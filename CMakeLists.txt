@@ -218,6 +218,9 @@ endif ()
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h @ONLY NEWLINE_STYLE LF)
 add_definitions(-DHAVE_CONFIG)
 
+if (NOT CMAKE_BUILD_TYPE)
+    message(FATAL_ERROR "Please set variables -DCMAKE_BUILD_TYPE=Debug|Release")
+endif ()
 
 string(TOLOWER ${CMAKE_BUILD_TYPE} LOWER_CMAKE_BUILD_TYPE)
 
