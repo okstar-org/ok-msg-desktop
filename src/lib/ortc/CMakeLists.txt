@@ -36,6 +36,7 @@ elseif (UNIX)
 endif ()
 
 add_library(${PROJECT_NAME} ${PROJECT_Sources})
+target_link_libraries(${PROJECT_NAME} X11)
 
 if(MSVC)
     set_property(TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
