@@ -1,0 +1,72 @@
+*{
+ border: none;
+
+}
+
+QWidget, QFrame {
+    background-color: rgb(255, 255, 255);
+}
+
+QLabel, QCheckBox, QPushButton, QLineEdit {
+    color: rgb(34, 34, 34);
+}
+
+QLineEdit {
+    border:1px solid #efefef;
+    border-radius:4px;
+    padding: 0 10px 0 10px;
+    color: #333;
+}
+
+QLineEdit[text=\"\"],QComboBox[text=\"\"]{ color:#d3d3d3; }
+
+QComboBox{
+    border: 1px solid #efefef;
+    border-radius: 4px;
+    padding: 0 10px 0 10px;
+    background-color:#ffffff;
+}
+
+QComboBox QAbstractItemView {
+    outline: 0px solid gray;
+    border: 1px solid rgb(188, 188, 188);
+    background-color: #ffffff;
+    selection-background-color: rgba(211, 211, 211, 0.3);
+}
+
+QComboBox::drop-down{
+    width: 0px;
+}
+
+QScrollBar:vertical {
+    width: 10px;
+    color:red;
+    background-color: #d0d2d4;
+    border: none;
+}
+
+QScrollBar::handle:vertical {
+    background: rgb(188, 188, 188);
+    border: none;
+    width: 10px;
+}
+
+QPushButton#loginBtn {
+    color: rgb(204, 0, 0);
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 2px;
+}
+
+QLabel#login_header {
+    font-size: 24px;
+}
+
+QLabel#loginMessage {
+    font-size: 14px;
+    color: #a2a2a2;
+}
+
+/* QCheckBox#rememberAccount:hover, QPushButton#forgetPassword:hover, QPushButton#registerAccount:hover {
+    color: rgb(204,0,0);
+} */

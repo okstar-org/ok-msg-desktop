@@ -1,0 +1,70 @@
+QScrollArea {
+	background-color: white
+}
+
+QScrollBar {
+	width: 8px;
+	background: rgba(0, 0, 0, 0%);
+	margin: 0px, 0px, 0px, 0px;
+	padding-top: 9px;
+	padding-bottom: 9px;
+}
+
+QScrollBar::handle {
+	width: 8px;
+	background: rgba(0, 0, 0, 25%);
+	border-radius: 4px;
+	min-height: 20;
+}
+
+QScrollBar::handle:hover {
+	width: 8px;
+	background: rgba(0, 0, 0, 50%);
+	border-radius: 4px;
+	min-height: 20;
+}
+
+QScrollBar::add-line {
+	height: 9px;
+	width: 8px;
+	subcontrol-position: bottom;
+}
+
+QScrollBar::sub-line {
+	height: 9px;
+	width: 8px;
+	subcontrol-position: top;
+}
+
+QScrollBar::add-line:hover {
+	height: 9px;
+	width: 8px;
+	subcontrol-position: bottom;
+}
+
+QScrollBar::sub-line:hover {
+	height: 9px;
+	width: 8px;
+	subcontrol-position: top;
+}
+
+QScrollBar::add-page, QScrollBar::sub-page {
+	background: rgba(0, 0, 0, 10%);
+	border-radius: 4px;
+}
+
+QPushButton {border:none; }
+
+QPushButton#chat_emoji_button {background:url(://resources/icon/chat_emoji.png) no-repeat center ; }
+
+QPushButton#chat_emoji_button:hover {
+	background:url(://resources/icon/chat_emoji_active.png) no-repeat center ; 
+}
+
+QPushButton#chat_send_button {
+	background:url(://resources/icon/chat_send.png) no-repeat center ; 
+}
+
+QPushButton#chat_send_button:hover {
+	background:url(://resources/icon/chat_send_active.png) no-repeat center ; 
+}

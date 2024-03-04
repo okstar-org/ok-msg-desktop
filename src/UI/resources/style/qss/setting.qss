@@ -1,0 +1,65 @@
+QPushButton { 
+    border:1px solid #efefef; 
+    background-color:white;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+QPushButton:hover, QPushButton:!hover:checked {
+    background-color:#efefef;
+}
+
+QLabel[label=text]{
+    background: transparent;
+    border-top: none;
+}
+
+QPushButton:hover QLabel[labelt=text] , QPushButton:!hover:checked QLabel[labelt=text] {
+    background-color:#efefef;
+}
+
+QPushButton#setting_testing {
+    background-image: url(://resources/icon/setting_testing.png) ;
+}
+QPushButton#setting_testing:hover, QPushButton#setting_testing:!hover:checked {
+    background-image: url(://resources/icon/setting_testing_active.png) ;
+}
+
+QPushButton#setting_help {
+    background-image: url(://resources/icon/setting_help.png) ;
+}
+
+QPushButton#setting_help:hover, QPushButton#setting_help:!hover:checked {
+    background-image: url(://resources/icon/setting_help_active.png) ;
+}
+
+
+QPushButton#setting_olc {
+    background-image: url(://resources/icon/setting_olc.png) ;
+}
+QPushButton#setting_olc:hover, QPushButton#setting_olc:!hover:checked {
+    background-image: url(://resources/icon/setting_olc_active.png) ;
+}
+
+
+QPushButton#setting_theme {
+    background-image: url(://resources/icon/setting_theme.png) ;
+}
+QPushButton#setting_theme:hover, QPushButton#setting_theme:!hover:checked {
+    background-image: url(://resources/icon/setting_theme_active.png) ;
+}
+
+QPushButton#setting_voice {
+    background-image: url(://resources/icon/setting_voice.png) ;
+}
+QPushButton#setting_voice:hover, QPushButton#setting_voice:!hover:checked {
+    background-image: url(://resources/icon/setting_voice_active.png) ;
+}
+
+QPushButton#setting_exit {
+    background-image: url(://resources/icon/setting_exit.png) ;
+}
+
+QPushButton#setting_exit:hover, QPushButton#setting_exit:!hover:checked {
+    background-image: url(://resources/icon/setting_exit_active.png) ;
+}

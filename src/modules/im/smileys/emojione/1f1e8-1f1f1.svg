@@ -1,0 +1,13 @@
+<!--
+  - Copyright (c) 2022 船山信息 chuanshaninfo.com
+  - The project is licensed under Mulan PubL v2.
+  - You can use this software according to the terms and conditions of the Mulan
+  - PubL v2. You may obtain a copy of Mulan PubL v2 at:
+  -          http://license.coscl.org.cn/MulanPubL-2.0
+  - THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+  - EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+  - MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+  - See the Mulan PubL v2 for more details.
+  -->
+
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64"><path fill="#ED4C5C" d="M2 32c0 16.568 13.432 30 30 30s30-13.432 30-30H2z"/><path fill="#F9F9F9" d="M32 2c16.568 0 30 13.432 30 30H32V2z"/><path fill="#2A5F9E" d="M32 2C15.432 2 2 15.432 2 32h30V2z"/><path fill="#F9F9F9" d="M20 21.717L24.944 25l-1.867-5.341L28 16.25h-6.099L20 11l-1.847 5.25H12l4.923 3.409L15.056 25z"/></svg>

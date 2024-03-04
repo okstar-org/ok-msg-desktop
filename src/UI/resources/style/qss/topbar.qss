@@ -1,0 +1,23 @@
+QLabel#signalLo {
+    background: url(:/resources/icon/signal.png)  no-repeat center;
+}
+
+QLabel#signalLo[status="show"] {
+    background: url(:/resources/icon/signal_lo.png)  no-repeat center;
+}
+
+QLabel#signalWB {
+    background: url(:/resources/icon/signal.png)  no-repeat center;
+}
+
+QLabel#signalWB[status="show"] {
+    background: url(:/resources/icon/signal_wb.png)  no-repeat center;
+}
+
+QLabel#signalTe {
+    background: url(:/resources/icon/signal.png)  no-repeat center;
+}
+
+QLabel#signalTe[status="show"] {
+    background: url(:/resources/icon/signal_te.png)  no-repeat center;
+}

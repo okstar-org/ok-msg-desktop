@@ -1,0 +1,54 @@
+*{font-family:Microsoft YaHei;}
+
+QLabel#TitleContent
+{
+	color:black;
+}
+
+
+QPushButton#ButtonMax:pressed
+{
+    border-image:url(:/resources/icon/titlebar_max.png) 0 27 0 54 ;
+}
+
+QPushButton#ButtonRestore
+{
+    border-image:url(:/resources/icon/titlebar_restore.png) 0 81 0 0 ;
+}
+
+QPushButton#ButtonRestore:hover
+{
+    border-image:url(:/resources/icon/titlebar_restore.png) 0 54 0 27 ;
+}
+
+QPushButton#ButtonRestore:pressed
+{
+    border-image:url(:/resources/icon/titlebar_restore.png) 0 27 0 54 ;
+}
+
+QPushButton.title_btn_close
+{
+    background:url(:/resources/icon/btn_close.png) no-repeat center;
+}
+
+QPushButton.title_btn_close:hover
+{
+    background:url(:/resources/icon/btn_close_active.png) no-repeat center;
+}
+
+QPushButton.title_btn_close:pressed
+{
+    background: url(:/resources/icon/btn_close_active.png) no-repeat center ;
+}
+
+QPushButton.title_btn_minimize {
+    background: url(:/resources/icon/btn_minimize.png) no-repeat center;
+}
+
+QPushButton.title_btn_minimize:hover {
+    background: url(:/resources/icon/btn_minimize_active.png) no-repeat center;
+}
+
+QPushButton.title_btn_minimize:pressed {
+    background: url(:/resources/icon/btn_minimize_active.png) no-repeat center;
+}

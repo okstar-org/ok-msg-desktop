@@ -1,0 +1,16 @@
+
+QPushButton#close {
+    border: none; background:url(:/resources/icon/btn_close_active.png) no-repeat center;
+}
+
+QPushButton#close:hover {
+    border: none; background:url(:/resources/icon/btn_close_active.png) no-repeat center;
+}
+
+QPushButton#minimize {
+    border: none; background:url(:/resources/icon/btn_minimize.png) no-repeat center;
+}
+
+QPushButton#minimize:hover {
+    border: none; background:url(:/resources/icon/btn_minimize_active.png) no-repeat center;
+}

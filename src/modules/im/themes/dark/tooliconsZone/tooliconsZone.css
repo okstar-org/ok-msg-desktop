@@ -1,0 +1,47 @@
+/*
+ * Copyright (c) 2022 船山信息 chuanshaninfo.com
+ * The project is licensed under Mulan PubL v2.
+ * You can use this software according to the terms and conditions of the Mulan
+ * PubL v2. You may obtain a copy of Mulan PubL v2 at:
+ *          http://license.coscl.org.cn/MulanPubL-2.0
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PubL v2 for more details.
+ */
+
+QPushButton[update-available=true]
+{
+    background-color: #115508;
+    border: none;
+}
+
+QPushButton:hover[update-available=true]
+{
+    background-color: #19780b;
+    border: none;
+}
+
+QPushButton
+{
+    background-color: @themeDark;
+    border: none;
+}
+
+QPushButton:hover
+{
+    background-color: @themeMediumDark;
+    border: none;
+}
+
+QPushButton:checked
+{
+    background-color: @themeMedium;
+    border: none;
+}
+
+QPushButton:pressed
+{
+    background-color: @themeMediumLight;
+    border: none;
+}

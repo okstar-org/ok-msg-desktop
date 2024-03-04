@@ -1,0 +1,42 @@
+<RCC>
+
+    <qresource prefix="/resources">
+        <file>icon/signal.png</file>
+        <file>icon/signal_CONNECTED.png</file>
+        <file>icon/signal_CONNECTING.png</file>
+        <file>icon/signal_DISCONNECTED.png</file>
+        <file>icon/video_zoom_in.png</file>
+        <file>icon/video_voice.png</file>
+        <file>icon/video_voice_active.png</file>
+        <file>icon/btn_close.png</file>
+        <file>icon/btn_minimize.png</file>
+        <file>icon/btn_close_active.png</file>
+        <file>icon/btn_minimize_active.png</file>
+        <file>icon/signal_lo.png</file>
+        <file>icon/signal_te.png</file>
+        <file>icon/signal_wb.png</file>
+        <file>icon/setting/setting_testing.png</file>
+        <file>icon/setting/setting_testing_active.png</file>
+        <file>icon/setting/setting_help.png</file>
+        <file>icon/setting/setting_help_active.png</file>
+        <file>icon/setting/setting_voice.png</file>
+        <file>icon/setting/setting_voice_active.png</file>
+        <file>icon/setting/setting_exit.png</file>
+        <file>icon/setting/setting_exit_active.png</file>
+        <file>icon/setting/setting_theme.png</file>
+        <file>icon/setting/setting_theme_active.png</file>
+        <file>icon/setting/setting_checked.png</file>
+        <file>icon/screencaptor_exit.png</file>
+        <file>icon/screencaptor_finish.png</file>
+        <file>icon/player/player_mute.png</file>
+        <file>icon/player/player_pause.png</file>
+        <file>icon/player/player_play.png</file>
+        <file>icon/btn_maximum.png</file>
+        <file>icon/btn_maximum_active.png</file>
+
+        <file>logo/main.svg</file>
+
+        <file>images/avatar.png</file>
+    </qresource>
+
+</RCC>

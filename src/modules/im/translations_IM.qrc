@@ -1,0 +1,16 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+  <qresource prefix="/translations/IM">
+    <file alias="de.qm">/lvm/1/code/QtWorkspace/OkEDU-Classroom-Desktop/modules/im/de.qm</file>
+    <file alias="es.qm">/lvm/1/code/QtWorkspace/OkEDU-Classroom-Desktop/modules/im/es.qm</file>
+    <file alias="fr.qm">/lvm/1/code/QtWorkspace/OkEDU-Classroom-Desktop/modules/im/fr.qm</file>
+    <file alias="it.qm">/lvm/1/code/QtWorkspace/OkEDU-Classroom-Desktop/modules/im/it.qm</file>
+    <file alias="ja.qm">/lvm/1/code/QtWorkspace/OkEDU-Classroom-Desktop/modules/im/ja.qm</file>
+    <file alias="ko.qm">/lvm/1/code/QtWorkspace/OkEDU-Classroom-Desktop/modules/im/ko.qm</file>
+    <file alias="pt.qm">/lvm/1/code/QtWorkspace/OkEDU-Classroom-Desktop/modules/im/pt.qm</file>
+    <file alias="ru.qm">/lvm/1/code/QtWorkspace/OkEDU-Classroom-Desktop/modules/im/ru.qm</file>
+    <file alias="ar.qm">/lvm/1/code/QtWorkspace/OkEDU-Classroom-Desktop/modules/im/ar.qm</file>
+    <file alias="zh_CN.qm">/lvm/1/code/QtWorkspace/OkEDU-Classroom-Desktop/modules/im/zh_CN.qm</file>
+    <file alias="zh_TW.qm">/lvm/1/code/QtWorkspace/OkEDU-Classroom-Desktop/modules/im/zh_TW.qm</file>
+  </qresource>
+</RCC>
