@@ -66,9 +66,7 @@ set(PLATFORM_ARCH ${CMAKE_C_PLATFORM_ID}-${CMAKE_SYSTEM_PROCESSOR})
 message(STATUS "PLATFORM_ARCH=" ${PLATFORM_ARCH})
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-# include(CheckAtomic)
-
-# include(dependencies)
+include(dependencies)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}"
      "${PROJECT_SOURCE_DIR}/cmake/modules")
