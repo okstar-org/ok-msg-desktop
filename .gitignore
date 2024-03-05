@@ -48,8 +48,7 @@ moc_*.h
 *.dir/**
 *_autogen.dir/**
 
-3rdparty/webrtc
-3rdparty/gloox
+3rdparty/
 
 **/.cproject
 **/.project
