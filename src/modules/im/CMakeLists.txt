@@ -27,7 +27,6 @@ elseif(UNIX)
 endif()
 
 include_directories(${PROJECT_BINARY_DIR})
-include_directories(${GLOOX_DIR}/include)
 
 set(CMAKE_AUTOUIC_SEARCH_PATHS ./src src/widget src/widget/form)
 

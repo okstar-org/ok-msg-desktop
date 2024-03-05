@@ -4,65 +4,66 @@
  * You can use this software according to the terms and conditions of the Mulan
  * PubL v2. You may obtain a copy of Mulan PubL v2 at:
  *          http://license.coscl.org.cn/MulanPubL-2.0
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
- * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
- * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
- * See the Mulan PubL v2 for more details.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY
+ * KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE. See the
+ * Mulan PubL v2 for more details.
  */
 #pragma once
 
-#include <QString>
 #include <QMutex>
+#include <QString>
 #include <memory>
 #include <set>
 
 #include "base/r.h"
 #include "base/system/sys_info.h"
-#include "base/timer.h"
 #include "base/task.h"
+#include "base/timer.h"
 
+#include "lib/backend/OkCloudService.h"
 #include "lib/messenger/IMMessage.h"
 #include "lib/messenger/IMRoomHelper.h"
-#include "lib/backend/OkCloudService.h"
 #include "lib/session/AuthSession.h"
 
-#include <gloox/attention.h>
-#include <gloox/bookmarkhandler.h>
-#include <gloox/bookmarkstorage.h>
-#include <gloox/carbons.h>
-#include <gloox/chatstatefilter.h>
-#include <gloox/chatstatehandler.h>
-#include <gloox/client.h>
-#include <gloox/connectionlistener.h>
-#include <gloox/extdisco.h>
-#include <gloox/forward.h>
-#include <gloox/iqhandler.h>
-#include <gloox/jinglecontent.h>
-#include <gloox/jinglemessage.h>
-#include <gloox/jinglesession.h>
-#include <gloox/jinglesessionmanager.h>
-#include <gloox/loghandler.h>
-#include <gloox/logsink.h>
-#include <gloox/messageeventfilter.h>
-#include <gloox/messageeventhandler.h>
-#include <gloox/messagesessionhandler.h>
-#include <gloox/mucroom.h>
-#include <gloox/mucroomconfighandler.h>
-#include <gloox/mucroomhandler.h>
-#include <gloox/nativebookmarkhandler.h>
-#include <gloox/nativebookmarkstorage.h>
-#include <gloox/presence.h>
-#include <gloox/pubsub.h>
-#include <gloox/pubsubevent.h>
-#include <gloox/pubsubitem.h>
-#include <gloox/pubsubmanager.h>
-#include <gloox/pubsubresulthandler.h>
-#include <gloox/registration.h>
-#include <gloox/registrationhandler.h>
-#include <gloox/rosterlistener.h>
-#include <gloox/rostermanager.h>
-#include <gloox/vcardhandler.h>
-#include <gloox/vcardmanager.h>
+#include <gloox/src/attention.h>
+#include <gloox/src/bookmarkhandler.h>
+#include <gloox/src/bookmarkstorage.h>
+#include <gloox/src/carbons.h>
+#include <gloox/src/chatstatefilter.h>
+#include <gloox/src/chatstatehandler.h>
+#include <gloox/src/client.h>
+#include <gloox/src/connectionlistener.h>
+#include <gloox/src/extdisco.h>
+#include <gloox/src/forward.h>
+#include <gloox/src/iqhandler.h>
+#include <gloox/src/incominghandler.h>
+#include <gloox/src/jinglecontent.h>
+#include <gloox/src/jinglemessage.h>
+#include <gloox/src/jinglesession.h>
+#include <gloox/src/jinglesessionmanager.h>
+#include <gloox/src/loghandler.h>
+#include <gloox/src/logsink.h>
+#include <gloox/src/messageeventfilter.h>
+#include <gloox/src/messageeventhandler.h>
+#include <gloox/src/messagesessionhandler.h>
+#include <gloox/src/mucroom.h>
+#include <gloox/src/mucroomconfighandler.h>
+#include <gloox/src/mucroomhandler.h>
+#include <gloox/src/nativebookmarkhandler.h>
+#include <gloox/src/nativebookmarkstorage.h>
+#include <gloox/src/presence.h>
+#include <gloox/src/pubsub.h>
+#include <gloox/src/pubsubevent.h>
+#include <gloox/src/pubsubitem.h>
+#include <gloox/src/pubsubmanager.h>
+#include <gloox/src/pubsubresulthandler.h>
+#include <gloox/src/registration.h>
+#include <gloox/src/registrationhandler.h>
+#include <gloox/src/rosterlistener.h>
+#include <gloox/src/rostermanager.h>
+#include <gloox/src/vcardhandler.h>
+#include <gloox/src/vcardmanager.h>
 
 namespace lib {
 namespace messenger {
@@ -96,13 +97,10 @@ class IM : public ok::lib::Task,
            public NativeBookmarkHandler {
   Q_OBJECT
 public:
-  explicit IM(QString host,
-              QString user, QString pwd,
-              QStringList  features);
+  explicit IM(QString host, QString user, QString pwd, QStringList features);
   ~IM();
 
   static IMMessage from(MsgType type, const gloox::Message &msg);
-
 
   std::unique_ptr<Client> makeClient();
 
@@ -128,8 +126,8 @@ public:
    * send
    */
   void sendPresence();
-  void sendPresence(const JID& to);
-  void sendReceiptReceived(const QString &id,QString receiptNum);
+  void sendPresence(const JID &to);
+  void sendReceiptReceived(const QString &id, QString receiptNum);
 
   /**
    * 服务发现
@@ -146,7 +144,8 @@ public:
    * 朋友相关
    */
   void enableRosterManager();
-  void addRosterItem(const QString &username, const QString &nick, const QString &msg);
+  void addRosterItem(const QString &username, const QString &nick,
+                     const QString &msg);
 
   void acceptFriendRequest(const QString &);
   void rejectFriendRequest(const QString &);
@@ -158,8 +157,6 @@ public:
 
   void retry();
   bool removeFriend(JID jid);
-
-
 
   // gloox log
   void handleLog(LogLevel level, LogArea area,
@@ -182,33 +179,30 @@ public:
   void setRoomName(const QString &groupId, const std::string &roomName);
 
   bool inviteToRoom(const JID &roomJid, const JID &peerId);
-  bool leaveGroup(const QString& groupId);
-  bool destroyGroup(const QString& groupId);
+  bool leaveGroup(const QString &groupId);
+  bool destroyGroup(const QString &groupId);
 
   bool sendToRoom(const QString &to, const QString &msg,
-                  const QString &id = "") ;
+                  const QString &id = "");
 
   void joinRoom(const QString &jid);
 
-
   void createRoom(const JID &jid, const std::string &password = "");
 
-  const IMRoomInfo *  findRoom(const QString &groupId) const;
+  const IMRoomInfo *findRoom(const QString &groupId) const;
 
   void doConnect();
 
   void doDisconnect();
 
-
-  //2-群组列表
+  // 2-群组列表
   void loadGroupList();
-  //3-用户信息
+  // 3-用户信息
   void loadRosterInfo();
-  //4-加入群聊
+  // 4-加入群聊
   void joinRooms();
 
-
-  void send(const QString& xml);
+  void send(const QString &xml);
 
   void stop();
 
@@ -229,40 +223,33 @@ public:
    * @return
    */
   std::set<std::string> getOnlineResources(const std::string &bare);
-  void updateOnlineStatus(const std::string &bare,
-                            const std::string &resource,
-                            Presence::PresenceType presenceType);
+  void updateOnlineStatus(const std::string &bare, const std::string &resource,
+                          Presence::PresenceType presenceType);
 
   /**
    * jingle-message
    *    发起呼叫邀请
    */
-  void proposeJingleMessage(const QString &friendId,
-                          const QString &callId,
-                          bool video);
+  void proposeJingleMessage(const QString &friendId, const QString &callId,
+                            bool video);
 
-  void rejectJingleMessage(const QString &friendId,
-                           const QString &callId);
+  void rejectJingleMessage(const QString &friendId, const QString &callId);
 
-  void acceptJingleMessage(const QString &friendId,
-                            const QString &callId);
+  void acceptJingleMessage(const QString &friendId, const QString &callId);
 
-  void retractJingleMessage(const QString &friendId,
-                            const QString &callId);
+  void retractJingleMessage(const QString &friendId, const QString &callId);
 
   void doJingleMessage(const PeerId &peerId,
-                         const gloox::Jingle::JingleMessage *jm);
+                       const gloox::Jingle::JingleMessage *jm);
 
   [[nodiscard]] gloox::JID wrapJid(const QString &f) const;
 
   [[nodiscard]] gloox::JID wrapRoomJid(const QString &group) const;
-  void sendChatState(const QString &to, ChatStateType state) ;
+  void sendChatState(const QString &to, ChatStateType state);
 
-  void makeId(QString& id);
+  void makeId(QString &id);
 
-  ExtDisco& extDisco(){
-    return mExtDisco;
-  }
+  ExtDisco &extDisco() { return mExtDisco; }
 
 protected:
   void run() override;
@@ -273,13 +260,14 @@ protected:
   /**
    * ping handler
    */
-  virtual void handlePing( const PingType type, const std::string& body ) override;
+  virtual void handlePing(const PingType type,
+                          const std::string &body) override;
 #endif
 
   /**
    * incoming handler
    */
-   void handleIncoming( Tag* tag ) override;
+  virtual void handleIncoming(Tag *tag) override;
 
   /**
    * iq handlers
@@ -301,23 +289,21 @@ protected:
   void onDisconnect(ConnectionError e) override;
   bool onTLSConnect(const CertInfo &info) override;
 
-
   /**
    * Registration
    */
-  virtual void handleRegistrationFields( const JID& from, int fields,
-                                        std::string instructions ) override;
+  virtual void handleRegistrationFields(const JID &from, int fields,
+                                        std::string instructions) override;
 
-  virtual void handleAlreadyRegistered( const JID& from ) override;
+  virtual void handleAlreadyRegistered(const JID &from) override;
 
-  virtual void handleRegistrationResult( const JID& from,//
-                                        RegistrationResult regResult,//
-                                        const Error* error) override;
+  virtual void handleRegistrationResult(const JID &from,              //
+                                        RegistrationResult regResult, //
+                                        const Error *error) override;
 
-  virtual void handleDataForm( const JID& from, const DataForm& form ) override;
+  virtual void handleDataForm(const JID &from, const DataForm &form) override;
 
-  virtual void handleOOB( const JID& from, const OOB& oob ) override;
-
+  virtual void handleOOB(const JID &from, const OOB &oob) override;
 
   /**
    * vCard
@@ -357,7 +343,7 @@ protected:
 
   void handleRosterError(const IQ &iq) override;
 
-  void handleRosterItemExchange( const JID& from, const RosterX* items ) override;
+  void handleRosterItemExchange(const JID &from, const RosterX *items) override;
 
   // MUC config
   void handleMUCConfigList(MUCRoom *room, const MUCListItemList &items,
@@ -375,8 +361,8 @@ protected:
                      MessageSession *session = nullptr) override;
   void handleMessageSession(MessageSession *session) override;
 
-  //MessageEventHandler
-  void handleMessageEvent( const JID& from, const MessageEvent* event ) override;
+  // MessageEventHandler
+  void handleMessageEvent(const JID &from, const MessageEvent *event) override;
 
   void handleChatState(const JID &from, ChatStateType state) override;
 
@@ -413,15 +399,15 @@ protected:
   void handleDiscoError(const JID &from, const gloox::Error *,
                         int context) override;
   // DiscoNodeHandler
-  virtual StringList handleDiscoNodeFeatures( const JID& from, const std::string& node ) override;
+  virtual StringList handleDiscoNodeFeatures(const JID &from,
+                                             const std::string &node) override;
 
+  virtual Disco::IdentityList
+  handleDiscoNodeIdentities(const JID &from, const std::string &node) override;
 
-  virtual Disco::IdentityList handleDiscoNodeIdentities( const JID& from,
-                                                        const std::string& node ) override;
-
-
-  virtual Disco::ItemList handleDiscoNodeItems( const JID& from, const JID& to,
-                                               const std::string& node = EmptyString ) override;
+  virtual Disco::ItemList
+  handleDiscoNodeItems(const JID &from, const JID &to,
+                       const std::string &node = EmptyString) override;
 
   // Presence handler
   void handlePresence(const Presence &presence) override;
@@ -732,7 +718,6 @@ protected:
   void handleBookmarks(const BookmarkList &bList, //
                        const ConferenceList &cList) override;
 
-
 private:
   base::OsInfo osInfo;
 
@@ -750,7 +735,6 @@ private:
 
   QString _nick;
   int _nickChanged = 0;
-
 
   std::unique_ptr<Client> _client;
 
@@ -780,7 +764,7 @@ private:
 
   std::unique_ptr<MessageEventFilter> m_messageEventFilter;
 
-  std::map<std::string, ChatStateFilter*> m_chatStateFilters;
+  std::map<std::string, ChatStateFilter *> m_chatStateFilters;
 
   QMap<QString, IMRoomInfo> m_roomMap;
 
@@ -789,9 +773,6 @@ private:
   // 连接状态
   IMStatus _status;
   Presence::PresenceType selfPresType = gloox::Presence::Unavailable;
-
-
-
 
   QString m_addFriendMsg;
 
@@ -805,31 +786,25 @@ private:
 
   ExtDisco mExtDisco;
 
-  void timerEvent(QTimerEvent*) override;
+  void timerEvent(QTimerEvent *) override;
 
-  void doPubSubEvent(const gloox::PubSub::Event* pse,
-                     const Message &msg,
+  void doPubSubEvent(const gloox::PubSub::Event *pse, const Message &msg,
                      QString &friendId);
-  void doMessageHeadline(const Message &msg,
-                         QString &friendId,
+  void doMessageHeadline(const Message &msg, QString &friendId,
                          const QString &body);
-  void doMessageChat(const Message &msg,
-                         QString &friendId,
-                         const QString &body);
+  void doMessageChat(const Message &msg, QString &friendId,
+                     const QString &body);
 
-  void doMessageNormal(const Message &msg,
-                     QString &friendId);
+  void doMessageNormal(const Message &msg, QString &friendId);
 
-  void joinRoom(MUCRoom* room);
+  void joinRoom(MUCRoom *room);
 
-  void onAddRoom(const std::string &jid,
-               const std::string &name="");
+  void onAddRoom(const std::string &jid, const std::string &name = "");
 
 signals:
   void connectResult(IMStatus);
 
-  void receiveRoomMessage(QString groupId, PeerId friendId,
-                          IMMessage);
+  void receiveRoomMessage(QString groupId, PeerId friendId, IMMessage);
 
   // friend events
   void receiveFriend(QString friendId);
@@ -850,11 +825,11 @@ signals:
 
   void receiveFriendChatState(QString friendId, int state);
 
-  void exportEncryptedMessage(QDomElement& dom);
+  void exportEncryptedMessage(QDomElement &dom);
 
   void receiveMessageReceipt(QString friendId, QString receipt);
 
-  void incoming(const QDomElement& xml);
+  void incoming(const QDomElement &xml);
 
   /**
    * Call events
@@ -862,8 +837,9 @@ signals:
    * @param audio
    * @param video
    */
-   //呼叫请求
-  void receiveCallRequest(QString friendId, QString callId, bool audio, bool video);
+  //呼叫请求
+  void receiveCallRequest(QString friendId, QString callId, bool audio,
+                          bool video);
   //呼叫撤回
   void receiveCallRetract(QString friendId, int state);
   void receiveCallAcceptByOther(QString callId, PeerId peerId);
@@ -873,8 +849,8 @@ signals:
   void receiveCallStateAccepted(PeerId peerId, QString callId, bool video);
   void receiveCallStateRejected(PeerId peerId, QString callId, bool video);
 
-  void receiveFileChunk(const FriendId friendId, QString sId,
-                        int seq, const std::string chunk);
+  void receiveFileChunk(const FriendId friendId, QString sId, int seq,
+                        const std::string chunk);
   void receiveFileFinished(const FriendId friendId, QString sId);
 
   // Self events
@@ -899,12 +875,11 @@ signals:
   void doPubSubEventDone();
 
 public slots:
-  void onSelfNicknameChanged(const QString& nickname);
-
+  void onSelfNicknameChanged(const QString &nickname);
 
   void sendServiceDiscoveryItems();
   void sendServiceDiscoveryInfo(const JID &item);
 };
 
 } // namespace messenger
-} // namespace network
+} // namespace lib

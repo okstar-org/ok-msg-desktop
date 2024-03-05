@@ -16,11 +16,8 @@
 
 #pragma once
 
-#include "lib/session/AccountItem.h"
 #include "jid.h"
 #include <QObject>
-
-#define PeerUIN std::string
 
 namespace ok {
 namespace base {

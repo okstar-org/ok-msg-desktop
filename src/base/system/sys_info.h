@@ -13,7 +13,7 @@
 #ifndef BASE_SYSTEM_SYS_INFO_H_
 #define BASE_SYSTEM_SYS_INFO_H_
 
-#include "base/basic_types.h"
+#include "../basic_types.h"
 #include <QString>
 #include <QFile>
 #include <QTextStream>

@@ -18,14 +18,14 @@
 
 #include "base/files.h"
 #include "lib/settings/OkSettings.h"
-#include "settings/translator.h"
+#include "lib/settings/translator.h"
 #include <base/basic_types.h>
 #include <base/widgets.h>
 
 #if OK_PLUGIN
 #include "UI/component/PluginManagerForm.h"
-#include "settings/OkSettings.h"
-#include "settings/translator.h"
+#include "lib/settings/OkSettings.h"
+#include "lib/settings/translator.h"
 #endif
 
 

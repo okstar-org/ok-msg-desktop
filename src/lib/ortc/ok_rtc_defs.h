@@ -16,13 +16,13 @@
 #include <string>
 #include <vector>
 
-#include "gloox/jinglecontent.h"
-#include "gloox/jinglefiletransfer.h"
-#include "gloox/jinglegroup.h"
-#include "gloox/jingleibb.h"
-#include "gloox/jingleiceudp.h"
-#include "gloox/jinglertp.h"
-#include "gloox/jinglesession.h"
+#include <gloox/src/jinglecontent.h>
+#include <gloox/src/jinglefiletransfer.h>
+#include <gloox/src/jinglegroup.h>
+#include <gloox/src/jingleibb.h>
+#include <gloox/src/jingleiceudp.h>
+#include <gloox/src/jinglertp.h>
+#include <gloox/src/jinglesession.h>
 
 namespace lib {
 namespace ortc {

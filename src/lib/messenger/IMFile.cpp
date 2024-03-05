@@ -4,17 +4,17 @@
  * You can use this software according to the terms and conditions of the Mulan
  * PubL v2. You may obtain a copy of Mulan PubL v2 at:
  *          http://license.coscl.org.cn/MulanPubL-2.0
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
- * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
- * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
- * See the Mulan PubL v2 for more details.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY
+ * KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE. See the
+ * Mulan PubL v2 for more details.
  */
 
 #include "IMFile.h"
 #include "base/logs.h"
 #include <QEventLoop>
-#include <gloox/bytestream.h>
-#include <gloox/inbandbytestream.h>
+#include <gloox/src/bytestream.h>
+#include <gloox/src/inbandbytestream.h>
 #include <utility>
 
 namespace lib {
@@ -115,12 +115,13 @@ void IMFile::handleBytestreamData(gloox::Bytestream *bs,
 void IMFile::handleBytestreamDataAck(gloox::Bytestream *bs) {
   DEBUG_LOG(("acked:%1").arg(qstring(bs->sid())));
   m_ack_seq += 1;
-  //TODO 考虑性能关系暂时不处理实时反馈ack
-  //  if(m_ack_seq < m_seq){
-  //    emit fileSending(m_friendId, m_file, m_ack_seq, m_ack_seq*m_buf, false);
-  //  } else{
-  //    emit fileSending(m_friendId, m_file, m_ack_seq, m_sentBytes, true);
-  //  }
+  // TODO 考虑性能关系暂时不处理实时反馈ack
+  //   if(m_ack_seq < m_seq){
+  //     emit fileSending(m_friendId, m_file, m_ack_seq, m_ack_seq*m_buf,
+  //     false);
+  //   } else{
+  //     emit fileSending(m_friendId, m_file, m_ack_seq, m_sentBytes, true);
+  //   }
 }
 
 void IMFile::handleBytestreamError(gloox::Bytestream *bs, const gloox::IQ &iq) {
@@ -128,5 +129,5 @@ void IMFile::handleBytestreamError(gloox::Bytestream *bs, const gloox::IQ &iq) {
   fileError(m_friendId, m_file, m_sentBytes);
 }
 
-} // namespace IM
+} // namespace messenger
 } // namespace lib

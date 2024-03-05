@@ -14,8 +14,6 @@ set(${PROJECT_NAME}_SOURCES
     utils.cpp
     widgets.h
     system/sys_info.h
-    applicationinfo.h
-    applicationinfo.cpp
     jid.h
     jid.cpp
     OkAccount.h

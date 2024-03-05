@@ -15,7 +15,7 @@
 
 #include "lib/plugin/PluginInfo.h"
 #include "lib/plugin/pluginmanager.h"
-#include "backend/OkCloudService.h"
+#include "lib/backend/OkCloudService.h"
 #include <QRecursiveMutex>
 #include <QWidget>
 

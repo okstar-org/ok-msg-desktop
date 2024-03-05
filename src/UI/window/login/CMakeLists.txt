@@ -65,8 +65,10 @@ add_library(${PROJECT_NAME}
     ${${PROJECT_NAME}_SOURCES})
 
 target_link_libraries(${PROJECT_NAME}
+        PRIVATE Session
         PRIVATE ${Qt5Widgets_LIBRARIES}
         PRIVATE ${Qt5Svg_LIBRARIES}
+
 )
 
 if(MSVC)

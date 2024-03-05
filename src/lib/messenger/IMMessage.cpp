@@ -4,17 +4,17 @@
  * You can use this software according to the terms and conditions of the Mulan
  * PubL v2. You may obtain a copy of Mulan PubL v2 at:
  *          http://license.coscl.org.cn/MulanPubL-2.0
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
- * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
- * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
- * See the Mulan PubL v2 for more details.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY
+ * KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE. See the
+ * Mulan PubL v2 for more details.
  */
 
 #include "IMMessage.h"
 #include "base/basic_types.h"
 #include <QDebug>
 #include <QString>
-#include <gloox/jid.h>
+#include <gloox/src/jid.h>
 #include <utility>
 
 namespace lib {
@@ -22,7 +22,7 @@ namespace messenger {
 
 IMMessage::IMMessage() {}
 
-IMMessage::IMMessage(MsgType type_,  //
+IMMessage::IMMessage(MsgType type_,    //
                      QString from_,    //
                      QString body_,    //
                      QString id_,      //
@@ -56,7 +56,7 @@ FriendId::FriendId(const FriendId &f)
 FriendId::~FriendId() {}
 
 bool FriendId::operator==(const QString &friendId) const {
-  return toString()==friendId;
+  return toString() == friendId;
 }
 
 bool FriendId::operator==(const FriendId &friendId) const {
@@ -107,20 +107,11 @@ bool PeerId::operator==(const QString &username_) const {
 }
 
 const std::string arr[9] = {
-    "CONNECTING",
-    "AUTH_FAILED",
-    "CONNECTED",
-    "DISCONNECTED",
-    "TIMEOUT",
-    "ERROR",
-    "TLS_ERROR",
-    "OUT_OF_RESOURCE",
-    "NO_SUPPORT",
+    "CONNECTING", "AUTH_FAILED", "CONNECTED",       "DISCONNECTED", "TIMEOUT",
+    "ERROR",      "TLS_ERROR",   "OUT_OF_RESOURCE", "NO_SUPPORT",
 };
 
-std::string IMStatusToString(IMStatus status){
-  return arr[(int)status];
-}
+std::string IMStatusToString(IMStatus status) { return arr[(int)status]; }
 
-} // namespace IM
+} // namespace messenger
 } // namespace lib

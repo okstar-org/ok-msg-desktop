@@ -11,7 +11,7 @@
  */
 
 #include "common.h"
-#include "applicationinfo.h"
+#include "lib/settings/applicationinfo.h"
 
 #ifdef Q_OS_MAC
 #include "CocoaUtilities/cocoacommon.h"

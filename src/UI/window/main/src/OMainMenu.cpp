@@ -18,7 +18,7 @@
 
 #include "base/files.h"
 #include "base/resources.h"
-#include "images.h"
+#include "base/images.h"
 
 namespace UI {
 

@@ -10,7 +10,7 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#include "base/system/sys_info.h"
+#include "../../system/sys_info.h"
 
 #include <QFile>
 #include <QSysInfo>

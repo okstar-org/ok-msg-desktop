@@ -4,6 +4,10 @@ if(POLICY CMP0091)
   cmake_policy(SET CMP0091 NEW)
 endif(POLICY CMP0091)
 
+if(POLICY CMP0135)
+  cmake_policy(SET CMP0135 NEW)
+endif(POLICY CMP0135)
+
 project(OkMSG-Project)
 
 # 在QtCreator下禁用CONAN
@@ -25,8 +29,6 @@ message(STATUS "ProcessorCount=" ${N})
 # 开启插件（ON/OFF）
 set(ENABLE_PLUGINS ON)
 
-# option(PLATFORM_EXTENSIONS "Enable platform specific extensions, requires
-# extra dependencies" ON)
 
 message(STATUS "PROJECT_SOURCE_DIR=" ${PROJECT_SOURCE_DIR})
 message(STATUS "CMAKE_CURRENT_SOURCE_DIR=" ${CMAKE_CURRENT_SOURCE_DIR})
@@ -55,6 +57,10 @@ execute_process(
 
 add_definitions(-DGIT_VERSION="${GIT_VERSION}")
 message(STATUS "GIT_VERSION=" ${GIT_VERSION})
+
+set(OK_ARCH ${CMAKE_SYSTEM_PROCESSOR})
+set(OK_PLATFORM ${CMAKE_C_PLATFORM_ID})
+
 
 set(PLATFORM_ARCH ${CMAKE_C_PLATFORM_ID}-${CMAKE_SYSTEM_PROCESSOR})
 message(STATUS "PLATFORM_ARCH=" ${PLATFORM_ARCH})
@@ -87,6 +93,7 @@ if(UNIX)
   find_package(PkgConfig REQUIRED)
 endif()
 
+# Qt
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
@@ -108,6 +115,8 @@ find_package(
              LinguistTools
              UiTools
   REQUIRED)
+
+option(PLATFORM_EXTENSIONS "Enable platform specific extensions, requires extra dependencies" ON)
 
 # 设置Qt模块包含头文件和库
 include_directories(${CMAKE_PREFIX_PATH}/include)
@@ -273,11 +282,8 @@ message(STATUS "CMAKE_CXX_FLAGS=" ${CMAKE_CXX_FLAGS})
 message(STATUS "CMAKE_CXX_FLAGS_DEBUG=" ${CMAKE_CXX_FLAGS_DEBUG})
 message(STATUS "CMAKE_CXX_FLAGS_RELEASE=" ${CMAKE_CXX_FLAGS_RELEASE})
 
-# 设置Gloox位置
-set(GLOOX_DIR ${CMAKE_SOURCE_DIR}/3rdparty/gloox/libgloox-${PLATFORM_ARCH})
-
 # 设置WebRTC位置
-set(WebRTC_DIR ${PROJECT_SOURCE_DIR}/3rdparty/webrtc/libwebrtc-${PLATFORM_ARCH})
+#set(WebRTC_DIR ${PROJECT_SOURCE_DIR}/3rdparty/webrtc/libwebrtc-${PLATFORM_ARCH})
 
 include_directories(.)
 
@@ -389,17 +395,7 @@ elseif(UNIX)
   set(PLATFORM_LIBS z ssl crypto atomic)
 endif()
 
-if(WIN32)
-  set(DEP_LIBS ${GLOOX_DIR}/${LOWER_CMAKE_BUILD_TYPE}/gloox.lib
-               ${WebRTC_DIR}/${LOWER_CMAKE_BUILD_TYPE}/webrtc.lib)
-elseif(UNIX)
-  set(DEP_LIBS ${GLOOX_DIR}/${LOWER_CMAKE_BUILD_TYPE}/libgloox.a
-               ${WebRTC_DIR}/${LOWER_CMAKE_BUILD_TYPE}/libwebrtc.a)
-endif()
-
 set(ALL_LIBRARIES ${PLATFORM_LIBS})
-
-list(APPEND OK_LIBS OkCore UI)
 
 if(ENABLE_MODULE_PAINTER)
   list(APPEND OK_LIBS Painter)
@@ -410,18 +406,7 @@ if(ENABLE_PLUGINS)
   include(${PROJECT_SOURCE_DIR}/plugins/plugins.cmake)
 endif()
 
-list(
-  APPEND
-  OK_LIBS
-  IM
-  IMCore
-  OkRTC
-  OkRTC_webrtc
-  Session
-  Settings
-  Network
-  Backend
-  OkBase)
+
 
 if(MSVC)
   set_property(

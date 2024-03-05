@@ -20,8 +20,8 @@
 #include "api/media_stream_interface.h"
 #include "modules/video_capture/video_capture.h"
 
-#include "lib/ortc/ok_rtc_defs.h"
-#include "lib/ortc/ok_rtc_proxy.h"
+#include "../ok_rtc_defs.h"
+#include "../ok_rtc_proxy.h"
 #include "vcm_capturer.h"
 
 namespace rtc {

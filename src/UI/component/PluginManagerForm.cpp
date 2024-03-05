@@ -17,8 +17,7 @@
 
 #include "PluginInfoForm.h"
 #include "PluginItemForm.h"
-#include "lib/plugin/PluginInfo.h"
-#include "network/NetworkHttp.h"
+#include "lib/network/NetworkHttp.h"
 #include "ui_PluginManagerForm.h"
 
 namespace ok {

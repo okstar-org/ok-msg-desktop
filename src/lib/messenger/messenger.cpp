@@ -18,7 +18,7 @@
 #include "lib/messenger/IM.h"
 #include "lib/messenger/IMConference.h"
 #include "lib/messenger/IMJingle.h"
-#include "plugin/pluginmanager.h"
+#include "lib/plugin/pluginmanager.h"
 
 #include <QThread>
 #include <memory>

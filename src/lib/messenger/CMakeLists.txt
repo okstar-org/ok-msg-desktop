@@ -1,7 +1,7 @@
 project(IMCore)
 
+include_directories(${CMAKE_SOURCE_DIR}/3rdparty)
 include_directories(${WebRTC_DIR}/include)
-include_directories(${GLOOX_DIR}/include)
 
 file(GLOB ${PROJECT_NAME}_SOURCES *.cpp)
 
@@ -16,5 +16,5 @@ target_link_libraries(
 if(MSVC)
   set_property(
     TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY
-                                    "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif(MSVC)

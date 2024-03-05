@@ -10,6 +10,11 @@
  * See the Mulan PubL v2 for more details.
  */
 #include "ok_rtc.h"
+
+#include <memory>
+#include <string>
+#include <utility>
+
 #include "api/peer_connection_interface.h"
 
 #include <api/audio_codecs/builtin_audio_decoder_factory.h>
@@ -17,15 +22,13 @@
 #include <api/create_peerconnection_factory.h>
 #include <api/video_codecs/builtin_video_decoder_factory.h>
 #include <api/video_codecs/builtin_video_encoder_factory.h>
-#include <memory>
-#include <string>
-#include <utility>
-
 #include <pc/video_track_source.h>
+
+
+#include <rtc_base/thread.h>
 #include <rtc_base/logging.h>
 #include <rtc_base/ssl_adapter.h>
 #include <rtc_base/string_encode.h>
-#include <rtc_base/thread.h>
 
 #include "ok_conductor.h"
 #include "vcm_capturer.h"
@@ -55,7 +58,7 @@ CreateSessionDescription(webrtc::SdpType sdpType,
   auto sessionDescription = std::make_unique<::cricket::SessionDescription>();
   auto &contents = context.getContents();
 
-  ::cricket::ContentGroup group(::cricket::GROUP_TYPE_BUNDLE);
+  cricket::ContentGroup group(cricket::GROUP_TYPE_BUNDLE);
   for (const auto &content : contents) {
 
     auto name = content.name;
@@ -95,7 +98,8 @@ CreateSessionDescription(webrtc::SdpType sdpType,
       auto acd = std::make_unique<::cricket::AudioContentDescription>();
 
       for (auto &pt : description.payloadTypes) {
-        ::cricket::AudioCodec ac(pt.id, pt.name, pt.clockrate, pt.bitrate,
+        auto ac = ::cricket::CreateAudioCodec(
+                                 pt.id, pt.name, pt.clockrate,
                                  pt.channels);
         for (auto &e : pt.parameters) {
           ac.SetParam(e.name, e.value);
@@ -148,7 +152,8 @@ CreateSessionDescription(webrtc::SdpType sdpType,
     case gloox::Jingle::video: {
       auto vcd = std::make_unique<::cricket::VideoContentDescription>();
       for (auto &pt : description.payloadTypes) {
-        ::cricket::VideoCodec vc(pt.id, pt.name);
+//        ::cricket::VideoCodec vc(pt.id, pt.name);
+        auto vc = ::cricket::CreateVideoCodec(pt.id, pt.name);
         for (auto &e : pt.parameters) {
           vc.SetParam(e.name, e.value);
         }
@@ -232,17 +237,17 @@ void ORTC::start() {
   RTC_LOG(LS_INFO) << "WebRTC is starting...";
 
   network_thread = rtc::Thread::CreateWithSocketServer();
-  network_thread->SetName("network_thread", network_thread.get());
+  network_thread->SetName("network_thread", nullptr);
   bool result = network_thread->Start();
   RTC_LOG(LS_INFO) << "Start network thread=>" << result;
 
   worker_thread = rtc::Thread::Create();
-  worker_thread->SetName("worker_thread", worker_thread.get());
+  worker_thread->SetName("worker_thread", nullptr);
   result = worker_thread->Start();
   RTC_LOG(LS_INFO) << "Start worker thread=>" << result;
 
   signaling_thread = rtc::Thread::Create();
-  signaling_thread->SetName("signaling_thread", signaling_thread.get());
+  signaling_thread->SetName("signaling_thread", nullptr);
   result = signaling_thread->Start();
   RTC_LOG(LS_INFO) << "Start signaling thread=>" << result;
 
@@ -251,10 +256,10 @@ void ORTC::start() {
       worker_thread.get(),    /* worker_thread */
       signaling_thread.get(), /* signaling_thread */
       nullptr,                /* default_adm */
-      webrtc::CreateBuiltinAudioEncoderFactory(),
-      webrtc::CreateBuiltinAudioDecoderFactory(),
-      webrtc::CreateBuiltinVideoEncoderFactory(),
-      webrtc::CreateBuiltinVideoDecoderFactory(), //
+      webrtc::CreateBuiltinAudioEncoderFactory(), //
+      webrtc::CreateBuiltinAudioDecoderFactory(), //
+      nullptr,  //::CreateBuiltinVideoEncoderFactory(), //
+      nullptr, //::CreateBuiltinVideoDecoderFactory(), //
       nullptr /* audio_mixer */,                  //
       nullptr /* audio_processing */);
 

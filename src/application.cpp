@@ -19,14 +19,14 @@
 #include <QString>
 #include <QTranslator>
 
-#include "UI/core/FontManager.h"
-#include "UI/window/login/src/LoginWindow.h"
 #include "base/files.h"
 #include "base/logs.h"
 #include "base/r.h"
-#include "im/src/nexus.h"
 #include "lib/plugin/pluginmanager.h"
 #include "lib/settings/translator.h"
+#include "modules/im/src/nexus.h"
+#include "UI/core/FontManager.h"
+#include "UI/window/login/src/LoginWindow.h"
 
 using namespace core;
 using namespace base;

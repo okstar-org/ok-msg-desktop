@@ -15,8 +15,8 @@
 
 #include "base/timer.h"
 #include "lib/plugin/PluginInfo.h"
-#include "backend/OkCloudService.h"
-#include "network/NetworkHttp.h"
+#include "lib/backend/OkCloudService.h"
+#include "lib/network/NetworkHttp.h"
 #include <QWidget>
 
 namespace Ui {

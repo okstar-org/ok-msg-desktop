@@ -1,13 +1,17 @@
 project(Settings)
 
-set(${PROJECT_NAME}_RESOURCES
+
+
+set(${PROJECT_NAME}_SOURCES
         translator.h
         translator.cpp
         OkSettings.h
         OkSettings.cpp
+        applicationinfo.h
+        applicationinfo.cpp
 )
 
-add_library(${PROJECT_NAME} ${${PROJECT_NAME}_RESOURCES})
+add_library(${PROJECT_NAME} ${${PROJECT_NAME}_SOURCES})
 target_link_libraries(${PROJECT_NAME}
         PRIVATE ${Qt5Core_LIBRARIES}
         PRIVATE ${Qt5Widgets_LIBRARIES}

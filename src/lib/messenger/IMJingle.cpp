@@ -4,24 +4,24 @@
  * You can use this software according to the terms and conditions of the Mulan
  * PubL v2. You may obtain a copy of Mulan PubL v2 at:
  *          http://license.coscl.org.cn/MulanPubL-2.0
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
- * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
- * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
- * See the Mulan PubL v2 for more details.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY
+ * KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE. See the
+ * Mulan PubL v2 for more details.
  */
 
 #include "IMJingle.h"
 
 #include <QUuid>
 
-#include <gloox/capabilities.h>
-#include <gloox/extdisco.h>
-#include <gloox/jinglecontent.h>
-#include <gloox/jinglegroup.h>
-#include <gloox/jingleiceudp.h>
-#include <gloox/jinglertp.h>
-#include <gloox/jinglesession.h>
-#include <gloox/jinglesessionmanager.h>
+#include <gloox/src/capabilities.h>
+#include <gloox/src/extdisco.h>
+#include <gloox/src/jinglecontent.h>
+#include <gloox/src/jinglegroup.h>
+#include <gloox/src/jingleiceudp.h>
+#include <gloox/src/jinglertp.h>
+#include <gloox/src/jinglesession.h>
+#include <gloox/src/jinglesessionmanager.h>
 
 #include "IM.h"
 #include "IMFile.h"
@@ -40,7 +40,6 @@ IMJingle::IMJingle(IM *im_)
 
   DEBUG_LOG(("Is be creating ..."));
   forClient(im_->getClient());
-
 
   connect(im_, &lib::messenger::IM::receiveCallRequest,
           [&](QString friendId, QString callId, bool audio, bool video) {
@@ -125,15 +124,15 @@ void IMJingle::cacheSessionInfo(Jingle::Session *session,
 
   std::list<ortc::IceServer> l;
   if (callType != JingleCallType::none) {
-      //
-      for (const auto &item : client->extDisco().services()) {
-        ortc::IceServer ice;
-        ice.uri = item.type + ":" + item.host + ":" + std::to_string(item.port) ;
-    //              "?transport=" + item.transport;
-        ice.username = item.username;
-        ice.password = item.password;
-        l.push_back(ice);
-      }
+    //
+    for (const auto &item : client->extDisco().services()) {
+      ortc::IceServer ice;
+      ice.uri = item.type + ":" + item.host + ":" + std::to_string(item.port);
+      //              "?transport=" + item.transport;
+      ice.username = item.username;
+      ice.password = item.password;
+      l.push_back(ice);
+    }
   }
 
   auto wrapSession = new IMJingleSession(stdstring(peer.toString()), sId,
@@ -280,8 +279,6 @@ void IMJingle::doSessionInitiate(Jingle::Session *session,
   qDebug() << "sId:" << qstring(session->sid());
   qDebug() << "peerId:" << (peerId.toString());
 
-
-
   auto s = findSession(session->sid());
   if (!s) {
     return;
@@ -305,7 +302,7 @@ void IMJingle::doSessionInitiate(Jingle::Session *session,
                       .arg(file.sId)
                       .arg(file.name)
                       .arg(file.id))
-        emit receiveFileRequest(peerId.username + "@"+peerId.server, file);
+        emit receiveFileRequest(peerId.username + "@" + peerId.server, file);
       }
     }
     s->setContext(context);
@@ -336,7 +333,8 @@ void IMJingle::doSessionTerminate(Jingle::Session *session,
                                   const Session::Jingle *jingle,
                                   const PeerId &peerId) {
 
-  DEBUG_LOG(("sId:%1 peerId:%2").arg(qstring(session->sid())).arg(peerId.toString()));
+  DEBUG_LOG(
+      ("sId:%1 peerId:%2").arg(qstring(session->sid())).arg(peerId.toString()));
   int ri = 0;
   for (auto &file : m_waitSendFiles) {
     if (qstring(session->sid()) == file.sId) {
@@ -359,9 +357,9 @@ void IMJingle::doSessionTerminate(Jingle::Session *session,
    */
   auto state = TOXAV_FRIEND_CALL_STATE_FINISHED;
   auto reason = jingle->tag()->findChild("reason");
-  if (reason ) {
+  if (reason) {
     if (reason->findChild("busy")) {
-        state = TOXAV_FRIEND_CALL_STATE_SENDING_A;
+      state = TOXAV_FRIEND_CALL_STATE_SENDING_A;
     }
   }
   // rtc
@@ -577,8 +575,9 @@ void IMJingle::onIce(const std::string &sId,    //
     return;
   }
 
-  DEBUG_LOG(("ice: mid:%1 mline:%2")//
-                .arg(qstring(oIceUdp.mid)).arg(oIceUdp.mline))
+  DEBUG_LOG(("ice: mid:%1 mline:%2") //
+                .arg(qstring(oIceUdp.mid))
+                .arg(oIceUdp.mline))
   auto *iceUdp = new ICEUDP(oIceUdp.pwd, oIceUdp.ufrag, oIceUdp.candidates);
   iceUdp->setDtls(oIceUdp.dtls);
 
@@ -617,7 +616,6 @@ bool IMJingle::startCall(const QString &friendId, const QString &sId,
     return false;
   }
 
-  
   sendCallToResource(friendId, sId, video);
   return true;
 }
@@ -895,5 +893,5 @@ void IMJingle::doStopFileSendTask(const Session *session,
   m_fileSenderMap.remove(file.sId);
   DEBUG_LOG(("Send file:%1 task has been clean.").arg(file.id));
 }
-} // namespace IM
+} // namespace messenger
 } // namespace lib

@@ -15,7 +15,7 @@
 #include "accountinfoaccessor.h"
 #include "activetabaccessor.h"
 #include "applicationinfoaccessor.h"
-#include "base/applicationinfo.h"
+#include "lib/settings/applicationinfo.h"
 
 #include "chattabaccessor.h"
 

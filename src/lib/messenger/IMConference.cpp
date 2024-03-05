@@ -16,11 +16,8 @@
 #include <memory>
 
 #include "base/logs.h"
-#include "gloox/capabilities.h"
-//#include "gloox/conference.h"
-#include "gloox/error.h"
-#include "gloox/mucroom.h"
-#include "base/r.h"
+#include <gloox/src/capabilities.h>
+#include <gloox/src/error.h>
 
 namespace lib {
 namespace messenger {

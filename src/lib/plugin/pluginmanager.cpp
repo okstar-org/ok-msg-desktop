@@ -15,7 +15,7 @@
 #include "OkOptions.h"
 #include "base/basic_types.h"
 #include "base/OkAccount.h"
-#include "base/applicationinfo.h"
+#include "lib/settings/applicationinfo.h"
 #include "base/task.h"
 #include "files.h"
 #include "iqnamespacefilter.h"

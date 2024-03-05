@@ -19,15 +19,13 @@
 // #include "profile.h"
 // #include "profiles.h"
 // #include "application.h"
-#include "base/system/sys_info.h"
 //#include "translationmanager.h"
-#include "lib/settings/OkSettings.h"
+#include "base/system/sys_info.h"
+
+#include "OkSettings.h"
 
 #include <QStandardPaths>
 #include <QCoreApplication>
-
-
-
 #include <QDesktopServices>
 #include <QDir>
 #include <QFile>

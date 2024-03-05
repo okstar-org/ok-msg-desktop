@@ -4,10 +4,10 @@
  * You can use this software according to the terms and conditions of the Mulan
  * PubL v2. You may obtain a copy of Mulan PubL v2 at:
  *          http://license.coscl.org.cn/MulanPubL-2.0
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
- * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
- * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
- * See the Mulan PubL v2 for more details.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY
+ * KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE. See the
+ * Mulan PubL v2 for more details.
  */
 
 #include "IM.h"
@@ -24,21 +24,21 @@
 #include <thread>
 #include <utility>
 
-#include <gloox/avatar.h>
-#include <gloox/base64.h>
-#include <gloox/capabilities.h>
-#include <gloox/chatstate.h>
-#include <gloox/conference.h>
-#include <gloox/dataformitem.h>
-#include <gloox/disco.h>
-#include <gloox/extdisco.h>
-#include <gloox/inbandbytestream.h>
-#include <gloox/message.h>
-#include <gloox/nickname.h>
-#include <gloox/pubsubevent.h>
-#include <gloox/receipt.h>
-#include <gloox/rostermanager.h>
-#include <gloox/vcardupdate.h>
+#include <gloox/src/avatar.h>
+#include <gloox/src/base64.h>
+#include <gloox/src/capabilities.h>
+#include <gloox/src/chatstate.h>
+#include <gloox/src/conference.h>
+#include <gloox/src/dataformitem.h>
+#include <gloox/src/disco.h>
+#include <gloox/src/extdisco.h>
+#include <gloox/src/inbandbytestream.h>
+#include <gloox/src/message.h>
+#include <gloox/src/nickname.h>
+#include <gloox/src/pubsubevent.h>
+#include <gloox/src/receipt.h>
+#include <gloox/src/rostermanager.h>
+#include <gloox/src/vcardupdate.h>
 
 namespace lib {
 namespace messenger {
@@ -59,7 +59,7 @@ IM::IM(QString host, QString user, QString pwd,
        QStringList features_)                           //
     : osInfo(::base::SystemInfo::instance()->osInfo()), //
       features(std::move(features_)),                   //
-      _host(stdstring(host)),                         //
+      _host(stdstring(host)),                           //
       _username(stdstring(user)),                       //
       _password(stdstring(pwd)),                        //
       _status(IMStatus::DISCONNECTED),                  //
@@ -73,7 +73,8 @@ IM::IM(QString host, QString user, QString pwd,
                   .arg(APPLICATION_SHORT_NAME, //
                        osInfo.hostName,
                        GIT_DESCRIBE, //
-                       osInfo.uniqueId.mid(0, 6)).toStdString();
+                       osInfo.uniqueId.mid(0, 6))
+                  .toStdString();
   qDebug() << "Generate self resource:" << _resource.c_str();
 
   // qRegisterMetaType
@@ -98,7 +99,7 @@ void IM::run() { doConnect(); }
 void IM::timerEvent(QTimerEvent *e) {}
 
 std::unique_ptr<Client> IM::makeClient() {
-  JID loginJid(_username+"@"+_host+"/"+_resource);
+  JID loginJid(_username + "@" + _host + "/" + _resource);
 
   DEBUG_LOG(("Using Jid:%1").arg(qstring(loginJid.full())));
 
@@ -771,8 +772,8 @@ void IM::handleChatState(const JID &from, ChatStateType state) {
  * @param state 聊天状态
  */
 void IM::sendChatState(const QString &to, ChatStateType state) {
-  DEBUG_LOG(("to:%1 state:%2")           //
-                .arg((to)) //
+  DEBUG_LOG(("to:%1 state:%2") //
+                .arg((to))     //
                 .arg(static_cast<int>(state)));
   auto csf = m_chatStateFilters[stdstring(to)];
   if (!csf) {
@@ -830,7 +831,7 @@ void IM::handleMUCParticipantPresence(gloox::MUCRoom *room,                 //
   auto mucUser = presence.tag()->findChild("x", XMLNS, XMLNS_MUC_USER);
   if (mucUser) {
     //<x xmlns='http://jabber.org/protocol/muc#user'><item affiliation='none'
-    //role='none'/></x>
+    // role='none'/></x>
     auto item = mucUser->findChild("item");
     if (item)
       qDebug() << "affiliation: " << qstring(item->findAttribute("affiliation"))
@@ -1623,8 +1624,9 @@ bool IM::removeFriend(JID jid) {
   return true;
 }
 
-void IM::addRosterItem(const QString &username, const QString &nick, const QString &msg) {
-  qDebug()<<"addRosterItem"<<username << nick << msg;
+void IM::addRosterItem(const QString &username, const QString &nick,
+                       const QString &msg) {
+  qDebug() << "addRosterItem" << username << nick << msg;
   m_addFriendMsg = msg;
   StringList group;
   _client->rosterManager()->add(wrapJid(username), stdstring(nick), group);

@@ -15,7 +15,7 @@
 #include "base/basic_types.h"
 #include "lib/ortc/ok_rtc_defs.h"
 #include "lib/ortc/ok_rtc_manager.h"
-#include "gloox/jinglesession.h"
+#include <gloox/src/jinglesession.h>
 
 namespace ortc{
 struct IceServer;

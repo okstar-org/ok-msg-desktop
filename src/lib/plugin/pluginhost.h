@@ -16,7 +16,7 @@
 #include "accountinfoaccessinghost.h"
 #include "activetabaccessinghost.h"
 #include "applicationinfoaccessinghost.h"
-#include "base/applicationinfo.h"
+#include "lib/settings/applicationinfo.h"
 #include "contactinfoaccessinghost.h"
 #include "contactstateaccessinghost.h"
 #include "encryptionsupport.h"

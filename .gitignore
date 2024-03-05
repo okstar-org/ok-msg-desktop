@@ -48,8 +48,6 @@ moc_*.h
 *.dir/**
 *_autogen.dir/**
 
-3rdparty/
-
 **/.cproject
 **/.project
 *_autogen

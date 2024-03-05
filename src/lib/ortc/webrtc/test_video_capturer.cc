@@ -27,14 +27,14 @@ using namespace webrtc;
 
 TestVideoCapturer::~TestVideoCapturer() = default;
 
-void TestVideoCapturer::OnOutputFormatRequest(
-    int width, int height, const absl::optional<int> &max_fps) {
-  absl::optional<std::pair<int, int>> target_aspect_ratio =
-      std::make_pair(width, height);
-  absl::optional<int> max_pixel_count = width * height;
-  video_adapter_.OnOutputFormatRequest(target_aspect_ratio, max_pixel_count,
-                                       max_fps);
-}
+//void TestVideoCapturer::OnOutputFormatRequest(
+//    int width, int height, const absl::optional<int> &max_fps) {
+//  absl::optional<std::pair<int, int>> target_aspect_ratio =
+//      std::make_pair(width, height);
+//  absl::optional<int> max_pixel_count = width * height;
+//  video_adapter_.OnOutputFormatRequest(target_aspect_ratio, max_pixel_count,
+//                                       max_fps);
+//}
 
 void TestVideoCapturer::OnFrame(const VideoFrame &original_frame) {
   int cropped_width = 0;
@@ -64,12 +64,13 @@ void TestVideoCapturer::OnFrame(const VideoFrame &original_frame) {
             .set_rotation(kVideoRotation_0)
             .set_timestamp_us(frame.timestamp_us())
             .set_id(frame.id());
-    if (frame.has_update_rect()) {
-      VideoFrame::UpdateRect new_rect = frame.update_rect().ScaleWithFrame(
-          frame.width(), frame.height(), 0, 0, frame.width(), frame.height(),
-          out_width, out_height);
-      new_frame_builder.set_update_rect(new_rect);
-    }
+//    TODO disable 20240305
+    //    if (frame.has_update_rect()) {
+//      VideoFrame::UpdateRect new_rect = frame.update_rect().ScaleWithFrame(
+//          frame.width(), frame.height(), 0, 0, frame.width(), frame.height(),
+//          out_width, out_height);
+//      new_frame_builder.set_update_rect(new_rect);
+//    }
     broadcaster_.OnFrame(new_frame_builder.build());
 
   } else {
