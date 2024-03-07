@@ -76,11 +76,12 @@ message(STATUS "PLATFORM= " ${PLATFORM} )
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-# include(CheckAtomic)
 
-# include(dependencies)
+
+include(dependencies)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}"
         "${PROJECT_SOURCE_DIR}/cmake/modules")
+
 
 # 设置编译器相关
 set(CMAKE_C_STANDARD 11)
@@ -102,43 +103,6 @@ if(UNIX)
   find_package(PkgConfig REQUIRED)
 endif()
 
-# Qt
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTORCC ON)
-
-find_package(
-        Qt5
-        COMPONENTS Core
-        Concurrent
-        Widgets
-        Gui
-        Multimedia
-        MultimediaWidgets
-        Network
-        Xml
-        Sql
-        Svg
-        OpenGL
-        DBus
-        LinguistTools
-        UiTools
-        REQUIRED)
-
-option(PLATFORM_EXTENSIONS "Enable platform specific extensions, requires extra dependencies" ON)
-
-# 设置Qt模块包含头文件和库
-include_directories(${CMAKE_PREFIX_PATH}/include)
-link_directories(${CMAKE_PREFIX_PATH}/lib)
-
-# set(QtModules Core Widgets Gui Multimedia MultimediaWidgets Network Concurrent
-# Sql Svg Xml XmlPatterns OpenGL ANGLE) if(UNIX) set(QtModules ${QtModules}
-# DBus) endif(UNIX)
-#
-# foreach (Module ${QtModules}) set(Qt${Module}${QT_VERSION_MAJOR}_INCLUDES
-# ${CMAKE_PREFIX_PATH}/include/Qt${Module})
-# include_directories(${Qt${Module}${QT_VERSION_MAJOR}_INCLUDES}) endforeach
-# (Module)
 if(WIN32)
   set(ARCH "x64")
   string(TOLOWER ${CMAKE_C_PLATFORM_ID}-${ARCH} PLATFORM_ARCH)
@@ -147,11 +111,6 @@ if(WIN32)
   # Windows暂时构建类型Release
   set(CMAKE_CONFIGURATION_TYPES "Debug;Release;MinSizeRel;RelWithDebInfo")
 
-  # Conan检查
-  if(NOT EXISTS build/deps)
-    execute_process(COMMAND conan install . -s compiler.runtime=MT
-            --build=missing)
-  endif()
 
   # 设置相关宏定义
   add_definitions(
@@ -249,12 +208,9 @@ if(BUILD_WITH_LIBCXX AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
   message(STATUS "Build with libc++")
 else()
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++20")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
   message(STATUS "Build with libstdc++")
 endif()
-
-set(CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES "/usr/include/c++/12")
-message(STATUS "CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES= " ${CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES})
 
 
 # -Wunused-parameter -pedantic -fsanitize=address,undefined,leak,integer -Wextra
@@ -433,8 +389,3 @@ if(ENABLE_PLUGINS)
   include(${PROJECT_SOURCE_DIR}/plugins/plugins.cmake)
 endif()
 
-if(MSVC)
-  set_property(
-          TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY
-          "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-endif(MSVC)

@@ -60,25 +60,18 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
 
 # 🧰 编译环境
 
-- ✅ 支持 **GCC On Linux**
-- ✅ 支持 **Clang On Linux**
-- ✅ 支持 **MSVC On Windows**
-- ✅ 支持 **Clang On Windows**
-- 📌 支持 **MinGW On Windows** 计划中
-- 📌 支持 **Clang On macOS** 计划中
 
 # ⚙️ 构建开发
-- C++版本：C++20 
-- Qt版本：Qt5.15.x
+## CMake执行构建
+```shell
+git submodule update --init
 
-✔️ 支持**静态Qt编译** (Linux、Windows)。
-✔️ 支持**动态Qt编译**（Linux、Windows）；
+cmake -B cmake-build-release
 
-> 构建本项目需要分如下几步：
-1. 准备工具链环境：[Linux](./docs/building/ToolChain-linux.md) | [Windows](./docs/building/ToolChain-win.md) | [macOS](./docs/building/ToolChain-macos.md) 计划中
-2. 准备Qt环境：[Linux](./docs/building/Qt-linux.md) | [Windows](./docs/building/Qt-win.md) | [macOS](./docs/building/BUILD-macos.md) 计划中
-3. 准备包依赖：[Linux](./docs/building/ThirdPart-linux.md)  | [Windows](./docs/building/ThirdPart-win.md) | [macOS](./docs/building/ThirdPart-macos.md) 计划中
-4. 准备IDE开发： [VS Code](./docs/building/IDE-vscode.md) | [VS Studio](./docs/building/IDE-vsstudio.md) | [QtCreator](./docs/building/IDE-qtcreator.md) | [Clion](./docs/building/IDE-clion.md)
+cmake --build cmake-build-release
+# 如果出现 Library not found: mpr
+```
+
 
 # ⚒️ 开发规范
 

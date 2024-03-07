@@ -2,8 +2,14 @@ project(OkRTC)
 
 #WebRTC
 set(WebRTC_VER "121.6167.5.0")
-set(WebRTC_URL "https://github.com/crow-misia/libwebrtc-bin/releases/download/${WebRTC_VER}/libwebrtc-${PLATFORM}-${ARCH}.tar.xz")
 
+if(WIN32)
+set(WebRTC_URL "https://github.com/crow-misia/libwebrtc-bin/releases/download/${WebRTC_VER}/libwebrtc-win-${ARCH}.7z")
+else()
+set(WebRTC_URL "https://github.com/crow-misia/libwebrtc-bin/releases/download/${WebRTC_VER}/libwebrtc-${PLATFORM}-${ARCH}.tar.xz")
+endif()
+
+message(STATUS "Fetch webrtc")
 include(FetchContent)
 FetchContent_Declare(
         webrtc
@@ -13,12 +19,16 @@ FetchContent_MakeAvailable(webrtc)
 include_directories(${webrtc_SOURCE_DIR}/include)
 
 #absl
+
+message(STATUS "Fetch absl")
+set(ABSL_PROPAGATE_CXX_STD ON)
 FetchContent_Declare(absl
-        GIT_REPOSITORY https://github.com/abseil/abseil-cpp.git
+      GIT_REPOSITORY https://github.com/abseil/abseil-cpp.git
+      GIT_TAG lts_2023_08_02
+      #  URL https://github.com/abseil/abseil-cpp/releases/download/20220623.2/abseil-cpp-20220623.2.tar.gz
 )
 FetchContent_MakeAvailable(absl)
 include_directories(${absl_SOURCE_DIR})
-
 
 
 add_definitions(-DOPENSSL_IS_BORINGSSL=1)
