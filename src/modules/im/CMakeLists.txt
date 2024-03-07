@@ -1,8 +1,6 @@
 project(IM)
 
-add_definitions(-DOK_${PROJECT_NAME}_MODULE= "${PROJECT_NAME}")
-add_definitions(
-        -DOK_${PROJECT_NAME}_TRANSLATIONS= "translations_${PROJECT_NAME}")
+add_definitions(-DOK_${PROJECT_NAME}_MODULE="${PROJECT_NAME}")
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
