@@ -104,12 +104,6 @@ if(WIN32)
   string(TOLOWER ${CMAKE_C_PLATFORM_ID}-${ARCH} PLATFORM_ARCH)
   message(STATUS "PLATFORM_ARCH=" ${PLATFORM_ARCH})
 
-  # Conan检查
-  if(NOT EXISTS build/deps)
-    execute_process(COMMAND conan install ${PROJECT_SOURCE_DIR} -s compiler.runtime=MT
-                            --build=missing)
-  endif()
-
   # 设置相关宏定义
   add_definitions(
     -DWEBRTC_WIN

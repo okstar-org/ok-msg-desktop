@@ -10,7 +10,7 @@ endif(POLICY CMP0135)
 
 project(OkMSG-Project)
 
-
+include(cmake/dependencies.cmake)
 include(cmake/build.cmake)
 include(cmake/develop.cmake)
 include(cmake/platform.cmake)
