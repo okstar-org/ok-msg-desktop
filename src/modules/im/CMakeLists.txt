@@ -1,476 +1,506 @@
 project(IM)
 
-add_definitions(-DOK_${PROJECT_NAME}_MODULE="${PROJECT_NAME}")
+add_definitions(-DOK_${PROJECT_NAME}_MODULE= "${PROJECT_NAME}")
 add_definitions(
-  -DOK_${PROJECT_NAME}_TRANSLATIONS="translations_${PROJECT_NAME}")
+        -DOK_${PROJECT_NAME}_TRANSLATIONS= "translations_${PROJECT_NAME}")
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
-if(WIN32)
+if (WIN32)
 
-  # Conan
-  find_file(CONAN conanbuildinfo.cmake ../../ NO_CACHE)
-  if(CONAN)
-    include(${CONAN})
-    conan_basic_setup()
-  else()
-    message(
-      FATAL_ERROR
-        "Haven't execute conan command: `conan install . -s compiler.runtime=MT --build=missing`"
+    #  # Conan
+    #  find_file(CONAN conanbuildinfo.cmake ../../ NO_CACHE)
+    #  if(CONAN)
+    #    include(${CONAN})
+    #    conan_basic_setup()
+    #  else()
+    #    message(
+    #      FATAL_ERROR
+    #        "Haven't execute conan command: `conan install . -s compiler.runtime=MT --build=missing`"
+    #    )
+    #  endif()
+    #ffmpeg
+    FetchContent_Declare(ffmpeg
+            URL https://github.com/FFmpeg/FFmpeg/archive/refs/tags/n5.1.3.tar.gz
     )
-  endif()
+    FetchContent_MakeAvailable(ffmpeg)
 
-elseif(UNIX)
-  include(./cmake/Dependencies.cmake)
-endif()
+    FetchContent_Declare(openal
+            URL https://openal-soft.org/openal-binaries/openal-soft-1.23.1-bin.zip
+    )
+    FetchContent_MakeAvailable(openal)
+
+    FetchContent_Declare(libexif
+            URL https://github.com/libexif/libexif/releases/download/v0.6.24/libexif-0.6.24.tar.bz2
+    )
+    FetchContent_MakeAvailable(libexif)
+
+    FetchContent_Declare(libsodium
+            URL https://download.libsodium.org/libsodium/releases/libsodium-1.0.19-stable-msvc.zip
+    )
+    FetchContent_MakeAvailable(libsodium)
+
+    FetchContent_Declare(libwebp
+            URL https://github.com/webmproject/libwebp/archive/refs/tags/v1.3.2.zip
+    )
+    FetchContent_MakeAvailable(libwebp)
+
+    FetchContent_Declare(sqlite3
+            URL https://github.com/sqlite/sqlite/archive/refs/tags/vesion-3.45.1.zip
+    )
+    FetchContent_MakeAvailable(sqlite3)
+
+elseif (UNIX)
+    include(./cmake/Dependencies.cmake)
+endif ()
 
 include_directories(${PROJECT_BINARY_DIR})
 
 set(CMAKE_AUTOUIC_SEARCH_PATHS ./src src/widget src/widget/form)
 
 qt5_wrap_ui(
-  ${PROJECT_NAME}_FORMS
-  src/mainwindow.ui
-  src/chatlog/content/filetransferwidget.ui
-  src/widget/about/aboutfriendform.ui
-  src/widget/form/loadhistorydialog.ui
-  src/widget/form/profileform.ui
-  src/widget/tool/removefrienddialog.ui
-  src/widget/form/searchsettingsform.ui
-  src/widget/form/setpassworddialog.ui
-  src/widget/form/settings/aboutsettings.ui
-  src/widget/form/settings/advancedsettings.ui
-  src/widget/form/settings/avform.ui
-  src/widget/form/settings/generalsettings.ui
-  src/widget/form/settings/privacysettings.ui
-  src/widget/form/settings/userinterfacesettings.ui)
+        ${PROJECT_NAME}_FORMS
+        src/mainwindow.ui
+        src/chatlog/content/filetransferwidget.ui
+        src/widget/about/aboutfriendform.ui
+        src/widget/form/loadhistorydialog.ui
+        src/widget/form/profileform.ui
+        src/widget/tool/removefrienddialog.ui
+        src/widget/form/searchsettingsform.ui
+        src/widget/form/setpassworddialog.ui
+        src/widget/form/settings/aboutsettings.ui
+        src/widget/form/settings/advancedsettings.ui
+        src/widget/form/settings/avform.ui
+        src/widget/form/settings/generalsettings.ui
+        src/widget/form/settings/privacysettings.ui
+        src/widget/form/settings/userinterfacesettings.ui)
 
 set(${PROJECT_NAME}_SOURCES
-    src/audio/audio.cpp
-    src/audio/audio.h
-    src/audio/backend/alsink.cpp
-    src/audio/backend/alsink.h
-    src/audio/backend/alsource.cpp
-    src/audio/backend/alsource.h
-    src/audio/backend/openal.cpp
-    src/audio/backend/openal.h
-    src/audio/iaudiosettings.h
-    src/audio/iaudiocontrol.h
-    src/audio/iaudiosink.h
-    src/audio/iaudiosource.h
-    src/chatlog/chatlinecontent.cpp
-    src/chatlog/chatlinecontent.h
-    src/chatlog/chatlinecontentproxy.cpp
-    src/chatlog/chatlinecontentproxy.h
-    src/chatlog/chatline.cpp
-    src/chatlog/chatline.h
-    src/chatlog/chatlog.cpp
-    src/chatlog/chatlog.h
-    src/chatlog/chatmessage.cpp
-    src/chatlog/chatmessage.h
-    src/chatlog/content/filetransferwidget.cpp
-    src/chatlog/content/filetransferwidget.h
-    src/chatlog/content/image.cpp
-    src/chatlog/content/image.h
-    src/chatlog/content/notificationicon.cpp
-    src/chatlog/content/notificationicon.h
-    src/chatlog/content/spinner.cpp
-    src/chatlog/content/spinner.h
-    src/chatlog/content/text.cpp
-    src/chatlog/content/text.h
-    src/chatlog/content/timestamp.cpp
-    src/chatlog/content/timestamp.h
-    src/chatlog/content/broken.cpp
-    src/chatlog/content/broken.h
-    src/chatlog/customtextdocument.cpp
-    src/chatlog/customtextdocument.h
-    src/chatlog/documentcache.cpp
-    src/chatlog/documentcache.h
-    src/chatlog/pixmapcache.cpp
-    src/chatlog/pixmapcache.h
-    src/chatlog/toxfileprogress.cpp
-    src/chatlog/toxfileprogress.h
-    src/chatlog/textformatter.cpp
-    src/chatlog/textformatter.h
-    src/core/coreav.cpp
-    src/core/coreav.h
-    src/core/core.h
-    src/core/core.cpp
-    src/core/corefile.cpp
-    src/core/corefile.h
-    src/core/dhtserver.cpp
-    src/core/dhtserver.h
-    src/core/icoresettings.h
-    src/core/toxcall.cpp
-    src/core/toxcall.h
-    src/core/toxencrypt.cpp
-    src/core/toxencrypt.h
-    src/core/toxfile.cpp
-    src/core/toxfile.h
-    src/core/toxfilepause.h
-    src/core/toxid.cpp
-    src/core/toxid.h
-    src/core/groupid.cpp
-    src/core/groupid.h
-    src/core/toxlogger.cpp
-    src/core/toxlogger.h
-    src/core/toxoptions.cpp
-    src/core/toxoptions.h
-    src/core/toxpk.cpp
-    src/core/toxpk.h
-    src/core/contactid.cpp
-    src/core/contactid.h
-    src/core/toxstring.cpp
-    src/core/toxstring.h
-    src/friendlist.cpp
-    src/friendlist.h
-    src/grouplist.cpp
-    src/grouplist.h
-    src/ipc.cpp
-    src/ipc.h
-    src/model/about/aboutfriend.cpp
-    src/model/about/aboutfriend.h
-    src/model/about/iaboutfriend.h
-    src/model/chatroom/chatroom.h
-    src/model/chatroom/friendchatroom.cpp
-    src/model/chatroom/friendchatroom.h
-    src/model/chatroom/groupchatroom.cpp
-    src/model/chatroom/groupchatroom.h
-    src/model/contact.cpp
-    src/model/contact.h
-    src/model/chatlogitem.cpp
-    src/model/chatlogitem.h
-    src/model/friend.cpp
-    src/model/friend.h
-    src/model/message.h
-    src/model/message.cpp
-    src/model/imessagedispatcher.h
-    src/model/friendmessagedispatcher.h
-    src/model/friendmessagedispatcher.cpp
-    src/model/groupmessagedispatcher.h
-    src/model/groupmessagedispatcher.cpp
-    src/model/message.h
-    src/model/message.cpp
-    src/model/groupinvite.cpp
-    src/model/groupinvite.h
-    src/model/group.cpp
-    src/model/group.h
-    src/model/status.cpp
-    src/model/status.h
-    src/model/interface.h
-    src/model/profile/iprofileinfo.h
-    src/model/profile/profileinfo.cpp
-    src/model/profile/profileinfo.h
-    src/model/dialogs/idialogs.h
-    src/model/ichatlog.h
-    src/model/sessionchatlog.h
-    src/model/sessionchatlog.cpp
-    src/model/chathistory.h
-    src/model/chathistory.cpp
-    src/model/toxclientstandards.h
-    # src/net/bootstrapnodeupdater.cpp src/net/bootstrapnodeupdater.h
-    src/net/avatarbroadcaster.cpp
-    src/net/avatarbroadcaster.h
-    src/net/toxuri.cpp
-    src/net/toxuri.h
-    src/nexus.cpp
-    src/nexus.h
-    src/persistence/db/rawdatabase.cpp
-    src/persistence/db/rawdatabase.h
-    src/persistence/history.cpp
-    src/persistence/history.h
-    src/persistence/ifriendsettings.h
-    src/persistence/offlinemsgengine.cpp
-    src/persistence/offlinemsgengine.h
-    src/persistence/paths.cpp
-    src/persistence/paths.h
-    src/persistence/profile.cpp
-    src/persistence/profile.h
-    src/persistence/profilelocker.cpp
-    src/persistence/profilelocker.h
-    src/persistence/serialize.cpp
-    src/persistence/serialize.h
-    src/persistence/settings.cpp
-    src/persistence/settings.h
-    src/persistence/settingsserializer.cpp
-    src/persistence/settingsserializer.h
-    src/persistence/smileypack.cpp
-    src/persistence/smileypack.h
-    src/persistence/toxsave.cpp
-    src/persistence/toxsave.h
-    src/video/cameradevice.cpp
-    src/video/cameradevice.h
-    src/video/camerasource.cpp
-    src/video/camerasource.h
-    src/video/corevideosource.cpp
-    src/video/corevideosource.h
-    src/video/genericnetcamview.cpp
-    src/video/genericnetcamview.h
-    src/video/groupnetcamview.cpp
-    src/video/groupnetcamview.h
-    src/video/ivideosettings.h
-    src/video/netcamview.cpp
-    src/video/netcamview.h
-    src/video/videoframe.cpp
-    src/video/videoframe.h
-    src/video/videomode.cpp
-    src/video/videomode.h
-    src/video/videosource.cpp
-    src/video/videosource.h
-    src/video/videosurface.cpp
-    src/video/videosurface.h
-    src/widget/about/aboutfriendform.cpp
-    src/widget/about/aboutfriendform.h
-    src/widget/categorywidget.cpp
-    src/widget/categorywidget.h
-    src/widget/chatformheader.cpp
-    src/widget/chatformheader.h
-    src/widget/circlewidget.cpp
-    src/widget/circlewidget.h
-    src/widget/contentdialog.cpp
-    src/widget/contentdialog.h
-    src/widget/contentdialogmanager.cpp
-    src/widget/contentdialogmanager.h
-    src/widget/contentlayout.cpp
-    src/widget/contentlayout.h
-    src/widget/emoticonswidget.cpp
-    src/widget/emoticonswidget.h
-    src/widget/flowlayout.cpp
-    src/widget/flowlayout.h
-    src/widget/searchform.cpp
-    src/widget/searchform.h
-    src/widget/searchtypes.h
-    src/widget/form/addfriendform.cpp
-    src/widget/form/addfriendform.h
-    src/widget/form/friendform.h
-    src/widget/form/friendform.cpp
-    src/widget/form/friendform.ui
-    src/widget/form/chatform.cpp
-    src/widget/form/chatform.h
-    src/widget/form/filesform.cpp
-    src/widget/form/filesform.h
-    src/widget/form/genericchatform.cpp
-    src/widget/form/genericchatform.h
-    src/widget/form/groupchatform.cpp
-    src/widget/form/groupchatform.h
-    src/widget/form/groupinviteform.cpp
-    src/widget/form/groupinviteform.h
-    src/widget/form/groupinvitewidget.cpp
-    src/widget/form/groupinvitewidget.h
-    src/widget/form/loadhistorydialog.cpp
-    src/widget/form/loadhistorydialog.h
-    src/widget/form/profileform.cpp
-    src/widget/form/profileform.h
-    src/widget/form/searchsettingsform.cpp
-    src/widget/form/searchsettingsform.h
-    src/widget/form/setpassworddialog.cpp
-    src/widget/form/setpassworddialog.h
-    src/widget/form/settings/aboutform.cpp
-    src/widget/form/settings/aboutform.h
-    src/widget/form/settings/advancedform.cpp
-    src/widget/form/settings/advancedform.h
-    src/widget/form/settings/avform.cpp
-    src/widget/form/settings/avform.h
-    src/widget/form/settings/generalform.cpp
-    src/widget/form/settings/generalform.h
-    src/widget/form/settings/genericsettings.cpp
-    src/widget/form/settings/genericsettings.h
-    src/widget/form/settings/privacyform.cpp
-    src/widget/form/settings/privacyform.h
-    src/widget/form/settings/userinterfaceform.h
-    src/widget/form/settings/userinterfaceform.cpp
-    src/widget/form/settings/verticalonlyscroller.cpp
-    src/widget/form/settings/verticalonlyscroller.h
-    src/widget/form/settingswidget.cpp
-    src/widget/form/settingswidget.h
-    src/widget/form/tabcompleter.cpp
-    src/widget/form/tabcompleter.h
-    src/widget/friendlistlayout.cpp
-    src/widget/friendlistlayout.h
-    src/widget/friendlistwidget.cpp
-    src/widget/friendlistwidget.h
-    src/widget/friendwidget.cpp
-    src/widget/friendwidget.h
-    src/widget/genericchatitemlayout.cpp
-    src/widget/genericchatitemlayout.h
-    src/widget/genericchatitemwidget.cpp
-    src/widget/genericchatitemwidget.h
-    src/widget/genericchatroomwidget.cpp
-    src/widget/genericchatroomwidget.h
-    src/widget/groupwidget.cpp
-    src/widget/groupwidget.h
-    src/widget/gui.cpp
-    src/widget/gui.h
-    # src/widget/loginscreen.cpp src/widget/loginscreen.h
-    src/widget/maskablepixmapwidget.cpp
-    src/widget/maskablepixmapwidget.h
-    src/widget/notificationedgewidget.cpp
-    src/widget/notificationedgewidget.h
-    src/widget/notificationscrollarea.cpp
-    src/widget/notificationscrollarea.h
-    src/widget/passwordedit.cpp
-    src/widget/passwordedit.h
-    src/widget/qrwidget.cpp
-    src/widget/qrwidget.h
-    src/widget/splitterrestorer.cpp
-    src/widget/splitterrestorer.h
-    src/widget/style.cpp
-    src/widget/style.h
-    src/widget/tool/activatedialog.cpp
-    src/widget/tool/activatedialog.h
-    src/widget/tool/adjustingscrollarea.cpp
-    src/widget/tool/adjustingscrollarea.h
-    src/widget/tool/callconfirmwidget.cpp
-    src/widget/tool/callconfirmwidget.h
-    src/widget/tool/chattextedit.cpp
-    src/widget/tool/chattextedit.h
-    src/widget/tool/croppinglabel.cpp
-    src/widget/tool/croppinglabel.h
-    src/widget/tool/flyoutoverlaywidget.cpp
-    src/widget/tool/flyoutoverlaywidget.h
-    src/widget/tool/friendrequestdialog.cpp
-    src/widget/tool/friendrequestdialog.h
-    src/widget/tool/identicon.cpp
-    src/widget/tool/identicon.h
-    src/widget/tool/movablewidget.cpp
-    src/widget/tool/movablewidget.h
-    src/widget/tool/profileimporter.cpp
-    src/widget/tool/profileimporter.h
-    src/widget/tool/recursivesignalblocker.cpp
-    src/widget/tool/recursivesignalblocker.h
-    src/widget/tool/removefrienddialog.cpp
-    src/widget/tool/removefrienddialog.h
-    src/widget/tool/screengrabberchooserrectitem.cpp
-    src/widget/tool/screengrabberchooserrectitem.h
-    src/widget/tool/screengrabberoverlayitem.cpp
-    src/widget/tool/screengrabberoverlayitem.h
-    src/widget/tool/screenshotgrabber.cpp
-    src/widget/tool/screenshotgrabber.h
-    src/widget/tool/toolboxgraphicsitem.cpp
-    src/widget/tool/toolboxgraphicsitem.h
-    # src/widget/translator.cpp src/widget/translator.h
-    src/widget/widget.cpp
-    src/widget/widget.h)
+        src/audio/audio.cpp
+        src/audio/audio.h
+        src/audio/backend/alsink.cpp
+        src/audio/backend/alsink.h
+        src/audio/backend/alsource.cpp
+        src/audio/backend/alsource.h
+        src/audio/backend/openal.cpp
+        src/audio/backend/openal.h
+        src/audio/iaudiosettings.h
+        src/audio/iaudiocontrol.h
+        src/audio/iaudiosink.h
+        src/audio/iaudiosource.h
+        src/chatlog/chatlinecontent.cpp
+        src/chatlog/chatlinecontent.h
+        src/chatlog/chatlinecontentproxy.cpp
+        src/chatlog/chatlinecontentproxy.h
+        src/chatlog/chatline.cpp
+        src/chatlog/chatline.h
+        src/chatlog/chatlog.cpp
+        src/chatlog/chatlog.h
+        src/chatlog/chatmessage.cpp
+        src/chatlog/chatmessage.h
+        src/chatlog/content/filetransferwidget.cpp
+        src/chatlog/content/filetransferwidget.h
+        src/chatlog/content/image.cpp
+        src/chatlog/content/image.h
+        src/chatlog/content/notificationicon.cpp
+        src/chatlog/content/notificationicon.h
+        src/chatlog/content/spinner.cpp
+        src/chatlog/content/spinner.h
+        src/chatlog/content/text.cpp
+        src/chatlog/content/text.h
+        src/chatlog/content/timestamp.cpp
+        src/chatlog/content/timestamp.h
+        src/chatlog/content/broken.cpp
+        src/chatlog/content/broken.h
+        src/chatlog/customtextdocument.cpp
+        src/chatlog/customtextdocument.h
+        src/chatlog/documentcache.cpp
+        src/chatlog/documentcache.h
+        src/chatlog/pixmapcache.cpp
+        src/chatlog/pixmapcache.h
+        src/chatlog/toxfileprogress.cpp
+        src/chatlog/toxfileprogress.h
+        src/chatlog/textformatter.cpp
+        src/chatlog/textformatter.h
+        src/core/coreav.cpp
+        src/core/coreav.h
+        src/core/core.h
+        src/core/core.cpp
+        src/core/corefile.cpp
+        src/core/corefile.h
+        src/core/dhtserver.cpp
+        src/core/dhtserver.h
+        src/core/icoresettings.h
+        src/core/toxcall.cpp
+        src/core/toxcall.h
+        src/core/toxencrypt.cpp
+        src/core/toxencrypt.h
+        src/core/toxfile.cpp
+        src/core/toxfile.h
+        src/core/toxfilepause.h
+        src/core/toxid.cpp
+        src/core/toxid.h
+        src/core/groupid.cpp
+        src/core/groupid.h
+        src/core/toxlogger.cpp
+        src/core/toxlogger.h
+        src/core/toxoptions.cpp
+        src/core/toxoptions.h
+        src/core/toxpk.cpp
+        src/core/toxpk.h
+        src/core/contactid.cpp
+        src/core/contactid.h
+        src/core/toxstring.cpp
+        src/core/toxstring.h
+        src/friendlist.cpp
+        src/friendlist.h
+        src/grouplist.cpp
+        src/grouplist.h
+        src/ipc.cpp
+        src/ipc.h
+        src/model/about/aboutfriend.cpp
+        src/model/about/aboutfriend.h
+        src/model/about/iaboutfriend.h
+        src/model/chatroom/chatroom.h
+        src/model/chatroom/friendchatroom.cpp
+        src/model/chatroom/friendchatroom.h
+        src/model/chatroom/groupchatroom.cpp
+        src/model/chatroom/groupchatroom.h
+        src/model/contact.cpp
+        src/model/contact.h
+        src/model/chatlogitem.cpp
+        src/model/chatlogitem.h
+        src/model/friend.cpp
+        src/model/friend.h
+        src/model/message.h
+        src/model/message.cpp
+        src/model/imessagedispatcher.h
+        src/model/friendmessagedispatcher.h
+        src/model/friendmessagedispatcher.cpp
+        src/model/groupmessagedispatcher.h
+        src/model/groupmessagedispatcher.cpp
+        src/model/message.h
+        src/model/message.cpp
+        src/model/groupinvite.cpp
+        src/model/groupinvite.h
+        src/model/group.cpp
+        src/model/group.h
+        src/model/status.cpp
+        src/model/status.h
+        src/model/interface.h
+        src/model/profile/iprofileinfo.h
+        src/model/profile/profileinfo.cpp
+        src/model/profile/profileinfo.h
+        src/model/dialogs/idialogs.h
+        src/model/ichatlog.h
+        src/model/sessionchatlog.h
+        src/model/sessionchatlog.cpp
+        src/model/chathistory.h
+        src/model/chathistory.cpp
+        src/model/toxclientstandards.h
+        # src/net/bootstrapnodeupdater.cpp src/net/bootstrapnodeupdater.h
+        src/net/avatarbroadcaster.cpp
+        src/net/avatarbroadcaster.h
+        src/net/toxuri.cpp
+        src/net/toxuri.h
+        src/nexus.cpp
+        src/nexus.h
+        src/persistence/db/rawdatabase.cpp
+        src/persistence/db/rawdatabase.h
+        src/persistence/history.cpp
+        src/persistence/history.h
+        src/persistence/ifriendsettings.h
+        src/persistence/offlinemsgengine.cpp
+        src/persistence/offlinemsgengine.h
+        src/persistence/paths.cpp
+        src/persistence/paths.h
+        src/persistence/profile.cpp
+        src/persistence/profile.h
+        src/persistence/profilelocker.cpp
+        src/persistence/profilelocker.h
+        src/persistence/serialize.cpp
+        src/persistence/serialize.h
+        src/persistence/settings.cpp
+        src/persistence/settings.h
+        src/persistence/settingsserializer.cpp
+        src/persistence/settingsserializer.h
+        src/persistence/smileypack.cpp
+        src/persistence/smileypack.h
+        src/persistence/toxsave.cpp
+        src/persistence/toxsave.h
+        src/video/cameradevice.cpp
+        src/video/cameradevice.h
+        src/video/camerasource.cpp
+        src/video/camerasource.h
+        src/video/corevideosource.cpp
+        src/video/corevideosource.h
+        src/video/genericnetcamview.cpp
+        src/video/genericnetcamview.h
+        src/video/groupnetcamview.cpp
+        src/video/groupnetcamview.h
+        src/video/ivideosettings.h
+        src/video/netcamview.cpp
+        src/video/netcamview.h
+        src/video/videoframe.cpp
+        src/video/videoframe.h
+        src/video/videomode.cpp
+        src/video/videomode.h
+        src/video/videosource.cpp
+        src/video/videosource.h
+        src/video/videosurface.cpp
+        src/video/videosurface.h
+        src/widget/about/aboutfriendform.cpp
+        src/widget/about/aboutfriendform.h
+        src/widget/categorywidget.cpp
+        src/widget/categorywidget.h
+        src/widget/chatformheader.cpp
+        src/widget/chatformheader.h
+        src/widget/circlewidget.cpp
+        src/widget/circlewidget.h
+        src/widget/contentdialog.cpp
+        src/widget/contentdialog.h
+        src/widget/contentdialogmanager.cpp
+        src/widget/contentdialogmanager.h
+        src/widget/contentlayout.cpp
+        src/widget/contentlayout.h
+        src/widget/emoticonswidget.cpp
+        src/widget/emoticonswidget.h
+        src/widget/flowlayout.cpp
+        src/widget/flowlayout.h
+        src/widget/searchform.cpp
+        src/widget/searchform.h
+        src/widget/searchtypes.h
+        src/widget/form/addfriendform.cpp
+        src/widget/form/addfriendform.h
+        src/widget/form/friendform.h
+        src/widget/form/friendform.cpp
+        src/widget/form/friendform.ui
+        src/widget/form/chatform.cpp
+        src/widget/form/chatform.h
+        src/widget/form/filesform.cpp
+        src/widget/form/filesform.h
+        src/widget/form/genericchatform.cpp
+        src/widget/form/genericchatform.h
+        src/widget/form/groupchatform.cpp
+        src/widget/form/groupchatform.h
+        src/widget/form/groupinviteform.cpp
+        src/widget/form/groupinviteform.h
+        src/widget/form/groupinvitewidget.cpp
+        src/widget/form/groupinvitewidget.h
+        src/widget/form/loadhistorydialog.cpp
+        src/widget/form/loadhistorydialog.h
+        src/widget/form/profileform.cpp
+        src/widget/form/profileform.h
+        src/widget/form/searchsettingsform.cpp
+        src/widget/form/searchsettingsform.h
+        src/widget/form/setpassworddialog.cpp
+        src/widget/form/setpassworddialog.h
+        src/widget/form/settings/aboutform.cpp
+        src/widget/form/settings/aboutform.h
+        src/widget/form/settings/advancedform.cpp
+        src/widget/form/settings/advancedform.h
+        src/widget/form/settings/avform.cpp
+        src/widget/form/settings/avform.h
+        src/widget/form/settings/generalform.cpp
+        src/widget/form/settings/generalform.h
+        src/widget/form/settings/genericsettings.cpp
+        src/widget/form/settings/genericsettings.h
+        src/widget/form/settings/privacyform.cpp
+        src/widget/form/settings/privacyform.h
+        src/widget/form/settings/userinterfaceform.h
+        src/widget/form/settings/userinterfaceform.cpp
+        src/widget/form/settings/verticalonlyscroller.cpp
+        src/widget/form/settings/verticalonlyscroller.h
+        src/widget/form/settingswidget.cpp
+        src/widget/form/settingswidget.h
+        src/widget/form/tabcompleter.cpp
+        src/widget/form/tabcompleter.h
+        src/widget/friendlistlayout.cpp
+        src/widget/friendlistlayout.h
+        src/widget/friendlistwidget.cpp
+        src/widget/friendlistwidget.h
+        src/widget/friendwidget.cpp
+        src/widget/friendwidget.h
+        src/widget/genericchatitemlayout.cpp
+        src/widget/genericchatitemlayout.h
+        src/widget/genericchatitemwidget.cpp
+        src/widget/genericchatitemwidget.h
+        src/widget/genericchatroomwidget.cpp
+        src/widget/genericchatroomwidget.h
+        src/widget/groupwidget.cpp
+        src/widget/groupwidget.h
+        src/widget/gui.cpp
+        src/widget/gui.h
+        # src/widget/loginscreen.cpp src/widget/loginscreen.h
+        src/widget/maskablepixmapwidget.cpp
+        src/widget/maskablepixmapwidget.h
+        src/widget/notificationedgewidget.cpp
+        src/widget/notificationedgewidget.h
+        src/widget/notificationscrollarea.cpp
+        src/widget/notificationscrollarea.h
+        src/widget/passwordedit.cpp
+        src/widget/passwordedit.h
+        src/widget/qrwidget.cpp
+        src/widget/qrwidget.h
+        src/widget/splitterrestorer.cpp
+        src/widget/splitterrestorer.h
+        src/widget/style.cpp
+        src/widget/style.h
+        src/widget/tool/activatedialog.cpp
+        src/widget/tool/activatedialog.h
+        src/widget/tool/adjustingscrollarea.cpp
+        src/widget/tool/adjustingscrollarea.h
+        src/widget/tool/callconfirmwidget.cpp
+        src/widget/tool/callconfirmwidget.h
+        src/widget/tool/chattextedit.cpp
+        src/widget/tool/chattextedit.h
+        src/widget/tool/croppinglabel.cpp
+        src/widget/tool/croppinglabel.h
+        src/widget/tool/flyoutoverlaywidget.cpp
+        src/widget/tool/flyoutoverlaywidget.h
+        src/widget/tool/friendrequestdialog.cpp
+        src/widget/tool/friendrequestdialog.h
+        src/widget/tool/identicon.cpp
+        src/widget/tool/identicon.h
+        src/widget/tool/movablewidget.cpp
+        src/widget/tool/movablewidget.h
+        src/widget/tool/profileimporter.cpp
+        src/widget/tool/profileimporter.h
+        src/widget/tool/recursivesignalblocker.cpp
+        src/widget/tool/recursivesignalblocker.h
+        src/widget/tool/removefrienddialog.cpp
+        src/widget/tool/removefrienddialog.h
+        src/widget/tool/screengrabberchooserrectitem.cpp
+        src/widget/tool/screengrabberchooserrectitem.h
+        src/widget/tool/screengrabberoverlayitem.cpp
+        src/widget/tool/screengrabberoverlayitem.h
+        src/widget/tool/screenshotgrabber.cpp
+        src/widget/tool/screenshotgrabber.h
+        src/widget/tool/toolboxgraphicsitem.cpp
+        src/widget/tool/toolboxgraphicsitem.h
+        # src/widget/translator.cpp src/widget/translator.h
+        src/widget/widget.cpp
+        src/widget/widget.h)
 
-if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-  set(${PROJECT_NAME}_SOURCES
-      ${${PROJECT_NAME}_SOURCES} src/platform/camera/directshow.cpp
-      src/platform/camera/directshow.h)
-  set(${PROJECT_NAME}_RESOURCES ${${PROJECT_NAME}_RESOURCES} windows/qtox.rc)
-elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux" OR ${CMAKE_SYSTEM_NAME} MATCHES
-                                               "FreeBSD")
-  set(${PROJECT_NAME}_SOURCES
-      ${${PROJECT_NAME}_SOURCES} src/platform/camera/v4l2.cpp
-      src/platform/camera/v4l2.h)
-elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-  set(${PROJECT_NAME}_SOURCES
-      ${${PROJECT_NAME}_SOURCES} src/platform/install_osx.cpp
-      src/platform/install_osx.h)
-endif()
-
-if(UNIX)
-  set(${PROJECT_NAME}_SOURCES
-      ${${PROJECT_NAME}_SOURCES} src/platform/posixsignalnotifier.cpp
-      src/platform/posixsignalnotifier.h)
-endif()
-
-if(PLATFORM_EXTENSIONS)
-  set(${PROJECT_NAME}_SOURCES ${${PROJECT_NAME}_SOURCES}
-                              src/platform/capslock.h src/platform/timer.h)
-
-  if(WIN32)
+if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     set(${PROJECT_NAME}_SOURCES
-        ${${PROJECT_NAME}_SOURCES} src/platform/capslock_win.cpp
-        src/platform/timer_win.cpp)
-  elseif(${X11_EXT})
+            ${${PROJECT_NAME}_SOURCES} src/platform/camera/directshow.cpp
+            src/platform/camera/directshow.h)
+    set(${PROJECT_NAME}_RESOURCES ${${PROJECT_NAME}_RESOURCES} windows/qtox.rc)
+elseif (${CMAKE_SYSTEM_NAME} MATCHES "Linux" OR ${CMAKE_SYSTEM_NAME} MATCHES
+        "FreeBSD")
     set(${PROJECT_NAME}_SOURCES
-        ${${PROJECT_NAME}_SOURCES} src/platform/capslock_x11.cpp
-        src/platform/timer_x11.cpp src/platform/x11_display.cpp)
-  elseif(${APPLE_EXT})
+            ${${PROJECT_NAME}_SOURCES} src/platform/camera/v4l2.cpp
+            src/platform/camera/v4l2.h)
+elseif (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     set(${PROJECT_NAME}_SOURCES
-        ${${PROJECT_NAME}_SOURCES} src/platform/capslock_osx.cpp
-        src/platform/timer_osx.cpp)
-  endif()
-endif()
+            ${${PROJECT_NAME}_SOURCES} src/platform/install_osx.cpp
+            src/platform/install_osx.h)
+endif ()
+
+if (UNIX)
+    set(${PROJECT_NAME}_SOURCES
+            ${${PROJECT_NAME}_SOURCES} src/platform/posixsignalnotifier.cpp
+            src/platform/posixsignalnotifier.h)
+endif ()
+
+if (PLATFORM_EXTENSIONS)
+    set(${PROJECT_NAME}_SOURCES ${${PROJECT_NAME}_SOURCES}
+            src/platform/capslock.h src/platform/timer.h)
+
+    if (WIN32)
+        set(${PROJECT_NAME}_SOURCES
+                ${${PROJECT_NAME}_SOURCES} src/platform/capslock_win.cpp
+                src/platform/timer_win.cpp)
+    elseif (${X11_EXT})
+        set(${PROJECT_NAME}_SOURCES
+                ${${PROJECT_NAME}_SOURCES} src/platform/capslock_x11.cpp
+                src/platform/timer_x11.cpp src/platform/x11_display.cpp)
+    elseif (${APPLE_EXT})
+        set(${PROJECT_NAME}_SOURCES
+                ${${PROJECT_NAME}_SOURCES} src/platform/capslock_osx.cpp
+                src/platform/timer_osx.cpp)
+    endif ()
+endif ()
 
 qt5_add_translation(
-  ${PROJECT_NAME}_QM_FILES
-  translations/de.ts
-  translations/es.ts
-  translations/fr.ts
-  translations/it.ts
-  translations/ja.ts
-  translations/ko.ts
-  translations/pt.ts
-  translations/ru.ts
-  translations/ar.ts
-  translations/zh_CN.ts
-  translations/zh_TW.ts)
+        ${PROJECT_NAME}_QM_FILES
+        translations/de.ts
+        translations/es.ts
+        translations/fr.ts
+        translations/it.ts
+        translations/ja.ts
+        translations/ko.ts
+        translations/pt.ts
+        translations/ru.ts
+        translations/ar.ts
+        translations/zh_CN.ts
+        translations/zh_TW.ts)
 
 file(
-  WRITE "${PROJECT_BINARY_DIR}/translations.qrc.in"
-  "<!DOCTYPE RCC>
+        WRITE "${PROJECT_BINARY_DIR}/translations.qrc.in"
+        "<!DOCTYPE RCC>
 <RCC version=\"1.0\">
   <qresource prefix=\"/translations/${PROJECT_NAME}\">
 ")
 
-foreach(qm ${${PROJECT_NAME}_QM_FILES})
-  get_filename_component(qm_name ${qm} NAME)
-  file(APPEND "${PROJECT_BINARY_DIR}/translations.qrc.in"
-       "    <file alias=\"${qm_name}\">${qm}</file>\n")
-endforeach(qm)
+foreach (qm ${${PROJECT_NAME}_QM_FILES})
+    get_filename_component(qm_name ${qm} NAME)
+    file(APPEND "${PROJECT_BINARY_DIR}/translations.qrc.in"
+            "    <file alias=\"${qm_name}\">${qm}</file>\n")
+endforeach (qm)
 
 file(
-  APPEND "${PROJECT_BINARY_DIR}/translations.qrc.in"
-  "  </qresource>
+        APPEND "${PROJECT_BINARY_DIR}/translations.qrc.in"
+        "  </qresource>
 </RCC>
 ")
 
 execute_process(
-  COMMAND
-    ${CMAKE_COMMAND} -E copy_if_different
-    ${PROJECT_BINARY_DIR}/translations.qrc.in
-    ${PROJECT_BINARY_DIR}/translations_${PROJECT_NAME}.qrc)
+        COMMAND
+        ${CMAKE_COMMAND} -E copy_if_different
+        ${PROJECT_BINARY_DIR}/translations.qrc.in
+        ${PROJECT_BINARY_DIR}/translations_${PROJECT_NAME}.qrc)
 
-if(NOT SMILEYS)
-  set(SMILEYS "")
-endif()
+if (NOT SMILEYS)
+    set(SMILEYS "")
+endif ()
 
 set(SMILEY_RESOURCES "")
-if(NOT "${SMILEYS}" STREQUAL "DISABLED")
-  set(SMILEY_RESOURCES ${PROJECT_SOURCE_DIR}/smileys/emojione.qrc)
+if (NOT "${SMILEYS}" STREQUAL "DISABLED")
+    set(SMILEY_RESOURCES ${PROJECT_SOURCE_DIR}/smileys/emojione.qrc)
 
-  if(NOT "${SMILEYS}" STREQUAL "MIN")
-    set(SMILEY_RESOURCES ${SMILEY_RESOURCES}
-                         ${PROJECT_SOURCE_DIR}/smileys/smileys.qrc)
-  endif()
-endif()
+    if (NOT "${SMILEYS}" STREQUAL "MIN")
+        set(SMILEY_RESOURCES ${SMILEY_RESOURCES}
+                ${PROJECT_SOURCE_DIR}/smileys/smileys.qrc)
+    endif ()
+endif ()
 
 qt5_add_resources(
-  ${PROJECT_NAME}_RESOURCES res.qrc
-  ${PROJECT_BINARY_DIR}/translations_${PROJECT_NAME}.qrc ${SMILEY_RESOURCES}
-  # DEPENDS ${${PROJECT_NAME}_QM_FILES} # OPTIONS ${RCC_OPTIONS}
+        ${PROJECT_NAME}_RESOURCES res.qrc
+        ${PROJECT_BINARY_DIR}/translations_${PROJECT_NAME}.qrc ${SMILEY_RESOURCES}
+        # DEPENDS ${${PROJECT_NAME}_QM_FILES} # OPTIONS ${RCC_OPTIONS}
 )
 
 include_directories(${PROJECT_BINARY_DIR})
 
 add_library(
-  ${PROJECT_NAME} ${${PROJECT_NAME}_FORMS} ${${PROJECT_NAME}_SOURCES}
-                  ${${PROJECT_NAME}_QM_FILES} ${${PROJECT_NAME}_RESOURCES})
+        ${PROJECT_NAME} ${${PROJECT_NAME}_FORMS} ${${PROJECT_NAME}_SOURCES}
+        ${${PROJECT_NAME}_QM_FILES} ${${PROJECT_NAME}_RESOURCES})
 
 target_link_libraries(
-  ${PROJECT_NAME}
-  PRIVATE ${Qt5Core_LIBRARIES}
-  PRIVATE ${Qt5Gui_LIBRARIES}
-  PRIVATE ${Qt5Widgets_LIBRARIES}
-  PRIVATE ${Qt5Network_LIBRARIES}
-  PRIVATE ${Qt5Xml_LIBRARIES}
-  PRIVATE ${Qt5Svg_LIBRARIES} ${CMAKE_REQUIRED_LIBRARIES} ${ALL_LIBRARIES})
+        ${PROJECT_NAME}
+        PRIVATE ${Qt5Core_LIBRARIES}
+        PRIVATE ${Qt5Gui_LIBRARIES}
+        PRIVATE ${Qt5Widgets_LIBRARIES}
+        PRIVATE ${Qt5Network_LIBRARIES}
+        PRIVATE ${Qt5Xml_LIBRARIES}
+        PRIVATE ${Qt5Svg_LIBRARIES} ${CMAKE_REQUIRED_LIBRARIES} ${ALL_LIBRARIES})
 
-if(MSVC)
-  set_property(
-    TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY
-                                    "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-endif(MSVC)
+if (MSVC)
+    set_property(
+            TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY
+            "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif (MSVC)

@@ -1,26 +1,29 @@
 project(OkRTC)
 
 #WebRTC
+set(WebRTC_VER "121.6167.5.0")
+set(WebRTC_URL "https://github.com/crow-misia/libwebrtc-bin/releases/download/${WebRTC_VER}/libwebrtc-${PLATFORM}-${ARCH}.tar.xz")
+
 include(FetchContent)
 FetchContent_Declare(
         webrtc
-#     121.6167.5.0   114.5735.6.1
-        URL https://github.com/crow-misia/libwebrtc-bin/releases/download/121.6167.5.0/libwebrtc-linux-x64.tar.xz
+        URL ${WebRTC_URL}
 )
 FetchContent_MakeAvailable(webrtc)
 include_directories(${webrtc_SOURCE_DIR}/include)
 
-
-FetchContent_Declare(
-        absl
+#absl
+FetchContent_Declare(absl
         GIT_REPOSITORY https://github.com/abseil/abseil-cpp.git
 )
 FetchContent_MakeAvailable(absl)
 include_directories(${absl_SOURCE_DIR})
 
+
+
 add_definitions(-DOPENSSL_IS_BORINGSSL=1)
 
-if(WIN32)
+if (WIN32)
     add_definitions(-DWEBRTC_WIN)
 endif ()
 
