@@ -16,5 +16,29 @@ if(WIN32)
     message(STATUS "LINK_STATIC_QT=${LINK_STATIC_QT}")
 endif()
 
-# 开启插件（ON/OFF）
-set(ENABLE_PLUGINS OFF)
+# webrtc
+set(WebRTC_VER "121.6167.5.0")
+
+if(WIN32)
+set(WebRTC_URL "https://github.com/crow-misia/libwebrtc-bin/releases/download/${WebRTC_VER}/libwebrtc-win-${ARCH}.7z")
+else()
+set(WebRTC_URL "https://github.com/crow-misia/libwebrtc-bin/releases/download/${WebRTC_VER}/libwebrtc-${PLATFORM}-${ARCH}.tar.xz")
+endif()
+
+message(STATUS "Fetch webrtc")
+FetchContent_Declare(
+        webrtc
+        URL ${WebRTC_URL}
+)
+FetchContent_MakeAvailable(webrtc)
+
+# absl
+include(FetchContent)
+message(STATUS "Fetch absl")
+set(ABSL_PROPAGATE_CXX_STD ON)
+FetchContent_Declare(absl
+      GIT_REPOSITORY https://github.com/abseil/abseil-cpp.git
+      GIT_TAG lts_2023_08_02
+      #  URL https://github.com/abseil/abseil-cpp/releases/download/20220623.2/abseil-cpp-20220623.2.tar.gz
+)
+FetchContent_MakeAvailable(absl)
