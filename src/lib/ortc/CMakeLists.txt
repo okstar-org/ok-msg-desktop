@@ -6,22 +6,12 @@ foreach(dir ${USER_INCLUDE_DIRECTORIES})
     message(STATUS "  ${dir}")
 endforeach()
 
-#absl
-#set(ABSL_INTERNAL_AT_LEAST_CXX20 ON)
-#
-#FetchContent_Declare(absl
-#        GIT_REPOSITORY https://github.com/abseil/abseil-cpp.git
-#        GIG_TAG lts_2022_06_23
-#)
-#FetchContent_MakeAvailable(absl)
-#include_directories(${absl_SOURCE_DIR})
-
 #WebRTC
 set(WebRTC_VER "121.6167.5.0")
 if (WIN32)
-    set(WebRTC_URL "https://github.com/crow-misia/libwebrtc-bin/releases/download/${WebRTC_VER}/libwebrtc-win-${ARCH}.tar.xz")
+    set(WebRTC_URL "https://github.com/crow-misia/libwebrtc-bin/releases/download/${WebRTC_VER}/libwebrtc-win-x64.tar.xz")
 elseif (LINUX)
-    set(WebRTC_URL "https://github.com/crow-misia/libwebrtc-bin/releases/download/${WebRTC_VER}/libwebrtc-linux-${ARCH}.tar.xz")
+    set(WebRTC_URL "https://github.com/crow-misia/libwebrtc-bin/releases/download/${WebRTC_VER}/libwebrtc-linux-x64.tar.xz")
 endif ()
 
 FetchContent_Declare(
