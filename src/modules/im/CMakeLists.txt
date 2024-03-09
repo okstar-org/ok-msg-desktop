@@ -20,31 +20,40 @@ if (WIN32)
     #    )
     #  endif()
     #ffmpeg
+    message(STATUS "Fetch ffmpeg")
     FetchContent_Declare(ffmpeg
             URL https://github.com/FFmpeg/FFmpeg/archive/refs/tags/n5.1.3.tar.gz
     )
     FetchContent_MakeAvailable(ffmpeg)
 
+    message(STATUS "Fetch openal")
     FetchContent_Declare(openal
             URL https://openal-soft.org/openal-binaries/openal-soft-1.23.1-bin.zip
     )
     FetchContent_MakeAvailable(openal)
 
+    message(STATUS "Fetch libexif")
     FetchContent_Declare(libexif
             URL https://github.com/libexif/libexif/releases/download/v0.6.24/libexif-0.6.24.tar.bz2
     )
     FetchContent_MakeAvailable(libexif)
 
+    message(STATUS "Fetch libsodium")
     FetchContent_Declare(libsodium
             URL https://download.libsodium.org/libsodium/releases/libsodium-1.0.19-stable-msvc.zip
     )
     FetchContent_MakeAvailable(libsodium)
+    include_directories(${libsodium_SOURCE_DIR}/include)
+    link_directories(${libsodium_SOURCE_DIR}/${ARCH}/${CMAKE_BUILD_TYPE}/static)
 
-    FetchContent_Declare(libwebp
-            URL https://github.com/webmproject/libwebp/archive/refs/tags/v1.3.2.zip
+    message(STATUS "Fetch libvpx")
+    FetchContent_Declare(libvpx
+           URL https://github.com/webmproject/libvpx/archive/refs/tags/v1.11.0.zip
     )
-    FetchContent_MakeAvailable(libwebp)
+    FetchContent_MakeAvailable(libvpx)
+    include_directories(${libvpx_SOURCE_DIR})
 
+    message(STATUS "Fetch sqlite3")
     FetchContent_Declare(sqlite3
             URL https://github.com/sqlite/sqlite/archive/refs/tags/vesion-3.45.1.zip
     )
@@ -437,30 +446,30 @@ qt5_add_translation(
         translations/zh_CN.ts
         translations/zh_TW.ts)
 
-file(
-        WRITE "${PROJECT_BINARY_DIR}/translations.qrc.in"
-        "<!DOCTYPE RCC>
+set(RESOURCE_NAME "${PROJECT_BINARY_DIR}/${PROJECT_NAME}.qrc.in")
+
+file(WRITE "${RESOURCE_NAME}"
+"<!DOCTYPE RCC>
 <RCC version=\"1.0\">
   <qresource prefix=\"/translations/${PROJECT_NAME}\">
 ")
 
 foreach (qm ${${PROJECT_NAME}_QM_FILES})
     get_filename_component(qm_name ${qm} NAME)
-    file(APPEND "${PROJECT_BINARY_DIR}/translations.qrc.in"
+    file(APPEND "${RESOURCE_NAME}"
             "    <file alias=\"${qm_name}\">${qm}</file>\n")
 endforeach (qm)
 
-file(
-        APPEND "${PROJECT_BINARY_DIR}/translations.qrc.in"
-        "  </qresource>
+file(APPEND "${RESOURCE_NAME}"
+"</qresource>
 </RCC>
 ")
 
 execute_process(
         COMMAND
         ${CMAKE_COMMAND} -E copy_if_different
-        ${PROJECT_BINARY_DIR}/translations.qrc.in
-        ${PROJECT_BINARY_DIR}/translations_${PROJECT_NAME}.qrc)
+        ${RESOURCE_NAME}
+        ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.qrc)
 
 if (NOT SMILEYS)
     set(SMILEYS "")
@@ -477,8 +486,10 @@ if (NOT "${SMILEYS}" STREQUAL "DISABLED")
 endif ()
 
 qt5_add_resources(
-        ${PROJECT_NAME}_RESOURCES res.qrc
-        ${PROJECT_BINARY_DIR}/translations_${PROJECT_NAME}.qrc ${SMILEY_RESOURCES}
+        ${PROJECT_NAME}_RESOURCES
+        res.qrc
+        ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.qrc
+        ${SMILEY_RESOURCES}
         # DEPENDS ${${PROJECT_NAME}_QM_FILES} # OPTIONS ${RCC_OPTIONS}
 )
 

@@ -58,7 +58,7 @@ Nexus::Nexus(QObject *parent)
   Q_INIT_RESOURCE(res);
   Q_INIT_RESOURCE(emojione);
   Q_INIT_RESOURCE(smileys);
-  Q_INIT_RESOURCE(translations_IM);
+  Q_INIT_RESOURCE(IM);
 }
 
 Nexus::~Nexus() {

@@ -2,6 +2,43 @@ project(OkMSG-Desktop)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
+
+
+# Qt
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
+
+find_package(Qt5 COMPONENTS Core
+        Concurrent
+        Widgets
+        Gui
+        Multimedia
+        MultimediaWidgets
+        Network
+        Xml
+        Sql
+        Svg
+        OpenGL
+        LinguistTools
+        UiTools
+        REQUIRED)
+
+option(PLATFORM_EXTENSIONS "Enable platform specific extensions, requires extra dependencies" ON)
+
+# 设置Qt模块包含头文件和库
+include_directories(${CMAKE_PREFIX_PATH}/include)
+link_directories(${CMAKE_PREFIX_PATH}/lib)
+
+# set(QtModules Core Widgets Gui Multimedia MultimediaWidgets Network Concurrent
+# Sql Svg Xml XmlPatterns OpenGL ANGLE) if(UNIX) set(QtModules ${QtModules}
+# DBus) endif(UNIX)
+#
+# foreach (Module ${QtModules}) set(Qt${Module}${QT_VERSION_MAJOR}_INCLUDES
+# ${CMAKE_PREFIX_PATH}/include/Qt${Module})
+# include_directories(${Qt${Module}${QT_VERSION_MAJOR}_INCLUDES}) endforeach
+# (Module)
+ 
 add_subdirectory(base)
 add_subdirectory(lib)
 add_subdirectory(modules)
@@ -124,6 +161,7 @@ endif ()
 
 target_link_libraries(
         ${PROJECT_NAME}
+        PRIVATE webpmux
         PRIVATE ${OK_LIBS}
         PRIVATE ${DEP_LIBS}
         PRIVATE ${Qt5Core_LIBRARIES}
