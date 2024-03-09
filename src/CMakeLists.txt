@@ -161,7 +161,6 @@ endif ()
 
 target_link_libraries(
         ${PROJECT_NAME}
-        PRIVATE webpmux
         PRIVATE ${OK_LIBS}
         PRIVATE ${DEP_LIBS}
         PRIVATE ${Qt5Core_LIBRARIES}
