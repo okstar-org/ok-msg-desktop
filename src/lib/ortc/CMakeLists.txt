@@ -9,11 +9,12 @@ endforeach()
 #WebRTC
 set(WebRTC_VER "121.6167.5.0")
 if (WIN32)
-    set(WebRTC_URL "https://github.com/crow-misia/libwebrtc-bin/releases/download/${WebRTC_VER}/libwebrtc-win-x64.tar.xz")
+    set(WebRTC_URL "https://github.com/crow-misia/libwebrtc-bin/releases/download/${WebRTC_VER}/libwebrtc-win-x64.7z")
 elseif (LINUX)
     set(WebRTC_URL "https://github.com/crow-misia/libwebrtc-bin/releases/download/${WebRTC_VER}/libwebrtc-linux-x64.tar.xz")
 endif ()
 
+message(STATUS "Fetch webrtc")
 FetchContent_Declare(
         webrtc
         URL ${WebRTC_URL}
