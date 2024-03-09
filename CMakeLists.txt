@@ -7,6 +7,7 @@ endif(POLICY CMP0091)
 if(POLICY CMP0135)
   cmake_policy(SET CMP0135 NEW)
 endif(POLICY CMP0135)
+include(FetchContent)
 
 project(OkMSG-Project)
 
@@ -253,10 +254,6 @@ else()
   message(STATUS "Build with libstdc++")
 endif()
 
-set(CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES "/usr/include/c++/12")
-message(STATUS "CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES= " ${CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES})
-
-
 # -Wunused-parameter -pedantic -fsanitize=address,undefined,leak,integer -Wextra
 # -Wall -Wmacro-redefined -Wbuiltin-macro-redefined
 #if(UNIX)
@@ -438,3 +435,4 @@ if(MSVC)
           TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY
           "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif(MSVC)
+

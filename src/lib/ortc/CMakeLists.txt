@@ -1,23 +1,37 @@
 project(OkRTC)
+message(STATUS "Implicit include directories: ${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES}")
+message(STATUS "User-added include directories:")
+get_directory_property(USER_INCLUDE_DIRECTORIES INCLUDE_DIRECTORIES)
+foreach(dir ${USER_INCLUDE_DIRECTORIES})
+    message(STATUS "  ${dir}")
+endforeach()
+
+#absl
+#set(ABSL_INTERNAL_AT_LEAST_CXX20 ON)
+#
+#FetchContent_Declare(absl
+#        GIT_REPOSITORY https://github.com/abseil/abseil-cpp.git
+#        GIG_TAG lts_2022_06_23
+#)
+#FetchContent_MakeAvailable(absl)
+#include_directories(${absl_SOURCE_DIR})
 
 #WebRTC
 set(WebRTC_VER "121.6167.5.0")
-set(WebRTC_URL "https://github.com/crow-misia/libwebrtc-bin/releases/download/${WebRTC_VER}/libwebrtc-${PLATFORM}-${ARCH}.tar.xz")
+if (WIN32)
+    set(WebRTC_URL "https://github.com/crow-misia/libwebrtc-bin/releases/download/${WebRTC_VER}/libwebrtc-win-${ARCH}.tar.xz")
+elseif (LINUX)
+    set(WebRTC_URL "https://github.com/crow-misia/libwebrtc-bin/releases/download/${WebRTC_VER}/libwebrtc-linux-${ARCH}.tar.xz")
+endif ()
 
-include(FetchContent)
 FetchContent_Declare(
         webrtc
         URL ${WebRTC_URL}
 )
 FetchContent_MakeAvailable(webrtc)
 include_directories(${webrtc_SOURCE_DIR}/include)
+include_directories(${webrtc_SOURCE_DIR}/include/third_party/abseil-cpp/)
 
-#absl
-FetchContent_Declare(absl
-        GIT_REPOSITORY https://github.com/abseil/abseil-cpp.git
-)
-FetchContent_MakeAvailable(absl)
-include_directories(${absl_SOURCE_DIR})
 
 
 
