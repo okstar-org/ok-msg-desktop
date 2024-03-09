@@ -1,7 +1,9 @@
 project(IMCore)
 
-#add_subdirectory(${CMAKE_SOURCE_DIR}/3rdparty/gloox ${gloox_BINARY_DIR})
-message(STATUS "gloox_DIR= " ${gloox_DIR})
+set(BUILD_SHARED_LIBS OFF)
+
+add_subdirectory(${CMAKE_SOURCE_DIR}/3rdparty/gloox ${PROJECT_BINARY_DIR}/gloox)
+
 include_directories(${CMAKE_SOURCE_DIR}/3rdparty)
 include_directories(${WebRTC_DIR}/include)
 
@@ -11,7 +13,7 @@ add_library(${PROJECT_NAME} ${${PROJECT_NAME}_SOURCES})
 
 target_link_libraries(
   ${PROJECT_NAME}
-  PRIVATE gloox
+  PRIVATE ${PROJECT_BINARY_DIR}/gloox/src/libgloox.a
   PRIVATE ${Qt5Core_LIBRARIES}
   PRIVATE ${Qt5Xml_LIBRARIES}
   PRIVATE ${Qt5Widgets_LIBRARIES})
