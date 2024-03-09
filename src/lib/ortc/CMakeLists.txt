@@ -57,9 +57,10 @@ include_directories(${CMAKE_SOURCE_DIR}/3rdparty)
 
 add_library(${PROJECT_NAME} ${${PROJECT_NAME}_SOURCES})
 
+
 target_link_libraries(${PROJECT_NAME}
         ${webrtc_SOURCE_DIR}/lib/libwebrtc.a
-        gloox
+
         X11
 )
 
