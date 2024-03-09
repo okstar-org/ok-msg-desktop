@@ -1,7 +1,7 @@
 project(IMCore)
 
-add_subdirectory(${CMAKE_SOURCE_DIR}/3rdparty/gloox ${gloox_BINARY_DIR})
-message(STATUS "==========" ${gloox_BINARY_DIR})
+#add_subdirectory(${CMAKE_SOURCE_DIR}/3rdparty/gloox ${gloox_BINARY_DIR})
+message(STATUS "gloox_DIR= " ${gloox_DIR})
 include_directories(${CMAKE_SOURCE_DIR}/3rdparty)
 include_directories(${WebRTC_DIR}/include)
 
