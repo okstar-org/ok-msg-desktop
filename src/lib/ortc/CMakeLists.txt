@@ -49,7 +49,7 @@ elseif (UNIX)
     add_definitions(-DWEBRTC_POSIX)
 endif ()
 
-
+set(BUILD_SHARED_LIBS ON)
 add_subdirectory(${CMAKE_SOURCE_DIR}/3rdparty/gloox ${PROJECT_BINARY_DIR}/3rdparty/gloox)
 if (WIN32)
     set(gloox_LIB ${PROJECT_BINARY_DIR}/3rdparty/gloox/build/src/gloox.lib)
