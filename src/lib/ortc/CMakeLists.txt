@@ -1,4 +1,10 @@
 project(OkRTC)
+message(STATUS "Implicit include directories: ${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES}")
+message(STATUS "User-added include directories:")
+get_directory_property(USER_INCLUDE_DIRECTORIES INCLUDE_DIRECTORIES)
+foreach(dir ${USER_INCLUDE_DIRECTORIES})
+    message(STATUS "  ${dir}")
+endforeach()
 include(FetchContent)
 
 #WebRTC
@@ -75,7 +81,7 @@ if(WIN32)
 elseif (LINUX)
     target_link_libraries(${PROJECT_NAME}
             PRIVATE ${gloox_LIB}
-            PRIVATE ${webrtc_SOURCE_DIR}/lib/libwebrtc.a
+            PRIVATE ${webrtc_LIB}
     )
 endif ()
 

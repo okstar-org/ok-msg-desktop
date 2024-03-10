@@ -664,6 +664,7 @@ QString PluginManager::getStatusMessage(int account) const {
 
 static inline const QString getProxyId(OkAccount *pa) {
   //  return pa->accountOptions().proxyID;
+    return {};
 }
 
 QString PluginManager::proxyHost(int account) const {

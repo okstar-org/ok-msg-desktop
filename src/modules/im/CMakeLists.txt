@@ -14,8 +14,8 @@ if (WIN32)
     FetchContent_MakeAvailable(libsodium)
     include_directories(${libsodium_SOURCE_DIR}/include)
     link_directories(${libsodium_SOURCE_DIR}/${ARCH}/${CMAKE_BUILD_TYPE}/static)
-    
-    
+
+
     find_package(FFMPEG REQUIRED)
     include_directories(${FFMPEG_INCLUDE_DIRS})
     message(STATUS "FFMPEG_INCLUDE_DIRS=${FFMPEG_INCLUDE_DIRS}")
@@ -28,7 +28,7 @@ if (WIN32)
     message(STATUS "QRENCODE_INCLUDE_DIR=${qrencode_INCLUDE_DIR}")
     message(STATUS "qrencode_LIBRARIES=${qrencode_LIBRARIES}")
 
-    
+
 #    find_package(OpenAL REQUIRED)
     set(OpenAL_LIBRARIES ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/OpenAL32.lib)
     message(STATUS "OpenAL_INCLUDE_DIR=${OpenAL_INCLUDE_DIR}")
@@ -45,13 +45,19 @@ if (WIN32)
     message(STATUS "libexif_INCLUDE_DIR=${libexif_INCLUDE_DIR}")
     message(STATUS "libexif_LIBRARIES=${libexif_LIBRARIES}")
 
+
+#    find_package(unofficial-libvpx CONFIG REQUIRED)
+    set(libvpx_LIBRARIES ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/vpx.lib)
+    message(STATUS "libvpx_LIBRARIES=${libvpx_LIBRARIES}")
+
+#    target_link_libraries(main PRIVATE unofficial::libvpx::libvpx)
+
 elseif (UNIX)
     include(./cmake/Dependencies.cmake)
 endif ()
 
 
 include_directories(${PROJECT_BINARY_DIR})
-
 
 set(CMAKE_AUTOUIC_SEARCH_PATHS ./src src/widget src/widget/form)
 
@@ -474,7 +480,7 @@ if (NOT "${SMILEYS}" STREQUAL "DISABLED")
 endif ()
 
 qt5_add_resources(
-        ${PROJECT_NAME}_RESOURCES 
+        ${PROJECT_NAME}_RESOURCES
         res.qrc
         ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.qrc
         ${SMILEY_RESOURCES}
@@ -504,6 +510,7 @@ set(ALL_LIBRARIES ${PLATFORM_LIBS})
 target_link_libraries(
         ${PROJECT_NAME}
         PRIVATE ${qrencode_LIBRARIES}
+        PRIVATE ${libvpx_LIBRARIES}
         PRIVATE ${libexif_LIBRARIES}
         PRIVATE ${sqlite3_LIBRARIES}
         PRIVATE ${OpenAL_LIBRARIES}

@@ -62,19 +62,21 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
 
 
 # ⚙️ 构建开发
-## 配置开发环境 
+## Windows 
 - 安装`visual studio 17 2022`
-- 配置
-- 
 
-## CMake执行构建
+- 配置环境变量
+```shell
+VCPKG_ROOT=E:\Program Files\Microsoft Visual Studio\2022\Community\VC\vcpkg
+#可选，默默C盘
+VCPKG_DOWNLOADS=下载路径
+```
+
+- CMake执行构建
 ```shell
 git submodule update --init
-
-
-cmake -B build
-
-cmake --build build --preset win-x64-debug
+cmake -B build --preset win-x64-{debug|release}
+cmake --build build 
 ```
 
 
