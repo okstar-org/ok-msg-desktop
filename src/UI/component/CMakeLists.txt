@@ -10,3 +10,9 @@ target_link_libraries(${PROJECT_NAME}
         PRIVATE ${Qt5Widgets_LIBRARIES}
         PRIVATE ${Qt5Xml_LIBRARIES}
 )
+
+if (MSVC)
+    set_property(
+            TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY
+            "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif (MSVC)
