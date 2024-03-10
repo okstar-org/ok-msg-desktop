@@ -20,12 +20,6 @@ set(${PROJECT_NAME}_SOURCES
         launcher.cpp
 )
 
-
-if (ENABLE_PLUGINS)
-    list(APPEND OK_LIBS Plugin)
-    include(${CMAKE_SOURCE_DIR}/plugins/plugins.cmake)
-endif ()
-
 list(APPEND OK_LIBS
         UI
         IM
@@ -37,6 +31,10 @@ list(APPEND OK_LIBS
         Backend
         OkBase
 )
+
+if(ENABLE_PLUGINS)
+    list(APPEND OK_LIBS Plugin)
+endif()
 
 if (WIN32 AND NOT LOWER_CMAKE_BUILD_TYPE STREQUAL debug)
     add_executable(${PROJECT_NAME} WIN32 ${${PROJECT_NAME}_SOURCES}

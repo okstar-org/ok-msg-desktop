@@ -1,10 +1,10 @@
 project(IM)
 add_definitions(-DOK_${PROJECT_NAME}_MODULE="${PROJECT_NAME}")
 
-set(CMAKE_PREFIX_PATH  ${CMAKE_PREFIX_PATH} ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET})
-message(STATUS "CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}" )
-message(STATUS "PROJECT_BINARY_DIR=${PROJECT_BINARY_DIR}" )
-message(STATUS "VCPKG_TARGET_TRIPLET=${VCPKG_TARGET_TRIPLET}" )
+set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET})
+message(STATUS "CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}")
+message(STATUS "PROJECT_BINARY_DIR=${PROJECT_BINARY_DIR}")
+message(STATUS "VCPKG_TARGET_TRIPLET=${VCPKG_TARGET_TRIPLET}")
 
 if (WIN32)
     message(STATUS "Fetch libsodium")
@@ -29,29 +29,36 @@ if (WIN32)
     message(STATUS "qrencode_LIBRARIES=${qrencode_LIBRARIES}")
 
 
-#    find_package(OpenAL REQUIRED)
+    #    find_package(OpenAL REQUIRED)
     set(OpenAL_LIBRARIES ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/OpenAL32.lib)
     message(STATUS "OpenAL_INCLUDE_DIR=${OpenAL_INCLUDE_DIR}")
     message(STATUS "OpenAL_LIBRARIES=${OpenAL_LIBRARIES}")
 
 
-#    find_package(sqlite3 REQUIRED)
+    #    find_package(sqlite3 REQUIRED)
     set(sqlite3_LIBRARIES ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/sqlite3.lib)
     message(STATUS "sqlite3_INCLUDE_DIR=${sqlite3_INCLUDE_DIR}")
     message(STATUS "sqlite3_LIBRARIES=${sqlite3_LIBRARIES}")
 
-#    find_package(exif REQUIRED)
+    #    find_package(exif REQUIRED)
     set(libexif_LIBRARIES ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/exif.lib)
     message(STATUS "libexif_INCLUDE_DIR=${libexif_INCLUDE_DIR}")
     message(STATUS "libexif_LIBRARIES=${libexif_LIBRARIES}")
 
 
-#    find_package(unofficial-libvpx CONFIG REQUIRED)
+    #    find_package(unofficial-libvpx CONFIG REQUIRED)
     set(libvpx_LIBRARIES ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/vpx.lib)
     message(STATUS "libvpx_LIBRARIES=${libvpx_LIBRARIES}")
 
-#    target_link_libraries(main PRIVATE unofficial::libvpx::libvpx)
+    #    target_link_libraries(main PRIVATE unofficial::libvpx::libvpx)
 
+    set(ALL_LIBRARIES
+            PRIVATE ${qrencode_LIBRARIES}
+            PRIVATE ${libvpx_LIBRARIES}
+            PRIVATE ${libexif_LIBRARIES}
+            PRIVATE ${sqlite3_LIBRARIES}
+            PRIVATE ${OpenAL_LIBRARIES}
+            PRIVATE ${FFMPEG_LIBRARIES})
 elseif (UNIX)
     include(./cmake/Dependencies.cmake)
 endif ()
@@ -443,7 +450,7 @@ qt5_add_translation(
 set(RESOURCE_NAME "${PROJECT_BINARY_DIR}/${PROJECT_NAME}.qrc.in")
 
 file(WRITE "${RESOURCE_NAME}"
-"<!DOCTYPE RCC>
+        "<!DOCTYPE RCC>
 <RCC version=\"1.0\">
   <qresource prefix=\"/translations/${PROJECT_NAME}\">
 ")
@@ -455,7 +462,7 @@ foreach (qm ${${PROJECT_NAME}_QM_FILES})
 endforeach (qm)
 
 file(APPEND "${RESOURCE_NAME}"
-"</qresource>
+        "</qresource>
 </RCC>
 ")
 
@@ -500,21 +507,15 @@ if (WIN32)
             amstrmid msdmo strmiids psapi
             Vfw32 shell32 oleaut32 ole32 user32 advapi32
             bcrypt Mf Mfplat Mfreadwrite mfuuid dxva2 evr strmbase)
+    set(ALL_LIBRARIES ${PLATFORM_LIBS})
 elseif (UNIX)
     set(PLATFORM_LIBS z ssl crypto atomic X11)
 endif ()
 
-set(ALL_LIBRARIES ${PLATFORM_LIBS})
-
 
 target_link_libraries(
         ${PROJECT_NAME}
-        PRIVATE ${qrencode_LIBRARIES}
-        PRIVATE ${libvpx_LIBRARIES}
-        PRIVATE ${libexif_LIBRARIES}
-        PRIVATE ${sqlite3_LIBRARIES}
-        PRIVATE ${OpenAL_LIBRARIES}
-        PRIVATE ${FFMPEG_LIBRARIES}
+
         PRIVATE ${Qt5Core_LIBRARIES}
         PRIVATE ${Qt5Gui_LIBRARIES}
         PRIVATE ${Qt5Widgets_LIBRARIES}
@@ -522,7 +523,8 @@ target_link_libraries(
         PRIVATE ${Qt5Xml_LIBRARIES}
         PRIVATE ${Qt5Svg_LIBRARIES}
         ${CMAKE_REQUIRED_LIBRARIES}
-        ${ALL_LIBRARIES})
+        ${ALL_LIBRARIES}
+)
 
 if (MSVC)
     set_property(

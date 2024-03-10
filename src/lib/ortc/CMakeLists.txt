@@ -2,21 +2,21 @@ project(OkRTC)
 message(STATUS "Implicit include directories: ${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES}")
 message(STATUS "User-added include directories:")
 get_directory_property(USER_INCLUDE_DIRECTORIES INCLUDE_DIRECTORIES)
-foreach(dir ${USER_INCLUDE_DIRECTORIES})
+foreach (dir ${USER_INCLUDE_DIRECTORIES})
     message(STATUS "  ${dir}")
-endforeach()
+endforeach ()
 include(FetchContent)
 
 #WebRTC
 set(WebRTC_VER "121.6167.5.0")
 
-if(WIN32)
-        set(WebRTC_URL "https://github.com/crow-misia/libwebrtc-bin/releases/download/${WebRTC_VER}/libwebrtc-win-x64.7z")
-elseif(APPLE)
-        set(WebRTC_URL "https://github.com/crow-misia/libwebrtc-bin/releases/download/${WebRTC_VER}/libwebrtc-macos-x64.tar.xz")
-elseif(LINUX)
-        set(WebRTC_URL "https://github.com/crow-misia/libwebrtc-bin/releases/download/${WebRTC_VER}/libwebrtc-linux-x64.tar.xz")
-endif()
+if (WIN32)
+    set(WebRTC_URL "https://github.com/crow-misia/libwebrtc-bin/releases/download/${WebRTC_VER}/libwebrtc-win-x64.7z")
+elseif (APPLE)
+    set(WebRTC_URL "https://github.com/crow-misia/libwebrtc-bin/releases/download/${WebRTC_VER}/libwebrtc-macos-x64.tar.xz")
+elseif (LINUX)
+    set(WebRTC_URL "https://github.com/crow-misia/libwebrtc-bin/releases/download/${WebRTC_VER}/libwebrtc-linux-x64.tar.xz")
+endif ()
 
 message(STATUS "Fetch webrtc")
 FetchContent_Declare(webrtc
@@ -28,14 +28,14 @@ include_directories(${webrtc_SOURCE_DIR}/include)
 include_directories(${webrtc_SOURCE_DIR}/include/third_party/sqlite)
 include_directories(${webrtc_SOURCE_DIR}/include/third_party/abseil-cpp)
 
-if(WIN32)
+if (WIN32)
     if (CMAKE_BUILD_TYPE STREQUAL Release)
-        set(webrtc_LIB  ${webrtc_SOURCE_DIR}/release/webrtc.lib)
+        set(webrtc_LIB ${webrtc_SOURCE_DIR}/release/webrtc.lib)
     else ()
-        set(webrtc_LIB  ${webrtc_SOURCE_DIR}/debug/webrtc.lib)
+        set(webrtc_LIB ${webrtc_SOURCE_DIR}/debug/webrtc.lib)
     endif ()
 else ()
-    set(webrtc_LIB  ${webrtc_SOURCE_DIR}/lib/libwebrtc.a)
+    set(webrtc_LIB ${webrtc_SOURCE_DIR}/lib/libwebrtc.a)
 endif ()
 
 message(STATUS "webrtc_SOURCE_DIR=${webrtc_SOURCE_DIR}")
@@ -47,6 +47,14 @@ if (WIN32)
     add_definitions(-DWEBRTC_WIN)
 elseif (UNIX)
     add_definitions(-DWEBRTC_POSIX)
+endif ()
+
+
+add_subdirectory(${CMAKE_SOURCE_DIR}/3rdparty/gloox ${PROJECT_BINARY_DIR}/3rdparty/gloox)
+if (WIN32)
+    set(gloox_LIB ${PROJECT_BINARY_DIR}/3rdparty/gloox/build/src/gloox.lib)
+elseif (LINUX)
+    set(gloox_LIB gloox)
 endif ()
 
 add_definitions(-DNDEBUG)
@@ -73,17 +81,10 @@ include_directories(${CMAKE_SOURCE_DIR}/3rdparty)
 
 add_library(${PROJECT_NAME} ${${PROJECT_NAME}_SOURCES})
 
-if(WIN32)
-    target_link_libraries(${PROJECT_NAME}
-            PRIVATE ${CMAKE_SOURCE_DIR}/3rdparty/gloox/build/src/gloox.lib
-            PRIVATE ${webrtc_LIB}
-    )
-elseif (LINUX)
-    target_link_libraries(${PROJECT_NAME}
-            PRIVATE ${gloox_LIB}
-            PRIVATE ${webrtc_LIB}
-    )
-endif ()
+target_link_libraries(${PROJECT_NAME}
+        PRIVATE ${gloox_LIB}
+        PRIVATE ${webrtc_LIB}
+)
 
 if (MSVC)
     set_property(
