@@ -1,4 +1,7 @@
 project(UIComponent)
+
+include_directories(${CMAKE_SOURCE_DIR}/plugins/include)
+
 file( GLOB ${PROJECT_NAME}_SRCS *.cpp )
 add_library( ${PROJECT_NAME} ${${PROJECT_NAME}_SRCS} )
 

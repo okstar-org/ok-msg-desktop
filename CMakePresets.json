@@ -1,25 +1,24 @@
 {
-  "version": 3,
-  "configurePresets": [
-    {
-      "hidden": true,
-      "name": "Qt",
-      "cacheVariables": {
-        "CMAKE_PREFIX_PATH": "$env{QTDIR}"
-      },
-      "environment": {
-        "PATH": "$penv{PATH};$env{QTDIR}/bin"
-      },
-      "vendor": {
-        "qt-project.org/Qt": {
-          "checksum": "Sp19WUpde73JS7nK33HZMqVZTyI="
+    "version": 3,
+    "configurePresets": [
+        {
+            "name": "win-x64-debug",
+            "displayName": "Windows x64 Debug",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "architecture": {
+                "value": "x64",
+                "strategy": "external"
+            },
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}"
+            },
+            "vendor": {
+                "microsoft.com/VisualStudioSettings/CMake/1.0": {
+                    "hostOS": [ "Windows" ]
+                }
+            },
+            "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
         }
-      }
-    }
-  ],
-  "vendor": {
-    "qt-project.org/Presets": {
-      "checksum": "+knLrtcP3xTAxZGDu4uUoEIBvBs="
-    }
-  }
+    ]
 }

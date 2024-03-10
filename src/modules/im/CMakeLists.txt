@@ -1,41 +1,12 @@
 project(IM)
+add_definitions(-DOK_${PROJECT_NAME}_MODULE="${PROJECT_NAME}")
 
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTORCC ON)
+set(CMAKE_PREFIX_PATH  ${CMAKE_PREFIX_PATH} ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET})
+message(STATUS "CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}" )
+message(STATUS "PROJECT_BINARY_DIR=${PROJECT_BINARY_DIR}" )
+message(STATUS "VCPKG_TARGET_TRIPLET=${VCPKG_TARGET_TRIPLET}" )
 
 if (WIN32)
-
-    #  # Conan
-    #  find_file(CONAN conanbuildinfo.cmake ../../ NO_CACHE)
-    #  if(CONAN)
-    #    include(${CONAN})
-    #    conan_basic_setup()
-    #  else()
-    #    message(
-    #      FATAL_ERROR
-    #        "Haven't execute conan command: `conan install . -s compiler.runtime=MT --build=missing`"
-    #    )
-    #  endif()
-    #ffmpeg
-    message(STATUS "Fetch ffmpeg")
-    FetchContent_Declare(ffmpeg
-            URL https://github.com/FFmpeg/FFmpeg/archive/refs/tags/n5.1.3.tar.gz
-    )
-    FetchContent_MakeAvailable(ffmpeg)
-
-    message(STATUS "Fetch openal")
-    FetchContent_Declare(openal
-            URL https://openal-soft.org/openal-binaries/openal-soft-1.23.1-bin.zip
-    )
-    FetchContent_MakeAvailable(openal)
-
-    message(STATUS "Fetch libexif")
-    FetchContent_Declare(libexif
-            URL https://github.com/libexif/libexif/releases/download/v0.6.24/libexif-0.6.24.tar.bz2
-    )
-    FetchContent_MakeAvailable(libexif)
-
     message(STATUS "Fetch libsodium")
     FetchContent_Declare(libsodium
             URL https://download.libsodium.org/libsodium/releases/libsodium-1.0.19-stable-msvc.zip
@@ -43,28 +14,44 @@ if (WIN32)
     FetchContent_MakeAvailable(libsodium)
     include_directories(${libsodium_SOURCE_DIR}/include)
     link_directories(${libsodium_SOURCE_DIR}/${ARCH}/${CMAKE_BUILD_TYPE}/static)
+    
+    
+    find_package(FFMPEG REQUIRED)
+    include_directories(${FFMPEG_INCLUDE_DIRS})
+    message(STATUS "FFMPEG_INCLUDE_DIRS=${FFMPEG_INCLUDE_DIRS}")
+    message(STATUS "FFMPEG_LIBRARIES=${FFMPEG_LIBRARIES}")
 
-    message(STATUS "Fetch libvpx")
-    FetchContent_Declare(libvpx
-           URL https://github.com/webmproject/libvpx/archive/refs/tags/v1.11.0.zip
-    )
-    FetchContent_MakeAvailable(libvpx)
-    include_directories(${libvpx_SOURCE_DIR})
 
-    message(STATUS "Fetch sqlite3")
-    FetchContent_Declare(sqlite3
-            URL https://github.com/sqlite/sqlite/archive/refs/tags/vesion-3.45.1.zip
-    )
-    FetchContent_MakeAvailable(sqlite3)
+    find_path(qrencode_INCLUDE_DIR NAMES qrencode.h)
+    set(qrencode_LIBRARIES ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/qrencode.lib)
+    include_directories(${qrencode_INCLUDE_DIR})
+    message(STATUS "QRENCODE_INCLUDE_DIR=${qrencode_INCLUDE_DIR}")
+    message(STATUS "qrencode_LIBRARIES=${qrencode_LIBRARIES}")
+
+    
+#    find_package(OpenAL REQUIRED)
+    set(OpenAL_LIBRARIES ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/OpenAL32.lib)
+    message(STATUS "OpenAL_INCLUDE_DIR=${OpenAL_INCLUDE_DIR}")
+    message(STATUS "OpenAL_LIBRARIES=${OpenAL_LIBRARIES}")
+
+
+#    find_package(sqlite3 REQUIRED)
+    set(sqlite3_LIBRARIES ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/sqlite3.lib)
+    message(STATUS "sqlite3_INCLUDE_DIR=${sqlite3_INCLUDE_DIR}")
+    message(STATUS "sqlite3_LIBRARIES=${sqlite3_LIBRARIES}")
+
+#    find_package(exif REQUIRED)
+    set(libexif_LIBRARIES ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/exif.lib)
+    message(STATUS "libexif_INCLUDE_DIR=${libexif_INCLUDE_DIR}")
+    message(STATUS "libexif_LIBRARIES=${libexif_LIBRARIES}")
 
 elseif (UNIX)
     include(./cmake/Dependencies.cmake)
 endif ()
 
 
-add_definitions(-DOK_${PROJECT_NAME}_MODULE="${PROJECT_NAME}")
-
 include_directories(${PROJECT_BINARY_DIR})
+
 
 set(CMAKE_AUTOUIC_SEARCH_PATHS ./src src/widget src/widget/form)
 
@@ -500,14 +487,35 @@ add_library(
         ${PROJECT_NAME} ${${PROJECT_NAME}_FORMS} ${${PROJECT_NAME}_SOURCES}
         ${${PROJECT_NAME}_QM_FILES} ${${PROJECT_NAME}_RESOURCES})
 
+
+if (WIN32)
+    set(PLATFORM_LIBS d3d11 dxgi shlwapi
+            Iphlpapi dwmapi dmoguids wmcodecdspuuid Winmm
+            amstrmid msdmo strmiids psapi
+            Vfw32 shell32 oleaut32 ole32 user32 advapi32
+            bcrypt Mf Mfplat Mfreadwrite mfuuid dxva2 evr strmbase)
+elseif (UNIX)
+    set(PLATFORM_LIBS z ssl crypto atomic X11)
+endif ()
+
+set(ALL_LIBRARIES ${PLATFORM_LIBS})
+
+
 target_link_libraries(
         ${PROJECT_NAME}
+        PRIVATE ${qrencode_LIBRARIES}
+        PRIVATE ${libexif_LIBRARIES}
+        PRIVATE ${sqlite3_LIBRARIES}
+        PRIVATE ${OpenAL_LIBRARIES}
+        PRIVATE ${FFMPEG_LIBRARIES}
         PRIVATE ${Qt5Core_LIBRARIES}
         PRIVATE ${Qt5Gui_LIBRARIES}
         PRIVATE ${Qt5Widgets_LIBRARIES}
         PRIVATE ${Qt5Network_LIBRARIES}
         PRIVATE ${Qt5Xml_LIBRARIES}
-        PRIVATE ${Qt5Svg_LIBRARIES} ${CMAKE_REQUIRED_LIBRARIES} ${ALL_LIBRARIES})
+        PRIVATE ${Qt5Svg_LIBRARIES}
+        ${CMAKE_REQUIRED_LIBRARIES}
+        ${ALL_LIBRARIES})
 
 if (MSVC)
     set_property(

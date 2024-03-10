@@ -62,14 +62,19 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
 
 
 # ⚙️ 构建开发
+## 配置开发环境 
+- 安装`visual studio 17 2022`
+- 配置
+- 
+
 ## CMake执行构建
 ```shell
 git submodule update --init
 
-cmake -B cmake-build-release
 
-cmake --build cmake-build-release
-# 如果出现 Library not found: mpr
+cmake -B build
+
+cmake --build build --preset win-x64-debug
 ```
 
 

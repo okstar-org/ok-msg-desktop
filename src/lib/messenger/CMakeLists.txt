@@ -9,13 +9,24 @@ file(GLOB ${PROJECT_NAME}_SOURCES *.cpp)
 add_library(${PROJECT_NAME} ${${PROJECT_NAME}_SOURCES})
 
 target_link_libraries(
-  ${PROJECT_NAME}
-  PRIVATE ${Qt5Core_LIBRARIES}
-  PRIVATE ${Qt5Xml_LIBRARIES}
-  PRIVATE ${Qt5Widgets_LIBRARIES})
+        ${PROJECT_NAME}
+        PRIVATE ${Qt5Core_LIBRARIES}
+        PRIVATE ${Qt5Xml_LIBRARIES}
+        PRIVATE ${Qt5Widgets_LIBRARIES}
+)
 
-if(MSVC)
-  set_property(
-    TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY
-    "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-endif(MSVC)
+if (WIN32)
+    target_link_libraries(${PROJECT_NAME}
+            PRIVATE OkRTC
+    )
+elseif (LINUX)
+    target_link_libraries(${PROJECT_NAME}
+            PRIVATE OkRTC
+    )
+endif ()
+
+if (MSVC)
+    set_property(
+            TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY
+            "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif (MSVC)

@@ -2,43 +2,6 @@ project(OkMSG-Desktop)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-
-
-# Qt
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTORCC ON)
-
-find_package(Qt5 COMPONENTS Core
-        Concurrent
-        Widgets
-        Gui
-        Multimedia
-        MultimediaWidgets
-        Network
-        Xml
-        Sql
-        Svg
-        OpenGL
-        LinguistTools
-        UiTools
-        REQUIRED)
-
-option(PLATFORM_EXTENSIONS "Enable platform specific extensions, requires extra dependencies" ON)
-
-# 设置Qt模块包含头文件和库
-include_directories(${CMAKE_PREFIX_PATH}/include)
-link_directories(${CMAKE_PREFIX_PATH}/lib)
-
-# set(QtModules Core Widgets Gui Multimedia MultimediaWidgets Network Concurrent
-# Sql Svg Xml XmlPatterns OpenGL ANGLE) if(UNIX) set(QtModules ${QtModules}
-# DBus) endif(UNIX)
-#
-# foreach (Module ${QtModules}) set(Qt${Module}${QT_VERSION_MAJOR}_INCLUDES
-# ${CMAKE_PREFIX_PATH}/include/Qt${Module})
-# include_directories(${Qt${Module}${QT_VERSION_MAJOR}_INCLUDES}) endforeach
-# (Module)
- 
 add_subdirectory(base)
 add_subdirectory(lib)
 add_subdirectory(modules)
@@ -49,8 +12,7 @@ set(${PROJECT_NAME}_RC_FILES icon/icon.rc)
 # Add QRC files.
 set(${PROJECT_NAME}_QRC_FILES UI/resources/resources.qrc)
 
-set(${PROJECT_NAME}_RESOURCES ${${PROJECT_NAME}_RC_FILES}
-        ${${PROJECT_NAME}_QRC_FILES})
+set(${PROJECT_NAME}_RESOURCES ${${PROJECT_NAME}_RC_FILES} ${${PROJECT_NAME}_QRC_FILES})
 
 set(${PROJECT_NAME}_SOURCES
         main.cpp
@@ -58,81 +20,6 @@ set(${PROJECT_NAME}_SOURCES
         launcher.cpp
 )
 
-if (WIN32)
-    set(PLATFORM_LIBS
-            swresample
-            swscale
-            avdevice
-            avutil
-            avcodec
-            avfilter
-            avformat
-            brotlidec-static
-            brotlienc-static
-            charset
-            exif
-            fdk-aac
-            # freetype
-            iconv
-            lzma
-            mp3lame
-            ogg
-            openh264
-            openjp2
-            opus
-            postproc
-            qrencode
-            sqlite3
-            vorbis
-            vorbisenc
-            vorbisfile
-            webp
-            webpdecoder
-            webpdemux
-            webpmux
-            x264
-            x265
-            sharpyuv
-            OpenAL32
-            vpxmt
-            bz2
-            d3d11
-            dxgi
-            shlwapi
-            Iphlpapi
-            dwmapi
-            dmoguids
-            wmcodecdspuuid
-            Winmm
-            amstrmid
-            msdmo
-            strmiids
-            psapi
-            Vfw32
-            shell32
-            oleaut32
-            ole32
-            user32
-            advapi32
-            bcrypt
-            Mf
-            Mfplat
-            Mfreadwrite
-            mfuuid
-            dxva2
-            evr
-            strmbase)
-elseif (UNIX)
-    set(PLATFORM_LIBS z ssl crypto atomic)
-endif ()
-
-set(ALL_LIBRARIES ${PLATFORM_LIBS})
-
-list(APPEND OK_LIBS UI)
-
-if (ENABLE_MODULE_PAINTER)
-    list(APPEND OK_LIBS Painter)
-endif ()
 
 if (ENABLE_PLUGINS)
     list(APPEND OK_LIBS Plugin)
@@ -161,9 +48,7 @@ endif ()
 
 target_link_libraries(
         ${PROJECT_NAME}
-        PRIVATE webpmux
         PRIVATE ${OK_LIBS}
-        PRIVATE ${DEP_LIBS}
         PRIVATE ${Qt5Core_LIBRARIES}
         PRIVATE ${Qt5Gui_LIBRARIES}
         PRIVATE ${Qt5Network_LIBRARIES}
@@ -171,14 +56,11 @@ target_link_libraries(
         PRIVATE ${Qt5MultimediaWidgets_LIBRARIES}
         PRIVATE ${Qt5Multimedia_LIBRARIES}
         PRIVATE ${Qt5Xml_LIBRARIES}
-        PRIVATE ${Qt5Svg_LIBRARIES} ${ALL_LIBRARIES})
+        PRIVATE ${Qt5Svg_LIBRARIES}
+)
 
 if (MSVC)
     set_property(
             TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY
             "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif (MSVC)
-
-if (LOWER_CMAKE_BUILD_TYPE STREQUAL debug)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE DEBUG_BUILD)
-endif ()

@@ -10,6 +10,9 @@ endif(POLICY CMP0135)
 
 project(OkMSG-Project)
 
+
+
+
 include(cmake/dependencies.cmake)
 include(cmake/build.cmake)
 include(cmake/develop.cmake)
@@ -17,6 +20,8 @@ include(cmake/platform.cmake)
 
 
 include_directories(.)
+include_directories(${PROJECT_SOURCE_DIR}/3rdparty/libvpx)
+
 add_subdirectory(src)
 
 # Add RC files.
@@ -66,8 +71,8 @@ if(WIN32)
           avcodec
           avfilter
           avformat
-          brotlidec-static
-          brotlienc-static
+          brotlidec
+          brotlienc
           charset
           exif
           fdk-aac
@@ -128,9 +133,7 @@ endif()
 
 set(ALL_LIBRARIES ${PLATFORM_LIBS})
 
-if(ENABLE_MODULE_PAINTER)
-  list(APPEND OK_LIBS Painter)
-endif()
+
 
 if(ENABLE_PLUGINS)
   list(APPEND OK_LIBS Plugin)
