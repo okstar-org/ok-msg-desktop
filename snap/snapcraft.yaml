@@ -69,7 +69,6 @@ parts:
     stage:
       - -./usr/lib/$CRAFT_ARCH_TRIPLET/libjpeg.so.8.2.2
     after:
-      - mozjpeg
       - qt
   qt:
     plugin: nil
