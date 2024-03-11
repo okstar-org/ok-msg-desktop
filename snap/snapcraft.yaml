@@ -39,3 +39,9 @@ apps:
       - unity7
       - wayland
       - x11
+
+parts:
+  ok-msg-desktop:
+    plugin: cmake
+    source: .
+    source-type: git
