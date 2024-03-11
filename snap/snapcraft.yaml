@@ -192,7 +192,3 @@ parts:
       - -./usr/libexec
       - -./usr/mkspecs
       - -./usr/modules
-    after:
-      - mozjpeg
-      - openssl
-      - patches
