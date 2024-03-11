@@ -23,9 +23,7 @@
 #include <base/widgets.h>
 
 #if OK_PLUGIN
-#include "UI/component/PluginManagerForm.h"
-#include "lib/settings/OkSettings.h"
-#include "lib/settings/translator.h"
+#include "PluginManagerForm.h"
 #endif
 
 
@@ -38,11 +36,11 @@ ConfigWindow::ConfigWindow(QWidget *parent): QFrame(parent),ui(new Ui::ConfigWin
   setObjectName(qsl("Page:%1").arg(static_cast<int>(PageMenu::setting)));
 
   QString locale = ok::base::OkSettings::getInstance().getTranslation();
-//  settings::Translator::registerHandler(std::bind(&ConfigWindow::retranslateUi, this), this);
   qDebug()<<"locale"<<locale;
+  settings::Translator::registerHandler(std::bind(&ConfigWindow::retranslateUi, this), this);
 
   settings::Translator::translate(OK_UIWindowConfig_MODULE, locale);
-  retranslateUi();
+//  retranslateUi();
 
   auto qss = base::Files::readStringAll(":/qss/plugin.qss");
   setStyleSheet(qss);

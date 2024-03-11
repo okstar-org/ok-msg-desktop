@@ -152,10 +152,10 @@ ProfileForm::ProfileForm(IProfileInfo* profileInfo, QWidget* parent)
 //            this, &ProfileForm::onDeletePassClicked);
 //    connect(bodyUI->deletePassButton, &QPushButton::clicked,
 //            this, &ProfileForm::setPasswordButtonsText);
-    connect(bodyUI->changePassButton, &QPushButton::clicked,
-            this, &ProfileForm::onChangePassClicked);
-    connect(bodyUI->changePassButton, &QPushButton::clicked,
-            this, &ProfileForm::setPasswordButtonsText);
+//    connect(bodyUI->changePassButton, &QPushButton::clicked,
+//            this, &ProfileForm::onChangePassClicked);
+//    connect(bodyUI->changePassButton, &QPushButton::clicked,
+//            this, &ProfileForm::setPasswordButtonsText);
     connect(bodyUI->saveQr, &QPushButton::clicked, this, &ProfileForm::onSaveQrClicked);
     connect(bodyUI->copyQr, &QPushButton::clicked, this, &ProfileForm::onCopyQrClicked);
 
@@ -380,13 +380,13 @@ void ProfileForm::onLogoutClicked()
 
 void ProfileForm::setPasswordButtonsText()
 {
-    if (profileInfo->isEncrypted()) {
-        bodyUI->changePassButton->setText(tr("Change password", "button text"));
+//    if (profileInfo->isEncrypted()) {
+//        bodyUI->changePassButton->setText(tr("Change password", "button text"));
 //        bodyUI->deletePassButton->setVisible(true);
-    } else {
-        bodyUI->changePassButton->setText(tr("Set profile password", "button text"));
+//    } else {
+//        bodyUI->changePassButton->setText(tr("Set profile password", "button text"));
 //        bodyUI->deletePassButton->setVisible(false);
-    }
+//    }
 }
 
 void ProfileForm::onCopyQrClicked()

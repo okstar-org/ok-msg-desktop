@@ -82,10 +82,12 @@ add_library(${PROJECT_NAME}
     ${${PROJECT_NAME}_RESOURCES}
     ${${PROJECT_NAME}_QM_FILES}
     ${${PROJECT_NAME}_SOURCES})
+
 target_link_libraries(${PROJECT_NAME}
         PRIVATE ${Qt5Widgets_LIBRARIES}
-
+        PRIVATE ${Qt5Xml_LIBRARIES}
 )
+
 if(MSVC)
     set_property(TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif (MSVC)
