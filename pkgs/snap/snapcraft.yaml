@@ -1,0 +1,41 @@
+name: ok-msg-desktop
+adopt-info: ok-msg
+icon: src/UI/resources/logo/icon-512@2x.png
+
+base: core22
+grade: stable
+confinement: strict
+compression: lzo
+
+architectures:
+  - build-on: amd64
+#  - build-on: arm64
+#  - build-on: armhf
+#  - build-on: ppc64el
+
+apps:
+  ok-msg-desktop:
+    command: bin/desktop-launch ok-msg-desktop
+    common-id: org.okstar.ok-msg-desktop
+    desktop: usr/share/applications/okstar_ok-msg-desktop.desktop
+    environment:
+      # Tell glib to use portals on file associations handling.
+      GTK_USE_PORTAL: 1
+      # Use sandboxed ibus api
+      IBUS_USE_PORTAL: 1
+    plugs:
+      - alsa
+      - audio-playback
+      - audio-record
+      - camera
+      - desktop
+      - desktop-legacy
+      - hardware-observe
+      - home
+      - network
+      - network-status
+      - opengl
+      - removable-media
+      - unity7
+      - wayland
+      - x11
