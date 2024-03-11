@@ -49,19 +49,13 @@ elseif (UNIX)
     add_definitions(-DWEBRTC_POSIX)
 endif ()
 
+# === Gloox ===
 if (WIN32)
-    set(BUILD_SHARED_LIBS OFF)
-else ()
-    set(BUILD_SHARED_LIBS ON)
+    add_definitions(-DHAVE_OPENSSL=0 -D_WIN32 -DWIN32 -D_WINDOWS -D_UNICODE)
 endif ()
-
-add_definitions(-DHAVE_OPENSSL=0 -D_WIN32 -DWIN32 -D_WINDOWS -D_UNICODE)
 add_subdirectory(${CMAKE_SOURCE_DIR}/3rdparty/gloox ${PROJECT_BINARY_DIR}/3rdparty/gloox)
-#if (WIN32)
-#    set(gloox_LIB gloox)
-#elseif (LINUX)
-    set(gloox_LIB gloox)
-#endif ()
+set(gloox_LIB gloox)
+# ==== Gloox ====
 
 add_definitions(-DNDEBUG)
 
