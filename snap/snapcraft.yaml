@@ -51,3 +51,4 @@ parts:
       - libqt5svg5-dev
       - libqt5xml5
       - libqt5xmlpatterns5-dev
+      - libqt5opengl5-dev
