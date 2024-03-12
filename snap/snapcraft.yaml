@@ -61,8 +61,13 @@ parts:
       - libsqlite3-dev
       - libsqlcipher-dev
 #      X11
-      - libxcb*
-      - libxkb*
+      - libxcb1-dev
+      - libxcb-glx0-dev
+      - libxcb-xkb-dev
+      - libxcb-xv0-dev
+      - libxkbcommon-x11-dev
+      - libxkbcommon-dev
+      - libxkbfile-dev
       - libfontconfig1-dev
       - libfreetype6-dev
       - libx11-dev
