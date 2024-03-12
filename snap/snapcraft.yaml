@@ -45,5 +45,5 @@ parts:
     plugin: cmake
     source: .
     source-type: git
-    after:
+    build-snaps:
       - qt515-core20
