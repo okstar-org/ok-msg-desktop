@@ -45,7 +45,7 @@
    <item>
     <widget class="QPushButton" name="addFriend">
      <property name="text">
-      <string>Add friend</string>
+      <string>Add friends</string>
      </property>
     </widget>
    </item>

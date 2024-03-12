@@ -19,6 +19,7 @@ if(WIN32)
     message(STATUS "LINK_STATIC_QT=${LINK_STATIC_QT}")
 endif()
 
+
 # Qt
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
@@ -44,4 +45,8 @@ if(UNIX)
     set(Qt5LinuxAccessibilitySupport_INCLUDES
             ${CMAKE_PREFIX_PATH}/include/QtLinuxAccessibilitySupport)
 endif()
+
+
+# 开启插件（ON/OFF）
+option(ENABLE_PLUGINS "Enable plugins" ON)
 

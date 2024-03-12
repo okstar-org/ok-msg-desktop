@@ -1421,8 +1421,21 @@ bool PluginHost::decryptMessageElement(int account, QDomElement &message) {
 }
 
 bool PluginHost::encryptMessageElement(int account, QDomElement &message) {
+  if(plugin_.isNull()){
+    qWarning() <<"Unable find plugin";
+    return false;
+  }
+
   auto es = qobject_cast<ok::plugin::EncryptionSupport *>(plugin_);
-  return es && es->encryptMessageElement(account, message);
+  if(!es){
+    qWarning() <<"Unable find plugin for EncryptionSupport";
+    return false;
+  }
+
+  qDebug()<<"encryptMessageElement ...";
+  auto encrypted = es->encryptMessageElement(account, message);
+  qDebug()<<"encryptMessageElement=> "<<encrypted;
+  return true;
 }
 
 /**
