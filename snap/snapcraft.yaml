@@ -48,3 +48,6 @@ parts:
     build-packages:
       - qtbase5-dev
       - qtmultimedia5-dev
+      - libqt5svg5-dev
+      - libqt5xml5
+      - libqt5xmlpatterns5-dev
