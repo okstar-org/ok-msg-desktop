@@ -17,6 +17,7 @@ if(WIN32)
 endif()
 
 # webrtc
+include(FetchContent)
 set(WebRTC_VER "121.6167.5.0")
 
 if(WIN32)
@@ -33,7 +34,6 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(webrtc)
 
 # absl
-include(FetchContent)
 message(STATUS "Fetch absl")
 set(ABSL_PROPAGATE_CXX_STD ON)
 FetchContent_Declare(absl
