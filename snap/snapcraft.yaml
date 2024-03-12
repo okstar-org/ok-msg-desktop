@@ -46,4 +46,4 @@ parts:
     source: .
     source-type: git
     after:
-      - desktop-qt
+      - qt515-core20
