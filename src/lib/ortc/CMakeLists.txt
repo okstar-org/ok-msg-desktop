@@ -5,6 +5,7 @@ get_directory_property(USER_INCLUDE_DIRECTORIES INCLUDE_DIRECTORIES)
 foreach (dir ${USER_INCLUDE_DIRECTORIES})
     message(STATUS "  ${dir}")
 endforeach ()
+
 include(FetchContent)
 
 #WebRTC
@@ -49,21 +50,27 @@ elseif (UNIX)
     add_definitions(-DWEBRTC_POSIX)
 endif ()
 
+
+# ==== Gloox ====
 if (WIN32)
     set(BUILD_SHARED_LIBS OFF)
+    add_definitions(-DHAVE_OPENSSL=0 -D_WIN32 -DWIN32 -D_WINDOWS -D_UNICODE)
 else ()
     set(BUILD_SHARED_LIBS ON)
 endif ()
 
-add_definitions(-DHAVE_OPENSSL=0 -D_WIN32 -DWIN32 -D_WINDOWS -D_UNICODE)
-add_subdirectory(${CMAKE_SOURCE_DIR}/3rdparty/gloox ${PROJECT_BINARY_DIR}/3rdparty/gloox)
-#if (WIN32)
-#    set(gloox_LIB gloox)
-#elseif (LINUX)
-    set(gloox_LIB gloox)
-#endif ()
+add_definitions(
+        # -DQSSLSOCKET_DEBUG
+        -DLOG_XMPP # xmpp logs
+        -DWANT_PING # xmpp ping
+        -DENABLE_SEND_RAW_XML # xmpp send raw xmls
+        -DLOG_TO_FILE)
 
-add_definitions(-DNDEBUG)
+add_subdirectory(${CMAKE_SOURCE_DIR}/3rdparty/gloox ${PROJECT_BINARY_DIR}/3rdparty/gloox)
+set(gloox_LIB gloox)
+# ==== Gloox ====
+
+
 
 set(${PROJECT_NAME}_SOURCES
         webrtc/ok_videosink.h

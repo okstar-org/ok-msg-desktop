@@ -15,9 +15,9 @@ project(OkMSG-Project)
 
 
 include(cmake/dependencies.cmake)
+include(cmake/platform.cmake)
 include(cmake/build.cmake)
 include(cmake/develop.cmake)
-include(cmake/platform.cmake)
 
 
 include_directories(.)
