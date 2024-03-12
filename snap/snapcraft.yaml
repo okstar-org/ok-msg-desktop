@@ -1,6 +1,7 @@
 name: ok-msg-desktop
-adopt-info: ok-msg
+version: git
 icon: src/UI/resources/logo/icon-512@2x.png
+adopt-info: ok-msg
 
 base: core22
 grade: stable
