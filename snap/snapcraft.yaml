@@ -47,3 +47,4 @@ parts:
     source-type: git
     build-packages:
       - qtbase5-dev
+      - qtmultimedia5-dev
