@@ -1,4 +1,5 @@
 name: ok-msg-desktop
+summary: OkMSG是由OkStar(okstar.org)社区开发和维护的注重数据安全与保护的企业通讯协同工具。
 version: git
 icon: src/UI/resources/logo/icon-512@2x.png
 adopt-info: ok-msg
