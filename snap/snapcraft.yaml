@@ -20,7 +20,7 @@ apps:
   ok-msg-desktop:
     command: bin/desktop-launch ok-msg-desktop
     common-id: org.okstar.ok-msg-desktop
-    desktop: usr/share/applications/okstar_ok-msg-desktop.desktop
+    desktop: usr/share/applications/ok-msg-desktop.desktop
     environment:
       # Tell glib to use portals on file associations handling.
       GTK_USE_PORTAL: 1
@@ -108,3 +108,10 @@ parts:
       - libqt5opengl5-dev
       - qttools5-dev
       - qttools5-dev-tools
+    cmake-generator: Ninja
+    cmake-parameters:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DCMAKE_INSTALL_PREFIX=/usr
+      - -DDESKTOP_APP_USE_PACKAGED=ON
+      - -DDESKTOP_APP_USE_PACKAGED_LAZY=ON
+      - -DDESKTOP_LAUNCHER_BASENAME=ok-msg-desktop
