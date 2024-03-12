@@ -49,34 +49,45 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
 
 # 🖥️ 支持平台
 > 🐧 Linux
-- Ubuntu  已支持 文档：[Build On Ubuntu](./docs/BUILD-linux.md "Linux 构建")
-- Fedora  计划中
+- Ubuntu  已支持
 
 > 🪟 Windows
-- Windows10+ 已支持 文档：[Build On Windows](./docs/building/BUILD-win.md "Windows 构建")。
+- Windows10+ 已支持
 
 > 🍎 macOS
-- 计划中   文档：[Build On macOS](./docs/building/BUILD-macos.md "MacOS 构建")。
+- 计划中
 
 # 🧰 编译环境
-
+✅ 支持 GCC On Linux
+✅ 支持 Clang On Linux
+✅ 支持 MSVC On Windows
+✅ 支持 Clang On Windows
+📌 支持 MinGW On Windows 计划中
+📌 支持 Clang On macOS 计划中
 
 # ⚙️ 构建开发
-## CMake执行构建
+- C++版本：C++20
+- Qt版本：Qt5.15.x
+
+## Windows 
+- 安装`visual studio 17 2022`
+
+- 配置环境变量
+```shell
+VCPKG_ROOT=E:\Program Files\Microsoft Visual Studio\2022\Community\VC\vcpkg
+#可选，默默C盘
+VCPKG_DOWNLOADS=下载路径
+```
+
+- CMake执行构建
 ```shell
 git submodule update --init
-
-cmake -B cmake-build-release
-
-cmake --build cmake-build-release
-# 如果出现 Library not found: mpr
+cmake -B build --preset win-x64-{debug|release}
+cmake --build build 
 ```
 
 
 # ⚒️ 开发规范
-
-- Git  [Git规范](./docs/spec/git.md)
-- Format [代码格式化](./docs/spec/format.md)
 - 开发者规约（进行中）
 
 # 🗓️ 版本规则
@@ -97,19 +108,6 @@ cmake --build cmake-build-release
 </div>
 
 > 欢迎大家 Clone 本项目，捐赠收入将用于对贡献者的奖励。
-
-# ⏰ 任务规划
-- 2023年 
-  1. 完成项目基本功能 
-  2. 开启社区基本建设
-  3. 开启社区项目内测
-- 2024年
-  1. 完成对各系统平台的支持
-  2. 登录到各平台面向消费者
-  3. 开启商业定制之路
-
-> 【金山文档】 OkMSG任务列表 https://kdocs.cn/l/csib86aYwx0P
-
 
 # 🏭 社区建设
 

@@ -349,16 +349,16 @@ Profile does not contain your history.</string>
               </property>
              </widget>
             </item>
-            <item>
-             <widget class="QPushButton" name="changePassButton">
-              <property name="accessibleDescription">
-               <string>Change profile password</string>
-              </property>
-              <property name="text">
-               <string>Change password</string>
-              </property>
-             </widget>
-            </item>
+<!--            <item>-->
+<!--             <widget class="QPushButton" name="changePassButton">-->
+<!--              <property name="accessibleDescription">-->
+<!--               <string>Change profile password</string>-->
+<!--              </property>-->
+<!--              <property name="text">-->
+<!--               <string>Change password</string>-->
+<!--              </property>-->
+<!--             </widget>-->
+<!--            </item>-->
             <item>
              <widget class="QPushButton" name="logoutButton">
               <property name="toolTip">

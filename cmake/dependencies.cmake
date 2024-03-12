@@ -6,7 +6,11 @@ if(WIN32)
     endif()
     message(STATUS "QT_DIR=${QT_DIR}")
     set(CMAKE_PREFIX_PATH ${QT_DIR})
-    set(CMAKE_BUILD_TYPE "Release")
+
+    # 设置Qt模块包含头文件和库
+    include_directories(${CMAKE_PREFIX_PATH}/include)
+    link_directories(${CMAKE_PREFIX_PATH}/lib)
+    option(PLATFORM_EXTENSIONS "Enable platform specific extensions, requires extra dependencies" ON)
 
     # 根据Qt类型，设置动态(安装默认)或者静态(下载的静态版)，默认从环境变量读取
     set(LINK_STATIC_QT $ENV{LINK_STATIC_QT})
@@ -16,29 +20,34 @@ if(WIN32)
     message(STATUS "LINK_STATIC_QT=${LINK_STATIC_QT}")
 endif()
 
-# webrtc
-include(FetchContent)
-set(WebRTC_VER "121.6167.5.0")
 
-if(WIN32)
-set(WebRTC_URL "https://github.com/crow-misia/libwebrtc-bin/releases/download/${WebRTC_VER}/libwebrtc-win-${ARCH}.7z")
-else()
-set(WebRTC_URL "https://github.com/crow-misia/libwebrtc-bin/releases/download/${WebRTC_VER}/libwebrtc-${PLATFORM}-${ARCH}.tar.xz")
+# Qt
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
+
+find_package(Qt5 COMPONENTS Core
+        Concurrent
+        Widgets
+        Gui
+        Multimedia
+        MultimediaWidgets
+        Network
+        Xml
+        Sql
+        Svg
+        OpenGL
+        LinguistTools
+        UiTools
+        REQUIRED)
+
+if(UNIX)
+    include_directories(${Qt5LinuxAccessibilitySupport_INCLUDES})
+    set(Qt5LinuxAccessibilitySupport_INCLUDES
+            ${CMAKE_PREFIX_PATH}/include/QtLinuxAccessibilitySupport)
 endif()
 
-message(STATUS "Fetch webrtc")
-FetchContent_Declare(
-        webrtc
-        URL ${WebRTC_URL}
-)
-FetchContent_MakeAvailable(webrtc)
 
-# absl
-message(STATUS "Fetch absl")
-set(ABSL_PROPAGATE_CXX_STD ON)
-FetchContent_Declare(absl
-      GIT_REPOSITORY https://github.com/abseil/abseil-cpp.git
-      GIT_TAG lts_2023_08_02
-      #  URL https://github.com/abseil/abseil-cpp/releases/download/20220623.2/abseil-cpp-20220623.2.tar.gz
-)
-FetchContent_MakeAvailable(absl)
+# 开启插件（ON/OFF）
+option(ENABLE_PLUGINS "Enable plugins" ON)
+

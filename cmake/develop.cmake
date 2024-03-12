@@ -61,43 +61,9 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}"
 # set(CMAKE_PREFIX_PATH ${QT_DIR}) message(STATUS "CMAKE_PREFIX_PATH="
 # ${CMAKE_PREFIX_PATH})
 
-# Qt
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTORCC ON)
-
-find_package(
-  Qt5
-  COMPONENTS Core
-             Concurrent
-             Widgets
-             Gui
-             Multimedia
-             MultimediaWidgets
-             Network
-             Xml
-             Sql
-             Svg
-             OpenGL
-             DBus
-             LinguistTools
-             UiTools
-  REQUIRED)
 
 option(PLATFORM_EXTENSIONS "Enable platform specific extensions, requires extra dependencies" ON)
 
-# 设置Qt模块包含头文件和库
-include_directories(${CMAKE_PREFIX_PATH}/include)
-link_directories(${CMAKE_PREFIX_PATH}/lib)
-
-# set(QtModules Core Widgets Gui Multimedia MultimediaWidgets Network Concurrent
-# Sql Svg Xml XmlPatterns OpenGL ANGLE) if(UNIX) set(QtModules ${QtModules}
-# DBus) endif(UNIX)
-#
-# foreach (Module ${QtModules}) set(Qt${Module}${QT_VERSION_MAJOR}_INCLUDES
-# ${CMAKE_PREFIX_PATH}/include/Qt${Module})
-# include_directories(${Qt${Module}${QT_VERSION_MAJOR}_INCLUDES}) endforeach
-# (Module)
 
 if(WIN32)
   set(ARCH "x64")
@@ -137,10 +103,6 @@ elseif(APPLE)
   message(ERROR "暂不支持 Not supported temporarily")
 endif()
 
-# conan
-include_directories(${PROJECT_SOURCE_DIR}/build/deps/include)
-link_directories(${PROJECT_SOURCE_DIR}/build/deps/lib)
-
 # Gloox
 add_definitions(
   # -DQSSLSOCKET_DEBUG
@@ -170,10 +132,6 @@ if(ENABLE_PLUGINS)
   endif()
 endif()
 
-if(ENABLE_MODULE_PAINTER)
-  add_definitions(-DOK_MODULE_PAINTER)
-endif()
-
 # config.h.in -> config.h
 configure_file(${PROJECT_SOURCE_DIR}/config.h.in
                ${PROJECT_BINARY_DIR}/config.h @ONLY NEWLINE_STYLE LF)
@@ -181,11 +139,7 @@ include_directories(${PROJECT_BINARY_DIR})
 
 add_definitions(-DHAVE_CONFIG)
 
-if(UNIX)
-  include_directories(${Qt5LinuxAccessibilitySupport_INCLUDES})
-  set(Qt5LinuxAccessibilitySupport_INCLUDES
-      ${CMAKE_PREFIX_PATH}/include/QtLinuxAccessibilitySupport)
-endif()
+
 
 # 设置WebRTC位置
 #set(WebRTC_DIR ${PROJECT_SOURCE_DIR}/3rdparty/webrtc/libwebrtc-${PLATFORM_ARCH})

@@ -1,4 +1,4 @@
 [submodule "3rdparty/gloox"]
 	path = 3rdparty/gloox
-	url = https://gitee.com/okstar-org/ok-gloox.git
+	url = https://github.com/okstar-org/ok-gloox.git
 	branch = main

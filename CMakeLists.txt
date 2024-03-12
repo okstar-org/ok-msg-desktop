@@ -7,8 +7,12 @@ endif(POLICY CMP0091)
 if(POLICY CMP0135)
   cmake_policy(SET CMP0135 NEW)
 endif(POLICY CMP0135)
+include(FetchContent)
 
 project(OkMSG-Project)
+
+
+
 
 include(cmake/dependencies.cmake)
 include(cmake/build.cmake)
@@ -17,6 +21,8 @@ include(cmake/platform.cmake)
 
 
 include_directories(.)
+include_directories(${PROJECT_SOURCE_DIR}/3rdparty/libvpx)
+
 add_subdirectory(src)
 
 # Add RC files.
@@ -57,82 +63,6 @@ execute_process(
 qt5_add_resources(${PROJECT_NAME}_RESOURCES
         ${PROJECT_BINARY_DIR}/translations.qrc)
 
-if(WIN32)
-  set(PLATFORM_LIBS
-          swresample
-          swscale
-          avdevice
-          avutil
-          avcodec
-          avfilter
-          avformat
-          brotlidec-static
-          brotlienc-static
-          charset
-          exif
-          fdk-aac
-
-          # freetype
-          iconv
-          lzma
-          mp3lame
-          ogg
-          openh264
-          openjp2
-          opus
-          postproc
-          qrencode
-          sqlite3
-          vorbis
-          vorbisenc
-          vorbisfile
-          webp
-          webpdecoder
-          webpdemux
-          webpmux
-          x264
-          x265
-          sharpyuv
-          OpenAL32
-          vpxmt
-          bz2
-          d3d11
-          dxgi
-          shlwapi
-          Iphlpapi
-          dwmapi
-          dmoguids
-          wmcodecdspuuid
-          Winmm
-          amstrmid
-          msdmo
-          strmiids
-          psapi
-          Vfw32
-          shell32
-          oleaut32
-          ole32
-          user32
-          advapi32
-          bcrypt
-          Mf
-          Mfplat
-          Mfreadwrite
-          mfuuid
-          dxva2
-          evr
-          strmbase)
-elseif(UNIX)
-  set(PLATFORM_LIBS z ssl crypto atomic)
-endif()
-
-set(ALL_LIBRARIES ${PLATFORM_LIBS})
-
-if(ENABLE_MODULE_PAINTER)
-  list(APPEND OK_LIBS Painter)
-endif()
-
 if(ENABLE_PLUGINS)
-  list(APPEND OK_LIBS Plugin)
   include(${PROJECT_SOURCE_DIR}/plugins/plugins.cmake)
 endif()
