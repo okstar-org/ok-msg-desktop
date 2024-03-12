@@ -56,9 +56,11 @@ parts:
       - libkrb5-dev
       - libssl-dev
       - libcrypt-dev
+        # sqlite sqlcipher
       - libsodium-dev
       - libsqlite3-dev
       - libsqlcipher-dev
+#      X11
       - libxcb*
       - libxkb*
       - libfontconfig1-dev
@@ -79,9 +81,6 @@ parts:
       - libpulse-dev
       - libpulse-mainloop-glib0
       - libopenal-dev
-        # sqlite sqlcipher
-      - libsqlite3-dev
-      - libsqlcipher-dev
 #      FFMPEG
       - libvpx-dev
       - libjpeg-dev
@@ -92,8 +91,6 @@ parts:
       - libavcodec-dev
       - libavdevice-dev
       - libqrencode-dev
-      - libsodium-dev
-      - libopenal-dev
 #      Qt
       - qtbase5-dev
       - qtmultimedia5-dev
@@ -101,5 +98,4 @@ parts:
       - libqt5xml5
       - libqt5xmlpatterns5-dev
       - libqt5opengl5-dev
-      - linguist-qt5
       - linguist-qt6
