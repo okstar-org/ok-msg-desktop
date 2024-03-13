@@ -139,7 +139,6 @@ parts:
       - libglib2.0-0
       - libglx0
       - libgl1
-      - libGL
       - libgtk-3-0
       - libharfbuzz0b
       - libice6
