@@ -125,13 +125,21 @@ parts:
       - libqt5opengl5-dev
       - qttools5-dev
       - qttools5-dev-tools
+      - libsignal-protocol-c-dev
     stage-packages:
+      - libqt5core5a
+      - libqt5gui5
+      - libqt5widgets5
+      - libdouble-conversion3
+      - libmd4c0
       - libdbus-1-3
       - libegl1
       - libfontconfig1
       - libfreetype6
       - libglib2.0-0
       - libglx0
+      - libgl1
+      - libGL
       - libgtk-3-0
       - libharfbuzz0b
       - libice6
