@@ -147,6 +147,7 @@ parts:
       - libglx0
       - libgl1
       - libglu1-mesa
+      - freeglut3
       - libgtk-3-0
       - libharfbuzz0b
       - libice6
@@ -156,7 +157,6 @@ parts:
       - libpng16-16
       - libsm6
       - libvulkan1
-      - libglut
       - libx11-6
       - libx11-xcb1
       - libxcb1
