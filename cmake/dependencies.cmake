@@ -4,6 +4,7 @@ set(ORGANIZATION_DOMAIN "okstar.org")
 set(APPLICATION_ID "org.okstar.ok-msg-desktop")
 set(APPLICATION_NAME "OkMSG-Desktop")
 set(APPLICATION_SHORT_NAME "OkMSG")
+set(APPLICATION_EXE_NAME "ok-msg-desktop")
 set(SUPPORT_EMAIL "support@okstar.org")
 
 add_definitions(
