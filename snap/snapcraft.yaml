@@ -142,6 +142,7 @@ parts:
       - libglib2.0-0
       - libglx0
       - libgl1
+      - libglu1-mesa
       - libgtk-3-0
       - libharfbuzz0b
       - libice6
