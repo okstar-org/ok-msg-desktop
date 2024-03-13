@@ -244,9 +244,7 @@ parts:
       - -DCMAKE_BUILD_TYPE=Release
       - -DCMAKE_INSTALL_PREFIX=/usr
       - -DDESKTOP_APP_USE_PACKAGED=ON
-      - -DDESKTOP_APP_USE_PACKAGED_LAZY=ON
       - -DDESKTOP_LAUNCHER_BASENAME=ok-msg-desktop
-
     prime:
       - -./usr/bin
       - -./usr/doc
