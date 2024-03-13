@@ -48,6 +48,9 @@ parts:
     plugin: cmake
     source: .
     source-type: git
+    parse-info: [ usr/share/metainfo/ok-msg-desktop.metainfo.xml ]
+    build-environment:
+      - LD_LIBRARY_PATH: $CRAFT_STAGE/usr/lib/$CRAFT_ARCH_TRIPLET${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
     build-packages:
       - libpcre2-dev
       - libudev-dev
@@ -56,10 +59,11 @@ parts:
       - libdrm-dev
       - libgbm-dev
       - libgtk-3-dev
+      - freeglut3-dev
       - libkrb5-dev
+        # sqlite sqlcipher
       - libssl-dev
       - libcrypt-dev
-        # sqlite sqlcipher
       - libsodium-dev
       - libsqlite3-dev
       - libsqlcipher-dev
@@ -242,6 +246,7 @@ parts:
       - -DDESKTOP_APP_USE_PACKAGED=ON
       - -DDESKTOP_APP_USE_PACKAGED_LAZY=ON
       - -DDESKTOP_LAUNCHER_BASENAME=ok-msg-desktop
+
     prime:
       - -./usr/bin
       - -./usr/doc

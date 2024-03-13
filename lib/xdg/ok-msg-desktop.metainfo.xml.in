@@ -12,11 +12,11 @@
         <category>Network</category>
         <category>InstantMessaging</category>
     </categories>
-    <update_contact>johnprestonmail_at_gmail.com</update_contact>
-    <developer_name>John Preston</developer_name>
-    <url type="homepage">https://desktop.telegram.org/</url>
-    <url type="bugtracker">https://github.com/telegramdesktop/tdesktop/issues</url>
-    <url type="translate">https://translations.telegram.org/</url>
+    <update_contact>cto@chuanshaninfo.com</update_contact>
+    <developer_name>okstar.org</developer_name>
+    <url type="homepage">https://github.com/okstar-org</url>
+    <url type="bugtracker">https://github.com/okstar-org/ok-msg-desktop/issues</url>
+    <url type="translate">https://translations.okstar.org/</url>
     <screenshots>
       <screenshot type="default">
         <image>https://raw.githubusercontent.com/okstar-org/ok-msg-desktop/main/docs/assets/preview.png</image>
