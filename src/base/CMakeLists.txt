@@ -40,7 +40,8 @@ elseif(LINUX)
       system/linux/autorun_xdg.cpp)
 endif()
 
-add_library(${PROJECT_NAME} ${${PROJECT_NAME}_SOURCES})
+add_library(${PROJECT_NAME} STATIC
+        ${${PROJECT_NAME}_SOURCES})
 
 target_link_libraries(
   ${PROJECT_NAME}

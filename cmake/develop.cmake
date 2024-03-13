@@ -64,7 +64,6 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}"
 
 option(PLATFORM_EXTENSIONS "Enable platform specific extensions, requires extra dependencies" ON)
 
-
 if(WIN32)
   set(ARCH "x64")
   string(TOLOWER ${CMAKE_C_PLATFORM_ID}-${ARCH} PLATFORM_ARCH)

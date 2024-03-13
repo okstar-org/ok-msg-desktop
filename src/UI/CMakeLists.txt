@@ -5,7 +5,7 @@ add_subdirectory(window)
 add_subdirectory(widget)
 
 
-add_library(${PROJECT_NAME})
+add_library(${PROJECT_NAME} STATIC)
 
 target_link_libraries(${PROJECT_NAME}
         PUBLIC UICore

@@ -50,6 +50,7 @@ elseif (UNIX)
 endif ()
 
 # === Gloox ===
+set(BUILD_SHARED_LIBS ON)
 if (WIN32)
     add_definitions(-DHAVE_OPENSSL=0 -D_WIN32 -DWIN32 -D_WINDOWS -D_UNICODE)
 endif ()
@@ -79,7 +80,8 @@ set(${PROJECT_NAME}_SOURCES
 
 include_directories(${CMAKE_SOURCE_DIR}/3rdparty)
 
-add_library(${PROJECT_NAME} ${${PROJECT_NAME}_SOURCES})
+add_library(${PROJECT_NAME} STATIC
+        ${${PROJECT_NAME}_SOURCES})
 
 target_link_libraries(${PROJECT_NAME}
         PRIVATE ${gloox_LIB}

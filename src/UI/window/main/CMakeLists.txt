@@ -77,7 +77,7 @@ qt5_add_resources(
         ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.qrc
 )
 
-add_library(${PROJECT_NAME}
+add_library(${PROJECT_NAME} STATIC
     ${${PROJECT_NAME}_FORMS}
     ${${PROJECT_NAME}_RESOURCES}
     ${${PROJECT_NAME}_QM_FILES}

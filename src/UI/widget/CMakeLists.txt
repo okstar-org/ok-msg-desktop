@@ -1,9 +1,9 @@
 project(UIWidget)
 
-
 set(${PROJECT_NAME}_RESOUCRES MoveableBar.cpp)
 
-add_library(${PROJECT_NAME} ${${PROJECT_NAME}_RESOUCRES})
+add_library(${PROJECT_NAME} STATIC
+        ${${PROJECT_NAME}_RESOUCRES})
 
 target_link_libraries(${PROJECT_NAME}
         PRIVATE ${Qt5Core_LIBRARIES}

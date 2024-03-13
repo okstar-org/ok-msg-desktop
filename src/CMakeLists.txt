@@ -23,12 +23,11 @@ set(${PROJECT_NAME}_SOURCES
 list(APPEND OK_LIBS
         UI
         IM
-        IMCore
-        OkRTC
-        Session
-        Settings
-        Network
-        Backend
+        OkIMCore
+        OkSession
+        OkSettings
+        OkNetwork
+        OkBackend
         OkBase
 )
 
