@@ -130,6 +130,9 @@ parts:
       - libqt5core5a
       - libqt5gui5
       - libqt5widgets5
+      - libqt5svg5
+      - libqt5xml5
+      - libsdl2-2.0-0
       - libdouble-conversion3
       - libmd4c0
       - libdbus-1-3
@@ -167,7 +170,70 @@ parts:
       - libxcursor1
       - libxkbcommon0
       - libxkbcommon-x11-0
+      - libxv1
+      - libxss1
       - zlib1g
+      - libflac8
+      - ocl-icd-libopencl1
+      - libaom3
+      - libasound2
+      - libasyncns0
+      - libavc1394-0
+      - libavcodec58
+      - libavdevice58
+      - libavfilter7
+      - libavformat58
+      - libavutil56
+      - libblas3
+      - libbluray2
+      - libbs2b0
+      - libcaca0
+      - libcdio19
+      - libcdio-cdda2
+      - libcdio-paranoia2
+      - libchromaprint1
+      - libcodec2-1.0
+      - libdav1d5
+      - libdc1394-25
+      - libdecor-0-0
+      - libexif12
+      - libflite1
+      - libgfortran5
+      - libgme0
+      - libgomp1
+      - libgsm1
+      - libiec61883-0
+      - libjack-jackd2-0
+      - liblapack3
+      - liblilv-0-0
+      - libmfx1
+      - libmp3lame0
+      - libmpg123-0
+      - libmysofa1
+      - libnorm1
+      - libnuma1
+      - libogg0
+      - libopenal1
+      - libopenjp2-7
+      - libopenmpt0
+      - libopus0
+      - libpgm-5.3-0
+      - libpocketsphinx3
+      - libpostproc55
+      - libpulse0
+      - libqrencode4
+      - libquadmath0
+      - libvpx7
+      - libwebpmux3
+      - libx264-163
+      - libx265-199
+      - libswscale5
+      - libswresample3
+      - libsqlcipher0
+      - libvorbis0a
+      - libvorbisenc2
+      - libvorbisfile3
+      - libspeex1
     cmake-generator: Ninja
     cmake-parameters:
       - -DCMAKE_BUILD_TYPE=Release
