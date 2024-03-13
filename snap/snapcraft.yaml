@@ -18,7 +18,7 @@ architectures:
 
 apps:
   ok-msg-desktop:
-    command: bin/desktop-launch ok-msg-desktop
+    command: ok-msg-desktop
     common-id: org.okstar.ok-msg-desktop
     desktop: usr/share/applications/ok-msg-desktop.desktop
     environment:
