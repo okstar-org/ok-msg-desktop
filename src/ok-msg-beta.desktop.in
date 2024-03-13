@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Name=OkMSG
+GenericName=OkMSG
+Comment=OkMSG is a cross platform enterprise communication collaboration tool maintained by the OkStar.org community, supporting independent and private deployment of an open-source project that integrates multiple functions such as instant messaging, voice and video calls, file sending, and meetings.
+Comment[zh_CN]=﻿OkMSG 是由OkStar.org社区维护的跨平台的企业通讯协同工具，支持独立私有化部署的集即时消息、语音和视频通话、发送文件、会议等多种功能于一身的开源项目。
+Exec=@EXECUTABLE@ %U
+StartupNotify=true
+Terminal=false
+Icon=@ICON_PATH@
+Type=Application
+Categories=Office;Network;
+X-KDE-DBUS-Restricted-Interfaces=org.kde.kwin.Screenshot,org.kde.KWin.ScreenShot2
