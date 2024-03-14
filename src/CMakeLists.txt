@@ -82,34 +82,35 @@ if (LINUX AND DESKTOP_APP_USE_PACKAGED)
     install(FILES "../src/UI/resources/logo/icon-512.png" DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/512x512/apps" RENAME ${PNG_NAME})
 endif()
 
-
-##---------------- 以下为用CPack打包成deb包的内容 ----------------##
-# 指定deb包的版本号
-set(_VERSION_MAJOR 1)
-set(_VERSION_MINOR 2)
-set(_VERSION_PATCH 3)
-set(CPACK_PACKAGE_VERSION_MAJOR "${_VERSION_MAJOR}")
-set(CPACK_PACKAGE_VERSION_MINOR "${_VERSION_MINOR}")
-set(CPACK_PACKAGE_VERSION_PATCH "${_VERSION_PATCH}")
-# 指定CPack生成的是deb包（还可以是其他包如 <.7z> <.zip> 等）
-set(CPACK_GENERATOR "DEB")
-# 指定包名
-set(CPACK_PACKAGE_NAME ${PROJECT_NAME})
-# 指定程序名，就是程序安装后的名字
-set(CPACK_DEBIAN_PACKAGE_NAME ${APPLICATION_ID})
-# 指定运行的计算机架构
-set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE ${CMAKE_C_LIBRARY_ARCHITECTURE})
-# 指定所需的依赖
-# set(CPACK_DEBIAN_PACKAGE_DEPENDS "libgrpc++")
-# 设置包作者的联系方式
-set(CPACK_PACKAGE_CONTACT ${SUPPORT_EMAIL})
-# 设置维护人
-set(CPACK_DEBIAN_PACKAGE_MAINTAINER ${SUPPORT_EMAIL})
-
-# 指定需要安装的文件
-INSTALL(TARGETS ${PROJECT_NAME}
-        RUNTIME DESTINATION /tmp/${APPLICATION_ID}
-)
-
-include(CPack)
-
+#if(CPACK000)
+#    ##---------------- 以下为用CPack打包成deb包的内容 ----------------##
+#    # 指定deb包的版本号
+#    set(_VERSION_MAJOR 1)
+#    set(_VERSION_MINOR 2)
+#    set(_VERSION_PATCH 3)
+#    set(CPACK_PACKAGE_VERSION_MAJOR "${_VERSION_MAJOR}")
+#    set(CPACK_PACKAGE_VERSION_MINOR "${_VERSION_MINOR}")
+#    set(CPACK_PACKAGE_VERSION_PATCH "${_VERSION_PATCH}")
+#    # 指定CPack生成的是deb包（还可以是其他包如 <.7z> <.zip> 等）
+#    set(CPACK_GENERATOR "DEB")
+#    # 指定包名
+#    set(CPACK_PACKAGE_NAME ${PROJECT_NAME})
+#    # 指定程序名，就是程序安装后的名字
+#    set(CPACK_DEBIAN_PACKAGE_NAME ${APPLICATION_ID})
+#    # 指定运行的计算机架构
+#    set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE ${CMAKE_C_LIBRARY_ARCHITECTURE})
+#    # 指定所需的依赖
+#    # set(CPACK_DEBIAN_PACKAGE_DEPENDS "libgrpc++")
+#    # 设置包作者的联系方式
+#    set(CPACK_PACKAGE_CONTACT ${SUPPORT_EMAIL})
+#    # 设置维护人
+#    set(CPACK_DEBIAN_PACKAGE_MAINTAINER ${SUPPORT_EMAIL})
+#
+#    # 指定需要安装的文件
+#    INSTALL(TARGETS ${PROJECT_NAME}
+#            RUNTIME DESTINATION /tmp/${APPLICATION_ID}
+#    )
+#
+#    include(CPack)
+#
+#endif ()

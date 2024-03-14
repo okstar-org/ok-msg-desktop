@@ -9,18 +9,20 @@ include(FetchContent)
 
 #WebRTC
 set(WebRTC_VER "121.6167.5.0")
+set(WebRTC_HASH "MD5=52eba9fd0543b239f3f8e190646b45ae")
 
 if (WIN32)
-    set(WebRTC_URL "https://github.com/crow-misia/libwebrtc-bin/releases/download/${WebRTC_VER}/libwebrtc-win-x64.7z")
+    set(WebRTC_NAME "libwebrtc-win-x64.7z")
 elseif (APPLE)
-    set(WebRTC_URL "https://github.com/crow-misia/libwebrtc-bin/releases/download/${WebRTC_VER}/libwebrtc-macos-x64.tar.xz")
+    set(WebRTC_NAME "libwebrtc-macos-x64.tar.xz")
 elseif (LINUX)
-    set(WebRTC_URL "https://github.com/crow-misia/libwebrtc-bin/releases/download/${WebRTC_VER}/libwebrtc-linux-x64.tar.xz")
+    set(WebRTC_NAME "libwebrtc-linux-x64.tar.xz")
 endif ()
 
 message(STATUS "Fetch webrtc")
 FetchContent_Declare(webrtc
-        URL ${WebRTC_URL}
+    URL "https://github.com/crow-misia/libwebrtc-bin/releases/download/${WebRTC_VER}/${WebRTC_NAME}"
+    URL_HASH ${WebRTC_HASH}
 )
 FetchContent_MakeAvailable(webrtc)
 
