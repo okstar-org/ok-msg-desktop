@@ -16,35 +16,8 @@ architectures:
 #  - build-on: armhf
 #  - build-on: ppc64el
 
-apps:
-  ok-msg-desktop:
-    command: bin/desktop-launch ok-msg-desktop
-    common-id: org.okstar.ok-msg-desktop
-    desktop: usr/share/applications/ok-msg-desktop.desktop
-    environment:
-      # Tell glib to use portals on file associations handling.
-      GTK_USE_PORTAL: 1
-      # Use sandboxed ibus api
-      IBUS_USE_PORTAL: 1
-    plugs:
-      - alsa
-      - audio-playback
-      - audio-record
-      - camera
-      - desktop
-      - desktop-legacy
-      - hardware-observe
-      - home
-      - network
-      - network-status
-      - opengl
-      - removable-media
-      - unity7
-      - wayland
-      - x11
-
 parts:
-  ok-msg-desktop:
+  ok-msg:
     plugin: cmake
     source: .
     source-type: git
@@ -67,6 +40,8 @@ parts:
       - libsodium-dev
       - libsqlite3-dev
       - libsqlcipher-dev
+      - libvulkan-dev
+      - libwayland-dev
 #      X11
       - libx11-dev
       - libx11-xcb-dev
@@ -120,6 +95,8 @@ parts:
       - libavcodec-dev
       - libavdevice-dev
       - libqrencode-dev
+      - libblas-dev
+      - libsignal-protocol-c-dev
 #      Qt
       - qtbase5-dev
       - qtmultimedia5-dev
@@ -129,13 +106,14 @@ parts:
       - libqt5opengl5-dev
       - qttools5-dev
       - qttools5-dev-tools
-      - libsignal-protocol-c-dev
+      - libqt5x11extras5-dev
     stage-packages:
       - libqt5core5a
       - libqt5gui5
       - libqt5widgets5
       - libqt5svg5
       - libqt5xml5
+      - libqt5x11extras5
       - libsdl2-2.0-0
       - libdouble-conversion3
       - libmd4c0
@@ -227,6 +205,7 @@ parts:
       - libpocketsphinx3
       - libpostproc55
       - libpulse0
+      - pulseaudio
       - libqrencode4
       - libquadmath0
       - libvpx7
@@ -240,23 +219,52 @@ parts:
       - libvorbisenc2
       - libvorbisfile3
       - libspeex1
-
     cmake-generator: Ninja
     cmake-parameters:
       - -DCMAKE_BUILD_TYPE=Release
       - -DCMAKE_INSTALL_PREFIX=/usr
       - -DDESKTOP_APP_USE_PACKAGED=ON
       - -DDESKTOP_LAUNCHER_BASENAME=ok-msg-desktop
-    prime:
-      - -./usr/bin
-      - -./usr/doc
-      - -./usr/include
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/cmake
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/metatypes
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.a
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.so
-      - -./usr/libexec
-      - -./usr/mkspecs
-      - -./usr/modules
+
+layout:
+  /usr/share/alsa:
+    bind: $SNAP/usr/share/alsa
+  /usr/share/X11:
+    bind: $SNAP/usr/share/X11
+  /usr/lib/$CRAFT_ARCH_TRIPLET/webkit2gtk-4.1:
+    bind: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET/webkit2gtk-4.1
+
+apps:
+  ok-msg-desktop:
+    command: usr/bin/OkMSG-Desktop
+    common-id: org.okstar.ok-msg-desktop
+    desktop: usr/share/applications/ok-msg-desktop.desktop
+    environment:
+      # Tell glib to use portals on file associations handling.
+      GTK_USE_PORTAL: 1
+      # Use sandboxed ibus api
+      IBUS_USE_PORTAL: 1
+      LD_LIBRARY_PATH: $SNAP/usr/lib/x86_64-linux-gnu/lapack:$SNAP/usr/lib/x86_64-linux-gnu/blas:$SNAP/usr/lib/x86_64-linux-gnu/pulseaudio:$LD_LIBRARY_PATH
+    plugs:
+      - alsa
+      - audio-playback
+      - audio-record
+      - camera
+      - desktop
+      - desktop-legacy
+      - hardware-observe
+      - home
+      - network
+      - network-status
+      - opengl
+      - removable-media
+      - unity7
+      - wayland
+      - x11
+    slots:
+      - ok-msg-desktop-mpris
+
+slots:
+  ok-msg-desktop-mpris:
+    interface: mpris
+    name: okmsgdesktop
