@@ -31,9 +31,18 @@ parts:
     plugin: make
     make-parameters: ["FLAVOR=qt5"]
     build-packages:
+      - dpkg-dev
       - build-essential
       - qtbase5-dev
-      - dpkg-dev
+      - qtmultimedia5-dev
+      - qtmultimedia5-dev
+      - libqt5svg5-dev
+      - libqt5xml5
+      - libqt5xmlpatterns5-dev
+      - libqt5opengl5-dev
+      - qttools5-dev
+      - qttools5-dev-tools
+      - libqt5x11extras5-dev
     stage-packages:
       - libxkbcommon0
 #      - ttf-ubuntu-font-family
