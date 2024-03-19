@@ -1,4 +1,4 @@
-project(Settings)
+project(OkSettings)
 
 
 
@@ -11,7 +11,9 @@ set(${PROJECT_NAME}_SOURCES
         applicationinfo.cpp
 )
 
-add_library(${PROJECT_NAME} ${${PROJECT_NAME}_SOURCES})
+add_library(${PROJECT_NAME} STATIC
+        ${${PROJECT_NAME}_SOURCES})
+
 target_link_libraries(${PROJECT_NAME}
         PRIVATE ${Qt5Core_LIBRARIES}
         PRIVATE ${Qt5Widgets_LIBRARIES}

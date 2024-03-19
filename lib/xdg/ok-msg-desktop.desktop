@@ -1,0 +1,21 @@
+[Desktop Entry]
+Name=OkMSG Desktop
+Comment=Official desktop version of OkMSG messaging app
+TryExec=ok-msg-desktop
+Exec=ok-msg-desktop -- %u
+Icon=ok-msg
+Terminal=false
+StartupWMClass=OkMSGDesktop
+Type=Application
+Categories=Chat;Network;InstantMessaging;Qt;
+MimeType=x-scheme-handler/tg;
+Keywords=okstar;okmsg;msg;chat;im;messaging;messenger;
+Actions=Quit;
+SingleMainWindow=true
+X-GNOME-UsesNotifications=true
+X-GNOME-SingleWindow=true
+
+[Desktop Action Quit]
+Exec=ok-msg-desktop -quit
+Name=Quit OkMSG
+Icon=application-exit

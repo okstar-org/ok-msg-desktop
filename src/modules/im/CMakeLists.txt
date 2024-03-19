@@ -39,7 +39,7 @@ if (WIN32)
             PRIVATE ${swscale_LIBRARIES}
     )
 
-    find_path(qrencode_INCLUDE_DIR NAMES qrencode.h)
+#    find_path(qrencode_INCLUDE_DIR NAMES qrencode.h)
     set(qrencode_LIBRARIES ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/qrencode.lib)
     include_directories(${qrencode_INCLUDE_DIR})
     message(STATUS "QRENCODE_INCLUDE_DIR=${qrencode_INCLUDE_DIR}")
@@ -513,10 +513,11 @@ qt5_add_resources(
 
 include_directories(${PROJECT_BINARY_DIR})
 
-add_library(
-        ${PROJECT_NAME} ${${PROJECT_NAME}_FORMS} ${${PROJECT_NAME}_SOURCES}
-        ${${PROJECT_NAME}_QM_FILES} ${${PROJECT_NAME}_RESOURCES})
-
+add_library(${PROJECT_NAME} STATIC
+        ${${PROJECT_NAME}_FORMS}
+        ${${PROJECT_NAME}_SOURCES}
+        ${${PROJECT_NAME}_QM_FILES}
+        ${${PROJECT_NAME}_RESOURCES})
 
 if (WIN32)
     set(PLATFORM_LIBS d3d11 dxgi shlwapi
