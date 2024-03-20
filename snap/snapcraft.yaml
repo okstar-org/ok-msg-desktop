@@ -319,7 +319,6 @@ apps:
 slots:
   ok-msg-desktop-mpris:
     interface: mpris
-    name: okmsgdesktop
 
 #plugs:
 #  # Support for common GTK themes
