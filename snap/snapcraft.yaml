@@ -135,7 +135,6 @@ parts:
       - libgstreamer-plugins-good1.0-dev
       - libgstreamer-plugins-bad1.0-dev
       - libpulse-dev
-      - libpulse-mainloop-glib0
       - libopenal-dev
 #      FFMPEG
       - libvpx-dev
@@ -258,7 +257,6 @@ parts:
       - libpocketsphinx3
       - libpostproc55
       - libpulse0
-      - pulseaudio
       - libqrencode4
       - libquadmath0
       - libvpx7
@@ -321,7 +319,6 @@ apps:
 slots:
   ok-msg-desktop-mpris:
     interface: mpris
-    name: okmsgdesktop
 
 #plugs:
 #  # Support for common GTK themes
