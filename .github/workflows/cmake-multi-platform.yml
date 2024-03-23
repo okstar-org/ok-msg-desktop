@@ -52,9 +52,9 @@ jobs:
     # workaround for broken clang on ubuntu runner until https://github.com/actions/runner-images/issues/8659 get fixed
     # link: https://github.com/mjp41/workaround8649
     - name: Remove libstdc++-13
+      if: matrix.os == 'ubuntu-latest' && matrix.c_compiler == 'clang'
       run: |
-        sudo apt-get remove -y libstdc++-13-dev
-        sudo apt-get install -y libstdc++-12-dev
+        sudo apt-get remove -y g++-12 libstdc++-12 g++-13 libstdc++-13
 
     - name: Checkout repository and submodules
       uses: actions/checkout@v3
@@ -65,7 +65,7 @@ jobs:
       uses: jurplel/install-qt-action@v3
 
     - name: Linux depends
-      if: matrix.os == 'ubuntu-latest'
+      if: matrix.os == 'ubuntu-latest' && matrix.
       run: |
         sudo apt-get update -y
         sudo apt-get install -y libpcre2-dev libudev-dev libmtdev-dev  libinput-dev libdrm-dev libgbm-dev    \
