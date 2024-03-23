@@ -53,8 +53,8 @@ jobs:
     # link: https://github.com/mjp41/workaround8649
     - name: Remove libstdc++-13
       run: |
-        apt-get remove -y libstdc++-13-dev
-        apt-get install -y libstdc++-12-dev
+        sudo apt-get remove -y libstdc++-13-dev
+        sudo apt-get install -y libstdc++-12-dev
 
     - name: Checkout repository and submodules
       uses: actions/checkout@v3
