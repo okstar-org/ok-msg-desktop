@@ -54,7 +54,8 @@ jobs:
     - name: Remove libstdc++-13
       if: matrix.os == 'ubuntu-latest' && matrix.c_compiler == 'clang'
       run: |
-        sudo apt-get remove -y g++-12 libstdc++-12-dev g++-13 libstdc++-13-dev
+        sudo apt-get remove -y g++-13 libstdc++-13-dev
+        sudo apt-get install -y g++-12 libstdc++-12-dev
 
     - name: Checkout repository and submodules
       uses: actions/checkout@v3
