@@ -22,7 +22,7 @@ endif ()
 message(STATUS "Fetch webrtc")
 FetchContent_Declare(webrtc
     URL "https://github.com/crow-misia/libwebrtc-bin/releases/download/${WebRTC_VER}/${WebRTC_NAME}"
-    URL_HASH ${WebRTC_HASH}
+#    URL_HASH ${WebRTC_HASH}
 )
 FetchContent_MakeAvailable(webrtc)
 
