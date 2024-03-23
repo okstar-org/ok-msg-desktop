@@ -50,7 +50,6 @@ jobs:
 
     - name: Git Sumbodule Update
       run: |
-        git pull --recurse-submodules
         git submodule update --remote --recursive
 
     - name: Install Qt
