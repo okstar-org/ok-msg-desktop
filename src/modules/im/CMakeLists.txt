@@ -4,7 +4,11 @@ add_definitions(-DOK_${PROJECT_NAME}_MODULE="${PROJECT_NAME}")
 set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET})
 message(STATUS "CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}")
 message(STATUS "PROJECT_BINARY_DIR=${PROJECT_BINARY_DIR}")
+
 message(STATUS "VCPKG_TARGET_TRIPLET=${VCPKG_TARGET_TRIPLET}")
+message(STATUS "VCPKG_TARGET_ARCHITECTURE=${VCPKG_TARGET_ARCHITECTURE}")
+message(STATUS "VCPKG_CMAKE_SYSTEM_NAME=${VCPKG_CMAKE_SYSTEM_NAME}")
+message(STATUS "VCPKG_BUILD_TYPE=${VCPKG_BUILD_TYPE}")
 
 if (WIN32)
     message(STATUS "Fetch libsodium")
@@ -16,13 +20,26 @@ if (WIN32)
     link_directories(${libsodium_SOURCE_DIR}/${ARCH}/${CMAKE_BUILD_TYPE}/static)
 
 
-    find_package(FFMPEG REQUIRED)
+#    find_package(FFMPEG REQUIRED)
     include_directories(${FFMPEG_INCLUDE_DIRS})
     message(STATUS "FFMPEG_INCLUDE_DIRS=${FFMPEG_INCLUDE_DIRS}")
     message(STATUS "FFMPEG_LIBRARIES=${FFMPEG_LIBRARIES}")
+    set(avcodec_LIBRARIES ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/avcodec.lib)
+    set(avdevice_LIBRARIES ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/avdevice.lib)
+    set(avformat_LIBRARIES ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/avformat.lib)
+    set(avfilter_LIBRARIES ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/avfilter.lib)
+    set(avutil_LIBRARIES ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/avutil.lib)
+    set(swscale_LIBRARIES ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/swscale.lib)
+    list(APPEND ALL_LIBRARIES
+            PRIVATE ${avcodec_LIBRARIES}
+            PRIVATE ${avdevice_LIBRARIES}
+            PRIVATE ${avformat_LIBRARIES}
+            PRIVATE ${avfilter_LIBRARIES}
+            PRIVATE ${avutil_LIBRARIES}
+            PRIVATE ${swscale_LIBRARIES}
+    )
 
-
-    find_path(qrencode_INCLUDE_DIR NAMES qrencode.h)
+#    find_path(qrencode_INCLUDE_DIR NAMES qrencode.h)
     set(qrencode_LIBRARIES ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/qrencode.lib)
     include_directories(${qrencode_INCLUDE_DIR})
     message(STATUS "QRENCODE_INCLUDE_DIR=${qrencode_INCLUDE_DIR}")
@@ -52,13 +69,13 @@ if (WIN32)
 
     #    target_link_libraries(main PRIVATE unofficial::libvpx::libvpx)
 
-    set(ALL_LIBRARIES
+    list(APPEND ALL_LIBRARIES
             PRIVATE ${qrencode_LIBRARIES}
             PRIVATE ${libvpx_LIBRARIES}
             PRIVATE ${libexif_LIBRARIES}
             PRIVATE ${sqlite3_LIBRARIES}
             PRIVATE ${OpenAL_LIBRARIES}
-            PRIVATE ${FFMPEG_LIBRARIES})
+    )
 elseif (UNIX)
     include(./cmake/Dependencies.cmake)
 endif ()

@@ -13,8 +13,8 @@ message(STATUS "CXX Standard: ${CMAKE_CXX_STANDARD}")
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release")
 endif()
-message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 string(TOLOWER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
+message(STATUS "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
 
 # Support for pthread
 set(CMAKE_THREAD_LIBS_INIT "-lpthread")

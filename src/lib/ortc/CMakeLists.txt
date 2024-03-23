@@ -54,8 +54,19 @@ endif ()
 # === Gloox ===
 set(BUILD_SHARED_LIBS ON)
 if (WIN32)
+    set(BUILD_SHARED_LIBS OFF)
     add_definitions(-DHAVE_OPENSSL=0 -D_WIN32 -DWIN32 -D_WINDOWS -D_UNICODE)
+else ()
+    set(BUILD_SHARED_LIBS ON)
 endif ()
+
+add_definitions(
+        # -DQSSLSOCKET_DEBUG
+        -DLOG_XMPP # xmpp logs
+        -DWANT_PING # xmpp ping
+        -DENABLE_SEND_RAW_XML # xmpp send raw xmls
+        -DLOG_TO_FILE)
+
 add_subdirectory(${CMAKE_SOURCE_DIR}/3rdparty/gloox ${PROJECT_BINARY_DIR}/3rdparty/gloox)
 set(gloox_LIB gloox)
 # ==== Gloox ====
