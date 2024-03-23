@@ -58,7 +58,7 @@ jobs:
       id: vcpkg
       with:
         manifest-dir: ${{ github.workspace }}
-        triplet: ${{ matrix.config.vcpkg_triplet }}
+        triplet: x64-windows-release
         token: ${{ github.token }}
         github-binarycache: true
 
