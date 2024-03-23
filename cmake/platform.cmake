@@ -24,7 +24,6 @@ if(WIN32)
             # OpenAL
             -DAL_LIBTYPE_STATIC)
 elseif(LINUX)
-    string(TOLOWER ${PLATFORM_ARCH} PLATFORM_ARCH)
 
     # 设置相关宏定义
     add_definitions(-DWEBRTC_POSIX -DWEBRTC_LINUX -DQ_OS_POSIX
