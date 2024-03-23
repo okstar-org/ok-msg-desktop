@@ -47,9 +47,11 @@ jobs:
     steps:
     - name: Checkout repository and submodules
       uses: actions/checkout@v3
+
+    - name: Git Sumbodule Update
       run: |
-        rm -rf 3rdparty 
-        git submodule update --init --recursive
+        git pull --recurse-submodules
+        git submodule update --remote --recursive
 
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
