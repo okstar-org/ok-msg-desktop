@@ -75,9 +75,9 @@ jobs:
         # ffmpeg vpx qrencode sodium
         sudo apt install -y libvpx-dev libjpeg-dev libexif-dev libtiff-dev libpng16-16 libpng-dev libavcodec-dev libavdevice-dev libqrencode-dev libsodium-dev libopenal-dev
 
-    - uses: ilammy/msvc-dev-cmd@v1.10.0
+    - name: Native Tools Command Prompt.
       if: matrix.os == 'windows-latest'
-      name: Native Tools Command Prompt.
+      uses: ilammy/msvc-dev-cmd@v1.10.0
       with:
         arch: ${{ matrix.arch }}
 
