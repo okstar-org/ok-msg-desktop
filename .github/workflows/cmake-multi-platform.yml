@@ -43,7 +43,11 @@ jobs:
             c_compiler: clang
           - os: ubuntu-latest
             c_compiler: cl
-
+        config:
+          - os: ubuntu-latest
+            vcpkg_triplet: x64-linux-release
+          - os: windows-latest
+            vcpkg_triplet: x64-windows-release
     steps:
     - name: Checkout repository and submodules
       uses: actions/checkout@v3
@@ -60,8 +64,8 @@ jobs:
       id: vcpkg
       with:
         manifest-dir: ${{ github.workspace }}
-        triplet: x64-windows-release
         token: ${{ github.token }}
+        triplet: ${{ matrix.config.vcpkg_triplet }}
         github-binarycache: true
 
     - name: Set reusable strings
