@@ -47,6 +47,11 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: Checkout submodules
+      uses: textbook/git-checkout-submodule-action@master
+      with:
+        remote: true
+
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
 
