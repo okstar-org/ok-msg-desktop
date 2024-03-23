@@ -65,7 +65,7 @@ jobs:
       uses: jurplel/install-qt-action@v3
 
     - name: Linux depends
-      if: matrix.os == 'ubuntu-latest' && matrix.
+      if: matrix.os == 'ubuntu-latest'
       run: |
         sudo apt-get update -y
         sudo apt-get install -y libpcre2-dev libudev-dev libmtdev-dev  libinput-dev libdrm-dev libgbm-dev    \
