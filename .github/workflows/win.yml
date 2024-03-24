@@ -9,6 +9,9 @@ on:
     branches: [ "develop-cicd" ]
 
 jobs:
+  env:
+    UPLOAD_ARTIFACT: "true"
+
   build:
     runs-on: ${{ matrix.os }}
 
@@ -23,6 +26,7 @@ jobs:
       #
       # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the build_type list.
       matrix:
+        arch: [x86, x64]
         os: [windows-latest]
         build_type: [Release]
         c_compiler: [gcc, cl]
@@ -75,10 +79,23 @@ jobs:
 
     - name: Build
       # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
-      run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
+      run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{matrix.arch}}_${{ matrix.build_type }}
 
     - name: Test
       working-directory: ${{ steps.strings.outputs.build-output-dir }}
       # Execute tests defined by the CMake configuration. Note that --build-config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: ctest --build-config ${{ matrix.build_type }}
+
+    - name: Move artifact.
+      if: env.UPLOAD_ARTIFACT == 'true'
+      run: |
+        mkdir artifact
+        move ${{ steps.strings.outputs.build-output-dir }}\src\${{ matrix.build_type }}\OkMSG-Desktop.exe artifact/
+
+    - uses: actions/upload-artifact@master
+      name: Upload artifact.
+      if: env.UPLOAD_ARTIFACT == 'true'
+      with:
+        name: ${{ env.ARTIFACT_NAME }}
+        path: artifact\
