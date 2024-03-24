@@ -61,7 +61,6 @@ else ()
 endif ()
 
 add_definitions(
-        # -DQSSLSOCKET_DEBUG
         -DLOG_XMPP # xmpp logs
         -DWANT_PING # xmpp ping
         -DENABLE_SEND_RAW_XML # xmpp send raw xmls
