@@ -63,7 +63,7 @@ endif ()
 add_definitions(
         -DLOG_XMPP # xmpp logs
         -DWANT_PING # xmpp ping
-        -DENABLE_SEND_RAW_XML # xmpp send raw xmls
+        -DENABLE_SEND_RAW_XML # send raw xmls
         -DLOG_TO_FILE)
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/3rdparty/gloox ${PROJECT_BINARY_DIR}/3rdparty/gloox)
