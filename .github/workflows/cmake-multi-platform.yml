@@ -53,7 +53,7 @@ jobs:
     - name: Submodule cleanup fix  # Bodge for https://github.com/actions/checkout/issues/358
       run: |
         git config pull.rebase true
-        git submodule foreach --recursive git pull origin main--allow-unrelated-histories
+        git submodule foreach --recursive git pull origin main --allow-unrelated-histories
 
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
