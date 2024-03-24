@@ -523,9 +523,9 @@ add_library(${PROJECT_NAME} STATIC
 if (WIN32)
     set(PLATFORM_LIBS d3d11 dxgi shlwapi
             Iphlpapi dwmapi dmoguids wmcodecdspuuid Winmm
-            amstrmid msdmo strmiids psapi
+            amstrmid msdmo strmiids strmbase psapi
             Vfw32 shell32 oleaut32 ole32 user32 advapi32
-            bcrypt Mf Mfplat Mfreadwrite mfuuid dxva2 evr strmbase)
+            bcrypt Mf Mfplat Mfreadwrite mfuuid dxva2 evr )
 elseif (UNIX)
     set(PLATFORM_LIBS z ssl crypto atomic X11)
 endif ()
@@ -542,6 +542,7 @@ target_link_libraries(
         PRIVATE ${Qt5Svg_LIBRARIES}
         ${CMAKE_REQUIRED_LIBRARIES}
         ${ALL_LIBRARIES}
+        ${PLATFORM_LIBS}
 )
 
 if (MSVC)
