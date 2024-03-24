@@ -122,14 +122,14 @@ void LoginWidget::init() {
 void LoginWidget::doLogin() {
   if (m_loaded < 1) {
     //    QMessageBox::warning(this,tr("WARNING"), tr("请确认页面加载完成"));
-    onError("请确认页面加载完成!");
+    onError(tr("请确认页面加载完成!"));
     return;
   }
 
   // 获取服务提供商
   auto providerIdx = ui->providers->currentIndex();
   if (!(providerIdx > 0)) {
-    onError("请选择服务提供商!");
+    onError(tr("请选择服务提供商!"));
     return;
   }
 
