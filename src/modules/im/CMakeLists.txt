@@ -46,9 +46,10 @@ if (WIN32)
     message(STATUS "qrencode_LIBRARIES=${qrencode_LIBRARIES}")
 
 
-    #    find_package(OpenAL REQUIRED)
-    set(OpenAL_LIBRARIES ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/OpenAL32.lib)
+    find_package(OpenAL REQUIRED)
+    include_directories(${OpenAL_INCLUDE_DIR})
     message(STATUS "OpenAL_INCLUDE_DIR=${OpenAL_INCLUDE_DIR}")
+    set(OpenAL_LIBRARIES ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/OpenAL32.lib)
     message(STATUS "OpenAL_LIBRARIES=${OpenAL_LIBRARIES}")
 
 
