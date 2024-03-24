@@ -9,10 +9,10 @@ on:
     branches: [ "develop-cicd" ]
 
 jobs:
-  env:
-    UPLOAD_ARTIFACT: "true"
-
   build:
+    env:
+      UPLOAD_ARTIFACT: "true"
+
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -97,5 +97,5 @@ jobs:
       name: Upload artifact.
       if: env.UPLOAD_ARTIFACT == 'true'
       with:
-        name: ${{ env.ARTIFACT_NAME }}
+        name: "OkMSG-Desktop"
         path: artifact\
