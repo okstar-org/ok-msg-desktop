@@ -52,6 +52,7 @@ jobs:
 
     - name: Submodule cleanup fix  # Bodge for https://github.com/actions/checkout/issues/358
       run: |
+        git config pull.rebase true
         git submodule foreach --recursive git pull
 
     - name: Install Qt
