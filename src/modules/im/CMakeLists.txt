@@ -68,7 +68,7 @@ if (WIN32)
     set(libvpx_LIBRARIES ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/vpx.lib)
     message(STATUS "libvpx_LIBRARIES=${libvpx_LIBRARIES}")
 
-    #    target_link_libraries(main PRIVATE unofficial::libvpx::libvpx)
+    #   target_link_libraries(main PRIVATE unofficial::libvpx::libvpx)
 
     list(APPEND ALL_LIBRARIES
             PRIVATE ${qrencode_LIBRARIES}
