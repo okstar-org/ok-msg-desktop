@@ -52,8 +52,7 @@ jobs:
 
     - name: Submodule cleanup fix  # Bodge for https://github.com/actions/checkout/issues/358
       run: |
-        git submodule foreach --recursive git clean -ffdx
-        git submodule foreach --recursive git reset --hard
+        git submodule foreach --recursive git pull
 
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
