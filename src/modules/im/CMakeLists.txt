@@ -1,9 +1,6 @@
 project(IM)
 add_definitions(-DOK_${PROJECT_NAME}_MODULE="${PROJECT_NAME}")
 
-set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET})
-message(STATUS "CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}")
-message(STATUS "PROJECT_BINARY_DIR=${PROJECT_BINARY_DIR}")
 
 message(STATUS "VCPKG_TARGET_TRIPLET=${VCPKG_TARGET_TRIPLET}")
 message(STATUS "VCPKG_TARGET_ARCHITECTURE=${VCPKG_TARGET_ARCHITECTURE}")
@@ -11,6 +8,9 @@ message(STATUS "VCPKG_CMAKE_SYSTEM_NAME=${VCPKG_CMAKE_SYSTEM_NAME}")
 message(STATUS "VCPKG_BUILD_TYPE=${VCPKG_BUILD_TYPE}")
 
 if (WIN32)
+    set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET})
+    include_directories(${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/include)
+
     message(STATUS "Fetch libsodium")
     FetchContent_Declare(libsodium
             URL https://download.libsodium.org/libsodium/releases/libsodium-1.0.19-stable-msvc.zip
@@ -46,7 +46,7 @@ if (WIN32)
     message(STATUS "qrencode_LIBRARIES=${qrencode_LIBRARIES}")
 
 
-    find_package(OpenAL REQUIRED)
+    find_package(OpenAL CONFIG REQUIRED)
     include_directories(${OpenAL_INCLUDE_DIR})
     message(STATUS "OpenAL_INCLUDE_DIR=${OpenAL_INCLUDE_DIR}")
     set(OpenAL_LIBRARIES ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/OpenAL32.lib)
