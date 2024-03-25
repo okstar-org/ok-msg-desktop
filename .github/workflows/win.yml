@@ -2,6 +2,10 @@
 # See: https://github.com/actions/starter-workflows/blob/main/ci/cmake-single-platform.yml
 name: CMake on Windows platforms
 
+permissions:
+  contents: write
+  discussions: write
+
 on:
   push:
     branches: [ "main" ]
@@ -111,4 +115,4 @@ jobs:
       if: ${{ startsWith(github.ref, 'refs/tags/') }}
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        files: artifact\OkMSG-Desktop_${{matrix.arch}}.zip
+        files: artifact\OkMSG-Desktop_${{matrix.arch}}.exe
