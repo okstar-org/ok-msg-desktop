@@ -96,6 +96,7 @@ jobs:
     - name: Move artifact.
       if: env.UPLOAD_ARTIFACT == 'true'
       run: |
+        dir .
         mkdir artifact
         cp ${{ steps.strings.outputs.build-output-dir }}\src\${{ matrix.build_type }}\OkMSG-Desktop.exe artifact/OkMSG-Desktop_${{matrix.arch}}.exe
 
