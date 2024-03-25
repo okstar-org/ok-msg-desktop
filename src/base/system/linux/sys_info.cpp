@@ -11,6 +11,7 @@
  */
 
 #include "../../system/sys_info.h"
+#include "files.h"
 
 #include <QFile>
 #include <QSysInfo>
@@ -20,7 +21,7 @@ namespace base {
 bool SysInfo::GetCpuInfo(CpuInfo &info) {
   auto arch = QSysInfo::currentCpuArchitecture();
   info.arch = arch == "x86_64" ? "x64" : arch;
-  return ReadLineValue("/proc/cpuinfo", ":",
+  return Files::ReadKeyValueLine("/proc/cpuinfo", ":",
                        [&](const QString &k, const QString &v) {
                          if (k == "vendor_id") {
                            info.manufacturer = v;

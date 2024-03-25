@@ -91,11 +91,11 @@ jobs:
       if: env.UPLOAD_ARTIFACT == 'true'
       run: |
         mkdir artifact
-        move ${{ steps.strings.outputs.build-output-dir }}\src\${{ matrix.build_type }}\OkMSG-Desktop.exe artifact/
+        move ${{ steps.strings.outputs.build-output-dir }}\src\${{ matrix.build_type }}\OkMSG-Desktop.exe artifact/OkMSG-Desktop_${{matrix.arch}}.exe
 
     - uses: actions/upload-artifact@master
       name: Upload artifact.
       if: env.UPLOAD_ARTIFACT == 'true'
       with:
-        name: "OkMSG-Desktop"
+        name: OkMSG-Desktop_${{matrix.arch}}
         path: artifact\
