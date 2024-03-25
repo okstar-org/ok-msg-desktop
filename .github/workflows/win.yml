@@ -99,7 +99,7 @@ jobs:
       uses: actions/upload-artifact@master
       if: env.UPLOAD_ARTIFACT == 'true'
       with:
-        name: OkMSG-Desktop_${{matrix.arch}}.zip
+        name: OkMSG-Desktop_${{matrix.arch}}
         path: artifact\
 
     - name: Show git information
