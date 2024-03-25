@@ -4,9 +4,9 @@ name: CMake on Windows platforms
 
 on:
   push:
-    branches: [ "develop-cicd" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "develop-cicd" ]
+    branches: [ "main" ]
 
 jobs:
   build:

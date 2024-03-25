@@ -79,3 +79,5 @@ qrc_*.cpp
 
 #config.h
 config.h
+
+.flatpak-builder
