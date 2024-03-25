@@ -107,6 +107,11 @@ jobs:
         name: OkMSG-Desktop_${{matrix.arch}}
         path: artifact\
 
+    - name: Look current build dirs
+      run: |
+        ls build
+        ls build/src/
+
     - name: Upload binaries to release
       uses: softprops/action-gh-release@v1
       if: ${{ startsWith(github.ref, 'refs/tags/') }}
