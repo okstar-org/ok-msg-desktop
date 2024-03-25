@@ -112,4 +112,4 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         files: |
-          ${{ steps.strings.outputs.build-output-dir }}\src\${{ matrix.build_type }}\OkMSG-Desktop.exe
+          ${{ steps.strings.outputs.build-output-dir }}/src/${{ matrix.build_type }}/OkMSG-Desktop.exe
