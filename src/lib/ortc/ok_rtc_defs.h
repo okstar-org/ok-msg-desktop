@@ -106,7 +106,7 @@ enum JingleCallType {
   file      // file
 };
 
-static std::string JingleCallTypeToString (JingleCallType type){
+inline static std::string JingleCallTypeToString (JingleCallType type){
   std::string arr[4]={"none", "audio", "video", "file"};
   return arr[type];
 }

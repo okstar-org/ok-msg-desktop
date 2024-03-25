@@ -22,27 +22,6 @@
 
 namespace base {
 
-static bool ReadLineValue(const QString &filePath, const QString &delimiter,
-                          Fn<void(QString k, QString v)> fn) {
-
-  QFile file(filePath);
-
-  if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-    return false;
-
-  QTextStream stream(&file);
-  QString line;
-  while (stream.readLineInto(&line)) {
-    auto arr = line.split(delimiter);
-    if (arr.size() == 2 && !arr[1].isEmpty()) {
-      fn(arr[0].trimmed(), arr[1].trimmed());
-    }
-  }
-  file.close();
-  return true;
-}
-
-
 typedef enum {
   X86,
   X64
