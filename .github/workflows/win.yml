@@ -119,5 +119,4 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         files: |
           LICENSE
-          artifact/
-          build/${{ matrix.build_type }}/src/OkMSG-Desktop.exe
+          artifact/OkMSG-Desktop_${{matrix.arch}}.exe
