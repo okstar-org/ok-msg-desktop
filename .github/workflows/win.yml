@@ -98,7 +98,8 @@ jobs:
       run: |
         mkdir artifact
         cp ${{ steps.strings.outputs.build-output-dir }}\src\${{ matrix.build_type }}\OkMSG-Desktop.exe artifact/OkMSG-Desktop_${{matrix.arch}}.exe
-        xcopy build/${{env.VCPKG_TARGET_TRIPLET}}/bin artifact
+#        xcopy ${env.VCPKG_ROOT}/vcpkg_installed/${{env.VCPKG_TARGET_TRIPLET}}/bin artifact
+        xcopy build/vcpkg_installed/${{matrix.arch}}-windows/bin artifact
         xcopy LICENSE artifact
 
     - name: Archive Release
