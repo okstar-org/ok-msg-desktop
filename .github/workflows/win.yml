@@ -8,11 +8,11 @@ permissions:
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "develop" ]
     tags:
       - "v*.*.*"
   pull_request:
-    branches: [ "main" ]
+    branches: [ "develop" ]
 
 jobs:
   build:
@@ -102,7 +102,6 @@ jobs:
       run: |
         mkdir artifact
         cp ${{ steps.strings.outputs.build-output-dir }}\src\${{ matrix.build_type }}\OkMSG-Desktop.exe artifact/OkMSG-Desktop_${{matrix.arch}}.exe
-        ls ${{ steps.strings.outputs.build-output-dir }}\vcpkg_installed\${{ matrix.arch }}-windows\bin
         xcopy build\vcpkg_installed\${{ env.VCPKG_DEFAULT_TRIPLET }}\bin\*.dll artifact\
         xcopy "$env:Qt5_Dir\bin\*.dll" artifact
         Copy-Item -Recurse $env:Qt5_Dir\plugins artifact
