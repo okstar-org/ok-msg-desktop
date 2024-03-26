@@ -101,10 +101,12 @@ jobs:
         xcopy ${{env.VCPKG_INSTALLED_DIR}}/${{env.VCPKG_DEFAULT_TRIPLET}}/bin artifact
         xcopy LICENSE artifact
 
-    - name: Zip artifact
-      uses: montudor/action-zip@v1
+    - name: Archive Release
+      uses: thedoctor0/zip-release@0.7.5
       with:
-        args: zip -qq -r ok-msg-desktop_${{ matrix.os }}_${{ matrix.arch }}.zip artifact
+        type: 'zip'
+        path: artifact
+        filename: ok-msg-desktop_${{ matrix.os }}_${{ matrix.arch }}.zip
 
     - name: Upload artifact.
       uses: actions/upload-artifact@master
