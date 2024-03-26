@@ -33,7 +33,7 @@ jobs:
       #
       # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the build_type list.
       matrix:
-        arch: [x86, x64]
+        arch: [x64]
         os: [windows-latest]
         build_type: [Release]
         c_compiler: [cl]
@@ -105,6 +105,7 @@ jobs:
         ls ${{ steps.strings.outputs.build-output-dir }}\vcpkg_installed\${{ matrix.arch }}-windows\bin
         xcopy build\vcpkg_installed\${{ env.VCPKG_DEFAULT_TRIPLET }}\bin\*.dll artifact\
         xcopy "$env:Qt5_Dir\bin\*.dll" artifact
+        Copy-Item -Recurse $env:Qt5_Dir\plugins artifact
         xcopy LICENSE artifact
 
     - name: Archive Release
