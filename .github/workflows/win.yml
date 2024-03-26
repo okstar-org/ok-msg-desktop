@@ -18,7 +18,7 @@ jobs:
   build:
     env:
       UPLOAD_ARTIFACT: "true"
-
+      VCPKG_DEFAULT_TRIPLET: ${{ matrix.arch }}-windows
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -99,7 +99,7 @@ jobs:
         mkdir artifact
         cp ${{ steps.strings.outputs.build-output-dir }}\src\${{ matrix.build_type }}\OkMSG-Desktop.exe artifact/OkMSG-Desktop_${{matrix.arch}}.exe
         ls ${{ steps.strings.outputs.build-output-dir }}\vcpkg_installed\${{ matrix.arch }}-windows\bin
-        xcopy build\vcpkg_installed\${{ matrix.arch }}-windows\bin\ artifact\
+        xcopy build\vcpkg_installed\${{ env.VCPKG_DEFAULT_TRIPLET }}\bin\ artifact\
         xcopy LICENSE artifact
 
     - name: Archive Release
