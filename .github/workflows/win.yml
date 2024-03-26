@@ -54,6 +54,8 @@ jobs:
 
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
+      with:
+        arch: ${{ matrix.arch == 'x64' && 'win64_msvc2019_64' || 'win32_msvc2019' }}
 
     - name: Native Tools Command Prompt.
       uses: ilammy/msvc-dev-cmd@v1.10.0
