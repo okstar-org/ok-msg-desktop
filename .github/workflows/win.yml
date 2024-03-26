@@ -85,7 +85,7 @@ jobs:
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
         -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake"
         -DVCPKG_TARGET_TRIPLET=${{ env.VCPKG_DEFAULT_TRIPLET }}
-        -A ${{ config.target_platform }}
+        -A ${{ matrix.config.target_platform }}
         -S ${{ github.workspace }}
 
 
