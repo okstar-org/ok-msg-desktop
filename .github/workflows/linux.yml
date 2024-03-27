@@ -81,11 +81,12 @@ jobs:
         -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
         -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-        -S ${{ github.workspace }}    
+        -S ${{ github.workspace }}
+        -DCPACK=1
 
     - name: Build
       # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
-      run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
+      run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }} --target package
 
     - name: Test
       working-directory: ${{ steps.strings.outputs.build-output-dir }}
@@ -93,34 +94,10 @@ jobs:
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: ctest --build-config ${{ matrix.build_type }}
 
-    - name: Move artifact.
-      if: env.UPLOAD_ARTIFACT == 'true'
-      run: |
-        mkdir artifact
-        cp ${{ steps.strings.outputs.build-output-dir }}/src/${{ matrix.build_type }}/OkMSG-Desktop artifact
-        cp build\vcpkg_installed\${{ env.VCPKG_DEFAULT_TRIPLET }}\bin\*.dll artifact\
-        xcopy "$env:Qt5_Dir\bin\*.dll" artifact
-        Copy-Item -Recurse $env:Qt5_Dir\plugins artifact
-        xcopy LICENSE artifact
-
-    - name: Archive Release
-      uses: thedoctor0/zip-release@0.7.5
-      with:
-        type: 'zip'
-        path: artifact
-        filename: ok-msg-desktop_${{ matrix.os }}_${{ matrix.arch }}.zip
-
-    - name: Upload artifact.
-      uses: actions/upload-artifact@master
-      if: env.UPLOAD_ARTIFACT == 'true'
-      with:
-        name: OkMSG-Desktop_${{matrix.arch}}
-        path: artifact\
-
-    - name: Upload binaries to release
+    - name: Upload deb to release
       uses: softprops/action-gh-release@v1
       if: ${{ startsWith(github.ref, 'refs/tags/') }}
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         files: |
-          ok-msg-desktop_${{ matrix.os }}_${{ matrix.arch }}.zip
+          ${{ steps.strings.outputs.build-output-dir }}/ok-msg-desktop_${{ matrix.os }}_${{ matrix.arch }}.deb
