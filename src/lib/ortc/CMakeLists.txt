@@ -8,6 +8,7 @@ endforeach ()
 include(FetchContent)
 
 #WebRTC
+set(WebRTC_VER "121.6167.5.0")
 if (WIN32)
     set(WebRTC_NAME "libwebrtc-win-x64.7z")
     set(WebRTC_HASH "MD5=532f7bdd7dca911bb23bb2c310c57ee7")
