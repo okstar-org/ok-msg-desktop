@@ -526,7 +526,7 @@ if (WIN32)
             amstrmid msdmo strmiids strmbase psapi
             Vfw32 shell32 oleaut32 ole32 user32 advapi32
             bcrypt Mf Mfplat Mfreadwrite mfuuid dxva2 evr )
-elseif (UNIX)
+elseif (LINUX)
     set(PLATFORM_LIBS z ssl crypto atomic X11)
 endif ()
 
