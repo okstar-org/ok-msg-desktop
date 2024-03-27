@@ -36,6 +36,11 @@ if(ENABLE_PLUGINS)
     list(APPEND OK_LIBS Plugin)
 endif()
 
+if(UNIX)
+    set(LDFLAGS "-lz")
+    message(STATUS "LDFLAGS=${LDFLAGS}")
+endif ()
+
 if (WIN32 AND NOT LOWER_CMAKE_BUILD_TYPE STREQUAL debug)
     add_executable(${PROJECT_NAME} WIN32 ${${PROJECT_NAME}_SOURCES}
             ${${PROJECT_NAME}_RESOURCES})
