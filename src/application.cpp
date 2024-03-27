@@ -194,6 +194,9 @@ void Application::onMenuPushed(UI::PageMenu menu, bool checked) {
     }
     break;
   }
+  default:{
+    //ignore
+  }
   }
 }
 

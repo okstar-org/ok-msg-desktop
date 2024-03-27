@@ -35,7 +35,6 @@ parts:
       - build-essential
       - qtbase5-dev
       - qtmultimedia5-dev
-      - qtmultimedia5-dev
       - libqt5svg5-dev
       - libqt5xml5
       - libqt5xmlpatterns5-dev
@@ -130,10 +129,6 @@ parts:
       - libxss-dev
         # Multimedia
       - libasound2-dev
-      - libgstreamer1.0-dev
-      - libgstreamer-plugins-base1.0-dev
-      - libgstreamer-plugins-good1.0-dev
-      - libgstreamer-plugins-bad1.0-dev
       - libpulse-dev
       - libopenal-dev
 #      FFMPEG
@@ -165,7 +160,6 @@ parts:
 #      - libqt5svg5
 #      - libqt5xml5
 #      - libqt5x11extras5
-#
       - libsdl2-2.0-0
       - libdouble-conversion3
       - libmd4c0
@@ -287,7 +281,7 @@ layout:
 
 apps:
   ok-msg-desktop:
-    command: bin/desktop-launch OkMSG-Desktop
+    command: bin/desktop-launch ok-msg-desktop
     common-id: org.okstar.ok-msg-desktop
     desktop: usr/share/applications/ok-msg-desktop.desktop
     environment:
