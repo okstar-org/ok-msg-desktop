@@ -534,7 +534,6 @@ message(STATUS "PLATFORM_LIBS=${PLATFORM_LIBS}")
 
 target_link_libraries(
         ${PROJECT_NAME}
-
         PRIVATE ${Qt5Core_LIBRARIES}
         PRIVATE ${Qt5Gui_LIBRARIES}
         PRIVATE ${Qt5Widgets_LIBRARIES}
@@ -543,7 +542,7 @@ target_link_libraries(
         PRIVATE ${Qt5Svg_LIBRARIES}
         ${CMAKE_REQUIRED_LIBRARIES}
         ${ALL_LIBRARIES}
-        ${PLATFORM_LIBS}
+        PUBLIC ${PLATFORM_LIBS}
 )
 
 if (MSVC)

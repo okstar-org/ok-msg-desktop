@@ -46,7 +46,7 @@ endif ()
 
 target_link_libraries(
         ${PROJECT_NAME}
-        PRIVATE ${OK_LIBS}
+        PUBLIC ${OK_LIBS}
         PRIVATE ${Qt5Core_LIBRARIES}
         PRIVATE ${Qt5Gui_LIBRARIES}
         PRIVATE ${Qt5Network_LIBRARIES}
