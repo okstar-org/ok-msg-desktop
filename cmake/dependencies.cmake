@@ -1,6 +1,7 @@
 # 配置工程信息
 set(ORGANIZATION_NAME "OkStar")
 set(ORGANIZATION_DOMAIN "okstar.org")
+set(ORGANIZATION_HOME "https://github.com/okstar-org")
 set(APPLICATION_ID "org.okstar.ok-msg-desktop")
 set(APPLICATION_NAME "OkMSG-Desktop")
 set(APPLICATION_SHORT_NAME "OkMSG")
