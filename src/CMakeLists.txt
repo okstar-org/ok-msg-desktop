@@ -1,4 +1,4 @@
-project(OkMSG-Desktop)
+project(ok-msg-Desktop)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 

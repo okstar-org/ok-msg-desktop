@@ -58,7 +58,6 @@ endif ()
 # === Gloox ===
 
 if (WIN32)
-    set(BUILD_SHARED_LIBS OFF)
     add_definitions(-D_WIN32 -DWIN32 -D_WINDOWS -D_UNICODE)
 endif ()
 
