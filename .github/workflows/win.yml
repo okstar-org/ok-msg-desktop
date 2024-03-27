@@ -49,8 +49,7 @@ jobs:
         submodules: 'true'
     - name: Pull submodules
       run: |
-        git config pull.ff only
-        git submodule foreach git pull origin main --allow-unrelated-histories
+        git submodule update --remote --init
 
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
