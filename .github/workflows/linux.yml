@@ -66,6 +66,8 @@ jobs:
         sudo apt install -y libvpx-dev libjpeg-dev libexif-dev \
         libtiff-dev libpng16-16 libpng-dev libavcodec-dev   \
         libavdevice-dev libqrencode-dev libsodium-dev libopenal-dev
+        
+        ls /usr/lib/x86_64-linux-gnu/libz.so
 
     - name: Set reusable strings
       # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
