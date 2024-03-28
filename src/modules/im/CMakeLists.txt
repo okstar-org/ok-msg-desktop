@@ -531,18 +531,16 @@ elseif (UNIX)
 endif ()
 
 
-target_link_libraries(
-        ${PROJECT_NAME}
-
-        PRIVATE ${Qt5Core_LIBRARIES}
-        PRIVATE ${Qt5Gui_LIBRARIES}
-        PRIVATE ${Qt5Widgets_LIBRARIES}
-        PRIVATE ${Qt5Network_LIBRARIES}
-        PRIVATE ${Qt5Xml_LIBRARIES}
-        PRIVATE ${Qt5Svg_LIBRARIES}
-        ${CMAKE_REQUIRED_LIBRARIES}
-        ${ALL_LIBRARIES}
-        ${PLATFORM_LIBS}
+target_link_libraries(${PROJECT_NAME}
+    PUBLIC ${Qt5Core_LIBRARIES}
+    PUBLIC ${Qt5Gui_LIBRARIES}
+    PUBLIC ${Qt5Widgets_LIBRARIES}
+    PUBLIC ${Qt5Network_LIBRARIES}
+    PUBLIC ${Qt5Xml_LIBRARIES}
+    PUBLIC ${Qt5Svg_LIBRARIES}
+    PUBLIC ${CMAKE_REQUIRED_LIBRARIES}
+    PUBLIC ${ALL_LIBRARIES}
+    PUBLIC ${PLATFORM_LIBS}
 )
 
 if (MSVC)

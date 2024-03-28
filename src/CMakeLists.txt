@@ -44,17 +44,19 @@ else ()
             ${${PROJECT_NAME}_RESOURCES})
 endif ()
 
+
+
+
 target_link_libraries(
         ${PROJECT_NAME}
-        PUBLIC ${OK_LIBS}
-        PRIVATE ${Qt5Core_LIBRARIES}
-        PRIVATE ${Qt5Gui_LIBRARIES}
-        PRIVATE ${Qt5Network_LIBRARIES}
-        PRIVATE ${Qt5Widgets_LIBRARIES}
-        PRIVATE ${Qt5MultimediaWidgets_LIBRARIES}
-        PRIVATE ${Qt5Multimedia_LIBRARIES}
-        PRIVATE ${Qt5Xml_LIBRARIES}
-        PRIVATE ${Qt5Svg_LIBRARIES}
+        PRIVATE ${OK_LIBS}
+#        PRIVATE ${Qt5Core_LIBRARIES}
+#        PRIVATE ${Qt5Gui_LIBRARIES}
+#        PRIVATE ${Qt5Network_LIBRARIES}
+#        PRIVATE ${Qt5Widgets_LIBRARIES}
+#        PRIVATE ${Qt5MultimediaWidgets_LIBRARIES}
+#        PRIVATE ${Qt5Multimedia_LIBRARIES}
+#        PRIVATE ${Qt5Xml_LIBRARIES}
 )
 
 if (MSVC)
