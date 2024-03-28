@@ -54,8 +54,6 @@ jobs:
         sudo apt install -y libsqlite3-dev libsqlcipher-dev libsodium-dev
         # ffmpeg vpx qrencode 
         sudo apt install -y libvpx-dev libjpeg-dev libexif-dev libtiff-dev libpng16-16 libpng-dev libavcodec-dev libavdevice-dev libqrencode-dev
-        sudo apt remove -y gcc-13 libstdc++-13-dev
-        sudo apt install -y gcc-12 libstdc++-12-dev
 
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
