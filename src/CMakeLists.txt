@@ -86,7 +86,7 @@ if (LINUX AND DESKTOP_APP_USE_PACKAGED)
     install(FILES "../src/UI/resources/logo/icon-512.png" DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/512x512/apps" RENAME ${PNG_NAME})
 endif()
 
-if(LINUX AND CPACK)
+if(LINUX AND OK_CPACK)
     ##---------------- 以下为用CPack打包成deb包的内容 ----------------##
     message(STATUS "CPACK")
     # 指定deb包的版本号
