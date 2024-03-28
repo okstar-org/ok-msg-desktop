@@ -20,6 +20,7 @@ jobs:
 
       matrix:
 #        https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
+        arch: [x86_64]
         os: [ubuntu-22.04]
         build_type: [Release]
         c_compiler: [clang-17]
