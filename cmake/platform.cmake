@@ -3,9 +3,22 @@ message(STATUS "CMAKE_GENERATOR_PLATFORM=" ${CMAKE_GENERATOR_PLATFORM})
 message(STATUS "CMAKE_SYSTEM_PROCESSOR=" ${CMAKE_SYSTEM_PROCESSOR})
 message(STATUS "CMAKE_SYSTEM_VERSION=" ${CMAKE_SYSTEM_VERSION})
 
-# For GNU/Linux and *BSD systems:
-if(UNIX AND NOT (APPLE))
-  set(LINUX ON)
+cmake_host_system_information(RESULT PRETTY_NAME QUERY DISTRIB_PRETTY_NAME)
+message(STATUS "OS Information:${PRETTY_NAME}")
+
+cmake_host_system_information(RESULT DISTRO QUERY DISTRIB_INFO)
+foreach(VAR IN LISTS DISTRO)
+    message(STATUS "\t ${VAR}=`${${VAR}}`")
+endforeach()
+
+
+if(CMAKE_SYSTEM_NAME MATCHES "Windows")
+    message("This is Windows")
+elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
+    set(LINUX ON)
+    message("This is Linux")
+elseif(CMAKE_SYSTEM_NAME MATCHES "Darwin")
+    message("This is macOS")
 endif()
 
 if(WIN32)

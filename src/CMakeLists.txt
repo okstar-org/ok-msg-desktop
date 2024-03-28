@@ -106,13 +106,58 @@ if(LINUX AND CPACK)
     set(CPACK_PACKAGE_MAINTAINER ${OK_MAINTAINER})
     set(CPACK_PACKAGE_SECTION ${CPACK_DESKTOP_GROUP})
 
+    if (${DISTRO_ID} MATCHES "ubuntu")
+        set(OK_CPACK_DEPENDS "libvpx7,libx264-163,libx265-199,libpgm-5.3-0,libdc1394-25,libaom3,libdav1d5,libdouble-conversion3,libmysofa1")
+    elseif (${DISTRO_ID} MATCHES "debian")
+        set(OK_CPACK_DEPENDS "libvpx5,libx264-155,libx265-165,libpgm-5.2-0,libdc1394-22,libaom0,libdavix0v5,libdouble-conversion1")
+    endif ()
+
+    MESSAGE(STATUS "OK_CPACK_DEPENDS=${OK_CPACK_DEPENDS}")
+
     # DEB
-    set(CPACK_DEBIAN_PACKAGE_DEPENDS "libqt5core5a,libqt5gui5,libqt5widgets5,libqt5svg5,libqt5xml5,libqt5x11extras5,libqt5concurrent5,libsdl2-2.0-0,libdouble-conversion3,libmd4c0,libdbus-1-3,libegl1,libfontconfig1,libfreetype6,libglib2.0-0,libglx0,libgl1,libglu1-mesa,freeglut3,libgtk-3-0,libharfbuzz0b,libice6,libicu70,libopengl0,libpcre2-16-0,libpng16-16,libsm6,libvulkan1,libx11-6,libx11-xcb1,libxcb1,libxcb-glx0,libxcb-icccm4,libxcb-image0,libxcb-keysyms1,libxcb-randr0,libxcb-render0,libxcb-render-util0,libxcb-shape0,libxcb-shm0,libxcb-sync1,libxcb-util1,libxcb-xfixes0,libxcb-xkb1,libxcursor1,libxkbcommon0,libxkbcommon-x11-0,libxv1,libxss1,zlib1g,libflac8,ocl-icd-libopencl1,libaom3,libasound2,libasyncns0,libavc1394-0,libavcodec58,libavdevice58,libavfilter7,libavformat58,libavutil56,libblas3,libbluray2,libbs2b0,libcaca0,libcdio19,libcdio-cdda2,libcdio-paranoia2,libchromaprint1,libcodec2-1.0,libdav1d5,libdc1394-25,libdecor-0-0,libexif12,libflite1,libgfortran5,libgme0,libgomp1,libgsm1,libiec61883-0,libjack-jackd2-0,liblapack3,liblilv-0-0,libmfx1,libmp3lame0,libmpg123-0,libmysofa1,libnorm1,libnuma1,libogg0,libopenal1,libopenjp2-7,libopenmpt0,libopus0,libpgm-5.3-0,libpocketsphinx3,libpostproc55,libpulse0,libqrencode4,libquadmath0,libvpx7,libwebpmux3,libx264-163,libx265-199,libswscale5,libswresample3,libsqlcipher0,libvorbis0a,libvorbisenc2,libvorbisfile3,libspeex1")
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS "${OK_CPACK_DEPENDS},\
+    libqt5core5a,libqt5gui5,libqt5widgets5,\
+    libqt5svg5,libqt5xml5,libqt5x11extras5,libqt5concurrent5,\
+    libsdl2-2.0-0,libdbus-1-3,\
+    libegl1,libfontconfig1,libfreetype6,libglib2.0-0,libglx0,libgl1,libglu1-mesa,\
+    freeglut3,libgtk-3-0,libharfbuzz0b,libice6,libicu70,libopengl0,libpcre2-16-0,\
+    libpng16-16,libsm6,libvulkan1,libx11-6,libx11-xcb1,libxcb1,libxcb-glx0,libxcb-icccm4,\
+    libxcb-image0,libxcb-keysyms1,libxcb-randr0,libxcb-render0,libxcb-render-util0,\
+    libxcb-shape0,libxcb-shm0,libxcb-sync1,libxcb-util1,libxcb-xfixes0,libxcb-xkb1,\
+    libxcursor1,libxkbcommon0,libxkbcommon-x11-0,libxv1,libxss1,zlib1g,libflac8,\
+    ocl-icd-libopencl1,libasound2,libasyncns0,libavc1394-0,libavcodec58,\
+    libavdevice58,libavfilter7,libavformat58,libavutil56,libblas3,libbluray2,\
+    libbs2b0,libcaca0,libcdio19,libcdio-cdda2,libcdio-paranoia2,libchromaprint1,\
+    libcodec2-1.0,libdav1d5,libdecor-0-0,libexif12,libflite1,\
+    libgfortran5,libgme0,libgomp1,libgsm1,libiec61883-0,libjack-jackd2-0,\
+    liblapack3,liblilv-0-0,libmp3lame0,libmpg123-0,\
+    libnorm1,libnuma1,libogg0,libopenal1,libopenjp2-7,libopenmpt0,libopus0,\
+    libpocketsphinx3,libpostproc55,libpulse0,libqrencode4,libquadmath0,\
+    libwebpmux3,libswscale5,libswresample3,\
+    libsqlcipher0,libvorbis0a,libvorbisenc2,libvorbisfile3,libspeex1")
 
     # RPM
     set(CPACK_RPM_PACKAGE_GROUP ${CPACK_DESKTOP_GROUP})
     set(CPACK_RPM_PACKAGE_AUTOREQ ${OK_MAINTAINER})
-    set(CPACK_RPM_PACKAGE_REQUIRES "libqt5core5a,libqt5gui5,libqt5widgets5,libqt5svg5,libqt5xml5,libqt5x11extras5,libqt5concurrent5,libsdl2-2.0-0,libdouble-conversion3,libmd4c0,libdbus-1-3,libegl1,libfontconfig1,libfreetype6,libglib2.0-0,libglx0,libgl1,libglu1-mesa,freeglut3,libgtk-3-0,libharfbuzz0b,libice6,libicu70,libopengl0,libpcre2-16-0,libpng16-16,libsm6,libvulkan1,libx11-6,libx11-xcb1,libxcb1,libxcb-glx0,libxcb-icccm4,libxcb-image0,libxcb-keysyms1,libxcb-randr0,libxcb-render0,libxcb-render-util0,libxcb-shape0,libxcb-shm0,libxcb-sync1,libxcb-util1,libxcb-xfixes0,libxcb-xkb1,libxcursor1,libxkbcommon0,libxkbcommon-x11-0,libxv1,libxss1,zlib1g,libflac8,ocl-icd-libopencl1,libaom3,libasound2,libasyncns0,libavc1394-0,libavcodec58,libavdevice58,libavfilter7,libavformat58,libavutil56,libblas3,libbluray2,libbs2b0,libcaca0,libcdio19,libcdio-cdda2,libcdio-paranoia2,libchromaprint1,libcodec2-1.0,libdav1d5,libdc1394-25,libdecor-0-0,libexif12,libflite1,libgfortran5,libgme0,libgomp1,libgsm1,libiec61883-0,libjack-jackd2-0,liblapack3,liblilv-0-0,libmfx1,libmp3lame0,libmpg123-0,libmysofa1,libnorm1,libnuma1,libogg0,libopenal1,libopenjp2-7,libopenmpt0,libopus0,libpgm-5.3-0,libpocketsphinx3,libpostproc55,libpulse0,libqrencode4,libquadmath0,libvpx7,libwebpmux3,libx264-163,libx265-199,libswscale5,libswresample3,libsqlcipher0,libvorbis0a,libvorbisenc2,libvorbisfile3,libspeex1")
+    set(CPACK_RPM_PACKAGE_REQUIRES "libqt5core5a,libqt5gui5,libqt5widgets5,\
+    libqt5svg5,libqt5xml5,libqt5x11extras5,libqt5concurrent5,libsdl2-2.0-0,\
+    libdouble-conversion3,libdbus-1-3,libegl1,libfontconfig1,\
+    libfreetype6,libglib2.0-0,libglx0,libgl1,libglu1-mesa,freeglut3,libgtk-3-0,\
+    libharfbuzz0b,libice6,libicu70,libopengl0,libpcre2-16-0,libpng16-16,libsm6,\
+    libvulkan1,libx11-6,libx11-xcb1,libxcb1,libxcb-glx0,libxcb-icccm4,libxcb-image0,\
+    libxcb-keysyms1,libxcb-randr0,libxcb-render0,libxcb-render-util0,libxcb-shape0,\
+    libxcb-shm0,libxcb-sync1,libxcb-util1,libxcb-xfixes0,libxcb-xkb1,libxcursor1,\
+    libxkbcommon0,libxkbcommon-x11-0,libxv1,libxss1,zlib1g,libflac8,ocl-icd-libopencl1,\
+    libaom3,libasound2,libasyncns0,libavc1394-0,libavcodec58,libavdevice58,libavfilter7,\
+    libavformat58,libavutil56,libblas3,libbluray2,libbs2b0,libcaca0,libcdio19,\
+    libcdio-cdda2,libcdio-paranoia2,libchromaprint1,libcodec2-1.0,libdav1d5,\
+    libdc1394-25,libdecor-0-0,libexif12,libflite1,libgfortran5,libgme0,libgomp1,\
+    libgsm1,libiec61883-0,libjack-jackd2-0,\
+    liblapack3,liblilv-0-0,libmp3lame0,libmpg123-0,libmysofa1,\
+    libnorm1,libnuma1,libogg0,libopenal1,libopenjp2-7,libopenmpt0,libopus0,\
+    libpgm-5.3-0,libpocketsphinx3,libpostproc55,libpulse0,libqrencode4,\
+    libquadmath0,libvpx7,libwebpmux3,libx264-163,libx265-199,libswscale5,\
+    libswresample3,libsqlcipher0,libvorbis0a,libvorbisenc2,libvorbisfile3,libspeex1")
 
     # 指定需要安装的文件
     include(CPack)
