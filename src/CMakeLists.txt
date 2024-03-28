@@ -117,6 +117,7 @@ if(LINUX AND CPACK)
     MESSAGE(STATUS "OK_CPACK_DEPENDS=${OK_CPACK_DEPENDS}")
 
     # DEB
+    set(CPACK_DEBIAN_FILE_NAME ${APPLICATION_EXE_NAME}-${DISTRO_ID}-${DISTRO_VERSION_ID}_${CMAKE_SYSTEM_PROCESSOR})
     set(CPACK_DEBIAN_PACKAGE_DEPENDS "${OK_CPACK_DEPENDS},\
     libqt5core5a,libqt5gui5,libqt5widgets5,\
     libqt5svg5,libqt5xml5,libqt5x11extras5,libqt5concurrent5,\
