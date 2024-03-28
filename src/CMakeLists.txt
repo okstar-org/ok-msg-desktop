@@ -101,12 +101,12 @@ if(LINUX AND CPACK)
     set(CPACK_PACKAGE_NAME ${APPLICATION_EXE_NAME})
     set(CPACK_PACKAGE_FILE_NAME ${APPLICATION_EXE_NAME}-${DISTRO_ID}-${DISTRO_VERSION_ID}_${CMAKE_SYSTEM_PROCESSOR})
     set(CPACK_PACKAGE_CONTACT ${OK_SUPPORT_EMAIL})
-    set(CPACK_PACKAGE_DESCRIPTION "OkMSG &#x652F;&#x6301;&#x72EC;&#x7ACB;&#x79C1;&#x6709;&#x5316;&#x90E8;&#x7F72;&#x7684;&#x96C6;&#x5373;&#x65F6;&#x6D88;&#x606F;&#x3001;&#x8BED;&#x97F3;&#x3001;&#x89C6;&#x9891;&#x901A;&#x8BDD;&#x3001;&#x53D1;&#x9001;&#x6587;&#x4EF6;&#x3001;&#x4F1A;&#x8BAE;&#x7B49;&#x591A;&#x79CD;&#x529F;&#x80FD;&#x4E8E;&#x4E00;&#x8EAB;&#x7684;&#x5F00;&#x6E90;&#x9879;&#x76EE;&#xFF0C;&#x540C;&#x65F6;&#x8BA9;&#x60A8;&#x7684;&#x4F01;&#x4E1A;&#x66F4;&#x52A0;&#x6709;&#x6548;&#x5F00;&#x542F;&#x534F;&#x4F5C;&#x3001;&#x6709;&#x6548;&#x6C9F;&#x901A;&#xFF0C;&#x63A7;&#x5236;&#x6210;&#x672C;&#xFF0C;&#x5F00;&#x62D3;&#x65B0;&#x4E1A;&#x52A1;&#xFF0C;&#x5E76;&#x5E2E;&#x52A9;&#x60A8;&#x52A0;&#x901F;&#x53D1;&#x5C55;&#x4E1A;&#x52A1;&#x3002;")
     set(CPACK_PACKAGE_HOMEPAGE_URL ${ORGANIZATION_HOME})
-    set(CPACK_PACKAGE_ICON "@CMake_SOURCE_DIR@/src/UI/resources/logo/main.svg")
+    set(CPACK_PACKAGE_ICON "${CMake_SOURCE_DIR}/src/UI/resources/logo/main.svg")
     set(CPACK_PACKAGE_VENDOR ${OK_MAINTAINER})
     set(CPACK_PACKAGE_MAINTAINER ${OK_MAINTAINER})
     set(CPACK_PACKAGE_SECTION ${CPACK_DESKTOP_GROUP})
+    set(CPACK_PACKAGE_DESCRIPTION "OkMSG &#x652F;&#x6301;&#x72EC;&#x7ACB;&#x79C1;&#x6709;&#x5316;&#x90E8;&#x7F72;&#x7684;&#x96C6;&#x5373;&#x65F6;&#x6D88;&#x606F;&#x3001;&#x8BED;&#x97F3;&#x3001;&#x89C6;&#x9891;&#x901A;&#x8BDD;&#x3001;&#x53D1;&#x9001;&#x6587;&#x4EF6;&#x3001;&#x4F1A;&#x8BAE;&#x7B49;&#x591A;&#x79CD;&#x529F;&#x80FD;&#x4E8E;&#x4E00;&#x8EAB;&#x7684;&#x5F00;&#x6E90;&#x9879;&#x76EE;&#xFF0C;&#x540C;&#x65F6;&#x8BA9;&#x60A8;&#x7684;&#x4F01;&#x4E1A;&#x66F4;&#x52A0;&#x6709;&#x6548;&#x5F00;&#x542F;&#x534F;&#x4F5C;&#x3001;&#x6709;&#x6548;&#x6C9F;&#x901A;&#xFF0C;&#x63A7;&#x5236;&#x6210;&#x672C;&#xFF0C;&#x5F00;&#x62D3;&#x65B0;&#x4E1A;&#x52A1;&#xFF0C;&#x5E76;&#x5E2E;&#x52A9;&#x60A8;&#x52A0;&#x901F;&#x53D1;&#x5C55;&#x4E1A;&#x52A1;&#x3002;")
 
     if (${DISTRO_ID} MATCHES "ubuntu")
         set(OK_CPACK_DEPENDS "libvpx7,libx264-163,libx265-199,libpgm-5.3-0,libdc1394-25,libaom3,libdav1d5,libdouble-conversion3,libmysofa1")
@@ -140,27 +140,27 @@ if(LINUX AND CPACK)
     libsqlcipher0,libvorbis0a,libvorbisenc2,libvorbisfile3,libspeex1")
 
     # RPM
-    set(CPACK_RPM_PACKAGE_GROUP ${CPACK_DESKTOP_GROUP})
-    set(CPACK_RPM_PACKAGE_AUTOREQ ${OK_MAINTAINER})
-    set(CPACK_RPM_PACKAGE_REQUIRES "libqt5core5a,libqt5gui5,libqt5widgets5,\
-    libqt5svg5,libqt5xml5,libqt5x11extras5,libqt5concurrent5,libsdl2-2.0-0,\
-    libdouble-conversion3,libdbus-1-3,libegl1,libfontconfig1,\
-    libfreetype6,libglib2.0-0,libglx0,libgl1,libglu1-mesa,freeglut3,libgtk-3-0,\
-    libharfbuzz0b,libice6,libicu70,libopengl0,libpcre2-16-0,libpng16-16,libsm6,\
-    libvulkan1,libx11-6,libx11-xcb1,libxcb1,libxcb-glx0,libxcb-icccm4,libxcb-image0,\
-    libxcb-keysyms1,libxcb-randr0,libxcb-render0,libxcb-render-util0,libxcb-shape0,\
-    libxcb-shm0,libxcb-sync1,libxcb-util1,libxcb-xfixes0,libxcb-xkb1,libxcursor1,\
-    libxkbcommon0,libxkbcommon-x11-0,libxv1,libxss1,zlib1g,libflac8,ocl-icd-libopencl1,\
-    libaom3,libasound2,libasyncns0,libavc1394-0,libavcodec58,libavdevice58,libavfilter7,\
-    libavformat58,libavutil56,libblas3,libbluray2,libbs2b0,libcaca0,libcdio19,\
-    libcdio-cdda2,libcdio-paranoia2,libchromaprint1,libcodec2-1.0,libdav1d5,\
-    libdc1394-25,libdecor-0-0,libexif12,libflite1,libgfortran5,libgme0,libgomp1,\
-    libgsm1,libiec61883-0,libjack-jackd2-0,\
-    liblapack3,liblilv-0-0,libmp3lame0,libmpg123-0,libmysofa1,\
-    libnorm1,libnuma1,libogg0,libopenal1,libopenjp2-7,libopenmpt0,libopus0,\
-    libpgm-5.3-0,libpocketsphinx3,libpostproc55,libpulse0,libqrencode4,\
-    libquadmath0,libvpx7,libwebpmux3,libx264-163,libx265-199,libswscale5,\
-    libswresample3,libsqlcipher0,libvorbis0a,libvorbisenc2,libvorbisfile3,libspeex1")
+#    set(CPACK_RPM_PACKAGE_GROUP ${CPACK_DESKTOP_GROUP})
+#    set(CPACK_RPM_PACKAGE_AUTOREQ ${OK_MAINTAINER})
+#    set(CPACK_RPM_PACKAGE_REQUIRES "libqt5core5a,libqt5gui5,libqt5widgets5,\
+#    libqt5svg5,libqt5xml5,libqt5x11extras5,libqt5concurrent5,libsdl2-2.0-0,\
+#    libdouble-conversion3,libdbus-1-3,libegl1,libfontconfig1,\
+#    libfreetype6,libglib2.0-0,libglx0,libgl1,libglu1-mesa,freeglut3,libgtk-3-0,\
+#    libharfbuzz0b,libice6,libicu70,libopengl0,libpcre2-16-0,libpng16-16,libsm6,\
+#    libvulkan1,libx11-6,libx11-xcb1,libxcb1,libxcb-glx0,libxcb-icccm4,libxcb-image0,\
+#    libxcb-keysyms1,libxcb-randr0,libxcb-render0,libxcb-render-util0,libxcb-shape0,\
+#    libxcb-shm0,libxcb-sync1,libxcb-util1,libxcb-xfixes0,libxcb-xkb1,libxcursor1,\
+#    libxkbcommon0,libxkbcommon-x11-0,libxv1,libxss1,zlib1g,libflac8,ocl-icd-libopencl1,\
+#    libaom3,libasound2,libasyncns0,libavc1394-0,libavcodec58,libavdevice58,libavfilter7,\
+#    libavformat58,libavutil56,libblas3,libbluray2,libbs2b0,libcaca0,libcdio19,\
+#    libcdio-cdda2,libcdio-paranoia2,libchromaprint1,libcodec2-1.0,libdav1d5,\
+#    libdc1394-25,libdecor-0-0,libexif12,libflite1,libgfortran5,libgme0,libgomp1,\
+#    libgsm1,libiec61883-0,libjack-jackd2-0,\
+#    liblapack3,liblilv-0-0,libmp3lame0,libmpg123-0,libmysofa1,\
+#    libnorm1,libnuma1,libogg0,libopenal1,libopenjp2-7,libopenmpt0,libopus0,\
+#    libpgm-5.3-0,libpocketsphinx3,libpostproc55,libpulse0,libqrencode4,\
+#    libquadmath0,libvpx7,libwebpmux3,libx264-163,libx265-199,libswscale5,\
+#    libswresample3,libsqlcipher0,libvorbis0a,libvorbisenc2,libvorbisfile3,libspeex1")
 
     # 指定需要安装的文件
     include(CPack)
