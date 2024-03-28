@@ -54,6 +54,8 @@ jobs:
         sudo apt install -y libsqlite3-dev libsqlcipher-dev libsodium-dev
         # ffmpeg vpx qrencode 
         sudo apt install -y libvpx-dev libjpeg-dev libexif-dev libtiff-dev libpng16-16 libpng-dev libavcodec-dev libavdevice-dev libqrencode-dev
+        sudo apt remove -y libstdc++-13-dev
+        sudo apt install -y libstdc++-13-dev
 
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
@@ -63,8 +65,6 @@ jobs:
       shell: bash
       run: |
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
-        file /usr/lib/x86_64-linux-gnu/libz.so
-        
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
