@@ -22,11 +22,11 @@ jobs:
 #        https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
         os: [ubuntu-22.04]
         build_type: [Release]
-        c_compiler: [gcc]
+        c_compiler: [clang]
         include:
           - os: ubuntu-22.04
-            c_compiler: gcc
-            cpp_compiler: g++
+            c_compiler: clang
+            cpp_compiler: clang++
     steps:
     - name: Checkout repository and submodules
       uses: actions/checkout@v3
