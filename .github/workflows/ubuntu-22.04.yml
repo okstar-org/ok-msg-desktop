@@ -100,4 +100,4 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         files: |
-          ${{ steps.strings.outputs.build-output-dir }}/ok-msg-desktop-${{matrix.os}}.deb
+          ${{ steps.strings.outputs.build-output-dir }}/ok-msg-desktop_${{matrix.os}}_${{ matrix.arch }}.deb
