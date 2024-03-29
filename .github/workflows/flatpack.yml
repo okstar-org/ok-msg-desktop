@@ -24,27 +24,23 @@ jobs:
       matrix:
 #        https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
         arch: [x86_64]
-        os: [ubuntu-22.04]
-        build_type: [Release]
-        c_compiler: [clang-17]
-        include:
-          - os: ubuntu-22.04
-            c_compiler: clang-17
-            cpp_compiler: clang++-17
+#        os: [ubuntu-22.04]
+#        build_type: [Release]
+#        c_compiler: [clang-17]
+#        include:
+#          - os: ubuntu-22.04
+#            c_compiler: clang-17
+#            cpp_compiler: clang++-17
     steps:
-    - name: Checkout repository and submodules
-      uses: actions/checkout@v3
-      with:
-        submodules: 'true'
+#    - name: Checkout repository and submodules
+#      uses: actions/checkout@v3
+#      with:
+#        submodules: 'true'
 
-    - name: Pull submodules
-      run: |
-        git config --global --add safe.directory /__w/ok-msg-desktop/ok-msg-desktop
-        git submodule update --remote --init
-
-    - name: Ping
-      run: |
-        ip a
+#    - name: Pull submodules
+#      run: |
+#        git config --global --add safe.directory /__w/ok-msg-desktop/ok-msg-desktop
+#        git submodule update --remote --init
 
     - name: Flatpak Build
       uses: flatpak/flatpak-github-actions/flatpak-builder@v6
