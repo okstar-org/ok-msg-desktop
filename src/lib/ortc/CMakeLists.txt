@@ -23,6 +23,9 @@ else()
     set(WebRTC_URL "https://github.com/crow-misia/libwebrtc-bin/releases/download/${WebRTC_VER}/${WebRTC_NAME}")
 endif()
 
+execute_process(COMMAND curl https://github.com OUTPUT_VARIABLE XXX)
+message(STATUS "=>" $XXX)
+
 message(STATUS "Fetch webrtc, It may take some time to wait.")
 set(FETCHCONTENT_QUIET OFF)
 FetchContent_Declare(webrtc
