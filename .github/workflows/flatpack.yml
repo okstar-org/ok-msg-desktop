@@ -16,7 +16,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     container:
       image: bilelmoussaoui/flatpak-github-actions:gnome-44
-      options: --privileged
+      options: --privileged --network
     strategy:
       # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
       fail-fast: false
