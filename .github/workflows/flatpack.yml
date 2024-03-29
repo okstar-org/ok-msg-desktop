@@ -42,7 +42,10 @@ jobs:
         git config --global --add safe.directory /__w/ok-msg-desktop/ok-msg-desktop
         git submodule update --remote --init
 
-    - name: "Flatpak Build"
+    - name: Ping
+      run: ping -c 10 github.com
+
+    - name: Flatpak Build
       uses: flatpak/flatpak-github-actions/flatpak-builder@v6
       with:
         bundle: ok-msg.flatpak
