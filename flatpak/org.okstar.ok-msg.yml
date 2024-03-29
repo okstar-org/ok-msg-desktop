@@ -60,6 +60,6 @@ modules:
       - -DCMAKE_BUILD_TYPE=Release
       - -DDESKTOP_APP_USE_PACKAGED=ON
     sources:
-      - type: dir
-        path: ../
-        branch: main
+      - type: git
+        url: https://github.com/okstar-org/ok-msg-desktop.git
+        branch: develop
