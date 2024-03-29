@@ -37,7 +37,9 @@ jobs:
       with:
         submodules: 'true'
     - name: os
-      run: cat /etc/os-release
+      run: |
+        cat /etc/os-release
+        dnf update -y
 #    - name: Pull submodules
 #      run: |
 #        git config --global --add safe.directory /__w/ok-msg-desktop/ok-msg-desktop
