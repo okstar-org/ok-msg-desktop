@@ -39,10 +39,12 @@ jobs:
 
     - name: Pull submodules
       run: |
+        git config --global --add safe.directory .
         git submodule update --remote --init
 
     - name: "Flatpak Build"
       uses: flatpak/flatpak-github-actions/flatpak-builder@v6
       with:
+        bundle: ok-msg.flatpak
         manifest-path: flatpak/org.okstar.ok-msg.yml
         cache-key: flatpak-builder-${{ github.sha }}
