@@ -61,5 +61,5 @@ modules:
       - -DDESKTOP_APP_USE_PACKAGED=ON
     sources:
       - type: dir
-        path: .
+        path: ../
         branch: main
