@@ -36,7 +36,7 @@ execute_process(
 message(STATUS "Fetch GIT_DESCRIBE=${GIT_DESCRIBE}")
 
 if (NOT GIT_DESCRIBE)
-  set(GIT_DESCRIBE, "v0.0.0")
+  set(GIT_DESCRIBE "v0.0.0")
   message(STATUS "Set GIT_DESCRIBE=${GIT_DESCRIBE}")
 endif ()
 
