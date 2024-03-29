@@ -39,7 +39,7 @@ jobs:
 
     - name: Pull submodules
       run: |
-        git config --global --add safe.directory /
+        git config --global --add safe.directory /__w/ok-msg-desktop/ok-msg-desktop
         git submodule update --remote --init
 
     - name: "Flatpak Build"
