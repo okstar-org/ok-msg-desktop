@@ -44,8 +44,7 @@ jobs:
 
     - name: Ping
       run: |
-        dnf install -y net-tools
-        ping -c 10 github.com
+        ip a
 
     - name: Flatpak Build
       uses: flatpak/flatpak-github-actions/flatpak-builder@v6
