@@ -52,13 +52,10 @@ modules:
     buildsystem: cmake-ninja
     builddir: true
     build-options:
-      arch:
-        aarch64:
-          cflags: -g1
-          cxxflags: -g1
     config-opts:
       - -DCMAKE_BUILD_TYPE=Release
       - -DDESKTOP_APP_USE_PACKAGED=ON
+      - -DOK_CHINA=1
     sources:
       - type: git
         url: https://github.com/okstar-org/ok-msg-desktop.git
