@@ -43,7 +43,9 @@ jobs:
         git submodule update --remote --init
 
     - name: Ping
-      run: ping -c 10 github.com
+      run: |
+        dnf install -y net-tools
+        ping -c 10 github.com
 
     - name: Flatpak Build
       uses: flatpak/flatpak-github-actions/flatpak-builder@v6
