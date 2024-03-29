@@ -55,7 +55,6 @@ modules:
     config-opts:
       - -DCMAKE_BUILD_TYPE=Release
       - -DDESKTOP_APP_USE_PACKAGED=ON
-      - -DOK_CHINA=1
     sources:
       - type: git
         url: https://github.com/okstar-org/ok-msg-desktop.git
