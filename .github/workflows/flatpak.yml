@@ -40,6 +40,7 @@ jobs:
       run: |
         cat /etc/os-release
         dnf update -y
+        curl https://github.com
 #    - name: Pull submodules
 #      run: |
 #        git config --global --add safe.directory /__w/ok-msg-desktop/ok-msg-desktop
