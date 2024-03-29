@@ -20,7 +20,7 @@ endif ()
 if(OK_CHINA)
     set(WebRTC_URL "https://chuanshaninfo.com/download/libwebrtc-bin/${WebRTC_NAME}")
 else()
-    set(WebRTC_URL "https://github.com/crow-misia/libwebrtc-bin/releases/download/${WebRTC_VER}/${WebRTC_NAME}")
+    set(WebRTC_URL "https://20.205.243.166/crow-misia/libwebrtc-bin/releases/download/${WebRTC_VER}/${WebRTC_NAME}")
 endif()
 
 message(STATUS "Fetch webrtc, It may take some time to wait.")
