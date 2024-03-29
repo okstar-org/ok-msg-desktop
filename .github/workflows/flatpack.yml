@@ -48,3 +48,4 @@ jobs:
         bundle: ok-msg.flatpak
         manifest-path: flatpak/org.okstar.ok-msg.yml
         cache-key: flatpak-builder-${{ github.sha }}
+        run-tests: true
