@@ -13,12 +13,12 @@ endforeach()
 
 
 if(CMAKE_SYSTEM_NAME MATCHES "Windows")
-    message("This is Windows")
+    message(STATUS "This is Windows")
 elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
     set(LINUX ON)
-    message("This is Linux")
+    message(STATUS "This is Linux")
 elseif(CMAKE_SYSTEM_NAME MATCHES "Darwin")
-    message("This is macOS")
+    message(STATUS "This is macOS")
 endif()
 
 if(WIN32)
