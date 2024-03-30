@@ -17,6 +17,7 @@ finish-args:
   - --talk-name=com.canonical.indicator.application
   - --talk-name=org.ayatana.indicator.application
   - --filesystem=xdg-run/pipewire-0
+  - --filesystem=xdg-documents
   - --unset-env=QT_PLUGIN_PATH
   - --env=PATH=/app/bin:/usr/bin
 add-extensions:
@@ -26,11 +27,15 @@ add-extensions:
     version: '23.08'
     autodownload: true
     autodelete: false
+
 build-options:
   cflags: -DNDEBUG
   cxxflags: -DNDEBUG
   append-path: /usr/lib/sdk/llvm16/bin
   append-ld-library-path: /usr/lib/sdk/llvm16/lib
+  build-args:
+    - --share=ipc
+    - --share=network
 cleanup:
   - /doc
   - /include
@@ -47,11 +52,27 @@ cleanup:
   - '*.la'
   - '*.a'
 modules:
+  - name: libsodium
+    buildsystem: autotools
+    builddir: true
+    sources:
+      - type: archive
+        url: https://github.com/jedisct1/libsodium/archive/refs/tags/1.0.19-RELEASE.tar.gz
+        sha256: 4fb996013283f482f46a457c8ff2c1495e797788e78e8ec56b1aa1b19253bf75
+
+  - name: sqlcipher
+    buildsystem: autotools
+    builddir: true
+    sources:
+      - type: archive
+        url: https://github.com/sqlcipher/sqlcipher/archive/refs/tags/v4.5.6.tar.gz
+        sha256: e4a527e38e67090c1d2dc41df28270d16c15f7ca5210a3e7ec4c4b8fda36e28f
 
   - name: ok-msg-desktop
     buildsystem: cmake-ninja
-    builddir: true
-    build-options:
+    make-args:
+      - --network
+
     config-opts:
       - -DCMAKE_BUILD_TYPE=Release
       - -DDESKTOP_APP_USE_PACKAGED=ON
