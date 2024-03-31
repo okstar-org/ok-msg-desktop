@@ -55,7 +55,7 @@ modules:
   - name: tcl
     buildsystem: simple
     build-commands:
-      - cd unix && ./configure --prefix=/usr/local --exec-prefix=/usr/local/linux-sparc
+      - cd unix && ./configure --prefix=/usr/local --exec-prefix=$FLATPAK_DEST/share/linux-sparc
       - cd unix ; make && make test && make install
     sources:
       - type: archive
@@ -65,7 +65,7 @@ modules:
   - name: tk
     buildsystem: simple
     build-commands:
-      - cd unix && ./configure options --with-tcl=/usr/local/linux-sparc
+      - cd unix && ./configure options --with-tcl=$FLATPAK_DEST/share/linux-sparc
       - cd unix; make && make test && make install
     sources:
       - type: archive
