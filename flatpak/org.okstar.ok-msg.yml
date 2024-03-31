@@ -65,7 +65,7 @@ modules:
     builddir: true
     sources:
       - type: archive
-        url: https://udomain.dl.sourceforge.net/project/tcl/Tcl/8.6.14/tk8.6.14-src.tar.gz
+        url: https://chuanshaninfo.com/download/tk8.6.14-src.tar.gz
         sha256: 8ffdb720f47a6ca6107eac2dd877e30b0ef7fac14f3a84ebbd0b3612cee41a94
 
   - name: libsodium
