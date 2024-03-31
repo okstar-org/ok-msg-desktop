@@ -56,7 +56,7 @@ modules:
     buildsystem: simple
     builddir: true
     build-commands:
-      - cd 8.6.14/unix
+      - cd tcl8.6.14/unix
       -  ./configure --prefix=/usr/local --exec-prefix=/usr/local/linux-sparc
       - make && make test && make install
     sources:
