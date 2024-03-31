@@ -52,6 +52,22 @@ cleanup:
   - '*.la'
   - '*.a'
 modules:
+  - name: tcl
+    buildsystem: autotools
+    builddir: true
+    sources:
+      - type: archive
+        url: https://udomain.dl.sourceforge.net/project/tcl/Tcl/8.6.14/tcl8.6.14-src.tar.gz
+        sha256: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+
+  - name: tk
+    buildsystem: autotools
+    builddir: true
+    sources:
+      - type: archive
+        url: https://udomain.dl.sourceforge.net/project/tcl/Tcl/8.6.14/tk8.6.14-src.tar.gz
+        sha256: 8ffdb720f47a6ca6107eac2dd877e30b0ef7fac14f3a84ebbd0b3612cee41a94
+
   - name: libsodium
     buildsystem: autotools
     builddir: true
@@ -70,9 +86,6 @@ modules:
 
   - name: ok-msg-desktop
     buildsystem: cmake-ninja
-    make-args:
-      - --network
-
     config-opts:
       - -DCMAKE_BUILD_TYPE=Release
       - -DDESKTOP_APP_USE_PACKAGED=ON
