@@ -77,15 +77,8 @@ modules:
         sha256: 8ffdb720f47a6ca6107eac2dd877e30b0ef7fac14f3a84ebbd0b3612cee41a94
 
   - name: libsodium
-    buildsystem: simple
-    build-commands:
-      - cd /home/user/src/tk8.5.0/unix
-      mkdir solaris
-      cd solaris
-      /home/user/src/tk8.5.0/unix/configure \
-      --with-tcl=/home/user/src/tcl8.5.0/unix/solaris \
-      --prefix=/usr/local \
-      --exec-prefix=/usr/local/solaris-sparc
+    buildsystem: autotools
+    builddir: true
     sources:
       - type: archive
         url: https://github.com/jedisct1/libsodium/archive/refs/tags/1.0.19-RELEASE.tar.gz
