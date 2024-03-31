@@ -54,7 +54,6 @@ cleanup:
 modules:
   - name: tcl
     buildsystem: simple
-    builddir: true
     build-commands:
       - cd tcl8.6.14/unix
       -  ./configure --prefix=/usr/local --exec-prefix=/usr/local/linux-sparc
@@ -66,7 +65,6 @@ modules:
 
   - name: tk
     buildsystem: simple
-    builddir: true
     build-commands:
       - cd tk8.6.14/unix
       - ./configure options --with-tcl=/usr/local/linux-sparc
