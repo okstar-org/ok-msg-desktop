@@ -104,7 +104,6 @@ modules:
     buildsystem: cmake-ninja
     config-opts:
       - -DCMAKE_BUILD_TYPE=Release
-      - -DBUILD_TESTS=OFF
       - -DDESKTOP_APP_USE_PACKAGED=ON
       - -DDESKTOP_LAUNCHER_BASENAME=org.okstar.ok-msg
     sources:
