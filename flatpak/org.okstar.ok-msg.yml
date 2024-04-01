@@ -63,7 +63,7 @@ modules:
     buildsystem: simple
     build-commands:
       - cp -r ../tcl /app
-      - cd /app/tcl/unix; ./configure CFLAGS="-O0" --prefix=/app --exec-prefix=/app && make && make install
+      - cd /app/tcl/unix; ./configure --prefix=/app --exec-prefix=/app && make && make install
 
     sources:
       - type: archive
@@ -77,7 +77,7 @@ modules:
       no-debuginfo: true
     build-commands:
       - ls /app
-      - cd unix && ./configure CFLAGS="-O0" --prefix=/app --exec-prefix=/app --with-tcl=/app/tcl/unix
+      - cd unix && ./configure --prefix=/app --exec-prefix=/app --with-tcl=/app/tcl/unix
       - cd unix; make && make install
     sources:
       - type: archive

@@ -14,14 +14,14 @@
 
 #include <QUuid>
 
-#include <gloox/src/capabilities.h>
-#include <gloox/src/extdisco.h>
-#include <gloox/src/jinglecontent.h>
-#include <gloox/src/jinglegroup.h>
-#include <gloox/src/jingleiceudp.h>
-#include <gloox/src/jinglertp.h>
-#include <gloox/src/jinglesession.h>
-#include <gloox/src/jinglesessionmanager.h>
+#include <capabilities.h>
+#include <extdisco.h>
+#include <jinglecontent.h>
+#include <jinglegroup.h>
+#include <jingleiceudp.h>
+#include <jinglertp.h>
+#include <jinglesession.h>
+#include <jinglesessionmanager.h>
 
 #include "IM.h"
 #include "IMFile.h"

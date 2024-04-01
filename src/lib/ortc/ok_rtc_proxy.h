@@ -14,8 +14,8 @@
 
 #include <string>
 
-#include <gloox/src/client.h>
-#include <gloox/src/jinglesession.h>
+#include <client.h>
+#include <jinglesession.h>
 
 #include "ok_rtc_defs.h"
 #include "ok_rtc_renderer.h"

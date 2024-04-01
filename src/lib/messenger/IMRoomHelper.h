@@ -14,7 +14,7 @@
 
 #include "messenger.h"
 #include <QString>
-#include <gloox/src/mucroom.h>
+#include <mucroom.h>
 #include <map>
 #include <string>
 

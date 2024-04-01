@@ -13,8 +13,8 @@
 #include "IMFile.h"
 #include "base/logs.h"
 #include <QEventLoop>
-#include <gloox/src/bytestream.h>
-#include <gloox/src/inbandbytestream.h>
+#include <bytestream.h>
+#include <inbandbytestream.h>
 #include <utility>
 
 namespace lib {

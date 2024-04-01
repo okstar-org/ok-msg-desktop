@@ -17,14 +17,14 @@
 #include <QMap>
 #include <map>
 
-#include <gloox/src/client.h>
-#include <gloox/src/jinglesession.h>
-#include <gloox/src/jinglesessionhandler.h>
-#include <gloox/src/jinglesessionmanager.h>
+#include <client.h>
+#include <jinglesession.h>
+#include <jinglesessionhandler.h>
+#include <jinglesessionmanager.h>
 
-#include <gloox/src/error.h>
-#include <gloox/src/inbandbytestream.h>
-#include <gloox/src/presencehandler.h>
+#include <error.h>
+#include <inbandbytestream.h>
+#include <presencehandler.h>
 
 #include "IM.h"
 #include "IMConference.h"

@@ -1,5 +1,3 @@
-# This starter workflow is for a CMake project running on multiple platforms. There is a different starter workflow if you just want a single platform.
-# See: https://github.com/actions/starter-workflows/blob/main/ci/cmake-single-platform.yml
 name: Flatpak on Ubuntu 22.04 platforms
 
 permissions:
@@ -20,17 +18,10 @@ jobs:
     strategy:
       # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
       fail-fast: false
-
       matrix:
 #        https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
         arch: [x86_64]
         os: [ubuntu-22.04]
-#        build_type: [Release]
-#        c_compiler: [clang-17]
-#        include:
-#          - os: ubuntu-22.04
-#            c_compiler: clang-17
-#            cpp_compiler: clang++-17
     steps:
     - name: Checkout repository and submodules
       uses: actions/checkout@v3

@@ -1,6 +1,21 @@
 project(OkIMCore)
 
-include_directories(${CMAKE_SOURCE_DIR}/3rdparty)
+include_directories(${gloox_SOURCE_DIR}/src)
+message(STATUS "gloox_SOURCE_DIR=${gloox_SOURCE_DIR}")
+
+if (WIN32)
+	add_definitions(-D_WIN32 -DWIN32 -D_WINDOWS -D_UNICODE)
+endif()
+
+
+add_definitions(
+		-DLOG_XMPP # xmpp logs
+		-DWANT_PING # xmpp ping
+		-DENABLE_SEND_RAW_XML # send raw xmls
+		-DLOG_TO_FILE)
+
+# ==== Gloox ====
+
 include_directories(${WebRTC_DIR}/include)
 
 file(GLOB ${PROJECT_NAME}_SOURCES *.cpp)

@@ -16,8 +16,8 @@
 #include <memory>
 
 #include "base/logs.h"
-#include <gloox/src/capabilities.h>
-#include <gloox/src/error.h>
+#include <capabilities.h>
+#include <error.h>
 
 namespace lib {
 namespace messenger {

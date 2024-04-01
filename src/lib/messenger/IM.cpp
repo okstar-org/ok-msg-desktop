@@ -24,21 +24,22 @@
 #include <thread>
 #include <utility>
 
-#include <gloox/src/avatar.h>
-#include <gloox/src/base64.h>
-#include <gloox/src/capabilities.h>
-#include <gloox/src/chatstate.h>
-#include <gloox/src/conference.h>
-#include <gloox/src/dataformitem.h>
-#include <gloox/src/disco.h>
-#include <gloox/src/extdisco.h>
-#include <gloox/src/inbandbytestream.h>
-#include <gloox/src/message.h>
-#include <gloox/src/nickname.h>
-#include <gloox/src/pubsubevent.h>
-#include <gloox/src/receipt.h>
-#include <gloox/src/rostermanager.h>
-#include <gloox/src/vcardupdate.h>
+#include <avatar.h>
+#include <attention.h>
+#include <base64.h>
+#include <capabilities.h>
+#include <chatstate.h>
+#include <conference.h>
+#include <dataformitem.h>
+#include <disco.h>
+#include <extdisco.h>
+#include <inbandbytestream.h>
+#include <message.h>
+#include <nickname.h>
+#include <pubsubevent.h>
+#include <receipt.h>
+#include <rostermanager.h>
+#include <vcardupdate.h>
 
 namespace lib {
 namespace messenger {

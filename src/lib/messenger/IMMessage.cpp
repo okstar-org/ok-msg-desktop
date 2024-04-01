@@ -14,7 +14,7 @@
 #include "base/basic_types.h"
 #include <QDebug>
 #include <QString>
-#include <gloox/src/jid.h>
+#include <jid.h>
 #include <utility>
 
 namespace lib {

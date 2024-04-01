@@ -16,9 +16,9 @@
 #include "lib/messenger/messenger.h"
 #include <QFile>
 #include <QThread>
-#include <gloox/src/bytestreamdatahandler.h>
-#include <gloox/src/inbandbytestream.h>
-#include <gloox/src/iqhandler.h>
+#include <bytestreamdatahandler.h>
+#include <inbandbytestream.h>
+#include <iqhandler.h>
 
 namespace lib {
 namespace messenger {

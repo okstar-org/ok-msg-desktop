@@ -1,4 +1,5 @@
 project(OkRTC)
+
 message(STATUS "Implicit include directories: ${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES}")
 message(STATUS "User-added include directories:")
 get_directory_property(USER_INCLUDE_DIRECTORIES INCLUDE_DIRECTORIES)
@@ -55,24 +56,7 @@ elseif (UNIX)
     add_definitions(-DWEBRTC_POSIX)
 endif ()
 
-# === Gloox ===
-set(BUILD_SHARED_LIBS ON)
-if (WIN32)
-    set(BUILD_SHARED_LIBS OFF)
-    add_definitions(-D_WIN32 -DWIN32 -D_WINDOWS -D_UNICODE)
-else ()
-    set(BUILD_SHARED_LIBS ON)
-endif ()
-
-add_definitions(
-        -DLOG_XMPP # xmpp logs
-        -DWANT_PING # xmpp ping
-        -DENABLE_SEND_RAW_XML # send raw xmls
-        -DLOG_TO_FILE)
-
-add_subdirectory(${CMAKE_SOURCE_DIR}/3rdparty/gloox ${PROJECT_BINARY_DIR}/3rdparty/gloox)
-set(gloox_LIB gloox)
-# ==== Gloox ====
+include_directories(${gloox_SOURCE_DIR}/src)
 
 add_definitions(-DNDEBUG)
 
@@ -100,7 +84,7 @@ add_library(${PROJECT_NAME} STATIC
         ${${PROJECT_NAME}_SOURCES})
 
 target_link_libraries(${PROJECT_NAME}
-        PRIVATE ${gloox_LIB}
+        PRIVATE gloox
         PRIVATE ${webrtc_LIB}
 )
 
