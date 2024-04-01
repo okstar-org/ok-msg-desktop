@@ -20,6 +20,8 @@ finish-args:
   - --filesystem=xdg-documents
   - --unset-env=QT_PLUGIN_PATH
   - --env=PATH=/app/bin:/usr/bin
+#sdk-extensions:
+#  - org.freedesktop.Sdk.Extension.llvm16
 add-extensions:
   org.freedesktop.Platform.ffmpeg-full:
     directory: lib/ffmpeg
@@ -36,6 +38,7 @@ build-options:
   build-args:
     - --share=ipc
     - --share=network
+    - --filesystem=/usr/local
 cleanup:
   - /doc
   - /include
@@ -51,12 +54,13 @@ cleanup:
   - '*.prl'
   - '*.la'
   - '*.a'
+
 modules:
   - name: tcl
     buildsystem: simple
     build-commands:
-      - cd unix && ./configure --prefix=/usr/local --exec-prefix=$FLATPAK_DEST/share/linux-sparc
-      - cd unix ; make && make test && make install
+      - cd unix && ./configure
+      - cd unix ; make && make install
     sources:
       - type: archive
         url: https://chuanshaninfo.com/download/tcl8.6.14-src.tar.gz
@@ -65,8 +69,8 @@ modules:
   - name: tk
     buildsystem: simple
     build-commands:
-      - cd unix && ./configure options --with-tcl=$FLATPAK_DEST/share/linux-sparc
-      - cd unix; make && make test && make install
+      - cd unix && ./configure
+      - cd unix; make && make install
     sources:
       - type: archive
         url: https://chuanshaninfo.com/download/tk8.6.14-src.tar.gz
