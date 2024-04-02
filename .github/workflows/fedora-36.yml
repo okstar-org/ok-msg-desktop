@@ -25,11 +25,11 @@ jobs:
       matrix:
 #        https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
         arch: [x86_64]
-        os: [fedora-22.04]
+        os: [fedora-36]
         build_type: [Release]
         c_compiler: [gcc]
         include:
-          - os: fedora-22.04
+          - os: fedora-36
             c_compiler: gcc
             cpp_compiler: g++
     steps:
