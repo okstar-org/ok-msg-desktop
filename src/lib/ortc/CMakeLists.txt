@@ -18,11 +18,7 @@ elseif (LINUX)
     set(WebRTC_NAME "libwebrtc-linux-x64.tar.xz")
 endif ()
 
-if(OK_CHINA)
-    set(WebRTC_URL "https://chuanshaninfo.com/download/libwebrtc-bin/${WebRTC_NAME}")
-else()
-    set(WebRTC_URL "https://github.com/crow-misia/libwebrtc-bin/releases/download/${WebRTC_VER}/${WebRTC_NAME}")
-endif()
+set(WebRTC_URL "https://github.com/crow-misia/libwebrtc-bin/releases/download/${WebRTC_VER}/${WebRTC_NAME}")
 
 message(STATUS "Fetch webrtc, It may take some time to wait.")
 set(FETCHCONTENT_QUIET OFF)

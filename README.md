@@ -86,12 +86,25 @@ cmake --build build
 ```
 
 # Linux 构建
+## Ubuntu 22.04
+> 安装依赖
+```shell
+
+```
+
+## Fedora 36
+```shell
+dnf update-y
+dnf install qt5-qtbase-devel qt6-qtbase-gui  qt5-qtmultimedia-devel  qt5-qtsvg-devel qt5-qttools-devel qt5-qttools-static \
+            libavcodec-free-devel libavdevice-free-devel libexif-free-devel qrencode-devel libsodium-devel sqlcipher-devel \
+            libvpx-devel openal-soft-devel openssl-devel
+```
+
 ```shell
 # 预处理
 cmake -B build -DCMAKE_BUILD_TYPE={Debug|Release} [-DOK_CPACK=1  #(打包DEB、RPM)]
 # 构建
 cmake --build build [--target package #(打包DEB、RPM)]
-
 ```
 
 # Downloads
