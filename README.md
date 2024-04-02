@@ -94,8 +94,9 @@ cmake --build build
 
 ## Fedora 36
 ```shell
-dnf update-y
-dnf install qt5-qtbase-devel qt6-qtbase-gui  qt5-qtmultimedia-devel  qt5-qtsvg-devel qt5-qttools-devel qt5-qttools-static \
+dnf update -y
+dnf install -y gcc g++
+dnf install -y qt5-qtbase-devel qt6-qtbase-gui  qt5-qtmultimedia-devel  qt5-qtsvg-devel qt5-qttools-devel qt5-qttools-static \
             libavcodec-free-devel libavdevice-free-devel libexif-free-devel qrencode-devel libsodium-devel sqlcipher-devel \
             libvpx-devel openal-soft-devel openssl-devel
 ```
