@@ -106,4 +106,3 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         files: |
           ${{ steps.strings.outputs.build-output-dir }}/ok-msg-desktop_${{matrix.os}}_${{ matrix.arch }}.deb
-          ${{ steps.strings.outputs.build-output-dir }}/ok-msg-desktop_fedora-36_${{ matrix.arch }}.rpm
