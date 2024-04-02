@@ -97,7 +97,6 @@ if(LINUX AND OK_CPACK)
     set(CPACK_PACKAGE_VERSION_PATCH "${OK_VER_PATCH}")
 
     # https://cmake.org/cmake/help/book/mastering-cmake/chapter/Packaging%20With%20CPack.html#options-added-by-cpack
-    set(CPACK_GENERATOR "DEB;RPM")
     set(CPACK_DESKTOP_GROUP "Network,Office")
     # 指定包名
     set(CPACK_PACKAGE_NAME ${APPLICATION_EXE_NAME})
@@ -111,6 +110,7 @@ if(LINUX AND OK_CPACK)
     set(CPACK_PACKAGE_DESCRIPTION "OkMSG &#x652F;&#x6301;&#x72EC;&#x7ACB;&#x79C1;&#x6709;&#x5316;&#x90E8;&#x7F72;&#x7684;&#x96C6;&#x5373;&#x65F6;&#x6D88;&#x606F;&#x3001;&#x8BED;&#x97F3;&#x3001;&#x89C6;&#x9891;&#x901A;&#x8BDD;&#x3001;&#x53D1;&#x9001;&#x6587;&#x4EF6;&#x3001;&#x4F1A;&#x8BAE;&#x7B49;&#x591A;&#x79CD;&#x529F;&#x80FD;&#x4E8E;&#x4E00;&#x8EAB;&#x7684;&#x5F00;&#x6E90;&#x9879;&#x76EE;&#xFF0C;&#x540C;&#x65F6;&#x8BA9;&#x60A8;&#x7684;&#x4F01;&#x4E1A;&#x66F4;&#x52A0;&#x6709;&#x6548;&#x5F00;&#x542F;&#x534F;&#x4F5C;&#x3001;&#x6709;&#x6548;&#x6C9F;&#x901A;&#xFF0C;&#x63A7;&#x5236;&#x6210;&#x672C;&#xFF0C;&#x5F00;&#x62D3;&#x65B0;&#x4E1A;&#x52A1;&#xFF0C;&#x5E76;&#x5E2E;&#x52A9;&#x60A8;&#x52A0;&#x901F;&#x53D1;&#x5C55;&#x4E1A;&#x52A1;&#x3002;")
 
     if (${DISTRO_ID} MATCHES "ubuntu")
+        set(CPACK_GENERATOR "DEB")
         set(OK_CPACK_DEPENDS "libvpx7,libx264-163,libx265-199,libpgm-5.3-0,libdc1394-25,libaom3,libdav1d5,libdouble-conversion3,libmysofa1")
         # DEB for ubuntu
         set(CPACK_DEBIAN_PACKAGE_DEPENDS "${OK_CPACK_DEPENDS},\
@@ -138,6 +138,7 @@ if(LINUX AND OK_CPACK)
         set(OK_CPACK_DEPENDS "libvpx5,libx264-155,libx265-165,libpgm-5.2-0,libdc1394-22,libaom0,libdavix0v5,libdouble-conversion1")
     elseif (${DISTRO_ID} MATCHES "fedora")
         # RPM
+        set(CPACK_GENERATOR "RPM")
 #        set(CPACK_RPM_FILE_NAME ${APPLICATION_EXE_NAME}_fedora-36_${CMAKE_SYSTEM_PROCESSOR}.rpm)
         set(CPACK_RPM_PACKAGE_GROUP ${CPACK_DESKTOP_GROUP})
         set(CPACK_RPM_PACKAGE_AUTOREQ ${OK_MAINTAINER})
