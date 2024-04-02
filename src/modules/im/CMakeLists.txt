@@ -528,7 +528,7 @@ if (WIN32)
             Vfw32 shell32 oleaut32 ole32 user32 advapi32
             bcrypt Mf Mfplat Mfreadwrite mfuuid dxva2 evr )
 elseif (UNIX)
-    set(PLATFORM_LIBS z ssl crypto atomic X11)
+    set(PLATFORM_LIBS z OpenSSL::SSL OpenSSL::Crypto atomic X11)
 endif ()
 
 

@@ -49,6 +49,7 @@ message(STATUS "webrtc_SOURCE_DIR=${webrtc_SOURCE_DIR}")
 message(STATUS "webrtc_LIB=${webrtc_LIB}")
 
 add_definitions(-DOPENSSL_IS_BORINGSSL=1)
+add_definitions(-DNDEBUG)
 
 if (WIN32)
     add_definitions(-DWEBRTC_WIN)
@@ -58,7 +59,6 @@ endif ()
 
 include_directories(${gloox_SOURCE_DIR}/src)
 
-add_definitions(-DNDEBUG)
 
 set(${PROJECT_NAME}_SOURCES
         webrtc/ok_videosink.h

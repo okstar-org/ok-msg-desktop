@@ -1,4 +1,4 @@
-# Copyright (c) 2022 船山信息 chuanshaninfo.com OkEDU-Classroom is licensed under
+# Copyright (c) 2022 船山信息 chuanshaninfo.com This project is licensed under
 # Mulan PubL v2. You can use this software according to the terms and conditions
 # of the Mulan PubL v2. You may obtain a copy of Mulan PubL v2 at:
 # http://license.coscl.org.cn/MulanPubL-2.0 THIS SOFTWARE IS PROVIDED ON AN "AS
@@ -26,7 +26,7 @@ function(search_dependency pkg)
   set(oneValueArgs PACKAGE LIBRARY FRAMEWORK HEADER)
   set(multiValueArgs)
   cmake_parse_arguments(arg "${options}" "${oneValueArgs}" "${multiValueArgs}"
-                        ${ARGN})
+      ${ARGN})
 
   # Try pkg-config first.
   if(NOT ${pkg}_FOUND AND arg_PACKAGE)
@@ -36,11 +36,11 @@ function(search_dependency pkg)
   # Then, try OSX frameworks.
   if(NOT ${pkg}_FOUND AND arg_FRAMEWORK)
     find_library(
-      ${pkg}_LIBRARIES
-      NAMES ${arg_FRAMEWORK}
-      PATHS ${CMAKE_OSX_SYSROOT}/System/Library
-      PATH_SUFFIXES Frameworks
-      NO_DEFAULT_PATH)
+        ${pkg}_LIBRARIES
+        NAMES ${arg_FRAMEWORK}
+        PATHS ${CMAKE_OSX_SYSROOT}/System/Library
+        PATH_SUFFIXES Frameworks
+        NO_DEFAULT_PATH)
     if(${pkg}_LIBRARIES)
       set(${pkg}_FOUND TRUE)
     endif()
@@ -71,13 +71,13 @@ function(search_dependency pkg)
     endif()
 
     message(STATUS ${pkg} " LIBRARY_DIRS: "
-                   "${${pkg}${maybe_static}_LIBRARY_DIRS}")
+        "${${pkg}${maybe_static}_LIBRARY_DIRS}")
     message(STATUS ${pkg} " INCLUDE_DIRS: "
-                   "${${pkg}${maybe_static}_INCLUDE_DIRS}")
+        "${${pkg}${maybe_static}_INCLUDE_DIRS}")
     message(STATUS ${pkg} " CFLAGS_OTHER: "
-                   "${${pkg}${maybe_static}_CFLAGS_OTHER}")
+        "${${pkg}${maybe_static}_CFLAGS_OTHER}")
     message(STATUS ${pkg} " LIBRARIES:    "
-                   "${${pkg}${maybe_static}_LIBRARIES}")
+        "${${pkg}${maybe_static}_LIBRARIES}")
 
     link_directories(${${pkg}${maybe_static}_LIBRARY_DIRS})
     include_directories(${${pkg}${maybe_static}_INCLUDE_DIRS})
@@ -123,8 +123,8 @@ endif()
 search_dependency(OPENAL PACKAGE openal)
 
 if(PLATFORM_EXTENSIONS
-   AND UNIX
-   AND NOT APPLE)
+    AND UNIX
+    AND NOT APPLE)
   # Automatic auto-away support. (X11 also using for capslock detection)
   search_dependency(X11 PACKAGE x11 OPTIONAL)
   search_dependency(XSS PACKAGE xscrnsaver OPTIONAL)
@@ -142,6 +142,8 @@ if(WIN32)
   set(ALL_LIBRARIES ${ALL_LIBRARIES} strmiids)
   # Qt doesn't provide openssl on windows
   search_dependency(OPENSSL PACKAGE openssl)
+else ()
+  find_package(OpenSSL)
 endif()
 
 set(APPLE_EXT False)
@@ -156,8 +158,8 @@ endif()
 
 if(PLATFORM_EXTENSIONS)
   if(${APPLE_EXT}
-     OR ${X11_EXT}
-     OR WIN32)
+      OR ${X11_EXT}
+      OR WIN32)
     add_definitions(-DQTOX_PLATFORM_EXT)
     message(STATUS "Using platform extensions")
   else()
