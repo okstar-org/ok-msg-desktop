@@ -13,23 +13,23 @@ set(${PROJECT_NAME}_RC_FILES icon/icon.rc)
 set(${PROJECT_NAME}_QRC_FILES UI/resources/resources.qrc)
 
 set(${PROJECT_NAME}_RESOURCES ${${PROJECT_NAME}_RC_FILES}
-                              ${${PROJECT_NAME}_QRC_FILES})
+    ${${PROJECT_NAME}_QRC_FILES})
 
 set(${PROJECT_NAME}_SOURCES
-        main.cpp
-        application.cpp
-        launcher.cpp
+    main.cpp
+    application.cpp
+    launcher.cpp
 )
 
 list(APPEND OK_LIBS
-        UI
-        IM
-        OkIMCore
-        OkSession
-        OkSettings
-        OkNetwork
-        OkBackend
-        OkBase
+    UI
+    IM
+    OkIMCore
+    OkSession
+    OkSettings
+    OkNetwork
+    OkBackend
+    OkBase
 )
 
 if(ENABLE_PLUGINS)
@@ -38,31 +38,31 @@ endif()
 
 if (WIN32 AND LOWER_CMAKE_BUILD_TYPE STREQUAL release)
     add_executable(${PROJECT_NAME} ${${PROJECT_NAME}_SOURCES}
-            ${${PROJECT_NAME}_RESOURCES})
+        ${${PROJECT_NAME}_RESOURCES})
 else ()
     add_executable(${PROJECT_NAME} WIN32 ${${PROJECT_NAME}_SOURCES}
-            ${${PROJECT_NAME}_RESOURCES})
+        ${${PROJECT_NAME}_RESOURCES})
 endif ()
 
 
 
 
 target_link_libraries(
-        ${PROJECT_NAME}
-        PRIVATE ${OK_LIBS}
-#        PRIVATE ${Qt5Core_LIBRARIES}
-#        PRIVATE ${Qt5Gui_LIBRARIES}
-#        PRIVATE ${Qt5Network_LIBRARIES}
-#        PRIVATE ${Qt5Widgets_LIBRARIES}
-#        PRIVATE ${Qt5MultimediaWidgets_LIBRARIES}
-#        PRIVATE ${Qt5Multimedia_LIBRARIES}
-#        PRIVATE ${Qt5Xml_LIBRARIES}
+    ${PROJECT_NAME}
+    PRIVATE ${OK_LIBS}
+    #        PRIVATE ${Qt5Core_LIBRARIES}
+    #        PRIVATE ${Qt5Gui_LIBRARIES}
+    #        PRIVATE ${Qt5Network_LIBRARIES}
+    #        PRIVATE ${Qt5Widgets_LIBRARIES}
+    #        PRIVATE ${Qt5MultimediaWidgets_LIBRARIES}
+    #        PRIVATE ${Qt5Multimedia_LIBRARIES}
+    #        PRIVATE ${Qt5Xml_LIBRARIES}
 )
 
 if (MSVC)
     set_property(
-            TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY
-            "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+        TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY
+        "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif (MSVC)
 
 set(PNG_NAME "ok-msg.png")
@@ -112,7 +112,7 @@ if(LINUX AND OK_CPACK)
     if (${DISTRO_ID} MATCHES "ubuntu")
         set(CPACK_GENERATOR "DEB")
         set(OK_CPACK_DEPENDS "libvpx7,libx264-163,libx265-199,libpgm-5.3-0,libdc1394-25,libaom3,libdav1d5,libdouble-conversion3,libmysofa1")
-        # DEB for ubuntu
+        # DEB for ubuntu 22.04
         set(CPACK_DEBIAN_PACKAGE_DEPENDS "${OK_CPACK_DEPENDS},\
             libqt5core5a,libqt5gui5,libqt5widgets5,\
             libqt5svg5,libqt5xml5,libqt5x11extras5,libqt5concurrent5,\
@@ -137,29 +137,14 @@ if(LINUX AND OK_CPACK)
     elseif (${DISTRO_ID} MATCHES "debian")
         set(OK_CPACK_DEPENDS "libvpx5,libx264-155,libx265-165,libpgm-5.2-0,libdc1394-22,libaom0,libdavix0v5,libdouble-conversion1")
     elseif (${DISTRO_ID} MATCHES "fedora")
-        # RPM
+        # RPM for fedora 36
         set(CPACK_GENERATOR "RPM")
-#        set(CPACK_RPM_FILE_NAME ${APPLICATION_EXE_NAME}_fedora-36_${CMAKE_SYSTEM_PROCESSOR}.rpm)
         set(CPACK_RPM_PACKAGE_GROUP ${CPACK_DESKTOP_GROUP})
         set(CPACK_RPM_PACKAGE_AUTOREQ ${OK_MAINTAINER})
-        set(CPACK_RPM_PACKAGE_REQUIRES "ffmpeg-free,qt5-qtbase,qt5-qtbase-gui,qt5-qtsvg,qt5-qtmultimedia,qt5-linguist,qt5-qttools,qt5-qtscxml
-            libsdl2-2.0-0,\
-            libdouble-conversion3,libdbus-1-3,libegl1,libfontconfig1,\
-            libfreetype6,libglib2.0-0,libglx0,libgl1,libglu1-mesa,freeglut3,libgtk-3-0,\
-            libharfbuzz0b,libice6,libicu70,libopengl0,libpcre2-16-0,libpng16-16,libsm6,\
-            libvulkan1,libx11-6,libx11-xcb1,libxcb1,libxcb-glx0,libxcb-icccm4,libxcb-image0,\
-            libxcb-keysyms1,libxcb-randr0,libxcb-render0,libxcb-render-util0,libxcb-shape0,\
-            libxcb-shm0,libxcb-sync1,libxcb-util1,libxcb-xfixes0,libxcb-xkb1,libxcursor1,\
-            libxkbcommon0,libxkbcommon-x11-0,libXv,libxss1,zlib,libflac8,ocl-icd-libopencl1,\
-            libaom3,libasound2,libasyncns0,libavc1394-0,libavcodec58,libavdevice58,libavfilter7,\
-            libavformat58,libavutil56,libblas3,libbluray2,libbs2b0,libcaca0,libcdio19,\
-            libcdio-cdda2,libcdio-paranoia2,libchromaprint1,libcodec2-1.0,libdav1d5,\
-            libdc1394-25,libdecor-0-0,libexif12,libflite1,libgfortran5,libgme0,libgomp1,\
-            libgsm1,libiec61883-0,libjack-jackd2-0,\
-            liblapack3,liblilv-0-0,libmp3lame0,libmpg123-0,libmysofa1,\
-            libnorm1,libnuma1,libogg0,libopenal1,libopenjp2-7,libopenmpt0,libopus0,\
-            libpgm-5.3-0,libpocketsphinx3,libpostproc55,libpulse0,libqrencode4,\
-            libquadmath0,libvpx7,libwebpmux3,libsqlcipher0,libvorbis0a,libvorbisenc2,libvorbisfile3,libspeex1")
+        set(CPACK_RPM_PACKAGE_REQUIRES "qt5-qtbase,qt5-qtbase-gui,qt5-qtsvg,qt5-qtmultimedia,qt5-linguist,qt5-qttools,qt5-qtscxml,qt5-qttools-static,\
+            libvpx,ffmpeg-free, libavcodec-free-devel, libavdevice-free,libexif,\
+            qrencode-libs, libsodium-devel sqlcipher, \
+            openal-soft,openssl-libs")
     endif ()
 
     # 指定需要安装的文件
@@ -178,42 +163,42 @@ if(LINUX AND OK_CPACK)
 endif ()
 
 if(LINUX AND PACMAN)
-install(TARGETS ${PROJECT_NAME} DESTINATION bin)
+    install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 
-set(ICON_SIZES
-    16x16
-    24x24
-    32x32
-    48x48
-    64x64
-    72x72
-    96x96
-    128x128
-    256x256)
+    set(ICON_SIZES
+        16x16
+        24x24
+        32x32
+        48x48
+        64x64
+        72x72
+        96x96
+        128x128
+        256x256)
 
-foreach(SIZE ${ICON_SIZES})
-  set(ICON_FILE "icon/${SIZE}.png")
-  set(DESTINATION_DIR "/usr/share/icons/hicolor/${SIZE}/apps")
-  set(DESTINATION_PATH "${DESTINATION_DIR}/ok-msg.png")
+    foreach(SIZE ${ICON_SIZES})
+        set(ICON_FILE "icon/${SIZE}.png")
+        set(DESTINATION_DIR "/usr/share/icons/hicolor/${SIZE}/apps")
+        set(DESTINATION_PATH "${DESTINATION_DIR}/ok-msg.png")
 
-  install(
-    FILES ${CMAKE_CURRENT_BINARY_DIR}/${ICON_FILE}
-    DESTINATION ${DESTINATION_DIR}
-    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ)
+        install(
+            FILES ${CMAKE_CURRENT_BINARY_DIR}/${ICON_FILE}
+            DESTINATION ${DESTINATION_DIR}
+            PERMISSIONS OWNER_READ GROUP_READ WORLD_READ)
 
-  install(
-    CODE "execute_process(COMMAND xdg-icon-resource install --context apps --size ${SIZE} ${DESTINATION_PATH})"
-  )
-endforeach()
+        install(
+            CODE "execute_process(COMMAND xdg-icon-resource install --context apps --size ${SIZE} ${DESTINATION_PATH})"
+        )
+    endforeach()
 
-set(DESKTOP_FILE "ok-msg.desktop")
-set(DESTINATION_DIR "/usr/share/applications")
+    set(DESKTOP_FILE "ok-msg.desktop")
+    set(DESTINATION_DIR "/usr/share/applications")
 
-configure_file(${DESKTOP_FILE}.in ${CMAKE_CURRENT_BINARY_DIR}/${DESKTOP_FILE}
-               @ONLY)
+    configure_file(${DESKTOP_FILE}.in ${CMAKE_CURRENT_BINARY_DIR}/${DESKTOP_FILE}
+        @ONLY)
 
-install(
-  FILES ${CMAKE_CURRENT_BINARY_DIR}/${DESKTOP_FILE}
-  DESTINATION ${DESTINATION_DIR}
-  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ)
+    install(
+        FILES ${CMAKE_CURRENT_BINARY_DIR}/${DESKTOP_FILE}
+        DESTINATION ${DESTINATION_DIR}
+        PERMISSIONS OWNER_READ GROUP_READ WORLD_READ)
 endif ()
