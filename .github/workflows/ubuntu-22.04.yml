@@ -99,10 +99,11 @@ jobs:
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: ctest --build-config ${{ matrix.build_type }}
 
-    - name: Upload deb to release
+    - name: Upload deb/rpm to release
       uses: softprops/action-gh-release@v1
       if: ${{ startsWith(github.ref, 'refs/tags/') }}
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         files: |
           ${{ steps.strings.outputs.build-output-dir }}/ok-msg-desktop_${{matrix.os}}_${{ matrix.arch }}.deb
+          ${{ steps.strings.outputs.build-output-dir }}/ok-msg-desktop_fedora-36_${{ matrix.arch }}.rpm

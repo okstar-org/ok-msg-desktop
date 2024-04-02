@@ -57,19 +57,18 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
 > 🍎 macOS
 - 计划中
 
-# 🧰 编译环境
-✅ 支持 GCC On Linux
-✅ 支持 Clang On Linux
-✅ 支持 MSVC On Windows
-✅ 支持 Clang On Windows
-📌 支持 MinGW On Windows 计划中
-📌 支持 Clang On macOS 计划中
+# 🧰 编译器支持
+- ✅ 支持 GCC On Linux
+- ✅ 支持 Clang On Linux
+- ✅ 支持 MSVC On Windows
+- ✅ 支持 Clang On Windows
 
 # ⚙️ 构建开发
+本项目目前支持Windows和Linux环境开发，macOS环境正在规划中
 - C++版本：C++20
 - Qt版本：Qt5.15.x
 
-## Windows 
+## Windows 构建
 - 安装`visual studio 17 2022`
 
 - 配置环境变量
@@ -79,13 +78,55 @@ VCPKG_ROOT=E:\Program Files\Microsoft Visual Studio\2022\Community\VC\vcpkg
 VCPKG_DOWNLOADS=下载路径
 ```
 
-- CMake执行构建
+- CMake执行配置
 ```shell
-git submodule update --init
+# 预处理
 cmake -B build --preset win-x64-{debug|release}
-cmake --build build 
+cmake --build build
 ```
 
+# Linux 构建
+```shell
+# 预处理
+cmake -B build -DCMAKE_BUILD_TYPE={Debug|Release} [-DOK_CPACK=1  #(打包DEB、RPM)]
+# 构建
+cmake --build build [--target package #(打包DEB、RPM)]
+
+```
+
+# Downloads
+本项目支持Windows、Linux支持多种安装方式
+- 下载地址: https://github.com/okstar-org/ok-msg-desktop/releases
+
+<table>
+    <tr>
+        <th></th>
+        <th>Windows</th>
+        <th>Ubuntu (64-bit)</th>
+        <th>Fedora (64-bit)</th>
+        <th>Android</th>
+        <th>macOS</th>
+        <th>iOS</th>
+    </tr>
+    <tr>
+        <th>v24.03.0</th>
+        <td>
+          <a href="https://github.com/okstar-org/ok-msg-desktop/releases/download/v24.03.0/ok-msg-desktop_windows-latest_x64.zip">Windows 10+</a>
+        </td>
+        <td>
+            <a href="https://github.com/okstar-org/ok-msg-desktop/releases/download/v24.03.0/ok-msg-desktop_ubuntu-22.04_x86_64.deb">Ubuntu 22.04 (deb)</a><br>
+            <a href="https://snapcraft.io/ok-msg"><img decoding="async" class="aligncenter" src="https://snapcraft.io/static/images/badges/en/snap-store-black.svg" alt="Get it from the Snap Store"><br></a>
+        </td>
+        <td>
+            <a href="https://github.com/okstar-org/ok-msg-desktop/releases/download/v24.03.0/ok-msg-desktop_fedora-36_x86_64.deb">Fedora 36</a><br>
+        </td>
+        <td><a href="https://www.pgyer.com/0UruoU">Android</a></td>
+        <td>
+          规划中 
+        </td>
+        <td>规划中</td>
+    </tr>
+</table>
 
 # ⚒️ 开发规范
 - 开发者规约（进行中）
