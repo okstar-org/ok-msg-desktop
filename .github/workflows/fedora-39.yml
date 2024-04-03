@@ -1,0 +1,89 @@
+# This starter workflow is for a CMake project running on multiple platforms. There is a different starter workflow if you just want a single platform.
+# See: https://github.com/actions/starter-workflows/blob/main/ci/cmake-single-platform.yml
+name: CMake on Fedora 39 platforms
+
+permissions:
+  contents: write
+  discussions: write
+
+on:
+  push:
+    branches: [ "develop" ]
+    tags:
+      - "v*.*.*"
+  pull_request:
+    branches: [ "develop" ]
+
+jobs:
+  build:
+    runs-on: self-hosted
+
+    strategy:
+      # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
+      fail-fast: false
+
+      matrix:
+#        https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
+        arch: [x86_64]
+        os: [fedora-39]
+        build_type: [Release]
+        c_compiler: [gcc]
+        include:
+          - os: fedora-39
+            c_compiler: gcc
+            cpp_compiler: g++
+    steps:
+    - name: Checkout repository and submodules
+      uses: actions/checkout@v3
+      with:
+        submodules: 'true'
+
+    - name: Pull submodules
+      run: |
+        git submodule update --remote --init
+
+    - name: Install system dependencies
+      run: |
+        sudo dnf update -y
+        sudo dnf install -y gcc g++
+        sudo dnf install -y qt5-qtbase-devel qt6-qtbase-gui  qt5-qtmultimedia-devel  qt5-qtsvg-devel qt5-qttools-devel qt5-qttools-static \
+                    libavcodec-free-devel libavdevice-free-devel libexif-devel qrencode-devel libsodium-devel sqlcipher-devel \
+                    libvpx-devel openal-soft-devel openssl-devel
+
+    - name: Set reusable strings
+      id: strings
+      shell: bash
+      run: |
+        echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+
+    - name: Configure CMake
+      # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
+      # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
+      run: >
+        cmake -B ${{ steps.strings.outputs.build-output-dir }}
+        -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
+        -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
+        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        -DOK_CPACK=1
+        -S ${{ github.workspace }}
+
+    - name: Build
+      # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
+      run: >
+        cmake --build ${{ steps.strings.outputs.build-output-dir }} 
+        --config ${{ matrix.build_type }} 
+        --target package
+
+    - name: Test
+      working-directory: ${{ steps.strings.outputs.build-output-dir }}
+      # Execute tests defined by the CMake configuration. Note that --build-config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
+      # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
+      run: ctest --build-config ${{ matrix.build_type }}
+
+    - name: Upload rpm to release
+      uses: softprops/action-gh-release@v1
+      if: ${{ startsWith(github.ref, 'refs/tags/') }}
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        files: |
+          ${{ steps.strings.outputs.build-output-dir }}/ok-msg-desktop_${{matrix.os}}_${{ matrix.arch }}.rpm
