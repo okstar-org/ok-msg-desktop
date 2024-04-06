@@ -79,6 +79,8 @@ public:
   uint32_t getCurrentProfileId() ;
   void setCurrentProfile(const QString& profile);
 
+  QString getAppCacheDirPath() const;
+
 private:
   static uint32_t makeProfileId(const QString& profile);
 

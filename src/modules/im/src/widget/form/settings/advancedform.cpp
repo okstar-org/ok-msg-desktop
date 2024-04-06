@@ -20,6 +20,7 @@
 #include <QMessageBox>
 #include <QProcess>
 
+#include "base/OkSettings.h"
 #include "src/model/status.h"
 #include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
@@ -81,7 +82,7 @@ void AdvancedForm::on_btnExportLog_clicked()
         return;
     }
 
-    QString logFileDir = Settings::getInstance().getAppCacheDirPath();
+    QString logFileDir = ok::base::OkSettings::getInstance().getAppCacheDirPath();
     QString logfile = logFileDir + "qtox.log";
 
     QFile file(logfile);
@@ -100,7 +101,7 @@ void AdvancedForm::on_btnExportLog_clicked()
 
 void AdvancedForm::on_btnCopyDebug_clicked()
 {
-    QString logFileDir = Settings::getInstance().getAppCacheDirPath();
+    QString logFileDir = ok::base::OkSettings::getInstance().getAppCacheDirPath();
     QString logfile = logFileDir + "qtox.log";
 
     QFile file(logfile);

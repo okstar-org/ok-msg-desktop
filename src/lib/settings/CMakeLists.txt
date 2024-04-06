@@ -5,8 +5,6 @@ project(OkSettings)
 set(${PROJECT_NAME}_SOURCES
         translator.h
         translator.cpp
-        OkSettings.h
-        OkSettings.cpp
         applicationinfo.h
         applicationinfo.cpp
 )

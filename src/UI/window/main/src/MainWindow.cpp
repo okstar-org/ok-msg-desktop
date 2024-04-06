@@ -16,7 +16,7 @@
 #include "UI/window/config/src/ConfigWindow.h"
 #include "base/logs.h"
 #include "base/r.h"
-#include "lib/settings/OkSettings.h"
+#include "base/OkSettings.h"
 #include "modules/im/src/model/status.h"
 #include "modules/im/src/widget/style.h"
 

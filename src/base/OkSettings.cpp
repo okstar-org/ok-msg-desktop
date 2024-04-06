@@ -317,5 +317,34 @@ uint32_t OkSettings::makeProfileId(const QString &profile) {
   return dwords[0] ^ dwords[1] ^ dwords[2] ^ dwords[3];
 }
 
+
+/**
+ * @brief Get path to directory, where the application cache are stored.
+ * @return Path to application cache, ends with a directory separator.
+ */
+QString OkSettings::getAppCacheDirPath() const {
+  if (makeToxPortable)
+    return qApp->applicationDirPath() + QDir::separator();
+
+// workaround for https://bugreports.qt-project.org/browse/QTBUG-38845
+#ifdef Q_OS_WIN
+  return QDir::cleanPath(
+             QStandardPaths::writableLocation(QStandardPaths::HomeLocation) +
+             QDir::separator() + "AppData" + QDir::separator() + "Roaming" +
+             QDir::separator() + "tox") +
+         QDir::separator();
+#elif defined(Q_OS_OSX)
+  return QDir::cleanPath(
+             QStandardPaths::writableLocation(QStandardPaths::HomeLocation) +
+             QDir::separator() + "Library" + QDir::separator() +
+             "Application Support" + QDir::separator() + "Tox") +
+         QDir::separator();
+#else
+  return QDir::cleanPath(
+             QStandardPaths::writableLocation(QStandardPaths::CacheLocation)) +
+         QDir::separator();
+#endif
+}
+
 } // namespace base
 } // namespace ok

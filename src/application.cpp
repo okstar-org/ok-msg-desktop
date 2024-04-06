@@ -92,17 +92,25 @@ void Application::start() {
 
 void Application::createLoginUI() {
   m_loginWindow = std::make_unique<UI::LoginWindow>();
-  connect(m_loginWindow.get(), &UI::LoginWindow::loginResult,
-          [&](ok::session::SignInInfo &signInInfo,
-              ok::session::LoginResult &result) {
-            if (result.status == ok::session::Status::SUCCESS) {
-              onLoginSuccess(signInInfo);
-              disconnect(m_loginWindow.get());
-            }
-          });
 
+  connect(m_loginWindow.get(), &UI::LoginWindow::loginResult,
+        [&](ok::session::SignInInfo &signInInfo,
+            ok::session::LoginResult &result) {
+          if (result.status == ok::session::Status::SUCCESS) {
+            onLoginSuccess(signInInfo);
+            disconnect(m_loginWindow.get());
+          }
+        });
+
+  connect(_session.get(), &ok::session::AuthSession::loginResult,
+          [&](ok::session::SignInInfo signInInfo, ok::session::LoginResult result) {
+            qDebug()<<"result:" << result.msg;
+          }
+  );
   m_loginWindow->show();
+
 }
+
 void Application::deleteLoginUI() {
   disconnect(m_loginWindow.get());
   m_loginWindow.reset();

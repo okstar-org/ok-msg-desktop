@@ -16,13 +16,8 @@
 #include "config.h"
 #endif
 #include "base/r.h"
-// #include "profile.h"
-// #include "profiles.h"
-// #include "application.h"
-//#include "translationmanager.h"
 #include "base/system/sys_info.h"
-
-#include "OkSettings.h"
+#include "base/OkSettings.h"
 
 #include <QStandardPaths>
 #include <QCoreApplication>

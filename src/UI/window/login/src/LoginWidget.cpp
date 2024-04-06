@@ -22,7 +22,7 @@
 #include "base/logs.h"
 #include "base/widgets.h"
 #include "lib/backend/OkCloudService.h"
-#include "lib/settings/OkSettings.h"
+#include "base/OkSettings.h"
 #include "lib/settings/translator.h"
 #include "ui_LoginWidget.h"
 

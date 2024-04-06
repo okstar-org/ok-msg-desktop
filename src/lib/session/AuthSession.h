@@ -142,6 +142,7 @@ private:
 
   ::lib::messenger::IM *_im;
   Status _status;
+
 signals:
   void loginResult(SignInInfo, LoginResult); // LoginResult
 

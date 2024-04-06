@@ -11,7 +11,7 @@
  */
 
 #include "nexus.h"
-#include "lib/settings/OkSettings.h"
+#include "base/OkSettings.h"
 #include "lib/settings/translator.h"
 #include "persistence/settings.h"
 #include "src/core/core.h"

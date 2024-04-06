@@ -20,7 +20,7 @@
 #include "files.h"
 #include "iqnamespacefilter.h"
 #include "lib/messenger/messenger.h"
-#include "lib/settings/OkSettings.h"
+#include "base/OkSettings.h"
 #include "okplugin.h"
 #include "pluginhost.h"
 #include <QLabel>

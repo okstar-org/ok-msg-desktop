@@ -139,7 +139,6 @@ public:
     static void destroyInstance();
     QString getSettingsDirPath() const;
     QString getAppDataDirPath() const;
-    QString getAppCacheDirPath() const;
 
     void createSettingsDir();
     void createPersonal(QString basename);

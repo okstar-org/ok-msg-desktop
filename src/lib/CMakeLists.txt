@@ -5,6 +5,7 @@ FetchContent_Declare(gloox
 )
 FetchContent_MakeAvailable(gloox)
 message(STATUS "gloox_SOURCE_DIR=${gloox_SOURCE_DIR}")
+add_definitions(-DINBANDBYTESTREAM_TEST -DCLIENTBASE_TEST)
 
 add_subdirectory(network)
 add_subdirectory(backend)

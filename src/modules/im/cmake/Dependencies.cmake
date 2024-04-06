@@ -173,5 +173,3 @@ if(${DESKTOP_NOTIFICATIONS})
   find_package(LibsnoreQt5 0.7.0 REQUIRED)
   set(ALL_LIBRARIES ${ALL_LIBRARIES} Snore::Libsnore)
 endif()
-
-add_definitions(-DLOG_TO_FILE=1)

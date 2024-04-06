@@ -147,6 +147,10 @@ void AuthSession::doConnect() {
             });
 
     _im->start();
+  }, [&](const QString &msg){
+    _status = Status::FAILURE;
+    LoginResult result{Status::FAILURE, msg};
+    emit loginResult(m_signInInfo, result);
   });
 }
 

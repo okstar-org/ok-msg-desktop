@@ -19,6 +19,10 @@ endif()
 string(TOLOWER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
 message(STATUS "CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}")
 
+if (CMAKE_BUILD_TYPE MATCHES "Debug")
+    add_definitions(-DLOG_TO_FILE=1)
+endif ()
+
 # Support for pthread
 set(CMAKE_THREAD_LIBS_INIT "-lpthread")
 set(CMAKE_HAVE_THREADS_LIBRARY 1)

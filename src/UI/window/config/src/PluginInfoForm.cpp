@@ -15,7 +15,7 @@
 #include "base/files.h"
 #include "lib/plugin/pluginhost.h"
 #include "lib/network/NetworkHttp.h"
-#include "lib/settings/OkSettings.h"
+#include "base/OkSettings.h"
 #include "ui_PluginInfoForm.h"
 #include <QDebug>
 

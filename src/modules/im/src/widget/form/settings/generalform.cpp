@@ -25,7 +25,7 @@
 #include "src/widget/style.h"
 #include "src/widget/tool/recursivesignalblocker.h"
 #include "lib/settings/translator.h"
-#include "lib/settings/OkSettings.h"
+#include "base/OkSettings.h"
 
 #include "src/widget/widget.h"
 

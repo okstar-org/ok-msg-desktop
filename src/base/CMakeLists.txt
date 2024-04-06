@@ -9,7 +9,7 @@ set(${PROJECT_NAME}_SOURCES
     logs.cpp
     StringUtils.cpp
     timer.cpp
-    times.cpp
+    times.h
     task.h
     utils.cpp
     widgets.h
@@ -28,7 +28,11 @@ set(${PROJECT_NAME}_SOURCES
     r.h
     Page.h
     Page.cpp
-    PageFactory.h)
+    PageFactory.h
+    OkSettings.h
+    OkSettings.cpp
+    OkProcess.h
+)
 
 if(WIN32)
   set(${PROJECT_NAME}_SOURCES

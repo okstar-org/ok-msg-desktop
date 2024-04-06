@@ -217,9 +217,10 @@ std::unique_ptr<Client> IM::makeClient() {
   disco->addFeature(XMLNS_NICKNAME);
   disco->addFeature(XMLNS_NICKNAME + "+notify");
 
+  client->setTls(TLSPolicy::TLSDisabled);
   client->setCompression(false);
-  client->registerIncomingHandler(this);
   client->registerIqHandler(this, ExtIBB);
+//  client->registerIncomingHandler(this);
 
   /**
    * listeners
@@ -412,18 +413,8 @@ void IM::requestVCards() {
 void IM::enableRosterManager() {
 
   /**
-   * extensions
+   * roster
    */
-  auto client = _client.get();
-
-  auto disco = _client->disco();
-
-  /**
-   * Registration
-   */
-  mRegistration = std::make_unique<Registration>(client);
-  mRegistration->registerRegistrationHandler(this);
-
   auto pRosterManager = _client->enableRoster();
   pRosterManager->registerRosterListener(this);
 
@@ -437,6 +428,12 @@ void IM::enableRosterManager() {
   auto t = iq2.tag();
   t->addChild(gloox::ExtDisco::newRequest());
   _client->send(t);
+
+  /**
+   * Registration
+   */
+  mRegistration = std::make_unique<Registration>(_client.get());
+  mRegistration->registerRegistrationHandler(this);
 }
 
 void IM::doDisconnect() {
@@ -2447,6 +2444,7 @@ void IM::onSelfNicknameChanged(const QString &nickname) {
 }
 
 void IM::endJingle() { mPeerRequestMedias.clear(); }
+
 void IM::handleIncoming(gloox::Tag *tag) {
   auto services =
       tag->findChild("services", "xmlns", XMLNS_EXTERNAL_SERVICE_DISCOVERY);
@@ -2500,8 +2498,8 @@ void IM::onDisconnect(ConnectionError e) {
     _status = IMStatus::DISCONNECTED;
     break;
   case ConnAttemptTimeout:
-    break;
     _status = IMStatus::TIMEOUT;
+    break;
   default:
     _status = IMStatus::DISCONNECTED;
     break;
@@ -2526,7 +2524,7 @@ bool IM::onTLSConnect(const CertInfo &info) {
                 .arg((info.status))                     //
                 .arg(qstring(info.issuer.c_str()))      //
                 .arg(qstring(info.server.c_str()))      //
-                .arg((info.protocol))                   //
+                .arg((info.protocol.c_str()))           //
                 .arg(qstring(info.mac.c_str()))         //
                 .arg(qstring(info.cipher.c_str()))      //
                 .arg(qstring(info.compression.c_str())) //

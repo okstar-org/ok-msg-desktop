@@ -63,6 +63,7 @@
 #include <rostermanager.h>
 #include <vcardhandler.h>
 #include <vcardmanager.h>
+#include <pinghandler.h>
 #include "IMRoomHelper.h"
 
 namespace lib {
@@ -260,7 +261,7 @@ protected:
   /**
    * ping handler
    */
-  virtual void handlePing(const PingType type,
+  virtual void handlePing(const gloox::PingHandler::PingType type,
                           const std::string &body) override;
 #endif
 

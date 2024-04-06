@@ -40,7 +40,7 @@
 #include "friendlistwidget.h"
 #include "friendwidget.h"
 #include "groupwidget.h"
-#include "lib/settings/OkSettings.h"
+#include "base/OkSettings.h"
 #include "lib/settings/translator.h"
 #include "maskablepixmapwidget.h"
 #include "splitterrestorer.h"

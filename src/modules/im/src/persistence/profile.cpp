@@ -35,7 +35,7 @@
 #include "src/widget/tool/identicon.h"
 #include "src/widget/widget.h"
 #include "base/images.h"
-#include "lib/settings/OkSettings.h"
+#include "base/OkSettings.h"
 
 /**
  * @class Profile

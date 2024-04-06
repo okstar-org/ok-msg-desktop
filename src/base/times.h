@@ -12,6 +12,7 @@
 #ifndef TIMES_H
 #define TIMES_H
 
+#include <QDateTime>
 #include <sstream>
 #include <string>
 
@@ -19,7 +20,9 @@ namespace base {
 
 class Times {
 public:
-  Times();
+  static QDateTime now(){
+    return QDateTime::currentDateTime();
+  }
 
   static std::string formatTime(int ms) {
     int s = 1000;

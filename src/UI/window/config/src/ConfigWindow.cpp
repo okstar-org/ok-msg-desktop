@@ -17,7 +17,7 @@
 #include <QWidget>
 
 #include "base/files.h"
-#include "lib/settings/OkSettings.h"
+#include "base/OkSettings.h"
 #include "lib/settings/translator.h"
 #include <base/basic_types.h>
 #include <base/widgets.h>
