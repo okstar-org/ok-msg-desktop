@@ -8,11 +8,15 @@ add_subdirectory(modules)
 add_subdirectory(UI)
 
 # Add RC files.
-set(${PROJECT_NAME}_RC_FILES icon/icon.rc)
-# Add QRC files.
-set(${PROJECT_NAME}_QRC_FILES resources/resources.qrc)
+set(${PROJECT_NAME}_RC_FILES
+    icon/icon.rc)
 
-set(${PROJECT_NAME}_RESOURCES ${${PROJECT_NAME}_RC_FILES}
+# Add QRC files.
+set(${PROJECT_NAME}_QRC_FILES
+    resources/resources.qrc)
+
+set(${PROJECT_NAME}_RESOURCES
+    ${${PROJECT_NAME}_RC_FILES}
     ${${PROJECT_NAME}_QRC_FILES})
 
 set(${PROJECT_NAME}_SOURCES
@@ -36,11 +40,13 @@ if(ENABLE_PLUGINS)
     list(APPEND OK_LIBS Plugin)
 endif()
 
-if (WIN32 AND CMAKE_BUILD_TYPE STREQUAL Debug)
-    add_executable(${PROJECT_NAME} WIN32 ${${PROJECT_NAME}_SOURCES}
+if (WIN32 AND CMAKE_BUILD_TYPE STREQUAL Release)
+    add_executable(${PROJECT_NAME} WIN32
+        ${${PROJECT_NAME}_SOURCES}
         ${${PROJECT_NAME}_RESOURCES})
 else ()
-    add_executable(${PROJECT_NAME} ${${PROJECT_NAME}_SOURCES}
+    add_executable(${PROJECT_NAME}
+        ${${PROJECT_NAME}_SOURCES}
         ${${PROJECT_NAME}_RESOURCES})
 endif ()
 
@@ -77,13 +83,13 @@ if (LINUX AND DESKTOP_APP_USE_PACKAGED)
     install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}" BUNDLE DESTINATION "${CMAKE_INSTALL_BINDIR}")
     install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${APPLICATION_EXE_NAME}.metainfo.xml" DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/metainfo" RENAME "${DESKTOP_LAUNCHER_BASENAME}.metainfo.xml")
     install(FILES "../lib/xdg/${APPLICATION_EXE_NAME}.desktop" DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/applications" RENAME "${DESKTOP_LAUNCHER_BASENAME}.desktop")
-    install(FILES "../src/UI/resources/logo/icon-16.png" DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/16x16/apps" RENAME ${PNG_NAME})
-    install(FILES "../src/UI/resources/logo/icon-32.png" DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/32x32/apps" RENAME ${PNG_NAME})
-    install(FILES "../src/UI/resources/logo/icon-48.png" DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/48x48/apps" RENAME ${PNG_NAME})
-    install(FILES "../src/UI/resources/logo/icon-64.png" DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/64x64/apps" RENAME ${PNG_NAME})
-    install(FILES "../src/UI/resources/logo/icon-128.png" DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/128x128/apps" RENAME ${PNG_NAME})
-    install(FILES "../src/UI/resources/logo/icon-256.png" DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/256x256/apps" RENAME ${PNG_NAME})
-    install(FILES "../src/UI/resources/logo/icon-512.png" DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/512x512/apps" RENAME ${PNG_NAME})
+    install(FILES "../src/resources/logo/icon-16.png" DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/16x16/apps" RENAME ${PNG_NAME})
+    install(FILES "../src/resources/logo/icon-32.png" DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/32x32/apps" RENAME ${PNG_NAME})
+    install(FILES "../src/resources/logo/icon-48.png" DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/48x48/apps" RENAME ${PNG_NAME})
+    install(FILES "../src/resources/logo/icon-64.png" DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/64x64/apps" RENAME ${PNG_NAME})
+    install(FILES "../src/resources/logo/icon-128.png" DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/128x128/apps" RENAME ${PNG_NAME})
+    install(FILES "../src/resources/logo/icon-256.png" DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/256x256/apps" RENAME ${PNG_NAME})
+    install(FILES "../src/resources/logo/icon-512.png" DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/512x512/apps" RENAME ${PNG_NAME})
 endif()
 
 message(STATUS "OK_CPACK=${OK_CPACK}")
@@ -103,7 +109,7 @@ if(LINUX AND OK_CPACK)
     set(CPACK_PACKAGE_FILE_NAME ${APPLICATION_EXE_NAME}_${DISTRO_ID}-${DISTRO_VERSION_ID}_${CMAKE_SYSTEM_PROCESSOR})
     set(CPACK_PACKAGE_CONTACT ${OK_SUPPORT_EMAIL})
     set(CPACK_PACKAGE_HOMEPAGE_URL ${ORGANIZATION_HOME})
-    set(CPACK_PACKAGE_ICON "${CMake_SOURCE_DIR}/src/UI/resources/logo/main.svg")
+    set(CPACK_PACKAGE_ICON "${CMake_SOURCE_DIR}/src/resources/logo/main.svg")
     set(CPACK_PACKAGE_VENDOR ${OK_MAINTAINER})
     set(CPACK_PACKAGE_MAINTAINER ${OK_MAINTAINER})
     set(CPACK_PACKAGE_SECTION ${CPACK_DESKTOP_GROUP})
@@ -153,13 +159,13 @@ if(LINUX AND OK_CPACK)
     generate_appdata_changelog(${PROJECT_NAME} "${CMAKE_SOURCE_DIR}/changelog.txt" "${CMAKE_CURRENT_BINARY_DIR}/${APPLICATION_EXE_NAME}.metainfo.xml")
     install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}" BUNDLE DESTINATION "${CMAKE_INSTALL_BINDIR}")
     install(FILES "../lib/xdg/${APPLICATION_EXE_NAME}.desktop" DESTINATION "/usr/share/applications" RENAME "${APPLICATION_EXE_NAME}.desktop")
-    install(FILES "../src/UI/resources/logo/icon-16.png" DESTINATION "/usr/share/icons/hicolor/16x16/apps" RENAME ${PNG_NAME})
-    install(FILES "../src/UI/resources/logo/icon-32.png" DESTINATION "/usr/share/icons/hicolor/32x32/apps" RENAME ${PNG_NAME})
-    install(FILES "../src/UI/resources/logo/icon-48.png" DESTINATION "/usr/share/icons/hicolor/48x48/apps" RENAME ${PNG_NAME})
-    install(FILES "../src/UI/resources/logo/icon-64.png" DESTINATION "/usr/share/icons/hicolor/64x64/apps" RENAME ${PNG_NAME})
-    install(FILES "../src/UI/resources/logo/icon-128.png" DESTINATION "/usr/share/icons/hicolor/128x128/apps" RENAME ${PNG_NAME})
-    install(FILES "../src/UI/resources/logo/icon-256.png" DESTINATION "/usr/share/icons/hicolor/256x256/apps" RENAME ${PNG_NAME})
-    install(FILES "../src/UI/resources/logo/icon-512.png" DESTINATION "/usr/share/icons/hicolor/512x512/apps" RENAME ${PNG_NAME})
+    install(FILES "../src/resources/logo/icon-16.png" DESTINATION "/usr/share/icons/hicolor/16x16/apps" RENAME ${PNG_NAME})
+    install(FILES "../src/resources/logo/icon-32.png" DESTINATION "/usr/share/icons/hicolor/32x32/apps" RENAME ${PNG_NAME})
+    install(FILES "../src/resources/logo/icon-48.png" DESTINATION "/usr/share/icons/hicolor/48x48/apps" RENAME ${PNG_NAME})
+    install(FILES "../src/resources/logo/icon-64.png" DESTINATION "/usr/share/icons/hicolor/64x64/apps" RENAME ${PNG_NAME})
+    install(FILES "../src/resources/logo/icon-128.png" DESTINATION "/usr/share/icons/hicolor/128x128/apps" RENAME ${PNG_NAME})
+    install(FILES "../src/resources/logo/icon-256.png" DESTINATION "/usr/share/icons/hicolor/256x256/apps" RENAME ${PNG_NAME})
+    install(FILES "../src/resources/logo/icon-512.png" DESTINATION "/usr/share/icons/hicolor/512x512/apps" RENAME ${PNG_NAME})
 endif ()
 
 if(LINUX AND PACMAN)

@@ -2,7 +2,7 @@ name: ok-msg
 summary: OkMSG 是由OkStar(okstar.org)社区开发和维护的注重数据安全与保护的企业通讯协同工具。
 description: OkMSG 支持独立私有化部署的集即时消息、语音、视频通话、发送文件、会议等多种功能于一身的开源项目，同时让您的企业更加有效开启协作、有效沟通，控制成本，开拓新业务，并帮助您加速发展业务。
 version: git
-icon: src/UI/resources/logo/main.svg
+icon: src/resources/logo/main.svg
 adopt-info: ok-msg
 
 base: core22
