@@ -10,7 +10,7 @@ add_subdirectory(UI)
 # Add RC files.
 set(${PROJECT_NAME}_RC_FILES icon/icon.rc)
 # Add QRC files.
-set(${PROJECT_NAME}_QRC_FILES UI/resources/resources.qrc)
+set(${PROJECT_NAME}_QRC_FILES resources/resources.qrc)
 
 set(${PROJECT_NAME}_RESOURCES ${${PROJECT_NAME}_RC_FILES}
     ${${PROJECT_NAME}_QRC_FILES})
