@@ -100,7 +100,7 @@ jobs:
     - name: Move artifact.
       if: env.UPLOAD_ARTIFACT == 'true'
       run: |
-        mkdir artifact
+        mkdir ${{ env.EXE_NAME_PREFIX }}
         cp ${{ steps.strings.outputs.build-output-dir }}\src\${{ matrix.build_type }}\ok-msg-desktop.exe ${{ env.EXE_NAME_PREFIX }}
         xcopy build\vcpkg_installed\${{ env.VCPKG_DEFAULT_TRIPLET }}\bin\*.dll ${{ env.EXE_NAME_PREFIX }}
         xcopy "$env:Qt5_Dir\bin\*.dll" ${{ env.EXE_NAME_PREFIX }}
