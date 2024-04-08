@@ -111,14 +111,14 @@ jobs:
       uses: thedoctor0/zip-release@0.7.5
       with:
         type: 'zip'
-        path: artifact
+        path: ${{ env.EXE_NAME_PREFIX }}
         filename: ok-msg-desktop_${{ matrix.os }}_${{ matrix.arch }}.zip
 
     - name: Upload artifact.
       uses: actions/upload-artifact@master
       if: env.UPLOAD_ARTIFACT == 'true'
       with:
-        name: ok-msg-desktop_${{matrix.arch}}
+        name: ok-msg-desktop_${{matrix.arch}}_${{ matrix.arch }}
         path: ${{ env.EXE_NAME_PREFIX }}
 
     - name: Upload binaries to release
