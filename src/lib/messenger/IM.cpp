@@ -1627,17 +1627,22 @@ void IM::addRosterItem(const QString &username, const QString &nick,
   qDebug() << "addRosterItem" << username << nick << msg;
   m_addFriendMsg = msg;
   StringList group;
-  _client->rosterManager()->add(wrapJid(username), stdstring(nick), group);
+  auto rm = _client->rosterManager();
+
+  JID jid(username.toStdString());
+  rm->add(jid, stdstring(nick), group);
+  rm->synchronize();
+  rm->ackSubscriptionRequest(jid, true);
 }
 
 void IM::acceptFriendRequest(const QString &friendId) {
   DEBUG_LOG(("friend:%1").arg(friendId))
-  _client->rosterManager()->ackSubscriptionRequest(wrapJid(friendId), true);
+  _client->rosterManager()->ackSubscriptionRequest(JID(stdstring(friendId)).bareJID(), true);
 }
 
 void IM::rejectFriendRequest(const QString &friendId) {
   DEBUG_LOG(("friend:%1").arg(friendId))
-  _client->rosterManager()->ackSubscriptionRequest(wrapJid(friendId), false);
+  _client->rosterManager()->ackSubscriptionRequest(JID(stdstring(friendId)).bareJID(), false);
 }
 
 size_t IM::getRosterCount() {

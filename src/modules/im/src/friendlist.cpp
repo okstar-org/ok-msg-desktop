@@ -23,8 +23,7 @@ QHash<ToxPk, Friend *> FriendList::friendList;
 QHash<QString, ToxPk> FriendList::id2key;
 
 Friend *FriendList::addFriend(QString friendId, const ToxPk &friendPk, bool isFriend) {
-  qDebug() << "addFriend friendId:" << friendId
-           << "friendPk:" << friendPk.toString();
+  qDebug() << "addFriend friendId:" << friendId << "friendPk:" << friendPk.toString();
 
   auto friendChecker = friendList.find(friendPk);
   if (friendChecker != friendList.end()) {

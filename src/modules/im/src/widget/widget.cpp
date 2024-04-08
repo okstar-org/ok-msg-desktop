@@ -1487,9 +1487,9 @@ void Widget::onFriendMessageReceived(ToxPk friendnumber,      //
      * 陌生人消息（可能是已经将对方删除，通讯录没有对方记录）
      */
     qWarning() << "Can not find friend:"
-               << friendnumber.username
+               << friendnumber.toString()
                <<", so add it to contacts";
-    addFriend(friendnumber.username, friendnumber, false);
+    addFriend(friendnumber.toString(), friendnumber, false);
     return;
   }
   friendMessageDispatchers[f->getPublicKey()]->onMessageReceived(isAction, message);
