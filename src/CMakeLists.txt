@@ -36,11 +36,11 @@ if(ENABLE_PLUGINS)
     list(APPEND OK_LIBS Plugin)
 endif()
 
-if (WIN32 AND LOWER_CMAKE_BUILD_TYPE STREQUAL release)
-    add_executable(${PROJECT_NAME} ${${PROJECT_NAME}_SOURCES}
+if (WIN32 AND CMAKE_BUILD_TYPE STREQUAL Debug)
+    add_executable(${PROJECT_NAME} WIN32 ${${PROJECT_NAME}_SOURCES}
         ${${PROJECT_NAME}_RESOURCES})
 else ()
-    add_executable(${PROJECT_NAME} WIN32 ${${PROJECT_NAME}_SOURCES}
+    add_executable(${PROJECT_NAME} ${${PROJECT_NAME}_SOURCES}
         ${${PROJECT_NAME}_RESOURCES})
 endif ()
 
