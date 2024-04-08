@@ -17,7 +17,7 @@ on:
 jobs:
   build:
     env:
-      EXE_NAME_PREFIX: "ok-msg-desktop"
+      ARTIFACT_PATH: "ok-msg-desktop"
       UPLOAD_ARTIFACT: "true"
       VCPKG_DEFAULT_TRIPLET: ${{ matrix.arch }}-windows
 
@@ -100,18 +100,18 @@ jobs:
     - name: Move artifact.
       if: env.UPLOAD_ARTIFACT == 'true'
       run: |
-        mkdir ${{ env.EXE_NAME_PREFIX }}
-        cp ${{ steps.strings.outputs.build-output-dir }}\src\${{ matrix.build_type }}\ok-msg-desktop.exe ${{ env.EXE_NAME_PREFIX }}
-        xcopy build\vcpkg_installed\${{ env.VCPKG_DEFAULT_TRIPLET }}\bin\*.dll ${{ env.EXE_NAME_PREFIX }}
-        xcopy "$env:Qt5_Dir\bin\*.dll" ${{ env.EXE_NAME_PREFIX }}
-        Copy-Item -Recurse $env:Qt5_Dir\plugins ${{ env.EXE_NAME_PREFIX }}
-        xcopy LICENSE ${{ env.EXE_NAME_PREFIX }}
+        mkdir ${{ env.ARTIFACT_PATH }}
+        cp ${{ steps.strings.outputs.build-output-dir }}\src\${{ matrix.build_type }}\ok-msg-desktop.exe ${{ env.ARTIFACT_PATH }}
+        xcopy build\vcpkg_installed\${{ env.VCPKG_DEFAULT_TRIPLET }}\bin\*.dll ${{ env.ARTIFACT_PATH }}
+        xcopy "$env:Qt5_Dir\bin\*.dll" ${{ env.ARTIFACT_PATH }}
+        Copy-Item -Recurse $env:Qt5_Dir\plugins ${{ env.ARTIFACT_PATH }}
+        xcopy LICENSE ${{ env.ARTIFACT_PATH }}
 
     - name: Archive Release
       uses: thedoctor0/zip-release@0.7.5
       with:
         type: 'zip'
-        path: ${{ env.EXE_NAME_PREFIX }}
+        path: ${{ env.ARTIFACT_PATH }}
         filename: ok-msg-desktop_${{ matrix.os }}_${{ matrix.arch }}.zip
 
     - name: Upload artifact.
@@ -119,7 +119,7 @@ jobs:
       if: env.UPLOAD_ARTIFACT == 'true'
       with:
         name: ok-msg-desktop_${{matrix.arch}}_${{ matrix.arch }}
-        path: ${{ env.EXE_NAME_PREFIX }}
+        path: ${{ env.ARTIFACT_PATH }}
 
     - name: Upload binaries to release
       uses: softprops/action-gh-release@v1
