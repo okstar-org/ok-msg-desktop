@@ -93,6 +93,9 @@ struct SignInInfo {
   QString account;
   // 密码
   QString password;
+
+  // username
+  QString username;
   // stack url
   QString stackUrl;
 };

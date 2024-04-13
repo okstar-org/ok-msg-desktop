@@ -93,11 +93,13 @@ void AuthSession::doConnect() {
 
     DEBUG_LOG(("Res.data=>%1").arg(res.data->toString()));
 
-    m_signInInfo.account = res.data->username;
+    m_signInInfo.username = res.data->username.toLower();
+    okAccount = std::make_unique<ok::base::OkAccount>(m_signInInfo.username);
+    okAccount->setJid(::base::Jid(m_signInInfo.username, m_signInInfo.host));
 
     QStringList l;
     _im = new ::lib::messenger::IM(m_signInInfo.host,
-                                   m_signInInfo.account,
+                                   m_signInInfo.username,
                                    m_signInInfo.password,l);
     connect(_im, &::lib::messenger::IM::connectResult,
             [&](::lib::messenger::IMStatus status) {
@@ -155,14 +157,14 @@ void AuthSession::doConnect() {
 }
 
 void AuthSession::doLogin(const SignInInfo &signInInfo) {
+  m_signInInfo = signInInfo;
+
   DEBUG_LOG(("account:%1 password:%2")
                 .arg(signInInfo.account)
                 .arg(signInInfo.password));
 
-  m_signInInfo = signInInfo;
-
-  passportService = (std::make_unique<ok::backend::PassportService>(m_signInInfo.stackUrl)), //
-  okAccount = std::make_unique<ok::base::OkAccount>(signInInfo.account);
+  qDebug() <<"stackUrl:" << signInInfo.stackUrl;
+  passportService = (std::make_unique<ok::backend::PassportService>(signInInfo.stackUrl));
 
   if (_status == ok::session::Status::CONNECTING) {
     DEBUG_LOG(("The connection is connecting."));

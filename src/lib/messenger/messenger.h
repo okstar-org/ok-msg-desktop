@@ -311,7 +311,7 @@ signals:
   void started();
   void stopped();
   void disconnect();
-  void incoming(const QDomElement &dom);
+  void incoming(const QString dom);
 
   void receivedGroupMessage(lib::messenger::IMMessage imMsg); //
   void messageSent(const IMMessage &message);                 //

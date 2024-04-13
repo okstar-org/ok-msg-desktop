@@ -43,35 +43,16 @@ Messenger::Messenger(QObject *parent)
   connect(this, &Messenger::stopped, this, &Messenger::onStopped);
 
   QStringList features;
-
 #ifdef OK_PLUGIN
-  auto features0 = ok::plugin::PluginManager::instance()->pluginFeatures();
+  auto pm = ok::plugin::PluginManager::instance();
+  auto features0 = pm->pluginFeatures();
   features << features0;
-#endif
 
   auto _session = ok::session::AuthSession::Instance();
-  auto _im = _session->im();
+  pm->addAccount(_session->account(), this);
+#endif
 
-  qRegisterMetaType<QDomElement>("QDomElement");
-  connect(_im, &IM::incoming,
-          [=, this](const QDomElement &dom) { emit incoming(dom); });
 
-//  connect(_im, &IM::doPubSubEventDone,[=](){
-////    sleep(1);
-//    _im->joinRooms();
-//  });
-}
-
-Messenger::~Messenger() {}
-
-Messenger *Messenger::getInstance() {
-  static Messenger *self = nullptr;
-  if (!self)
-    self = new Messenger();
-  return self;
-}
-
-void Messenger::start() {
 
   /**
    * IM
@@ -84,6 +65,18 @@ void Messenger::start() {
   connectJingle();
 
 
+}
+
+Messenger::~Messenger() {}
+
+Messenger *Messenger::getInstance() {
+  static Messenger *self = nullptr;
+  if (!self)
+    self = new Messenger();
+  return self;
+}
+
+void Messenger::start() {
   emit started();
 }
 
@@ -131,16 +124,20 @@ void Messenger::onStarted() {
 
 void Messenger::onStopped() { qDebug() << "onStopped..."; }
 
-bool Messenger::connectIM() {
+bool Messenger::connectIM( ) {
   auto _session = ok::session::AuthSession::Instance();
   auto _im = _session->im();
 
-//  connect(_im, &IM::onStarted, this, [&]() {
-//    onStarted();
-//  });
+  connect(_im, &IM::onStarted, this, [&]() {
+    qDebug() <<"Started.";
+  });
+
 //  connect(_im, &IM::onStopped, this, [&]() {
 //    onStopped();
 //  });
+
+  connect(_im, &IM::incoming,
+          [=, this](QString xml) { emit incoming(xml); });
 
   /**
    * selfHandlers
@@ -643,8 +640,10 @@ void Messenger::onEncryptedMessage(QDomElement &dom) {
   auto pm = ok::plugin::PluginManager::instance();
   pm->addAccount(_session->account(), this);
   bool decrypted = pm->decryptMessageElement(_session->account(), dom);
-  if (!decrypted)
+  if (!decrypted){
+    qWarning()<<"decrypted failed.";
     return;
+  }
   auto body = dom.firstChildElement("body").text();
   if (body.isEmpty())
     return;

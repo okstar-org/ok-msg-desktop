@@ -50,7 +50,7 @@ public:
   StreamWatcher(::lib::messenger::Messenger *messenger, PluginManager *m, int a) //
       : manager(m), account(a), m_messenger(messenger) {
     // ignore
-    qRegisterMetaType<QDomElement>("QDomElement");
+
     connect(m_messenger, &::lib::messenger::Messenger::incoming, //
             this, &StreamWatcher::doDom);
   }
@@ -62,9 +62,14 @@ public:
   int account;
 
 public slots:
-  void doDom(QDomElement xml) {
-    qDebug() << "incomingXml=>" << &xml;
-    bool y = manager->incomingXml(account, xml);
+  void doDom(QString xml) {
+    qDebug() << "incomingXml=>" << xml;
+    QDomDocument document;
+    if (!document.setContent(xml, true)) {
+      return;
+    }
+
+    bool y = manager->incomingXml(account, document.documentElement());
     qDebug() << "incomingXml=>" << y;
   };
 };
@@ -716,7 +721,7 @@ QStringList PluginManager::getRoster(int account) const {
 }
 
 QString PluginManager::getJid(int account) const {
-  QString jid = "-1";
+  QString jid = "";
   if (accountIds_.isValidRange(account)) {
     jid.clear();
     OkAccount *pa = accountIds_.account(account);
@@ -1294,7 +1299,6 @@ bool PluginManager::decryptMessageElement(OkAccount *account,
       return true;
     }
   }
-  qDebug() <<"Would not find suitable plugin!";
   return false;
 }
 
@@ -1329,8 +1333,6 @@ int AccountIds::appendAccount(OkAccount *acc) {
     id_keys[id] = acc;
     acc_keys[acc] = id;
   }
-  qDebug() << this << "account" << acc->getUsername() << acc << "=>id" << id
-           << id_keys.size();
   return id;
 }
 

@@ -220,6 +220,7 @@ std::unique_ptr<Client> IM::makeClient() {
   client->setTls(TLSPolicy::TLSDisabled);
   client->setCompression(false);
   client->registerIqHandler(this, ExtIBB);
+  client->registerIqHandler(this, ExtPubSub);
 //  client->registerIncomingHandler(this);
 
   /**
@@ -230,6 +231,7 @@ std::unique_ptr<Client> IM::makeClient() {
   client->registerPresenceHandler(this);
   client->registerMessageHandler(this);
   client->registerMessageSessionHandler(this);
+//  client->setStreamManagement(true, true);
 
 #ifdef LOG_XMPP
   client->logInstance().registerLogHandler(LogLevelDebug, LogAreaAll, this);
@@ -258,10 +260,11 @@ void IM::onConnect() {
   auto res = _client->resource();
   DEBUG_LOG(("resource:%1").arg(qstring(res)));
 
+//  fetchVCard(qstring(self().bare()));
+
   emit selfIdChanged(qstring(_client->username()));
   emit connectResult(_status);
-  fetchVCard(qstring(self().bare()));
-  //  emit onStarted();
+  emit onStarted();
 }
 
 void IM::doConnect() {
@@ -525,6 +528,11 @@ void IM::handleMessage(const gloox::Message &msg, MessageSession *session) {
     DEBUG_LOG(("session is NULL"))
     return;
   }
+
+  if((receivedMsg++)==0){
+    sleep(10);
+  }
+
   auto from = msg.from();
   auto threadId = qstring(session->threadID());
   auto peerId = qstring(from.full());
@@ -600,6 +608,8 @@ void IM::handleMessage(const gloox::Message &msg, MessageSession *session) {
   if (jm) {
     doJingleMessage(PeerId(msg.from().full()), jm);
   }
+  auto xml = qstring(msg.tag()->xml());
+  emit incoming(xml);
 }
 
 void IM::doMessageHeadline(const Message &msg, QString &friendId,
@@ -731,22 +741,51 @@ void IM::doPubSubEvent(const gloox::PubSub::Event *pse, //
       item0->setID(itemId);
       items.emplace_back(item0);
 
-      if (!pubSubManager.get()) {
-        qWarning() << "pubSubManager is null";
-        return;
+      if (pubSubManager) {
+        pubSubManager->requestItems(msg.from(), XMLNS_AVATAR, "", items, this);
       }
-      pubSubManager->requestItems(msg.from(), XMLNS_AVATAR, "", items, this);
     }
 
-    auto devices = item->payload->findChild("list", //
-                                            XMLNS,  //
-                                            "eu.siacs.conversations.axolotl");
-    if (devices) {
-      for (auto dev : devices->findChildren("device")) {
-        qDebug() << "device id:" << qstring(dev->findAttribute("id"));
-      }
-    }
+    //list xmlns='eu.siacs.conversations.axolotl'
+//    auto devices = item->payload->findChild("list", //
+//                                            XMLNS,  //
+//                                            "eu.siacs.conversations.axolotl");
+//    if (devices) {
+//      for (auto dev : devices->findChildren("device")) {
+//        qDebug() << "device id:" << qstring(dev->findAttribute("id"));
+//      }
+//    }
+//
+//    //bundle xmlns="eu.siacs.conversations.axolotl"
+//    auto bundle = item->payload->findChild("bundle", XMLNS,"eu.siacs.conversations.axolotl" );
+//    if(bundle){
+//
+//      auto deviceId=qstring(pse->node()).split(":")[1];
+//
+//      qDebug() <<"deviceId: " << deviceId;
+//
+//      auto spkp = bundle->findChild("signedPreKeyPublic")->cdata();
+//      qDebug() <<"signedPreKeyPublic: "<< qstring(spkp);
+//
+//      auto spks = bundle->findChild("signedPreKeySignature")->cdata();
+//      qDebug() <<"signedPreKeySignature: "<< qstring(spks);
+//
+//      auto ik = bundle->findChild("identityKey")->cdata();
+//      qDebug() <<"identityKey: "<< qstring(ik);
+//
+//      //
+//      auto prekeys = bundle->findChild("prekeys")->children();
+//      for (auto pk : prekeys) {
+//        //preKeyId
+//        qDebug() <<"preKeyId:" << qstring( pk->findAttribute("preKeyId"))
+//                 <<"identityKey: "<< qstring(pk->cdata());
+//
+//      }
+//    }
+
   }
+
+
 }
 
 /**
@@ -1335,6 +1374,9 @@ bool IM::handleIq(const IQ &iq) {
     IQ riq(IQ::IqType::Result, iq.from(), iq.id());
     _client->send(riq);
   }
+
+  emit incoming(qstring(iq.tag()->xml()));
+
   return true;
 }
 
@@ -2456,7 +2498,7 @@ void IM::handleIncoming(gloox::Tag *tag) {
   if (services) {
     mExtDisco = ExtDisco(services);
   }
-  emit incoming(::base::Xmls::parse(qstring(tag->xml())));
+//  emit incoming(::base::Xmls::parse(qstring(tag->xml())));
 }
 
 void IM::onDisconnect(ConnectionError e) {
@@ -2545,13 +2587,13 @@ void IM::handleLog(LogLevel level, LogArea area, const std::string &message) {
   //   DEBUG_LOG(("%1").arg(message.c_str()));
   switch (area) {
   case LogAreaXmlIncoming:
-    DEBUG_LOG(("Received XML:\n%1").arg(message.c_str()));
+    DEBUG_LOG(("Received XML: %1").arg(message.c_str()));
     break;
   case LogAreaXmlOutgoing:
-    DEBUG_LOG(("Sent XML:\n%1").arg(message.c_str()));
+    DEBUG_LOG(("Sent XML: %1").arg(message.c_str()));
     break;
   case LogAreaClassConnectionBOSH:
-    DEBUG_LOG(("BOSH:%1").arg(message.c_str()));
+    DEBUG_LOG(("BOSH: %1").arg(message.c_str()));
     break;
   case LogAreaClassClient:
     DEBUG_LOG(("Client: %1").arg(message.c_str()));

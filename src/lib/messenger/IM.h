@@ -787,6 +787,8 @@ private:
 
   ExtDisco mExtDisco;
 
+  int receivedMsg = 0;
+
   void timerEvent(QTimerEvent *) override;
 
   void doPubSubEvent(const gloox::PubSub::Event *pse, const Message &msg,
@@ -830,7 +832,7 @@ signals:
 
   void receiveMessageReceipt(QString friendId, QString receipt);
 
-  void incoming(const QDomElement &xml);
+  void incoming(QString xml);
 
   /**
    * Call events

@@ -67,7 +67,8 @@ void logMessageHandler(QtMsgType type, const QMessageLogContext& ctxt, const QSt
   fwrite(LogMsgBytes.constData(), 1, LogMsgBytes.size(), stdout);
 
   QFile* logFilePtr = logFileFile.loadRelaxed();
-  logFilePtr->write(msg.toUtf8());
+  logFilePtr->write(line.toUtf8());
+  logFilePtr->flush();
 }
 #endif
 
