@@ -444,7 +444,7 @@ void IM::doDisconnect() {
   _client->disconnect();
 }
 
-QDomElement IM::buildMessage(const QString &to,  //
+QDomDocument IM::buildMessage(const QString &to,  //
                              const QString &msg, //
                              QString &id) {
 
@@ -633,14 +633,13 @@ void IM::doMessageChat(const Message &msg, QString &friendId,
   qDebug() << "doMessageChat from:" << friendId;
   if (!body.isEmpty()) {
     if (!msg.encrypted()) {
-      qDebug() << "body:" << body;
+      qDebug() << "Is plain message:" << body;
       IMMessage imMsg = from(MsgType::Chat, msg);
       emit receiveFriendMessage(friendId, imMsg);
     } else {
-      qDebug() << "encrypted message.";
       QString xml = qstring(msg.tag()->xml());
-      QDomElement dom = ::base::Xmls::parse(xml);
-      emit exportEncryptedMessage(dom);
+      qDebug() << "Is encrypted message:"<<xml;
+      emit exportEncryptedMessage(xml);
     }
   }
   // 从 message.receipt 提取接收确认ID

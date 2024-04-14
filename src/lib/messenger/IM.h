@@ -167,7 +167,7 @@ public:
 
   virtual Client *getClient() const { return _client.get(); }
 
-  QDomElement buildMessage(const QString &to, const QString &msg, QString &id);
+  QDomDocument buildMessage(const QString &to, const QString &msg, QString &id);
 
   bool sendTo(const QString &to, const QString &msg, QString &id);
 
@@ -828,7 +828,7 @@ signals:
 
   void receiveFriendChatState(QString friendId, int state);
 
-  void exportEncryptedMessage(QDomElement &dom);
+  void exportEncryptedMessage(QString em);
 
   void receiveMessageReceipt(QString friendId, QString receipt);
 

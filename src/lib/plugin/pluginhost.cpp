@@ -1432,7 +1432,7 @@ bool PluginHost::encryptMessageElement(int account, QDomElement &message) {
     return false;
   }
 
-  qDebug()<<"encryptMessageElement ...";
+  qDebug()<<"encryptMessageElement msg:" << &message;
   auto encrypted = es->encryptMessageElement(account, message);
   qDebug()<<"encryptMessageElement=> "<<encrypted;
   return true;

@@ -114,9 +114,8 @@ void Messenger::onStarted() {
 
 #ifdef OK_PLUGIN
   qDebug() << "Initialize plugin manager...";
-  qRegisterMetaType<QDomElement>("QDomElement&");
-  connect(_im, &IM::exportEncryptedMessage, this,
-          &Messenger::onEncryptedMessage);
+  qRegisterMetaType<QDomDocument>("QDomDocument");
+  connect(_im, &IM::exportEncryptedMessage, this, &Messenger::onEncryptedMessage);
   qDebug() << "Initialized plugin manager successfully";
 #endif
   qDebug() << "onStarted completed";
@@ -465,7 +464,10 @@ bool Messenger::sendToFriend(const QString &f, const QString &msg,
     pm->addAccount(_session->account(), this);
 
     auto dom = _im->buildMessage(f, msg, receiptNum);
-    if (pm->encryptMessageElement(_session->account(), dom)) {
+    auto ele = dom.documentElement();
+
+    if (pm->encryptMessageElement(_session->account(), ele)) {
+      qDebug()<<"encryptMessageElement=>"<<&dom;
       auto xml = ::base::Xmls::format(dom);
       _im->send(xml);
       y = true;
@@ -631,29 +633,40 @@ void Messenger::onDisconnect() {
   });
 }
 
-void Messenger::onEncryptedMessage(QDomElement &dom) {
+void Messenger::onEncryptedMessage(QString xml) {
 #ifdef OK_PLUGIN
+  if(xml.isNull())
+  {
+    qWarning()<<"Empty encryptedMessage!";
+    return;
+  }
+  auto dom = ::base::Xmls::parse(xml);
+
+  qDebug() << "onEncryptedMessage:"<<dom.toString();
   auto _session = ok::session::AuthSession::Instance();
   auto info = _session->getSignInInfo();
   auto _im = _session->im();
   _session->account()->setJid(qstring(_im->self().full()));
   auto pm = ok::plugin::PluginManager::instance();
   pm->addAccount(_session->account(), this);
-  bool decrypted = pm->decryptMessageElement(_session->account(), dom);
+  auto ele= dom.documentElement();
+  bool decrypted = pm->decryptMessageElement(_session->account(), ele);
   if (!decrypted){
     qWarning()<<"decrypted failed.";
     return;
   }
-  auto body = dom.firstChildElement("body").text();
-  if (body.isEmpty())
+  auto body = ele.firstChildElement("body").text();
+  if (body.isEmpty()){
+    qWarning()<<"Empty body!";
     return;
+  }
 
-  QString from = dom.attribute("from");
-  QString to = dom.attribute("to");
+  QString from = dom.documentElement().attribute("from");
+  QString to = dom.documentElement().attribute("to");
 
   IMMessage msg(MsgType::Chat, from, body);
   for (auto handler : friendHandlers) {
-    handler->onFriendMessage(qstring(JID(stdstring(from)).username()), msg);
+    handler->onFriendMessage(qstring(JID(stdstring(from)).bareJID().bare()), msg);
   }
 #endif
 }

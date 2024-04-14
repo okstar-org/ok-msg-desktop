@@ -19,15 +19,15 @@
 namespace base {
 class Xmls {
 public:
-  inline static QDomElement parse(const QString &xmlData) {
+  inline static QDomDocument parse(const QString &xmlData) {
     QDomDocument document;
     if (!document.setContent(xmlData, true)) {
-      return QDomElement{};
+      return QDomDocument{};
     }
-    return document.documentElement();
+    return document;
   }
 
-  inline static QString format(QDomElement& element){
+  inline static QString format(QDomDocument& element){
     if(element.isNull())
       return QString{};
 

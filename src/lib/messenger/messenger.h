@@ -25,6 +25,7 @@
 #include <utility>
 
 class QDomElement;
+class QDomDocument;
 
 namespace lib {
 namespace messenger {
@@ -339,7 +340,7 @@ private slots:
   void onStopped();
   void onReceiveGroupMessage(lib::messenger::IMMessage imMsg);
   void onDisconnect();
-  void onEncryptedMessage(QDomElement &dom);
+  void onEncryptedMessage(QString dom);
 
   void onGroupReceived(QString groupId, QString name);
 

@@ -4,6 +4,7 @@
 #include <QtPlugin>
 
 class QDomElement;
+class QDomDocument;
 
 namespace ok {
 namespace plugin {

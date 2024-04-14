@@ -1288,14 +1288,12 @@ bool PluginManager::decryptMessageElement(OkAccount *account,
                               Qt::BlockingQueuedConnection,
                               Q_RETURN_ARG(bool, ret),
                               Q_ARG(OkAccount *, account),
-                              Q_ARG(QDomElement &, message));
+                              Q_ARG(QDomElement&, message));
     return ret;
   }
 
-  qDebug() << "decryptMessageElement:" << account->getUsername() << message.text();
   for (auto const host : pluginByFile_) {
     if (host->decryptMessageElement(accountIds_.id(account), message)) {
-      qDebug() <<"Using plugin:"<<host->shortName()<<"decryptMessageElement completed.";
       return true;
     }
   }
@@ -1315,7 +1313,7 @@ bool PluginManager::encryptMessageElement(OkAccount *account,
     return ret;
   }
 
-  qDebug() << "encryptMessageElement:" << account->getUsername() << message.text();
+  qDebug() << "encryptMessageElement:" << account->getUsername() << message.ownerDocument().toString();
   for (auto const host : pluginByFile_) {
     if (host->encryptMessageElement(accountIds_.id(account), message)) {
       qDebug() <<"Using plugin:"<<host->shortName()<<"encryptMessageElement completed.";
