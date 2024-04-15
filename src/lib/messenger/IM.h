@@ -141,6 +141,8 @@ public:
 
   void requestVCards();
 
+  void setUIStarted();
+
   /**
    * 朋友相关
    */
@@ -719,15 +721,10 @@ protected:
   void handleBookmarks(const BookmarkList &bList, //
                        const ConferenceList &cList) override;
 
-private:
+
   base::OsInfo osInfo;
 
   QStringList features;
-
-  /**
-   * 连接状态
-   */
-  bool started;
 
   std::string _host;
   std::string _username;
@@ -787,7 +784,9 @@ private:
 
   ExtDisco mExtDisco;
 
-  int receivedMsg = 0;
+  bool mUIStarted;
+
+  bool mStarted;
 
   void timerEvent(QTimerEvent *) override;
 
@@ -862,7 +861,8 @@ signals:
   void selfAvatarChanged(std::string avatar);
   void selfStatusChanged(int type, const std::string status);
 
-  void onStarted();
+  void connected();
+  void started();
   void onStopped();
 
   void groupListReceived(const QString groupId, const QString name);

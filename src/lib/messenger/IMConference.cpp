@@ -35,10 +35,10 @@ IMConference::IMConference(Client *client,
 
 //void IMConference::onStart(const gloox::Conference *j) {
 //  auto c = const_cast<gloox::Conference *>(j);
-//  DEBUG_LOG(("room:%1").arg(c->room().c_str()))
-//  DEBUG_LOG(("ready:%1").arg(c->ready()))
-//  DEBUG_LOG(("auth:%1").arg(c->auth()))
-//  DEBUG_LOG(("focusJid:%1").arg(qstring(c->focusJid().full())))
+//  qDebug(("room:%1").arg(c->room().c_str()))
+//  qDebug(("ready:%1").arg(c->ready()))
+//  qDebug(("auth:%1").arg(c->auth()))
+//  qDebug(("focusJid:%1").arg(qstring(c->focusJid().full())))
 //  this->setVideoMute(c->room());
 //
 //
@@ -49,19 +49,11 @@ IMConference::IMConference(Client *client,
  * @param jid
  */
 void IMConference::start(const JID &jid) {
-  DEBUG_LOG(("room:%1 暂未实现").arg(qstring(jid.full())));
-
-//  JID j(jid);
-//  j.setUsername(jid.username()+"-av");
-//  const QString &machineUid = QUuid::createUuid().toString();
-//  JID focus(XMPP_CONFERENCE_FOCUS);
-
-  //  _conferenceManager->create(j, focus, machineUid.toStdString(), this);
 
 }
 
 void IMConference::join(const std::string &room) {
-  DEBUG_LOG(("room:%1").arg(qstring(room)));
+//  qDebug(("room:%1").arg(qstring(room)));
   //  std::string room_host = room + "@" + CONFERENCE_HOST;
   //  std::string machineUid = _client->getID();
 
@@ -99,33 +91,32 @@ void IMConference::handleDiscoInfo(const JID &from, const Disco::Info &info,
                                    int context) {
   QString _from = QString::fromStdString(from.full());
 
-  DEBUG_LOG(("from=%1 context=%2").arg(_from).arg(context));
+//  qDebug(("from=%1 context=%2").arg(_from).arg(context));
 
   //    const StringList features = info.features();
   //    for(auto feature: features){
-  //        DEBUG_LOG(("feature=%1").arg(QString::fromStdString(feature)));
+  //        qDebug(("feature=%1").arg(QString::fromStdString(feature)));
   //    }
 
   const Disco::IdentityList &identities = info.identities();
-  for (auto identity : identities) {
-    DEBUG_LOG(("identity=%1").arg(qstring(identity->name())));
-  }
+  for (auto identity : identities)
+    qDebug() << "identity=" << qstring(identity->name());
 }
 
 void IMConference::handleDiscoItems(const JID &from, const Disco::Items &items,
                                     int context) {
   QString _from = QString::fromStdString(from.full());
-  DEBUG_LOG(("from=%1 context=%2").arg(_from).arg(context));
+//  qDebug(("from=%1 context=%2").arg(_from).arg(context));
 }
 
 void IMConference::handleDiscoError(const JID &from, const gloox::Error *error,
                                     int context) {
 
   QString _from = qstring(from.full());
-  DEBUG_LOG(("from=%1 context=%2 error=%3")
-                .arg(_from)
-                .arg(context)
-                .arg(qstring(error->text())));
+//  qDebug(("from=%1 context=%2 error=%3")
+//                .arg(_from)
+//                .arg(context)
+//                .arg(qstring(error->text())));
 }
 // Presence Han
 

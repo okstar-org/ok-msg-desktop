@@ -35,13 +35,14 @@
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
 #include <QRandomGenerator>
 #endif
-#include <QRegularExpression>
+
 #include <QString>
 #include <QStringBuilder>
 #include <QTimer>
 
 #include <cassert>
-#include <memory>
+#include <chrono>
+#include <thread>
 
 const QString Core::TOX_EXT = ".tox";
 
@@ -198,19 +199,9 @@ void Core::registerCallbacks(Tox *tox) {
   tox->addGroupHandler(this);
   tox->addSelfHandler(this);
 
-  //  tox_callback_friend_request(tox, onFriendRequest);
-  //  tox_callback_friend_message(tox, onFriendMessage);
-  //  tox_callback_friend_name(tox, onFriendNameChange);
-  //  tox_callback_friend_typing(tox, onFriendTypingChange);
-  //  tox_callback_friend_status_message(tox, onStatusMessageChanged);
-  //  tox_callback_friend_status(tox, onUserStatusChanged);
-  //  tox_callback_friend_connection_status(tox, onConnectionStatusChanged);
-  //  tox_callback_friend_read_receipt(tox, onReadReceiptCallback);
-  //  tox_callback_conference_invite(tox, onGroupInvite);
-  //  tox_callback_conference_message(tox, onGroupMessage);
-  //  tox_callback_conference_peer_list_changed(tox, onGroupPeerListChange);
-  //  tox_callback_conference_peer_name(tox, onGroupPeerNameChange);
-  //  tox_callback_conference_title(tox, onGroupTitleChange);
+  connect(tox, &lib::messenger::Messenger::connected, [=](){
+    emit connected();
+  });
 }
 
 /**
@@ -361,11 +352,9 @@ ToxCorePtr Core::makeToxCore(const QByteArray &savedata,
   // or a nullptr
   return core;
 }
-#include <chrono>
-#include <thread>
 
 void Core::onStarted() {
-  qDebug() << "onStarted...";
+  qDebug() << "connected...";
   ASSERT_CORE_THREAD;
 
   // One time initialization stuff
@@ -395,7 +384,7 @@ void Core::onStarted() {
   av->start();
   process(); // starts its own timer
   emit avReady();
-  qDebug() << "onStarted completed.";
+  qDebug() << "connected completed.";
 }
 
 /**
@@ -1728,4 +1717,8 @@ void Core::sendReceiptReceived(const QString &friendId, QString receipt) {
 
 void Core::requestBookmarks() {
   tox->requestBookmarks();
+}
+
+void Core::setUIStarted() {
+  tox->setUIStarted();
 }

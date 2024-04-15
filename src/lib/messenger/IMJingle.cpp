@@ -38,17 +38,17 @@ IMJingle::IMJingle(IM *im_)
     : client(im_), m_callType(lib::ortc::JingleCallType::none),
       m_callStage(StageNone), m_callDirection(CallNone) {
 
-  DEBUG_LOG(("Is be creating ..."));
+  qDebug()<<("Is be creating ...");
   forClient(im_->getClient());
 
   connect(im_, &lib::messenger::IM::receiveCallRequest,
           [&](QString friendId, QString callId, bool audio, bool video) {
             m_callDirection = CallIn;
           });
-  DEBUG_LOG(("Is be created"));
+  qDebug()<<("Be created");
 }
 
-IMJingle::~IMJingle() { DEBUG_LOG(("...")); }
+IMJingle::~IMJingle() { qDebug()<<("Be destroyed"); }
 
 /**
  * 连接改变
@@ -61,7 +61,7 @@ void IMJingle::clientChanged(gloox::Client *client) { forClient(client); }
  * @param client
  */
 void IMJingle::forClient(Client *client) {
-  DEBUG_LOG(("client:%1").arg(qstring(client->getID())));
+  qDebug() << "client:" << qstring(client->getID());
   assert(client);
 
   // register extensions Jingle
@@ -82,7 +82,7 @@ void IMJingle::forClient(Client *client) {
 }
 
 void IMJingle::join(const JID &room) {
-  DEBUG_LOG(("..."));
+  qDebug()<<("...");
 
   // join conference
   //    JID focus(XMPP_CONFERENCE_FOCUS);
@@ -141,7 +141,7 @@ void IMJingle::cacheSessionInfo(Jingle::Session *session,
 }
 
 void IMJingle::clearSessionInfo(Jingle::Session *session) {
-  DEBUG_LOG(("Clear the session:%1").arg(qstring(session->sid())))
+  qDebug()<<("Clear the session:%1")<<((qstring(session->sid())));
 
   auto responder = session->remote();
   m_friendSessionMap.erase(PeerId(responder));
@@ -156,11 +156,11 @@ void IMJingle::clearSessionInfo(Jingle::Session *session) {
   m_callStage = StageNone;
   m_callType = ortc::JingleCallType::none;
 
-  DEBUG_LOG(("session has be destroyed."))
+  qDebug()<<("session has be destroyed.");
 }
 
 std::string IMJingle::getSessionByFriendId(const QString &friendId) {
-  DEBUG_LOG(("getSessionId:%1").arg(friendId))
+  qDebug()<<("getSessionId:%1")<<((friendId));
 
   auto it = m_friendSessionMap.find(PeerId(friendId));
   if (it != m_friendSessionMap.end()) {
@@ -174,15 +174,14 @@ std::string IMJingle::getSessionByFriendId(const QString &friendId) {
 
 void IMJingle::handleSessionActionError(Action action, Session *session,
                                         const gloox::Error *error) {
-  DEBUG_LOG(("sId:%1 action:%2 from:%3 error:%4")
-                .arg(qstring(session->sid()))
-                .arg(static_cast<int>(action))
-                .arg(qstring(session->remote().full()))
-                .arg(qstring(error->text())));
+  qDebug() << "sId:%1 action:%2 from:%3 error:%4"
+           << qstring(session->sid())
+           << static_cast<int>(action)
+           << qstring(session->remote().full()) <<((qstring(error->text())));
 }
 
 void IMJingle::handleIncomingSession(Session *session) {
-  DEBUG_LOG(("sId:%1").arg(qstring(session->sid())))
+  qDebug() << "sId:%1" << qstring(session->sid());
   cacheSessionInfo(session, m_callType);
 }
 
@@ -194,10 +193,10 @@ void IMJingle::handleSessionAction(Action action, Session *session,
   auto friendId = PeerId(from);
   const std::string &sid = jingle->sid();
 
-  DEBUG_LOG(("action:%1 from:%2 sid:%3")
-                .arg(static_cast<int>(action))
-                .arg(qstring(from.full()))
-                .arg(qstring(sid)))
+  qDebug()<<("action:%1 from:%2 sid:%3")
+                <<((static_cast<int>(action)))
+                <<((qstring(from.full())))
+                <<((qstring(sid)));
 
   auto *ws = findSession(session->sid());
   if (ws) {
@@ -298,10 +297,10 @@ void IMJingle::doSessionInitiate(Jingle::Session *session,
       for (const auto &f : c.file.files) {
         FileHandler::File file = {qstring(c.file.ibb.sid()), qstring(f.name),
                                   qstring(session->sid()), "", (quint64)f.size};
-        DEBUG_LOG(("sId:%1 file:%2 fileId:%3")
-                      .arg(file.sId)
-                      .arg(file.name)
-                      .arg(file.id))
+        qDebug()<<("sId:%1 file:%2 fileId:%3")
+                      <<((file.sId))
+                      <<((file.name))
+                      <<((file.id));
         emit receiveFileRequest(peerId.username + "@" + peerId.server, file);
       }
     }
@@ -333,14 +332,13 @@ void IMJingle::doSessionTerminate(Jingle::Session *session,
                                   const Session::Jingle *jingle,
                                   const PeerId &peerId) {
 
-  DEBUG_LOG(
-      ("sId:%1 peerId:%2").arg(qstring(session->sid())).arg(peerId.toString()));
+  qDebug()<<QString("sId:%1 peerId:%2")<<(qstring(session->sid()))<<(peerId.toString());
   int ri = 0;
   for (auto &file : m_waitSendFiles) {
     if (qstring(session->sid()) == file.sId) {
       // TODO 需要处理没有terminate的信令的清理
       // 清理待发文件
-      DEBUG_LOG(("file:%1 session is terminate.").arg(file.id));
+      qDebug()<<("file:%1 session is terminate.")<<((file.id));
       doStopFileSendTask(session, file);
       m_waitSendFiles.removeAt(ri);
       return;
@@ -380,16 +378,16 @@ void IMJingle::doSessionAccept(Jingle::Session *session,
                                const Jingle::Session::Jingle *jingle,
                                const PeerId &peerId) {
 
-  DEBUG_LOG(("sId:%1 friendId:%2") //
-                .arg(qstring(session->sid()))
-                .arg(peerId.toString()));
+  qDebug() << "sId:%1 friendId:%2" //
+           << qstring(session->sid()) //
+           << peerId.toString();
 
   JingleContext answer(lib::ortc::JingleSdpType::Answer, //
                        stdstring(peerId.toString()),     //
                        session->sid(), SESSION_VERSION, jingle->plugins());
 
   auto callType = answer.callType();
-  DEBUG_LOG(("callType:%1").arg((int)callType));
+  qDebug()<<("callType:%1")<<(((int)callType));
 
   if (callType == lib::ortc::JingleCallType::file) {
     // jingle-file
@@ -421,31 +419,30 @@ void IMJingle::doSessionAccept(Jingle::Session *session,
 
 void IMJingle::doSessionInfo(const Session::Jingle *jingle,
                              const PeerId &friendId) {
-  DEBUG_LOG(("jingle:%1 peerId:%2") //
-                .arg(qstring(jingle->sid()))
-                .arg(friendId.toString()));
+  qDebug() << "jingle:%1 peerId:%2" //
+           << qstring(jingle->sid()) //
+           << friendId.toString();
 }
 
 void IMJingle::doContentAdd(const Session::Jingle *jingle,
                             const PeerId &friendId) {
 
-  DEBUG_LOG(("jingle:%1 peerId:%2")
-                .arg(qstring(jingle->sid()))
-                .arg(friendId.toString()));
+  qDebug() << "jingle:%1 peerId:%2" << qstring(jingle->sid())
+           << friendId.toString();
   //  _rtcManager->ContentAdd(sdMap, this);
 }
 
 void IMJingle::doContentRemove(const Session::Jingle *jingle,
                                const PeerId &peerId) {
-  DEBUG_LOG(("jingle:%1 peerId:%2")
-                .arg(qstring(jingle->sid()))
-                .arg(peerId.toString()));
+  qDebug()<<("jingle:%1 peerId:%2")
+                <<(qstring(jingle->sid()))
+                <<((peerId.toString()));
 
   //  JID peerJID;
   //  std::map<std::string, Session> sdMap;
   //  const PluginList &plugins = jingle->plugins();
   //  for (const auto p : plugins) {
-  //    DEBUG_LOG(("Plugin:%1").arg(QString::fromStdString(p->filterString())));
+  //    qDebug()<<("Plugin:%1")<<((QString::fromStdString(p->filterString())));
   //    JinglePluginType pt = p->pluginType();
   //    switch (pt) {
   //    case JinglePluginType::PluginContent: {
@@ -461,41 +458,40 @@ void IMJingle::doContentRemove(const Session::Jingle *jingle,
 
 void IMJingle::doContentModify(const Session::Jingle *jingle,
                                const PeerId &peerId) {
-  DEBUG_LOG(("jingle:%1 peerId:%2") //
-                .arg(qstring(jingle->sid()))
-                .arg(peerId.toString()));
+  qDebug()<<("jingle:%1 peerId:%2") //
+                <<((qstring(jingle->sid())))
+                <<((peerId.toString()));
 }
 
 void IMJingle::doContentAccept(const Session::Jingle *jingle,
                                const PeerId &peerId) {
-  DEBUG_LOG(("jingle:%1 peerId:%2") //
-                .arg(qstring(jingle->sid()))
-                .arg(peerId.toString()));
+  qDebug()<<("jingle:%1 peerId:%2") //
+                <<((qstring(jingle->sid())))
+                <<((peerId.toString()));
 }
 
 void IMJingle::doContentReject(const Session::Jingle *jingle,
                                const PeerId &peerId) {
-  DEBUG_LOG(("jingle:%1 peerId:%2") //
-                .arg(qstring(jingle->sid()))
-                .arg(peerId.toString()));
+  qDebug()<<("jingle:%1 peerId:%2") //
+                <<((qstring(jingle->sid())))
+                <<((peerId.toString()));
 }
 
 void IMJingle::doTransportAccept(const Session::Jingle *jingle,
                                  const PeerId &peerId) {
-  DEBUG_LOG(("jingle:%1 peerId:%2") //
-                .arg(qstring(jingle->sid()))
-                .arg(peerId.toString()));
+  qDebug() << ("jingle:%1 peerId:%2") //
+           << qstring(jingle->sid()) << peerId.toString();
 }
 
 void IMJingle::doTransportInfo(const Session::Jingle *jingle,
                                const PeerId &peerId) {
-  DEBUG_LOG(("sId:%1 peerId:%2") //
-                .arg(qstring(jingle->sid()))
-                .arg(peerId.toString()));
+  qDebug()<<("sId:%1 peerId:%2") //
+                <<(qstring(jingle->sid()))
+                <<((peerId.toString()));
 
   auto s = findSession(jingle->sid());
   if (!s) {
-    DEBUG_LOG(("Session is not exit."));
+    qDebug()<<("Session is not exit.");
     return;
   }
 
@@ -516,37 +512,37 @@ void IMJingle::doSecurityInfo(const Session::Jingle *, const PeerId &) {}
 
 void IMJingle::doDescriptionInfo(const Session::Jingle *jingle,
                                  const PeerId &peerId) {
-  DEBUG_LOG(("sessionId:%1 from:%2")
-                .arg(qstring(jingle->sid()))
-                .arg(peerId.toString()));
+  qDebug()<<("sessionId:%1 from:%2")
+                <<(qstring(jingle->sid()))
+                <<((peerId.toString()));
 }
 
 void IMJingle::doInvalidAction(const Session::Jingle *jingle,
                                const PeerId &peerId) {
-  DEBUG_LOG(("sessionId:%1 from:%2")
-                .arg(qstring(jingle->sid()))
-                .arg(peerId.toString()));
+  qDebug()<<("sessionId:%1 from:%2")
+                <<(qstring(jingle->sid()))
+                <<((peerId.toString()));
 }
 
 void IMJingle::onCreatePeerConnection(const std::string &peerId,
                                       const std::string &sId, bool ok) {
-  DEBUG_LOG(("peerId:%1 sId:%2 => %3")
-                .arg(qstring(peerId))
-                .arg(qstring(sId))
-                .arg(ok ? "YES" : "NO"))
+  qDebug()<<("peerId:%1 sId:%2 => %3")
+                <<(qstring(peerId))
+                <<(qstring(sId))
+                <<((ok ? "YES" : "NO"));
 
   /**
    * TODO 处理连接异常情况
    */
   if (!ok) {
-    DEBUG_LOG(("连接异常!"));
+    qDebug()<<("连接异常!");
   }
 }
 
 void IMJingle::onRTP(const std::string &sId,    //
                      const std::string &peerId, //
                      const lib::ortc::JingleContext &oContext) {
-  DEBUG_LOG(("peerId:%1 sId:%2").arg(qstring(peerId)).arg(qstring(sId)));
+  qDebug()<<("peerId:%1 sId:%2")<<(qstring(peerId))<<((qstring(sId)));
 
   PluginList plugins = oContext.toJingleSdp();
 
@@ -567,7 +563,7 @@ void IMJingle::onIce(const std::string &sId,    //
                      const std::string &peerId, //
                      const OIceUdp &oIceUdp) {
 
-  DEBUG_LOG(("sId:%1 peerId:%2").arg(qstring(sId)).arg(qstring(peerId)));
+  qDebug()<<("sId:%1 peerId:%2")<<(qstring(sId))<<(qstring(peerId));
 
   auto *session = findSession(sId);
   if (!session) {
@@ -575,9 +571,9 @@ void IMJingle::onIce(const std::string &sId,    //
     return;
   }
 
-  DEBUG_LOG(("ice: mid:%1 mline:%2") //
-                .arg(qstring(oIceUdp.mid))
-                .arg(oIceUdp.mline))
+  qDebug()<<("ice: mid:%1 mline:%2") //
+                <<(qstring(oIceUdp.mid))
+                <<((oIceUdp.mline));
   auto *iceUdp = new ICEUDP(oIceUdp.pwd, oIceUdp.ufrag, oIceUdp.candidates);
   iceUdp->setDtls(oIceUdp.dtls);
 
@@ -608,7 +604,7 @@ void IMJingle::onRender(const std::string &peerId,
 // startCall
 bool IMJingle::startCall(const QString &friendId, const QString &sId,
                          bool video) {
-  DEBUG_LOG(("friendId:%1 video:%2").arg(friendId).arg(video))
+  qDebug()<<("friendId:%1 video:%2")<<(friendId)<<((video));
 
   auto resources = client->getOnlineResources(stdstring(friendId));
   if (resources.empty()) {
@@ -631,15 +627,15 @@ bool IMJingle::sendCallToResource(const QString &friendId, const QString &sId,
 bool IMJingle::createCall(const PeerId &to, const QString &sId, bool video) {
   std::string peerId = stdstring(to.toString());
 
-  DEBUG_LOG(("Create session:%1 isVideo:%2 to peerId:%3")
-                .arg(sId)
-                .arg(video)
-                .arg(to.toString()));
+  qDebug()<<("Create session:%1 isVideo:%2 to peerId:%3")
+                <<(sId)
+                <<(video)
+                <<((to.toString()));
 
   auto session =
       _sessionManager->createSession(JID(peerId), this, stdstring(sId));
   if (!session) {
-    DEBUG_LOG(("Cannot create session!"))
+    qDebug()<<("Cannot create session!");
     return false;
   }
 
@@ -657,7 +653,7 @@ bool IMJingle::createCall(const PeerId &to, const QString &sId, bool video) {
 }
 
 void IMJingle::cancel(const QString &friendId) {
-  DEBUG_LOG(("cancel:%1").arg(friendId))
+  qDebug()<<("cancel:%1")<<((friendId));
 
   auto it = m_friendSessionMap.find(PeerId(friendId));
   if (it != m_friendSessionMap.end()) {
@@ -672,7 +668,7 @@ void IMJingle::cancel(const QString &friendId) {
 }
 
 void IMJingle::cancelCall(const QString &friendId, const QString &sId) {
-  DEBUG_LOG(("friendId:%1 sId:%2").arg(friendId).arg(sId))
+  qDebug()<<("friendId:%1 sId:%2")<<(friendId)<<((sId));
 
   IMJingleSession *s = findSession(stdstring(sId));
   if (s) {
@@ -701,7 +697,7 @@ void IMJingle::cancelCall(const QString &friendId, const QString &sId) {
 
 bool IMJingle::answer(const QString &friendId, const QString &callId,
                       bool video) {
-  DEBUG_LOG(("friend:%1 video:%2").arg(friendId).arg(video))
+  qDebug()<<("friend:%1 video:%2")<<(friendId)<<((video));
   PeerId friendId1(friendId);
 
   client->acceptJingleMessage(friendId, callId);
@@ -722,10 +718,10 @@ void IMJingle::rejectFileRequest(const QString &friendId,
 
 void IMJingle::acceptFileRequest(const QString &friendId,
                                  const FileHandler::File &file) {
-  DEBUG_LOG(("sId:%1 file:%2 fileId:%3") //
-                .arg(file.sId)
-                .arg(file.name)
-                .arg(file.id))
+  qDebug()<<("sId:%1 file:%2 fileId:%3") //
+                <<(file.sId)
+                <<(file.name)
+                <<((file.id));
 
   auto *ws = findSession(stdstring(file.sId));
   if (!ws) {
@@ -757,8 +753,7 @@ void IMJingle::acceptFileRequest(const QString &friendId,
 
 void IMJingle::finishFileRequest(const QString &friendId,
                                  const FileHandler::File &file) {
-  DEBUG_LOG(
-      ("sId:%1 file:%2 fileId:%3").arg(file.sId).arg(file.name).arg(file.id))
+  qDebug()<<("sId:%1 file:%2 fileId:%3")<<(file.sId)<<(file.name)<<((file.id));
   auto *s = (findSession(stdstring(file.sId)));
   if (!s) {
     return;
@@ -774,7 +769,7 @@ void IMJingle::finishFileTransfer(const QString &friendId,
 
 bool IMJingle::sendFile(const QString &friendId,
                         const FileHandler::File &file) {
-  DEBUG_LOG(("friendId:%1 name:%2").arg(friendId).arg(file.name))
+  qDebug()<<("friendId:%1 name:%2")<<(friendId)<<(file.name);
   if (file.id.isEmpty()) {
     qWarning() << "文件缺少ID属性！";
     return false;
@@ -797,10 +792,10 @@ bool IMJingle::sendFile(const QString &friendId,
 
 bool IMJingle::sendFileToResource(const JID &jid,
                                   const FileHandler::File &file) {
-  DEBUG_LOG(("peerId:%1").arg(qstring(jid.full())))
+  qDebug()<<("peerId:%1")<<((qstring(jid.full())));
   auto session = _sessionManager->createSession(jid, this);
   if (!session) {
-    DEBUG_LOG(("Can not create session!"))
+    qDebug() << "Can not create session!";
     return false;
   }
 
@@ -836,7 +831,7 @@ bool IMJingle::sendFileToResource(const JID &jid,
 IMJingleSession *IMJingle::findSession(const std::string &sId) {
   auto f = m_sessionMap.find((sId));
   if (f == m_sessionMap.end()) {
-    DEBUG_LOG(("Can not find the session id is:%1").arg(qstring(sId)))
+    qDebug() << "Can not find the session id is:%1" << qstring(sId);
     return nullptr;
   }
   return f->second;
@@ -844,8 +839,8 @@ IMJingleSession *IMJingle::findSession(const std::string &sId) {
 
 void IMJingle::doStartFileSendTask(const Session *session,
                                    const FileHandler::File &file) {
-  DEBUG_LOG(
-      ("sId:%1 file:%2 fileId:%3").arg(file.sId).arg(file.name).arg(file.id))
+  qDebug()<<
+      ("sId:%1 file:%2 fileId:%3")<<(file.sId)<<(file.name)<<((file.id));
 
   auto *imFile = new IMFile(session->remote(), file, client);
   connect(imFile, &IMFile::fileSending,
@@ -870,7 +865,7 @@ void IMJingle::doStartFileSendTask(const Session *session,
           });
   imFile->start();
   m_fileSenderMap.insert(file.sId, imFile);
-  DEBUG_LOG(("Send file:%1 task has been stared.").arg(file.id));
+  qDebug()<<("Send file:%1 task has been stared.")<<((file.id));
 }
 
 void IMJingle::doStopFileSendTask(const Session *session,
@@ -880,7 +875,7 @@ void IMJingle::doStopFileSendTask(const Session *session,
   if (!imFile) {
     return;
   }
-  DEBUG_LOG(("Send file:%1 task will be clear.").arg(file.id));
+  qDebug()<<("Send file:%1 task will be clear.")<<((file.id));
   imFile->abort();
   if (imFile->isRunning()) {
     imFile->quit();
@@ -891,7 +886,7 @@ void IMJingle::doStopFileSendTask(const Session *session,
 
   // 返回截断后续处理
   m_fileSenderMap.remove(file.sId);
-  DEBUG_LOG(("Send file:%1 task has been clean.").arg(file.id));
+  qDebug()<<("Send file:%1 task has been clean.")<<((file.id));
 }
 } // namespace messenger
 } // namespace lib

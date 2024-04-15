@@ -58,7 +58,7 @@ namespace core
 
         QString classroomQM(":/" + m_path + "/classroom_zh.qm");
 
-        DEBUG_LOG(("load QM file:%1").arg(classroomQM));
+        qDebug() << "load qm file:" << classroomQM;
 
         m_apTranslator.load(classroomQM);
         qApp->installTranslator(&m_apTranslator);

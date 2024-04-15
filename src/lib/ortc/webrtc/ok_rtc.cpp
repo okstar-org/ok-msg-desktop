@@ -270,11 +270,11 @@ void ORTC::start() {
   RTC_LOG(LS_INFO) << "peer_connection_factory_:"
                      << peer_connection_factory_.get();
 
-  // DEBUG_LOG(("Create audio source..."));
+  // qDebug(("Create audio source..."));
   _audioSource =
       peer_connection_factory_->CreateAudioSource(::cricket::AudioOptions());
 
-  // DEBUG_LOG(("Create video device..."));
+  // qDebug(("Create video device..."));
   _videoDeviceInfo = std::shared_ptr<webrtc::VideoCaptureModule::DeviceInfo>(
       webrtc::VideoCaptureFactory::CreateDeviceInfo());
 
@@ -320,7 +320,7 @@ bool ORTC::join(const std::string &peerId, const std::string &sId,
 }
 
 bool ORTC::quit(const std::string &peerId) {
-  //  DEBUG_LOG(("Quit for WebRTC peerId:%1").arg(qstring(peerId)));
+  //  qDebug(("Quit for WebRTC peerId:%1").arg(qstring(peerId)));
   auto it = _pcMap.find(peerId);
   if (it == _pcMap.end()) {
     return false;
@@ -374,16 +374,16 @@ Conductor *ORTC::createConductor(const std::string &peerId,
                     _rtcHandler, _rtcRenderer);
 
   if (callType == JingleCallType::audio) {
-    // DEBUG_LOG(("AddTrack audio..."));
+    // qDebug(("AddTrack audio..."));
     conductor->AddTrack(_audioSource.get());
   }
 
   if (callType == JingleCallType::video) {
-    // DEBUG_LOG(("AddTrack audio..."));
+    // qDebug(("AddTrack audio..."));
     conductor->AddTrack(_audioSource.get());
 
     int num_devices = _videoDeviceInfo->NumberOfDevices();
-    // DEBUG_LOG(("Get number of video devices:%1").arg(num_devices));
+    // qDebug(("Get number of video devices:%1").arg(num_devices));
     /**
      * TODO 多个视频设备需要提醒
      */
@@ -412,7 +412,7 @@ Conductor *ORTC::createConductor(const std::string &peerId,
       //_video_track = peer_connection_factory_->CreateVideoTrack(label,
       //_videoTrackSource.get());
       //_video_track->AddOrUpdateSink(new OVideoSink(_rtcRenderer),
-      // rtc::VideoSinkWants()); DEBUG_LOG(("Added video track, The device num
+      // rtc::VideoSinkWants()); qDebug(("Added video track, The device num
       // is:%1").arg(i));
 
       break;
@@ -489,7 +489,7 @@ void ORTC::CreateAnswer(const std::string &peerId, //
 
 void ORTC::setTransportInfo(Conductor *conductor, const ortc::OIceUdp &iceUdp) {
 
-  //  //DEBUG_LOG(("mid:%1
+  //  //qDebug(("mid:%1
   //  mline:%2").arg(qstring(iceUdp.mid)).arg(iceUdp.mline))
   int i = 0;
   for (auto &_candidate : iceUdp.candidates) {

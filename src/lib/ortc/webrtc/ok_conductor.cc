@@ -49,7 +49,7 @@ Conductor::Conductor(
       peer_connection_factory_(pcf), _remote_audio_track(nullptr),
       _remote_video_track(nullptr) {
 
-  // DEBUG_LOG(("begin"));
+  // qDebug(("begin"));
 
   assert(!peerId_.empty());
 
@@ -58,11 +58,11 @@ Conductor::Conductor(
   assert(rtcRenderer);
 
   peer_connection_ = CreatePeerConnection();
-  // DEBUG_LOG(("end"));
+  // qDebug(("end"));
 }
 
 Conductor::~Conductor() {
-  // DEBUG_LOG(("begin"));
+  // qDebug(("begin"));
 
   if (_audioRtpSender.get()) {
     peer_connection_->RemoveTrackOrError(_audioRtpSender);
@@ -73,7 +73,7 @@ Conductor::~Conductor() {
   }
 
   DestroyPeerConnection();
-  // DEBUG_LOG(("end"));
+  // qDebug(("end"));
 }
 
 rtc::scoped_refptr<webrtc::PeerConnectionInterface> Conductor::CreatePeerConnection() {
@@ -118,7 +118,7 @@ void Conductor::AddTrack(webrtc::AudioSourceInterface *_audioSource) {
   std::string label = "-";
   std::string streamId = "okedu-audio-id";
 
-  //  //DEBUG_LOG(("kAudioLabel:%1  kAudioStreamId:%2")
+  //  //qDebug(("kAudioLabel:%1  kAudioStreamId:%2")
   //                .arg(qstring(label))
   //                .arg(qstring(streamId)));
 
@@ -128,20 +128,20 @@ void Conductor::AddTrack(webrtc::AudioSourceInterface *_audioSource) {
   auto add_track_result = peer_connection_->AddTrack(_audioTrack, {streamId});
 
   if (!add_track_result.ok()) {
-    // DEBUG_LOG(("Failed to add audio track to PeerConnection:%1")
+    // qDebug(("Failed to add audio track to PeerConnection:%1")
     //                  .arg(qstring(add_track_result.error().message())));
     return;
   }
 
   _audioRtpSender = add_track_result.value();
-  // DEBUG_LOG(("ssrc:%1").arg(_audioRtpSender->ssrc())) ;
+  // qDebug(("ssrc:%1").arg(_audioRtpSender->ssrc())) ;
 }
 
 void Conductor::AddTrack(webrtc::VideoTrackSourceInterface *_videoTrackSource) {
   std::string label = "-";
   std::string streamId = "okedu-video-id";
 
-  // DEBUG_LOG(("kVideoLabel:%1 kVideoStreamId:%2")
+  // qDebug(("kVideoLabel:%1 kVideoStreamId:%2")
   //              .arg(qstring(label))
   //              .arg(qstring(streamId)));
 
@@ -151,7 +151,7 @@ void Conductor::AddTrack(webrtc::VideoTrackSourceInterface *_videoTrackSource) {
 
   auto add_track_result = peer_connection_->AddTrack(_videoTrack, {streamId});
   if (!add_track_result.ok()) {
-    //    DEBUG_LOG(("Failed to add
+    //    qDebug(("Failed to add
     //    track:%1").arg(qstring(add_track_result.error().message())));
     return;
   }
@@ -161,11 +161,11 @@ void Conductor::AddTrack(webrtc::VideoTrackSourceInterface *_videoTrackSource) {
 
 void Conductor::OnDataChannel(
     rtc::scoped_refptr<webrtc::DataChannelInterface> channel) {
-  // DEBUG_LOG(("OnDataChannel channel id: %1").arg(channel->id()));
+  // qDebug(("OnDataChannel channel id: %1").arg(channel->id()));
 }
 
 void Conductor::OnRenegotiationNeeded() {
-  // DEBUG_LOG(("OnRenegotiationNeeded"));
+  // qDebug(("OnRenegotiationNeeded"));
 }
 
 /**
@@ -194,7 +194,7 @@ void Conductor::OnIceCandidate(const webrtc::IceCandidateInterface *ice) {
   std::string str;
   ice->ToString(&str);
 
-  // DEBUG_LOG(("mid:%1=>%2").arg(qstring(ice->sdp_mid())).arg(qstring(str)));
+  // qDebug(("mid:%1=>%2").arg(qstring(ice->sdp_mid())).arg(qstring(str)));
 
   auto &cand = ice->candidate();
 
@@ -338,7 +338,7 @@ void Conductor::OnRemoveTrack(
     //      auto vsk = it.first;
     //
     //      if (!it.second) {
-    //        DEBUG_LOG(LS_ERROR)).arg("VideoSink: ").arg(vsk).arg(" is
+    //        qDebug(LS_ERROR)).arg("VideoSink: ").arg(vsk).arg(" is
     //        null"));
     //        continue;
     //      }
@@ -349,7 +349,7 @@ void Conductor::OnRemoveTrack(
     //      }
     //    }
 
-    //    DEBUG_LOG(("RemoveSink TrackId:").arg(remote_video_track->id()
+    //    qDebug(("RemoveSink TrackId:").arg(remote_video_track->id()
     //                      ).arg(" VideoSink: ").arg(ovs;
     // 移除视频接收器
     //    remote_video_track->RemoveSink(ovs.get());
@@ -360,7 +360,7 @@ void Conductor::OnRemoveTrack(
     // 清空map
     //    _VideoSinkMap.erase(remote_video_track->id());
 
-    //    DEBUG_LOG(("RemoveSink TrackId:").arg(remote_video_track->id()
+    //    qDebug(("RemoveSink TrackId:").arg(remote_video_track->id()
     //                      ).arg(" VideoSink: ").arg(ovs).arg(" is success!"));
   }
 }
@@ -450,17 +450,17 @@ void Conductor::OnContentAdd(
 
   std::string new_sdp;
   jsd->ToString(&new_sdp);
-  // DEBUG_LOG(("remote new sdp:\n%1\n").arg(qstring(new_sdp)));
+  // qDebug(("remote new sdp:\n%1\n").arg(qstring(new_sdp)));
   peer_connection_->SetRemoteDescription(this, jsd.release());
 
-  // DEBUG_LOG(("end"));
+  // qDebug(("end"));
 }
 
 void Conductor::OnContentRemove(
     std::map<std::string, gloox::Jingle::Session> sdMap,
     OkRTCHandler *handler) {
 #if 0
-//  DEBUG_LOG(LS_INFO);
+//  qDebug(LS_INFO);
   std::lock_guard<std::mutex> lock(_session_mutex);
 
   //    auto find = _VideoSinkMap.find(peer);
@@ -478,13 +478,13 @@ void Conductor::OnContentRemove(
 
   std::string sdp;
   remoteSDI->ToString(&sdp);
-  //DEBUG_LOG(("remote orignal sdp:\n").arg(sdp;
+  //qDebug(("remote orignal sdp:\n").arg(sdp;
 
   for (auto it = sdMap.begin(); it != sdMap.end(); ++it) {
     std::string name = it->first;
     gloox::Jingle::Session sdp = it->second;
 
-    //DEBUG_LOG(("sdp mid: ").arg(name;
+    //qDebug(("sdp mid: ").arg(name;
 
     const cricket::SessionDescription *mcd = remoteSDI->description();
     const cricket::ContentInfo *info = mcd->GetContentByName(name);
@@ -507,7 +507,7 @@ void Conductor::OnContentRemove(
                                    std::string track_id = i.id;
                                    std::string stream_id = i.first_stream_id();
 
-                                   //DEBUG_LOG(LS_INFO)
+                                   //qDebug(LS_INFO)
                                       ).arg("Remove StreamParamsVec: ssrc: "
                                       ).arg(ssrc).arg(" cname: ").arg(cname
                                       ).arg(" track_id: ").arg(track_id
@@ -522,23 +522,23 @@ void Conductor::OnContentRemove(
 
     std::string new_sdp;
     remoteSDI->ToString(&new_sdp);
-    //DEBUG_LOG(("remote new sdp: \n").arg(new_sdp;
+    //qDebug(("remote new sdp: \n").arg(new_sdp;
 
     std::unique_ptr<webrtc::SessionDescriptionInterface> jsd =
         webrtc::CreateSessionDescription(webrtc::SdpType::kOffer, new_sdp);
 
     peer_connection_->SetRemoteDescription(this, jsd.release());
 
-    //DEBUG_LOG(("end peer:"));
+    //qDebug(("end peer:"));
 #endif
 }
 
 void Conductor::OnSessionTerminate(const std::string &sid,
                                    OkRTCHandler *handler) {
-  // DEBUG_LOG(("begin sid:").arg(qstring(sid)));
+  // qDebug(("begin sid:").arg(qstring(sid)));
   std::lock_guard<std::mutex> lock(_session_mutex);
   //  Shutdown();
-  // DEBUG_LOG(("end"));
+  // qDebug(("end"));
 }
 
 JingleContents
@@ -559,7 +559,7 @@ Conductor::toJingleSdp(const webrtc::SessionDescriptionInterface *desc) {
     OContent oContent;
 
     const std::string &name = rtcContent.mid();
-    // DEBUG_LOG(("Content name: %1").arg(qstring(name)));
+    // qDebug(("Content name: %1").arg(qstring(name)));
 
     oContent.name = name;
 
@@ -723,7 +723,7 @@ Conductor::toJingleSdp(const webrtc::SessionDescriptionInterface *desc) {
  * SetLocalDescription/SetRemoteDescription
  */
 void Conductor::OnSuccess() {
-  // DEBUG_LOG(("SetLocalDescription or SetRemoteDescription=>OnSuccess"));
+  // qDebug(("SetLocalDescription or SetRemoteDescription=>OnSuccess"));
 }
 
 /**
@@ -731,11 +731,11 @@ void Conductor::OnSuccess() {
  * @param desc
  */
 void Conductor::OnSuccess(webrtc::SessionDescriptionInterface *desc) {
-  // DEBUG_LOG(("desc type:%1").arg(qstring(desc->type())));
+  // qDebug(("desc type:%1").arg(qstring(desc->type())));
   std::string sdp;
   desc->ToString(&sdp);
 
-  // DEBUG_LOG(("sdp:\n%1\n").arg(qstring(sdp)));
+  // qDebug(("sdp:\n%1\n").arg(qstring(sdp)));
   peer_connection_->SetLocalDescription(this, desc);
 
   JingleSdpType jingleSdpType = JingleSdpType::Answer;
@@ -761,41 +761,41 @@ void Conductor::OnSuccess(webrtc::SessionDescriptionInterface *desc) {
 }
 
 void Conductor::OnFailure(webrtc::RTCError error) {
-  // DEBUG_LOG(("error:%1").arg(qstring(error.message())));
+  // qDebug(("error:%1").arg(qstring(error.message())));
 }
 
 void Conductor::OnSetRemoteDescriptionComplete(webrtc::RTCError error) {
-  // DEBUG_LOG(("error:%1").arg(qstring(error.message())));
+  // qDebug(("error:%1").arg(qstring(error.message())));
 }
 
 void Conductor::OnConnectionChange(
     webrtc::PeerConnectionInterface::PeerConnectionState new_state) {
-  // DEBUG_LOG(("new_state=>%1").arg((webrtc::PeerConnectionInterface::AsString(new_state).data())));
+  // qDebug(("new_state=>%1").arg((webrtc::PeerConnectionInterface::AsString(new_state).data())));
 }
 
 void Conductor::OnSessionAccept(
     std::unique_ptr<webrtc::SessionDescriptionInterface> desc) {
-  // DEBUG_LOG(("type:%1").arg(qstring(desc->type())));
+  // qDebug(("type:%1").arg(qstring(desc->type())));
   SetRemoteDescription(std::move(desc));
   updateCandidates();
 }
 
 void Conductor::updateCandidates() {
-  // DEBUG_LOG(("updateCandidates"));
+  // qDebug(("updateCandidates"));
   auto it = _candidates.begin();
   for (; it != _candidates.end();) {
     auto candidate = *it;
 
     std::string str;
     candidate->ToString(&str);
-    // DEBUG_LOG(("updateCandidates
+    // qDebug(("updateCandidates
     // sdp_mid:%1=>%2").arg(qstring(candidate->sdp_mid())).arg(qstring(str)));
 
     // 规范：https://datatracker.ietf.org/doc/html/rfc5245#section-15.1
     // 格式：candidate:1022514418 1 udp 2122197247 192.168.8.2 44868 typ host
     // generation 0
     bool add = peer_connection_->AddIceCandidate(candidate);
-    // DEBUG_LOG(("AddIceCandidate=>%1").arg(add));
+    // qDebug(("AddIceCandidate=>%1").arg(add));
     it = _candidates.erase(it);
   }
 }

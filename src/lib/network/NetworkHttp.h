@@ -38,8 +38,6 @@ public:
 
   void httpFinished();
 
-  void wrapRequest(const QNetworkRequest &request, const QUrl &url);
-
   bool
   get(const QUrl &url,                                                      //
       Fn<void(QByteArray body, const QString filename)> fn,                 //

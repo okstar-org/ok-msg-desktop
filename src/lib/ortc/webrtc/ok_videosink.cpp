@@ -31,7 +31,7 @@ OVideoSink::~OVideoSink() {  }
 void OVideoSink::OnFrame(const webrtc::VideoFrame &frame) {
 
   if (!_renderer) {
-    //DEBUG_LOG(("_renderer is nullptr!"));
+    //qDebug(("_renderer is nullptr!"));
     return;
   }
 
@@ -54,7 +54,7 @@ void OVideoSink::OnFrame(const webrtc::VideoFrame &frame) {
     break;
 
   default:
-    //DEBUG_LOG(("Not supported frame type:%1")
+    //qDebug(("Not supported frame type:%1")
 //                  .arg(webrtc::VideoFrameBufferTypeToString(vfb->type())));
     break;
   }

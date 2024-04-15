@@ -37,9 +37,9 @@ Application::Application(int &argc, char *argv[])
     : QApplication(argc, argv), _argc(argc), _argv(argv) {
   qDebug() << "Creating application...";
 
-  DEBUG_LOG(("argc:%1").arg(argc));
+  qDebug() << QString("argc:%1").arg(argc);
   for (int i = 0; i < argc; i++) {
-    DEBUG_LOG(("argv:%1->%2").arg(i).arg(argv[i]));
+    qDebug() << QString("argv:%1->%2").arg(i).arg(argv[i]);
   }
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 7, 0)
@@ -122,7 +122,7 @@ void Application::closeLoginUI() {
 }
 
 void Application::onLoginSuccess(ok::session::SignInInfo &signInInfo) {
-  DEBUG_LOG(qsl("onLoginSuccess account:%1").arg(signInInfo.account));
+  qDebug() << qsl("onLoginSuccess account:%1").arg(signInInfo.account);
   m_signInInfo = signInInfo;
 
   // 初始化 IM 模块
@@ -173,14 +173,14 @@ void Application::stopMainUI() {
 void Application::loadService() {}
 
 void Application::initScreenCaptor() {
-  //  DEBUG_LOG(("initScreenCaptor ..."));
+  //  qDebug(("initScreenCaptor ..."));
   //  auto _screenCaptor = new OEScreenshot();
   //  m_moduleMap.insert(_screenCaptor->name(), _screenCaptor);
-  //  DEBUG_LOG(("initScreenCaptor finished"));
+  //  qDebug(("initScreenCaptor finished"));
 }
 
 void Application::cleanup() {
-  DEBUG_LOG(("Cleanup..."));
+  qDebug(("Cleanup..."));
   for (auto e : m_moduleMap) {
     e->cleanup();
   }
@@ -189,7 +189,7 @@ void Application::cleanup() {
 void Application::finish() {}
 
 void Application::onMenuPushed(UI::PageMenu menu, bool checked) {
-  DEBUG_LOG(("menu:%1 checked:%2").arg((int)menu).arg(checked));
+  qDebug() << QString("menu:%1 checked:%2").arg((int)menu).arg(checked);
 
   switch (menu) {
   case UI::PageMenu::chat: {
@@ -211,7 +211,7 @@ void Application::onMenuPushed(UI::PageMenu menu, bool checked) {
 void Application::onMenuReleased(UI::PageMenu menu, bool checked) {}
 
 void Application::initModuleIM(ok::session::SignInInfo &signInInfo) {
-  DEBUG_LOG(("IM..."))
+  qDebug(("IM..."));
 
   auto im = Nexus::Create();
 

@@ -520,6 +520,9 @@ void Widget::init() {
 #ifdef Q_OS_MAC
   Nexus::getInstance().updateWindows();
 #endif
+
+  core->setUIStarted();
+
 }
 
 bool Widget::eventFilter(QObject *obj, QEvent *event) {

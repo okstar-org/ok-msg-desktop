@@ -108,6 +108,8 @@ public:
 
 
   void requestBookmarks();
+  void setUIStarted();
+
 
 public slots:
   void start();

@@ -137,11 +137,11 @@ void LoginWidget::doLogin() {
   auto status = ok::session::AuthSession::Instance()->status();
   switch (status) {
   case ok::session::Status::SUCCESS: {
-    DEBUG_LOG(("SUCCESS ..."));
+    qDebug(("SUCCESS ..."));
     return;
   }
   case ok::session::Status::CONNECTING: {
-    DEBUG_LOG(("CONNECTING ..."));
+    qDebug(("CONNECTING ..."));
     //    sess->interrupt();
     return;
   }
@@ -178,7 +178,7 @@ void LoginWidget::doLogin() {
 void LoginWidget::onConnectResult(ok::session::SignInInfo info,
                                   ok::session::LoginResult result) {
 
-  DEBUG_LOG(("msg:%1").arg(result.msg));
+  qDebug()<<("msg:")<<(result.msg);
 
   switch (result.status) {
   case ok::session::Status::NONE:

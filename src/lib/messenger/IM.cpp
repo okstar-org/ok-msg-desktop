@@ -64,7 +64,10 @@ IM::IM(QString host, QString user, QString pwd,
       _username(stdstring(user)),                       //
       _password(stdstring(pwd)),                        //
       _status(IMStatus::DISCONNECTED),                  //
-      mExtDisco{ExtDisco()} {
+      mExtDisco{ExtDisco()},                            //
+      mUIStarted(false),                                 //
+      mStarted(false)                                 //
+{
 
   qDebug() << ("Create messenger instance...");
 
@@ -91,7 +94,7 @@ IM::IM(QString host, QString user, QString pwd,
 }
 
 IM::~IM() {
-  DEBUG_LOG(("IM::~IM..."));
+  qDebug(("IM::~IM..."));
   disconnect(this, &IM::selfNicknameChanged, this, &IM::onSelfNicknameChanged);
 }
 
@@ -102,7 +105,7 @@ void IM::timerEvent(QTimerEvent *e) {}
 std::unique_ptr<Client> IM::makeClient() {
   JID loginJid(_username + "@" + _host + "/" + _resource);
 
-  DEBUG_LOG(("Using Jid:%1").arg(qstring(loginJid.full())));
+  qDebug()<<("Using Jid:%1")<<(qstring(loginJid.full()));
 
   /**
    * Client
@@ -229,8 +232,8 @@ std::unique_ptr<Client> IM::makeClient() {
   client->registerConnectionListener(this);
 
   client->registerPresenceHandler(this);
-  client->registerMessageHandler(this);
   client->registerMessageSessionHandler(this);
+//  client->registerMessageHandler(this);
 //  client->setStreamManagement(true, true);
 
 #ifdef LOG_XMPP
@@ -252,23 +255,23 @@ void IM::stop() {
 }
 
 void IM::onConnect() {
-  DEBUG_LOG(("connected"));
+  qDebug(("connected"));
   assert(_client);
 
   _status = IMStatus::CONNECTED;
 
   auto res = _client->resource();
-  DEBUG_LOG(("resource:%1").arg(qstring(res)));
+  qDebug()<<("resource:%1")<<(qstring(res));
 
 //  fetchVCard(qstring(self().bare()));
 
   emit selfIdChanged(qstring(_client->username()));
   emit connectResult(_status);
-  emit onStarted();
+  emit connected();
 }
 
 void IM::doConnect() {
-  DEBUG_LOG(("connecting ..."));
+  qDebug(("connecting ..."));
   if (_status == IMStatus::CONNECTED || _status == IMStatus::CONNECTING) {
     return;
   }
@@ -489,7 +492,8 @@ void IM::makeId(QString &id) {
 
 // Handle Message session
 void IM::handleMessageSession(MessageSession *session) {
-  qDebug() << "Message session from:" << qstring(session->target().full());
+
+  qDebug() << "handleMessageSession:" << qstring(session->target().full());
 
   // 放入最新的session
 
@@ -508,10 +512,10 @@ void IM::handleMessageSession(MessageSession *session) {
   // m_pepEventFilter->registerPlugin(new SmartBoard::ControllerSelect());
   // m_pepEventFilter->registerPlugin(new SmartBoard::ControllerVoice());
 
-  //    m_pepEventFilter->registerPersonalEventingProtocolHandler(this);
+  //  m_pepEventFilter->registerPersonalEventingProtocolHandler(this);
   //  auto jid = session->target();
   //  sessionMap.emplace(std::pair(jid.bare(), session));
-  session->registerMessageHandler(this);
+    session->registerMessageHandler(this);
 
   // 聊天状态过滤器，获取：正在中等输入状态
   if (m_chatStateFilters.size() > 1000) {
@@ -525,21 +529,23 @@ void IM::handleMessageSession(MessageSession *session) {
 
 void IM::handleMessage(const gloox::Message &msg, MessageSession *session) {
   if (!session) {
-    DEBUG_LOG(("session is NULL"))
+    qWarning()<<"session is NULL";
     return;
   }
 
-  if((receivedMsg++)==0){
-    sleep(10);
+  while(!mUIStarted){
+    sleep(1);
   }
 
-  auto from = msg.from();
   auto threadId = qstring(session->threadID());
+  auto from = msg.from();
   auto peerId = qstring(from.full());
   auto friendId = qstring(from.bare());
   auto body = qstring(msg.body());
 
-  DEBUG_LOG(("from:%1 msgType:%2").arg(peerId).arg((int)msg.subtype()));
+  qDebug() << "from:" << peerId;
+  qDebug() << "subtype:" << (int)msg.subtype();
+  qDebug() << "sessionId:" << threadId;
 
   sessionIdMap.emplace(friendId.toStdString(), threadId.toStdString());
   sessionMap.emplace(threadId.toStdString(), session);
@@ -794,9 +800,9 @@ void IM::doPubSubEvent(const gloox::PubSub::Event *pse, //
  * @param state
  */
 void IM::handleChatState(const JID &from, ChatStateType state) {
-  DEBUG_LOG(("from:%1 state:%2")
-                .arg(qstring(from.full()))
-                .arg(static_cast<int>(state)));
+  qDebug() << qsl("from:%1 state:%2") //
+           << qstring(from.full())    //
+           << static_cast<int>(state);
 
   auto friendId = qstring(from.bare());
   emit receiveFriendChatState(friendId, state);
@@ -808,9 +814,9 @@ void IM::handleChatState(const JID &from, ChatStateType state) {
  * @param state 聊天状态
  */
 void IM::sendChatState(const QString &to, ChatStateType state) {
-  DEBUG_LOG(("to:%1 state:%2") //
+  qDebug()<<QString("to:%1 state:%2") //
                 .arg((to))     //
-                .arg(static_cast<int>(state)));
+                .arg(static_cast<int>(state));
   auto csf = m_chatStateFilters[stdstring(to)];
   if (!csf) {
     return;
@@ -827,7 +833,7 @@ void IM::sendChatState(const QString &to, ChatStateType state) {
  */
 void IM::onJoinedRoom(const JID &roomJid, const UserJID &userJID) {
 
-  DEBUG_LOG(("roomJid:%1 userJid:%2")         //
+  qDebug(("roomJid:%1 userJid:%2")         //
                 .arg(qstring(roomJid.full())) //
                 .arg((userJID.id))            //
   );
@@ -849,7 +855,7 @@ void IM::onJoinedRoom(const JID &roomJid, const UserJID &userJID) {
   // Jingle
   // _jingle->join(roomJid);
   // SmartBoard
-  // DEBUG_LOG(("end for:%1").arg(qstring(roomJid.full())));
+  // qDebug(("end for:%1").arg(qstring(roomJid.full())));
 
   //    _joined_room = true;
   //  }
@@ -876,7 +882,7 @@ void IM::handleMUCParticipantPresence(gloox::MUCRoom *room,                 //
 
 #if 0
   JID *nick = participant.nick;
-  DEBUG_LOG(("participant:%1 presence=>%2") //
+  qDebug(("participant:%1 presence=>%2") //
                 .arg(qstring(nick->resource()))
                 .arg(presence.presence()));
 
@@ -906,11 +912,11 @@ void IM::handleMUCMessage(MUCRoom *room, const gloox::Message &msg, bool priv) {
   PeerId peerId(msg.from());
   qDebug() << "room:" << qstring(room->name());
 
-  DEBUG_LOG(("roomId:%1 from:%2 msgId:%3") //
+  qDebug()<<QString("roomId:%1 from:%2 msgId:%3") //
                 .arg(roomId)               // room
                 .arg(peerId.toString())    // from
                 .arg(msgId)                // msg id
-  );
+  ;
 
   qDebug() << "msg:" << body;
 
@@ -998,24 +1004,24 @@ bool IM::handleMUCRoomCreation(MUCRoom *room) {
 void IM::handleMUCSubject(MUCRoom *room,           //
                           const std::string &nick, //
                           const std::string &subject) {
-  DEBUG_LOG(("MUCRoom name:%1").arg(qstring(room->name())));
-  DEBUG_LOG(("nick:%1").arg(qstring(nick)));
-  DEBUG_LOG(("subject:%2").arg(qstring(subject)));
+  qDebug()<<QString("MUCRoom name:%1").arg(qstring(room->name()));
+  qDebug()<<QString("nick:%1").arg(qstring(nick));
+  qDebug()<<QString("subject:%2").arg(qstring(subject));
   room->getRoomInfo();
 }
 
 void IM::handleMUCInviteDecline(MUCRoom *room, const JID &invitee,
                                 const std::string &reason) {
-  DEBUG_LOG(("MUCRoom:%1").arg(qstring(room->name())));
-  DEBUG_LOG(("invitee:%1 reason:%2")
+  qDebug()<<QString("MUCRoom:%1").arg(qstring(room->name()));
+  qDebug()<<QString("invitee:%1 reason:%2")
                 .arg(qstring(invitee.full()))
-                .arg(qstring(reason)));
+                .arg(qstring(reason));
 }
 
 void IM::handleMUCError(MUCRoom *room, StanzaError error) {
-  DEBUG_LOG(("MUCRoom:%1 error:%2")
+  qDebug()<<QString("MUCRoom:%1 error:%2")
                 .arg(qstring(room->name()))
-                .arg(static_cast<int>(error)));
+                .arg(static_cast<int>(error));
 }
 
 void IM::handleMUCInfo(MUCRoom *room,              //
@@ -1062,15 +1068,15 @@ void IM::handleMUCInfo(MUCRoom *room,              //
 }
 
 void IM::handleMUCItems(MUCRoom *room, const Disco::ItemList &items) {
-  DEBUG_LOG(("MUCRoom:%1").arg(qstring(room->name())));
-  DEBUG_LOG(("items:%1").arg(items.size()));
+  qDebug()<<QString("MUCRoom:%1").arg(qstring(room->name()));
+  qDebug()<<QString("items:%1").arg(items.size());
 }
 
 // config
 void IM::handleMUCConfigList(MUCRoom *room,                //
                              const MUCListItemList &items, //
                              MUCOperation operation) {
-  DEBUG_LOG(("IM::handleMUCConfigList"));
+  qDebug()<<QString("IM::handleMUCConfigList");
 }
 
 void IM::handleMUCConfigForm(MUCRoom *room, const DataForm &form) {
@@ -1306,24 +1312,23 @@ void IM::handlePing(const gloox::PingHandler::PingType type,
  * @param vcard
  */
 void IM::handleVCard(const JID &jid, const VCard *vcard) {
-  DEBUG_LOG(("jid：%1").arg(qstring(jid.full())));
+  qDebug()<<QString("jid：%1").arg(qstring(jid.full()));
 
   VCard::Photo photo = vcard->photo();
   if (!photo.binval.empty()) {
-    DEBUG_LOG(("photo binval size:%1").arg(photo.binval.size()));
+    qDebug()<<QString("photo binval size:%1").arg(photo.binval.size());
     emit receiveFriendAvatarChanged(qstring(jid.bare()), photo.binval);
   }
 
   auto &nickname = vcard->nickname();
   if (!nickname.empty()) {
-    DEBUG_LOG(("nickname:%1").arg(qstring(nickname)));
+    qDebug()<<QString("nickname:%1").arg(qstring(nickname));
     emit receiveNicknameChange(qstring(jid.bare()), qstring(nickname));
   }
 }
 
-void IM::handleVCardResult(VCardContext context, const JID &jid,
-                           StanzaError error) {
-  DEBUG_LOG(("context:%1 jid:%2").arg(context).arg(qstring(jid.full())));
+void IM::handleVCardResult(VCardContext context, const JID &jid, StanzaError error) {
+  qDebug()<<QString("context:%1 jid:%2").arg(context).arg(qstring(jid.full()));
   if (error) {
     return;
   }
@@ -1339,7 +1344,7 @@ void IM::fetchVCard(const QString &friendId) {
 }
 
 void IM::handleTag(Tag *tag) {
-  DEBUG_LOG(("tag：%1").arg(qstring(tag->xml())));
+  qDebug()<<QString("tag：%1").arg(qstring(tag->xml()));
 }
 
 bool IM::handleIq(const IQ &iq) {
@@ -1348,21 +1353,21 @@ bool IM::handleIq(const IQ &iq) {
   FriendId friendId(iq.from());
   const auto *ibb = iq.findExtension<InBandBytestream::IBB>(ExtIBB);
   if (ibb) {
-    DEBUG_LOG(("ibb流:%1").arg(qstring(ibb->sid())));
+    qDebug()<<QString("ibb流:%1").arg(qstring(ibb->sid()));
 
     switch (ibb->type()) {
     case InBandBytestream::IBBOpen: {
-      DEBUG_LOG(("Open"))
+      qDebug()<<QString("Open");
       break;
     }
     case InBandBytestream::IBBData: {
-      DEBUG_LOG(("Data seq:%1").arg(ibb->seq()))
+      qDebug()<<QString("Data seq:%1").arg(ibb->seq());
       emit receiveFileChunk(friendId, qstring(ibb->sid()), ibb->seq(),
                             ibb->data());
       break;
     }
     case InBandBytestream::IBBClose: {
-      DEBUG_LOG(("Close"))
+      qDebug()<<QString("Close");
       emit receiveFileFinished(friendId, qstring(ibb->sid()));
       break;
     }
@@ -1380,6 +1385,11 @@ bool IM::handleIq(const IQ &iq) {
 }
 
 void IM::handleIqID(const IQ &iq, int context) {}
+
+
+void IM::setUIStarted(){
+  mUIStarted = true;
+}
 
 void IM::requestBookmarks() {
   /**
@@ -1426,16 +1436,16 @@ void IM::handleDiscoInfo(const JID &from,         //
                          int context) {
 
   QString _from = QString::fromStdString(from.full());
-  DEBUG_LOG(("from=%1 context=%2").arg(_from).arg(context));
+  qDebug()<<QString("from=%1 context=%2").arg(_from).arg(context);
 
   const StringList features = info.features();
   for (auto feature : features) {
-    DEBUG_LOG(("feature=%1").arg(QString::fromStdString(feature)));
+    qDebug()<<QString("feature=%1").arg(QString::fromStdString(feature));
   }
 
   const Disco::IdentityList &identities = info.identities();
   for (auto identity : identities) {
-    DEBUG_LOG(("identity=%1").arg(qstring(identity->name())));
+    qDebug()<<QString("identity=%1").arg(qstring(identity->name()));
   }
 }
 
@@ -1450,7 +1460,7 @@ void IM::handleDiscoItems(const JID &from,           //
                           int context) {
 
   QString _from = QString::fromStdString(from.full());
-  DEBUG_LOG(("from=%1 context=%2").arg(_from).arg(context));
+  qDebug()<<QString("from=%1 context=%2").arg(_from).arg(context);
 
   const Disco::ItemList &localItems = items.items();
   for (auto item : localItems) {
@@ -1493,10 +1503,10 @@ void IM::handleDiscoError(const JID &from,           //
                           int context) {
 
   QString _from = qstring(from.full());
-  DEBUG_LOG(("from=%1 context=%2 error=%3")
+  qDebug()<<QString("from=%1 context=%2 error=%3")
                 .arg(_from)
                 .arg(context)
-                .arg(qstring(error->text())));
+                .arg(qstring(error->text()));
 }
 
 // Presence Handler
@@ -1506,6 +1516,15 @@ void IM::handlePresence(const Presence &presence) {
 
   updateOnlineStatus(presence.from().bare(), presence.from().resource(),
                      presence.presence());
+  while(!mUIStarted){
+    qDebug()<<"Waiting UI Started...";
+    sleep(1);
+  }
+
+  if(!mStarted){
+    mStarted = true;
+    emit started();
+  }
 }
 
 /**
@@ -1541,60 +1560,60 @@ void IM::handleItemRemoved(const JID &jid) {
    * subscription='remove'
    * TODO 需要通知到页面
    */
-  DEBUG_LOG(("已删除好友:%1").arg(qstring(jid.full())));
+  qDebug()<<QString("已删除好友:%1").arg(qstring(jid.full()));
   emit receiveFriendRemoved(qstring(jid.username()));
 }
 
 // 好友更新
 void IM::handleItemUpdated(const JID &jid) {
-  DEBUG_LOG(("jid: %1").arg(qstring(jid.full())));
+  qDebug()<<QString("jid: %1").arg(qstring(jid.full()));
 
   auto userId = qstring(jid.username());
 
   auto item = _client->rosterManager()->getRosterItem(jid);
   auto subType = item->subscription();
-  DEBUG_LOG(("type: %1").arg(subType));
+  qDebug()<<QString("type: %1").arg(subType);
 
   switch (subType) {
 
   case gloox::S10nNone: {
-    DEBUG_LOG(("none"))
+    qDebug()<<QString("none");
     //    _client->rosterManager()->subscribe(jid);
     break;
   }
   case gloox::S10nNoneOut: {
-    DEBUG_LOG(("已发送订阅请求，等待对方确认！"))
+    qDebug()<<QString("已发送订阅请求，等待对方确认！");
     break;
   }
   case gloox::S10nNoneIn: {
-    DEBUG_LOG(("收到对方订阅请求，等待自己确认！"))
+    qDebug()<<QString("收到对方订阅请求，等待自己确认！");
     break;
   }
   case S10nNoneOutIn: {
-    DEBUG_LOG(("双方发起订阅，等待双方接受！"))
+    qDebug()<<QString("双方发起订阅，等待双方接受！");
     break;
   }
   case gloox::S10nTo: {
-    DEBUG_LOG(("已订阅对方，等待对方接受！"))
+    qDebug()<<QString("已订阅对方，等待对方接受！");
     // 加到联系人列表
     emit receiveFriend(qstring(jid.bare()));
     break;
   }
   case gloox::S10nToIn: {
-    DEBUG_LOG(("已订阅对方，对方接受订阅，等待自己确认！"))
+    qDebug()<<QString("已订阅对方，对方接受订阅，等待自己确认！");
     //    _client->rosterManager()->subscribe(jid);
     break;
   }
   case gloox::S10nFrom: {
-    DEBUG_LOG(("对方已订阅自己！"))
+    qDebug()<<QString("对方已订阅自己！");
     break;
   }
   case gloox::S10nFromOut: {
-    DEBUG_LOG(("对方已订阅自己，已接受对方订阅，待自己确认！"))
+    qDebug()<<QString("对方已订阅自己，已接受对方订阅，待自己确认！");
     break;
   }
   case gloox::S10nBoth: {
-    DEBUG_LOG(("互相订阅成功！"))
+    qDebug()<<QString("互相订阅成功！");
     emit receiveFriend(qstring(jid.bare()));
     break;
   }
@@ -1606,7 +1625,7 @@ void IM::handleItemUpdated(const JID &jid) {
  * @param jid
  */
 void IM::handleItemSubscribed(const JID &jid) {
-  DEBUG_LOG(("jid:%1").arg(qstring(jid.full())));
+  qDebug()<<QString("jid:%1").arg(qstring(jid.full()));
 }
 
 /**
@@ -1614,7 +1633,7 @@ void IM::handleItemSubscribed(const JID &jid) {
  * @param jid
  */
 void IM::handleItemUnsubscribed(const JID &jid) {
-  DEBUG_LOG(("jid:%1").arg(qstring(jid.full())));
+  qDebug()<<QString("jid:%1").arg(qstring(jid.full()));
 }
 
 void IM::updateOnlineStatus(const std::string &bare,
@@ -1677,12 +1696,12 @@ void IM::addRosterItem(const QString &username, const QString &nick,
 }
 
 void IM::acceptFriendRequest(const QString &friendId) {
-  DEBUG_LOG(("friend:%1").arg(friendId))
+  qDebug()<<QString("friend:%1").arg(friendId);
   _client->rosterManager()->ackSubscriptionRequest(JID(stdstring(friendId)).bareJID(), true);
 }
 
 void IM::rejectFriendRequest(const QString &friendId) {
-  DEBUG_LOG(("friend:%1").arg(friendId))
+  qDebug()<<QString("friend:%1").arg(friendId);
   _client->rosterManager()->ackSubscriptionRequest(JID(stdstring(friendId)).bareJID(), false);
 }
 
@@ -1701,7 +1720,13 @@ void IM::getRosterList(std::list<FriendId> &list) {
 }
 
 void IM::handleRoster(const Roster &roster) {
-  DEBUG_LOG(("size:%1").arg(roster.size()));
+  qDebug()<<QString("size:%1").arg(roster.size());
+
+  while(!mUIStarted){
+    qDebug()<<"Waiting UI Started...";
+    sleep(1);
+  }
+
 
   for (auto &it : roster) {
     auto &key = it.first;
@@ -1731,11 +1756,11 @@ void IM::handleRosterPresence(const RosterItem &item,              //
                               Presence::PresenceType presenceType, //
                               const std::string &msg) {
 
-  DEBUG_LOG(("item:%1 resource:%2 presenceType:%3 msg:%4")
+  qDebug()<<QString("item:%1 resource:%2 presenceType:%3 msg:%4")
                 .arg(qstring(item.jid().full()))
                 .arg(qstring(resource))
                 .arg(presenceType)
-                .arg(qstring(msg)));
+                .arg(qstring(msg));
 
   updateOnlineStatus(item.jid().bare(), resource, presenceType);
 
@@ -1748,7 +1773,7 @@ void IM::handleRosterPresence(const RosterItem &item,              //
         //        case ExtCaps: {
         //          auto caps = const_cast<Capabilities *>(
         //              static_cast<const Capabilities *>(ext));
-        //          DEBUG_LOG(("caps:%1").arg(qstring(caps->node())))
+        //          qDebug()<<QString("caps:%1").arg(qstring(caps->node())))
         //          break;
         //        }
       case ExtVCardUpdate: {
@@ -1785,11 +1810,11 @@ void IM::handleSelfPresence(const RosterItem &item,              //
                             Presence::PresenceType presenceType, //
                             const std::string &msg) {
 
-  DEBUG_LOG(("item:%1 resource:%2 presenceType:%3 msg:%4")
+  qDebug()<<QString("item:%1 resource:%2 presenceType:%3 msg:%4")
                 .arg(qstring(item.jid().full()))
                 .arg(qstring(resource))
                 .arg(presenceType)
-                .arg(qstring(msg)));
+                .arg(qstring(msg));
 
   selfPresType = presenceType;
 
@@ -1840,9 +1865,9 @@ void IM::handleSelfPresence(const RosterItem &item,              //
  * @return
  */
 bool IM::handleSubscriptionRequest(const JID &jid, const std::string &msg) {
-  DEBUG_LOG(("好友订阅（加好友）请求，来自:%1 消息:%2")
+  qDebug()<<QString("好友订阅（加好友）请求，来自:%1 消息:%2")
                 .arg(qstring(jid.full()))
-                .arg(qstring(msg)));
+                .arg(qstring(msg));
   emit receiveFriendRequest(qstring(jid.bare()), qstring(msg));
   return true;
 };
@@ -1854,16 +1879,16 @@ bool IM::handleSubscriptionRequest(const JID &jid, const std::string &msg) {
  * @return
  */
 bool IM::handleUnsubscriptionRequest(const JID &jid, const std::string &msg) {
-  DEBUG_LOG(("jid:%1 msg:%2").arg(qstring(jid.full())).arg(qstring(msg)));
+  qDebug()<<QString("jid:%1 msg:%2").arg(qstring(jid.full())).arg(qstring(msg));
   return true;
 };
 
 void IM::handleNonrosterPresence(const Presence &presence) {
-  DEBUG_LOG(("presence:%1").arg(qstring(presence.from().full())));
+  qDebug()<<QString("presence:%1").arg(qstring(presence.from().full()));
 };
 
 void IM::handleRosterError(const IQ &iq) {
-  DEBUG_LOG(("text:%1").arg(qstring(iq.error()->text())));
+  qDebug()<<QString("text:%1").arg(qstring(iq.error()->text()));
 };
 
 void IM::handleRosterItemExchange(const gloox::JID &from,
@@ -1915,7 +1940,7 @@ PeerId IM::getSelfPeerId() {
 QString IM::getSelfUsername() { return qstring(self().username()); }
 
 void IM::setNickname(const QString &nickname) {
-  DEBUG_LOG(("nickname:%1").arg(nickname))
+  qDebug()<<QString("nickname:%1").arg(nickname);
   if (_nick == nickname) {
     return;
   }
@@ -1944,7 +1969,7 @@ void IM::setAvatar(const QByteArray &avatar) {
     return;
 
   QString sha1 = lib::base::Hashs::sha1(avatar);
-  DEBUG_LOG(("avatar size:%1 sha1:%2").arg(avatar.size()).arg(sha1))
+  qDebug()<<QString("avatar size:%1 sha1:%2").arg(avatar.size()).arg(sha1);
 
   auto base64 = avatar.toBase64().toStdString();
 
@@ -1977,7 +2002,7 @@ qANQR1DBwU4DX7jmYZnncm...
 }
 
 void IM::changePassword(const QString &password) {
-  DEBUG_LOG(("password:%1").arg(password));
+  qDebug()<<QString("password:%1").arg(password);
   if (password.isEmpty())
     return;
 
@@ -2061,8 +2086,7 @@ void IM::sendServiceDiscoveryInfo(const JID &item) {
 
 void IM::handleItem(const JID &service, const std::string &node,
                     const Tag *entry) {
-  DEBUG_LOG(
-      ("service:%1 node:%2").arg(qstring(service.full())).arg(qstring(node)));
+  qDebug()<<QString("service:%1 node:%2").arg(qstring(service.full())).arg(qstring(node));
 }
 
 void IM::handleItems(const std::string &id,                   //
@@ -2076,11 +2100,11 @@ void IM::handleItems(const std::string &id,                   //
   }
 
   auto friendId = qstring(service.bare());
-  DEBUG_LOG(("id:%1 friendId:%2 service:%3 node:%4")
+  qDebug()<<QString("id:%1 friendId:%2 service:%3 node:%4")
                 .arg(qstring(id))
                 .arg(friendId)
                 .arg(qstring(service.full()))
-                .arg(qstring(node)));
+                .arg(qstring(node));
 
   auto isSelf = friendId == getSelfId().toString();
 
@@ -2089,9 +2113,9 @@ void IM::handleItems(const std::string &id,                   //
     auto data = item->payload();
     auto tagName = data->name();
 
-    DEBUG_LOG(("PubSub::Item tagName:%1 node:%2")
+    qDebug()<<QString("PubSub::Item tagName:%1 node:%2")
                   .arg(qstring(tagName))
-                  .arg(qstring(node)));
+                  .arg(qstring(node));
 
     if (node == XMLNS_NICKNAME) {
       qDebug() << "Parse nickname";
@@ -2106,7 +2130,6 @@ void IM::handleItems(const std::string &id,                   //
     }
 
     if (node == XMLNS_AVATAR) {
-      qDebug() << "Parse avatar";
       auto base64 = data->cdata();
       if (!base64.empty()) {
         std::string::size_type pos = 0;
@@ -2115,7 +2138,6 @@ void IM::handleItems(const std::string &id,                   //
         while ((pos = base64.find('\r')) != std::string::npos)
           base64.erase(pos, 1);
         auto avt = Base64::decode64(base64);
-        qDebug() << "Avatar size" << avt.size();
         if (isSelf) {
           qDebug() << "Receive self avatar";
           emit selfAvatarChanged(avt);
@@ -2133,12 +2155,12 @@ void IM::handleItemPublication(const std::string &id,    //
                                const std::string &node,  //
                                const ItemList &itemList, //
                                const gloox::Error *error) {
-  DEBUG_LOG(("node:%1").arg(qstring(node)));
+  qDebug()<<QString("node:%1").arg(qstring(node));
   if (node == XMLNS_AVATAR) {
     // 更新头像元信息
     //  https://xmpp.org/extensions/xep-0084.html#process-pubmeta
     for (auto &item : itemList) {
-      DEBUG_LOG(("itemId:%1").arg(qstring(item->id())));
+      qDebug()<<QString("itemId:%1").arg(qstring(item->id()));
     }
   }
 }
@@ -2146,7 +2168,7 @@ void IM::handleItemPublication(const std::string &id,    //
 void IM::handleItemDeletion(const std::string &id, const JID &service,
                             const std::string &node, const ItemList &itemList,
                             const gloox::Error *error) {
-  DEBUG_LOG(("id:%1 service:%2").arg(qstring(id)).arg(qstring(service.full())))
+  qDebug()<<QString("id:%1 service:%2").arg(qstring(id)).arg(qstring(service.full()));
 }
 
 void IM::handleSubscriptionResult(const std::string &id, const JID &service,
@@ -2155,7 +2177,7 @@ void IM::handleSubscriptionResult(const std::string &id, const JID &service,
                                   const gloox::PubSub::SubscriptionType subType,
                                   const gloox::Error *error) {
 
-  DEBUG_LOG(("id:%1 jid:%2").arg(qstring(id)).arg(qstring(jid.full())))
+  qDebug()<<QString("id:%1 jid:%2").arg(qstring(id)).arg(qstring(jid.full()));
   pubSubManager->requestItems(service, node, sid, 100, this);
 }
 
@@ -2213,10 +2235,10 @@ void IM::handleDefaultNodeConfig(const std::string &id, const JID &service,
                                  const DataForm *config,
                                  const gloox::Error *error) {
   Q_UNUSED(config);
-  DEBUG_LOG(("id:%1 service:%2 error:%3")
+  qDebug()<<QString("id:%1 service:%2 error:%3")
                 .arg(qstring(id))
                 .arg(qstring(service.full()))
-                .arg(qstring(error->text())));
+                .arg(qstring(error->text()));
 }
 
 std::string IM::getOnlineResource(const std::string &bare) {
@@ -2241,9 +2263,9 @@ std::set<std::string> IM::getOnlineResources(const std::string &bare) {
 void IM::doJingleMessage(const PeerId &peerId,
                          const Jingle::JingleMessage *jm) {
 
-  DEBUG_LOG(("JingleMessage id:%1 action:%2")
+  qDebug()<<QString("JingleMessage id:%1 action:%2")
                 .arg(qstring(jm->id()))
-                .arg(Jingle::ActionValues[jm->action()]));
+                .arg(Jingle::ActionValues[jm->action()]);
 
   qDebug() << "peerId:" << peerId.toString();
 
@@ -2462,7 +2484,7 @@ bool IM::destroyGroup(const QString &groupId) {
 Disco::ItemList IM::handleDiscoNodeItems(const JID &from, const JID &to,
                                          const std::string &node) {
 
-  DEBUG_LOG(("from:%1").arg(from.full().c_str()))
+  qDebug()<<QString("from:%1").arg(from.full().c_str());
 
   return gloox::Disco::ItemList();
 }
@@ -2501,7 +2523,7 @@ void IM::handleIncoming(gloox::Tag *tag) {
 }
 
 void IM::onDisconnect(ConnectionError e) {
-  DEBUG_LOG(("error:%1").arg(e));
+  qDebug()<<QString("error:%1").arg(e);
   switch (e) {
   case ConnAuthenticationFailed:
     _status = IMStatus::AUTH_FAILED;
@@ -2555,12 +2577,12 @@ void IM::onDisconnect(ConnectionError e) {
 }
 
 bool IM::onTLSConnect(const CertInfo &info) {
-  DEBUG_LOG(("CertInfo:\n"))
+  qDebug()<<QString("CertInfo:");
 
   time_t from(info.date_from);
   time_t to(info.date_to);
 
-  DEBUG_LOG(("status: %1\n"   //
+  qDebug()<<QString("status: %1\n"   //
              "issuer: %2\n"   //
              "peer: %3\n"     //
              "protocol: %4\n" //
@@ -2573,38 +2595,38 @@ bool IM::onTLSConnect(const CertInfo &info) {
                 .arg((info.protocol.c_str()))           //
                 .arg(qstring(info.mac.c_str()))         //
                 .arg(qstring(info.cipher.c_str()))      //
-                .arg(qstring(info.compression.c_str())) //
-  )
+                .arg(qstring(info.compression.c_str())); //
 
-  DEBUG_LOG(("from:%1").arg(ctime(&from)));
-  DEBUG_LOG(("to:%1").arg(ctime(&to)));
+
+  qDebug()<<QString("from:%1").arg(ctime(&from));
+  qDebug()<<QString("to:%1").arg(ctime(&to));
 
   return true;
 }
 
 void IM::handleLog(LogLevel level, LogArea area, const std::string &message) {
-  //   DEBUG_LOG(("%1").arg(message.c_str()));
+  //   qDebug()<<QString("%1").arg(message.c_str()));
   switch (area) {
   case LogAreaXmlIncoming:
-    DEBUG_LOG(("Received XML: %1").arg(message.c_str()));
+    qDebug()<<QString("Received XML: %1").arg(message.c_str());
     break;
   case LogAreaXmlOutgoing:
-    DEBUG_LOG(("Sent XML: %1").arg(message.c_str()));
+    qDebug()<<QString("Sent XML: %1").arg(qstring(message));
     break;
   case LogAreaClassConnectionBOSH:
-    DEBUG_LOG(("BOSH: %1").arg(message.c_str()));
+    qDebug()<<QString("BOSH: %1").arg(message.c_str());
     break;
   case LogAreaClassClient:
-    DEBUG_LOG(("Client: %1").arg(message.c_str()));
+    qDebug()<<QString("Client: %1").arg(message.c_str());
     break;
   case LogAreaClassDns:
-    DEBUG_LOG(("dns: %1").arg(message.c_str()));
+    qDebug()<<QString("dns: %1").arg(message.c_str());
     break;
   default:
-    DEBUG_LOG(("level: %1, area: %2 msg: %3")
+    qDebug()<<QString("level: %1, area: %2 msg: %3")
                   .arg(level)
                   .arg(area)
-                  .arg(message.c_str()));
+                  .arg(message.c_str());
   }
 }
 

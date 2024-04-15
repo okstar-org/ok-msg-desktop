@@ -42,16 +42,3 @@ void writeDebug(const char *file, int line, const char *func,
                 const std::string &str);
 
 } // namespace Logs
-
-//#define DEBUG_LOG(msg)                                                         \
-//  { Logs::writeDebug(__FILE__, __LINE__, __FUNCTION__, QString msg); }
-
-#define DEBUG_LOG(msg)                                                         \
-  { qDebug().noquote() << __FUNCTION__ << QString msg; }
-
-#define DEBUG_LOG_S(TAG)                                                       \
-  qDebug() << TAG << ":"                                                       \
-           << QDateTime::currentDateTime().toString(Qt::DateFormat::ISODate)   \
-           << "[" + QThread::currentThread()->objectName() + "]"               \
-           << QString("(%1:%2)").arg(__FILE__).arg(__LINE__) << __FUNCTION__   \
-           << ":"

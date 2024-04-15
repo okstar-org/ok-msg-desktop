@@ -2,7 +2,6 @@ project(UICore)
 set(UICore_SOURCES
     ControllerManager.cpp
     FontManager.cpp
-    I18N.cpp
     SettingManager.cpp
     ui.h
 )

@@ -38,16 +38,16 @@ namespace network {
 
 NetworkHttp::NetworkHttp(QObject *parent) : QObject(parent) {
    bool supportsSsl = QSslSocket::supportsSsl();
-   DEBUG_LOG(("supportsSsl:%1").arg(supportsSsl));
+   qDebug()<<("supportsSsl:")<<(supportsSsl);
    QString buildVersion = QSslSocket::sslLibraryBuildVersionString();
-   DEBUG_LOG(("buildVersion:%1").arg(buildVersion));
+   qDebug()<<("buildVersion:")<<(buildVersion);
    QString libraryVersion = QSslSocket::sslLibraryVersionString();
-   DEBUG_LOG(("libraryVersion:%1").arg(libraryVersion));
+   qDebug()<<("libraryVersion:")<<(libraryVersion);
 
   //  QNetworkAccessManager
   _manager = std::make_unique<QNetworkAccessManager>(this);
   auto schemes = _manager->supportedSchemes();
-  DEBUG_LOG(("supportedSchemes:%1").arg(schemes.join(" ")));
+  qDebug()<<("supportedSchemes:")<<(schemes.join(" "));
 }
 
 NetworkHttp::~NetworkHttp() {}
@@ -58,7 +58,7 @@ bool NetworkHttp::get(
     Fn<void(qint64 bytesReceived, qint64 bytesTotal)> progress, //
     Fn<void(const QString &errStr)> failed) {
 
-  DEBUG_LOG(("Url:%1").arg(url.toString()));
+  qDebug() << "Url:" << url.toString();
   if(url.isEmpty())
   {
     qWarning()<<"url is empty";
@@ -105,10 +105,9 @@ bool NetworkHttp::get(
 QByteArray NetworkHttp::get(
     const QUrl &url,
     const Fn<void(qint64 bytesReceived, qint64 bytesTotal)> &downloadProgress) {
-  DEBUG_LOG(("Url:%1").arg(url.toString()));
+  qDebug() << "Url:" << url.toString();
 
   QNetworkRequest request(url);
-  wrapRequest(request, url.host());
 
   auto _reply = _manager->get(request);
   _reply->ignoreSslErrors();
@@ -126,7 +125,7 @@ QByteArray NetworkHttp::get(
 
   QByteArray byteArr = _reply->readAll();
   int size = byteArr.size();
-  DEBUG_LOG(("Received bytes:%1").arg(size));
+  qDebug()<<("Received bytes:")<<(size);
   return byteArr;
 }
 
@@ -161,12 +160,12 @@ void NetworkHttp::postJSON(const QUrl &url, const QString &data,
 
 void NetworkHttp::post(const QUrl &url, const QString &data,
                        Fn<void(QByteArray)> fn) {
-  DEBUG_LOG(("Url:%1").arg(url.toString()));
+  qDebug()<< ("Url:")<<(url.toString());
 
   QNetworkRequest request(url);
   request.setHeader(QNetworkRequest::ContentTypeHeader,
                     QVariant("application/json"));
-  wrapRequest(request, url.host());
+
 
   auto postData = QByteArray::fromStdString(data.toStdString());
   auto _reply = _manager->post(request, postData);
@@ -177,15 +176,15 @@ void NetworkHttp::post(const QUrl &url, const QString &data,
   loop.exec();
 
   QByteArray byteArr = _reply->readAll();
-  DEBUG_LOG(("Received bytes:%1").arg(byteArr.size()));
+  qDebug() << "Received bytes:%1" << byteArr.size();
   fn(byteArr);
 }
 
 QByteArray NetworkHttp::post(const QUrl &url, const QString &data) {
-  DEBUG_LOG(("Url:%1").arg(url.toString()));
+  qDebug() << "Url:" << url.toString();
 
   if (data.isEmpty()) {
-    DEBUG_LOG_S(L_WARN) << ("data isEmpty.");
+    qWarning() << "data isEmpty!";
     return QByteArray::fromStdString("");
   }
 
@@ -193,7 +192,6 @@ QByteArray NetworkHttp::post(const QUrl &url, const QString &data) {
   request.setHeader(QNetworkRequest::ContentTypeHeader,
                     QVariant("application/json"));
   request.setRawHeader("Accept", "application/json");
-  wrapRequest(request, url.host());
 
   auto postData = QByteArray::fromStdString(data.toStdString());
   QNetworkReply *_reply = (_manager->post(request, postData));
@@ -216,20 +214,16 @@ void NetworkHttp::PostFormData(
     Fn<void(const QJsonObject &)> readyRead) {
 
   if (url.isEmpty()) {
-    DEBUG_LOG_S(L_ERROR) << "url is empty!";
+    qWarning() << "url is empty!";
     return;
   }
 
   if (byteArray.size() <= 0) {
-    DEBUG_LOG_S(L_ERROR) << "byteArray is empty!";
+    qWarning() << "byteArray is empty!";
     return;
   }
-
-  DEBUG_LOG_S(L_INFO) << "url:" << url << "byteArray:" << byteArray.size();
-
   // 添加认证信息
-
-  QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
+  auto *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
 
   /* type */
   QUrlQuery uQuery(url.query());
@@ -254,12 +248,7 @@ void NetworkHttp::PostFormData(
   // client->token().toUtf8()));
   QVariant var;
   var.setValue(cookies);
-
-  for (auto &c : cookies) {
-    DEBUG_LOG_S(L_INFO) << "cookie name: " << c.name()
-                        << " value: " << c.value();
-  }
-
+  
   request.setHeader(QNetworkRequest::CookieHeader, var);
   QNetworkReply *reply = _manager->post(request, multiPart);
   multiPart->setParent(reply);
@@ -280,19 +269,16 @@ void NetworkHttp::PostFormData(
     Fn<void(int bytesSent, int bytesTotal)> uploadProgress,
     Fn<void(const QJsonObject &)> readyRead) {
   if (url.isEmpty()) {
-    DEBUG_LOG_S(L_ERROR) << "url is empty!";
+    qWarning() << "url is empty!";
     return;
   }
 
   if (!file) {
-    DEBUG_LOG_S(L_ERROR) << "file is nullptr!";
+    qWarning() << "file is nullptr!";
     return;
   }
 
-  DEBUG_LOG_S(L_INFO) << "url:" << url << "file:" << file->fileName();
-
   QString contentType = base::Files::GetContentTypeStr(file->fileName());
-
   file->open(QIODevice::ReadOnly);
 
   QByteArray byteArray = file->readAll();
@@ -301,16 +287,7 @@ void NetworkHttp::PostFormData(
                file->fileName(), uploadProgress, readyRead);
 }
 
-void NetworkHttp::wrapRequest(const QNetworkRequest &request, const QUrl &url) {
 
-  auto cs = _manager->cookieJar()->cookiesForUrl(url);
-  if (!cs.empty()) {
-    for (auto &c : cs) {
-      DEBUG_LOG_S(L_INFO) << "cookie: " << c.domain() << "/" << c.path() << "|"
-                          << c.name() << "=" << c.value();
-    }
-  }
-}
+void NetworkHttp::httpFinished() { qDebug() << "finished."; }
 
-void NetworkHttp::httpFinished() { DEBUG_LOG_S(L_INFO) << "..."; }
 } // namespace network

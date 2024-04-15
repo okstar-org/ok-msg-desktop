@@ -81,7 +81,7 @@ int Launcher::executeApplication() {
 
 int Launcher::startup() {
   auto result = executeApplication();
-  DEBUG_LOG(("finished, result: %1").arg(result));
+  qDebug() << QString("finished, result: %1").arg(result);
   return result;
 }
 

@@ -22,10 +22,10 @@ namespace messenger {
 IMFile::IMFile(const JID &friendId, FileHandler::File file, const IM *im)
     : m_friendId(friendId), m_file(std::move(file)), m_im(im),
       m_byteStream(nullptr) {
-  DEBUG_LOG(("Create for:%1").arg(m_file.id));
+  qDebug() << "Create for:" << m_file.id;
 }
 
-IMFile::~IMFile() { DEBUG_LOG(("Destroyed for:%1").arg(m_file.id)); }
+IMFile::~IMFile() { qDebug() << "Destroyed for:" << m_file.id; }
 
 void IMFile::run() {
 
@@ -34,7 +34,7 @@ void IMFile::run() {
           .arg(qstring(m_friendId.username()))
           .arg(m_file.id));
 
-  DEBUG_LOG(("Start file:%1").arg(m_file.id));
+  qDebug() << "Start file:%1" << m_file.id;
 
   /**
    * 1、创建流通道
@@ -55,7 +55,7 @@ void IMFile::run() {
   m_ibb->setBlockSize(m_buf);
 
   bool c = m_ibb->connect();
-  DEBUG_LOG(("IBBConnect=>%1").arg(c))
+  qDebug() << "IBBConnect=>" << c;
   qFile = std::make_unique<QFile>(m_file.path);
 
   //  QEventLoop loop;
@@ -89,13 +89,13 @@ void IMFile::run() {
 
   emit fileSending(m_friendId, m_file, m_ack_seq, m_sentBytes, true);
 
-  DEBUG_LOG(("finished."))
+  qDebug("finished.");
 }
 
 void IMFile::abort() { emit fileAbort(m_friendId, m_file, m_sentBytes); }
 
 void IMFile::handleBytestreamOpen(gloox::Bytestream *bs) {
-  DEBUG_LOG(("file:%1").arg(qFile->fileName()))
+  qDebug() << ("file:%1") << qFile->fileName();
   if (!qFile->open(QIODevice::ReadOnly)) {
     return;
   }
@@ -103,17 +103,17 @@ void IMFile::handleBytestreamOpen(gloox::Bytestream *bs) {
 }
 
 void IMFile::handleBytestreamClose(gloox::Bytestream *bs) {
-  DEBUG_LOG(("closed:%1").arg(qstring(bs->sid())))
+  qDebug() << "closed:" <<(qstring(bs->sid()));
   emit fileSent(m_friendId, m_file);
 }
 
 void IMFile::handleBytestreamData(gloox::Bytestream *bs,
                                   const std::string &data) {
-  DEBUG_LOG(("data:%1").arg(qstring(bs->sid())))
+  qDebug() << "data:" << qstring(bs->sid());
 }
 
 void IMFile::handleBytestreamDataAck(gloox::Bytestream *bs) {
-  DEBUG_LOG(("acked:%1").arg(qstring(bs->sid())));
+  qDebug() << "acked:" << qstring(bs->sid());
   m_ack_seq += 1;
   // TODO 考虑性能关系暂时不处理实时反馈ack
   //   if(m_ack_seq < m_seq){
@@ -125,7 +125,7 @@ void IMFile::handleBytestreamDataAck(gloox::Bytestream *bs) {
 }
 
 void IMFile::handleBytestreamError(gloox::Bytestream *bs, const gloox::IQ &iq) {
-  DEBUG_LOG(("error:%1").arg(qstring(bs->sid())))
+  qDebug() << "error:" << qstring(bs->sid());
   fileError(m_friendId, m_file, m_sentBytes);
 }
 

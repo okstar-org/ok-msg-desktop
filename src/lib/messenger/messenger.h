@@ -290,6 +290,7 @@ public:
 
 
   void requestBookmarks();
+  void setUIStarted();
 
 private:
   explicit Messenger(QObject *parent = nullptr);
@@ -311,6 +312,7 @@ private:
 signals:
   void started();
   void stopped();
+  void connected();
   void disconnect();
   void incoming(const QString dom);
 

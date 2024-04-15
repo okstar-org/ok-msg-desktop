@@ -39,8 +39,6 @@ Messenger::Messenger(QObject *parent)
   qRegisterMetaType<IMMessage>("IMMessage");
 
   connect(this, &Messenger::disconnect, this, &Messenger::onDisconnect);
-  connect(this, &Messenger::started, this, &Messenger::onStarted);
-  connect(this, &Messenger::stopped, this, &Messenger::onStopped);
 
   QStringList features;
 #ifdef OK_PLUGIN
@@ -77,7 +75,7 @@ Messenger *Messenger::getInstance() {
 }
 
 void Messenger::start() {
-  emit started();
+
 }
 
 void Messenger::setMute(bool mute) { _jingle->setMute(mute); }
@@ -96,14 +94,14 @@ void Messenger::onConnectResult(IMStatus status) {
   auto _im = _session->im();
   if (status == IMStatus::DISCONNECTED) {
     _delayer->call(1000 * 5, [&]() {
-      DEBUG_LOG(("Retry connect..."));
+      qDebug(("Retry connect..."));
       _im->doConnect();
     });
   }
 }
 
 void Messenger::onStarted() {
-  qDebug() << "onStarted...";
+  qDebug() << "connected...";
 
   auto _session = ok::session::AuthSession::Instance();
   auto _im = _session->im();
@@ -118,7 +116,7 @@ void Messenger::onStarted() {
   connect(_im, &IM::exportEncryptedMessage, this, &Messenger::onEncryptedMessage);
   qDebug() << "Initialized plugin manager successfully";
 #endif
-  qDebug() << "onStarted completed";
+  qDebug() << "connected completed";
 }
 
 void Messenger::onStopped() { qDebug() << "onStopped..."; }
@@ -127,9 +125,13 @@ bool Messenger::connectIM( ) {
   auto _session = ok::session::AuthSession::Instance();
   auto _im = _session->im();
 
-  connect(_im, &IM::onStarted, this, [&]() {
-    qDebug() <<"Started.";
+  connect(_im, &IM::connected, this, [&]() {
+    emit connected();
   });
+
+  connect(_im, &IM::started, this, &Messenger::onStarted);
+//  connect(this, &Messenger::stopped, this, &Messenger::onStopped);
+
 
 //  connect(_im, &IM::onStopped, this, [&]() {
 //    onStopped();
@@ -428,7 +430,7 @@ bool Messenger::sendToGroup(const QString &g,   //
                             const QString &msg, //
                             QString &receiptNum) {
   Q_UNUSED(receiptNum)
-  DEBUG_LOG(("sendToGroup=>%1 msg:%2").arg(g).arg(msg));
+  qDebug() << QString("sendToGroup=>%1 msg:%2").arg(g).arg(msg);
   sentCount++;
 
   auto _session = ok::session::AuthSession::Instance();
@@ -440,13 +442,13 @@ bool Messenger::sendToGroup(const QString &g,   //
 
 bool Messenger::sendFileToFriend(const QString &f,
                                  const FileHandler::File &file) {
-  DEBUG_LOG(("file:%1=>%2").arg(file.name).arg(f));
+  qDebug() << QString("file:%1=>%2").arg(file.name).arg(f);
   return _jingle->sendFile(f, file);
 }
 
 bool Messenger::sendToFriend(const QString &f, const QString &msg,
                              QString &receiptNum, bool encrypt) {
-  DEBUG_LOG(("msg:%1=>%2").arg(msg).arg(f));
+  qDebug() << QString("msg:%1=>%2").arg(msg).arg(f);
   sentCount++;
 
   auto _session = ok::session::AuthSession::Instance();
@@ -476,7 +478,7 @@ bool Messenger::sendToFriend(const QString &f, const QString &msg,
   }
   if (!y) {
     y = _im->sendTo(f, msg, receiptNum);
-    DEBUG_LOG(("sendTo=>%1").arg(y));
+    qDebug() << QString("sendTo=>%1").arg(y);
   }
   return y;
 }
@@ -489,20 +491,20 @@ void Messenger::receiptReceived(const QString &f, QString receipt) {
 }
 
 bool Messenger::callToFriend(const QString &f, const QString &sId, bool video) {
-  DEBUG_LOG(("friend:%1 video:%2").arg((f)).arg(video));
+  qDebug() << QString("friend:%1 video:%2").arg((f)).arg(video);
   return _jingle->startCall(f, sId, video);
 }
 
 bool Messenger::createCallToPeerId(const PeerId &to,
                                    const QString &sId, bool video) {
 
-  DEBUG_LOG(("peerId:%1 video:%2").arg((to.toString())).arg(video));
+  qDebug() << QString("peerId:%1 video:%2").arg((to.toString())).arg(video);
   return _jingle->createCall(to, sId, video);
 }
 
 bool Messenger::answerToFriend(const QString &f, const QString &callId,
                                bool video) {
-  DEBUG_LOG(("friend:%1 video:%2").arg((f)).arg(video));
+  qDebug() << QString("friend:%1 video:%2").arg((f)).arg(video);
   return _jingle->answer(f, callId, video);
 }
 
@@ -529,6 +531,7 @@ void Messenger::rejectFriendRequest(const QString &f) {
   auto _im = _session->im();
   _im->rejectFriendRequest(f);
 }
+
 void Messenger::getFriendVCard(const QString &f) {
   auto _session = ok::session::AuthSession::Instance();
   auto _im = _session->im();
@@ -594,7 +597,6 @@ PeerId Messenger::getSelfId() const {
 }
 
 Tox_User_Status Messenger::getSelfStatus() const {
-
   auto pt = gloox::Presence::PresenceType::Available;
   // _im->getPresenceType();
   return static_cast<Tox_User_Status>(pt);
@@ -626,7 +628,7 @@ void Messenger::changePassword(const QString &password) {
 
 void Messenger::onDisconnect() {
   _delayer->call(1000 * 5, [&]() {
-    DEBUG_LOG(("retry connect..."));
+    qDebug(("retry connect..."));
     auto _session = ok::session::AuthSession::Instance();
     auto _im = _session->im();
     _im->start();
@@ -709,7 +711,7 @@ bool Messenger::callToGroup(const QString &g) {
 }
 
 void Messenger::joinGroup(const QString &group) {
-  DEBUG_LOG(("group:%1").arg(group));
+  qDebug() << QString("group:%1").arg(group);
   auto _session = ok::session::AuthSession::Instance();
   auto _im = _session->im();
   _im->joinRoom(group);
@@ -732,17 +734,17 @@ void Messenger::acceptFileRequest(QString friendId,
 }
 
 void Messenger::cancelFile(QString fileId) {
-  DEBUG_LOG(("fileId:%1").arg(fileId));
+  qDebug() << QString("fileId:%1").arg(fileId);
 }
 
 void Messenger::finishFileRequest(QString friendId, const FileHandler::File &file) {
-  DEBUG_LOG(("fileId:%1").arg(friendId));
+  qDebug() << QString("fileId:%1").arg(friendId);
   _jingle->finishFileRequest(friendId, file);
 }
 
 void Messenger::finishFileTransfer(QString friendId,
                                    const FileHandler::File &file) {
-  DEBUG_LOG(("friendId:%1 file:%2").arg(friendId).arg(file.name));
+  qDebug() << QString("friendId:%1 file:%2").arg(friendId).arg(file.name);
   _jingle->finishFileTransfer(friendId, file);
 }
 
@@ -753,6 +755,12 @@ void Messenger::requestBookmarks() {
 
  // im->requestBookmarks();
   //im->enablePubSubManager();
+}
+
+void Messenger::setUIStarted(){
+  auto session = ok::session::AuthSession::Instance();
+  auto im = session->im();
+  im->setUIStarted();
 }
 
 void Messenger::onGroupReceived(QString groupId, QString name) {

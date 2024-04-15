@@ -270,7 +270,7 @@ QString ApplicationInfo::profilesDir(ApplicationInfo::HomedirType type) { return
 
 QString ApplicationInfo::currentProfileDir(ApplicationInfo::HomedirType type)
 {
-    return "";
+    return homeDir(type);
 }
 
 QString ApplicationInfo::desktopFileBaseName() { return QLatin1String(xstr(APP_BIN_NAME) ".desktop"); }

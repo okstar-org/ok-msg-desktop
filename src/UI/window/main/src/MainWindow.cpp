@@ -110,7 +110,7 @@ inline QIcon MainWindow::prepareIcon(QString path, int w, int h) {
 void MainWindow::showEvent(QShowEvent *event) {}
 
 void MainWindow::closeEvent(QCloseEvent *event) {
-  DEBUG_LOG(("closeEvent..."));
+  qDebug(("closeEvent..."));
   auto &settings = ok::base::OkSettings::getInstance();
 
   if (settings.getShowSystemTray() && settings.getCloseToTray()) {
@@ -273,7 +273,6 @@ void MainWindow::updateIcons() {
 }
 
 QFrame *MainWindow::initPage(PageMenu menu) {
-  DEBUG_LOG(("initPage ..."))
 
   QFrame *w = Q_NULLPTR;
 
@@ -291,7 +290,7 @@ QFrame *MainWindow::initPage(PageMenu menu) {
     break;
   }
 
-  DEBUG_LOG(("initPage finished"))
+  qDebug(("initPage finished"));
   if (w) {
     ui->stacked_widget->addWidget(w);
   }
@@ -300,7 +299,7 @@ QFrame *MainWindow::initPage(PageMenu menu) {
 
 QFrame *MainWindow::getPage(PageMenu menu) {
   int idx = static_cast<int>(menu);
-  DEBUG_LOG(("menu: %1").arg(idx));
+  qDebug() << "menu:" << idx;
   for (int i = 0; i < ui->stacked_widget->count(); i++) {
     QFrame *p = static_cast<QFrame *>(ui->stacked_widget->widget(i));
     if (p->objectName().compare(qsl("Page:%1").arg(static_cast<int>(menu))) ==
