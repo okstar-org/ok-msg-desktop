@@ -80,13 +80,11 @@ struct FriendId {
 
   FriendId();
   ~FriendId();
-  FriendId(const gloox::JID &);
+
   FriendId(const FriendId &);
   FriendId(const QString &jid);
 
   QString toString() const {
-    if(server.isEmpty())
-      return username;
     return username + "@" + server;
   }
 

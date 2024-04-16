@@ -27,13 +27,22 @@ public:
     return document;
   }
 
-  inline static QString format(QDomDocument& element){
+  inline static QString format(QDomElement& element){
     if(element.isNull())
       return QString{};
 
     QTextStream stream;
     stream.setString(new QString());
     element.save(stream, 0);
+    return *stream.string();
+  }
+
+  inline static QString format(QDomDocument&document){
+    if(document.isNull())
+      return QString{};
+    QTextStream stream;
+    stream.setString(new QString());
+    document.save(stream, 0);
     return *stream.string();
   }
 };

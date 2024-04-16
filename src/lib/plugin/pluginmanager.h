@@ -66,7 +66,9 @@ public:
   int appendAccount(OkAccount *acc);
   void removeAccount(OkAccount *acc);
   void clear();
-  bool isValidRange(int id) const { return id_keys.contains(id); }
+  bool isValidRange(int id) const {
+    return id_keys.contains(id);
+  }
   OkAccount *account(int id) const;
   int id(OkAccount *acc) const;
 
@@ -283,7 +285,7 @@ private slots:
   void accountDestroyed();
 
 public slots:
-  bool addAccount(OkAccount* account, ::lib::messenger::Messenger *messenger);
+  int addAccount(OkAccount* account, ::lib::messenger::Messenger *messenger);
   bool decryptMessageElement(OkAccount *account, QDomElement &message) ;
   bool encryptMessageElement(OkAccount *account, QDomElement &message) ;
 

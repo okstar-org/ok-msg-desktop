@@ -64,8 +64,9 @@ bool NetworkHttp::get(
     qWarning()<<"url is empty";
     return false;
   }
-
-  auto *reply = _manager->get(QNetworkRequest(url));
+  QNetworkRequest req(url);
+  req.setAttribute(QNetworkRequest::RedirectPolicyAttribute, true);
+  auto *reply = _manager->get(req);
   reply->ignoreSslErrors();
 
   connect(reply, &QNetworkReply::finished, [=]() {

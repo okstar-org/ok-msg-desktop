@@ -34,11 +34,6 @@ IMMessage::IMMessage(MsgType type_,    //
 
 FriendId::FriendId() {}
 
-FriendId::FriendId(const gloox::JID &jid) {
-  username = qstring(jid.username());
-  server = qstring(jid.server());
-}
-
 FriendId::FriendId(const QString &jid_) {
   if (jid_.contains("@")) {
     gloox::JID jid(stdstring(jid_));

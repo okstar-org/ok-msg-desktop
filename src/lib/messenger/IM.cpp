@@ -261,9 +261,9 @@ void IM::onConnect() {
   _status = IMStatus::CONNECTED;
 
   auto res = _client->resource();
-  qDebug()<<("resource:%1")<<(qstring(res));
+  qDebug()<<("resource:")<<(qstring(res));
 
-//  fetchVCard(qstring(self().bare()));
+  fetchVCard(qstring(self().bare()));
 
   emit selfIdChanged(qstring(_client->username()));
   emit connectResult(_status);
@@ -543,7 +543,7 @@ void IM::handleMessage(const gloox::Message &msg, MessageSession *session) {
   auto friendId = qstring(from.bare());
   auto body = qstring(msg.body());
 
-  qDebug() << "from:" << peerId;
+  qDebug() << "handleMessage from:" << peerId;
   qDebug() << "subtype:" << (int)msg.subtype();
   qDebug() << "sessionId:" << threadId;
 
@@ -692,10 +692,12 @@ void IM::handleMessageEvent(const JID &from, const MessageEvent *et) {
 void IM::doPubSubEvent(const gloox::PubSub::Event *pse, //
                        const Message &msg,              //
                        QString &friendId) {
-  qDebug() << "doPubSubEvent:" << friendId;
-  qDebug() << "selfId:" << getSelfId().toString();
 
-  auto isSelf = friendId == getSelfId().toString();
+  qDebug() << "doPubSubEvent:" << friendId;
+  const QString &selfId = getSelfId().toString();
+
+  qDebug() << "selfId:" << selfId;
+  auto isSelf = friendId == selfId;
 
   for (auto &item : pse->items()) {
     qDebug() << "item:" << qstring(item->item);
@@ -800,9 +802,8 @@ void IM::doPubSubEvent(const gloox::PubSub::Event *pse, //
  * @param state
  */
 void IM::handleChatState(const JID &from, ChatStateType state) {
-  qDebug() << qsl("from:%1 state:%2") //
-           << qstring(from.full())    //
-           << static_cast<int>(state);
+  qDebug() << "handleChatState from:" << qstring(from.full())    //
+           << "state:" <<static_cast<int>(state);
 
   auto friendId = qstring(from.bare());
   emit receiveFriendChatState(friendId, state);
@@ -814,9 +815,7 @@ void IM::handleChatState(const JID &from, ChatStateType state) {
  * @param state 聊天状态
  */
 void IM::sendChatState(const QString &to, ChatStateType state) {
-  qDebug()<<QString("to:%1 state:%2") //
-                .arg((to))     //
-                .arg(static_cast<int>(state));
+  qDebug()<<"sendChatState" << "to:"<< to << "state:" << (static_cast<int>(state));
   auto csf = m_chatStateFilters[stdstring(to)];
   if (!csf) {
     return;
@@ -1350,9 +1349,9 @@ void IM::handleTag(Tag *tag) {
 bool IM::handleIq(const IQ &iq) {
   qDebug() << "iq" << qstring(iq.xmlLang());
 
-  FriendId friendId(iq.from());
   const auto *ibb = iq.findExtension<InBandBytestream::IBB>(ExtIBB);
   if (ibb) {
+    FriendId friendId(qstring(iq.from().bare()));
     qDebug()<<QString("ibb流:%1").arg(qstring(ibb->sid()));
 
     switch (ibb->type()) {
@@ -1380,7 +1379,6 @@ bool IM::handleIq(const IQ &iq) {
   }
 
   emit incoming(qstring(iq.tag()->xml()));
-
   return true;
 }
 
@@ -1713,8 +1711,8 @@ void IM::getRosterList(std::list<FriendId> &list) {
   auto rosterManager = _client->rosterManager();
   gloox::Roster *rosterMap = rosterManager->roster();
   for (const auto &itr : *rosterMap) {
-    auto jid = itr.second;
-    FriendId peerId(jid->jid());
+    auto pItem = itr.second;
+    FriendId peerId(qstring(pItem->jid().bare()));
     list.push_back(peerId);
   }
 }
@@ -1928,12 +1926,12 @@ void IM::handleDataForm(const JID &from, const DataForm &form){};
 void IM::handleOOB(const JID &from, const OOB &oob){};
 
 FriendId IM::getSelfId() {
-  FriendId fId(_client->jid());
+  FriendId fId(qstring(_client->jid().bare()));
   return fId;
 }
 
 PeerId IM::getSelfPeerId() {
-  PeerId peerId(_client->jid());
+  PeerId peerId(qstring(_client->jid().bare()));
   return peerId;
 }
 
@@ -2608,22 +2606,22 @@ void IM::handleLog(LogLevel level, LogArea area, const std::string &message) {
   //   qDebug()<<QString("%1").arg(message.c_str()));
   switch (area) {
   case LogAreaXmlIncoming:
-    qDebug()<<QString("Received XML: %1").arg(message.c_str());
+    qDebug() << "Received XML:" << message.c_str();
     break;
   case LogAreaXmlOutgoing:
-    qDebug()<<QString("Sent XML: %1").arg(qstring(message));
+    qDebug() << "Sent XML:" << qstring(message);
     break;
   case LogAreaClassConnectionBOSH:
-    qDebug()<<QString("BOSH: %1").arg(message.c_str());
+    qDebug() << "BOSH:" << (message.c_str());
     break;
   case LogAreaClassClient:
-    qDebug()<<QString("Client: %1").arg(message.c_str());
+    qDebug() << "Client:" << (message.c_str());
     break;
   case LogAreaClassDns:
-    qDebug()<<QString("dns: %1").arg(message.c_str());
+    qDebug() << "dns:" << (message.c_str());
     break;
   default:
-    qDebug()<<QString("level: %1, area: %2 msg: %3")
+    qDebug() << QString("level: %1, area: %2 msg: %3")
                   .arg(level)
                   .arg(area)
                   .arg(message.c_str());

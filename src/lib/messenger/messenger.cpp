@@ -40,18 +40,6 @@ Messenger::Messenger(QObject *parent)
 
   connect(this, &Messenger::disconnect, this, &Messenger::onDisconnect);
 
-  QStringList features;
-#ifdef OK_PLUGIN
-  auto pm = ok::plugin::PluginManager::instance();
-  auto features0 = pm->pluginFeatures();
-  features << features0;
-
-  auto _session = ok::session::AuthSession::Instance();
-  pm->addAccount(_session->account(), this);
-#endif
-
-
-
   /**
    * IM
    */
@@ -62,7 +50,24 @@ Messenger::Messenger(QObject *parent)
    */
   connectJingle();
 
+  QStringList features;
+#ifdef OK_PLUGIN
+  auto pm = ok::plugin::PluginManager::instance();
+  auto features0 = pm->pluginFeatures();
+  features << features0;
 
+  auto _session = ok::session::AuthSession::Instance();
+  int acc = pm->addAccount(_session->account(), this);
+  qDebug() << "PluginManager account id=>"<<acc;
+
+  ok::session::AuthSession::Instance();
+  auto _im = _session->im();
+  connect(_im, &IM::connected, this, [pm,_session]() {
+//    pm->accountBeforeLogin(acc);
+    pm->startLogin(_session->account());
+  });
+
+#endif
 }
 
 Messenger::~Messenger() {}
@@ -137,8 +142,8 @@ bool Messenger::connectIM( ) {
 //    onStopped();
 //  });
 
-  connect(_im, &IM::incoming,
-          [=, this](QString xml) { emit incoming(xml); });
+  connect(_im, &IM::incoming, this,
+          [=, this](QString xml) { emit incoming(xml); }, Qt::QueuedConnection);
 
   /**
    * selfHandlers
@@ -469,8 +474,8 @@ bool Messenger::sendToFriend(const QString &f, const QString &msg,
     auto ele = dom.documentElement();
 
     if (pm->encryptMessageElement(_session->account(), ele)) {
-      qDebug()<<"encryptMessageElement=>"<<&dom;
-      auto xml = ::base::Xmls::format(dom);
+      qDebug()<<"encryptMessageElement=>"<<ele.ownerDocument().toString();
+      auto xml = ::base::Xmls::format(ele);
       _im->send(xml);
       y = true;
     }

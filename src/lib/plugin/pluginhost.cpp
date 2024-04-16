@@ -716,7 +716,7 @@ void PluginHost::logout(int account) {
 void PluginHost::sendStanza(int account, const QDomElement &stanza) {
   QTextStream stream;
   stream.setString(new QString());
-  stanza.save(stream, 0);
+  stanza.save(stream, QDomElement::EncodingFromDocument);
   manager_->sendXml(account, *stream.string());
 }
 
@@ -1416,8 +1416,11 @@ void PluginHost::playSound(const QString &fileName) {
  */
 
 bool PluginHost::decryptMessageElement(int account, QDomElement &message) {
+  qDebug()<<"decryptMessageElement account:"<< account << "msg:" << &message;
   auto es = qobject_cast<ok::plugin::EncryptionSupport *>(plugin_);
-  return es && es->decryptMessageElement(account, message);
+  bool decrypted = es && es->decryptMessageElement(account, message);
+  qDebug()<<"decryptMessageElement account:"<< account << decrypted;
+  return decrypted;
 }
 
 bool PluginHost::encryptMessageElement(int account, QDomElement &message) {
@@ -1432,9 +1435,9 @@ bool PluginHost::encryptMessageElement(int account, QDomElement &message) {
     return false;
   }
 
-  qDebug()<<"encryptMessageElement msg:" << &message;
+  qDebug()<<"encryptMessageElement account:"<< account << "msg:" << message.ownerDocument().toString();
   auto encrypted = es->encryptMessageElement(account, message);
-  qDebug()<<"encryptMessageElement=> "<<encrypted;
+  qDebug()<<"encryptMessageElement account:"<< account << encrypted;
   return true;
 }
 

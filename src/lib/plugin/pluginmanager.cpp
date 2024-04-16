@@ -45,14 +45,12 @@ namespace ok {
 namespace plugin {
 
 class PluginManager::StreamWatcher : public QObject {
-  //  Q_OBJECT
 public:
-  StreamWatcher(::lib::messenger::Messenger *messenger, PluginManager *m, int a) //
-      : manager(m), account(a), m_messenger(messenger) {
+  StreamWatcher(::lib::messenger::Messenger *messenger, PluginManager *pluginManager, int account_) //
+      : manager(pluginManager), account(account_), m_messenger(messenger) {
     // ignore
-
     connect(m_messenger, &::lib::messenger::Messenger::incoming, //
-            this, &StreamWatcher::doDom);
+            this, &StreamWatcher::doDom, Qt::QueuedConnection);
   }
 
   ~StreamWatcher() {}
@@ -68,8 +66,8 @@ public slots:
     if (!document.setContent(xml, true)) {
       return;
     }
-
-    bool y = manager->incomingXml(account, document.documentElement());
+    auto ele = document.documentElement();
+    bool y = manager->incomingXml(account, ele);
     qDebug() << "incomingXml=>" << y;
   };
 };
@@ -963,14 +961,14 @@ QStringList PluginManager::pluginFeatures() const {
 /**
  * Tells the plugin manager about add the client OkAccount
  */
-bool PluginManager::addAccount(OkAccount *account,
+int PluginManager::addAccount(OkAccount *account,
                                ::lib::messenger::Messenger *messenger) {
 
   if(QThread::currentThread() != m_thread.get()){
-    bool ret;
+    int ret;
     QMetaObject::invokeMethod(this, "addAccount",
                               Qt::BlockingQueuedConnection,
-                              Q_RETURN_ARG(bool, ret),
+                              Q_RETURN_ARG(int, ret),
                               Q_ARG(OkAccount *, account),
                               Q_ARG(::lib::messenger::Messenger *, messenger));
     return ret;
@@ -983,12 +981,11 @@ bool PluginManager::addAccount(OkAccount *account,
       streamWatcher = new StreamWatcher(messenger, this, id);
       //  this StreamWatcher instance isn't stored anywhere
       //  and probably leaks (if go(true) isn't called somewhere else)
-      //  connect(account, SIGNAL(accountDestroyed()), this,
-      //  SLOT(accountDestroyed()));
+      connect(account, SIGNAL(accountDestroyed()), this, SLOT(accountDestroyed()));
     }
-    return true;
+    return id;
   }
-  return false;
+  return 0;
 }
 
 /**

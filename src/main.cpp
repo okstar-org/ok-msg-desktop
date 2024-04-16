@@ -36,9 +36,9 @@ void logMessageHandler(QtMsgType type, const QMessageLogContext& ctxt, const QSt
   }
 
   // Time should be in UTC to save user privacy on log sharing
-  QDateTime time = QDateTime::currentDateTime();
+  QString time = QDateTime::currentDateTime().toString("yy-MM-dd HH:mm:ss.zzz");
   QString line = QString("[%1] [%2] [%3:%4] - ")
-                       .arg(time.toString("yy-MM-dd HH:mm:ss.zzz"))
+                       .arg(time)
                        .arg(QThread::currentThread()->objectName())
                        .arg(file)
                        .arg(ctxt.line);
