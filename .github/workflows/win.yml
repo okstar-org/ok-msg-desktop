@@ -8,11 +8,11 @@ permissions:
 
 on:
   push:
-#    branches: [ "develop" ]
+    branches: [ "develop" ]
     tags:
       - "v*.*.*"
-#  pull_request:
-#    branches: [ "develop" ]
+  pull_request:
+    branches: [ "develop" ]
 
 jobs:
   build:
