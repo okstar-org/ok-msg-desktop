@@ -79,8 +79,10 @@ void logMessageHandler(QtMsgType type, const QMessageLogContext &ctxt,
   }
 }
 
-LogManager::LogManager() {
+static LogManager *log = nullptr;
 
+LogManager::LogManager() {
+  qDebug() << "Initialize LogManager";
   logFileDir = base::OkSettings::getAppLogPath();
   qDebug() << "Log file dir is:" << logFileDir;
 
@@ -103,11 +105,14 @@ LogManager::~LogManager() {
 }
 
 const LogManager &LogManager::Instance() {
-  static LogManager *log = nullptr;
   if(!log){
     log = new LogManager();
   }
   return *log;
+}
+
+void LogManager::Destroy() {
+  delete log;
 }
 
 } // namespace lib

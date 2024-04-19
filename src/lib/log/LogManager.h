@@ -29,6 +29,7 @@ namespace lib {
 class LogManager {
 public:
   static const LogManager& Instance();
+  static void Destroy();
 
   [[nodiscard]] const QString& getLogFile() const {
     return logName;

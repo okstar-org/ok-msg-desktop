@@ -101,7 +101,7 @@ public:
   QWidget *optionsWidget() const;
 
   // cached basic info
-  const QString &name() const;
+  inline const QString &name() const;
   const QString &shortName() const;
   const QString &version() const;
   const QString &vendor() const;
@@ -321,7 +321,6 @@ signals:
 
 private:
   PluginManager *manager_ = nullptr;
-  QPointer<QObject> plugin_;
   QString file_;
   QString name_;
   QString shortName_;
@@ -331,8 +330,11 @@ private:
   int priority_ = 0;
   QByteArray rawIcon_;
   QIcon icon_;
-  QPluginLoader *loader_ = nullptr;
+
+  QPointer<QObject> plugin_ = nullptr;
+  QPointer<QPluginLoader> loader_ = nullptr;
   QPointer<QObject> enableHandler = nullptr;
+
   //    Iconset *         iconset_            = nullptr;
   bool hasToolBarButton_ = false;
   bool hasGCToolBarButton_ = false;

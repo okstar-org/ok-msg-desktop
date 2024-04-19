@@ -213,28 +213,15 @@ QString ApplicationInfo::libDir()
  */
 QString ApplicationInfo::homeDir(ApplicationInfo::HomedirType type)
 {
-    static QString configDir_ = QStandardPaths::locate(QStandardPaths::GenericConfigLocation, "", QStandardPaths::LocateDirectory);
-    qDebug() << configDir_;
-    static QString dataDir_ = QStandardPaths::locate(QStandardPaths::GenericDataLocation, "", QStandardPaths::LocateDirectory);
-    qDebug() << dataDir_;
-    static QString cacheDir_ = QStandardPaths::locate(QStandardPaths::GenericCacheLocation, "", QStandardPaths::LocateDirectory);
-    qDebug() << cacheDir_;
-
-    QString ret;
     switch (type) {
     case ApplicationInfo::ConfigLocation:
-        ret = configDir_;
-        break;
-
+       return ok::base::OkSettings::configDir().path();
     case ApplicationInfo::DataLocation:
-        ret = dataDir_;
-        break;
-
+        return ok::base::OkSettings::dataDir().path();
     case ApplicationInfo::CacheLocation:
-        ret = cacheDir_;
-        break;
+      return ok::base::OkSettings::cacheDir().path();
     }
-    return ret;
+
 }
 
 QString ApplicationInfo::makeSubhomePath(const QString &path, ApplicationInfo::HomedirType type)

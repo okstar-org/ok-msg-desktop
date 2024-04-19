@@ -4,10 +4,10 @@
  * You can use this software according to the terms and conditions of the Mulan
  * PubL v2. You may obtain a copy of Mulan PubL v2 at:
  *          http://license.coscl.org.cn/MulanPubL-2.0
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
- * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
- * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
- * See the Mulan PubL v2 for more details.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY
+ * KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE. See the
+ * Mulan PubL v2 for more details.
  */
 
 #include "pluginhost.h"
@@ -95,10 +95,6 @@ PluginHost::PluginHost(PluginManager *manager, const QString &pluginFile)
 PluginHost::~PluginHost() {
   disable();
   unload();
-  if (loader_) {
-    delete loader_;
-    loader_ = nullptr;
-  }
 }
 
 /**
@@ -234,9 +230,9 @@ void PluginHost::updateMetadata() {
   qDebug("Loaded plugin name is:%s shortName is:%s", //
          qPrintable(name_), qPrintable(shortName_));
 
-    qDebug("Loaded metadata for plugin %s", qPrintable(file_));
-    valid_ = true;
-    loader.unload();
+  qDebug("Loaded metadata for plugin %s", qPrintable(file_));
+  valid_ = true;
+  loader.unload();
 }
 
 /**
@@ -252,58 +248,37 @@ void PluginHost::updateMetadata() {
  * before.
  */
 bool PluginHost::load() {
-  qDebug() << "To loading plugin" << file_;
+  qDebug() << "Loading plugin" << file_;
   if (plugin_) {
-    qDebug() << QString("Plugin %1 was already loaded.").arg(file_);
+    qWarning() << QString("Plugin %1 was already loaded.").arg(file_);
     return true;
   }
 
-  if (!loader_) {
-    loader_ = new QPluginLoader(file_);
-    qDebug("Trying to load plugin");
-    bool loaded = loader_->load();
-    qDebug() << "The plugin is loaded?=>" << loaded;
-    if (!loaded) {
-      delete loader_;
-      return false;
-    }
-    loader_->setLoadHints(QLibrary::ResolveAllSymbolsHint);
-  }
-
-  if (!loader_->isLoaded()) {
-    qWarning() << "Error loading plugin:" << loader_->errorString();
+  loader_ = new QPluginLoader(file_, this);
+  loader_->setLoadHints(QLibrary::ResolveAllSymbolsHint);
+  bool loaded = loader_->load();
+  qDebug() << "The plugin is loaded?=>" << loaded;
+  if (!loaded) {
     delete loader_;
-    loader_ = nullptr;
+    loader_.clear();
+    qWarning() << "Can not to load plugin:" << name();
     return false;
   }
+
 
   QObject *plugin = loader_->instance();
-  if (!plugin) {
-    qWarning() << "Error instance plugin:" << loader_->errorString();
-    delete loader_;
-    loader_ = nullptr;
-    return false;
-  };
-
-  // Check it's the right sort of plugin
+  qDebug() << "Plugin address is:" << plugin;
   OkPlugin *pPlugin = qobject_cast<OkPlugin *>(plugin);
   if (!pPlugin) {
     qWarning("File is a plugin but a valid OkPlugin");
-    if (loader_->isLoaded()) {
-      loader_->unload();
-    }
-    delete loader_;
-    loader_ = nullptr;
-    valid_ = false;
+    unload();
     return false;
   }
+
   plugin_ = plugin;
   valid_ = true;
-  // loaded_ = true;
-  // enabled_ = false;
   name_ = pPlugin->name();
-  qDebug() << "Loaded the plugin named is" << name_ << "and sortName is"
-           << shortName_;
+  qDebug() << "Loaded the plugin sortName is" << shortName_;
 
   // shortName_ = psiPlugin->shortName();
   // version_   = psiPlugin->version();
@@ -341,42 +316,39 @@ bool PluginHost::load() {
  * all.
  */
 bool PluginHost::unload() {
-  qDebug() << "To unloading plugin" << file_;
+  qDebug() << "Unloading plugin" << shortName();
   if (!plugin_) {
+    qWarning() << QString("Plugin %1 was already unloaded.").arg(shortName());
     return true;
   }
 
-  if (!loader_) {
-    qWarning("Plugin %s's loader wasn't found when trying to unload",
-             qPrintable(name_));
-    return true;
-  }
-
-  if (!loader_->isLoaded()) {
-    qWarning() << "Unloaded plugin:" << qPrintable(name_);
-    return true;
-  }
-
+  qDebug() << "Plugin address is:" << plugin_.data();
   disable();
 
-  if (!loader_->unload()) {
-    qWarning("Failed to unload plugin: %s", qPrintable(name_));
-    qWarning() << "error:" << loader_->errorString();
-    return true;
+  if(!loader_){
+    qWarning() << "The plugin was unloaded.";
+    return false;
   }
+
+  if (loader_->isLoaded()) {
+    bool unloaded = loader_->unload();
+    qDebug() << "Unload plugin" << name_ << "?=>" << unloaded;
+    loader_->deleteLater();
+  }
+
 
   // loader will delete it automatically
   delete plugin_;
-  plugin_ = nullptr;
+  plugin_.clear();
 
   //            delete iconset_;
   //            iconset_   = nullptr;
   delete loader_;
-  loader_ = nullptr;
+  loader_.clear();
 
   connected_ = false;
 
-  qDebug("Plugin unloaded: %s", qPrintable(name_));
+  qDebug() << "Plugin unloaded:" << name_;
   return plugin_ == nullptr;
 }
 
@@ -540,12 +512,13 @@ bool PluginHost::enable() {
  */
 bool PluginHost::disable() {
   QMutexLocker locker(&mutex_);
+  qDebug() << "Disable plugin" << shortName();
   if (!enabled_) {
     qWarning() << "The plugin" << shortName() << "is disabled already.";
     return true;
   }
 
-  if(plugin_){
+  if (plugin_) {
     enabled_ = !qobject_cast<OkPlugin *>(plugin_)->disable();
     if (!enabled_) {
       delete enableHandler;
@@ -577,8 +550,8 @@ bool PluginHost::isEnabled() const { return enabled_; }
  */
 bool PluginHost::incomingXml(int account, const QDomElement &e) {
   QMutexLocker locker(&mutex_);
-  if(!plugin_){
-    qWarning() <<"The plugin has be unloaded.";
+  if (!plugin_) {
+    qWarning() << "The plugin has be unloaded.";
     return false;
   }
   bool handled = false;
@@ -1428,30 +1401,31 @@ void PluginHost::playSound(const QString &fileName) {
 bool PluginHost::decryptMessageElement(int account, QDomElement &message) {
   QMutexLocker locker(&mutex_);
 
-  qDebug()<<"decryptMessageElement account:"<< account << "msg:" << &message;
+  qDebug() << "decryptMessageElement account:" << account << "msg:" << &message;
   auto es = qobject_cast<ok::plugin::EncryptionSupport *>(plugin_);
   bool decrypted = es && es->decryptMessageElement(account, message);
-  qDebug()<<"decryptMessageElement account:"<< account << decrypted;
+  qDebug() << "decryptMessageElement account:" << account << decrypted;
   return decrypted;
 }
 
 bool PluginHost::encryptMessageElement(int account, QDomElement &message) {
   QMutexLocker locker(&mutex_);
 
-  if(plugin_.isNull()){
-    qWarning() <<"Unable find plugin";
+  if (plugin_.isNull()) {
+    qWarning() << "Unable find plugin";
     return false;
   }
 
   auto es = qobject_cast<ok::plugin::EncryptionSupport *>(plugin_);
-  if(!es){
-    qWarning() <<"Unable find plugin for EncryptionSupport";
+  if (!es) {
+    qWarning() << "Unable find plugin for EncryptionSupport";
     return false;
   }
 
-  qDebug()<<"encryptMessageElement account:"<< account << "msg:" << message.ownerDocument().toString();
+  qDebug() << "encryptMessageElement account:" << account
+           << "msg:" << message.ownerDocument().toString();
   auto encrypted = es->encryptMessageElement(account, message);
-  qDebug()<<"encryptMessageElement account:"<< account << encrypted;
+  qDebug() << "encryptMessageElement account:" << account << encrypted;
   return true;
 }
 
@@ -1519,7 +1493,7 @@ void PluginHost::executeChatLogJavaScript(QWidget *log, const QString &js) {
 void PluginHost::selectMediaDevices(const QString &audioInput,
                                     const QString &audioOutput,
                                     const QString &videoInput) {
-  qDebug()<<"selectMediaDevices";
+  qDebug() << "selectMediaDevices";
   //    MediaDeviceWatcher::instance()->selectDevices(audioInput, audioOutput,
   //    videoInput);
 }
