@@ -255,7 +255,16 @@ PluginHost *PluginManager::addHostFile(const QString &file) {
 }
 
 void PluginManager::removeHostFile(PluginHost *host) {
-//  host->disable();
+  if(!host)
+  {
+    qWarning() <<"Plugin is not installed.";
+    return;
+  }
+
+  if(host->isEnabled()){
+    qWarning() <<"Plugin is not disabled.";
+    return;
+  }
 
   auto file = pathToPlugin(host->shortName());
   qDebug()<<"Plugin file:"<< file;
@@ -263,9 +272,11 @@ void PluginManager::removeHostFile(PluginHost *host) {
   int host_removed = hosts_.remove(host->shortName());
   qDebug() << "Remove plugin from host:" << host->shortName() << "=>" << host_removed;
 
-
   int file_removed2 = pluginByFile_.remove(file);
   qDebug() << "Remove plugin from file:" << file << "=>" << file_removed2;
+
+  pluginsByPriority_.removeAll(host);
+  qDebug() << "Remove plugin from pluginsByPriority";
 
   auto removed = ok::base::Files::removeFile(file);
   qDebug() << "Remove plugin local file:" << file << "=>" << removed;

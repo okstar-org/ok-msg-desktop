@@ -577,7 +577,10 @@ bool PluginHost::isEnabled() const { return enabled_; }
  */
 bool PluginHost::incomingXml(int account, const QDomElement &e) {
   QMutexLocker locker(&mutex_);
-
+  if(!plugin_){
+    qWarning() <<"The plugin has be unloaded.";
+    return false;
+  }
   bool handled = false;
   // try stanza filter first
   StanzaFilter *sf = qobject_cast<StanzaFilter *>(plugin_);

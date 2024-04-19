@@ -39,11 +39,11 @@ namespace network {
 NetworkHttp::NetworkHttp(QObject *parent) : QObject(parent) {
 #ifndef QT_NO_SSL
    bool supportsSsl = QSslSocket::supportsSsl();
-   qDebug()<<("supportsSsl:")<<(supportsSsl);
+   qDebug()<<("supportsSsl    :")<<(supportsSsl);
    QString buildVersion = QSslSocket::sslLibraryBuildVersionString();
-   qDebug()<<("buildVersion:")<<(buildVersion);
+   qDebug()<<("buildVersion   :")<<(buildVersion);
    QString libraryVersion = QSslSocket::sslLibraryVersionString();
-   qDebug()<<("libraryVersion:")<<(libraryVersion);
+   qDebug()<<("libraryVersion :")<<(libraryVersion);
 #endif
   //  QNetworkAccessManager
   _manager = std::make_unique<QNetworkAccessManager>(this);
