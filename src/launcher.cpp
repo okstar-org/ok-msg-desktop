@@ -11,9 +11,7 @@
  */
 #include "launcher.h"
 
-#include "base/r.h"
 #include "application.h"
-#include "base/system/sys_info.h"
 #include <QTranslator>
 #include <base/logs.h>
 #include <memory>
@@ -29,33 +27,6 @@ Launcher::Launcher(int argc, char *argv[])
       _argv(argv)  //
 {
   QThread::currentThread()->setObjectName("Launcher");
-}
-
-int Launcher::executeApplication() {
-
-  base::CpuInfo cpuInfo;
-  base::SysInfo::GetCpuInfo(cpuInfo);
-  //"x64" "AuthenticAMD" "AMD Ryzen 7 1700X Eight-Core Processor" 8 16
-  qDebug() << "CpuInfo:"          //
-           << cpuInfo.arch         //
-           << cpuInfo.manufacturer //
-           << cpuInfo.name         //
-           << cpuInfo.cores        //
-           << cpuInfo.processors;  //
-
-  base::OsInfo osInfo;
-  base::SysInfo::GetOsInfo(osInfo);
-  qDebug() << "OsInfo:"           //
-           << osInfo.kernelName    //"linux"
-           << osInfo.kernelVersion //"5.19.0-50-generic"
-           << osInfo.name          //"ubuntu"
-           << osInfo.version       //"22.04"
-           << osInfo.prettyName    //"Ubuntu 22.04.2 LTS"
-           << osInfo.hostName      //"root-host"
-           << osInfo.uniqueId;     //"OWVjYjNmZTY0OTFmNGZiZGFhYjI0ODA2OTgwY2QxODQ="
-
-  qDebug() <<"Release:" << APPLICATION_RELEASE << APPLICATION_VERSION_ID;
-
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 0))
   QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
   QGuiApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
@@ -66,7 +37,9 @@ int Launcher::executeApplication() {
   QGuiApplication::setHighDpiScaleFactorRoundingPolicy(
       Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
 #endif
+}
 
+int Launcher::executeApplication() {
   // 初始化程序实例
   app = new Application(_argc, _argv);
 

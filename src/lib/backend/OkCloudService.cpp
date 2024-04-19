@@ -42,8 +42,8 @@ bool OkCloudService::GetFederalInfo(Fn<void(Res<FederalInfo> &)> fn, Fn<void(QSt
 
 bool OkCloudService::GetPluginPage(Fn<void(ResPage<ok::backend::PluginInfo> &)> fn, Fn<void(QString)> err) {
 
-  auto osInfo = ::base::SystemInfo::instance()->osInfo();
-  auto cpuInfo = ::base::SystemInfo::instance()->cpuInfo();
+  auto osInfo = ok::base::SystemInfo::instance()->osInfo();
+  auto cpuInfo = ok::base::SystemInfo::instance()->cpuInfo();
   auto platform = osInfo.kernelName;
 
   QString url = _baseUrl + "/plugin/page?platform="+platform+"&arch="+cpuInfo.arch;

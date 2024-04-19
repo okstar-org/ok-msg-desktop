@@ -4,10 +4,10 @@
  * You can use this software according to the terms and conditions of the Mulan
  * PubL v2. You may obtain a copy of Mulan PubL v2 at:
  *          http://license.coscl.org.cn/MulanPubL-2.0
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
- * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
- * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
- * See the Mulan PubL v2 for more details.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY
+ * KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE. See the
+ * Mulan PubL v2 for more details.
  */
 
 //
@@ -17,6 +17,9 @@
 #include "OkSettings.h"
 #include "base/autorun.h"
 #include "base/r.h"
+#include "sys/sysinfo.h"
+#include "system/sys_info.h"
+#include "utils.h"
 #include <QDebug>
 #include <QDir>
 #include <QMutexLocker>
@@ -25,10 +28,7 @@
 #include <QStandardPaths>
 #include <QtWidgets>
 
-namespace ok {
-namespace base {
-
-static QString globalSettingsFile = APPLICATION_SHORT_NAME ".ini";
+namespace ok::base {
 
 static QStringList locales = {
     "zh_CN", // 中文简体 zh_CN, zh_TW, zh_HK
@@ -51,24 +51,17 @@ OkSettings::OkSettings(QObject *parent) //
       currentProfileId(0) {
 
   settingsThread = new QThread();
-  settingsThread->setObjectName(globalSettingsFile);
+  settingsThread->setObjectName(objectName());
   settingsThread->start(QThread::LowPriority);
   moveToThread(settingsThread);
 
   loadGlobal();
 }
 
+
 void OkSettings::loadGlobal() {
 
-  QDir dir(getSettingsDirPath());
-  QString filePath = dir.filePath(getGlobalSettingsFile());
-
-  // If no settings file exist -- use the default one
-  if (!QFile(filePath).exists()) {
-    qDebug() << "No settings file found, using defaults";
-    filePath = ":/conf/" + globalSettingsFile;
-  }
-
+  QString filePath =  getGlobalSettingsFile() ;
   qDebug() << "Loading settings from " + filePath;
 
   QSettings s(filePath, QSettings::IniFormat);
@@ -98,7 +91,7 @@ void OkSettings::saveGlobal() {
 
   QMutexLocker locker{&bigLock};
 
-  QString path = getSettingsDirPath() + globalSettingsFile;
+  QString path = ok::base::PlatformInfo::getGlobalSettingsFile();
   qDebug() << "Saving global settings at " + path;
 
   QSettings s(path, QSettings::IniFormat);
@@ -118,38 +111,6 @@ void OkSettings::saveGlobal() {
     s.setValue("minimizeToTray", minimizeToTray);
   }
   s.endGroup();
-}
-
-QString OkSettings::getGlobalSettingsFile() { return globalSettingsFile; }
-
-/**
- * @brief Get path to directory, where the settings files are stored.
- * @return Path to settings directory, ends with a directory separator.
- */
-QString OkSettings::getSettingsDirPath() {
-  QMutexLocker locker{&bigLock};
-  if (makeToxPortable)
-    return qApp->applicationDirPath() + QDir::separator();
-
-// workaround for https://bugreports.qt-project.org/browse/QTBUG-38845
-#ifdef Q_OS_WIN
-  return QDir::cleanPath(
-             QStandardPaths::writableLocation(QStandardPaths::HomeLocation) +
-             QDir::separator() + "AppData" + QDir::separator() + "Roaming" +
-             QDir::separator() + APPLICATION_ID) +
-         QDir::separator();
-#elif defined(Q_OS_OSX)
-  return QDir::cleanPath(
-             QStandardPaths::writableLocation(QStandardPaths::HomeLocation) +
-             QDir::separator() + "Library" + QDir::separator() +
-             "Application Support" + QDir::separator() + APPLICATION_ID) +
-         QDir::separator();
-#else
-  return QDir::cleanPath(
-             QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) +
-             QDir::separator() + APPLICATION_ID) +
-         QDir::separator();
-#endif
 }
 
 OkSettings &OkSettings::getInstance() {
@@ -176,22 +137,37 @@ void OkSettings::setTranslation(const QString &newValue) {
   }
 }
 
-QString OkSettings::downloadDir() {
-  return QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
+QDir OkSettings::downloadDir() {
+  return ok::base::PlatformInfo::getAppDownloadDirPath();
 }
 
-QString OkSettings::cacheDir() {
-  return QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
+QDir OkSettings::cacheDir() {
+  return ok::base::PlatformInfo::getAppCacheDirPath();
 }
 
-QString OkSettings::configDir() {
-  return QStandardPaths::writableLocation(QStandardPaths::ConfigLocation);
+QDir OkSettings::configDir() {
+  return ok::base::PlatformInfo::getAppConfigDirPath();
 }
 
-QString OkSettings::pluginDir() {
-  QDir dir;
-  dir.mkpath(configDir() + "/" + APPLICATION_ID + "/plugins");
-  return configDir() + "/" + APPLICATION_ID + "/plugins";
+QDir OkSettings::dataDir() {
+  return  ok::base::PlatformInfo::getAppDataDirPath();
+}
+
+
+/**
+ * @brief Get path to directory, where the application cache are stored.
+ * @return Path to application cache, ends with a directory separator.
+ */
+QDir OkSettings::getAppCacheDirPath() {
+  return PlatformInfo::getAppCacheDirPath();
+}
+
+QDir OkSettings::getAppPluginPath()  {
+  return PlatformInfo::getAppPluginDirPath();
+}
+
+QDir OkSettings::getAppLogPath() {
+  return PlatformInfo::getAppLogDirPath();
 }
 
 bool OkSettings::getShowSystemTray() {
@@ -318,33 +294,8 @@ uint32_t OkSettings::makeProfileId(const QString &profile) {
 }
 
 
-/**
- * @brief Get path to directory, where the application cache are stored.
- * @return Path to application cache, ends with a directory separator.
- */
-QString OkSettings::getAppCacheDirPath() const {
-  if (makeToxPortable)
-    return qApp->applicationDirPath() + QDir::separator();
-
-// workaround for https://bugreports.qt-project.org/browse/QTBUG-38845
-#ifdef Q_OS_WIN
-  return QDir::cleanPath(
-             QStandardPaths::writableLocation(QStandardPaths::HomeLocation) +
-             QDir::separator() + "AppData" + QDir::separator() + "Roaming" +
-             QDir::separator() + "tox") +
-         QDir::separator();
-#elif defined(Q_OS_OSX)
-  return QDir::cleanPath(
-             QStandardPaths::writableLocation(QStandardPaths::HomeLocation) +
-             QDir::separator() + "Library" + QDir::separator() +
-             "Application Support" + QDir::separator() + "Tox") +
-         QDir::separator();
-#else
-  return QDir::cleanPath(
-             QStandardPaths::writableLocation(QStandardPaths::CacheLocation)) +
-         QDir::separator();
-#endif
+QString OkSettings::getGlobalSettingsFile() {
+  return ok::base::PlatformInfo::getGlobalSettingsFile();
 }
 
 } // namespace base
-} // namespace ok

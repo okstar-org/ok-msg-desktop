@@ -17,10 +17,10 @@
 #pragma once
 
 #include "base/compatiblerecursivemutex.h"
+#include <QDir>
 #include <QObject>
 
-namespace ok {
-namespace base {
+namespace ok::base {
 
 class OkSettings : public QObject {
   Q_OBJECT
@@ -30,7 +30,6 @@ public:
   static OkSettings &getInstance();
 
   QString getGlobalSettingsFile();
-  QString getSettingsDirPath() ;
 
   void loadGlobal();
 
@@ -38,10 +37,14 @@ public:
   QString getTranslation() ;
   void setTranslation(const QString &newValue);
 
-  static QString downloadDir();
-  static QString cacheDir();
-  static QString configDir();
-  static QString pluginDir();
+  static QDir downloadDir();
+  static QDir cacheDir();
+  static QDir configDir();
+  static QDir dataDir();
+
+  static QDir getAppCacheDirPath() ;
+  static QDir getAppLogPath() ;
+  static QDir getAppPluginPath() ;
 
   bool getShowSystemTray() ;
   void setShowSystemTray(bool newValue);
@@ -79,7 +82,8 @@ public:
   uint32_t getCurrentProfileId() ;
   void setCurrentProfile(const QString& profile);
 
-  QString getAppCacheDirPath() const;
+
+
 
 private:
   static uint32_t makeProfileId(const QString& profile);
@@ -88,7 +92,6 @@ private:
 
   CompatibleRecursiveMutex bigLock;
   QString translation;
-  bool makeToxPortable = false;
 
   bool showSystemTray;
   bool closeToTray;
@@ -122,4 +125,3 @@ public slots:
 };
 
 } // namespace base
-} // namespace ok

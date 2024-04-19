@@ -5,19 +5,16 @@ if(ENABLE_PLUGINS)
     message(STATUS "ENABLE_PLUGINS")
 endif()
 
-# 在QtCreator下禁用CONAN
-set(QT_CREATOR_SKIP_CONAN_SETUP TRUE)
-# 取消CONAN对编译器的检查
-set(CONAN_DISABLE_CHECK_COMPILER ON)
-
 include(ProcessorCount)
 ProcessorCount(N)
 message(STATUS "ProcessorCount=" ${N})
 
-message(STATUS "CMAKE_SOURCE_DIR=" ${CMAKE_SOURCE_DIR})
 message(STATUS "PROJECT_SOURCE_DIR=" ${PROJECT_SOURCE_DIR})
 message(STATUS "PROJECT_BINARY_DIR=" ${PROJECT_BINARY_DIR})
+message(STATUS "CMAKE_SOURCE_DIR=" ${CMAKE_SOURCE_DIR})
 message(STATUS "CMAKE_CURRENT_SOURCE_DIR=" ${CMAKE_CURRENT_SOURCE_DIR})
+message(STATUS "CMAKE_PREFIX_PATH=" ${CMAKE_PREFIX_PATH})
+message(STATUS "Qt5_DIR=" ${Qt5_DIR})
 
 execute_process(
   COMMAND git rev-parse HEAD

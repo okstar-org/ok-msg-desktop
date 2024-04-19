@@ -4,10 +4,10 @@
  * You can use this software according to the terms and conditions of the Mulan
  * PubL v2. You may obtain a copy of Mulan PubL v2 at:
  *          http://license.coscl.org.cn/MulanPubL-2.0
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
- * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
- * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
- * See the Mulan PubL v2 for more details.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY
+ * KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE. See the
+ * Mulan PubL v2 for more details.
  */
 
 #pragma once
@@ -49,7 +49,7 @@ enum class MsgType {
 struct IMMessage {
 public:
   IMMessage();
-  IMMessage(MsgType type_,  //
+  IMMessage(MsgType type_,    //
             QString from_,    //
             QString body_,    //
             QString id_ = "", //
@@ -84,11 +84,20 @@ struct FriendId {
   FriendId(const FriendId &);
   FriendId(const QString &jid);
 
-  QString toString() const {
+  [[nodiscard]] QString getUsername() const { return username; }
+  [[nodiscard]] QString getServer() const { return server; }
+
+  [[nodiscard]] QString toString() const {
+    if (username.isEmpty()) {
+      return {};
+    }
+
+    if(server.isEmpty()){
+      return username;
+    }
+
     return username + "@" + server;
   }
-
-  QString getUsername() const { return username; }
 };
 
 struct PeerId : public FriendId {
@@ -115,5 +124,5 @@ struct PeerId : public FriendId {
 
 // Q_DECLARE_METATYPE(IMMessage)
 
-} // namespace IM
+} // namespace messenger
 } // namespace lib

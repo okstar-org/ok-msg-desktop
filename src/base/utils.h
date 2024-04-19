@@ -13,18 +13,16 @@
 #pragma once
 
 #include <QDateTime>
+#include <QDir>
 #include <QObject>
 #include <QUuid>
 
 #include "basic_types.h"
 
-namespace base {
+namespace ok::base {
 
-class Utils {
+class KeyUtils {
 public:
-  Utils();
-  ~Utils();
-
   static QString GetUUID() {
     // 去除前后“{}”
     return QUuid::createUuid().toString().remove(0, 1).remove(36, 1);
@@ -40,4 +38,17 @@ public:
     return ts;
   }
 };
+
+class PathUtils{
+public:
+   [[nodiscard]] inline static QDir ensure(const QString & path)  {
+    QDir dir(path);
+    if(!dir.exists()){
+      dir.mkpath(".");
+    }
+    return dir;
+  }
+};
+
+
 } // namespace base

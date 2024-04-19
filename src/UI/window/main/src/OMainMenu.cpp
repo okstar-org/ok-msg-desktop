@@ -32,7 +32,7 @@ OMainMenu::OMainMenu(QWidget *parent)
   delayCaller_ = (std::make_unique<base::DelayedCallTimer>());
 
   // 设置样式
-  QString qss = base::Files::readStringAll(":/qss/menu.qss");
+  QString qss = ok::base::Files::readStringAll(":/qss/menu.qss");
   setStyleSheet(qss);
 
   ui->chatBtn->setCursor(Qt::PointingHandCursor);

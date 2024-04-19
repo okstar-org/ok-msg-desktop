@@ -42,7 +42,7 @@ ConfigWindow::ConfigWindow(QWidget *parent): QFrame(parent),ui(new Ui::ConfigWin
   settings::Translator::translate(OK_UIWindowConfig_MODULE, locale);
 //  retranslateUi();
 
-  auto qss = base::Files::readStringAll(":/qss/plugin.qss");
+  auto qss = ok::base::Files::readStringAll(":/qss/plugin.qss");
   setStyleSheet(qss);
 
   init();

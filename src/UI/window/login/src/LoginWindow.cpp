@@ -39,7 +39,7 @@ LoginWindow::LoginWindow(QWidget *parent)
   setFixedSize(LOGIN_WINDOW_WIDTH, LOGIN_WINDOW_HEIGHT);
 
   // 设置样式
-  QString qss = base::Files::readStringAll(":/qss/login.qss");
+  QString qss = ok::base::Files::readStringAll(":/qss/login.qss");
   setStyleSheet(qss);
 
   connect(ui->loginWidget, &UI::LoginWidget::loginResult,

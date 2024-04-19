@@ -5,7 +5,7 @@ include_directories(${CMAKE_BINARY_DIR})
 include_directories(${CMAKE_SOURCE_DIR}/plugins/include)
 
 set(${PROJECT_NAME}_SOURCES
-    files.cpp
+    files.h
     logs.cpp
     StringUtils.cpp
     timer.cpp

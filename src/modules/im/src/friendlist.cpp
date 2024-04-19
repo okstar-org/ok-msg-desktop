@@ -46,7 +46,6 @@ Friend *FriendList::findFriend(const ToxPk &friendPk) {
   if (f_it != friendList.end()) {
     return *f_it;
   }
-  qWarning()<<"Can not find friend:" << friendPk.toString() <<" from friend list";
   return nullptr;
 }
 

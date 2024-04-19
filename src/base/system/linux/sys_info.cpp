@@ -4,35 +4,37 @@
  * You can use this software according to the terms and conditions of the Mulan
  * PubL v2. You may obtain a copy of Mulan PubL v2 at:
  *          http://license.coscl.org.cn/MulanPubL-2.0
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
- * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
- * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
- * See the Mulan PubL v2 for more details.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY
+ * KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE. See the
+ * Mulan PubL v2 for more details.
  */
 
 #include "../../system/sys_info.h"
 #include "files.h"
 
-#include <QFile>
+#include <QCoreApplication>
+#include <QDir>
+#include <QStandardPaths>
 #include <QSysInfo>
 
-namespace base {
+namespace ok::base {
 
 bool SysInfo::GetCpuInfo(CpuInfo &info) {
   auto arch = QSysInfo::currentCpuArchitecture();
   info.arch = arch == "x86_64" ? "x64" : arch;
-  return Files::ReadKeyValueLine("/proc/cpuinfo", ":",
-                       [&](const QString &k, const QString &v) {
-                         if (k == "vendor_id") {
-                           info.manufacturer = v;
-                         } else if (k == "model name") {
-                           info.name = v;
-                         } else if (k == "cpu cores") {
-                           info.cores = std::stoi(v.toStdString());
-                         } else if (k == "processor") {
-                           info.processors = std::stoi(v.toStdString()) + 1;
-                         }
-                       });
+  return Files::ReadKeyValueLine(
+      "/proc/cpuinfo", ":", [&](const QString &k, const QString &v) {
+        if (k == "vendor_id") {
+          info.manufacturer = v;
+        } else if (k == "model name") {
+          info.name = v;
+        } else if (k == "cpu cores") {
+          info.cores = std::stoi(v.toStdString());
+        } else if (k == "processor") {
+          info.processors = std::stoi(v.toStdString()) + 1;
+        }
+      });
 }
 
 bool SysInfo::GetOsInfo(OsInfo &info) {
@@ -50,18 +52,7 @@ bool SysInfo::GetOsInfo(OsInfo &info) {
   info.prettyName = QSysInfo::prettyProductName();
   info.name = QSysInfo::productType();
   info.version = QSysInfo::productVersion();
-
   return true;
-  //  return ReadLineValue("/etc/os-release", "=",
-  //                       [&](const QString &k, const QString &v) {
-  //                         if (k == "NAME") {
-  //                           info.name = v.section("\"", 1, 1);
-  //                         } else if (k == "VERSION_ID") {
-  //                           info.version = v.section("\"", 1, 1);
-  //                         } else if (k == "PRETTY_NAME") {
-  //                           info.pretty_name = v.section("\"", 1, 1);
-  //                         }
-  //                       });
 }
 
 SystemInfo *SystemInfo::instance() {
@@ -85,4 +76,4 @@ CpuInfo SystemInfo::cpuInfo() {
   return info;
 }
 
-} // namespace base
+} // namespace ok::base

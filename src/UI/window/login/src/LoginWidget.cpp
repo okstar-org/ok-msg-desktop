@@ -65,7 +65,7 @@ void LoginWidget::init() {
 
   //==========国际化==========//
   // 先获取当前语言
-  OkSettings &s = OkSettings::getInstance();
+  auto &s = ok::base::OkSettings::getInstance();
   qDebug() << "Settings translation:" << s.getTranslation();
 
   for (int i = 0; i < s.getLocales().size(); ++i) {
@@ -215,7 +215,7 @@ void LoginWidget::on_language_currentIndexChanged(int index) {
     return;
   }
 
-  OkSettings &s = OkSettings::getInstance();
+  auto &s = ok::base::OkSettings::getInstance();
   const QString &locale = s.getLocales().at(index - 1);
   s.setTranslation(locale);
   s.saveGlobal();

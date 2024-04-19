@@ -43,6 +43,8 @@
 // #include <windows.h>
 // #endif
 
+#include <QDebug>
+
 #define xstr(a) str(a)
 #define str(a) #a
 
@@ -73,9 +75,9 @@ QString ApplicationInfo::version() { return APPLICATION_VERSION; }
 QString ApplicationInfo::capsNode() { return PROG_CAPS_NODE; }
 
 QString ApplicationInfo::osName() {
-    base::OsInfo info;
-    base::SysInfo::GetOsInfo(info);
-    return  info.name;
+    ok::base::OsInfo info;
+    ok::base::SysInfo::GetOsInfo(info);
+    return info.name;
 }
 
 QString ApplicationInfo::IPCName() { return PROG_IPC_NAME; }
@@ -135,7 +137,7 @@ QStringList ApplicationInfo::pluginDirs()
 #endif
 
     static const QStringList &&dirs = {
-      ok::base::OkSettings::pluginDir()
+      ok::base::OkSettings().getAppPluginPath().path()
     };
     return dirs;
 }
@@ -211,9 +213,12 @@ QString ApplicationInfo::libDir()
  */
 QString ApplicationInfo::homeDir(ApplicationInfo::HomedirType type)
 {
-    static QString configDir_ = QStandardPaths::locate(QStandardPaths::ConfigLocation, "");
-    static QString dataDir_ = QStandardPaths::locate(QStandardPaths::DataLocation, "");
-    static QString cacheDir_ = QStandardPaths::locate(QStandardPaths::CacheLocation, "");
+    static QString configDir_ = QStandardPaths::locate(QStandardPaths::GenericConfigLocation, "", QStandardPaths::LocateDirectory);
+    qDebug() << configDir_;
+    static QString dataDir_ = QStandardPaths::locate(QStandardPaths::GenericDataLocation, "", QStandardPaths::LocateDirectory);
+    qDebug() << dataDir_;
+    static QString cacheDir_ = QStandardPaths::locate(QStandardPaths::GenericCacheLocation, "", QStandardPaths::LocateDirectory);
+    qDebug() << cacheDir_;
 
     QString ret;
     switch (type) {

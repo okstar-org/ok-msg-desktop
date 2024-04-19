@@ -176,12 +176,23 @@ bool PluginManager::uninstallPlugin(const QString &shortName) {
 
 bool PluginManager::installPlugin(const QString &filePath,
                                   const QString &shortName) {
-  // 移动到插件安装目录
-  auto pf = QString("%1/%2").arg(ok::base::OkSettings::pluginDir(), shortName);
-  ::base::Files::moveFile(filePath, pf);
-  qDebug() << "Plugin" << filePath << "be moved to:" << pf;
+  // 移动到插件目录
+  qDebug() << "Plugin is:" << filePath << shortName;
+  QFile file(filePath);
+  if(!file.exists()){
+    qWarning()<<"Plugin is not exist!";
+    return false;
+  }
 
-  auto ph = addHostFile(pf);
+  auto pluginFile = ok::base::OkSettings().getAppPluginPath().path()+'/'+shortName;
+  auto moved = ok::base::Files::moveFile(filePath, pluginFile);
+  if(!moved){
+    qWarning()<<"Plugin move failed!";
+    return false;
+  }
+
+  qDebug() << "Plugin at:" << pluginFile;
+  auto ph = addHostFile(pluginFile);
   if (ph == nullptr) {
     return false;
   }
@@ -256,7 +267,7 @@ void PluginManager::removeHostFile(PluginHost *host) {
   int file_removed2 = pluginByFile_.remove(file);
   qDebug() << "Remove plugin from file:" << file << "=>" << file_removed2;
 
-  auto removed = ::base::Files::removeFile(file);
+  auto removed = ok::base::Files::removeFile(file);
   qDebug() << "Remove plugin local file:" << file << "=>" << removed;
 }
 

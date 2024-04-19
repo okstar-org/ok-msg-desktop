@@ -402,6 +402,9 @@ bool PluginHost::isLoaded() const { return plugin_ != nullptr; }
  */
 bool PluginHost::enable() {
   qDebug() << "To enabling plugin" << file_;
+
+  QMutexLocker locker(&mutex_);
+
   if (!enabled_ && load()) {
     if (!connected_) {
       qDebug() << "connecting plugin " << name_;
@@ -536,6 +539,7 @@ bool PluginHost::enable() {
  * all.
  */
 bool PluginHost::disable() {
+  QMutexLocker locker(&mutex_);
   if (!enabled_) {
     qWarning() << "The plugin" << shortName() << "is disabled already.";
     return true;
@@ -565,7 +569,6 @@ bool PluginHost::isEnabled() const { return enabled_; }
  * If plugin implements incoming XML filters, they are called in turn.
  * Any handler may then modify the XML and may cause the stanza to be
  * silently discarded.
- * TODO: modification doesn't work
  *
  * \param account Identifier of the PsiAccount responsible
  * \param xml Incoming XML (may be modified)
@@ -573,6 +576,8 @@ bool PluginHost::isEnabled() const { return enabled_; }
  * silently discarded.
  */
 bool PluginHost::incomingXml(int account, const QDomElement &e) {
+  QMutexLocker locker(&mutex_);
+
   bool handled = false;
   // try stanza filter first
   StanzaFilter *sf = qobject_cast<StanzaFilter *>(plugin_);
@@ -629,6 +634,8 @@ bool PluginHost::incomingXml(int account, const QDomElement &e) {
 }
 
 bool PluginHost::outgoingXml(int account, QDomElement &e) {
+  QMutexLocker locker(&mutex_);
+
   bool handled = false;
   StanzaFilter *ef = qobject_cast<StanzaFilter *>(plugin_);
   if (ef && ef->outgoingStanza(account, e)) {
@@ -1060,7 +1067,7 @@ PluginHost::appCapsVersion() { // this stuff is incompatible with new caps 1.5
 QString PluginHost::appOsName() { return ApplicationInfo::osName(); }
 
 QString PluginHost::appOsVersion() {
-  return ::base::SystemInfo::instance()->osVersion();
+  return ok::base::SystemInfo::instance()->osVersion();
 }
 
 QString PluginHost::appHomeDir(ApplicationInfoAccessingHost::HomedirType type) {
@@ -1416,6 +1423,8 @@ void PluginHost::playSound(const QString &fileName) {
  */
 
 bool PluginHost::decryptMessageElement(int account, QDomElement &message) {
+  QMutexLocker locker(&mutex_);
+
   qDebug()<<"decryptMessageElement account:"<< account << "msg:" << &message;
   auto es = qobject_cast<ok::plugin::EncryptionSupport *>(plugin_);
   bool decrypted = es && es->decryptMessageElement(account, message);
@@ -1424,6 +1433,8 @@ bool PluginHost::decryptMessageElement(int account, QDomElement &message) {
 }
 
 bool PluginHost::encryptMessageElement(int account, QDomElement &message) {
+  QMutexLocker locker(&mutex_);
+
   if(plugin_.isNull()){
     qWarning() <<"Unable find plugin";
     return false;

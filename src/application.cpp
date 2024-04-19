@@ -19,14 +19,17 @@
 #include <QString>
 #include <QTranslator>
 
+#include "UI/core/FontManager.h"
+#include "UI/window/login/src/LoginWindow.h"
+#include "base/OkSettings.h"
 #include "base/files.h"
 #include "base/logs.h"
 #include "base/r.h"
+#include "base/system/sys_info.h"
+#include "lib/log/LogManager.h"
 #include "lib/plugin/pluginmanager.h"
 #include "lib/settings/translator.h"
 #include "modules/im/src/nexus.h"
-#include "UI/core/FontManager.h"
-#include "UI/window/login/src/LoginWindow.h"
 
 using namespace core;
 using namespace base;
@@ -35,19 +38,62 @@ namespace core {
 
 Application::Application(int &argc, char *argv[])
     : QApplication(argc, argv), _argc(argc), _argv(argv) {
-  qDebug() << "Creating application...";
+
+  //Qt application settings.
+  setApplicationName(APPLICATION_NAME);
+  setApplicationVersion(APPLICATION_VERSION_ID);
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 7, 0)
+  setDesktopFileName(APPLICATION_NAME);
+#endif
+
+  //Initialize log manager.
+  ok::lib::LogManager::Instance();
 
   qDebug() << QString("argc:%1").arg(argc);
   for (int i = 0; i < argc; i++) {
     qDebug() << QString("argv:%1->%2").arg(i).arg(argv[i]);
   }
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 7, 0)
-  setDesktopFileName(APPLICATION_ID);
-#endif
+  ok::base::CpuInfo cpuInfo;
+  ok::base::SysInfo::GetCpuInfo(cpuInfo);
 
-  setApplicationName(qsl(APPLICATION_NAME));
-  setApplicationVersion("\nGit commit: " + QString(GIT_VERSION));
+  qDebug() << "CpuInfo  :"          //
+           << cpuInfo.arch         //
+           << cpuInfo.manufacturer //
+           << cpuInfo.name         //
+           << cpuInfo.cores        //
+           << cpuInfo.processors;  //
+
+  ok::base::OsInfo osInfo;
+  ok::base::SysInfo::GetOsInfo(osInfo);
+  qDebug() << "OsInfo   :"           //
+           << osInfo.kernelName    //"linux"
+           << osInfo.kernelVersion //"5.19.0-50-generic"
+           << osInfo.name          //"ubuntu"
+           << osInfo.version       //"22.04"
+           << osInfo.prettyName    //"Ubuntu 22.04.2 LTS"
+           << osInfo.hostName      //"root-host"
+           << osInfo.uniqueId;     //"OWVjYjNmZTY0OTFmNGZiZGFhYjI0ODA2OTgwY2QxODQ="
+
+  qDebug() <<"APPLICATION_RELEASE   :" << APPLICATION_RELEASE;
+  qDebug() <<"APPLICATION_VERSION_ID:" << APPLICATION_VERSION_ID;
+  qDebug() <<"APPLICATION_ID        :" << APPLICATION_ID;
+  qDebug() <<"APPLICATION_NAME      :" << APPLICATION_NAME;
+
+  auto configDir = ok::base::OkSettings::configDir();
+  qDebug()<< "ConfigDir  :"<< configDir.path();
+  auto cacheDir = ok::base::OkSettings::cacheDir();
+  qDebug()<<"CacheDir   :"<< cacheDir.path();
+  auto dataDir = ok::base::OkSettings::dataDir();
+  qDebug()<<"DataDir    :"<< dataDir.path();
+  auto downloadDir = ok::base::OkSettings::downloadDir();
+  qDebug()<<"DownloadDir:"<< downloadDir.path();
+
+  auto pluginDir = ok::base::OkSettings::getAppPluginPath();
+  qDebug()<<"PluginDir  :"<< pluginDir.path();
+  auto logDir = ok::base::OkSettings::getAppLogPath();
+  qDebug()<<"LogDir     :"<< logDir.path();
 
   // Windows platform plugins DLL hell fix
   QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath());
@@ -56,7 +102,7 @@ Application::Application(int &argc, char *argv[])
   // 统一注册类型
   qRegisterMetaType<UI::PageMenu>("PageMenu");
 
-  QString qss = base::Files::readStringAll("application.qss");
+  QString qss = ok::base::Files::readStringAll("application.qss");
   qApp->setStyleSheet(qss);
 
   // 字体

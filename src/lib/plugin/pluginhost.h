@@ -106,8 +106,8 @@ public:
   const QString &version() const;
   const QString &vendor() const;
   const QString &description() const;
-  int priority() const;
   const QIcon &icon() const;
+  int priority() const;
 
   QStringList pluginFeatures() const;
 
@@ -171,7 +171,7 @@ public:
                           const char *slot) override;
   void requestNewShortcut(QObject *receiver, const char *slot) override;
 
-  // IconFacrotyAccessingHost
+  // IconFactoryAccessingHost
   QIcon getIcon(const QString &name) override;
   void addIcon(const QString &name, const QByteArray &icon) override;
 
@@ -296,7 +296,6 @@ public:
   bool encryptMessageElement(int account, QDomElement &message) override;
 
   // PluginAccessingHost
-
   QObject *getPlugin(const QString &name) override;
   QVariantMap selfMetadata() const override;
 
@@ -346,11 +345,13 @@ private:
 
   QMultiMap<QString, IqNamespaceFilter *> iqNsFilters_;
   QMultiMap<QRegExp, IqNamespaceFilter *> iqNsxFilters_;
+
   QList<QVariantHash> buttons_;
   QList<QVariantHash> gcbuttons_;
-
   QList<QVariantHash> accMenu_;
   QList<QVariantHash> contactMenu_;
+
+  QMutex mutex_;
 };
 } // namespace plugin
 } // namespace ok

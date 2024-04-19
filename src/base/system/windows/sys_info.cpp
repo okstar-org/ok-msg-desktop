@@ -13,8 +13,11 @@
 #include "base/system/sys_info.h"
 #include <QProcess>
 #include <algorithm>
+#include <QCoreApplication>
+#include <QDir>
+#include <QStandardPaths>
 
-namespace base {
+namespace ok::base {
 
 bool SysInfo::GetCpuInfo(CpuInfo &info) {
   auto arch = QSysInfo::currentCpuArchitecture();

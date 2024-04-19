@@ -23,11 +23,11 @@ namespace ok {
 namespace plugin {
 
 inline QString makePath(const QString &id, const QString &name) {
-  return QString("%1/%2_%3").arg(ok::base::OkSettings::downloadDir(), id, name);
+  return QString("%1/%2_%3").arg(ok::base::OkSettings::downloadDir().path(), id, name);
 }
 
 inline QString makePluginPath(const QString &name) {
-  return QString("%1/%2").arg(ok::base::OkSettings::pluginDir(), name);
+  return QString("%1/%2").arg(ok::base::OkSettings().getAppPluginPath().path(), name);
 }
 
 PluginInfoForm::PluginInfoForm(ok::backend::PluginInfo &info, QWidget *parent)
@@ -107,7 +107,7 @@ void PluginInfoForm::toInstall() {
       [&](QByteArray buf, const QString &fileName) {
         auto path = makePath(QString::number(id), fileName);
         qDebug() << "download bytes" << buf.size() << "be saved to=>" << path;
-        if (!::base::Files::writeTo(buf, path)) {
+        if (!ok::base::Files::writeTo(buf, path)) {
           qWarning() << "Cannot to write plugin files." << path;
           return;
         }

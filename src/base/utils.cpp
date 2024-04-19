@@ -12,10 +12,6 @@
 
 #include "utils.h"
 
-namespace base {
-
-Utils::Utils() {}
-
-Utils::~Utils() {}
+namespace ok::base {
 
 } // namespace base

@@ -1102,13 +1102,13 @@ void Settings::setGroupAlwaysNotify(bool newValue) {
 
 QString Settings::getTranslation() const {
   QMutexLocker locker{&bigLock};
-  ok::base::OkSettings &s = ok::base::OkSettings::getInstance();
+  auto &s = ok::base::OkSettings::getInstance();
   return s.getTranslation();
 }
 
 void Settings::setTranslation(const QString &newValue) {
   QMutexLocker locker{&bigLock};
-  ok::base::OkSettings &s = ok::base::OkSettings::getInstance();
+  auto &s = ok::base::OkSettings::getInstance();
   auto translation = s.getTranslation();
   if (newValue != translation) {
     translation = newValue;

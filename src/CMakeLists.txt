@@ -30,6 +30,7 @@ list(APPEND OK_LIBS
     IM
     OkIMCore
     OkSession
+    OkLog
     OkSettings
     OkNetwork
     OkBackend

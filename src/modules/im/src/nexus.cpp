@@ -107,11 +107,11 @@ void Nexus::onSave(SavedInfo &savedInfo) {
     }
 
     QCommandLineParser parser;
-    if (!Profile::exists(signInInfo.account)) {
-      profile = Profile::createProfile(signInInfo.account, &parser,
+    if (!Profile::exists(signInInfo.username)) {
+      profile = Profile::createProfile(signInInfo.username, &parser,
                                        signInInfo.password);
     } else {
-      profile = Profile::loadProfile(signInInfo.account, &parser,
+      profile = Profile::loadProfile(signInInfo.username, &parser,
                                      signInInfo.password);
     }
 
@@ -126,7 +126,7 @@ void Nexus::onSave(SavedInfo &savedInfo) {
 
     parent = parent_;
 
-    ok::base::OkSettings &s = ok::base::OkSettings::getInstance();
+    auto &s = ok::base::OkSettings::getInstance();
     QString locale = s.getTranslation();
     qDebug() << "locale" << locale;
 

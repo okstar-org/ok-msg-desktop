@@ -722,7 +722,7 @@ protected:
                        const ConferenceList &cList) override;
 
 
-  base::OsInfo osInfo;
+  ok::base::OsInfo osInfo;
 
   QStringList features;
 

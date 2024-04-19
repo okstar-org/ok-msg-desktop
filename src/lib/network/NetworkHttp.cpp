@@ -78,7 +78,7 @@ bool NetworkHttp::get(
     }
     auto bytes = reply->readAll();
     auto size = bytes.size();
-    qDebug() << "Received bytes:" << size << QString(bytes);
+    qDebug() << "Received bytes:" << size;
     if (size <= 0)
       return;
 
@@ -279,12 +279,11 @@ void NetworkHttp::PostFormData(
     return;
   }
 
-  QString contentType = base::Files::GetContentTypeStr(file->fileName());
+  QString contentType = ok::base::Files::GetContentTypeStr(file->fileName());
   file->open(QIODevice::ReadOnly);
 
   QByteArray byteArray = file->readAll();
-
-  PostFormData(url, byteArray, base::Files::GetContentTypeStr(file->fileName()),
+  PostFormData(url, byteArray, ok::base::Files::GetContentTypeStr(file->fileName()),
                file->fileName(), uploadProgress, readyRead);
 }
 

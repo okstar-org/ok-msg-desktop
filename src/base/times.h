@@ -16,7 +16,7 @@
 #include <sstream>
 #include <string>
 
-namespace base {
+namespace ok::base {
 
 class Times {
 public:

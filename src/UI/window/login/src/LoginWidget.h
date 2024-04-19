@@ -26,14 +26,14 @@ namespace Ui {
 class LoginWidget;
 }
 
-namespace ok {
-namespace backend {
+
+namespace ok::backend {
 class OkCloudService;
 }
 namespace session {
 class AuthSession;
 }
-} // namespace ok
+
 
 namespace UI {
 

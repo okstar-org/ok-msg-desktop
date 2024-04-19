@@ -20,7 +20,7 @@
 #include <QMimeDatabase>
 #include "basic_types.h"
 
-namespace base {
+namespace ok::base {
 
 enum class FileContentType {
   UNKOWN,
@@ -115,11 +115,11 @@ public:
     return true;
   }
 
-  inline static bool moveFile(QString oldPath, QString newPath) {
+  inline static bool moveFile(const QString& oldPath, QString newPath) {
     QFile file(oldPath);
     if (!file.exists())
       return false;
-    return (file.rename(newPath));
+    return file.rename(newPath);
   }
 
   inline static bool removeFile(const QString &filePath) {

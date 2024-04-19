@@ -57,7 +57,7 @@ GeneralForm::GeneralForm(SettingsWidget* myParent)
     //获取复选框状态
     bodyUI->checkUpdates->setChecked(s.getCheckUpdates());
 
-    ok::base::OkSettings& okSettings = ok::base::OkSettings::getInstance();
+    auto & okSettings = ok::base::OkSettings::getInstance();
 
     for (int i = 0; i < okSettings.getLocales().size(); ++i) {
         QString langName;
@@ -119,7 +119,7 @@ GeneralForm::~GeneralForm()
 
 void GeneralForm::on_transComboBox_currentIndexChanged(int index)
 {
-    ok::base::OkSettings& s =ok::base::OkSettings::getInstance();
+    auto & s = ok::base::OkSettings::getInstance();
     const QString& locale = s.getLocales().at(index);
     s.setTranslation(locale);
     settings::Translator::translate(OK_IM_MODULE, locale);

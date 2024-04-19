@@ -58,7 +58,7 @@ using namespace gloox;
  */
 IM::IM(QString host, QString user, QString pwd,
        QStringList features_)                           //
-    : osInfo(::base::SystemInfo::instance()->osInfo()), //
+    : osInfo(ok::base::SystemInfo::instance()->osInfo()), //
       features(std::move(features_)),                   //
       _host(stdstring(host)),                           //
       _username(stdstring(user)),                       //
@@ -105,7 +105,7 @@ void IM::timerEvent(QTimerEvent *e) {}
 std::unique_ptr<Client> IM::makeClient() {
   JID loginJid(_username + "@" + _host + "/" + _resource);
 
-  qDebug()<<("Using Jid:%1")<<(qstring(loginJid.full()));
+  qDebug() << "Using Jid:" << qstring(loginJid.full());
 
   /**
    * Client
@@ -544,8 +544,8 @@ void IM::handleMessage(const gloox::Message &msg, MessageSession *session) {
   auto body = qstring(msg.body());
 
   qDebug() << "handleMessage from:" << peerId;
-  qDebug() << "subtype:" << (int)msg.subtype();
   qDebug() << "sessionId:" << threadId;
+  qDebug() << "subtype:" << (int)msg.subtype();
 
   sessionIdMap.emplace(friendId.toStdString(), threadId.toStdString());
   sessionMap.emplace(threadId.toStdString(), session);
@@ -676,7 +676,6 @@ void IM::doMessageChat(const Message &msg, QString &friendId,
  * @param friendId
  */
 void IM::doMessageNormal(const Message &msg, QString &friendId) {
-  qDebug() << "doMessageNormal from:" << friendId;
   auto conf = msg.findExtension<Conference>(ExtConference);
   if (conf) {
     auto jid = conf->jid().bare();
@@ -691,12 +690,9 @@ void IM::handleMessageEvent(const JID &from, const MessageEvent *et) {
 
 void IM::doPubSubEvent(const gloox::PubSub::Event *pse, //
                        const Message &msg,              //
-                       QString &friendId) {
+                       QString &friendId) {             //
 
-  qDebug() << "doPubSubEvent:" << friendId;
   const QString &selfId = getSelfId().toString();
-
-  qDebug() << "selfId:" << selfId;
   auto isSelf = friendId == selfId;
 
   for (auto &item : pse->items()) {
@@ -1347,8 +1343,6 @@ void IM::handleTag(Tag *tag) {
 }
 
 bool IM::handleIq(const IQ &iq) {
-  qDebug() << "iq" << qstring(iq.xmlLang());
-
   const auto *ibb = iq.findExtension<InBandBytestream::IBB>(ExtIBB);
   if (ibb) {
     FriendId friendId(qstring(iq.from().bare()));
@@ -2092,18 +2086,15 @@ void IM::handleItems(const std::string &id,                   //
                      const std::string &node,                 //
                      const gloox::PubSub::ItemList &itemList, //
                      const gloox::Error *error) {
+
+  qDebug() << "handleItems" << qstring(service.full()) << (qstring(node));
+
   if (error) {
-    qDebug() << "Error:" << qstring(error->text());
+    qWarning() << "error:" << error->tag()->xml().c_str();
     return;
   }
 
   auto friendId = qstring(service.bare());
-  qDebug()<<QString("id:%1 friendId:%2 service:%3 node:%4")
-                .arg(qstring(id))
-                .arg(friendId)
-                .arg(qstring(service.full()))
-                .arg(qstring(node));
-
   auto isSelf = friendId == getSelfId().toString();
 
   for (auto &item : itemList) {
@@ -2111,12 +2102,9 @@ void IM::handleItems(const std::string &id,                   //
     auto data = item->payload();
     auto tagName = data->name();
 
-    qDebug()<<QString("PubSub::Item tagName:%1 node:%2")
-                  .arg(qstring(tagName))
-                  .arg(qstring(node));
+    qDebug() << "handleItem:" << qstring(tagName) << qstring(node);
 
     if (node == XMLNS_NICKNAME) {
-      qDebug() << "Parse nickname";
       gloox::Nickname nickname(data);
       auto nick = qstring(nickname.nick());
       qDebug() << "nick:" << nick;
@@ -2609,7 +2597,7 @@ void IM::handleLog(LogLevel level, LogArea area, const std::string &message) {
     qDebug() << "Received XML:" << message.c_str();
     break;
   case LogAreaXmlOutgoing:
-    qDebug() << "Sent XML:" << qstring(message);
+    qDebug() << "Sent XML:" << message.c_str();
     break;
   case LogAreaClassConnectionBOSH:
     qDebug() << "BOSH:" << (message.c_str());
