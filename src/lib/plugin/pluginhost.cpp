@@ -110,13 +110,6 @@ bool PluginHost::isValid() const { return valid_; }
 const QString &PluginHost::path() const { return file_; }
 
 /**
- * \brief Returns plugin full name.
- *
- * Data is available also when plugin is not loaded.
- */
-const QString &PluginHost::name() const { return name_; }
-
-/**
  * \brief Returns plugin short name.
  *
  * Data is available also when plugin is not loaded.

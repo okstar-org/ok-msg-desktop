@@ -101,7 +101,10 @@ public:
   QWidget *optionsWidget() const;
 
   // cached basic info
-  inline const QString &name() const;
+  inline const QString &name() const{
+    return name_;
+  };
+
   const QString &shortName() const;
   const QString &version() const;
   const QString &vendor() const;
