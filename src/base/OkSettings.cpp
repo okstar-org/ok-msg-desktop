@@ -16,11 +16,7 @@
 
 #include "OkSettings.h"
 #include "base/autorun.h"
-#include "base/r.h"
-#include "sys/sysinfo.h"
 #include "system/sys_info.h"
-#include "utils.h"
-#include <QDebug>
 #include <QDir>
 #include <QMutexLocker>
 #include <QObject>
