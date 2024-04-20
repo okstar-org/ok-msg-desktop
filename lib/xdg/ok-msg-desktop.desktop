@@ -7,11 +7,11 @@ Icon=org.okstar.ok-msg
 Terminal=false
 StartupWMClass=OkMSGDesktop
 Type=Application
-Categories=Chat;Network;Office;
+Categories=Network;Office;
 MimeType=x-scheme-handler/ok;
-Keywords=okstar;okmsg;msg;chat;im;messaging;messenger;
+Keywords=ok;okstar;okmsg;msg;chat;im;messaging;messenger;
 Actions=Quit;
-SingleMainWindow=true
+X-SingleMainWindow=true
 X-GNOME-UsesNotifications=true
 X-GNOME-SingleWindow=true
 
