@@ -1,16 +1,10 @@
 <h1 align="center">OkMSG Desktop</h1>
 
-<p align="center">
-  <img src="https://img.shields.io/badge/build-passing-brightgreen.svg">
-  <img src="https://img.shields.io/badge/platform-Windows%20|%20Linux%20|%20Web-brightgreen.svg">
-  <img src="https://img.shields.io/badge/license-MulanPubL%202.0-blue.svg">
-  <img src="https://img.shields.io/badge/std-C++20-blue.svg">
-  <img src="https://img.shields.io/badge/language-Qt-blue.svg">
-</p>
-
 # 🎁 项目介绍
 
 OkMSG是由OkStar(okstar.org)社区开发和维护的注重数据安全与保护的企业通讯协同工具，支持独立私有化部署的集即时消息、语音、视频通话、发送文件、会议等多种功能于一身的开源项目，同时让您的企业更加有效开启协作、有效沟通，控制成本，开拓新业务，并帮助您加速发展业务。
+
+OkMSG is an enterprise communication collaboration tool developed and maintained by the OkStar (okstar. org) community that focuses on data security and protection. It supports independent private deployment and is an open-source project that integrates multiple functions such as instant messaging, voice, video calling, file sending, and meetings. It enables your enterprise to more effectively initiate collaboration, communicate effectively, control costs, explore new businesses, and help you accelerate business development.
 
 OkMSG的诞生主要解决企业信息化过程中面对的问题：
 • 远程协同工具提高工作效率同时,如何保障企业数据安全和隐私、自主可控将成为企业最核心的问题。
@@ -20,10 +14,7 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
 - 聊天模块
   - 具备单聊、群聊；
   - 支持文字、音视频、文件传输等基本功能；
-  - 消息加密（计划中）。
-  
-- 教室模块 
-  - 互动白板、课堂直播、交流互动、在线群聊等功能；
+  - 消息端到端加密。
 
 # 🏢 软件架构
 
