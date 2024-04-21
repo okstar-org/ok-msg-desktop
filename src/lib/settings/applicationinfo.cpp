@@ -221,7 +221,7 @@ QString ApplicationInfo::homeDir(ApplicationInfo::HomedirType type)
     case ApplicationInfo::CacheLocation:
       return ok::base::OkSettings::cacheDir().path();
     }
-
+    return {};
 }
 
 QString ApplicationInfo::makeSubhomePath(const QString &path, ApplicationInfo::HomedirType type)

@@ -531,9 +531,8 @@ elseif (UNIX)
     set(PLATFORM_LIBS z OpenSSL::SSL OpenSSL::Crypto atomic X11)
 endif ()
 
-
 target_link_libraries(${PROJECT_NAME}
-    PRIVATE gloox
+    PUBLIC ${gloox_LIB}
     PUBLIC ${Qt5Core_LIBRARIES}
     PUBLIC ${Qt5Gui_LIBRARIES}
     PUBLIC ${Qt5Widgets_LIBRARIES}

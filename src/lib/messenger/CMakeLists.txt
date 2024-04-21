@@ -2,6 +2,7 @@ project(OkIMCore)
 
 include_directories(${gloox_SOURCE_DIR}/src)
 message(STATUS "gloox_SOURCE_DIR=${gloox_SOURCE_DIR}")
+message(STATUS "gloox_LIB=${gloox_LIB}")
 
 if (WIN32)
 	add_definitions(-D_WIN32 -DWIN32 -D_WINDOWS -D_UNICODE)
@@ -26,6 +27,7 @@ add_library(${PROJECT_NAME} STATIC
 target_link_libraries(${PROJECT_NAME}
 		PUBLIC Plugin
 		PRIVATE OkRTC
+		PRIVATE ${gloox_LIB}
 		PRIVATE ${Qt5Core_LIBRARIES}
 		PRIVATE ${Qt5Xml_LIBRARIES}
 		PRIVATE ${Qt5Widgets_LIBRARIES})
