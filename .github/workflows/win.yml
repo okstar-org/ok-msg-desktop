@@ -126,8 +126,8 @@ jobs:
         files: |
           ok-msg-desktop_${{ matrix.os }}_${{ matrix.arch }}.zip
 
-      - name: Compile .ISS to .EXE Installer
-        uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
-        with:
-          path: ${{ env.ARTIFACT_PATH }}/inno-setup-script.iss
-          options: /O+
+    - name: Compile .ISS to .EXE Installer
+      uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
+      with:
+        path: ${{ env.ARTIFACT_PATH }}/inno-setup-script.iss
+        options: /O+
