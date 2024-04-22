@@ -24,7 +24,7 @@ DisableProgramGroupPage=yes
 LicenseFile={#MyAppExePATH}\LICENSE
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
-OutputDir=D:\Work\ok-msg\src\ok-msg-desktop\build
+OutputDir={#MyAppExePATH}\deploy-setup
 OutputBaseFilename=OkMSG-setup
 Compression=lzma
 SolidCompression=yes
