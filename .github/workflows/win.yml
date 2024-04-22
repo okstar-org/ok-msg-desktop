@@ -109,7 +109,6 @@ jobs:
       uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
       with:
         path: inno-setup-script.iss
-        options: /Qp /O${{ env.ARTIFACT_PATH }} /F${{ env.ARTIFACT_Setup_FileName }} /Sbyparam=$p 
 
     - name: Archive Release
       uses: thedoctor0/zip-release@0.7.5
