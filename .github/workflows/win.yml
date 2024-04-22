@@ -100,7 +100,7 @@ jobs:
       if: env.UPLOAD_ARTIFACT == 'true'
       run: |
         mkdir ${{ env.ARTIFACT_PATH }}
-        cp ${{ steps.strings.outputs.build-output-dir }}\src\${{ matrix.build_type }}\ARTIFACT_Setup_FileName.exe ${{ env.ARTIFACT_PATH }}
+        cp ${{ steps.strings.outputs.build-output-dir }}\src\${{ matrix.build_type }}\ok-msg-desktop.exe ${{ env.ARTIFACT_PATH }}
         xcopy build\vcpkg_installed\${{ env.VCPKG_DEFAULT_TRIPLET }}\bin\*.dll ${{ env.ARTIFACT_PATH }}
         xcopy "$env:Qt5_Dir\bin\*.dll" ${{ env.ARTIFACT_PATH }}
         Copy-Item -Recurse $env:Qt5_Dir\plugins ${{ env.ARTIFACT_PATH }}
