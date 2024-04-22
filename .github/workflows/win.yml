@@ -108,7 +108,7 @@ jobs:
     - name: Compile .ISS to .EXE Installer
       uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
       with:
-        path: ${{ github.workspace }}/inno-setup-script.iss
+        path: inno-setup-script.iss
         options: /Qp /O${{ env.ARTIFACT_PATH }} /F${{ env.ARTIFACT_Setup_FileName }} /Sbyparam=$p 
 
     - name: Archive Release
