@@ -25,7 +25,7 @@ DisableProgramGroupPage=yes
 LicenseFile={#MyAppExePATH}\LICENSE
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
-OutputDir={#MyAppExePATH}\deploy-setup
+OutputDir=.\deploy-setup
 OutputBaseFilename={#MyAppExeFile}
 Compression=lzma
 SolidCompression=yes
