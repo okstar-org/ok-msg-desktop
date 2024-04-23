@@ -6,6 +6,7 @@
 #define MyAppPublisher "OkStar"
 #define MyAppURL "https://github.com/okstar-org/ok-msg-desktop"
 #define MyAppExeName "ok-msg-desktop_windows-latest_x64_setup.exe"
+#define MyAppExeFile "ok-msg-desktop_windows-latest_x64_setup"
 #define MyAppExePATH "ok-msg-desktop"
 
 [Setup]
@@ -25,7 +26,7 @@ LicenseFile={#MyAppExePATH}\LICENSE
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
 OutputDir={#MyAppExePATH}\deploy-setup
-OutputBaseFilename={#MyAppExeName}
+OutputBaseFilename={#MyAppExeFile}
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
