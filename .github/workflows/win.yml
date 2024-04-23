@@ -114,7 +114,6 @@ jobs:
     - name: Move setup binary.
       if: env.UPLOAD_ARTIFACT == 'true'
       run: |
-        mkdir ${{ env.ARTIFACT_Setup_Path }}
         cp ${{ env.ARTIFACT_Setup_Path}}\${{ env.ARTIFACT_Setup_FileName }}.exe ${{ env.ARTIFACT_PATH }}
 
     - name: Upload setup binary to release
