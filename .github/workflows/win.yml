@@ -110,7 +110,7 @@ jobs:
       uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
       with:
         path: inno-setup-script.iss
-·
+
     - name: Move setup binary.
       if: env.UPLOAD_ARTIFACT == 'true'
       run: |
