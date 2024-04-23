@@ -25,7 +25,7 @@ LicenseFile={#MyAppExePATH}\LICENSE
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
 OutputDir={#MyAppExePATH}\deploy-setup
-OutputBaseFilename=OkMSG-setup
+OutputBaseFilename={#MyAppExeName}
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
