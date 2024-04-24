@@ -117,11 +117,12 @@ jobs:
         mv ${{ env.ARTIFACT_Setup_Path}}\${{ env.ARTIFACT_Setup_FileName }}.exe ${{ env.ARTIFACT_PATH }}
 
     - name: Upload setup binary to release.
-      uses: actions/upload-artifact@master
-      if: env.UPLOAD_ARTIFACT == 'true'
+      uses: softprops/action-gh-release@v1
+      if: ${{ startsWith(github.ref, 'refs/tags/') }}
       with:
-        name: ${{ env.ARTIFACT_Setup_FileName }}.exe
-        path: ${{ env.ARTIFACT_PATH }}
+        token: ${{ secrets.GITHUB_TOKEN }}
+        files: |
+          ${{ env.ARTIFACT_PATH }}/${{ env.ARTIFACT_Setup_FileName }}.exe
 
     - name: Archive Release
       uses: thedoctor0/zip-release@0.7.5
