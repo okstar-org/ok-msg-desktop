@@ -9,45 +9,30 @@ endforeach ()
 
 #WebRTC
 if(${DESKTOP_APP_USE_FLATPAK})
-    message(STATUS "webrtc_SOURCE_DIR=${webrtc_SOURCE_DIR}")
     include_directories(${webrtc_SOURCE_DIR})
     include_directories(${webrtc_SOURCE_DIR}/third_party/sqlite)
     include_directories(${webrtc_SOURCE_DIR}/third_party/abseil-cpp)
+    message(STATUS "webrtc_SOURCE_DIR=${webrtc_SOURCE_DIR}")
     message(STATUS "webrtc_LIB=${webrtc_LIB}")
 else ()
-    include(FetchContent)
-    set(WebRTC_VER "121.6167.5.0")
-    if (WIN32)
-        set(WebRTC_NAME "libwebrtc-win-x64.7z")
-    elseif (APPLE)
-        set(WebRTC_NAME "libwebrtc-macos-x64.tar.xz")
-    elseif (LINUX)
-        set(WebRTC_NAME "libwebrtc-linux-x64.tar.xz")
-    endif ()
+    FetchContent_Declare(protobuf
+        GIT_REPOSITORY https://github.com/protocolbuffers/protobuf.git
+        GIT_TAG        v26.1
+    )
+    FetchContent_MakeAvailable(protobuf)
+    include_directories(${protobuf_SOURCE_DIR})
 
-    set(WebRTC_URL "https://github.com/crow-misia/libwebrtc-bin/releases/download/${WebRTC_VER}/${WebRTC_NAME}")
+    message(STATUS "protobuf_SOURCE_DIR=${protobuf_SOURCE_DIR}")
+    message(STATUS "protobuf_LIB=${protobuf_LIB}")
 
-    message(STATUS "Fetch webrtc, It may take some time to wait.")
-    set(FETCHCONTENT_QUIET OFF)
+
     FetchContent_Declare(webrtc
-        URL ${WebRTC_URL}
+        GIT_REPOSITORY https://github.com/okstar-org/ok-rtc.git
+        GIT_TAG        master
     )
     FetchContent_MakeAvailable(webrtc)
-
-    include_directories(${webrtc_SOURCE_DIR}/include)
-    include_directories(${webrtc_SOURCE_DIR}/include/third_party/sqlite)
-    include_directories(${webrtc_SOURCE_DIR}/include/third_party/abseil-cpp)
-
-    if (WIN32)
-        if (CMAKE_BUILD_TYPE STREQUAL Release)
-            set(webrtc_LIB ${webrtc_SOURCE_DIR}/release/webrtc.lib)
-        else ()
-            set(webrtc_LIB ${webrtc_SOURCE_DIR}/debug/webrtc.lib)
-        endif ()
-    else ()
-        set(webrtc_LIB ${webrtc_SOURCE_DIR}/lib/libwebrtc.a)
-    endif ()
-
+    include_directories(${webrtc_SOURCE_DIR}/src)
+    set(webrtc_LIB ok-rtc)
     message(STATUS "webrtc_SOURCE_DIR=${webrtc_SOURCE_DIR}")
     message(STATUS "webrtc_LIB=${webrtc_LIB}")
 endif ()

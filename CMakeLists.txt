@@ -1,19 +1,19 @@
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.22)
+cmake_policy(SET CMP0076 NEW)
+cmake_policy(SET CMP0091 NEW)
+cmake_policy(SET CMP0135 NEW)
 
-if(POLICY CMP0091)
-  cmake_policy(SET CMP0091 NEW)
-endif(POLICY CMP0091)
+include(CMakeDependentOption)
+include(CheckSymbolExists)
 
-if(POLICY CMP0135)
-  cmake_policy(SET CMP0135 NEW)
-endif(POLICY CMP0135)
 include(FetchContent)
+set(FETCHCONTENT_QUIET OFF)
 
-project(OkMSG-Project)
-
-get_filename_component(third_party_loc "3rdparty" REALPATH)
-get_filename_component(submodules_loc "src" REALPATH)
-get_filename_component(cmake_helpers_loc "cmake" REALPATH)
+project(OkMSG-Project
+    LANGUAGES C CXX ASM
+    DESCRIPTION "OkMSG"
+    HOMEPAGE_URL "https://github.com/okstar-org/ok-msg-desktop.git"
+)
 
 include(cmake/init_target.cmake)
 include(cmake/generate_target.cmake)

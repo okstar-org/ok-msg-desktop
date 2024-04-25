@@ -23,7 +23,7 @@
 #include <api/video_codecs/builtin_video_decoder_factory.h>
 #include <api/video_codecs/builtin_video_encoder_factory.h>
 #include <pc/video_track_source.h>
-
+#include <media/base/codec.h>
 
 #include <rtc_base/thread.h>
 #include <rtc_base/logging.h>
@@ -58,7 +58,7 @@ CreateSessionDescription(webrtc::SdpType sdpType,
   auto sessionDescription = std::make_unique<::cricket::SessionDescription>();
   auto &contents = context.getContents();
 
-  cricket::ContentGroup group(cricket::GROUP_TYPE_BUNDLE);
+  ::cricket::ContentGroup group(::cricket::GROUP_TYPE_BUNDLE);
   for (const auto &content : contents) {
 
     auto name = content.name;
@@ -98,9 +98,7 @@ CreateSessionDescription(webrtc::SdpType sdpType,
       auto acd = std::make_unique<::cricket::AudioContentDescription>();
 
       for (auto &pt : description.payloadTypes) {
-        auto ac = ::cricket::CreateAudioCodec(
-                                 pt.id, pt.name, pt.clockrate,
-                                 pt.channels);
+        ::cricket::AudioCodec ac((int)pt.id, pt.name, (int)pt.clockrate, pt.bitrate, pt.channels);
         for (auto &e : pt.parameters) {
           ac.SetParam(e.name, e.value);
         }
@@ -152,8 +150,7 @@ CreateSessionDescription(webrtc::SdpType sdpType,
     case gloox::Jingle::video: {
       auto vcd = std::make_unique<::cricket::VideoContentDescription>();
       for (auto &pt : description.payloadTypes) {
-//        ::cricket::VideoCodec vc(pt.id, pt.name);
-        auto vc = ::cricket::CreateVideoCodec(pt.id, pt.name);
+        ::cricket::VideoCodec vc(pt.id, pt.name);
         for (auto &e : pt.parameters) {
           vc.SetParam(e.name, e.value);
         }
@@ -237,17 +234,17 @@ void ORTC::start() {
   RTC_LOG(LS_INFO) << "WebRTC is starting...";
 
   network_thread = rtc::Thread::CreateWithSocketServer();
-  network_thread->SetName("network_thread", nullptr);
+  network_thread->SetName("network_thread", network_thread.get());
   bool result = network_thread->Start();
   RTC_LOG(LS_INFO) << "Start network thread=>" << result;
 
   worker_thread = rtc::Thread::Create();
-  worker_thread->SetName("worker_thread", nullptr);
+  worker_thread->SetName("worker_thread", worker_thread.get());
   result = worker_thread->Start();
   RTC_LOG(LS_INFO) << "Start worker thread=>" << result;
 
   signaling_thread = rtc::Thread::Create();
-  signaling_thread->SetName("signaling_thread", nullptr);
+  signaling_thread->SetName("signaling_thread", signaling_thread.get());
   result = signaling_thread->Start();
   RTC_LOG(LS_INFO) << "Start signaling thread=>" << result;
 
@@ -256,10 +253,10 @@ void ORTC::start() {
       worker_thread.get(),    /* worker_thread */
       signaling_thread.get(), /* signaling_thread */
       nullptr,                /* default_adm */
-      webrtc::CreateBuiltinAudioEncoderFactory(), //
-      webrtc::CreateBuiltinAudioDecoderFactory(), //
-      nullptr,  //::CreateBuiltinVideoEncoderFactory(), //
-      nullptr, //::CreateBuiltinVideoDecoderFactory(), //
+      webrtc::CreateBuiltinAudioEncoderFactory(),
+      webrtc::CreateBuiltinAudioDecoderFactory(),
+      webrtc::CreateBuiltinVideoEncoderFactory(),
+      webrtc::CreateBuiltinVideoDecoderFactory(), //
       nullptr /* audio_mixer */,                  //
       nullptr /* audio_processing */);
 

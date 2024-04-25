@@ -48,9 +48,6 @@ endif()
 
 if(UNIX)
   find_package(PkgConfig REQUIRED)
-
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --copy-dt-needed-entries -Wl")
-
 # -Wunused-parameter -pedantic -fsanitize=address,undefined,leak,integer -Wextra
 # -Wall -Wmacro-redefined -Wbuiltin-macro-redefined
   set(CMAKE_CXX_FLAGS
