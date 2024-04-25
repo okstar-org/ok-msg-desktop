@@ -20,6 +20,8 @@ jobs:
       ARTIFACT_PATH: "ok-msg-desktop"
       UPLOAD_ARTIFACT: "true"
       VCPKG_DEFAULT_TRIPLET: ${{ matrix.arch }}-windows
+      ARTIFACT_Setup_Path: "${{ github.workspace }}/deploy-setup"
+      ARTIFACT_Setup_FileName: "ok-msg-desktop_${{ matrix.os }}_${{ matrix.arch }}_setup"
 
     runs-on: ${{ matrix.os }}
 
@@ -103,6 +105,24 @@ jobs:
         xcopy "$env:Qt5_Dir\bin\*.dll" ${{ env.ARTIFACT_PATH }}
         Copy-Item -Recurse $env:Qt5_Dir\plugins ${{ env.ARTIFACT_PATH }}
         xcopy LICENSE ${{ env.ARTIFACT_PATH }}
+
+    - name: Compile .ISS to .EXE Installer
+      uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
+      with:
+        path: inno-setup-script.iss
+
+    - name: Move setup binary.
+      if: env.UPLOAD_ARTIFACT == 'true'
+      run: |
+        mv ${{ env.ARTIFACT_Setup_Path}}\${{ env.ARTIFACT_Setup_FileName }}.exe ${{ env.ARTIFACT_PATH }}
+
+    - name: Upload setup binary to release.
+      uses: softprops/action-gh-release@v1
+      if: ${{ startsWith(github.ref, 'refs/tags/') }}
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        files: |
+          ${{ env.ARTIFACT_PATH }}/${{ env.ARTIFACT_Setup_FileName }}.exe
 
     - name: Archive Release
       uses: thedoctor0/zip-release@0.7.5
