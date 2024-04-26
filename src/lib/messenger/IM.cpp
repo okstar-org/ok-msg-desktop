@@ -224,6 +224,7 @@ std::unique_ptr<Client> IM::makeClient() {
   client->setCompression(false);
   client->registerIqHandler(this, ExtIBB);
   client->registerIqHandler(this, ExtPubSub);
+  client->registerIqHandler(this, ExtSrvDisco);
 //  client->registerIncomingHandler(this);
 
   /**
@@ -1370,6 +1371,12 @@ bool IM::handleIq(const IQ &iq) {
 
     IQ riq(IQ::IqType::Result, iq.from(), iq.id());
     _client->send(riq);
+  }
+
+  auto services =
+      iq.tag()->findChild("services", "xmlns", XMLNS_EXTERNAL_SERVICE_DISCOVERY);
+  if (services) {
+    mExtDisco = ExtDisco(services);
   }
 
   emit incoming(qstring(iq.tag()->xml()));

@@ -124,13 +124,31 @@ void IMJingle::cacheSessionInfo(Jingle::Session *session,
 
   std::list<ortc::IceServer> l;
   if (callType != JingleCallType::none) {
-    //
-    for (const auto &item : client->extDisco().services()) {
+    std::list<ExtDisco::Service> discos;
+
+    ExtDisco::Service disco;
+    disco.type="turn";
+    disco.host = "chuanshaninfo.com";
+    disco.port=34780;
+    disco.username="gaojie";
+    disco.password="hncs";
+    discos.push_back(disco);
+
+    ExtDisco::Service disco1;
+    disco1.type="stun";
+    disco1.host = "stun.l.google.com";
+    disco1.port=19302;
+
+    discos.push_back(disco1);
+
+
+    for (const auto &item :  discos) {
       ortc::IceServer ice;
       ice.uri = item.type + ":" + item.host + ":" + std::to_string(item.port);
       //              "?transport=" + item.transport;
       ice.username = item.username;
       ice.password = item.password;
+      qDebug() <<"Add ice:" << ice.uri.c_str();
       l.push_back(ice);
     }
   }
