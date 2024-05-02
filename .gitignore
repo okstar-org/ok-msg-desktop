@@ -80,3 +80,4 @@ qrc_*.cpp
 config.h
 
 .flatpak-builder
+/out/

@@ -1115,8 +1115,11 @@ void IM::handleMUCConfigForm(MUCRoom *room, const DataForm &form) {
 
 void IM::handleMUCConfigResult(MUCRoom *room, bool success,
                                MUCOperation operation) {
-  qDebug() << "handleMUCConfigResult room" << qstring(room->jid().full())
-           << "success:" << success << "operation:" << operation;
+  qDebug() << "handleMUCConfigResult room"
+           << qstring(room->jid().full())
+           << "operation:" << operation
+           << "success:" << success;
+
 };
 
 void IM::handleMUCRequest(MUCRoom *room, const DataForm &form) {
@@ -1287,7 +1290,7 @@ void IM::setRoomName(const QString &groupId, const std::string &roomName) {
   // 存储书签列表
   if (update) {
     bookmarkStorage->storeBookmarks(mBookmarkList, mConferenceList);
-    qDebug() << "Store bookmarks is successful for room" << groupId;
+    qDebug() << "Store bookmarks：" << groupId;
   }
 }
 
@@ -2094,10 +2097,10 @@ void IM::handleItems(const std::string &id,                   //
                      const gloox::PubSub::ItemList &itemList, //
                      const gloox::Error *error) {
 
-  qDebug() << "handleItems" << qstring(service.full()) << (qstring(node));
+//  qDebug() << "handleItems" << qstring(service.full()) << (qstring(node));
 
   if (error) {
-    qWarning() << "error:" << error->tag()->xml().c_str();
+    qWarning() << __func__ << "error:" << error->tag()->xml().c_str();
     return;
   }
 
@@ -2516,7 +2519,7 @@ void IM::handleIncoming(gloox::Tag *tag) {
 }
 
 void IM::onDisconnect(ConnectionError e) {
-  qDebug()<<QString("error:%1").arg(e);
+  qDebug() << __func__ << "error:" << e;
   switch (e) {
   case ConnAuthenticationFailed:
     _status = IMStatus::AUTH_FAILED;

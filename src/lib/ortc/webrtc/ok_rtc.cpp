@@ -98,9 +98,10 @@ CreateSessionDescription(webrtc::SdpType sdpType,
       auto acd = std::make_unique<::cricket::AudioContentDescription>();
 
       for (auto &pt : description.payloadTypes) {
-        auto ac = ::cricket::CreateAudioCodec(
-                                 pt.id, pt.name, pt.clockrate,
-                                 pt.channels);
+//        auto ac = ::cricket::CreateAudioCodec(
+//                                 pt.id, pt.name, pt.clockrate,
+//                                 pt.channels);
+::cricket::AudioCodec ac(pt.id, pt.name, pt.clockrate, pt.bitrate,pt.channels);
         for (auto &e : pt.parameters) {
           ac.SetParam(e.name, e.value);
         }
@@ -152,8 +153,8 @@ CreateSessionDescription(webrtc::SdpType sdpType,
     case gloox::Jingle::video: {
       auto vcd = std::make_unique<::cricket::VideoContentDescription>();
       for (auto &pt : description.payloadTypes) {
-//        ::cricket::VideoCodec vc(pt.id, pt.name);
-        auto vc = ::cricket::CreateVideoCodec(pt.id, pt.name);
+        ::cricket::VideoCodec vc(pt.id, pt.name);
+//        auto vc = ::cricket::CreateVideoCodec(pt.id, pt.name);
         for (auto &e : pt.parameters) {
           vc.SetParam(e.name, e.value);
         }

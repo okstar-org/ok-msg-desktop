@@ -1323,7 +1323,7 @@ void Widget::addFriendFailed(const ToxPk &, const QString &errorInfo) {
 }
 
 void Widget::onFriendStatusChanged(QString friendId, Status::Status status) {
-  qDebug() << "onFriendStatusChanged" << friendId
+  qDebug() << __func__ << friendId
            << "status:" << ((int)status);
   const auto &friendPk = FriendList::id2Key(friendId);
   Friend *f = FriendList::findFriend(friendPk);

@@ -30,11 +30,49 @@ set(CMAKE_USE_WIN32_THREADS_INIT 0)
 set(CMAKE_USE_PTHREADS_INIT 1)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 
+set(BUILD_SHARED_LIBS OFF)
 
 if (WIN32)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D_ITERATOR_DEBUG_LEVEL=0" )
     add_definitions(-D_ITERATOR_DEBUG_LEVEL=0)
-    set(BUILD_SHARED_LIBS OFF)
-else ()
-    set(BUILD_SHARED_LIBS ON)
 endif ()
+
+
+if(UNIX)
+    find_package(PkgConfig REQUIRED)
+
+    # -Wunused-parameter -pedantic -fsanitize=address,undefined,leak,integer -Wextra
+    # -Wall -Wmacro-redefined -Wbuiltin-macro-redefined
+    set(CMAKE_CXX_FLAGS
+        "${CMAKE_CXX_FLAGS} -fstack-protector-all -Wunused-function -Wstrict-overflow -Wstrict-aliasing -Wstack-protector"
+    )
+endif(UNIX)
+
+if(MSVC)
+    option(USE_MP "use multiple" ON)
+    option(ProjectConfig_Global_COMPILE_FLAGS_WITH_MP "Set The Global Option COMPILE_FLAGS /MP to target." ON)
+    if(ProjectConfig_Global_COMPILE_FLAGS_WITH_MP OR USE_MP)
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /MP ")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP ")
+    endif()
+    #set(VS_STARTUP_PROJECT ${PROJECT_NAME})
+    #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}  /D_ITERATOR_DEBUG_LEVEL=0")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}  /D_ITERATOR_DEBUG_LEVEL=0 /DNDEBUG")
+    add_definitions(-D_ITERATOR_DEBUG_LEVEL=0)
+
+    SET (CMAKE_C_COMPILER_WORKS 1)
+    SET (CMAKE_CXX_COMPILER_WORKS 1)
+
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()
+
+message(STATUS "CMAKE_C_COMPILER_ID=" ${CMAKE_C_COMPILER_ID})
+message(STATUS "CMAKE_C_COMPILER=" ${CMAKE_C_COMPILER})
+message(STATUS "CMAKE_C_FLAGS=" ${CMAKE_C_FLAGS})
+
+message(STATUS "CMAKE_CXX_COMPILER_ID=" ${CMAKE_CXX_COMPILER_ID})
+message(STATUS "CMAKE_CXX_COMPILER=" ${CMAKE_CXX_COMPILER})
+message(STATUS "CMAKE_CXX_FLAGS=" ${CMAKE_CXX_FLAGS})
+message(STATUS "CMAKE_CXX_FLAGS_DEBUG=" ${CMAKE_CXX_FLAGS_DEBUG})
+message(STATUS "CMAKE_CXX_FLAGS_RELEASE=" ${CMAKE_CXX_FLAGS_RELEASE})

@@ -75,9 +75,9 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}"
 option(PLATFORM_EXTENSIONS "Enable platform specific extensions, requires extra dependencies" ON)
 
 # config.h.in -> config.h
-configure_file(${PROJECT_SOURCE_DIR}/config.h.in ${PROJECT_BINARY_DIR}/config.h @ONLY NEWLINE_STYLE LF)
-include_directories(${PROJECT_BINARY_DIR})
-add_definitions(-DHAVE_CONFIG)
+configure_file(${PROJECT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/ok_config.h @ONLY NEWLINE_STYLE LF)
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+add_definitions(-DOK_HAVE_CONFIG)
 
 
 # 开启插件（ON/OFF）

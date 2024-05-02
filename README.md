@@ -80,16 +80,34 @@ cmake --build build
 ## Ubuntu 22.04
 > 安装依赖
 ```shell
+sudo apt install -y gcc g++ clang yasm  
+sudo apt install -y qtcreator qtbase5-dev  qtmultimedia5-dev libqt5svg5-dev qttools5-dev
+sudo apt install -y libcrypto++-dev  libssl-dev
+sudo apt install -y libpipewire-0.3-dev libxss-dev libgbm-dev libdrm-dev libxdamage-dev libxrender-dev libxrandr-dev libxtst-dev \
+  libavcodec-dev libavformat-dev libswscale-dev libavdevice-dev libvpx-dev \
+  libopus-dev libjpeg-dev libopenal-dev libopenh264-dev \
+  libexif-dev libqrencode-dev libsodium-dev libsqlcipher-dev
+```
+> 构建OkRtc模块
+```shell
+git clone git@github.com:okstar-org/ok-rtc.git
+cd ok-rtc
 
+# CMake 构建
+cmake -B out  && cmake --build out
+# CMake 安装
+sudo cmake --install out
 ```
 
 ## Fedora 36
 ```shell
 dnf update -y
 dnf install -y gcc g++
-dnf install -y qt5-qtbase-devel qt6-qtbase-gui  qt5-qtmultimedia-devel  qt5-qtsvg-devel qt5-qttools-devel qt5-qttools-static \
-            libavcodec-free-devel libavdevice-free-devel libexif-free-devel qrencode-devel libsodium-devel sqlcipher-devel \
-            libvpx-devel openal-soft-devel openssl-devel
+dnf install -y qt5-qtbase-devel qt6-qtbase-gui  qt5-qtmultimedia-devel \
+  qt5-qtsvg-devel qt5-qttools-devel qt5-qttools-static \
+  libavcodec-free-devel libavdevice-free-devel \
+  libexif-free-devel qrencode-devel libsodium-devel sqlcipher-devel \
+  libvpx-devel openal-soft-devel openssl-devel
 ```
 
 ```shell

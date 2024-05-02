@@ -12,8 +12,8 @@
 
 #include "applicationinfo.h"
 
-#ifdef HAVE_CONFIG
-#include "config.h"
+#ifdef OK_HAVE_CONFIG
+#include "ok_config.h"
 #endif
 #include "base/r.h"
 #include "base/system/sys_info.h"

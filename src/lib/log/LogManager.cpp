@@ -32,8 +32,10 @@ namespace lib {
 static QAtomicPointer<QFile> logFilePointer;
 static QMutex logMutex;
 
-void logMessageHandler(QtMsgType type, const QMessageLogContext &ctxt,
+void logMessageHandler(QtMsgType type,
+                       const QMessageLogContext &ctxt,
                        const QString &msg) {
+
   QMutexLocker locker(&logMutex);
 
   QString file = ctxt.file;
