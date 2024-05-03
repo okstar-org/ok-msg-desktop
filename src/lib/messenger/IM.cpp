@@ -1722,7 +1722,7 @@ void IM::getRosterList(std::list<FriendId> &list) {
 }
 
 void IM::handleRoster(const Roster &roster) {
-  qDebug()<<QString("size:%1").arg(roster.size());
+  qDebug() << __func__ << "size:" << roster.size();
 
   while(!mUIStarted){
     qDebug()<<"Waiting UI Started...";

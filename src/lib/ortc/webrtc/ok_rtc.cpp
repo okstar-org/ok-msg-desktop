@@ -259,8 +259,8 @@ void ORTC::start() {
       nullptr,                /* default_adm */
       webrtc::CreateBuiltinAudioEncoderFactory(), //
       webrtc::CreateBuiltinAudioDecoderFactory(), //
-      nullptr,  //::CreateBuiltinVideoEncoderFactory(), //
-      nullptr, //::CreateBuiltinVideoDecoderFactory(), //
+      webrtc::CreateBuiltinVideoEncoderFactory(), //
+      webrtc::CreateBuiltinVideoDecoderFactory(), //
       nullptr /* audio_mixer */,                  //
       nullptr /* audio_processing */);
 
