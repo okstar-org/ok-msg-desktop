@@ -55,7 +55,7 @@ parts:
       - -./usr/share
 
   webrtc:
-    source: https://github.com/okstar-org/ok_rtc.git
+    source: https://github.com/okstar-org/ok-rtc.git
     source-depth: 1
     source-commit: 1e343304df8eb5995229e21733fb1f18839a0668
     plugin: cmake
