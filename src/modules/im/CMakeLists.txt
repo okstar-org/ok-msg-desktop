@@ -1,82 +1,39 @@
 project(IM)
 add_definitions(-DOK_${PROJECT_NAME}_MODULE="${PROJECT_NAME}")
 
-
-
 if (WIN32)
-    message(STATUS "VCPKG_TARGET_TRIPLET=${VCPKG_TARGET_TRIPLET}")
-    message(STATUS "VCPKG_TARGET_ARCHITECTURE=${VCPKG_TARGET_ARCHITECTURE}")
-    message(STATUS "VCPKG_CMAKE_SYSTEM_NAME=${VCPKG_CMAKE_SYSTEM_NAME}")
-    message(STATUS "VCPKG_BUILD_TYPE=${VCPKG_BUILD_TYPE}")
+    find_package(PkgConfig REQUIRED)
+   
 
-    set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET})
-    include_directories(${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/include)
+    pkg_check_modules(AVDEVICE REQUIRED libavdevice)
+    pkg_check_modules(AVCODEC REQUIRED libavcodec)
+    pkg_check_modules(AVFORMAT REQUIRED libavformat)
+    pkg_check_modules(AVUTIL REQUIRED libavutil)
+    pkg_check_modules(SWSCALE REQUIRED libswscale)
+    pkg_check_modules(SWRESAMPLE REQUIRED libswresample)
 
-    message(STATUS "Fetch libsodium")
-    FetchContent_Declare(libsodium
-            URL https://download.libsodium.org/libsodium/releases/libsodium-1.0.19-stable-msvc.zip
-    )
-    FetchContent_MakeAvailable(libsodium)
-    include_directories(${libsodium_SOURCE_DIR}/include)
-    link_directories(${libsodium_SOURCE_DIR}/${ARCH}/${CMAKE_BUILD_TYPE}/static)
-
-
-#    find_package(FFMPEG REQUIRED)
-    include_directories(${FFMPEG_INCLUDE_DIRS})
-    message(STATUS "FFMPEG_INCLUDE_DIRS=${FFMPEG_INCLUDE_DIRS}")
-    message(STATUS "FFMPEG_LIBRARIES=${FFMPEG_LIBRARIES}")
-    set(avcodec_LIBRARIES ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/avcodec.lib)
-    set(avdevice_LIBRARIES ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/avdevice.lib)
-    set(avformat_LIBRARIES ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/avformat.lib)
-    set(avfilter_LIBRARIES ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/avfilter.lib)
-    set(avutil_LIBRARIES ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/avutil.lib)
-    set(swscale_LIBRARIES ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/swscale.lib)
-    list(APPEND ALL_LIBRARIES
-            PRIVATE ${avcodec_LIBRARIES}
-            PRIVATE ${avdevice_LIBRARIES}
-            PRIVATE ${avformat_LIBRARIES}
-            PRIVATE ${avfilter_LIBRARIES}
-            PRIVATE ${avutil_LIBRARIES}
-            PRIVATE ${swscale_LIBRARIES}
-    )
-
-#    find_path(qrencode_INCLUDE_DIR NAMES qrencode.h)
-    set(qrencode_LIBRARIES ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/qrencode.lib)
-    include_directories(${qrencode_INCLUDE_DIR})
-    message(STATUS "QRENCODE_INCLUDE_DIR=${qrencode_INCLUDE_DIR}")
-    message(STATUS "qrencode_LIBRARIES=${qrencode_LIBRARIES}")
-
-
-    find_package(OpenAL CONFIG REQUIRED)
-    include_directories(${OpenAL_INCLUDE_DIR})
-    message(STATUS "OpenAL_INCLUDE_DIR=${OpenAL_INCLUDE_DIR}")
-    set(OpenAL_LIBRARIES ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/OpenAL32.lib)
-    message(STATUS "OpenAL_LIBRARIES=${OpenAL_LIBRARIES}")
-
-
-    #    find_package(sqlite3 REQUIRED)
-    set(sqlite3_LIBRARIES ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/sqlite3.lib)
-    message(STATUS "sqlite3_INCLUDE_DIR=${sqlite3_INCLUDE_DIR}")
-    message(STATUS "sqlite3_LIBRARIES=${sqlite3_LIBRARIES}")
-
-    #    find_package(exif REQUIRED)
-    set(libexif_LIBRARIES ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/exif.lib)
-    message(STATUS "libexif_INCLUDE_DIR=${libexif_INCLUDE_DIR}")
-    message(STATUS "libexif_LIBRARIES=${libexif_LIBRARIES}")
-
-
-    #    find_package(unofficial-libvpx CONFIG REQUIRED)
-    set(libvpx_LIBRARIES ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/vpx.lib)
-    message(STATUS "libvpx_LIBRARIES=${libvpx_LIBRARIES}")
-
-    #   target_link_libraries(main PRIVATE unofficial::libvpx::libvpx)
+    pkg_check_modules(libsodium REQUIRED libsodium )
+    pkg_check_modules(QRENCODE REQUIRED libqrencode )
+    pkg_check_modules(OpenAL REQUIRED openal)
+    pkg_check_modules(sqlite3 REQUIRED sqlite3)
+    pkg_check_modules(exif REQUIRED libexif)
+    pkg_check_modules(vpx REQUIRED vpx)
+   pkg_check_modules(JPEG REQUIRED libjpeg)
 
     list(APPEND ALL_LIBRARIES
-            PRIVATE ${qrencode_LIBRARIES}
-            PRIVATE ${libvpx_LIBRARIES}
-            PRIVATE ${libexif_LIBRARIES}
-            PRIVATE ${sqlite3_LIBRARIES}
-            PRIVATE ${OpenAL_LIBRARIES}
+            ${AVDEVICE_LINK_LIBRARIES}
+            ${AVCODEC_LINK_LIBRARIES}
+            ${AVFORMAT_LINK_LIBRARIES}
+            ${AVUTIL_LINK_LIBRARIES}
+            ${SWSCALE_LINK_LIBRARIES}
+            ${QRENCODE_LINK_LIBRARIES}
+            ${JPEG_LINK_LIBRARIES}
+    
+            PRIVATE ${libsodium_LINK_LIBRARIES}
+            PRIVATE ${vpx_LINK_LIBRARIES}
+            PRIVATE ${exif_LINK_LIBRARIES}
+            PRIVATE ${sqlite3_LINK_LIBRARIES}
+            PRIVATE ${OpenAL_LINK_LIBRARIES}
     )
 elseif (UNIX)
     include(./cmake/Dependencies.cmake)
@@ -522,6 +479,16 @@ add_library(${PROJECT_NAME} STATIC
         ${${PROJECT_NAME}_RESOURCES})
 
 if (WIN32)
+  target_include_directories(${PROJECT_NAME}
+        PRIVATE
+            ${AVCODEC_INCLUDE_DIRS}
+            ${AVFORMAT_INCLUDE_DIRS}
+            ${AVUTIL_INCLUDE_DIRS}
+            ${SWSCALE_INCLUDE_DIRS}
+          
+        )
+        
+
     set(PLATFORM_LIBS d3d11 dxgi shlwapi
             Iphlpapi dwmapi dmoguids wmcodecdspuuid Winmm
             amstrmid msdmo strmiids strmbase psapi

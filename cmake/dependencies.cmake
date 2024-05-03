@@ -66,7 +66,5 @@ if (UNIX)
             ${CMAKE_PREFIX_PATH}/include/QtLinuxAccessibilitySupport)
 endif ()
 
-
 # 开启插件（ON/OFF）
 option(ENABLE_PLUGINS "Enable plugins" ON)
-

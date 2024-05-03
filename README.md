@@ -62,14 +62,61 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
 ## Windows 构建
 - 安装`visual studio 17 2022`
 
-- 配置环境变量
+- 配置vcpkg
 ```shell
+#设置vcpkg路径，也可以参考官网下载：https://github.com/microsoft/vcpkg/blob/master/README_zh_CN.md
 VCPKG_ROOT=E:\Program Files\Microsoft Visual Studio\2022\Community\VC\vcpkg
 #可选，默默C盘
 VCPKG_DOWNLOADS=下载路径
 ```
 
-- CMake执行配置
+- 安装vcpkg依赖包
+```shell
+# 进入项目跟目录（包含vcpkg.json），执行安装命令
+vcpkg install --triplet x64-windows
+```
+
+- 编译OkRTC库
+```shell
+
+git clone https://github.com/okstar-org/ok-rtc.git
+
+# CMake预处理
+ E:\QtWorkspace\ok-rtc> cmake -B out/Debug -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE='$env{VCPKG_ROOT}\scripts\buildsystems\vcpkg.cmake' -DCMAKE_PREFIX_PATH='${PROJECT_ROOT}\vcpkg_installed\x64-windows'
+
+# 构建
+E:\QtWorkspace\ok-rtc> cmake --build out/Debug
+
+```
+- 构建项目
+1. 修改CMake预设文件CMakeUserPresets.json(该文件是针对用户本地环境的配置，不要提交)，列子如下：
+> 此处主要利用 `CMAKE_PREFIX_PATH` 关联到第三方库（调试库），比如：Qt、VcPkg下载的库、OkRTC等
+```json
+{
+  "version": 3,
+  "configurePresets": [
+    {
+      "name": "win-x64-release",
+      "displayName": "Windows x64 Release",
+      "binaryDir": "${sourceDir}/out/${presetName}",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_PREFIX_PATH": "E:/QtWorkspace/ok-rtc/out/Release;${sourceDir}/vcpkg_installed/x64-windows;E:/Qt/Qt5.15.7-Windows-x86_64-VS2019-16.11.20-staticFull"
+      }
+    },
+    {
+      "name": "win-x64-debug",
+      "displayName": "Windows x64 Debug",
+      "binaryDir": "${sourceDir}/out/${presetName}",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_PREFIX_PATH": "E:/QtWorkspace/ok-rtc/out/Debug;${sourceDir}/vcpkg_installed/x64-windows;E:/Qt/Qt5.15.11-Windows-x86_64-VS2022-staticFull-debug"
+      }
+    }
+  ]
+}
+```
+2. 执行构建命令
 ```shell
 # 预处理
 cmake -B build --preset win-x64-{debug|release}

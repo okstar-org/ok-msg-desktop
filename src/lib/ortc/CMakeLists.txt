@@ -50,7 +50,6 @@ add_library(${PROJECT_NAME} STATIC
         ${${PROJECT_NAME}_SOURCES})
 
 target_link_libraries(${PROJECT_NAME}
-        PRIVATE jpeg
         PRIVATE ${gloox_LIB}
         PRIVATE ${webrtc_LIB}
 )
