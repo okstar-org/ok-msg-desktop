@@ -10,7 +10,7 @@ endforeach ()
 #WebRTC
 set(webrtc ok-rtc)
 find_package(${webrtc} REQUIRED)
-if(ok-rtc_FOUND)
+if(${webrtc}_FOUND)
     set(webrtc_LIB ok-rtc::ok-rtc)
 endif ()
 
