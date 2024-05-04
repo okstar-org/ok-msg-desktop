@@ -12,6 +12,11 @@ find_package(ok-rtc REQUIRED)
 if(ok-rtc_FOUND)
     set(webrtc_LIB ok-rtc::ok-rtc)
 endif ()
+if (WIN32)
+    add_definitions(-DWEBRTC_WIN)
+elseif (UNIX)
+    add_definitions(-DWEBRTC_POSIX)
+endif ()
 
 #ok-gloox
 find_package(ok-gloox REQUIRED)
@@ -19,16 +24,6 @@ if(ok-gloox_FOUND)
     set(gloox_LIB ok-gloox::ok-gloox)
 endif ()
 
-add_definitions(-DOPENSSL_IS_BORINGSSL=1)
-add_definitions(-DNDEBUG)
-
-if (WIN32)
-    add_definitions(-DWEBRTC_WIN)
-elseif (UNIX)
-    add_definitions(-DWEBRTC_POSIX)
-endif ()
-
-#include_directories(${gloox_SOURCE_DIR})
 
 
 set(${PROJECT_NAME}_SOURCES
