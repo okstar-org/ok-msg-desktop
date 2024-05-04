@@ -31,8 +31,8 @@ parts:
       - libavutil56
       - libswresample3
       - libswscale5
-    stage:
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/libjpeg.so.8.2.2
+#    stage:
+#      - -./usr/lib/$CRAFT_ARCH_TRIPLET/libjpeg.so.8.2.2
     after:
       - mozjpeg
   mozjpeg:
