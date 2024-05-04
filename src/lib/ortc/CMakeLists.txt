@@ -7,11 +7,16 @@ foreach (dir ${USER_INCLUDE_DIRECTORIES})
     message(STATUS "  ${dir}")
 endforeach ()
 
-#WebRTC
-set(webrtc ok-rtc)
-find_package(${webrtc} REQUIRED)
-if(${webrtc}_FOUND)
+#ok-rtc
+find_package(ok-rtc REQUIRED)
+if(ok-rtc_FOUND)
     set(webrtc_LIB ok-rtc::ok-rtc)
+endif ()
+
+#ok-gloox
+find_package(ok-gloox REQUIRED)
+if(ok-gloox_FOUND)
+    set(gloox_LIB ok-gloox::ok-gloox)
 endif ()
 
 add_definitions(-DOPENSSL_IS_BORINGSSL=1)
@@ -23,7 +28,7 @@ elseif (UNIX)
     add_definitions(-DWEBRTC_POSIX)
 endif ()
 
-include_directories(${gloox_SOURCE_DIR}/src)
+#include_directories(${gloox_SOURCE_DIR})
 
 
 set(${PROJECT_NAME}_SOURCES

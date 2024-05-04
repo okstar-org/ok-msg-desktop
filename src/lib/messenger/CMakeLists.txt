@@ -1,13 +1,15 @@
 project(OkIMCore)
 
-include_directories(${gloox_SOURCE_DIR}/src)
-message(STATUS "gloox_SOURCE_DIR=${gloox_SOURCE_DIR}")
-message(STATUS "gloox_LIB=${gloox_LIB}")
+
 
 if (WIN32)
 	add_definitions(-D_WIN32 -DWIN32 -D_WINDOWS -D_UNICODE)
 endif()
 
+find_package(ok-gloox REQUIRED)
+if(ok-gloox_FOUND)
+	set(gloox_LIB ok-gloox::ok-gloox)
+endif ()
 
 add_definitions(
 		-DLOG_XMPP # xmpp logs

@@ -76,19 +76,28 @@ VCPKG_DOWNLOADS=下载路径
 vcpkg install --triplet x64-windows
 ```
 
+- 配置pkg-config关联
+这一步实现pkg-config到vcpkg安装包的关联，便于cmake pkg-config模块能检索到。
+```shell
+# 配置环境变量
+PKG_CONFIG_PATH=<项目根目录>/vcpkg_installed/x64-windows/lib/pkgconfig
+```
+命令行输入如下，检查是否存在vcpkg安装的新包。
+  
+    pkg-config.bat --list-all
+
+
 - 编译OkRTC库
 ```shell
-
 git clone https://github.com/okstar-org/ok-rtc.git
-
 # CMake预处理
  E:\QtWorkspace\ok-rtc> cmake -B out/Debug -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE='$env{VCPKG_ROOT}\scripts\buildsystems\vcpkg.cmake' -DCMAKE_PREFIX_PATH='${PROJECT_ROOT}\vcpkg_installed\x64-windows'
-
 # 构建
 E:\QtWorkspace\ok-rtc> cmake --build out/Debug
 
 ```
 - 构建项目
+
 1. 修改CMake预设文件CMakeUserPresets.json(该文件是针对用户本地环境的配置，不要提交)，列子如下：
 > 此处主要利用 `CMAKE_PREFIX_PATH` 关联到第三方库（调试库），比如：Qt、VcPkg下载的库、OkRTC等
 ```json
@@ -116,6 +125,7 @@ E:\QtWorkspace\ok-rtc> cmake --build out/Debug
   ]
 }
 ```
+
 2. 执行构建命令
 ```shell
 # 预处理

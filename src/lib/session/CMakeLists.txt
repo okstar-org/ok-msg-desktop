@@ -1,7 +1,12 @@
 project(OkSession)
 
-include_directories(${gloox_SOURCE_DIR}/src)
 include_directories(${WebRTC_DIR}/include)
+
+find_package(ok-gloox REQUIRED)
+if(ok-gloox_FOUND)
+    set(gloox_LIB ok-gloox::ok-gloox)
+endif ()
+
 
 set(${PROJECT_NAME}_SOURCES
         AccountItem.cpp
@@ -13,6 +18,7 @@ add_library(${PROJECT_NAME} STATIC
         ${${PROJECT_NAME}_SOURCES})
 
 target_link_libraries(${PROJECT_NAME}
+    PRIVATE ${gloox_LIB}
     PUBLIC ${Qt5Core_LIBRARIES}
     PUBLIC ${Qt5Xml_LIBRARIES}
 )

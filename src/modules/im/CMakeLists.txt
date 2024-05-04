@@ -499,7 +499,7 @@ elseif (UNIX)
 endif ()
 
 target_link_libraries(${PROJECT_NAME}
-    PUBLIC ${gloox_LIB}
+    PUBLIC ${ok-gloox_LIBRARIES}
     PUBLIC ${Qt5Core_LIBRARIES}
     PUBLIC ${Qt5Gui_LIBRARIES}
     PUBLIC ${Qt5Widgets_LIBRARIES}
