@@ -31,28 +31,28 @@ parts:
       - libavutil56
       - libswresample3
       - libswscale5
-#    stage:
-#      - -./usr/lib/$CRAFT_ARCH_TRIPLET/libjpeg.so.8.2.2
-    after:
-      - mozjpeg
-  mozjpeg:
-    source: https://github.com/mozilla/mozjpeg.git
-    source-depth: 1
-    source-tag: v4.0.3
-    plugin: cmake
-    cmake-generator: Ninja
-    cmake-parameters:
-      - -DCMAKE_BUILD_TYPE=Release
-      - -DCMAKE_INSTALL_PREFIX=/usr
-      - -DENABLE_STATIC=OFF
-      - -DWITH_JPEG8=ON
-      - -DPNG_SUPPORTED=OFF
-    prime:
-      - -./usr/bin
-      - -./usr/include
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/pkgconfig
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.so
-      - -./usr/share
+    stage:
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/libjpeg.so.8.2.2
+#    after:
+#      - mozjpeg
+#  mozjpeg:
+#    source: https://github.com/mozilla/mozjpeg.git
+#    source-depth: 1
+#    source-tag: v4.0.3
+#    plugin: cmake
+#    cmake-generator: Ninja
+#    cmake-parameters:
+#      - -DCMAKE_BUILD_TYPE=Release
+#      - -DCMAKE_INSTALL_PREFIX=/usr
+#      - -DENABLE_STATIC=OFF
+#      - -DWITH_JPEG8=ON
+#      - -DPNG_SUPPORTED=OFF
+#    prime:
+#      - -./usr/bin
+#      - -./usr/include
+#      - -./usr/lib/$CRAFT_ARCH_TRIPLET/pkgconfig
+#      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.so
+#      - -./usr/share
 
   webrtc:
     source: https://github.com/okstar-org/ok-rtc.git
