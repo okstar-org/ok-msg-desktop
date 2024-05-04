@@ -106,7 +106,7 @@ parts:
       - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.a
     after:
       - ffmpeg
-      - mozjpeg
+#      - mozjpeg
 
   desktop-qt5:
     source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
