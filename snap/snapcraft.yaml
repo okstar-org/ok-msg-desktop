@@ -54,7 +54,7 @@ parts:
 #      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.so
 #      - -./usr/share
 
-  webrtc:
+  ok-rtc:
     source: https://github.com/okstar-org/ok-rtc.git
     source-depth: 1
     source-commit: 1e343304df8eb5995229e21733fb1f18839a0668
@@ -157,7 +157,6 @@ parts:
     parse-info: [ usr/share/metainfo/ok-msg-desktop.metainfo.xml ]
     build-environment:
       - LD_LIBRARY_PATH: $CRAFT_STAGE/usr/lib/$CRAFT_ARCH_TRIPLET${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
-
     build-packages:
       - libpcre2-dev
       - libudev-dev
@@ -226,7 +225,6 @@ parts:
       - libqrencode-dev
       - libblas-dev
       - libsignal-protocol-c-dev
-
     stage-packages:
       - libsdl2-2.0-0
       - libdouble-conversion3
@@ -339,7 +337,7 @@ parts:
       - -DCMAKE_INSTALL_PREFIX=/usr
       - -DDESKTOP_APP_USE_PACKAGED=ON
       - -DDESKTOP_LAUNCHER_BASENAME=ok-msg-desktop
-    after: [ desktop-qt5 ]
+    after: [ desktop-qt5, ok-rtc ]
 layout:
   /usr/share/alsa:
     bind: $SNAP/usr/share/alsa
