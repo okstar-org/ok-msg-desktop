@@ -10,30 +10,33 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#ifndef CONTENTLAYOUT_H
-#define CONTENTLAYOUT_H
+//
+// Created by gaojie on 24-5-5.
+//
 
-#include <QBoxLayout>
+#ifndef CONTENTWIDGET_H
+#define CONTENTWIDGET_H
+
 #include <QFrame>
-#include <QStackedLayout>
+#include <QHBoxLayout>
 
-class ContentLayout : public QStackedLayout
-{
+class ContentLayout;
+class ChatForm;
+
+class ContentWidget : public QWidget {
+  Q_OBJECT
 public:
-    ContentLayout();
-    explicit ContentLayout(QWidget* parent);
-    ~ContentLayout();
-
-    void reloadTheme();
-    void clear();
-
-//    QFrame mainHLine;
-//    QHBoxLayout mainHLineLayout;
-//    QWidget* mainContent;
-//    QWidget* mainHead;
+  explicit ContentWidget(QWidget *parent= nullptr);
+  void showTo(ContentLayout*);
+  void setChatForm(ChatForm *);
 
 private:
-    void init();
+  void init();
+  QFrame mainHLine;
+  QHBoxLayout mainHLineLayout;
+  QWidget* mainHead;
+  QWidget* mainContent;
+
 };
 
-#endif // CONTENTLAYOUT_H
+#endif // OKMSG_PROJECT_CONTENTWIDGET_H

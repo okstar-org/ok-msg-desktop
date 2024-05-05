@@ -12,17 +12,21 @@
 
 #include "friendlistwidget.h"
 #include "circlewidget.h"
+#include "contentdialogmanager.h"
 #include "friendlistlayout.h"
 #include "friendwidget.h"
+#include "src/model/chatroom/friendchatroom.h"
 #include "groupwidget.h"
-#include "widget.h"
 #include "src/friendlist.h"
 #include "src/model/friend.h"
 #include "src/model/group.h"
 #include "src/model/status.h"
+#include "src/model/chathistory.h"
+#include "src/nexus.h"
 #include "src/persistence/settings.h"
 #include "src/widget/categorywidget.h"
-
+#include "widget.h"
+#include "src/persistence/profile.h"
 #include <QDragEnterEvent>
 #include <QDragLeaveEvent>
 #include <QGridLayout>
@@ -94,16 +98,19 @@ FriendListWidget::FriendListWidget(Widget* parent, bool groupsOnTop)
     : QWidget(parent)
     , groupsOnTop(groupsOnTop)
 {
-    listLayout = new FriendListLayout();
-    setLayout(listLayout);
-    setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+  setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 
-    groupLayout.getLayout()->setSpacing(0);
-    groupLayout.getLayout()->setMargin(0);
 
-    // Prevent QLayout's add child warning before setting the mode.
-    listLayout->removeItem(listLayout->getLayoutOnline());
-    listLayout->removeItem(listLayout->getLayoutOffline());
+  m_contentLayout = parent->getContentLayout();
+
+  groupLayout.getLayout()->setSpacing(0);
+  groupLayout.getLayout()->setMargin(0);
+
+  // Prevent QLayout's add child warning before setting the mode.
+  listLayout = new FriendListLayout();
+  listLayout->removeItem(listLayout->getLayoutOnline());
+  listLayout->removeItem(listLayout->getLayoutOffline());
+  setLayout(listLayout);
 
     mode = Settings::getInstance().getFriendSortingMode();
     sortByMode(mode);
@@ -115,6 +122,8 @@ FriendListWidget::FriendListWidget(Widget* parent, bool groupsOnTop)
     dayTimer->start(timeUntilTomorrow());
 
     setAcceptDrops(true);
+
+
 }
 
 FriendListWidget::~FriendListWidget()
@@ -137,6 +146,112 @@ FriendListWidget::~FriendListWidget()
         delete circleLayout;
     }
 }
+
+FriendWidget* FriendListWidget::addFriend(QString friendId, const ToxPk &friendPk, bool isFriend) {
+  qDebug() << __func__  <<"friend is exist."<<friendId;
+  auto exist = FriendList::findFriend(friendPk);
+  if (exist) {
+    return friendWidgets.value(friendPk);
+  }
+
+  auto core = Core::getInstance();
+  auto profile = Nexus::getProfile();
+
+  auto &settings = Settings::getInstance();
+  const auto compact = settings.getCompactLayout();
+
+  auto friendWidget = new FriendWidget(m_contentLayout, friendId, friendPk, isFriend, compact);
+  friendWidgets.insert(friendPk, friendWidget);
+
+
+//  TODO 连接朋友活跃状态
+//  connect(chatForm, &ChatForm::updateFriendActivity, this,
+//          &Widget::updateFriendActivity);
+
+//  friendMessageDispatchers[friendPk] = friendMessageDispatcher;
+//  friendChatLogs[friendPk] = chatHistory;
+//  friendChatrooms[friendPk] = chatRoom;
+  friendWidgets[friendPk] = friendWidget;
+//  chatForms[friendPk] = chatForm;
+
+//  const auto activityTime = settings.getFriendActivity(friendPk);
+//  const auto chatTime = chatForm->getLatestTime();
+//  if (chatTime > activityTime && chatTime.isValid()) {
+//    settings.setFriendActivity(friendPk, chatTime);
+//  }
+//
+  addFriendWidget(friendWidget, Status::Status::Offline,settings.getFriendCircleID(friendPk));
+//
+//  auto notifyReceivedCallback = [this, friendPk](const ToxPk &author,
+//                                                 const Message &message) {
+//    auto isTargeted =
+//        std::any_of(message.metadata.begin(), message.metadata.end(),
+//                    [](MessageMetadata metadata) {
+//                      return metadata.type == MessageMetadataType::selfMention;
+//                    });
+//    newFriendMessageAlert(friendPk, message.content);
+//  };
+//
+//  auto notifyReceivedConnection =
+//      connect(friendMessageDispatcher.get(),
+//              &IMessageDispatcher::messageReceived, notifyReceivedCallback);
+//
+//  friendAlertConnections.insert(friendPk, notifyReceivedConnection);
+//
+//  connect(newfriend, &Friend::aliasChanged, this,
+//          &Widget::onFriendAliasChanged);
+//  connect(newfriend, &Friend::displayedNameChanged, this,
+//          &Widget::onFriendDisplayedNameChanged);
+//
+//  connect(chatForm, &ChatForm::incomingNotification, this,
+//          &Widget::incomingNotification);
+//  connect(chatForm, &ChatForm::outgoingNotification, this,
+//          &Widget::outgoingNotification);
+//  connect(chatForm, &ChatForm::stopNotification, this,
+//          &Widget::onStopNotification);
+//  connect(chatForm, &ChatForm::endCallNotification, this, &Widget::onCallEnd);
+//  connect(chatForm, &ChatForm::rejectCall, this, &Widget::onRejectCall);
+//
+//  connect(friendWidget, &FriendWidget::newWindowOpened, this, &Widget::openNewDialog);
+//  connect(friendWidget, &FriendWidget::chatroomWidgetClicked, this,
+//          &Widget::onChatroomWidgetClicked);
+//  connect(friendWidget, &FriendWidget::chatroomWidgetClicked, chatForm,
+//          &ChatForm::focusInput);
+//  connect(friendWidget, &FriendWidget::friendHistoryRemoved, chatForm,
+//          &ChatForm::clearChatArea);
+//  connect(friendWidget, &FriendWidget::copyFriendIdToClipboard, this,
+//          &Widget::copyFriendIdToClipboard);
+//
+//  connect(friendWidget, &FriendWidget::contextMenuCalled, friendWidget,
+//          &FriendWidget::onContextMenuCalled);
+//
+//  connect(friendWidget, &FriendWidget::addFriend, //
+//          this, &Widget::addFriend0);
+//
+//  connect(friendWidget, SIGNAL(removeFriend(const ToxPk &)), this,
+//          SLOT(removeFriend(const ToxPk &)));
+//
+//  Profile *profile = Nexus::getProfile();
+//  connect(profile, &Profile::friendAvatarSet, friendWidget,
+//          &FriendWidget::onAvatarSet);
+//  connect(profile, &Profile::friendAvatarRemoved, friendWidget,
+//          &FriendWidget::onAvatarRemoved);
+//
+//  // Try to get the avatar from the cache
+//  QPixmap avatar = Nexus::getProfile()->loadAvatar(friendPk);
+//  if (!avatar.isNull()) {
+//    //chatForm->onAvatarChanged(friendPk, avatar);
+//    //friendWidget->onAvatarSet(friendPk, avatar);
+//  }
+//
+//  FilterCriteria filter = getFilterCriteria();
+//  friendWidget->search(ui->searchContactText->text(), filterOffline(filter));
+
+  //  core->getFriendInfo(friendPk.toString());
+
+  return friendWidget;
+}
+
 
 void FriendListWidget::setMode(SortingMode mode)
 {
@@ -598,6 +713,15 @@ void FriendListWidget::dropEvent(QDropEvent* event)
         circleWidget->updateStatus();
 }
 
+void FriendListWidget::showEvent(QShowEvent *event) {
+  auto core = Core::getInstance();
+  connect(core, &Core::friendAdded, this, &FriendListWidget::addFriend);
+  for (auto& friendId : core->getFriendList()) {
+    qDebug() <<"friendId:" << friendId;
+  };
+}
+
+
 void FriendListWidget::dayTimeout()
 {
     if (mode == SortingMode::Activity) {
@@ -717,4 +841,27 @@ QLayout* FriendListWidget::nextLayout(QLayout* layout, bool forward) const
             return listLayout->getLayoutOffline();
     }
     return nullptr;
+}
+
+FriendWidget *FriendListWidget::getFriend(const ToxPk &friendPk) {
+  return  friendWidgets.value(friendPk);
+}
+
+void FriendListWidget::removeFriend(const ToxPk &friendPk) {
+
+  auto f = getFriend(friendPk);
+  if(!f){
+    return;
+  }
+
+  FriendList::removeFriend(friendPk, false);
+  removeFriendWidget(f);
+  f->deleteLater();
+
+}
+
+void FriendListWidget::slot_addFriend(QString friendId,
+                                      const ToxPk &friendPk,
+                                      bool isFriend) {
+  addFriend(friendId, friendPk, isFriend);
 }

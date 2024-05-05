@@ -26,6 +26,7 @@ class GroupWidget final : public GenericChatroomWidget
 public:
     GroupWidget(std::shared_ptr<GroupChatroom> chatroom, bool compact);
     ~GroupWidget();
+    void setAvatar(const QPixmap& pixmap) final override;
     void setAsInactiveChatroom() final override;
     void setAsActiveChatroom() final override;
     void updateStatusLight() final override;

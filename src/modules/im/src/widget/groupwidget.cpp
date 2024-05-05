@@ -146,6 +146,10 @@ void GroupWidget::updateUserCount(int numPeers)
 //    statusMessageLabel->setText(tr("%n user(s) in chat", "Number of users in chat", numPeers));
 }
 
+void GroupWidget::setAvatar(const QPixmap& pixmap){
+  avatar->setPixmap(pixmap);
+}
+
 void GroupWidget::setAsActiveChatroom()
 {
     setActive(true);

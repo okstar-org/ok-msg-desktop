@@ -199,7 +199,7 @@ bool ProfileForm::isShown() const
 
 void ProfileForm::show(ContentLayout* contentLayout)
 {
-    contentLayout->mainContent->layout()->addWidget(this);
+//    contentLayout->mainContent->layout()->addWidget(this);
     QWidget::show();
     prFileLabelUpdate();
     bool portable = Settings::getInstance().getMakeToxPortable();

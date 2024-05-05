@@ -138,9 +138,22 @@ Widget::Widget(IAudioControl &audio, QWidget *parent)
     : QFrame(parent), icon{nullptr}, trayMenu{nullptr},
       ui(new Ui::IMMainWindow), activeChatroomWidget{nullptr}, eventFlag(false),
       eventIcon(false), audio(audio), settings(Settings::getInstance()),
+      contentLayout{nullptr},
       delayCaller(std::make_unique<base::DelayedCallTimer>()) //
 {
+  ui->setupUi(this);
+
   setObjectName(qsl("Page:%1").arg(static_cast<int>(UI::PageMenu::chat)));
+
+  QWidget *contentWidget = new QWidget(this);
+  contentWidget->setObjectName("contentWidget");
+  ui->mainSplitter->addWidget(contentWidget);
+
+  contentLayout = new ContentLayout(contentWidget);
+
+  setMinimumWidth(775);
+
+
   installEventFilter(this);
   QString locale = settings.getTranslation();
   settings::Translator::translate(OK_IM_MODULE, locale);
@@ -148,7 +161,7 @@ Widget::Widget(IAudioControl &audio, QWidget *parent)
 }
 
 void Widget::init() {
-  ui->setupUi(this);
+
   centralLayout = ui->mainSplitter;
   setLayout(ui->centralLayout);
 
@@ -459,7 +472,7 @@ void Widget::init() {
           &Nexus::onWindowStateChanged);
 #endif
 
-  contentLayout = nullptr;
+
   onSeparateWindowChanged(settings.getSeparateWindow(), false);
 
   ui->addButton->setCheckable(true);
@@ -716,7 +729,6 @@ void Widget::onCoreChanged(Core &core) {
   connect(&core, &Core::usernameSet, this, &Widget::setUsername);
   connect(&core, &Core::avatarSet, this, &Widget::setAvatar);
   connect(&core, &Core::statusMessageSet, this, &Widget::setStatusMessage);
-  connect(&core, &Core::friendAdded, this, &Widget::addFriend);
   connect(&core, &Core::friendAddedDone, this, &Widget::addFriendDone);
   connect(&core, &Core::failedToAddFriend, this, &Widget::addFriendFailed);
   connect(&core, &Core::friendUsernameChanged, this,
@@ -816,13 +828,6 @@ void Widget::onSeparateWindowChanged(bool separate, bool clicked) {
       }
     }
 
-    QWidget *contentWidget = new QWidget(this);
-    contentWidget->setObjectName("contentWidget");
-
-    contentLayout = new ContentLayout(contentWidget);
-    ui->mainSplitter->addWidget(contentWidget);
-
-    setMinimumWidth(775);
 
     SplitterRestorer restorer(ui->mainSplitter);
     restorer.restore(settings.getSplitterState(), size());
@@ -1020,7 +1025,7 @@ void Widget::hideMainForms(GenericChatroomWidget *chatroomWidget) {
   setActiveToolMenuButton(ActiveToolMenuButton::None);
 
   if (contentLayout != nullptr) {
-    contentLayout->clear();
+//    contentLayout->clear();
   }
 
   if (activeChatroomWidget != nullptr) {
@@ -1193,118 +1198,122 @@ void Widget::addFriend1(const ToxPk &friendId) {
 
 void Widget::addFriend(QString friendId, const ToxPk &friendPk, bool isFriend) {
 
-  auto exist = FriendList::findFriend(friendPk);
-  if (exist) {
-    return;
-  }
+  auto friendWidget = contactListWidget->addFriend(
+                                                   friendId, friendPk, isFriend);
+  connectFriendWidget(*friendWidget);
 
-  settings.updateFriendAddress(friendPk.toString());
-
-  Friend *newfriend = FriendList::addFriend(friendId, friendPk, isFriend);
-  auto dialogManager = ContentDialogManager::getInstance();
-
-  auto rawChatroom = new FriendChatroom(newfriend, dialogManager);
-
-  std::shared_ptr<FriendChatroom> chatroom(rawChatroom);
-  const auto compact = settings.getCompactLayout();
-
-  auto widget = new FriendWidget(chatroom, compact);
-  connectFriendWidget(*widget);
-  auto history = Nexus::getProfile()->getHistory();
-
-  auto messageProcessor = MessageProcessor(sharedMessageProcessorParams);
-  auto friendMessageDispatcher = std::make_shared<FriendMessageDispatcher>(
-      *newfriend, std::move(messageProcessor), *core);
-
-  // Note: We do not have to connect the message dispatcher signals since
-  // ChatHistory hooks them up in a very specific order
-  auto chatHistory = std::make_shared<ChatHistory>(*newfriend, history, *core,
-                                                   Settings::getInstance(),
-                                                   *friendMessageDispatcher);
-  auto friendForm =
-      new ChatForm(newfriend, *chatHistory, *friendMessageDispatcher);
-  connect(friendForm, &ChatForm::updateFriendActivity, this,
-          &Widget::updateFriendActivity);
-
-  friendMessageDispatchers[friendPk] = friendMessageDispatcher;
-  friendChatLogs[friendPk] = chatHistory;
-  friendChatrooms[friendPk] = chatroom;
-  friendWidgets[friendPk] = widget;
-  chatForms[friendPk] = friendForm;
-
-  const auto activityTime = settings.getFriendActivity(friendPk);
-  const auto chatTime = friendForm->getLatestTime();
-  if (chatTime > activityTime && chatTime.isValid()) {
-    settings.setFriendActivity(friendPk, chatTime);
-  }
-
-  contactListWidget->addFriendWidget(widget, Status::Status::Offline,
-                                     settings.getFriendCircleID(friendPk));
-
-  auto notifyReceivedCallback = [this, friendPk](const ToxPk &author,
-                                                 const Message &message) {
-    auto isTargeted =
-        std::any_of(message.metadata.begin(), message.metadata.end(),
-                    [](MessageMetadata metadata) {
-                      return metadata.type == MessageMetadataType::selfMention;
-                    });
-    newFriendMessageAlert(friendPk, message.content);
-  };
-
-  auto notifyReceivedConnection =
-      connect(friendMessageDispatcher.get(),
-              &IMessageDispatcher::messageReceived, notifyReceivedCallback);
-
-  friendAlertConnections.insert(friendPk, notifyReceivedConnection);
-
-  connect(newfriend, &Friend::aliasChanged, this,
-          &Widget::onFriendAliasChanged);
-  connect(newfriend, &Friend::displayedNameChanged, this,
-          &Widget::onFriendDisplayedNameChanged);
-
-  connect(friendForm, &ChatForm::incomingNotification, this,
-          &Widget::incomingNotification);
-  connect(friendForm, &ChatForm::outgoingNotification, this,
-          &Widget::outgoingNotification);
-  connect(friendForm, &ChatForm::stopNotification, this,
-          &Widget::onStopNotification);
-  connect(friendForm, &ChatForm::endCallNotification, this, &Widget::onCallEnd);
-  connect(friendForm, &ChatForm::rejectCall, this, &Widget::onRejectCall);
-
-  connect(widget, &FriendWidget::newWindowOpened, this, &Widget::openNewDialog);
-  connect(widget, &FriendWidget::chatroomWidgetClicked, this,
-          &Widget::onChatroomWidgetClicked);
-  connect(widget, &FriendWidget::chatroomWidgetClicked, friendForm,
-          &ChatForm::focusInput);
-  connect(widget, &FriendWidget::friendHistoryRemoved, friendForm,
-          &ChatForm::clearChatArea);
-  connect(widget, &FriendWidget::copyFriendIdToClipboard, this,
-          &Widget::copyFriendIdToClipboard);
-
-  connect(widget, &FriendWidget::contextMenuCalled, widget,
-          &FriendWidget::onContextMenuCalled);
-
-  connect(widget, &FriendWidget::addFriend, //
-          this, &Widget::addFriend0);
-
-  connect(widget, SIGNAL(removeFriend(const ToxPk &)), this,
-          SLOT(removeFriend(const ToxPk &)));
-
-  Profile *profile = Nexus::getProfile();
-  connect(profile, &Profile::friendAvatarSet, widget,
-          &FriendWidget::onAvatarSet);
-  connect(profile, &Profile::friendAvatarRemoved, widget,
-          &FriendWidget::onAvatarRemoved);
-
-  // Try to get the avatar from the cache
-  QPixmap avatar = Nexus::getProfile()->loadAvatar(friendPk);
-  if (!avatar.isNull()) {
-    //friendForm->onAvatarChanged(friendPk, avatar);
-    //widget->onAvatarSet(friendPk, avatar);
-  }
-
-  FilterCriteria filter = getFilterCriteria();
-  widget->search(ui->searchContactText->text(), filterOffline(filter));
+//  auto exist = FriendList::findFriend(friendPk);
+//  if (exist) {
+//    return;
+//  }
+//
+//  settings.updateFriendAddress(friendPk.toString());
+//
+//  Friend *newfriend = FriendList::addFriend(friendId, friendPk, isFriend);
+//  auto dialogManager = ContentDialogManager::getInstance();
+//
+//  auto rawChatroom = new FriendChatroom(newfriend, dialogManager);
+//
+//  std::shared_ptr<FriendChatroom> chatRoom(rawChatroom);
+//  const auto compact = settings.getCompactLayout();
+//
+//  auto widget = new FriendWidget(chatRoom, compact);
+//  connectFriendWidget(*widget);
+//  auto history = Nexus::getProfile()->getHistory();
+//
+//  auto messageProcessor = MessageProcessor(sharedMessageProcessorParams);
+//  auto friendMessageDispatcher = std::make_shared<FriendMessageDispatcher>(
+//      *newfriend, std::move(messageProcessor), *core);
+//
+//  // Note: We do not have to connect the message dispatcher signals since
+//  // ChatHistory hooks them up in a very specific order
+//  auto chatHistory = std::make_shared<ChatHistory>(*newfriend, history, *core,
+//                                                   Settings::getInstance(),
+//                                                   *friendMessageDispatcher);
+//  auto chatForm =
+//      new ChatForm(newfriend, *chatHistory, *friendMessageDispatcher);
+//  connect(chatForm, &ChatForm::updateFriendActivity, this,
+//          &Widget::updateFriendActivity);
+//
+//  friendMessageDispatchers[friendPk] = friendMessageDispatcher;
+//  friendChatLogs[friendPk] = chatHistory;
+//  friendChatrooms[friendPk] = chatRoom;
+//  friendWidgets[friendPk] = widget;
+//  chatForms[friendPk] = chatForm;
+//
+//  const auto activityTime = settings.getFriendActivity(friendPk);
+//  const auto chatTime = chatForm->getLatestTime();
+//  if (chatTime > activityTime && chatTime.isValid()) {
+//    settings.setFriendActivity(friendPk, chatTime);
+//  }
+//
+//  contactListWidget->addFriendWidget(widget, Status::Status::Offline,
+//                                     settings.getFriendCircleID(friendPk));
+//
+//  auto notifyReceivedCallback = [this, friendPk](const ToxPk &author,
+//                                                 const Message &message) {
+//    auto isTargeted =
+//        std::any_of(message.metadata.begin(), message.metadata.end(),
+//                    [](MessageMetadata metadata) {
+//                      return metadata.type == MessageMetadataType::selfMention;
+//                    });
+//    newFriendMessageAlert(friendPk, message.content);
+//  };
+//
+//  auto notifyReceivedConnection =
+//      connect(friendMessageDispatcher.get(),
+//              &IMessageDispatcher::messageReceived, notifyReceivedCallback);
+//
+//  friendAlertConnections.insert(friendPk, notifyReceivedConnection);
+//
+//  connect(newfriend, &Friend::aliasChanged, this,
+//          &Widget::onFriendAliasChanged);
+//  connect(newfriend, &Friend::displayedNameChanged, this,
+//          &Widget::onFriendDisplayedNameChanged);
+//
+//  connect(chatForm, &ChatForm::incomingNotification, this,
+//          &Widget::incomingNotification);
+//  connect(chatForm, &ChatForm::outgoingNotification, this,
+//          &Widget::outgoingNotification);
+//  connect(chatForm, &ChatForm::stopNotification, this,
+//          &Widget::onStopNotification);
+//  connect(chatForm, &ChatForm::endCallNotification, this, &Widget::onCallEnd);
+//  connect(chatForm, &ChatForm::rejectCall, this, &Widget::onRejectCall);
+//
+//  connect(widget, &FriendWidget::newWindowOpened, this, &Widget::openNewDialog);
+//  connect(widget, &FriendWidget::chatroomWidgetClicked, this,
+//          &Widget::onChatroomWidgetClicked);
+//  connect(widget, &FriendWidget::chatroomWidgetClicked, chatForm,
+//          &ChatForm::focusInput);
+//  connect(widget, &FriendWidget::friendHistoryRemoved, chatForm,
+//          &ChatForm::clearChatArea);
+//  connect(widget, &FriendWidget::copyFriendIdToClipboard, this,
+//          &Widget::copyFriendIdToClipboard);
+//
+//  connect(widget, &FriendWidget::contextMenuCalled, widget,
+//          &FriendWidget::onContextMenuCalled);
+//
+//  connect(widget, &FriendWidget::addFriend, //
+//          this, &Widget::addFriend0);
+//
+//  connect(widget, SIGNAL(removeFriend(const ToxPk &)), this,
+//          SLOT(removeFriend(const ToxPk &)));
+//
+//  Profile *profile = Nexus::getProfile();
+//  connect(profile, &Profile::friendAvatarSet, widget,
+//          &FriendWidget::onAvatarSet);
+//  connect(profile, &Profile::friendAvatarRemoved, widget,
+//          &FriendWidget::onAvatarRemoved);
+//
+//  // Try to get the avatar from the cache
+//  QPixmap avatar = Nexus::getProfile()->loadAvatar(friendPk);
+//  if (!avatar.isNull()) {
+//    //chatForm->onAvatarChanged(friendPk, avatar);
+//    //widget->onAvatarSet(friendPk, avatar);
+//  }
+//
+//  FilterCriteria filter = getFilterCriteria();
+//  widget->search(ui->searchContactText->text(), filterOffline(filter));
 
 //  core->getFriendInfo(friendPk.toString());
 }
@@ -1334,7 +1343,8 @@ void Widget::onFriendStatusChanged(QString friendId, Status::Status status) {
 
   bool isActualChange = f->getStatus() != status;
 
-  FriendWidget *widget = friendWidgets[f->getPublicKey()];
+  FriendWidget *widget = // friendWidgets[f->getPublicKey()];
+  friendListWidget->getFriend(f->getPublicKey());
   if (isActualChange) {
     if (!Status::isOnline(f->getStatus())) {
       contactListWidget->moveWidget(widget, Status::Status::Online);
@@ -1364,8 +1374,12 @@ void Widget::onFriendStatusMessageChanged(QString friendId,
   str.replace('\n', ' ').remove('\r').remove(QChar('\0'));
   f->setStatusMessage(str);
 
-  friendWidgets[friendPk]->setStatusMsg(str);
   chatForms[friendPk]->setStatusMessage(str);
+
+  auto frd = friendListWidget->getFriend(friendPk);
+  if(frd){
+    frd->setStatusMsg(str);
+  }
 }
 
 void Widget::onFriendDisplayedNameChanged(const QString &displayed) {
@@ -1377,7 +1391,7 @@ void Widget::onFriendDisplayedNameChanged(const QString &displayed) {
     }
   }
 
-  FriendWidget *friendWidget = friendWidgets[f->getPublicKey()];
+  FriendWidget *friendWidget = friendListWidget->getFriend(f->getPublicKey());
   if (friendWidget->isActive()) {
     GUI::setWindowTitle(displayed);
   }
@@ -1400,7 +1414,7 @@ void Widget::onFriendAliasChanged(const ToxPk &friendId, const QString &alias) {
   Friend *f = qobject_cast<Friend *>(sender());
 
   // TODO(sudden6): don't update the contact list here, make it update itself
-  FriendWidget *friendWidget = friendWidgets[friendId];
+  FriendWidget *friendWidget = friendListWidget->getFriend(friendId);
   Status::Status status = f->getStatus();
   contactListWidget->moveWidget(friendWidget, status);
   FilterCriteria criteria = getFilterCriteria();
@@ -1520,19 +1534,21 @@ void Widget::addFriendDialog(const Friend *frnd, ContentDialog *dialog) {
       ContentDialogManager::getInstance()->getFriendDialog(friendPk);
 
   bool isSeparate = settings.getSeparateWindow();
-  FriendWidget *widget = friendWidgets[friendPk];
-  bool isCurrent = activeChatroomWidget == widget;
-  if (!contentDialog && !isSeparate && isCurrent) {
-    onAddClicked();
-  }
+//  FriendWidget *widget = friendWidgets[friendPk];
+//  bool isCurrent = activeChatroomWidget == widget;
+//  if (!contentDialog && !isSeparate && isCurrent) {
+//    onAddClicked();
+//  }
 
   auto form = chatForms[friendPk];
   auto chatroom = friendChatrooms[friendPk];
-  FriendWidget *friendWidget =
-      ContentDialogManager::getInstance()->addFriendToDialog(dialog, chatroom,
+
+      ContentDialogManager::getInstance()->addFriendToDialog(friendPk,
+                                                             dialog,
+                                                             chatroom.get(),
                                                              form);
 
-  friendWidget->setStatusMsg(widget->getStatusMsg());
+//  friendWidget->setStatusMsg(widget->getStatusMsg());
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 7, 0))
   auto widgetRemoveFriend = QOverload<const ToxPk &>::of(&Widget::removeFriend);
@@ -1540,42 +1556,18 @@ void Widget::addFriendDialog(const Friend *frnd, ContentDialog *dialog) {
   auto widgetRemoveFriend =
       static_cast<void (Widget::*)(const ToxPk &)>(&Widget::removeFriend);
 #endif
+//  connect(friendWidget, &FriendWidget::removeFriend, this, widgetRemoveFriend);
+//  connect(friendWidget, &FriendWidget::addFriend, this, &Widget::addFriend0);
 
-  connect(friendWidget, &FriendWidget::removeFriend, this, widgetRemoveFriend);
-  connect(friendWidget, &FriendWidget::addFriend, this, &Widget::addFriend0);
 
-  connect(friendWidget, &FriendWidget::middleMouseClicked, dialog,
-          [=]() { dialog->removeFriend(friendPk); });
-  connect(friendWidget, &FriendWidget::copyFriendIdToClipboard, this,
-          &Widget::copyFriendIdToClipboard);
-  connect(friendWidget, &FriendWidget::newWindowOpened, this,
-          &Widget::openNewDialog);
-
-  // Signal transmission from the created `friendWidget` (which shown in
-  // ContentDialog) to the `widget` (which shown in main widget)
   // FIXME: emit should be removed
-  connect(
-      friendWidget, &FriendWidget::contextMenuCalled, widget,
-      [=](QContextMenuEvent *event) { emit widget->contextMenuCalled(event); });
-
-  connect(friendWidget, &FriendWidget::chatroomWidgetClicked,
-          [=](GenericChatroomWidget *w) {
-            Q_UNUSED(w);
-            emit widget->chatroomWidgetClicked(widget);
-          });
-  connect(friendWidget, &FriendWidget::newWindowOpened,
-          [=](GenericChatroomWidget *w) {
-            Q_UNUSED(w);
-            emit widget->newWindowOpened(widget);
-          });
-  // FIXME: emit should be removed
-  emit widget->chatroomWidgetClicked(widget);
+//  emit friendWidget->chatroomWidgetClicked(friendWidget);
 
   Profile *profile = Nexus::getProfile();
-  connect(profile, &Profile::friendAvatarSet, friendWidget,
-          &FriendWidget::onAvatarSet);
-  connect(profile, &Profile::friendAvatarRemoved, friendWidget,
-          &FriendWidget::onAvatarRemoved);
+//  connect(profile, &Profile::friendAvatarSet, friendWidget,
+//          &FriendWidget::onAvatarSet);
+//  connect(profile, &Profile::friendAvatarRemoved, friendWidget,
+//          &FriendWidget::onAvatarRemoved);
 
   QPixmap avatar = Nexus::getProfile()->loadAvatar(frnd->getPublicKey());
   if (!avatar.isNull()) {
@@ -1666,13 +1658,13 @@ bool Widget::newFriendMessageAlert(const ToxPk &friendId, const QString &text,
           ContentDialogManager::getInstance()->isContactActive(friendId);
     } else {
       currentWindow = window();
-      FriendWidget *widget = friendWidgets[friendId];
+      FriendWidget *widget = friendListWidget->getFriend(friendId);
       hasActive = widget == activeChatroomWidget;
     }
   }
 
   if (newMessageAlert(currentWindow, hasActive, sound)) {
-    FriendWidget *widget = friendWidgets[friendId];
+    FriendWidget *widget = friendListWidget->getFriend(friendId);
     f->setEventFlag(true);
     widget->updateStatusLight();
     ui->friendList->trackWidget(widget);
@@ -1848,7 +1840,7 @@ void Widget::updateFriendActivity(const Friend &frnd) {
   const auto oldTime = settings.getFriendActivity(pk);
   const auto newTime = QDateTime::currentDateTime();
   settings.setFriendActivity(pk, newTime);
-  FriendWidget *widget = friendWidgets[frnd.getPublicKey()];
+  FriendWidget *widget = friendListWidget->getFriend(frnd.getPublicKey());
   contactListWidget->moveWidget(widget, frnd.getStatus());
   contactListWidget->updateActivityTime(oldTime); // update old category widget
 }
@@ -1873,16 +1865,16 @@ void Widget::removeFriend(Friend *f, bool fake) {
   }
 
   const ToxPk friendPk = f->getPublicKey();
-  auto widget = friendWidgets[friendPk];
-  widget->setAsInactiveChatroom();
-  if (widget == activeChatroomWidget) {
+  auto frdWidget = friendListWidget->getFriend(friendPk);
+  frdWidget->setAsInactiveChatroom();
+  if (frdWidget == activeChatroomWidget) {
     activeChatroomWidget = nullptr;
     onAddClicked();
   }
 
   friendAlertConnections.remove(friendPk);
 
-  contactListWidget->removeFriendWidget(widget);
+  friendListWidget->removeFriend(friendPk);
 
   ContentDialog *lastDialog =
       ContentDialogManager::getInstance()->getFriendDialog(friendPk);
@@ -1890,7 +1882,7 @@ void Widget::removeFriend(Friend *f, bool fake) {
     lastDialog->removeFriend(friendPk);
   }
 
-  FriendList::removeFriend(friendPk, fake);
+
   if (!fake) {
     core->removeFriend(f->getPublicKey().toString());
     // aliases aren't supported for non-friend peers in groups, revert to basic
@@ -1902,17 +1894,17 @@ void Widget::removeFriend(Friend *f, bool fake) {
     }
   }
 
-  friendWidgets.remove(friendPk);
-  delete widget;
+//  frdWidget->removeFriend(friendPk);
+//  delete frdWidget;
 
   auto chatForm = chatForms[friendPk];
   chatForms.remove(friendPk);
   delete chatForm;
 
   delete f;
-  if (contentLayout && contentLayout->mainHead->layout()->isEmpty()) {
-    onAddClicked();
-  }
+//  if (contentLayout && contentLayout->mainHead->layout()->isEmpty()) {
+//    onAddClicked();
+//  }
 
   contactListWidget->reDraw();
 }
@@ -1930,7 +1922,7 @@ void Widget::onDialogShown(GenericChatroomWidget *widget) {
 }
 
 void Widget::onFriendDialogShown(const Friend *f) {
-  onDialogShown(friendWidgets[f->getPublicKey()]);
+  onDialogShown(friendListWidget->getFriend(f->getPublicKey()));
 }
 
 void Widget::onGroupDialogShown(Group *g) {
@@ -2254,9 +2246,9 @@ void Widget::removeGroup(Group *g, bool fake) {
   }
   groupChatForms.erase(groupChatFormIt);
   delete g;
-  if (contentLayout && contentLayout->mainHead->layout()->isEmpty()) {
-    onAddClicked();
-  }
+//  if (contentLayout && contentLayout->mainHead->layout()->isEmpty()) {
+//    onAddClicked();
+//  }
 
   groupAlertConnections.remove(groupId);
 
@@ -2650,7 +2642,7 @@ void Widget::reloadTheme() {
   }
 
   for (Friend *f : FriendList::getAllFriends()) {
-    friendWidgets[f->getPublicKey()]->reloadTheme();
+    friendListWidget->getFriend(f->getPublicKey())->reloadTheme();
   }
 
   for (Group *g : GroupList::getAllGroups()) {

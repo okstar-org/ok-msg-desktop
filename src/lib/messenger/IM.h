@@ -127,7 +127,7 @@ public:
    * send
    */
   void sendPresence();
-  void sendPresence(const JID &to);
+  void sendPresence(const JID &to, Presence::PresenceType type);
   void sendReceiptReceived(const QString &id, QString receiptNum);
 
   /**
@@ -146,9 +146,11 @@ public:
   /**
    * 朋友相关
    */
-  void enableRosterManager();
-  void addRosterItem(const QString &username, const QString &nick,
-                     const QString &msg);
+  RosterManager *enableRosterManager();
+
+  void addRosterItem(const QString &username,
+                                const QString &nick,
+                                const QString &msg);
 
   void acceptFriendRequest(const QString &);
   void rejectFriendRequest(const QString &);
@@ -722,6 +724,9 @@ protected:
                        const ConferenceList &cList) override;
 
 
+private:
+  QMutex m_mutex;
+
   ok::base::OsInfo osInfo;
 
   QStringList features;
@@ -735,6 +740,11 @@ protected:
   int _nickChanged = 0;
 
   std::unique_ptr<Client> _client;
+
+  /**
+   * 联系人
+   */
+  gloox::Roster m_roster;
 
   /**
    * k: sessionId

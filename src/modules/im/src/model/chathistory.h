@@ -25,8 +25,11 @@ class ChatHistory : public IChatLog
 {
     Q_OBJECT
 public:
-    ChatHistory(Friend& f_, History* history_, const ICoreIdHandler& coreIdHandler,
-                const Settings& settings, IMessageDispatcher& messageDispatcher);
+    ChatHistory(Friend& f_, History* history_,
+              const ICoreIdHandler& coreIdHandler,
+              const Settings& settings,
+              IMessageDispatcher& messageDispatcher);
+
     const ChatLogItem& at(ChatLogIdx idx) const override;
     SearchResult searchForward(SearchPos startIdx, const QString& phrase,
                                const ParameterSearch& parameter) const override;

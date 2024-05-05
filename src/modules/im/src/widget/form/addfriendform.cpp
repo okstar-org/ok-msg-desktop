@@ -165,8 +165,8 @@ bool AddFriendForm::isShown() const {
 }
 
 void AddFriendForm::show(ContentLayout *contentLayout) {
-  contentLayout->mainContent->layout()->addWidget(tabWidget);
-  contentLayout->mainHead->layout()->addWidget(head);
+//  contentLayout->mainContent->layout()->addWidget(tabWidget);
+//  contentLayout->mainHead->layout()->addWidget(head);
   tabWidget->show();
   head->show();
   //  setIdFromClipboard();

@@ -96,8 +96,8 @@ bool GroupInviteForm::isShown() const
  */
 void GroupInviteForm::show(ContentLayout* contentLayout)
 {
-    contentLayout->mainContent->layout()->addWidget(this);
-    contentLayout->mainHead->layout()->addWidget(headWidget);
+//    contentLayout->mainContent->layout()->addWidget(this);
+//    contentLayout->mainHead->layout()->addWidget(headWidget);
     QWidget::show();
     headWidget->show();
 }

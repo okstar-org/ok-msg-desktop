@@ -249,6 +249,8 @@ set(${PROJECT_NAME}_SOURCES
         src/widget/contentdialogmanager.h
         src/widget/contentlayout.cpp
         src/widget/contentlayout.h
+    src/widget/ContentWidget.h
+    src/widget/ContentWidget.cpp
         src/widget/emoticonswidget.cpp
         src/widget/emoticonswidget.h
         src/widget/flowlayout.cpp
@@ -405,7 +407,9 @@ if (PLATFORM_EXTENSIONS)
     elseif (${APPLE_EXT})
         set(${PROJECT_NAME}_SOURCES
                 ${${PROJECT_NAME}_SOURCES} src/platform/capslock_osx.cpp
-                src/platform/timer_osx.cpp)
+                src/platform/timer_osx.cpp
+            src/widget/ContentWidget.cpp
+            src/widget/ContentWidget.h)
     endif ()
 endif ()
 

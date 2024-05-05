@@ -45,7 +45,7 @@ public:
     explicit ContentDialog(QWidget* parent = nullptr);
     ~ContentDialog() override;
 
-    FriendWidget* addFriend(std::shared_ptr<FriendChatroom> chatroom, GenericChatForm* form);
+    void addFriend(FriendChatroom* chatroom, GenericChatForm* form);
     GroupWidget* addGroup(std::shared_ptr<GroupChatroom> chatroom, GenericChatForm* form);
     void removeFriend(const ToxPk& friendPk) override;
     void removeGroup(const GroupId& groupId) override;
@@ -121,8 +121,10 @@ private:
     QSize videoSurfaceSize;
     int videoCount;
 
-    QHash<const ContactId&, GenericChatroomWidget*> contactWidgets;
-    QHash<const ContactId&, GenericChatForm*> contactChatForms;
+    GenericChatroomWidget* contactWidget;
+
+    GenericChatForm* m_chatForm;
+    FriendChatroom* m_chatroom;
 
     QString username;
 };

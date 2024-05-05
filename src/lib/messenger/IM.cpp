@@ -128,7 +128,7 @@ std::unique_ptr<Client> IM::makeClient() {
   client->registerStanzaExtension(new Capabilities);
   client->registerStanzaExtension(new Disco::Items);
 
-  client->registerStanzaExtension(new Jingle::JingleMessage());
+
   client->registerStanzaExtension(new InBandBytestream::IBB);
   client->registerStanzaExtension(new ChatState(nullptr));
   client->registerStanzaExtension(new Receipt(nullptr));
@@ -162,15 +162,12 @@ std::unique_ptr<Client> IM::makeClient() {
     qDebug() << "addFeature:" << feat;
     disco->addFeature(stdstring(feat));
   }
-  // urn:xmpp:avatar:data
-  disco->addFeature(XMLNS_AVATAR);
-  // urn:xmpp:avatar:metadata
-  disco->addFeature(XMLNS_META_AVATAR);
-  // urn:xmpp:avatar:metadata+notify
-  disco->addFeature(XMLNS_META_AVATAR + "+notify");
-  client->registerStanzaExtension(new Avatar);
 
+  /**
+   * 聊天相关
+   */
   disco->addFeature(XMLNS_CHAT_STATES);
+
   disco->addFeature(XMLNS_MUC);
   disco->addFeature(XMLNS_MUC_ADMIN);
   disco->addFeature(XMLNS_MUC_OWNER);
@@ -195,8 +192,12 @@ std::unique_ptr<Client> IM::makeClient() {
   disco->addFeature("urn:xmpp:carbons:rules:0");
   disco->addFeature(XMLNS_ADDRESSES);
 
-  // 基本Jingle功能
   disco->addFeature(XMLNS_IBB);
+
+  /**
+   * Jingle功能
+   */
+  client->registerStanzaExtension(new Jingle::JingleMessage());
   disco->addFeature(XMLNS_JINGLE);
   disco->addFeature(XMLNS_JINGLE_FILE_TRANSFER);
   disco->addFeature(XMLNS_JINGLE_FILE_TRANSFER4);
@@ -237,9 +238,9 @@ std::unique_ptr<Client> IM::makeClient() {
 //  client->registerMessageHandler(this);
 //  client->setStreamManagement(true, true);
 
-#ifdef LOG_XMPP
-  client->logInstance().registerLogHandler(LogLevelDebug, LogAreaAll, this);
-#endif
+//#ifdef LOG_XMPP
+//  client->logInstance().registerLogHandler(LogLevelDebug, LogAreaAll, this);
+//#endif
 
   vCardManager = std::make_unique<VCardManager>(client.get());
   pubSubManager = std::make_unique<PubSub::Manager>(client.get());
@@ -324,17 +325,26 @@ IMMessage IM::from(MsgType type, const gloox::Message &msg) {
 void IM::enableDiscoManager() {
   qDebug() << "enableDiscoManager";
 
-  auto disco = _client->disco();
+  auto client = _client.get();
+  auto disco = client->disco();
 
   for (const auto &feat : features) {
     qDebug() << "addFeature:" << feat;
     disco->addFeature(stdstring(feat));
   }
+
+  /**
+   * 头像相关
+   */
+  client->registerStanzaExtension(new Avatar);
   // urn:xmpp:avatar:data
   disco->addFeature(XMLNS_AVATAR);
   // urn:xmpp:avatar:metadata
   disco->addFeature(XMLNS_META_AVATAR);
+  // urn:xmpp:avatar:metadata+notify
   disco->addFeature(XMLNS_META_AVATAR + "+notify");
+
+
 
   disco->addFeature(XMLNS_CHAT_STATES);
   disco->addFeature(XMLNS_MUC);
@@ -382,13 +392,15 @@ void IM::enableDiscoManager() {
   disco->addFeature(XMLNS_JINGLE_APPS_RTP_HDREXT);
   disco->addFeature(XMLNS_JINGLE_APPS_GROUP);
   disco->addFeature(XMLNS_JINGLE_MESSAGE);
-  // NICK
+
+  /**
+   * 昵称 NICK
+   */
   disco->addFeature(XMLNS_NICKNAME);
   disco->addFeature(XMLNS_NICKNAME + "+notify");
+  client->registerStanzaExtension(new Nickname(nullptr));
 
-  auto client = _client.get();
 
-  client->registerStanzaExtension(new Avatar);
   client->registerStanzaExtension(new VCardUpdate);
   client->registerStanzaExtension(new Capabilities);
   client->registerStanzaExtension(new Disco::Items);
@@ -403,7 +415,7 @@ void IM::enableDiscoManager() {
   client->registerStanzaExtension(new DelayedDelivery());
   client->registerStanzaExtension(new ExtDisco());
   client->registerStanzaExtension(new Addresses());
-  client->registerStanzaExtension(new Nickname(nullptr));
+
 
   disco->registerDiscoHandler(this);
   disco->registerNodeHandler(this, EmptyString);
@@ -417,30 +429,30 @@ void IM::requestVCards() {
   vCardManager->fetchVCard(self().bareJID(), this);
 }
 
-void IM::enableRosterManager() {
-
+gloox::RosterManager * IM::enableRosterManager() {
+  qDebug() << __func__ ;
   /**
    * roster
    */
   auto pRosterManager = _client->enableRoster();
   pRosterManager->registerRosterListener(this);
-
+  return pRosterManager;
   // enable carbons（多终端支持）
-  IQ iq(IQ::IqType::Set, JID(), "server");
-  iq.addExtension(new Carbons(gloox::Carbons::Enable));
-  _client->send(iq);
-
-  // request ext server disco
-  IQ iq2(gloox::IQ::Get, JID(_host));
-  auto t = iq2.tag();
-  t->addChild(gloox::ExtDisco::newRequest());
-  _client->send(t);
-
-  /**
-   * Registration
-   */
-  mRegistration = std::make_unique<Registration>(_client.get());
-  mRegistration->registerRegistrationHandler(this);
+//  IQ iq(IQ::IqType::Set, JID(), "server");
+//  iq.addExtension(new Carbons(gloox::Carbons::Enable));
+//  _client->send(iq);
+//
+//  // request ext server disco
+//  IQ iq2(gloox::IQ::Get, JID(_host));
+//  auto t = iq2.tag();
+//  t->addChild(gloox::ExtDisco::newRequest());
+//  _client->send(t);
+//
+//  /**
+//   * Registration
+//   */
+//  mRegistration = std::make_unique<Registration>(_client.get());
+//  mRegistration->registerRegistrationHandler(this);
 }
 
 void IM::doDisconnect() {
@@ -529,6 +541,7 @@ void IM::handleMessageSession(MessageSession *session) {
 }
 
 void IM::handleMessage(const gloox::Message &msg, MessageSession *session) {
+  return;
   if (!session) {
     qWarning()<<"session is NULL";
     return;
@@ -1518,10 +1531,6 @@ void IM::handlePresence(const Presence &presence) {
 
   updateOnlineStatus(presence.from().bare(), presence.from().resource(),
                      presence.presence());
-  while(!mUIStarted){
-    qDebug()<<"Waiting UI Started...";
-    sleep(1);
-  }
 
   if(!mStarted){
     mStarted = true;
@@ -1713,6 +1722,11 @@ size_t IM::getRosterCount() {
 
 void IM::getRosterList(std::list<FriendId> &list) {
   auto rosterManager = _client->rosterManager();
+  if(!rosterManager){
+    QMutexLocker locker(&m_mutex);
+    rosterManager = enableRosterManager();
+  }
+
   gloox::Roster *rosterMap = rosterManager->roster();
   for (const auto &itr : *rosterMap) {
     auto pItem = itr.second;
@@ -1723,12 +1737,7 @@ void IM::getRosterList(std::list<FriendId> &list) {
 
 void IM::handleRoster(const Roster &roster) {
   qDebug() << __func__ << "size:" << roster.size();
-
-  while(!mUIStarted){
-    qDebug()<<"Waiting UI Started...";
-    sleep(1);
-  }
-
+  m_roster = roster;
 
   for (auto &it : roster) {
     auto &key = it.first;
@@ -2043,8 +2052,8 @@ void IM::sendPresence() {
   _client->setPresence();
 }
 
-void IM::sendPresence(const JID &to) {
-  _client->setPresence(to, Presence::PresenceType::Available, 0);
+void IM::sendPresence(const JID &to, Presence::PresenceType type) {
+  _client->setPresence(to, type, 0);
 }
 
 void IM::sendReceiptReceived(const QString &id, QString receiptNum) {

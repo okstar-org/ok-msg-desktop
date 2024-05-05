@@ -62,8 +62,8 @@ bool FilesForm::isShown() const
 
 void FilesForm::show(ContentLayout* contentLayout)
 {
-    contentLayout->mainContent->layout()->addWidget(&main);
-    contentLayout->mainHead->layout()->addWidget(head);
+//    contentLayout->mainContent->layout()->addWidget(&main);
+//    contentLayout->mainHead->layout()->addWidget(head);
     main.show();
     head->show();
 }

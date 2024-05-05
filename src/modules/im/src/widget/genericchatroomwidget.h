@@ -32,6 +32,7 @@ public:
 public slots:
     virtual void setAsActiveChatroom() = 0;
     virtual void setAsInactiveChatroom() = 0;
+    virtual void setAvatar(const QPixmap& pixmap) = 0;
     virtual void updateStatusLight() = 0;
     virtual void resetEventFlags() = 0;
     virtual QString getStatusString() const = 0;

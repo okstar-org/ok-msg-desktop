@@ -40,8 +40,11 @@ public:
     IDialogs* getFriendDialogs(const ToxPk& friendPk) const;
     IDialogs* getGroupDialogs(const GroupId& groupId) const;
 
-    FriendWidget* addFriendToDialog(ContentDialog* dialog, std::shared_ptr<FriendChatroom> chatroom,
+    void addFriendToDialog(const ToxPk& friendPx,
+                                    ContentDialog* dialog,
+                                    FriendChatroom* chatroom,
                                     GenericChatForm* form);
+
     GroupWidget* addGroupToDialog(ContentDialog* dialog, std::shared_ptr<GroupChatroom> chatroom,
                                   GenericChatForm* form);
 

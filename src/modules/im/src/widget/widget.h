@@ -134,6 +134,10 @@ public:
 
   void resetIcon();
 
+  [[nodiscard]] ContentLayout *getContentLayout() const {
+    return contentLayout;
+  }
+
 public slots:
   void onShowSettings();
   void onSeparateWindowClicked(bool separate);
@@ -344,7 +348,8 @@ private:
   std::unique_ptr<IAudioSink> audioNotification = nullptr;
   Settings &settings;
 
-  QMap<ToxPk, FriendWidget *> friendWidgets;
+//  QMap<ToxPk, FriendWidget *> friendWidgets;
+  FriendListWidget* friendListWidget;
   // Shared pointer because qmap copies stuff all over the place
   QMap<ToxPk, std::shared_ptr<FriendMessageDispatcher>>
       friendMessageDispatchers;

@@ -505,8 +505,9 @@ void GenericChatForm::setName(const QString &newName) {
 }
 
 void GenericChatForm::show(ContentLayout *contentLayout) {
-  contentLayout->mainHead->layout()->addWidget(headWidget);
-  headWidget->show();
+//  auto mainLayout = contentLayout->mainHead->layout();
+//  contentLayout->addWidget(headWidget);
+//  headWidget->show();
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 12, 4) &&                                 \
     QT_VERSION > QT_VERSION_CHECK(5, 11, 0)
@@ -516,8 +517,10 @@ void GenericChatForm::show(ContentLayout *contentLayout) {
   QWidget::show();
   contentLayout->mainContent->layout()->addWidget(this);
 #else
-  contentLayout->mainContent->layout()->addWidget(this);
-  QWidget::show();
+//  contentLayout->mainContent->layout()->addWidget(this);
+//  contentLayout->layout()->addWidget(this);
+  show();
+//  QWidget::show();
 #endif
 }
 

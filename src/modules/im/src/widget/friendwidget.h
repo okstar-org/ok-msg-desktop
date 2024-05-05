@@ -13,8 +13,12 @@
 #ifndef FRIENDWIDGET_H
 #define FRIENDWIDGET_H
 
+#include "ContentWidget.h"
 #include "genericchatroomwidget.h"
 #include "src/core/toxpk.h"
+#include "src/model/chatroom/groupchatroom.h"
+#include "src/model/friendmessagedispatcher.h"
+#include "src/model/message.h"
 
 #include <memory>
 
@@ -22,16 +26,22 @@ class FriendChatroom;
 class QPixmap;
 class MaskablePixmapWidget;
 class CircleWidget;
+class ChatForm;
+class ChatHistory;
+class ContentDialog;
+class ContentLayout;
+class Widget;
 
 class FriendWidget : public GenericChatroomWidget
 {
     Q_OBJECT
 public:
-    FriendWidget(std::shared_ptr<FriendChatroom> chatform, bool compact);
+    FriendWidget(ContentLayout* layout, const QString& friendId, const ToxPk &friendPk, bool isFriend, bool compact);
 
     void contextMenuEvent(QContextMenuEvent* event) override final;
     void setAsActiveChatroom() override final;
     void setAsInactiveChatroom() override final;
+    void setAvatar(const QPixmap &pixmap) override final;
     void updateStatusLight() override final;
     void resetEventFlags() override final;
     QString getStatusString() const override final;
@@ -56,12 +66,29 @@ public slots:
     void onAvatarRemoved(const ToxPk& friendPk);
     void onContextMenuCalled(QContextMenuEvent* event);
     void setActive(bool active);
+    void slot_chatroomWidgetClicked(GenericChatroomWidget *w);
 
 protected:
     virtual void mousePressEvent(QMouseEvent* ev) override;
     virtual void mouseMoveEvent(QMouseEvent* ev) override;
     void setFriendAlias();
 
+  private:
+    ContentLayout* contentLayout;
+    ContentWidget* contentWidget;
+
+    MessageProcessor::SharedParams sharedMessageProcessorParams;
+    std::unique_ptr<FriendMessageDispatcher> friendMessageDispatcher;
+    std::unique_ptr<ChatHistory> chatHistory;
+    std::unique_ptr<ChatForm> chatForm;
+    std::unique_ptr<FriendChatroom> chatRoom;
+
+    Friend *m_friend ;
+
+    bool isDefaultAvatar;
+
+    ContentDialog *createContentDialog() const;
+    ContentDialog * addFriendDialog(const Friend *frnd );
 private slots:
     void removeChatWindow();
     void moveToNewCircle();
@@ -70,9 +97,8 @@ private slots:
     void changeAutoAccept(bool enable);
     void showDetails();
 
-public:
-    std::shared_ptr<FriendChatroom> chatroom;
-    bool isDefaultAvatar;
+
+
 };
 
 #endif // FRIENDWIDGET_H

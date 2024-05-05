@@ -113,7 +113,7 @@ bool SettingsWidget::isShown() const
 
 void SettingsWidget::show(ContentLayout* contentLayout)
 {
-    contentLayout->mainContent->layout()->addWidget(settingsWidgets.get());
+//    contentLayout->mainContent->layout()->addWidget(settingsWidgets.get());
     settingsWidgets->show();
     onTabChanged(settingsWidgets->currentIndex());
 }
