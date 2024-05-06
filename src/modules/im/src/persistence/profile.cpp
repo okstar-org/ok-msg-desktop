@@ -89,8 +89,8 @@ void Profile::initCore(const QByteArray &toxsave, ICoreSettings &s,
   connect(core.get(), &Core::saveRequest, this, &Profile::onSaveToxSave);
   // react to avatar changes
   connect(core.get(), &Core::friendAvatarRemoved, this, &Profile::removeAvatar);
-  connect(core.get(), &Core::friendAvatarChanged, this,
-          &Profile::setFriendAvatar);
+//  connect(core.get(), &Core::friendAvatarChanged, this,
+//          &Profile::setFriendAvatar);
   connect(core.get(), &Core::fileAvatarOfferReceived, this,
           &Profile::onAvatarOfferReceived,
           Qt::ConnectionType::QueuedConnection);

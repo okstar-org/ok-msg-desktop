@@ -53,7 +53,7 @@ public:
   void setFriendStatus(const ToxPk &friendPk,  Status::Status status);
   void setFriendStatusMsg(const ToxPk &friendPk,  const QString& statusMsg);
   void setFriendName(const ToxPk &friendPk,  const QString& name);
-
+  void setFriendAvatar(const ToxPk &friendPk, const QByteArray& avatar);
 
   GroupWidget *addGroup(QString groupnumber, const GroupId &groupId,
                         const QString &groupName = "");

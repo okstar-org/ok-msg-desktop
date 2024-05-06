@@ -729,6 +729,8 @@ void Widget::onCoreChanged(Core &core) {
   connect(&core, &Core::usernameSet, this, &Widget::setUsername);
   connect(&core, &Core::avatarSet, this, &Widget::setAvatar);
   connect(&core, &Core::statusMessageSet, this, &Widget::setStatusMessage);
+  connect(&core, &Core::friendAvatarChanged, this, &Widget::onFriendAvatarChanged);
+
   connect(&core, &Core::friendAddedDone, this, &Widget::addFriendDone);
   connect(&core, &Core::failedToAddFriend, this, &Widget::addFriendFailed);
   connect(&core, &Core::friendUsernameChanged, this,
@@ -2899,4 +2901,10 @@ void Widget::connectFriendWidget(FriendWidget &friendWidget) {
           &Widget::searchCircle);
   connect(&friendWidget, &FriendWidget::updateFriendActivity, this,
           &Widget::updateFriendActivity);
+}
+void Widget::onFriendAvatarChanged(ToxPk friendnumber,
+                                   const QByteArray &avatar) {
+  qDebug() << __func__ <<"friend:" << friendnumber.toString() << avatar;
+  contactListWidget->setFriendAvatar(friendnumber, avatar);
+
 }

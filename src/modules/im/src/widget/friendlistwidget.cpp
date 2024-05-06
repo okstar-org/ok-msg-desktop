@@ -1036,3 +1036,16 @@ void FriendListWidget::setFriendName(const ToxPk &friendPk,
     }
 
 }
+
+void FriendListWidget::setFriendAvatar(const ToxPk &friendPk,
+                                       const QByteArray &avatar) {
+  auto fw = getFriend(friendPk);
+  if(!fw){
+    qWarning() <<"friend is no exist.";
+    return;
+  }
+
+  QPixmap p;
+  p.loadFromData(avatar);
+  fw->setAvatar(p);
+}

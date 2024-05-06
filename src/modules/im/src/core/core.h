@@ -153,7 +153,7 @@ signals:
   void disconnected();
 
   void friendRequestReceived(const ToxPk &friendPk, const QString &message);
-  void friendAvatarChanged(const ToxPk friendPk, std::string pic);
+  void friendAvatarChanged(const ToxPk friendPk, const QByteArray &avatar);
   void friendAvatarRemoved(const ToxPk &friendPk);
 
   void requestSent(const ToxPk &friendPk, const QString &message);

@@ -164,6 +164,7 @@ public slots:
   void onFriendUsernameChanged(QString friendId, const QString &username);
   void onFriendAliasChanged(const ToxPk &friendId, const QString &alias);
   void onFriendMessageReceived(ToxPk friendnumber, const lib::messenger::IMMessage &message, bool isAction);
+  void onFriendAvatarChanged(ToxPk friendnumber, const QByteArray& avatar);
   void onReceiptReceived(QString friendId, ReceiptNum receipt);
   void onFriendRequestReceived(const ToxPk &friendPk, const QString &message);
   void onFileReceiveRequested(const ToxFile &file);

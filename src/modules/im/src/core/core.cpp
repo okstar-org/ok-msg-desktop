@@ -572,7 +572,7 @@ void Core::onFriendAvatarChanged(const QString friendId,
   if (avatar.empty())
     return;
   qDebug() << "onFriendAvatarChanged" << friendId <<"avatar size"<< avatar.size();
-  emit friendAvatarChanged(getFriendPublicKey(friendId), avatar);
+  emit friendAvatarChanged(getFriendPublicKey(friendId), QByteArray::fromStdString(avatar));
 }
 
 void Core::onFriendTypingChange(Tox *, QString friendId, bool isTyping,
