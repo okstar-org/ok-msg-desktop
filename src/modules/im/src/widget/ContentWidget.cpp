@@ -15,10 +15,11 @@
 //
 
 #include "ContentWidget.h"
+#include "chatformheader.h"
 #include "contentlayout.h"
 #include "form/chatform.h"
 #include "src/persistence/settings.h"
-#include "chatformheader.h"
+#include "src/widget/form/groupchatform.h"
 #include <QLabel>
 #include <QStyleFactory>
 
@@ -77,6 +78,12 @@ void ContentWidget::showTo(ContentLayout *layout) {
 }
 
 void ContentWidget::setChatForm(ChatForm * form) {
+  auto h = form->getHead();
+  mainHead->layout()->addWidget(h);
+  mainContent->layout()->addWidget(form);
+}
+
+void ContentWidget::setGroupChatForm(GroupChatForm * form) {
   auto h = form->getHead();
   mainHead->layout()->addWidget(h);
   mainContent->layout()->addWidget(form);

@@ -171,22 +171,25 @@ void ContentDialog::addFriend( FriendChatroom* chatroom,
 //    return friendWidget;
 }
 
-GroupWidget* ContentDialog::addGroup(std::shared_ptr<GroupChatroom> chatroom, GenericChatForm* form)
+GroupWidget* ContentDialog::addGroup(GroupChatroom* chatroom, GenericChatForm* form)
 {
-    const auto g = chatroom->getGroup();
-    const auto& groupId = g->getPersistentId();
-    const auto compact = Settings::getInstance().getCompactLayout();
-    auto groupWidget = new GroupWidget(chatroom, compact);
-    contactWidget = groupWidget;
+//    const auto g = chatroom->getGroup();
+//    const auto& groupId = g->getPersistentId();
+//    const auto compact = Settings::getInstance().getCompactLayout();
+//    auto groupWidget = new GroupWidget(chatroom, compact);
+//    contactWidget = groupWidget;
     m_chatForm = form;
-    groupLayout.addSortedWidget(groupWidget);
+    m_chatroom = chatroom;
 
-    connect(groupWidget, &GroupWidget::chatroomWidgetClicked, this, &ContentDialog::activate);
+//    groupLayout.addSortedWidget(groupWidget);
+
+//    connect(groupWidget, &GroupWidget::chatroomWidgetClicked, this, &ContentDialog::activate);
 
     // FIXME: emit should be removed
-    emit groupWidget->chatroomWidgetClicked(groupWidget);
+//    emit groupWidget->chatroomWidgetClicked(groupWidget);
 
-    return groupWidget;
+//    return groupWidget;
+
 }
 
 void ContentDialog::removeFriend(const ToxPk& friendPk)

@@ -1580,7 +1580,7 @@ void Widget::addGroupDialog(Group *group, ContentDialog *dialog) {
   ContentDialog *groupDialog =
       ContentDialogManager::getInstance()->getGroupDialog(groupId);
   bool separated = settings.getSeparateWindow();
-  GroupWidget *widget = groupWidgets[groupId];
+  GroupWidget *widget = contactListWidget->getGroup(groupId);
   bool isCurrentWindow = activeChatroomWidget == widget;
   if (!groupDialog && !separated && isCurrentWindow) {
     onAddClicked();
@@ -1588,8 +1588,8 @@ void Widget::addGroupDialog(Group *group, ContentDialog *dialog) {
 
   auto chatForm = groupChatForms[groupId].data();
   auto chatroom = groupChatrooms[groupId];
-  auto groupWidget = ContentDialogManager::getInstance()->addGroupToDialog(
-      dialog, chatroom, chatForm);
+  auto groupWidget = ContentDialogManager::getInstance()->addGroupToDialog(groupId,
+      dialog, chatroom.get(), chatForm);
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 7, 0))
   auto removeGroup = QOverload<const GroupId &>::of(&Widget::removeGroup);
@@ -1600,31 +1600,31 @@ void Widget::addGroupDialog(Group *group, ContentDialog *dialog) {
   auto destroyGroup =
       static_cast<void (Widget::*)(const GroupId &)>(&Widget::destroyGroup);
 #endif
-  connect(groupWidget, &GroupWidget::removeGroup, this, removeGroup);
-  connect(groupWidget, &GroupWidget::destroyGroup, this, destroyGroup);
-  connect(groupWidget, &GroupWidget::chatroomWidgetClicked, chatForm,
-          &GroupChatForm::focusInput);
-  connect(groupWidget, &GroupWidget::middleMouseClicked, dialog,
-          [=]() { dialog->removeGroup(groupId); });
-  connect(groupWidget, &GroupWidget::chatroomWidgetClicked, chatForm,
-          &ChatForm::focusInput);
-  connect(groupWidget, &GroupWidget::newWindowOpened, this,
-          &Widget::openNewDialog);
-
-  // Signal transmission from the created `groupWidget` (which shown in
-  // ContentDialog) to the `widget` (which shown in main widget)
-  // FIXME: emit should be removed
-  connect(groupWidget, &GroupWidget::chatroomWidgetClicked,
-          [=](GenericChatroomWidget *w) {
-            Q_UNUSED(w);
-            emit widget->chatroomWidgetClicked(widget);
-          });
-
-  connect(groupWidget, &GroupWidget::newWindowOpened,
-          [=](GenericChatroomWidget *w) {
-            Q_UNUSED(w);
-            emit widget->newWindowOpened(widget);
-          });
+//  connect(groupWidget, &GroupWidget::removeGroup, this, removeGroup);
+//  connect(groupWidget, &GroupWidget::destroyGroup, this, destroyGroup);
+//  connect(groupWidget, &GroupWidget::chatroomWidgetClicked, chatForm,
+//          &GroupChatForm::focusInput);
+//  connect(groupWidget, &GroupWidget::middleMouseClicked, dialog,
+//          [=]() { dialog->removeGroup(groupId); });
+//  connect(groupWidget, &GroupWidget::chatroomWidgetClicked, chatForm,
+//          &ChatForm::focusInput);
+//  connect(groupWidget, &GroupWidget::newWindowOpened, this,
+//          &Widget::openNewDialog);
+//
+//  // Signal transmission from the created `groupWidget` (which shown in
+//  // ContentDialog) to the `widget` (which shown in main widget)
+//  // FIXME: emit should be removed
+//  connect(groupWidget, &GroupWidget::chatroomWidgetClicked,
+//          [=](GenericChatroomWidget *w) {
+//            Q_UNUSED(w);
+//            emit widget->chatroomWidgetClicked(widget);
+//          });
+//
+//  connect(groupWidget, &GroupWidget::newWindowOpened,
+//          [=](GenericChatroomWidget *w) {
+//            Q_UNUSED(w);
+//            emit widget->newWindowOpened(widget);
+//          });
 
   // FIXME: emit should be removed
   emit widget->chatroomWidgetClicked(widget);
@@ -1704,7 +1704,7 @@ bool Widget::newGroupMessageAlert(const GroupId &groupId, const ToxPk &authorPk,
   ContentDialog *contentDialog =
       ContentDialogManager::getInstance()->getGroupDialog(groupId);
   Group *g = GroupList::findGroup(groupId);
-  GroupWidget *widget = groupWidgets[groupId];
+  GroupWidget *widget = nullptr; //groupWidgets[groupId];
 
   if (contentDialog != nullptr) {
     currentWindow = contentDialog->window();
@@ -1963,8 +1963,8 @@ void Widget::registerContentDialog(ContentDialog &contentDialog) const {
           &ContentDialog::reorderLayouts);
   connect(&contentDialog, &ContentDialog::addFriendDialog, this,
           &Widget::addFriendDialog);
-  connect(&contentDialog, &ContentDialog::addGroupDialog, this,
-          &Widget::addGroupDialog);
+//  connect(&contentDialog, &ContentDialog::addGroupDialog, this,
+//          &Widget::addGroupDialog);
   connect(&contentDialog, &ContentDialog::connectFriendWidget, this,
           &Widget::connectFriendWidget);
 
@@ -2109,20 +2109,25 @@ void Widget::onGroupMessageReceived(QString groupnumber,
                                     const QDateTime &time,
                                     bool isAction) {
 
-  /*qDebug() << "onGroupMessageReceived group:" << groupnumber
+  qDebug() << "onGroupMessageReceived group:" << groupnumber
            << "nick:" << nick
-           << "content:" << content;*/
+           << "content:" << content;
 
   const GroupId &groupId = GroupList::id2Key(groupnumber);
-  Group *g = GroupList::findGroup(groupId);
-  if (!g) {
-    qWarning() << "Can not find the group named:" << groupnumber;
-    return;
-  }
+//  Group *g = GroupList::findGroup(groupId);
+//  if (!g) {
+//    qWarning() << "Can not find the group named:" << groupnumber;
+//    return;
+//  }
+//
+//  ToxPk author = core->getGroupPeerPk(groupnumber, nick);
+//  groupMessageDispatchers[groupId]->onMessageReceived(author, isAction, content,
+//                                                      nick, from, time);
 
-  ToxPk author = core->getGroupPeerPk(groupnumber, nick);
-  groupMessageDispatchers[groupId]->onMessageReceived(author, isAction, content,
-                                                      nick, from, time);
+  auto gw = contactListWidget->getGroup(groupId);
+  if(gw){
+    gw->setRecvMessage(groupnumber, nick, from, content, time, isAction);
+  }
 }
 
 void Widget::onGroupPeerListChanged(QString groupnumber) {
@@ -2263,97 +2268,100 @@ void Widget::destroyGroup(const GroupId &groupId) {
   removeGroup(GroupList::findGroup(groupId), false);
 }
 
-Group *Widget::createGroup(QString groupnumber,
+GroupWidget *Widget::createGroup(QString groupnumber,
                            const GroupId &groupId,
                            const QString& groupName) {
-  qDebug() << "createGroup" << groupnumber
-            << groupName;
 
-  Group *g = GroupList::findGroup(groupId);
-  if (g) {
-    qWarning() << "Group already exists" << groupnumber << "=>group:" << g;
-    return g;
-  }
 
-  const bool enabled = core->getGroupAvEnabled(groupnumber);
-  Group *newgroup = GroupList::addGroup(groupnumber, groupId, groupName,
-                                        enabled, core->getUsername());
-
-  auto dialogManager = ContentDialogManager::getInstance();
-  auto rawChatroom = new GroupChatroom(newgroup, dialogManager);
-  std::shared_ptr<GroupChatroom> chatroom(rawChatroom);
-
-  const auto compact = settings.getCompactLayout();
-  auto widget = new GroupWidget(chatroom, compact);
-  auto messageProcessor = MessageProcessor(sharedMessageProcessorParams);
-  auto messageDispatcher = std::make_shared<GroupMessageDispatcher>(
-      *newgroup, std::move(messageProcessor), *core, *core,
-      Settings::getInstance());
-  auto groupChatLog = std::make_shared<SessionChatLog>(*core);
-
-  connect(messageDispatcher.get(), &IMessageDispatcher::messageReceived,
-          groupChatLog.get(), &SessionChatLog::onMessageReceived);
-  connect(messageDispatcher.get(), &IMessageDispatcher::messageSent,
-          groupChatLog.get(), &SessionChatLog::onMessageSent);
-  connect(messageDispatcher.get(), &IMessageDispatcher::messageComplete,
-          groupChatLog.get(), &SessionChatLog::onMessageComplete);
-
-  auto notifyReceivedCallback = [this, groupId](const ToxPk &author,
-                                                const Message &message) {
-    auto isTargeted =
-        std::any_of(message.metadata.begin(), message.metadata.end(),
-                    [](MessageMetadata metadata) {
-                      return metadata.type == MessageMetadataType::selfMention;
-                    });
-    newGroupMessageAlert(groupId, author, message.content,
-                         isTargeted || settings.getGroupAlwaysNotify());
-  };
-
-  auto notifyReceivedConnection =
-      connect(messageDispatcher.get(), &IMessageDispatcher::messageReceived,
-              notifyReceivedCallback);
-  groupAlertConnections.insert(groupId, notifyReceivedConnection);
-
-  auto form =
-      new GroupChatForm(newgroup, *groupChatLog, *messageDispatcher, settings);
-  connect(&settings, &Settings::nameColorsChanged, form,
-          &GenericChatForm::setColorizedNames);
-  form->setColorizedNames(settings.getEnableGroupChatsColor());
-  groupMessageDispatchers[groupId] = messageDispatcher;
-  groupChatLogs[groupId] = groupChatLog;
-  groupWidgets[groupId] = widget;
-  groupChatrooms[groupId] = chatroom;
-  groupChatForms[groupId] = QSharedPointer<GroupChatForm>(form);
-
-  contactListWidget->addGroupWidget(widget);
-
-  widget->updateStatusLight();
-  contactListWidget->activateWindow();
-
-  connect(widget, &GroupWidget::chatroomWidgetClicked, this,
-          &Widget::onChatroomWidgetClicked);
-  connect(widget, &GroupWidget::newWindowOpened, this, &Widget::openNewDialog);
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 7, 0))
-  auto widgetRemoveGroup = QOverload<const GroupId &>::of(&Widget::removeGroup);
-  auto widgetDestroyGroup = QOverload<const GroupId &>::of(&Widget::destroyGroup);
-#else
-  auto widgetRemoveGroup =
-      static_cast<void (Widget::*)(const GroupId &)>(&Widget::removeGroup);
-  auto widgetDestroyGroup =
-      static_cast<void (Widget::*)(const GroupId &)>(&Widget::destroyGroup);
-#endif
-  connect(widget, &GroupWidget::removeGroup, this, widgetRemoveGroup);
-  connect(widget, &GroupWidget::destroyGroup, this, widgetDestroyGroup);
-//  connect(widget, &GroupWidget::middleMouseClicked, this,
-//          [=]() { removeGroup(groupId); });
-  connect(widget, &GroupWidget::chatroomWidgetClicked, form,
-          &ChatForm::focusInput);
-  connect(newgroup, &Group::titleChangedByUser, this,
-          &Widget::titleChangedByUser);
-  connect(core, &Core::usernameSet, newgroup, &Group::setSelfName);
-
-  FilterCriteria filter = getFilterCriteria();
-  widget->searchName(ui->searchContactText->text(), filterGroups(filter));
+  auto newgroup = contactListWidget->addGroup(groupnumber, groupId, groupName);
+//  qDebug() << "createGroup" << groupnumber
+//            << groupName;
+//
+//  Group *g = GroupList::findGroup(groupId);
+//  if (g) {
+//    qWarning() << "Group already exists" << groupnumber << "=>group:" << g;
+//    return g;
+//  }
+//
+//  const bool enabled = core->getGroupAvEnabled(groupnumber);
+//  Group *newgroup = GroupList::addGroup(groupnumber, groupId, groupName,
+//                                        enabled, core->getUsername());
+//
+//  auto dialogManager = ContentDialogManager::getInstance();
+//  auto rawChatroom = new GroupChatroom(newgroup, dialogManager);
+//  std::shared_ptr<GroupChatroom> chatroom(rawChatroom);
+//
+//  const auto compact = settings.getCompactLayout();
+//  auto widget = new GroupWidget(chatroom, compact);
+//  auto messageProcessor = MessageProcessor(sharedMessageProcessorParams);
+//  auto messageDispatcher = std::make_shared<GroupMessageDispatcher>(
+//      *newgroup, std::move(messageProcessor), *core, *core,
+//      Settings::getInstance());
+//  auto groupChatLog = std::make_shared<SessionChatLog>(*core);
+//
+//  connect(messageDispatcher.get(), &IMessageDispatcher::messageReceived,
+//          groupChatLog.get(), &SessionChatLog::onMessageReceived);
+//  connect(messageDispatcher.get(), &IMessageDispatcher::messageSent,
+//          groupChatLog.get(), &SessionChatLog::onMessageSent);
+//  connect(messageDispatcher.get(), &IMessageDispatcher::messageComplete,
+//          groupChatLog.get(), &SessionChatLog::onMessageComplete);
+//
+//  auto notifyReceivedCallback = [this, groupId](const ToxPk &author,
+//                                                const Message &message) {
+//    auto isTargeted =
+//        std::any_of(message.metadata.begin(), message.metadata.end(),
+//                    [](MessageMetadata metadata) {
+//                      return metadata.type == MessageMetadataType::selfMention;
+//                    });
+//    newGroupMessageAlert(groupId, author, message.content,
+//                         isTargeted || settings.getGroupAlwaysNotify());
+//  };
+//
+//  auto notifyReceivedConnection =
+//      connect(messageDispatcher.get(), &IMessageDispatcher::messageReceived,
+//              notifyReceivedCallback);
+//  groupAlertConnections.insert(groupId, notifyReceivedConnection);
+//
+//  auto form =
+//      new GroupChatForm(newgroup, *groupChatLog, *messageDispatcher, settings);
+//  connect(&settings, &Settings::nameColorsChanged, form,
+//          &GenericChatForm::setColorizedNames);
+//  form->setColorizedNames(settings.getEnableGroupChatsColor());
+//  groupMessageDispatchers[groupId] = messageDispatcher;
+//  groupChatLogs[groupId] = groupChatLog;
+//  groupWidgets[groupId] = widget;
+//  groupChatrooms[groupId] = chatroom;
+//  groupChatForms[groupId] = QSharedPointer<GroupChatForm>(form);
+//
+//  contactListWidget->addGroupWidget(widget);
+//
+//  widget->updateStatusLight();
+//  contactListWidget->activateWindow();
+//
+//  connect(widget, &GroupWidget::chatroomWidgetClicked, this,
+//          &Widget::onChatroomWidgetClicked);
+//  connect(widget, &GroupWidget::newWindowOpened, this, &Widget::openNewDialog);
+//#if (QT_VERSION >= QT_VERSION_CHECK(5, 7, 0))
+//  auto widgetRemoveGroup = QOverload<const GroupId &>::of(&Widget::removeGroup);
+//  auto widgetDestroyGroup = QOverload<const GroupId &>::of(&Widget::destroyGroup);
+//#else
+//  auto widgetRemoveGroup =
+//      static_cast<void (Widget::*)(const GroupId &)>(&Widget::removeGroup);
+//  auto widgetDestroyGroup =
+//      static_cast<void (Widget::*)(const GroupId &)>(&Widget::destroyGroup);
+//#endif
+//  connect(widget, &GroupWidget::removeGroup, this, widgetRemoveGroup);
+//  connect(widget, &GroupWidget::destroyGroup, this, widgetDestroyGroup);
+////  connect(widget, &GroupWidget::middleMouseClicked, this,
+////          [=]() { removeGroup(groupId); });
+//  connect(widget, &GroupWidget::chatroomWidgetClicked, form,
+//          &ChatForm::focusInput);
+//  connect(newgroup, &Group::titleChangedByUser, this,
+//          &Widget::titleChangedByUser);
+//  connect(core, &Core::usernameSet, newgroup, &Group::setSelfName);
+//
+//  FilterCriteria filter = getFilterCriteria();
+//  widget->searchName(ui->searchContactText->text(), filterGroups(filter));
 
   return newgroup;
 }
@@ -2361,27 +2369,28 @@ Group *Widget::createGroup(QString groupnumber,
 void Widget::onEmptyGroupCreated(QString groupnumber,
                                  const GroupId &groupId,
                                  const QString &title) {
-  Group *group = createGroup(groupnumber, groupId, title);
+  GroupWidget *group = createGroup(groupnumber, groupId, title);
   if (!group) {
+    qWarning() <<"Unable to create group" << groupnumber;
     return;
   }
-  if (title.isEmpty()) {
+
+  if (!title.isEmpty()) {
+    group->setName(title);
     // Only rename group if groups are visible.
-    if (groupsVisible()) {
-      groupWidgets[groupId]->editName();
-    }
-  } else {
-    group->setTitle(QString(), title);
+//    if (groupsVisible()) {
+//      groupWidgets[groupId]->editName();
+//    }
   }
 }
 
 void Widget::onGroupJoined(QString groupNum, const GroupId groupId, const QString& name) {
-  qDebug()<<"onGroupJoined"<<groupNum;
+  qDebug() << __func__ <<groupNum;
   auto group = createGroup(groupNum, groupId, name);
 
   qDebug() << "Created group:" << group << "=>" << groupNum;
 //  core->joinRoom(groupNuvoid Widget::onGroupJoinedDone(){
-  qDebug()<<"onGroupJoinedDone";
+//  qDebug()<<"onGroupJoinedDone";
 //  delayCaller->call(1000,[&](){
 //    for(auto group: GroupList::getAllGroups()){
 //      core->joinRoom(group->getId(), core->getNick());

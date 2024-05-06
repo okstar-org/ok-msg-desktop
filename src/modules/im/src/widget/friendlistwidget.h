@@ -4,10 +4,10 @@
  * You can use this software according to the terms and conditions of the Mulan
  * PubL v2. You may obtain a copy of Mulan PubL v2 at:
  *          http://license.coscl.org.cn/MulanPubL-2.0
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
- * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
- * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
- * See the Mulan PubL v2 for more details.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY
+ * KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE. See the
+ * Mulan PubL v2 for more details.
  */
 
 #ifndef FRIENDLISTWIDGET_H
@@ -34,75 +34,85 @@ class CategoryWidget;
 class Friend;
 class ContentLayout;
 
-class FriendListWidget : public QWidget
-{
-    Q_OBJECT
+class FriendListWidget : public QWidget {
+  Q_OBJECT
 public:
-    using SortingMode = Settings::FriendListSortingMode;
-    explicit FriendListWidget(Widget* parent, bool groupsOnTop = true);
-    ~FriendListWidget();
-    void setMode(SortingMode mode);
-    SortingMode getMode() const;
 
-    FriendWidget* addFriend(  QString friendId, const ToxPk &friendPk, bool isFriend);
+  using SortingMode = Settings::FriendListSortingMode;
+  explicit FriendListWidget(Widget *parent, bool groupsOnTop = true);
+  ~FriendListWidget();
+  void setMode(SortingMode mode);
+  SortingMode getMode() const;
+  FriendWidget *addFriend(QString friendId, const ToxPk &friendPk,
+                          bool isFriend);
 
-    FriendWidget* getFriend(const ToxPk &friendPk);
+  FriendWidget *getFriend(const ToxPk &friendPk);
+  void removeFriendWidget(FriendWidget *w);
+  void removeFriend(const ToxPk &friendPk);
+  void addFriendWidget(FriendWidget *w, Status::Status s, int circleIndex);
 
-    void removeFriend(const ToxPk &friendPk);
 
-    void addGroupWidget(GroupWidget* widget);
-    void addFriendWidget(FriendWidget* w, Status::Status s, int circleIndex);
-    void removeGroupWidget(GroupWidget* w);
-    void removeFriendWidget(FriendWidget* w);
-    void addCircleWidget(int id);
-    void addCircleWidget(FriendWidget* widget = nullptr);
-    void removeCircleWidget(CircleWidget* widget);
-    void searchChatrooms(const QString& searchString, bool hideOnline = false,
-                         bool hideOffline = false, bool hideGroups = false);
+  GroupWidget *addGroup(QString groupnumber,
+                        const GroupId &groupId,
+                        const QString& groupName="");
 
-    void cycleContacts(GenericChatroomWidget* activeChatroomWidget, bool forward);
+  GroupWidget *getGroup(const GroupId &id);
 
-    void updateActivityTime(const QDateTime& date);
-    void reDraw();
+  void addGroupWidget(GroupWidget *widget);
+  void removeGroupWidget(GroupWidget *w);
+
+  void addCircleWidget(int id);
+  void addCircleWidget(FriendWidget *widget = nullptr);
+  void removeCircleWidget(CircleWidget *widget);
+  void searchChatrooms(const QString &searchString, bool hideOnline = false,
+                       bool hideOffline = false, bool hideGroups = false);
+
+  void cycleContacts(GenericChatroomWidget *activeChatroomWidget, bool forward);
+
+  void updateActivityTime(const QDateTime &date);
+  void reDraw();
 
 signals:
-    void onCompactChanged(bool compact);
-    void connectCircleWidget(CircleWidget& circleWidget);
-    void searchCircle(CircleWidget& circleWidget);
+  void onCompactChanged(bool compact);
+  void connectCircleWidget(CircleWidget &circleWidget);
+  void searchCircle(CircleWidget &circleWidget);
 
 public slots:
-    void renameGroupWidget(GroupWidget* groupWidget, const QString& newName);
-    void renameCircleWidget(CircleWidget* circleWidget, const QString& newName);
-    void onFriendWidgetRenamed(FriendWidget* friendWidget);
-    void onGroupchatPositionChanged(bool top);
-    void moveWidget(FriendWidget* w, Status::Status s, bool add = false);
+  void renameGroupWidget(GroupWidget *groupWidget, const QString &newName);
+  void renameCircleWidget(CircleWidget *circleWidget, const QString &newName);
+  void onFriendWidgetRenamed(FriendWidget *friendWidget);
+  void onGroupchatPositionChanged(bool top);
+  void moveWidget(FriendWidget *w, Status::Status s, bool add = false);
 
-    void slot_addFriend(QString friendId, const ToxPk &friendPk, bool isFriend);
+  void slot_addFriend(QString friendId, const ToxPk &friendPk, bool isFriend);
 
 protected:
-    void dragEnterEvent(QDragEnterEvent* event) override;
-    void dropEvent(QDropEvent* event) override;
-    void showEvent(QShowEvent *event) override;
+  void dragEnterEvent(QDragEnterEvent *event) override;
+  void dropEvent(QDropEvent *event) override;
+  void showEvent(QShowEvent *event) override;
 private slots:
-    void dayTimeout();
+  void dayTimeout();
 
 private:
-    CircleWidget* createCircleWidget(int id = -1);
+  CircleWidget *createCircleWidget(int id = -1);
 
-  QLayout* nextLayout(QLayout* layout, bool forward) const;
-  void moveFriends(QLayout* layout);
-  CategoryWidget* getTimeCategoryWidget(const Friend* frd) const;
+  QLayout *nextLayout(QLayout *layout, bool forward) const;
+  void moveFriends(QLayout *layout);
+  CategoryWidget *getTimeCategoryWidget(const Friend *frd) const;
   void sortByMode(SortingMode mode);
-    SortingMode mode;
+  SortingMode mode;
 
   bool groupsOnTop;
-  FriendListLayout* listLayout;
-  GenericChatItemLayout* circleLayout = nullptr;
-  GenericChatItemLayout groupLayout;
-  QVBoxLayout* activityLayout = nullptr;
-  QTimer* dayTimer;
+  FriendListLayout *listLayout;
+  GenericChatItemLayout *circleLayout = nullptr;
+  QVBoxLayout *activityLayout = nullptr;
+  QTimer *dayTimer;
+
+  ContentLayout *m_contentLayout;
+
   QMap<ToxPk, FriendWidget *> friendWidgets;
-  ContentLayout* m_contentLayout;
+  QMap<GroupId, GroupWidget *> groupWidgets;
+  GenericChatItemLayout groupLayout;
 };
 
 #endif // FRIENDLISTWIDGET_H

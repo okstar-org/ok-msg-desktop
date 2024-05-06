@@ -416,8 +416,8 @@ GenericChatForm::GenericChatForm(const Contact *contact_,
       std::bind(&GenericChatForm::retranslateUi, this), this);
 
   // update header on name/title change
-  connect(contact, &Contact::displayedNameChanged, this,
-          &GenericChatForm::setName);
+//  connect(contact, &Contact::displayedNameChanged, this,
+//          &GenericChatForm::setName);
 
   auto chatLogIdxRange = chatLog.getNextIdx() - chatLog.getFirstIdx();
   auto firstChatLogIdx = (chatLogIdxRange < 100) ? chatLog.getFirstIdx()

@@ -272,7 +272,7 @@ private:
                        bool notify = true);
   void setActiveToolMenuButton(ActiveToolMenuButton newActiveButton);
   void hideMainForms(GenericChatroomWidget *chatroomWidget);
-  Group *createGroup(QString groupnumber, const GroupId &groupId, const QString& name);
+  GroupWidget *createGroup(QString groupnumber, const GroupId &groupId, const QString& name);
   void removeFriend(Friend *f, bool fake = false);
   void removeGroup(Group *g, bool fake = false);
   void saveWindowGeometry();

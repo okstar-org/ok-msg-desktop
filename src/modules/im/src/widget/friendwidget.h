@@ -66,7 +66,7 @@ public slots:
     void onAvatarRemoved(const ToxPk& friendPk);
     void onContextMenuCalled(QContextMenuEvent* event);
     void setActive(bool active);
-    void slot_chatroomWidgetClicked(GenericChatroomWidget *w);
+    void do_widgetClicked(GenericChatroomWidget *w);
 
 protected:
     virtual void mousePressEvent(QMouseEvent* ev) override;
@@ -84,7 +84,7 @@ protected:
     std::unique_ptr<FriendChatroom> chatRoom;
 
     Friend *m_friend;
-    Group *m_group;
+
 
     bool isDefaultAvatar;
 

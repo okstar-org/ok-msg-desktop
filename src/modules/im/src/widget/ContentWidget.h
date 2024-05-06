@@ -17,6 +17,7 @@
 #ifndef CONTENTWIDGET_H
 #define CONTENTWIDGET_H
 
+#include "src/widget/form/groupchatform.h"
 #include <QFrame>
 #include <QHBoxLayout>
 
@@ -29,6 +30,7 @@ public:
   explicit ContentWidget(QWidget *parent= nullptr);
   void showTo(ContentLayout*);
   void setChatForm(ChatForm *);
+  void setGroupChatForm(GroupChatForm * form);
 
 private:
   void init();
@@ -36,7 +38,6 @@ private:
   QHBoxLayout mainHLineLayout;
   QWidget* mainHead;
   QWidget* mainContent;
-
 };
 
 #endif // OKMSG_PROJECT_CONTENTWIDGET_H

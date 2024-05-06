@@ -253,6 +253,8 @@ FriendWidget* FriendListWidget::addFriend(QString friendId, const ToxPk &friendP
 }
 
 
+
+
 void FriendListWidget::setMode(SortingMode mode)
 {
     if (this->mode == mode)
@@ -396,6 +398,89 @@ CategoryWidget* FriendListWidget::getTimeCategoryWidget(const Friend* frd) const
 FriendListWidget::SortingMode FriendListWidget::getMode() const
 {
     return mode;
+}
+
+
+
+GroupWidget *FriendListWidget::addGroup(QString groupnumber,
+                                        const GroupId &groupId,
+                                        const QString &groupName) {
+
+  qDebug() << __func__ << groupnumber;
+
+  Group *g = GroupList::findGroup(groupId);
+  if (g) {
+    qWarning() << "Group already exists" << groupnumber << "=>group:" << g;
+    return  groupWidgets.value(groupId);
+  }
+
+  auto core = Core::getInstance();
+  auto &settings = Settings::getInstance();
+
+  const bool enabled = core->getGroupAvEnabled(groupnumber);
+
+  const auto compact = settings.getCompactLayout();
+  auto widget = new GroupWidget(m_contentLayout, groupnumber, groupId, groupName, compact);
+  groupWidgets[groupId] = widget;
+
+//  auto notifyReceivedCallback = [this, groupId](const ToxPk &author,
+//                                                const Message &message) {
+//    auto isTargeted =
+//        std::any_of(message.metadata.begin(), message.metadata.end(),
+//                    [](MessageMetadata metadata) {
+//                      return metadata.type == MessageMetadataType::selfMention;
+//                    });
+//    newGroupMessageAlert(groupId, author, message.content,
+//                         isTargeted || settings.getGroupAlwaysNotify());
+//  };
+//
+//  auto notifyReceivedConnection =
+//      connect(messageDispatcher.get(), &IMessageDispatcher::messageReceived,
+//              notifyReceivedCallback);
+//  groupAlertConnections.insert(groupId, notifyReceivedConnection);
+//
+//  auto form =
+//      new GroupChatForm(newgroup, *groupChatLog, *messageDispatcher, settings);
+//  connect(&settings, &Settings::nameColorsChanged, form,
+//          &GenericChatForm::setColorizedNames);
+//  form->setColorizedNames(settings.getEnableGroupChatsColor());
+//  groupMessageDispatchers[groupId] = messageDispatcher;
+//  groupChatLogs[groupId] = groupChatLog;
+//  groupWidgets[groupId] = widget;
+//  groupChatrooms[groupId] = chatroom;
+//  groupChatForms[groupId] = QSharedPointer<GroupChatForm>(form);
+//
+    addGroupWidget(widget);
+//
+//  widget->updateStatusLight();
+//  contactListWidget->activateWindow();
+//
+//  connect(widget, &GroupWidget::chatroomWidgetClicked, this,
+//          &Widget::onChatroomWidgetClicked);
+//  connect(widget, &GroupWidget::newWindowOpened, this, &Widget::openNewDialog);
+//#if (QT_VERSION >= QT_VERSION_CHECK(5, 7, 0))
+//  auto widgetRemoveGroup = QOverload<const GroupId &>::of(&Widget::removeGroup);
+//  auto widgetDestroyGroup = QOverload<const GroupId &>::of(&Widget::destroyGroup);
+//#else
+//  auto widgetRemoveGroup =
+//      static_cast<void (Widget::*)(const GroupId &)>(&Widget::removeGroup);
+//  auto widgetDestroyGroup =
+//      static_cast<void (Widget::*)(const GroupId &)>(&Widget::destroyGroup);
+//#endif
+//  connect(widget, &GroupWidget::removeGroup, this, widgetRemoveGroup);
+//  connect(widget, &GroupWidget::destroyGroup, this, widgetDestroyGroup);
+//  //  connect(widget, &GroupWidget::middleMouseClicked, this,
+//  //          [=]() { removeGroup(groupId); });
+//  connect(widget, &GroupWidget::chatroomWidgetClicked, form,
+//          &ChatForm::focusInput);
+//  connect(newgroup, &Group::titleChangedByUser, this,
+//          &Widget::titleChangedByUser);
+//  connect(core, &Core::usernameSet, newgroup, &Group::setSelfName);
+//
+//  FilterCriteria filter = getFilterCriteria();
+//  widget->searchName(ui->searchContactText->text(), filterGroups(filter));
+
+  return widget;
 }
 
 void FriendListWidget::addGroupWidget(GroupWidget* widget)
@@ -865,3 +950,5 @@ void FriendListWidget::slot_addFriend(QString friendId,
                                       bool isFriend) {
   addFriend(friendId, friendPk, isFriend);
 }
+
+GroupWidget *FriendListWidget::getGroup(const GroupId &id) { return groupWidgets.value(id); }

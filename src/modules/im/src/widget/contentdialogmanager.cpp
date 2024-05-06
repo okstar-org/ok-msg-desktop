@@ -66,12 +66,12 @@ void ContentDialogManager::addFriendToDialog(const ToxPk& friendPk,
     contactDialogs[friendPk] = dialog;
 }
 
-GroupWidget* ContentDialogManager::addGroupToDialog(ContentDialog* dialog,
-                                                    std::shared_ptr<GroupChatroom> chatroom,
+ContentDialog* ContentDialogManager::addGroupToDialog(const GroupId& groupId,
+                                                      ContentDialog* dialog,
+                                                     GroupChatroom* chatroom,
                                                     GenericChatForm* form)
 {
-    auto groupWidget = dialog->addGroup(chatroom, form);
-    const auto& groupId = groupWidget->getGroup()->getPersistentId();
+    dialog->addGroup(chatroom, form);
 
     ContentDialog* lastDialog = getGroupDialog(groupId);
     if (lastDialog) {
@@ -79,7 +79,7 @@ GroupWidget* ContentDialogManager::addGroupToDialog(ContentDialog* dialog,
     }
 
     contactDialogs[groupId] = dialog;
-    return groupWidget;
+    return lastDialog;
 }
 
 void ContentDialogManager::focusContact(const ContactId& contactId)

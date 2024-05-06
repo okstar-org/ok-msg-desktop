@@ -45,8 +45,10 @@ public:
                                     FriendChatroom* chatroom,
                                     GenericChatForm* form);
 
-    GroupWidget* addGroupToDialog(ContentDialog* dialog, std::shared_ptr<GroupChatroom> chatroom,
-                                  GenericChatForm* form);
+    ContentDialog* addGroupToDialog(const GroupId& groupId,
+                                    ContentDialog* dialog,
+                                    GroupChatroom* chatroom,
+                                    GenericChatForm* form);
 
     void addContentDialog(ContentDialog& dialog);
 
