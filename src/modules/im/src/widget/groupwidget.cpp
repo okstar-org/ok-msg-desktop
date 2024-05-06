@@ -91,8 +91,8 @@ GroupWidget::GroupWidget(ContentLayout *layout,
 
 //
   //
-  //    connect(messageDispatcher.get(), &IMessageDispatcher::messageReceived,
-  //            groupChatLog.get(), &SessionChatLog::onMessageReceived);
+      connect(messageDispatcher.get(), &IMessageDispatcher::messageReceived,
+              chatLog.get(), &SessionChatLog::onMessageReceived);
   //    connect(messageDispatcher.get(), &IMessageDispatcher::messageSent,
   //            groupChatLog.get(), &SessionChatLog::onMessageSent);
   //    connect(messageDispatcher.get(), &IMessageDispatcher::messageComplete,
@@ -294,7 +294,6 @@ void GroupWidget::do_widgetClicked(GenericChatroomWidget *w) {
   qDebug() << __func__ << "show group:" << group->getId();
 //  auto dialog = addGroupDialog(group);
   contentWidget->showTo(contentLayout);
-
 }
 
 void GroupWidget::updateUserCount(int numPeers) {
@@ -309,15 +308,20 @@ void GroupWidget::setAvatar(const QPixmap &pixmap) {
 
 void GroupWidget::setAsActiveChatroom() {
   setActive(true);
-  avatar->setPixmap(Style::scaleSvgImage(":img/group_dark.svg", avatar->width(),
-                                         avatar->height()));
 }
 
 void GroupWidget::setAsInactiveChatroom() {
   setActive(false);
-  avatar->setPixmap(Style::scaleSvgImage(":img/group.svg", avatar->width(),
-                                         avatar->height()));
 }
+
+void GroupWidget::onSetActive(bool active) {
+    const auto uri = active ? ":img/group_dark.svg" : ":img/group.svg";
+    avatar->setPixmap(Style::scaleSvgImage(uri,
+                                           avatar->width(),
+                                           avatar->height()));
+
+}
+
 
 void GroupWidget::updateStatusLight() {
   Group *g = chatroom->getGroup();

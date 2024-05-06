@@ -157,7 +157,7 @@ FriendWidget::FriendWidget(ContentLayout *layout, const QString &friendId,
 }
 
 void FriendWidget::do_widgetClicked(GenericChatroomWidget *w) {
-  qDebug() << __func__ << "show friend:" << m_friend->getId();
+//  qDebug() << __func__ << "show friend:" << m_friend->getId();
 
 
   //  GroupId id;
@@ -265,6 +265,7 @@ ContentDialog *FriendWidget::addFriendDialog(const Friend *frnd) {
  * Redirect all event information to the signal.
  */
 void FriendWidget::contextMenuEvent(QContextMenuEvent *event) {
+  onContextMenuCalled(event);
   emit contextMenuCalled(event);
 }
 
@@ -499,10 +500,11 @@ void FriendWidget::setAvatar(const QPixmap &pixmap) {
   avatar->setPixmap(pixmap);
 }
 
-void FriendWidget::setActive(bool active) {
-  GenericChatroomWidget::setActive(active);
+void FriendWidget::onSetActive(bool active) {
+
   if (isDefaultAvatar) {
-    const auto uri = active ? QStringLiteral(":img/contact_dark.svg")
+    const auto uri = active ?
+                            QStringLiteral(":img/contact_dark.svg")//
                             : QStringLiteral(":img/contact.svg");
     avatar->setPixmap(QPixmap{uri});
   }

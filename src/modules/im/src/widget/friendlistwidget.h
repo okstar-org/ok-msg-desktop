@@ -49,7 +49,7 @@ public:
   FriendWidget *getFriend(const ToxPk &friendPk);
   void removeFriendWidget(FriendWidget *w);
   void removeFriend(const ToxPk &friendPk);
-  void addFriendWidget(FriendWidget *w, Status::Status s, int circleIndex);
+  void addFriendWidget(FriendWidget *fw, Status::Status s, int circleIndex);
 
 
   GroupWidget *addGroup(QString groupnumber,
@@ -58,7 +58,7 @@ public:
 
   GroupWidget *getGroup(const GroupId &id);
 
-  void addGroupWidget(GroupWidget *widget);
+  void addGroupWidget(GroupWidget *gw);
   void removeGroupWidget(GroupWidget *w);
 
   void addCircleWidget(int id);
@@ -80,11 +80,15 @@ signals:
 public slots:
   void renameGroupWidget(GroupWidget *groupWidget, const QString &newName);
   void renameCircleWidget(CircleWidget *circleWidget, const QString &newName);
-  void onFriendWidgetRenamed(FriendWidget *friendWidget);
-  void onGroupchatPositionChanged(bool top);
-  void moveWidget(FriendWidget *w, Status::Status s, bool add = false);
 
+  void onFriendWidgetRenamed(FriendWidget *friendWidget);
+  void slot_friendClicked(GenericChatroomWidget *);
+
+  void moveWidget(FriendWidget *w, Status::Status s, bool add = false);
   void slot_addFriend(QString friendId, const ToxPk &friendPk, bool isFriend);
+
+  void onGroupchatPositionChanged(bool top);
+  void slot_groupClicked(GenericChatroomWidget *);
 
 protected:
   void dragEnterEvent(QDragEnterEvent *event) override;

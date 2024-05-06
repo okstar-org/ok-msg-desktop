@@ -60,6 +60,8 @@ public slots:
     void activate();
     void compactChange(bool compact);
 
+    void setActive(bool active);
+    virtual void onSetActive(bool active) = 0;
 signals:
     void chatroomWidgetClicked(GenericChatroomWidget* widget);
     void newWindowOpened(GenericChatroomWidget* widget);
@@ -69,7 +71,7 @@ protected:
     void mouseReleaseEvent(QMouseEvent* event) override;
     void enterEvent(QEvent* e) override;
     void leaveEvent(QEvent* e) override;
-    void setActive(bool active);
+
 
 protected:
     QPoint dragStartPos;

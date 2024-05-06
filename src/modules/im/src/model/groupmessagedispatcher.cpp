@@ -86,6 +86,6 @@ void GroupMessageDispatcher::onMessageReceived(const ToxPk &sender,
     return;
   }
 
-  emit messageReceived(
-      sender, processor.processIncomingMessage(isAction, content, from, time, nick));
+  auto msg = processor.processIncomingMessage(isAction, content, from, time, nick);
+  emit messageReceived(sender, msg);
 }

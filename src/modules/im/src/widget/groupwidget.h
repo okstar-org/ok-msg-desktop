@@ -68,6 +68,7 @@ protected:
   void dragEnterEvent(QDragEnterEvent *ev) override;
   void dragLeaveEvent(QDragLeaveEvent *ev) override;
   void dropEvent(QDropEvent *ev) override;
+  void onSetActive(bool active) override;
 
 private slots:
   void retranslateUi();

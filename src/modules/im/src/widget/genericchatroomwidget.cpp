@@ -124,6 +124,8 @@ void GenericChatroomWidget::setActive(bool _active)
 //        statusMessageLabel->setForegroundRole(QPalette::WindowText);
         nameLabel->setForegroundRole(QPalette::WindowText);
     }
+
+    onSetActive(active);
 }
 
 void GenericChatroomWidget::setName(const QString& name)
