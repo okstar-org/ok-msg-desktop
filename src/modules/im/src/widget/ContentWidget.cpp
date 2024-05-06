@@ -18,6 +18,7 @@
 #include "contentlayout.h"
 #include "form/chatform.h"
 #include "src/persistence/settings.h"
+#include "chatformheader.h"
 #include <QLabel>
 #include <QStyleFactory>
 
@@ -70,16 +71,13 @@ void ContentWidget::init() {
 }
 
 void ContentWidget::showTo(ContentLayout *layout) {
-//  auto l = new QLabel("===xxx===");
-//  layout->addWidget(l);
-
-  layout->addWidget(mainContent);
-
-
-  mainHead->show();
-  QWidget::show();
+  layout->addWidget(this);
+  layout->setCurrentWidget(this);
+  show();
 }
 
 void ContentWidget::setChatForm(ChatForm * form) {
+  auto h = form->getHead();
+  mainHead->layout()->addWidget(h);
   mainContent->layout()->addWidget(form);
 }

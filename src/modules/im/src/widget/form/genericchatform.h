@@ -78,7 +78,9 @@ public:
     static QString resolveToxPk(const ToxPk& pk);
     QDateTime getLatestTime() const;
     QDateTime getFirstTime() const;
-
+    ChatFormHeader* getHead(){
+        return headWidget;
+    };
 signals:
     void messageInserted();
     void messageNotFoundShow(SearchDirection direction);

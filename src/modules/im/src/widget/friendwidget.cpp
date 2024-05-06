@@ -46,6 +46,7 @@
 #include <cassert>
 #include "src/persistence/profile.h"
 #include "src/model/chathistory.h"
+#include "form/chatform.h"
 
 /**
  * @class FriendWidget
@@ -90,8 +91,8 @@ FriendWidget::FriendWidget(ContentLayout *layout,
   chatForm = std::make_unique<ChatForm>(m_friend, *chatHistory, *friendMessageDispatcher);
 
   contentWidget = new ContentWidget(this);
+  contentWidget->hide();
   contentWidget->setChatForm(chatForm.get());
-
 //  const auto compact = settings.getCompactLayout();
 
 
@@ -162,20 +163,29 @@ FriendWidget::FriendWidget(ContentLayout *layout,
 }
 
 void FriendWidget::slot_chatroomWidgetClicked(GenericChatroomWidget *w) {
-  const Friend *frnd = m_friend;
-  GroupId id;
+  qDebug() << __func__ ;
 
-
-  GenericChatForm *form = reinterpret_cast<GenericChatForm *>(chatRoom.get());
-
-  bool chatFormIsSet;
-  ContentDialogManager::getInstance()->focusContact(id);
-  chatFormIsSet = ContentDialogManager::getInstance()->contactWidgetExists(id);
-  bool newWindow=false;
-  if ((chatFormIsSet || form->isVisible()) && !newWindow) {
-    return;
+  if (m_friend) {
+    qDebug() << "show friend:" << m_friend->getId();
+//    dialog = addFriendDialog(m_friend);
+  } else if(m_group) {
+    qDebug() << "show group:" << m_group->getId();
+    //      Group *group = widget->getGroup();
+    //      addGroupDialog(group, dialog);
   }
 
+//  GroupId id;
+
+
+//  GenericChatForm *form = reinterpret_cast<GenericChatForm *>(chatRoom.get());
+
+//  ContentDialogManager::getInstance()->focusContact(id);
+//  bool chatFormIsSet = ContentDialogManager::getInstance()->contactWidgetExists(id);
+//  if ((chatFormIsSet || form->isVisible()) && !newWindow) {
+//    return;
+//  }
+
+  bool newWindow=false;
   auto &settings = Settings::getInstance();
   if (settings.getSeparateWindow() || newWindow) {
     ContentDialog *dialog = nullptr;
@@ -186,8 +196,9 @@ void FriendWidget::slot_chatroomWidgetClicked(GenericChatroomWidget *w) {
 
 
 
-    if (frnd) {
-      dialog = addFriendDialog(frnd);
+    if (m_friend) {
+      qDebug() << "show friend:" << m_friend->getId();
+      dialog = addFriendDialog(m_friend);
     } else {
 //      Group *group = widget->getGroup();
 //      addGroupDialog(group, dialog);
@@ -197,8 +208,7 @@ void FriendWidget::slot_chatroomWidgetClicked(GenericChatroomWidget *w) {
     dialog->activateWindow();
   } else {
 //    hideMainForms(widget);
-    if (frnd) {
-
+    if (m_friend) {
       contentWidget->showTo(contentLayout);
     } else {
 //      groupChatForms[group->getPersistentId()]->show(contentLayout);

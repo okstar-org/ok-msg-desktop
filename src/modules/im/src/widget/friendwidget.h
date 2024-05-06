@@ -83,7 +83,8 @@ protected:
     std::unique_ptr<ChatForm> chatForm;
     std::unique_ptr<FriendChatroom> chatRoom;
 
-    Friend *m_friend ;
+    Friend *m_friend;
+    Group *m_group;
 
     bool isDefaultAvatar;
 
