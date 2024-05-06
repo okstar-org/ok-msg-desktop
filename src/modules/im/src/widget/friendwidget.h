@@ -35,20 +35,27 @@ class Widget;
 class FriendWidget : public GenericChatroomWidget
 {
     Q_OBJECT
-public:
+
+  public:
     FriendWidget(ContentLayout* layout, const QString& friendId, const ToxPk &friendPk, bool isFriend, bool compact);
 
     void contextMenuEvent(QContextMenuEvent* event) override final;
     void setAsActiveChatroom() override final;
     void setAsInactiveChatroom() override final;
     void setAvatar(const QPixmap &pixmap) override final;
-    void updateStatusLight() override final;
+    void setStatus(Status::Status status);
+    void setStatusMsg(const QString& msg) ;
+
     void resetEventFlags() override final;
     QString getStatusString() const override final;
+
     const Friend* getFriend() const override final;
     const Contact* getContact() const override final;
 
     void search(const QString& searchString, bool hide = false);
+    void setRecvMessage(const lib::messenger::IMMessage &message,
+                        bool isAction);
+    void updateStatusLight() override final;
 
 signals:
     void friendWidgetClicked(FriendWidget* widget);
@@ -77,7 +84,7 @@ protected:
     ContentWidget* contentWidget;
 
     MessageProcessor::SharedParams sharedMessageProcessorParams;
-    std::unique_ptr<FriendMessageDispatcher> friendMessageDispatcher;
+    std::unique_ptr<FriendMessageDispatcher> messageDispatcher;
     std::unique_ptr<ChatHistory> chatHistory;
     std::unique_ptr<ChatForm> chatForm;
     std::unique_ptr<FriendChatroom> chatRoom;
@@ -89,6 +96,7 @@ protected:
 
     ContentDialog *createContentDialog() const;
     ContentDialog * addFriendDialog(const Friend *frnd );
+
 private slots:
     void removeChatWindow();
     void moveToNewCircle();
@@ -96,9 +104,6 @@ private slots:
     void moveToCircle(int circleId);
     void changeAutoAccept(bool enable);
     void showDetails();
-
-
-
 };
 
 #endif // FRIENDWIDGET_H

@@ -77,15 +77,15 @@ FriendWidget::FriendWidget(ContentLayout *layout, const QString &friendId,
   // ChatHistory hooks them up in a very specific order
   chatHistory = std::make_unique<ChatHistory>(*m_friend, history, *core,
                                               Settings::getInstance(),
-                                              *friendMessageDispatcher.get());
+                                              *messageDispatcher.get());
 
 
 
   auto messageProcessor = MessageProcessor(sharedMessageProcessorParams);
-  friendMessageDispatcher = std::make_unique<FriendMessageDispatcher>(
+  messageDispatcher = std::make_unique<FriendMessageDispatcher>(
       *m_friend, messageProcessor, *core);
   chatForm = std::make_unique<ChatForm>(m_friend, *chatHistory,
-                                        *friendMessageDispatcher);
+                                        *messageDispatcher);
 
   contentWidget = new ContentWidget(this);
   contentWidget->hide();
@@ -513,7 +513,6 @@ void FriendWidget::onSetActive(bool active) {
 void FriendWidget::updateStatusLight() {
   const auto frnd = chatRoom->getFriend();
   const bool event = frnd->getEventFlag();
-  statusPic.setPixmap(QPixmap(Status::getIconPath(frnd->getStatus(), event)));
 
   if (event) {
     const Settings &s = Settings::getInstance();
@@ -527,6 +526,8 @@ void FriendWidget::updateStatusLight() {
   }
 
   statusPic.setMargin(event ? 1 : 3);
+  statusPic.setPixmap(QPixmap(Status::getIconPath(frnd->getStatus(), event)));
+
 }
 
 QString FriendWidget::getStatusString() const {
@@ -651,4 +652,19 @@ ContentDialog *FriendWidget::createContentDialog() const {
 
   ContentDialogManager::getInstance()->addContentDialog(*contentDialog);
   return contentDialog;
+}
+
+void FriendWidget::setRecvMessage(const lib::messenger::IMMessage &message,
+                                  bool isAction) {
+  messageDispatcher->onMessageReceived(isAction,message);
+}
+
+void FriendWidget::setStatus(Status::Status status) {
+  m_friend->setStatus(status);
+  updateStatusLight();
+}
+
+void FriendWidget::setStatusMsg(const QString &msg) {
+  m_friend->setStatusMessage(msg);
+  GenericChatroomWidget::setStatusMsg(msg);
 }

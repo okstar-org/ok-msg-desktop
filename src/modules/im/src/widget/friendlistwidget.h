@@ -36,25 +36,27 @@ class ContentLayout;
 
 class FriendListWidget : public QWidget {
   Q_OBJECT
-public:
 
+public:
   using SortingMode = Settings::FriendListSortingMode;
   explicit FriendListWidget(Widget *parent, bool groupsOnTop = true);
   ~FriendListWidget();
   void setMode(SortingMode mode);
   SortingMode getMode() const;
+
   FriendWidget *addFriend(QString friendId, const ToxPk &friendPk,
                           bool isFriend);
-
   FriendWidget *getFriend(const ToxPk &friendPk);
   void removeFriendWidget(FriendWidget *w);
   void removeFriend(const ToxPk &friendPk);
   void addFriendWidget(FriendWidget *fw, Status::Status s, int circleIndex);
+  void setFriendStatus(const ToxPk &friendPk,  Status::Status status);
+  void setFriendStatusMsg(const ToxPk &friendPk,  const QString& statusMsg);
+  void setFriendName(const ToxPk &friendPk,  const QString& name);
 
 
-  GroupWidget *addGroup(QString groupnumber,
-                        const GroupId &groupId,
-                        const QString& groupName="");
+  GroupWidget *addGroup(QString groupnumber, const GroupId &groupId,
+                        const QString &groupName = "");
 
   GroupWidget *getGroup(const GroupId &id);
 
@@ -71,6 +73,14 @@ public:
 
   void updateActivityTime(const QDateTime &date);
   void reDraw();
+
+  void setRecvGroupMessage(QString groupnumber, QString nick,
+                           const QString &from, const QString &content,
+                           const QDateTime &time, bool isAction);
+
+  void setRecvFriendMessage(ToxPk friendnumber,                       //
+                            const lib::messenger::IMMessage &message, //
+                            bool isAction);
 
 signals:
   void onCompactChanged(bool compact);

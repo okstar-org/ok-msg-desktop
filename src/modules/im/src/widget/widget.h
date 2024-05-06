@@ -349,10 +349,10 @@ private:
   Settings &settings;
 
 //  QMap<ToxPk, FriendWidget *> friendWidgets;
-  FriendListWidget* friendListWidget;
+//  FriendListWidget* friendListWidget;
   // Shared pointer because qmap copies stuff all over the place
-  QMap<ToxPk, std::shared_ptr<FriendMessageDispatcher>>
-      friendMessageDispatchers;
+//  QMap<ToxPk, std::shared_ptr<FriendMessageDispatcher>>
+//      friendMessageDispatchers;
   // Stop gap method of linking our friend messages back to a group id.
   // Eventual goal is to have a notification manager that works on
   // Messages hooked up to message dispatchers but we aren't there
@@ -362,9 +362,9 @@ private:
   QMap<ToxPk, std::shared_ptr<FriendChatroom>> friendChatrooms;
   QMap<ToxPk, ChatForm *> chatForms;
 
-  QMap<GroupId, GroupWidget *> groupWidgets;
-  QMap<GroupId, std::shared_ptr<GroupMessageDispatcher>>
-      groupMessageDispatchers;
+//  QMap<GroupId, GroupWidget *> groupWidgets;
+//  QMap<GroupId, std::shared_ptr<GroupMessageDispatcher>>
+//      groupMessageDispatchers;
 
   // Stop gap method of linking our group messages back to a group id.
   // Eventual goal is to have a notification manager that works on

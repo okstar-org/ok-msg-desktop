@@ -160,7 +160,7 @@ FriendWidget *FriendListWidget::addFriend(QString friendId,
   //  connect(chatForm, &ChatForm::updateFriendActivity, this,
   //          &Widget::updateFriendActivity);
 
-  //  friendMessageDispatchers[friendPk] = friendMessageDispatcher;
+  //  friendMessageDispatchers[friendPk] = messageDispatcher;
   //  friendChatLogs[friendPk] = chatHistory;
   //  friendChatrooms[friendPk] = chatRoom;
   friendWidgets[friendPk] = friendWidget;
@@ -187,7 +187,7 @@ FriendWidget *FriendListWidget::addFriend(QString friendId,
   //  };
   //
   //  auto notifyReceivedConnection =
-  //      connect(friendMessageDispatcher.get(),
+  //      connect(messageDispatcher.get(),
   //              &IMessageDispatcher::messageReceived, notifyReceivedCallback);
   //
   //  friendAlertConnections.insert(friendPk, notifyReceivedConnection);
@@ -964,4 +964,75 @@ void FriendListWidget::slot_friendClicked(GenericChatroomWidget *actived) {
       fw->setActive(true);
     }
   }
+}
+void FriendListWidget::setRecvGroupMessage(QString groupnumber, QString nick,
+                                           const QString &from,
+                                           const QString &content,
+                                           const QDateTime &time,
+                                           bool isAction) {
+  const GroupId &groupId = GroupList::id2Key(groupnumber);
+  auto gw = getGroup(groupId);
+  if (gw) {
+    gw->setRecvMessage(groupnumber, nick, from, content, time, isAction);
+  }
+}
+void FriendListWidget::setRecvFriendMessage(
+    ToxPk friendnumber,
+    const lib::messenger::IMMessage &message,
+    bool isAction) {
+
+  const auto &friendId = FriendList::id2Key(friendnumber.toString());
+  Friend *f = FriendList::findFriend(friendId);
+  if (!f) {
+    /**
+     * 陌生人消息（可能是已经将对方删除，通讯录没有对方记录）
+     */
+    qWarning() << "Can not find friend:"
+               << friendnumber.toString()
+               <<", so add it to contacts";
+    addFriend(friendnumber.toString(), friendnumber, false);
+    return;
+  }
+
+  auto fw =  getFriend(friendId);
+  fw->setRecvMessage(message, isAction);
+}
+void FriendListWidget::setFriendStatus(const ToxPk &friendPk,
+                                       Status::Status status) {
+
+  auto fw = getFriend(friendPk);
+  if(!fw){
+    qWarning() <<"friend widget no exist.";
+    return;
+  }
+
+  fw->setStatus(status);
+}
+
+void FriendListWidget::setFriendStatusMsg(const ToxPk &friendPk,
+                                          const QString &statusMsg) {
+  auto fw = getFriend(friendPk);
+  if(!fw){
+    qWarning() <<"friend widget no exist.";
+    return;
+  }
+
+  fw->setStatusMsg(statusMsg);
+
+}
+void FriendListWidget::setFriendName(const ToxPk &friendPk,
+                                     const QString &name) {
+
+    for (Group *g : GroupList::getAllGroups()) {
+      if (g->getPeerList().contains(friendPk)) {
+        g->updateUsername(friendPk, name);
+      }
+    }
+
+    FriendWidget *friendWidget = getFriend(friendPk);
+    if (friendWidget->isActive()) {
+//      GUI::setWindowTitle(displayed);
+      friendWidget->setName(name);
+    }
+
 }
