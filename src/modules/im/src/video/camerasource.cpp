@@ -407,7 +407,7 @@ void CameraSource::closeDevice()
  */
 void CameraSource::stream()
 {
-    auto streamLoop = [=]() {
+    auto streamLoop = [this]() {
         AVPacket packet;
         if (av_read_frame(device->context, &packet) != 0) {
             return;

@@ -199,7 +199,7 @@ void Core::registerCallbacks(Tox *tox) {
   tox->addGroupHandler(this);
   tox->addSelfHandler(this);
 
-  connect(tox, &lib::messenger::Messenger::connected, [=](){
+  connect(tox, &lib::messenger::Messenger::connected, [this](){
     emit connected();
   });
 }

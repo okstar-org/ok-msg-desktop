@@ -27,6 +27,7 @@
 #include "src/widget/form/addfriendform.h"
 #include "src/modules/im/src/grouplist.h"
 #include "widget.h"
+#include "ui_chat.h"
 
 ChatWidget::ChatWidget(QWidget *parent) : QWidget(parent), //
     ui(new Ui::Chat),//
@@ -44,8 +45,12 @@ ChatWidget::ChatWidget(QWidget *parent) : QWidget(parent), //
   ui->mainSplitter->setSizes(QList<int>() << 200<<500);
 
   contactListWidget = new FriendListWidget(this, false);
-  ui->scrollAreaWidgetContents->setGeometry(0, 0, ui->friendList->width(), ui->friendList->height());
-  ui->scrollAreaWidgetContents->layout()->addWidget(contactListWidget);
+
+
+  ui->scrollAreaWidgetContents->setGeometry(0, 0, 200, 500);
+  auto layout = ui->scrollAreaWidgetContents->layout();
+  layout->setAlignment(Qt::AlignTop|Qt::AlignVCenter);
+  layout->addWidget(contactListWidget);
 
   init();
 
@@ -144,6 +149,9 @@ void ChatWidget::onCoreChanged(Core &core_) {
   }
 
   core->loadGroupList();
+  auto username = core->getUsername();
+  qDebug() <<"username"<< username;
+  ui->nameLabel->setText(username);
 }
 
 void ChatWidget::slot_friendAdded(const ToxPk &friendPk, bool isFriend) {
@@ -287,6 +295,14 @@ AddFriendForm *ChatWidget::openFriendAddForm() {
   }
   addFriendForm->show(nullptr);
   return addFriendForm.get();
+}
+
+void ChatWidget::showEvent(QShowEvent *e)
+{
+    qDebug() <<"showEvent: "<<e;
+    qDebug() <<"friendList size:" << ui->contactPanel->size() << ui->friendList->size() << ui->scrollAreaWidgetContents->size();
+
+
 }
 
 

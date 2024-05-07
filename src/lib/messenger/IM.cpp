@@ -116,19 +116,17 @@ std::unique_ptr<Client> IM::makeClient() {
   disco->setVersion("disco", APPLICATION_VERSION, stdstring(osInfo.prettyName));
   disco->setIdentity("client", "pc", APPLICATION_RELEASE);
   disco->addIdentity("pubsub", "pep");
-
   disco->addFeature(XMLNS_PUBSUB);
   disco->addFeature(XMLNS_PUBSUB_EVENT);
   disco->addFeature(XMLNS_PUBSUB_OWNER);
   disco->addFeature(XMLNS_PUBSUB_PUBLISH_OPTIONS);
   disco->addFeature(XMLNS_PUBSUB_AUTO_SUBSCRIBE);
   disco->addFeature(XMLNS_PUBSUB_AUTO_CREATE);
+  client->registerStanzaExtension(new Disco::Items);
+  client->registerStanzaExtension(new PubSub::Event());
 
   client->registerStanzaExtension(new VCardUpdate);
   client->registerStanzaExtension(new Capabilities);
-  client->registerStanzaExtension(new Disco::Items);
-
-
   client->registerStanzaExtension(new InBandBytestream::IBB);
   client->registerStanzaExtension(new ChatState(nullptr));
   client->registerStanzaExtension(new Receipt(nullptr));
@@ -139,7 +137,7 @@ std::unique_ptr<Client> IM::makeClient() {
   client->registerStanzaExtension(new ExtDisco());
   client->registerStanzaExtension(new Addresses());
   client->registerStanzaExtension(new Nickname(nullptr));
-  client->registerStanzaExtension(new PubSub::Event());
+
 
   /**
    *

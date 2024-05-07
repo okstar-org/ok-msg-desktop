@@ -1907,6 +1907,10 @@ You may want to create one.</source>
         <translation>打开文件传输历史记录</translation>
     </message>
     <message>
+        <source>Chat</source>
+        <translation>消息</translation>
+    </message>
+    <message>
         <source>Settings</source>
         <translation>设置</translation>
     </message>
@@ -3082,6 +3086,10 @@ This ID includes the NoSpam code (in blue), and the checksum (in gray).</source>
         <comment>title of the window</comment>
         <translation>设置</translation>
     </message>
+<message>
+<source>Chat</source>
+<translation>消息</translation>
+</message>
     <message>
         <source>My profile</source>
         <comment>title of the window</comment>

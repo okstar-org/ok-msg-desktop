@@ -119,7 +119,7 @@ void Translator::unregister(void *owner) {
 //  QMutexLocker locker{&lock};
   callbacks.erase(
       std::remove_if(begin(callbacks), end(callbacks),
-                     [=](const Callback &c) { return c.first == owner; }),
+                     [&](const Callback &c) { return c.first == owner; }),
       end(callbacks));
 }
 } // namespace main

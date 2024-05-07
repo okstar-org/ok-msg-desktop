@@ -40,7 +40,7 @@ elseif (UNIX)
 endif ()
 
 
-include_directories(${PROJECT_BINARY_DIR})
+include_directories(${PROJECT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
 set(CMAKE_AUTOUIC_SEARCH_PATHS ./src src/widget src/widget/form)
 
@@ -372,8 +372,6 @@ set(${PROJECT_NAME}_SOURCES
         src/widget/ContentWidget.h
         src/widget/FriendAddWidget.cpp
         src/widget/FriendAddWidget.h
-        src/widget/ChatWidget.cpp
-        src/widget/ChatWidget.h
         # src/widget/translator.cpp src/widget/translator.h
         src/widget/widget.cpp
         src/widget/widget.h)
@@ -481,7 +479,6 @@ qt5_add_resources(
         # DEPENDS ${${PROJECT_NAME}_QM_FILES} # OPTIONS ${RCC_OPTIONS}
 )
 
-include_directories(${PROJECT_BINARY_DIR})
 
 add_library(${PROJECT_NAME} STATIC
         ${${PROJECT_NAME}_FORMS}

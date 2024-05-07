@@ -37,18 +37,24 @@
 SettingsWidget::SettingsWidget(UpdateCheck* updateCheck, IAudioControl& audio, Widget* parent)
     : QWidget(parent, Qt::Window)
 {
+//    setAttribute(Qt::WA_DeleteOnClose);
+
+    setGeometry(0,0, parent->width(), parent->height());
+
+
     CoreAV* coreAV = Core::getInstance()->getAv();
     IAudioSettings* audioSettings = &Settings::getInstance();
     IVideoSettings* videoSettings = &Settings::getInstance();
     CameraSource& camera = CameraSource::getInstance();
 
-    setAttribute(Qt::WA_DeleteOnClose);
 
-    bodyLayout = std::unique_ptr<QVBoxLayout>(new QVBoxLayout());
 
     settingsWidgets = std::unique_ptr<QTabWidget>(new QTabWidget(this));
     settingsWidgets->setTabPosition(QTabWidget::North);
+
+    bodyLayout = std::unique_ptr<QVBoxLayout>(new QVBoxLayout(this));
     bodyLayout->addWidget(settingsWidgets.get());
+    setLayout(bodyLayout.get());
 
     std::unique_ptr<GeneralForm> gfrm(new GeneralForm(this));
     connect(gfrm.get(), &GeneralForm::updateIcons, parent, &Widget::updateIcons);

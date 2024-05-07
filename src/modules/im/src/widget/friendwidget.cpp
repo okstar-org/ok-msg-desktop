@@ -127,7 +127,7 @@ FriendWidget::FriendWidget(ContentLayout *layout,
   //  statusMessageLabel->setTextFormat(Qt::PlainText);
 
   //  connect(this, &FriendWidget::middleMouseClicked, dialog,
-  //          [=]() { dialog->removeFriend(friendPk); });
+  //          [this]() { dialog->removeFriend(friendPk); });
   //  connect(friendWidget, &FriendWidget::copyFriendIdToClipboard, this,
   //          &Widget::copyFriendIdToClipboard);
   //  connect(friendWidget, &FriendWidget::newWindowOpened, this,
@@ -138,7 +138,7 @@ FriendWidget::FriendWidget(ContentLayout *layout,
   // FIXME: emit should be removed
   //  connect(
   //      this, &FriendWidget::contextMenuCalled, this,
-  //      [=](QContextMenuEvent *event) { emit contextMenuCalled(event); });
+  //      [this](QContextMenuEvent *event) { emit contextMenuCalled(event); });
   //
   connect(this, &FriendWidget::chatroomWidgetClicked,
           [=, this](GenericChatroomWidget *w) {
@@ -147,7 +147,7 @@ FriendWidget::FriendWidget(ContentLayout *layout,
             emit friendWidgetClicked(this);
           });
   //  connect(friendWidget, &FriendWidget::newWindowOpened,
-  //          [=](GenericChatroomWidget *w) {
+  //          [this](GenericChatroomWidget *w) {
   //            Q_UNUSED(w);
   //            emit friendWidget->newWindowOpened(friendWidget);
   //          });
@@ -342,7 +342,7 @@ void FriendWidget::onContextMenuCalled(QContextMenuEvent *event) {
   //        new QAction(tr("Move  to circle \"%1\"").arg(circle.name),
   //        circleMenu);
   //    connect(action, &QAction::triggered,
-  //            [=]() { moveToCircle(circle.circleId); });
+  //            [this]() { moveToCircle(circle.circleId); });
   //    circleMenu->addAction(action);
   //  }
 
@@ -676,4 +676,6 @@ void FriendWidget::setStatusMsg(const QString &msg) {
   m_friend->setStatusMessage(msg);
   GenericChatroomWidget::setStatusMsg(msg);
 }
-void FriendWidget::setTyping(bool typing) {}
+void FriendWidget::setTyping(bool typing) {
+
+}

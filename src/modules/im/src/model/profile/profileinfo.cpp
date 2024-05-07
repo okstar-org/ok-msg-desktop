@@ -46,7 +46,7 @@ ProfileInfo::ProfileInfo(Core* core, Profile* profile)
     connect(core, &Core::statusMessageSet, this, &ProfileInfo::statusMessageChanged);
 
 //    connectTo_usernameChanged(this,
-//                              [=](const QString& val) {
+//                              [this](const QString& val) {
 //                                profile->rename(val);
 //                              });
 

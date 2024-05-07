@@ -228,7 +228,7 @@ void AddFriendForm::onFriendReceipts(const QList<ok::backend::OrgStaff *> &qList
 void AddFriendForm::searchFriend(const QString &idText) {
   qDebug() << "searchFriend" << idText;
   // 查询账号信息
-  userService->search(idText, [=](const QList<ok::backend::OrgStaff *> &qList) {
+  userService->search(idText, [this](const QList<ok::backend::OrgStaff *> &qList) {
     emit friendReceipts(qList);
   });
 }

@@ -19,8 +19,9 @@
 
 #include "contentlayout.h"
 #include "friendlistwidget.h"
-#include "ui_chat.h"
 #include <QWidget>
+#include <QPushButton>
+
 
 namespace Ui {
 class Chat;
@@ -42,6 +43,8 @@ public:
   void connectCircleWidget();
   void searchCircle(CircleWidget &circleWidget);
   AddFriendForm *openFriendAddForm();
+protected:
+  void showEvent(QShowEvent*) override;
 private:
   Ui::Chat *ui;
   ContentLayout *contentLayout;

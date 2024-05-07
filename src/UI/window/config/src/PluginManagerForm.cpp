@@ -74,7 +74,7 @@ void PluginManagerForm::createPlugin(ok::backend::PluginInfo &info, int i) {
   ui->listWidget->addItem(aitem);
   ui->listWidget->setItemWidget(aitem, pitem);
 
-  delayCaller_->call(i + 1 * 100, [=]() { emit pitem->loadLogo(); });
+  delayCaller_->call(i + 1 * 100, [&]() { emit pitem->loadLogo(); });
 }
 
 void PluginManagerForm::setPluginInfo(ok::backend::PluginInfo &info) {

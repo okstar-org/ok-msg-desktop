@@ -147,7 +147,7 @@ void GroupInviteForm::showEvent(QShowEvent* event)
 void GroupInviteForm::deleteInviteWidget(const GroupInvite& inviteInfo)
 {
     auto deletingWidget =
-        std::find_if(invites.begin(), invites.end(), [=](const GroupInviteWidget* widget) {
+        std::find_if(invites.begin(), invites.end(), [&](const GroupInviteWidget* widget) {
             return inviteInfo == widget->getInviteInfo();
         });
     (*deletingWidget)->deleteLater();

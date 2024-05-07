@@ -513,7 +513,7 @@ void Nexus::onSave(SavedInfo &savedInfo) {
       action->setCheckable(true);
       action->setChecked(windowList[i] == activeWindow);
       connect(action, &QAction::triggered,
-              [=] { onOpenWindow(windowList[i]); });
+              [this] { onOpenWindow(windowList[i]); });
       windowMenu->addAction(action);
       dockMenu->insertAction(dockLast, action);
     }

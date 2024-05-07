@@ -153,20 +153,19 @@ Widget::Widget(IAudioControl &audio, QWidget *parent)//
   layout()->setMargin(0);
   layout()->setSpacing(0);
 
+  setMinimumWidth(775);
+
   setObjectName(qsl("Page:%1").arg(static_cast<int>(UI::PageMenu::chat)));
 //
 //  QWidget *contentWidget = new QWidget(this);
 //  contentWidget->setObjectName("contentWidget");
 ////  ui->mainSplitter->addWidget(contentWidget);
 
-  chatWidget = new ChatWidget;
-  ui->tabWidget->addTab(chatWidget, tr("Chat"));
+  chatWidget = std::make_unique<ChatWidget>();
+  ui->tabWidget->addTab(chatWidget.get(), tr("Chat"));
 
-
-
-
-
-  setMinimumWidth(775);
+  settingsWidget = std::make_unique<SettingsWidget>(updateCheck.get(), audio, this);
+  ui->tabWidget->addTab(settingsWidget.get(), tr("Settings"));
 
 
   installEventFilter(this);
@@ -462,7 +461,7 @@ void Widget::init() {
 //          profileForm,&ProfileForm::onSelfAvatarLoaded);
 
   connect(Nexus::getProfile(), &Profile::coreChanged,
-          chatWidget, &ChatWidget::onCoreChanged);
+          chatWidget.get(), &ChatWidget::onCoreChanged);
 
 
 
@@ -475,7 +474,7 @@ void Widget::init() {
   connect(updateCheck.get(), &UpdateCheck::updateAvailable, this,
           &Widget::onUpdateAvailable);
 #endif
-  settingsWidget = new SettingsWidget(updateCheck.get(), audio, this);
+
 #if UPDATE_CHECK_ENABLED
   updateCheck->checkForUpdate();
 #endif
@@ -600,7 +599,7 @@ Widget::~Widget() {
 
   delete filesForm;
   delete timer;
-  delete settingsWidget;
+
 
   FriendList::clear();
   GroupList::clear();
@@ -1436,7 +1435,7 @@ void Widget::addGroupDialog(Group *group, ContentDialog *dialog) {
 //  connect(groupWidget, &GroupWidget::chatroomWidgetClicked, chatForm,
 //          &GroupChatForm::focusInput);
 //  connect(groupWidget, &GroupWidget::middleMouseClicked, dialog,
-//          [=]() { dialog->removeGroup(groupId); });
+//          [this]() { dialog->removeGroup(groupId); });
 //  connect(groupWidget, &GroupWidget::chatroomWidgetClicked, chatForm,
 //          &ChatForm::focusInput);
 //  connect(groupWidget, &GroupWidget::newWindowOpened, this,
@@ -1446,13 +1445,13 @@ void Widget::addGroupDialog(Group *group, ContentDialog *dialog) {
 //  // ContentDialog) to the `widget` (which shown in main widget)
 //  // FIXME: emit should be removed
 //  connect(groupWidget, &GroupWidget::chatroomWidgetClicked,
-//          [=](GenericChatroomWidget *w) {
+//          [this](GenericChatroomWidget *w) {
 //            Q_UNUSED(w);
 //            emit widget->chatroomWidgetClicked(widget);
 //          });
 //
 //  connect(groupWidget, &GroupWidget::newWindowOpened,
-//          [=](GenericChatroomWidget *w) {
+//          [this](GenericChatroomWidget *w) {
 //            Q_UNUSED(w);
 //            emit widget->newWindowOpened(widget);
 //          });
@@ -2027,7 +2026,7 @@ GroupWidget *Widget::createGroup(QString groupnumber,
 //  connect(widget, &GroupWidget::removeGroup, this, widgetRemoveGroup);
 //  connect(widget, &GroupWidget::destroyGroup, this, widgetDestroyGroup);
 ////  connect(widget, &GroupWidget::middleMouseClicked, this,
-////          [=]() { removeGroup(groupId); });
+////          [this]() { removeGroup(groupId); });
 //  connect(widget, &GroupWidget::chatroomWidgetClicked, form,
 //          &ChatForm::focusInput);
 //  connect(newgroup, &Group::titleChangedByUser, this,

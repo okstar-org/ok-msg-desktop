@@ -306,8 +306,9 @@ private:
 
 
 
-  ChatWidget *chatWidget;
+  std::unique_ptr<ChatWidget > chatWidget;
   std::unique_ptr<AddFriendForm> addFriendForm;
+  std::unique_ptr<SettingsWidget> settingsWidget;
 
 
 
@@ -316,7 +317,6 @@ private:
   ProfileInfo *profileInfo;
   ProfileForm *profileForm;
 
-  QPointer<SettingsWidget> settingsWidget;
   std::unique_ptr<UpdateCheck> updateCheck; // ownership should be moved outside
                                             // Widget once non-singleton
   FilesForm *filesForm;

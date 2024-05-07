@@ -34,7 +34,7 @@ AboutFriendForm::AboutFriendForm(std::unique_ptr<IAboutFriend> _about, QWidget* 
     connect(ui->autogroupinvite, &QCheckBox::clicked, this, &AboutFriendForm::onAutoGroupInvite);
     connect(ui->selectSaveDir, &QPushButton::clicked, this, &AboutFriendForm::onSelectDirClicked);
     connect(ui->removeHistory, &QPushButton::clicked, this, &AboutFriendForm::onRemoveHistoryClicked);
-    about->connectTo_autoAcceptDirChanged(this, [=](const QString& dir){ onAutoAcceptDirChanged(dir); });
+    about->connectTo_autoAcceptDirChanged(this, [this](const QString& dir){ onAutoAcceptDirChanged(dir); });
 
     const QString dir = about->getAutoAcceptDir();
     ui->autoacceptfile->setChecked(!dir.isEmpty());

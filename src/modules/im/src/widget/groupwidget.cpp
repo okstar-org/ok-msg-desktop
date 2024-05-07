@@ -142,7 +142,7 @@ ContentDialog * GroupWidget::addGroupDialog(Group *group) {
   //  connect(groupWidget, &GroupWidget::chatroomWidgetClicked, chatForm,
   //          &GroupChatForm::focusInput);
   //  connect(groupWidget, &GroupWidget::middleMouseClicked, dialog,
-  //          [=]() { dialog->removeGroup(groupId); });
+  //          [this]() { dialog->removeGroup(groupId); });
   //  connect(groupWidget, &GroupWidget::chatroomWidgetClicked, chatForm,
   //          &ChatForm::focusInput);
   //  connect(groupWidget, &GroupWidget::newWindowOpened, this,
@@ -152,13 +152,13 @@ ContentDialog * GroupWidget::addGroupDialog(Group *group) {
   //  // ContentDialog) to the `widget` (which shown in main widget)
   //  // FIXME: emit should be removed
   //  connect(groupWidget, &GroupWidget::chatroomWidgetClicked,
-  //          [=](GenericChatroomWidget *w) {
+  //          [this](GenericChatroomWidget *w) {
   //            Q_UNUSED(w);
   //            emit widget->chatroomWidgetClicked(widget);
   //          });
   //
   //  connect(groupWidget, &GroupWidget::newWindowOpened,
-  //          [=](GenericChatroomWidget *w) {
+  //          [this](GenericChatroomWidget *w) {
   //            Q_UNUSED(w);
   //            emit widget->newWindowOpened(widget);
   //          });

@@ -36,8 +36,8 @@ GroupInviteWidget::GroupInviteWidget(QWidget* parent, const GroupInvite& invite)
     , widgetLayout(new QHBoxLayout(this))
     , inviteInfo(invite)
 {
-    connect(acceptButton, &QPushButton::clicked, [=]() { emit accepted(inviteInfo); });
-    connect(rejectButton, &QPushButton::clicked, [=]() { emit rejected(inviteInfo); });
+    connect(acceptButton, &QPushButton::clicked, [this]() { emit accepted(inviteInfo); });
+    connect(rejectButton, &QPushButton::clicked, [this]() { emit rejected(inviteInfo); });
     widgetLayout->addWidget(inviteMessageLabel);
     widgetLayout->addWidget(acceptButton);
     widgetLayout->addWidget(rejectButton);

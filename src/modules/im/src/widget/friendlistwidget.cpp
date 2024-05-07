@@ -124,6 +124,8 @@ FriendListWidget::FriendListWidget(ChatWidget *parent, bool groupsOnTop)
           &FriendListWidget::onCompactChanged);
   connect(&settings, &Settings::groupchatPositionChanged, this,
           &FriendListWidget::onGroupchatPositionChanged);
+
+
 }
 
 FriendListWidget::~FriendListWidget() {
@@ -492,7 +494,7 @@ GroupWidget *FriendListWidget::addGroup(
   //  connect(widget, &GroupWidget::removeGroup, this, widgetRemoveGroup);
   //  connect(widget, &GroupWidget::destroyGroup, this, widgetDestroyGroup);
   //  //  connect(widget, &GroupWidget::middleMouseClicked, this,
-  //  //          [=]() { removeGroup(groupId); });
+  //  //          [this]() { removeGroup(groupId); });
   //  connect(widget, &GroupWidget::chatroomWidgetClicked, form,
   //          &ChatForm::focusInput);
   //  connect(newgroup, &Group::titleChangedByUser, this,
