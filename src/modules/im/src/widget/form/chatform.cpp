@@ -172,14 +172,14 @@ ChatForm::ChatForm(Friend *chatFriend, IChatLog &chatLog,
             }
           });
 
-  connect(&typingTimer, &QTimer::timeout, this, [=] {
+  connect(&typingTimer, &QTimer::timeout, this, [this] {
     Core::getInstance()->sendTyping(f->getId(), false);
     isTyping = false;
   });
 
   // reflect name changes in the header
   connect(headWidget, &ChatFormHeader::nameChanged, this,
-          [=](const QString &newName) { f->setAlias(newName); });
+          [this](const QString &newName) { f->setAlias(newName); });
   connect(headWidget, &ChatFormHeader::callAccepted, this,
           [this] { onAnswerCallTriggered(lastCallIsVideo); });
   connect(headWidget, &ChatFormHeader::callRejected, this,
@@ -415,9 +415,9 @@ void ChatForm::onVolMuteToggle() {
   updateMuteVolButton();
 }
 
-void ChatForm::onFriendStatusChanged(QString friendId, Status::Status status) {
+void ChatForm::onFriendStatusChanged(const ToxPk& friendId, Status::Status status) {
   // Disable call buttons if friend is offline
-  if (friendId != f->getId()) {
+  if (friendId.toString() != f->getId()) {
     return;
   }
 
@@ -437,8 +437,8 @@ void ChatForm::onFriendStatusChanged(QString friendId, Status::Status status) {
   }
 }
 
-void ChatForm::onFriendTypingChanged(QString friendId, bool isTyping) {
-  if (friendId == f->getId()) {
+void ChatForm::onFriendTypingChanged(const ToxPk& friendId, bool isTyping) {
+  if (friendId.toString() == f->getId()) {
     setFriendTyping(isTyping);
   }
 }

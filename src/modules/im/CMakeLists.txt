@@ -48,6 +48,7 @@ qt5_wrap_ui(
         ${PROJECT_NAME}_FORMS
         src/mainwindow.ui
         src/chatlog/content/filetransferwidget.ui
+        src/widget/chat.ui
         src/widget/about/aboutfriendform.ui
         src/widget/form/loadhistorydialog.ui
         src/widget/form/profileform.ui
@@ -249,8 +250,6 @@ set(${PROJECT_NAME}_SOURCES
         src/widget/contentdialogmanager.h
         src/widget/contentlayout.cpp
         src/widget/contentlayout.h
-    src/widget/ContentWidget.h
-    src/widget/ContentWidget.cpp
         src/widget/emoticonswidget.cpp
         src/widget/emoticonswidget.h
         src/widget/flowlayout.cpp
@@ -366,6 +365,15 @@ set(${PROJECT_NAME}_SOURCES
         src/widget/tool/screenshotgrabber.h
         src/widget/tool/toolboxgraphicsitem.cpp
         src/widget/tool/toolboxgraphicsitem.h
+
+        src/widget/ChatWidget.h
+        src/widget/ChatWidget.cpp
+        src/widget/ContentWidget.cpp
+        src/widget/ContentWidget.h
+        src/widget/FriendAddWidget.cpp
+        src/widget/FriendAddWidget.h
+        src/widget/ChatWidget.cpp
+        src/widget/ChatWidget.h
         # src/widget/translator.cpp src/widget/translator.h
         src/widget/widget.cpp
         src/widget/widget.h)
@@ -408,8 +416,7 @@ if (PLATFORM_EXTENSIONS)
         set(${PROJECT_NAME}_SOURCES
                 ${${PROJECT_NAME}_SOURCES} src/platform/capslock_osx.cpp
                 src/platform/timer_osx.cpp
-            src/widget/ContentWidget.cpp
-            src/widget/ContentWidget.h)
+ )
     endif ()
 endif ()
 

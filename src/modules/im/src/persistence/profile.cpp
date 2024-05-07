@@ -310,9 +310,9 @@ void Profile::startCore() {
   // Core/Profile coupling
 
   connect(core.get(), &Core::requestSent, this, &Profile::onRequestSent);
-  emit coreChanged(*core);
-
   core->start();
+
+  emit coreChanged(*core);
 
   //  const ToxId &selfId = core->getSelfId();
   //  const ToxPk &selfPk = selfId.getPublicKey();
@@ -825,12 +825,12 @@ QString Profile::setPassword(const QString &newPassword) {
   QByteArray avatar = loadAvatarData(core->getSelfId().getPublicKey());
   saveAvatar(core->getSelfId().getPublicKey(), avatar);
 
-  QVector<QString> friendList = core->getFriendList();
-  QVectorIterator<QString> i(friendList);
-  while (i.hasNext()) {
-    const ToxPk friendPublicKey = core->getFriendPublicKey(i.next());
-    saveAvatar(friendPublicKey, loadAvatarData(friendPublicKey));
-  }
+//  QVector<QString> friendList = core->loadFriendList();
+//  QVectorIterator<QString> i(friendList);
+//  while (i.hasNext()) {
+//    const ToxPk friendPublicKey = core->getFriendPublicKey(i.next());
+//    saveAvatar(friendPublicKey, loadAvatarData(friendPublicKey));
+//  }
   return error;
 }
 

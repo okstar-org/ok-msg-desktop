@@ -142,7 +142,7 @@ getChatMessageForIdx(ChatLogIdx idx,
 }
 
 bool shouldRenderDate(ChatLogIdx idxToRender, const IChatLog &chatLog) {
-  if (idxToRender == chatLog.getFirstIdx())
+  if (idxToRender.get() == chatLog.getFirstIdx().get())
     return true;
 
   return chatLog.at(idxToRender - 1).getTimestamp().date() !=
@@ -353,7 +353,7 @@ GenericChatForm::GenericChatForm(const Contact *contact_,
 
   quoteAction =
       menu.addAction(QIcon(), QString(), this, SLOT(quoteSelectedText()),
-                     QKeySequence(Qt::ALT + Qt::Key_Q));
+                     QKeySequence(Qt::ALT , Qt::Key_Q));
   addAction(quoteAction);
   menu.addSeparator();
 
@@ -400,6 +400,8 @@ GenericChatForm::GenericChatForm(const Contact *contact_,
 
   connect(&chatLog, &IChatLog::itemUpdated, this,
           &GenericChatForm::renderMessage);
+
+
 
   connect(msgEdit, &ChatTextEdit::enterPressed, this,
           &GenericChatForm::onSendTriggered);

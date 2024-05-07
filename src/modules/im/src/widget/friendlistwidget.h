@@ -13,6 +13,7 @@
 #ifndef FRIENDLISTWIDGET_H
 #define FRIENDLISTWIDGET_H
 
+
 #include "genericchatitemlayout.h"
 #include "src/core/core.h"
 #include "src/model/friendmessagedispatcher.h"
@@ -33,19 +34,19 @@ class GenericChatroomWidget;
 class CategoryWidget;
 class Friend;
 class ContentLayout;
+class ChatWidget;
 
 class FriendListWidget : public QWidget {
   Q_OBJECT
 
 public:
   using SortingMode = Settings::FriendListSortingMode;
-  explicit FriendListWidget(Widget *parent, bool groupsOnTop = true);
+  explicit FriendListWidget(ChatWidget *parent, bool groupsOnTop = true);
   ~FriendListWidget();
   void setMode(SortingMode mode);
   SortingMode getMode() const;
 
-  FriendWidget *addFriend(QString friendId, const ToxPk &friendPk,
-                          bool isFriend);
+  FriendWidget *addFriend(const ToxPk &friendPk,bool isFriend);
   FriendWidget *getFriend(const ToxPk &friendPk);
   void removeFriendWidget(FriendWidget *w);
   void removeFriend(const ToxPk &friendPk);
@@ -54,8 +55,9 @@ public:
   void setFriendStatusMsg(const ToxPk &friendPk,  const QString& statusMsg);
   void setFriendName(const ToxPk &friendPk,  const QString& name);
   void setFriendAvatar(const ToxPk &friendPk, const QByteArray& avatar);
+  void setFriendTyping(const ToxPk &pk, bool typing);
 
-  GroupWidget *addGroup(QString groupnumber, const GroupId &groupId,
+  GroupWidget *addGroup(const GroupId &groupId,
                         const QString &groupName = "");
 
   GroupWidget *getGroup(const GroupId &id);
@@ -82,43 +84,46 @@ public:
                             const lib::messenger::IMMessage &message, //
                             bool isAction);
 
+  CircleWidget *createCircleWidget(int id = -1);
 signals:
   void onCompactChanged(bool compact);
   void connectCircleWidget(CircleWidget &circleWidget);
-  void searchCircle(CircleWidget &circleWidget);
 
+  void searchCircle(CircleWidget &circleWidget);
 public slots:
   void renameGroupWidget(GroupWidget *groupWidget, const QString &newName);
+
   void renameCircleWidget(CircleWidget *circleWidget, const QString &newName);
-
   void onFriendWidgetRenamed(FriendWidget *friendWidget);
-  void slot_friendClicked(GenericChatroomWidget *);
 
+  void slot_friendClicked(GenericChatroomWidget *);
   void moveWidget(FriendWidget *w, Status::Status s, bool add = false);
-  void slot_addFriend(QString friendId, const ToxPk &friendPk, bool isFriend);
 
   void onGroupchatPositionChanged(bool top);
-  void slot_groupClicked(GenericChatroomWidget *);
 
+  void slot_groupClicked(GenericChatroomWidget *);
 protected:
   void dragEnterEvent(QDragEnterEvent *event) override;
   void dropEvent(QDropEvent *event) override;
   void showEvent(QShowEvent *event) override;
 private slots:
-  void dayTimeout();
 
+  void dayTimeout();
 private:
-  CircleWidget *createCircleWidget(int id = -1);
 
   QLayout *nextLayout(QLayout *layout, bool forward) const;
   void moveFriends(QLayout *layout);
   CategoryWidget *getTimeCategoryWidget(const Friend *frd) const;
   void sortByMode(SortingMode mode);
+  void connectFriendWidget(FriendWidget &friendWidget);
+  void updateFriendActivity(const Friend &frnd);
+
+
   SortingMode mode;
 
   bool groupsOnTop;
   FriendListLayout *listLayout;
-  GenericChatItemLayout *circleLayout = nullptr;
+//  GenericChatItemLayout *circleLayout = nullptr;
   QVBoxLayout *activityLayout = nullptr;
   QTimer *dayTimer;
 

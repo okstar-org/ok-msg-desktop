@@ -37,8 +37,8 @@ CoreFilePtr CoreFile::makeCoreFile(Core *core, Tox *tox,
   assert(tox != nullptr);
 
   CoreFilePtr result = CoreFilePtr{new CoreFile{tox, coreLoopLock}};
-  connect(core, &Core::friendStatusChanged, result.get(),
-          &CoreFile::onConnectionStatusChanged);
+//  connect(core, &Core::friendStatusChanged, result.get(),
+//          &CoreFile::onConnectionStatusChanged);
 
   return result;
 }

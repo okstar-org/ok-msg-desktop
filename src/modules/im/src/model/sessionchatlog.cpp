@@ -363,7 +363,7 @@ void SessionChatLog::onMessageSent(DispatchedMessageId id,
 
   outgoingMessages.insert(id, messageIdx);
 
-  emit this->itemUpdated(messageIdx);
+  emit itemUpdated(messageIdx);
 }
 
 /**

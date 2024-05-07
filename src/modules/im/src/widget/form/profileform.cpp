@@ -132,7 +132,7 @@ ProfileForm::ProfileForm(IProfileInfo* profileInfo, QWidget* parent)
 
     timer.setInterval(750);
     timer.setSingleShot(true);
-    connect(&timer, &QTimer::timeout, this, [=]() {
+    connect(&timer, &QTimer::timeout, this, [this]() {
         // QString x = bodyUI->toxIdLabel->text().replace(" ✔");
         // bodyUI->toxIdLabel->setText(x);
         hasCheck = false;
@@ -140,7 +140,7 @@ ProfileForm::ProfileForm(IProfileInfo* profileInfo, QWidget* parent)
 
     connect(bodyUI->toxIdLabel, &CroppingLabel::clicked, this, &ProfileForm::copyIdClicked);
     connect(toxId, &ClickableTE::clicked, this, &ProfileForm::copyIdClicked);
-    profileInfo->connectTo_idChanged(this, [=](const ToxId& id) { setToxId(id); });
+    profileInfo->connectTo_idChanged(this, [this](const ToxId& id) { setToxId(id); });
     connect(bodyUI->userName, &QLineEdit::editingFinished, this, &ProfileForm::onUserNameEdited);
     connect(bodyUI->statusMessage, &QLineEdit::editingFinished,
             this, &ProfileForm::onStatusMessageEdited);
@@ -161,10 +161,10 @@ ProfileForm::ProfileForm(IProfileInfo* profileInfo, QWidget* parent)
 
     profileInfo->connectTo_usernameChanged(
             this,
-            [=](const QString& val) { bodyUI->userName->setText(val); });
+            [this](const QString& val) { bodyUI->userName->setText(val); });
     profileInfo->connectTo_statusMessageChanged(
             this,
-            [=](const QString& val) { bodyUI->statusMessage->setText(val); });
+            [this](const QString& val) { bodyUI->statusMessage->setText(val); });
 
     for (QComboBox* cb : findChildren<QComboBox*>()) {
         cb->installEventFilter(this);

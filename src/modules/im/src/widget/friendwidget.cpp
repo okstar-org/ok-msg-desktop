@@ -55,7 +55,7 @@
  * For example, used on friend list.
  * When you click should open the chat with friend. Widget has a context menu.
  */
-FriendWidget::FriendWidget(ContentLayout *layout, const QString &friendId,
+FriendWidget::FriendWidget(ContentLayout *layout,
                            const ToxPk &friendPk, bool isFriend, bool compact)
     : GenericChatroomWidget(compact), contentLayout(layout),
       isDefaultAvatar{true} {
@@ -70,8 +70,11 @@ FriendWidget::FriendWidget(ContentLayout *layout, const QString &friendId,
   auto history = profile->getHistory();
   auto dialogManager = ContentDialogManager::getInstance();
 
-  m_friend = FriendList::addFriend(friendId, friendPk, isFriend);
+  m_friend = FriendList::addFriend(friendPk, isFriend);
 
+  auto messageProcessor = MessageProcessor(sharedMessageProcessorParams);
+  messageDispatcher = std::make_unique<FriendMessageDispatcher>(
+      *m_friend, messageProcessor, *core);
 
   // Note: We do not have to connect the message dispatcher signals since
   // ChatHistory hooks them up in a very specific order
@@ -80,11 +83,12 @@ FriendWidget::FriendWidget(ContentLayout *layout, const QString &friendId,
                                               *messageDispatcher.get());
 
 
+  chatLog = std::make_unique<SessionChatLog>(*core);
+  connect(messageDispatcher.get(), &IMessageDispatcher::messageReceived,
+          chatLog.get(), &SessionChatLog::onMessageReceived);
 
-  auto messageProcessor = MessageProcessor(sharedMessageProcessorParams);
-  messageDispatcher = std::make_unique<FriendMessageDispatcher>(
-      *m_friend, messageProcessor, *core);
-  chatForm = std::make_unique<ChatForm>(m_friend, *chatHistory,
+  chatForm = std::make_unique<ChatForm>(m_friend,
+                                        *chatHistory,
                                         *messageDispatcher);
 
   contentWidget = new ContentWidget(this);
@@ -287,7 +291,7 @@ void FriendWidget::onContextMenuCalled(QContextMenuEvent *event) {
   if (chatRoom->possibleToOpenInNewWindow()) {
     const auto openChatWindow = menu.addAction(tr("Open chat in new window"));
     connect(openChatWindow, &QAction::triggered,
-            [=]() { emit newWindowOpened(this); });
+            [this]() { emit newWindowOpened(this); });
   }
 
   if (chatRoom->canBeRemovedFromWindow()) {
@@ -497,6 +501,10 @@ void FriendWidget::setAsActiveChatroom() { setActive(true); }
 void FriendWidget::setAsInactiveChatroom() { setActive(false); }
 
 void FriendWidget::setAvatar(const QPixmap &pixmap) {
+  if(pixmap.isNull()){
+    return;
+  }
+  isDefaultAvatar = false;
   avatar->setPixmap(pixmap);
 }
 
@@ -668,3 +676,4 @@ void FriendWidget::setStatusMsg(const QString &msg) {
   m_friend->setStatusMessage(msg);
   GenericChatroomWidget::setStatusMsg(msg);
 }
+void FriendWidget::setTyping(bool typing) {}

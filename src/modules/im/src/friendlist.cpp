@@ -22,8 +22,8 @@
 QHash<ToxPk, Friend *> FriendList::friendList;
 QHash<QString, ToxPk> FriendList::id2key;
 
-Friend *FriendList::addFriend(QString friendId, const ToxPk &friendPk, bool isFriend) {
-  qDebug() << "addFriend friendId:" << friendId << "friendPk:" << friendPk.toString();
+Friend *FriendList::addFriend(const ToxPk &friendPk, bool isFriend) {
+  qDebug() << __func__ <<"friendId:" << "friendPk:" << friendPk.toString();
 
   auto friendChecker = friendList.find(friendPk);
   if (friendChecker != friendList.end()) {
@@ -31,12 +31,12 @@ Friend *FriendList::addFriend(QString friendId, const ToxPk &friendPk, bool isFr
   }
 
   QString alias = Settings::getInstance().getFriendAlias(friendPk);
-  qDebug()<<"friendId:"<< friendId <<" alias:"<<alias;
+  qDebug() <<" alias:"<<alias;
 
-  Friend *newfriend = new Friend(friendId, friendPk,isFriend, alias, friendPk.getUsername());
+  Friend *newfriend = new Friend( friendPk,isFriend, alias, friendPk.getUsername());
 
   friendList[friendPk] = newfriend;
-  id2key[friendId] = friendPk;
+  id2key[friendPk.toString()] = friendPk;
 
   return newfriend;
 }

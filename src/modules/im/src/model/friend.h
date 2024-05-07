@@ -25,8 +25,7 @@
 class Friend : public Contact {
   Q_OBJECT
 public:
-  Friend(QString friendId,
-         const ToxPk &friendPk,
+  Friend(const ToxPk &friendPk,
          bool isFriend,
          const QString &userAlias = {},
          const QString &userName = {});

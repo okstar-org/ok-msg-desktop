@@ -44,7 +44,7 @@ void AvatarBroadcaster::setAvatar(QByteArray data) {
   avatarData = data;
   friendsSentTo.clear();
 
-//  QVector<QString> friends = Core::getInstance()->getFriendList();
+//  QVector<QString> friends = Core::getInstance()->loadFriendList();
 //  for (auto &friendId : friends)
 //    sendAvatarTo(friendId);
 }
@@ -69,8 +69,8 @@ void AvatarBroadcaster::sendAvatarTo(QString friendId) {
  * they come online.
  */
 void AvatarBroadcaster::enableAutoBroadcast(bool state) {
-  QObject::disconnect(autoBroadcastConn);
-  if (state)
-    autoBroadcastConn = QObject::connect(
-        Core::getInstance(), &Core::friendStatusChanged, autoBroadcast);
+//  QObject::disconnect(autoBroadcastConn);
+//  if (state)
+//    autoBroadcastConn = QObject::connect(
+//        Core::getInstance(), &Core::friendStatusChanged, autoBroadcast);
 }

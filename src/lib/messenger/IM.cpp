@@ -218,8 +218,8 @@ std::unique_ptr<Client> IM::makeClient() {
   disco->addFeature(XMLNS_JINGLE_APPS_GROUP);
   disco->addFeature(XMLNS_JINGLE_MESSAGE);
   // NICK
-  disco->addFeature(XMLNS_NICKNAME);
-  disco->addFeature(XMLNS_NICKNAME + "+notify");
+//  disco->addFeature(XMLNS_NICKNAME);
+//  disco->addFeature(XMLNS_NICKNAME + "+notify");
 
   client->setTls(TLSPolicy::TLSDisabled);
   client->setCompression(false);
@@ -238,9 +238,9 @@ std::unique_ptr<Client> IM::makeClient() {
 //  client->registerMessageHandler(this);
 //  client->setStreamManagement(true, true);
 
-//#ifdef LOG_XMPP
-//  client->logInstance().registerLogHandler(LogLevelDebug, LogAreaAll, this);
-//#endif
+#ifdef LOG_XMPP
+  client->logInstance().registerLogHandler(LogLevelDebug, LogAreaAll, this);
+#endif
 
   vCardManager = std::make_unique<VCardManager>(client.get());
   pubSubManager = std::make_unique<PubSub::Manager>(client.get());
@@ -265,9 +265,9 @@ void IM::onConnect() {
   auto res = _client->resource();
   qDebug()<<("resource:")<<(qstring(res));
 
-  fetchVCard(qstring(self().bare()));
+//  fetchVCard(qstring(self().bare()));
 
-  emit selfIdChanged(qstring(_client->username()));
+//  emit selfIdChanged(qstring(_client->username()));
   emit connectResult(_status);
   emit connected();
 }
@@ -336,13 +336,13 @@ void IM::enableDiscoManager() {
   /**
    * 头像相关
    */
-  client->registerStanzaExtension(new Avatar);
-  // urn:xmpp:avatar:data
-  disco->addFeature(XMLNS_AVATAR);
-  // urn:xmpp:avatar:metadata
-  disco->addFeature(XMLNS_META_AVATAR);
-  // urn:xmpp:avatar:metadata+notify
-  disco->addFeature(XMLNS_META_AVATAR + "+notify");
+//  client->registerStanzaExtension(new Avatar);
+//  // urn:xmpp:avatar:data
+//  disco->addFeature(XMLNS_AVATAR);
+//  // urn:xmpp:avatar:metadata
+//  disco->addFeature(XMLNS_META_AVATAR);
+//  // urn:xmpp:avatar:metadata+notify
+//  disco->addFeature(XMLNS_META_AVATAR + "+notify");
 
 
 
@@ -506,8 +506,9 @@ void IM::makeId(QString &id) {
 // Handle Message session
 void IM::handleMessageSession(MessageSession *session) {
 
-  qDebug() << "handleMessageSession:" << qstring(session->target().full());
-
+  qDebug() << __func__
+           << "from" << qstring(session->target().full())
+           << "session:" << session->threadID().c_str();
   // 放入最新的session
 
   // m_messageEventFilter = std::make_unique<MessageEventFilter>(session);
@@ -541,14 +542,10 @@ void IM::handleMessageSession(MessageSession *session) {
 }
 
 void IM::handleMessage(const gloox::Message &msg, MessageSession *session) {
-  return;
+
   if (!session) {
     qWarning()<<"session is NULL";
     return;
-  }
-
-  while(!mUIStarted){
-    sleep(1);
   }
 
   auto threadId = qstring(session->threadID());
@@ -1324,9 +1321,9 @@ void IM::handlePing(const gloox::PingHandler::PingType type,
  * @param vcard
  */
 void IM::handleVCard(const JID &jid, const VCard *vcard) {
-  qDebug()<<QString("jid：%1").arg(qstring(jid.full()));
+  qDebug()<<  __func__ << QString("jid：%1").arg(qstring(jid.full()));
 
-  VCard::Photo photo = vcard->photo();
+  auto & photo = vcard->photo();
   if (!photo.binval.empty()) {
     qDebug()<<QString("photo binval size:%1").arg(photo.binval.size());
     emit receiveFriendAvatarChanged(qstring(jid.bare()), photo.binval);
@@ -1747,9 +1744,9 @@ void IM::handleRoster(const Roster &roster) {
     emit receiveFriend(qstring(jid.bare()));
     msleep(100);
   }
-  //  enableDiscoManager();
 
-  loadGroupList();
+  //  enableDiscoManager();
+  //  loadGroupList();
 
   emit receiveFriendDone();
 };
@@ -2611,27 +2608,28 @@ bool IM::onTLSConnect(const CertInfo &info) {
 
 void IM::handleLog(LogLevel level, LogArea area, const std::string &message) {
   //   qDebug()<<QString("%1").arg(message.c_str()));
+  auto line =  QString::fromStdString(message);
   switch (area) {
   case LogAreaXmlIncoming:
-    qDebug() << "Received XML:" << message.c_str();
+    qDebug() << "Received XML:" << line;
     break;
   case LogAreaXmlOutgoing:
-    qDebug() << "Sent XML:" << message.c_str();
+    qDebug() << "Sent XML:"  << line;
     break;
   case LogAreaClassConnectionBOSH:
-    qDebug() << "BOSH:" << (message.c_str());
+    qDebug() << "BOSH:"  << line;
     break;
   case LogAreaClassClient:
-    qDebug() << "Client:" << (message.c_str());
+    qDebug() << "Client:"  << line;
     break;
   case LogAreaClassDns:
-    qDebug() << "dns:" << (message.c_str());
+    qDebug() << "dns:" << line;
     break;
   default:
     qDebug() << QString("level: %1, area: %2 msg: %3")
                   .arg(level)
                   .arg(area)
-                  .arg(message.c_str());
+                  .arg(line);
   }
 }
 

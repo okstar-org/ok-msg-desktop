@@ -78,25 +78,26 @@ GroupWidget::GroupWidget(ContentLayout *layout,
   messageDispatcher = std::make_unique<GroupMessageDispatcher>(
       *group, std::move(messageProcessor), *core, *core,
       Settings::getInstance());
+
+
   chatLog = std::make_unique<SessionChatLog>(*core);
 
   chatform = std::make_unique<GroupChatForm>(group,
-                                              *chatLog.get(),
-                                              *messageDispatcher.get(), settings);
+                                              *chatLog,
+                                              *messageDispatcher, settings);
 
 
   contentWidget = new ContentWidget(this);
   contentWidget->hide();
   contentWidget->setGroupChatForm(chatform.get());
 
-//
-  //
+
       connect(messageDispatcher.get(), &IMessageDispatcher::messageReceived,
               chatLog.get(), &SessionChatLog::onMessageReceived);
-  //    connect(messageDispatcher.get(), &IMessageDispatcher::messageSent,
-  //            groupChatLog.get(), &SessionChatLog::onMessageSent);
-  //    connect(messageDispatcher.get(), &IMessageDispatcher::messageComplete,
-  //            groupChatLog.get(), &SessionChatLog::onMessageComplete);
+      connect(messageDispatcher.get(), &IMessageDispatcher::messageSent,
+              chatLog.get(), &SessionChatLog::onMessageSent);
+      connect(messageDispatcher.get(), &IMessageDispatcher::messageComplete,
+              chatLog.get(), &SessionChatLog::onMessageComplete);
 }
 
 GroupWidget::~GroupWidget() { settings::Translator::unregister(this); }
@@ -290,9 +291,7 @@ void GroupWidget::mouseMoveEvent(QMouseEvent *ev) {
 }
 
 void GroupWidget::do_widgetClicked(GenericChatroomWidget *w) {
-
-  qDebug() << __func__ << "show group:" << group->getId();
-//  auto dialog = addGroupDialog(group);
+//  qDebug() << __func__ << "show group:" << group->getId();
   contentWidget->showTo(contentLayout);
 }
 

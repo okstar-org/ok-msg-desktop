@@ -16,7 +16,7 @@
 #include "src/widget/form/chatform.h"
 
 
-Friend::Friend(QString friendId,         //
+Friend::Friend(
                const ToxPk &friendPk,    //
                bool isFriend,
                const QString &userAlias, //
@@ -25,7 +25,6 @@ Friend::Friend(QString friendId,         //
     : userName{userName},   //
       userAlias{userAlias}, //
       friendPk{friendPk},   //
-      friendId{friendId},   //
       hasNewEvents{false},  //
       friendStatus{Status::Status::Offline},
       isFriend_{isFriend}

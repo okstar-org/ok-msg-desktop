@@ -390,7 +390,10 @@ void Core::onStarted() {
 /**
  * @brief Starts toxcore and it's event loop, can be called from any thread
  */
-void Core::start() { coreThread->start(); }
+void Core::start() {
+  qDebug() << __func__ << "...";
+  coreThread->start();
+}
 
 /**
  * @brief Returns the global widget's Core instance
@@ -510,8 +513,8 @@ void Core::bootstrapDht() {
 }
 
 void Core::onFriend(const QString friendId) {
-  qDebug() << "onFriend" << friendId;
-  emit friendAdded(friendId, ToxPk(friendId), true);
+  qDebug() << __func__ << friendId;
+  emit sig_friendAdded(  ToxPk(friendId), true);
 }
 
 void Core::onFriendDone() {
@@ -559,12 +562,12 @@ void Core::onFriendMessage(QString friendId,
  */
 void Core::onFriendChatState(QString friendId, int state) {
   qDebug() << "onFriendChatState:" << friendId << "state:" << state;
-  emit friendTypingChanged(friendId, state == 2);
+  emit friendTypingChanged(getFriendPublicKey(friendId), state == 2);
 }
 
 void Core::onFriendNameChanged(QString friendId, QString name) {
   qDebug() << "onFriendNameChanged" << friendId << "alias:" << name;
-  emit friendUsernameChanged(friendId, name);
+  emit friendUsernameChanged(getFriendPublicKey(friendId), name);
 }
 
 void Core::onFriendAvatarChanged(const QString friendId,
@@ -575,44 +578,16 @@ void Core::onFriendAvatarChanged(const QString friendId,
   emit friendAvatarChanged(getFriendPublicKey(friendId), QByteArray::fromStdString(avatar));
 }
 
-void Core::onFriendTypingChange(Tox *, QString friendId, bool isTyping,
-                                void *core) {
-  emit static_cast<Core *>(core)->friendTypingChanged(friendId, isTyping);
-}
-
-void Core::onStatusMessageChanged(Tox *, QString friendId,
-                                  const uint8_t *cMessage, size_t cMessageSize,
-                                  void *core) {
-  QString message = ToxString(cMessage, cMessageSize).getQString();
-  // no saveRequest, this callback is called on every connection, not just on
-  // name change
-  emit static_cast<Core *>(core)->friendStatusMessageChanged(friendId, message);
-}
-
 void Core::onUserStatusChanged(Tox *, QString friendId,
                                Tox_User_Status userStatus, void *core) {
   qDebug() << "onUserStatusChanged:" << friendId << "userStatus:" << userStatus;
   Status::Status status = fromToxStatus(userStatus);
-  emit friendStatusChanged(friendId, status);
-}
-
-void Core::onConnectionStatusChanged(Tox *, QString friendId,
-                                     Tox_Connection status, void *vCore) {
-  Core *core = static_cast<Core *>(vCore);
-  Status::Status friendStatus = status != TOX_CONNECTION_NONE
-                                    ? Status::Status::Online
-                                    : Status::Status::Offline;
-  // Ignore Online because it will be emited from onUserStatusChanged
-  bool isOffline = friendStatus == Status::Status::Offline;
-  if (isOffline) {
-    emit core->friendStatusChanged(friendId, friendStatus);
-    core->checkLastOnline(friendId);
-  }
+  emit friendStatusChanged(getFriendPublicKey(friendId), status);
 }
 
 void Core::onGroupList(const QString groupId, const QString name) {
-  qDebug() << "onGroupList add groupId:" << groupId << name;
-  emit groupJoined(groupId, GroupId (groupId), name);
+  qDebug() << __func__ << "groupId:" << groupId << name;
+  emit groupJoined( GroupId (groupId), name);
 }
 
 void Core::onGroupListDone() {
@@ -711,7 +686,7 @@ void Core::onGroupInfo( QString groupId, lib::messenger::GroupInfo groupInfo) {
 }
 
 void Core::onMessageReceipt(QString friendId, ReceiptNum receipt) {
-  emit receiptRecieved(friendId, receipt);
+  emit receiptRecieved(getFriendPublicKey(friendId), receipt);
 }
 
 void Core::acceptFriendRequest(const ToxPk &friendPk) {
@@ -726,7 +701,7 @@ void Core::acceptFriendRequest(const ToxPk &friendPk) {
   //      emit failedToAddFriend(friendPk);
   //    } else {
   emit saveRequest();
-  emit friendAdded(friendId, friendPk, true);
+  emit sig_friendAdded(friendPk, true);
   //    }
 }
 
@@ -1127,7 +1102,7 @@ void Core::loadFriends() {
     return;
   }
 
-  //  std::list<lib::IM::FriendId> peers = messenger->getFriendList();
+  //  std::list<lib::IM::FriendId> peers = messenger->loadFriendList();
   //  for (auto itr : peers) {
   //    qDebug() << "id=" << qstring(itr.getJid())
   //             << " name=" << qstring(itr.getUsername());
@@ -1210,14 +1185,13 @@ void Core::checkLastOnline(QString friendId) {
  * @brief Returns the list of friendIds in our friendlist, an empty list on
  * error
  */
-QVector<QString> Core::getFriendList() const {
+QVector<ToxPk> Core::loadFriendList() const {
   QMutexLocker ml{&coreLoopLock};
 
-  std::list<lib::messenger::FriendId> peers = tox->getFriendList();
-
-  QVector<QString> friends;
-  for (auto &p : peers) {
-    friends.push_back(p.username);
+  std::list<lib::messenger::FriendId> friendList = tox->getFriendList();
+  QVector<ToxPk> friends;
+  for (auto &p : friendList) {
+    friends.push_back(ToxPk(p.toString()));
   }
   return friends;
 }
@@ -1721,4 +1695,7 @@ void Core::requestBookmarks() {
 
 void Core::setUIStarted() {
   tox->setUIStarted();
+}
+void Core::loadGroupList() const {
+  tox->loadGroupList();
 }

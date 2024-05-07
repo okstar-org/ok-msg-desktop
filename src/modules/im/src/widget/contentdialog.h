@@ -45,7 +45,7 @@ public:
   ~ContentDialog() override;
 
   void addFriend(FriendChatroom *chatroom, GenericChatForm *form);
-  GroupWidget *addGroup(GroupChatroom *chatroom, GenericChatForm *form);
+  void addGroup(GroupChatroom *chatroom, GenericChatForm *form);
   void removeFriend(const ToxPk &friendPk) override;
   void removeGroup(const GroupId &groupId) override;
   int chatroomCount() const override;

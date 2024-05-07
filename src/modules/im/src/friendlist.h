@@ -24,7 +24,7 @@ class ToxPk;
 
 class FriendList {
 public:
-  static Friend *addFriend(QString friendId, const ToxPk &friendPk, bool isFriend);
+  static Friend *addFriend(const ToxPk &friendPk, bool isFriend);
   static Friend *findFriend(const ToxPk &friendPk);
   static const ToxPk &id2Key(QString friendId);
   static QList<Friend *> getAllFriends();

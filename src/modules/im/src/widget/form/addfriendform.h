@@ -105,11 +105,12 @@ private:
     QLineEdit toxId;
     QTextEdit message;
     QTextEdit importMessage;
+
     QVBoxLayout layout;
-    QVBoxLayout headLayout;
+
     QVBoxLayout importContactsLayout;
     QHBoxLayout importFileLine;
-    QWidget* head;
+
     QWidget* main;
     QWidget* importContacts;
     QString lastUsername;

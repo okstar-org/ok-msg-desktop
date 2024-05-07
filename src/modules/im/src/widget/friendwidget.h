@@ -19,6 +19,7 @@
 #include "src/model/chatroom/groupchatroom.h"
 #include "src/model/friendmessagedispatcher.h"
 #include "src/model/message.h"
+#include "src/model/sessionchatlog.h"
 
 #include <memory>
 
@@ -37,7 +38,7 @@ class FriendWidget : public GenericChatroomWidget
     Q_OBJECT
 
   public:
-    FriendWidget(ContentLayout* layout, const QString& friendId, const ToxPk &friendPk, bool isFriend, bool compact);
+    FriendWidget(ContentLayout* layout, const ToxPk &friendPk, bool isFriend, bool compact);
 
     void contextMenuEvent(QContextMenuEvent* event) override final;
     void setAsActiveChatroom() override final;
@@ -45,6 +46,7 @@ class FriendWidget : public GenericChatroomWidget
     void setAvatar(const QPixmap &pixmap) override final;
     void setStatus(Status::Status status);
     void setStatusMsg(const QString& msg) ;
+    void setTyping(bool typing);
 
     void resetEventFlags() override final;
     QString getStatusString() const override final;
@@ -88,7 +90,7 @@ protected:
     std::unique_ptr<ChatHistory> chatHistory;
     std::unique_ptr<ChatForm> chatForm;
     std::unique_ptr<FriendChatroom> chatRoom;
-
+    std::unique_ptr<SessionChatLog> chatLog;
     Friend *m_friend;
 
 

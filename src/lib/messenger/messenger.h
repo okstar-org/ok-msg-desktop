@@ -270,6 +270,7 @@ public:
   /**
    * Group
    */
+  void loadGroupList();
   bool initRoom();
   bool callToGroup(const QString &g);
   bool createGroup(const QString &group);

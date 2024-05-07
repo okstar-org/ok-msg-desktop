@@ -121,11 +121,11 @@ ContentDialog::ContentDialog(QWidget* parent)
 
     setAcceptDrops(true);
 
-    new QShortcut(Qt::CTRL + Qt::Key_Q, this, SLOT(close()));
-    new QShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_Tab, this, SLOT(previousContact()));
-    new QShortcut(Qt::CTRL + Qt::Key_Tab, this, SLOT(nextContact()));
-    new QShortcut(Qt::CTRL + Qt::Key_PageUp, this, SLOT(previousContact()));
-    new QShortcut(Qt::CTRL + Qt::Key_PageDown, this, SLOT(nextContact()));
+    new QShortcut(QKeySequence(Qt::CTRL , Qt::Key_Q), this, SLOT(close()));
+    new QShortcut(QKeySequence(Qt::CTRL , Qt::SHIFT , Qt::Key_Tab), this, SLOT(previousContact()));
+    new QShortcut(QKeySequence(Qt::CTRL , Qt::Key_Tab), this, SLOT(nextContact()));
+    new QShortcut(QKeySequence(Qt::CTRL , Qt::Key_PageUp), this, SLOT(previousContact()));
+    new QShortcut(QKeySequence(Qt::CTRL , Qt::Key_PageDown), this, SLOT(nextContact()));
 
     connect(&s, &Settings::groupchatPositionChanged, this, &ContentDialog::onGroupchatPositionChanged);
     connect(splitter, &QSplitter::splitterMoved, this, &ContentDialog::saveSplitterState);
@@ -171,7 +171,7 @@ void ContentDialog::addFriend( FriendChatroom* chatroom,
 //    return friendWidget;
 }
 
-GroupWidget* ContentDialog::addGroup(GroupChatroom* chatroom, GenericChatForm* form)
+void ContentDialog::addGroup(GroupChatroom* chatroom, GenericChatForm* form)
 {
 //    const auto g = chatroom->getGroup();
 //    const auto& groupId = g->getPersistentId();

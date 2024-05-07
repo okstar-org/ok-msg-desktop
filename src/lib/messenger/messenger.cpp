@@ -111,9 +111,9 @@ void Messenger::onStarted() {
   auto _session = ok::session::AuthSession::Instance();
   auto _im = _session->im();
 
-  _im->enableRosterManager();
-  _im->sendPresence();
-  _im->sendServiceDiscoveryItems();
+//  _im->enableRosterManager();
+//  _im->sendPresence();
+//  _im->sendServiceDiscoveryItems();
 
 #ifdef OK_PLUGIN
   qDebug() << "Initialize plugin manager...";
@@ -678,6 +678,10 @@ void Messenger::onEncryptedMessage(QString xml) {
 #endif
 }
 
+void Messenger::loadGroupList() {
+  ok::session::AuthSession::Instance()->im()->loadGroupList();
+}
+
 bool Messenger::createGroup(const QString &group) {
   auto _session = ok::session::AuthSession::Instance();
   auto _im = _session->im();
@@ -778,6 +782,7 @@ void Messenger::onFriendReceived(QString friendId) {
     handler->onFriend(friendId);
   }
 }
+
 
 } // namespace messenger
 } // namespace lib

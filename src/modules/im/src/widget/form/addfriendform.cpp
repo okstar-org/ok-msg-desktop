@@ -59,11 +59,14 @@ AddFriendForm::AddFriendForm() {
   userService = std::make_unique<ok::backend::UserService>(signIn.stackUrl);
 
   tabWidget = new QTabWidget();
-  main = new QWidget(tabWidget), head = new QWidget();
+  main = new QWidget(tabWidget);
   QFont bold;
   bold.setBold(true);
   headLabel.setFont(bold);
   toxIdLabel.setTextFormat(Qt::RichText);
+
+  layout.setMargin(0);
+  layout.setSpacing(0);
 
   main->setLayout(&layout);
 
@@ -110,8 +113,6 @@ AddFriendForm::AddFriendForm() {
 
   tabWidget->addTab(scrollArea, QString());
 
-  head->setLayout(&headLayout);
-  headLayout.addWidget(&headLabel);
 
   connect(&toxId, &QLineEdit::returnPressed, this,
           &AddFriendForm::onSendTriggered);
@@ -151,24 +152,18 @@ AddFriendForm::AddFriendForm() {
 
 AddFriendForm::~AddFriendForm() {
   settings::Translator::unregister(this);
-  head->deleteLater();
   tabWidget->deleteLater();
 }
 
 bool AddFriendForm::isShown() const {
-  if (head->isVisible()) {
-    head->window()->windowHandle()->alert(0);
-    return true;
-  }
-
-  return false;
+  return true;
 }
 
 void AddFriendForm::show(ContentLayout *contentLayout) {
 //  contentLayout->mainContent->layout()->addWidget(tabWidget);
 //  contentLayout->mainHead->layout()->addWidget(head);
   tabWidget->show();
-  head->show();
+
   //  setIdFromClipboard();
   toxId.setFocus();
 

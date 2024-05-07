@@ -25,7 +25,8 @@ class ChatHistory : public IChatLog
 {
     Q_OBJECT
 public:
-    ChatHistory(Friend& f_, History* history_,
+    ChatHistory(Friend& f_,
+              History* history_,
               const ICoreIdHandler& coreIdHandler,
               const Settings& settings,
               IMessageDispatcher& messageDispatcher);

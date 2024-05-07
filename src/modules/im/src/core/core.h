@@ -79,7 +79,9 @@ public:
   static const QString TOX_EXT;
   static QStringList splitMessage(const QString &message);
   QString getPeerName(const ToxPk &id) const;
-  QVector<QString> getFriendList() const;
+  QVector<ToxPk> loadFriendList() const;
+
+  void loadGroupList() const;
   GroupId getGroupPersistentId(QString groupId) const override;
   uint32_t getGroupNumberPeers(QString groupId) const override;
   QString getGroupPeerName(QString groupId, QString peerId) const override;
@@ -153,7 +155,7 @@ signals:
   void disconnected();
 
   void friendRequestReceived(const ToxPk &friendPk, const QString &message);
-  void friendAvatarChanged(const ToxPk friendPk, const QByteArray &avatar);
+  void friendAvatarChanged(const ToxPk &friendPk, const QByteArray &avatar);
   void friendAvatarRemoved(const ToxPk &friendPk);
 
   void requestSent(const ToxPk &friendPk, const QString &message);
@@ -187,13 +189,13 @@ signals:
                              const lib::messenger::IMMessage &message, //
                              bool isAction);
 
-  void friendAdded(QString friendId, const ToxPk &friendPk, bool isFriend);
+  void sig_friendAdded(const ToxPk &friendPk, bool isFriend);
   void friendAddedDone();
 
-  void friendStatusChanged(QString friendId, Status::Status status);
-  void friendStatusMessageChanged(QString friendId, const QString &message);
-  void friendUsernameChanged(QString friendId, const QString &username);
-  void friendTypingChanged(QString friendId, bool isTyping);
+  void friendStatusChanged(const ToxPk &friendId, Status::Status status);
+  void friendStatusMessageChanged(const ToxPk &friendId, const QString &message);
+  void friendUsernameChanged(const ToxPk &friendPk, const QString &username);
+  void friendTypingChanged(const ToxPk & friendId, bool isTyping);
 
   void friendRemoved(QString friendId);
   void friendLastSeenChanged(QString friendId, const QDateTime &dateTime);
@@ -225,11 +227,11 @@ signals:
 
   void groupPeerAudioPlaying(QString groupnumber, ToxPk peerPk);
   void groupSentFailed(QString groupId);
-  void groupJoined(QString groupnumber, GroupId groupId, const QString &name);
+  void groupJoined(const GroupId& groupId, const QString &name);
   void groupJoinedDone();
   void actionSentResult(QString friendId, const QString &action, int success);
 
-  void receiptRecieved(QString friedId, ReceiptNum receipt);
+  void receiptRecieved(const ToxPk & friedId, ReceiptNum receipt);
 
   void failedToRemoveFriend(QString friendId);
 
@@ -250,26 +252,14 @@ private:
                               void *core);
 
 
-  static void onFriendTypingChange(Tox *tox, QString friendId, bool isTyping,
-                                   void *core);
-
-  static void onStatusMessageChanged(Tox *tox, QString friendId,
-                                     const uint8_t *cMessage,
-                                     size_t cMessageSize, void *core);
-
   void onUserStatusChanged(Tox *tox, QString friendId,
                            Tox_User_Status userStatus, void *core);
 
-  static void onConnectionStatusChanged(Tox *tox, QString friendId,
-                                        Tox_Connection status, void *vCore);
 
   static void onGroupInvite(Tox *tox, QString friendId,
                             Tox_Conference_Type type, const uint8_t *cookie,
                             size_t length, void *vCore);
 
-//  static void onGroupMessage(Tox *tox, QString groupId, QString peerId,
-//                             Tox_Message_Type type, const uint8_t *cMessage,
-//                             size_t length, void *vCore);
 
   static void onGroupPeerListChange(Tox *, QString groupId, void *core);
 
