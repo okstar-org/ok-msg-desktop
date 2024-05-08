@@ -1009,22 +1009,7 @@ so you can save the file on windows.</source>
         <source>Show details</source>
         <translation>查看详情</translation>
     </message>
-    <message>
-        <source>Online</source>
-        <translation>在线</translation>
-    </message>
-    <message>
-        <source>Away</source>
-        <translation>离开</translation>
-    </message>
-    <message>
-        <source>Busy</source>
-        <translation>忙碌</translation>
-    </message>
-    <message>
-        <source>Offline</source>
-        <translation>离线</translation>
-    </message>
+
     <message>
         <source>Choose an auto accept directory</source>
         <comment>popup title</comment>
@@ -1259,6 +1244,53 @@ instead of system taskbar.</source>
         <source>Export to file</source>
         <translation>导出到文件</translation>
     </message>
+</context>
+    <context>
+<name>ChatWidget</name>
+<message>
+<source>Online</source>
+<translation>在线</translation>
+</message>
+<message>
+<source>Away</source>
+<translation>离开</translation>
+</message>
+<message>
+<source>Busy</source>
+<translation>忙碌</translation>
+</message>
+<message>
+<source>Offline</source>
+<translation>离线</translation>
+</message>
+<message>
+<source>By Name</source>
+<translation>按名称</translation>
+</message>
+<message>
+<source>By Activity</source>
+<translation>按活动日期</translation>
+</message>
+<message>
+<source>All</source>
+<translation>全部</translation>
+</message>
+<message>
+<source>Friends</source>
+<translation>好友</translation>
+</message>
+<message>
+<source>Groups</source>
+<translation>群组</translation>
+</message>
+<message>
+<source>Search Contacts</source>
+<translation>搜索联系人</translation>
+</message>
+<message>
+<source>Filter...</source>
+<translation>筛选...</translation>
+</message>
 </context>
 <context>
     <name>GenericNetCamView</name>
@@ -3005,30 +3037,7 @@ This ID includes the NoSpam code (in blue), and the checksum (in gray).</source>
             <numerusform>%n 个新群聊邀请</numerusform>
         </translation>
     </message>
-    <message>
-        <source>By Name</source>
-        <translation>按名称</translation>
-    </message>
-    <message>
-        <source>By Activity</source>
-        <translation>按活动日期</translation>
-    </message>
-    <message>
-        <source>All</source>
-        <translation>全部</translation>
-    </message>
-    <message>
-        <source>Friends</source>
-        <translation>好友</translation>
-    </message>
-    <message>
-        <source>Search Contacts</source>
-        <translation>搜索联系人</translation>
-    </message>
-    <message>
-        <source>Filter...</source>
-        <translation>筛选...</translation>
-    </message>
+
     <message>
         <source>File</source>
         <translation>文件名</translation>
@@ -3089,6 +3098,30 @@ This ID includes the NoSpam code (in blue), and the checksum (in gray).</source>
 <message>
 <source>Chat</source>
 <translation>消息</translation>
+</message>
+<message>
+<source>By Name</source>
+<translation>按名称</translation>
+</message>
+<message>
+<source>By Activity</source>
+<translation>按活动日期</translation>
+</message>
+<message>
+<source>All</source>
+<translation>全部</translation>
+</message>
+<message>
+<source>Friends</source>
+<translation>好友</translation>
+</message>
+<message>
+<source>Search Contacts</source>
+<translation>搜索联系人</translation>
+</message>
+<message>
+<source>Filter...</source>
+<translation>筛选...</translation>
 </message>
     <message>
         <source>My profile</source>

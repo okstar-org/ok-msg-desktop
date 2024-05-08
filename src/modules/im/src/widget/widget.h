@@ -106,7 +106,6 @@ class Widget final : public QFrame {
 
 private:
 
-  enum class FilterCriteria { All = 0, Online, Offline, Friends, Groups };
 
 public:
   explicit Widget(IAudioControl &audio, QWidget *parent = nullptr);
@@ -141,7 +140,6 @@ public:
 
   void reloadTheme();
 
-  bool groupsVisible() const;
 
   void resetIcon();
 
@@ -217,9 +215,7 @@ private slots:
   void copyFriendIdToClipboard(const ToxPk &friendId);
   void removeGroup(const GroupId &groupId);
   void destroyGroup(const GroupId &groupId);
-  void setStatusOnline();
-  void setStatusAway();
-  void setStatusBusy();
+
   void onIconClick(QSystemTrayIcon::ActivationReason);
   void onUserAwayCheck();
   void onEventIconTick();
@@ -261,13 +257,7 @@ private:
   void saveWindowGeometry();
   void saveSplitterGeometry();
   void cycleContacts(bool forward);
-  void searchContacts();
-  void changeDisplayMode();
-  void updateFilterText();
-  FilterCriteria getFilterCriteria() const;
-  static bool filterGroups(FilterCriteria index);
-  static bool filterOnline(FilterCriteria index);
-  static bool filterOffline(FilterCriteria index);
+
   void retranslateUi();
   void focusChatInput();
   void openDialog(GenericChatroomWidget *widget, bool newWindow);
@@ -284,19 +274,9 @@ private:
   QAction *actionLogout;
   QAction *actionQuit;
   QAction *actionShow;
-
-  QMenu *filterMenu;
-
-  QActionGroup *filterGroup;
-  QAction *filterAllAction;
-  QAction *filterOnlineAction;
-  QAction *filterOfflineAction;
-  QAction *filterFriendsAction;
-  QAction *filterGroupsAction;
-
-  QActionGroup *filterDisplayGroup;
-  QAction *filterDisplayName;
-  QAction *filterDisplayActivity;
+  void setStatusOnline();
+  void setStatusAway();
+  void setStatusBusy();
 
   Ui::IMMainWindow *ui;
   QSplitter *centralLayout;

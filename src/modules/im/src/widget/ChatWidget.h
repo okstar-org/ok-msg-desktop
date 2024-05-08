@@ -19,21 +19,25 @@
 
 #include "contentlayout.h"
 #include "friendlistwidget.h"
-#include <QWidget>
+#include <QActionGroup>
 #include <QPushButton>
-
+#include <QWidget>
 
 namespace Ui {
-class Chat;
+class ChatWidget;
 }
 
 class CircleWidget;
 class GroupInviteForm;
 class AddFriendForm;
 
+
 class ChatWidget : public QWidget {
   Q_OBJECT
 public:
+
+  enum class FilterCriteria { All = 0, Online, Offline, Friends, Groups };
+
   ChatWidget(QWidget *parent = nullptr);
   ~ChatWidget();
 
@@ -44,16 +48,27 @@ public:
   void searchCircle(CircleWidget &circleWidget);
   AddFriendForm *openFriendAddForm();
   void reloadTheme();
+  void retranslateUi();
 protected:
   void showEvent(QShowEvent*) override;
 private:
-  Ui::Chat *ui;
+  Ui::ChatWidget *ui;
   ContentLayout *contentLayout;
   FriendListWidget *contactListWidget;
   CircleWidget *circleWidget;
 
   Core *core;
   CoreFile *coreFile;
+
+  QAction *statusOnline;
+  QAction *statusAway;
+  QAction *statusBusy;
+  QAction *actionLogout;
+  QAction *actionQuit;
+  QAction *actionShow;
+  void setStatusOnline();
+  void setStatusAway();
+  void setStatusBusy();
 
   GroupInviteForm *groupInviteForm;
   uint32_t unreadGroupInvites;
@@ -62,8 +77,31 @@ private:
 
    std::unique_ptr< AddFriendForm > addFriendForm;
 
+      QMenu *filterMenu;
+
+      QActionGroup *filterGroup;
+      QAction *filterAllAction;
+      QAction *filterOnlineAction;
+      QAction *filterOfflineAction;
+      QAction *filterFriendsAction;
+      QAction *filterGroupsAction;
+
+      QActionGroup *filterDisplayGroup;
+      QAction *filterDisplayName;
+      QAction *filterDisplayActivity;
+
   void init();
   void deinit();
+  void updateIcons();
+  void setupSearch();
+  void searchContacts();
+
+  void updateFilterText();
+  FilterCriteria getFilterCriteria() const;
+  static bool filterGroups(FilterCriteria index);
+  static bool filterOnline(FilterCriteria index);
+  static bool filterOffline(FilterCriteria index);
+  bool groupsVisible() const;
 
   void connectToCore(Core* core);
 
@@ -123,7 +161,10 @@ void onGroupPeerStatusChanged(QString groupnumber, QString peerPk,
                               bool  online);
 void onGroupClicked();
 
-void updateIcons();
+
+
+void changeDisplayMode();
+void setupStatus();
 };
 
 #endif // CHATWIDGET_H

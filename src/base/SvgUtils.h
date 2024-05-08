@@ -17,12 +17,37 @@
 #ifndef OKMSG_SVGUTILS_H
 #define OKMSG_SVGUTILS_H
 
-class QIcon;
-class QString;
+#include <QIcon>
+#include <QSvgRenderer>
+#include <QPainter>
 
 class SvgUtils {
 public:
-  static QIcon prepareIcon(QString path, int w, int h);
+  inline static QIcon prepareIcon(const QString& path, int w, int h) {
+#ifdef Q_OS_LINUX
+    // Preparing needed to set correct size of icons for GTK tray backend
+    QString desktop = getenv("XDG_CURRENT_DESKTOP");
+    if (desktop.isEmpty()) {
+      desktop = getenv("DESKTOP_SESSION");
+    }
+
+    desktop = desktop.toLower();
+    if (desktop == "xfce" || desktop.contains("gnome") || desktop == "mate" ||
+        desktop == "x-cinnamon") {
+      if (w > 0 && h > 0) {
+        QSvgRenderer renderer(path);
+
+        QPixmap pm(w, h);
+        pm.fill(Qt::transparent);
+        QPainter painter(&pm);
+        renderer.render(&painter, pm.rect());
+
+        return QIcon{pm };
+      }
+    }
+#endif
+    return QIcon{path};
+  }
 };
 
 #endif // OKMSG_PROJECT_SVGUTILS_H

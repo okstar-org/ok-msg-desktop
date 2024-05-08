@@ -230,47 +230,6 @@ Widget::Widget(IAudioControl &audio, QWidget *parent)//
     //    ui->myProfile->insertSpacing(1, 7);
     //  }
 
-    filterMenu = new QMenu(this);
-    filterGroup = new QActionGroup(this);
-    filterDisplayGroup = new QActionGroup(this);
-
-    filterDisplayName = new QAction(this);
-    filterDisplayName->setCheckable(true);
-    filterDisplayName->setChecked(true);
-    filterDisplayGroup->addAction(filterDisplayName);
-    filterMenu->addAction(filterDisplayName);
-    filterDisplayActivity = new QAction(this);
-    filterDisplayActivity->setCheckable(true);
-    filterDisplayGroup->addAction(filterDisplayActivity);
-    filterMenu->addAction(filterDisplayActivity);
-    settings.getFriendSortingMode() == FriendListWidget::SortingMode::Name
-        ? filterDisplayName->setChecked(true)
-        : filterDisplayActivity->setChecked(true);
-    filterMenu->addSeparator();
-
-    filterAllAction = new QAction(this);
-    filterAllAction->setCheckable(true);
-    filterAllAction->setChecked(true);
-    filterGroup->addAction(filterAllAction);
-    filterMenu->addAction(filterAllAction);
-    filterOnlineAction = new QAction(this);
-    filterOnlineAction->setCheckable(true);
-    filterGroup->addAction(filterOnlineAction);
-    filterMenu->addAction(filterOnlineAction);
-    filterOfflineAction = new QAction(this);
-    filterOfflineAction->setCheckable(true);
-    filterGroup->addAction(filterOfflineAction);
-    filterMenu->addAction(filterOfflineAction);
-    filterFriendsAction = new QAction(this);
-    filterFriendsAction->setCheckable(true);
-    filterGroup->addAction(filterFriendsAction);
-    filterMenu->addAction(filterFriendsAction);
-    filterGroupsAction = new QAction(this);
-    filterGroupsAction->setCheckable(true);
-    filterGroup->addAction(filterGroupsAction);
-    filterMenu->addAction(filterGroupsAction);
-
-    //  ui->searchContactFilterBox->setMenu(filterMenu);
 
 
     //  ui->friendList->setWidget(contactListWidget);
@@ -278,11 +237,7 @@ Widget::Widget(IAudioControl &audio, QWidget *parent)//
     //  ui->friendList->setContextMenuPolicy(Qt::CustomContextMenu);
     //  ui->statusLabel->setEditable(true);
 
-    //  QMenu *statusButtonMenu = new QMenu(ui->statusButton);
-    //  statusButtonMenu->addAction(statusOnline);
-    //  statusButtonMenu->addAction(statusAway);
-    //  statusButtonMenu->addAction(statusBusy);
-    //  ui->statusButton->setMenu(statusButtonMenu);
+
 
     // disable proportional scaling
     //  ui->mainSplitter->setStretchFactor(0, 0);
@@ -722,9 +677,7 @@ void Widget::connectToCore(Core &core) {
   //  connect(timer, &QTimer::timeout, this, &Widget::onTryCreateTrayIcon);
   //  connect(ui->searchContactText, &QLineEdit::textChanged, this,
   //          &Widget::searchContacts);
-  connect(filterGroup, &QActionGroup::triggered, this, &Widget::searchContacts);
-  connect(filterDisplayGroup, &QActionGroup::triggered, this,
-          &Widget::changeDisplayMode);
+
   //  connect(ui->friendList, &QWidget::customContextMenuRequested, this,
   //          &Widget::friendListContextMenu);
 
@@ -1002,7 +955,7 @@ void Widget::setAvatar( QByteArray avatar) {
   }
 //  profilePicture->setPixmap(pixmap);
   profileInfo->setAvatar(pixmap);
-  qDebug() << "setAvatar ok.";
+
 }
 
 /**
@@ -2194,35 +2147,6 @@ void Widget::cycleContacts(bool forward) {
 //  contactListWidget->cycleContacts(activeChatroomWidget, forward);
 }
 
-bool Widget::filterGroups(FilterCriteria index) {
-  switch (index) {
-  case FilterCriteria::Offline:
-  case FilterCriteria::Friends:
-    return true;
-  default:
-    return false;
-  }
-}
-
-bool Widget::filterOffline(FilterCriteria index) {
-  switch (index) {
-  case FilterCriteria::Online:
-  case FilterCriteria::Groups:
-    return true;
-  default:
-    return false;
-  }
-}
-
-bool Widget::filterOnline(FilterCriteria index) {
-  switch (index) {
-  case FilterCriteria::Offline:
-  case FilterCriteria::Groups:
-    return true;
-  default:
-    return false;
-  }
-}
 
 void Widget::clearAllReceipts() {
   QList<Friend *> frnds = FriendList::getAllFriends();
@@ -2242,61 +2166,11 @@ void Widget::previousContact() { cycleContacts(false); }
 
 
 
-void Widget::searchContacts() {
-//  QString searchString = ui->searchContactText->text();
-  FilterCriteria filter = getFilterCriteria();
-
-//  contactListWidget->searchChatrooms(searchString, filterOnline(filter),
-//                                     filterOffline(filter),
-//                                     filterGroups(filter));
-
-  updateFilterText();
-
-//  contactListWidget->reDraw();
-}
-
-void Widget::changeDisplayMode() {
-  filterDisplayGroup->setEnabled(false);
-
-//  if (filterDisplayGroup->checkedAction() == filterDisplayActivity) {
-//    contactListWidget->setMode(FriendListWidget::SortingMode::Activity);
-//  } else if (filterDisplayGroup->checkedAction() == filterDisplayName) {
-//    contactListWidget->setMode(FriendListWidget::SortingMode::Name);
-//  }
-
-  searchContacts();
-  filterDisplayGroup->setEnabled(true);
-
-  updateFilterText();
-}
-
-void Widget::updateFilterText() {
-  QString action = filterDisplayGroup->checkedAction()->text();
-  QString text = filterGroup->checkedAction()->text();
-  text = action + QStringLiteral(" | ") + text;
-//  ui->searchContactFilterBox->setText(text);
-}
-
-Widget::FilterCriteria Widget::getFilterCriteria() const {
-  QAction *checked = filterGroup->checkedAction();
-
-  if (checked == filterOnlineAction)
-    return FilterCriteria::Online;
-  else if (checked == filterOfflineAction)
-    return FilterCriteria::Offline;
-  else if (checked == filterFriendsAction)
-    return FilterCriteria::Friends;
-  else if (checked == filterGroupsAction)
-    return FilterCriteria::Groups;
-
-  return FilterCriteria::All;
-}
 
 
-bool Widget::groupsVisible() const {
-  FilterCriteria filter = getFilterCriteria();
-  return !filterGroups(filter);
-}
+
+
+
 
 void Widget::friendListContextMenu(const QPoint &pos) {
   QMenu menu(this);
@@ -2338,23 +2212,8 @@ void Widget::retranslateUi() {
   //  setUsername(core->getUsername());
   //  setStatusMessage(core->getStatusMessage());
 
-  filterDisplayName->setText(tr("By Name"));
-  filterDisplayActivity->setText(tr("By Activity"));
-  filterAllAction->setText(tr("All"));
-  filterOnlineAction->setText(tr("Online"));
-  filterOfflineAction->setText(tr("Offline"));
-  filterFriendsAction->setText(tr("Friends"));
-  filterGroupsAction->setText(tr("Groups"));
-//  ui->searchContactText->setPlaceholderText(tr("Search Contacts"));
-  updateFilterText();
 
-//  ui->searchContactText->setPlaceholderText(tr("Search Contacts"));
-  statusOnline->setText(tr("Online", "Button to set your status to 'Online'"));
-  statusAway->setText(tr("Away", "Button to set your status to 'Away'"));
-  statusBusy->setText(tr("Busy", "Button to set your status to 'Busy'"));
-  actionLogout->setText(tr("Logout", "Tray action menu to logout user"));
-  actionQuit->setText(tr("Exit", "Tray action menu to exit tox"));
-  actionShow->setText(tr("Show", "Tray action menu to show qTox window"));
+
 
   if (!settings.getSeparateWindow() &&
       (settingsWidget && settingsWidget->isShown())) {

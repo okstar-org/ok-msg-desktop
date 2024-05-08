@@ -33,7 +33,6 @@ set(${PROJECT_NAME}_SOURCES
     OkProcess.h
     utils.h
     SvgUtils.h
-    SvgUtils.cpp
 )
 
 if(WIN32)

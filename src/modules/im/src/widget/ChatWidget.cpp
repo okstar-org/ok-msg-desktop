@@ -20,6 +20,7 @@
 #include "circlewidget.h"
 #include "contentlayout.h"
 #include "friendlistwidget.h"
+#include "lib/settings/translator.h"
 #include "src/core/corefile.h"
 #include "src/friendlist.h"
 #include "src/model/group.h"
@@ -30,14 +31,16 @@
 #include "src/widget/form/groupinviteform.h"
 #include "style.h"
 #include "ui_chat.h"
+#include "base/OkSettings.h"
 #include "widget.h"
+#include <QMenu>
 #include <QPainter>
 #include <QSvgRenderer>
 
 ChatWidget::ChatWidget(QWidget *parent)
     : QWidget(parent),  //
-      ui(new Ui::Chat), //
-      unreadGroupInvites{0} {
+      ui(new Ui::ChatWidget), //
+      unreadGroupInvites{0}, core{nullptr}, coreFile{nullptr} {
   ui->setupUi(this);
   layout()->setMargin(0);
   layout()->setSpacing(0);
@@ -57,8 +60,13 @@ ChatWidget::ChatWidget(QWidget *parent)
   layout->setAlignment(Qt::AlignTop | Qt::AlignVCenter);
   layout->addWidget(contactListWidget);
 
+
+  setupStatus();
+  setupSearch();
   init();
 
+  QString locale = Settings::getInstance().getTranslation();
+  settings::Translator::translate(OK_IM_MODULE, locale);
   //  circleWidget= contactListWidget->createCircleWidget();
   //  connectCircleWidget();
 
@@ -333,15 +341,17 @@ void ChatWidget::onUsernameSet(const QString &username) {
   ui->nameLabel->setToolTip(
       Qt::convertFromPlainText(username, Qt::WhiteSpaceNormal));
   // for overlength names
-
   //  sharedMessageProcessorParams.onUserNameSet(username);
 }
-void ChatWidget::onStatusSet(Status::Status status) {
 
+void ChatWidget::onStatusSet(Status::Status status) {
   int icon_size = 15;
   ui->statusButton->setProperty("status", static_cast<int>(status));
   ui->statusButton->setIcon(SvgUtils::prepareIcon(
       getIconPath(status), icon_size, icon_size));
+
+
+
   updateIcons();
 }
 
@@ -370,11 +380,8 @@ void ChatWidget::updateIcons() {
 
 void ChatWidget::onStatusMessageSet(const QString &statusMessage) {
     ui->statusLabel->setText(statusMessage);
-  // escape HTML from tooltips and preserve newlines
-  // TODO: move newspace preservance to a generic function
-//    ui->statusLabel->setToolTip("<p style='white-space:pre'>" +
-//                                statusMessage.toHtmlEscaped() + "</p>");
 }
+
 void ChatWidget::friendRequestsUpdate() {
   auto &settings = Settings::getInstance();
 
@@ -611,4 +618,220 @@ void ChatWidget::reloadTheme() {
   //  }
 
   contactListWidget->reloadTheme();
+}
+void ChatWidget::setupSearch() {
+
+  filterMenu = new QMenu(this);
+  filterGroup = new QActionGroup(this);
+  filterDisplayGroup = new QActionGroup(this);
+
+  filterDisplayName = new QAction(this);
+  filterDisplayName->setCheckable(true);
+  filterDisplayName->setChecked(true);
+  filterDisplayGroup->addAction(filterDisplayName);
+  filterMenu->addAction(filterDisplayName);
+  filterDisplayActivity = new QAction(this);
+  filterDisplayActivity->setCheckable(true);
+  filterDisplayGroup->addAction(filterDisplayActivity);
+  filterMenu->addAction(filterDisplayActivity);
+
+  Settings::getInstance().getFriendSortingMode() == FriendListWidget::SortingMode::Name
+      ? filterDisplayName->setChecked(true)
+      : filterDisplayActivity->setChecked(true);
+  filterMenu->addSeparator();
+
+  filterAllAction = new QAction(this);
+  filterAllAction->setCheckable(true);
+  filterAllAction->setChecked(true);
+  filterGroup->addAction(filterAllAction);
+  filterMenu->addAction(filterAllAction);
+  filterOnlineAction = new QAction(this);
+  filterOnlineAction->setCheckable(true);
+  filterGroup->addAction(filterOnlineAction);
+  filterMenu->addAction(filterOnlineAction);
+  filterOfflineAction = new QAction(this);
+  filterOfflineAction->setCheckable(true);
+  filterGroup->addAction(filterOfflineAction);
+  filterMenu->addAction(filterOfflineAction);
+  filterFriendsAction = new QAction(this);
+  filterFriendsAction->setCheckable(true);
+  filterGroup->addAction(filterFriendsAction);
+  filterMenu->addAction(filterFriendsAction);
+  filterGroupsAction = new QAction(this);
+  filterGroupsAction->setCheckable(true);
+  filterGroup->addAction(filterGroupsAction);
+  filterMenu->addAction(filterGroupsAction);
+
+  filterDisplayName->setText(tr("By Name"));
+  filterDisplayActivity->setText(tr("By Activity"));
+  filterAllAction->setText(tr("All"));
+  filterOnlineAction->setText(tr("Online"));
+  filterOfflineAction->setText(tr("Offline"));
+  filterFriendsAction->setText(tr("Friends"));
+  filterGroupsAction->setText(tr("Groups"));
+  ui->searchContactText->setPlaceholderText(tr("Search Contacts"));
+  ui->searchContactFilterBox->setMenu(filterMenu);
+  updateFilterText();
+
+
+    connect(filterGroup, &QActionGroup::triggered,
+            this, &ChatWidget::searchContacts);
+    connect(filterDisplayGroup, &QActionGroup::triggered,
+            this,&ChatWidget::changeDisplayMode);
+}
+
+void ChatWidget::changeDisplayMode() {
+  filterDisplayGroup->setEnabled(false);
+
+  //  if (filterDisplayGroup->checkedAction() == filterDisplayActivity) {
+  //    contactListWidget->setMode(FriendListWidget::SortingMode::Activity);
+  //  } else if (filterDisplayGroup->checkedAction() == filterDisplayName) {
+  //    contactListWidget->setMode(FriendListWidget::SortingMode::Name);
+  //  }
+
+  searchContacts();
+  filterDisplayGroup->setEnabled(true);
+
+  updateFilterText();
+}
+
+void ChatWidget::searchContacts() {
+  //  QString searchString = ui->searchContactText->text();
+  FilterCriteria filter = getFilterCriteria();
+
+  //  contactListWidget->searchChatrooms(searchString, filterOnline(filter),
+  //                                     filterOffline(filter),
+  //                                     filterGroups(filter));
+
+  updateFilterText();
+
+  //  contactListWidget->reDraw();
+}
+
+void ChatWidget::updateFilterText() {
+  QString action = filterDisplayGroup->checkedAction()->text();
+  QString text = filterGroup->checkedAction()->text();
+  text = action + QStringLiteral(" | ") + text;
+  //  ui->searchContactFilterBox->setText(text);
+}
+
+ChatWidget::FilterCriteria ChatWidget::getFilterCriteria() const {
+  QAction *checked = filterGroup->checkedAction();
+
+  if (checked == filterOnlineAction)
+    return FilterCriteria::Online;
+  else if (checked == filterOfflineAction)
+    return FilterCriteria::Offline;
+  else if (checked == filterFriendsAction)
+    return FilterCriteria::Friends;
+  else if (checked == filterGroupsAction)
+    return FilterCriteria::Groups;
+
+  return FilterCriteria::All;
+}
+
+
+bool ChatWidget::filterGroups(FilterCriteria index) {
+  switch (index) {
+  case FilterCriteria::Offline:
+  case FilterCriteria::Friends:
+    return true;
+  default:
+    return false;
+  }
+}
+
+bool ChatWidget::filterOffline(FilterCriteria index) {
+  switch (index) {
+  case FilterCriteria::Online:
+  case FilterCriteria::Groups:
+    return true;
+  default:
+    return false;
+  }
+}
+
+bool ChatWidget::filterOnline(FilterCriteria index) {
+  switch (index) {
+  case FilterCriteria::Offline:
+  case FilterCriteria::Groups:
+    return true;
+  default:
+    return false;
+  }
+}
+
+
+bool ChatWidget::groupsVisible() const {
+  FilterCriteria filter = getFilterCriteria();
+  return !filterGroups(filter);
+}
+
+void ChatWidget::retranslateUi() {
+  ui->retranslateUi(this);
+
+
+
+}
+void ChatWidget::setupStatus() {
+ int icon_size = 15;
+
+  // Preparing icons and set their size
+  statusOnline = new QAction(this);
+  statusOnline->setIcon(SvgUtils::prepareIcon(Status::getIconPath(Status::Status::Online),
+                                              icon_size, icon_size));
+  connect(statusOnline, &QAction::triggered, this, &ChatWidget::setStatusOnline);
+
+  statusAway = new QAction(this);
+  statusAway->setIcon(SvgUtils::prepareIcon(Status::getIconPath(Status::Status::Away),
+                                            icon_size, icon_size));
+  connect(statusAway, &QAction::triggered, this, &ChatWidget::setStatusAway);
+
+  statusBusy = new QAction(this);
+  statusBusy->setIcon(SvgUtils::prepareIcon(Status::getIconPath(Status::Status::Busy),
+                                            icon_size, icon_size));
+  connect(statusBusy, &QAction::triggered, this, &ChatWidget::setStatusBusy);
+
+  QMenu *statusButtonMenu = new QMenu(ui->statusButton);
+  statusButtonMenu->addAction(statusOnline);
+  statusButtonMenu->addAction(statusAway);
+  statusButtonMenu->addAction(statusBusy);
+  ui->statusButton->setMenu(statusButtonMenu);
+
+
+
+  //  ui->searchContactText->setPlaceholderText(tr("Search Contacts"));
+  statusOnline->setText(tr("Online", "Button to set your status to 'Online'"));
+  statusAway->setText(tr("Away", "Button to set your status to 'Away'"));
+  statusBusy->setText(tr("Busy", "Button to set your status to 'Busy'"));
+//  actionLogout->setText(tr("Logout", "Tray action menu to logout user"));
+//  actionQuit->setText(tr("Exit", "Tray action menu to exit tox"));
+//  actionShow->setText(tr("Show", "Tray action menu to show qTox window"));
+
+}
+
+
+
+void ChatWidget::setStatusOnline() {
+  //  if (!ui->statusButton->isEnabled()) {
+  //    return;
+  //  }
+
+  core->setStatus(Status::Status::Online);
+}
+
+void ChatWidget::setStatusAway() {
+  //  if (!ui->statusButton->isEnabled()) {
+  //    return;
+  //  }
+
+  core->setStatus(Status::Status::Away);
+}
+
+void ChatWidget::setStatusBusy() {
+  //  if (!ui->statusButton->isEnabled()) {
+  //    return;
+  //  }
+
+  core->setStatus(Status::Status::Busy);
 }
