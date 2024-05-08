@@ -140,7 +140,6 @@ public:
   void clearAllReceipts();
 
   void reloadTheme();
-  static inline QIcon prepareIcon(QString path, int w = 0, int h = 0);
 
   bool groupsVisible() const;
 
@@ -166,7 +165,7 @@ public slots:
   void onSelfAvatarLoaded(const QPixmap &pic);
 
   void setUsername(const QString &username);
-  void setStatusMessage(const QString &statusMessage);
+
   void setAvatar( QByteArray avatar);
   void addFriend0(const ToxPk &friendPk);
   void addFriend(QString friendId, const ToxPk &friendPk, bool isFriend);
@@ -181,8 +180,7 @@ public slots:
 
   void titleChangedByUser(const QString &title);
   void onGroupPeerAudioPlaying(QString groupnumber, ToxPk peerPk);
-  void onGroupSendFailed(QString groupnumber);
-  void onFriendTypingChanged(QString friendnumber, bool isTyping);
+
   void nextContact();
   void previousContact();
   void onFriendDialogShown(const Friend *f);
@@ -321,7 +319,7 @@ private:
                                             // Widget once non-singleton
   FilesForm *filesForm;
 
-  GenericChatroomWidget *activeChatroomWidget;
+//  GenericChatroomWidget *activeChatroomWidget;
 //  FriendListWidget *contactListWidget;
 //  MaskablePixmapWidget *profilePicture;
   bool notify(QObject *receiver, QEvent *event);
@@ -349,7 +347,7 @@ private:
   QMap<ToxPk, QMetaObject::Connection> friendAlertConnections;
   QMap<ToxPk, std::shared_ptr<ChatHistory>> friendChatLogs;
   QMap<ToxPk, std::shared_ptr<FriendChatroom>> friendChatrooms;
-  QMap<ToxPk, ChatForm *> chatForms;
+//  QMap<ToxPk, ChatForm *> chatForms;
 
 //  QMap<GroupId, GroupWidget *> groupWidgets;
 //  QMap<GroupId, std::shared_ptr<GroupMessageDispatcher>>
@@ -361,8 +359,8 @@ private:
   // yet
   QMap<GroupId, QMetaObject::Connection> groupAlertConnections;
   QMap<GroupId, std::shared_ptr<IChatLog>> groupChatLogs;
-  QMap<GroupId, std::shared_ptr<GroupChatroom>> groupChatrooms;
-  QMap<GroupId, QSharedPointer<GroupChatForm>> groupChatForms;
+//  QMap<GroupId, std::shared_ptr<GroupChatroom>> groupChatrooms;
+//  QMap<GroupId, QSharedPointer<GroupChatForm>> groupChatForms;
 
   MessageProcessor::SharedParams sharedMessageProcessorParams;
 

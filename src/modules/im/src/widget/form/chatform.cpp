@@ -96,9 +96,9 @@ QString secondsToDHMS(quint32 duration) {
 }
 } // namespace
 
-ChatForm::ChatForm(Friend *chatFriend, IChatLog &chatLog,
+ChatForm::ChatForm(Friend *chatFriend, IChatLog &chatLog_,
                    IMessageDispatcher &messageDispatcher)
-    : GenericChatForm(chatFriend, chatLog, messageDispatcher),
+    : GenericChatForm(chatFriend, chatLog_, messageDispatcher),
       f(chatFriend), isTyping{false}, lastCallIsVideo{false} {
   setName(f->getDisplayedName());
 
@@ -116,8 +116,8 @@ ChatForm::ChatForm(Friend *chatFriend, IChatLog &chatLog,
 
   callDurationTimer = nullptr;
 
-  chatWidget->setTypingNotification(ChatMessage::createTypingNotification());
-  chatWidget->setMinimumHeight(CHAT_WIDGET_MIN_HEIGHT);
+  chatLog->setTypingNotification(ChatMessage::createTypingNotification());
+  chatLog->setMinimumHeight(CHAT_WIDGET_MIN_HEIGHT);
 
   callDuration = new QLabel();
   headWidget->addWidget(statusMessageLabel);
@@ -654,10 +654,11 @@ void ChatForm::onUpdateTime() {
   callDuration->setText(secondsToDHMS(timeElapsed.elapsed() / 1000));
 }
 
-void ChatForm::setFriendTyping(bool isTyping) {
-  chatWidget->setTypingNotificationVisible(isTyping);
+void ChatForm::setFriendTyping(bool typing) {
+  isTyping = typing;
+  chatLog->setTypingNotificationVisible(typing);
   Text *text =
-      static_cast<Text *>(chatWidget->getTypingNotification()->getContent(1));
+      static_cast<Text *>(chatLog->getTypingNotification()->getContent(1));
   QString typingDiv = "<div class=typing>%1</div>";
   QString name = f->getDisplayedName();
   text->setText(typingDiv.arg(tr("%1 is typing").arg(name)));
@@ -668,7 +669,7 @@ void ChatForm::show(ContentLayout *contentLayout) {
 }
 
 void ChatForm::reloadTheme() {
-  chatWidget->setTypingNotification(ChatMessage::createTypingNotification());
+  chatLog->setTypingNotification(ChatMessage::createTypingNotification());
   GenericChatForm::reloadTheme();
 }
 
@@ -688,6 +689,6 @@ void ChatForm::retranslateUi() {
   updateMuteVolButton();
 
   if (netcam) {
-    netcam->setShowMessages(chatWidget->isVisible());
+    netcam->setShowMessages(chatLog->isVisible());
   }
 }

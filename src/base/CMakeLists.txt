@@ -11,7 +11,6 @@ set(${PROJECT_NAME}_SOURCES
     timer.cpp
     times.h
     task.h
-    utils.cpp
     widgets.h
     system/sys_info.h
     jid.h
@@ -32,6 +31,9 @@ set(${PROJECT_NAME}_SOURCES
     OkSettings.h
     OkSettings.cpp
     OkProcess.h
+    utils.h
+    SvgUtils.h
+    SvgUtils.cpp
 )
 
 if(WIN32)

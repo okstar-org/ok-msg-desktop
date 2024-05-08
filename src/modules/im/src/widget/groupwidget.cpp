@@ -31,10 +31,8 @@
 #include <QMimeData>
 #include <QPalette>
 
-GroupWidget::GroupWidget(ContentLayout *layout,
-                         QString groupnumber,
-                         const GroupId &groupId,
-                         const QString &groupName,
+GroupWidget::GroupWidget(ContentLayout *layout, QString groupnumber,
+                         const GroupId &groupId, const QString &groupName,
                          bool compact)
     : GenericChatroomWidget(compact), contentLayout{layout} {
 
@@ -46,13 +44,13 @@ GroupWidget::GroupWidget(ContentLayout *layout,
   statusPic.setPixmap(QPixmap(Status::getIconPath(Status::Status::Online)));
   statusPic.setMargin(3);
 
-  connect(this, &GroupWidget::chatroomWidgetClicked, [this](){
+  connect(this, &GroupWidget::chatroomWidgetClicked, [this]() {
     this->do_widgetClicked(this);
     emit groupWidgetClicked(this);
   });
 
   auto core = Core::getInstance();
-  auto & settings = Settings::getInstance();
+  auto &settings = Settings::getInstance();
 
   group = GroupList::addGroup(
       groupnumber, groupId, groupName, true, ""
@@ -69,40 +67,34 @@ GroupWidget::GroupWidget(ContentLayout *layout,
   setAcceptDrops(true);
 
   connect(group, &Group::titleChanged, this, &GroupWidget::updateTitle);
-  connect(group, &Group::numPeersChanged, this,
-          &GroupWidget::updateUserCount);
+  connect(group, &Group::numPeersChanged, this, &GroupWidget::updateUserCount);
   connect(nameLabel, &CroppingLabel::editFinished, group, &Group::setName);
-
 
   auto messageProcessor = MessageProcessor(sharedMessageProcessorParams);
   messageDispatcher = std::make_unique<GroupMessageDispatcher>(
       *group, std::move(messageProcessor), *core, *core,
       Settings::getInstance());
 
-
   chatLog = std::make_unique<SessionChatLog>(*core);
 
-  chatform = std::make_unique<GroupChatForm>(group,
-                                              *chatLog,
-                                              *messageDispatcher, settings);
-
+  chatform = std::make_unique<GroupChatForm>(group, *chatLog,
+                                             *messageDispatcher, settings);
 
   contentWidget = new ContentWidget(this);
   contentWidget->hide();
   contentWidget->setGroupChatForm(chatform.get());
 
-
-      connect(messageDispatcher.get(), &IMessageDispatcher::messageReceived,
-              chatLog.get(), &SessionChatLog::onMessageReceived);
-      connect(messageDispatcher.get(), &IMessageDispatcher::messageSent,
-              chatLog.get(), &SessionChatLog::onMessageSent);
-      connect(messageDispatcher.get(), &IMessageDispatcher::messageComplete,
-              chatLog.get(), &SessionChatLog::onMessageComplete);
+  connect(messageDispatcher.get(), &IMessageDispatcher::messageReceived,
+          chatLog.get(), &SessionChatLog::onMessageReceived);
+  connect(messageDispatcher.get(), &IMessageDispatcher::messageSent,
+          chatLog.get(), &SessionChatLog::onMessageSent);
+  connect(messageDispatcher.get(), &IMessageDispatcher::messageComplete,
+          chatLog.get(), &SessionChatLog::onMessageComplete);
 }
 
 GroupWidget::~GroupWidget() { settings::Translator::unregister(this); }
 
-ContentDialog * GroupWidget::addGroupDialog(Group *group) {
+ContentDialog *GroupWidget::addGroupDialog(Group *group) {
 
   auto &settings = Settings::getInstance();
 
@@ -123,10 +115,8 @@ ContentDialog * GroupWidget::addGroupDialog(Group *group) {
 
   //  auto chatForm = groupChatForms[groupId].data();
   //  auto chatroom = groupChatrooms[groupId];
-  ContentDialogManager::getInstance()->addGroupToDialog(groupId,
-                                                        dialog,
-                                                        chatroom.get(),
-                                                        chatform.get());
+  ContentDialogManager::getInstance()->addGroupToDialog(
+      groupId, dialog, chatroom.get(), chatform.get());
   //
   // #if (QT_VERSION >= QT_VERSION_CHECK(5, 7, 0))
   //  auto removeGroup = QOverload<const GroupId &>::of(&Widget::removeGroup);
@@ -291,7 +281,7 @@ void GroupWidget::mouseMoveEvent(QMouseEvent *ev) {
 }
 
 void GroupWidget::do_widgetClicked(GenericChatroomWidget *w) {
-//  qDebug() << __func__ << "show group:" << group->getId();
+  //  qDebug() << __func__ << "show group:" << group->getId();
   contentWidget->showTo(contentLayout);
 }
 
@@ -305,22 +295,15 @@ void GroupWidget::setAvatar(const QPixmap &pixmap) {
   avatar->setPixmap(pixmap);
 }
 
-void GroupWidget::setAsActiveChatroom() {
-  setActive(true);
-}
+void GroupWidget::setAsActiveChatroom() { setActive(true); }
 
-void GroupWidget::setAsInactiveChatroom() {
-  setActive(false);
-}
+void GroupWidget::setAsInactiveChatroom() { setActive(false); }
 
 void GroupWidget::onSetActive(bool active) {
-    const auto uri = active ? ":img/group_dark.svg" : ":img/group.svg";
-    avatar->setPixmap(Style::scaleSvgImage(uri,
-                                           avatar->width(),
-                                           avatar->height()));
-
+  const auto uri = active ? ":img/group_dark.svg" : ":img/group.svg";
+  avatar->setPixmap(
+      Style::scaleSvgImage(uri, avatar->width(), avatar->height()));
 }
-
 
 void GroupWidget::updateStatusLight() {
   Group *g = chatroom->getGroup();
@@ -396,5 +379,8 @@ void GroupWidget::setRecvMessage(QString groupnumber, QString nick,
 
   auto core = Core::getInstance();
   ToxPk author = core->getGroupPeerPk(groupnumber, nick);
-  messageDispatcher->onMessageReceived(author, isAction, content, nick, from, time);
+  messageDispatcher->onMessageReceived(author, isAction, content, nick, from,
+                                       time);
 }
+
+void GroupWidget::reloadTheme() { chatform->reloadTheme(); }

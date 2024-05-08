@@ -38,13 +38,14 @@ class ChatWidget;
 
 class FriendListWidget : public QWidget {
   Q_OBJECT
-
 public:
+
   using SortingMode = Settings::FriendListSortingMode;
   explicit FriendListWidget(ChatWidget *parent, bool groupsOnTop = true);
   ~FriendListWidget();
   void setMode(SortingMode mode);
   SortingMode getMode() const;
+  void reloadTheme();
 
   FriendWidget *addFriend(const ToxPk &friendPk,bool isFriend);
   FriendWidget *getFriend(const ToxPk &friendPk);

@@ -182,7 +182,7 @@ protected:
 
     SearchForm *searchForm;
     QLabel *dateInfo;
-    ChatLog* chatWidget;
+    ChatLog* chatLog;
     ChatTextEdit* msgEdit;
 #ifdef SPELL_CHECKING
     Sonnet::SpellCheckDecorator* decorator{nullptr};
@@ -191,7 +191,7 @@ protected:
     GenericNetCamView* netcam;
     Widget* parent;
 
-    IChatLog& chatLog;
+    IChatLog& iChatLog;
     IMessageDispatcher& messageDispatcher;
     SearchPos searchPos;
     std::map<ChatLogIdx, ChatMessage::Ptr> messages;

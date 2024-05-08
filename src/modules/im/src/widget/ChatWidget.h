@@ -43,6 +43,7 @@ public:
   void connectCircleWidget();
   void searchCircle(CircleWidget &circleWidget);
   AddFriendForm *openFriendAddForm();
+  void reloadTheme();
 protected:
   void showEvent(QShowEvent*) override;
 private:
@@ -72,6 +73,11 @@ private:
 
 public slots:
   void onCoreChanged(Core &core);
+
+  void onStatusSet(Status::Status status);
+  void onUsernameSet(const QString& username);
+  void onStatusMessageSet(const QString &statusMessage) ;
+
 
   void slot_friendAdded(const ToxPk &friendPk, bool isFriend);
   void onFriendUsernameChanged(const ToxPk &friendPk, const QString &username);
@@ -117,6 +123,7 @@ void onGroupPeerStatusChanged(QString groupnumber, QString peerPk,
                               bool  online);
 void onGroupClicked();
 
+void updateIcons();
 };
 
 #endif // CHATWIDGET_H

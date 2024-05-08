@@ -50,9 +50,9 @@ LoginWidget::~LoginWidget() {
   // 卸载语言处理器
   settings::Translator::unregister(this);
   disconnect(m_loginKey);
-  delete m_loginKey;
+  m_loginKey->deleteLater();
+  okCloudService->deleteLater();
   delete ui;
-  delete okCloudService;
 }
 
 void LoginWidget::init() {

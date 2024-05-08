@@ -15,23 +15,29 @@
 //
 
 #include "ChatWidget.h"
+#include "base/SvgUtils.h"
+#include "base/utils.h"
 #include "circlewidget.h"
 #include "contentlayout.h"
 #include "friendlistwidget.h"
 #include "src/core/corefile.h"
 #include "src/friendlist.h"
-#include "src/nexus.h"
 #include "src/model/group.h"
 #include "src/model/groupinvite.h"
-#include "src/widget/form/groupinviteform.h"
-#include "src/widget/form/addfriendform.h"
 #include "src/modules/im/src/grouplist.h"
-#include "widget.h"
+#include "src/nexus.h"
+#include "src/widget/form/addfriendform.h"
+#include "src/widget/form/groupinviteform.h"
+#include "style.h"
 #include "ui_chat.h"
+#include "widget.h"
+#include <QPainter>
+#include <QSvgRenderer>
 
-ChatWidget::ChatWidget(QWidget *parent) : QWidget(parent), //
-    ui(new Ui::Chat),//
-    unreadGroupInvites{0} {
+ChatWidget::ChatWidget(QWidget *parent)
+    : QWidget(parent),  //
+      ui(new Ui::Chat), //
+      unreadGroupInvites{0} {
   ui->setupUi(this);
   layout()->setMargin(0);
   layout()->setSpacing(0);
@@ -42,14 +48,13 @@ ChatWidget::ChatWidget(QWidget *parent) : QWidget(parent), //
   contentWidget->setObjectName("contentWidget");
   contentLayout = new ContentLayout(contentWidget);
   ui->mainSplitter->addWidget(contentWidget);
-  ui->mainSplitter->setSizes(QList<int>() << 200<<500);
+  ui->mainSplitter->setSizes(QList<int>() << 200 << 500);
 
   contactListWidget = new FriendListWidget(this, false);
 
-
   ui->scrollAreaWidgetContents->setGeometry(0, 0, 200, 500);
   auto layout = ui->scrollAreaWidgetContents->layout();
-  layout->setAlignment(Qt::AlignTop|Qt::AlignVCenter);
+  layout->setAlignment(Qt::AlignTop | Qt::AlignVCenter);
   layout->addWidget(contactListWidget);
 
   init();
@@ -82,8 +87,6 @@ void ChatWidget::connectCircleWidget() {
 void ChatWidget::init() {
   //  core = Nexus::getCore();
   //  coreFile = core->getCoreFile();
-
-
 }
 
 void ChatWidget::deinit() {
@@ -91,52 +94,53 @@ void ChatWidget::deinit() {
   core->deleteLater();
 }
 
-void ChatWidget::connectToCore(Core *core)
-{
-    connect(core, &Core::sig_friendAdded, this, &ChatWidget::slot_friendAdded);
-    connect(core, &Core::friendUsernameChanged, this,
-            &ChatWidget::onFriendUsernameChanged);
-    connect(core, &Core::friendAvatarChanged, this,
-            &ChatWidget::onFriendAvatarChanged);
+void ChatWidget::connectToCore(Core *core) {
+  connect(core, &Core::usernameSet, this, &ChatWidget::onUsernameSet);
+  connect(core, &Core::statusSet, this, &ChatWidget::onStatusSet);
+  connect(core, &Core::statusMessageSet, this, &ChatWidget::onStatusMessageSet);
 
-    connect(core, &Core::friendStatusChanged, this,
-            &ChatWidget::onFriendStatusChanged);
-    connect(core, &Core::friendStatusMessageChanged, this,
-            &ChatWidget::onFriendStatusMessageChanged);
-    connect(core, &Core::friendRequestReceived, this,
-            &ChatWidget::onFriendRequestReceived);
-    connect(core, &Core::friendMessageReceived, this,
-            &ChatWidget::onFriendMessageReceived);
-    connect(core, &Core::friendTypingChanged, this,
-            &ChatWidget::onFriendTypingChanged);
-    connect(core, &Core::receiptRecieved,
-            this, &ChatWidget::onReceiptReceived);
+  connect(core, &Core::sig_friendAdded, this, &ChatWidget::slot_friendAdded);
+  connect(core, &Core::friendUsernameChanged, this,
+          &ChatWidget::onFriendUsernameChanged);
+  connect(core, &Core::friendAvatarChanged, this,
+          &ChatWidget::onFriendAvatarChanged);
 
-    connect(core, &Core::groupJoined, this, &ChatWidget::onGroupJoined);
+  connect(core, &Core::friendStatusChanged, this,
+          &ChatWidget::onFriendStatusChanged);
+  connect(core, &Core::friendStatusMessageChanged, this,
+          &ChatWidget::onFriendStatusMessageChanged);
+  connect(core, &Core::friendRequestReceived, this,
+          &ChatWidget::onFriendRequestReceived);
+  connect(core, &Core::friendMessageReceived, this,
+          &ChatWidget::onFriendMessageReceived);
+  connect(core, &Core::friendTypingChanged, this,
+          &ChatWidget::onFriendTypingChanged);
+  connect(core, &Core::receiptRecieved, this, &ChatWidget::onReceiptReceived);
 
-    connect(core, &Core::groupInviteReceived, this,
-            &ChatWidget::onGroupInviteReceived);
-    connect(core, &Core::groupMessageReceived, this,
-            &ChatWidget::onGroupMessageReceived);
-    connect(core, &Core::groupPeerlistChanged, this,
-            &ChatWidget::onGroupPeerListChanged);
-    connect(core, &Core::groupPeerSizeChanged, this,
-            &ChatWidget::onGroupPeerSizeChanged);
-    connect(core, &Core::groupPeerNameChanged, this,
-            &ChatWidget::onGroupPeerNameChanged);
-    connect(core, &Core::groupPeerStatusChanged, this,
-            &ChatWidget::onGroupPeerStatusChanged);
-    connect(core, &Core::groupTitleChanged, this,
-            &ChatWidget::onGroupTitleChanged);
+  connect(core, &Core::groupJoined, this, &ChatWidget::onGroupJoined);
 
-//    connect(core, &Core::groupPeerAudioPlaying, this,
-//            &ChatWidget::onGroupPeerAudioPlaying);
-//    connect(core, &Core::emptyGroupCreated, this,
-//           &ChatWidget::onEmptyGroupCreated);
+  connect(core, &Core::groupInviteReceived, this,
+          &ChatWidget::onGroupInviteReceived);
+  connect(core, &Core::groupMessageReceived, this,
+          &ChatWidget::onGroupMessageReceived);
+  connect(core, &Core::groupPeerlistChanged, this,
+          &ChatWidget::onGroupPeerListChanged);
+  connect(core, &Core::groupPeerSizeChanged, this,
+          &ChatWidget::onGroupPeerSizeChanged);
+  connect(core, &Core::groupPeerNameChanged, this,
+          &ChatWidget::onGroupPeerNameChanged);
+  connect(core, &Core::groupPeerStatusChanged, this,
+          &ChatWidget::onGroupPeerStatusChanged);
+  connect(core, &Core::groupTitleChanged, this,
+          &ChatWidget::onGroupTitleChanged);
 
-//    connect(&core, &Core::groupSentFailed, this,
-//            &ChatWidget::onGroupSendFailed);
+  //    connect(core, &Core::groupPeerAudioPlaying, this,
+  //            &ChatWidget::onGroupPeerAudioPlaying);
+  //    connect(core, &Core::emptyGroupCreated, this,
+  //           &ChatWidget::onEmptyGroupCreated);
 
+  //    connect(&core, &Core::groupSentFailed, this,
+  //            &ChatWidget::onGroupSendFailed);
 }
 
 void ChatWidget::onCoreChanged(Core &core_) {
@@ -144,13 +148,13 @@ void ChatWidget::onCoreChanged(Core &core_) {
   connectToCore(core);
 
   auto fl = core->loadFriendList();
-  for (auto fk  : fl) {
+  for (auto fk : fl) {
     contactListWidget->addFriend(fk, true);
   }
 
   core->loadGroupList();
   auto username = core->getUsername();
-  qDebug() <<"username"<< username;
+  qDebug() << "username" << username;
   ui->nameLabel->setText(username);
 }
 
@@ -197,7 +201,7 @@ void ChatWidget::onReceiptReceived(const ToxPk &friendId, ReceiptNum receipt) {
     return;
   }
   //  TODO
-//    contactListWidget->onReceiptReceived(receipt);
+  //    contactListWidget->onReceiptReceived(receipt);
 }
 
 void ChatWidget::onFriendStatusChanged(const ToxPk &friendId,
@@ -279,7 +283,7 @@ void ChatWidget::onFriendRequestReceived(const ToxPk &friendPk,
 }
 
 AddFriendForm *ChatWidget::openFriendAddForm() {
-  if(!addFriendForm){
+  if (!addFriendForm) {
     addFriendForm = std::make_unique<AddFriendForm>();
 
     connect(addFriendForm.get(), &AddFriendForm::friendRequested, this,
@@ -287,24 +291,18 @@ AddFriendForm *ChatWidget::openFriendAddForm() {
     connect(addFriendForm.get(), &AddFriendForm::friendRequestsSeen, this,
             &ChatWidget::friendRequestsUpdate);
 
-//    connect(addFriendForm.get(), &AddFriendForm::friendRequestAccepted, this,
-//            &ChatWidget::friendRequestAccepted);
-//    connect(addFriendForm.get(), &AddFriendForm::friendRequestRejected, this,
-//            &ChatWidget::friendRequestRejected);
-
+    //    connect(addFriendForm.get(), &AddFriendForm::friendRequestAccepted,
+    //    this,
+    //            &ChatWidget::friendRequestAccepted);
+    //    connect(addFriendForm.get(), &AddFriendForm::friendRequestRejected,
+    //    this,
+    //            &ChatWidget::friendRequestRejected);
   }
   addFriendForm->show(nullptr);
   return addFriendForm.get();
 }
 
-void ChatWidget::showEvent(QShowEvent *e)
-{
-    qDebug() <<"showEvent: "<<e;
-    qDebug() <<"friendList size:" << ui->contactPanel->size() << ui->friendList->size() << ui->scrollAreaWidgetContents->size();
-
-
-}
-
+void ChatWidget::showEvent(QShowEvent *e) {}
 
 // void ChatWidget::onFriendDisplayedNameChanged(const ToxPk & friendPk, const
 // QString &displayed) {
@@ -329,8 +327,56 @@ void ChatWidget::showEvent(QShowEvent *e)
 //   settings.savePersonal();
 //}
 
+void ChatWidget::onUsernameSet(const QString &username) {
+
+  ui->nameLabel->setText(username);
+  ui->nameLabel->setToolTip(
+      Qt::convertFromPlainText(username, Qt::WhiteSpaceNormal));
+  // for overlength names
+
+  //  sharedMessageProcessorParams.onUserNameSet(username);
+}
+void ChatWidget::onStatusSet(Status::Status status) {
+
+  int icon_size = 15;
+  ui->statusButton->setProperty("status", static_cast<int>(status));
+  ui->statusButton->setIcon(SvgUtils::prepareIcon(
+      getIconPath(status), icon_size, icon_size));
+  updateIcons();
+}
+
+void ChatWidget::updateIcons() {
+
+  QIcon ico;
+  bool eventIcon = true;
+
+  const QString assetSuffix =
+      Status::getAssetSuffix(static_cast<Status::Status>(
+          ui->statusButton->property("status").toInt())) +
+      (eventIcon ? "_event" : "");
+
+  QString color = Settings::getInstance().getLightTrayIcon() ? "light" : "dark";
+  QString path = ":/img/taskbar/" + color + "/taskbar_" + assetSuffix + ".svg";
+  QSvgRenderer renderer(path);
+
+  // Prepare a QImage with desired characteritisc
+  QImage image = QImage(250, 250, QImage::Format_ARGB32);
+  image.fill(Qt::transparent);
+  QPainter painter(&image);
+  renderer.render(&painter);
+  ico = QIcon(QPixmap::fromImage(image));
+  setWindowIcon(ico);
+}
+
+void ChatWidget::onStatusMessageSet(const QString &statusMessage) {
+    ui->statusLabel->setText(statusMessage);
+  // escape HTML from tooltips and preserve newlines
+  // TODO: move newspace preservance to a generic function
+//    ui->statusLabel->setToolTip("<p style='white-space:pre'>" +
+//                                statusMessage.toHtmlEscaped() + "</p>");
+}
 void ChatWidget::friendRequestsUpdate() {
-    auto &settings = Settings::getInstance();
+  auto &settings = Settings::getInstance();
 
   unsigned int unreadFriendRequests = settings.getUnreadFriendRequests();
 
@@ -340,12 +386,12 @@ void ChatWidget::friendRequestsUpdate() {
   } else if (!friendRequestsButton) {
     friendRequestsButton = new QPushButton(this);
     friendRequestsButton->setObjectName("green");
-//    ui->statusLayout->insertWidget(2, friendRequestsButton);
+    //    ui->statusLayout->insertWidget(2, friendRequestsButton);
 
-//    connect(friendRequestsButton, &QPushButton::released, [this]() {
-//      onAddClicked();
-//      addFriendForm->setMode(AddFriendForm::Mode::FriendRequest);
-//    });
+    //    connect(friendRequestsButton, &QPushButton::released, [this]() {
+    //      onAddClicked();
+    //      addFriendForm->setMode(AddFriendForm::Mode::FriendRequest);
+    //    });
   }
 
   if (friendRequestsButton) {
@@ -354,8 +400,8 @@ void ChatWidget::friendRequestsUpdate() {
   }
 }
 
-void ChatWidget::onGroupJoined(const GroupId &groupId, const QString& name) {
-  qDebug() << __func__ <<groupId.toString()<<name;
+void ChatWidget::onGroupJoined(const GroupId &groupId, const QString &name) {
+  qDebug() << __func__ << groupId.toString() << name;
   auto group = contactListWidget->addGroup(groupId, name);
 
   qDebug() << "Created group:" << group << "=>" << groupId.toString();
@@ -388,7 +434,8 @@ void ChatWidget::onGroupInviteReceived(const GroupInvite &inviteInfo) {
 
       ++unreadGroupInvites;
       groupInvitesUpdate();
-      Widget::getInstance()->newMessageAlert(window(), isActiveWindow(), true, true);
+      Widget::getInstance()->newMessageAlert(window(), isActiveWindow(), true,
+                                             true);
 
 #if DESKTOP_NOTIFICATIONS
       if (settings.getNotifyHide()) {
@@ -416,30 +463,27 @@ void ChatWidget::onGroupInviteAccepted(const GroupInvite &inviteInfo) {
   }
 }
 
-void ChatWidget::onGroupMessageReceived(QString groupnumber,
-                                    QString nick,
-                                    const QString &from,
-                                    const QString &content,
-                                    const QDateTime &time,
-                                    bool isAction) {
+void ChatWidget::onGroupMessageReceived(QString groupnumber, QString nick,
+                                        const QString &from,
+                                        const QString &content,
+                                        const QDateTime &time, bool isAction) {
 
-  qDebug() << "onGroupMessageReceived group:" << groupnumber
-           << "nick:" << nick
+  qDebug() << "onGroupMessageReceived group:" << groupnumber << "nick:" << nick
            << "content:" << content;
 
-//  Group *g = GroupList::findGroup(groupId);
-//  if (!g) {
-//    qWarning() << "Can not find the group named:" << groupnumber;
-//    return;
-//  }
-//
-//  ToxPk author = core->getGroupPeerPk(groupnumber, nick);
-//  groupMessageDispatchers[groupId]->onMessageReceived(author, isAction, content,
-//                                                      nick, from, time);
+  //  Group *g = GroupList::findGroup(groupId);
+  //  if (!g) {
+  //    qWarning() << "Can not find the group named:" << groupnumber;
+  //    return;
+  //  }
+  //
+  //  ToxPk author = core->getGroupPeerPk(groupnumber, nick);
+  //  groupMessageDispatchers[groupId]->onMessageReceived(author, isAction,
+  //  content,
+  //                                                      nick, from, time);
 
-
-
-//  contactListWidget->setRecvGroupMessage(groupnumber, nick, from, content, time, isAction);
+  //  contactListWidget->setRecvGroupMessage(groupnumber, nick, from, content,
+  //  time, isAction);
 }
 
 void ChatWidget::onGroupPeerListChanged(QString groupnumber) {
@@ -460,8 +504,9 @@ void ChatWidget::onGroupPeerSizeChanged(QString groupnumber, const uint size) {
   g->numPeersChanged(size);
 }
 
-void ChatWidget::onGroupPeerNameChanged(QString groupnumber, const ToxPk &peerPk,
-                                    const QString &newName) {
+void ChatWidget::onGroupPeerNameChanged(QString groupnumber,
+                                        const ToxPk &peerPk,
+                                        const QString &newName) {
   const GroupId &groupId = GroupList::id2Key(groupnumber);
   Group *g = GroupList::findGroup(groupId);
   if (!g) {
@@ -473,7 +518,7 @@ void ChatWidget::onGroupPeerNameChanged(QString groupnumber, const ToxPk &peerPk
 }
 
 void ChatWidget::onGroupPeerStatusChanged(QString groupnumber, QString peerName,
-                                      bool online) {
+                                          bool online) {
 
   const GroupId &groupId = GroupList::id2Key(groupnumber);
   Group *g = GroupList::findGroup(groupId);
@@ -487,7 +532,7 @@ void ChatWidget::onGroupPeerStatusChanged(QString groupnumber, QString peerName,
 }
 
 void ChatWidget::onGroupTitleChanged(QString groupnumber, const QString &author,
-                                 const QString &title) {
+                                     const QString &title) {
   const GroupId &groupId = GroupList::id2Key(groupnumber);
   Group *g = GroupList::findGroup(groupId);
   if (!g) {
@@ -495,16 +540,15 @@ void ChatWidget::onGroupTitleChanged(QString groupnumber, const QString &author,
     return;
   }
 
-//  GroupWidget *widget = groupWidgets[groupId];
-//  if (widget->isActive()) {
-//    GUI::setWindowTitle(title);
-//  }
-//
-//  g->setTitle(author, title);
-//  FilterCriteria filter = getFilterCriteria();
-//  widget->searchName(ui->searchContactText->text(), filterGroups(filter));
+  //  GroupWidget *widget = groupWidgets[groupId];
+  //  if (widget->isActive()) {
+  //    GUI::setWindowTitle(title);
+  //  }
+  //
+  //  g->setTitle(author, title);
+  //  FilterCriteria filter = getFilterCriteria();
+  //  widget->searchName(ui->searchContactText->text(), filterGroups(filter));
 }
-
 
 void ChatWidget::groupInvitesUpdate() {
   if (unreadGroupInvites == 0) {
@@ -513,10 +557,10 @@ void ChatWidget::groupInvitesUpdate() {
   } else if (!groupInvitesButton) {
     groupInvitesButton = new QPushButton(this);
     groupInvitesButton->setObjectName("green");
-//    ui->statusLayout->insertWidget(2, groupInvitesButton);
+    //    ui->statusLayout->insertWidget(2, groupInvitesButton);
 
-    connect(groupInvitesButton, &QPushButton::released,
-            this, &ChatWidget::onGroupClicked);
+    connect(groupInvitesButton, &QPushButton::released, this,
+            &ChatWidget::onGroupClicked);
   }
 
   if (groupInvitesButton) {
@@ -533,17 +577,38 @@ void ChatWidget::groupInvitesClear() {
 void ChatWidget::onGroupClicked() {
   auto &settings = Settings::getInstance();
 
-//    hideMainForms(nullptr);
-    if(!groupInviteForm){
-      groupInviteForm = new GroupInviteForm;
+  //    hideMainForms(nullptr);
+  if (!groupInviteForm) {
+    groupInviteForm = new GroupInviteForm;
 
-      connect(groupInviteForm, &GroupInviteForm::groupCreate,
-              core,
-              &Core::createGroup);
-    }
+    connect(groupInviteForm, &GroupInviteForm::groupCreate, core,
+            &Core::createGroup);
+  }
   groupInviteForm->show(contentLayout);
-//    setWindowTitle(fromDialogType(DialogType::GroupDialog));
-//    setActiveToolMenuButton(ActiveToolMenuButton::GroupButton);
+  //    setWindowTitle(fromDialogType(DialogType::GroupDialog));
+  //    setActiveToolMenuButton(ActiveToolMenuButton::GroupButton);
+}
+void ChatWidget::reloadTheme() {
+  QString statusPanelStyle = Style::getStylesheet("window/statusPanel.css");
+  //  ui->tooliconsZone->setStyleSheet(
+  //      Style::getStylesheet("tooliconsZone/tooliconsZone.css"));
+  //  ui->statusPanel->setStyleSheet(statusPanelStyle);
+  ui->statusHead->setStyleSheet(statusPanelStyle);
+  ui->friendList->setStyleSheet(
+      Style::getStylesheet("friendList/friendList.css"));
+  ui->statusButton->setStyleSheet(
+      Style::getStylesheet("statusButton/statusButton.css"));
+  contactListWidget->reDraw();
+
+  //  profilePicture->setStyleSheet(Style::getStylesheet("window/profile.css"));
+
+  if (contentLayout != nullptr) {
+    contentLayout->reloadTheme();
   }
 
+  //  for (Friend *f : FriendList::getAllFriends()) {
+  //    contactListWidget->getFriend(f->getPublicKey())->reloadTheme();
+  //  }
 
+  contactListWidget->reloadTheme();
+}

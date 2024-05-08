@@ -33,6 +33,10 @@
 #include <QWindow>
 #endif
 
+#include "ChatWidget.h"
+#include "base/OkSettings.h"
+#include "base/Page.h"
+#include "base/SvgUtils.h"
 #include "base/images.h"
 #include "circlewidget.h"
 #include "contentdialog.h"
@@ -41,7 +45,6 @@
 #include "friendlistwidget.h"
 #include "friendwidget.h"
 #include "groupwidget.h"
-#include "base/OkSettings.h"
 #include "lib/settings/translator.h"
 #include "maskablepixmapwidget.h"
 #include "splitterrestorer.h"
@@ -77,8 +80,6 @@
 #include "src/widget/style.h"
 #include "tool/removefrienddialog.h"
 #include "ui_mainwindow.h"
-#include "ChatWidget.h"
-#include "base/Page.h"
 
 bool toxActivateEventHandler(const QByteArray &) {
   Widget *widget = Nexus::getDesktopGUI();
@@ -142,7 +143,7 @@ Widget *Widget::getInstance(IAudioControl *audio){
 
 Widget::Widget(IAudioControl &audio, QWidget *parent)//
     : QFrame(parent), icon{nullptr}, trayMenu{nullptr},//
-      ui(new Ui::IMMainWindow), activeChatroomWidget{nullptr}, eventFlag(false),//
+      ui(new Ui::IMMainWindow),  eventFlag(false),//
       eventIcon(false), audio(audio),       //
       settings(Settings::getInstance()),    //
       delayCaller(std::make_unique<base::DelayedCallTimer>()) //
@@ -188,22 +189,22 @@ Widget::Widget(IAudioControl &audio, QWidget *parent)//
 
     // Preparing icons and set their size
     statusOnline = new QAction(this);
-    statusOnline->setIcon(prepareIcon(Status::getIconPath(Status::Status::Online),
+    statusOnline->setIcon(SvgUtils::prepareIcon(Status::getIconPath(Status::Status::Online),
                                       icon_size, icon_size));
     connect(statusOnline, &QAction::triggered, this, &Widget::setStatusOnline);
 
     statusAway = new QAction(this);
-    statusAway->setIcon(prepareIcon(Status::getIconPath(Status::Status::Away),
+    statusAway->setIcon(SvgUtils::prepareIcon(Status::getIconPath(Status::Status::Away),
                                     icon_size, icon_size));
     connect(statusAway, &QAction::triggered, this, &Widget::setStatusAway);
 
     statusBusy = new QAction(this);
-    statusBusy->setIcon(prepareIcon(Status::getIconPath(Status::Status::Busy),
+    statusBusy->setIcon(SvgUtils::prepareIcon(Status::getIconPath(Status::Status::Busy),
                                     icon_size, icon_size));
     connect(statusBusy, &QAction::triggered, this, &Widget::setStatusBusy);
 
     actionLogout = new QAction(this);
-    actionLogout->setIcon(
+    actionLogout->setIcon(SvgUtils::
         prepareIcon(":/img/others/logout-icon.svg", icon_size, icon_size));
 
     actionQuit = new QAction(this);
@@ -211,7 +212,7 @@ Widget::Widget(IAudioControl &audio, QWidget *parent)//
     actionQuit->setMenuRole(QAction::QuitRole);
   #endif
 
-    actionQuit->setIcon(prepareIcon(
+    actionQuit->setIcon(SvgUtils::prepareIcon(
         Style::getImagePath("rejectCall/rejectCall.svg"), icon_size, icon_size));
     connect(actionQuit, &QAction::triggered, qApp, &QApplication::quit);
 
@@ -513,10 +514,6 @@ void Widget::updateIcons() {
     return;
   }
 
-//  const QString assetSuffix =
-//      Status::getAssetSuffix(static_cast<Status::Status>(
-//          ui->statusButton->property("status").toInt())) +
-//      (eventIcon ? "_event" : "");
 
   // Some builds of Qt appear to have a bug in icon loading:
   // QIcon::hasThemeIcon is sometimes unaware that the icon returned
@@ -587,10 +584,6 @@ Widget::~Widget() {
 
   for (Friend *f : FriendList::getAllFriends()) {
     removeFriend(f, true);
-  }
-
-  for (auto form : chatForms) {
-    delete form;
   }
 
   delete profileForm;
@@ -675,7 +668,6 @@ void Widget::connectToCore(Core &core) {
   connect(&core, &Core::statusSet, this, &Widget::onStatusSet);
   connect(&core, &Core::usernameSet, this, &Widget::setUsername);
   connect(&core, &Core::avatarSet, this, &Widget::setAvatar);
-  connect(&core, &Core::statusMessageSet, this, &Widget::setStatusMessage);
 
   connect(&core, &Core::friendAddedDone, this, &Widget::addFriendDone);
   connect(&core, &Core::failedToAddFriend, this, &Widget::addFriendFailed);
@@ -794,7 +786,7 @@ void Widget::onStatusSet(Status::Status status) {
 //  ui->statusButton->setProperty("status", static_cast<int>(status));
 //  ui->statusButton->setIcon(
 //      prepareIcon(getIconPath(status), icon_size, icon_size));
-  updateIcons();
+//  updateIcons();
 }
 
 void Widget::onSeparateWindowClicked(bool separate) {
@@ -976,16 +968,6 @@ void Widget::showProfile() // onAvatarClicked, onUsernameClicked
 
 void Widget::hideMainForms(GenericChatroomWidget *chatroomWidget) {
   setActiveToolMenuButton(ActiveToolMenuButton::None);
-
-//  if (contentLayout != nullptr) {
-//    contentLayout->clear();
-//  }
-
-  if (activeChatroomWidget != nullptr) {
-    activeChatroomWidget->setAsInactiveChatroom();
-  }
-
-  activeChatroomWidget = chatroomWidget;
 }
 
 void Widget::setUsername(const QString &username) {
@@ -1004,14 +986,6 @@ void Widget::setUsername(const QString &username) {
 void Widget::onStatusMessageChanged(const QString &newStatusMessage) {
   // Keep old status message until Core tells us to set it.
   core->setStatusMessage(newStatusMessage);
-}
-
-void Widget::setStatusMessage(const QString &statusMessage) {
-//  ui->statusLabel->setText(statusMessage);
-  // escape HTML from tooltips and preserve newlines
-  // TODO: move newspace preservance to a generic function
-//  ui->statusLabel->setToolTip("<p style='white-space:pre'>" +
-//                              statusMessage.toHtmlEscaped() + "</p>");
 }
 
 void Widget::setAvatar( QByteArray avatar) {
@@ -1127,14 +1101,10 @@ void Widget::dispatchFileWithBool(ToxFile file, bool) { dispatchFile(file); }
 void Widget::dispatchFileSendFailed(QString friendId, const QString &fileName) {
   const auto &friendPk = FriendList::id2Key(friendId);
 
-  auto chatForm = chatForms.find(friendPk);
-  if (chatForm == chatForms.end()) {
-    return;
-  }
-
-  chatForm.value()->addSystemInfoMessage(
-      tr("Failed to send file \"%1\"").arg(fileName), ChatMessage::ERROR,
-      QDateTime::currentDateTime());
+//TODO
+//  chatForm.value()->addSystemInfoMessage(
+//      tr("Failed to send file \"%1\"").arg(fileName), ChatMessage::ERROR,
+//      QDateTime::currentDateTime());
 }
 
 void Widget::onRejectCall(QString friendId) {
@@ -1301,12 +1271,12 @@ void Widget::openDialog(GenericChatroomWidget *widget, bool newWindow) {
   GroupId id;
   const Friend *frnd = widget->getFriend();
   const Group *group = widget->getGroup();
-  if (frnd) {
-    form = chatForms[frnd->getPublicKey()];
-  } else if (group) {
-    id = group->getPersistentId();
-    form = groupChatForms[id].data();
-  }
+//  if (frnd) {
+//    form = chatForms[frnd->getPublicKey()];
+//  } else if (group) {
+//    id = group->getPersistentId();
+//    form = groupChatForms[id].data();
+//  }
   bool chatFormIsSet;
   ContentDialogManager::getInstance()->focusContact(id);
   chatFormIsSet = ContentDialogManager::getInstance()->contactWidgetExists(id);
@@ -1370,13 +1340,13 @@ void Widget::addFriendDialog(const Friend *frnd, ContentDialog *dialog) {
 //    onAddClicked();
 //  }
 
-  auto form = chatForms[friendPk];
-  auto chatroom = friendChatrooms[friendPk];
+//  auto form = chatForms[friendPk];
+//  auto chatroom = friendChatrooms[friendPk];
 
-      ContentDialogManager::getInstance()->addFriendToDialog(friendPk,
-                                                             dialog,
-                                                             chatroom.get(),
-                                                             form);
+//      ContentDialogManager::getInstance()->addFriendToDialog(friendPk,
+//                                                             dialog,
+//                                                             chatroom.get(),
+//                                                             form);
 
 //  friendWidget->setStatusMsg(widget->getStatusMsg());
 
@@ -1416,10 +1386,10 @@ void Widget::addGroupDialog(Group *group, ContentDialog *dialog) {
 //    onAddClicked();
 //  }
 
-  auto chatForm = groupChatForms[groupId].data();
-  auto chatroom = groupChatrooms[groupId];
-  auto groupWidget = ContentDialogManager::getInstance()->addGroupToDialog(groupId,
-      dialog, chatroom.get(), chatForm);
+//  auto chatForm = groupChatForms[groupId].data();
+//  auto chatroom = groupChatrooms[groupId];
+//  auto groupWidget = ContentDialogManager::getInstance()->addGroupToDialog(groupId,
+//      dialog, chatroom.get(), chatForm);
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 7, 0))
   auto removeGroup = QOverload<const GroupId &>::of(&Widget::removeGroup);
@@ -1541,7 +1511,6 @@ bool Widget::newGroupMessageAlert(const GroupId &groupId, const ToxPk &authorPk,
     hasActive = ContentDialogManager::getInstance()->isContactActive(groupId);
   } else {
     currentWindow = window();
-    hasActive = widget == activeChatroomWidget;
   }
 
   if (!newMessageAlert(currentWindow, hasActive, true, notify)) {
@@ -1706,9 +1675,9 @@ void Widget::removeFriend(Friend *f, bool fake) {
 //  frdWidget->removeFriend(friendPk);
 //  delete frdWidget;
 
-  auto chatForm = chatForms[friendPk];
-  chatForms.remove(friendPk);
-  delete chatForm;
+//  auto chatForm = chatForms[friendPk];
+//  chatForms.remove(friendPk);
+//  delete chatForm;
 
   delete f;
 //  if (contentLayout && contentLayout->mainHead->layout()->isEmpty()) {
@@ -1880,8 +1849,8 @@ void Widget::onGroupPeerAudioPlaying(QString groupnumber, ToxPk peerPk) {
     return;
   }
 
-  auto form = groupChatForms[groupId].data();
-  form->peerAudioPlaying(peerPk);
+//  auto form = groupChatForms[groupId].data();
+//  form->peerAudioPlaying(peerPk);
 }
 
 void Widget::removeGroup(Group *g, bool fake) {
@@ -2079,11 +2048,6 @@ bool Widget::event(QEvent *e) {
 //    ui->friendList->updateVisualTracking();
     break;
   case QEvent::WindowActivate:
-    if (activeChatroomWidget) {
-      activeChatroomWidget->resetEventFlags();
-      activeChatroomWidget->updateStatusLight();
-      setWindowTitle(activeChatroomWidget->getTitle());
-    }
 
     if (eventFlag) {
       resetIcon();
@@ -2201,29 +2165,7 @@ void Widget::setStatusBusy() {
   core->setStatus(Status::Status::Busy);
 }
 
-void Widget::onGroupSendFailed(QString groupnumber) {
-  const auto &groupId = GroupList::id2Key(groupnumber);
-  Group *g = GroupList::findGroup(groupId);
-  if (!g) {
-    qWarning() << "Can not find the group named:" << groupnumber;
-    return;
-  }
 
-  const auto message = tr("Message failed to send");
-  const auto curTime = QDateTime::currentDateTime();
-  auto form = groupChatForms[groupId].data();
-  form->addSystemInfoMessage(message, ChatMessage::INFO, curTime);
-}
-
-void Widget::onFriendTypingChanged(QString friendnumber, bool isTyping) {
-  const auto &friendId = FriendList::id2Key(friendnumber);
-  Friend *f = FriendList::findFriend(friendId);
-  if (!f) {
-    return;
-  }
-
-  chatForms[f->getPublicKey()]->setFriendTyping(isTyping);
-}
 
 void Widget::onSetShowSystemTray(bool newValue) {
   if (icon) {
@@ -2291,70 +2233,14 @@ void Widget::clearAllReceipts() {
 
 void Widget::reloadTheme() {
   this->setStyleSheet(Style::getStylesheet("window/general.css"));
-  QString statusPanelStyle = Style::getStylesheet("window/statusPanel.css");
-//  ui->tooliconsZone->setStyleSheet(
-//      Style::getStylesheet("tooliconsZone/tooliconsZone.css"));
-//  ui->statusPanel->setStyleSheet(statusPanelStyle);
-//  ui->statusHead->setStyleSheet(statusPanelStyle);
-//  ui->friendList->setStyleSheet(
-//      Style::getStylesheet("friendList/friendList.css"));
-//  ui->statusButton->setStyleSheet(
-//      Style::getStylesheet("statusButton/statusButton.css"));
-//  contactListWidget->reDraw();
 
-//  profilePicture->setStyleSheet(Style::getStylesheet("window/profile.css"));
-
-//  if (contentLayout != nullptr) {
-//    contentLayout->reloadTheme();
-//  }
-
-//  for (Friend *f : FriendList::getAllFriends()) {
-//    contactListWidget->getFriend(f->getPublicKey())->reloadTheme();
-//  }
-
-//  for (Group *g : GroupList::getAllGroups()) {
-//    groupWidgets[g->getPersistentId()]->reloadTheme();
-//  }
-
-  for (auto f : FriendList::getAllFriends()) {
-    chatForms[f->getPublicKey()]->reloadTheme();
-  }
-
-  for (auto g : GroupList::getAllGroups()) {
-    groupChatForms[g->getPersistentId()]->reloadTheme();
-  }
 }
 
 void Widget::nextContact() { cycleContacts(true); }
 
 void Widget::previousContact() { cycleContacts(false); }
 
-// Preparing needed to set correct size of icons for GTK tray backend
-inline QIcon Widget::prepareIcon(QString path, int w, int h) {
-#ifdef Q_OS_LINUX
 
-  QString desktop = getenv("XDG_CURRENT_DESKTOP");
-  if (desktop.isEmpty()) {
-    desktop = getenv("DESKTOP_SESSION");
-  }
-
-  desktop = desktop.toLower();
-  if (desktop == "xfce" || desktop.contains("gnome") || desktop == "mate" ||
-      desktop == "x-cinnamon") {
-    if (w > 0 && h > 0) {
-      QSvgRenderer renderer(path);
-
-      QPixmap pm(w, h);
-      pm.fill(Qt::transparent);
-      QPainter painter(&pm);
-      renderer.render(&painter, pm.rect());
-
-      return QIcon(pm);
-    }
-  }
-#endif
-  return QIcon(path);
-}
 
 void Widget::searchContacts() {
 //  QString searchString = ui->searchContactText->text();
@@ -2494,13 +2380,13 @@ void Widget::retranslateUi() {
 }
 
 void Widget::focusChatInput() {
-  if (activeChatroomWidget) {
-    if (const Friend *f = activeChatroomWidget->getFriend()) {
-      chatForms[f->getPublicKey()]->focusInput();
-    } else if (Group *g = activeChatroomWidget->getGroup()) {
-      groupChatForms[g->getPersistentId()]->focusInput();
-    }
-  }
+//  if (activeChatroomWidget) {
+//    if (const Friend *f = activeChatroomWidget->getFriend()) {
+//      chatForms[f->getPublicKey()]->focusInput();
+//    } else if (Group *g = activeChatroomWidget->getGroup()) {
+//      groupChatForms[g->getPersistentId()]->focusInput();
+//    }
+//  }
 }
 
 void Widget::refreshPeerListsLocal(const QString &username) {

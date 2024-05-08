@@ -56,6 +56,8 @@ public:
                       const QDateTime &time,
                       bool isAction);
 
+  void reloadTheme() ;
+
 signals:
   void groupWidgetClicked(GroupWidget *widget);
   void removeGroup(const GroupId &groupId);

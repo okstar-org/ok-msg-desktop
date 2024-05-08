@@ -1084,3 +1084,15 @@ void FriendListWidget::setFriendTyping(const ToxPk &friendId, bool isTyping) {
   if (fw)
     fw->setTyping(isTyping);
 }
+void FriendListWidget::reloadTheme() {
+  for (auto gw: groupWidgets) {
+    gw->reloadTheme();
+  }
+
+  for (auto fw: friendWidgets) {
+    fw->reloadTheme();
+  }
+
+
+
+}
