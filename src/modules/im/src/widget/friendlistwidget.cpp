@@ -183,9 +183,12 @@ FriendWidget *FriendListWidget::addFriend(const ToxPk &friendPk,
   //  if (chatTime > activityTime && chatTime.isValid()) {
   //    settings.setFriendActivity(friendPk, chatTime);
   //  }
-  //
-  addFriendWidget(friendWidget, Status::Status::Offline,
+  auto status = core->getFriendStatus(friendPk.toString());
+  addFriendWidget(friendWidget, status,
                   settings.getFriendCircleID(friendPk));
+
+  setFriendStatus(friendPk, status);
+
   //
   //  auto notifyReceivedCallback = [this, friendPk](const ToxPk &author,
   //                                                 const Message &message) {
@@ -1030,13 +1033,11 @@ void FriendListWidget::setRecvFriendMessage(
 }
 void FriendListWidget::setFriendStatus(const ToxPk &friendPk,
                                        Status::Status status) {
-
   auto fw = getFriend(friendPk);
   if (!fw) {
-    qWarning() << "friend widget no exist.";
+    qWarning() << "friend widget is no existing.";
     return;
   }
-
   fw->setStatus(status);
 }
 

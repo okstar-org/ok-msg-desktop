@@ -56,9 +56,13 @@
  * When you click should open the chat with friend. Widget has a context menu.
  */
 FriendWidget::FriendWidget(ContentLayout *layout,
-                           const ToxPk &friendPk, bool isFriend, bool compact)
+                           const ToxPk &friendPk,
+                           bool isFriend,
+                           bool compact)
     : GenericChatroomWidget(compact), contentLayout(layout),
       isDefaultAvatar{true} {
+
+  qDebug() <<__func__ <<"friend:"<<friendPk.toString();
 
   avatar->setPixmap(QPixmap(":/img/contact.svg"));
   statusPic.setPixmap(QPixmap(Status::getIconPath(Status::Status::Offline)));
@@ -105,9 +109,6 @@ FriendWidget::FriendWidget(ContentLayout *layout,
 
   chatRoom = std::make_unique<FriendChatroom>(m_friend, dialogManager);
   auto frnd = chatRoom->getFriend();
-  qDebug() << "Add friendWidget userName:" << frnd->getUserName()
-           << "displayedName:" << frnd->getDisplayedName();
-
   nameLabel->setText(frnd->getDisplayedName());
 
   // update alias when edited

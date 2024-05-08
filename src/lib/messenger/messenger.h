@@ -253,6 +253,9 @@ public:
   
   void getFriendVCard(const QString &f);
 
+  Tox_User_Status getFriendStatus(const QString &f);
+
+
   // 发起呼叫邀请
   bool callToFriend(const QString &f, const QString &sId, bool video);
 

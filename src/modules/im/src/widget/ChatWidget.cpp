@@ -15,9 +15,11 @@
 //
 
 #include "ChatWidget.h"
+#include "base/OkSettings.h"
 #include "base/SvgUtils.h"
 #include "base/utils.h"
 #include "circlewidget.h"
+#include "contentdialogmanager.h"
 #include "contentlayout.h"
 #include "friendlistwidget.h"
 #include "lib/settings/translator.h"
@@ -31,7 +33,6 @@
 #include "src/widget/form/groupinviteform.h"
 #include "style.h"
 #include "ui_chat.h"
-#include "base/OkSettings.h"
 #include "widget.h"
 #include <QMenu>
 #include <QPainter>
@@ -212,14 +213,14 @@ void ChatWidget::onReceiptReceived(const ToxPk &friendId, ReceiptNum receipt) {
   //    contactListWidget->onReceiptReceived(receipt);
 }
 
-void ChatWidget::onFriendStatusChanged(const ToxPk &friendId,
+void ChatWidget::onFriendStatusChanged(const ToxPk &friendPk,
                                        Status::Status status) {
-  qDebug() << __func__ << friendId.toString() << "status:" << ((int)status);
-  //  const auto &friendPk = FriendList::id2Key(friendId);
-  //  contactListWidget->setFriendStatus(friendPk, status);
+  qDebug() << __func__ << friendPk.toString() << "status:" << (int)status;
+  //  const auto &friendPk = FriendList::id2Key(friendPk);
+    contactListWidget->setFriendStatus(friendPk, status);
   //  Friend *f = FriendList::findFriend(friendPk);
   //  if (!f) {
-  //    qWarning() << "Unable to find friend" << friendId;
+  //    qWarning() << "Unable to find friend" << friendPk;
   //    return;
   //  }
   //
@@ -241,7 +242,7 @@ void ChatWidget::onFriendStatusChanged(const ToxPk &friendId,
   //    setWindowTitle(widget->getTitle());
   //  }
   //
-  //  ContentDialogManager::getInstance()->updateFriendStatus(friendPk);
+    ContentDialogManager::getInstance()->updateFriendStatus(friendPk);
 }
 
 void ChatWidget::onFriendStatusMessageChanged(const ToxPk &friendPk,

@@ -91,6 +91,7 @@ public:
   ToxPk getFriendPublicKey(QString friendNumber) const;
   QString getFriendUsername(QString friendNumber) const;
   void getFriendInfo(const QString& friendNumber) const;
+  Status::Status getFriendStatus(const QString& friendNumber) const;
 
   bool isFriendOnline(QString friendId) const;
   bool hasFriendWithPublicKey(const ToxPk &publicKey) const;

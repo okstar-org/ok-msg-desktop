@@ -778,8 +778,14 @@ bool Core::sendMessageWithType(QString friendId, const QString &message,
                                Tox_Message_Type type, ReceiptNum &receipt,
                                bool encrypt) {
 
-  qDebug() << "Core::sendMessageWithType:" << message
-           << "=>friend:" << friendId;
+  qDebug() << __func__ <<"friendId"<< friendId <<  "type"<<type<<"message:"<< message;
+  if(friendId.isEmpty())
+
+  {
+qWarning() <<"friendId is empty.";
+    return false;
+  }
+
   QString receipts = 0;
   bool yes = tox->sendToFriend(friendId, message, receipts, encrypt);
 
@@ -1574,6 +1580,11 @@ QString Core::getFriendUsername(QString friendnumber) const {
 
 void Core::getFriendInfo(const QString& friendnumber) const {
   tox->getFriendVCard(friendnumber);
+}
+
+Status::Status Core::getFriendStatus(const QString &friendNumber) const {
+ auto status= tox->getFriendStatus(friendNumber);
+ return status == TOX_USER_STATUS_Available ? Status::Status::Online : Status::Status::Offline;
 }
 
 QStringList Core::splitMessage(const QString &message) {

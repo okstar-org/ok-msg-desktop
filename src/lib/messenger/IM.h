@@ -122,6 +122,7 @@ public:
    * fetchVCard
    */
   void fetchVCard(const QString &friendId);
+  Tox_User_Status getFriendStatus(const QString &friendId);
 
   /**
    * send

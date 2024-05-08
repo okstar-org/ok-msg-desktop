@@ -27,7 +27,8 @@ Friend::Friend(
       friendPk{friendPk},   //
       hasNewEvents{false},  //
       friendStatus{Status::Status::Offline},
-      isFriend_{isFriend}
+      isFriend_{isFriend},
+      friendId(friendPk.toString())
 {
   if (userName.isEmpty()) {
     this->userName = friendPk.toString();

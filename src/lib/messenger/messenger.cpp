@@ -563,6 +563,13 @@ std::list<FriendId> Messenger::getFriendList() {
   return list;
 }
 
+Tox_User_Status Messenger::getFriendStatus(const QString &f) {
+  auto _session = ok::session::AuthSession::Instance();
+  auto _im = _session->im();
+ return _im->getFriendStatus(f);
+}
+
+
 void Messenger::addSelfHandler(SelfHandler *handler) {
   selfHandlers.push_back(handler);
 }
@@ -782,7 +789,6 @@ void Messenger::onFriendReceived(QString friendId) {
     handler->onFriend(friendId);
   }
 }
-
 
 } // namespace messenger
 } // namespace lib

@@ -268,6 +268,11 @@ void IM::onConnect() {
 //  emit selfIdChanged(qstring(_client->username()));
   emit connectResult(_status);
   emit connected();
+
+  if(!mStarted){
+    mStarted = true;
+    emit started();
+  }
 }
 
 void IM::doConnect() {
@@ -1470,7 +1475,7 @@ void IM::handleDiscoItems(const JID &from,           //
                           int context) {
 
   QString _from = QString::fromStdString(from.full());
-  qDebug()<<QString("from=%1 context=%2").arg(_from).arg(context);
+  qDebug() << __func__ << "from" << _from << "context" << context;
 
   const Disco::ItemList &localItems = items.items();
   for (auto item : localItems) {
@@ -1521,16 +1526,13 @@ void IM::handleDiscoError(const JID &from,           //
 
 // Presence Handler
 void IM::handlePresence(const Presence &presence) {
-  qDebug() << "handlePresence from:" << qstring(presence.from().full())
+  qDebug() << __func__
+           << "from" << qstring(presence.from().full())
            << "presence" << presence.presence();
 
-  updateOnlineStatus(presence.from().bare(), presence.from().resource(),
+  updateOnlineStatus(presence.from().bare(),
+                     presence.from().resource(),
                      presence.presence());
-
-  if(!mStarted){
-    mStarted = true;
-    emit started();
-  }
 }
 
 /**
@@ -1740,7 +1742,9 @@ void IM::handleRoster(const Roster &roster) {
 
     qDebug() << "roster" << jid.full().c_str();
     emit receiveFriend(qstring(jid.bare()));
-    msleep(100);
+
+    Subscription sub(gloox::Subscription::Subscribe, jid);
+    _client->send(sub);
   }
 
   //  enableDiscoManager();
@@ -2629,6 +2633,12 @@ void IM::handleLog(LogLevel level, LogArea area, const std::string &message) {
                   .arg(area)
                   .arg(line);
   }
+}
+
+Tox_User_Status IM::getFriendStatus(const QString &qString) {
+  return onlineMap.find(qString.toStdString())!=onlineMap.end()
+             ?Tox_User_Status::TOX_USER_STATUS_Available:
+             Tox_User_Status::TOX_USER_STATUS_Unavailable;
 }
 
 } // namespace messenger
