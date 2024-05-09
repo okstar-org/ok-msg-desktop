@@ -62,13 +62,15 @@ ChatWidget::ChatWidget(QWidget *parent)
   layout->setAlignment(Qt::AlignTop | Qt::AlignVCenter);
   layout->addWidget(contactListWidget);
 
-
+  const Settings& s = Settings::getInstance();
+  setStyleSheet(Style::getStylesheet("window/chat.css"));
+  reloadTheme();
   setupStatus();
   setupSearch();
   init();
 
-  QString locale = Settings::getInstance().getTranslation();
-  settings::Translator::translate(OK_IM_MODULE, locale);
+//  QString locale = Settings::getInstance().getTranslation();
+//  settings::Translator::translate(OK_IM_MODULE, locale);
   //  circleWidget= contactListWidget->createCircleWidget();
   //  connectCircleWidget();
 
@@ -688,6 +690,8 @@ void ChatWidget::setupSearch() {
             this, &ChatWidget::searchContacts);
     connect(filterDisplayGroup, &QActionGroup::triggered,
             this,&ChatWidget::changeDisplayMode);
+
+
 }
 
 void ChatWidget::changeDisplayMode() {

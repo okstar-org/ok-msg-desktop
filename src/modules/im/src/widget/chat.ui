@@ -87,7 +87,7 @@
        <property name="childrenCollapsible">
         <bool>false</bool>
        </property>
-       <widget class="QFrame" name="contactPanel">
+       <widget class="QFrame" name="statusPanel">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
           <horstretch>0</horstretch>

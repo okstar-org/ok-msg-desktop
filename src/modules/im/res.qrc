@@ -95,6 +95,7 @@
         <file>themes/dark/window/profile.css</file>
         <file>themes/dark/window/statusPanel.css</file>
         <file>themes/dark/window/window.css</file>
+        <file>themes/dark/window/chat.css</file>
         <file>themes/dark/chatArea/info.svg</file>
         <file>themes/dark/chatArea/spinner.svg</file>
         <file>themes/dark/chatArea/typing.svg</file>
