@@ -675,8 +675,7 @@ void Widget::connectToCore(Core &core) {
   connect(timer, &QTimer::timeout, this, &Widget::onUserAwayCheck);
   connect(timer, &QTimer::timeout, this, &Widget::onEventIconTick);
   //  connect(timer, &QTimer::timeout, this, &Widget::onTryCreateTrayIcon);
-  //  connect(ui->searchContactText, &QLineEdit::textChanged, this,
-  //          &Widget::searchContacts);
+
 
   //  connect(ui->friendList, &QWidget::customContextMenuRequested, this,
   //          &Widget::friendListContextMenu);

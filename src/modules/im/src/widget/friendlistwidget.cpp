@@ -255,9 +255,9 @@ FriendWidget *FriendListWidget::addFriend(const ToxPk &friendPk,
   //    //friendWidget->onAvatarSet(friendPk, avatar);
   //  }
   //
-  //  FilterCriteria filter = getFilterCriteria();
-  //  friendWidget->search(ui->searchContactText->text(),
-  //  filterOffline(filter));
+//    FilterCriteria filter = getFilterCriteria();
+//    friendWidget->search(ui->searchContactText->text(),
+//    filterOffline(filter));
 
   //  core->getFriendInfo(friendPk.toString());
 

@@ -664,13 +664,17 @@ void ChatWidget::setupSearch() {
   filterMenu->addAction(filterGroupsAction);
 
   filterDisplayName->setText(tr("By Name"));
-  filterDisplayActivity->setText(tr("By Activity"));
+//  filterDisplayActivity->setText(tr("By Activity"));
   filterAllAction->setText(tr("All"));
   filterOnlineAction->setText(tr("Online"));
   filterOfflineAction->setText(tr("Offline"));
   filterFriendsAction->setText(tr("Friends"));
   filterGroupsAction->setText(tr("Groups"));
+
   ui->searchContactText->setPlaceholderText(tr("Search Contacts"));
+    connect(ui->searchContactText, &QLineEdit::textChanged, this,
+            &ChatWidget::searchContacts);
+
   ui->searchContactFilterBox->setMenu(filterMenu);
   updateFilterText();
 
@@ -697,23 +701,25 @@ void ChatWidget::changeDisplayMode() {
 }
 
 void ChatWidget::searchContacts() {
-  //  QString searchString = ui->searchContactText->text();
-  FilterCriteria filter = getFilterCriteria();
+    QString searchString = ui->searchContactText->text();
 
-  //  contactListWidget->searchChatrooms(searchString, filterOnline(filter),
-  //                                     filterOffline(filter),
-  //                                     filterGroups(filter));
+    qDebug() <<__func__ << searchString;
 
-  updateFilterText();
+    FilterCriteria filter = getFilterCriteria();
 
-  //  contactListWidget->reDraw();
+    contactListWidget->searchChatrooms(searchString,
+                                       filterOnline(filter),
+                                       filterOffline(filter),
+                                       filterGroups(filter));
+    contactListWidget->reDraw();
+    updateFilterText();
 }
 
 void ChatWidget::updateFilterText() {
   QString action = filterDisplayGroup->checkedAction()->text();
   QString text = filterGroup->checkedAction()->text();
   text = action + QStringLiteral(" | ") + text;
-  //  ui->searchContactFilterBox->setText(text);
+  ui->searchContactFilterBox->setText(text);
 }
 
 ChatWidget::FilterCriteria ChatWidget::getFilterCriteria() const {
