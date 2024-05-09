@@ -669,7 +669,7 @@ void ChatWidget::setupSearch() {
   filterMenu->addAction(filterGroupsAction);
 
   filterDisplayName->setText(tr("By Name"));
-//  filterDisplayActivity->setText(tr("By Activity"));
+  filterDisplayActivity->setText(tr("By Activity"));
   filterAllAction->setText(tr("All"));
   filterOnlineAction->setText(tr("Online"));
   filterOfflineAction->setText(tr("Offline"));

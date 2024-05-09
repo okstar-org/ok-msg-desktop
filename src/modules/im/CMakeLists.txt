@@ -49,6 +49,7 @@ qt5_wrap_ui(
         src/mainwindow.ui
         src/chatlog/content/filetransferwidget.ui
         src/widget/chat.ui
+        src/widget/ContactWidget.ui
         src/widget/about/aboutfriendform.ui
         src/widget/form/loadhistorydialog.ui
         src/widget/form/profileform.ui
@@ -257,6 +258,8 @@ set(${PROJECT_NAME}_SOURCES
         src/widget/searchform.cpp
         src/widget/searchform.h
         src/widget/searchtypes.h
+        src/widget/ContactWidget.h
+        src/widget/ContactWidget.cpp
         src/widget/form/addfriendform.cpp
         src/widget/form/addfriendform.h
         src/widget/form/friendform.h

@@ -3046,6 +3046,10 @@ This ID includes the NoSpam code (in blue), and the checksum (in gray).</source>
         <source>Edit</source>
         <translation>编辑</translation>
     </message>
+<message>
+<source>Contact</source>
+<translation>通讯录</translation>
+</message>
     <message>
         <source>Contacts</source>
         <translation>联系人</translation>

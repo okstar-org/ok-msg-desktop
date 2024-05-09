@@ -79,6 +79,7 @@ class Settings;
 class IChatLog;
 class ChatHistory;
 class ChatWidget;
+class ContactWidget;
 
 
 
@@ -285,7 +286,7 @@ private:
 
 
   std::unique_ptr<ChatWidget > chatWidget;
-  std::unique_ptr<AddFriendForm> addFriendForm;
+  std::unique_ptr<ContactWidget> contactWidget;
   std::unique_ptr<SettingsWidget> settingsWidget;
 
 
@@ -297,7 +298,7 @@ private:
 
   std::unique_ptr<UpdateCheck> updateCheck; // ownership should be moved outside
                                             // Widget once non-singleton
-  FilesForm *filesForm;
+//  FilesForm *filesForm;
 
 //  GenericChatroomWidget *activeChatroomWidget;
 //  FriendListWidget *contactListWidget;

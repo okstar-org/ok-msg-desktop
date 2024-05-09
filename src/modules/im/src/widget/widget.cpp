@@ -78,6 +78,7 @@
 #include "src/widget/form/settingswidget.h"
 #include "src/widget/gui.h"
 #include "src/widget/style.h"
+#include "src/widget/ContactWidget.h"
 #include "tool/removefrienddialog.h"
 #include "ui_mainwindow.h"
 
@@ -154,19 +155,20 @@ Widget::Widget(IAudioControl &audio, QWidget *parent)//
   layout()->setMargin(0);
   layout()->setSpacing(0);
 
-  setMinimumWidth(775);
+  setMinimumWidth(777);
 
   setObjectName(qsl("Page:%1").arg(static_cast<int>(UI::PageMenu::chat)));
-//
-//  QWidget *contentWidget = new QWidget(this);
-//  contentWidget->setObjectName("contentWidget");
-////  ui->mainSplitter->addWidget(contentWidget);
+
 
   chatWidget = std::make_unique<ChatWidget>();
   ui->tabWidget->addTab(chatWidget.get(), tr("Chat"));
 
+  contactWidget = std::make_unique<ContactWidget>();
+  ui->tabWidget->addTab(contactWidget.get(), tr("Contact"));
+
   settingsWidget = std::make_unique<SettingsWidget>(updateCheck.get(), audio, this);
   ui->tabWidget->addTab(settingsWidget.get(), tr("Settings"));
+
 
 
   installEventFilter(this);
@@ -351,7 +353,7 @@ Widget::Widget(IAudioControl &audio, QWidget *parent)//
 #endif
 
 
-    onSeparateWindowChanged(settings.getSeparateWindow(), false);
+//    onSeparateWindowChanged(settings.getSeparateWindow(), false);
 
     //  ui->addButton->setCheckable(true);
     //  ui->groupButton->setCheckable(true);
@@ -421,7 +423,7 @@ void Widget::init() {
 
 
 
-  filesForm = new FilesForm();
+//  filesForm = new FilesForm();
 //  addFriendForm = new AddFriendForm;
 //  groupInviteForm = new GroupInviteForm;
 
@@ -545,7 +547,7 @@ Widget::~Widget() {
   delete profileInfo;
 
 
-  delete filesForm;
+//  delete filesForm;
   delete timer;
 
 
@@ -821,18 +823,18 @@ void Widget::forceShow() {
 }
 
 void Widget::onTransferClicked() {
-  if (settings.getSeparateWindow()) {
-    if (!filesForm->isShown()) {
-      filesForm->show(createContentDialog(DialogType::TransferDialog));
-    }
+//  if (settings.getSeparateWindow()) {
+//    if (!filesForm->isShown()) {
+//      filesForm->show(createContentDialog(DialogType::TransferDialog));
+//    }
 
-    setActiveToolMenuButton(ActiveToolMenuButton::None);
-  } else {
-    hideMainForms(nullptr);
-//    filesForm->show(contentLayout);
-    setWindowTitle(fromDialogType(DialogType::TransferDialog));
-    setActiveToolMenuButton(ActiveToolMenuButton::TransferButton);
-  }
+//    setActiveToolMenuButton(ActiveToolMenuButton::None);
+//  } else {
+//    hideMainForms(nullptr);
+////    filesForm->show(contentLayout);
+//    setWindowTitle(fromDialogType(DialogType::TransferDialog));
+//    setActiveToolMenuButton(ActiveToolMenuButton::TransferButton);
+//  }
 }
 
 void Widget::confirmExecutableOpen(const QFileInfo &file) {
