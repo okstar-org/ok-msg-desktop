@@ -313,7 +313,7 @@ gloox::JID IM::wrapJid(const QString &f) const {
   return gloox::JID(f.toStdString() + "@" + _host);
 }
 
-IMMessage IM::from(MsgType type, const gloox::Message &msg) {
+IMMessage IM::fromXMsg(MsgType type, const gloox::Message &msg) {
 
   IMMessage imMsg(type,                       //
                   qstring(msg.from().full()), //
@@ -654,7 +654,7 @@ void IM::doMessageChat(const Message &msg, QString &friendId,
   if (!body.isEmpty()) {
     if (!msg.encrypted()) {
       qDebug() << "Is plain message:" << body;
-      IMMessage imMsg = from(MsgType::Chat, msg);
+      IMMessage imMsg = fromXMsg(MsgType::Chat, msg);
       emit receiveFriendMessage(friendId, imMsg);
     } else {
       QString xml = qstring(msg.tag()->xml());
@@ -914,21 +914,20 @@ void IM::handleMUCParticipantPresence(gloox::MUCRoom *room,                 //
 }
 
 void IM::handleMUCMessage(MUCRoom *room, const gloox::Message &msg, bool priv) {
-  auto body = qstring(msg.body());
   auto msgId = qstring(msg.id());
+  qDebug()<< "msgId:"<< (msgId) ;
+
   auto roomId = qstring(room->jid().full());
+  qDebug() << "roomId:" << roomId;
+
+  auto from = qstring(msg.from().full());
+  qDebug() << "from:" << from;
+
+  auto body = qstring(msg.body());
+  qDebug() << "body:" << body;
+
 
   PeerId peerId(msg.from());
-  qDebug() << "room:" << qstring(room->name());
-
-  qDebug()<<QString("roomId:%1 from:%2 msgId:%3") //
-                .arg(roomId)               // room
-                .arg(peerId.toString())    // from
-                .arg(msgId)                // msg id
-  ;
-
-  qDebug() << "msg:" << body;
-
   for (const auto &id : sendIds) {
     if (id == msg.id()) {
       qDebug() << "自己发出消息，忽略！";
@@ -970,7 +969,7 @@ void IM::handleMUCMessage(MUCRoom *room, const gloox::Message &msg, bool priv) {
     return;
   }
 
-  IMMessage imMsg = from(MsgType::Groupchat, msg);
+  IMMessage imMsg = fromXMsg(MsgType::Groupchat, msg);
   const DelayedDelivery *dd = msg.when();
   if (dd) {
     // yyyy-MM-dd HH:mm:ss 20230614T12:11:43Z
@@ -1246,22 +1245,23 @@ void IM::joinRooms() {
   }
 }
 
-bool IM::sendToRoom(const QString &to, const QString &msg, const QString &id) {
+QString IM::sendToRoom(const QString &to, const QString &msg, const QString &id) {
   qDebug() << "sendToRoom=>" << to;
   qDebug() << "msg:" << msg;
 
   auto pRoomInfo = findRoom((to));
   if (!pRoomInfo) {
     qDebug() << "The room is not exist!";
-    return false;
+    return QString{};
   }
 
   std::string msgId = !id.isEmpty() ? id.toStdString() : getClient()->getID();
   qDebug() << "msgId:" << qstring(msgId);
+
   sendIds.emplace_back(msgId);
 
-  pRoomInfo->room->send(msg.toStdString());
-  return true;
+  auto mid = pRoomInfo->room->send(msg.toStdString());
+  return qstring(mid);
 }
 
 void IM::setRoomSubject(const QString &groupId, const std::string &nick) {

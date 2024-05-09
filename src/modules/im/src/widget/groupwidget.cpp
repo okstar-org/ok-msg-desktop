@@ -90,6 +90,22 @@ GroupWidget::GroupWidget(ContentLayout *layout, QString groupnumber,
           chatLog.get(), &SessionChatLog::onMessageSent);
   connect(messageDispatcher.get(), &IMessageDispatcher::messageComplete,
           chatLog.get(), &SessionChatLog::onMessageComplete);
+
+  auto notifyReceivedCallback = [this, groupId](const ToxPk &author, const Message &message) {
+      auto isTargeted =
+          std::any_of(message.metadata.begin(), message.metadata.end(),
+                      [](MessageMetadata metadata) {
+                        return metadata.type == MessageMetadataType::selfMention;
+                      });
+      auto &settings = Settings::getInstance();
+      Widget::getInstance()->newGroupMessageAlert(groupId, author, message.content,
+                           isTargeted || settings.getGroupAlwaysNotify());
+    };
+
+    auto notifyReceivedConnection =
+        connect(messageDispatcher.get(), &IMessageDispatcher::messageReceived,
+                notifyReceivedCallback);
+//    groupAlertConnections.insert(groupId, notifyReceivedConnection);
 }
 
 GroupWidget::~GroupWidget() { settings::Translator::unregister(this); }
@@ -373,14 +389,12 @@ void GroupWidget::retranslateUi() {
   updateUserCount(group->getPeersCount());
 }
 
-void GroupWidget::setRecvMessage(QString groupnumber, QString nick,
-                                 const QString &from, const QString &content,
-                                 const QDateTime &time, bool isAction) {
+void GroupWidget::setRecvMessage(const GroupMessage& msg) {
 
   auto core = Core::getInstance();
-  ToxPk author = core->getGroupPeerPk(groupnumber, nick);
-  messageDispatcher->onMessageReceived(author, isAction, content, nick, from,
-                                       time);
+  ToxPk author = core->getGroupPeerPk(msg.groupId.getUsername(), msg.from);
+  messageDispatcher->onMessageReceived(author, msg.isAction, msg.id, msg.content, msg.nick,msg.from,
+                                       msg.timestamp);
 }
 
 void GroupWidget::reloadTheme() { chatform->reloadTheme(); }

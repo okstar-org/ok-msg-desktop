@@ -514,7 +514,7 @@ void Core::bootstrapDht() {
 
 void Core::onFriend(const QString friendId) {
   qDebug() << __func__ << friendId;
-  emit sig_friendAdded(  ToxPk(friendId), true);
+  emit friendAdded(  ToxPk(friendId), true);
 }
 
 void Core::onFriendDone() {
@@ -550,11 +550,19 @@ void Core::onFriendRequest(Tox *, const QString &cFriendPk,
 
 void Core::onFriendMessage(QString friendId,
                            lib::messenger::IMMessage message) {
-  qDebug() << "msg content:" << message.body;
-  qDebug() << "from friend:" << friendId;
+  qDebug() <<__func__<< "friend:" << friendId;
+  qDebug() <<"content:" << message.body;
+
   sendReceiptReceived(friendId, message.id);
-  lib::messenger::FriendId ff(friendId);
-  emit friendMessageReceived(ToxPk(ff), message, false);
+
+  FriendMessage msg;
+  msg.id= message.id;
+  msg.content=message.body;
+  msg.from= getFriendPublicKey( message.from);
+  msg.isAction=false;
+  msg.timestamp=message.time;
+  msg.displayName=message.from;
+  emit friendMessageReceived(ToxPk(friendId), msg, false);
 }
 
 /**
@@ -662,13 +670,19 @@ void Core::onGroupMessage(const QString groupId,
                           const lib::messenger::PeerId peerId,
                           const lib::messenger::IMMessage message) {
 
-  //qDebug() << "onGroupMessage groupId:" << groupId //
-  //         << "peerId:" << peerId.toString()       //
-  //         << "from:" << message.from              //
-  //         << "msg:" << message.body;
+  qDebug() <<__func__<< "groupId:" << groupId<<message.body;
+
   bool isAction = false;
-  emit groupMessageReceived(groupId, peerId.resource, message.from,
-                            message.body, message.time, isAction);
+  GroupMessage msg;
+          msg.isAction= isAction;
+          msg.groupId=GroupId(groupId);
+          msg.id=message.id;
+          msg.from = message.from;
+          msg.content=message.body;
+          msg.timestamp=message.time;
+          msg.displayName=message.from;
+
+  emit groupMessageReceived(msg);
 }
 
 void Core::onGroupOccupants(const QString groupId, const uint size) {
@@ -701,7 +715,7 @@ void Core::acceptFriendRequest(const ToxPk &friendPk) {
   //      emit failedToAddFriend(friendPk);
   //    } else {
   emit saveRequest();
-  emit sig_friendAdded(friendPk, true);
+  emit friendAdded(friendPk, true);
   //    }
 }
 
@@ -826,12 +840,13 @@ void Core::sendTyping(QString friendId, bool typing) {
   emit failedToSetTyping(typing);
 }
 
-void Core::sendGroupMessageWithType(QString groupId, const QString &message,
+QString Core::sendGroupMessageWithType(QString groupId,
+                                    const QString &message,
                                     Tox_Message_Type type) {
   QMutexLocker ml{&coreLoopLock};
-  QString r = 0;
-
+  QString r;
   tox->sendToGroup(groupId, message, r);
+  return r;
 
   //  int size = message.toUtf8().size();
   //  auto maxSize = tox_max_message_length();
@@ -851,14 +866,14 @@ void Core::sendGroupMessageWithType(QString groupId, const QString &message,
   //  }
 }
 
-void Core::sendGroupMessage(QString groupId, const QString &message) {
+QString  Core::sendGroupMessage(QString groupId, const QString &message) {
   QMutexLocker ml{&coreLoopLock};
-  sendGroupMessageWithType(groupId, message, TOX_MESSAGE_TYPE_NORMAL);
+    return  sendGroupMessageWithType(groupId, message, TOX_MESSAGE_TYPE_NORMAL);
 }
 
-void Core::sendGroupAction(QString groupId, const QString &message) {
+QString  Core::sendGroupAction(QString groupId, const QString &message) {
   QMutexLocker ml{&coreLoopLock};
-  sendGroupMessageWithType(groupId, message, TOX_MESSAGE_TYPE_ACTION);
+  return sendGroupMessageWithType(groupId, message, TOX_MESSAGE_TYPE_ACTION);
 }
 
 void Core::changeGroupTitle(QString groupId, const QString &title) {

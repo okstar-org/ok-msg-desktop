@@ -416,8 +416,8 @@ void Widget::init() {
 //  connect(profile, &Profile::selfAvatarChanged,
 //          profileForm,&ProfileForm::onSelfAvatarLoaded);
 
-  connect(Nexus::getProfile(), &Profile::coreChanged,
-          chatWidget.get(), &ChatWidget::onCoreChanged);
+//  connect(Nexus::getProfile(), &Profile::coreChanged,
+//          chatWidget.get(), &ChatWidget::onCoreChanged);
 
 
 
@@ -1451,26 +1451,19 @@ bool Widget::newFriendMessageAlert(const ToxPk &friendId, const QString &text,
 
 bool Widget::newGroupMessageAlert(const GroupId &groupId, const ToxPk &authorPk,
                                   const QString &message, bool notify) {
-  bool hasActive;
-  QWidget *currentWindow;
-  ContentDialog *contentDialog =
-      ContentDialogManager::getInstance()->getGroupDialog(groupId);
-  Group *g = GroupList::findGroup(groupId);
-  GroupWidget *widget = nullptr; //groupWidgets[groupId];
 
-  if (contentDialog != nullptr) {
-    currentWindow = contentDialog->window();
-    hasActive = ContentDialogManager::getInstance()->isContactActive(groupId);
-  } else {
+    qDebug() << __func__ <<"groupId" << groupId.toString()<< "message"<< message;
+    bool hasActive;
+  QWidget *currentWindow =
     currentWindow = window();
-  }
+
 
   if (!newMessageAlert(currentWindow, hasActive, true, notify)) {
     return false;
   }
 
-  g->setEventFlag(true);
-  widget->updateStatusLight();
+//  g->setEventFlag(true);
+//  widget->updateStatusLight();
 #if DESKTOP_NOTIFICATIONS
   if (settings.getNotifyHide()) {
     notifier.notifyMessageSimple(DesktopNotify::MessageType::GROUP);
@@ -1487,13 +1480,13 @@ bool Widget::newGroupMessageAlert(const GroupId &groupId, const ToxPk &authorPk,
   }
 #endif
 
-  if (contentDialog == nullptr) {
-    if (hasActive) {
-      setWindowTitle(widget->getTitle());
-    }
-  } else {
-    ContentDialogManager::getInstance()->updateGroupStatus(groupId);
-  }
+//  if (contentDialog == nullptr) {
+//    if (hasActive) {
+//      setWindowTitle(widget->getTitle());
+//    }
+//  } else {
+//    ContentDialogManager::getInstance()->updateGroupStatus(groupId);
+//  }
 
   return true;
 }

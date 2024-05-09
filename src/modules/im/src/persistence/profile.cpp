@@ -306,8 +306,7 @@ QString Profile::getName() const { return name; }
  * @brief Starts the Core thread
  */
 void Profile::startCore() {
-  // kriby: code duplication belongs in initCore, but cannot yet due to
-  // Core/Profile coupling
+  qDebug() <<__func__;
 
   connect(core.get(), &Core::requestSent, this, &Profile::onRequestSent);
   core->start();

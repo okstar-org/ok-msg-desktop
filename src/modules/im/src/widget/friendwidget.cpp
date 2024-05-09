@@ -663,7 +663,7 @@ ContentDialog *FriendWidget::createContentDialog() const {
   return contentDialog;
 }
 
-void FriendWidget::setRecvMessage(const lib::messenger::IMMessage &message,
+void FriendWidget::setRecvMessage(const FriendMessage &message,
                                   bool isAction) {
   messageDispatcher->onMessageReceived(isAction,message);
 }

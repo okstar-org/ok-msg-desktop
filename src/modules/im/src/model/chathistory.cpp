@@ -35,7 +35,8 @@ ChatLogIdx findFirstMessage(const SessionChatLog& sessionChatLog)
 {
     auto it = sessionChatLog.getFirstIdx();
     while (it < sessionChatLog.getNextIdx()) {
-        if (sessionChatLog.at(it).getContentType() == ChatLogItem::ContentType::message) {
+        auto item = sessionChatLog.at(it);
+        if (item && item->getContentType() == ChatLogItem::ContentType::message) {
             return it;
         }
         it++;
@@ -104,7 +105,7 @@ ChatHistory::ChatHistory(Friend& f_,    //
     connect(&sessionChatLog, &IChatLog::itemUpdated, this, &IChatLog::itemUpdated);
 }
 
-const ChatLogItem& ChatHistory::at(ChatLogIdx idx) const
+const ChatLogItem* ChatHistory::at(ChatLogIdx idx) const
 {
     if (canUseHistory()) {
         ensureIdxInSessionChatLog(idx);
@@ -139,11 +140,11 @@ SearchResult ChatHistory::searchBackward(SearchPos startIdx, const QString& phra
     }
 
     auto earliestMessage = findFirstMessage(sessionChatLog);
+    auto earliestMsg = sessionChatLog.at(earliestMessage);
 
-    auto earliestMessageDate =
-        (earliestMessage == ChatLogIdx(-1))
+    auto earliestMessageDate = (earliestMessage == ChatLogIdx(-1) || !earliestMsg)
             ? QDateTime::currentDateTime()
-            : sessionChatLog.at(earliestMessage).getContentAsMessage().message.timestamp;
+            : earliestMsg->getContentAsMessage().message.timestamp;
 
     // Roundabout way of getting the first idx but I don't want to have to
     // deal with re-implementing so we'll just piece what we want together...
@@ -251,10 +252,10 @@ void ChatHistory::onFileTransferBrokenUnbroken(const ToxPk& sender, const ToxFil
 
 void ChatHistory::onMessageReceived(const ToxPk& sender, const Message & message)
 {
-    qDebug()<<"onMessageReceived sender:"<<sender.toString()<<" from:"<<message.from.toString();
+    qDebug()<<__func__<<"sender:"<<sender.toString()<<" from:"<<message.from;
     auto selfId = coreIdHandler.getSelfId().toString();
 
-    if(selfId == message.from.toString()){
+    if(selfId == message.from){
       qWarning()<<"Is self message.";
       return;
     }
@@ -366,7 +367,11 @@ void ChatHistory::loadHistoryIntoSessionChatLog(ChatLogIdx start) const
             // we hit IMessageDispatcher's signals which history listens for.
             // Items added to history have already been sent so we know they already
             // reflect what was sent/received.
-            auto processedMessage = Message{isAction, messageContent, message.sender, message.timestamp};
+            auto processedMessage = Message{
+                    .isAction= isAction,
+                    .content=messageContent,
+                    .from= message.sender,
+                    .timestamp= message.timestamp};
 
             auto dispatchedMessageIt =
                 std::find_if(dispatchedMessageRowIdMap.begin(), dispatchedMessageRowIdMap.end(),
@@ -423,7 +428,7 @@ void ChatHistory::dispatchUnsentMessages(IMessageDispatcher& messageDispatcher)
         // We should only send a single message, but in the odd case where we end
         // up having to split more than when we added the message to history we'll
         // just associate the last dispatched id with the history message
-        handleDispatchedMessage(dispatchIds.second, message.id);
+        handleDispatchedMessage(dispatchIds.first, message.id);
 
         // We don't add the messages to the underlying chatlog since
         // 1. We don't even know the ChatLogIdx of this message

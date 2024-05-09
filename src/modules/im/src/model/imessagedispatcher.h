@@ -22,6 +22,8 @@
 
 #include <cstdint>
 
+
+
 using DispatchedMessageId = NamedType<size_t, struct SentMessageIdTag, Orderable, Incrementable>;
 Q_DECLARE_METATYPE(DispatchedMessageId);
 
@@ -37,7 +39,7 @@ public:
      * @param[in] content Message content
      * @return Pair of first and last dispatched message IDs
      */
-    virtual std::pair<DispatchedMessageId, DispatchedMessageId>
+    virtual std::pair<DispatchedMessageId, SentMessageId>
     sendMessage(bool isAction, const QString& content, bool encrypt = false) = 0;
 signals:
     /**

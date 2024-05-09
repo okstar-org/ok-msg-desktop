@@ -29,16 +29,18 @@ class IGroupSettings;
 class GroupMessageDispatcher : public IMessageDispatcher {
   Q_OBJECT
 public:
-  GroupMessageDispatcher(Group &group, MessageProcessor processor,
+  GroupMessageDispatcher(Group &group,
+                         MessageProcessor processor,
                          ICoreIdHandler &idHandler,
                          ICoreGroupMessageSender &messageSender,
                          const IGroupSettings &groupSettings);
 
-  std::pair<DispatchedMessageId, DispatchedMessageId>
+  std::pair<DispatchedMessageId, SentMessageId>
   sendMessage(bool isAction, QString const &content,
               bool encrypt = false) override;
 
   void onMessageReceived(ToxPk const &sender, bool isAction,
+                         QString const &id,
                          QString const &content, QString const &nick,
                          QString const &from, const QDateTime &time);
 
@@ -49,6 +51,7 @@ private:
   ICoreGroupMessageSender &messageSender;
   const IGroupSettings &groupSettings;
   DispatchedMessageId nextMessageId{0};
+  QMap<QString, DispatchedMessageId> sentMsgIdMap;
 };
 
 #endif /* IMESSAGE_DISPATCHER_H */

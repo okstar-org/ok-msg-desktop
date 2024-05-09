@@ -117,7 +117,7 @@ public slots:
   void onStatusMessageSet(const QString &statusMessage) ;
 
 
-  void slot_friendAdded(const ToxPk &friendPk, bool isFriend);
+  void onFriendAdded(const ToxPk &friendPk, bool isFriend);
   void onFriendUsernameChanged(const ToxPk &friendPk, const QString &username);
 
   void onFriendStatusChanged(const ToxPk &friendPk, Status::Status status);
@@ -125,7 +125,7 @@ public slots:
                                     const QString &message);
 
   void onFriendMessageReceived(const ToxPk &friendPk,
-                               const lib::messenger::IMMessage &message,
+                               const FriendMessage &message,
                                bool isAction);
   void onFriendAvatarChanged(const ToxPk &friendPk, const QByteArray &avatar);
   void onReceiptReceived(const ToxPk &friendPk, ReceiptNum receipt);
@@ -137,12 +137,7 @@ public slots:
 
   void onGroupJoined( const GroupId & groupId, const QString& name);
 void onGroupInviteReceived(const GroupInvite &inviteInfo);
-void onGroupMessageReceived(QString groupnumber,
-                            QString nick,
-                            const QString &from,
-                            const QString &message,
-                            const QDateTime& time,
-                            bool isAction);
+void onGroupMessageReceived(const GroupMessage&);
 
 
 

@@ -19,6 +19,9 @@
 
 #include <vector>
 
+#include <src/core/groupid.h>
+#include <src/core/toxpk.h>
+
 #include "lib/messenger/IMMessage.h"
 
 class Friend;
@@ -40,12 +43,29 @@ struct MessageMetadata {
 };
 
 struct Message {
+public:
   bool isAction;
+  QString id;
   QString content;
-  lib::messenger::PeerId from;
+  QString from;
   QDateTime timestamp;
-  std::vector<MessageMetadata> metadata;
   QString displayName;
+  std::vector<MessageMetadata> metadata;
+};
+
+
+struct GroupMessage : public Message{
+public:
+    GroupId groupId;
+    QString nick;
+    QString toString() const {
+        return QString("{id:%1, from:%2, content:%3}").arg(id).arg(from).arg(content);
+    }
+};
+
+struct FriendMessage : Message{
+    ToxPk from;
+    ToxPk to;
 };
 
 class MessageProcessor {
@@ -80,6 +100,7 @@ public:
                                               QString const &content);
 
   Message processIncomingMessage(bool isAction,
+                                 QString const &id,
                                  QString const &from,
                                  QString const &message,
                                  const QDateTime& time,

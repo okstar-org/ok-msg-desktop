@@ -49,12 +49,7 @@ public:
   void editName();
   ContentDialog * addGroupDialog(Group *group);
   ContentDialog * createContentDialog()const ;
-  void setRecvMessage(QString groupnumber,
-                      QString nick,
-                      const QString &from,
-                      const QString &content,
-                      const QDateTime &time,
-                      bool isAction);
+  void setRecvMessage(const GroupMessage& msg);
 
   void reloadTheme() ;
 

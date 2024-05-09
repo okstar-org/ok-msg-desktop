@@ -28,6 +28,7 @@
 #include "src/model/group.h"
 #include "src/model/groupinvite.h"
 #include "src/modules/im/src/grouplist.h"
+#include "src/persistence/profile.h"
 #include "src/nexus.h"
 #include "src/widget/form/addfriendform.h"
 #include "src/widget/form/groupinviteform.h"
@@ -77,7 +78,9 @@ ChatWidget::ChatWidget(QWidget *parent)
   //          &FriendListWidget::connectCircleWidget);
 }
 
-ChatWidget::~ChatWidget() {}
+ChatWidget::~ChatWidget() {
+    deinit();
+}
 
 void ChatWidget::searchCircle(CircleWidget &circleWidget) {
   //  FilterCriteria filter = getFilterCriteria();
@@ -96,21 +99,31 @@ void ChatWidget::connectCircleWidget() {
 void ChatWidget::init() {
   //  core = Nexus::getCore();
   //  coreFile = core->getCoreFile();
+
+
+    connect(Nexus::getProfile(), &Profile::coreChanged,
+            this, &ChatWidget::onCoreChanged);
 }
 
 void ChatWidget::deinit() {
-  coreFile->deleteLater();
-  core->deleteLater();
+//  coreFile->deleteLater();
+//  core->deleteLater();
+    disconnect(Nexus::getProfile(), &Profile::coreChanged,
+               this, &ChatWidget::onCoreChanged);
 }
 
 void ChatWidget::connectToCore(Core *core) {
+    qDebug() << __func__<<"core"<<core;
   connect(core, &Core::usernameSet, this, &ChatWidget::onUsernameSet);
   connect(core, &Core::statusSet, this, &ChatWidget::onStatusSet);
   connect(core, &Core::statusMessageSet, this, &ChatWidget::onStatusMessageSet);
 
-  connect(core, &Core::sig_friendAdded, this, &ChatWidget::slot_friendAdded);
-  connect(core, &Core::friendUsernameChanged, this,
-          &ChatWidget::onFriendUsernameChanged);
+  connect(core, &Core::friendAdded,
+          this, &ChatWidget::onFriendAdded);
+
+  connect(core, &Core::friendUsernameChanged,
+          this, &ChatWidget::onFriendUsernameChanged);
+
   connect(core, &Core::friendAvatarChanged, this,
           &ChatWidget::onFriendAvatarChanged);
 
@@ -167,7 +180,7 @@ void ChatWidget::onCoreChanged(Core &core_) {
   ui->nameLabel->setText(username);
 }
 
-void ChatWidget::slot_friendAdded(const ToxPk &friendPk, bool isFriend) {
+void ChatWidget::onFriendAdded(const ToxPk &friendPk, bool isFriend) {
   contactListWidget->addFriend(friendPk, isFriend);
 }
 
@@ -195,10 +208,10 @@ void ChatWidget::onFriendUsernameChanged(const ToxPk &friendPk,
 
 void ChatWidget::onFriendMessageReceived(
     const ToxPk &friendnumber,                //
-    const lib::messenger::IMMessage &message, //
+    const FriendMessage &message, //
     bool isAction)                            //
 {
-  qDebug() << __func__ << message.body << "from" << message.from;
+  qDebug() << __func__ << message.content << "from" << message.from.toString();
   contactListWidget->setRecvFriendMessage(friendnumber, message, isAction);
 }
 
@@ -471,13 +484,9 @@ void ChatWidget::onGroupInviteAccepted(const GroupInvite &inviteInfo) {
   }
 }
 
-void ChatWidget::onGroupMessageReceived(QString groupnumber, QString nick,
-                                        const QString &from,
-                                        const QString &content,
-                                        const QDateTime &time, bool isAction) {
+void ChatWidget::onGroupMessageReceived(const GroupMessage& msg) {
 
-  qDebug() << "onGroupMessageReceived group:" << groupnumber << "nick:" << nick
-           << "content:" << content;
+  qDebug() <<__func__<< msg.toString();
 
   //  Group *g = GroupList::findGroup(groupId);
   //  if (!g) {
@@ -490,8 +499,7 @@ void ChatWidget::onGroupMessageReceived(QString groupnumber, QString nick,
   //  content,
   //                                                      nick, from, time);
 
-  //  contactListWidget->setRecvGroupMessage(groupnumber, nick, from, content,
-  //  time, isAction);
+    contactListWidget->setRecvGroupMessage(msg);
 }
 
 void ChatWidget::onGroupPeerListChanged(QString groupnumber) {
@@ -541,6 +549,7 @@ void ChatWidget::onGroupPeerStatusChanged(QString groupnumber, QString peerName,
 
 void ChatWidget::onGroupTitleChanged(QString groupnumber, const QString &author,
                                      const QString &title) {
+    qDebug()<<__func__ << "group" << groupnumber << title;
   const GroupId &groupId = GroupList::id2Key(groupnumber);
   Group *g = GroupList::findGroup(groupId);
   if (!g) {
@@ -548,14 +557,10 @@ void ChatWidget::onGroupTitleChanged(QString groupnumber, const QString &author,
     return;
   }
 
-  //  GroupWidget *widget = groupWidgets[groupId];
-  //  if (widget->isActive()) {
-  //    GUI::setWindowTitle(title);
-  //  }
-  //
-  //  g->setTitle(author, title);
-  //  FilterCriteria filter = getFilterCriteria();
-  //  widget->searchName(ui->searchContactText->text(), filterGroups(filter));
+  contactListWidget->setGroupTitle(groupId, author, title);
+
+//  FilterCriteria filter = getFilterCriteria();
+//  widget->searchName(ui->searchContactText->text(), filterGroups(filter));
 }
 
 void ChatWidget::groupInvitesUpdate() {

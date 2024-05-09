@@ -65,6 +65,7 @@ public:
 
   void addGroupWidget(GroupWidget *gw);
   void removeGroupWidget(GroupWidget *w);
+  void setGroupTitle(const GroupId &groupId, const QString &author,const QString& title);
 
   void addCircleWidget(int id);
   void addCircleWidget(FriendWidget *widget = nullptr);
@@ -77,12 +78,10 @@ public:
   void updateActivityTime(const QDateTime &date);
   void reDraw();
 
-  void setRecvGroupMessage(QString groupnumber, QString nick,
-                           const QString &from, const QString &content,
-                           const QDateTime &time, bool isAction);
+  void setRecvGroupMessage(const GroupMessage& msg);
 
   void setRecvFriendMessage(ToxPk friendnumber,                       //
-                            const lib::messenger::IMMessage &message, //
+                            const FriendMessage &message, //
                             bool isAction);
 
   CircleWidget *createCircleWidget(int id = -1);

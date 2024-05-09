@@ -145,8 +145,14 @@ bool shouldRenderDate(ChatLogIdx idxToRender, const IChatLog &chatLog) {
   if (idxToRender.get() == chatLog.getFirstIdx().get())
     return true;
 
-  return chatLog.at(idxToRender - 1).getTimestamp().date() !=
-         chatLog.at(idxToRender).getTimestamp().date();
+
+  auto prev = chatLog.at(idxToRender - 1);
+  auto cur = chatLog.at(idxToRender);
+  if(!prev || !cur)
+      return false;
+
+  return prev->getTimestamp().date() !=
+         cur->getTimestamp().date();
 }
 
 ChatMessage::Ptr dateMessageForItem(const ChatLogItem &item) {
@@ -604,18 +610,19 @@ bool GenericChatForm::needsToHideName(ChatLogIdx idx) const {
     return false;
   }
 
-  const auto &prevItem = iChatLog.at(idx - 1);
-  const auto &currentItem = iChatLog.at(idx);
-
+  const auto prevItem = iChatLog.at(idx - 1);
+  const auto currentItem = iChatLog.at(idx);
+  if(!prevItem || !currentItem){
+      return false;
+  }
   // Always show the * in the name field for action messages
-  if (currentItem.getContentType() == ChatLogItem::ContentType::message &&
-      currentItem.getContentAsMessage().message.isAction) {
+  if (currentItem->getContentType() == ChatLogItem::ContentType::message &&
+      currentItem->getContentAsMessage().message.isAction) {
     return false;
   }
 
-  qint64 messagesTimeDiff =
-      prevItem.getTimestamp().secsTo(currentItem.getTimestamp());
-  return currentItem.getSender() == prevItem.getSender() &&
+  qint64 messagesTimeDiff = prevItem->getTimestamp().secsTo(currentItem->getTimestamp());
+  return currentItem->getSender() == prevItem->getSender() &&
          messagesTimeDiff < chatLog->repNameAfter;
 }
 
@@ -867,17 +874,17 @@ void GenericChatForm::onExportChat() {
   QString buffer;
   for (auto i = iChatLog.getFirstIdx(); i < iChatLog.getNextIdx(); ++i) {
     const auto &item = iChatLog.at(i);
-    if (item.getContentType() != ChatLogItem::ContentType::message) {
+    if (!item || item->getContentType() != ChatLogItem::ContentType::message) {
       continue;
     }
 
-    QString timestamp = item.getTimestamp().time().toString("hh:mm:ss");
-    QString datestamp = item.getTimestamp().date().toString("yyyy-MM-dd");
-    QString author = item.getDisplayName();
+    QString timestamp = item->getTimestamp().time().toString("hh:mm:ss");
+    QString datestamp = item->getTimestamp().date().toString("yyyy-MM-dd");
+    QString author = item->getDisplayName();
 
     buffer =
         buffer % QString{datestamp % '\t' % timestamp % '\t' % author % '\t' %
-                         item.getContentAsMessage().message.content % '\n'};
+                         item->getContentAsMessage().message.content % '\n'};
   }
   file.write(buffer.toUtf8());
   file.close();
@@ -966,6 +973,7 @@ void GenericChatForm::handleSearchResult(SearchResult result,
 }
 
 void GenericChatForm::renderMessage(ChatLogIdx idx) {
+  qDebug()<<__func__ <<"idx"<<idx.get();
   renderMessages(idx, idx + 1);
 }
 
@@ -976,7 +984,12 @@ void GenericChatForm::renderMessages(ChatLogIdx begin, ChatLogIdx end,
 
   for (auto i = begin; i < end; ++i) {
     auto chatMessage = getChatMessageForIdx(i, messages);
-    renderItem(iChatLog.at(i), needsToHideName(i), colorizeNames, chatMessage);
+    auto item = iChatLog.at(i);
+    if(!item){
+        qWarning() <<"is no existing msg idx:" << i.get();
+        continue;
+    }
+    renderItem(*item, needsToHideName(i), colorizeNames, chatMessage);
 
     if (messages.find(i) == messages.end()) {
       QList<ChatLine::Ptr> *lines =
@@ -986,7 +999,9 @@ void GenericChatForm::renderMessages(ChatLogIdx begin, ChatLogIdx end,
       messages.insert({i, chatMessage});
 
       if (shouldRenderDate(i, iChatLog)) {
-        lines->push_back(dateMessageForItem(iChatLog.at(i)));
+          auto msg=iChatLog.at(i);
+          if(msg)
+            lines->push_back(dateMessageForItem(*msg));
       }
       lines->push_back(chatMessage);
     }

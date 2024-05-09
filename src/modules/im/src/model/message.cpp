@@ -66,12 +66,14 @@ std::vector<Message> MessageProcessor::processOutgoingMessage(bool isAction, QSt
  * @brief Converts an incoming message into a sanitized Message
  */
 Message MessageProcessor::processIncomingMessage(bool isAction,
+                                                 QString const &id,
                                                  QString const& message,
                                                  QString const& from,
                                                  const QDateTime& timestamp,
                                                  QString const& displayName)
 {
     auto ret = Message{};
+    ret.id=id;
     ret.isAction = isAction;
     ret.from = from;
     ret.content = message;

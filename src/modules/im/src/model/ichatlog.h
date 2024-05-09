@@ -86,7 +86,7 @@ public:
      * @return Variant type referencing either a ToxFile or Message
      * @pre idx must be between currentFirstIdx() and currentLastIdx()
      */
-    virtual const ChatLogItem& at(ChatLogIdx idx) const = 0;
+    virtual const ChatLogItem* at(ChatLogIdx idx) const = 0;
 
     /**
      * @brief searches forwards through the chat log until phrase is found according to parameter

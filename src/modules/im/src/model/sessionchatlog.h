@@ -30,7 +30,7 @@ public:
     SessionChatLog(ChatLogIdx initialIdx, const ICoreIdHandler& coreIdHandler);
 
     ~SessionChatLog();
-    const ChatLogItem& at(ChatLogIdx idx) const override;
+    const ChatLogItem* at(ChatLogIdx idx) const override;
     SearchResult searchForward(SearchPos startIdx, const QString& phrase,
                                const ParameterSearch& parameter) const override;
     SearchResult searchBackward(SearchPos startIdx, const QString& phrase,
@@ -59,6 +59,9 @@ public slots:
 private:
     const ICoreIdHandler& coreIdHandler;
 
+    QMap<QString, ChatLogIdx> id2IdxMap;
+    inline ChatLogIdx getNextIdx(QString msgId);
+
     ChatLogIdx nextIdx = ChatLogIdx(0);
 
     std::map<ChatLogIdx, ChatLogItem> items;
@@ -81,6 +84,7 @@ private:
      * is marked as completed
      */
     QMap<DispatchedMessageId, ChatLogIdx> outgoingMessages;
+
 };
 
 #endif /*SESSION_CHAT_LOG_H*/

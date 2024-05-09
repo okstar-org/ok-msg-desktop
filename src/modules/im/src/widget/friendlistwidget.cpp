@@ -543,6 +543,17 @@ void FriendListWidget::removeGroupWidget(GroupWidget *w) {
   w->deleteLater();
 }
 
+void FriendListWidget::setGroupTitle(const GroupId& groupId,const QString &author, const QString &title)
+{
+    auto widget = groupWidgets[groupId];
+    if(!widget){
+        qWarning() << "group widget is no existing.";
+        return;
+    }
+    auto g = GroupList::findGroup(groupId);
+    g->setTitle(author, title);
+}
+
 void FriendListWidget::removeFriendWidget(FriendWidget *w) {
   const Friend *contact = w->getFriend();
 
@@ -1001,19 +1012,18 @@ void FriendListWidget::slot_friendClicked(GenericChatroomWidget *actived) {
     }
   }
 }
-void FriendListWidget::setRecvGroupMessage(QString groupnumber, QString nick,
-                                           const QString &from,
-                                           const QString &content,
-                                           const QDateTime &time,
-                                           bool isAction) {
-  const GroupId &groupId = GroupList::id2Key(groupnumber);
+void FriendListWidget::setRecvGroupMessage(const GroupMessage& msg) {
+  const GroupId &groupId = msg.groupId;
   auto gw = getGroup(groupId);
-  if (gw) {
-    gw->setRecvMessage(groupnumber, nick, from, content, time, isAction);
+  if (!gw) {
+      qWarning() <<"group is no existing";
+      return;
   }
+    gw->setRecvMessage(msg);
+
 }
 void FriendListWidget::setRecvFriendMessage(
-    ToxPk friendnumber, const lib::messenger::IMMessage &message,
+    ToxPk friendnumber, const FriendMessage &message,
     bool isAction) {
 
   const auto &friendId = FriendList::id2Key(friendnumber.toString());

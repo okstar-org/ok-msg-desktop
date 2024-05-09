@@ -441,8 +441,12 @@ bool Messenger::sendToGroup(const QString &g,   //
   auto _session = ok::session::AuthSession::Instance();
   auto _im = _session->im();
 
-  auto y = _im->sendToRoom(g, msg, "");
-  return y;
+  auto id = _im->sendToRoom(g, msg, "");
+  if(id.isEmpty())
+      return false;
+
+  receiptNum = id;
+  return true;
 }
 
 bool Messenger::sendFileToFriend(const QString &f,

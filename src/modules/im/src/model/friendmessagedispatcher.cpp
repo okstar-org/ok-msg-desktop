@@ -48,7 +48,7 @@ FriendMessageDispatcher::FriendMessageDispatcher(
 /**
  * @see IMessageSender::sendMessage
  */
-std::pair<DispatchedMessageId, DispatchedMessageId>
+std::pair<DispatchedMessageId, SentMessageId>
 FriendMessageDispatcher::sendMessage(bool isAction, const QString &content, bool encrypt) {
   qDebug() << "FriendMessageDispatcher::sendMessage" << content;
 
@@ -81,7 +81,7 @@ FriendMessageDispatcher::sendMessage(bool isAction, const QString &content, bool
     }
 
   }
-  return std::make_pair(firstId, lastId);
+  return std::make_pair(firstId, "");
 }
 
 /**
@@ -90,8 +90,13 @@ FriendMessageDispatcher::sendMessage(bool isAction, const QString &content, bool
  * @param[in] content Unprocessed toxcore message
  */
 void FriendMessageDispatcher::onMessageReceived(bool isAction,
-                                                const lib::messenger::IMMessage& msg) {
-  auto msg0 = processor.processIncomingMessage(isAction, msg.body, msg.from, msg.time, f.getDisplayedName());
+                                                const FriendMessage& msg) {
+  auto msg0 = processor.processIncomingMessage(isAction,
+                                               msg.id,
+                                               msg.from.toString(),
+                                               msg.content,
+                                               msg.timestamp,
+                                               f.getDisplayedName());
   emit this->messageReceived(f.getPublicKey(), msg0);
 }
 

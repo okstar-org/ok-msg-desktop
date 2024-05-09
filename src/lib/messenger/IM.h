@@ -101,7 +101,7 @@ public:
   explicit IM(QString host, QString user, QString pwd, QStringList features);
   ~IM();
 
-  static IMMessage from(MsgType type, const gloox::Message &msg);
+  inline static IMMessage fromXMsg(MsgType type, const gloox::Message &msg);
 
   std::unique_ptr<Client> makeClient();
 
@@ -188,7 +188,14 @@ public:
   bool leaveGroup(const QString &groupId);
   bool destroyGroup(const QString &groupId);
 
-  bool sendToRoom(const QString &to, const QString &msg,
+  /**
+   * @brief sendToRoom
+   * @param to
+   * @param msg
+   * @param id 设置消息ID
+   * @return 成功返回消息ID
+   */
+  QString sendToRoom(const QString &to, const QString &msg,
                   const QString &id = "");
 
   void joinRoom(const QString &jid);

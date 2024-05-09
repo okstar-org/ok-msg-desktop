@@ -38,6 +38,8 @@
 #include <functional>
 #include <memory>
 
+#include <src/model/message.h>
+
 class CoreAV;
 class CoreFile;
 class IAudioControl;
@@ -141,8 +143,8 @@ public slots:
   bool sendAction(QString friendId, const QString &action,
                   ReceiptNum &receipt, bool encrypt = false) override;
   //GroupSender
-  void sendGroupMessage(QString groupId, const QString &message) override;
-  void sendGroupAction(QString groupId, const QString &message) override;
+  QString sendGroupMessage(QString groupId, const QString &message) override;
+  QString sendGroupAction(QString groupId, const QString &message) override;
 
   void changeGroupTitle(QString groupId, const QString &title);
 
@@ -187,10 +189,10 @@ signals:
                                const QByteArray &avatarHash);
 
   void friendMessageReceived(const ToxPk &friendId,//
-                             const lib::messenger::IMMessage &message, //
+                             const FriendMessage &message, //
                              bool isAction);
 
-  void sig_friendAdded(const ToxPk &friendPk, bool isFriend);
+  void friendAdded(const ToxPk &friendPk, bool isFriend);
   void friendAddedDone();
 
   void friendStatusChanged(const ToxPk &friendId, Status::Status status);
@@ -205,11 +207,7 @@ signals:
                          const QString &title = QString());
   void groupInviteReceived(const GroupInvite &inviteInfo);
 
-  void groupMessageReceived(QString groupnumber, QString peernumber,
-                            const QString &from,
-                            const QString &message,
-                            const QDateTime& time,
-                            bool isAction);
+  void groupMessageReceived(const GroupMessage& msg);
 
   void groupNamelistChanged(QString groupnumber, QString peerId,
                             uint8_t change);
@@ -273,7 +271,7 @@ private:
   static void onReadReceiptCallback(Tox *tox, QString friendId,
                                     ReceiptNum receipt, void *core);
 
-  void sendGroupMessageWithType(QString groupId, const QString &message,
+  QString sendGroupMessageWithType(QString groupId, const QString &message,
                                 Tox_Message_Type type);
 
   bool sendMessageWithType(QString friendId, const QString &message,

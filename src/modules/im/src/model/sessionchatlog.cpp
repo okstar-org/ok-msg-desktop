@@ -114,13 +114,13 @@ SessionChatLog::SessionChatLog(ChatLogIdx initialIdx,
 
 SessionChatLog::~SessionChatLog() = default;
 
-const ChatLogItem &SessionChatLog::at(ChatLogIdx idx) const {
-  auto item = items.find(idx);
-  if (item == items.end()) {
-    std::terminate();
+const ChatLogItem* SessionChatLog::at(ChatLogIdx idx) const {
+  auto it = items.find(idx);
+  if (it == items.end()) {
+      qWarning()<<"Unable to find ChatLogItem:" << idx.get();
+      return nullptr;
   }
-
-  return item->second;
+  return &(it->second);
 }
 
 SearchResult
@@ -328,17 +328,19 @@ void SessionChatLog::insertFileAtIdx(ChatLogIdx idx, const ToxPk &sender,
  */
 void SessionChatLog::onMessageReceived(const ToxPk &sender,
                                        const Message &message) {
-  qDebug()<<"onMessageReceived sender:"<<sender.toString() ;
-  qDebug()<<"from:"<< message.from.toString();
+  qDebug()<<__func__<< "msgId:"<<message.id;
+  qDebug()<<"sender:"<<sender.toString() ;
+  qDebug()<<"from:"<< message.from;
+  qDebug()<<"displayName:"<< message.displayName;
   qDebug()<<"msg:"<< message.content;
 
-  auto messageIdx = nextIdx++;
+  auto messageIdx = getNextIdx(message.id);
 
   ChatLogMessage chatLogMessage;
   chatLogMessage.state = MessageState::complete;
   chatLogMessage.message = message;
 
-  ToxPk pk(lib::messenger::FriendId(message.from));
+  ToxPk pk(message.from);
   items.emplace(messageIdx, ChatLogItem(pk, message.displayName, chatLogMessage));
 
   emit itemUpdated(messageIdx);
@@ -351,7 +353,8 @@ void SessionChatLog::onMessageReceived(const ToxPk &sender,
  */
 void SessionChatLog::onMessageSent(DispatchedMessageId id,
                                    const Message &message) {
-  auto messageIdx = nextIdx++;
+
+  auto messageIdx = getNextIdx(message.id);
 
   ChatLogMessage chatLogMessage;
   chatLogMessage.state = MessageState::pending;
@@ -447,5 +450,21 @@ void SessionChatLog::onFileTransferRemotePausedUnpaused(const ToxPk &sender,
 void SessionChatLog::onFileTransferBrokenUnbroken(const ToxPk &sender,
                                                   const ToxFile &file,
                                                   bool /*broken*/) {
-  onFileUpdated(sender, file);
+    onFileUpdated(sender, file);
+}
+
+ChatLogIdx SessionChatLog::getNextIdx(QString msgId)
+{
+    if(msgId.isEmpty()){
+        qWarning() << "msgId is empty.";
+        return ++nextIdx;
+    }
+    auto idx = id2IdxMap.value(msgId, ChatLogIdx(0));
+    if(idx.get()==0){
+        idx = ++nextIdx;
+        id2IdxMap.insert(msgId, idx);
+    }
+
+    qDebug()<<"make next msgId:"<< msgId<< " idx:" << idx.get();
+    return idx;
 }

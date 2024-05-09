@@ -24,33 +24,35 @@ GroupMessageDispatcher::GroupMessageDispatcher(
   processor.enableMentions();
 }
 
-std::pair<DispatchedMessageId, DispatchedMessageId>
+std::pair<DispatchedMessageId, SentMessageId>
 GroupMessageDispatcher::sendMessage(bool isAction, QString const &content,
                                     bool encrypt) {
-  const auto firstMessageId = nextMessageId;
-  auto lastMessageId = firstMessageId;
+    Q_UNUSED(encrypt);
 
-  for (auto const &message : processor.processOutgoingMessage(isAction, content)) {
+//  const auto firstMessageId = nextMessageId;
+//  auto lastMessageId = firstMessageId;
+
+  for (auto &message : processor.processOutgoingMessage(isAction, content)) {
     auto messageId = nextMessageId++;
-    lastMessageId = messageId;
+//    lastMessageId = messageId;
 
+    SentMessageId msgId;
     if (message.isAction) {
-      messageSender.sendGroupAction(group.getId(), message.content);
+      msgId = messageSender.sendGroupAction(group.getId(), message.content);
     } else {
-      messageSender.sendGroupMessage(group.getId(), message.content);
+      msgId = messageSender.sendGroupMessage(group.getId(), message.content);
     }
+    qDebug() <<"sent the msg:"<< messageId.get() <<"=>msgId"<<msgId;
+    message.id = msgId;
+    sentMsgIdMap.insert(msgId, messageId);
 
-    // Emit both signals since we do not have receipts for groups
-    //
-    // NOTE: We could in theory keep track of our sent message and wait for
-    // toxcore to send it back to us to indicate a completed message, but
-    // this isn't necessarily the design of toxcore and associating the
-    // received message back would be difficult.
     emit this->messageSent(messageId, message);
     emit this->messageComplete(messageId);
+
+    return std::make_pair(messageId, msgId);
   }
 
-  return std::make_pair(firstMessageId, lastMessageId);
+  return {};
 }
 
 /**
@@ -61,12 +63,18 @@ GroupMessageDispatcher::sendMessage(bool isAction, QString const &content,
  */
 void GroupMessageDispatcher::onMessageReceived(const ToxPk &sender,
                                                bool isAction,
+                                               QString const &id,
                                                QString const &content,
-                                               QString const& nick,
+                                               QString const &nick,
                                                QString const &from,
                                                const QDateTime &time) {
 
-  //qDebug() << "onMessageReceived nick:" << nick<< "msg:" << content;
+  qDebug() <<__func__ << "id:" << id << "nick:" << nick<< "msg:" << content;
+  if(sentMsgIdMap.contains(id)){
+      qWarning() << "is sent message!";
+      return;
+  }
+
   auto self = idHandler.getSelfId().toString();
   if (self == from) {
     qWarning() << "Is self message (from is mine).";
@@ -81,11 +89,11 @@ void GroupMessageDispatcher::onMessageReceived(const ToxPk &sender,
 //    return;
 //  }
 
-  if (groupSettings.getBlackList().contains(sender.toString())) {
-    qDebug() << "onGroupMessageReceived: Filtered:" << sender.toString();
-    return;
-  }
+//  if (groupSettings.getBlackList().contains(sender.toString())) {
+//    qDebug() << "the sender is in backlist" << sender.toString();
+//    return;
+//  }
 
-  auto msg = processor.processIncomingMessage(isAction, content, from, time, nick);
+  auto msg = processor.processIncomingMessage(isAction, id, content, from, time, nick);
   emit messageReceived(sender, msg);
 }

@@ -31,10 +31,8 @@ public:
     FriendMessageDispatcher(Friend& f, MessageProcessor processor,
                             ICoreFriendMessageSender& messageSender);
 
-    std::pair<DispatchedMessageId, DispatchedMessageId> sendMessage(bool isAction,
-                                                                    const QString& content,
-                                                                    bool encrypt = false) override;
-    void onMessageReceived(bool isAction, const lib::messenger::IMMessage &msg);
+    std::pair<DispatchedMessageId, SentMessageId> sendMessage(bool isAction, const QString& content, bool encrypt = false) override;
+    void onMessageReceived(bool isAction, const FriendMessage &msg);
     void onReceiptReceived(ReceiptNum receipt);
     void clearOutgoingMessages();
 private slots:

@@ -55,7 +55,7 @@ class FriendWidget : public GenericChatroomWidget
     const Contact* getContact() const override final;
 
     void search(const QString& searchString, bool hide = false);
-    void setRecvMessage(const lib::messenger::IMMessage &message,
+    void setRecvMessage(const FriendMessage &message,
                         bool isAction);
     void updateStatusLight() override final;
 
