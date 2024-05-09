@@ -44,6 +44,7 @@ PluginManagerForm::PluginManagerForm(QWidget *parent)
         [&](backend::ResPage<ok::backend::PluginInfo> &resList) {
           int i = 0;
           for (auto &item : resList.data.list) {
+            qDebug() <<"add plugin:" << item.name;
             add(item, i++);
           }
         },
@@ -74,7 +75,7 @@ void PluginManagerForm::createPlugin(ok::backend::PluginInfo &info, int i) {
   ui->listWidget->addItem(aitem);
   ui->listWidget->setItemWidget(aitem, pitem);
 
-  delayCaller_->call(i + 1 * 100, [&]() { emit pitem->loadLogo(); });
+
 }
 
 void PluginManagerForm::setPluginInfo(ok::backend::PluginInfo &info) {
