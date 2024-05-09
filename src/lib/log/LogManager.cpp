@@ -73,7 +73,7 @@ void logMessageHandler(QtMsgType type,
   line += ": " + msg + "\n";
   QByteArray lineBytes = line.toUtf8();
   fwrite(lineBytes.constData(), 1, lineBytes.size(), stdout);
-
+  fflush(stdout);
   QFile *logFilePtr = logFilePointer.loadRelaxed();
   if (logFilePtr) {
     logFilePtr->write(lineBytes);
