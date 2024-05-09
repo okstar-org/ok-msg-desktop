@@ -670,7 +670,10 @@ void Core::onGroupMessage(const QString groupId,
                           const lib::messenger::PeerId peerId,
                           const lib::messenger::IMMessage message) {
 
-  qDebug() <<__func__<< "groupId:" << groupId<<message.body;
+  qDebug() <<__func__
+          << "groupId:" << groupId
+          << "from:" << peerId.toString()
+          << "body:" << message.body;
 
   bool isAction = false;
   GroupMessage msg;
@@ -681,6 +684,8 @@ void Core::onGroupMessage(const QString groupId,
           msg.content=message.body;
           msg.timestamp=message.time;
           msg.displayName=message.from;
+          msg.nick=peerId.resource;
+
 
   emit groupMessageReceived(msg);
 }
