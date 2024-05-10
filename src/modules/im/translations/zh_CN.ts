@@ -261,12 +261,8 @@ which may lead to problems with video calls.</source>
         <translation>选择自动接受目录</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the public key of your friend, use it to verify their identity via another channel. You can not send this to other people so they can add this contact.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;这是您朋友的公钥，使用它通过其它渠道来验证朋友的身份。您不能将该密钥发送给其他人以使他们可以添加该朋友为联系人。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Public key (not ToxID):</source>
-        <translation>公钥（不是 ToxID）：</translation>
+        <source>Account:</source>
+        <translation>帐号：</translation>
     </message>
     <message>
         <source>Confirmation</source>
@@ -280,6 +276,14 @@ which may lead to problems with video calls.</source>
         <source>Failed to remove chat history with %1!</source>
         <translation>移除与 %1 的聊天记录失败！</translation>
     </message>
+    <message>
+        <source>Clear history:</source>
+        <translation>清空历史记录：</translation>
+    </message>
+<message>
+<source>Clear</source>
+<translation>清空</translation>
+</message>
 </context>
 <context>
     <name>AboutSettings</name>

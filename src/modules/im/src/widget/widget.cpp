@@ -925,16 +925,7 @@ void Widget::hideMainForms(GenericChatroomWidget *chatroomWidget) {
 }
 
 void Widget::setUsername(const QString &username) {
-  if (username.isEmpty()) {
-//    ui->nameLabel->setText(tr("Your name"));
-//    ui->nameLabel->setToolTip(tr("Your name"));
-  } else {
-//    ui->nameLabel->setText(username);
-//    ui->nameLabel->setToolTip(Qt::convertFromPlainText(
-//        username, Qt::WhiteSpaceNormal)); // for overlength names
-  }
 
-  sharedMessageProcessorParams.onUserNameSet(username);
 }
 
 void Widget::onStatusMessageChanged(const QString &newStatusMessage) {
@@ -1047,7 +1038,8 @@ void Widget::dispatchFile(ToxFile file) {
 
   const auto senderPk =
       (file.direction == ToxFile::SENDING) ? core->getSelfPublicKey() : pk;
-  friendChatLogs[pk]->onFileUpdated(senderPk, file);
+
+  //  friendChatLogs[pk]->onFileUpdated(senderPk, file);
 }
 
 void Widget::dispatchFileWithBool(ToxFile file, bool) { dispatchFile(file); }

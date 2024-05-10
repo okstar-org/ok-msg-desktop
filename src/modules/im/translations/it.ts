@@ -261,11 +261,7 @@ questo può causare problemi con le chiamate video.</translation>
         <translation>Scegli dove salvare i file scaricati automaticamente</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the public key of your friend, use it to verify their identity via another channel. You can not send this to other people so they can add this contact.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Questa è la chiave pubblica del tuo amico, usatela per verificare la sua identità attraverso un altro canale. Non è possibile inviarla ad altre persone in modo che possano aggiungere questo contatto.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Public key (not ToxID):</source>
+        <source>Account:</source>
         <translation>Chiave pubblica (non ToxID):</translation>
     </message>
     <message>

@@ -11,11 +11,9 @@
  */
 
 #include "friendlist.h"
-#include "src/core/contactid.h"
 #include "src/core/toxpk.h"
 #include "src/model/friend.h"
 #include "src/persistence/settings.h"
-#include <QDebug>
 #include <QHash>
 #include <QMenu>
 
@@ -27,7 +25,8 @@ Friend *FriendList::addFriend(const ToxPk &friendPk, bool isFriend) {
 
   auto friendChecker = friendList.find(friendPk);
   if (friendChecker != friendList.end()) {
-    qWarning() << "sendFriendRequest: friendPk already taken";
+    qWarning() << "is existing friend.";
+    return friendChecker.value();
   }
 
   QString alias = Settings::getInstance().getFriendAlias(friendPk);

@@ -222,6 +222,13 @@ bool Messenger::connectIM( ) {
             }
           });
 
+  connect(_im, &IM::receiveFriendMessageSession, this,
+          [&](QString friendId, QString sid) -> void {
+            for (auto handler : friendHandlers) {
+              handler->onFriendMessageSession(friendId, sid);
+            }
+          });
+
   connect(_im, &IM::receiveNicknameChange, this,
           [&](QString friendId, QString nickname) {
             for (auto handler : friendHandlers) {

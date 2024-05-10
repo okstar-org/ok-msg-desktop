@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>AboutFriendForm</class>
- <widget class="QDialog" name="AboutFriendForm">
+ <widget class="QWidget" name="AboutFriendForm">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>506</width>
-    <height>521</height>
+    <width>581</width>
+    <height>578</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <layout class="QGridLayout" name="gridLayout">
+      <layout class="QGridLayout" name="avatarLayout">
        <item row="0" column="1">
         <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
@@ -105,25 +105,49 @@
     </layout>
    </item>
    <item>
-    <layout class="QFormLayout" name="formLayout">
-     <property name="labelAlignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label_5">
-       <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the public key of your friend, use it to verify their identity via another channel. You can not send this to other people so they can add this contact.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <layout class="QGridLayout" name="infoLayout">
+     <item row="6" column="1">
+      <widget class="QCheckBox" name="autoacceptfile">
+       <property name="accessibleDescription">
+        <string>Automatically accept files from contact if set</string>
        </property>
+       <property name="text">
+        <string>Auto accept files</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="accountLabel">
        <property name="layoutDirection">
         <enum>Qt::LeftToRight</enum>
        </property>
        <property name="text">
-        <string>Public key (not ToxID):</string>
+        <string>Account:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0">
+      <widget class="QLabel" name="autoAcceptCallLabel">
+       <property name="text">
+        <string>Auto accept call:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="9" column="1">
+      <widget class="QPushButton" name="selectSaveDir">
+       <property name="text">
+        <string>Auto accept for this contact is disabled</string>
        </property>
       </widget>
      </item>
      <item row="0" column="1">
-      <widget class="QLineEdit" name="publicKey">
+      <widget class="QLineEdit" name="friendId">
        <property name="enabled">
         <bool>true</bool>
        </property>
@@ -150,78 +174,46 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label_4">
+     <item row="5" column="1">
+      <widget class="QComboBox" name="autoacceptcall">
+       <item>
+        <property name="text">
+         <string>Manual</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Audio</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Audio + Video</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="9" column="0">
+      <widget class="QLabel" name="saveFileLabel">
+       <property name="text">
+        <string>Default directory to save files:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="aliasLabel">
        <property name="text">
         <string>Used aliases:</string>
        </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QLabel" name="aliases">
-       <property name="text">
-        <string>HISTORY OF ALIASES</string>
-       </property>
-       <property name="textFormat">
-        <enum>Qt::PlainText</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="0" colspan="2">
-      <widget class="QCheckBox" name="autoacceptfile">
-       <property name="accessibleDescription">
-        <string>Automatically accept files from contact if set</string>
-       </property>
-       <property name="text">
-        <string>Auto accept files</string>
-       </property>
-      </widget>
-     </item>
-     <item row="8" column="0">
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Default directory to save files:</string>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
      </item>
      <item row="8" column="1">
-      <widget class="QPushButton" name="selectSaveDir">
-       <property name="text">
-        <string>Auto accept for this contact is disabled</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0" colspan="2">
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
-        <widget class="QLabel" name="label_2">
-         <property name="text">
-          <string>Auto accept call:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QComboBox" name="autoacceptcall">
-         <item>
-          <property name="text">
-           <string>Manual</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Audio</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Audio + Video</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item row="4" column="0" colspan="2">
       <widget class="QCheckBox" name="autogroupinvite">
        <property name="accessibleDescription">
         <string>Automatically accept group chat invitations from this contact if set.</string>
@@ -231,14 +223,24 @@
        </property>
       </widget>
      </item>
+     <item row="10" column="1">
+      <widget class="QPushButton" name="removeHistory">
+       <property name="text">
+        <string>Clear</string>
+       </property>
+      </widget>
+     </item>
+     <item row="10" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Clear history:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
     </layout>
-   </item>
-   <item>
-    <widget class="QPushButton" name="removeHistory">
-     <property name="text">
-      <string>Remove history (operation can not be undone!)</string>
-     </property>
-    </widget>
    </item>
    <item>
     <widget class="QGroupBox" name="groupBox">
@@ -275,11 +277,8 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>publicKey</tabstop>
-  <tabstop>autoacceptcall</tabstop>
+  <tabstop>friendId</tabstop>
   <tabstop>autoacceptfile</tabstop>
-  <tabstop>selectSaveDir</tabstop>
-  <tabstop>removeHistory</tabstop>
   <tabstop>note</tabstop>
  </tabstops>
  <resources/>

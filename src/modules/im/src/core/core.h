@@ -90,7 +90,7 @@ public:
   ToxPk getGroupPeerPk(QString groupId, QString peerId) const override;
   QStringList getGroupPeerNames(QString groupId) const override;
   bool getGroupAvEnabled(QString groupId) const override;
-  ToxPk getFriendPublicKey(QString friendNumber) const;
+  inline ToxPk getFriendPublicKey(QString friendNumber) const;
   QString getFriendUsername(QString friendNumber) const;
   void getFriendInfo(const QString& friendNumber) const;
   Status::Status getFriendStatus(const QString& friendNumber) const;
@@ -180,17 +180,20 @@ signals:
 
   void saveRequest();
 
-  /**
-   * @deprecated prefer signals using ToxPk
-   */
 
   void fileAvatarOfferReceived(QString friendId,  //
                                QString fileId,    //
                                const QByteArray &avatarHash);
 
+  void friendMessageSessionReceived(const ToxPk &friendId,//
+                             const QString &sid);
+
+
   void friendMessageReceived(const ToxPk &friendId,//
                              const FriendMessage &message, //
                              bool isAction);
+
+
 
   void friendAdded(const ToxPk &friendPk, bool isFriend);
   void friendAddedDone();
@@ -314,6 +317,9 @@ private:
 
   virtual void onFriendMessage(QString friendId,
                                lib::messenger::IMMessage message) override;
+
+  virtual void onFriendMessageSession(QString friendId,
+                               QString sid) override;
 
   virtual void onFriendChatState(QString friendId,int state) override;
 

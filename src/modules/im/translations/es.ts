@@ -261,11 +261,7 @@ se pueden producir problemas con las videollamadas.</translation>
         <translation>Seleccione un directorio y aceptar automáticamente</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the public key of your friend, use it to verify their identity via another channel. You can not send this to other people so they can add this contact.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Esta es la clave pública de su amigo, utilícela para verificar su identidad a través de otro canal. No puedes enviarla a otras personas para que puedan agregar este contacto.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Public key (not ToxID):</source>
+        <source>Account:</source>
         <translation>Clave pública (no el ToxID):</translation>
     </message>
     <message>

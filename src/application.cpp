@@ -159,7 +159,8 @@ void Application::createLoginUI() {
 
 void Application::deleteLoginUI() {
   disconnect(m_loginWindow.get());
-  m_loginWindow.reset();
+  m_loginWindow->close();
+  m_loginWindow->deleteLater();
 }
 
 void Application::closeLoginUI() {

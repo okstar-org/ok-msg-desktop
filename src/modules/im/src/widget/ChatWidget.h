@@ -17,8 +17,9 @@
 #ifndef CHATWIDGET_H
 #define CHATWIDGET_H
 
+#include "MainLayout.h"
 #include "contentlayout.h"
-#include "friendlistwidget.h"
+#include "MessageSessionListWidget.h"
 #include <QActionGroup>
 #include <QPushButton>
 #include <QWidget>
@@ -30,9 +31,9 @@ class ChatWidget;
 class CircleWidget;
 class GroupInviteForm;
 class AddFriendForm;
+class MessageSessionListWidget;
 
-
-class ChatWidget : public QWidget {
+class ChatWidget : public MainLayout {
   Q_OBJECT
 public:
 
@@ -41,8 +42,9 @@ public:
   ChatWidget(QWidget *parent = nullptr);
   ~ChatWidget();
 
-  [[nodiscard]] ContentLayout *getContentLayout() const {
-    return contentLayout;
+  [[nodiscard]]  ContentLayout *getContentLayout() const override {
+        assert(contentLayout);
+      return contentLayout.get();
   }
   void connectCircleWidget();
   void searchCircle(CircleWidget &circleWidget);
@@ -53,8 +55,9 @@ protected:
   void showEvent(QShowEvent*) override;
 private:
   Ui::ChatWidget *ui;
-  ContentLayout *contentLayout;
-  FriendListWidget *contactListWidget;
+  std::unique_ptr<QWidget> contentWidget;
+  std::unique_ptr<ContentLayout> contentLayout;
+  std::unique_ptr<MessageSessionListWidget> contactListWidget;
   CircleWidget *circleWidget;
 
   Core *core;
@@ -73,9 +76,9 @@ private:
   GroupInviteForm *groupInviteForm;
   uint32_t unreadGroupInvites;
   QPushButton *friendRequestsButton;
-    QPushButton *groupInvitesButton;
+  QPushButton *groupInvitesButton;
 
-   std::unique_ptr< AddFriendForm > addFriendForm;
+  std::unique_ptr< AddFriendForm > addFriendForm;
 
       QMenu *filterMenu;
 
@@ -117,12 +120,14 @@ public slots:
   void onStatusMessageSet(const QString &statusMessage) ;
 
 
-  void onFriendAdded(const ToxPk &friendPk, bool isFriend);
+
   void onFriendUsernameChanged(const ToxPk &friendPk, const QString &username);
 
   void onFriendStatusChanged(const ToxPk &friendPk, Status::Status status);
   void onFriendStatusMessageChanged(const ToxPk &friendPk,
                                     const QString &message);
+
+  void onFriendMessageSessionReceived(const ToxPk &friendPk, const QString &sid);
 
   void onFriendMessageReceived(const ToxPk &friendPk,
                                const FriendMessage &message,

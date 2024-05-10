@@ -216,8 +216,8 @@ std::unique_ptr<Client> IM::makeClient() {
   disco->addFeature(XMLNS_JINGLE_APPS_GROUP);
   disco->addFeature(XMLNS_JINGLE_MESSAGE);
   // NICK
-//  disco->addFeature(XMLNS_NICKNAME);
-//  disco->addFeature(XMLNS_NICKNAME + "+notify");
+  disco->addFeature(XMLNS_NICKNAME);
+  disco->addFeature(XMLNS_NICKNAME + "+notify");
 
   client->setTls(TLSPolicy::TLSDisabled);
   client->setCompression(false);
@@ -508,10 +508,12 @@ void IM::makeId(QString &id) {
 
 // Handle Message session
 void IM::handleMessageSession(MessageSession *session) {
-
+  auto from = qstring(session->target().full());
+  auto sid =  qstring(session->threadID());
   qDebug() << __func__
-           << "from" << qstring(session->target().full())
-           << "session:" << session->threadID().c_str();
+           << "from" << from
+           << "sid:" << sid;
+
   // 放入最新的session
 
   // m_messageEventFilter = std::make_unique<MessageEventFilter>(session);
@@ -534,14 +536,16 @@ void IM::handleMessageSession(MessageSession *session) {
   //  sessionMap.emplace(std::pair(jid.bare(), session));
     session->registerMessageHandler(this);
 
+    emit receiveFriendMessageSession(qstring(session->target().bare()), sid);
+
   // 聊天状态过滤器，获取：正在中等输入状态
-  if (m_chatStateFilters.size() > 1000) {
-    return;
-  }
-  auto csf = new ChatStateFilter(session);
-  csf->registerChatStateHandler(this);
-  m_chatStateFilters.emplace(session->target().bare(), csf);
-  // TODO delete csf
+//  if (m_chatStateFilters.size() > 1000) {
+//    return;
+//  }
+//  auto csf = new ChatStateFilter(session);
+//  csf->registerChatStateHandler(this);
+//  m_chatStateFilters.emplace(session->target().bare(), csf);
+//  // TODO delete csf
 }
 
 void IM::handleMessage(const gloox::Message &msg, MessageSession *session) {

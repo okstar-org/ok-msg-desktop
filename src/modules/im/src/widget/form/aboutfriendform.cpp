@@ -20,13 +20,11 @@
 #include <QMessageBox>
 
 AboutFriendForm::AboutFriendForm(std::unique_ptr<IAboutFriend> _about, QWidget* parent)
-    : QDialog(parent)
+    : QWidget(parent)
     , ui(new Ui::AboutFriendForm)
     , about{std::move(_about)}
 {
     ui->setupUi(this);
-    ui->label_4->hide();
-    ui->aliases->hide();
 
     connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &AboutFriendForm::onAcceptedClicked);
     connect(ui->autoacceptfile, &QCheckBox::clicked, this, &AboutFriendForm::onAutoAcceptDirClicked);
@@ -54,8 +52,7 @@ AboutFriendForm::AboutFriendForm(std::unique_ptr<IAboutFriend> _about, QWidget* 
     const QString name = about->getName();
     setWindowTitle(name);
     ui->userName->setText(name);
-    ui->publicKey->setText(about->getPublicKey().toString());
-    ui->publicKey->setCursorPosition(0); // scroll textline to left
+    ui->friendId->setText(about->getPublicKey().toString());
     ui->note->setPlainText(about->getNote());
     ui->statusMessage->setText(about->getStatusMessage());
     ui->avatar->setPixmap(about->getAvatar());
@@ -146,4 +143,9 @@ void AboutFriendForm::onRemoveHistoryClicked()
 AboutFriendForm::~AboutFriendForm()
 {
     delete ui;
+}
+
+void AboutFriendForm::setName(const QString &name)
+{
+    ui->userName->setText(name);
 }

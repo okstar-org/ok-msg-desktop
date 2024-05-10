@@ -325,9 +325,9 @@ private:
   // Eventual goal is to have a notification manager that works on
   // Messages hooked up to message dispatchers but we aren't there
   // yet
-  QMap<ToxPk, QMetaObject::Connection> friendAlertConnections;
-  QMap<ToxPk, std::shared_ptr<ChatHistory>> friendChatLogs;
-  QMap<ToxPk, std::shared_ptr<FriendChatroom>> friendChatrooms;
+//  QMap<ToxPk, QMetaObject::Connection> friendAlertConnections;
+//  QMap<ToxPk, std::shared_ptr<ChatHistory>> friendChatLogs;
+//  QMap<ToxPk, std::shared_ptr<FriendChatroom>> friendChatrooms;
 //  QMap<ToxPk, ChatForm *> chatForms;
 
 //  QMap<GroupId, GroupWidget *> groupWidgets;
@@ -338,12 +338,12 @@ private:
   // Eventual goal is to have a notification manager that works on
   // Messages hooked up to message dispatchers but we aren't there
   // yet
-  QMap<GroupId, QMetaObject::Connection> groupAlertConnections;
-  QMap<GroupId, std::shared_ptr<IChatLog>> groupChatLogs;
+//  QMap<GroupId, QMetaObject::Connection> groupAlertConnections;
+//  QMap<GroupId, std::shared_ptr<IChatLog>> groupChatLogs;
 //  QMap<GroupId, std::shared_ptr<GroupChatroom>> groupChatrooms;
 //  QMap<GroupId, QSharedPointer<GroupChatForm>> groupChatForms;
 
-  MessageProcessor::SharedParams sharedMessageProcessorParams;
+
 
 #if DESKTOP_NOTIFICATIONS
   DesktopNotify notifier;

@@ -22,7 +22,6 @@
 #include <QAtomicPointer>
 #include <QDebug>
 #include <QDir>
-#include <QMutex>
 #include <QMutexLocker>
 #include <QThread>
 
@@ -44,7 +43,7 @@ void logMessageHandler(QtMsgType type,
   }
 
   // Time should be in UTC to save user privacy on log sharing
-  QString time = QDateTime::currentDateTime().toString("yy-MM-dd HH:mm:ss.zzz");
+  QString time = ::base::Times::formatTime(::base::Times::now(), "yy-MM-dd HH:mm:ss.zzz");
   QString line = QString("[%1] [%2] [%3:%4] - ")
                      .arg(time)
                      .arg(QThread::currentThread()->objectName())
@@ -89,7 +88,7 @@ LogManager::LogManager() {
   qDebug() << "Log file dir is:" << logFileDir;
 
   logName = APPLICATION_NAME "-" +
-                    ok::base::Times::now().toString("yyyyMMddHHmmss") + "-" +
+                    ::base::Times::formatTime(::base::Times::now(), "yyyyMMddHHmmss") + "-" +
                     QString::number(base::OkProcess::selfPid()) + ".log";
 
   QString logFilePath = logFileDir.path() + QDir::separator() + logName;
@@ -101,9 +100,7 @@ LogManager::LogManager() {
 }
 
 LogManager::~LogManager() {
-  if(file){
-    file->close();
-  }
+  Destroy();
 }
 
 const LogManager &LogManager::Instance() {
@@ -115,6 +112,7 @@ const LogManager &LogManager::Instance() {
 
 void LogManager::Destroy() {
   delete log;
+  log= nullptr;
 }
 
 } // namespace lib

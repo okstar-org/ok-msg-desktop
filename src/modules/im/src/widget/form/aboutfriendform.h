@@ -13,7 +13,7 @@
 #ifndef ABOUT_USER_FORM_H
 #define ABOUT_USER_FORM_H
 
-#include "src/model/about/iaboutfriend.h"
+#include "src/model/aboutfriend.h"
 
 #include <QDialog>
 #include <QPointer>
@@ -24,13 +24,15 @@ namespace Ui {
 class AboutFriendForm;
 }
 
-class AboutFriendForm : public QDialog
+class AboutFriendForm : public QWidget
 {
     Q_OBJECT
 
 public:
     AboutFriendForm(std::unique_ptr<IAboutFriend> about, QWidget* parent = nullptr);
     ~AboutFriendForm();
+
+    void setName(const QString &name);
 
 private:
     Ui::AboutFriendForm* ui;

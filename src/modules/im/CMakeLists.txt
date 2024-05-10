@@ -48,9 +48,9 @@ qt5_wrap_ui(
         ${PROJECT_NAME}_FORMS
         src/mainwindow.ui
         src/chatlog/content/filetransferwidget.ui
-        src/widget/chat.ui
+        src/widget/ChatWidget.ui
         src/widget/ContactWidget.ui
-        src/widget/about/aboutfriendform.ui
+        src/widget/form/aboutfriendform.ui
         src/widget/form/loadhistorydialog.ui
         src/widget/form/profileform.ui
         src/widget/tool/removefrienddialog.ui
@@ -146,9 +146,9 @@ set(${PROJECT_NAME}_SOURCES
         src/grouplist.h
         src/ipc.cpp
         src/ipc.h
-        src/model/about/aboutfriend.cpp
-        src/model/about/aboutfriend.h
-        src/model/about/iaboutfriend.h
+        src/model/aboutfriend.cpp
+        src/model/aboutfriend.h
+        src/model/iaboutfriend.h
         src/model/chatroom/chatroom.h
         src/model/chatroom/friendchatroom.cpp
         src/model/chatroom/friendchatroom.h
@@ -237,8 +237,8 @@ set(${PROJECT_NAME}_SOURCES
         src/video/videosource.h
         src/video/videosurface.cpp
         src/video/videosurface.h
-        src/widget/about/aboutfriendform.cpp
-        src/widget/about/aboutfriendform.h
+        src/widget/form/aboutfriendform.cpp
+        src/widget/form/aboutfriendform.h
         src/widget/categorywidget.cpp
         src/widget/categorywidget.h
         src/widget/chatformheader.cpp
@@ -260,6 +260,12 @@ set(${PROJECT_NAME}_SOURCES
         src/widget/searchtypes.h
         src/widget/ContactWidget.h
         src/widget/ContactWidget.cpp
+        src/widget/MainLayout.h
+        src/widget/MainLayout.cpp
+        src/widget/MessageSessionListWidget.h
+        src/widget/MessageSessionListWidget.cpp
+        src/widget/MessageSessionWidget.h
+        src/widget/MessageSessionWidget.cpp
         src/widget/form/addfriendform.cpp
         src/widget/form/addfriendform.h
         src/widget/form/friendform.h

@@ -837,6 +837,8 @@ signals:
 
   void receiveFriendStatus(QString friendId, int status);
 
+  void receiveFriendMessageSession(QString friendId, QString sid);
+
   void receiveFriendMessage(QString peerId, IMMessage);
 
   void receiveNicknameChange(QString friendId, QString nickname);

@@ -548,6 +548,12 @@ void Core::onFriendRequest(Tox *, const QString &cFriendPk,
   //                                                        requestMessage);
 }
 
+void Core::onFriendMessageSession(QString friendId, QString sid) {
+    qDebug() <<__func__<< "friend:" << friendId << "sid:" << sid;
+    emit friendMessageSessionReceived(ToxPk(friendId), sid);
+}
+
+
 void Core::onFriendMessage(QString friendId,
                            lib::messenger::IMMessage message) {
   qDebug() <<__func__<< "friend:" << friendId;
@@ -1580,7 +1586,7 @@ bool Core::hasFriendWithPublicKey(const ToxPk &publicKey) const {
 /**
  * @brief Get the public key part of the ToxID only
  */
-ToxPk Core::getFriendPublicKey(QString friendNumber) const {
+inline ToxPk Core::getFriendPublicKey(QString friendNumber) const {
   //qDebug() << "getFriendPublicKey" << friendNumber;
   //  QMutexLocker ml{&coreLoopLock};
   //  uint8_t rawid[TOX_PUBLIC_KEY_SIZE];

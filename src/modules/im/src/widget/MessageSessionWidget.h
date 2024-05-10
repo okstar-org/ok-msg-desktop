@@ -10,8 +10,8 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#ifndef FRIENDWIDGET_H
-#define FRIENDWIDGET_H
+#ifndef OK_MESSAGE_SESSION_WIDGET_H
+#define OK_MESSAGE_SESSION_WIDGET_H
 
 #include "ContentWidget.h"
 #include "genericchatroomwidget.h"
@@ -32,14 +32,14 @@ class ChatHistory;
 class ContentDialog;
 class ContentLayout;
 class Widget;
-class AboutFriendForm;
+class FriendWidget;
 
-class FriendWidget : public GenericChatroomWidget
+class MessageSessionWidget : public GenericChatroomWidget
 {
     Q_OBJECT
 
   public:
-    FriendWidget(ContentLayout* layout, const ToxPk &friendPk, bool isFriend, bool compact);
+    MessageSessionWidget(ContentLayout* layout, const ToxPk &friendPk, bool isFriend, bool compact);
 
     void contextMenuEvent(QContextMenuEvent* event) override final;
     void setAsActiveChatroom() override final;
@@ -49,7 +49,6 @@ class FriendWidget : public GenericChatroomWidget
     void setStatusMsg(const QString& msg) ;
     void setTyping(bool typing);
     void setName(const QString& name);
-
     void resetEventFlags() override final;
     QString getStatusString() const override final;
 
@@ -62,13 +61,13 @@ class FriendWidget : public GenericChatroomWidget
     void updateStatusLight() override final;
 
 signals:
-    void friendWidgetClicked(FriendWidget* widget);
     void removeFriend(const ToxPk& friendPk);
     void addFriend(const ToxPk& friendPk);
     void copyFriendIdToClipboard(const ToxPk& friendPk);
     void contextMenuCalled(QContextMenuEvent* event);
     void friendHistoryRemoved();
-    void friendWidgetRenamed(FriendWidget* friendWidget);
+    void widgetClicked(MessageSessionWidget* widget);
+    void widgetRenamed(MessageSessionWidget* friendWidget);
     void searchCircle(CircleWidget& circleWidget);
     void updateFriendActivity(Friend& frnd);
 //    void setActive(bool active);
@@ -76,18 +75,16 @@ public slots:
   void onAvatarSet(const ToxPk& friendPk, const std::string pic);
   void onAvatarRemoved(const ToxPk& friendPk);
   void onContextMenuCalled(QContextMenuEvent* event);
-    void do_widgetClicked(GenericChatroomWidget *w);
+  void do_widgetClicked(GenericChatroomWidget *w);
 
 protected:
     virtual void mousePressEvent(QMouseEvent* ev) override;
     virtual void mouseMoveEvent(QMouseEvent* ev) override;
-
+    void setFriendAlias();
     void onSetActive(bool active) override;
   private:
     ContentLayout* contentLayout;
-//    ContentWidget* contentWidget;
-
-    std::unique_ptr<AboutFriendForm> about;
+    ContentWidget* contentWidget;
 
     MessageProcessor::SharedParams sharedMessageProcessorParams;
     std::unique_ptr<FriendMessageDispatcher> messageDispatcher;
