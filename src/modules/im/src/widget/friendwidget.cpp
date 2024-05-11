@@ -457,9 +457,9 @@ void FriendWidget::showDetails() {
       const auto af = new AboutFriend(frnd, &Settings::getInstance());
       std::unique_ptr<IAboutFriend> iabout = std::unique_ptr<IAboutFriend>(af);
       about = std::make_unique<AboutFriendForm>(std::move(iabout), this);
+      connect(about.get(), &AboutFriendForm::histroyRemoved,
+              this, &FriendWidget::friendHistoryRemoved);
   }
-  connect(about.get(), &AboutFriendForm::histroyRemoved,
-          this, &FriendWidget::friendHistoryRemoved);
 
   contentLayout->addWidget(about.get());
   contentLayout->setCurrentWidget(about.get());

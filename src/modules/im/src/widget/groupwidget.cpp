@@ -11,7 +11,7 @@
  */
 
 #include "groupwidget.h"
-
+#include "contentlayout.h"
 #include "contentdialogmanager.h"
 #include "form/groupchatform.h"
 #include "lib/settings/translator.h"
@@ -298,7 +298,19 @@ void GroupWidget::mouseMoveEvent(QMouseEvent *ev) {
 
 void GroupWidget::do_widgetClicked(GenericChatroomWidget *w) {
   //  qDebug() << __func__ << "show group:" << group->getId();
-  contentWidget->showTo(contentLayout);
+//  contentWidget->showTo(contentLayout);
+    showDetails();
+}
+
+void GroupWidget::showDetails(){
+    const auto group = chatroom->getGroup();
+    if(!about){
+        qDebug() << "create about for:" << group->getId();
+        about = std::make_unique<AboutGroupForm>(group->getPersistentId(), this);
+    }
+
+    contentLayout->addWidget(about.get());
+    contentLayout->setCurrentWidget(about.get());
 }
 
 void GroupWidget::updateUserCount(int numPeers) {

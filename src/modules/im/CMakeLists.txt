@@ -51,6 +51,7 @@ qt5_wrap_ui(
         src/widget/ChatWidget.ui
         src/widget/ContactWidget.ui
         src/widget/form/aboutfriendform.ui
+        src/widget/form/aboutgroupform.ui
         src/widget/form/loadhistorydialog.ui
         src/widget/form/profileform.ui
         src/widget/tool/removefrienddialog.ui
@@ -266,6 +267,8 @@ set(${PROJECT_NAME}_SOURCES
         src/widget/MessageSessionListWidget.cpp
         src/widget/MessageSessionWidget.h
         src/widget/MessageSessionWidget.cpp
+        src/widget/form/aboutgroupform.h
+        src/widget/form/aboutgroupform.cpp
         src/widget/form/addfriendform.cpp
         src/widget/form/addfriendform.h
         src/widget/form/friendform.h

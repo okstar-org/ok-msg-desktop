@@ -25,6 +25,7 @@
 #include "src/model/groupmessagedispatcher.h"
 #include "src/model/sessionchatlog.h"
 #include <memory>
+#include <src/widget/form/aboutgroupform.h>
 
 class GroupWidget final : public GenericChatroomWidget {
   Q_OBJECT
@@ -50,7 +51,7 @@ public:
   ContentDialog * addGroupDialog(Group *group);
   ContentDialog * createContentDialog()const ;
   void setRecvMessage(const GroupMessage& msg);
-
+  void showDetails();
   void reloadTheme() ;
 
 signals:
@@ -84,6 +85,7 @@ private:
   std::unique_ptr<GroupChatroom> chatroom;
   std::unique_ptr<GroupChatForm> chatform;
   std::unique_ptr<SessionChatLog> chatLog;
+  std::unique_ptr<AboutGroupForm> about;
 };
 
 #endif // GROUPWIDGET_H
