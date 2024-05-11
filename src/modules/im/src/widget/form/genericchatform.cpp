@@ -496,9 +496,9 @@ void GenericChatForm::reloadTheme() {
   msgEdit->setStyleSheet(Style::getStylesheet("msgEdit/msgEdit.css") +
                          fontToCss(s.getChatMessageFont(), "QTextEdit"));
 
-  chatLog->setStyleSheet(Style::getStylesheet("chatArea/chatArea.css"));
+//  chatLog->setStyleSheet(Style::getStylesheet("chatArea/chatArea.css"));
   headWidget->setStyleSheet(Style::getStylesheet("chatArea/chatHead.css"));
-  chatLog->reloadTheme();
+//  chatLog->reloadTheme();
   headWidget->reloadTheme();
   searchForm->reloadTheme();
 

@@ -176,8 +176,8 @@ which may lead to problems with video calls.</source>
 <context>
     <name>AboutFriendForm</name>
     <message>
-        <source>Dialog</source>
-        <translation>对话框</translation>
+        <source>Send message</source>
+        <translation>发送消息</translation>
     </message>
     <message>
         <source>username</source>

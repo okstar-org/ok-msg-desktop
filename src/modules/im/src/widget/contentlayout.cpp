@@ -27,28 +27,28 @@ ContentLayout::ContentLayout(QWidget* parent)
 {
     init();
 
-    QPalette palette = parent->palette();
-    palette.setBrush(QPalette::WindowText, QColor(0, 0, 0));
-    palette.setBrush(QPalette::Button, QColor(255, 255, 255));
-    palette.setBrush(QPalette::Light, QColor(255, 255, 255));
-    palette.setBrush(QPalette::Midlight, QColor(255, 255, 255));
-    palette.setBrush(QPalette::Dark, QColor(127, 127, 127));
-    palette.setBrush(QPalette::Mid, QColor(170, 170, 170));
-    palette.setBrush(QPalette::Text, QColor(0, 0, 0));
-    palette.setBrush(QPalette::BrightText, QColor(255, 255, 255));
-    palette.setBrush(QPalette::ButtonText, QColor(0, 0, 0));
-    palette.setBrush(QPalette::Base, QColor(255, 255, 255));
-    palette.setBrush(QPalette::Window, QColor(255, 255, 255));
-    palette.setBrush(QPalette::Shadow, QColor(0, 0, 0));
-    palette.setBrush(QPalette::AlternateBase, QColor(255, 255, 255));
-    palette.setBrush(QPalette::ToolTipBase, QColor(255, 255, 220));
-    palette.setBrush(QPalette::ToolTipText, QColor(0, 0, 0));
+//    QPalette palette = parent->palette();
+//    palette.setBrush(QPalette::WindowText, QColor(0, 0, 0));
+//    palette.setBrush(QPalette::Button, QColor(255, 255, 255));
+//    palette.setBrush(QPalette::Light, QColor(255, 255, 255));
+//    palette.setBrush(QPalette::Midlight, QColor(255, 255, 255));
+//    palette.setBrush(QPalette::Dark, QColor(127, 127, 127));
+//    palette.setBrush(QPalette::Mid, QColor(170, 170, 170));
+//    palette.setBrush(QPalette::Text, QColor(0, 0, 0));
+//    palette.setBrush(QPalette::BrightText, QColor(255, 255, 255));
+//    palette.setBrush(QPalette::ButtonText, QColor(0, 0, 0));
+//    palette.setBrush(QPalette::Base, QColor(255, 255, 255));
+//    palette.setBrush(QPalette::Window, QColor(255, 255, 255));
+//    palette.setBrush(QPalette::Shadow, QColor(0, 0, 0));
+//    palette.setBrush(QPalette::AlternateBase, QColor(255, 255, 255));
+//    palette.setBrush(QPalette::ToolTipBase, QColor(255, 255, 220));
+//    palette.setBrush(QPalette::ToolTipText, QColor(0, 0, 0));
 
-    palette.setBrush(QPalette::Disabled, QPalette::WindowText, QColor(127, 127, 127));
-    palette.setBrush(QPalette::Disabled, QPalette::Text, QColor(127, 127, 127));
-    palette.setBrush(QPalette::Disabled, QPalette::ButtonText, QColor(127, 127, 127));
+//    palette.setBrush(QPalette::Disabled, QPalette::WindowText, QColor(127, 127, 127));
+//    palette.setBrush(QPalette::Disabled, QPalette::Text, QColor(127, 127, 127));
+//    palette.setBrush(QPalette::Disabled, QPalette::ButtonText, QColor(127, 127, 127));
 
-    parent->setPalette(palette);
+////    parent->setPalette(palette);
 }
 
 ContentLayout::~ContentLayout()

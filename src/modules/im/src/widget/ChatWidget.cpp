@@ -100,6 +100,13 @@ void ChatWidget::connectCircleWidget() {
 }
 
 void ChatWidget::init() {
+
+    auto widget = Widget::getInstance();
+    connect(widget, &Widget::toSendMessage, [&](const QString& to){
+        contactListWidget->toSendMessage(ToxPk(to));
+    });
+
+
     connect(Nexus::getProfile(), &Profile::coreChanged,
             this, &ChatWidget::onCoreChanged);
 }

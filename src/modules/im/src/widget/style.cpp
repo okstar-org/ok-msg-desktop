@@ -135,6 +135,7 @@ QMap<Style::ColorPalette, QString> Style::aliasColors = {{TransferGood, "transfe
                                                          {ThemeMediumDark, "themeMediumDark"},
                                                          {ThemeMedium, "themeMedium"},
                                                          {ThemeLight, "themeLight"},
+                                                         {ThemeHighlight, "themeHighlight"},
                                                          {Action, "action"},
                                                          {Link, "link"},
                                                          {SearchHighlighted, "searchHighlighted"},

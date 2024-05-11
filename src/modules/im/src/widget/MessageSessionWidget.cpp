@@ -144,7 +144,7 @@ MessageSessionWidget::MessageSessionWidget(ContentLayout *layout,
   connect(this, &MessageSessionWidget::chatroomWidgetClicked,
           [=, this](GenericChatroomWidget *w) {
             Q_UNUSED(w);
-            do_widgetClicked(this);
+            do_widgetClicked();
             emit widgetClicked(this);
           });
   //  connect(MessageSessionWidget, &MessageSessionWidget::newWindowOpened,
@@ -161,7 +161,7 @@ MessageSessionWidget::MessageSessionWidget(ContentLayout *layout,
   }
 }
 
-void MessageSessionWidget::do_widgetClicked(GenericChatroomWidget *w) {
+void MessageSessionWidget::do_widgetClicked( ) {
 //  qDebug() << __func__ << "show friend:" << m_friend->getId();
 
 

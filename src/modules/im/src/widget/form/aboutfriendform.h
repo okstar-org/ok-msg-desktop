@@ -24,6 +24,8 @@ namespace Ui {
 class AboutFriendForm;
 }
 
+class Widget;
+
 class AboutFriendForm : public QWidget
 {
     Q_OBJECT
@@ -37,13 +39,14 @@ public:
 private:
     Ui::AboutFriendForm* ui;
     const std::unique_ptr<IAboutFriend> about;
+    Widget *widget;
 
 signals:
     void histroyRemoved();
 
 private slots:
     void onAutoAcceptDirChanged(const QString& path);
-    void onAcceptedClicked();
+    void onSendMessageClicked();
     void onAutoAcceptDirClicked();
     void onAutoAcceptCallClicked();
     void onAutoGroupInvite();

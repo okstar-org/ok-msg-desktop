@@ -157,23 +157,23 @@ void Application::createLoginUI() {
 
 }
 
-void Application::deleteLoginUI() {
-  disconnect(m_loginWindow.get());
-  m_loginWindow->close();
-  m_loginWindow->deleteLater();
-}
-
+/**
+ *  关闭login窗口
+ */
 void Application::closeLoginUI() {
-  // 关闭login窗口
-  deleteLoginUI();
+    disconnect(m_loginWindow.get());
+    m_loginWindow->close();
 }
 
 void Application::onLoginSuccess(ok::session::SignInInfo &signInInfo) {
   qDebug() << qsl("onLoginSuccess account:%1").arg(signInInfo.account);
   m_signInInfo = signInInfo;
-
-  // 初始化 IM 模块
-  initModuleIM(signInInfo);
+  // 启动主界面
+  startMainUI();
+#ifdef OK_PLUGIN
+  // 初始化插件平台
+  initPluginManager();
+#endif
 
   // 初始化 Painter 模块
 #ifdef OK_MODULE_PAINTER
@@ -183,13 +183,7 @@ void Application::onLoginSuccess(ok::session::SignInInfo &signInInfo) {
   // 初始化截屏模块
   initScreenCaptor();
 
-  // 启动主界面
-  startMainUI();
 
-#ifdef OK_PLUGIN
-  // 初始化插件平台
-  initPluginManager();
-#endif
   // 关闭登录界面
   closeLoginUI();
 }
@@ -241,6 +235,9 @@ void Application::onMenuPushed(UI::PageMenu menu, bool checked) {
   switch (menu) {
   case UI::PageMenu::chat: {
     Module *m = m_moduleMap.value(Nexus::Name());
+    if(!m){
+        m = initModuleIM(m_signInInfo);
+    }
     if (checked) {
       if (!m->isStarted()) {
         auto container = m_windowManager->getContainer(menu);
@@ -257,21 +254,17 @@ void Application::onMenuPushed(UI::PageMenu menu, bool checked) {
 
 void Application::onMenuReleased(UI::PageMenu menu, bool checked) {}
 
-void Application::initModuleIM(ok::session::SignInInfo &signInInfo) {
-  qDebug(("IM..."));
-
-  auto im = Nexus::Create();
-
-  //  connect(im, &Module::createProfileFailed, //
-  //          m_loginWindow.get(), &LoginWindow::onProfileLoadFailed);
-
-  //  Module &nexus = Nexus::getInstance();
-  //  nexus.init(static_cast<Profile *>(profile));
-
-  connect(static_cast<Nexus *>(im), &Nexus::updateAvatar, this,
-          &Application::onAvatar);
-
-  m_moduleMap.insert(im->name(), im);
+Module * Application::initModuleIM(ok::session::SignInInfo &signInInfo) {
+  qDebug() << __func__ << signInInfo.username;
+  auto im = m_moduleMap.value(Nexus::Name());
+  if(!im){
+      qDebug() <<"Creating module:" << Nexus::Name();
+      im = Nexus::Create();
+      connect(static_cast<Nexus *>(im), &Nexus::updateAvatar,   //
+              this, &Application::onAvatar);
+      m_moduleMap.insert(im->name(), im);
+  }
+  return im;
 }
 
 #ifdef OK_PLUGIN

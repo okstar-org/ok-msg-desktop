@@ -35,7 +35,8 @@ QString getShortName(const QString& name)
 
 }
 
-FriendChatroom::FriendChatroom(Friend* frnd, IDialogsManager* dialogsManager)
+FriendChatroom::FriendChatroom(Friend* frnd,
+                               IDialogsManager* dialogsManager)
     : frnd{frnd}
     , dialogsManager{dialogsManager}
 {

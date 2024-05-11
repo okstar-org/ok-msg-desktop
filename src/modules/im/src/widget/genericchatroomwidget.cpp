@@ -116,7 +116,7 @@ void GenericChatroomWidget::setActive(bool _active)
 {
     active = _active;
     if (active) {
-        setBackgroundRole(QPalette::Light);
+        setBackgroundRole(QPalette::Highlight);
 //        statusMessageLabel->setForegroundRole(QPalette::HighlightedText);
         nameLabel->setForegroundRole(QPalette::HighlightedText);
     } else {
@@ -164,14 +164,14 @@ void GenericChatroomWidget::reloadTheme()
 //    statusMessageLabel->setPalette(p);
 
     p = nameLabel->palette();
-    p.setColor(QPalette::WindowText, Style::getColor(Style::GroundBase));           // Base color
+    p.setColor(QPalette::WindowText, Style::getColor(Style::MainText));           // Base color
     p.setColor(QPalette::HighlightedText, Style::getColor(Style::NameActive)); // Color when active
     nameLabel->setPalette(p);
 
     p = palette();
     p.setColor(QPalette::Window, Style::getColor(Style::ThemeMedium));   // Base background color
-    p.setColor(QPalette::Highlight, Style::getColor(Style::ThemeLight)); // On mouse over
-    p.setColor(QPalette::Light, Style::getColor(Style::GroundBase));          // When active
+    p.setColor(QPalette::Highlight, Style::getColor(Style::ThemeHighlight)); // On mouse over
+    p.setColor(QPalette::Light, Style::getColor(Style::ThemeLight));          // When active
     setPalette(p);
 
 
@@ -196,7 +196,7 @@ void GenericChatroomWidget::mouseReleaseEvent(QMouseEvent* event)
 void GenericChatroomWidget::enterEvent(QEvent*)
 {
     if (!active)
-        setBackgroundRole(QPalette::Highlight);
+        setBackgroundRole(QPalette::Light);
 }
 
 void GenericChatroomWidget::leaveEvent(QEvent* event)

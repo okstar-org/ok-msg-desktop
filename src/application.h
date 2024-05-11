@@ -77,13 +77,12 @@ private:
   void loadService();
 
   void createLoginUI();
-  void deleteLoginUI();
   void closeLoginUI();
 
   void startMainUI();
   void stopMainUI();
 
-  void initModuleIM(ok::session::SignInInfo &signInInfo);
+  Module * initModuleIM(ok::session::SignInInfo &signInInfo);
 
 #ifdef OK_MODULE_PAINTER
   void initModulePainter();

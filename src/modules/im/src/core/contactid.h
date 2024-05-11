@@ -43,7 +43,7 @@ protected:
     ContactId();
     explicit ContactId(const lib::messenger::FriendId& rawId);
     explicit ContactId(const QByteArray &rawId);
-
+    explicit ContactId(const QString &strId);
 };
 
 inline uint qHash(const ContactId& id)

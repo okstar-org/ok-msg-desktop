@@ -251,6 +251,8 @@ void MessageSessionListWidget::connectFriendWidget(MessageSessionWidget &sw) {
           &MessageSessionListWidget::searchCircle);
   connect(&sw, &MessageSessionWidget::updateFriendActivity, this,
           &MessageSessionListWidget::updateFriendActivity);
+  connect(&sw, &MessageSessionWidget::widgetClicked, this,
+          &MessageSessionListWidget::slot_sessionClicked);
 }
 
 void MessageSessionListWidget::updateFriendActivity(const Friend &frnd) {
@@ -688,6 +690,20 @@ CircleWidget *MessageSessionListWidget::createCircleWidget(int id) {
   return nullptr;
 }
 
+void MessageSessionListWidget::toSendMessage(const ToxPk &pk)
+{
+    auto w = sessionWidgets.value(pk);
+    if(!w){
+        qWarning() << "Unable to find friend:"<<pk.getUsername();
+
+        //TODO to create message session.
+        return;
+    }
+
+    emit w->chatroomWidgetClicked(w);
+
+}
+
 QLayout *MessageSessionListWidget::nextLayout(QLayout *layout, bool forward) const {
     qDebug() <<"nextLayout:"<<layout<<"forward:"<<forward;
     if (forward) {
@@ -778,6 +794,10 @@ void MessageSessionListWidget::setFriendName(const ToxPk &friendPk,
                                      const QString &name) {
 
   auto w = getMessageSession(friendPk);
+  if(!w){
+      qWarning() <<"friend is no existing.";
+      return;
+  }
   if (w->isActive()) {
     //      GUI::setWindowTitle(displayed);
     w->setName(name);

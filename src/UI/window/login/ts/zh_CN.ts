@@ -72,6 +72,37 @@
         <source>Remember</source>
         <translation>记住密码</translation>
     </message>
-   
+
+    <message>
+        <source>NO_SUPPORT</source>
+        <translation>不支持协议</translation>
+    </message>
+    <message>
+        <source>CONN_ERROR</source>
+        <translation>连接异常</translation>
+    </message>
+   <message>
+        <source>DISCONNECTED</source>
+        <translation>连接断开</translation>
+    </message>
+    <message>
+        <source>AUTH_FAILED</source>
+        <translation>认证失败</translation>
+    </message>
+<message>
+        <source>TLS_ERROR</source>
+        <translation>TLS证书错误</translation>
+    </message>
+
+<message>
+        <source>OUT_OF_RESOURCE</source>
+        <translation>系统资源受限</translation>
+    </message>
+
+    <message>
+        <source>...</source>
+        <translation>进行中</translation>
+    </message>
+
 </context>
 </TS>

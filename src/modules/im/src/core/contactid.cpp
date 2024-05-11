@@ -39,6 +39,10 @@ ContactId::ContactId(const QByteArray &rawId)
     : lib::messenger::FriendId(QString::fromUtf8(rawId)) {
 }
 
+ContactId::ContactId(const QString &strId)
+    : lib::messenger::FriendId((strId)) {
+}
+
 QString ContactId::getUsername() const {
   return username;
 }

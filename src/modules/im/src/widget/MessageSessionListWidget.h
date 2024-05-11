@@ -75,6 +75,10 @@ public:
                             bool isAction);
 
   CircleWidget *createCircleWidget(int id = -1);
+
+  void toSendMessage(const ToxPk &pk);
+
+
 signals:
   void onCompactChanged(bool compact);
   void connectCircleWidget(CircleWidget &circleWidget);
@@ -106,7 +110,7 @@ private:
   void sortByMode(SortingMode mode);
   void connectFriendWidget(MessageSessionWidget &sw);
   void updateFriendActivity(const Friend &frnd);
- void addFriendWidget(MessageSessionWidget  *fw, Status::Status s, int circleIndex);
+  void addFriendWidget(MessageSessionWidget  *fw, Status::Status s, int circleIndex);
 
   SortingMode mode;
 

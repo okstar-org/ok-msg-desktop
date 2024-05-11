@@ -409,23 +409,9 @@ Widget::Widget(IAudioControl &audio, QWidget *parent)//
 void Widget::init() {
   profile = Nexus::getProfile();
 
-//  centralLayout = ui->mainSplitter;
-//  setLayout(ui->centralLayout);
-  // connect logout tray menu action
-//  connect(actionLogout, &QAction::triggered,
-//          profileForm,&ProfileForm::onLogoutClicked);
-
-//  connect(profile, &Profile::selfAvatarChanged,
-//          profileForm,&ProfileForm::onSelfAvatarLoaded);
-
-//  connect(Nexus::getProfile(), &Profile::coreChanged,
-//          chatWidget.get(), &ChatWidget::onCoreChanged);
-
-
-
-//  filesForm = new FilesForm();
-//  addFriendForm = new AddFriendForm;
-//  groupInviteForm = new GroupInviteForm;
+  connect(this, &Widget::toSendMessage, [&](){
+      ui->tabWidget->setCurrentIndex(0);
+  });
 
 #if UPDATE_CHECK_ENABLED
   updateCheck = std::unique_ptr<UpdateCheck>(new UpdateCheck(settings));
@@ -701,8 +687,7 @@ void Widget::connectToCore(Core &core) {
   connect(coreFile, &CoreFile::fileSendFailed, this,
           &Widget::dispatchFileSendFailed);
 
-
-  //  core->setUIStarted();
+    core.setUIStarted();
 }
 
 void Widget::onConnected() {

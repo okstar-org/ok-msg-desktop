@@ -202,6 +202,7 @@ signals:
   void statusMessageChanged(const QString &statusMessage);
   void resized();
   void windowStateChanged(Qt::WindowStates states);
+  void toSendMessage(const QString &username);
 
 private slots:
 

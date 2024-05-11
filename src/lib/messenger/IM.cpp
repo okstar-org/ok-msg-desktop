@@ -270,9 +270,10 @@ void IM::onConnect() {
   emit connected();
 
   if(!mStarted){
-    mStarted = true;
-    emit started();
+      qWarning() <<"Waiting UI to ready.";
+      sleep(1);
   }
+  qDebug() << "Resume.";
 }
 
 void IM::doConnect() {

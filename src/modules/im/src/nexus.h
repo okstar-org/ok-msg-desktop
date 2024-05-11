@@ -54,7 +54,7 @@ public:
   /**
    * Module
    */
-  static QString Name();
+ inline static QString Name();
   static Module *Create();
   QString name() override;
   void init(Profile *) override;

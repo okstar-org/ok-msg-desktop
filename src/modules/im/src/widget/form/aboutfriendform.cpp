@@ -15,6 +15,7 @@
 #include "ui_aboutfriendform.h"
 #include "src/core/core.h"
 #include "src/widget/style.h"
+#include "src/widget/widget.h"
 
 #include <QFileDialog>
 #include <QMessageBox>
@@ -23,10 +24,11 @@ AboutFriendForm::AboutFriendForm(std::unique_ptr<IAboutFriend> _about, QWidget* 
     : QWidget(parent)
     , ui(new Ui::AboutFriendForm)
     , about{std::move(_about)}
+    , widget{Widget::getInstance()}
 {
     ui->setupUi(this);
 
-    connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &AboutFriendForm::onAcceptedClicked);
+    connect(ui->sendMessage, &QPushButton::clicked, this, &AboutFriendForm::onSendMessageClicked);
     connect(ui->autoacceptfile, &QCheckBox::clicked, this, &AboutFriendForm::onAutoAcceptDirClicked);
     connect(ui->autoacceptcall, SIGNAL(activated(int)), this, SLOT(onAutoAcceptCallClicked(void)));
     connect(ui->autogroupinvite, &QCheckBox::clicked, this, &AboutFriendForm::onAutoGroupInvite);
@@ -113,9 +115,13 @@ void AboutFriendForm::onSelectDirClicked()
 /**
  * @brief Called when user clicks the bottom OK button, save all settings
  */
-void AboutFriendForm::onAcceptedClicked()
+void AboutFriendForm::onSendMessageClicked()
 {
-    about->setNote(ui->note->toPlainText());
+//    about->setNote(ui->note->toPlainText());
+    auto widget = Widget::getInstance();
+    if(widget){
+      emit widget->toSendMessage(ui->friendId->text());
+    }
 }
 
 void AboutFriendForm::onRemoveHistoryClicked()
