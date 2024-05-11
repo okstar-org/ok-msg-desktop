@@ -539,7 +539,7 @@ void FriendWidget::search(const QString &searchString, bool hide) {
 
 void FriendWidget::resetEventFlags() { chatRoom->resetEventFlags(); }
 
-void FriendWidget::onAvatarSet(const ToxPk &friendPk, const std::string pic) {
+void FriendWidget::onAvatarSet(const ToxPk &friendPk, const QPixmap& pic) {
   const auto frnd = chatRoom->getFriend();
   if (friendPk != frnd->getPublicKey()) {
     return;
@@ -547,10 +547,9 @@ void FriendWidget::onAvatarSet(const ToxPk &friendPk, const std::string pic) {
   qDebug() << "FriendWidget::onAvatarSet:" << friendPk.toString()
            << "pic:" << pic.size();
   isDefaultAvatar = false;
-  QPixmap pixmap;
-  auto f = pixmap.loadFromData(QByteArray::fromStdString(pic));
-  if (f) {
-    setAvatar(pixmap);
+
+  if (!pic.isNull()) {
+    setAvatar(pic);
   }
 }
 

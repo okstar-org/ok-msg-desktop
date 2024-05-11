@@ -90,7 +90,7 @@ public:
   ToxPk getGroupPeerPk(QString groupId, QString peerId) const override;
   QStringList getGroupPeerNames(QString groupId) const override;
   bool getGroupAvEnabled(QString groupId) const override;
-  inline ToxPk getFriendPublicKey(QString friendNumber) const;
+  ToxPk getFriendPublicKey(QString friendNumber) const;
   QString getFriendUsername(QString friendNumber) const;
   void getFriendInfo(const QString& friendNumber) const;
   Status::Status getFriendStatus(const QString& friendNumber) const;

@@ -111,8 +111,8 @@ MessageSessionListWidget::~MessageSessionListWidget() {
   //  }
 }
 
-MessageSessionWidget *MessageSessionListWidget::addMessageSession(const ToxPk &friendPk,
-                                          const QString &sid) {
+MessageSessionWidget *MessageSessionListWidget::createMessageSession(
+        const ToxPk &friendPk, const QString &sid) {
   qDebug() << __func__ << "friend is exist." << friendPk.toString();
 //  auto exist = FriendList::findFriend(friendPk);
 //  if (exist) {
@@ -148,7 +148,7 @@ MessageSessionWidget *MessageSessionListWidget::addMessageSession(const ToxPk &f
   //    settings.setFriendActivity(friendPk, chatTime);
   //  }
   auto status = core->getFriendStatus(friendPk.toString());
-  addFriendWidget(sw, status,
+  addWidget(sw, status,
                   settings.getFriendCircleID(friendPk));
 
   setFriendStatus(friendPk, status);
@@ -228,7 +228,7 @@ MessageSessionWidget *MessageSessionListWidget::addMessageSession(const ToxPk &f
   return sw;
 }
 
-void MessageSessionListWidget::addFriendWidget(MessageSessionWidget *fw, Status::Status s,
+void MessageSessionListWidget::addWidget(MessageSessionWidget *fw, Status::Status s,
                                        int circleIndex) {
 
 //  CircleWidget *circleWidget = CircleWidget::getFromID(circleIndex);
@@ -237,7 +237,7 @@ void MessageSessionListWidget::addFriendWidget(MessageSessionWidget *fw, Status:
 //  else
 //    circleWidget->addFriendWidget(fw, s);
     listLayout->addWidget(fw);
-  sessionWidgets.insert(fw->getFriend()->getPublicKey(), fw);
+    sessionWidgets.insert(fw->getFriend()->getPublicKey(), fw);
 
 //  connect(fw, &MessageSessionWidget::friendWidgetRenamed, this,
 //          &MessageSessionListWidget::onFriendWidgetRenamed);
@@ -694,12 +694,9 @@ void MessageSessionListWidget::toSendMessage(const ToxPk &pk)
 {
     auto w = sessionWidgets.value(pk);
     if(!w){
-        qWarning() << "Unable to find friend:"<<pk.getUsername();
-
-        //TODO to create message session.
-        return;
+        qDebug() << "Create session for"<<pk.getUsername();
+        w = createMessageSession(pk, "");
     }
-
     emit w->chatroomWidgetClicked(w);
 
 }
@@ -760,7 +757,7 @@ void MessageSessionListWidget::setRecvFriendMessage(
      */
     qWarning() << "Can not find friend:" << friendnumber.toString()
                << ", so add it to contact.";
-    addMessageSession(friendnumber, message.id);
+    createMessageSession(friendnumber, message.id);
     return;
   }
 

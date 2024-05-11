@@ -571,7 +571,7 @@ void MessageSessionWidget::search(const QString &searchString, bool hide) {
 
 void MessageSessionWidget::resetEventFlags() { chatRoom->resetEventFlags(); }
 
-void MessageSessionWidget::onAvatarSet(const ToxPk &friendPk, const std::string pic) {
+void MessageSessionWidget::onAvatarSet(const ToxPk &friendPk, const QPixmap& pic) {
   const auto frnd = chatRoom->getFriend();
   if (friendPk != frnd->getPublicKey()) {
     return;
@@ -579,10 +579,10 @@ void MessageSessionWidget::onAvatarSet(const ToxPk &friendPk, const std::string 
   qDebug() << "MessageSessionWidget::onAvatarSet:" << friendPk.toString()
            << "pic:" << pic.size();
   isDefaultAvatar = false;
-  QPixmap pixmap;
-  auto f = pixmap.loadFromData(QByteArray::fromStdString(pic));
-  if (f) {
-    setAvatar(pixmap);
+
+
+  if (!pic.isNull()) {
+    setAvatar(pic);
   }
 }
 

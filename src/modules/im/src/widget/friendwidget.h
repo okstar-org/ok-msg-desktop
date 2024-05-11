@@ -73,10 +73,10 @@ signals:
     void updateFriendActivity(Friend& frnd);
 //    void setActive(bool active);
 public slots:
-  void onAvatarSet(const ToxPk& friendPk, const std::string pic);
+  void onAvatarSet(const ToxPk& friendPk, const QPixmap& pic);
   void onAvatarRemoved(const ToxPk& friendPk);
   void onContextMenuCalled(QContextMenuEvent* event);
-    void do_widgetClicked(GenericChatroomWidget *w);
+  void do_widgetClicked(GenericChatroomWidget *w);
 
 protected:
     virtual void mousePressEvent(QMouseEvent* ev) override;

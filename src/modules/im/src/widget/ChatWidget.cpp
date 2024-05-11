@@ -183,7 +183,7 @@ void ChatWidget::onCoreChanged(Core &core_) {
 void ChatWidget::onFriendMessageSessionReceived(const ToxPk &friendPk, const QString &sid)
 {
      qDebug() << __func__ << "friend:" << friendPk.toString() << "sid:" <<sid;
-     contactListWidget->addMessageSession(friendPk, sid);
+     contactListWidget->createMessageSession(friendPk, sid);
 }
 
 void ChatWidget::onFriendAvatarChanged(const ToxPk &friendnumber,

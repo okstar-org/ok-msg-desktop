@@ -48,7 +48,7 @@ public:
   SortingMode getMode() const;
   void reloadTheme();
 
-  MessageSessionWidget *addMessageSession(const ToxPk &friendPk,const QString &sid);
+  MessageSessionWidget *createMessageSession(const ToxPk &friendPk,const QString &sid);
   MessageSessionWidget *getMessageSession(const ToxPk &friendPk);
 
   void removeSessionWidget(MessageSessionWidget *w);
@@ -110,7 +110,7 @@ private:
   void sortByMode(SortingMode mode);
   void connectFriendWidget(MessageSessionWidget &sw);
   void updateFriendActivity(const Friend &frnd);
-  void addFriendWidget(MessageSessionWidget  *fw, Status::Status s, int circleIndex);
+  void addWidget(MessageSessionWidget  *fw, Status::Status s, int circleIndex);
 
   SortingMode mode;
 

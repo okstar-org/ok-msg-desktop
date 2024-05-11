@@ -89,8 +89,8 @@ void Profile::initCore(const QByteArray &toxsave, ICoreSettings &s,
   connect(core.get(), &Core::saveRequest, this, &Profile::onSaveToxSave);
   // react to avatar changes
   connect(core.get(), &Core::friendAvatarRemoved, this, &Profile::removeAvatar);
-//  connect(core.get(), &Core::friendAvatarChanged, this,
-//          &Profile::setFriendAvatar);
+  connect(core.get(), &Core::friendAvatarChanged, this,
+          &Profile::setFriendAvatar);
   connect(core.get(), &Core::fileAvatarOfferReceived, this,
           &Profile::onAvatarOfferReceived,
           Qt::ConnectionType::QueuedConnection);
@@ -398,8 +398,9 @@ bool Profile::saveToxSave(QByteArray data) {
  * @return Path to the avatar.
  */
 QString Profile::avatarPath(const ToxPk &owner, bool forceUnencrypted) {
-  const QString ownerStr = owner.toString();
-  return Settings::getInstance().getSettingsDirPath() + "avatars/" + ownerStr + ".png";
+  auto ownerStr = owner.toString();
+  auto base=Settings::getInstance().getSettingsDirPath();
+  return base + "avatars/" + ownerStr + ".png";
 }
 
 /**
@@ -451,12 +452,11 @@ QByteArray Profile::loadAvatarData(const ToxPk &owner) {
   }
 
   QByteArray pic = file.readAll();
-  if (avatarEncrypted && !pic.isEmpty()) {
-    pic = passkey->decrypt(pic);
+
     if (pic.isEmpty()) {
       qWarning() << "Failed to decrypt avatar at" << path;
     }
-  }
+
 
   return pic;
 }
@@ -538,31 +538,25 @@ void Profile::setAvatarOnly(QPixmap pixmap) { emit selfAvatarChanged(pixmap); }
  * depending on settings
  * @param owner pk of friend
  */
-void Profile::setFriendAvatar(const ToxPk owner, std::string pic) {
-  qDebug() << "Profile::setFriendAvatar:" << owner.toString()
-           << "picSize:" << pic.size();
-
-  QImage pixmap;
-  QByteArray avatarData;
-  if (!pic.empty()) {
-    auto bb = QByteArray::fromStdString(pic);
-
+void Profile::setFriendAvatar(const ToxPk owner, const QByteArray & avatarData) {
+  qDebug() << __func__ << owner.toString()
+           << "size:" << avatarData.size();
+  QPixmap pixmap;
+  if (!avatarData.isEmpty()) {
     bool loaded =
-        base::Images::putToImage(bb, pixmap);
+        base::Images::putToPixmap(avatarData, pixmap);
     if (!loaded) {
       return;
     }
-
-    avatarData = bb;
-    emit friendAvatarSet(owner, pic);
+    emit friendAvatarSet(owner, pixmap);
   } else if (Settings::getInstance().getShowIdenticons()) {
-    pixmap = Identicon(owner.getByteArray()).toImage(32);
-    emit friendAvatarSet(owner, pic);
+    pixmap =QPixmap::fromImage( Identicon(owner.getByteArray()).toImage(32));
+    emit friendAvatarSet(owner, pixmap);
   } else {
     pixmap.load(":/img/contact_dark.svg");
     emit friendAvatarRemoved(owner);
   }
-  friendAvatarChanged(owner, QPixmap::fromImage(pixmap));
+  friendAvatarChanged(owner, pixmap);
   saveAvatar(owner, avatarData);
 }
 

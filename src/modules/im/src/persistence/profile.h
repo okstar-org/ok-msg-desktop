@@ -80,7 +80,7 @@ signals:
   void friendAvatarChanged(const ToxPk &friendPk, const QPixmap &pixmap);
   // emit on a set of avatar, including identicon, used by those two care about
   // active for default, so can't use friendAvatarChanged
-  void friendAvatarSet(const ToxPk &friendPk, const std::string pixmap);
+  void friendAvatarSet(const ToxPk &friendPk, const QPixmap &pixmap);
   // emit on set to default, used by those that modify on active
   void friendAvatarRemoved(const ToxPk &friendPk);
   // TODO(sudden6): this doesn't seem to be the right place for Core errors
@@ -98,7 +98,7 @@ private slots:
   // TODO(sudden6): use ToxPk instead of friendId
   void onAvatarOfferReceived(QString friendId, QString fileId,
                              const QByteArray &avatarHash);
-  void setFriendAvatar(const ToxPk owner, std::string pic);
+  void setFriendAvatar(const ToxPk owner, const QByteArray &pic);
 
 private:
   Profile(QString name, const QString &password, bool newProfile,
