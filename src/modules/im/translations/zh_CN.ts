@@ -173,6 +173,92 @@ which may lead to problems with video calls.</source>
         <translation>贡献者</translation>
     </message>
 </context>
+
+<context>
+<name>AboutGroupForm</name>
+<message>
+<source>Send message</source>
+<translation>发送消息</translation>
+</message>
+<message>
+<source>Name:</source>
+<translation>名称：</translation>
+</message>
+<message>
+<source>Default directory to save files:</source>
+<translation>默认文件保存目录：</translation>
+</message>
+<message>
+<source>Id:</source>
+<translation>Id：</translation>
+</message>
+<message>
+<source>Title:</source>
+<translation>主题：</translation>
+</message>
+<message>
+<source>Description:</source>
+<translation>描述：</translation>
+</message>
+<message>
+<source>Occupants:</source>
+<translation>成员数：</translation>
+</message>
+<message>
+<source>Auto accept for this contact is disabled</source>
+<translation>已针对这个联系人禁用了自动接收</translation>
+</message>
+<message>
+<source>Auto accept call:</source>
+<translation>自动接听呼叫：</translation>
+</message>
+<message>
+<source>Manual</source>
+<translation>手动</translation>
+</message>
+<message>
+<source>Audio</source>
+<translation>音频</translation>
+</message>
+<message>
+<source>Audio + Video</source>
+<translation>音视频</translation>
+</message>
+<message>
+<source>Notes</source>
+<translation>附注</translation>
+</message>
+
+
+<message>
+<source>History removed</source>
+<translation>已删除历史记录</translation>
+</message>
+
+<message>
+<source>Choose an auto accept directory</source>
+<extracomment>popup title</extracomment>
+<translation>选择自动接受目录</translation>
+</message>
+
+<message>
+<source>Are you sure to clear the history?</source>
+    <translation>您确定要移除聊天记录吗？</translation>
+</message>
+<message>
+<source>Failed to remove the history</source>
+<translation>移除聊天记录失败！</translation>
+</message>
+<message>
+<source>Clear history:</source>
+<translation>清空历史记录：</translation>
+</message>
+<message>
+<source>Clear</source>
+<translation>清空</translation>
+</message>
+</context>
+
 <context>
     <name>AboutFriendForm</name>
     <message>

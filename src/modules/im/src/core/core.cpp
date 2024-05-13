@@ -599,9 +599,9 @@ void Core::onUserStatusChanged(Tox *, QString friendId,
   emit friendStatusChanged(getFriendPublicKey(friendId), status);
 }
 
-void Core::onGroupList(const QString groupId, const QString name) {
+void Core::onGroup(const QString groupId, const QString name) {
   qDebug() << __func__ << "groupId:" << groupId << name;
-  emit groupJoined( GroupId (groupId), name);
+  emit groupAdded( GroupId (groupId), name);
 }
 
 void Core::onGroupListDone() {
@@ -697,17 +697,29 @@ void Core::onGroupMessage(const QString groupId,
 }
 
 void Core::onGroupOccupants(const QString groupId, const uint size) {
+    qDebug() << __func__ <<"groupId" << groupId <<"size"<< size;
   emit groupPeerSizeChanged(groupId, size);
 }
 
 void Core::onGroupOccupantStatus(const QString groupId, //
-                                 const QString peerId,  //
-                                 bool online) {
-  emit groupPeerStatusChanged(groupId, peerId, online);
+                                 const lib::messenger::GroupOccupant occ) {
+
+    GroupOccupant go = {.nick=occ.nick,
+                        .affiliation=occ.affiliation,
+                        .role=occ.role,
+                        .status = occ.status};
+    emit groupPeerStatusChanged(groupId, go);
 }
 
 void Core::onGroupInfo( QString groupId, lib::messenger::GroupInfo groupInfo) {
-  emit groupTitleChanged(groupId, QString(), qstring(groupInfo.name));
+    GroupInfo info={
+        .name = groupInfo.name,
+        .description = groupInfo.description,
+        .subject = groupInfo.subject,
+        .creationdate = groupInfo.creationdate,
+        .occupants = groupInfo.occupants,
+  };
+  emit groupInfoReceipt(GroupId(groupId), info);
 }
 
 void Core::onMessageReceipt(QString friendId, ReceiptNum receipt) {

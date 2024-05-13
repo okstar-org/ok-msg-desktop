@@ -49,7 +49,7 @@ using namespace gloox;
 #define DISCO_CTX_CONF 0
 #define DISCO_CTX_ROSTER 1
 #define DISCO_CTX_BOOKMARKS 2
-
+#define DISCO_CTX_CONF_MEMBERS 3
 /**
  * 聊天通讯核心类
  * @param user
@@ -880,42 +880,22 @@ void IM::onJoinedRoom(const JID &roomJid, const UserJID &userJID) {
 void IM::handleMUCParticipantPresence(gloox::MUCRoom *room,                 //
                                       const MUCRoomParticipant participant, //
                                       const Presence &presence) {
+  auto groupId = qstring(room->jid().full());
+  auto nick = qstring(participant.nick->resource());
 
-  qDebug() << "handleMUCParticipantPresence" << qstring(room->jid().full())
-           << "nick" << participant.nick->resource().c_str();
+  qDebug() << __func__ << groupId
+           << "nick" << nick;
 
   auto mucUser = presence.tag()->findChild("x", XMLNS, XMLNS_MUC_USER);
   if (mucUser) {
-    //<x xmlns='http://jabber.org/protocol/muc#user'><item affiliation='none'
-    // role='none'/></x>
     auto item = mucUser->findChild("item");
-    if (item)
-      qDebug() << "affiliation: " << qstring(item->findAttribute("affiliation"))
-               << "role: " << qstring(item->findAttribute("role"));
+    if (item){
+      auto affiliation= qstring(item->findAttribute("affiliation"));
+      auto role= qstring(item->findAttribute("role"));
+      GroupOccupant occ={.nick = nick, .affiliation=affiliation, .role=role, .status=presence.presence()};
+      emit groupOccupantStatus(groupId, occ);
+    }
   }
-
-#if 0
-  JID *nick = participant.nick;
-  qDebug(("participant:%1 presence=>%2") //
-                .arg(qstring(nick->resource()))
-                .arg(presence.presence()));
-
-//TODO 此处导致界面卡死，暂时注释
-  switch (presence.presence()) {
-  case Presence::Unavailable:
-  case Presence::Invalid:
-  case Presence::Error: {
-    // 非在线
-    emit groupOccupantStatus(roomName, peerId, false);
-    break;
-  }
-  default: {
-    // 在线
-    emit groupOccupantStatus(roomName, peerId, true);
-    break;
-  }
-  }
-#endif
 }
 
 void IM::handleMUCMessage(MUCRoom *room, const gloox::Message &msg, bool priv) {
@@ -1005,9 +985,9 @@ bool IM::handleMUCRoomCreation(MUCRoom *room) {
   m_roomMap.insert(roomId, IMRoomInfo{room, {}});
 
   // 群聊增加
-  emit groupListReceived(roomId, qstring(room->name()));
+  emit groupReceived(roomId, qstring(room->name()));
 
-  msleep(100);
+
   joinRoom(roomId);
 
   //  bookmarkStorage->requestBookmarks();
@@ -1045,10 +1025,11 @@ void IM::handleMUCInfo(MUCRoom *room,              //
   auto roomId = qstring(room->jid().full());
   auto roomName = qstring(name);
 
-  qDebug() << "handleMUCInfo" << roomName;
+  qDebug() << __func__ << roomId<< roomName;
 
   GroupInfo groupInfo;
-  groupInfo.name = name;
+  groupInfo.name = roomName;
+
 
   if (infoForm) {
     auto info = const_cast<IMRoomInfo *>(findRoom(roomId));
@@ -1059,25 +1040,20 @@ void IM::handleMUCInfo(MUCRoom *room,              //
 
       if (field->name() == "muc#roominfo_occupants") {
         groupInfo.occupants = std::stoi(field->value());
-      } else if (field->name() == "muc#roominfo_roomname") {
-        groupInfo.name = (field->value());
+      } else if (field->name() == "muc#roominfo_roomname" && !field->value().empty()) {
+        groupInfo.name = qstring(field->value());
       } else if (field->name() == "muc#roominfo_subject") {
-        groupInfo.subject = field->value();
+        groupInfo.subject =qstring(field->value()) ;
       } else if (field->name() == "muc#roominfo_description") {
-        groupInfo.description = field->value();
+        groupInfo.description = qstring(field->value());
       } else if (field->name() == "muc#roominfo_creationdate") {
-        groupInfo.creationdate = field->value();
+        groupInfo.creationdate = qstring(field->value());
       }
     }
-
-    if (info->name.empty()) {
-      info->info.name = name;
-    }
-
     info->info = groupInfo;
+    emit groupRoomInfo(roomId, groupInfo);
   }
 
-  emit groupRoomInfo(roomId, groupInfo);
 }
 
 void IM::handleMUCItems(MUCRoom *room, const Disco::ItemList &items) {
@@ -1224,9 +1200,14 @@ void IM::onAddRoom(const std::string &jid, const std::string &name) {
   m_roomMap.insert(roomId, IMRoomInfo{room, {}});
 
   qDebug() << "emit room:" << roomId;
-  emit groupListReceived(roomId, name.empty() ? qstring(roomJid.username())
+  emit groupReceived(roomId, name.empty() ? qstring(roomJid.username())
                                               : qstring(name));
-  msleep(100);
+
+
+  //查询成员列表
+  //XMLNS_DISCO_ITEMS
+  getClient()->disco()->getDiscoItems(jid, XMLNS_DISCO_ITEMS, this, DISCO_CTX_CONF_MEMBERS);
+
   joinRoom(room);
 }
 
@@ -1286,7 +1267,6 @@ void IM::setRoomName(const QString &groupId, const std::string &roomName) {
 
   auto info = const_cast<IMRoomInfo *>(pRoomInfo);
   info->changes.insert(std::make_pair("muc#roomconfig_roomname", roomName));
-  info->name = roomName;
   // 获取新配置（handleMUCConfigForm处理）
   info->room->requestRoomConfig();
 
@@ -1419,6 +1399,11 @@ void IM::requestBookmarks() {
   bookmarkStorage->requestBookmarks();
 }
 
+/**
+ * @brief 处理群聊列表
+ * @param bList
+ * @param cList
+ */
 void IM::handleBookmarks(const BookmarkList &bList,   //
                          const ConferenceList &cList) //
 {
@@ -1456,7 +1441,7 @@ void IM::handleDiscoInfo(const JID &from,         //
                          int context) {
 
   QString _from = QString::fromStdString(from.full());
-  qDebug()<<QString("from=%1 context=%2").arg(_from).arg(context);
+  qDebug()<<__func__<<_from<<"context:"<<(context);
 
   const StringList features = info.features();
   for (auto feature : features) {
@@ -1492,29 +1477,20 @@ void IM::handleDiscoItems(const JID &from,           //
 #endif // !Q_OS_WIN
     }
 
-    if (context == DISCO_CTX_CONF) {
+    else if (context == DISCO_CTX_CONF) {
       /**
        * 处理服务发现的群聊列表
        */
       auto roomId = qstring(item->jid().bare());
       auto name = qstring(item->name());
       qDebug() << "room:" << name << roomId;
-      //      if (m_roomMap.find(roomId) == m_roomMap.end()) {
-      //
-      //        auto room = new MUCRoom(_client.get(), item->jid(), this, this);
-      //        m_roomMap.insert(roomId, room);
-      //
-      //        qDebug() << "emit room:" << name;
-      //        emit groupListReceived(roomId, name);
-      //        msleep(100);
-      //      }
     }
-  }
 
-  if (context == DISCO_CTX_CONF) {
-    // 4-加入群聊
-    //    joinRooms();
-    //    emit groupListReceivedDone();
+    else if(context == DISCO_CTX_CONF_MEMBERS){
+        //群聊成员
+         auto memberId = qstring(item->jid().bare());
+         qDebug() << "member:" << memberId;
+    }
   }
 }
 
@@ -2509,7 +2485,7 @@ StringList IM::handleDiscoNodeFeatures(const JID &from,
 }
 
 void IM::onSelfNicknameChanged(const QString &nickname) {
-  qDebug() << "onSelfNicknameChanged" << nickname;
+//  qDebug() << "onSelfNicknameChanged" << nickname;
   _nickChanged++;
   //  if (_nickChanged == 1) {
   //    for (auto &c : mConferenceList) {

@@ -99,12 +99,12 @@ QString GenericChatForm::resolveToxPk(const ToxPk &pk) {
     return f->getDisplayedName();
   }
 
-  for (Group *it : GroupList::getAllGroups()) {
-    QString res = it->resolveToxId(pk);
-    if (!res.isEmpty()) {
-      return res;
-    }
-  }
+//  for (Group *it : GroupList::getAllGroups()) {
+//    QString res = it->resolveToxId(pk);
+//    if (!res.isEmpty()) {
+//      return res;
+//    }
+//  }
 
   return pk.toString();
 }

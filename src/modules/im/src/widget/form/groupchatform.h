@@ -36,7 +36,7 @@ public:
     GroupChatForm(Group* chatGroup, IChatLog& chatLog, IMessageDispatcher& messageDispatcher, IGroupSettings& _settings);
     ~GroupChatForm();
 
-    void peerAudioPlaying(ToxPk peerPk);
+    void peerAudioPlaying(QString peerPk);
 
 private slots:
     void onScreenshotClicked() override;
@@ -67,8 +67,8 @@ private:
 
 private:
     Group* group;
-    QMap<ToxPk, QLabel*> peerLabels;
-    QMap<ToxPk, QTimer*> peerAudioTimers;
+    QMap<QString, QLabel*> peerLabels;
+    QMap<QString, QTimer*> peerAudioTimers;
     FlowLayout* namesListLayout;
     QLabel* nusersLabel;
     TabCompleter* tabber;

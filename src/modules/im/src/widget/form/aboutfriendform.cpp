@@ -55,7 +55,6 @@ AboutFriendForm::AboutFriendForm(std::unique_ptr<IAboutFriend> _about, QWidget* 
     setWindowTitle(name);
     ui->userName->setText(name);
     ui->friendId->setText(about->getPublicKey().toString());
-    ui->note->setPlainText(about->getNote());
     ui->statusMessage->setText(about->getStatusMessage());
     ui->avatar->setPixmap(about->getAvatar());
 
@@ -117,7 +116,6 @@ void AboutFriendForm::onSelectDirClicked()
  */
 void AboutFriendForm::onSendMessageClicked()
 {
-//    about->setNote(ui->note->toPlainText());
     auto widget = Widget::getInstance();
     if(widget){
       emit widget->toSendMessage(ui->friendId->text());

@@ -36,7 +36,7 @@ Group::Group(QString groupId, const GroupId persistentGroupId,
   // notification on naming is appropriate
   hasNewMessages = 0;
   userWasMentioned = 0;
-  regeneratePeerList();
+
 }
 
 void Group::setName(const QString &newTitle) {
@@ -62,67 +62,18 @@ QString Group::getName() const { return title; }
 
 QString Group::getDisplayedName() const { return getName(); }
 
-void Group::regeneratePeerList() {
-  // NOTE: there's a bit of a race here. Core emits a signal for both
-  // groupPeerlistChanged and groupPeerNameChanged back-to-back when a peer
-  // joins our group. If we get both before we process this slot,
-  // core->getGroupPeerNames will contain the new peer name, and we'll ignore
-  // the name changed signal, and emit a single userJoined with the correct
-  // name. But, if we receive the name changed signal a little later, we will
-  // emit userJoined before we have their username, using just their ToxPk, then
-  // shortly after emit another peerNameChanged signal. This can cause
-  // double-updated to UI and chatlog, but is unavoidable given the API of
-  // toxcore.
 
-  //  QStringList peers = groupQuery.getGroupPeerNames(toxGroupNum);
-  //  const auto oldPeerNames = peerDisplayNames;
-  //  peerDisplayNames.clear();
-  //  const int nPeers = peerDisplayNames.size();
-  //  for (int i = 0; i < nPeers; ++i) {
-  //    const auto pk = groupQuery.getGroupPeerPk(toxGroupNum, peers[i]);
-  //    if (pk == idHandler.getSelfPublicKey()) {
-  //      peerDisplayNames[pk] = idHandler.getUsername();
-  //    } else {
-  //      peerDisplayNames[pk] = FriendList::decideNickname(pk, peers[i]);
-  //    }
-  //  }
-  //  for (const auto &pk : oldPeerNames.keys()) {
-  //    if (!peerDisplayNames.contains(pk)) {
-  //      emit userLeft(pk, oldPeerNames.value(pk));
-  //      stopAudioOfDepartedPeers(pk);
-  //    }
-  //  }
-    for (const auto &pk : peerDisplayNames.keys()) {
-//      if (!oldPeerNames.contains(pk)) {
-        emit userJoined(pk, peerDisplayNames.value(pk));
-//      }
-    }
-  //  for (const auto &pk : peerDisplayNames.keys()) {
-  //    if (oldPeerNames.contains(pk) &&
-  //        oldPeerNames.value(pk) != peerDisplayNames.value(pk)) {
-  //      emit peerNameChanged(pk, oldPeerNames.value(pk),
-  //                           peerDisplayNames.value(pk));
-  //    }
-  //  }
-  //  if (oldPeerNames.size() != nPeers) {
-  //    emit numPeersChanged(nPeers);
-  //  }
-}
-
-void Group::updateUsername(ToxPk pk, const QString newName) {
-  const QString displayName = FriendList::decideNickname(pk, newName);
+void Group::updateUsername(const QString oldName, const QString newName) {
+//  const QString displayName = FriendList::decideNickname(pk, newName);
 //  qDebug() <<"updateUsername=>" << displayName;
 
-  if(!peerDisplayNames.contains(pk)){
-        return ;
+  if(!peerDisplayNames.contains(oldName)){
+     return;
   }
 
-  if (peerDisplayNames[pk] != displayName) {
-    // there could be no actual change even if their username changed due to an
-    // alias being set
-    const auto oldName = peerDisplayNames[pk];
-    peerDisplayNames[pk] = displayName;
-    emit peerNameChanged(pk, oldName, displayName);
+  if (peerDisplayNames[oldName] != newName) {
+    peerDisplayNames[newName] = newName;
+    emit peerNameChanged(oldName, newName);
   }
 }
 
@@ -132,18 +83,24 @@ QString Group::getId() const { return toxGroupNum; }
 
 const GroupId &Group::getPersistentId() const { return groupId; }
 
-int Group::getPeersCount() const { return peerDisplayNames.size(); }
+int Group::getPeersCount() const { return peerCount; }
+
+void Group::setPeerCount(uint32_t count)
+{
+    peerCount = count;
+    emit peerCountChanged(peerCount);
+}
 
 /**
  * @brief Gets the PKs and names of all peers
  * @return PKs and names of all peers, including our own PK and name
  */
-const QMap<ToxPk, QString> &Group::getPeerList() const {
+const QMap<QString, QString> &Group::getPeerList() const {
   return peerDisplayNames;
 }
 
-void Group::addPeerName(GroupId groupId) {
-  peerDisplayNames[ToxPk(groupId)] = groupId.getUsername();
+void Group::addPeer(const GroupOccupant &occ) {
+  peerDisplayNames[occ.nick] = occ.nick;
 }
 
 void Group::setEventFlag(bool f) { hasNewMessages = f; }
@@ -154,19 +111,22 @@ void Group::setMentionedFlag(bool f) { userWasMentioned = f; }
 
 bool Group::getMentionedFlag() const { return userWasMentioned; }
 
-QString Group::resolveToxId(const ToxPk &id) const {
-  auto it = peerDisplayNames.find(id);
 
-  if (it != peerDisplayNames.end()) {
-    return *it;
-  }
-
-  return QString();
-}
 
 void Group::setSelfName(const QString &name) { selfName = name; }
 
 QString Group::getSelfName() const { return selfName; }
+
+void Group::setDesc(const QString &desc_)
+{
+    desc = desc_;
+    emit descChanged(desc);
+}
+
+const QString& Group::getDesc() const
+{
+    return desc;
+}
 
 void Group::stopAudioOfDepartedPeers(const ToxPk &peerPk) {
   if (avGroupchat) {

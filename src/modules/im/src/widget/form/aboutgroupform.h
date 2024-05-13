@@ -16,10 +16,16 @@ public:
     explicit AboutGroupForm(const GroupId & gId, QWidget *parent = nullptr);
     ~AboutGroupForm();
     void init();
+
+
+
 private:
 
     Ui::AboutGroupForm *ui;
     GroupId groupId;
+
+private slots:
+    void onSendMessageClicked();
 };
 
 #endif // ABOUTGROUPFORM_H

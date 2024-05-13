@@ -174,10 +174,12 @@ bool Messenger::connectIM( ) {
           handler->onSelfIdChanged(id);
         }
       });
+
   /**
    * friendHandlers
    */
-  connect(_im, &IM::receiveFriend, this, &Messenger::onFriendReceived, Qt::QueuedConnection);
+  connect(_im, &IM::receiveFriend, this,
+          &Messenger::onFriendReceived, Qt::QueuedConnection);
 
   connect(
       _im, &IM::receiveFriendDone, this,//
@@ -296,7 +298,7 @@ bool Messenger::connectIM( ) {
             }
           });
 
-  connect(_im, &IM::groupListReceived, this,
+  connect(_im, &IM::groupReceived, this,
           &Messenger::onGroupReceived);
 
   connect(_im, &IM::groupListReceivedDone, this,
@@ -322,12 +324,13 @@ bool Messenger::connectIM( ) {
 
   connect(
       _im, &IM::groupOccupantStatus, this,
-      [&](const QString &groupId, const QString &peerId, bool online) -> void {
+      [&](const QString &groupId, const GroupOccupant &go) -> void {
         for (auto handler : groupHandlers) {
-          handler->onGroupOccupantStatus(groupId, peerId, online);
+          handler->onGroupOccupantStatus(groupId, go);
         }
       });
 
+  qRegisterMetaType<GroupInfo>("GroupInfo");
   connect(_im, &IM::groupRoomInfo, this,
           [&](const QString &groupId, const  GroupInfo info) -> void {
             for (auto handler : groupHandlers) {
@@ -792,7 +795,7 @@ void Messenger::setUIStarted(){
 
 void Messenger::onGroupReceived(QString groupId, QString name) {
     for (auto handler : groupHandlers) {
-      handler->onGroupList(groupId, name);
+      handler->onGroup(groupId, name);
     }
 }
 void Messenger::onFriendReceived(QString friendId) {

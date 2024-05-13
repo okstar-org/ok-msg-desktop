@@ -121,8 +121,8 @@ GroupChatForm::GroupChatForm(Group* chatGroup, IChatLog& chatLog, IMessageDispat
     connect(group, &Group::titleChanged, this, &GroupChatForm::onTitleChanged);
     connect(group, &Group::userJoined, this, &GroupChatForm::onUserJoined);
     connect(group, &Group::userLeft, this, &GroupChatForm::onUserLeft);
-    connect(group, &Group::peerNameChanged, this, &GroupChatForm::onPeerNameChanged);
-    connect(group, &Group::numPeersChanged, this, &GroupChatForm::updateUserCount);
+//    connect(group, &Group::peerNameChanged, this, &GroupChatForm::onPeerNameChanged);
+    connect(group, &Group::peerCountChanged, this, &GroupChatForm::updateUserCount);
     settings.connectTo_blackListChanged(this, [this](QStringList const&) { this->updateUserNames(); });
 
     updateUserNames();
@@ -185,18 +185,18 @@ void GroupChatForm::updateUserNames()
         const QString editedName = editName(peerName);
         QLabel* const label = new QLabel(editedName + QLatin1String(", "));
         if (editedName != peerName) {
-            label->setToolTip(peerName + " (" + peerPk.toString() + ")");
-        } else if (peerName != peerPk.toString()) {
-            label->setToolTip(peerPk.toString());
+            label->setToolTip(peerName + " (" + peerPk + ")");
+        } else if (peerName != peerPk ) {
+            label->setToolTip(peerPk );
         } // else their name is just their Pk, no tooltip needed
         label->setTextFormat(Qt::PlainText);
         label->setContextMenuPolicy(Qt::CustomContextMenu);
 
         connect(label, &QLabel::customContextMenuRequested, this, &GroupChatForm::onLabelContextMenuRequested);
 
-        if (peerPk == selfPk) {
+        if (peerPk == selfPk.toString()) {
             label->setProperty("peerType", LABEL_PEER_TYPE_OUR);
-        } else if (settings.getBlackList().contains(peerPk.toString())) {
+        } else if (settings.getBlackList().contains(peerPk)) {
             label->setProperty("peerType", LABEL_PEER_TYPE_MUTED);
         }
 
@@ -248,7 +248,7 @@ void GroupChatForm::onPeerNameChanged(const ToxPk& peer, const QString& oldName,
     updateUserNames();
 }
 
-void GroupChatForm::peerAudioPlaying(ToxPk peerPk)
+void GroupChatForm::peerAudioPlaying(QString peerPk)
 {
     peerLabels[peerPk]->setProperty("playingAudio", LABEL_PEER_PLAYING_AUDIO);
     peerLabels[peerPk]->style()->unpolish(peerLabels[peerPk]);
@@ -358,7 +358,7 @@ GenericNetCamView* GroupChatForm::createNetcam()
     const auto ownPk = Core::getInstance()->getSelfPublicKey();
     for (const auto& peerPk : names.keys()) {
         auto timerIt = peerAudioTimers.find(peerPk);
-        if (peerPk != ownPk && timerIt != peerAudioTimers.end()) {
+        if (peerPk != ownPk.toString() && timerIt != peerAudioTimers.end()) {
             static_cast<GroupNetCamView*>(view)->addPeer(peerPk, names.find(peerPk).value());
         }
     }
@@ -415,17 +415,17 @@ void GroupChatForm::onLabelContextMenuRequested(const QPoint& localPos)
     QStringList blackList = settings.getBlackList();
     QMenu* const contextMenu = new QMenu(this);
     const ToxPk selfPk = Core::getInstance()->getSelfPublicKey();
-    ToxPk peerPk;
 
     // delete menu after it stops being used
     connect(contextMenu, &QMenu::aboutToHide, contextMenu, &QObject::deleteLater);
 
+    QString peerPk;
     peerPk = peerLabels.key(label);
-    if (peerPk.isEmpty() || peerPk == selfPk) {
+    if (peerPk.isEmpty() || peerPk == selfPk.toString()) {
         return;
     }
 
-    const bool isPeerBlocked = blackList.contains(peerPk.toString());
+    const bool isPeerBlocked = blackList.contains(peerPk);
     QString menuTitle = label->text();
     if (menuTitle.endsWith(QLatin1String(", "))) {
         menuTitle.chop(2);
@@ -445,12 +445,12 @@ void GroupChatForm::onLabelContextMenuRequested(const QPoint& localPos)
     const QAction* selectedItem = contextMenu->exec(pos);
     if (selectedItem == toggleMuteAction) {
         if (isPeerBlocked) {
-            const int index = blackList.indexOf(peerPk.toString());
+            const int index = blackList.indexOf(peerPk );
             if (index != -1) {
                 blackList.removeAt(index);
             }
         } else {
-            blackList << peerPk.toString();
+            blackList << peerPk ;
         }
 
         settings.setBlackList(blackList);

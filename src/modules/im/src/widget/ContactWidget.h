@@ -53,6 +53,7 @@ public slots:
 
 
   void onGroupJoined( const GroupId & groupId, const QString& name);
+  void onGroupInfoReceived(const GroupId & groupId, const GroupInfo& info);
   void onGroupInviteReceived(const GroupInvite &inviteInfo);
 
 
@@ -69,8 +70,7 @@ void onGroupPeerNameChanged(QString groupnumber, const ToxPk &peerPk,
 void onGroupTitleChanged(QString groupnumber, const QString &author,
                          const QString &title);
 
-void onGroupPeerStatusChanged(QString groupnumber, QString peerPk,
-                              bool  online);
+void onGroupPeerStatusChanged(const QString & groupnumber,const GroupOccupant &go);
 void onGroupClicked();
 
 private:

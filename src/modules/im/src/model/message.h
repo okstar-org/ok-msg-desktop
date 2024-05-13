@@ -53,6 +53,10 @@ public:
   std::vector<MessageMetadata> metadata;
 };
 
+struct FriendMessage : Message{
+    ToxPk from;
+    ToxPk to;
+};
 
 struct GroupMessage : public Message{
 public:
@@ -63,10 +67,21 @@ public:
     }
 };
 
-struct FriendMessage : Message{
-    ToxPk from;
-    ToxPk to;
+struct GroupInfo {
+    QString name;
+    QString description;
+    QString subject;
+    QString creationdate;
+    uint64_t occupants=0;
 };
+
+struct GroupOccupant{
+    QString nick;
+    QString affiliation;
+    QString role;
+    int status;
+} ;
+
 
 class MessageProcessor {
 

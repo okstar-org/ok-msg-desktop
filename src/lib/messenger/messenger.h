@@ -90,21 +90,29 @@ public:
 
 typedef struct {
 
-  std::string name;
+  QString name;
 
-  std::string description;
+  QString description;
 
-  std::string subject;
+  QString subject;
 
-  std::string creationdate;
+  QString creationdate;
 
-  int occupants;
+  uint64_t occupants=0;
 } GroupInfo;
+
+typedef struct{
+    QString nick;
+    QString affiliation;
+    QString role;
+    int status;
+} GroupOccupant;
 
 class GroupHandler {
 public:
-  virtual void onGroupList(const QString groupId,
-                           const QString name) = 0;
+  virtual void onGroup(const QString groupId,
+                       const QString name) = 0;
+
   virtual void onGroupListDone() = 0;
 
   virtual void onGroupInvite(const QString groupId, //
@@ -120,8 +128,7 @@ public:
   virtual void onGroupInfo(QString groupId, GroupInfo groupInfo) = 0;
 
   virtual void onGroupOccupantStatus(const QString groupId, //
-                                     const QString peerId,  //
-                                     bool online) = 0;
+                                    GroupOccupant) = 0;
 };
 
 class CallHandler {

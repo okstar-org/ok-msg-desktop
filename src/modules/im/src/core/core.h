@@ -219,7 +219,7 @@ signals:
 
   void groupPeerSizeChanged(QString groupnumber, const uint size);
 
-  void groupPeerStatusChanged(QString groupnumber, QString peerId, bool online);
+  void groupPeerStatusChanged(QString groupnumber, GroupOccupant go);
 
   void groupPeerNameChanged(QString groupnumber, const ToxPk &peerPk,
                             const QString &newName);
@@ -227,9 +227,12 @@ signals:
   void groupTitleChanged(QString groupnumber, const QString &author,
                          const QString &title);
 
+  void groupInfoReceipt(const GroupId & groupId,
+                        const GroupInfo& info);
+
   void groupPeerAudioPlaying(QString groupnumber, ToxPk peerPk);
   void groupSentFailed(QString groupId);
-  void groupJoined(const GroupId& groupId, const QString &name);
+  void groupAdded(const GroupId& groupId, const QString &name);
   void groupJoinedDone();
   void actionSentResult(QString friendId, const QString &action, int success);
 
@@ -332,7 +335,7 @@ private:
   /**
    * GroupHandler
    */
-  virtual void onGroupList(const QString groupId,  const QString name) override;
+  virtual void onGroup(const QString groupId,  const QString name) override;
   virtual void onGroupListDone() override;
 
   virtual void onGroupInvite(const QString groupId, //
@@ -348,9 +351,8 @@ private:
 
   virtual void onGroupOccupants(const QString groupId, uint size) override;
 
-  virtual void onGroupOccupantStatus(const QString groupId, //
-                                     const QString peerId,  //
-                                     bool online);
+  virtual void onGroupOccupantStatus(const QString groupId,
+                                     lib::messenger::GroupOccupant) override;
 
 private slots:
   void process();

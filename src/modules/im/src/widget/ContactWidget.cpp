@@ -92,7 +92,12 @@ void ContactWidget::connectToCore(Core *core) {
 
 
 
-  connect(core, &Core::groupJoined, this, &ContactWidget::onGroupJoined);
+  connect(core, &Core::groupAdded, this, &ContactWidget::onGroupJoined);
+
+  connect(core, &Core::groupInfoReceipt, this, &ContactWidget::onGroupInfoReceived);
+
+  connect(core, &Core::groupTitleChanged, this,
+          &ContactWidget::onGroupTitleChanged);
 
   connect(core, &Core::groupInviteReceived, this,
           &ContactWidget::onGroupInviteReceived);
@@ -105,8 +110,7 @@ void ContactWidget::connectToCore(Core *core) {
           &ContactWidget::onGroupPeerNameChanged);
   connect(core, &Core::groupPeerStatusChanged, this,
           &ContactWidget::onGroupPeerStatusChanged);
-  connect(core, &Core::groupTitleChanged, this,
-          &ContactWidget::onGroupTitleChanged);
+
 
 }
 
@@ -210,6 +214,11 @@ void ContactWidget::onGroupJoined(const GroupId &groupId, const QString &name) {
   qDebug() << "Created group:" << group << "=>" << groupId.toString();
 }
 
+void ContactWidget::onGroupInfoReceived(const GroupId &groupId, const GroupInfo &info){
+  qDebug() << __func__ << groupId.toString();
+  contactListWidget->setGroupInfo(groupId, info);
+}
+
 void ContactWidget::onGroupInviteReceived(const GroupInvite &inviteInfo) {
 
   const uint8_t confType = inviteInfo.getType();
@@ -261,7 +270,7 @@ void ContactWidget::onGroupPeerListChanged(QString groupnumber) {
   const GroupId &groupId = GroupList::id2Key(groupnumber);
   Group *g = GroupList::findGroup(groupId);
   assert(g);
-  g->regeneratePeerList();
+//  g->regeneratePeerList();
 }
 
 void ContactWidget::onGroupPeerSizeChanged(QString groupnumber, const uint size) {
@@ -272,7 +281,7 @@ void ContactWidget::onGroupPeerSizeChanged(QString groupnumber, const uint size)
     return;
   }
 
-  g->numPeersChanged(size);
+  g->setPeerCount(size);
 }
 
 void ContactWidget::onGroupPeerNameChanged(QString groupnumber,
@@ -284,12 +293,12 @@ void ContactWidget::onGroupPeerNameChanged(QString groupnumber,
     qWarning() << "Can not find the group named:" << groupnumber;
     return;
   }
-  const QString &setName = FriendList::decideNickname(peerPk, newName);
-  g->updateUsername(peerPk, newName);
+//  const QString &setName = FriendList::decideNickname(peerPk, newName);
+//  g->updateUsername(peerPk, newName);
 }
 
-void ContactWidget::onGroupPeerStatusChanged(QString groupnumber, QString peerName,
-                                          bool online) {
+void ContactWidget::onGroupPeerStatusChanged(const QString &groupnumber,
+                                             const GroupOccupant &go) {
 
   const GroupId &groupId = GroupList::id2Key(groupnumber);
   Group *g = GroupList::findGroup(groupId);
@@ -298,8 +307,8 @@ void ContactWidget::onGroupPeerStatusChanged(QString groupnumber, QString peerNa
     return;
   }
 
-  g->addPeerName(groupId);
-  g->regeneratePeerList();
+  g->addPeer(go);
+
 }
 
 void ContactWidget::onGroupTitleChanged(QString groupnumber, const QString &author,

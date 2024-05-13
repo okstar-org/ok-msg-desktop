@@ -144,7 +144,7 @@ void ChatWidget::connectToCore(Core *core) {
           &ChatWidget::onFriendTypingChanged);
   connect(core, &Core::receiptRecieved, this, &ChatWidget::onReceiptReceived);
 
-  connect(core, &Core::groupJoined, this, &ChatWidget::onGroupJoined);
+  connect(core, &Core::groupAdded, this, &ChatWidget::onGroupJoined);
 
   connect(core, &Core::groupInviteReceived, this,
           &ChatWidget::onGroupInviteReceived);
@@ -485,10 +485,10 @@ void ChatWidget::onGroupMessageReceived(const GroupMessage& msg) {
 }
 
 void ChatWidget::onGroupPeerListChanged(QString groupnumber) {
-  const GroupId &groupId = GroupList::id2Key(groupnumber);
-  Group *g = GroupList::findGroup(groupId);
-  assert(g);
-  g->regeneratePeerList();
+//  const GroupId &groupId = GroupList::id2Key(groupnumber);
+//  Group *g = GroupList::findGroup(groupId);
+//  assert(g);
+//  g->regeneratePeerList();
 }
 
 void ChatWidget::onGroupPeerSizeChanged(QString groupnumber, const uint size) {
@@ -499,7 +499,7 @@ void ChatWidget::onGroupPeerSizeChanged(QString groupnumber, const uint size) {
     return;
   }
 
-  g->numPeersChanged(size);
+  g->setPeerCount(size);
 }
 
 void ChatWidget::onGroupPeerNameChanged(QString groupnumber,
@@ -511,22 +511,22 @@ void ChatWidget::onGroupPeerNameChanged(QString groupnumber,
     qWarning() << "Can not find the group named:" << groupnumber;
     return;
   }
-  const QString &setName = FriendList::decideNickname(peerPk, newName);
-  g->updateUsername(peerPk, newName);
+//  const QString &setName = FriendList::decideNickname(peerPk, newName);
+//  g->updateUsername(peerPk, newName);
 }
 
-void ChatWidget::onGroupPeerStatusChanged(QString groupnumber, QString peerName,
-                                          bool online) {
+void ChatWidget::onGroupPeerStatusChanged(const QString& groupnumber,
+                                          const GroupOccupant &go) {
 
   const GroupId &groupId = GroupList::id2Key(groupnumber);
   Group *g = GroupList::findGroup(groupId);
   if (!g) {
-    qWarning() << "Can not find group named:" << groupnumber;
+    qWarning() << "Can not find group named:" << groupId.getUsername();
     return;
   }
 
-  g->addPeerName(groupId);
-  g->regeneratePeerList();
+  g->addPeer(go);
+//  g->regeneratePeerList();
 }
 
 void ChatWidget::onGroupTitleChanged(QString groupnumber, const QString &author,

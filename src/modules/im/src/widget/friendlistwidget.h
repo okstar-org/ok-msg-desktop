@@ -66,6 +66,7 @@ public:
   void addGroupWidget(GroupWidget *gw);
   void removeGroupWidget(GroupWidget *w);
   void setGroupTitle(const GroupId &groupId, const QString &author,const QString& title);
+  void setGroupInfo(const GroupId &groupId, const GroupInfo &info);
 
   void addCircleWidget(int id);
   void addCircleWidget(FriendWidget *widget = nullptr);

@@ -885,11 +885,10 @@ signals:
   void started();
   void onStopped();
 
-  void groupListReceived(const QString groupId, const QString name);
+  void groupReceived(const QString groupId, const QString name);
   void groupListReceivedDone();
   void groupOccupants(const QString groupId, const uint size);
-  void groupOccupantStatus(const QString groupId, const QString peerId,
-                           bool online);
+  void groupOccupantStatus(const QString& groupId, GroupOccupant&);
   void groupInvite(const QString groupId, const QString peerId,
                    const QString message);
 

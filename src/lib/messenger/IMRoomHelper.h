@@ -32,16 +32,7 @@ struct IMRoomInfo {
    * 参考：
    * https://xmpp.org/extensions/xep-0045.html#registrar-formtype-roominfo
    */
-  //名称 muc#roominfo_roomname
-  std::string name;
-  // muc#roominfo_description
-  std::string description;
-  // muc#roominfo_subject
-  std::string subject;
-  // x-muc#roominfo_creationdate
-  std::string creationdate;
-  //人数 muc#roominfo_occupants
-  int occupants;
+
   GroupInfo info;
 
   /**

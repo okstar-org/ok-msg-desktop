@@ -157,8 +157,7 @@ void onGroupPeerNameChanged(QString groupnumber, const ToxPk &peerPk,
 void onGroupTitleChanged(QString groupnumber, const QString &author,
                          const QString &title);
 
-void onGroupPeerStatusChanged(QString groupnumber, QString peerPk,
-                              bool  online);
+void onGroupPeerStatusChanged(const QString&, const GroupOccupant&);
 void onGroupClicked();
 
 

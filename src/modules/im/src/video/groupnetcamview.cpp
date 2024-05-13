@@ -153,8 +153,8 @@ GroupNetCamView::GroupNetCamView(QString group, QWidget* parent)
         setActive();
     });
 
-    connect(Nexus::getProfile(), &Profile::friendAvatarChanged, this,
-            &GroupNetCamView::friendAvatarChanged);
+//    connect(Nexus::getProfile(), &Profile::friendAvatarChanged, this,
+//            &GroupNetCamView::friendAvatarChanged);
 
     selfVideoSurface->setText(Core::getInstance()->getUsername());
 }
@@ -166,20 +166,21 @@ void GroupNetCamView::clearPeers()
     }
 }
 
-void GroupNetCamView::addPeer(const ToxPk& peer, const QString& name)
+void GroupNetCamView::addPeer(const QString& peer, const QString& name)
 {
-    QPixmap groupAvatar = Nexus::getProfile()->loadAvatar(peer);
-    LabeledVideo* labeledVideo = new LabeledVideo(groupAvatar, "black", this);
-    labeledVideo->setText(name);
-    horLayout->insertWidget(horLayout->count() - 1, labeledVideo);
-    PeerVideo peerVideo;
-    peerVideo.video = labeledVideo;
-    videoList.insert(peer, peerVideo);
+    qDebug() << __func__;
+//    QPixmap groupAvatar = Nexus::getProfile()->loadAvatar(peer);
+//    LabeledVideo* labeledVideo = new LabeledVideo(groupAvatar, "black", this);
+//    labeledVideo->setText(name);
+//    horLayout->insertWidget(horLayout->count() - 1, labeledVideo);
+//    PeerVideo peerVideo;
+//    peerVideo.video = labeledVideo;
+//    videoList.insert(peer, peerVideo);
 
-    setActive();
+//    setActive();
 }
 
-void GroupNetCamView::removePeer(const ToxPk& peer)
+void GroupNetCamView::removePeer(const QString& peer)
 {
     auto peerVideo = videoList.find(peer);
 
@@ -229,7 +230,7 @@ void GroupNetCamView::setActive(const ToxPk& peer)
 #endif
 }
 
-void GroupNetCamView::friendAvatarChanged(ToxPk friendPk, const QPixmap& pixmap)
+void GroupNetCamView::friendAvatarChanged(QString friendPk, const QPixmap& pixmap)
 {
     auto peerVideo = videoList.find(friendPk);
     if (peerVideo != videoList.end()) {

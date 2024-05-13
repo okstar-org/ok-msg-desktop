@@ -592,9 +592,9 @@ void Widget::resizeEvent(QResizeEvent *event) {
 QString Widget::getUsername() { return core->getUsername(); }
 
 void Widget::onSelfAvatarLoaded(const QPixmap &pic) {
-  qDebug() << "onSelfAvatarLoaded" << pic.size();
+
   if(pic.size().isEmpty()){
-    qWarning()<<"pic is empty.";
+    qWarning()<<__func__<<"pic is empty.";
     return;
   }
 //  profilePicture->setPixmap(pic);
@@ -919,11 +919,11 @@ void Widget::onStatusMessageChanged(const QString &newStatusMessage) {
 }
 
 void Widget::setAvatar( QByteArray avatar) {
-  qDebug() << "Widget::setAvatar size:" << avatar.size();
-
-  if (avatar.isEmpty())
-    return;
-
+    if (avatar.isEmpty())
+    {
+        qWarning() << __func__ <<"avatar is empty!";
+        return;
+    }
   QPixmap pixmap;
   if(!base::Images::putToPixmap(avatar, pixmap))
   {
@@ -1589,11 +1589,11 @@ void Widget::removeFriend(Friend *f, bool fake) {
     core->removeFriend(f->getPublicKey().toString());
     // aliases aren't supported for non-friend peers in groups, revert to basic
     // username
-    for (Group *g : GroupList::getAllGroups()) {
-      if (g->getPeerList().contains(friendPk)) {
-        g->updateUsername(friendPk, f->getUserName());
-      }
-    }
+//    for (Group *g : GroupList::getAllGroups()) {
+//      if (g->getPeerList().contains(friendPk)) {
+//        g->updateUsername(friendPk, f->getUserName());
+//      }
+//    }
   }
 
 //  frdWidget->removeFriend(friendPk);
@@ -2220,9 +2220,10 @@ void Widget::focusChatInput() {
 }
 
 void Widget::refreshPeerListsLocal(const QString &username) {
-  for (Group *g : GroupList::getAllGroups()) {
-    g->updateUsername(core->getSelfPublicKey(), username);
-  }
+    qDebug() <<__func__ << "username"<<username;
+//  for (Group *g : GroupList::getAllGroups()) {
+//    g->updateUsername(core->getSelfPublicKey(), username);
+//  }
 }
 
 

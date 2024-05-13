@@ -40,14 +40,6 @@ QString resolveToxPk(const ToxPk& pk)
     if (f) {
         return f->getDisplayedName();
     }
-
-    for (Group* it : GroupList::getAllGroups()) {
-        QString res = it->resolveToxId(pk);
-        if (!res.isEmpty()) {
-            return res;
-        }
-    }
-
     return pk.getUsername();
 }
 

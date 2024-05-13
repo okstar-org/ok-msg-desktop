@@ -15,6 +15,7 @@
 #include "contentdialogmanager.h"
 #include "form/groupchatform.h"
 #include "lib/settings/translator.h"
+#include "groupwidget.h"
 #include "maskablepixmapwidget.h"
 #include "src/model/sessionchatlog.h"
 #include "src/model/status.h"
@@ -67,7 +68,8 @@ GroupWidget::GroupWidget(ContentLayout *layout, QString groupnumber,
   setAcceptDrops(true);
 
   connect(group, &Group::titleChanged, this, &GroupWidget::updateTitle);
-  connect(group, &Group::numPeersChanged, this, &GroupWidget::updateUserCount);
+  connect(group, &Group::peerCountChanged, this, &GroupWidget::updateUserCount);
+  connect(group, &Group::descChanged, this, &GroupWidget::updateDesc);
   connect(nameLabel, &CroppingLabel::editFinished, group, &Group::setName);
 
   auto messageProcessor = MessageProcessor(sharedMessageProcessorParams);
@@ -302,14 +304,19 @@ void GroupWidget::do_widgetClicked(GenericChatroomWidget *w) {
     showDetails();
 }
 
+void GroupWidget::updateDesc(const QString &)
+{
+
+}
+
 void GroupWidget::showDetails(){
     const auto group = chatroom->getGroup();
     if(!about){
         qDebug() << "create about for:" << group->getId();
         about = std::make_unique<AboutGroupForm>(group->getPersistentId(), this);
+        contentLayout->addWidget(about.get());
     }
 
-    contentLayout->addWidget(about.get());
     contentLayout->setCurrentWidget(about.get());
 }
 
@@ -317,6 +324,10 @@ void GroupWidget::updateUserCount(int numPeers) {
   //    qDebug()<<"updateUserCount group:" << getGroup()->getId() << numPeers;
   //    statusMessageLabel->setText(tr("%n user(s) in chat", "Number of users in
   //    chat", numPeers));
+//    const auto group = chatroom->getGroup();
+//    if(about){
+//      about->set
+//    }
 }
 
 void GroupWidget::setAvatar(const QPixmap &pixmap) {

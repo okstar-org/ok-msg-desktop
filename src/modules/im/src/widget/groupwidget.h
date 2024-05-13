@@ -73,7 +73,7 @@ private slots:
   void updateTitle(const QString &author, const QString &newName);
   void updateUserCount(int numPeers);
   void do_widgetClicked(GenericChatroomWidget *w);
-
+    void updateDesc(const QString &);
 private:
 
   Group *group;

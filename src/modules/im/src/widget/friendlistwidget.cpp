@@ -492,15 +492,31 @@ void FriendListWidget::removeGroupWidget(GroupWidget *w) {
   w->deleteLater();
 }
 
-void FriendListWidget::setGroupTitle(const GroupId& groupId,const QString &author, const QString &title)
+void FriendListWidget::setGroupTitle(const GroupId& groupId,
+                                     const QString &author,
+                                     const QString &title)
 {
-    auto widget = groupWidgets[groupId];
-    if(!widget){
-        qWarning() << "group widget is no existing.";
+    auto g = GroupList::findGroup(groupId);
+    if(!g){
+        qWarning() << "group is no existing."<<groupId.toString();
         return;
     }
-    auto g = GroupList::findGroup(groupId);
     g->setTitle(author, title);
+}
+
+void FriendListWidget::setGroupInfo(const GroupId &groupId, const GroupInfo &info)
+{
+    auto g = GroupList::findGroup(groupId);
+    if(!g){
+        qWarning() << "group is no existing."<<groupId.toString();
+        return;
+    }
+
+    g->setPeerCount(info.occupants);
+    g->setDesc(info.description);
+    g->setTitle("", info.subject);
+    g->setName(info.name);
+
 }
 
 void FriendListWidget::removeFriendWidget(FriendWidget *w) {
@@ -1013,11 +1029,11 @@ void FriendListWidget::setFriendStatusMsg(const ToxPk &friendPk,
 void FriendListWidget::setFriendName(const ToxPk &friendPk,
                                      const QString &name) {
 
-  for (Group *g : GroupList::getAllGroups()) {
-    if (g->getPeerList().contains(friendPk)) {
-      g->updateUsername(friendPk, name);
-    }
-  }
+//  for (Group *g : GroupList::getAllGroups()) {
+//    if (g->getPeerList().contains(friendPk)) {
+//      g->updateUsername(friendPk, name);
+//    }
+//  }
 
   FriendWidget *friendWidget = getFriend(friendPk);
   if(!friendWidget){

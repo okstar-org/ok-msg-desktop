@@ -104,48 +104,38 @@
      </item>
     </layout>
    </item>
-   <item row="1" column="0">
-    <layout class="QGridLayout" name="infoLayout">
-     <item row="6" column="1">
-      <widget class="QCheckBox" name="autoacceptfile">
-       <property name="accessibleDescription">
-        <string>Automatically accept files from contact if set</string>
+   <item row="2" column="0">
+    <layout class="QGridLayout" name="gridLayout_2">
+     <item row="1" column="0">
+      <widget class="QPushButton" name="sendMessage">
+       <property name="maximumSize">
+        <size>
+         <width>120</width>
+         <height>60</height>
+        </size>
        </property>
        <property name="text">
-        <string>Auto accept files</string>
+        <string>Send message</string>
        </property>
       </widget>
      </item>
      <item row="0" column="0">
-      <widget class="QLabel" name="accountLabel">
-       <property name="layoutDirection">
-        <enum>Qt::LeftToRight</enum>
+      <spacer name="verticalSpacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
        </property>
-       <property name="text">
-        <string>Account:</string>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
        </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
+      </spacer>
      </item>
-     <item row="5" column="0">
-      <widget class="QLabel" name="autoAcceptCallLabel">
-       <property name="text">
-        <string>Auto accept call:</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="9" column="1">
-      <widget class="QPushButton" name="selectSaveDir">
-       <property name="text">
-        <string>Auto accept for this contact is disabled</string>
-       </property>
-      </widget>
-     </item>
+    </layout>
+   </item>
+   <item row="1" column="0">
+    <layout class="QGridLayout" name="infoLayout">
      <item row="0" column="1">
       <widget class="QLineEdit" name="friendId">
        <property name="enabled">
@@ -174,7 +164,20 @@
        </property>
       </widget>
      </item>
-     <item row="5" column="1">
+     <item row="0" column="0">
+      <widget class="QLabel" name="accountLabel">
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="text">
+        <string>Account:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
       <widget class="QComboBox" name="autoacceptcall">
        <item>
         <property name="text">
@@ -193,7 +196,7 @@
        </item>
       </widget>
      </item>
-     <item row="9" column="0">
+     <item row="8" column="0">
       <widget class="QLabel" name="saveFileLabel">
        <property name="text">
         <string>Default directory to save files:</string>
@@ -204,9 +207,9 @@
       </widget>
      </item>
      <item row="4" column="0">
-      <widget class="QLabel" name="aliasLabel">
+      <widget class="QLabel" name="autoAcceptCallLabel">
        <property name="text">
-        <string>Used aliases:</string>
+        <string>Auto accept call:</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -214,6 +217,13 @@
       </widget>
      </item>
      <item row="8" column="1">
+      <widget class="QPushButton" name="selectSaveDir">
+       <property name="text">
+        <string>Auto accept for this contact is disabled</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="1">
       <widget class="QCheckBox" name="autogroupinvite">
        <property name="accessibleDescription">
         <string>Automatically accept group chat invitations from this contact if set.</string>
@@ -223,14 +233,7 @@
        </property>
       </widget>
      </item>
-     <item row="10" column="1">
-      <widget class="QPushButton" name="removeHistory">
-       <property name="text">
-        <string>Clear</string>
-       </property>
-      </widget>
-     </item>
-     <item row="10" column="0">
+     <item row="9" column="0">
       <widget class="QLabel" name="label">
        <property name="text">
         <string>Clear history:</string>
@@ -240,45 +243,20 @@
        </property>
       </widget>
      </item>
-    </layout>
-   </item>
-   <item row="2" column="0">
-    <widget class="QGroupBox" name="groupBox">
-     <property name="title">
-      <string>Notes</string>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_3">
-      <item>
-       <widget class="QPlainTextEdit" name="note">
-        <property name="accessibleDescription">
-         <string>Input field for notes about the contact</string>
-        </property>
-        <property name="plainText">
-         <string/>
-        </property>
-        <property name="placeholderText">
-         <string>You can save comment about this contact here.</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="3" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <property name="spacing">
-      <number>6</number>
-     </property>
-     <item>
-      <widget class="QPushButton" name="sendMessage">
-       <property name="maximumSize">
-        <size>
-         <width>120</width>
-         <height>60</height>
-        </size>
+     <item row="9" column="1">
+      <widget class="QPushButton" name="removeHistory">
+       <property name="text">
+        <string>Clear</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="1">
+      <widget class="QCheckBox" name="autoacceptfile">
+       <property name="accessibleDescription">
+        <string>Automatically accept files from contact if set</string>
        </property>
        <property name="text">
-        <string>Send message</string>
+        <string>Auto accept files</string>
        </property>
       </widget>
      </item>
@@ -289,7 +267,6 @@
  <tabstops>
   <tabstop>friendId</tabstop>
   <tabstop>autoacceptfile</tabstop>
-  <tabstop>note</tabstop>
  </tabstops>
  <resources/>
  <connections/>
