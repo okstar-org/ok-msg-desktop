@@ -36,6 +36,7 @@ public:
          const QString& rawText = QString(), const TextType& type = NORMAL, const QColor& custom = Style::getColor(Style::MainText));
     virtual ~Text();
 
+    void setTextSelectable(bool selectable);
     void setText(const QString& txt);
     void selectText(const QString& txt, const std::pair<int, int>& point);
     void selectText(const QRegularExpression& exp, const std::pair<int, int>& point);
@@ -66,6 +67,11 @@ public:
 
     virtual QString getText() const final;
     QString getLinkAt(QPointF scenePos) const;
+
+    void setContentsMargins(QMarginsF margins);
+
+    void setBoundingRadius(qreal radius);
+    void setBackgroundColor(const QColor &color);
 
 protected:
     // dynamic resource management
@@ -103,6 +109,10 @@ private:
     TextType textType;
     QColor color;
     QColor customColor;
+    QColor backgroundColor;
+    qreal boundRadius = 0.0;
+    QMarginsF margins;
+    bool selectable = true;
 };
 
 #endif // TEXT_H
