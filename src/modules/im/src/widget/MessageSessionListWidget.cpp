@@ -19,6 +19,7 @@
 #include "friendlistlayout.h"
 #include "friendwidget.h"
 #include "groupwidget.h"
+#include "style.h"
 #include "src/friendlist.h"
 #include "src/model/chathistory.h"
 #include "src/model/chatroom/friendchatroom.h"
@@ -818,7 +819,16 @@ void MessageSessionListWidget::setFriendTyping(const ToxPk &friendId, bool isTyp
 }
 
 void MessageSessionListWidget::reloadTheme() {
-  for (auto fw: sessionWidgets) {
+    auto p = palette();
+    p.setColor(QPalette::Window, Style::getColor(Style::ThemeMedium));   // Base background color
+    p.setColor(QPalette::Highlight, Style::getColor(Style::ThemeHighlight)); // On mouse over
+    p.setColor(QPalette::Light, Style::getColor(Style::ThemeLight));          // When active
+    setPalette(p);
+
+
+
+
+    for (auto fw: sessionWidgets) {
     fw->reloadTheme();
   }
 }

@@ -79,24 +79,24 @@ QListView
 
 #statusPanel
 {
-  background-color: @themeDark;
+  background-color: @groundBase;
 }
 
 #statusPanel > #statusHead
 {
-  background-color: @themeDark;
+  background-color: @groundBase;
 }
 
 #statusPanel > #statusHead > #nameLabel
 {
-  background-color: @themeDark;
+  background-color: @groundBase;
   font: @extraBig;
   color: @nameActive;
 }
 
 #statusPanel > #statusHead > #statusLabel
 {
-  background-color: @themeDark;
+  background-color: @groundBase;
   font: @medium;
   color: @statusActive;
 }
@@ -114,7 +114,7 @@ QListView
 /*Bugged in Qt, but it's probably better to leave enabled so that users can tell it's clickable*/
 #statusPanel > #statusHead > #statusButton:hover
 {
-  background-color: @themeLight;
+  /*background-color: @themeLight;*/
 }
 
 #statusPanel > #statusHead > #statusButton:pressed
