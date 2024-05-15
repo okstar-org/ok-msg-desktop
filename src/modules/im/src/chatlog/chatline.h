@@ -60,6 +60,7 @@ public:
     void fontChanged(const QFont &font);
     void reloadTheme();
     void selectionCleared();
+    void selectAll();
     void setTime(const QDateTime &time) {
         datetime = time;
     }

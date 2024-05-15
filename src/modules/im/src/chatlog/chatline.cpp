@@ -79,6 +79,14 @@ void IChatItem::selectionCleared()
     }
 }
 
+void IChatItem::selectAll()
+{
+    for (ChatLineContent *content : contents())
+    {
+        content->selectAll();
+    }
+}
+
 void IChatItem::setRow(int row)
 {
     this->row = row;

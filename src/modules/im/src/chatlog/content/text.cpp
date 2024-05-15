@@ -181,6 +181,20 @@ void Text::selectionFocusChanged(bool focusIn)
     update();
 }
 
+void Text::selectAll()
+{
+    if (!doc)
+        return;
+
+    QTextCursor cursor(doc);
+    cursor.setPosition(0);
+    cursor.select(QTextCursor::Document);
+    selectionAnchor = cursor.selectionStart();
+    selectionEnd = cursor.selectionEnd();
+    selectedText = text;
+    update();
+}
+
 bool Text::isOverSelection(QPointF scenePos) const
 {
     int cur = cursorFromPos(scenePos);
@@ -418,9 +432,15 @@ QSizeF Text::idealSize()
 int Text::cursorFromPos(QPointF scenePos, bool fuzzy) const
 {
     if (doc)
-        return doc->documentLayout()->hitTest(mapFromScene(scenePos),
-                                              fuzzy ? Qt::FuzzyHit : Qt::ExactHit);
-
+    {
+        QPointF pos = mapFromScene(scenePos);
+        QRectF rect = this->boundingRect();
+        if (rect.contains(pos))
+        {
+            pos.ry() = qBound(rect.top() + margins.top() + 1, pos.y(), rect.bottom() - margins.bottom() - 1);
+        }
+        return doc->documentLayout()->hitTest(pos, fuzzy ? Qt::FuzzyHit : Qt::ExactHit);
+    }
     return -1;
 }
 

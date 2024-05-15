@@ -78,10 +78,6 @@ ChatLog::ChatLog(QWidget* parent)
     setContextMenuPolicy(Qt::CustomContextMenu);
     setBackgroundBrush(QBrush(Style::getColor(Style::GroundBase), Qt::SolidPattern));
 
-    // The selection rect for multi-line selection
-    selGraphItem = scene->addRect(0, 0, 0, 0, selectionRectColor.darker(120), selectionRectColor);
-    selGraphItem->setZValue(-1.0); // behind all other items
-
     // copy action (ie. Ctrl+C)
     copyAction = new QAction(this);
     copyAction->setIcon(QIcon::fromTheme("edit-copy"));
@@ -251,8 +247,8 @@ void ChatLog::mouseMoveEvent(QMouseEvent* ev)
             && (clickPos - ev->pos()).manhattanLength() > QApplication::startDragDistance()) {
             QPointF sceneClickPos = mapToScene(clickPos.toPoint());
             IChatItem::Ptr line = findLineByPosY(scenePos.y());
-            ChatLineContent *content =
-                line->selectable() ? getContentFromPos(sceneClickPos) : nullptr;
+            ChatLineContent *content = (line && 
+                line->selectable()) ? getContentFromPos(sceneClickPos) : nullptr;
             if (content) {
                 selClickedRow = content->getRow();
                 selClickedCol = content->getColumn();
@@ -276,7 +272,7 @@ void ChatLog::mouseMoveEvent(QMouseEvent* ev)
         }
 
         if (selectionMode != SelectionMode::None) {
-            ChatLineContent* content = getContentFromPos(scenePos);
+            ChatLineContent *content = getContentFromPos(scenePos);
             IChatItem::Ptr line = findLineByPosY(scenePos.y());
 
             int row;
@@ -286,31 +282,57 @@ void ChatLog::mouseMoveEvent(QMouseEvent* ev)
                 int col = content->getColumn();
 
                 if (row == selClickedRow && col == selClickedCol) {
+                    // 从多行切换到精确选择，重新处理起点
+                    if (selectionMode == SelectionMode::Multi)
+                        content->selectionStarted(mapToScene(clickPos.toPoint()));
                     selectionMode = SelectionMode::Precise;
-
                     content->selectionMouseMove(scenePos);
-                    selGraphItem->hide();
+
                 } else if (col != selClickedCol) {
                     selectionMode = SelectionMode::Multi;
-
-                    lines[selClickedRow]->selectionCleared();
+                    // 多行选择，直接全选
+                    lines[selClickedRow]->selectAll();
                 }
             } else if (line.get()) {
                 row = line->getRow();
 
                 if (row != selClickedRow) {
                     selectionMode = SelectionMode::Multi;
-                    lines[selClickedRow]->selectionCleared();
+                    lines[selClickedRow]->selectAll();
                 }
             } else {
                 return;
             }
-
+            // 对变动的多行范围，重新设定选择
+            auto selectionLineChange = [this](int row1, int row2, bool down) {
+                int start = std::min(row1, row2) + (down ? 1 : 0);
+                int end = std::max(row1, row2) + (down ? 1 : 0);
+                bool isMore = ((row2 > row1) && down) || ((row2 < row1) && !down);
+                for (int i = start; i < end; i++)
+                {
+                    IChatItem::Ptr line = lines.at(i);
+                    if (line) {
+                        if (isMore)
+                            line->selectAll();
+                        else
+                            line->selectionCleared();
+                    }
+                }
+            };
+            
             if (row >= selClickedRow)
+            {
+                if (selectionMode == SelectionMode::Multi)
+                    selectionLineChange(selLastRow, row, true);
                 selLastRow = row;
+            }
 
             if (row <= selClickedRow)
+            {
+                if (selectionMode == SelectionMode::Multi)
+                    selectionLineChange(selFirstRow, row, false);
                 selFirstRow = row;
+            }
 
             updateMultiSelectionRect();
         }
@@ -343,7 +365,7 @@ bool ChatLog::isOverSelection(QPointF scenePos) const
         if (content)
             return content->isOverSelection(scenePos);
     } else if (selectionMode == SelectionMode::Multi) {
-        if (selGraphItem->rect().contains(scenePos))
+        if (selectionBox.contains(scenePos))
             return true;
     }
 
@@ -680,8 +702,6 @@ void ChatLog::reloadTheme()
 {
     setBackgroundBrush(QBrush(Style::getColor(Style::GroundBase), Qt::SolidPattern));
     selectionRectColor = Style::getColor(Style::SelectText);
-    selGraphItem->setBrush(QBrush(selectionRectColor));
-    selGraphItem->setPen(QPen(selectionRectColor.darker(120)));
 
     for (IChatItem::Ptr l : lines) {
         l->reloadTheme();
@@ -773,14 +793,9 @@ void ChatLog::updateMultiSelectionRect()
         QRectF selBBox;
         selBBox = selBBox.united(lines[selFirstRow]->sceneBoundingRect());
         selBBox = selBBox.united(lines[selLastRow]->sceneBoundingRect());
-
-        if (selGraphItem->rect() != selBBox)
-            scene->invalidate(selGraphItem->rect());
-
-        selGraphItem->setRect(selBBox);
-        selGraphItem->show();
+        selectionBox = selBBox;
     } else {
-        selGraphItem->hide();
+        selectionBox = QRectF();
     }
 }
 
@@ -924,8 +939,6 @@ void ChatLog::focusInEvent(QFocusEvent* ev)
     QGraphicsView::focusInEvent(ev);
 
     if (selectionMode != SelectionMode::None) {
-        selGraphItem->setBrush(QBrush(selectionRectColor));
-
         for (int i = selFirstRow; i <= selLastRow; ++i)
             lines[i]->selectionFocusChanged(true);
     }
@@ -936,8 +949,6 @@ void ChatLog::focusOutEvent(QFocusEvent* ev)
     QGraphicsView::focusOutEvent(ev);
 
     if (selectionMode != SelectionMode::None) {
-        selGraphItem->setBrush(QBrush(selectionRectColor.lighter(120)));
-
         if (selFirstRow >= 0)
         {
             for (int i = selFirstRow; i <= selLastRow; ++i)
