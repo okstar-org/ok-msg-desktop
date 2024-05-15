@@ -152,6 +152,7 @@ private:
     SelectionMode selectionMode = SelectionMode::None;
     QPointF clickPos;
     QGraphicsRectItem* selGraphItem = nullptr;
+    QRectF selectionBox;
     QTimer* selectionTimer = nullptr;
     QTimer* workerTimer = nullptr;
     QTimer* multiClickTimer = nullptr;

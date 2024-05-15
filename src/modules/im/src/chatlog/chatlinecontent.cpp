@@ -57,6 +57,10 @@ void ChatLineContent::selectionFocusChanged(bool)
 {
 }
 
+void ChatLineContent::selectAll()
+{
+}
+
 bool ChatLineContent::isOverSelection(QPointF) const
 {
     return false;
