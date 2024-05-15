@@ -35,16 +35,16 @@ public:
     explicit ChatLog(QWidget* parent = nullptr);
     virtual ~ChatLog();
 
-    void insertChatlineAtBottom(ChatLine::Ptr l);
-    void insertChatlineOnTop(ChatLine::Ptr l);
-    void insertChatlinesOnTop(const QList<ChatLine::Ptr>& newLines);
+    void insertChatlineAtBottom(IChatItem::Ptr l);
+    void insertChatlineOnTop(IChatItem::Ptr l);
+    void insertChatlinesOnTop(const QList<IChatItem::Ptr> &newLines);
     void clearSelection();
     void clear();
     void copySelectedText(bool toSelectionBuffer = false) const;
-    void setBusyNotification(ChatLine::Ptr notification);
-    void setTypingNotification(ChatLine::Ptr notification);
+    void setBusyNotification(IChatItem::Ptr notification);
+    void setTypingNotification(IChatItem::Ptr notification);
     void setTypingNotificationVisible(bool visible);
-    void scrollToLine(ChatLine::Ptr line);
+    void scrollToLine(IChatItem::Ptr line);
     void selectAll();
     void fontChanged(const QFont& font);
     void reloadTheme();
@@ -54,17 +54,17 @@ public:
     bool isEmpty() const;
     bool hasTextToBeCopied() const;
 
-    ChatLine::Ptr getTypingNotification() const;
-    QVector<ChatLine::Ptr> getLines();
-    ChatLine::Ptr getLatestLine() const;
-    ChatLine::Ptr getFirstLine() const;
+    IChatItem::Ptr getTypingNotification() const;
+    QVector<IChatItem::Ptr> getLines();
+    IChatItem::Ptr getLatestLine() const;
+    IChatItem::Ptr getFirstLine() const;
     ChatLineContent* getContentFromGlobalPos(QPoint pos) const;
     const uint repNameAfter = 5 * 60;
 
 signals:
     void selectionChanged();
     void workerTimeoutFinished();
-    void firstVisibleLineChanged(const ChatLine::Ptr& prevLine, const ChatLine::Ptr& firstLine);
+    void firstVisibleLineChanged(const IChatItem::Ptr& prevLine, const IChatItem::Ptr& firstLine);
     void loadHistoryLower();
 
 public slots:
@@ -106,11 +106,11 @@ protected:
     void updateTypingNotification();
     void updateBusyNotification();
 
-    ChatLine::Ptr findLineByPosY(qreal yPos) const;
+    IChatItem::Ptr findLineByPosY(qreal yPos) const;
 
 private:
     void retranslateUi();
-    bool isActiveFileTransfer(ChatLine::Ptr l);
+    bool isActiveFileTransfer(IChatItem::Ptr l);
     void handleMultiClickEvent();
     void moveSelectionRectUpIfSelected(int offset);
     void moveSelectionRectDownIfSelected(int offset);
@@ -138,10 +138,10 @@ private:
     QAction* selectAllAction = nullptr;
     QGraphicsScene* scene = nullptr;
     QGraphicsScene* busyScene = nullptr;
-    QVector<ChatLine::Ptr> lines;
-    QList<ChatLine::Ptr> visibleLines;
-    ChatLine::Ptr typingNotification;
-    ChatLine::Ptr busyNotification;
+    QVector<IChatItem::Ptr> lines;
+    QList<IChatItem::Ptr> visibleLines;
+    IChatItem::Ptr typingNotification;
+    IChatItem::Ptr busyNotification;
 
     // selection
     int selClickedRow = -1; // These 4 are only valid while selectionMode != None
@@ -163,11 +163,11 @@ private:
     // worker vars
     int workerLastIndex = 0;
     bool workerStb = false;
-    ChatLine::Ptr workerAnchorLine;
+    IChatItem::Ptr workerAnchorLine;
 
     // layout
     QMargins margins = QMargins(10, 10, 10, 10);
-    qreal lineSpacing = 5.0f;
+    qreal lineSpacing = 20.0f;
 };
 
 #endif // CHATLOG_H

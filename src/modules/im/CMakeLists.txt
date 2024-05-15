@@ -83,6 +83,8 @@ set(${PROJECT_NAME}_SOURCES
         src/chatlog/chatlinecontentproxy.h
         src/chatlog/chatline.cpp
         src/chatlog/chatline.h
+        src/chatlog/chatmessageitem.cpp
+        src/chatlog/chatmessageitem.h
         src/chatlog/chatlog.cpp
         src/chatlog/chatlog.h
         src/chatlog/chatmessage.cpp
@@ -101,6 +103,10 @@ set(${PROJECT_NAME}_SOURCES
         src/chatlog/content/timestamp.h
         src/chatlog/content/broken.cpp
         src/chatlog/content/broken.h
+        src/chatlog/content/contactavatar.cpp
+        src/chatlog/content/contactavatar.h
+        src/chatlog/content/simpletext.cpp
+        src/chatlog/content/simpletext.h
         src/chatlog/customtextdocument.cpp
         src/chatlog/customtextdocument.h
         src/chatlog/documentcache.cpp

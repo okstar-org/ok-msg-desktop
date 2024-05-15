@@ -15,8 +15,6 @@
 
 #include <QGraphicsItem>
 
-class ChatLine;
-
 class ChatLineContent : public QObject, public QGraphicsItem
 {
     Q_OBJECT
@@ -55,7 +53,7 @@ public:
     virtual void reloadTheme();
 
 private:
-    friend class ChatLine;
+    friend class IChatItem;
     void setIndex(int row, int col);
 
 private:

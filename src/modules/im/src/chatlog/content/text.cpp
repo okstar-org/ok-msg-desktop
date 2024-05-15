@@ -45,8 +45,12 @@ Text::~Text()
         DocumentCache::getInstance().push(doc);
 }
 
-void Text::setText(const QString& txt)
+void Text::setTextSelectable(bool selectable)
 {
+    this->selectable = selectable;
+}
+
+void Text::setText(const QString &txt) {
     text = txt;
     dirty = true;
 }
@@ -55,7 +59,7 @@ void Text::selectText(const QString& txt, const std::pair<int, int>& point)
 {
     regenerate();
 
-    if (!doc) {
+    if (!doc || !selectable) {
         return;
     }
 
@@ -68,7 +72,7 @@ void Text::selectText(const QRegularExpression &exp, const std::pair<int, int>& 
 {
     regenerate();
 
-    if (!doc) {
+    if (!doc || !selectable) {
         return;
     }
 
@@ -94,7 +98,7 @@ void Text::setWidth(qreal w)
 
 void Text::selectionMouseMove(QPointF scenePos)
 {
-    if (!doc)
+    if (!doc || !selectable)
         return;
 
     int cur = cursorFromPos(scenePos);
@@ -198,7 +202,8 @@ void Text::fontChanged(const QFont& font)
 
 QRectF Text::boundingRect() const
 {
-    return QRectF(QPointF(0, 0), size);
+    return QRectF(QPointF(0, 0), size + QSize(margins.left() + margins.right(),
+                                              margins.top() + margins.bottom()));
 }
 
 void Text::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
@@ -209,6 +214,24 @@ void Text::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWid
     if (!doc)
         return;
 
+    painter->setRenderHint(QPainter::Antialiasing);
+    if (backgroundColor.isValid())
+    {
+        painter->save();
+        painter->translate(0.5, 0.5);
+        if (boundRadius > 0)
+        {
+            QPainterPath path;
+            path.addRoundedRect(boundingRect(), boundRadius, boundRadius);
+            painter->fillPath(path, backgroundColor);
+        }
+        else
+        {
+            painter->fillRect(boundingRect(), backgroundColor);
+        }
+        painter->restore();
+    }
+    painter->save();
     painter->setClipRect(boundingRect());
 
     // draw selection
@@ -229,7 +252,9 @@ void Text::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWid
     ctx.palette.setColor(QPalette::Text, color);
 
     // draw text
+    painter->translate(margins.left(), margins.top());
     doc->documentLayout()->draw(painter, ctx);
+    painter->restore();
 }
 
 void Text::visibilityChanged(bool visible)
@@ -280,7 +305,7 @@ void Text::hoverMoveEvent(QGraphicsSceneHoverEvent* event)
     QString anchor = doc->documentLayout()->anchorAt(event->pos());
 
     if (anchor.isEmpty())
-        setCursor(Qt::IBeamCursor);
+        setCursor(selectable ? Qt::IBeamCursor : Qt::ArrowCursor);
     else
         setCursor(Qt::PointingHandCursor);
 
@@ -303,6 +328,29 @@ QString Text::getLinkAt(QPointF scenePos) const
     QTextCursor cursor(doc);
     cursor.setPosition(cursorFromPos(scenePos));
     return cursor.charFormat().anchorHref();
+}
+
+void Text::setContentsMargins(QMarginsF margins)
+{
+    this->margins = margins;
+}
+
+void Text::setBoundingRadius(qreal radius)
+{ 
+    if (boundRadius != radius)
+    {
+        boundRadius = radius;
+        update();
+    }
+}
+
+void Text::setBackgroundColor(const QColor &color)
+{
+    if (backgroundColor != color)
+    {
+        backgroundColor = color;
+        update();
+    }
 }
 
 void Text::regenerate()

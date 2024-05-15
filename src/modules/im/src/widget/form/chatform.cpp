@@ -577,7 +577,7 @@ void ChatForm::sendImage(const QPixmap &pixmap) {
   }
 }
 
-void ChatForm::insertChatMessage(ChatMessage::Ptr msg) {
+void ChatForm::insertChatMessage(IChatItem::Ptr msg) {
   GenericChatForm::insertChatMessage(msg);
   if (netcam && bodySplitter->sizes()[1] == 0) {
     netcam->setShowMessages(true, true);
@@ -651,7 +651,8 @@ void ChatForm::onUpdateTime() {
 void ChatForm::setFriendTyping(bool typing) {
   isTyping = typing;
   chatLog->setTypingNotificationVisible(typing);
-  Text *text = static_cast<Text *>(chatLog->getTypingNotification()->getContent(1));
+  Text *text =
+      static_cast<Text *>(chatLog->getTypingNotification()->centerContent());
   QString typingDiv = "<div class=typing>%1</div>";
   QString name = f->getDisplayedName();
   text->setText(typingDiv.arg(tr("%1 is typing").arg(name)));

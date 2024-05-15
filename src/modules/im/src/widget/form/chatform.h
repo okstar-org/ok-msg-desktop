@@ -103,7 +103,7 @@ private:
 
 protected:
   GenericNetCamView *createNetcam() final override;
-  void insertChatMessage(ChatMessage::Ptr msg) final override;
+  void insertChatMessage(IChatItem::Ptr msg) final override;
   void dragEnterEvent(QDragEnterEvent *ev) final override;
   void dropEvent(QDropEvent *ev) final override;
   void hideEvent(QHideEvent *event) final override;

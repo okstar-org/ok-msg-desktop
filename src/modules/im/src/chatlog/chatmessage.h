@@ -16,12 +16,12 @@
 #include "chatline.h"
 #include "src/core/toxfile.h"
 #include "src/persistence/history.h"
-
+#include "src/model/chatlogitem.h"
 #include <QDateTime>
 
 class QGraphicsScene;
 
-class ChatMessage : public ChatLine
+class ChatMessage
 {
 public:
     using Ptr = std::shared_ptr<ChatMessage>;
@@ -40,24 +40,17 @@ public:
         ALERT,
     };
 
-    ChatMessage();
+    static IChatItem::Ptr createChatMessage(const ChatLogItem &item, const QString &rawMessage,
+                      MessageType type, bool isMe, MessageState state,
+                      const QDateTime &date, bool colorizeName = false);
 
-    static ChatMessage::Ptr createChatMessage(const QString& sender, const QString& rawMessage,
-                                              MessageType type, bool isMe, MessageState state,
-                                              const QDateTime& date, bool colorizeName = false);
-    static ChatMessage::Ptr createChatInfoMessage(const QString& rawMessage, SystemMessageType type,
+    static IChatItem::Ptr createChatInfoMessage(const QString &rawMessage,
+                                                SystemMessageType type,
                                                   const QDateTime& date);
-    static ChatMessage::Ptr createFileTransferMessage(const QString& sender, ToxFile file,
+    static IChatItem::Ptr createFileTransferMessage(const ChatLogItem &item, ToxFile file,
                                                       bool isMe, const QDateTime& date);
-    static ChatMessage::Ptr createTypingNotification();
-    static ChatMessage::Ptr createBusyNotification();
-
-    void markAsDelivered(const QDateTime& time);
-    QString toString() const;
-    bool isAction() const;
-    void setAsAction();
-    void hideSender();
-    void hideDate();
+    static IChatItem::Ptr createTypingNotification();
+    static IChatItem::Ptr createBusyNotification();
 
 protected:
     static QString detectQuotes(const QString& str, MessageType type);
