@@ -75,7 +75,7 @@ QString editName(const QString& name)
  * @brief Timeout = peer stopped sending audio.
  */
 
-GroupChatForm::GroupChatForm(Group* chatGroup, IChatLog& chatLog, IMessageDispatcher& messageDispatcher, IGroupSettings& _settings)
+GroupChatForm::GroupChatForm(const Group* chatGroup, IChatLog& chatLog, IMessageDispatcher& messageDispatcher, IGroupSettings& _settings)
     : GenericChatForm(chatGroup, chatLog, messageDispatcher)
     , group(chatGroup)
     , inCall(false)

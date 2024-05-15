@@ -34,7 +34,7 @@ class OfflineMsgEngine : public QObject
 {
     Q_OBJECT
 public:
-    explicit OfflineMsgEngine(Friend* f, ICoreFriendMessageSender* messageSender);
+    explicit OfflineMsgEngine(const Friend* f, ICoreFriendMessageSender* messageSender);
 
     using CompletionFn = std::function<void()>;
     void addUnsentMessage(Message const& message, CompletionFn completionCallback);

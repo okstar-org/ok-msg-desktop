@@ -25,11 +25,11 @@
 
 static const int MAX_GROUP_TITLE_LENGTH = 128;
 
-Group::Group(QString groupId, const GroupId persistentGroupId,
+Group::Group(const GroupId persistentGroupId,
              const QString &name, bool isAvGroupchat, const QString &selfName,
              ICoreGroupQuery &groupQuery, ICoreIdHandler &idHandler)
     : selfName{selfName}, title{name},
-      toxGroupNum(groupId), groupId{persistentGroupId},
+      groupId{persistentGroupId},
       avGroupchat{isAvGroupchat}, groupQuery(groupQuery), idHandler(idHandler) {
   // in groupchats, we only notify on messages containing your name <-- dumb
   // sound notifications should be on all messages, but system popup
@@ -37,16 +37,6 @@ Group::Group(QString groupId, const GroupId persistentGroupId,
   hasNewMessages = 0;
   userWasMentioned = 0;
 
-}
-
-void Group::setName(const QString &newTitle) {
-  const QString shortTitle = newTitle.left(MAX_GROUP_TITLE_LENGTH);
-  if (!shortTitle.isEmpty() && title != shortTitle) {
-    title = shortTitle;
-    emit displayedNameChanged(title);
-    emit titleChangedByUser(title);
-    emit titleChanged(selfName, title);
-  }
 }
 
 void Group::setTitle(const QString &author, const QString &newTitle) {
@@ -57,10 +47,6 @@ void Group::setTitle(const QString &author, const QString &newTitle) {
     emit titleChanged(author, title);
   }
 }
-
-QString Group::getName() const { return title; }
-
-QString Group::getDisplayedName() const { return getName(); }
 
 
 void Group::updateUsername(const QString oldName, const QString newName) {
@@ -78,10 +64,6 @@ void Group::updateUsername(const QString oldName, const QString newName) {
 }
 
 bool Group::isAvGroupchat() const { return avGroupchat; }
-
-QString Group::getId() const { return toxGroupNum; }
-
-const GroupId &Group::getPersistentId() const { return groupId; }
 
 int Group::getPeersCount() const { return peerCount; }
 
@@ -131,6 +113,6 @@ const QString& Group::getDesc() const
 void Group::stopAudioOfDepartedPeers(const ToxPk &peerPk) {
   if (avGroupchat) {
     Core *core = Core::getInstance();
-    core->getAv()->invalidateGroupCallPeerSource(toxGroupNum, peerPk);
+    core->getAv()->invalidateGroupCallPeerSource(peerPk.toString(), peerPk);
   }
 }

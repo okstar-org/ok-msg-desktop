@@ -144,7 +144,7 @@ void ContentDialog::closeEvent(QCloseEvent* event)
     event->accept();
 }
 
-void ContentDialog::addFriend( FriendChatroom* chatroom,
+void ContentDialog::addFriend(FriendChatroom* chatroom,
                               GenericChatForm* form)
 {
 //    const auto compact = Settings::getInstance().getCompactLayout();
@@ -386,14 +386,13 @@ void ContentDialog::updateTitleAndStatusIcon()
 
     setWindowTitle(activeChatroomWidget->getTitle() + QStringLiteral(" - ") + username);
 
-    bool isGroupchat = activeChatroomWidget->getGroup() != nullptr;
-    if (isGroupchat) {
+    if (activeChatroomWidget->isGroup()) {
         setWindowIcon(QIcon(":/img/group.svg"));
         return;
     }
 
-    Status::Status currentStatus = activeChatroomWidget->getFriend()->getStatus();
-    setWindowIcon(QIcon{Status::getIconPath(currentStatus)});
+//    Status::Status currentStatus = activeChatroomWidget->getFriend()->getStatus();
+//    setWindowIcon(QIcon{Status::getIconPath(currentStatus)});
 }
 
 /**
@@ -438,28 +437,28 @@ void ContentDialog::setUsername(const QString& newName)
 
 bool ContentDialog::event(QEvent* event)
 {
-    switch (event->type()) {
-    case QEvent::WindowActivate:
-        if (activeChatroomWidget) {
-            activeChatroomWidget->resetEventFlags();
-            activeChatroomWidget->updateStatusLight();
+//    switch (event->type()) {
+//    case QEvent::WindowActivate:
+//        if (activeChatroomWidget) {
+//            activeChatroomWidget->resetEventFlags();
+//            activeChatroomWidget->updateStatusLight();
 
-            updateTitleAndStatusIcon();
+//            updateTitleAndStatusIcon();
 
-            const Friend* frnd = activeChatroomWidget->getFriend();
-            Group* group = activeChatroomWidget->getGroup();
+//            const Friend* frnd = activeChatroomWidget->getFriend();
+//            const Group* group = activeChatroomWidget->getGroup();
 
-            if (frnd) {
-                emit friendDialogShown(frnd);
-            } else if (group) {
-                emit groupDialogShown(group);
-            }
-        }
+//            if (frnd) {
+//                emit friendDialogShown(frnd);
+//            } else if (group) {
+//                emit groupDialogShown(group);
+//            }
+//        }
 
-        emit activated();
-    default:
-        break;
-    }
+//        emit activated();
+//    default:
+//        break;
+//    }
 
     return ActivateDialog::event(event);
 }

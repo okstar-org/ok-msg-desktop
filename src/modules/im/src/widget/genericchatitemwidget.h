@@ -15,11 +15,12 @@
 
 #include <QFrame>
 #include <QLabel>
+#include "src/model/message.h"
 
 class CroppingLabel;
 
 /**
- * 聊天框
+ * 聊天控件
  */
 class GenericChatItemWidget : public QFrame
 {
@@ -32,23 +33,29 @@ public:
         FriendOnlineItem
     };
 
-    explicit GenericChatItemWidget(bool compact, QWidget* parent = nullptr);
+    explicit GenericChatItemWidget(ChatType chatType=ChatType::Chat, QWidget* parent = nullptr);
 
-    bool isCompact() const;
-    void setCompact(bool compact);
+    bool isCompact() const{return compact;};
+    void setCompact(bool compact_){compact = compact_;};
+    Q_PROPERTY(bool compact READ isCompact WRITE setCompact)
 
     QString getName() const;
 
     void searchName(const QString& searchString, bool hideAll);
 
-    Q_PROPERTY(bool compact READ isCompact WRITE setCompact)
 
+    ChatType getChatType() const{return chatType;};
+    void setChatType(ChatType type){chatType = type;};
+    Q_PROPERTY(ChatType chatType READ getChatType WRITE setChatType)
+
+    bool isGroup() const {return chatType == ChatType::GroupChat;};
 protected:
     CroppingLabel* nameLabel;
     QLabel statusPic;
 
 private:
     bool compact;
+    ChatType chatType;
 };
 
 #endif // GENERICCHATITEMWIDGET_H

@@ -59,7 +59,7 @@ FriendWidget::FriendWidget(ContentLayout *layout,
                            const ToxPk &friendPk,
                            bool isFriend,
                            bool compact)
-    : GenericChatroomWidget(compact), contentLayout(layout),
+    : GenericChatroomWidget(ChatType::Chat), contentLayout(layout),
       isDefaultAvatar{true} {
 
   qDebug() <<__func__ <<"friend:"<<friendPk.toString();
@@ -126,8 +126,8 @@ FriendWidget::FriendWidget(ContentLayout *layout,
             Q_UNUSED(newName);
             emit friendWidgetRenamed(this);
           });
-  connect(chatRoom.get(), &FriendChatroom::activeChanged, this,
-          &FriendWidget::setActive);
+//  connect(chatRoom.get(), &Chatroom::activeChanged, this,
+//          &FriendWidget::setActive);
   //  statusMessageLabel->setTextFormat(Qt::PlainText);
 
   //  connect(this, &FriendWidget::middleMouseClicked, dialog,
@@ -159,7 +159,7 @@ FriendWidget::FriendWidget(ContentLayout *layout,
   // Try to get the avatar from the cache
   QPixmap avatar = Nexus::getProfile()->loadAvatar(friendPk);
   if (!avatar.isNull()) {
-    chatForm->onAvatarChanged(friendPk, avatar);
+//    sendWorker->onAvatarChanged(friendPk, avatar);
     setAvatar(avatar);
   }
 }
@@ -363,80 +363,80 @@ void FriendWidget::removeChatWindow() { chatRoom->removeFriendFromDialogs(); }
 
 namespace {
 
-std::tuple<CircleWidget *, FriendListWidget *>
-getCircleAndFriendList(const Friend *frnd, FriendWidget *fw) {
-  const auto pk = frnd->getPublicKey();
-  const auto circleId = Settings::getInstance().getFriendCircleID(pk);
-  auto circleWidget = CircleWidget::getFromID(circleId);
-  auto w = circleWidget ? static_cast<QWidget *>(circleWidget)
-                        : static_cast<QWidget *>(fw);
-  auto friendList = qobject_cast<FriendListWidget *>(w->parentWidget());
-  return std::make_tuple(circleWidget, friendList);
-}
+//std::tuple<CircleWidget *, FriendListWidget *>
+//getCircleAndFriendList(const Friend *frnd, FriendWidget *fw) {
+//  const auto pk = frnd->getPublicKey();
+//  const auto circleId = Settings::getInstance().getFriendCircleID(pk);
+//  auto circleWidget = CircleWidget::getFromID(circleId);
+//  auto w = circleWidget ? static_cast<QWidget *>(circleWidget)
+//                        : static_cast<QWidget *>(fw);
+//  auto friendList = qobject_cast<FriendListWidget *>(w->parentWidget());
+//  return std::make_tuple(circleWidget, friendList);
+//}
 
 } // namespace
 
 void FriendWidget::moveToNewCircle() {
   const auto frnd = chatRoom->getFriend();
   CircleWidget *circleWidget;
-  FriendListWidget *friendList;
-  std::tie(circleWidget, friendList) = getCircleAndFriendList(frnd, this);
+//  FriendListWidget *friendList;
+//  std::tie(circleWidget, friendList) = getCircleAndFriendList(frnd, this);
 
-  if (circleWidget != nullptr) {
-    circleWidget->updateStatus();
-  }
+//  if (circleWidget != nullptr) {
+//    circleWidget->updateStatus();
+//  }
 
-  if (friendList != nullptr) {
-    friendList->addCircleWidget(this);
-  } else {
-    const auto pk = frnd->getPublicKey();
-    auto &s = Settings::getInstance();
-    auto circleId = s.addCircle();
-    s.setFriendCircleID(pk, circleId);
-  }
+//  if (friendList != nullptr) {
+//    friendList->addCircleWidget(this);
+//  } else {
+//    const auto pk = frnd->getPublicKey();
+//    auto &s = Settings::getInstance();
+//    auto circleId = s.addCircle();
+//    s.setFriendCircleID(pk, circleId);
+//  }
 }
 
 void FriendWidget::removeFromCircle() {
-  const auto frnd = chatRoom->getFriend();
-  CircleWidget *circleWidget;
-  FriendListWidget *friendList;
-  std::tie(circleWidget, friendList) = getCircleAndFriendList(frnd, this);
+//  const auto frnd = chatRoom->getFriend();
+//  CircleWidget *circleWidget;
+//  FriendListWidget *friendList;
+//  std::tie(circleWidget, friendList) = getCircleAndFriendList(frnd, this);
 
-  if (friendList != nullptr) {
-    friendList->moveWidget(this, frnd->getStatus(), true);
-  } else {
-    const auto pk = frnd->getPublicKey();
-    auto &s = Settings::getInstance();
-    s.setFriendCircleID(pk, -1);
-  }
+//  if (friendList != nullptr) {
+//    friendList->moveWidget(this, frnd->getStatus(), true);
+//  } else {
+//    const auto pk = frnd->getPublicKey();
+//    auto &s = Settings::getInstance();
+//    s.setFriendCircleID(pk, -1);
+//  }
 
-  if (circleWidget != nullptr) {
-    circleWidget->updateStatus();
-    emit searchCircle(*circleWidget);
-  }
+//  if (circleWidget != nullptr) {
+//    circleWidget->updateStatus();
+//    emit searchCircle(*circleWidget);
+//  }
 }
 
 void FriendWidget::moveToCircle(int newCircleId) {
-  const auto frnd = chatRoom->getFriend();
-  const auto pk = frnd->getPublicKey();
-  const auto oldCircleId = Settings::getInstance().getFriendCircleID(pk);
-  auto &s = Settings::getInstance();
-  auto oldCircleWidget = CircleWidget::getFromID(oldCircleId);
-  auto newCircleWidget = CircleWidget::getFromID(newCircleId);
+//  const auto frnd = chatRoom->getFriend();
+//  const auto pk = frnd->getPublicKey();
+//  const auto oldCircleId = Settings::getInstance().getFriendCircleID(pk);
+//  auto &s = Settings::getInstance();
+//  auto oldCircleWidget = CircleWidget::getFromID(oldCircleId);
+//  auto newCircleWidget = CircleWidget::getFromID(newCircleId);
 
-  if (newCircleWidget) {
-    newCircleWidget->addFriendWidget(this, frnd->getStatus());
-    newCircleWidget->setExpanded(true);
-    emit searchCircle(*newCircleWidget);
-    s.savePersonal();
-  } else {
-    s.setFriendCircleID(pk, newCircleId);
-  }
+//  if (newCircleWidget) {
+//    newCircleWidget->addFriendWidget(this, frnd->getStatus());
+//    newCircleWidget->setExpanded(true);
+//    emit searchCircle(*newCircleWidget);
+//    s.savePersonal();
+//  } else {
+//    s.setFriendCircleID(pk, newCircleId);
+//  }
 
-  if (oldCircleWidget) {
-    oldCircleWidget->updateStatus();
-    emit searchCircle(*oldCircleWidget);
-  }
+//  if (oldCircleWidget) {
+//    oldCircleWidget->updateStatus();
+//    emit searchCircle(*oldCircleWidget);
+//  }
 }
 
 void FriendWidget::changeAutoAccept(bool enable) {
@@ -493,11 +493,11 @@ void FriendWidget::updateStatusLight() {
 
   if (event) {
     const Settings &s = Settings::getInstance();
-    const uint32_t circleId = s.getFriendCircleID(frnd->getPublicKey());
-    CircleWidget *circleWidget = CircleWidget::getFromID(circleId);
-    if (circleWidget) {
-      circleWidget->setExpanded(true);
-    }
+//    const uint32_t circleId = s.getFriendCircleID(frnd->getPublicKey());
+//    CircleWidget *circleWidget = CircleWidget::getFromID(circleId);
+//    if (circleWidget) {
+//      circleWidget->setExpanded(true);
+//    }
 
     emit updateFriendActivity(*frnd);
   }
@@ -530,11 +530,11 @@ void FriendWidget::search(const QString &searchString, bool hide) {
   const auto frnd = chatRoom->getFriend();
   searchName(searchString, hide);
   const Settings &s = Settings::getInstance();
-  const uint32_t circleId = s.getFriendCircleID(frnd->getPublicKey());
-  CircleWidget *circleWidget = CircleWidget::getFromID(circleId);
-  if (circleWidget) {
-    circleWidget->search(searchString);
-  }
+//  const uint32_t circleId = s.getFriendCircleID(frnd->getPublicKey());
+//  CircleWidget *circleWidget = CircleWidget::getFromID(circleId);
+//  if (circleWidget) {
+//    circleWidget->search(searchString);
+//  }
 }
 
 void FriendWidget::resetEventFlags() { chatRoom->resetEventFlags(); }

@@ -29,8 +29,7 @@ class ContentWidget : public QWidget {
 public:
   explicit ContentWidget(QWidget *parent= nullptr);
   void showTo(ContentLayout*);
-  void setChatForm(ChatForm *);
-  void setGroupChatForm(GroupChatForm * form);
+  void setChatForm(GenericChatForm *);
 
 private:
   void init();
@@ -38,6 +37,8 @@ private:
   QHBoxLayout mainHLineLayout;
   QWidget* mainHead;
   QWidget* mainContent;
+
+  int contentIndex;
 };
 
 #endif // OKMSG_PROJECT_CONTENTWIDGET_H

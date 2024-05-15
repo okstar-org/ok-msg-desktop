@@ -80,8 +80,13 @@ struct GroupOccupant{
     QString affiliation;
     QString role;
     int status;
-} ;
+};
 
+
+enum class ChatType{
+    Chat,       //单聊
+    GroupChat   //群聊
+};
 
 class MessageProcessor {
 

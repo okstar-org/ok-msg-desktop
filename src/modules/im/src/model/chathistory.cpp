@@ -64,7 +64,7 @@ bool handleActionPrefix(QString& content)
 }
 } // namespace
 
-ChatHistory::ChatHistory(Friend& f_,    //
+ChatHistory::ChatHistory(const Friend& f_,    //
                          History* history_, //
                          const ICoreIdHandler& coreIdHandler, //
                          const Settings& settings_,   //

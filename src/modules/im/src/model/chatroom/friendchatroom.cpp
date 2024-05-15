@@ -35,30 +35,25 @@ QString getShortName(const QString& name)
 
 }
 
-FriendChatroom::FriendChatroom(Friend* frnd,
+FriendChatroom::FriendChatroom(const Friend* frnd,
                                IDialogsManager* dialogsManager)
     : frnd{frnd}
     , dialogsManager{dialogsManager}
 {
+    qDebug() <<"friend"<< frnd->getId();
 }
 
-Friend* FriendChatroom::getFriend()
+const Friend* FriendChatroom::getFriend()
 {
     return frnd;
 }
 
-Contact* FriendChatroom::getContact()
+const Contact* FriendChatroom::getContact()
 {
     return frnd;
 }
 
-void FriendChatroom::setActive(bool _active)
-{
-    if (active != _active) {
-        active = _active;
-        emit activeChanged(active);
-    }
-}
+
 
 bool FriendChatroom::canBeInvited() const
 {
@@ -155,7 +150,7 @@ QVector<CircleToDisplay> FriendChatroom::getOtherCircles() const
 
 void FriendChatroom::resetEventFlags()
 {
-    frnd->setEventFlag(false);
+//    frnd->setEventFlag(false);
 }
 
 bool FriendChatroom::possibleToOpenInNewWindow() const

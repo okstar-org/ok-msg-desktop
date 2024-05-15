@@ -21,9 +21,15 @@
 
 #include "lib/messenger/messenger.h"
 
-class ContactId : public lib::messenger::FriendId
+class ContactId
 {
 public:
+    explicit ContactId();
+    explicit ContactId(const ContactId &contactId);
+    explicit ContactId(const QByteArray &rawId);
+    explicit ContactId(const QString &strId);
+    explicit ContactId(const QString &username, const QString &server);
+
     virtual ~ContactId() = default;
     ContactId& operator=(const ContactId& other) = default;
     ContactId& operator=(ContactId&& other) = default;
@@ -33,17 +39,17 @@ public:
 
     QByteArray getByteArray() const;
     bool isEmpty() const;
-    virtual int getSize() const = 0;
+    int getSize();
 
-    QString getUsername() const;
-    QString getServer() const;
-//    QString getResource() const;
+    QString toString() const{
+        return username+"@"+server;
+    };
 
-protected:
-    ContactId();
-    explicit ContactId(const lib::messenger::FriendId& rawId);
-    explicit ContactId(const QByteArray &rawId);
-    explicit ContactId(const QString &strId);
+    //用户名
+    QString username;
+    //服务器地址
+    QString server;
+
 };
 
 inline uint qHash(const ContactId& id)

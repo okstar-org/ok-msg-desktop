@@ -22,10 +22,12 @@ class QList;
 class Group;
 class QString;
 
+using GroupMap = QHash<QString, Group*>;
+
 class GroupList
 {
 public:
-    static Group* addGroup(QString groupId, const GroupId& persistentGroupId, const QString& name, bool isAvGroupchat, const QString& selfName);
+    static Group* addGroup(const GroupId& persistentGroupId, const QString& name, bool isAvGroupchat, const QString& selfName);
     static Group* findGroup(const GroupId& groupId);
     static const GroupId& id2Key(QString groupNum);
     static void removeGroup(const GroupId& groupId, bool fake = false);
@@ -33,8 +35,7 @@ public:
     static void clear();
 
 private:
-    static QHash<const GroupId, Group*> groupList;
-    static QHash<QString, GroupId> id2key;
+    static GroupMap groupMap;
 };
 
 #endif // GROUPLIST_H

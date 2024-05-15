@@ -1016,7 +1016,7 @@ ToxId Core::getSelfId() const {
 ToxPk Core::getSelfPublicKey() const {
   QMutexLocker ml{&coreLoopLock};
   auto friendId = tox->getSelfId();
-  return ToxPk(friendId);
+  return ToxPk(friendId.toString());
 }
 
 /**
@@ -1340,9 +1340,7 @@ ToxPk Core::getGroupPeerPk(QString groupId, QString peerId) const {
   //  }
   //  assert(success);
 
-  auto toxPk = ToxPk{lib::messenger::PeerId(peerId)};
-
-  //  return ToxPk(friendPk);
+  auto toxPk = ToxPk{peerId};
   return toxPk;
 }
 

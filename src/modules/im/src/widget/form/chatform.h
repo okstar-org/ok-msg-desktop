@@ -38,7 +38,8 @@ class QMoveEvent;
 class ChatForm : public GenericChatForm {
   Q_OBJECT
 public:
-  ChatForm(Friend *chatFriend, IChatLog &chatLog,
+  ChatForm(const Friend *chatFriend,
+           IChatLog &chatLog,
            IMessageDispatcher &messageDispatcher);
   ~ChatForm();
   void setStatusMessage(const QString &newMessage);
@@ -58,13 +59,12 @@ signals:
   void endCallNotification();
   void rejectCall(QString friendId);
   void acceptCall(QString friendId);
-  void updateFriendActivity(Friend &frnd);
+  void updateFriendActivity(const Friend &frnd);
 
 public slots:
   void onAvInvite(QString friendId, bool video);
   void onAvStart(QString friendId, bool video);
   void onAvEnd(QString friendId, bool error);
-  void onAvatarChanged(const ToxPk &friendPk, const QPixmap &pic);
   void onFileNameChanged(const ToxPk &friendPk);
   void clearChatArea();
 
@@ -110,7 +110,7 @@ protected:
   void showEvent(QShowEvent *event) final override;
 
 private:
-  Friend *f;
+  const Friend *f;
   CroppingLabel *statusMessageLabel;
   QMenu statusMessageMenu;
   QLabel *callDuration;

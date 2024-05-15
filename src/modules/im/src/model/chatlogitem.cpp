@@ -40,7 +40,7 @@ QString resolveToxPk(const ToxPk& pk)
     if (f) {
         return f->getDisplayedName();
     }
-    return pk.getUsername();
+    return pk.username;
 }
 
 } // namespace

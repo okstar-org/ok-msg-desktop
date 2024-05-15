@@ -17,58 +17,52 @@
 #include <QHash>
 #include <QMenu>
 
-QHash<ToxPk, Friend *> FriendList::friendList;
-QHash<QString, ToxPk> FriendList::id2key;
+
+ FriendMap FriendList::friendMap;
 
 Friend *FriendList::addFriend(const ToxPk &friendPk, bool isFriend) {
-  qDebug() << __func__ <<"friendId:" << "friendPk:" << friendPk.toString();
+  qDebug() << __func__ << "friendPk:" << friendPk.toString();
 
-  auto friendChecker = friendList.find(friendPk);
-  if (friendChecker != friendList.end()) {
-    qWarning() << "is existing friend.";
-    return friendChecker.value();
+  auto frnd = findFriend(friendPk);
+
+  if(frnd){
+      qWarning() <<"friend:" << friendPk.toString() <<"is existing";
+      return frnd;
   }
 
   QString alias = Settings::getInstance().getFriendAlias(friendPk);
-  qDebug() <<" alias:"<<alias;
+  qDebug() <<"alias:"<<alias;
 
-  Friend *newfriend = new Friend( friendPk,isFriend, alias, friendPk.getUsername());
+  Friend *newfriend = new Friend( friendPk,isFriend, alias, friendPk.username);
+  friendMap[((ContactId&)friendPk).toString()] = newfriend;
 
-  friendList[friendPk] = newfriend;
-  id2key[friendPk.toString()] = friendPk;
-
+  if(friendPk.resource.isEmpty()){
+      newfriend->addEnd(friendPk.resource);
+  }
   return newfriend;
 }
 
 Friend *FriendList::findFriend(const ToxPk &friendPk) {
-  auto f_it = friendList.find(friendPk);
-  if (f_it != friendList.end()) {
-    return *f_it;
-  }
-  return nullptr;
-}
 
-const ToxPk &FriendList::id2Key(QString friendId) {
-  return id2key[friendId];
+  return friendMap.value(((ContactId&)friendPk).toString());
+
 }
 
 void FriendList::removeFriend(const ToxPk &friendPk, bool fake) {
-  auto f_it = friendList.find(friendPk);
-  if (f_it != friendList.end()) {
-    if (!fake)
-      Settings::getInstance().removeFriendSettings(
-          f_it.value()->getPublicKey());
-    friendList.erase(f_it);
-  }
+    auto f = findFriend(friendPk);
+    if(f){
+        delete f;
+        friendMap.remove(((ContactId&)friendPk).toString());
+    }
 }
 
 void FriendList::clear() {
-  for (auto friendptr : friendList)
+  for (auto friendptr : friendMap)
     delete friendptr;
-  friendList.clear();
+  friendMap.clear();
 }
 
-QList<Friend *> FriendList::getAllFriends() { return friendList.values(); }
+QList<Friend *> FriendList::getAllFriends() { return friendMap.values(); }
 
 QString FriendList::decideNickname(const ToxPk &friendPk,
                                    const QString &origName) {

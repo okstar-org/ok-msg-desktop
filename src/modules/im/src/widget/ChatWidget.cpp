@@ -85,25 +85,25 @@ ChatWidget::~ChatWidget() {
     deinit();
 }
 
-void ChatWidget::searchCircle(CircleWidget &circleWidget) {
-  //  FilterCriteria filter = getFilterCriteria();
-  //  QString text = ui->searchContactText->text();
-  //  circleWidget.search(text, true, filterOnline(filter),
-  //  filterOffline(filter));
-}
+//void ChatWidget::searchCircle(CircleWidget &circleWidget) {
+//  //  FilterCriteria filter = getFilterCriteria();
+//  //  QString text = ui->searchContactText->text();
+//  //  circleWidget.search(text, true, filterOnline(filter),
+//  //  filterOffline(filter));
+//}
 
-void ChatWidget::connectCircleWidget() {
-  connect(circleWidget, &CircleWidget::searchCircle, this,
-          &ChatWidget::searchCircle);
-  //  connect( circleWidget, &CircleWidget::newContentDialog, this,
-  //          &ChatWidget::registerContentDialog);
-}
+//void ChatWidget::connectCircleWidget() {
+////  connect(circleWidget, &CircleWidget::searchCircle, this,
+////          &ChatWidget::searchCircle);
+//  //  connect( circleWidget, &CircleWidget::newContentDialog, this,
+//  //          &ChatWidget::registerContentDialog);
+//}
 
 void ChatWidget::init() {
 
     auto widget = Widget::getInstance();
-    connect(widget, &Widget::toSendMessage, [&](const QString& to){
-        contactListWidget->toSendMessage(ToxPk(to));
+    connect(widget, &Widget::toSendMessage, [&](const QString& to, bool isGroup){
+        contactListWidget->toSendMessage(ToxPk(to), isGroup);
     });
 
 
@@ -183,7 +183,7 @@ void ChatWidget::onCoreChanged(Core &core_) {
 void ChatWidget::onFriendMessageSessionReceived(const ToxPk &friendPk, const QString &sid)
 {
      qDebug() << __func__ << "friend:" << friendPk.toString() << "sid:" <<sid;
-     contactListWidget->createMessageSession(friendPk, sid);
+     contactListWidget->createMessageSession(friendPk, sid, ChatType::Chat);
 }
 
 void ChatWidget::onFriendAvatarChanged(const ToxPk &friendnumber,
@@ -492,7 +492,7 @@ void ChatWidget::onGroupPeerListChanged(QString groupnumber) {
 }
 
 void ChatWidget::onGroupPeerSizeChanged(QString groupnumber, const uint size) {
-  const GroupId &groupId = GroupList::id2Key(groupnumber);
+  const GroupId &groupId = GroupId(groupnumber);
   Group *g = GroupList::findGroup(groupId);
   if (!g) {
     qWarning() << "Can not find the group named:" << groupnumber;
@@ -505,7 +505,7 @@ void ChatWidget::onGroupPeerSizeChanged(QString groupnumber, const uint size) {
 void ChatWidget::onGroupPeerNameChanged(QString groupnumber,
                                         const ToxPk &peerPk,
                                         const QString &newName) {
-  const GroupId &groupId = GroupList::id2Key(groupnumber);
+  const GroupId &groupId = GroupId(groupnumber);
   Group *g = GroupList::findGroup(groupId);
   if (!g) {
     qWarning() << "Can not find the group named:" << groupnumber;
@@ -518,10 +518,10 @@ void ChatWidget::onGroupPeerNameChanged(QString groupnumber,
 void ChatWidget::onGroupPeerStatusChanged(const QString& groupnumber,
                                           const GroupOccupant &go) {
 
-  const GroupId &groupId = GroupList::id2Key(groupnumber);
+  const GroupId &groupId = GroupId(groupnumber);
   Group *g = GroupList::findGroup(groupId);
   if (!g) {
-    qWarning() << "Can not find group named:" << groupId.getUsername();
+    qWarning() << "Can not find group named:" << groupId.username;
     return;
   }
 
@@ -532,7 +532,7 @@ void ChatWidget::onGroupPeerStatusChanged(const QString& groupnumber,
 void ChatWidget::onGroupTitleChanged(QString groupnumber, const QString &author,
                                      const QString &title) {
     qDebug()<<__func__ << "group" << groupnumber << title;
-  const GroupId &groupId = GroupList::id2Key(groupnumber);
+  const GroupId &groupId = GroupId(groupnumber);
   Group *g = GroupList::findGroup(groupId);
   if (!g) {
     qWarning() << "Can not find group" << groupnumber;

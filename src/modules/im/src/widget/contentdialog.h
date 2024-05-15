@@ -70,7 +70,7 @@ public:
 
 signals:
   void friendDialogShown(const Friend *f);
-  void groupDialogShown(Group *g);
+  void groupDialogShown(const Group *g);
   void addFriendDialog(Friend *frnd, ContentDialog *contentDialog);
   void addGroupDialog(Group *group, ContentDialog *contentDialog);
   void activated();

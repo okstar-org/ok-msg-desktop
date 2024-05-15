@@ -123,7 +123,7 @@ public:
 
   void showUpdateDownloadProgress();
   void addFriendDialog(const Friend *frnd, ContentDialog *dialog);
-  void addGroupDialog(Group *group, ContentDialog *dialog);
+  void addGroupDialog(const Group *group, ContentDialog *dialog);
   bool newFriendMessageAlert(const ToxPk &friendId, const QString &text,
                              bool sound = true, bool file = false);
   bool newGroupMessageAlert(const GroupId &groupId, const ToxPk &authorPk,
@@ -183,7 +183,7 @@ public slots:
   void nextContact();
   void previousContact();
   void onFriendDialogShown(const Friend *f);
-  void onGroupDialogShown(Group *g);
+  void onGroupDialogShown(const Group *g);
   void toggleFullscreen();
   void refreshPeerListsLocal(const QString &username);
   void onUpdateAvailable();
@@ -202,7 +202,7 @@ signals:
   void statusMessageChanged(const QString &statusMessage);
   void resized();
   void windowStateChanged(Qt::WindowStates states);
-  void toSendMessage(const QString &username);
+  void toSendMessage(const QString &to, bool isGroup = false);
 
 private slots:
 

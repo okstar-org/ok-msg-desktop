@@ -25,11 +25,11 @@ class GroupChatroom : public QObject, public Chatroom
 {
     Q_OBJECT
 public:
-    GroupChatroom(Group* group, IDialogsManager* dialogsManager);
+    GroupChatroom(const Group* group, IDialogsManager* dialogsManager);
 
-    Contact* getContact() override;
+   const Contact* getContact() override;
 
-    Group* getGroup();
+   const Group* getGroup();
 
     bool hasNewMessage() const;
     void resetEventFlags();
@@ -37,12 +37,11 @@ public:
     bool friendExists(const ToxPk& pk);
     void inviteFriend(const ToxPk& pk);
 
-    bool possibleToOpenInNewWindow() const;
-    bool canBeRemovedFromWindow() const;
-    void removeGroupFromDialogs();
+
+
 
 private:
-    Group* group{nullptr};
+   const Group* group{nullptr};
     IDialogsManager* dialogsManager{nullptr};
 };
 

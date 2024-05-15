@@ -44,13 +44,18 @@ GroupId::GroupId(const QByteArray &rawId)
 {
 
 }
+
+GroupId::GroupId(const QString &rawId):ContactId(rawId)
+{
+
+}
 /**
  * @brief Constructs a GroupId from bytes.
  * @param rawId The bytes to construct the GroupId from. The lenght must be exactly
  *              TOX_CONFERENCE_UID_SIZE, else the GroupId will be empty.
  */
-GroupId::GroupId(const lib::messenger::FriendId& rawId)
-  : ContactId(rawId)
+GroupId::GroupId(const ContactId& contactId)
+  : ContactId(contactId)
 {
 
 }
@@ -61,16 +66,16 @@ GroupId::GroupId(const lib::messenger::FriendId& rawId)
  */
 int GroupId::getSize() const
 {
-    return username.size();
+    return toString().size();
 }
 
 bool GroupId::operator==(const GroupId& other) const
 {
-    return username == other.username;
+    return ContactId::operator==(other);
 }
 
 bool GroupId::operator<(const GroupId& other) const
 {
-    return username < other.username;
+    return toString() < other.toString();
 }
 

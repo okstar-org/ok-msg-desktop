@@ -267,14 +267,14 @@ void ContactWidget::onGroupInviteAccepted(const GroupInvite &inviteInfo) {
 
 
 void ContactWidget::onGroupPeerListChanged(QString groupnumber) {
-  const GroupId &groupId = GroupList::id2Key(groupnumber);
+  const GroupId &groupId = GroupId(groupnumber);
   Group *g = GroupList::findGroup(groupId);
   assert(g);
-//  g->regeneratePeerList();
+//g->regeneratePeerList();
 }
 
 void ContactWidget::onGroupPeerSizeChanged(QString groupnumber, const uint size) {
-  const GroupId &groupId = GroupList::id2Key(groupnumber);
+  const GroupId &groupId = GroupId(groupnumber);
   Group *g = GroupList::findGroup(groupId);
   if (!g) {
     qWarning() << "Can not find the group named:" << groupnumber;
@@ -287,7 +287,7 @@ void ContactWidget::onGroupPeerSizeChanged(QString groupnumber, const uint size)
 void ContactWidget::onGroupPeerNameChanged(QString groupnumber,
                                         const ToxPk &peerPk,
                                         const QString &newName) {
-  const GroupId &groupId = GroupList::id2Key(groupnumber);
+  const GroupId &groupId = GroupId(groupnumber);
   Group *g = GroupList::findGroup(groupId);
   if (!g) {
     qWarning() << "Can not find the group named:" << groupnumber;
@@ -300,7 +300,7 @@ void ContactWidget::onGroupPeerNameChanged(QString groupnumber,
 void ContactWidget::onGroupPeerStatusChanged(const QString &groupnumber,
                                              const GroupOccupant &go) {
 
-  const GroupId &groupId = GroupList::id2Key(groupnumber);
+  const GroupId &groupId = GroupId(groupnumber);
   Group *g = GroupList::findGroup(groupId);
   if (!g) {
     qWarning() << "Can not find group named:" << groupnumber;
@@ -314,7 +314,7 @@ void ContactWidget::onGroupPeerStatusChanged(const QString &groupnumber,
 void ContactWidget::onGroupTitleChanged(QString groupnumber, const QString &author,
                                      const QString &title) {
     qDebug()<<__func__ << "group" << groupnumber << title;
-  const GroupId &groupId = GroupList::id2Key(groupnumber);
+  const GroupId &groupId = GroupId(groupnumber);
   Group *g = GroupList::findGroup(groupId);
   if (!g) {
     qWarning() << "Can not find group" << groupnumber;

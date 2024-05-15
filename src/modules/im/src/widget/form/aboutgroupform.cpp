@@ -29,7 +29,7 @@ void AboutGroupForm::init(){
 
     auto group =  GroupList::findGroup(groupId);
     if(!group){
-        qWarning() << "Group"<< groupId.getUsername() <<"is no existing!";
+        qWarning() << "Group"<< groupId.username <<"is no existing!";
         return;
     }
 
@@ -63,6 +63,7 @@ void AboutGroupForm::onSendMessageClicked()
 {
     auto widget = Widget::getInstance();
     if(widget){
-      emit widget->toSendMessage(ui->id->text());
+        qDebug() <<"toSendMessage:"<< ui->id->text();
+      emit widget->toSendMessage(ui->id->text(), true);
     }
 }

@@ -44,8 +44,8 @@ public:
   void updateStatusLight() final override;
   void resetEventFlags() final override;
   QString getStatusString() const final override;
-  Group *getGroup() const final override;
-  const Contact *getContact() const final override;
+  const Group *getGroup() const ;
+
   void setName(const QString &name);
   void editName();
   ContentDialog * addGroupDialog(Group *group);

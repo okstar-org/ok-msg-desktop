@@ -10,24 +10,15 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#ifndef GROUPID_H
-#define GROUPID_H
+//
+// Created by gaojie on 24-5-14.
+//
+#include "chatroom.h"
 
-#include "src/core/contactid.h"
-#include "lib/messenger/IMMessage.h"
-
-class GroupId : public ContactId{
-public:
-    GroupId();
-    GroupId(const GroupId& other);
-    explicit GroupId(const QByteArray& rawId);
-    explicit GroupId(const QString& rawId);
-    explicit GroupId(const ContactId& contactId);
-    int getSize() const;
-
-    bool operator==(const GroupId &other) const;
-    bool operator<(const GroupId &other) const;
-
-};
-
-#endif // GROUPID_H
+void Chatroom::setActive(bool _active)
+{
+    if (active != _active) {
+        active = _active;
+        emit activeChanged(active);
+    }
+}

@@ -25,7 +25,7 @@ class ChatHistory : public IChatLog
 {
     Q_OBJECT
 public:
-    ChatHistory(Friend& f_,
+    ChatHistory(const Friend& f_,
               History* history_,
               const ICoreIdHandler& coreIdHandler,
               const Settings& settings,
@@ -59,7 +59,7 @@ private:
     bool canUseHistory() const;
     ChatLogIdx getInitialChatLogIdx() const;
 
-    Friend& f;
+    const Friend& f;
     History* history;
     const Settings& settings;
     const ICoreIdHandler& coreIdHandler;

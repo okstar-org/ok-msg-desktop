@@ -33,7 +33,10 @@ class GroupChatForm : public GenericChatForm
 {
     Q_OBJECT
 public:
-    GroupChatForm(Group* chatGroup, IChatLog& chatLog, IMessageDispatcher& messageDispatcher, IGroupSettings& _settings);
+    GroupChatForm(const Group* chatGroup,
+                  IChatLog& chatLog,
+                  IMessageDispatcher& messageDispatcher,
+                  IGroupSettings& _settings);
     ~GroupChatForm();
 
     void peerAudioPlaying(QString peerPk);
@@ -66,7 +69,7 @@ private:
     void leaveGroupCall();
 
 private:
-    Group* group;
+    const Group* group;
     QMap<QString, QLabel*> peerLabels;
     QMap<QString, QTimer*> peerAudioTimers;
     FlowLayout* namesListLayout;

@@ -22,7 +22,7 @@
 #include <QTimer>
 #include <chrono>
 
-OfflineMsgEngine::OfflineMsgEngine(Friend *frnd,
+OfflineMsgEngine::OfflineMsgEngine(const Friend *frnd,
                                    ICoreFriendMessageSender *messageSender)
     : f(frnd), messageSender(messageSender) {}
 

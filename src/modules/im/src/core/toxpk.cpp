@@ -16,7 +16,8 @@
 
 #include <QByteArray>
 #include <QString>
-
+#include <QDebug>
+#include <QRegularExpression>
 #include <cassert>
 
 /**
@@ -36,7 +37,7 @@ ToxPk::ToxPk() : ContactId()
  * @param other ToxPk to copy
  */
 ToxPk::ToxPk(const ToxPk& other)
-    : ContactId(other.toString().toUtf8())
+    : ContactId(other), resource(other.resource)
 {
 }
 
@@ -45,9 +46,29 @@ ToxPk::ToxPk(const ToxPk& other)
  * @param rawId The bytes to construct the ToxPk from. The lenght must be exactly
  *              TOX_PUBLIC_KEY_SIZE, else the ToxPk will be empty.
  */
-ToxPk::ToxPk(const QByteArray& rawId)
-    : ContactId(rawId)
+ToxPk::ToxPk(const QByteArray& rawId):
+    ContactId(rawId)
 {
+}
+
+ToxPk::ToxPk(const QString &strId):
+    ContactId(strId)
+{
+    // 正则表达式模式，这里假设username不包含@，server不包含/
+      QRegularExpression re("([^@]+)@([^/]+)(/[^/]+)?");
+      // 匹配输入字符串
+      QRegularExpressionMatch match = re.match(strId);
+      // 检查是否匹配成功
+      if (!match.hasMatch()) {
+
+          qWarning() << "Unable to parse contactId:"<<strId;
+          return;
+      }
+
+      resource = match.captured(3);
+        if(resource.startsWith("/")){
+            resource = resource.replace("/", "");
+        }
 }
 
 /**
@@ -55,17 +76,17 @@ ToxPk::ToxPk(const QByteArray& rawId)
  * @param rawId The bytes to construct the ToxPk from, will read exactly
  * TOX_PUBLIC_KEY_SIZE from the specified buffer.
  */
-ToxPk::ToxPk(const lib::messenger::FriendId& rawId)
+ToxPk::ToxPk(const ContactId& rawId)
     : ContactId( rawId )
 {
 }
 
 bool ToxPk::operator==(const ToxPk &other) const {
-    return other.username.toLower() == username.toLower() ;//&& other.server == server;
+    return toString() == other.toString();
 }
 
 bool ToxPk::operator<(const ToxPk &other) const {
-  return username < other.username ;// && server < other.server;
+  return ContactId::operator<(other);
 }
 
 /**
@@ -75,4 +96,22 @@ bool ToxPk::operator<(const ToxPk &other) const {
 int ToxPk::getSize() const
 {
     return toString().size();
+}
+
+QByteArray ToxPk::getByteArray() const
+{
+    return toString().toUtf8();
+}
+
+QString ToxPk::toString() const
+{
+    if(username.isEmpty()||server.isEmpty()){
+        return {};
+    }
+
+    if(resource.isEmpty())
+         return username+"@"+server;
+
+    return username+"@"+server+"/"+resource;
+
 }

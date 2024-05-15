@@ -557,6 +557,11 @@ bool GenericChatForm::event(QEvent *e) {
   return QWidget::event(e);
 }
 
+void GenericChatForm::onAvatarChanged(const ToxPk &friendPk, const QPixmap &pic) {
+  qDebug() << "ChatForm::onAvatarChanged:"<<friendPk.toString() << "pic:"<< pic.size();
+  headWidget->setAvatar(pic);
+}
+
 void GenericChatForm::onChatContextMenuRequested(QPoint pos) {
   QWidget *sender = static_cast<QWidget *>(QObject::sender());
   pos = sender->mapToGlobal(pos);

@@ -18,15 +18,16 @@
 #include <QBoxLayout>
 #include <QMouseEvent>
 
-GenericChatroomWidget::GenericChatroomWidget(bool compact, QWidget* parent)
-    : GenericChatItemWidget(compact, parent)
-    , active{false}
+GenericChatroomWidget::GenericChatroomWidget(ChatType type,   QWidget* parent)
+    : GenericChatItemWidget(type, parent),
+
+      active{false}
 {
     // avatar
     QSize size;
-    if (isCompact())
-        size = QSize(20, 20);
-    else
+//    if (isCompact())
+//        size = QSize(20, 20);
+//    else
         size = QSize(40, 40);
 
     avatar = new MaskablePixmapWidget(this, size, ":/img/avatar_mask.svg");
@@ -44,7 +45,7 @@ GenericChatroomWidget::GenericChatroomWidget(bool compact, QWidget* parent)
     setAutoFillBackground(true);
     reloadTheme();
 
-    compactChange(isCompact());
+    compactChange(false);
 }
 
 bool GenericChatroomWidget::eventFilter(QObject*, QEvent*)
@@ -54,8 +55,8 @@ bool GenericChatroomWidget::eventFilter(QObject*, QEvent*)
 
 void GenericChatroomWidget::compactChange(bool _compact)
 {
-    if (!isCompact())
-        delete textLayout; // has to be first, deleted by layout
+//    if (!isCompact())
+//        delete textLayout; // has to be first, deleted by layout
 
     setCompact(_compact);
 

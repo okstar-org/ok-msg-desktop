@@ -21,18 +21,18 @@
 #include "src/model/status.h"
 #include "src/persistence/settings.h"
 
-GroupChatroom::GroupChatroom(Group* group, IDialogsManager* dialogsManager)
+GroupChatroom::GroupChatroom(const Group* group, IDialogsManager* dialogsManager)
     : group{group}
     , dialogsManager{dialogsManager}
 {
 }
 
-Contact* GroupChatroom::getContact()
+const Contact* GroupChatroom::getContact()
 {
-    return group;
+    return (group);
 }
 
-Group* GroupChatroom::getGroup()
+const Group* GroupChatroom::getGroup()
 {
     return group;
 }
@@ -44,8 +44,8 @@ bool GroupChatroom::hasNewMessage() const
 
 void GroupChatroom::resetEventFlags()
 {
-    group->setEventFlag(false);
-    group->setMentionedFlag(false);
+//    group->setEventFlag(false);
+//    group->setMentionedFlag(false);
 }
 
 bool GroupChatroom::friendExists(const ToxPk& pk)
@@ -65,23 +65,5 @@ void GroupChatroom::inviteFriend(const ToxPk& pk)
     }
 }
 
-bool GroupChatroom::possibleToOpenInNewWindow() const
-{
-    const auto groupId = group->getPersistentId();
-    const auto dialogs = dialogsManager->getGroupDialogs(groupId);
-    return !dialogs || dialogs->chatroomCount() > 1;
-}
 
-bool GroupChatroom::canBeRemovedFromWindow() const
-{
-    const auto groupId = group->getPersistentId();
-    const auto dialogs = dialogsManager->getGroupDialogs(groupId);
-    return dialogs && dialogs->hasContact(groupId);
-}
 
-void GroupChatroom::removeGroupFromDialogs()
-{
-    const auto groupId = group->getPersistentId();
-    auto dialogs = dialogsManager->getGroupDialogs(groupId);
-    dialogs->removeGroup(groupId);
-}

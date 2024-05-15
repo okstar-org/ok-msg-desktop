@@ -21,17 +21,39 @@ class Contact : public QObject
 {
     Q_OBJECT
 public:
+    Contact();
+    Contact(const ContactId& id, const QString& name, const QString& alias="", bool isGroup = false);
     virtual ~Contact() = 0;
 
-    virtual void setName(const QString& name) = 0;
-    virtual QString getDisplayedName() const = 0;
-    virtual QString getId() const = 0;
-    virtual const ContactId& getPersistentId() const = 0;
-    virtual void setEventFlag(bool flag) = 0;
-    virtual bool getEventFlag() const = 0;
+    void setName(const QString& name);
+    const QString& getName() const{return name;};
+
+    void setAlias(const QString &name);
+    const QString&  getAlias() const{return alias;};
+    bool hasAlias() const { return !alias.isEmpty(); }
+
+
+    QString getDisplayedName() const ;
+
+    const ContactId& getPersistentId() const {return id;};
+    QString getId() const {return id.toString(); };
+
+    virtual void setEventFlag(bool flag) ;
+    virtual bool getEventFlag() const ;
 
 signals:
+    void nameChanged(const QString &name);
     void displayedNameChanged(const QString& newName);
+    void aliasChanged(QString alias);
+
+protected:
+    bool isGroup;
+    ContactId id;
+
+    //名称
+    QString name;
+    //别名(自己备注)
+    QString alias;
 };
 
 #endif // CONTACT_H

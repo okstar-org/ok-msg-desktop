@@ -29,10 +29,10 @@ class QPixmap;
 class Widget;
 class FriendWidget;
 class GroupWidget;
-class CircleWidget;
+//class CircleWidget;
+//class CategoryWidget;
 class FriendListLayout;
 class GenericChatroomWidget;
-class CategoryWidget;
 class Friend;
 class ContentLayout;
 class MainLayout;
@@ -48,7 +48,8 @@ public:
   SortingMode getMode() const;
   void reloadTheme();
 
-  MessageSessionWidget *createMessageSession(const ToxPk &friendPk,const QString &sid);
+  MessageSessionWidget *createMessageSession(const ToxPk &friendPk,const QString &sid,
+                                             ChatType type);
   MessageSessionWidget *getMessageSession(const ToxPk &friendPk);
 
   void removeSessionWidget(MessageSessionWidget *w);
@@ -74,16 +75,15 @@ public:
                             const FriendMessage &message, //
                             bool isAction);
 
-  CircleWidget *createCircleWidget(int id = -1);
+//  CircleWidget *createCircleWidget(int id = -1);
 
-  void toSendMessage(const ToxPk &pk);
+  void toSendMessage(const ToxPk &pk, bool isGroup);
 
 
 signals:
   void onCompactChanged(bool compact);
-  void connectCircleWidget(CircleWidget &circleWidget);
-
-  void searchCircle(CircleWidget &circleWidget);
+//  void connectCircleWidget(CircleWidget &circleWidget);
+//  void searchCircle(CircleWidget &circleWidget);
 public slots:
 //  void renameGroupWidget(GroupWidget *groupWidget, const QString &newName);
 
@@ -106,9 +106,9 @@ protected:
 private:
   QLayout *nextLayout(QLayout *layout, bool forward) const;
   void moveFriends(QLayout *layout);
-  CategoryWidget *getTimeCategoryWidget(const Friend *frd) const;
+//  CategoryWidget *getTimeCategoryWidget(const Friend *frd) const;
   void sortByMode(SortingMode mode);
-  void connectFriendWidget(MessageSessionWidget &sw);
+  void connectSessionWidget(MessageSessionWidget &sw);
   void updateFriendActivity(const Friend &frnd);
   void addWidget(MessageSessionWidget  *fw, Status::Status s, int circleIndex);
 
@@ -122,7 +122,7 @@ private:
 
   ContentLayout *m_contentLayout;
 
-  QMap<ToxPk, MessageSessionWidget *> sessionWidgets;
+  QMap<QString, MessageSessionWidget *> sessionWidgets;
 
 };
 

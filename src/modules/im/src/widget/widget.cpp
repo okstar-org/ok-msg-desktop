@@ -967,7 +967,7 @@ void Widget::playNotificationSound(IAudioSink::Sound sound, bool loop) {
 void Widget::cleanupNotificationSound() { audioNotification.reset(); }
 
 void Widget::incomingNotification(QString friendnumber) {
-  const auto &friendId = FriendList::id2Key(friendnumber);
+  const auto &friendId = ToxPk(friendnumber);
   newFriendMessageAlert(friendId, {}, false);
 
   // loop until call answered or rejected
@@ -991,7 +991,7 @@ void Widget::onStopNotification() { audioNotification.reset(); }
  * necessary
  */
 void Widget::dispatchFile(ToxFile file) {
-  const auto &friendId = FriendList::id2Key(file.friendId);
+  const auto &friendId = ToxPk(file.friendId);
   Friend *f = FriendList::findFriend(friendId);
   if (!f) {
     return;
@@ -1030,7 +1030,7 @@ void Widget::dispatchFile(ToxFile file) {
 void Widget::dispatchFileWithBool(ToxFile file, bool) { dispatchFile(file); }
 
 void Widget::dispatchFileSendFailed(QString friendId, const QString &fileName) {
-  const auto &friendPk = FriendList::id2Key(friendId);
+//  const auto &friendPk = ToxPk(friendId);
 
 //TODO
 //  chatForm.value()->addSystemInfoMessage(
@@ -1198,56 +1198,56 @@ void Widget::openDialog(GenericChatroomWidget *widget, bool newWindow) {
   widget->resetEventFlags();
   widget->updateStatusLight();
 
-  GenericChatForm *form;
-  GroupId id;
-  const Friend *frnd = widget->getFriend();
-  const Group *group = widget->getGroup();
-//  if (frnd) {
-//    form = chatForms[frnd->getPublicKey()];
-//  } else if (group) {
-//    id = group->getPersistentId();
-//    form = groupChatForms[id].data();
+//  GenericChatForm *form;
+//  GroupId id;
+////  const Friend *frnd = widget->getFriend();
+////  const Group *group = widget->getGroup();
+////  if (frnd) {
+////    form = chatForms[frnd->getPublicKey()];
+////  } else if (group) {
+////    id = group->getPersistentId();
+////    form = groupChatForms[id].data();
+////  }
+//  bool chatFormIsSet;
+//  ContentDialogManager::getInstance()->focusContact(id);
+//  chatFormIsSet = ContentDialogManager::getInstance()->contactWidgetExists(id);
+
+//  if ((chatFormIsSet || form->isVisible()) && !newWindow) {
+//    return;
 //  }
-  bool chatFormIsSet;
-  ContentDialogManager::getInstance()->focusContact(id);
-  chatFormIsSet = ContentDialogManager::getInstance()->contactWidgetExists(id);
 
-  if ((chatFormIsSet || form->isVisible()) && !newWindow) {
-    return;
-  }
+//  if (settings.getSeparateWindow() || newWindow) {
+//    ContentDialog *dialog = nullptr;
 
-  if (settings.getSeparateWindow() || newWindow) {
-    ContentDialog *dialog = nullptr;
+//    if (!settings.getDontGroupWindows() && !newWindow) {
+//      dialog = ContentDialogManager::getInstance()->current();
+//    }
 
-    if (!settings.getDontGroupWindows() && !newWindow) {
-      dialog = ContentDialogManager::getInstance()->current();
-    }
+//    if (dialog == nullptr) {
+//      dialog = createContentDialog();
+//    }
 
-    if (dialog == nullptr) {
-      dialog = createContentDialog();
-    }
+//    dialog->show();
 
-    dialog->show();
-
-    if (frnd) {
-      addFriendDialog(frnd, dialog);
-    } else {
-      Group *group = widget->getGroup();
-      addGroupDialog(group, dialog);
-    }
-
-    dialog->raise();
-    dialog->activateWindow();
-  } else {
-    hideMainForms(widget);
-    if (frnd) {
-//      chatForms[frnd->getPublicKey()]->show(contentLayout);
+//    if (frnd) {
+//      addFriendDialog(frnd, dialog);
 //    } else {
-//      groupChatForms[group->getPersistentId()]->show(contentLayout);
-    }
-    widget->setAsActiveChatroom();
-    setWindowTitle(widget->getTitle());
-  }
+//      auto group = widget->getGroup();
+//      addGroupDialog(group, dialog);
+//    }
+
+//    dialog->raise();
+//    dialog->activateWindow();
+//  } else {
+//    hideMainForms(widget);
+//    if (frnd) {
+////      chatForms[frnd->getPublicKey()]->show(contentLayout);
+////    } else {
+////      groupChatForms[group->getPersistentId()]->show(contentLayout);
+//    }
+//    widget->setAsActiveChatroom();
+//    setWindowTitle(widget->getTitle());
+//  }
 }
 
 
@@ -1306,7 +1306,7 @@ void Widget::addFriendDialog(const Friend *frnd, ContentDialog *dialog) {
   }
 }
 
-void Widget::addGroupDialog(Group *group, ContentDialog *dialog) {
+void Widget::addGroupDialog(const Group *group, ContentDialog *dialog) {
   const GroupId &groupId = group->getPersistentId();
   ContentDialog *groupDialog =
       ContentDialogManager::getInstance()->getGroupDialog(groupId);
@@ -1538,7 +1538,7 @@ void Widget::friendRequestedTo(const ToxId &friendAddress, const QString &nick, 
 
 
 void Widget::onFileReceiveRequested(const ToxFile &file) {
-  const ToxPk &friendPk = FriendList::id2Key(file.friendId);
+  const ToxPk &friendPk = ToxPk(file.friendId);
   newFriendMessageAlert(
       friendPk,
       file.fileName + " (" +
@@ -1627,7 +1627,7 @@ void Widget::onFriendDialogShown(const Friend *f) {
 //  onDialogShown(contactListWidget->getFriend(f->getPublicKey()));
 }
 
-void Widget::onGroupDialogShown(Group *g) {
+void Widget::onGroupDialogShown(const Group *g) {
   const GroupId &groupId = g->getPersistentId();
 //  onDialogShown(groupWidgets[groupId]);
 }
@@ -1766,7 +1766,7 @@ void Widget::titleChangedByUser(const QString &title) {
 }
 
 void Widget::onGroupPeerAudioPlaying(QString groupnumber, ToxPk peerPk) {
-  const GroupId &groupId = GroupList::id2Key(groupnumber);
+  const GroupId &groupId = GroupId(groupnumber);
   Group *g = GroupList::findGroup(groupId);
   if (!g) {
     qWarning() << "Can not find the group named:" << groupnumber;

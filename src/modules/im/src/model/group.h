@@ -31,11 +31,15 @@ class Group : public Contact
 {
     Q_OBJECT
 public:
-    Group(QString groupId, const GroupId persistentGroupId, const QString& name, bool isAvGroupchat,
-          const QString& selfName, ICoreGroupQuery& groupQuery, ICoreIdHandler& idHandler);
+    Group(const GroupId persistentGroupId,
+          const QString& name,
+          bool isAvGroupchat,
+          const QString& selfName,
+          ICoreGroupQuery& groupQuery,
+          ICoreIdHandler& idHandler);
+
     bool isAvGroupchat() const;
-    QString getId() const override;
-    const GroupId& getPersistentId() const override;
+
     int getPeersCount() const;
     void setPeerCount(uint32_t count);
 
@@ -50,13 +54,11 @@ public:
     bool getMentionedFlag() const;
 
     void updateUsername(const QString oldName, const QString newName);
-    void setName(const QString& newTitle) override;
 
     void setTitle(const QString& author, const QString& newTitle);
     const QString & getTitle()const{return title;};
 
-    QString getName() const;
-    QString getDisplayedName() const override;
+
 
     void setSelfName(const QString& name);
     QString getSelfName() const;
@@ -64,7 +66,7 @@ public:
     void setDesc(const QString& desc_);
     const QString & getDesc() const;
 
-
+const GroupId& getPersistentId() const {return groupId;};
 signals:
     void titleChangedByUser(const QString& title);
     void titleChanged(const QString& author, const QString& title);
@@ -87,7 +89,6 @@ private:
     QMap<QString, QString> peerDisplayNames;
     bool hasNewMessages;
     bool userWasMentioned;
-    QString toxGroupNum;
     const GroupId groupId;
     bool avGroupchat;
 };

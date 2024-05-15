@@ -16,7 +16,7 @@
 #include <QtCore>
 
 GroupMessageDispatcher::GroupMessageDispatcher(
-    Group &g_, MessageProcessor processor_, ICoreIdHandler &idHandler_,
+    const Group &g_, MessageProcessor processor_, ICoreIdHandler &idHandler_,
     ICoreGroupMessageSender &messageSender_,
     const IGroupSettings &groupSettings_)
     : group(g_), processor(processor_), idHandler(idHandler_),

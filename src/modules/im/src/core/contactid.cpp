@@ -14,8 +14,9 @@
 #include <QByteArray>
 #include <QHash>
 #include <QString>
-
+#include <QRegularExpression>
 #include <cstdint>
+#include <QDebug>
 #include "base/StringUtils.h"
 #include "lib/messenger/IMMessage.h"
 
@@ -25,35 +26,32 @@
  */
 ContactId::ContactId()  {}
 
-/**
- * @brief Constructs a ContactId from bytes.
- * @param rawId The bytes to construct the ContactId from.
- */
-ContactId::ContactId(const lib::messenger::FriendId &rawId)
-    : lib::messenger::FriendId(rawId)
+
+ContactId::ContactId(const QByteArray &rawId)
+    : ContactId(QString::fromUtf8(rawId)) {
+}
+
+ContactId::ContactId(const QString &strId) {
+    // 正则表达式模式，这里假设username不包含@，server不包含/
+      QRegularExpression re("([^@]+)@([^/]+)(/[^/]+)?");
+      // 匹配输入字符串
+      QRegularExpressionMatch match = re.match(strId);
+      // 检查是否匹配成功
+      if (!match.hasMatch()) {
+          qWarning() << "Unable to parse contactId:"<<strId;
+          return;
+      }
+          // 提取各个部分
+          username = match.captured(1);
+          server = match.captured(2);
+
+}
+
+ContactId::ContactId(const ContactId &contactId):
+    username{contactId.username}, server{contactId.server}
 {
 
 }
-
-ContactId::ContactId(const QByteArray &rawId)
-    : lib::messenger::FriendId(QString::fromUtf8(rawId)) {
-}
-
-ContactId::ContactId(const QString &strId)
-    : lib::messenger::FriendId((strId)) {
-}
-
-QString ContactId::getUsername() const {
-  return username;
-}
-
-QString ContactId::getServer() const {
-  return server;
-}
-
-//QString ContactId::getResource() const {
-//  return "";
-//}
 
 /**
  * @brief Compares the equality of the ContactId.
@@ -61,7 +59,7 @@ QString ContactId::getServer() const {
  * @return True if both ContactId are equal, false otherwise.
  */
 bool ContactId::operator==(const ContactId &other) const {
-  return FriendId::operator==(other);
+  return username == other.username && server == other.server;
 }
 
 /**
@@ -70,7 +68,7 @@ bool ContactId::operator==(const ContactId &other) const {
  * @return True if both ContactIds are not equal, false otherwise.
  */
 bool ContactId::operator!=(const ContactId &other) const {
-  return FriendId::operator!=(other);
+  return !(ContactId::operator==(other));
 }
 
 /**
@@ -80,7 +78,7 @@ bool ContactId::operator!=(const ContactId &other) const {
  * otherwise.
  */
 bool ContactId::operator<(const ContactId &other) const {
-  return FriendId::operator<(other);
+  return username < other.username && server < other.server;
 }
 
 /**
@@ -95,5 +93,10 @@ QByteArray ContactId::getByteArray() const {
  * @brief Checks if the ContactId contains a id.
  * @return True if there is a id, False otherwise.
  */
-bool ContactId::isEmpty() const { return getUsername().isEmpty(); }
+bool ContactId::isEmpty() const { return username.isEmpty(); }
+
+int ContactId::getSize()
+{
+    return toString().size();
+}
 

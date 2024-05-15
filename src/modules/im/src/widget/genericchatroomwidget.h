@@ -14,6 +14,7 @@
 #define GENERICCHATROOMWIDGET_H
 
 #include "genericchatitemwidget.h"
+#include "src/model/message.h"
 
 class CroppingLabel;
 class MaskablePixmapWidget;
@@ -23,11 +24,14 @@ class ContentLayout;
 class Friend;
 class Group;
 class Contact;
+
+
+
 class GenericChatroomWidget : public GenericChatItemWidget
 {
     Q_OBJECT
 public:
-    explicit GenericChatroomWidget(bool compact, QWidget* parent = nullptr);
+    explicit GenericChatroomWidget(ChatType chatType, QWidget* parent = nullptr);
 
 public slots:
     virtual void setAsActiveChatroom() = 0;
@@ -36,15 +40,7 @@ public slots:
     virtual void updateStatusLight() = 0;
     virtual void resetEventFlags() = 0;
     virtual QString getStatusString() const = 0;
-    virtual const Contact* getContact() const = 0;
-    virtual const Friend* getFriend() const
-    {
-        return nullptr;
-    }
-    virtual Group* getGroup() const
-    {
-        return nullptr;
-    }
+     const ContactId& getContactId() const {return contactId;};
 
     virtual bool eventFilter(QObject*, QEvent*) final override;
 
@@ -74,6 +70,7 @@ protected:
 
 
 protected:
+
     QPoint dragStartPos;
     QColor lastColor;
     QHBoxLayout* mainLayout = nullptr;
@@ -81,6 +78,7 @@ protected:
     MaskablePixmapWidget* avatar;
 //    CroppingLabel* statusMessageLabel;
     bool active;
+    ContactId contactId;
 };
 
 #endif // GENERICCHATROOMWIDGET_H

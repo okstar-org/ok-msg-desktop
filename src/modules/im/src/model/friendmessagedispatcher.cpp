@@ -37,7 +37,7 @@ bool sendMessageToCore(ICoreFriendMessageSender &messageSender, const Friend &f,
 } // namespace
 
 FriendMessageDispatcher::FriendMessageDispatcher(
-    Friend &f_, MessageProcessor processor_,
+   const Friend &f_, MessageProcessor processor_,
     ICoreFriendMessageSender &messageSender_)
     : f(f_), messageSender(messageSender_),
       offlineMsgEngine(&f_, &messageSender_), processor(std::move(processor_)) {
@@ -113,7 +113,7 @@ void FriendMessageDispatcher::onReceiptReceived(ReceiptNum receipt) {
  * @brief Handles status change for friend
  * @note Parameters just to fit slot api
  */
-void FriendMessageDispatcher::onFriendOnlineOfflineChanged(const ToxPk &,
+void FriendMessageDispatcher::onFriendOnlineOfflineChanged(
                                                            bool isOnline) {
   if (isOnline) {
     offlineMsgEngine.deliverOfflineMsgs();

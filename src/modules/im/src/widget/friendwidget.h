@@ -53,8 +53,8 @@ class FriendWidget : public GenericChatroomWidget
     void resetEventFlags() override final;
     QString getStatusString() const override final;
 
-    const Friend* getFriend() const override final;
-    const Contact* getContact() const override final;
+    const Friend* getFriend() const ;
+    const Contact* getContact() const ;
 
     void search(const QString& searchString, bool hide = false);
     void setRecvMessage(const FriendMessage &message,
@@ -70,7 +70,7 @@ signals:
     void friendHistoryRemoved();
     void friendWidgetRenamed(FriendWidget* friendWidget);
     void searchCircle(CircleWidget& circleWidget);
-    void updateFriendActivity(Friend& frnd);
+    void updateFriendActivity(const Friend& frnd);
 //    void setActive(bool active);
 public slots:
   void onAvatarSet(const ToxPk& friendPk, const QPixmap& pic);

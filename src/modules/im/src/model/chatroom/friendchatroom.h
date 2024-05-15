@@ -39,15 +39,15 @@ class FriendChatroom : public QObject, public Chatroom
 {
     Q_OBJECT
 public:
-    FriendChatroom(Friend* frnd, IDialogsManager* dialogsManager);
+    FriendChatroom(const Friend* frnd, IDialogsManager* dialogsManager);
 
-    Contact* getContact() override;
+  const  Contact* getContact() override;
 
 public slots:
 
-    Friend* getFriend();
+  const  Friend* getFriend();
 
-    void setActive(bool active);
+
 
     bool canBeInvited() const;
 
@@ -72,12 +72,10 @@ public slots:
     bool friendCanBeRemoved() const;
     void removeFriendFromDialogs();
 
-signals:
-    void activeChanged(bool activated);
 
 private:
     bool active{false};
-    Friend* frnd{nullptr};
+    const Friend* frnd{nullptr};
     IDialogsManager* dialogsManager{nullptr};
 };
 

@@ -89,8 +89,10 @@ public slots:
     void focusInput();
     void onChatMessageFontChanged(const QFont& font);
     void setColorizedNames(bool enable);
+    void onAvatarChanged(const ToxPk &friendPk, const QPixmap &pic);
 
 protected slots:
+
     void onChatContextMenuRequested(QPoint pos);
     virtual void onScreenshotClicked() = 0;
     void onSendTriggered();

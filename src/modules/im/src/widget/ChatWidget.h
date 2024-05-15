@@ -46,8 +46,8 @@ public:
         assert(contentLayout);
       return contentLayout.get();
   }
-  void connectCircleWidget();
-  void searchCircle(CircleWidget &circleWidget);
+//  void connectCircleWidget();
+//  void searchCircle(CircleWidget &circleWidget);
   AddFriendForm *openFriendAddForm();
   void reloadTheme();
   void retranslateUi();

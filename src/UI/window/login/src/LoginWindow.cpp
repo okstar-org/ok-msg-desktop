@@ -51,7 +51,7 @@ LoginWindow::LoginWindow(QWidget *parent)
 
 LoginWindow::~LoginWindow() {
     disconnect(ui->loginWidget);
-  delete ui;
+//  delete ui;
 }
 
 void LoginWindow::onProfileLoadFailed(QString msg) {

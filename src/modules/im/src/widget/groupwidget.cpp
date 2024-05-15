@@ -35,13 +35,12 @@
 GroupWidget::GroupWidget(ContentLayout *layout, QString groupnumber,
                          const GroupId &groupId, const QString &groupName,
                          bool compact)
-    : GenericChatroomWidget(compact), contentLayout{layout} {
+    : GenericChatroomWidget(ChatType::GroupChat), contentLayout{layout} {
 
   settings::Translator::registerHandler(
       std::bind(&GroupWidget::retranslateUi, this), this);
 
-  avatar->setPixmap(Style::scaleSvgImage(":img/group.svg", avatar->width(),
-                                         avatar->height()));
+  avatar->setPixmap(Style::scaleSvgImage(":img/group.svg", avatar->width(), avatar->height()));
   statusPic.setPixmap(QPixmap(Status::getIconPath(Status::Status::Online)));
   statusPic.setMargin(3);
 
@@ -54,8 +53,7 @@ GroupWidget::GroupWidget(ContentLayout *layout, QString groupnumber,
   auto &settings = Settings::getInstance();
 
   group = GroupList::addGroup(
-      groupnumber, groupId, groupName, true, ""
-      //                                        core->getUsername()
+       groupId, groupName, true, core->getUsername()
   );
 
   auto dialogManager = ContentDialogManager::getInstance();
@@ -84,7 +82,7 @@ GroupWidget::GroupWidget(ContentLayout *layout, QString groupnumber,
 
   contentWidget = new ContentWidget(this);
   contentWidget->hide();
-  contentWidget->setGroupChatForm(chatform.get());
+//  contentWidget->setGroupChatForm(chatform.get());
 
   connect(messageDispatcher.get(), &IMessageDispatcher::messageReceived,
           chatLog.get(), &SessionChatLog::onMessageReceived);
@@ -116,14 +114,14 @@ ContentDialog *GroupWidget::addGroupDialog(Group *group) {
 
   auto &settings = Settings::getInstance();
 
-  const GroupId &groupId = group->getPersistentId();
+  auto &groupId = group->getPersistentId();
 
   ContentDialog *dialog =
-      ContentDialogManager::getInstance()->getGroupDialog(groupId);
-  bool separated = settings.getSeparateWindow();
-  if (!dialog) {
-    dialog = createContentDialog();
-  }
+      ContentDialogManager::getInstance()->getGroupDialog(GroupId(groupId));
+//  bool separated = settings.getSeparateWindow();
+//  if (!dialog) {
+//    dialog = createContentDialog();
+//  }
 
   //  GroupWidget *widget = groupWidgets[groupId];
   //  bool isCurrentWindow = activeChatroomWidget == widget;
@@ -133,8 +131,8 @@ ContentDialog *GroupWidget::addGroupDialog(Group *group) {
 
   //  auto chatForm = groupChatForms[groupId].data();
   //  auto chatroom = groupChatrooms[groupId];
-  ContentDialogManager::getInstance()->addGroupToDialog(
-      groupId, dialog, chatroom.get(), chatform.get());
+//  ContentDialogManager::getInstance()->addGroupToDialog(
+//      groupId, dialog, chatroom.get(), chatform.get());
   //
   // #if (QT_VERSION >= QT_VERSION_CHECK(5, 7, 0))
   //  auto removeGroup = QOverload<const GroupId &>::of(&Widget::removeGroup);
@@ -228,15 +226,15 @@ void GroupWidget::contextMenuEvent(QContextMenuEvent *event) {
 
   QMenu menu(this);
 
-  QAction *openChatWindow = nullptr;
-  if (chatroom->possibleToOpenInNewWindow()) {
-    openChatWindow = menu.addAction(tr("Open chat in new window"));
-  }
+//  QAction *openChatWindow = nullptr;
+//  if (chatroom->possibleToOpenInNewWindow()) {
+//    openChatWindow = menu.addAction(tr("Open chat in new window"));
+//  }
 
-  QAction *removeChatWindow = nullptr;
-  if (chatroom->canBeRemovedFromWindow()) {
-    removeChatWindow = menu.addAction(tr("Remove chat from this window"));
-  }
+//  QAction *removeChatWindow = nullptr;
+//  if (chatroom->canBeRemovedFromWindow()) {
+//    removeChatWindow = menu.addAction(tr("Remove chat from this window"));
+//  }
 
   menu.addSeparator();
 
@@ -258,17 +256,17 @@ void GroupWidget::contextMenuEvent(QContextMenuEvent *event) {
     return;
   }
 
-  if (selectedItem == quitGroup) {
-    emit removeGroup(group->getPersistentId());
-  } else if (selectedItem == destroyGrpAct) {
-    emit destroyGroup(group->getPersistentId());
-  } else if (selectedItem == openChatWindow) {
-    emit newWindowOpened(this);
-  } else if (selectedItem == removeChatWindow) {
-    chatroom->removeGroupFromDialogs();
-  } else if (selectedItem == setTitle) {
-    editName();
-  }
+//  if (selectedItem == quitGroup) {
+//    emit removeGroup(group->getPersistentId());
+//  } else if (selectedItem == destroyGrpAct) {
+//    emit destroyGroup(group->getPersistentId());
+//  } else if (selectedItem == openChatWindow) {
+//    emit newWindowOpened(this);
+//  } else if (selectedItem == removeChatWindow) {
+//    chatroom->removeGroupFromDialogs();
+//  } else if (selectedItem == setTitle) {
+//    editName();
+//  }
 }
 
 void GroupWidget::mousePressEvent(QMouseEvent *ev) {
@@ -340,12 +338,11 @@ void GroupWidget::setAsInactiveChatroom() { setActive(false); }
 
 void GroupWidget::onSetActive(bool active) {
   const auto uri = active ? ":img/group_dark.svg" : ":img/group.svg";
-  avatar->setPixmap(
-      Style::scaleSvgImage(uri, avatar->width(), avatar->height()));
+  avatar->setPixmap(Style::scaleSvgImage(uri, avatar->width(), avatar->height()));
 }
 
 void GroupWidget::updateStatusLight() {
-  Group *g = chatroom->getGroup();
+  const Group *g = chatroom->getGroup();
   const bool event = g->getEventFlag();
   statusPic.setPixmap(
       QPixmap(Status::getIconPath(Status::Status::Online, event)));
@@ -363,9 +360,7 @@ QString GroupWidget::getStatusString() const {
 void GroupWidget::editName() { nameLabel->editBegin(); }
 
 // TODO: Remove
-Group *GroupWidget::getGroup() const { return chatroom->getGroup(); }
-
-const Contact *GroupWidget::getContact() const { return getGroup(); }
+const Group *GroupWidget::getGroup() const { return chatroom->getGroup(); }
 
 void GroupWidget::resetEventFlags() { chatroom->resetEventFlags(); }
 
@@ -415,7 +410,7 @@ void GroupWidget::retranslateUi() {
 void GroupWidget::setRecvMessage(const GroupMessage& msg) {
 
   auto core = Core::getInstance();
-  ToxPk author = core->getGroupPeerPk(msg.groupId.getUsername(), msg.from);
+  ToxPk author = core->getGroupPeerPk(msg.groupId.username, msg.from);
   messageDispatcher->onMessageReceived(author, msg.isAction, msg.id, msg.content, msg.nick,msg.from,
                                        msg.timestamp);
 }

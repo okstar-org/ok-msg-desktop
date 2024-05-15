@@ -18,7 +18,15 @@
 class Chatroom
 {
 public:
-    virtual Contact* getContact() = 0;
+    virtual const Contact* getContact() = 0;
+
+    void setActive(bool _active);
+
+signals:
+    void activeChanged(bool activated);
+
+private:
+    bool  active;
 };
 
 #endif /* MODEL_CHATROOM_H */

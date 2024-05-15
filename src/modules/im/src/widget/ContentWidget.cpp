@@ -23,7 +23,8 @@
 #include <QLabel>
 #include <QStyleFactory>
 
-ContentWidget::ContentWidget(QWidget* parent): QWidget(parent){
+ContentWidget::ContentWidget(QWidget* parent): QWidget(parent),
+    contentIndex{-1}{
 
   setLayout(new QVBoxLayout(this));
 
@@ -72,19 +73,16 @@ void ContentWidget::init() {
 }
 
 void ContentWidget::showTo(ContentLayout *layout) {
-  layout->addWidget(this);
-  layout->setCurrentWidget(this);
+    if(contentIndex == -1){
+        contentIndex= layout->addWidget(this);
+    }
+  layout->setCurrentIndex(contentIndex);
   show();
 }
 
-void ContentWidget::setChatForm(ChatForm * form) {
+void ContentWidget::setChatForm(GenericChatForm * form) {
   auto h = form->getHead();
   mainHead->layout()->addWidget(h);
   mainContent->layout()->addWidget(form);
 }
 
-void ContentWidget::setGroupChatForm(GroupChatForm * form) {
-  auto h = form->getHead();
-  mainHead->layout()->addWidget(h);
-  mainContent->layout()->addWidget(form);
-}

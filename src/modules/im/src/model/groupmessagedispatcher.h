@@ -29,7 +29,7 @@ class IGroupSettings;
 class GroupMessageDispatcher : public IMessageDispatcher {
   Q_OBJECT
 public:
-  GroupMessageDispatcher(Group &group,
+  GroupMessageDispatcher(const Group &group,
                          MessageProcessor processor,
                          ICoreIdHandler &idHandler,
                          ICoreGroupMessageSender &messageSender,
@@ -45,7 +45,7 @@ public:
                          QString const &from, const QDateTime &time);
 
 private:
-  Group &group;
+  const Group &group;
   MessageProcessor processor;
   ICoreIdHandler &idHandler;
   ICoreGroupMessageSender &messageSender;

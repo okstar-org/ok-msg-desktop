@@ -54,7 +54,7 @@ public:
   /**
    * Module
    */
- inline static QString Name();
+  inline static QString Name();
   static Module *Create();
   QString name() override;
   void init(Profile *) override;
@@ -90,6 +90,7 @@ private:
 
   QActionGroup *windowActions = nullptr;
 #endif
+
 signals:
   void currentProfileChanged(Profile *Profile);
   void profileLoaded();

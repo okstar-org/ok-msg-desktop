@@ -151,6 +151,7 @@ set(${PROJECT_NAME}_SOURCES
         src/model/aboutfriend.h
         src/model/iaboutfriend.h
         src/model/chatroom/chatroom.h
+        src/model/chatroom/chatroom.cpp
         src/model/chatroom/friendchatroom.cpp
         src/model/chatroom/friendchatroom.h
         src/model/chatroom/groupchatroom.cpp
@@ -240,12 +241,12 @@ set(${PROJECT_NAME}_SOURCES
         src/video/videosurface.h
         src/widget/form/aboutfriendform.cpp
         src/widget/form/aboutfriendform.h
-        src/widget/categorywidget.cpp
-        src/widget/categorywidget.h
+#        src/widget/categorywidget.cpp
+#        src/widget/categorywidget.h
         src/widget/chatformheader.cpp
         src/widget/chatformheader.h
-        src/widget/circlewidget.cpp
-        src/widget/circlewidget.h
+#        src/widget/circlewidget.cpp
+#        src/widget/circlewidget.h
         src/widget/contentdialog.cpp
         src/widget/contentdialog.h
         src/widget/contentdialogmanager.cpp
@@ -386,7 +387,10 @@ set(${PROJECT_NAME}_SOURCES
         src/widget/FriendAddWidget.h
         # src/widget/translator.cpp src/widget/translator.h
         src/widget/widget.cpp
-        src/widget/widget.h)
+        src/widget/widget.h
+        src/worker/SendWorker.h
+        src/worker/SendWorker.cpp
+)
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     set(${PROJECT_NAME}_SOURCES

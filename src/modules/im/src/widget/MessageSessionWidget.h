@@ -23,6 +23,8 @@
 
 #include <memory>
 
+#include <src/worker/SendWorker.h>
+
 class FriendChatroom;
 class QPixmap;
 class MaskablePixmapWidget;
@@ -39,7 +41,9 @@ class MessageSessionWidget : public GenericChatroomWidget
     Q_OBJECT
 
   public:
-    MessageSessionWidget(ContentLayout* layout, const ToxPk &friendPk, bool isFriend, bool compact);
+    MessageSessionWidget(ContentLayout* layout,
+                         const ToxPk &friendPk,
+                         ChatType);
 
     void contextMenuEvent(QContextMenuEvent* event) override final;
     void setAsActiveChatroom() override final;
@@ -52,8 +56,9 @@ class MessageSessionWidget : public GenericChatroomWidget
     void resetEventFlags() override final;
     QString getStatusString() const override final;
 
-    const Friend* getFriend() const override final;
-    const Contact* getContact() const override final;
+
+    const ContactId &getContactId() const   {return contactId; };
+
 
     void search(const QString& searchString, bool hide = false);
     void setRecvMessage(const FriendMessage &message,
@@ -86,19 +91,21 @@ protected:
     ContentLayout* contentLayout;
     ContentWidget* contentWidget;
 
-    MessageProcessor::SharedParams sharedMessageProcessorParams;
-    std::unique_ptr<FriendMessageDispatcher> messageDispatcher;
-    std::unique_ptr<ChatHistory> chatHistory;
-    std::unique_ptr<ChatForm> chatForm;
-    std::unique_ptr<FriendChatroom> chatRoom;
-    std::unique_ptr<SessionChatLog> chatLog;
-    Friend *m_friend;
+//    MessageProcessor::SharedParams sharedMessageProcessorParams;
+//    std::unique_ptr<FriendMessageDispatcher> messageDispatcher;
+//    std::unique_ptr<ChatHistory> chatHistory;
+//    std::unique_ptr<ChatForm> chatForm;
+//    std::unique_ptr<SessionChatLog> chatLog;
+//    std::unique_ptr<FriendChatroom> chatRoom;
 
+    const ContactId contactId;
+
+    SendWorker *sendWorker;
 
     bool isDefaultAvatar;
 
     ContentDialog *createContentDialog() const;
-    ContentDialog * addFriendDialog(const Friend *frnd );
+
 
 private slots:
     void removeChatWindow();

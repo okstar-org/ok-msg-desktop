@@ -15,29 +15,39 @@
 
 #include "src/core/contactid.h"
 #include <QByteArray>
-#include <cstdint>
+#include <QHash>
 
+/**
+ * 帐号
+ */
 class ToxPk : public ContactId
 {
 public:
     ToxPk();
     ToxPk(const ToxPk& other);
     explicit ToxPk(const QByteArray& rawId);
-    explicit ToxPk(const lib::messenger::FriendId& rawId);
+    explicit ToxPk(const QString& rawId);
+    explicit ToxPk(const ContactId& rawId);
 
     bool operator==(const ToxPk& other) const;
     bool operator<(const ToxPk& other) const;
 
-    int getSize() const override;
+    int getSize() const;
+
+    QByteArray getByteArray() const ;
+
+    QString toString() const;
+
+    const QString& getResource() const {return resource;}
+
+    QString resource;
+
 };
 
 
 inline uint qHash(const ToxPk& id)
 {
-    uint hash = qHash(id.getByteArray());
-    return hash;
+    return qHash(id.getByteArray());
 }
-
-
 
 #endif // TOXPK_H

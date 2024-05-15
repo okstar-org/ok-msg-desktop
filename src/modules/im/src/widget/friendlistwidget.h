@@ -28,10 +28,10 @@ class QPixmap;
 class Widget;
 class FriendWidget;
 class GroupWidget;
-class CircleWidget;
+//class CircleWidget;
+//class CategoryWidget;
 class FriendListLayout;
 class GenericChatroomWidget;
-class CategoryWidget;
 class Friend;
 class ContentLayout;
 class MainLayout;
@@ -68,9 +68,9 @@ public:
   void setGroupTitle(const GroupId &groupId, const QString &author,const QString& title);
   void setGroupInfo(const GroupId &groupId, const GroupInfo &info);
 
-  void addCircleWidget(int id);
-  void addCircleWidget(FriendWidget *widget = nullptr);
-  void removeCircleWidget(CircleWidget *widget);
+//  void addCircleWidget(int id);
+//  void addCircleWidget(FriendWidget *widget = nullptr);
+//  void removeCircleWidget(CircleWidget *widget);
   void searchChatrooms(const QString &searchString, bool hideOnline = false,
                        bool hideOffline = false, bool hideGroups = false);
 
@@ -85,16 +85,16 @@ public:
                             const FriendMessage &message, //
                             bool isAction);
 
-  CircleWidget *createCircleWidget(int id = -1);
+//  CircleWidget *createCircleWidget(int id = -1);
 signals:
   void onCompactChanged(bool compact);
-  void connectCircleWidget(CircleWidget &circleWidget);
-  void searchCircle(CircleWidget &circleWidget);
+//  void connectCircleWidget(CircleWidget &circleWidget);
+//  void searchCircle(CircleWidget &circleWidget);
 
 public slots:
   void renameGroupWidget(GroupWidget *groupWidget, const QString &newName);
 
-  void renameCircleWidget(CircleWidget *circleWidget, const QString &newName);
+//  void renameCircleWidget(CircleWidget *circleWidget, const QString &newName);
   void onFriendWidgetRenamed(FriendWidget *friendWidget);
 
   void slot_friendClicked(GenericChatroomWidget *);
@@ -114,7 +114,7 @@ private:
 
   QLayout *nextLayout(QLayout *layout, bool forward) const;
   void moveFriends(QLayout *layout);
-  CategoryWidget *getTimeCategoryWidget(const Friend *frd) const;
+//  CategoryWidget *getTimeCategoryWidget(const Friend *frd) const;
   void sortByMode(SortingMode mode);
   void connectFriendWidget(FriendWidget &friendWidget);
   void updateFriendActivity(const Friend &frnd);

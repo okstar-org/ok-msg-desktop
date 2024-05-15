@@ -96,7 +96,7 @@ QString secondsToDHMS(quint32 duration) {
 }
 } // namespace
 
-ChatForm::ChatForm(Friend *chatFriend, IChatLog &chatLog_,
+ChatForm::ChatForm(const Friend *chatFriend, IChatLog &chatLog_,
                    IMessageDispatcher &messageDispatcher)
     : GenericChatForm(chatFriend, chatLog_, messageDispatcher),
       f(chatFriend), isTyping{false}, lastCallIsVideo{false} {
@@ -177,9 +177,10 @@ ChatForm::ChatForm(Friend *chatFriend, IChatLog &chatLog_,
     isTyping = false;
   });
 
-  // reflect name changes in the header
-  connect(headWidget, &ChatFormHeader::nameChanged, this,
-          [this](const QString &newName) { f->setAlias(newName); });
+  //TODO reflect name changes in the header
+//  connect(headWidget, &ChatFormHeader::nameChanged, this,
+//          [this](const QString &newName) { f->setAlias(newName); });
+
   connect(headWidget, &ChatFormHeader::callAccepted, this,
           [this] { onAnswerCallTriggered(lastCallIsVideo); });
   connect(headWidget, &ChatFormHeader::callRejected, this,
@@ -455,13 +456,6 @@ void ChatForm::onStatusMessage(const QString &message) {
   }
 }
 
-void ChatForm::onAvatarChanged(const ToxPk &friendPk, const QPixmap &pic) {
-  if (friendPk != f->getPublicKey()) {
-    return;
-  }
-  qDebug() << "ChatForm::onAvatarChanged:"<<friendPk.toString() << "pic:"<< pic.size();
-  headWidget->setAvatar(pic);
-}
 
 GenericNetCamView *ChatForm::createNetcam() {
   qDebug() << "creating netcam";
@@ -657,8 +651,7 @@ void ChatForm::onUpdateTime() {
 void ChatForm::setFriendTyping(bool typing) {
   isTyping = typing;
   chatLog->setTypingNotificationVisible(typing);
-  Text *text =
-      static_cast<Text *>(chatLog->getTypingNotification()->getContent(1));
+  Text *text = static_cast<Text *>(chatLog->getTypingNotification()->getContent(1));
   QString typingDiv = "<div class=typing>%1</div>";
   QString name = f->getDisplayedName();
   text->setText(typingDiv.arg(tr("%1 is typing").arg(name)));

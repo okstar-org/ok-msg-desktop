@@ -14,6 +14,7 @@
 #define FRIENDLIST_H
 
 #include <cstdint>
+#include <QMap>
 
 template <class T> class QList;
 template <class A, class B> class QHash;
@@ -22,19 +23,19 @@ class QByteArray;
 class QString;
 class ToxPk;
 
+using FriendMap = QMap<QString, Friend *>;
+
 class FriendList {
 public:
   static Friend *addFriend(const ToxPk &friendPk, bool isFriend);
   static Friend *findFriend(const ToxPk &friendPk);
-  static const ToxPk &id2Key(QString friendId);
   static QList<Friend *> getAllFriends();
   static void removeFriend(const ToxPk &friendPk, bool fake = false);
   static void clear();
   static QString decideNickname(const ToxPk &friendPk, const QString &origName);
 
 private:
-  static QHash<ToxPk, Friend *> friendList;
-  static QHash<QString, ToxPk> id2key;
+  static FriendMap friendMap;
 };
 
 #endif // FRIENDLIST_H
