@@ -131,8 +131,8 @@ ChatForm::ChatForm(const Friend *chatFriend, IChatLog &chatLog_,
   const Core *core = Core::getInstance();
   const Profile *profile = Nexus::getProfile();
   const CoreFile *coreFile = core->getCoreFile();
-  connect(profile, &Profile::friendAvatarChanged, this,
-          &ChatForm::onAvatarChanged);
+//  connect(profile, &Profile::friendAvatarChanged, this,
+//          &ChatForm::onAvatarChanged);
   connect(coreFile, &CoreFile::fileReceiveRequested, this,
           &ChatForm::updateFriendActivityForFile);
   connect(coreFile, &CoreFile::fileSendStarted, this,

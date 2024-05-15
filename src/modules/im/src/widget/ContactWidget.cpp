@@ -130,7 +130,7 @@ void ContactWidget::onFriendUsernameChanged(const ToxPk &friendPk,
                                          const QString &username) {
   qDebug() << __func__ << "friend:" << friendPk.toString()
            << "name:" << username;
-  contactListWidget->setFriendName(friendPk, username);
+//  contactListWidget->setFriendName(friendPk, username);
 }
 
 

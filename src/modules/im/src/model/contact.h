@@ -15,6 +15,7 @@
 
 #include "src/core/contactid.h"
 #include <QObject>
+#include <QPixmap>
 #include <QString>
 
 class Contact : public QObject
@@ -40,6 +41,11 @@ public:
     const ContactId& getPersistentId() const {return id;};
     QString getId() const {return id.toString(); };
 
+    void setAvatar(const QPixmap& pix){
+        avatar=pix;
+        emit avatarChanged(avatar);
+    }
+
     virtual void setEventFlag(bool flag) ;
     virtual bool getEventFlag() const ;
 
@@ -47,6 +53,7 @@ signals:
     void nameChanged(const QString &name);
     void displayedNameChanged(const QString& newName);
     void aliasChanged(QString alias);
+    void avatarChanged(const QPixmap& avatar);
 
 protected:
     bool group;
@@ -56,6 +63,8 @@ protected:
     QString name;
     //别名(自己备注)
     QString alias;
+
+    QPixmap avatar;
 };
 
 #endif // CONTACT_H

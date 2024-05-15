@@ -81,8 +81,10 @@ void ContentWidget::showTo(ContentLayout *layout) {
 }
 
 void ContentWidget::setChatForm(GenericChatForm * form) {
-  auto h = form->getHead();
-  mainHead->layout()->addWidget(h);
+//  auto h = form->getHead();
+  mainHead->layout()->addWidget(form->getHead());
   mainContent->layout()->addWidget(form);
+
+
 }
 

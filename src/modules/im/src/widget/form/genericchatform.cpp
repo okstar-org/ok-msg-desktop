@@ -25,6 +25,7 @@
 #include "src/model/group.h"
 #include "src/persistence/settings.h"
 #include "src/persistence/smileypack.h"
+#include "src/persistence/profile.h"
 #include "src/video/genericnetcamview.h"
 #include "src/widget/chatformheader.h"
 #include "src/widget/contentdialog.h"
@@ -57,6 +58,9 @@
 #include "lib/plugin/pluginmanager.h"
 
 #include <src/chatlog/chatmessageitem.h>
+
+#include <src/nexus.h>
+#include <src/nexus.h>
 #endif
 
 /**
@@ -412,11 +416,28 @@ GenericChatForm::GenericChatForm(const Contact *contact_,
           &GenericChatForm::onSendTriggered);
 
   if(!contact_->isGroup()){
-    auto f= FriendList::findFriend(ToxPk(contact_->getId()));
+
+      ToxPk pk(contact_->getId());
+      auto f= FriendList::findFriend(pk);
     connect(f, &Friend::displayedNameChanged,
             this,
             &GenericChatForm::onDisplayedNameChanged);
+
+    connect(f, &Friend::avatarChanged,
+            this,
+            [&](const QPixmap& avatar){
+        onAvatarChanged(avatar);
+    });
+
+    // Try to get the avatar from the cache
+    QPixmap avatar = Nexus::getProfile()->loadAvatar(pk);
+    if (!avatar.isNull()) {
+        onAvatarChanged(avatar);
+    }
   }
+
+
+
 
   reloadTheme();
 
@@ -563,8 +584,8 @@ bool GenericChatForm::event(QEvent *e) {
   return QWidget::event(e);
 }
 
-void GenericChatForm::onAvatarChanged(const ToxPk &friendPk, const QPixmap &pic) {
-  qDebug() << __func__ <<friendPk.toString() << "pic:"<< pic.size();
+void GenericChatForm::onAvatarChanged(const QPixmap &pic) {
+  qDebug() << __func__ <<contact->getId() << "pic:"<< pic.size();
   headWidget->setAvatar(pic);
 }
 

@@ -102,8 +102,9 @@ MessageSessionWidget::MessageSessionWidget(
 
 
   contentWidget = new ContentWidget(this);
-      contentWidget->hide();
-    contentWidget->setChatForm(sendWorker->getChatForm());
+  contentWidget->hide();
+  contentWidget->setChatForm(sendWorker->getChatForm());
+
   //  const auto compact = settings.getCompactLayout();
 
   const auto activityTime = settings.getFriendActivity(toxPk);
@@ -162,12 +163,6 @@ MessageSessionWidget::MessageSessionWidget(
   //            emit MessageSessionWidget->newWindowOpened(MessageSessionWidget);
   //          });
 
-  // Try to get the avatar from the cache
-  QPixmap avatar = Nexus::getProfile()->loadAvatar(toxPk);
-  if (!avatar.isNull()) {
-    sendWorker->getChatForm()->onAvatarChanged(toxPk, avatar);
-    setAvatar(avatar);
-  }
 }
 
 void MessageSessionWidget::do_widgetClicked() {
@@ -419,6 +414,11 @@ void MessageSessionWidget::setAvatar(const QPixmap &pixmap) {
   }
   isDefaultAvatar = false;
   avatar->setPixmap(pixmap);
+
+  if(!isGroup()){
+       auto frnd = FriendList::findFriend(ToxPk(contactId));
+       frnd->setAvatar(pixmap);
+  }
 }
 
 void MessageSessionWidget::onSetActive(bool active) {
@@ -603,7 +603,7 @@ void MessageSessionWidget::setTyping(bool typing) {
 
 void MessageSessionWidget::setName(const QString &name)
 {
-     auto chatForm =(ChatForm*) sendWorker->getChatForm();
+    auto chatForm =(ChatForm*) sendWorker->getChatForm();
     chatForm->setName(name);
     GenericChatroomWidget::setName(name);
 }

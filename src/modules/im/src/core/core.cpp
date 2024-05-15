@@ -1704,7 +1704,7 @@ void Core::logout() { tox->stop(); }
 
 void Core::onSelfNameChanged(QString name) {
   QMutexLocker ml{&coreLoopLock};
-  qDebug()<<"onSelfNameChanged:"<<name;
+//  qDebug()<<"onSelfNameChanged:"<<name;
   emit usernameSet(name);
 }
 
