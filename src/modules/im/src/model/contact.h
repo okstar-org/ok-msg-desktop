@@ -25,6 +25,8 @@ public:
     Contact(const ContactId& id, const QString& name, const QString& alias="", bool isGroup = false);
     virtual ~Contact() = 0;
 
+    bool isGroup()const{return group;}
+
     void setName(const QString& name);
     const QString& getName() const{return name;};
 
@@ -47,7 +49,7 @@ signals:
     void aliasChanged(QString alias);
 
 protected:
-    bool isGroup;
+    bool group;
     ContactId id;
 
     //名称

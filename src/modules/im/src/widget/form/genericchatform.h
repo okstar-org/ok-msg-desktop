@@ -90,6 +90,7 @@ public slots:
     void onChatMessageFontChanged(const QFont& font);
     void setColorizedNames(bool enable);
     void onAvatarChanged(const ToxPk &friendPk, const QPixmap &pic);
+    void onDisplayedNameChanged(const QString& name);
 
 protected slots:
 

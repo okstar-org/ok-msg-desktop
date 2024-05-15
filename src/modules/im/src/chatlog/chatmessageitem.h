@@ -8,7 +8,6 @@ class Text;
 class SimpleText;
 class NotificationIcon;
 
-// »ù´¡ÏûÏ¢¿ò
 class ChatMesssageBox : public IChatItem {
 public:
     ChatMesssageBox(const QPixmap &avatar, const QString &contactName,
@@ -34,7 +33,13 @@ public:
     bool selectable() const override {
         return true;
     }
+    ContactAvatar *getAvatarItem(){
+        return avatarItem;
+    }
 
+    SimpleText *nickname(){
+        return nicknameItem;
+    }
 protected:
     QList<ChatLineContent *> contents() override;
 

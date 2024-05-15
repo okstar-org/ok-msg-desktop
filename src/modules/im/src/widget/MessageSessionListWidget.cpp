@@ -785,15 +785,17 @@ void MessageSessionListWidget::setFriendStatusMsg(const ToxPk &friendPk,
 void MessageSessionListWidget::setFriendName(const ToxPk &friendPk,
                                      const QString &name) {
 
-  auto w = getMessageSession(friendPk);
+    auto w = FriendList::findFriend(friendPk);
+
   if(!w){
-      qWarning() <<"friend is no existing.";
+      qWarning() <<"friend is no existing." << friendPk.toString();
       return;
   }
-  if (w->isActive()) {
-    //      GUI::setWindowTitle(displayed);
+
     w->setName(name);
-  }
+
+
+
 }
 
 void MessageSessionListWidget::setFriendAvatar(const ToxPk &friendPk,

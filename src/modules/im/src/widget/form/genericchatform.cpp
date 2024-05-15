@@ -17,6 +17,7 @@
 #include "src/chatlog/chatlog.h"
 #include "src/chatlog/content/filetransferwidget.h"
 #include "src/chatlog/content/timestamp.h"
+#include "src/chatlog/content/simpletext.h"
 #include "src/core/core.h"
 #include "src/friendlist.h"
 #include "src/grouplist.h"
@@ -54,6 +55,8 @@
 
 #ifdef OK_PLUGIN
 #include "lib/plugin/pluginmanager.h"
+
+#include <src/chatlog/chatmessageitem.h>
 #endif
 
 /**
@@ -405,10 +408,15 @@ GenericChatForm::GenericChatForm(const Contact *contact_,
   connect(&iChatLog, &IChatLog::itemUpdated,
           this,&GenericChatForm::renderMessage);
 
-
-
   connect(msgEdit, &ChatTextEdit::enterPressed, this,
           &GenericChatForm::onSendTriggered);
+
+  if(!contact_->isGroup()){
+    auto f= FriendList::findFriend(ToxPk(contact_->getId()));
+    connect(f, &Friend::displayedNameChanged,
+            this,
+            &GenericChatForm::onDisplayedNameChanged);
+  }
 
   reloadTheme();
 
@@ -556,8 +564,19 @@ bool GenericChatForm::event(QEvent *e) {
 }
 
 void GenericChatForm::onAvatarChanged(const ToxPk &friendPk, const QPixmap &pic) {
-  qDebug() << "ChatForm::onAvatarChanged:"<<friendPk.toString() << "pic:"<< pic.size();
+  qDebug() << __func__ <<friendPk.toString() << "pic:"<< pic.size();
   headWidget->setAvatar(pic);
+}
+
+void GenericChatForm::onDisplayedNameChanged(const QString &name)
+{
+    qDebug() <<__func__<< contact->getId() << name;
+    headWidget->setName(name);
+    for(auto msg: messages){
+        auto it =msg.second;
+        auto p = (ChatMesssageBox*)it.get();
+        p->nickname()->setText(name);
+    }
 }
 
 void GenericChatForm::onChatContextMenuRequested(QPoint pos) {

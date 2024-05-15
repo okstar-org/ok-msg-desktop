@@ -19,7 +19,7 @@ Contact:: Contact(){
 }
 
 Contact:: Contact(const ContactId& id_, const QString& name_, const QString& alias_, bool isGroup_)
-    : id(id_),name{name_},alias{alias_},isGroup(isGroup_){
+    : id(id_),name{name_},alias{alias_},group(isGroup_){
 
 }
 

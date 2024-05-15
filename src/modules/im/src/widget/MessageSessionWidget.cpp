@@ -83,10 +83,10 @@ MessageSessionWidget::MessageSessionWidget(
   if(chatType==ChatType::Chat){
       auto f = FriendList::addFriend(toxPk, true);
 
+
       connect(f, &Friend::displayedNameChanged, this,
               [this](const QString &newName) {
-                Q_UNUSED(newName);
-                emit widgetRenamed(this);
+                setName(newName);
               });
 
       connect(f, &Friend::statusChanged, this,
@@ -102,7 +102,7 @@ MessageSessionWidget::MessageSessionWidget(
 
 
   contentWidget = new ContentWidget(this);
-    //  contentWidget->hide();
+      contentWidget->hide();
     contentWidget->setChatForm(sendWorker->getChatForm());
   //  const auto compact = settings.getCompactLayout();
 
@@ -171,8 +171,7 @@ MessageSessionWidget::MessageSessionWidget(
 }
 
 void MessageSessionWidget::do_widgetClicked() {
-    qDebug() << __func__ << "contactId:" << contactId.toString();
-    auto form = sendWorker->getChatForm();
+//    qDebug() << __func__ << "contactId:" << contactId.toString();
     contentWidget->showTo(contentLayout);
 }
 
@@ -606,6 +605,5 @@ void MessageSessionWidget::setName(const QString &name)
 {
      auto chatForm =(ChatForm*) sendWorker->getChatForm();
     chatForm->setName(name);
-//    m_friend->setName(name);
     GenericChatroomWidget::setName(name);
 }
