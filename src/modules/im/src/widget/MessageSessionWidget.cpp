@@ -48,6 +48,8 @@
 #include "src/persistence/profile.h"
 #include <cassert>
 
+#include <src/nexus.h>
+
 /**
  * @class MessageSessionWidget
  *
@@ -79,7 +81,19 @@ MessageSessionWidget::MessageSessionWidget(
 
 
   if(chatType==ChatType::Chat){
-      auto f =FriendList::addFriend(toxPk, true);
+      auto f = FriendList::addFriend(toxPk, true);
+
+      connect(f, &Friend::displayedNameChanged, this,
+              [this](const QString &newName) {
+                Q_UNUSED(newName);
+                emit widgetRenamed(this);
+              });
+
+      connect(f, &Friend::statusChanged, this,
+              [this](Status::Status status, bool event) {
+                setStatus(status, event);
+              });
+
       sendWorker = SendWorker::forFriend(*f);
   }else if(chatType == ChatType::GroupChat) {
       auto g = GroupList::addGroup(GroupId(toxPk), "", true, toxPk.resource);
@@ -115,6 +129,7 @@ MessageSessionWidget::MessageSessionWidget(
 //            Q_UNUSED(newName);
 //            emit widgetRenamed(this);
 //          });
+
 //  connect(sendWorker->getChatroom(),
 //          &Chatroom::activeChanged,
 //          this,
@@ -159,6 +174,13 @@ void MessageSessionWidget::do_widgetClicked() {
     qDebug() << __func__ << "contactId:" << contactId.toString();
     auto form = sendWorker->getChatForm();
     contentWidget->showTo(contentLayout);
+}
+
+void MessageSessionWidget::showEvent(QShowEvent *)
+{
+    auto core = Nexus::getCore();
+    auto status= core->getFriendStatus(contactId.toString());
+    setStatus(status, false);
 }
 
 /**
@@ -410,7 +432,8 @@ void MessageSessionWidget::onSetActive(bool active) {
   }
 }
 
-void MessageSessionWidget::updateStatusLight() {
+void MessageSessionWidget::updateStatusLight(Status::Status status, bool event) {
+
 //  const auto frnd = chatRoom->getFriend();
 //  const bool event = frnd->getEventFlag();
 
@@ -425,7 +448,7 @@ void MessageSessionWidget::updateStatusLight() {
 //  }
 
 //  statusPic.setMargin(event ? 1 : 3);
-//  statusPic.setPixmap(QPixmap(Status::getIconPath(frnd->getStatus(), event)));
+  statusPic.setPixmap(QPixmap(Status::getIconPath(status, event)));
 
 }
 
@@ -565,9 +588,8 @@ void MessageSessionWidget::setRecvMessage(const FriendMessage &message,
   fmd->onMessageReceived(isAction,message);
 }
 
-void MessageSessionWidget::setStatus(Status::Status status) {
-//  m_friend->setStatus(status);
-  updateStatusLight();
+void MessageSessionWidget::setStatus(Status::Status status, bool event) {
+  updateStatusLight(status, event);
 }
 
 void MessageSessionWidget::setStatusMsg(const QString &msg) {

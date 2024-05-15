@@ -41,7 +41,7 @@ public:
   void setAvatar(const QPixmap &pixmap) final override;
   void setAsInactiveChatroom() final override;
   void setAsActiveChatroom() final override;
-  void updateStatusLight() final override;
+  void updateStatusLight(Status::Status status, bool event) final override;
   void resetEventFlags() final override;
   QString getStatusString() const final override;
   const Group *getGroup() const ;

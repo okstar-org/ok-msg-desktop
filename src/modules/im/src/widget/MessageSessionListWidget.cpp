@@ -110,6 +110,7 @@ MessageSessionListWidget::~MessageSessionListWidget() {
   //  }
 }
 
+
 MessageSessionWidget *MessageSessionListWidget::createMessageSession(
         const ToxPk &friendPk, const QString &sid, ChatType type) {
   qDebug() << __func__ << "friend:" << friendPk.toString();
@@ -120,11 +121,12 @@ MessageSessionWidget *MessageSessionListWidget::createMessageSession(
   auto &settings = Settings::getInstance();
 
 
-  bool isFriend = true; //TODO isFriend
-  auto sw = new MessageSessionWidget(m_contentLayout, friendPk, type);
-  qDebug() <<"session:" <<sw;
-  connectSessionWidget(*sw);
-
+  auto sw = getMessageSession(friendPk);
+  if(!sw){
+      sw = new MessageSessionWidget(m_contentLayout, friendPk, type);
+      qDebug() << "create friend:" << friendPk.toString() <<" session:" <<sw;
+      connectSessionWidget(*sw);
+    }
 
   //  TODO 连接朋友活跃状态
   //  connect(chatForm, &ChatForm::updateFriendActivity, this,
@@ -146,7 +148,7 @@ MessageSessionWidget *MessageSessionListWidget::createMessageSession(
   }else{
     auto status = core->getFriendStatus(friendPk.toString());
     addWidget(sw, status, settings.getFriendCircleID(friendPk));
-    setFriendStatus(friendPk, status);
+//    setFriendStatus(friendPk, status);
   }
 
   //
@@ -297,7 +299,7 @@ void MessageSessionListWidget::sortByMode(SortingMode mode) {
 //      }
     }
 
-    listLayout->addLayout(listLayout->getLayoutOnline());
+//    listLayout->addLayout(listLayout->getLayout());
     listLayout->addLayout(listLayout->getLayoutOffline());
     //    listLayout->addLayout(circleLayout->getLayout());
 //    onGroupchatPositionChanged(groupsOnTop);
@@ -760,14 +762,13 @@ void MessageSessionListWidget::setRecvFriendMessage(
 }
 
 
-void MessageSessionListWidget::setFriendStatus(const ToxPk &friendPk,
-                                       Status::Status status) {
+void MessageSessionListWidget::setFriendStatus(const ToxPk &friendPk, Status::Status status) {
   auto fw = getMessageSession(friendPk);
   if (!fw) {
     qWarning() << "friend widget is no existing.";
     return;
   }
-  fw->setStatus(status);
+  fw->setStatus(status, false);
 }
 
 void MessageSessionListWidget::setFriendStatusMsg(const ToxPk &friendPk,

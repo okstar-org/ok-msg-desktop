@@ -487,9 +487,9 @@ void FriendWidget::onSetActive(bool active) {
   }
 }
 
-void FriendWidget::updateStatusLight() {
+void FriendWidget::updateStatusLight(Status::Status status, bool event) {
   const auto frnd = chatRoom->getFriend();
-  const bool event = frnd->getEventFlag();
+//  const bool event = frnd->getEventFlag();
 
   if (event) {
     const Settings &s = Settings::getInstance();
@@ -503,7 +503,7 @@ void FriendWidget::updateStatusLight() {
   }
 
   statusPic.setMargin(event ? 1 : 3);
-  statusPic.setPixmap(QPixmap(Status::getIconPath(frnd->getStatus(), event)));
+  statusPic.setPixmap(QPixmap(Status::getIconPath(status, event)));
 
 }
 
@@ -635,9 +635,8 @@ void FriendWidget::setRecvMessage(const FriendMessage &message,
   messageDispatcher->onMessageReceived(isAction,message);
 }
 
-void FriendWidget::setStatus(Status::Status status) {
-  m_friend->setStatus(status);
-  updateStatusLight();
+void FriendWidget::setStatus(Status::Status status, bool event) {
+  updateStatusLight(status, event);
 }
 
 void FriendWidget::setStatusMsg(const QString &msg) {

@@ -1196,7 +1196,7 @@ void Widget::openNewDialog(GenericChatroomWidget *widget) {
 
 void Widget::openDialog(GenericChatroomWidget *widget, bool newWindow) {
   widget->resetEventFlags();
-  widget->updateStatusLight();
+//  widget->updateStatusLight();
 
 //  GenericChatForm *form;
 //  GroupId id;
@@ -1617,7 +1617,7 @@ void Widget::removeFriend(const ToxPk &friendId) {
 
 void Widget::onDialogShown(GenericChatroomWidget *widget) {
   widget->resetEventFlags();
-  widget->updateStatusLight();
+//  widget->updateStatusLight();
 
 //  ui->friendList->updateTracking(widget);
   resetIcon();

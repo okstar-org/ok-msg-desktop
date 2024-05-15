@@ -49,7 +49,7 @@ class MessageSessionWidget : public GenericChatroomWidget
     void setAsActiveChatroom() override final;
     void setAsInactiveChatroom() override final;
     void setAvatar(const QPixmap &pixmap) override final;
-    void setStatus(Status::Status status);
+    void setStatus(Status::Status status, bool event);
     void setStatusMsg(const QString& msg) ;
     void setTyping(bool typing);
     void setName(const QString& name);
@@ -61,9 +61,11 @@ class MessageSessionWidget : public GenericChatroomWidget
 
 
     void search(const QString& searchString, bool hide = false);
+
     void setRecvMessage(const FriendMessage &message,
                         bool isAction);
-    void updateStatusLight() override final;
+
+    void updateStatusLight(Status::Status status, bool event) override final;
 
 signals:
     void removeFriend(const ToxPk& friendPk);
@@ -81,6 +83,7 @@ public slots:
   void onAvatarRemoved(const ToxPk& friendPk);
   void onContextMenuCalled(QContextMenuEvent* event);
   void do_widgetClicked( );
+  void showEvent(QShowEvent *) override;
 
 protected:
     virtual void mousePressEvent(QMouseEvent* ev) override;

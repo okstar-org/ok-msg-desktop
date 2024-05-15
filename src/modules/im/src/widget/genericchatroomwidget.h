@@ -15,6 +15,7 @@
 
 #include "genericchatitemwidget.h"
 #include "src/model/message.h"
+#include "src/model/status.h"
 
 class CroppingLabel;
 class MaskablePixmapWidget;
@@ -37,7 +38,7 @@ public slots:
     virtual void setAsActiveChatroom() = 0;
     virtual void setAsInactiveChatroom() = 0;
     virtual void setAvatar(const QPixmap& pixmap) = 0;
-    virtual void updateStatusLight() = 0;
+    virtual void updateStatusLight(Status::Status status, bool event) = 0;
     virtual void resetEventFlags() = 0;
     virtual QString getStatusString() const = 0;
      const ContactId& getContactId() const {return contactId;};

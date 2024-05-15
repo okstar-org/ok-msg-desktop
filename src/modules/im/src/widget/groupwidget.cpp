@@ -341,11 +341,10 @@ void GroupWidget::onSetActive(bool active) {
   avatar->setPixmap(Style::scaleSvgImage(uri, avatar->width(), avatar->height()));
 }
 
-void GroupWidget::updateStatusLight() {
+void GroupWidget::updateStatusLight(Status::Status status, bool event) {
   const Group *g = chatroom->getGroup();
-  const bool event = g->getEventFlag();
   statusPic.setPixmap(
-      QPixmap(Status::getIconPath(Status::Status::Online, event)));
+      QPixmap(Status::getIconPath(status, event)));
   statusPic.setMargin(event ? 1 : 3);
 }
 

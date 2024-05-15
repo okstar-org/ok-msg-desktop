@@ -204,7 +204,7 @@ void ChatWidget::onFriendMessageReceived(
     const FriendMessage &message, //
     bool isAction)                            //
 {
-  qDebug() << __func__ << message.content << "from" << message.from.toString();
+  qDebug() << __func__ <<"content:"<< message.content << "from" << message.from.toString();
   contactListWidget->setRecvFriendMessage(friendnumber, message, isAction);
 }
 
@@ -223,13 +223,14 @@ void ChatWidget::onFriendStatusChanged(const ToxPk &friendPk,
                                        Status::Status status) {
   qDebug() << __func__ << friendPk.toString() << "status:" << (int)status;
   //  const auto &friendPk = FriendList::id2Key(friendPk);
-    contactListWidget->setFriendStatus(friendPk, status);
-  //  Friend *f = FriendList::findFriend(friendPk);
-  //  if (!f) {
-  //    qWarning() << "Unable to find friend" << friendPk;
-  //    return;
-  //  }
-  //
+//    contactListWidget->setFriendStatus(friendPk, status);
+    Friend *f = FriendList::findFriend(friendPk);
+    if (!f) {
+      qWarning() << "Unable to find friend" << friendPk.toString();
+      return;
+    }
+    f->setStatus(status);
+
   //  bool isActualChange = f->getStatus() != status;
   //
   //  FriendWidget *widget = // friendWidgets[f->getPublicKey()];
@@ -242,13 +243,13 @@ void ChatWidget::onFriendStatusChanged(const ToxPk &friendPk,
   //    }
   //  }
   //
-  //  f->setStatus(status);
+
   //  widget->updateStatusLight();
   //  if (widget->isActive()) {
   //    setWindowTitle(widget->getTitle());
   //  }
   //
-    ContentDialogManager::getInstance()->updateFriendStatus(friendPk);
+//    ContentDialogManager::getInstance()->updateFriendStatus(friendPk);
 }
 
 void ChatWidget::onFriendStatusMessageChanged(const ToxPk &friendPk,

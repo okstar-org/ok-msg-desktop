@@ -1014,7 +1014,7 @@ void FriendListWidget::setFriendStatus(const ToxPk &friendPk,
     qWarning() << "friend widget is no existing.";
     return;
   }
-  fw->setStatus(status);
+  fw->setStatus(status, false);
 }
 
 void FriendListWidget::setFriendStatusMsg(const ToxPk &friendPk,

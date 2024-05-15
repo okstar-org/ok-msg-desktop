@@ -45,7 +45,7 @@ class FriendWidget : public GenericChatroomWidget
     void setAsActiveChatroom() override final;
     void setAsInactiveChatroom() override final;
     void setAvatar(const QPixmap &pixmap) override final;
-    void setStatus(Status::Status status);
+    void setStatus(Status::Status status, bool event);
     void setStatusMsg(const QString& msg) ;
     void setTyping(bool typing);
     void setName(const QString& name);
@@ -59,7 +59,7 @@ class FriendWidget : public GenericChatroomWidget
     void search(const QString& searchString, bool hide = false);
     void setRecvMessage(const FriendMessage &message,
                         bool isAction);
-    void updateStatusLight() override final;
+    void updateStatusLight(Status::Status status, bool event) override final;
 
 signals:
     void friendWidgetClicked(FriendWidget* widget);

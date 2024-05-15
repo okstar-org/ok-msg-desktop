@@ -54,7 +54,7 @@ public:
 signals:
   void nameChanged(const ToxPk &friendId, const QString &name);
   void aliasChanged(const ToxPk &friendId, QString alias);
-  void statusChanged(Status::Status status);
+  void statusChanged(Status::Status status, bool event);
   void onlineOfflineChanged( bool isOnline);
   void statusMessageChanged( const QString &message);
   void loadChatHistory();

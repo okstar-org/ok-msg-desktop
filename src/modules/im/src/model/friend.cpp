@@ -52,7 +52,7 @@ void Friend::setStatus(Status::Status s) {
   if (friendStatus != s) {
     auto oldStatus = friendStatus;
     friendStatus = s;
-    emit statusChanged(friendStatus);
+    emit statusChanged(friendStatus, hasNewEvents);
     if (!Status::isOnline(oldStatus) && Status::isOnline(friendStatus)) {
       emit onlineOfflineChanged(true);
     } else if (Status::isOnline(oldStatus) && !Status::isOnline(friendStatus)) {

@@ -93,11 +93,11 @@ void FriendMessageDispatcher::onMessageReceived(bool isAction,
                                                 const FriendMessage& msg) {
   auto msg0 = processor.processIncomingMessage(isAction,
                                                msg.id,
-                                               msg.from.toString(),
                                                msg.content,
+                                               msg.from.toString(),
                                                msg.timestamp,
                                                f.getDisplayedName());
-  emit this->messageReceived(f.getPublicKey(), msg0);
+  emit messageReceived(f.getPublicKey(), msg0);
 }
 
 

@@ -592,7 +592,7 @@ void ContentDialog::activate(GenericChatroomWidget* widget)
 
     widget->setAsActiveChatroom();
     widget->resetEventFlags();
-    widget->updateStatusLight();
+//    widget->updateStatusLight();
     updateTitleAndStatusIcon();
 }
 
