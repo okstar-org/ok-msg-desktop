@@ -112,7 +112,7 @@ protected slots:
     void onExportChat();
     void searchFormShow();
     void onSearchTriggered();
-    void updateShowDateInfo(const ChatLine::Ptr& prevLine, const ChatLine::Ptr& topLine);
+    void updateShowDateInfo(const IChatItem::Ptr &prevLine, const IChatItem::Ptr &topLine);
 
     void searchInBegin(const QString& phrase, const ParameterSearch& parameter);
     void onSearchUp(const QString& phrase, const ParameterSearch& parameter);
@@ -132,7 +132,7 @@ protected slots:
 private:
     void retranslateUi();
     void addSystemDateMessage(const QDate& date);
-    QDateTime getTime(const ChatLine::Ptr& chatLine) const;
+    QDateTime getTime(const IChatItem::Ptr& chatLine) const;
 
 protected:
     // ChatMessage::Ptr createMessage(const ToxPk& author, const QString& message,
@@ -141,7 +141,7 @@ protected:
     void showNetcam();
     void hideNetcam();
     virtual GenericNetCamView* createNetcam() = 0;
-    virtual void insertChatMessage(ChatMessage::Ptr msg);
+    virtual void insertChatMessage(IChatItem::Ptr msg);
     void adjustFileMenuPosition();
     virtual void hideEvent(QHideEvent* event) override;
     virtual void showEvent(QShowEvent*) override;
@@ -194,7 +194,7 @@ protected:
     IChatLog& iChatLog;
     IMessageDispatcher& messageDispatcher;
     SearchPos searchPos;
-    std::map<ChatLogIdx, ChatMessage::Ptr> messages;
+    std::map<ChatLogIdx, IChatItem::Ptr> messages;
     bool colorizeNames = false;
 };
 
