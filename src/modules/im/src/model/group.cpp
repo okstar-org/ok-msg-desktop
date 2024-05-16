@@ -28,9 +28,11 @@ static const int MAX_GROUP_TITLE_LENGTH = 128;
 Group::Group(const GroupId persistentGroupId,
              const QString &name, bool isAvGroupchat, const QString &selfName,
              ICoreGroupQuery &groupQuery, ICoreIdHandler &idHandler)
-    : selfName{selfName}, title{name},
+    :Contact(persistentGroupId, name),
       groupId{persistentGroupId},
-      avGroupchat{isAvGroupchat}, groupQuery(groupQuery), idHandler(idHandler) {
+      avGroupchat{isAvGroupchat},
+      groupQuery(groupQuery),
+      idHandler(idHandler) {
   // in groupchats, we only notify on messages containing your name <-- dumb
   // sound notifications should be on all messages, but system popup
   // notification on naming is appropriate
@@ -93,11 +95,6 @@ void Group::setMentionedFlag(bool f) { userWasMentioned = f; }
 
 bool Group::getMentionedFlag() const { return userWasMentioned; }
 
-
-
-void Group::setSelfName(const QString &name) { selfName = name; }
-
-QString Group::getSelfName() const { return selfName; }
 
 void Group::setDesc(const QString &desc_)
 {

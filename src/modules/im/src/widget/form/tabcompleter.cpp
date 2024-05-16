@@ -62,7 +62,7 @@ void TabCompleter::buildCompletionList()
     QRegExp regex(QString("^[-_\\[\\]{}|`^.\\\\]*").append(QRegExp::escape(tabAbbrev)),
                   Qt::CaseInsensitive);
 
-    const QString ownNick = group->getSelfName();
+    const QString ownNick = group->getName();
     for (const auto& name : group->getPeerList()) {
         if (name == ownNick) {
             continue;   // don't auto complete own name

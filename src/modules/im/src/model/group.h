@@ -82,7 +82,6 @@ private:
 private:
     ICoreGroupQuery& groupQuery;
     ICoreIdHandler& idHandler;
-    QString selfName;
     QString title;
     QString desc;
     uint32_t peerCount;

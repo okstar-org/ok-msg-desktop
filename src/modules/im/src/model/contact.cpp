@@ -79,4 +79,5 @@ void Contact::setEventFlag(bool flag)
 bool Contact::getEventFlag() const
 {
 
+    return false;
 }
