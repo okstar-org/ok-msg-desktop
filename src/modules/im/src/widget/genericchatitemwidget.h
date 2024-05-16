@@ -52,8 +52,6 @@ public:
 protected:
     CroppingLabel* nameLabel;
     QLabel statusPic;
-
-private:
     bool compact;
     ChatType chatType;
 };

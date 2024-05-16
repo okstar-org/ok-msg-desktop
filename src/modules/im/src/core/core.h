@@ -210,7 +210,7 @@ signals:
                          const QString &title = QString());
   void groupInviteReceived(const GroupInvite &inviteInfo);
 
-  void groupMessageReceived(const GroupMessage& msg);
+  void groupMessageReceived(GroupId groupId, GroupMessage msg);
 
   void groupNamelistChanged(QString groupnumber, QString peerId,
                             uint8_t change);

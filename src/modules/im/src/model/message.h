@@ -60,7 +60,6 @@ struct FriendMessage : Message{
 
 struct GroupMessage : public Message{
 public:
-    GroupId groupId;
     QString nick;
     QString toString() const {
         return QString("{id:%1, from:%2, content:%3}").arg(id).arg(from).arg(content);

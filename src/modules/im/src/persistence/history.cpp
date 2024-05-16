@@ -390,6 +390,8 @@ void History::eraseHistory()
  */
 void History::removeFriendHistory(const QString& friendPk)
 {
+    qDebug()<<__func__<< friendPk;
+
     if (!isValid()) {
         return;
     }

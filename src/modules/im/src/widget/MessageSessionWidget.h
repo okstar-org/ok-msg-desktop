@@ -42,7 +42,7 @@ class MessageSessionWidget : public GenericChatroomWidget
 
   public:
     MessageSessionWidget(ContentLayout* layout,
-                         const ToxPk &friendPk,
+                         const ContactId &cid,
                          ChatType);
 
     ~MessageSessionWidget();
@@ -64,11 +64,15 @@ class MessageSessionWidget : public GenericChatroomWidget
     void setRecvMessage(const FriendMessage &message,
                         bool isAction);
 
+    void setMessageReceipt(const ReceiptNum &receipt);
+
+
+    void setRecvGroupMessage(const GroupMessage& msg);
+
     void updateStatusLight(Status::Status status, bool event) override final;
 
 signals:
     void removeFriend(const ToxPk& friendPk);
-    void addFriend(const ToxPk& friendPk);
     void copyFriendIdToClipboard(const ToxPk& friendPk);
     void contextMenuCalled(QContextMenuEvent* event);
     void friendHistoryRemoved();
@@ -78,6 +82,7 @@ signals:
     void updateFriendActivity(Friend& frnd);
 //    void setActive(bool active);
     void deleteWidget(MessageSessionWidget *widget);
+
 public slots:
   void onAvatarSet(const ToxPk& friendPk, const QPixmap& pic);
   void onAvatarRemoved(const ToxPk& friendPk);

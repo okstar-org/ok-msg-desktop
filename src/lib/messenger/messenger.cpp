@@ -236,7 +236,7 @@ bool Messenger::connectIM( ) {
             for (auto handler : friendHandlers) {
               handler->onFriendNameChanged(friendId, nickname);
             }
-          }, Qt::QueuedConnection);
+          });
 
   connect(_im, &IM::receiveFriendAvatarChanged, this,
           [&](QString friendId, std::string avatar) {

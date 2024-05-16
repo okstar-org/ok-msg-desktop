@@ -408,10 +408,10 @@ void GroupWidget::retranslateUi() {
 
 void GroupWidget::setRecvMessage(const GroupMessage& msg) {
 
-  auto core = Core::getInstance();
-  ToxPk author = core->getGroupPeerPk(msg.groupId.username, msg.from);
-  messageDispatcher->onMessageReceived(author, msg.isAction, msg.id, msg.content, msg.nick,msg.from,
-                                       msg.timestamp);
+//  auto core = Core::getInstance();
+//  ToxPk author = core->getGroupPeerPk(msg.groupId.username, msg.from);
+//  messageDispatcher->onMessageReceived(author, msg.isAction, msg.id, msg.content, msg.nick,msg.from,
+//                                       msg.timestamp);
 }
 
 void GroupWidget::reloadTheme() { chatform->reloadTheme(); }

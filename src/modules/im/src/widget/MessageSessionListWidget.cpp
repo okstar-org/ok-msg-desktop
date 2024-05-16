@@ -113,7 +113,7 @@ MessageSessionListWidget::~MessageSessionListWidget() {
 
 
 MessageSessionWidget *MessageSessionListWidget::createMessageSession(
-        const ToxPk &friendPk, const QString &sid, ChatType type) {
+        const ContactId &friendPk, const QString &sid, ChatType type) {
   qDebug() << __func__ << "friend:" << friendPk.toString();
 
   auto core = Core::getInstance();
@@ -122,7 +122,7 @@ MessageSessionWidget *MessageSessionListWidget::createMessageSession(
   auto &settings = Settings::getInstance();
 
 
-  auto sw = getMessageSession(friendPk);
+  auto sw = getMessageSession(friendPk.toString());
   if(sw){
     return sw;
   }
@@ -134,98 +134,7 @@ MessageSessionWidget *MessageSessionListWidget::createMessageSession(
   listLayout->addWidget(sw);
   sessionWidgets.insert(sw->getContactId().toString(), sw);
 
-
-
-
-  //  TODO 连接朋友活跃状态
-  //  connect(chatForm, &ChatForm::updateFriendActivity, this,
-  //          &Widget::updateFriendActivity);
-
-  //  friendMessageDispatchers[friendPk] = messageDispatcher;
-  //  friendChatLogs[friendPk] = chatHistory;
-  //  friendChatrooms[friendPk] = chatRoom;
-  //  friendWidgets[friendPk] = friendWidget;
-  //  chatForms[friendPk] = chatForm;
-
-  //  const auto activityTime = settings.getFriendActivity(friendPk);
-  //  const auto chatTime = chatForm->getLatestTime();
-  //  if (chatTime > activityTime && chatTime.isValid()) {
-  //    settings.setFriendActivity(friendPk, chatTime);
-  //  }
-
-
-  //
-  //  auto notifyReceivedCallback = [this, friendPk](const ToxPk &author,
-  //                                                 const Message &message) {
-  //    auto isTargeted =
-  //        std::any_of(message.metadata.begin(), message.metadata.end(),
-  //                    [](MessageMetadata metadata) {
-  //                      return metadata.type ==
-  //                      MessageMetadataType::selfMention;
-  //                    });
-  //    newFriendMessageAlert(friendPk, message.content);
-  //  };
-  //
-  //  auto notifyReceivedConnection =
-  //      connect(messageDispatcher.get(),
-  //              &IMessageDispatcher::messageReceived, notifyReceivedCallback);
-  //
-  //  friendAlertConnections.insert(friendPk, notifyReceivedConnection);
-  //
-  //  connect(newfriend, &Friend::aliasChanged, this,
-  //          &Widget::onFriendAliasChanged);
-  //  connect(newfriend, &Friend::displayedNameChanged, this,
-  //          &Widget::onFriendDisplayedNameChanged);
-  //
-  //  connect(chatForm, &ChatForm::incomingNotification, this,
-  //          &Widget::incomingNotification);
-  //  connect(chatForm, &ChatForm::outgoingNotification, this,
-  //          &Widget::outgoingNotification);
-  //  connect(chatForm, &ChatForm::stopNotification, this,
-  //          &Widget::onStopNotification);
-  //  connect(chatForm, &ChatForm::endCallNotification, this,
-  //  &Widget::onCallEnd); connect(chatForm, &ChatForm::rejectCall, this,
-  //  &Widget::onRejectCall);
-  //
-  //  connect(friendWidget, &FriendWidget::newWindowOpened, this,
-  //  &Widget::openNewDialog); connect(friendWidget,
-  //  &FriendWidget::chatroomWidgetClicked, this,
-  //          &Widget::onChatroomWidgetClicked);
-  //  connect(friendWidget, &FriendWidget::chatroomWidgetClicked, chatForm,
-  //          &ChatForm::focusInput);
-  //  connect(friendWidget, &FriendWidget::friendHistoryRemoved, chatForm,
-  //          &ChatForm::clearChatArea);
-  //  connect(friendWidget, &FriendWidget::copyFriendIdToClipboard, this,
-  //          &Widget::copyFriendIdToClipboard);
-  //
-  //  connect(friendWidget, &FriendWidget::contextMenuCalled, friendWidget,
-  //          &FriendWidget::onContextMenuCalled);
-  //
-  //  connect(friendWidget, &FriendWidget::addFriend, //
-  //          this, &Widget::addFriend0);
-  //
-  //  connect(friendWidget, SIGNAL(removeFriend(const ToxPk &)), this,
-  //          SLOT(removeFriend(const ToxPk &)));
-  //
-  //  Profile *profile = Nexus::getProfile();
-  //  connect(profile, &Profile::friendAvatarSet, friendWidget,
-  //          &FriendWidget::onAvatarSet);
-  //  connect(profile, &Profile::friendAvatarRemoved, friendWidget,
-  //          &FriendWidget::onAvatarRemoved);
-  //
-  //  // Try to get the avatar from the cache
-  //  QPixmap avatar = Nexus::getProfile()->loadAvatar(friendPk);
-  //  if (!avatar.isNull()) {
-  //    //chatForm->onAvatarChanged(friendPk, avatar);
-  //    //friendWidget->onAvatarSet(friendPk, avatar);
-  //  }
-  //
-//    FilterCriteria filter = getFilterCriteria();
-//    friendWidget->search(ui->searchContactText->text(),
-//    filterOffline(filter));
-
-  //  core->getFriendInfo(friendPk.toString());
-
+  emit sessionAdded(sw);
   return sw;
 }
 
@@ -249,7 +158,7 @@ void MessageSessionListWidget::updateFriendActivity(const Friend &frnd) {
   const auto oldTime = settings.getFriendActivity(pk);
   const auto newTime = QDateTime::currentDateTime();
   settings.setFriendActivity(pk, newTime);
-  MessageSessionWidget *widget = getMessageSession(frnd.getPublicKey());
+  MessageSessionWidget *widget = getMessageSession(frnd.getPublicKey().toString());
   moveWidget(widget, frnd.getStatus());
   updateActivityTime(oldTime); // update old category widget
 }
@@ -630,6 +539,18 @@ void MessageSessionListWidget::reDraw() {
   resize(QSize()); // lifehack
 }
 
+void MessageSessionListWidget::setRecvGroupMessage(const GroupId &groupId, const GroupMessage &msg)
+{
+
+    auto ms = getMessageSession(groupId.toString());
+    if(!ms){
+        ms = createMessageSession(groupId,"", ChatType::GroupChat);
+    }
+
+    ms->setRecvGroupMessage(msg);
+
+}
+
 //CircleWidget *MessageSessionListWidget::createCircleWidget(int id) {
 //  if (id == -1)
 //    id = Settings::getInstance().addCircle();
@@ -682,8 +603,8 @@ QLayout *MessageSessionListWidget::nextLayout(QLayout *layout, bool forward) con
     return nullptr;
 }
 
-MessageSessionWidget *MessageSessionListWidget::getMessageSession(const ToxPk &friendPk) {
-    return sessionWidgets.value(friendPk.toString());
+MessageSessionWidget *MessageSessionListWidget::getMessageSession(const QString &contactId) {
+    return sessionWidgets.value(contactId);
 }
 
 
@@ -713,24 +634,33 @@ void MessageSessionListWidget::setRecvFriendMessage(
     ToxPk friendnumber, const FriendMessage &message,
     bool isAction) {
 
-  Friend *f = FriendList::findFriend(friendnumber);
-  if (!f) {
-    /**
-     * 陌生人消息（可能是已经将对方删除，通讯录没有对方记录）
-     */
-    qWarning() << "Can not find friend:" << friendnumber.toString()
-               << ", so add it to contact.";
-    createMessageSession(friendnumber, message.id, ChatType::Chat);
-    return;
+  auto fw = getMessageSession(friendnumber.toString());
+  if(!fw){
+      /**
+       * 陌生人消息（可能是已经将对方删除，通讯录没有对方记录）
+       */
+      qWarning() << "Can not find friend:" << friendnumber.toString()
+                 << ", so add it to contact.";
+      fw=createMessageSession(friendnumber, message.id, ChatType::Chat);
+
   }
 
-  auto fw = getMessageSession(friendnumber);
   fw->setRecvMessage(message, isAction);
+}
+
+void MessageSessionListWidget::setFriendMessageReceipt(const ToxPk &friendId,
+                                                       const ReceiptNum &receipt)
+{
+    auto fw = getMessageSession(friendId.toString());
+    if(!fw){
+        return;
+    }
+    fw->setMessageReceipt(receipt);
 }
 
 
 void MessageSessionListWidget::setFriendStatus(const ToxPk &friendPk, Status::Status status) {
-  auto fw = getMessageSession(friendPk);
+  auto fw = getMessageSession(friendPk.toString());
   if (!fw) {
     qWarning() << "friend widget is no existing.";
     return;
@@ -740,7 +670,7 @@ void MessageSessionListWidget::setFriendStatus(const ToxPk &friendPk, Status::St
 
 void MessageSessionListWidget::setFriendStatusMsg(const ToxPk &friendPk,
                                           const QString &statusMsg) {
-  auto fw = getMessageSession(friendPk);
+  auto fw = getMessageSession(friendPk.toString());
   if (!fw) {
     qWarning() << "friend widget no exist.";
     return;
@@ -751,23 +681,17 @@ void MessageSessionListWidget::setFriendStatusMsg(const ToxPk &friendPk,
 
 void MessageSessionListWidget::setFriendName(const ToxPk &friendPk,
                                      const QString &name) {
-
-    auto w = FriendList::findFriend(friendPk);
-
+  auto w = FriendList::findFriend(friendPk);
   if(!w){
       qWarning() <<"friend is no existing." << friendPk.toString();
       return;
   }
-
-    w->setName(name);
-
-
-
+  w->setName(name);
 }
 
 void MessageSessionListWidget::setFriendAvatar(const ToxPk &friendPk,
                                        const QByteArray &avatar) {
-  auto fw = getMessageSession(friendPk);
+  auto fw = getMessageSession(friendPk.toString());
   if (!fw) {
     qWarning() << "friend is no exist.";
     return;
@@ -779,7 +703,7 @@ void MessageSessionListWidget::setFriendAvatar(const ToxPk &friendPk,
 }
 
 void MessageSessionListWidget::setFriendTyping(const ToxPk &friendId, bool isTyping) {
-  auto fw = getMessageSession(friendId);
+  auto fw = getMessageSession(friendId.toString());
   if (fw)
     fw->setTyping(isTyping);
 }

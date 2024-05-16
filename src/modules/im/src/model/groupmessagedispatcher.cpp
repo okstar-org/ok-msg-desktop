@@ -47,13 +47,12 @@ GroupMessageDispatcher::sendMessage(bool isAction, QString const &content,
     } else {
       msgId = messageSender.sendGroupMessage(group.getId(), message.content);
     }
-    qDebug() <<"sent the msg:"<< messageId.get() <<"=>msgId"<<msgId;
+    qDebug() <<"sent the msg success=> msgIdx:" << messageId.get() <<"msgId:" <<msgId;
     message.id = msgId;
     sentMsgIdMap.insert(msgId, messageId);
 
-    emit this->messageSent(messageId, message);
-    emit this->messageComplete(messageId);
-
+    emit messageSent(messageId, message);
+    emit messageComplete(messageId);
     return std::make_pair(messageId, msgId);
   }
 

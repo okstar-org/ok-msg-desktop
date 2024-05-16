@@ -200,9 +200,9 @@ void ChatWidget::onFriendUsernameChanged(const ToxPk &friendPk,
     contactListWidget->setFriendName(friendPk, username);
 }
 
-void ChatWidget::onFriendMessageReceived(
+void ChatWidget::onFriendMessageReceived(     //
     const ToxPk &friendnumber,                //
-    const FriendMessage &message, //
+    const FriendMessage &message,             //
     bool isAction)                            //
 {
   qDebug() << __func__ <<"content:"<< message.content << "from" << message.from.toString();
@@ -210,14 +210,8 @@ void ChatWidget::onFriendMessageReceived(
 }
 
 void ChatWidget::onReceiptReceived(const ToxPk &friendId, ReceiptNum receipt) {
-  qDebug() << __func__ << "friendId:" << friendId.toString();
-
-  Friend *f = FriendList::findFriend(friendId);
-  if (!f) {
-    return;
-  }
-  //  TODO
-  //    contactListWidget->onReceiptReceived(receipt);
+  qDebug() << __func__ << "friendId:" << friendId.toString() << receipt;
+  contactListWidget->setFriendMessageReceipt(friendId, receipt);
 }
 
 void ChatWidget::onFriendStatusChanged(const ToxPk &friendPk,
@@ -469,21 +463,10 @@ void ChatWidget::onGroupInviteAccepted(const GroupInvite &inviteInfo) {
   }
 }
 
-void ChatWidget::onGroupMessageReceived(const GroupMessage& msg) {
+void ChatWidget::onGroupMessageReceived(GroupId groupId, GroupMessage msg) {
 
-  qDebug() <<__func__<< msg.toString();
-
-  //  Group *g = GroupList::findGroup(groupId);
-  //  if (!g) {
-  //    qWarning() << "Can not find the group named:" << groupnumber;
-  //    return;
-  //  }
-  //
-  //  ToxPk author = core->getGroupPeerPk(groupnumber, nick);
-  //  groupMessageDispatchers[groupId]->onMessageReceived(author, isAction,
-  //  content,\
-  nick, from, time);
-//    contactListWidget->setRecvGroupMessage(msg);
+   qDebug() <<__func__<< msg.toString();
+   contactListWidget->setRecvGroupMessage(groupId, msg);
 }
 
 void ChatWidget::onGroupPeerListChanged(QString groupnumber) {

@@ -40,10 +40,13 @@ public:
   sendMessage(bool isAction, QString const &content,
               bool encrypt = false) override;
 
-  void onMessageReceived(ToxPk const &sender, bool isAction,
+  void onMessageReceived(ToxPk const &sender,
+                         bool isAction,
                          QString const &id,
-                         QString const &content, QString const &nick,
-                         QString const &from, const QDateTime &time);
+                         QString const &content,
+                         QString const &nick,
+                         QString const &from,
+                         const QDateTime &time);
 
 private:
   const Group &group;

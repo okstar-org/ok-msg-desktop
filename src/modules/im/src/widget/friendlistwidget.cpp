@@ -982,13 +982,13 @@ void FriendListWidget::slot_friendClicked(GenericChatroomWidget *actived) {
   }
 }
 void FriendListWidget::setRecvGroupMessage(const GroupMessage& msg) {
-  const GroupId &groupId = msg.groupId;
-  auto gw = getGroup(groupId);
-  if (!gw) {
-      qWarning() <<"group is no existing";
-      return;
-  }
-    gw->setRecvMessage(msg);
+//  const GroupId &groupId = msg.groupId;
+//  auto gw = getGroup(groupId);
+//  if (!gw) {
+//      qWarning() <<"group is no existing";
+//      return;
+//  }
+//    gw->setRecvMessage(msg);
 
 }
 void FriendListWidget::setRecvFriendMessage(
@@ -1013,7 +1013,7 @@ void FriendListWidget::setFriendStatus(const ToxPk &friendPk,
                                        Status::Status status) {
   auto fw = getFriend(friendPk);
   if (!fw) {
-    qWarning() << "friend widget is no existing.";
+    qWarning() << "friend"<< friendPk.toString() << "widget is no existing.";
     return;
   }
   fw->setStatus(status, false);

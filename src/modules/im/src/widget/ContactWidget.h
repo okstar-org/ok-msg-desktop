@@ -21,6 +21,10 @@ class Core;
 class GroupInviteForm;
 class QPushButton;
 
+/**
+ * 通讯录界面
+ * @brief ContactWidget::ContactWidget
+ */
 class ContactWidget : public MainLayout
 {
     Q_OBJECT

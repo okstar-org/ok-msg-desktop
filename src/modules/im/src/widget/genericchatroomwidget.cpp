@@ -94,7 +94,7 @@ void GenericChatroomWidget::compactChange(bool _compact)
         textLayout->addStretch();
         textLayout->addWidget(nameLabel);
 //        textLayout->addWidget(statusMessageLabel);
-//        textLayout->addStretch();
+        textLayout->addStretch();
         mainLayout->addSpacing(20);
         mainLayout->addWidget(avatar);
         mainLayout->addSpacing(10);

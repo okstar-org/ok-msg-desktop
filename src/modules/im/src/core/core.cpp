@@ -580,7 +580,7 @@ void Core::onFriendChatState(QString friendId, int state) {
 }
 
 void Core::onFriendNameChanged(QString friendId, QString name) {
-  qDebug() << "onFriendNameChanged" << friendId << "alias:" << name;
+  qDebug() << __func__ << friendId << name;
   emit friendUsernameChanged(getFriendPublicKey(friendId), name);
 }
 
@@ -676,15 +676,13 @@ void Core::onGroupMessage(const QString groupId,
                           const lib::messenger::PeerId peerId,
                           const lib::messenger::IMMessage message) {
 
-  qDebug() <<__func__
-          << "groupId:" << groupId
-          << "from:" << peerId.toString()
-          << "body:" << message.body;
+  qDebug() << __func__ << "groupId:" << groupId;
+  qDebug() << "from:" << peerId.toString();
+  qDebug() << "body:" << message.body;
 
   bool isAction = false;
   GroupMessage msg;
           msg.isAction= isAction;
-          msg.groupId=GroupId(groupId);
           msg.id=message.id;
           msg.from = message.from;
           msg.content=message.body;
@@ -692,8 +690,7 @@ void Core::onGroupMessage(const QString groupId,
           msg.displayName=message.from;
           msg.nick=peerId.resource;
 
-
-  emit groupMessageReceived(msg);
+  emit groupMessageReceived(GroupId(groupId), msg);
 }
 
 void Core::onGroupOccupants(const QString groupId, const uint size) {
@@ -723,6 +720,7 @@ void Core::onGroupInfo( QString groupId, lib::messenger::GroupInfo groupInfo) {
 }
 
 void Core::onMessageReceipt(QString friendId, ReceiptNum receipt) {
+    qDebug()<<__func__<<friendId<<receipt;
   emit receiptRecieved(getFriendPublicKey(friendId), receipt);
 }
 

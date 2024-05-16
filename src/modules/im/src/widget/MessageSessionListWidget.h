@@ -48,9 +48,11 @@ public:
   SortingMode getMode() const;
   void reloadTheme();
 
-  MessageSessionWidget *createMessageSession(const ToxPk &friendPk,const QString &sid,
+  MessageSessionWidget *createMessageSession(const ContactId &cId,
+                                             const QString &sid,
                                              ChatType type);
-  MessageSessionWidget *getMessageSession(const ToxPk &friendPk);
+
+  MessageSessionWidget *getMessageSession(const QString &contactId);
 
   void removeSessionWidget(MessageSessionWidget *w);
   void removeFriend(const ToxPk &friendPk);
@@ -69,11 +71,13 @@ public:
   void updateActivityTime(const QDateTime &date);
   void reDraw();
 
-//  void setRecvGroupMessage(const GroupMessage& msg);
+  void setRecvGroupMessage(const GroupId& groupId, const GroupMessage& msg);
 
   void setRecvFriendMessage(ToxPk friendnumber,                       //
                             const FriendMessage &message, //
                             bool isAction);
+
+  void setFriendMessageReceipt(const ToxPk &friendId, const ReceiptNum& receipt);
 
 //  CircleWidget *createCircleWidget(int id = -1);
 
@@ -81,6 +85,7 @@ public:
 
 
 signals:
+  void sessionAdded(MessageSessionWidget* widget);
   void onCompactChanged(bool compact);
 //  void connectCircleWidget(CircleWidget &circleWidget);
 //  void searchCircle(CircleWidget &circleWidget);

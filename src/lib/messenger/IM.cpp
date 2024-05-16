@@ -562,9 +562,9 @@ void IM::handleMessage(const gloox::Message &msg, MessageSession *session) {
   auto friendId = qstring(from.bare());
   auto body = qstring(msg.body());
 
-  qDebug() << "handleMessage from:" << peerId;
-  qDebug() << "sessionId:" << threadId;
-  qDebug() << "subtype:" << (int)msg.subtype();
+  qDebug()  <<__func__<< "from:" << peerId
+            << "sessionId:" << threadId
+            << "subtype:" << (int)msg.subtype();
 
   sessionIdMap.emplace(friendId.toStdString(), threadId.toStdString());
   sessionMap.emplace(threadId.toStdString(), session);
@@ -716,17 +716,18 @@ void IM::doPubSubEvent(const gloox::PubSub::Event *pse, //
 
   for (auto &item : pse->items()) {
     qDebug() << "item:" << qstring(item->item);
+
     auto nickTag = item->payload->findChild("nick");
     if (nickTag) {
       Nickname nickname(nickTag);
       auto newNick = qstring(nickname.nick());
+      qDebug() << "Received friend nick:" << friendId << newNick;
+      emit receiveNicknameChange(friendId, newNick);
+
       if (isSelf && _nick != newNick) {
         _nick = newNick;
         qDebug() << "Received self nick:" << _nick;
         emit selfNicknameChanged(newNick);
-      } else {
-        qDebug() << "Received friend:" << friendId << "nick:" << newNick;
-        emit receiveNicknameChange(friendId, newNick);
       }
     }
     auto avatarData = item->payload->findChild("data", XMLNS, XMLNS_AVATAR);
@@ -1317,11 +1318,11 @@ void IM::handleVCard(const JID &jid, const VCard *vcard) {
     emit receiveFriendAvatarChanged(qstring(jid.bare()), photo.binval);
   }
 
-  auto &nickname = vcard->nickname();
-  if (!nickname.empty()) {
-    qDebug()<<QString("nickname:%1").arg(qstring(nickname));
-    emit receiveNicknameChange(qstring(jid.bare()), qstring(nickname));
-  }
+//  auto &nickname = vcard->nickname();
+//  if (!nickname.empty()) {
+//    qDebug()<<QString("nickname:%1").arg(qstring(nickname));
+//    emit receiveNicknameChange(qstring(jid.bare()), qstring(nickname));
+//  }
 }
 
 void IM::handleVCardResult(VCardContext context, const JID &jid, StanzaError error) {

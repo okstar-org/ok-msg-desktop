@@ -33,6 +33,10 @@ class GroupInviteForm;
 class AddFriendForm;
 class MessageSessionListWidget;
 
+/**
+ * 消息界面
+ * @brief The ChatWidget class
+ */
 class ChatWidget : public MainLayout {
   Q_OBJECT
 public:
@@ -142,7 +146,7 @@ public slots:
 
   void onGroupJoined( const GroupId & groupId, const QString& name);
 void onGroupInviteReceived(const GroupInvite &inviteInfo);
-void onGroupMessageReceived(const GroupMessage&);
+void onGroupMessageReceived(GroupId groupId, GroupMessage msg);
 
 
 

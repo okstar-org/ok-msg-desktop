@@ -59,7 +59,7 @@
  */
 MessageSessionWidget::MessageSessionWidget(
                            ContentLayout *layout,
-                           const ToxPk &toxPk,
+                           const ContactId &toxPk,
                            ChatType chatType)
     : GenericChatroomWidget(chatType, toxPk),
       contentLayout(layout),
@@ -80,9 +80,7 @@ MessageSessionWidget::MessageSessionWidget(
 
 
   if(chatType==ChatType::Chat){
-      auto f = FriendList::addFriend(toxPk, true);
-
-
+      auto f = FriendList::addFriend(ToxPk(contactId), true);
       connect(f, &Friend::displayedNameChanged, this,
               [this](const QString &newName) {
                 setName(newName);
@@ -95,8 +93,13 @@ MessageSessionWidget::MessageSessionWidget(
 
       sendWorker = std::move( SendWorker::forFriend(*f));
   }else if(chatType == ChatType::GroupChat) {
-      auto g = GroupList::addGroup(GroupId(toxPk), "", true, toxPk.resource);
+      auto nick = core->getNick();
+      auto g = GroupList::addGroup(GroupId(contactId), "", true, nick);
       sendWorker = std::move(SendWorker::forGroup(*g));
+      connect(g, &Group::displayedNameChanged, this,
+              [this](const QString &newName) {
+                setName(newName);
+              });
   }
 
 
@@ -106,11 +109,11 @@ MessageSessionWidget::MessageSessionWidget(
 
   //  const auto compact = settings.getCompactLayout();
 
-  const auto activityTime = settings.getFriendActivity(toxPk);
-  const auto chatTime = sendWorker->getChatForm()->getLatestTime();
-  if (chatTime > activityTime && chatTime.isValid()) {
-    settings.setFriendActivity(toxPk, chatTime);
-  }
+//  const auto activityTime = settings.getFriendActivity(toxPk);
+//  const auto chatTime = sendWorker->getChatForm()->getLatestTime();
+//  if (chatTime > activityTime && chatTime.isValid()) {
+//    settings.setFriendActivity(toxPk, chatTime);
+//  }
 
 //  chatRoom = std::make_unique<FriendChatroom>(m_friend, dialogManager);
 //  auto frnd = chatRoom->getFriend();
@@ -177,9 +180,17 @@ void MessageSessionWidget::do_widgetClicked() {
 
 void MessageSessionWidget::showEvent(QShowEvent *)
 {
-    auto core = Nexus::getCore();
-    auto status= core->getFriendStatus(contactId.toString());
-    setStatus(status, false);
+    if(isGroup()){
+        //获取名称
+        auto group = GroupList::findGroup(GroupId{contactId.toString()});
+        if(group){
+            setName(group->getName());
+        }
+    }else{
+        auto core = Nexus::getCore();
+        auto status= core->getFriendStatus(contactId.toString());
+        setStatus(status, false);
+    }
 }
 
 /**
@@ -561,6 +572,18 @@ void MessageSessionWidget::setRecvMessage(const FriendMessage &message,
   fmd->onMessageReceived(isAction,message);
 }
 
+void MessageSessionWidget::setMessageReceipt(const ReceiptNum &receipt)
+{
+    FriendMessageDispatcher* fmd= (FriendMessageDispatcher*)sendWorker->dispacher();
+    fmd->onReceiptReceived(receipt);
+}
+
+void MessageSessionWidget::setRecvGroupMessage(const GroupMessage &msg)
+{
+    auto md= (GroupMessageDispatcher*)sendWorker->dispacher();
+    md->onMessageReceived(ToxPk(msg.from), false, msg.id, msg.content, msg.nick, msg.from, msg.timestamp);
+}
+
 void MessageSessionWidget::setStatus(Status::Status status, bool event) {
   updateStatusLight(status, event);
 }
@@ -577,6 +600,8 @@ void MessageSessionWidget::setTyping(bool typing) {
 
 void MessageSessionWidget::setName(const QString &name)
 {
+    qDebug() << __func__ <<"friend:" << contactId.toString()<<"name:" << name;
+    nameLabel->setText(name);
     auto chatForm =(ChatForm*) sendWorker->getChatForm();
     chatForm->setName(name);
     GenericChatroomWidget::setName(name);
