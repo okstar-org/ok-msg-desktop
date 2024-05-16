@@ -47,6 +47,10 @@ public:
      return messageDispatcher.get();
  }
 
+ QList<Message> getLastTextMessage(){
+    return chatHistory->getLastTextMessage(1);
+ }
+
 private:
 
 

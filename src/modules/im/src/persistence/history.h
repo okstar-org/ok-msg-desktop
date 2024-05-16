@@ -171,6 +171,7 @@ public:
     size_t getNumMessagesForFriend(const ToxPk& friendPk);
     size_t getNumMessagesForFriendBeforeDate(const ToxPk& friendPk, const QDateTime& date);
     QList<HistMessage> getMessagesForFriend(const ToxPk& friendPk, size_t firstIdx, size_t lastIdx);
+    QList<HistMessage> getLastMessageForFriend(const ToxPk& pk, uint size);
     QList<HistMessage> getUndeliveredMessagesForFriend(const ToxPk& friendPk);
     QDateTime getDateWhereFindPhrase(const QString& friendPk, const QDateTime& from, QString phrase,
                                      const ParameterSearch& parameter);

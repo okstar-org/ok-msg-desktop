@@ -49,8 +49,11 @@ public:
     Q_PROPERTY(ChatType chatType READ getChatType WRITE setChatType)
 
     bool isGroup() const {return chatType == ChatType::GroupChat;};
+
+    void setLastMessage(const QString& msg);
 protected:
     CroppingLabel* nameLabel;
+    CroppingLabel* lastMessageLabel;
     QLabel statusPic;
     bool compact;
     ChatType chatType;

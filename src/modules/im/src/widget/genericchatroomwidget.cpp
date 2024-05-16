@@ -37,7 +37,7 @@ GenericChatroomWidget::GenericChatroomWidget(ChatType type,  const ContactId &ci
 //    statusMessageLabel->setTextFormat(Qt::PlainText);
 //    statusMessageLabel->setForegroundRole(QPalette::WindowText);
 
-    nameLabel->setForegroundRole(QPalette::WindowText);
+//    nameLabel->setForegroundRole(QPalette::WindowText);
 
     Settings& s = Settings::getInstance();
     connect(&s, &Settings::compactLayoutChanged, this, &GenericChatroomWidget::compactChange);
@@ -81,8 +81,8 @@ void GenericChatroomWidget::compactChange(bool _compact)
         mainLayout->addWidget(avatar);
         mainLayout->addSpacing(5);
         mainLayout->addWidget(nameLabel);
-//        mainLayout->addWidget(statusMessageLabel);
-//        mainLayout->addSpacing(5);
+        mainLayout->addWidget(lastMessageLabel);
+        mainLayout->addSpacing(5);
         mainLayout->addWidget(&statusPic);
         mainLayout->addSpacing(5);
         mainLayout->activate();
@@ -93,7 +93,7 @@ void GenericChatroomWidget::compactChange(bool _compact)
         avatar->setSize(QSize(40, 40));
         textLayout->addStretch();
         textLayout->addWidget(nameLabel);
-//        textLayout->addWidget(statusMessageLabel);
+        textLayout->addWidget(lastMessageLabel);
         textLayout->addStretch();
         mainLayout->addSpacing(20);
         mainLayout->addWidget(avatar);

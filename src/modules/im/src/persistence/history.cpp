@@ -708,7 +708,8 @@ size_t History::getNumMessagesForFriendBeforeDate(const ToxPk& friendPk, const Q
     return numMessages;
 }
 
-QList<History::HistMessage> History::getMessagesForFriend(const ToxPk& friendPk, size_t firstIdx,
+QList<History::HistMessage> History::getMessagesForFriend(const ToxPk& friendPk,
+                                                          size_t firstIdx,
                                                           size_t lastIdx)
 {
     if (historyAccessBlocked()) {
@@ -770,7 +771,69 @@ QList<History::HistMessage> History::getMessagesForFriend(const ToxPk& friendPk,
     db->execNow({queryText, rowCallback});
 
     return messages;
-}
+    }
+
+   QList< History::HistMessage > History::getLastMessageForFriend(const ToxPk &pk, uint size)
+    {
+
+       if (historyAccessBlocked()) {
+           return {};
+       }
+
+       QList<HistMessage> messages;
+
+       auto sql = QString(
+                        "SELECT history.id, faux_offline_pending.id, timestamp, "
+                        "chat.public_key owner, aliases.display_name, "
+                        "sender.public_key sender_key, "
+                        "message, file_transfers.file_restart_id, "
+                        "file_transfers.file_path, file_transfers.file_name, "
+                        "file_transfers.file_size, file_transfers.direction, "
+                        "file_transfers.file_state, broken_messages.id FROM history "
+                        "LEFT JOIN faux_offline_pending ON history.id = faux_offline_pending.id "
+                        "JOIN peers chat ON history.chat_id = chat.id "
+                        "JOIN aliases ON sender_alias = aliases.id "
+                        "JOIN peers sender ON aliases.owner = sender.id "
+                        "LEFT JOIN file_transfers ON history.file_id = file_transfers.id "
+                        "LEFT JOIN broken_messages ON history.id = broken_messages.id "
+                        "WHERE chat.public_key='%1' "
+                        "ORDER by history.timestamp DESC LIMIT %2;").arg(pk.toString()).arg(size);
+
+
+
+       auto rowCallback = [&messages](const QVector<QVariant>& row) {
+           // dispName and message could have null bytes, QString::fromUtf8
+           // truncates on null bytes so we strip them
+           auto id = RowId{row[0].toLongLong()};
+           auto isPending = !row[1].isNull();
+           auto timestamp = QDateTime::fromMSecsSinceEpoch(row[2].toLongLong());
+           auto friend_key = row[3].toString();
+           auto display_name = QString::fromUtf8(row[4].toByteArray().replace('\0', ""));
+           auto sender_key = row[5].toString();
+           auto isBroken = !row[13].isNull();
+
+           MessageState messageState = getMessageState(isPending, isBroken);
+
+           if (row[7].isNull()) {
+               messages += {id, messageState, timestamp, friend_key,
+                            display_name, sender_key, row[6].toString()};
+           } else {
+               ToxFile file;
+               file.fileKind = TOX_FILE_KIND_DATA;
+               file.resumeFileId = row[7].toString().toUtf8();
+               file.filePath = row[8].toString();
+               file.fileName = row[9].toString();
+               file.filesize = row[10].toLongLong();
+               file.direction = static_cast<ToxFile::FileDirection>(row[11].toLongLong());
+               file.status = static_cast<ToxFile::FileStatus>(row[12].toInt());
+               messages +=
+                   {id, messageState, timestamp, friend_key, display_name, sender_key, file};
+           }
+       };
+
+       db->execNow({sql, rowCallback});
+       return messages;
+    }
 
 QList<History::HistMessage> History::getUndeliveredMessagesForFriend(const ToxPk& friendPk)
 {

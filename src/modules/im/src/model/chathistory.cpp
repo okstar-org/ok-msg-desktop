@@ -120,6 +120,33 @@ const ChatLogItem* ChatHistory::at(ChatLogIdx idx) const
     return sessionChatLog.at(idx);
 }
 
+QList<Message> ChatHistory::getLastTextMessage(uint size)
+{
+
+    QList<Message> list;
+
+    qDebug()<<__func__ <<"friend:"<<f.getPublicKey().toString();
+    auto messages = history->getLastMessageForFriend(f.getPublicKey(), size);
+    qDebug()<<__func__ <<"messages:"<<messages.size();
+
+    for(auto i: messages){
+        auto type = i.content.getType();
+        if(type == HistMessageContentType::message){
+            Message msg={.isAction=false,
+                         .id = QString::number(i.id.get()),
+                         .content = i.content.asMessage(),
+                         .from = i.sender,
+                         .timestamp = i.timestamp,
+                         .displayName=i.dispName
+                        };
+            list.append(msg);
+        }
+    }
+
+    return list;
+
+}
+
 SearchResult ChatHistory::searchForward(SearchPos startIdx, const QString& phrase,
                                         const ParameterSearch& parameter) const
 {

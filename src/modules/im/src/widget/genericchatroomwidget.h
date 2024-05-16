@@ -77,7 +77,7 @@ protected:
     QHBoxLayout* mainLayout = nullptr;
     QVBoxLayout* textLayout = nullptr;
     MaskablePixmapWidget* avatar;
-//    CroppingLabel* statusMessageLabel;
+
     bool active;
     ContactId contactId;
 };

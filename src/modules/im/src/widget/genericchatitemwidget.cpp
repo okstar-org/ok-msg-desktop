@@ -22,6 +22,26 @@ GenericChatItemWidget::GenericChatItemWidget(ChatType type, QWidget* parent)
 {
     nameLabel = new CroppingLabel(this);
     nameLabel->setTextFormat(Qt::PlainText);
+
+    lastMessageLabel = new CroppingLabel(this);
+    lastMessageLabel->setTextFormat(Qt::PlainText);
+    lastMessageLabel->setText("");
+
+
+
+
+
+  auto p = lastMessageLabel->palette();
+  p.setColor(QPalette::WindowText, Style::getColor(Style::GroundExtra));
+//  p.setColor(QPalette::HighlightedText, Style::getColor(Style::GroundExtra));
+//  auto fs = nameLabel->font().pixelSize()*.8;
+
+  auto newFont= lastMessageLabel->font();
+  newFont.setPixelSize(newFont.pixelSize()*.7);
+
+  lastMessageLabel->setFont(newFont);
+  lastMessageLabel->setPalette(p);
+//  lastMessageLabel->setForegroundRole(QPalette::WindowText);
 }
 
 
@@ -33,4 +53,9 @@ QString GenericChatItemWidget::getName() const
 void GenericChatItemWidget::searchName(const QString& searchString, bool hide)
 {
     setVisible(!hide && getName().contains(searchString, Qt::CaseInsensitive));
+}
+
+void GenericChatItemWidget::setLastMessage(const QString &msg)
+{
+    lastMessageLabel->setText(msg);
 }

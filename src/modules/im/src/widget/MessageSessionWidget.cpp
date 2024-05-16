@@ -190,7 +190,22 @@ void MessageSessionWidget::showEvent(QShowEvent *)
         auto core = Nexus::getCore();
         auto status= core->getFriendStatus(contactId.toString());
         setStatus(status, false);
+
+        auto msgs = sendWorker->getLastTextMessage();
+        for(auto m : msgs){
+            QString prefix;
+            if(ContactId(m.from).username == core->getUsername()){
+                prefix = tr("I:");
+            }else{
+                //TODO 获取用户名称displayName
+                prefix=m.displayName+tr(":");
+            }
+                   setLastMessage(prefix+m.content);
+            break;
+        }
     }
+
+
 }
 
 /**
@@ -568,14 +583,15 @@ void MessageSessionWidget::mouseMoveEvent(QMouseEvent *ev) {
 
 void MessageSessionWidget::setRecvMessage(const FriendMessage &message,
                                           bool isAction) {
-  FriendMessageDispatcher* fmd= (FriendMessageDispatcher*)sendWorker->dispacher();
-  fmd->onMessageReceived(isAction,message);
+  auto md= (FriendMessageDispatcher*)sendWorker->dispacher();
+  md->onMessageReceived(isAction,message);
+  setLastMessage(message.content);
 }
 
 void MessageSessionWidget::setMessageReceipt(const ReceiptNum &receipt)
 {
-    FriendMessageDispatcher* fmd= (FriendMessageDispatcher*)sendWorker->dispacher();
-    fmd->onReceiptReceived(receipt);
+    auto md= (FriendMessageDispatcher*)sendWorker->dispacher();
+    md->onReceiptReceived(receipt);
 }
 
 void MessageSessionWidget::setRecvGroupMessage(const GroupMessage &msg)

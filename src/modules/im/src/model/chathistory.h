@@ -34,6 +34,9 @@ public:
     ~ChatHistory();
 
     const ChatLogItem* at(ChatLogIdx idx) const override;
+    //最后几条
+    QList<Message> getLastTextMessage(uint size);
+
     SearchResult searchForward(SearchPos startIdx, const QString& phrase,
                                const ParameterSearch& parameter) const override;
     SearchResult searchBackward(SearchPos startIdx, const QString& phrase,

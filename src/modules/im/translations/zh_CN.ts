@@ -1389,6 +1389,16 @@ instead of system taskbar.</source>
 <name>MessageSessionWidget</name>
 
 <message>
+<source>I:</source>
+<translation>我：</translation>
+</message>
+
+<message>
+<source>:</source>
+<translation>：</translation>
+</message>
+
+<message>
 <source>Delete the session</source>
 <translation>删除该会话</translation>
 </message>
