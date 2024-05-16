@@ -41,8 +41,8 @@ GroupWidget::GroupWidget(ContentLayout *layout, QString groupnumber,
       std::bind(&GroupWidget::retranslateUi, this), this);
 
   avatar->setPixmap(Style::scaleSvgImage(":img/group.svg", avatar->width(), avatar->height()));
-  statusPic.setPixmap(QPixmap(Status::getIconPath(Status::Status::Online)));
-  statusPic.setMargin(3);
+  statusPic->setPixmap(QPixmap(Status::getIconPath(Status::Status::Online)));
+//  statusPic->setMargin(3);
 
   connect(this, &GroupWidget::chatroomWidgetClicked, [this]() {
     this->do_widgetClicked(this);
@@ -343,9 +343,10 @@ void GroupWidget::onSetActive(bool active) {
 
 void GroupWidget::updateStatusLight(Status::Status status, bool event) {
   const Group *g = chatroom->getGroup();
-  statusPic.setPixmap(
-      QPixmap(Status::getIconPath(status, event)));
-  statusPic.setMargin(event ? 1 : 3);
+  if(statusPic){
+    statusPic->setPixmap(QPixmap(Status::getIconPath(status, event)));
+    statusPic->setMargin(event ? 1 : 3);
+  }
 }
 
 QString GroupWidget::getStatusString() const {

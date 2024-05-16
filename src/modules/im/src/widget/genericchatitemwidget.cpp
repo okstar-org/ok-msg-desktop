@@ -11,6 +11,7 @@
  */
 
 #include "genericchatitemwidget.h"
+#include "maskablepixmapwidget.h"
 #include "src/persistence/settings.h"
 #include "src/widget/style.h"
 #include "src/widget/tool/croppinglabel.h"
@@ -19,9 +20,9 @@
 #include <src/friendlist.h>
 #include "src/model/friend.h"
 
-GenericChatItemWidget::GenericChatItemWidget(ChatType type, QWidget* parent)
+GenericChatItemWidget::GenericChatItemWidget(ChatType type, const ContactId &cid, QWidget* parent)
     : QFrame(parent)
-    , chatType(type)
+    , chatType(type), statusPic{nullptr}, contactId{cid}, prevStatus{Status::Status::None}
 {
     nameLabel = new CroppingLabel(this);
     nameLabel->setTextFormat(Qt::PlainText);
@@ -29,7 +30,6 @@ GenericChatItemWidget::GenericChatItemWidget(ChatType type, QWidget* parent)
     lastMessageLabel = new CroppingLabel(this);
     lastMessageLabel->setTextFormat(Qt::PlainText);
     lastMessageLabel->setText("");
-
 
 
 
@@ -45,6 +45,24 @@ GenericChatItemWidget::GenericChatItemWidget(ChatType type, QWidget* parent)
   lastMessageLabel->setFont(newFont);
   lastMessageLabel->setPalette(p);
 //  lastMessageLabel->setForegroundRole(QPalette::WindowText);
+
+  // avatar
+  QSize size;
+//    if (isCompact())
+//        size = QSize(20, 20);
+//    else
+      size = QSize(40, 40);
+
+  avatar = new MaskablePixmapWidget(this, size, ":/img/avatar_mask.svg");
+  statusPic = new QLabel(this);
+
+
+  if(type == ChatType::Chat){
+      avatar->setPixmap(QPixmap(":/img/contact.svg"));
+      statusPic->setPixmap(QPixmap(Status::getIconPath(Status::Status::Offline)));
+  }else{
+      avatar->setPixmap(QPixmap(":/img/group.svg"));
+  }
 }
 
 
@@ -81,4 +99,27 @@ void GenericChatItemWidget::updateLastMessage(const Message &m)
         }
     }
     setLastMessage(prefix+m.content);
+}
+
+void GenericChatItemWidget::updateStatusLight(Status::Status status, bool event)
+{
+    if(event && !isGroup()){
+        //事件（通知）状态，保留当前状态
+        auto f = FriendList::findFriend(contactId);
+        if(f){
+            prevStatus = f->getStatus();
+        }
+    }
+    statusPic->setMargin(event ? 1 : 3);
+    statusPic->setPixmap(QPixmap(Status::getIconPath(status, event)));
+}
+
+void GenericChatItemWidget::clearStatusLight()
+{
+    statusPic->clear();
+    if(prevStatus!=Status::Status::None){
+        //恢复之前状态
+        statusPic->setMargin( 1 );
+        statusPic->setPixmap(QPixmap(Status::getIconPath(prevStatus, false)));
+    }
 }

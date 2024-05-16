@@ -50,6 +50,8 @@
 
 #include <src/nexus.h>
 
+#include <src/chatlog/chatlog.h>
+
 /**
  * @class MessageSessionWidget
  *
@@ -69,8 +71,7 @@ MessageSessionWidget::MessageSessionWidget(
   qDebug() <<__func__ <<"friend:"<<toxPk.toString();
 
   avatar->setPixmap(QPixmap(":/img/contact.svg"));
-  statusPic.setPixmap(QPixmap(Status::getIconPath(Status::Status::Offline)));
-  statusPic.setMargin(3);
+
 
   auto profile = Nexus::getProfile();
   auto core = Core::getInstance();
@@ -109,9 +110,19 @@ MessageSessionWidget::MessageSessionWidget(
   }
 
 
+  auto chatForm = sendWorker->getChatForm();
+
   contentWidget = std::make_unique<ContentWidget>(this);
   contentWidget->hide();
-  contentWidget->setChatForm(sendWorker->getChatForm());
+  contentWidget->setObjectName(QString("ContentWidget:%1").arg(contactId.toString()));
+  contentWidget->setChatForm(chatForm);
+
+  connect(chatForm->getChatLog(), &ChatLog::readAll, this, [&](){
+    //已经阅读完消息，清除信号灯
+      if(contentWidget->isVisible()){
+          clearStatusLight();
+      }
+  });
 
   //  const auto compact = settings.getCompactLayout();
 
@@ -478,26 +489,6 @@ void MessageSessionWidget::onSetActive(bool active) {
   }
 }
 
-void MessageSessionWidget::updateStatusLight(Status::Status status, bool event) {
-
-//  const auto frnd = chatRoom->getFriend();
-//  const bool event = frnd->getEventFlag();
-
-//  if (event) {
-//    const Settings &s = Settings::getInstance();
-//    const uint32_t circleId = s.getFriendCircleID(frnd->getPublicKey());
-//    CircleWidget *circleWidget = CircleWidget::getFromID(circleId);
-//    if (circleWidget) {
-//      circleWidget->setExpanded(true);
-//    }
-//    emit updateFriendActivity(*frnd);
-//  }
-
-//  statusPic.setMargin(event ? 1 : 3);
-  statusPic.setPixmap(QPixmap(Status::getIconPath(status, event)));
-
-}
-
 QString MessageSessionWidget::getStatusString() const {
   auto contact = sendWorker->getChatroom()->getContact();
   auto frnd = FriendList::findFriend(ToxPk(contact->getId()));
@@ -591,11 +582,19 @@ void MessageSessionWidget::mouseMoveEvent(QMouseEvent *ev) {
   }
 }
 
-void MessageSessionWidget::setRecvMessage(const FriendMessage &message,
+void MessageSessionWidget::setRecvMessage(const FriendMessage &msg,
                                           bool isAction) {
   auto md= (FriendMessageDispatcher*)sendWorker->dispacher();
-  md->onMessageReceived(isAction,message);
-  updateLastMessage(message);
+  md->onMessageReceived(isAction,msg);
+  updateLastMessage(msg);
+
+  auto vis = contentWidget->isVisible();
+  if(!vis){
+      //更新状态信号灯
+      updateStatusLight(Status::Status::Online, true);
+      //聊天界面不显示，消息提示。
+      Widget::getInstance()->newGroupMessageAlert(GroupId(contactId), ToxPk(msg.from), msg.content, true);
+  }
 }
 
 void MessageSessionWidget::setMessageReceipt(const ReceiptNum &receipt)
@@ -609,6 +608,14 @@ void MessageSessionWidget::setRecvGroupMessage(const GroupMessage &msg)
     auto md= (GroupMessageDispatcher*)sendWorker->dispacher();
     md->onMessageReceived(ToxPk(msg.from), false, msg.id, msg.content, msg.nick, msg.from, msg.timestamp);
     updateLastMessage(msg);
+
+    auto vis = contentWidget->isVisible();
+    if(!vis){
+        //更新状态信号灯
+        updateStatusLight(Status::Status::Online, true);
+        //聊天界面不显示，消息提示。
+        Widget::getInstance()->newGroupMessageAlert(GroupId(contactId), ToxPk(msg.from), msg.content, true);
+    }
 }
 
 void MessageSessionWidget::setStatus(Status::Status status, bool event) {

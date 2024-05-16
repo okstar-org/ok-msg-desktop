@@ -21,6 +21,7 @@ namespace Status
     // Status::Status is weird, but Status is a fitting name for both the namespace and enum class..
     enum class Status
     {
+        None=-1,
         Online = 0,
         Away,
         Busy,

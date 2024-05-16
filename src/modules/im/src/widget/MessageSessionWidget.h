@@ -69,7 +69,6 @@ class MessageSessionWidget : public GenericChatroomWidget
 
     void setRecvGroupMessage(const GroupMessage& msg);
 
-    void updateStatusLight(Status::Status status, bool event) override final;
 
 signals:
     void removeFriend(const ToxPk& friendPk);

@@ -18,7 +18,7 @@
 #include "src/model/status.h"
 
 class CroppingLabel;
-class MaskablePixmapWidget;
+
 class QVBoxLayout;
 class QHBoxLayout;
 class ContentLayout;
@@ -38,7 +38,7 @@ public slots:
     virtual void setAsActiveChatroom() = 0;
     virtual void setAsInactiveChatroom() = 0;
     virtual void setAvatar(const QPixmap& pixmap) = 0;
-    virtual void updateStatusLight(Status::Status status, bool event) = 0;
+
     virtual void resetEventFlags() = 0;
     virtual QString getStatusString() const = 0;
      const ContactId& getContactId() const {return contactId;};
@@ -76,7 +76,7 @@ protected:
     QColor lastColor;
     QHBoxLayout* mainLayout = nullptr;
     QVBoxLayout* textLayout = nullptr;
-    MaskablePixmapWidget* avatar;
+
 
     bool active;
     ContactId contactId;

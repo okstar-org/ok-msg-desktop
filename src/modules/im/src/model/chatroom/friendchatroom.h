@@ -15,6 +15,7 @@
 
 #include "chatroom.h"
 
+#include <QLabel>
 #include <QObject>
 #include <QString>
 #include <QVector>
@@ -78,6 +79,7 @@ private:
     bool active{false};
     const Friend* frnd{nullptr};
     IDialogsManager* dialogsManager{nullptr};
+
 };
 
 #endif // FRIEND_H

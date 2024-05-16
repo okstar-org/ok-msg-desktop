@@ -98,3 +98,14 @@ void ContentWidget::setChatForm(GenericChatForm * form) {
 
 }
 
+void ContentWidget::showEvent(QShowEvent *event)
+{
+    qDebug() << __func__ << this;
+}
+
+void ContentWidget::hideEvent(QHideEvent *event)
+{
+
+    qDebug() << __func__ << this;
+}
+

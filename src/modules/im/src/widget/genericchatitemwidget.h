@@ -16,9 +16,10 @@
 #include <QFrame>
 #include <QLabel>
 #include "src/model/message.h"
+#include "src/model/status.h"
 
 class CroppingLabel;
-
+class MaskablePixmapWidget;
 /**
  * 聊天控件
  */
@@ -33,7 +34,7 @@ public:
         FriendOnlineItem
     };
 
-    explicit GenericChatItemWidget(ChatType chatType=ChatType::Chat, QWidget* parent = nullptr);
+    explicit GenericChatItemWidget(ChatType chatType, const ContactId &cid,  QWidget* parent = nullptr);
 
     bool isCompact() const{return compact;};
     void setCompact(bool compact_){compact = compact_;};
@@ -53,12 +54,18 @@ public:
     void setLastMessage(const QString& msg);
 
     void updateLastMessage(const Message&);
+
+    virtual void updateStatusLight(Status::Status status, bool event);
+    virtual void clearStatusLight();
 protected:
     CroppingLabel* nameLabel;
     CroppingLabel* lastMessageLabel;
-    QLabel statusPic;
+    QLabel* statusPic;
+    MaskablePixmapWidget* avatar;
     bool compact;
     ChatType chatType;
+    ContactId contactId;
+    Status::Status prevStatus;
 };
 
 #endif // GENERICCHATITEMWIDGET_H

@@ -66,8 +66,11 @@ FriendWidget::FriendWidget(ContentLayout *layout,
   qDebug() <<__func__ <<"friend:"<<friendPk.toString();
 
   avatar->setPixmap(QPixmap(":/img/contact.svg"));
-  statusPic.setPixmap(QPixmap(Status::getIconPath(Status::Status::Offline)));
-  statusPic.setMargin(3);
+
+  if(statusPic){
+    statusPic->setPixmap(QPixmap(Status::getIconPath(Status::Status::Offline)));
+//    statusPic->setMargin(3);
+  }
 
   auto profile = Nexus::getProfile();
 
@@ -502,8 +505,7 @@ void FriendWidget::updateStatusLight(Status::Status status, bool event) {
     emit updateFriendActivity(*frnd);
   }
 
-  statusPic.setMargin(event ? 1 : 3);
-  statusPic.setPixmap(QPixmap(Status::getIconPath(status, event)));
+    GenericChatItemWidget::updateStatusLight(status, event);
 
 }
 

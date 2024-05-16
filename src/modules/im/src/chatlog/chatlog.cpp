@@ -67,6 +67,9 @@ ChatLog::ChatLog(QWidget* parent)
     scene = new QGraphicsScene(this);
     scene->setItemIndexMethod(QGraphicsScene::BspTreeIndex);
     setScene(scene);
+    // 连接滚动条的 valueChanged 信号到槽函数
+    connect(verticalScrollBar(), &QScrollBar::valueChanged, this, &ChatLog::onVScrollBarValueChanged);
+
 
     // Cfg.
     setInteractive(true);
@@ -899,6 +902,14 @@ void ChatLog::onWorkerTimeout()
 void ChatLog::onMultiClickTimeout()
 {
     clickCount = 0;
+}
+
+void ChatLog::onVScrollBarValueChanged(int value)
+{
+       if (value == verticalScrollBar()->maximum()) {
+           // 当垂直滚动条的值改变时触发
+           emit readAll();
+       }
 }
 
 void ChatLog::handleMultiClickEvent()

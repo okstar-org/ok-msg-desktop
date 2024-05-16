@@ -33,6 +33,9 @@ public:
   void showTo(ContentLayout*);
   void setChatForm(GenericChatForm *);
 
+  virtual void showEvent(QShowEvent *event) override;
+  virtual void hideEvent(QHideEvent *event) override;
+
 private:
   void init();
   QFrame* mainHLine;

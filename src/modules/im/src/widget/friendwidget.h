@@ -59,7 +59,7 @@ class FriendWidget : public GenericChatroomWidget
     void search(const QString& searchString, bool hide = false);
     void setRecvMessage(const FriendMessage &message,
                         bool isAction);
-    void updateStatusLight(Status::Status status, bool event) override final;
+    virtual void updateStatusLight(Status::Status status, bool event) override;
 
 signals:
     void friendWidgetClicked(FriendWidget* widget);

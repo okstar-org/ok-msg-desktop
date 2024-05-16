@@ -19,25 +19,9 @@
 #include <QMouseEvent>
 
 GenericChatroomWidget::GenericChatroomWidget(ChatType type,  const ContactId &cid,  QWidget* parent)
-    : GenericChatItemWidget(type, parent),
-        contactId(cid),
-      active{false}
+    : GenericChatItemWidget(type, cid, parent),
+      contactId(cid), active{false}
 {
-    // avatar
-    QSize size;
-//    if (isCompact())
-//        size = QSize(20, 20);
-//    else
-        size = QSize(40, 40);
-
-    avatar = new MaskablePixmapWidget(this, size, ":/img/avatar_mask.svg");
-
-    // status text
-//    statusMessageLabel = new CroppingLabel(this);
-//    statusMessageLabel->setTextFormat(Qt::PlainText);
-//    statusMessageLabel->setForegroundRole(QPalette::WindowText);
-
-//    nameLabel->setForegroundRole(QPalette::WindowText);
 
     Settings& s = Settings::getInstance();
     connect(&s, &Settings::compactLayoutChanged, this, &GenericChatroomWidget::compactChange);
@@ -83,8 +67,12 @@ void GenericChatroomWidget::compactChange(bool _compact)
         mainLayout->addWidget(nameLabel);
         mainLayout->addWidget(lastMessageLabel);
         mainLayout->addSpacing(5);
-        mainLayout->addWidget(&statusPic);
-        mainLayout->addSpacing(5);
+
+        if(statusPic){
+            mainLayout->addWidget(statusPic);
+            mainLayout->addSpacing(5);
+        }
+
         mainLayout->activate();
 //        statusMessageLabel->setFont(Style::getFont(Style::Small));
         nameLabel->setFont(Style::getFont(Style::Medium));
@@ -100,8 +88,9 @@ void GenericChatroomWidget::compactChange(bool _compact)
         mainLayout->addSpacing(10);
         mainLayout->addLayout(textLayout);
         mainLayout->addSpacing(10);
-        mainLayout->addWidget(&statusPic);
-        mainLayout->addSpacing(10);
+        if(statusPic){
+        mainLayout->addWidget(statusPic);
+        mainLayout->addSpacing(10);}
         mainLayout->activate();
 //        statusMessageLabel->setFont(Style::getFont(Style::Medium));
         nameLabel->setFont(Style::getFont(Style::Big));

@@ -66,14 +66,15 @@ signals:
     void workerTimeoutFinished();
     void firstVisibleLineChanged(const IChatItem::Ptr& prevLine, const IChatItem::Ptr& firstLine);
     void loadHistoryLower();
+    void readAll();
 
 public slots:
     void forceRelayout();
-
 private slots:
     void onSelectionTimerTimeout();
     void onWorkerTimeout();
     void onMultiClickTimeout();
+    void onVScrollBarValueChanged(int value);
 
 protected:
     QRectF calculateSceneRect() const;
