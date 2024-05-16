@@ -123,11 +123,19 @@ MessageSessionWidget *MessageSessionListWidget::createMessageSession(
 
 
   auto sw = getMessageSession(friendPk);
-  if(!sw){
-      sw = new MessageSessionWidget(m_contentLayout, friendPk, type);
-      qDebug() << "create friend:" << friendPk.toString() <<" session:" <<sw;
-      connectSessionWidget(*sw);
-    }
+  if(sw){
+    return sw;
+  }
+
+  sw = new MessageSessionWidget(m_contentLayout, friendPk, type);
+  qDebug() << "create friend:" << friendPk.toString() <<" session:" <<sw;
+  connectSessionWidget(*sw);
+
+  listLayout->addWidget(sw);
+  sessionWidgets.insert(sw->getContactId().toString(), sw);
+
+
+
 
   //  TODO 连接朋友活跃状态
   //  connect(chatForm, &ChatForm::updateFriendActivity, this,
@@ -144,13 +152,7 @@ MessageSessionWidget *MessageSessionListWidget::createMessageSession(
   //  if (chatTime > activityTime && chatTime.isValid()) {
   //    settings.setFriendActivity(friendPk, chatTime);
   //  }
-  if(type==ChatType::GroupChat){
-      addWidget(sw, Status::Status::Online, 0);
-  }else{
-    auto status = core->getFriendStatus(friendPk.toString());
-    addWidget(sw, status, settings.getFriendCircleID(friendPk));
-//    setFriendStatus(friendPk, status);
-  }
+
 
   //
   //  auto notifyReceivedCallback = [this, friendPk](const ToxPk &author,
@@ -227,21 +229,6 @@ MessageSessionWidget *MessageSessionListWidget::createMessageSession(
   return sw;
 }
 
-void MessageSessionListWidget::addWidget(MessageSessionWidget *w,
-                                         Status::Status s,
-                                         int circleIndex) {
-
-
-    listLayout->addWidget(w);
-    sessionWidgets.insert(w->getContactId().toString(), w);
-
-
-
-//  connect(fw, &MessageSessionWidget::friendWidgetRenamed, this,
-//          &MessageSessionListWidget::onFriendWidgetRenamed);
-//  connect(fw, &MessageSessionWidget::friendWidgetClicked, this,
-//          &MessageSessionListWidget::slot_friendClicked);
-}
 
 
 void MessageSessionListWidget::connectSessionWidget(MessageSessionWidget &sw) {
@@ -251,6 +238,9 @@ void MessageSessionListWidget::connectSessionWidget(MessageSessionWidget &sw) {
           &MessageSessionListWidget::updateFriendActivity);
   connect(&sw, &MessageSessionWidget::widgetClicked, this,
           &MessageSessionListWidget::slot_sessionClicked);
+
+  connect(&sw, &MessageSessionWidget::deleteWidget, this,
+          &MessageSessionListWidget::do_deleteWidget);
 }
 
 void MessageSessionListWidget::updateFriendActivity(const Friend &frnd) {
@@ -393,33 +383,9 @@ void MessageSessionListWidget::moveFriends(QLayout *layout) {
   }
 }
 
-//CategoryWidget *
-//MessageSessionListWidget::getTimeCategoryWidget(const Friend *frd) const {
-//  const auto activityTime = getActiveTimeFriend(frd);
-//  int timeIndex = static_cast<int>(base::getTimeBucket(activityTime));
-//  QWidget *widget = activityLayout->itemAt(timeIndex)->widget();
-//  return qobject_cast<CategoryWidget *>(widget);
-//}
 
 MessageSessionListWidget::SortingMode MessageSessionListWidget::getMode() const { return mode; }
 
-void MessageSessionListWidget::removeSessionWidget(MessageSessionWidget *w) {
-    qDebug() << __func__<<"widget:"<<w;
-//  const Friend *contact = w->getFriend();
-
-//  if (mode == SortingMode::Activity) {
-//    auto *categoryWidget = getTimeCategoryWidget(contact);
-//    categoryWidget->removeFriendWidget(w, contact->getStatus());
-//    categoryWidget->setVisible(categoryWidget->hasChatrooms());
-//  } else {
-//    int id = Settings::getInstance().getFriendCircleID(contact->getPublicKey());
-//    CircleWidget *circleWidget = CircleWidget::getFromID(id);
-//    if (circleWidget != nullptr) {
-//      circleWidget->removeFriendWidget(w, contact->getStatus());
-//      emit searchCircle(*circleWidget);
-//    }
-//  }
-}
 
 void MessageSessionListWidget::searchChatrooms(const QString &searchString,
                                        bool hideOnline, bool hideOffline,
@@ -717,23 +683,11 @@ QLayout *MessageSessionListWidget::nextLayout(QLayout *layout, bool forward) con
 }
 
 MessageSessionWidget *MessageSessionListWidget::getMessageSession(const ToxPk &friendPk) {
-  return sessionWidgets.value(friendPk.toString());
-}
-
-void MessageSessionListWidget::removeFriend(const ToxPk &friendPk) {
-
-  auto f = getMessageSession(friendPk);
-  if (!f) {
-    return;
-  }
-
-  FriendList::removeFriend(friendPk, false);
-  removeSessionWidget(f);
-  f->deleteLater();
+    return sessionWidgets.value(friendPk.toString());
 }
 
 
-void MessageSessionListWidget::slot_sessionClicked(GenericChatroomWidget *actived) {
+void MessageSessionListWidget::slot_sessionClicked(MessageSessionWidget *actived) {
   for (auto w : sessionWidgets) {
     if (w != actived) {
       w->setActive(false);
@@ -742,6 +696,18 @@ void MessageSessionListWidget::slot_sessionClicked(GenericChatroomWidget *active
     }
   }
 }
+
+void MessageSessionListWidget::do_deleteWidget(MessageSessionWidget *w)
+{
+    qDebug() << __func__<<"session:" << w;
+    auto &cid =  w->getContactId();
+    int removed = sessionWidgets.remove(cid.toString());
+    if(removed){
+        qDebug() <<"delete"<<w;
+        w->deleteLater();
+    }
+}
+
 
 void MessageSessionListWidget::setRecvFriendMessage(
     ToxPk friendnumber, const FriendMessage &message,

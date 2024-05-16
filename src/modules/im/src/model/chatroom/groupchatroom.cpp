@@ -27,6 +27,11 @@ GroupChatroom::GroupChatroom(const Group* group, IDialogsManager* dialogsManager
 {
 }
 
+GroupChatroom::~GroupChatroom()
+{
+    qDebug() << __func__;
+}
+
 const Contact* GroupChatroom::getContact()
 {
     return (group);

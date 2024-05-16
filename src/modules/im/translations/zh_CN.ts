@@ -1377,11 +1377,28 @@ instead of system taskbar.</source>
 <source>Search Contacts</source>
 <translation>搜索联系人</translation>
 </message>
+
 <message>
 <source>Filter...</source>
 <translation>筛选...</translation>
 </message>
+
+
 </context>
+    <context>
+<name>MessageSessionWidget</name>
+
+<message>
+<source>Delete the session</source>
+<translation>删除该会话</translation>
+</message>
+
+<message>
+<source>Show details</source>
+<translation>显示详情</translation>
+</message>
+    </context>
+
 <context>
     <name>GenericNetCamView</name>
     <message>

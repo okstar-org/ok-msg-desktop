@@ -18,7 +18,10 @@
 #include <QHash>
 
 /**
- * 帐号
+ * 帐号终端
+ * 一个联系人存在多个，通过resource识别
+ * 格式:user@server/resource
+ * 比如：jidlpdyibulw@meet.chuanshaninfo.com/OkMSG.root-host.[v24.03.1-27-gb9531c6].OTE5Y2
  */
 class ToxPk : public ContactId
 {

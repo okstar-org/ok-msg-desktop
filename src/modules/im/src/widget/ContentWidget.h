@@ -28,14 +28,16 @@ class ContentWidget : public QWidget {
   Q_OBJECT
 public:
   explicit ContentWidget(QWidget *parent= nullptr);
+  ~ContentWidget();
+
   void showTo(ContentLayout*);
   void setChatForm(GenericChatForm *);
 
 private:
   void init();
-  QFrame mainHLine;
-  QHBoxLayout mainHLineLayout;
-  QWidget* mainHead;
+  QFrame* mainHLine;
+ QHBoxLayout* mainHLineLayout;
+ QWidget* mainHead;
   QWidget* mainContent;
 
   int contentIndex;

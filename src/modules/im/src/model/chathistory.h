@@ -31,6 +31,8 @@ public:
               const Settings& settings,
               IMessageDispatcher& messageDispatcher);
 
+    ~ChatHistory();
+
     const ChatLogItem* at(ChatLogIdx idx) const override;
     SearchResult searchForward(SearchPos startIdx, const QString& phrase,
                                const ParameterSearch& parameter) const override;

@@ -83,11 +83,16 @@ SendWorker::SendWorker(const Group &group)
      chatRoom = std::make_unique<GroupChatroom>(&group, ContentDialogManager::getInstance());
 }
 
-SendWorker *SendWorker::forFriend(const Friend& friend_){
-   return new SendWorker(friend_);
+SendWorker::~SendWorker()
+{
+    qDebug()<<__func__;
 }
 
-SendWorker *SendWorker::forGroup(const Group &group)
+std::unique_ptr<SendWorker> SendWorker::forFriend(const Friend& friend_){
+   return std::make_unique<SendWorker>(friend_);
+}
+
+std::unique_ptr<SendWorker> SendWorker::forGroup(const Group &group)
 {
-    return new SendWorker(group);
+    return std::make_unique<SendWorker>(group);
 }

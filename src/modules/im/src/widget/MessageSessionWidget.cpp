@@ -61,9 +61,8 @@ MessageSessionWidget::MessageSessionWidget(
                            ContentLayout *layout,
                            const ToxPk &toxPk,
                            ChatType chatType)
-    : GenericChatroomWidget(chatType),
+    : GenericChatroomWidget(chatType, toxPk),
       contentLayout(layout),
-      contactId{toxPk},
       sendWorker{nullptr},
       isDefaultAvatar{true} {
 
@@ -94,14 +93,14 @@ MessageSessionWidget::MessageSessionWidget(
                 setStatus(status, event);
               });
 
-      sendWorker = SendWorker::forFriend(*f);
+      sendWorker = std::move( SendWorker::forFriend(*f));
   }else if(chatType == ChatType::GroupChat) {
       auto g = GroupList::addGroup(GroupId(toxPk), "", true, toxPk.resource);
-      sendWorker = SendWorker::forGroup(*g);
+      sendWorker = std::move(SendWorker::forGroup(*g));
   }
 
 
-  contentWidget = new ContentWidget(this);
+  contentWidget = std::make_unique<ContentWidget>(this);
   contentWidget->hide();
   contentWidget->setChatForm(sendWorker->getChatForm());
 
@@ -165,6 +164,12 @@ MessageSessionWidget::MessageSessionWidget(
 
 }
 
+MessageSessionWidget::~MessageSessionWidget()
+{
+    qDebug()<<__func__;
+
+}
+
 void MessageSessionWidget::do_widgetClicked() {
 //    qDebug() << __func__ << "contactId:" << contactId.toString();
     contentWidget->showTo(contentLayout);
@@ -202,19 +207,19 @@ void MessageSessionWidget::onContextMenuCalled(QContextMenuEvent *event) {
 
   installEventFilter(this); // Disable leave event.
 
-  QMenu menu;
 
   auto chatRoom = sendWorker->getChatroom();
 
 
-  menu.addSeparator();
-  QMenu *inviteMenu = menu.addMenu(tr("Invite to group", "Menu to invite a friend to a groupchat"));
+  QMenu menu;
+//  menu.addSeparator();
+  auto deleteAct = menu.addAction(tr("Delete the session"));
   //  inviteMenu->setEnabled(chatRoom->canBeInvited());
 
-  const auto newGroupAction = inviteMenu->addAction(tr("To new group"));
-//  connect(newGroupAction, &QAction::triggered,
-//          chatRoom, &FriendChatroom::inviteToNewGroup);
-  inviteMenu->addSeparator();
+
+  connect(deleteAct, &QAction::triggered,
+          this, &MessageSessionWidget::removeChat);
+//  inviteMenu->addSeparator();
 
 //  for (const auto &group : chatRoom->getGroups()) {
 //    const auto groupAction =
@@ -251,8 +256,8 @@ void MessageSessionWidget::onContextMenuCalled(QContextMenuEvent *event) {
   //    circleMenu->addAction(action);
   //  }
 
-  const auto setAlias = menu.addAction(tr("Set alias..."));
-  connect(setAlias, &QAction::triggered, nameLabel, &CroppingLabel::editBegin);
+//  const auto setAlias = menu.addAction(tr("Set alias..."));
+//  connect(setAlias, &QAction::triggered, nameLabel, &CroppingLabel::editBegin);
 
   //  自动接收文件
   //  menu.addSeparator();
@@ -263,7 +268,7 @@ void MessageSessionWidget::onContextMenuCalled(QContextMenuEvent *event) {
   //  connect(autoAccept, &QAction::triggered, this,
   //  &MessageSessionWidget::changeAutoAccept);
 
-  menu.addSeparator();
+//  menu.addSeparator();
 
 //  auto fnd = chatRoom->getFriend();
 //  if (chatRoom->friendCanBeRemoved()) {
@@ -275,7 +280,7 @@ void MessageSessionWidget::onContextMenuCalled(QContextMenuEvent *event) {
 //        [=, this]() { emit removeFriend(friendPk); }, Qt::QueuedConnection);
 //  }
 
-  menu.addSeparator();
+//  menu.addSeparator();
 
 //  if (!fnd->isFriend()) {
 //    const auto friendPk = fnd->getPublicKey();
@@ -285,10 +290,10 @@ void MessageSessionWidget::onContextMenuCalled(QContextMenuEvent *event) {
 //        [=, this]() { emit addFriend(friendPk); }, Qt::QueuedConnection);
 //  }
 
-  //  menu.addSeparator();
-  //  const auto aboutWindow = menu.addAction(tr("Show details"));
-  //  connect(aboutWindow, &QAction::triggered, this,
-  //  &MessageSessionWidget::showDetails);
+//    menu.addSeparator();
+    const auto aboutWindow = menu.addAction(tr("Show details"));
+    connect(aboutWindow, &QAction::triggered, this,
+    &MessageSessionWidget::showDetails);
 
   const auto pos = event->globalPos();
   menu.exec(pos);
@@ -300,8 +305,8 @@ void MessageSessionWidget::onContextMenuCalled(QContextMenuEvent *event) {
   }
 }
 
-void MessageSessionWidget::removeChatWindow() {
-//    chatRoom->removeFriendFromDialogs();
+void MessageSessionWidget::removeChat() {
+    emit deleteWidget(this);
 }
 
 //namespace {
@@ -394,6 +399,7 @@ void MessageSessionWidget::changeAutoAccept(bool enable) {
 //    chatRoom->disableAutoAccept();
 //  }
 }
+
 void MessageSessionWidget::showDetails() {
 //  const auto frnd = chatRoom->getFriend();
 //  const auto iabout = new AboutFriend(frnd, &Settings::getInstance());
@@ -402,6 +408,11 @@ void MessageSessionWidget::showDetails() {
 //  connect(aboutUser, &AboutFriendForm::histroyRemoved, this,
 //          &MessageSessionWidget::friendHistoryRemoved);
 //  aboutUser->show();
+
+auto w = Widget::getInstance();
+if(w){
+  emit w->toShowDetails(getContactId());
+}
 }
 
 void MessageSessionWidget::setAsActiveChatroom() { setActive(true); }
@@ -542,43 +553,6 @@ void MessageSessionWidget::mouseMoveEvent(QMouseEvent *ev) {
     drag->setPixmap(avatar->getPixmap());
     drag->exec(Qt::CopyAction | Qt::MoveAction);
   }
-}
-
-ContentDialog *MessageSessionWidget::createContentDialog() const {
-  qDebug() << __func__;
-
-  ContentDialog *contentDialog = new ContentDialog();
-  //  connect(contentDialog, &ContentDialog::friendDialogShown, this,
-  //          &Widget::onFriendDialogShown);
-  //  connect(contentDialog, &ContentDialog::groupDialogShown, this,
-  //          &Widget::onGroupDialogShown);
-
-  auto core = Core::getInstance();
-
-  connect(core, &Core::usernameSet, contentDialog, &ContentDialog::setUsername);
-
-  //  connect(&settings, &Settings::groupchatPositionChanged, &contentDialog,
-  //          &ContentDialog::reorderLayouts);
-  //  connect(&contentDialog, &ContentDialog::addFriendDialog, this,
-  //          &Widget::addFriendDialog);
-  //  connect(&contentDialog, &ContentDialog::addGroupDialog, this,
-  //          &Widget::addGroupDialog);
-  //  connect(&contentDialog, &ContentDialog::connectFriendWidget, this,
-  //          &Widget::connectFriendWidget);
-
-#ifdef Q_OS_MAC
-  Nexus &n = Nexus::getInstance();
-  connect(&contentDialog, &ContentDialog::destroyed, &n,
-          &Nexus::updateWindowsClosed);
-  connect(&contentDialog, &ContentDialog::windowStateChanged, &n,
-          &Nexus::onWindowStateChanged);
-  connect(contentDialog.windowHandle(), &QWindow::windowTitleChanged, &n,
-          &Nexus::updateWindows);
-  n.updateWindows();
-#endif
-
-  ContentDialogManager::getInstance()->addContentDialog(*contentDialog);
-  return contentDialog;
 }
 
 void MessageSessionWidget::setRecvMessage(const FriendMessage &message,

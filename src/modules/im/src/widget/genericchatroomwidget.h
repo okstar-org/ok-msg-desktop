@@ -32,7 +32,7 @@ class GenericChatroomWidget : public GenericChatItemWidget
 {
     Q_OBJECT
 public:
-    explicit GenericChatroomWidget(ChatType chatType, QWidget* parent = nullptr);
+    explicit GenericChatroomWidget(ChatType chatType, const ContactId &cid, QWidget* parent = nullptr);
 
 public slots:
     virtual void setAsActiveChatroom() = 0;

@@ -27,8 +27,12 @@
 class SendWorker : public QObject{
     Q_OBJECT
 public:
- static SendWorker *forFriend(const Friend& m_friend);
- static SendWorker *forGroup(const Group& m_group);
+    SendWorker(const Friend& m_friend);
+    SendWorker(const Group& m_group);
+    ~SendWorker();
+
+ static std::unique_ptr<SendWorker> forFriend(const Friend& m_friend);
+ static std::unique_ptr<SendWorker> forGroup(const Group& m_group);
 
 
  GenericChatForm* getChatForm() const {
@@ -44,8 +48,7 @@ public:
  }
 
 private:
-    SendWorker(const Friend& m_friend);
-    SendWorker(const Group& m_group);
+
 
     MessageProcessor::SharedParams sharedMessageProcessorParams;
     std::unique_ptr<IMessageDispatcher> messageDispatcher;

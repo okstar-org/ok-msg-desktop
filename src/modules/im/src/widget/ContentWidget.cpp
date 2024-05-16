@@ -33,43 +33,53 @@ ContentWidget::ContentWidget(QWidget* parent): QWidget(parent),
   init();
 }
 
+ContentWidget::~ContentWidget()
+{
+
+    qDebug() <<__func__;
+
+}
+
 void ContentWidget::init() {
 
-  mainHead = new QWidget();
+  mainHead =  new QWidget(this);
   mainHead->setLayout(new QVBoxLayout);
   mainHead->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
   mainHead->layout()->setMargin(0);
   mainHead->layout()->setSpacing(0);
   mainHead->setMouseTracking(true);
 
-  mainHLine.setFrameShape(QFrame::HLine);
-  mainHLine.setFrameShadow(QFrame::Plain);
+  mainHLine = new QFrame(this);
+  mainHLine->setFrameShape(QFrame::HLine);
+  mainHLine->setFrameShadow(QFrame::Plain);
+
+  mainHLineLayout=new QHBoxLayout(this);
+  mainHLineLayout->addWidget(mainHLine);
+  mainHLineLayout->addSpacing(4);
+  mainHLineLayout->addSpacing(5);
+  layout()->addItem(mainHLineLayout);
+
 
 //  QPalette palette = mainHLine.palette();
 //  palette.setBrush(QPalette::WindowText, QBrush(QColor(193, 193, 193)));
 //  mainHLine.setPalette(palette);
 
-  mainContent = new QWidget();
+  mainContent = new QWidget(this);
   mainContent->setLayout(new QVBoxLayout);
   mainContent->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
-  if (QStyleFactory::keys().contains(Settings::getInstance().getStyle())
-      && Settings::getInstance().getStyle() != "None") {
-    mainHead->setStyle(QStyleFactory::create(Settings::getInstance().getStyle()));
-    mainContent->setStyle(QStyleFactory::create(Settings::getInstance().getStyle()));
-  }
+//  if (QStyleFactory::keys().contains(Settings::getInstance().getStyle())
+//      && Settings::getInstance().getStyle() != "None") {
+//    mainHead->setStyle(QStyleFactory::create(Settings::getInstance().getStyle()));
+//    mainContent->setStyle(QStyleFactory::create(Settings::getInstance().getStyle()));
+//  }
 
 //  reloadTheme();
 
-  mainHLineLayout.addSpacing(4);
-  mainHLineLayout.addWidget(&mainHLine);
-  mainHLineLayout.addSpacing(5);
-  layout()->addItem(&mainHLineLayout);
 
   layout()->addWidget(mainHead);
   layout()->addWidget(mainContent);
 
-  //    addLayout(&mainHLineLayout);
 }
 
 void ContentWidget::showTo(ContentLayout *layout) {

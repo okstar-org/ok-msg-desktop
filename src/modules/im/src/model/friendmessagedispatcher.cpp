@@ -45,6 +45,11 @@ FriendMessageDispatcher::FriendMessageDispatcher(
           &FriendMessageDispatcher::onFriendOnlineOfflineChanged);
 }
 
+FriendMessageDispatcher::~FriendMessageDispatcher()
+{
+    qDebug()<<__func__;
+}
+
 /**
  * @see IMessageSender::sendMessage
  */

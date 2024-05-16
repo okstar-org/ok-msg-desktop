@@ -31,6 +31,7 @@ public:
     FriendMessageDispatcher(const Friend& f,
                             MessageProcessor processor,
                             ICoreFriendMessageSender& messageSender);
+    ~FriendMessageDispatcher();
 
     std::pair<DispatchedMessageId, SentMessageId> sendMessage(
             bool isAction,

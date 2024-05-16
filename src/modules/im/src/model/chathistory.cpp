@@ -105,6 +105,11 @@ ChatHistory::ChatHistory(const Friend& f_,    //
     connect(&sessionChatLog, &IChatLog::itemUpdated, this, &IChatLog::itemUpdated);
 }
 
+ChatHistory::~ChatHistory()
+{
+    qDebug()<<__func__;
+}
+
 const ChatLogItem* ChatHistory::at(ChatLogIdx idx) const
 {
     if (canUseHistory()) {

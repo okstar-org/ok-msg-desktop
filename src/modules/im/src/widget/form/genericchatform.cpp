@@ -464,6 +464,7 @@ GenericChatForm::GenericChatForm(const Contact *contact_,
 }
 
 GenericChatForm::~GenericChatForm() {
+    qDebug()<<__func__;
   settings::Translator::unregister(this);
   delete searchForm;
 }

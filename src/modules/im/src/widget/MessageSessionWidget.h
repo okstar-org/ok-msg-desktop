@@ -45,6 +45,8 @@ class MessageSessionWidget : public GenericChatroomWidget
                          const ToxPk &friendPk,
                          ChatType);
 
+    ~MessageSessionWidget();
+
     void contextMenuEvent(QContextMenuEvent* event) override final;
     void setAsActiveChatroom() override final;
     void setAsInactiveChatroom() override final;
@@ -55,9 +57,6 @@ class MessageSessionWidget : public GenericChatroomWidget
     void setName(const QString& name);
     void resetEventFlags() override final;
     QString getStatusString() const override final;
-
-
-    const ContactId &getContactId() const   {return contactId; };
 
 
     void search(const QString& searchString, bool hide = false);
@@ -74,10 +73,11 @@ signals:
     void contextMenuCalled(QContextMenuEvent* event);
     void friendHistoryRemoved();
     void widgetClicked(MessageSessionWidget* widget);
-    void widgetRenamed(MessageSessionWidget* friendWidget);
+    void widgetRenamed(MessageSessionWidget* widget);
     void searchCircle(CircleWidget& circleWidget);
     void updateFriendActivity(Friend& frnd);
 //    void setActive(bool active);
+    void deleteWidget(MessageSessionWidget *widget);
 public slots:
   void onAvatarSet(const ToxPk& friendPk, const QPixmap& pic);
   void onAvatarRemoved(const ToxPk& friendPk);
@@ -90,28 +90,18 @@ protected:
     virtual void mouseMoveEvent(QMouseEvent* ev) override;
     void setFriendAlias();
     void onSetActive(bool active) override;
-  private:
+
+private:
+
     ContentLayout* contentLayout;
-    ContentWidget* contentWidget;
 
-//    MessageProcessor::SharedParams sharedMessageProcessorParams;
-//    std::unique_ptr<FriendMessageDispatcher> messageDispatcher;
-//    std::unique_ptr<ChatHistory> chatHistory;
-//    std::unique_ptr<ChatForm> chatForm;
-//    std::unique_ptr<SessionChatLog> chatLog;
-//    std::unique_ptr<FriendChatroom> chatRoom;
-
-    const ContactId contactId;
-
-    SendWorker *sendWorker;
+    std::unique_ptr<ContentWidget> contentWidget;
+    std::unique_ptr<SendWorker> sendWorker;
 
     bool isDefaultAvatar;
 
-    ContentDialog *createContentDialog() const;
-
-
 private slots:
-    void removeChatWindow();
+    void removeChat();
     void moveToNewCircle();
     void removeFromCircle();
     void moveToCircle(int circleId);

@@ -77,6 +77,7 @@ public slots:
   void onAvatarRemoved(const ToxPk& friendPk);
   void onContextMenuCalled(QContextMenuEvent* event);
   void do_widgetClicked(GenericChatroomWidget *w);
+  void showDetails();
 
 protected:
     virtual void mousePressEvent(QMouseEvent* ev) override;
@@ -109,7 +110,7 @@ private slots:
     void removeFromCircle();
     void moveToCircle(int circleId);
     void changeAutoAccept(bool enable);
-    void showDetails();
+
 };
 
 #endif // FRIENDWIDGET_H

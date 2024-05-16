@@ -52,7 +52,7 @@ LoginWidget::~LoginWidget() {
   disconnect(m_loginKey);
   m_loginKey->deleteLater();
   okCloudService->deleteLater();
-  delete ui;
+//  delete ui;
 }
 
 void LoginWidget::init() {

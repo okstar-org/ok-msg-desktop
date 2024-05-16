@@ -74,6 +74,9 @@ FriendListWidget::FriendListWidget(MainLayout *parent, bool groupsOnTop)
   connect(&settings, &Settings::groupchatPositionChanged, this,
           &FriendListWidget::onGroupchatPositionChanged);
 
+  auto widget = Widget::getInstance();
+  connect(widget, &Widget::toShowDetails, this,
+          &FriendListWidget::do_toShowDetails);
 
 }
 
@@ -97,9 +100,8 @@ FriendListWidget::~FriendListWidget() {
   //  }
 }
 
-FriendWidget *FriendListWidget::addFriend(const ToxPk &friendPk,
-                                          bool isFriend) {
-  qDebug() << __func__ << "friend is exist." << friendPk.toString();
+FriendWidget *FriendListWidget::addFriend(const ToxPk &friendPk, bool isFriend) {
+  qDebug() << __func__ << "friend" << friendPk.toString();
 //  auto exist = FriendList::findFriend(friendPk);
 //  if (exist) {
 //    return friendWidgets.value(friendPk);
@@ -113,7 +115,7 @@ FriendWidget *FriendListWidget::addFriend(const ToxPk &friendPk,
 
   auto friendWidget = new FriendWidget(m_contentLayout, friendPk, isFriend, compact);
   connectFriendWidget(*friendWidget);
-  friendWidgets.insert(friendPk, friendWidget);
+  friendWidgets.insert(friendPk.toString(), friendWidget);
 
   //  TODO 连接朋友活跃状态
   //  connect(chatForm, &ChatForm::updateFriendActivity, this,
@@ -219,11 +221,11 @@ void FriendListWidget::addFriendWidget(FriendWidget *fw, Status::Status s,
 //    moveWidget(fw, s, true);
 //  else
 //    circleWidget->addFriendWidget(fw, s);
-
+  listLayout->addFriendWidget(fw,s);
 //  connect(fw, &FriendWidget::friendWidgetRenamed, this,
 //          &FriendListWidget::onFriendWidgetRenamed);
-//  connect(fw, &FriendWidget::friendWidgetClicked, this,
-//          &FriendListWidget::slot_friendClicked);
+  connect(fw, &FriendWidget::friendWidgetClicked, this,
+          &FriendListWidget::slot_friendClicked);
 }
 
 
@@ -934,7 +936,7 @@ QLayout *FriendListWidget::nextLayout(QLayout *layout, bool forward) const {
 }
 
 FriendWidget *FriendListWidget::getFriend(const ToxPk &friendPk) {
-  return friendWidgets.value(friendPk);
+  return friendWidgets.value(friendPk.toString());
 }
 
 void FriendListWidget::removeFriend(const ToxPk &friendPk) {
@@ -1071,7 +1073,14 @@ void FriendListWidget::reloadTheme() {
   for (auto fw: friendWidgets) {
     fw->reloadTheme();
   }
+}
 
-
-
+void FriendListWidget::do_toShowDetails(const ContactId &cid) {
+  qDebug() << __func__  << cid.toString();
+  for (auto fw: friendWidgets) {
+    if(fw->getContactId()==cid){
+      emit fw->chatroomWidgetClicked(fw);
+      break;
+    }
+  }
 }

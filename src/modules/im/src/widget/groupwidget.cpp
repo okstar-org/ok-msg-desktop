@@ -35,7 +35,7 @@
 GroupWidget::GroupWidget(ContentLayout *layout, QString groupnumber,
                          const GroupId &groupId, const QString &groupName,
                          bool compact)
-    : GenericChatroomWidget(ChatType::GroupChat), contentLayout{layout} {
+    : GenericChatroomWidget(ChatType::GroupChat, groupId), contentLayout{layout} {
 
   settings::Translator::registerHandler(
       std::bind(&GroupWidget::retranslateUi, this), this);

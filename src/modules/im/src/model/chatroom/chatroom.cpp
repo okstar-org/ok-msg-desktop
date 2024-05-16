@@ -15,6 +15,16 @@
 //
 #include "chatroom.h"
 
+Chatroom::Chatroom()
+{
+
+}
+
+Chatroom::~Chatroom()
+{
+
+}
+
 void Chatroom::setActive(bool _active)
 {
     if (active != _active) {

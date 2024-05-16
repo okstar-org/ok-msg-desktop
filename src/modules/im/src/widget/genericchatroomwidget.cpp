@@ -18,9 +18,9 @@
 #include <QBoxLayout>
 #include <QMouseEvent>
 
-GenericChatroomWidget::GenericChatroomWidget(ChatType type,   QWidget* parent)
+GenericChatroomWidget::GenericChatroomWidget(ChatType type,  const ContactId &cid,  QWidget* parent)
     : GenericChatItemWidget(type, parent),
-
+        contactId(cid),
       active{false}
 {
     // avatar

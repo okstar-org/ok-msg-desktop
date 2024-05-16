@@ -413,6 +413,10 @@ void Widget::init() {
       ui->tabWidget->setCurrentIndex(0);
   });
 
+  connect(this, &Widget::toShowDetails, [&](){
+    ui->tabWidget->setCurrentIndex(1);
+  });
+
 #if UPDATE_CHECK_ENABLED
   updateCheck = std::unique_ptr<UpdateCheck>(new UpdateCheck(settings));
   connect(updateCheck.get(), &UpdateCheck::updateAvailable, this,

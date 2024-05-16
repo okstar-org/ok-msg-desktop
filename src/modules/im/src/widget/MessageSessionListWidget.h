@@ -90,8 +90,8 @@ public slots:
 //  void renameCircleWidget(CircleWidget *circleWidget, const QString &newName);
   void onFriendWidgetRenamed(FriendWidget *friendWidget);
 
-  void slot_sessionClicked(GenericChatroomWidget *);
-
+  void slot_sessionClicked(MessageSessionWidget *w);
+    void do_deleteWidget(MessageSessionWidget *w);
   void moveWidget(MessageSessionWidget *w, Status::Status s, bool add = false);
 
 
@@ -110,7 +110,6 @@ private:
   void sortByMode(SortingMode mode);
   void connectSessionWidget(MessageSessionWidget &sw);
   void updateFriendActivity(const Friend &frnd);
-  void addWidget(MessageSessionWidget  *fw, Status::Status s, int circleIndex);
 
   SortingMode mode;
 
@@ -122,7 +121,7 @@ private:
 
   ContentLayout *m_contentLayout;
 
-  QMap<QString, MessageSessionWidget *> sessionWidgets;
+  QMap<QString,  MessageSessionWidget*> sessionWidgets;
 
 };
 

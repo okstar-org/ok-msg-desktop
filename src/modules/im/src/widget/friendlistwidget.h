@@ -103,6 +103,8 @@ public slots:
   void onGroupchatPositionChanged(bool top);
 
   void slot_groupClicked(GenericChatroomWidget *);
+  void do_toShowDetails(const ContactId& cid);
+
 protected:
   void dragEnterEvent(QDragEnterEvent *event) override;
   void dropEvent(QDropEvent *event) override;
@@ -130,9 +132,10 @@ private:
 
   ContentLayout *m_contentLayout;
 
-  QMap<ToxPk, FriendWidget *> friendWidgets;
+  QMap<QString, FriendWidget *> friendWidgets;
   QMap<GroupId, GroupWidget *> groupWidgets;
   GenericChatItemLayout groupLayout;
+
 };
 
 #endif // FRIENDLISTWIDGET_H

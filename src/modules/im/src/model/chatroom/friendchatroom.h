@@ -35,11 +35,12 @@ struct CircleToDisplay
     int circleId;
 };
 
-class FriendChatroom : public QObject, public Chatroom
+class FriendChatroom : public Chatroom
 {
     Q_OBJECT
 public:
     FriendChatroom(const Friend* frnd, IDialogsManager* dialogsManager);
+    ~FriendChatroom();
 
   const  Contact* getContact() override;
 

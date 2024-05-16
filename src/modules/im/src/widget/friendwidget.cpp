@@ -59,7 +59,8 @@ FriendWidget::FriendWidget(ContentLayout *layout,
                            const ToxPk &friendPk,
                            bool isFriend,
                            bool compact)
-    : GenericChatroomWidget(ChatType::Chat), contentLayout(layout),
+    : GenericChatroomWidget(ChatType::Chat, friendPk),
+      contentLayout(layout),
       isDefaultAvatar{true} {
 
   qDebug() <<__func__ <<"friend:"<<friendPk.toString();
@@ -69,6 +70,7 @@ FriendWidget::FriendWidget(ContentLayout *layout,
   statusPic.setMargin(3);
 
   auto profile = Nexus::getProfile();
+
   auto core = Core::getInstance();
   auto &settings = Settings::getInstance();
   auto history = profile->getHistory();
@@ -106,7 +108,6 @@ FriendWidget::FriendWidget(ContentLayout *layout,
   const auto activityTime = settings.getFriendActivity(friendPk);
   const auto chatTime = chatForm->getLatestTime();
   if (chatTime > activityTime && chatTime.isValid()) {
-
     settings.setFriendActivity(friendPk, chatTime);
   }
 
@@ -117,6 +118,7 @@ FriendWidget::FriendWidget(ContentLayout *layout,
   // update alias when edited
   connect(nameLabel, &CroppingLabel::editFinished, //
           frnd, &Friend::setAlias);
+
   // update on changes of the displayed name
   connect(frnd, &Friend::displayedNameChanged, //
           nameLabel, &CroppingLabel::setText);
@@ -166,9 +168,7 @@ FriendWidget::FriendWidget(ContentLayout *layout,
 
 void FriendWidget::do_widgetClicked(GenericChatroomWidget *w) {
   qDebug() << __func__ << "show friend:" << m_friend->getId();
-//  contentWidget->showTo(contentLayout);
     showDetails();
-
 }
 
 ContentDialog *FriendWidget::addFriendDialog(const Friend *frnd) {
@@ -459,9 +459,9 @@ void FriendWidget::showDetails() {
       about = std::make_unique<AboutFriendForm>(std::move(iabout), this);
       connect(about.get(), &AboutFriendForm::histroyRemoved,
               this, &FriendWidget::friendHistoryRemoved);
+      contentLayout->addWidget(about.get());
   }
 
-  contentLayout->addWidget(about.get());
   contentLayout->setCurrentWidget(about.get());
 }
 

@@ -21,11 +21,12 @@ class IDialogsManager;
 class Group;
 class ToxPk;
 
-class GroupChatroom : public QObject, public Chatroom
+class GroupChatroom : public Chatroom
 {
     Q_OBJECT
 public:
     GroupChatroom(const Group* group, IDialogsManager* dialogsManager);
+    ~GroupChatroom();
 
    const Contact* getContact() override;
 

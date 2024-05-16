@@ -112,7 +112,9 @@ SessionChatLog::SessionChatLog(ChatLogIdx initialIdx,
                                const ICoreIdHandler &coreIdHandler)
     : coreIdHandler(coreIdHandler), nextIdx(initialIdx) {}
 
-SessionChatLog::~SessionChatLog() = default;
+SessionChatLog::~SessionChatLog(){
+    qDebug() << __func__;
+}
 
 const ChatLogItem* SessionChatLog::at(ChatLogIdx idx) const {
   auto it = items.find(idx);

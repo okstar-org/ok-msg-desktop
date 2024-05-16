@@ -21,7 +21,12 @@ GroupMessageDispatcher::GroupMessageDispatcher(
     const IGroupSettings &groupSettings_)
     : group(g_), processor(processor_), idHandler(idHandler_),
       messageSender(messageSender_), groupSettings(groupSettings_) {
-  processor.enableMentions();
+    processor.enableMentions();
+}
+
+GroupMessageDispatcher::~GroupMessageDispatcher()
+{
+    qDebug()<<__func__;
 }
 
 std::pair<DispatchedMessageId, SentMessageId>

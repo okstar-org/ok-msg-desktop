@@ -40,7 +40,12 @@ FriendChatroom::FriendChatroom(const Friend* frnd,
     : frnd{frnd}
     , dialogsManager{dialogsManager}
 {
-    qDebug() <<"friend"<< frnd->getId();
+    qDebug()<<__func__ <<"friend"<< frnd->getId();
+}
+
+FriendChatroom::~FriendChatroom()
+{
+    qDebug()<<__func__;
 }
 
 const Friend* FriendChatroom::getFriend()

@@ -116,9 +116,9 @@ void AboutFriendForm::onSelectDirClicked()
  */
 void AboutFriendForm::onSendMessageClicked()
 {
-    auto widget = Widget::getInstance();
-    if(widget){
-      emit widget->toSendMessage(ui->friendId->text());
+    auto w = Widget::getInstance();
+    if(w){
+      emit w->toSendMessage(ui->friendId->text());
     }
 }
 
