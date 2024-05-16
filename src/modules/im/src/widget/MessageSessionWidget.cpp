@@ -98,6 +98,10 @@ MessageSessionWidget::MessageSessionWidget(
       auto nick = core->getNick();
       auto g = GroupList::addGroup(GroupId(contactId), "", true, nick);
       sendWorker = std::move(SendWorker::forGroup(*g));
+
+      connect(sendWorker->dispacher(),&IMessageDispatcher::messageSent,
+              this, &MessageSessionWidget::onMessageSent);
+
       connect(g, &Group::displayedNameChanged, this,
               [this](const QString &newName) {
                 setName(newName);
@@ -604,6 +608,7 @@ void MessageSessionWidget::setRecvGroupMessage(const GroupMessage &msg)
 {
     auto md= (GroupMessageDispatcher*)sendWorker->dispacher();
     md->onMessageReceived(ToxPk(msg.from), false, msg.id, msg.content, msg.nick, msg.from, msg.timestamp);
+    updateLastMessage(msg);
 }
 
 void MessageSessionWidget::setStatus(Status::Status status, bool event) {
