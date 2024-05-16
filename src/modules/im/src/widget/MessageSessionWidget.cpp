@@ -92,6 +92,8 @@ MessageSessionWidget::MessageSessionWidget(
               });
 
       sendWorker = std::move( SendWorker::forFriend(*f));
+      connect(sendWorker->dispacher(),&IMessageDispatcher::messageSent,
+              this, &MessageSessionWidget::onMessageSent);
   }else if(chatType == ChatType::GroupChat) {
       auto nick = core->getNick();
       auto g = GroupList::addGroup(GroupId(contactId), "", true, nick);
@@ -188,24 +190,23 @@ void MessageSessionWidget::showEvent(QShowEvent *)
         }
     }else{
         auto core = Nexus::getCore();
-        auto status= core->getFriendStatus(contactId.toString());
-        setStatus(status, false);
+//        auto status= core->getFriendStatus(contactId.toString());
+        auto f = FriendList::findFriend(contactId);
+//        if(status != f->getStatus()){
+//            f->setStatus(status);
+//        }else{
+            setStatus(f->getStatus(), false);
+//        }
 
         auto msgs = sendWorker->getLastTextMessage();
         for(auto m : msgs){
-            QString prefix;
-            if(ContactId(m.from).username == core->getUsername()){
-                prefix = tr("I:");
-            }else{
-                //TODO 获取用户名称displayName
-                prefix=m.displayName+tr(":");
-            }
-                   setLastMessage(prefix+m.content);
+            updateLastMessage(m);
             break;
         }
+
+
+
     }
-
-
 }
 
 /**
@@ -441,6 +442,11 @@ if(w){
 }
 }
 
+void MessageSessionWidget::onMessageSent(DispatchedMessageId id, const Message &message)
+{
+    updateLastMessage(message);
+}
+
 void MessageSessionWidget::setAsActiveChatroom() { setActive(true); }
 
 void MessageSessionWidget::setAsInactiveChatroom() { setActive(false); }
@@ -585,7 +591,7 @@ void MessageSessionWidget::setRecvMessage(const FriendMessage &message,
                                           bool isAction) {
   auto md= (FriendMessageDispatcher*)sendWorker->dispacher();
   md->onMessageReceived(isAction,message);
-  setLastMessage(message.content);
+  updateLastMessage(message);
 }
 
 void MessageSessionWidget::setMessageReceipt(const ReceiptNum &receipt)
@@ -601,7 +607,9 @@ void MessageSessionWidget::setRecvGroupMessage(const GroupMessage &msg)
 }
 
 void MessageSessionWidget::setStatus(Status::Status status, bool event) {
-  updateStatusLight(status, event);
+    updateStatusLight(status, event);
+    auto f = FriendList::findFriend(contactId);
+    f->setStatus(status);
 }
 
 void MessageSessionWidget::setStatusMsg(const QString &msg) {

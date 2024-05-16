@@ -89,6 +89,14 @@ public slots:
   void onContextMenuCalled(QContextMenuEvent* event);
   void do_widgetClicked( );
   void showEvent(QShowEvent *) override;
+private slots:
+    void removeChat();
+    void moveToNewCircle();
+    void removeFromCircle();
+    void moveToCircle(int circleId);
+    void changeAutoAccept(bool enable);
+    void showDetails();
+    void onMessageSent(DispatchedMessageId id, const Message & message);
 
 protected:
     virtual void mousePressEvent(QMouseEvent* ev) override;
@@ -105,13 +113,7 @@ private:
 
     bool isDefaultAvatar;
 
-private slots:
-    void removeChat();
-    void moveToNewCircle();
-    void removeFromCircle();
-    void moveToCircle(int circleId);
-    void changeAutoAccept(bool enable);
-    void showDetails();
+
 };
 
 #endif // FRIENDWIDGET_H

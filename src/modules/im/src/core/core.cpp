@@ -564,10 +564,10 @@ void Core::onFriendMessage(QString friendId,
   FriendMessage msg;
   msg.id= message.id;
   msg.content=message.body;
-  msg.from= getFriendPublicKey( message.from);
+  msg.from= message.from;
   msg.isAction=false;
   msg.timestamp=message.time;
-  msg.displayName=message.from;
+  msg.displayName=ContactId(message.from).username;
   emit friendMessageReceived(ToxPk(friendId), msg, false);
 }
 

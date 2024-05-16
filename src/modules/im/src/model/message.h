@@ -44,6 +44,7 @@ struct MessageMetadata {
 
 struct Message {
 public:
+    bool isGroup{false};
   bool isAction;
   QString id;
   QString content;
@@ -54,12 +55,15 @@ public:
 };
 
 struct FriendMessage : Message{
-    ToxPk from;
+//    ToxPk from;
     ToxPk to;
 };
 
 struct GroupMessage : public Message{
 public:
+    GroupMessage(){
+        isGroup = true;
+    }
     QString nick;
     QString toString() const {
         return QString("{id:%1, from:%2, content:%3}").arg(id).arg(from).arg(content);

@@ -42,10 +42,8 @@ Friend *FriendList::addFriend(const ToxPk &friendPk, bool isFriend) {
   return newfriend;
 }
 
-Friend *FriendList::findFriend(const ToxPk &friendPk) {
-
-  return friendMap.value(((ContactId&)friendPk).toString());
-
+Friend *FriendList::findFriend(const ContactId &cId) {
+  return friendMap.value(cId.toString());
 }
 
 void FriendList::removeFriend(const ToxPk &friendPk, bool fake) {

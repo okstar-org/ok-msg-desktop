@@ -16,6 +16,8 @@
 #include <cstdint>
 #include <QMap>
 
+#include <src/core/contactid.h>
+
 template <class T> class QList;
 template <class A, class B> class QHash;
 class Friend;
@@ -28,7 +30,7 @@ using FriendMap = QMap<QString, Friend *>;
 class FriendList {
 public:
   static Friend *addFriend(const ToxPk &friendPk, bool isFriend);
-  static Friend *findFriend(const ToxPk &friendPk);
+  static Friend *findFriend(const ContactId &cId);
   static QList<Friend *> getAllFriends();
   static void removeFriend(const ToxPk &friendPk, bool fake = false);
   static void clear();

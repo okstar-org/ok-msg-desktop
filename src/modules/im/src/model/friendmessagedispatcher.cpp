@@ -99,7 +99,7 @@ void FriendMessageDispatcher::onMessageReceived(bool isAction,
   auto msg0 = processor.processIncomingMessage(isAction,
                                                msg.id,
                                                msg.content,
-                                               msg.from.toString(),
+                                               msg.from,
                                                msg.timestamp,
                                                f.getDisplayedName());
   emit messageReceived(f.getPublicKey(), msg0);

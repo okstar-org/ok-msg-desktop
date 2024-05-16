@@ -23,13 +23,12 @@ Friend::Friend(
                const QString &userName
              )
     : Contact(friendPk, userName, userAlias, false),
-
       hasNewEvents{false},  //
       friendStatus{Status::Status::Offline},
       isFriend_{isFriend}
-
 {
-
+    auto core=Core::getInstance();
+    friendStatus = core->getFriendStatus(friendPk.toString());
 }
 
 
@@ -61,4 +60,6 @@ void Friend::setStatus(Status::Status s) {
   }
 }
 
-Status::Status Friend::getStatus() const { return friendStatus; }
+Status::Status Friend::getStatus() const {
+    return friendStatus;
+}

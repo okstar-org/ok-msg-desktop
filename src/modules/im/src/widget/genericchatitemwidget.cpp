@@ -15,6 +15,9 @@
 #include "src/widget/style.h"
 #include "src/widget/tool/croppinglabel.h"
 #include <QVariant>
+#include <src/core/core.h>
+#include <src/friendlist.h>
+#include "src/model/friend.h"
 
 GenericChatItemWidget::GenericChatItemWidget(ChatType type, QWidget* parent)
     : QFrame(parent)
@@ -58,4 +61,24 @@ void GenericChatItemWidget::searchName(const QString& searchString, bool hide)
 void GenericChatItemWidget::setLastMessage(const QString &msg)
 {
     lastMessageLabel->setText(msg);
+}
+
+void GenericChatItemWidget::updateLastMessage(const Message &m)
+{
+    QString prefix;
+    auto core = Core::getInstance();
+    if(m.isGroup){
+        //群聊显示前缀，单聊不显示
+        if(ContactId(m.from).username == core->getUsername()){
+            prefix = tr("I:");
+        }else{
+            auto f = FriendList::findFriend(ContactId(m.from));
+            if(f){
+                prefix=f->getDisplayedName()+tr(":");
+            }else{
+                prefix=m.displayName+tr(":");
+            }
+        }
+    }
+    setLastMessage(prefix+m.content);
 }

@@ -51,6 +51,8 @@ public:
     bool isGroup() const {return chatType == ChatType::GroupChat;};
 
     void setLastMessage(const QString& msg);
+
+    void updateLastMessage(const Message&);
 protected:
     CroppingLabel* nameLabel;
     CroppingLabel* lastMessageLabel;

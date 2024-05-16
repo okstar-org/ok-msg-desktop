@@ -205,7 +205,7 @@ void ChatWidget::onFriendMessageReceived(     //
     const FriendMessage &message,             //
     bool isAction)                            //
 {
-  qDebug() << __func__ <<"content:"<< message.content << "from" << message.from.toString();
+  qDebug() << __func__ <<"content:"<< message.content << "from" << message.from;
   contactListWidget->setRecvFriendMessage(friendnumber, message, isAction);
 }
 
@@ -464,7 +464,6 @@ void ChatWidget::onGroupInviteAccepted(const GroupInvite &inviteInfo) {
 }
 
 void ChatWidget::onGroupMessageReceived(GroupId groupId, GroupMessage msg) {
-
    qDebug() <<__func__<< msg.toString();
    contactListWidget->setRecvGroupMessage(groupId, msg);
 }

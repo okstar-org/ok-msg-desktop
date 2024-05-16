@@ -186,6 +186,10 @@ ChatForm::ChatForm(const Friend *chatFriend, IChatLog &chatLog_,
   connect(headWidget, &ChatFormHeader::callRejected, this,
           &ChatForm::onRejectCallTriggered);
 
+  connect(chatFriend, &Friend::statusChanged, [&](Status::Status status, bool event){
+      updateCallButtons();
+  });
+
   updateCallButtons();
 
   setAcceptDrops(true);
@@ -395,6 +399,7 @@ void ChatForm::onVideoCallTriggered() {
 }
 
 void ChatForm::updateCallButtons() {
+    qDebug() << __func__;
   CoreAV *av = Core::getInstance()->getAv();
   const bool audio = av->isCallActive(f);
   const bool video = av->isCallVideoEnabled(f);

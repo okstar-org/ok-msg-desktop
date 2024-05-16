@@ -1385,18 +1385,23 @@ instead of system taskbar.</source>
 
 
 </context>
-    <context>
-<name>MessageSessionWidget</name>
 
+<context>
+<name>GenericChatItemWidget</name>
 <message>
 <source>I:</source>
 <translation>我：</translation>
 </message>
-
 <message>
 <source>:</source>
 <translation>：</translation>
 </message>
+</context>
+
+    <context>
+<name>MessageSessionWidget</name>
+
+
 
 <message>
 <source>Delete the session</source>
