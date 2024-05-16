@@ -651,10 +651,9 @@ void ChatForm::onUpdateTime() {
 void ChatForm::setFriendTyping(bool typing) {
   isTyping = typing;
   chatLog->setTypingNotificationVisible(typing);
-  Text *text =
-      static_cast<Text *>(chatLog->getTypingNotification()->centerContent());
   QString typingDiv = "<div class=typing>%1</div>";
   QString name = f->getDisplayedName();
+  Text *text = static_cast<Text *>(chatLog->getTypingNotification()->centerContent());
   text->setText(typingDiv.arg(tr("%1 is typing").arg(name)));
 }
 

@@ -106,9 +106,8 @@ IChatItem::Ptr ChatMessage::createTypingNotification() {
   // This causes "[user]..." to be displayed in place of user nick, as long
   // as user will keep typing. Issue #1280
 
-  NotificationIcon *iconItem = new NotificationIcon(QSize(18, 18));
-  auto *item = new ChatNotificationBox("[user]...", baseFont);
-  item->setIcon(iconItem);
+  auto *item = new ChatNotificationBox("", baseFont);
+  item->setIcon(new NotificationIcon(QSize(18, 18)));
   return IChatItem::Ptr(item);
 }
 

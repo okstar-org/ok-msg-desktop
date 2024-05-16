@@ -125,6 +125,8 @@ void ChatWidget::connectToCore(Core *core) {
 
   connect(core, &Core::friendMessageSessionReceived,
           this, &ChatWidget::onFriendMessageSessionReceived);
+  connect(core, &Core::friendMessageReceived, this,
+          &ChatWidget::onFriendMessageReceived);
 
   connect(core, &Core::friendUsernameChanged,
           this, &ChatWidget::onFriendUsernameChanged);
@@ -138,8 +140,7 @@ void ChatWidget::connectToCore(Core *core) {
           &ChatWidget::onFriendStatusMessageChanged);
   connect(core, &Core::friendRequestReceived, this,
           &ChatWidget::onFriendRequestReceived);
-  connect(core, &Core::friendMessageReceived, this,
-          &ChatWidget::onFriendMessageReceived);
+
   connect(core, &Core::friendTypingChanged, this,
           &ChatWidget::onFriendTypingChanged);
   connect(core, &Core::receiptRecieved, this, &ChatWidget::onReceiptReceived);
