@@ -52,8 +52,8 @@ public:
   bool isFriend()const {return  isFriend_;}
   void addEnd(const QString& end){ends.append(end);}
 signals:
-  void nameChanged(const ToxPk &friendId, const QString &name);
-  void aliasChanged(const ToxPk &friendId, QString alias);
+//  void nameChanged(const QString &name);
+//  void aliasChanged(const ToxPk &friendId, QString alias);
   void statusChanged(Status::Status status, bool event);
   void onlineOfflineChanged( bool isOnline);
   void statusMessageChanged( const QString &message);

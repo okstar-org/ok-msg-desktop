@@ -18,11 +18,18 @@
 
 #include <QObject>
 
+class Friend;
+
 class IAboutFriend
 {
 public:
     virtual ~IAboutFriend() = default;
+
+    virtual const Friend* getFriend() const = 0;
+
     virtual QString getName() const = 0;
+    virtual const QString & getAlias() const =0;
+
     virtual QString getStatusMessage() const = 0;
     virtual ToxPk getPublicKey() const = 0;
 

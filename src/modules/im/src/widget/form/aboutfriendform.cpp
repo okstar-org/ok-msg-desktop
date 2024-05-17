@@ -16,17 +16,23 @@
 #include "src/core/core.h"
 #include "src/widget/style.h"
 #include "src/widget/widget.h"
+#include "src/persistence/profile.h"
 
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QLineEdit>
+
+#include <src/nexus.h>
 
 AboutFriendForm::AboutFriendForm(std::unique_ptr<IAboutFriend> _about, QWidget* parent)
     : QWidget(parent)
     , ui(new Ui::AboutFriendForm)
     , about{std::move(_about)}
     , widget{Widget::getInstance()}
+    , profile{Nexus::getInstance().getProfile()}
 {
     ui->setupUi(this);
+    setStyleSheet(Style::getStylesheet("window/general.css"));
 
     connect(ui->sendMessage, &QPushButton::clicked, this, &AboutFriendForm::onSendMessageClicked);
     connect(ui->autoacceptfile, &QCheckBox::clicked, this, &AboutFriendForm::onAutoAcceptDirClicked);
@@ -51,14 +57,21 @@ AboutFriendForm::AboutFriendForm(std::unique_ptr<IAboutFriend> _about, QWidget* 
         ui->selectSaveDir->setText(about->getAutoAcceptDir());
     }
 
-    const QString name = about->getName();
-    setWindowTitle(name);
-    ui->userName->setText(name);
+
+    ui->userName->setText( about->getName());
     ui->friendId->setText(about->getPublicKey().toString());
     ui->statusMessage->setText(about->getStatusMessage());
     ui->avatar->setPixmap(about->getAvatar());
 
-    setStyleSheet(Style::getStylesheet("window/general.css"));
+    ui->alias->setText(about->getAlias());
+
+    connect(ui->alias, &QLineEdit::textChanged, this, &AboutFriendForm::onAliasChanged);
+
+
+
+    connect(about->getFriend(), &Friend::nameChanged, [&](auto name){
+        ui->userName->setText(name);
+    });
 }
 
 static QString getAutoAcceptDir(const QString& dir)
@@ -152,4 +165,13 @@ AboutFriendForm::~AboutFriendForm()
 void AboutFriendForm::setName(const QString &name)
 {
     ui->userName->setText(name);
+}
+
+void AboutFriendForm::onAliasChanged(const QString &text)
+{
+    auto fid = ui->friendId->text();
+
+    profile->saveFriendAlias(fid, text);
+    auto f = FriendList::findFriend(ContactId(fid));
+    f->setAlias(text);
 }

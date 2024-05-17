@@ -51,9 +51,6 @@ GenericChatItemWidget::GenericChatItemWidget(ChatType type, const ContactId &cid
   lastMessageLabel->setPalette(p);
 //  lastMessageLabel->setForegroundRole(QPalette::WindowText);
 
-
-
-
   statusPic = new QLabel(this);
   if(type == ChatType::Chat){ 
       statusPic->setPixmap(QPixmap(Status::getIconPath(Status::Status::Offline)));

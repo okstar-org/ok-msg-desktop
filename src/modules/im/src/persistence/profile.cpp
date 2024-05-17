@@ -560,6 +560,16 @@ void Profile::setFriendAvatar(const ToxPk owner, const QByteArray & avatarData) 
   saveAvatar(owner, avatarData);
 }
 
+void Profile::saveFriendAlias(const QString &friendPk, const QString &alias)
+{
+    history->setFriendAlias(friendPk, alias);
+}
+
+QString Profile::getFriendAlias(const QString &friendPk)
+{
+    return history->getFriendAlias(friendPk);
+}
+
 /**
  * @brief Adds history message about friendship request attempt if history is
  * enabled

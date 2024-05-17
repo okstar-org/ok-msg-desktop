@@ -27,10 +27,14 @@ bool createCurrentSchema(RawDatabase& db)
     queries += RawDatabase::Query(QStringLiteral(
         "CREATE TABLE peers (id INTEGER PRIMARY KEY, "
         "public_key TEXT NOT NULL UNIQUE);"
-        "CREATE TABLE aliases (id INTEGER PRIMARY KEY, "
-        "owner INTEGER, "
-        "display_name BLOB NOT NULL, "
-        "UNIQUE(owner, display_name));"
+
+        //aliases
+        "CREATE TABLE aliases ("
+        "id INTEGER PRIMARY KEY, "
+        "owner INTEGER UNIQUE, "
+        "display_name BLOB NOT NULL"
+        ");"
+        //aliases
         "CREATE TABLE history "
         "(id INTEGER PRIMARY KEY, "
         "timestamp INTEGER NOT NULL, "
@@ -482,7 +486,10 @@ History::generateNewMessageQueries(const QString& friendPk, const QString& messa
     }
 
     queries += RawDatabase::Query(
-        QString("INSERT OR IGNORE INTO aliases (owner, display_name) VALUES (%1, ?);").arg(senderId),
+        QString("INSERT OR IGNORE INTO aliases (owner, display_name) VALUES (%1, ?)"
+                "   ON CONFLICT(owner)"
+                "   DO UPDATE SET display_name = excluded.display_name;"
+                ).arg(senderId),
         {dispName.toUtf8()});
 
     // If the alias already existed, the insert will ignore the conflict and last_insert_rowid()
@@ -1053,6 +1060,39 @@ void History::markAsDelivered(RowId messageId)
     }
 
     db->execLater(QString("DELETE FROM faux_offline_pending WHERE id=%1;").arg(messageId.get()));
+}
+
+void History::setFriendAlias(const QString &friendPk, const QString &alias)
+{
+    uint owner = -1;
+    db->execNow({QString("SELECT id FROM peers where public_key = '%1'").arg(friendPk),
+                 [&owner](const QVector<QVariant>& row) {
+                     owner = row[0].toLongLong();
+                 }});
+    if(owner < 0){
+        return;
+    }
+
+    auto sql = QString("INSERT OR IGNORE INTO aliases (owner, display_name) "
+                       "VALUES (%1, '%2') "
+                       "ON CONFLICT(owner) "
+                       "DO UPDATE SET display_name = excluded.display_name;")
+                                          .arg(owner)
+                                          .arg(alias);
+    db->execNow((sql));
+}
+
+QString History::getFriendAlias(const QString &friendPk)
+{
+    QString name;
+    db->execNow({QString("select display_name "
+                 "from aliases a join peers p on a.owner = p.id "
+                 "where p.public_key='%1'")
+                 .arg(friendPk),
+                 [&name](const QVector<QVariant>& row) {
+                     name = row[0].toString();
+                 }});
+    return name;
 }
 
 /**

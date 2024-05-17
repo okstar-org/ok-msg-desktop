@@ -73,19 +73,6 @@ FriendWidget::FriendWidget(ContentLayout *layout,
   auto dialogManager = ContentDialogManager::getInstance();
 
   m_friend = FriendList::addFriend(friendPk, isFriend);
-
-//  contentWidget = new ContentWidget(this);
-//  contentWidget->hide();
-//  contentWidget->setChatForm(chatForm.get());
-//  const auto compact = settings.getCompactLayout();
-
-//  const auto activityTime = settings.getFriendActivity(friendPk);
-//  const auto chatTime = chatForm->getLatestTime();
-//  if (chatTime > activityTime && chatTime.isValid()) {
-//    settings.setFriendActivity(friendPk, chatTime);
-//  }
-
-
   nameLabel->setText(m_friend->getDisplayedName());
 
   // update alias when edited
@@ -280,8 +267,8 @@ void FriendWidget::onContextMenuCalled(QContextMenuEvent *event) {
   //    circleMenu->addAction(action);
   //  }
 
-  const auto setAlias = menu.addAction(tr("Set alias..."));
-  connect(setAlias, &QAction::triggered, nameLabel, &CroppingLabel::editBegin);
+//  const auto setAlias = menu.addAction(tr("Set alias..."));
+//  connect(setAlias, &QAction::triggered, nameLabel, &CroppingLabel::editBegin);
 
   //  自动接收文件
   //  menu.addSeparator();

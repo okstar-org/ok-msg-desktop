@@ -28,8 +28,10 @@ class AboutFriend : public QObject, public IAboutFriend
 
 public:
     AboutFriend(const Friend* f, IFriendSettings* const settings);
-
+    const Friend* getFriend()const override {return f;}
     QString getName() const override;
+    const QString & getAlias() const override;
+
     QString getStatusMessage() const override;
     ToxPk getPublicKey() const override;
 

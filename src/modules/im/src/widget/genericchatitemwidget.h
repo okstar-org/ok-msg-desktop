@@ -60,10 +60,12 @@ public:
     inline Contact* getContact(){
         if(isGroup()){
             auto g = GroupList::findGroup(GroupId(contactId));
+            assert(g);
             return (Contact*)g;
         }else{
            auto f= FriendList::findFriend(ToxPk(contactId));
-            return (Contact*)f;
+           assert(f);
+           return (Contact*)f;
         }
     }
 

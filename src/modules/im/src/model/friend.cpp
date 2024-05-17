@@ -16,6 +16,8 @@
 #include "src/widget/form/chatform.h"
 
 
+
+
 Friend::Friend(
                const ToxPk &friendPk,    //
                bool isFriend,
@@ -29,6 +31,8 @@ Friend::Friend(
 {
     auto core=Core::getInstance();
     friendStatus = core->getFriendStatus(friendPk.toString());
+
+
 }
 
 

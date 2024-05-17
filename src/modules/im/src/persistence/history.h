@@ -180,11 +180,19 @@ public:
 
     void markAsDelivered(RowId messageId);
 
+
+    void setFriendAlias(const QString& friendPk, const QString& alias);
+    QString getFriendAlias(const QString& friendPk);
+
 protected:
     QVector<RawDatabase::Query>
-    generateNewMessageQueries(const QString& friendPk, const QString& message,
-                              const QString& sender, const QDateTime& time, bool isDelivered,
-                              QString dispName, std::function<void(RowId)> insertIdCallback = {});
+    generateNewMessageQueries(const QString& friendPk,
+                              const QString& message,
+                              const QString& sender,
+                              const QDateTime& time,
+                              bool isDelivered,
+                              QString dispName,
+                              std::function<void(RowId)> insertIdCallback = {});
 
 signals:
     void fileInsertionReady(FileDbInsertionData data);
@@ -196,8 +204,13 @@ private slots:
 
 private:
     bool historyAccessBlocked();
-    static RawDatabase::Query generateFileFinished(RowId fileId, bool success,
-                                                   const QString& filePath, const QByteArray& fileHash);
+    static RawDatabase::Query generateFileFinished(RowId fileId,
+                                                   bool success,
+                                                   const QString& filePath,
+                                                   const QByteArray& fileHash);
+
+
+
     std::shared_ptr<RawDatabase> db;
 
 

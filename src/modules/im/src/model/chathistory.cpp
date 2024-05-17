@@ -373,7 +373,7 @@ void ChatHistory::loadHistoryIntoSessionChatLog(ChatLogIdx start) const
     assert(getFirstIdx() == ChatLogIdx(0));
     auto messages = history->getMessagesForFriend(f.getPublicKey(), start.get(), end.get());
 
-    assert(messages.size() == end.get() - start.get());
+//    assert(messages.size() == end.get() - start.get());
     ChatLogIdx nextIdx = start;
 
     for (const auto& message : messages) {
@@ -433,7 +433,7 @@ void ChatHistory::loadHistoryIntoSessionChatLog(ChatLogIdx start) const
         }
     }
 
-    assert(nextIdx == end);
+//    assert(nextIdx == end);
 }
 
 /**

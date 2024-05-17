@@ -32,7 +32,7 @@ public:
     const QString& getName() const{return name;};
 
     void setAlias(const QString &name);
-    const QString&  getAlias() const{return alias;};
+    const QString& getAlias() const{return alias;};
     bool hasAlias() const { return !alias.isEmpty(); }
 
 
@@ -43,6 +43,7 @@ public:
 
     void setAvatar(const QPixmap& pix);
     void clearAvatar();
+   const QPixmap& getAvatar() const {return avatar;};
 
     virtual void setEventFlag(bool flag) ;
     virtual bool getEventFlag() const ;

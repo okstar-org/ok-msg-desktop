@@ -38,7 +38,12 @@ AboutFriend::AboutFriend(const Friend* f, IFriendSettings* const s)
 
 QString AboutFriend::getName() const
 {
-    return f->getDisplayedName();
+    return f->getName();
+}
+
+const QString &AboutFriend::getAlias() const
+{
+    return f->getAlias();
 }
 
 QString AboutFriend::getStatusMessage() const
@@ -53,10 +58,11 @@ ToxPk AboutFriend::getPublicKey() const
 
 QPixmap AboutFriend::getAvatar() const
 {
-    const ToxPk pk = f->getPublicKey();
-    const QPixmap avatar = Nexus::getProfile()->loadAvatar(pk);
-    return avatar.isNull() ? QPixmap(QStringLiteral(":/img/contact_dark.svg"))
-                           : avatar;
+    return f->getAvatar();
+//    const ToxPk pk = f->getPublicKey();
+//    const QPixmap avatar = Nexus::getProfile()->loadAvatar(pk);
+//    return avatar.isNull() ? QPixmap(QStringLiteral(":/img/contact_dark.svg"))
+//                           : avatar;
 }
 
 QString AboutFriend::getNote() const
