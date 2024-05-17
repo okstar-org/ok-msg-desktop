@@ -274,12 +274,8 @@ which may lead to problems with video calls.</source>
         <translation>状态消息</translation>
     </message>
     <message>
-        <source>Used aliases:</source>
-        <translation>已用的别名：</translation>
-    </message>
-    <message>
-        <source>HISTORY OF ALIASES</source>
-        <translation>曾用的别名</translation>
+        <source>Alias:</source>
+        <translation>备注名：</translation>
     </message>
     <message>
         <source>Automatically accept files from contact if set</source>
@@ -1087,10 +1083,6 @@ so you can save the file on windows.</source>
         <translation>在新窗口打开</translation>
     </message>
     <message>
-        <source>Set alias...</source>
-        <translation>添加备注名...</translation>
-    </message>
-    <message>
         <source>Auto accept files from this friend</source>
         <comment>context menu entry</comment>
         <translation>自动接收此好友发送的文件</translation>
@@ -1522,10 +1514,6 @@ instead of system taskbar.</source>
     <message>
         <source>Remove chat from this window</source>
         <translation>从这个窗口中删除会话</translation>
-    </message>
-    <message>
-        <source>Set title...</source>
-        <translation>设置名称...</translation>
     </message>
     <message>
         <source>Quit group</source>

@@ -212,7 +212,7 @@ void GroupWidget::contextMenuEvent(QContextMenuEvent *event) {
 
   menu.addSeparator();
 
-  QAction *setTitle = menu.addAction(tr("Set title..."));
+//  QAction *setTitle = menu.addAction(tr("Set title..."));
   QAction *quitGroup =
       menu.addAction(tr("Quit group", "Menu to quit a groupchat"));
   QAction *destroyGrpAct =

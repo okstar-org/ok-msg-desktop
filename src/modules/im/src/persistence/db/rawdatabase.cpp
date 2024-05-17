@@ -776,9 +776,8 @@ void RawDatabase::process()
                                                 - static_cast<int>(compileTail - query.query.data()),
                                             &stmt, &compileTail))
                     != SQLITE_OK) {
-                    qWarning() << "Failed to prepare statement" << anonymizeQuery(query.query)
-                               << "and returned" << r;
-                    qWarning("The full error is %d: %s", sqlite3_errcode(sqlite), sqlite3_errmsg(sqlite));
+                    qWarning() << "Failed to prepare statement:" << anonymizeQuery(query.query);
+                    qWarning("The error code is %d errmsg is %s", sqlite3_errcode(sqlite), sqlite3_errmsg(sqlite));
                     goto cleanupStatements;
                 }
                 query.statements += stmt;
@@ -833,6 +832,9 @@ void RawDatabase::process()
                     goto cleanupStatements;
                 case SQLITE_CONSTRAINT:
                     qWarning() << "Constraint error executing query" << anonQuery;
+                    goto cleanupStatements;
+                case SQLITE_BUSY:
+                    qWarning() << "Is busying executing query" << anonQuery;
                     goto cleanupStatements;
                 default:
                     qWarning() << "Unknown error" << result << "executing query" << anonQuery;

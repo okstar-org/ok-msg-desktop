@@ -280,8 +280,8 @@ void FriendWidget::onContextMenuCalled(QContextMenuEvent *event) {
   //    circleMenu->addAction(action);
   //  }
 
-  const auto setAlias = menu.addAction(tr("Set alias..."));
-  connect(setAlias, &QAction::triggered, nameLabel, &CroppingLabel::editBegin);
+//  const auto setAlias = menu.addAction(tr("Set alias..."));
+//  connect(setAlias, &QAction::triggered, nameLabel, &CroppingLabel::editBegin);
 
   //  自动接收文件
   //  menu.addSeparator();

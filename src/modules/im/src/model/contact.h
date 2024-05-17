@@ -43,6 +43,7 @@ public:
 
     void setAvatar(const QPixmap& pix);
     void clearAvatar();
+   const QPixmap& getAvatar() const {return avatar;};
 
     virtual void setEventFlag(bool flag) ;
     virtual bool getEventFlag() const ;

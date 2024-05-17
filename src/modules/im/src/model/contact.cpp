@@ -13,6 +13,8 @@
 
 #include "contact.h"
 #include <QVariant>
+#include <src/nexus.h>
+#include "src/persistence/profile.h"
 
 Contact:: Contact(){
 
@@ -21,6 +23,11 @@ Contact:: Contact(){
 Contact:: Contact(const ContactId& id_, const QString& name_, const QString& alias_, bool isGroup_)
     : id(id_),name{name_},alias{alias_},group(isGroup_){
 
+    auto profile = Nexus::getProfile();
+    auto alias0 = profile->getFriendAlias(id.toString());
+    if(!alias0.isEmpty()){
+        alias = alias0;
+    }
 }
 
 Contact::~Contact()
@@ -32,7 +39,10 @@ QString Contact::getDisplayedName() const {
   if (!alias.isEmpty()) {
     return alias;
   }
-  return name;
+  if(!name.isEmpty()){
+      return name;
+  }
+  return id.username;
 }
 
 void Contact::setAvatar(const QPixmap &pix)

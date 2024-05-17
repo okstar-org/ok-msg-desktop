@@ -72,6 +72,8 @@ public:
   static QString getDbPath(const QString &profileName);
 
   void saveAvatar(const ToxPk &owner, const QByteArray &avatar);
+  void saveFriendAlias(const QString& friendPk, const QString& alias);
+  QString getFriendAlias(const QString& friendPk);
 
 signals:
   void selfAvatarChanged(const QPixmap &pixmap);

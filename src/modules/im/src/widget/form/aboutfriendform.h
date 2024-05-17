@@ -25,6 +25,7 @@ class AboutFriendForm;
 }
 
 class Widget;
+class Profile;
 
 class AboutFriendForm : public QWidget
 {
@@ -40,11 +41,12 @@ private:
     Ui::AboutFriendForm* ui;
     const std::unique_ptr<IAboutFriend> about;
     Widget *widget;
-
+    Profile *profile;
 signals:
     void histroyRemoved();
 
 private slots:
+    void onAliasChanged(const QString& text);
     void onAutoAcceptDirChanged(const QString& path);
     void onSendMessageClicked();
     void onAutoAcceptDirClicked();

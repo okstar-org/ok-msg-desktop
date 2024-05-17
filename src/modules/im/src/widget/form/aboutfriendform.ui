@@ -136,6 +136,29 @@
    </item>
    <item row="1" column="0">
     <layout class="QGridLayout" name="infoLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="accountLabel">
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="text">
+        <string>Account:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="9" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Clear history:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
      <item row="0" column="1">
       <widget class="QLineEdit" name="friendId">
        <property name="enabled">
@@ -164,16 +187,10 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="accountLabel">
-       <property name="layoutDirection">
-        <enum>Qt::LeftToRight</enum>
-       </property>
+     <item row="8" column="1">
+      <widget class="QPushButton" name="selectSaveDir">
        <property name="text">
-        <string>Account:</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        <string>Auto accept for this contact is disabled</string>
        </property>
       </widget>
      </item>
@@ -206,6 +223,13 @@
        </property>
       </widget>
      </item>
+     <item row="9" column="1">
+      <widget class="QPushButton" name="removeHistory">
+       <property name="text">
+        <string>Clear</string>
+       </property>
+      </widget>
+     </item>
      <item row="4" column="0">
       <widget class="QLabel" name="autoAcceptCallLabel">
        <property name="text">
@@ -216,10 +240,13 @@
        </property>
       </widget>
      </item>
-     <item row="8" column="1">
-      <widget class="QPushButton" name="selectSaveDir">
+     <item row="5" column="1">
+      <widget class="QCheckBox" name="autoacceptfile">
+       <property name="accessibleDescription">
+        <string>Automatically accept files from contact if set</string>
+       </property>
        <property name="text">
-        <string>Auto accept for this contact is disabled</string>
+        <string>Auto accept files</string>
        </property>
       </widget>
      </item>
@@ -233,30 +260,44 @@
        </property>
       </widget>
      </item>
-     <item row="9" column="0">
-      <widget class="QLabel" name="label">
+     <item row="1" column="0">
+      <widget class="QLabel" name="aliasLabel">
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
        <property name="text">
-        <string>Clear history:</string>
+        <string>Alias:</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
      </item>
-     <item row="9" column="1">
-      <widget class="QPushButton" name="removeHistory">
-       <property name="text">
-        <string>Clear</string>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="alias">
+       <property name="enabled">
+        <bool>true</bool>
        </property>
-      </widget>
-     </item>
-     <item row="5" column="1">
-      <widget class="QCheckBox" name="autoacceptfile">
-       <property name="accessibleDescription">
-        <string>Automatically accept files from contact if set</string>
+       <property name="mouseTracking">
+        <bool>false</bool>
+       </property>
+       <property name="acceptDrops">
+        <bool>false</bool>
+       </property>
+       <property name="inputMask">
+        <string notr="true"/>
        </property>
        <property name="text">
-        <string>Auto accept files</string>
+        <string/>
+       </property>
+       <property name="cursorPosition">
+        <number>0</number>
+       </property>
+       <property name="readOnly">
+        <bool>false</bool>
+       </property>
+       <property name="cursorMoveStyle">
+        <enum>Qt::LogicalMoveStyle</enum>
        </property>
       </widget>
      </item>

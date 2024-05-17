@@ -132,7 +132,7 @@ MessageSessionWidget::MessageSessionWidget(
 //  chatRoom = std::make_unique<FriendChatroom>(m_friend, dialogManager);
 //  auto frnd = chatRoom->getFriend();
 
-  nameLabel->setText(toxPk.username);
+  nameLabel->setText(getContact()->getDisplayedName());;
 
   // update alias when edited
 //  connect(nameLabel, &CroppingLabel::editFinished, //
