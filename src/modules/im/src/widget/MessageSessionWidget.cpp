@@ -65,13 +65,10 @@ MessageSessionWidget::MessageSessionWidget(
                            ChatType chatType)
     : GenericChatroomWidget(chatType, toxPk),
       contentLayout(layout),
-      sendWorker{nullptr},
-      isDefaultAvatar{true} {
+      sendWorker{nullptr}
+        {
 
   qDebug() <<__func__ <<"friend:"<<toxPk.toString();
-
-  avatar->setPixmap(QPixmap(":/img/contact.svg"));
-
 
   auto profile = Nexus::getProfile();
   auto core = Core::getInstance();
@@ -176,11 +173,11 @@ MessageSessionWidget::MessageSessionWidget(
             do_widgetClicked();
             emit widgetClicked(this);
           });
-  //  connect(MessageSessionWidget, &MessageSessionWidget::newWindowOpened,
-  //          [this](GenericChatroomWidget *w) {
-  //            Q_UNUSED(w);
-  //            emit MessageSessionWidget->newWindowOpened(MessageSessionWidget);
-  //          });
+
+    connect(getContact(), &Contact::avatarChanged,
+            [&](auto& pic) {
+              setAvatar(pic);
+            });
 
 }
 
@@ -466,27 +463,9 @@ void MessageSessionWidget::setAsActiveChatroom() { setActive(true); }
 
 void MessageSessionWidget::setAsInactiveChatroom() { setActive(false); }
 
-void MessageSessionWidget::setAvatar(const QPixmap &pixmap) {
-  if(pixmap.isNull()){
-    return;
-  }
-  isDefaultAvatar = false;
-  avatar->setPixmap(pixmap);
 
-  if(!isGroup()){
-       auto frnd = FriendList::findFriend(ToxPk(contactId));
-       frnd->setAvatar(pixmap);
-  }
-}
+void MessageSessionWidget::onActiveSet(bool active) {
 
-void MessageSessionWidget::onSetActive(bool active) {
-
-  if (isDefaultAvatar) {
-    const auto uri = active ?
-                            QStringLiteral(":img/contact_dark.svg")//
-                            : QStringLiteral(":img/contact.svg");
-    avatar->setPixmap(QPixmap{uri});
-  }
 }
 
 QString MessageSessionWidget::getStatusString() const {
@@ -538,17 +517,22 @@ void MessageSessionWidget::onAvatarSet(const ToxPk &friendPk, const QPixmap& pic
 //  }
   qDebug() <<__func__<< "onAvatarSet:" << friendPk.toString()
            << "pic:" << pic.size();
-  isDefaultAvatar = false;
 
-  if (!pic.isNull()) {
-    setAvatar(pic);
+  if(pic.isNull())
+      return;
+
+  auto c = getContact();
+  if(c){
+      c->setAvatar(pic);
   }
+
+
+    setAvatar(pic);
+
 }
 
 void MessageSessionWidget::onAvatarRemoved(const ToxPk &friendPk) {
 
-
-  isDefaultAvatar = true;
 
   const QString path =
       QString(":/img/contact%1.svg").arg(isActive() ? "_dark" : "");
@@ -582,8 +566,7 @@ void MessageSessionWidget::mouseMoveEvent(QMouseEvent *ev) {
   }
 }
 
-void MessageSessionWidget::setRecvMessage(const FriendMessage &msg,
-                                          bool isAction) {
+void MessageSessionWidget::setRecvMessage(const FriendMessage &msg, bool isAction) {
   auto md= (FriendMessageDispatcher*)sendWorker->dispacher();
   md->onMessageReceived(isAction,msg);
   updateLastMessage(msg);

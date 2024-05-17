@@ -50,7 +50,7 @@ class MessageSessionWidget : public GenericChatroomWidget
     void contextMenuEvent(QContextMenuEvent* event) override final;
     void setAsActiveChatroom() override final;
     void setAsInactiveChatroom() override final;
-    void setAvatar(const QPixmap &pixmap) override final;
+
     void setStatus(Status::Status status, bool event);
     void setStatusMsg(const QString& msg) ;
     void setTyping(bool typing);
@@ -68,6 +68,7 @@ class MessageSessionWidget : public GenericChatroomWidget
 
 
     void setRecvGroupMessage(const GroupMessage& msg);
+
 
 
 signals:
@@ -101,7 +102,7 @@ protected:
     virtual void mousePressEvent(QMouseEvent* ev) override;
     virtual void mouseMoveEvent(QMouseEvent* ev) override;
     void setFriendAlias();
-    void onSetActive(bool active) override;
+    void onActiveSet(bool active) override;
 
 private:
 
@@ -110,7 +111,7 @@ private:
     std::unique_ptr<ContentWidget> contentWidget;
     std::unique_ptr<SendWorker> sendWorker;
 
-    bool isDefaultAvatar;
+
 
 
 };

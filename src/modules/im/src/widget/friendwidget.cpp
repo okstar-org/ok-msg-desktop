@@ -472,22 +472,9 @@ void FriendWidget::setAsActiveChatroom() { setActive(true); }
 
 void FriendWidget::setAsInactiveChatroom() { setActive(false); }
 
-void FriendWidget::setAvatar(const QPixmap &pixmap) {
-  if(pixmap.isNull()){
-    return;
-  }
-  isDefaultAvatar = false;
-  avatar->setPixmap(pixmap);
-}
 
-void FriendWidget::onSetActive(bool active) {
+void FriendWidget::onActiveSet(bool active) {
 
-  if (isDefaultAvatar) {
-    const auto uri = active ?
-                            QStringLiteral(":img/contact_dark.svg")//
-                            : QStringLiteral(":img/contact.svg");
-    avatar->setPixmap(QPixmap{uri});
-  }
 }
 
 void FriendWidget::updateStatusLight(Status::Status status, bool event) {
@@ -495,18 +482,15 @@ void FriendWidget::updateStatusLight(Status::Status status, bool event) {
 //  const bool event = frnd->getEventFlag();
 
   if (event) {
-    const Settings &s = Settings::getInstance();
+//    const Settings &s = Settings::getInstance();
 //    const uint32_t circleId = s.getFriendCircleID(frnd->getPublicKey());
 //    CircleWidget *circleWidget = CircleWidget::getFromID(circleId);
 //    if (circleWidget) {
 //      circleWidget->setExpanded(true);
 //    }
-
     emit updateFriendActivity(*frnd);
   }
-
-    GenericChatItemWidget::updateStatusLight(status, event);
-
+  GenericChatItemWidget::updateStatusLight(status, event);
 }
 
 QString FriendWidget::getStatusString() const {
@@ -531,7 +515,7 @@ const Contact *FriendWidget::getContact() const { return getFriend(); }
 void FriendWidget::search(const QString &searchString, bool hide) {
   const auto frnd = chatRoom->getFriend();
   searchName(searchString, hide);
-  const Settings &s = Settings::getInstance();
+//  const Settings &s = Settings::getInstance();
 //  const uint32_t circleId = s.getFriendCircleID(frnd->getPublicKey());
 //  CircleWidget *circleWidget = CircleWidget::getFromID(circleId);
 //  if (circleWidget) {

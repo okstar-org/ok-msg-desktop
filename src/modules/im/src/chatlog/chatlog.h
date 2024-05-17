@@ -170,6 +170,7 @@ private:
     // layout
     QMargins margins = QMargins(10, 10, 10, 10);
     qreal lineSpacing = 20.0f;
+
 };
 
 #endif // CHATLOG_H

@@ -906,8 +906,11 @@ void ChatLog::onMultiClickTimeout()
 
 void ChatLog::onVScrollBarValueChanged(int value)
 {
+//        qDebug() <<"height"<< sceneRect().height()<<" value"<<value
+//                << verticalScrollBar()->maximum();
        if (value == verticalScrollBar()->maximum()) {
            // 当垂直滚动条的值改变时触发
+           qDebug() <<"readAll";
            emit readAll();
        }
 }

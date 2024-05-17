@@ -20,7 +20,7 @@
 
 GenericChatroomWidget::GenericChatroomWidget(ChatType type,  const ContactId &cid,  QWidget* parent)
     : GenericChatItemWidget(type, cid, parent),
-      contactId(cid), active{false}
+      contactId(cid)
 {
 
     Settings& s = Settings::getInstance();
@@ -95,27 +95,6 @@ void GenericChatroomWidget::compactChange(bool _compact)
 //        statusMessageLabel->setFont(Style::getFont(Style::Medium));
         nameLabel->setFont(Style::getFont(Style::Big));
     }
-}
-
-bool GenericChatroomWidget::isActive()
-{
-    return active;
-}
-
-void GenericChatroomWidget::setActive(bool _active)
-{
-    active = _active;
-    if (active) {
-        setBackgroundRole(QPalette::Highlight);
-//        statusMessageLabel->setForegroundRole(QPalette::HighlightedText);
-        nameLabel->setForegroundRole(QPalette::HighlightedText);
-    } else {
-        setBackgroundRole(QPalette::Window);
-//        statusMessageLabel->setForegroundRole(QPalette::WindowText);
-        nameLabel->setForegroundRole(QPalette::WindowText);
-    }
-
-    onSetActive(active);
 }
 
 void GenericChatroomWidget::setName(const QString& name)

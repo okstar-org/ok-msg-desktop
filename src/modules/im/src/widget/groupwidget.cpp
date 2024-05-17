@@ -328,15 +328,11 @@ void GroupWidget::updateUserCount(int numPeers) {
 //    }
 }
 
-void GroupWidget::setAvatar(const QPixmap &pixmap) {
-  avatar->setPixmap(pixmap);
-}
-
 void GroupWidget::setAsActiveChatroom() { setActive(true); }
 
 void GroupWidget::setAsInactiveChatroom() { setActive(false); }
 
-void GroupWidget::onSetActive(bool active) {
+void GroupWidget::onActiveSet(bool active) {
   const auto uri = active ? ":img/group_dark.svg" : ":img/group.svg";
   avatar->setPixmap(Style::scaleSvgImage(uri, avatar->width(), avatar->height()));
 }

@@ -38,7 +38,7 @@ public:
               bool compact);
 
   ~GroupWidget();
-  void setAvatar(const QPixmap &pixmap) final override;
+
   void setAsInactiveChatroom() final override;
   void setAsActiveChatroom() final override;
   void updateStatusLight(Status::Status status, bool event) final override;
@@ -66,7 +66,7 @@ protected:
   void dragEnterEvent(QDragEnterEvent *ev) override;
   void dragLeaveEvent(QDragLeaveEvent *ev) override;
   void dropEvent(QDropEvent *ev) override;
-  void onSetActive(bool active) override;
+  void onActiveSet(bool active) override;
 
 private slots:
   void retranslateUi();

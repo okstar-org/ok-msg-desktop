@@ -42,6 +42,7 @@ public:
     QString getId() const {return id.toString(); };
 
     void setAvatar(const QPixmap& pix){
+
         avatar=pix;
         emit avatarChanged(avatar);
     }
@@ -63,7 +64,7 @@ protected:
     QString name;
     //别名(自己备注)
     QString alias;
-
+    //头像
     QPixmap avatar;
 };
 

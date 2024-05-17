@@ -777,6 +777,7 @@ void GenericChatForm::clearChatArea(bool confirm, bool inform) {
 void GenericChatForm::onSelectAllClicked() { chatLog->selectAll(); }
 
 void GenericChatForm::insertChatMessage(IChatItem::Ptr msg) {
+  qDebug() << __func__ << msg->centerContent()->getText();
   chatLog->insertChatlineAtBottom(msg);
   emit messageInserted();
 }

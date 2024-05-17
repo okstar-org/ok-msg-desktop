@@ -15,11 +15,17 @@
 
 #include <QFrame>
 #include <QLabel>
+#include <src/friendlist.h>
+#include <src/grouplist.h>
+#include <src/model/contact.h>
 #include "src/model/message.h"
 #include "src/model/status.h"
 
 class CroppingLabel;
 class MaskablePixmapWidget;
+
+
+
 /**
  * 聊天控件
  */
@@ -51,21 +57,45 @@ public:
 
     bool isGroup() const {return chatType == ChatType::GroupChat;};
 
+    inline Contact* getContact(){
+        if(isGroup()){
+            auto g = GroupList::findGroup(GroupId(contactId));
+            return (Contact*)g;
+        }else{
+           auto f= FriendList::findFriend(ToxPk(contactId));
+            return (Contact*)f;
+        }
+    }
+
     void setLastMessage(const QString& msg);
 
     void updateLastMessage(const Message&);
 
     virtual void updateStatusLight(Status::Status status, bool event);
     virtual void clearStatusLight();
+
+    bool isActive();
+    void setActive(bool active);
+    virtual void onActiveSet(bool active) = 0;
+
+    void setAvatar(const QPixmap& pic);
+    void clearAvatar();
+    void setDefaultAvatar();
+
+
 protected:
     CroppingLabel* nameLabel;
     CroppingLabel* lastMessageLabel;
     QLabel* statusPic;
+
+    Status::AvatarSet avatarSetStatus;
     MaskablePixmapWidget* avatar;
+
     bool compact;
     ChatType chatType;
     ContactId contactId;
     Status::Status prevStatus;
+    bool active;
 };
 
 #endif // GENERICCHATITEMWIDGET_H

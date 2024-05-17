@@ -37,7 +37,7 @@ public:
 public slots:
     virtual void setAsActiveChatroom() = 0;
     virtual void setAsInactiveChatroom() = 0;
-    virtual void setAvatar(const QPixmap& pixmap) = 0;
+
 
     virtual void resetEventFlags() = 0;
     virtual QString getStatusString() const = 0;
@@ -45,7 +45,6 @@ public slots:
 
     virtual bool eventFilter(QObject*, QEvent*) final override;
 
-    bool isActive();
 
     void setName(const QString& name);
     void setStatusMsg(const QString& status);
@@ -57,8 +56,7 @@ public slots:
     void activate();
     void compactChange(bool compact);
 
-    void setActive(bool active);
-    virtual void onSetActive(bool active) = 0;
+
 signals:
     void chatroomWidgetClicked(GenericChatroomWidget* widget);
     void newWindowOpened(GenericChatroomWidget* widget);
@@ -78,7 +76,7 @@ protected:
     QVBoxLayout* textLayout = nullptr;
 
 
-    bool active;
+
     ContactId contactId;
 };
 

@@ -44,7 +44,7 @@ class FriendWidget : public GenericChatroomWidget
     void contextMenuEvent(QContextMenuEvent* event) override final;
     void setAsActiveChatroom() override final;
     void setAsInactiveChatroom() override final;
-    void setAvatar(const QPixmap &pixmap) override final;
+
     void setStatus(Status::Status status, bool event);
     void setStatusMsg(const QString& msg) ;
     void setTyping(bool typing);
@@ -83,7 +83,7 @@ protected:
     virtual void mousePressEvent(QMouseEvent* ev) override;
     virtual void mouseMoveEvent(QMouseEvent* ev) override;
 
-    void onSetActive(bool active) override;
+    void onActiveSet(bool active) override;
   private:
     ContentLayout* contentLayout;
 //    ContentWidget* contentWidget;

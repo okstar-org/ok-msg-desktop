@@ -20,9 +20,14 @@
 #include <src/friendlist.h>
 #include "src/model/friend.h"
 
+
+
+
 GenericChatItemWidget::GenericChatItemWidget(ChatType type, const ContactId &cid, QWidget* parent)
     : QFrame(parent)
-    , chatType(type), statusPic{nullptr}, contactId{cid}, prevStatus{Status::Status::None}
+    , chatType(type), statusPic{nullptr},
+      contactId{cid}, prevStatus{Status::Status::None},
+      active{false}, avatarSetStatus{Status::AvatarSet::None}
 {
     nameLabel = new CroppingLabel(this);
     nameLabel->setTextFormat(Qt::PlainText);
@@ -46,6 +51,14 @@ GenericChatItemWidget::GenericChatItemWidget(ChatType type, const ContactId &cid
   lastMessageLabel->setPalette(p);
 //  lastMessageLabel->setForegroundRole(QPalette::WindowText);
 
+
+
+
+  statusPic = new QLabel(this);
+  if(type == ChatType::Chat){ 
+      statusPic->setPixmap(QPixmap(Status::getIconPath(Status::Status::Offline)));
+  }
+
   // avatar
   QSize size;
 //    if (isCompact())
@@ -54,15 +67,7 @@ GenericChatItemWidget::GenericChatItemWidget(ChatType type, const ContactId &cid
       size = QSize(40, 40);
 
   avatar = new MaskablePixmapWidget(this, size, ":/img/avatar_mask.svg");
-  statusPic = new QLabel(this);
-
-
-  if(type == ChatType::Chat){
-      avatar->setPixmap(QPixmap(":/img/contact.svg"));
-      statusPic->setPixmap(QPixmap(Status::getIconPath(Status::Status::Offline)));
-  }else{
-      avatar->setPixmap(QPixmap(":/img/group.svg"));
-  }
+  setDefaultAvatar();
 }
 
 
@@ -103,7 +108,7 @@ void GenericChatItemWidget::updateLastMessage(const Message &m)
 
 void GenericChatItemWidget::updateStatusLight(Status::Status status, bool event)
 {
-    if(event && !isGroup()){
+    if(!isGroup()){
         //事件（通知）状态，保留当前状态
         auto f = FriendList::findFriend(contactId);
         if(f){
@@ -123,3 +128,55 @@ void GenericChatItemWidget::clearStatusLight()
         statusPic->setPixmap(QPixmap(Status::getIconPath(prevStatus, false)));
     }
 }
+
+
+
+bool GenericChatItemWidget::isActive()
+{
+    return active;
+}
+
+void GenericChatItemWidget::setActive(bool _active)
+{
+    active = _active;
+    if (active) {
+        setBackgroundRole(QPalette::Highlight);
+//        statusMessageLabel->setForegroundRole(QPalette::HighlightedText);
+        nameLabel->setForegroundRole(QPalette::HighlightedText);
+    } else {
+        setBackgroundRole(QPalette::Window);
+//        statusMessageLabel->setForegroundRole(QPalette::WindowText);
+        nameLabel->setForegroundRole(QPalette::WindowText);
+    }
+
+    if(avatarSetStatus == Status::AvatarSet::DefaultSet){
+        setDefaultAvatar();
+    }
+
+    onActiveSet(active);
+}
+
+void GenericChatItemWidget::setAvatar(const QPixmap &pic)
+{
+    if(pic.isNull())
+        return;
+
+    avatar->setPixmap(pic);
+    avatarSetStatus=Status::AvatarSet::UserSet;
+}
+
+void GenericChatItemWidget::clearAvatar()
+{
+    avatar->clear();
+    setDefaultAvatar();
+}
+
+void GenericChatItemWidget::setDefaultAvatar()
+{
+    auto name = chatType == ChatType::Chat ? "contact" : "group";
+    const auto uri = active ? QString(":img/%1.svg").arg(name)//
+                            : QString(":img/%1_dark.svg").arg(name);
+    avatar->setPixmap(QPixmap(uri));
+    avatarSetStatus=Status::AvatarSet::DefaultSet;
+}
+
