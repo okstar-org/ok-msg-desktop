@@ -143,7 +143,7 @@ sudo apt install -y libcrypto++-dev  libssl-dev
 sudo apt install -y libpipewire-0.3-dev libxss-dev libgbm-dev libdrm-dev libxdamage-dev libxrender-dev libxrandr-dev libxtst-dev \
   libasound2-dev libpulse-dev libavcodec-dev libavformat-dev libswscale-dev libavdevice-dev libvpx-dev \
   libopus-dev libjpeg-dev libopenal-dev libopenh264-dev \
-  libexif-dev libqrencode-dev libsodium-dev libsqlcipher-dev
+  libexif-dev libqrencode-dev libsodium-dev libsqlite3-dev
 ```
 > 构建OkRtc模块
 ```shell
@@ -163,7 +163,7 @@ dnf install -y gcc g++
 dnf install -y qt5-qtbase-devel qt6-qtbase-gui  qt5-qtmultimedia-devel \
   qt5-qtsvg-devel qt5-qttools-devel qt5-qttools-static \
   libavcodec-free-devel libavdevice-free-devel \
-  libexif-free-devel qrencode-devel libsodium-devel sqlcipher-devel \
+  libexif-free-devel qrencode-devel libsodium-devel sqlite3-devel \
   libvpx-devel openal-soft-devel openssl-devel
 ```
 
