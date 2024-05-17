@@ -59,7 +59,6 @@ class FriendWidget : public GenericChatroomWidget
     void search(const QString& searchString, bool hide = false);
     void setRecvMessage(const FriendMessage &message,
                         bool isAction);
-    virtual void updateStatusLight(Status::Status status, bool event) override;
 
 signals:
     void friendWidgetClicked(FriendWidget* widget);
@@ -73,8 +72,7 @@ signals:
     void updateFriendActivity(const Friend& frnd);
 //    void setActive(bool active);
 public slots:
-  void onAvatarSet(const ToxPk& friendPk, const QPixmap& pic);
-  void onAvatarRemoved(const ToxPk& friendPk);
+
   void onContextMenuCalled(QContextMenuEvent* event);
   void do_widgetClicked(GenericChatroomWidget *w);
   void showDetails();
@@ -90,25 +88,13 @@ protected:
 
     std::unique_ptr<AboutFriendForm> about;
 
-    MessageProcessor::SharedParams sharedMessageProcessorParams;
-    std::unique_ptr<FriendMessageDispatcher> messageDispatcher;
-    std::unique_ptr<ChatHistory> chatHistory;
-    std::unique_ptr<ChatForm> chatForm;
-    std::unique_ptr<FriendChatroom> chatRoom;
-    std::unique_ptr<SessionChatLog> chatLog;
     Friend *m_friend;
-
-
-    bool isDefaultAvatar;
 
     ContentDialog *createContentDialog() const;
     ContentDialog * addFriendDialog(const Friend *frnd );
 
 private slots:
-    void removeChatWindow();
-    void moveToNewCircle();
-    void removeFromCircle();
-    void moveToCircle(int circleId);
+
     void changeAutoAccept(bool enable);
 
 };

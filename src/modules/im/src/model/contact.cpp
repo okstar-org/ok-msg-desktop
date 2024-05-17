@@ -35,6 +35,18 @@ QString Contact::getDisplayedName() const {
   return name;
 }
 
+void Contact::setAvatar(const QPixmap &pix)
+{
+    avatar=pix;
+    emit avatarChanged(avatar);
+}
+
+void Contact::clearAvatar()
+{
+    avatar = QPixmap{};
+    emit avatarChanged(avatar);
+}
+
 
 void Contact::setName(const QString &_name) {
 

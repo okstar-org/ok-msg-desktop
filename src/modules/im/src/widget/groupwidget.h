@@ -44,13 +44,12 @@ public:
   void updateStatusLight(Status::Status status, bool event) final override;
   void resetEventFlags() final override;
   QString getStatusString() const final override;
-  const Group *getGroup() const ;
+  const Group *getGroup() const {return group;};
 
-  void setName(const QString &name);
   void editName();
   ContentDialog * addGroupDialog(Group *group);
   ContentDialog * createContentDialog()const ;
-  void setRecvMessage(const GroupMessage& msg);
+
   void showDetails();
   void reloadTheme() ;
 
@@ -73,18 +72,12 @@ private slots:
   void updateTitle(const QString &author, const QString &newName);
   void updateUserCount(int numPeers);
   void do_widgetClicked(GenericChatroomWidget *w);
-    void updateDesc(const QString &);
-private:
+  void updateDesc(const QString &);
 
+private:
   Group *group;
   ContentWidget* contentWidget;
   ContentLayout* contentLayout;
-
-  MessageProcessor::SharedParams sharedMessageProcessorParams;
-  std::unique_ptr<GroupMessageDispatcher>  messageDispatcher;
-  std::unique_ptr<GroupChatroom> chatroom;
-  std::unique_ptr<GroupChatForm> chatform;
-  std::unique_ptr<SessionChatLog> chatLog;
   std::unique_ptr<AboutGroupForm> about;
 };
 

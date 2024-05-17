@@ -533,10 +533,11 @@ void MessageSessionWidget::onAvatarSet(const ToxPk &friendPk, const QPixmap& pic
 
 void MessageSessionWidget::onAvatarRemoved(const ToxPk &friendPk) {
 
+  // 清空联系人头像
+  auto c = getContact();
+  c->clearAvatar();
 
-  const QString path =
-      QString(":/img/contact%1.svg").arg(isActive() ? "_dark" : "");
-  avatar->setPixmap(QPixmap(path));
+
 }
 
 void MessageSessionWidget::mousePressEvent(QMouseEvent *ev) {

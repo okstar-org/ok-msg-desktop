@@ -81,9 +81,7 @@ public:
 
   void setRecvGroupMessage(const GroupMessage& msg);
 
-  void setRecvFriendMessage(ToxPk friendnumber,                       //
-                            const FriendMessage &message, //
-                            bool isAction);
+
 
 //  CircleWidget *createCircleWidget(int id = -1);
 signals:

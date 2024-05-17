@@ -40,14 +40,9 @@ GroupWidget::GroupWidget(ContentLayout *layout, QString groupnumber,
   settings::Translator::registerHandler(
       std::bind(&GroupWidget::retranslateUi, this), this);
 
-  avatar->setPixmap(Style::scaleSvgImage(":img/group.svg", avatar->width(), avatar->height()));
-  statusPic->setPixmap(QPixmap(Status::getIconPath(Status::Status::Online)));
+//  avatar->setPixmap(Style::scaleSvgImage(":img/group.svg", avatar->width(), avatar->height()));
+//  statusPic->setPixmap(QPixmap(Status::getIconPath(Status::Status::Online)));
 //  statusPic->setMargin(3);
-
-  connect(this, &GroupWidget::chatroomWidgetClicked, [this]() {
-    this->do_widgetClicked(this);
-    emit groupWidgetClicked(this);
-  });
 
   auto core = Core::getInstance();
   auto &settings = Settings::getInstance();
@@ -57,7 +52,6 @@ GroupWidget::GroupWidget(ContentLayout *layout, QString groupnumber,
   );
 
   auto dialogManager = ContentDialogManager::getInstance();
-  chatroom = std::make_unique<GroupChatroom>(group, dialogManager);
 
   //    Group* g = chatroom->getGroup();
   nameLabel->setText(group->getName());
@@ -68,43 +62,23 @@ GroupWidget::GroupWidget(ContentLayout *layout, QString groupnumber,
   connect(group, &Group::titleChanged, this, &GroupWidget::updateTitle);
   connect(group, &Group::peerCountChanged, this, &GroupWidget::updateUserCount);
   connect(group, &Group::descChanged, this, &GroupWidget::updateDesc);
-  connect(nameLabel, &CroppingLabel::editFinished, group, &Group::setName);
+//  connect(nameLabel, &CroppingLabel::editFinished, group, &Group::setName);
+  connect(getContact(), &Contact::displayedNameChanged,
+          [&](auto& newName) {
+            setName(newName);
+          });
 
-  auto messageProcessor = MessageProcessor(sharedMessageProcessorParams);
-  messageDispatcher = std::make_unique<GroupMessageDispatcher>(
-      *group, std::move(messageProcessor), *core, *core,
-      Settings::getInstance());
-
-  chatLog = std::make_unique<SessionChatLog>(*core);
-
-  chatform = std::make_unique<GroupChatForm>(group, *chatLog,
-                                             *messageDispatcher, settings);
 
   contentWidget = new ContentWidget(this);
   contentWidget->hide();
-//  contentWidget->setGroupChatForm(chatform.get());
 
-  connect(messageDispatcher.get(), &IMessageDispatcher::messageReceived,
-          chatLog.get(), &SessionChatLog::onMessageReceived);
-  connect(messageDispatcher.get(), &IMessageDispatcher::messageSent,
-          chatLog.get(), &SessionChatLog::onMessageSent);
-  connect(messageDispatcher.get(), &IMessageDispatcher::messageComplete,
-          chatLog.get(), &SessionChatLog::onMessageComplete);
 
-  auto notifyReceivedCallback = [this, groupId](const ToxPk &author, const Message &message) {
-      auto isTargeted =
-          std::any_of(message.metadata.begin(), message.metadata.end(),
-                      [](MessageMetadata metadata) {
-                        return metadata.type == MessageMetadataType::selfMention;
-                      });
-      auto &settings = Settings::getInstance();
-      Widget::getInstance()->newGroupMessageAlert(groupId, author, message.content,
-                           isTargeted || settings.getGroupAlwaysNotify());
-    };
+  connect(this, &GroupWidget::chatroomWidgetClicked, [this]() {
+    this->do_widgetClicked(this);
+    emit groupWidgetClicked(this);
+  });
 
-    auto notifyReceivedConnection =
-        connect(messageDispatcher.get(), &IMessageDispatcher::messageReceived,
-                notifyReceivedCallback);
+
 //    groupAlertConnections.insert(groupId, notifyReceivedConnection);
 }
 
@@ -308,13 +282,12 @@ void GroupWidget::updateDesc(const QString &)
 }
 
 void GroupWidget::showDetails(){
-    const auto group = chatroom->getGroup();
+    qDebug() << __func__;
     if(!about){
         qDebug() << "create about for:" << group->getId();
         about = std::make_unique<AboutGroupForm>(group->getPersistentId(), this);
         contentLayout->addWidget(about.get());
     }
-
     contentLayout->setCurrentWidget(about.get());
 }
 
@@ -333,45 +306,44 @@ void GroupWidget::setAsActiveChatroom() { setActive(true); }
 void GroupWidget::setAsInactiveChatroom() { setActive(false); }
 
 void GroupWidget::onActiveSet(bool active) {
-  const auto uri = active ? ":img/group_dark.svg" : ":img/group.svg";
-  avatar->setPixmap(Style::scaleSvgImage(uri, avatar->width(), avatar->height()));
+//  const auto uri = active ? ":img/group_dark.svg" : ":img/group.svg";
+//  avatar->setPixmap(Style::scaleSvgImage(uri, avatar->width(), avatar->height()));
 }
 
 void GroupWidget::updateStatusLight(Status::Status status, bool event) {
-  const Group *g = chatroom->getGroup();
-  if(statusPic){
-    statusPic->setPixmap(QPixmap(Status::getIconPath(status, event)));
-    statusPic->setMargin(event ? 1 : 3);
-  }
+//  const Group *g = chatroom->getGroup();
+//  if(statusPic){
+//    statusPic->setPixmap(QPixmap(Status::getIconPath(status, event)));
+//    statusPic->setMargin(event ? 1 : 3);
+//  }
 }
 
 QString GroupWidget::getStatusString() const {
-  if (chatroom->hasNewMessage()) {
-    return tr("New Message");
-  } else {
-    return tr("Online");
-  }
+//  if (chatroom->hasNewMessage()) {
+//    return tr("New Message");
+//  } else {
+//    return tr("Online");
+//  }
+    return {};
 }
 
 void GroupWidget::editName() { nameLabel->editBegin(); }
 
-// TODO: Remove
-const Group *GroupWidget::getGroup() const { return chatroom->getGroup(); }
 
-void GroupWidget::resetEventFlags() { chatroom->resetEventFlags(); }
+void GroupWidget::resetEventFlags() {  }
 
 void GroupWidget::dragEnterEvent(QDragEnterEvent *ev) {
-  if (!ev->mimeData()->hasFormat("toxPk")) {
-    return;
-  }
-  const ToxPk pk{ev->mimeData()->data("toxPk")};
-  if (chatroom->friendExists(pk)) {
-    ev->acceptProposedAction();
-  }
+//  if (!ev->mimeData()->hasFormat("toxPk")) {
+//    return;
+//  }
+//  const ToxPk pk{ev->mimeData()->data("toxPk")};
+//  if (chatroom->friendExists(pk)) {
+//    ev->acceptProposedAction();
+//  }
 
-  if (!active) {
-    setBackgroundRole(QPalette::Highlight);
-  }
+//  if (!active) {
+//    setBackgroundRole(QPalette::Highlight);
+//  }
 }
 
 void GroupWidget::dragLeaveEvent(QDragLeaveEvent *) {
@@ -381,34 +353,29 @@ void GroupWidget::dragLeaveEvent(QDragLeaveEvent *) {
 }
 
 void GroupWidget::dropEvent(QDropEvent *ev) {
-  if (!ev->mimeData()->hasFormat("toxPk")) {
-    return;
-  }
-  const ToxPk pk{ev->mimeData()->data("toxPk")};
-  if (!chatroom->friendExists(pk)) {
-    return;
-  }
+//  if (!ev->mimeData()->hasFormat("toxPk")) {
+//    return;
+//  }
+//  const ToxPk pk{ev->mimeData()->data("toxPk")};
+//  if (!chatroom->friendExists(pk)) {
+//    return;
+//  }
 
-  chatroom->inviteFriend(pk);
+//  chatroom->inviteFriend(pk);
 
-  if (!active) {
-    setBackgroundRole(QPalette::Window);
-  }
+//  if (!active) {
+//    setBackgroundRole(QPalette::Window);
+//  }
 }
 
-void GroupWidget::setName(const QString &name) { nameLabel->setText(name); }
-
 void GroupWidget::retranslateUi() {
-  const Group *group = chatroom->getGroup();
   updateUserCount(group->getPeersCount());
 }
 
-void GroupWidget::setRecvMessage(const GroupMessage& msg) {
 
-//  auto core = Core::getInstance();
-//  ToxPk author = core->getGroupPeerPk(msg.groupId.username, msg.from);
-//  messageDispatcher->onMessageReceived(author, msg.isAction, msg.id, msg.content, msg.nick,msg.from,
-//                                       msg.timestamp);
+
+void GroupWidget::reloadTheme() {
+    if(about){
+        //TODO about->reloadTheme();
+    }
 }
-
-void GroupWidget::reloadTheme() { chatform->reloadTheme(); }

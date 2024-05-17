@@ -41,11 +41,8 @@ public:
     const ContactId& getPersistentId() const {return id;};
     QString getId() const {return id.toString(); };
 
-    void setAvatar(const QPixmap& pix){
-
-        avatar=pix;
-        emit avatarChanged(avatar);
-    }
+    void setAvatar(const QPixmap& pix);
+    void clearAvatar();
 
     virtual void setEventFlag(bool flag) ;
     virtual bool getEventFlag() const ;

@@ -158,8 +158,12 @@ void GenericChatItemWidget::setActive(bool _active)
 
 void GenericChatItemWidget::setAvatar(const QPixmap &pic)
 {
-    if(pic.isNull())
+    qDebug() << __func__ << "pic:" << pic;
+    if(pic.isNull()){
+        //设置默认
+        setDefaultAvatar();
         return;
+    }
 
     avatar->setPixmap(pic);
     avatarSetStatus=Status::AvatarSet::UserSet;
@@ -173,6 +177,7 @@ void GenericChatItemWidget::clearAvatar()
 
 void GenericChatItemWidget::setDefaultAvatar()
 {
+      qDebug() << __func__;
     auto name = chatType == ChatType::Chat ? "contact" : "group";
     const auto uri = active ? QString(":img/%1.svg").arg(name)//
                             : QString(":img/%1_dark.svg").arg(name);

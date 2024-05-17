@@ -991,24 +991,7 @@ void FriendListWidget::setRecvGroupMessage(const GroupMessage& msg) {
 //    gw->setRecvMessage(msg);
 
 }
-void FriendListWidget::setRecvFriendMessage(
-    ToxPk friendnumber, const FriendMessage &message,
-    bool isAction) {
 
-  Friend *f = FriendList::findFriend(friendnumber);
-  if (!f) {
-    /**
-     * 陌生人消息（可能是已经将对方删除，通讯录没有对方记录）
-     */
-    qWarning() << "Can not find friend:" << friendnumber.toString()
-               << ", so add it to contact.";
-    addFriend(friendnumber, false);
-    return;
-  }
-
-  auto fw = getFriend(friendnumber);
-  fw->setRecvMessage(message, isAction);
-}
 void FriendListWidget::setFriendStatus(const ToxPk &friendPk,
                                        Status::Status status) {
   auto fw = getFriend(friendPk);
