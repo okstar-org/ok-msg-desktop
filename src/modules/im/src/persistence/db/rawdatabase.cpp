@@ -756,7 +756,7 @@ void RawDatabase::process()
 
         // Add transaction commands if necessary
         if (trans.queries.size() > 1) {
-            trans.queries.prepend({"BEGIN;"});
+            trans.queries.prepend({"BEGIN TRANSACTION;"});
             trans.queries.append({"COMMIT;"});
         }
 

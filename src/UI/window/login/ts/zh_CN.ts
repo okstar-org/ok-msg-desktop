@@ -43,6 +43,10 @@
     <source>Please select service provider</source>
     <translation>请选择服务提供商</translation>
     </message>
+<message>
+<source>Login</source>
+<translation>登录</translation>
+</message>
 </context>
 
 <context>

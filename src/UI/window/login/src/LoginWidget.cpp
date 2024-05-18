@@ -43,6 +43,20 @@ LoginWidget::LoginWidget(QWidget *parent)
 
   ui->setupUi(this);
   ui->loginBtn->setCursor(Qt::PointingHandCursor);
+  /**
+   * 安装事件过滤器
+   */
+  ui->signUp->installEventFilter(this);
+  ui->findPwd->installEventFilter(this);
+
+  /**
+   * 增加快捷键
+   */
+  m_loginKey = new QShortcut(QKeySequence(Qt::Key_Return), this);
+  connect(m_loginKey, SIGNAL(activated()), //
+          this, SLOT(on_loginBtn_released()));
+
+  okCloudService = new ok::backend::OkCloudService(this);
 
   m_timer->start(1000);
   connect(m_timer.get(), &QTimer::timeout, this, &LoginWidget::onTimeout);
@@ -52,16 +66,13 @@ LoginWidget::LoginWidget(QWidget *parent)
 }
 
 LoginWidget::~LoginWidget() {
-  // 卸载语言处理器
-  disconnect(m_loginKey);
-  m_loginKey->deleteLater();
-  okCloudService->deleteLater();
-//  delete ui;
+    qDebug() <<__func__;
+    delete ui;
 }
 
 void LoginWidget::init() {
   m_settingManager = SettingManager::InitGet();
-  m_settingManager->getAccount([&](QString acc, QString password) {
+  m_settingManager->getAccount([&](const QString& acc, const QString& password) {
     ui->rember->setChecked(!acc.isEmpty());
     ui->accountInput->setText(acc);
     ui->passwordInput->setText(password);
@@ -83,8 +94,7 @@ void LoginWidget::init() {
   if (i >= 0 && i < ui->language->count())
     ui->language->setCurrentIndex(i + 1);
 
-  settings::Translator::registerHandler(
-      std::bind(&LoginWidget::retranslateUi, this), this);
+  settings::Translator::registerHandler([&] { retranslateUi(); }, this);
 
   retranslateUi();
   //==========国际化==========//
@@ -92,7 +102,7 @@ void LoginWidget::init() {
   /**
    * 处理服务供应商
    */
-  okCloudService = new ok::backend::OkCloudService;
+
   okCloudService->GetFederalInfo(
       [&](ok::backend::Res<ok::backend::FederalInfo> &res) {
         for (const auto &item : res.data->states) {
@@ -107,20 +117,9 @@ void LoginWidget::init() {
           m_loaded++;
         }
       },
-      [&](QString error) { onError(error); });
+      [&](const QString& error) { onError(error); });
 
-  /**
-   * 安装事件过滤器
-   */
-  ui->signUp->installEventFilter(this);
-  ui->findPwd->installEventFilter(this);
 
-  /**
-   * 增加快捷键
-   */
-  m_loginKey = new QShortcut(QKeySequence(Qt::Key_Return), this);
-  connect(m_loginKey, SIGNAL(activated()), //
-          this, SLOT(on_loginBtn_released()));
 }
 
 void LoginWidget::doLogin() {
@@ -247,8 +246,7 @@ bool LoginWidget::eventFilter(QObject *obj, QEvent *event) {
   switch (event->type()) {
   case QEvent::MouseButtonPress: {
     if (obj == ui->signUp) {
-      QDesktopServices::openUrl(
-          QUrl("http://stack.okstar.org.cn/auth/register"));
+      QDesktopServices::openUrl(QUrl("http://stack.okstar.org.cn/auth/register"));
     } else if (obj == ui->findPwd) {
       QDesktopServices::openUrl(QUrl("http://stack.okstar.org.cn/auth/forgot"));
     }

@@ -466,9 +466,10 @@ History::generateNewMessageQueries(const Message& message,
     QVector<RawDatabase::Query> queries;
 
     queries +=
-        RawDatabase::Query(QString("INSERT INTO history (timestamp, receiver, sender, message, type) values (%1, ?, ?, ?, %2)")
-                           .arg(message.timestamp.toMSecsSinceEpoch()).arg(0),
-                           { message.to.toUtf8(), message.from.toUtf8(), message.content.toUtf8()},
+        RawDatabase::Query(QString("INSERT INTO history "
+                                   "(timestamp, receiver, sender, message, type) "
+                                   "values (%1, '%2', '%3', '%4', %5)")
+                           .arg(message.timestamp.toMSecsSinceEpoch()).arg(message.to).arg(message.from).arg(message.content).arg(0),
                            insertIdCallback);
 
     if (!isDelivered) {
@@ -825,7 +826,7 @@ QList<History::HistMessage> History::getUndeliveredMessagesForFriend(const ToxPk
                 "aliases.display_name, sender.public_key, message, broken_messages.id "
                 "FROM history "
                 "JOIN faux_offline_pending ON history.id = faux_offline_pending.id "
-                "JOIN peers chat on history.chat_id = chat.id "
+                "JOIN peers chat on history.sender = chat.public_key "
                 "JOIN aliases on sender_alias = aliases.id "
                 "JOIN peers sender on aliases.owner = sender.id "
                 "LEFT JOIN broken_messages ON history.id = broken_messages.id "

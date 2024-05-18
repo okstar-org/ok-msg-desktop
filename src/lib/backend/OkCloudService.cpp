@@ -26,7 +26,9 @@ PluginInfo PluginInfo::fromJson(const QJsonObject &data) {
 OkCloudService::OkCloudService(QObject *parent)
     : BaseService(BACKEND_CLOUD_URL, parent) {}
 
-OkCloudService::~OkCloudService() {}
+OkCloudService::~OkCloudService() {
+    qDebug() <<__func__;
+}
 
 bool OkCloudService::GetFederalInfo(Fn<void(Res<FederalInfo> &)> fn, Fn<void(QString)> err) {
   QString url = _baseUrl + "/federal/.well-known/info.json";
