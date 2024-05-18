@@ -16,13 +16,9 @@
 #include "src/core/core.h"
 #include "src/widget/style.h"
 #include "src/widget/widget.h"
-#include "src/persistence/profile.h"
 
 #include <QFileDialog>
 #include <QMessageBox>
-#include <QLineEdit>
-
-#include <src/nexus.h>
 
 AboutFriendForm::AboutFriendForm(std::unique_ptr<IAboutFriend> _about, QWidget* parent)
     : QWidget(parent)

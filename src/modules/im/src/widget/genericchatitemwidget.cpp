@@ -65,6 +65,13 @@ GenericChatItemWidget::GenericChatItemWidget(ChatType type, const ContactId &cid
 
   avatar = new MaskablePixmapWidget(this, size, ":/img/avatar_mask.svg");
   setDefaultAvatar();
+
+  auto f = FriendList::findFriend(contactId);
+if(f){
+    qDebug()<<f->getId()<<f->getDisplayedName();
+ nameLabel->setText(f->getDisplayedName());
+}
+
 }
 
 
