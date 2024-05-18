@@ -53,7 +53,7 @@ public:
 protected:
   void retranslateUi();
   bool eventFilter(QObject *obj, QEvent *event) override;
-
+    void showEvent(QShowEvent *e) override;
 private:
   Ui::LoginWidget *ui;
 
@@ -66,6 +66,7 @@ private:
 
   QStringList m_hosts;
   QStringList m_stacks;
+  std::unique_ptr<QTimer> m_timer;
 
 signals:
   void loginSuccess(QString name, QString password);
@@ -75,6 +76,7 @@ signals:
                    ok::session::LoginResult &result);
 
 private slots:
+  void onTimeout();
   void doLogin();
   void onConnectResult(ok::session::SignInInfo info,
                        ok::session::LoginResult result);

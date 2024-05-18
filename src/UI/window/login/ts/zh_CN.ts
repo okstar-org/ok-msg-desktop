@@ -104,5 +104,15 @@
         <translation>进行中</translation>
     </message>
 
+    <message>
+        <source>Please waiting the page is loaded</source>
+        <translation>请等待页面加载完成</translation>
+    </message>
+
+    <message>
+        <source>Please select service provider</source>
+        <translation>请选择服务提供商</translation>
+    </message>
+
 </context>
 </TS>

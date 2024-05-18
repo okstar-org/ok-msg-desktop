@@ -66,6 +66,7 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow() {
   qDebug() << "~MainWindow";
   disconnect(m_menu);
+  delete timer;
   delete ui;
 }
 

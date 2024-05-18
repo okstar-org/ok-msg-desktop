@@ -17,6 +17,7 @@
 #include <QShortcut>
 #include <QTranslator>
 #include <QWidget>
+#include <memory>
 
 #include "UI/core/SettingManager.h"
 #include "base/logs.h"
@@ -37,10 +38,13 @@ LoginWidget::LoginWidget(QWidget *parent)
       ui(new Ui::LoginWidget),   //
       m_loginKey(nullptr),       //
       m_settingManager(nullptr), //
-      m_loaded(0) {
+      m_loaded(0), m_timer{std::make_unique<QTimer>()} {
 
   ui->setupUi(this);
   ui->loginBtn->setCursor(Qt::PointingHandCursor);
+
+  m_timer->start(1000);
+  connect(m_timer.get(), &QTimer::timeout, this, &LoginWidget::onTimeout);
 
   // 初始化
   init();
@@ -121,15 +125,14 @@ void LoginWidget::init() {
 
 void LoginWidget::doLogin() {
   if (m_loaded < 1) {
-    //    QMessageBox::warning(this,tr("WARNING"), tr("请确认页面加载完成"));
-    onError(tr("请确认页面加载完成!"));
+    onError(tr("Please waiting the page is loaded"));
     return;
   }
 
   // 获取服务提供商
   auto providerIdx = ui->providers->currentIndex();
   if (!(providerIdx > 0)) {
-    onError(tr("请选择服务提供商!"));
+    onError(tr("Please select service provider"));
     return;
   }
 
@@ -253,6 +256,22 @@ bool LoginWidget::eventFilter(QObject *obj, QEvent *event) {
     break;
   };
   return QObject::eventFilter(obj, event);
+}
+
+void LoginWidget::showEvent(QShowEvent *e)
+{
+
+}
+
+void LoginWidget::onTimeout()
+{
+    if(ui->rember->isChecked() && ui->providers->count()>0){
+
+        if(!ui->passwordInput->text().isEmpty()&&!ui->accountInput->text().isEmpty()){
+
+            on_loginBtn_released();
+        }
+    }
 }
 
 } // namespace UI
