@@ -43,7 +43,7 @@ AboutFriendForm::AboutFriendForm(std::unique_ptr<IAboutFriend> _about, QWidget* 
     const QString dir = about->getAutoAcceptDir();
     ui->autoacceptfile->setChecked(!dir.isEmpty());
 
-    ui->removeHistory->setEnabled(about->isHistoryExistence());
+//    ui->removeHistory->setEnabled(about->isHistoryExistence());
 
     const int index = static_cast<int>(about->getAutoAcceptCall());
     ui->autoacceptcall->setCurrentIndex(index);
@@ -128,9 +128,7 @@ void AboutFriendForm::onSelectDirClicked()
 void AboutFriendForm::onSendMessageClicked()
 {
     auto w = Widget::getInstance();
-    if(w){
-      emit w->toSendMessage(ui->friendId->text());
-    }
+    emit w->toSendMessage(ui->friendId->text());
 }
 
 void AboutFriendForm::onRemoveHistoryClicked()
@@ -142,17 +140,18 @@ void AboutFriendForm::onRemoveHistoryClicked()
         return;
     }
 
-   const bool result = about->clearHistory();
 
-    if (!result) {
-        GUI::showWarning(tr("History removed"),
-                         tr("Failed to remove chat history with %1!").arg(about->getName()).toHtmlEscaped());
-        return;
-    }
+    auto w = Widget::getInstance();
+    emit w->toDeleteChat(ui->friendId->text());
 
-    emit histroyRemoved();
-
-    ui->removeHistory->setEnabled(false); // For know clearly to has removed the history
+//   const bool result = about->clearHistory();
+//    if (!result) {
+//        GUI::showWarning(tr("History removed"),
+//                         tr("Failed to remove chat history with %1!").arg(about->getName()).toHtmlEscaped());
+//        return;
+//    }
+//    emit histroyRemoved();
+//    ui->removeHistory->setEnabled(false); // For know clearly to has removed the history
 }
 
 AboutFriendForm::~AboutFriendForm()

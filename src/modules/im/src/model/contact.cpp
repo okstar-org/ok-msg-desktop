@@ -20,8 +20,11 @@ Contact:: Contact(){
 
 }
 
-Contact:: Contact(const ContactId& id_, const QString& name_, const QString& alias_, bool isGroup_)
-    : id(id_),name{name_},alias{alias_},group(isGroup_){
+Contact:: Contact(const ContactId& id_, const QString& name_,
+                  const QString& alias_, bool isGroup_)
+    : id(id_),name{name_},alias{alias_},
+      group(isGroup_),
+      avatarSetStatus{ Status::AvatarSet::None}{
 
     auto profile = Nexus::getProfile();
     auto alias0 = profile->getFriendAlias(id.toString());
@@ -32,6 +35,9 @@ Contact:: Contact(const ContactId& id_, const QString& name_, const QString& ali
     auto avt = profile->loadAvatarData(ToxPk{id});
     if(!avt.isNull()){
         avatar.loadFromData(avt);
+        avatarSetStatus = Status::AvatarSet::UserSet;
+    }else{
+      setDefaultAvatar();
     }
 }
 
@@ -50,9 +56,30 @@ QString Contact::getDisplayedName() const {
   return id.username;
 }
 
+const QPixmap& Contact::setDefaultAvatar()
+{
+    auto name = !group ? "contact" : "group";
+    auto uri = QString(":img/%1_dark.svg").arg(name);
+    avatar=QPixmap(uri);
+    avatarSetStatus=Status::AvatarSet::DefaultSet;
+    return avatar;
+}
+
 void Contact::setAvatar(const QPixmap &pix)
 {
-    avatar=pix;
+    if(pix.isNull()){
+        return;
+    }
+
+    avatar = pix;
+    avatarSetStatus=Status::AvatarSet::UserSet;
+
+    //save to profile
+    auto profile = Nexus::getProfile();
+    QByteArray buf;
+    avatar.save(buf);
+    profile->saveAvatar(ToxPk{id}, buf);
+
     emit avatarChanged(avatar);
 }
 
@@ -60,6 +87,11 @@ void Contact::clearAvatar()
 {
     avatar = QPixmap{};
     emit avatarChanged(avatar);
+}
+
+const QPixmap &Contact::getAvatar() const
+{
+    return avatar;
 }
 
 

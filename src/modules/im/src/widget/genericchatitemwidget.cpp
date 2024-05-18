@@ -19,7 +19,7 @@
 #include <src/core/core.h>
 #include <src/friendlist.h>
 #include "src/model/friend.h"
-
+#include "src/model/group.h"
 
 
 
@@ -27,7 +27,7 @@ GenericChatItemWidget::GenericChatItemWidget(ChatType type, const ContactId &cid
     : QFrame(parent)
     , chatType(type), statusPic{nullptr},
       contactId{cid}, prevStatus{Status::Status::None},
-      active{false}, avatarSetStatus{Status::AvatarSet::None}
+      active{false}
 {
     nameLabel = new CroppingLabel(this);
     nameLabel->setTextFormat(Qt::PlainText);
@@ -35,14 +35,8 @@ GenericChatItemWidget::GenericChatItemWidget(ChatType type, const ContactId &cid
     lastMessageLabel = new CroppingLabel(this);
     lastMessageLabel->setTextFormat(Qt::PlainText);
     lastMessageLabel->setText("");
-
-
-
-
   auto p = lastMessageLabel->palette();
   p.setColor(QPalette::WindowText, Style::getColor(Style::GroundExtra));
-//  p.setColor(QPalette::HighlightedText, Style::getColor(Style::GroundExtra));
-//  auto fs = nameLabel->font().pixelSize()*.8;
 
   auto newFont= lastMessageLabel->font();
   newFont.setPixelSize(newFont.pixelSize()*.7);
@@ -56,21 +50,11 @@ GenericChatItemWidget::GenericChatItemWidget(ChatType type, const ContactId &cid
       statusPic->setPixmap(QPixmap(Status::getIconPath(Status::Status::Offline)));
   }
 
-  // avatar
-  QSize size;
-//    if (isCompact())
-//        size = QSize(20, 20);
-//    else
-      size = QSize(40, 40);
 
+  QSize size = QSize(40, 40);
   avatar = new MaskablePixmapWidget(this, size, ":/img/avatar_mask.svg");
-  setDefaultAvatar();
 
-  auto f = FriendList::findFriend(contactId);
-if(f){
-    qDebug()<<f->getId()<<f->getDisplayedName();
- nameLabel->setText(f->getDisplayedName());
-}
+
 
 }
 
@@ -153,9 +137,9 @@ void GenericChatItemWidget::setActive(bool _active)
         nameLabel->setForegroundRole(QPalette::WindowText);
     }
 
-    if(avatarSetStatus == Status::AvatarSet::DefaultSet){
-        setDefaultAvatar();
-    }
+//    if(avatarSetStatus == Status::AvatarSet::DefaultSet){
+//        setDefaultAvatar();
+//    }
 
     onActiveSet(active);
 }
@@ -164,28 +148,41 @@ void GenericChatItemWidget::setAvatar(const QPixmap &pic)
 {
     qDebug() << __func__ << "pic:" << pic;
     if(pic.isNull()){
-        //设置默认
-        setDefaultAvatar();
         return;
     }
 
     avatar->setPixmap(pic);
-    avatarSetStatus=Status::AvatarSet::UserSet;
+
 }
 
 void GenericChatItemWidget::clearAvatar()
 {
     avatar->clear();
-    setDefaultAvatar();
+
+    auto c =getContact();
+    if(c){
+      c->clearAvatar();
+    }
 }
 
 void GenericChatItemWidget::setDefaultAvatar()
 {
-      qDebug() << __func__;
-    auto name = chatType == ChatType::Chat ? "contact" : "group";
-    const auto uri = active ? QString(":img/%1.svg").arg(name)//
-                            : QString(":img/%1_dark.svg").arg(name);
-    avatar->setPixmap(QPixmap(uri));
-    avatarSetStatus=Status::AvatarSet::DefaultSet;
+    qDebug() << __func__;
+
+    auto c = getContact();
+
+        auto pix= c->setDefaultAvatar();
+        avatar->setPixmap(pix);
+
+
+}
+
+void GenericChatItemWidget::showEvent(QShowEvent *e)
+{
+    Contact* c = getContact();
+
+      avatar->setPixmap(c->getAvatar());
+      nameLabel->setText(c->getDisplayedName());
+
 }
 

@@ -192,8 +192,11 @@ void MessageSessionWidget::do_widgetClicked() {
     contentWidget->showTo(contentLayout);
 }
 
-void MessageSessionWidget::showEvent(QShowEvent *)
+void MessageSessionWidget::showEvent(QShowEvent *e)
 {
+
+    GenericChatroomWidget::showEvent(e);
+
     if(isGroup()){
         //获取名称
         auto group = GroupList::findGroup(GroupId{contactId.toString()});
@@ -201,23 +204,15 @@ void MessageSessionWidget::showEvent(QShowEvent *)
             setName(group->getName());
         }
     }else{
-        auto core = Nexus::getCore();
-//        auto status= core->getFriendStatus(contactId.toString());
+
         auto f = FriendList::findFriend(contactId);
-//        if(status != f->getStatus()){
-//            f->setStatus(status);
-//        }else{
-            setStatus(f->getStatus(), false);
-//        }
+        setStatus(f->getStatus(), false);
 
         auto msgs = sendWorker->getLastTextMessage();
         for(auto m : msgs){
             updateLastMessage(m);
             break;
         }
-
-
-
     }
 }
 
@@ -345,7 +340,7 @@ void MessageSessionWidget::onContextMenuCalled(QContextMenuEvent *event) {
 }
 
 void MessageSessionWidget::removeChat() {
-    emit deleteWidget(this);
+    emit deleteSession(contactId.toString());
 }
 
 //namespace {

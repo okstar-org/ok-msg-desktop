@@ -96,7 +96,7 @@ public slots:
   void onFriendWidgetRenamed(FriendWidget *friendWidget);
 
   void slot_sessionClicked(MessageSessionWidget *w);
-    void do_deleteWidget(MessageSessionWidget *w);
+  void do_deleteSession(const QString &contactId);
   void moveWidget(MessageSessionWidget *w, Status::Status s, bool add = false);
 
 

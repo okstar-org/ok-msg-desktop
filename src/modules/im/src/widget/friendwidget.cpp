@@ -127,11 +127,11 @@ FriendWidget::FriendWidget(ContentLayout *layout,
   statusPic->hide();
 
   // Try to get the avatar from the cache
-  QPixmap avatar = Nexus::getProfile()->loadAvatar(friendPk);
-  if (!avatar.isNull()) {
+//  QPixmap avatar = Nexus::getProfile()->loadAvatar(friendPk);
+//  if (!avatar.isNull()) {
 //    sendWorker->onAvatarChanged(friendPk, avatar);
-    setAvatar(avatar);
-  }
+//    setAvatar(avatar);
+//  }
 }
 
 void FriendWidget::do_widgetClicked(GenericChatroomWidget *w) {

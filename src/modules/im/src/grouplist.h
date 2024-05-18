@@ -27,7 +27,7 @@ using GroupMap = QHash<QString, Group*>;
 class GroupList
 {
 public:
-    static Group* addGroup(const GroupId& persistentGroupId, const QString& name, bool isAvGroupchat, const QString& selfName);
+    static Group* addGroup(const GroupId& groupId, const QString& name="", bool isAvGroupchat=true, const QString& selfName="");
     static Group* findGroup(const GroupId& groupId);
     static const GroupId& id2Key(QString groupNum);
     static void removeGroup(const GroupId& groupId, bool fake = false);

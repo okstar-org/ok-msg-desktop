@@ -89,6 +89,11 @@ MessageSessionListWidget::MessageSessionListWidget(MainLayout *parent,
 
 //  connect(&settings, &Settings::groupchatPositionChanged, this,
 //          &MessageSessionListWidget::onGroupchatPositionChanged);
+
+   auto w = Widget::getInstance();
+   connect(w, &Widget::toDeleteChat, this, &MessageSessionListWidget::do_deleteSession);
+
+
 }
 
 MessageSessionListWidget::~MessageSessionListWidget() {
@@ -148,8 +153,8 @@ void MessageSessionListWidget::connectSessionWidget(MessageSessionWidget &sw) {
   connect(&sw, &MessageSessionWidget::widgetClicked, this,
           &MessageSessionListWidget::slot_sessionClicked);
 
-  connect(&sw, &MessageSessionWidget::deleteWidget, this,
-          &MessageSessionListWidget::do_deleteWidget);
+  connect(&sw, &MessageSessionWidget::deleteSession, this,
+          &MessageSessionListWidget::do_deleteSession);
 }
 
 void MessageSessionListWidget::updateFriendActivity(const Friend &frnd) {
@@ -618,14 +623,13 @@ void MessageSessionListWidget::slot_sessionClicked(MessageSessionWidget *actived
   }
 }
 
-void MessageSessionListWidget::do_deleteWidget(MessageSessionWidget *w)
+void MessageSessionListWidget::do_deleteSession(const QString &cid)
 {
-    qDebug() << __func__<<"session:" << w;
-    auto &cid =  w->getContactId();
-    int removed = sessionWidgets.remove(cid.toString());
-    if(removed){
+    auto w = sessionWidgets.value(cid );
+    if(w){
         qDebug() <<"delete"<<w;
         w->deleteLater();
+        sessionWidgets.remove(cid);
     }
 }
 

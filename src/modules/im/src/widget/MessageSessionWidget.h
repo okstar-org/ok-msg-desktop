@@ -81,7 +81,7 @@ signals:
     void searchCircle(CircleWidget& circleWidget);
     void updateFriendActivity(Friend& frnd);
 //    void setActive(bool active);
-    void deleteWidget(MessageSessionWidget *widget);
+    void deleteSession(const QString &contactId);
 
 public slots:
   void onAvatarSet(const ToxPk& friendPk, const QPixmap& pic);

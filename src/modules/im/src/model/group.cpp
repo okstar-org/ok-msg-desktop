@@ -25,11 +25,11 @@
 
 static const int MAX_GROUP_TITLE_LENGTH = 128;
 
-Group::Group(const GroupId persistentGroupId,
+Group::Group(const GroupId groupId_,
              const QString &name, bool isAvGroupchat, const QString &selfName,
              ICoreGroupQuery &groupQuery, ICoreIdHandler &idHandler)
-    :Contact(persistentGroupId, name),
-      groupId{persistentGroupId},
+    :Contact(groupId_, name, name, true),
+      groupId{groupId_},
       avGroupchat{isAvGroupchat},
       groupQuery(groupQuery),
       idHandler(idHandler) {

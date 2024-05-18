@@ -14,6 +14,7 @@
 #define CONTACT_H
 
 #include "src/core/contactid.h"
+#include "src/model/status.h"
 #include <QObject>
 #include <QPixmap>
 #include <QString>
@@ -41,9 +42,10 @@ public:
     const ContactId& getPersistentId() const {return id;};
     QString getId() const {return id.toString(); };
 
+    const QPixmap& setDefaultAvatar();
     void setAvatar(const QPixmap& pix);
     void clearAvatar();
-   const QPixmap& getAvatar() const {return avatar;};
+    const QPixmap& getAvatar() const;
 
     virtual void setEventFlag(bool flag) ;
     virtual bool getEventFlag() const ;
@@ -58,12 +60,15 @@ protected:
     bool group;
     ContactId id;
 
+
     //名称
     QString name;
     //别名(自己备注)
     QString alias;
+
     //头像
     QPixmap avatar;
+    Status::AvatarSet avatarSetStatus;
 };
 
 #endif // CONTACT_H

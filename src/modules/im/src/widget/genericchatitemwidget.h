@@ -19,7 +19,7 @@
 #include <src/grouplist.h>
 #include <src/model/contact.h>
 #include "src/model/message.h"
-#include "src/model/status.h"
+
 
 class CroppingLabel;
 class MaskablePixmapWidget;
@@ -86,11 +86,14 @@ public:
 
 
 protected:
+
+    virtual void showEvent(QShowEvent* e) override;
+
     CroppingLabel* nameLabel;
     CroppingLabel* lastMessageLabel;
     QLabel* statusPic;
 
-    Status::AvatarSet avatarSetStatus;
+
     MaskablePixmapWidget* avatar;
 
     bool compact;

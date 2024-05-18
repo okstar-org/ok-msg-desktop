@@ -204,6 +204,7 @@ signals:
   void windowStateChanged(Qt::WindowStates states);
   void toSendMessage(const QString &to, bool isGroup = false);
   void toShowDetails(const ContactId &to);
+  void toDeleteChat(const QString &to);
 
 private slots:
 
