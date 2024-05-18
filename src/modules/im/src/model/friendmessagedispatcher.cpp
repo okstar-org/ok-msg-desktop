@@ -12,6 +12,7 @@
 
 #include "friendmessagedispatcher.h"
 #include "src/model/status.h"
+#include "src/model/message.h"
 #include "src/persistence/settings.h"
 
 namespace {
@@ -37,12 +38,17 @@ bool sendMessageToCore(ICoreFriendMessageSender &messageSender, const Friend &f,
 } // namespace
 
 FriendMessageDispatcher::FriendMessageDispatcher(
-   const Friend &f_, MessageProcessor processor_,
-    ICoreFriendMessageSender &messageSender_)
-    : f(f_), messageSender(messageSender_),
-      offlineMsgEngine(&f_, &messageSender_), processor(std::move(processor_)) {
-  connect(&f, &Friend::onlineOfflineChanged, this,
-          &FriendMessageDispatcher::onFriendOnlineOfflineChanged);
+        const Friend &f_,
+        const MessageProcessor::SharedParams& p,
+        ICoreIdHandler &idHandler_,
+        ICoreFriendMessageSender &messageSender_)
+    : f(f_),
+      messageSender(messageSender_),
+      offlineMsgEngine(&f_, &messageSender_),
+      processor(MessageProcessor(idHandler_, f_, p ))
+{
+  connect(&f, &Friend::onlineOfflineChanged,
+          this, &FriendMessageDispatcher::onFriendOnlineOfflineChanged);
 }
 
 FriendMessageDispatcher::~FriendMessageDispatcher()
@@ -94,15 +100,9 @@ FriendMessageDispatcher::sendMessage(bool isAction, const QString &content, bool
  * @param[in] isAction True if action message
  * @param[in] content Unprocessed toxcore message
  */
-void FriendMessageDispatcher::onMessageReceived(bool isAction,
-                                                const FriendMessage& msg) {
-  auto msg0 = processor.processIncomingMessage(isAction,
-                                               msg.id,
-                                               msg.content,
-                                               msg.from,
-                                               msg.timestamp,
-                                               f.getDisplayedName());
-  emit messageReceived(f.getPublicKey(), msg0);
+void FriendMessageDispatcher::onMessageReceived(FriendMessage& msg) {
+  auto msg0 = processor.processIncomingMessage(msg);
+  emit messageReceived(ToxPk(msg.from), msg0);
 }
 
 

@@ -75,6 +75,9 @@ public:
   void saveFriendAlias(const QString& friendPk, const QString& alias);
   QString getFriendAlias(const QString& friendPk);
 
+
+  uint addContact(const ContactId& cid);
+
 signals:
   void selfAvatarChanged(const QPixmap &pixmap);
   // emit on any change, including default avatar. Used by those that don't care

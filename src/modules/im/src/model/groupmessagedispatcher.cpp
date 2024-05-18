@@ -16,12 +16,18 @@
 #include <QtCore>
 
 GroupMessageDispatcher::GroupMessageDispatcher(
-    const Group &g_, MessageProcessor processor_, ICoreIdHandler &idHandler_,
-    ICoreGroupMessageSender &messageSender_,
-    const IGroupSettings &groupSettings_)
-    : group(g_), processor(processor_), idHandler(idHandler_),
-      messageSender(messageSender_), groupSettings(groupSettings_) {
-    processor.enableMentions();
+        const Group &g_,
+        MessageProcessor::SharedParams p,
+        ICoreIdHandler &idHandler_,
+        ICoreGroupMessageSender &messageSender_,
+        const IGroupSettings &groupSettings_)
+    : group(g_),
+      processor(MessageProcessor(idHandler_, g_, p)),
+      idHandler(idHandler_),
+      messageSender(messageSender_),
+      groupSettings(groupSettings_)
+{
+//    processor.enableMentions();
 }
 
 GroupMessageDispatcher::~GroupMessageDispatcher()
@@ -65,22 +71,16 @@ GroupMessageDispatcher::sendMessage(bool isAction, QString const &content,
  * @param[in] isAction True if is action
  * @param[in] content Message content
  */
-void GroupMessageDispatcher::onMessageReceived(const ToxPk &sender,
-                                               bool isAction,
-                                               QString const &id,
-                                               QString const &content,
-                                               QString const &nick,
-                                               QString const &from,
-                                               const QDateTime &time) {
+void GroupMessageDispatcher::onMessageReceived(GroupMessage &msg) {
 
-  qDebug() <<__func__ << "id:" << id << "nick:" << nick<< "msg:" << content;
-  if(sentMsgIdMap.contains(id)){
+  qDebug() <<__func__ << "id:" << msg.id << "nick:" <<msg.nick<< "msg:" <<msg.content;
+  if(sentMsgIdMap.contains(msg.id)){
       qWarning() << "is sent message!";
       return;
   }
 
   auto self = idHandler.getSelfId().toString();
-  if (self == from) {
+  if (self == msg.from) {
     qWarning() << "Is self message (from is mine).";
     return;
   }
@@ -98,6 +98,6 @@ void GroupMessageDispatcher::onMessageReceived(const ToxPk &sender,
 //    return;
 //  }
 
-  auto msg = processor.processIncomingMessage(isAction, id, content, from, time, nick);
-  emit messageReceived(sender, msg);
+  auto msg0 = processor.processIncomingMessage(msg);
+  emit messageReceived(ToxPk(msg.from), msg0);
 }

@@ -20,6 +20,8 @@
 
 #include <cassert>
 #include <cstdint>
+
+#include <src/model/message.h>
 //#include <tox/toxencryptsave.h>
 
 #include "src/core/toxfile.h"
@@ -136,6 +138,7 @@ public:
 
         QString chat;
         QString sender;
+        QString receiver;
         QString dispName;
         QDateTime timestamp;
         RowId id;
@@ -159,8 +162,11 @@ public:
 
     void eraseHistory();
     void removeFriendHistory(const QString& friendPk);
-    void addNewMessage(const QString& friendPk, const QString& message, const QString& sender,
-                       const QDateTime& time, bool isDelivered, QString dispName,
+
+    uint addNewContact(const QString& contactId);
+
+    void addNewMessage(const Message& message,
+                       bool isDelivered,
                        const std::function<void(RowId)>& insertIdCallback = {});
 
     void addNewFileMessage(const QString& friendPk, const QString& fileId,
@@ -186,12 +192,8 @@ public:
 
 protected:
     QVector<RawDatabase::Query>
-    generateNewMessageQueries(const QString& friendPk,
-                              const QString& message,
-                              const QString& sender,
-                              const QDateTime& time,
+    generateNewMessageQueries(const Message& message,
                               bool isDelivered,
-                              QString dispName,
                               std::function<void(RowId)> insertIdCallback = {});
 
 signals:

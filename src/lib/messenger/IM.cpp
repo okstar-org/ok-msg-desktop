@@ -18,6 +18,7 @@
 #include "base/hashs.h"
 #include "base/logs.h"
 #include "base/xmls.h"
+#include "base/times.h"
 
 #include <list>
 #include <string>
@@ -316,9 +317,12 @@ gloox::JID IM::wrapJid(const QString &f) const {
 
 IMMessage IM::fromXMsg(MsgType type, const gloox::Message &msg) {
 
-  IMMessage imMsg(type,                       //
-                  qstring(msg.from().full()), //
-                  qstring(msg.body()));
+    IMMessage imMsg = {
+        .from =qstring( msg.from().full()),
+        .to = qstring(msg.to().full()),
+        .body=qstring(msg.body()),
+        .timestamp = ::base::Times::now()
+    };
 
   if (!msg.id().empty()) {
     imMsg.id = (qstring(msg.id()));
@@ -680,10 +684,9 @@ void IM::doMessageChat(const Message &msg, QString &friendId,
     if (eMsg) {
       auto ebody = eMsg->body();
       if (!ebody.empty()) {
-        emit receiveFriendMessage(qstring(eMsg->to().full()),
-                                  IMMessage(MsgType::Chat,
-                                            qstring(eMsg->from().full()),
-                                            qstring(ebody), ""));
+        auto msg =  fromXMsg(MsgType::Chat, *eMsg);
+        msg.to = qstring(eMsg->to().full());
+        emit receiveFriendMessage(msg.to, msg);
       }
     }
   }
@@ -959,8 +962,7 @@ void IM::handleMUCMessage(MUCRoom *room, const gloox::Message &msg, bool priv) {
   const DelayedDelivery *dd = msg.when();
   if (dd) {
     // yyyy-MM-dd HH:mm:ss 20230614T12:11:43Z
-    imMsg.time =
-        QDateTime::fromString(qstring(dd->stamp()), "yyyy-MM-ddTHH:mm:ssZ");
+    imMsg.timestamp = QDateTime::fromString(qstring(dd->stamp()), "yyyy-MM-ddTHH:mm:ssZ");
   }
 
   auto addresses = msg.address();

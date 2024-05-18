@@ -47,19 +47,12 @@ enum class MsgType {
 };
 
 struct IMMessage {
-public:
-  IMMessage();
-  IMMessage(MsgType type_,    //
-            QString from_,    //
-            QString body_,    //
-            QString id_ = "", //
-            QDateTime time_ = QDateTime::currentDateTime());
-
   MsgType type;
   QString id;
   QString from;
+  QString to;
   QString body;
-  QDateTime time;
+  QDateTime timestamp;
 };
 
 struct SelfInfo {
@@ -113,12 +106,14 @@ struct PeerId : public FriendId {
   bool operator==(const PeerId &peerId) const;
   bool operator==(const QString &username) const;
 
-  [[nodiscard]] const QString toFriendId() const {
+  [[nodiscard]] inline const QString toFriendId() const {
     return username + "@" + server;
   }
 
-  [[nodiscard]] const QString toString() const {
-    return username + "@" + server + "/" + resource;
+  [[nodiscard]] inline const QString toString() const {
+      if(resource.isEmpty())
+          return toFriendId();
+    return toFriendId() + "/" + resource;
   }
 };
 

@@ -62,7 +62,6 @@ private:
     ToxPk sender;
     QString displayName;
     ContentType contentType;
-
     ContentPtr content;
 };
 

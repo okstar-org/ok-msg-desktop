@@ -35,8 +35,10 @@ void MessageProcessor::SharedParams::setPublicKey(const QString& pk)
                                        QRegularExpression::CaseInsensitiveOption);
 }
 
-MessageProcessor::MessageProcessor(const MessageProcessor::SharedParams& sharedParams)
-    : sharedParams(sharedParams)
+MessageProcessor::MessageProcessor(ICoreIdHandler &idHandler_,
+                                   const Contact& f_,
+                                   const MessageProcessor::SharedParams& sharedParams_)
+    : idHandler{idHandler_}, f{f_}, sharedParams(sharedParams_)
 {}
 
 /**
@@ -53,6 +55,8 @@ std::vector<Message> MessageProcessor::processOutgoingMessage(bool isAction, QSt
                    [&](const QString& part) {
                        Message message;
                        message.isAction = isAction;
+                       message.to = f.getId();
+                       message.from = idHandler.getSelfId().toString();
                        message.content = part;
                        message.timestamp = timestamp;
                        return message;
@@ -65,20 +69,8 @@ std::vector<Message> MessageProcessor::processOutgoingMessage(bool isAction, QSt
 /**
  * @brief Converts an incoming message into a sanitized Message
  */
-Message MessageProcessor::processIncomingMessage(bool isAction,
-                                                 QString const &id,
-                                                 QString const& message,
-                                                 QString const& from,
-                                                 const QDateTime& timestamp,
-                                                 QString const& displayName)
+Message MessageProcessor::processIncomingMessage(Message& ret )
 {
-    auto ret = Message{};
-    ret.id=id;
-    ret.isAction = isAction;
-    ret.from = from;
-    ret.content = message;
-    ret.timestamp = timestamp;
-    ret.displayName = displayName;
 
     if (detectingMentions) {
         auto nameMention = sharedParams.GetNameMention();

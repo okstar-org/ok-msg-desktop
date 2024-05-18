@@ -30,7 +30,7 @@ class GroupMessageDispatcher : public IMessageDispatcher {
   Q_OBJECT
 public:
   GroupMessageDispatcher(const Group &group,
-                         MessageProcessor processor,
+                         MessageProcessor::SharedParams p,
                          ICoreIdHandler &idHandler,
                          ICoreGroupMessageSender &messageSender,
                          const IGroupSettings &groupSettings);
@@ -40,13 +40,7 @@ public:
   sendMessage(bool isAction, QString const &content,
               bool encrypt = false) override;
 
-  void onMessageReceived(ToxPk const &sender,
-                         bool isAction,
-                         QString const &id,
-                         QString const &content,
-                         QString const &nick,
-                         QString const &from,
-                         const QDateTime &time);
+  void onMessageReceived(GroupMessage &msg);
 
 private:
   const Group &group;

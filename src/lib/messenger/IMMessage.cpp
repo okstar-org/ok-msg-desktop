@@ -20,18 +20,6 @@
 namespace lib {
 namespace messenger {
 
-IMMessage::IMMessage() {}
-
-IMMessage::IMMessage(MsgType type_,    //
-                     QString from_,    //
-                     QString body_,    //
-                     QString id_,      //
-                     QDateTime time_)  //
-    : type(type_), id(std::move(id_)), //
-      from(std::move(from_)),          //
-      body(std::move(body_)),          //
-      time(std::move(time_)) {}
-
 FriendId::FriendId() {}
 
 FriendId::FriendId(const QString &jid_) {

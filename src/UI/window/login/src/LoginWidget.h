@@ -48,12 +48,11 @@ public:
   ~LoginWidget() override;
   void onError(const QString &msg);
   void init();
-  void showMainWindow();
 
 protected:
   void retranslateUi();
-  bool eventFilter(QObject *obj, QEvent *event) override;
-    void showEvent(QShowEvent *e) override;
+  virtual bool eventFilter(QObject *obj, QEvent *event) override;
+  virtual void showEvent(QShowEvent *e) override;
 private:
   Ui::LoginWidget *ui;
 

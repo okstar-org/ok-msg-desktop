@@ -563,9 +563,15 @@ void MessageSessionWidget::mouseMoveEvent(QMouseEvent *ev) {
 }
 
 void MessageSessionWidget::setRecvMessage(const FriendMessage &msg, bool isAction) {
+
+  FriendMessage m = msg;
+  m.from = ContactId(m.from).toString();
+  m.displayName = getContact()->getDisplayedName();
+
   auto md= (FriendMessageDispatcher*)sendWorker->dispacher();
-  md->onMessageReceived(isAction,msg);
-  updateLastMessage(msg);
+  md->onMessageReceived(m);
+
+  updateLastMessage(m);
 
   auto vis = contentWidget->isVisible();
   if(!vis){
@@ -584,9 +590,14 @@ void MessageSessionWidget::setMessageReceipt(const ReceiptNum &receipt)
 
 void MessageSessionWidget::setRecvGroupMessage(const GroupMessage &msg)
 {
+    GroupMessage m = msg;
+    m.from = ContactId(m.from).toString();
+    m.displayName = getContact()->getDisplayedName();
+
     auto md= (GroupMessageDispatcher*)sendWorker->dispacher();
-    md->onMessageReceived(ToxPk(msg.from), false, msg.id, msg.content, msg.nick, msg.from, msg.timestamp);
-    updateLastMessage(msg);
+    md->onMessageReceived(m);
+
+    updateLastMessage(m);
 
     auto vis = contentWidget->isVisible();
     if(!vis){

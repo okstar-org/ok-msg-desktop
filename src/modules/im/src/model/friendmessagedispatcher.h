@@ -29,7 +29,8 @@ class FriendMessageDispatcher : public IMessageDispatcher
     Q_OBJECT
 public:
     FriendMessageDispatcher(const Friend& f,
-                            MessageProcessor processor,
+                            const MessageProcessor::SharedParams &sharedParams,
+                            ICoreIdHandler &idHandler_,
                             ICoreFriendMessageSender& messageSender);
     ~FriendMessageDispatcher();
 
@@ -38,7 +39,7 @@ public:
             const QString& content,
             bool encrypt = false) override;
 
-    void onMessageReceived(bool isAction, const FriendMessage &msg);
+    void onMessageReceived(FriendMessage &msg);
     void onReceiptReceived(ReceiptNum receipt);
     void clearOutgoingMessages();
 

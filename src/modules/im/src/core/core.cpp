@@ -562,11 +562,12 @@ void Core::onFriendMessage(QString friendId,
   sendReceiptReceived(friendId, message.id);
 
   FriendMessage msg;
-  msg.id= message.id;
-  msg.content=message.body;
-  msg.from= message.from;
   msg.isAction=false;
-  msg.timestamp=message.time;
+  msg.id= message.id;
+  msg.from= message.from;
+  msg.to = message.to;
+  msg.content=message.body;
+  msg.timestamp=message.timestamp;
   msg.displayName=ContactId(message.from).username;
   emit friendMessageReceived(ToxPk(friendId), msg, false);
 }
@@ -685,9 +686,10 @@ void Core::onGroupMessage(const QString groupId,
           msg.isAction= isAction;
           msg.id=message.id;
           msg.from = message.from;
+          msg.to = message.to;
           msg.content=message.body;
-          msg.timestamp=message.time;
-          msg.displayName=message.from;
+          msg.timestamp=message.timestamp;
+          msg.resource=peerId.resource;
           msg.nick=peerId.resource;
 
   emit groupMessageReceived(GroupId(groupId), msg);

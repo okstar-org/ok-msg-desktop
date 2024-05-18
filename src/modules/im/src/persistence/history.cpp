@@ -25,7 +25,9 @@ bool createCurrentSchema(RawDatabase& db)
 {
     QVector<RawDatabase::Query> queries;
     queries += RawDatabase::Query(QStringLiteral(
-        "CREATE TABLE peers (id INTEGER PRIMARY KEY, "
+        //peers
+        "CREATE TABLE peers ("
+        "id INTEGER PRIMARY KEY AUTOINCREMENT, "
         "public_key TEXT NOT NULL UNIQUE);"
 
         //aliases
@@ -34,20 +36,18 @@ bool createCurrentSchema(RawDatabase& db)
         "owner INTEGER UNIQUE, "
         "display_name BLOB NOT NULL"
         ");"
-        //aliases
-        "CREATE TABLE history "
-        "(id INTEGER PRIMARY KEY, "
-        "timestamp INTEGER NOT NULL, "
-        "chat_id INTEGER NOT NULL, "
-        "sender_alias INTEGER NOT NULL, "
-        // even though technically a message can be null for file transfer, we've opted
-        // to just insert an empty string when there's no content, this moderately simplifies
-        // implementating to leakon as currently our database doesn't have support for optional
-        // fields. We would either have to insert "?" or "null" based on if message exists and then
-        // ensure that our blob vector always has the right number of fields. Better to just
-        // leave this as NOT NULL for now.
-        "message BLOB NOT NULL, "
-        "file_id INTEGER);"
+
+        //history
+        " CREATE TABLE history (                                   "
+        "   id INTEGER PRIMARY KEY AUTOINCREMENT,         "
+        "   timestamp INTEGER NOT NULL,                          "
+        "   receiver TEXT NOT NULL,                             "
+        "   sender TEXT NOT NULL,                             "
+        "   message BLOB NOT NULL,                             "
+        "   file_id INTEGER , "
+        "   type INTEGER                                 "
+        "   );                                                      "
+
         "CREATE TABLE file_transfers "
         "(id INTEGER PRIMARY KEY, "
         "chat_id INTEGER NOT NULL, "
@@ -60,10 +60,11 @@ bool createCurrentSchema(RawDatabase& db)
         "file_state INTEGER NOT NULL);"
         "CREATE TABLE faux_offline_pending (id INTEGER PRIMARY KEY);"
         "CREATE TABLE broken_messages (id INTEGER PRIMARY KEY);"));
-    // sqlite doesn't support including the index as part of the CREATE TABLE statement, so add a second query
-    queries += RawDatabase::Query(
-        "CREATE INDEX chat_id_idx on history (chat_id);");
+
+
+    queries += RawDatabase::Query("CREATE INDEX sender_idx on history (sender);");
     queries += RawDatabase::Query(QStringLiteral("PRAGMA user_version = %1;").arg(SCHEMA_VERSION));
+
     return db.execNow(queries);
 }
 
@@ -419,8 +420,8 @@ void History::removeFriendHistory(const QString& friendPk)
                                 "    WHERE chat_id=%1 "
                                 "); "
                                 "DELETE FROM history WHERE chat_id=%1; "
-                                "DELETE FROM aliases WHERE owner=%1; "
-                                "DELETE FROM peers WHERE id=%1; "
+                                //"DELETE FROM aliases WHERE owner=%1; "
+                                //"DELETE FROM peers WHERE id=%1; "
                                 "DELETE FROM file_transfers WHERE chat_id=%1;"
                                 "VACUUM;")
                             .arg(id);
@@ -430,6 +431,21 @@ void History::removeFriendHistory(const QString& friendPk)
     } else {
         qWarning() << "Failed to remove friend's history";
     }
+}
+
+uint History::addNewContact(const QString &contactId)
+{
+    auto q = QString("INSERT OR IGNORE INTO peers (public_key) VALUES ('%1');"
+                                        )
+                                .arg(contactId);
+
+    db->execNow(q);
+
+    uint id = 0;
+    db->execNow({ "SELECT last_insert_rowid();", [&id](const QVector<QVariant>& row){
+                    id = row[0].toUInt();
+                 } });
+    return id;
 }
 
 /**
@@ -443,70 +459,17 @@ void History::removeFriendHistory(const QString& friendPk)
  * @param insertIdCallback Function, called after query execution.
  */
 QVector<RawDatabase::Query>
-History::generateNewMessageQueries(const QString& friendPk, const QString& message,
-                                   const QString& sender, const QDateTime& time, bool isDelivered,
-                                   QString dispName, std::function<void(RowId)> insertIdCallback)
+History::generateNewMessageQueries(const Message& message,
+                                  bool isDelivered,
+                                  std::function<void(RowId)> insertIdCallback)
 {
     QVector<RawDatabase::Query> queries;
 
-    // Get the db id of the peer we're chatting with
-    int64_t peerId;
-    if (peers.contains(friendPk)) {
-        peerId = (peers)[friendPk];
-    } else {
-        if (peers.isEmpty()) {
-            peerId = 0;
-        } else {
-            peerId = *std::max_element(peers.begin(), peers.end()) + 1;
-        }
-
-        (peers)[friendPk] = peerId;
-        queries += RawDatabase::Query(("INSERT INTO peers (id, public_key) "
-                                       "VALUES (%1, '"
-                                       + friendPk + "');")
-                                          .arg(peerId));
-    }
-
-    // Get the db id of the sender of the message
-    int64_t senderId;
-    if (peers.contains(sender)) {
-        senderId = (peers)[sender];
-    } else {
-        if (peers.isEmpty()) {
-            senderId = 0;
-        } else {
-            senderId = *std::max_element(peers.begin(), peers.end()) + 1;
-        }
-
-        (peers)[sender] = senderId;
-        queries += RawDatabase::Query{("INSERT INTO peers (id, public_key) "
-                                       "VALUES (%1, '"
-                                       + sender + "');")
-                                          .arg(senderId)};
-    }
-
-    queries += RawDatabase::Query(
-        QString("INSERT OR IGNORE INTO aliases (owner, display_name) VALUES (%1, ?)"
-                "   ON CONFLICT(owner)"
-                "   DO UPDATE SET display_name = excluded.display_name;"
-                ).arg(senderId),
-        {dispName.toUtf8()});
-
-    // If the alias already existed, the insert will ignore the conflict and last_insert_rowid()
-    // will return garbage,
-    // so we have to check changes() and manually fetch the row ID in this case
     queries +=
-        RawDatabase::Query(QString(
-                               "INSERT INTO history (timestamp, chat_id, message, sender_alias) "
-                               "VALUES (%1, %2, ?, ("
-                               "  CASE WHEN changes() IS 0 THEN ("
-                               "    SELECT id FROM aliases WHERE owner=%3 AND display_name=?)"
-                               "  ELSE last_insert_rowid() END"
-                               "));")
-                               .arg(time.toMSecsSinceEpoch())
-                               .arg(peerId)
-                               .arg(senderId),
-                           {message.toUtf8(), dispName.toUtf8()}, insertIdCallback);
+        RawDatabase::Query(QString("INSERT INTO history (timestamp, receiver, sender, message, type) values (%1, ?, ?, ?, %2)")
+                           .arg(message.timestamp.toMSecsSinceEpoch()).arg(0),
+                           { message.to.toUtf8(), message.from.toUtf8(), message.content.toUtf8()},
+                           insertIdCallback);
 
     if (!isDelivered) {
         queries += RawDatabase::Query{"INSERT INTO faux_offline_pending (id) VALUES ("
@@ -633,7 +596,7 @@ void History::addNewFileMessage(const QString& friendPk, const QString& fileId,
             emit thisPtr->fileInsertionReady(std::move(insertionDataRw));
     };
 
-    addNewMessage(friendPk, "", sender, time, true, dispName, insertFileTransferFn);
+//    addNewMessage(friendPk, "", sender, time, true, dispName, insertFileTransferFn);
 }
 
 /**
@@ -646,15 +609,17 @@ void History::addNewFileMessage(const QString& friendPk, const QString& fileId,
  * @param dispName Name, which should be displayed.
  * @param insertIdCallback Function, called after query execution.
  */
-void History::addNewMessage(const QString& friendPk, const QString& message, const QString& sender,
-                            const QDateTime& time, bool isDelivered, QString displayName,
+void History::addNewMessage(const Message& message,
+                            bool isDelivered,
                             const std::function<void(RowId)>& insertIdCallback)
 {
+    qDebug() << __func__ << "from:"<<message.from << "message"<<message.content;
+
     if (historyAccessBlocked()) {
         return;
     }
 
-    db->execLater(generateNewMessageQueries(friendPk, message, sender, time, isDelivered, displayName,
+    db->execLater(generateNewMessageQueries(message, isDelivered,
                                             insertIdCallback));
 }
 
@@ -693,18 +658,17 @@ size_t History::getNumMessagesForFriendBeforeDate(const ToxPk& friendPk, const Q
         return 0;
     }
 
-    QString queryText = QString("SELECT COUNT(history.id) "
+    QString queryText = QString("SELECT COUNT(id) "
                                 "FROM history "
-                                "JOIN peers chat ON chat_id = chat.id "
-                                "WHERE chat.public_key='%1'")
-                            .arg(friendPk.toString());
+                                "WHERE sender = '%1'")
+                            .arg(ContactId(friendPk).toString());
 
     if (date.isNull()) {
         queryText += ";";
     } else {
         queryText += QString(" AND timestamp < %1;").arg(date.toMSecsSinceEpoch());
     }
-
+    qDebug() << queryText;
     size_t numMessages = 0;
     auto rowCallback = [&numMessages](const QVector<QVariant>& row) {
         numMessages = row[0].toLongLong();
@@ -727,24 +691,29 @@ QList<History::HistMessage> History::getMessagesForFriend(const ToxPk& friendPk,
 
     // Don't forget to update the rowCallback if you change the selected columns!
     QString queryText =
-        QString("SELECT history.id, faux_offline_pending.id, timestamp, "
-                "chat.public_key, aliases.display_name, sender.public_key, "
-                "message, file_transfers.file_restart_id, "
+        QString("SELECT history.id, "
+                "faux_offline_pending.id, "
+                "timestamp, "
+                "receiver owner, "
+                "aliases.display_name, "
+                "sender sender_key, "
+                "message, "
+                "file_transfers.file_restart_id, "
                 "file_transfers.file_path, file_transfers.file_name, "
                 "file_transfers.file_size, file_transfers.direction, "
-                "file_transfers.file_state, broken_messages.id FROM history "
+                "file_transfers.file_state, broken_messages.id "
+                "FROM history "
                 "LEFT JOIN faux_offline_pending ON history.id = faux_offline_pending.id "
-                "JOIN peers chat ON history.chat_id = chat.id "
-                "JOIN aliases ON sender_alias = aliases.id "
-                "JOIN peers sender ON aliases.owner = sender.id "
+                "LEFT JOIN aliases ON sender = aliases.owner "
                 "LEFT JOIN file_transfers ON history.file_id = file_transfers.id "
                 "LEFT JOIN broken_messages ON history.id = broken_messages.id "
-                "WHERE chat.public_key='%1' "
+                "WHERE history.sender='%1' OR history.receiver='%1' "
+                "ORDER by history.timestamp "
                 "LIMIT %2 OFFSET %3;")
             .arg(friendPk.toString())
             .arg(lastIdx - firstIdx)
             .arg(firstIdx);
-
+    qDebug()<<queryText;
     auto rowCallback = [&messages](const QVector<QVariant>& row) {
         // dispName and message could have null bytes, QString::fromUtf8
         // truncates on null bytes so we strip them
@@ -790,23 +759,26 @@ QList<History::HistMessage> History::getMessagesForFriend(const ToxPk& friendPk,
        QList<HistMessage> messages;
 
        auto sql = QString(
-                        "SELECT history.id, faux_offline_pending.id, timestamp, "
-                        "chat.public_key owner, aliases.display_name, "
-                        "sender.public_key sender_key, "
-                        "message, file_transfers.file_restart_id, "
-                        "file_transfers.file_path, file_transfers.file_name, "
-                        "file_transfers.file_size, file_transfers.direction, "
-                        "file_transfers.file_state, broken_messages.id FROM history "
-                        "LEFT JOIN faux_offline_pending ON history.id = faux_offline_pending.id "
-                        "JOIN peers chat ON history.chat_id = chat.id "
-                        "JOIN aliases ON sender_alias = aliases.id "
-                        "JOIN peers sender ON aliases.owner = sender.id "
-                        "LEFT JOIN file_transfers ON history.file_id = file_transfers.id "
-                        "LEFT JOIN broken_messages ON history.id = broken_messages.id "
-                        "WHERE chat.public_key='%1' "
-                        "ORDER by history.timestamp DESC LIMIT %2;").arg(pk.toString()).arg(size);
-
-
+                   "SELECT history.id, "
+                   "faux_offline_pending.id, "
+                   "timestamp, "
+                   "receiver owner, "
+                   "aliases.display_name, "
+                   "sender sender_key, "
+                   "message, "
+                   "file_transfers.file_restart_id, "
+                   "file_transfers.file_path, file_transfers.file_name, "
+                   "file_transfers.file_size, file_transfers.direction, "
+                   "file_transfers.file_state, broken_messages.id "
+                   "FROM history "
+                   "LEFT JOIN faux_offline_pending ON history.id = faux_offline_pending.id "
+                   "LEFT JOIN aliases ON sender = aliases.owner "
+                   "LEFT JOIN file_transfers ON history.file_id = file_transfers.id "
+                   "LEFT JOIN broken_messages ON history.id = broken_messages.id "
+                   "WHERE history.sender='%1' OR history.receiver='%1' "
+                   "ORDER by history.timestamp DESC LIMIT %2;")
+                      .arg(pk.toString())
+                      .arg(size);
 
        auto rowCallback = [&messages](const QVector<QVariant>& row) {
            // dispName and message could have null bytes, QString::fromUtf8
@@ -967,8 +939,7 @@ QDateTime History::getDateWhereFindPhrase(const QString& friendPk, const QDateTi
         QStringLiteral("SELECT timestamp "
                        "FROM history "
                        "LEFT JOIN faux_offline_pending ON history.id = faux_offline_pending.id "
-                       "JOIN peers chat ON chat_id = chat.id "
-                       "WHERE chat.public_key='%1' "
+                       "WHERE public_key='%1' "
                        "AND %2 "
                        "%3")
             .arg(friendPk)
@@ -1008,19 +979,17 @@ QList<History::DateIdx> History::getNumMessagesForFriendBeforeDateBoundaries(con
     // but this time with the only filter being that our id is less than
     // the ID of the corresponding row in the table that is grouped by day
     auto countMessagesForFriend =
-        QString("SELECT COUNT(*) - 1 " // Count - 1 corresponds to 0 indexed message id for friend
-                "FROM history countHistory "            // Import unfiltered table as countHistory
-                "JOIN peers chat ON chat_id = chat.id " // link chat_id to chat.id
-                "WHERE chat.public_key = '%1'"          // filter this conversation
-                "AND countHistory.id <= history.id") // and filter that our unfiltered table history id only has elements up to history.id
+        QString("SELECT COUNT(*) "
+                "FROM history "
+                "WHERE public_key = '%1' "
+                )
             .arg(friendPkString);
 
     auto limitString = (maxNum) ? QString("LIMIT %1").arg(maxNum) : QString("");
 
     auto queryString = QString("SELECT (%1), (timestamp / 1000 / 60 / 60 / 24) AS day "
                                "FROM history "
-                               "JOIN peers chat ON chat_id = chat.id "
-                               "WHERE chat.public_key = '%2' "
+                               "WHERE public_key = '%2' "
                                "AND timestamp >= %3 "
                                "GROUP by day "
                                "%4;")
@@ -1064,12 +1033,13 @@ void History::markAsDelivered(RowId messageId)
 
 void History::setFriendAlias(const QString &friendPk, const QString &alias)
 {
-    uint owner = -1;
+    int owner = -1;
     db->execNow({QString("SELECT id FROM peers where public_key = '%1'").arg(friendPk),
                  [&owner](const QVector<QVariant>& row) {
                      owner = row[0].toLongLong();
                  }});
     if(owner < 0){
+        qWarning() <<"contactId"<<friendPk<<" is no existing";
         return;
     }
 

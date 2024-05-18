@@ -27,6 +27,10 @@ Contact:: Contact(const ContactId& id_, const QString& name_,
       avatarSetStatus{ Status::AvatarSet::None}{
 
     auto profile = Nexus::getProfile();
+
+    uint dbId = profile->addContact(id);
+    qDebug() <<__func__ <<"Add contact "<< id.toString() << " saved to db dbId=>"<<dbId;
+
     auto alias0 = profile->getFriendAlias(id.toString());
     if(!alias0.isEmpty()){
         alias = alias0;

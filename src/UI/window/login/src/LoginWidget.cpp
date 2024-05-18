@@ -38,7 +38,8 @@ LoginWidget::LoginWidget(QWidget *parent)
       ui(new Ui::LoginWidget),   //
       m_loginKey(nullptr),       //
       m_settingManager(nullptr), //
-      m_loaded(0), m_timer{std::make_unique<QTimer>()} {
+      m_loaded(0),
+      m_timer{std::make_unique<QTimer>()} {
 
   ui->setupUi(this);
   ui->loginBtn->setCursor(Qt::PointingHandCursor);
@@ -52,7 +53,6 @@ LoginWidget::LoginWidget(QWidget *parent)
 
 LoginWidget::~LoginWidget() {
   // 卸载语言处理器
-  settings::Translator::unregister(this);
   disconnect(m_loginKey);
   m_loginKey->deleteLater();
   okCloudService->deleteLater();
@@ -188,6 +188,7 @@ void LoginWidget::onConnectResult(ok::session::SignInInfo info,
     break;
   case ok::session::Status::CONNECTING: {
     ui->loginMessage->setText(tr("..."));
+    ui->loginBtn->setText(tr("Logging in"));
     QString account(ui->accountInput->text());
     QString password(ui->passwordInput->text());
     emit loginFailed(account, password);
@@ -201,6 +202,7 @@ void LoginWidget::onConnectResult(ok::session::SignInInfo info,
     break;
   }
   case ok::session::Status::FAILURE:
+      ui->loginBtn->setText(tr("Login"));
     ui->loginMessage->setText(result.msg);
     break;
   }
@@ -266,9 +268,7 @@ void LoginWidget::showEvent(QShowEvent *e)
 void LoginWidget::onTimeout()
 {
     if(ui->rember->isChecked() && ui->providers->count()>0){
-
         if(!ui->passwordInput->text().isEmpty()&&!ui->accountInput->text().isEmpty()){
-
             on_loginBtn_released();
         }
     }

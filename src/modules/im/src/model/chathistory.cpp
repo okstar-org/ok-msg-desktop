@@ -134,10 +134,11 @@ QList<Message> ChatHistory::getLastTextMessage(uint size)
         if(type == HistMessageContentType::message){
             Message msg={.isAction=false,
                          .id = QString::number(i.id.get()),
-                         .content = i.content.asMessage(),
                          .from = i.sender,
-                         .timestamp = i.timestamp,
-                         .displayName=i.dispName
+                         .to = i.receiver,
+                         .displayName=i.dispName,
+                         .content = i.content.asMessage(),
+                         .timestamp = i.timestamp
                         };
             list.append(msg);
         }
@@ -300,7 +301,7 @@ void ChatHistory::onMessageReceived(const ToxPk& sender, const Message & message
         if (message.isAction) {
             content = ChatForm::ACTION_PREFIX + content;
         }
-        history->addNewMessage(friendPk, content, friendPk, message.timestamp, true, displayName);
+        history->addNewMessage(message, true);
     }
 
     sessionChatLog.onMessageReceived(sender, message);
@@ -321,7 +322,7 @@ void ChatHistory::onMessageSent(DispatchedMessageId id, const Message & message)
 
         auto onInsertion = [this, id](RowId historyId) { handleDispatchedMessage(id, historyId); };
 
-        history->addNewMessage(friendPk, content, selfPk, message.timestamp, false, username,
+        history->addNewMessage(message, false,
                                onInsertion);
     }
 
@@ -372,6 +373,7 @@ void ChatHistory::loadHistoryIntoSessionChatLog(ChatLogIdx start) const
     // conversion should be safe
     assert(getFirstIdx() == ChatLogIdx(0));
     auto messages = history->getMessagesForFriend(f.getPublicKey(), start.get(), end.get());
+    qDebug() <<"load message for:"<< f.getPublicKey().toString() <<"messages:" << messages.size();
 
 //    assert(messages.size() == end.get() - start.get());
     ChatLogIdx nextIdx = start;
@@ -402,9 +404,13 @@ void ChatHistory::loadHistoryIntoSessionChatLog(ChatLogIdx start) const
             // reflect what was sent/received.
             auto processedMessage = Message{
                     .isAction= isAction,
-                    .content=messageContent,
+//                    .id = message.id,
                     .from= message.sender,
-                    .timestamp= message.timestamp};
+                    .to = message.receiver,
+                    .displayName = message.dispName,
+                    .content=messageContent,
+                    .timestamp= message.timestamp
+            };
 
             auto dispatchedMessageIt =
                 std::find_if(dispatchedMessageRowIdMap.begin(), dispatchedMessageRowIdMap.end(),

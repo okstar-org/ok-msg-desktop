@@ -52,9 +52,8 @@ public:
  }
 
 private:
+    MessageProcessor::SharedParams sharedParams;
 
-
-    MessageProcessor::SharedParams sharedMessageProcessorParams;
     std::unique_ptr<IMessageDispatcher> messageDispatcher;
     std::unique_ptr<ChatHistory> chatHistory;
     std::unique_ptr<SessionChatLog> chatLog;

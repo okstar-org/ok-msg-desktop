@@ -21,8 +21,10 @@
 
 #include <src/core/groupid.h>
 #include <src/core/toxpk.h>
-
+#include "src/core/icoreidhandler.h"
 #include "lib/messenger/IMMessage.h"
+
+#include "contact.h"
 
 class Friend;
 
@@ -44,19 +46,25 @@ struct MessageMetadata {
 
 struct Message {
 public:
-    bool isGroup{false};
+  bool isGroup{false};
   bool isAction;
   QString id;
-  QString content;
   QString from;
-  QDateTime timestamp;
+  QString to;
   QString displayName;
+  QString content;
+  QDateTime timestamp;
   std::vector<MessageMetadata> metadata;
+
+  QString toString() const {
+      return QString("{id:%1, from:%2, to:%3, time:%4, content:%5}")
+              .arg(id).arg(from).arg(to).arg(timestamp.toString()).arg(content);
+  }
+
 };
 
 struct FriendMessage : Message{
-//    ToxPk from;
-    ToxPk to;
+//    ToxPk to;
 };
 
 struct GroupMessage : public Message{
@@ -65,9 +73,13 @@ public:
         isGroup = true;
     }
     QString nick;
+    QString resource;
+
     QString toString() const {
-        return QString("{id:%1, from:%2, content:%3}").arg(id).arg(from).arg(content);
+        return QString("{id:%1, from:%2, to:%3, time:%4, content:%5, nick:%6, resource:%7}")
+                .arg(id).arg(from).arg(to).arg(timestamp.toString()).arg(content).arg(nick).arg(resource);
     }
+
 };
 
 struct GroupInfo {
@@ -102,11 +114,17 @@ public:
 
   public:
       //模式匹配
-    QRegularExpression GetNameMention() const { return nameMention; }
-    QRegularExpression GetSanitizedNameMention() const {
+    const QRegularExpression & GetNameMention() const {
+        return nameMention;
+    }
+
+    const QRegularExpression & GetSanitizedNameMention() const {
       return sanitizedNameMention;
     }
-    QRegularExpression GetPublicKeyMention() const { return pubKeyMention; }
+    const QRegularExpression & GetPublicKeyMention() const {
+        return pubKeyMention;
+    }
+
     void onUserNameSet(const QString &username);
     void setPublicKey(const QString &pk);
 
@@ -116,18 +134,11 @@ public:
     QRegularExpression pubKeyMention;
   };
 
-  MessageProcessor(const SharedParams &sharedParams);
+  MessageProcessor(ICoreIdHandler &idHandler, const Contact& f, const SharedParams &sharedParams);
 
-  std::vector<Message> processOutgoingMessage(bool isAction,
+  std::vector<Message> processOutgoingMessage(bool isAction, QString const &content);
 
-                                              QString const &content);
-
-  Message processIncomingMessage(bool isAction,
-                                 QString const &id,
-                                 QString const &from,
-                                 QString const &message,
-                                 const QDateTime& time,
-                                 QString const &displayName);
+  Message processIncomingMessage(Message& message);
 
   /**
    * @brief Enables mention detection in the processor
@@ -141,6 +152,8 @@ public:
 
 private:
   bool detectingMentions = false;
+  ICoreIdHandler &idHandler;
+  const Contact& f;
   const SharedParams &sharedParams;
 };
 

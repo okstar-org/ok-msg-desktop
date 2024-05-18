@@ -570,6 +570,12 @@ QString Profile::getFriendAlias(const QString &friendPk)
     return history->getFriendAlias(friendPk);
 }
 
+uint Profile::addContact(const ContactId &cid)
+{
+    qDebug() << __func__<<cid.toString();
+    return history->addNewContact(cid.toString());
+}
+
 /**
  * @brief Adds history message about friendship request attempt if history is
  * enabled
@@ -587,7 +593,7 @@ void Profile::onRequestSent(const ToxPk &friendPk, const QString &message) {
   const QString selfStr = core->getSelfPublicKey().toString();
   const QDateTime datetime = QDateTime::currentDateTime();
   const QString name = core->getUsername();
-  history->addNewMessage(pkStr, inviteStr, selfStr, datetime, true, name);
+//  history->addNewMessage(pkStr, inviteStr, selfStr, datetime, true, name);
 }
 
 /**

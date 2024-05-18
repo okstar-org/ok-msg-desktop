@@ -26,6 +26,7 @@
 #include <src/model/chatroom/groupchatroom.h>
 
 
+
 SendWorker::SendWorker(const Friend &m_friend){
     qDebug() << __func__ <<"friend:"<<m_friend.getId();
 
@@ -35,9 +36,8 @@ SendWorker::SendWorker(const Friend &m_friend){
     auto history = profile->getHistory();
 
 
-       auto messageProcessor = MessageProcessor(sharedMessageProcessorParams);
        messageDispatcher = std::make_unique<FriendMessageDispatcher>(
-           m_friend, messageProcessor, *core);
+           m_friend, sharedParams, *core, *core);
 
        chatHistory = std::make_unique<ChatHistory>(m_friend,
                                                    history,
@@ -57,7 +57,8 @@ SendWorker::SendWorker(const Friend &m_friend){
                                             *messageDispatcher.get());
 
 
-      chatRoom = std::make_unique<FriendChatroom>(&m_friend, ContentDialogManager::getInstance());
+      chatRoom = std::make_unique<FriendChatroom>(&m_friend,
+                                                  ContentDialogManager::getInstance());
 
 }
 
@@ -69,10 +70,8 @@ SendWorker::SendWorker(const Group &group)
     auto &settings = Settings::getInstance();
     auto history = profile->getHistory();
 
-
-    auto messageProcessor = MessageProcessor(sharedMessageProcessorParams);
     messageDispatcher = std::make_unique<GroupMessageDispatcher>(
-        group, std::move(messageProcessor), *core, *core,
+        group, sharedParams, *core, *core,
         Settings::getInstance());
 
      chatLog = std::make_unique<SessionChatLog>(*core);
@@ -88,7 +87,9 @@ SendWorker::SendWorker(const Group &group)
                                                 *chatLog.get(),
                                                 *messageDispatcher.get(),
                                                 settings);
-     chatRoom = std::make_unique<GroupChatroom>(&group, ContentDialogManager::getInstance());
+
+     chatRoom = std::make_unique<GroupChatroom>(&group,
+                                                ContentDialogManager::getInstance());
 }
 
 SendWorker::~SendWorker()
