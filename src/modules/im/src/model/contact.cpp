@@ -28,6 +28,11 @@ Contact:: Contact(const ContactId& id_, const QString& name_, const QString& ali
     if(!alias0.isEmpty()){
         alias = alias0;
     }
+
+    auto avt = profile->loadAvatarData(ToxPk{id});
+    if(!avt.isNull()){
+        avatar.loadFromData(avt);
+    }
 }
 
 Contact::~Contact()
