@@ -30,9 +30,9 @@
 SendWorker::SendWorker(const Friend &m_friend){
     qDebug() << __func__ <<"friend:"<<m_friend.getId();
 
-    auto profile = Nexus::getProfile();
     auto core = Core::getInstance();
     auto &settings = Settings::getInstance();
+    auto profile = Nexus::getProfile();
     auto history = profile->getHistory();
 
 

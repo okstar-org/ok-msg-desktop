@@ -817,29 +817,11 @@ QString Profile::setPassword(const QString &newPassword) {
   // apply new encryption
   onSaveToxSave();
 
-  bool dbSuccess = false;
-
-  // TODO: ensure the database and the tox save file use the same password
-  if (database) {
-    dbSuccess = database->setPassword(newPassword);
-  }
-
   QString error{};
-  if (!dbSuccess) {
-    error = tr("Couldn't change password on the database, it might be "
-               "corrupted or use the old "
-               "password.");
-  }
 
   QByteArray avatar = loadAvatarData(core->getSelfId().getPublicKey());
   saveAvatar(core->getSelfId().getPublicKey(), avatar);
 
-//  QVector<QString> friendList = core->loadFriendList();
-//  QVectorIterator<QString> i(friendList);
-//  while (i.hasNext()) {
-//    const ToxPk friendPublicKey = core->getFriendPublicKey(i.next());
-//    saveAvatar(friendPublicKey, loadAvatarData(friendPublicKey));
-//  }
   return error;
 }
 

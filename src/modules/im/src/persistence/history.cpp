@@ -19,12 +19,13 @@
 #include "db/rawdatabase.h"
 
 namespace {
-static constexpr int SCHEMA_VERSION = 4;
+
+static constexpr int SCHEMA_VERSION = 0;
 
 bool createCurrentSchema(RawDatabase& db)
 {
     QVector<RawDatabase::Query> queries;
-    queries += RawDatabase::Query(QStringLiteral(
+    queries += RawDatabase::Query(QString(
         //peers
         "CREATE TABLE peers ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -48,6 +49,7 @@ bool createCurrentSchema(RawDatabase& db)
         "   type INTEGER                                 "
         "   );                                                      "
 
+        //file_transfers
         "CREATE TABLE file_transfers "
         "(id INTEGER PRIMARY KEY, "
         "chat_id INTEGER NOT NULL, "
@@ -58,12 +60,16 @@ bool createCurrentSchema(RawDatabase& db)
         "file_size INTEGER NOT NULL, "
         "direction INTEGER NOT NULL, "
         "file_state INTEGER NOT NULL);"
+
+        //faux_offline_pending
         "CREATE TABLE faux_offline_pending (id INTEGER PRIMARY KEY);"
+
+        //broken_messages
         "CREATE TABLE broken_messages (id INTEGER PRIMARY KEY);"));
 
-
-    queries += RawDatabase::Query("CREATE INDEX sender_idx on history (sender);");
-    queries += RawDatabase::Query(QStringLiteral("PRAGMA user_version = %1;").arg(SCHEMA_VERSION));
+//    queries += RawDatabase::Query(QString("CREATE INDEX his_receiver_idx ON history (receiver); "));
+//    queries += RawDatabase::Query(QString("CREATE INDEX his_sender_idx ON history (sender); "));
+    queries += RawDatabase::Query(QString("PRAGMA user_version = %1;").arg(SCHEMA_VERSION));
 
     return db.execNow(queries);
 }
@@ -83,111 +89,18 @@ bool isNewDb(std::shared_ptr<RawDatabase>& db, bool& success)
     return newDb;
 }
 
+/**
+ * Upgrade db schema from 0 to 1
+ * @brief dbSchema0to1
+ * @param db
+ * @return
+ */
 bool dbSchema0to1(RawDatabase& db)
 {
     QVector<RawDatabase::Query> queries;
-    queries +=
-        RawDatabase::Query(QStringLiteral(
-            "CREATE TABLE file_transfers "
-            "(id INTEGER PRIMARY KEY, "
-            "chat_id INTEGER NOT NULL, "
-            "file_restart_id BLOB NOT NULL, "
-            "file_name BLOB NOT NULL, "
-            "file_path BLOB NOT NULL, "
-            "file_hash BLOB NOT NULL, "
-            "file_size INTEGER NOT NULL, "
-            "direction INTEGER NOT NULL, "
-            "file_state INTEGER NOT NULL);"));
-    queries +=
-        RawDatabase::Query(QStringLiteral("ALTER TABLE history ADD file_id INTEGER;"));
+    queries += RawDatabase::Query(QStringLiteral(";"));
     queries += RawDatabase::Query(QStringLiteral("PRAGMA user_version = 1;"));
     return db.execNow(queries);
-}
-
-bool dbSchema1to2(RawDatabase& db)
-{
-    // Any faux_offline_pending message, in a chat that has newer delivered
-    // message is decided to be broken. It must be moved from
-    // faux_offline_pending to broken_messages
-
-    // the last non-pending message in each chat
-    QString lastDeliveredQuery = QString(
-        "SELECT chat_id, MAX(history.id) FROM "
-        "history JOIN peers chat ON chat_id = chat.id "
-        "LEFT JOIN faux_offline_pending ON history.id = faux_offline_pending.id "
-        "WHERE faux_offline_pending.id IS NULL "
-        "GROUP BY chat_id;");
-
-    QVector<RawDatabase::Query> upgradeQueries;
-    upgradeQueries +=
-        RawDatabase::Query(QStringLiteral(
-            "CREATE TABLE broken_messages "
-            "(id INTEGER PRIMARY KEY);"));
-
-    auto rowCallback = [&upgradeQueries](const QVector<QVariant>& row) {
-        auto chatId = row[0].toLongLong();
-        auto lastDeliveredHistoryId = row[1].toLongLong();
-
-        upgradeQueries += QString("INSERT INTO broken_messages "
-            "SELECT faux_offline_pending.id FROM "
-            "history JOIN faux_offline_pending "
-            "ON faux_offline_pending.id = history.id "
-            "WHERE history.chat_id=%1 "
-            "AND history.id < %2;").arg(chatId).arg(lastDeliveredHistoryId);
-    };
-    // note this doesn't modify the db, just generate new queries, so is safe
-    // to run outside of our upgrade transaction
-    if (!db.execNow({lastDeliveredQuery, rowCallback})) {
-        return false;
-    }
-
-    upgradeQueries += QString(
-        "DELETE FROM faux_offline_pending "
-        "WHERE id in ("
-            "SELECT id FROM broken_messages);");
-
-    upgradeQueries += RawDatabase::Query(QStringLiteral("PRAGMA user_version = 2;"));
-
-    return db.execNow(upgradeQueries);
-}
-
-bool dbSchema2to3(RawDatabase& db)
-{
-    // Any faux_offline_pending message with the content "/me " are action
-    // messages that qTox previously let a user enter, but that will cause an
-    // action type message to be sent to toxcore, with 0 length, which will
-    // always fail. They must be be moved from faux_offline_pending to broken_messages
-    // to avoid qTox from erroring trying to send them on every connect
-
-    const QString emptyActionMessageString = "/me ";
-
-    QVector<RawDatabase::Query> upgradeQueries;
-    upgradeQueries += RawDatabase::Query{QString("INSERT INTO broken_messages "
-            "SELECT faux_offline_pending.id FROM "
-            "history JOIN faux_offline_pending "
-            "ON faux_offline_pending.id = history.id "
-            "WHERE history.message = ?;"),
-            {emptyActionMessageString.toUtf8()}};
-
-    upgradeQueries += QString(
-        "DELETE FROM faux_offline_pending "
-        "WHERE id in ("
-            "SELECT id FROM broken_messages);");
-
-    upgradeQueries += RawDatabase::Query(QStringLiteral("PRAGMA user_version = 3;"));
-
-    return db.execNow(upgradeQueries);
-}
-
-bool dbSchema3to4(RawDatabase& db)
-{
-    QVector<RawDatabase::Query> upgradeQueries;
-    upgradeQueries += RawDatabase::Query{QString(
-        "CREATE INDEX chat_id_idx on history (chat_id);")};
-
-    upgradeQueries += RawDatabase::Query(QStringLiteral("PRAGMA user_version = 4;"));
-
-    return db.execNow(upgradeQueries);
 }
 
 
@@ -199,35 +112,30 @@ bool dbSchema3to4(RawDatabase& db)
 */
 bool dbSchemaUpgrade(std::shared_ptr<RawDatabase>& db)
 {
-    int64_t databaseSchemaVersion;
+    qDebug() << __func__;
 
+    int64_t databaseSchemaVersion;
     if (!db->execNow(RawDatabase::Query("PRAGMA user_version", [&](const QVector<QVariant>& row) {
             databaseSchemaVersion = row[0].toLongLong();
         }))) {
         qCritical() << "History failed to read user_version";
         return false;
     }
+    qDebug() <<"Current db schame version is"<< databaseSchemaVersion;
 
     if (databaseSchemaVersion > SCHEMA_VERSION) {
         qWarning().nospace() << "Database version (" << databaseSchemaVersion <<
-            ") is newer than we currently support (" << SCHEMA_VERSION << "). Please upgrade qTox";
+            ") is newer than we currently support (" << SCHEMA_VERSION << "). Please upgrade the program!";
         // We don't know what future versions have done, we have to disable db access until we re-upgrade
         return false;
-    } else if (databaseSchemaVersion == SCHEMA_VERSION) {
-        // No work to do
-        return true;
     }
 
     switch (databaseSchemaVersion) {
     case 0: {
-        // Note: 0 is a special version that is actually two versions.
-        //   possibility 1) it is a newly created database and it neesds the current schema to be created.
-        //   possibility 2) it is a old existing database, before version 1 and before we saved schema version,
-        //       and needs to be updated.
         bool success = false;
         const bool newDb = isNewDb(db, success);
         if (!success) {
-            qCritical() << "Failed to create current db schema";
+            qCritical() << "Failed to determine the db is new";
             return false;
         }
         if (newDb) {
@@ -237,34 +145,9 @@ bool dbSchemaUpgrade(std::shared_ptr<RawDatabase>& db)
             }
             qDebug() << "Database created at schema version" << SCHEMA_VERSION;
             break; // new db is the only case where we don't incrementally upgrade through each version
-        } else {
-            if (!dbSchema0to1(*db)) {
-                qCritical() << "Failed to upgrade db to schema version 1, aborting";
-                return false;
-            }
-            qDebug() << "Database upgraded incrementally to schema version 1";
         }
     }
-        // fallthrough
-    case 1:
-       if (!dbSchema1to2(*db)) {
-            qCritical() << "Failed to upgrade db to schema version 2, aborting";
-            return false;
-       }
-       qDebug() << "Database upgraded incrementally to schema version 2";
-       //fallthrough
-    case 2:
-       if (!dbSchema2to3(*db)) {
-            qCritical() << "Failed to upgrade db to schema version 3, aborting";
-            return false;
-       }
-       qDebug() << "Database upgraded incrementally to schema version 3";
-    case 3:
-       if (!dbSchema3to4(*db)) {
-            qCritical() << "Failed to upgrade db to schema version 4, aborting";
-            return false;
-       }
-       qDebug() << "Database upgraded incrementally to schema version 4";
+    //other versions
     // etc.
     default:
         qInfo() << "Database upgrade finished (databaseSchemaVersion" << databaseSchemaVersion
@@ -661,7 +544,7 @@ size_t History::getNumMessagesForFriendBeforeDate(const ToxPk& friendPk, const Q
 
     QString queryText = QString("SELECT COUNT(id) "
                                 "FROM history "
-                                "WHERE sender = '%1'")
+                                "WHERE sender = '%1' or receiver = '%1';")
                             .arg(ContactId(friendPk).toString());
 
     if (date.isNull()) {
