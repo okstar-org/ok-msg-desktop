@@ -251,6 +251,8 @@ void ChatForm::onTextEditChanged() {
 }
 
 void ChatForm::onAttachClicked() {
+  qDebug() <<__func__;
+
   QStringList paths = QFileDialog::getOpenFileNames(
       Q_NULLPTR, tr("Send a file"), QDir::homePath(), nullptr, nullptr);
 
@@ -264,7 +266,7 @@ void ChatForm::onAttachClicked() {
     QString fileName = QFileInfo(path).fileName();
     if (!file.exists() || !file.open(QIODevice::ReadOnly)) {
       QMessageBox::warning(this, tr("Unable to open"),
-                           tr("qTox wasn't able to open %1").arg(fileName));
+                           tr("Wasn't able to open %1").arg(fileName));
       continue;
     }
 
@@ -277,6 +279,7 @@ void ChatForm::onAttachClicked() {
     }
 
     qint64 filesize = file.size();
+    qDebug() <<"sending"<<file <<"size"<<filesize;
     core->getCoreFile()->sendFile(f->getId(), fileName, path, filesize);
   }
 }

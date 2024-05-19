@@ -87,11 +87,11 @@ IM::IM(QString host, QString user, QString pwd,
   qRegisterMetaType<FriendId>("FriendId");
   qRegisterMetaType<PeerId>("PeerId");
   qRegisterMetaType<IMMessage>("IMMessage");
+  qRegisterMetaType<GroupOccupant>("GroupOccupant");
 
   startTimer(20 * 1000);
-  qDebug() << ("Create messenger instance is successfully");
-
   connect(this, &IM::selfNicknameChanged, this, &IM::onSelfNicknameChanged);
+  qDebug() << ("Create messenger instance is successfully");
 }
 
 IM::~IM() {
@@ -890,15 +890,28 @@ void IM::handleMUCParticipantPresence(gloox::MUCRoom *room,                 //
   qDebug() << __func__ << groupId
            << "nick" << nick;
 
-  auto mucUser = presence.tag()->findChild("x", XMLNS, XMLNS_MUC_USER);
-  if (mucUser) {
-    auto item = mucUser->findChild("item");
+  auto x = presence.tag()->findChild("x", XMLNS, XMLNS_MUC_USER);
+  if (x) {
+      GroupOccupant occ={.nick = nick};
+
+      auto item = x->findChild("item");
     if (item){
       auto affiliation= qstring(item->findAttribute("affiliation"));
       auto role= qstring(item->findAttribute("role"));
-      GroupOccupant occ={.nick = nick, .affiliation=affiliation, .role=role, .status=presence.presence()};
-      emit groupOccupantStatus(groupId, occ);
+      auto jid = qstring(item->findAttribute("jid"));
+        occ.jid=jid;
+        occ.affiliation=affiliation;
+        occ.role=role;
+        occ.status=presence.presence();
     }
+
+    for (auto t : x->findChildren("status")){
+          occ.codes.push_back(qstring(t->findAttribute("code")).toInt());
+    }
+
+
+    emit groupOccupantStatus(groupId, occ);
+
   }
 }
 

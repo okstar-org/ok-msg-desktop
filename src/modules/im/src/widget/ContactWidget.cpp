@@ -299,9 +299,9 @@ void ContactWidget::onGroupPeerNameChanged(QString groupnumber,
 
 void ContactWidget::onGroupPeerStatusChanged(const QString &groupnumber,
                                              const GroupOccupant &go) {
+  qDebug() <<__func__ <<"group"<<groupnumber << "occupant:" << go.nick;
 
-  const GroupId &groupId = GroupId(groupnumber);
-  Group *g = GroupList::findGroup(groupId);
+  Group *g = GroupList::findGroup(GroupId(groupnumber));
   if (!g) {
     qWarning() << "Can not find group named:" << groupnumber;
     return;

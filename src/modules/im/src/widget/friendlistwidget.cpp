@@ -386,8 +386,7 @@ void FriendListWidget::moveFriends(QLayout *layout) {
 
 FriendListWidget::SortingMode FriendListWidget::getMode() const { return mode; }
 
-GroupWidget *FriendListWidget::addGroup(
-                                        const GroupId &groupId,
+GroupWidget *FriendListWidget::addGroup(const GroupId &groupId,
                                         const QString &groupName) {
 
   qDebug() << __func__ << groupId.toString();
@@ -395,7 +394,7 @@ GroupWidget *FriendListWidget::addGroup(
   Group *g = GroupList::findGroup(groupId);
   if (g) {
     qWarning() << "Group already exist.";
-    return groupWidgets.value(groupId);
+    return groupWidgets.value(groupId.toString());
   }
 
   auto core = Core::getInstance();
@@ -404,12 +403,12 @@ GroupWidget *FriendListWidget::addGroup(
 //  const bool enabled = core->getGroupAvEnabled(groupId.toString());
 
   const auto compact = settings.getCompactLayout();
-  auto widget = new GroupWidget(m_contentLayout,
+  auto gw = new GroupWidget(m_contentLayout,
                                 groupId.toString(),
                                 groupId,
                                 groupName,
                                 compact);
-  groupWidgets[groupId] = widget;
+  groupWidgets[groupId.toString()] = gw;
 
   //  auto notifyReceivedCallback = [this, groupId](const ToxPk &author,
   //                                                const Message &message) {
@@ -440,7 +439,17 @@ GroupWidget *FriendListWidget::addGroup(
   //  groupChatrooms[groupId] = chatroom;
   //  groupChatForms[groupId] = QSharedPointer<GroupChatForm>(form);
   //
-  addGroupWidget(widget);
+  groupLayout.addSortedWidget(gw);
+
+  connect(g, &Group::titleChanged,
+          [=, this](const QString &author, const QString &name) {
+            Q_UNUSED(author);
+            renameGroupWidget(gw, name);
+          });
+
+  connect(gw, &GroupWidget::chatroomWidgetClicked, this,
+          &FriendListWidget::slot_groupClicked);
+  connect(gw, &GroupWidget::removeGroup, this, &FriendListWidget::do_groupDeleted);
   //
   //  widget->updateStatusLight();
   //  contactListWidget->activateWindow();
@@ -472,26 +481,18 @@ GroupWidget *FriendListWidget::addGroup(
   //  FilterCriteria filter = getFilterCriteria();
   //  widget->searchName(ui->searchContactText->text(), filterGroups(filter));
 
-  return widget;
+  return gw;
 }
 
-void FriendListWidget::addGroupWidget(GroupWidget *gw) {
-  groupLayout.addSortedWidget(gw);
-  auto g = gw->getGroup();
-  connect(g, &Group::titleChanged,
-          [=, this](const QString &author, const QString &name) {
-            Q_UNUSED(author);
-            renameGroupWidget(gw, name);
-          });
-
-  connect(gw, &GroupWidget::chatroomWidgetClicked, this,
-          &FriendListWidget::slot_groupClicked);
+void FriendListWidget::do_groupDeleted(const ContactId &cid)
+{
+    removeGroup(GroupId(cid));
 }
 
-
-void FriendListWidget::removeGroupWidget(GroupWidget *w) {
-  groupLayout.removeSortedWidget(w);
-  w->deleteLater();
+void FriendListWidget::removeGroup(const GroupId &cid) {
+    auto gw = groupWidgets.value(cid.toString());
+    gw->deleteLater();
+    groupLayout.removeSortedWidget(gw);
 }
 
 void FriendListWidget::setGroupTitle(const GroupId& groupId,
@@ -952,7 +953,7 @@ void FriendListWidget::removeFriend(const ToxPk &friendPk) {
 }
 
 GroupWidget *FriendListWidget::getGroup(const GroupId &id) {
-  return groupWidgets.value(id);
+  return groupWidgets.value(id.toString());
 }
 
 void FriendListWidget::slot_groupClicked(GenericChatroomWidget *actived) {
@@ -1067,3 +1068,4 @@ void FriendListWidget::do_toShowDetails(const ContactId &cid) {
     }
   }
 }
+

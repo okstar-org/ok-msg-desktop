@@ -1512,8 +1512,8 @@ instead of system taskbar.</source>
 <context>
     <name>GroupWidget</name>
     <message>
-        <source>Remove chat from this window</source>
-        <translation>从这个窗口中删除会话</translation>
+        <source>Are you sure to quit %1 chat group?</source>
+        <translation>您确定退出群聊 %1 吗？</translation>
     </message>
     <message>
         <source>Quit group</source>

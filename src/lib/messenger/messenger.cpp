@@ -461,7 +461,6 @@ bool Messenger::sendToGroup(const QString &g,   //
 
 bool Messenger::sendFileToFriend(const QString &f,
                                  const FileHandler::File &file) {
-  qDebug() << QString("file:%1=>%2").arg(file.name).arg(f);
   return _jingle->sendFile(f, file);
 }
 

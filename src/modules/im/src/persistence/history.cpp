@@ -544,7 +544,7 @@ size_t History::getNumMessagesForFriendBeforeDate(const ToxPk& friendPk, const Q
 
     QString queryText = QString("SELECT COUNT(id) "
                                 "FROM history "
-                                "WHERE sender = '%1' or receiver = '%1';")
+                                "WHERE sender = '%1' or receiver = '%1'")
                             .arg(ContactId(friendPk).toString());
 
     if (date.isNull()) {
@@ -706,12 +706,10 @@ QList<History::HistMessage> History::getUndeliveredMessagesForFriend(const ToxPk
 
     auto queryText =
         QString("SELECT history.id, faux_offline_pending.id, timestamp, chat.public_key, "
-                "aliases.display_name, sender.public_key, message, broken_messages.id "
+                "chat.public_key, message, broken_messages.id "
                 "FROM history "
                 "JOIN faux_offline_pending ON history.id = faux_offline_pending.id "
                 "JOIN peers chat on history.sender = chat.public_key "
-                "JOIN aliases on sender_alias = aliases.id "
-                "JOIN peers sender on aliases.owner = sender.id "
                 "LEFT JOIN broken_messages ON history.id = broken_messages.id "
                 "WHERE chat.public_key='%1';")
             .arg(friendPk.toString());

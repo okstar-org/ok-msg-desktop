@@ -137,13 +137,16 @@ void CoreFile::sendAvatarFile(QString friendId, const QByteArray &data) {
   //  addFile(friendId, fileNum, file);
 }
 
-void CoreFile::sendFile(QString friendId, QString filename, QString filePath,
+void CoreFile::sendFile(QString friendId,
+                        QString filename,
+                        QString filePath,
                         long long filesize) {
+
+    qDebug()<< __func__ << filePath;
+
     QMutexLocker{coreLoopLock};
 
     QString fileId = QDateTime::currentDateTime().toString();
-    qDebug()<<"CoreFile::sendFile" << filePath <<"fileId"<< fileId;
-
     QString fileNum = filename;
     ToxFile file{fileId, friendId, fileNum, filename,
                  filePath, ToxFile::SENDING};

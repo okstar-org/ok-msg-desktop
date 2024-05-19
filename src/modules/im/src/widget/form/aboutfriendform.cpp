@@ -60,12 +60,8 @@ AboutFriendForm::AboutFriendForm(std::unique_ptr<IAboutFriend> _about, QWidget* 
     ui->friendId->setText(about->getPublicKey().toString());
     ui->statusMessage->setText(about->getStatusMessage());
     ui->avatar->setPixmap(about->getAvatar());
-
     ui->alias->setText(about->getAlias());
-
     connect(ui->alias, &QLineEdit::textChanged, this, &AboutFriendForm::onAliasChanged);
-
-
 
     connect(about->getFriend(), &Friend::nameChanged, [&](auto name){
         ui->userName->setText(name);

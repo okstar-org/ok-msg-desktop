@@ -17,12 +17,13 @@ public:
     ~AboutGroupForm();
     void init();
 
-
+    void updateUI();
 
 private:
 
     Ui::AboutGroupForm *ui;
     GroupId groupId;
+     Group* group;
 
 private slots:
     void onSendMessageClicked();

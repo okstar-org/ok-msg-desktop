@@ -88,25 +88,23 @@ public:
   virtual void onMessageReceipt(QString friendId, QString receipt) = 0;
 };
 
-typedef struct {
-
+struct GroupInfo {
   QString name;
-
   QString description;
-
   QString subject;
-
   QString creationdate;
-
   uint64_t occupants=0;
-} GroupInfo;
+} ;
 
-typedef struct{
+struct GroupOccupant{
+    QString jid;
     QString nick;
     QString affiliation;
     QString role;
     int status;
-} GroupOccupant;
+    //https://xmpp.org/registrar/mucstatus.html
+    QList<int> codes;
+};
 
 class GroupHandler {
 public:

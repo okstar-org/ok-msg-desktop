@@ -216,7 +216,8 @@ void ChatWidget::connectToCore(Core *core) {
 
 void ChatWidget::connectToCoreFile(CoreFile *coreFile)
 {
-    connect(coreFile, &CoreFile::fileSendStarted, this, &ChatWidget::dispatchFile);
+    connect(coreFile, &CoreFile::fileSendStarted, this,
+            &ChatWidget::dispatchFile);
     connect(coreFile, &CoreFile::fileReceiveRequested, this,
             &ChatWidget::dispatchFile);
     connect(coreFile, &CoreFile::fileTransferAccepted, this,

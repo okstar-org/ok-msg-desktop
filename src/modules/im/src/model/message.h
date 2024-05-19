@@ -91,10 +91,12 @@ struct GroupInfo {
 };
 
 struct GroupOccupant{
+    QString jid;
     QString nick;
     QString affiliation;
     QString role;
     int status;
+    QList<int> codes;
 };
 
 

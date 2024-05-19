@@ -46,18 +46,34 @@
    </item>
    <item row="5" column="0">
     <layout class="QGridLayout" name="infoLayout">
-     <item row="4" column="0">
-      <widget class="QLabel" name="titleLabel">
+     <item row="12" column="0">
+      <widget class="QLabel" name="autoAcceptCallLabel">
        <property name="text">
-        <string>Title:</string>
+        <string>Auto accept call:</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
-      <widget class="QLabel" name="id">
+     <item row="8" column="0">
+      <widget class="QLabel" name="countLabel">
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="text">
+        <string>Occupants:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="1">
+      <widget class="QLineEdit" name="desc"/>
+     </item>
+     <item row="8" column="1">
+      <widget class="QLabel" name="occupants">
        <property name="text">
         <string notr="true"/>
        </property>
@@ -73,18 +89,22 @@
        </property>
       </widget>
      </item>
-     <item row="6" column="0">
-      <widget class="QLabel" name="descLabel">
-       <property name="text">
-        <string>Description:</string>
+     <item row="15" column="1">
+      <widget class="QCheckBox" name="autogroupinvite">
+       <property name="accessibleDescription">
+        <string>Automatically accept group chat invitations from this contact if set.</string>
        </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       <property name="text">
+        <string>Auto accept group invites</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
-      <widget class="QLineEdit" name="name"/>
+     <item row="17" column="1">
+      <widget class="QPushButton" name="removeHistory">
+       <property name="text">
+        <string>Clear</string>
+       </property>
+      </widget>
      </item>
      <item row="2" column="0">
       <widget class="QLabel" name="nameLabel">
@@ -96,61 +116,10 @@
        </property>
       </widget>
      </item>
-     <item row="16" column="1">
-      <widget class="QPushButton" name="selectSaveDir">
+     <item row="17" column="0">
+      <widget class="QLabel" name="label">
        <property name="text">
-        <string>Auto accept for this contact is disabled</string>
-       </property>
-      </widget>
-     </item>
-     <item row="8" column="1">
-      <widget class="QLabel" name="occupants">
-       <property name="text">
-        <string notr="true"/>
-       </property>
-      </widget>
-     </item>
-     <item row="16" column="0">
-      <widget class="QLabel" name="saveFileLabel">
-       <property name="text">
-        <string>Default directory to save files:</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="idLabel">
-       <property name="text">
-        <string>Id:</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="17" column="1">
-      <widget class="QPushButton" name="removeHistory">
-       <property name="text">
-        <string>Clear</string>
-       </property>
-      </widget>
-     </item>
-     <item row="15" column="1">
-      <widget class="QCheckBox" name="autogroupinvite">
-       <property name="accessibleDescription">
-        <string>Automatically accept group chat invitations from this contact if set.</string>
-       </property>
-       <property name="text">
-        <string>Auto accept group invites</string>
-       </property>
-      </widget>
-     </item>
-     <item row="12" column="0">
-      <widget class="QLabel" name="autoAcceptCallLabel">
-       <property name="text">
-        <string>Auto accept call:</string>
+        <string>Clear history:</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -176,34 +145,78 @@
        </item>
       </widget>
      </item>
-     <item row="17" column="0">
-      <widget class="QLabel" name="label">
+     <item row="1" column="1">
+      <widget class="QLabel" name="id">
        <property name="text">
-        <string>Clear history:</string>
+        <string notr="true"/>
+       </property>
+      </widget>
+     </item>
+     <item row="16" column="0">
+      <widget class="QLabel" name="saveFileLabel">
+       <property name="text">
+        <string>Default directory to save files:</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
      </item>
-     <item row="8" column="0">
-      <widget class="QLabel" name="countLabel">
-       <property name="layoutDirection">
-        <enum>Qt::LeftToRight</enum>
-       </property>
+     <item row="6" column="0">
+      <widget class="QLabel" name="descLabel">
        <property name="text">
-        <string>Occupants:</string>
+        <string>Description:</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="titleLabel">
+       <property name="text">
+        <string>Title:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLineEdit" name="name"/>
      </item>
      <item row="4" column="1">
       <widget class="QLineEdit" name="title"/>
      </item>
-     <item row="6" column="1">
-      <widget class="QLineEdit" name="desc"/>
+     <item row="1" column="0">
+      <widget class="QLabel" name="idLabel">
+       <property name="text">
+        <string>Id:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="16" column="1">
+      <widget class="QPushButton" name="selectSaveDir">
+       <property name="text">
+        <string>Auto accept for this contact is disabled</string>
+       </property>
+      </widget>
+     </item>
+     <item row="18" column="0">
+      <widget class="QLabel" name="nickLabel">
+       <property name="text">
+        <string>Description:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="18" column="1">
+      <widget class="QLineEdit" name="nick"/>
      </item>
     </layout>
    </item>

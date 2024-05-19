@@ -350,13 +350,13 @@ void IMJingle::doSessionTerminate(Jingle::Session *session,
                                   const Session::Jingle *jingle,
                                   const PeerId &peerId) {
 
-  qDebug()<<QString("sId:%1 peerId:%2")<<(qstring(session->sid()))<<(peerId.toString());
+  qDebug()<<__func__<<"sId:"<<qstring(session->sid())<<"peerId"<<peerId.toString();
   int ri = 0;
   for (auto &file : m_waitSendFiles) {
     if (qstring(session->sid()) == file.sId) {
       // TODO 需要处理没有terminate的信令的清理
       // 清理待发文件
-      qDebug()<<("file:%1 session is terminate.")<<((file.id));
+      qDebug()<<"session is terminate."<<file.id;
       doStopFileSendTask(session, file);
       m_waitSendFiles.removeAt(ri);
       return;
@@ -787,19 +787,20 @@ void IMJingle::finishFileTransfer(const QString &friendId,
 
 bool IMJingle::sendFile(const QString &friendId,
                         const FileHandler::File &file) {
-  qDebug()<<("friendId:%1 name:%2")<<(friendId)<<(file.name);
+  qDebug()<<__func__ << (friendId) << (file.name);
   if (file.id.isEmpty()) {
-    qWarning() << "文件缺少ID属性！";
+    qWarning() << "file id is no existing";
     return false;
   }
 
-  JID jid = client->wrapJid(friendId);
-  auto resources = client->getOnlineResources(jid.bare());
+  auto bare = stdstring(friendId);
+  auto resources = client->getOnlineResources(bare);
   if (resources.empty()) {
     qWarning() << "目标用户不在线！";
     return false;
   }
 
+  JID jid(bare);
   for (auto &r : resources) {
     jid.setResource(r);
     sendFileToResource(jid, file);
@@ -857,33 +858,32 @@ IMJingleSession *IMJingle::findSession(const std::string &sId) {
 
 void IMJingle::doStartFileSendTask(const Session *session,
                                    const FileHandler::File &file) {
-  qDebug()<<
-      ("sId:%1 file:%2 fileId:%3")<<(file.sId)<<(file.name)<<((file.id));
+  qDebug()<<__func__<<(file.sId)<<(file.name)<<((file.id));
 
   auto *imFile = new IMFile(session->remote(), file, client);
   connect(imFile, &IMFile::fileSending,
           [&](const JID &m_friendId, const FileHandler::File &m_file, int m_seq,
               int m_sentBytes, bool end) {
-            emit sendFileInfo(qstring(m_friendId.username()), m_file, m_seq,
+            emit sendFileInfo(qstring(m_friendId.bare()), m_file, m_seq,
                               m_sentBytes, end);
           });
 
   connect(imFile, &IMFile::fileAbort,
           [&](const JID &m_friendId, const FileHandler::File &m_file,
               int m_sentBytes) {
-            emit sendFileAbort(qstring(m_friendId.username()), m_file,
+            emit sendFileAbort(qstring(m_friendId.bare()), m_file,
                                m_sentBytes);
           });
 
   connect(imFile, &IMFile::fileError,
           [&](const JID &m_friendId, const FileHandler::File &m_file,
               int m_sentBytes) {
-            emit sendFileError(qstring(m_friendId.username()), m_file,
+            emit sendFileError(qstring(m_friendId.bare()), m_file,
                                m_sentBytes);
           });
   imFile->start();
   m_fileSenderMap.insert(file.sId, imFile);
-  qDebug()<<("Send file:%1 task has been stared.")<<((file.id));
+  qDebug()<<__func__<<("Send file task has been stared.")<<((file.id));
 }
 
 void IMJingle::doStopFileSendTask(const Session *session,
@@ -893,7 +893,7 @@ void IMJingle::doStopFileSendTask(const Session *session,
   if (!imFile) {
     return;
   }
-  qDebug()<<("Send file:%1 task will be clear.")<<((file.id));
+  qDebug()<<__func__<<"Send file task will be clear."<<file.id;
   imFile->abort();
   if (imFile->isRunning()) {
     imFile->quit();
@@ -904,7 +904,8 @@ void IMJingle::doStopFileSendTask(const Session *session,
 
   // 返回截断后续处理
   m_fileSenderMap.remove(file.sId);
-  qDebug()<<("Send file:%1 task has been clean.")<<((file.id));
+  qDebug() << "Send file task has been clean."<<file.id;
+
 }
 } // namespace messenger
 } // namespace lib

@@ -11,11 +11,18 @@
 AboutGroupForm::AboutGroupForm(const GroupId& groupId_, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::AboutGroupForm),
-    groupId{groupId_}
+    groupId{groupId_}, group{GroupList::findGroup(groupId_)}
 {
     ui->setupUi(this);
 
     connect(ui->sendMessage, &QPushButton::clicked, this, &AboutGroupForm::onSendMessageClicked);
+
+    ui->id->setText(group->getId());
+    ui->name->setText(group->getDisplayedName());
+    ui->title->setText(group->getTitle());
+    ui->desc->setText(group->getDesc());
+    ui->occupants->setText(QString::number(group->getPeersCount()));
+
     init();
 }
 
@@ -26,13 +33,6 @@ AboutGroupForm::~AboutGroupForm()
 
 
 void AboutGroupForm::init(){
-
-    auto group =  GroupList::findGroup(groupId);
-    if(!group){
-        qWarning() << "Group"<< groupId.username <<"is no existing!";
-        return;
-    }
-
     connect(group, &Group::titleChanged, this, [&](const QString& author,const QString &title){
         ui->title->setText(title);
     });
@@ -44,18 +44,27 @@ void AboutGroupForm::init(){
         ui->desc->setText(desc);
     });
 
-    auto name = group->getDisplayedName();
-    ui->name->setText(name);
-    ui->occupants->setText(QString::number(group->getPeersCount()));
-    ui->id->setText(group->getId());
-    ui->desc->setText(group->getDesc());
-    ui->title->setText(group->getTitle());
+    connect(group, &Group::privilegesChanged, this, [&](const Group::Role &role, const Group::Affiliation &aff, const QList<int> codes){
+        updateUI();
+    });
 
     auto map = group->getPeerList();
     for(auto peer : map){
         auto f = new QLabel();
         f->setText(peer);
         ui->friendListLayout->addWidget(f);
+    }
+
+    updateUI();
+}
+
+void AboutGroupForm::updateUI()
+{
+    auto role= group->getRole();
+    if(role >= Group::Role::Participant){
+        ui->title->setEnabled(true);
+    }else{
+        ui->title->setDisabled(true);
     }
 }
 

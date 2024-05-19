@@ -63,8 +63,8 @@ public:
 
   GroupWidget *getGroup(const GroupId &id);
 
-  void addGroupWidget(GroupWidget *gw);
-  void removeGroupWidget(GroupWidget *w);
+
+  void removeGroup(const GroupId &groupId);
   void setGroupTitle(const GroupId &groupId, const QString &author,const QString& title);
   void setGroupInfo(const GroupId &groupId, const GroupInfo &info);
 
@@ -102,6 +102,7 @@ public slots:
 
   void slot_groupClicked(GenericChatroomWidget *);
   void do_toShowDetails(const ContactId& cid);
+  void do_groupDeleted(const ContactId& cid);
 
 protected:
   void dragEnterEvent(QDragEnterEvent *event) override;
@@ -131,7 +132,7 @@ private:
   ContentLayout *m_contentLayout;
 
   QMap<QString, FriendWidget *> friendWidgets;
-  QMap<GroupId, GroupWidget *> groupWidgets;
+  QMap<QString, GroupWidget *> groupWidgets;
   GenericChatItemLayout groupLayout;
 
 };

@@ -22,10 +22,10 @@ namespace messenger {
 IMFile::IMFile(const JID &friendId, FileHandler::File file, const IM *im)
     : m_friendId(friendId), m_file(std::move(file)), m_im(im),
       m_byteStream(nullptr) {
-  qDebug() << "Create for:" << m_file.id;
+  qDebug() <<__func__<< "Create FileSender:" << m_file.id;
 }
 
-IMFile::~IMFile() { qDebug() << "Destroyed for:" << m_file.id; }
+IMFile::~IMFile() { qDebug() <<__func__<< "Destroyed FileSender:" << m_file.id; }
 
 void IMFile::run() {
 
@@ -34,7 +34,7 @@ void IMFile::run() {
           .arg(qstring(m_friendId.username()))
           .arg(m_file.id));
 
-  qDebug() << "Start file:%1" << m_file.id;
+  qDebug() << "Start file" << m_file.id;
 
   /**
    * 1、创建流通道
@@ -65,7 +65,7 @@ void IMFile::run() {
   for (;;) {
 
     if (!m_byteStream) {
-      sleep(100);
+      sleep(1);
       continue;
     }
 
@@ -95,7 +95,7 @@ void IMFile::run() {
 void IMFile::abort() { emit fileAbort(m_friendId, m_file, m_sentBytes); }
 
 void IMFile::handleBytestreamOpen(gloox::Bytestream *bs) {
-  qDebug() << ("file:%1") << qFile->fileName();
+  qDebug() << __func__<< ("file") << qFile->fileName();
   if (!qFile->open(QIODevice::ReadOnly)) {
     return;
   }
@@ -103,17 +103,17 @@ void IMFile::handleBytestreamOpen(gloox::Bytestream *bs) {
 }
 
 void IMFile::handleBytestreamClose(gloox::Bytestream *bs) {
-  qDebug() << "closed:" <<(qstring(bs->sid()));
+  qDebug()<<__func__<< "closed:" <<(qstring(bs->sid()));
   emit fileSent(m_friendId, m_file);
 }
 
 void IMFile::handleBytestreamData(gloox::Bytestream *bs,
                                   const std::string &data) {
-  qDebug() << "data:" << qstring(bs->sid());
+  qDebug()<<__func__ << "data:" << qstring(bs->sid());
 }
 
 void IMFile::handleBytestreamDataAck(gloox::Bytestream *bs) {
-  qDebug() << "acked:" << qstring(bs->sid());
+  qDebug()<<__func__ << "acked:" << qstring(bs->sid());
   m_ack_seq += 1;
   // TODO 考虑性能关系暂时不处理实时反馈ack
   //   if(m_ack_seq < m_seq){
@@ -125,7 +125,7 @@ void IMFile::handleBytestreamDataAck(gloox::Bytestream *bs) {
 }
 
 void IMFile::handleBytestreamError(gloox::Bytestream *bs, const gloox::IQ &iq) {
-  qDebug() << "error:" << qstring(bs->sid());
+  qDebug() << __func__<< qstring(bs->sid());
   fileError(m_friendId, m_file, m_sentBytes);
 }
 

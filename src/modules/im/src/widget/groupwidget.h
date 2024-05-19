@@ -38,6 +38,7 @@ public:
               bool compact);
 
   ~GroupWidget();
+  void init();
 
   void setAsInactiveChatroom() final override;
   void setAsActiveChatroom() final override;
@@ -73,12 +74,21 @@ private slots:
   void updateUserCount(int numPeers);
   void do_widgetClicked(GenericChatroomWidget *w);
   void updateDesc(const QString &);
+  void do_removeGroup(const GroupId &groupId);
+  void do_destroyGroup(const GroupId &groupId);
+    void do_privilegesChanged(const Group::Role &role,
+                              const Group::Affiliation &aff,
+                              const QList<int> codes);
 
 private:
   Group *group;
   ContentWidget* contentWidget;
   ContentLayout* contentLayout;
   std::unique_ptr<AboutGroupForm> about;
+
+  QMenu *menu;
+   QAction *destroyGrpAct;
+   QAction *quitGroup;
 };
 
 #endif // GROUPWIDGET_H

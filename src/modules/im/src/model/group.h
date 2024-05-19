@@ -31,6 +31,25 @@ class Group : public Contact
 {
     Q_OBJECT
 public:
+    enum class Role {
+        //https://xmpp.org/extensions/xep-0045.html#roles
+        None,
+        Visitor,
+        Participant,
+        Moderator,
+
+    };
+
+    enum class Affiliation {
+        //https://xmpp.org/extensions/xep-0045.html#affil
+        Outcast,//被驱逐
+        None,
+        Owner,
+        Admin,
+        Member,
+    };
+
+
     Group(const GroupId persistentGroupId,
           const QString& name,
           bool isAvGroupchat,
@@ -66,6 +85,8 @@ public:
     void setDesc(const QString& desc_);
     const QString & getDesc() const;
 
+    const Role& getRole()const{return role;}
+
 const GroupId& getPersistentId() const {return groupId;};
 signals:
     void titleChangedByUser(const QString& title);
@@ -75,6 +96,9 @@ signals:
     void peerCountChanged(uint32_t numPeers);
     void peerNameChanged(const QString& oldName, const QString& newName);
     void descChanged(const QString&);
+    void privilegesChanged(const Role &role,
+                           const Affiliation &aff,
+                           const QList<int> codes);
 
 private:
     void stopAudioOfDepartedPeers(const ToxPk& peerPk);
@@ -90,6 +114,9 @@ private:
     bool userWasMentioned;
     const GroupId groupId;
     bool avGroupchat;
+    Role role{Role::None};
+    Affiliation affiliation{Affiliation::None};
+    QList<int> statusCodes;
 };
 
 #endif // GROUP_H

@@ -25,6 +25,35 @@
 
 static const int MAX_GROUP_TITLE_LENGTH = 128;
 
+namespace  {
+
+Group::Role parseRole(const QString &role){
+    if(role=="moderator"){
+       return Group::Role::Moderator;
+    }else if(role=="participant"){
+        return Group::Role::Participant;
+    }else if(role == "visitor"){
+        return Group::Role::Visitor;
+    }
+    return Group::Role::None;
+}
+
+Group::Affiliation parseAffiliation(const QString & affiliation){
+    if(affiliation == "admin"){
+        return Group::Affiliation::Admin;
+    }else if(affiliation=="owner"){
+        return Group::Affiliation::Owner;
+    }else if(affiliation=="member"){
+       return Group::Affiliation::Member;
+    }else if(affiliation=="outcast"){
+        return Group::Affiliation::Outcast;
+    }
+    return Group::Affiliation::None;
+}
+
+}
+
+
 Group::Group(const GroupId groupId_,
              const QString &name, bool isAvGroupchat, const QString &selfName,
              ICoreGroupQuery &groupQuery, ICoreIdHandler &idHandler)
@@ -32,7 +61,9 @@ Group::Group(const GroupId groupId_,
       groupId{groupId_},
       avGroupchat{isAvGroupchat},
       groupQuery(groupQuery),
-      idHandler(idHandler) {
+      idHandler(idHandler),
+      role{Role::None}, affiliation{Affiliation::None}
+{
   // in groupchats, we only notify on messages containing your name <-- dumb
   // sound notifications should be on all messages, but system popup
   // notification on naming is appropriate
@@ -85,6 +116,17 @@ const QMap<QString, QString> &Group::getPeerList() const {
 
 void Group::addPeer(const GroupOccupant &occ) {
   peerDisplayNames[occ.nick] = occ.nick;
+
+  //判断成员是否为自己
+  auto core = Core::getInstance();
+  auto selfId = core->getSelfId();
+  if(selfId.toString() == ContactId(occ.jid).toString()){
+      role = parseRole(occ.role);
+      affiliation=parseAffiliation(occ.affiliation);
+      statusCodes = occ.codes;
+
+      emit privilegesChanged(role, affiliation, statusCodes);
+  }
 }
 
 void Group::setEventFlag(bool f) { hasNewMessages = f; }

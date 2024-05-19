@@ -703,10 +703,12 @@ void Core::onGroupOccupants(const QString groupId, const uint size) {
 void Core::onGroupOccupantStatus(const QString groupId, //
                                  const lib::messenger::GroupOccupant occ) {
 
-    GroupOccupant go = {.nick=occ.nick,
+    GroupOccupant go = {.jid = occ.jid,
+                        .nick=occ.nick,
                         .affiliation=occ.affiliation,
                         .role=occ.role,
-                        .status = occ.status};
+                        .status = occ.status,
+                        .codes=occ.codes};
     emit groupPeerStatusChanged(groupId, go);
 }
 
@@ -949,7 +951,6 @@ void Core::leaveGroup(QString groupId) {
   if (success) {
     emit saveRequest();
     av->leaveGroupCall(groupId);
-    return;
   }
 }
 
@@ -958,7 +959,6 @@ void Core::destroyGroup(QString groupId) {
   if (success) {
     emit saveRequest();
     av->leaveGroupCall(groupId);
-    return;
   }
 }
 
