@@ -234,9 +234,7 @@ private slots:
   void incomingNotification(QString friendId);
   void onRejectCall(QString friendId);
   void onStopNotification();
-  void dispatchFile(ToxFile file);
-  void dispatchFileWithBool(ToxFile file, bool);
-  void dispatchFileSendFailed(QString friendId, const QString &fileName);
+
 
 
   void registerContentDialog(ContentDialog &contentDialog) const;

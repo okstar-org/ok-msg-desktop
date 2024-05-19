@@ -40,6 +40,49 @@
 #include <QPainter>
 #include <QSvgRenderer>
 
+
+namespace {
+
+/**
+ * @brief Dangerous way to find out if a path is writable.
+ * @param filepath Path to file which should be deleted.
+ * @return True, if file writeable, false otherwise.
+ */
+bool tryRemoveFile(const QString &filepath) {
+  QFile tmp(filepath);
+  bool writable = tmp.open(QIODevice::WriteOnly);
+  tmp.remove();
+  return writable;
+}
+
+void acceptFileTransfer(const ToxFile &file, const QString &path) {
+  QString filepath;
+  int number = 0;
+
+  QString suffix = QFileInfo(file.fileName).completeSuffix();
+  QString base = QFileInfo(file.fileName).baseName();
+
+  do {
+    filepath =
+        QString("%1/%2%3.%4")
+            .arg(path, base,
+                 number > 0 ? QString(" (%1)").arg(QString::number(number))
+                            : QString(),
+                 suffix);
+    ++number;
+  } while (QFileInfo(filepath).exists());
+
+  // Do not automatically accept the file-transfer if the path is not writable.
+  // The user can still accept it manually.
+  if (tryRemoveFile(filepath)) {
+    CoreFile *coreFile = Core::getInstance()->getCoreFile();
+    coreFile->acceptFileRecvRequest(file.friendId, file.fileNum, filepath);
+  } else {
+    qWarning() << "Cannot write to " << filepath;
+  }
+}
+} // namespace
+
 ChatWidget::ChatWidget(QWidget *parent)
     : MainLayout(parent),  //
       ui(new Ui::ChatWidget), //
@@ -171,9 +214,32 @@ void ChatWidget::connectToCore(Core *core) {
   //            &ChatWidget::onGroupSendFailed);
 }
 
+void ChatWidget::connectToCoreFile(CoreFile *coreFile)
+{
+    connect(coreFile, &CoreFile::fileSendStarted, this, &ChatWidget::dispatchFile);
+    connect(coreFile, &CoreFile::fileReceiveRequested, this,
+            &ChatWidget::dispatchFile);
+    connect(coreFile, &CoreFile::fileTransferAccepted, this,
+            &ChatWidget::dispatchFile);
+    connect(coreFile, &CoreFile::fileTransferCancelled, this,
+            &ChatWidget::dispatchFile);
+    connect(coreFile, &CoreFile::fileTransferFinished, this,
+            &ChatWidget::dispatchFile);
+    connect(coreFile, &CoreFile::fileTransferPaused, this, &ChatWidget::dispatchFile);
+    connect(coreFile, &CoreFile::fileTransferInfo, this, &ChatWidget::dispatchFile);
+    connect(coreFile, &CoreFile::fileTransferRemotePausedUnpaused, this,
+            &ChatWidget::dispatchFileWithBool);
+    connect(coreFile, &CoreFile::fileTransferBrokenUnbroken, this,
+            &ChatWidget::dispatchFileWithBool);
+    connect(coreFile, &CoreFile::fileSendFailed, this,
+            &ChatWidget::dispatchFileSendFailed);
+
+}
+
 void ChatWidget::onCoreChanged(Core &core_) {
   core = &core_;
   connectToCore(core);
+  connectToCoreFile(core->getCoreFile());
 
   auto username = core->getUsername();
   qDebug() << "username" << username;
@@ -749,10 +815,8 @@ bool ChatWidget::groupsVisible() const {
 
 void ChatWidget::retranslateUi() {
   ui->retranslateUi(this);
-
-
-
 }
+
 void ChatWidget::setupStatus() {
  int icon_size = 15;
 
@@ -787,6 +851,59 @@ void ChatWidget::setupStatus() {
 //  actionLogout->setText(tr("Logout", "Tray action menu to logout user"));
 //  actionQuit->setText(tr("Exit", "Tray action menu to exit tox"));
 //  actionShow->setText(tr("Show", "Tray action menu to show qTox window"));
+
+}
+
+void ChatWidget::dispatchFile(ToxFile file)
+{
+    qDebug() << __func__ <<file.fileName;
+
+    const auto &friendId = ToxPk(file.friendId);
+    Friend *f = FriendList::findFriend(friendId);
+    if (!f) {
+      return;
+    }
+
+    auto pk = f->getPublicKey();
+
+    if (file.status == ToxFile::INITIALIZING &&
+        file.direction == ToxFile::RECEIVING) {
+      auto sender = (file.direction == ToxFile::SENDING)
+                        ? Core::getInstance()->getSelfPublicKey()
+                        : pk;
+
+      const Settings &settings = Settings::getInstance();
+      QString autoAcceptDir = settings.getAutoAcceptDir(f->getPublicKey());
+      if (autoAcceptDir.isEmpty() &&
+          ok::base::OkSettings::getInstance().getAutoSaveEnabled()) {
+        autoAcceptDir = settings.getGlobalAutoAcceptDir();
+      }
+
+      auto maxAutoAcceptSize = settings.getMaxAutoAcceptSize();
+      bool autoAcceptSizeCheckPassed =
+          maxAutoAcceptSize == 0 || maxAutoAcceptSize >= file.filesize;
+
+      if (!autoAcceptDir.isEmpty() && autoAcceptSizeCheckPassed) {
+        acceptFileTransfer(file, autoAcceptDir);
+      }
+    }
+
+    const auto senderPk = (file.direction == ToxFile::SENDING) ? core->getSelfPublicKey() : pk;
+    contactListWidget->setFriendFileReceived(senderPk, file);
+}
+
+void ChatWidget::dispatchFileWithBool(ToxFile file, bool)
+{
+    dispatchFile(file);
+}
+
+void ChatWidget::dispatchFileSendFailed(QString friendId, const QString &fileName)
+{//  const auto &friendPk = ToxPk(friendId);
+
+    //TODO
+    //  chatForm.value()->addSystemInfoMessage(
+    //      tr("Failed to send file \"%1\"").arg(fileName), ChatMessage::ERROR,
+    //      QDateTime::currentDateTime());
 
 }
 

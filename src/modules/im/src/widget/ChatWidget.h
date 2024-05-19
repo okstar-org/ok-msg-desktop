@@ -111,6 +111,7 @@ private:
   bool groupsVisible() const;
 
   void connectToCore(Core* core);
+  void connectToCoreFile(CoreFile* coreFile);
 
   void groupInvitesUpdate();
   void groupInvitesClear();
@@ -139,7 +140,6 @@ public slots:
   void onFriendAvatarChanged(const ToxPk &friendPk, const QByteArray &avatar);
   void onReceiptReceived(const ToxPk &friendPk, ReceiptNum receipt);
   void onFriendRequestReceived(const ToxPk &friendPk, const QString &message);
-
   void onFriendTypingChanged(const ToxPk &friendnumber, bool isTyping);
 
 
@@ -168,6 +168,11 @@ void onGroupClicked();
 
 void changeDisplayMode();
 void setupStatus();
+
+void dispatchFile(ToxFile file);
+void dispatchFileWithBool(ToxFile file, bool);
+void dispatchFileSendFailed(QString friendId, const QString &fileName);
+
 };
 
 #endif // CHATWIDGET_H

@@ -429,7 +429,7 @@ void CoreFile::handleAvatarOffer(QString friendId, QString fileId,
 
 void CoreFile::onFileRequest(const QString &friendId,
                              const lib::messenger::FileHandler::File &file) {
-  qDebug() << "onFileRequest friendId:"<< friendId;
+  qDebug() << __func__<< file.name << "from"<< friendId;
   ToxFile toxFile(file.sId, friendId, file.id, file.name, "", ToxFile::RECEIVING);
   toxFile.filesize = file.size;
   toxFile.bytesSent = 0;

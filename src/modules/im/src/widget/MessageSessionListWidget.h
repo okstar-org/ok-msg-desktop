@@ -62,6 +62,8 @@ public:
   void setFriendName(const ToxPk &friendPk,  const QString& name);
   void setFriendAvatar(const ToxPk &friendPk, const QByteArray& avatar);
   void setFriendTyping(const ToxPk &pk, bool typing);
+  void setFriendFileReceived(const ToxPk &friendPk, const ToxFile &file);
+
 
   void searchChatrooms(const QString &searchString, bool hideOnline = false,
                        bool hideOffline = false, bool hideGroups = false);

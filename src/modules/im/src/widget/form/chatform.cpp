@@ -96,7 +96,8 @@ QString secondsToDHMS(quint32 duration) {
 }
 } // namespace
 
-ChatForm::ChatForm(const Friend *chatFriend, IChatLog &chatLog_,
+ChatForm::ChatForm(const Friend *chatFriend,
+                   IChatLog &chatLog_,
                    IMessageDispatcher &messageDispatcher)
     : GenericChatForm(chatFriend, chatLog_, messageDispatcher),
       f(chatFriend), isTyping{false}, lastCallIsVideo{false} {

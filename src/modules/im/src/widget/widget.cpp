@@ -94,47 +94,6 @@ bool toxActivateEventHandler(const QByteArray &) {
   return true;
 }
 
-namespace {
-
-/**
- * @brief Dangerous way to find out if a path is writable.
- * @param filepath Path to file which should be deleted.
- * @return True, if file writeable, false otherwise.
- */
-bool tryRemoveFile(const QString &filepath) {
-  QFile tmp(filepath);
-  bool writable = tmp.open(QIODevice::WriteOnly);
-  tmp.remove();
-  return writable;
-}
-
-void acceptFileTransfer(const ToxFile &file, const QString &path) {
-  QString filepath;
-  int number = 0;
-
-  QString suffix = QFileInfo(file.fileName).completeSuffix();
-  QString base = QFileInfo(file.fileName).baseName();
-
-  do {
-    filepath =
-        QString("%1/%2%3.%4")
-            .arg(path, base,
-                 number > 0 ? QString(" (%1)").arg(QString::number(number))
-                            : QString(),
-                 suffix);
-    ++number;
-  } while (QFileInfo(filepath).exists());
-
-  // Do not automatically accept the file-transfer if the path is not writable.
-  // The user can still accept it manually.
-  if (tryRemoveFile(filepath)) {
-    CoreFile *coreFile = Core::getInstance()->getCoreFile();
-    coreFile->acceptFileRecvRequest(file.friendId, file.fileNum, filepath);
-  } else {
-    qWarning() << "Cannot write to " << filepath;
-  }
-}
-} // namespace
 
 static Widget *instance = nullptr;
 
@@ -666,30 +625,8 @@ void Widget::connectToCore(Core &core) {
 
   connect(timer, &QTimer::timeout, this, &Widget::onUserAwayCheck);
   connect(timer, &QTimer::timeout, this, &Widget::onEventIconTick);
-  //  connect(timer, &QTimer::timeout, this, &Widget::onTryCreateTrayIcon);
+  connect(timer, &QTimer::timeout, this, &Widget::onTryCreateTrayIcon);
 
-
-  //  connect(ui->friendList, &QWidget::customContextMenuRequested, this,
-  //          &Widget::friendListContextMenu);
-
-  auto coreFile = core.getCoreFile();
-  connect(coreFile, &CoreFile::fileSendStarted, this, &Widget::dispatchFile);
-  connect(coreFile, &CoreFile::fileReceiveRequested, this,
-          &Widget::dispatchFile);
-  connect(coreFile, &CoreFile::fileTransferAccepted, this,
-          &Widget::dispatchFile);
-  connect(coreFile, &CoreFile::fileTransferCancelled, this,
-          &Widget::dispatchFile);
-  connect(coreFile, &CoreFile::fileTransferFinished, this,
-          &Widget::dispatchFile);
-  connect(coreFile, &CoreFile::fileTransferPaused, this, &Widget::dispatchFile);
-  connect(coreFile, &CoreFile::fileTransferInfo, this, &Widget::dispatchFile);
-  connect(coreFile, &CoreFile::fileTransferRemotePausedUnpaused, this,
-          &Widget::dispatchFileWithBool);
-  connect(coreFile, &CoreFile::fileTransferBrokenUnbroken, this,
-          &Widget::dispatchFileWithBool);
-  connect(coreFile, &CoreFile::fileSendFailed, this,
-          &Widget::dispatchFileSendFailed);
 
     core.setUIStarted();
 }
@@ -990,57 +927,6 @@ void Widget::onCallEnd() { playNotificationSound(IAudioSink::Sound::CallEnd); }
  */
 void Widget::onStopNotification() { audioNotification.reset(); }
 
-/**
- * @brief Dispatches file to the appropriate chatlog and accepts the transfer if
- * necessary
- */
-void Widget::dispatchFile(ToxFile file) {
-  const auto &friendId = ToxPk(file.friendId);
-  Friend *f = FriendList::findFriend(friendId);
-  if (!f) {
-    return;
-  }
-
-  auto pk = f->getPublicKey();
-
-  if (file.status == ToxFile::INITIALIZING &&
-      file.direction == ToxFile::RECEIVING) {
-    auto sender = (file.direction == ToxFile::SENDING)
-                      ? Core::getInstance()->getSelfPublicKey()
-                      : pk;
-
-    const Settings &settings = Settings::getInstance();
-    QString autoAcceptDir = settings.getAutoAcceptDir(f->getPublicKey());
-    if (autoAcceptDir.isEmpty() &&
-        ok::base::OkSettings::getInstance().getAutoSaveEnabled()) {
-      autoAcceptDir = settings.getGlobalAutoAcceptDir();
-    }
-
-    auto maxAutoAcceptSize = settings.getMaxAutoAcceptSize();
-    bool autoAcceptSizeCheckPassed =
-        maxAutoAcceptSize == 0 || maxAutoAcceptSize >= file.filesize;
-
-    if (!autoAcceptDir.isEmpty() && autoAcceptSizeCheckPassed) {
-      acceptFileTransfer(file, autoAcceptDir);
-    }
-  }
-
-  const auto senderPk =
-      (file.direction == ToxFile::SENDING) ? core->getSelfPublicKey() : pk;
-
-  //  friendChatLogs[pk]->onFileUpdated(senderPk, file);
-}
-
-void Widget::dispatchFileWithBool(ToxFile file, bool) { dispatchFile(file); }
-
-void Widget::dispatchFileSendFailed(QString friendId, const QString &fileName) {
-//  const auto &friendPk = ToxPk(friendId);
-
-//TODO
-//  chatForm.value()->addSystemInfoMessage(
-//      tr("Failed to send file \"%1\"").arg(fileName), ChatMessage::ERROR,
-//      QDateTime::currentDateTime());
-}
 
 void Widget::onRejectCall(QString friendId) {
   core->getAv()->cancelCall(friendId);

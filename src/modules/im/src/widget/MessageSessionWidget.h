@@ -69,7 +69,7 @@ class MessageSessionWidget : public GenericChatroomWidget
 
     void setRecvGroupMessage(const GroupMessage& msg);
 
-
+    void setFileReceived(const ToxFile& file);
 
 signals:
     void removeFriend(const ToxPk& friendPk);

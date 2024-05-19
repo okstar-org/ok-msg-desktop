@@ -709,7 +709,16 @@ void MessageSessionListWidget::setFriendAvatar(const ToxPk &friendPk,
 void MessageSessionListWidget::setFriendTyping(const ToxPk &friendId, bool isTyping) {
   auto fw = getMessageSession(friendId.toString());
   if (fw)
-    fw->setTyping(isTyping);
+      fw->setTyping(isTyping);
+}
+
+void MessageSessionListWidget::setFriendFileReceived(const ToxPk &friendPk, const ToxFile &file)
+{
+    auto ms = getMessageSession(friendPk.toString());
+    if(ms){
+        ms->setFileReceived(file);
+    }
+
 }
 
 void MessageSessionListWidget::reloadTheme() {
@@ -718,9 +727,6 @@ void MessageSessionListWidget::reloadTheme() {
     p.setColor(QPalette::Highlight, Style::getColor(Style::ThemeHighlight)); // On mouse over
     p.setColor(QPalette::Light, Style::getColor(Style::ThemeLight));          // When active
     setPalette(p);
-
-
-
 
     for (auto fw: sessionWidgets) {
     fw->reloadTheme();

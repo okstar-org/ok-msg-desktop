@@ -608,6 +608,13 @@ void MessageSessionWidget::setRecvGroupMessage(const GroupMessage &msg)
     }
 }
 
+void MessageSessionWidget::setFileReceived(const ToxFile &file)
+{
+    qDebug() << __func__ <<file.fileName;
+    auto cl = sendWorker->getChatLog();
+    cl->onFileUpdated(ToxPk(contactId), file);
+}
+
 void MessageSessionWidget::setStatus(Status::Status status, bool event) {
     updateStatusLight(status, event);
     auto f = FriendList::findFriend(contactId);

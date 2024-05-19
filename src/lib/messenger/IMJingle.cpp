@@ -199,20 +199,20 @@ void IMJingle::handleSessionActionError(Action action, Session *session,
 }
 
 void IMJingle::handleIncomingSession(Session *session) {
-  qDebug() << "sId:%1" << qstring(session->sid());
+  qDebug() << __func__ << "sId" << qstring(session->sid());
   cacheSessionInfo(session, m_callType);
 }
 
 // Session
-void IMJingle::handleSessionAction(Action action, Session *session,
+void IMJingle::handleSessionAction(Action action,
+                                   Session *session,
                                    const Session::Jingle *jingle) {
 
   auto from = session->remote();
   auto friendId = PeerId(from);
   const std::string &sid = jingle->sid();
 
-  qDebug()<<("action:%1 from:%2 sid:%3")
-                <<((static_cast<int>(action)))
+  qDebug()<<__func__<<((static_cast<int>(action)))
                 <<((qstring(from.full())))
                 <<((qstring(sid)));
 
@@ -293,8 +293,8 @@ void IMJingle::doSessionInitiate(Jingle::Session *session,
                                  const Jingle::Session::Jingle *jingle,
                                  const PeerId &peerId) {
 
-  qDebug() << "sId:" << qstring(session->sid());
-  qDebug() << "peerId:" << (peerId.toString());
+  qDebug() <<__func__   << "sId:" << qstring(session->sid())
+                        << "peerId:" << (peerId.toString());
 
   auto s = findSession(session->sid());
   if (!s) {
@@ -315,10 +315,10 @@ void IMJingle::doSessionInitiate(Jingle::Session *session,
       for (const auto &f : c.file.files) {
         FileHandler::File file = {qstring(c.file.ibb.sid()), qstring(f.name),
                                   qstring(session->sid()), "", (quint64)f.size};
-        qDebug()<<("sId:%1 file:%2 fileId:%3")
-                      <<((file.sId))
-                      <<((file.name))
-                      <<((file.id));
+        qDebug()<< QString("sId:%1 file:%2 fileId:%3")
+                      .arg((file.sId))
+                      .arg((file.name))
+                      .arg((file.id));
         emit receiveFileRequest(peerId.username + "@" + peerId.server, file);
       }
     }

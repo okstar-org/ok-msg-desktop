@@ -51,6 +51,10 @@ public:
     return chatHistory->getLastTextMessage(1);
  }
 
+ SessionChatLog* getChatLog()const{
+     return chatLog.get();
+ }
+
 private:
     MessageProcessor::SharedParams sharedParams;
 
