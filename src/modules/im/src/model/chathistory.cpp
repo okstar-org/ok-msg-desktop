@@ -89,6 +89,9 @@ ChatHistory::ChatHistory(const Friend& f_,    //
     // Now that we've fired off our unsent messages we can connect the message
     connect(&messageDispatcher, &IMessageDispatcher::messageSent, this, &ChatHistory::onMessageSent);
 
+    connect(&messageDispatcher, &IMessageDispatcher::fileReceived, this, &ChatHistory::onFileUpdated);
+    connect(&messageDispatcher, &IMessageDispatcher::fileReceived, &sessionChatLog, &SessionChatLog::onFileUpdated);
+
     // NOTE: this has to be done _after_ sending all sent messages since initial
     // state of the message has to be marked according to our dispatch state
     constexpr auto defaultNumMessagesToLoad = 100;
@@ -103,6 +106,8 @@ ChatHistory::ChatHistory(const Friend& f_,    //
     // We don't manage any of the item updates ourselves, we just forward along
     // the underlying sessionChatLog's updates
     connect(&sessionChatLog, &IChatLog::itemUpdated, this, &IChatLog::itemUpdated);
+
+
 }
 
 ChatHistory::~ChatHistory()
@@ -301,7 +306,7 @@ void ChatHistory::onMessageReceived(const ToxPk& sender, const Message & message
         if (message.isAction) {
             content = ChatForm::ACTION_PREFIX + content;
         }
-        history->addNewMessage(message, true);
+        history->addNewMessage(message, HistMessageContentType::message, true);
     }
 
     sessionChatLog.onMessageReceived(sender, message);
@@ -322,7 +327,9 @@ void ChatHistory::onMessageSent(DispatchedMessageId id, const Message & message)
 
         auto onInsertion = [this, id](RowId historyId) { handleDispatchedMessage(id, historyId); };
 
-        history->addNewMessage(message, false,
+        history->addNewMessage(message,
+                               HistMessageContentType::message,
+                               false,
                                onInsertion);
     }
 

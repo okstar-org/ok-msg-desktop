@@ -212,16 +212,18 @@ void renderMessage(const ChatLogItem &item, bool isSelf, bool colorizeNames,
 
 void renderFile(const ChatLogItem &item, ToxFile file, bool isSelf,
                 QDateTime timestamp, IChatItem::Ptr &chatMessage) {
+
+    qDebug() << __func__ <<"file"<<file.fileName;
+
   if (!chatMessage) {
-    chatMessage = ChatMessage::createFileTransferMessage(item, file,
-                                                         isSelf, timestamp);
+    chatMessage = ChatMessage::createFileTransferMessage(item, file, isSelf, timestamp);
   } else {
-    auto proxy =
-        static_cast<ChatLineContentProxy *>(chatMessage->centerContent());
-    assert(proxy->getWidgetType() ==
-           ChatLineContentProxy::FileTransferWidgetType);
-    auto ftWidget = static_cast<FileTransferWidget *>(proxy->getWidget());
-    ftWidget->onFileTransferUpdate(file);
+    auto proxy = static_cast<ChatLineContentProxy *>(chatMessage->centerContent());
+    if(proxy->getWidgetType() == ChatLineContentProxy::FileTransferWidgetType){
+        auto ftWidget = static_cast<FileTransferWidget *>(proxy->getWidget());
+        ftWidget->onFileTransferUpdate(file);
+        qDebug() <<"update file"<<file.fileName;
+    }
   }
 }
 
@@ -240,13 +242,18 @@ void renderItem(const ChatLogItem &item,
   switch (item.getContentType()) {
   case ChatLogItem::ContentType::message: {
     const auto &chatLogMessage = item.getContentAsMessage();
-    renderMessage(item, isSelf, colorizeNames, chatLogMessage,
+    renderMessage(item, isSelf,
+                  colorizeNames,
+                  chatLogMessage,
                   chatMessage);
     break;
   }
   case ChatLogItem::ContentType::fileTransfer: {
     const auto &file = item.getContentAsFile();
-    renderFile(item, file.file, isSelf, item.getTimestamp(),
+    renderFile(item,
+               file.file,
+               isSelf,
+               item.getTimestamp(),
                chatMessage);
     break;
   }
@@ -398,6 +405,9 @@ GenericChatForm::GenericChatForm(const Contact *contact_,
   connect(chatLog, &ChatLog::loadHistoryLower, this,
           &GenericChatForm::loadHistoryLower);
 
+  connect(&iChatLog, &IChatLog::itemUpdated,
+          this,&GenericChatForm::renderMessage);
+
   connect(searchForm, &SearchForm::searchInBegin, this,
           &GenericChatForm::searchInBegin);
   connect(searchForm, &SearchForm::searchUp, this,
@@ -409,11 +419,13 @@ GenericChatForm::GenericChatForm(const Contact *contact_,
   connect(this, &GenericChatForm::messageNotFoundShow, searchForm,
           &SearchForm::showMessageNotFound);
 
-  connect(&iChatLog, &IChatLog::itemUpdated,
-          this,&GenericChatForm::renderMessage);
+
 
   connect(msgEdit, &ChatTextEdit::enterPressed, this,
           &GenericChatForm::onSendTriggered);
+
+
+
 
   if(!contact_->isGroup()){
 
@@ -777,7 +789,7 @@ void GenericChatForm::clearChatArea(bool confirm, bool inform) {
 void GenericChatForm::onSelectAllClicked() { chatLog->selectAll(); }
 
 void GenericChatForm::insertChatMessage(IChatItem::Ptr msg) {
-  qDebug() << __func__ << msg->centerContent()->getText();
+  qDebug() << __func__ << msg->getRow();
   chatLog->insertChatlineAtBottom(msg);
   emit messageInserted();
 }
@@ -1020,12 +1032,13 @@ void GenericChatForm::renderMessages(ChatLogIdx begin, ChatLogIdx end,
   QList<IChatItem::Ptr> afterLines;
 
   for (auto i = begin; i < end; ++i) {
-    auto chatMessage = getChatMessageForIdx(i, messages);
     auto item = iChatLog.at(i);
     if(!item){
-        qWarning() <<"is no existing msg idx:" << i.get();
+        qWarning() <<"chatLog have no msg idx is:" << i.get();
         continue;
     }
+
+    auto chatMessage = getChatMessageForIdx(i, messages);
     renderItem(*item, needsToHideName(i), colorizeNames, chatMessage);
 
     if (messages.find(i) == messages.end()) {

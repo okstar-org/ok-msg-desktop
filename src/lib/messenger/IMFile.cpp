@@ -62,10 +62,19 @@ void IMFile::run() {
   //  connect(this, &IMFile::fileSent, &loop, &QEventLoop::quit);
   //  loop.exec();
 
+
+  int waitingSecs = 60;
+
   for (;;) {
 
     if (!m_byteStream) {
       sleep(1);
+
+      if(waitingSecs-- <= 0){
+          //超时
+          qWarning() << "Timout to wait stream open.";
+          break;
+      }
       continue;
     }
 
@@ -84,11 +93,14 @@ void IMFile::run() {
     emit fileSending(m_friendId, m_file, m_ack_seq, m_ack_seq * m_buf, false);
   }
 
-  m_byteStream->close();
+  if(m_byteStream){
+      m_byteStream->close();
+      emit fileSending(m_friendId, m_file, m_ack_seq, m_sentBytes, true);
+  }else{
+      qWarning() << "";
+  }
+
   qFile->close();
-
-  emit fileSending(m_friendId, m_file, m_ack_seq, m_sentBytes, true);
-
   qDebug("finished.");
 }
 

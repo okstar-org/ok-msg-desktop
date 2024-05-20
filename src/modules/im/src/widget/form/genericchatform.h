@@ -62,8 +62,10 @@ class GenericChatForm : public QWidget
 {
     Q_OBJECT
 public:
-    GenericChatForm(const Contact* contact, IChatLog& chatLog,
-                    IMessageDispatcher& messageDispatcher, QWidget* parent = nullptr);
+    GenericChatForm(const Contact* contact,
+                    IChatLog& chatLog,
+                    IMessageDispatcher& messageDispatcher,
+                    QWidget* parent = nullptr);
     ~GenericChatForm() override;
 
     void setName(const QString& newName);

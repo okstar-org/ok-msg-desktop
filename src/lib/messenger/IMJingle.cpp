@@ -811,7 +811,7 @@ bool IMJingle::sendFile(const QString &friendId,
 
 bool IMJingle::sendFileToResource(const JID &jid,
                                   const FileHandler::File &file) {
-  qDebug()<<("peerId:%1")<<((qstring(jid.full())));
+  qDebug()<<__func__<<qstring(jid.full());
   auto session = _sessionManager->createSession(jid, this);
   if (!session) {
     qDebug() << "Can not create session!";

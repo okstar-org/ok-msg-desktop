@@ -226,8 +226,10 @@ void ChatWidget::connectToCoreFile(CoreFile *coreFile)
             &ChatWidget::dispatchFile);
     connect(coreFile, &CoreFile::fileTransferFinished, this,
             &ChatWidget::dispatchFile);
-    connect(coreFile, &CoreFile::fileTransferPaused, this, &ChatWidget::dispatchFile);
-    connect(coreFile, &CoreFile::fileTransferInfo, this, &ChatWidget::dispatchFile);
+    connect(coreFile, &CoreFile::fileTransferPaused,
+            this, &ChatWidget::dispatchFile);
+    connect(coreFile, &CoreFile::fileTransferInfo,
+            this, &ChatWidget::dispatchFile);
     connect(coreFile, &CoreFile::fileTransferRemotePausedUnpaused, this,
             &ChatWidget::dispatchFileWithBool);
     connect(coreFile, &CoreFile::fileTransferBrokenUnbroken, this,

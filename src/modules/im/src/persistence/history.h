@@ -38,6 +38,24 @@ enum class HistMessageContentType
     file
 };
 
+struct FileDbInsertionData
+{
+    FileDbInsertionData();
+    RowId historyId;
+    QString friendPk;
+    QString fileId;
+    QString fileName;
+    QString filePath;
+    int64_t size;
+    int direction;
+
+    QString json(){
+        return QString("{\"id:\":\"%1\", \"name\": \"%2\", \"path\":\"%3\", \"size\": %4, \"direction\": %5}")
+                .arg(fileId).arg(fileName).arg(filePath).arg(size).arg(direction);
+    }
+};
+Q_DECLARE_METATYPE(FileDbInsertionData);
+
 class HistMessageContent
 {
 public:
@@ -86,19 +104,6 @@ private:
     HistMessageContentType type;
 };
 
-struct FileDbInsertionData
-{
-    FileDbInsertionData();
-
-    RowId historyId;
-    QString friendPk;
-    QString fileId;
-    QString fileName;
-    QString filePath;
-    int64_t size;
-    int direction;
-};
-Q_DECLARE_METATYPE(FileDbInsertionData);
 
 enum class MessageState
 {
@@ -166,6 +171,7 @@ public:
     uint addNewContact(const QString& contactId);
 
     void addNewMessage(const Message& message,
+                       HistMessageContentType type,
                        bool isDelivered,
                        const std::function<void(RowId)>& insertIdCallback = {});
 
@@ -193,6 +199,7 @@ public:
 protected:
     QVector<RawDatabase::Query>
     generateNewMessageQueries(const Message& message,
+                                HistMessageContentType type,
                               bool isDelivered,
                               std::function<void(RowId)> insertIdCallback = {});
 

@@ -343,6 +343,7 @@ uint History::addNewContact(const QString &contactId)
  */
 QVector<RawDatabase::Query>
 History::generateNewMessageQueries(const Message& message,
+                                   HistMessageContentType type,
                                   bool isDelivered,
                                   std::function<void(RowId)> insertIdCallback)
 {
@@ -352,7 +353,9 @@ History::generateNewMessageQueries(const Message& message,
         RawDatabase::Query(QString("INSERT INTO history "
                                    "(timestamp, receiver, sender, message, type) "
                                    "values (%1, '%2', '%3', '%4', %5)")
-                           .arg(message.timestamp.toMSecsSinceEpoch()).arg(message.to).arg(message.from).arg(message.content).arg(0),
+                           .arg(message.timestamp.toMSecsSinceEpoch())
+                           .arg(message.to).arg(message.from)
+                           .arg(message.content).arg((int)type),
                            insertIdCallback);
 
     if (!isDelivered) {
@@ -433,9 +436,14 @@ RawDatabase::Query History::generateFileFinished(RowId id, bool success, const Q
     }
 }
 
-void History::addNewFileMessage(const QString& friendPk, const QString& fileId,
-                                const QString& fileName, const QString& filePath, int64_t size,
-                                const QString& sender, const QDateTime& time, QString const& dispName)
+void History::addNewFileMessage(const QString& friendPk,
+                                const QString& fileId,
+                                const QString& fileName,
+                                const QString& filePath,
+                                int64_t size,
+                                const QString& sender,
+                                const QDateTime& time,
+                                QString const& dispName)
 {
     if (historyAccessBlocked()) {
         return;
@@ -470,6 +478,8 @@ void History::addNewFileMessage(const QString& friendPk, const QString& fileId,
     insertionData.size = size;
     insertionData.direction = direction;
 
+
+
     auto insertFileTransferFn = [weakThis, insertionData](RowId messageId) {
         auto insertionDataRw = std::move(insertionData);
 
@@ -480,7 +490,15 @@ void History::addNewFileMessage(const QString& friendPk, const QString& fileId,
             emit thisPtr->fileInsertionReady(std::move(insertionDataRw));
     };
 
-//    addNewMessage(friendPk, "", sender, time, true, dispName, insertFileTransferFn);
+    Message msg={
+        .isAction=false,
+        .from=sender,
+        .to = friendPk,
+        .content=insertionData.json(),
+        .timestamp=time,
+    };
+
+    addNewMessage(  msg, HistMessageContentType::file, true,  insertFileTransferFn);
 }
 
 /**
@@ -493,7 +511,7 @@ void History::addNewFileMessage(const QString& friendPk, const QString& fileId,
  * @param dispName Name, which should be displayed.
  * @param insertIdCallback Function, called after query execution.
  */
-void History::addNewMessage(const Message& message,
+void History::addNewMessage(const Message& message,HistMessageContentType type,
                             bool isDelivered,
                             const std::function<void(RowId)>& insertIdCallback)
 {
@@ -503,8 +521,8 @@ void History::addNewMessage(const Message& message,
         return;
     }
 
-    db->execLater(generateNewMessageQueries(message, isDelivered,
-                                            insertIdCallback));
+    db->execLater(generateNewMessageQueries(message, type,
+                                            isDelivered, insertIdCallback));
 }
 
 void History::setFileFinished(const QString& fileId, bool success, const QString& filePath,

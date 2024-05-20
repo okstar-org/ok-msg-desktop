@@ -45,17 +45,12 @@ SendWorker::SendWorker(const Friend &m_friend){
                                                    settings,
                                                    *messageDispatcher.get());
 
-       chatLog = std::make_unique<SessionChatLog>(*core);
+//       chatLog = std::make_unique<SessionChatLog>(*core);
 
-       connect(messageDispatcher.get(), &IMessageDispatcher::messageSent,
-               chatLog.get(), &SessionChatLog::onMessageSent);
-       connect(messageDispatcher.get(), &IMessageDispatcher::messageComplete,
-               chatLog.get(), &SessionChatLog::onMessageComplete);
-       connect(messageDispatcher.get(), &IMessageDispatcher::messageReceived,
-               chatLog.get(), &SessionChatLog::onMessageReceived);
+
 
       chatForm = std::make_unique<ChatForm>(&m_friend,
-                                            *chatLog.get(),
+                                            *chatHistory.get(),
                                             *messageDispatcher.get());
 
 

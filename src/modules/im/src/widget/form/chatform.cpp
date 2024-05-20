@@ -108,8 +108,7 @@ ChatForm::ChatForm(const Friend *chatFriend,
   statusMessageLabel = new CroppingLabel();
   statusMessageLabel->setObjectName("statusLabel");
   statusMessageLabel->setFont(Style::getFont(Style::Medium));
-  statusMessageLabel->setMinimumHeight(
-      Style::getFont(Style::Medium).pixelSize());
+  statusMessageLabel->setMinimumHeight(Style::getFont(Style::Medium).pixelSize());
   statusMessageLabel->setTextFormat(Qt::PlainText);
   statusMessageLabel->setContextMenuPolicy(Qt::CustomContextMenu);
 

@@ -43,6 +43,8 @@ public:
     void onReceiptReceived(ReceiptNum receipt);
     void clearOutgoingMessages();
 
+    void onFileReceived(const ToxFile &file);
+
 private slots:
     void onFriendOnlineOfflineChanged(  bool isOnline);
 

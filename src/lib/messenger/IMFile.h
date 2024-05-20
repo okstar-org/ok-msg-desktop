@@ -62,6 +62,7 @@ private:
   std::unique_ptr<QFile> qFile;
   gloox::Bytestream *m_byteStream;
 
+
 public:
 signals:
   void fileSent(const JID &m_friendId, const FileHandler::File &m_file);

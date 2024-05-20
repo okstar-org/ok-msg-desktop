@@ -164,13 +164,11 @@ void CoreFile::sendFile(QString friendId,
       emit fileSendFailed(friendId, filename);
       return;
     }
+
     qDebug() << QString("sendFile: Created file sender %1 with friend %2")
                     .arg(fileNum)
                     .arg(friendId);
 
-
-  //  tox_file_get_file_id(tox, friendId, fileNum,
-  //                       (uint8_t *)file.resumeFileId.data(), nullptr);
     if (!file.open(false)) {
       qWarning() << QString("sendFile: Can't open file, error: %1")
                         .arg(file.file->errorString());

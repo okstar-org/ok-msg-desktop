@@ -41,6 +41,7 @@ public:
      */
     virtual std::pair<DispatchedMessageId, SentMessageId>
     sendMessage(bool isAction, const QString& content, bool encrypt = false) = 0;
+
 signals:
     /**
      * @brief Emitted when a message is received and processed
@@ -59,6 +60,9 @@ signals:
      * @param id Id of message that is completed
      */
     void messageComplete(DispatchedMessageId id);
+
+
+    void fileReceived(const ToxPk& sender, const ToxFile & file);
 };
 
 #endif /* IMESSAGE_DISPATCHER_H */

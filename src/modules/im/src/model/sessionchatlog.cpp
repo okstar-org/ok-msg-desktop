@@ -103,7 +103,9 @@ firstItemAfterDate(QDate date, const std::map<ChatLogIdx, ChatLogItem> &items) {
 } // namespace
 
 SessionChatLog::SessionChatLog(const ICoreIdHandler &coreIdHandler)
-    : coreIdHandler(coreIdHandler) {}
+    : coreIdHandler(coreIdHandler) {
+
+}
 
 /**
  * @brief Alternate constructor that allows for an initial index to be set
@@ -406,8 +408,9 @@ void SessionChatLog::onMessageComplete(DispatchedMessageId id) {
  * @note This should be attached to any CoreFile signal that fits the signature
  */
 void SessionChatLog::onFileUpdated(const ToxPk &sender, const ToxFile &file) {
-  auto fileIt =
-      std::find_if(currentFileTransfers.begin(), currentFileTransfers.end(),
+    qDebug() <<__func__ <<"sender:" <<sender.toString()<<"file" <<file.fileName;
+
+  auto fileIt = std::find_if(currentFileTransfers.begin(), currentFileTransfers.end(),
                    [&](const CurrentFileTransfer &transfer) {
                      return transfer.file == file;
                    });
@@ -440,6 +443,7 @@ void SessionChatLog::onFileUpdated(const ToxPk &sender, const ToxFile &file) {
     currentFileTransfers.erase(fileIt);
   }
 
+  qDebug() <<"file messageIdx"<< messageIdx.get();
   emit this->itemUpdated(messageIdx);
 }
 

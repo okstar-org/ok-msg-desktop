@@ -714,7 +714,7 @@ void MessageSessionListWidget::setFriendTyping(const ToxPk &friendId, bool isTyp
 
 void MessageSessionListWidget::setFriendFileReceived(const ToxPk &friendPk, const ToxFile &file)
 {
-    auto ms = getMessageSession(friendPk.toString());
+    auto ms = getMessageSession(ContactId(friendPk).toString());
     if(ms){
         ms->setFileReceived(file);
     }

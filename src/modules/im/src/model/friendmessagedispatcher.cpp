@@ -118,8 +118,7 @@ void FriendMessageDispatcher::onReceiptReceived(ReceiptNum receipt) {
  * @brief Handles status change for friend
  * @note Parameters just to fit slot api
  */
-void FriendMessageDispatcher::onFriendOnlineOfflineChanged(
-                                                           bool isOnline) {
+void FriendMessageDispatcher::onFriendOnlineOfflineChanged(bool isOnline) {
   if (isOnline) {
     offlineMsgEngine.deliverOfflineMsgs();
   }
@@ -129,5 +128,10 @@ void FriendMessageDispatcher::onFriendOnlineOfflineChanged(
  * @brief Clears all currently outgoing messages
  */
 void FriendMessageDispatcher::clearOutgoingMessages() {
-  offlineMsgEngine.removeAllMessages();
+    offlineMsgEngine.removeAllMessages();
+}
+
+void FriendMessageDispatcher::onFileReceived( const ToxFile &file)
+{
+    emit fileReceived(ToxPk(file.friendId), file);
 }

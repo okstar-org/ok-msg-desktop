@@ -51,8 +51,8 @@ public:
     return chatHistory->getLastTextMessage(1);
  }
 
- SessionChatLog* getChatLog()const{
-     return chatLog.get();
+ IChatLog* getChatLog()const{
+     return chatHistory.get();
  }
 
 private:

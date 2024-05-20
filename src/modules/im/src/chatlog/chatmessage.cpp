@@ -81,13 +81,16 @@ IChatItem::Ptr ChatMessage::createChatInfoMessage(const QString &rawMessage,
 }
 
 IChatItem::Ptr ChatMessage::createFileTransferMessage(const ChatLogItem &item,
-                                                        ToxFile file, bool isMe,
+                                                        ToxFile file,
+                                                        bool isMe,
                                                         const QDateTime &date) {
-
+    qDebug() << __func__ <<  file.fileName;
     QPixmap avatar = Nexus::getProfile()->loadAvatar(item.getSender());
     QString senderText = item.getDisplayName();
 
-    ChatLineContent * fileContent = new ChatLineContentProxy(new FileTransferWidget(nullptr, file), 320, 0.6f);
+    auto ftw = new FileTransferWidget(nullptr, file);
+    ChatLineContent * fileContent = new ChatLineContentProxy(ftw, 320, 0.6f);
+
     ChatMesssageBox *msg = new ChatMesssageBox(avatar, senderText, fileContent);
     msg->setTime(date);
     return IChatItem::Ptr(msg);
