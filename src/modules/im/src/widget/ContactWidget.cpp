@@ -141,6 +141,9 @@ void ContactWidget::connectToCore(Core *core) {
 
 void ContactWidget::onFriendAdded(const ToxPk &friendPk, bool isFriend) {
   qDebug() << __func__ << "friend:" << friendPk.toString();
+  if(!friendPk.isValid()){
+      return;
+  }
   contactListWidget->addFriend(friendPk, isFriend);
 }
 

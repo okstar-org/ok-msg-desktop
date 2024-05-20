@@ -284,36 +284,17 @@ void History::removeFriendHistory(const QString& friendPk)
         return;
     }
 
-    if (!peers.contains(friendPk)) {
+    QString sql = QString("DELETE FROM history WHERE receiver='%1' or sender='%1'; "
+                            "DELETE FROM peers WHERE public_key='%1'; "
+                            "DELETE FROM aliases WHERE owner='%1'; "
+                            "VACUUM;")
+                            .arg(friendPk);
+    if (!db->execNow(sql)) {
+        qWarning() << "Failed to remove friend's history";
         return;
     }
+    peers.remove(friendPk);
 
-    int64_t id = peers[friendPk];
-
-    QString queryText = QString("DELETE FROM faux_offline_pending "
-                                "WHERE faux_offline_pending.id IN ( "
-                                "    SELECT faux_offline_pending.id FROM faux_offline_pending "
-                                "    LEFT JOIN history ON faux_offline_pending.id = history.id "
-                                "    WHERE chat_id=%1 "
-                                "); "
-                                "DELETE FROM broken_messages "
-                                "WHERE broken_messages.id IN ( "
-                                "    SELECT broken_messages.id FROM broken_messages "
-                                "    LEFT JOIN history ON broken_messages.id = history.id "
-                                "    WHERE chat_id=%1 "
-                                "); "
-                                "DELETE FROM history WHERE chat_id=%1; "
-                                //"DELETE FROM aliases WHERE owner=%1; "
-                                //"DELETE FROM peers WHERE id=%1; "
-                                "DELETE FROM file_transfers WHERE chat_id=%1;"
-                                "VACUUM;")
-                            .arg(id);
-
-    if (db->execNow(queryText)) {
-        peers.remove(friendPk);
-    } else {
-        qWarning() << "Failed to remove friend's history";
-    }
 }
 
 uint History::addNewContact(const QString &contactId)

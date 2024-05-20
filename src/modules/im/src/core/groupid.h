@@ -14,7 +14,7 @@
 #define GROUPID_H
 
 #include "src/core/contactid.h"
-#include "lib/messenger/IMMessage.h"
+
 
 class GroupId : public ContactId{
 public:

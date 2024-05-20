@@ -205,6 +205,7 @@ signals:
   void toSendMessage(const QString &to, bool isGroup = false);
   void toShowDetails(const ContactId &to);
   void toDeleteChat(const QString &to);
+  void toClearHistory(const QString &to);
 
 private slots:
 

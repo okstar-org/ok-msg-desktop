@@ -113,7 +113,6 @@ ChatHistory::ChatHistory(const Friend& f_,    //
 ChatHistory::~ChatHistory()
 {
     qDebug()<<__func__;
-    history->removeFriendHistory(f.getId());
 }
 
 const ChatLogItem* ChatHistory::at(ChatLogIdx idx) const

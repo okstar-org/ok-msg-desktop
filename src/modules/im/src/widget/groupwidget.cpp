@@ -300,9 +300,9 @@ void GroupWidget::updateDesc(const QString &)
 
 void GroupWidget::do_removeGroup(const GroupId &groupId)
 {
+    qDebug()<<__func__<<groupId.toString();
     auto core = Core::getInstance();
     core->leaveGroup(groupId.toString());
-
 }
 
 void GroupWidget::do_destroyGroup(const GroupId &groupId)

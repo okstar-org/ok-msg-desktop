@@ -201,8 +201,9 @@ void LoginWidget::onConnectResult(ok::session::SignInInfo info,
     break;
   }
   case ok::session::Status::FAILURE:
-      ui->loginBtn->setText(tr("Login"));
+    ui->loginBtn->setText(tr("Login"));
     ui->loginMessage->setText(result.msg);
+    m_timer->stop();
     break;
   }
   emit loginResult(info, result);

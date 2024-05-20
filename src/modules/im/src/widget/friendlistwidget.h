@@ -48,9 +48,8 @@ public:
   void reloadTheme();
 
   FriendWidget *addFriend(const ToxPk &friendPk,bool isFriend);
-  FriendWidget *getFriend(const ToxPk &friendPk);
-  void removeFriendWidget(FriendWidget *w);
-  void removeFriend(const ToxPk &friendPk);
+  FriendWidget *getFriend(const ContactId &friendPk);
+  void removeFriend(const ToxPk &cid);
   void addFriendWidget(FriendWidget *fw, Status::Status s, int circleIndex);
   void setFriendStatus(const ToxPk &friendPk,  Status::Status status);
   void setFriendStatusMsg(const ToxPk &friendPk,  const QString& statusMsg);
@@ -58,12 +57,8 @@ public:
   void setFriendAvatar(const ToxPk &friendPk, const QByteArray& avatar);
   void setFriendTyping(const ToxPk &pk, bool typing);
 
-  GroupWidget *addGroup(const GroupId &groupId,
-                        const QString &groupName = "");
-
+  GroupWidget *addGroup(const GroupId &groupId, const QString &groupName = "");
   GroupWidget *getGroup(const GroupId &id);
-
-
   void removeGroup(const GroupId &groupId);
   void setGroupTitle(const GroupId &groupId, const QString &author,const QString& title);
   void setGroupInfo(const GroupId &groupId, const GroupInfo &info);

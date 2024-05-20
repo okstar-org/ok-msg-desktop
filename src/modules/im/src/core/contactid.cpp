@@ -93,7 +93,7 @@ QByteArray ContactId::getByteArray() const {
  * @brief Checks if the ContactId contains a id.
  * @return True if there is a id, False otherwise.
  */
-bool ContactId::isEmpty() const { return username.isEmpty(); }
+bool ContactId::isValid() const { return !username.isEmpty() && !server.isEmpty(); }
 
 int ContactId::getSize()
 {

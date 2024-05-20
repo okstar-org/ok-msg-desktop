@@ -31,6 +31,8 @@ public:
     SendWorker(const Group& m_group);
     ~SendWorker();
 
+    void clearHistory();
+
  static std::unique_ptr<SendWorker> forFriend(const Friend& m_friend);
  static std::unique_ptr<SendWorker> forGroup(const Group& m_group);
 
@@ -63,6 +65,8 @@ private:
     std::unique_ptr<SessionChatLog> chatLog;
     std::unique_ptr<GenericChatForm> chatForm;
     std::unique_ptr<Chatroom> chatRoom;
+
+    ContactId contactId;
 };
 
 #endif // OKMSG_PROJECT_SENDWORKER_H

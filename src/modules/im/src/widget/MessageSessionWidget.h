@@ -71,6 +71,8 @@ class MessageSessionWidget : public GenericChatroomWidget
 
     void setFileReceived(const ToxFile& file);
 
+    void clearHistory();
+
 signals:
     void removeFriend(const ToxPk& friendPk);
     void copyFriendIdToClipboard(const ToxPk& friendPk);

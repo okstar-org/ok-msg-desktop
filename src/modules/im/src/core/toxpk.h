@@ -18,10 +18,9 @@
 #include <QHash>
 
 /**
- * 帐号终端
- * 一个联系人存在多个，通过resource识别
- * 格式:user@server/resource
- * 比如：jidlpdyibulw@meet.chuanshaninfo.com/OkMSG.root-host.[v24.03.1-27-gb9531c6].OTE5Y2
+ * 朋友ID
+ * 格式：user@server
+ * 比如：jidlpdyibulw@meet.chuanshaninfo.com
  */
 class ToxPk : public ContactId
 {
@@ -37,13 +36,9 @@ public:
 
     int getSize() const;
 
-    QByteArray getByteArray() const ;
+    QByteArray getByteArray() const;
 
     QString toString() const;
-
-    const QString& getResource() const {return resource;}
-
-    QString resource;
 
 };
 
@@ -52,5 +47,11 @@ inline uint qHash(const ToxPk& id)
 {
     return qHash(id.getByteArray());
 }
+
+class ToxPeer : public ToxPk {
+public:
+  explicit ToxPeer(const QString& rawId);
+  QString resource;
+};
 
 #endif // TOXPK_H

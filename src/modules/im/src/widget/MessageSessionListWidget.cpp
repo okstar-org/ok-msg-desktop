@@ -92,9 +92,10 @@ MessageSessionListWidget::MessageSessionListWidget(MainLayout *parent,
 //          &MessageSessionListWidget::onGroupchatPositionChanged);
 
    auto w = Widget::getInstance();
-   connect(w, &Widget::toDeleteChat, this, &MessageSessionListWidget::do_deleteSession);
+   connect(w, &Widget::toDeleteChat,
+           this, &MessageSessionListWidget::do_deleteSession);
 
-
+    connect(w, &Widget::toClearHistory, this, &MessageSessionListWidget::do_clearHistory);
 }
 
 MessageSessionListWidget::~MessageSessionListWidget() {
@@ -626,12 +627,22 @@ void MessageSessionListWidget::slot_sessionClicked(MessageSessionWidget *actived
 
 void MessageSessionListWidget::do_deleteSession(const QString &cid)
 {
+    qDebug() << __func__ << cid;
     auto w = sessionWidgets.value(cid );
     if(w){
         qDebug() <<"delete"<<w;
-        w->deleteLater();
         sessionWidgets.remove(cid);
+        w->deleteLater();
     }
+}
+
+void MessageSessionListWidget::do_clearHistory(const QString &cid)
+{
+      qDebug() << __func__ << cid;
+      auto ms = getMessageSession(cid);
+      if(ms){
+        ms->clearHistory();
+      }
 }
 
 

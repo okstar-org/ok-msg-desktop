@@ -17,6 +17,7 @@
 #include <QMap>
 
 #include <src/core/contactid.h>
+#include <src/core/toxpk.h>
 
 template <class T> class QList;
 template <class A, class B> class QHash;

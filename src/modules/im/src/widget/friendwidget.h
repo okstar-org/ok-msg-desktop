@@ -40,7 +40,7 @@ class FriendWidget : public GenericChatroomWidget
 
   public:
     FriendWidget(ContentLayout* layout, const ToxPk &friendPk, bool isFriend, bool compact);
-
+    ~FriendWidget();
     void contextMenuEvent(QContextMenuEvent* event) override final;
     void setAsActiveChatroom() override final;
     void setAsInactiveChatroom() override final;
@@ -60,6 +60,40 @@ class FriendWidget : public GenericChatroomWidget
     void setRecvMessage(const FriendMessage &message,
                         bool isAction);
 
+
+
+
+protected:
+    virtual void mousePressEvent(QMouseEvent* ev) override;
+    virtual void mouseMoveEvent(QMouseEvent* ev) override;
+
+    void onActiveSet(bool active) override;
+private:
+    void init();
+    void deinit();
+
+    ContentLayout* contentLayout;
+//    ContentWidget* contentWidget;
+
+    std::unique_ptr<AboutFriendForm> about;
+
+    Friend *m_friend;
+
+    ContentDialog *createContentDialog() const;
+    ContentDialog * addFriendDialog(const Friend *frnd );
+
+    //右键菜单
+    QMenu *menu;
+    QAction *inviteToGrp;
+    QAction *removeAct;
+
+
+public slots:
+  void onContextMenuCalled(QContextMenuEvent* event);
+  void do_widgetClicked(GenericChatroomWidget *w);
+  void showDetails();
+    void changeAutoAccept(bool enable);
+    void do_removeFriend(const ContactId& id);
 signals:
     void friendWidgetClicked(FriendWidget* widget);
     void removeFriend(const ToxPk& friendPk);
@@ -71,32 +105,6 @@ signals:
     void searchCircle(CircleWidget& circleWidget);
     void updateFriendActivity(const Friend& frnd);
 //    void setActive(bool active);
-public slots:
-
-  void onContextMenuCalled(QContextMenuEvent* event);
-  void do_widgetClicked(GenericChatroomWidget *w);
-  void showDetails();
-
-protected:
-    virtual void mousePressEvent(QMouseEvent* ev) override;
-    virtual void mouseMoveEvent(QMouseEvent* ev) override;
-
-    void onActiveSet(bool active) override;
-  private:
-    ContentLayout* contentLayout;
-//    ContentWidget* contentWidget;
-
-    std::unique_ptr<AboutFriendForm> about;
-
-    Friend *m_friend;
-
-    ContentDialog *createContentDialog() const;
-    ContentDialog * addFriendDialog(const Friend *frnd );
-
-private slots:
-
-    void changeAutoAccept(bool enable);
-
 };
 
 #endif // FRIENDWIDGET_H

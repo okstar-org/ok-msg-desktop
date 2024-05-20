@@ -1111,6 +1111,10 @@ so you can save the file on windows.</source>
         <translation>选择默认接收目录</translation>
     </message>
     <message>
+    <source>Confirmation</source>
+<translation>确认框</translation>
+    </message>
+    <message>
         <source>Remove friend</source>
         <comment>Menu to remove the friend from our friendlist</comment>
         <translation>删除好友</translation>
@@ -1137,8 +1141,8 @@ so you can save the file on windows.</source>
         <translation>到新建圈子</translation>
     </message>
     <message>
-        <source>Remove from circle &apos;%1&apos;</source>
-        <translation>从圈子 &apos;%1&apos; 中移除</translation>
+        <source>Are you sure to remove %1 ?</source>
+        <translation>您确定删除好友 &apos;%1&apos; ？</translation>
     </message>
     <message>
         <source>Move  to circle &quot;%1&quot;</source>

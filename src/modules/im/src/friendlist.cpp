@@ -18,7 +18,7 @@
 #include <QMenu>
 
 
- FriendMap FriendList::friendMap;
+FriendMap FriendList::friendMap;
 
 Friend *FriendList::addFriend(const ToxPk &friendPk, bool isFriend) {
   qDebug() << __func__ << "friendPk:" << friendPk.toString();
@@ -33,12 +33,12 @@ Friend *FriendList::addFriend(const ToxPk &friendPk, bool isFriend) {
   QString alias = Settings::getInstance().getFriendAlias(friendPk);
   qDebug() <<"alias:"<<alias;
 
-  Friend *newfriend = new Friend( friendPk,isFriend, alias, friendPk.username);
+  Friend *newfriend = new Friend(friendPk, isFriend, alias, friendPk.username);
   friendMap[((ContactId&)friendPk).toString()] = newfriend;
 
-  if(friendPk.resource.isEmpty()){
-      newfriend->addEnd(friendPk.resource);
-  }
+//  if(friendPk.resource.isEmpty()){
+//      newfriend->addEnd(friendPk.resource);
+//  }
   return newfriend;
 }
 
@@ -49,8 +49,8 @@ Friend *FriendList::findFriend(const ContactId &cId) {
 void FriendList::removeFriend(const ToxPk &friendPk, bool fake) {
     auto f = findFriend(friendPk);
     if(f){
-        delete f;
         friendMap.remove(((ContactId&)friendPk).toString());
+        f->deleteLater();
     }
 }
 

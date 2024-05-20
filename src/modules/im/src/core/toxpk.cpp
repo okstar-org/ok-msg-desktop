@@ -37,7 +37,7 @@ ToxPk::ToxPk() : ContactId()
  * @param other ToxPk to copy
  */
 ToxPk::ToxPk(const ToxPk& other)
-    : ContactId(other), resource(other.resource)
+    : ContactId(other)
 {
 }
 
@@ -55,20 +55,19 @@ ToxPk::ToxPk(const QString &strId):
     ContactId(strId)
 {
     // 正则表达式模式，这里假设username不包含@，server不包含/
-      QRegularExpression re("([^@]+)@([^/]+)(/[^/]+)?");
-      // 匹配输入字符串
-      QRegularExpressionMatch match = re.match(strId);
-      // 检查是否匹配成功
-      if (!match.hasMatch()) {
+//      QRegularExpression re("([^@]+)@([^/]+)(/[^/]+)?");
+//      // 匹配输入字符串
+//      QRegularExpressionMatch match = re.match(strId);
+//      // 检查是否匹配成功
+//      if (!match.hasMatch()) {
+//          qWarning() << "Unable to parse contactId:"<<strId;
+//          return;
+//      }
 
-          qWarning() << "Unable to parse contactId:"<<strId;
-          return;
-      }
-
-      resource = match.captured(3);
-        if(resource.startsWith("/")){
-            resource = resource.replace("/", "");
-        }
+//      resource = match.captured(3);
+//        if(resource.startsWith("/")){
+//            resource = resource.replace("/", "");
+//        }
 }
 
 /**
@@ -108,10 +107,5 @@ QString ToxPk::toString() const
     if(username.isEmpty()||server.isEmpty()){
         return {};
     }
-
-    if(resource.isEmpty())
-         return username+"@"+server;
-
-    return username+"@"+server+"/"+resource;
-
+    return username+"@"+server;
 }

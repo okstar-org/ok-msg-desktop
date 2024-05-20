@@ -1644,9 +1644,13 @@ void IM::handleItemUnsubscribed(const JID &jid) {
 void IM::updateOnlineStatus(const std::string &bare,
                             const std::string &resource,
                             Presence::PresenceType presenceType) {
-
+  if(presenceType==Presence::Error)
+  {
+      qWarning() <<"Ignore error presence.";
+      return;
+  }
   if (resource.empty()) {
-    qWarning() << "resource is empty.";
+    qWarning() << "Ignore resource is empty.";
     return;
   }
 
@@ -1738,6 +1742,11 @@ void IM::handleRoster(const Roster &roster) {
     auto &jid = it.second->jid();
 
     qDebug() << "roster" << jid.full().c_str();
+    if(jid.server().empty()){
+        qWarning() <<"Ignore roster whithout server.";
+        continue;
+    }
+
     emit receiveFriend(qstring(jid.bare()));
 
     Subscription sub(gloox::Subscription::Subscribe, jid);

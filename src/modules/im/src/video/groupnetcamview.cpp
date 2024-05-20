@@ -201,7 +201,7 @@ void GroupNetCamView::onUpdateActivePeer()
 
 void GroupNetCamView::setActive(const ToxPk& peer)
 {
-    if (peer.isEmpty()) {
+    if (!peer.isValid()) {
         videoLabelSurface->setText(selfVideoSurface->getText());
         activePeer = -1;
         return;

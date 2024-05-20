@@ -27,7 +27,8 @@
 
 
 
-SendWorker::SendWorker(const Friend &m_friend){
+SendWorker::SendWorker(const Friend &m_friend): contactId{m_friend.getId()}
+{
     qDebug() << __func__ <<"friend:"<<m_friend.getId();
 
     auto core = Core::getInstance();
@@ -59,9 +60,12 @@ SendWorker::SendWorker(const Friend &m_friend){
 
 }
 
-SendWorker::SendWorker(const Group &group)
+SendWorker::SendWorker(const Group &group): contactId{group.getId()}
 {
     qDebug() << __func__ <<"group:"<<group.getId();
+
+
+
     auto profile = Nexus::getProfile();
     auto core = Core::getInstance();
     auto &settings = Settings::getInstance();
@@ -92,6 +96,13 @@ SendWorker::SendWorker(const Group &group)
 SendWorker::~SendWorker()
 {
     qDebug()<<__func__;
+}
+
+void SendWorker::clearHistory()
+{
+   auto profile = Nexus::getProfile();
+   auto history = profile->getHistory();
+   history->removeFriendHistory(contactId.toString());
 }
 
 std::unique_ptr<SendWorker> SendWorker::forFriend(const Friend& friend_){

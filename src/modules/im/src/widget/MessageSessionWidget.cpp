@@ -619,6 +619,11 @@ void MessageSessionWidget::setFileReceived(const ToxFile &file)
 
 }
 
+void MessageSessionWidget::clearHistory()
+{
+    sendWorker->clearHistory();
+}
+
 void MessageSessionWidget::setStatus(Status::Status status, bool event) {
     updateStatusLight(status, event);
     auto f = FriendList::findFriend(contactId);

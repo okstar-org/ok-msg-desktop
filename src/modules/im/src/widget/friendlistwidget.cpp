@@ -188,8 +188,7 @@ FriendWidget *FriendListWidget::addFriend(const ToxPk &friendPk, bool isFriend) 
   //  connect(friendWidget, &FriendWidget::addFriend, //
   //          this, &Widget::addFriend0);
   //
-  //  connect(friendWidget, SIGNAL(removeFriend(const ToxPk &)), this,
-  //          SLOT(removeFriend(const ToxPk &)));
+
   //
   //  Profile *profile = Nexus::getProfile();
   //  connect(profile, &Profile::friendAvatarSet, friendWidget,
@@ -234,6 +233,10 @@ void FriendListWidget::connectFriendWidget(FriendWidget &friendWidget) {
 //          &FriendListWidget::searchCircle);
   connect(&friendWidget, &FriendWidget::updateFriendActivity, this,
           &FriendListWidget::updateFriendActivity);
+
+    connect(&friendWidget, &FriendWidget::removeFriend, this,
+            &FriendListWidget::removeFriend);
+
 }
 
 void FriendListWidget::updateFriendActivity(const Friend &frnd) {
@@ -522,21 +525,7 @@ void FriendListWidget::setGroupInfo(const GroupId &groupId, const GroupInfo &inf
 
 }
 
-void FriendListWidget::removeFriendWidget(FriendWidget *w) {
-//  const Friend *contact = w->getFriend();
-//  if (mode == SortingMode::Activity) {
-//    auto *categoryWidget = getTimeCategoryWidget(contact);
-//    categoryWidget->removeFriendWidget(w, contact->getStatus());
-//    categoryWidget->setVisible(categoryWidget->hasChatrooms());
-//  } else {
-//    int id = Settings::getInstance().getFriendCircleID(contact->getPublicKey());
-//    CircleWidget *circleWidget = CircleWidget::getFromID(id);
-//    if (circleWidget != nullptr) {
-//      circleWidget->removeFriendWidget(w, contact->getStatus());
-//      emit searchCircle(*circleWidget);
-//    }
-//  }
-}
+
 
 //void FriendListWidget::addCircleWidget(int id) { createCircleWidget(id); }
 
@@ -936,20 +925,17 @@ QLayout *FriendListWidget::nextLayout(QLayout *layout, bool forward) const {
   return nullptr;
 }
 
-FriendWidget *FriendListWidget::getFriend(const ToxPk &friendPk) {
+FriendWidget *FriendListWidget::getFriend(const ContactId &friendPk) {
   return friendWidgets.value(friendPk.toString());
 }
 
 void FriendListWidget::removeFriend(const ToxPk &friendPk) {
+  qDebug() << __func__ << friendPk.toString();
 
-  auto f = getFriend(friendPk);
-  if (!f) {
-    return;
-  }
+  friendWidgets.remove(friendPk.toString());
+  emit Widget::getInstance()->toDeleteChat(friendPk.toString());
 
   FriendList::removeFriend(friendPk, false);
-  removeFriendWidget(f);
-  f->deleteLater();
 }
 
 GroupWidget *FriendListWidget::getGroup(const GroupId &id) {

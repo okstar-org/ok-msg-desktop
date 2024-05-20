@@ -138,7 +138,7 @@ void AboutFriendForm::onRemoveHistoryClicked()
 
 
     auto w = Widget::getInstance();
-    emit w->toDeleteChat(ui->friendId->text());
+    emit w->toClearHistory(ui->friendId->text());
 
 //   const bool result = about->clearHistory();
 //    if (!result) {

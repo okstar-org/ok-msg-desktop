@@ -101,6 +101,8 @@ public slots:
 
   void slot_sessionClicked(MessageSessionWidget *w);
   void do_deleteSession(const QString &contactId);
+  void do_clearHistory(const QString &contactId);
+
   void moveWidget(MessageSessionWidget *w, Status::Status s, bool add = false);
 
 

@@ -11,6 +11,7 @@
  */
 
 #include "friendwidget.h"
+#include "gui.h"
 
 #include "circlewidget.h"
 #include "friendlistwidget.h"
@@ -60,7 +61,7 @@ FriendWidget::FriendWidget(ContentLayout *layout,
                            bool isFriend,
                            bool compact)
     : GenericChatroomWidget(ChatType::Chat, friendPk),
-      contentLayout(layout)
+      contentLayout(layout), menu{nullptr}
 {
 
   qDebug() <<__func__ <<"friend:"<<friendPk.toString();
@@ -98,19 +99,14 @@ FriendWidget::FriendWidget(ContentLayout *layout,
 //          &FriendWidget::setActive);
   //  statusMessageLabel->setTextFormat(Qt::PlainText);
 
-  //  connect(this, &FriendWidget::middleMouseClicked, dialog,
-  //          [this]() { dialog->removeFriend(friendPk); });
+
   //  connect(friendWidget, &FriendWidget::copyFriendIdToClipboard, this,
   //          &Widget::copyFriendIdToClipboard);
-  //  connect(friendWidget, &FriendWidget::newWindowOpened, this,
-  //          &Widget::openNewDialog);
+
 
   // Signal transmission from the created `friendWidget` (which shown in
   // ContentDialog) to the `widget` (which shown in main widget)
-  // FIXME: emit should be removed
-  //  connect(
-  //      this, &FriendWidget::contextMenuCalled, this,
-  //      [this](QContextMenuEvent *event) { emit contextMenuCalled(event); });
+
   //
   connect(this, &FriendWidget::chatroomWidgetClicked,
           [=, this](GenericChatroomWidget *w) {
@@ -132,6 +128,34 @@ FriendWidget::FriendWidget(ContentLayout *layout,
 //    sendWorker->onAvatarChanged(friendPk, avatar);
 //    setAvatar(avatar);
 //  }
+
+  init();
+}
+
+FriendWidget::~FriendWidget()
+{
+    deinit();
+}
+
+void FriendWidget::init()
+{
+     menu = new QMenu(this);
+
+     inviteToGrp= menu->addAction(tr("Invite to group"));
+
+     menu->addSeparator();
+
+    removeAct = menu->addAction(tr("Remove friend"));
+//    connect(
+    //        removeAction, &QAction::triggered, this,
+    //        [=, this]() { emit removeFriend(friendPk); }, Qt::QueuedConnection);
+    //  }
+
+}
+
+void FriendWidget::deinit()
+{
+
 }
 
 void FriendWidget::do_widgetClicked(GenericChatroomWidget *w) {
@@ -218,14 +242,6 @@ void FriendWidget::onContextMenuCalled(QContextMenuEvent *event) {
 
   installEventFilter(this); // Disable leave event.
 
-  QMenu menu;
-
-
-  menu.addSeparator();
-
-//  QMenu *inviteMenu = menu.addMenu(
-//      tr("Invite to group", "Menu to invite a friend to a groupchat"));
-//  //  inviteMenu->setEnabled(chatRoom->canBeInvited());
 
 //  const auto newGroupAction = inviteMenu->addAction(tr("To new group"));
 //  connect(newGroupAction, &QAction::triggered, chatRoom.get(),
@@ -307,30 +323,31 @@ void FriendWidget::onContextMenuCalled(QContextMenuEvent *event) {
   //  &FriendWidget::showDetails);
 
   const auto pos = event->globalPos();
-  menu.exec(pos);
+  auto selected= menu->exec(pos);
+  qDebug()<<"selected"<<selected;
 
   removeEventFilter(this);
 
   if (!active) {
     setBackgroundRole(QPalette::Window);
   }
+
+
+  if(selected == removeAct){
+      const bool retYes = GUI::askQuestion(tr("Confirmation"),
+                                           tr("Are you sure to remove %1 ?").arg(getName()),
+                                      false,
+                                      true,
+                                      true);
+       if (!retYes) {
+           return;
+       }
+
+       emit removeFriend(ToxPk(contactId));
+  }else if(selected == inviteToGrp){
+
+  }
 }
-
-namespace {
-
-//std::tuple<CircleWidget *, FriendListWidget *>
-//getCircleAndFriendList(const Friend *frnd, FriendWidget *fw) {
-//  const auto pk = frnd->getPublicKey();
-//  const auto circleId = Settings::getInstance().getFriendCircleID(pk);
-//  auto circleWidget = CircleWidget::getFromID(circleId);
-//  auto w = circleWidget ? static_cast<QWidget *>(circleWidget)
-//                        : static_cast<QWidget *>(fw);
-//  auto friendList = qobject_cast<FriendListWidget *>(w->parentWidget());
-//  return std::make_tuple(circleWidget, friendList);
-//}
-
-} // namespace
-
 
 void FriendWidget::changeAutoAccept(bool enable) {
 //  if (enable) {
@@ -341,8 +358,16 @@ void FriendWidget::changeAutoAccept(bool enable) {
 //    chatRoom->setAutoAcceptDir(newDir);
 //  } else {
 //    chatRoom->disableAutoAccept();
-//  }
+    //  }
 }
+
+void FriendWidget::do_removeFriend(const ContactId &id)
+{
+    qDebug()<<__func__<<id.toString();
+    auto core = Core::getInstance();
+    core->removeFriend(id.toString());
+}
+
 void FriendWidget::showDetails() {
     qDebug() <<__func__;
   if(!about){
@@ -366,6 +391,8 @@ void FriendWidget::setAsInactiveChatroom() { setActive(false); }
 void FriendWidget::onActiveSet(bool active) {
 
 }
+
+
 
 QString FriendWidget::getStatusString() const {
 

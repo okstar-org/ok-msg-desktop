@@ -38,7 +38,7 @@ public:
     bool operator<(const ContactId& other) const;
 
     QByteArray getByteArray() const;
-    bool isEmpty() const;
+    bool isValid() const;
     int getSize();
 
     QString toString() const{
