@@ -41,11 +41,11 @@ inline QDateTime getActiveTimeFriend(const Friend *contact) {
   return Settings::getInstance().getFriendActivity(contact->getPublicKey());
 }
 
-FriendListWidget::FriendListWidget(MainLayout *parent, bool groupsOnTop)
-    : QWidget(parent), groupsOnTop(groupsOnTop) {
+FriendListWidget::FriendListWidget(MainLayout *parent, ContentLayout*contentLayout, bool groupsOnTop)
+    : QWidget(parent), m_contentLayout{contentLayout}, groupsOnTop(groupsOnTop) {
   setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 
-  m_contentLayout = parent->getContentLayout();
+
 
   groupLayout.getLayout()->setSpacing(0);
   groupLayout.getLayout()->setMargin(0);

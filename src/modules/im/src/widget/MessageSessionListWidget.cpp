@@ -59,12 +59,13 @@ inline QDateTime getActiveTimeFriend(const Friend *contact) {
 }
 
 MessageSessionListWidget::MessageSessionListWidget(MainLayout *parent,
+                                                   ContentLayout* contentBox,
                                                    bool groupsOnTop)
-    : QWidget(parent), groupsOnTop(groupsOnTop) {
+    : QWidget(parent), m_contentLayout(contentBox), groupsOnTop(groupsOnTop) {
 
   setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 
-  m_contentLayout = parent->getContentLayout();
+
 
   // Prevent QLayout's add child warning before setting the mode.
   listLayout = new FriendListLayout();

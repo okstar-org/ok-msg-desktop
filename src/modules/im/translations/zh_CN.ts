@@ -398,9 +398,22 @@ which may lead to problems with video calls.</source>
         <translation>qTox 已经是最新的 ✓</translation>
     </message>
 </context>
+
+<context>
+    <name>FriendForm</name>
+    <message>
+        <source>Add</source>
+        <translation>添加</translation>
+    </message>
+</context>
+
 <context>
     <name>AddFriendForm</name>
-    <message>
+<message>
+<source>Search</source>
+<translation>搜索</translation>
+</message>
+<message>
         <source>Add Friends</source>
         <translation>添加好友</translation>
     </message>
@@ -437,8 +450,8 @@ which may lead to problems with video calls.</source>
         <translation>Tox ID，76 位十六进制字符或者类似于 name@example.com</translation>
     </message>
     <message>
-        <source>Type in Tox ID of your friend</source>
-        <translation>输入好友的 Tox ID</translation>
+        <source>Account/E-Mail/Phone Number</source>
+        <translation>帐号/邮箱/手机号</translation>
     </message>
     <message>
         <source>Friend request message</source>

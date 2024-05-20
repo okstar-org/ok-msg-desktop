@@ -52,6 +52,7 @@ qt5_wrap_ui(
         src/widget/ContactWidget.ui
         src/widget/form/aboutfriendform.ui
         src/widget/form/aboutgroupform.ui
+        src/widget/form/addfriendform.ui
         src/widget/form/loadhistorydialog.ui
         src/widget/form/profileform.ui
         src/widget/tool/removefrienddialog.ui

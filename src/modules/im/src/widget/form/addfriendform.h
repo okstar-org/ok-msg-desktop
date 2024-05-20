@@ -28,12 +28,16 @@ class QTabWidget;
 
 class ContentLayout;
 
+namespace Ui {
+class AddFriendForm;
+}
+
 namespace ok::backend{
   class UserService;
   struct OrgStaff;
 }
 
-class AddFriendForm : public QObject
+class AddFriendForm : public QWidget
 {
     Q_OBJECT
 public:
@@ -44,13 +48,11 @@ public:
         FriendRequest = 1
     };
 
-    AddFriendForm();
-    AddFriendForm(const AddFriendForm&) = delete;
-    AddFriendForm& operator=(const AddFriendForm&) = delete;
+    AddFriendForm(QWidget *parent);
     ~AddFriendForm();
 
     bool isShown() const;
-    void show(ContentLayout* contentLayout);
+    void showTo(ContentLayout* contentLayout);
     void setMode(Mode mode);
 
     bool addFriendRequest(const QString& friendAddress, const QString& message);
@@ -65,6 +67,9 @@ signals:
 public slots:
     void onUsernameSet(const QString& userName);
 
+protected:
+    virtual  void showEvent(QShowEvent *e) override;
+
 private slots:
     void onSearchTriggered();
     void onSendTriggered();
@@ -75,6 +80,8 @@ private slots:
     void onFriendRequestRejected();
     void onCurrentChanged(int index);
     void onFriendReceipts(const QList<ok::backend::OrgStaff *> &qList);
+
+
 private:
     void searchFriend(const QString& idText);
     void addFriend(const QString& idText, const QString& nick);
@@ -88,25 +95,27 @@ private:
     QString getMessage();
     QString getImportMessage() const;
 
-private:
-    QLabel headLabel;
-    QLabel toxIdLabel;
+    Ui::AddFriendForm * addUi;
+
+
+
     QLabel messageLabel;
     QLabel importFileLabel;
     QLabel importMessageLabel;
 
+    QVBoxLayout *friendLayout;
+
     QPushButton searchButton;
-    QVBoxLayout friendLayout;
     QScrollArea friendArea;
 
     QPushButton sendButton;
     QPushButton importFileButton;
     QPushButton importSendButton;
-    QLineEdit toxId;
-    QTextEdit message;
+//    QLineEdit toxId;
+//    QTextEdit message;
     QTextEdit importMessage;
 
-    QVBoxLayout layout;
+
 
     QVBoxLayout importContactsLayout;
     QHBoxLayout importFileLine;

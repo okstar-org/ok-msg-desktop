@@ -91,20 +91,24 @@ ChatWidget::ChatWidget(QWidget *parent)
   layout()->setMargin(0);
   layout()->setSpacing(0);
 
-  //  ui->mainSplitter->addWidget(contactListWidget);
-
+  //右侧容器
   contentWidget = std::make_unique<QWidget>(this);
   contentWidget->setObjectName("contentWidget");
-  contentLayout = std::make_unique<ContentLayout>(contentWidget.get());
-  ui->mainSplitter->addWidget(contentWidget.get());
-  ui->mainSplitter->setSizes(QList<int>() << 200 << 500);
+  contentLayout = new ContentLayout(contentWidget.get());
+  contentWidget->setLayout(contentLayout);
 
-  contactListWidget = std::make_unique<MessageSessionListWidget>(this, false);
+  //左侧
+  sessionListWidget = std::make_unique<MessageSessionListWidget>(this, contentLayout, false);
+  sessionListWidget->setGeometry(0, 0 , 400, 400);
+  sessionListWidget->layout()->setAlignment(Qt::AlignTop | Qt::AlignVCenter);
 
   ui->scrollAreaWidgetContents->setGeometry(0, 0, 200, 500);
-  auto layout = ui->scrollAreaWidgetContents->layout();
-  layout->setAlignment(Qt::AlignTop | Qt::AlignVCenter);
-  layout->addWidget((QWidget*)contactListWidget.get());
+  ui->scrollAreaWidgetContents->layout()->setAlignment(Qt::AlignTop | Qt::AlignVCenter);
+  ui->scrollAreaWidgetContents->layout()->addWidget((QWidget*)sessionListWidget.get());
+
+
+  ui->mainSplitter->addWidget(contentWidget.get());
+  ui->mainSplitter->setSizes(QList<int>() << 200 << 500);
 
   const Settings& s = Settings::getInstance();
   setStyleSheet(Style::getStylesheet("window/chat.css"));
@@ -146,7 +150,7 @@ void ChatWidget::init() {
 
     auto widget = Widget::getInstance();
     connect(widget, &Widget::toSendMessage, [&](const QString& to, bool isGroup){
-        contactListWidget->toSendMessage(ToxPk(to), isGroup);
+        sessionListWidget->toSendMessage(ToxPk(to), isGroup);
     });
 
 
@@ -181,8 +185,6 @@ void ChatWidget::connectToCore(Core *core) {
           &ChatWidget::onFriendStatusChanged);
   connect(core, &Core::friendStatusMessageChanged, this,
           &ChatWidget::onFriendStatusMessageChanged);
-  connect(core, &Core::friendRequestReceived, this,
-          &ChatWidget::onFriendRequestReceived);
 
   connect(core, &Core::friendTypingChanged, this,
           &ChatWidget::onFriendTypingChanged);
@@ -253,20 +255,20 @@ void ChatWidget::onCoreChanged(Core &core_) {
 void ChatWidget::onFriendMessageSessionReceived(const ToxPk &friendPk, const QString &sid)
 {
      qDebug() << __func__ << "friend:" << friendPk.toString() << "sid:" <<sid;
-     contactListWidget->createMessageSession(friendPk, sid, ChatType::Chat);
+     sessionListWidget->createMessageSession(friendPk, sid, ChatType::Chat);
 }
 
 void ChatWidget::onFriendAvatarChanged(const ToxPk &friendnumber,
                                        const QByteArray &avatar) {
   qDebug() << __func__ << "friend:" << friendnumber.toString() << avatar.size();
-  contactListWidget->setFriendAvatar(friendnumber, avatar);
+  sessionListWidget->setFriendAvatar(friendnumber, avatar);
 }
 
 void ChatWidget::onFriendUsernameChanged(const ToxPk &friendPk,
                                          const QString &username) {
   qDebug() << __func__ << "friend:" << friendPk.toString()
            << "name:" << username;
-    contactListWidget->setFriendName(friendPk, username);
+    sessionListWidget->setFriendName(friendPk, username);
 }
 
 void ChatWidget::onFriendMessageReceived(     //
@@ -275,12 +277,12 @@ void ChatWidget::onFriendMessageReceived(     //
     bool isAction)                            //
 {
   qDebug() << __func__ <<"content:"<< message.content << "from" << message.from;
-  contactListWidget->setRecvFriendMessage(friendnumber, message, isAction);
+  sessionListWidget->setRecvFriendMessage(friendnumber, message, isAction);
 }
 
 void ChatWidget::onReceiptReceived(const ToxPk &friendId, ReceiptNum receipt) {
   qDebug() << __func__ << "friendId:" << friendId.toString() << receipt;
-  contactListWidget->setFriendMessageReceipt(friendId, receipt);
+  sessionListWidget->setFriendMessageReceipt(friendId, receipt);
 }
 
 void ChatWidget::onFriendStatusChanged(const ToxPk &friendPk,
@@ -319,7 +321,7 @@ void ChatWidget::onFriendStatusChanged(const ToxPk &friendPk,
 void ChatWidget::onFriendStatusMessageChanged(const ToxPk &friendPk,
                                               const QString &message) {
 
-  contactListWidget->setFriendStatusMsg(friendPk, message);
+  sessionListWidget->setFriendStatusMsg(friendPk, message);
 
   //  Friend *f = FriendList::findFriend(friendPk);
   //  if (!f) {
@@ -340,46 +342,7 @@ void ChatWidget::onFriendStatusMessageChanged(const ToxPk &friendPk,
 
 void ChatWidget::onFriendTypingChanged(const ToxPk &friendId, bool isTyping) {
 
-  contactListWidget->setFriendTyping(friendId, isTyping);
-}
-
-void ChatWidget::onFriendRequestReceived(const ToxPk &friendPk,
-                                         const QString &message) {
-  qDebug() << __func__ << "friendId:" << friendPk.toString();
-
-  //  if (addFriendForm->addFriendRequest(friendPk.toString(), message)) {
-  //    friendRequestsUpdate();
-  //    newMessageAlert(window(), isActiveWindow(), true, true);
-  //
-  // #if DESKTOP_NOTIFICATIONS
-  //    if (settings.getNotifyHide()) {
-  //      notifier.notifyMessageSimple(DesktopNotify::MessageType::FRIEND_REQUEST);
-  //    } else {
-  //      notifier.notifyMessage(
-  //          friendPk.toString() + tr(" sent you a friend request."), message);
-  //    }
-  // #endif
-  //  }
-}
-
-AddFriendForm *ChatWidget::openFriendAddForm() {
-  if (!addFriendForm) {
-    addFriendForm = std::make_unique<AddFriendForm>();
-
-    connect(addFriendForm.get(), &AddFriendForm::friendRequested, this,
-            &ChatWidget::friendRequestsUpdate);
-    connect(addFriendForm.get(), &AddFriendForm::friendRequestsSeen, this,
-            &ChatWidget::friendRequestsUpdate);
-
-    //    connect(addFriendForm.get(), &AddFriendForm::friendRequestAccepted,
-    //    this,
-    //            &ChatWidget::friendRequestAccepted);
-    //    connect(addFriendForm.get(), &AddFriendForm::friendRequestRejected,
-    //    this,
-    //            &ChatWidget::friendRequestRejected);
-  }
-  addFriendForm->show(nullptr);
-  return addFriendForm.get();
+  sessionListWidget->setFriendTyping(friendId, isTyping);
 }
 
 void ChatWidget::showEvent(QShowEvent *e) {}
@@ -456,31 +419,6 @@ void ChatWidget::onStatusMessageSet(const QString &statusMessage) {
 
 
 
-void ChatWidget::friendRequestsUpdate() {
-  auto &settings = Settings::getInstance();
-
-  unsigned int unreadFriendRequests = settings.getUnreadFriendRequests();
-
-  if (unreadFriendRequests == 0) {
-    delete friendRequestsButton;
-    friendRequestsButton = nullptr;
-  } else if (!friendRequestsButton) {
-    friendRequestsButton = new QPushButton(this);
-    friendRequestsButton->setObjectName("green");
-    //    ui->statusLayout->insertWidget(2, friendRequestsButton);
-
-    //    connect(friendRequestsButton, &QPushButton::released, [this]() {
-    //      onAddClicked();
-    //      addFriendForm->setMode(AddFriendForm::Mode::FriendRequest);
-    //    });
-  }
-
-  if (friendRequestsButton) {
-    friendRequestsButton->setText(
-        tr("%n New Friend Request(s)", "", unreadFriendRequests));
-  }
-}
-
 void ChatWidget::onGroupJoined(const GroupId &groupId, const QString &name) {
   qDebug() << __func__ << groupId.toString() << name;
 //  auto group = contactListWidget->addGroup(groupId, name);
@@ -534,7 +472,7 @@ void ChatWidget::onGroupInviteAccepted(const GroupInvite &inviteInfo) {
 
 void ChatWidget::onGroupMessageReceived(GroupId groupId, GroupMessage msg) {
    qDebug() <<__func__<< msg.toString();
-   contactListWidget->setRecvGroupMessage(groupId, msg);
+   sessionListWidget->setRecvGroupMessage(groupId, msg);
 }
 
 void ChatWidget::onGroupPeerListChanged(QString groupnumber) {
@@ -632,7 +570,7 @@ void ChatWidget::onGroupClicked() {
     connect(groupInviteForm, &GroupInviteForm::groupCreate, core,
             &Core::createGroup);
   }
-  groupInviteForm->show(contentLayout.get());
+  groupInviteForm->show(contentLayout);
   //    setWindowTitle(fromDialogType(DialogType::GroupDialog));
   //    setActiveToolMenuButton(ActiveToolMenuButton::GroupButton);
 }
@@ -646,7 +584,7 @@ void ChatWidget::reloadTheme() {
       Style::getStylesheet("friendList/friendList.css"));
   ui->statusButton->setStyleSheet(
       Style::getStylesheet("statusButton/statusButton.css"));
-  contactListWidget->reDraw();
+  sessionListWidget->reDraw();
 
   //  profilePicture->setStyleSheet(Style::getStylesheet("window/profile.css"));
 
@@ -658,7 +596,7 @@ void ChatWidget::reloadTheme() {
   //    contactListWidget->getFriend(f->getPublicKey())->reloadTheme();
   //  }
 
-  contactListWidget->reloadTheme();
+  sessionListWidget->reloadTheme();
 }
 void ChatWidget::setupSearch() {
 
@@ -749,11 +687,11 @@ void ChatWidget::searchContacts() {
 
     FilterCriteria filter = getFilterCriteria();
 
-    contactListWidget->searchChatrooms(searchString,
+    sessionListWidget->searchChatrooms(searchString,
                                        filterOnline(filter),
                                        filterOffline(filter),
                                        filterGroups(filter));
-    contactListWidget->reDraw();
+    sessionListWidget->reDraw();
     updateFilterText();
 }
 
@@ -892,7 +830,7 @@ void ChatWidget::dispatchFile(ToxFile file)
     }
 
     const auto senderPk = (file.direction == ToxFile::SENDING) ? core->getSelfPublicKey() : pk;
-    contactListWidget->setFriendFileReceived(senderPk, file);
+    sessionListWidget->setFriendFileReceived(senderPk, file);
 }
 
 void ChatWidget::dispatchFileWithBool(ToxFile file, bool)
@@ -935,3 +873,4 @@ void ChatWidget::setStatusBusy() {
 
   core->setStatus(Status::Status::Busy);
 }
+

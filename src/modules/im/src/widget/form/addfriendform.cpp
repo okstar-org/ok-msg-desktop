@@ -33,17 +33,12 @@
 #include <QTabWidget>
 #include <QWindow>
 #include "lib/session/AuthSession.h"
-
+#include "ui_addfriendform.h"
 
 namespace {
 
 QString getToxId(const QString &id) {
-  const QString toxUriPrefix{"tox:"};
-  QString strippedId = id.trimmed();
-  if (strippedId.startsWith(toxUriPrefix)) {
-    strippedId.remove(0, toxUriPrefix.length());
-  }
-  return strippedId;
+  return id.trimmed();
 }
 
 bool checkIsValidId(const QString &id) { return ToxId::isToxId(id); }
@@ -54,43 +49,61 @@ bool checkIsValidId(const QString &id) { return ToxId::isToxId(id); }
  * @var QString AddFriendForm::lastUsername
  * @brief Cached username so we can retranslate the invite message
  */
-AddFriendForm::AddFriendForm() {
+AddFriendForm::AddFriendForm(QWidget *parent) : QWidget(parent) ,
+    addUi{ new Ui::AddFriendForm}
+{
+
+    setLayout(new QGridLayout);
+
   auto signIn = ok::session::AuthSession::Instance()->getSignInInfo();
   userService = std::make_unique<ok::backend::UserService>(signIn.stackUrl);
 
-  tabWidget = new QTabWidget();
+  tabWidget = new QTabWidget(this);
+
+
+
+  layout()->addWidget(tabWidget);
+  layout()->setMargin(0);
+  layout()->setSpacing(0);
+
+
   main = new QWidget(tabWidget);
-  QFont bold;
-  bold.setBold(true);
-  headLabel.setFont(bold);
-  toxIdLabel.setTextFormat(Qt::RichText);
+//  QFont bold;
+//  bold.setBold(true);
+//  headLabel.setFont(bold);
+//  toxIdLabel.setTextFormat(Qt::RichText);
 
-  layout.setMargin(0);
-  layout.setSpacing(0);
+    addUi->setupUi(main);
 
-  main->setLayout(&layout);
+//  main->setLayout(&layout);
 
-  layout.addWidget(&toxIdLabel);
-  layout.addWidget(&toxId);
-  layout.addWidget(&searchButton);
+//  layout.addWidget(&toxIdLabel);
+//  layout.addWidget(&toxId);
+//  layout.addWidget(&searchButton);
 
-  friendLayout.setAlignment(Qt::AlignTop);
-  friendArea.setWidgetResizable(true);
+//  friendArea.setWidgetResizable(true);
 
-  auto scrollAreaWidgetContents = new QWidget();
-  friendArea.setWidget(scrollAreaWidgetContents);
+//  auto scrollAreaWidgetContents = new QWidget();
+//  friendArea.setWidget(scrollAreaWidgetContents);
 
-  connect(&searchButton, &QPushButton::clicked, this,
+  connect(addUi->search, &QPushButton::clicked, this,
           &AddFriendForm::onSearchTriggered);
+
   connect(this, &AddFriendForm::friendReceipts, this,
           &AddFriendForm::onFriendReceipts);
-  friendArea.widget()->setLayout(&friendLayout);
-  layout.addWidget(&friendArea);
+
+
+  friendLayout= new QVBoxLayout(main);
+  friendLayout->setAlignment(Qt::AlignTop);
+  addUi->scrollArea->widget()->setLayout(friendLayout);
+
+//  friendArea.widget()->setLayout(&friendLayout);
+//  layout.addWidget(&friendArea);
 
 //  layout.addWidget(&messageLabel);
 //  layout.addWidget(&message);
 //  layout.addWidget(&sendButton);
-  tabWidget->addTab(main, QString());
+  tabWidget->addTab(main,{});
 
   //  importContacts = new QWidget(tabWidget);
   //  importContacts->setLayout(&importContactsLayout);
@@ -114,30 +127,30 @@ AddFriendForm::AddFriendForm() {
   tabWidget->addTab(scrollArea, QString());
 
 
-  connect(&toxId, &QLineEdit::returnPressed, this,
-          &AddFriendForm::onSendTriggered);
+//  connect(&toxId, &QLineEdit::returnPressed, this,
+//          &AddFriendForm::onSendTriggered);
 
-  connect(&toxId, &QLineEdit::textChanged, this, &AddFriendForm::onIdChanged);
-  connect(tabWidget, &QTabWidget::currentChanged, this,
-          &AddFriendForm::onCurrentChanged);
+//  connect(&toxId, &QLineEdit::textChanged, this, &AddFriendForm::onIdChanged);
+//  connect(tabWidget, &QTabWidget::currentChanged, this,
+//          &AddFriendForm::onCurrentChanged);
 
-  connect(&sendButton, &QPushButton::clicked, this,
-          &AddFriendForm::onSendTriggered);
-  connect(&importSendButton, &QPushButton::clicked, this,
-          &AddFriendForm::onImportSendClicked);
-  connect(&importFileButton, &QPushButton::clicked, this,
-          &AddFriendForm::onImportOpenClicked);
-  connect(Nexus::getCore(), &Core::usernameSet, this,
-          &AddFriendForm::onUsernameSet);
+//  connect(&sendButton, &QPushButton::clicked, this,
+//          &AddFriendForm::onSendTriggered);
+//  connect(&importSendButton, &QPushButton::clicked, this,
+//          &AddFriendForm::onImportSendClicked);
+//  connect(&importFileButton, &QPushButton::clicked, this,
+//          &AddFriendForm::onImportOpenClicked);
+//  connect(Nexus::getCore(), &Core::usernameSet, this,
+//          &AddFriendForm::onUsernameSet);
 
   // accessibility stuff
-  toxIdLabel.setAccessibleDescription(("Tox ID, 76 hexadecimal characters"));
-  toxId.setAccessibleDescription(tr("Type in Tox ID of your friend"));
-  messageLabel.setAccessibleDescription(tr("Friend request message"));
-  message.setAccessibleDescription(
-      tr("Type message to send with the friend request or leave empty to send "
-         "a default message"));
-  message.setTabChangesFocus(true);
+  addUi->input->setPlaceholderText(tr("Account/E-Mail/Phone Number"));
+//  toxId.setAccessibleDescription(tr("Type in Tox ID of your friend"));
+//  messageLabel.setAccessibleDescription(tr("Friend request message"));
+//  message.setAccessibleDescription(
+//      tr("Type message to send with the friend request or leave empty to send "
+//         "a default message"));
+//  message.setTabChangesFocus(true);
 
   retranslateUi();
   settings::Translator::registerHandler(
@@ -152,25 +165,29 @@ AddFriendForm::AddFriendForm() {
 
 AddFriendForm::~AddFriendForm() {
   settings::Translator::unregister(this);
-  tabWidget->deleteLater();
+    delete addUi;
 }
 
 bool AddFriendForm::isShown() const {
   return true;
 }
 
-void AddFriendForm::show(ContentLayout *contentLayout) {
+void AddFriendForm::showTo(ContentLayout *contentLayout) {
 //  contentLayout->mainContent->layout()->addWidget(tabWidget);
 //  contentLayout->mainHead->layout()->addWidget(head);
-  tabWidget->show();
+//  tabWidget->show();
 
   //  setIdFromClipboard();
-  toxId.setFocus();
+//  toxId.setFocus();
 
   // Fix #3421
   // Needed to update tab after opening window
   const int index = tabWidget->currentIndex();
   onCurrentChanged(index);
+
+  int idx= contentLayout->addWidget(this);
+  contentLayout->setCurrentIndex(idx);
+
 }
 
 QString AddFriendForm::getMessage() {
@@ -200,24 +217,30 @@ bool AddFriendForm::addFriendRequest(const QString &friendAddress,
 }
 
 void AddFriendForm::onUsernameSet(const QString &username) {
-  lastUsername = username;
+    lastUsername = username;
+}
+
+void AddFriendForm::showEvent(QShowEvent *e)
+{
+    onSearchTriggered();
 }
 
 void AddFriendForm::onFriendReceipts(const QList<ok::backend::OrgStaff *> &qList) {
-  qDebug() << "Exist friends:" << friendLayout.count();
+//    auto friendLayout = addUi->scrollAreaWidgetContents;
+  qDebug() << "Exist friends:" << friendLayout->count();
 
-  while (friendLayout.count() > 0) {
-    auto w = friendLayout.itemAt(0)->widget();
+  while (friendLayout->count() > 0) {
+    auto w = friendLayout->itemAt(0)->widget();
+    friendLayout->removeWidget(w);
     disconnect(w);
-    friendLayout.removeWidget(w);
     delete w;
   }
 
   for (auto item : qList) {
     if (!item->username.isEmpty()) {
       auto form = new FriendForm(item);
-      friendLayout.addWidget(form);
-      connect(form, &FriendForm::onClicked, [&](QString &username, QString &nick) {
+      friendLayout->addWidget(form);
+      connect(form, &FriendForm::add, [&](QString &username, QString &nick) {
         qDebug() << "Send request to" << username;
         addFriend(username, nick);
       });
@@ -256,18 +279,18 @@ void AddFriendForm::addFriend(const QString &idText, const QString& nick) {
 }
 
 void AddFriendForm::onSearchTriggered() {
-  const QString id = getToxId(toxId.text());
+  const QString id = addUi->input->text();
   searchFriend(id);
 
-  this->toxId.clear();
-  this->message.clear();
+//  this->toxId.clear();
+//  this->message.clear();
 }
 
 void AddFriendForm::onSendTriggered() {
-  const QString id = getToxId(toxId.text());
+  const QString id = addUi->input->text();
   addFriend(id, Nexus::getCore()->getNick());
-  this->toxId.clear();
-  this->message.clear();
+//  this->toxId.clear();
+//  this->message.clear();
 }
 
 void AddFriendForm::onImportSendClicked() {
@@ -333,11 +356,11 @@ void AddFriendForm::onIdChanged(const QString &id) {
   //: Ok ID format description
   const QString toxIdComment(tr("Tox ID comment"));
 
-  const QString labelText =
+//  const QString labelText =
       //      isValidId ?
-      QStringLiteral("%1 (%2)");
+//      QStringLiteral("%1 (%2)");
   //      : QStringLiteral("%1 <font color='red'>(%2)</font>");
-  toxIdLabel.setText(labelText.arg(toxIdText, toxIdComment));
+//  toxIdLabel.setText(labelText.arg(toxIdText, toxIdComment));
 
   //  toxId.setStyleSheet(isValidOrEmpty
   //                          ? QStringLiteral("")
@@ -357,7 +380,7 @@ void AddFriendForm::setIdFromClipboard() {
   const bool isSelf =
       ToxId::isToxId(strippedId) && ToxId(strippedId) != core->getSelfId();
   if (!strippedId.isEmpty() && ToxId::isToxId(strippedId) && isSelf) {
-    toxId.setText(trimmedId);
+//    toxId.setText(trimmedId);
   }
 }
 
@@ -415,7 +438,7 @@ void AddFriendForm::onCurrentChanged(int index) {
 }
 
 void AddFriendForm::retranslateUi() {
-  headLabel.setText(tr("Add Friends"));
+//  headLabel.setText(tr("Add Friends"));
 
   searchButton.setText(tr("Search users"));
   //: The message you send in friend requests
@@ -442,7 +465,7 @@ void AddFriendForm::retranslateUi() {
   //         : tr("Ready to import %n contact(s), click send to confirm", "",
   //              contactsToImport.size()));
 
-  onIdChanged(toxId.text());
+//  onIdChanged(toxId.text());
 
   tabWidget->setTabText(AddFriend, tr("Add a friend"));
   //  tabWidget->setTabText(ImportContacts, tr("Import contacts"));

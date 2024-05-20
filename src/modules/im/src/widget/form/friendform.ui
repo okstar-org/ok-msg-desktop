@@ -36,6 +36,13 @@
     </widget>
    </item>
    <item>
+    <widget class="QLabel" name="email">
+     <property name="text">
+      <string notr="true">email</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QLabel" name="phone">
      <property name="text">
       <string notr="true">phone</string>
@@ -44,8 +51,14 @@
    </item>
    <item>
     <widget class="QPushButton" name="addFriend">
+     <property name="maximumSize">
+      <size>
+       <width>50</width>
+       <height>16777215</height>
+      </size>
+     </property>
      <property name="text">
-      <string>Add friends</string>
+      <string>+</string>
      </property>
     </widget>
    </item>

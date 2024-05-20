@@ -21,12 +21,14 @@ FriendForm::FriendForm(ok::backend::OrgStaff *staff_, QWidget *parent)
   ui->username->setText(staff->username);
   ui->name->setText(staff->name);
   ui->phone->setText(staff->phone);
+  ui->email->setText(staff->email);
 
-  connect(ui->addFriend, &QPushButton::clicked,
-          [&]() { emit onClicked(staff->username, staff->name); });
+  connect(ui->addFriend, &QPushButton::released,
+          [&]() { emit add(staff->username, staff->name); });
 }
 
 FriendForm::~FriendForm() {
+  disconnect(ui->addFriend);
   delete staff;
   delete ui;
 }

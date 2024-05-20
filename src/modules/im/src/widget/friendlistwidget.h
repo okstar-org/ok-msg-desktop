@@ -41,7 +41,7 @@ class FriendListWidget : public QWidget {
 public:
 
   using SortingMode = Settings::FriendListSortingMode;
-  explicit FriendListWidget(MainLayout *parent, bool groupsOnTop = true);
+  explicit FriendListWidget(MainLayout *parent,ContentLayout*contentLayout, bool groupsOnTop = true);
   ~FriendListWidget();
   void setMode(SortingMode mode);
   SortingMode getMode() const;

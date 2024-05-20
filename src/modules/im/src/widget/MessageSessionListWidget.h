@@ -42,7 +42,9 @@ class MessageSessionListWidget : public QWidget {
 public:
 
   using SortingMode = Settings::FriendListSortingMode;
-  explicit MessageSessionListWidget(MainLayout *parent, bool groupsOnTop = true);
+  explicit MessageSessionListWidget(MainLayout *parent,
+                                    ContentLayout *contentBox,
+                                    bool groupsOnTop = true);
   ~MessageSessionListWidget();
   void setMode(SortingMode mode);
   SortingMode getMode() const;

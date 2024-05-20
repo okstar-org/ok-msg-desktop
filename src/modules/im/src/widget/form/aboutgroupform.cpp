@@ -50,8 +50,7 @@ void AboutGroupForm::init(){
 
     auto map = group->getPeerList();
     for(auto peer : map){
-        auto f = new QLabel();
-        f->setText(peer);
+        auto f = new QLabel(peer);
         ui->friendListLayout->addWidget(f);
     }
 

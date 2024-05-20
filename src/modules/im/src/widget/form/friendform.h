@@ -39,7 +39,7 @@ private:
     ok::backend::OrgStaff* staff;
 
     signals:
-      void onClicked(QString &username, QString &nick);
+      void add(QString &username, QString &nick);
 };
 
 #endif // FRIENDFORM_H

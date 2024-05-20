@@ -48,7 +48,7 @@ public:
 
   [[nodiscard]]  ContentLayout *getContentLayout() const override {
         assert(contentLayout);
-      return contentLayout.get();
+      return contentLayout;
   }
 //  void connectCircleWidget();
 //  void searchCircle(CircleWidget &circleWidget);
@@ -60,8 +60,8 @@ protected:
 private:
   Ui::ChatWidget *ui;
   std::unique_ptr<QWidget> contentWidget;
-  std::unique_ptr<ContentLayout> contentLayout;
-  std::unique_ptr<MessageSessionListWidget> contactListWidget;
+  ContentLayout* contentLayout;
+  std::unique_ptr<MessageSessionListWidget> sessionListWidget;
   CircleWidget *circleWidget;
 
   Core *core;
@@ -115,7 +115,7 @@ private:
 
   void groupInvitesUpdate();
   void groupInvitesClear();
-    void friendRequestsUpdate() ;
+
 
 public slots:
   void onCoreChanged(Core &core);
@@ -139,7 +139,7 @@ public slots:
                                bool isAction);
   void onFriendAvatarChanged(const ToxPk &friendPk, const QByteArray &avatar);
   void onReceiptReceived(const ToxPk &friendPk, ReceiptNum receipt);
-  void onFriendRequestReceived(const ToxPk &friendPk, const QString &message);
+
   void onFriendTypingChanged(const ToxPk &friendnumber, bool isTyping);
 
 

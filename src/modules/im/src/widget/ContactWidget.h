@@ -2,6 +2,7 @@
 #define CONTACTWIDGET_H
 
 
+#include <QPushButton>
 #include <QWidget>
 #include <memory>
 
@@ -19,7 +20,7 @@ class ContactWidget;
 class ToxPk;
 class Core;
 class GroupInviteForm;
-class QPushButton;
+class AddFriendForm;
 
 /**
  * 通讯录界面
@@ -40,6 +41,8 @@ public:
     }
 
 public slots:
+    void do_openAddForm();
+
   void onCoreChanged(Core &core);
   void onFriendAdded(const ToxPk &friendPk, bool isFriend);
   void onFriendUsernameChanged(const ToxPk &friendPk, const QString &username);
@@ -81,7 +84,7 @@ private:
     void init();
     void deinit();
     void connectToCore(Core* core);
-
+  void friendRequestsUpdate() ;
 
     Ui::ContactWidget *ui;
     Core *core;
@@ -90,6 +93,8 @@ private:
     std::unique_ptr<QWidget> contentWidget;
     std::unique_ptr<ContentLayout> contentLayout;
 
+
+    AddFriendForm *addForm;
 
     GroupInviteForm *groupInviteForm;
     uint32_t unreadGroupInvites;
