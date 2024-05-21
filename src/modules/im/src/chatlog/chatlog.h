@@ -171,6 +171,7 @@ private:
     QMargins margins = QMargins(10, 10, 10, 10);
     qreal lineSpacing = 20.0f;
 
+    int scrollBarValue  = 0;
 };
 
 #endif // CHATLOG_H

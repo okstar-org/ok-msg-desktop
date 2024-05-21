@@ -909,6 +909,7 @@ void ChatLog::onMultiClickTimeout()
 
 void ChatLog::onVScrollBarValueChanged(int value)
 {
+        scrollBarValue = value;
 //        qDebug() <<"height"<< sceneRect().height()<<" value"<<value
 //                << verticalScrollBar()->maximum();
        if (value == verticalScrollBar()->maximum()) {
@@ -945,9 +946,10 @@ void ChatLog::handleMultiClickEvent()
 
 void ChatLog::showEvent(QShowEvent*)
 {
-    // Empty.
-    // The default implementation calls centerOn - for some reason - causing
-    // the scrollbar to move.
+    if(scrollBarValue==0){
+        //没有滚动条，显示即已读完
+        emit readAll();
+    }
 }
 
 void ChatLog::focusInEvent(QFocusEvent* ev)
