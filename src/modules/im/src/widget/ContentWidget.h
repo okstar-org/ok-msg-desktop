@@ -43,7 +43,7 @@ private:
  QWidget* mainHead;
   QWidget* mainContent;
 
-  int contentIndex;
+
 };
 
 #endif // OKMSG_PROJECT_CONTENTWIDGET_H

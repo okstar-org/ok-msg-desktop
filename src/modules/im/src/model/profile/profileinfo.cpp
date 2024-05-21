@@ -112,6 +112,11 @@ void ProfileInfo::setAvatar(const QPixmap &avatar) {
     profile->setAvatarOnly(avatar);
 }
 
+const QPixmap &ProfileInfo::getAvatar()
+{
+    return profile->loadAvatar();
+}
+
 /**
  * @brief Set self status message.
  * @param status New status message.
@@ -125,9 +130,14 @@ void ProfileInfo::setStatusMessage(const QString& status)
  * @brief Get name of tox profile file.
  * @return Profile name.
  */
-QString ProfileInfo::getProfileName() const
+QString ProfileInfo::getUsername() const
 {
     return profile->getName();
+}
+
+const QString &ProfileInfo::getDisplayName() const
+{
+    return profile->getDisplayName();
 }
 
 /**

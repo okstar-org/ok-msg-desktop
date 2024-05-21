@@ -42,18 +42,23 @@ public:
   ~Profile();
 
   Core *getCore();
-  QString getName() const;
+
+  //获取用户名
+  const QString& getName() const;
+  //获取显示名（优先nick，再用户名）
+  const QString& getDisplayName() ;
 
   void startCore();
   bool isEncrypted() const;
   QString setPassword(const QString &newPassword);
   const ToxEncrypt *getPasskey() const;
 
-  QPixmap loadAvatar();
+  const QPixmap& loadAvatar();
   QPixmap loadAvatar(const ToxPk &owner);
   QByteArray loadAvatarData(const ToxPk &owner);
   void setAvatar(QByteArray pic);
   void setAvatarOnly(QPixmap pic);
+
 
   QByteArray getAvatarHash(const ToxPk &owner);
   void removeSelfAvatar();
@@ -99,6 +104,7 @@ public slots:
 private slots:
   void loadDatabase(QString password);
   void removeAvatar(const ToxPk &owner);
+
   void onSaveToxSave();
   // TODO(sudden6): use ToxPk instead of friendId
   void onAvatarOfferReceived(QString friendId, QString fileId,
@@ -115,13 +121,17 @@ private:
 
 private:
   std::unique_ptr<Core> core = nullptr;
+  //is username
   QString name;
+  QString nick;
+
   std::unique_ptr<ToxEncrypt> passkey = nullptr;
   std::shared_ptr<RawDatabase> database;
   std::shared_ptr<History> history;
   bool isRemoved;
   bool encrypted = false;
   static QStringList profiles;
+  QPixmap pixmap;
 };
 
 #endif // PROFILE_H

@@ -32,7 +32,8 @@ class CircleWidget;
 class GroupInviteForm;
 class AddFriendForm;
 class MessageSessionListWidget;
-
+class ProfileForm;
+class ProfileInfo;
 /**
  * 消息界面
  * @brief The ChatWidget class
@@ -55,6 +56,8 @@ public:
   AddFriendForm *openFriendAddForm();
   void reloadTheme();
   void retranslateUi();
+  void showProfile();
+
 protected:
   void showEvent(QShowEvent*) override;
 private:
@@ -97,6 +100,9 @@ private:
       QAction *filterDisplayName;
       QAction *filterDisplayActivity;
 
+      ProfileInfo *profileInfo;
+      ProfileForm *profileForm;
+
   void init();
   void deinit();
   void updateIcons();
@@ -118,13 +124,13 @@ private:
 
 
 public slots:
+  void on_nameClicked();
+
   void onCoreChanged(Core &core);
 
   void onStatusSet(Status::Status status);
   void onUsernameSet(const QString& username);
   void onStatusMessageSet(const QString &statusMessage) ;
-
-
 
   void onFriendUsernameChanged(const ToxPk &friendPk, const QString &username);
 

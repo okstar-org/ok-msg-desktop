@@ -39,6 +39,8 @@
 #include <QMenu>
 #include <QPainter>
 #include <QSvgRenderer>
+#include <src/model/profile/profileinfo.h>
+#include <src/widget/form/profileform.h>
 
 
 namespace {
@@ -86,7 +88,12 @@ void acceptFileTransfer(const ToxFile &file, const QString &path) {
 ChatWidget::ChatWidget(QWidget *parent)
     : MainLayout(parent),  //
       ui(new Ui::ChatWidget), //
-      unreadGroupInvites{0}, core{nullptr}, coreFile{nullptr} {
+      unreadGroupInvites{0},
+      core{nullptr},
+      coreFile{nullptr},
+      profileInfo{nullptr},
+      profileForm{nullptr}
+{
   ui->setupUi(this);
   layout()->setMargin(0);
   layout()->setSpacing(0);
@@ -132,27 +139,16 @@ ChatWidget::~ChatWidget() {
     deinit();
 }
 
-//void ChatWidget::searchCircle(CircleWidget &circleWidget) {
-//  //  FilterCriteria filter = getFilterCriteria();
-//  //  QString text = ui->searchContactText->text();
-//  //  circleWidget.search(text, true, filterOnline(filter),
-//  //  filterOffline(filter));
-//}
-
-//void ChatWidget::connectCircleWidget() {
-////  connect(circleWidget, &CircleWidget::searchCircle, this,
-////          &ChatWidget::searchCircle);
-//  //  connect( circleWidget, &CircleWidget::newContentDialog, this,
-//  //          &ChatWidget::registerContentDialog);
-//}
 
 void ChatWidget::init() {
+
+    connect(ui->nameLabel, &CroppingLabel::clicked,
+            this, &ChatWidget::on_nameClicked);
 
     auto widget = Widget::getInstance();
     connect(widget, &Widget::toSendMessage, [&](const QString& to, bool isGroup){
         sessionListWidget->toSendMessage(ToxPk(to), isGroup);
     });
-
 
     connect(Nexus::getProfile(), &Profile::coreChanged,
             this, &ChatWidget::onCoreChanged);
@@ -162,7 +158,11 @@ void ChatWidget::deinit() {
 
     disconnect(Nexus::getProfile(), &Profile::coreChanged,
                this, &ChatWidget::onCoreChanged);
+
+    delete profileForm;
+    delete profileInfo;
 }
+
 
 void ChatWidget::connectToCore(Core *core) {
     qDebug() << __func__<<"core"<<core;
@@ -560,6 +560,27 @@ void ChatWidget::groupInvitesClear() {
   groupInvitesUpdate();
 }
 
+void ChatWidget::showProfile()
+{
+    auto profile = Nexus::getProfile();
+    if(!profileForm){
+        auto core = Core::getInstance();
+        profileInfo = new ProfileInfo(core, profile);
+        profileForm = new ProfileForm(profileInfo);
+    }
+
+    if (!profileForm->isShown()) {
+        profileForm->showTo(getContentLayout());
+    }
+}
+
+void ChatWidget::on_nameClicked()
+{
+    qDebug() <<__func__;
+
+    showProfile();
+}
+
 void ChatWidget::onGroupClicked() {
   auto &settings = Settings::getInstance();
 
@@ -755,8 +776,9 @@ bool ChatWidget::groupsVisible() const {
 }
 
 void ChatWidget::retranslateUi() {
-  ui->retranslateUi(this);
+    ui->retranslateUi(this);
 }
+
 
 void ChatWidget::setupStatus() {
  int icon_size = 15;

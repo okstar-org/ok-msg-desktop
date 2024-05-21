@@ -177,7 +177,7 @@ ProfileForm::ProfileForm(IProfileInfo* profileInfo, QWidget* parent)
 
 void ProfileForm::prFileLabelUpdate()
 {
-    const QString name = profileInfo->getProfileName();
+    const QString name = profileInfo->getUsername();
     bodyUI->prFileLabel->setText(tr("Current profile: ") + name + ".tox");
 }
 
@@ -197,10 +197,14 @@ bool ProfileForm::isShown() const
     return false;
 }
 
-void ProfileForm::show(ContentLayout* contentLayout)
+void ProfileForm::showTo(ContentLayout* contentLayout)
 {
-//    contentLayout->mainContent->layout()->addWidget(this);
-    QWidget::show();
+    auto idx = contentLayout->indexOf(this);
+    if(idx < 0){
+        contentLayout->addWidget(this);
+    }
+    contentLayout->setCurrentWidget(this);
+
     prFileLabelUpdate();
     bool portable = Settings::getInstance().getMakeToxPortable();
     QString defaultPath = QDir(Settings::getInstance().getSettingsDirPath()).path().trimmed();
@@ -226,6 +230,14 @@ bool ProfileForm::eventFilter(QObject* object, QEvent* event)
             return true;
     }
     return false;
+}
+
+void ProfileForm::showEvent(QShowEvent *e)
+{
+    auto avt = profileInfo->getAvatar();
+    onSelfAvatarLoaded(avt);
+
+    bodyUI->userName->setText(profileInfo->getDisplayName());
 }
 
 void ProfileForm::showProfilePictureContextMenu(const QPoint& point)
@@ -311,7 +323,7 @@ void ProfileForm::onAvatarClicked()
 
 void ProfileForm::onRenameClicked()
 {
-    const QString cur = profileInfo->getProfileName();
+    const QString cur = profileInfo->getUsername();
     const QString title = tr("Rename \"%1\"", "renaming a profile").arg(cur);
     const QString name = QInputDialog::getText(this, title, title + ":");
     if (name.isEmpty()) {
@@ -329,7 +341,7 @@ void ProfileForm::onRenameClicked()
 
 void ProfileForm::onExportClicked()
 {
-    const QString current = profileInfo->getProfileName() + Core::TOX_EXT;
+    const QString current = profileInfo->getUsername() + Core::TOX_EXT;
     //:save dialog title
     const QString path = QFileDialog::getSaveFileName(Q_NULLPTR, tr("Export profile"), current,
                                                       //: save dialog filter
@@ -397,7 +409,7 @@ void ProfileForm::onCopyQrClicked()
 
 void ProfileForm::onSaveQrClicked()
 {
-    const QString current = profileInfo->getProfileName() + ".png";
+    const QString current = profileInfo->getUsername() + ".png";
 
     const QString path = QFileDialog::getSaveFileName(
                 Q_NULLPTR, tr("Save", "save qr image"), current,

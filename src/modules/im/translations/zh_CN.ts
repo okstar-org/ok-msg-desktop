@@ -1592,6 +1592,11 @@ Share it with your friends to communicate.</source>
         <comment>import profile button</comment>
         <translation>登出</translation>
     </message>
+<message>
+<source>Exit</source>
+<comment>Tray action menu to exit tox</comment>
+<translation>退出</translation>
+</message>
     <message>
         <source>Remove password</source>
         <translation>删除密码</translation>

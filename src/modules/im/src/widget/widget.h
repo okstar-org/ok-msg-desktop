@@ -210,7 +210,7 @@ signals:
 private slots:
 
   void onTransferClicked();
-  void showProfile();
+
   void openNewDialog(GenericChatroomWidget *widget);
   void onChatroomWidgetClicked(GenericChatroomWidget *widget);
   void onStatusMessageChanged(const QString &newStatusMessage);
@@ -294,8 +294,6 @@ private:
 
   Core *core;
   Profile *profile;
-  ProfileInfo *profileInfo;
-  ProfileForm *profileForm;
 
   std::unique_ptr<UpdateCheck> updateCheck; // ownership should be moved outside
                                             // Widget once non-singleton

@@ -492,9 +492,6 @@ Widget::~Widget() {
     removeFriend(f, true);
   }
 
-  delete profileForm;
-  delete profileInfo;
-
 
 //  delete filesForm;
   delete timer;
@@ -590,11 +587,6 @@ void Widget::connectToCore(Core &core) {
 
   //  sharedMessageProcessorParams.setPublicKey(core.getSelfPublicKey().toString());
 
-
-
-
-
-
   //  connect(coreFile, &CoreFile::fileReceiveRequested, this,
   //          &Widget::onFileReceiveRequested);
   //  connect(coreFile, &CoreFile::fileDownloadFinished, filesForm,
@@ -618,8 +610,7 @@ void Widget::connectToCore(Core &core) {
   //  connect(addFriendForm, &AddFriendForm::friendRequested, this,
   //          &Widget::friendRequestedTo);
 
-  profileInfo = new ProfileInfo(&core, profile);
-  profileForm = new ProfileForm(profileInfo);
+
 
 
 
@@ -830,21 +821,6 @@ void Widget::onShowSettings() {
   }
 }
 
-void Widget::showProfile() // onAvatarClicked, onUsernameClicked
-{
-  if (settings.getSeparateWindow()) {
-    if (!profileForm->isShown()) {
-      profileForm->show(createContentDialog(DialogType::ProfileDialog));
-    }
-
-    setActiveToolMenuButton(ActiveToolMenuButton::None);
-  } else {
-    hideMainForms(nullptr);
-//    profileForm->show(contentLayout);
-    setWindowTitle(fromDialogType(DialogType::ProfileDialog));
-    setActiveToolMenuButton(ActiveToolMenuButton::None);
-  }
-}
 
 void Widget::hideMainForms(GenericChatroomWidget *chatroomWidget) {
   setActiveToolMenuButton(ActiveToolMenuButton::None);
@@ -872,7 +848,7 @@ void Widget::setAvatar( QByteArray avatar) {
     return;
   }
 //  profilePicture->setPixmap(pixmap);
-  profileInfo->setAvatar(pixmap);
+//  profileInfo->setAvatar(pixmap);
 
 }
 

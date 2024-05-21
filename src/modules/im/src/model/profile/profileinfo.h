@@ -33,10 +33,14 @@ public:
     void copyId() const override;
 
     void setUsername(const QString& name) override;
+
     void setAvatar(const QPixmap& avatar) override;
+    const QPixmap& getAvatar() override;
     void setStatusMessage(const QString& status) override;
 
-    QString getProfileName() const override;
+    QString getUsername() const override;
+    virtual const QString& getDisplayName() const override;
+
     RenameResult renameProfile(const QString& name) override;
     SaveResult exportProfile(const QString& path) const override;
     QStringList removeProfile() override;

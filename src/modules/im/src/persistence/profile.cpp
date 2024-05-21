@@ -85,6 +85,8 @@ void Profile::initCore(const QByteArray &toxsave, ICoreSettings &s,
   //    core->setUsername(name);
   //  }
 
+
+
   // save tox file when Core requests it
   connect(core.get(), &Core::saveRequest, this, &Profile::onSaveToxSave);
   // react to avatar changes
@@ -296,11 +298,19 @@ const QStringList Profile::getAllProfileNames() {
 }
 
 Core *Profile::getCore() {
-  // TODO(sudden6): this is evil
   return core.get();
 }
 
-QString Profile::getName() const { return name; }
+const QString& Profile::getName() const { return name; }
+
+const QString& Profile::getDisplayName()
+{
+    nick = core->getNick();
+    if(!nick.isEmpty()){
+        return nick;
+    }
+    return name;
+}
 
 /**
  * @brief Starts the Core thread
@@ -407,8 +417,18 @@ QString Profile::avatarPath(const ToxPk &owner, bool forceUnencrypted) {
  * @brief Get our avatar from cache.
  * @return Avatar as QPixmap.
  */
-QPixmap Profile::loadAvatar() {
-  return loadAvatar(core->getSelfId().getPublicKey());
+const QPixmap & Profile::loadAvatar() {
+    if(pixmap.isNull())
+    {
+        //加载本地
+       pixmap= loadAvatar(core->getSelfId().getPublicKey());
+    }
+    if(pixmap.isNull()){
+        if (Settings::getInstance().getShowIdenticons()) {
+            pixmap = QPixmap::fromImage(Identicon(core->getSelfId().getPublicKey().getByteArray()).toImage(16));
+        }
+    }
+  return pixmap;
 }
 
 /**
@@ -416,7 +436,7 @@ QPixmap Profile::loadAvatar() {
  * @param owner Friend PK to load avatar.
  * @return Avatar as QPixmap.
  */
-QPixmap Profile::loadAvatar(const ToxPk &owner) {
+  QPixmap Profile::loadAvatar(const ToxPk &owner) {
   QPixmap pic;
   if (Settings::getInstance().getShowIdenticons()) {
     const QByteArray avatarData = loadAvatarData(owner);
@@ -454,7 +474,7 @@ QByteArray Profile::loadAvatarData(const ToxPk &owner) {
   QByteArray pic = file.readAll();
 
     if (pic.isEmpty()) {
-      qWarning() << "Failed to decrypt avatar at" << path;
+      qWarning() << "Empty avatar at" << path;
     }
 
 
@@ -502,7 +522,7 @@ void Profile::loadDatabase(QString password) {
  */
 void Profile::setAvatar(QByteArray pic) {
   bool loaded = false;
-  QPixmap pixmap;
+
   QByteArray avatarData;
   const ToxPk &selfPk = core->getSelfPublicKey();
   if (!pic.isEmpty()) {
@@ -520,6 +540,7 @@ void Profile::setAvatar(QByteArray pic) {
   if (!loaded) {
     return;
   }
+
   qDebug() << "pixmap" << pixmap.size();
   saveAvatar(selfPk, avatarData);
 
