@@ -48,6 +48,7 @@ public:
   ~LoginWidget() override;
   void onError(const QString &msg);
   void init();
+  void deinit();
 
 protected:
   void retranslateUi();

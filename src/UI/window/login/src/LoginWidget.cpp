@@ -122,6 +122,11 @@ void LoginWidget::init() {
 
 }
 
+void LoginWidget::deinit()
+{
+    settings::Translator::unregister(this);
+}
+
 void LoginWidget::doLogin() {
   if (m_loaded < 1) {
     onError(tr("Please waiting the page is loaded"));

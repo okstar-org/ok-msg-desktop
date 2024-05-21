@@ -24,7 +24,7 @@ class QTranslator;
 namespace settings {
 
 using Callback = QPair<void *, std::function<void()>>;
-
+ static QMutex lock;
 
 
 class Translator {
@@ -37,7 +37,7 @@ public:
 private:
 
 //  static QVector<Callback> callbacks;
-//  static QMutex lock;
+
 
 //  static QTranslator *translator;
 //  static bool m_loadedQtTranslations;
