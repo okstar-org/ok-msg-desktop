@@ -62,13 +62,14 @@ struct ToxFile {
   QString fileNum;
   QString fileName;
   QString filePath;
-  std::shared_ptr<QFile> file;
   quint64 bytesSent;
   quint64 filesize;
   FileStatus status;
   FileDirection direction;
   QByteArray avatarData;
   QByteArray resumeFileId;
+
+  std::shared_ptr<QFile> file;
   std::shared_ptr<QCryptographicHash> hashGenerator =
       std::make_shared<QCryptographicHash>(QCryptographicHash::Sha256);
   ToxFilePause pauseStatus;

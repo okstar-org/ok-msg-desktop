@@ -128,24 +128,23 @@ QList<Message> ChatHistory::getLastTextMessage(uint size)
 {
 
     QList<Message> list;
+    auto selfPk = coreIdHandler.getSelfPublicKey();
 
     qDebug()<<__func__ <<"friend:"<<f.getPublicKey().toString();
-    auto messages = history->getLastMessageForFriend(f.getPublicKey(), size);
+    auto messages = history->getLastMessageForFriend(selfPk, f.getPublicKey(), size, HistMessageContentType::message);
     qDebug()<<__func__ <<"messages:"<<messages.size();
 
-    for(auto i: messages){
-        auto type = i.content.getType();
-        if(type == HistMessageContentType::message){
+    for(auto& i: messages){
+
             Message msg={.isAction=false,
                          .id = QString::number(i.id.get()),
                          .from = i.sender,
                          .to = i.receiver,
-                         .displayName=i.dispName,
-                         .content = i.content.asMessage(),
+                         .content = *i.asMessage(),
                          .timestamp = i.timestamp
                         };
             list.append(msg);
-        }
+
     }
 
     return list;
@@ -373,32 +372,46 @@ void ChatHistory::loadHistoryIntoSessionChatLog(ChatLogIdx start) const
         return;
     }
 
+    auto core = Core::getInstance();
+
     auto end = sessionChatLog.getFirstIdx();
 
     // We know that both history and us have a start index of 0 so the type
     // conversion should be safe
     assert(getFirstIdx() == ChatLogIdx(0));
-    auto messages = history->getMessagesForFriend(f.getPublicKey(), start.get(), end.get());
+
+    auto messages = history->getMessagesForFriend(core->getSelfPublicKey(), f.getPublicKey(), start.get(), end.get());
     qDebug() <<"load message for:"<< f.getPublicKey().toString() <<"messages:" << messages.size();
 
-//    assert(messages.size() == end.get() - start.get());
+//  assert(messages.size() == end.get() - start.get());
     ChatLogIdx nextIdx = start;
 
     for (const auto& message : messages) {
         // Note that message.id is _not_ a valid conversion here since it is a
         // global id not a per-chat id like the ChatLogIdx
         auto currentIdx = nextIdx++;
+
         auto sender = ToxId(message.sender).getPublicKey();
-        switch (message.content.getType()) {
+//        auto frnd = FriendList::findFriend(ContactId{message.sender});
+        auto dispName = sender.username;
+
+        const auto date = message.timestamp;
+
+        switch (message.type) {
         case HistMessageContentType::file: {
-            const auto date = message.timestamp;
-            const auto file = message.content.asFile();
-            const auto chatLogFile = ChatLogFile{date, file};
-            sessionChatLog.insertFileAtIdx(currentIdx, sender, message.dispName, chatLogFile);
+            const auto file = message.asFile();
+            ToxFile tfile;
+            tfile.fileName=file->fileName;
+            tfile.filePath=file->filePath;
+            tfile.filesize=file->size;
+            tfile.sId = file->fileId;
+
+            const auto chatLogFile = ChatLogFile{date, tfile};
+            sessionChatLog.insertFileAtIdx(currentIdx, sender, dispName, chatLogFile);
             break;
         }
         case HistMessageContentType::message: {
-            auto messageContent = message.content.asMessage();
+            QString messageContent = *message.asMessage();
 
             auto isAction = handleActionPrefix(messageContent);
 
@@ -413,7 +426,7 @@ void ChatHistory::loadHistoryIntoSessionChatLog(ChatLogIdx start) const
 //                    .id = message.id,
                     .from= message.sender,
                     .to = message.receiver,
-                    .displayName = message.dispName,
+
                     .content=messageContent,
                     .timestamp= message.timestamp
             };
@@ -428,15 +441,15 @@ void ChatHistory::loadHistoryIntoSessionChatLog(ChatLogIdx start) const
             auto chatLogMessage = ChatLogMessage{message.state, processedMessage};
             switch (message.state) {
                 case MessageState::complete:
-                    sessionChatLog.insertCompleteMessageAtIdx(currentIdx, sender, message.dispName,
+                    sessionChatLog.insertCompleteMessageAtIdx(currentIdx, sender, dispName,
                                                               chatLogMessage);
                     break;
                 case MessageState::pending:
-                    sessionChatLog.insertIncompleteMessageAtIdx(currentIdx, sender, message.dispName,
+                    sessionChatLog.insertIncompleteMessageAtIdx(currentIdx, sender, dispName,
                                                                 chatLogMessage, dispatchedMessageIt.key());
                     break;
                 case MessageState::broken:
-                    sessionChatLog.insertBrokenMessageAtIdx(currentIdx, sender, message.dispName,
+                    sessionChatLog.insertBrokenMessageAtIdx(currentIdx, sender, dispName,
                                                             chatLogMessage);
                     break;
             }
@@ -454,13 +467,13 @@ void ChatHistory::loadHistoryIntoSessionChatLog(ChatLogIdx start) const
  */
 void ChatHistory::dispatchUnsentMessages(IMessageDispatcher& messageDispatcher)
 {
-    auto unsentMessages = history->getUndeliveredMessagesForFriend(f.getPublicKey());
+    auto core = Core::getInstance();
+    auto unsentMessages = history->getUndeliveredMessagesForFriend(core->getSelfPublicKey(), f.getPublicKey());
     for (auto& message : unsentMessages) {
-        // We should only store messages as unsent, if this changes in the
-        // future we need to extend this logic
-        assert(message.content.getType() == HistMessageContentType::message);
+        if(message.type==HistMessageContentType::file)
+            continue;
 
-        auto messageContent = message.content.asMessage();
+        auto messageContent = *message.asMessage();
         auto isAction = handleActionPrefix(messageContent);
 
         // NOTE: timestamp will be generated in messageDispatcher but we haven't

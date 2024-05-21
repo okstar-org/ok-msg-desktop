@@ -131,10 +131,13 @@ bool AboutFriend::clearHistory()
 
 bool AboutFriend::isHistoryExistence()
 {
+    auto profile = Nexus::getProfile();
+    auto core = profile->getCore();
+
     History* const history = Nexus::getProfile()->getHistory();
     if (history) {
         const ToxPk pk = f->getPublicKey();
-        return history->historyExists(pk);
+        return history->historyExists(core->getSelfPublicKey(), pk);
     }
 
     return false;

@@ -18,7 +18,6 @@
 namespace ok::backend {
 
 PluginInfo PluginInfo::fromJson(const QJsonObject &data) {
-
     return PluginInfo(data);
 }
 
