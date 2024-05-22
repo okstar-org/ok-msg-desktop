@@ -50,6 +50,7 @@ public:
     virtual SaveResult exportProfile(const QString& path) const = 0;
     virtual QStringList removeProfile() = 0;
     virtual void logout() = 0;
+    virtual void exit() = 0;
 
     virtual void copyQr(const QImage& image) const = 0;
     virtual SaveResult saveQr(const QImage& image, const QString& path) const = 0;

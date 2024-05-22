@@ -248,6 +248,12 @@ void ProfileInfo::logout()
     emit Nexus::getInstance().destroyProfile(getUsername());
 }
 
+void ProfileInfo::exit()
+{
+    qDebug()<<__func__;
+    emit Nexus::getInstance().exit(getUsername());
+}
+
 
 /**
  * @brief Copy image to clipboard.

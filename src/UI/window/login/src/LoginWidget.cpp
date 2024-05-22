@@ -61,7 +61,11 @@ LoginWidget::LoginWidget(QWidget *parent)
   m_timer->start(1000);
   connect(m_timer.get(), &QTimer::timeout, this, &LoginWidget::onTimeout);
 
+
   settings::Translator::registerHandler([&] { retranslateUi(); }, this);
+
+  m_settingManager = new SettingManager(this);
+
   // 初始化
   init();
 }
@@ -73,7 +77,7 @@ LoginWidget::~LoginWidget() {
 }
 
 void LoginWidget::init() {
-  m_settingManager = SettingManager::InitGet();
+
   m_settingManager->getAccount([&](const QString& acc, const QString& password) {
     ui->rember->setChecked(!acc.isEmpty());
     ui->accountInput->setText(acc);

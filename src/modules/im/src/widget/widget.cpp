@@ -1868,7 +1868,7 @@ void Widget::clearAllReceipts() {
 }
 
 void Widget::reloadTheme() {
-//  this->setStyleSheet(Style::getStylesheet("window/general.css"));
+  this->setStyleSheet(Style::getStylesheet("window/general.css"));
   chatWidget->reloadTheme();
 }
 

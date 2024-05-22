@@ -40,7 +40,6 @@ public:
   static Application *Instance();
 
   void start();
-
   void finish();
 
   inline SettingManager *settingManager() { return _settingManager.get(); }
@@ -50,8 +49,6 @@ public:
   }
 
 protected:
-  void initScreenCaptor();
-
   void initIM();
 
 private:
@@ -76,7 +73,7 @@ private:
   std::unique_ptr<UI::MainWindow> m_mainWindow;
 
   void loadService();
-
+  void doLogout();
   void createLoginUI();
   void closeLoginUI();
 
@@ -104,5 +101,7 @@ public slots:
   void onAvatar(const QPixmap &);
 
   void on_logout(const QString &profile);
+  void on_exit(const QString &profile);
+
 };
 } // namespace core

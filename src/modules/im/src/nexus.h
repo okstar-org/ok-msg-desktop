@@ -99,10 +99,11 @@ signals:
   void currentProfileChanged(Profile *Profile);
   void profileLoaded();
   void profileLoadFailed();
-  void destroyProfile(const QString &profile);
   void saveGlobal();
   void updateAvatar(const QPixmap &pixmap);
   void createProfileFailed(QString msg);
+  void destroyProfile(const QString &profile);
+  void exit(const QString &profile);
 
 public slots:
   void onCreateNewProfile(const QString &name, const QString &pass);

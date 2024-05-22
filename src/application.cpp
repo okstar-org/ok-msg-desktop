@@ -170,6 +170,7 @@ void Application::closeLoginUI() {
 void Application::onLoginSuccess(ok::session::SignInInfo &signInInfo) {
   qDebug() << qsl("onLoginSuccess account:%1").arg(signInInfo.account);
   m_signInInfo = signInInfo;
+
   // 启动主界面
   startMainUI();
 #ifdef OK_PLUGIN
@@ -182,16 +183,11 @@ void Application::onLoginSuccess(ok::session::SignInInfo &signInInfo) {
   initModulePainter();
 #endif
 
-  // 初始化截屏模块
-  initScreenCaptor();
-
-
   // 关闭登录界面
   closeLoginUI();
 }
 
 void Application::startMainUI() {
-  this->loadService();
 
     m_mainWindow = std::make_unique<UI::MainWindow>();
 
@@ -227,15 +223,6 @@ void Application::startMainUI() {
 
 void Application::stopMainUI() {
   m_mainWindow.reset();
-}
-
-void Application::loadService() {}
-
-void Application::initScreenCaptor() {
-  //  qDebug(("initScreenCaptor ..."));
-  //  auto _screenCaptor = new OEScreenshot();
-  //  m_moduleMap.insert(_screenCaptor->name(), _screenCaptor);
-  //  qDebug(("initScreenCaptor finished"));
 }
 
 void Application::cleanup() {
@@ -284,6 +271,7 @@ Module * Application::initModuleIM(ok::session::SignInInfo &signInInfo) {
               this, &Application::onAvatar);
 
       connect(nexus, &Nexus::destroyProfile, this, &Application::on_logout);
+      connect(nexus, &Nexus::exit, this, &Application::on_exit);
 
       m_moduleMap.insert(im->name(), im);
   }
@@ -310,22 +298,31 @@ void Application::onAvatar(const QPixmap &pixmap) {
 
 void Application::on_logout(const QString &profile)
 {
-   qDebug() << __func__<<profile;
-   QVector<QString> remove;
-   for(auto mod :  m_moduleMap){
-        qDebug() <<"delete module:" <<mod->name();
-        remove.push_back(mod->name());
-        mod->cleanup();
-   }
-
-   for(auto &name:remove){
-       m_moduleMap.remove(name);
-   }
-
-
-    stopMainUI();
+    qDebug() << __func__<<profile;
+    doLogout();
     sleep(1);
     createLoginUI();
+}
+
+void Application::on_exit(const QString &profile)
+{
+    qDebug() << __func__<<profile;
+    doLogout();
+    qApp->exit();
+}
+
+void Application::doLogout(){
+    qDebug() << __func__<<profile;
+    QVector<QString> remove;
+    for(auto mod :  m_moduleMap){
+         qDebug() <<"delete module:" <<mod->name();
+         remove.push_back(mod->name());
+         mod->cleanup();
+    }
+    for(auto &name:remove){
+        m_moduleMap.remove(name);
+    }
+     stopMainUI();
 }
 
 #ifdef OK_MODULE_PAINTER

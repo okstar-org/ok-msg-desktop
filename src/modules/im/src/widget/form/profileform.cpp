@@ -147,7 +147,7 @@ ProfileForm::ProfileForm(IProfileInfo* profileInfo, QWidget* parent)
             this, &ProfileForm::onStatusMessageEdited);
     connect(bodyUI->exportButton, &QPushButton::clicked, this, &ProfileForm::onExportClicked);
     connect(bodyUI->logoutButton, &QPushButton::clicked, this, &ProfileForm::onLogoutClicked);
-//    connect(bodyUI->renameButton, &QPushButton::clicked, this, &ProfileForm::onRenameClicked);
+    connect(bodyUI->exitButton, &QPushButton::clicked, this, &ProfileForm::onExitClicked);
 //    connect(bodyUI->deleteButton, &QPushButton::clicked, this, &ProfileForm::onDeleteClicked);
 //    connect(bodyUI->deletePassButton, &QPushButton::clicked,
 //            this, &ProfileForm::onDeletePassClicked);
@@ -389,6 +389,11 @@ void ProfileForm::onDeleteClicked()
 void ProfileForm::onLogoutClicked()
 {
     profileInfo->logout();
+}
+
+void ProfileForm::onExitClicked()
+{
+    profileInfo->exit();
 }
 
 void ProfileForm::setPasswordButtonsText()

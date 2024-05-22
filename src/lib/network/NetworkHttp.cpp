@@ -10,7 +10,7 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#include "NetworkHttp.h"
+#include "NetworkHttp_p.h"
 
 #include <memory>
 
@@ -36,7 +36,8 @@
 
 namespace network {
 
-NetworkHttp::NetworkHttp(QObject *parent) : QObject(parent) {
+NetworkHttp::NetworkHttp(QObject *parent) : QObject(parent),
+    _manager{nullptr} {
     qDebug() << __func__;
 #ifndef QT_NO_SSL
    bool supportsSsl = QSslSocket::supportsSsl();
@@ -47,7 +48,7 @@ NetworkHttp::NetworkHttp(QObject *parent) : QObject(parent) {
    qDebug()<<("libraryVersion :")<<(libraryVersion);
 #endif
   //  QNetworkAccessManager
-  _manager = std::make_unique<QNetworkAccessManager>();
+  _manager = new QNetworkAccessManager(this);
   auto schemes = _manager->supportedSchemes();
   qDebug()<<("supportedSchemes:")<<(schemes.join(" "));
 }
@@ -111,10 +112,7 @@ QByteArray NetworkHttp::get(
     const QUrl &url,
     const Fn<void(qint64 bytesReceived, qint64 bytesTotal)> &downloadProgress) {
   qDebug() << "Url:" << url.toString();
-
-  QNetworkRequest request(url);
-
-  auto _reply = _manager->get(request);
+  auto _reply = _manager->get(QNetworkRequest(url));
   _reply->ignoreSslErrors();
   if (!_reply->errorString().isEmpty()) {
     return {};
@@ -199,7 +197,7 @@ QByteArray NetworkHttp::post(const QUrl &url, const QString &data) {
   request.setRawHeader("Accept", "application/json");
 
   auto postData = QByteArray::fromStdString(data.toStdString());
-  QNetworkReply *_reply = (_manager->post(request, postData));
+  QNetworkReply *_reply = _manager->post(request, postData);
   _reply->ignoreSslErrors();
 
   connect(_reply, &QNetworkReply::finished, this, &NetworkHttp::httpFinished);
