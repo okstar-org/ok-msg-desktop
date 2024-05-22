@@ -324,7 +324,7 @@ void Application::on_logout(const QString &profile)
 
 
     stopMainUI();
-    sleep(1);
+    QThread::currentThread()->sleep(1);
     createLoginUI();
 }
 
