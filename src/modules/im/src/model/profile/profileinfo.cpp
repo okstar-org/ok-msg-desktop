@@ -244,14 +244,10 @@ QStringList ProfileInfo::removeProfile()
  */
 void ProfileInfo::logout()
 {
-    // TODO(kriby): Refactor all of these invokeMethod calls with connect() properly when possible
-    Settings::getInstance().saveGlobal();
-    core->logout();
-//    QMetaObject::invokeMethod(&Nexus::getInstance(), "showLogin",
-//                              Q_ARG(QString, Settings::getInstance().getCurrentProfile()));
-  //TODO 暂时退出程序，后续优化。
-    qApp->exit();
+    qDebug()<<__func__;
+    emit Nexus::getInstance().destroyProfile(getUsername());
 }
+
 
 /**
  * @brief Copy image to clipboard.

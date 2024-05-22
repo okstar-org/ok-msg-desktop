@@ -19,11 +19,11 @@
   class name ## Loader {              \
   public:                                 \
   name ## Loader() {                \
-    qDebug()<<"loading resource" ;   \
+    qDebug()<<"loading resource:" << #name ;   \
     Q_INIT_RESOURCE(name);       \
   };                                      \
   ~name ## Loader(){                \
-    qDebug()<<"cleanup resource";   \
+    qDebug()<<"cleanup resource:" << #name;   \
     Q_CLEANUP_RESOURCE(name);    \
   }                                       \
   };                                      \

@@ -61,12 +61,14 @@ LoginWidget::LoginWidget(QWidget *parent)
   m_timer->start(1000);
   connect(m_timer.get(), &QTimer::timeout, this, &LoginWidget::onTimeout);
 
+  settings::Translator::registerHandler([&] { retranslateUi(); }, this);
   // 初始化
   init();
 }
 
 LoginWidget::~LoginWidget() {
     qDebug() <<__func__;
+    settings::Translator::unregister(this);
     delete ui;
 }
 
@@ -94,7 +96,7 @@ void LoginWidget::init() {
   if (i >= 0 && i < ui->language->count())
     ui->language->setCurrentIndex(i + 1);
 
-  settings::Translator::registerHandler([&] { retranslateUi(); }, this);
+
 
   retranslateUi();
   //==========国际化==========//
@@ -124,7 +126,7 @@ void LoginWidget::init() {
 
 void LoginWidget::deinit()
 {
-    settings::Translator::unregister(this);
+
 }
 
 void LoginWidget::doLogin() {

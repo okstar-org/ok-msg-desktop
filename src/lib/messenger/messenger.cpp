@@ -31,6 +31,7 @@ Messenger::Messenger(QObject *parent)
     : QObject(parent),                                       //
       _delayer(std::make_unique<::base::DelayedCallTimer>()) //
 {
+    qDebug() << __func__;
 
   qRegisterMetaType<FileHandler::File>("FileHandler::File");
   qRegisterMetaType<FriendId>("FriendId");
@@ -70,17 +71,19 @@ Messenger::Messenger(QObject *parent)
 #endif
 }
 
-Messenger::~Messenger() {}
-
-Messenger *Messenger::getInstance() {
-  static Messenger *self = nullptr;
-  if (!self)
-    self = new Messenger();
-  return self;
+Messenger::~Messenger() {
+    qDebug() << __func__;
 }
 
-void Messenger::start() {
+//Messenger *Messenger::getInstance() {
+//  static Messenger *self = nullptr;
+//  if (!self)
+//    self = new Messenger();
+//  return self;
+//}
 
+void Messenger::start() {
+qDebug() << __func__;
 }
 
 void Messenger::setMute(bool mute) { _jingle->setMute(mute); }

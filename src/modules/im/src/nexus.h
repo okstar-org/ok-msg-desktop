@@ -41,21 +41,25 @@ class QSignalMapper;
 class Nexus : public QObject, public Module {
   Q_OBJECT
 public:
+
+    /**
+     * Module
+     */
+    static QString Name();
+    static Module *Create();
+
+
   void showMainGUI();
   void setSettings(Settings *settings);
   void setParser(QCommandLineParser *parser);
 
   static Nexus &getInstance();
-  static void destroyInstance();
   static Core *getCore();
   static Profile *getProfile();
   static Widget *getDesktopGUI();
 
-  /**
-   * Module
-   */
-  static QString Name();
-  static Module *Create();
+  virtual void destroy() override;
+
   QString name() override;
   void init(Profile *) override;
   void start(ok::session::SignInInfo &signInInfo,
@@ -95,6 +99,7 @@ signals:
   void currentProfileChanged(Profile *Profile);
   void profileLoaded();
   void profileLoadFailed();
+  void destroyProfile(const QString &profile);
   void saveGlobal();
   void updateAvatar(const QPixmap &pixmap);
   void createProfileFailed(QString msg);
@@ -102,9 +107,10 @@ signals:
 public slots:
   void onCreateNewProfile(const QString &name, const QString &pass);
   void onLoadProfile(const QString &name, const QString &pass);
-  int showLogin(const QString &profileName = QString());
   void bootstrapWithProfile(Profile *p);
   void bootstrapWithProfileName(const QString &p);
+  int showLogin(const QString &profileName = QString());
+  void do_logout(const QString & profile);
 
 private:
   explicit Nexus(QObject *parent = nullptr);
@@ -114,7 +120,9 @@ private:
 
 private:
   bool stared;
+
   Profile *profile;
+
   Settings *settings;
   QWidget *parent;
   Widget *widget;

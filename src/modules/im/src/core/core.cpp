@@ -239,8 +239,9 @@ ToxCorePtr Core::makeToxCore(const QByteArray &savedata,
   }
 
   //  Tox_Err_New tox_err;
-  //  core->tox = ToxPtr(tox_new(*toxOptions, &tox_err));
-  core->tox = ToxPtr(lib::messenger::Messenger::getInstance());
+//    core->tox = ToxPtr(tox_new(*toxOptions, &tox_err));
+  core->tox =ToxPtr(new lib::messenger::Messenger());
+
   //  switch (tox_err) {
   //  case TOX_ERR_NEW_OK:
   //    break;
@@ -393,6 +394,12 @@ void Core::onStarted() {
 void Core::start() {
   qDebug() << __func__ << "...";
   coreThread->start();
+  coreThread->quit();
+}
+
+void Core::stop() {
+  qDebug() << __func__ << "...";
+  coreThread->quit();
 }
 
 /**

@@ -90,14 +90,12 @@ FriendListWidget::~FriendListWidget() {
     delete activityLayout;
   }
 
-  //  if (circleLayout != nullptr) {
-  //    QLayoutItem *item;
-  //    while ((item = circleLayout->getLayout()->takeAt(0)) != nullptr) {
-  //      delete item->widget();
-  //      delete item;
-  //    }
-  //    delete circleLayout;
-  //  }
+
+
+  for (Friend *f : FriendList::getAllFriends()) {
+
+  }
+
 }
 
 FriendWidget *FriendListWidget::addFriend(const ToxPk &friendPk, bool isFriend) {
@@ -113,7 +111,7 @@ FriendWidget *FriendListWidget::addFriend(const ToxPk &friendPk, bool isFriend) 
   auto &settings = Settings::getInstance();
   const auto compact = settings.getCompactLayout();
 
-  auto friendWidget = new FriendWidget(m_contentLayout, friendPk, isFriend, compact);
+  auto friendWidget = new FriendWidget(m_contentLayout, friendPk, isFriend, this);
   connectFriendWidget(*friendWidget);
   friendWidgets.insert(friendPk.toString(), friendWidget);
 

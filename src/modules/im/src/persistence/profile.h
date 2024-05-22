@@ -41,7 +41,6 @@ public:
                                 QString password);
   ~Profile();
 
-  Core *getCore();
 
   //获取用户名
   const QString& getName() const;
@@ -49,6 +48,9 @@ public:
   const QString& getDisplayName() ;
 
   void startCore();
+  void stopCore();
+  Core *getCore();
+
   bool isEncrypted() const;
   QString setPassword(const QString &newPassword);
   const ToxEncrypt *getPasskey() const;

@@ -45,10 +45,6 @@ private:
 
   Ui::OMainMenu *ui;
 
-  // current menu
-  PageMenu m_current;
-  void *_imView = nullptr;
-  bool _imViewShow;
   int _showTimes;
   // delayCaller
   std::shared_ptr<base::DelayedCallTimer> delayCaller_;

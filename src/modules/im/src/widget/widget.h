@@ -167,7 +167,6 @@ public slots:
 
   void setAvatar( QByteArray avatar);
   void addFriend0(const ToxPk &friendPk);
-  void addFriend(QString friendId, const ToxPk &friendPk, bool isFriend);
   void addFriendDone();
   void addFriendFailed(const ToxPk &userId, const QString &errorInfo = QString());
 
@@ -214,8 +213,7 @@ private slots:
   void openNewDialog(GenericChatroomWidget *widget);
   void onChatroomWidgetClicked(GenericChatroomWidget *widget);
   void onStatusMessageChanged(const QString &newStatusMessage);
-  void removeFriend(const ToxPk &friendId);
-  void addFriend1(const ToxPk &friendId);
+
   void copyFriendIdToClipboard(const ToxPk &friendId);
   void removeGroup(const GroupId &groupId);
   void destroyGroup(const GroupId &groupId);

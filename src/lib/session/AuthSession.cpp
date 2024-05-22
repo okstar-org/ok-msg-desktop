@@ -114,7 +114,6 @@ void AuthSession::onLoginSuccessed(const SignInInfo &signIn)
                 msg = "请求超时！";
                 break;
               }case ::lib::messenger::IMStatus::CONNECTED:{
-
                   LoginResult result{Status::FAILURE, msg};
                   emit loginResult(m_signInInfo, result);
                   break;

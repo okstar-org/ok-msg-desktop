@@ -48,12 +48,11 @@
  * Restores all controls from the settings.
  */
 UserInterfaceForm::UserInterfaceForm(SettingsWidget* myParent)
-    : GenericForm(QPixmap(":/img/settings/general.png"))
+    : GenericForm(QPixmap(":/img/settings/general.png"), myParent),
+      bodyUI{new Ui::UserInterfaceSettings}
 {
-    parent = myParent;
-
-    bodyUI = new Ui::UserInterfaceSettings;
     bodyUI->setupUi(this);
+    parent = myParent;
 
     // block all child signals during initialization
     const RecursiveSignalBlocker signalBlocker(this);

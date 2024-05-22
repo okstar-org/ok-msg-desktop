@@ -59,8 +59,8 @@
 FriendWidget::FriendWidget(ContentLayout *layout,
                            const ToxPk &friendPk,
                            bool isFriend,
-                           bool compact)
-    : GenericChatroomWidget(ChatType::Chat, friendPk),
+                           QWidget* parent)
+    : GenericChatroomWidget(ChatType::Chat, friendPk, parent),
       contentLayout(layout), menu{nullptr}
 {
 
@@ -134,6 +134,7 @@ FriendWidget::FriendWidget(ContentLayout *layout,
 
 FriendWidget::~FriendWidget()
 {
+    FriendList::removeFriend(m_friend->getPublicKey());
     deinit();
 }
 
@@ -145,7 +146,7 @@ void FriendWidget::init()
 
      menu->addSeparator();
 
-    removeAct = menu->addAction(tr("Remove friend"));
+     removeAct = menu->addAction(tr("Remove friend"));
 //    connect(
     //        removeAction, &QAction::triggered, this,
     //        [=, this]() { emit removeFriend(friendPk); }, Qt::QueuedConnection);
@@ -155,7 +156,7 @@ void FriendWidget::init()
 
 void FriendWidget::deinit()
 {
-
+    delete menu;
 }
 
 void FriendWidget::do_widgetClicked(GenericChatroomWidget *w) {

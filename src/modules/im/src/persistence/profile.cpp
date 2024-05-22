@@ -336,6 +336,15 @@ void Profile::startCore() {
   //  setAvatar(data);
 }
 
+void Profile::stopCore()
+{
+    qDebug() <<__func__;
+
+    disconnect(core.get(), &Core::requestSent, this, &Profile::onRequestSent);
+    core->stop();
+
+}
+
 /**
  * @brief Saves the profile's .tox save, encrypted if needed.
  * @warning Invalid on deleted profiles.

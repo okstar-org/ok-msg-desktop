@@ -38,9 +38,7 @@ SettingsWidget::SettingsWidget(UpdateCheck* updateCheck, IAudioControl& audio, W
     : QWidget(parent, Qt::Window)
 {
 //    setAttribute(Qt::WA_DeleteOnClose);
-
-    setGeometry(0,0, parent->width(), parent->height());
-
+//    setGeometry(0,0, parent->width(), parent->height());
 
     CoreAV* coreAV = Core::getInstance()->getAv();
     IAudioSettings* audioSettings = &Settings::getInstance();

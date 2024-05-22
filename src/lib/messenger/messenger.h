@@ -202,10 +202,11 @@ public:
 class Messenger : public QObject {
   Q_OBJECT
 public:
-  using Ptr = std::shared_ptr<Messenger>;
+//  using Ptr = std::shared_ptr<Messenger>;
+  explicit Messenger(QObject *parent = nullptr);
   ~Messenger() override;
 
-  static Messenger *getInstance();
+//  static Messenger *getInstance();
 
   void start();
   void stop();
@@ -303,7 +304,7 @@ public:
   void setUIStarted();
 
 private:
-  explicit Messenger(QObject *parent = nullptr);
+
 
   bool connectIM();
 

@@ -34,6 +34,7 @@
 using namespace core;
 using namespace base;
 
+
 namespace core {
 
 Application::Application(int &argc, char *argv[])
@@ -163,6 +164,7 @@ void Application::createLoginUI() {
 void Application::closeLoginUI() {
     disconnect(m_loginWindow.get());
     m_loginWindow->close();
+    m_loginWindow.reset();
 }
 
 void Application::onLoginSuccess(ok::session::SignInInfo &signInInfo) {
@@ -191,24 +193,40 @@ void Application::onLoginSuccess(ok::session::SignInInfo &signInInfo) {
 void Application::startMainUI() {
   this->loadService();
 
-  m_windowManager = UI::WindowManager::Instance();
+    m_mainWindow = std::make_unique<UI::MainWindow>();
 
-  connect(m_windowManager, &UI::WindowManager::menuPushed, this,
-          &Application::onMenuPushed);
-  connect(m_windowManager, &UI::WindowManager::mainClose, this,
-          [&](SavedInfo savedInfo) {
-            for (auto m : m_moduleMap) {
-              m->onSave(savedInfo);
-            }
-          });
+    /**
+     * connect menu's button events.
+     */
+//    connect(m_mainWindow.get(), &UI::MainWindow::toClose, //
+//            [&](){
+//              emit mainClose({
+//                m_mainWindow->saveGeometry()
+//              });
+//            } );
 
-  m_windowManager->startMainUI();
+      connect(m_mainWindow.get(), &UI::MainWindow::menuPushed,
+              this, &Application::onMenuPushed);
+
+
+    m_mainWindow->show();
+
+//  m_windowManager = UI::WindowManager::Instance();
+
+//  connect(m_windowManager, &UI::WindowManager::menuPushed, this,
+//          &Application::onMenuPushed);
+//  connect(m_windowManager, &UI::WindowManager::mainClose, this,
+//          [&](SavedInfo savedInfo) {
+//            for (auto m : m_moduleMap) {
+//              m->onSave(savedInfo);
+//            }
+//          });
+
+//  m_windowManager->startMainUI();
 }
 
 void Application::stopMainUI() {
-  m_windowManager->stopMainUI();
-  delete m_windowManager;
-  m_windowManager = nullptr;
+  m_mainWindow.reset();
 }
 
 void Application::loadService() {}
@@ -240,7 +258,7 @@ void Application::onMenuPushed(UI::PageMenu menu, bool checked) {
     }
     if (checked) {
       if (!m->isStarted()) {
-        auto container = m_windowManager->getContainer(menu);
+        auto container = m_mainWindow->getContainer(menu);
         m->start(m_signInInfo, container);
       }
     }
@@ -260,8 +278,13 @@ Module * Application::initModuleIM(ok::session::SignInInfo &signInInfo) {
   if(!im){
       qDebug() <<"Creating module:" << Nexus::Name();
       im = Nexus::Create();
-      connect(static_cast<Nexus *>(im), &Nexus::updateAvatar,   //
+      auto nexus = static_cast<Nexus *>(im);
+
+      connect(nexus, &Nexus::updateAvatar,   //
               this, &Application::onAvatar);
+
+      connect(nexus, &Nexus::destroyProfile, this, &Application::on_logout);
+
       m_moduleMap.insert(im->name(), im);
   }
   return im;
@@ -278,11 +301,31 @@ void Application::initPluginManager() {
 #endif
 
 void Application::onAvatar(const QPixmap &pixmap) {
-  auto menu = m_windowManager->getMainMenu();
+  auto menu = m_mainWindow->menu();
   if (!menu)
     return;
 
   menu->setAvatar(pixmap);
+}
+
+void Application::on_logout(const QString &profile)
+{
+   qDebug() << __func__<<profile;
+   QVector<QString> remove;
+   for(auto mod :  m_moduleMap){
+        qDebug() <<"delete module:" <<mod->name();
+        remove.push_back(mod->name());
+        mod->cleanup();
+   }
+
+   for(auto &name:remove){
+       m_moduleMap.remove(name);
+   }
+
+
+    stopMainUI();
+    sleep(1);
+    createLoginUI();
 }
 
 #ifdef OK_MODULE_PAINTER

@@ -61,6 +61,10 @@ MainWindow::MainWindow(QWidget *parent)
   actionShow = new QAction(this);
   actionShow->setText(tr("Show", "Tray action menu to show qTox window"));
   connect(actionShow, &QAction::triggered, this, &MainWindow::forceShow);
+
+
+  connect(menu(), &OMainMenu::menuPushed,
+          [&](PageMenu menu, bool checked) { emit menuPushed(menu, checked); });
 }
 
 MainWindow::~MainWindow() {

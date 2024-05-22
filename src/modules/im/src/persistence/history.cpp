@@ -553,11 +553,10 @@ History::HistMessage rowToMessage(const QVector<QVariant>& row){
     auto isPending  = !row[7].isNull();
 
 
-    HistMessageContentType ctype=static_cast<HistMessageContentType>(type);
+    auto ctype = static_cast<HistMessageContentType>(type);
+    auto state = getMessageState(isPending, isBroken);
+    auto msg = History::HistMessage{ id, ctype, state,timestamp,sender_key,receiver, message };
 
-    MessageState state = getMessageState(isPending, isBroken);
-
-    History::HistMessage  msg { id, ctype, state,timestamp,sender_key,receiver, message };
     return msg;
 }
 
@@ -591,10 +590,8 @@ QList<History::HistMessage> History::getMessagesForFriend(const ToxPk& me,
     return messages;
     }
 
-   QList< History::HistMessage > History::getLastMessageForFriend(const ToxPk &me,
-                                                                  const ToxPk &friendPk,
-                                                                  uint size,
-                                                                  HistMessageContentType type)
+   QList<History::HistMessage> History::getLastMessageForFriend(const ToxPk &me, const ToxPk &friendPk,
+                                                                uint size, HistMessageContentType type)
     {
 
        if (historyAccessBlocked()) {

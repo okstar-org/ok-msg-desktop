@@ -54,6 +54,7 @@ void FriendList::removeFriend(const ToxPk &friendPk, bool fake) {
     }
 }
 
+
 void FriendList::clear() {
   for (auto friendptr : friendMap)
     delete friendptr;

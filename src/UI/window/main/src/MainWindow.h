@@ -66,7 +66,7 @@ private:
 
 signals:
   void toClose();
-
+ void menuPushed(PageMenu menu, bool checked);
 
 private slots:
   void onSwitchPage(PageMenu menu);
