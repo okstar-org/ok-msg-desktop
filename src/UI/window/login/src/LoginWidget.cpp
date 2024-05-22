@@ -124,8 +124,6 @@ void LoginWidget::init() {
         }
       },
       [&](const QString& error) { onError(error); });
-
-
 }
 
 void LoginWidget::deinit()

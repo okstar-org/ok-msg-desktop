@@ -523,16 +523,16 @@ QString makeSqlForFriend(const ToxPk& me, const ToxPk& friendPk){
     QString link = me == friendPk ? "AND" : "OR";
     QString queryText = QString(
                 "SELECT history.id, "   //0
-                "	timestamp, "        //1
-                "	receiver, "   //2
-                "	sender, "     //3
-                "	message, "    //4
-                "	type, "       //5
-                "	broken_messages.id bro_id, "    //6
-                "	faux_offline_pending.id off_id "    //7
-                "	FROM history "
-                "	LEFT JOIN faux_offline_pending ON history.id = faux_offline_pending.id "
-                "	LEFT JOIN broken_messages ON history.id = broken_messages.id "
+                "timestamp, "        //1
+                "receiver, "   //2
+                "sender, "     //3
+                "message, "    //4
+                "type, "       //5
+                "broken_messages.id bro_id, "    //6
+                "faux_offline_pending.id off_id "    //7
+                "FROM history "
+                "LEFT JOIN faux_offline_pending ON history.id = faux_offline_pending.id "
+                "LEFT JOIN broken_messages ON history.id = broken_messages.id "
                 "WHERE history.sender='%1' %2 history.receiver='%1' ")
             .arg(friendPk.toString()).arg(link);
     return queryText;

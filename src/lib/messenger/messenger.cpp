@@ -691,10 +691,12 @@ void Messenger::onEncryptedMessage(QString xml) {
     return;
   }
 
-  QString from = dom.documentElement().attribute("from");
-  QString to = dom.documentElement().attribute("to");
+  auto from = ele.attribute("from");
+  auto to = ele.attribute("to");
+  auto id = ele.attribute("id");
 
-  IMMessage msg(MsgType::Chat, from, body);
+  auto msg = IMMessage{MsgType::Chat, id, from, to, body, QDateTime::currentDateTime()};
+
   for (auto handler : friendHandlers) {
     handler->onFriendMessage(qstring(JID(stdstring(from)).bareJID().bare()), msg);
   }
