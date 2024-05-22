@@ -95,7 +95,7 @@ void ContactWidget::onCoreChanged(Core &core_) {
 }
 
 void ContactWidget::connectToCore(Core *core) {
-  qDebug() << __func__<<"core"<<core;
+  qDebug() << __func__<<core;
 
   connect(core, &Core::friendAdded,
           this, &ContactWidget::onFriendAdded);

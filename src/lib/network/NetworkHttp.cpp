@@ -10,8 +10,6 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#include "NetworkHttp_p.h"
-
 #include <memory>
 
 #include <QByteArray>
@@ -30,9 +28,10 @@
 #include <QTimer>
 #include <QUrlQuery>
 
+#include "NetworkHttp.h"
 #include "base/jsons.h"
 #include <base/files.h>
-#include <base/logs.h>
+
 
 namespace network {
 
@@ -41,16 +40,16 @@ NetworkHttp::NetworkHttp(QObject *parent) : QObject(parent),
     qDebug() << __func__;
 #ifndef QT_NO_SSL
    bool supportsSsl = QSslSocket::supportsSsl();
-   qDebug()<<("supportsSsl    :")<<(supportsSsl);
+   qDebug() << "supportsSsl    :" << supportsSsl;
    QString buildVersion = QSslSocket::sslLibraryBuildVersionString();
-   qDebug()<<("buildVersion   :")<<(buildVersion);
+   qDebug() << "buildVersion   :" << buildVersion;
    QString libraryVersion = QSslSocket::sslLibraryVersionString();
-   qDebug()<<("libraryVersion :")<<(libraryVersion);
+   qDebug() << "libraryVersion :" << libraryVersion;
 #endif
   //  QNetworkAccessManager
   _manager = new QNetworkAccessManager(this);
   auto schemes = _manager->supportedSchemes();
-  qDebug()<<("supportedSchemes:")<<(schemes.join(" "));
+  qDebug() << "supportedSchemes:" << schemes.join(" ");
 }
 
 NetworkHttp::~NetworkHttp() {
