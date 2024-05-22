@@ -118,6 +118,7 @@ public:
 
 public slots:
   void start();
+  void stop();
 
   QByteArray getToxSaveData();
 

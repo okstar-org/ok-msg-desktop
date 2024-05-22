@@ -81,6 +81,7 @@ void ContactWidget::deinit() {
 }
 
 void ContactWidget::onCoreChanged(Core &core_) {
+    qDebug() << __func__ << &core_;
   core = &core_;
   connectToCore(core);
 

@@ -149,7 +149,9 @@ ChatFormHeader::ChatFormHeader(QWidget* parent)
     settings::Translator::registerHandler(std::bind(&ChatFormHeader::retranslateUi, this), this);
 }
 
-ChatFormHeader::~ChatFormHeader() = default;
+ChatFormHeader::~ChatFormHeader() {
+    settings::Translator::unregister(this);
+}
 
 void ChatFormHeader::setName(const QString& newName)
 {

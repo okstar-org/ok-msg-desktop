@@ -55,13 +55,18 @@ static Nexus *nexus{nullptr};
 Nexus::Nexus(QObject *parent)
     : QObject(parent), stared(false), profile{nullptr}, widget{nullptr} {
 
-  Q_INIT_RESOURCE(res);
-  Q_INIT_RESOURCE(emojione);
-  Q_INIT_RESOURCE(smileys);
-  Q_INIT_RESOURCE(IM);
+    qDebug() << __func__;
+
+    Q_INIT_RESOURCE(res);
+    Q_INIT_RESOURCE(emojione);
+    Q_INIT_RESOURCE(smileys);
+    Q_INIT_RESOURCE(IM);
+
+//    connect(this, &Nexus::destroyProfile, this, &Nexus::do_logout);
 }
 
 Nexus::~Nexus() {
+  qDebug() << __func__;
   delete widget;
   widget = nullptr;
   delete profile;
@@ -101,6 +106,8 @@ void Nexus::onSave(SavedInfo &savedInfo) {
    */
   void Nexus::start(ok::session::SignInInfo & signInInfo, QWidget * parent_) {
 
+    qDebug()<<__func__ << signInInfo.username;
+
     if (stared) {
       qWarning("This module is already started.");
       return;
@@ -114,6 +121,7 @@ void Nexus::onSave(SavedInfo &savedInfo) {
       profile = Profile::loadProfile(signInInfo.username, &parser,
                                      signInInfo.password);
     }
+
 
     if (!profile) {
       qWarning() << "不能创建新的Profile，个人信息初始化异常或者重复登录";
@@ -155,12 +163,11 @@ void Nexus::onSave(SavedInfo &savedInfo) {
     qRegisterMetaType<ToxAV *>("ToxAV*");
     qRegisterMetaType<ToxFile>("ToxFile");
     qRegisterMetaType<ToxFile::FileDirection>("ToxFile::FileDirection");
-    qRegisterMetaType<std::shared_ptr<VideoFrame>>(
-        "std::shared_ptr<VideoFrame>");
+    qRegisterMetaType<std::shared_ptr<VideoFrame>>("std::shared_ptr<VideoFrame>");
     qRegisterMetaType<ToxPk>("ToxPk");
     qRegisterMetaType<ToxId>("ToxId");
-    qRegisterMetaType<ToxPk>("GroupId");
-    qRegisterMetaType<ToxPk>("ContactId");
+    qRegisterMetaType<GroupId>("GroupId");
+    qRegisterMetaType<ContactId>("ContactId");
     qRegisterMetaType<GroupInvite>("GroupInvite");
     qRegisterMetaType<ReceiptNum>("ReceiptNum");
     qRegisterMetaType<RowId>("RowId");
@@ -204,25 +211,6 @@ void Nexus::onSave(SavedInfo &savedInfo) {
 
   void Nexus::hide() { widget->hide(); }
 
-  void Nexus::cleanup(){
-    qDebug() << "Cleanup...";
-
-    // force save early even though destruction saves, because Windows OS will
-    // close qTox before cleanup() is finished if logging out or shutting down,
-    // once the top level window has exited, which occurs in ~Widget within
-    // ~Nexus. Re-ordering Nexus destruction is not trivial.
-    auto &s = Settings::getInstance();
-    s.saveGlobal();
-    s.savePersonal();
-    s.sync();
-
-    Nexus::destroyInstance();
-    // TODO
-    //  CameraSource::destroyInstance();
-    Settings::destroyInstance();
-
-    qDebug() << "Cleanup success";
-  }
 
   QString Nexus::name() { return Nexus::Name(); }
 
@@ -252,7 +240,16 @@ void Nexus::onSave(SavedInfo &savedInfo) {
     //    }
     //    disconnect(this, &Nexus::currentProfileChanged, this,
     //    &Nexus::bootstrapWithProfile); return returnval;
-    return -1;
+      return -1;
+  }
+
+  void Nexus::do_logout(const QString &profileName)
+  {
+        Settings::getInstance().saveGlobal();
+        profile->stopCore();
+        delete profile;
+        profile = nullptr;
+
   }
 
   void Nexus::bootstrapWithProfile(Profile * p) {
@@ -366,13 +363,31 @@ void Nexus::onSave(SavedInfo &savedInfo) {
   Nexus &Nexus::getInstance() {
     if (!nexus)
       nexus = new Nexus;
-
     return *nexus;
   }
 
-  void Nexus::destroyInstance() {
+  void Nexus::destroy() {
     delete nexus;
     nexus = nullptr;
+  }
+
+  void Nexus::cleanup(){
+    qDebug() <<__func__ << "...";
+
+    // force save early even though destruction saves, because Windows OS will
+    // close qTox before cleanup() is finished if logging out or shutting down,
+    // once the top level window has exited, which occurs in ~Widget within
+    // ~Nexus. Re-ordering Nexus destruction is not trivial.
+    auto &s = Settings::getInstance();
+    s.saveGlobal();
+    s.savePersonal();
+    s.sync();
+
+    Nexus::destroy();
+    CameraSource::destroyInstance();
+    Settings::destroyInstance();
+
+    qDebug() <<__func__ << ".";
   }
 
   /**

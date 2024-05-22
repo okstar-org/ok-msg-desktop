@@ -69,10 +69,11 @@ private:
   std::unique_ptr<ControllerManager> _controllerManager;
 
   std::unique_ptr<base::DelayedCallTimer> _delayCaller;
-  UI::WindowManager *m_windowManager;
+
   ok::session::SignInInfo m_signInInfo;
 
   std::unique_ptr<UI::LoginWindow> m_loginWindow;
+  std::unique_ptr<UI::MainWindow> m_mainWindow;
 
   void loadService();
 
@@ -101,5 +102,7 @@ public slots:
   void onMenuReleased(UI::PageMenu menu, bool checked);
 
   void onAvatar(const QPixmap &);
+
+  void on_logout(const QString &profile);
 };
 } // namespace core

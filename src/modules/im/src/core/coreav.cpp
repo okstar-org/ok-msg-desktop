@@ -104,9 +104,9 @@ void CoreAV::connectCallbacks(ToxAV &toxav) {
  * @param core pointer to the Tox instance
  * @return CoreAV instance on success, {} on failure
  */
-CoreAV::CoreAVPtr CoreAV::makeCoreAV(Tox *core,
+CoreAV::CoreAVPtr CoreAV::makeCoreAV(Tox *tox,
                                      CompatibleRecursiveMutex &toxCoreLock) {
-  std::unique_ptr<ToxAV, ToxAVDeleter> toxav(lib::messenger::Messenger::getInstance());
+  std::unique_ptr<ToxAV, ToxAVDeleter> toxav(tox);
   //  TOXAV_ERR_NEW err;
   //  switch (err) {
   //  case TOXAV_ERR_NEW_OK:

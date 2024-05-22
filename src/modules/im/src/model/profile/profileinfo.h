@@ -64,4 +64,7 @@ private:
     Profile* const profile;
     Core* const core;
 
+signals:
+    void logouted();
+
 };

@@ -52,8 +52,9 @@ bool checkIsValidId(const QString &id) { return ToxId::isToxId(id); }
 AddFriendForm::AddFriendForm(QWidget *parent) : QWidget(parent) ,
     addUi{ new Ui::AddFriendForm}
 {
+   addUi->setupUi(main);
 
-    setLayout(new QGridLayout);
+   setLayout(new QGridLayout);
 
   auto signIn = ok::session::AuthSession::Instance()->getSignInInfo();
   userService = std::make_unique<ok::backend::UserService>(signIn.stackUrl);
@@ -73,7 +74,7 @@ AddFriendForm::AddFriendForm(QWidget *parent) : QWidget(parent) ,
 //  headLabel.setFont(bold);
 //  toxIdLabel.setTextFormat(Qt::RichText);
 
-    addUi->setupUi(main);
+
 
 //  main->setLayout(&layout);
 

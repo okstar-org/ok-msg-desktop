@@ -41,6 +41,7 @@
 #include <QMessageBox>
 #include <QMouseEvent>
 #include <QWindow>
+#include <src/nexus.h>
 
 static const QMap<IProfileInfo::SetAvatarResult, QString> SET_AVATAR_ERROR = {
     { IProfileInfo::SetAvatarResult::CanNotOpen,

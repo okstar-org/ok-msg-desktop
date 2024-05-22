@@ -484,21 +484,21 @@ Widget::~Widget() {
     icon->hide();
   }
 
-  for (Group *g : GroupList::getAllGroups()) {
-    removeGroup(g, true);
-  }
+//  for (Group *g : GroupList::getAllGroups()) {
+//    removeGroup(g, true);
+//  }
 
-  for (Friend *f : FriendList::getAllFriends()) {
-    removeFriend(f, true);
-  }
+//  for (Friend *f : FriendList::getAllFriends()) {
+//    removeFriend(f, true);
+//  }
 
 
 //  delete filesForm;
   delete timer;
 
 
-  FriendList::clear();
-  GroupList::clear();
+//  FriendList::clear();
+//  GroupList::clear();
   delete trayMenu;
   delete ui;
 }
@@ -912,131 +912,6 @@ void Widget::addFriend0(const ToxPk &friendPk) {
   core->requestFriendship(ToxId(friendPk.toString()), core->getNick(), "请求添加好友！");
 }
 
-void Widget::addFriend1(const ToxPk &friendId) {
-  addFriend(friendId.username, friendId, true);
-}
-
-void Widget::addFriend(QString friendId, const ToxPk &friendPk, bool isFriend) {
-
-//  auto friendWidget = contactListWidget->addFriend(
-//                                                   friendId, friendPk, isFriend);
-
-
-//  auto exist = FriendList::findFriend(friendPk);
-//  if (exist) {
-//    return;
-//  }
-//
-//  settings.updateFriendAddress(friendPk.toString());
-//
-//  Friend *newfriend = FriendList::addFriend(friendId, friendPk, isFriend);
-//  auto dialogManager = ContentDialogManager::getInstance();
-//
-//  auto rawChatroom = new FriendChatroom(newfriend, dialogManager);
-//
-//  std::shared_ptr<FriendChatroom> chatRoom(rawChatroom);
-//  const auto compact = settings.getCompactLayout();
-//
-//  auto widget = new FriendWidget(chatRoom, compact);
-//  connectFriendWidget(*widget);
-//  auto history = Nexus::getProfile()->getHistory();
-//
-//  auto messageProcessor = MessageProcessor(sharedMessageProcessorParams);
-//  auto messageDispatcher = std::make_shared<FriendMessageDispatcher>(
-//      *newfriend, std::move(messageProcessor), *core);
-//
-//  // Note: We do not have to connect the message dispatcher signals since
-//  // ChatHistory hooks them up in a very specific order
-//  auto chatHistory = std::make_shared<ChatHistory>(*newfriend, history, *core,
-//                                                   Settings::getInstance(),
-//                                                   *messageDispatcher);
-//  auto chatForm =
-//      new ChatForm(newfriend, *chatHistory, *messageDispatcher);
-//  connect(chatForm, &ChatForm::updateFriendActivity, this,
-//          &Widget::updateFriendActivity);
-//
-//  friendMessageDispatchers[friendPk] = messageDispatcher;
-//  friendChatLogs[friendPk] = chatHistory;
-//  friendChatrooms[friendPk] = chatRoom;
-//  friendWidgets[friendPk] = widget;
-//  chatForms[friendPk] = chatForm;
-//
-//  const auto activityTime = settings.getFriendActivity(friendPk);
-//  const auto chatTime = chatForm->getLatestTime();
-//  if (chatTime > activityTime && chatTime.isValid()) {
-//    settings.setFriendActivity(friendPk, chatTime);
-//  }
-//
-//  contactListWidget->addFriendWidget(widget, Status::Status::Offline,
-//                                     settings.getFriendCircleID(friendPk));
-//
-//  auto notifyReceivedCallback = [this, friendPk](const ToxPk &author,
-//                                                 const Message &message) {
-//    auto isTargeted =
-//        std::any_of(message.metadata.begin(), message.metadata.end(),
-//                    [](MessageMetadata metadata) {
-//                      return metadata.type == MessageMetadataType::selfMention;
-//                    });
-//    newFriendMessageAlert(friendPk, message.content);
-//  };
-//
-//  auto notifyReceivedConnection =
-//      connect(messageDispatcher.get(),
-//              &IMessageDispatcher::messageReceived, notifyReceivedCallback);
-//
-//  friendAlertConnections.insert(friendPk, notifyReceivedConnection);
-//
-//  connect(newfriend, &Friend::aliasChanged, this,
-//          &Widget::onFriendAliasChanged);
-//  connect(newfriend, &Friend::displayedNameChanged, this,
-//          &Widget::onFriendDisplayedNameChanged);
-//
-//  connect(chatForm, &ChatForm::incomingNotification, this,
-//          &Widget::incomingNotification);
-//  connect(chatForm, &ChatForm::outgoingNotification, this,
-//          &Widget::outgoingNotification);
-//  connect(chatForm, &ChatForm::stopNotification, this,
-//          &Widget::onStopNotification);
-//  connect(chatForm, &ChatForm::endCallNotification, this, &Widget::onCallEnd);
-//  connect(chatForm, &ChatForm::rejectCall, this, &Widget::onRejectCall);
-//
-//  connect(widget, &FriendWidget::newWindowOpened, this, &Widget::openNewDialog);
-//  connect(widget, &FriendWidget::chatroomWidgetClicked, this,
-//          &Widget::onChatroomWidgetClicked);
-//  connect(widget, &FriendWidget::chatroomWidgetClicked, chatForm,
-//          &ChatForm::focusInput);
-//  connect(widget, &FriendWidget::friendHistoryRemoved, chatForm,
-//          &ChatForm::clearChatArea);
-//  connect(widget, &FriendWidget::copyFriendIdToClipboard, this,
-//          &Widget::copyFriendIdToClipboard);
-//
-//  connect(widget, &FriendWidget::contextMenuCalled, widget,
-//          &FriendWidget::onContextMenuCalled);
-//
-//  connect(widget, &FriendWidget::addFriend, //
-//          this, &Widget::addFriend0);
-//
-//  connect(widget, SIGNAL(removeFriend(const ToxPk &)), this,
-//          SLOT(removeFriend(const ToxPk &)));
-//
-//  Profile *profile = Nexus::getProfile();
-//  connect(profile, &Profile::friendAvatarSet, widget,
-//          &FriendWidget::onAvatarSet);
-//  connect(profile, &Profile::friendAvatarRemoved, widget,
-//          &FriendWidget::onAvatarRemoved);
-//
-//  // Try to get the avatar from the cache
-//  QPixmap avatar = Nexus::getProfile()->loadAvatar(friendPk);
-//  if (!avatar.isNull()) {
-//    //chatForm->onAvatarChanged(friendPk, avatar);
-//    //widget->onAvatarSet(friendPk, avatar);
-//  }
-//
-//  FilterCriteria filter = getFilterCriteria();
-//  widget->search(ui->searchContactText->text(), filterOffline(filter));
-
-//  core->getFriendInfo(friendPk.toString());
-}
 
 void Widget::addFriendDone() {
   core->requestBookmarks();
@@ -1147,12 +1022,12 @@ void Widget::addFriendDialog(const Friend *frnd, ContentDialog *dialog) {
 
 //  friendWidget->setStatusMsg(widget->getStatusMsg());
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 7, 0))
-  auto widgetRemoveFriend = QOverload<const ToxPk &>::of(&Widget::removeFriend);
-#else
-  auto widgetRemoveFriend =
-      static_cast<void (Widget::*)(const ToxPk &)>(&Widget::removeFriend);
-#endif
+//#if (QT_VERSION >= QT_VERSION_CHECK(5, 7, 0))
+//  auto widgetRemoveFriend = QOverload<const ToxPk &>::of(&Widget::removeFriend);
+//#else
+//  auto widgetRemoveFriend =
+//      static_cast<void (Widget::*)(const ToxPk &)>(&Widget::removeFriend);
+//#endif
 //  connect(friendWidget, &FriendWidget::removeFriend, this, widgetRemoveFriend);
 //  connect(friendWidget, &FriendWidget::addFriend, this, &Widget::addFriend0);
 
@@ -1413,73 +1288,73 @@ void Widget::onFileReceiveRequested(const ToxFile &file) {
 }
 
 
-void Widget::removeFriend(Friend *f, bool fake) {
-  qDebug()<<"removeFriend:"<<f->getPublicKey().toString();
+//void Widget::removeFriend(Friend *f, bool fake) {
+//  qDebug()<<"removeFriend:"<<f->getPublicKey().toString();
 
-  if (!fake) {
-    RemoveFriendDialog ask(this, f);
-    ask.exec();
+//  if (!fake) {
+//    RemoveFriendDialog ask(this, f);
+//    ask.exec();
 
-    if (!ask.accepted()) {
-      return;
-    }
+//    if (!ask.accepted()) {
+//      return;
+//    }
 
-    if (ask.removeHistory()) {
-      auto *his = Nexus::getProfile()->getHistory();
-      if (his) {
-        his->removeFriendHistory(f->getPublicKey().toString());
-      }
-    }
-  }
-
-  const ToxPk friendPk = f->getPublicKey();
-//  auto frdWidget = contactListWidget->getFriend(friendPk);
-//  frdWidget->setAsInactiveChatroom();
-//  if (frdWidget == activeChatroomWidget) {
-//    activeChatroomWidget = nullptr;
-//    onAddClicked();
-//  }
-//
-//  friendAlertConnections.remove(friendPk);
-//
-//  contactListWidget->removeFriend(friendPk);
-//
-  ContentDialog *lastDialog =
-      ContentDialogManager::getInstance()->getFriendDialog(friendPk);
-  if (lastDialog != nullptr) {
-    lastDialog->removeFriend(friendPk);
-  }
-
-
-  if (!fake) {
-    core->removeFriend(f->getPublicKey().toString());
-    // aliases aren't supported for non-friend peers in groups, revert to basic
-    // username
-//    for (Group *g : GroupList::getAllGroups()) {
-//      if (g->getPeerList().contains(friendPk)) {
-//        g->updateUsername(friendPk, f->getUserName());
+//    if (ask.removeHistory()) {
+//      auto *his = Nexus::getProfile()->getHistory();
+//      if (his) {
+//        his->removeFriendHistory(f->getPublicKey().toString());
 //      }
 //    }
-  }
-
-//  frdWidget->removeFriend(friendPk);
-//  delete frdWidget;
-
-//  auto chatForm = chatForms[friendPk];
-//  chatForms.remove(friendPk);
-//  delete chatForm;
-
-  delete f;
-//  if (contentLayout && contentLayout->mainHead->layout()->isEmpty()) {
-//    onAddClicked();
 //  }
 
-//  contactListWidget->reDraw();
-}
+//  const ToxPk friendPk = f->getPublicKey();
+////  auto frdWidget = contactListWidget->getFriend(friendPk);
+////  frdWidget->setAsInactiveChatroom();
+////  if (frdWidget == activeChatroomWidget) {
+////    activeChatroomWidget = nullptr;
+////    onAddClicked();
+////  }
+////
+////  friendAlertConnections.remove(friendPk);
+////
+////  contactListWidget->removeFriend(friendPk);
+////
+//  ContentDialog *lastDialog =
+//      ContentDialogManager::getInstance()->getFriendDialog(friendPk);
+//  if (lastDialog != nullptr) {
+//    lastDialog->removeFriend(friendPk);
+//  }
 
-void Widget::removeFriend(const ToxPk &friendId) {
-  removeFriend(FriendList::findFriend(friendId), false);
-}
+
+//  if (!fake) {
+//    core->removeFriend(f->getPublicKey().toString());
+//    // aliases aren't supported for non-friend peers in groups, revert to basic
+//    // username
+////    for (Group *g : GroupList::getAllGroups()) {
+////      if (g->getPeerList().contains(friendPk)) {
+////        g->updateUsername(friendPk, f->getUserName());
+////      }
+////    }
+//  }
+
+////  frdWidget->removeFriend(friendPk);
+////  delete frdWidget;
+
+////  auto chatForm = chatForms[friendPk];
+////  chatForms.remove(friendPk);
+////  delete chatForm;
+
+//  delete f;
+////  if (contentLayout && contentLayout->mainHead->layout()->isEmpty()) {
+////    onAddClicked();
+////  }
+
+////  contactListWidget->reDraw();
+//}
+
+//void Widget::removeFriend(const ToxPk &friendId) {
+//  removeFriend(FriendList::findFriend(friendId), false);
+//}
 
 void Widget::onDialogShown(GenericChatroomWidget *widget) {
   widget->resetEventFlags();
@@ -1993,7 +1868,7 @@ void Widget::clearAllReceipts() {
 }
 
 void Widget::reloadTheme() {
-  this->setStyleSheet(Style::getStylesheet("window/general.css"));
+//  this->setStyleSheet(Style::getStylesheet("window/general.css"));
   chatWidget->reloadTheme();
 }
 
