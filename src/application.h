@@ -65,8 +65,6 @@ private:
 
   std::unique_ptr<ControllerManager> _controllerManager;
 
-  std::unique_ptr<base::DelayedCallTimer> _delayCaller;
-
   ok::session::SignInInfo m_signInInfo;
 
   std::unique_ptr<UI::LoginWindow> m_loginWindow;
@@ -74,7 +72,10 @@ private:
 
   void loadService();
   void doLogout();
-  void createLoginUI();
+  /**
+   * bootstrap: 打开程序首次启动为true，登出启动为false
+   */
+  void createLoginUI(bool bootstrap);
   void closeLoginUI();
 
   void startMainUI();

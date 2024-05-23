@@ -110,9 +110,6 @@ Application::Application(int &argc, char *argv[])
   FontManager fm;
   fm.loadFonts();
 
-  // 延时器
-  _delayCaller = std::make_unique<DelayedCallTimer>();
-
   // 设置
   _settingManager = std::make_unique<SettingManager>(this);
 
@@ -130,15 +127,15 @@ Application *Application::Instance() {
 void Application::start() {
 
   // if (!session()->authenticated()) {
-  this->createLoginUI();
+  this->createLoginUI(true);
   // } else {
   //   this->startMainUI();
   // }
   // nexus->start();
 }
 
-void Application::createLoginUI() {
-  m_loginWindow = std::make_unique<UI::LoginWindow>();
+void Application::createLoginUI(bool bootstrap) {
+  m_loginWindow = std::make_unique<UI::LoginWindow>(bootstrap);
 
   connect(m_loginWindow.get(), &UI::LoginWindow::loginResult,
         [&](ok::session::SignInInfo &signInInfo,
@@ -301,7 +298,7 @@ void Application::on_logout(const QString &profile)
     qDebug() << __func__<<profile;
     doLogout();
     sleep(1);
-    createLoginUI();
+    createLoginUI(false);
 }
 
 void Application::on_exit(const QString &profile)

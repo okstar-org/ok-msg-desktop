@@ -10,6 +10,7 @@
  * See the Mulan PubL v2 for more details.
  */
 
+#include "BannerWidget.h"
 #include "LoginWindow.h"
 
 #include "LoginWidget.h"
@@ -25,24 +26,32 @@ namespace UI {
 using namespace ok::session;
 
 /* 登录主窗口 */
-LoginWindow::LoginWindow(QWidget *parent)
+LoginWindow::LoginWindow(bool bootstrap, QWidget *parent)
     : QMainWindow(parent), ui(new Ui::LoginWindow) {
 
   //初始化资源
   OK_RESOURCE_INIT(UIWindowLogin);
 
-  ui->setupUi(this);
-
-
   setAttribute(Qt::WA_DeleteOnClose, true);
   setWindowTitle(APPLICATION_NAME);
   setFixedSize(LOGIN_WINDOW_WIDTH, LOGIN_WINDOW_HEIGHT);
+
+  ui->setupUi(this);
+
+  bannerWidget = new BannerWidget(this);
+  bannerWidget->setFixedWidth(width()/2);
+
+  ui->hBoxLayout->addWidget(bannerWidget);
+
+  loginWidget = new LoginWidget(bootstrap, this);
+  ui->hBoxLayout->addWidget(loginWidget);
+
 
   // 设置样式
   QString qss = ok::base::Files::readStringAll(":/qss/login.qss");
   setStyleSheet(qss);
 
-  connect(ui->loginWidget, &UI::LoginWidget::loginResult,
+  connect(loginWidget, &UI::LoginWidget::loginResult,
           [&](ok::session::SignInInfo &info,  //
               ok::session::LoginResult &result) {
             emit loginResult(info, result);
@@ -50,12 +59,12 @@ LoginWindow::LoginWindow(QWidget *parent)
 }
 
 LoginWindow::~LoginWindow() {
-    disconnect(ui->loginWidget);
+    qDebug() << __func__;
     delete ui;
 }
 
 void LoginWindow::onProfileLoadFailed(QString msg) {
-  ui->loginWidget->onError(msg);
+  loginWidget->onError(msg);
 }
 
 } // namespace UI

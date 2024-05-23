@@ -15,8 +15,9 @@
 #include <QMainWindow>
 #include <memory>
 
-#include "LoginWidget.h"
+#include "lib/session/AuthSession.h"
 #include "base/resources.h"
+
 
 //初始化资源加载器
 OK_RESOURCE_LOADER(UIWindowLogin)
@@ -27,15 +28,19 @@ class LoginWindow;
 
 namespace UI {
 
+class LoginWidget;
+class BannerWidget;
 
 class LoginWindow : public QMainWindow {
   Q_OBJECT
 public:
-  explicit LoginWindow(QWidget *parent = nullptr);
+  explicit LoginWindow(bool bootstrap, QWidget *parent = nullptr);
   ~LoginWindow();
 
 private:
   Ui::LoginWindow *ui;
+  LoginWidget* loginWidget;
+  BannerWidget* bannerWidget;
 
   //资源指针申明
   OK_RESOURCE_PTR(UIWindowLogin);

@@ -471,13 +471,12 @@ void Widget::updateIcons() {
 }
 
 Widget::~Widget() {
-  QWidgetList windowList = QApplication::topLevelWidgets();
-
-  for (QWidget *window : windowList) {
-    if (window != this) {
-      window->close();
-    }
-  }
+//  QWidgetList windowList = QApplication::topLevelWidgets();
+//  for (QWidget *window : windowList) {
+//    if (window != this) {
+//      window->close();
+//    }
+//  }
 
   settings::Translator::unregister(this);
   if (icon) {

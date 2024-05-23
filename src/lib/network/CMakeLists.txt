@@ -1,6 +1,7 @@
 project(OkNetwork)
 
 set(${PROJECT_NAME}_SOURCES
+    ImageLoader.h
     ImageLoader.cpp
     NetworkHttp.h
     NetworkHttp.cpp)
