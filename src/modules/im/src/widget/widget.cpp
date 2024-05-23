@@ -577,11 +577,7 @@ void Widget::connectToCore(Core &core) {
 
   connect(&core, &Core::usernameSet, this, &Widget::refreshPeerListsLocal);
   connect(this, &Widget::statusSet, &core, &Core::setStatus);
-  connect(this, &Widget::friendRequested, &core, &Core::requestFriendship);
-  connect(this, &Widget::friendRequestAccepted, &core,
-          &Core::acceptFriendRequest);
-  connect(this, &Widget::friendRequestRejected, &core,
-          &Core::rejectFriendRequest);
+
   connect(this, &Widget::changeGroupTitle, &core, &Core::changeGroupTitle);
 
   //  sharedMessageProcessorParams.setPublicKey(core.getSelfPublicKey().toString());
@@ -908,7 +904,7 @@ void Widget::onRejectCall(QString friendId) {
 }
 
 void Widget::addFriend0(const ToxPk &friendPk) {
-  core->requestFriendship(ToxId(friendPk.toString()), core->getNick(), "请求添加好友！");
+//  core->requestFriendship(ToxId(friendPk.toString()), core->getNick(), "请求添加好友！");
 }
 
 

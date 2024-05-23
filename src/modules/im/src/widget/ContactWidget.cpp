@@ -55,10 +55,17 @@ void ContactWidget::do_openAddForm()
     if(!addForm){
         addForm = new AddFriendForm(this);
 
-        connect(addForm, &AddFriendForm::friendRequested, this,
-                &ContactWidget::friendRequestsUpdate);
-        connect(addForm, &AddFriendForm::friendRequestsSeen, this,
-                &ContactWidget::friendRequestsUpdate);
+//        connect(addForm, &AddFriendForm::friendRequested, this,
+//                &ContactWidget::friendRequestsUpdate);
+//        connect(addForm, &AddFriendForm::friendRequestsSeen, this,
+//                &ContactWidget::friendRequestsUpdate);
+
+
+        connect(addForm, &AddFriendForm::friendRequested, this, &ContactWidget::do_friendRequest);
+      //          connect(this, &Widget::friendRequestAccepted, &core,
+      //                  &Core::acceptFriendRequest);
+      //          connect(this, &Widget::friendRequestRejected, &core,
+      //                  &Core::rejectFriendRequest);
 
     }
     addForm->showTo(getContentLayout());
@@ -137,6 +144,7 @@ void ContactWidget::connectToCore(Core *core) {
   //好友请求
   connect(core, &Core::friendRequestReceived, this,
           &ContactWidget::onFriendRequestReceived);
+
 
 }
 
@@ -235,6 +243,11 @@ void ContactWidget::onFriendRequestReceived(const ToxPk &friendPk,
       }
    #endif
     }
+}
+
+void ContactWidget::do_friendRequest(const ToxPk &friendAddress, const QString &nick, const QString &message)
+{
+    core->requestFriendship(friendAddress, nick, message);
 }
 
 void ContactWidget::onGroupJoined(const GroupId &groupId, const QString &name) {

@@ -124,7 +124,7 @@ public slots:
 
   void acceptFriendRequest(const ToxPk &friendPk);
   void rejectFriendRequest(const ToxPk &friendPk);
-  void requestFriendship(const ToxId &friendAddress, const QString& nick, const QString &message);
+  void requestFriendship(const ToxPk &friendAddress, const QString& nick, const QString &message);
   void groupInviteFriend(QString friendId, QString groupId);
   QString createGroup(uint8_t type = 0);
 

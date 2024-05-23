@@ -790,8 +790,10 @@ QString Core::getFriendRequestErrorMessage(const ToxId &friendId,
   return QString{};
 }
 
-void Core::requestFriendship(const ToxId &friendId,const QString &nick, const QString &message) {
-  QMutexLocker ml{&coreLoopLock};
+void Core::requestFriendship(const ToxPk &friendId,const QString &nick, const QString &message) {
+    qDebug() << __func__<< friendId.toString() << nick << message;
+
+    QMutexLocker ml{&coreLoopLock};
 
   // ToxPk friendPk = friendId.getPublicKey();
   // QString errorMessage = getFriendRequestErrorMessage(friendId, message);
@@ -802,9 +804,9 @@ void Core::requestFriendship(const ToxId &friendId,const QString &nick, const QS
   // }
 
   //  ToxString cMessage(message);
-  QString fId = friendId.getToxIdAsStr();
-  qDebug() << "friendId" << fId;
-  tox->sendFriendRequest(fId, nick, message);
+//  QString fId = friendId.getToxIdAsStr();
+
+  tox->sendFriendRequest(friendId.toString(), nick, message);
 
   //    uint32_t friendNumber = tox_friend_add(tox.get(), friendId.getBytes(),
   //    cMessage.data(), cMessage.size(), nullptr);

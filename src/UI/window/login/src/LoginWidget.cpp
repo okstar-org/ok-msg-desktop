@@ -178,10 +178,11 @@ void LoginWidget::doLogin() {
       m_settingManager->clearAccount();
     }
 
-    SignInInfo info = {.host = host,
-                       .account = account,
-                       .password = password,
-                       .stackUrl = m_stacks.at(providerIdx - 1)};
+    SignInInfo info = {
+        .account = account,
+        .password = password,
+        .host = host,
+        .stackUrl = m_stacks.at(providerIdx - 1)};
     auto _session = ok::session::AuthSession::Instance();
     connect(_session, &AuthSession::loginResult, //
             this, &LoginWidget::onConnectResult);

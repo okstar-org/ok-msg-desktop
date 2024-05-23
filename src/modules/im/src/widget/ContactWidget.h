@@ -56,6 +56,7 @@ public slots:
 
   void onFriendRequestReceived(const ToxPk &friendPk, const QString &message);
 
+  void do_friendRequest(const ToxPk& friendAddress, const QString& nick, const QString& message);
 
 
 
@@ -64,27 +65,25 @@ public slots:
   void onGroupInviteReceived(const GroupInvite &inviteInfo);
 
 
+    void onGroupInviteAccepted(const GroupInvite &inviteInfo);
 
+    void onGroupPeerListChanged(QString groupnumber);
 
-void onGroupInviteAccepted(const GroupInvite &inviteInfo);
+    void onGroupPeerSizeChanged(QString groupnumber, const uint size);
 
-void onGroupPeerListChanged(QString groupnumber);
+    void onGroupPeerNameChanged(QString groupnumber, const ToxPk &peerPk,
+                                const QString &newName);
+    void onGroupTitleChanged(QString groupnumber, const QString &author,
+                             const QString &title);
 
-void onGroupPeerSizeChanged(QString groupnumber, const uint size);
-
-void onGroupPeerNameChanged(QString groupnumber, const ToxPk &peerPk,
-                            const QString &newName);
-void onGroupTitleChanged(QString groupnumber, const QString &author,
-                         const QString &title);
-
-void onGroupPeerStatusChanged(const QString & groupnumber,const GroupOccupant &go);
-void onGroupClicked();
+    void onGroupPeerStatusChanged(const QString & groupnumber,const GroupOccupant &go);
+    void onGroupClicked();
 
 private:
     void init();
     void deinit();
     void connectToCore(Core* core);
-  void friendRequestsUpdate() ;
+    void friendRequestsUpdate() ;
 
     Ui::ContactWidget *ui;
     Core *core;

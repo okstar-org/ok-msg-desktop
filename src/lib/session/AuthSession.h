@@ -87,8 +87,6 @@ private:
  * 登录信息
  */
 struct SignInInfo {
-  //xmpp host
-  QString host;
   // 账号
   QString account;
   // 密码
@@ -96,6 +94,8 @@ struct SignInInfo {
 
   // username
   QString username;
+  // xmpp host
+  QString host;
   // stack url
   QString stackUrl;
 };

@@ -21,12 +21,14 @@
 #include <QPushButton>
 #include <QScrollArea>
 #include <QSet>
+#include <QTabWidget>
 #include <QTextEdit>
 #include <QVBoxLayout>
 
-class QTabWidget;
+#include <lib/session/AuthSession.h>
 
 class ContentLayout;
+
 
 namespace Ui {
 class AddFriendForm;
@@ -35,6 +37,10 @@ class AddFriendForm;
 namespace ok::backend{
   class UserService;
   struct OrgStaff;
+}
+
+namespace ok::session{
+class SignInInfo;
 }
 
 class AddFriendForm : public QWidget
@@ -58,7 +64,7 @@ public:
     bool addFriendRequest(const QString& friendAddress, const QString& message);
 
 signals:
-    void friendRequested(const ToxId& friendAddress, const QString& nick, const QString& message);
+    void friendRequested(const ToxPk& friendAddress, const QString& nick, const QString& message);
     void friendRequestAccepted(const ToxPk& friendAddress);
     void friendRequestRejected(const ToxPk& friendAddress);
     void friendRequestsSeen();
@@ -90,7 +96,7 @@ private:
     void removeFriendRequestWidget(QWidget* friendWidget);
     void retranslateAcceptButton(QPushButton* acceptButton);
     void retranslateRejectButton(QPushButton* rejectButton);
-    void deleteFriendRequest(const ToxId& toxId);
+    void deleteFriendRequest(const ToxPk& toxId);
     void setIdFromClipboard();
     QString getMessage();
     QString getImportMessage() const;
@@ -129,6 +135,7 @@ private:
     QList<QPushButton*> rejectButtons;
     QList<QString> contactsToImport;
 
+    const ok::session::SignInInfo *signIn;
     std::unique_ptr<ok::backend::UserService> userService;
 };
 

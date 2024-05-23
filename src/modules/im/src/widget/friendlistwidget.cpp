@@ -99,11 +99,12 @@ FriendListWidget::~FriendListWidget() {
 }
 
 FriendWidget *FriendListWidget::addFriend(const ToxPk &friendPk, bool isFriend) {
-  qDebug() << __func__ << "friend" << friendPk.toString();
-//  auto exist = FriendList::findFriend(friendPk);
-//  if (exist) {
-//    return friendWidgets.value(friendPk);
-//  }
+  qDebug() << __func__ << friendPk.toString();
+  auto exist = getFriend(friendPk);
+  if (exist) {
+      qWarning() <<"Exist friend"<< friendPk.toString();
+    return exist;
+  }
 
   auto core = Core::getInstance();
   auto profile = Nexus::getProfile();
