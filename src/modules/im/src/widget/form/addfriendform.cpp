@@ -52,40 +52,20 @@ bool checkIsValidId(const QString &id) { return ToxId::isToxId(id); }
 AddFriendForm::AddFriendForm(QWidget *parent) : QWidget(parent) ,
     addUi{ new Ui::AddFriendForm}
 {
-   addUi->setupUi(main);
+
 
    setLayout(new QGridLayout);
+   layout()->setMargin(0);
+   layout()->setSpacing(0);
 
-  auto signIn = ok::session::AuthSession::Instance()->getSignInInfo();
-  userService = std::make_unique<ok::backend::UserService>(signIn.stackUrl);
+
 
   tabWidget = new QTabWidget(this);
-
-
-
   layout()->addWidget(tabWidget);
-  layout()->setMargin(0);
-  layout()->setSpacing(0);
 
 
   main = new QWidget(tabWidget);
-//  QFont bold;
-//  bold.setBold(true);
-//  headLabel.setFont(bold);
-//  toxIdLabel.setTextFormat(Qt::RichText);
-
-
-
-//  main->setLayout(&layout);
-
-//  layout.addWidget(&toxIdLabel);
-//  layout.addWidget(&toxId);
-//  layout.addWidget(&searchButton);
-
-//  friendArea.setWidgetResizable(true);
-
-//  auto scrollAreaWidgetContents = new QWidget();
-//  friendArea.setWidget(scrollAreaWidgetContents);
+  addUi->setupUi(main);
 
   connect(addUi->search, &QPushButton::clicked, this,
           &AddFriendForm::onSearchTriggered);
@@ -162,6 +142,9 @@ AddFriendForm::AddFriendForm(QWidget *parent) : QWidget(parent) ,
     Settings::Request request = Settings::getInstance().getFriendRequest(i);
     addFriendRequestWidget(request.address, request.message);
   }
+
+  signIn = &ok::session::AuthSession::Instance()->getSignInInfo();
+  userService = std::make_unique<ok::backend::UserService>(signIn->stackUrl);
 }
 
 AddFriendForm::~AddFriendForm() {
@@ -205,8 +188,7 @@ QString AddFriendForm::getImportMessage() const {
 
 void AddFriendForm::setMode(Mode mode) { tabWidget->setCurrentIndex(mode); }
 
-bool AddFriendForm::addFriendRequest(const QString &friendAddress,
-                                     const QString &message) {
+bool AddFriendForm::addFriendRequest(const QString &friendAddress, const QString &message) {
   if (Settings::getInstance().addFriendRequest(friendAddress, message)) {
     addFriendRequestWidget(friendAddress, message);
     if (isShown()) {
@@ -223,7 +205,7 @@ void AddFriendForm::onUsernameSet(const QString &username) {
 
 void AddFriendForm::showEvent(QShowEvent *e)
 {
-    onSearchTriggered();
+//    onSearchTriggered();
 }
 
 void AddFriendForm::onFriendReceipts(const QList<ok::backend::OrgStaff *> &qList) {
@@ -239,9 +221,10 @@ void AddFriendForm::onFriendReceipts(const QList<ok::backend::OrgStaff *> &qList
 
   for (auto item : qList) {
     if (!item->username.isEmpty()) {
+        item->host = signIn->host;
       auto form = new FriendForm(item);
       friendLayout->addWidget(form);
-      connect(form, &FriendForm::add, [&](QString &username, QString &nick) {
+      connect(form, &FriendForm::add, [&](const QString &username, QString &nick) {
         qDebug() << "Send request to" << username;
         addFriend(username, nick);
       });
@@ -258,8 +241,8 @@ void AddFriendForm::searchFriend(const QString &idText) {
 }
 
 void AddFriendForm::addFriend(const QString &idText, const QString& nick) {
-  qDebug() << "addFriend" << idText<<nick;
-  ToxId friendId(idText);
+  qDebug() << "addFriend" << idText << nick;
+  ToxPk friendId(idText);
   if (!friendId.isValid()) {
     GUI::showWarning(
         tr("Couldn't add friend"),
@@ -269,7 +252,7 @@ void AddFriendForm::addFriend(const QString &idText, const QString& nick) {
 
   deleteFriendRequest(friendId);
 
-  if (friendId == Core::getInstance()->getSelfId()) {
+  if (friendId == Core::getInstance()->getSelfPublicKey()) {
     // When trying to add your own Ok ID as friend
     GUI::showWarning(tr("Couldn't add friend"), tr("You can't add yourself as a friend!"));
     return;
@@ -385,11 +368,11 @@ void AddFriendForm::setIdFromClipboard() {
   }
 }
 
-void AddFriendForm::deleteFriendRequest(const ToxId &toxId) {
+void AddFriendForm::deleteFriendRequest(const ToxPk &toxId) {
   const int size = Settings::getInstance().getFriendRequestSize();
   for (int i = 0; i < size; ++i) {
     Settings::Request request = Settings::getInstance().getFriendRequest(i);
-    if (toxId == ToxId(request.address)) {
+    if (toxId == ToxPk(request.address)) {
       Settings::getInstance().removeFriendRequest(i);
       return;
     }
@@ -405,8 +388,7 @@ void AddFriendForm::onFriendRequestAccepted() {
 
   removeFriendRequestWidget(friendWidget);
 
-  const Settings::Request request =
-      Settings::getInstance().getFriendRequest(indexFromEnd);
+  const Settings::Request request = Settings::getInstance().getFriendRequest(indexFromEnd);
   emit friendRequestAccepted(ToxId(request.address).getPublicKey());
   Settings::getInstance().removeFriendRequest(indexFromEnd);
   Settings::getInstance().savePersonal();

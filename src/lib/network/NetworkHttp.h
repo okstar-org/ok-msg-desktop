@@ -15,6 +15,7 @@
 #include <QByteArray>
 #include <QFile>
 #include <QJsonObject>
+
 #include <QObject>
 #include <QString>
 #include <QUrl>
@@ -24,8 +25,7 @@
 #include <base/timer.h>
 
 class QNetworkAccessManager;
-class QNetworkRequest;
-class QNetworkCookie;
+
 
 namespace network {
 
@@ -72,7 +72,6 @@ public:
                             Fn<void(const QJsonObject &)> readyRead);
 
 protected:
-  std::unique_ptr<QNetworkAccessManager> _manager;
-  QList<QNetworkCookie> _cookies;
+  QNetworkAccessManager *_manager;
 };
 } // namespace network

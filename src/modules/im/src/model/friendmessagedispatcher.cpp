@@ -24,7 +24,8 @@ namespace {
  * @param[in] message
  * @param[out] receipt
  */
-bool sendMessageToCore(ICoreFriendMessageSender &messageSender, const Friend &f,
+bool sendMessageToCore(ICoreFriendMessageSender &messageSender,
+                       const ToxPk &f,
                        const Message &message, ReceiptNum &receipt,
                        bool encrypt) {
   QString friendId = f.getId();
@@ -38,7 +39,7 @@ bool sendMessageToCore(ICoreFriendMessageSender &messageSender, const Friend &f,
 } // namespace
 
 FriendMessageDispatcher::FriendMessageDispatcher(
-        const Friend &f_,
+        const ToxPk &f_,
         const MessageProcessor::SharedParams& p,
         ICoreIdHandler &idHandler_,
         ICoreFriendMessageSender &messageSender_)
@@ -47,8 +48,8 @@ FriendMessageDispatcher::FriendMessageDispatcher(
       offlineMsgEngine(&f_, &messageSender_),
       processor(MessageProcessor(idHandler_, f_, p ))
 {
-  connect(&f, &Friend::onlineOfflineChanged,
-          this, &FriendMessageDispatcher::onFriendOnlineOfflineChanged);
+//  connect(&f, &Friend::onlineOfflineChanged,
+//          this, &FriendMessageDispatcher::onFriendOnlineOfflineChanged);
 }
 
 FriendMessageDispatcher::~FriendMessageDispatcher()

@@ -28,6 +28,8 @@ public:
     bool operator==(const GroupId &other) const;
     bool operator<(const GroupId &other) const;
 
+    QString name;
+    QString nick;
 };
 
 #endif // GROUPID_H

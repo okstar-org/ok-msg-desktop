@@ -545,6 +545,7 @@ void Messenger::acceptFriendRequest(const QString &f) {
   auto _session = ok::session::AuthSession::Instance();
   auto _im = _session->im();
   _im->acceptFriendRequest(f);
+
 }
 
 void Messenger::rejectFriendRequest(const QString &f) {
@@ -562,7 +563,7 @@ void Messenger::getFriendVCard(const QString &f) {
 bool Messenger::removeFriend(const QString &f) {
   auto _session = ok::session::AuthSession::Instance();
   auto _im = _session->im();
-  return _im->removeFriend(_im->wrapJid(f));
+  return _im->removeFriend(f);
 }
 
 size_t Messenger::getFriendCount() {
@@ -691,10 +692,12 @@ void Messenger::onEncryptedMessage(QString xml) {
     return;
   }
 
-  QString from = dom.documentElement().attribute("from");
-  QString to = dom.documentElement().attribute("to");
+  auto from = ele.attribute("from");
+  auto to = ele.attribute("to");
+  auto id = ele.attribute("id");
 
-  IMMessage msg(MsgType::Chat, from, body);
+  auto msg = IMMessage{MsgType::Chat, id, from, to, body, QDateTime::currentDateTime()};
+
   for (auto handler : friendHandlers) {
     handler->onFriendMessage(qstring(JID(stdstring(from)).bareJID().bare()), msg);
   }

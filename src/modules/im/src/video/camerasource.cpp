@@ -98,6 +98,8 @@ CameraSource::CameraSource()
     , _isNone{true}
     , subscriptions{0}
 {
+    qDebug() << __func__;
+
     qRegisterMetaType<VideoMode>("VideoMode");
     deviceThread->setObjectName("Device thread");
     deviceThread->start();
@@ -119,6 +121,7 @@ CameraSource::CameraSource()
  */
 CameraSource& CameraSource::getInstance()
 {
+    qDebug() << __func__;
     if (!instance)
         instance = new CameraSource();
     instance->setupDefault();
@@ -127,6 +130,8 @@ CameraSource& CameraSource::getInstance()
 
 void CameraSource::destroyInstance()
 {
+    qDebug() << __func__;
+
     if (instance) {
         delete instance;
         instance = nullptr;

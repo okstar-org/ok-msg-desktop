@@ -16,6 +16,8 @@
 
 #include <QFrame>
 
+#include <src/core/contactid.h>
+
 namespace Ui {
 class FriendForm;
 }
@@ -39,7 +41,7 @@ private:
     ok::backend::OrgStaff* staff;
 
     signals:
-      void add(QString &username, QString &nick);
+      void add(const QString &cId, QString &nick);
 };
 
 #endif // FRIENDFORM_H

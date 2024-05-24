@@ -50,11 +50,9 @@ public:
 
   ~CoreAV();
 
-  bool isCallStarted(const Friend *f) const;
-  bool isCallStarted(const Group *f) const;
-  bool isCallActive(const Friend *f) const;
-  bool isCallActive(const Group *g) const;
-  bool isCallVideoEnabled(const Friend *f) const;
+  bool isCallStarted(const ContactId *f) const;
+  bool isCallActive(const ContactId *f) const;
+  bool isCallVideoEnabled(const ContactId *f) const;
   bool sendCallAudio(QString friendId, const int16_t *pcm, size_t samples,
                      uint8_t chans, uint32_t rate) const;
   void sendCallVideo(QString friendId, std::shared_ptr<VideoFrame> frame);
@@ -75,10 +73,10 @@ public:
   bool isGroupCallInputMuted(const Group *g) const;
   bool isGroupCallOutputMuted(const Group *g) const;
 
-  bool isCallInputMuted(const Friend *f) const;
-  bool isCallOutputMuted(const Friend *f) const;
-  void toggleMuteCallInput(const Friend *f);
-  void toggleMuteCallOutput(const Friend *f);
+  bool isCallInputMuted(const ContactId *f) const;
+  bool isCallOutputMuted(const ContactId *f) const;
+  void toggleMuteCallInput(const ContactId *f);
+  void toggleMuteCallOutput(const ContactId *f);
   static void groupCallCallback(void *tox, QString group, QString peer,
                                 const int16_t *data, unsigned samples,
                                 uint8_t channels, uint32_t sample_rate,

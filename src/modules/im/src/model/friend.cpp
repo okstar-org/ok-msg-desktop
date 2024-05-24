@@ -31,8 +31,11 @@ Friend::Friend(
 {
     auto core=Core::getInstance();
     friendStatus = core->getFriendStatus(friendPk.toString());
+}
 
-
+Friend::~Friend()
+{
+    qDebug()<<__func__;
 }
 
 

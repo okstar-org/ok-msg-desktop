@@ -45,6 +45,7 @@ public:
     SaveResult exportProfile(const QString& path) const override;
     QStringList removeProfile() override;
     void logout() override;
+    void exit() override;
 
     void copyQr(const QImage& image) const override;
     SaveResult saveQr(const QImage& image, const QString& path) const override;

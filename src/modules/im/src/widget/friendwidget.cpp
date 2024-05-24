@@ -61,7 +61,7 @@ FriendWidget::FriendWidget(ContentLayout *layout,
                            bool isFriend,
                            QWidget* parent)
     : GenericChatroomWidget(ChatType::Chat, friendPk, parent),
-      contentLayout(layout), menu{nullptr}
+      contentLayout(layout), menu{nullptr}, about{nullptr}
 {
 
   qDebug() <<__func__ <<"friend:"<<friendPk.toString();
@@ -74,7 +74,8 @@ FriendWidget::FriendWidget(ContentLayout *layout,
   auto dialogManager = ContentDialogManager::getInstance();
 
   m_friend = FriendList::addFriend(friendPk, isFriend);
-  nameLabel->setText(m_friend->getDisplayedName());
+//  nameLabel->setText(m_friend->getDisplayedName());
+
 
   // update alias when edited
   connect(nameLabel, &CroppingLabel::editFinished, //
@@ -90,10 +91,12 @@ FriendWidget::FriendWidget(ContentLayout *layout,
             emit friendWidgetRenamed(this);
           });
 
-  connect(getContact(), &Contact::avatarChanged,
-          [&](auto& pic) {
-            setAvatar(pic);
-          });
+
+
+//  connect(getContact(), &Contact::avatarChanged,
+//          [&](auto& pic) {
+//            setAvatar(pic);
+//          });
 
 //  connect(chatRoom.get(), &Chatroom::activeChanged, this,
 //          &FriendWidget::setActive);
@@ -129,34 +132,33 @@ FriendWidget::FriendWidget(ContentLayout *layout,
 //    setAvatar(avatar);
 //  }
 
+  menu = new QMenu(this);
+  inviteToGrp= menu->addAction(tr("Invite to group"));
+  menu->addSeparator();
+  removeAct = menu->addAction(tr("Remove friend"));
+
+  emit Widget::getInstance()->friendAdded(m_friend);
+
   init();
 }
 
 FriendWidget::~FriendWidget()
 {
-    FriendList::removeFriend(m_friend->getPublicKey());
+    qDebug() << __func__;
+    emit Widget::getInstance()->friendRemoved(m_friend);
+    removeDetails();
     deinit();
+    FriendList::removeFriend(ToxPk{contactId});
 }
 
 void FriendWidget::init()
 {
-     menu = new QMenu(this);
-
-     inviteToGrp= menu->addAction(tr("Invite to group"));
-
-     menu->addSeparator();
-
-     removeAct = menu->addAction(tr("Remove friend"));
-//    connect(
-    //        removeAction, &QAction::triggered, this,
-    //        [=, this]() { emit removeFriend(friendPk); }, Qt::QueuedConnection);
-    //  }
 
 }
 
 void FriendWidget::deinit()
 {
-    delete menu;
+
 }
 
 void FriendWidget::do_widgetClicked(GenericChatroomWidget *w) {
@@ -179,7 +181,7 @@ ContentDialog *FriendWidget::addFriendDialog(const Friend *frnd) {
   }
 
   auto &settings = Settings::getInstance();
-  bool isSeparate = settings.getSeparateWindow();
+
   //  FriendWidget *widget = friendWidgets[friendPk];
   //  bool isCurrent = activeChatroomWidget == widget;
   //  if (!contentDialog && !isSeparate && isCurrent) {
@@ -227,7 +229,7 @@ ContentDialog *FriendWidget::addFriendDialog(const Friend *frnd) {
  */
 void FriendWidget::contextMenuEvent(QContextMenuEvent *event) {
   onContextMenuCalled(event);
-  emit contextMenuCalled(event);
+//  emit contextMenuCalled(event);
 }
 
 /**
@@ -362,26 +364,28 @@ void FriendWidget::changeAutoAccept(bool enable) {
     //  }
 }
 
-void FriendWidget::do_removeFriend(const ContactId &id)
-{
-    qDebug()<<__func__<<id.toString();
-    auto core = Core::getInstance();
-    core->removeFriend(id.toString());
-}
-
 void FriendWidget::showDetails() {
     qDebug() <<__func__;
   if(!about){
       qDebug() << "create about for:" << m_friend->getId();
       const auto af = new AboutFriend(m_friend, &Settings::getInstance());
       std::unique_ptr<IAboutFriend> iabout = std::unique_ptr<IAboutFriend>(af);
-      about = std::make_unique<AboutFriendForm>(std::move(iabout), this);
-      connect(about.get(), &AboutFriendForm::histroyRemoved,
+      about = new AboutFriendForm(std::move(iabout), this);
+      connect(about, &AboutFriendForm::histroyRemoved,
               this, &FriendWidget::friendHistoryRemoved);
-      contentLayout->addWidget(about.get());
+      contentLayout->addWidget(about);
   }
 
-  contentLayout->setCurrentWidget(about.get());
+  contentLayout->setCurrentWidget(about);
+}
+
+void FriendWidget::removeDetails()
+{
+    if(about){
+        contentLayout->removeWidget(about);
+        about = nullptr;
+    }
+
 }
 
 void FriendWidget::setAsActiveChatroom() { setActive(true); }

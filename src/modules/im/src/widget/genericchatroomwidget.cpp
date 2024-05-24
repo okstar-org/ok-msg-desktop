@@ -99,6 +99,7 @@ void GenericChatroomWidget::compactChange(bool _compact)
 
 void GenericChatroomWidget::setName(const QString& name)
 {
+    GenericChatItemWidget::setName(name);
     nameLabel->setText(name);
 }
 

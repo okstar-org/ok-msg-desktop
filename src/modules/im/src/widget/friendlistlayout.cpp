@@ -18,16 +18,16 @@
 #include "src/friendlist.h"
 #include <cassert>
 
-FriendListLayout::FriendListLayout()
-    : QVBoxLayout()
-{
-    init();
-}
 
 FriendListLayout::FriendListLayout(QWidget* parent)
     : QVBoxLayout(parent)
 {
     init();
+}
+
+FriendListLayout::~FriendListLayout()
+{
+
 }
 
 void FriendListLayout::init()
@@ -58,11 +58,11 @@ void FriendListLayout::addFriendWidget(FriendWidget* w, Status::Status s)
     friendOnlineLayout.addSortedWidget(w);
 }
 
-void FriendListLayout::removeFriendWidget(FriendWidget* widget, Status::Status s)
+void FriendListLayout::removeFriendWidget(FriendWidget* widget )
 {
-    if (s == Status::Status::Offline)
+
         friendOfflineLayout.removeSortedWidget(widget);
-    else
+
         friendOnlineLayout.removeSortedWidget(widget);
 }
 

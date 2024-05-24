@@ -47,6 +47,7 @@ public:
     Q_PROPERTY(bool compact READ isCompact WRITE setCompact)
 
     QString getName() const;
+    void setName(const QString& name);
 
     void searchName(const QString& searchString, bool hideAll);
 
@@ -55,19 +56,7 @@ public:
     void setChatType(ChatType type){chatType = type;};
     Q_PROPERTY(ChatType chatType READ getChatType WRITE setChatType)
 
-    bool isGroup() const {return chatType == ChatType::GroupChat;};
-
-    inline Contact* getContact(){
-        if(isGroup()){
-            auto g = GroupList::findGroup(GroupId(contactId));
-            assert(g);
-            return (Contact*)g;
-        }else{
-           auto f= FriendList::findFriend(ToxPk(contactId));
-           assert(f);
-           return (Contact*)f;
-        }
-    }
+    inline bool isGroup() const {return chatType == ChatType::GroupChat;};
 
     void setLastMessage(const QString& msg);
 
@@ -84,7 +73,8 @@ public:
     void clearAvatar();
     void setDefaultAvatar();
 
-
+    void setContact(const Contact &contact)  ;
+    void removeContact();
 protected:
 
     virtual void showEvent(QShowEvent* e) override;
@@ -99,6 +89,14 @@ protected:
     bool compact;
     ChatType chatType;
     ContactId contactId;
+
+    /**
+     * 联系人
+     * 1、好友添加时被设置为friend、group的指针。
+     * 2、删除好友时，设置为nullptr。
+     */
+    const Contact *contact;
+
     Status::Status prevStatus;
     bool active;
 };

@@ -13,26 +13,23 @@
 
 #include "base/r.h"
 
+#include <QDebug>
+
 #define LOGIN_ACCOUNT_KEY "LOGIN_account"
 #define LOGIN_PASSWORD_KEY "LOGIN_password"
 
 namespace core {
 
-
-SettingManager::SettingManager(QObject *parent) : QObject(parent) {
-  settings =
-      std::make_unique<QSettings>(ORGANIZATION_NAME, ORGANIZATION_DOMAIN);
+SettingManager::SettingManager(QObject *parent) : QObject(parent),
+    settings{std::make_unique<QSettings>(ORGANIZATION_NAME, ORGANIZATION_DOMAIN)}
+{
+  qDebug() << __func__;
 }
 
-SettingManager::~SettingManager() {}
-
-SettingManager *SettingManager::InitGet() {
-  static SettingManager *self = nullptr;
-  if (!self) {
-    self = new SettingManager();
-  }
-  return self;
+SettingManager::~SettingManager() {
+  qDebug() << __func__;
 }
+
 
 void SettingManager::saveAccount(QString &account, QString &password) {
   settings->setValue(LOGIN_ACCOUNT_KEY, QVariant(account));

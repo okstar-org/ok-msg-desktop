@@ -27,6 +27,8 @@
 #include <QTimer>
 #include <cstdlib>
 
+#include <modules/im/src/nexus.h>
+
 namespace UI {
 
 MainWindow::MainWindow(QWidget *parent)
@@ -34,15 +36,14 @@ MainWindow::MainWindow(QWidget *parent)
 
   ui->setupUi(this);
 
-  setAttribute(Qt::WA_QuitOnClose, true);
-
   setWindowTitle(APPLICATION_NAME);
+  setAttribute(Qt::WA_QuitOnClose, true);
 
   m_menu = ui->menu_widget;
   connect(m_menu, SIGNAL(toggleChat(bool)), this, SLOT(onToggleChat(bool)));
   connect(m_menu, SIGNAL(onPage(PageMenu)), this, SLOT(onSwitchPage(PageMenu)));
 
-  timer = new QTimer();
+  timer = new QTimer(this);
   timer->start(1000);
   connect(timer, &QTimer::timeout, this, &MainWindow::onTryCreateTrayIcon);
 
@@ -70,7 +71,6 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow() {
   qDebug() << "~MainWindow";
   disconnect(m_menu);
-  delete timer;
   delete ui;
 }
 
@@ -115,14 +115,14 @@ inline QIcon MainWindow::prepareIcon(QString path, int w, int h) {
 void MainWindow::showEvent(QShowEvent *event) {}
 
 void MainWindow::closeEvent(QCloseEvent *event) {
-  qDebug(("closeEvent..."));
-  auto &settings = ok::base::OkSettings::getInstance();
+  qDebug()<<__func__<<"closeEvent...";
+//  auto &settings = ok::base::OkSettings::getInstance();
 
-  if (settings.getShowSystemTray() && settings.getCloseToTray()) {
+//  if (settings.getShowSystemTray() && settings.getCloseToTray()) {
 //    QWidget::closeEvent(event);
-    close();
-    return;
-  }
+//    close();
+//    return;
+//  }
 
   //    if (autoAwayActive) {
   //      emit statusSet(Status::Status::Online);
@@ -135,6 +135,8 @@ void MainWindow::closeEvent(QCloseEvent *event) {
   //    saveSplitterGeometry();
   //    QWidget::closeEvent(event);
   //    qApp->quit();
+
+  emit Nexus::getInstance().exit("");
 }
 
 void MainWindow::init() {}

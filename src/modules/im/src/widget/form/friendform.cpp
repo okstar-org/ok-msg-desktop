@@ -24,7 +24,7 @@ FriendForm::FriendForm(ok::backend::OrgStaff *staff_, QWidget *parent)
   ui->email->setText(staff->email);
 
   connect(ui->addFriend, &QPushButton::released,
-          [&]() { emit add(staff->username, staff->name); });
+          [&]() { emit add(staff->toContactId(), staff->name); });
 }
 
 FriendForm::~FriendForm() {

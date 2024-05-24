@@ -31,6 +31,9 @@ public:
          const QString &userName = {});
 
   Friend(const Friend &other) = delete;
+
+  ~Friend();
+
   Friend &operator=(const Friend &other) = delete;
 
 

@@ -41,14 +41,18 @@ public:
     bool isValid() const;
     int getSize();
 
-    QString toString() const{
+    inline QString toString() const{
         return username+"@"+server;
     };
+
+    inline QString getId() const {return toString();}
 
     //用户名
     QString username;
     //服务器地址
     QString server;
+
+    bool isGroup = false;
 
 };
 

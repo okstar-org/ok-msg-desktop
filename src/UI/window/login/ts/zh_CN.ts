@@ -3,51 +3,51 @@
 <TS version="2.1" language="zh_CN">
     <context>
         <name>UI::LoginWidget</name>
-    <message>
-    <source>Logging in</source>
-    <translation>登录中</translation>
-    </message>
-    <message>
-    <source>NO_SUPPORT</source>
-    <translation>协议不支持</translation>
-    </message>
-    <message>
-    <source>CONN_ERROR</source>
-    <translation>连接异常</translation>
-    </message>
-    <message>
-    <source>DISCONNECTED</source>
-    <translation>连接断开</translation>
-    </message>
-    <message>
-    <source>AUTH_FAILED</source>
-    <translation>认证失败</translation>
-    </message>
-    <message>
-    <source>TLS_ERROR</source>
-    <translation>证书错误</translation>
-    </message>
-    <message>
-    <source>OUT_OF_RESOURCE</source>
-    <translation>系统资源受限</translation>
-    </message>
-    <message>
-    <source>...</source>
-    <translation>进行中</translation>
-    </message>
-    <message>
-    <source>Please waiting the page is loaded</source>
-    <translation>请等待页面加载完成</translation>
-    </message>
-    <message>
-    <source>Please select service provider</source>
-    <translation>请选择服务提供商</translation>
-    </message>
-<message>
-<source>Login</source>
-<translation>登录</translation>
-</message>
-</context>
+        <message>
+        <source>Logging in</source>
+        <translation>登录中</translation>
+        </message>
+        <message>
+        <source>NO_SUPPORT</source>
+        <translation>协议不支持</translation>
+        </message>
+        <message>
+        <source>CONN_ERROR</source>
+        <translation>连接异常</translation>
+        </message>
+        <message>
+        <source>DISCONNECTED</source>
+        <translation>连接断开</translation>
+        </message>
+        <message>
+        <source>AUTH_FAILED</source>
+        <translation>认证失败</translation>
+        </message>
+        <message>
+        <source>TLS_ERROR</source>
+        <translation>证书错误</translation>
+        </message>
+        <message>
+        <source>OUT_OF_RESOURCE</source>
+        <translation>系统资源受限</translation>
+        </message>
+        <message>
+        <source>...</source>
+        <translation>进行中</translation>
+        </message>
+        <message>
+        <source>Please waiting the page is loaded</source>
+        <translation>请等待页面加载完成</translation>
+        </message>
+        <message>
+        <source>Please select service provider</source>
+        <translation>请选择服务提供商</translation>
+        </message>
+        <message>
+        <source>Login</source>
+        <translation>登录</translation>
+        </message>
+    </context>
 
 <context>
 <name>LoginWidget</name>

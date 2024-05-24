@@ -29,7 +29,7 @@ class IGroupSettings;
 class GroupMessageDispatcher : public IMessageDispatcher {
   Q_OBJECT
 public:
-  GroupMessageDispatcher(const Group &group,
+  GroupMessageDispatcher(const GroupId &groupId,
                          MessageProcessor::SharedParams p,
                          ICoreIdHandler &idHandler,
                          ICoreGroupMessageSender &messageSender,
@@ -43,7 +43,7 @@ public:
   void onMessageReceived(GroupMessage &msg);
 
 private:
-  const Group &group;
+  const GroupId &groupId;
   MessageProcessor processor;
   ICoreIdHandler &idHandler;
   ICoreGroupMessageSender &messageSender;

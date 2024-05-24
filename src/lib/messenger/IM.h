@@ -162,7 +162,7 @@ public:
   void getRosterList(std::list<FriendId> &);
 
   void retry();
-  bool removeFriend(JID jid);
+  bool removeFriend(const QString &friendId);
 
   // gloox log
   void handleLog(LogLevel level, LogArea area,

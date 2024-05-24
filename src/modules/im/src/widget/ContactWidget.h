@@ -41,7 +41,12 @@ public:
     }
 
 public slots:
-    void do_openAddForm();
+    /**
+     * do开头接受界面事件，调用core执行操作
+     * on开头接受core事件，操作界面
+    */
+
+  void do_openAddForm();
 
   void onCoreChanged(Core &core);
   void onFriendAdded(const ToxPk &friendPk, bool isFriend);
@@ -54,41 +59,48 @@ public slots:
 
   void onFriendAvatarChanged(const ToxPk &friendPk, const QByteArray &avatar);
 
-  void onFriendRequestReceived(const ToxPk &friendPk, const QString &message);
+  void onFriendRequest(const ToxPk &friendPk, const QString &message);
 
 
-
+  void do_friendDelete(const ToxPk &friendPk);
+  //朋友请求
+  void do_friendRequest(const ToxPk& friendAddress, const QString& nick, const QString& message);
+  //朋友请求接受
+  void do_friendRequestAccept(const ToxPk &friendPk);
+  //朋友请求拒绝
+  void do_friendRequestReject(const ToxPk &friendPk);
 
   void onGroupJoined( const GroupId & groupId, const QString& name);
   void onGroupInfoReceived(const GroupId & groupId, const GroupInfo& info);
   void onGroupInviteReceived(const GroupInvite &inviteInfo);
 
 
+    void onGroupInviteAccepted(const GroupInvite &inviteInfo);
 
+    void onGroupPeerListChanged(QString groupnumber);
 
-void onGroupInviteAccepted(const GroupInvite &inviteInfo);
+    void onGroupPeerSizeChanged(QString groupnumber, const uint size);
 
-void onGroupPeerListChanged(QString groupnumber);
+    void onGroupPeerNameChanged(QString groupnumber, const ToxPk &peerPk,
+                                const QString &newName);
+    void onGroupTitleChanged(QString groupnumber, const QString &author,
+                             const QString &title);
 
-void onGroupPeerSizeChanged(QString groupnumber, const uint size);
+    void onGroupPeerStatusChanged(const QString & groupnumber,const GroupOccupant &go);
+    void onGroupClicked();
 
-void onGroupPeerNameChanged(QString groupnumber, const ToxPk &peerPk,
-                            const QString &newName);
-void onGroupTitleChanged(QString groupnumber, const QString &author,
-                         const QString &title);
-
-void onGroupPeerStatusChanged(const QString & groupnumber,const GroupOccupant &go);
-void onGroupClicked();
 
 private:
     void init();
+    AddFriendForm* makeAddForm();
     void deinit();
     void connectToCore(Core* core);
-  void friendRequestsUpdate() ;
+    void friendRequestsUpdate() ;
+
 
     Ui::ContactWidget *ui;
     Core *core;
-    std::unique_ptr<FriendListWidget> contactListWidget;
+    FriendListWidget* contactListWidget;
 
     std::unique_ptr<QWidget> contentWidget;
     std::unique_ptr<ContentLayout> contentLayout;

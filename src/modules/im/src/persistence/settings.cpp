@@ -2030,7 +2030,6 @@ bool Settings::addFriendRequest(const QString &friendAddress,
   request.address = friendAddress;
   request.message = message;
   request.read = false;
-
   friendRequests.push_back(request);
   return true;
 }

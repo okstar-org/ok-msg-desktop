@@ -57,7 +57,9 @@ public:
   MessageSessionWidget *getMessageSession(const QString &contactId);
 
   void removeSessionWidget(MessageSessionWidget *w);
-  void removeFriend(const ToxPk &friendPk);
+
+  void addFriend(const Friend *f);
+  void removeFriend(const Friend *f);
 
   void setFriendStatus(const ToxPk &friendPk,  Status::Status status);
   void setFriendStatusMsg(const ToxPk &friendPk,  const QString& statusMsg);

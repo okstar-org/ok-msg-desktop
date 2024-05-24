@@ -523,16 +523,16 @@ QString makeSqlForFriend(const ToxPk& me, const ToxPk& friendPk){
     QString link = me == friendPk ? "AND" : "OR";
     QString queryText = QString(
                 "SELECT history.id, "   //0
-                "	timestamp, "        //1
-                "	receiver, "   //2
-                "	sender, "     //3
-                "	message, "    //4
-                "	type, "       //5
-                "	broken_messages.id bro_id, "    //6
-                "	faux_offline_pending.id off_id "    //7
-                "	FROM history "
-                "	LEFT JOIN faux_offline_pending ON history.id = faux_offline_pending.id "
-                "	LEFT JOIN broken_messages ON history.id = broken_messages.id "
+                "timestamp, "        //1
+                "receiver, "   //2
+                "sender, "     //3
+                "message, "    //4
+                "type, "       //5
+                "broken_messages.id bro_id, "    //6
+                "faux_offline_pending.id off_id "    //7
+                "FROM history "
+                "LEFT JOIN faux_offline_pending ON history.id = faux_offline_pending.id "
+                "LEFT JOIN broken_messages ON history.id = broken_messages.id "
                 "WHERE history.sender='%1' %2 history.receiver='%1' ")
             .arg(friendPk.toString()).arg(link);
     return queryText;
@@ -543,11 +543,11 @@ History::HistMessage rowToMessage(const QVector<QVariant>& row){
     // truncates on null bytes so we strip them
 
 
-    auto id = RowId{row[0].toLongLong()};
+    auto id         = RowId{row[0].toLongLong()};
     auto timestamp  = QDateTime::fromMSecsSinceEpoch(row[1].toLongLong());
-    auto receiver   = row[2].toString();
-    auto sender_key = row[3].toString();
-    auto message    = row[4].toString();
+    QString receiver   = row[2].toString();
+    QString sender_key = row[3].toString();
+    QString message    = row[4].toString();
     auto type       = row[5].toInt();
     auto isBroken   = !row[6].isNull();
     auto isPending  = !row[7].isNull();
@@ -555,9 +555,7 @@ History::HistMessage rowToMessage(const QVector<QVariant>& row){
 
     auto ctype = static_cast<HistMessageContentType>(type);
     auto state = getMessageState(isPending, isBroken);
-    auto msg = History::HistMessage{ id, ctype, state,timestamp,sender_key,receiver, message };
-
-    return msg;
+    return History::HistMessage{ id, ctype, state,timestamp,sender_key,receiver, message };
 }
 
 QList<History::HistMessage> History::getMessagesForFriend(const ToxPk& me,
@@ -581,14 +579,12 @@ QList<History::HistMessage> History::getMessagesForFriend(const ToxPk& me,
     qDebug()<<queryText;
 
     QList<HistMessage> messages;
-    auto rowCallback = [&messages](const QVector<QVariant>& row) {
-        messages.append(rowToMessage(row));
-    };
-
-    db->execNow({queryText, rowCallback});
+    db->execNow({queryText, [&messages](const QVector<QVariant>& row) {
+                     messages.append(rowToMessage(row));
+                 }});
 
     return messages;
-    }
+}
 
    QList<History::HistMessage> History::getLastMessageForFriend(const ToxPk &me, const ToxPk &friendPk,
                                                                 uint size, HistMessageContentType type)

@@ -23,13 +23,11 @@
 #include "src/friendlist.h"
 #include "src/model/chathistory.h"
 #include "src/model/chatroom/friendchatroom.h"
-#include "src/model/friend.h"
 #include "src/model/group.h"
 #include "src/model/status.h"
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
-//#include "src/widget/categorywidget.h"
 #include "widget.h"
 #include <QDragEnterEvent>
 #include <QDragLeaveEvent>
@@ -68,7 +66,7 @@ MessageSessionListWidget::MessageSessionListWidget(MainLayout *parent,
 
 
   // Prevent QLayout's add child warning before setting the mode.
-  listLayout = new FriendListLayout();
+  listLayout = new FriendListLayout(this);
   listLayout->removeItem(listLayout->getLayoutOnline());
   listLayout->removeItem(listLayout->getLayoutOffline());
   setLayout(listLayout);
@@ -144,8 +142,6 @@ MessageSessionWidget *MessageSessionListWidget::createMessageSession(
   emit sessionAdded(sw);
   return sw;
 }
-
-
 
 void MessageSessionListWidget::connectSessionWidget(MessageSessionWidget &sw) {
 //  connect(&sw, &MessageSessionWidget::searchCircle, this,
@@ -326,7 +322,7 @@ void MessageSessionListWidget::onFriendWidgetRenamed(FriendWidget *friendWidget)
 //      circleWidget->addFriendWidget(friendWidget, status);
 //      emit searchCircle(*circleWidget);
 //    } else {
-      listLayout->removeFriendWidget(friendWidget, status);
+      listLayout->removeFriendWidget(friendWidget);
       listLayout->addFriendWidget(friendWidget, status);
 //    }
 //  }
@@ -614,6 +610,22 @@ MessageSessionWidget *MessageSessionListWidget::getMessageSession(const QString 
     return sessionWidgets.value(contactId);
 }
 
+void MessageSessionListWidget::addFriend(const Friend *f)
+{
+    auto ms = getMessageSession(f->getId());
+    if(ms){
+        ms->setFriend(f);
+    }
+}
+
+void MessageSessionListWidget::removeFriend(const Friend *f)
+{
+    auto ms = getMessageSession(f->getId());
+    if(ms){
+        ms->removeFriend();
+    }
+}
+
 
 void MessageSessionListWidget::slot_sessionClicked(MessageSessionWidget *actived) {
   for (auto w : sessionWidgets) {
@@ -691,22 +703,19 @@ void MessageSessionListWidget::setFriendStatusMsg(const ToxPk &friendPk,
     qWarning() << "friend widget no exist.";
     return;
   }
-
   fw->setStatusMsg(statusMsg);
 }
 
-void MessageSessionListWidget::setFriendName(const ToxPk &friendPk,
-                                     const QString &name) {
-  auto w = FriendList::findFriend(friendPk);
-  if(!w){
-      qWarning() <<"friend is no existing." << friendPk.toString();
+void MessageSessionListWidget::setFriendName(const ToxPk &friendPk,  const QString &name) {
+    auto fw = getMessageSession(friendPk.toString());
+    if (!fw) {
+      qWarning() << "friend is no exist.";
       return;
-  }
-  w->setName(name);
+    }
+    fw->setName(name);
 }
 
-void MessageSessionListWidget::setFriendAvatar(const ToxPk &friendPk,
-                                       const QByteArray &avatar) {
+void MessageSessionListWidget::setFriendAvatar(const ToxPk &friendPk, const QByteArray &avatar) {
   auto fw = getMessageSession(friendPk.toString());
   if (!fw) {
     qWarning() << "friend is no exist.";

@@ -56,6 +56,7 @@ public:
 public slots:
     void onSelfAvatarLoaded(const QPixmap& pic);
     void onLogoutClicked();
+    void onExitClicked();
 
 protected:
     virtual bool eventFilter(QObject* object, QEvent* event) override;

@@ -33,13 +33,14 @@ using namespace core;
 using namespace ok::session;
 using namespace ok::base;
 
-LoginWidget::LoginWidget(QWidget *parent)
+LoginWidget::LoginWidget(bool bootstrap, QWidget *parent)
     : QWidget(parent),           //
       ui(new Ui::LoginWidget),   //
+      bootstrap{bootstrap},
       m_loginKey(nullptr),       //
       m_settingManager(nullptr), //
-      m_loaded(0),
-      m_timer{std::make_unique<QTimer>()} {
+      m_loaded(0) {
+    qDebug() <<__func__;
 
   ui->setupUi(this);
   ui->loginBtn->setCursor(Qt::PointingHandCursor);
@@ -58,10 +59,18 @@ LoginWidget::LoginWidget(QWidget *parent)
 
   okCloudService = new ok::backend::OkCloudService(this);
 
-  m_timer->start(1000);
-  connect(m_timer.get(), &QTimer::timeout, this, &LoginWidget::onTimeout);
-
   settings::Translator::registerHandler([&] { retranslateUi(); }, this);
+
+  m_settingManager = new SettingManager(this);
+
+
+  if(bootstrap){
+    qDebug()<<__func__ <<"Init timer";
+    m_timer=std::make_unique<QTimer>();
+    m_timer->start(1000);
+    connect(m_timer.get(), &QTimer::timeout, this, &LoginWidget::onTimeout);
+  }
+
   // 初始化
   init();
 }
@@ -73,7 +82,7 @@ LoginWidget::~LoginWidget() {
 }
 
 void LoginWidget::init() {
-  m_settingManager = SettingManager::InitGet();
+
   m_settingManager->getAccount([&](const QString& acc, const QString& password) {
     ui->rember->setChecked(!acc.isEmpty());
     ui->accountInput->setText(acc);
@@ -120,8 +129,6 @@ void LoginWidget::init() {
         }
       },
       [&](const QString& error) { onError(error); });
-
-
 }
 
 void LoginWidget::deinit()
@@ -171,10 +178,11 @@ void LoginWidget::doLogin() {
       m_settingManager->clearAccount();
     }
 
-    SignInInfo info = {.host = host,
-                       .account = account,
-                       .password = password,
-                       .stackUrl = m_stacks.at(providerIdx - 1)};
+    SignInInfo info = {
+        .account = account,
+        .password = password,
+        .host = host,
+        .stackUrl = m_stacks.at(providerIdx - 1)};
     auto _session = ok::session::AuthSession::Instance();
     connect(_session, &AuthSession::loginResult, //
             this, &LoginWidget::onConnectResult);
@@ -210,7 +218,11 @@ void LoginWidget::onConnectResult(ok::session::SignInInfo info,
   case ok::session::Status::FAILURE:
     ui->loginBtn->setText(tr("Login"));
     ui->loginMessage->setText(result.msg);
-    m_timer->stop();
+
+    //登录失败退出定时器
+    if(m_timer)
+        m_timer->stop();
+
     break;
   }
   emit loginResult(info, result);

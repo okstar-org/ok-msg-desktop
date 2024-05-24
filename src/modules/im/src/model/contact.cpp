@@ -46,9 +46,7 @@ Contact:: Contact(const ContactId& id_, const QString& name_,
 }
 
 Contact::~Contact()
-{
-
-}
+= default;
 
 QString Contact::getDisplayedName() const {
   if (!alias.isEmpty()) {

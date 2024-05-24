@@ -74,13 +74,13 @@ bool handleToxURI(const QString& toxURI)
                     "Default message in OkEDU URI friend requests. Write something appropriate!");
     const QString username = Nexus::getCore()->getUsername();
     ToxURIDialog* dialog = new ToxURIDialog(nullptr, toxaddr, defaultMessage.arg(username));
-    QObject::connect(dialog, &ToxURIDialog::finished, [&](int result) {
-        if (result == QDialog::Accepted) {
-            Core::getInstance()->requestFriendship(toxId,Nexus::getCore()->getNick(), dialog->getRequestMessage());
-        }
+//    QObject::connect(dialog, &ToxURIDialog::finished, [&](int result) {
+//        if (result == QDialog::Accepted) {
+//            Core::getInstance()->requestFriendship(toxId,Nexus::getCore()->getNick(), dialog->getRequestMessage());
+//        }
 
-        dialog->deleteLater();
-    });
+//        dialog->deleteLater();
+//    });
 
     dialog->open();
 

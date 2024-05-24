@@ -44,7 +44,7 @@ namespace UI {
 class LoginWidget : public QWidget {
   Q_OBJECT
 public:
-  explicit LoginWidget(QWidget *parent = nullptr);
+  explicit LoginWidget(bool bootstrap, QWidget *parent = nullptr);
   ~LoginWidget() override;
   void onError(const QString &msg);
   void init();
@@ -55,6 +55,7 @@ protected:
   virtual bool eventFilter(QObject *obj, QEvent *event) override;
   virtual void showEvent(QShowEvent *e) override;
 private:
+  bool bootstrap;
   Ui::LoginWidget *ui;
 
   QShortcut *m_loginKey;

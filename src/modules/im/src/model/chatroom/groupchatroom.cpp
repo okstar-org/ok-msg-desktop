@@ -21,8 +21,8 @@
 #include "src/model/status.h"
 #include "src/persistence/settings.h"
 
-GroupChatroom::GroupChatroom(const Group* group, IDialogsManager* dialogsManager)
-    : group{group}
+GroupChatroom::GroupChatroom(const GroupId* groupId_, IDialogsManager* dialogsManager)
+    : groupId{groupId_}
     , dialogsManager{dialogsManager}
 {
 }
@@ -32,19 +32,15 @@ GroupChatroom::~GroupChatroom()
     qDebug() << __func__;
 }
 
-const Contact* GroupChatroom::getContact()
+const ContactId &GroupChatroom::getContactId()
 {
-    return (group);
+ return *groupId;
 }
 
-const Group* GroupChatroom::getGroup()
-{
-    return group;
-}
 
 bool GroupChatroom::hasNewMessage() const
 {
-    return group->getEventFlag();
+   return false;
 }
 
 void GroupChatroom::resetEventFlags()
@@ -62,11 +58,11 @@ void GroupChatroom::inviteFriend(const ToxPk& pk)
 {
     const Friend* frnd = FriendList::findFriend(pk);
     const auto friendId = frnd->getId();
-    const auto groupId = group->getId();
+
     const auto canInvite = Status::isOnline(frnd->getStatus());
 
     if (canInvite) {
-        Core::getInstance()->groupInviteFriend(friendId, groupId);
+        Core::getInstance()->groupInviteFriend(friendId, groupId->getId());
     }
 }
 
