@@ -542,8 +542,9 @@ void Core::onFriendRemoved(QString friendId) {
 }
 
 void Core::onFriendStatus(QString friendId, Tox_User_Status status) {
-  qDebug() << "onFriendStatus friendId:" << friendId << status;
-  onUserStatusChanged(nullptr, friendId, status, this);
+  qDebug() << __func__ << friendId << status;
+  Status::Status status0 = fromToxStatus(status);
+  emit friendStatusChanged(getFriendPublicKey(friendId), status0);
 }
 
 void Core::onFriendRequest(Tox *, const QString &cFriendPk,
@@ -600,12 +601,6 @@ void Core::onFriendAvatarChanged(const QString friendId,
   emit friendAvatarChanged(getFriendPublicKey(friendId), QByteArray::fromStdString(avatar));
 }
 
-void Core::onUserStatusChanged(Tox *, QString friendId,
-                               Tox_User_Status userStatus, void *core) {
-  qDebug() << "onUserStatusChanged:" << friendId << "userStatus:" << userStatus;
-  Status::Status status = fromToxStatus(userStatus);
-  emit friendStatusChanged(getFriendPublicKey(friendId), status);
-}
 
 void Core::onGroup(const QString groupId, const QString name) {
   qDebug() << __func__ << "groupId:" << groupId << name;
@@ -736,18 +731,18 @@ void Core::onMessageReceipt(QString friendId, ReceiptNum receipt) {
 }
 
 void Core::acceptFriendRequest(const ToxPk &friendPk) {
+    qDebug() << __func__ << friendPk.toString();
+
   QMutexLocker ml{&coreLoopLock};
-  //   TODO: error handling
-  QString friendId = friendPk.toString(); // tox_friend_add_norequest(tox.get(),
-                                          // friendPk.getData(), nullptr);
-  qDebug() << friendId;
+
+  QString friendId = friendPk.toString();
   tox->acceptFriendRequest(friendId);
 
   //    if (friendId == std::numeric_limits<uint32_t>::max()) {
   //      emit failedToAddFriend(friendPk);
   //    } else {
   emit saveRequest();
-  emit friendAdded(friendPk, true);
+//  emit friendAdded(friendPk, true);
   //    }
 }
 

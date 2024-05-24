@@ -25,7 +25,7 @@ class Contact : public QObject
 public:
     Contact();
     Contact(const ContactId& id, const QString& name, const QString& alias="", bool isGroup = false);
-    virtual ~Contact() = 0;
+    ~Contact();
 
     bool isGroup()const{return group;}
 
@@ -57,9 +57,10 @@ signals:
     void avatarChanged(const QPixmap& avatar);
 
 protected:
+    //是否群聊
     bool group;
+    //联系人Id
     ContactId id;
-
 
     //名称
     QString name;

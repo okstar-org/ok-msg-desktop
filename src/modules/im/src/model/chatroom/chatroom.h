@@ -20,7 +20,7 @@ class Chatroom : public QObject
 {
     Q_OBJECT
 public:
-    virtual const Contact* getContact() = 0;
+    virtual const ContactId& getContactId() = 0;
      Chatroom();
      ~Chatroom();
     void setActive(bool _active);

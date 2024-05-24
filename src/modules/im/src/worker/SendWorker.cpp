@@ -27,9 +27,9 @@
 
 
 
-SendWorker::SendWorker(const Friend &m_friend): contactId{m_friend.getId()}
+SendWorker::SendWorker(const ToxPk &m_friend): contactId{m_friend}
 {
-    qDebug() << __func__ <<"friend:"<<m_friend.getId();
+    qDebug() << __func__ <<"friend:"<<m_friend.toString();
 
     auto core = Core::getInstance();
     auto &settings = Settings::getInstance();
@@ -60,9 +60,9 @@ SendWorker::SendWorker(const Friend &m_friend): contactId{m_friend.getId()}
 
 }
 
-SendWorker::SendWorker(const Group &group): contactId{group.getId()}
+SendWorker::SendWorker(const GroupId &groupId): contactId{groupId}
 {
-    qDebug() << __func__ <<"group:"<<group.getId();
+    qDebug() << __func__ <<"group:"<<groupId.toString();
 
 
 
@@ -72,7 +72,7 @@ SendWorker::SendWorker(const Group &group): contactId{group.getId()}
     auto history = profile->getHistory();
 
     messageDispatcher = std::make_unique<GroupMessageDispatcher>(
-        group, sharedParams, *core, *core,
+        groupId, sharedParams, *core, *core,
         Settings::getInstance());
 
      chatLog = std::make_unique<SessionChatLog>(*core);
@@ -84,12 +84,12 @@ SendWorker::SendWorker(const Group &group): contactId{group.getId()}
              chatLog.get(), &SessionChatLog::onMessageReceived);
 
 
-     chatForm = std::make_unique<GroupChatForm>(&group,
+     chatForm = std::make_unique<GroupChatForm>(&groupId,
                                                 *chatLog.get(),
                                                 *messageDispatcher.get(),
                                                 settings);
 
-     chatRoom = std::make_unique<GroupChatroom>(&group,
+     chatRoom = std::make_unique<GroupChatroom>(&groupId,
                                                 ContentDialogManager::getInstance());
 }
 
@@ -105,11 +105,11 @@ void SendWorker::clearHistory()
    history->removeFriendHistory(contactId.toString());
 }
 
-std::unique_ptr<SendWorker> SendWorker::forFriend(const Friend& friend_){
+std::unique_ptr<SendWorker> SendWorker::forFriend(const ToxPk& friend_){
    return std::make_unique<SendWorker>(friend_);
 }
 
-std::unique_ptr<SendWorker> SendWorker::forGroup(const Group &group)
+std::unique_ptr<SendWorker> SendWorker::forGroup(const GroupId &group)
 {
     return std::make_unique<SendWorker>(group);
 }

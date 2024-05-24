@@ -182,9 +182,9 @@ void CoreAV::process() {
  * @param f the friend to check
  * @return true, if call is started for the friend, false otherwise
  */
-bool CoreAV::isCallStarted(const Friend *f) const {
-//  QReadLocker locker{&callsLock};
-  return f && (calls.find(f->getId()) != calls.end());
+bool CoreAV::isCallStarted(const ToxPk *f) const {
+  QReadLocker locker{&callsLock};
+  return f && (calls.find(f->toString()) != calls.end());
 }
 
 /**
@@ -202,9 +202,9 @@ bool CoreAV::isCallStarted(const Group *g) const {
  * @param f the friend to check
  * @return true, if call is active for the friend, false otherwise
  */
-bool CoreAV::isCallActive(const Friend *f) const {
-//  QReadLocker locker{&callsLock};
-  auto it = calls.find(f->getId());
+bool CoreAV::isCallActive(const ToxPk *f) const {
+  QReadLocker locker{&callsLock};
+  auto it = calls.find(f->toString());
   if (it == calls.end()) {
     return false;
   }
@@ -225,9 +225,9 @@ bool CoreAV::isCallActive(const Group *g) const {
   return isCallStarted(g) && it->second->isActive();
 }
 
-bool CoreAV::isCallVideoEnabled(const Friend *f) const {
-//  QReadLocker locker{&callsLock};
-  auto it = calls.find(f->getId());
+bool CoreAV::isCallVideoEnabled(const ToxPk *f) const {
+  QReadLocker locker{&callsLock};
+  auto it = calls.find(f->toString());
   return isCallStarted(f) && it->second->getVideoEnabled();
 }
 
@@ -444,10 +444,10 @@ void CoreAV::sendCallVideo(QString callId, std::shared_ptr<VideoFrame> vframe) {
  * @brief Toggles the mute state of the call's input (microphone).
  * @param f The friend assigned to the call
  */
-void CoreAV::toggleMuteCallInput(const Friend *f) {
-  // QWriteLocker locker{&callsLock};
+void CoreAV::toggleMuteCallInput(const ToxPk *f) {
+   QWriteLocker locker{&callsLock};
 
-  auto it = calls.find(f->getId());
+  auto it = calls.find(f->toString());
   if (f && (it != calls.end())) {
     ToxCall &call = *it->second;
     call.setMuteMic(!call.getMuteMic());
@@ -459,10 +459,10 @@ void CoreAV::toggleMuteCallInput(const Friend *f) {
  * @brief Toggles the mute state of the call's output (speaker).
  * @param f The friend assigned to the call
  */
-void CoreAV::toggleMuteCallOutput(const Friend *f) {
-  // QWriteLocker locker{&callsLock};
+void CoreAV::toggleMuteCallOutput(const ToxPk *f) {
+   QWriteLocker locker{&callsLock};
 
-  auto it = calls.find(f->getId());
+  auto it = calls.find(f->toString());
   if (f && (it != calls.end())) {
     ToxCall &call = *it->second;
     call.setMuteVol(!call.getMuteVol());
@@ -696,13 +696,13 @@ bool CoreAV::isGroupCallOutputMuted(const Group *g) const {
  * @param f The friend to check
  * @return true when muted, false otherwise
  */
-bool CoreAV::isCallInputMuted(const Friend *f) const {
+bool CoreAV::isCallInputMuted(const ToxPk *f) const {
   QReadLocker locker{&callsLock};
 
   if (!f) {
     return false;
   }
-  const QString friendId = f->getId();
+  const QString friendId = f->toString();
   auto it = calls.find(friendId);
   return (it != calls.end()) && it->second->getMuteMic();
 }
@@ -712,7 +712,7 @@ bool CoreAV::isCallInputMuted(const Friend *f) const {
  * @param friendId The friend to check
  * @return true when muted, false otherwise
  */
-bool CoreAV::isCallOutputMuted(const Friend *f) const {
+bool CoreAV::isCallOutputMuted(const ToxPk *f) const {
   QReadLocker locker{&callsLock};
 
   if (!f) {

@@ -146,9 +146,14 @@ void ChatWidget::init() {
             this, &ChatWidget::on_nameClicked);
 
     auto widget = Widget::getInstance();
+
     connect(widget, &Widget::toSendMessage, [&](const QString& to, bool isGroup){
         sessionListWidget->toSendMessage(ToxPk(to), isGroup);
     });
+
+    connect(widget, &Widget::friendAdded, this, &ChatWidget::onFriendAdded);
+    connect(widget, &Widget::friendRemoved, this, &ChatWidget::onFriendRemoved);
+
 
     connect(Nexus::getProfile(), &Profile::coreChanged,
             this, &ChatWidget::onCoreChanged);
@@ -170,19 +175,16 @@ void ChatWidget::connectToCore(Core *core) {
   connect(core, &Core::statusSet, this, &ChatWidget::onStatusSet);
   connect(core, &Core::statusMessageSet, this, &ChatWidget::onStatusMessageSet);
 
+
   connect(core, &Core::friendMessageSessionReceived,
           this, &ChatWidget::onFriendMessageSessionReceived);
+
   connect(core, &Core::friendMessageReceived, this,
           &ChatWidget::onFriendMessageReceived);
 
-  connect(core, &Core::friendUsernameChanged,
-          this, &ChatWidget::onFriendUsernameChanged);
-
-  connect(core, &Core::friendAvatarChanged, this,
-          &ChatWidget::onFriendAvatarChanged);
-
   connect(core, &Core::friendStatusChanged, this,
           &ChatWidget::onFriendStatusChanged);
+
   connect(core, &Core::friendStatusMessageChanged, this,
           &ChatWidget::onFriendStatusMessageChanged);
 
@@ -256,19 +258,6 @@ void ChatWidget::onFriendMessageSessionReceived(const ToxPk &friendPk, const QSt
 {
      qDebug() << __func__ << "friend:" << friendPk.toString() << "sid:" <<sid;
      sessionListWidget->createMessageSession(friendPk, sid, ChatType::Chat);
-}
-
-void ChatWidget::onFriendAvatarChanged(const ToxPk &friendnumber,
-                                       const QByteArray &avatar) {
-  qDebug() << __func__ << "friend:" << friendnumber.toString() << avatar.size();
-  sessionListWidget->setFriendAvatar(friendnumber, avatar);
-}
-
-void ChatWidget::onFriendUsernameChanged(const ToxPk &friendPk,
-                                         const QString &username) {
-  qDebug() << __func__ << "friend:" << friendPk.toString()
-           << "name:" << username;
-    sessionListWidget->setFriendName(friendPk, username);
 }
 
 void ChatWidget::onFriendMessageReceived(     //
@@ -415,6 +404,16 @@ void ChatWidget::updateIcons() {
 
 void ChatWidget::onStatusMessageSet(const QString &statusMessage) {
     ui->statusLabel->setText(statusMessage);
+}
+
+void ChatWidget::onFriendAdded(const Friend *f)
+{
+    sessionListWidget->addFriend(f);
+}
+
+void ChatWidget::onFriendRemoved(const Friend *f)
+{
+     sessionListWidget->removeFriend(f);
 }
 
 

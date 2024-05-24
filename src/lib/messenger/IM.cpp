@@ -40,6 +40,7 @@
 #include <pubsubevent.h>
 #include <receipt.h>
 #include <rostermanager.h>
+#include <rosteritemdata.h>
 #include <vcardupdate.h>
 
 namespace lib {
@@ -1352,7 +1353,7 @@ void IM::fetchVCard(const QString &friendId) {
   qDebug() << "fetchVCard" << friendId;
   JID jid(stdstring(friendId));
   vCardManager->fetchVCard(jid, this);
-  pubSubManager->subscribe(jid, "", this);
+//  pubSubManager->subscribe(jid, "", this);
   //  _client->rosterManager()->subscribe(jid.bareJID());
 }
 
@@ -1542,18 +1543,15 @@ void IM::handlePresence(const Presence &presence) {
  * @return
  */
 void IM::handleItemAdded(const gloox::JID &jid) {
-  qDebug() << qstring(jid.full());
+  qDebug() << __func__<< qstring(jid.full());
 
-  auto rosterManager = _client->rosterManager();
-  /**
-   * 订阅好友
-   */
-  if (m_addFriendMsg.isEmpty()) {
-    rosterManager->subscribe(jid);
-  } else {
-    rosterManager->subscribe(jid, jid.username(), StringList(),
-                             stdstring(m_addFriendMsg));
-  }
+//  auto rosterManager = _client->rosterManager();
+//  if (m_addFriendMsg.isEmpty()) {
+//    rosterManager->subscribe(jid);
+//  } else {
+//    rosterManager->subscribe(jid, jid.username(), StringList(),
+//                             stdstring(m_addFriendMsg));
+//  }
 }
 
 /**
@@ -1565,64 +1563,55 @@ void IM::handleItemRemoved(const JID &jid) {
    * subscription='remove'
    * TODO 需要通知到页面
    */
-  qDebug()<<QString("已删除好友:%1").arg(qstring(jid.full()));
-  emit receiveFriendRemoved(qstring(jid.username()));
+  qDebug()<<__func__<< qstring(jid.full());
+  emit receiveFriendRemoved(qstring(jid.bare()));
 }
 
 // 好友更新
 void IM::handleItemUpdated(const JID &jid) {
-  qDebug()<<QString("jid: %1").arg(qstring(jid.full()));
+  qDebug() << __func__ << qstring(jid.full());
 
-  auto userId = qstring(jid.username());
+  auto contactId = qstring(jid.bare());
 
   auto item = _client->rosterManager()->getRosterItem(jid);
   auto subType = item->subscription();
-  qDebug()<<QString("type: %1").arg(subType);
+  qDebug()<<__func__<<"subscription:"<<(subType);
+  auto data =  item->data();
+  qDebug() << "ask"<< qstring(data->ask()) << "sub" << qstring(data->sub());
 
-  switch (subType) {
+  if(data->sub() == "none")
+  {
+      //双方处于解除状态
+       emit removeFriend(contactId);
+  }
+  else if(data->sub() == "from" ){
 
-  case gloox::S10nNone: {
-    qDebug()<<QString("none");
-    //    _client->rosterManager()->subscribe(jid);
-    break;
+      if(data->ask() == "unsubscribe"){
+          //已经解除到对方的订阅关联
+          qDebug() << "自己已经解除到对方的订阅关联"<<contactId;
+          _client->rosterManager()->remove(jid);
+          emit removeFriend(contactId);
+      }else{
+          //对方请求订阅
+          emit receiveFriendRequest(contactId, "");
+      }
   }
-  case gloox::S10nNoneOut: {
-    qDebug()<<QString("已发送订阅请求，等待对方确认！");
-    break;
+  else if(data->sub() == "to"){
+      //自己关联到对方
+      if(data->ask() == "unsubscribe"){
+        qDebug() << "对方已经解除到自己的订阅关联"<<contactId;
+      }else{
+          _client->rosterManager()->add(jid,   jid.username() , {});
+      }
   }
-  case gloox::S10nNoneIn: {
-    qDebug()<<QString("收到对方订阅请求，等待自己确认！");
-    break;
+  else if(data->sub() == "both"){
+      qDebug() << "建立订阅双向关联";
+      //加到联系人列表
+      emit receiveFriend(contactId);
   }
-  case S10nNoneOutIn: {
-    qDebug()<<QString("双方发起订阅，等待双方接受！");
-    break;
-  }
-  case gloox::S10nTo: {
-    qDebug()<<QString("已订阅对方，等待对方接受！");
-    // 加到联系人列表
-    emit receiveFriend(qstring(jid.bare()));
-    break;
-  }
-  case gloox::S10nToIn: {
-    qDebug()<<QString("已订阅对方，对方接受订阅，等待自己确认！");
-    //    _client->rosterManager()->subscribe(jid);
-    break;
-  }
-  case gloox::S10nFrom: {
-    qDebug()<<QString("对方已订阅自己！");
-    break;
-  }
-  case gloox::S10nFromOut: {
-    qDebug()<<QString("对方已订阅自己，已接受对方订阅，待自己确认！");
-    break;
-  }
-  case gloox::S10nBoth: {
-    qDebug()<<QString("互相订阅成功！");
-    emit receiveFriend(qstring(jid.bare()));
-    break;
-  }
-  }
+
+
+
 }
 
 /**
@@ -1630,7 +1619,7 @@ void IM::handleItemUpdated(const JID &jid) {
  * @param jid
  */
 void IM::handleItemSubscribed(const JID &jid) {
-  qDebug()<<QString("jid:%1").arg(qstring(jid.full()));
+  qDebug() << __func__ << qstring(jid.full());
 }
 
 /**
@@ -1638,56 +1627,23 @@ void IM::handleItemSubscribed(const JID &jid) {
  * @param jid
  */
 void IM::handleItemUnsubscribed(const JID &jid) {
-  qDebug()<<QString("jid:%1").arg(qstring(jid.full()));
+  qDebug() << __func__ << qstring(jid.full());
 }
 
-void IM::updateOnlineStatus(const std::string &bare,
-                            const std::string &resource,
-                            Presence::PresenceType presenceType) {
-  if(presenceType==Presence::Error)
-  {
-      qWarning() <<"Ignore error presence.";
-      return;
-  }
-  if (resource.empty()) {
-    qWarning() << "Ignore resource is empty.";
-    return;
-  }
 
-  auto friendId = qstring(bare);
-  int status = -1;
+bool IM::removeFriend(const QString& id) {
+    qDebug() << __func__ << id;
 
-  auto it = onlineMap.find(bare);
-  if (it == onlineMap.end()) { // 第一次
-    if (presenceType != gloox::Presence::Unavailable) {
-      std::set<std::string> resources;
-      resources.insert(resource);
-      onlineMap.emplace(bare, resources);
-      status = gloox::Presence::Available;
-    }
-  } else { // 第二次+
-    std::set<std::string> &resources = it->second;
-    if (presenceType != gloox::Presence::Unavailable) {
-      // multi online endpoint
-      resources.insert(resource);
-      onlineMap.emplace(bare, resources);
-      status = gloox::Presence::Available;
-    } else {
-      // one offline
-      resources.erase(resource);
-      if (resources.empty()) {
-        // all offline
-        onlineMap.erase(bare);
-        status = gloox::Presence::Unavailable;
-      }
-    }
-  }
-  emit receiveFriendStatus(friendId, status);
-}
+    /**
+     * 参考：https://datatracker.ietf.org/doc/html/rfc3921#section-8.4.2
+     */
 
-bool IM::removeFriend(JID jid) {
-  qDebug() << "removeFriend:" << qstring(jid.full());
-  _client->rosterManager()->remove(jid);
+    JID jid(id.toStdString());
+
+//    <presence to='contact@example.org' type='unsubscribe'/>
+  Subscription unsub(Subscription::Unsubscribe, jid);
+  _client->send(unsub);
+
   return true;
 }
 
@@ -1705,12 +1661,17 @@ void IM::addRosterItem(const QString &username, const QString &nick,
 }
 
 void IM::acceptFriendRequest(const QString &friendId) {
-  qDebug()<<QString("friend:%1").arg(friendId);
-  _client->rosterManager()->ackSubscriptionRequest(JID(stdstring(friendId)).bareJID(), true);
+  qDebug()<<__func__<<friendId;
+  auto jid = JID(stdstring(friendId)).bareJID();
+
+  auto m = _client->rosterManager();
+//  m->add(jid, jid.username(), {});
+  m->ackSubscriptionRequest(jid, true);
+  m->subscribe(jid);
 }
 
 void IM::rejectFriendRequest(const QString &friendId) {
-  qDebug()<<QString("friend:%1").arg(friendId);
+  qDebug()<<__func__<<friendId;
   _client->rosterManager()->ackSubscriptionRequest(JID(stdstring(friendId)).bareJID(), false);
 }
 
@@ -1881,9 +1842,7 @@ void IM::handleSelfPresence(const RosterItem &item,              //
  * @return
  */
 bool IM::handleSubscriptionRequest(const JID &jid, const std::string &msg) {
-  qDebug()<<QString("好友订阅（加好友）请求，来自:%1 消息:%2")
-                .arg(qstring(jid.full()))
-                .arg(qstring(msg));
+  qDebug()<<__func__ << qstring(jid.full()) << qstring(msg);
   emit receiveFriendRequest(qstring(jid.bare()), qstring(msg));
   return true;
 };
@@ -2268,6 +2227,51 @@ std::set<std::string> IM::getOnlineResources(const std::string &bare) {
     return it->second;
   }
   return {};
+}
+
+
+void IM::updateOnlineStatus(const std::string &bare,
+                            const std::string &resource,
+                            Presence::PresenceType presenceType) {
+  if(presenceType==Presence::Error)
+  {
+      qWarning() <<"Ignore error presence.";
+      return;
+  }
+  if (resource.empty()) {
+    qWarning() << "Ignore resource is empty.";
+    return;
+  }
+
+  auto friendId = qstring(bare);
+  int status = -1;
+
+  auto it = onlineMap.find(bare);
+  if (it == onlineMap.end()) { // 第一次
+    if (presenceType != gloox::Presence::Unavailable) {
+      std::set<std::string> resources;
+      resources.insert(resource);
+      onlineMap.emplace(bare, resources);
+      status = gloox::Presence::Available;
+    }
+  } else { // 第二次+
+    std::set<std::string> &resources = it->second;
+    if (presenceType != gloox::Presence::Unavailable) {
+      // multi online endpoint
+      resources.insert(resource);
+      onlineMap.emplace(bare, resources);
+      status = gloox::Presence::Available;
+    } else {
+      // one offline
+      resources.erase(resource);
+      if (resources.empty()) {
+        // all offline
+        onlineMap.erase(bare);
+        status = gloox::Presence::Unavailable;
+      }
+    }
+  }
+  emit receiveFriendStatus(friendId, status);
 }
 
 void IM::doJingleMessage(const PeerId &peerId,

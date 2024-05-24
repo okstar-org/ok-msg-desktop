@@ -28,7 +28,7 @@ class FriendMessageDispatcher : public IMessageDispatcher
 {
     Q_OBJECT
 public:
-    FriendMessageDispatcher(const Friend& f,
+    FriendMessageDispatcher(const ToxPk& f,
                             const MessageProcessor::SharedParams &sharedParams,
                             ICoreIdHandler &idHandler_,
                             ICoreFriendMessageSender& messageSender);
@@ -49,7 +49,7 @@ private slots:
     void onFriendOnlineOfflineChanged(  bool isOnline);
 
 private:
-    const Friend& f;
+    const ToxPk& f;
     DispatchedMessageId nextMessageId = DispatchedMessageId(0);
 
     ICoreFriendMessageSender& messageSender;

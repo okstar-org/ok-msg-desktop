@@ -22,7 +22,7 @@
 #include <QTimer>
 #include <chrono>
 
-OfflineMsgEngine::OfflineMsgEngine(const Friend *frnd,
+OfflineMsgEngine::OfflineMsgEngine(const ToxPk *frnd,
                                    ICoreFriendMessageSender *messageSender)
     : f(frnd), messageSender(messageSender) {}
 
@@ -97,9 +97,9 @@ void OfflineMsgEngine::addSentMessage(ReceiptNum receipt,
 void OfflineMsgEngine::deliverOfflineMsgs() {
   QMutexLocker ml(&mutex);
 
-  if (!Status::isOnline(f->getStatus())) {
-    return;
-  }
+//  if (!Status::isOnline(f->getStatus())) {
+//    return;
+//  }
 
   if (sentMessages.empty() && unsentMessages.empty()) {
     return;

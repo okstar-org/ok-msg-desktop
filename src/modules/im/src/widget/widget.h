@@ -46,7 +46,7 @@ class IMMainWindow;
 class AddFriendForm;
 class AlSink;
 class Camera;
-class ChatForm;
+
 class CircleWidget;
 class ContentDialog;
 class ContentLayout;
@@ -189,6 +189,8 @@ public slots:
   void onCoreChanged(Core &core);
 
 signals:
+  void friendAdded(const Friend* f);
+  void friendRemoved(const Friend* f);
   void friendRequestAccepted(const ToxPk &friendPk);
   void friendRequestRejected(const ToxPk &friendPk);
   void friendRequested(const ToxId &friendAddress, const QString &nick, const QString &message);
@@ -325,7 +327,6 @@ private:
 //  QMap<ToxPk, QMetaObject::Connection> friendAlertConnections;
 //  QMap<ToxPk, std::shared_ptr<ChatHistory>> friendChatLogs;
 //  QMap<ToxPk, std::shared_ptr<FriendChatroom>> friendChatrooms;
-//  QMap<ToxPk, ChatForm *> chatForms;
 
 //  QMap<GroupId, GroupWidget *> groupWidgets;
 //  QMap<GroupId, std::shared_ptr<GroupMessageDispatcher>>

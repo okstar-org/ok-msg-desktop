@@ -27,13 +27,16 @@ ContactWidget::ContactWidget(QWidget *parent) :
   contentLayout = std::make_unique<ContentLayout>(contentWidget.get());
 
   //左侧
-  contactListWidget = std::make_unique<FriendListWidget>(this, contentLayout.get(), false);
+  contactListWidget = new FriendListWidget(this, contentLayout.get(), false);
   contactListWidget->setGeometry(0, 0 , 400, 400);
   contactListWidget->layout()->setAlignment(Qt::AlignTop | Qt::AlignVCenter);
+  connect(contactListWidget, &FriendListWidget::deleteFriendWidget,
+          this, &ContactWidget::do_friendDelete);
+
 
   ui->scrollAreaWidgetContents->setGeometry(0, 0, 200, 500);
   ui->scrollAreaWidgetContents->layout()->setAlignment(Qt::AlignTop | Qt::AlignVCenter);
-  ui->scrollAreaWidgetContents->layout()->addWidget((QWidget*)contactListWidget.get());
+  ui->scrollAreaWidgetContents->layout()->addWidget((QWidget*)contactListWidget);
 
 
   ui->mainSplitter->addWidget(contentWidget.get());
@@ -50,25 +53,28 @@ ContactWidget::~ContactWidget()
     deinit();
 }
 
-void ContactWidget::do_openAddForm()
+AddFriendForm* ContactWidget::makeAddForm()
 {
     if(!addForm){
         addForm = new AddFriendForm(this);
 
-//        connect(addForm, &AddFriendForm::friendRequested, this,
-//                &ContactWidget::friendRequestsUpdate);
+
 //        connect(addForm, &AddFriendForm::friendRequestsSeen, this,
 //                &ContactWidget::friendRequestsUpdate);
-
-
         connect(addForm, &AddFriendForm::friendRequested, this, &ContactWidget::do_friendRequest);
-      //          connect(this, &Widget::friendRequestAccepted, &core,
-      //                  &Core::acceptFriendRequest);
-      //          connect(this, &Widget::friendRequestRejected, &core,
-      //                  &Core::rejectFriendRequest);
+        connect(addForm, &AddFriendForm::friendRequestAccepted, this, &ContactWidget::do_friendRequestAccept);
+        connect(addForm, &AddFriendForm::friendRequestRejected, this, &ContactWidget::do_friendRequestReject);
 
     }
-    addForm->showTo(getContentLayout());
+
+    return addForm;
+
+}
+
+
+void ContactWidget::do_openAddForm()
+{
+    makeAddForm()->showTo(getContentLayout());
 }
 
 
@@ -79,6 +85,7 @@ void ContactWidget::init() {
     connect(ui->addBtn, &QPushButton::released,
             this, &ContactWidget::do_openAddForm);
 }
+
 
 void ContactWidget::deinit() {
     disconnect(Nexus::getProfile(), &Profile::coreChanged,
@@ -104,6 +111,10 @@ void ContactWidget::onCoreChanged(Core &core_) {
 void ContactWidget::connectToCore(Core *core) {
   qDebug() << __func__<<core;
 
+  //好友请求
+  connect(core, &Core::friendRequestReceived, this,
+          &ContactWidget::onFriendRequest);
+
   connect(core, &Core::friendAdded,
           this, &ContactWidget::onFriendAdded);
 
@@ -117,9 +128,6 @@ void ContactWidget::connectToCore(Core *core) {
           &ContactWidget::onFriendStatusChanged);
   connect(core, &Core::friendStatusMessageChanged, this,
           &ContactWidget::onFriendStatusMessageChanged);
-  connect(core, &Core::friendRequestReceived, this,
-          &ContactWidget::onFriendRequestReceived);
-
 
 
   connect(core, &Core::groupAdded, this, &ContactWidget::onGroupJoined);
@@ -140,10 +148,6 @@ void ContactWidget::connectToCore(Core *core) {
           &ContactWidget::onGroupPeerNameChanged);
   connect(core, &Core::groupPeerStatusChanged, this,
           &ContactWidget::onGroupPeerStatusChanged);
-
-  //好友请求
-  connect(core, &Core::friendRequestReceived, this,
-          &ContactWidget::onFriendRequestReceived);
 
 
 }
@@ -167,10 +171,8 @@ void ContactWidget::onFriendUsernameChanged(const ToxPk &friendPk,
                                          const QString &username) {
   qDebug() << __func__ << "friend:" << friendPk.toString()
            << "name:" << username;
-//  contactListWidget->setFriendName(friendPk, username);
+  contactListWidget->setFriendName(friendPk, username);
 }
-
-
 
 void ContactWidget::onFriendStatusChanged(const ToxPk &friendPk,
                                        Status::Status status) {
@@ -226,13 +228,15 @@ void ContactWidget::onFriendStatusMessageChanged(const ToxPk &friendPk,
   //  }
 }
 
-void ContactWidget::onFriendRequestReceived(const ToxPk &friendPk,
+void ContactWidget::onFriendRequest(const ToxPk &friendPk,
                                          const QString &message) {
-  qDebug() << __func__ << friendPk.toString()<<message;
+    qDebug() << __func__ << friendPk.toString()<<message;
+    auto addForm = makeAddForm();
+    do_openAddForm();
 
     if (addForm->addFriendRequest(friendPk.toString(), message)) {
         friendRequestsUpdate();
-         Widget::getInstance()->newMessageAlert(window(), isActiveWindow(), true, true);
+        Widget::getInstance()->newMessageAlert(window(), isActiveWindow(), true, true);
 
    #if DESKTOP_NOTIFICATIONS
       if (settings.getNotifyHide()) {
@@ -245,9 +249,28 @@ void ContactWidget::onFriendRequestReceived(const ToxPk &friendPk,
     }
 }
 
-void ContactWidget::do_friendRequest(const ToxPk &friendAddress, const QString &nick, const QString &message)
+void ContactWidget::do_friendRequest(const ToxPk &friendPk, const QString &nick, const QString &message)
 {
-    core->requestFriendship(friendAddress, nick, message);
+    qDebug() << __func__ << friendPk.toString();
+    core->requestFriendship(friendPk, nick, message);
+}
+
+void ContactWidget::do_friendDelete(const ToxPk &friendPk)
+{
+    qDebug() << __func__ << friendPk.toString();
+    core->removeFriend(friendPk.toString());
+}
+
+void ContactWidget::do_friendRequestAccept(const ToxPk &friendPk)
+{
+    qDebug() << __func__ << friendPk.toString();
+    core->acceptFriendRequest(friendPk);
+}
+
+void ContactWidget::do_friendRequestReject(const ToxPk &friendPk)
+{
+    qDebug() << __func__ << friendPk.toString();
+    core->rejectFriendRequest(friendPk);
 }
 
 void ContactWidget::onGroupJoined(const GroupId &groupId, const QString &name) {
@@ -414,24 +437,22 @@ void ContactWidget::friendRequestsUpdate() {
   auto &settings = Settings::getInstance();
 
   unsigned int unreadFriendRequests = settings.getUnreadFriendRequests();
+qDebug() << __func__ << "unreadFriendRequests"<<unreadFriendRequests;
+//  if (unreadFriendRequests == 0) {
+//    delete friendRequestsButton;
+//    friendRequestsButton = nullptr;
+//  } else if (!friendRequestsButton) {
+//    friendRequestsButton = new QPushButton(this);
+//    friendRequestsButton->setObjectName("green");
+//    connect(friendRequestsButton, &QPushButton::released, [this]() {
+////    onAddClicked();
+//      addForm->setMode(AddFriendForm::Mode::FriendRequest);
+//    });
+//    ui->statusLayout->insertWidget(2, friendRequestsButton);
+//  }
 
-  if (unreadFriendRequests == 0) {
-    delete friendRequestsButton;
-    friendRequestsButton = nullptr;
-  } else if (!friendRequestsButton) {
-    friendRequestsButton = new QPushButton(this);
-    friendRequestsButton->setObjectName("green");
-    connect(friendRequestsButton, &QPushButton::released, [this]() {
-//      onAddClicked();
-      addForm->setMode(AddFriendForm::Mode::FriendRequest);
-    });
-    ui->statusLayout->insertWidget(2, friendRequestsButton);
-
-  }
-
-  if (friendRequestsButton) {
-    friendRequestsButton->setText(
-        tr("%n New Friend Request(s)", "", unreadFriendRequests));
-  }
+//  if (friendRequestsButton) {
+//    friendRequestsButton->setText(tr("%n New Friend Request(s)", "", unreadFriendRequests));
+//  }
 }
 

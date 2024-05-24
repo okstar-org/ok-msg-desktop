@@ -17,6 +17,8 @@
 
 #include <QObject>
 
+#include "src/core/groupid.h"
+
 class IDialogsManager;
 class Group;
 class ToxPk;
@@ -25,12 +27,10 @@ class GroupChatroom : public Chatroom
 {
     Q_OBJECT
 public:
-    GroupChatroom(const Group* group, IDialogsManager* dialogsManager);
+    GroupChatroom(const GroupId* groupId, IDialogsManager* dialogsManager);
     ~GroupChatroom();
 
-   const Contact* getContact() override;
-
-   const Group* getGroup();
+    virtual const ContactId& getContactId() override;
 
     bool hasNewMessage() const;
     void resetEventFlags();
@@ -42,8 +42,9 @@ public:
 
 
 private:
-   const Group* group{nullptr};
-    IDialogsManager* dialogsManager{nullptr};
+   const GroupId* groupId{nullptr};
+
+   IDialogsManager* dialogsManager{nullptr};
 };
 
 #endif /* GROUP_CHATROOM_H */

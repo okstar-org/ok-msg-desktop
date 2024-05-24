@@ -1073,8 +1073,7 @@ void Widget::addGroupDialog(const Group *group, ContentDialog *dialog) {
 //          &GroupChatForm::focusInput);
 //  connect(groupWidget, &GroupWidget::middleMouseClicked, dialog,
 //          [this]() { dialog->removeGroup(groupId); });
-//  connect(groupWidget, &GroupWidget::chatroomWidgetClicked, chatForm,
-//          &ChatForm::focusInput);
+
 //  connect(groupWidget, &GroupWidget::newWindowOpened, this,
 //          &Widget::openNewDialog);
 //

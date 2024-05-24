@@ -62,13 +62,16 @@ class GenericChatForm : public QWidget
 {
     Q_OBJECT
 public:
-    GenericChatForm(const Contact* contact,
+    GenericChatForm(const ContactId* contact,
                     IChatLog& chatLog,
                     IMessageDispatcher& messageDispatcher,
                     QWidget* parent = nullptr);
     ~GenericChatForm() override;
 
     void setName(const QString& newName);
+    void setContact(const Contact* contact);
+    void removeContact();
+
     virtual void show() final
     {
     }
@@ -160,7 +163,12 @@ protected:
     bool searchInText(const QString& phrase, const ParameterSearch& parameter, SearchDirection direction);
     std::pair<int, int> indexForSearchInLine(const QString& txt, const QString& phrase, const ParameterSearch& parameter, SearchDirection direction);
 
+    void updateCallButtons();
+
+    void setFriend(const Friend& f);
+
 protected:
+    const ContactId* contactId;
     const Contact* contact;
 
     bool audioInputFlag;

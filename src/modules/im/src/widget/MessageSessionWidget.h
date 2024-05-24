@@ -73,6 +73,9 @@ class MessageSessionWidget : public GenericChatroomWidget
 
     void clearHistory();
 
+    void setFriend(const Friend* f);
+    void removeFriend();
+
 signals:
     void removeFriend(const ToxPk& friendPk);
     void copyFriendIdToClipboard(const ToxPk& friendPk);
@@ -91,6 +94,7 @@ public slots:
   void onContextMenuCalled(QContextMenuEvent* event);
   void do_widgetClicked( );
   void showEvent(QShowEvent *) override;
+
 private slots:
     void removeChat();
     void moveToNewCircle();
@@ -99,6 +103,7 @@ private slots:
     void changeAutoAccept(bool enable);
     void showDetails();
     void onMessageSent(DispatchedMessageId id, const Message & message);
+
 
 protected:
     virtual void mousePressEvent(QMouseEvent* ev) override;
@@ -113,8 +118,10 @@ private:
     std::unique_ptr<ContentWidget> contentWidget;
     std::unique_ptr<SendWorker> sendWorker;
 
-
-
+    //联系人ID(朋友ID、群聊ID共享)
+    ContactId contactId;
+    ToxPk friendId;
+    GroupId groupId;
 
 };
 

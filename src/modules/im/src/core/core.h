@@ -258,10 +258,6 @@ private:
                               void *core);
 
 
-  void onUserStatusChanged(Tox *tox, QString friendId,
-                           Tox_User_Status userStatus, void *core);
-
-
   static void onGroupInvite(Tox *tox, QString friendId,
                             Tox_Conference_Type type, const uint8_t *cookie,
                             size_t length, void *vCore);

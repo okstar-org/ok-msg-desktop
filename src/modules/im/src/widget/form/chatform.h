@@ -38,7 +38,7 @@ class QMoveEvent;
 class ChatForm : public GenericChatForm {
   Q_OBJECT
 public:
-  ChatForm(const Friend *chatFriend,
+  ChatForm(const ToxPk *contact,
            IChatLog &chatLog,
            IMessageDispatcher &messageDispatcher);
   ~ChatForm();
@@ -59,7 +59,7 @@ signals:
   void endCallNotification();
   void rejectCall(QString friendId);
   void acceptCall(QString friendId);
-  void updateFriendActivity(const Friend &frnd);
+  void updateFriendActivity(const ToxPk &frnd);
 
 public slots:
   void onAvInvite(QString friendId, bool video);
@@ -110,7 +110,7 @@ protected:
   void showEvent(QShowEvent *event) final override;
 
 private:
-  const Friend *f;
+  const ToxPk *f;
   CroppingLabel *statusMessageLabel;
   QMenu statusMessageMenu;
   QLabel *callDuration;

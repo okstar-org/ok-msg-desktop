@@ -34,7 +34,7 @@ class OfflineMsgEngine : public QObject
 {
     Q_OBJECT
 public:
-    explicit OfflineMsgEngine(const Friend* f, ICoreFriendMessageSender* messageSender);
+    explicit OfflineMsgEngine(const ToxPk* f, ICoreFriendMessageSender* messageSender);
 
     using CompletionFn = std::function<void()>;
     void addUnsentMessage(Message const& message, CompletionFn completionCallback);
@@ -60,7 +60,7 @@ private:
     void checkForCompleteMessages(ReceiptNum receipt);
 
     CompatibleRecursiveMutex mutex;
-    const Friend* f;
+    const ToxPk* f;
     ICoreFriendMessageSender* messageSender;
     QVector<ReceiptNum> receivedReceipts;
     QMap<ReceiptNum, OfflineMessage> sentMessages;

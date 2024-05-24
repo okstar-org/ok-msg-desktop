@@ -152,6 +152,7 @@ void AboutFriendForm::onRemoveHistoryClicked()
 
 AboutFriendForm::~AboutFriendForm()
 {
+    qDebug() << __func__;
     delete ui;
 }
 
