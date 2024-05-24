@@ -165,12 +165,11 @@ protected:
     virtual void resizeEvent(QResizeEvent* event) final override;
     virtual bool eventFilter(QObject* object, QEvent* event) final override;
 
-     void updateCallButtons();
+    void updateCallButtons();
     void updateCallButtons(Status::Status status);
     void updateMuteMicButton();
     void updateMuteVolButton();
 
-    void updateCallButtons();
 
     void setFriend(const Friend& f);
 
