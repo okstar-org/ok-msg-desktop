@@ -27,14 +27,14 @@
 class SendWorker : public QObject{
     Q_OBJECT
 public:
-    SendWorker(const Friend& m_friend);
-    SendWorker(const Group& m_group);
+    SendWorker(const ToxPk& m_friend);
+    SendWorker(const GroupId& m_group);
     ~SendWorker();
 
     void clearHistory();
 
- static std::unique_ptr<SendWorker> forFriend(const Friend& m_friend);
- static std::unique_ptr<SendWorker> forGroup(const Group& m_group);
+ static std::unique_ptr<SendWorker> forFriend(const ToxPk& m_friend);
+ static std::unique_ptr<SendWorker> forGroup(const GroupId& m_group);
 
 
  GenericChatForm* getChatForm() const {

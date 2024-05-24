@@ -62,13 +62,16 @@ class GenericChatForm : public QWidget
 {
     Q_OBJECT
 public:
-    GenericChatForm(const Contact* contact,
+    GenericChatForm(const ContactId* contact,
                     IChatLog& chatLog,
                     IMessageDispatcher& messageDispatcher,
                     QWidget* parent = nullptr);
     ~GenericChatForm() override;
 
     void setName(const QString& newName);
+    void setContact(const Contact* contact);
+    void removeContact();
+
     virtual void show() final
     {
     }
@@ -148,19 +151,27 @@ protected:
     bool needsToHideName(ChatLogIdx idx) const;
     void showNetcam();
     void hideNetcam();
+    void adjustFileMenuPosition();
+    void disableSearchText();
+    bool searchInText(const QString& phrase, const ParameterSearch& parameter, SearchDirection direction);
+    std::pair<int, int> indexForSearchInLine(const QString& txt, const QString& phrase, const ParameterSearch& parameter, SearchDirection direction);
+
     virtual GenericNetCamView* createNetcam() = 0;
     virtual void insertChatMessage(IChatItem::Ptr msg);
-    void adjustFileMenuPosition();
+
     virtual void hideEvent(QHideEvent* event) override;
     virtual void showEvent(QShowEvent*) override;
     virtual bool event(QEvent*) final override;
     virtual void resizeEvent(QResizeEvent* event) final override;
     virtual bool eventFilter(QObject* object, QEvent* event) final override;
-    void disableSearchText();
-    bool searchInText(const QString& phrase, const ParameterSearch& parameter, SearchDirection direction);
-    std::pair<int, int> indexForSearchInLine(const QString& txt, const QString& phrase, const ParameterSearch& parameter, SearchDirection direction);
+
+     void updateCallButtons();
+    void updateCallButtons(Status::Status status);
+    void updateMuteMicButton();
+    void updateMuteVolButton();
 
 protected:
+    const ContactId* contactId;
     const Contact* contact;
 
     bool audioInputFlag;

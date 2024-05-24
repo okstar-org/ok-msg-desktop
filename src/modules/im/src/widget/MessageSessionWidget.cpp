@@ -61,49 +61,48 @@
  */
 MessageSessionWidget::MessageSessionWidget(
                            ContentLayout *layout,
-                           const ContactId &toxPk,
+                           const ContactId &cId,
                            ChatType chatType)
-    : GenericChatroomWidget(chatType, toxPk),
+    : GenericChatroomWidget(chatType, cId),
       contentLayout(layout),
-      sendWorker{nullptr}
+      sendWorker{nullptr},
+      contactId(cId)
         {
 
-  qDebug() <<__func__ <<"friend:"<<toxPk.toString();
+  qDebug() <<__func__ <<"contactId:"<<cId.toString();
 
   auto profile = Nexus::getProfile();
   auto core = Core::getInstance();
   auto &settings = Settings::getInstance();
   auto history = profile->getHistory();
   auto dialogManager = ContentDialogManager::getInstance();
+  auto widget =  Widget::getInstance();
 
 
   if(chatType==ChatType::Chat){
-      auto f = FriendList::addFriend(ToxPk(contactId), true);
-      connect(f, &Friend::displayedNameChanged, this,
-              [this](const QString &newName) {
-                setName(newName);
-              });
+      friendId = ToxPk(contactId);
 
-      connect(f, &Friend::statusChanged, this,
-              [this](Status::Status status, bool event) {
-                setStatus(status, event);
-              });
-
-      sendWorker = std::move( SendWorker::forFriend(*f));
+      sendWorker = std::move( SendWorker::forFriend(friendId));
       connect(sendWorker->dispacher(),&IMessageDispatcher::messageSent,
               this, &MessageSessionWidget::onMessageSent);
+
+
+
+
   }else if(chatType == ChatType::GroupChat) {
       auto nick = core->getNick();
-      auto g = GroupList::addGroup(GroupId(contactId), "", true, nick);
-      sendWorker = std::move(SendWorker::forGroup(*g));
+      groupId = GroupId(contactId);
+      groupId.nick = nick;
+
+      sendWorker = std::move(SendWorker::forGroup(groupId));
 
       connect(sendWorker->dispacher(),&IMessageDispatcher::messageSent,
               this, &MessageSessionWidget::onMessageSent);
 
-      connect(g, &Group::displayedNameChanged, this,
-              [this](const QString &newName) {
-                setName(newName);
-              });
+//      connect(g, &Group::displayedNameChanged, this,
+//              [this](const QString &newName) {
+//                setName(newName);
+//              });
   }
 
 
@@ -132,7 +131,7 @@ MessageSessionWidget::MessageSessionWidget(
 //  chatRoom = std::make_unique<FriendChatroom>(m_friend, dialogManager);
 //  auto frnd = chatRoom->getFriend();
 
-  nameLabel->setText(getContact()->getDisplayedName());;
+//  nameLabel->setText(getContact()->getDisplayedName());;
 
   // update alias when edited
 //  connect(nameLabel, &CroppingLabel::editFinished, //
@@ -174,10 +173,12 @@ MessageSessionWidget::MessageSessionWidget(
             emit widgetClicked(this);
           });
 
-    connect(getContact(), &Contact::avatarChanged,
-            [&](auto& pic) {
-              setAvatar(pic);
-            });
+//    connect(getContact(), &Contact::avatarChanged,
+//            [&](auto& pic) {
+//              setAvatar(pic);
+//            });
+
+
 
 }
 
@@ -204,9 +205,12 @@ void MessageSessionWidget::showEvent(QShowEvent *e)
             setName(group->getName());
         }
     }else{
-
-        auto f = FriendList::findFriend(contactId);
-        setStatus(f->getStatus(), false);
+         auto f = FriendList::findFriend(contactId);
+        if(f){
+            setContact(*f);
+            auto status = Core::getInstance()->getStatus();
+            updateStatusLight(status, false);
+        }
 
         auto msgs = sendWorker->getLastTextMessage();
         for(auto m : msgs){
@@ -454,6 +458,41 @@ void MessageSessionWidget::onMessageSent(DispatchedMessageId id, const Message &
     updateLastMessage(message);
 }
 
+void MessageSessionWidget::setFriend(const Friend *f)
+{
+    qDebug() << __func__ << f;
+    if(!f){
+        return;
+    }
+
+    auto chatForm = (ChatForm*) sendWorker->getChatForm();
+    chatForm->setContact(f);
+    setContact(*f);
+
+    connect(f, &Friend::displayedNameChanged, this, [&](const QString& name){
+        setName(name);
+    });
+
+    connect(f, &Friend::statusChanged, this, [this](Status::Status status, bool event) {
+        setStatus(status, event);
+    });
+
+    connect(f, &Friend::avatarChanged, this, [this](const QPixmap& avatar) {
+        setAvatar(avatar);
+    });
+
+    updateStatusLight(f->getStatus(), true);
+}
+
+void MessageSessionWidget::removeFriend()
+{
+    auto chatForm = (ChatForm*) sendWorker->getChatForm();
+    chatForm->removeContact();
+    removeContact();
+}
+
+
+
 void MessageSessionWidget::setAsActiveChatroom() { setActive(true); }
 
 void MessageSessionWidget::setAsInactiveChatroom() { setActive(false); }
@@ -464,20 +503,23 @@ void MessageSessionWidget::onActiveSet(bool active) {
 }
 
 QString MessageSessionWidget::getStatusString() const {
-  auto contact = sendWorker->getChatroom()->getContact();
-  auto frnd = FriendList::findFriend(ToxPk(contact->getId()));
+    qDebug() <<__func__;
+//  auto contactId = sendWorker->getChatroom()->getContactId();
+//  auto frnd = FriendList::findFriend(ToxPk(contact));
 
-  const int status = static_cast<int>(frnd->getStatus());
-  const bool event = frnd->getEventFlag();
+//  const int status = static_cast<int>(frnd->getStatus());
+//  const bool event = frnd->getEventFlag();
 
-  static const QVector<QString> names = {
-      tr("Online"),
-      tr("Away"),
-      tr("Busy"),
-      tr("Offline"),
-  };
+//  static const QVector<QString> names = {
+//      tr("Online"),
+//      tr("Away"),
+//      tr("Busy"),
+//      tr("Offline"),
+//  };
 
-  return event ? tr("New message") : names.value(status);
+//  return event ? tr("New message") : names.value(status);
+
+    return {};
 }
 
 //Friend *MessageSessionWidget::getFriend() const {
@@ -513,24 +555,25 @@ void MessageSessionWidget::onAvatarSet(const ToxPk &friendPk, const QPixmap& pic
   qDebug() <<__func__<< "onAvatarSet:" << friendPk.toString()
            << "pic:" << pic.size();
 
-  if(pic.isNull())
-      return;
+  if(!pic.isNull()){
 
-  auto c = getContact();
-  if(c){
-      c->setAvatar(pic);
-  }
+      setAvatar(pic);
+
+    }
+//  auto c = getContact();
+//  if(c){
+//      c->setAvatar(pic);
+//  }
 
 
-    setAvatar(pic);
 
 }
 
 void MessageSessionWidget::onAvatarRemoved(const ToxPk &friendPk) {
-
+    qDebug() << __func__ << friendPk.toString();
   // 清空联系人头像
-  auto c = getContact();
-  c->clearAvatar();
+//  auto c = getContact();
+//  c->clearAvatar();
 
 
 }
@@ -566,7 +609,12 @@ void MessageSessionWidget::setRecvMessage(const FriendMessage &msg, bool isActio
 
   FriendMessage m = msg;
   m.from = ContactId(m.from).toString();
-  m.displayName = getContact()->getDisplayedName();
+
+  auto frd = FriendList::findFriend(contactId);
+  if(frd)
+  {
+        m.displayName = frd->getDisplayedName();
+  }
 
   auto md= (FriendMessageDispatcher*)sendWorker->dispacher();
   md->onMessageReceived(m);
@@ -592,7 +640,12 @@ void MessageSessionWidget::setRecvGroupMessage(const GroupMessage &msg)
 {
     GroupMessage m = msg;
     m.from = ContactId(m.from).toString();
-    m.displayName = getContact()->getDisplayedName();
+
+    auto frd = FriendList::findFriend(contactId);
+    if(frd)
+    {
+          m.displayName = frd->getDisplayedName();
+    }
 
     auto md= (GroupMessageDispatcher*)sendWorker->dispacher();
     md->onMessageReceived(m);
@@ -627,6 +680,10 @@ void MessageSessionWidget::clearHistory()
 void MessageSessionWidget::setStatus(Status::Status status, bool event) {
     updateStatusLight(status, event);
     auto f = FriendList::findFriend(contactId);
+    if(!f){
+        qWarning() <<"friend is no existing.";
+        return;
+    }
     f->setStatus(status);
 }
 
@@ -643,8 +700,5 @@ void MessageSessionWidget::setTyping(bool typing) {
 void MessageSessionWidget::setName(const QString &name)
 {
     qDebug() << __func__ <<"friend:" << contactId.toString()<<"name:" << name;
-    nameLabel->setText(name);
-    auto chatForm =(ChatForm*) sendWorker->getChatForm();
-    chatForm->setName(name);
     GenericChatroomWidget::setName(name);
 }

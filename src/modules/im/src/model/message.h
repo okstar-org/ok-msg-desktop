@@ -136,7 +136,7 @@ public:
     QRegularExpression pubKeyMention;
   };
 
-  MessageProcessor(ICoreIdHandler &idHandler, const Contact& f, const SharedParams &sharedParams);
+  MessageProcessor(ICoreIdHandler &idHandler, const ContactId& f, const SharedParams &sharedParams);
 
   std::vector<Message> processOutgoingMessage(bool isAction, QString const &content);
 
@@ -155,7 +155,7 @@ public:
 private:
   bool detectingMentions = false;
   ICoreIdHandler &idHandler;
-  const Contact& f;
+  const ContactId& f;
   const SharedParams &sharedParams;
 };
 

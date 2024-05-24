@@ -25,11 +25,12 @@ class FriendListLayout : public QVBoxLayout
 {
     Q_OBJECT
 public:
-    explicit FriendListLayout();
+
     explicit FriendListLayout(QWidget* parent);
+    ~FriendListLayout();
 
     void addFriendWidget(FriendWidget* widget, Status::Status s);
-    void removeFriendWidget(FriendWidget* widget, Status::Status s);
+    void removeFriendWidget(FriendWidget* widget);
     int indexOfFriendWidget(GenericChatItemWidget* widget, bool online) const;
     void moveFriendWidgets(FriendListWidget* listWidget);
     int friendOnlineCount() const;

@@ -26,11 +26,13 @@
 GenericChatItemWidget::GenericChatItemWidget(ChatType type, const ContactId &cid, QWidget* parent)
     : QFrame(parent)
     , chatType(type), statusPic{nullptr},
-      contactId{cid}, prevStatus{Status::Status::None},
+      contactId{cid}, contact{nullptr},
+      prevStatus{Status::Status::None},
       active{false}
 {
     nameLabel = new CroppingLabel(this);
     nameLabel->setTextFormat(Qt::PlainText);
+    nameLabel->setText(cid.username);
 
     lastMessageLabel = new CroppingLabel(this);
     lastMessageLabel->setTextFormat(Qt::PlainText);
@@ -53,15 +55,17 @@ GenericChatItemWidget::GenericChatItemWidget(ChatType type, const ContactId &cid
 
   QSize size = QSize(40, 40);
   avatar = new MaskablePixmapWidget(this, size, ":/img/avatar_mask.svg");
-
-
-
 }
 
 
 QString GenericChatItemWidget::getName() const
 {
     return nameLabel->fullText();
+}
+
+void GenericChatItemWidget::setName(const QString &name)
+{
+    nameLabel->setText(name);
 }
 
 void GenericChatItemWidget::searchName(const QString& searchString, bool hide)
@@ -157,32 +161,38 @@ void GenericChatItemWidget::setAvatar(const QPixmap &pic)
 
 void GenericChatItemWidget::clearAvatar()
 {
+    qDebug() << __func__;
     avatar->clear();
-
-    auto c =getContact();
-    if(c){
-      c->clearAvatar();
-    }
 }
 
 void GenericChatItemWidget::setDefaultAvatar()
 {
     qDebug() << __func__;
+}
 
-    auto c = getContact();
+void GenericChatItemWidget::setContact(const Contact &contact_)
+{
+    contact = &contact_;
+    if(contact){
+        setName(contact->getDisplayedName());
+        setAvatar(contact->getAvatar());
+    }
+}
 
-        auto pix= c->setDefaultAvatar();
-        avatar->setPixmap(pix);
-
-
+void GenericChatItemWidget::removeContact()
+{
+    qDebug() << __func__;
+    contact = nullptr;
 }
 
 void GenericChatItemWidget::showEvent(QShowEvent *e)
 {
-    Contact* c = getContact();
+    qDebug() << __func__;
 
-      avatar->setPixmap(c->getAvatar());
-      nameLabel->setText(c->getDisplayedName());
+   if(contact){
+       setName(contact->getDisplayedName());
+       setAvatar(contact->getAvatar());
+   }
 
 }
 

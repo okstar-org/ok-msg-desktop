@@ -19,6 +19,7 @@
 #include <QObject>
 #include <QString>
 #include <QVector>
+#include "src/core/toxpk.h"
 
 class IDialogsManager;
 class Friend;
@@ -40,14 +41,14 @@ class FriendChatroom : public Chatroom
 {
     Q_OBJECT
 public:
-    FriendChatroom(const Friend* frnd, IDialogsManager* dialogsManager);
+    FriendChatroom(const ToxPk* frnd, IDialogsManager* dialogsManager);
     ~FriendChatroom();
 
-  const  Contact* getContact() override;
+    virtual const ContactId& getContactId() override;
 
 public slots:
 
-  const  Friend* getFriend();
+  const  ToxPk* getFriend();
 
 
 
@@ -77,7 +78,7 @@ public slots:
 
 private:
     bool active{false};
-    const Friend* frnd{nullptr};
+    const ToxPk* frnd{nullptr};
     IDialogsManager* dialogsManager{nullptr};
 
 };

@@ -36,7 +36,7 @@ void MessageProcessor::SharedParams::setPublicKey(const QString& pk)
 }
 
 MessageProcessor::MessageProcessor(ICoreIdHandler &idHandler_,
-                                   const Contact& f_,
+                                   const ContactId& f_,
                                    const MessageProcessor::SharedParams& sharedParams_)
     : idHandler{idHandler_}, f{f_}, sharedParams(sharedParams_)
 {}

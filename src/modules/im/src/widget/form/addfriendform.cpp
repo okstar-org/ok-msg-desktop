@@ -188,8 +188,7 @@ QString AddFriendForm::getImportMessage() const {
 
 void AddFriendForm::setMode(Mode mode) { tabWidget->setCurrentIndex(mode); }
 
-bool AddFriendForm::addFriendRequest(const QString &friendAddress,
-                                     const QString &message) {
+bool AddFriendForm::addFriendRequest(const QString &friendAddress, const QString &message) {
   if (Settings::getInstance().addFriendRequest(friendAddress, message)) {
     addFriendRequestWidget(friendAddress, message);
     if (isShown()) {
@@ -206,7 +205,7 @@ void AddFriendForm::onUsernameSet(const QString &username) {
 
 void AddFriendForm::showEvent(QShowEvent *e)
 {
-    onSearchTriggered();
+//    onSearchTriggered();
 }
 
 void AddFriendForm::onFriendReceipts(const QList<ok::backend::OrgStaff *> &qList) {
@@ -389,8 +388,7 @@ void AddFriendForm::onFriendRequestAccepted() {
 
   removeFriendRequestWidget(friendWidget);
 
-  const Settings::Request request =
-      Settings::getInstance().getFriendRequest(indexFromEnd);
+  const Settings::Request request = Settings::getInstance().getFriendRequest(indexFromEnd);
   emit friendRequestAccepted(ToxId(request.address).getPublicKey());
   Settings::getInstance().removeFriendRequest(indexFromEnd);
   Settings::getInstance().savePersonal();

@@ -123,6 +123,7 @@ private:
   void groupInvitesClear();
 
 
+
 public slots:
   void on_nameClicked();
 
@@ -132,7 +133,8 @@ public slots:
   void onUsernameSet(const QString& username);
   void onStatusMessageSet(const QString &statusMessage) ;
 
-  void onFriendUsernameChanged(const ToxPk &friendPk, const QString &username);
+  void onFriendAdded(const Friend* f);
+  void onFriendRemoved(const Friend* f);
 
   void onFriendStatusChanged(const ToxPk &friendPk, Status::Status status);
   void onFriendStatusMessageChanged(const ToxPk &friendPk,
@@ -143,7 +145,7 @@ public slots:
   void onFriendMessageReceived(const ToxPk &friendPk,
                                const FriendMessage &message,
                                bool isAction);
-  void onFriendAvatarChanged(const ToxPk &friendPk, const QByteArray &avatar);
+
   void onReceiptReceived(const ToxPk &friendPk, ReceiptNum receipt);
 
   void onFriendTypingChanged(const ToxPk &friendnumber, bool isTyping);

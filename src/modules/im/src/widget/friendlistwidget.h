@@ -28,8 +28,7 @@ class QPixmap;
 class Widget;
 class FriendWidget;
 class GroupWidget;
-//class CircleWidget;
-//class CategoryWidget;
+class Core;
 class FriendListLayout;
 class GenericChatroomWidget;
 class Friend;
@@ -50,7 +49,7 @@ public:
   FriendWidget *addFriend(const ToxPk &friendPk,bool isFriend);
   FriendWidget *getFriend(const ContactId &friendPk);
   void removeFriend(const ToxPk &cid);
-  void addFriendWidget(FriendWidget *fw, Status::Status s, int circleIndex);
+
   void setFriendStatus(const ToxPk &friendPk,  Status::Status status);
   void setFriendStatusMsg(const ToxPk &friendPk,  const QString& statusMsg);
   void setFriendName(const ToxPk &friendPk,  const QString& name);
@@ -76,13 +75,9 @@ public:
 
   void setRecvGroupMessage(const GroupMessage& msg);
 
-
-
-//  CircleWidget *createCircleWidget(int id = -1);
 signals:
-  void onCompactChanged(bool compact);
-//  void connectCircleWidget(CircleWidget &circleWidget);
-//  void searchCircle(CircleWidget &circleWidget);
+  void deleteFriendWidget(const ToxPk &friendPk);
+  void deleteGroupWidget(const ToxPk &friendPk);
 
 public slots:
   void renameGroupWidget(GroupWidget *groupWidget, const QString &newName);
@@ -103,9 +98,11 @@ protected:
   void dragEnterEvent(QDragEnterEvent *event) override;
   void dropEvent(QDropEvent *event) override;
   void showEvent(QShowEvent *event) override;
-private slots:
 
+private slots:
+  void onCoreChanged(Core &core);
   void dayTimeout();
+
 private:
 
   QLayout *nextLayout(QLayout *layout, bool forward) const;
@@ -115,6 +112,8 @@ private:
   void connectFriendWidget(FriendWidget &friendWidget);
   void updateFriendActivity(const Friend &frnd);
 
+  void connectToCore(Core* core);
+  Core *core;
 
   SortingMode mode;
 

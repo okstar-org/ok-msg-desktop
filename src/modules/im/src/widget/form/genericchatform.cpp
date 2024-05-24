@@ -61,6 +61,8 @@
 
 #include <src/nexus.h>
 #include <src/nexus.h>
+
+#include <src/core/coreav.h>
 #endif
 
 /**
@@ -270,11 +272,11 @@ ChatLogIdx firstItemAfterDate(QDate date, const IChatLog &chatLog) {
 }
 } // namespace
 
-GenericChatForm::GenericChatForm(const Contact *contact_,
+GenericChatForm::GenericChatForm(const ContactId *contact_,
                                  IChatLog &iChatLog_,
                                  IMessageDispatcher &messageDispatcher,
                                  QWidget *parent)
-    : QWidget(parent, Qt::Window), contact(contact_), audioInputFlag(false),
+    : QWidget(parent, Qt::Window), contactId(contact_), audioInputFlag(false),
       audioOutputFlag(false), isEncrypt(false), iChatLog(iChatLog_),
       messageDispatcher(messageDispatcher) {
   curRow = 0;
@@ -419,52 +421,20 @@ GenericChatForm::GenericChatForm(const Contact *contact_,
   connect(this, &GenericChatForm::messageNotFoundShow, searchForm,
           &SearchForm::showMessageNotFound);
 
-
-
   connect(msgEdit, &ChatTextEdit::enterPressed, this,
           &GenericChatForm::onSendTriggered);
 
 
-
-
-  if(!contact_->isGroup()){
-
-      ToxPk pk(contact_->getId());
-      auto f= FriendList::findFriend(pk);
-    connect(f, &Friend::displayedNameChanged,
-            this,
-            &GenericChatForm::onDisplayedNameChanged);
-
-    connect(f, &Friend::avatarChanged,
-            this,
-            [&](const QPixmap& avatar){
-        onAvatarChanged(avatar);
-    });
-
-    // Try to get the avatar from the cache
-    QPixmap avatar = Nexus::getProfile()->loadAvatar(pk);
-    if (!avatar.isNull()) {
-        onAvatarChanged(avatar);
-    }
-  }
-
-
-
-
-  reloadTheme();
 
   fileFlyout->setFixedSize(FILE_FLYOUT_SIZE);
   fileFlyout->setParent(this);
   fileButton->installEventFilter(this);
   fileFlyout->installEventFilter(this);
 
+  reloadTheme();
   retranslateUi();
   settings::Translator::registerHandler(
       std::bind(&GenericChatForm::retranslateUi, this), this);
-
-  // update header on name/title change
-//  connect(contact, &Contact::displayedNameChanged, this,
-//          &GenericChatForm::setName);
 
   auto chatLogIdxRange = iChatLog.getNextIdx() - iChatLog.getFirstIdx();
   auto firstChatLogIdx = (chatLogIdxRange < 100) ? iChatLog.getFirstIdx()
@@ -483,7 +453,7 @@ GenericChatForm::~GenericChatForm() {
 
 #ifdef OK_PLUGIN
 void GenericChatForm::onPluginEnabled(const QString &shortName) {
-  qDebug() << "Plugin is enabled" << shortName <<"for"<<contact->getDisplayedName();
+//  qDebug() << "Plugin is enabled" << shortName <<"for"<<contact->getDisplayedName();
   if (shortName == "omemo") {
     auto encryptButton_ =
         mainFootLayout->findChild<QPushButton *>("encryptButton");
@@ -549,7 +519,29 @@ void GenericChatForm::reloadTheme() {
 }
 
 void GenericChatForm::setName(const QString &newName) {
-  headWidget->setName(newName);
+    headWidget->setName(newName);
+}
+
+void GenericChatForm::setContact(const Contact *contact_)
+{
+    qDebug()<<__func__<<contact_;
+    contact = contact_;
+    connect(contact, &Contact::displayedNameChanged, this, &GenericChatForm::onDisplayedNameChanged);
+    connect(contact, &Contact::avatarChanged, this, &GenericChatForm::onAvatarChanged);
+    if(contact->isGroup()){
+
+    }else{
+        const Friend* f = static_cast<const Friend*>(contact);
+              connect(f, &Friend::statusChanged, [&](Status::Status status, bool event){
+                  updateCallButtons(status);
+              });
+    }
+}
+
+void GenericChatForm::removeContact()
+{
+    qDebug()<<__func__;
+    contact = nullptr;
 }
 
 void GenericChatForm::show(ContentLayout *contentLayout) {
@@ -575,6 +567,10 @@ void GenericChatForm::show(ContentLayout *contentLayout) {
 void GenericChatForm::showEvent(QShowEvent *) {
   msgEdit->setFocus();
   headWidget->showCallConfirm();
+  if(contact){
+      auto status = Core::getInstance()->getStatus();
+      updateCallButtons(status);
+  }
 }
 
 bool GenericChatForm::event(QEvent *e) {
@@ -598,13 +594,13 @@ bool GenericChatForm::event(QEvent *e) {
 }
 
 void GenericChatForm::onAvatarChanged(const QPixmap &pic) {
-  qDebug() << __func__ <<contact->getId() << "pic:"<< pic.size();
+  qDebug() << __func__ <<contactId->toString() << "pic:"<< pic.size();
   headWidget->setAvatar(pic);
 }
 
 void GenericChatForm::onDisplayedNameChanged(const QString &name)
 {
-    qDebug() <<__func__<< contact->getId() << name;
+    qDebug() <<__func__<< contactId->toString() << name;
     headWidget->setName(name);
     for(auto msg: messages){
         auto it =msg.second;
@@ -761,6 +757,48 @@ void GenericChatForm::disableSearchText() {
     text->deselectText();
   }
 }
+
+void GenericChatForm::updateCallButtons()
+{
+    qDebug() << __func__;
+    updateMuteMicButton();
+    updateMuteVolButton();
+}
+
+void GenericChatForm::updateCallButtons(Status::Status status)
+{
+      qDebug() << __func__ << (int)status;
+
+      CoreAV *av = Core::getInstance()->getAv();
+      const bool audio = av->isCallActive(contactId);
+      const bool video = av->isCallVideoEnabled(contactId);
+      const bool online = Status::isOnline(status);
+      headWidget->updateCallButtons(online, audio, video);
+
+      updateCallButtons();
+}
+
+
+void GenericChatForm::updateMuteMicButton() {
+  const CoreAV *av = Core::getInstance()->getAv();
+  bool active = av->isCallActive(contactId);
+  bool inputMuted = av->isCallInputMuted(contactId);
+  headWidget->updateMuteMicButton(active, inputMuted);
+  if (netcam) {
+    netcam->updateMuteMicButton(inputMuted);
+  }
+}
+
+void GenericChatForm::updateMuteVolButton() {
+  const CoreAV *av = Core::getInstance()->getAv();
+  bool active = av->isCallActive(contactId);
+  bool outputMuted = av->isCallOutputMuted(contactId);
+  headWidget->updateMuteVolButton(active, outputMuted);
+  if (netcam) {
+    netcam->updateMuteVolButton(outputMuted);
+  }
+}
+
 
 void GenericChatForm::clearChatArea() {
   clearChatArea(/* confirm = */ true, /* inform = */ true);

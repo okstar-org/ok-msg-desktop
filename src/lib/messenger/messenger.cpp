@@ -545,6 +545,7 @@ void Messenger::acceptFriendRequest(const QString &f) {
   auto _session = ok::session::AuthSession::Instance();
   auto _im = _session->im();
   _im->acceptFriendRequest(f);
+
 }
 
 void Messenger::rejectFriendRequest(const QString &f) {
@@ -562,7 +563,7 @@ void Messenger::getFriendVCard(const QString &f) {
 bool Messenger::removeFriend(const QString &f) {
   auto _session = ok::session::AuthSession::Instance();
   auto _im = _session->im();
-  return _im->removeFriend(_im->wrapJid(f));
+  return _im->removeFriend(f);
 }
 
 size_t Messenger::getFriendCount() {

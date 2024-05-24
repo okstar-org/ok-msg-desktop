@@ -27,8 +27,6 @@ class FriendChatroom;
 class QPixmap;
 class MaskablePixmapWidget;
 class CircleWidget;
-class ChatForm;
-class ChatHistory;
 class ContentDialog;
 class ContentLayout;
 class Widget;
@@ -75,7 +73,7 @@ private:
     ContentLayout* contentLayout;
 //    ContentWidget* contentWidget;
 
-    std::unique_ptr<AboutFriendForm> about;
+    AboutFriendForm* about;
 
     Friend *m_friend;
 
@@ -92,8 +90,9 @@ public slots:
   void onContextMenuCalled(QContextMenuEvent* event);
   void do_widgetClicked(GenericChatroomWidget *w);
   void showDetails();
-    void changeAutoAccept(bool enable);
-    void do_removeFriend(const ContactId& id);
+  void removeDetails();
+  void changeAutoAccept(bool enable);
+
 signals:
     void friendWidgetClicked(FriendWidget* widget);
     void removeFriend(const ToxPk& friendPk);

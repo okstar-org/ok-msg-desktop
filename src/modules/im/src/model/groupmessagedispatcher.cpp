@@ -16,12 +16,12 @@
 #include <QtCore>
 
 GroupMessageDispatcher::GroupMessageDispatcher(
-        const Group &g_,
+        const GroupId &g_,
         MessageProcessor::SharedParams p,
         ICoreIdHandler &idHandler_,
         ICoreGroupMessageSender &messageSender_,
         const IGroupSettings &groupSettings_)
-    : group(g_),
+    : groupId(g_),
       processor(MessageProcessor(idHandler_, g_, p)),
       idHandler(idHandler_),
       messageSender(messageSender_),
@@ -49,9 +49,9 @@ GroupMessageDispatcher::sendMessage(bool isAction, QString const &content,
 
     SentMessageId msgId;
     if (message.isAction) {
-      msgId = messageSender.sendGroupAction(group.getId(), message.content);
+      msgId = messageSender.sendGroupAction(groupId.getId(), message.content);
     } else {
-      msgId = messageSender.sendGroupMessage(group.getId(), message.content);
+      msgId = messageSender.sendGroupMessage(groupId.getId(), message.content);
     }
     qDebug() <<"sent the msg success=> msgIdx:" << messageId.get() <<"msgId:" <<msgId;
     message.id = msgId;

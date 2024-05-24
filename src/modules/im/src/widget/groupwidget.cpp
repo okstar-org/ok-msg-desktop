@@ -71,7 +71,7 @@ GroupWidget::GroupWidget(ContentLayout *layout, QString groupnumber,
   connect(group, &Group::privilegesChanged, this, &GroupWidget::do_privilegesChanged);
 
 //  connect(nameLabel, &CroppingLabel::editFinished, group, &Group::setName);
-  connect(getContact(), &Contact::displayedNameChanged,
+  connect(group, &Group::displayedNameChanged,
           [&](auto& newName) {
             setName(newName);
           });
