@@ -109,11 +109,11 @@ GroupChatForm::GroupChatForm(const GroupId* chatGroup, IChatLog& chatLog, IMessa
     headWidget->addLayout(namesListLayout);
     headWidget->addStretch();
 
-    //nameLabel->setMinimumHeight(12);
+//    nameLabel->setMinimumHeight(12);
     nusersLabel->setMinimumHeight(12);
 
-    connect(msgEdit, &ChatTextEdit::tabPressed, tabber, &TabCompleter::complete);
-    connect(msgEdit, &ChatTextEdit::keyPressed, tabber, &TabCompleter::reset);
+//    connect(msgEdit, &ChatTextEdit::tabPressed, tabber, &TabCompleter::complete);
+//    connect(msgEdit, &ChatTextEdit::keyPressed, tabber, &TabCompleter::reset);
     connect(headWidget, &ChatFormHeader::callTriggered, this, &GroupChatForm::onCallClicked);
     connect(headWidget, &ChatFormHeader::micMuteToggle, this, &GroupChatForm::onMicMuteToggle);
     connect(headWidget, &ChatFormHeader::volMuteToggle, this, &GroupChatForm::onVolMuteToggle);
@@ -216,12 +216,14 @@ void GroupChatForm::updateUserNames()
     });
 
     // remove comma from last sorted label
-    QLabel* const lastLabel = nickLabelList.last();
-    QString labelText = lastLabel->text();
-    labelText.chop(2);
-    lastLabel->setText(labelText);
-    for (QLabel* l : nickLabelList) {
-        namesListLayout->addWidget(l);
+    if(!nickLabelList.isEmpty()){
+        QLabel* const lastLabel = nickLabelList.last();
+        QString labelText = lastLabel->text();
+        labelText.chop(2);
+        lastLabel->setText(labelText);
+        for (QLabel* l : nickLabelList) {
+            namesListLayout->addWidget(l);
+        }
     }
 }
 

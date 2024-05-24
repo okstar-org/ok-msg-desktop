@@ -170,9 +170,6 @@ protected:
     void updateMuteMicButton();
     void updateMuteVolButton();
 
-
-    void setFriend(const Friend& f);
-
 protected:
     const ContactId* contactId;
     const Contact* contact;
