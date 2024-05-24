@@ -28,7 +28,6 @@
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
-//#include "src/widget/categorywidget.h"
 #include "widget.h"
 #include <QDragEnterEvent>
 #include <QDragLeaveEvent>
@@ -143,8 +142,6 @@ MessageSessionWidget *MessageSessionListWidget::createMessageSession(
   emit sessionAdded(sw);
   return sw;
 }
-
-
 
 void MessageSessionListWidget::connectSessionWidget(MessageSessionWidget &sw) {
 //  connect(&sw, &MessageSessionWidget::searchCircle, this,

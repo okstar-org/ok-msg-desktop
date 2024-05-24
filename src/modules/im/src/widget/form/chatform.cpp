@@ -188,7 +188,7 @@ ChatForm::ChatForm(const ToxPk *chatFriend,
 
   setName(contactId->username);
 
-//  updateCallButtons();
+  updateCallButtons();
 
   setAcceptDrops(true);
   retranslateUi();
@@ -211,7 +211,7 @@ void ChatForm::setStatusMessage(const QString &newMessage) {
 void ChatForm::callUpdateFriendActivity() { emit updateFriendActivity(*f); }
 
 void ChatForm::updateFriendActivityForFile(const ToxFile &file) {
-  if (file.friendId != f->toString()) {
+  if (file.friendId != f->getId()) {
     return;
   }
   emit updateFriendActivity(*f);
@@ -231,14 +231,14 @@ void ChatForm::onTextEditChanged() {
   if (!Settings::getInstance().getTypingNotification()) {
     if (isTyping) {
       isTyping = false;
-      Core::getInstance()->sendTyping(f->toString(), false);
+      Core::getInstance()->sendTyping(f->getId(), false);
     }
 
     return;
   }
   bool isTypingNow = !msgEdit->toPlainText().isEmpty();
   if (isTyping != isTypingNow) {
-    Core::getInstance()->sendTyping(f->toString(), isTypingNow);
+    Core::getInstance()->sendTyping(f->getId(), isTypingNow);
     if (isTypingNow) {
       typingTimer.start(TYPING_NOTIFICATION_DURATION);
     }
@@ -277,12 +277,12 @@ void ChatForm::onAttachClicked() {
 
     qint64 filesize = file.size();
     qDebug() <<"sending"<<file <<"size"<<filesize;
-    core->getCoreFile()->sendFile(f->toString(), fileName, path, filesize);
+    core->getCoreFile()->sendFile(f->getId(), fileName, path, filesize);
   }
 }
 
 void ChatForm::onAvInvite(QString friendId, bool video) {
-  if (friendId != f->toString()) {
+  if (friendId != f->getId()) {
     return;
   }
 
@@ -297,7 +297,7 @@ void ChatForm::onAvInvite(QString friendId, bool video) {
   if (Settings::getInstance()
           .getAutoAcceptCall(*f)
           .testFlag(testedFlag)) {
-    QString friendId = f->toString();
+    QString friendId = f->getId();
     qDebug() << "automatic call answer";
     CoreAV *coreav = Core::getInstance()->getAv();
     QMetaObject::invokeMethod(coreav, "answerCall", Qt::QueuedConnection,
@@ -312,7 +312,7 @@ void ChatForm::onAvInvite(QString friendId, bool video) {
 }
 
 void ChatForm::onAvStart(QString friendId, bool video) {
-  if (friendId != f->toString()) {
+  if (friendId != f->getId()) {
     return;
   }
 
@@ -328,7 +328,7 @@ void ChatForm::onAvStart(QString friendId, bool video) {
 }
 
 void ChatForm::onAvEnd(QString friendId, bool error) {
-  if (friendId != f->toString()) {
+  if (friendId != f->getId()) {
     return;
   }
 
@@ -355,7 +355,7 @@ void ChatForm::showOutgoingCall(bool video) {
 
 void ChatForm::onAnswerCallTriggered(bool video) {
   headWidget->removeCallConfirm();
-  QString friendId = f->toString();
+  QString friendId = f->getId();
   emit stopNotification();
   emit acceptCall(friendId);
 
@@ -373,12 +373,12 @@ void ChatForm::onAnswerCallTriggered(bool video) {
 
 void ChatForm::onRejectCallTriggered() {
   headWidget->removeCallConfirm();
-  emit rejectCall(f->toString());
+  emit rejectCall(f->getId());
 }
 
 void ChatForm::onCallTriggered() {
   CoreAV *av = Core::getInstance()->getAv();
-  QString friendId = f->toString();
+  QString friendId = f->getId();
   if (av->isCallStarted(f)) {
     av->cancelCall(friendId);
   } else if (av->startCall(friendId, false)) {
@@ -388,7 +388,7 @@ void ChatForm::onCallTriggered() {
 
 void ChatForm::onVideoCallTriggered() {
   CoreAV *av = Core::getInstance()->getAv();
-  QString cId = contactId->toString();
+  QString cId = f->getId();
   if (av->isCallStarted(f)) {
     // TODO: We want to activate video on the active call.
     if (av->isCallVideoEnabled(f)) {
@@ -415,7 +415,7 @@ void ChatForm::onVolMuteToggle() {
 void ChatForm::onFriendStatusChanged(const ToxPk& friendId, Status::Status status) {
     qDebug() << __func__ <<friendId.toString()<<(int)status;
   // Disable call buttons if friend is offline
-  if (friendId.toString() != f->toString()) {
+  if (friendId.toString() != f->getId()) {
     return;
   }
 
@@ -524,7 +524,7 @@ void ChatForm::dropEvent(QDropEvent *ev) {
     }
 
     if (info.exists()) {
-      core->getCoreFile()->sendFile(f->toString(), fileName,
+      core->getCoreFile()->sendFile(f->getId(), fileName,
                                     info.absoluteFilePath(), info.size());
     }
   }
@@ -569,7 +569,7 @@ void ChatForm::sendImage(const QPixmap &pixmap) {
     file.close();
     QFileInfo fi(file);
     CoreFile *coreFile = Core::getInstance()->getCoreFile();
-    coreFile->sendFile(f->toString(), fi.fileName(), fi.filePath(), filesize);
+    coreFile->sendFile(f->getId(), fi.fileName(), fi.filePath(), filesize);
   } else {
     QMessageBox::warning(
         this,
@@ -650,7 +650,6 @@ void ChatForm::reloadTheme() {
 }
 
 void ChatForm::showEvent(QShowEvent *event) {
-
   updateCallButtons();
   GenericChatForm::showEvent(event);
 }
