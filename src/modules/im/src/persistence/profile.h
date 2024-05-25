@@ -56,10 +56,11 @@ public:
   const ToxEncrypt *getPasskey() const;
 
   const QPixmap& loadAvatar();
-  QPixmap loadAvatar(const ToxPk &owner);
-  QByteArray loadAvatarData(const ToxPk &owner);
   void setAvatar(QByteArray pic);
   void setAvatarOnly(QPixmap pic);
+
+  inline QPixmap loadAvatar(const ContactId &owner);
+  inline QByteArray loadAvatarData(const ContactId &owner);
 
 
   QByteArray getAvatarHash(const ToxPk &owner);
@@ -117,7 +118,7 @@ private:
   Profile(QString name, const QString &password, bool newProfile,
           const QByteArray &toxsave, std::unique_ptr<ToxEncrypt> passKey);
   static QStringList getFilesByExt(QString extension);
-  QString avatarPath(const ToxPk &owner, bool forceUnencrypted = false);
+  QString avatarPath(const ContactId &owner, bool forceUnencrypted = false);
   bool saveToxSave(QByteArray data);
   void initCore(const QByteArray &toxsave, ICoreSettings &s, bool isNewProfile);
 

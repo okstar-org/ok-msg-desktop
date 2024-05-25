@@ -483,25 +483,26 @@ void History::setFileFinished(const QString& fileId, bool success, const QString
     fileInfos.remove(fileId);
 }
 
-size_t History::getNumMessagesForFriend(const ToxPk& friendPk)
+size_t History::getNumMessagesForFriend(const ToxPk& me, const ToxPk& friendPk)
 {
     if (historyAccessBlocked()) {
         return 0;
     }
 
-    return getNumMessagesForFriendBeforeDate(friendPk, QDateTime());
+    return getNumMessagesForFriendBeforeDate(me, friendPk, QDateTime());
 }
 
-size_t History::getNumMessagesForFriendBeforeDate(const ToxPk& friendPk, const QDateTime& date)
+size_t History::getNumMessagesForFriendBeforeDate(const ToxPk& me, const ToxPk& friendPk, const QDateTime& date)
 {
     if (historyAccessBlocked()) {
         return 0;
     }
 
+    QString link = me == friendPk ? "AND" : "OR";
     QString queryText = QString("SELECT COUNT(id) "
                                 "FROM history "
-                                "WHERE sender = '%1' or receiver = '%1'")
-                            .arg(ContactId(friendPk).toString());
+                                "WHERE sender = '%1' %2 receiver = '%1'")
+                            .arg(ContactId(friendPk).toString()).arg(link);
 
     if (date.isNull()) {
         queryText += ";";
@@ -533,7 +534,7 @@ QString makeSqlForFriend(const ToxPk& me, const ToxPk& friendPk){
                 "FROM history "
                 "LEFT JOIN faux_offline_pending ON history.id = faux_offline_pending.id "
                 "LEFT JOIN broken_messages ON history.id = broken_messages.id "
-                "WHERE history.sender='%1' %2 history.receiver='%1' ")
+                "WHERE (history.sender='%1' %2 history.receiver='%1') ")
             .arg(friendPk.toString()).arg(link);
     return queryText;
 }
@@ -548,7 +549,7 @@ History::HistMessage rowToMessage(const QVector<QVariant>& row){
     QString receiver   = row[2].toString();
     QString sender_key = row[3].toString();
     QString message    = row[4].toString();
-    auto type       = row[5].toInt();
+    auto type       = row[5].toInt(0);
     auto isBroken   = !row[6].isNull();
     auto isPending  = !row[7].isNull();
 
@@ -602,7 +603,7 @@ QList<History::HistMessage> History::getMessagesForFriend(const ToxPk& me,
                       .arg(sqlPrefix)
                       .arg(size)
                       .arg((int)type);
-
+        qDebug() <<"sql:"<<sql;
        QList<HistMessage> messages;
        auto rowCallback = [&messages](const QVector<QVariant>& row) {
            messages += rowToMessage(row);

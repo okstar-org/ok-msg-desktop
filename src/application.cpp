@@ -161,7 +161,6 @@ void Application::createLoginUI(bool bootstrap) {
 void Application::closeLoginUI() {
     disconnect(m_loginWindow.get());
     m_loginWindow->close();
-    m_loginWindow.reset();
 }
 
 void Application::onLoginSuccess(ok::session::SignInInfo &signInInfo) {

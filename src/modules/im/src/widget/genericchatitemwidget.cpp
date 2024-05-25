@@ -18,9 +18,10 @@
 #include <QVariant>
 #include <src/core/core.h>
 #include <src/friendlist.h>
+#include <src/nexus.h>
 #include "src/model/friend.h"
 #include "src/model/group.h"
-
+#include "src/persistence/profile.h"
 
 
 GenericChatItemWidget::GenericChatItemWidget(ChatType type, const ContactId &cid, QWidget* parent)
@@ -55,6 +56,14 @@ GenericChatItemWidget::GenericChatItemWidget(ChatType type, const ContactId &cid
 
   QSize size = QSize(40, 40);
   avatar = new MaskablePixmapWidget(this, size, ":/img/avatar_mask.svg");
+
+  auto profile = Nexus::getProfile();
+  auto avt = profile->loadAvatar(contactId);
+  if(!avt.isNull()){
+      avatar->setPixmap(avt);
+  }else{
+    setDefaultAvatar();
+  }
 }
 
 
@@ -168,6 +177,9 @@ void GenericChatItemWidget::clearAvatar()
 void GenericChatItemWidget::setDefaultAvatar()
 {
     qDebug() << __func__;
+    auto name = (chatType == ChatType::Chat) ? "contact" : "group";
+    auto uri = QString(":img/%1_dark.svg").arg(name);
+    avatar->setPixmap(QPixmap(uri));
 }
 
 void GenericChatItemWidget::setContact(const Contact &contact_)

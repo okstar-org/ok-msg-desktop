@@ -416,7 +416,7 @@ bool Profile::saveToxSave(QByteArray data) {
  * if this is an encrypted profile.
  * @return Path to the avatar.
  */
-QString Profile::avatarPath(const ToxPk &owner, bool forceUnencrypted) {
+QString Profile::avatarPath(const ContactId &owner, bool forceUnencrypted) {
   auto ownerStr = owner.toString();
   auto base=Settings::getInstance().getSettingsDirPath();
   return base + "avatars/" + ownerStr + ".png";
@@ -445,19 +445,13 @@ const QPixmap & Profile::loadAvatar() {
  * @param owner Friend PK to load avatar.
  * @return Avatar as QPixmap.
  */
-  QPixmap Profile::loadAvatar(const ToxPk &owner) {
-  QPixmap pic;
-  if (Settings::getInstance().getShowIdenticons()) {
+QPixmap Profile::loadAvatar(const ContactId &owner) {
+    QPixmap pixmap;
     const QByteArray avatarData = loadAvatarData(owner);
-    if (avatarData.isEmpty()) {
-      pic = QPixmap::fromImage(Identicon(owner.getByteArray()).toImage(16));
-    } else {
-      pic.loadFromData(avatarData);
+    if(!avatarData.isEmpty()){
+         pixmap.loadFromData(avatarData);
     }
-  } else {
-    pic.loadFromData(loadAvatarData(owner));
-  }
-  return pic;
+    return pixmap;
 }
 
 /**
@@ -465,23 +459,19 @@ const QPixmap & Profile::loadAvatar() {
  * @param owner Friend PK to load avatar.
  * @return Avatar as QByteArray.
  */
-QByteArray Profile::loadAvatarData(const ToxPk &owner) {
+QByteArray Profile::loadAvatarData(const ContactId &owner) {
+    qDebug() << __func__ << owner.toString();
+
   QString path = avatarPath(owner);
-  bool avatarEncrypted = encrypted;
-  // If the encrypted avatar isn't found, try loading the unencrypted one for
-  // the same ID
-  if (avatarEncrypted && !QFile::exists(path)) {
-    avatarEncrypted = false;
-    path = avatarPath(owner, true);
-  }
+  qDebug() << "read:"<<path;
 
   QFile file(path);
   if (!file.open(QIODevice::ReadOnly)) {
+    qWarning() << "Unable to open file" << path;
     return {};
   }
 
   QByteArray pic = file.readAll();
-
     if (pic.isEmpty()) {
       qWarning() << "Empty avatar at" << path;
     }

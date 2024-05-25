@@ -140,7 +140,7 @@ QList<Message> ChatHistory::getLastTextMessage(uint size)
                          .id = QString::number(i.id.get()),
                          .from = i.sender,
                          .to = i.receiver,
-                         .content = *i.asMessage(),
+                         .content = i.asMessage(),
                          .timestamp = i.timestamp
                         };
             list.append(msg);
@@ -192,7 +192,7 @@ SearchResult ChatHistory::searchBackward(SearchPos startIdx, const QString& phra
         history->getDateWhereFindPhrase(f.toString(), earliestMessageDate, phrase,
                                         parameter);
 
-    auto loadIdx = history->getNumMessagesForFriendBeforeDate(ToxPk{f}, dateWherePhraseFound);
+    auto loadIdx = history->getNumMessagesForFriendBeforeDate(coreIdHandler.getSelfPublicKey(), ToxPk{f}, dateWherePhraseFound);
     loadHistoryIntoSessionChatLog(ChatLogIdx(loadIdx));
 
     // Reset search pos to the message we just loaded to avoid a double search
@@ -402,17 +402,17 @@ void ChatHistory::loadHistoryIntoSessionChatLog(ChatLogIdx start) const
         case HistMessageContentType::file: {
             const auto file = message.asFile();
             ToxFile tfile;
-            tfile.fileName=file->fileName;
-            tfile.filePath=file->filePath;
-            tfile.filesize=file->size;
-            tfile.sId = file->fileId;
+            tfile.fileName=file.fileName;
+            tfile.filePath=file.filePath;
+            tfile.filesize=file.size;
+            tfile.sId = file.fileId;
 
             const auto chatLogFile = ChatLogFile{date, tfile};
             sessionChatLog.insertFileAtIdx(currentIdx, sender, dispName, chatLogFile);
             break;
         }
         case HistMessageContentType::message: {
-            QString messageContent = *message.asMessage();
+            QString messageContent = message.asMessage();
 
             auto isAction = handleActionPrefix(messageContent);
 
@@ -471,10 +471,10 @@ void ChatHistory::dispatchUnsentMessages(IMessageDispatcher& messageDispatcher)
     auto core = Core::getInstance();
     auto unsentMessages = history->getUndeliveredMessagesForFriend(core->getSelfPublicKey(), ToxPk(f));
     for (auto& message : unsentMessages) {
-        if(message.type==HistMessageContentType::file)
+        if(message.type != HistMessageContentType::message)
             continue;
 
-        auto messageContent = *message.asMessage();
+        auto messageContent = message.asMessage();
         auto isAction = handleActionPrefix(messageContent);
 
         // NOTE: timestamp will be generated in messageDispatcher but we haven't
@@ -537,7 +537,7 @@ bool ChatHistory::canUseHistory() const
 ChatLogIdx ChatHistory::getInitialChatLogIdx() const
 {
     if (canUseHistory()) {
-        return ChatLogIdx(history->getNumMessagesForFriend(ToxPk(f)));
+        return ChatLogIdx(history->getNumMessagesForFriend(coreIdHandler.getSelfPublicKey(), ToxPk(f)));
     }
     return ChatLogIdx(0);
 }

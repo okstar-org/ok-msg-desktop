@@ -97,15 +97,16 @@ public:
             state(state),
             timestamp{std::move(timestamp)},
             sender{std::move(sender)},
-            receiver{receiver}
+            receiver{std::move(receiver)},
+            message(std::move(message))
         {
-            if(type==HistMessageContentType::message){
-                 data = std::make_shared<QString>(std::move(message));
-            }else if(type==HistMessageContentType::file){
-                FileDbInsertionData dbFile;
-                dbFile.parse(message);
-                data= std::make_shared<FileDbInsertionData>(std::move(dbFile));
-            }
+//            if(type==HistMessageContentType::message){
+//                 data = std::make_shared<QString>(std::move(message));
+//            }else if(type==HistMessageContentType::file){
+//                FileDbInsertionData dbFile;
+//                dbFile.parse(message);
+//                data= std::make_shared<FileDbInsertionData>(std::move(dbFile));
+//            }
         }
 
         RowId id;
@@ -114,19 +115,24 @@ public:
         QString receiver;
         MessageState state;
         HistMessageContentType type;
-        std::shared_ptr<void> data;
+        QString message;
 
 
-        [[nodiscard]] const QString* asMessage() const
+        [[nodiscard]] QString asMessage() const
         {
-            assert(type == HistMessageContentType::message);
-            return static_cast<QString*>(data.get());
+            if(type == HistMessageContentType::message){
+                return message;
+            }
+            return {};
         }
 
-        [[nodiscard]] const FileDbInsertionData* asFile() const
+        [[nodiscard]] const FileDbInsertionData asFile() const
         {
-            assert(type == HistMessageContentType::file);
-            return static_cast<FileDbInsertionData*>(data.get());
+            FileDbInsertionData file;
+            if(type == HistMessageContentType::file){
+                file.parse(message);
+            }
+            return file;
         }
 
     };
@@ -165,8 +171,8 @@ public:
                            QString const& dispName);
 
     void setFileFinished(const QString& fileId, bool success, const QString& filePath, const QByteArray& fileHash);
-    size_t getNumMessagesForFriend(const ToxPk& friendPk);
-    size_t getNumMessagesForFriendBeforeDate(const ToxPk& friendPk, const QDateTime& date);
+    size_t getNumMessagesForFriend(const ToxPk& me, const ToxPk& friendPk);
+    size_t getNumMessagesForFriendBeforeDate(const ToxPk& me, const ToxPk& friendPk, const QDateTime& date);
 
     QList<HistMessage> getMessagesForFriend(const ToxPk& me, const ToxPk& friendPk, size_t firstIdx, size_t lastIdx);
     QList<HistMessage> getLastMessageForFriend(const ToxPk &me, const ToxPk& pk, uint size, HistMessageContentType type);
