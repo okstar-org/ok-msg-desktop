@@ -8,12 +8,12 @@ class Text;
 class SimpleText;
 class NotificationIcon;
 
-class ChatMesssageBox : public IChatItem {
+class ChatMessageBox : public IChatItem {
 public:
-    ChatMesssageBox(const QPixmap &avatar, const QString &contactName,
+  ChatMessageBox(const QPixmap &avatar, const QString &contactName,
                     const QString &message);
 
-    ChatMesssageBox(const QPixmap &avatar, const QString &contactName,
+  ChatMessageBox(const QPixmap &avatar, const QString &contactName,
                     ChatLineContent *messageItem);
 
     void setMessageState(MessageState state);

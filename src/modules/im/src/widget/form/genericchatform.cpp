@@ -539,7 +539,7 @@ void GenericChatForm::setContact(const Contact *contact_)
         });
 
         for(auto msg: messages){
-            auto p = (ChatMesssageBox*)msg.second.get();
+            auto p = (ChatMessageBox *)msg.second.get();
             p->nickname()->setText(f->getDisplayedName());
         }
     }
@@ -611,7 +611,7 @@ void GenericChatForm::onDisplayedNameChanged(const QString &name)
     headWidget->setName(name);
     for(auto msg: messages){
         auto it =msg.second;
-        auto p = (ChatMesssageBox*)it.get();
+        auto p = (ChatMessageBox *)it.get();
         p->nickname()->setText(name);
     }
 }

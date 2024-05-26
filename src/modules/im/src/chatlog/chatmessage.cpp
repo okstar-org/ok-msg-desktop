@@ -44,7 +44,7 @@ IChatItem::Ptr ChatMessage::createChatMessage(
   QString text = rawMessage.toHtmlEscaped();
   QString senderText = item.getDisplayName();
 
-  ChatMesssageBox *msg = new ChatMesssageBox(avatar, senderText, text);
+  ChatMessageBox *msg = new ChatMessageBox(avatar, senderText, text);
   if (isMe)
   {
       msg->setLayoutDirection(Qt::RightToLeft);
@@ -91,7 +91,7 @@ IChatItem::Ptr ChatMessage::createFileTransferMessage(const ChatLogItem &item,
     auto ftw = new FileTransferWidget(nullptr, file);
     ChatLineContent * fileContent = new ChatLineContentProxy(ftw, 320, 0.6f);
 
-    ChatMesssageBox *msg = new ChatMesssageBox(avatar, senderText, fileContent);
+    ChatMessageBox *msg = new ChatMessageBox(avatar, senderText, fileContent);
     msg->setTime(date);
     return IChatItem::Ptr(msg);
 }

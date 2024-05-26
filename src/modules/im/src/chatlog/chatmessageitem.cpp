@@ -8,7 +8,7 @@
 
 #include <QGraphicsScene>
 
-ChatMesssageBox::ChatMesssageBox(const QPixmap &avatar,
+ChatMessageBox::ChatMessageBox(const QPixmap &avatar,
                                  const QString &contactName,
                                  const QString &message) {
 
@@ -24,9 +24,7 @@ ChatMesssageBox::ChatMesssageBox(const QPixmap &avatar,
     messageItem = text;
 }
 
-ChatMesssageBox::ChatMesssageBox(const QPixmap &avatar,
-                                 const QString &contactName,
-                                 ChatLineContent *messageItem) {
+ChatMessageBox::ChatMessageBox(const QPixmap &avatar, const QString &contactName, ChatLineContent *messageItem) {
     avatarItem = new ContactAvatar(avatar);
     QFont baseFont = Settings::getInstance().getChatMessageFont();
     QFont nameFont = nicknameFont(baseFont);
@@ -34,7 +32,7 @@ ChatMesssageBox::ChatMesssageBox(const QPixmap &avatar,
     this->messageItem = messageItem;
 }
 
-void ChatMesssageBox::setMessageState(MessageState state) {
+void ChatMessageBox::setMessageState(MessageState state) {
     if (msgState == state)
         return;
     msgState = state;
@@ -58,7 +56,7 @@ void ChatMesssageBox::setMessageState(MessageState state) {
     }
 }
 
-void ChatMesssageBox::layout(qreal width, QPointF scenePos) {
+void ChatMessageBox::layout(qreal width, QPointF scenePos) {
 
     auto mirrorPos = [width, scenePos, this](QPointF &pos, qreal offset) {
         if (this->layoutDirection == Qt::RightToLeft)
@@ -105,7 +103,7 @@ void ChatMesssageBox::layout(qreal width, QPointF scenePos) {
     this->scenePos = scenePos;
 }
 
-QRectF ChatMesssageBox::sceneBoundingRect() const {
+QRectF ChatMessageBox::sceneBoundingRect() const {
     QRectF itemRect = avatarItem->sceneBoundingRect();
     if (showNickname)
         itemRect = itemRect.united(messageItem->sceneBoundingRect())
@@ -118,7 +116,7 @@ QRectF ChatMesssageBox::sceneBoundingRect() const {
     return itemRect;
 }
 
-void ChatMesssageBox::setVisible(bool visible) {
+void ChatMessageBox::setVisible(bool visible) {
     avatarItem->setVisible(visible);
     if (showNickname) {
         nicknameItem->setVisible(visible);
@@ -129,46 +127,46 @@ void ChatMesssageBox::setVisible(bool visible) {
     }
 }
 
-void ChatMesssageBox::markAsDelivered(const QDateTime &time) {
+void ChatMessageBox::markAsDelivered(const QDateTime &time) {
     setMessageState(MessageState::complete);
 }
 
-ChatLineContent *ChatMesssageBox::contentAtPos(QPointF scenePos) const {
+ChatLineContent *ChatMessageBox::contentAtPos(QPointF scenePos) const {
     if (messageItem && messageItem->sceneBoundingRect().contains(scenePos))
         return messageItem;
     return nullptr;
 }
 
-ChatLineContent *ChatMesssageBox::centerContent() const {
+ChatLineContent *ChatMessageBox::centerContent() const {
     return messageItem;
 }
 
-void ChatMesssageBox::setLayoutDirection(Qt::LayoutDirection direction) {
+void ChatMessageBox::setLayoutDirection(Qt::LayoutDirection direction) {
     layoutDirection = direction;
 }
 
-void ChatMesssageBox::setShowNickname(bool show) {
+void ChatMessageBox::setShowNickname(bool show) {
     showNickname = show;
 
     nicknameItem->setVisible(show);
     nicknameItem->visibilityChanged(show);
 }
 
-QList<ChatLineContent *> ChatMesssageBox::contents() {
+QList<ChatLineContent *> ChatMessageBox::contents() {
     QList<ChatLineContent *> result({avatarItem, nicknameItem, messageItem});
     if (stateItem)
         result.append(stateItem);
     return result;
 }
 
-QFont ChatMesssageBox::nicknameFont(const QFont &baseFont) {
+QFont ChatMessageBox::nicknameFont(const QFont &baseFont) {
 
     QFont font = baseFont;
     font.setPixelSize(font.pixelSize() - 1);
     return font;
 }
 
-int ChatMesssageBox::itemType() {
+int ChatMessageBox::itemType() {
     return 0;
 }
 
