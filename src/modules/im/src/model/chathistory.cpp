@@ -424,10 +424,9 @@ void ChatHistory::loadHistoryIntoSessionChatLog(ChatLogIdx start) const
             // reflect what was sent/received.
             auto processedMessage = Message{
                     .isAction= isAction,
-//                    .id = message.id,
+//                    .id = message.id.get(),
                     .from= message.sender,
                     .to = message.receiver,
-
                     .content=messageContent,
                     .timestamp= message.timestamp
             };

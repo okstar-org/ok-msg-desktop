@@ -532,9 +532,14 @@ void GenericChatForm::setContact(const Contact *contact_)
 
     }else{
         const Friend* f = static_cast<const Friend*>(contact);
-              connect(f, &Friend::statusChanged, [&](Status::Status status, bool event){
-                  updateCallButtons(status);
-              });
+        connect(f, &Friend::statusChanged, [&](Status::Status status, bool event){
+            updateCallButtons(status);
+        });
+
+        for(auto msg: messages){
+            auto p = (ChatMesssageBox*)msg.second.get();
+            p->nickname()->setText(f->getDisplayedName());
+        }
     }
 }
 

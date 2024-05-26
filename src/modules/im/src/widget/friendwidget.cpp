@@ -73,7 +73,7 @@ FriendWidget::FriendWidget(ContentLayout *layout,
   auto dialogManager = ContentDialogManager::getInstance();
 
   m_friend = FriendList::addFriend(f);
-//  nameLabel->setText(m_friend->getDisplayedName());
+  nameLabel->setText(m_friend->getDisplayedName());
 
 
   // update alias when edited
