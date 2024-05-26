@@ -208,9 +208,9 @@ void MessageSessionWidget::showEvent(QShowEvent *e)
          auto f = FriendList::findFriend(contactId);
         if(f){
             setContact(*f);
-            auto status = Core::getInstance()->getStatus();
-            updateStatusLight(status, false);
         }
+        auto status = Core::getInstance()->getFriendStatus(contactId.toString());
+        updateStatusLight(status, false);
 
         auto msgs = sendWorker->getLastTextMessage();
         for(auto m : msgs){
@@ -481,7 +481,7 @@ void MessageSessionWidget::setFriend(const Friend *f)
         setAvatar(avatar);
     });
 
-    updateStatusLight(f->getStatus(), true);
+//    updateStatusLight(f->getStatus(), true);
 }
 
 void MessageSessionWidget::removeFriend()
@@ -624,7 +624,8 @@ void MessageSessionWidget::setRecvMessage(const FriendMessage &msg, bool isActio
   auto vis = contentWidget->isVisible();
   if(!vis){
       //更新状态信号灯
-      updateStatusLight(Status::Status::Online, true);
+      auto status = Core::getInstance()->getFriendStatus(contactId.toString());
+      updateStatusLight(status, true);
       //聊天界面不显示，消息提示。
       Widget::getInstance()->newGroupMessageAlert(GroupId(contactId), ToxPk(msg.from), msg.content, true);
   }

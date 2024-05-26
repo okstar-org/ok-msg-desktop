@@ -154,7 +154,7 @@ void ContactWidget::onFriendStatusChanged(const ToxPk &friendPk, Status::Status 
   //  }
   //
   //  f->setStatus(status);
-  //  widget->updateStatusLight();
+
   //  if (widget->isActive()) {
   //    setWindowTitle(widget->getTitle());
   //  }

@@ -49,8 +49,10 @@ GenericChatItemWidget::GenericChatItemWidget(ChatType type, const ContactId &cid
 //  lastMessageLabel->setForegroundRole(QPalette::WindowText);
 
   statusPic = new QLabel(this);
-  if(type == ChatType::Chat){ 
-      statusPic->setPixmap(QPixmap(Status::getIconPath(Status::Status::Offline)));
+  if(type == ChatType::Chat){
+      updateStatusLight(Status::Status::Offline, false);
+  }else{
+      clearStatusLight();
   }
 
 
@@ -109,25 +111,12 @@ void GenericChatItemWidget::updateLastMessage(const Message &m)
 
 void GenericChatItemWidget::updateStatusLight(Status::Status status, bool event)
 {
-    if(!isGroup()){
-        //事件（通知）状态，保留当前状态
-        auto f = FriendList::findFriend(contactId);
-        if(f){
-            prevStatus = f->getStatus();
-        }
-    }
-    statusPic->setMargin(event ? 1 : 3);
     statusPic->setPixmap(QPixmap(Status::getIconPath(status, event)));
 }
 
 void GenericChatItemWidget::clearStatusLight()
 {
     statusPic->clear();
-    if(prevStatus!=Status::Status::None){
-        //恢复之前状态
-        statusPic->setMargin( 1 );
-        statusPic->setPixmap(QPixmap(Status::getIconPath(prevStatus, false)));
-    }
 }
 
 

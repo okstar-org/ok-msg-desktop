@@ -299,7 +299,7 @@ void ChatWidget::onFriendStatusChanged(const ToxPk &friendPk,
   //  }
   //
 
-  //  widget->updateStatusLight();
+
   //  if (widget->isActive()) {
   //    setWindowTitle(widget->getTitle());
   //  }
