@@ -612,18 +612,23 @@ MessageSessionWidget *MessageSessionListWidget::getMessageSession(const QString 
 
 void MessageSessionListWidget::addFriend(const Friend *f)
 {
-    auto ms = getMessageSession(f->getId());
-    if(ms){
-        ms->setFriend(f);
+    auto ms = getMessageSession(f->getId().toString());
+    if(!ms){
+      qWarning() <<"Unable to find message session" <<f->getId();
+      return;
     }
+    ms->setFriend(f);
+
 }
 
 void MessageSessionListWidget::removeFriend(const Friend *f)
 {
-    auto ms = getMessageSession(f->getId());
-    if(ms){
-        ms->removeFriend();
+    auto ms = getMessageSession(f->getId().toString());
+    if(!ms){
+      qWarning() <<"Unable to find message session" <<f->getId();
+      return;
     }
+    ms->removeFriend();
 }
 
 

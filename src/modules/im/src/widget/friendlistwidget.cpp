@@ -94,11 +94,11 @@ FriendListWidget::~FriendListWidget() {
 
 }
 
-FriendWidget *FriendListWidget::addFriend(const ToxPk &friendPk, bool isFriend) {
-  qDebug() << __func__ << friendPk.toString();
-  auto exist = getFriend(friendPk);
+FriendWidget *FriendListWidget::addFriend(const FriendInfo &friendInfo) {
+  qDebug() << __func__ << friendInfo;
+  auto exist = getFriend(friendInfo.id);
   if (exist) {
-      qWarning() <<"Exist friend"<< friendPk.toString();
+      qWarning() <<"Exist friend"<< friendInfo.id;
     return exist;
   }
 
@@ -108,40 +108,40 @@ FriendWidget *FriendListWidget::addFriend(const ToxPk &friendPk, bool isFriend) 
   auto &settings = Settings::getInstance();
   const auto compact = settings.getCompactLayout();
 
-  auto fw = new FriendWidget(m_contentLayout, friendPk, isFriend, this);
+  auto fw = new FriendWidget(m_contentLayout, friendInfo, this);
   connectFriendWidget(*fw);
-  friendWidgets.insert(friendPk.toString(), fw);
+  friendWidgets.insert(friendInfo.getId().toString(), fw);
   //  CircleWidget *circleWidget = CircleWidget::getFromID(circleIndex);
   //  if (circleWidget == nullptr)
   //    moveWidget(fw, s, true);
   //  else
   //    circleWidget->addFriendWidget(fw, s);
-  auto status = core->getFriendStatus(friendPk.toString());
+  auto status = core->getFriendStatus(friendInfo.toString());
   listLayout->addFriendWidget(fw,status);
-
+  setFriendStatus(friendInfo.getId(), status);
 
 
   //  TODO 连接朋友活跃状态
   //  connect(chatForm, &ChatForm::updateFriendActivity, this,
   //          &Widget::updateFriendActivity);
 
-  //  friendMessageDispatchers[friendPk] = messageDispatcher;
-  //  friendChatLogs[friendPk] = chatHistory;
-  //  friendChatrooms[friendPk] = chatRoom;
-  //  friendWidgets[friendPk] = friendWidget;
-  //  chatForms[friendPk] = chatForm;
+  //  friendMessageDispatchers[friendInfo] = messageDispatcher;
+  //  friendChatLogs[friendInfo] = chatHistory;
+  //  friendChatrooms[friendInfo] = chatRoom;
+  //  friendWidgets[friendInfo] = friendWidget;
+  //  chatForms[friendInfo] = chatForm;
 
-  //  const auto activityTime = settings.getFriendActivity(friendPk);
+  //  const auto activityTime = settings.getFriendActivity(friendInfo);
   //  const auto chatTime = chatForm->getLatestTime();
   //  if (chatTime > activityTime && chatTime.isValid()) {
-  //    settings.setFriendActivity(friendPk, chatTime);
+  //    settings.setFriendActivity(friendInfo, chatTime);
   //  }
 
 //  listLayout->addWidget(fw);
-  setFriendStatus(friendPk, status);
+
 
   //
-  //  auto notifyReceivedCallback = [this, friendPk](const ToxPk &author,
+  //  auto notifyReceivedCallback = [this, friendInfo](const ToxPk &author,
   //                                                 const Message &message) {
   //    auto isTargeted =
   //        std::any_of(message.metadata.begin(), message.metadata.end(),
@@ -149,14 +149,14 @@ FriendWidget *FriendListWidget::addFriend(const ToxPk &friendPk, bool isFriend) 
   //                      return metadata.type ==
   //                      MessageMetadataType::selfMention;
   //                    });
-  //    newFriendMessageAlert(friendPk, message.content);
+  //    newFriendMessageAlert(friendInfo, message.content);
   //  };
   //
   //  auto notifyReceivedConnection =
   //      connect(messageDispatcher.get(),
   //              &IMessageDispatcher::messageReceived, notifyReceivedCallback);
   //
-  //  friendAlertConnections.insert(friendPk, notifyReceivedConnection);
+  //  friendAlertConnections.insert(friendInfo, notifyReceivedConnection);
   //
   //  connect(newfriend, &Friend::aliasChanged, this,
   //          &Widget::onFriendAliasChanged);
@@ -199,17 +199,17 @@ FriendWidget *FriendListWidget::addFriend(const ToxPk &friendPk, bool isFriend) 
   //          &FriendWidget::onAvatarRemoved);
   //
   //  // Try to get the avatar from the cache
-  //  QPixmap avatar = Nexus::getProfile()->loadAvatar(friendPk);
+  //  QPixmap avatar = Nexus::getProfile()->loadAvatar(friendInfo);
   //  if (!avatar.isNull()) {
-  //    //chatForm->onAvatarChanged(friendPk, avatar);
-  //    //friendWidget->onAvatarSet(friendPk, avatar);
+  //    //chatForm->onAvatarChanged(friendInfo, avatar);
+  //    //friendWidget->onAvatarSet(friendInfo, avatar);
   //  }
   //
 //    FilterCriteria filter = getFilterCriteria();
 //    friendWidget->search(ui->searchContactText->text(),
 //    filterOffline(filter));
 
-  //  core->getFriendInfo(friendPk.toString());
+  //  core->getFriendInfo(friendInfo.toString());
 
   return fw;
 }
@@ -934,15 +934,15 @@ void FriendListWidget::removeFriend(const ToxPk &friendPk) {
   qDebug() << __func__ << friendPk.toString();
 
   auto fw = friendWidgets.value(friendPk.toString());
+  if(!fw){
+      qWarning() <<"Unable to find friendWidget";
+    return;
+  }
+    listLayout->removeFriendWidget(fw);
+    friendWidgets.remove(friendPk.toString());
+    emit deleteFriendWidget(friendPk);
+    delete fw;
 
-  listLayout->removeFriendWidget(fw);
-  friendWidgets.remove(friendPk.toString());
-
-//  FriendList::removeFriend(friendPk, false);
-
-  emit deleteFriendWidget(friendPk);
-//  emit Widget::getInstance()->toDeleteChat(friendPk.toString());
-  delete fw;
 }
 
 GroupWidget *FriendListWidget::getGroup(const GroupId &id) {
@@ -986,7 +986,7 @@ void FriendListWidget::setRecvGroupMessage(const GroupMessage& msg) {
 
 }
 
-void FriendListWidget::setFriendStatus(const ToxPk &friendPk,
+void FriendListWidget::setFriendStatus(const ContactId &friendPk,
                                        Status::Status status) {
   auto fw = getFriend(friendPk);
   if (!fw) {

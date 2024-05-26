@@ -15,40 +15,35 @@
 #include "src/persistence/profile.h"
 #include "src/widget/form/chatform.h"
 
-
-
-
-Friend::Friend(
-               const ToxPk &friendPk,    //
-               bool isFriend,
+Friend::Friend(const ToxPk &friendPk, //
+               bool isFriend, //
                const QString &userAlias, //
-               const QString &userName
-             )
-    : Contact(friendPk, userName, userAlias, false),
-      hasNewEvents{false},  //
-      friendStatus{Status::Status::Offline},
-      isFriend_{isFriend}
-{
-    auto core=Core::getInstance();
-    friendStatus = core->getFriendStatus(friendPk.toString());
+               const QString &userName)//
+    : Contact(friendPk, userName, userAlias, false),//
+      id{friendPk}, //
+      hasNewEvents{false}, //
+      friendStatus{Status::Status::Offline},//
+      isFriend_{isFriend} {
+  auto core = Core::getInstance();
+  friendStatus = core->getFriendStatus(friendPk.toString());
 }
 
-Friend::~Friend()
-{
-    qDebug()<<__func__;
-}
 
+Friend::~Friend() { qDebug() << __func__; }
+
+QString Friend::toString() const
+{
+    return getId().toString();
+}
 
 void Friend::setStatusMessage(const QString &message) {
   if (statusMessage != message) {
     statusMessage = message;
-    emit statusMessageChanged( message);
+    emit statusMessageChanged(message);
   }
 }
 
 QString Friend::getStatusMessage() const { return statusMessage; }
-
-
 
 void Friend::setEventFlag(bool flag) { hasNewEvents = flag; }
 
@@ -67,6 +62,5 @@ void Friend::setStatus(Status::Status s) {
   }
 }
 
-Status::Status Friend::getStatus() const {
-    return friendStatus;
-}
+Status::Status Friend::getStatus() const { return friendStatus; }
+

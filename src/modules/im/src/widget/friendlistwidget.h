@@ -46,11 +46,11 @@ public:
   SortingMode getMode() const;
   void reloadTheme();
 
-  FriendWidget *addFriend(const ToxPk &friendPk,bool isFriend);
+  FriendWidget *addFriend(const FriendInfo &friendInfo);
   FriendWidget *getFriend(const ContactId &friendPk);
   void removeFriend(const ToxPk &cid);
 
-  void setFriendStatus(const ToxPk &friendPk,  Status::Status status);
+  void setFriendStatus(const ContactId &friendPk,  Status::Status status);
   void setFriendStatusMsg(const ToxPk &friendPk,  const QString& statusMsg);
   void setFriendName(const ToxPk &friendPk,  const QString& name);
   void setFriendAvatar(const ToxPk &friendPk, const QByteArray& avatar);

@@ -303,7 +303,7 @@ void GroupChatForm::dropEvent(QDropEvent* ev)
     if (!frnd)
         return;
 
-    QString friendId = frnd->getId();
+    QString friendId = frnd->getId().toString();
     QString cid = contactId->toString();
     if (Status::isOnline(frnd->getStatus())) {
         Core::getInstance()->groupInviteFriend(friendId, cid);

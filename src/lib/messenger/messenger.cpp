@@ -21,6 +21,7 @@
 #include "lib/plugin/pluginmanager.h"
 
 #include <QThread>
+#include <jid.h>
 #include <memory>
 
 namespace lib {
@@ -182,15 +183,11 @@ bool Messenger::connectIM( ) {
    * friendHandlers
    */
   connect(_im, &IM::receiveFriend, this,
-          &Messenger::onFriendReceived, Qt::QueuedConnection);
-
-  connect(
-      _im, &IM::receiveFriendDone, this,//
-      [&]() {
-        for (auto handler : friendHandlers) {
-          handler->onFriendDone();
-        }
-      }, Qt::QueuedConnection);
+          [&](const Friend& frnd){
+            for (auto handler : friendHandlers) {
+              handler->onFriend(frnd);
+            }
+          });
 
   connect(_im, &IM::receiveFriendRequest, this,
           [&](const QString friendId, QString msg) -> void {
@@ -534,18 +531,17 @@ bool Messenger::cancelToFriend(const QString &f, const QString &callId) {
   return true;
 }
 
-void Messenger::sendFriendRequest(const QString &username,const QString &nick, const QString &message) {
-  qDebug() << "sendFriendRequest: " << username << nick << message;
+void Messenger::sendFriendRequest(const QString &f,const QString &nick, const QString &message) {
+  qDebug() <<__func__ << f << nick << message;
   auto _session = ok::session::AuthSession::Instance();
   auto _im = _session->im();
-  _im->addRosterItem(username, nick, message);
+  _im->addFriend(JID(stdstring(f)), nick, message);
 }
 
 void Messenger::acceptFriendRequest(const QString &f) {
   auto _session = ok::session::AuthSession::Instance();
   auto _im = _session->im();
   _im->acceptFriendRequest(f);
-
 }
 
 void Messenger::rejectFriendRequest(const QString &f) {
@@ -557,13 +553,13 @@ void Messenger::rejectFriendRequest(const QString &f) {
 void Messenger::getFriendVCard(const QString &f) {
   auto _session = ok::session::AuthSession::Instance();
   auto _im = _session->im();
-  _im->fetchVCard(f);
+  _im->fetchFriendVCard(f);
 }
 
 bool Messenger::removeFriend(const QString &f) {
   auto _session = ok::session::AuthSession::Instance();
   auto _im = _session->im();
-  return _im->removeFriend(f);
+  return _im->removeFriend(JID(f.toStdString()));
 }
 
 size_t Messenger::getFriendCount() {
@@ -572,12 +568,10 @@ size_t Messenger::getFriendCount() {
   return _im->getRosterCount();
 }
 
-std::list<FriendId> Messenger::getFriendList() {
-  std::list<FriendId> list;
+void Messenger::getFriendList(std::list<Friend>& list) {
   auto _session = ok::session::AuthSession::Instance();
   auto _im = _session->im();
   _im->getRosterList(list);
-  return list;
 }
 
 Tox_User_Status Messenger::getFriendStatus(const QString &f) {
@@ -711,14 +705,14 @@ void Messenger::loadGroupList() {
 bool Messenger::createGroup(const QString &group) {
   auto _session = ok::session::AuthSession::Instance();
   auto _im = _session->im();
-  _im->createRoom(_im->wrapRoomJid(group));
+  _im->createRoom(JID(stdstring(group)));
   return true;
 }
 
 bool Messenger::inviteGroup(const QString &group, const QString &f) {
   auto _session = ok::session::AuthSession::Instance();
   auto _im = _session->im();
-  return _im->inviteToRoom(_im->wrapRoomJid(group), _im->wrapJid(f));
+  return _im->inviteToRoom(JID(stdstring(group)), JID(stdstring(f)));
 }
 
 bool Messenger::leaveGroup(const QString &group) {
@@ -758,13 +752,11 @@ void Messenger::setSelfAvatar(const QByteArray &avatar) {
   _im->setAvatar(avatar);
 }
 
-void Messenger::rejectFileRequest(QString friendId,
-                                  const FileHandler::File &file) {
+void Messenger::rejectFileRequest(QString friendId, const FileHandler::File &file) {
   _jingle->rejectFileRequest(friendId, file);
 }
 
-void Messenger::acceptFileRequest(QString friendId,
-                                  const FileHandler::File &file) {
+void Messenger::acceptFileRequest(QString friendId, const FileHandler::File &file) {
   _jingle->acceptFileRequest(friendId, file);
 }
 
@@ -802,11 +794,6 @@ void Messenger::onGroupReceived(QString groupId, QString name) {
     for (auto handler : groupHandlers) {
       handler->onGroup(groupId, name);
     }
-}
-void Messenger::onFriendReceived(QString friendId) {
-  for (auto handler : friendHandlers) {
-    handler->onFriend(friendId);
-  }
 }
 
 } // namespace messenger

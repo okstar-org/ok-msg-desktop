@@ -26,6 +26,7 @@
 #include "src/model/status.h"
 // #include "src/net/bootstrapnodeupdater.h"
 #include "base/compatiblerecursivemutex.h"
+#include "src/model/friend.h"
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
 #include "src/util/strongtype.h"
@@ -40,8 +41,10 @@
 #include <QStringBuilder>
 #include <QTimer>
 
+#include <algorithm>
 #include <cassert>
 #include <chrono>
+#include <ranges>
 #include <thread>
 
 const QString Core::TOX_EXT = ".tox";
@@ -519,16 +522,10 @@ void Core::bootstrapDht() {
   //  }
 }
 
-void Core::onFriend(const QString friendId) {
-  qDebug() << __func__ << friendId;
-  emit friendAdded(  ToxPk(friendId), true);
+void Core::onFriend(const lib::messenger::Friend& frnd) {
+  qDebug() << __func__ << frnd;
+  emit friendAdded(FriendInfo{frnd});
 }
-
-void Core::onFriendDone() {
-  qDebug() << "onFriend done.";
-  emit friendAddedDone();
-}
-
 
 void Core::onFriendRequest(const QString friendId,
                            QString msg) {
@@ -1233,15 +1230,17 @@ void Core::checkLastOnline(QString friendId) {
  * @brief Returns the list of friendIds in our friendlist, an empty list on
  * error
  */
-QVector<ToxPk> Core::loadFriendList() const {
+void Core::loadFriendList(std::list<FriendInfo> &friends) const {
   QMutexLocker ml{&coreLoopLock};
 
-  std::list<lib::messenger::FriendId> friendList = tox->getFriendList();
-  QVector<ToxPk> friends;
-  for (auto &p : friendList) {
-    friends.push_back(ToxPk(p.toString()));
+  std::list<lib::messenger::Friend> fs;
+  tox->getFriendList(fs);
+
+  for (auto &f :fs) {
+    auto x= FriendInfo{f};
+    friends.push_back(x);
   }
-  return friends;
+
 }
 
 /**

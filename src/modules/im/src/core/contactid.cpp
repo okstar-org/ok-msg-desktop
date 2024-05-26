@@ -100,3 +100,8 @@ int ContactId::getSize()
     return toString().size();
 }
 
+QDebug &operator<<(QDebug &debug, const ContactId &f) {
+  QDebugStateSaver saver(debug);
+  debug.nospace() << f.toString();
+  return debug;
+}

@@ -54,6 +54,7 @@ public:
 
     bool isGroup = false;
 
+    friend QDebug& operator<<(QDebug& debug, const ContactId &f);
 };
 
 inline uint qHash(const ContactId& id)

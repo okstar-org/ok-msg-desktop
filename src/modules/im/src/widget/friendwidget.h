@@ -37,7 +37,7 @@ class FriendWidget : public GenericChatroomWidget
     Q_OBJECT
 
   public:
-    FriendWidget(ContentLayout* layout, const ToxPk &friendPk, bool isFriend, QWidget* parent=nullptr);
+    FriendWidget(ContentLayout* layout, const FriendInfo& f, QWidget* parent=nullptr);
     ~FriendWidget();
     void contextMenuEvent(QContextMenuEvent* event) override final;
     void setAsActiveChatroom() override final;

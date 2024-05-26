@@ -49,7 +49,7 @@ public slots:
   void do_openAddForm();
 
   void onCoreChanged(Core &core);
-  void onFriendAdded(const ToxPk &friendPk, bool isFriend);
+  void onFriendAdded(const FriendInfo &frnd);
   void onFriendUsernameChanged(const ToxPk &friendPk, const QString &username);
 
   void onFriendStatusChanged(const ToxPk &friendPk, Status::Status status);

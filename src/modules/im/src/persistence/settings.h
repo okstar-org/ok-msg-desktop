@@ -33,6 +33,8 @@
 #include <QObject>
 #include <QPixmap>
 
+#include <src/core/contactid.h>
+
 
 class Profile;
 class QCommandLineParser;
@@ -457,7 +459,7 @@ public:
     QString getFriendAddress(const QString& publicKey) const;
     void updateFriendAddress(const QString& newAddr);
 
-    QString getFriendAlias(const ToxPk& id) const override;
+    QString getFriendAlias(const ContactId& id) const override;
     void setFriendAlias(const ToxPk& id, const QString& alias) override;
 
     int getFriendCircleID(const ToxPk& id) const override;

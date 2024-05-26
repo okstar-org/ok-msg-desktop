@@ -21,22 +21,24 @@
 #include <QObject>
 #include <QString>
 
+namespace lib::messenger{
+class Friend;
+}
 
 class Friend : public Contact {
   Q_OBJECT
 public:
+
   Friend(const ToxPk &friendPk,
          bool isFriend,
          const QString &userAlias = {},
          const QString &userName = {});
 
-  Friend(const Friend &other) = delete;
-
   ~Friend();
 
-  Friend &operator=(const Friend &other) = delete;
+  const ToxPk& getId() const {return id; };
 
-
+  QString toString() const;
 
   bool hasAlias() const;
 
@@ -65,7 +67,8 @@ signals:
 public slots:
 
 private:
-  bool hasNewEvents;
+  ToxPk id;
+  bool hasNewEvents{};
   bool isFriend_;
   QString statusMessage;
   Status::Status friendStatus;

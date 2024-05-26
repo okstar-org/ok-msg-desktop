@@ -80,6 +80,12 @@ ToxPk::ToxPk(const ContactId& rawId)
 {
 }
 
+ToxPk::ToxPk(const lib::messenger::FriendId &fId):
+    ContactId(fId.toString())
+{
+
+}
+
 bool ToxPk::operator==(const ToxPk &other) const {
     return toString() == other.toString();
 }

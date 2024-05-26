@@ -112,6 +112,7 @@ public:
   void setNickname(const QString &nickname);
   QString getNickname();
 
+
   void setAvatar(const QByteArray &avatar);
   void changePassword(const QString &password);
   FriendId getSelfId();
@@ -121,8 +122,9 @@ public:
   /**
    * fetchVCard
    */
-  void fetchVCard(const QString &friendId);
+  void fetchFriendVCard(const QString &friendId);
   Tox_User_Status getFriendStatus(const QString &friendId);
+  void requestFriendNickname(const JID& friendId);
 
   /**
    * send
@@ -149,9 +151,10 @@ public:
    */
   RosterManager *enableRosterManager();
 
-  void addRosterItem(const QString &username,
+  void addFriend(const JID &jid,
                                 const QString &nick,
                                 const QString &msg);
+  bool removeFriend(const JID &jid);
 
   void acceptFriendRequest(const QString &);
   void rejectFriendRequest(const QString &);
@@ -159,10 +162,10 @@ public:
   void sendReceiptRecieved(const JID &to, QString receipt);
 
   size_t getRosterCount();
-  void getRosterList(std::list<FriendId> &);
+  void getRosterList(std::list<Friend> &);
 
   void retry();
-  bool removeFriend(const QString &friendId);
+
 
   // gloox log
   void handleLog(LogLevel level, LogArea area,
@@ -790,7 +793,7 @@ private:
   IMStatus _status;
   Presence::PresenceType selfPresType = gloox::Presence::Unavailable;
 
-  QString m_addFriendMsg;
+
 
   std::map<PeerId, Jingle::RTP::Medias> mPeerRequestMedias;
 
@@ -805,8 +808,6 @@ private:
   bool mUIStarted;
 
   bool mStarted;
-
-  void timerEvent(QTimerEvent *) override;
 
   void doPubSubEvent(const gloox::PubSub::Event *pse, const Message &msg,
                      QString &friendId);
@@ -827,7 +828,7 @@ signals:
   void receiveRoomMessage(QString groupId, PeerId friendId, IMMessage);
 
   // friend events
-  void receiveFriend(QString friendId);
+  void receiveFriend(Friend frnd);
 
   void receiveFriendDone();
 
@@ -897,8 +898,6 @@ signals:
   void doPubSubEventDone();
 
 public slots:
-  void onSelfNicknameChanged(const QString &nickname);
-
   void sendServiceDiscoveryItems();
   void sendServiceDiscoveryInfo(const JID &item);
 };

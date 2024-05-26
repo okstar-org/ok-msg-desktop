@@ -17,16 +17,18 @@
 
 #include "base/hashs.h"
 #include "base/logs.h"
-#include "base/xmls.h"
 #include "base/times.h"
-
+#include "base/xmls.h"
+#include <algorithm>
 #include <list>
+#include <ranges>
 #include <string>
 #include <thread>
 #include <utility>
 
-#include <avatar.h>
+#include <QStringList>
 #include <attention.h>
+#include <avatar.h>
 #include <base64.h>
 #include <capabilities.h>
 #include <chatstate.h>
@@ -39,8 +41,8 @@
 #include <nickname.h>
 #include <pubsubevent.h>
 #include <receipt.h>
-#include <rostermanager.h>
 #include <rosteritemdata.h>
+#include <rostermanager.h>
 #include <vcardupdate.h>
 
 namespace lib {
@@ -59,21 +61,22 @@ using namespace gloox;
  * @param features_
  */
 IM::IM(QString host, QString user, QString pwd,
-       QStringList features_)                           //
+       QStringList features_)                             //
     : osInfo(ok::base::SystemInfo::instance()->osInfo()), //
-      features(std::move(features_)),                   //
-      _host(stdstring(host)),                           //
-      _username(stdstring(user)),                       //
-      _password(stdstring(pwd)),                        //
-      _status(IMStatus::DISCONNECTED),                  //
-      mExtDisco{ExtDisco()},                            //
-      mUIStarted(false),                                 //
-      mStarted(false)                                 //
+      features(std::move(features_)),                     //
+      _host(stdstring(host)),                             //
+      _username(stdstring(user)),                         //
+      _password(stdstring(pwd)),                          //
+      _status(IMStatus::DISCONNECTED),                    //
+      mExtDisco{ExtDisco()},                              //
+      mUIStarted(false),                                  //
+      mStarted(false)                                     //
 {
 
-  qDebug() << ("Create messenger instance...");
+  qDebug() << __func__ << "Create instance...";
 
   setObjectName("IM-Connect");
+
   // 生成本机resource. 格式:OkEDU.<HOST>.[VER].[UNIQUE]
   _resource = QString("%1.%2.[%3].%4")         //
                   .arg(APPLICATION_SHORT_NAME, //
@@ -86,23 +89,17 @@ IM::IM(QString host, QString user, QString pwd,
   // qRegisterMetaType
   qRegisterMetaType<JID>("JID");
   qRegisterMetaType<FriendId>("FriendId");
+  qRegisterMetaType<Friend>("Friend");
   qRegisterMetaType<PeerId>("PeerId");
   qRegisterMetaType<IMMessage>("IMMessage");
   qRegisterMetaType<GroupOccupant>("GroupOccupant");
 
-  startTimer(20 * 1000);
-  connect(this, &IM::selfNicknameChanged, this, &IM::onSelfNicknameChanged);
   qDebug() << ("Create messenger instance is successfully");
 }
 
-IM::~IM() {
-  qDebug(("IM::~IM..."));
-  disconnect(this, &IM::selfNicknameChanged, this, &IM::onSelfNicknameChanged);
-}
+IM::~IM() { qDebug() << __func__; }
 
 void IM::run() { doConnect(); }
-
-void IM::timerEvent(QTimerEvent *e) {}
 
 std::unique_ptr<Client> IM::makeClient() {
   JID loginJid(_username + "@" + _host + "/" + _resource);
@@ -139,7 +136,6 @@ std::unique_ptr<Client> IM::makeClient() {
   client->registerStanzaExtension(new ExtDisco());
   client->registerStanzaExtension(new Addresses());
   client->registerStanzaExtension(new Nickname(nullptr));
-
 
   /**
    *
@@ -226,7 +222,7 @@ std::unique_ptr<Client> IM::makeClient() {
   client->registerIqHandler(this, ExtIBB);
   client->registerIqHandler(this, ExtPubSub);
   client->registerIqHandler(this, ExtSrvDisco);
-//  client->registerIncomingHandler(this);
+  //  client->registerIncomingHandler(this);
 
   /**
    * listeners
@@ -235,8 +231,8 @@ std::unique_ptr<Client> IM::makeClient() {
 
   client->registerPresenceHandler(this);
   client->registerMessageSessionHandler(this);
-//  client->registerMessageHandler(this);
-//  client->setStreamManagement(true, true);
+  //  client->registerMessageHandler(this);
+  //  client->setStreamManagement(true, true);
 
 #ifdef LOG_XMPP
   client->logInstance().registerLogHandler(LogLevelDebug, LogAreaAll, this);
@@ -257,38 +253,38 @@ void IM::stop() {
 }
 
 void IM::onConnect() {
-  qDebug(("connected"));
+  qDebug() << __func__ << "connected";
   assert(_client);
 
   _status = IMStatus::CONNECTED;
 
   auto res = _client->resource();
-  qDebug()<<("resource:")<<(qstring(res));
+  qDebug() << __func__ << ("resource:") << (qstring(res));
 
-//  fetchVCard(qstring(self().bare()));
+  //  fetchVCard(qstring(self().bare()));
 
-//  emit selfIdChanged(qstring(_client->username()));
+  //  emit selfIdChanged(qstring(_client->username()));
   emit connectResult(_status);
   emit connected();
 
-  if(!mStarted){
-      qWarning() <<"Waiting UI to ready.";
-      sleep(1);
+  if (!mStarted) {
+    qWarning() << "Waiting UI to ready.";
+    sleep(1);
   }
-  qDebug() << "Resume.";
+  qDebug() << __func__ << "Resume.";
 }
 
 void IM::doConnect() {
-  qDebug(("connecting ..."));
+  qDebug() << __func__ << "connecting ...";
   if (_status == IMStatus::CONNECTED || _status == IMStatus::CONNECTING) {
     return;
   }
   // set status to connecting
   _status = IMStatus::CONNECTING;
 
-  qDebug() << "Create IM client...";
+  qDebug() << __func__ << "Create IM client...";
   _client = makeClient();
-  qDebug() << "Create IM client is:" << _client.get();
+  qDebug() << __func__ << "Create IM client is:" << _client.get();
   _client->connect(true);
 }
 
@@ -308,22 +304,9 @@ void IM::interrupt() {
   }
 }
 
-gloox::JID IM::wrapRoomJid(const QString &group) const {
-  return gloox::JID(group.toStdString() + "@" + _host);
-}
-
-gloox::JID IM::wrapJid(const QString &f) const {
-  return gloox::JID(f.toStdString() + "@" + _host);
-}
-
 IMMessage IM::fromXMsg(MsgType type, const gloox::Message &msg) {
 
-    IMMessage imMsg = {
-        .from =qstring( msg.from().full()),
-        .to = qstring(msg.to().full()),
-        .body=qstring(msg.body()),
-        .timestamp = ::base::Times::now()
-    };
+  IMMessage imMsg = {.from = qstring(msg.from().full()), .to = qstring(msg.to().full()), .body = qstring(msg.body()), .timestamp = ::base::Times::now()};
 
   if (!msg.id().empty()) {
     imMsg.id = (qstring(msg.id()));
@@ -345,15 +328,13 @@ void IM::enableDiscoManager() {
   /**
    * 头像相关
    */
-//  client->registerStanzaExtension(new Avatar);
-//  // urn:xmpp:avatar:data
-//  disco->addFeature(XMLNS_AVATAR);
-//  // urn:xmpp:avatar:metadata
-//  disco->addFeature(XMLNS_META_AVATAR);
-//  // urn:xmpp:avatar:metadata+notify
-//  disco->addFeature(XMLNS_META_AVATAR + "+notify");
-
-
+  //  client->registerStanzaExtension(new Avatar);
+  //  // urn:xmpp:avatar:data
+  //  disco->addFeature(XMLNS_AVATAR);
+  //  // urn:xmpp:avatar:metadata
+  //  disco->addFeature(XMLNS_META_AVATAR);
+  //  // urn:xmpp:avatar:metadata+notify
+  //  disco->addFeature(XMLNS_META_AVATAR + "+notify");
 
   disco->addFeature(XMLNS_CHAT_STATES);
   disco->addFeature(XMLNS_MUC);
@@ -409,7 +390,6 @@ void IM::enableDiscoManager() {
   disco->addFeature(XMLNS_NICKNAME + "+notify");
   client->registerStanzaExtension(new Nickname(nullptr));
 
-
   client->registerStanzaExtension(new VCardUpdate);
   client->registerStanzaExtension(new Capabilities);
   client->registerStanzaExtension(new Disco::Items);
@@ -425,7 +405,6 @@ void IM::enableDiscoManager() {
   client->registerStanzaExtension(new ExtDisco());
   client->registerStanzaExtension(new Addresses());
 
-
   disco->registerDiscoHandler(this);
   disco->registerNodeHandler(this, EmptyString);
 }
@@ -438,8 +417,8 @@ void IM::requestVCards() {
   vCardManager->fetchVCard(self().bareJID(), this);
 }
 
-gloox::RosterManager * IM::enableRosterManager() {
-  qDebug() << __func__ ;
+gloox::RosterManager *IM::enableRosterManager() {
+  qDebug() << __func__;
   /**
    * roster
    */
@@ -447,21 +426,21 @@ gloox::RosterManager * IM::enableRosterManager() {
   pRosterManager->registerRosterListener(this);
   return pRosterManager;
   // enable carbons（多终端支持）
-//  IQ iq(IQ::IqType::Set, JID(), "server");
-//  iq.addExtension(new Carbons(gloox::Carbons::Enable));
-//  _client->send(iq);
-//
-//  // request ext server disco
-//  IQ iq2(gloox::IQ::Get, JID(_host));
-//  auto t = iq2.tag();
-//  t->addChild(gloox::ExtDisco::newRequest());
-//  _client->send(t);
-//
-//  /**
-//   * Registration
-//   */
-//  mRegistration = std::make_unique<Registration>(_client.get());
-//  mRegistration->registerRegistrationHandler(this);
+  //  IQ iq(IQ::IqType::Set, JID(), "server");
+  //  iq.addExtension(new Carbons(gloox::Carbons::Enable));
+  //  _client->send(iq);
+  //
+  //  // request ext server disco
+  //  IQ iq2(gloox::IQ::Get, JID(_host));
+  //  auto t = iq2.tag();
+  //  t->addChild(gloox::ExtDisco::newRequest());
+  //  _client->send(t);
+  //
+  //  /**
+  //   * Registration
+  //   */
+  //  mRegistration = std::make_unique<Registration>(_client.get());
+  //  mRegistration->registerRegistrationHandler(this);
 }
 
 void IM::doDisconnect() {
@@ -470,13 +449,12 @@ void IM::doDisconnect() {
 }
 
 QDomDocument IM::buildMessage(const QString &to,  //
-                             const QString &msg, //
-                             QString &id) {
+                              const QString &msg, //
+                              QString &id) {
 
   std::string msgId = id.isEmpty() ? _client->getID() : id.toStdString();
 
-  gloox::Message m(gloox::Message::MessageType::Chat, JID(stdstring(to)),
-                   msg.toStdString());
+  gloox::Message m(gloox::Message::MessageType::Chat, JID(stdstring(to)), msg.toStdString());
   m.setFrom(_client->jid());
   m.setID(msgId);
   m.addExtension(new Receipt(Receipt::Request));
@@ -494,8 +472,7 @@ bool IM::sendTo(const QString &friendId, const QString &msg, QString &id) {
   std::string msgId = id.isEmpty() ? _client->getID() : id.toStdString();
   qDebug() << "msgId:" << qstring(msgId);
 
-  gloox::Message m(gloox::Message::MessageType::Chat, JID(stdstring(friendId)),
-                   msg.toStdString());
+  gloox::Message m(gloox::Message::MessageType::Chat, JID(stdstring(friendId)), msg.toStdString());
   m.setFrom(_client->jid());
   m.setID(msgId);
   m.addExtension(new Receipt(Receipt::Request));
@@ -515,10 +492,8 @@ void IM::makeId(QString &id) {
 // Handle Message session
 void IM::handleMessageSession(MessageSession *session) {
   auto from = qstring(session->target().full());
-  auto sid =  qstring(session->threadID());
-  qDebug() << __func__
-           << "from" << from
-           << "sid:" << sid;
+  auto sid = qstring(session->threadID());
+  qDebug() << __func__ << "from" << from << "sid:" << sid;
 
   // 放入最新的session
 
@@ -540,24 +515,23 @@ void IM::handleMessageSession(MessageSession *session) {
   //  m_pepEventFilter->registerPersonalEventingProtocolHandler(this);
   //  auto jid = session->target();
   //  sessionMap.emplace(std::pair(jid.bare(), session));
-    session->registerMessageHandler(this);
+  session->registerMessageHandler(this);
 
-    emit receiveFriendMessageSession(qstring(session->target().bare()), sid);
+  emit receiveFriendMessageSession(qstring(session->target().bare()), sid);
 
   // 聊天状态过滤器，获取：正在中等输入状态
-//  if (m_chatStateFilters.size() > 1000) {
-//    return;
-//  }
-//  auto csf = new ChatStateFilter(session);
-//  csf->registerChatStateHandler(this);
-//  m_chatStateFilters.emplace(session->target().bare(), csf);
-//  // TODO delete csf
+  //  if (m_chatStateFilters.size() > 1000) {
+  //    return;
+  //  }
+  //  auto csf = new ChatStateFilter(session);
+  //  csf->registerChatStateHandler(this);
+  //  m_chatStateFilters.emplace(session->target().bare(), csf);
 }
 
 void IM::handleMessage(const gloox::Message &msg, MessageSession *session) {
 
   if (!session) {
-    qWarning()<<"session is NULL";
+    qWarning() << "session is NULL";
     return;
   }
 
@@ -567,9 +541,7 @@ void IM::handleMessage(const gloox::Message &msg, MessageSession *session) {
   auto friendId = qstring(from.bare());
   auto body = qstring(msg.body());
 
-  qDebug()  <<__func__<< "from:" << peerId
-            << "sessionId:" << threadId
-            << "subtype:" << (int)msg.subtype();
+  qDebug() << __func__ << "from:" << peerId << "sessionId:" << threadId << "subtype:" << (int)msg.subtype();
 
   sessionIdMap.emplace(friendId.toStdString(), threadId.toStdString());
   sessionMap.emplace(threadId.toStdString(), session);
@@ -625,8 +597,7 @@ void IM::handleMessage(const gloox::Message &msg, MessageSession *session) {
   auto address = msg.address();
   if (address) {
     for (const auto &item : address->addresses()) {
-      qDebug() << "address type:" << qstring(item.type)
-               << "jid:" << qstring(item.jid.full());
+      qDebug() << "address type:" << qstring(item.type) << "jid:" << qstring(item.jid.full());
     }
   }
 
@@ -642,8 +613,7 @@ void IM::handleMessage(const gloox::Message &msg, MessageSession *session) {
   emit incoming(xml);
 }
 
-void IM::doMessageHeadline(const Message &msg, QString &friendId,
-                           const QString &body) {
+void IM::doMessageHeadline(const Message &msg, QString &friendId, const QString &body) {
 
   auto mu = msg.findExtension<MUCRoom::MUCUser>(ExtMUCUser);
   if (mu) {
@@ -658,8 +628,7 @@ void IM::doMessageHeadline(const Message &msg, QString &friendId,
  * 处理聊天消息
  *
  */
-void IM::doMessageChat(const Message &msg, QString &friendId,
-                       const QString &body) {
+void IM::doMessageChat(const Message &msg, QString &friendId, const QString &body) {
   qDebug() << "doMessageChat from:" << friendId;
   if (!body.isEmpty()) {
     if (!msg.encrypted()) {
@@ -668,7 +637,7 @@ void IM::doMessageChat(const Message &msg, QString &friendId,
       emit receiveFriendMessage(friendId, imMsg);
     } else {
       QString xml = qstring(msg.tag()->xml());
-      qDebug() << "Is encrypted message:"<<xml;
+      qDebug() << "Is encrypted message:" << xml;
       emit exportEncryptedMessage(xml);
     }
   }
@@ -685,7 +654,7 @@ void IM::doMessageChat(const Message &msg, QString &friendId,
     if (eMsg) {
       auto ebody = eMsg->body();
       if (!ebody.empty()) {
-        auto msg =  fromXMsg(MsgType::Chat, *eMsg);
+        auto msg = fromXMsg(MsgType::Chat, *eMsg);
         msg.to = qstring(eMsg->to().full());
         emit receiveFriendMessage(msg.to, msg);
       }
@@ -707,9 +676,7 @@ void IM::doMessageNormal(const Message &msg, QString &friendId) {
   }
 }
 
-void IM::handleMessageEvent(const JID &from, const MessageEvent *et) {
-  qDebug() << ("JID:") << qstring(from.full()) << " MessageEvent:%2" << et;
-}
+void IM::handleMessageEvent(const JID &from, const MessageEvent *et) { qDebug() << ("JID:") << qstring(from.full()) << " MessageEvent:%2" << et; }
 
 void IM::doPubSubEvent(const gloox::PubSub::Event *pse, //
                        const Message &msg,              //
@@ -749,8 +716,7 @@ void IM::doPubSubEvent(const gloox::PubSub::Event *pse, //
           qDebug() << "Receive self avatar size" << avt.size();
           emit selfAvatarChanged(avt);
         } else {
-          qDebug() << "Receive friend avatar" << friendId << "size"
-                   << avt.size();
+          qDebug() << "Receive friend avatar" << friendId << "size" << avt.size();
           emit receiveFriendAvatarChanged(friendId, avt);
         }
       }
@@ -773,46 +739,43 @@ void IM::doPubSubEvent(const gloox::PubSub::Event *pse, //
       }
     }
 
-    //list xmlns='eu.siacs.conversations.axolotl'
-//    auto devices = item->payload->findChild("list", //
-//                                            XMLNS,  //
-//                                            "eu.siacs.conversations.axolotl");
-//    if (devices) {
-//      for (auto dev : devices->findChildren("device")) {
-//        qDebug() << "device id:" << qstring(dev->findAttribute("id"));
-//      }
-//    }
-//
-//    //bundle xmlns="eu.siacs.conversations.axolotl"
-//    auto bundle = item->payload->findChild("bundle", XMLNS,"eu.siacs.conversations.axolotl" );
-//    if(bundle){
-//
-//      auto deviceId=qstring(pse->node()).split(":")[1];
-//
-//      qDebug() <<"deviceId: " << deviceId;
-//
-//      auto spkp = bundle->findChild("signedPreKeyPublic")->cdata();
-//      qDebug() <<"signedPreKeyPublic: "<< qstring(spkp);
-//
-//      auto spks = bundle->findChild("signedPreKeySignature")->cdata();
-//      qDebug() <<"signedPreKeySignature: "<< qstring(spks);
-//
-//      auto ik = bundle->findChild("identityKey")->cdata();
-//      qDebug() <<"identityKey: "<< qstring(ik);
-//
-//      //
-//      auto prekeys = bundle->findChild("prekeys")->children();
-//      for (auto pk : prekeys) {
-//        //preKeyId
-//        qDebug() <<"preKeyId:" << qstring( pk->findAttribute("preKeyId"))
-//                 <<"identityKey: "<< qstring(pk->cdata());
-//
-//      }
-//    }
-
+    // list xmlns='eu.siacs.conversations.axolotl'
+    //    auto devices = item->payload->findChild("list", //
+    //                                            XMLNS,  //
+    //                                            "eu.siacs.conversations.axolotl");
+    //    if (devices) {
+    //      for (auto dev : devices->findChildren("device")) {
+    //        qDebug() << "device id:" << qstring(dev->findAttribute("id"));
+    //      }
+    //    }
+    //
+    //    //bundle xmlns="eu.siacs.conversations.axolotl"
+    //    auto bundle = item->payload->findChild("bundle", XMLNS,"eu.siacs.conversations.axolotl" );
+    //    if(bundle){
+    //
+    //      auto deviceId=qstring(pse->node()).split(":")[1];
+    //
+    //      qDebug() <<"deviceId: " << deviceId;
+    //
+    //      auto spkp = bundle->findChild("signedPreKeyPublic")->cdata();
+    //      qDebug() <<"signedPreKeyPublic: "<< qstring(spkp);
+    //
+    //      auto spks = bundle->findChild("signedPreKeySignature")->cdata();
+    //      qDebug() <<"signedPreKeySignature: "<< qstring(spks);
+    //
+    //      auto ik = bundle->findChild("identityKey")->cdata();
+    //      qDebug() <<"identityKey: "<< qstring(ik);
+    //
+    //      //
+    //      auto prekeys = bundle->findChild("prekeys")->children();
+    //      for (auto pk : prekeys) {
+    //        //preKeyId
+    //        qDebug() <<"preKeyId:" << qstring( pk->findAttribute("preKeyId"))
+    //                 <<"identityKey: "<< qstring(pk->cdata());
+    //
+    //      }
+    //    }
   }
-
-
 }
 
 /**
@@ -822,8 +785,8 @@ void IM::doPubSubEvent(const gloox::PubSub::Event *pse, //
  * @param state
  */
 void IM::handleChatState(const JID &from, ChatStateType state) {
-  qDebug() << "handleChatState from:" << qstring(from.full())    //
-           << "state:" <<static_cast<int>(state);
+  qDebug() << "handleChatState from:" << qstring(from.full()) //
+           << "state:" << static_cast<int>(state);
 
   auto friendId = qstring(from.bare());
   emit receiveFriendChatState(friendId, state);
@@ -835,51 +798,13 @@ void IM::handleChatState(const JID &from, ChatStateType state) {
  * @param state 聊天状态
  */
 void IM::sendChatState(const QString &to, ChatStateType state) {
-  qDebug()<<"sendChatState" << "to:"<< to << "state:" << (static_cast<int>(state));
+  qDebug() << "sendChatState" << "to:" << to << "state:" << (static_cast<int>(state));
   auto csf = m_chatStateFilters[stdstring(to)];
   if (!csf) {
     return;
   }
   csf->setChatState(state);
 }
-
-#ifdef false
-/**
- * 加入房间事件
- * @brief IM::onJoinedRoom
- * @param roomJid
- * @param userJID
- */
-void IM::onJoinedRoom(const JID &roomJid, const UserJID &userJID) {
-
-  qDebug(("roomJid:%1 userJid:%2")         //
-                .arg(qstring(roomJid.full())) //
-                .arg((userJID.id))            //
-  );
-
-  std::lock_guard<std::mutex> lock(_join_room_mutex);
-
-  //  if (!_joined_room) {
-  // 加入会议室，改变成会员角色
-  //         if(_userManager->isMember()){
-  //             setAffiliation(userJID,
-  //             MUCRoomAffiliation::AffiliationMember); setRole(userJID,
-  //             MUCRoomRole::RoleVisitor);
-  //         }else{
-  //             setAffiliation(userJID,
-  //             MUCRoomAffiliation::AffiliationOwner); setRole(userJID,
-  //             MUCRoomRole::RoleModerator);
-  //         }
-
-  // Jingle
-  // _jingle->join(roomJid);
-  // SmartBoard
-  // qDebug(("end for:%1").arg(qstring(roomJid.full())));
-
-  //    _joined_room = true;
-  //  }
-}
-#endif
 
 // MUC handler -- handleMUCParticipantPresence
 void IM::handleMUCParticipantPresence(gloox::MUCRoom *room,                 //
@@ -888,37 +813,34 @@ void IM::handleMUCParticipantPresence(gloox::MUCRoom *room,                 //
   auto groupId = qstring(room->jid().full());
   auto nick = qstring(participant.nick->resource());
 
-  qDebug() << __func__ << groupId
-           << "nick" << nick;
+  qDebug() << __func__ << groupId << "nick" << nick;
 
   auto x = presence.tag()->findChild("x", XMLNS, XMLNS_MUC_USER);
   if (x) {
-      GroupOccupant occ={.nick = nick};
+    GroupOccupant occ = {.nick = nick};
 
-      auto item = x->findChild("item");
-    if (item){
-      auto affiliation= qstring(item->findAttribute("affiliation"));
-      auto role= qstring(item->findAttribute("role"));
+    auto item = x->findChild("item");
+    if (item) {
+      auto affiliation = qstring(item->findAttribute("affiliation"));
+      auto role = qstring(item->findAttribute("role"));
       auto jid = qstring(item->findAttribute("jid"));
-        occ.jid=jid;
-        occ.affiliation=affiliation;
-        occ.role=role;
-        occ.status=presence.presence();
+      occ.jid = jid;
+      occ.affiliation = affiliation;
+      occ.role = role;
+      occ.status = presence.presence();
     }
 
-    for (auto t : x->findChildren("status")){
-          occ.codes.push_back(qstring(t->findAttribute("code")).toInt());
+    for (auto t : x->findChildren("status")) {
+      occ.codes.push_back(qstring(t->findAttribute("code")).toInt());
     }
-
 
     emit groupOccupantStatus(groupId, occ);
-
   }
 }
 
 void IM::handleMUCMessage(MUCRoom *room, const gloox::Message &msg, bool priv) {
   auto msgId = qstring(msg.id());
-  qDebug()<< "msgId:"<< (msgId) ;
+  qDebug() << "msgId:" << (msgId);
 
   auto roomId = qstring(room->jid().full());
   qDebug() << "roomId:" << roomId;
@@ -928,7 +850,6 @@ void IM::handleMUCMessage(MUCRoom *room, const gloox::Message &msg, bool priv) {
 
   auto body = qstring(msg.body());
   qDebug() << "body:" << body;
-
 
   PeerId peerId(msg.from());
   for (const auto &id : sendIds) {
@@ -961,8 +882,7 @@ void IM::handleMUCMessage(MUCRoom *room, const gloox::Message &msg, bool priv) {
      * </message>
      */
     if (MUCRoom::OpInviteFrom == mu->operation()) {
-      emit groupInvite(qstring(JID(*mu->jid()).bare()), roomId,
-                       qstring(msg.body()));
+      emit groupInvite(qstring(JID(*mu->jid()).bare()), roomId, qstring(msg.body()));
     }
 
     return;
@@ -1004,7 +924,6 @@ bool IM::handleMUCRoomCreation(MUCRoom *room) {
   // 群聊增加
   emit groupReceived(roomId, qstring(room->name()));
 
-
   joinRoom(roomId);
 
   //  bookmarkStorage->requestBookmarks();
@@ -1014,25 +933,18 @@ bool IM::handleMUCRoomCreation(MUCRoom *room) {
 void IM::handleMUCSubject(MUCRoom *room,           //
                           const std::string &nick, //
                           const std::string &subject) {
-  qDebug()<<QString("MUCRoom name:%1").arg(qstring(room->name()));
-  qDebug()<<QString("nick:%1").arg(qstring(nick));
-  qDebug()<<QString("subject:%2").arg(qstring(subject));
+  qDebug() << QString("MUCRoom name:%1").arg(qstring(room->name()));
+  qDebug() << QString("nick:%1").arg(qstring(nick));
+  qDebug() << QString("subject:%2").arg(qstring(subject));
   room->getRoomInfo();
 }
 
-void IM::handleMUCInviteDecline(MUCRoom *room, const JID &invitee,
-                                const std::string &reason) {
-  qDebug()<<QString("MUCRoom:%1").arg(qstring(room->name()));
-  qDebug()<<QString("invitee:%1 reason:%2")
-                .arg(qstring(invitee.full()))
-                .arg(qstring(reason));
+void IM::handleMUCInviteDecline(MUCRoom *room, const JID &invitee, const std::string &reason) {
+  qDebug() << QString("MUCRoom:%1").arg(qstring(room->name()));
+  qDebug() << QString("invitee:%1 reason:%2").arg(qstring(invitee.full())).arg(qstring(reason));
 }
 
-void IM::handleMUCError(MUCRoom *room, StanzaError error) {
-  qDebug()<<QString("MUCRoom:%1 error:%2")
-                .arg(qstring(room->name()))
-                .arg(static_cast<int>(error));
-}
+void IM::handleMUCError(MUCRoom *room, StanzaError error) { qDebug() << QString("MUCRoom:%1 error:%2").arg(qstring(room->name())).arg(static_cast<int>(error)); }
 
 void IM::handleMUCInfo(MUCRoom *room,              //
                        int features,               //
@@ -1042,25 +954,23 @@ void IM::handleMUCInfo(MUCRoom *room,              //
   auto roomId = qstring(room->jid().full());
   auto roomName = qstring(name);
 
-  qDebug() << __func__ << roomId<< roomName;
+  qDebug() << __func__ << roomId << roomName;
 
   GroupInfo groupInfo;
   groupInfo.name = roomName;
-
 
   if (infoForm) {
     auto info = const_cast<IMRoomInfo *>(findRoom(roomId));
 
     for (auto field : infoForm->fields()) {
-      qDebug() << "field name:" << qstring(field->name())
-               << qstring(field->value());
+      qDebug() << "field name:" << qstring(field->name()) << qstring(field->value());
 
       if (field->name() == "muc#roominfo_occupants") {
         groupInfo.occupants = std::stoi(field->value());
       } else if (field->name() == "muc#roominfo_roomname" && !field->value().empty()) {
         groupInfo.name = qstring(field->value());
       } else if (field->name() == "muc#roominfo_subject") {
-        groupInfo.subject =qstring(field->value()) ;
+        groupInfo.subject = qstring(field->value());
       } else if (field->name() == "muc#roominfo_description") {
         groupInfo.description = qstring(field->value());
       } else if (field->name() == "muc#roominfo_creationdate") {
@@ -1070,19 +980,18 @@ void IM::handleMUCInfo(MUCRoom *room,              //
     info->info = groupInfo;
     emit groupRoomInfo(roomId, groupInfo);
   }
-
 }
 
 void IM::handleMUCItems(MUCRoom *room, const Disco::ItemList &items) {
-  qDebug()<<QString("MUCRoom:%1").arg(qstring(room->name()));
-  qDebug()<<QString("items:%1").arg(items.size());
+  qDebug() << QString("MUCRoom:%1").arg(qstring(room->name()));
+  qDebug() << QString("items:%1").arg(items.size());
 }
 
 // config
 void IM::handleMUCConfigList(MUCRoom *room,                //
                              const MUCListItemList &items, //
                              MUCOperation operation) {
-  qDebug()<<QString("IM::handleMUCConfigList");
+  qDebug() << QString("IM::handleMUCConfigList");
 }
 
 void IM::handleMUCConfigForm(MUCRoom *room, const DataForm &form) {
@@ -1123,13 +1032,8 @@ void IM::handleMUCConfigForm(MUCRoom *room, const DataForm &form) {
   }
 };
 
-void IM::handleMUCConfigResult(MUCRoom *room, bool success,
-                               MUCOperation operation) {
-  qDebug() << "handleMUCConfigResult room"
-           << qstring(room->jid().full())
-           << "operation:" << operation
-           << "success:" << success;
-
+void IM::handleMUCConfigResult(MUCRoom *room, bool success, MUCOperation operation) {
+  qDebug() << "handleMUCConfigResult room" << qstring(room->jid().full()) << "operation:" << operation << "success:" << success;
 };
 
 void IM::handleMUCRequest(MUCRoom *room, const DataForm &form) {
@@ -1137,8 +1041,7 @@ void IM::handleMUCRequest(MUCRoom *room, const DataForm &form) {
   for (const auto &item : form.items()) {
     qDebug() << "item" << item;
     for (const auto &item_j : item->fields()) {
-      qDebug() << "field:" << item_j->name().c_str() << "=>"
-               << item_j->value().c_str();
+      qDebug() << "field:" << item_j->name().c_str() << "=>" << item_j->value().c_str();
     }
   }
 };
@@ -1204,8 +1107,7 @@ void IM::joinRoom(MUCRoom *room) {
   room->setNick(stdstring(getNickname()));
   room->join();
   room->getRoomInfo();
-  _client->disco()->getDiscoItems(room->jid(), XMLNS_BOOKMARKS, this,
-                                  DISCO_CTX_BOOKMARKS);
+  _client->disco()->getDiscoItems(room->jid(), XMLNS_BOOKMARKS, this, DISCO_CTX_BOOKMARKS);
 }
 
 void IM::onAddRoom(const std::string &jid, const std::string &name) {
@@ -1217,12 +1119,10 @@ void IM::onAddRoom(const std::string &jid, const std::string &name) {
   m_roomMap.insert(roomId, IMRoomInfo{room, {}});
 
   qDebug() << "emit room:" << roomId;
-  emit groupReceived(roomId, name.empty() ? qstring(roomJid.username())
-                                              : qstring(name));
+  emit groupReceived(roomId, name.empty() ? qstring(roomJid.username()) : qstring(name));
 
-
-  //查询成员列表
-  //XMLNS_DISCO_ITEMS
+  // 查询成员列表
+  // XMLNS_DISCO_ITEMS
   getClient()->disco()->getDiscoItems(jid, XMLNS_DISCO_ITEMS, this, DISCO_CTX_CONF_MEMBERS);
 
   joinRoom(room);
@@ -1310,8 +1210,7 @@ void IM::setRoomName(const QString &groupId, const std::string &roomName) {
 }
 
 #ifdef WANT_PING
-void IM::handlePing(const gloox::PingHandler::PingType type,
-                    const std::string &body) {
+void IM::handlePing(const gloox::PingHandler::PingType type, const std::string &body) {
   qDebug() << "ping" << type << qstring(body);
   if (type != websocketPong) {
     IQ iq(IQ::IqType::Result, JID(_host));
@@ -1326,60 +1225,57 @@ void IM::handlePing(const gloox::PingHandler::PingType type,
  * @param vcard
  */
 void IM::handleVCard(const JID &jid, const VCard *vcard) {
-  qDebug()<<  __func__ << QString("jid：%1").arg(qstring(jid.full()));
+  qDebug() << __func__ << QString("jid：%1").arg(qstring(jid.full()));
 
-  auto & photo = vcard->photo();
+  auto &photo = vcard->photo();
   if (!photo.binval.empty()) {
-    qDebug()<<QString("photo binval size:%1").arg(photo.binval.size());
+    qDebug() << QString("photo binval size:%1").arg(photo.binval.size());
     emit receiveFriendAvatarChanged(qstring(jid.bare()), photo.binval);
   }
 
-//  auto &nickname = vcard->nickname();
-//  if (!nickname.empty()) {
-//    qDebug()<<QString("nickname:%1").arg(qstring(nickname));
-//    emit receiveNicknameChange(qstring(jid.bare()), qstring(nickname));
-//  }
+  //  auto &nickname = vcard->nickname();
+  //  if (!nickname.empty()) {
+  //    qDebug()<<QString("nickname:%1").arg(qstring(nickname));
+  //    emit receiveNicknameChange(qstring(jid.bare()), qstring(nickname));
+  //  }
 }
 
 void IM::handleVCardResult(VCardContext context, const JID &jid, StanzaError error) {
-  qDebug()<<QString("context:%1 jid:%2").arg(context).arg(qstring(jid.full()));
+  qDebug() << QString("context:%1 jid:%2").arg(context).arg(qstring(jid.full()));
   if (error) {
     return;
   }
 }
 
-void IM::fetchVCard(const QString &friendId) {
+void IM::fetchFriendVCard(const QString &friendId) {
   // 获取联系人个人信息
   qDebug() << "fetchVCard" << friendId;
   JID jid(stdstring(friendId));
   vCardManager->fetchVCard(jid, this);
-//  pubSubManager->subscribe(jid, "", this);
+  //  pubSubManager->subscribe(jid, "", this);
   //  _client->rosterManager()->subscribe(jid.bareJID());
 }
 
-void IM::handleTag(Tag *tag) {
-  qDebug()<<QString("tag：%1").arg(qstring(tag->xml()));
-}
+void IM::handleTag(Tag *tag) { qDebug() << QString("tag：%1").arg(qstring(tag->xml())); }
 
 bool IM::handleIq(const IQ &iq) {
   const auto *ibb = iq.findExtension<InBandBytestream::IBB>(ExtIBB);
   if (ibb) {
     FriendId friendId(qstring(iq.from().bare()));
-    qDebug()<<QString("ibb流:%1").arg(qstring(ibb->sid()));
+    qDebug() << QString("ibb流:%1").arg(qstring(ibb->sid()));
 
     switch (ibb->type()) {
     case InBandBytestream::IBBOpen: {
-      qDebug()<<QString("Open");
+      qDebug() << QString("Open");
       break;
     }
     case InBandBytestream::IBBData: {
-      qDebug()<<QString("Data seq:%1").arg(ibb->seq());
-      emit receiveFileChunk(friendId, qstring(ibb->sid()), ibb->seq(),
-                            ibb->data());
+      qDebug() << QString("Data seq:%1").arg(ibb->seq());
+      emit receiveFileChunk(friendId, qstring(ibb->sid()), ibb->seq(), ibb->data());
       break;
     }
     case InBandBytestream::IBBClose: {
-      qDebug()<<QString("Close");
+      qDebug() << QString("Close");
       emit receiveFileFinished(friendId, qstring(ibb->sid()));
       break;
     }
@@ -1391,8 +1287,7 @@ bool IM::handleIq(const IQ &iq) {
     _client->send(riq);
   }
 
-  auto services =
-      iq.tag()->findChild("services", "xmlns", XMLNS_EXTERNAL_SERVICE_DISCOVERY);
+  auto services = iq.tag()->findChild("services", "xmlns", XMLNS_EXTERNAL_SERVICE_DISCOVERY);
   if (services) {
     mExtDisco = ExtDisco(services);
   }
@@ -1403,10 +1298,7 @@ bool IM::handleIq(const IQ &iq) {
 
 void IM::handleIqID(const IQ &iq, int context) {}
 
-
-void IM::setUIStarted(){
-  mUIStarted = true;
-}
+void IM::setUIStarted() { mUIStarted = true; }
 
 void IM::requestBookmarks() {
   /**
@@ -1434,8 +1326,7 @@ void IM::handleBookmarks(const BookmarkList &bList,   //
 
   for (auto &c : cList) {
     auto name = (!c.name.empty() ? c.name : JID(c.jid).username());
-    qDebug() << "room:" << qstring(name) << "jid:" << qstring(c.jid)
-             << "nick:" << qstring(c.nick) << "autojoin:" << c.autojoin;
+    qDebug() << "room:" << qstring(name) << "jid:" << qstring(c.jid) << "nick:" << qstring(c.nick) << "autojoin:" << c.autojoin;
 
     // 缓存到本地
     onAddRoom(c.jid, name);
@@ -1458,16 +1349,16 @@ void IM::handleDiscoInfo(const JID &from,         //
                          int context) {
 
   QString _from = QString::fromStdString(from.full());
-  qDebug()<<__func__<<_from<<"context:"<<(context);
+  qDebug() << __func__ << _from << "context:" << (context);
 
   const StringList features = info.features();
   for (auto feature : features) {
-    qDebug()<<QString("feature=%1").arg(QString::fromStdString(feature));
+    qDebug() << QString("feature=%1").arg(QString::fromStdString(feature));
   }
 
   const Disco::IdentityList &identities = info.identities();
   for (auto identity : identities) {
-    qDebug()<<QString("identity=%1").arg(qstring(identity->name()));
+    qDebug() << QString("identity=%1").arg(qstring(identity->name()));
   }
 }
 
@@ -1503,10 +1394,10 @@ void IM::handleDiscoItems(const JID &from,           //
       qDebug() << "room:" << name << roomId;
     }
 
-    else if(context == DISCO_CTX_CONF_MEMBERS){
-        //群聊成员
-         auto memberId = qstring(item->jid().bare());
-         qDebug() << "member:" << memberId;
+    else if (context == DISCO_CTX_CONF_MEMBERS) {
+      // 群聊成员
+      auto memberId = qstring(item->jid().bare());
+      qDebug() << "member:" << memberId;
     }
   }
 }
@@ -1516,21 +1407,14 @@ void IM::handleDiscoError(const JID &from,           //
                           int context) {
 
   QString _from = qstring(from.full());
-  qDebug()<<QString("from=%1 context=%2 error=%3")
-                .arg(_from)
-                .arg(context)
-                .arg(qstring(error->text()));
+  qDebug() << QString("from=%1 context=%2 error=%3").arg(_from).arg(context).arg(qstring(error->text()));
 }
 
 // Presence Handler
 void IM::handlePresence(const Presence &presence) {
-  qDebug() << __func__
-           << "from" << qstring(presence.from().full())
-           << "presence" << presence.presence();
+  qDebug() << __func__ << "from" << qstring(presence.from().full()) << "presence" << presence.presence();
 
-  updateOnlineStatus(presence.from().bare(),
-                     presence.from().resource(),
-                     presence.presence());
+  updateOnlineStatus(presence.from().bare(), presence.from().resource(), presence.presence());
 }
 
 /**
@@ -1543,15 +1427,18 @@ void IM::handlePresence(const Presence &presence) {
  * @return
  */
 void IM::handleItemAdded(const gloox::JID &jid) {
-  qDebug() << __func__<< qstring(jid.full());
+  qDebug() << __func__ << qstring(jid.full());
 
-//  auto rosterManager = _client->rosterManager();
-//  if (m_addFriendMsg.isEmpty()) {
-//    rosterManager->subscribe(jid);
-//  } else {
-//    rosterManager->subscribe(jid, jid.username(), StringList(),
-//                             stdstring(m_addFriendMsg));
-//  }
+  auto m = _client->rosterManager();
+  // 订阅对方
+  m->subscribe(jid);
+
+  auto item = m->getRosterItem(jid);
+  if (!item) {
+    qWarning() << "Unable to find roster.";
+    return;
+  }
+  emit receiveFriend(Friend{item});
 }
 
 /**
@@ -1559,11 +1446,7 @@ void IM::handleItemAdded(const gloox::JID &jid) {
  * @param jid
  */
 void IM::handleItemRemoved(const JID &jid) {
-  /**
-   * subscription='remove'
-   * TODO 需要通知到页面
-   */
-  qDebug()<<__func__<< qstring(jid.full());
+  qDebug() << __func__ << qstring(jid.full());
   emit receiveFriendRemoved(qstring(jid.bare()));
 }
 
@@ -1575,113 +1458,77 @@ void IM::handleItemUpdated(const JID &jid) {
 
   auto item = _client->rosterManager()->getRosterItem(jid);
   auto subType = item->subscription();
-  qDebug()<<__func__<<"subscription:"<<(subType);
-  auto data =  item->data();
-  qDebug() << "ask"<< qstring(data->ask()) << "sub" << qstring(data->sub());
+  qDebug() << __func__ << "subscription:" << (subType);
+  auto data = item->data();
+  qDebug() << "ask" << qstring(data->ask()) << "sub" << qstring(data->sub());
 
-  if(data->sub() == "none")
-  {
-      //双方处于解除状态
-       emit removeFriend(contactId);
+  if (data->sub() == "both") {
+    qDebug() << "建立订阅双向关联";
+    requestFriendNickname(jid);
   }
-  else if(data->sub() == "from" ){
-
-      if(data->ask() == "unsubscribe"){
-          //已经解除到对方的订阅关联
-          qDebug() << "自己已经解除到对方的订阅关联"<<contactId;
-          _client->rosterManager()->remove(jid);
-          emit removeFriend(contactId);
-      }else{
-          //对方请求订阅
-          emit receiveFriendRequest(contactId, "");
-      }
-  }
-  else if(data->sub() == "to"){
-      //自己关联到对方
-      if(data->ask() == "unsubscribe"){
-        qDebug() << "对方已经解除到自己的订阅关联"<<contactId;
-      }else{
-          _client->rosterManager()->add(jid,   jid.username() , {});
-      }
-  }
-  else if(data->sub() == "both"){
-      qDebug() << "建立订阅双向关联";
-      //加到联系人列表
-      emit receiveFriend(contactId);
-  }
-
-
-
 }
 
 /**
  * 订阅好友
  * @param jid
  */
-void IM::handleItemSubscribed(const JID &jid) {
-  qDebug() << __func__ << qstring(jid.full());
-}
+void IM::handleItemSubscribed(const JID &jid) { qDebug() << __func__ << qstring(jid.full()); }
 
 /**
  * 取消订阅好友
  * @param jid
  */
-void IM::handleItemUnsubscribed(const JID &jid) {
-  qDebug() << __func__ << qstring(jid.full());
-}
+void IM::handleItemUnsubscribed(const JID &jid) { qDebug() << __func__ << qstring(jid.full()); }
 
 
-bool IM::removeFriend(const QString& id) {
-    qDebug() << __func__ << id;
+bool IM::removeFriend(const JID &jid) {
+  qDebug() << __func__ << jid.full().c_str();
 
-    /**
-     * 参考：https://datatracker.ietf.org/doc/html/rfc3921#section-8.4.2
-     */
-
-    JID jid(id.toStdString());
-
-//    <presence to='contact@example.org' type='unsubscribe'/>
-  Subscription unsub(Subscription::Unsubscribe, jid);
-  _client->send(unsub);
-
+  /**
+   * 参考：https://datatracker.ietf.org/doc/html/rfc3921#section-8.4.2
+   */
+  auto m = _client->rosterManager();
+  // 取消订阅
+  m->unsubscribe(jid);
+  // 从联系人列表移除
+  m->remove(jid);
   return true;
 }
 
-void IM::addRosterItem(const QString &username, const QString &nick,
-                       const QString &msg) {
-  qDebug() << "addRosterItem" << username << nick << msg;
-  m_addFriendMsg = msg;
-  StringList group;
-  auto rm = _client->rosterManager();
+void IM::addFriend(const JID &jid, const QString &nick, const QString &msg) {
+  qDebug() << __func__ << jid.full().c_str()  << nick << msg;
 
-  JID jid(username.toStdString());
-  rm->add(jid, stdstring(nick), group);
-  rm->synchronize();
-  rm->ackSubscriptionRequest(jid, true);
+  auto m = _client->rosterManager();
+  // 订阅对方(同时加入到联系人列表)
+  m->subscribe(jid, stdstring(nick), {});
+  m->add(jid, stdstring(nick), {});
+  m->synchronize();
 }
 
 void IM::acceptFriendRequest(const QString &friendId) {
-  qDebug()<<__func__<<friendId;
+  qDebug() << __func__ << friendId;
   auto jid = JID(stdstring(friendId)).bareJID();
 
   auto m = _client->rosterManager();
-//  m->add(jid, jid.username(), {});
+  // 答复同意订阅
   m->ackSubscriptionRequest(jid, true);
+  // 同时订阅对方
   m->subscribe(jid);
+  // 添加到联系人列表
+  m->add(jid, jid.username(), {});
+  m->synchronize();
 }
 
 void IM::rejectFriendRequest(const QString &friendId) {
-  qDebug()<<__func__<<friendId;
+  qDebug() << __func__ << friendId;
   _client->rosterManager()->ackSubscriptionRequest(JID(stdstring(friendId)).bareJID(), false);
 }
 
-size_t IM::getRosterCount() {
-  return _client->rosterManager()->roster()->size();
-}
+size_t IM::getRosterCount() { return _client->rosterManager()->roster()->size(); }
 
-void IM::getRosterList(std::list<FriendId> &list) {
+void IM::getRosterList(std::list<Friend> &list) {
   auto rosterManager = _client->rosterManager();
-  if(!rosterManager){
+  if (!rosterManager) {
     QMutexLocker locker(&m_mutex);
     rosterManager = enableRosterManager();
   }
@@ -1689,8 +1536,7 @@ void IM::getRosterList(std::list<FriendId> &list) {
   gloox::Roster *rosterMap = rosterManager->roster();
   for (const auto &itr : *rosterMap) {
     auto pItem = itr.second;
-    FriendId peerId(qstring(pItem->jid().bare()));
-    list.push_back(peerId);
+    list.push_back(Friend{pItem});
   }
 }
 
@@ -1700,23 +1546,22 @@ void IM::handleRoster(const Roster &roster) {
 
   for (auto &it : roster) {
     auto &key = it.first;
-    auto &jid = it.second->jid();
+    auto &item = it.second;
 
-    qDebug() << "roster" << jid.full().c_str();
-    if(jid.server().empty()){
-        qWarning() <<"Ignore roster whithout server.";
-        continue;
+    qDebug() << "roster" << item->jid().full().c_str() << "subscription" << item->subscription();
+    if (item->jid().server().empty()) {
+      qWarning() << "Ignore roster whithout server.";
+      continue;
     }
 
-    emit receiveFriend(qstring(jid.bare()));
+    auto frnd = Friend{item};
+    emit receiveFriend(frnd);
 
-    Subscription sub(gloox::Subscription::Subscribe, jid);
-    _client->send(sub);
+    //    Subscription sub(gloox::Subscription::Subscribe, jid);
+    //    _client->send(sub);
   }
-
   //  enableDiscoManager();
   //  loadGroupList();
-
   emit receiveFriendDone();
 };
 
@@ -1733,11 +1578,7 @@ void IM::handleRosterPresence(const RosterItem &item,              //
                               Presence::PresenceType presenceType, //
                               const std::string &msg) {
 
-  qDebug()<<QString("item:%1 resource:%2 presenceType:%3 msg:%4")
-                .arg(qstring(item.jid().full()))
-                .arg(qstring(resource))
-                .arg(presenceType)
-                .arg(qstring(msg));
+  qDebug() << QString("item:%1 resource:%2 presenceType:%3 msg:%4").arg(qstring(item.jid().full())).arg(qstring(resource)).arg(presenceType).arg(qstring(msg));
 
   updateOnlineStatus(item.jid().bare(), resource, presenceType);
 
@@ -1762,8 +1603,7 @@ void IM::handleRosterPresence(const RosterItem &item,              //
         </items>
         </pubsub>
          */
-        auto vCardUpdate =
-            const_cast<VCardUpdate *>(static_cast<const VCardUpdate *>(ext));
+        auto vCardUpdate = const_cast<VCardUpdate *>(static_cast<const VCardUpdate *>(ext));
         if (vCardUpdate && vCardUpdate->hasPhoto()) {
 
           ItemList items;
@@ -1771,8 +1611,7 @@ void IM::handleRosterPresence(const RosterItem &item,              //
           item0->setID(vCardUpdate->hash());
           items.emplace_back(item0);
 
-          pubSubManager->requestItems(item.jid(), XMLNS_AVATAR, "", items,
-                                      this);
+          pubSubManager->requestItems(item.jid(), XMLNS_AVATAR, "", items, this);
         }
         break;
       }
@@ -1787,18 +1626,11 @@ void IM::handleSelfPresence(const RosterItem &item,              //
                             Presence::PresenceType presenceType, //
                             const std::string &msg) {
 
-  qDebug()<<QString("item:%1 resource:%2 presenceType:%3 msg:%4")
-                .arg(qstring(item.jid().full()))
-                .arg(qstring(resource))
-                .arg(presenceType)
-                .arg(qstring(msg));
+  qDebug() << QString("item:%1 resource:%2 presenceType:%3 msg:%4").arg(qstring(item.jid().full())).arg(qstring(resource)).arg(presenceType).arg(qstring(msg));
 
   selfPresType = presenceType;
 
-  emit selfStatusChanged(_client->resource() == resource
-                             ? selfPresType
-                             : (int)gloox::Presence::Available,
-                         msg);
+  emit selfStatusChanged(_client->resource() == resource ? selfPresType : (int)gloox::Presence::Available, msg);
 
   //  if (presenceType == gloox::Presence::Available) {
   for (auto &it : item.resources()) {
@@ -1815,8 +1647,7 @@ void IM::handleSelfPresence(const RosterItem &item,              //
         </items>
         </pubsub>
          */
-        auto vCardUpdate =
-            const_cast<VCardUpdate *>(static_cast<const VCardUpdate *>(ext));
+        auto vCardUpdate = const_cast<VCardUpdate *>(static_cast<const VCardUpdate *>(ext));
         if (vCardUpdate && vCardUpdate->hasPhoto()) {
 
           ItemList items;
@@ -1824,15 +1655,13 @@ void IM::handleSelfPresence(const RosterItem &item,              //
           item0->setID(vCardUpdate->hash());
           items.emplace_back(item0);
 
-          pubSubManager->requestItems(item.jid().bareJID(), XMLNS_AVATAR, "",
-                                      items, this);
+          pubSubManager->requestItems(item.jid().bareJID(), XMLNS_AVATAR, "", items, this);
         }
         break;
       }
       }
     }
   }
-  //  }
 };
 
 /**
@@ -1842,8 +1671,12 @@ void IM::handleSelfPresence(const RosterItem &item,              //
  * @return
  */
 bool IM::handleSubscriptionRequest(const JID &jid, const std::string &msg) {
-  qDebug()<<__func__ << qstring(jid.full()) << qstring(msg);
-  emit receiveFriendRequest(qstring(jid.bare()), qstring(msg));
+  qDebug() << __func__ << qstring(jid.full()) << qstring(msg);
+//  emit receiveFriendRequest(qstring(jid.bare()), qstring(msg));
+  auto m = _client->rosterManager();
+  // 订阅对方
+//  m->add(jid.bareJID(), jid.username(), {});
+  m->subscribe(jid.bareJID(), jid.username(), {}, {});
   return true;
 };
 
@@ -1854,37 +1687,30 @@ bool IM::handleSubscriptionRequest(const JID &jid, const std::string &msg) {
  * @return
  */
 bool IM::handleUnsubscriptionRequest(const JID &jid, const std::string &msg) {
-  qDebug()<<QString("jid:%1 msg:%2").arg(qstring(jid.full())).arg(qstring(msg));
+  qDebug() << QString("jid:%1 msg:%2").arg(qstring(jid.full())).arg(qstring(msg));
   return true;
 };
 
-void IM::handleNonrosterPresence(const Presence &presence) {
-  qDebug()<<QString("presence:%1").arg(qstring(presence.from().full()));
-};
+void IM::handleNonrosterPresence(const Presence &presence) { qDebug() << QString("presence:%1").arg(qstring(presence.from().full())); };
 
-void IM::handleRosterError(const IQ &iq) {
-  qDebug()<<QString("text:%1").arg(qstring(iq.error()->text()));
-};
+void IM::handleRosterError(const IQ &iq) { qDebug() << QString("text:%1").arg(qstring(iq.error()->text())); };
 
-void IM::handleRosterItemExchange(const gloox::JID &from,
-                                  const gloox::RosterX *items) {}
+void IM::handleRosterItemExchange(const gloox::JID &from, const gloox::RosterX *items) {}
 
-void IM::handleRegistrationFields(const JID &from, int fields,
-                                  std::string instructions){};
+void IM::handleRegistrationFields(const JID &from, int fields, std::string instructions) {};
 
 /**
  * This function is called if @ref Registration::createAccount() was called on
  * an authenticated stream and the server lets us know about this.
  */
-void IM::handleAlreadyRegistered(const JID &from){};
+void IM::handleAlreadyRegistered(const JID &from) {};
 
 /**
  * This funtion is called to notify about the result of an operation.
  * @param from The server or service the result came from.
  * @param regResult The result of the last operation.
  */
-void IM::handleRegistrationResult(const JID &from, RegistrationResult regResult,
-                                  const Error *error){};
+void IM::handleRegistrationResult(const JID &from, RegistrationResult regResult, const Error *error) {};
 
 /**
  * This function is called additionally to @ref handleRegistrationFields() if
@@ -1892,7 +1718,7 @@ void IM::handleRegistrationResult(const JID &from, RegistrationResult regResult,
  * @param from The server or service the data form came from.
  * @param form The DataForm containing registration information.
  */
-void IM::handleDataForm(const JID &from, const DataForm &form){};
+void IM::handleDataForm(const JID &from, const DataForm &form) {};
 
 /**
  * This function is called if the server does not offer in-band registration
@@ -1900,7 +1726,7 @@ void IM::handleDataForm(const JID &from, const DataForm &form){};
  * @param from The server or service the referal came from.
  * @param oob The OOB object describing the external URL.
  */
-void IM::handleOOB(const JID &from, const OOB &oob){};
+void IM::handleOOB(const JID &from, const OOB &oob) {};
 
 FriendId IM::getSelfId() {
   FriendId fId(qstring(_client->jid().bare()));
@@ -1915,7 +1741,7 @@ PeerId IM::getSelfPeerId() {
 QString IM::getSelfUsername() { return qstring(self().username()); }
 
 void IM::setNickname(const QString &nickname) {
-  qDebug()<<QString("nickname:%1").arg(nickname);
+  qDebug() << QString("nickname:%1").arg(nickname);
   if (_nick == nickname) {
     return;
   }
@@ -1944,7 +1770,7 @@ void IM::setAvatar(const QByteArray &avatar) {
     return;
 
   QString sha1 = lib::base::Hashs::sha1(avatar);
-  qDebug()<<QString("avatar size:%1 sha1:%2").arg(avatar.size()).arg(sha1);
+  qDebug() << QString("avatar size:%1 sha1:%2").arg(avatar.size()).arg(sha1);
 
   auto base64 = avatar.toBase64().toStdString();
 
@@ -1977,7 +1803,7 @@ qANQR1DBwU4DX7jmYZnncm...
 }
 
 void IM::changePassword(const QString &password) {
-  qDebug()<<QString("password:%1").arg(password);
+  qDebug() << QString("password:%1").arg(password);
   if (password.isEmpty())
     return;
 
@@ -2016,9 +1842,7 @@ void IM::sendPresence() {
   _client->setPresence();
 }
 
-void IM::sendPresence(const JID &to, Presence::PresenceType type) {
-  _client->setPresence(to, type, 0);
-}
+void IM::sendPresence(const JID &to, Presence::PresenceType type) { _client->setPresence(to, type, 0); }
 
 void IM::sendReceiptReceived(const QString &id, QString receiptNum) {
 
@@ -2027,8 +1851,7 @@ void IM::sendReceiptReceived(const QString &id, QString receiptNum) {
   Message m(gloox::Message::MessageType::Chat, JID(stdstring(id)));
   m.setFrom(_client->jid());
 
-  m.addExtension(
-      new Receipt(Receipt::ReceiptType::Received, receiptNum.toStdString()));
+  m.addExtension(new Receipt(Receipt::ReceiptType::Received, receiptNum.toStdString()));
 
   _client->send(m);
 }
@@ -2059,10 +1882,7 @@ void IM::sendServiceDiscoveryInfo(const JID &item) {
   _client->send(iqt);
 }
 
-void IM::handleItem(const JID &service, const std::string &node,
-                    const Tag *entry) {
-  qDebug()<<QString("service:%1 node:%2").arg(qstring(service.full())).arg(qstring(node));
-}
+void IM::handleItem(const JID &service, const std::string &node, const Tag *entry) { qDebug() << QString("service:%1 node:%2").arg(qstring(service.full())).arg(qstring(node)); }
 
 void IM::handleItems(const std::string &id,                   //
                      const JID &service,                      //
@@ -2124,90 +1944,48 @@ void IM::handleItemPublication(const std::string &id,    //
                                const std::string &node,  //
                                const ItemList &itemList, //
                                const gloox::Error *error) {
-  qDebug()<<QString("node:%1").arg(qstring(node));
+  qDebug() << QString("node:%1").arg(qstring(node));
   if (node == XMLNS_AVATAR) {
     // 更新头像元信息
     //  https://xmpp.org/extensions/xep-0084.html#process-pubmeta
     for (auto &item : itemList) {
-      qDebug()<<QString("itemId:%1").arg(qstring(item->id()));
+      qDebug() << QString("itemId:%1").arg(qstring(item->id()));
     }
   }
 }
 
-void IM::handleItemDeletion(const std::string &id, const JID &service,
-                            const std::string &node, const ItemList &itemList,
-                            const gloox::Error *error) {
-  qDebug()<<QString("id:%1 service:%2").arg(qstring(id)).arg(qstring(service.full()));
+void IM::handleItemDeletion(const std::string &id, const JID &service, const std::string &node, const ItemList &itemList, const gloox::Error *error) {
+  qDebug() << QString("id:%1 service:%2").arg(qstring(id)).arg(qstring(service.full()));
 }
 
-void IM::handleSubscriptionResult(const std::string &id, const JID &service,
-                                  const std::string &node,
-                                  const std::string &sid, const JID &jid,
-                                  const gloox::PubSub::SubscriptionType subType,
-                                  const gloox::Error *error) {
+void IM::handleSubscriptionResult(const std::string &id, const JID &service, const std::string &node, const std::string &sid, const JID &jid,
+                                  const gloox::PubSub::SubscriptionType subType, const gloox::Error *error) {
 
-  qDebug()<<QString("id:%1 jid:%2").arg(qstring(id)).arg(qstring(jid.full()));
+  qDebug() << QString("id:%1 jid:%2").arg(qstring(id)).arg(qstring(jid.full()));
   pubSubManager->requestItems(service, node, sid, 100, this);
 }
 
-void IM::handleUnsubscriptionResult(const std::string &id, const JID &service,
-                                    const gloox::Error *error) {}
-void IM::handleSubscriptionOptions(const std::string &id, const JID &service,
-                                   const JID &jid, const std::string &node,
-                                   const DataForm *options,
-                                   const std::string &sid,
+void IM::handleUnsubscriptionResult(const std::string &id, const JID &service, const gloox::Error *error) {}
+void IM::handleSubscriptionOptions(const std::string &id, const JID &service, const JID &jid, const std::string &node, const DataForm *options, const std::string &sid,
                                    const gloox::Error *error) {}
-void IM::handleSubscriptionOptionsResult(const std::string &id,
-                                         const JID &service, const JID &jid,
-                                         const std::string &node,
-                                         const std::string &sid,
-                                         const gloox::Error *error) {}
-void IM::handleSubscribers(const std::string &id, const JID &service,
-                           const std::string &node,
-                           const SubscriptionList &list,
-                           const gloox::Error *error) {}
-void IM::handleSubscribersResult(const std::string &id, const JID &service,
-                                 const std::string &node,
-                                 const SubscriberList *list,
-                                 const gloox::Error *error) {}
+void IM::handleSubscriptionOptionsResult(const std::string &id, const JID &service, const JID &jid, const std::string &node, const std::string &sid, const gloox::Error *error) {}
+void IM::handleSubscribers(const std::string &id, const JID &service, const std::string &node, const SubscriptionList &list, const gloox::Error *error) {}
+void IM::handleSubscribersResult(const std::string &id, const JID &service, const std::string &node, const SubscriberList *list, const gloox::Error *error) {}
 
-void IM::handleAffiliates(const std::string &id, const JID &service,
-                          const std::string &node, const AffiliateList *list,
-                          const gloox::Error *error) {}
+void IM::handleAffiliates(const std::string &id, const JID &service, const std::string &node, const AffiliateList *list, const gloox::Error *error) {}
 
-void IM::handleAffiliatesResult(const std::string &id, const JID &service,
-                                const std::string &node,
-                                const AffiliateList *list,
-                                const gloox::Error *error) {}
-void IM::handleNodeConfig(const std::string &id, const JID &service,
-                          const std::string &node, const DataForm *config,
-                          const gloox::Error *error) {}
-void IM::handleNodeConfigResult(const std::string &id, const JID &service,
-                                const std::string &node,
-                                const gloox::Error *error) {}
-void IM::handleNodeCreation(const std::string &id, const JID &service,
-                            const std::string &node,
-                            const gloox::Error *error) {}
-void IM::handleNodeDeletion(const std::string &id, const JID &service,
-                            const std::string &node,
-                            const gloox::Error *error) {}
-void IM::handleNodePurge(const std::string &id, const JID &service,
-                         const std::string &node, const gloox::Error *error) {}
-void IM::handleSubscriptions(const std::string &id, const JID &service,
-                             const SubscriptionMap &subMap,
-                             const gloox::Error *error) {}
-void IM::handleAffiliations(const std::string &id, const JID &service,
-                            const AffiliationMap &affMap,
-                            const gloox::Error *error) {}
+void IM::handleAffiliatesResult(const std::string &id, const JID &service, const std::string &node, const AffiliateList *list, const gloox::Error *error) {}
+void IM::handleNodeConfig(const std::string &id, const JID &service, const std::string &node, const DataForm *config, const gloox::Error *error) {}
+void IM::handleNodeConfigResult(const std::string &id, const JID &service, const std::string &node, const gloox::Error *error) {}
+void IM::handleNodeCreation(const std::string &id, const JID &service, const std::string &node, const gloox::Error *error) {}
+void IM::handleNodeDeletion(const std::string &id, const JID &service, const std::string &node, const gloox::Error *error) {}
+void IM::handleNodePurge(const std::string &id, const JID &service, const std::string &node, const gloox::Error *error) {}
+void IM::handleSubscriptions(const std::string &id, const JID &service, const SubscriptionMap &subMap, const gloox::Error *error) {}
+void IM::handleAffiliations(const std::string &id, const JID &service, const AffiliationMap &affMap, const gloox::Error *error) {}
 
-void IM::handleDefaultNodeConfig(const std::string &id, const JID &service,
-                                 const DataForm *config,
-                                 const gloox::Error *error) {
+void IM::handleDefaultNodeConfig(const std::string &id, const JID &service, const DataForm *config, const gloox::Error *error) {
   Q_UNUSED(config);
-  qDebug()<<QString("id:%1 service:%2 error:%3")
-                .arg(qstring(id))
-                .arg(qstring(service.full()))
-                .arg(qstring(error->text()));
+  qDebug() << QString("id:%1 service:%2 error:%3").arg(qstring(id)).arg(qstring(service.full())).arg(qstring(error->text()));
 }
 
 std::string IM::getOnlineResource(const std::string &bare) {
@@ -2229,14 +2007,10 @@ std::set<std::string> IM::getOnlineResources(const std::string &bare) {
   return {};
 }
 
-
-void IM::updateOnlineStatus(const std::string &bare,
-                            const std::string &resource,
-                            Presence::PresenceType presenceType) {
-  if(presenceType==Presence::Error)
-  {
-      qWarning() <<"Ignore error presence.";
-      return;
+void IM::updateOnlineStatus(const std::string &bare, const std::string &resource, Presence::PresenceType presenceType) {
+  if (presenceType == Presence::Error) {
+    qWarning() << "Ignore error presence.";
+    return;
   }
   if (resource.empty()) {
     qWarning() << "Ignore resource is empty.";
@@ -2274,12 +2048,9 @@ void IM::updateOnlineStatus(const std::string &bare,
   emit receiveFriendStatus(friendId, status);
 }
 
-void IM::doJingleMessage(const PeerId &peerId,
-                         const Jingle::JingleMessage *jm) {
+void IM::doJingleMessage(const PeerId &peerId, const Jingle::JingleMessage *jm) {
 
-  qDebug()<<QString("JingleMessage id:%1 action:%2")
-                .arg(qstring(jm->id()))
-                .arg(Jingle::ActionValues[jm->action()]);
+  qDebug() << QString("JingleMessage id:%1 action:%2").arg(qstring(jm->id())).arg(Jingle::ActionValues[jm->action()]);
 
   qDebug() << "peerId:" << peerId.toString();
 
@@ -2353,8 +2124,7 @@ void IM::doJingleMessage(const PeerId &peerId,
   }
 }
 
-void IM::proposeJingleMessage(const QString &friendId, const QString &callId,
-                              bool video) {
+void IM::proposeJingleMessage(const QString &friendId, const QString &callId, bool video) {
 
   auto it = sessionIdMap.find(stdstring(friendId));
   if (it == sessionIdMap.end())
@@ -2365,8 +2135,7 @@ void IM::proposeJingleMessage(const QString &friendId, const QString &callId,
     return;
 
   StanzaExtensionList exts;
-  auto *jm = new Jingle::JingleMessage(Jingle::JingleMessage::propose,
-                                       stdstring(callId));
+  auto *jm = new Jingle::JingleMessage(Jingle::JingleMessage::propose, stdstring(callId));
   jm->addMedia(Jingle::Media::audio);
   if (video) {
     jm->addMedia(Jingle::Media::video);
@@ -2392,8 +2161,7 @@ void IM::rejectJingleMessage(const QString &friendId, const QString &callId) {
     return;
 
   StanzaExtensionList exts;
-  auto reject = new Jingle::JingleMessage(Jingle::JingleMessage::reject,
-                                          stdstring(callId));
+  auto reject = new Jingle::JingleMessage(Jingle::JingleMessage::reject, stdstring(callId));
   exts.push_back(reject);
 
   auto session = sit->second;
@@ -2416,16 +2184,14 @@ void IM::acceptJingleMessage(const QString &friendId, const QString &callId) {
     return;
   }
 
-  auto proceed = new Jingle::JingleMessage(Jingle::JingleMessage::proceed,
-                                           stdstring(callId));
+  auto proceed = new Jingle::JingleMessage(Jingle::JingleMessage::proceed, stdstring(callId));
   Message proceedMsg(gloox::Message::Chat, JID(stdstring(friendId)));
   proceedMsg.addExtension(proceed);
   _client->send(proceedMsg);
   qDebug() << "Sent proceed for jingle-message";
 
   // 发送给自己其它终端
-  auto accept = new Jingle::JingleMessage(Jingle::JingleMessage::accept,
-                                          stdstring(callId));
+  auto accept = new Jingle::JingleMessage(Jingle::JingleMessage::accept, stdstring(callId));
   Message msg(gloox::Message::Chat, self().bareJID());
   msg.addExtension(accept);
   _client->send(msg);
@@ -2442,8 +2208,7 @@ void IM::retractJingleMessage(const QString &friendId, const QString &callId) {
     return;
 
   auto session = sit->second;
-  auto *jm1 = new Jingle::JingleMessage(Jingle::JingleMessage::retract,
-                                        stdstring(callId));
+  auto *jm1 = new Jingle::JingleMessage(Jingle::JingleMessage::retract, stdstring(callId));
   StanzaExtensionList exts1;
   exts1.push_back(jm1);
   session->send("", "", exts1);
@@ -2464,8 +2229,7 @@ bool IM::leaveGroup(const QString &groupId) {
   m_roomMap.remove(groupId);
 
   // 从书签删除，再保存书签
-  mConferenceList.remove_if(
-      [&](ConferenceListItem &a) { return a.jid == stdstring(groupId); });
+  mConferenceList.remove_if([&](ConferenceListItem &a) { return a.jid == stdstring(groupId); });
 
   bookmarkStorage->storeBookmarks(mBookmarkList, mConferenceList);
 
@@ -2487,53 +2251,32 @@ bool IM::destroyGroup(const QString &groupId) {
   m_roomMap.remove(groupId);
 
   // 从书签删除，再保存书签
-  mConferenceList.remove_if(
-      [&](ConferenceListItem &a) { return a.jid == stdstring(groupId); });
+  mConferenceList.remove_if([&](ConferenceListItem &a) { return a.jid == stdstring(groupId); });
 
   bookmarkStorage->storeBookmarks(mBookmarkList, mConferenceList);
 
   return true;
 }
 
-Disco::ItemList IM::handleDiscoNodeItems(const JID &from, const JID &to,
-                                         const std::string &node) {
+Disco::ItemList IM::handleDiscoNodeItems(const JID &from, const JID &to, const std::string &node) {
 
-  qDebug()<<QString("from:%1").arg(from.full().c_str());
+  qDebug() << QString("from:%1").arg(from.full().c_str());
 
   return gloox::Disco::ItemList();
 }
 
-Disco::IdentityList IM::handleDiscoNodeIdentities(const JID &from,
-                                                  const std::string &node) {
-  return gloox::Disco::IdentityList();
-}
+Disco::IdentityList IM::handleDiscoNodeIdentities(const JID &from, const std::string &node) { return gloox::Disco::IdentityList(); }
 
-StringList IM::handleDiscoNodeFeatures(const JID &from,
-                                       const std::string &node) {
-  return gloox::StringList();
-}
-
-void IM::onSelfNicknameChanged(const QString &nickname) {
-//  qDebug() << "onSelfNicknameChanged" << nickname;
-  _nickChanged++;
-  //  if (_nickChanged == 1) {
-  //    for (auto &c : mConferenceList) {
-  //      JID roomJid(c.jid);
-  //      roomJid.setResource(stdstring(nickname));
-  //      joinRoom(roomJid);
-  //    }
-  //  }
-}
+StringList IM::handleDiscoNodeFeatures(const JID &from, const std::string &node) { return gloox::StringList(); }
 
 void IM::endJingle() { mPeerRequestMedias.clear(); }
 
 void IM::handleIncoming(gloox::Tag *tag) {
-  auto services =
-      tag->findChild("services", "xmlns", XMLNS_EXTERNAL_SERVICE_DISCOVERY);
+  auto services = tag->findChild("services", XMLNS, XMLNS_EXTERNAL_SERVICE_DISCOVERY);
   if (services) {
     mExtDisco = ExtDisco(services);
   }
-//  emit incoming(::base::Xmls::parse(qstring(tag->xml())));
+  //  emit incoming(::base::Xmls::parse(qstring(tag->xml())));
 }
 
 void IM::onDisconnect(ConnectionError e) {
@@ -2591,64 +2334,63 @@ void IM::onDisconnect(ConnectionError e) {
 }
 
 bool IM::onTLSConnect(const CertInfo &info) {
-  qDebug()<<QString("CertInfo:");
+  qDebug() << QString("CertInfo:");
 
   time_t from(info.date_from);
   time_t to(info.date_to);
 
-  qDebug()<<QString("status: %1\n"   //
-             "issuer: %2\n"   //
-             "peer: %3\n"     //
-             "protocol: %4\n" //
-             "mac: %5\n"      //
-             "cipher: %6\n"   //
-             "compression: %7\n")
-                .arg((info.status))                     //
-                .arg(qstring(info.issuer.c_str()))      //
-                .arg(qstring(info.server.c_str()))      //
-                .arg((info.protocol.c_str()))           //
-                .arg(qstring(info.mac.c_str()))         //
-                .arg(qstring(info.cipher.c_str()))      //
-                .arg(qstring(info.compression.c_str())); //
+  qDebug() << QString("status: %1\n"   //
+                      "issuer: %2\n"   //
+                      "peer: %3\n"     //
+                      "protocol: %4\n" //
+                      "mac: %5\n"      //
+                      "cipher: %6\n"   //
+                      "compression: %7\n")
+                  .arg((info.status))                      //
+                  .arg(qstring(info.issuer.c_str()))       //
+                  .arg(qstring(info.server.c_str()))       //
+                  .arg((info.protocol.c_str()))            //
+                  .arg(qstring(info.mac.c_str()))          //
+                  .arg(qstring(info.cipher.c_str()))       //
+                  .arg(qstring(info.compression.c_str())); //
 
-
-  qDebug()<<QString("from:%1").arg(ctime(&from));
-  qDebug()<<QString("to:%1").arg(ctime(&to));
+  qDebug() << QString("from:%1").arg(ctime(&from));
+  qDebug() << QString("to:%1").arg(ctime(&to));
 
   return true;
 }
 
 void IM::handleLog(LogLevel level, LogArea area, const std::string &message) {
   //   qDebug()<<QString("%1").arg(message.c_str()));
-  auto line =  QString::fromStdString(message);
+  auto line = QString::fromStdString(message);
   switch (area) {
   case LogAreaXmlIncoming:
     qDebug() << "Received XML:" << line;
     break;
   case LogAreaXmlOutgoing:
-    qDebug() << "Sent XML:"  << line;
+    qDebug() << "Sent XML:" << line;
     break;
   case LogAreaClassConnectionBOSH:
-    qDebug() << "BOSH:"  << line;
+    qDebug() << "BOSH:" << line;
     break;
   case LogAreaClassClient:
-    qDebug() << "Client:"  << line;
+    qDebug() << "Client:" << line;
     break;
   case LogAreaClassDns:
     qDebug() << "dns:" << line;
     break;
   default:
-    qDebug() << QString("level: %1, area: %2 msg: %3")
-                  .arg(level)
-                  .arg(area)
-                  .arg(line);
+    qDebug() << QString("level: %1, area: %2 msg: %3").arg(level).arg(area).arg(line);
   }
 }
 
 Tox_User_Status IM::getFriendStatus(const QString &qString) {
-  return onlineMap.find(qString.toStdString())!=onlineMap.end()
-             ?Tox_User_Status::TOX_USER_STATUS_Available:
-             Tox_User_Status::TOX_USER_STATUS_Unavailable;
+  return onlineMap.find(qString.toStdString()) != onlineMap.end() ? Tox_User_Status::TOX_USER_STATUS_Available : Tox_User_Status::TOX_USER_STATUS_Unavailable;
+}
+
+void IM::requestFriendNickname(const JID &friendId) {
+  qDebug() << __func__ << friendId.full().c_str();
+  pubSubManager->subscribe(friendId, XMLNS_NICKNAME, this);
 }
 
 } // namespace messenger

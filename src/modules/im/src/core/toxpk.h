@@ -17,6 +17,10 @@
 #include <QByteArray>
 #include <QHash>
 
+namespace lib::messenger{
+class FriendId;
+}
+
 /**
  * 朋友ID
  * 格式：user@server
@@ -30,6 +34,7 @@ public:
     explicit ToxPk(const QByteArray& rawId);
     explicit ToxPk(const QString& rawId);
     explicit ToxPk(const ContactId& rawId);
+    explicit ToxPk(const lib::messenger::FriendId& fId);
 
     bool operator==(const ToxPk& other) const;
     bool operator<(const ToxPk& other) const;

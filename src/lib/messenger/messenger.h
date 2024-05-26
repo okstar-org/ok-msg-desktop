@@ -74,8 +74,7 @@ public:
 
 class FriendHandler {
 public:
-  virtual void onFriend(QString friendId) = 0;
-  virtual void onFriendDone() = 0;
+  virtual void onFriend(const Friend& frnd) = 0;
   virtual void onFriendRequest(QString friendId, QString msg) = 0;
   virtual void onFriendRemoved(QString friendId) = 0;
   virtual void onFriendStatus(QString friendId, Tox_User_Status status) = 0;
@@ -226,7 +225,7 @@ public:
 
   size_t getFriendCount();
 
-  std::list<lib::messenger::FriendId> getFriendList();
+  void getFriendList(std::list<lib::messenger::Friend> &);
 
   bool sendToGroup(const QString &g, const QString &msg, QString &receiptNum);
 
@@ -356,8 +355,6 @@ private slots:
   void onEncryptedMessage(QString dom);
 
   void onGroupReceived(QString groupId, QString name);
-
-  void onFriendReceived(QString friendId);
 
 };
 

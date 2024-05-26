@@ -59,8 +59,8 @@ public:
   void setAvatar(QByteArray pic);
   void setAvatarOnly(QPixmap pic);
 
-  inline QPixmap loadAvatar(const ContactId &owner);
-  inline QByteArray loadAvatarData(const ContactId &owner);
+  QPixmap loadAvatar(const ContactId &owner);
+  QByteArray loadAvatarData(const ContactId &owner);
 
 
   QByteArray getAvatarHash(const ToxPk &owner);

@@ -122,8 +122,7 @@ public:
   Camera *getCamera();
 
   void showUpdateDownloadProgress();
-  void addFriendDialog(const Friend *frnd, ContentDialog *dialog);
-  void addGroupDialog(const Group *group, ContentDialog *dialog);
+
   bool newFriendMessageAlert(const ToxPk &friendId, const QString &text,
                              bool sound = true, bool file = false);
   bool newGroupMessageAlert(const GroupId &groupId, const ToxPk &authorPk,

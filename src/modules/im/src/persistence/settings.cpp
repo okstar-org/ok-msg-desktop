@@ -1830,7 +1830,7 @@ void Settings::updateFriendAddress(const QString &newAddr) {
   frnd.addr = newAddr;
 }
 
-QString Settings::getFriendAlias(const ToxPk &id) const {
+QString Settings::getFriendAlias(const ContactId &id) const {
   QMutexLocker locker{&bigLock};
   if (friendLst.isEmpty())
     return {};

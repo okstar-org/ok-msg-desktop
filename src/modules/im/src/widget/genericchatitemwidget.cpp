@@ -199,12 +199,9 @@ void GenericChatItemWidget::removeContact()
 
 void GenericChatItemWidget::showEvent(QShowEvent *e)
 {
-    qDebug() << __func__;
-
    if(contact){
        setName(contact->getDisplayedName());
        setAvatar(contact->getAvatar());
    }
-
 }
 

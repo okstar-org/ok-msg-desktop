@@ -23,12 +23,12 @@
 #include "toxid.h"
 #include "toxpk.h"
 
+#include "base/compatiblerecursivemutex.h"
 #include "lib/messenger/messenger.h"
 #include "lib/messenger/tox/tox.h"
-#include "base/compatiblerecursivemutex.h"
-#include "src/util/strongtype.h"
-#include "src/model/status.h"
 
+#include "src/model/status.h"
+#include "src/util/strongtype.h"
 
 #include <QMutex>
 #include <QObject>
@@ -45,6 +45,7 @@ class CoreFile;
 class IAudioControl;
 class ICoreSettings;
 class GroupInvite;
+class Friend;
 class Profile;
 class Core;
 
@@ -81,7 +82,7 @@ public:
   static const QString TOX_EXT;
   static QStringList splitMessage(const QString &message);
   QString getPeerName(const ToxPk &id) const;
-  QVector<ToxPk> loadFriendList() const;
+  void loadFriendList(std::list<FriendInfo> &) const;
 
   void loadGroupList() const;
   GroupId getGroupPersistentId(QString groupId) const override;
@@ -194,10 +195,7 @@ signals:
                              const FriendMessage &message, //
                              bool isAction);
 
-
-
-  void friendAdded(const ToxPk &friendPk, bool isFriend);
-  void friendAddedDone();
+  void friendAdded(const FriendInfo frnd);
 
   void friendStatusChanged(const ToxPk &friendId, Status::Status status);
   void friendStatusMessageChanged(const ToxPk &friendId, const QString &message);
@@ -304,9 +302,7 @@ private:
    * @param list
    */
 
-  virtual void onFriend(const QString friendId) override;
-
-  virtual void onFriendDone() override;
+  virtual void onFriend(const lib::messenger::Friend& frnd) override;
 
   virtual void onFriendRequest(const QString friendId, QString name) override;
 

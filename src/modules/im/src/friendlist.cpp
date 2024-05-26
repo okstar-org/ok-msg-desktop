@@ -20,24 +20,25 @@
 
 FriendMap FriendList::friendMap;
 
-Friend *FriendList::addFriend(const ToxPk &friendPk, bool isFriend) {
-  qDebug() << __func__ << "friendPk:" << friendPk.toString();
+Friend *FriendList::addFriend(const FriendInfo &friendInfo) {
+  qDebug() << __func__ << "friendInfo:" << friendInfo.toString();
 
-  auto frnd = findFriend(friendPk);
-
+  auto frnd = findFriend(friendInfo.id);
   if(frnd){
-      qWarning() <<"friend:" << friendPk.toString() <<"is existing";
+      qWarning() <<"friend:" << friendInfo.toString() <<"is existing";
       return frnd;
   }
 
-  QString alias = Settings::getInstance().getFriendAlias(friendPk);
+  QString alias = Settings::getInstance().getFriendAlias(friendInfo.id);
   qDebug() <<"alias:"<<alias;
 
-  Friend *newfriend = new Friend(friendPk, isFriend, alias, friendPk.username);
-  friendMap[((ContactId&)friendPk).toString()] = newfriend;
+  Friend *newfriend = new Friend(friendInfo.id,
+                                 friendInfo.isFriend(),
+                                 alias, friendInfo.getName());
+  friendMap[((ContactId&)friendInfo).toString()] = newfriend;
 
-//  if(friendPk.resource.isEmpty()){
-//      newfriend->addEnd(friendPk.resource);
+//  if(friendInfo.resource.isEmpty()){
+//      newfriend->addEnd(friendInfo.resource);
 //  }
   return newfriend;
 }

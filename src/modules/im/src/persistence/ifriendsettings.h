@@ -18,6 +18,8 @@
 #include <QObject>
 #include <QFlag>
 
+#include <src/core/contactid.h>
+
 class ToxPk;
 
 class IFriendSettings
@@ -46,7 +48,7 @@ public:
     virtual bool getAutoGroupInvite(const ToxPk& pk) const = 0;
     virtual void setAutoGroupInvite(const ToxPk& pk, bool accept) = 0;
 
-    virtual QString getFriendAlias(const ToxPk& pk) const = 0;
+    virtual QString getFriendAlias(const ContactId& pk) const = 0;
     virtual void setFriendAlias(const ToxPk& pk, const QString& alias) = 0;
 
     virtual int getFriendCircleID(const ToxPk& pk) const = 0;

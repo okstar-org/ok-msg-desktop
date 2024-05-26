@@ -99,9 +99,10 @@ void ContactWidget::onCoreChanged(Core &core_) {
   core = &core_;
   connectToCore(core);
 
-  auto fl = core->loadFriendList();
-  for (auto fk : fl) {
-    contactListWidget->addFriend(fk, true);
+  std::list<FriendInfo> fl;
+  core->loadFriendList(fl);
+  for (auto& fk : fl) {
+    contactListWidget->addFriend(fk);
   }
 
   core->loadGroupList();
@@ -152,12 +153,12 @@ void ContactWidget::connectToCore(Core *core) {
 
 }
 
-void ContactWidget::onFriendAdded(const ToxPk &friendPk, bool isFriend) {
-  qDebug() << __func__ << "friend:" << friendPk.toString();
-  if(!friendPk.isValid()){
+void ContactWidget::onFriendAdded(const FriendInfo &frnd) {
+  qDebug() << __func__ << "friend:" << frnd.getId().toString();
+  if(!frnd.getId().isValid()){
       return;
   }
-  contactListWidget->addFriend(friendPk, isFriend);
+  contactListWidget->addFriend(frnd);
 }
 
 

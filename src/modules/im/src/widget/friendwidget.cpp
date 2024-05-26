@@ -57,14 +57,13 @@
  * When you click should open the chat with friend. Widget has a context menu.
  */
 FriendWidget::FriendWidget(ContentLayout *layout,
-                           const ToxPk &friendPk,
-                           bool isFriend,
+                           const FriendInfo &f,
                            QWidget* parent)
-    : GenericChatroomWidget(ChatType::Chat, friendPk, parent),
+    : GenericChatroomWidget(ChatType::Chat, f.id, parent),
       contentLayout(layout), menu{nullptr}, about{nullptr}
 {
 
-  qDebug() <<__func__ <<"friend:"<<friendPk.toString();
+  qDebug() <<__func__ <<"friend:"<<f.toString();
 
   auto profile = Nexus::getProfile();
 
@@ -73,7 +72,7 @@ FriendWidget::FriendWidget(ContentLayout *layout,
   auto history = profile->getHistory();
   auto dialogManager = ContentDialogManager::getInstance();
 
-  m_friend = FriendList::addFriend(friendPk, isFriend);
+  m_friend = FriendList::addFriend(f);
 //  nameLabel->setText(m_friend->getDisplayedName());
 
 
@@ -162,12 +161,12 @@ void FriendWidget::deinit()
 }
 
 void FriendWidget::do_widgetClicked(GenericChatroomWidget *w) {
-  qDebug() << __func__ << "show friend:" << m_friend->getId();
+  qDebug() << __func__ << "show friend:" << m_friend->getId().toString();
     showDetails();
 }
 
 ContentDialog *FriendWidget::addFriendDialog(const Friend *frnd) {
-  QString friendId = frnd->getId();
+  QString friendId = frnd->getId().toString();
   qDebug() << __func__ << friendId;
 
   const ToxPk &friendPk = frnd->getPublicKey();
@@ -367,7 +366,7 @@ void FriendWidget::changeAutoAccept(bool enable) {
 void FriendWidget::showDetails() {
     qDebug() <<__func__;
   if(!about){
-      qDebug() << "create about for:" << m_friend->getId();
+      qDebug() << "create about for:" << m_friend->getId().toString();
       const auto af = new AboutFriend(m_friend, &Settings::getInstance());
       std::unique_ptr<IAboutFriend> iabout = std::unique_ptr<IAboutFriend>(af);
       about = new AboutFriendForm(std::move(iabout), this);
