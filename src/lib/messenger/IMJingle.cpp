@@ -313,7 +313,7 @@ void IMJingle::doSessionInitiate(Jingle::Session *session,
     QList<QString> files;
     for (const auto &c : context.getContents()) {
       for (const auto &f : c.file.files) {
-        FileHandler::File file = {qstring(c.file.ibb.sid()), qstring(f.name),
+        File file = {qstring(c.file.ibb.sid()), qstring(f.name),
                                   qstring(session->sid()), "", (quint64)f.size};
         qDebug()<< QString("sId:%1 file:%2 fileId:%3")
                       .arg((file.sId))
@@ -730,12 +730,12 @@ bool IMJingle::answer(const QString &friendId, const QString &callId,
  * @param file
  */
 void IMJingle::rejectFileRequest(const QString &friendId,
-                                 const FileHandler::File &file) {
+                                 const File &file) {
   cancelCall(friendId, file.sId);
 }
 
 void IMJingle::acceptFileRequest(const QString &friendId,
-                                 const FileHandler::File &file) {
+                                 const File &file) {
   qDebug()<<("sId:%1 file:%2 fileId:%3") //
                 <<(file.sId)
                 <<(file.name)
@@ -770,23 +770,24 @@ void IMJingle::acceptFileRequest(const QString &friendId,
 }
 
 void IMJingle::finishFileRequest(const QString &friendId,
-                                 const FileHandler::File &file) {
-  qDebug()<<("sId:%1 file:%2 fileId:%3")<<(file.sId)<<(file.name)<<((file.id));
-  auto *s = (findSession(stdstring(file.sId)));
+                                 const QString &sId) {
+  qDebug()<<__func__<<"sId:"<<(sId);
+  auto *s = findSession(stdstring(sId));
   if (!s) {
+      qWarning() << "Can not find file session" << sId;
     return;
   }
-  s->getSession()->sessionTerminate(
-      new Session::Reason(Session::Reason::Success));
+  s->getSession()->sessionTerminate(new Session::Reason(Session::Reason::Success));
 }
 
 void IMJingle::finishFileTransfer(const QString &friendId,
-                                  const FileHandler::File &file) {
-  finishFileRequest(friendId, file);
+                                  const QString &sId) {
+    qDebug()<<__func__<<"sId:"<<(sId);
+  finishFileRequest(friendId, sId);
 }
 
 bool IMJingle::sendFile(const QString &friendId,
-                        const FileHandler::File &file) {
+                        const File &file) {
   qDebug()<<__func__ << (friendId) << (file.name);
   if (file.id.isEmpty()) {
     qWarning() << "file id is no existing";
@@ -810,9 +811,9 @@ bool IMJingle::sendFile(const QString &friendId,
 }
 
 bool IMJingle::sendFileToResource(const JID &jid,
-                                  const FileHandler::File &file) {
-  qDebug()<<__func__<<qstring(jid.full());
-  auto session = _sessionManager->createSession(jid, this);
+                                  const File &file) {
+  qDebug()<<__func__<< qstring(jid.full()) << "sId:"<<file.sId;
+  auto session = _sessionManager->createSession(jid, this, stdstring(file.sId));
   if (!session) {
     qDebug() << "Can not create session!";
     return false;
@@ -840,7 +841,7 @@ bool IMJingle::sendFileToResource(const JID &jid,
   session->sessionInitiate(jc);
 
   // 缓存文件
-  auto &nf = const_cast<FileHandler::File &>(file);
+  auto &nf = const_cast<File &>(file);
   nf.sId = qstring(session->sid());
   m_waitSendFiles.append(nf);
 
@@ -857,26 +858,26 @@ IMJingleSession *IMJingle::findSession(const std::string &sId) {
 }
 
 void IMJingle::doStartFileSendTask(const Session *session,
-                                   const FileHandler::File &file) {
-  qDebug()<<__func__<<(file.sId)<<(file.name)<<((file.id));
+                                   const File &file) {
+  qDebug()<<__func__<<file.sId ;
 
   auto *imFile = new IMFile(session->remote(), file, client);
   connect(imFile, &IMFile::fileSending,
-          [&](const JID &m_friendId, const FileHandler::File &m_file, int m_seq,
+          [&](const JID &m_friendId, const File &m_file, int m_seq,
               int m_sentBytes, bool end) {
             emit sendFileInfo(qstring(m_friendId.bare()), m_file, m_seq,
                               m_sentBytes, end);
           });
 
   connect(imFile, &IMFile::fileAbort,
-          [&](const JID &m_friendId, const FileHandler::File &m_file,
+          [&](const JID &m_friendId, const File &m_file,
               int m_sentBytes) {
             emit sendFileAbort(qstring(m_friendId.bare()), m_file,
                                m_sentBytes);
           });
 
   connect(imFile, &IMFile::fileError,
-          [&](const JID &m_friendId, const FileHandler::File &m_file,
+          [&](const JID &m_friendId, const File &m_file,
               int m_sentBytes) {
             emit sendFileError(qstring(m_friendId.bare()), m_file,
                                m_sentBytes);
@@ -887,14 +888,15 @@ void IMJingle::doStartFileSendTask(const Session *session,
 }
 
 void IMJingle::doStopFileSendTask(const Session *session,
-                                  const FileHandler::File &file) {
-  Q_UNUSED(session)
+                                  const File &file) {
+    Q_UNUSED(session)
+  qDebug()<<__func__<<file.sId ;
   auto *imFile = m_fileSenderMap.value(file.sId);
   if (!imFile) {
     return;
   }
+
   qDebug()<<__func__<<"Send file task will be clear."<<file.id;
-  imFile->abort();
   if (imFile->isRunning()) {
     imFile->quit();
     imFile->wait();

@@ -34,7 +34,7 @@ Messenger::Messenger(QObject *parent)
 {
     qDebug() << __func__;
 
-  qRegisterMetaType<FileHandler::File>("FileHandler::File");
+  qRegisterMetaType<File>("File");
   qRegisterMetaType<FriendId>("FriendId");
   qRegisterMetaType<PeerId>("PeerId");
   qRegisterMetaType<std::string>("std::string");
@@ -393,27 +393,27 @@ bool Messenger::connectJingle() {
           });
 
   connect(_jingle.get(), &IMJingle::receiveFileRequest, this,
-          [&](const QString &friendId, const FileHandler::File &file) {
+          [&](const QString &friendId, const File &file) {
             for (auto h : fileHandlers) {
               h->onFileRequest(friendId, file);
             }
           });
   connect(_jingle.get(), &IMJingle::sendFileInfo, this,
-          [&](const QString &friendId, const FileHandler::File &file, int m_seq,
+          [&](const QString &friendId, const File &file, int m_seq,
               int m_sentBytes, bool end) {
             for (auto h : fileHandlers) {
               h->onFileSendInfo(friendId, file, m_seq, m_sentBytes, end);
             }
           });
   connect(_jingle.get(), &IMJingle::sendFileAbort, this,
-          [&](const QString &friendId, const FileHandler::File &file,
+          [&](const QString &friendId, const File &file,
               int m_sentBytes) {
             for (auto h : fileHandlers) {
               h->onFileSendAbort(friendId, file, m_sentBytes);
             }
           });
   connect(_jingle.get(), &IMJingle::sendFileError, this,
-          [&](const QString &friendId, const FileHandler::File &file,
+          [&](const QString &friendId, const File &file,
               int m_sentBytes) {
             for (auto h : fileHandlers) {
               h->onFileSendError(friendId, file, m_sentBytes);
@@ -460,7 +460,7 @@ bool Messenger::sendToGroup(const QString &g,   //
 }
 
 bool Messenger::sendFileToFriend(const QString &f,
-                                 const FileHandler::File &file) {
+                                 const File &file) {
   return _jingle->sendFile(f, file);
 }
 
@@ -752,11 +752,11 @@ void Messenger::setSelfAvatar(const QByteArray &avatar) {
   _im->setAvatar(avatar);
 }
 
-void Messenger::rejectFileRequest(QString friendId, const FileHandler::File &file) {
+void Messenger::rejectFileRequest(QString friendId, const File &file) {
   _jingle->rejectFileRequest(friendId, file);
 }
 
-void Messenger::acceptFileRequest(QString friendId, const FileHandler::File &file) {
+void Messenger::acceptFileRequest(QString friendId, const File &file) {
   _jingle->acceptFileRequest(friendId, file);
 }
 
@@ -764,15 +764,15 @@ void Messenger::cancelFile(QString fileId) {
   qDebug() << QString("fileId:%1").arg(fileId);
 }
 
-void Messenger::finishFileRequest(QString friendId, const FileHandler::File &file) {
-  qDebug() << QString("fileId:%1").arg(friendId);
-  _jingle->finishFileRequest(friendId, file);
+void Messenger::finishFileRequest(QString friendId, const QString &sId) {
+  qDebug() << __func__<<sId;
+  _jingle->finishFileRequest(friendId, sId);
 }
 
 void Messenger::finishFileTransfer(QString friendId,
-                                   const FileHandler::File &file) {
-  qDebug() << QString("friendId:%1 file:%2").arg(friendId).arg(file.name);
-  _jingle->finishFileTransfer(friendId, file);
+                                   const QString &sId) {
+    qDebug() << __func__<<sId;
+  _jingle->finishFileTransfer(friendId, sId);
 }
 
 void Messenger::requestBookmarks() {

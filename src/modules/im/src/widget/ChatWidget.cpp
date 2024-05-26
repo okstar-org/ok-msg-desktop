@@ -78,7 +78,7 @@ void acceptFileTransfer(const ToxFile &file, const QString &path) {
   // The user can still accept it manually.
   if (tryRemoveFile(filepath)) {
     CoreFile *coreFile = Core::getInstance()->getCoreFile();
-    coreFile->acceptFileRecvRequest(file.friendId, file.fileNum, filepath);
+    coreFile->acceptFileRecvRequest(file.friendId, file.fileId, filepath);
   } else {
     qWarning() << "Cannot write to " << filepath;
   }
@@ -821,7 +821,7 @@ void ChatWidget::setupStatus() {
 
 void ChatWidget::dispatchFile(ToxFile file)
 {
-    qDebug() << __func__ <<file.fileName;
+    qDebug() << __func__ << file.fileId;
 
     const auto &friendId = ToxPk(file.friendId);
     Friend *f = FriendList::findFriend(friendId);
@@ -831,9 +831,9 @@ void ChatWidget::dispatchFile(ToxFile file)
 
     auto pk = f->getPublicKey();
 
-    if (file.status == ToxFile::INITIALIZING &&
-        file.direction == ToxFile::RECEIVING) {
-      auto sender = (file.direction == ToxFile::SENDING)
+    if (file.status == FileStatus::INITIALIZING &&
+        file.direction == FileDirection::RECEIVING) {
+      auto sender = (file.direction == FileDirection::SENDING)
                         ? Core::getInstance()->getSelfPublicKey()
                         : pk;
 
@@ -846,15 +846,14 @@ void ChatWidget::dispatchFile(ToxFile file)
 
       auto maxAutoAcceptSize = settings.getMaxAutoAcceptSize();
       bool autoAcceptSizeCheckPassed =
-          maxAutoAcceptSize == 0 || maxAutoAcceptSize >= file.filesize;
+          maxAutoAcceptSize == 0 || maxAutoAcceptSize >= file.fileSize;
 
       if (!autoAcceptDir.isEmpty() && autoAcceptSizeCheckPassed) {
         acceptFileTransfer(file, autoAcceptDir);
       }
     }
 
-    const auto frnd = (file.direction == ToxFile::SENDING) ?  pk : core->getSelfPublicKey();
-    sessionListWidget->setFriendFileReceived(frnd, file);
+    sessionListWidget->setFriendFileReceived(pk, file);
 }
 
 void ChatWidget::dispatchFileWithBool(ToxFile file, bool)

@@ -19,9 +19,13 @@
 
 namespace lib {
 namespace messenger {
-IMFile::IMFile(const JID &friendId, FileHandler::File file, const IM *im)
+
+constexpr int BUF_SIZE = 100*1024;   //100k
+
+
+IMFile::IMFile(const JID &friendId, File file, const IM *im)
     : m_friendId(friendId), m_file(std::move(file)), m_im(im),
-      m_byteStream(nullptr) {
+      m_byteStream(nullptr),  m_buf{BUF_SIZE}, m_seq{0}, m_sentBytes{0}, m_ack_seq{0} {
   qDebug() <<__func__<< "Create FileSender:" << m_file.id;
 }
 

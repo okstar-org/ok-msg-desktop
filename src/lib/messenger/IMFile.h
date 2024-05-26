@@ -27,8 +27,8 @@ class IMFile : public QThread, public BytestreamDataHandler {
   Q_OBJECT
 public:
   IMFile(const JID &friendId,           //
-         FileHandler::File file,        //
-         const lib::messenger::IM *im); //
+         File file,        //
+         const IM *im); //
 
   virtual ~IMFile();
 
@@ -51,12 +51,12 @@ public:
 
 private:
   JID m_friendId;
-  FileHandler::File m_file;
+  File m_file;
   const IM *m_im;
-  int m_buf = 4096; // 4k
-  int m_seq = 0;
-  quint64 m_sentBytes = 0;
-  int m_ack_seq = 0;
+  int m_buf;
+  int m_seq;
+  quint64 m_sentBytes;
+  int m_ack_seq;
 
   std::unique_ptr<InBandBytestream> m_ibb;
   std::unique_ptr<QFile> qFile;
@@ -65,12 +65,12 @@ private:
 
 public:
 signals:
-  void fileSent(const JID &m_friendId, const FileHandler::File &m_file);
-  void fileError(const JID &m_friendId, const FileHandler::File &m_file,
+  void fileSent(const JID &m_friendId, const File &m_file);
+  void fileError(const JID &m_friendId, const File &m_file,
                  int m_sentBytes);
-  void fileAbort(const JID &m_friendId, const FileHandler::File &m_file,
+  void fileAbort(const JID &m_friendId, const File &m_file,
                  int m_sentBytes);
-  void fileSending(const JID &m_friendId, const FileHandler::File &m_file,
+  void fileSending(const JID &m_friendId, const File &m_file,
                    int m_seq, int m_sentBytes, bool end);
 };
 

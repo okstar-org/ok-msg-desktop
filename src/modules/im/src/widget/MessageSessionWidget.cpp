@@ -205,7 +205,7 @@ void MessageSessionWidget::showEvent(QShowEvent *e)
             setName(group->getName());
         }
     }else{
-         auto f = FriendList::findFriend(contactId);
+        auto f = FriendList::findFriend(contactId);
         if(f){
             setContact(*f);
         }

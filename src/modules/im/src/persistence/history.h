@@ -40,34 +40,34 @@ enum class HistMessageContentType
     file
 };
 
-struct FileDbInsertionData
-{
-    FileDbInsertionData();
-
-    QString fileId;
-    QString fileName;
-    QString filePath;
-    int64_t size;
-    int direction;
-
-    QString json(){
-        return QString("{\"id:\":\"%1\", \"name\":\"%2\", \"path\":\"%3\", \"size\":%4, \"direction\":%5}")
-                .arg(fileId).arg(fileName).arg(filePath).arg(size).arg(direction);
-    }
-
-    void parse(const QString &json){
-        auto doc = Jsons::toJSON(json.toUtf8());
-        auto obj = doc.object();
-        fileId = obj.value("id").toString();
-        fileName = obj.value("fileName").toString();
-        filePath = obj.value("path").toString();
-        size = obj.value("size").toInt();
-        direction = obj.value("direction").toInt();
-    }
-};
-
-
-Q_DECLARE_METATYPE(FileDbInsertionData);
+//struct FileDbInsertionData
+//{
+//    FileDbInsertionData();
+//
+//    QString fileId;
+//    QString fileName;
+//    QString filePath;
+//    int64_t size;
+//    int direction;
+//
+//    QString json(){
+//        return QString("{\"id:\":\"%1\", \"name\":\"%2\", \"path\":\"%3\", \"size\":%4, \"direction\":%5}")
+//                .arg(fileId).arg(fileName).arg(filePath).arg(size).arg(direction);
+//    }
+//
+//    void parse(const QString &json){
+//        auto doc = Jsons::toJSON(json.toUtf8());
+//        auto obj = doc.object();
+//        fileId = obj.value("id").toString();
+//        fileName = obj.value("fileName").toString();
+//        filePath = obj.value("path").toString();
+//        size = obj.value("size").toInt();
+//        direction = obj.value("direction").toInt();
+//    }
+//};
+//
+//
+//Q_DECLARE_METATYPE(FileDbInsertionData);
 
 
 enum class MessageState
@@ -85,20 +85,23 @@ public:
 
     struct HistMessage
     {
+        HistMessage()=default;
         HistMessage(RowId id,
                     HistMessageContentType type,
                     MessageState state,
                     QDateTime timestamp,
                     QString sender,
                     QString receiver,
-                    QString message)
+                    QString message,
+                    QString dataId)
           : id{id},
             type{type},
             state(state),
             timestamp{std::move(timestamp)},
             sender{std::move(sender)},
             receiver{std::move(receiver)},
-            message(std::move(message))
+            message(std::move(message)),
+            dataId{dataId}
         {
 //            if(type==HistMessageContentType::message){
 //                 data = std::make_shared<QString>(std::move(message));
@@ -116,7 +119,7 @@ public:
         MessageState state;
         HistMessageContentType type;
         QString message;
-
+        QString dataId;
 
         [[nodiscard]] QString asMessage() const
         {
@@ -126,9 +129,9 @@ public:
             return {};
         }
 
-        [[nodiscard]] const FileDbInsertionData asFile() const
+        [[nodiscard]] FileInfo asFile() const
         {
-            FileDbInsertionData file;
+          FileInfo file;
             if(type == HistMessageContentType::file){
                 file.parse(message);
             }
@@ -162,15 +165,15 @@ public:
                        const std::function<void(RowId)>& insertIdCallback = {});
 
     void addNewFileMessage(const QString& friendPk,
-                           const QString& fileId,
-                           const QString& fileName,
-                           const QString& filePath,
-                           int64_t size,
+                           const ToxFile& file,
                            const QString& sender,
                            const QDateTime& time,
                            QString const& dispName);
 
-    void setFileFinished(const QString& fileId, bool success, const QString& filePath, const QByteArray& fileHash);
+    void setFileFinished(const ToxFile& file );
+
+    QList<HistMessage> getMessageByDataId(const QString &dataId);
+
     size_t getNumMessagesForFriend(const ToxPk& me, const ToxPk& friendPk);
     size_t getNumMessagesForFriendBeforeDate(const ToxPk& me, const ToxPk& friendPk, const QDateTime& date);
 
@@ -200,7 +203,7 @@ protected:
 
 signals:
 
-    void fileInserted(RowId dbId, QString fileId);
+//    void fileInserted(RowId dbId, QString fileId);
 
 private slots:
 
@@ -208,10 +211,10 @@ private slots:
 
 private:
     bool historyAccessBlocked();
-    static RawDatabase::Query generateFileFinished(RowId fileId,
-                                                   bool success,
-                                                   const QString& filePath,
-                                                   const QByteArray& fileHash);
+//    static RawDatabase::Query generateFileFinished(RowId fileId,
+//                                                   bool success,
+//                                                   const QString& filePath,
+//                                                   const QByteArray& fileHash);
 
 
 
@@ -219,17 +222,19 @@ private:
 
 
     QHash<QString, int64_t> peers;
-    struct FileInfo
-    {
-        bool finished = false;
-        bool success = false;
-        QString filePath;
-        QByteArray fileHash;
-        RowId fileId{-1};
-    };
+//    struct FileInfo
+//    {
+//        bool finished = false;
+//        bool success = false;
+//        QString filePath;
+//        QByteArray fileHash;
+//        RowId fileId{-1};
+//    };
 
     // This needs to be a shared pointer to avoid callback lifetime issues
-    QHash<QString, FileInfo> fileInfos;
+//    QHash<QString, RowId> fileCached;
+    QString makeSqlForFriend(const ToxPk &me, const ToxPk &friendPk);
+    History::HistMessage rowToMessage(const QVector<QVariant> &row);
 };
 
 #endif // HISTORY_H

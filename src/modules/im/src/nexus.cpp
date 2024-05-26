@@ -162,7 +162,8 @@ void Nexus::onSave(SavedInfo &savedInfo) {
     qRegisterMetaType<Profile *>("Profile*");
     qRegisterMetaType<ToxAV *>("ToxAV*");
     qRegisterMetaType<ToxFile>("ToxFile");
-    qRegisterMetaType<ToxFile::FileDirection>("ToxFile::FileDirection");
+    qRegisterMetaType<FileDirection>("FileDirection");
+    qRegisterMetaType<FileStatus>("FileStatus");
     qRegisterMetaType<std::shared_ptr<VideoFrame>>("std::shared_ptr<VideoFrame>");
     qRegisterMetaType<ToxPk>("ToxPk");
     qRegisterMetaType<ToxId>("ToxId");

@@ -73,15 +73,15 @@ QRegularExpression getRegexpForPhrase(const QString &phrase,
 /**
  * @return True if the given status indicates no future updates will come in
  */
-bool toxFileIsComplete(ToxFile::FileStatus status) {
+bool toxFileIsComplete(FileStatus status) {
   switch (status) {
-  case ToxFile::INITIALIZING:
-  case ToxFile::PAUSED:
-  case ToxFile::TRANSMITTING:
+  case FileStatus::INITIALIZING:
+  case FileStatus::PAUSED:
+  case FileStatus::TRANSMITTING:
     return false;
-  case ToxFile::BROKEN:
-  case ToxFile::CANCELED:
-  case ToxFile::FINISHED:
+  case FileStatus::BROKEN:
+  case FileStatus::CANCELED:
+  case FileStatus::FINISHED:
   default:
     return true;
   }
@@ -417,8 +417,8 @@ void SessionChatLog::onFileUpdated(const ToxPk &sender, const ToxFile &file) {
 
   ChatLogIdx messageIdx;
   if (fileIt == currentFileTransfers.end() &&
-      file.status == ToxFile::INITIALIZING) {
-    assert(file.status == ToxFile::INITIALIZING);
+      file.status == FileStatus::INITIALIZING) {
+    assert(file.status == FileStatus::INITIALIZING);
     CurrentFileTransfer currentTransfer;
     currentTransfer.file = file;
     currentTransfer.idx = nextIdx++;

@@ -1162,7 +1162,7 @@ void Widget::onFileReceiveRequested(const ToxFile &file) {
   newFriendMessageAlert(
       friendPk,
       file.fileName + " (" +
-          FileTransferWidget::getHumanReadableSize(file.filesize) + ")",
+          FileTransferWidget::getHumanReadableSize(file.fileSize) + ")",
       true, true);
 }
 

@@ -76,18 +76,18 @@ public:
    * File(接收)
    */
   void rejectFileRequest(const QString &friendId,
-                         const FileHandler::File &file);
+                         const File &file);
   void acceptFileRequest(const QString &friendId,
-                         const FileHandler::File &file);
+                         const File &file);
   void finishFileRequest(const QString &friendId,
-                         const FileHandler::File &file);
+                         const QString &sId);
   void finishFileTransfer(const QString &friendId,
-                          const FileHandler::File &file);
+                          const QString &sId);
   /**
    * File(发送)
    */
-  bool sendFile(const QString &friendId, const FileHandler::File &file);
-  bool sendFileToResource(const JID &friendId, const FileHandler::File &file);
+  bool sendFile(const QString &friendId, const File &file);
+  bool sendFileToResource(const JID &friendId, const File &file);
 
 protected:
   void handleSessionAction(Jingle::Action action, Jingle::Session *session,
@@ -143,7 +143,7 @@ private:
 //  std::unique_ptr<lib::ortc::OkRTCManager> _rtcManager;
   std::unique_ptr<Jingle::SessionManager> _sessionManager;
 
-  QList<FileHandler::File> m_waitSendFiles;
+  QList<File> m_waitSendFiles;
 
   // file sending task map
   QMap<QString, IMFile *> m_fileSenderMap;
@@ -184,7 +184,7 @@ private:
    * @param file
    */
   void doStartFileSendTask(const Jingle::Session *session,
-                           const FileHandler::File &file);
+                           const File &file);
 
   /**
    * 停止文件发送任务
@@ -192,7 +192,7 @@ private:
    * @param file
    */
   void doStopFileSendTask(const Jingle::Session *session,
-                          const FileHandler::File &file);
+                          const File &file);
 
 signals:
   void receiveFriendCall(QString friendId, QString callId, bool audio,
@@ -218,14 +218,14 @@ signals:
                                int32_t vstride);
 
   void receiveFileRequest(const QString &friendId,
-                          const FileHandler::File &file);
+                          const File &file);
 
-  void sendFileInfo(const QString &friendId, const FileHandler::File &file,
+  void sendFileInfo(const QString &friendId, const File &file,
                     int m_seq, int m_sentBytes, bool end);
 
-  void sendFileAbort(const QString &friendId, const FileHandler::File &file,
+  void sendFileAbort(const QString &friendId, const File &file,
                      int m_sentBytes);
-  void sendFileError(const QString &friendId, const FileHandler::File &file,
+  void sendFileError(const QString &friendId, const File &file,
                      int m_sentBytes);
 };
 

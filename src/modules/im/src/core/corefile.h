@@ -47,8 +47,12 @@ public:
   static CoreFilePtr makeCoreFile(Core *core, Tox *tox,
                                   CompatibleRecursiveMutex &coreLoopLock);
 
-  void sendFile(QString friendId, QString filename, QString filePath,
-                long long filesize);
+  void sendFile(QString friendId,
+                QString filename,
+                QString filePath,
+                quint64 filesize,
+                quint64 sent=0);
+
   void sendAvatarFile(QString friendId, const QByteArray &data);
   void pauseResumeFile(QString friendId, QString fileId);
   void cancelFileSend(QString friendId, QString fileId);
@@ -63,15 +67,15 @@ public:
    * File handlers
    */
 
-  void onFileRequest(const QString &friendId, const lib::messenger::FileHandler::File& file) override;
+  void onFileRequest(const QString &friendId, const lib::messenger::File& file) override;
   void onFileRecvChunk(const QString &friendId, const QString& fileId, int seq, const std::string &chunk) override;
   void onFileRecvFinished(const QString &friendId, const QString& fileId) override;
-  void onFileSendInfo(const QString &friendId, const lib::messenger::FileHandler::File &file, int m_seq,
+  void onFileSendInfo(const QString &friendId, const lib::messenger::File &file, int m_seq,
                       int m_sentBytes, bool end) override;
 
-  void onFileSendAbort(const QString &friendId, const lib::messenger::FileHandler::File &file,
+  void onFileSendAbort(const QString &friendId, const lib::messenger::File &file,
                       int m_sentBytes) override;
-  void onFileSendError(const QString &friendId, const lib::messenger::FileHandler::File &file,
+  void onFileSendError(const QString &friendId, const lib::messenger::File &file,
                       int m_sentBytes) override;
 signals:
   void fileSendStarted(ToxFile file);
@@ -92,14 +96,14 @@ private:
   CoreFile(Tox *core, CompatibleRecursiveMutex &coreLoopLock);
 
   ToxFile *findFile(QString friendId, QString fileId);
-  void addFile(QString friendId, QString fileId, const ToxFile &file);
+  const QString& addFile(QString friendId, ToxFile &file);
   void removeFile(QString friendId, QString fileId);
 
   static QString getFriendKey(const QString& friendId, QString fileId) {
     return  friendId + "-"+ fileId;
   }
 
-  lib::messenger::FileHandler::File buildHandlerFile(const ToxFile* toxFile);
+  lib::messenger::File buildHandlerFile(const ToxFile* toxFile);
 
   void connectCallbacks(Tox &tox);
   static void onFileReceiveCallback(Tox *tox, QString friendId, QString fileId,

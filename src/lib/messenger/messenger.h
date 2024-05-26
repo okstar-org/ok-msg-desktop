@@ -47,6 +47,19 @@ class AuthSession;
 namespace lib {
 namespace messenger {
 
+struct File {
+  //file id
+    QString id;
+  // session id
+  QString sId;
+  QString name;
+  QString path;
+  quint64 size;
+  int direction;
+  int status;
+};
+
+
 // NOTE: This could be extended in the future to handle all text processing (see
 // ChatMessage::createChatMessage)
 enum class MessageMetadataType {
@@ -170,20 +183,6 @@ public:
 
 class FileHandler {
 public:
-  struct File {
-    QString id;
-    QString name;
-    QString sId; // session id
-    QString path;
-    quint64 size;
-
-    File() = default;
-    File(QString id_, QString name_, QString sId_,    //
-         QString path = "", quint64 size_ = 0)        //
-        : id(std::move(id_)), name(name_), sId(sId_), //
-          path(path), size(size_)                     //
-    {}
-  };
 
   virtual void onFileRequest(const QString &friendId, const File &file) = 0;
   virtual void onFileRecvChunk(const QString &friendId, const QString &fileId,
@@ -234,7 +233,7 @@ public:
 
   void receiptReceived(const QString &f, QString receipt);
 
-  bool sendFileToFriend(const QString &f, const FileHandler::File &file);
+  bool sendFileToFriend(const QString &f, const File &file);
 
 
   bool connectJingle();
@@ -292,10 +291,10 @@ public:
   /**
    * File
    */
-  void rejectFileRequest(QString friendId, const FileHandler::File &file);
-  void acceptFileRequest(QString friendId, const FileHandler::File &file);
-  void finishFileRequest(QString friendId, const FileHandler::File &file);
-  void finishFileTransfer(QString friendId, const FileHandler::File &file);
+  void rejectFileRequest(QString friendId, const File &file);
+  void acceptFileRequest(QString friendId, const File &file);
+  void finishFileRequest(QString friendId, const QString &sId);
+  void finishFileTransfer(QString friendId, const QString &sId);
   void cancelFile(QString fileId);
 
 

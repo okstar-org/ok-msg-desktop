@@ -534,6 +534,8 @@ void GenericChatForm::setContact(const Contact *contact_)
 
     }else{
         const Friend* f = static_cast<const Friend*>(contact);
+        setName(f->getDisplayedName());
+
         connect(f, &Friend::statusChanged, [&](Status::Status status, bool event){
             updateCallButtons(status);
         });
@@ -575,8 +577,17 @@ void GenericChatForm::showEvent(QShowEvent *) {
   msgEdit->setFocus();
   headWidget->showCallConfirm();
   if(contact){
-      auto status = Core::getInstance()->getStatus();
-      updateCallButtons(status);
+      if(contact->isGroup()){
+
+      }else{
+        auto status = Core::getInstance()->getFriendStatus(contactId->getId());
+        updateCallButtons(status);
+
+        auto f = FriendList::findFriend(*contactId);
+        if(f){
+            setContact(f);
+        }
+      }
   }
 }
 

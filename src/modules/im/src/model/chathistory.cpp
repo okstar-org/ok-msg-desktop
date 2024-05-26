@@ -242,33 +242,27 @@ void ChatHistory::onFileUpdated(const ToxPk& sender, const ToxFile& file)
 {
     if (canUseHistory()) {
         switch (file.status) {
-        case ToxFile::INITIALIZING: {
+        case FileStatus::INITIALIZING: {
             // Note: There is some implcit coupling between history and the current
             // chat log. Both rely on generating a new id based on the state of
             // initializing. If this is changed in the session chat log we'll end up
             // with a different order when loading from history
             history->addNewFileMessage(f.toString(),
-                                       file.resumeFileId,
-                                       file.fileName,
-                                       file.filePath,
-                                       file.filesize,
+                                       file,
                                        sender.toString(),
                                        QDateTime::currentDateTime(),
                                        {});
             break;
         }
-        case ToxFile::CANCELED:
-        case ToxFile::FINISHED:
-        case ToxFile::BROKEN: {
-            const bool isSuccess = file.status == ToxFile::FINISHED;
-            history->setFileFinished(file.resumeFileId,
-                                     isSuccess,
-                                     file.filePath,
-                                     file.hashGenerator->result());
+        case FileStatus::CANCELED:
+        case FileStatus::FINISHED:
+        case FileStatus::BROKEN: {
+//            const bool isSuccess = file.status == FileStatus::FINISHED;
+            history->setFileFinished(file);
             break;
         }
-        case ToxFile::PAUSED:
-        case ToxFile::TRANSMITTING:
+        case FileStatus::PAUSED:
+        case FileStatus::TRANSMITTING:
         default:
             break;
         }
@@ -400,14 +394,9 @@ void ChatHistory::loadHistoryIntoSessionChatLog(ChatLogIdx start) const
 
         switch (message.type) {
         case HistMessageContentType::file: {
-            const auto file = message.asFile();
-            ToxFile tfile;
-            tfile.fileName=file.fileName;
-            tfile.filePath=file.filePath;
-            tfile.filesize=file.size;
-            tfile.sId = file.fileId;
-
-            const auto chatLogFile = ChatLogFile{date, tfile};
+            auto file = message.asFile();
+            auto tfile =ToxFile  { file };
+            auto chatLogFile = ChatLogFile{date, tfile};
             sessionChatLog.insertFileAtIdx(currentIdx, sender, dispName, chatLogFile);
             break;
         }
