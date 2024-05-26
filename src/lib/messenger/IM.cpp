@@ -1499,6 +1499,11 @@ void IM::addFriend(const JID &jid, const QString &nick, const QString &msg) {
   qDebug() << __func__ << jid.full().c_str()  << nick << msg;
 
   auto m = _client->rosterManager();
+  auto f = m->getRosterItem(jid);
+  if(f){
+      qWarning() << "Friend is existing!";
+      return;
+  }
   // 订阅对方(同时加入到联系人列表)
   m->subscribe(jid, stdstring(nick), {});
   m->add(jid, stdstring(nick), {});

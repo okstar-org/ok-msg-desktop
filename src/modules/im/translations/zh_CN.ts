@@ -409,11 +409,11 @@ which may lead to problems with video calls.</source>
 
 <context>
     <name>AddFriendForm</name>
-<message>
-<source>Search</source>
-<translation>搜索</translation>
-</message>
-<message>
+    <message>
+        <source>Search</source>
+        <translation>搜索</translation>
+    </message>
+    <message>
         <source>Add Friends</source>
         <translation>添加好友</translation>
     </message>
@@ -1054,36 +1054,7 @@ so you can save the file on windows.</source>
         <translation>永不</translation>
     </message>
 </context>
-<context>
-    <name>FriendRequestDialog</name>
-    <message>
-        <source>Friend request</source>
-        <comment>Title of the window to aceept/deny a friend request</comment>
-        <translation>好友请求</translation>
-    </message>
-    <message>
-        <source>Someone wants to make friends with you</source>
-        <translation>有用户想要添加您为好友</translation>
-    </message>
-    <message>
-        <source>User ID:</source>
-        <translation>用户 ID ：</translation>
-    </message>
-    <message>
-        <source>Friend request message:</source>
-        <translation>好友请求消息：</translation>
-    </message>
-    <message>
-        <source>Accept</source>
-        <comment>Accept a friend request</comment>
-        <translation>同意</translation>
-    </message>
-    <message>
-        <source>Reject</source>
-        <comment>Reject a friend request</comment>
-        <translation>拒绝</translation>
-    </message>
-</context>
+
 <context>
     <name>FriendWidget</name>
     <message>
