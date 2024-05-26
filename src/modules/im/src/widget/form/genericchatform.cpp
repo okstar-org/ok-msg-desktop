@@ -506,11 +506,13 @@ void GenericChatForm::reloadTheme() {
   msgEdit->setStyleSheet(Style::getStylesheet("msgEdit/msgEdit.css") +
                          fontToCss(s.getChatMessageFont(), "QTextEdit"));
 
-//  chatLog->setStyleSheet(Style::getStylesheet("chatArea/chatArea.css"));
-  headWidget->setStyleSheet(Style::getStylesheet("chatArea/chatHead.css"));
-//  chatLog->reloadTheme();
-  headWidget->reloadTheme();
   searchForm->reloadTheme();
+
+  headWidget->setStyleSheet(Style::getStylesheet("chatArea/chatHead.css"));
+  headWidget->reloadTheme();
+
+  chatLog->setStyleSheet(Style::getStylesheet("chatArea/chatArea.css"));
+  chatLog->reloadTheme();
 
   emoteButton->setStyleSheet(Style::getStylesheet(STYLE_PATH));
   fileButton->setStyleSheet(Style::getStylesheet(STYLE_PATH));

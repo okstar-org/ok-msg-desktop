@@ -407,6 +407,7 @@ void ChatLog::insertChatlineAtBottom(IChatItem::Ptr l) {
 
     l->setRow(from);
     l->addToScene(scene);
+
     lines.append(l);
 
     // partial refresh

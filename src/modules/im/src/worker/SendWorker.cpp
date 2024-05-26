@@ -46,14 +46,9 @@ SendWorker::SendWorker(const ToxPk &m_friend): contactId{m_friend}
                                                    settings,
                                                    *messageDispatcher.get());
 
-//       chatLog = std::make_unique<SessionChatLog>(*core);
-
-
-
       chatForm = std::make_unique<ChatForm>(&m_friend,
                                             *chatHistory.get(),
                                             *messageDispatcher.get());
-
 
       chatRoom = std::make_unique<FriendChatroom>(&m_friend,
                                                   ContentDialogManager::getInstance());

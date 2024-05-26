@@ -853,8 +853,8 @@ void ChatWidget::dispatchFile(ToxFile file)
       }
     }
 
-    const auto senderPk = (file.direction == ToxFile::SENDING) ? core->getSelfPublicKey() : pk;
-    sessionListWidget->setFriendFileReceived(senderPk, file);
+    const auto frnd = (file.direction == ToxFile::SENDING) ?  pk : core->getSelfPublicKey();
+    sessionListWidget->setFriendFileReceived(frnd, file);
 }
 
 void ChatWidget::dispatchFileWithBool(ToxFile file, bool)
