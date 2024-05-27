@@ -198,6 +198,8 @@ signals:
   void statusSet(Status::Status status);
   void statusSelected(Status::Status status);
   void usernameChanged(const QString &username);
+  void avatarSet(const QPixmap &avt);
+
   void changeGroupTitle(QString groupnumber, const QString &title);
   void statusMessageChanged(const QString &statusMessage);
   void resized();

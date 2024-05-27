@@ -37,6 +37,8 @@ OMainMenu::OMainMenu(QWidget *parent)
 
   ui->chatBtn->setCursor(Qt::PointingHandCursor);
   ui->settingBtn->setCursor(Qt::PointingHandCursor);
+
+
 }
 
 OMainMenu::~OMainMenu() {

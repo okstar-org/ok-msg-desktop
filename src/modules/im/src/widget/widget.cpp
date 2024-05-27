@@ -82,6 +82,7 @@
 #include "tool/removefrienddialog.h"
 #include "ui_mainwindow.h"
 
+
 bool toxActivateEventHandler(const QByteArray &) {
   Widget *widget = Nexus::getDesktopGUI();
   if (!widget) {
@@ -610,7 +611,8 @@ void Widget::connectToCore(Core &core) {
   connect(timer, &QTimer::timeout, this, &Widget::onTryCreateTrayIcon);
 
 
-    core.setUIStarted();
+
+  core.setUIStarted();
 }
 
 void Widget::onConnected() {
@@ -832,12 +834,16 @@ void Widget::setAvatar( QByteArray avatar) {
         qWarning() << __func__ <<"avatar is empty!";
         return;
     }
-  QPixmap pixmap;
+
+    QPixmap pixmap;
   if(!base::Images::putToPixmap(avatar, pixmap))
   {
     qWarning()<<"loadFromData failed.";
     return;
   }
+
+  emit avatarSet(pixmap);
+
 //  profilePicture->setPixmap(pixmap);
 //  profileInfo->setAvatar(pixmap);
 

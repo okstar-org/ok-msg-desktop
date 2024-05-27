@@ -35,6 +35,8 @@ public:
   explicit MainWindow(QWidget *parent = nullptr);
   ~MainWindow();
 
+  static MainWindow* getInstance();
+
   void init();
   QFrame *getPage(PageMenu menu);
   QFrame *initPage(PageMenu menu);

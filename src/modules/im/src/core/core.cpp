@@ -47,6 +47,8 @@
 #include <ranges>
 #include <thread>
 
+#include <src/persistence/profile.h>
+
 const QString Core::TOX_EXT = ".tox";
 
 #define ASSERT_CORE_THREAD assert(QThread::currentThread() == coreThread.get())
@@ -1603,7 +1605,13 @@ void Core::onSelfNameChanged(QString name) {
 
 void Core::onSelfAvatarChanged(const std::string avatar) {
   QMutexLocker ml{&coreLoopLock};
-  emit avatarSet(QByteArray::fromStdString(avatar));
+
+  auto a = QByteArray::fromStdString(avatar);
+
+//  emit avatarSet(a);
+  auto p = Nexus::getProfile();
+  p->setAvatar(a);
+
 }
 
 void Core::onSelfStatusChanged(Tox_User_Status userStatus,

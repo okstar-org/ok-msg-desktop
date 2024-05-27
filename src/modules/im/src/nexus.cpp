@@ -338,7 +338,9 @@ void Nexus::onSave(SavedInfo &savedInfo) {
             &Widget::onSelfAvatarLoaded);
 
     connect(profile, &Profile::selfAvatarChanged,
-            [&](const QPixmap &pixmap) { emit updateAvatar(pixmap); });
+            [&](const QPixmap &pixmap) {
+        emit updateAvatar(pixmap);
+    });
 
     connect(profile, &Profile::coreChanged, widget, &Widget::onCoreChanged);
 

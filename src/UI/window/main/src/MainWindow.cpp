@@ -31,6 +31,8 @@
 
 namespace UI {
 
+static MainWindow* instance = nullptr;
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
 
@@ -66,12 +68,19 @@ MainWindow::MainWindow(QWidget *parent)
 
   connect(menu(), &OMainMenu::menuPushed,
           [&](PageMenu menu, bool checked) { emit menuPushed(menu, checked); });
+
+  instance = this;
 }
 
 MainWindow::~MainWindow() {
   qDebug() << "~MainWindow";
   disconnect(m_menu);
   delete ui;
+}
+
+MainWindow *MainWindow::getInstance()
+{
+    return instance;
 }
 
 // Preparing needed to set correct size of icons for GTK tray backend
