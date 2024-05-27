@@ -109,7 +109,7 @@ private slots:
   void removeAvatar(const ToxPk &owner);
 
   void onSaveToxSave();
-  // TODO(sudden6): use ToxPk instead of friendId
+  // TODO(sudden6): use ToxPk instead of receiver
   void onAvatarOfferReceived(QString friendId, QString fileId,
                              const QByteArray &avatarHash);
   void setFriendAvatar(const ToxPk owner, const QByteArray &pic);

@@ -487,8 +487,8 @@ void MessageSessionListWidget::dropEvent(QDropEvent *event) {
 void MessageSessionListWidget::showEvent(QShowEvent *event) {
   //  auto core = Core::getInstance();
   //  connect(core, &Core::friendAdded, this, &MessageSessionListWidget::addFriend);
-  //  for (auto &friendId : core->loadFriendList()) {
-  //    qDebug() << "friendId:" << friendId;
+  //  for (auto &receiver : core->loadFriendList()) {
+  //    qDebug() << "receiver:" << receiver;
   //  };
 }
 

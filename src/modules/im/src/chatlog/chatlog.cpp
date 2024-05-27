@@ -60,7 +60,7 @@ static bool lessThanRowIndex(const IChatItem::Ptr &lhs,
 }
 
 ChatLog::ChatLog(QWidget* parent)
-    : QGraphicsView(parent)
+    : QGraphicsView(parent), scrollBarValue{0}
 {
     // Create the scene
     busyScene = new QGraphicsScene(this);
@@ -913,9 +913,9 @@ void ChatLog::onVScrollBarValueChanged(int value)
         scrollBarValue = value;
 //        qDebug() <<"height"<< sceneRect().height()<<" value"<<value
 //                << verticalScrollBar()->maximum();
-       if (value == verticalScrollBar()->maximum()) {
+       if (scrollBarValue == verticalScrollBar()->maximum()) {
            // 当垂直滚动条的值改变时触发
-           qDebug() <<"readAll";
+//           qDebug() <<"readAll";
            emit readAll();
        }
 }
@@ -947,9 +947,14 @@ void ChatLog::handleMultiClickEvent()
 
 void ChatLog::showEvent(QShowEvent*)
 {
-    if(scrollBarValue==0){
-        //没有滚动条，显示即已读完
+    if(verticalScrollBar()->maximum()==0){
+        //没有滚动条，发射“已读完”信号
         emit readAll();
+    }
+
+    if( verticalScrollBar()->maximum()==verticalScrollBar()->value()){
+        //有滚动条，但是已经卷动到底部，发射“以读完”信号
+         emit readAll();
     }
 }
 

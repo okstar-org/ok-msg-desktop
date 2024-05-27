@@ -81,7 +81,7 @@ private:
     QColor buttonBackgroundColor;
 
     bool active;
-    FileStatus lastStatus = FileStatus::INITIALIZING;
+    FileStatus lastStatus;
 
     enum class ExifOrientation
     {

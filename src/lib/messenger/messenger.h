@@ -32,8 +32,8 @@ namespace messenger {
 
 class IMJingle;
 class IMConference;
-
 enum class IMStatus;
+
 } // namespace messenger
 } // namespace lib
 
@@ -41,40 +41,40 @@ namespace ok {
 namespace session {
 class AuthSession;
 }
-
 } // namespace ok
 
 namespace lib {
 namespace messenger {
 
+//不要修改顺序和值
+enum class FileStatus {
+  INITIALIZING = 0,
+  PAUSED = 1,
+  TRANSMITTING = 2,
+  BROKEN = 3,
+  CANCELED = 4,
+  FINISHED = 5,
+};
+
+//不要修改顺序和值
+enum class FileDirection {
+  SENDING = 0,
+  RECEIVING = 1,
+};
+
 struct File {
-  //file id
-    QString id;
-  // session id
+  //id(file id = ibb id) 和 sId(session id)
+  QString id;
   QString sId;
   QString name;
   QString path;
   quint64 size;
-  int direction;
-  int status;
+  FileStatus status;
+  FileDirection direction;
+  [[__nodiscard__ ]] QString toString() const;
+  friend QDebug &operator<<(QDebug &debug, const File &f);
 };
 
-
-// NOTE: This could be extended in the future to handle all text processing (see
-// ChatMessage::createChatMessage)
-enum class MessageMetadataType {
-  selfMention,
-};
-
-// May need to be extended in the future to have a more varianty type (imagine
-// if we wanted to add message replies and shoved a reply id in here)
-struct MessageMetadata {
-  MessageMetadataType type;
-  // Indicates start position within a Message::content
-  size_t start;
-  // Indicates end position within a Message::content
-  size_t end;
-};
 
 class SelfHandler {
 public:
@@ -122,8 +122,6 @@ class GroupHandler {
 public:
   virtual void onGroup(const QString groupId,
                        const QString name) = 0;
-
-  virtual void onGroupListDone() = 0;
 
   virtual void onGroupInvite(const QString groupId, //
                              const QString peerId,  //

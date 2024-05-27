@@ -1262,7 +1262,7 @@ bool IM::handleIq(const IQ &iq) {
   const auto *ibb = iq.findExtension<InBandBytestream::IBB>(ExtIBB);
   if (ibb) {
     FriendId friendId(qstring(iq.from().bare()));
-    qDebug() << QString("ibb流:%1").arg(qstring(ibb->sid()));
+    qDebug() << QString("IBB stream id:%1").arg(qstring(ibb->sid()));
 
     switch (ibb->type()) {
     case InBandBytestream::IBBOpen: {
@@ -2179,13 +2179,13 @@ void IM::rejectJingleMessage(const QString &friendId, const QString &callId) {
 void IM::acceptJingleMessage(const QString &friendId, const QString &callId) {
   auto it = sessionIdMap.find(stdstring(friendId));
   if (it == sessionIdMap.end()) {
-    qWarning() << "Unable to find friendId" << friendId << "session" << callId;
+    qWarning() << "Unable to find receiver" << friendId << "session" << callId;
     return;
   }
 
   auto sit = sessionMap.find(it->second);
   if (sit == sessionMap.end()) {
-    qWarning() << "Unable to find friendId" << friendId << "session" << callId;
+    qWarning() << "Unable to find receiver" << friendId << "session" << callId;
     return;
   }
 

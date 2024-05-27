@@ -1009,16 +1009,10 @@ bool Widget::newFriendMessageAlert(const ToxPk &friendId, const QString &text,
           ContentDialogManager::getInstance()->isContactActive(friendId);
     } else {
       currentWindow = window();
-//      FriendWidget *widget = contactListWidget->getFriend(friendId);
-//      hasActive = widget == activeChatroomWidget;
-    }
+   }
   }
 
   if (newMessageAlert(currentWindow, hasActive, sound)) {
-//    FriendWidget *widget = contactListWidget->getFriend(friendId);
-//    f->setEventFlag(true);
-//    widget->updateStatusLight();
-//    ui->friendList->trackWidget(widget);
 #if DESKTOP_NOTIFICATIONS
     if (settings.getNotifyHide()) {
       notifier.notifyMessageSimple(file
@@ -1158,7 +1152,7 @@ void Widget::friendRequestedTo(const ToxId &friendAddress, const QString &nick, 
 
 
 void Widget::onFileReceiveRequested(const ToxFile &file) {
-  const ToxPk &friendPk = ToxPk(file.friendId);
+  const ToxPk &friendPk = ToxPk(file.receiver);
   newFriendMessageAlert(
       friendPk,
       file.fileName + " (" +
@@ -1231,8 +1225,8 @@ void Widget::onFileReceiveRequested(const ToxFile &file) {
 ////  contactListWidget->reDraw();
 //}
 
-//void Widget::removeFriend(const ToxPk &friendId) {
-//  removeFriend(FriendList::findFriend(friendId), false);
+//void Widget::removeFriend(const ToxPk &receiver) {
+//  removeFriend(FriendList::findFriend(receiver), false);
 //}
 
 void Widget::onDialogShown(GenericChatroomWidget *widget) {

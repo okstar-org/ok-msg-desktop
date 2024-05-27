@@ -211,7 +211,7 @@ void ChatForm::setStatusMessage(const QString &newMessage) {
 void ChatForm::callUpdateFriendActivity() { emit updateFriendActivity(*f); }
 
 void ChatForm::updateFriendActivityForFile(const ToxFile &file) {
-  if (file.friendId != f->getId()) {
+  if (file.receiver != f->getId()) {
     return;
   }
   emit updateFriendActivity(*f);

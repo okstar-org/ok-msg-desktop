@@ -230,9 +230,11 @@ signals:
                         const GroupInfo& info);
 
   void groupPeerAudioPlaying(QString groupnumber, ToxPk peerPk);
+
   void groupSentFailed(QString groupId);
+
   void groupAdded(const GroupId& groupId, const QString &name);
-  void groupJoinedDone();
+
   void actionSentResult(QString friendId, const QString &action, int success);
 
   void receiptRecieved(const ToxPk & friedId, ReceiptNum receipt);
@@ -250,27 +252,27 @@ private:
   virtual void onSelfAvatarChanged(const std::string avatar) override;
   virtual void onSelfStatusChanged(Tox_User_Status status, const std::string &msg) override;
 
+//
+//  static void onFriendRequest(Tox *tox, const QString &cUserId,
+//                              const uint8_t *cMessage, size_t cMessageSize,
+//                              void *core);
+//
+//
+//  static void onGroupInvite(Tox *tox, QString receiver,
+//                            Tox_Conference_Type type, const uint8_t *cookie,
+//                            size_t length, void *vCore);
 
-  static void onFriendRequest(Tox *tox, const QString &cUserId,
-                              const uint8_t *cMessage, size_t cMessageSize,
-                              void *core);
 
-
-  static void onGroupInvite(Tox *tox, QString friendId,
-                            Tox_Conference_Type type, const uint8_t *cookie,
-                            size_t length, void *vCore);
-
-
-  static void onGroupPeerListChange(Tox *, QString groupId, void *core);
-
-  static void onGroupPeerNameChange(Tox *, QString groupId, QString peerId,
-                                    const uint8_t *name, size_t length,
-                                    void *core);
-  static void onGroupTitleChange(Tox *tox, QString groupId, QString peerId,
-                                 const uint8_t *cTitle, size_t length,
-                                 void *vCore);
-  static void onReadReceiptCallback(Tox *tox, QString friendId,
-                                    ReceiptNum receipt, void *core);
+//  static void onGroupPeerListChange(Tox *, QString groupId, void *core);
+//
+//  static void onGroupPeerNameChange(Tox *, QString groupId, QString peerId,
+//                                    const uint8_t *name, size_t length,
+//                                    void *core);
+//  static void onGroupTitleChange(Tox *tox, QString groupId, QString peerId,
+//                                 const uint8_t *cTitle, size_t length,
+//                                 void *vCore);
+//  static void onReadReceiptCallback(Tox *tox, QString receiver,
+//                                    ReceiptNum receipt, void *core);
 
   QString sendGroupMessageWithType(QString groupId, const QString &message,
                                 Tox_Message_Type type);
@@ -329,7 +331,6 @@ private:
    * GroupHandler
    */
   virtual void onGroup(const QString groupId,  const QString name) override;
-  virtual void onGroupListDone() override;
 
   virtual void onGroupInvite(const QString groupId, //
                               const QString peerId,  //

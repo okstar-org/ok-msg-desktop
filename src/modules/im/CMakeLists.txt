@@ -146,8 +146,6 @@ set(${PROJECT_NAME}_SOURCES
         src/core/toxpk.h
         src/core/contactid.cpp
         src/core/contactid.h
-        src/core/toxstring.cpp
-        src/core/toxstring.h
         src/friendlist.cpp
         src/friendlist.h
         src/grouplist.cpp
@@ -195,9 +193,6 @@ set(${PROJECT_NAME}_SOURCES
         src/model/chathistory.h
         src/model/chathistory.cpp
         src/model/toxclientstandards.h
-        # src/net/bootstrapnodeupdater.cpp src/net/bootstrapnodeupdater.h
-        src/net/avatarbroadcaster.cpp
-        src/net/avatarbroadcaster.h
         src/net/toxuri.cpp
         src/net/toxuri.h
         src/nexus.cpp

@@ -11,6 +11,7 @@
  */
 
 #include "src/core/toxfile.h"
+#include "toxpk.h"
 #include <QFile>
 #include <QRegularExpression>
 #include <base/jsons.h>
@@ -31,7 +32,7 @@
  */
 
 
-FileInfo::FileInfo(const QString &friendId,
+FileInfo::FileInfo(
                    const QString &sId,
                    const QString &id,
                    const QString &fileName,
@@ -40,21 +41,12 @@ FileInfo::FileInfo(const QString &friendId,
                    quint64 bytesSent,
                    FileStatus status,
                    FileDirection direction)
-    : friendId(friendId), sId{sId}, fileId(id), fileName(fileName), filePath(filePath)
+    : sId{sId}, fileId(id), fileName(fileName), filePath(filePath)
     , fileSize(fileSize), bytesSent(bytesSent), status(status), direction(direction)
 {
 
 }
 
-QString FileInfo::json() const
-{
-    return QString("{\"id:\":\"%1\", \"name\":\"%2\", "
-                   "\"path\":\"%3\", \"size\":%4, "
-                   "\"status\":%5, \"direction\":%6, \"sId\":\"%7\"}")
-    .arg(fileId).arg(fileName)
-            .arg(filePath).arg(fileSize)
-            .arg((int)status).arg((int)direction).arg(sId);
-}
 
 void FileInfo::parse(const QString &json)
 {
@@ -69,7 +61,8 @@ void FileInfo::parse(const QString &json)
 }
 
 
-ToxFile::ToxFile(const QString &friendId,
+ToxFile::ToxFile(const QString &sender,
+                 const QString &friendId,
                  QString sId_,
                  QString fileId_,
                  QString filename_,
@@ -78,18 +71,19 @@ ToxFile::ToxFile(const QString &friendId,
                  quint64 bytesSent,
                  FileStatus status,
                  FileDirection direction)
-    : FileInfo(friendId, sId_, fileId_, filename_,
+    : FileInfo(sId_, fileId_, filename_,
                filePath_, fileSize_,
                bytesSent, status, direction)
-    ,file(new QFile(filePath_)){
+    ,file(new QFile(filePath_)), sender{sender}, receiver{friendId}
+{
 }
 
-ToxFile::ToxFile(const QString &friendId, const lib::messenger::File &file)
-    :FileInfo(friendId, file.sId, file.id, file.name,
-               file.path, file.size, 0,
+ToxFile::ToxFile(const QString &sender, const QString &friendId, const lib::messenger::File &file)
+    :FileInfo(file.sId, file.id, file.name, file.path, file.size, 0,
               (FileStatus)file.status,
               (FileDirection)file.direction)
-    ,file(new QFile(file.path))
+    ,file(new QFile(file.path)), sender{sender},
+      receiver{friendId}
 {
 
 }
@@ -122,9 +116,10 @@ lib::messenger::File ToxFile::toIMFile()
     return lib::messenger::File{fileId, sId, fileName,   filePath,  fileSize};
 }
 
-QString ToxFile::toString() const
+const QString& ToxFile::getFriendId() const
 {
-    return QString("{id:%1, sId:%2, name:%3, path:%4, size:%5}")
-            .arg(fileId).arg(sId).arg(fileName).arg(filePath).arg(fileSize);
+    return direction == FileDirection::RECEIVING ? sender : receiver;
 }
+
+
 

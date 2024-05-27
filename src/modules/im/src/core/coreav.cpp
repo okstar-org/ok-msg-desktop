@@ -26,17 +26,17 @@
 #include <cassert>
 
 /**
- * @fn void CoreAV::avInvite(QString friendId, bool video)
+ * @fn void CoreAV::avInvite(QString receiver, bool video)
  * @brief Sent when a friend calls us.
  * @param friendId Id of friend in call list.
  * @param video False if chat is audio only, true audio and video.
  *
- * @fn void CoreAV::avStart(QString friendId, bool video)
+ * @fn void CoreAV::avStart(QString receiver, bool video)
  * @brief Sent when a call we initiated has started.
  * @param friendId Id of friend in call list.
  * @param video False if chat is audio only, true audio and video.
  *
- * @fn void CoreAV::avEnd(QString friendId)
+ * @fn void CoreAV::avEnd(QString receiver)
  * @brief Sent when a call was ended by the peer.
  * @param friendId Id of friend in call list.
  *
@@ -760,7 +760,7 @@ void CoreAV::receiveCallStateAccepted(lib::messenger::PeerId peerId, QString cal
   if(QThread::currentThread() != coreavThread.get()){
 //   bool invoked= QMetaObject::invokeMethod(toxav.get(),
 //                                "createCallToPeerId",
-//                                Q_ARG(lib::IM::PeerId, friendId),
+//                                Q_ARG(lib::IM::PeerId, receiver),
 //                                Q_ARG(QString, callId),
 //                                Q_ARG(bool, video));
     emit createCallToPeerId(peerId, callId, video);

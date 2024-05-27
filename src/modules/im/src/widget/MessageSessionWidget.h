@@ -76,6 +76,7 @@ class MessageSessionWidget : public GenericChatroomWidget
     void setFriend(const Friend* f);
     void removeFriend();
 
+
 signals:
     void removeFriend(const ToxPk& friendPk);
     void copyFriendIdToClipboard(const ToxPk& friendPk);

@@ -56,7 +56,7 @@ AboutFriendForm::AboutFriendForm(std::unique_ptr<IAboutFriend> _about, QWidget* 
     }
 
 
-    ui->userName->setText( about->getName());
+    ui->userName->setText(about->getName());
     ui->friendId->setText(about->getPublicKey().toString());
     ui->statusMessage->setText(about->getStatusMessage());
     ui->avatar->setPixmap(about->getAvatar());

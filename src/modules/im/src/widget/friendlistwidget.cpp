@@ -796,8 +796,8 @@ void FriendListWidget::dropEvent(QDropEvent *event) {
 void FriendListWidget::showEvent(QShowEvent *event) {
   //  auto core = Core::getInstance();
   //  connect(core, &Core::friendAdded, this, &FriendListWidget::addFriend);
-  //  for (auto &friendId : core->loadFriendList()) {
-  //    qDebug() << "friendId:" << friendId;
+  //  for (auto &receiver : core->loadFriendList()) {
+  //    qDebug() << "receiver:" << receiver;
     //  };
 }
 

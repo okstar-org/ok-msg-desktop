@@ -240,13 +240,12 @@ std::vector<IChatLog::DateChatLogIdxPair>   //
 
 void ChatHistory::onFileUpdated(const ToxPk& sender, const ToxFile& file)
 {
+    qDebug() << __func__ <<"sender:" << sender.toString();
+
     if (canUseHistory()) {
         switch (file.status) {
         case FileStatus::INITIALIZING: {
-            // Note: There is some implcit coupling between history and the current
-            // chat log. Both rely on generating a new id based on the state of
-            // initializing. If this is changed in the session chat log we'll end up
-            // with a different order when loading from history
+
             history->addNewFileMessage(f.toString(),
                                        file,
                                        sender.toString(),
@@ -405,15 +404,8 @@ void ChatHistory::loadHistoryIntoSessionChatLog(ChatLogIdx start) const
 
             auto isAction = handleActionPrefix(messageContent);
 
-            // It's okay to skip the message processor here. The processor is
-            // meant to convert between boundaries of our internal
-            // representation. We already had to go through the processor before
-            // we hit IMessageDispatcher's signals which history listens for.
-            // Items added to history have already been sent so we know they already
-            // reflect what was sent/received.
             auto processedMessage = Message{
                     .isAction= isAction,
-//                    .id = message.id.get(),
                     .from= message.sender,
                     .to = message.receiver,
                     .content=messageContent,

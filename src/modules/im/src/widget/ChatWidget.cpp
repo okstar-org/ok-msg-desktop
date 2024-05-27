@@ -78,7 +78,7 @@ void acceptFileTransfer(const ToxFile &file, const QString &path) {
   // The user can still accept it manually.
   if (tryRemoveFile(filepath)) {
     CoreFile *coreFile = Core::getInstance()->getCoreFile();
-    coreFile->acceptFileRecvRequest(file.friendId, file.fileId, filepath);
+    coreFile->acceptFileRecvRequest(file.receiver, file.fileId, filepath);
   } else {
     qWarning() << "Cannot write to " << filepath;
   }
@@ -270,7 +270,7 @@ void ChatWidget::onFriendMessageReceived(     //
 }
 
 void ChatWidget::onReceiptReceived(const ToxPk &friendId, ReceiptNum receipt) {
-  qDebug() << __func__ << "friendId:" << friendId.toString() << receipt;
+  qDebug() << __func__ << "receiver:" << friendId.toString() << receipt;
   sessionListWidget->setFriendMessageReceipt(friendId, receipt);
 }
 
@@ -341,13 +341,13 @@ void ChatWidget::showEvent(QShowEvent *e) {}
 //    contactListWidget->setFriendName(friendPk, displayed);
 // }
 
-// void ChatWidget::onFriendAliasChanged(const ToxPk &friendId, const QString
+// void ChatWidget::onFriendAliasChanged(const ToxPk &receiver, const QString
 // &alias) {
-//   qDebug() << __func__ <<"friendId" << friendId.toString() << alias;
+//   qDebug() << __func__ <<"receiver" << receiver.toString() << alias;
 //   Friend *f = qobject_cast<Friend *>(sender());
 //
 //   // TODO(sudden6): don't update the contact list here, make it update itself
-//   FriendWidget *friendWidget = contactListWidget->getFriend(friendId);
+//   FriendWidget *friendWidget = contactListWidget->getFriend(receiver);
 //   Status::Status status = f->getStatus();
 //   contactListWidget->moveWidget(friendWidget, status);
 //   FilterCriteria criteria = getFilterCriteria();
@@ -355,7 +355,7 @@ void ChatWidget::showEvent(QShowEvent *e) {}
 //                                                   : filterOnline(criteria);
 //   friendWidget->searchName(ui->searchContactText->text(), filter);
 //
-//   settings.setFriendAlias(friendId, alias);
+//   settings.setFriendAlias(receiver, alias);
 //   settings.savePersonal();
 //}
 
@@ -821,21 +821,16 @@ void ChatWidget::setupStatus() {
 
 void ChatWidget::dispatchFile(ToxFile file)
 {
-    qDebug() << __func__ << file.fileId;
+    qDebug() << __func__ << "file:" <<file.toString();
 
-    const auto &friendId = ToxPk(file.friendId);
+    const auto &friendId = ToxPk(file.getFriendId());
     Friend *f = FriendList::findFriend(friendId);
     if (!f) {
-      return;
+        qWarning() <<"Friend is no existing!" << friendId;
+        return;
     }
 
-    auto pk = f->getPublicKey();
-
-    if (file.status == FileStatus::INITIALIZING &&
-        file.direction == FileDirection::RECEIVING) {
-      auto sender = (file.direction == FileDirection::SENDING)
-                        ? Core::getInstance()->getSelfPublicKey()
-                        : pk;
+    if (file.status == FileStatus::INITIALIZING && file.direction == FileDirection::RECEIVING) {
 
       const Settings &settings = Settings::getInstance();
       QString autoAcceptDir = settings.getAutoAcceptDir(f->getPublicKey());
@@ -853,7 +848,7 @@ void ChatWidget::dispatchFile(ToxFile file)
       }
     }
 
-    sessionListWidget->setFriendFileReceived(pk, file);
+    sessionListWidget->setFriendFileReceived(friendId, file);
 }
 
 void ChatWidget::dispatchFileWithBool(ToxFile file, bool)
@@ -862,7 +857,7 @@ void ChatWidget::dispatchFileWithBool(ToxFile file, bool)
 }
 
 void ChatWidget::dispatchFileSendFailed(QString friendId, const QString &fileName)
-{//  const auto &friendPk = ToxPk(friendId);
+{//  const auto &friendPk = ToxPk(receiver);
 
     //TODO
     //  chatForm.value()->addSystemInfoMessage(

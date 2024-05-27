@@ -307,19 +307,22 @@ void IMJingle::doSessionInitiate(Jingle::Session *session,
                         SESSION_VERSION, jingle->plugins());
 
   auto callType = context.callType();
-
   if (callType == ortc::JingleCallType::file) {
     // jingle-file
     QList<QString> files;
     for (const auto &c : context.getContents()) {
       for (const auto &f : c.file.files) {
-        File file = {qstring(c.file.ibb.sid()), qstring(f.name),
-                                  qstring(session->sid()), "", (quint64)f.size};
-        qDebug()<< QString("sId:%1 file:%2 fileId:%3")
-                      .arg((file.sId))
-                      .arg((file.name))
-                      .arg((file.id));
-        emit receiveFileRequest(peerId.username + "@" + peerId.server, file);
+        auto id = qstring(c.file.ibb.sid());
+        auto sId = qstring(session->sid());
+        File file = {.id= id,
+                     .sId= sId,
+                     .name = qstring(f.name),
+                     .path= {},
+                     .size = (quint64)f.size,
+                     .status = FileStatus::INITIALIZING,
+                     .direction=FileDirection::RECEIVING};
+        qDebug() << "receive file:" << file.toString();
+        emit receiveFileRequest(peerId.toFriendId(), file);
       }
     }
     s->setContext(context);
@@ -396,7 +399,7 @@ void IMJingle::doSessionAccept(Jingle::Session *session,
                                const Jingle::Session::Jingle *jingle,
                                const PeerId &peerId) {
 
-  qDebug() << "sId:%1 friendId:%2" //
+  qDebug() << "sId:%1 receiver:%2" //
            << qstring(session->sid()) //
            << peerId.toString();
 
@@ -622,7 +625,7 @@ void IMJingle::onRender(const std::string &peerId,
 // startCall
 bool IMJingle::startCall(const QString &friendId, const QString &sId,
                          bool video) {
-  qDebug()<<("friendId:%1 video:%2")<<(friendId)<<((video));
+  qDebug()<<("receiver:%1 video:%2")<<(friendId)<<((video));
 
   auto resources = client->getOnlineResources(stdstring(friendId));
   if (resources.empty()) {
@@ -686,7 +689,7 @@ void IMJingle::cancel(const QString &friendId) {
 }
 
 void IMJingle::cancelCall(const QString &friendId, const QString &sId) {
-  qDebug()<<("friendId:%1 sId:%2")<<(friendId)<<((sId));
+  qDebug()<<("receiver:%1 sId:%2")<<(friendId)<<((sId));
 
   IMJingleSession *s = findSession(stdstring(sId));
   if (s) {
@@ -865,6 +868,7 @@ void IMJingle::doStartFileSendTask(const Session *session,
   connect(imFile, &IMFile::fileSending,
           [&](const JID &m_friendId, const File &m_file, int m_seq,
               int m_sentBytes, bool end) {
+
             emit sendFileInfo(qstring(m_friendId.bare()), m_file, m_seq,
                               m_sentBytes, end);
           });

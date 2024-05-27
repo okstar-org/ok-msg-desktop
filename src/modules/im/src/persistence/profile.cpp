@@ -10,26 +10,21 @@
  * See the Mulan PubL v2 for more details.
  */
 
+#include <cassert>
+
 #include <QBuffer>
-#include <QDebug>
 #include <QDir>
 #include <QFileInfo>
 #include <QImage>
 #include <QObject>
 #include <QSaveFile>
-#include <QThread>
 
-#include <cassert>
-#include <sodium.h>
-
-#include "base/files.h"
 #include "profile.h"
 #include "profilelocker.h"
 #include "settings.h"
 #include "src/core/core.h"
 #include "src/core/coreav.h"
 #include "src/core/corefile.h"
-#include "src/net/avatarbroadcaster.h"
 #include "src/nexus.h"
 #include "src/widget/gui.h"
 #include "src/widget/tool/identicon.h"
@@ -544,9 +539,6 @@ void Profile::setAvatar(QByteArray pic) {
   saveAvatar(selfPk, avatarData);
 
   emit selfAvatarChanged(pixmap);
-  AvatarBroadcaster::setAvatar(avatarData);
-  AvatarBroadcaster::enableAutoBroadcast();
-
   core->setAvatar(avatarData);
 }
 

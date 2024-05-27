@@ -22,33 +22,21 @@
 
 class QFile;
 class QTimer;
+class ToxPk;
 
 namespace lib::messenger {
 class File;
+enum class FileStatus;
+enum class FileDirection;
 }
 
-// Note do not change values, these are directly inserted into the DB in their
-// current form, changing order would mess up database state!
-enum class FileStatus {
-  INITIALIZING = 0,
-  PAUSED = 1,
-  TRANSMITTING = 2,
-  BROKEN = 3,
-  CANCELED = 4,
-  FINISHED = 5,
-};
-
-// Note do not change values, these are directly inserted into the DB in their
-// current form (can add fields though as db representation is an int)
-enum class FileDirection : bool {
-  SENDING = 0,
-  RECEIVING = 1,
-};
+using FileStatus = lib::messenger::FileStatus;
+using FileDirection = lib::messenger::FileDirection;
 
 struct FileInfo {
 public:
     FileInfo()=default;
-    FileInfo(const QString &friendId,
+    FileInfo(
              const QString &sId,
              const QString& id,
              const QString &fileName,
@@ -58,7 +46,7 @@ public:
              FileStatus status,
              FileDirection direction
             );
-    QString friendId;
+
     //sessionId
     QString sId;
     //uuid
@@ -67,13 +55,21 @@ public:
     QString filePath;
     quint64 fileSize;
     quint64 bytesSent;
-    FileStatus status = FileStatus::INITIALIZING;
+    FileStatus status;
     FileDirection direction;
-
     QString sha256;
-
 public:
-    QString json() const;
+    [[nodiscard]] QString json() const
+    {
+        return QString("{\"id:\":\"%1\", \"name\":\"%2\", "
+                       "\"path\":\"%3\", \"size\":%4, "
+                       "\"status\":%5, \"direction\":%6, "
+                       "\"sId\":\"%7\"}")
+                .arg(fileId).arg(fileName)
+                .arg(filePath).arg(fileSize)
+                .arg((int)status).arg((int)direction).arg(sId);
+    }
+
 
     void parse(const QString &json);
 };
@@ -82,7 +78,8 @@ Q_DECLARE_METATYPE(FileInfo);
 
 struct ToxFile : public FileInfo {
   ToxFile() = default;
-  ToxFile(const QString &friendId,
+  ToxFile(const QString &sender,
+          const QString &friendId,
           QString sId,
           QString FileId,
           QString FileName,
@@ -92,7 +89,7 @@ struct ToxFile : public FileInfo {
           FileStatus status,
           FileDirection Direction);
 
-  ToxFile(const QString &friendId, const lib::messenger::File &file);
+  ToxFile(const QString &sender, const QString &friendId, const lib::messenger::File &file);
   ToxFile(const FileInfo& fi);
 
   bool operator==(const ToxFile &other) const;
@@ -103,7 +100,16 @@ struct ToxFile : public FileInfo {
 
   lib::messenger::File toIMFile();
 
-  QString toString() const;
+  const QString& getFriendId() const;
+
+  inline QString toString() const
+  {
+      return QString("{id:%1, sId:%2, name:%3, path:%4, size:%5}")
+              .arg(fileId).arg(sId).arg(fileName).arg(filePath).arg(fileSize);
+  }
+
+  QString sender;
+  QString receiver;
 
   std::shared_ptr<QFile> file;
   std::shared_ptr<QCryptographicHash> hashGenerator = std::make_shared<QCryptographicHash>(QCryptographicHash::Sha256);

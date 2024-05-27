@@ -61,6 +61,9 @@ public:
     ChatLineContent* getContentFromGlobalPos(QPoint pos) const;
     const uint repNameAfter = 5 * 60;
 
+    constexpr inline int getVScrollBarValue() const {
+        return scrollBarValue;
+    }
 signals:
     void selectionChanged();
     void workerTimeoutFinished();
@@ -108,6 +111,7 @@ protected:
     void updateBusyNotification();
 
     IChatItem::Ptr findLineByPosY(qreal yPos) const;
+
 
 private:
     void retranslateUi();

@@ -47,13 +47,13 @@ public:
   static CoreFilePtr makeCoreFile(Core *core, Tox *tox,
                                   CompatibleRecursiveMutex &coreLoopLock);
 
-  void sendFile(QString friendId,
+  void sendFile(
+                QString friendId,
                 QString filename,
                 QString filePath,
                 quint64 filesize,
                 quint64 sent=0);
 
-  void sendAvatarFile(QString friendId, const QByteArray &data);
   void pauseResumeFile(QString friendId, QString fileId);
   void cancelFileSend(QString friendId, QString fileId);
 
@@ -95,9 +95,9 @@ signals:
 private:
   CoreFile(Tox *core, CompatibleRecursiveMutex &coreLoopLock);
 
-  ToxFile *findFile(QString friendId, QString fileId);
-  const QString& addFile(QString friendId, ToxFile &file);
-  void removeFile(QString friendId, QString fileId);
+  ToxFile *findFile(QString fileId);
+  const QString& addFile(ToxFile &file);
+  void removeFile(QString fileId);
 
   static QString getFriendKey(const QString& friendId, QString fileId) {
     return  friendId + "-"+ fileId;

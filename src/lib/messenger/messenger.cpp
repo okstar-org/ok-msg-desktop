@@ -301,13 +301,6 @@ bool Messenger::connectIM( ) {
   connect(_im, &IM::groupReceived, this,
           &Messenger::onGroupReceived);
 
-  connect(_im, &IM::groupListReceivedDone, this,
-          [&]() {
-            for (auto handler : groupHandlers) {
-              handler->onGroupListDone();
-            }
-          });
-
   connect(_im, &IM::receiveRoomMessage, this,
           [&](QString groupId, PeerId peerId, IMMessage msg) -> void {
             for (auto handler : groupHandlers) {
@@ -502,7 +495,7 @@ bool Messenger::sendToFriend(const QString &f, const QString &msg,
 }
 
 void Messenger::receiptReceived(const QString &f, QString receipt) {
-  qDebug() << "receiptReceived friendId:" << f << "receiptNum:" << receipt;
+  qDebug() << "receiptReceived receiver:" << f << "receiptNum:" << receipt;
   auto _session = ok::session::AuthSession::Instance();
   auto _im = _session->im();
   return _im->sendReceiptReceived(f, receipt);
@@ -795,6 +788,20 @@ void Messenger::onGroupReceived(QString groupId, QString name) {
       handler->onGroup(groupId, name);
     }
 }
+
+QString File::toString() const
+{
+    return QString("{id:%1, sId:%2, name:%3, path:%4, size:%5, status:%6, direction:%7}")
+           .arg(id).arg(sId).arg(name).arg(path).arg(size)
+           .arg((int)status).arg((int)direction);
+}
+
+QDebug &operator<<(QDebug &debug, const File &f) {
+  QDebugStateSaver saver(debug);
+  debug.nospace() << f.toString();
+  return debug;
+}
+
 
 } // namespace messenger
 } // namespace lib

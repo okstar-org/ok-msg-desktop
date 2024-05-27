@@ -109,9 +109,9 @@ ToxFriendCall::ToxFriendCall(QString friendId, bool VideoEnabled, CoreAV &av,
     // source.subscribe();
     // videoInConn = QObject::connect(&source, &VideoSource::frameAvailable,
     //                                [&av,
-    //                                friendId](std::shared_ptr<VideoFrame>
+    //                                receiver](std::shared_ptr<VideoFrame>
     //                                frame) {
-    //                                    av.sendCallVideo(friendId, frame);
+    //                                    av.sendCallVideo(receiver, frame);
     //                                });
     // if (!videoInConn) {
     //     qDebug() << "Video connection not working";

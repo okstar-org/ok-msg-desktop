@@ -42,6 +42,7 @@
 #include <QInputDialog>
 #include <QMenu>
 #include <QMimeData>
+#include <QScrollBar>
 
 #include "form/chatform.h"
 #include "src/model/chathistory.h"
@@ -114,9 +115,9 @@ MessageSessionWidget::MessageSessionWidget(
   contentWidget->setChatForm(chatForm);
 
   connect(chatForm->getChatLog(), &ChatLog::readAll, this, [&](){
-    //已经阅读完消息，清除信号灯
       if(contentWidget->isVisible()){
-          clearStatusLight();
+          // 已经阅读完消息，信号灯还原
+          updateStatusLight(Core::getInstance()->getFriendStatus(contactId.toString()), false);
       }
   });
 
@@ -209,8 +210,6 @@ void MessageSessionWidget::showEvent(QShowEvent *e)
         if(f){
             setContact(*f);
         }
-        auto status = Core::getInstance()->getFriendStatus(contactId.toString());
-        updateStatusLight(status, false);
 
         auto msgs = sendWorker->getLastTextMessage();
         for(auto m : msgs){
@@ -218,6 +217,17 @@ void MessageSessionWidget::showEvent(QShowEvent *e)
             break;
         }
     }
+
+//    auto chatForm = sendWorker->getChatForm();
+//    auto cl= chatForm->getChatLog();
+//    auto vbv = cl->getVScrollBarValue();
+//    if(vbv<=0){
+//        //无滚动条，设置用户默认信号灯
+//        updateStatusLight(Core::getInstance()->getFriendStatus(contactId.toString()), false);
+//    }
+//    QScrollBar *sb = cl->verticalScrollBar();
+//    auto sbv=   sb->value();
+//    qDebug() << sbv;
 }
 
 /**
@@ -480,8 +490,6 @@ void MessageSessionWidget::setFriend(const Friend *f)
     connect(f, &Friend::avatarChanged, this, [this](const QPixmap& avatar) {
         setAvatar(avatar);
     });
-
-//    updateStatusLight(f->getStatus(), true);
 }
 
 void MessageSessionWidget::removeFriend()
@@ -491,12 +499,9 @@ void MessageSessionWidget::removeFriend()
     removeContact();
 }
 
-
-
 void MessageSessionWidget::setAsActiveChatroom() { setActive(true); }
 
 void MessageSessionWidget::setAsInactiveChatroom() { setActive(false); }
-
 
 void MessageSessionWidget::onActiveSet(bool active) {
 
@@ -664,12 +669,11 @@ void MessageSessionWidget::setRecvGroupMessage(const GroupMessage &msg)
 
 void MessageSessionWidget::setFileReceived(const ToxFile &file)
 {
-    qDebug() << __func__ <<file.fileName;
-//    auto cl = sendWorker->getChatLog();
-//    cl->onMessageReceived(ToxPk(contactId), file);
+    qDebug() << __func__ <<file.toString();
 
     auto md= (FriendMessageDispatcher*)sendWorker->dispacher();
-    md->onFileReceived(file);
+    if(md)
+        md->onFileReceived(file);
 
 }
 

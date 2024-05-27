@@ -132,7 +132,7 @@ private:
   CallDirection m_callDirection;
   bool isAccepted = false;
 
-  // friendId -> sid
+  // receiver -> sid
   std::map<PeerId, std::string> m_friendSessionMap;
   //  std::map<PeerId, const Jingle::Session::Jingle *> m_jingleMap;
   // sid -> JingleContext

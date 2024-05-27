@@ -33,16 +33,6 @@ struct ChatLogItemDeleter
         delete static_cast<T*>(ptr);
     }
 };
-
-QString resolveToxPk(const ToxPk& pk)
-{
-    Friend* f = FriendList::findFriend(pk);
-    if (f) {
-        return f->getDisplayedName();
-    }
-    return pk.username;
-}
-
 } // namespace
 
 ChatLogItem::ChatLogItem(ToxPk sender_, QString displayName, ChatLogFile file_)

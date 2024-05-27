@@ -139,7 +139,7 @@ void FileTransferWidget::acceptTransfer(const QString& filepath)
 
     // everything ok!
     CoreFile* coreFile = Core::getInstance()->getCoreFile();
-    coreFile->acceptFileRecvRequest(fileInfo.friendId, fileInfo.fileId, filepath);
+    coreFile->acceptFileRecvRequest(fileInfo.receiver, fileInfo.fileId, filepath);
 }
 
 void FileTransferWidget::setBackgroundColor(const QColor& c, bool whiteFont)
@@ -473,20 +473,20 @@ void FileTransferWidget::handleButton(QPushButton* btn)
     CoreFile* coreFile = Core::getInstance()->getCoreFile();
     if (fileInfo.direction == FileDirection::SENDING) {
         if (btn->objectName() == "cancel") {
-            coreFile->cancelFileSend(fileInfo.friendId, fileInfo.fileId);
+            coreFile->cancelFileSend(fileInfo.receiver, fileInfo.fileId);
         } else if (btn->objectName() == "pause") {
-            coreFile->pauseResumeFile(fileInfo.friendId, fileInfo.fileId);
+            coreFile->pauseResumeFile(fileInfo.receiver, fileInfo.fileId);
         } else if (btn->objectName() == "resume") {
-            coreFile->pauseResumeFile(fileInfo.friendId, fileInfo.fileId);
+            coreFile->pauseResumeFile(fileInfo.receiver, fileInfo.fileId);
         }
     } else // receiving or paused
     {
         if (btn->objectName() == "cancel") {
-            coreFile->cancelFileRecv(fileInfo.friendId, fileInfo.fileId);
+            coreFile->cancelFileRecv(fileInfo.receiver, fileInfo.fileId);
         } else if (btn->objectName() == "pause") {
-            coreFile->pauseResumeFile(fileInfo.friendId, fileInfo.fileId);
+            coreFile->pauseResumeFile(fileInfo.receiver, fileInfo.fileId);
         } else if (btn->objectName() == "resume") {
-            coreFile->pauseResumeFile(fileInfo.friendId, fileInfo.fileId);
+            coreFile->pauseResumeFile(fileInfo.receiver, fileInfo.fileId);
         } else if (btn->objectName() == "accept") {
             QString path =
                 QFileDialog::getSaveFileName(Q_NULLPTR,
