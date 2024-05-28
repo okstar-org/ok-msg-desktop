@@ -244,6 +244,14 @@ bool Messenger::connectIM( ) {
               handler->onFriendAvatarChanged(friendId, avatar);
             }
           });
+
+  connect(_im, &IM::receiveFriendAliasChanged, this,
+          [&](const JID& friendId, const std::string& alias) {
+            for (auto handler : friendHandlers) {
+              handler->onFriendAliasChanged(FriendId(friendId.bareJID()), qstring(alias));
+            }
+          });
+
   /**
    * callHandlers
    */
@@ -563,8 +571,13 @@ size_t Messenger::getFriendCount() {
 
 void Messenger::getFriendList(std::list<Friend>& list) {
   auto _session = ok::session::AuthSession::Instance();
-  auto _im = _session->im();
-  _im->getRosterList(list);
+  _session->im()->getRosterList(list);
+}
+
+void Messenger::setFriendAlias(const QString &f, const QString &alias)
+{
+    auto _session = ok::session::AuthSession::Instance();
+    _session->im()->setFriendAlias(JID(stdstring(f)), stdstring(alias));
 }
 
 Tox_User_Status Messenger::getFriendStatus(const QString &f) {
@@ -725,6 +738,25 @@ void Messenger::setRoomName(const QString &group, const QString &nick) {
   auto _session = ok::session::AuthSession::Instance();
   auto _im = _session->im();
   _im->setRoomName(group, stdstring(nick));
+}
+
+void Messenger::setRoomDesc(const QString &group, const QString &nick)
+{
+    auto _session = ok::session::AuthSession::Instance();
+    auto _im = _session->im();
+    _im->setRoomDesc(group, stdstring(nick));
+}
+
+void Messenger::setRoomSubject(const QString &group, const QString &notice) {
+  auto _session = ok::session::AuthSession::Instance();
+  auto _im = _session->im();
+  _im->setRoomSubject(group, stdstring(notice));
+}
+
+void Messenger::setRoomAlias(const QString &group, const QString &alias)
+{
+    auto _session = ok::session::AuthSession::Instance();
+    _session->im()->setRoomAlias(group, stdstring(alias));
 }
 
 bool Messenger::callToGroup(const QString &g) {

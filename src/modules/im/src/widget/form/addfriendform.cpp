@@ -39,8 +39,6 @@ namespace {
 
 QString getToxId(const QString &id) { return id.trimmed(); }
 
-bool checkIsValidId(const QString &id) { return ToxId::isToxId(id); }
-
 } // namespace
 
 /**

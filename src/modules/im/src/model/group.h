@@ -74,10 +74,8 @@ public:
 
     void updateUsername(const QString oldName, const QString newName);
 
-    void setTitle(const QString& author, const QString& newTitle);
-    const QString & getTitle()const{return title;};
-
-
+    void setSubject(const QString& author, const QString& subject);
+    const QString &getSubject()const{return subject;};
 
     void setSelfName(const QString& name);
     QString getSelfName() const;
@@ -87,10 +85,17 @@ public:
 
     const Role& getRole()const{return role;}
 
-const GroupId& getPersistentId() const {return groupId;};
+    const Affiliation& getAffiliation() const {
+        return affiliation;
+    }
+
+    const GroupId& getPersistentId() const {return groupId;};
+
+    void setName(const QString& name);
+
 signals:
     void titleChangedByUser(const QString& title);
-    void titleChanged(const QString& author, const QString& title);
+    void subjectChanged(const QString& author, const QString& title);
     void userJoined(const ToxPk& user, const QString& name);
     void userLeft(const ToxPk& user, const QString& name);
     void peerCountChanged(uint32_t numPeers);
@@ -106,7 +111,7 @@ private:
 private:
     ICoreGroupQuery& groupQuery;
     ICoreIdHandler& idHandler;
-    QString title;
+    QString subject;
     QString desc;
     uint32_t peerCount;
     QMap<QString, QString> peerDisplayNames;

@@ -95,7 +95,7 @@ void ContactWidget::connectToCore(Core *core) {
   connect(core, &Core::friendUsernameChanged, this, &ContactWidget::onFriendUsernameChanged);
 
   connect(core, &Core::friendAvatarChanged, this, &ContactWidget::onFriendAvatarChanged);
-
+  connect(core, &Core::friendAliasChanged, this, &ContactWidget::onFriendAliasChanged);
   connect(core, &Core::friendStatusChanged, this, &ContactWidget::onFriendStatusChanged);
   connect(core, &Core::friendStatusMessageChanged, this, &ContactWidget::onFriendStatusMessageChanged);
 
@@ -124,6 +124,12 @@ void ContactWidget::onFriendAdded(const FriendInfo &frnd) {
 void ContactWidget::onFriendAvatarChanged(const ToxPk &friendnumber, const QByteArray &avatar) {
   qDebug() << __func__ << "friend:" << friendnumber.toString() << avatar.size();
   contactListWidget->setFriendAvatar(friendnumber, avatar);
+}
+
+void ContactWidget::onFriendAliasChanged(const ToxPk &friendPk, const QString &alias)
+{
+    qDebug() << __func__ << "friend:" << friendPk.toString() << "alias:" << alias;
+    contactListWidget->setFriendAlias(friendPk, alias);
 }
 
 void ContactWidget::onFriendUsernameChanged(const ToxPk &friendPk, const QString &username) {
@@ -156,7 +162,7 @@ void ContactWidget::onFriendStatusChanged(const ToxPk &friendPk, Status::Status 
   //  f->setStatus(status);
 
   //  if (widget->isActive()) {
-  //    setWindowTitle(widget->getTitle());
+  //    setWindowTitle(widget->getSubject());
   //  }
   //
   //    ContentDialogManager::getInstance()->updateFriendStatus(friendPk);

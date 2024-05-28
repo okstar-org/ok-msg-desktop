@@ -118,7 +118,7 @@ GroupChatForm::GroupChatForm(const GroupId* chatGroup, IChatLog& chatLog, IMessa
     connect(headWidget, &ChatFormHeader::micMuteToggle, this, &GroupChatForm::onMicMuteToggle);
     connect(headWidget, &ChatFormHeader::volMuteToggle, this, &GroupChatForm::onVolMuteToggle);
 //    connect(headWidget, &ChatFormHeader::nameChanged, chatGroup, &Group::setName);
-//    connect(group, &Group::titleChanged, this, &GroupChatForm::onTitleChanged);
+//    connect(group, &Group::subjectChanged, this, &GroupChatForm::onTitleChanged);
 //    connect(group, &Group::userJoined, this, &GroupChatForm::onUserJoined);
 //    connect(group, &Group::userLeft, this, &GroupChatForm::onUserLeft);
 //    connect(group, &Group::peerNameChanged, this, &GroupChatForm::onPeerNameChanged);

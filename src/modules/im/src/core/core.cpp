@@ -487,10 +487,16 @@ void Core::onFriendNameChanged(QString friendId, QString name) {
 
 void Core::onFriendAvatarChanged(const QString friendId,
                                  const std::string avatar) {
-  if (avatar.empty())
+ qDebug() << __func__ << friendId <<"avatar size"<< avatar.size();
+ if (avatar.empty())
     return;
-  qDebug() << "onFriendAvatarChanged" << friendId <<"avatar size"<< avatar.size();
+
   emit friendAvatarChanged(getFriendPublicKey(friendId), QByteArray::fromStdString(avatar));
+}
+
+void Core::onFriendAliasChanged(const lib::messenger::FriendId &fId, const QString &alias)
+{
+    emit friendAliasChanged(ToxPk{fId}, alias);
 }
 
 
@@ -627,12 +633,8 @@ void Core::acceptFriendRequest(const ToxPk &friendPk) {
   QString friendId = friendPk.toString();
   tox->acceptFriendRequest(friendId);
 
-  //    if (receiver == std::numeric_limits<uint32_t>::max()) {
-  //      emit failedToAddFriend(friendPk);
-  //    } else {
   emit saveRequest();
-//  emit friendAdded(friendPk, true);
-  //    }
+
 }
 
 void Core::rejectFriendRequest(const ToxPk &friendPk) {
@@ -794,38 +796,33 @@ QString  Core::sendGroupAction(QString groupId, const QString &message) {
   return sendGroupMessageWithType(groupId, message, TOX_MESSAGE_TYPE_ACTION);
 }
 
-void Core::changeGroupTitle(QString groupId, const QString &title) {
+void Core::setGroupName(const QString &groupId, const QString &name) {
+  qDebug() << __func__ << groupId << name;
   QMutexLocker ml{&coreLoopLock};
-  tox->setRoomName(groupId, title);
+  tox->setRoomName(groupId, name);
+//  emit saveRequest();
+  //  emit groupTitleChanged(groupId, getUsername(), name);
+}
 
-  //
-  //  ToxString cTitle(title);
-  //  Tox_Err_Conference_Title error;
-  //  bool success = tox_conference_set_title(tox.get(), groupId, cTitle.data(),
-  //                                          cTitle.size(), &error);
-  //    if (success) {
-  emit saveRequest();
-  emit groupTitleChanged(groupId, getUsername(), title);
-  //      return;
-  //    }
-  //
-  //  qCritical() << "Fail of tox_conference_set_title";
-  //  switch (error) {
-  //  case TOX_ERR_CONFERENCE_TITLE_CONFERENCE_NOT_FOUND:
-  //    qCritical() << "Conference not found";
-  //    break;
-  //
-  //  case TOX_ERR_CONFERENCE_TITLE_FAIL_SEND:
-  //    qCritical() << "Conference title failed to send";
-  //    break;
-  //
-  //  case TOX_ERR_CONFERENCE_TITLE_INVALID_LENGTH:
-  //    qCritical() << "Invalid length";
-  //    break;
-  //
-  //  default:
-  //    break;
-  //  }
+void Core::setGroupSubject(const QString &groupId, const QString &subject)
+{
+    qDebug() << __func__ << groupId << subject;
+    QMutexLocker ml{&coreLoopLock};
+    tox->setRoomSubject(groupId, subject);
+}
+
+void Core::setGroupDesc(const QString &groupId, const QString &desc)
+{
+    qDebug() << __func__ << groupId << desc;
+    QMutexLocker ml{&coreLoopLock};
+    tox->setRoomDesc(groupId, desc);
+}
+
+void Core::setGroupAlias(const QString &groupId, const QString &alias)
+{
+    qDebug() << __func__ << groupId << alias;
+    QMutexLocker ml{&coreLoopLock};
+    tox->setRoomAlias(groupId, alias);
 }
 
 void Core::removeFriend(QString friendId) {
@@ -1502,11 +1499,14 @@ inline ToxPk Core::getFriendPublicKey(QString friendNumber) const {
   return ToxPk(friendNumber.toUtf8());
 }
 
-/**
- * @brief Get the username of a friend
- */
 QString Core::getFriendUsername(QString friendnumber) const {
-  return tox->getSelfUsername();
+    qWarning() << "Not implicement";
+    return {};
+}
+
+void Core::setFriendAlias(const QString &friendId, const QString &alias)
+{
+    tox->setFriendAlias(friendId, alias);
 }
 
 void Core::getFriendInfo(const QString& friendnumber) const {

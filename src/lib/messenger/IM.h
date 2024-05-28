@@ -151,9 +151,7 @@ public:
    */
   RosterManager *enableRosterManager();
 
-  void addFriend(const JID &jid,
-                                const QString &nick,
-                                const QString &msg);
+  void addFriend(const JID &jid, const QString &nick, const QString &msg);
   bool removeFriend(const JID &jid);
 
   void acceptFriendRequest(const QString &);
@@ -163,6 +161,8 @@ public:
 
   size_t getRosterCount();
   void getRosterList(std::list<Friend> &);
+
+  void setFriendAlias(const JID &jid, const std::string &alias);
 
   void retry();
 
@@ -185,8 +185,9 @@ public:
    * @param nick
    */
   void setRoomSubject(const QString &groupId, const std::string &nick);
-  void setRoomName(const QString &groupId, const std::string &roomName);
-
+  void setRoomName(const QString &groupId, const std::string &name);
+  void setRoomAlias(const QString &groupId, const std::string &alias);
+  void setRoomDesc(const QString &groupId, const std::string &desc);
   bool inviteToRoom(const JID &roomJid, const JID &peerId);
   bool leaveGroup(const QString &groupId);
   bool destroyGroup(const QString &groupId);
@@ -830,8 +831,6 @@ signals:
   // friend events
   void receiveFriend(Friend frnd);
 
-  void receiveFriendDone();
-
   void receiveFriendRequest(QString friendId, QString msg);
 
   void receiveFriendRemoved(QString friendId);
@@ -843,6 +842,8 @@ signals:
   void receiveFriendMessage(QString peerId, IMMessage);
 
   void receiveNicknameChange(QString friendId, QString nickname);
+
+  void receiveFriendAliasChanged(JID friendId, std::string alias);
 
   void receiveFriendAvatarChanged(QString friendId, std::string avatar);
 

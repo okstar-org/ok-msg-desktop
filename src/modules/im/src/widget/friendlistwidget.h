@@ -53,6 +53,7 @@ public:
   void setFriendStatus(const ContactId &friendPk,  Status::Status status);
   void setFriendStatusMsg(const ToxPk &friendPk,  const QString& statusMsg);
   void setFriendName(const ToxPk &friendPk,  const QString& name);
+  void setFriendAlias(const ToxPk &friendPk,  const QString& alias);
   void setFriendAvatar(const ToxPk &friendPk, const QByteArray& avatar);
   void setFriendTyping(const ToxPk &pk, bool typing);
 

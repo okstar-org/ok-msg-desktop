@@ -575,7 +575,7 @@ void Widget::connectToCore(Core &core) {
   connect(&core, &Core::usernameSet, this, &Widget::refreshPeerListsLocal);
   connect(this, &Widget::statusSet, &core, &Core::setStatus);
 
-  connect(this, &Widget::changeGroupTitle, &core, &Core::changeGroupTitle);
+  connect(this, &Widget::changeGroupTitle, &core, &Core::setGroupName);
 
   //  sharedMessageProcessorParams.setPublicKey(core.getSelfPublicKey().toString());
 
@@ -984,7 +984,7 @@ void Widget::openDialog(GenericChatroomWidget *widget, bool newWindow) {
 ////      groupChatForms[group->getPersistentId()]->show(contentLayout);
 //    }
 //    widget->setAsActiveChatroom();
-//    setWindowTitle(widget->getTitle());
+//    setWindowTitle(widget->getSubject());
 //  }
 }
 
@@ -1036,7 +1036,7 @@ bool Widget::newFriendMessageAlert(const ToxPk &friendId, const QString &text,
 
     if (contentDialog == nullptr) {
       if (hasActive) {
-//        setWindowTitle(widget->getTitle());
+//        setWindowTitle(widget->getSubject());
       }
     } else {
       ContentDialogManager::getInstance()->updateFriendStatus(friendId);
@@ -1081,7 +1081,7 @@ bool Widget::newGroupMessageAlert(const GroupId &groupId, const ToxPk &authorPk,
 
 //  if (contentDialog == nullptr) {
 //    if (hasActive) {
-//      setWindowTitle(widget->getTitle());
+//      setWindowTitle(widget->getSubject());
 //    }
 //  } else {
 //    ContentDialogManager::getInstance()->updateGroupStatus(groupId);

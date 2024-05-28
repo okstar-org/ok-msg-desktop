@@ -58,6 +58,7 @@ public slots:
 
 
   void onFriendAvatarChanged(const ToxPk &friendPk, const QByteArray &avatar);
+  void onFriendAliasChanged(const ToxPk &friendPk, const QString &alias);
 
   void onFriendRequest(const ToxPk &friendPk, const QString &message);
 

@@ -276,7 +276,8 @@ GenericChatForm::GenericChatForm(const ContactId *contact_,
                                  IChatLog &iChatLog_,
                                  IMessageDispatcher &messageDispatcher,
                                  QWidget *parent)
-    : QWidget(parent, Qt::Window), contactId(contact_), audioInputFlag(false),
+    : QWidget(parent, Qt::Window), contactId(contact_), contact(nullptr),
+      audioInputFlag(false),
       audioOutputFlag(false), isEncrypt(false), iChatLog(iChatLog_),
       messageDispatcher(messageDispatcher) {
   curRow = 0;

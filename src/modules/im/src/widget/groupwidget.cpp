@@ -44,9 +44,6 @@ GroupWidget::GroupWidget(ContentLayout *layout, QString groupnumber,
   settings::Translator::registerHandler(
       std::bind(&GroupWidget::retranslateUi, this), this);
 
-//  avatar->setPixmap(Style::scaleSvgImage(":img/group.svg", avatar->width(), avatar->height()));
-//  statusPic->setPixmap(QPixmap(Status::getIconPath(Status::Status::Online)));
-//  statusPic->setMargin(3);
   setAcceptDrops(true);
 
   connect(this, &GroupWidget::removeGroup, this, &GroupWidget::do_removeGroup);
@@ -61,11 +58,10 @@ GroupWidget::GroupWidget(ContentLayout *layout, QString groupnumber,
 
   auto dialogManager = ContentDialogManager::getInstance();
 
-  //    Group* g = chatroom->getGroup();
-  nameLabel->setText(group->getName());
+  nameLabel->setText(group->getDisplayedName());
 
   updateUserCount(group->getPeersCount());
-  connect(group, &Group::titleChanged, this, &GroupWidget::updateTitle);
+  connect(group, &Group::subjectChanged, this, &GroupWidget::updateTitle);
   connect(group, &Group::peerCountChanged, this, &GroupWidget::updateUserCount);
   connect(group, &Group::descChanged, this, &GroupWidget::updateDesc);
   connect(group, &Group::privilegesChanged, this, &GroupWidget::do_privilegesChanged);
@@ -109,7 +105,7 @@ void GroupWidget::init()
 
 //    menu.addSeparator();
 
-  //  QAction *setTitle = menu.addAction(tr("Set title..."));
+  //  QAction *setSubject = menu.addAction(tr("Set title..."));
     quitGroup = menu->addAction(tr("Quit group", "Menu to quit a groupchat"));
 
 }
@@ -217,7 +213,7 @@ ContentDialog *GroupWidget::createContentDialog() const {
 
 void GroupWidget::updateTitle(const QString &author, const QString &newName) {
   Q_UNUSED(author);
-  nameLabel->setText(newName);
+
 }
 
 void GroupWidget::contextMenuEvent(QContextMenuEvent *event) {
@@ -255,7 +251,7 @@ void GroupWidget::contextMenuEvent(QContextMenuEvent *event) {
     emit newWindowOpened(this);
   } else if (selectedItem == removeChatWindow) {
     chatroom->removeGroupFromDialogs();
-  } else if (selectedItem == setTitle) {
+  } else if (selectedItem == setSubject) {
     editName();
   }*/
 }

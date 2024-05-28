@@ -196,14 +196,11 @@ void MessageSessionWidget::do_widgetClicked() {
 
 void MessageSessionWidget::showEvent(QShowEvent *e)
 {
-
     GenericChatroomWidget::showEvent(e);
-
     if(isGroup()){
-        //获取名称
         auto group = GroupList::findGroup(GroupId{contactId.toString()});
         if(group){
-            setName(group->getName());
+            setContact(*group);
         }
     }else{
         auto f = FriendList::findFriend(contactId);

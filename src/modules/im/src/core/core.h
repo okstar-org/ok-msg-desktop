@@ -92,7 +92,10 @@ public:
   QStringList getGroupPeerNames(QString groupId) const override;
   bool getGroupAvEnabled(QString groupId) const override;
   ToxPk getFriendPublicKey(QString friendNumber) const;
+
   QString getFriendUsername(QString friendNumber) const;
+  void setFriendAlias(const QString& friendId, const QString& alias);
+
   void getFriendInfo(const QString& friendNumber) const;
   Status::Status getFriendStatus(const QString& friendNumber) const;
 
@@ -117,7 +120,6 @@ public:
   void setUIStarted();
 
 
-public slots:
   void start();
   void stop();
 
@@ -148,7 +150,12 @@ public slots:
   QString sendGroupMessage(QString groupId, const QString &message) override;
   QString sendGroupAction(QString groupId, const QString &message) override;
 
-  void changeGroupTitle(QString groupId, const QString &title);
+  void setGroupName(const QString &groupId, const QString &name);
+  void setGroupSubject(const QString &groupId, const QString &subject);
+  void setGroupDesc(const QString &groupId, const QString &desc);
+  void setGroupAlias(const QString &groupId, const QString &alias);
+
+
 
   void sendTyping(QString friendId, bool typing);
 
@@ -161,6 +168,7 @@ signals:
 
   void friendRequestReceived(const ToxPk &friendPk, const QString &message);
   void friendAvatarChanged(const ToxPk &friendPk, const QByteArray &avatar);
+  void friendAliasChanged(const ToxPk &fId, const QString& alias);
   void friendAvatarRemoved(const ToxPk &friendPk);
 
   void requestSent(const ToxPk &friendPk, const QString &message);
@@ -325,6 +333,7 @@ private:
 
   virtual void onFriendAvatarChanged(const QString friendId, const std::string avatar) override;
 
+  virtual  void onFriendAliasChanged(const lib::messenger::FriendId& fId, const QString& alias) override;
   virtual void onMessageReceipt(QString friendId,ReceiptNum  receipt) override;
 
   /**

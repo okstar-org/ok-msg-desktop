@@ -427,7 +427,7 @@ void ChatForm::onFriendStatusChanged(const ToxPk& friendId, Status::Status statu
   updateCallButtons();
 
 //  if (Settings::getInstance().getStatusChangeNotificationEnabled()) {
-//    QString fStatus = Status::getTitle(status);
+//    QString fStatus = Status::getSubject(status);
 //    addSystemInfoMessage(tr("%1 is now %2", "e.g. \"Dubslow is now online\"")
 //                             .arg(f->getDisplayedName())
 //                             .arg(fStatus),

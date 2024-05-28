@@ -185,6 +185,10 @@ which may lead to problems with video calls.</source>
 <translation>名称：</translation>
 </message>
 <message>
+<source>Alias:</source>
+<translation>备注名：</translation>
+</message>
+<message>
 <source>Default directory to save files:</source>
 <translation>默认文件保存目录：</translation>
 </message>
@@ -227,6 +231,11 @@ which may lead to problems with video calls.</source>
 <message>
 <source>Notes</source>
 <translation>附注</translation>
+</message>
+
+<message>
+<source>Send notice:</source>
+<translation>发送公告：</translation>
 </message>
 
 

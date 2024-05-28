@@ -31,10 +31,10 @@ Contact:: Contact(const ContactId& id_, const QString& name_,
     uint dbId = profile->addContact(id);
     qDebug() <<__func__ <<"Add contact "<< id.toString() << " saved to db dbId=>"<<dbId;
 
-    auto alias0 = profile->getFriendAlias(id.toString());
-    if(!alias0.isEmpty()){
-        alias = alias0;
-    }
+//    auto alias0 = profile->getFriendAlias(id.toString());
+//    if(!alias0.isEmpty()){
+//        alias = alias0;
+//    }
 
     auto avt = profile->loadAvatarData(ToxPk{id});
     if(!avt.isNull()){
@@ -62,7 +62,7 @@ const QPixmap& Contact::setDefaultAvatar()
 {
     auto name = !group ? "contact" : "group";
     auto uri = QString(":img/%1_dark.svg").arg(name);
-    avatar=QPixmap(uri);
+    avatar = QPixmap(uri);
     avatarSetStatus=Status::AvatarSet::DefaultSet;
     return avatar;
 }
@@ -103,35 +103,33 @@ void Contact::setName(const QString &_name) {
     return;
   }
 
-
   if (_name == name) {
     return;
   }
-    name = _name;
-    emit nameChanged(name);
 
-    if(alias.isEmpty()){
-        emit displayedNameChanged(name);
-    }
+  name = _name;
+  emit nameChanged(name);
 
+  if(alias.isEmpty()){
+     emit displayedNameChanged(name);
+  }
 }
 
 
 void Contact::setAlias(const QString &alias_) {
-  if (alias_.isEmpty() || alias_ == alias) {
+  if (alias_.isEmpty() ) {
     return;
   }
 
-  // save old displayed name to be able to compare for changes
-  const auto oldDisplayed = getDisplayedName();
-  alias = alias_;
-  emit aliasChanged( alias);
+  if(alias_ != getDisplayedName())
+    emit displayedNameChanged(alias_);
 
-  const auto newDisplayed = getDisplayedName();
-  if (oldDisplayed != newDisplayed) {
-    emit displayedNameChanged(newDisplayed);
+  if(alias_ != alias){
+    alias = alias_;
+    emit aliasChanged(alias);
   }
 }
+
 void Contact::setEventFlag(bool flag)
 {
 

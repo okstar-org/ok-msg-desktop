@@ -91,7 +91,7 @@ Message MessageProcessor::processIncomingMessage(Message &ret) {
 
 FriendInfo::FriendInfo(const lib::messenger::Friend &aFriend)
     : id{ContactId{aFriend.id.toString()}},
-      name{aFriend.name}, is_friend{aFriend.isFriend()},
+      alias{aFriend.alias}, is_friend{aFriend.isFriend()},
       online(aFriend.online), groups(aFriend.groups) {
 }
 

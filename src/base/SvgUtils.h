@@ -18,35 +18,37 @@
 #define OKMSG_SVGUTILS_H
 
 #include <QIcon>
-#include <QSvgRenderer>
 #include <QPainter>
+#include <QPixmap>
+#include <QSvgRenderer>
 
 class SvgUtils {
 public:
-  inline static QIcon prepareIcon(const QString& path, int w, int h) {
+  /**
+   * 将SVG渲染到QPixmap以支持不失真的伸缩
+   * @brief renderTo
+   * @param path
+   * @param pm
+   */
+  inline static void renderTo(const QString &path, QPixmap &pm) {
+    QSvgRenderer renderer(path);
+    pm.fill(Qt::transparent);
+    QPainter painter(&pm);
+    renderer.render(&painter, pm.rect());
+  }
+
+  inline static QIcon prepareIcon(const QString &path, int w, int h) {
+    if (!(w > 0 && h > 0)) {
+      return QIcon{path};
+    }
+
 #ifdef Q_OS_LINUX
-    // Preparing needed to set correct size of icons for GTK tray backend
-    QString desktop = getenv("XDG_CURRENT_DESKTOP");
-    if (desktop.isEmpty()) {
-      desktop = getenv("DESKTOP_SESSION");
-    }
-
-    desktop = desktop.toLower();
-    if (desktop == "xfce" || desktop.contains("gnome") || desktop == "mate" ||
-        desktop == "x-cinnamon") {
-      if (w > 0 && h > 0) {
-        QSvgRenderer renderer(path);
-
-        QPixmap pm(w, h);
-        pm.fill(Qt::transparent);
-        QPainter painter(&pm);
-        renderer.render(&painter, pm.rect());
-
-        return QIcon{pm };
-      }
-    }
-#endif
+    QPixmap pm(w, h);
+    renderTo(path, pm);
+    return QIcon{pm};
+#else
     return QIcon{path};
+#endif
   }
 };
 

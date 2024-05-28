@@ -933,9 +933,7 @@ bool IM::handleMUCRoomCreation(MUCRoom *room) {
 void IM::handleMUCSubject(MUCRoom *room,           //
                           const std::string &nick, //
                           const std::string &subject) {
-  qDebug() << QString("MUCRoom name:%1").arg(qstring(room->name()));
-  qDebug() << QString("nick:%1").arg(qstring(nick));
-  qDebug() << QString("subject:%2").arg(qstring(subject));
+  qDebug() << __func__ <<  room->name().c_str() << "subject" << qstring(subject);
   room->getRoomInfo();
 }
 
@@ -995,13 +993,13 @@ void IM::handleMUCConfigList(MUCRoom *room,                //
 }
 
 void IM::handleMUCConfigForm(MUCRoom *room, const DataForm &form) {
-  qDebug() << "handleMUCConfigForm room:" << room->jid().full().c_str();
+  qDebug() << __func__ << "room:" << room->jid().full().c_str();
 
   auto roomId = qstring(room->jid().full());
 
   auto find = m_roomMap.find(roomId);
   if (find == m_roomMap.end()) {
-    qWarning() << "Unable find room from cache" << roomId;
+    qWarning() << "Unable to find room from cache:" << roomId;
     return;
   }
 
@@ -1033,7 +1031,23 @@ void IM::handleMUCConfigForm(MUCRoom *room, const DataForm &form) {
 };
 
 void IM::handleMUCConfigResult(MUCRoom *room, bool success, MUCOperation operation) {
-  qDebug() << "handleMUCConfigResult room" << qstring(room->jid().full()) << "operation:" << operation << "success:" << success;
+  qDebug() << __func__<< "room" << qstring(room->jid().full())
+           << "operation:" << operation
+           << "success:" << success;
+    if(success){
+        //成功则忽略
+        return;
+    }
+
+  switch (operation) {
+  case RequestRoomConfig:{
+      qWarning() << "无操作群配置权限";
+      break;
+  }
+  default:
+      //other
+      break;
+  }
 };
 
 void IM::handleMUCRequest(MUCRoom *room, const DataForm &form) {
@@ -1167,10 +1181,10 @@ QString IM::sendToRoom(const QString &to, const QString &msg, const QString &id)
   return qstring(mid);
 }
 
-void IM::setRoomSubject(const QString &groupId, const std::string &nick) {
+void IM::setRoomSubject(const QString &groupId, const std::string &subject) {
   auto room = findRoom(groupId);
   if (room) {
-    room->room->setSubject(nick);
+    room->room->setSubject(subject);
   }
 }
 
@@ -1186,27 +1200,40 @@ void IM::setRoomName(const QString &groupId, const std::string &roomName) {
   info->changes.insert(std::make_pair("muc#roomconfig_roomname", roomName));
   // 获取新配置（handleMUCConfigForm处理）
   info->room->requestRoomConfig();
+}
 
-  //  ConferenceListItem item;
-  //  item.name = room->name();
-  //  item.jid = room->jid().full();
-  //  item.autojoin = true;
-  //  item.nick = stdstring(getNickname());
-  bool update = false;
-  // 添加到书签列表
-  for (auto &item : mConferenceList) {
-    if (item.jid == groupId.toStdString()) {
-      item.name = roomName;
-      update = true;
-      break;
+void IM::setRoomAlias(const QString &groupId, const std::string &alias)
+{
+    qDebug() << __func__ << groupId << alias.c_str();
+      //修改书签列表
+      bool update = false;
+      for (auto &item : mConferenceList) {
+        if (item.jid == groupId.toStdString()) {
+          item.name = alias;
+          update = true;
+          break;
+        }
+      }
+    //存储书签列表
+     if (update) {
+        bookmarkStorage->storeBookmarks(mBookmarkList, mConferenceList);
+        qDebug() << "Store the bookmarks：" << groupId;
+     }
+}
+
+void IM::setRoomDesc(const QString &groupId, const std::string &desc)
+{
+    qDebug() << __func__ << groupId << desc.c_str();
+    const IMRoomInfo *pRoomInfo = findRoom(groupId);
+    if (!pRoomInfo) {
+      qDebug() << "room is not exist." << groupId;
+      return;
     }
-  }
 
-  // 存储书签列表
-  if (update) {
-    bookmarkStorage->storeBookmarks(mBookmarkList, mConferenceList);
-    qDebug() << "Store bookmarks：" << groupId;
-  }
+    auto info = const_cast<IMRoomInfo *>(pRoomInfo);
+    info->changes.insert(std::make_pair("muc#roomconfig_roomdesc", desc));
+    // 获取新配置（handleMUCConfigForm处理）
+    info->room->requestRoomConfig();
 }
 
 #ifdef WANT_PING
@@ -1316,28 +1343,29 @@ void IM::requestBookmarks() {
 void IM::handleBookmarks(const BookmarkList &bList,   //
                          const ConferenceList &cList) //
 {
-  qDebug() << "handleBookmarks...";
+  qDebug() << __func__;
   qDebug() << "ConferenceList:" << cList.size();
   qDebug() << "BookmarkList:" << bList.size();
 
   //  缓存群聊书签列表（新增加群聊加入该书签一起保存）
   mConferenceList = cList;
-  mBookmarkList = bList;
 
-  for (auto &c : cList) {
+  for (auto &c : mConferenceList) {
     auto name = (!c.name.empty() ? c.name : JID(c.jid).username());
     qDebug() << "room:" << qstring(name) << "jid:" << qstring(c.jid) << "nick:" << qstring(c.nick) << "autojoin:" << c.autojoin;
-
     // 缓存到本地
     onAddRoom(c.jid, name);
   }
 
-  //  joinRooms();
-  emit groupListReceivedDone();
+
+  mBookmarkList = bList;
+  for (auto &c : mBookmarkList) {
+     qDebug() << "Bookmark name:" << qstring(c.name) << "url:" << qstring(c.url);
+  }
 }
 
 void IM::handleBookmarks(const BMConferenceList &cList) {
-  qDebug() << "handleBookmarks";
+  qDebug() << __func__;
   for (const auto &conf : cList) {
     qDebug() << "conference:" << qstring(conf.jid);
   }
@@ -1464,7 +1492,8 @@ void IM::handleItemUpdated(const JID &jid) {
 
   if (data->sub() == "both") {
     qDebug() << "建立订阅双向关联";
-    requestFriendNickname(jid);
+//    requestFriendNickname(jid);
+    emit receiveFriendAliasChanged(jid, data->name());
   }
 }
 
@@ -1545,6 +1574,18 @@ void IM::getRosterList(std::list<Friend> &list) {
   }
 }
 
+void IM::setFriendAlias(const JID &jid, const std::string &alias)
+{
+    qDebug() << __func__ << jid.bare().c_str() << alias.c_str();
+
+    auto m = _client->rosterManager();
+
+    //保存联系人
+    m->add(jid.bareJID(), alias, {});
+    m->synchronize();
+
+}
+
 void IM::handleRoster(const Roster &roster) {
   qDebug() << __func__ << "size:" << roster.size();
   m_roster = roster;
@@ -1567,7 +1608,7 @@ void IM::handleRoster(const Roster &roster) {
   }
   //  enableDiscoManager();
   //  loadGroupList();
-  emit receiveFriendDone();
+
 };
 
 /**

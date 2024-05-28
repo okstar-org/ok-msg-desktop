@@ -380,10 +380,10 @@ void FriendWidget::showDetails() {
 
 void FriendWidget::removeDetails()
 {
-    if(about){
-        contentLayout->removeWidget(about);
-        about = nullptr;
-    }
+//    if(about){
+//        contentLayout->removeWidget(about);
+//        about = nullptr;
+//    }
 
 }
 
@@ -512,7 +512,6 @@ void FriendWidget::setTyping(bool typing) {
 
 void FriendWidget::setName(const QString &name)
 {
-    m_friend->setName(name);
     GenericChatroomWidget::setName(name);
     if(about){
         about->setName(name);

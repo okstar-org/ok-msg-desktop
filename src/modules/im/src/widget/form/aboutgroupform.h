@@ -27,6 +27,10 @@ private:
 
 private slots:
     void onSendMessageClicked();
+    void doNameChanged(const QString& text);
+    void doAliasChanged(const QString& text);
+    void doSubjectChanged(const QString& text);
+    void doDescChanged(const QString& text);
 };
 
 #endif // ABOUTGROUPFORM_H

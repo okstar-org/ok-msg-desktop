@@ -111,7 +111,7 @@ public:
   explicit Friend(gloox::RosterItem *pItem);
 
   FriendId id;
-  QString name;
+  QString alias;
   int subscription;
   bool online;
   QStringList groups;
@@ -120,7 +120,8 @@ public:
   [[nodiscard]] bool isFriend() const;
 
   [[nodiscard]] QString toString() const {
-    return QString("{id: %1, name: %2, subscription:%3, online:%4, groups:[%5]}").arg(id.toString()).arg(name).arg(subscription).arg(online).arg(groups.join(","));
+    return QString("{id: %1, alias: %2, subscription:%3, online:%4, groups:[%5]}")  //
+            .arg(id.toString()).arg(alias).arg(subscription).arg(online).arg(groups.join(","));
   }
 
   friend std::ostream &operator<<(std::ostream &os, const Friend &f);

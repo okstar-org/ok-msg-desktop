@@ -72,12 +72,11 @@ Group::Group(const GroupId groupId_,
 
 }
 
-void Group::setTitle(const QString &author, const QString &newTitle) {
+void Group::setSubject(const QString &author, const QString &newTitle) {
   const QString shortTitle = newTitle.left(MAX_GROUP_TITLE_LENGTH);
-  if (!shortTitle.isEmpty() && title != shortTitle) {
-    title = shortTitle;
-    emit displayedNameChanged(title);
-    emit titleChanged(author, title);
+  if (!shortTitle.isEmpty() && subject != shortTitle) {
+    subject = shortTitle;
+    emit subjectChanged(author, subject);
   }
 }
 
@@ -149,9 +148,14 @@ const QString& Group::getDesc() const
     return desc;
 }
 
+void Group::setName(const QString &name)
+{
+    qDebug() << __func__ << name;
+    Contact::setName(name);
+}
+
 void Group::stopAudioOfDepartedPeers(const ToxPk &peerPk) {
   if (avGroupchat) {
-    Core *core = Core::getInstance();
-    core->getAv()->invalidateGroupCallPeerSource(peerPk.toString(), peerPk);
+    Core::getInstance()->getAv()->invalidateGroupCallPeerSource(peerPk.toString(), peerPk);
   }
 }

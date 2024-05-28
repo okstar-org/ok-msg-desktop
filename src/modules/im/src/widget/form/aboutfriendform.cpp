@@ -21,6 +21,10 @@
 
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QPainter>
+#include <QSvgRenderer>
+
+#include <base/SvgUtils.h>
 
 AboutFriendForm::AboutFriendForm(std::unique_ptr<IAboutFriend> _about, QWidget* parent)
     : QWidget(parent)
@@ -56,16 +60,23 @@ AboutFriendForm::AboutFriendForm(std::unique_ptr<IAboutFriend> _about, QWidget* 
     }
 
 
-    ui->userName->setText(about->getName());
-    ui->friendId->setText(about->getPublicKey().toString());
+    ui->id->setText(about->getPublicKey().toString());
     ui->statusMessage->setText(about->getStatusMessage());
     ui->avatar->setPixmap(about->getAvatar());
-    ui->alias->setText(about->getAlias());
-    connect(ui->alias, &QLineEdit::textChanged, this, &AboutFriendForm::onAliasChanged);
 
+    ui->userName->setText(about->getName());
     connect(about->getFriend(), &Friend::nameChanged, [&](auto name){
         ui->userName->setText(name);
     });
+
+    ui->alias->setText(about->getAlias());
+    ui->alias->setPlaceholderText(about->getName());
+    connect(about->getFriend(), &Contact::aliasChanged, [&](auto alias){
+        ui->alias->setText(alias);
+    });
+
+    connect(ui->alias, &QLineEdit::textChanged, this, &AboutFriendForm::onAliasChanged);
+
 }
 
 static QString getAutoAcceptDir(const QString& dir)
@@ -124,7 +135,7 @@ void AboutFriendForm::onSelectDirClicked()
 void AboutFriendForm::onSendMessageClicked()
 {
     auto w = Widget::getInstance();
-    emit w->toSendMessage(ui->friendId->text());
+    emit w->toSendMessage(ui->id->text());
 }
 
 void AboutFriendForm::onRemoveHistoryClicked()
@@ -138,7 +149,7 @@ void AboutFriendForm::onRemoveHistoryClicked()
 
 
     auto w = Widget::getInstance();
-    emit w->toClearHistory(ui->friendId->text());
+    emit w->toClearHistory(ui->id->text());
 
 //   const bool result = about->clearHistory();
 //    if (!result) {
@@ -163,9 +174,11 @@ void AboutFriendForm::setName(const QString &name)
 
 void AboutFriendForm::onAliasChanged(const QString &text)
 {
-    auto fid = ui->friendId->text();
 
-    profile->saveFriendAlias(fid, text);
+    auto fid = ui->id->text();
+
     auto f = FriendList::findFriend(ContactId(fid));
     f->setAlias(text);
+
+    Core::getInstance()->setFriendAlias(fid, text);
 }

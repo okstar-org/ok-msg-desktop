@@ -29,12 +29,10 @@ Friend *FriendList::addFriend(const FriendInfo &friendInfo) {
       return frnd;
   }
 
-  QString alias = Settings::getInstance().getFriendAlias(friendInfo.id);
-  qDebug() <<"alias:"<<alias;
-
   Friend *newfriend = new Friend(friendInfo.id,
                                  friendInfo.isFriend(),
-                                 alias, friendInfo.getName());
+                                 friendInfo.getAlias(),
+                                 {});
   friendMap[((ContactId&)friendInfo).toString()] = newfriend;
 
 //  if(friendInfo.resource.isEmpty()){

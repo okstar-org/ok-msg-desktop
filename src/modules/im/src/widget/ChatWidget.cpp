@@ -301,7 +301,7 @@ void ChatWidget::onFriendStatusChanged(const ToxPk &friendPk,
 
 
   //  if (widget->isActive()) {
-  //    setWindowTitle(widget->getTitle());
+  //    setWindowTitle(widget->getSubject());
   //  }
   //
 //    ContentDialogManager::getInstance()->updateFriendStatus(friendPk);

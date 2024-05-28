@@ -96,6 +96,9 @@ public:
   virtual void onFriendNameChanged(QString friendId, QString name) = 0;
   virtual void onFriendAvatarChanged(const QString friendId,
                                      const std::string avatar) = 0;
+
+  virtual void onFriendAliasChanged(const FriendId& fId, const QString& alias)=0;
+
   virtual void onFriendChatState(QString friendId, int state) = 0;
   virtual void onMessageReceipt(QString friendId, QString receipt) = 0;
 };
@@ -215,19 +218,14 @@ public:
   Tox_User_Status getSelfStatus() const;
 
   void addSelfHandler(SelfHandler *);
-  void addFriendHandler(FriendHandler *);
   void addGroupHandler(GroupHandler *);
   void addCallHandler(CallHandler *);
   void addFileHandler(FileHandler *);
 
-  size_t getFriendCount();
-
-  void getFriendList(std::list<lib::messenger::Friend> &);
 
   bool sendToGroup(const QString &g, const QString &msg, QString &receiptNum);
 
-  bool sendToFriend(const QString &f, const QString &msg, QString &receiptNum,
-                    bool encrypt = false);
+
 
   void receiptReceived(const QString &f, QString receipt);
 
@@ -238,7 +236,7 @@ public:
 
   QString genUniqueId();
 
-  // ============= setXX============/
+  /** self */
   void setSelfNickname(const QString &nickname);
   void changePassword(const QString &password);
   void setSelfAvatar(const QByteArray &avatar);
@@ -247,6 +245,14 @@ public:
   /**
    * Friend (audio/video)
    */
+  void addFriendHandler(FriendHandler *);
+
+  size_t getFriendCount();
+
+  void getFriendList(std::list<lib::messenger::Friend> &);
+
+  void setFriendAlias(const QString &f, const QString &alias);
+
   // 添加好友
   void sendFriendRequest(const QString &username, const QString &nick, const QString &message);
   // 接受朋友邀请
@@ -258,6 +264,8 @@ public:
 
   Tox_User_Status getFriendStatus(const QString &f);
 
+  bool sendToFriend(const QString &f, const QString &msg, QString &receiptNum,
+                    bool encrypt = false);
 
   // 发起呼叫邀请
   bool callToFriend(const QString &f, const QString &sId, bool video);
@@ -282,6 +290,9 @@ public:
   bool createGroup(const QString &group);
   void joinGroup(const QString &group);
   void setRoomName(const QString &group, const QString &nick);
+  void setRoomDesc(const QString &group, const QString &desc);
+  void setRoomSubject(const QString &group, const QString &subject);
+  void setRoomAlias(const QString &group, const QString &alias);
   bool inviteGroup(const QString &group, const QString &f);
   bool leaveGroup(const QString &group);
   bool destroyGroup(const QString &group);

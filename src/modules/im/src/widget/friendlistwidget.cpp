@@ -439,7 +439,7 @@ GroupWidget *FriendListWidget::addGroup(const GroupId &groupId,
   //
   groupLayout.addSortedWidget(gw);
 
-  connect(g, &Group::titleChanged,
+  connect(g, &Group::subjectChanged,
           [=, this](const QString &author, const QString &name) {
             Q_UNUSED(author);
             renameGroupWidget(gw, name);
@@ -502,7 +502,7 @@ void FriendListWidget::setGroupTitle(const GroupId& groupId,
         qWarning() << "group is no existing."<<groupId.toString();
         return;
     }
-    g->setTitle(author, title);
+    g->setSubject(author, title);
 }
 
 void FriendListWidget::setGroupInfo(const GroupId &groupId, const GroupInfo &info)
@@ -515,7 +515,7 @@ void FriendListWidget::setGroupInfo(const GroupId &groupId, const GroupInfo &inf
 
     g->setPeerCount(info.occupants);
     g->setDesc(info.description);
-    g->setTitle("", info.subject);
+    g->setSubject("", info.subject);
     g->setName(info.name);
 
 }
@@ -1009,12 +1009,23 @@ void FriendListWidget::setFriendStatusMsg(const ToxPk &friendPk,
 
 void FriendListWidget::setFriendName(const ToxPk &friendPk, const QString &name) {
   qDebug() << __func__ << friendPk.toString() << name;
-  auto *friendWidget = FriendList::findFriend(friendPk);
-  if(!friendWidget){
+  auto f = FriendList::findFriend(friendPk);
+  if(!f){
       qWarning() <<"friend is no existing.";
       return;
   }
-  friendWidget->setName(name);
+  f->setName(name);
+}
+
+void FriendListWidget::setFriendAlias(const ToxPk &friendPk, const QString &alias)
+{
+    qDebug() << __func__ << friendPk.toString() << alias;
+    auto f = FriendList::findFriend(friendPk);
+    if(!f){
+        qWarning() <<"friend is no existing.";
+        return;
+    }
+    f->setAlias(alias);
 }
 
 void FriendListWidget::setFriendAvatar(const ToxPk &friendPk,

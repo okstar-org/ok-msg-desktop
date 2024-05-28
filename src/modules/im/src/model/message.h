@@ -76,7 +76,7 @@ public:
 
 struct FriendInfo {
   ToxPk id;
-  QString name;
+  QString alias;
   bool is_friend;
   bool online;
   QStringList groups;
@@ -85,12 +85,13 @@ struct FriendInfo {
 
   [[nodiscard]] inline const ToxPk &getId() const { return id; }
 
-  [[nodiscard]] inline const QString &getName() const { return name; }
+  [[nodiscard]] inline const QString &getAlias() const { return alias; }
 
   [[nodiscard]] inline bool isFriend() const { return is_friend; };
 
   [[nodiscard]] inline QString toString() const {
-    return QString("{id: %1, name: %2, is_friend:%3, online:%4, groups:[%5]}").arg(id.toString()).arg(name).arg(is_friend).arg(online).arg(groups.join(","));
+    return QString("{id: %1, alias: %2, is_friend:%3, online:%4, groups:[%5]}") //
+            .arg(id.toString()).arg(alias).arg(is_friend).arg(online).arg(groups.join(","));
   }
 
   friend QDebug &operator<<(QDebug &debug, const FriendInfo &f);

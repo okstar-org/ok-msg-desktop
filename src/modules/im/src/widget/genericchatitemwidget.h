@@ -27,7 +27,7 @@ class MaskablePixmapWidget;
 
 
 /**
- * 聊天控件
+ * 聊天控件基类
  */
 class GenericChatItemWidget : public QFrame
 {
@@ -79,11 +79,12 @@ protected:
 
     virtual void showEvent(QShowEvent* e) override;
 
+    //名称
     CroppingLabel* nameLabel;
     CroppingLabel* lastMessageLabel;
+    //信号状态
     QLabel* statusPic;
-
-
+    //头像
     MaskablePixmapWidget* avatar;
 
     bool compact;

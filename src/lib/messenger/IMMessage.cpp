@@ -91,7 +91,7 @@ std::ostream &operator<<(std::ostream &os, const Friend &f) {
 
 Friend::Friend(gloox::RosterItem *item) //
     : id{FriendId{qstring(item->jid().bare())}},  //
-      name{qstring(item->name())},  //
+      alias{qstring(item->name())},  //
       subscription{item->subscription()},//
       online{item->online()}, //
       groups{qstringlist(item->groups())}//

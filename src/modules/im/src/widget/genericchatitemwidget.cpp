@@ -55,10 +55,7 @@ GenericChatItemWidget::GenericChatItemWidget(ChatType type, const ContactId &cid
       clearStatusLight();
   }
 
-
-  QSize size = QSize(40, 40);
-  avatar = new MaskablePixmapWidget(this, size, ":/img/avatar_mask.svg");
-
+  avatar = new MaskablePixmapWidget(this, QSize(40, 40), ":/img/avatar_mask.svg");
   auto profile = Nexus::getProfile();
   auto avt = profile->loadAvatar(contactId);
   if(!avt.isNull()){

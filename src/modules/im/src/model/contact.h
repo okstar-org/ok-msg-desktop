@@ -62,9 +62,9 @@ protected:
     //联系人Id
     ContactId id;
 
-    //名称
+    //名称(nick)： https://xmpp.org/extensions/xep-0172.html
     QString name;
-    //别名(自己备注)
+    //别名(自己备注，即书签名称)https://xmpp.org/extensions/xep-0048.html
     QString alias;
 
     //头像
