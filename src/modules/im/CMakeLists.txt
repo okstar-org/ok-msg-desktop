@@ -138,9 +138,7 @@ set(${PROJECT_NAME}_SOURCES
         src/core/toxid.h
         src/core/groupid.cpp
         src/core/groupid.h
-        src/core/toxlogger.cpp
-        src/core/toxlogger.h
-        src/core/toxoptions.cpp
+    src/core/toxoptions.cpp
         src/core/toxoptions.h
         src/core/toxpk.cpp
         src/core/toxpk.h

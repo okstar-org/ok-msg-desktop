@@ -42,6 +42,10 @@ enum class FileDirection {
   RECEIVING = 1,
 };
 
+enum class FileControl{
+  RESUME, PAUSE, CANCEL
+};
+
 struct File {
 public:
   //id(file id = ibb id) 和 sId(session id)

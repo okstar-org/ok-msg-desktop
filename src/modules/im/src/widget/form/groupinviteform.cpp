@@ -30,7 +30,7 @@
 #include <QWindow>
 
 #include <algorithm>
-//#include <tox/tox.h>
+
 
 /**
  * @class GroupInviteForm
@@ -47,7 +47,7 @@ GroupInviteForm::GroupInviteForm()
 {
     QVBoxLayout* layout = new QVBoxLayout(this);
     connect(createButton, &QPushButton::clicked,
-            [this]() { emit groupCreate(TOX_CONFERENCE_TYPE_AV); });
+            [this]() { emit groupCreate(ConferenceType::AV); });
 
     QWidget* innerWidget = new QWidget(scroll);
     innerWidget->setLayout(new QVBoxLayout());

@@ -120,6 +120,11 @@ enum class ChatType {
   GroupChat // 群聊
 };
 
+enum class ConferenceType {
+  TEXT,
+  AV
+};
+
 class MessageProcessor {
 
 public:

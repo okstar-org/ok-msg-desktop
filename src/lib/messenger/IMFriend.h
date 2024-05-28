@@ -27,6 +27,18 @@ class RosterItem;
 
 namespace lib::messenger {
 
+enum class IMStatus {
+  Available,                  /**< The entity is online. */
+  Chat,                       /**< The entity is 'available for chat'. */
+  Away,                       /**< The entity is away. */
+  DND,                        /**< The entity is DND (Do Not Disturb). */
+  XA,                         /**< The entity is XA (eXtended Away). */
+  Unavailable,                /**< The entity is offline. */
+  Probe,                      /**< This is a presence probe. */
+  Error,                      /**< This is a presence error. */
+  Invalid                     /**< The stanza is invalid. */
+};
+
 /**
  * 联系人ID，即：朋友ID、群聊ID
  * 格式:[username]@[server]

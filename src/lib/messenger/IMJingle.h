@@ -35,7 +35,6 @@
 #include "lib/ortc/ok_rtc_manager.h"
 #include "lib/ortc/ok_rtc_proxy.h"
 #include "lib/session/AuthSession.h"
-#include "lib/messenger/tox/tox.h"
 
 
 using namespace std;

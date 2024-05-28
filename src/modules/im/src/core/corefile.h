@@ -13,9 +13,6 @@
 #ifndef COREFILE_H
 #define COREFILE_H
 
-#include "lib/messenger/tox/tox.h"
-
-
 #include "src/core/core.h"
 #include "src/core/toxpk.h"
 #include "src/model/status.h"
@@ -33,7 +30,7 @@
 #include <memory>
 
 #include "lib/messenger/messenger.h"
-
+#include "lib/messenger/IMFile.h"
 
 class CoreFile;
 
@@ -111,7 +108,7 @@ private:
                                     const uint8_t *fname, size_t fnameLen,
                                     void *vCore);
   static void onFileControlCallback(Tox *tox, QString friendId, QString fileId,
-                                    Tox_File_Control control, void *vCore);
+                                    lib::messenger::FileControl control, void *vCore);
   static void onFileDataCallback(Tox *tox, QString friendId, QString fileId,
                                  uint64_t pos, size_t length, void *vCore);
   static void onFileRecvChunkCallback(Tox *tox, QString friendId,

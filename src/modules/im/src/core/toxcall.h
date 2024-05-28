@@ -17,7 +17,6 @@
 #include "src/audio/iaudiosink.h"
 #include "src/audio/iaudiosource.h"
 #include <src/core/toxpk.h>
-#include "lib/messenger/tox/tox.h"
 
 #include <QMap>
 #include <QMetaObject>

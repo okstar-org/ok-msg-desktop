@@ -15,10 +15,9 @@
 #include "IMMessage.h"
 #include "IMFriend.h"
 #include "IMGroup.h"
-
 #include "base/task.h"
 #include "base/timer.h"
-#include "tox/tox.h"
+
 #include "tox/toxav.h"
 
 #include <QDateTime>
@@ -52,13 +51,23 @@ namespace messenger {
 
 class File;
 
+
+/**
+ * 连接状态
+ *
+ */
+enum class IMConnectStatus {
+  CONNECTING, AUTH_FAILED, CONNECTED,
+  DISCONNECTED, TIMEOUT, CONN_ERROR,
+  TLS_ERROR, OUT_OF_RESOURCE, NO_SUPPORT
+};
+
 class SelfHandler {
 public:
   virtual void onSelfIdChanged(QString id) = 0;
   virtual void onSelfNameChanged(QString name) = 0;
   virtual void onSelfAvatarChanged(const std::string avatar) = 0;
-  virtual void onSelfStatusChanged(Tox_User_Status status,
-                                   const std::string &msg) = 0;
+  virtual void onSelfStatusChanged(IMStatus status, const std::string &msg) = 0;
 };
 
 class FriendHandler {
@@ -66,7 +75,7 @@ public:
   virtual void onFriend(const IMFriend & frnd) = 0;
   virtual void onFriendRequest(QString friendId, QString msg) = 0;
   virtual void onFriendRemoved(QString friendId) = 0;
-  virtual void onFriendStatus(QString friendId, Tox_User_Status status) = 0;
+  virtual void onFriendStatus(QString friendId, IMStatus status) = 0;
   virtual void onFriendMessage(QString friendId, IMMessage message) = 0;
   virtual void onFriendMessageSession(QString friendId, QString sid) = 0;
   virtual void onFriendNameChanged(QString friendId, QString name) = 0;
@@ -175,7 +184,7 @@ public:
   IMPeerId getSelfId() const;
   QString getSelfUsername() const;
   QString getSelfNick() const;
-  Tox_User_Status getSelfStatus() const;
+  IMStatus getSelfStatus() const;
 
   void addSelfHandler(SelfHandler *);
   void addGroupHandler(GroupHandler *);
@@ -222,7 +231,7 @@ public:
   
   void getFriendVCard(const QString &f);
 
-  Tox_User_Status getFriendStatus(const QString &f);
+  IMStatus getFriendStatus(const QString &f);
 
   bool sendToFriend(const QString &f, const QString &msg, QString &receiptNum,
                     bool encrypt = false);
@@ -315,7 +324,7 @@ signals:
                                int32_t vstride);
 
 private slots:
-  void onConnectResult(lib::messenger::IMStatus);
+  void onConnectResult(lib::messenger::IMConnectStatus);
   void onStarted();
   void onStopped();
   void onReceiveGroupMessage(lib::messenger::IMMessage imMsg);

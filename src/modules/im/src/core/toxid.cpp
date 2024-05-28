@@ -16,7 +16,6 @@
 #include <QDebug>
 #include <QRegularExpression>
 #include <cstdint>
-//#include <tox/tox.h>
 
 // Tox doesn't publicly define these
 #define NOSPAM_BYTES 4

@@ -19,7 +19,7 @@
 #include "src/core/coreav.h"
 #include "src/core/dhtserver.h"
 #include "src/core/icoresettings.h"
-#include "src/core/toxlogger.h"
+
 #include "src/core/toxoptions.h"
 #include "src/core/toxstring.h"
 #include "src/model/groupinvite.h"
@@ -76,17 +76,17 @@ Core::~Core() {
   tox.reset();
 }
 
-Status::Status Core::fromToxStatus(const Tox_User_Status &userStatus) const {
+Status::Status Core::fromToxStatus(const lib::messenger::IMStatus &status_) const {
   Status::Status status;
-  switch (userStatus) {
-  case TOX_USER_STATUS_Available:
-  case TOX_USER_STATUS_Chat:
+  switch (status_) {
+  case lib::messenger::IMStatus::Available:
+  case lib::messenger::IMStatus::Chat:
     status = Status::Status::Online;
     break;
-  case TOX_USER_STATUS_Away:
+  case lib::messenger::IMStatus::Away:
     status = Status::Status::Away;
     break;
-  case TOX_USER_STATUS_DND:
+  case lib::messenger::IMStatus::DND:
     status = Status::Status::Busy;
     break;
   default:
@@ -441,8 +441,8 @@ void Core::onFriendRemoved(QString friendId) {
   emit friendRemoved(friendId);
 }
 
-void Core::onFriendStatus(QString friendId, Tox_User_Status status) {
-  qDebug() << __func__ << friendId << status;
+void Core::onFriendStatus(QString friendId, lib::messenger::IMStatus status) {
+  qDebug() << __func__ << friendId << (int)status;
   Status::Status status0 = fromToxStatus(status);
   emit friendStatusChanged(getFriendPublicKey(friendId), status0);
 }
@@ -568,7 +568,7 @@ void Core::onGroupInvite(const QString groupId,
            << " msg:" << message;
 
   GroupInvite invite(groupId, peerId,
-                     TOX_CONFERENCE_TYPE_TEXT,
+                     ConferenceType::TEXT,
                      message.toUtf8());
   emit groupInviteReceived(invite);
 }
@@ -718,11 +718,12 @@ void Core::requestFriendship(const ToxPk &friendId,const QString &nick, const QS
   emit saveRequest();
 }
 
-bool Core::sendMessageWithType(QString friendId, const QString &message,
-                               Tox_Message_Type type, ReceiptNum &receipt,
+bool Core::sendMessageWithType(QString friendId,
+                               const QString &message,
+                               ReceiptNum &receipt,
                                bool encrypt) {
 
-  qDebug() << __func__ <<"receiver"<< friendId <<  "type"<<type<<"message:"<< message;
+  qDebug() << __func__ <<"receiver"<< friendId <<"message:"<< message;
   if(friendId.isEmpty())
 
   {
@@ -753,14 +754,14 @@ qWarning() <<"receiver is empty.";
 bool Core::sendMessage(QString friendId, const QString &message,
                        ReceiptNum &receipt, bool encrypt) {
   QMutexLocker ml(&coreLoopLock);
-  return sendMessageWithType(friendId, message, TOX_MESSAGE_TYPE_NORMAL,
+  return sendMessageWithType(friendId, message,
                              receipt, encrypt);
 }
 
 bool Core::sendAction(QString friendId, const QString &action,
                       ReceiptNum &receipt, bool encrypt) {
   QMutexLocker ml(&coreLoopLock);
-  return sendMessageWithType(friendId, action, TOX_MESSAGE_TYPE_ACTION, receipt,
+  return sendMessageWithType(friendId, action, receipt,
                              encrypt);
 }
 
@@ -770,9 +771,7 @@ void Core::sendTyping(QString friendId, bool typing) {
   emit failedToSetTyping(typing);
 }
 
-QString Core::sendGroupMessageWithType(QString groupId,
-                                    const QString &message,
-                                    Tox_Message_Type type) {
+QString Core::sendGroupMessageWithType(QString groupId,const QString &message) {
   QMutexLocker ml{&coreLoopLock};
   QString r;
   tox->sendToGroup(groupId, message, r);
@@ -798,12 +797,12 @@ QString Core::sendGroupMessageWithType(QString groupId,
 
 QString  Core::sendGroupMessage(QString groupId, const QString &message) {
   QMutexLocker ml{&coreLoopLock};
-    return  sendGroupMessageWithType(groupId, message, TOX_MESSAGE_TYPE_NORMAL);
+    return sendGroupMessageWithType(groupId, message);
 }
 
 QString  Core::sendGroupAction(QString groupId, const QString &message) {
   QMutexLocker ml{&coreLoopLock};
-  return sendGroupMessageWithType(groupId, message, TOX_MESSAGE_TYPE_ACTION);
+  return sendGroupMessageWithType(groupId, message);
 }
 
 void Core::setGroupName(const QString &groupId, const QString &name) {
@@ -951,13 +950,13 @@ Status::Status Core::getStatus() const {
   assert(tox != nullptr);
   QMutexLocker ml{&coreLoopLock};
   switch (tox->getSelfStatus()) {
-  case TOX_USER_STATUS_Available:
-  case TOX_USER_STATUS_Chat:
+  case lib::messenger::IMStatus::Available:
+  case lib::messenger::IMStatus::Chat:
     return Status::Status::Online;
-  case TOX_USER_STATUS_Away:
-  case TOX_USER_STATUS_XA:
+  case lib::messenger::IMStatus::Away:
+  case lib::messenger::IMStatus::XA:
     return Status::Status::Away;
-  case TOX_USER_STATUS_DND:
+  case lib::messenger::IMStatus::DND:
     return Status::Status::Busy;
   default:
     return Status::Status::Offline;
@@ -982,30 +981,28 @@ void Core::setStatusMessage(const QString &message) {
   emit statusMessageSet(message);
 }
 
-void Core::setStatus(Status::Status status) {
+void Core::setStatus(Status::Status status_) {
   QMutexLocker ml{&coreLoopLock};
 
-  Tox_User_Status userstatus;
-  switch (status) {
+  lib::messenger::IMStatus userstatus;
+  switch (status_) {
   case Status::Status::Online:
-    userstatus = Tox_User_Status ::TOX_USER_STATUS_Available;
+    userstatus = lib::messenger::IMStatus::Available;
     break;
 
   case Status::Status::Away:
-    userstatus = TOX_USER_STATUS_Away;
+    userstatus = lib::messenger::IMStatus::Away;
     break;
 
   case Status::Status::Busy:
-    userstatus = TOX_USER_STATUS_DND;
+    userstatus = lib::messenger::IMStatus::DND;
     break;
-
   default:
-    return;
     break;
   }
 
   emit saveRequest();
-  emit statusSet(status);
+  emit statusSet(status_);
 }
 
 void Core::setAvatar(const QByteArray &avatar) { tox->setSelfAvatar(avatar); }
@@ -1138,34 +1135,6 @@ void Core::loadFriendList(std::list<FriendInfo> &friends) const {
     friends.push_back(x);
   }
 
-}
-
-/**
- * @brief Print in console text of error.
- * @param error Error to handle.
- * @return True if no error, false otherwise.
- */
-bool Core::parsePeerQueryError(Tox_Err_Conference_Peer_Query error) const {
-  switch (error) {
-  case TOX_ERR_CONFERENCE_PEER_QUERY_OK:
-    return true;
-
-  case TOX_ERR_CONFERENCE_PEER_QUERY_CONFERENCE_NOT_FOUND:
-    qCritical() << "Conference not found";
-    return false;
-
-  case TOX_ERR_CONFERENCE_PEER_QUERY_NO_CONNECTION:
-    qCritical() << "No connection";
-    return false;
-
-  case TOX_ERR_CONFERENCE_PEER_QUERY_PEER_NOT_FOUND:
-    qCritical() << "Peer not found";
-    return false;
-
-  default:
-    qCritical() << "Unknow error code:" << error;
-    return false;
-  }
 }
 
 GroupId Core::getGroupPersistentId(QString groupId) const {
@@ -1311,45 +1280,6 @@ bool Core::getGroupAvEnabled(QString groupId) const {
   return true;
 }
 
-/**
- * @brief Print in console text of error.
- * @param error Error to handle.
- * @return True if no error, false otherwise.
- */
-bool Core::parseConferenceJoinError(Tox_Err_Conference_Join error) const {
-  switch (error) {
-  case TOX_ERR_CONFERENCE_JOIN_OK:
-    return true;
-
-  case TOX_ERR_CONFERENCE_JOIN_DUPLICATE:
-    qCritical() << "Conference duplicate";
-    return false;
-
-  case TOX_ERR_CONFERENCE_JOIN_FAIL_SEND:
-    qCritical() << "Conference join failed to send";
-    return false;
-
-  case TOX_ERR_CONFERENCE_JOIN_FRIEND_NOT_FOUND:
-    qCritical() << "IMFriend not found";
-    return false;
-
-  case TOX_ERR_CONFERENCE_JOIN_INIT_FAIL:
-    qCritical() << "Init fail";
-    return false;
-
-  case TOX_ERR_CONFERENCE_JOIN_INVALID_LENGTH:
-    qCritical() << "Invalid length";
-    return false;
-
-  case TOX_ERR_CONFERENCE_JOIN_WRONG_TYPE:
-    qCritical() << "Wrong conference type";
-    return false;
-
-  default:
-    qCritical() << "Unknow error code:" << error;
-    return false;
-  }
-}
 
 /**
  * @brief Accept a groupchat invite.
@@ -1431,7 +1361,7 @@ void Core::groupInviteFriend(QString friendId, QString groupId) {
   //  }
 }
 
-QString Core::createGroup(uint8_t type) {
+QString Core::createGroup(ConferenceType type) {
   QMutexLocker ml{&coreLoopLock};
   QString id = QUuid::createUuid().toString(QUuid::StringFormat::WithoutBraces);
   tox->createGroup(id.split("-").at(0));
@@ -1523,7 +1453,8 @@ void Core::getFriendInfo(const QString& friendnumber) const {
 
 Status::Status Core::getFriendStatus(const QString &friendNumber) const {
  auto status= tox->getFriendStatus(friendNumber);
- return status == TOX_USER_STATUS_Available ? Status::Status::Online : Status::Status::Offline;
+ return status == lib::messenger::IMStatus::Available
+            ? Status::Status::Online : Status::Status::Offline;
 }
 
 QStringList Core::splitMessage(const QString &message) {
@@ -1622,11 +1553,10 @@ void Core::onSelfAvatarChanged(const std::string avatar) {
 
 }
 
-void Core::onSelfStatusChanged(Tox_User_Status userStatus,
+void Core::onSelfStatusChanged(lib::messenger::IMStatus userStatus,
                                const std::string &msg) {
   QMutexLocker ml{&coreLoopLock};
   auto st = fromToxStatus(userStatus);
-
   emit statusSet(st);
   auto t = getTitle(st);
   if (!msg.empty()) {

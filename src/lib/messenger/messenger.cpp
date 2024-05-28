@@ -97,11 +97,11 @@ void Messenger::sendChatState(const QString &friendId, int state) {
   _im->sendChatState(friendId, static_cast<ChatStateType>(state));
 }
 
-void Messenger::onConnectResult(IMStatus status) {
+void Messenger::onConnectResult(lib::messenger::IMConnectStatus status) {
   qDebug() << ("status:") << (int)status;
   auto _session = ok::session::AuthSession::Instance();
   auto _im = _session->im();
-  if (status == IMStatus::DISCONNECTED) {
+  if (status == lib::messenger::IMConnectStatus::DISCONNECTED) {
     _delayer->call(1000 * 5, [&]() {
       qDebug(("Retry connect..."));
       _im->doConnect();
@@ -167,7 +167,7 @@ bool Messenger::connectIM( ) {
   connect(_im, &IM::selfStatusChanged, this,
           [&](int type, const std::string &status) {
             for (auto handler : selfHandlers) {
-              handler->onSelfStatusChanged(static_cast<Tox_User_Status>(type),
+              handler->onSelfStatusChanged(static_cast<IMStatus>(type),
                                            status);
             }
           });
@@ -206,7 +206,7 @@ bool Messenger::connectIM( ) {
   connect(_im, &IM::receiveFriendStatus, this,
           [&](QString friendId, int type) -> void {
             for (auto handler : friendHandlers) {
-              handler->onFriendStatus(friendId, static_cast<Tox_User_Status>(type));
+              handler->onFriendStatus(friendId, static_cast<IMStatus>(type));
             }
           });
 
@@ -589,7 +589,7 @@ void Messenger::setFriendAlias(const QString &f, const QString &alias)
     _session->im()->setFriendAlias(JID(stdstring(f)), stdstring(alias));
 }
 
-Tox_User_Status Messenger::getFriendStatus(const QString &f) {
+IMStatus Messenger::getFriendStatus(const QString &f) {
   auto _session = ok::session::AuthSession::Instance();
   auto _im = _session->im();
  return _im->getFriendStatus(f);
@@ -634,10 +634,9 @@ IMPeerId Messenger::getSelfId() const {
   return _im->getSelfPeerId();
 }
 
-Tox_User_Status Messenger::getSelfStatus() const {
+IMStatus Messenger::getSelfStatus() const {
   auto pt = gloox::Presence::PresenceType::Available;
-  // _im->getPresenceType();
-  return static_cast<Tox_User_Status>(pt);
+  return static_cast<IMStatus>(pt);
 }
 
 void Messenger::setSelfNickname(const QString &nickname) {

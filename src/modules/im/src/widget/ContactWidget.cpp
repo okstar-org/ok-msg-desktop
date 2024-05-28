@@ -236,8 +236,8 @@ void ContactWidget::onGroupInfoReceived(const GroupId &groupId, const GroupInfo 
 
 void ContactWidget::onGroupInviteReceived(const GroupInvite &inviteInfo) {
 
-  const uint8_t confType = inviteInfo.getType();
-  if (confType == TOX_CONFERENCE_TYPE_TEXT || confType == TOX_CONFERENCE_TYPE_AV) {
+  auto confType = inviteInfo.getType();
+  if (confType == ConferenceType::TEXT || confType == ConferenceType::AV) {
     if (false
         // settings.getAutoGroupInvite(f->getPublicKey())
     ) {
@@ -261,7 +261,7 @@ void ContactWidget::onGroupInviteReceived(const GroupInvite &inviteInfo) {
 #endif
     }
   } else {
-    qWarning() << "onGroupInviteReceived: Unknown groupchat type:" << confType;
+    qWarning() << "onGroupInviteReceived: Unknown ConferenceType:" << (int)confType;
     return;
   }
 }
@@ -360,7 +360,8 @@ void ContactWidget::onGroupClicked() {
   if (!groupInviteForm) {
     groupInviteForm = new GroupInviteForm;
 
-    connect(groupInviteForm, &GroupInviteForm::groupCreate, core, &Core::createGroup);
+    connect(groupInviteForm, &GroupInviteForm::groupCreate,
+            core, &Core::createGroup);
   }
   groupInviteForm->show(contentLayout.get());
   //    setWindowTitle(fromDialogType(DialogType::GroupDialog));

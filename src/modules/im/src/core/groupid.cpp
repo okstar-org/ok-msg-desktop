@@ -11,7 +11,6 @@
  */
 
 #include "groupid.h"
-//#include <tox/tox.h>
 
 #include <QByteArray>
 #include <QString>

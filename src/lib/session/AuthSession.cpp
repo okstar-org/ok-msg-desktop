@@ -70,9 +70,9 @@ void AuthSession::onLoginSuccessed(const SignInInfo &signIn)
                                    m_signInInfo.password, l);
 
     connect(_im, &::lib::messenger::IM::connectResult,
-            [&](::lib::messenger::IMStatus status) {
+            [&](::lib::messenger::IMConnectStatus status) {
               QString msg;
-              if (status == ::lib::messenger::IMStatus::CONNECTED) {
+              if (status == ::lib::messenger::IMConnectStatus::CONNECTED) {
                 _status = Status::SUCCESS;
                 LoginResult result{Status::SUCCESS, msg};
                 emit loginResult(m_signInInfo, result);
@@ -82,38 +82,38 @@ void AuthSession::onLoginSuccessed(const SignInInfo &signIn)
               // 错误处理
               _status = Status::FAILURE;
               switch (status) {
-              case ::lib::messenger::IMStatus::NO_SUPPORT:{
+              case ::lib::messenger::IMConnectStatus::NO_SUPPORT:{
                   msg = tr("NO_SUPPORT");
                   break;
               }
-              case ::lib::messenger::IMStatus::AUTH_FAILED: {
+              case ::lib::messenger::IMConnectStatus::AUTH_FAILED: {
                 msg = tr("AUTH_FAILED");
                 break;
               }
-              case ::lib::messenger::IMStatus::DISCONNECTED: {
+              case ::lib::messenger::IMConnectStatus::DISCONNECTED: {
                 msg = tr("DISCONNECTED");
                 break;
               }
-              case ::lib::messenger::IMStatus::CONN_ERROR: {
+              case ::lib::messenger::IMConnectStatus::CONN_ERROR: {
                 msg = tr("CONN_ERROR");
                 break;
               }
-              case ::lib::messenger::IMStatus::CONNECTING: {
+              case ::lib::messenger::IMConnectStatus::CONNECTING: {
                 msg = tr("...");
                 break;
               }
-              case ::lib::messenger::IMStatus::TLS_ERROR: {
+              case ::lib::messenger::IMConnectStatus::TLS_ERROR: {
                 msg = tr("TLS_ERROR");
                 break;
               }
-              case ::lib::messenger::IMStatus::OUT_OF_RESOURCE: {
+              case ::lib::messenger::IMConnectStatus::OUT_OF_RESOURCE: {
                 msg = tr("OUT_OF_RESOURCE");
                 break;
               }
-              case ::lib::messenger::IMStatus::TIMEOUT: {
+              case ::lib::messenger::IMConnectStatus::TIMEOUT: {
                 msg = "请求超时！";
                 break;
-              }case ::lib::messenger::IMStatus::CONNECTED:{
+              }case ::lib::messenger::IMConnectStatus::CONNECTED:{
                   LoginResult result{Status::FAILURE, msg};
                   emit loginResult(m_signInInfo, result);
                   break;

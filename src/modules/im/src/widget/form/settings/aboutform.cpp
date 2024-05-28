@@ -20,8 +20,6 @@
 #include "src/widget/tool/recursivesignalblocker.h"
 #include "lib/settings/translator.h"
 
-//#include <tox/tox.h>
-
 #include <QDebug>
 #include <QDesktopServices>
 #include <QPushButton>

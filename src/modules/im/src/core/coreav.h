@@ -23,8 +23,6 @@
 #include <memory>
 
 #include "lib/messenger/messenger.h"
-#include "lib/messenger/tox/tox.h"
-
 
 class Friend;
 class Group;

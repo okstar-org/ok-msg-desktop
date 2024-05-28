@@ -379,8 +379,10 @@ void CoreFile::onFileRequest(const QString &from,
   emit fileReceiveRequested(toxFile);
 }
 
-void CoreFile::onFileControlCallback(Tox *, QString friendId, QString fileId,
-                                     Tox_File_Control control, void *vCore) {
+void CoreFile::onFileControlCallback(Tox *, QString friendId,
+                                     QString fileId,
+                                     lib::messenger::FileControl control,
+                                     void *vCore) {
   Core *core = static_cast<Core *>(vCore);
   CoreFile *coreFile = core->getCoreFile();
   ToxFile *file = coreFile->findFile( fileId);
@@ -389,21 +391,21 @@ void CoreFile::onFileControlCallback(Tox *, QString friendId, QString fileId,
     return;
   }
 
-  if (control == TOX_FILE_CONTROL_CANCEL) {
+  if (control == lib::messenger::FileControl::CANCEL) {
     file->status = FileStatus::CANCELED;
     emit coreFile->fileTransferCancelled(*file);
     coreFile->removeFile( fileId);
-  } else if (control == TOX_FILE_CONTROL_PAUSE) {
+  } else if (control == lib::messenger::FileControl::PAUSE) {
     file->status = FileStatus::PAUSED;
     emit coreFile->fileTransferRemotePausedUnpaused(*file, true);
-  } else if (control == TOX_FILE_CONTROL_RESUME) {
+  } else if (control == lib::messenger::FileControl::RESUME) {
     if (file->direction == FileDirection::SENDING)
     {
         file->status =FileStatus::TRANSMITTING;
         emit coreFile->fileTransferRemotePausedUnpaused(*file, false);
     }
   }else {
-    qWarning() << "Unhandled file control " << control << " for file "
+    qWarning() << "Unhandled file control " << (int)control << " for file "
                << friendId << ':' << fileId;
   }
 }

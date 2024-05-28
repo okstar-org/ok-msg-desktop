@@ -25,7 +25,6 @@
 
 #include "base/compatiblerecursivemutex.h"
 #include "lib/messenger/messenger.h"
-#include "lib/messenger/tox/tox.h"
 
 #include "src/model/status.h"
 #include "src/util/strongtype.h"
@@ -58,21 +57,13 @@ class Core : public QObject,
              public ICoreGroupQuery,
              public lib::messenger::FriendHandler,
              public lib::messenger::GroupHandler,
-             public lib::messenger::SelfHandler
-{
+             public lib::messenger::SelfHandler {
   Q_OBJECT
 
 public:
-  enum class ToxCoreErrors {
-    BAD_PROXY,
-    INVALID_SAVE,
-    FAILED_TO_START,
-    ERROR_ALLOC
-  };
+  enum class ToxCoreErrors { BAD_PROXY, INVALID_SAVE, FAILED_TO_START, ERROR_ALLOC };
 
-  static ToxCorePtr makeToxCore(const QByteArray &savedata,
-                                const ICoreSettings *const settings,
-                                ToxCoreErrors *err = nullptr);
+  static ToxCorePtr makeToxCore(const QByteArray &savedata, const ICoreSettings *const settings, ToxCoreErrors *err = nullptr);
   static Core *getInstance();
   const CoreAV *getAv() const;
   CoreAV *getAv();
@@ -94,16 +85,16 @@ public:
   ToxPk getFriendPublicKey(QString friendNumber) const;
 
   QString getFriendUsername(QString friendNumber) const;
-  void setFriendAlias(const QString& friendId, const QString& alias);
+  void setFriendAlias(const QString &friendId, const QString &alias);
 
-  void getFriendInfo(const QString& friendNumber) const;
-  Status::Status getFriendStatus(const QString& friendNumber) const;
+  void getFriendInfo(const QString &friendNumber) const;
+  Status::Status getFriendStatus(const QString &friendNumber) const;
 
   bool isFriendOnline(QString friendId) const;
   bool hasFriendWithPublicKey(const ToxPk &publicKey) const;
   QString joinGroupchat(const GroupInvite &inviteInfo);
   void joinRoom(const QString &groupId);
-  void quitGroupChat(const QString& groupId) const;
+  void quitGroupChat(const QString &groupId) const;
 
   QString getUsername() const override;
   QString getNick() const override;
@@ -115,10 +106,8 @@ public:
 
   void sendFile(QString friendId, QString filename, QString filePath, long long filesize);
 
-
   void requestBookmarks();
   void setUIStarted();
-
 
   void start();
   void stop();
@@ -127,9 +116,9 @@ public:
 
   void acceptFriendRequest(const ToxPk &friendPk);
   void rejectFriendRequest(const ToxPk &friendPk);
-  void requestFriendship(const ToxPk &friendAddress, const QString& nick, const QString &message);
+  void requestFriendship(const ToxPk &friendAddress, const QString &nick, const QString &message);
   void groupInviteFriend(QString friendId, QString groupId);
-  QString createGroup(uint8_t type = 0);
+  QString createGroup(ConferenceType type = ConferenceType::TEXT);
 
   void removeFriend(QString friendId);
   void leaveGroup(QString groupId);
@@ -139,14 +128,12 @@ public:
   void setUsername(const QString &username);
   void setPassword(const QString &password);
   void setStatusMessage(const QString &message);
-  void setAvatar(const QByteArray& avatar);
+  void setAvatar(const QByteArray &avatar);
 
-  //FriendSender
-  bool sendMessage(QString friendId, const QString &message,
-                   ReceiptNum &receipt, bool encrypt = false) override;
-  bool sendAction(QString friendId, const QString &action,
-                  ReceiptNum &receipt, bool encrypt = false) override;
-  //GroupSender
+  // FriendSender
+  bool sendMessage(QString friendId, const QString &message, ReceiptNum &receipt, bool encrypt = false) override;
+  bool sendAction(QString friendId, const QString &action, ReceiptNum &receipt, bool encrypt = false) override;
+  // GroupSender
   QString sendGroupMessage(QString groupId, const QString &message) override;
   QString sendGroupAction(QString groupId, const QString &message) override;
 
@@ -155,10 +142,7 @@ public:
   void setGroupDesc(const QString &groupId, const QString &desc);
   void setGroupAlias(const QString &groupId, const QString &alias);
 
-
-
   void sendTyping(QString friendId, bool typing);
-
 
   void logout();
 
@@ -168,12 +152,11 @@ signals:
 
   void friendRequestReceived(const ToxPk &friendPk, const QString &message);
   void friendAvatarChanged(const ToxPk &friendPk, const QByteArray &avatar);
-  void friendAliasChanged(const ToxPk &fId, const QString& alias);
+  void friendAliasChanged(const ToxPk &fId, const QString &alias);
   void friendAvatarRemoved(const ToxPk &friendPk);
 
   void requestSent(const ToxPk &friendPk, const QString &message);
-  void failedToAddFriend(const ToxPk &friendPk,
-                         const QString &errorInfo = QString());
+  void failedToAddFriend(const ToxPk &friendPk, const QString &errorInfo = QString());
 
   void usernameSet(const QString &username);
   void avatarSet(QByteArray avatar);
@@ -190,16 +173,14 @@ signals:
 
   void saveRequest();
 
-
-  void fileAvatarOfferReceived(QString friendId,  //
-                               QString fileId,    //
+  void fileAvatarOfferReceived(QString friendId, //
+                               QString fileId,   //
                                const QByteArray &avatarHash);
 
-  void friendMessageSessionReceived(const ToxPk &friendId,//
-                             const QString &sid);
+  void friendMessageSessionReceived(const ToxPk &friendId, //
+                                    const QString &sid);
 
-
-  void friendMessageReceived(const ToxPk &friendId,//
+  void friendMessageReceived(const ToxPk &friendId,        //
                              const FriendMessage &message, //
                              bool isAction);
 
@@ -208,21 +189,19 @@ signals:
   void friendStatusChanged(const ToxPk &friendId, Status::Status status);
   void friendStatusMessageChanged(const ToxPk &friendId, const QString &message);
   void friendUsernameChanged(const ToxPk &friendPk, const QString &username);
-  void friendTypingChanged(const ToxPk & friendId, bool isTyping);
+  void friendTypingChanged(const ToxPk &friendId, bool isTyping);
 
   void friendRemoved(QString friendId);
   void friendLastSeenChanged(QString friendId, const QDateTime &dateTime);
 
-  void emptyGroupCreated(QString groupnumber, const GroupId groupId,
-                         const QString &title = QString());
+  void emptyGroupCreated(QString groupnumber, const GroupId groupId, const QString &title = QString());
   void groupInviteReceived(const GroupInvite &inviteInfo);
 
   void groupSubjectChanged(GroupId groupId, QString subject);
 
   void groupMessageReceived(GroupId groupId, GroupMessage msg);
 
-  void groupNamelistChanged(QString groupnumber, QString peerId,
-                            uint8_t change);
+  void groupNamelistChanged(QString groupnumber, QString peerId, uint8_t change);
 
   void groupPeerlistChanged(QString groupnumber);
 
@@ -230,21 +209,19 @@ signals:
 
   void groupPeerStatusChanged(QString groupnumber, GroupOccupant go);
 
-  void groupPeerNameChanged(QString groupnumber, const ToxPk &peerPk,
-                            const QString &newName);
+  void groupPeerNameChanged(QString groupnumber, const ToxPk &peerPk, const QString &newName);
 
-  void groupInfoReceipt(const GroupId & groupId,
-                        const GroupInfo& info);
+  void groupInfoReceipt(const GroupId &groupId, const GroupInfo &info);
 
   void groupPeerAudioPlaying(QString groupnumber, ToxPk peerPk);
 
   void groupSentFailed(QString groupId);
 
-  void groupAdded(const GroupId& groupId, const QString &name);
+  void groupAdded(const GroupId &groupId, const QString &name);
 
   void actionSentResult(QString friendId, const QString &action, int success);
 
-  void receiptRecieved(const ToxPk & friedId, ReceiptNum receipt);
+  void receiptRecieved(const ToxPk &friedId, ReceiptNum receipt);
 
   void failedToRemoveFriend(QString friendId);
 
@@ -257,42 +234,36 @@ private:
   virtual void onSelfIdChanged(QString id) override;
   virtual void onSelfNameChanged(QString name) override;
   virtual void onSelfAvatarChanged(const std::string avatar) override;
-  virtual void onSelfStatusChanged(Tox_User_Status status, const std::string &msg) override;
+  virtual void onSelfStatusChanged(lib::messenger::IMStatus status, const std::string &msg) override;
 
-//
-//  static void onFriendRequest(Tox *tox, const QString &cUserId,
-//                              const uint8_t *cMessage, size_t cMessageSize,
-//                              void *core);
-//
-//
-//  static void onGroupInvite(Tox *tox, QString receiver,
-//                            Tox_Conference_Type type, const uint8_t *cookie,
-//                            size_t length, void *vCore);
+  //
+  //  static void onFriendRequest(Tox *tox, const QString &cUserId,
+  //                              const uint8_t *cMessage, size_t cMessageSize,
+  //                              void *core);
+  //
+  //
+  //  static void onGroupInvite(Tox *tox, QString receiver,
+  //                            Tox_Conference_Type type, const uint8_t *cookie,
+  //                            size_t length, void *vCore);
 
+  //  static void onGroupPeerListChange(Tox *, QString groupId, void *core);
+  //
+  //  static void onGroupPeerNameChange(Tox *, QString groupId, QString peerId,
+  //                                    const uint8_t *name, size_t length,
+  //                                    void *core);
+  //  static void onGroupTitleChange(Tox *tox, QString groupId, QString peerId,
+  //                                 const uint8_t *cTitle, size_t length,
+  //                                 void *vCore);
+  //  static void onReadReceiptCallback(Tox *tox, QString receiver,
+  //                                    ReceiptNum receipt, void *core);
 
-//  static void onGroupPeerListChange(Tox *, QString groupId, void *core);
-//
-//  static void onGroupPeerNameChange(Tox *, QString groupId, QString peerId,
-//                                    const uint8_t *name, size_t length,
-//                                    void *core);
-//  static void onGroupTitleChange(Tox *tox, QString groupId, QString peerId,
-//                                 const uint8_t *cTitle, size_t length,
-//                                 void *vCore);
-//  static void onReadReceiptCallback(Tox *tox, QString receiver,
-//                                    ReceiptNum receipt, void *core);
-
-  QString sendGroupMessageWithType(QString groupId, const QString &message,
-                                Tox_Message_Type type);
+  QString sendGroupMessageWithType(QString groupId, const QString &message);
 
   bool sendMessageWithType(QString friendId, const QString &message,
-                           Tox_Message_Type type, ReceiptNum &receipt,
-                           bool encrypt = false);
-
+                           ReceiptNum &receipt, bool encrypt = false);
 
   void sendReceiptReceived(const QString &friendId, QString receipt);
 
-  bool parsePeerQueryError(Tox_Err_Conference_Peer_Query error) const;
-  bool parseConferenceJoinError(Tox_Err_Conference_Join error) const;
   bool checkConnection();
 
   void makeTox(QByteArray savedata, ICoreSettings *s);
@@ -302,8 +273,7 @@ private:
 
   void checkLastOnline(QString friendId);
 
-  QString getFriendRequestErrorMessage(const ToxId &friendId,
-                                       const QString &message) const;
+  QString getFriendRequestErrorMessage(const ToxId &friendId, const QString &message) const;
   void registerCallbacks(Tox *tox);
 
   /**
@@ -311,51 +281,46 @@ private:
    * @param list
    */
 
-  virtual void onFriend(const lib::messenger::IMFriend & frnd) override;
+  virtual void onFriend(const lib::messenger::IMFriend &frnd) override;
 
   virtual void onFriendRequest(const QString friendId, QString name) override;
 
   virtual void onFriendRemoved(QString friendId) override;
 
-  virtual void onFriendStatus(QString friendId,
-                              Tox_User_Status status) override;
+  virtual void onFriendStatus(QString friendId, lib::messenger::IMStatus status) override;
 
-  virtual void onFriendMessage(QString friendId,
-                               lib::messenger::IMMessage message) override;
+  virtual void onFriendMessage(QString friendId, lib::messenger::IMMessage message) override;
 
-  virtual void onFriendMessageSession(QString friendId,
-                               QString sid) override;
+  virtual void onFriendMessageSession(QString friendId, QString sid) override;
 
-  virtual void onFriendChatState(QString friendId,int state) override;
+  virtual void onFriendChatState(QString friendId, int state) override;
 
   virtual void onFriendNameChanged(QString friendId, QString name) override;
 
   virtual void onFriendAvatarChanged(const QString friendId, const std::string avatar) override;
 
-  virtual  void onFriendAliasChanged(const lib::messenger::IMContactId & fId, const QString& alias) override;
-  virtual void onMessageReceipt(QString friendId,ReceiptNum  receipt) override;
+  virtual void onFriendAliasChanged(const lib::messenger::IMContactId &fId, const QString &alias) override;
+  virtual void onMessageReceipt(QString friendId, ReceiptNum receipt) override;
 
   /**
    * GroupHandler
    */
-  virtual void onGroup(const QString groupId,  const QString name) override;
+  virtual void onGroup(const QString groupId, const QString name) override;
 
   virtual void onGroupInvite(const QString groupId, //
-                              const QString peerId,  //
-                              const QString message) override;
-virtual void onGroupSubjectChanged(const QString &groupId, const QString &subject) override;
+                             const QString peerId,  //
+                             const QString message) override;
+  virtual void onGroupSubjectChanged(const QString &groupId, const QString &subject) override;
 
-  virtual void onGroupMessage(const QString groupId, //
-                              const lib::messenger::IMPeerId peerId,  //
+  virtual void onGroupMessage(const QString groupId,                 //
+                              const lib::messenger::IMPeerId peerId, //
                               const lib::messenger::IMMessage message) override;
 
-  virtual void onGroupInfo(QString groupId,
-                           lib::messenger::IMGroup groupInfo) override;
+  virtual void onGroupInfo(QString groupId, lib::messenger::IMGroup groupInfo) override;
 
   virtual void onGroupOccupants(const QString groupId, uint size) override;
 
-  virtual void onGroupOccupantStatus(const QString groupId,
-                                     lib::messenger::IMGroupOccupant) override;
+  virtual void onGroupOccupantStatus(const QString groupId, lib::messenger::IMGroupOccupant) override;
 
 private slots:
   void process();
@@ -382,7 +347,7 @@ private:
 
   std::unique_ptr<QThread> coreThread = nullptr;
 
-  Status::Status fromToxStatus(const Tox_User_Status &userStatus) const;
+  Status::Status fromToxStatus(const lib::messenger::IMStatus &status) const;
 };
 
 #endif // CORE_HPP

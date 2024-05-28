@@ -45,8 +45,7 @@
 #include <rostermanager.h>
 #include <vcardupdate.h>
 
-namespace lib {
-namespace messenger {
+namespace lib::messenger {
 
 using namespace gloox;
 
@@ -67,7 +66,7 @@ IM::IM(QString host, QString user, QString pwd,
       _host(stdstring(host)),                             //
       _username(stdstring(user)),                         //
       _password(stdstring(pwd)),                          //
-      _status(IMStatus::DISCONNECTED),                    //
+      _status(IMConnectStatus::DISCONNECTED),                    //
       mExtDisco{ExtDisco()},                              //
       mUIStarted(false),                                  //
       mStarted(false)                                     //
@@ -245,7 +244,7 @@ std::unique_ptr<Client> IM::makeClient() {
 }
 
 void IM::stop() {
-  if (_status != IMStatus::CONNECTED) {
+  if (_status != IMConnectStatus::CONNECTED) {
     return;
   }
   doDisconnect();
@@ -256,7 +255,7 @@ void IM::onConnect() {
   qDebug() << __func__ << "connected";
   assert(_client);
 
-  _status = IMStatus::CONNECTED;
+  _status = IMConnectStatus::CONNECTED;
 
   auto res = _client->resource();
   qDebug() << __func__ << ("resource:") << (qstring(res));
@@ -276,11 +275,11 @@ void IM::onConnect() {
 
 void IM::doConnect() {
   qDebug() << __func__ << "connecting ...";
-  if (_status == IMStatus::CONNECTED || _status == IMStatus::CONNECTING) {
+  if (_status == IMConnectStatus::CONNECTED || _status == IMConnectStatus::CONNECTING) {
     return;
   }
   // set status to connecting
-  _status = IMStatus::CONNECTING;
+  _status = IMConnectStatus::CONNECTING;
 
   qDebug() << __func__ << "Create IM client...";
   _client = makeClient();
@@ -297,7 +296,7 @@ void IM::send(const QString &xml) {
 }
 
 void IM::interrupt() {
-  _status = IMStatus::DISCONNECTED;
+  _status = IMConnectStatus::DISCONNECTED;
   emit connectResult(_status);
   if (_client) {
     _client->disconnect();
@@ -2333,20 +2332,20 @@ void IM::onDisconnect(ConnectionError e) {
   qDebug() << __func__ << "error:" << e;
   switch (e) {
   case ConnAuthenticationFailed:
-    _status = IMStatus::AUTH_FAILED;
+    _status = IMConnectStatus::AUTH_FAILED;
     break;
   case ConnNoError:
-    _status = IMStatus::DISCONNECTED;
+    _status = IMConnectStatus::DISCONNECTED;
     break;
   case ConnStreamError:
   case ConnStreamVersionError:
-    _status = IMStatus::CONN_ERROR;
+    _status = IMConnectStatus::CONN_ERROR;
     break;
   case ConnStreamClosed:
-    _status = IMStatus::DISCONNECTED;
+    _status = IMConnectStatus::DISCONNECTED;
     break;
   case ConnProxyGatewayTimeout:
-    _status = IMStatus::TIMEOUT;
+    _status = IMConnectStatus::TIMEOUT;
     break;
   case ConnProxyAuthRequired:
   case ConnProxyAuthFailed:
@@ -2355,28 +2354,28 @@ void IM::onDisconnect(ConnectionError e) {
   case ConnParseError:
   case ConnConnectionRefused:
   case ConnDnsError:
-    _status = IMStatus::CONN_ERROR;
+    _status = IMConnectStatus::CONN_ERROR;
     break;
   case ConnOutOfMemory:
-    _status = IMStatus::OUT_OF_RESOURCE;
+    _status = IMConnectStatus::OUT_OF_RESOURCE;
     break;
   case ConnNoSupportedAuth:
-    _status = IMStatus::NO_SUPPORT;
+    _status = IMConnectStatus::NO_SUPPORT;
     break;
   case ConnTlsFailed:
   case ConnTlsNotAvailable:
-    _status = IMStatus::TLS_ERROR;
+    _status = IMConnectStatus::TLS_ERROR;
     break;
   case ConnCompressionFailed:
   case ConnUserDisconnected:
   case ConnNotConnected:
-    _status = IMStatus::DISCONNECTED;
+    _status = IMConnectStatus::DISCONNECTED;
     break;
   case ConnAttemptTimeout:
-    _status = IMStatus::TIMEOUT;
+    _status = IMConnectStatus::TIMEOUT;
     break;
   default:
-    _status = IMStatus::DISCONNECTED;
+    _status = IMConnectStatus::DISCONNECTED;
     break;
   }
 
@@ -2434,8 +2433,9 @@ void IM::handleLog(LogLevel level, LogArea area, const std::string &message) {
   }
 }
 
-Tox_User_Status IM::getFriendStatus(const QString &qString) {
-  return onlineMap.find(qString.toStdString()) != onlineMap.end() ? Tox_User_Status::TOX_USER_STATUS_Available : Tox_User_Status::TOX_USER_STATUS_Unavailable;
+IMStatus IM::getFriendStatus(const QString &qString) {
+  return onlineMap.find(qString.toStdString()) != onlineMap.end()
+             ? IMStatus::Available : IMStatus::Unavailable;
 }
 
 void IM::requestFriendNickname(const JID &friendId) {
@@ -2444,4 +2444,3 @@ void IM::requestFriendNickname(const JID &friendId) {
 }
 
 } // namespace messenger
-} // namespace lib

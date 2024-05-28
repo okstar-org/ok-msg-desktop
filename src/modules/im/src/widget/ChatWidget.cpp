@@ -427,9 +427,9 @@ void ChatWidget::onGroupJoined(const GroupId &groupId, const QString &name) {
 
 void ChatWidget::onGroupInviteReceived(const GroupInvite &inviteInfo) {
 
-  const uint8_t confType = inviteInfo.getType();
-  if (confType == TOX_CONFERENCE_TYPE_TEXT ||
-      confType == TOX_CONFERENCE_TYPE_AV) {
+  auto confType = inviteInfo.getType();
+  if (confType == ConferenceType::TEXT ||
+      confType == ConferenceType::AV) {
     if (false
         // settings.getAutoGroupInvite(f->getPublicKey())
     ) {
@@ -455,7 +455,7 @@ void ChatWidget::onGroupInviteReceived(const GroupInvite &inviteInfo) {
 #endif
     }
   } else {
-    qWarning() << "onGroupInviteReceived: Unknown groupchat type:" << confType;
+    qWarning() << "onGroupInviteReceived: Unknown ConferenceType:" << (int)confType;
     return;
   }
 }
