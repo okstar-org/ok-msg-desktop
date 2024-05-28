@@ -13,10 +13,14 @@
 #pragma once
 
 #include "IMMessage.h"
+#include "IMFriend.h"
+#include "IMGroup.h"
+
 #include "base/task.h"
 #include "base/timer.h"
 #include "tox/tox.h"
 #include "tox/toxav.h"
+
 #include <QDateTime>
 #include <QString>
 #include <array>
@@ -46,35 +50,7 @@ class AuthSession;
 namespace lib {
 namespace messenger {
 
-//不要修改顺序和值
-enum class FileStatus {
-  INITIALIZING = 0,
-  PAUSED = 1,
-  TRANSMITTING = 2,
-  BROKEN = 3,
-  CANCELED = 4,
-  FINISHED = 5,
-};
-
-//不要修改顺序和值
-enum class FileDirection {
-  SENDING = 0,
-  RECEIVING = 1,
-};
-
-struct File {
-  //id(file id = ibb id) 和 sId(session id)
-  QString id;
-  QString sId;
-  QString name;
-  QString path;
-  quint64 size;
-  FileStatus status;
-  FileDirection direction;
-  [[__nodiscard__ ]] QString toString() const;
-  friend QDebug &operator<<(QDebug &debug, const File &f);
-};
-
+class File;
 
 class SelfHandler {
 public:
@@ -87,7 +63,7 @@ public:
 
 class FriendHandler {
 public:
-  virtual void onFriend(const Friend& frnd) = 0;
+  virtual void onFriend(const IMFriend & frnd) = 0;
   virtual void onFriendRequest(QString friendId, QString msg) = 0;
   virtual void onFriendRemoved(QString friendId) = 0;
   virtual void onFriendStatus(QString friendId, Tox_User_Status status) = 0;
@@ -97,28 +73,10 @@ public:
   virtual void onFriendAvatarChanged(const QString friendId,
                                      const std::string avatar) = 0;
 
-  virtual void onFriendAliasChanged(const FriendId& fId, const QString& alias)=0;
+  virtual void onFriendAliasChanged(const IMContactId & fId, const QString& alias)=0;
 
   virtual void onFriendChatState(QString friendId, int state) = 0;
   virtual void onMessageReceipt(QString friendId, QString receipt) = 0;
-};
-
-struct GroupInfo {
-  QString name;
-  QString description;
-  QString subject;
-  QString creationdate;
-  uint64_t occupants=0;
-} ;
-
-struct GroupOccupant{
-    QString jid;
-    QString nick;
-    QString affiliation;
-    QString role;
-    int status;
-    //https://xmpp.org/registrar/mucstatus.html
-    QList<int> codes;
 };
 
 class GroupHandler {
@@ -133,15 +91,15 @@ public:
   virtual void onGroupSubjectChanged(const QString &groupId, const QString &subject)=0;
 
   virtual void onGroupMessage(const QString groupId, //
-                              const PeerId peerId,   //
+                              const IMPeerId peerId,   //
                               const IMMessage message) = 0;
 
   virtual void onGroupOccupants(const QString groupId, uint size) = 0;
 
-  virtual void onGroupInfo(QString groupId, GroupInfo groupInfo) = 0;
+  virtual void onGroupInfo(QString groupId, IMGroup groupInfo) = 0;
 
   virtual void onGroupOccupantStatus(const QString groupId, //
-                                    GroupOccupant) = 0;
+                                     IMGroupOccupant) = 0;
 };
 
 class CallHandler {
@@ -153,13 +111,13 @@ public:
   virtual void onCallRetract(const QString &friendId, //
                       int state) = 0;
 
-  virtual void onCallAcceptByOther(const QString& callId, const PeerId& peerId) = 0;
+  virtual void onCallAcceptByOther(const QString& callId, const IMPeerId & peerId) = 0;
 
-  virtual void receiveCallStateAccepted(PeerId friendId, //
+  virtual void receiveCallStateAccepted(IMPeerId friendId, //
                                         QString callId,  //
                                         bool video) = 0;
 
-  virtual void receiveCallStateRejected(PeerId friendId, //
+  virtual void receiveCallStateRejected(IMPeerId friendId, //
                                         QString callId,  //
                                         bool video) = 0;
 
@@ -214,7 +172,7 @@ public:
 
   void send(const QString &xml);
 
-  PeerId getSelfId() const;
+  IMPeerId getSelfId() const;
   QString getSelfUsername() const;
   QString getSelfNick() const;
   Tox_User_Status getSelfStatus() const;
@@ -245,13 +203,13 @@ public:
   // void setMute(bool mute);
 
   /**
-   * Friend (audio/video)
+   * IMFriend (audio/video)
    */
   void addFriendHandler(FriendHandler *);
 
   size_t getFriendCount();
 
-  void getFriendList(std::list<lib::messenger::Friend> &);
+  void getFriendList(std::list<lib::messenger::IMFriend> &);
 
   void setFriendAlias(const QString &f, const QString &alias);
 
@@ -273,7 +231,7 @@ public:
   bool callToFriend(const QString &f, const QString &sId, bool video);
 
   // 创建呼叫
-  bool createCallToPeerId(const PeerId &to, const QString &sId,
+  bool createCallToPeerId(const IMPeerId &to, const QString &sId,
                           bool video);
 
   bool answerToFriend(const QString &f, const QString &callId, bool video);

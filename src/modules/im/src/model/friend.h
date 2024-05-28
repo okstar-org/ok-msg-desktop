@@ -22,7 +22,7 @@
 #include <QString>
 
 namespace lib::messenger{
-class Friend;
+class IMFriend;
 }
 
 class Friend : public Contact {

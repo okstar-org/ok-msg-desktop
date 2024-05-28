@@ -39,8 +39,11 @@
 
 
 using namespace std;
+
 namespace lib {
 namespace messenger {
+
+class IMFileTask;
 
 class IMJingle : public QObject,
                  public Jingle::SessionHandler,
@@ -64,7 +67,7 @@ public:
 
   bool sendCallToResource(const QString &friendId, const QString &sId, bool video);
 
-  bool createCall(const PeerId &to, const QString &sId, bool video);
+  bool createCall(const IMPeerId &to, const QString &sId, bool video);
 
   bool answer(const QString &friendId, const QString &callId, bool video);
   void cancel(const QString &friendId);
@@ -133,8 +136,8 @@ private:
   bool isAccepted = false;
 
   // receiver -> sid
-  std::map<PeerId, std::string> m_friendSessionMap;
-  //  std::map<PeerId, const Jingle::Session::Jingle *> m_jingleMap;
+  std::map<IMPeerId, std::string> m_friendSessionMap;
+  //  std::map<IMPeerId, const Jingle::Session::Jingle *> m_jingleMap;
   // sid -> JingleContext
   //  std::map<std::string, lib::ortc::JingleContext> m_contextMap;
   // sid -> session
@@ -146,7 +149,7 @@ private:
   QList<File> m_waitSendFiles;
 
   // file sending task map
-  QMap<QString, IMFile *> m_fileSenderMap;
+  QMap<QString, IMFileTask *> m_fileSenderMap;
 
   QList<Jingle::Content *> m_ices;
 
@@ -156,27 +159,27 @@ private:
   void clearSessionInfo(Jingle::Session *session);
 
   void doSessionInitiate(Jingle::Session *session,
-                         const Jingle::Session::Jingle *, const PeerId &);
+                         const Jingle::Session::Jingle *, const IMPeerId &);
 
   void doSessionTerminate(Jingle::Session *session,
-                          const Jingle::Session::Jingle *, const PeerId &);
+                          const Jingle::Session::Jingle *, const IMPeerId &);
 
   void doSessionAccept(Jingle::Session *session,        //
                        const Jingle::Session::Jingle *, //
-                       const PeerId &);
-  void doSessionInfo(const Jingle::Session::Jingle *, const PeerId &);
-  void doContentAdd(const Jingle::Session::Jingle *, const PeerId &);
-  void doContentRemove(const Jingle::Session::Jingle *, const PeerId &);
-  void doContentModify(const Jingle::Session::Jingle *, const PeerId &);
-  void doContentAccept(const Jingle::Session::Jingle *, const PeerId &);
-  void doContentReject(const Jingle::Session::Jingle *, const PeerId &);
-  void doTransportAccept(const Jingle::Session::Jingle *, const PeerId &);
-  void doTransportInfo(const Jingle::Session::Jingle *, const PeerId &);
-  void doTransportReject(const Jingle::Session::Jingle *, const PeerId &);
-  void doTransportReplace(const Jingle::Session::Jingle *, const PeerId &);
-  void doSecurityInfo(const Jingle::Session::Jingle *, const PeerId &);
-  void doDescriptionInfo(const Jingle::Session::Jingle *, const PeerId &);
-  void doInvalidAction(const Jingle::Session::Jingle *, const PeerId &);
+                       const IMPeerId &);
+  void doSessionInfo(const Jingle::Session::Jingle *, const IMPeerId &);
+  void doContentAdd(const Jingle::Session::Jingle *, const IMPeerId &);
+  void doContentRemove(const Jingle::Session::Jingle *, const IMPeerId &);
+  void doContentModify(const Jingle::Session::Jingle *, const IMPeerId &);
+  void doContentAccept(const Jingle::Session::Jingle *, const IMPeerId &);
+  void doContentReject(const Jingle::Session::Jingle *, const IMPeerId &);
+  void doTransportAccept(const Jingle::Session::Jingle *, const IMPeerId &);
+  void doTransportInfo(const Jingle::Session::Jingle *, const IMPeerId &);
+  void doTransportReject(const Jingle::Session::Jingle *, const IMPeerId &);
+  void doTransportReplace(const Jingle::Session::Jingle *, const IMPeerId &);
+  void doSecurityInfo(const Jingle::Session::Jingle *, const IMPeerId &);
+  void doDescriptionInfo(const Jingle::Session::Jingle *, const IMPeerId &);
+  void doInvalidAction(const Jingle::Session::Jingle *, const IMPeerId &);
 
   /**
    * 启动文件发送任务

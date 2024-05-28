@@ -311,7 +311,7 @@ private:
    * @param list
    */
 
-  virtual void onFriend(const lib::messenger::Friend& frnd) override;
+  virtual void onFriend(const lib::messenger::IMFriend & frnd) override;
 
   virtual void onFriendRequest(const QString friendId, QString name) override;
 
@@ -332,7 +332,7 @@ private:
 
   virtual void onFriendAvatarChanged(const QString friendId, const std::string avatar) override;
 
-  virtual  void onFriendAliasChanged(const lib::messenger::FriendId& fId, const QString& alias) override;
+  virtual  void onFriendAliasChanged(const lib::messenger::IMContactId & fId, const QString& alias) override;
   virtual void onMessageReceipt(QString friendId,ReceiptNum  receipt) override;
 
   /**
@@ -346,16 +346,16 @@ private:
 virtual void onGroupSubjectChanged(const QString &groupId, const QString &subject) override;
 
   virtual void onGroupMessage(const QString groupId, //
-                              const lib::messenger::PeerId peerId,  //
+                              const lib::messenger::IMPeerId peerId,  //
                               const lib::messenger::IMMessage message) override;
 
   virtual void onGroupInfo(QString groupId,
-                           lib::messenger::GroupInfo groupInfo) override;
+                           lib::messenger::IMGroup groupInfo) override;
 
   virtual void onGroupOccupants(const QString groupId, uint size) override;
 
   virtual void onGroupOccupantStatus(const QString groupId,
-                                     lib::messenger::GroupOccupant) override;
+                                     lib::messenger::IMGroupOccupant) override;
 
 private slots:
   void process();

@@ -80,7 +80,7 @@ ToxPk::ToxPk(const ContactId& rawId)
 {
 }
 
-ToxPk::ToxPk(const lib::messenger::FriendId &fId):
+ToxPk::ToxPk(const lib::messenger::IMContactId &fId):
     ContactId(fId.toString())
 {
 

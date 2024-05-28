@@ -22,16 +22,7 @@ class JID;
 class RosterItem;
 }
 
-namespace lib {
-namespace messenger {
-
-/**
- * @brief 连接状态
- *
- */
-enum class IMStatus { CONNECTING, AUTH_FAILED, CONNECTED, DISCONNECTED, TIMEOUT, CONN_ERROR, TLS_ERROR, OUT_OF_RESOURCE, NO_SUPPORT };
-
-std::string IMStatusToString(IMStatus status);
+namespace lib::messenger {
 
 enum class MsgType {
   Chat = 1,
@@ -47,86 +38,5 @@ struct IMMessage {
   QDateTime timestamp;
 };
 
-struct SelfInfo {
-  QString nickname;
-  QByteArray selfAvatar;
-};
+} // namespace lib::messenger
 
-struct FriendId {
-  /**
-   * [username]@[server]
-   */
-  QString username;
-  QString server;
-  bool operator==(const QString &friendId) const;
-  bool operator==(const FriendId &friendId) const;
-  bool operator!=(const FriendId &friendId) const;
-  bool operator<(const FriendId &friendId) const;
-
-  FriendId();
-  FriendId(const FriendId &);
-  FriendId(const QString &jid);
-  FriendId(const gloox::JID &jid);
-
-  [[nodiscard]] QString getUsername() const { return username; }
-  [[nodiscard]] QString getServer() const { return server; }
-
-  [[nodiscard]] QString toString() const {
-    if (username.isEmpty()) {
-      return {};
-    }
-
-    if (server.isEmpty()) {
-      return username;
-    }
-
-    return username + "@" + server;
-  }
-};
-
-struct PeerId : public FriendId {
-  /**
-   * [username]@[server]/[resource]
-   */
-  QString resource;
-
-  PeerId();
-  explicit PeerId(const QString &peerId);
-  explicit PeerId(const gloox::JID &jid);
-  bool operator==(const PeerId &peerId) const;
-  bool operator==(const QString &username) const;
-
-  [[nodiscard]] inline const QString toFriendId() const { return username + "@" + server; }
-
-  [[nodiscard]] inline const QString toString() const {
-    if (resource.isEmpty())
-      return toFriendId();
-    return toFriendId() + "/" + resource;
-  }
-};
-
-class Friend {
-public:
-  Friend();
-  explicit Friend(gloox::RosterItem *pItem);
-
-  FriendId id;
-  QString alias;
-  int subscription;
-  bool online;
-  QStringList groups;
-
-  //互相关注才是朋友
-  [[nodiscard]] bool isFriend() const;
-
-  [[nodiscard]] QString toString() const {
-    return QString("{id: %1, alias: %2, subscription:%3, online:%4, groups:[%5]}")  //
-            .arg(id.toString()).arg(alias).arg(subscription).arg(online).arg(groups.join(","));
-  }
-
-  friend std::ostream &operator<<(std::ostream &os, const Friend &f);
-  friend QDebug& operator<<(QDebug& debug, const Friend &f);
-};
-
-} // namespace messenger
-} // namespace lib

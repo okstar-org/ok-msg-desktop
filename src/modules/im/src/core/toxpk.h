@@ -18,7 +18,7 @@
 #include <QHash>
 
 namespace lib::messenger{
-class FriendId;
+class IMContactId;
 }
 
 /**
@@ -34,7 +34,7 @@ public:
     explicit ToxPk(const QByteArray& rawId);
     explicit ToxPk(const QString& rawId);
     explicit ToxPk(const ContactId& rawId);
-    explicit ToxPk(const lib::messenger::FriendId& fId);
+    explicit ToxPk(const lib::messenger::IMContactId & fId);
 
     bool operator==(const ToxPk& other) const;
     bool operator<(const ToxPk& other) const;

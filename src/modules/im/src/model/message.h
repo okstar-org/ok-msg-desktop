@@ -20,6 +20,7 @@
 #include <vector>
 
 #include "lib/messenger/IMMessage.h"
+#include "lib/messenger/IMFile.h"
 #include "src/core/icoreidhandler.h"
 #include <src/core/groupid.h>
 #include <src/core/toxpk.h>
@@ -81,7 +82,7 @@ struct FriendInfo {
   bool online;
   QStringList groups;
 
-  explicit FriendInfo(const lib::messenger::Friend &aFriend);
+  explicit FriendInfo(const lib::messenger::IMFriend &aFriend);
 
   [[nodiscard]] inline const ToxPk &getId() const { return id; }
 

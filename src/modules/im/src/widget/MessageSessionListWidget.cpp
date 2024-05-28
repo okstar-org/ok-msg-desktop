@@ -288,7 +288,7 @@ void MessageSessionListWidget::moveFriends(QLayout *layout) {
 //    if (circleWidget) {
 //      circleWidget->moveFriendWidgets(this);
 //    } else if (friendWidget) {
-//      const Friend *contact = friendWidget->getFriend();
+//      const IMFriend *contact = friendWidget->getFriend();
 //      auto *categoryWidget = getTimeCategoryWidget(contact);
 //      categoryWidget->addFriendWidget(friendWidget, contact->getStatus());
 //    }
@@ -504,7 +504,7 @@ void MessageSessionListWidget::dayTimeout() {
 void MessageSessionListWidget::moveWidget(MessageSessionWidget *widget, Status::Status s,
                                   bool add) {
 //  if (mode == SortingMode::Name) {
-//    const Friend *f = widget->getFriend();
+//    const IMFriend *f = widget->getFriend();
 //    int circleId = Settings::getInstance().getFriendCircleID(f->getPublicKey());
 //    CircleWidget *circleWidget = CircleWidget::getFromID(circleId);
 
@@ -517,7 +517,7 @@ void MessageSessionListWidget::moveWidget(MessageSessionWidget *widget, Status::
 
 //    circleWidget->addFriendWidget(widget, s);
 //  } else {
-//    const Friend *contact = widget->getFriend();
+//    const IMFriend *contact = widget->getFriend();
 //    auto *categoryWidget = getTimeCategoryWidget(contact);
 //    categoryWidget->addFriendWidget(widget, contact->getStatus());
 //    categoryWidget->show();

@@ -5,7 +5,6 @@ add_definitions(-DOK_${PROJECT_NAME}_MODULE="${PROJECT_NAME}")
 include_directories(${CMAKE_SOURCE_DIR}/plugins/include)
 
 set(${PROJECT_NAME}_SOURCES
-        BaseWindow.cpp
         widgetfactory.cpp
         WindowManager.h
         WindowManager.cpp

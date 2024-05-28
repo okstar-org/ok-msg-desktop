@@ -16,21 +16,7 @@
 #include <QRegularExpression>
 #include <base/jsons.h>
 #include <lib/messenger/messenger.h>
-
-
-
-#define TOX_HEX_ID_LENGTH 2 * TOX_ADDRESS_SIZE
-
-/**
- * @file corestructs.h
- * @brief Some headers use Core structs but don't need to include all of core.h
- *
- * They should include this file directly instead to reduce compilation times
- *
- * @var uint8_t FileStatus::fileKind
- * @brief Data file (default) or avatar
- */
-
+#include "lib/messenger/IMFile.h"
 
 FileInfo::FileInfo(
                    const QString &sId,

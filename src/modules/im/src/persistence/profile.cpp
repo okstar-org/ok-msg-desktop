@@ -437,7 +437,7 @@ const QPixmap & Profile::loadAvatar() {
 
 /**
  * @brief Get a contact's avatar from cache.
- * @param owner Friend PK to load avatar.
+ * @param owner IMFriend PK to load avatar.
  * @return Avatar as QPixmap.
  */
 QPixmap Profile::loadAvatar(const ContactId &owner) {
@@ -451,7 +451,7 @@ QPixmap Profile::loadAvatar(const ContactId &owner) {
 
 /**
  * @brief Get a contact's avatar from cache.
- * @param owner Friend PK to load avatar.
+ * @param owner IMFriend PK to load avatar.
  * @return Avatar as QByteArray.
  */
 QByteArray Profile::loadAvatarData(const ContactId &owner) {
@@ -631,7 +631,7 @@ void Profile::saveAvatar(const ToxPk &owner, const QByteArray &pic) {
 
 /**
  * @brief Get the tox hash of a cached avatar.
- * @param owner Friend PK to get hash.
+ * @param owner IMFriend PK to get hash.
  * @return Avatar tox hash.
  */
 QByteArray Profile::getAvatarHash(const ToxPk &owner) {
@@ -671,7 +671,7 @@ History *Profile::getHistory() { return history.get(); }
 
 /**
  * @brief Removes a cached avatar.
- * @param owner Friend PK whose avater to delete.
+ * @param owner IMFriend PK whose avater to delete.
  */
 void Profile::removeAvatar(const ToxPk &owner) {
   QFile::remove(avatarPath(owner));

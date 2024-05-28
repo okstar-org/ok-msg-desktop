@@ -88,11 +88,11 @@ IM::IM(QString host, QString user, QString pwd,
 
   // qRegisterMetaType
   qRegisterMetaType<JID>("JID");
-  qRegisterMetaType<FriendId>("FriendId");
-  qRegisterMetaType<Friend>("Friend");
-  qRegisterMetaType<PeerId>("PeerId");
+  qRegisterMetaType<IMContactId>("IMContactId");
+  qRegisterMetaType<IMFriend>("IMFriend");
+  qRegisterMetaType<IMPeerId>("IMPeerId");
   qRegisterMetaType<IMMessage>("IMMessage");
-  qRegisterMetaType<GroupOccupant>("GroupOccupant");
+  qRegisterMetaType<IMGroupOccupant>("IMGroupOccupant");
 
   qDebug() << ("Create messenger instance is successfully");
 }
@@ -607,7 +607,7 @@ void IM::handleMessage(const gloox::Message &msg, MessageSession *session) {
    */
   auto jm = msg.findExtension<Jingle::JingleMessage>(ExtJingleMessage);
   if (jm) {
-    doJingleMessage(PeerId(msg.from().full()), jm);
+    doJingleMessage(IMPeerId(msg.from().full()), jm);
   }
   auto xml = qstring(msg.tag()->xml());
   emit incoming(xml);
@@ -817,7 +817,7 @@ void IM::handleMUCParticipantPresence(gloox::MUCRoom *room,                 //
 
   auto x = presence.tag()->findChild("x", XMLNS, XMLNS_MUC_USER);
   if (x) {
-    GroupOccupant occ = {.nick = nick};
+    IMGroupOccupant occ = {.nick = nick};
 
     auto item = x->findChild("item");
     if (item) {
@@ -851,7 +851,7 @@ void IM::handleMUCMessage(MUCRoom *room, const gloox::Message &msg, bool priv) {
   auto body = qstring(msg.body());
   qDebug() << "body:" << body;
 
-  PeerId peerId(msg.from());
+  IMPeerId peerId(msg.from());
   for (const auto &id : sendIds) {
     if (id == msg.id()) {
       qDebug() << "自己发出消息，忽略！";
@@ -958,7 +958,7 @@ void IM::handleMUCInfo(MUCRoom *room,              //
 
   qDebug() << __func__ << roomId << roomName;
 
-  GroupInfo groupInfo;
+  IMGroup groupInfo;
   groupInfo.name = roomName;
 
   if (infoForm) {
@@ -1292,7 +1292,7 @@ void IM::handleTag(Tag *tag) { qDebug() << QString("tag：%1").arg(qstring(tag->
 bool IM::handleIq(const IQ &iq) {
   const auto *ibb = iq.findExtension<InBandBytestream::IBB>(ExtIBB);
   if (ibb) {
-    FriendId friendId(qstring(iq.from().bare()));
+    IMContactId friendId(qstring(iq.from().bare()));
     qDebug() << QString("IBB stream id:%1").arg(qstring(ibb->sid()));
 
     switch (ibb->type()) {
@@ -1470,7 +1470,7 @@ void IM::handleItemAdded(const gloox::JID &jid) {
     qWarning() << "Unable to find roster.";
     return;
   }
-  emit receiveFriend(Friend{item});
+  emit receiveFriend(IMFriend{item});
 }
 
 /**
@@ -1534,7 +1534,7 @@ void IM::addFriend(const JID &jid, const QString &nick, const QString &msg) {
   auto m = _client->rosterManager();
   auto f = m->getRosterItem(jid);
   if(f){
-      qWarning() << "Friend is existing!";
+      qWarning() << "IMFriend is existing!";
       return;
   }
   // 订阅对方(同时加入到联系人列表)
@@ -1564,7 +1564,7 @@ void IM::rejectFriendRequest(const QString &friendId) {
 
 size_t IM::getRosterCount() { return _client->rosterManager()->roster()->size(); }
 
-void IM::getRosterList(std::list<Friend> &list) {
+void IM::getRosterList(std::list<IMFriend> &list) {
   auto rosterManager = _client->rosterManager();
   if (!rosterManager) {
     QMutexLocker locker(&m_mutex);
@@ -1574,7 +1574,7 @@ void IM::getRosterList(std::list<Friend> &list) {
   gloox::Roster *rosterMap = rosterManager->roster();
   for (const auto &itr : *rosterMap) {
     auto pItem = itr.second;
-    list.push_back(Friend{pItem});
+    list.push_back(IMFriend{pItem});
   }
 }
 
@@ -1604,7 +1604,7 @@ void IM::handleRoster(const Roster &roster) {
       continue;
     }
 
-    auto frnd = Friend{item};
+    auto frnd = IMFriend{item};
     emit receiveFriend(frnd);
 
     //    Subscription sub(gloox::Subscription::Subscribe, jid);
@@ -1778,13 +1778,13 @@ void IM::handleDataForm(const JID &from, const DataForm &form) {};
  */
 void IM::handleOOB(const JID &from, const OOB &oob) {};
 
-FriendId IM::getSelfId() {
-  FriendId fId(qstring(_client->jid().bare()));
+IMContactId IM::getSelfId() {
+  IMContactId fId(qstring(_client->jid().bare()));
   return fId;
 }
 
-PeerId IM::getSelfPeerId() {
-  PeerId peerId(qstring(_client->jid().bare()));
+IMPeerId IM::getSelfPeerId() {
+  IMPeerId peerId(qstring(_client->jid().bare()));
   return peerId;
 }
 
@@ -2098,7 +2098,7 @@ void IM::updateOnlineStatus(const std::string &bare, const std::string &resource
   emit receiveFriendStatus(friendId, status);
 }
 
-void IM::doJingleMessage(const PeerId &peerId, const Jingle::JingleMessage *jm) {
+void IM::doJingleMessage(const IMPeerId &peerId, const Jingle::JingleMessage *jm) {
 
   qDebug() << QString("JingleMessage id:%1 action:%2").arg(qstring(jm->id())).arg(Jingle::ActionValues[jm->action()]);
 
@@ -2193,7 +2193,7 @@ void IM::proposeJingleMessage(const QString &friendId, const QString &callId, bo
   exts.push_back(jm);
 
   // 缓存发起媒体
-  mPeerRequestMedias.emplace(PeerId(friendId), jm->medias());
+  mPeerRequestMedias.emplace(IMPeerId(friendId), jm->medias());
 
   auto session = sit->second;
   session->setResource(self().resource());

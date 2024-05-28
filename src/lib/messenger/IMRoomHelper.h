@@ -33,7 +33,7 @@ struct IMRoomInfo {
    * https://xmpp.org/extensions/xep-0045.html#registrar-formtype-roominfo
    */
 
-  GroupInfo info;
+  IMGroup info;
 
   /**
    * 房间待修改项

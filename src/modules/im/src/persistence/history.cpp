@@ -273,7 +273,7 @@ void History::eraseHistory()
 
 /**
  * @brief Erases the chat history with one friend.
- * @param friendPk Friend public key to erase.
+ * @param friendPk IMFriend public key to erase.
  */
 void History::removeFriendHistory(const QString& friendPk)
 {
@@ -313,7 +313,7 @@ uint History::addNewContact(const QString &contactId)
 
 /**
  * @brief Generate query to insert new message in database
- * @param friendPk Friend publick key to save.
+ * @param friendPk IMFriend publick key to save.
  * @param message Message to save.
  * @param sender Sender to save.
  * @param time Time of message sending.
@@ -435,7 +435,7 @@ void History::addNewFileMessage(const QString& friendPk,
 
 /**
  * @brief Saves a chat message in the database.
- * @param friendPk Friend publick key to save.
+ * @param friendPk IMFriend publick key to save.
  * @param message Message to save.
  * @param sender Sender to save.
  * @param time Time of message sending.
@@ -668,7 +668,7 @@ QList<History::HistMessage> History::getUndeliveredMessagesForFriend(const ToxPk
 
 /**
  * @brief Search phrase in chat messages
- * @param friendPk Friend public key
+ * @param friendPk IMFriend public key
  * @param from a date message where need to start a search
  * @param phrase what need to find
  * @param parameter for search

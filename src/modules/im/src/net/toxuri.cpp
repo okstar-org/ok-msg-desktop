@@ -98,7 +98,7 @@ ToxURIDialog::ToxURIDialog(QWidget* parent, const QString& userId, const QString
     QLineEdit* userIdEdit = new QLineEdit(userId, this);
     userIdEdit->setCursorPosition(0);
     userIdEdit->setReadOnly(true);
-    QLabel* messageLabel = new QLabel(tr("Friend request message:"), this);
+    QLabel* messageLabel = new QLabel(tr("IMFriend request message:"), this);
     messageEdit = new QPlainTextEdit(message, this);
 
     QDialogButtonBox* buttonBox = new QDialogButtonBox(Qt::Horizontal, this);

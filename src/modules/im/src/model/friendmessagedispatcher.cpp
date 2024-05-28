@@ -48,7 +48,7 @@ FriendMessageDispatcher::FriendMessageDispatcher(
       offlineMsgEngine(&f_, &messageSender_),
       processor(MessageProcessor(idHandler_, f_, p ))
 {
-//  connect(&f, &Friend::onlineOfflineChanged,
+//  connect(&f, &IMFriend::onlineOfflineChanged,
 //          this, &FriendMessageDispatcher::onFriendOnlineOfflineChanged);
 }
 

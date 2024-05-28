@@ -72,6 +72,23 @@ namespace messenger {
 using namespace gloox;
 using namespace gloox::PubSub;
 
+
+/**
+ * 连接状态
+ *
+ */
+enum class IMStatus { CONNECTING,
+                      AUTH_FAILED,
+                      CONNECTED,
+                      DISCONNECTED,
+                      TIMEOUT,
+                      CONN_ERROR,
+                      TLS_ERROR,
+                      OUT_OF_RESOURCE,
+                      NO_SUPPORT };
+
+
+
 class IM : public ok::lib::Task,
            public ConnectionListener,
 #ifdef WANT_PING
@@ -115,8 +132,8 @@ public:
 
   void setAvatar(const QByteArray &avatar);
   void changePassword(const QString &password);
-  FriendId getSelfId();
-  PeerId getSelfPeerId();
+  IMContactId getSelfId();
+  IMPeerId getSelfPeerId();
   QString getSelfUsername();
 
   /**
@@ -160,7 +177,7 @@ public:
   void sendReceiptRecieved(const JID &to, QString receipt);
 
   size_t getRosterCount();
-  void getRosterList(std::list<Friend> &);
+  void getRosterList(std::list<IMFriend> &);
 
   void setFriendAlias(const JID &jid, const std::string &alias);
 
@@ -173,7 +190,7 @@ public:
 
   virtual const JID &self() const { return _client->jid(); }
 
-  virtual Client *getClient() const { return _client.get(); }
+  Client *getClient() const { return _client.get(); }
 
   QDomDocument buildMessage(const QString &to, const QString &msg, QString &id);
 
@@ -256,7 +273,7 @@ public:
 
   void retractJingleMessage(const QString &friendId, const QString &callId);
 
-  void doJingleMessage(const PeerId &peerId,
+  void doJingleMessage(const IMPeerId &peerId,
                        const gloox::Jingle::JingleMessage *jm);
 
   [[nodiscard]] gloox::JID wrapJid(const QString &f) const;
@@ -796,7 +813,7 @@ private:
 
 
 
-  std::map<PeerId, Jingle::RTP::Medias> mPeerRequestMedias;
+  std::map<IMPeerId, Jingle::RTP::Medias> mPeerRequestMedias;
 
   //发送消息的id
   std::list<std::string> sendIds;
@@ -826,10 +843,10 @@ private:
 signals:
   void connectResult(IMStatus);
 
-  void receiveRoomMessage(QString groupId, PeerId friendId, IMMessage);
+  void receiveRoomMessage(QString groupId, IMPeerId friendId, IMMessage);
 
   // friend events
-  void receiveFriend(Friend frnd);
+  void receiveFriend(IMFriend frnd);
 
   void receiveFriendRequest(QString friendId, QString msg);
 
@@ -866,16 +883,16 @@ signals:
                           bool video);
   //呼叫撤回
   void receiveCallRetract(QString friendId, int state);
-  void receiveCallAcceptByOther(QString callId, PeerId peerId);
+  void receiveCallAcceptByOther(QString callId, IMPeerId peerId);
   void receiveFriendHangup(QString friendId, int state);
 
   //对方状态变化
-  void receiveCallStateAccepted(PeerId peerId, QString callId, bool video);
-  void receiveCallStateRejected(PeerId peerId, QString callId, bool video);
+  void receiveCallStateAccepted(IMPeerId peerId, QString callId, bool video);
+  void receiveCallStateRejected(IMPeerId peerId, QString callId, bool video);
 
-  void receiveFileChunk(const FriendId friendId, QString sId, int seq,
+  void receiveFileChunk(const IMContactId friendId, QString sId, int seq,
                         const std::string chunk);
-  void receiveFileFinished(const FriendId friendId, QString sId);
+  void receiveFileFinished(const IMContactId friendId, QString sId);
 
   // Self events
   void selfIdChanged(QString id);
@@ -890,11 +907,11 @@ signals:
   void groupReceived(const QString groupId, const QString name);
   void groupListReceivedDone();
   void groupOccupants(const QString groupId, const uint size);
-  void groupOccupantStatus(const QString& groupId, GroupOccupant occ);
+  void groupOccupantStatus(const QString& groupId, IMGroupOccupant occ);
   void groupInvite(const QString groupId, const QString peerId,
                    const QString message);
 
-  void groupRoomInfo(QString groupId, GroupInfo groupInfo);
+  void groupRoomInfo(QString groupId, IMGroup groupInfo);
 
   void groupSubjectChanged(const JID group, const std::string subject);
 

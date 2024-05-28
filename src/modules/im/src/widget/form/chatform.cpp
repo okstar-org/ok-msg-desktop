@@ -54,7 +54,7 @@
 
 /**
  * @brief ChatForm::incomingNotification Notify that we are called by someone.
- * @param friendId Friend that is calling us.
+ * @param friendId IMFriend that is calling us.
  *
  * @brief ChatForm::outgoingNotification Notify that we are calling someone.
  *

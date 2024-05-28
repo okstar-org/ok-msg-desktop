@@ -488,7 +488,7 @@ Widget::~Widget() {
 //    removeGroup(g, true);
 //  }
 
-//  for (Friend *f : FriendList::getAllFriends()) {
+//  for (IMFriend *f : FriendList::getAllFriends()) {
 //    removeFriend(f, true);
 //  }
 
@@ -938,7 +938,7 @@ void Widget::openDialog(GenericChatroomWidget *widget, bool newWindow) {
 
 //  GenericChatForm *form;
 //  GroupId id;
-////  const Friend *frnd = widget->getFriend();
+////  const IMFriend *frnd = widget->getFriend();
 ////  const Group *group = widget->getGroup();
 ////  if (frnd) {
 ////    form = chatForms[frnd->getPublicKey()];
@@ -1067,7 +1067,7 @@ bool Widget::newGroupMessageAlert(const GroupId &groupId, const ToxPk &authorPk,
   if (settings.getNotifyHide()) {
     notifier.notifyMessageSimple(DesktopNotify::MessageType::GROUP);
   } else {
-    Friend *f = FriendList::findFriend(authorPk);
+    IMFriend *f = FriendList::findFriend(authorPk);
     QString title =
         g->getPeerList().value(authorPk) + " (" + g->getDisplayedName() + ")";
     if (!f) {
@@ -1167,7 +1167,7 @@ void Widget::onFileReceiveRequested(const ToxFile &file) {
 }
 
 
-//void Widget::removeFriend(Friend *f, bool fake) {
+//void Widget::removeFriend(IMFriend *f, bool fake) {
 //  qDebug()<<"removeFriend:"<<f->getPublicKey().toString();
 
 //  if (!fake) {
@@ -1825,7 +1825,7 @@ void Widget::retranslateUi() {
 
 void Widget::focusChatInput() {
 //  if (activeChatroomWidget) {
-//    if (const Friend *f = activeChatroomWidget->getFriend()) {
+//    if (const IMFriend *f = activeChatroomWidget->getFriend()) {
 //      chatForms[f->getPublicKey()]->focusInput();
 //    } else if (Group *g = activeChatroomWidget->getGroup()) {
 //      groupChatForms[g->getPersistentId()]->focusInput();

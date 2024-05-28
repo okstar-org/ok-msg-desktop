@@ -70,7 +70,7 @@ AddFriendForm::AddFriendForm(QWidget *parent) : QWidget(parent), addUi{new Ui::A
   // accessibility stuff
   addUi->input->setPlaceholderText(tr("Account/E-Mail/Phone Number"));
   //  toxId.setAccessibleDescription(tr("Type in Tox ID of your friend"));
-  //  messageLabel.setAccessibleDescription(tr("Friend request message"));
+  //  messageLabel.setAccessibleDescription(tr("IMFriend request message"));
   //  message.setAccessibleDescription(
   //      tr("Type message to send with the friend request or leave empty to send "
   //         "a default message"));

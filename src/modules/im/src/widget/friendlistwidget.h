@@ -108,7 +108,7 @@ private:
 
   QLayout *nextLayout(QLayout *layout, bool forward) const;
   void moveFriends(QLayout *layout);
-//  CategoryWidget *getTimeCategoryWidget(const Friend *frd) const;
+//  CategoryWidget *getTimeCategoryWidget(const IMFriend *frd) const;
   void sortByMode(SortingMode mode);
   void connectFriendWidget(FriendWidget &friendWidget);
   void updateFriendActivity(const Friend &frnd);

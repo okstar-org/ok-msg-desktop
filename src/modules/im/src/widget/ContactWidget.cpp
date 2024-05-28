@@ -140,7 +140,7 @@ void ContactWidget::onFriendStatusChanged(const ToxPk &friendPk, Status::Status 
   qDebug() << __func__ << friendPk.toString() << "status:" << (int)status;
   //  const auto &friendPk = FriendList::id2Key(friendPk);
   contactListWidget->setFriendStatus(friendPk, status);
-  //  Friend *f = FriendList::findFriend(friendPk);
+  //  IMFriend *f = FriendList::findFriend(friendPk);
   //  if (!f) {
   //    qWarning() << "Unable to find friend" << friendPk;
   //    return;
@@ -171,7 +171,7 @@ void ContactWidget::onFriendStatusMessageChanged(const ToxPk &friendPk, const QS
 
   contactListWidget->setFriendStatusMsg(friendPk, message);
 
-  //  Friend *f = FriendList::findFriend(friendPk);
+  //  IMFriend *f = FriendList::findFriend(friendPk);
   //  if (!f) {
   //    return;
   //  }
@@ -386,6 +386,6 @@ void ContactWidget::friendRequestsUpdate() {
   //  }
 
   //  if (friendRequestsButton) {
-  //    friendRequestsButton->setText(tr("%n New Friend Request(s)", "", unreadFriendRequests));
+  //    friendRequestsButton->setText(tr("%n New IMFriend Request(s)", "", unreadFriendRequests));
   //  }
 }

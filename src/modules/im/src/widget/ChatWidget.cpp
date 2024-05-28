@@ -310,7 +310,7 @@ void ChatWidget::onFriendStatusMessageChanged(const ToxPk &friendPk,
 
   sessionListWidget->setFriendStatusMsg(friendPk, message);
 
-  //  Friend *f = FriendList::findFriend(friendPk);
+  //  IMFriend *f = FriendList::findFriend(friendPk);
   //  if (!f) {
   //    return;
   //  }
@@ -342,7 +342,7 @@ void ChatWidget::showEvent(QShowEvent *e) {}
 // void ChatWidget::onFriendAliasChanged(const ToxPk &receiver, const QString
 // &alias) {
 //   qDebug() << __func__ <<"receiver" << receiver.toString() << alias;
-//   Friend *f = qobject_cast<Friend *>(sender());
+//   IMFriend *f = qobject_cast<IMFriend *>(sender());
 //
 //   // TODO(sudden6): don't update the contact list here, make it update itself
 //   FriendWidget *friendWidget = contactListWidget->getFriend(receiver);
@@ -613,7 +613,7 @@ void ChatWidget::reloadTheme() {
     contentLayout->reloadTheme();
   }
 
-  //  for (Friend *f : FriendList::getAllFriends()) {
+  //  for (IMFriend *f : FriendList::getAllFriends()) {
   //    contactListWidget->getFriend(f->getPublicKey())->reloadTheme();
   //  }
 
@@ -824,7 +824,7 @@ void ChatWidget::dispatchFile(ToxFile file)
     const auto &friendId = ToxPk(file.getFriendId());
     Friend *f = FriendList::findFriend(friendId);
     if (!f) {
-        qWarning() <<"Friend is no existing!" << friendId;
+        qWarning() <<"IMFriend is no existing!" << friendId;
         return;
     }
 

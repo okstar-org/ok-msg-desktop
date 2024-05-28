@@ -25,6 +25,7 @@
 
 #include "IM.h"
 #include "IMFile.h"
+#include "IMFileTask.h"
 #include "base/logs.h"
 
 namespace lib {
@@ -116,7 +117,7 @@ void IMJingle::cacheSessionInfo(Jingle::Session *session,
   JID responder = session->remote();
   const std::string &sId = session->sid();
 
-  PeerId peer(responder);
+  IMPeerId peer(responder);
   auto fIt = m_friendSessionMap.find(peer);
   if (fIt == m_friendSessionMap.end()) {
     m_friendSessionMap.emplace(peer, sId);
@@ -162,7 +163,7 @@ void IMJingle::clearSessionInfo(Jingle::Session *session) {
   qDebug()<<("Clear the session:%1")<<((qstring(session->sid())));
 
   auto responder = session->remote();
-  m_friendSessionMap.erase(PeerId(responder));
+  m_friendSessionMap.erase(IMPeerId(responder));
 
   auto find = m_sessionMap.find(session->sid());
   if (find != m_sessionMap.end()) {
@@ -180,7 +181,7 @@ void IMJingle::clearSessionInfo(Jingle::Session *session) {
 std::string IMJingle::getSessionByFriendId(const QString &friendId) {
   qDebug()<<("getSessionId:%1")<<((friendId));
 
-  auto it = m_friendSessionMap.find(PeerId(friendId));
+  auto it = m_friendSessionMap.find(IMPeerId(friendId));
   if (it != m_friendSessionMap.end()) {
     return it->second;
   }
@@ -209,7 +210,7 @@ void IMJingle::handleSessionAction(Action action,
                                    const Session::Jingle *jingle) {
 
   auto from = session->remote();
-  auto friendId = PeerId(from);
+  auto friendId = IMPeerId(from);
   const std::string &sid = jingle->sid();
 
   qDebug()<<__func__<<((static_cast<int>(action)))
@@ -291,7 +292,7 @@ void IMJingle::handleSessionAction(Action action,
 
 void IMJingle::doSessionInitiate(Jingle::Session *session,
                                  const Jingle::Session::Jingle *jingle,
-                                 const PeerId &peerId) {
+                                 const IMPeerId &peerId) {
 
   qDebug() <<__func__   << "sId:" << qstring(session->sid())
                         << "peerId:" << (peerId.toString());
@@ -351,7 +352,7 @@ void IMJingle::doSessionInitiate(Jingle::Session *session,
 
 void IMJingle::doSessionTerminate(Jingle::Session *session,
                                   const Session::Jingle *jingle,
-                                  const PeerId &peerId) {
+                                  const IMPeerId &peerId) {
 
   qDebug()<<__func__<<"sId:"<<qstring(session->sid())<<"peerId"<<peerId.toString();
   int ri = 0;
@@ -397,7 +398,7 @@ void IMJingle::doSessionTerminate(Jingle::Session *session,
 
 void IMJingle::doSessionAccept(Jingle::Session *session,
                                const Jingle::Session::Jingle *jingle,
-                               const PeerId &peerId) {
+                               const IMPeerId &peerId) {
 
   qDebug() << "sId:%1 receiver:%2" //
            << qstring(session->sid()) //
@@ -439,14 +440,14 @@ void IMJingle::doSessionAccept(Jingle::Session *session,
 }
 
 void IMJingle::doSessionInfo(const Session::Jingle *jingle,
-                             const PeerId &friendId) {
+                             const IMPeerId &friendId) {
   qDebug() << "jingle:%1 peerId:%2" //
            << qstring(jingle->sid()) //
            << friendId.toString();
 }
 
 void IMJingle::doContentAdd(const Session::Jingle *jingle,
-                            const PeerId &friendId) {
+                            const IMPeerId &friendId) {
 
   qDebug() << "jingle:%1 peerId:%2" << qstring(jingle->sid())
            << friendId.toString();
@@ -454,7 +455,7 @@ void IMJingle::doContentAdd(const Session::Jingle *jingle,
 }
 
 void IMJingle::doContentRemove(const Session::Jingle *jingle,
-                               const PeerId &peerId) {
+                               const IMPeerId &peerId) {
   qDebug()<<("jingle:%1 peerId:%2")
                 <<(qstring(jingle->sid()))
                 <<((peerId.toString()));
@@ -478,34 +479,34 @@ void IMJingle::doContentRemove(const Session::Jingle *jingle,
 }
 
 void IMJingle::doContentModify(const Session::Jingle *jingle,
-                               const PeerId &peerId) {
+                               const IMPeerId &peerId) {
   qDebug()<<("jingle:%1 peerId:%2") //
                 <<((qstring(jingle->sid())))
                 <<((peerId.toString()));
 }
 
 void IMJingle::doContentAccept(const Session::Jingle *jingle,
-                               const PeerId &peerId) {
+                               const IMPeerId &peerId) {
   qDebug()<<("jingle:%1 peerId:%2") //
                 <<((qstring(jingle->sid())))
                 <<((peerId.toString()));
 }
 
 void IMJingle::doContentReject(const Session::Jingle *jingle,
-                               const PeerId &peerId) {
+                               const IMPeerId &peerId) {
   qDebug()<<("jingle:%1 peerId:%2") //
                 <<((qstring(jingle->sid())))
                 <<((peerId.toString()));
 }
 
 void IMJingle::doTransportAccept(const Session::Jingle *jingle,
-                                 const PeerId &peerId) {
+                                 const IMPeerId &peerId) {
   qDebug() << ("jingle:%1 peerId:%2") //
            << qstring(jingle->sid()) << peerId.toString();
 }
 
 void IMJingle::doTransportInfo(const Session::Jingle *jingle,
-                               const PeerId &peerId) {
+                               const IMPeerId &peerId) {
   qDebug()<<("sId:%1 peerId:%2") //
                 <<(qstring(jingle->sid()))
                 <<((peerId.toString()));
@@ -525,21 +526,21 @@ void IMJingle::doTransportInfo(const Session::Jingle *jingle,
   }
 }
 
-void IMJingle::doTransportReject(const Session::Jingle *, const PeerId &) {}
+void IMJingle::doTransportReject(const Session::Jingle *, const IMPeerId &) {}
 
-void IMJingle::doTransportReplace(const Session::Jingle *, const PeerId &) {}
+void IMJingle::doTransportReplace(const Session::Jingle *, const IMPeerId &) {}
 
-void IMJingle::doSecurityInfo(const Session::Jingle *, const PeerId &) {}
+void IMJingle::doSecurityInfo(const Session::Jingle *, const IMPeerId &) {}
 
 void IMJingle::doDescriptionInfo(const Session::Jingle *jingle,
-                                 const PeerId &peerId) {
+                                 const IMPeerId &peerId) {
   qDebug()<<("sessionId:%1 from:%2")
                 <<(qstring(jingle->sid()))
                 <<((peerId.toString()));
 }
 
 void IMJingle::doInvalidAction(const Session::Jingle *jingle,
-                               const PeerId &peerId) {
+                               const IMPeerId &peerId) {
   qDebug()<<("sessionId:%1 from:%2")
                 <<(qstring(jingle->sid()))
                 <<((peerId.toString()));
@@ -616,7 +617,7 @@ void IMJingle::onRender(const std::string &peerId,
                                image.v, image.ystride, image.ustride,
                                image.vstride);
   } else {
-    emit receiveFriendVideoFrame(PeerId(peerId).username, image.width_,
+    emit receiveFriendVideoFrame(IMPeerId(peerId).username, image.width_,
                                  image.height_, image.y, image.u, image.v,
                                  image.ystride, image.ustride, image.vstride);
   }
@@ -645,7 +646,7 @@ bool IMJingle::sendCallToResource(const QString &friendId, const QString &sId,
   return true;
 }
 
-bool IMJingle::createCall(const PeerId &to, const QString &sId, bool video) {
+bool IMJingle::createCall(const IMPeerId &to, const QString &sId, bool video) {
   std::string peerId = stdstring(to.toString());
 
   qDebug()<<("Create session:%1 isVideo:%2 to peerId:%3")
@@ -676,7 +677,7 @@ bool IMJingle::createCall(const PeerId &to, const QString &sId, bool video) {
 void IMJingle::cancel(const QString &friendId) {
   qDebug()<<("cancel:%1")<<((friendId));
 
-  auto it = m_friendSessionMap.find(PeerId(friendId));
+  auto it = m_friendSessionMap.find(IMPeerId(friendId));
   if (it != m_friendSessionMap.end()) {
     auto sId = it->second;
     auto sIt = m_sessionMap.find(sId);
@@ -697,7 +698,7 @@ void IMJingle::cancelCall(const QString &friendId, const QString &sId) {
     s->getSession()->sessionTerminate(
         new Session::Reason(Session::Reason::Reasons::Cancel));
     if (s->getRtcManager()) {
-      PeerId peerId(s->getSession()->remote());
+      IMPeerId peerId(s->getSession()->remote());
       s->getRtcManager()->quit(stdstring(peerId.toString()));
     }
     clearSessionInfo(s->getSession());
@@ -719,7 +720,7 @@ void IMJingle::cancelCall(const QString &friendId, const QString &sId) {
 bool IMJingle::answer(const QString &friendId, const QString &callId,
                       bool video) {
   qDebug()<<("friend:%1 video:%2")<<(friendId)<<((video));
-  PeerId friendId1(friendId);
+  IMPeerId friendId1(friendId);
 
   client->acceptJingleMessage(friendId, callId);
   isAccepted = true;
@@ -864,8 +865,8 @@ void IMJingle::doStartFileSendTask(const Session *session,
                                    const File &file) {
   qDebug()<<__func__<<file.sId ;
 
-  auto *imFile = new IMFile(session->remote(), file, client);
-  connect(imFile, &IMFile::fileSending,
+  auto *imFile = new IMFileTask(session->remote(), &file, client);
+  connect(imFile, &IMFileTask::fileSending,
           [&](const JID &m_friendId, const File &m_file, int m_seq,
               int m_sentBytes, bool end) {
 
@@ -873,14 +874,14 @@ void IMJingle::doStartFileSendTask(const Session *session,
                               m_sentBytes, end);
           });
 
-  connect(imFile, &IMFile::fileAbort,
+  connect(imFile, &IMFileTask::fileAbort,
           [&](const JID &m_friendId, const File &m_file,
               int m_sentBytes) {
             emit sendFileAbort(qstring(m_friendId.bare()), m_file,
                                m_sentBytes);
           });
 
-  connect(imFile, &IMFile::fileError,
+  connect(imFile, &IMFileTask::fileError,
           [&](const JID &m_friendId, const File &m_file,
               int m_sentBytes) {
             emit sendFileError(qstring(m_friendId.bare()), m_file,
@@ -902,8 +903,7 @@ void IMJingle::doStopFileSendTask(const Session *session,
 
   qDebug()<<__func__<<"Send file task will be clear."<<file.id;
   if (imFile->isRunning()) {
-    imFile->quit();
-    imFile->wait();
+    imFile->forceQuit();
   }
   disconnect(imFile);
   delete imFile;

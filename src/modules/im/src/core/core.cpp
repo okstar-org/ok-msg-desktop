@@ -425,7 +425,7 @@ void Core::bootstrapDht() {
   //  }
 }
 
-void Core::onFriend(const lib::messenger::Friend& frnd) {
+void Core::onFriend(const lib::messenger::IMFriend & frnd) {
   qDebug() << __func__ << frnd;
   emit friendAdded(FriendInfo{frnd});
 }
@@ -494,7 +494,7 @@ void Core::onFriendAvatarChanged(const QString friendId,
   emit friendAvatarChanged(getFriendPublicKey(friendId), QByteArray::fromStdString(avatar));
 }
 
-void Core::onFriendAliasChanged(const lib::messenger::FriendId &fId, const QString &alias)
+void Core::onFriendAliasChanged(const lib::messenger::IMContactId &fId, const QString &alias)
 {
     emit friendAliasChanged(ToxPk{fId}, alias);
 }
@@ -581,7 +581,7 @@ void Core::onGroupSubjectChanged(const QString &groupId,
 }
 
 void Core::onGroupMessage(const QString groupId,
-                          const lib::messenger::PeerId peerId,
+                          const lib::messenger::IMPeerId peerId,
                           const lib::messenger::IMMessage message) {
 
   qDebug() << __func__ << "groupId:" << groupId;
@@ -608,7 +608,7 @@ void Core::onGroupOccupants(const QString groupId, const uint size) {
 }
 
 void Core::onGroupOccupantStatus(const QString groupId, //
-                                 const lib::messenger::GroupOccupant occ) {
+                                 const lib::messenger::IMGroupOccupant occ) {
 
     GroupOccupant go = {.jid = occ.jid,
                         .nick=occ.nick,
@@ -619,8 +619,8 @@ void Core::onGroupOccupantStatus(const QString groupId, //
     emit groupPeerStatusChanged(groupId, go);
 }
 
-void Core::onGroupInfo( QString groupId, lib::messenger::GroupInfo groupInfo) {
-    GroupInfo info={
+void Core::onGroupInfo( QString groupId, lib::messenger::IMGroup groupInfo) {
+    GroupInfo info = {
         .name = groupInfo.name,
         .description = groupInfo.description,
         .subject = groupInfo.subject,
@@ -679,7 +679,7 @@ QString Core::getFriendRequestErrorMessage(const ToxId &friendId,
   //  }
 
   //  if (hasFriendWithPublicKey(receiver.getPublicKey())) {
-  return tr("Friend is already added",
+  return tr("IMFriend is already added",
             "Error while sending friendship request");
   //  }
 
@@ -1044,7 +1044,7 @@ void Core::loadFriends() {
     return;
   }
 
-  //  std::list<lib::IM::FriendId> peers = messenger->loadFriendList();
+  //  std::list<lib::IM::IMContactId> peers = messenger->loadFriendList();
   //  for (auto itr : peers) {
   //    qDebug() << "id=" << qstring(itr.getJid())
   //             << " name=" << qstring(itr.getUsername());
@@ -1130,7 +1130,7 @@ void Core::checkLastOnline(QString friendId) {
 void Core::loadFriendList(std::list<FriendInfo> &friends) const {
   QMutexLocker ml{&coreLoopLock};
 
-  std::list<lib::messenger::Friend> fs;
+  std::list<lib::messenger::IMFriend> fs;
   tox->getFriendList(fs);
 
   for (auto &f :fs) {
@@ -1330,7 +1330,7 @@ bool Core::parseConferenceJoinError(Tox_Err_Conference_Join error) const {
     return false;
 
   case TOX_ERR_CONFERENCE_JOIN_FRIEND_NOT_FOUND:
-    qCritical() << "Friend not found";
+    qCritical() << "IMFriend not found";
     return false;
 
   case TOX_ERR_CONFERENCE_JOIN_INIT_FAIL:

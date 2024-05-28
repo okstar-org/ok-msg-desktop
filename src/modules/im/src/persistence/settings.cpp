@@ -623,7 +623,7 @@ void Settings::createPersonal(QString basename) {
   QSettings ps(path, QSettings::IniFormat);
   ps.setIniCodec("UTF-8");
   ps.beginGroup("Friends");
-  //  ps.beginWriteArray("Friend", 0);
+  //  ps.beginWriteArray("IMFriend", 0);
   //  ps.endArray();
   ps.endGroup();
 
@@ -659,7 +659,7 @@ void Settings::loadPersonal(QString profileName, const ToxEncrypt *passKey) {
 
   ps.beginGroup("Friends");
   {
-    int size = ps.beginReadArray("Friend");
+    int size = ps.beginReadArray("IMFriend");
     friendLst.reserve(size);
     friendLst.clear();
     for (int i = 0; i < size; i++) {
@@ -772,7 +772,7 @@ void Settings::savePersonal(QString profileName, const ToxEncrypt *passkey) {
   QSettings ps(path, QSettings::IniFormat);
   ps.beginGroup("Friends");
   {
-    ps.beginWriteArray("Friend", friendLst.size());
+    ps.beginWriteArray("IMFriend", friendLst.size());
     int index = 0;
     for (auto &frnd : friendLst) {
       ps.setArrayIndex(index);

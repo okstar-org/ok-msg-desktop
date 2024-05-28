@@ -158,9 +158,9 @@ FriendWidget *FriendListWidget::addFriend(const FriendInfo &friendInfo) {
   //
   //  friendAlertConnections.insert(friendInfo, notifyReceivedConnection);
   //
-  //  connect(newfriend, &Friend::aliasChanged, this,
+  //  connect(newfriend, &IMFriend::aliasChanged, this,
   //          &Widget::onFriendAliasChanged);
-  //  connect(newfriend, &Friend::displayedNameChanged, this,
+  //  connect(newfriend, &IMFriend::displayedNameChanged, this,
   //          &Widget::onFriendDisplayedNameChanged);
   //
   //  connect(chatForm, &ChatForm::incomingNotification, this,
@@ -367,7 +367,7 @@ void FriendListWidget::moveFriends(QLayout *layout) {
 //    if (circleWidget) {
 //      circleWidget->moveFriendWidgets(this);
 //    } else if (friendWidget) {
-//      const Friend *contact = friendWidget->getFriend();
+//      const IMFriend *contact = friendWidget->getFriend();
 //      auto *categoryWidget = getTimeCategoryWidget(contact);
 //      categoryWidget->addFriendWidget(friendWidget, contact->getStatus());
 //    }
@@ -375,7 +375,7 @@ void FriendListWidget::moveFriends(QLayout *layout) {
 }
 
 //CategoryWidget *
-//FriendListWidget::getTimeCategoryWidget(const Friend *frd) const {
+//FriendListWidget::getTimeCategoryWidget(const IMFriend *frd) const {
 //  const auto activityTime = getActiveTimeFriend(frd);
 //  int timeIndex = static_cast<int>(base::getTimeBucket(activityTime));
 //  QWidget *widget = activityLayout->itemAt(timeIndex)->widget();
@@ -528,7 +528,7 @@ void FriendListWidget::setGroupInfo(const GroupId &groupId, const GroupInfo &inf
 //  CircleWidget *circleWidget = createCircleWidget();
 //  if (circleWidget != nullptr) {
 //    if (friendWidget != nullptr) {
-//      const Friend *f = friendWidget->getFriend();
+//      const IMFriend *f = friendWidget->getFriend();
 //      ToxPk toxPk = f->getPublicKey();
 //      int circleId = Settings::getInstance().getFriendCircleID(toxPk);
 //      CircleWidget *circleOriginal = CircleWidget::getFromID(circleId);
@@ -590,7 +590,7 @@ void FriendListWidget::renameGroupWidget(GroupWidget *groupWidget,
 //}
 
 void FriendListWidget::onFriendWidgetRenamed(FriendWidget *friendWidget) {
-//  const Friend *contact = friendWidget->getFriend();
+//  const IMFriend *contact = friendWidget->getFriend();
 //  auto status = contact->getStatus();
 //  if (mode == SortingMode::Activity) {
 //    auto *categoryWidget = getTimeCategoryWidget(contact);
@@ -833,7 +833,7 @@ void FriendListWidget::moveWidget(FriendWidget *widget, Status::Status s,
 
 //    circleWidget->addFriendWidget(widget, s);
   } else {
-//    const Friend *contact = widget->getFriend();
+//    const IMFriend *contact = widget->getFriend();
 //    auto *categoryWidget = getTimeCategoryWidget(contact);
 //    categoryWidget->addFriendWidget(widget, contact->getStatus());
 //    categoryWidget->show();

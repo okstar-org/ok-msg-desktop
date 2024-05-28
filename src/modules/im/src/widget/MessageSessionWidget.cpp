@@ -136,12 +136,12 @@ MessageSessionWidget::MessageSessionWidget(
 
   // update alias when edited
 //  connect(nameLabel, &CroppingLabel::editFinished, //
-//          m_friend, &Friend::setAlias);
+//          m_friend, &IMFriend::setAlias);
 
-//  connect(m_friend, &Friend::displayedNameChanged, //
+//  connect(m_friend, &IMFriend::displayedNameChanged, //
 //          nameLabel, &CroppingLabel::setText);
 
-//  connect(m_friend, &Friend::displayedNameChanged, this,
+//  connect(m_friend, &IMFriend::displayedNameChanged, this,
 //          [this](const QString &newName) {
 //            Q_UNUSED(newName);
 //            emit widgetRenamed(this);
@@ -357,7 +357,7 @@ void MessageSessionWidget::removeChat() {
 //namespace {
 
 //std::tuple<CircleWidget *, FriendListWidget *>
-//getCircleAndFriendList(const Friend *frnd, MessageSessionWidget *fw) {
+//getCircleAndFriendList(const IMFriend *frnd, MessageSessionWidget *fw) {
 //  const auto pk = frnd->getPublicKey();
 //  const auto circleId = Settings::getInstance().getFriendCircleID(pk);
 //  auto circleWidget = CircleWidget::getFromID(circleId);
@@ -524,7 +524,7 @@ QString MessageSessionWidget::getStatusString() const {
     return {};
 }
 
-//Friend *MessageSessionWidget::getFriend() const {
+//IMFriend *MessageSessionWidget::getFriend() const {
 //    auto contact = sendWorker->getChatroom()->getContact();
 //    auto cid = contact->getId();
 
@@ -596,7 +596,7 @@ void MessageSessionWidget::mouseMoveEvent(QMouseEvent *ev) {
   const int distance = (dragStartPos - ev->pos()).manhattanLength();
   if (distance > QApplication::startDragDistance()) {
     QMimeData *mdata = new QMimeData;
-//    const Friend *frnd = getFriend();
+//    const IMFriend *frnd = getFriend();
 //    mdata->setText(frnd->getDisplayedName());
 //    mdata->setData("toxPk", frnd->getPublicKey().getByteArray());
 

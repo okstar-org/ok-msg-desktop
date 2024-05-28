@@ -147,109 +147,26 @@ void ContentDialog::closeEvent(QCloseEvent* event)
 void ContentDialog::addFriend(FriendChatroom* chatroom,
                               GenericChatForm* form)
 {
-//    const auto compact = Settings::getInstance().getCompactLayout();
-//    auto frnd = chatroom->getFriend();
-//    const auto& friendPk = frnd->getPublicKey();
-    m_chatroom = chatroom;
-    m_chatForm = reinterpret_cast<GenericChatForm *>(form);
 
-
-//    auto friendWidget = new FriendWidget(chatRoom, compact);
-//    emit connectFriendWidget(*friendWidget);
-//    contactWidgets[friendPk] = friendWidget;
-//    friendLayout->addFriendWidget(friendWidget, frnd->getStatus());
-//    contactChatForms[friendPk] = form;
-
-    // TODO(sudden6): move this connection to the Friend::displayedNameChanged signal
-//    connect(frnd, &Friend::aliasChanged, this, &ContentDialog::updateFriendWidget);
-//    connect(frnd, &Friend::statusMessageChanged, this, &ContentDialog::setStatusMessage);
-//    connect(friendWidget, &FriendWidget::chatroomWidgetClicked, this, &ContentDialog::activate);
-//
-//    // FIXME: emit should be removed
-//    emit friendWidget->chatroomWidgetClicked(friendWidget);
-//
-//    return friendWidget;
 }
 
 void ContentDialog::addGroup(GroupChatroom* chatroom, GenericChatForm* form)
 {
-//    const auto g = chatroom->getGroup();
-//    const auto& groupId = g->getPersistentId();
-//    const auto compact = Settings::getInstance().getCompactLayout();
-//    auto groupWidget = new GroupWidget(chatroom, compact);
-//    contactWidget = groupWidget;
-    m_chatForm = form;
-    m_chatroom = chatroom;
-
-//    groupLayout.addSortedWidget(groupWidget);
-
-//    connect(groupWidget, &GroupWidget::chatroomWidgetClicked, this, &ContentDialog::activate);
-
-    // FIXME: emit should be removed
-//    emit groupWidget->chatroomWidgetClicked(groupWidget);
-
-//    return groupWidget;
 
 }
 
 void ContentDialog::removeFriend(const ToxPk& friendPk)
 {
-//    auto chatroomWidget = qobject_cast<FriendWidget*>(contactWidgets[friendPk]);
-//    disconnect(chatroomWidget->getFriend(), &Friend::aliasChanged, this,
-//               &ContentDialog::updateFriendWidget);
-//
-//    // Need to find replacement to show here instead.
-//    if (activeChatroomWidget == chatroomWidget) {
-//        cycleContacts(/* forward = */ true, /* inverse = */ false);
-//    }
-//
-//    friendLayout->removeFriendWidget(chatroomWidget, Status::Status::Offline);
-//    friendLayout->removeFriendWidget(chatroomWidget, Status::Status::Online);
-//
-//    chatroomWidget->deleteLater();
-//
-//    if (chatroomCount() == 0) {
-//        contentLayout->clear();
-//        activeChatroomWidget = nullptr;
-//        deleteLater();
-//    } else {
-//        update();
-//    }
-//
-//    contactWidgets.remove(friendPk);
-//    contactChatForms.remove(friendPk);
-//    closeIfEmpty();
+
 }
 
 void ContentDialog::removeGroup(const GroupId& groupId)
 {
-//    auto chatroomWidget = qobject_cast<GroupWidget*>(contactWidgets[groupId]);
-//    // Need to find replacement to show here instead.
-//    if (activeChatroomWidget == chatroomWidget) {
-//        cycleContacts(true, false);
-//    }
-//
-//    groupLayout.removeSortedWidget(chatroomWidget);
-//    chatroomWidget->deleteLater();
-//
-//    if (chatroomCount() == 0) {
-//        contentLayout->clear();
-//        activeChatroomWidget = nullptr;
-//        deleteLater();
-//    } else {
-//        update();
-//    }
-//
-//    contactWidgets.remove(groupId);
-//    contactChatForms.remove(groupId);
-//    closeIfEmpty();
 }
 
 void ContentDialog::closeIfEmpty()
 {
-//    if (contactWidgets.isEmpty()) {
-//        close();
-//    }
+
 }
 
 int ContentDialog::chatroomCount() const
@@ -445,7 +362,7 @@ bool ContentDialog::event(QEvent* event)
 
 //            updateTitleAndStatusIcon();
 
-//            const Friend* frnd = activeChatroomWidget->getFriend();
+//            const IMFriend* frnd = activeChatroomWidget->getFriend();
 //            const Group* group = activeChatroomWidget->getGroup();
 
 //            if (frnd) {
@@ -631,7 +548,7 @@ void ContentDialog::setStatusMessage(const ToxPk& friendPk, const QString& messa
 
 /**
  * @brief Update friend widget name and position.
- * @param friendId Friend Id.
+ * @param friendId IMFriend Id.
  * @param alias Alias to display on widget.
  */
 void ContentDialog::updateFriendWidget(const ToxPk& friendPk, QString alias)

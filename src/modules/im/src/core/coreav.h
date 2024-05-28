@@ -94,10 +94,10 @@ signals:
   void avInvite(QString friendId, bool video);
   void avStart(QString friendId, bool video);
   void avEnd(QString friendId, bool error = false);
-  void createCallToPeerId(lib::messenger::PeerId friendId, QString callId, bool video);
+  void createCallToPeerId(lib::messenger::IMPeerId friendId, QString callId, bool video);
 
 private slots:
-  void doCreateCallToPeerId(lib::messenger::PeerId friendId, QString callId, bool video);
+  void doCreateCallToPeerId(lib::messenger::IMPeerId friendId, QString callId, bool video);
 
   static void callCallback(ToxAV *toxAV, QString friendId, QString callId,
                            bool audio, bool video, void *self);
@@ -155,11 +155,11 @@ private:
 
   void onCallRetract(const QString &friendId, int state) override;
 
-   void onCallAcceptByOther(const QString& callId, const lib::messenger::PeerId& peerId) override;
+   void onCallAcceptByOther(const QString& callId, const lib::messenger::IMPeerId & peerId) override;
 
-  void receiveCallStateAccepted(lib::messenger::PeerId friendId, QString callId, bool video) override;
+  void receiveCallStateAccepted(lib::messenger::IMPeerId friendId, QString callId, bool video) override;
 
-  void receiveCallStateRejected(lib::messenger::PeerId friendId, QString callId, bool video) override;
+  void receiveCallStateRejected(lib::messenger::IMPeerId friendId, QString callId, bool video) override;
 
   void onHangup(const QString &friendId,
                 TOXAV_FRIEND_CALL_STATE state) override;

@@ -68,8 +68,8 @@ CoreAV::CoreAV(std::unique_ptr<ToxAV, ToxAVDeleter> toxav,
   assert(coreavThread);
   assert(iterateTimer);
     
-  qRegisterMetaType<lib::messenger::PeerId>("lib::messenger::PeerId");
-  qRegisterMetaType<lib::messenger::FriendId>("lib::messenger::FriendId");
+  qRegisterMetaType<lib::messenger::IMPeerId>("lib::messenger::IMPeerId");
+  qRegisterMetaType<lib::messenger::IMContactId>("lib::messenger::IMContactId");
 
   connect(this, &CoreAV::createCallToPeerId, this, &CoreAV::doCreateCallToPeerId);
 
@@ -725,7 +725,7 @@ void CoreAV::onCallRetract(const QString &friendNum, int state) {
 }
 
 void CoreAV::onCallAcceptByOther(const QString& callId,
-                                 const lib::messenger::PeerId& peerId) {
+                                 const lib::messenger::IMPeerId & peerId) {
 
   qDebug() << ("onCallAcceptByOther")<<(peerId.toString())<<"callId"<<callId;
   QString friendNum;
@@ -747,7 +747,7 @@ void CoreAV::onCallAcceptByOther(const QString& callId,
 }
 
 
-void CoreAV::receiveCallStateAccepted(lib::messenger::PeerId peerId, QString callId, bool video) {
+void CoreAV::receiveCallStateAccepted(lib::messenger::IMPeerId peerId, QString callId, bool video) {
   qDebug() << "receiveCallStateAccepted from peerId" << peerId.toString()
            << "callId:" << callId;
 
@@ -760,7 +760,7 @@ void CoreAV::receiveCallStateAccepted(lib::messenger::PeerId peerId, QString cal
   if(QThread::currentThread() != coreavThread.get()){
 //   bool invoked= QMetaObject::invokeMethod(toxav.get(),
 //                                "createCallToPeerId",
-//                                Q_ARG(lib::IM::PeerId, receiver),
+//                                Q_ARG(lib::IM::IMPeerId, receiver),
 //                                Q_ARG(QString, callId),
 //                                Q_ARG(bool, video));
     emit createCallToPeerId(peerId, callId, video);
@@ -770,11 +770,11 @@ void CoreAV::receiveCallStateAccepted(lib::messenger::PeerId peerId, QString cal
 
 }
 
-void CoreAV::doCreateCallToPeerId(lib::messenger::PeerId friendId, QString callId, bool video) {
+void CoreAV::doCreateCallToPeerId(lib::messenger::IMPeerId friendId, QString callId, bool video) {
   toxav->createCallToPeerId(friendId, callId, video);
 }
 
-void CoreAV::receiveCallStateRejected(lib::messenger::PeerId friendId, QString callId, bool video) {
+void CoreAV::receiveCallStateRejected(lib::messenger::IMPeerId friendId, QString callId, bool video) {
   qDebug() << "CoreAV::receiveCallStateRejected" << friendId.toString() << callId;
   stateCallback(toxav.get(), //
                 friendId.toFriendId(),                                     //
@@ -890,7 +890,7 @@ void CoreAV::stateCallback(ToxAV *toxav,      //
       emit self->avStart(friendNum, videoEnabled);
     } else if ((call.getState() & TOXAV_FRIEND_CALL_STATE_SENDING_V) &&
                !(state & TOXAV_FRIEND_CALL_STATE_SENDING_V)) {
-      qDebug() << "Friend" << friendNum << "stopped sending video";
+      qDebug() << "IMFriend" << friendNum << "stopped sending video";
       if (call.getVideoSource()) {
         call.getVideoSource()->stopSource();
       }
