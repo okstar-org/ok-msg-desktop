@@ -896,6 +896,8 @@ signals:
 
   void groupRoomInfo(QString groupId, GroupInfo groupInfo);
 
+  void groupSubjectChanged(const JID group, const std::string subject);
+
   void doPubSubEventDone();
 
 public slots:

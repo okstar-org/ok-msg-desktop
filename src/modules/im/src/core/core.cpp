@@ -559,15 +559,25 @@ void Core::onGroup(const QString groupId, const QString name) {
 //                               ToxString(cTitle, length).getQString());
 //}
 
-void Core::onGroupInvite(const QString groupId, const QString peerId,
+void Core::onGroupInvite(const QString groupId,
+                         const QString peerId,
                          const QString message) {
 
-  qDebug() << "onGroupInvite groupId:" << groupId << " receiver:" << peerId
+  qDebug() << __func__ << "groupId:" << groupId
+           << " receiver:" << peerId
            << " msg:" << message;
 
-  GroupInvite invite(groupId, peerId, TOX_CONFERENCE_TYPE_TEXT,
+  GroupInvite invite(groupId, peerId,
+                     TOX_CONFERENCE_TYPE_TEXT,
                      message.toUtf8());
   emit groupInviteReceived(invite);
+}
+
+void Core::onGroupSubjectChanged(const QString &groupId,
+                                 const QString &subject)
+{
+    qDebug() << __func__ << "groupId:" << groupId << " subject:" << subject;
+    emit groupSubjectChanged(GroupId(groupId), subject);
 }
 
 void Core::onGroupMessage(const QString groupId,
@@ -800,8 +810,6 @@ void Core::setGroupName(const QString &groupId, const QString &name) {
   qDebug() << __func__ << groupId << name;
   QMutexLocker ml{&coreLoopLock};
   tox->setRoomName(groupId, name);
-//  emit saveRequest();
-  //  emit groupTitleChanged(groupId, getUsername(), name);
 }
 
 void Core::setGroupSubject(const QString &groupId, const QString &subject)

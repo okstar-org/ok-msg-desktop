@@ -29,13 +29,14 @@ AboutGroupForm::AboutGroupForm(const GroupId& groupId_, QWidget *parent) :
 
     //不可变(只接收来自服务器修改的推送)
     ui->groupName->setText(group->getName());
-
-    //
-    ui->name->setText(group->getName());
-    connect(ui->name, &QLineEdit::textChanged, this, &AboutGroupForm::doNameChanged);
-    connect(group, &Group::nameChanged, [&](auto name){
+    connect(group, &Group::nameChanged  , this, [&](const QString& name){
+        ui->groupName->setText(name);
         ui->name->setText(name);
     });
+
+    //名称
+    ui->name->setText(group->getName());
+    connect(ui->name, &QLineEdit::textChanged, this, &AboutGroupForm::doNameChanged);
 
     //备注名
     ui->alias->setText(group->getDisplayedName());
@@ -43,20 +44,11 @@ AboutGroupForm::AboutGroupForm(const GroupId& groupId_, QWidget *parent) :
 
     //主题
     connect(ui->notice, &QLineEdit::textChanged,  this, &AboutGroupForm::doSubjectChanged);
+    ui->subject->setText(group->getSubject());
+    connect(group, &Group::subjectChanged  , this, [&](const QString& name){
+        ui->subject->setText(name);
+    });
 
-
-
-
-    init();
-}
-
-AboutGroupForm::~AboutGroupForm()
-{
-    delete ui;
-}
-
-
-void AboutGroupForm::init(){
     connect(group, &Group::subjectChanged, this, [&](const QString& author,const QString &title){
         ui->subject->setText(title);
     });
@@ -81,6 +73,11 @@ void AboutGroupForm::init(){
     }
 
     updateUI();
+}
+
+AboutGroupForm::~AboutGroupForm()
+{
+    delete ui;
 }
 
 void AboutGroupForm::updateUI()

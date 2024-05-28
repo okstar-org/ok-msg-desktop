@@ -130,6 +130,8 @@ public:
                              const QString peerId,  //
                              const QString message) = 0;
 
+  virtual void onGroupSubjectChanged(const QString &groupId, const QString &subject)=0;
+
   virtual void onGroupMessage(const QString groupId, //
                               const PeerId peerId,   //
                               const IMMessage message) = 0;

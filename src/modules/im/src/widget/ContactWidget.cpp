@@ -103,8 +103,7 @@ void ContactWidget::connectToCore(Core *core) {
 
   connect(core, &Core::groupInfoReceipt, this, &ContactWidget::onGroupInfoReceived);
 
-  connect(core, &Core::groupTitleChanged, this, &ContactWidget::onGroupTitleChanged);
-
+  connect(core, &Core::groupSubjectChanged, this, &ContactWidget::onGroupSubjectChanged);
   connect(core, &Core::groupInviteReceived, this, &ContactWidget::onGroupInviteReceived);
 
   connect(core, &Core::groupPeerlistChanged, this, &ContactWidget::onGroupPeerListChanged);
@@ -318,19 +317,16 @@ void ContactWidget::onGroupPeerStatusChanged(const QString &groupnumber, const G
   g->addPeer(go);
 }
 
-void ContactWidget::onGroupTitleChanged(QString groupnumber, const QString &author, const QString &title) {
-  qDebug() << __func__ << "group" << groupnumber << title;
-  const GroupId &groupId = GroupId(groupnumber);
-  Group *g = GroupList::findGroup(groupId);
-  if (!g) {
-    qWarning() << "Can not find group" << groupnumber;
-    return;
-  }
+void ContactWidget::onGroupSubjectChanged(const GroupId& groupId, const QString &subject)
+{
+    Group *g = GroupList::findGroup(groupId);
+    if (!g) {
+      qWarning() << "Can not find group" << groupId;
+      return;
+    }
 
-  contactListWidget->setGroupTitle(groupId, author, title);
+    g->setSubject({}, subject);
 
-  //  FilterCriteria filter = getFilterCriteria();
-  //  widget->searchName(ui->searchContactText->text(), filterGroups(filter));
 }
 
 // void ContactWidget::groupInvitesUpdate() {

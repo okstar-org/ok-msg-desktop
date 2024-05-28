@@ -1064,5 +1064,12 @@ void FriendListWidget::do_toShowDetails(const ContactId &cid) {
       break;
     }
   }
+
+  for(auto gw: groupWidgets){
+      if(gw->getContactId() == cid){
+          emit gw->chatroomWidgetClicked(gw);
+          break;
+      }
+  }
 }
 

@@ -84,9 +84,8 @@ public slots:
 
     void onGroupPeerNameChanged(QString groupnumber, const ToxPk &peerPk,
                                 const QString &newName);
-    void onGroupTitleChanged(QString groupnumber, const QString &author,
-                             const QString &title);
 
+    void onGroupSubjectChanged(const GroupId&, const QString &subject);
     void onGroupPeerStatusChanged(const QString & groupnumber,const GroupOccupant &go);
     void onGroupClicked();
 

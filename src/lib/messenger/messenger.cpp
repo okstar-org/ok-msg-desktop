@@ -298,11 +298,20 @@ bool Messenger::connectIM( ) {
             }
           });
 
+  //group
   connect(_im, &IM::groupInvite, this,
           [&](const QString &groupId, const QString &peerId,
               const QString &message) {
             for (auto handler : groupHandlers) {
               handler->onGroupInvite(groupId, peerId, message);
+            }
+          });
+
+
+  connect(_im, &IM::groupSubjectChanged, this,
+          [&](const JID &group, const std::string &subject) -> void {
+            for (auto handler : groupHandlers) {
+              handler->onGroupSubjectChanged(qstring(group.bare()), qstring(subject));
             }
           });
 

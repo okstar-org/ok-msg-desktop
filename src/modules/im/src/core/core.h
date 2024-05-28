@@ -217,6 +217,8 @@ signals:
                          const QString &title = QString());
   void groupInviteReceived(const GroupInvite &inviteInfo);
 
+  void groupSubjectChanged(GroupId groupId, QString subject);
+
   void groupMessageReceived(GroupId groupId, GroupMessage msg);
 
   void groupNamelistChanged(QString groupnumber, QString peerId,
@@ -230,9 +232,6 @@ signals:
 
   void groupPeerNameChanged(QString groupnumber, const ToxPk &peerPk,
                             const QString &newName);
-
-  void groupTitleChanged(QString groupnumber, const QString &author,
-                         const QString &title);
 
   void groupInfoReceipt(const GroupId & groupId,
                         const GroupInfo& info);
@@ -344,6 +343,7 @@ private:
   virtual void onGroupInvite(const QString groupId, //
                               const QString peerId,  //
                               const QString message) override;
+virtual void onGroupSubjectChanged(const QString &groupId, const QString &subject) override;
 
   virtual void onGroupMessage(const QString groupId, //
                               const lib::messenger::PeerId peerId,  //

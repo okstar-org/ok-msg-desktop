@@ -933,8 +933,12 @@ bool IM::handleMUCRoomCreation(MUCRoom *room) {
 void IM::handleMUCSubject(MUCRoom *room,           //
                           const std::string &nick, //
                           const std::string &subject) {
-  qDebug() << __func__ <<  room->name().c_str() << "subject" << qstring(subject);
-  room->getRoomInfo();
+
+    qDebug() << __func__ <<  room->name().c_str() << "subject" << qstring(subject);
+    emit groupSubjectChanged(room->jid(), subject);
+
+    //可能存在其它更新，执行信息拉取
+    room->getRoomInfo();
 }
 
 void IM::handleMUCInviteDecline(MUCRoom *room, const JID &invitee, const std::string &reason) {

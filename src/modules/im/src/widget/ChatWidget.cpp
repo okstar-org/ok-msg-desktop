@@ -206,8 +206,6 @@ void ChatWidget::connectToCore(Core *core) {
           &ChatWidget::onGroupPeerNameChanged);
   connect(core, &Core::groupPeerStatusChanged, this,
           &ChatWidget::onGroupPeerStatusChanged);
-  connect(core, &Core::groupTitleChanged, this,
-          &ChatWidget::onGroupTitleChanged);
 
   //    connect(core, &Core::groupPeerAudioPlaying, this,
   //            &ChatWidget::onGroupPeerAudioPlaying);
