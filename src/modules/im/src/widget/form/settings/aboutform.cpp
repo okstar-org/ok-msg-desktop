@@ -53,16 +53,40 @@ AboutForm::AboutForm(UpdateCheck* updateCheck)
 {
     bodyUI->setupUi(this);
 
+    if (QString(GIT_VERSION).indexOf(" ") > -1)
+        bodyUI->gitVersion->setOpenExternalLinks(false);
+
+//    QString tmpl="<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd\">\
+//    <html><head><meta name=\"qrichtext\" content=\"1\" />"
+//    "<style type=\"text/css\">p, li { white-space: pre-wrap; }</style>"
+//    "</head><body style=\" font-family:'Noto Sans'; font-size:10pt; font-weight:400; font-style:normal;\">\
+//    <p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">%1</p></body></html>";
+
+    QString lic = QString("Copyright (c) 2022 **%1 %2**\n\r"
+                          "**%3** is licensed under Mulan PubL v2.\n\r"
+                          "You can use this software according to the terms and conditions of the Mulan PubL v2.\n\r"
+                          "You may obtain a copy of Mulan PubL v2 at:\n\r"
+                          "**http://license.coscl.org.cn/MulanPubL-2.0**\n\r"
+                          " THIS SOFTWARE IS PROVIDED ON AN \"AS IS\" BASIS,\n\r"
+                          " WITHOUT WARRANTIES OF ANY KIND,EITHER EXPRESS OR IMPLIED,\n\r"
+                          " INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,\n\r"
+                          " MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.\n\r"
+                          " See the Mulan PubL v2 for more details.\n\r")
+                          .arg(ORGANIZATION_NAME)
+                          .arg(ORGANIZATION_DOMAIN)
+                          .arg(APPLICATION_NAME);
+
+//    auto html=QString(tmpl).arg(lic);
+    bodyUI->license->setMarkdown(lic);
+
     // block all child signals during initialization
     const RecursiveSignalBlocker signalBlocker(this);
 
     replaceVersions();
 
-    if (QString(GIT_VERSION).indexOf(" ") > -1)
-        bodyUI->gitVersion->setOpenExternalLinks(false);
-
     eventsInit();
     settings::Translator::registerHandler(std::bind(&AboutForm::retranslateUi, this), this);
+
 }
 
 /**
