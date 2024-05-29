@@ -56,12 +56,6 @@ AboutForm::AboutForm(UpdateCheck* updateCheck)
     if (QString(GIT_VERSION).indexOf(" ") > -1)
         bodyUI->gitVersion->setOpenExternalLinks(false);
 
-//    QString tmpl="<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd\">\
-//    <html><head><meta name=\"qrichtext\" content=\"1\" />"
-//    "<style type=\"text/css\">p, li { white-space: pre-wrap; }</style>"
-//    "</head><body style=\" font-family:'Noto Sans'; font-size:10pt; font-weight:400; font-style:normal;\">\
-//    <p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">%1</p></body></html>";
-
     QString lic = QString("Copyright (c) 2022 **%1 %2**\n\r"
                           "**%3** is licensed under Mulan PubL v2.\n\r"
                           "You can use this software according to the terms and conditions of the Mulan PubL v2.\n\r"
@@ -76,7 +70,6 @@ AboutForm::AboutForm(UpdateCheck* updateCheck)
                           .arg(ORGANIZATION_DOMAIN)
                           .arg(APPLICATION_NAME);
 
-//    auto html=QString(tmpl).arg(lic);
     bodyUI->license->setMarkdown(lic);
 
     // block all child signals during initialization
