@@ -65,8 +65,8 @@ public:
 
   static ToxCorePtr makeToxCore(const QByteArray &savedata, const ICoreSettings *const settings, ToxCoreErrors *err = nullptr);
   static Core *getInstance();
-  const CoreAV *getAv() const;
-  CoreAV *getAv();
+//  const CoreAV *getAv() const;
+//  CoreAV *getAv();
   CoreFile *getCoreFile() const;
   ~Core();
 
@@ -339,7 +339,7 @@ private:
   ToxPtr tox;
 
   std::unique_ptr<CoreFile> file;
-  std::unique_ptr<CoreAV> av;
+//  std::unique_ptr<CoreAV> av;
   ReceiptNum m_receipt;
   QTimer *toxTimer = nullptr;
   // recursive, since we might call our own functions

@@ -144,7 +144,7 @@ ChatForm::ChatForm(const ToxPk *chatFriend,
   connect(coreFile, &CoreFile::fileNameChanged, this,
           &ChatForm::onFileNameChanged);
 
-  const CoreAV *av = core->getAv();
+  const CoreAV *av = CoreAV::getInstance();
   connect(av, &CoreAV::avInvite, this, &ChatForm::onAvInvite);
   connect(av, &CoreAV::avStart, this, &ChatForm::onAvStart);
   connect(av, &CoreAV::avEnd, this, &ChatForm::onAvEnd);
@@ -299,7 +299,7 @@ void ChatForm::onAvInvite(QString friendId, bool video) {
           .testFlag(testedFlag)) {
     QString friendId = f->getId();
     qDebug() << "automatic call answer";
-    CoreAV *coreav = Core::getInstance()->getAv();
+    CoreAV *coreav = CoreAV::getInstance();
     QMetaObject::invokeMethod(coreav, "answerCall", Qt::QueuedConnection,
                               Q_ARG(QString, friendId), Q_ARG(bool, video));
     onAvStart(friendId, video);
@@ -332,6 +332,8 @@ void ChatForm::onAvEnd(QString friendId, bool error) {
     return;
   }
 
+  qDebug()<<__func__ <<"friendId" << friendId;
+
   headWidget->removeCallConfirm();
   // Fixes an OS X bug with ending a call while in full screen
   if (netcam && netcam->isFullScreen()) {
@@ -340,7 +342,9 @@ void ChatForm::onAvEnd(QString friendId, bool error) {
 
   emit stopNotification();
   emit endCallNotification();
-  updateCallButtons();
+
+  auto status = Core::getInstance()->getStatus();
+  updateCallButtons(status);
   stopCounter(error);
   hideNetcam();
 }
@@ -360,7 +364,7 @@ void ChatForm::onAnswerCallTriggered(bool video) {
   emit acceptCall(friendId);
 
   updateCallButtons();
-  CoreAV *av = Core::getInstance()->getAv();
+  CoreAV *av = CoreAV::getInstance();
   if (!av->answerCall(friendId, video)) {
     updateCallButtons();
     stopCounter();
@@ -377,7 +381,7 @@ void ChatForm::onRejectCallTriggered() {
 }
 
 void ChatForm::onCallTriggered() {
-  CoreAV *av = Core::getInstance()->getAv();
+  CoreAV *av = CoreAV::getInstance();
   QString friendId = f->getId();
   if (av->isCallStarted(f)) {
     av->cancelCall(friendId);
@@ -387,7 +391,7 @@ void ChatForm::onCallTriggered() {
 }
 
 void ChatForm::onVideoCallTriggered() {
-  CoreAV *av = Core::getInstance()->getAv();
+  CoreAV *av = CoreAV::getInstance();
   QString cId = f->getId();
   if (av->isCallStarted(f)) {
     // TODO: We want to activate video on the active call.
@@ -401,13 +405,13 @@ void ChatForm::onVideoCallTriggered() {
 
 
 void ChatForm::onMicMuteToggle() {
-  CoreAV *av = Core::getInstance()->getAv();
+  CoreAV *av = CoreAV::getInstance();
   av->toggleMuteCallInput(f);
   updateMuteMicButton();
 }
 
 void ChatForm::onVolMuteToggle() {
-  CoreAV *av = Core::getInstance()->getAv();
+  CoreAV *av = CoreAV::getInstance();
   av->toggleMuteCallOutput(f);
   updateMuteVolButton();
 }
@@ -461,7 +465,7 @@ GenericNetCamView *ChatForm::createNetcam() {
   qDebug() <<__func__<< "creating netcam";
   QString friendId = f->toString();
   NetCamView *view = new NetCamView(*f, this);
-  CoreAV *av = Core::getInstance()->getAv();
+  CoreAV *av = CoreAV::getInstance();
 
   VideoSource *source = av->getVideoSourceFromCall(friendId);
 //  VideoSource *selfSource = reinterpret_cast<VideoSource *>(av->getVideoSourceFromSelf());

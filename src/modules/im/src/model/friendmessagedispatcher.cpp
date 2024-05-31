@@ -134,6 +134,12 @@ void FriendMessageDispatcher::clearOutgoingMessages() {
 
 void FriendMessageDispatcher::onFileReceived( const ToxFile &file)
 {
-    const auto &friendId = ToxPk(file.getFriendId());
+    const auto &friendId = ToxPk(f);
     emit fileReceived(friendId, file);
+}
+
+void FriendMessageDispatcher::onFileCancelled(const QString &fileId)
+{
+    const auto &friendId = ToxPk(f);
+    emit fileCancelled(friendId, fileId);
 }

@@ -67,6 +67,7 @@ AboutFriendForm::AboutFriendForm(std::unique_ptr<IAboutFriend> _about, QWidget* 
     ui->userName->setText(about->getName());
     connect(about->getFriend(), &Friend::nameChanged, [&](auto name){
         ui->userName->setText(name);
+        ui->alias->setPlaceholderText(name);
     });
 
     ui->alias->setText(about->getAlias());

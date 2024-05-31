@@ -15,16 +15,13 @@
 #include <string>
 #include <utility>
 
-#include "api/peer_connection_interface.h"
-
+#include <api/peer_connection_interface.h>
 #include <api/audio_codecs/builtin_audio_decoder_factory.h>
 #include <api/audio_codecs/builtin_audio_encoder_factory.h>
 #include <api/create_peerconnection_factory.h>
 #include <api/video_codecs/builtin_video_decoder_factory.h>
 #include <api/video_codecs/builtin_video_encoder_factory.h>
 #include <pc/video_track_source.h>
-
-
 #include <rtc_base/thread.h>
 #include <rtc_base/logging.h>
 #include <rtc_base/ssl_adapter.h>
@@ -210,14 +207,26 @@ CreateSessionDescription(webrtc::SdpType sdpType,
   return sessionDescriptionInterface;
 }
 
-ORTC::ORTC(std::list<IceServer> iceOptions, OkRTCHandler *handler,
+ORTC::ORTC(std::list<IceServer> iceOptions,
+           OkRTCHandler *handler,
            OkRTCRenderer *renderer)
-    : _iceOptions((iceOptions)) {
+    : _iceOptions((iceOptions))
+{
+
+//  _logSink(std::make_unique<LogSinkImpl>())
+//    rtc::LogMessage::AddLogToStream(_logSink.get(), rtc::LS_INFO);
+    rtc::LogMessage::LogToDebug(rtc::LS_INFO);
+//    rtc::LogMessage::SetLogToStderr(false);
+
+  RTC_LOG(LS_INFO) <<  "Starting the WebRTC..." ;
+
+  RTC_LOG(LS_INFO) << absl::string_view{"InitializeSSL=>"}<< rtc::InitializeSSL();
+
 
   _rtcHandler = handler;
   _rtcRenderer = renderer;
-  start();
 
+  start();
 }
 
 ORTC::~ORTC() {
@@ -228,29 +237,34 @@ ORTC::~ORTC() {
 
 void ORTC::start() {
 
-  assert(!_started);
+  if(_started){
+      return;
+  }
 
   // lock
-  _start_shutdown_mtx.lock();
+//  _start_shutdown_mtx.lock();
 
-  rtc::LogMessage::LogToDebug(rtc::LS_INFO);
-  rtc::InitializeSSL();
-  RTC_LOG(LS_INFO) << "WebRTC is starting...";
-
+  RTC_LOG(LS_INFO) << "Creating network thread";
   network_thread = rtc::Thread::CreateWithSocketServer();
-  network_thread->SetName("network_thread", nullptr);
-  bool result = network_thread->Start();
-  RTC_LOG(LS_INFO) << "Start network thread=>" << result;
+  RTC_LOG(LS_INFO) << "Network thread=>" << network_thread;
+  network_thread->SetName("network_thread", this);
+  network_thread->Start();
+  RTC_LOG(LS_INFO) << "Network thread is started=>";
 
+  RTC_LOG(LS_INFO) << "Creating worker thread";
   worker_thread = rtc::Thread::Create();
-  worker_thread->SetName("worker_thread", nullptr);
-  result = worker_thread->Start();
-  RTC_LOG(LS_INFO) << "Start worker thread=>" << result;
+  RTC_LOG(LS_INFO) << "Worker thread=>" << worker_thread;
+  worker_thread->SetName("worker_thread", this);
+  worker_thread->Start();
+  RTC_LOG(LS_INFO) << "Worker thread is started=>";
 
+  RTC_LOG(LS_INFO) << "Creating signaling thread";
   signaling_thread = rtc::Thread::Create();
-  signaling_thread->SetName("signaling_thread", nullptr);
-  result = signaling_thread->Start();
-  RTC_LOG(LS_INFO) << "Start signaling thread=>" << result;
+  RTC_LOG(LS_INFO) << "Signaling thread=>" << signaling_thread;
+  signaling_thread->SetName("signaling_thread", this);
+  signaling_thread->Start();
+  RTC_LOG(LS_INFO) << "Signaling thread is started=>";
+
 
   peer_connection_factory_ = webrtc::CreatePeerConnectionFactory(
       network_thread.get(),   /* network_thread */
@@ -263,13 +277,12 @@ void ORTC::start() {
       webrtc::CreateBuiltinVideoDecoderFactory(), //
       nullptr /* audio_mixer */,                  //
       nullptr /* audio_processing */);
+  RTC_LOG(LS_INFO) << "peer_connection_factory:" << peer_connection_factory_.get();
 
   webrtc::PeerConnectionFactoryInterface::Options options;
   options.disable_encryption = false;
   peer_connection_factory_->SetOptions(options);
 
-  RTC_LOG(LS_INFO) << "peer_connection_factory_:"
-                     << peer_connection_factory_.get();
 
   // qDebug(("Create audio source..."));
   _audioSource =
@@ -296,6 +309,7 @@ void ORTC::shutdown() {
 
   peer_connection_factory_ = nullptr;
   rtc::CleanupSSL();
+
 
   _shutdown = true;
   // unlock

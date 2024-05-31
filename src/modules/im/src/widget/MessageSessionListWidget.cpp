@@ -125,11 +125,10 @@ MessageSessionWidget *MessageSessionListWidget::createMessageSession(
   auto profile = Nexus::getProfile();
 
   auto &settings = Settings::getInstance();
-
-
   auto sw = getMessageSession(friendPk.toString());
   if(sw){
-    return sw;
+      qWarning() <<"Message session is existing.";
+      return sw;
   }
 
   sw = new MessageSessionWidget(m_contentLayout, friendPk, type);
@@ -745,6 +744,14 @@ void MessageSessionListWidget::setFriendFileReceived(const ToxPk &friendPk, cons
         ms->setFileReceived(file);
     }
 
+}
+
+void MessageSessionListWidget::setFriendFileCancelled(const ToxPk &f, const QString &fileId)
+{
+    auto ms = getMessageSession(ContactId(f).toString());
+    if(ms){
+        ms->setFileCancelled(fileId);
+    }
 }
 
 void MessageSessionListWidget::reloadTheme() {

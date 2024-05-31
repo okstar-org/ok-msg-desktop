@@ -88,8 +88,8 @@ public:
 
   JingleContents toJingleSdp(const webrtc::SessionDescriptionInterface *desc);
 
-  virtual void AddRef() const {};
-  virtual rtc::RefCountReleaseStatus Release() const {
+  virtual void AddRef() const override {};
+  virtual rtc::RefCountReleaseStatus Release() const override {
     return rtc::RefCountReleaseStatus::kDroppedLastRef;
   };
 

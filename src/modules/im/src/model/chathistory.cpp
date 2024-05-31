@@ -91,6 +91,10 @@ ChatHistory::ChatHistory(const ContactId& f_,    //
 
     connect(&messageDispatcher, &IMessageDispatcher::fileReceived, this, &ChatHistory::onFileUpdated);
     connect(&messageDispatcher, &IMessageDispatcher::fileReceived, &sessionChatLog, &SessionChatLog::onFileUpdated);
+    connect(&messageDispatcher, &IMessageDispatcher::fileCancelled, this, &ChatHistory::onFileCanceled);
+    connect(&messageDispatcher, &IMessageDispatcher::fileCancelled, &sessionChatLog, &SessionChatLog::onFileCanceled);
+
+
 
     // NOTE: this has to be done _after_ sending all sent messages since initial
     // state of the message has to be marked according to our dispatch state
@@ -240,7 +244,7 @@ std::vector<IChatLog::DateChatLogIdxPair>   //
 
 void ChatHistory::onFileUpdated(const ToxPk& sender, const ToxFile& file)
 {
-    qDebug() << __func__ <<"sender:" << sender.toString();
+    qDebug() << __func__ <<"friendId:" << sender.toString();
 
     if (canUseHistory()) {
         switch (file.status) {
@@ -257,7 +261,7 @@ void ChatHistory::onFileUpdated(const ToxPk& sender, const ToxFile& file)
         case FileStatus::FINISHED:
         case FileStatus::BROKEN: {
 //            const bool isSuccess = file.status == FileStatus::FINISHED;
-            history->setFileFinished(file);
+            history->setFileMessage(file);
             break;
         }
         case FileStatus::PAUSED:
@@ -268,6 +272,17 @@ void ChatHistory::onFileUpdated(const ToxPk& sender, const ToxFile& file)
     }
 
     sessionChatLog.onFileUpdated(sender, file);
+}
+
+void ChatHistory::onFileCanceled(const ToxPk &sender, const QString &fileId)
+{
+    qDebug() << __func__ <<"fileId:" <<fileId;
+    auto files = history->getMessageByDataId(fileId);
+    for(auto f: files){
+        auto ff = f.asFile();
+        ff.status = FileStatus::CANCELED;
+        history->setFileMessage(ToxFile(ff));
+    }
 }
 
 void ChatHistory::onFileTransferRemotePausedUnpaused(const ToxPk& sender, const ToxFile& file,
@@ -395,6 +410,8 @@ void ChatHistory::loadHistoryIntoSessionChatLog(ChatLogIdx start) const
         case HistMessageContentType::file: {
             auto file = message.asFile();
             auto tfile =ToxFile  { file };
+            tfile.receiver = message.receiver;
+            tfile.sender = message.sender;
             auto chatLogFile = ChatLogFile{date, tfile};
             sessionChatLog.insertFileAtIdx(currentIdx, sender, dispName, chatLogFile);
             break;

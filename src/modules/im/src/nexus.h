@@ -58,6 +58,7 @@ public:
   static Profile *getProfile();
   static Widget *getDesktopGUI();
 
+
   virtual void destroy() override;
 
   QString name() override;

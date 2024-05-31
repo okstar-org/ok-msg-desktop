@@ -902,7 +902,7 @@ void Widget::onStopNotification() { audioNotification.reset(); }
 
 
 void Widget::onRejectCall(QString friendId) {
-  core->getAv()->cancelCall(friendId);
+//  core->getAv()->cancelCall(friendId);
 }
 
 void Widget::addFriend0(const ToxPk &friendPk) {

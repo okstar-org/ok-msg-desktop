@@ -159,7 +159,7 @@ bool dbSchemaUpgrade(std::shared_ptr<RawDatabase>& db)
 
 MessageState getMessageState(bool isPending, bool isBroken)
 {
-    assert(!(isPending && isBroken));
+
     MessageState messageState;
     if (isPending) {
         messageState = MessageState::pending;
@@ -458,7 +458,7 @@ void History::addNewMessage(const Message& message,
                                             isDelivered, insertIdCallback));
 }
 
-void History::setFileFinished(const ToxFile& file)
+void History::setFileMessage(const ToxFile& file)
 {
     qDebug() <<__func__ <<"file:" <<file.fileId;
 
@@ -475,6 +475,7 @@ void History::setFileFinished(const ToxFile& file)
 
 
 }
+
 
 QList<History::HistMessage> History::getMessageByDataId(const QString &dataId)
 {
@@ -578,8 +579,8 @@ History::HistMessage History::rowToMessage(const QVector<QVariant>& row){
     QString sender_key = row[3].toString();
     QString message    = row[4].toString();
     auto type       = row[5].toInt(0);
-    auto isBroken   = !row[6].isNull();
-    auto isPending  = !row[7].isNull();
+    auto isBroken   = row[6].toInt(0);
+    auto isPending  = row[7].toInt(0);
     QString dataId = row[8].toString();
 
     auto ctype = static_cast<HistMessageContentType>(type);

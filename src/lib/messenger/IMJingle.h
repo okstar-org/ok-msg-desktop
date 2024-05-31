@@ -24,37 +24,46 @@
 
 #include <error.h>
 #include <inbandbytestream.h>
+#include <messagesessionhandler.h>
 #include <presencehandler.h>
 
-#include "IM.h"
 #include "IMConference.h"
-#include "IMFile.h"
 #include "IMJingleSession.h"
 #include "lib/messenger/messenger.h"
+#include "lib/session/AuthSession.h"
+
 #include "lib/ortc/ok_rtc_defs.h"
 #include "lib/ortc/ok_rtc_manager.h"
 #include "lib/ortc/ok_rtc_proxy.h"
-#include "lib/session/AuthSession.h"
 
-
-using namespace std;
-
+namespace gloox {
+namespace Jingle {
+class JingleMessage;
+}
+}
 namespace lib {
 namespace messenger {
 
 class IMFileTask;
+enum class CallDirection;
+
 
 class IMJingle : public QObject,
-                 public Jingle::SessionHandler,
+                 public MessageHandler,
+                 public gloox::IqHandler,
+                 public gloox::MessageSessionHandler,
+                 public gloox::Jingle::SessionHandler,
                  public lib::ortc::OkRTCHandler,
                  public lib::ortc::OkRTCRenderer {
   Q_OBJECT
 
 public:
-  IMJingle(IM *client);
+  IMJingle(IM *im, std::vector<FileHandler *> *fileHandlers, QObject *parent = nullptr);
+
   ~IMJingle() override;
 
-  void clientChanged(gloox::Client *client);
+   virtual void handleMessageSession( MessageSession* session ) override;
+   virtual void handleMessage( const Message& msg, MessageSession* session = 0 ) override;
 
   /**
    * 发起呼叫
@@ -74,24 +83,52 @@ public:
   void join(const JID &room);
   void setMute(bool mute);
   void setRemoteMute(bool mute);
+
   /**
-   * File(接收)
+   * jingle-message
+   */
+  //处理JingleMessage消息
+  void doJingleMessage(const IMPeerId &peerId, const gloox::Jingle::JingleMessage *jm);
+
+  //发起呼叫邀请
+  void proposeJingleMessage(const QString &friendId, const QString &callId, bool video);
+
+  void rejectJingleMessage(const QString &friendId, const QString &callId);
+
+  void acceptJingleMessage(const QString &friendId, const QString &callId);
+
+  void retractJingleMessage(const QString &friendId, const QString &callId);
+
+
+
+  /**
+   * File
    */
   void rejectFileRequest(const QString &friendId,
-                         const File &file);
+                         const QString &sId);
   void acceptFileRequest(const QString &friendId,
                          const File &file);
   void finishFileRequest(const QString &friendId,
                          const QString &sId);
   void finishFileTransfer(const QString &friendId,
                           const QString &sId);
-  /**
-   * File(发送)
-   */
+
   bool sendFile(const QString &friendId, const File &file);
   bool sendFileToResource(const JID &friendId, const File &file);
 
+
 protected:
+
+  /**
+   * iq handlers
+   * @param iq
+   * @return
+   */
+  bool handleIq(const IQ &iq) override;
+
+  void handleIqID(const IQ &iq, int context) override;
+
+
   void handleSessionAction(Jingle::Action action, Jingle::Session *session,
                            const Jingle::Session::Jingle *jingle) override;
 
@@ -122,39 +159,36 @@ protected:
   void onRender(const std::string &peerId,
                 lib::ortc::RendererImage image) override;
 
-  IMJingleSession *findSession(const std::string &sId);
+  IMJingleSession *findSession(const QString &sId);
+
+  IMJingleSession* createSession(const IMPeerId &to, const QString &sId);
 
 private:
-  void forClient(Client *client);
 
-  IM *client;
+  IM *im;
 
-  lib::ortc::JingleCallType m_callType;
-  CallStage m_callStage;
-  CallDirection m_callDirection;
-  bool isAccepted = false;
+  std::vector<FileHandler *> *fileHandlers;
 
   // receiver -> sid
-  std::map<IMPeerId, std::string> m_friendSessionMap;
+  QMap<IMPeerId, QString> m_friendSessionMap;
   //  std::map<IMPeerId, const Jingle::Session::Jingle *> m_jingleMap;
   // sid -> JingleContext
   //  std::map<std::string, lib::ortc::JingleContext> m_contextMap;
   // sid -> session
-  std::map<std::string, IMJingleSession *> m_sessionMap;
+  QMap<QString, IMJingleSession *> m_sessionMap;
 
 //  std::unique_ptr<lib::ortc::OkRTCManager> _rtcManager;
   std::unique_ptr<Jingle::SessionManager> _sessionManager;
 
-  QList<File> m_waitSendFiles;
 
-  // file sending task map
-  QMap<QString, IMFileTask *> m_fileSenderMap;
+
 
   QList<Jingle::Content *> m_ices;
 
-  std::string getSessionByFriendId(const QString &friendId);
+  QString getSessionByFriendId(const QString &friendId);
 
-  void cacheSessionInfo(Jingle::Session *session, lib::ortc::JingleCallType callType);
+  IMJingleSession* cacheSessionInfo(Jingle::Session *session, lib::ortc::JingleCallType callType);
+
   void clearSessionInfo(Jingle::Session *session);
 
   void doSessionInitiate(Jingle::Session *session,
@@ -180,27 +214,31 @@ private:
   void doDescriptionInfo(const Jingle::Session::Jingle *, const IMPeerId &);
   void doInvalidAction(const Jingle::Session::Jingle *, const IMPeerId &);
 
-  /**
-   * 启动文件发送任务
-   * @param session
-   * @param file
-   */
-  void doStartFileSendTask(const Jingle::Session *session,
-                           const File &file);
 
-  /**
-   * 停止文件发送任务
-   * @param session
-   * @param file
-   */
-  void doStopFileSendTask(const Jingle::Session *session,
-                          const File &file);
 
 signals:
+  /**
+   * Call events
+   * @param friendId
+   * @param audio
+   * @param video
+   */
+  void callStarted();
+  // 呼叫请求
+  void receiveCallRequest(QString friendId, QString callId, bool audio, bool video);
+  // 呼叫撤回
+  void receiveCallRetract(QString friendId, int state);
+  void receiveCallAcceptByOther(QString callId, IMPeerId peerId);
+  void receiveFriendHangup(QString friendId, int state);
+
+  // 对方状态变化
+  void receiveCallStateAccepted(IMPeerId peerId, QString callId, bool video);
+  void receiveCallStateRejected(IMPeerId peerId, QString callId, bool video);
+
+
   void receiveFriendCall(QString friendId, QString callId, bool audio,
                          bool video);
 
-  void receiveFriendHangup(QString friendId, int state);
 
   void receiveSelfVideoFrame(uint16_t w, uint16_t h, //
                              const uint8_t *y,       //
@@ -222,13 +260,12 @@ signals:
   void receiveFileRequest(const QString &friendId,
                           const File &file);
 
-  void sendFileInfo(const QString &friendId, const File &file,
-                    int m_seq, int m_sentBytes, bool end);
 
-  void sendFileAbort(const QString &friendId, const File &file,
-                     int m_sentBytes);
-  void sendFileError(const QString &friendId, const File &file,
-                     int m_sentBytes);
+
+  void receiveFileChunk(const IMContactId friendId, QString sId,
+                        int seq, const std::string chunk);
+  void receiveFileFinished(const IMContactId friendId, QString sId);
+
 };
 
 } // namespace IM

@@ -26,13 +26,18 @@ class ORTC;
 class OkRTCManager {
 
 public:
-  OkRTCManager(std::list<IceServer> iceServers, OkRTCHandler *handler, OkRTCRenderer *renderer);
+  OkRTCManager(std::list<IceServer> iceServers,
+               OkRTCHandler *handler,
+               OkRTCRenderer *renderer);
+
   ~OkRTCManager();
 
-  void start(const std::string &peerId, const std::string &sId,
+  void start(const std::string &peerId,
+             const std::string &sId,
              JingleCallType callType);
 
-  void join(const std::string &peerId, const std::string &sId,
+  void join(const std::string &peerId,
+            const std::string &sId,
             const JingleContext &context);
 
   void quit(const std::string &peerId);

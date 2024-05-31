@@ -170,7 +170,7 @@ public:
                            const QDateTime& time,
                            QString const& dispName);
 
-    void setFileFinished(const ToxFile& file );
+    void setFileMessage(const ToxFile& file );
 
     QList<HistMessage> getMessageByDataId(const QString &dataId);
 

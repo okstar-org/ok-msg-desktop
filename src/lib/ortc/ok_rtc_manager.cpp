@@ -23,7 +23,9 @@
 namespace lib {
 namespace ortc {
 
-OkRTCManager::OkRTCManager(std::list<IceServer> iceServers, OkRTCHandler *handler, OkRTCRenderer *renderer) {
+OkRTCManager::OkRTCManager(std::list<IceServer> iceServers,
+                           OkRTCHandler *handler,
+                           OkRTCRenderer *renderer) {
   rtcProxy = std::make_unique<ORTC>(iceServers, handler, renderer);
 }
 

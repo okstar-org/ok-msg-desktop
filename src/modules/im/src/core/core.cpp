@@ -54,7 +54,7 @@ const QString Core::TOX_EXT = ".tox";
 #define ASSERT_CORE_THREAD assert(QThread::currentThread() == coreThread.get())
 
 Core::Core(QThread *coreThread)
-    : tox(nullptr), av(nullptr), toxTimer{new QTimer{this}},
+    : tox(nullptr), toxTimer{new QTimer{this}},
       coreThread(coreThread) {
 
   assert(toxTimer);
@@ -72,7 +72,7 @@ Core::~Core() {
   coreThread->exit(0);
   coreThread->wait();
 
-  av.reset();
+//  av.reset();
   tox.reset();
 }
 
@@ -229,14 +229,14 @@ ToxCorePtr Core::makeToxCore(const QByteArray &savedata,
   // toxcore is successfully created, create toxav
   // TODO(sudden6): don't create CoreAv here, Core should be usable without
   // CoreAV
-  core->av = CoreAV::makeCoreAV(core->tox.get(), core->coreLoopLock);
-  if (!core->av) {
-    qCritical() << "Toxav failed to start";
-    if (err) {
-      *err = ToxCoreErrors::FAILED_TO_START;
-    }
-    return {};
-  }
+//  core->av = CoreAV::makeCoreAV(core->tox.get(), core->coreLoopLock);
+//  if (!core->av) {
+//    qCritical() << "Toxav failed to start";
+//    if (err) {
+//      *err = ToxCoreErrors::FAILED_TO_START;
+//    }
+//    return {};
+//  }
 
   // create CoreFile
   core->file =
@@ -288,7 +288,7 @@ void Core::onStarted() {
   // loadFriends();
   // loadGroups();
   tox->start();
-  av->start();
+//  av->start();
   process(); // starts its own timer
   emit avReady();
   qDebug() << "connected completed.";
@@ -313,9 +313,9 @@ void Core::stop() {
  */
 Core *Core::getInstance() { return Nexus::getCore(); }
 
-const CoreAV *Core::getAv() const { return av.get(); }
+//const CoreAV *Core::getAv() const { return av.get(); }
 
-CoreAV *Core::getAv() { return av.get(); }
+//CoreAV *Core::getAv() { return av.get(); }
 
 CoreFile *Core::getCoreFile() const { return file.get(); }
 
@@ -847,7 +847,7 @@ void Core::leaveGroup(QString groupId) {
   bool success = tox->leaveGroup(groupId);
   if (success) {
     emit saveRequest();
-    av->leaveGroupCall(groupId);
+//    av->leaveGroupCall(groupId);
   }
 }
 
@@ -855,7 +855,7 @@ void Core::destroyGroup(QString groupId) {
   bool success = tox->destroyGroup(groupId);
   if (success) {
     emit saveRequest();
-    av->leaveGroupCall(groupId);
+//    av->leaveGroupCall(groupId);
   }
 }
 

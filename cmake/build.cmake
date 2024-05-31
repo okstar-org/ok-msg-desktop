@@ -46,6 +46,7 @@ if(UNIX)
     set(CMAKE_CXX_FLAGS
         "${CMAKE_CXX_FLAGS} -fstack-protector-all -Wunused-function -Wstrict-overflow -Wstrict-aliasing -Wstack-protector"
     )
+  set(QT_CREATOR_SKIP_VCPKG_SETUP ON)
 endif(UNIX)
 
 if(MSVC)

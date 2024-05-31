@@ -22,7 +22,7 @@ add_definitions(
 
 include_directories(${WebRTC_DIR}/include)
 
-file(GLOB ${PROJECT_NAME}_SOURCES *.cpp)
+file(GLOB ${PROJECT_NAME}_SOURCES *.cpp *.h)
 
 add_library(${PROJECT_NAME} STATIC
 		${${PROJECT_NAME}_SOURCES})

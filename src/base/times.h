@@ -67,7 +67,7 @@ class Times {
 public:
   inline static QDateTime now() { return QDateTime::currentDateTime(); }
 
-  inline static QString formatTime(const QDateTime& dateTime, const QString &fmt) {
+  static QString formatTime(const QDateTime& dateTime, const QString &fmt) {
     if(dateTime.isNull()){
       return {};
     }

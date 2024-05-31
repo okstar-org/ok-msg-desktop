@@ -44,6 +44,7 @@ public:
     void clearOutgoingMessages();
 
     void onFileReceived(const ToxFile &file);
+    void onFileCancelled(const QString &fileId);
 
 private slots:
     void onFriendOnlineOfflineChanged(  bool isOnline);

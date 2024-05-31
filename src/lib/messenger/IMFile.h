@@ -46,6 +46,12 @@ enum class FileControl{
   RESUME, PAUSE, CANCEL
 };
 
+
+struct FileTxIBB {
+    QString sid;
+    int blockSize;
+};
+
 struct File {
 public:
   //id(file id = ibb id) 和 sId(session id)
@@ -56,10 +62,53 @@ public:
   quint64 size;
   FileStatus status;
   FileDirection direction;
+  FileTxIBB txIbb;
   [[__nodiscard__ ]] QString toString() const;
   friend QDebug &operator<<(QDebug &debug, const File &f);
 };
 
+class FileHandler {
+public:
+
+  virtual void onFileRequest(const QString &friendId, const File &file) = 0;
+  virtual void onFileRecvChunk(const QString &friendId, const QString &fileId,
+                               int seq, const std::string &chunk) = 0;
+  virtual void onFileRecvFinished(const QString &friendId,
+                                  const QString &fileId) = 0;
+  virtual void onFileSendInfo(const QString &friendId, const File &file,
+                              int m_seq, int m_sentBytes, bool end) = 0;
+  virtual void onFileSendAbort(const QString &friendId, const File &file,
+                               int m_sentBytes) = 0;
+  virtual void onFileSendError(const QString &friendId, const File &file,
+                               int m_sentBytes) = 0;
+};
+
+
+class IMFile : public QObject{
+public:
+    IMFile(QObject* parent=nullptr);
+    void addFileHandler(FileHandler *);
+
+    /**
+     * File
+     */
+    void fileRejectRequest(QString friendId, const File &file);
+    void fileAcceptRequest(QString friendId, const File &file);
+    void fileFinishRequest(QString friendId, const QString &sId);
+    void fileFinishTransfer(QString friendId, const QString &sId);
+    void fileCancel(QString fileId);
+    bool fileSendToFriend(const QString &f, const File &file);
+
+
+private:
+     IMJingle *jingle;
+     std::vector<FileHandler *> fileHandlers;
+
+};
+
 } // namespace messenger
 } // namespace lib
+
+using ToxFile1 = lib::messenger::IMFile;
+
 #endif // OKEDU_CLASSROOM_DESKTOP_IMFILE_H

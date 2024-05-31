@@ -667,11 +667,18 @@ void MessageSessionWidget::setRecvGroupMessage(const GroupMessage &msg)
 void MessageSessionWidget::setFileReceived(const ToxFile &file)
 {
     qDebug() << __func__ <<file.toString();
-
     auto md= (FriendMessageDispatcher*)sendWorker->dispacher();
     if(md)
         md->onFileReceived(file);
 
+}
+
+void MessageSessionWidget::setFileCancelled(const QString &fileId)
+{
+    qDebug() << __func__ <<fileId;
+    auto md= (FriendMessageDispatcher*)sendWorker->dispacher();
+    if(md)
+        md->onFileCancelled(fileId);
 }
 
 void MessageSessionWidget::clearHistory()

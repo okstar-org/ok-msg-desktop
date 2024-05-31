@@ -313,7 +313,7 @@ void GroupChatForm::dropEvent(QDropEvent* ev)
 void GroupChatForm::onMicMuteToggle()
 {
     if (audioInputFlag) {
-        CoreAV* av = Core::getInstance()->getAv();
+//        CoreAV* av = Core::getInstance()->getAv();
 //        const bool oldMuteState = av->isGroupCallInputMuted(group);
 //        const bool newMute = !oldMuteState;
 //        av->muteCallInput(group, newMute);
@@ -324,7 +324,7 @@ void GroupChatForm::onMicMuteToggle()
 void GroupChatForm::onVolMuteToggle()
 {
     if (audioOutputFlag) {
-        CoreAV* av = Core::getInstance()->getAv();
+//        CoreAV* av = Core::getInstance()->getAv();
 //        const bool oldMuteState = av->isGroupCallOutputMuted(group);
 //        const bool newMute = !oldMuteState;
 //        av->muteCallOutput(group, newMute);
@@ -334,7 +334,6 @@ void GroupChatForm::onVolMuteToggle()
 
 void GroupChatForm::onCallClicked()
 {
-    CoreAV* av = Core::getInstance()->getAv();
 
     if (!inCall) {
         joinGroupCall();
@@ -344,6 +343,7 @@ void GroupChatForm::onCallClicked()
 
     headWidget->updateCallButtons(true, inCall);
 
+//    CoreAV* av = Core::getInstance()->getAv();
 //    const bool inMute = av->isGroupCallInputMuted(group);
 //    headWidget->updateMuteMicButton(inCall, inMute);
 
@@ -461,7 +461,7 @@ void GroupChatForm::onLabelContextMenuRequested(const QPoint& localPos)
 
 void GroupChatForm::joinGroupCall()
 {
-    CoreAV* av = Core::getInstance()->getAv();
+//    CoreAV* av = Core::getInstance()->getAv();
 //    av->joinGroupCall(*group);
     audioInputFlag = true;
     audioOutputFlag = true;
@@ -470,7 +470,7 @@ void GroupChatForm::joinGroupCall()
 
 void GroupChatForm::leaveGroupCall()
 {
-    CoreAV* av = Core::getInstance()->getAv();
+//    CoreAV* av = Core::getInstance()->getAv();
 //    av->leaveGroupCall(group->getId());
     audioInputFlag = false;
     audioOutputFlag = false;

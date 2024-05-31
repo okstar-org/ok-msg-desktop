@@ -40,9 +40,11 @@ class CoreFile : public QObject, public lib::messenger::FileHandler {
   Q_OBJECT
 
 public:
-  void handleAvatarOffer(QString friendId, QString fileId, bool accept);
+
   static CoreFilePtr makeCoreFile(Core *core, Tox *tox,
                                   CompatibleRecursiveMutex &coreLoopLock);
+
+  void handleAvatarOffer(QString friendId, QString fileId, bool accept);
 
   void sendFile(
                 QString friendId,
@@ -80,6 +82,7 @@ signals:
   void fileTransferAccepted(ToxFile file);
   void fileTransferCancelled(ToxFile file);
   void fileTransferFinished(ToxFile file);
+  void fileTransferNoExisting(const QString &friendId, const QString &fileId);
   void fileUploadFinished(const QString &path);
   void fileDownloadFinished(const QString &path);
   void fileTransferPaused(ToxFile file);
@@ -90,7 +93,7 @@ signals:
   void fileSendFailed(QString friendId, const QString &fname);
 
 private:
-  CoreFile(Tox *core, CompatibleRecursiveMutex &coreLoopLock);
+  CoreFile(ToxFile1 *core, CompatibleRecursiveMutex &coreLoopLock);
 
   ToxFile *findFile(QString fileId);
   const QString& addFile(ToxFile &file);
@@ -102,7 +105,7 @@ private:
 
   lib::messenger::File buildHandlerFile(const ToxFile* toxFile);
 
-  void connectCallbacks(Tox &tox);
+  void connectCallbacks(ToxFile1 &tox);
   static void onFileReceiveCallback(Tox *tox, QString friendId, QString fileId,
                                     uint32_t kind, uint64_t filesize,
                                     const uint8_t *fname, size_t fnameLen,
@@ -123,9 +126,9 @@ private slots:
 
 private:
   QHash<QString, ToxFile> fileMap;
-  Tox *tox;
+  ToxFile1 *tox;
+  Tox *tox0;
   CompatibleRecursiveMutex *coreLoopLock = nullptr;
-
 };
 
 #endif // COREFILE_H

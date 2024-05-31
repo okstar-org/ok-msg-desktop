@@ -33,6 +33,17 @@ FileInfo::FileInfo(
 
 }
 
+QString FileInfo::json() const
+{
+    return QString("{\"id\":\"%1\", \"name\":\"%2\", "
+                   "\"path\":\"%3\", \"size\":%4, "
+                   "\"status\":%5, \"direction\":%6, "
+                   "\"sId\":\"%7\"}")
+            .arg(fileId).arg(fileName)
+            .arg(filePath).arg(fileSize)
+            .arg((int)status).arg((int)direction).arg(sId);
+}
+
 
 void FileInfo::parse(const QString &json)
 {
@@ -41,6 +52,7 @@ void FileInfo::parse(const QString &json)
     fileId = obj.value("id").toString();
     fileName = obj.value("name").toString();
     filePath = obj.value("path").toString();
+    sId = obj.value("sid").toString();
     fileSize = obj.value("size").toInt();
     status = (FileStatus)obj.value("status").toInt();
     direction = (FileDirection)obj.value("direction").toInt();
@@ -75,6 +87,11 @@ ToxFile::ToxFile(const QString &sender, const QString &friendId, const lib::mess
 }
 
 ToxFile::ToxFile(const FileInfo &fi): FileInfo(fi)
+{
+
+}
+
+ToxFile::~ToxFile()
 {
 
 }

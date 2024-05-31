@@ -407,8 +407,8 @@ void SessionChatLog::onMessageComplete(DispatchedMessageId id) {
  * validation
  * @note This should be attached to any CoreFile signal that fits the signature
  */
-void SessionChatLog::onFileUpdated(const ToxPk &sender, const ToxFile &file) {
-    qDebug() <<__func__ <<"sender:" <<sender.toString()<<"file" <<file.fileName;
+void SessionChatLog::onFileUpdated(const ToxPk &friendId, const ToxFile &file) {
+    qDebug() <<__func__ <<"friendId:" <<friendId.toString()<<"file" <<file.fileName;
 
   auto fileIt = std::find_if(currentFileTransfers.begin(), currentFileTransfers.end(),
                    [&](const CurrentFileTransfer &transfer) {
@@ -425,7 +425,7 @@ void SessionChatLog::onFileUpdated(const ToxPk &sender, const ToxFile &file) {
     currentFileTransfers.push_back(currentTransfer);
 
     const auto chatLogFile = ChatLogFile{QDateTime::currentDateTime(), file};
-    items.emplace(currentTransfer.idx, ChatLogItem(sender,
+    items.emplace(currentTransfer.idx, ChatLogItem(friendId,
                                                    coreIdHandler.getNick(),
                                                    chatLogFile));
     messageIdx = currentTransfer.idx;
@@ -445,6 +445,40 @@ void SessionChatLog::onFileUpdated(const ToxPk &sender, const ToxFile &file) {
 
   qDebug() <<"file messageIdx"<< messageIdx.get();
   emit this->itemUpdated(messageIdx);
+}
+
+void SessionChatLog::onFileCanceled(const ToxPk &sender, const QString &fileId)
+{
+    qDebug() <<__func__<< fileId;
+
+    ChatLogIdx messageIdx;
+
+    if(currentFileTransfers.empty()){
+        //db
+       for(auto &item : items){
+           if(item.second.getContentType() == ChatLogItem:: ContentType::fileTransfer){
+               auto f = item.second.getContentAsFile();
+               if(f.file.fileId == fileId){
+                   messageIdx = item.first;
+                    break;
+               }
+           }
+       }
+    }else{
+        //cache
+        auto fileIt = std::find_if(currentFileTransfers.begin(), currentFileTransfers.end(),
+                         [&](const CurrentFileTransfer &transfer) {
+                           return transfer.file.fileId == fileId;
+                         });
+        if (fileIt != currentFileTransfers.end()) {
+          messageIdx = fileIt->idx;
+        }
+    }
+
+    //Update status to canceled
+    qDebug() <<"messageIdx" << messageIdx.get();
+    items.at(messageIdx).getContentAsFile().file.status = FileStatus::CANCELED;
+    emit this->itemUpdated(messageIdx);
 }
 
 void SessionChatLog::onFileTransferRemotePausedUnpaused(const ToxPk &sender,

@@ -62,7 +62,9 @@ signals:
     void messageComplete(DispatchedMessageId id);
 
 
-    void fileReceived(const ToxPk& sender, const ToxFile & file);
+    void fileReceived(const ToxPk& f, const ToxFile & file);
+
+    void fileCancelled(const ToxPk& f, const QString & fileId);
 };
 
 #endif /* IMESSAGE_DISPATCHER_H */

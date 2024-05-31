@@ -70,6 +70,7 @@ class MessageSessionWidget : public GenericChatroomWidget
     void setRecvGroupMessage(const GroupMessage& msg);
 
     void setFileReceived(const ToxFile& file);
+    void setFileCancelled(const QString &fileId);
 
     void clearHistory();
 

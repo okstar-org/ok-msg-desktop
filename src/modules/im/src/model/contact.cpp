@@ -117,12 +117,15 @@ void Contact::setName(const QString &_name) {
 
 
 void Contact::setAlias(const QString &alias_) {
-  if (alias_.isEmpty() ) {
-    return;
-  }
+  qDebug() <<__func__<<alias_;
 
-  if(alias_ != getDisplayedName())
-    emit displayedNameChanged(alias_);
+
+  if(alias_.isEmpty()){
+      emit displayedNameChanged(getDisplayedName());
+  }else{
+    if(alias_ != getDisplayedName())
+        emit displayedNameChanged(alias_);
+  }
 
   if(alias_ != alias){
     alias = alias_;

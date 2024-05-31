@@ -47,6 +47,7 @@ public:
 
 public slots:
     void onFileUpdated(const ToxPk& sender, const ToxFile& file);
+    void onFileCanceled(const ToxPk& sender, const QString& fileId);
     void onFileTransferRemotePausedUnpaused(const ToxPk& sender, const ToxFile& file, bool paused);
     void onFileTransferBrokenUnbroken(const ToxPk& sender, const ToxFile& file, bool broken);
 

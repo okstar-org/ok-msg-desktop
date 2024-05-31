@@ -788,7 +788,7 @@ void GenericChatForm::updateCallButtons(Status::Status status)
 {
       qDebug() << __func__ << (int)status;
 
-      CoreAV *av = Core::getInstance()->getAv();
+      CoreAV *av = CoreAV::getInstance();
       const bool audio = av->isCallActive(contactId);
       const bool video = av->isCallVideoEnabled(contactId);
       const bool online = Status::isOnline(status);
@@ -799,7 +799,7 @@ void GenericChatForm::updateCallButtons(Status::Status status)
 
 
 void GenericChatForm::updateMuteMicButton() {
-  const CoreAV *av = Core::getInstance()->getAv();
+  const CoreAV *av = CoreAV::getInstance();
   bool active = av->isCallActive(contactId);
   bool inputMuted = av->isCallInputMuted(contactId);
   headWidget->updateMuteMicButton(active, inputMuted);
@@ -809,7 +809,7 @@ void GenericChatForm::updateMuteMicButton() {
 }
 
 void GenericChatForm::updateMuteVolButton() {
-  const CoreAV *av = Core::getInstance()->getAv();
+  const CoreAV *av = CoreAV::getInstance();
   bool active = av->isCallActive(contactId);
   bool outputMuted = av->isCallOutputMuted(contactId);
   headWidget->updateMuteVolButton(active, outputMuted);

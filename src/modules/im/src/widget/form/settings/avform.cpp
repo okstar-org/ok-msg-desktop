@@ -37,11 +37,10 @@
 #define ALC_ALL_DEVICES_SPECIFIER ALC_DEVICE_SPECIFIER
 #endif
 
-AVForm::AVForm(IAudioControl& audio, CoreAV* coreAV, CameraSource& camera,
+AVForm::AVForm(IAudioControl& audio, CameraSource& camera,
                IAudioSettings* audioSettings, IVideoSettings* videoSettings)
     : GenericForm(QPixmap(":/img/settings/av.png"))
     , audio(audio)
-    , coreAV{coreAV}
     , audioSettings{audioSettings}
     , videoSettings{videoSettings}
     , camVideoSurface(nullptr)
@@ -102,6 +101,7 @@ AVForm::AVForm(IAudioControl& audio, CoreAV* coreAV, CameraSource& camera,
     connect(qGUIApp, &QGuiApplication::screenAdded, this, &AVForm::rescanDevices);
     connect(qGUIApp, &QGuiApplication::screenRemoved, this, &AVForm::rescanDevices);
     settings::Translator::registerHandler(std::bind(&AVForm::retranslateUi, this), this);
+
 }
 
 AVForm::~AVForm()
@@ -451,7 +451,7 @@ void AVForm::on_videoDevCombobox_currentIndexChanged(int index)
     camera.setupDevice(dev, mode);
     if (dev == "none") {
         // TODO: Use injected `coreAv` currently injected `nullptr`
-        Core::getInstance()->getAv()->sendNoVideo();
+//        Core::getInstance()->getAv()->sendNoVideo();
     }
 }
 

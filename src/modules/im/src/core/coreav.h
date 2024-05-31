@@ -13,16 +13,15 @@
 #ifndef COREAV_H
 #define COREAV_H
 
-#include "src/core/toxcall.h"
-#include "base/compatiblerecursivemutex.h"
-
 #include <QMutex>
 #include <QObject>
 #include <QReadWriteLock>
 #include <atomic>
 #include <memory>
 
-#include "lib/messenger/messenger.h"
+#include "src/core/toxcall.h"
+#include "base/compatiblerecursivemutex.h"
+#include "lib/messenger/IMCall.h"
 
 class Friend;
 class Group;
@@ -41,7 +40,9 @@ class CoreAV : public QObject, public lib::messenger::CallHandler {
 
 public:
   using CoreAVPtr = std::unique_ptr<CoreAV>;
-  static CoreAVPtr makeCoreAV(Tox *core, CompatibleRecursiveMutex &coreLock);
+
+  static CoreAVPtr makeCoreAV();
+  static CoreAV* getInstance();
 
   void setAudio(IAudioControl &newAudio);
   IAudioControl *getAudio();
@@ -97,10 +98,9 @@ signals:
 private slots:
   void doCreateCallToPeerId(lib::messenger::IMPeerId friendId, QString callId, bool video);
 
-  static void callCallback(ToxAV *toxAV, QString friendId, QString callId,
-                           bool audio, bool video, void *self);
-  static void stateCallback(ToxAV *, QString friendId, uint32_t state,
-                            void *self);
+  void callCallback( QString friendId, QString callId, bool audio, bool video );
+  void stateCallback(QString friendId, uint32_t state);
+
   static void bitrateCallback(ToxAV *toxAV, QString friendId, uint32_t arate,
                               uint32_t vrate, void *self);
   static void audioBitrateCallback(ToxAV *toxAV, QString friendId,
@@ -130,11 +130,11 @@ private:
     }
   };
 
-  CoreAV(std::unique_ptr<ToxAV, ToxAVDeleter> tox,
-         CompatibleRecursiveMutex &toxCoreLock);
-  void connectCallbacks(ToxAV &toxav);
+  CoreAV();
 
+  void connectCallbacks(ToxAV &toxav);
   void process();
+
   static void audioFrameCallback(ToxAV *toxAV, QString friendId,
                                  const int16_t *pcm, size_t sampleCount,
                                  uint8_t channels, uint32_t samplingRate,
@@ -166,10 +166,11 @@ private:
   static constexpr uint32_t VIDEO_DEFAULT_BITRATE = 2500;
 
 private:
-//  std::unique_ptr<CoreVideoSource> selfVideoSource;
+  //  std::unique_ptr<CoreVideoSource> selfVideoSource;
   // atomic because potentially accessed by different threads
-  std::atomic<IAudioControl *> audio;
-  std::unique_ptr<ToxAV, ToxAVDeleter> toxav;
+
+  std::atomic<IAudioControl *> audioCtrl;
+  std::unique_ptr<ToxAV> toxav;
   std::unique_ptr<QThread> coreavThread;
   QTimer *iterateTimer = nullptr;
   using ToxFriendCallPtr = std::unique_ptr<ToxFriendCall>;
@@ -191,12 +192,6 @@ private:
   // protect 'calls' and 'groupCalls'
   mutable QReadWriteLock callsLock{QReadWriteLock::Recursive};
 
-  /**
-   * @brief needed to synchronize with the Core thread, some toxav_* functions
-   *        must not execute at the same time as tox_iterate()
-   * @note This must be a recursive mutex as we're going to lock it in callbacks
-   */
-  CompatibleRecursiveMutex &coreLock;
 };
 
 #endif // COREAV_H

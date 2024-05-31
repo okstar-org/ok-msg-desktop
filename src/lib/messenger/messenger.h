@@ -18,8 +18,6 @@
 #include "base/task.h"
 #include "base/timer.h"
 
-#include "tox/toxav.h"
-
 #include <QDateTime>
 #include <QString>
 #include <array>
@@ -48,8 +46,6 @@ class AuthSession;
 
 namespace lib {
 namespace messenger {
-
-class File;
 
 
 /**
@@ -111,61 +107,8 @@ public:
                                      IMGroupOccupant) = 0;
 };
 
-class CallHandler {
-public:
-  virtual void onCall(const QString &friendId, //
-                      const QString &callId,   //
-                      bool audio, bool video) = 0;
 
-  virtual void onCallRetract(const QString &friendId, //
-                      int state) = 0;
 
-  virtual void onCallAcceptByOther(const QString& callId, const IMPeerId & peerId) = 0;
-
-  virtual void receiveCallStateAccepted(IMPeerId friendId, //
-                                        QString callId,  //
-                                        bool video) = 0;
-
-  virtual void receiveCallStateRejected(IMPeerId friendId, //
-                                        QString callId,  //
-                                        bool video) = 0;
-
-  virtual void onHangup(const QString &friendId, //
-                        TOXAV_FRIEND_CALL_STATE state) = 0;
-
-  virtual void onSelfVideoFrame(uint16_t w, uint16_t h, //
-                                const uint8_t *y,       //
-                                const uint8_t *u,       //
-                                const uint8_t *v,       //
-                                int32_t ystride,        //
-                                int32_t ustride,        //
-                                int32_t vstride) = 0;
-
-  virtual void onFriendVideoFrame(const QString &friendId, //
-                                  uint16_t w, uint16_t h,  //
-                                  const uint8_t *y,        //
-                                  const uint8_t *u,        //
-                                  const uint8_t *v,        //
-                                  int32_t ystride,         //
-                                  int32_t ustride,         //
-                                  int32_t vstride) = 0;
-};
-
-class FileHandler {
-public:
-
-  virtual void onFileRequest(const QString &friendId, const File &file) = 0;
-  virtual void onFileRecvChunk(const QString &friendId, const QString &fileId,
-                               int seq, const std::string &chunk) = 0;
-  virtual void onFileRecvFinished(const QString &friendId,
-                                  const QString &fileId) = 0;
-  virtual void onFileSendInfo(const QString &friendId, const File &file,
-                              int m_seq, int m_sentBytes, bool end) = 0;
-  virtual void onFileSendAbort(const QString &friendId, const File &file,
-                               int m_sentBytes) = 0;
-  virtual void onFileSendError(const QString &friendId, const File &file,
-                               int m_sentBytes) = 0;
-};
 
 class Messenger : public QObject {
   Q_OBJECT
@@ -188,8 +131,6 @@ public:
 
   void addSelfHandler(SelfHandler *);
   void addGroupHandler(GroupHandler *);
-  void addCallHandler(CallHandler *);
-  void addFileHandler(FileHandler *);
 
 
   bool sendToGroup(const QString &g, const QString &msg, QString &receiptNum);
@@ -198,10 +139,6 @@ public:
 
   void receiptReceived(const QString &f, QString receipt);
 
-  bool sendFileToFriend(const QString &f, const File &file);
-
-
-  bool connectJingle();
 
   QString genUniqueId();
 
@@ -235,27 +172,14 @@ public:
 
   bool sendToFriend(const QString &f, const QString &msg, QString &receiptNum,
                     bool encrypt = false);
-
-  // 发起呼叫邀请
-  bool callToFriend(const QString &f, const QString &sId, bool video);
-
-  // 创建呼叫
-  bool createCallToPeerId(const IMPeerId &to, const QString &sId,
-                          bool video);
-
-  bool answerToFriend(const QString &f, const QString &callId, bool video);
-  bool cancelToFriend(const QString &f, const QString &sId);
   bool removeFriend(const QString &f);
-  // 静音功能
-  void setMute(bool mute);
-  void setRemoteMute(bool mute);
-  void sendChatState(const QString &friendId, int state);
+
   /**
    * Group
    */
   void loadGroupList();
   bool initRoom();
-  bool callToGroup(const QString &g);
+
   bool createGroup(const QString &group);
   void joinGroup(const QString &group);
   void setRoomName(const QString &group, const QString &nick);
@@ -266,15 +190,10 @@ public:
   bool leaveGroup(const QString &group);
   bool destroyGroup(const QString &group);
 
-  /**
-   * File
-   */
-  void rejectFileRequest(QString friendId, const File &file);
-  void acceptFileRequest(QString friendId, const File &file);
-  void finishFileRequest(QString friendId, const QString &sId);
-  void finishFileTransfer(QString friendId, const QString &sId);
-  void cancelFile(QString fileId);
 
+
+
+  void sendChatState(const QString &friendId, int state);
 
   void requestBookmarks();
   void setUIStarted();
@@ -284,14 +203,17 @@ private:
 
   bool connectIM();
 
-  std::unique_ptr<lib::messenger::IMJingle> _jingle;
+  IMJingle *jingle;
+
+  //key: sId value:Jingle
+//  QMap<QString, lib::messenger::IMJingle*> jingleMap;
   std::unique_ptr<lib::messenger::IMConference> _conference;
 
   std::vector<FriendHandler *> friendHandlers;
   std::vector<SelfHandler *> selfHandlers;
   std::vector<GroupHandler *> groupHandlers;
-  std::vector<CallHandler *> callHandlers;
-  std::vector<FileHandler *> fileHandlers;
+
+
 
   size_t sentCount = 0;
   std::unique_ptr<base::DelayedCallTimer> _delayer;
@@ -306,22 +228,6 @@ signals:
   void receivedGroupMessage(lib::messenger::IMMessage imMsg); //
   void messageSent(const IMMessage &message);                 //
 
-  void receiveSelfVideoFrame(uint16_t w, uint16_t h, //
-                             const uint8_t *y,       //
-                             const uint8_t *u,       //
-                             const uint8_t *v,       //
-                             int32_t ystride,        //
-                             int32_t ustride,        //
-                             int32_t vstride);
-
-  void receiveFriendVideoFrame(const QString &friendId, //
-                               uint16_t w, uint16_t h,  //
-                               const uint8_t *y,        //
-                               const uint8_t *u,        //
-                               const uint8_t *v,        //
-                               int32_t ystride,         //
-                               int32_t ustride,         //
-                               int32_t vstride);
 
 private slots:
   void onConnectResult(lib::messenger::IMConnectStatus);
@@ -335,5 +241,8 @@ private slots:
 
 };
 
+
 } // namespace messenger
 } // namespace lib
+
+using Tox = lib::messenger::Messenger;

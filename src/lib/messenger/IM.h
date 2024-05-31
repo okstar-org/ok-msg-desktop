@@ -72,11 +72,16 @@ namespace gloox{
   class MUCRoom;
 };
 
+namespace lib::ortc {
+enum class JingleCallType;
+}
+
 namespace lib {
 namespace messenger {
 
 using namespace gloox;
 using namespace gloox::PubSub;
+enum class CallDirection { CallIn, CallOut };
 
 
 struct IMRoomInfo {
@@ -104,6 +109,7 @@ struct IMRoomInfo {
   std::map<std::string, std::string> changes;
 };
 
+class IMJingle;
 
 class IM : public ok::lib::Task,
            public ConnectionListener,
@@ -271,6 +277,13 @@ public:
   std::set<std::string> getOnlineResources(const std::string &bare);
   void updateOnlineStatus(const std::string &bare, const std::string &resource, Presence::PresenceType presenceType);
 
+
+//  //文件传输通道
+//  IMJingle* createFileTransfer(const QString& f, const File &file);
+
+//  //创建音视频通道
+//  IMJingle* createAvToFriend(const QString& f, const QString sId, bool video);
+
   /**
    * jingle-message
    *    发起呼叫邀请
@@ -283,7 +296,6 @@ public:
 
   void retractJingleMessage(const QString &friendId, const QString &callId);
 
-  void doJingleMessage(const IMPeerId &peerId, const gloox::Jingle::JingleMessage *jm);
 
   [[nodiscard]] gloox::JID wrapJid(const QString &f) const;
 
@@ -809,25 +821,7 @@ signals:
 
   void incoming(QString xml);
 
-  /**
-   * Call events
-   * @param friendId
-   * @param audio
-   * @param video
-   */
-  // 呼叫请求
-  void receiveCallRequest(QString friendId, QString callId, bool audio, bool video);
-  // 呼叫撤回
-  void receiveCallRetract(QString friendId, int state);
-  void receiveCallAcceptByOther(QString callId, IMPeerId peerId);
-  void receiveFriendHangup(QString friendId, int state);
 
-  // 对方状态变化
-  void receiveCallStateAccepted(IMPeerId peerId, QString callId, bool video);
-  void receiveCallStateRejected(IMPeerId peerId, QString callId, bool video);
-
-  void receiveFileChunk(const IMContactId friendId, QString sId, int seq, const std::string chunk);
-  void receiveFileFinished(const IMContactId friendId, QString sId);
 
   // Self events
   void selfIdChanged(QString id);

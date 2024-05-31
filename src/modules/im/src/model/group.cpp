@@ -156,6 +156,6 @@ void Group::setName(const QString &name)
 
 void Group::stopAudioOfDepartedPeers(const ToxPk &peerPk) {
   if (avGroupchat) {
-    Core::getInstance()->getAv()->invalidateGroupCallPeerSource(peerPk.toString(), peerPk);
+//    Core::getInstance()->getAv()->invalidateGroupCallPeerSource(peerPk.toString(), peerPk);
   }
 }

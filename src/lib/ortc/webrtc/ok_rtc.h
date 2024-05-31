@@ -22,6 +22,7 @@
 
 #include "../ok_rtc_defs.h"
 #include "../ok_rtc_proxy.h"
+#include "LogSinkImpl.h"
 #include "vcm_capturer.h"
 
 namespace rtc {
@@ -98,6 +99,7 @@ public:
   }
 
 private:
+    std::unique_ptr<LogSinkImpl> _logSink;
 
   Conductor *createConductor(const std::string &peerId,
                              const std::string &sId,

@@ -176,7 +176,7 @@ void onGroupClicked();
 
 void changeDisplayMode();
 void setupStatus();
-
+void cancelFile(const QString &friendId, const QString &fileId);
 void dispatchFile(ToxFile file);
 void dispatchFileWithBool(ToxFile file, bool);
 void dispatchFileSendFailed(QString friendId, const QString &fileName);

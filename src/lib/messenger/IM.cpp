@@ -11,6 +11,7 @@
  */
 
 #include "IM.h"
+#include "IMJingle.h"
 
 // TODO resolve conflict DrawText in WinUser.h
 #undef DrawText
@@ -189,38 +190,15 @@ std::unique_ptr<Client> IM::makeClient() {
 
   disco->addFeature(XMLNS_IBB);
 
-  /**
-   * Jingle功能
-   */
-  client->registerStanzaExtension(new Jingle::JingleMessage());
-  disco->addFeature(XMLNS_JINGLE);
-  disco->addFeature(XMLNS_JINGLE_FILE_TRANSFER);
-  disco->addFeature(XMLNS_JINGLE_FILE_TRANSFER4);
-  disco->addFeature(XMLNS_JINGLE_FILE_TRANSFER5);
-  disco->addFeature(XMLNS_JINGLE_FILE_TRANSFER_MULTI);
 
-  disco->addFeature(XMLNS_JINGLE_IBB);
-  disco->addFeature(XMLNS_JINGLE_ERRORS);
-  disco->addFeature(XMLNS_JINGLE_ICE_UDP);
-  disco->addFeature(XMLNS_JINGLE_APPS_DTLS);
-  disco->addFeature(XMLNS_JINGLE_APPS_RTP);
-  disco->addFeature(XMLNS_JINGLE_FEATURE_AUDIO);
-  disco->addFeature(XMLNS_JINGLE_FEATURE_VIDEO);
-  disco->addFeature(XMLNS_JINGLE_APPS_RTP_SSMA);
-  disco->addFeature(XMLNS_JINGLE_APPS_RTP_FB);
-  disco->addFeature(XMLNS_JINGLE_APPS_RTP_SSMA);
-  disco->addFeature(XMLNS_JINGLE_APPS_RTP_HDREXT);
-  disco->addFeature(XMLNS_JINGLE_APPS_GROUP);
-  disco->addFeature(XMLNS_JINGLE_MESSAGE);
   // NICK
   disco->addFeature(XMLNS_NICKNAME);
   disco->addFeature(XMLNS_NICKNAME + "+notify");
 
   client->setTls(TLSPolicy::TLSDisabled);
   client->setCompression(false);
-  client->registerIqHandler(this, ExtIBB);
+
   client->registerIqHandler(this, ExtPubSub);
-  client->registerIqHandler(this, ExtSrvDisco);
   //  client->registerIncomingHandler(this);
 
   /**
@@ -230,7 +208,7 @@ std::unique_ptr<Client> IM::makeClient() {
 
   client->registerPresenceHandler(this);
   client->registerMessageSessionHandler(this);
-  //  client->registerMessageHandler(this);
+  client->registerMessageHandler(this);
   //  client->setStreamManagement(true, true);
 
 #ifdef LOG_XMPP
@@ -600,14 +578,7 @@ void IM::handleMessage(const gloox::Message &msg, MessageSession *session) {
     }
   }
 
-  /**
-   * 处理jingle-message消息
-   * https://xmpp.org/extensions/xep-0353.html
-   */
-  auto jm = msg.findExtension<Jingle::JingleMessage>(ExtJingleMessage);
-  if (jm) {
-    doJingleMessage(IMPeerId(msg.from().full()), jm);
-  }
+
   auto xml = qstring(msg.tag()->xml());
   emit incoming(xml);
 }
@@ -1286,42 +1257,11 @@ void IM::fetchFriendVCard(const QString &friendId) {
   //  _client->rosterManager()->subscribe(jid.bareJID());
 }
 
-void IM::handleTag(Tag *tag) { qDebug() << QString("tag：%1").arg(qstring(tag->xml())); }
+void IM::handleTag(Tag *tag) {
+    qDebug() << QString("tag：%1").arg(qstring(tag->xml()));
+}
 
 bool IM::handleIq(const IQ &iq) {
-  const auto *ibb = iq.findExtension<InBandBytestream::IBB>(ExtIBB);
-  if (ibb) {
-    IMContactId friendId(qstring(iq.from().bare()));
-    qDebug() << QString("IBB stream id:%1").arg(qstring(ibb->sid()));
-
-    switch (ibb->type()) {
-    case InBandBytestream::IBBOpen: {
-      qDebug() << QString("Open");
-      break;
-    }
-    case InBandBytestream::IBBData: {
-      qDebug() << QString("Data seq:%1").arg(ibb->seq());
-      emit receiveFileChunk(friendId, qstring(ibb->sid()), ibb->seq(), ibb->data());
-      break;
-    }
-    case InBandBytestream::IBBClose: {
-      qDebug() << QString("Close");
-      emit receiveFileFinished(friendId, qstring(ibb->sid()));
-      break;
-    }
-    default: {
-    }
-    }
-
-    IQ riq(IQ::IqType::Result, iq.from(), iq.id());
-    _client->send(riq);
-  }
-
-  auto services = iq.tag()->findChild("services", "xmlns", XMLNS_EXTERNAL_SERVICE_DISCOVERY);
-  if (services) {
-    mExtDisco = ExtDisco(services);
-  }
-
   emit incoming(qstring(iq.tag()->xml()));
   return true;
 }
@@ -1552,7 +1492,7 @@ void IM::acceptFriendRequest(const QString &friendId) {
   // 同时订阅对方
   m->subscribe(jid);
   // 添加到联系人列表
-  m->add(jid, jid.username(), {});
+  m->add(jid, {}, {});
   m->synchronize();
 }
 
@@ -2097,81 +2037,23 @@ void IM::updateOnlineStatus(const std::string &bare, const std::string &resource
   emit receiveFriendStatus(friendId, status);
 }
 
-void IM::doJingleMessage(const IMPeerId &peerId, const Jingle::JingleMessage *jm) {
+//IMJingle *IM::createFileTransfer(const QString &f, const File &file)
+//{
+//    qDebug() << __func__ << "friend:" << f <<"file:" <<file.id;
+////    auto jingle = new IMJingle(this, f, file.id, lib::ortc::JingleCallType::file, CallDirection::CallOut );
+////    return jingle;
+//}
 
-  qDebug() << QString("JingleMessage id:%1 action:%2").arg(qstring(jm->id())).arg(Jingle::ActionValues[jm->action()]);
+//IMJingle *IM::createAvToFriend(const QString &f, const QString sId, bool video)
+//{
+//    qDebug() << __func__ << "friend:" << f <<"sId:" << sId << "video?"<< video;
+////    auto jingle = new IMJingle(this, f, sId,
+////                               video ? lib::ortc::JingleCallType::video : lib::ortc::JingleCallType::audio,
+////                               CallDirection::CallOut);
+////    return jingle;
+//}
 
-  qDebug() << "peerId:" << peerId.toString();
 
-  auto friendId = peerId.toFriendId();
-  auto callId = qstring(jm->id());
-
-  switch (jm->action()) {
-  case Jingle::JingleMessage::propose: {
-    /**
-     * 接收到呼叫
-     * 推送铃声
-     * <message from='juliet@capulet.example/phone' to='romeo@montague.example'
-     * type='chat'> <ringing xmlns='urn:xmpp:jingle-message:0'
-     * id='ca3cf894-5325-482f-a412-a6e9f832298d'/> <store
-     * xmlns="urn:xmpp:hints"/>
-     * </message>
-     */
-    if (!mPeerRequestMedias.empty()) {
-      rejectJingleMessage(friendId, callId);
-      return;
-    }
-    mPeerRequestMedias.emplace(peerId, jm->medias());
-    emit receiveCallRequest(friendId, callId, true, jm->medias().size() > 1);
-    break;
-  }
-  case Jingle::JingleMessage::reject: {
-    /**
-     * 对方拒绝
-     */
-    mPeerRequestMedias.clear();
-    auto ms = jm->medias();
-    emit receiveCallStateRejected(peerId, callId, ms.size() > 1);
-    emit receiveFriendHangup(friendId, 0);
-    break;
-  }
-  case Jingle::JingleMessage::accept: {
-    /**
-     * 被自己账号其它终端接受
-     */
-    qDebug() << "Accepted by" << peerId.toString();
-    emit receiveCallAcceptByOther(callId, peerId);
-    mPeerRequestMedias.clear();
-    break;
-  }
-  case Jingle::JingleMessage::retract: {
-    /**
-     * 撤回(发起者取消)，挂断自己
-     */
-    mPeerRequestMedias.clear();
-    emit receiveCallRetract(friendId, 0);
-    break;
-  }
-  case Jingle::JingleMessage::proceed:
-    if (friendId == qstring(self().username())) {
-      /**
-       * 自己的其他终端接受处理，挂断自己
-       */
-      emit receiveFriendHangup(friendId, 0);
-    } else {
-      /**
-       * 对方接受
-       */
-      auto medias = mPeerRequestMedias.find(peerId)->second;
-      emit receiveCallStateAccepted(peerId, callId, medias.size() > 1);
-    }
-    mPeerRequestMedias.clear();
-    break;
-  case Jingle::JingleMessage::finish:
-    mPeerRequestMedias.clear();
-    break;
-  }
-}
 
 void IM::proposeJingleMessage(const QString &friendId, const QString &callId, bool video) {
 

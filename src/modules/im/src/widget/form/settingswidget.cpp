@@ -40,7 +40,7 @@ SettingsWidget::SettingsWidget(UpdateCheck* updateCheck, IAudioControl& audio, W
 //    setAttribute(Qt::WA_DeleteOnClose);
 //    setGeometry(0,0, parent->width(), parent->height());
 
-    CoreAV* coreAV = Core::getInstance()->getAv();
+//    CoreAV* coreAV = Core::getInstance()->getAv();
     IAudioSettings* audioSettings = &Settings::getInstance();
     IVideoSettings* videoSettings = &Settings::getInstance();
     CameraSource& camera = CameraSource::getInstance();
@@ -61,7 +61,7 @@ SettingsWidget::SettingsWidget(UpdateCheck* updateCheck, IAudioControl& audio, W
     std::unique_ptr<PrivacyForm> pfrm(new PrivacyForm());
     connect(pfrm.get(), &PrivacyForm::clearAllReceipts, parent, &Widget::clearAllReceipts);
 
-    AVForm* rawAvfrm = new AVForm(audio, coreAV, camera, audioSettings, videoSettings);
+    AVForm* rawAvfrm = new AVForm(audio, camera, audioSettings, videoSettings);
     std::unique_ptr<AVForm> avfrm(rawAvfrm);
     std::unique_ptr<AdvancedForm> expfrm(new AdvancedForm());
     std::unique_ptr<AboutForm> abtfrm(new AboutForm(updateCheck));

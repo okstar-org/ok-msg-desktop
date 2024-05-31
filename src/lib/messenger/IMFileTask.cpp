@@ -52,16 +52,15 @@ void IMFileTask::run() {
   //  connect(this, &IMFileTask::fileSent, &loop, &QEventLoop::quit);
   //  loop.exec();
 
-  int waitingSecs = 60;
+  int waitingSecs = 0;
 
   for (;;) {
 
     if (!m_byteStream) {
       sleep(1);
 
-      if (waitingSecs-- <= 0) {
-        // 超时
-        qWarning() << "Timout to wait stream open.";
+      if (waitingSecs++ >= 60) {
+        qWarning() << "Timeout to wait stream open." << waitingSecs;
         break;
       }
       continue;
@@ -108,7 +107,9 @@ void IMFileTask::handleBytestreamClose(gloox::Bytestream *bs) {
   emit fileSent(m_friendId, *m_file);
 }
 
-void IMFileTask::handleBytestreamData(gloox::Bytestream *bs, const std::string &data) { qDebug() << __func__ << "data:" << qstring(bs->sid()); }
+void IMFileTask::handleBytestreamData(gloox::Bytestream *bs, const std::string &data) {
+    qDebug() << __func__ << "data:" << qstring(bs->sid());
+}
 
 void IMFileTask::handleBytestreamDataAck(gloox::Bytestream *bs) {
   qDebug() << __func__ << "acked:" << qstring(bs->sid());

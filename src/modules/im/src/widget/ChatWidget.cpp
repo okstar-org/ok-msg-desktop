@@ -226,6 +226,10 @@ void ChatWidget::connectToCoreFile(CoreFile *coreFile)
             &ChatWidget::dispatchFile);
     connect(coreFile, &CoreFile::fileTransferCancelled, this,
             &ChatWidget::dispatchFile);
+    //
+    connect(coreFile, &CoreFile::fileTransferNoExisting, this,
+            &ChatWidget::cancelFile);
+
     connect(coreFile, &CoreFile::fileTransferFinished, this,
             &ChatWidget::dispatchFile);
     connect(coreFile, &CoreFile::fileTransferPaused,
@@ -815,6 +819,20 @@ void ChatWidget::setupStatus() {
 //  actionQuit->setText(tr("Exit", "Tray action menu to exit tox"));
 //  actionShow->setText(tr("Show", "Tray action menu to show qTox window"));
 
+}
+
+void ChatWidget::cancelFile(const QString &friendId, const QString &fileId)
+{
+    qDebug() << __func__ << "file:" <<fileId;
+    auto frndId = ToxPk{friendId};
+
+    Friend *f = FriendList::findFriend(frndId);
+    if (!f) {
+        qWarning() <<"IMFriend is no existing!" << friendId;
+        return;
+    }
+
+    sessionListWidget->setFriendFileCancelled(frndId, fileId);
 }
 
 void ChatWidget::dispatchFile(ToxFile file)

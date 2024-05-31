@@ -146,7 +146,7 @@ void Nexus::onSave(SavedInfo &savedInfo) {
     Settings& settings = Settings::getInstance();
     audioControl = std::unique_ptr<IAudioControl>(Audio::makeAudio(settings));
     assert(audioControl != nullptr);
-    profile->getCore()->getAv()->setAudio(*audioControl);
+//    profile->getCore()->getAv()->setAudio(*audioControl);
 
     // Setup the environment
     qRegisterMetaType<Status::Status>("Status::Status");

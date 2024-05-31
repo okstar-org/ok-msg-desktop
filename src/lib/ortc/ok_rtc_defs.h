@@ -99,17 +99,11 @@ enum class JingleSdpType {
 };
 
 // 呼叫类型
-enum JingleCallType {
-  none,
+enum class JingleCallType {
+  file,     // file
   audio,    // audio
   video,    // video
-  file      // file
 };
-
-inline static std::string JingleCallTypeToString (JingleCallType type){
-  std::string arr[4]={"none", "audio", "video", "file"};
-  return arr[type];
-}
 
 struct JingleContext {
 
@@ -144,7 +138,7 @@ public:
         return JingleCallType::audio;
       }
     }
-    return JingleCallType::none;
+    return JingleCallType::audio;
   }
 
   inline bool hasVideo() { return callType() == JingleCallType::video; }
