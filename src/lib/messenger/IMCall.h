@@ -75,6 +75,10 @@ namespace ok::session {
 class AuthSession;
 }
 
+namespace lib::ortc {
+class OkRTCManager;
+}
+
 namespace lib::messenger {
 
 class CallHandler {
@@ -171,7 +175,7 @@ private:
      IMJingle *jingle;
      ok::session::AuthSession *session;
      std::vector<CallHandler *> callHandlers;
-
+     lib::ortc::OkRTCManager *rtcManager;
 };
 
 } // namespace lib::messenger

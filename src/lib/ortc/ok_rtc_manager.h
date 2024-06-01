@@ -15,22 +15,24 @@
 #include <memory>
 #include <string>
 
-#include "ok_rtc_proxy.h"
+#include "ok_rtc.h"
 #include "ok_rtc_renderer.h"
 
 namespace lib {
 namespace ortc {
 
-class ORTC;
-
 class OkRTCManager {
 
 public:
-  OkRTCManager(std::list<IceServer> iceServers,
-               OkRTCHandler *handler,
-               OkRTCRenderer *renderer);
-
+    static OkRTCManager* getInstance(std::list<IceServer> iceServers,
+                                     OkRTCHandler *handler,
+                                     OkRTCRenderer *renderer);
   ~OkRTCManager();
+
+
+
+  OkRTC* createInstance();
+  void destroyInstance(OkRTC*);
 
   void start(const std::string &peerId,
              const std::string &sId,
@@ -69,8 +71,16 @@ public:
 
   void setMute(bool mute);
   void setRemoteMute(bool mute);
+
 private:
-  std::unique_ptr<ORTC> rtcProxy;
+  OkRTCManager(std::list<IceServer> iceServers,
+               OkRTCHandler *handler,
+               OkRTCRenderer *renderer);
+
+  std::unique_ptr<OkRTC> rtc;
+  std::list<IceServer> iceServers;
+  OkRTCHandler *handler;
+  OkRTCRenderer *renderer;
 };
 
 } // namespace ortc

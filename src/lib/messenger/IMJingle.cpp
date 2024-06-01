@@ -86,38 +86,6 @@ IMJingle::IMJingle(IM *im_,
   _sessionManager->registerPlugin(new Group());
   _sessionManager->registerPlugin(new RTP());
 
-  std::list<ortc::IceServer> iceServers;
-
-    std::list<ExtDisco::Service> discos;
-
-    ExtDisco::Service disco0;
-    disco0.type="turn";
-    disco0.host = "chuanshaninfo.com";
-    disco0.port=34780;
-    disco0.username="gaojie";
-    disco0.password="hncs";
-    discos.push_back(disco0);
-
-    ExtDisco::Service disco1;
-    disco1.type="stun";
-    disco1.host = "stun.l.google.com";
-    disco1.port=19302;
-
-    discos.push_back(disco1);
-
-
-    for (const auto &item :  discos) {
-      ortc::IceServer ice;
-      ice.uri = item.type + ":" + item.host + ":" + std::to_string(item.port);
-      //              "?transport=" + item.transport;
-      ice.username = item.username;
-      ice.password = item.password;
-      qDebug() <<"Add ice:" << ice.uri.c_str();
-      iceServers.push_back(ice);
-    }
-//    std::make_unique<lib::ortc::OkRTCManager>(iceServers, this, this); //
-
-
   qDebug() << __func__ << ("Created");
 }
 

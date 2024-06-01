@@ -454,10 +454,10 @@ void MessageSessionWidget::showDetails() {
 //          &MessageSessionWidget::friendHistoryRemoved);
 //  aboutUser->show();
 
-auto w = Widget::getInstance();
-if(w){
-  emit w->toShowDetails(getContactId());
-}
+    auto w = Widget::getInstance();
+    if(w){
+      emit w->toShowDetails(getContactId());
+    }
 }
 
 void MessageSessionWidget::onMessageSent(DispatchedMessageId id, const Message &message)
@@ -558,10 +558,8 @@ void MessageSessionWidget::onAvatarSet(const ToxPk &friendPk, const QPixmap& pic
            << "pic:" << pic.size();
 
   if(!pic.isNull()){
-
       setAvatar(pic);
-
-    }
+  }
 //  auto c = getContact();
 //  if(c){
 //      c->setAvatar(pic);

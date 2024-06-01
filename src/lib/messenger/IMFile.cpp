@@ -43,8 +43,6 @@ IMFile::IMFile(QObject *parent): QObject(parent)
     auto _session = ok::session::AuthSession::Instance();
     auto _im = _session->im();
 
-
-
     jingle = new IMJingle(_im, &fileHandlers, this);
 
     /*file handler*/
@@ -69,6 +67,12 @@ IMFile::IMFile(QObject *parent): QObject(parent)
                 h->onFileRequest(friendId, file);
               }
             });
+
+}
+
+IMFile::~IMFile()
+{
+//    disconnect(jingle, &IMJingle::receiveFileChunk, this);
 
 }
 

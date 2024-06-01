@@ -1,9 +1,5 @@
 project(OkRTC)
 
-set(CMAKE_AUTOMOC OFF)
-set(CMAKE_AUTOUIC OFF)
-set(CMAKE_AUTORCC OFF)
-
 message(STATUS "${PROJECT_NAME} Implicit include directories: ${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES}")
 message(STATUS "User-added include directories:")
 get_directory_property(USER_INCLUDE_DIRECTORIES INCLUDE_DIRECTORIES)
@@ -20,6 +16,7 @@ if(ok-rtc_FOUND)
       add_definitions(-DWEBRTC_POSIX)
   endif ()
   set(webrtc_LIB ok-rtc::ok-rtc)
+
 endif ()
 
 #ok-gloox
@@ -28,13 +25,11 @@ if(ok-gloox_FOUND)
     set(gloox_LIB ok-gloox::ok-gloox)
 endif ()
 
-
-
 set(${PROJECT_NAME}_SOURCES
         webrtc/ok_videosink.h
         webrtc/ok_videosink.cpp
-        webrtc/ok_rtc.h
-        webrtc/ok_rtc.cpp
+		webrtc/webrtc.h
+		webrtc/webrtc.cpp
         webrtc/ok_conductor.h
         webrtc/ok_conductor.cc
         webrtc/test_video_capturer.h
@@ -45,7 +40,7 @@ set(${PROJECT_NAME}_SOURCES
     webrtc/LogSinkImpl.cpp
         ok_rtc_manager.h
         ok_rtc_manager.cpp
-        ok_rtc_proxy.h
+    ok_rtc.h
         ok_rtc_renderer.h
         ok_rtc_defs.h
         ok_rtc_defs.cpp)
@@ -55,8 +50,8 @@ add_library(${PROJECT_NAME} STATIC
         ${${PROJECT_NAME}_SOURCES})
 
 target_link_libraries(${PROJECT_NAME}
-        PRIVATE ${gloox_LIB}
         PRIVATE ${webrtc_LIB}
+        PRIVATE ${gloox_LIB}
 )
 
 if (MSVC)

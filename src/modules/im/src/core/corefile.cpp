@@ -38,8 +38,8 @@ CoreFilePtr CoreFile::makeCoreFile(Core *core, Tox *tox,
   assert(core != nullptr);
   assert(tox != nullptr);
 
-  auto imfile = new lib::messenger::IMFile({});
-  CoreFilePtr result = CoreFilePtr{new CoreFile{imfile, coreLoopLock}};
+
+  CoreFilePtr result = CoreFilePtr{new CoreFile{}};
 
   //  connect(core, &Core::friendStatusChanged, result.get(),
 //          &CoreFile::onConnectionStatusChanged);
@@ -47,8 +47,8 @@ CoreFilePtr CoreFile::makeCoreFile(Core *core, Tox *tox,
   return result;
 }
 
-CoreFile::CoreFile(ToxFile1 *core, CompatibleRecursiveMutex &coreLoopLock)
-    : tox{core}, coreLoopLock{&coreLoopLock} {
+CoreFile::CoreFile() {
+  tox = new lib::messenger::IMFile(this);
   connectCallbacks(*tox);
 }
 

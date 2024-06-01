@@ -206,7 +206,7 @@ ContentDialog *FriendWidget::addFriendDialog(const Friend *frnd) {
   // FIXME: emit should be removed
   //  emit friendWidget->chatroomWidgetClicked(friendWidget);
 
-  Profile *profile = Nexus::getProfile();
+//  Profile *profile = Nexus::getProfile();
 //  connect(profile, &Profile::friendAvatarSet, this, &FriendWidget::onAvatarSet);
 //  connect(profile, &Profile::friendAvatarRemoved, this,
 //          &FriendWidget::onAvatarRemoved);

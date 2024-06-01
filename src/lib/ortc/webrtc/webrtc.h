@@ -20,8 +20,8 @@
 #include "api/media_stream_interface.h"
 #include "modules/video_capture/video_capture.h"
 
+#include "../ok_rtc.h"
 #include "../ok_rtc_defs.h"
-#include "../ok_rtc_proxy.h"
 #include "LogSinkImpl.h"
 #include "vcm_capturer.h"
 
@@ -44,25 +44,23 @@ class Conductor;
 
 
 
-class ORTC : public OkRTCProxy {
+class WebRTC : public OkRTC {
 public:
-  ORTC(std::list<IceServer> iceServers, OkRTCHandler *handler, OkRTCRenderer *renderer);
+  WebRTC(std::list<IceServer> iceServers, OkRTCHandler *handler, OkRTCRenderer *renderer);
 
-  virtual ~ORTC();
-
-
+  ~WebRTC();
 
   void
   SetRemoteDescription(const std::string &peerId,
                        const lib::ortc::JingleContext &jingleContext) override;
 
-  void CreateOffer(const std::string &peerId) ;
+  void CreateOffer(const std::string &peerId) override;
 
   void CreateAnswer(const std::string &peerId,
                     const lib::ortc::JingleContext &pContent) override;
 
-  bool SetTransportInfo(const std::string &peerId, //
-                        const ortc::OIceUdp &iceUdp);
+  bool SetTransportInfo(const std::string &peerId,
+                        const ortc::OIceUdp &iceUdp) override;
 
   void ContentAdd(std::map<std::string, gloox::Jingle::Session> sdMap,
                   ortc::OkRTCHandler *handler) override;
@@ -74,7 +72,7 @@ public:
 
   void setMute(bool mute) override;
 
-  void setRemoteMute(bool mute) ;
+  void setRemoteMute(bool mute) override;
 
   void start();
 

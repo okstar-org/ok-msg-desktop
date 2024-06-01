@@ -38,47 +38,48 @@ typedef struct join_options {
 
 class OkRTCHandler {
 public:
-  virtual void onCreatePeerConnection(const std::string &peerId,
-                                      const std::string &sId, bool ok) = 0;
+  virtual void onCreatePeerConnection(const std::string &peerId, const std::string &sId, bool ok) = 0;
 
-  virtual void onRTP(const std::string &sId, const std::string &peerId,
-                     const JingleContext &osd) = 0;
+  virtual void onRTP(const std::string &sId, const std::string &peerId, const JingleContext &osd) = 0;
 
-  virtual void onIce(const std::string &sId, const std::string &peerId,
-                     const OIceUdp &iceUdp) = 0;
+  virtual void onIce(const std::string &sId, const std::string &peerId, const OIceUdp &iceUdp) = 0;
 };
 
-class OkRTCProxy {
+/**
+ * RTC 接口
+ */
+class OkRTC {
 
 public:
-  virtual void
-  SetRemoteDescription(const std::string &peerId,
-                       const lib::ortc::JingleContext &jingleContext) = 0;
 
-  virtual void ContentAdd(std::map<std::string, gloox::Jingle::Session> sdMap,
-                          OkRTCHandler *handler) = 0;
 
-  virtual void
-  ContentRemove(std::map<std::string, gloox::Jingle::Session> sdMap,
-                OkRTCHandler *handler) = 0;
+  virtual void CreateOffer(const std::string &peerId) = 0;
+
+  virtual void SetRemoteDescription(const std::string &peerId, const lib::ortc::JingleContext &jingleContext) = 0;
+
+  virtual void ContentAdd(std::map<std::string, gloox::Jingle::Session> sdMap, OkRTCHandler *handler) = 0;
+
+  virtual void ContentRemove(std::map<std::string, gloox::Jingle::Session> sdMap, OkRTCHandler *handler) = 0;
 
   virtual void SessionTerminate(const std::string &peerId) = 0;
 
+  virtual bool SetTransportInfo(const std::string &peerId, const OIceUdp &oIceUdp) = 0;
+
   virtual void setMute(bool mute) = 0;
 
-  virtual bool join(const std::string &peerId, const std::string &sId,
-                    const JingleContext &context) = 0;
+  virtual void setRemoteMute(bool mute) = 0;
 
-  virtual bool call(const std::string &peerId, const std::string &sId,
-                    JingleCallType callType) = 0;
+  virtual bool join(const std::string &peerId, const std::string &sId, const JingleContext &context) = 0;
+
+  virtual bool call(const std::string &peerId, const std::string &sId, JingleCallType callType) = 0;
 
   virtual bool quit(const std::string &peerId) = 0;
 
   virtual void createPeerConnection() = 0;
+
   virtual size_t getVideoSize() = 0;
 
-  virtual void CreateAnswer(const std::string &peerId,
-                            const lib::ortc::JingleContext &pContent) = 0;
+  virtual void CreateAnswer(const std::string &peerId, const lib::ortc::JingleContext &pContent) = 0;
 };
 
 } // namespace ortc

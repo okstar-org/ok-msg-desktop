@@ -87,6 +87,7 @@ public:
 class IMFile : public QObject{
 public:
     IMFile(QObject* parent=nullptr);
+    ~IMFile();
     void addFileHandler(FileHandler *);
 
     /**

@@ -507,21 +507,24 @@ void IM::handleMessageSession(MessageSession *session) {
 
 void IM::handleMessage(const gloox::Message &msg, MessageSession *session) {
 
-  if (!session) {
-    qWarning() << "session is NULL";
-    return;
-  }
+//  if (!session) {
+//    qWarning() << "session is NULL";
+//    return;
+//  }
 
-  auto threadId = qstring(session->threadID());
+//  auto threadId = qstring(session->threadID());
   auto from = msg.from();
   auto peerId = qstring(from.full());
   auto friendId = qstring(from.bare());
   auto body = qstring(msg.body());
 
-  qDebug() << __func__ << "from:" << peerId << "sessionId:" << threadId << "subtype:" << (int)msg.subtype();
+  qDebug() << __func__
+           << "from:" << peerId
+//           << "sessionId:" << threadId
+           << "subtype:" << (int)msg.subtype();
 
-  sessionIdMap.emplace(friendId.toStdString(), threadId.toStdString());
-  sessionMap.emplace(threadId.toStdString(), session);
+//  sessionIdMap.emplace(friendId.toStdString(), threadId.toStdString());
+//  sessionMap.emplace(threadId.toStdString(), session);
 
   gloox::Message::MessageType msgType = msg.subtype();
   switch (msgType) {

@@ -30,7 +30,7 @@
 
 #include <rtc_base/ref_count.h>
 
-#include "../ok_rtc_proxy.h"
+#include "../ok_rtc.h"
 
 #include "ok_videosink.h"
 #include "vcm_capturer.h"

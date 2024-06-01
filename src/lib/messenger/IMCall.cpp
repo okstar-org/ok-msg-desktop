@@ -58,9 +58,10 @@ IMCall::IMCall( QObject *parent): QObject(parent)
         qDebug() <<"Add ice:" << ice.uri.c_str();
         iceServers.push_back(ice);
       }
-//      std::make_unique<lib::ortc::OkRTCManager>(iceServers, nullptr, nullptr);
 
-
+    rtcManager = lib::ortc::OkRTCManager::getInstance(iceServers, nullptr, nullptr);
+    auto rtc = rtcManager->createInstance();
+    qDebug() <<"RTC is:" << rtc;
 }
 
 void IMCall::addCallHandler(CallHandler *hdr)
@@ -70,7 +71,7 @@ void IMCall::addCallHandler(CallHandler *hdr)
 
 bool IMCall::callToGroup(const QString &g)
 {
-
+    return false;
 }
 
 void IMCall::connectJingle(IMJingle* _jingle) {
@@ -185,12 +186,14 @@ bool IMCall::callToPeerId(const IMPeerId &to,
 
   qDebug() << QString("peerId:%1 video:%2").arg((to.toString())).arg(video);
 //  return _jingle->createCall(to, sId, video);
+  return false;
 }
 
 bool IMCall::callAnswerToFriend(const QString &f, const QString &callId,
                                bool video) {
   qDebug() << QString("friend:%1 video:%2").arg((f)).arg(video);
 //  return _jingle->answer(f, callId, video);
+  return false;
 }
 
 bool IMCall::callCancelToFriend(const QString &f, const QString &sId) {

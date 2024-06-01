@@ -71,7 +71,6 @@ private:
     void deinit();
 
     ContentLayout* contentLayout;
-//    ContentWidget* contentWidget;
 
     AboutFriendForm* about;
 

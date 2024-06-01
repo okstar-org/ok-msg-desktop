@@ -10,12 +10,12 @@
  * See the Mulan PubL v2 for more details.
  */
 
+#include "IMJingleSession.h"
 #include "IMFile.h"
 #include "IMFileTask.h"
-#include "IMJingleSession.h"
-#include "lib/ortc/ok_rtc_proxy.h"
-#include "lib/ortc/ok_rtc_renderer.h"
 #include "base/basic_types.h"
+#include "lib/ortc/ok_rtc.h"
+#include "lib/ortc/ok_rtc_renderer.h"
 #include <QDebug>
 
 namespace lib {
@@ -42,10 +42,10 @@ IMJingleSession::IMJingleSession(IM* im,
           <<"sid:" << sId
            <<"to peer:"<<peerId.toString();
 
-  if(m_callType == ortc::JingleCallType::audio || m_callType == ortc::JingleCallType::video){
-    _rtcManager = std::make_unique<lib::ortc::OkRTCManager>(iceServers, handler, renderer); //
-    _rtcManager->start(stdstring(peerId.toString()), stdstring(sId), m_callType);
-  }
+//  if(m_callType == ortc::JingleCallType::audio || m_callType == ortc::JingleCallType::video){
+//    _rtcManager = std::make_unique<lib::ortc::OkRTCManager>(iceServers, handler, renderer); //
+//    _rtcManager->start(stdstring(peerId.toString()), stdstring(sId), m_callType);
+//  }
   qDebug()<< __func__ << "be created.";
 }
 

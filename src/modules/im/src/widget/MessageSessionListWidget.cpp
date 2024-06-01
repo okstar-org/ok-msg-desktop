@@ -90,13 +90,15 @@ MessageSessionListWidget::MessageSessionListWidget(MainLayout *parent,
 //          &MessageSessionListWidget::onGroupchatPositionChanged);
 
    auto w = Widget::getInstance();
-   connect(w, &Widget::toDeleteChat,
-           this, &MessageSessionListWidget::do_deleteSession);
-
-    connect(w, &Widget::toClearHistory, this, &MessageSessionListWidget::do_clearHistory);
+   connect(w, &Widget::toDeleteChat, this, &MessageSessionListWidget::do_deleteSession);
+   connect(w, &Widget::toClearHistory, this, &MessageSessionListWidget::do_clearHistory);
 }
 
 MessageSessionListWidget::~MessageSessionListWidget() {
+   auto w = Widget::getInstance();
+    disconnect(w, &Widget::toDeleteChat, this, &MessageSessionListWidget::do_deleteSession);
+    disconnect(w, &Widget::toClearHistory, this, &MessageSessionListWidget::do_clearHistory);
+
   if (activityLayout != nullptr) {
     QLayoutItem *item;
     while ((item = activityLayout->takeAt(0)) != nullptr) {

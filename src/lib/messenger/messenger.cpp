@@ -123,9 +123,9 @@ bool Messenger::connectIM( ) {
   auto _session = ok::session::AuthSession::Instance();
   auto _im = _session->im();
 
-  connect(_im, &IM::connected, this, [&]() {
-    emit connected();
-  });
+//  connect(_im, &IM::connected, this, [&]() {
+//    emit connected();
+//  });
 
   connect(_im, &IM::started, this, &Messenger::onStarted);
 //  connect(this, &Messenger::stopped, this, &Messenger::onStopped);

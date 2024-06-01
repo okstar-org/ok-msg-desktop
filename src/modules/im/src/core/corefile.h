@@ -93,7 +93,7 @@ signals:
   void fileSendFailed(QString friendId, const QString &fname);
 
 private:
-  CoreFile(ToxFile1 *core, CompatibleRecursiveMutex &coreLoopLock);
+  CoreFile();
 
   ToxFile *findFile(QString fileId);
   const QString& addFile(ToxFile &file);

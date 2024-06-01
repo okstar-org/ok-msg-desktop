@@ -32,9 +32,9 @@
 #include "lib/messenger/messenger.h"
 #include "lib/session/AuthSession.h"
 
+#include "lib/ortc/ok_rtc.h"
 #include "lib/ortc/ok_rtc_defs.h"
 #include "lib/ortc/ok_rtc_manager.h"
-#include "lib/ortc/ok_rtc_proxy.h"
 
 namespace gloox {
 namespace Jingle {
