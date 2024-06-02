@@ -497,15 +497,19 @@ void Profile::loadDatabase(QString password) {
   // it), so we always load the history, and if it fails we can't change the
   // setting now, but we keep a nullptr
   qDebug() << "Create database for" << name;
+
+  bool ok = false;
   database = std::make_shared<RawDatabase>(getDbPath(name), password, salt);
   if (database && database->isOpen()) {
     history.reset(new History(database));
-  } else {
-    qWarning() << "Failed to open database for profile" << name;
-    GUI::showError(
-        QObject::tr("Error"),
-        QObject::tr(
-            "qTox couldn't open your chat logs, they will be disabled."));
+     ok = history->isValid();
+  }
+  if(!ok){
+      qWarning() << "Failed to load database for profile" << name;
+      GUI::showError(
+          QObject::tr("Error"),
+          QObject::tr("Couldn't open your chat logs, they will be exit."));
+      qApp->exit(1);
   }
 }
 

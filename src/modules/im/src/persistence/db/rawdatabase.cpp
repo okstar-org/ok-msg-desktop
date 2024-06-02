@@ -80,6 +80,7 @@ RawDatabase::RawDatabase(const QString& path, const QString& password, const QBy
     , path{path}
     , currentSalt{salt} // we need the salt later if a new password should be set
     , currentHexKey{deriveKey(password, salt)}
+    , sqlite{nullptr}
 {
     qDebug() <<__func__ <<"path:" << path;
     workerThread->setObjectName("Database");

@@ -2186,8 +2186,8 @@ If you are getting spammed with friend requests, change the NoSpam.</source>
 <context>
     <name>Profile</name>
     <message>
-        <source>Failed to derive key from password, the profile won&apos;t use the new password.</source>
-        <translation>从密码获取密钥失败，该帐户将不会使用新的密码。</translation>
+        <source>Couldn't open your chat logs, they will be exit.</source>
+        <translation>无法打开聊天历史，程序将退出。</translation>
     </message>
     <message>
         <source>Couldn&apos;t change password on the database, it might be corrupted or use the old password.</source>

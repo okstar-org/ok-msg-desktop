@@ -13,6 +13,7 @@
 //
 // Created by gaojie on 24-5-29.
 //
+#include <iostream>
 
 #include "IMCall.h"
 #include "IMJingle.h"
@@ -59,9 +60,10 @@ IMCall::IMCall( QObject *parent): QObject(parent)
         iceServers.push_back(ice);
       }
 
-    rtcManager = lib::ortc::OkRTCManager::getInstance(iceServers, nullptr, nullptr);
-    auto rtc = rtcManager->createInstance();
-    qDebug() <<"RTC is:" << rtc;
+      rtcManager  = lib::ortc::OkRTCManager::getInstance(iceServers, nullptr, nullptr);
+      auto rtc    = rtcManager->createInstance();
+      qDebug()    << "RTC is:" << rtc;
+
 }
 
 void IMCall::addCallHandler(CallHandler *hdr)

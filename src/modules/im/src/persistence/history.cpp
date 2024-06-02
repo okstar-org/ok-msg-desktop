@@ -48,7 +48,7 @@ bool createCurrentSchema(RawDatabase& db)
         "   data_id TEXT, "
         "   type INTEGER "
         "   );  "
-        "CREATE INDEX idx_data_id ON history(data_id); "
+
         //file_transfers
         "CREATE TABLE file_transfers "
         "(id INTEGER PRIMARY KEY, "
@@ -69,6 +69,7 @@ bool createCurrentSchema(RawDatabase& db)
 
 //    queries += RawDatabase::Query(QString("CREATE INDEX his_receiver_idx ON history (receiver); "));
 //    queries += RawDatabase::Query(QString("CREATE INDEX his_sender_idx ON history (sender); "));
+//    queries += RawDatabase::Query(QString("CREATE INDEX idx_data_id ON history(data_id); "));
     queries += RawDatabase::Query(QString("PRAGMA user_version = %1;").arg(SCHEMA_VERSION));
 
     return db.execNow(queries);

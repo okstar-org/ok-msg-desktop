@@ -212,20 +212,8 @@ WebRTC::WebRTC(std::list<IceServer> iceOptions,
            OkRTCRenderer *renderer)
     : _iceOptions((iceOptions))
 {
-
-//  _logSink(std::make_unique<LogSinkImpl>())
-//    rtc::LogMessage::AddLogToStream(_logSink.get(), rtc::LS_INFO);
-    rtc::LogMessage::LogToDebug(rtc::LS_INFO);
-//    rtc::LogMessage::SetLogToStderr(false);
-
-
-  RTC_LOG(LS_INFO) << "Starting the WebRTC...";
-  RTC_LOG(LS_INFO) << "InitializeSSL=>" << rtc::InitializeSSL();
-
-
   _rtcHandler = handler;
   _rtcRenderer = renderer;
-
   start();
 }
 
@@ -241,14 +229,25 @@ void WebRTC::start() {
       return;
   }
 
+  rtc::InitializeSSL();
+  //  _logSink(std::make_unique<LogSinkImpl>())
+  //    rtc::LogMessage::AddLogToStream(_logSink.get(), rtc::LS_INFO);
+      rtc::LogMessage::LogToDebug(rtc::LS_INFO);
+  //    rtc::LogMessage::SetLogToStderr(false);
+
+
+//    RTC_LOG(LS_INFO) << "Starting the WebRTC...";
+//    RTC_LOG(LS_INFO) << "InitializeSSL=>" ;
+
+
   // lock
 //  _start_shutdown_mtx.lock();
 
-  RTC_LOG(LS_INFO) << "Creating network thread";
+//  RTC_LOG(LS_INFO) << "Creating network thread";
   network_thread = rtc::Thread::CreateWithSocketServer();
-  RTC_LOG(LS_INFO) << "Network thread=>" << network_thread;
+//  RTC_LOG(LS_INFO) << "Network thread=>" << network_thread;
   network_thread->SetName("network_thread", this);
-  RTC_LOG(LS_INFO) << "Network thread is started=>" << network_thread->Start();
+//  RTC_LOG(LS_INFO) << "Network thread is started=>" << network_thread->Start();
 
   // RTC_LOG(LS_INFO) << "Creating worker thread";
   worker_thread = rtc::Thread::Create();

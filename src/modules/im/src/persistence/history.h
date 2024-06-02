@@ -194,6 +194,7 @@ public:
     void setFriendAlias(const QString& friendPk, const QString& alias);
     QString getFriendAlias(const QString& friendPk);
 
+
 protected:
     QVector<RawDatabase::Query>
     generateNewMessageQueries(const Message& message,
