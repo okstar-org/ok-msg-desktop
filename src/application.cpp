@@ -296,7 +296,7 @@ void Application::on_logout(const QString &profile)
 {
     qDebug() << __func__<<profile;
     doLogout();
-    sleep(1);
+    QThread::currentThread()->sleep(1);
     createLoginUI(false);
 }
 

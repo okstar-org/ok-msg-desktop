@@ -1,5 +1,5 @@
 #include "LogSinkImpl.h"
-
+#include <iostream>
 #ifdef WEBRTC_WIN
 #include "windows.h"
 #include <ctime>

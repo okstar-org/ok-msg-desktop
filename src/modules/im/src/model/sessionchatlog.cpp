@@ -425,9 +425,16 @@ void SessionChatLog::onFileUpdated(const ToxPk &friendId, const ToxFile &file) {
     currentFileTransfers.push_back(currentTransfer);
 
     const auto chatLogFile = ChatLogFile{QDateTime::currentDateTime(), file};
-    items.emplace(currentTransfer.idx, ChatLogItem(
-                                           ToxPk{file.sender},
-                                           coreIdHandler.getNick(),
+
+    ToxPk senderPk{file.sender};
+    QString senderName;
+    if (coreIdHandler.getSelfPublicKey().getId() == file.sender) {
+      senderName = coreIdHandler.getNick();
+    } else {
+      senderName = FriendList::decideNickname(senderPk, senderPk.username);
+    }
+    items.emplace(currentTransfer.idx, ChatLogItem(senderPk,
+                                           senderName,
                                            chatLogFile));
     messageIdx = currentTransfer.idx;
   } else if (fileIt != currentFileTransfers.end()) {

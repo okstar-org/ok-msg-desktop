@@ -39,8 +39,8 @@ ContactWidget::ContactWidget(QWidget *parent) : MainLayout(parent), ui(new Ui::C
 }
 
 ContactWidget::~ContactWidget() {
-  delete ui;
   deinit();
+  delete ui;
 }
 
 AddFriendForm *ContactWidget::makeAddForm() {

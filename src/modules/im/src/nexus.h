@@ -14,6 +14,7 @@
 #define NEXUS_H
 
 #include <QObject>
+#include <QPointer>
 
 #include "modules/module.h"
 
@@ -127,7 +128,7 @@ private:
 
   Settings *settings;
   QWidget *parent;
-  Widget *widget;
+  QPointer<Widget> widget;  //某些异常情况下widget会被提前释放
   std::unique_ptr<IAudioControl> audioControl;
   QCommandLineParser *parser = nullptr;
 };
