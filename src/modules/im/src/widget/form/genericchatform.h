@@ -177,7 +177,8 @@ protected:
 
 protected:
     const ContactId* contactId;
-    const Contact* contact;
+    const Contact *contact = nullptr;
+ 
 
     bool audioInputFlag;
     bool audioOutputFlag;
