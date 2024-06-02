@@ -91,12 +91,20 @@ PKG_CONFIG_PATH=<项目根目录>/vcpkg_installed/x64-windows/lib/pkgconfig
 ```shell
 git clone https://github.com/okstar-org/ok-rtc.git
 # CMake预处理
- E:\QtWorkspace\ok-rtc> cmake -B out/Debug -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE='$env{VCPKG_ROOT}\scripts\buildsystems\vcpkg.cmake' -DCMAKE_PREFIX_PATH='${PROJECT_ROOT}\vcpkg_installed\x64-windows'
+ E:\QtWorkspace\ok-rtc> cmake -B out -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE='$env{VCPKG_ROOT}\scripts\buildsystems\vcpkg.cmake' -DCMAKE_PREFIX_PATH='${PROJECT_ROOT}\vcpkg_installed\x64-windows'
 # 构建
-E:\QtWorkspace\ok-rtc> cmake --build out/Debug
-
+E:\QtWorkspace\ok-rtc> cmake --build out --config Release --target ALL_BUILD -j 4
 ```
-- 构建项目
+- 编译OkGloox库
+```shell
+git clone https://github.com/okstar-org/ok-gloox.git
+# CMake预处理
+ E:\QtWorkspace\ok-gloox>  cmake -G "Visual Studio 17 2022" -B .\out\
+# 构建
+E:\QtWorkspace\ok-gloox>  cmake --build .\out\ --config Release --target ALL_BUILD -j 4
+```
+
+- 构建OkMSG项目
 
 1. 修改CMake预设文件CMakeUserPresets.json(该文件是针对用户本地环境的配置，不要提交)，列子如下：
 > 此处主要利用 `CMAKE_PREFIX_PATH` 关联到第三方库（调试库），比如：Qt、VcPkg下载的库、OkRTC等

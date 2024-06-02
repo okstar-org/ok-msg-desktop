@@ -60,9 +60,9 @@ IMCall::IMCall( QObject *parent): QObject(parent)
         iceServers.push_back(ice);
       }
 
-      rtcManager  = lib::ortc::OkRTCManager::getInstance(iceServers, nullptr, nullptr);
-      auto rtc    = rtcManager->createInstance();
-      qDebug()    << "RTC is:" << rtc;
+//      rtcManager  = lib::ortc::OkRTCManager::getInstance(iceServers, nullptr, nullptr);
+//      auto rtc    = rtcManager->createInstance();
+//      qDebug()    << "RTC is:" << rtc;
 
 }
 

@@ -229,15 +229,14 @@ void WebRTC::start() {
       return;
   }
 
-  rtc::InitializeSSL();
   //  _logSink(std::make_unique<LogSinkImpl>())
   //    rtc::LogMessage::AddLogToStream(_logSink.get(), rtc::LS_INFO);
       rtc::LogMessage::LogToDebug(rtc::LS_INFO);
   //    rtc::LogMessage::SetLogToStderr(false);
 
 
-//    RTC_LOG(LS_INFO) << "Starting the WebRTC...";
-//    RTC_LOG(LS_INFO) << "InitializeSSL=>" ;
+    RTC_LOG(LS_INFO) << "Starting the WebRTC...";
+    RTC_LOG(LS_INFO) << "InitializeSSL=>" << rtc::InitializeSSL();
 
 
   // lock
