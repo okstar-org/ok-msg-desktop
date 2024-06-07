@@ -245,7 +245,7 @@ bool History::isValid()
  * @param friendPk
  * @return True if has, false otherwise.
  */
-bool History::historyExists(const ToxPk& me, const ToxPk& friendPk)
+bool History::historyExists(const FriendId& me, const FriendId& friendPk)
 {
     if (historyAccessBlocked()) {
         return false;
@@ -512,7 +512,7 @@ QList<History::HistMessage> History::getMessageByDataId(const QString &dataId)
     return messages;
 }
 
-size_t History::getNumMessagesForFriend(const ToxPk& me, const ToxPk& friendPk)
+size_t History::getNumMessagesForFriend(const FriendId& me, const FriendId& friendPk)
 {
     if (historyAccessBlocked()) {
         return 0;
@@ -521,7 +521,7 @@ size_t History::getNumMessagesForFriend(const ToxPk& me, const ToxPk& friendPk)
     return getNumMessagesForFriendBeforeDate(me, friendPk, QDateTime());
 }
 
-size_t History::getNumMessagesForFriendBeforeDate(const ToxPk& me, const ToxPk& friendPk, const QDateTime& date)
+size_t History::getNumMessagesForFriendBeforeDate(const FriendId& me, const FriendId& friendPk, const QDateTime& date)
 {
     if (historyAccessBlocked()) {
         return 0;
@@ -549,7 +549,7 @@ size_t History::getNumMessagesForFriendBeforeDate(const ToxPk& me, const ToxPk& 
     return numMessages;
 }
 
-QString History::makeSqlForFriend(const ToxPk& me, const ToxPk& friendPk){
+QString History::makeSqlForFriend(const FriendId& me, const FriendId& friendPk){
     QString link = me == friendPk ? "AND" : "OR";
     QString queryText = QString(
                 "SELECT history.id, "   //0
@@ -589,8 +589,8 @@ History::HistMessage History::rowToMessage(const QVector<QVariant>& row){
     return History::HistMessage{ id, ctype, state,timestamp,sender_key,receiver, message, dataId };
 }
 
-QList<History::HistMessage> History::getMessagesForFriend(const ToxPk& me,
-                                                          const ToxPk& friendPk,
+QList<History::HistMessage> History::getMessagesForFriend(const FriendId& me,
+                                                          const FriendId& friendPk,
                                                           size_t firstIdx,
                                                           size_t lastIdx)
 {
@@ -617,7 +617,7 @@ QList<History::HistMessage> History::getMessagesForFriend(const ToxPk& me,
     return messages;
 }
 
-   QList<History::HistMessage> History::getLastMessageForFriend(const ToxPk &me, const ToxPk &friendPk,
+   QList<History::HistMessage> History::getLastMessageForFriend(const FriendId &me, const FriendId &friendPk,
                                                                 uint size, HistMessageContentType type)
     {
 
@@ -642,7 +642,7 @@ QList<History::HistMessage> History::getMessagesForFriend(const ToxPk& me,
        return messages;
     }
 
-QList<History::HistMessage> History::getUndeliveredMessagesForFriend(const ToxPk& me, const ToxPk& friendPk)
+QList<History::HistMessage> History::getUndeliveredMessagesForFriend(const FriendId& me, const FriendId& friendPk)
 {
     if (historyAccessBlocked()) {
         return {};
@@ -776,7 +776,7 @@ QDateTime History::getDateWhereFindPhrase(const QString& friendPk, const QDateTi
  * of date changes (for loadHistory). We could write two separate queries but the query is fairly
  * intricate compared to our other ones so reducing duplication of it is preferable.
  */
-QList<History::DateIdx> History::getNumMessagesForFriendBeforeDateBoundaries(const ToxPk& friendPk,
+QList<History::DateIdx> History::getNumMessagesForFriendBeforeDateBoundaries(const FriendId& friendPk,
                                                                              const QDate& from,
                                                                              size_t maxNum)
 {

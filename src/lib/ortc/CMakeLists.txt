@@ -4,56 +4,89 @@ message(STATUS "${PROJECT_NAME} Implicit include directories: ${CMAKE_CXX_IMPLIC
 message(STATUS "User-added include directories:")
 get_directory_property(USER_INCLUDE_DIRECTORIES INCLUDE_DIRECTORIES)
 foreach (dir ${USER_INCLUDE_DIRECTORIES})
-    message(STATUS "  ${dir}")
+	message(STATUS "  ${dir}")
 endforeach ()
 
 #ok-rtc
 find_package(ok-rtc REQUIRED)
-if(ok-rtc_FOUND)
-  if (WIN32)
-      add_definitions(-DWEBRTC_WIN)
-  elseif (UNIX)
-      add_definitions(-DWEBRTC_POSIX)
-  endif ()
-  set(webrtc_LIB ok-rtc::ok-rtc)
+if (ok-rtc_FOUND)
+	if (WIN32)
+		add_definitions(-DWEBRTC_WIN)
+	elseif (UNIX)
+		add_definitions(-DWEBRTC_POSIX -DWEBRTC_LINUX -DABSL_USES_STD_STRING_VIEW=1)
+		add_compile_definitions(-DWEBRTC_POSIX -DWEBRTC_LINUX)
+	endif ()
+	set(webrtc_LIB ok-rtc::ok-rtc)
 
 endif ()
 
 #ok-gloox
 find_package(ok-gloox REQUIRED)
-if(ok-gloox_FOUND)
-    set(gloox_LIB ok-gloox::ok-gloox)
+if (ok-gloox_FOUND)
+	set(gloox_LIB ok-gloox::ok-gloox)
 endif ()
 
 set(${PROJECT_NAME}_SOURCES
-        webrtc/ok_videosink.h
-        webrtc/ok_videosink.cpp
+		webrtc/platform/PlatformInterface.h
+		    # Desktop capturer
+		    webrtc/platform/desktop_capturer/DesktopCaptureSource.h
+		    webrtc/platform/desktop_capturer/DesktopCaptureSource.cpp
+		    webrtc/platform/desktop_capturer/DesktopCaptureSourceHelper.h
+	      webrtc/platform/desktop_capturer/DesktopCaptureSourceHelper.cpp
+		    webrtc/platform/desktop_capturer/DesktopCaptureSourceManager.h
+		    webrtc/platform/desktop_capturer/DesktopCaptureSourceManager.cpp
+
+		
+		
+
+
+		webrtc/platform/tdesktop/DesktopInterface.cpp
+		webrtc/platform/tdesktop/DesktopInterface.h
+		webrtc/platform/tdesktop/VideoCapturerInterfaceImpl.cpp
+		webrtc/platform/tdesktop/VideoCapturerInterfaceImpl.h
+		webrtc/platform/tdesktop/VideoCapturerTrackSource.cpp
+		webrtc/platform/tdesktop/VideoCapturerTrackSource.h
+		webrtc/platform/tdesktop/VideoCameraCapturer.cpp
+		webrtc/platform/tdesktop/VideoCameraCapturer.h
+
+		webrtc/Stats.h
+		webrtc/Instance.h
+		webrtc/ThreadLocalObject.h
+		webrtc/ThreadLocalObject.cpp
+		webrtc/VideoCaptureInterface.h
+		webrtc/VideoCaptureInterface.cpp
+		webrtc/VideoCaptureInterfaceImpl.h
+		webrtc/VideoCaptureInterfaceImpl.cpp
+		webrtc/StaticThreads.h
+		webrtc/StaticThreads.cpp
+		webrtc/ok_videosink.h
+		webrtc/ok_videosink.cpp
 		webrtc/webrtc.h
 		webrtc/webrtc.cpp
-        webrtc/ok_conductor.h
-        webrtc/ok_conductor.cc
-        webrtc/test_video_capturer.h
-        webrtc/test_video_capturer.cc
-        webrtc/vcm_capturer.h
-        webrtc/vcm_capturer.cc
-    webrtc/LogSinkImpl.h
-    webrtc/LogSinkImpl.cpp
-        ok_rtc_manager.h
-        ok_rtc_manager.cpp
-    ok_rtc.h
-        ok_rtc_renderer.h
-        ok_rtc_defs.h
-        ok_rtc_defs.cpp)
+		webrtc/ok_conductor.h
+		webrtc/ok_conductor.cpp
+		webrtc/test_video_capturer.h
+		webrtc/test_video_capturer.cc
+		webrtc/vcm_capturer.h
+		webrtc/vcm_capturer.cc
+		webrtc/LogSinkImpl.h
+		webrtc/LogSinkImpl.cpp
+		ok_rtc_manager.h
+		ok_rtc_manager.cpp
+		ok_rtc.h
+		ok_rtc_renderer.h
+		ok_rtc_defs.h
+		ok_rtc_defs.cpp)
 
 
 add_library(${PROJECT_NAME} STATIC
-        ${${PROJECT_NAME}_SOURCES})
+		${${PROJECT_NAME}_SOURCES})
 
 target_link_libraries(${PROJECT_NAME}
-        PRIVATE ${webrtc_LIB}
-        PRIVATE ${gloox_LIB}
+		${webrtc_LIB}
+		${gloox_LIB}
 )
 
 if (MSVC)
-    set_property(TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+	set_property(TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif (MSVC)

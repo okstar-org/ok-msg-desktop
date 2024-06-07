@@ -102,7 +102,7 @@ static QString fontToCss(const QFont &font, const QString &name) {
  * @return Name or alias of someone with such public key, or public key string
  * representation if no one was found
  */
-QString GenericChatForm::resolveToxPk(const ToxPk &pk) {
+QString GenericChatForm::resolveToxPk(const FriendId &pk) {
   Friend *f = FriendList::findFriend(pk);
   if (f) {
     return f->getDisplayedName();

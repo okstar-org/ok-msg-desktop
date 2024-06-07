@@ -16,6 +16,8 @@
 
 #include <memory>
 
+#include <pc/video_track_source.h>
+
 #include "api/video/video_frame.h"
 #include "api/video/video_source_interface.h"
 #include "media/base/video_adapter.h"
@@ -29,18 +31,21 @@ using namespace webrtc;
 
 class TestVideoCapturer : public rtc::VideoSourceInterface<VideoFrame> {
 public:
-  class FramePreprocessor {
-  public:
-    virtual ~FramePreprocessor() = default;
+    class FramePreprocessor {
+    public:
+        virtual ~FramePreprocessor() = default;
+        virtual VideoFrame Preprocess(const VideoFrame &frame) = 0;
+    };
 
-    virtual VideoFrame Preprocess(const VideoFrame &frame) = 0;
-  };
+  TestVideoCapturer();
 
-  ~TestVideoCapturer() override;
+  ~TestVideoCapturer();
 
   void AddOrUpdateSink(rtc::VideoSinkInterface<VideoFrame> *sink,
                        const rtc::VideoSinkWants &wants) override;
+
   void RemoveSink(rtc::VideoSinkInterface<VideoFrame> *sink) override;
+
   void SetFramePreprocessor(std::unique_ptr<FramePreprocessor> preprocessor) {
     MutexLock lock(&lock_);
     preprocessor_ = std::move(preprocessor);

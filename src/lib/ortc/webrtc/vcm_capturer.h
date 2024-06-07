@@ -25,15 +25,18 @@ namespace ortc {
 
 using namespace webrtc;
 
-class VcmCapturer :  public rtc::VideoSinkInterface<VideoFrame>,
+class VcmCapturer :
+        public rtc::VideoSinkInterface<VideoFrame>,
         public TestVideoCapturer                    {
 public:
     VcmCapturer(VideoCaptureModule::DeviceInfo*);
+    ~VcmCapturer();
+
     bool Create(size_t width,
                         size_t height,
                         size_t target_fps,
                         size_t capture_device_index);
-    virtual ~VcmCapturer();
+
 
     void OnFrame(const VideoFrame &frame) override;
 

@@ -13,8 +13,8 @@
 #ifndef ICORE_GROUP_QUERY_H
 #define ICORE_GROUP_QUERY_H
 
+#include "FriendId.h"
 #include "groupid.h"
-#include "toxpk.h"
 
 #include <QString>
 #include <QStringList>
@@ -28,7 +28,7 @@ public:
     virtual GroupId getGroupPersistentId(QString groupId) const = 0;
     virtual uint32_t getGroupNumberPeers(QString groupId) const = 0;
     virtual QString getGroupPeerName(QString groupId, QString peerId) const = 0;
-    virtual ToxPk getGroupPeerPk(QString groupId, QString peerId) const = 0;
+    virtual ToxPeer getGroupPeerPk(QString groupId, QString peerId) const = 0;
     virtual QStringList getGroupPeerNames(QString groupId) const = 0;
     virtual bool getGroupAvEnabled(QString groupId) const = 0;
 };

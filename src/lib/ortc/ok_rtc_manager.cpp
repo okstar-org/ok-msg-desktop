@@ -23,74 +23,74 @@
 namespace lib {
 namespace ortc {
 
-OkRTCManager::OkRTCManager(std::list<IceServer> iceServers,
-                           OkRTCHandler *handler,
-                           OkRTCRenderer *renderer)
-    : iceServers{iceServers}, handler{handler}, renderer{renderer}
+static OkRTCManager *instance = nullptr;
+static std::mutex mtx;
+
+OkRTCManager::OkRTCManager()
 {
 
-}
-
-OkRTCManager *OkRTCManager::getInstance(std::list<IceServer> iceServers, OkRTCHandler *handler, OkRTCRenderer *renderer)
-{
-    static OkRTCManager *instance = nullptr;
-    if(!instance){
-        instance = new OkRTCManager(iceServers, handler, renderer);
-    }
-    return instance;
 }
 
 OkRTCManager::~OkRTCManager() {
-
+    rtc.reset();
 }
 
-OkRTC *OkRTCManager::createInstance()
+OkRTCManager *OkRTCManager::getInstance()
 {
-    rtc = std::make_unique<WebRTC>(iceServers, handler, renderer);
+  std::lock_guard<std::mutex> lock(mtx);
+  if(!instance){
+    RTC_DLOG_F(LS_INFO) << "Creating instance.";
+    instance = new OkRTCManager();
+  }
+  return instance;
+}
+
+void OkRTCManager::destroyInstance()
+{
+    std::lock_guard<std::mutex> lock(mtx);
+    if(!instance)
+    {
+        RTC_DLOG_F(LS_WARNING) << "The instance has been destroyed!";
+        return;
+    }
+
+    RTC_DLOG_F(LS_INFO) << "instance:"<<instance;
+    delete instance;
+    instance = nullptr;
+    RTC_DLOG_F(LS_WARNING) << "Destroy the instance successfully.";
+}
+
+OkRTC *OkRTCManager::getRtc()
+{
+    if(!rtc){
+        rtc = std::make_unique<WebRTC>();
+    }
     return rtc.get();
 }
 
-void OkRTCManager::destroyInstance(OkRTC *rtc_)
-{
-   rtc.reset();
-}
-
-void OkRTCManager::start(const std::string &peerId,
-                         const std::string &sId,
-                         lib::ortc::JingleCallType callType){
-  rtc->call(peerId, sId, callType);
-}
+//void OkRTCManager::start(const std::string &peerId,
+//                         const std::string &sId,
+//                         lib::ortc::JingleCallType callType){
+//  rtc->call(peerId, sId, callType);
+//}
 
 void OkRTCManager::join(const std::string &peerId,
                         const std::string &sId,
-                        const JingleContext& context) {
+                        const OJingleContentAv & context) {
   rtc->join(peerId, sId, context);
 }
 
-void OkRTCManager::quit(const std::string &peerId) {
-  rtc->quit(peerId);
-}
-
-void OkRTCManager::createPeerConnection() {
-  rtc->createPeerConnection();
-}
-
-void OkRTCManager::SetRemoteDescription(
-    const std::string &peerId, const lib::ortc::JingleContext &jingleContext) {
-  rtc->SetRemoteDescription(peerId, jingleContext);
-}
+//void OkRTCManager::quit(const std::string &peerId) {
+//  rtc->quit(peerId);
+//}
 
 void OkRTCManager::CreateOffer(const std::string &peerId) {
   rtc->CreateOffer(peerId);
 }
 
-void OkRTCManager::CreateAnswer(const std::string &peerId, const lib::ortc::JingleContext &pContent) {
-  rtc->CreateAnswer(peerId, pContent);
-}
-
-bool OkRTCManager::SetTransportInfo(const std::string &peerId, const OIceUdp &oIceUdp) {
-  return rtc->SetTransportInfo(peerId, oIceUdp);
-}
+//void OkRTCManager::CreateAnswer(const std::string &peerId, const lib::ortc::OJingleContent &pContent) {
+//  rtc->CreateAnswer(peerId, pContent);
+//}
 
 void OkRTCManager::ContentAdd(
     std::map<std::string, gloox::Jingle::Session> &sdMap,
@@ -111,6 +111,7 @@ void OkRTCManager::SessionTerminate(const std::string &sid) {
 void OkRTCManager::setMute(bool mute) { rtc->setMute(mute); }
 
 void OkRTCManager::setRemoteMute(bool mute) {  }
+
 
 size_t OkRTCManager::getVideoSize() { return rtc->getVideoSize(); }
 

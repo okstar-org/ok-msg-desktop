@@ -24,7 +24,7 @@
 #include <QFrame>
 #include <QLabel>
 
-NetCamView::NetCamView(ToxPk friendPk, QWidget* parent)
+NetCamView::NetCamView(FriendId friendPk, QWidget* parent)
     : GenericNetCamView(parent)
     , selfFrame{nullptr}
     , friendPk{friendPk}
@@ -73,7 +73,7 @@ NetCamView::NetCamView(ToxPk friendPk, QWidget* parent)
                            [this](const QPixmap& pixmap) { selfVideoSurface->setAvatar(pixmap); });
 
     connections += connect(Nexus::getProfile(), &Profile::friendAvatarChanged,
-                           [this](ToxPk friendPk, const QPixmap& pixmap) {
+                           [this](FriendId friendPk, const QPixmap& pixmap) {
                                if (this->friendPk == friendPk)
                                    videoSurface->setAvatar(pixmap);
                            });

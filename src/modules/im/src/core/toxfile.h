@@ -23,7 +23,7 @@
 
 class QFile;
 class QTimer;
-class ToxPk;
+class FriendId;
 
 namespace lib::messenger {
 class File;
@@ -38,7 +38,7 @@ struct FileInfo {
 public:
     FileInfo()=default;
     FileInfo(
-             const QString &sId,
+             const QString &sId, 
              const QString& id,
              const QString &fileName,
              const QString & filePath,

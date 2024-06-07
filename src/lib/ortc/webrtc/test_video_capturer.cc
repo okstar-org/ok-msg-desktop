@@ -83,6 +83,11 @@ rtc::VideoSinkWants TestVideoCapturer::GetSinkWants() {
   return broadcaster_.wants();
 }
 
+TestVideoCapturer::TestVideoCapturer()
+{
+
+}
+
 void TestVideoCapturer::AddOrUpdateSink(
     rtc::VideoSinkInterface<VideoFrame> *sink,
     const rtc::VideoSinkWants &wants) {

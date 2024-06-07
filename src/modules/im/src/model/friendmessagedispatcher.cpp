@@ -25,7 +25,7 @@ namespace {
  * @param[out] receipt
  */
 bool sendMessageToCore(ICoreFriendMessageSender &messageSender,
-                       const ToxPk &f,
+                       const FriendId &f,
                        const Message &message, ReceiptNum &receipt,
                        bool encrypt) {
   QString friendId = f.getId();
@@ -39,7 +39,7 @@ bool sendMessageToCore(ICoreFriendMessageSender &messageSender,
 } // namespace
 
 FriendMessageDispatcher::FriendMessageDispatcher(
-        const ToxPk &f_,
+        const FriendId &f_,
         const MessageProcessor::SharedParams& p,
         ICoreIdHandler &idHandler_,
         ICoreFriendMessageSender &messageSender_)
@@ -103,7 +103,7 @@ FriendMessageDispatcher::sendMessage(bool isAction, const QString &content, bool
  */
 void FriendMessageDispatcher::onMessageReceived(FriendMessage& msg) {
   auto msg0 = processor.processIncomingMessage(msg);
-  emit messageReceived(ToxPk(msg.from), msg0);
+  emit messageReceived(FriendId(msg.from), msg0);
 }
 
 
@@ -134,12 +134,12 @@ void FriendMessageDispatcher::clearOutgoingMessages() {
 
 void FriendMessageDispatcher::onFileReceived( const ToxFile &file)
 {
-    const auto &friendId = ToxPk(f);
+    const auto &friendId = FriendId(f);
     emit fileReceived(friendId, file);
 }
 
 void FriendMessageDispatcher::onFileCancelled(const QString &fileId)
 {
-    const auto &friendId = ToxPk(f);
+    const auto &friendId = FriendId(f);
     emit fileCancelled(friendId, fileId);
 }

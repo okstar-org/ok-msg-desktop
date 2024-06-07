@@ -12,8 +12,8 @@
 
 #include "groupnetcamview.h"
 #include "src/audio/audio.h"
+#include "src/core/FriendId.h"
 #include "src/core/core.h"
-#include "src/core/toxpk.h"
 #include "src/friendlist.h"
 #include "src/model/friend.h"
 #include "src/nexus.h"
@@ -199,7 +199,7 @@ void GroupNetCamView::onUpdateActivePeer()
     setActive();
 }
 
-void GroupNetCamView::setActive(const ToxPk& peer)
+void GroupNetCamView::setActive(const FriendId& peer)
 {
     if (!peer.isValid()) {
         videoLabelSurface->setText(selfVideoSurface->getText());

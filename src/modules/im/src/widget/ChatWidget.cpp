@@ -42,6 +42,8 @@
 #include <src/model/profile/profileinfo.h>
 #include <src/widget/form/profileform.h>
 
+#include <src/core/coreav.h>
+
 
 namespace {
 
@@ -148,7 +150,7 @@ void ChatWidget::init() {
     auto widget = Widget::getInstance();
 
     connect(widget, &Widget::toSendMessage, [&](const QString& to, bool isGroup){
-        sessionListWidget->toSendMessage(ToxPk(to), isGroup);
+        sessionListWidget->toSendMessage(FriendId(to), isGroup);
     });
 
     connect(widget, &Widget::friendAdded, this, &ChatWidget::onFriendAdded);
@@ -250,20 +252,26 @@ void ChatWidget::onCoreChanged(Core &core_) {
   connectToCore(core);
   connectToCoreFile(core->getCoreFile());
 
+  const CoreAV *av = CoreAV::getInstance();
+  connect(av, &CoreAV::avInvite, this, &ChatWidget::onAvInvite);
+  connect(av, &CoreAV::avStart, this, &ChatWidget::onAvStart);
+  connect(av, &CoreAV::avEnd, this, &ChatWidget::onAvEnd);
+
+
   auto username = core->getUsername();
   qDebug() << "username" << username;
   ui->nameLabel->setText(username);
 }
 
 
-void ChatWidget::onFriendMessageSessionReceived(const ToxPk &friendPk, const QString &sid)
+void ChatWidget::onFriendMessageSessionReceived(const FriendId &friendPk, const QString &sid)
 {
      qDebug() << __func__ << "friend:" << friendPk.toString() << "sid:" <<sid;
      sessionListWidget->createMessageSession(friendPk, sid, ChatType::Chat);
 }
 
 void ChatWidget::onFriendMessageReceived(     //
-    const ToxPk &friendnumber,                //
+    const FriendId &friendnumber,                //
     const FriendMessage &message,             //
     bool isAction)                            //
 {
@@ -271,12 +279,12 @@ void ChatWidget::onFriendMessageReceived(     //
   sessionListWidget->setRecvFriendMessage(friendnumber, message, isAction);
 }
 
-void ChatWidget::onReceiptReceived(const ToxPk &friendId, ReceiptNum receipt) {
+void ChatWidget::onReceiptReceived(const FriendId &friendId, ReceiptNum receipt) {
   qDebug() << __func__ << "receiver:" << friendId.toString() << receipt;
   sessionListWidget->setFriendMessageReceipt(friendId, receipt);
 }
 
-void ChatWidget::onFriendStatusChanged(const ToxPk &friendPk,
+void ChatWidget::onFriendStatusChanged(const FriendId &friendPk,
                                        Status::Status status) {
   qDebug() << __func__ << friendPk.toString() << "status:" << (int)status;
   //  const auto &friendPk = FriendList::id2Key(friendPk);
@@ -309,7 +317,7 @@ void ChatWidget::onFriendStatusChanged(const ToxPk &friendPk,
 //    ContentDialogManager::getInstance()->updateFriendStatus(friendPk);
 }
 
-void ChatWidget::onFriendStatusMessageChanged(const ToxPk &friendPk,
+void ChatWidget::onFriendStatusMessageChanged(const FriendId &friendPk,
                                               const QString &message) {
 
   sessionListWidget->setFriendStatusMsg(friendPk, message);
@@ -331,7 +339,7 @@ void ChatWidget::onFriendStatusMessageChanged(const ToxPk &friendPk,
   //  }
 }
 
-void ChatWidget::onFriendTypingChanged(const ToxPk &friendId, bool isTyping) {
+void ChatWidget::onFriendTypingChanged(const FriendId &friendId, bool isTyping) {
 
   sessionListWidget->setFriendTyping(friendId, isTyping);
 }
@@ -498,7 +506,7 @@ void ChatWidget::onGroupPeerSizeChanged(QString groupnumber, const uint size) {
 }
 
 void ChatWidget::onGroupPeerNameChanged(QString groupnumber,
-                                        const ToxPk &peerPk,
+                                        const FriendId &peerPk,
                                         const QString &newName) {
   const GroupId &groupId = GroupId(groupnumber);
   Group *g = GroupList::findGroup(groupId);
@@ -824,13 +832,13 @@ void ChatWidget::setupStatus() {
 void ChatWidget::cancelFile(const QString &friendId, const QString &fileId)
 {
     qDebug() << __func__ << "file:" <<fileId;
-    auto frndId = ToxPk{friendId};
+    auto frndId = FriendId{friendId};
 
-    Friend *f = FriendList::findFriend(frndId);
-    if (!f) {
-        qWarning() <<"IMFriend is no existing!" << friendId;
-        return;
-    }
+//    Friend *f = FriendList::findFriend(frndId);
+//    if (!f) {
+//        qWarning() <<"IMFriend is no existing!" << friendId;
+//        return;
+//    }
 
     sessionListWidget->setFriendFileCancelled(frndId, fileId);
 }
@@ -839,7 +847,7 @@ void ChatWidget::dispatchFile(ToxFile file)
 {
     qDebug() << __func__ << "file:" <<file.toString();
 
-    const auto &friendId = ToxPk(file.getFriendId());
+    const auto &friendId = FriendId(file.getFriendId());
     Friend *f = FriendList::findFriend(friendId);
     if (!f) {
         qWarning() <<"IMFriend is no existing!" << friendId;
@@ -906,5 +914,71 @@ void ChatWidget::setStatusBusy() {
   //  }
 
   core->setStatus(Status::Status::Busy);
+}
+
+
+void ChatWidget::onAvInvite(ToxPeer peerId, bool video) {
+  auto fId =  peerId.toFriendId();
+  sessionListWidget->setFriendAvInvite(peerId, video);
+
+
+//  auto testedFlag = video ?
+//              Settings::AutoAcceptCall::Video : Settings::AutoAcceptCall::Audio;
+
+//  // AutoAcceptCall is set for this friend
+//  if (Settings::getInstance()
+//          .getAutoAcceptCall(*f)
+//          .testFlag(testedFlag)) {
+
+//    CoreAV *coreav = CoreAV::getInstance();
+//    QMetaObject::invokeMethod(coreav, "answerCall", Qt::QueuedConnection,
+//                              Q_ARG(ToxPeer, peerId), Q_ARG(bool, video));
+
+//    onAvStart(friendId, video);
+//  } else {
+//    headWidget->createCallConfirm(peerId, video);
+//    headWidget->showCallConfirm();
+//    lastCallIsVideo = video;
+//    emit incomingNotification(fId);
+//  }
+}
+
+void ChatWidget::onAvStart(QString friendId, bool video) {
+//  if (friendId != f->getId()) {
+//    return;
+//  }
+
+//  if (video) {
+//    showNetcam();
+//  } else {
+//    hideNetcam();
+//  }
+
+//  emit stopNotification();
+//  updateCallButtons();
+//  startCounter();
+}
+
+void ChatWidget::onAvEnd(const FriendId& friendId, bool error) {
+//  if (friendId != f->getId()) {
+//    return;
+//  }
+
+  qDebug()<<__func__ <<"friendId" << friendId <<"error"<<error;
+  sessionListWidget->setFriendAvEnd(friendId, error);
+
+//  headWidget->removeCallConfirm();
+//  // Fixes an OS X bug with ending a call while in full screen
+//  if (netcam && netcam->isFullScreen()) {
+//    netcam->showNormal();
+//  }
+
+//  emit stopNotification();
+//  emit endCallNotification();
+
+//  auto status = Core::getInstance()->getStatus();
+//  updateCallButtons(status);
+//  stopCounter(error);
+//  hideNetcam();
 }
 

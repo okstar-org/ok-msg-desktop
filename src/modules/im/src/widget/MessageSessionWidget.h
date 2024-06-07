@@ -15,7 +15,7 @@
 
 #include "ContentWidget.h"
 #include "genericchatroomwidget.h"
-#include "src/core/toxpk.h"
+#include "src/core/FriendId.h"
 #include "src/model/chatroom/groupchatroom.h"
 #include "src/model/friendmessagedispatcher.h"
 #include "src/model/message.h"
@@ -77,10 +77,12 @@ class MessageSessionWidget : public GenericChatroomWidget
     void setFriend(const Friend* f);
     void removeFriend();
 
+    void setAvInvite(const ToxPeer &peerId, bool video);
+    void setAvEnd(const FriendId& friendId, bool error);
 
 signals:
-    void removeFriend(const ToxPk& friendPk);
-    void copyFriendIdToClipboard(const ToxPk& friendPk);
+    void removeFriend(const FriendId& friendPk);
+    void copyFriendIdToClipboard(const FriendId& friendPk);
     void contextMenuCalled(QContextMenuEvent* event);
     void friendHistoryRemoved();
     void widgetClicked(MessageSessionWidget* widget);
@@ -91,8 +93,8 @@ signals:
     void deleteSession(const QString &contactId);
 
 public slots:
-  void onAvatarSet(const ToxPk& friendPk, const QPixmap& pic);
-  void onAvatarRemoved(const ToxPk& friendPk);
+  void onAvatarSet(const FriendId& friendPk, const QPixmap& pic);
+  void onAvatarRemoved(const FriendId& friendPk);
   void onContextMenuCalled(QContextMenuEvent* event);
   void do_widgetClicked( );
   void showEvent(QShowEvent *) override;
@@ -105,7 +107,8 @@ private slots:
     void changeAutoAccept(bool enable);
     void showDetails();
     void onMessageSent(DispatchedMessageId id, const Message & message);
-
+    void doAcceptCall(const ToxPeer& p, bool video);
+    void doRejectCall(const ToxPeer& p);
 
 protected:
     virtual void mousePressEvent(QMouseEvent* ev) override;
@@ -122,7 +125,7 @@ private:
 
     //联系人ID(朋友ID、群聊ID共享)
     ContactId contactId;
-    ToxPk friendId;
+    FriendId friendId;
     GroupId groupId;
 
 };

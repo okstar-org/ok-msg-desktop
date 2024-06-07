@@ -15,11 +15,11 @@
 
 #include "chatroom.h"
 
+#include "src/core/FriendId.h"
 #include <QLabel>
 #include <QObject>
 #include <QString>
 #include <QVector>
-#include "src/core/toxpk.h"
 
 class IDialogsManager;
 class Friend;
@@ -41,14 +41,14 @@ class FriendChatroom : public Chatroom
 {
     Q_OBJECT
 public:
-    FriendChatroom(const ToxPk* frnd, IDialogsManager* dialogsManager);
+    FriendChatroom(const FriendId* frnd, IDialogsManager* dialogsManager);
     ~FriendChatroom();
 
     virtual const ContactId& getContactId() override;
 
 public slots:
 
-  const  ToxPk* getFriend();
+  const  FriendId* getFriend();
 
 
 
@@ -78,7 +78,7 @@ public slots:
 
 private:
     bool active{false};
-    const ToxPk* frnd{nullptr};
+    const FriendId* frnd{nullptr};
     IDialogsManager* dialogsManager{nullptr};
 
 };

@@ -13,8 +13,8 @@
 #ifndef COREFILE_H
 #define COREFILE_H
 
+#include "src/core/FriendId.h"
 #include "src/core/core.h"
-#include "src/core/toxpk.h"
 #include "src/model/status.h"
 #include "toxfile.h"
 
@@ -89,7 +89,7 @@ signals:
   void fileTransferInfo(ToxFile file);
   void fileTransferRemotePausedUnpaused(ToxFile file, bool paused);
   void fileTransferBrokenUnbroken(ToxFile file, bool broken);
-  void fileNameChanged(const ToxPk &friendPk);
+  void fileNameChanged(const FriendId &friendPk);
   void fileSendFailed(QString friendId, const QString &fname);
 
 private:

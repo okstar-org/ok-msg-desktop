@@ -47,22 +47,24 @@ public:
                            Session *mSession,
                            std::list<ortc::IceServer> iceServers,
                            std::vector<FileHandler *>* fileHandlers,
-                           ortc::OkRTCHandler *handler,
-                           ortc::OkRTCRenderer *renderer);
+                           ortc::OkRTCHandler *handler);
   virtual ~IMJingleSession();
 
 
   [[nodiscard]] Session *getSession() const;
-  [[nodiscard]] inline const ortc::JingleContext &getContext() const {
+  [[nodiscard]] inline const ortc::OJingleContent &getContext() const {
     return context;
   }
 
   void onAccept();
+  //被动结束
   void onTerminate();
+  //主动结束
+  void doTerminate();
 
   void createOffer(const std::string &peerId);
 
-  void setContext(const ortc::JingleContext&);
+  void setContext(const ortc::OJingleContent &);
 
   const Session::Jingle *getJingle() const;
   void setJingle(const Session::Jingle *jingle);
@@ -75,7 +77,6 @@ public:
 
   [[nodiscard]] bool isAccepted() const { return accepted; }
 
-  [[nodiscard]] ortc::OkRTCManager *getRtcManager(){return _rtcManager.get();}
 
   const QString & getId() const {
     return sId;
@@ -115,9 +116,8 @@ private:
   QString sId;
   Session *session;
   const Session::Jingle *jingle;
-  ortc::JingleContext context;
+  ortc::OJingleContent context;
 
-  std::vector<FileHandler *> *fileHandlers;
 
 
   lib::ortc::JingleCallType m_callType;
@@ -128,8 +128,7 @@ private:
   QList<File> m_waitSendFiles;
   //k: file.id
   QMap<QString, IMFileTask *> m_fileSenderMap;
-
-  std::unique_ptr<ortc::OkRTCManager> _rtcManager;
+  std::vector<FileHandler *> *fileHandlers;
   std::list<ortc::OIceUdp> pendingIceCandidates;
 
 signals:

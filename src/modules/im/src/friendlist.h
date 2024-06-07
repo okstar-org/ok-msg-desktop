@@ -17,15 +17,15 @@
 #include <QMap>
 
 #include "src/model/message.h"
+#include <src/core/FriendId.h>
 #include <src/core/contactid.h>
-#include <src/core/toxpk.h>
 
 template <class T> class QList;
 template <class A, class B> class QHash;
 class Friend;
 class QByteArray;
 class QString;
-class ToxPk;
+class FriendId;
 
 using FriendMap = QMap<QString, Friend *>;
 
@@ -34,9 +34,9 @@ public:
   static Friend *addFriend(const FriendInfo &friendInfo);
   static Friend *findFriend(const ContactId &cId);
   static QList<Friend *> getAllFriends();
-  static void removeFriend(const ToxPk &friendPk, bool fake = false);
+  static void removeFriend(const FriendId &friendPk, bool fake = false);
   static void clear();
-  static QString decideNickname(const ToxPk &friendPk, const QString &origName);
+  static QString decideNickname(const FriendId &friendPk, const QString &origName);
 
 private:
   static FriendMap friendMap;

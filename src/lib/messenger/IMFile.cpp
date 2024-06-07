@@ -43,7 +43,8 @@ IMFile::IMFile(QObject *parent): QObject(parent)
     auto _session = ok::session::AuthSession::Instance();
     auto _im = _session->im();
 
-    jingle = new IMJingle(_im, &fileHandlers, this);
+    jingle = IMJingle::getInstance();
+    jingle->setFileHandlers(&fileHandlers);
 
     /*file handler*/
     connect(jingle, &IMJingle::receiveFileChunk, this,

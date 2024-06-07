@@ -277,26 +277,6 @@ public:
   std::set<std::string> getOnlineResources(const std::string &bare);
   void updateOnlineStatus(const std::string &bare, const std::string &resource, Presence::PresenceType presenceType);
 
-
-//  //文件传输通道
-//  IMJingle* createFileTransfer(const QString& f, const File &file);
-
-//  //创建音视频通道
-//  IMJingle* createAvToFriend(const QString& f, const QString sId, bool video);
-
-  /**
-   * jingle-message
-   *    发起呼叫邀请
-   */
-  void proposeJingleMessage(const QString &friendId, const QString &callId, bool video);
-
-  void rejectJingleMessage(const QString &friendId, const QString &callId);
-
-  void acceptJingleMessage(const QString &friendId, const QString &callId);
-
-  void retractJingleMessage(const QString &friendId, const QString &callId);
-
-
   [[nodiscard]] gloox::JID wrapJid(const QString &f) const;
 
   [[nodiscard]] gloox::JID wrapRoomJid(const QString &group) const;

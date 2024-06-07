@@ -35,7 +35,7 @@ QString getShortName(const QString& name)
 
 }
 
-FriendChatroom::FriendChatroom(const ToxPk* frnd,
+FriendChatroom::FriendChatroom(const FriendId* frnd,
                                IDialogsManager* dialogsManager)
     : frnd{frnd}
     , dialogsManager{dialogsManager}
@@ -48,7 +48,7 @@ FriendChatroom::~FriendChatroom()
     qDebug()<<__func__;
 }
 
-const ToxPk* FriendChatroom::getFriend()
+const FriendId* FriendChatroom::getFriend()
 {
     return frnd;
 }

@@ -34,7 +34,7 @@
 
 #include <memory>
 
-SettingsWidget::SettingsWidget(UpdateCheck* updateCheck, IAudioControl& audio, Widget* parent)
+SettingsWidget::SettingsWidget(UpdateCheck* updateCheck, Widget* parent)
     : QWidget(parent, Qt::Window)
 {
 //    setAttribute(Qt::WA_DeleteOnClose);
@@ -61,7 +61,7 @@ SettingsWidget::SettingsWidget(UpdateCheck* updateCheck, IAudioControl& audio, W
     std::unique_ptr<PrivacyForm> pfrm(new PrivacyForm());
     connect(pfrm.get(), &PrivacyForm::clearAllReceipts, parent, &Widget::clearAllReceipts);
 
-    AVForm* rawAvfrm = new AVForm(audio, camera, audioSettings, videoSettings);
+    AVForm* rawAvfrm = new AVForm( camera, audioSettings, videoSettings);
     std::unique_ptr<AVForm> avfrm(rawAvfrm);
     std::unique_ptr<AdvancedForm> expfrm(new AdvancedForm());
     std::unique_ptr<AboutForm> abtfrm(new AboutForm(updateCheck));

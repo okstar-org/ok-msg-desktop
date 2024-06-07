@@ -14,7 +14,7 @@
 #define GROUPCHATFORM_H
 
 #include "genericchatform.h"
-#include "src/core/toxpk.h"
+#include "src/core/FriendId.h"
 #include <QMap>
 
 namespace Ui {
@@ -47,9 +47,9 @@ private slots:
     void onMicMuteToggle();
     void onVolMuteToggle();
     void onCallClicked();
-    void onUserJoined(const ToxPk& user, const QString& name);
-    void onUserLeft(const ToxPk& user, const QString& name);
-    void onPeerNameChanged(const ToxPk& peer, const QString& oldName, const QString& newName);
+    void onUserJoined(const FriendId& user, const QString& name);
+    void onUserLeft(const FriendId& user, const QString& name);
+    void onPeerNameChanged(const FriendId& peer, const QString& oldName, const QString& newName);
     void onTitleChanged(const QString& author, const QString& title);
     void onLabelContextMenuRequested(const QPoint& localPos);
 

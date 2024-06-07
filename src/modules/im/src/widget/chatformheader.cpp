@@ -25,6 +25,8 @@
 #include <QTextDocument>
 #include <QToolButton>
 
+#include <src/core/FriendId.h>
+
 static const QSize AVATAR_SIZE{40, 40};
 static const short HEAD_LAYOUT_SPACING = 5;
 static const short MIC_BUTTONS_LAYOUT_SPACING = 4;
@@ -196,12 +198,18 @@ void ChatFormHeader::showOutgoingCall(bool video)
     updateButtonsView();
 }
 
-void ChatFormHeader::createCallConfirm(bool video)
+void ChatFormHeader::createCallConfirm(const ToxPeer &peer, bool video)
 {
     QWidget* btn = video ? videoButton : callButton;
     callConfirm = std::unique_ptr<CallConfirmWidget>(new CallConfirmWidget(btn));
-    connect(callConfirm.get(), &CallConfirmWidget::accepted, this, &ChatFormHeader::callAccepted);
-    connect(callConfirm.get(), &CallConfirmWidget::rejected, this, &ChatFormHeader::callRejected);
+    connect(callConfirm.get(), &CallConfirmWidget::accepted, [=](){
+        emit callAccepted(peer);
+    });
+    connect(callConfirm.get(), &CallConfirmWidget::rejected, [=](){
+        emit callRejected(peer);
+    });
+//    connect(callConfirm.get(), &CallConfirmWidget::accepted, this, &ChatFormHeader::callAccepted);
+//    connect(callConfirm.get(), &CallConfirmWidget::rejected, this, &ChatFormHeader::callRejected);
 }
 
 void ChatFormHeader::showCallConfirm()

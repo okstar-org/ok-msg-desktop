@@ -10,8 +10,8 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#ifndef TOXPK_H
-#define TOXPK_H
+#ifndef OK_FRIEND_ID_H
+#define OK_FRIEND_ID_H
 
 #include "src/core/contactid.h"
 #include <QByteArray>
@@ -19,6 +19,7 @@
 
 namespace lib::messenger{
 class IMContactId;
+class IMPeerId;
 }
 
 /**
@@ -26,36 +27,50 @@ class IMContactId;
  * 格式：user@server
  * 比如：jidlpdyibulw@meet.chuanshaninfo.com
  */
-class ToxPk : public ContactId
+class FriendId : public ContactId
 {
 public:
-    ToxPk();
-    ToxPk(const ToxPk& other);
-    explicit ToxPk(const QByteArray& rawId);
-    explicit ToxPk(const QString& rawId);
-    explicit ToxPk(const ContactId& rawId);
-    explicit ToxPk(const lib::messenger::IMContactId & fId);
+    FriendId();
+    FriendId(const FriendId& other);
+    explicit FriendId(const QByteArray& rawId);
+    explicit FriendId(const QString& rawId);
+    explicit FriendId(const ContactId& rawId);
+    explicit FriendId(const lib::messenger::IMContactId & fId);
 
-    bool operator==(const ToxPk& other) const;
-    bool operator<(const ToxPk& other) const;
+    bool operator==(const FriendId& other) const;
+    bool operator<(const FriendId& other) const;
+
 
     int getSize() const;
 
     QByteArray getByteArray() const;
 
-    QString toString() const;
+    QString toString() const override;
 
 };
 
 
-inline uint qHash(const ToxPk& id)
+inline uint qHash(const FriendId& id)
 {
     return qHash(id.getByteArray());
 }
 
-class ToxPeer : public ToxPk {
+class ToxPeer : public FriendId {
 public:
+  explicit ToxPeer() = default;
+
+  explicit ToxPeer(const lib::messenger::IMPeerId& peerId);
+
   explicit ToxPeer(const QString& rawId);
+
+  bool isValid() const override;
+
+  QString toString() const override;
+
+  const FriendId toFriendId() const {
+      return FriendId{username+"@"+server};
+  }
+
   QString resource;
 };
 

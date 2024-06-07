@@ -11,7 +11,7 @@
  */
 
 #include "friendlist.h"
-#include "src/core/toxpk.h"
+#include "src/core/FriendId.h"
 #include "src/model/friend.h"
 #include "src/persistence/settings.h"
 #include <QHash>
@@ -45,7 +45,7 @@ Friend *FriendList::findFriend(const ContactId &cId) {
   return friendMap.value(cId.toString());
 }
 
-void FriendList::removeFriend(const ToxPk &friendPk, bool fake) {
+void FriendList::removeFriend(const FriendId &friendPk, bool fake) {
     auto f = findFriend(friendPk);
     if(f){
         friendMap.remove(((ContactId&)friendPk).toString());
@@ -62,7 +62,7 @@ void FriendList::clear() {
 
 QList<Friend *> FriendList::getAllFriends() { return friendMap.values(); }
 
-QString FriendList::decideNickname(const ToxPk &friendPk,
+QString FriendList::decideNickname(const FriendId &friendPk,
                                    const QString &origName) {
   Friend *f = FriendList::findFriend(friendPk);
   if (f != nullptr) {

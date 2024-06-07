@@ -11,7 +11,7 @@
  */
 
 #include "identicon.h"
-#include "src/core/toxpk.h"
+#include "src/core/FriendId.h"
 
 #include <cassert>
 

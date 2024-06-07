@@ -23,6 +23,7 @@ class CroppingLabel;
 class QPushButton;
 class QToolButton;
 class CallConfirmWidget;
+class ToxPeer;
 
 class ChatFormHeader : public QWidget
 {
@@ -54,11 +55,14 @@ public:
     void setMode(Mode mode);
 
     void showOutgoingCall(bool video);
-    void createCallConfirm(bool video);
+
+    void createCallConfirm(const ToxPeer& peer, bool video);
     void showCallConfirm();
     void removeCallConfirm();
 
+
     void updateCallButtons(bool online, bool audio, bool video = false);
+
     void updateMuteMicButton(bool active, bool inputMuted);
     void updateMuteVolButton(bool active, bool outputMuted);
 
@@ -80,8 +84,8 @@ signals:
 
     void nameChanged(const QString& name);
 
-    void callAccepted();
-    void callRejected();
+    void callAccepted(const ToxPeer& peerId);
+    void callRejected(const ToxPeer& peerId);
 
 private slots:
     void retranslateUi();

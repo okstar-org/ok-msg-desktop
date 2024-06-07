@@ -15,6 +15,7 @@
 
 #include "../ok_rtc_renderer.h"
 #include <mutex>
+#include <ok_rtc.h>
 #include <api/video/video_sink_interface.h>
 #include <api/video/video_frame.h>
 
@@ -23,7 +24,7 @@ namespace ortc {
 
 class OVideoSink : public rtc::VideoSinkInterface<webrtc::VideoFrame> {
 public:
-  OVideoSink(OkRTCRenderer *renderer, std::string peerId = "");
+  OVideoSink(OkRTCHandler *handler, std::string peerId);
 
   virtual ~OVideoSink() override;
 
@@ -32,9 +33,8 @@ public:
 
 private:
   uint64_t _renderCount;
-  OkRTCRenderer *_renderer;
-  std::string _track_id;
   std::string _peer_id;
+  OkRTCHandler *handler;
 };
 
 } // namespace ortc

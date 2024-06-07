@@ -33,7 +33,7 @@ public:
     const QString & getAlias() const override;
 
     QString getStatusMessage() const override;
-    ToxPk getPublicKey() const override;
+    FriendId getPublicKey() const override;
 
     QPixmap getAvatar() const override;
 

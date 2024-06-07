@@ -13,8 +13,8 @@
 #ifndef CHAT_LOG_ITEM_H
 #define CHAT_LOG_ITEM_H
 
+#include "src/core/FriendId.h"
 #include "src/core/toxfile.h"
-#include "src/core/toxpk.h"
 #include "src/model/message.h"
 #include "src/persistence/history.h"
 
@@ -44,9 +44,9 @@ public:
         fileTransfer,
     };
 
-    ChatLogItem(ToxPk sender,QString displayName, ChatLogFile file);
-    ChatLogItem(ToxPk sender,QString displayName, ChatLogMessage message);
-    const ToxPk& getSender() const;
+    ChatLogItem(FriendId sender,QString displayName, ChatLogFile file);
+    ChatLogItem(FriendId sender,QString displayName, ChatLogMessage message);
+    const FriendId& getSender() const;
     ContentType getContentType() const;
     ChatLogFile& getContentAsFile();
     const ChatLogFile& getContentAsFile() const;
@@ -57,9 +57,9 @@ public:
     const QString& getDisplayName() const;
 
 private:
-    ChatLogItem(ToxPk sender, QString displayName, ContentType contentType, ContentPtr content);
+    ChatLogItem(FriendId sender, QString displayName, ContentType contentType, ContentPtr content);
 
-    ToxPk sender;
+    FriendId sender;
     QString displayName;
     ContentType contentType;
     ContentPtr content;

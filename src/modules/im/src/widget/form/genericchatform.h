@@ -14,7 +14,7 @@
 #define GENERICCHATFORM_H
 
 #include "src/chatlog/chatmessage.h"
-#include "src/core/toxpk.h"
+#include "src/core/FriendId.h"
 #include "src/model/ichatlog.h"
 #include "src/widget/searchtypes.h"
 
@@ -80,9 +80,10 @@ public:
 
     void addSystemInfoMessage(const QString& message, ChatMessage::SystemMessageType type,
                               const QDateTime& datetime);
-    static QString resolveToxPk(const ToxPk& pk);
+    static QString resolveToxPk(const FriendId& pk);
     QDateTime getLatestTime() const;
     QDateTime getFirstTime() const;
+
   [[__nodiscard__]]  inline ChatFormHeader* getHead() const {
         return headWidget;
     };

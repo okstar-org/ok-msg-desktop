@@ -37,10 +37,8 @@ if(WIN32)
             # OpenAL
             -DAL_LIBTYPE_STATIC)
 elseif(LINUX)
-
     # 设置相关宏定义
-    add_definitions(-DWEBRTC_POSIX -DWEBRTC_LINUX -DQ_OS_POSIX
-            -D_GLIBCXX_USE_CXX11_ABI=1 -DOPENSSL_IS_BORINGSSL=1)
+    add_definitions(-DQ_OS_POSIX)
 elseif(APPLE)
     # do something related to APPLE
     message(ERROR "暂不支持 Not supported temporarily")

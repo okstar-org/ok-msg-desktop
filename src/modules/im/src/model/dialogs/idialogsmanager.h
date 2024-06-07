@@ -16,13 +16,13 @@
 #include "idialogs.h"
 
 class GroupId;
-class ToxPk;
+class FriendId;
 
 class IDialogsManager
 {
 public:
     virtual ~IDialogsManager() = default;
-    virtual IDialogs* getFriendDialogs(const ToxPk& friendPk) const = 0;
+    virtual IDialogs* getFriendDialogs(const FriendId& friendId) const = 0;
     virtual IDialogs* getGroupDialogs(const GroupId& groupId) const = 0;
 };
 

@@ -135,7 +135,7 @@ QList<Message> ChatHistory::getLastTextMessage(uint size)
     auto selfPk = coreIdHandler.getSelfPublicKey();
 
     qDebug()<<__func__ <<"friend:"<<f.toString();
-    auto messages = history->getLastMessageForFriend(selfPk, ToxPk{f}, size, HistMessageContentType::message);
+    auto messages = history->getLastMessageForFriend(selfPk, FriendId{f}, size, HistMessageContentType::message);
     qDebug()<<__func__ <<"messages:"<<messages.size();
 
     for(auto& i: messages){
@@ -196,7 +196,7 @@ SearchResult ChatHistory::searchBackward(SearchPos startIdx, const QString& phra
         history->getDateWhereFindPhrase(f.toString(), earliestMessageDate, phrase,
                                         parameter);
 
-    auto loadIdx = history->getNumMessagesForFriendBeforeDate(coreIdHandler.getSelfPublicKey(), ToxPk{f}, dateWherePhraseFound);
+    auto loadIdx = history->getNumMessagesForFriendBeforeDate(coreIdHandler.getSelfPublicKey(), FriendId{f}, dateWherePhraseFound);
     loadHistoryIntoSessionChatLog(ChatLogIdx(loadIdx));
 
     // Reset search pos to the message we just loaded to avoid a double search
@@ -223,7 +223,7 @@ std::vector<IChatLog::DateChatLogIdxPair>   //
     ChatHistory::getDateIdxs(const QDate& startDate, size_t maxDates) const
 {
     if (canUseHistory()) {
-        auto counts = history->getNumMessagesForFriendBeforeDateBoundaries(ToxPk(f),
+        auto counts = history->getNumMessagesForFriendBeforeDateBoundaries(FriendId(f),
                                                                            startDate, maxDates);
 
         std::vector<IChatLog::DateChatLogIdxPair> ret;
@@ -242,7 +242,7 @@ std::vector<IChatLog::DateChatLogIdxPair>   //
     }
 }
 
-void ChatHistory::onFileUpdated(const ToxPk& sender, const ToxFile& file)
+void ChatHistory::onFileUpdated(const FriendId& sender, const ToxFile& file)
 {
     qDebug() << __func__ <<"friendId:" << sender.toString();
 
@@ -274,7 +274,7 @@ void ChatHistory::onFileUpdated(const ToxPk& sender, const ToxFile& file)
     sessionChatLog.onFileUpdated(sender, file);
 }
 
-void ChatHistory::onFileCanceled(const ToxPk &sender, const QString &fileId)
+void ChatHistory::onFileCanceled(const FriendId &sender, const QString &fileId)
 {
     qDebug() << __func__ <<"fileId:" <<fileId;
     auto files = history->getMessageByDataId(fileId);
@@ -285,18 +285,18 @@ void ChatHistory::onFileCanceled(const ToxPk &sender, const QString &fileId)
     }
 }
 
-void ChatHistory::onFileTransferRemotePausedUnpaused(const ToxPk& sender, const ToxFile& file,
+void ChatHistory::onFileTransferRemotePausedUnpaused(const FriendId& sender, const ToxFile& file,
                                                      bool paused)
 {
     sessionChatLog.onFileTransferRemotePausedUnpaused(sender, file, paused);
 }
 
-void ChatHistory::onFileTransferBrokenUnbroken(const ToxPk& sender, const ToxFile& file, bool broken)
+void ChatHistory::onFileTransferBrokenUnbroken(const FriendId& sender, const ToxFile& file, bool broken)
 {
     sessionChatLog.onFileTransferBrokenUnbroken(sender, file, broken);
 }
 
-void ChatHistory::onMessageReceived(const ToxPk& sender, const Message & message)
+void ChatHistory::onMessageReceived(const FriendId& sender, const Message & message)
 {
     qDebug()<<__func__<<"sender:"<<sender.toString()<<" from:"<<message.from;
     auto selfId = coreIdHandler.getSelfId().toString();
@@ -389,7 +389,7 @@ void ChatHistory::loadHistoryIntoSessionChatLog(ChatLogIdx start) const
     // conversion should be safe
     assert(getFirstIdx() == ChatLogIdx(0));
 
-    auto messages = history->getMessagesForFriend(core->getSelfPublicKey(), ToxPk(f), start.get(), end.get());
+    auto messages = history->getMessagesForFriend(core->getSelfPublicKey(), FriendId(f), start.get(), end.get());
     qDebug() <<"load message for:"<< f.toString() <<"messages:" << messages.size();
 
 //  assert(messages.size() == end.get() - start.get());
@@ -465,7 +465,7 @@ void ChatHistory::loadHistoryIntoSessionChatLog(ChatLogIdx start) const
 void ChatHistory::dispatchUnsentMessages(IMessageDispatcher& messageDispatcher)
 {
     auto core = Core::getInstance();
-    auto unsentMessages = history->getUndeliveredMessagesForFriend(core->getSelfPublicKey(), ToxPk(f));
+    auto unsentMessages = history->getUndeliveredMessagesForFriend(core->getSelfPublicKey(), FriendId(f));
     for (auto& message : unsentMessages) {
         if(message.type != HistMessageContentType::message)
             continue;
@@ -533,7 +533,7 @@ bool ChatHistory::canUseHistory() const
 ChatLogIdx ChatHistory::getInitialChatLogIdx() const
 {
     if (canUseHistory()) {
-        return ChatLogIdx(history->getNumMessagesForFriend(coreIdHandler.getSelfPublicKey(), ToxPk(f)));
+        return ChatLogIdx(history->getNumMessagesForFriend(coreIdHandler.getSelfPublicKey(), FriendId(f)));
     }
     return ChatLogIdx(0);
 }

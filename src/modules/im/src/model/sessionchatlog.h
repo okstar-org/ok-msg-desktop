@@ -39,24 +39,24 @@ public:
     ChatLogIdx getNextIdx() const override;
     std::vector<DateChatLogIdxPair> getDateIdxs(const QDate& startDate, size_t maxDates) const override;
 
-    void insertCompleteMessageAtIdx(ChatLogIdx idx, const ToxPk& sender, const QString& senderName,
+    void insertCompleteMessageAtIdx(ChatLogIdx idx, const FriendId& sender, const QString& senderName,
                                     const ChatLogMessage& message);
-    void insertIncompleteMessageAtIdx(ChatLogIdx idx, const ToxPk& sender, const QString& senderName,
+    void insertIncompleteMessageAtIdx(ChatLogIdx idx, const FriendId& sender, const QString& senderName,
                                       const ChatLogMessage& message, DispatchedMessageId dispatchId);
-    void insertBrokenMessageAtIdx(ChatLogIdx idx, const ToxPk& sender, const QString& senderName,
+    void insertBrokenMessageAtIdx(ChatLogIdx idx, const FriendId& sender, const QString& senderName,
                                   const ChatLogMessage& message);
-    void insertFileAtIdx(ChatLogIdx idx, const ToxPk& sender, const QString& senderName, const ChatLogFile& file);
+    void insertFileAtIdx(ChatLogIdx idx, const FriendId& sender, const QString& senderName, const ChatLogFile& file);
 
 public slots:
-    void onMessageReceived(const ToxPk& sender, const Message& message);
+    void onMessageReceived(const FriendId& sender, const Message& message);
     void onMessageSent(DispatchedMessageId id, const Message& message);
     void onMessageComplete(DispatchedMessageId id);
 
-    void onFileUpdated(const ToxPk& sender, const ToxFile& file);
-    void onFileCanceled(const ToxPk& sender, const QString& fileId);
+    void onFileUpdated(const FriendId& sender, const ToxFile& file);
+    void onFileCanceled(const FriendId& sender, const QString& fileId);
 
-    void onFileTransferRemotePausedUnpaused(const ToxPk& sender, const ToxFile& file, bool paused);
-    void onFileTransferBrokenUnbroken(const ToxPk& sender, const ToxFile& file, bool broken);
+    void onFileTransferRemotePausedUnpaused(const FriendId& sender, const ToxFile& file, bool paused);
+    void onFileTransferBrokenUnbroken(const FriendId& sender, const ToxFile& file, bool broken);
 
 private:
     const ICoreIdHandler& coreIdHandler;

@@ -13,25 +13,25 @@
 #include "ok_videosink.h"
 
 #include <api/video/i420_buffer.h>
-
+#include <rtc_base/logging.h>
 
 #include <utility>
 
 namespace lib {
 namespace ortc {
 
-OVideoSink::OVideoSink(OkRTCRenderer *renderer, std::string peerId)
-    : _renderer(renderer), _peer_id(std::move(peerId)) {
-  assert(renderer);
-  //  assert(!peerId.empty());
+OVideoSink::OVideoSink(OkRTCHandler *handler, std::string peerId)
+    : handler(handler), _peer_id(std::move(peerId)) {
+  assert(!handler);
+  assert(!peerId.empty());
 }
 
 OVideoSink::~OVideoSink() {  }
 
 void OVideoSink::OnFrame(const webrtc::VideoFrame &frame) {
 
-  if (!_renderer) {
-    //qDebug(("_renderer is nullptr!"));
+  if (!handler) {
+    RTC_LOG(LS_WARNING) << "handler is null!";
     return;
   }
 
@@ -59,10 +59,11 @@ void OVideoSink::OnFrame(const webrtc::VideoFrame &frame) {
     break;
   }
 
-  if (!conv)
-    return;
+  if (!conv){
+      return;
+  }
 
-  _renderer->onRender(_peer_id, _image);
+  handler->onRender(_peer_id, _image);
 
   // 渲染次数计数
   _renderCount++;

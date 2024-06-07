@@ -96,7 +96,7 @@ QString secondsToDHMS(quint32 duration) {
 }
 } // namespace
 
-ChatForm::ChatForm(const ToxPk *chatFriend,
+ChatForm::ChatForm(const FriendId *chatFriend,
                    IChatLog &chatLog_,
                    IMessageDispatcher &messageDispatcher)
     : GenericChatForm(chatFriend, chatLog_, messageDispatcher),
@@ -144,15 +144,13 @@ ChatForm::ChatForm(const ToxPk *chatFriend,
   connect(coreFile, &CoreFile::fileNameChanged, this,
           &ChatForm::onFileNameChanged);
 
-  const CoreAV *av = CoreAV::getInstance();
-  connect(av, &CoreAV::avInvite, this, &ChatForm::onAvInvite);
-  connect(av, &CoreAV::avStart, this, &ChatForm::onAvStart);
-  connect(av, &CoreAV::avEnd, this, &ChatForm::onAvEnd);
 
   connect(headWidget, &ChatFormHeader::callTriggered, this,
           &ChatForm::onCallTriggered);
+
   connect(headWidget, &ChatFormHeader::videoCallTriggered, this,
           &ChatForm::onVideoCallTriggered);
+
   connect(headWidget, &ChatFormHeader::micMuteToggle, this,
           &ChatForm::onMicMuteToggle);
   connect(headWidget, &ChatFormHeader::volMuteToggle, this,
@@ -182,9 +180,14 @@ ChatForm::ChatForm(const ToxPk *chatFriend,
 //          [this](const QString &newName) { f->setAlias(newName); });
 
   connect(headWidget, &ChatFormHeader::callAccepted, this,
-          [this] { onAnswerCallTriggered(lastCallIsVideo); });
+          [this](const ToxPeer& p) {
+          onAcceptCallTriggered(p, lastCallIsVideo);
+  });
+
   connect(headWidget, &ChatFormHeader::callRejected, this,
-          &ChatForm::onRejectCallTriggered);
+          [this](const ToxPeer& p){
+          onRejectCallTriggered(p);
+  });
 
   setName(contactId->username);
 
@@ -217,7 +220,7 @@ void ChatForm::updateFriendActivityForFile(const ToxFile &file) {
   emit updateFriendActivity(*f);
 }
 
-void ChatForm::onFileNameChanged(const ToxPk &friendPk) {
+void ChatForm::onFileNameChanged(const FriendId &friendPk) {
   if (friendPk != *f) {
     return;
   }
@@ -281,73 +284,6 @@ void ChatForm::onAttachClicked() {
   }
 }
 
-void ChatForm::onAvInvite(QString friendId, bool video) {
-  if (friendId != f->getId()) {
-    return;
-  }
-
-  QString displayedName = f->username;
-  insertChatMessage(ChatMessage::createChatInfoMessage(
-      tr("%1 calling").arg(displayedName), ChatMessage::INFO,
-      QDateTime::currentDateTime()));
-
-  auto testedFlag =
-      video ? Settings::AutoAcceptCall::Video : Settings::AutoAcceptCall::Audio;
-  // AutoAcceptCall is set for this friend
-  if (Settings::getInstance()
-          .getAutoAcceptCall(*f)
-          .testFlag(testedFlag)) {
-    QString friendId = f->getId();
-    qDebug() << "automatic call answer";
-    CoreAV *coreav = CoreAV::getInstance();
-    QMetaObject::invokeMethod(coreav, "answerCall", Qt::QueuedConnection,
-                              Q_ARG(QString, friendId), Q_ARG(bool, video));
-    onAvStart(friendId, video);
-  } else {
-    headWidget->createCallConfirm(video);
-    headWidget->showCallConfirm();
-    lastCallIsVideo = video;
-    emit incomingNotification(friendId);
-  }
-}
-
-void ChatForm::onAvStart(QString friendId, bool video) {
-  if (friendId != f->getId()) {
-    return;
-  }
-
-  if (video) {
-    showNetcam();
-  } else {
-    hideNetcam();
-  }
-
-  emit stopNotification();
-  updateCallButtons();
-  startCounter();
-}
-
-void ChatForm::onAvEnd(QString friendId, bool error) {
-  if (friendId != f->getId()) {
-    return;
-  }
-
-  qDebug()<<__func__ <<"friendId" << friendId;
-
-  headWidget->removeCallConfirm();
-  // Fixes an OS X bug with ending a call while in full screen
-  if (netcam && netcam->isFullScreen()) {
-    netcam->showNormal();
-  }
-
-  emit stopNotification();
-  emit endCallNotification();
-
-  auto status = Core::getInstance()->getStatus();
-  updateCallButtons(status);
-  stopCounter(error);
-  hideNetcam();
-}
 
 void ChatForm::showOutgoingCall(bool video) {
   headWidget->showOutgoingCall(video);
@@ -357,27 +293,58 @@ void ChatForm::showOutgoingCall(bool video) {
   emit updateFriendActivity(*f);
 }
 
-void ChatForm::onAnswerCallTriggered(bool video) {
-  headWidget->removeCallConfirm();
-  QString friendId = f->getId();
-  emit stopNotification();
-  emit acceptCall(friendId);
+void ChatForm::showCallConfirm(const ToxPeer &peerId, bool video, const QString &displayedName)
+{
+    qDebug() <<__func__ <<"peerId"<<peerId;
 
-  updateCallButtons();
-  CoreAV *av = CoreAV::getInstance();
-  if (!av->answerCall(friendId, video)) {
-    updateCallButtons();
-    stopCounter();
-    hideNetcam();
-    return;
-  }
+    // 聊天框插入呼叫消息
+//    auto msg = ChatMessage::createChatInfoMessage(
+//                tr("%1 calling").arg(displayedName),
+//                ChatMessage::INFO,
+//                QDateTime::currentDateTime());
+//    insertChatMessage(msg);
 
-  onAvStart(friendId, av->isCallVideoEnabled(f));
+    // 显示呼叫确认
+    headWidget->createCallConfirm(peerId, video);
+    headWidget->showCallConfirm();
 }
 
-void ChatForm::onRejectCallTriggered() {
+void ChatForm::closeCallConfirm(const FriendId &friendId)
+{
+    qDebug() << __func__ << "friendId" << friendId;
+    headWidget->removeCallConfirm();
+}
+
+void ChatForm::onAcceptCallTriggered(const ToxPeer &peer, bool video) {
+    headWidget->removeCallConfirm();
+
+    if (video) {
+      showNetcam();
+    } else {
+      hideNetcam();
+    }
+
+    updateCallButtons();
+    startCounter();
+
+//  emit stopNotification();
+    emit acceptCall(peer, video);
+
+//  updateCallButtons();
+//  CoreAV *av = CoreAV::getInstance();
+//  if (!av->answerCall(friendId, video)) {
+//    updateCallButtons();
+//    stopCounter();
+//    hideNetcam();
+//    return;
+//  }
+
+//  onAvStart(friendId, av->isCallVideoEnabled(f));
+}
+
+void ChatForm::onRejectCallTriggered(const ToxPeer &peer) {
   headWidget->removeCallConfirm();
-  emit rejectCall(f->getId());
+  emit rejectCall(peer);
 }
 
 void ChatForm::onCallTriggered() {
@@ -416,7 +383,7 @@ void ChatForm::onVolMuteToggle() {
   updateMuteVolButton();
 }
 
-void ChatForm::onFriendStatusChanged(const ToxPk& friendId, Status::Status status) {
+void ChatForm::onFriendStatusChanged(const FriendId& friendId, Status::Status status) {
     qDebug() << __func__ <<friendId.toString()<<(int)status;
   // Disable call buttons if friend is offline
   if (friendId.toString() != f->getId()) {
@@ -439,7 +406,7 @@ void ChatForm::onFriendStatusChanged(const ToxPk& friendId, Status::Status statu
 //  }
 }
 
-void ChatForm::onFriendTypingChanged(const ToxPk& friendId, bool isTyping) {
+void ChatForm::onFriendTypingChanged(const FriendId& friendId, bool isTyping) {
     qDebug()<<__func__ << friendId.toString()<<isTyping;
   if (friendId.toString() == f->toString()) {
     setFriendTyping(isTyping);
@@ -473,8 +440,9 @@ GenericNetCamView *ChatForm::createNetcam() {
    view->show(source, f->username);
 
 
-  connect(view, &GenericNetCamView::videoCallEnd, this,
-          &ChatForm::onVideoCallTriggered);
+//  connect(view, &GenericNetCamView::videoCallEnd, this,
+//          &ChatForm::onVideoCallTriggered);
+
   connect(view, &GenericNetCamView::volMuteToggle, this,
           &ChatForm::onVolMuteToggle);
   connect(view, &GenericNetCamView::micMuteToggle, this,

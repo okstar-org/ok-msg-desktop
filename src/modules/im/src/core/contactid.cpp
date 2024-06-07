@@ -32,11 +32,8 @@ ContactId::ContactId(const QByteArray &rawId)
 }
 
 ContactId::ContactId(const QString &strId) {
-    // 正则表达式模式，这里假设username不包含@，server不包含/
-      QRegularExpression re("([^@]+)@([^/]+)(/[^/]+)?");
-      // 匹配输入字符串
-      QRegularExpressionMatch match = re.match(strId);
       // 检查是否匹配成功
+      auto match = JidMatch(strId);
       if (!match.hasMatch()) {
           qWarning() << "Unable to parse contactId:"<<strId;
           return;

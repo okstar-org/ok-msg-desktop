@@ -48,14 +48,14 @@ public:
 
   FriendWidget *addFriend(const FriendInfo &friendInfo);
   FriendWidget *getFriend(const ContactId &friendPk);
-  void removeFriend(const ToxPk &cid);
+  void removeFriend(const FriendId &cid);
 
   void setFriendStatus(const ContactId &friendPk,  Status::Status status);
-  void setFriendStatusMsg(const ToxPk &friendPk,  const QString& statusMsg);
-  void setFriendName(const ToxPk &friendPk,  const QString& name);
-  void setFriendAlias(const ToxPk &friendPk,  const QString& alias);
-  void setFriendAvatar(const ToxPk &friendPk, const QByteArray& avatar);
-  void setFriendTyping(const ToxPk &pk, bool typing);
+  void setFriendStatusMsg(const FriendId &friendPk,  const QString& statusMsg);
+  void setFriendName(const FriendId &friendPk,  const QString& name);
+  void setFriendAlias(const FriendId &friendPk,  const QString& alias);
+  void setFriendAvatar(const FriendId &friendPk, const QByteArray& avatar);
+  void setFriendTyping(const FriendId &pk, bool typing);
 
   GroupWidget *addGroup(const GroupId &groupId, const QString &groupName = "");
   GroupWidget *getGroup(const GroupId &id);
@@ -77,8 +77,8 @@ public:
   void setRecvGroupMessage(const GroupMessage& msg);
 
 signals:
-  void deleteFriendWidget(const ToxPk &friendPk);
-  void deleteGroupWidget(const ToxPk &friendPk);
+  void deleteFriendWidget(const FriendId &friendPk);
+  void deleteGroupWidget(const FriendId &friendPk);
 
 public slots:
   void renameGroupWidget(GroupWidget *groupWidget, const QString &newName);

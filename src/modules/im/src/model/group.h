@@ -15,17 +15,15 @@
 
 #include "contact.h"
 
+#include "src/core/FriendId.h"
 #include "src/core/contactid.h"
 #include "src/core/groupid.h"
 #include "src/core/icoregroupquery.h"
 #include "src/core/icoreidhandler.h"
-#include "src/core/toxpk.h"
 #include "src/model/message.h"
 #include <QMap>
 #include <QObject>
 #include <QStringList>
-
-
 
 class Group : public Contact
 {
@@ -64,7 +62,7 @@ public:
 
     void addPeer(const GroupOccupant &go);
     const QMap<QString, QString>& getPeerList() const;
-    bool peerHasNickname(ToxPk pk);
+    bool peerHasNickname(FriendId pk);
 
     void setEventFlag(bool f) override;
     bool getEventFlag() const override;
@@ -96,8 +94,8 @@ public:
 signals:
     void titleChangedByUser(const QString& title);
     void subjectChanged(const QString& author, const QString& title);
-    void userJoined(const ToxPk& user, const QString& name);
-    void userLeft(const ToxPk& user, const QString& name);
+    void userJoined(const FriendId& user, const QString& name);
+    void userLeft(const FriendId& user, const QString& name);
     void peerCountChanged(uint32_t numPeers);
     void peerNameChanged(const QString& oldName, const QString& newName);
     void descChanged(const QString&);
@@ -106,7 +104,7 @@ signals:
                            const QList<int> codes);
 
 private:
-    void stopAudioOfDepartedPeers(const ToxPk& peerPk);
+    void stopAudioOfDepartedPeers(const FriendId& peerPk);
 
 private:
     ICoreGroupQuery& groupQuery;

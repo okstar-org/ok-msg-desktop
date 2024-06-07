@@ -26,6 +26,6 @@ private:
 
 };
 
-} // namespace tgcalls
+} // namespace lib::ortc
 
 #endif

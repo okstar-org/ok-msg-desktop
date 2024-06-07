@@ -25,9 +25,9 @@
 
 #include <base/jsons.h>
 
+#include "src/core/FriendId.h"
 #include "src/core/toxfile.h"
 #include "src/model/message.h"
-#include "src/core/toxpk.h"
 #include "src/persistence/db/rawdatabase.h"
 #include "src/widget/searchtypes.h"
 
@@ -152,7 +152,7 @@ public:
 
     bool isValid();
 
-    bool historyExists(const ToxPk& me, const ToxPk& friendPk);
+    bool historyExists(const FriendId& me, const FriendId& friendPk);
 
     void eraseHistory();
     void removeFriendHistory(const QString& friendPk);
@@ -174,18 +174,18 @@ public:
 
     QList<HistMessage> getMessageByDataId(const QString &dataId);
 
-    size_t getNumMessagesForFriend(const ToxPk& me, const ToxPk& friendPk);
-    size_t getNumMessagesForFriendBeforeDate(const ToxPk& me, const ToxPk& friendPk, const QDateTime& date);
+    size_t getNumMessagesForFriend(const FriendId& me, const FriendId& friendPk);
+    size_t getNumMessagesForFriendBeforeDate(const FriendId& me, const FriendId& friendPk, const QDateTime& date);
 
-    QList<HistMessage> getMessagesForFriend(const ToxPk& me, const ToxPk& friendPk, size_t firstIdx, size_t lastIdx);
-    QList<HistMessage> getLastMessageForFriend(const ToxPk &me, const ToxPk& pk, uint size, HistMessageContentType type);
+    QList<HistMessage> getMessagesForFriend(const FriendId& me, const FriendId& friendPk, size_t firstIdx, size_t lastIdx);
+    QList<HistMessage> getLastMessageForFriend(const FriendId &me, const FriendId& pk, uint size, HistMessageContentType type);
 
-    QList<HistMessage> getUndeliveredMessagesForFriend(const ToxPk &me, const ToxPk& friendPk);
+    QList<HistMessage> getUndeliveredMessagesForFriend(const FriendId &me, const FriendId& friendPk);
     QDateTime getDateWhereFindPhrase(const QString& friendPk,
                                      const QDateTime& from,
                                      QString phrase,
                                      const ParameterSearch& parameter);
-    QList<DateIdx> getNumMessagesForFriendBeforeDateBoundaries(const ToxPk& friendPk,
+    QList<DateIdx> getNumMessagesForFriendBeforeDateBoundaries(const FriendId& friendPk,
                                                                const QDate& from, size_t maxNum);
 
     void markAsDelivered(RowId messageId);
@@ -234,7 +234,7 @@ private:
 
     // This needs to be a shared pointer to avoid callback lifetime issues
 //    QHash<QString, RowId> fileCached;
-    QString makeSqlForFriend(const ToxPk &me, const ToxPk &friendPk);
+    QString makeSqlForFriend(const FriendId &me, const FriendId &friendPk);
     History::HistMessage rowToMessage(const QVector<QVariant> &row);
 };
 

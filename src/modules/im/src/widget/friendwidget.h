@@ -15,7 +15,7 @@
 
 #include "ContentWidget.h"
 #include "genericchatroomwidget.h"
-#include "src/core/toxpk.h"
+#include "src/core/FriendId.h"
 #include "src/model/chatroom/groupchatroom.h"
 #include "src/model/friendmessagedispatcher.h"
 #include "src/model/message.h"
@@ -94,9 +94,9 @@ public slots:
 
 signals:
     void friendWidgetClicked(FriendWidget* widget);
-    void removeFriend(const ToxPk& friendPk);
-    void addFriend(const ToxPk& friendPk);
-    void copyFriendIdToClipboard(const ToxPk& friendPk);
+    void removeFriend(const FriendId& friendPk);
+    void addFriend(const FriendId& friendPk);
+    void copyFriendIdToClipboard(const FriendId& friendPk);
     void contextMenuCalled(QContextMenuEvent* event);
     void friendHistoryRemoved();
     void friendWidgetRenamed(FriendWidget* friendWidget);

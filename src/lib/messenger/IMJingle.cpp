@@ -37,34 +37,43 @@ using namespace gloox;
 using namespace Jingle;
 using namespace lib::ortc;
 
-IMJingle::IMJingle(IM *im_,
-                   std::vector<FileHandler *> *fileHandlers,
-                   QObject *parent)
-    : QObject(parent), im(im_), fileHandlers{fileHandlers}
+inline IM* getIM(){
+  return  ok::session::AuthSession::Instance()->im();
+}
+
+
+IMJingle::IMJingle()
+//    : QObject(parent), im(im_), call{call}, fileHandlers{fileHandlers}
 {
   qDebug() << __func__ << "Creating";
 
   qRegisterMetaType<std::string>("std::string");
 
-  auto client = im->getClient();
+  auto client = getIM()->getClient();
   client->registerMessageHandler(this);
   client->registerIqHandler(this, ExtIBB);
-  client->registerIqHandler(this, ExtSrvDisco);
-
-  auto s = client->m_messageHandlers.size();
-  qDebug() <<"msgHandlers="<<s;
-
   client->registerStanzaExtension(new Jingle::JingleMessage());
 
+  //jingle session
+  _sessionManager = std::make_unique<SessionManager>(client, this);
+  _sessionManager->registerPlugin(new Content());
+
   auto disco = client->disco();
+  //jingle
   disco->addFeature(XMLNS_JINGLE);
+  disco->addFeature(XMLNS_JINGLE_MESSAGE);
+  disco->addFeature(XMLNS_JINGLE_ERRORS);
+
+  //jingle file
   disco->addFeature(XMLNS_JINGLE_FILE_TRANSFER);
   disco->addFeature(XMLNS_JINGLE_FILE_TRANSFER4);
   disco->addFeature(XMLNS_JINGLE_FILE_TRANSFER5);
   disco->addFeature(XMLNS_JINGLE_FILE_TRANSFER_MULTI);
-
   disco->addFeature(XMLNS_JINGLE_IBB);
-  disco->addFeature(XMLNS_JINGLE_ERRORS);
+  _sessionManager->registerPlugin(new FileTransfer());
+  _sessionManager->registerPlugin(new IBB());
+
+  //jingle av
   disco->addFeature(XMLNS_JINGLE_ICE_UDP);
   disco->addFeature(XMLNS_JINGLE_APPS_DTLS);
   disco->addFeature(XMLNS_JINGLE_APPS_RTP);
@@ -75,22 +84,28 @@ IMJingle::IMJingle(IM *im_,
   disco->addFeature(XMLNS_JINGLE_APPS_RTP_SSMA);
   disco->addFeature(XMLNS_JINGLE_APPS_RTP_HDREXT);
   disco->addFeature(XMLNS_JINGLE_APPS_GROUP);
-  disco->addFeature(XMLNS_JINGLE_MESSAGE);
-
-
-  _sessionManager = std::make_unique<SessionManager>(client, this);
-  _sessionManager->registerPlugin(new FileTransfer());
-  _sessionManager->registerPlugin(new Content());
-  _sessionManager->registerPlugin(new IBB());
   _sessionManager->registerPlugin(new ICEUDP());
   _sessionManager->registerPlugin(new Group());
   _sessionManager->registerPlugin(new RTP());
 
+
+
   qDebug() << __func__ << ("Created");
 }
 
+
+
+IMJingle *IMJingle::getInstance()
+{
+    static IMJingle * jingle = nullptr;
+    if(!jingle){
+       jingle = new IMJingle();
+    }
+    return jingle;
+}
+
 IMJingle::~IMJingle() {
-    auto client = im->getClient();
+    auto client = getIM()->getClient();
     client->removeMessageHandler(this);
     qDebug() << __func__ << "Destroyed";
 }
@@ -135,17 +150,17 @@ void IMJingle::join(const JID &room) {
 
 void IMJingle::setMute(bool mute) {
   for (auto it : m_sessionMap) {
-    auto m = it->getRtcManager();
-    if(m)
-        m->setMute(mute);
+    auto rtcManager = OkRTCManager::getInstance();
+    if(rtcManager)
+        rtcManager->setMute(mute);
   }
 }
 
 void IMJingle::setRemoteMute(bool mute) {
   for (auto it : m_sessionMap) {
-    auto m = it->getRtcManager();
-    if(m)
-        m->setRemoteMute(mute);
+    auto rtcManager = OkRTCManager::getInstance();
+    if(rtcManager)
+        rtcManager->setRemoteMute(mute);
   }
 }
 
@@ -176,37 +191,46 @@ void IMJingle::doJingleMessage(const IMPeerId &peerId, const gloox::Jingle::Jing
     }
     case Jingle::JingleMessage::propose:
     {
-      // 被自己账号其它终端接受
-      qDebug() << "Accepted by" << peerId.toString();
-      emit receiveCallAcceptByOther(sId, peerId);
+      // 被对方发起呼叫
+      qDebug() << "On call from:" << peerId.toString();
+
+      //获取呼叫类型
+      bool audio = false;
+      bool video = false;
+      for(auto& m : jm->medias()){
+          if(m == Jingle::audio){
+             audio = true;
+          }else if(m == Jingle::video){
+             video = true;
+          }
+      }
+
+      emit receiveCallRequest(peerId, sId, audio, video);
+//      emit receiveCallAcceptByOther(sId, peerId);
       break;
     }
     case Jingle::JingleMessage::retract: {
       /**
-       * 撤回(发起者取消)，挂断自己
+       * 撤回(需要判断是对方还是自己其它终端)
        */
-//      mPeerRequestMedias.clear();
       emit receiveCallRetract(friendId, 0);
       break;
     }
-    case Jingle::JingleMessage::accept:
+    case Jingle::JingleMessage::accept:{
+        //自己其它终端接受，挂断自己
+        if(peerId != getIM()->getSelfPeerId()){
+            emit receiveFriendHangup(friendId, 0);
+        }else{
+            //自己终端接受，不处理
+//            OkRTCManager::getInstance()->getRtc()->CreateAnswer(peerId.toString());
+        }
+        break;
+    }
     case Jingle::JingleMessage::proceed:
-      if (friendId == im->getSelfId().toString()) {
-        /**
-         * 自己的其他终端接受处理，挂断自己
-         */
-        emit receiveFriendHangup(friendId, 0);
-      } else {
-        //对方接受，创建session
-
-        createCall(peerId, sId, jm->medias().size()>0);
-
-        emit receiveCallStateAccepted(peerId, sId, jm->medias().size() > 1);
-      }
-
+      //对方接受
+      emit receiveCallStateAccepted(peerId, sId, jm->medias().size() > 1);
       break;
     case Jingle::JingleMessage::finish:
-
       break;
     }
 }
@@ -221,7 +245,7 @@ IMJingleSession* IMJingle::cacheSessionInfo(Jingle::Session *session,
   m_friendSessionMap.insert(peer, sId);
 
 
-  std::list<ortc::IceServer> l;
+  std::list<ortc::IceServer> iceSrvs;
 
     std::list<ExtDisco::Service> discos;
 
@@ -248,14 +272,14 @@ IMJingleSession* IMJingle::cacheSessionInfo(Jingle::Session *session,
       ice.username = item.username;
       ice.password = item.password;
       qDebug() <<"Add ice:" << ice.uri.c_str();
-      l.push_back(ice);
+      iceSrvs.push_back(ice);
     }
 
 
-  auto ws = new IMJingleSession(im, peer, sId, callType,
-                                  session, l,
+  auto ws = new IMJingleSession(getIM(), peer, sId, callType,
+                                  session, iceSrvs,
                                   fileHandlers,
-                                  this, this);
+                                  this);
 
   m_sessionMap.insert(sId, ws);
 
@@ -396,6 +420,7 @@ void IMJingle::handleSessionAction(Action action,
 void IMJingle::doSessionInitiate(Jingle::Session *session,
                                  const Jingle::Session::Jingle *jingle,
                                  const IMPeerId &peerId) {
+
   auto sid =  qstring(session->sid());
   qDebug() <<__func__   << "sId:" << sid
                         << "peerId:" << peerId.toString();
@@ -422,6 +447,10 @@ void IMJingle::doSessionInitiate(Jingle::Session *session,
                   emit receiveFileRequest(peerId.toFriendId(), file);
                 }
                 isFile = true;
+            }else{
+                //av
+//                auto group = p->findPlugin<FileTransfer>(PluginGroup);
+
             }
             break;
         }
@@ -435,15 +464,25 @@ void IMJingle::doSessionInitiate(Jingle::Session *session,
     if(isFile){
         cacheSessionInfo(session, lib::ortc::JingleCallType::file);
         return;
-    }
+    }else{
+        //av
+         cacheSessionInfo(session, lib::ortc::JingleCallType::av);
 
+         OJingleContentAv cav;
+        cav.parse(jingle);
+        cav.sdpType = lib::ortc::JingleSdpType::Answer;
+
+        OkRTCManager::getInstance()->getRtc()
+                ->CreateAnswer(stdstring(peerId.toString()), session->sid(), cav);
+
+    }
 
 
 //  bool isVideo = lib::ortc::JingleCallType::video == callType;
 //  auto _rtcManager = s->getRtcManager();
 //  if (s->isAccepted()) {
 
-//    JingleContext answer(lib::ortc::JingleSdpType::Answer,
+//    OJingleContent answer(lib::ortc::JingleSdpType::Answer,
 //                         stdstring(peerId.username), session->sid(),
 //                         SESSION_VERSION, context.getContents());
 
@@ -501,16 +540,16 @@ void IMJingle::doSessionTerminate(Jingle::Session *session,
     }
   }
   // rtc
-  auto s = findSession(sid);
-  if (s) {
-    auto _rtcManager = s->getRtcManager();
-    if (_rtcManager) {
-      _rtcManager->quit(stdstring(peerId.toString()));
-    }
-  }
+//  auto s = findSession(sid);
+//  if (s) {
+//    auto rtcManager = OkRTCManager::getInstance();
+//    if (rtcManager) {
+//      rtcManager->quit(stdstring(peerId.toString()));
+//    }
+//  }
 
   clearSessionInfo(session);
-  im->endJingle();
+  getIM()->endJingle();
   emit receiveFriendHangup(peerId.toFriendId(), (int)state);
 }
 
@@ -526,42 +565,7 @@ void IMJingle::doSessionAccept(Jingle::Session *session,
       qWarning() <<"Unable to find session"<<sid;
       return;
   }
-
-    ws->onAccept();
-
-//  JingleContext answer(lib::ortc::JingleSdpType::Answer, //
-//                       stdstring(peerId.toString()),     //
-//                       session->sid(), SESSION_VERSION, jingle->plugins());
-
-//  auto callType = answer.callType();
-//  qDebug()<<("callType:%1")<<(((int)callType));
-
-//  if (callType == lib::ortc::JingleCallType::file) {
-//    // jingle-file
-//    for (auto &file : m_waitSendFiles) {
-//      if (qstring(session->sid()) == file.sId) {
-//        doStartFileSendTask(session, file);
-//        break;
-//      }
-//    }
-//    // 返回截断后续处理
-//    return;
-//  }else{
-//      // 发送传输信息
-//      auto *ws = findSession(sid);
-//      if (!ws) {
-//        qWarning() << "Unable to find session:" << &session->sid();
-//        return;
-//      }
-
-//      // RTC 接受会话
-//      ws->getRtcManager()->SetRemoteDescription(stdstring(peerId.toString()),
-//                                                answer);
-
-//      emit receiveFriendHangup(
-//          peerId.username, answer.hasVideo() ? TOXAV_FRIEND_CALL_STATE_SENDING_V
-//                                             : TOXAV_FRIEND_CALL_STATE_SENDING_A);
-//  }
+  ws->onAccept();
 }
 
 void IMJingle::doSessionInfo(const Session::Jingle *jingle,
@@ -632,25 +636,23 @@ void IMJingle::doTransportAccept(const Session::Jingle *jingle,
 
 void IMJingle::doTransportInfo(const Session::Jingle *jingle,
                                const IMPeerId &peerId) {
+
     auto sid = qstring(jingle->sid());
+    qDebug()<<__func__ << "sId:" << sid << "peerId:" << peerId.toString();
 
-  qDebug()<<__func__
-                <<sid
-                <<peerId.toString();
+    auto s = findSession(sid);
+    if (!s) {
+        qWarning()<<("Session is no existing.");
+        return;
+    }
 
-  auto s = findSession(sid);
-  if (!s) {
-    qDebug()<<("Session is not exit.");
-    return;
-  }
+    OJingleContentAv content;
+    content.parse(jingle);
 
-  OIceUdp::OIceUdpMap map;
-  OIceUdp::fromJingle(jingle->plugins(), map);
-
-  for (auto &it : map) {
-    s->getRtcManager()->SetTransportInfo(stdstring(peerId.toString()),
-                                         it.second);
-  }
+    for (auto &it : content.contents) {
+        OkRTCManager::getInstance()->getRtc()
+            ->setTransportInfo(stdstring(peerId.toString()), jingle->sid(), it.iceUdp);
+    }
 }
 
 void IMJingle::doTransportReject(const Session::Jingle *, const IMPeerId &) {}
@@ -673,28 +675,27 @@ void IMJingle::doInvalidAction(const Session::Jingle *jingle,
                 <<((peerId.toString()));
 }
 
-void IMJingle::onCreatePeerConnection(const std::string &peerId,
-                                      const std::string &sId, bool ok) {
-  qDebug()<<("peerId:%1 sId:%2 => %3")
-                <<(qstring(peerId))
-                <<(qstring(sId))
-                <<((ok ? "YES" : "NO"));
+void IMJingle::onCreatePeerConnection(const std::string &sId,
+                                      const std::string &peerId,
+                                      bool ok) {
+  auto p = qstring(peerId);
+  auto s = qstring(sId);
 
-  /**
-   * TODO 处理连接异常情况
-   */
-  if (!ok) {
-    qDebug()<<("连接异常!");
-  }
+  qDebug()<<__func__<< "sId:" << s
+                    << "peerId:" << p
+                    << "isOk=>" << ok;
+
+//  emit call->sig_createPeerConnection(s, p, ok);
 }
 
 void IMJingle::onRTP(const std::string &sid,    //
                      const std::string &peerId, //
-                     const lib::ortc::JingleContext &oContext) {
-    auto sId = qstring(sid);
-  qDebug()<<("peerId:%1 sId:%2")<<(qstring(peerId))<<sId;
+                     const lib::ortc::OJingleContentAv &oContext) {
+  auto sId = qstring(sid);
+  qDebug()<<__func__ << "sId:"<<sId<<"peerId:"<<qstring(peerId);
 
-  PluginList plugins = oContext.toJingleSdp();
+  PluginList plugins;
+  oContext.toPlugins(plugins);
 
   auto pSession = findSession(sId);
   if (!pSession) {
@@ -702,18 +703,24 @@ void IMJingle::onRTP(const std::string &sid,    //
     return;
   }
 
-//  if (pSession->direction() == CallIn) {
-//    pSession->getSession()->sessionAccept(plugins);
-//  } else if (pSession->direction() == CallOut) {
-//    pSession->getSession()->sessionInitiate(plugins);
-//  }
+  if (pSession->direction() == CallDirection::CallIn) {
+    pSession->getSession()->sessionAccept(plugins);
+  } else if (pSession->direction() == CallDirection::CallOut) {
+    pSession->getSession()->sessionInitiate(plugins);
+  }
 }
 
 void IMJingle::onIce(const std::string &sId,    //
                      const std::string &peerId, //
                      const OIceUdp &oIceUdp) {
-auto sid = qstring(sId);
-  qDebug()<< __func__ << sid << (qstring(peerId));
+
+  auto sid = qstring(sId);
+
+  qDebug()<< __func__
+          << "sId:"<< sid
+          << "peerId:" << qstring(peerId)
+          << "mid:" << qstring(oIceUdp.mid)
+          << "mline:" << oIceUdp.mline;
 
   auto *session = findSession(sid);
   if (!session) {
@@ -721,9 +728,7 @@ auto sid = qstring(sId);
     return;
   }
 
-  qDebug()<<("ice: mid:%1 mline:%2") //
-                <<(qstring(oIceUdp.mid))
-                <<((oIceUdp.mline));
+
   auto *iceUdp = new ICEUDP(oIceUdp.pwd, oIceUdp.ufrag, oIceUdp.candidates);
   iceUdp->setDtls(oIceUdp.dtls);
 
@@ -769,45 +774,50 @@ void IMJingle::proposeJingleMessage(const QString &friendId, const QString &call
   for(auto ext: exts )
       m.addExtension( ext);
 
-  im->getClient()->send(m);
+  getIM()->getClient()->send(m);
 
 }
 
-void IMJingle::rejectJingleMessage(const QString &friendId, const QString &callId) {
+void IMJingle::rejectJingleMessage(const QString &peerId, const QString &callId) {
 
-  qDebug() <<__func__<<"friend:"<<friendId << callId;
+  qDebug() <<__func__<<"friend:"<<peerId << callId;
 
   StanzaExtensionList exts;
   auto reject = new Jingle::JingleMessage(Jingle::JingleMessage::reject, stdstring(callId));
   exts.push_back(reject);
 
-  auto jid = JID{stdstring(friendId)};
+  auto jid = JID{stdstring(peerId)};
   Message m( Message::Chat, jid, {}, {});
-  for(auto ext: exts )
-      m.addExtension( ext);
+  for(auto ext: exts)
+      m.addExtension(ext);
 
-  im->getClient()->send(m);
+  getIM()->getClient()->send(m);
 }
 
-void IMJingle::acceptJingleMessage(const QString &friendId, const QString &callId) {
-  qDebug() <<__func__<<"friend:"<<friendId << callId;
+void IMJingle::acceptJingleMessage(const IMPeerId &peerId, const QString &callId, bool video) {
+  qDebug() <<__func__<<"friend:"<< peerId.toFriendId() << callId;
 
   auto proceed = new Jingle::JingleMessage(Jingle::JingleMessage::proceed, stdstring(callId));
-  Message proceedMsg(gloox::Message::Chat, JID(stdstring(friendId)));
+  Message proceedMsg(gloox::Message::Chat, JID(stdstring(peerId.toString())));
   proceedMsg.addExtension(proceed);
-  im->getClient()->send(proceedMsg);
-  qDebug() << "Sent proceed for jingle-message";
+  getIM()->getClient()->send(proceedMsg);
+  qDebug() << "Sent proceed=>"<<peerId.toString();
 
   // 发送给自己其它终端
   auto accept = new Jingle::JingleMessage(Jingle::JingleMessage::accept, stdstring(callId));
 
-  Message msg(gloox::Message::Chat,im->self().bareJID());
+  auto self = getIM()->self().bareJID();
+
+  Message msg(gloox::Message::Chat, self);
   msg.addExtension(accept);
-  im->getClient()->send(msg);
-  qDebug() << "Sent accept for jingle-message";
+  getIM()->getClient()->send(msg);
+  qDebug() << "Sent accept=>" << qstring(self.full());
 
   // 设置状态为接受
   auto ws = findSession( callId );
+  if(!ws){
+      ws = createSession(peerId, callId, JingleCallType::av);
+  }
   ws->setAccepted(true);
 }
 
@@ -820,7 +830,14 @@ void IMJingle::retractJingleMessage(const QString &friendId, const QString &call
   Message m( Message::Chat, jid, {}, {});
   m.addExtension(jm);
 
-  im->getClient()->send(m);
+  getIM()->getClient()->send(m);
+}
+
+bool IMJingle::sendCallToResource(const QString &friendId, const QString &sId,
+                                  bool video) {
+
+  proposeJingleMessage(friendId, sId, video);
+  return true;
 }
 
 
@@ -828,7 +845,7 @@ void IMJingle::retractJingleMessage(const QString &friendId, const QString &call
 bool IMJingle::startCall(const QString &friendId, const QString &sId, bool video) {
   qDebug()<<__func__<<"friendId:"<<friendId<<"video:"<<video;
 
-  auto resources = im->getOnlineResources(stdstring(friendId));
+  auto resources = getIM()->getOnlineResources(stdstring(friendId));
   if (resources.empty()) {
     qWarning() << "目标用户不在线！";
     return false;
@@ -838,19 +855,55 @@ bool IMJingle::startCall(const QString &friendId, const QString &sId, bool video
   return true;
 }
 
-bool IMJingle::sendCallToResource(const QString &friendId, const QString &sId,
-                                  bool video) {
-  im->proposeJingleMessage(friendId, sId, video);
-  return true;
-}
-
 bool IMJingle::createCall(const IMPeerId &to, const QString &sId, bool video) {
-  qDebug()<<__func__<< ("to:") << to.toString();
+  qDebug()<<__func__<< "to:" << to.toString() << "sId:" << sId;
 
-  auto sw = createSession(to, sId);
-  sw->createOffer(stdstring(to.toString()));
+  auto ws = createSession(to, sId, JingleCallType::av);
 
-  return true;
+  auto rtc = OkRTCManager::getInstance()->getRtc();
+  rtc->addRTCHandler(this);
+
+  std::list<ortc::IceServer> iceServers;
+
+    std::list<ExtDisco::Service> discos;
+
+    ExtDisco::Service disco0;
+    disco0.type="turn";
+    disco0.host = "chuanshaninfo.com";
+    disco0.port=34780;
+    disco0.username="gaojie";
+    disco0.password="hncs";
+    discos.push_back(disco0);
+
+    ExtDisco::Service disco1;
+    disco1.type="stun";
+    disco1.host = "stun.l.google.com";
+    disco1.port=19302;
+
+    discos.push_back(disco1);
+
+
+    for (const auto &item :  discos) {
+      ortc::IceServer ice;
+      ice.uri = item.type + ":" + item.host + ":" + std::to_string(item.port);
+      //              "?transport=" + item.transport;
+      ice.username = item.username;
+      ice.password = item.password;
+      qDebug() <<"Add ice:" << ice.uri.c_str();
+      iceServers.push_back(ice);
+
+      rtc->addIceServer(ice);
+    }
+
+  bool createdCall = rtc->call(stdstring(to.toString()), stdstring(sId),
+                               video);
+
+
+  if(createdCall){
+      ws->createOffer(stdstring(to.toString()));
+  }
+
+  return createdCall;
 }
 
 void IMJingle::cancel(const QString &friendId) {
@@ -860,45 +913,54 @@ void IMJingle::cancel(const QString &friendId) {
 
     auto session = m_sessionMap.value(sId);
     if (session) {
-      cancelCall(friendId, qstring(session->getSession()->sid()));
+        cancelCall(IMContactId{friendId}, qstring(session->getSession()->sid()));
       clearSessionInfo(session->getSession());
     }
 
 }
 
-void IMJingle::cancelCall(const QString &friendId, const QString &sId) {
-  qDebug()<< __func__ << friendId << sId;
+void IMJingle::cancelCall(const IMContactId &friendId, const QString &sId) {
+  qDebug()<< __func__ << friendId.toString() << sId;
 
   IMJingleSession *s = findSession(sId);
   if (s) {
-    // session-terminate
-    s->getSession()->sessionTerminate(
-        new Session::Reason(Session::Reason::Reasons::Cancel));
-    if (s->getRtcManager()) {
-      IMPeerId peerId(s->getSession()->remote());
-      s->getRtcManager()->quit(stdstring(peerId.toString()));
-    }
+    s->doTerminate();
     clearSessionInfo(s->getSession());
   } else {
     // jingle-message
-
     if (s->direction() == CallDirection:: CallOut) {
-      im->retractJingleMessage(friendId, sId);
+      retractJingleMessage(friendId.toString(), sId);
     } else if (s->direction() == CallDirection:: CallIn) {
-      im->rejectJingleMessage(friendId, sId);
+      rejectJingleMessage(friendId.toString(), sId);
     }
   }
   s->setCallStage(CallStage::StageNone);
 }
 
-bool IMJingle::answer(const QString &friendId, const QString &callId,
+void IMJingle::rejectCall(const IMPeerId &peerId, const QString &sId)
+{
+    qDebug()<< __func__ << peerId.toString() << sId;
+
+    IMJingleSession *s = findSession(sId);
+    if (s) {
+      s->doTerminate();
+      clearSessionInfo(s->getSession());
+    }else
+    {
+        rejectJingleMessage(peerId.toString(), sId);
+    }
+}
+
+bool IMJingle::answer(const IMPeerId &peerId,
+                      const QString &callId,
                       bool video) {
-  qDebug()<<("friend:%1 video:%2")<<(friendId)<<((video));
-  IMPeerId friendId1(friendId);
 
-  acceptJingleMessage(friendId, callId);
+  qDebug()<<__func__<< "peer:" << peerId.toString() << "video:"<<  video ;
 
+  auto rtc = OkRTCManager::getInstance()->getRtc();
+  rtc->addRTCHandler(this);
 
+  acceptJingleMessage(peerId, callId, video);
 
   return true;
 }
@@ -910,7 +972,7 @@ bool IMJingle::answer(const QString &friendId, const QString &callId,
  */
 void IMJingle::rejectFileRequest(const QString &friendId,
                                  const QString &sId) {
-  cancelCall(friendId, sId);
+    cancelCall(IMContactId{friendId}, sId);
 }
 
 void IMJingle::acceptFileRequest(const QString &friendId,
@@ -922,6 +984,7 @@ void IMJingle::acceptFileRequest(const QString &friendId,
 
   auto *ws = findSession(file.sId);
   if (!ws) {
+    qWarning() <<"Unable to find session sId:" << file.sId;
     return;
   }
   // 协议：https://xmpp.org/extensions/xep-0234.html#requesting
@@ -973,7 +1036,7 @@ bool IMJingle::sendFile(const QString &friendId,
   }
 
   auto bare = stdstring(friendId);
-  auto resources = im->getOnlineResources(bare);
+  auto resources = getIM()->getOnlineResources(bare);
   if (resources.empty()) {
     qWarning() << "目标用户不在线！";
     return false;
@@ -1055,7 +1118,7 @@ bool IMJingle::handleIq(const IQ &iq)
       }
 
       IQ riq(IQ::IqType::Result, iq.from(), iq.id());
-      im->getClient()->send(riq);
+      getIM()->getClient()->send(riq);
     }
 
     return true;
@@ -1074,14 +1137,15 @@ IMJingleSession *IMJingle::findSession(const QString &sId) {
   return m_sessionMap.value(sId);
 }
 
-IMJingleSession *IMJingle::createSession(const IMPeerId &to, const QString &sId)
+IMJingleSession *IMJingle::createSession(const IMPeerId &to, const QString &sId, JingleCallType ct)
 {
 
-    auto s = _sessionManager->createSession(JID(to.toString().toStdString()),
-                                   this,
-                                   stdstring(sId));
-    auto ws = cacheSessionInfo(s, video ? JingleCallType::video : JingleCallType::audio);
+    auto s = _sessionManager->createSession(
+                                    JID(stdstring(to.toString())),
+                                    this,
+                                    stdstring(sId));
 
+    auto ws = cacheSessionInfo(s, ct);
     return ws;
 
 }

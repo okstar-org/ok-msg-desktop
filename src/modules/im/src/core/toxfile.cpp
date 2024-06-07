@@ -11,12 +11,12 @@
  */
 
 #include "src/core/toxfile.h"
-#include "toxpk.h"
+#include "FriendId.h"
+#include "lib/messenger/IMFile.h"
 #include <QFile>
 #include <QRegularExpression>
 #include <base/jsons.h>
 #include <lib/messenger/messenger.h>
-#include "lib/messenger/IMFile.h"
 
 FileInfo::FileInfo(
                    const QString &sId,

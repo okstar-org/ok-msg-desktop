@@ -13,6 +13,7 @@
 #ifndef CORE_HPP
 #define CORE_HPP
 
+#include "FriendId.h"
 #include "groupid.h"
 #include "icorefriendmessagesender.h"
 #include "icoregroupmessagesender.h"
@@ -21,7 +22,6 @@
 #include "receiptnum.h"
 #include "toxfile.h"
 #include "toxid.h"
-#include "toxpk.h"
 
 #include "base/compatiblerecursivemutex.h"
 #include "lib/messenger/messenger.h"
@@ -72,17 +72,17 @@ public:
 
   static const QString TOX_EXT;
   static QStringList splitMessage(const QString &message);
-  QString getPeerName(const ToxPk &id) const;
+  QString getPeerName(const FriendId &id) const;
   void loadFriendList(std::list<FriendInfo> &) const;
 
   void loadGroupList() const;
   GroupId getGroupPersistentId(QString groupId) const override;
   uint32_t getGroupNumberPeers(QString groupId) const override;
   QString getGroupPeerName(QString groupId, QString peerId) const override;
-  ToxPk getGroupPeerPk(QString groupId, QString peerId) const override;
+  ToxPeer getGroupPeerPk(QString groupId, QString peerId) const override;
   QStringList getGroupPeerNames(QString groupId) const override;
   bool getGroupAvEnabled(QString groupId) const override;
-  ToxPk getFriendPublicKey(QString friendNumber) const;
+  FriendId getFriendPublicKey(QString friendNumber) const;
 
   QString getFriendUsername(QString friendNumber) const;
   void setFriendAlias(const QString &friendId, const QString &alias);
@@ -91,7 +91,7 @@ public:
   Status::Status getFriendStatus(const QString &friendNumber) const;
 
   bool isFriendOnline(QString friendId) const;
-  bool hasFriendWithPublicKey(const ToxPk &publicKey) const;
+  bool hasFriendWithPublicKey(const FriendId &publicKey) const;
   QString joinGroupchat(const GroupInvite &inviteInfo);
   void joinRoom(const QString &groupId);
   void quitGroupChat(const QString &groupId) const;
@@ -101,7 +101,7 @@ public:
   Status::Status getStatus() const;
   QString getStatusMessage() const;
   ToxId getSelfId() const override;
-  ToxPk getSelfPublicKey() const override;
+  FriendId getSelfPublicKey() const override;
   QPair<QByteArray, QByteArray> getKeypair() const;
 
   void sendFile(QString friendId, QString filename, QString filePath, long long filesize);
@@ -114,9 +114,9 @@ public:
 
   QByteArray getToxSaveData();
 
-  void acceptFriendRequest(const ToxPk &friendPk);
-  void rejectFriendRequest(const ToxPk &friendPk);
-  void requestFriendship(const ToxPk &friendAddress, const QString &nick, const QString &message);
+  void acceptFriendRequest(const FriendId &friendPk);
+  void rejectFriendRequest(const FriendId &friendPk);
+  void requestFriendship(const FriendId &friendAddress, const QString &nick, const QString &message);
   void groupInviteFriend(QString friendId, QString groupId);
   QString createGroup(ConferenceType type = ConferenceType::TEXT);
 
@@ -150,13 +150,13 @@ signals:
   void connected();
   void disconnected();
 
-  void friendRequestReceived(const ToxPk &friendPk, const QString &message);
-  void friendAvatarChanged(const ToxPk &friendPk, const QByteArray &avatar);
-  void friendAliasChanged(const ToxPk &fId, const QString &alias);
-  void friendAvatarRemoved(const ToxPk &friendPk);
+  void friendRequestReceived(const FriendId &friendPk, const QString &message);
+  void friendAvatarChanged(const FriendId &friendPk, const QByteArray &avatar);
+  void friendAliasChanged(const FriendId &fId, const QString &alias);
+  void friendAvatarRemoved(const FriendId &friendPk);
 
-  void requestSent(const ToxPk &friendPk, const QString &message);
-  void failedToAddFriend(const ToxPk &friendPk, const QString &errorInfo = QString());
+  void requestSent(const FriendId &friendPk, const QString &message);
+  void failedToAddFriend(const FriendId &friendPk, const QString &errorInfo = QString());
 
   void usernameSet(const QString &username);
   void avatarSet(QByteArray avatar);
@@ -177,19 +177,19 @@ signals:
                                QString fileId,   //
                                const QByteArray &avatarHash);
 
-  void friendMessageSessionReceived(const ToxPk &friendId, //
+  void friendMessageSessionReceived(const FriendId &friendId, //
                                     const QString &sid);
 
-  void friendMessageReceived(const ToxPk &friendId,        //
+  void friendMessageReceived(const FriendId &friendId,        //
                              const FriendMessage &message, //
                              bool isAction);
 
   void friendAdded(const FriendInfo frnd);
 
-  void friendStatusChanged(const ToxPk &friendId, Status::Status status);
-  void friendStatusMessageChanged(const ToxPk &friendId, const QString &message);
-  void friendUsernameChanged(const ToxPk &friendPk, const QString &username);
-  void friendTypingChanged(const ToxPk &friendId, bool isTyping);
+  void friendStatusChanged(const FriendId &friendId, Status::Status status);
+  void friendStatusMessageChanged(const FriendId &friendId, const QString &message);
+  void friendUsernameChanged(const FriendId &friendPk, const QString &username);
+  void friendTypingChanged(const FriendId &friendId, bool isTyping);
 
   void friendRemoved(QString friendId);
   void friendLastSeenChanged(QString friendId, const QDateTime &dateTime);
@@ -209,11 +209,11 @@ signals:
 
   void groupPeerStatusChanged(QString groupnumber, GroupOccupant go);
 
-  void groupPeerNameChanged(QString groupnumber, const ToxPk &peerPk, const QString &newName);
+  void groupPeerNameChanged(QString groupnumber, const FriendId &peerPk, const QString &newName);
 
   void groupInfoReceipt(const GroupId &groupId, const GroupInfo &info);
 
-  void groupPeerAudioPlaying(QString groupnumber, ToxPk peerPk);
+  void groupPeerAudioPlaying(QString groupnumber, FriendId peerPk);
 
   void groupSentFailed(QString groupId);
 
@@ -221,7 +221,7 @@ signals:
 
   void actionSentResult(QString friendId, const QString &action, int success);
 
-  void receiptRecieved(const ToxPk &friedId, ReceiptNum receipt);
+  void receiptRecieved(const FriendId &friedId, ReceiptNum receipt);
 
   void failedToRemoveFriend(QString friendId);
 

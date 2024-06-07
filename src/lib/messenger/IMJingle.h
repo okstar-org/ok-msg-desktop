@@ -44,21 +44,21 @@ class JingleMessage;
 namespace lib {
 namespace messenger {
 
+class IMCall;
 class IMFileTask;
 enum class CallDirection;
-
 
 class IMJingle : public QObject,
                  public MessageHandler,
                  public gloox::IqHandler,
                  public gloox::MessageSessionHandler,
                  public gloox::Jingle::SessionHandler,
-                 public lib::ortc::OkRTCHandler,
-                 public lib::ortc::OkRTCRenderer {
+                 public lib::ortc::OkRTCHandler {
   Q_OBJECT
 
 public:
-  IMJingle(IM *im, std::vector<FileHandler *> *fileHandlers, QObject *parent = nullptr);
+  static IMJingle* getInstance( );
+
 
   ~IMJingle() override;
 
@@ -77,9 +77,12 @@ public:
 
   bool createCall(const IMPeerId &to, const QString &sId, bool video);
 
-  bool answer(const QString &friendId, const QString &callId, bool video);
+  bool answer(const IMPeerId &to, const QString &callId, bool video);
+
   void cancel(const QString &friendId);
-  void cancelCall(const QString &friendId, const QString &sId);
+  void cancelCall(const IMContactId &friendId, const QString &sId);
+  void rejectCall(const IMPeerId &friendId, const QString &sId);
+
   void join(const JID &room);
   void setMute(bool mute);
   void setRemoteMute(bool mute);
@@ -95,7 +98,7 @@ public:
 
   void rejectJingleMessage(const QString &friendId, const QString &callId);
 
-  void acceptJingleMessage(const QString &friendId, const QString &callId);
+  void acceptJingleMessage(const IMPeerId &peerId, const QString &callId, bool video);
 
   void retractJingleMessage(const QString &friendId, const QString &callId);
 
@@ -104,6 +107,10 @@ public:
   /**
    * File
    */
+  void setFileHandlers(std::vector<FileHandler *> *fileHandlers_){
+      fileHandlers = fileHandlers_;
+  };
+
   void rejectFileRequest(const QString &friendId,
                          const QString &sId);
   void acceptFileRequest(const QString &friendId,
@@ -119,11 +126,6 @@ public:
 
 protected:
 
-  /**
-   * iq handlers
-   * @param iq
-   * @return
-   */
   bool handleIq(const IQ &iq) override;
 
   void handleIqID(const IQ &iq, int context) override;
@@ -137,18 +139,14 @@ protected:
 
   void handleIncomingSession(Jingle::Session *session) override;
 
-  /**
-   * OkRTCHandler
-   * @param oContext
-   */
-
-  void onCreatePeerConnection(const std::string &peerId, const std::string &sId,
+  void onCreatePeerConnection(const std::string &sId,
+                              const std::string &peerId,
                               bool ok) override;
 
   // onRTP
   void onRTP(const std::string &sId,      //
              const std::string &friendId, //
-             const lib::ortc::JingleContext &oContext) override;
+             const lib::ortc::OJingleContentAv &oContext) override;
 
   // onIce
   void onIce(const std::string &sId,      //
@@ -161,29 +159,11 @@ protected:
 
   IMJingleSession *findSession(const QString &sId);
 
-  IMJingleSession* createSession(const IMPeerId &to, const QString &sId);
+  IMJingleSession* createSession(const IMPeerId &to, const QString &sId, lib::ortc::JingleCallType ct);
+
 
 private:
-
-  IM *im;
-
-  std::vector<FileHandler *> *fileHandlers;
-
-  // receiver -> sid
-  QMap<IMPeerId, QString> m_friendSessionMap;
-  //  std::map<IMPeerId, const Jingle::Session::Jingle *> m_jingleMap;
-  // sid -> JingleContext
-  //  std::map<std::string, lib::ortc::JingleContext> m_contextMap;
-  // sid -> session
-  QMap<QString, IMJingleSession *> m_sessionMap;
-
-//  std::unique_ptr<lib::ortc::OkRTCManager> _rtcManager;
-  std::unique_ptr<Jingle::SessionManager> _sessionManager;
-
-
-
-
-  QList<Jingle::Content *> m_ices;
+  IMJingle();
 
   QString getSessionByFriendId(const QString &friendId);
 
@@ -216,16 +196,35 @@ private:
 
 
 
+  std::vector<FileHandler *> *fileHandlers;
+
+  // receiver -> sid
+  QMap<IMPeerId, QString> m_friendSessionMap;
+
+  // sid -> session
+  QMap<QString, IMJingleSession *> m_sessionMap;
+
+
+  std::unique_ptr<Jingle::SessionManager> _sessionManager;
+
+  QList<Jingle::Content *> m_ices;
+
+
 signals:
-  /**
-   * Call events
-   * @param friendId
-   * @param audio
-   * @param video
-   */
   void callStarted();
+
   // 呼叫请求
-  void receiveCallRequest(QString friendId, QString callId, bool audio, bool video);
+  void receiveCallRequest(IMPeerId peerId,
+                          QString callId,
+                          bool audio,
+                          bool video);
+
+  void receiveFriendCall(QString friendId,
+                         QString callId,
+                         bool audio,
+                         bool video);
+
+
   // 呼叫撤回
   void receiveCallRetract(QString friendId, int state);
   void receiveCallAcceptByOther(QString callId, IMPeerId peerId);
@@ -235,9 +234,6 @@ signals:
   void receiveCallStateAccepted(IMPeerId peerId, QString callId, bool video);
   void receiveCallStateRejected(IMPeerId peerId, QString callId, bool video);
 
-
-  void receiveFriendCall(QString friendId, QString callId, bool audio,
-                         bool video);
 
 
   void receiveSelfVideoFrame(uint16_t w, uint16_t h, //

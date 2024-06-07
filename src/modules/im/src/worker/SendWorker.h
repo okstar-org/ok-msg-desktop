@@ -27,13 +27,13 @@
 class SendWorker : public QObject{
     Q_OBJECT
 public:
-    SendWorker(const ToxPk& m_friend);
+    SendWorker(const FriendId& m_friend);
     SendWorker(const GroupId& m_group);
     ~SendWorker();
 
     void clearHistory();
 
- static std::unique_ptr<SendWorker> forFriend(const ToxPk& m_friend);
+ static std::unique_ptr<SendWorker> forFriend(const FriendId& m_friend);
  static std::unique_ptr<SendWorker> forGroup(const GroupId& m_group);
 
 

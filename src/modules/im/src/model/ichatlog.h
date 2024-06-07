@@ -14,9 +14,9 @@
 #define ICHAT_LOG_H
 
 #include "message.h"
+#include "src/core/FriendId.h"
 #include "src/core/core.h"
 #include "src/core/toxfile.h"
-#include "src/core/toxpk.h"
 #include "src/friendlist.h"
 #include "src/grouplist.h"
 #include "src/model/chatlogitem.h"

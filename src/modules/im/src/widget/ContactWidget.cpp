@@ -120,23 +120,23 @@ void ContactWidget::onFriendAdded(const FriendInfo &frnd) {
   contactListWidget->addFriend(frnd);
 }
 
-void ContactWidget::onFriendAvatarChanged(const ToxPk &friendnumber, const QByteArray &avatar) {
+void ContactWidget::onFriendAvatarChanged(const FriendId &friendnumber, const QByteArray &avatar) {
   qDebug() << __func__ << "friend:" << friendnumber.toString() << avatar.size();
   contactListWidget->setFriendAvatar(friendnumber, avatar);
 }
 
-void ContactWidget::onFriendAliasChanged(const ToxPk &friendPk, const QString &alias)
+void ContactWidget::onFriendAliasChanged(const FriendId &friendPk, const QString &alias)
 {
     qDebug() << __func__ << "friend:" << friendPk.toString() << "alias:" << alias;
     contactListWidget->setFriendAlias(friendPk, alias);
 }
 
-void ContactWidget::onFriendUsernameChanged(const ToxPk &friendPk, const QString &username) {
+void ContactWidget::onFriendUsernameChanged(const FriendId &friendPk, const QString &username) {
   qDebug() << __func__ << "friend:" << friendPk.toString() << "name:" << username;
   contactListWidget->setFriendName(friendPk, username);
 }
 
-void ContactWidget::onFriendStatusChanged(const ToxPk &friendPk, Status::Status status) {
+void ContactWidget::onFriendStatusChanged(const FriendId &friendPk, Status::Status status) {
   qDebug() << __func__ << friendPk.toString() << "status:" << (int)status;
   //  const auto &friendPk = FriendList::id2Key(friendPk);
   contactListWidget->setFriendStatus(friendPk, status);
@@ -167,7 +167,7 @@ void ContactWidget::onFriendStatusChanged(const ToxPk &friendPk, Status::Status 
   //    ContentDialogManager::getInstance()->updateFriendStatus(friendPk);
 }
 
-void ContactWidget::onFriendStatusMessageChanged(const ToxPk &friendPk, const QString &message) {
+void ContactWidget::onFriendStatusMessageChanged(const FriendId &friendPk, const QString &message) {
 
   contactListWidget->setFriendStatusMsg(friendPk, message);
 
@@ -188,7 +188,7 @@ void ContactWidget::onFriendStatusMessageChanged(const ToxPk &friendPk, const QS
   //  }
 }
 
-void ContactWidget::onFriendRequest(const ToxPk &friendPk, const QString &message) {
+void ContactWidget::onFriendRequest(const FriendId &friendPk, const QString &message) {
   qDebug() << __func__ << friendPk.toString() << message;
   do_openAddForm();
   Widget::getInstance()->newMessageAlert(window(), isActiveWindow(), true, true);
@@ -203,22 +203,22 @@ void ContactWidget::onFriendRequest(const ToxPk &friendPk, const QString &messag
   //    }
 }
 
-void ContactWidget::do_friendRequest(const ToxPk &friendPk, const QString &nick, const QString &message) {
+void ContactWidget::do_friendRequest(const FriendId &friendPk, const QString &nick, const QString &message) {
   qDebug() << __func__ << friendPk.toString();
   core->requestFriendship(friendPk, nick, message);
 }
 
-void ContactWidget::do_friendDelete(const ToxPk &friendPk) {
+void ContactWidget::do_friendDelete(const FriendId &friendPk) {
   qDebug() << __func__ << friendPk.toString();
   core->removeFriend(friendPk.toString());
 }
 
-void ContactWidget::do_friendRequestAccept(const ToxPk &friendPk) {
+void ContactWidget::do_friendRequestAccept(const FriendId &friendPk) {
   qDebug() << __func__ << friendPk.toString();
   core->acceptFriendRequest(friendPk);
 }
 
-void ContactWidget::do_friendRequestReject(const ToxPk &friendPk) {
+void ContactWidget::do_friendRequestReject(const FriendId &friendPk) {
   qDebug() << __func__ << friendPk.toString();
   core->rejectFriendRequest(friendPk);
 }
@@ -294,7 +294,7 @@ void ContactWidget::onGroupPeerSizeChanged(QString groupnumber, const uint size)
   g->setPeerCount(size);
 }
 
-void ContactWidget::onGroupPeerNameChanged(QString groupnumber, const ToxPk &peerPk, const QString &newName) {
+void ContactWidget::onGroupPeerNameChanged(QString groupnumber, const FriendId &peerPk, const QString &newName) {
   const GroupId &groupId = GroupId(groupnumber);
   Group *g = GroupList::findGroup(groupId);
   if (!g) {

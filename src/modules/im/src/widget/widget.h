@@ -24,11 +24,11 @@
 
 #include "src/audio/iaudiocontrol.h"
 #include "src/audio/iaudiosink.h"
+#include "src/core/FriendId.h"
 #include "src/core/core.h"
 #include "src/core/groupid.h"
 #include "src/core/toxfile.h"
 #include "src/core/toxid.h"
-#include "src/core/toxpk.h"
 #include "src/model/friendmessagedispatcher.h"
 #include "src/model/groupmessagedispatcher.h"
 #include "ui_mainwindow.h"
@@ -123,9 +123,9 @@ public:
 
   void showUpdateDownloadProgress();
 
-  bool newFriendMessageAlert(const ToxPk &friendId, const QString &text,
+  bool newFriendMessageAlert(const FriendId &friendId, const QString &text,
                              bool sound = true, bool file = false);
-  bool newGroupMessageAlert(const GroupId &groupId, const ToxPk &authorPk,
+  bool newGroupMessageAlert(const GroupId &groupId, const FriendId &authorPk,
                             const QString &message, bool notify);
   bool getIsWindowMinimized();
   void updateIcons();
@@ -165,9 +165,9 @@ public slots:
   void setUsername(const QString &username);
 
   void setAvatar( QByteArray avatar);
-  void addFriend0(const ToxPk &friendPk);
+  void addFriend0(const FriendId &friendPk);
   void addFriendDone();
-  void addFriendFailed(const ToxPk &userId, const QString &errorInfo = QString());
+  void addFriendFailed(const FriendId &userId, const QString &errorInfo = QString());
 
 
   void onFileReceiveRequested(const ToxFile &file);
@@ -176,7 +176,7 @@ public slots:
 
 
   void titleChangedByUser(const QString &title);
-  void onGroupPeerAudioPlaying(QString groupnumber, ToxPk peerPk);
+  void onGroupPeerAudioPlaying(QString groupnumber, FriendId peerPk);
 
   void nextContact();
   void previousContact();
@@ -186,12 +186,14 @@ public slots:
   void refreshPeerListsLocal(const QString &username);
   void onUpdateAvailable();
   void onCoreChanged(Core &core);
+  void incomingNotification(QString friendId);
+  void onStopNotification();
 
 signals:
   void friendAdded(const Friend* f);
   void friendRemoved(const Friend* f);
-  void friendRequestAccepted(const ToxPk &friendPk);
-  void friendRequestRejected(const ToxPk &friendPk);
+  void friendRequestAccepted(const FriendId &friendPk);
+  void friendRequestRejected(const FriendId &friendPk);
   void friendRequested(const ToxId &friendAddress, const QString &nick, const QString &message);
 
 
@@ -217,7 +219,7 @@ private slots:
   void onChatroomWidgetClicked(GenericChatroomWidget *widget);
   void onStatusMessageChanged(const QString &newStatusMessage);
 
-  void copyFriendIdToClipboard(const ToxPk &friendId);
+  void copyFriendIdToClipboard(const FriendId &friendId);
   void removeGroup(const GroupId &groupId);
   void destroyGroup(const GroupId &groupId);
 
@@ -233,9 +235,9 @@ private slots:
   void onDialogShown(GenericChatroomWidget *widget);
   void outgoingNotification();
   void onCallEnd();
-  void incomingNotification(QString friendId);
+
   void onRejectCall(QString friendId);
-  void onStopNotification();
+
 
 
 

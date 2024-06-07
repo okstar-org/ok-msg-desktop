@@ -31,7 +31,7 @@ public:
     virtual const QString & getAlias() const =0;
 
     virtual QString getStatusMessage() const = 0;
-    virtual ToxPk getPublicKey() const = 0;
+    virtual FriendId getPublicKey() const = 0;
 
     virtual QPixmap getAvatar() const = 0;
 

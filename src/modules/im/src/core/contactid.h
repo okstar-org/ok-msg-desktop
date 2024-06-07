@@ -18,12 +18,23 @@
 #include <cstdint>
 #include <QHash>
 #include <memory>
+#include <QRegularExpression>
+#include <QRegularExpressionMatch>
 
 #include "lib/messenger/messenger.h"
+
+inline QRegularExpressionMatch JidMatch(const QString& strId){
+      // 正则表达式模式，这里假设username不包含@，server不包含/
+      QRegularExpression re("([^@]+)@([^/]+)(/[^/]+)?");
+      // 匹配输入字符串
+      return re.match(strId);
+}
 
 class ContactId
 {
 public:
+
+
     explicit ContactId();
     explicit ContactId(const ContactId &contactId);
     explicit ContactId(const QByteArray &rawId);
@@ -38,10 +49,10 @@ public:
     bool operator<(const ContactId& other) const;
 
     QByteArray getByteArray() const;
-    bool isValid() const;
+    virtual bool isValid() const;
     int getSize();
 
-    inline QString toString() const{
+    virtual QString toString() const {
         return username+"@"+server;
     };
 

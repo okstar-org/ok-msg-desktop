@@ -33,7 +33,8 @@
 #include "../ok_rtc.h"
 
 #include "ok_videosink.h"
-#include "vcm_capturer.h"
+#include "webrtc.h"
+//#include "vcm_capturer.h"
 
 namespace lib {
 namespace ortc {
@@ -43,16 +44,14 @@ class Conductor : public webrtc::PeerConnectionObserver,
                   public webrtc::SetSessionDescriptionObserver,
                   public webrtc::SetRemoteDescriptionObserverInterface {
 public:
-  Conductor(const webrtc::PeerConnectionInterface::RTCConfiguration &config, //
-            rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> pcf,
+  Conductor(
+            WebRTC* webrtc,
             const std::string &peerId_,                                       //
-            const std::string &sId,
-            OkRTCHandler *rtcHandler,
-            OkRTCRenderer *rtcRenderer);
+            const std::string &sId);
 
-  virtual ~Conductor() override;
+  ~Conductor() ;
 
-  void CreateAnswer(std::unique_ptr<webrtc::SessionDescriptionInterface> desc);
+  void CreateAnswer();
 
   void CreateOffer();
 
@@ -86,7 +85,7 @@ public:
 
   size_t getVideoCaptureSize();
 
-  JingleContents toJingleSdp(const webrtc::SessionDescriptionInterface *desc);
+  OJingleContentAv toJingleSdp(const webrtc::SessionDescriptionInterface *desc);
 
   virtual void AddRef() const override {};
   virtual rtc::RefCountReleaseStatus Release() const override {
@@ -100,8 +99,9 @@ public:
 
   void AddTrack(webrtc::VideoTrackSourceInterface* _videoTrackSource);
 
-protected:
   rtc::scoped_refptr<webrtc::PeerConnectionInterface> CreatePeerConnection();
+
+protected:
   void DestroyPeerConnection();
 
   //
@@ -117,8 +117,7 @@ protected:
   OnAddTrack(rtc::scoped_refptr<webrtc::RtpReceiverInterface> receiver,
              const std::vector<rtc::scoped_refptr<webrtc::MediaStreamInterface>>
                  &streams) override;
-  void
-  OnTrack(rtc::scoped_refptr<RtpTransceiverInterface> transceiver) override;
+  void OnTrack(rtc::scoped_refptr<webrtc::RtpTransceiverInterface> transceiver) override;
   void OnRemoveTrack(
       rtc::scoped_refptr<webrtc::RtpReceiverInterface> receiver) override;
   void OnDataChannel(
@@ -159,18 +158,17 @@ private:
   bool _started = false;
   std::mutex _session_mutex;
 
-  std::unique_ptr<webrtc::PeerConnectionInterface::RTCConfiguration> config;
+
   std::string peerId;
   std::string sId;
 
-  OkRTCHandler *rtcHandler;
-  OkRTCRenderer *rtcRenderer;
+
+
+  WebRTC * webRtc;
 
   ortc::JoinOptions _joinOptions;
 
   rtc::scoped_refptr<webrtc::PeerConnectionInterface> peer_connection_;
-
-  rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> peer_connection_factory_;
 
   std::list<webrtc::IceCandidateInterface *> _candidates;
   std::unique_ptr<OVideoSink> _videoSink;
@@ -183,8 +181,8 @@ private:
   webrtc::AudioTrackInterface * _remote_audio_track;
   webrtc::VideoTrackInterface * _remote_video_track;
 
-  rtc::scoped_refptr<RtpSenderInterface> _audioRtpSender;
-  rtc::scoped_refptr<RtpSenderInterface> _videoRtpSender;
+  rtc::scoped_refptr<webrtc::RtpSenderInterface> _audioRtpSender;
+  rtc::scoped_refptr<webrtc::RtpSenderInterface> _videoRtpSender;
 //  rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> _videoTrackSource;
 };
 

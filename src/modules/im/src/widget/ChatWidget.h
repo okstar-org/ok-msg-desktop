@@ -136,19 +136,19 @@ public slots:
   void onFriendAdded(const Friend* f);
   void onFriendRemoved(const Friend* f);
 
-  void onFriendStatusChanged(const ToxPk &friendPk, Status::Status status);
-  void onFriendStatusMessageChanged(const ToxPk &friendPk,
+  void onFriendStatusChanged(const FriendId &friendPk, Status::Status status);
+  void onFriendStatusMessageChanged(const FriendId &friendPk,
                                     const QString &message);
 
-  void onFriendMessageSessionReceived(const ToxPk &friendPk, const QString &sid);
+  void onFriendMessageSessionReceived(const FriendId &friendPk, const QString &sid);
 
-  void onFriendMessageReceived(const ToxPk &friendPk,
+  void onFriendMessageReceived(const FriendId &friendPk,
                                const FriendMessage &message,
                                bool isAction);
 
-  void onReceiptReceived(const ToxPk &friendPk, ReceiptNum receipt);
+  void onReceiptReceived(const FriendId &friendPk, ReceiptNum receipt);
 
-  void onFriendTypingChanged(const ToxPk &friendnumber, bool isTyping);
+  void onFriendTypingChanged(const FriendId &friendnumber, bool isTyping);
 
 
 
@@ -164,7 +164,7 @@ void onGroupPeerListChanged(QString groupnumber);
 
 void onGroupPeerSizeChanged(QString groupnumber, const uint size);
 
-void onGroupPeerNameChanged(QString groupnumber, const ToxPk &peerPk,
+void onGroupPeerNameChanged(QString groupnumber, const FriendId &peerPk,
                             const QString &newName);
 void onGroupTitleChanged(QString groupnumber, const QString &author,
                          const QString &title);
@@ -180,6 +180,10 @@ void cancelFile(const QString &friendId, const QString &fileId);
 void dispatchFile(ToxFile file);
 void dispatchFileWithBool(ToxFile file, bool);
 void dispatchFileSendFailed(QString friendId, const QString &fileName);
+
+void onAvInvite(ToxPeer peerId, bool video);
+void onAvStart(QString friendId, bool video);
+void onAvEnd(const FriendId & friendId, bool error);
 
 };
 

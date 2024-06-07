@@ -18,21 +18,9 @@
 namespace lib {
 namespace ortc {
 
-struct RendererImage {
-  size_t width_;
-  size_t height_;
-  uint8_t *y;      //
-  uint8_t *u;      //
-  uint8_t *v;      //
-  int32_t ystride; //
-  int32_t ustride; //
-  int32_t vstride; //
-};
 
-class OkRTCRenderer {
-public:
-  virtual void onRender(const std::string &friendId, RendererImage image) = 0;
-};
+
+
 
 } // namespace ortc
 } // namespace lib

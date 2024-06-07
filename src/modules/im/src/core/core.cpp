@@ -59,6 +59,8 @@ Core::Core(QThread *coreThread)
 
   assert(toxTimer);
 
+  qRegisterMetaType<ToxPeer>("ToxPeer");
+
   toxTimer->setSingleShot(true);
   connect(toxTimer, &QTimer::timeout, this, &Core::process);
   connect(coreThread, &QThread::finished, toxTimer, &QTimer::stop);
@@ -433,7 +435,7 @@ void Core::onFriend(const lib::messenger::IMFriend & frnd) {
 void Core::onFriendRequest(const QString friendId,
                            QString msg) {
   qDebug() << "onFriendRequest" << friendId;
-  emit friendRequestReceived(ToxPk(friendId), msg);
+  emit friendRequestReceived(FriendId(friendId), msg);
 }
 
 void Core::onFriendRemoved(QString friendId) {
@@ -450,7 +452,7 @@ void Core::onFriendStatus(QString friendId, lib::messenger::IMStatus status) {
 
 void Core::onFriendMessageSession(QString friendId, QString sid) {
     qDebug() <<__func__<< "friend:" << friendId << "sid:" << sid;
-    emit friendMessageSessionReceived(ToxPk(friendId), sid);
+    emit friendMessageSessionReceived(FriendId(friendId), sid);
 }
 
 
@@ -469,7 +471,7 @@ void Core::onFriendMessage(QString friendId,
   msg.content=message.body;
   msg.timestamp=message.timestamp;
   msg.displayName=ContactId(message.from).username;
-  emit friendMessageReceived(ToxPk(friendId), msg, false);
+  emit friendMessageReceived(FriendId(friendId), msg, false);
 }
 
 /**
@@ -496,7 +498,7 @@ void Core::onFriendAvatarChanged(const QString friendId,
 
 void Core::onFriendAliasChanged(const lib::messenger::IMContactId &fId, const QString &alias)
 {
-    emit friendAliasChanged(ToxPk{fId}, alias);
+    emit friendAliasChanged(FriendId{fId}, alias);
 }
 
 
@@ -635,7 +637,7 @@ void Core::onMessageReceipt(QString friendId, ReceiptNum receipt) {
   emit receiptRecieved(getFriendPublicKey(friendId), receipt);
 }
 
-void Core::acceptFriendRequest(const ToxPk &friendPk) {
+void Core::acceptFriendRequest(const FriendId &friendPk) {
     qDebug() << __func__ << friendPk.toString();
 
   QMutexLocker ml{&coreLoopLock};
@@ -647,7 +649,7 @@ void Core::acceptFriendRequest(const ToxPk &friendPk) {
 
 }
 
-void Core::rejectFriendRequest(const ToxPk &friendPk) {
+void Core::rejectFriendRequest(const FriendId &friendPk) {
   tox->rejectFriendRequest(friendPk.toString());
 }
 
@@ -686,7 +688,7 @@ QString Core::getFriendRequestErrorMessage(const ToxId &friendId,
   return QString{};
 }
 
-void Core::requestFriendship(const ToxPk &friendId,const QString &nick, const QString &message) {
+void Core::requestFriendship(const FriendId &friendId,const QString &nick, const QString &message) {
     qDebug() << __func__<< friendId.toString() << nick << message;
 
     QMutexLocker ml{&coreLoopLock};
@@ -910,10 +912,10 @@ ToxId Core::getSelfId() const {
  * @brief Gets self public key
  * @return Self PK
  */
-ToxPk Core::getSelfPublicKey() const {
+FriendId Core::getSelfPublicKey() const {
   QMutexLocker ml{&coreLoopLock};
   auto friendId = tox->getSelfId();
-  return ToxPk(friendId.toString());
+  return FriendId(friendId.toString());
 }
 
 /**
@@ -1196,7 +1198,7 @@ QString Core::getGroupPeerName(QString groupId, QString peerId) const {
 /**
  * @brief Get the public key of a peer of a group
  */
-ToxPk Core::getGroupPeerPk(QString groupId, QString peerId) const {
+ToxPeer Core::getGroupPeerPk(QString groupId, QString peerId) const {
   QMutexLocker ml{&coreLoopLock};
 
   //  uint8_t friendPk[TOX_PUBLIC_KEY_SIZE] = {0x00};
@@ -1209,7 +1211,7 @@ ToxPk Core::getGroupPeerPk(QString groupId, QString peerId) const {
   //  }
   //  assert(success);
 
-  auto toxPk = ToxPk{peerId};
+  auto toxPk = ToxPeer{peerId};
   return toxPk;
 }
 
@@ -1410,7 +1412,7 @@ bool Core::isFriendOnline(QString friendId) const {
 /**
  * @brief Checks if we have a friend by public key
  */
-bool Core::hasFriendWithPublicKey(const ToxPk &publicKey) const {
+bool Core::hasFriendWithPublicKey(const FriendId &publicKey) const {
   //  QMutexLocker ml{&coreLoopLock};
   //
   //  if (publicKey.isEmpty()) {
@@ -1426,7 +1428,7 @@ bool Core::hasFriendWithPublicKey(const ToxPk &publicKey) const {
 /**
  * @brief Get the public key part of the ToxID only
  */
-inline ToxPk Core::getFriendPublicKey(QString friendNumber) const {
+inline FriendId Core::getFriendPublicKey(QString friendNumber) const {
   //qDebug() << "getFriendPublicKey" << friendNumber;
   //  QMutexLocker ml{&coreLoopLock};
   //  uint8_t rawid[TOX_PUBLIC_KEY_SIZE];
@@ -1434,7 +1436,7 @@ inline ToxPk Core::getFriendPublicKey(QString friendNumber) const {
   //    qWarning() << "getFriendPublicKey: Getting public key failed";
   //    return ToxPk();
   //  }
-  return ToxPk(friendNumber.toUtf8());
+  return FriendId(friendNumber.toUtf8());
 }
 
 QString Core::getFriendUsername(QString friendnumber) const {
@@ -1503,7 +1505,7 @@ QStringList Core::splitMessage(const QString &message) {
   return splittedMsgs;
 }
 
-QString Core::getPeerName(const ToxPk &id) const {
+QString Core::getPeerName(const FriendId &id) const {
   QMutexLocker ml{&coreLoopLock};
 
   QString name;

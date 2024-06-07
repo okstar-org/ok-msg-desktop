@@ -1,5 +1,5 @@
-﻿/*
- * Copyright (c) 2022 船山信息 chuanshaninfo.com
+/*
+ * Copyright (c) 2022 ???? chuanshaninfo.com
  * The project is licensed under Mulan PubL v2.
  * You can use this software according to the terms and conditions of the Mulan
  * PubL v2. You may obtain a copy of Mulan PubL v2 at:
@@ -10,11 +10,18 @@
  * See the Mulan PubL v2 for more details.
  */
 #include "webrtc.h"
+#include "StaticThreads.h"
+#include "ok_conductor.h"
+#include "vcm_capturer.h"
 
 #include <memory>
 #include <string>
 #include <utility>
 
+#include <rtc_base/thread.h>
+#include <rtc_base/logging.h>
+#include <rtc_base/ssl_adapter.h>
+#include <rtc_base/string_encode.h>
 #include <api/peer_connection_interface.h>
 #include <api/audio_codecs/builtin_audio_decoder_factory.h>
 #include <api/audio_codecs/builtin_audio_encoder_factory.h>
@@ -22,38 +29,32 @@
 #include <api/video_codecs/builtin_video_decoder_factory.h>
 #include <api/video_codecs/builtin_video_encoder_factory.h>
 #include <pc/video_track_source.h>
-#include <rtc_base/thread.h>
-#include <rtc_base/logging.h>
-#include <rtc_base/ssl_adapter.h>
-#include <rtc_base/string_encode.h>
+#include <modules/video_capture/video_capture_factory.h>
 
-#include "ok_conductor.h"
-#include "vcm_capturer.h"
 
 namespace lib {
 namespace ortc {
 
 class WebRTC;
 
-class CapturerTrackSource : public webrtc::VideoTrackSource {
-public:
-  explicit CapturerTrackSource(std::unique_ptr<VcmCapturer> capturer)
-      : VideoTrackSource(/*remote=*/false), capturer_(std::move(capturer)) {}
+//class CapturerTrackSource : public webrtc::VideoTrackSource {
+//public:
+//  explicit CapturerTrackSource(std::unique_ptr<VcmCapturer> capturer)
+//      : VideoTrackSource(/*remote=*/false), capturer_(std::move(capturer)) {}
 
-private:
-  std::unique_ptr<VcmCapturer> capturer_;
+//private:
+//  std::unique_ptr<VcmCapturer> capturer_;
 
-  rtc::VideoSourceInterface<webrtc::VideoFrame> *source() override {
-    return capturer_.get();
-  }
-};
+//  rtc::VideoSourceInterface<webrtc::VideoFrame> *source() override {
+//    return capturer_.get();
+//  }
+//};
 
 static std::unique_ptr<webrtc::SessionDescriptionInterface>
-CreateSessionDescription(webrtc::SdpType sdpType,
-                         const JingleContext &context) {
+CreateSessionDescription(webrtc::SdpType sdpType, const OJingleContentAv &context) {
 
   auto sessionDescription = std::make_unique<::cricket::SessionDescription>();
-  auto &contents = context.getContents();
+  auto &contents = context.contents;
 
   cricket::ContentGroup group(cricket::GROUP_TYPE_BUNDLE);
   for (const auto &content : contents) {
@@ -95,10 +96,7 @@ CreateSessionDescription(webrtc::SdpType sdpType,
       auto acd = std::make_unique<::cricket::AudioContentDescription>();
 
       for (auto &pt : description.payloadTypes) {
-//        auto ac = ::cricket::CreateAudioCodec(
-//                                 pt.id, pt.name, pt.clockrate,
-//                                 pt.channels);
-::cricket::AudioCodec ac(pt.id, pt.name, pt.clockrate, pt.bitrate,pt.channels);
+        ::cricket::AudioCodec ac(pt.id, pt.name, pt.clockrate, pt.bitrate,pt.channels);
         for (auto &e : pt.parameters) {
           ac.SetParam(e.name, e.value);
         }
@@ -207,236 +205,257 @@ CreateSessionDescription(webrtc::SdpType sdpType,
   return sessionDescriptionInterface;
 }
 
-WebRTC::WebRTC(std::list<IceServer> iceOptions,
-           OkRTCHandler *handler,
-           OkRTCRenderer *renderer)
-    : _iceOptions((iceOptions))
+WebRTC::WebRTC( )
+    : peer_connection_factory{nullptr}, _rtcHandler{nullptr}
 {
-  _rtcHandler = handler;
-  _rtcRenderer = renderer;
-  start();
+    _rtcConfig.sdp_semantics = webrtc::SdpSemantics::kUnifiedPlan;
+    _rtcConfig.enable_implicit_rollback = false;
+    _rtcConfig.enable_ice_renomination = true;
 }
 
 WebRTC::~WebRTC() {
-  // RTC_LOG(LS_INFO) << "WebRTC will be destroy...";
-  shutdown();
-  // RTC_LOG(LS_INFO) << "WebRTC has be destroyed.";
+    if(isStarted()){
+        stop();
+    }
 }
 
-void WebRTC::start() {
+bool WebRTC::start()
+{
+    RTC_DLOG_F(LS_INFO) << "Starting the WebRTC...";
+    // lock
+    start_mtx.lock();
 
-  if(_started){
-      return;
-  }
-
-  //  _logSink(std::make_unique<LogSinkImpl>())
-  //    rtc::LogMessage::AddLogToStream(_logSink.get(), rtc::LS_INFO);
-      rtc::LogMessage::LogToDebug(rtc::LS_INFO);
-  //    rtc::LogMessage::SetLogToStderr(false);
-
-
-    RTC_LOG(LS_INFO) << "Starting the WebRTC...";
-    RTC_LOG(LS_INFO) << "InitializeSSL=>" << rtc::InitializeSSL();
+    //  _logSink(std::make_unique<LogSinkImpl>())
+    //    rtc::LogMessage::AddLogToStream(_logSink.get(), rtc::LS_INFO);
+     rtc::LogMessage::LogToDebug(rtc::LS_INFO);
+    //    rtc::LogMessage::SetLogToStderr(false);
 
 
-  // lock
-//  _start_shutdown_mtx.lock();
-
-//  RTC_LOG(LS_INFO) << "Creating network thread";
-  network_thread = rtc::Thread::CreateWithSocketServer();
-//  RTC_LOG(LS_INFO) << "Network thread=>" << network_thread;
-  network_thread->SetName("network_thread", this);
-//  RTC_LOG(LS_INFO) << "Network thread is started=>" << network_thread->Start();
-
-  // RTC_LOG(LS_INFO) << "Creating worker thread";
-  worker_thread = rtc::Thread::Create();
-  // RTC_LOG(LS_INFO) << "Worker thread=>" << worker_thread;
-  worker_thread->SetName("worker_thread", this);
-  worker_thread->Start();
-  // RTC_LOG(LS_INFO) << "Worker thread is started=>";
-
-  // RTC_LOG(LS_INFO) << "Creating signaling thread";
-  signaling_thread = rtc::Thread::Create();
-  // RTC_LOG(LS_INFO) << "Signaling thread=>" << signaling_thread;
-  signaling_thread->SetName("signaling_thread", this);
-  signaling_thread->Start();
-  // RTC_LOG(LS_INFO) << "Signaling thread is started=>";
+    RTC_DLOG_F(LS_INFO) << "InitializeSSL=>"<<rtc::InitializeSSL();;
 
 
-  peer_connection_factory_ = webrtc::CreatePeerConnectionFactory(
-      network_thread.get(),   /* network_thread */
-      worker_thread.get(),    /* worker_thread */
-      signaling_thread.get(), /* signaling_thread */
-      nullptr,                /* default_adm */
-      webrtc::CreateBuiltinAudioEncoderFactory(), //
-      webrtc::CreateBuiltinAudioDecoderFactory(), //
-      webrtc::CreateBuiltinVideoEncoderFactory(), //
-      webrtc::CreateBuiltinVideoDecoderFactory(), //
-      nullptr /* audio_mixer */,                  //
-      nullptr /* audio_processing */);
-  // RTC_LOG(LS_INFO) << "peer_connection_factory:" << peer_connection_factory_.get();
+    RTC_DLOG_F(LS_INFO) << "Creating network thread";
+    network_thread = rtc::Thread::CreateWithSocketServer();
+    RTC_DLOG_F(LS_INFO) << "Network thread=>" << network_thread;
+    network_thread->SetName("network_thread", this);
+    RTC_DLOG_F(LS_INFO) << "Network thread is started=>" << network_thread->Start();
 
-  webrtc::PeerConnectionFactoryInterface::Options options;
-  options.disable_encryption = false;
-  peer_connection_factory_->SetOptions(options);
+    RTC_DLOG_F(LS_INFO) << "Creating worker thread";
+    worker_thread = rtc::Thread::Create();
+    RTC_DLOG_F(LS_INFO) << "Worker thread=>" << worker_thread;
+    worker_thread->SetName("worker_thread", this);
+    RTC_DLOG_F(LS_INFO) << "Worker thread is started=>" << worker_thread->Start();
+
+    RTC_DLOG_F(LS_INFO) << "Creating signaling thread";
+    signaling_thread = rtc::Thread::Create();
+    RTC_DLOG_F(LS_INFO) << "Signaling thread=>" << signaling_thread;;
+    signaling_thread->SetName("signaling_thread", this);
+    RTC_DLOG_F(LS_INFO) << "Signaling thread is started=>" << signaling_thread->Start();
 
 
-  // qDebug(("Create audio source..."));
-  _audioSource =
-      peer_connection_factory_->CreateAudioSource(::cricket::AudioOptions());
+    peer_connection_factory = webrtc::CreatePeerConnectionFactory(
+        network_thread.get(),   /* network_thread */
+        worker_thread.get(),    /* worker_thread */
+        signaling_thread.get(), /* signaling_thread */
+        nullptr,                /* default_adm */
+        webrtc::CreateBuiltinAudioEncoderFactory(), //
+        webrtc::CreateBuiltinAudioDecoderFactory(), //
+        webrtc::CreateBuiltinVideoEncoderFactory(), //
+        webrtc::CreateBuiltinVideoDecoderFactory(), //
+        nullptr /* audio_mixer */,                  //
+        nullptr /* audio_processing */);
 
-  // qDebug(("Create video device..."));
-  _videoDeviceInfo = std::shared_ptr<webrtc::VideoCaptureModule::DeviceInfo>(
-      webrtc::VideoCaptureFactory::CreateDeviceInfo());
 
-  _started = true;
-  _shutdown = false;
 
-  _start_shutdown_mtx.unlock();
 
-  // RTC_LOG(LS_INFO) << "WebRTC has be started.";
+  //   peer_connection_factory = pcf.get();
+     RTC_DLOG_F(LS_INFO) << "peer_connection_factory:" << peer_connection_factory;
+
+      webrtc::PeerConnectionFactoryInterface::Options options;
+      options.disable_encryption = false;
+      peer_connection_factory->SetOptions(options);
+
+
+    RTC_DLOG_F(LS_INFO) << "Create audio source...";
+    audioSource = peer_connection_factory->CreateAudioSource(::cricket::AudioOptions());
+    RTC_DLOG_F(LS_INFO) << "Audio source is:"<< audioSource;
+
+
+    RTC_DLOG_F(LS_INFO) << "Create video device...";
+    auto vdi = webrtc::VideoCaptureFactory::CreateDeviceInfo();
+    RTC_DLOG_F(LS_INFO) << "Video capture numbers:"<< vdi->NumberOfDevices();
+
+
+
+    start_mtx.unlock();
+
+     RTC_DLOG_F(LS_INFO) << "WebRTC has be started.";
+     return true;
 }
 
-void WebRTC::shutdown() {
-  // RTC_LOG(LS_INFO) << "WebRTC is shutdown...";
-  assert(!_shutdown);
+bool WebRTC::stop()
+{
+    RTC_DLOG_F(LS_INFO) << "WebRTC will be destroy...";
+    std::lock_guard<std::recursive_mutex> lock(start_mtx);
 
-  // lock
-  _start_shutdown_mtx.lock();
+    //销毁connection
+    for(auto pc : _pcMap){
+        delete pc.second;
+    }
 
-  peer_connection_factory_ = nullptr;
-  rtc::CleanupSSL();
+    //销毁factory
+    peer_connection_factory = nullptr;
 
+    //清除ssl
+    rtc::CleanupSSL();
+    RTC_DLOG_F(LS_INFO) << "WebRTC has be destroyed.";
+    return true;
+}
 
-  _shutdown = true;
-  // unlock
-  _start_shutdown_mtx.unlock();
+bool WebRTC::isStarted()
+{
+    return peer_connection_factory;
+}
+
+bool WebRTC::ensureStart()
+{
+   std::lock_guard<std::recursive_mutex> lock(start_mtx);
+   return isStarted()? true: start();
+}
+
+void WebRTC::addIceServer(const IceServer &ice)
+{
+    // Add the ice server.
+    webrtc::PeerConnectionInterface::IceServer stunServer;
+
+      stunServer.urls.push_back(ice.uri);
+      stunServer.tls_cert_policy = webrtc::PeerConnectionInterface::kTlsCertPolicyInsecureNoCheck;
+      if (!ice.username.empty()) {
+        stunServer.username = ice.username;
+        stunServer.password = ice.password;
+      }
+
+    _rtcConfig.servers.push_back(stunServer);
+
+}
+
+void WebRTC::addRTCHandler(  OkRTCHandler *hand)
+{
+    _rtcHandler = hand;
 }
 
 bool WebRTC::call(const std::string &peerId, const std::string &sId,
-                lib::ortc::JingleCallType callType) {
-
-  createConductor(peerId, sId, callType);
-
-  return true;
+                    bool video) {
+  RTC_DLOG_F(LS_INFO) <<"peerId:" << peerId;
+  return createConductor(peerId, sId, video);
 }
 
-bool WebRTC::join(const std::string &peerId, const std::string &sId,
-                const JingleContext &context) {
+bool WebRTC::join(const std::string &peerId,
+                  const std::string &sId,
+                  const OJingleContentAv &context) {
   assert(!peerId.empty());
 
-  createConductor(peerId, sId, context.callType());
+//  createConductor(peerId, sId, context.callType());
+  // RTC_DLOG_F(LS_INFO) << "end";
 
-  // RTC_LOG(LS_INFO) << "end";
   return true;
 }
 
 bool WebRTC::quit(const std::string &peerId) {
   //  qDebug(("Quit for WebRTC peerId:%1").arg(qstring(peerId)));
-  auto it = _pcMap.find(peerId);
-  if (it == _pcMap.end()) {
-    return false;
-  }
+//  auto it = _pcMap.find(peerId);
+//  if (it == _pcMap.end()) {
+//    return false;
+//  }
 
-  delete it->second;
-  it->second = nullptr;
-  _pcMap.erase(it);
+//  delete it->second;
+//  it->second = nullptr;
+//  _pcMap.erase(it);
   return true;
 }
 
 Conductor *WebRTC::getConductor(const std::string &peerId) {
-
-  // RTC_LOG(LS_INFO) << "Get conductor for peerId:" << peerId;
-
-  auto it = _pcMap.find(peerId);
-  if (it == _pcMap.end()) {
-    return nullptr;
-  }
-  return it->second;
+    return _pcMap[peerId];
 }
 
 Conductor *WebRTC::createConductor(const std::string &peerId,
                                  const std::string &sId,
-                                 JingleCallType callType) {
+                                 bool video) {
 
-  // RTC_LOG(LS_INFO) << "createConductor:" << peerId //
-//                     << " sid:" << sId                //
-//                     << " callType:" << callType;     //
-
-  webrtc::PeerConnectionInterface::RTCConfiguration _rtcConfig;
-  _rtcConfig.sdp_semantics = webrtc::SdpSemantics::kUnifiedPlan;
-  _rtcConfig.enable_implicit_rollback = false;
-  _rtcConfig.enable_ice_renomination = true;
-
-  // Add the ice server.
-  webrtc::PeerConnectionInterface::IceServer stunServer;
-  for (const auto &ice : iceOptions()) {
-    stunServer.urls.push_back(ice.uri);
-    stunServer.tls_cert_policy =
-        webrtc::PeerConnectionInterface::kTlsCertPolicyInsecureNoCheck;
-    if (!ice.username.empty()) {
-      stunServer.username = ice.username;
-      stunServer.password = ice.password;
-    }
-  }
-  _rtcConfig.servers.push_back(stunServer);
-
-  auto conductor = //
-      new Conductor(_rtcConfig, peer_connection_factory_, peerId, sId,
-                    _rtcHandler, _rtcRenderer);
-
-  if (callType == JingleCallType::audio) {
-    // qDebug(("AddTrack audio..."));
-    conductor->AddTrack(_audioSource.get());
+   RTC_LOG_F(LS_INFO) << "peer:" << peerId //
+                     << " sid:" << sId                //
+                     << " video:" << video;     //
+  auto conductor = _pcMap[peerId];
+  if(conductor){
+      return conductor;
   }
 
-  if (callType == JingleCallType::video) {
-    // qDebug(("AddTrack audio..."));
-    conductor->AddTrack(_audioSource.get());
+  conductor = new Conductor(this, peerId, sId);
 
-    int num_devices = _videoDeviceInfo->NumberOfDevices();
-    // qDebug(("Get number of video devices:%1").arg(num_devices));
-    /**
-     * TODO 多个视频设备需要提醒
-     */
+  if (!video) {
+    RTC_DLOG_V(rtc::LS_INFO) << "AddTrack audio..." << audioSource;
+    conductor->AddTrack(audioSource);
+  } else {
+    RTC_DLOG_V(rtc::LS_INFO) << "AddTrack audio..." << audioSource;
+    conductor->AddTrack(audioSource);
+
+    auto vdi = webrtc::VideoCaptureFactory::CreateDeviceInfo();
+    int num_devices = vdi->NumberOfDevices();
+    RTC_DLOG_F(LS_INFO) << "Get number of video devices:" << num_devices;
+
     const size_t kWidth = 840;
     const size_t kHeight = 480;
     const size_t kFps = 30;
     std::string label = "-";
 
-    for (int i = 0; i < num_devices; ++i) {
-      auto capturer = std::make_unique<VcmCapturer>(_videoDeviceInfo.get());
-      if (!capturer) {
-        // RTC_LOG(LS_INFO) << "Can not create camera capture for device" << i;
-        continue;
-      }
-      bool created = capturer->Create(kWidth, kHeight, kFps, i);
-      if (!created) {
-        // RTC_LOG(LS_INFO) << "Can not start camera capture for device" << i;
-        continue;
-      }
+    int videoIdx = -1;
+    for (int i = 0; i < vdi->NumberOfDevices(); ++i) {
 
-      _videoTrackSource =
-          rtc::make_ref_counted<CapturerTrackSource>(std::move(capturer));
-      conductor->AddTrack(_videoTrackSource.get());
 
-      // 本地视频显示
+//      auto capturer = new VcmCapturer(vdi);
+//      if (!capturer) {
+//         RTC_LOG(LS_WARNING) << "Can not create camera capture for device" << i;
+//        continue;
+//      }
+//
+//      bool created = capturer->Create(kWidth, kHeight, kFps, i);
+//      if (!created) {
+//        RTC_DLOG_F(LS_INFO) << "Can not start camera capture for device" << i;
+//        continue;
+//      }
+//
+      char name[50] = {0};
+      char uid[50] = {0};
+      char puid[50] = {0};
+      vdi->GetDeviceName(i, name, 50, uid, 50, puid, 50);
+     RTC_DLOG_F(LS_INFO) << "Video device info:" << name << uid << puid;
+
+
+//    auto  _videoTrackSource =
+//          rtc::make_ref_counted<webrtc::VideoTrackSource>(std::unique_ptr<VcmCapturer>(capturer));
+//    new webrtc::VideoTrackSource(false);
+//    auto x=  peer_connection_factory->CreateVideoTrack(name, capturer);
+
+      auto vc= getVideoCapture(uid);
+      conductor->AddTrack(vc->source());
+
+
+      // ??????
       //_video_track = peer_connection_factory_->CreateVideoTrack(label,
       //_videoTrackSource.get());
       //_video_track->AddOrUpdateSink(new OVideoSink(_rtcRenderer),
       // rtc::VideoSinkWants()); qDebug(("Added video track, The device num
-      // is:%1").arg(i));
+       // is:%1").arg(i));
 
       break;
     }
   }
-
-  _pcMap.emplace(peerId, conductor);
+  _pcMap[peerId]= conductor;
   return conductor;
 }
 
 void WebRTC::SetRemoteDescription(const std::string &peerId,
-                                const lib::ortc::JingleContext &jingleContext) {
+                                    const OJingleContentAv &jingleContext) {
 
   auto conductor = getConductor(peerId);
   auto sdi = CreateSessionDescription(
@@ -446,63 +465,18 @@ void WebRTC::SetRemoteDescription(const std::string &peerId,
   conductor->SetRemoteDescription(std::move(sdi));
 }
 
-bool WebRTC::SetTransportInfo(const std::string &peerId,   //
-                            const ortc::OIceUdp &iceUdp) //
-{
-  Conductor *conductor = getConductor(peerId);
-  if (!conductor)
-    return false;
-  setTransportInfo(conductor, iceUdp);
-  return true;
-}
+void WebRTC::setTransportInfo(const std::string &peerId,
+                              const std::string &sId,
+                              const ortc::OIceUdp &iceUdp) {
 
-void WebRTC::ContentAdd(std::map<std::string, gloox::Jingle::Session> sdMap,
-                      OkRTCHandler *handler) {
-  _c->OnContentAdd(sdMap, handler);
-}
+    RTC_LOG_F(LS_INFO) << "peerId:"<< peerId;
 
-void WebRTC::ContentRemove(std::map<std::string, gloox::Jingle::Session> sdMap,
-                         OkRTCHandler *handler) {
+    Conductor *conductor = createConductor(peerId, sId, false);
+    if (!conductor) {
+      RTC_LOG_F(LS_WARNING) << "conductor is null!";
+      return;
+    }
 
-  _c->OnContentRemove(sdMap, handler);
-}
-
-void WebRTC::setMute(bool mute) {
-  for (auto it : _pcMap) {
-    it.second->setMute(mute);
-  }
-}
-
-void WebRTC::setRemoteMute(bool mute) {
-  for (auto it : _pcMap) {
-    it.second->setRemoteMute(mute);
-  }
-}
-void WebRTC::createPeerConnection() {}
-
-size_t WebRTC::getVideoSize() { return _c->getVideoCaptureSize(); }
-
-void WebRTC::CreateOffer(const std::string &peerId) {
-  Conductor *conductor = getConductor(peerId);
-  conductor->CreateOffer();
-}
-
-void WebRTC::SessionTerminate(const std::string &peerId) { quit(peerId); }
-
-void WebRTC::CreateAnswer(const std::string &peerId, //
-                        const lib::ortc::JingleContext &pContent) {
-  Conductor *conductor = getConductor(peerId);
-  if (!conductor) {
-    return;
-  }
-  auto sdi = CreateSessionDescription(webrtc::SdpType::kOffer, pContent);
-  conductor->CreateAnswer(std::move(sdi));
-}
-
-void WebRTC::setTransportInfo(Conductor *conductor, const ortc::OIceUdp &iceUdp) {
-
-  //  //qDebug(("mid:%1
-  //  mline:%2").arg(qstring(iceUdp.mid)).arg(iceUdp.mline))
   int i = 0;
   for (auto &_candidate : iceUdp.candidates) {
     ::cricket::Candidate candidate;
@@ -519,10 +493,11 @@ void WebRTC::setTransportInfo(Conductor *conductor, const ortc::OIceUdp &iceUdp)
     }
 
     candidate.set_foundation(_candidate.foundation);
+    candidate.set_component(std::stoi(_candidate.component));
     candidate.set_tcptype(_candidate.tcptype);   // passive
     candidate.set_protocol(_candidate.protocol); // udp,ssltcp
     candidate.set_priority(_candidate.priority);
-    candidate.set_component(std::stoi(_candidate.component));
+    candidate.set_generation(std::stoi(_candidate.generation));
 
     if (!_candidate.network.empty()) {
       candidate.set_network_id(std::stoi(_candidate.network));
@@ -530,7 +505,6 @@ void WebRTC::setTransportInfo(Conductor *conductor, const ortc::OIceUdp &iceUdp)
       candidate.set_network_id(i);
     }
 
-    candidate.set_generation(std::stoi(_candidate.generation));
     candidate.set_address(::rtc::SocketAddress(_candidate.ip, _candidate.port));
 
     /**
@@ -561,12 +535,93 @@ void WebRTC::setTransportInfo(Conductor *conductor, const ortc::OIceUdp &iceUdp)
       candidate.set_related_address(raddr);
     }
 
-    auto jsep_candidate =
-        webrtc::CreateIceCandidate(iceUdp.mid, iceUdp.mline, candidate);
+    auto jsep_candidate = webrtc::CreateIceCandidate(iceUdp.mid, iceUdp.mline, candidate);
     conductor->setTransportInfo(std::move(jsep_candidate));
     i++;
   }
 }
+
+void WebRTC::ContentAdd(std::map<std::string, gloox::Jingle::Session> sdMap,
+                      OkRTCHandler *handler) {
+//  _c->OnContentAdd(sdMap, handler);
+}
+
+void WebRTC::ContentRemove(std::map<std::string, gloox::Jingle::Session> sdMap,
+                         OkRTCHandler *handler) {
+
+//  _c->OnContentRemove(sdMap, handler);
+}
+
+void WebRTC::setMute(bool mute) {
+//  for (auto it : _pcMap) {
+//    it.second->setMute(mute);
+//  }
+}
+
+void WebRTC::setRemoteMute(bool mute) {
+//  for (auto it : _pcMap) {
+//    it.second->setRemoteMute(mute);
+//  }
+}
+void WebRTC::createPeerConnection() {}
+
+size_t WebRTC::getVideoSize() {
+    RTC_DLOG_F(LS_INFO) << "Create video device...";
+    auto vdi = webrtc::VideoCaptureFactory::CreateDeviceInfo();
+    RTC_DLOG_F(LS_INFO) << "Video capture numbers:"<< vdi->NumberOfDevices();
+    return vdi->NumberOfDevices();
+}
+
+std::shared_ptr<VideoCaptureInterface> WebRTC::getVideoCapture(
+    std::optional<std::string> deviceId,
+    bool isScreenCapture) {
+
+  if(deviceId->empty()){
+    return {};
+  }
+
+  if (auto result = _videoCapture.lock()) {
+    if (deviceId) {
+      result->switchToDevice( *deviceId,isScreenCapture);
+    }
+    return result;
+  }
+
+  const auto startDeviceId =   *deviceId;
+
+  auto result = std::shared_ptr<VideoCaptureInterface>(
+      VideoCaptureInterface::Create(StaticThreads::getThreads(),startDeviceId));
+  _videoCapture = result;
+  return result;
+}
+
+void WebRTC::CreateOffer(const std::string &peerId) {
+  Conductor *conductor = getConductor(peerId);
+  conductor->CreateOffer();
+}
+
+void WebRTC::SessionTerminate(const std::string &peerId) {
+//    quit(peerId);
+}
+
+void WebRTC::CreateAnswer(const std::string &peerId,
+                          const std::string &sId,
+                          const OJingleContentAv &pContent) {
+
+  RTC_LOG_F(LS_INFO) << "peerId:"<< peerId ;
+
+  Conductor *conductor = createConductor(peerId, sId, false);
+  if (!conductor) {
+    RTC_LOG_F(LS_WARNING) << "conductor is null!";
+    return;
+  }
+
+  auto sdp = CreateSessionDescription(webrtc::SdpType::kOffer, pContent);
+  conductor->SetRemoteDescription(std::move(sdp));
+  conductor->CreateAnswer();
+
+}
+
 
 } // namespace ortc
 } // namespace lib

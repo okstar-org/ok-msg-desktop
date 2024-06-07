@@ -138,10 +138,10 @@ set(${PROJECT_NAME}_SOURCES
         src/core/toxid.h
         src/core/groupid.cpp
         src/core/groupid.h
-    src/core/toxoptions.cpp
+        src/core/toxoptions.cpp
         src/core/toxoptions.h
-        src/core/toxpk.cpp
-        src/core/toxpk.h
+		    src/core/FriendId.cpp
+		    src/core/FriendId.h
         src/core/contactid.cpp
         src/core/contactid.h
         src/friendlist.cpp

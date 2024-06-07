@@ -29,14 +29,14 @@ class Friend : public Contact {
   Q_OBJECT
 public:
 
-  Friend(const ToxPk &friendPk,
+  Friend(const FriendId &friendPk,
          bool isFriend,
          const QString &userAlias = {},
          const QString &userName = {});
 
   ~Friend();
 
-  const ToxPk& getId() const {return id; };
+  const FriendId& getId() const {return id; };
 
   QString toString() const;
 
@@ -48,7 +48,7 @@ public:
   void setEventFlag(bool f) override;
   bool getEventFlag() const override;
 
-  const ToxPk getPublicKey() const{return ToxPk{ Contact::getId()};};
+  const FriendId getPublicKey() const{return FriendId{ Contact::getId()};};
 
 
   void setStatus(Status::Status s);
@@ -67,7 +67,7 @@ signals:
 public slots:
 
 private:
-  ToxPk id;
+  FriendId id;
   bool hasNewEvents{};
   bool isFriend_;
   QString statusMessage;

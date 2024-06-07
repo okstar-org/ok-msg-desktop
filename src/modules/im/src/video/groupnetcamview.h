@@ -15,7 +15,7 @@
 
 #include "genericnetcamview.h"
 
-#include "src/core/toxpk.h"
+#include "src/core/FriendId.h"
 
 #include <QMap>
 
@@ -40,7 +40,7 @@ private:
         LabeledVideo* video;
     };
 
-    void setActive(const ToxPk& peer = ToxPk{});
+    void setActive(const FriendId& peer = FriendId{});
 
     QHBoxLayout* horLayout;
     QMap<QString, PeerVideo> videoList;

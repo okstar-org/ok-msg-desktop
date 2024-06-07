@@ -10,10 +10,10 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#include <QObject>
-#include "src/model/interface.h"
-#include "src/core/toxpk.h"
 #include "iprofileinfo.h"
+#include "src/core/FriendId.h"
+#include "src/model/interface.h"
+#include <QObject>
 
 class Core;
 class QFile;

@@ -61,13 +61,13 @@ public:
   void addFriend(const Friend *f);
   void removeFriend(const Friend *f);
 
-  void setFriendStatus(const ToxPk &friendPk,  Status::Status status);
-  void setFriendStatusMsg(const ToxPk &friendPk,  const QString& statusMsg);
-  void setFriendName(const ToxPk &friendPk,  const QString& name);
-  void setFriendAvatar(const ToxPk &friendPk, const QByteArray& avatar);
-  void setFriendTyping(const ToxPk &pk, bool typing);
-  void setFriendFileReceived(const ToxPk &friendPk, const ToxFile &file);
-  void setFriendFileCancelled(const ToxPk &friendId, const QString &fileId);
+  void setFriendStatus(const FriendId &friendPk,  Status::Status status);
+  void setFriendStatusMsg(const FriendId &friendPk,  const QString& statusMsg);
+  void setFriendName(const FriendId &friendPk,  const QString& name);
+  void setFriendAvatar(const FriendId &friendPk, const QByteArray& avatar);
+  void setFriendTyping(const FriendId &pk, bool typing);
+  void setFriendFileReceived(const FriendId &friendPk, const ToxFile &file);
+  void setFriendFileCancelled(const FriendId &friendId, const QString &fileId);
 
   void searchChatrooms(const QString &searchString, bool hideOnline = false,
                        bool hideOffline = false, bool hideGroups = false);
@@ -79,16 +79,19 @@ public:
 
   void setRecvGroupMessage(const GroupId& groupId, const GroupMessage& msg);
 
-  void setRecvFriendMessage(ToxPk friendnumber,                       //
+  void setRecvFriendMessage(FriendId friendnumber,                       //
                             const FriendMessage &message, //
                             bool isAction);
 
-  void setFriendMessageReceipt(const ToxPk &friendId, const ReceiptNum& receipt);
+  void setFriendMessageReceipt(const FriendId &friendId, const ReceiptNum& receipt);
 
 //  CircleWidget *createCircleWidget(int id = -1);
 
-  void toSendMessage(const ToxPk &pk, bool isGroup);
+  void toSendMessage(const FriendId &pk, bool isGroup);
 
+  //av
+  void setFriendAvInvite(const ToxPeer &peer, bool video);
+  void setFriendAvEnd(const FriendId &friendId, bool error);
 
 signals:
   void sessionAdded(MessageSessionWidget* widget);

@@ -21,7 +21,7 @@
 
 class IDialogsManager;
 class Group;
-class ToxPk;
+class FriendId;
 
 class GroupChatroom : public Chatroom
 {
@@ -35,8 +35,8 @@ public:
     bool hasNewMessage() const;
     void resetEventFlags();
 
-    bool friendExists(const ToxPk& pk);
-    void inviteFriend(const ToxPk& pk);
+    bool friendExists(const FriendId& pk);
+    void inviteFriend(const FriendId& pk);
 
 
 

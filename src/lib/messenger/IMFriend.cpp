@@ -59,14 +59,13 @@ IMPeerId::IMPeerId(const gloox::JID &jid) {
 }
 
 IMPeerId::IMPeerId(const QString &peerId) {
-  if (peerId.contains("@")) {
+    assert (peerId.contains("@"));
+
     auto jid = gloox::JID(peerId.toStdString());
     username = qstring(jid.username());
     server = qstring(jid.server());
     resource = qstring(jid.resource());
-  } else {
-    username = peerId;
-  }
+
 }
 
 bool IMPeerId::operator==(const IMPeerId &peerId) const {

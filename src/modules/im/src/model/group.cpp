@@ -12,11 +12,11 @@
 
 #include "group.h"
 #include "friend.h"
+#include "src/core/FriendId.h"
 #include "src/core/contactid.h"
 #include "src/core/core.h"
 #include "src/core/coreav.h"
 #include "src/core/groupid.h"
-#include "src/core/toxpk.h"
 #include "src/friendlist.h"
 #include "src/persistence/settings.h"
 #include "src/widget/form/groupchatform.h"
@@ -154,7 +154,7 @@ void Group::setName(const QString &name)
     Contact::setName(name);
 }
 
-void Group::stopAudioOfDepartedPeers(const ToxPk &peerPk) {
+void Group::stopAudioOfDepartedPeers(const FriendId &peerPk) {
   if (avGroupchat) {
 //    Core::getInstance()->getAv()->invalidateGroupCallPeerSource(peerPk.toString(), peerPk);
   }

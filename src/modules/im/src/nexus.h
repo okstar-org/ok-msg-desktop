@@ -70,6 +70,10 @@ public:
   void onSave(SavedInfo& ) override;
   void cleanup() override;
 
+  IAudioControl* audio()const {
+      return audioControl.get();
+  }
+
 #ifdef Q_OS_MAC
 public:
   QMenuBar *globalMenuBar;

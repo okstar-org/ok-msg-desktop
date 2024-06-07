@@ -230,7 +230,7 @@ void FriendListWidget::connectFriendWidget(FriendWidget &fw) {
 }
 
 void FriendListWidget::updateFriendActivity(const Friend &frnd) {
-  const ToxPk &pk = frnd.getPublicKey();
+  const FriendId &pk = frnd.getPublicKey();
   auto &settings = Settings::getInstance();
   const auto oldTime = settings.getFriendActivity(pk);
   const auto newTime = QDateTime::currentDateTime();
@@ -763,7 +763,7 @@ void FriendListWidget::dragEnterEvent(QDragEnterEvent *event) {
   if (!event->mimeData()->hasFormat("toxPk")) {
     return;
   }
-  ToxPk toxPk(event->mimeData()->data("toxPk"));
+  FriendId toxPk(event->mimeData()->data("toxPk"));
   Friend *frnd = FriendList::findFriend(toxPk);
   if (frnd)
     event->acceptProposedAction();
@@ -778,7 +778,7 @@ void FriendListWidget::dropEvent(QDropEvent *event) {
 
   // Check, that the user has a friend with the same ToxPk
   assert(event->mimeData()->hasFormat("toxPk"));
-  const ToxPk toxPk{event->mimeData()->data("toxPk")};
+  const FriendId toxPk{event->mimeData()->data("toxPk")};
   Friend *f = FriendList::findFriend(toxPk);
   if (!f)
     return;
@@ -930,7 +930,7 @@ FriendWidget *FriendListWidget::getFriend(const ContactId &friendPk) {
   return friendWidgets.value(friendPk.toString());
 }
 
-void FriendListWidget::removeFriend(const ToxPk &friendPk) {
+void FriendListWidget::removeFriend(const FriendId &friendPk) {
   qDebug() << __func__ << friendPk.toString();
 
   auto fw = friendWidgets.value(friendPk.toString());
@@ -996,7 +996,7 @@ void FriendListWidget::setFriendStatus(const ContactId &friendPk,
   fw->setStatus(status, false);
 }
 
-void FriendListWidget::setFriendStatusMsg(const ToxPk &friendPk,
+void FriendListWidget::setFriendStatusMsg(const FriendId &friendPk,
                                           const QString &statusMsg) {
   auto fw = getFriend(friendPk);
   if (!fw) {
@@ -1007,7 +1007,7 @@ void FriendListWidget::setFriendStatusMsg(const ToxPk &friendPk,
   fw->setStatusMsg(statusMsg);
 }
 
-void FriendListWidget::setFriendName(const ToxPk &friendPk, const QString &name) {
+void FriendListWidget::setFriendName(const FriendId &friendPk, const QString &name) {
   qDebug() << __func__ << friendPk.toString() << name;
   auto f = FriendList::findFriend(friendPk);
   if(!f){
@@ -1017,7 +1017,7 @@ void FriendListWidget::setFriendName(const ToxPk &friendPk, const QString &name)
   f->setName(name);
 }
 
-void FriendListWidget::setFriendAlias(const ToxPk &friendPk, const QString &alias)
+void FriendListWidget::setFriendAlias(const FriendId &friendPk, const QString &alias)
 {
     qDebug() << __func__ << friendPk.toString() << alias;
     auto f = FriendList::findFriend(friendPk);
@@ -1028,7 +1028,7 @@ void FriendListWidget::setFriendAlias(const ToxPk &friendPk, const QString &alia
     f->setAlias(alias);
 }
 
-void FriendListWidget::setFriendAvatar(const ToxPk &friendPk,
+void FriendListWidget::setFriendAvatar(const FriendId &friendPk,
                                        const QByteArray &avatar) {
   auto fw = getFriend(friendPk);
   if (!fw) {
@@ -1041,7 +1041,7 @@ void FriendListWidget::setFriendAvatar(const ToxPk &friendPk,
   fw->setAvatar(p);
 }
 
-void FriendListWidget::setFriendTyping(const ToxPk &friendId, bool isTyping) {
+void FriendListWidget::setFriendTyping(const FriendId &friendId, bool isTyping) {
   auto fw = getFriend(friendId);
   if (fw)
     fw->setTyping(isTyping);

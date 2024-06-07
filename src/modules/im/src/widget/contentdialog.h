@@ -13,8 +13,8 @@
 #ifndef CONTENTDIALOG_H
 #define CONTENTDIALOG_H
 
+#include "src/core/FriendId.h"
 #include "src/core/groupid.h"
-#include "src/core/toxpk.h"
 #include "src/model/chatroom/chatroom.h"
 #include "src/model/dialogs/idialogs.h"
 #include "src/model/status.h"
@@ -46,7 +46,7 @@ public:
 
   void addFriend(FriendChatroom *chatroom, GenericChatForm *form);
   void addGroup(GroupChatroom *chatroom, GenericChatForm *form);
-  void removeFriend(const ToxPk &friendPk) override;
+  void removeFriend(const FriendId &friendPk) override;
   void removeGroup(const GroupId &groupId) override;
   int chatroomCount() const override;
   void ensureSplitterVisible();
@@ -63,10 +63,10 @@ public:
   bool isContactActive(const ContactId &contactId) const override;
 
   void focusContact(const ContactId &friendPk);
-  void updateFriendStatus(const ToxPk &friendPk, Status::Status status);
+  void updateFriendStatus(const FriendId &friendPk, Status::Status status);
   void updateContactStatusLight(const ContactId &contactId);
 
-  void setStatusMessage(const ToxPk &friendPk, const QString &message);
+  void setStatusMessage(const FriendId &friendPk, const QString &message);
 
 signals:
   void friendDialogShown(const Friend *f);
@@ -96,7 +96,7 @@ public slots:
   void activate(GenericChatroomWidget *widget);
 
 private slots:
-  void updateFriendWidget(const ToxPk &friendPk, QString alias);
+  void updateFriendWidget(const FriendId &friendPk, QString alias);
   void onGroupchatPositionChanged(bool top);
 
 private:

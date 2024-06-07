@@ -227,7 +227,7 @@ void GroupChatForm::updateUserNames()
     }
 }
 
-void GroupChatForm::onUserJoined(const ToxPk& user, const QString& name)
+void GroupChatForm::onUserJoined(const FriendId& user, const QString& name)
 {
     if (settings.getShowGroupJoinLeaveMessages()) {
         addSystemInfoMessage(tr("%1 has joined the group").arg(name), ChatMessage::INFO, QDateTime::currentDateTime());
@@ -235,7 +235,7 @@ void GroupChatForm::onUserJoined(const ToxPk& user, const QString& name)
     updateUserNames();
 }
 
-void GroupChatForm::onUserLeft(const ToxPk& user, const QString& name)
+void GroupChatForm::onUserLeft(const FriendId& user, const QString& name)
 {
     if (settings.getShowGroupJoinLeaveMessages()) {
         addSystemInfoMessage(tr("%1 has left the group").arg(name), ChatMessage::INFO, QDateTime::currentDateTime());
@@ -243,7 +243,7 @@ void GroupChatForm::onUserLeft(const ToxPk& user, const QString& name)
     updateUserNames();
 }
 
-void GroupChatForm::onPeerNameChanged(const ToxPk& peer, const QString& oldName, const QString& newName)
+void GroupChatForm::onPeerNameChanged(const FriendId& peer, const QString& oldName, const QString& newName)
 {
     addSystemInfoMessage(tr("%1 is now known as %2").arg(oldName, newName), ChatMessage::INFO, QDateTime::currentDateTime());
     updateUserNames();
@@ -287,7 +287,7 @@ void GroupChatForm::dragEnterEvent(QDragEnterEvent* ev)
     if (!ev->mimeData()->hasFormat("toxPk")) {
         return;
     }
-    ToxPk toxPk{ev->mimeData()->data("toxPk")};
+    FriendId toxPk{ev->mimeData()->data("toxPk")};
     Friend* frnd = FriendList::findFriend(toxPk);
     if (frnd)
         ev->acceptProposedAction();
@@ -298,7 +298,7 @@ void GroupChatForm::dropEvent(QDropEvent* ev)
     if (!ev->mimeData()->hasFormat("toxPk")) {
         return;
     }
-    ToxPk toxPk{ev->mimeData()->data("toxPk")};
+    FriendId toxPk{ev->mimeData()->data("toxPk")};
     Friend* frnd = FriendList::findFriend(toxPk);
     if (!frnd)
         return;
@@ -416,7 +416,7 @@ void GroupChatForm::onLabelContextMenuRequested(const QPoint& localPos)
     const QString unmuteString = tr("unmute");
     QStringList blackList = settings.getBlackList();
     QMenu* const contextMenu = new QMenu(this);
-    const ToxPk selfPk = Core::getInstance()->getSelfPublicKey();
+    const FriendId selfPk = Core::getInstance()->getSelfPublicKey();
 
     // delete menu after it stops being used
     connect(contextMenu, &QMenu::aboutToHide, contextMenu, &QObject::deleteLater);

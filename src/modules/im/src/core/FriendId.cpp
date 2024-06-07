@@ -10,7 +10,7 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#include "toxpk.h"
+#include "FriendId.h"
 
 #include <QByteArray>
 #include <QString>
@@ -26,7 +26,7 @@
 /**
  * @brief The default constructor. Creates an empty Tox key.
  */
-ToxPk::ToxPk() : ContactId()
+FriendId::FriendId() : ContactId()
 {
 }
 
@@ -34,7 +34,7 @@ ToxPk::ToxPk() : ContactId()
  * @brief The copy constructor.
  * @param other ToxPk to copy
  */
-ToxPk::ToxPk(const ToxPk& other)
+FriendId::FriendId(const FriendId& other)
     : ContactId(other)
 {
 }
@@ -44,12 +44,12 @@ ToxPk::ToxPk(const ToxPk& other)
  * @param rawId The bytes to construct the ToxPk from. The lenght must be exactly
  *              TOX_PUBLIC_KEY_SIZE, else the ToxPk will be empty.
  */
-ToxPk::ToxPk(const QByteArray& rawId):
+FriendId::FriendId(const QByteArray& rawId):
     ContactId(rawId)
 {
 }
 
-ToxPk::ToxPk(const QString &strId):
+FriendId::FriendId(const QString &strId):
     ContactId(strId)
 {
     // 正则表达式模式，这里假设username不包含@，server不包含/
@@ -73,22 +73,22 @@ ToxPk::ToxPk(const QString &strId):
  * @param rawId The bytes to construct the ToxPk from, will read exactly
  * TOX_PUBLIC_KEY_SIZE from the specified buffer.
  */
-ToxPk::ToxPk(const ContactId& rawId)
+FriendId::FriendId(const ContactId& rawId)
     : ContactId( rawId )
 {
 }
 
-ToxPk::ToxPk(const lib::messenger::IMContactId &fId):
+FriendId::FriendId(const lib::messenger::IMContactId &fId):
     ContactId(fId.toString())
 {
 
 }
 
-bool ToxPk::operator==(const ToxPk &other) const {
+bool FriendId::operator==(const FriendId &other) const {
     return toString() == other.toString();
 }
 
-bool ToxPk::operator<(const ToxPk &other) const {
+bool FriendId::operator<(const FriendId &other) const {
   return ContactId::operator<(other);
 }
 
@@ -96,20 +96,41 @@ bool ToxPk::operator<(const ToxPk &other) const {
  * @brief Get size of public key in bytes.
  * @return Size of public key in bytes.
  */
-int ToxPk::getSize() const
+int FriendId::getSize() const
 {
     return toString().size();
 }
 
-QByteArray ToxPk::getByteArray() const
+QByteArray FriendId::getByteArray() const
 {
     return toString().toUtf8();
 }
 
-QString ToxPk::toString() const
+QString FriendId::toString() const
 {
-    if(username.isEmpty()||server.isEmpty()){
-        return {};
+    return !isValid() ? "" : username+"@"+server;
+}
+
+ToxPeer::ToxPeer(const lib::messenger::IMPeerId &peerId): FriendId(peerId)
+{
+    resource = peerId.resource;
+}
+
+ToxPeer::ToxPeer(const QString &rawId) : FriendId(rawId){
+    auto match = JidMatch(rawId);
+    if (!match.hasMatch()) {
+        qWarning() << "Unable to parse id:"<<rawId;
+        return;
     }
-    return username+"@"+server;
+    resource = match.captured(3);
+}
+
+bool ToxPeer::isValid() const
+{
+    return FriendId::isValid() && !resource.isEmpty();
+}
+
+QString ToxPeer::toString() const
+{
+    return FriendId::toString()+"/"+resource;
 }

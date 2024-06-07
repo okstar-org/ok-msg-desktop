@@ -46,13 +46,13 @@ public:
     std::vector<DateChatLogIdxPair> getDateIdxs(const QDate& startDate, size_t maxDates) const override;
 
 public slots:
-    void onFileUpdated(const ToxPk& sender, const ToxFile& file);
-    void onFileCanceled(const ToxPk& sender, const QString& fileId);
-    void onFileTransferRemotePausedUnpaused(const ToxPk& sender, const ToxFile& file, bool paused);
-    void onFileTransferBrokenUnbroken(const ToxPk& sender, const ToxFile& file, bool broken);
+    void onFileUpdated(const FriendId& sender, const ToxFile& file);
+    void onFileCanceled(const FriendId& sender, const QString& fileId);
+    void onFileTransferRemotePausedUnpaused(const FriendId& sender, const ToxFile& file, bool paused);
+    void onFileTransferBrokenUnbroken(const FriendId& sender, const ToxFile& file, bool broken);
 
 private slots:
-    void onMessageReceived(const ToxPk& sender, const Message& message);
+    void onMessageReceived(const FriendId& sender, const Message& message);
     void onMessageSent(DispatchedMessageId id, const Message& message);
     void onMessageComplete(DispatchedMessageId id);
 

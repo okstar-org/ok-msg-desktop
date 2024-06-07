@@ -63,9 +63,9 @@ public:
   QByteArray loadAvatarData(const ContactId &owner);
 
 
-  QByteArray getAvatarHash(const ToxPk &owner);
+  QByteArray getAvatarHash(const FriendId &owner);
   void removeSelfAvatar();
-  void removeFriendAvatar(const ToxPk &owner);
+  void removeFriendAvatar(const FriendId &owner);
   bool isHistoryEnabled();
   History *getHistory();
 
@@ -79,7 +79,7 @@ public:
   static bool isEncrypted(QString name);
   static QString getDbPath(const QString &profileName);
 
-  void saveAvatar(const ToxPk &owner, const QByteArray &avatar);
+  void saveAvatar(const FriendId &owner, const QByteArray &avatar);
   void saveFriendAlias(const QString& friendPk, const QString& alias);
   QString getFriendAlias(const QString& friendPk);
 
@@ -90,29 +90,29 @@ signals:
   void selfAvatarChanged(const QPixmap &pixmap);
   // emit on any change, including default avatar. Used by those that don't care
   // about active on default avatar.
-  void friendAvatarChanged(const ToxPk &friendPk, const QPixmap &pixmap);
+  void friendAvatarChanged(const FriendId &friendPk, const QPixmap &pixmap);
   // emit on a set of avatar, including identicon, used by those two care about
   // active for default, so can't use friendAvatarChanged
-  void friendAvatarSet(const ToxPk &friendPk, const QPixmap &pixmap);
+  void friendAvatarSet(const FriendId &friendPk, const QPixmap &pixmap);
   // emit on set to default, used by those that modify on active
-  void friendAvatarRemoved(const ToxPk &friendPk);
+  void friendAvatarRemoved(const FriendId &friendPk);
   // TODO(sudden6): this doesn't seem to be the right place for Core errors
   void failedToStart();
   void badProxy();
   void coreChanged(Core &core);
 
 public slots:
-  void onRequestSent(const ToxPk &friendPk, const QString &message);
+  void onRequestSent(const FriendId &friendPk, const QString &message);
 
 private slots:
   void loadDatabase(QString password);
-  void removeAvatar(const ToxPk &owner);
+  void removeAvatar(const FriendId &owner);
 
   void onSaveToxSave();
   // TODO(sudden6): use ToxPk instead of receiver
   void onAvatarOfferReceived(QString friendId, QString fileId,
                              const QByteArray &avatarHash);
-  void setFriendAvatar(const ToxPk owner, const QByteArray &pic);
+  void setFriendAvatar(const FriendId owner, const QByteArray &pic);
 
 private:
   Profile(QString name, const QString &password, bool newProfile,

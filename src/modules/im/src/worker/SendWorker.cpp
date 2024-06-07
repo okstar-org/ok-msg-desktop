@@ -27,7 +27,7 @@
 
 
 
-SendWorker::SendWorker(const ToxPk &m_friend): contactId{m_friend}
+SendWorker::SendWorker(const FriendId &m_friend): contactId{m_friend}
 {
     qDebug() << __func__ <<"friend:"<<m_friend.toString();
 
@@ -100,7 +100,7 @@ void SendWorker::clearHistory()
    history->removeFriendHistory(contactId.toString());
 }
 
-std::unique_ptr<SendWorker> SendWorker::forFriend(const ToxPk& friend_){
+std::unique_ptr<SendWorker> SendWorker::forFriend(const FriendId& friend_){
    return std::make_unique<SendWorker>(friend_);
 }
 

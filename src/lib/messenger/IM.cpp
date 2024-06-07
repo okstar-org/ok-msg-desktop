@@ -1726,8 +1726,7 @@ IMContactId IM::getSelfId() {
 }
 
 IMPeerId IM::getSelfPeerId() {
-  IMPeerId peerId(qstring(_client->jid().bare()));
-  return peerId;
+  return  IMPeerId (qstring(_client->jid().full()));;
 }
 
 QString IM::getSelfUsername() { return qstring(self().username()); }
@@ -2038,114 +2037,6 @@ void IM::updateOnlineStatus(const std::string &bare, const std::string &resource
     }
   }
   emit receiveFriendStatus(friendId, status);
-}
-
-//IMJingle *IM::createFileTransfer(const QString &f, const File &file)
-//{
-//    qDebug() << __func__ << "friend:" << f <<"file:" <<file.id;
-////    auto jingle = new IMJingle(this, f, file.id, lib::ortc::JingleCallType::file, CallDirection::CallOut );
-////    return jingle;
-//}
-
-//IMJingle *IM::createAvToFriend(const QString &f, const QString sId, bool video)
-//{
-//    qDebug() << __func__ << "friend:" << f <<"sId:" << sId << "video?"<< video;
-////    auto jingle = new IMJingle(this, f, sId,
-////                               video ? lib::ortc::JingleCallType::video : lib::ortc::JingleCallType::audio,
-////                               CallDirection::CallOut);
-////    return jingle;
-//}
-
-
-
-void IM::proposeJingleMessage(const QString &friendId, const QString &callId, bool video) {
-
-  auto it = sessionIdMap.find(stdstring(friendId));
-  if (it == sessionIdMap.end())
-    return;
-
-  auto sit = sessionMap.find(it->second);
-  if (sit == sessionMap.end())
-    return;
-
-  StanzaExtensionList exts;
-  auto *jm = new Jingle::JingleMessage(Jingle::JingleMessage::propose, stdstring(callId));
-  jm->addMedia(Jingle::Media::audio);
-  if (video) {
-    jm->addMedia(Jingle::Media::video);
-  }
-  exts.push_back(jm);
-
-  // 缓存发起媒体
-  mPeerRequestMedias.emplace(IMPeerId(friendId), jm->medias());
-
-  auto session = sit->second;
-  session->setResource(self().resource());
-  session->send("", "", exts);
-}
-
-void IM::rejectJingleMessage(const QString &friendId, const QString &callId) {
-
-  auto it = sessionIdMap.find(stdstring(friendId));
-  if (it == sessionIdMap.end())
-    return;
-
-  auto sit = sessionMap.find(it->second);
-  if (sit == sessionMap.end())
-    return;
-
-  StanzaExtensionList exts;
-  auto reject = new Jingle::JingleMessage(Jingle::JingleMessage::reject, stdstring(callId));
-  exts.push_back(reject);
-
-  auto session = sit->second;
-  session->setResource(self().resource());
-  session->send("", "", exts);
-
-  mPeerRequestMedias.clear();
-}
-
-void IM::acceptJingleMessage(const QString &friendId, const QString &callId) {
-  auto it = sessionIdMap.find(stdstring(friendId));
-  if (it == sessionIdMap.end()) {
-    qWarning() << "Unable to find receiver" << friendId << "session" << callId;
-    return;
-  }
-
-  auto sit = sessionMap.find(it->second);
-  if (sit == sessionMap.end()) {
-    qWarning() << "Unable to find receiver" << friendId << "session" << callId;
-    return;
-  }
-
-  auto proceed = new Jingle::JingleMessage(Jingle::JingleMessage::proceed, stdstring(callId));
-  Message proceedMsg(gloox::Message::Chat, JID(stdstring(friendId)));
-  proceedMsg.addExtension(proceed);
-  _client->send(proceedMsg);
-  qDebug() << "Sent proceed for jingle-message";
-
-  // 发送给自己其它终端
-  auto accept = new Jingle::JingleMessage(Jingle::JingleMessage::accept, stdstring(callId));
-  Message msg(gloox::Message::Chat, self().bareJID());
-  msg.addExtension(accept);
-  _client->send(msg);
-  qDebug() << "Sent accept for jingle-message";
-}
-
-void IM::retractJingleMessage(const QString &friendId, const QString &callId) {
-  auto it = sessionIdMap.find(stdstring(friendId));
-  if (it == sessionIdMap.end())
-    return;
-
-  auto sit = sessionMap.find(it->second);
-  if (sit == sessionMap.end())
-    return;
-
-  auto session = sit->second;
-  auto *jm1 = new Jingle::JingleMessage(Jingle::JingleMessage::retract, stdstring(callId));
-  StanzaExtensionList exts1;
-  exts1.push_back(jm1);
-  session->send("", "", exts1);
 }
 
 void IM::retry() { doConnect(); }

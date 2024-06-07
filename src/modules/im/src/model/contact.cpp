@@ -36,7 +36,7 @@ Contact:: Contact(const ContactId& id_, const QString& name_,
 //        alias = alias0;
 //    }
 
-    auto avt = profile->loadAvatarData(ToxPk{id});
+    auto avt = profile->loadAvatarData(FriendId{id});
     if(!avt.isNull()){
         avatar.loadFromData(avt);
         avatarSetStatus = Status::AvatarSet::UserSet;
@@ -80,7 +80,7 @@ void Contact::setAvatar(const QPixmap &pix)
     auto profile = Nexus::getProfile();
     QByteArray buf;
     avatar.save(buf);
-    profile->saveAvatar(ToxPk{id}, buf);
+    profile->saveAvatar(FriendId{id}, buf);
 
     emit avatarChanged(avatar);
 }

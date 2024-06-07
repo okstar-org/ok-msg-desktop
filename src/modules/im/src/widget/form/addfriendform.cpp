@@ -152,7 +152,7 @@ void AddFriendForm::searchFriend(const QString &idText) {
 
 void AddFriendForm::addFriend(const QString &idText, const QString &nick) {
   qDebug() << "addFriend" << idText << nick;
-  ToxPk friendId(idText);
+  FriendId friendId(idText);
   if (!friendId.isValid()) {
     GUI::showWarning(tr("Couldn't add friend"), tr("%1 Ok ID is invalid", "Tox address error").arg(idText));
     return;

@@ -13,8 +13,8 @@
 #ifndef ICORE_ID_HANDLER_H
 #define ICORE_ID_HANDLER_H
 
+#include "FriendId.h"
 #include "toxid.h"
-#include "toxpk.h"
 
 class ICoreIdHandler
 {
@@ -22,7 +22,7 @@ class ICoreIdHandler
 public:
     virtual ~ICoreIdHandler() = default;
     virtual ToxId getSelfId() const = 0;
-    virtual ToxPk getSelfPublicKey() const = 0;
+    virtual FriendId getSelfPublicKey() const = 0;
     virtual QString getUsername() const = 0;
     virtual QString getNick() const = 0;
 };

@@ -83,7 +83,7 @@ namespace lib::messenger {
 
 class CallHandler {
 public:
-  virtual void onCall(const QString &friendId, //
+  virtual void onCall(const IMPeerId &peerId, //
                       const QString &callId,   //
                       bool audio, bool video) = 0;
 
@@ -143,9 +143,11 @@ public:
     // 创建呼叫
     bool callToPeerId(const IMPeerId &to, const QString &sId, bool video);
     // 应答呼叫
-    bool callAnswerToFriend(const QString &f, const QString &callId, bool video);
+    bool callAnswerToFriend(const IMPeerId &peer, const QString &callId, bool video);
     // 取消呼叫
-    bool callCancelToFriend(const QString &f, const QString &sId);
+    void callRetract(const IMContactId &f, const QString &sId);
+    // 拒绝呼叫
+    void callReject(const IMPeerId &f, const QString &sId);
 
     // 静音功能
     void setMute(bool mute);
@@ -153,6 +155,10 @@ public:
 
 
 signals:
+      void sig_createPeerConnection(const QString sId,
+                                    const QString peerId,
+                                    bool ok);
+
       void receiveSelfVideoFrame(uint16_t w, uint16_t h, //
                                  const uint8_t *y,       //
                                  const uint8_t *u,       //
@@ -176,6 +182,9 @@ private:
      ok::session::AuthSession *session;
      std::vector<CallHandler *> callHandlers;
      lib::ortc::OkRTCManager *rtcManager;
+
+public slots:
+     void onCallAccepted(IMPeerId peerId, QString callId, bool video);
 };
 
 } // namespace lib::messenger

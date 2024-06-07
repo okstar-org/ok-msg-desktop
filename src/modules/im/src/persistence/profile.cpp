@@ -522,7 +522,7 @@ void Profile::setAvatar(QByteArray pic) {
   bool loaded = false;
 
   QByteArray avatarData;
-  const ToxPk &selfPk = core->getSelfPublicKey();
+  const FriendId &selfPk = core->getSelfPublicKey();
   if (!pic.isEmpty()) {
     loaded = pixmap.loadFromData(pic);
     avatarData = pic;
@@ -554,7 +554,7 @@ void Profile::setAvatarOnly(QPixmap pixmap) { emit selfAvatarChanged(pixmap); }
  * depending on settings
  * @param owner pk of friend
  */
-void Profile::setFriendAvatar(const ToxPk owner, const QByteArray & avatarData) {
+void Profile::setFriendAvatar(const FriendId owner, const QByteArray & avatarData) {
   qDebug() << __func__ << owner.toString()
            << "size:" << avatarData.size();
   QPixmap pixmap;
@@ -598,7 +598,7 @@ uint Profile::addContact(const ContactId &cid)
  * @param friendPk Pk of a friend which request is destined to
  * @param message Friendship request message
  */
-void Profile::onRequestSent(const ToxPk &friendPk, const QString &message) {
+void Profile::onRequestSent(const FriendId &friendPk, const QString &message) {
   if (!isHistoryEnabled()) {
     return;
   }
@@ -617,7 +617,7 @@ void Profile::onRequestSent(const ToxPk &friendPk, const QString &message) {
  * @param pic Picture to save.
  * @param owner PK of avatar owner.
  */
-void Profile::saveAvatar(const ToxPk &owner, const QByteArray &pic) {
+void Profile::saveAvatar(const FriendId &owner, const QByteArray &pic) {
   QString path = avatarPath(owner);
   QDir(Settings::getInstance().getSettingsDirPath()).mkdir("avatars");
   if (pic.isEmpty()) {
@@ -638,7 +638,7 @@ void Profile::saveAvatar(const ToxPk &owner, const QByteArray &pic) {
  * @param owner IMFriend PK to get hash.
  * @return Avatar tox hash.
  */
-QByteArray Profile::getAvatarHash(const ToxPk &owner) {
+QByteArray Profile::getAvatarHash(const FriendId &owner) {
   //  QByteArray pic = loadAvatarData(owner);
   //  QByteArray avatarHash(TOX_HASH_LENGTH, 0);
   //  tox_hash((uint8_t *)avatarHash.data(), (uint8_t *)pic.data(), pic.size());
@@ -656,7 +656,7 @@ void Profile::removeSelfAvatar() {
 /**
  * @brief Removes friend avatar.
  */
-void Profile::removeFriendAvatar(const ToxPk &owner) { removeAvatar(owner); }
+void Profile::removeFriendAvatar(const FriendId &owner) { removeAvatar(owner); }
 
 /**
  * @brief Checks that the history is enabled in the settings, and loaded
@@ -677,7 +677,7 @@ History *Profile::getHistory() { return history.get(); }
  * @brief Removes a cached avatar.
  * @param owner IMFriend PK whose avater to delete.
  */
-void Profile::removeAvatar(const ToxPk &owner) {
+void Profile::removeAvatar(const FriendId &owner) {
   QFile::remove(avatarPath(owner));
   if (owner == core->getSelfId().getPublicKey()) {
     setAvatar({});

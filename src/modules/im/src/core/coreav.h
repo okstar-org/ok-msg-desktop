@@ -80,25 +80,25 @@ public:
                                 const int16_t *data, unsigned samples,
                                 uint8_t channels, uint32_t sample_rate,
                                 void *core);
-  void invalidateGroupCallPeerSource(QString group, ToxPk peerPk);
+  void invalidateGroupCallPeerSource(QString group, FriendId peerPk);
 
 public slots:
   bool startCall(QString friendId, bool video);
-  bool answerCall(QString friendId, bool video);
+  bool answerCall(ToxPeer peerId, bool video);
   bool cancelCall(QString friendId);
+  void rejectCall(const ToxPeer &peerId);
   void timeoutCall(QString friendId);
   void start();
 
 signals:
-  void avInvite(QString friendId, bool video);
+  void avInvite(ToxPeer peerId, bool video);
   void avStart(QString friendId, bool video);
-  void avEnd(QString friendId, bool error = false);
+  void avEnd(FriendId friendId, bool error = false);
   void createCallToPeerId(lib::messenger::IMPeerId friendId, QString callId, bool video);
 
 private slots:
   void doCreateCallToPeerId(lib::messenger::IMPeerId friendId, QString callId, bool video);
 
-  void callCallback( QString friendId, QString callId, bool audio, bool video );
   void stateCallback(QString friendId, uint32_t state);
 
   static void bitrateCallback(ToxAV *toxAV, QString friendId, uint32_t arate,
@@ -149,7 +149,7 @@ private:
                           const uint8_t *y, const uint8_t *u, const uint8_t *v,
                           int32_t ystride, int32_t ustride, int32_t vstride);
 
-  void onCall(const QString &friendId, const QString& callId, bool audio, bool video) override;
+  void onCall(const lib::messenger::IMPeerId &peerId, const QString& callId, bool audio, bool video) override;
 
   void onCallRetract(const QString &friendId, int state) override;
 
@@ -170,10 +170,11 @@ private:
   // atomic because potentially accessed by different threads
 
   std::atomic<IAudioControl *> audioCtrl;
-  std::unique_ptr<ToxAV> toxav;
+  std::unique_ptr<ToxAV> imCall;
   std::unique_ptr<QThread> coreavThread;
   QTimer *iterateTimer = nullptr;
   using ToxFriendCallPtr = std::unique_ptr<ToxFriendCall>;
+
   /**
    * @brief Maps friend IDs to ToxFriendCall.
    * @note Need to use STL container here, because Qt containers need a copy

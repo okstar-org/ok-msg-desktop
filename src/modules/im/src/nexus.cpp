@@ -143,10 +143,9 @@ void Nexus::onSave(SavedInfo &savedInfo) {
 
     assert(profile);
 
-    Settings& settings = Settings::getInstance();
+    auto &settings = Settings::getInstance();
+
     audioControl = std::unique_ptr<IAudioControl>(Audio::makeAudio(settings));
-    assert(audioControl != nullptr);
-//    profile->getCore()->getAv()->setAudio(*audioControl);
 
     // Setup the environment
     qRegisterMetaType<Status::Status>("Status::Status");
@@ -165,7 +164,7 @@ void Nexus::onSave(SavedInfo &savedInfo) {
     qRegisterMetaType<FileDirection>("FileDirection");
     qRegisterMetaType<FileStatus>("FileStatus");
     qRegisterMetaType<std::shared_ptr<VideoFrame>>("std::shared_ptr<VideoFrame>");
-    qRegisterMetaType<ToxPk>("ToxPk");
+    qRegisterMetaType<FriendId>("ToxPk");
     qRegisterMetaType<ToxId>("ToxId");
     qRegisterMetaType<GroupId>("GroupId");
     qRegisterMetaType<ContactId>("ContactId");
@@ -317,6 +316,8 @@ void Nexus::onSave(SavedInfo &savedInfo) {
     // TODO(kriby): Rewrite as view-model connect sequence only, add to a
     // controller class object
     assert(profile);
+
+
 
     // Create GUI
     widget = new Widget(*audioControl, parent);

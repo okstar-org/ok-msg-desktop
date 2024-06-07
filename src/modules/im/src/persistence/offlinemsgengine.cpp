@@ -22,7 +22,7 @@
 #include <QTimer>
 #include <chrono>
 
-OfflineMsgEngine::OfflineMsgEngine(const ToxPk *frnd,
+OfflineMsgEngine::OfflineMsgEngine(const FriendId *frnd,
                                    ICoreFriendMessageSender *messageSender)
     : f(frnd), messageSender(messageSender) {}
 

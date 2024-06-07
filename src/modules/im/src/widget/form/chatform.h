@@ -38,34 +38,39 @@ class QMoveEvent;
 class ChatForm : public GenericChatForm {
   Q_OBJECT
 public:
-  ChatForm(const ToxPk *contact,
+  static const QString ACTION_PREFIX;
+
+  ChatForm(const FriendId *contact,
            IChatLog &chatLog,
            IMessageDispatcher &messageDispatcher);
   ~ChatForm();
+
   void setStatusMessage(const QString &newMessage);
 
   void setFriendTyping(bool isTyping);
 
   virtual void show(ContentLayout *contentLayout) final override;
+
   virtual void reloadTheme() final override;
 
-  static const QString ACTION_PREFIX;
+  void insertChatMessage(IChatItem::Ptr msg) final override;
+
+
+  void showCallConfirm(const ToxPeer &peerId, bool video, const QString &displayedName);
+  void closeCallConfirm(const FriendId &friendId);
 
 signals:
-
   void incomingNotification(QString friendId);
   void outgoingNotification();
   void stopNotification();
   void endCallNotification();
-  void rejectCall(QString friendId);
-  void acceptCall(QString friendId);
-  void updateFriendActivity(const ToxPk &frnd);
+  void rejectCall(const ToxPeer& peerId);
+  void acceptCall(const ToxPeer& peerId, bool video);
+  void updateFriendActivity(const FriendId &frnd);
 
 public slots:
-  void onAvInvite(QString friendId, bool video);
-  void onAvStart(QString friendId, bool video);
-  void onAvEnd(QString friendId, bool error);
-  void onFileNameChanged(const ToxPk &friendPk);
+
+  void onFileNameChanged(const FriendId &friendPk);
   void clearChatArea();
 
 private slots:
@@ -76,13 +81,13 @@ private slots:
   void onTextEditChanged();
   void onCallTriggered();
   void onVideoCallTriggered();
-  void onAnswerCallTriggered(bool video);
-  void onRejectCallTriggered();
+  void onAcceptCallTriggered(const ToxPeer &peer, bool video);
+  void onRejectCallTriggered(const ToxPeer &peer);
   void onMicMuteToggle();
   void onVolMuteToggle();
 
-  void onFriendStatusChanged(const ToxPk& friendId, Status::Status status);
-  void onFriendTypingChanged(const ToxPk& friendId, bool isTyping);
+  void onFriendStatusChanged(const FriendId& friendId, Status::Status status);
+  void onFriendTypingChanged(const FriendId& friendId, bool isTyping);
   void onFriendNameChanged(const QString &name);
   void onStatusMessage(const QString &message);
   void onUpdateTime();
@@ -92,6 +97,16 @@ private slots:
 
   void callUpdateFriendActivity();
 
+
+
+protected:
+  GenericNetCamView *createNetcam() final override;
+
+  void dragEnterEvent(QDragEnterEvent *ev) final override;
+  void dropEvent(QDropEvent *ev) final override;
+  void hideEvent(QHideEvent *event) final override;
+  void showEvent(QShowEvent *event) final override;
+
 private:
 
   void retranslateUi();
@@ -100,16 +115,7 @@ private:
   void stopCounter(bool error = false);
 
 
-protected:
-  GenericNetCamView *createNetcam() final override;
-  void insertChatMessage(IChatItem::Ptr msg) final override;
-  void dragEnterEvent(QDragEnterEvent *ev) final override;
-  void dropEvent(QDropEvent *ev) final override;
-  void hideEvent(QHideEvent *event) final override;
-  void showEvent(QShowEvent *event) final override;
-
-private:
-  const ToxPk *f;
+  const FriendId *f;
   CroppingLabel *statusMessageLabel;
   QMenu statusMessageMenu;
   QLabel *callDuration;

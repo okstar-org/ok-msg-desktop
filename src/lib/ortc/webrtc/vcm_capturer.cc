@@ -24,8 +24,10 @@ namespace ortc {
 VcmCapturer::VcmCapturer(VideoCaptureModule::DeviceInfo* deviceInfo) :
     deviceInfo_(deviceInfo),
     vcm_(nullptr) {
-
 }
+
+VcmCapturer::~VcmCapturer() { Destroy(); }
+
 
 bool VcmCapturer::Init(size_t width,
                        size_t height,
@@ -97,7 +99,6 @@ void VcmCapturer::Destroy() {
   vcm_ = nullptr;
 }
 
-VcmCapturer::~VcmCapturer() { Destroy(); }
 
 void VcmCapturer::OnFrame(const VideoFrame &frame) {
   TestVideoCapturer::OnFrame(frame);

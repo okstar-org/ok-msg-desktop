@@ -15,7 +15,7 @@
 #include "src/persistence/profile.h"
 #include "src/widget/form/chatform.h"
 
-Friend::Friend(const ToxPk &friendPk, //
+Friend::Friend(const FriendId &friendPk, //
                bool isFriend, //
                const QString &userAlias, //
                const QString &userName)//

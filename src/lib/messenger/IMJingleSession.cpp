@@ -17,6 +17,8 @@
 #include "lib/ortc/ok_rtc.h"
 #include "lib/ortc/ok_rtc_renderer.h"
 #include <QDebug>
+#include <lib/ortc/ok_rtc_defs.h>
+#include <lib/ortc/ok_rtc_manager.h>
 
 namespace lib {
 namespace messenger {
@@ -28,8 +30,7 @@ IMJingleSession::IMJingleSession(IM* im,
                                  Session *mSession,
                                  std::list<ortc::IceServer> iceServers,
                                  std::vector<FileHandler *> *fileHandlers,
-                                 ortc::OkRTCHandler *handler,
-                                 ortc::OkRTCRenderer *renderer)
+                                 ortc::OkRTCHandler *handler)
     : im{im},
       sId(sId_),
       session(mSession),
@@ -65,11 +66,15 @@ void IMJingleSession::onAccept()
       }
     }else{
         // av
+        auto peerId = session->remote().full();
 
+        lib::ortc::OJingleContentAv cav;
+        cav.sdpType =lib::ortc::JingleSdpType::Answer;
+        cav.parse(jingle);
 
         // RTC 接受会话
-//        getRtcManager()->SetRemoteDescription(stdstring(peerId.toString()),
-//                                                  answer);
+        lib::ortc:: OkRTCManager::getInstance()->getRtc()
+               ->SetRemoteDescription(peerId, cav);
 
 //        emit receiveFriendHangup(
 //            peerId.username, answer.hasVideo() ? TOXAV_FRIEND_CALL_STATE_SENDING_V
@@ -80,25 +85,38 @@ void IMJingleSession::onAccept()
 void IMJingleSession::onTerminate()
 {
     qDebug()<<__func__;
+    lib::ortc::OkRTCManager::destroyInstance();
+}
+
+void IMJingleSession::doTerminate()
+{
+     qDebug()<< __func__;
+
+    //发送结束协议
+    session->sessionTerminate(new Session::Reason(Session::Reason::Reasons::Cancel));
+
+    //销毁rtc
+    lib::ortc::OkRTCManager::destroyInstance();
 }
 
 void IMJingleSession::createOffer(const std::string &peerId)
 {
     qDebug() << __func__ << "to" << peerId.c_str();
-    _rtcManager->CreateOffer(peerId);
+    auto rm = lib::ortc::OkRTCManager::getInstance();
+    auto r = rm->getRtc();
+    r->CreateOffer(peerId);
 }
 
 const Session::Jingle *IMJingleSession::getJingle() const { return jingle; }
 
-void IMJingleSession::setJingle(const Session::Jingle *jingle) {
-    IMJingleSession::jingle = jingle;
+void IMJingleSession::setJingle(const Session::Jingle *jingle_) {
+    jingle = jingle_;
 }
 
 CallDirection IMJingleSession::direction() const
 {
     auto sender = session->initiator().bareJID();
     auto self = im->self().bareJID();
-
     return (sender==self) ? CallDirection::CallOut:CallDirection::CallIn;
 }
 
@@ -107,7 +125,7 @@ void IMJingleSession::setCallStage(CallStage state)
     m_callStage=state;
 }
 
-void IMJingleSession::setContext(const ortc::JingleContext &jc) {
+void IMJingleSession::setContext(const ortc::OJingleContent &jc) {
   context = jc;
 }
 

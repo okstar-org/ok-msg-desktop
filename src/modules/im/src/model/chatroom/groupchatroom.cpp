@@ -12,8 +12,8 @@
 
 #include "groupchatroom.h"
 
+#include "src/core/FriendId.h"
 #include "src/core/core.h"
-#include "src/core/toxpk.h"
 #include "src/friendlist.h"
 #include "src/model/dialogs/idialogsmanager.h"
 #include "src/model/friend.h"
@@ -49,12 +49,12 @@ void GroupChatroom::resetEventFlags()
 //    group->setMentionedFlag(false);
 }
 
-bool GroupChatroom::friendExists(const ToxPk& pk)
+bool GroupChatroom::friendExists(const FriendId& pk)
 {
     return FriendList::findFriend(pk) != nullptr;
 }
 
-void GroupChatroom::inviteFriend(const ToxPk& pk)
+void GroupChatroom::inviteFriend(const FriendId& pk)
 {
     const Friend* frnd = FriendList::findFriend(pk);
     const auto friendId = frnd->getId();

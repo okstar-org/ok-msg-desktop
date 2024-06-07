@@ -36,7 +36,7 @@ class SettingsWidget : public QWidget
 {
     Q_OBJECT
 public:
-    SettingsWidget(UpdateCheck* updateCheck, IAudioControl& audio, Widget* parent = nullptr);
+    SettingsWidget(UpdateCheck* updateCheck, Widget* parent = nullptr);
     ~SettingsWidget();
 
     bool isShown() const;

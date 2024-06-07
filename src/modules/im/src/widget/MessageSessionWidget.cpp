@@ -44,14 +44,17 @@
 #include <QMimeData>
 #include <QScrollBar>
 
+#include <cassert>
+
 #include "form/chatform.h"
 #include "src/model/chathistory.h"
 #include "src/persistence/profile.h"
-#include <cassert>
-
 #include <src/nexus.h>
-
 #include <src/chatlog/chatlog.h>
+#include "src/widget/chatformheader.h"
+
+#include <src/core/coreav.h>
+
 
 /**
  * @class MessageSessionWidget
@@ -81,14 +84,18 @@ MessageSessionWidget::MessageSessionWidget(
 
 
   if(chatType==ChatType::Chat){
-      friendId = ToxPk(contactId);
+      friendId = FriendId(contactId);
 
       sendWorker = std::move( SendWorker::forFriend(friendId));
-      connect(sendWorker->dispacher(),&IMessageDispatcher::messageSent,
+
+      connect(sendWorker->dispacher(), &IMessageDispatcher::messageSent,
               this, &MessageSessionWidget::onMessageSent);
 
+      connect(static_cast<ChatForm*>(sendWorker->getChatForm()), &ChatForm::acceptCall,
+              this, &MessageSessionWidget::doAcceptCall);
 
-
+      connect(static_cast<ChatForm*>(sendWorker->getChatForm()), &ChatForm::rejectCall,
+              this, &MessageSessionWidget::doRejectCall);
 
   }else if(chatType == ChatType::GroupChat) {
       auto nick = core->getNick();
@@ -465,6 +472,7 @@ void MessageSessionWidget::onMessageSent(DispatchedMessageId id, const Message &
     updateLastMessage(message);
 }
 
+
 void MessageSessionWidget::setFriend(const Friend *f)
 {
     qDebug() << __func__ << f;
@@ -494,6 +502,71 @@ void MessageSessionWidget::removeFriend()
     auto chatForm = (ChatForm*) sendWorker->getChatForm();
     chatForm->removeContact();
     removeContact();
+}
+
+void MessageSessionWidget::setAvInvite(const ToxPeer &peerId, bool video)
+{
+    qDebug() << __func__ << peerId.toString();
+
+    QString friendId = peerId.toFriendId().toString();
+    auto f = FriendList::findFriend(peerId);
+
+    QString displayedName = f ? f->getDisplayedName() : peerId.username;
+    qDebug() << "show displayedName:" << displayedName;
+
+    //显示呼叫请求框
+    auto chatForm = (ChatForm*) sendWorker->getChatForm();
+    chatForm->showCallConfirm(peerId, video, displayedName);
+
+    // 发送通知声音
+    auto w = Widget::getInstance();
+    w->incomingNotification(friendId);
+}
+
+void MessageSessionWidget::setAvEnd(const FriendId &friendId, bool error)
+{
+    qDebug() << __func__ << friendId.toString();
+
+    //显示呼叫请求框
+    auto chatForm = (ChatForm*) sendWorker->getChatForm();
+    chatForm->closeCallConfirm(friendId);
+
+    auto f = FriendList::findFriend(friendId);
+    if(f){
+        chatForm->getHead()->updateCallButtons(
+                    f->getStatus()==Status::Status::Online,
+                    false, false);
+    }
+
+    // 发送通知声音
+    auto w = Widget::getInstance();
+    w->onStopNotification();
+
+
+}
+
+void MessageSessionWidget::doAcceptCall(const ToxPeer &p, bool video)
+{
+    qDebug() << __func__ << p.toString();
+
+    //关闭声音
+    auto w = Widget::getInstance();
+    w->onStopNotification();
+
+    //发送接收应答
+    CoreAV *coreav = CoreAV::getInstance();
+    coreav->answerCall(p, video);
+}
+
+void MessageSessionWidget::doRejectCall(const ToxPeer &p)
+{
+    //关闭声音
+    auto w = Widget::getInstance();
+    w->onStopNotification();
+
+    //发送拒绝应答
+    CoreAV *coreav = CoreAV::getInstance();
+    coreav->rejectCall(p);
 }
 
 void MessageSessionWidget::setAsActiveChatroom() { setActive(true); }
@@ -549,7 +622,7 @@ void MessageSessionWidget::resetEventFlags() {
 //    getFriend()->setEventFlag(false);
 }
 
-void MessageSessionWidget::onAvatarSet(const ToxPk &friendPk, const QPixmap& pic) {
+void MessageSessionWidget::onAvatarSet(const FriendId &friendPk, const QPixmap& pic) {
 //  const auto frnd =  getFriend();;
 //  if (friendPk != frnd->getPublicKey()) {
 //    return;
@@ -569,7 +642,7 @@ void MessageSessionWidget::onAvatarSet(const ToxPk &friendPk, const QPixmap& pic
 
 }
 
-void MessageSessionWidget::onAvatarRemoved(const ToxPk &friendPk) {
+void MessageSessionWidget::onAvatarRemoved(const FriendId &friendPk) {
     qDebug() << __func__ << friendPk.toString();
   // 清空联系人头像
 //  auto c = getContact();
@@ -627,7 +700,7 @@ void MessageSessionWidget::setRecvMessage(const FriendMessage &msg, bool isActio
       auto status = Core::getInstance()->getFriendStatus(contactId.toString());
       updateStatusLight(status, true);
       //聊天界面不显示，消息提示。
-      Widget::getInstance()->newGroupMessageAlert(GroupId(contactId), ToxPk(msg.from), msg.content, true);
+      Widget::getInstance()->newGroupMessageAlert(GroupId(contactId), FriendId(msg.from), msg.content, true);
   }
 }
 
@@ -658,7 +731,7 @@ void MessageSessionWidget::setRecvGroupMessage(const GroupMessage &msg)
         //更新状态信号灯
         updateStatusLight(Status::Status::Online, true);
         //聊天界面不显示，消息提示。
-        Widget::getInstance()->newGroupMessageAlert(GroupId(contactId), ToxPk(msg.from), msg.content, true);
+        Widget::getInstance()->newGroupMessageAlert(GroupId(contactId), FriendId(msg.from), msg.content, true);
     }
 }
 
@@ -709,3 +782,6 @@ void MessageSessionWidget::setName(const QString &name)
     qDebug() << __func__ <<"friend:" << contactId.toString()<<"name:" << name;
     GenericChatroomWidget::setName(name);
 }
+
+
+

@@ -25,45 +25,16 @@ IMCall::IMCall( QObject *parent): QObject(parent)
 {
     session = ok::session::AuthSession::Instance();
 
-    jingle = new IMJingle(session->im(),{}, this);
+    auto im = session->im();
+//    auto client = im->getClient();
+
+    jingle = IMJingle::getInstance();
     connectJingle(jingle);
 
-
-
-    std::list<ortc::IceServer> iceServers;
-
-      std::list<ExtDisco::Service> discos;
-
-      ExtDisco::Service disco0;
-      disco0.type="turn";
-      disco0.host = "chuanshaninfo.com";
-      disco0.port=34780;
-      disco0.username="gaojie";
-      disco0.password="hncs";
-      discos.push_back(disco0);
-
-      ExtDisco::Service disco1;
-      disco1.type="stun";
-      disco1.host = "stun.l.google.com";
-      disco1.port=19302;
-
-      discos.push_back(disco1);
-
-
-      for (const auto &item :  discos) {
-        ortc::IceServer ice;
-        ice.uri = item.type + ":" + item.host + ":" + std::to_string(item.port);
-        //              "?transport=" + item.transport;
-        ice.username = item.username;
-        ice.password = item.password;
-        qDebug() <<"Add ice:" << ice.uri.c_str();
-        iceServers.push_back(ice);
-      }
-
-//      rtcManager  = lib::ortc::OkRTCManager::getInstance(iceServers, nullptr, nullptr);
-//      auto rtc    = rtcManager->createInstance();
-//      qDebug()    << "RTC is:" << rtc;
-
+      rtcManager  = lib::ortc::OkRTCManager::getInstance();
+      auto rtc    = rtcManager->getRtc();
+      qDebug()    << "RTC is:" << rtc;
+      qDebug()    << "Video size is:" << rtc->getVideoSize();
 }
 
 void IMCall::addCallHandler(CallHandler *hdr)
@@ -84,9 +55,9 @@ void IMCall::connectJingle(IMJingle* _jingle) {
    */
   connect(_jingle, &IMJingle
           ::receiveCallRequest, this,
-          [&](QString friendId, QString callId, bool audio, bool video) {
+          [&](IMPeerId peerId, QString callId, bool audio, bool video) {
             for (auto handler : callHandlers) {
-              handler->onCall(friendId, callId, audio, video);
+              handler->onCall(peerId, callId, audio, video);
             }
           });
 
@@ -104,12 +75,7 @@ void IMCall::connectJingle(IMJingle* _jingle) {
             }
           });
 
-  connect(_jingle, &IMJingle::receiveCallStateAccepted, this,
-          [&](IMPeerId friendId, QString callId, bool video) {
-            for (auto handler : callHandlers) {
-              handler->receiveCallStateAccepted(friendId, callId, video);
-            }
-          });
+  connect(_jingle, &IMJingle::receiveCallStateAccepted, this, &IMCall::onCallAccepted);
 
   connect(_jingle, &IMJingle::receiveCallStateRejected, this,
           [&](IMPeerId friendId, QString callId, bool video) {
@@ -153,7 +119,21 @@ void IMCall::connectJingle(IMJingle* _jingle) {
                                        y, u, v, //
                                        ystride, ustride, vstride);
           });
+}
 
+//对方接受呼叫
+void IMCall::onCallAccepted(IMPeerId peerId, QString callId, bool video)
+{
+    qDebug() << __func__
+             << "peerId:" << peerId.toString()
+             << "sId" << callId
+             << "video?" << video;
+
+
+
+    for (auto handler : callHandlers) {
+        handler->receiveCallStateAccepted(peerId, callId, video);
+    }
 
 
 }
@@ -165,7 +145,7 @@ bool IMCall::callToFriend(const QString &friendId, const QString &sId, bool vide
 
 
   auto im = ok::session::AuthSession::Instance()->im();
-  im->proposeJingleMessage(friendId, sId, video);
+  jingle->proposeJingleMessage(friendId, sId, video);
 
   auto resources = im->getOnlineResources(stdstring(friendId));
   if (resources.empty()) {
@@ -175,32 +155,36 @@ bool IMCall::callToFriend(const QString &friendId, const QString &sId, bool vide
 
   jingle->proposeJingleMessage(friendId, sId, video);
   qDebug() << "Sent propose jingle message.";
-
-
   return true;
 
 
 //  return _jingle->startCall(f, sId, video);
 }
 
-bool IMCall::callToPeerId(const IMPeerId &to,
-                                   const QString &sId, bool video) {
+bool IMCall::callToPeerId(const IMPeerId &to, const QString &sId, bool video) {
 
   qDebug() << QString("peerId:%1 video:%2").arg((to.toString())).arg(video);
-//  return _jingle->createCall(to, sId, video);
-  return false;
+
+  auto r = jingle->createCall(to, sId, video );
+
+  qDebug() <<"createdCall=>" << r;
+
+    return r;
 }
 
-bool IMCall::callAnswerToFriend(const QString &f, const QString &callId,
+bool IMCall::callAnswerToFriend(const IMPeerId &f, const QString &callId,
                                bool video) {
-  qDebug() << QString("friend:%1 video:%2").arg((f)).arg(video);
-//  return _jingle->answer(f, callId, video);
-  return false;
+  qDebug() <<__func__ << "peer:" << f.toString();
+  return jingle->answer(f, callId, video);
 }
 
-bool IMCall::callCancelToFriend(const QString &f, const QString &sId) {
-//  _jingle->cancelCall(f, callId);
-  return true;
+void IMCall::callRetract(const IMContactId &f, const QString &sId) {
+    jingle->cancelCall(f, sId);
+}
+
+void IMCall::callReject(const IMPeerId &f, const QString &sId)
+{
+    jingle->rejectCall(f, sId);
 }
 
 void IMCall::setMute(bool mute) {

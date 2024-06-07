@@ -46,7 +46,7 @@ signals:
     /**
      * @brief Emitted when a message is received and processed
      */
-    void messageReceived(const ToxPk& sender, const Message & message);
+    void messageReceived(const FriendId& sender, const Message & message);
 
     /**
      * @brief Emitted when a message is processed and sent
@@ -62,9 +62,9 @@ signals:
     void messageComplete(DispatchedMessageId id);
 
 
-    void fileReceived(const ToxPk& f, const ToxFile & file);
+    void fileReceived(const FriendId& f, const ToxFile & file);
 
-    void fileCancelled(const ToxPk& f, const QString & fileId);
+    void fileCancelled(const FriendId& f, const QString & fileId);
 };
 
 #endif /* IMESSAGE_DISPATCHER_H */

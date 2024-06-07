@@ -147,7 +147,7 @@ FriendWidget::~FriendWidget()
     emit Widget::getInstance()->friendRemoved(m_friend);
     removeDetails();
     deinit();
-    FriendList::removeFriend(ToxPk{contactId});
+    FriendList::removeFriend(FriendId{contactId});
 }
 
 void FriendWidget::init()
@@ -169,7 +169,7 @@ ContentDialog *FriendWidget::addFriendDialog(const Friend *frnd) {
   QString friendId = frnd->getId().toString();
   qDebug() << __func__ << friendId;
 
-  const ToxPk &friendPk = frnd->getPublicKey();
+  const FriendId &friendPk = frnd->getPublicKey();
   qDebug() << "friendPk" << friendPk.toString();
 
   ContentDialog *dialog =
@@ -345,7 +345,7 @@ void FriendWidget::onContextMenuCalled(QContextMenuEvent *event) {
            return;
        }
 
-       emit removeFriend(ToxPk(contactId));
+       emit removeFriend(FriendId(contactId));
   }else if(selected == inviteToGrp){
 
   }

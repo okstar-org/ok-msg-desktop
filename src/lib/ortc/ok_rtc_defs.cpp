@@ -14,87 +14,150 @@
 
 namespace lib {
 namespace ortc {
-JingleContext::JingleContext() {
+
+void OJingleContent::toPlugins(PluginList &plugins) const {
 
 };
 
-JingleContext::JingleContext(JingleSdpType sdpType_,     //
-                             const std::string &peerId_, //
-                             const std::string &sId,      //
-                             const std::string &sVer,     //
-                             const PluginList &plugins)
-    : sdpType(sdpType_), peerId(peerId_), sessionId(sId), sessionVersion(sVer) {
-  fromJingleSdp(plugins);
+void OJingleContent::parse(const Session::Jingle *jingle) {
+  sessionId = jingle->sid();
+  sessionVersion = SESSION_VERSION;
 }
 
-JingleContext::JingleContext(lib::ortc::JingleSdpType sdpType_, //
-                             const std::string &peerId_,        //
-                             const std::string &sId,            //
-                             const std::string &sVer,           //
-                             const lib::ortc::JingleContents &contents_)
-: sdpType(sdpType_), peerId(peerId_),
-      sessionId(sId), sessionVersion(sVer),
-      contents(contents_) {
+void OJingleContentFile::toPlugins(PluginList &plugins) const {}
 
-}
+void OJingleContentFile::parse(const Jingle::Session::Jingle *jingle) {
 
-void JingleContext::fromJingleSdp(const PluginList &plugins) {
-    for (const auto p : plugins) {
-      Jingle::JinglePluginType pt = p->pluginType();
-      switch (pt) {
-      case JinglePluginType::PluginContent: {
+  OJingleContent::parse(jingle);
+  callType = JingleCallType::file;
 
-        OContent oContent;
+  for (const auto p : jingle->plugins()) {
+    Jingle::JinglePluginType pt = p->pluginType();
+    switch (pt) {
+    case JinglePluginType::PluginContent: {
 
-        const auto *content = static_cast<const Content *>(p);
-        oContent.name = content->name();
+      OContent oContent;
+      const auto *content = static_cast<const Content *>(p);
+      oContent.name = content->name();
 
-        const auto *file =
-            content->findPlugin<FileTransfer>(PluginFileTransfer);
-        if (file) {
-          OFile oFile = {file->files()};
-          const auto *ibb = content->findPlugin<IBB>(PluginIBB);
-          if (ibb) {
-            oFile.ibb = *ibb;
-          }
-          oContent.file = oFile;
+      const auto *file = content->findPlugin<FileTransfer>(PluginFileTransfer);
+      if (file) {
+        OFile oFile = {file->files()};
+        const auto *ibb = content->findPlugin<IBB>(PluginIBB);
+        if (ibb) {
+          oFile.ibb = *ibb;
         }
-
-        const auto *rtp = content->findPlugin<RTP>(PluginRTP);
-        if (rtp) {
-          ORTP description = {
-              rtp->media(),        //
-              rtp->payloadTypes(), //
-              rtp->hdrExts(),      //
-              rtp->sources(),      //
-              rtp->ssrcGroup(),    //
-              rtp->rtcpMux()       //
-          };
-          oContent.rtp = description;
-        }
-
-        const auto *udp = content->findPlugin<ICEUDP>(PluginICEUDP);
-        if (udp) {
-          OIceUdp iceUdp = {
-              "",
-              0,
-              udp->ufrag(),     //
-              udp->pwd(),       //
-              udp->dtls(),      //
-              udp->candidates() //
-          };
-          oContent.iceUdp = iceUdp;
-        }
-
-        contents.emplace_back(oContent);
-        break;
+        oContent.file = oFile;
       }
-      default:
-        break;
-      }
+      contents.emplace_back(oContent);
+      break;
     }
-  
+    default:
+      break;
+    }
+  }
 }
+
+void OJingleContentAv::toPlugins(PluginList &plugins) const {
+  //<group>
+  Jingle::Group::ContentList contentList;
+  for (auto &content : contents) {
+    auto name = content.name;
+    auto desc = content.rtp;
+
+    contentList.push_back(Jingle::Group::Content{name});
+
+    // description
+    Jingle::PluginList rtpPlugins;
+
+    // rtcp
+    auto rtp = new Jingle::RTP(desc.media, desc.payloadTypes);
+    rtp->setRtcpMux(desc.rtcpMux);
+
+    // payload-type
+    rtp->setPayloadTypes(desc.payloadTypes);
+
+    // rtp-hdrExt
+    rtp->setHdrExts(desc.hdrExts);
+
+    // source
+    if (!desc.sources.empty()) {
+      rtp->setSources(desc.sources);
+    }
+
+    // ssrc-group
+    if (!desc.ssrcGroup.ssrcs.empty()) {
+      rtp->setSsrcGroup(desc.ssrcGroup);
+    }
+
+    // rtp
+    rtpPlugins.emplace_back(rtp);
+
+    // transport
+    OIceUdp oIceUdp = content.iceUdp;
+    auto ice = new Jingle::ICEUDP(oIceUdp.pwd, oIceUdp.ufrag, oIceUdp.candidates);
+    ice->setDtls(oIceUdp.dtls);
+    rtpPlugins.emplace_back(ice);
+
+    auto *pContent = new Jingle::Content(name, rtpPlugins, Jingle::Content::CInitiator);
+    plugins.emplace_back(pContent);
+  }
+
+  auto group = new Jingle::Group("BUNDLE", contentList);
+  plugins.push_back(group);
+}
+
+void OJingleContentAv::parse(const Jingle::Session::Jingle *jingle) {
+  OJingleContent::parse(jingle);
+  callType = JingleCallType::av;
+
+  int mid = 0;
+  for (const auto p : jingle->plugins()) {
+    Jingle::JinglePluginType pt = p->pluginType();
+    switch (pt) {
+    case JinglePluginType::PluginContent: {
+
+      OSdp oContent;
+
+      const auto *content = static_cast<const Content *>(p);
+      oContent.name = content->name();
+
+      const auto *rtp = content->findPlugin<RTP>(PluginRTP);
+      if (rtp) {
+        ORTP description = {
+            rtp->media(),        //
+            rtp->payloadTypes(), //
+            rtp->hdrExts(),      //
+            rtp->sources(),      //
+            rtp->ssrcGroup(),    //
+            rtp->rtcpMux()       //
+        };
+        oContent.rtp = description;
+      }
+
+      const auto *udp = content->findPlugin<ICEUDP>(PluginICEUDP);
+      if (udp) {
+        OIceUdp iceUdp = {
+            std::to_string(mid), //
+            mid,                 //
+            udp->ufrag(),        //
+            udp->pwd(),          //
+            udp->dtls(),         //
+            udp->candidates()    //
+        };
+        oContent.iceUdp = iceUdp;
+      }
+
+      contents.emplace_back(oContent);
+      break;
+    }
+    default:
+      break;
+    }
+    mid++;
+  }
+}
+
 
 } // namespace ortc
 } // namespace lib

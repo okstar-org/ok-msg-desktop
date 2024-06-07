@@ -126,7 +126,7 @@ Widget::Widget(IAudioControl &audio, QWidget *parent)//
   contactWidget = std::make_unique<ContactWidget>();
   ui->tabWidget->addTab(contactWidget.get(), tr("Contact"));
 
-  settingsWidget = std::make_unique<SettingsWidget>(updateCheck.get(), audio);
+  settingsWidget = std::make_unique<SettingsWidget>(updateCheck.get());
   ui->tabWidget->addTab(settingsWidget.get(), tr("Settings"));
 
 
@@ -881,7 +881,7 @@ void Widget::playNotificationSound(IAudioSink::Sound sound, bool loop) {
 void Widget::cleanupNotificationSound() { audioNotification.reset(); }
 
 void Widget::incomingNotification(QString friendnumber) {
-  const auto &friendId = ToxPk(friendnumber);
+  const auto &friendId = FriendId(friendnumber);
   newFriendMessageAlert(friendId, {}, false);
 
   // loop until call answered or rejected
@@ -905,7 +905,7 @@ void Widget::onRejectCall(QString friendId) {
 //  core->getAv()->cancelCall(friendId);
 }
 
-void Widget::addFriend0(const ToxPk &friendPk) {
+void Widget::addFriend0(const FriendId &friendPk) {
 //  core->requestFriendship(ToxId(friendPk.toString()), core->getNick(), "请求添加好友！");
 }
 
@@ -914,7 +914,7 @@ void Widget::addFriendDone() {
   core->requestBookmarks();
 }
 
-void Widget::addFriendFailed(const ToxPk &, const QString &errorInfo) {
+void Widget::addFriendFailed(const FriendId &, const QString &errorInfo) {
   QString info = QString(tr("Couldn't request friendship"));
   if (!errorInfo.isEmpty()) {
     info = info + QStringLiteral(": ") + errorInfo;
@@ -988,7 +988,7 @@ void Widget::openDialog(GenericChatroomWidget *widget, bool newWindow) {
 //  }
 }
 
-bool Widget::newFriendMessageAlert(const ToxPk &friendId, const QString &text,
+bool Widget::newFriendMessageAlert(const FriendId &friendId, const QString &text,
                                    bool sound, bool file) {
   bool hasActive;
   QWidget *currentWindow;
@@ -1048,7 +1048,7 @@ bool Widget::newFriendMessageAlert(const ToxPk &friendId, const QString &text,
   return false;
 }
 
-bool Widget::newGroupMessageAlert(const GroupId &groupId, const ToxPk &authorPk,
+bool Widget::newGroupMessageAlert(const GroupId &groupId, const FriendId &authorPk,
                                   const QString &message, bool notify) {
 
     qDebug() << __func__ <<"groupId" << groupId.toString()<< "message"<< message;
@@ -1158,7 +1158,7 @@ void Widget::friendRequestedTo(const ToxId &friendAddress, const QString &nick, 
 
 
 void Widget::onFileReceiveRequested(const ToxFile &file) {
-  const ToxPk &friendPk = ToxPk(file.receiver);
+  const FriendId &friendPk = FriendId(file.receiver);
   newFriendMessageAlert(
       friendPk,
       file.fileName + " (" +
@@ -1363,7 +1363,7 @@ ContentLayout *Widget::createContentDialog(DialogType type) const {
   return contentLayoutDialog;
 }
 
-void Widget::copyFriendIdToClipboard(const ToxPk &friendId) {
+void Widget::copyFriendIdToClipboard(const FriendId &friendId) {
   Friend *f = FriendList::findFriend(friendId);
   if (f != nullptr) {
     QClipboard *clipboard = QApplication::clipboard();
@@ -1379,7 +1379,7 @@ void Widget::titleChangedByUser(const QString &title) {
   emit changeGroupTitle(group->getId(), title);
 }
 
-void Widget::onGroupPeerAudioPlaying(QString groupnumber, ToxPk peerPk) {
+void Widget::onGroupPeerAudioPlaying(QString groupnumber, FriendId peerPk) {
   const GroupId &groupId = GroupId(groupnumber);
   Group *g = GroupList::findGroup(groupId);
   if (!g) {

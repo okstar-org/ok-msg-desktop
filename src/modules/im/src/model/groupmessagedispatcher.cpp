@@ -99,5 +99,5 @@ void GroupMessageDispatcher::onMessageReceived(GroupMessage &msg) {
 //  }
 
   auto msg0 = processor.processIncomingMessage(msg);
-  emit messageReceived(ToxPk(msg.from), msg0);
+  emit messageReceived(FriendId(msg.from), msg0);
 }

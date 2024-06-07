@@ -44,8 +44,12 @@
  */
 
 ToxCall::ToxCall(bool VideoEnabled, CoreAV &av, IAudioControl &audio)
-    : av{&av}, audio(audio), videoEnabled{VideoEnabled},
-      audioSource(audio.makeSource()) {}
+    : av{&av},
+      audio(audio),
+      videoEnabled{VideoEnabled} {
+
+          audioSource = audio.makeSource();
+}
 
 ToxCall::~ToxCall() {
   if (videoEnabled) {
@@ -80,14 +84,16 @@ QString ToxCall::getCallId() const  { return callId; }
 
 void ToxCall::setCallId(QString value) { callId = value; }
 
-ToxFriendCall::ToxFriendCall(QString friendId, bool VideoEnabled, CoreAV &av,
+ToxFriendCall::ToxFriendCall(QString peerId, bool VideoEnabled, CoreAV &av,
                              IAudioControl &audio)
     : ToxCall(VideoEnabled, av, audio),
-      sink(audio.makeSink()), friendId{friendId} {
+      sink(audio.makeSink()), peerId{peerId}
+{
+
   connect(
       audioSource.get(), &IAudioSource::frameAvailable, this,
       [this](const int16_t *pcm, size_t samples, uint8_t chans, uint32_t rate) {
-        this->av->sendCallAudio(this->friendId, pcm, samples, chans, rate);
+        this->av->sendCallAudio(this->peerId, pcm, samples, chans, rate);
       });
 
   connect(audioSource.get(), &IAudioSource::invalidated, this,
@@ -122,16 +128,16 @@ ToxFriendCall::ToxFriendCall(QString friendId, bool VideoEnabled, CoreAV &av,
 ToxFriendCall::~ToxFriendCall() { QObject::disconnect(audioSinkInvalid); }
 
 void ToxFriendCall::onAudioSourceInvalidated() {
-  auto newSrc = audio.makeSource();
-  connect(
-      newSrc.get(), &IAudioSource::frameAvailable, this,
-      [this](const int16_t *pcm, size_t samples, uint8_t chans, uint32_t rate) {
-        this->av->sendCallAudio(this->friendId, pcm, samples, chans, rate);
-      });
-  audioSource = std::move(newSrc);
+//  auto newSrc = audio.makeSource();
+//  connect(
+//      newSrc.get(), &IAudioSource::frameAvailable, this,
+//      [this](const int16_t *pcm, size_t samples, uint8_t chans, uint32_t rate) {
+//        this->av->sendCallAudio(this->friendId, pcm, samples, chans, rate);
+//      });
+//  audioSource = std::move(newSrc);
 
-  connect(audioSource.get(), &IAudioSource::invalidated, this,
-          &ToxFriendCall::onAudioSourceInvalidated);
+//  connect(audioSource.get(), &IAudioSource::invalidated, this,
+//          &ToxFriendCall::onAudioSourceInvalidated);
 }
 
 void ToxFriendCall::onAudioSinkInvalidated() {
@@ -204,12 +210,12 @@ void ToxGroupCall::onAudioSourceInvalidated() {
           &ToxGroupCall::onAudioSourceInvalidated);
 }
 
-void ToxGroupCall::onAudioSinkInvalidated(ToxPk peerId) {
+void ToxGroupCall::onAudioSinkInvalidated(FriendId peerId) {
   removePeer(peerId);
   addPeer(peerId);
 }
 
-void ToxGroupCall::removePeer(ToxPk peerId) {
+void ToxGroupCall::removePeer(FriendId peerId) {
   const auto &source = peers.find(peerId);
   if (source == peers.cend()) {
     qDebug() << "Peer:" << peerId.toString()
@@ -222,7 +228,7 @@ void ToxGroupCall::removePeer(ToxPk peerId) {
   sinkInvalid.erase(peerId);
 }
 
-void ToxGroupCall::addPeer(ToxPk peerId) {
+void ToxGroupCall::addPeer(FriendId peerId) {
   std::unique_ptr<IAudioSink> newSink = audio.makeSink();
 
   QMetaObject::Connection con;
@@ -236,7 +242,7 @@ void ToxGroupCall::addPeer(ToxPk peerId) {
   sinkInvalid.insert({peerId, con});
 }
 
-bool ToxGroupCall::havePeer(ToxPk peerId) {
+bool ToxGroupCall::havePeer(FriendId peerId) {
   const auto &source = peers.find(peerId);
   return source != peers.cend();
 }
@@ -250,7 +256,7 @@ void ToxGroupCall::clearPeers() {
   sinkInvalid.clear();
 }
 
-void ToxGroupCall::playAudioBuffer(const ToxPk &peer, const int16_t *data,
+void ToxGroupCall::playAudioBuffer(const FriendId &peer, const int16_t *data,
                                    int samples, unsigned channels,
                                    int sampleRate) {
   if (!havePeer(peer)) {

@@ -57,9 +57,9 @@ public:
   bool addFriendRequest(const QString &friendAddress, const QString &message);
 
 signals:
-  void friendRequested(const ToxPk &friendAddress, const QString &nick, const QString &message);
-  void friendRequestAccepted(const ToxPk &friendAddress);
-  void friendRequestRejected(const ToxPk &friendAddress);
+  void friendRequested(const FriendId &friendAddress, const QString &nick, const QString &message);
+  void friendRequestAccepted(const FriendId &friendAddress);
+  void friendRequestRejected(const FriendId &friendAddress);
   void friendRequestsSeen();
   void friendReceipts(const QList<ok::backend::OrgStaff *> &qList);
 

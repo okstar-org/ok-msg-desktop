@@ -64,4 +64,4 @@ void LogSinkImpl::OnLogMessage(const std::string &message) {
 #endif
 }
 
-} // namespace tgcalls
+} // namespace lib::ortc

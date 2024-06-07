@@ -157,7 +157,7 @@ void MessageSessionListWidget::connectSessionWidget(MessageSessionWidget &sw) {
 }
 
 void MessageSessionListWidget::updateFriendActivity(const Friend &frnd) {
-  const ToxPk &pk = frnd.getPublicKey();
+  const FriendId &pk = frnd.getPublicKey();
   auto &settings = Settings::getInstance();
   const auto oldTime = settings.getFriendActivity(pk);
   const auto newTime = QDateTime::currentDateTime();
@@ -388,7 +388,7 @@ void MessageSessionListWidget::cycleContacts(
 //  CircleWidget *circleWidget = nullptr;
 
   if (friendWidget != nullptr) {
-    const ToxPk &pk = friendWidget->getFriend()->getPublicKey();
+    const FriendId &pk = friendWidget->getFriend()->getPublicKey();
     uint32_t circleId = Settings::getInstance().getFriendCircleID(pk);
 //    circleWidget = CircleWidget::getFromID(circleId);
 //    if (circleWidget != nullptr) {
@@ -455,7 +455,7 @@ void MessageSessionListWidget::dragEnterEvent(QDragEnterEvent *event) {
   if (!event->mimeData()->hasFormat("toxPk")) {
     return;
   }
-  ToxPk toxPk(event->mimeData()->data("toxPk"));
+  FriendId toxPk(event->mimeData()->data("toxPk"));
   Friend *frnd = FriendList::findFriend(toxPk);
   if (frnd)
     event->acceptProposedAction();
@@ -470,7 +470,7 @@ void MessageSessionListWidget::dropEvent(QDropEvent *event) {
 
   // Check, that the user has a friend with the same ToxPk
   assert(event->mimeData()->hasFormat("toxPk"));
-  const ToxPk toxPk{event->mimeData()->data("toxPk")};
+  const FriendId toxPk{event->mimeData()->data("toxPk")};
   Friend *f = FriendList::findFriend(toxPk);
   if (!f)
     return;
@@ -529,8 +529,8 @@ void MessageSessionListWidget::updateActivityTime(const QDateTime &time) {
   if (mode != SortingMode::Activity)
     return;
 
-  int timeIndex = static_cast<int>(base::getTimeBucket(time));
-  QWidget *widget = activityLayout->itemAt(timeIndex)->widget();
+//  int timeIndex = static_cast<int>(base::getTimeBucket(time));
+//  QWidget *widget = activityLayout->itemAt(timeIndex)->widget();
 //  CategoryWidget *categoryWidget = static_cast<CategoryWidget *>(widget);
 //  categoryWidget->updateStatus();
 //  categoryWidget->setVisible(categoryWidget->hasChatrooms());
@@ -578,7 +578,7 @@ void MessageSessionListWidget::setRecvGroupMessage(const GroupId &groupId, const
 //  return nullptr;
 //}
 
-void MessageSessionListWidget::toSendMessage(const ToxPk &pk, bool isGroup)
+void MessageSessionListWidget::toSendMessage(const FriendId &pk, bool isGroup)
 {
     qDebug() << __func__<< pk.toString();
     auto w = sessionWidgets.value(pk.toString());
@@ -588,6 +588,27 @@ void MessageSessionListWidget::toSendMessage(const ToxPk &pk, bool isGroup)
     }
     emit w->chatroomWidgetClicked(w);
 
+}
+
+void MessageSessionListWidget::setFriendAvInvite(const ToxPeer &peerId, bool video)
+{
+    auto friendId = peerId.toFriendId();
+    auto w = sessionWidgets.value(friendId.toString());
+    if(!w){
+        qDebug() << "Create session for friend"<< friendId;
+        w = createMessageSession(friendId, "", ChatType::Chat);
+    }
+    w->setAvInvite(peerId, video);
+}
+
+void MessageSessionListWidget::setFriendAvEnd(const FriendId &friendId, bool error)
+{
+    auto w = sessionWidgets.value(friendId.toString());
+    if(!w){
+        qWarning() << "The message session is no existing!";
+        return;
+    }
+    w->setAvEnd(friendId, error);
 }
 
 QLayout *MessageSessionListWidget::nextLayout(QLayout *layout, bool forward) const {
@@ -665,7 +686,7 @@ void MessageSessionListWidget::do_clearHistory(const QString &cid)
 
 
 void MessageSessionListWidget::setRecvFriendMessage(
-    ToxPk friendnumber, const FriendMessage &message,
+    FriendId friendnumber, const FriendMessage &message,
     bool isAction) {
 
   auto fw = getMessageSession(friendnumber.toString());
@@ -682,7 +703,7 @@ void MessageSessionListWidget::setRecvFriendMessage(
   fw->setRecvMessage(message, isAction);
 }
 
-void MessageSessionListWidget::setFriendMessageReceipt(const ToxPk &friendId,
+void MessageSessionListWidget::setFriendMessageReceipt(const FriendId &friendId,
                                                        const ReceiptNum &receipt)
 {
     auto fw = getMessageSession(friendId.toString());
@@ -693,7 +714,7 @@ void MessageSessionListWidget::setFriendMessageReceipt(const ToxPk &friendId,
 }
 
 
-void MessageSessionListWidget::setFriendStatus(const ToxPk &friendPk, Status::Status status) {
+void MessageSessionListWidget::setFriendStatus(const FriendId &friendPk, Status::Status status) {
   auto fw = getMessageSession(friendPk.toString());
   if (!fw) {
     qWarning() << "friend widget is no existing.";
@@ -702,7 +723,7 @@ void MessageSessionListWidget::setFriendStatus(const ToxPk &friendPk, Status::St
   fw->setStatus(status, false);
 }
 
-void MessageSessionListWidget::setFriendStatusMsg(const ToxPk &friendPk,
+void MessageSessionListWidget::setFriendStatusMsg(const FriendId &friendPk,
                                           const QString &statusMsg) {
   auto fw = getMessageSession(friendPk.toString());
   if (!fw) {
@@ -712,7 +733,7 @@ void MessageSessionListWidget::setFriendStatusMsg(const ToxPk &friendPk,
   fw->setStatusMsg(statusMsg);
 }
 
-void MessageSessionListWidget::setFriendName(const ToxPk &friendPk,  const QString &name) {
+void MessageSessionListWidget::setFriendName(const FriendId &friendPk,  const QString &name) {
     auto fw = getMessageSession(friendPk.toString());
     if (!fw) {
       qWarning() << "friend is no exist.";
@@ -721,7 +742,7 @@ void MessageSessionListWidget::setFriendName(const ToxPk &friendPk,  const QStri
     fw->setName(name);
 }
 
-void MessageSessionListWidget::setFriendAvatar(const ToxPk &friendPk, const QByteArray &avatar) {
+void MessageSessionListWidget::setFriendAvatar(const FriendId &friendPk, const QByteArray &avatar) {
   auto fw = getMessageSession(friendPk.toString());
   if (!fw) {
     qWarning() << "friend is no exist.";
@@ -733,13 +754,13 @@ void MessageSessionListWidget::setFriendAvatar(const ToxPk &friendPk, const QByt
   fw->setAvatar(p);
 }
 
-void MessageSessionListWidget::setFriendTyping(const ToxPk &friendId, bool isTyping) {
+void MessageSessionListWidget::setFriendTyping(const FriendId &friendId, bool isTyping) {
   auto fw = getMessageSession(friendId.toString());
   if (fw)
       fw->setTyping(isTyping);
 }
 
-void MessageSessionListWidget::setFriendFileReceived(const ToxPk &friendPk, const ToxFile &file)
+void MessageSessionListWidget::setFriendFileReceived(const FriendId &friendPk, const ToxFile &file)
 {
     auto ms = getMessageSession(ContactId(friendPk).toString());
     if(ms){
@@ -748,7 +769,7 @@ void MessageSessionListWidget::setFriendFileReceived(const ToxPk &friendPk, cons
 
 }
 
-void MessageSessionListWidget::setFriendFileCancelled(const ToxPk &f, const QString &fileId)
+void MessageSessionListWidget::setFriendFileCancelled(const FriendId &f, const QString &fileId)
 {
     auto ms = getMessageSession(ContactId(f).toString());
     if(ms){

@@ -19,11 +19,11 @@
 
 #include <vector>
 
-#include "lib/messenger/IMMessage.h"
 #include "lib/messenger/IMFile.h"
+#include "lib/messenger/IMMessage.h"
 #include "src/core/icoreidhandler.h"
+#include <src/core/FriendId.h>
 #include <src/core/groupid.h>
-#include <src/core/toxpk.h>
 
 #include "contact.h"
 
@@ -76,7 +76,7 @@ public:
 };
 
 struct FriendInfo {
-  ToxPk id;
+  FriendId id;
   QString alias;
   bool is_friend;
   bool online;
@@ -84,7 +84,7 @@ struct FriendInfo {
 
   explicit FriendInfo(const lib::messenger::IMFriend &aFriend);
 
-  [[nodiscard]] inline const ToxPk &getId() const { return id; }
+  [[nodiscard]] inline const FriendId &getId() const { return id; }
 
   [[nodiscard]] inline const QString &getAlias() const { return alias; }
 

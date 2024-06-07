@@ -155,7 +155,7 @@ void ContentDialog::addGroup(GroupChatroom* chatroom, GenericChatForm* form)
 
 }
 
-void ContentDialog::removeFriend(const ToxPk& friendPk)
+void ContentDialog::removeFriend(const FriendId& friendPk)
 {
 
 }
@@ -387,13 +387,13 @@ void ContentDialog::dragEnterEvent(QDragEnterEvent* event)
     GroupWidget* group = qobject_cast<GroupWidget*>(o);
     if (frnd) {
         assert(event->mimeData()->hasFormat("toxPk"));
-        ToxPk toxPk{event->mimeData()->data("toxPk")};
+        FriendId toxPk{event->mimeData()->data("toxPk")};
         Friend* contact = FriendList::findFriend(toxPk);
         if (!contact) {
             return;
         }
 
-        ToxPk friendId = contact->getPublicKey();
+        FriendId friendId = contact->getPublicKey();
 
         // If friend is already in a dialog then you can't drop friend where it already is.
         if (!hasContact(friendId)) {
@@ -420,7 +420,7 @@ void ContentDialog::dropEvent(QDropEvent* event)
     GroupWidget* group = qobject_cast<GroupWidget*>(o);
     if (frnd) {
         assert(event->mimeData()->hasFormat("toxPk"));
-        const ToxPk toxId(event->mimeData()->data("toxPk"));
+        const FriendId toxId(event->mimeData()->data("toxPk"));
         Friend* contact = FriendList::findFriend(toxId);
         if (!contact) {
             return;
@@ -513,7 +513,7 @@ void ContentDialog::activate(GenericChatroomWidget* widget)
     updateTitleAndStatusIcon();
 }
 
-void ContentDialog::updateFriendStatus(const ToxPk& friendPk, Status::Status status)
+void ContentDialog::updateFriendStatus(const FriendId& friendPk, Status::Status status)
 {
 //    auto widget = qobject_cast<FriendWidget*>(contactWidgets.value(friendPk));
 //    addFriendWidget(widget, status);
@@ -538,7 +538,7 @@ return false;
 }
 
 // TODO: Connect to widget directly
-void ContentDialog::setStatusMessage(const ToxPk& friendPk, const QString& message)
+void ContentDialog::setStatusMessage(const FriendId& friendPk, const QString& message)
 {
 //    auto widget = contactWidgets.value(friendPk);
 //    if (widget != nullptr) {
@@ -551,7 +551,7 @@ void ContentDialog::setStatusMessage(const ToxPk& friendPk, const QString& messa
  * @param friendId IMFriend Id.
  * @param alias Alias to display on widget.
  */
-void ContentDialog::updateFriendWidget(const ToxPk& friendPk, QString alias)
+void ContentDialog::updateFriendWidget(const FriendId& friendPk, QString alias)
 {
     Friend* f = FriendList::findFriend(friendPk);
     FriendWidget* friendWidget = qobject_cast<FriendWidget*>(contactWidget);

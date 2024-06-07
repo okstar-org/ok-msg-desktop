@@ -17,7 +17,7 @@ namespace Ui {
 class ContactWidget;
 }
 
-class ToxPk;
+class FriendId;
 class Core;
 class GroupInviteForm;
 class AddFriendForm;
@@ -50,26 +50,26 @@ public slots:
 
   void onCoreChanged(Core &core);
   void onFriendAdded(const FriendInfo &frnd);
-  void onFriendUsernameChanged(const ToxPk &friendPk, const QString &username);
+  void onFriendUsernameChanged(const FriendId &friendPk, const QString &username);
 
-  void onFriendStatusChanged(const ToxPk &friendPk, Status::Status status);
-  void onFriendStatusMessageChanged(const ToxPk &friendPk,
+  void onFriendStatusChanged(const FriendId &friendPk, Status::Status status);
+  void onFriendStatusMessageChanged(const FriendId &friendPk,
                                     const QString &message);
 
 
-  void onFriendAvatarChanged(const ToxPk &friendPk, const QByteArray &avatar);
-  void onFriendAliasChanged(const ToxPk &friendPk, const QString &alias);
+  void onFriendAvatarChanged(const FriendId &friendPk, const QByteArray &avatar);
+  void onFriendAliasChanged(const FriendId &friendPk, const QString &alias);
 
-  void onFriendRequest(const ToxPk &friendPk, const QString &message);
+  void onFriendRequest(const FriendId &friendPk, const QString &message);
 
 
-  void do_friendDelete(const ToxPk &friendPk);
+  void do_friendDelete(const FriendId &friendPk);
   //朋友请求
-  void do_friendRequest(const ToxPk& friendAddress, const QString& nick, const QString& message);
+  void do_friendRequest(const FriendId& friendAddress, const QString& nick, const QString& message);
   //朋友请求接受
-  void do_friendRequestAccept(const ToxPk &friendPk);
+  void do_friendRequestAccept(const FriendId &friendPk);
   //朋友请求拒绝
-  void do_friendRequestReject(const ToxPk &friendPk);
+  void do_friendRequestReject(const FriendId &friendPk);
 
   void onGroupJoined( const GroupId & groupId, const QString& name);
   void onGroupInfoReceived(const GroupId & groupId, const GroupInfo& info);
@@ -82,7 +82,7 @@ public slots:
 
     void onGroupPeerSizeChanged(QString groupnumber, const uint size);
 
-    void onGroupPeerNameChanged(QString groupnumber, const ToxPk &peerPk,
+    void onGroupPeerNameChanged(QString groupnumber, const FriendId &peerPk,
                                 const QString &newName);
 
     void onGroupSubjectChanged(const GroupId&, const QString &subject);
