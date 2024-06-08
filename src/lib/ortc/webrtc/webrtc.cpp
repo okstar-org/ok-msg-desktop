@@ -12,7 +12,6 @@
 #include "webrtc.h"
 #include "StaticThreads.h"
 #include "ok_conductor.h"
-#include "vcm_capturer.h"
 
 #include <memory>
 #include <string>
@@ -34,21 +33,6 @@
 
 namespace lib {
 namespace ortc {
-
-class WebRTC;
-
-//class CapturerTrackSource : public webrtc::VideoTrackSource {
-//public:
-//  explicit CapturerTrackSource(std::unique_ptr<VcmCapturer> capturer)
-//      : VideoTrackSource(/*remote=*/false), capturer_(std::move(capturer)) {}
-
-//private:
-//  std::unique_ptr<VcmCapturer> capturer_;
-
-//  rtc::VideoSourceInterface<webrtc::VideoFrame> *source() override {
-//    return capturer_.get();
-//  }
-//};
 
 static std::unique_ptr<webrtc::SessionDescriptionInterface>
 CreateSessionDescription(webrtc::SdpType sdpType, const OJingleContentAv &context) {
@@ -205,7 +189,7 @@ CreateSessionDescription(webrtc::SdpType sdpType, const OJingleContentAv &contex
   return sessionDescriptionInterface;
 }
 
-WebRTC::WebRTC( )
+WebRTC::WebRTC()
     : peer_connection_factory{nullptr}, _rtcHandler{nullptr}
 {
     _rtcConfig.sdp_semantics = webrtc::SdpSemantics::kUnifiedPlan;
@@ -227,7 +211,7 @@ bool WebRTC::start()
 
     //  _logSink(std::make_unique<LogSinkImpl>())
     //    rtc::LogMessage::AddLogToStream(_logSink.get(), rtc::LS_INFO);
-     rtc::LogMessage::LogToDebug(rtc::LS_INFO);
+     rtc::LogMessage::LogToDebug(rtc::LS_VERBOSE);
     //    rtc::LogMessage::SetLogToStderr(false);
 
 
@@ -265,10 +249,6 @@ bool WebRTC::start()
         nullptr /* audio_mixer */,                  //
         nullptr /* audio_processing */);
 
-
-
-
-  //   peer_connection_factory = pcf.get();
      RTC_DLOG_F(LS_INFO) << "peer_connection_factory:" << peer_connection_factory;
 
       webrtc::PeerConnectionFactoryInterface::Options options;

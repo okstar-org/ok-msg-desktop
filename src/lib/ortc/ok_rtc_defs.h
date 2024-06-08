@@ -33,10 +33,6 @@ using namespace gloox;
 using namespace gloox::Jingle;
 
 struct OIceUdp {
-
-  // key: mid
-  typedef std::map<std::string, OIceUdp> OIceUdpMap;
-
   std::string mid;
   int mline;
   std::string ufrag;

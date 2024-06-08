@@ -95,9 +95,9 @@ public:
   void
   OnSessionAccept(std::unique_ptr<webrtc::SessionDescriptionInterface> desc);
 
-  void AddTrack(webrtc::AudioSourceInterface* _audioSource);
+  bool AddTrack(webrtc::AudioSourceInterface* _audioSource);
 
-  void AddTrack(webrtc::VideoTrackSourceInterface* _videoTrackSource);
+  bool AddTrack(webrtc::VideoTrackSourceInterface* _videoTrackSource);
 
   rtc::scoped_refptr<webrtc::PeerConnectionInterface> CreatePeerConnection();
 

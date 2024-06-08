@@ -883,22 +883,19 @@ bool IMJingle::createCall(const IMPeerId &to, const QString &sId, bool video) {
     discos.push_back(disco1);
 
 
-    for (const auto &item :  discos) {
-      ortc::IceServer ice;
-      ice.uri = item.type + ":" + item.host + ":" + std::to_string(item.port);
-      //              "?transport=" + item.transport;
-      ice.username = item.username;
-      ice.password = item.password;
-      qDebug() <<"Add ice:" << ice.uri.c_str();
-      iceServers.push_back(ice);
+//    for (const auto &item :  discos) {
+//      ortc::IceServer ice;
+//      ice.uri = item.type + ":" + item.host + ":" + std::to_string(item.port);
+//      //              "?transport=" + item.transport;
+//      ice.username = item.username;
+//      ice.password = item.password;
+//      qDebug() <<"Add ice:" << ice.uri.c_str();
+//      iceServers.push_back(ice);
 
-      rtc->addIceServer(ice);
-    }
+//      rtc->addIceServer(ice);
+//    }
 
-  bool createdCall = rtc->call(stdstring(to.toString()), stdstring(sId),
-                               video);
-
-
+  bool createdCall = rtc->call(stdstring(to.toString()), stdstring(sId), video);
   if(createdCall){
       ws->createOffer(stdstring(to.toString()));
   }
