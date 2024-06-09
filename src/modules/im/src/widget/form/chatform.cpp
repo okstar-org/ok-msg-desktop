@@ -100,7 +100,7 @@ ChatForm::ChatForm(const FriendId *chatFriend,
                    IChatLog &chatLog_,
                    IMessageDispatcher &messageDispatcher)
     : GenericChatForm(chatFriend, chatLog_, messageDispatcher),
-      f(chatFriend), isTyping{false}, lastCallIsVideo{false} {
+      f(chatFriend), isTyping{false}{
 
 
   headWidget->setAvatar(QPixmap(":/img/contact_dark.svg"));
@@ -303,7 +303,7 @@ void ChatForm::showCallConfirm(const ToxPeer &peerId, bool video, const QString 
 //                ChatMessage::INFO,
 //                QDateTime::currentDateTime());
 //    insertChatMessage(msg);
-
+    lastCallIsVideo = video;
     // 显示呼叫确认
     headWidget->createCallConfirm(peerId, video);
     headWidget->showCallConfirm();
@@ -312,20 +312,23 @@ void ChatForm::showCallConfirm(const ToxPeer &peerId, bool video, const QString 
 void ChatForm::closeCallConfirm(const FriendId &friendId)
 {
     qDebug() << __func__ << "friendId" << friendId;
+    lastCallIsVideo = false;
     headWidget->removeCallConfirm();
 }
 
 void ChatForm::onAcceptCallTriggered(const ToxPeer &peer, bool video) {
+    qDebug() << __func__ << "peer" << peer;
+
     headWidget->removeCallConfirm();
 
-    if (video) {
-      showNetcam();
-    } else {
-      hideNetcam();
-    }
+//    if (video) {
+//      showNetcam();
+//    } else {
+//      hideNetcam();
+//    }
 
     updateCallButtons();
-    startCounter();
+//    startCounter();
 
 //  emit stopNotification();
     emit acceptCall(peer, video);

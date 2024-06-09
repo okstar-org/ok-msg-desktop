@@ -29,7 +29,6 @@ class IAudioControl;
 class QThread;
 class QTimer;
 class CoreVideoSource;
-class CameraSource;
 class VideoSource;
 class VideoFrame;
 class Core;
@@ -58,9 +57,9 @@ public:
   bool sendGroupCallAudio(QString groupNum, const int16_t *pcm, size_t samples,
                           uint8_t chans, uint32_t rate) const;
 
-//  CoreVideoSource *getVideoSourceFromSelf() const{
-//    return selfVideoSource.get();
-//  }
+  CoreVideoSource *getSelfVideoSource()  {
+    return selfVideoSource.get();
+  }
 
   VideoSource *getVideoSourceFromCall(QString callNumber) const;
   void sendNoVideo();
@@ -92,7 +91,7 @@ public slots:
 
 signals:
   void avInvite(ToxPeer peerId, bool video);
-  void avStart(QString friendId, bool video);
+  void avStart(FriendId friendId, bool video);
   void avEnd(FriendId friendId, bool error = false);
   void createCallToPeerId(lib::messenger::IMPeerId friendId, QString callId, bool video);
 
@@ -140,20 +139,22 @@ private:
                                  uint8_t channels, uint32_t samplingRate,
                                  void *self);
 
-  void videoFrameCallback(ToxAV *toxAV, QString friendId, uint16_t w,
-                          uint16_t h, const uint8_t *y, const uint8_t *u,
-                          const uint8_t *v, int32_t ystride, int32_t ustride,
-                          int32_t vstride, void *self);
+//  void videoFrameCallback(ToxAV *toxAV, QString friendId, uint16_t w,
+//                          uint16_t h, const uint8_t *y, const uint8_t *u,
+//                          const uint8_t *v, int32_t ystride, int32_t ustride,
+//                          int32_t vstride, void *self);
 
-  void videoFramePush(CoreVideoSource *vs, uint16_t w, uint16_t h,
-                          const uint8_t *y, const uint8_t *u, const uint8_t *v,
-                          int32_t ystride, int32_t ustride, int32_t vstride);
+  vpx_image makeVpxFrame( uint16_t w, uint16_t h,
+                     const uint8_t *y, const uint8_t *u, const uint8_t *v,
+                     int32_t ystride, int32_t ustride, int32_t vstride);
+
+  void videoFramePush(CoreVideoSource *vs, const vpx_image &frame);
 
   void onCall(const lib::messenger::IMPeerId &peerId, const QString& callId, bool audio, bool video) override;
 
   void onCallRetract(const QString &friendId, int state) override;
 
-   void onCallAcceptByOther(const QString& callId, const lib::messenger::IMPeerId & peerId) override;
+  void onCallAcceptByOther(const QString& callId, const lib::messenger::IMPeerId & peerId) override;
 
   void receiveCallStateAccepted(lib::messenger::IMPeerId friendId, QString callId, bool video) override;
 
@@ -173,13 +174,16 @@ private:
   std::unique_ptr<ToxAV> imCall;
   std::unique_ptr<QThread> coreavThread;
   QTimer *iterateTimer = nullptr;
-  using ToxFriendCallPtr = std::unique_ptr<ToxFriendCall>;
+
+  std::unique_ptr<CoreVideoSource> selfVideoSource;
+
 
   /**
    * @brief Maps friend IDs to ToxFriendCall.
    * @note Need to use STL container here, because Qt containers need a copy
    * constructor.
    */
+  using ToxFriendCallPtr = std::unique_ptr<ToxFriendCall>;
   std::map<QString, ToxFriendCallPtr> calls;
 
   using ToxGroupCallPtr = std::unique_ptr<ToxGroupCall>;

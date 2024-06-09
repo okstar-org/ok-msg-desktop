@@ -943,7 +943,7 @@ void ChatWidget::onAvInvite(ToxPeer peerId, bool video) {
 //  }
 }
 
-void ChatWidget::onAvStart(QString friendId, bool video) {
+void ChatWidget::onAvStart(const FriendId& friendId, bool video) {
 //  if (friendId != f->getId()) {
 //    return;
 //  }
@@ -957,6 +957,11 @@ void ChatWidget::onAvStart(QString friendId, bool video) {
 //  emit stopNotification();
 //  updateCallButtons();
 //  startCounter();
+
+
+    sessionListWidget->setFriendAvStart(friendId, video);
+
+
 }
 
 void ChatWidget::onAvEnd(const FriendId& friendId, bool error) {
@@ -978,7 +983,7 @@ void ChatWidget::onAvEnd(const FriendId& friendId, bool error) {
 
 //  auto status = Core::getInstance()->getStatus();
 //  updateCallButtons(status);
-//  stopCounter(error);
+//    stopCounter(error);
 //  hideNetcam();
 }
 

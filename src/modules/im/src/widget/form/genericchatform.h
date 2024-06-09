@@ -90,6 +90,9 @@ public:
   [[__nodiscard__]] inline ChatLog *getChatLog() const{
         return chatLog;
     }
+
+    void showNetcam();
+    void hideNetcam();
 signals:
     void messageInserted();
     void messageNotFoundShow(SearchDirection direction);
@@ -150,8 +153,7 @@ protected:
     // ChatMessage::Ptr createMessage(const ToxPk& author, const QString& message,
     //                                const QDateTime& datetime, bool isAction, bool isSent, bool colorizeName = false);
     bool needsToHideName(ChatLogIdx idx) const;
-    void showNetcam();
-    void hideNetcam();
+
     void adjustFileMenuPosition();
     void disableSearchText();
     bool searchInText(const QString& phrase, const ParameterSearch& parameter, SearchDirection direction);
@@ -208,7 +210,10 @@ protected:
     Sonnet::SpellCheckDecorator* decorator{nullptr};
 #endif
     FlyoutOverlayWidget* fileFlyout;
+
     GenericNetCamView* netcam;
+    bool lastCallIsVideo;
+
     Widget* parent;
 
     IChatLog& iChatLog;

@@ -168,7 +168,8 @@ void VideoCameraCapturer::OnFrame(const webrtc::VideoFrame &frame) {
 	if (_state != VideoState::Active) {
 		return;
 	} else if (_aspectRatio <= 0.001) {
-		_sink->OnFrame(frame);
+        if(_sink)
+            _sink->OnFrame(frame);
 		return;
 	}
 	const auto originalWidth = frame.width();

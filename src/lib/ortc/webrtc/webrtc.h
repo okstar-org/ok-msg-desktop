@@ -53,17 +53,13 @@ public:
 
   bool ensureStart() override;
 
-  void addIceServer(const IceServer &ice) override;
-  void addRTCHandler( OkRTCHandler* hand) override;
+  void addRTCHandler(OkRTCHandler* hand) override;
 
-  void
-  SetRemoteDescription(const std::string &peerId,
-                       const OJingleContentAv &context) override;
+  void setRemoteDescription(const std::string &peerId, const OJingleContentAv &context) override;
 
   void CreateOffer(const std::string &peerId) override;
 
   void CreateAnswer(const std::string &peerId,
-                    const std::string &sId,
                     const OJingleContentAv &content) override;
 
   void setTransportInfo(const std::string &peerId,
@@ -86,7 +82,7 @@ public:
 
   size_t getVideoSize() override;
 
-  [[nodiscard]] auto getVideoCapture(
+  [[nodiscard]] auto createVideoCapture(
       std::optional<std::string> deviceId = std::nullopt,
       bool isScreenCapture = false)
       -> std::shared_ptr<VideoCaptureInterface>;
@@ -101,9 +97,16 @@ public:
 
   bool quit(const std::string &peerId) override;
 
-  std::list<IceServer>& iceOptions (){
-      return _iceOptions;
-  }
+  void setIceOptions(std::list<IceServer>& ices) override;
+
+  webrtc::SdpType convertToSdpType(JingleSdpType sdpType);
+
+  JingleSdpType convertFromSdpType(webrtc::SdpType sdpType);
+
+  std::unique_ptr<webrtc::SessionDescriptionInterface> convertToSdp(const OJingleContentAv &context);
+
+  OJingleContentAv convertFromSdp( webrtc::SessionDescriptionInterface* sdp);
+
 
   OkRTCHandler* getHandler()const {
       return _rtcHandler;
@@ -119,6 +122,7 @@ public:
 
 private:
 //    std::unique_ptr<LogSinkImpl> _logSink;
+  void addIceServer(const IceServer &ice);
 
   Conductor *createConductor(const std::string &peerId,
                              const std::string &sId,
@@ -126,13 +130,10 @@ private:
 
   Conductor *getConductor(const std::string &peerId);
 
-//  void setTransportInfo(Conductor *conductor, const ortc::OIceUdp &iceUdp);
-
   std::recursive_mutex start_mtx;
 
-
-  std::list<IceServer> _iceOptions;
   webrtc::PeerConnectionInterface::RTCConfiguration _rtcConfig;
+
 
   std::unique_ptr<rtc::Thread> network_thread;
   std::unique_ptr<rtc::Thread> worker_thread;
@@ -142,20 +143,14 @@ private:
 
   OkRTCHandler *_rtcHandler;
 
-  /**
-   * 音频源
-   */
+  // 音频源
   rtc::scoped_refptr<webrtc::AudioSourceInterface> audioSource;
 
-  /**
-   * 视频源
-   */
-//  std::unique_ptr<VcmCapturer> capturer;
-//  std::shared_ptr<webrtc::VideoCaptureModule::DeviceInfo> _videoDeviceInfo;
-//  rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> _videoTrackSource;
-//  rtc::scoped_refptr<webrtc::VideoTrackInterface> _video_track;
+  //视频源
+  std::shared_ptr<VideoCaptureInterface> videoCapture;
 
-  std::weak_ptr<VideoCaptureInterface> _videoCapture;
+  //sink
+  std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> sink;
 
   rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> peer_connection_factory;
 };

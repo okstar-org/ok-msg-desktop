@@ -659,18 +659,14 @@ void IM::doPubSubEvent(const gloox::PubSub::Event *pse, //
   auto isSelf = friendId == selfId;
 
   for (auto &item : pse->items()) {
-    qDebug() << "item:" << qstring(item->item);
-
     auto nickTag = item->payload->findChild("nick");
     if (nickTag) {
       Nickname nickname(nickTag);
       auto newNick = qstring(nickname.nick());
-      qDebug() << "Received friend nick:" << friendId << newNick;
+      qDebug() << "nick:" << newNick;
       emit receiveNicknameChange(friendId, newNick);
-
       if (isSelf && _nick != newNick) {
         _nick = newNick;
-        qDebug() << "Received self nick:" << _nick;
         emit selfNicknameChanged(newNick);
       }
     }

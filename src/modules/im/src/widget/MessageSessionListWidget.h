@@ -91,6 +91,7 @@ public:
 
   //av
   void setFriendAvInvite(const ToxPeer &peer, bool video);
+  void setFriendAvStart(const FriendId &friendId, bool video);
   void setFriendAvEnd(const FriendId &friendId, bool error);
 
 signals:

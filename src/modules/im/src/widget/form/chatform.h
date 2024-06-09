@@ -59,6 +59,9 @@ public:
   void showCallConfirm(const ToxPeer &peerId, bool video, const QString &displayedName);
   void closeCallConfirm(const FriendId &friendId);
 
+  void startCounter();
+  void stopCounter(bool error = false);
+
 signals:
   void incomingNotification(QString friendId);
   void outgoingNotification();
@@ -98,7 +101,6 @@ private slots:
   void callUpdateFriendActivity();
 
 
-
 protected:
   GenericNetCamView *createNetcam() final override;
 
@@ -111,8 +113,6 @@ private:
 
   void retranslateUi();
   void showOutgoingCall(bool video);
-  void startCounter();
-  void stopCounter(bool error = false);
 
 
   const FriendId *f;
@@ -124,7 +124,7 @@ private:
   QElapsedTimer timeElapsed;
   QAction *copyStatusAction;
   bool isTyping;
-  bool lastCallIsVideo;
+
 };
 
 #endif // CHATFORM_H

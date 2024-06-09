@@ -22,13 +22,12 @@
 namespace lib {
 namespace ortc {
 
-class OVideoSink : public rtc::VideoSinkInterface<webrtc::VideoFrame> {
+class VideoSink : public rtc::VideoSinkInterface<webrtc::VideoFrame> {
 public:
-  OVideoSink(OkRTCHandler *handler, std::string peerId);
+  VideoSink(OkRTCHandler *handler, std::string peerId = {});
 
-  virtual ~OVideoSink() override;
+  virtual ~VideoSink() override;
 
-  // VideoSinkInterface
   virtual void OnFrame(const webrtc::VideoFrame &frame) override;
 
 private:

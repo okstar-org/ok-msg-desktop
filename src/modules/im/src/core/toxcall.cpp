@@ -47,14 +47,13 @@ ToxCall::ToxCall(bool VideoEnabled, CoreAV &av, IAudioControl &audio)
     : av{&av},
       audio(audio),
       videoEnabled{VideoEnabled} {
-
-          audioSource = audio.makeSource();
+      audioSource = audio.makeSource();
 }
 
 ToxCall::~ToxCall() {
   if (videoEnabled) {
     QObject::disconnect(videoInConn);
-    CameraSource::getInstance().unsubscribe();
+//    CameraSource::getInstance().unsubscribe();
   }
 }
 

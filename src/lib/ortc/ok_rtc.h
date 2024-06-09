@@ -13,7 +13,7 @@
 #pragma once
 
 #include <string>
-
+#include <sstream>
 #include <client.h>
 #include <jinglesession.h>
 
@@ -38,6 +38,14 @@ struct IceServer {
   std::string uri;
   std::string username;
   std::string password;
+
+  std::string toString() const {
+    std::stringstream ss;
+    ss <<"{uri:" << uri << ","
+         "  username:"<< username<< ", "
+         "  password:"<< password <<"}";
+    return ss.str();;
+  }
 };
 
 typedef struct join_options {
@@ -84,13 +92,17 @@ public:
 
   virtual bool ensureStart() = 0;
 
-  virtual void addIceServer(const IceServer &ice) = 0;
+  virtual void setIceOptions(std::list<IceServer>& ices) = 0;
+
+
   virtual void addRTCHandler( OkRTCHandler* hand) = 0;
 
 
   virtual void CreateOffer(const std::string &peerId) = 0;
 
-  virtual void SetRemoteDescription(const std::string &peerId, const OJingleContentAv &jingleContext) = 0;
+  virtual void CreateAnswer(const std::string &peerId, const OJingleContentAv &pContent) = 0;
+
+  virtual void setRemoteDescription(const std::string &peerId, const OJingleContentAv &jingleContext) = 0;
 
   virtual void ContentAdd(std::map<std::string, gloox::Jingle::Session> sdMap, OkRTCHandler *handler) = 0;
 
@@ -115,7 +127,7 @@ public:
   // 获取视频设备数量
   virtual size_t getVideoSize() = 0;
 
-  virtual void CreateAnswer(const std::string &peerId, const std::string &sId, const OJingleContentAv &pContent) = 0;
+
 };
 
 } // namespace ortc

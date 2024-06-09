@@ -27,7 +27,8 @@
 namespace lib {
 namespace ortc {
 
-#define SESSION_VERSION "1"
+#define SESSION_VERSION "3"
+
 using namespace std;
 using namespace gloox;
 using namespace gloox::Jingle;
@@ -69,6 +70,7 @@ struct OSdp {
 enum class JingleSdpType {
   Offer,
   Answer,
+  Rollback,
 };
 
 // 呼叫类型
@@ -113,6 +115,16 @@ public:
     void toPlugins(PluginList& plugins) const override;
     void parse(const Jingle::Session::Jingle *jingle) override;
     std::vector<OSdp> contents;
+
+    inline bool isVideo() const {
+        for(auto s : contents){
+           if(s.rtp.media == Jingle::Media::video){
+               return true;
+           }
+        }
+        return false;
+    }
+
 };
 
 } // namespace ortc

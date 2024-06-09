@@ -36,6 +36,7 @@
 CoreAV::CoreAV()
     : audioCtrl{Nexus::getInstance().audio()},
       coreavThread{new QThread{this}},
+      selfVideoSource{ std::make_unique<CoreVideoSource>()},
       iterateTimer{new QTimer{this}} {
   assert(coreavThread);
   assert(iterateTimer);
@@ -115,6 +116,7 @@ CoreAV::~CoreAV() {
 
   coreavThread->exit(0);
   coreavThread->wait();
+
 }
 
 /**
@@ -164,10 +166,11 @@ bool CoreAV::answerCall(ToxPeer peerId, bool video) {
   qDebug() <<__func__ << "peer:" << peerId << "isVideo?" << video;
   QWriteLocker locker{&callsLock};
 
-  auto friendNum = peerId.toFriendId().toString();
 
-  qDebug() << QString("Answering call to %1").arg(friendNum);
-  auto it = calls.find(friendNum);
+  auto friendId = peerId.toFriendId(); //.toString();
+
+  qDebug() << QString("Answering call to %1").arg(friendId.toString());
+  auto it = calls.find(friendId.toString());
   assert(it != calls.end());
 
   QString callId = it->second->getCallId();
@@ -180,6 +183,8 @@ bool CoreAV::answerCall(ToxPeer peerId, bool video) {
   locker.unlock();
 
   if (answer) {
+    //
+      emit avStart(friendId, isCallVideoEnabled(&friendId));
     it->second->setActive(true);
     return true;
   } else {
@@ -208,7 +213,7 @@ bool CoreAV::answerCall(ToxPeer peerId, bool video) {
 }
 //
 bool CoreAV::startCall(QString friendNum, bool video) {
-  qDebug() << QString("Starting call with %1").arg(friendNum);
+  qDebug() << __func__ <<"=>" << friendNum <<"video?" <<video;
 
   QWriteLocker locker{&callsLock};
 
@@ -823,24 +828,39 @@ void CoreAV::onHangup(const QString &friendId, TOXAV_FRIEND_CALL_STATE state) {
   stateCallback(friendId, state);
 }
 
-void CoreAV::onFriendVideoFrame(const QString &friendId, uint16_t w, uint16_t h,
+void CoreAV::onFriendVideoFrame(const QString &friendId,
+                                uint16_t w, uint16_t h,
                                 const uint8_t *y, const uint8_t *u,
                                 const uint8_t *v, int32_t ystride,
                                 int32_t ustride, int32_t vstride) {
-  videoFrameCallback(imCall.get(), friendId, w, h, y, u, v, ystride, ustride,
-                     vstride, this);
+
+    // This callback should come from the CoreAV thread
+//     QReadLocker locker{&callsLock}; 为了提高性能暂时去掉
+
+    auto it = calls.find(friendId);
+    if (it == calls.end()) {
+      qWarning() <<"Unable to find call!" << friendId;
+      return;
+    }
+
+    auto frame = makeVpxFrame( w,  h, y,  u, v, ystride, ustride, vstride);
+    it->second->getVideoSource()->pushFrame(&frame);
 }
 
 void CoreAV::onSelfVideoFrame(uint16_t w, uint16_t h, const uint8_t *y,
                               const uint8_t *u, const uint8_t *v,
                               int32_t ystride, int32_t ustride,
                               int32_t vstride) {
-//  videoFramePush(selfVideoSource.get(), w, h, y, u, v, ystride, ustride,
-//                 vstride);
+
+    auto frame = makeVpxFrame( w,  h, y,  u, v, ystride, ustride, vstride);
+    selfVideoSource->pushFrame(&frame);
 }
 
 void CoreAV::stateCallback(QString friendNum, uint32_t state ) {
   qDebug() << "stateCallback friend:" << friendNum;
+
+  auto friendId = FriendId{friendNum};
+
   auto it =  calls.find(friendNum);
   if (it ==  calls.end()) {
     qWarning() << QString("stateCallback called, but call %1 is already dead")
@@ -856,18 +876,18 @@ void CoreAV::stateCallback(QString friendNum, uint32_t state ) {
     qWarning() << "Call with friend" << friendNum
                << "died of unnatural causes!";
     calls.erase(friendNum);
-    emit avEnd(FriendId{friendNum}, true);
+    emit avEnd(friendId, true);
   } else if (state & TOXAV_FRIEND_CALL_STATE_FINISHED) {
     qDebug() << "Call with friend" << friendNum << "finished quietly";
     calls.erase(friendNum);
-    emit avEnd(FriendId{friendNum});
+    emit avEnd(friendId);
   } else {
     // If our state was null, we started the call and were still ringing
     if (!call.getState() && state) {
       call.setActive(true);
       bool videoEnabled = call.getVideoEnabled();
       call.setState(static_cast<TOXAV_FRIEND_CALL_STATE>(state));
-      emit avStart(friendNum, videoEnabled);
+      emit avStart(FriendId{friendNum}, videoEnabled);
     } else if ((call.getState() & TOXAV_FRIEND_CALL_STATE_SENDING_V) &&
                !(state & TOXAV_FRIEND_CALL_STATE_SENDING_V)) {
       qDebug() << "IMFriend" << friendNum << "stopped sending video";
@@ -948,67 +968,27 @@ void CoreAV::audioFrameCallback(ToxAV *, QString friendNum, const int16_t *pcm,
   call.playAudioBuffer(pcm, sampleCount, channels, samplingRate);
 }
 
-/**
- * 接收视频帧
- * @param friendNum
- * @param w
- * @param h
- * @param y
- * @param u
- * @param v
- * @param ystride
- * @param ustride
- * @param vstride
- * @param vSelf
- */
-void CoreAV::videoFrameCallback(ToxAV *, QString friendNum, //
-                                uint16_t w, uint16_t h,     //
-                                const uint8_t *y,           //
-                                const uint8_t *u,           //
-                                const uint8_t *v,           //
-                                int32_t ystride,            //
-                                int32_t ustride,            //
-                                int32_t vstride,            //
-                                void *vSelf) {
-
-  auto self = static_cast<CoreAV *>(vSelf);
-  // This callback should come from the CoreAV thread
-  assert(QThread::currentThread() == self->coreavThread.get());
-  QReadLocker locker{&self->callsLock};
-
-  auto it = self->calls.find(friendNum);
-  if (it == self->calls.end()) {
-    return;
-  }
-
-  CoreVideoSource *videoSource = it->second->getVideoSource();
-  videoFramePush(videoSource, w, h, y, u, v, ystride, ustride, vstride);
+vpx_image CoreAV::makeVpxFrame(uint16_t w, uint16_t h, const uint8_t *y, const uint8_t *u, const uint8_t *v, int32_t ystride, int32_t ustride, int32_t vstride)
+{
+      vpx_image frame;
+      frame.d_h = h;
+      frame.d_w = w;
+      frame.planes[0] = const_cast<uint8_t *>(y);
+      frame.planes[1] = const_cast<uint8_t *>(u);
+      frame.planes[2] = const_cast<uint8_t *>(v);
+      frame.stride[0] = ystride;
+      frame.stride[1] = ustride;
+      frame.stride[2] = vstride;
+      return frame;
 }
 
 void CoreAV::videoFramePush(CoreVideoSource *videoSource, //
-                            uint16_t w,                   //
-                            uint16_t h,                   //
-                            const uint8_t *y,             //
-                            const uint8_t *u,             //
-                            const uint8_t *v,             //
-                            int32_t ystride,              //
-                            int32_t ustride,              //
-                            int32_t vstride               //
+                            const vpx_image &frame              //
 ) {
 
   if (!videoSource) {
     return;
   }
-
-  vpx_image frame;
-  frame.d_h = h;
-  frame.d_w = w;
-  frame.planes[0] = const_cast<uint8_t *>(y);
-  frame.planes[1] = const_cast<uint8_t *>(u);
-  frame.planes[2] = const_cast<uint8_t *>(v);
-  frame.stride[0] = ystride;
-  frame.stride[1] = ustride;
-  frame.stride[2] = vstride;
 
   videoSource->pushFrame(&frame);
 }

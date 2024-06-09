@@ -14,7 +14,7 @@ class Threads;
 
 class VideoCaptureInterfaceObject {
 public:
-  VideoCaptureInterfaceObject(std::string deviceId, bool isScreenCapture, std::shared_ptr<PlatformContext> platformContext, Threads &threads);
+  VideoCaptureInterfaceObject(rtc::Thread *signalingThread, rtc::Thread *workerThread, std::string deviceId, bool isScreenCapture, std::shared_ptr<PlatformContext> platformContext);
   ~VideoCaptureInterfaceObject();
 
   void switchToDevice(std::string deviceId, bool isScreenCapture);
@@ -52,7 +52,10 @@ private:
 
 class VideoCaptureInterfaceImpl : public VideoCaptureInterface {
 public:
-  VideoCaptureInterfaceImpl(std::string deviceId, bool isScreenCapture, std::shared_ptr<PlatformContext> platformContext, std::shared_ptr<Threads> threads);
+  VideoCaptureInterfaceImpl(rtc::Thread *signalingThread, rtc::Thread *workerThread,
+                            std::string deviceId,
+                            bool isScreenCapture,
+                            std::shared_ptr<PlatformContext> platformContext);
   virtual ~VideoCaptureInterfaceImpl();
 
   void switchToDevice(std::string deviceId, bool isScreenCapture) override;
@@ -64,10 +67,11 @@ public:
   void setOnPause(std::function<void(bool)> pause) override;
   void setOnIsActiveUpdated(std::function<void(bool)> onIsActiveUpdated) override;
   rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> source() override;
-  ThreadLocalObject<VideoCaptureInterfaceObject> *object();
+   VideoCaptureInterfaceObject  *object();
 
 private:
-  ThreadLocalObject<VideoCaptureInterfaceObject> _impl;
+//  ThreadLocalObject<VideoCaptureInterfaceObject> _impl;
+  VideoCaptureInterfaceObject *_impl;
 };
 
 } // namespace lib::ortc

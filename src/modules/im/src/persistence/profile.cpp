@@ -357,9 +357,8 @@ void Profile::onSaveToxSave() {
 void Profile::onAvatarOfferReceived(QString friendId, QString fileId,
                                     const QByteArray &avatarHash) {
   // accept if we don't have it already
-  const bool accept =
-      getAvatarHash(core->getFriendPublicKey(friendId)) != avatarHash;
-  core->getCoreFile()->handleAvatarOffer(friendId, fileId, accept);
+//  const bool accept = getAvatarHash(core->getFriendPublicKey(friendId)) != avatarHash;
+//  core->getCoreFile()->handleAvatarOffer(friendId, fileId, accept);
 }
 
 /**

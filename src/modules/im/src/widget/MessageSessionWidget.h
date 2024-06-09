@@ -78,6 +78,7 @@ class MessageSessionWidget : public GenericChatroomWidget
     void removeFriend();
 
     void setAvInvite(const ToxPeer &peerId, bool video);
+    void setAvStart(const FriendId& friendId, bool video);
     void setAvEnd(const FriendId& friendId, bool error);
 
 signals:

@@ -28,7 +28,6 @@ IMJingleSession::IMJingleSession(IM* im,
                                  const QString &sId_,
                                  lib::ortc::JingleCallType callType,
                                  Session *mSession,
-                                 std::list<ortc::IceServer> iceServers,
                                  std::vector<FileHandler *> *fileHandlers,
                                  ortc::OkRTCHandler *handler)
     : im{im},
@@ -40,13 +39,8 @@ IMJingleSession::IMJingleSession(IM* im,
 {
   qDebug() << __func__
            <<"type:" << (int)m_callType
-          <<"sid:" << sId
+           <<"sid:" << sId
            <<"to peer:"<<peerId.toString();
-
-//  if(m_callType == ortc::JingleCallType::audio || m_callType == ortc::JingleCallType::video){
-//    _rtcManager = std::make_unique<lib::ortc::OkRTCManager>(iceServers, handler, renderer); //
-//    _rtcManager->start(stdstring(peerId.toString()), stdstring(sId), m_callType);
-//  }
   qDebug()<< __func__ << "be created.";
 }
 
@@ -58,7 +52,6 @@ Session *IMJingleSession::getSession() const { return session; }
 
 void IMJingleSession::onAccept()
 {
-
     if (m_callType == lib::ortc::JingleCallType::file) {
       // file
       for (auto &file : m_waitSendFiles) {
@@ -74,7 +67,7 @@ void IMJingleSession::onAccept()
 
         // RTC 接受会话
         lib::ortc:: OkRTCManager::getInstance()->getRtc()
-               ->SetRemoteDescription(peerId, cav);
+               ->setRemoteDescription(peerId, cav);
 
 //        emit receiveFriendHangup(
 //            peerId.username, answer.hasVideo() ? TOXAV_FRIEND_CALL_STATE_SENDING_V
@@ -82,10 +75,12 @@ void IMJingleSession::onAccept()
     }
 }
 
+
 void IMJingleSession::onTerminate()
 {
     qDebug()<<__func__;
-    lib::ortc::OkRTCManager::destroyInstance();
+
+    lib::ortc::OkRTCManager::getInstance()->destroyRtc();
 }
 
 void IMJingleSession::doTerminate()
@@ -93,10 +88,9 @@ void IMJingleSession::doTerminate()
      qDebug()<< __func__;
 
     //发送结束协议
-    session->sessionTerminate(new Session::Reason(Session::Reason::Reasons::Cancel));
-
-    //销毁rtc
-    lib::ortc::OkRTCManager::destroyInstance();
+    session->sessionTerminate(
+                new Session::Reason(Session::Reason::Reasons::Success));
+    lib::ortc::OkRTCManager::getInstance()->destroyRtc();
 }
 
 void IMJingleSession::createOffer(const std::string &peerId)

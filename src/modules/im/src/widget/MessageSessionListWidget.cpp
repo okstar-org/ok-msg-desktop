@@ -601,6 +601,16 @@ void MessageSessionListWidget::setFriendAvInvite(const ToxPeer &peerId, bool vid
     w->setAvInvite(peerId, video);
 }
 
+void MessageSessionListWidget::setFriendAvStart(const FriendId& friendId, bool video)
+{
+    auto w = sessionWidgets.value(friendId.toString());
+    if(!w){
+        qWarning() << "The message session is no existing!";
+        return;
+    }
+    w->setAvStart(friendId, video);
+}
+
 void MessageSessionListWidget::setFriendAvEnd(const FriendId &friendId, bool error)
 {
     auto w = sessionWidgets.value(friendId.toString());

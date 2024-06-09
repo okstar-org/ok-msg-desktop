@@ -64,15 +64,21 @@ OkRTC *OkRTCManager::getRtc()
 {
     if(!rtc){
         rtc = std::make_unique<WebRTC>();
+        rtc->setIceOptions(_iceOptions);
     }
     return rtc.get();
 }
 
-//void OkRTCManager::start(const std::string &peerId,
-//                         const std::string &sId,
-//                         lib::ortc::JingleCallType callType){
-//  rtc->call(peerId, sId, callType);
-//}
+void OkRTCManager::destroyRtc()
+{
+    rtc.reset();
+}
+
+
+void OkRTCManager::addIceServer(const IceServer &ice)
+{
+  _iceOptions.push_back(ice);
+}
 
 void OkRTCManager::join(const std::string &peerId,
                         const std::string &sId,
@@ -80,17 +86,9 @@ void OkRTCManager::join(const std::string &peerId,
   rtc->join(peerId, sId, context);
 }
 
-//void OkRTCManager::quit(const std::string &peerId) {
-//  rtc->quit(peerId);
-//}
-
 void OkRTCManager::CreateOffer(const std::string &peerId) {
   rtc->CreateOffer(peerId);
 }
-
-//void OkRTCManager::CreateAnswer(const std::string &peerId, const lib::ortc::OJingleContent &pContent) {
-//  rtc->CreateAnswer(peerId, pContent);
-//}
 
 void OkRTCManager::ContentAdd(
     std::map<std::string, gloox::Jingle::Session> &sdMap,

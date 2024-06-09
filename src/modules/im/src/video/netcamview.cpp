@@ -11,7 +11,7 @@
  */
 
 #include "netcamview.h"
-#include "camerasource.h"
+#include "src/video/corevideosource.h"
 #include "src/core/core.h"
 #include "src/friendlist.h"
 #include "src/model/friend.h"
@@ -23,6 +23,7 @@
 #include <QBoxLayout>
 #include <QFrame>
 #include <QLabel>
+#include <src/core/coreav.h>
 
 NetCamView::NetCamView(FriendId friendPk, QWidget* parent)
     : GenericNetCamView(parent)
@@ -91,10 +92,12 @@ NetCamView::~NetCamView()
 void NetCamView::show(VideoSource* source,  const QString& title)
 {
     setSource(source);
-    auto camera = &CameraSource::getInstance();
-    selfVideoSurface->setSource(camera);
     setTitle(title);
     QWidget::show();
+
+    const auto av = CoreAV::getInstance();
+    selfVideoSurface->setSource(av->getSelfVideoSource());
+
 }
 
 void NetCamView::hide()

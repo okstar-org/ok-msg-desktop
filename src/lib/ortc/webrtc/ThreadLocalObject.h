@@ -4,6 +4,8 @@
 #include <cassert>
 #include <functional>
 #include <memory>
+#include <iostream>
+
 #include <ok-rtc/rtc_base/thread.h>
 #include <ok-rtc/rtc_base/location.h>
 
@@ -19,7 +21,9 @@ public:
 	_thread(thread),
 	_valueHolder(std::make_unique<ValueHolder>()) {
 		assert(_thread != nullptr);
-		_thread->PostTask([valueHolder = _valueHolder.get(), generator = std::forward<Generator>(generator)]() mutable {
+        _thread->PostTask([valueHolder = _valueHolder.get(),
+                          generator = std::forward<Generator>(generator)]()
+                          mutable {
 			valueHolder->_value.reset(generator());
 		});
 	}
@@ -39,6 +43,8 @@ public:
 	}
 
 	T *getSyncAssumingSameThread() {
+        assert(_thread);
+        std::cout << "thread:" << _thread->name() << std::endl;
 		assert(_thread->IsCurrent());
 		assert(_valueHolder->_value != nullptr);
 		return _valueHolder->_value.get();
