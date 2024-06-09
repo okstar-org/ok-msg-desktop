@@ -23,18 +23,8 @@ namespace lib::messenger {
 
 IMCall::IMCall( QObject *parent): QObject(parent)
 {
-    session = ok::session::AuthSession::Instance();
-
-    auto im = session->im();
-//    auto client = im->getClient();
-
     jingle = IMJingle::getInstance();
     connectJingle(jingle);
-
-      rtcManager  = lib::ortc::OkRTCManager::getInstance();
-      auto rtc    = rtcManager->getRtc();
-      qDebug()    << "RTC is:" << rtc;
-      qDebug()    << "Video size is:" << rtc->getVideoSize();
 }
 
 void IMCall::addCallHandler(CallHandler *hdr)
@@ -128,14 +118,9 @@ void IMCall::onCallAccepted(IMPeerId peerId, QString callId, bool video)
              << "peerId:" << peerId.toString()
              << "sId" << callId
              << "video?" << video;
-
-
-
     for (auto handler : callHandlers) {
         handler->receiveCallStateAccepted(peerId, callId, video);
     }
-
-
 }
 
 
@@ -156,9 +141,6 @@ bool IMCall::callToFriend(const QString &friendId, const QString &sId, bool vide
   jingle->proposeJingleMessage(friendId, sId, video);
   qDebug() << "Sent propose jingle message.";
   return true;
-
-
-//  return _jingle->startCall(f, sId, video);
 }
 
 bool IMCall::callToPeerId(const IMPeerId &to, const QString &sId, bool video) {

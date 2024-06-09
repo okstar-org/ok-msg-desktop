@@ -92,7 +92,7 @@ public slots:
 
 signals:
   void avInvite(ToxPeer peerId, bool video);
-  void avStart(QString friendId, bool video);
+  void avStart(FriendId friendId, bool video);
   void avEnd(FriendId friendId, bool error = false);
   void createCallToPeerId(lib::messenger::IMPeerId friendId, QString callId, bool video);
 
@@ -140,10 +140,10 @@ private:
                                  uint8_t channels, uint32_t samplingRate,
                                  void *self);
 
-  void videoFrameCallback(ToxAV *toxAV, QString friendId, uint16_t w,
-                          uint16_t h, const uint8_t *y, const uint8_t *u,
-                          const uint8_t *v, int32_t ystride, int32_t ustride,
-                          int32_t vstride, void *self);
+//  void videoFrameCallback(ToxAV *toxAV, QString friendId, uint16_t w,
+//                          uint16_t h, const uint8_t *y, const uint8_t *u,
+//                          const uint8_t *v, int32_t ystride, int32_t ustride,
+//                          int32_t vstride, void *self);
 
   void videoFramePush(CoreVideoSource *vs, uint16_t w, uint16_t h,
                           const uint8_t *y, const uint8_t *u, const uint8_t *v,

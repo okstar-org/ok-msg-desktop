@@ -29,12 +29,14 @@ std::unique_ptr<webrtc::VideoDecoderFactory> DesktopInterface::makeVideoDecoderF
 #endif
 }
 
-rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> DesktopInterface::makeVideoSource(rtc::Thread *signalingThread, rtc::Thread *workerThread) {
+rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> DesktopInterface::makeVideoSource(
+        rtc::Thread *signalingThread,
+        rtc::Thread *workerThread)
+{
 	const auto videoTrackSource = rtc::scoped_refptr<VideoCapturerTrackSource>(
 		new rtc::RefCountedObject<VideoCapturerTrackSource>());
-	return videoTrackSource
-		? webrtc::VideoTrackSourceProxy::Create(signalingThread, workerThread, videoTrackSource)
-		: nullptr;
+    return videoTrackSource ? webrtc::VideoTrackSourceProxy::Create(signalingThread, workerThread, videoTrackSource)
+        : nullptr;
 }
 
 bool DesktopInterface::supportsEncoding(const std::string &codecName) {

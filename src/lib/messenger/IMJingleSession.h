@@ -45,7 +45,6 @@ public:
                            const QString &sId,
                            lib::ortc::JingleCallType callType,
                            Session *mSession,
-                           std::list<ortc::IceServer> iceServers,
                            std::vector<FileHandler *>* fileHandlers,
                            ortc::OkRTCHandler *handler);
   virtual ~IMJingleSession();

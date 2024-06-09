@@ -181,7 +181,6 @@ private:
      IMJingle *jingle;
      ok::session::AuthSession *session;
      std::vector<CallHandler *> callHandlers;
-     lib::ortc::OkRTCManager *rtcManager;
 
 public slots:
      void onCallAccepted(IMPeerId peerId, QString callId, bool video);

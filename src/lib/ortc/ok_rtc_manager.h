@@ -31,6 +31,9 @@ public:
   ~OkRTCManager();
 
   OkRTC* getRtc();
+  void destroyRtc();
+
+  void addIceServer(const IceServer &ice);
 
   void join(const std::string &peerId,
             const std::string &sId,
@@ -62,6 +65,7 @@ public:
 private:
   OkRTCManager();
 
+  std::list<IceServer> _iceOptions;
   std::unique_ptr<OkRTC> rtc;
 
 };

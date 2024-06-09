@@ -182,7 +182,7 @@ void dispatchFileWithBool(ToxFile file, bool);
 void dispatchFileSendFailed(QString friendId, const QString &fileName);
 
 void onAvInvite(ToxPeer peerId, bool video);
-void onAvStart(QString friendId, bool video);
+void onAvStart(const FriendId & friendId, bool video);
 void onAvEnd(const FriendId & friendId, bool error);
 
 };

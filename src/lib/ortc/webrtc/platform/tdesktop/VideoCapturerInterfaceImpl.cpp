@@ -10,13 +10,10 @@ namespace lib::ortc {
 namespace {
 
 std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> GetSink(
-	const rtc::scoped_refptr<
-		webrtc::VideoTrackSourceInterface> &nativeSource) {
-	const auto proxy = static_cast<webrtc::VideoTrackSourceProxy*>(
-		nativeSource.get());
-	const auto internal = static_cast<VideoCapturerTrackSource*>(
-		proxy->internal());
-	return internal->sink();
+	const rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> &nativeSource) {
+    const auto proxy = static_cast<webrtc::VideoTrackSourceProxy*>(nativeSource.get());
+    const auto internal = static_cast<VideoCapturerTrackSource*>(proxy->internal());
+    return internal->sink();
 }
 
 } // namespace

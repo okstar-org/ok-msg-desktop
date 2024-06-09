@@ -10,7 +10,7 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#include "ok_videosink.h"
+#include "ok_video_sink.h"
 
 #include <api/video/i420_buffer.h>
 #include <rtc_base/logging.h>
@@ -20,21 +20,17 @@
 namespace lib {
 namespace ortc {
 
-OVideoSink::OVideoSink(OkRTCHandler *handler, std::string peerId)
-    : handler(handler), _peer_id(std::move(peerId)) {
-  assert(!handler);
-  assert(!peerId.empty());
+VideoSink::VideoSink(OkRTCHandler *handler, std::string peerId)
+    : handler(handler),
+      _peer_id(std::move(peerId)) {
+    RTC_DCHECK(handler);
 }
 
-OVideoSink::~OVideoSink() {  }
+VideoSink::~VideoSink() {
 
-void OVideoSink::OnFrame(const webrtc::VideoFrame &frame) {
+}
 
-  if (!handler) {
-    RTC_LOG(LS_WARNING) << "handler is null!";
-    return;
-  }
-
+void VideoSink::OnFrame(const webrtc::VideoFrame &frame) {
   bool conv = false;
   ortc::RendererImage _image{};
   auto vfb = frame.video_frame_buffer();

@@ -278,7 +278,7 @@ GenericChatForm::GenericChatForm(const ContactId *contact_,
                                  QWidget *parent)
     : QWidget(parent, Qt::Window), contactId(contact_), contact(nullptr),
       audioInputFlag(false),
-      audioOutputFlag(false), isEncrypt(false), iChatLog(iChatLog_),
+      audioOutputFlag(false), isEncrypt(false), lastCallIsVideo{false} , iChatLog(iChatLog_),
       messageDispatcher(messageDispatcher) {
   curRow = 0;
   headWidget = new ChatFormHeader();
@@ -1205,6 +1205,7 @@ void GenericChatForm::hideNetcam() {
   ContentDialog *current = ContentDialogManager::getInstance()->current();
   if (current)
     current->onVideoHide();
+
 
   netcam->close();
   netcam->hide();

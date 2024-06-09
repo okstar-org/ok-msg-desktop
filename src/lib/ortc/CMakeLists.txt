@@ -59,16 +59,12 @@ set(${PROJECT_NAME}_SOURCES
 		webrtc/VideoCaptureInterfaceImpl.cpp
 		webrtc/StaticThreads.h
 		webrtc/StaticThreads.cpp
-		webrtc/ok_videosink.h
-		webrtc/ok_videosink.cpp
+		webrtc/ok_video_sink.h
+		webrtc/ok_video_sink.cpp
 		webrtc/webrtc.h
 		webrtc/webrtc.cpp
 		webrtc/ok_conductor.h
 		webrtc/ok_conductor.cpp
-		webrtc/test_video_capturer.h
-		webrtc/test_video_capturer.cc
-		webrtc/vcm_capturer.h
-		webrtc/vcm_capturer.cc
 		webrtc/LogSinkImpl.h
 		webrtc/LogSinkImpl.cpp
 		ok_rtc_manager.h

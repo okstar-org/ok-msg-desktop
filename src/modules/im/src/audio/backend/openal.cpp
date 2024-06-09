@@ -53,7 +53,8 @@ OpenAL::OpenAL() : audioThread{new QThread} {
   alGetError();
   alcGetError(nullptr);
 
-  audioThread->setObjectName("qTox Audio");
+  audioThread->setObjectName("ok-audio");
+
   QObject::connect(audioThread, &QThread::finished, &voiceTimer, &QTimer::stop);
   QObject::connect(audioThread, &QThread::finished, &captureTimer,
                    &QTimer::stop);

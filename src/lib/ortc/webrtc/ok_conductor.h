@@ -32,7 +32,7 @@
 
 #include "../ok_rtc.h"
 
-#include "ok_videosink.h"
+#include "ok_video_sink.h"
 #include "webrtc.h"
 //#include "vcm_capturer.h"
 
@@ -92,12 +92,11 @@ public:
     return rtc::RefCountReleaseStatus::kDroppedLastRef;
   };
 
-  void
-  OnSessionAccept(std::unique_ptr<webrtc::SessionDescriptionInterface> desc);
+  void OnSessionAccept(std::unique_ptr<webrtc::SessionDescriptionInterface> desc);
 
-  bool AddTrack(webrtc::AudioSourceInterface* _audioSource);
+  bool AddAudioTrack(webrtc::AudioSourceInterface* _audioSource);
 
-  bool AddTrack(webrtc::VideoTrackSourceInterface* _videoTrackSource);
+  bool AddVideoTrack(webrtc::VideoTrackSourceInterface* _videoTrackSource);
 
   rtc::scoped_refptr<webrtc::PeerConnectionInterface> CreatePeerConnection();
 
@@ -171,9 +170,9 @@ private:
   rtc::scoped_refptr<webrtc::PeerConnectionInterface> peer_connection_;
 
   std::list<webrtc::IceCandidateInterface *> _candidates;
-  std::unique_ptr<OVideoSink> _videoSink;
+  std::unique_ptr<VideoSink> _videoSink;
 
-//  std::map<std::string, std::shared_ptr<OVideoSink>> _VideoSinkMap;
+//  std::map<std::string, std::shared_ptr<VideoSink>> _VideoSinkMap;
 
   rtc::scoped_refptr<webrtc::AudioTrackInterface> _audioTrack;
   rtc::scoped_refptr<webrtc::VideoTrackInterface> _videoTrack;

@@ -113,7 +113,7 @@ bool dbSchema0to1(RawDatabase& db)
 */
 bool dbSchemaUpgrade(std::shared_ptr<RawDatabase>& db)
 {
-    qDebug() << __func__;
+//    qDebug() << __func__;
 
     int64_t databaseSchemaVersion;
     if (!db->execNow(RawDatabase::Query("PRAGMA user_version", [&](const QVector<QVariant>& row) {
@@ -538,7 +538,7 @@ size_t History::getNumMessagesForFriendBeforeDate(const FriendId& me, const Frie
     } else {
         queryText += QString(" AND timestamp < %1;").arg(date.toMSecsSinceEpoch());
     }
-    qDebug() << queryText;
+//    qDebug() << queryText;
     size_t numMessages = 0;
     auto rowCallback = [&numMessages](const QVector<QVariant>& row) {
         numMessages = row[0].toLongLong();
@@ -607,7 +607,7 @@ QList<History::HistMessage> History::getMessagesForFriend(const FriendId& me,
             .arg(lastIdx - firstIdx)
             .arg(firstIdx);
 
-    qDebug()<<queryText;
+//    qDebug()<<queryText;
 
     QList<HistMessage> messages;
     db->execNow({queryText, [&](const QVector<QVariant>& row) {
@@ -633,7 +633,7 @@ QList<History::HistMessage> History::getMessagesForFriend(const FriendId& me,
                       .arg(sqlPrefix)
                       .arg(size)
                       .arg((int)type);
-        qDebug() <<"sql:"<<sql;
+//        qDebug() <<"sql:"<<sql;
        QList<HistMessage> messages;
        auto rowCallback = [&](const QVector<QVariant>& row) {
            messages += rowToMessage(row);

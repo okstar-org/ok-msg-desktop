@@ -523,26 +523,47 @@ void MessageSessionWidget::setAvInvite(const ToxPeer &peerId, bool video)
     w->incomingNotification(friendId);
 }
 
+void MessageSessionWidget::setAvStart(const FriendId &friendId, bool video)
+{
+    qDebug() << __func__ << friendId.toString();
+    //显示呼叫请求框
+    auto chatForm = (ChatForm*) sendWorker->getChatForm();
+    if (video) {
+        chatForm->showNetcam();
+    } else {
+        chatForm->hideNetcam();
+    }
+    chatForm->startCounter();
+
+    auto w = Widget::getInstance();
+    w->onStopNotification();
+}
+
 void MessageSessionWidget::setAvEnd(const FriendId &friendId, bool error)
 {
     qDebug() << __func__ << friendId.toString();
 
-    //显示呼叫请求框
     auto chatForm = (ChatForm*) sendWorker->getChatForm();
+    //关闭呼叫请求框
     chatForm->closeCallConfirm(friendId);
+
+    chatForm->stopNotification();
+    //关计时器
+    chatForm->stopCounter(error);
+    //关闭视频显示
+    chatForm->hideNetcam();
+
 
     auto f = FriendList::findFriend(friendId);
     if(f){
         chatForm->getHead()->updateCallButtons(
                     f->getStatus()==Status::Status::Online,
-                    false, false);
+                    false,
+                    false);
     }
 
-    // 发送通知声音
     auto w = Widget::getInstance();
     w->onStopNotification();
-
-
 }
 
 void MessageSessionWidget::doAcceptCall(const ToxPeer &p, bool video)
@@ -556,6 +577,7 @@ void MessageSessionWidget::doAcceptCall(const ToxPeer &p, bool video)
     //发送接收应答
     CoreAV *coreav = CoreAV::getInstance();
     coreav->answerCall(p, video);
+
 }
 
 void MessageSessionWidget::doRejectCall(const ToxPeer &p)

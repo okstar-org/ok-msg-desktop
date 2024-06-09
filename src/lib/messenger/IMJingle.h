@@ -80,6 +80,7 @@ public:
   bool answer(const IMPeerId &to, const QString &callId, bool video);
 
   void cancel(const QString &friendId);
+  //取消呼叫
   void cancelCall(const IMContactId &friendId, const QString &sId);
   void rejectCall(const IMPeerId &friendId, const QString &sId);
 
@@ -204,6 +205,8 @@ private:
   // sid -> session
   QMap<QString, IMJingleSession *> m_sessionMap;
 
+  //sid -> isVideo,在jingle-message阶段暂时保留呼叫的类型是视频（音频无需保存）。
+  QMap<QString, bool> m_sidVideo;
 
   std::unique_ptr<Jingle::SessionManager> _sessionManager;
 

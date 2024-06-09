@@ -4,6 +4,7 @@
 #include <api/media_stream_interface.h>
 #include <functional>
 #include <memory>
+#include <rtc_base/thread.h>
 #include <string>
 
 namespace rtc {
@@ -33,18 +34,20 @@ protected:
 
 public:
 	static std::unique_ptr<VideoCaptureInterface> Create(
-                std::shared_ptr<Threads> threads,
+                rtc::Thread *signalingThread, rtc::Thread *workerThread,
                 std::string deviceId = std::string(),
                 bool isScreenCapture = false,
 		std::shared_ptr<PlatformContext> platformContext = nullptr);
 
 	virtual ~VideoCaptureInterface();
 
-	virtual void switchToDevice(std::string deviceId, bool isScreenCapture) = 0;
+    virtual rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> source() = 0;
+
+    virtual void switchToDevice(std::string deviceId, bool isScreenCapture) = 0;
 	virtual void setState(VideoState state) = 0;
     virtual void setPreferredAspectRatio(float aspectRatio) = 0;
-    virtual rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> source() = 0;
 	virtual void setOutput(std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> sink) = 0;
+
     virtual void setOnFatalError(std::function<void()> error) {
       // TODO: make this function pure virtual when everybody implements it.
     }

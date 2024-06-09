@@ -6,10 +6,10 @@
 
 namespace lib::ortc {
 
-VideoCaptureInterfaceObject::VideoCaptureInterfaceObject(std::string deviceId, bool isScreenCapture, std::shared_ptr<PlatformContext> platformContext, Threads &threads)
-: _videoSource(PlatformInterface::SharedInstance()->makeVideoSource(threads.getMediaThread(), threads.getWorkerThread())) {
+VideoCaptureInterfaceObject::VideoCaptureInterfaceObject(rtc::Thread *signalingThread, rtc::Thread *workerThread, std::string deviceId, bool isScreenCapture, std::shared_ptr<PlatformContext> platformContext)
+: _videoSource(PlatformInterface::SharedInstance()->makeVideoSource(signalingThread, workerThread))
+{
 	_platformContext = platformContext;
-
 	switchToDevice(deviceId, isScreenCapture);
 }
 
@@ -164,66 +164,74 @@ void VideoCaptureInterfaceObject::setRotationUpdated(std::function<void(int)> ro
     _rotationUpdated = rotationUpdated;
 }
 
-VideoCaptureInterfaceImpl::VideoCaptureInterfaceImpl(std::string deviceId, bool isScreenCapture, std::shared_ptr<PlatformContext> platformContext, std::shared_ptr<Threads> threads) :
-_impl(threads->getMediaThread(), [deviceId, isScreenCapture, platformContext, threads]() {
-	return new VideoCaptureInterfaceObject(deviceId, isScreenCapture, platformContext, *threads);
-}) {
+VideoCaptureInterfaceImpl::VideoCaptureInterfaceImpl(rtc::Thread *signalingThread,
+                                                     rtc::Thread *workerThread,
+                                                     std::string deviceId,
+                                                     bool isScreenCapture,
+                                                     std::shared_ptr<PlatformContext> platformContext ) :
+_impl( //threads->getMediaThread(), [deviceId, isScreenCapture, platformContext, threads]() {
+//	return
+       new VideoCaptureInterfaceObject(signalingThread, workerThread, deviceId, isScreenCapture, platformContext)
+//}
+)
+{
+
 }
 
 VideoCaptureInterfaceImpl::~VideoCaptureInterfaceImpl() = default;
 
 void VideoCaptureInterfaceImpl::switchToDevice(std::string deviceId, bool isScreenCapture) {
-	_impl.perform(RTC_FROM_HERE, [deviceId, isScreenCapture](VideoCaptureInterfaceObject *impl) {
-		impl->switchToDevice(deviceId, isScreenCapture);
-	});
+//	_impl.perform(RTC_FROM_HERE, [deviceId, isScreenCapture](VideoCaptureInterfaceObject *impl) {
+        _impl->switchToDevice(deviceId, isScreenCapture);
+//	});
 }
 
 void VideoCaptureInterfaceImpl::withNativeImplementation(std::function<void(void *)> completion) {
-    _impl.perform(RTC_FROM_HERE, [completion](VideoCaptureInterfaceObject *impl) {
-        impl->withNativeImplementation(completion);
-    });
+//    _impl.perform(RTC_FROM_HERE, [completion](VideoCaptureInterfaceObject *impl) {
+        _impl->withNativeImplementation(completion);
+//    });
 }
 
 void VideoCaptureInterfaceImpl::setState(VideoState state) {
-	_impl.perform(RTC_FROM_HERE, [state](VideoCaptureInterfaceObject *impl) {
-		impl->setState(state);
-	});
+//	_impl.perform(RTC_FROM_HERE, [state](VideoCaptureInterfaceObject *impl) {
+        _impl->setState(state);
+//	});
 }
 
 void VideoCaptureInterfaceImpl::setPreferredAspectRatio(float aspectRatio) {
-    _impl.perform(RTC_FROM_HERE, [aspectRatio](VideoCaptureInterfaceObject *impl) {
-        impl->setPreferredAspectRatio(aspectRatio);
-    });
+//    _impl.perform(RTC_FROM_HERE, [aspectRatio](VideoCaptureInterfaceObject *impl) {
+        _impl->setPreferredAspectRatio(aspectRatio);
+//    });
 }
 void VideoCaptureInterfaceImpl::setOnFatalError(std::function<void()> error) {
-    _impl.perform(RTC_FROM_HERE, [error](VideoCaptureInterfaceObject *impl) {
-        impl->setOnFatalError(error);
-    });
+//    _impl.perform(RTC_FROM_HERE, [error](VideoCaptureInterfaceObject *impl) {
+        _impl->setOnFatalError(error);
+//    });
 }
 void VideoCaptureInterfaceImpl::setOnPause(std::function<void(bool)> pause) {
-    _impl.perform(RTC_FROM_HERE, [pause](VideoCaptureInterfaceObject *impl) {
-        impl->setOnPause(pause);
-    });
+//    _impl.perform(RTC_FROM_HERE, [pause](VideoCaptureInterfaceObject *impl) {
+        _impl->setOnPause(pause);
+//    });
 }
 
 void VideoCaptureInterfaceImpl::setOnIsActiveUpdated(std::function<void(bool)> onIsActiveUpdated) {
-    _impl.perform(RTC_FROM_HERE, [onIsActiveUpdated](VideoCaptureInterfaceObject *impl) {
-        impl->setOnIsActiveUpdated(onIsActiveUpdated);
-    });
+//    _impl.perform(RTC_FROM_HERE, [onIsActiveUpdated](VideoCaptureInterfaceObject *impl) {
+        _impl->setOnIsActiveUpdated(onIsActiveUpdated);
+//    });
 }
 
 void VideoCaptureInterfaceImpl::setOutput(std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> sink) {
-	_impl.perform(RTC_FROM_HERE, [sink](VideoCaptureInterfaceObject *impl) {
-		impl->setOutput(sink);
-	});
+//	_impl.perform(RTC_FROM_HERE, [sink](VideoCaptureInterfaceObject *impl) {
+        _impl->setOutput(sink);
+//	});
 }
 
-ThreadLocalObject<VideoCaptureInterfaceObject> *VideoCaptureInterfaceImpl::object() {
-	return &_impl;
+ VideoCaptureInterfaceObject  *VideoCaptureInterfaceImpl::object() {
+    return _impl;
 }
 
 rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> VideoCaptureInterfaceImpl::source() {
-  return _impl.getSyncAssumingSameThread()->source();
+  return _impl->source();
 }
 
 } // namespace lib::ortc
