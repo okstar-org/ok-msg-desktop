@@ -57,44 +57,39 @@ Conductor::Conductor(
 }
 
 Conductor::~Conductor() {
-  RTC_LOG(LS_INFO) <<"...";
-
-//  if (_audioRtpSender.get()) {
-      //TODO 特定情况，无法移除
-//    peer_connection_->RemoveTrackOrError(_audioRtpSender);
-//  }
-
-//  if (_videoRtpSender.get()) {
-//    peer_connection_->RemoveTrackOrError(_videoRtpSender);
-//  }
-
+  RTC_LOG(LS_INFO) << __FUNCTION__ << "...";
   DestroyPeerConnection();
-  RTC_LOG(LS_INFO) <<"Destroyed";
+  RTC_LOG(LS_INFO) << __FUNCTION__ << "Destroyed";
 }
 
-rtc::scoped_refptr<webrtc::PeerConnectionInterface> Conductor::CreatePeerConnection() {
-  RTC_LOG(LS_INFO) << "Create peer connection ...";
+void Conductor::CreatePeerConnection() {
+  RTC_LOG(LS_INFO) << __FUNCTION__<< "...";
 
   webrtc::PeerConnectionDependencies pc_dependencies(this);
 
   auto maybe = webRtc->getFactory()->CreatePeerConnectionOrError(webRtc->getConfig(),
                                                                  std::move(pc_dependencies));
-  RTC_LOG(LS_INFO) << "=>" << maybe.ok();
+  if(webRtc->getHandler()){
+     webRtc->getHandler()->onCreatePeerConnection(sId, peerId, maybe.ok());
+  }
 
-  auto hdr = webRtc->getHandler();
-  if(hdr){
-     hdr->onCreatePeerConnection(sId, peerId, maybe.ok());
+  if(!maybe.ok()){
+      return;
   }
-  if(maybe.ok()){
-      peer_connection_ = std::move(maybe.value());
-  }
-  return peer_connection_;
+
+  peer_connection_ = maybe.value();
+  RTC_LOG(LS_INFO) << __FUNCTION__<<"done.";
+
+
 }
 
 void Conductor::DestroyPeerConnection() {
-   RTC_LOG(LS_INFO) << "Destroy peer connection ...";
+   RTC_LOG(LS_INFO) << __FUNCTION__ << "...";
+   RemoveAudioTrack();
+   RemoveVideoTrack();
    peer_connection_->Close();
    peer_connection_.release();
+   RTC_LOG(LS_INFO) << __FUNCTION__ <<" done.";
 }
 
 size_t Conductor::getVideoCaptureSize() {
@@ -108,11 +103,14 @@ size_t Conductor::getVideoCaptureSize() {
 }
 
 void Conductor::setMute(bool mute) {
-  // if (_audio_track)
-  _audioTrack->set_enabled(!mute);
+  RTC_LOG(LS_INFO) << __FUNCTION__;
+    if(_audioTrack){
+        _audioTrack->set_enabled(!mute);
+    }
 }
 
 void Conductor::setRemoteMute(bool mute) {
+    RTC_LOG(LS_INFO) << __FUNCTION__ ;
   if (_remote_audio_track) {
     _remote_audio_track->set_enabled(!mute);
   }
@@ -136,6 +134,13 @@ bool Conductor::AddAudioTrack(webrtc::AudioSourceInterface *_audioSource) {
    RTC_LOG(LS_INFO)<< "Audio rtp sender:"<< _audioRtpSender.get();
    return true;
 }
+
+bool Conductor::RemoveAudioTrack(){
+   RTC_LOG(LS_INFO) << __FUNCTION__;
+   auto result = peer_connection_->RemoveTrackOrError(_audioRtpSender);
+   return result.ok();
+}
+
 
 bool Conductor::AddVideoTrack(webrtc::VideoTrackSourceInterface *_videoTrackSource) {
   RTC_LOG(LS_INFO) << __FUNCTION__ << ":" << _videoTrackSource;
@@ -164,6 +169,13 @@ bool Conductor::AddVideoTrack(webrtc::VideoTrackSourceInterface *_videoTrackSour
 
 }
 
+bool Conductor::RemoveVideoTrack()
+{
+    RTC_LOG(LS_INFO) << __FUNCTION__;
+    auto result = peer_connection_->RemoveTrackOrError(_videoRtpSender);
+    return result.ok();
+}
+
 void Conductor::OnDataChannel(rtc::scoped_refptr<webrtc::DataChannelInterface> channel) {
     RTC_LOG(LS_INFO) << __FUNCTION__ << "OnDataChannel channel id:" << channel->id();
 }
@@ -182,14 +194,9 @@ void Conductor::OnIceConnectionChange(
     RTC_LOG(LS_INFO) << __FUNCTION__ << "=>" << webrtc::PeerConnectionInterface::AsString(state).data();
 }
 
-/**
- * ICE 采集状态
- * @param state
- */
 void Conductor::OnIceGatheringChange(webrtc::PeerConnectionInterface::IceGatheringState state) {
    RTC_LOG(LS_INFO) << __FUNCTION__ << webrtc::PeerConnectionInterface::AsString(state).data();
 }
-
 
 void Conductor::OnIceCandidate(const webrtc::IceCandidateInterface *ice) {
 
@@ -283,9 +290,6 @@ void Conductor::OnSignalingChange(webrtc::PeerConnectionInterface::SignalingStat
 }
 
 
-//
-//
-//
 void Conductor::OnAddTrack(
     rtc::scoped_refptr<webrtc::RtpReceiverInterface> receiver,
     const std::vector<rtc::scoped_refptr<webrtc::MediaStreamInterface>>
@@ -347,10 +351,9 @@ void Conductor::CreateOffer() {
  * @param desc
  */
 void Conductor::CreateAnswer() {
-  RTC_LOG(LS_INFO) << "...";
+  RTC_LOG(LS_INFO) << __FUNCTION__ << "...";
   peer_connection_->CreateAnswer(this, webrtc::PeerConnectionInterface::RTCOfferAnswerOptions());
-  updateCandidates();
-  RTC_LOG(LS_INFO) << "done.";
+  RTC_LOG(LS_INFO) << __FUNCTION__ << "done.";
 }
 
 void Conductor::SetRemoteDescription(std::unique_ptr<webrtc::SessionDescriptionInterface> desc) {
@@ -372,11 +375,10 @@ void Conductor::setTransportInfo(
   RTC_LOG(LS_INFO) << __FUNCTION__ << " mid:" << candidate->sdp_mid() << " "<< str;
 
   auto c = candidate.release();
-  peer_connection_->AddIceCandidate(c);
+  auto added = peer_connection_->AddIceCandidate(c);
 
-  //  if (!yes) {
-//    _candidates.push_back(c);
-//  }
+  RTC_LOG(LS_INFO) << __FUNCTION__ << " => " <<added;
+
 }
 
 void Conductor::sessionTerminate() { peer_connection_->Close(); }
@@ -698,43 +700,17 @@ void Conductor::OnFailure(webrtc::RTCError error) {
 }
 
 void Conductor::OnSetRemoteDescriptionComplete(webrtc::RTCError error) {
-  RTC_LOG(LS_INFO) << __FUNCTION__ << error.message();
+  RTC_LOG(LS_INFO) << __FUNCTION__ <<" : " << error.message();
 }
 
 void Conductor::OnConnectionChange(webrtc::PeerConnectionInterface::PeerConnectionState new_state) {
-  RTC_LOG(LS_INFO) << __FUNCTION__ << webrtc::PeerConnectionInterface::AsString(new_state).data();
+  RTC_LOG(LS_INFO) << __FUNCTION__ <<" : " << webrtc::PeerConnectionInterface::AsString(new_state).data();
 }
 
 void Conductor::OnSessionAccept(
     std::unique_ptr<webrtc::SessionDescriptionInterface> desc) {
   // qDebug(("type:%1").arg(qstring(desc->type())));
   SetRemoteDescription(std::move(desc));
-  updateCandidates();
-}
-
-void Conductor::updateCandidates() {
-  // qDebug(("updateCandidates"));
-  auto it = _candidates.begin();
-  for (; it != _candidates.end();) {
-    auto candidate = *it;
-
-    std::string str;
-    candidate->ToString(&str);
-
-    // 规范：https://datatracker.ietf.org/doc/html/rfc5245#section-15.1
-//    candidate:1 2 UDP 2113937151 192.168.1.100 50000 typ host generation 0 ufrag Xg5q network-id 1
-//      1: 可能是component ID，用于标识RTP/RTCP的不同组件。
-//      2: 传输协议（UDP）。
-//      2113937151: 优先级。
-//    192.168.1.100: 基础IP地址。
-//    50000: 端口号。
-//    typ host: candidate类型（host）。
-//    其余字段为其他属性。
-    // 格式：candidate:1022514418 1 udp 2122197247 192.168.8.2 44868 typ host generation 0
-    bool add = peer_connection_->AddIceCandidate(candidate);
-    // qDebug(("AddIceCandidate=>%1").arg(add));
-    it = _candidates.erase(it);
-  }
 }
 
 } // namespace ortc

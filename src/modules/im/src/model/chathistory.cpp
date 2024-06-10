@@ -133,13 +133,8 @@ QList<Message> ChatHistory::getLastTextMessage(uint size)
 
     QList<Message> list;
     auto selfPk = coreIdHandler.getSelfPublicKey();
-
-    qDebug()<<__func__ <<"friend:"<<f.toString();
     auto messages = history->getLastMessageForFriend(selfPk, FriendId{f}, size, HistMessageContentType::message);
-    qDebug()<<__func__ <<"messages:"<<messages.size();
-
     for(auto& i: messages){
-
             Message msg={.isAction=false,
                          .id = QString::number(i.id.get()),
                          .from = i.sender,
@@ -148,7 +143,6 @@ QList<Message> ChatHistory::getLastTextMessage(uint size)
                          .timestamp = i.timestamp
                         };
             list.append(msg);
-
     }
 
     return list;

@@ -116,13 +116,11 @@ public:
 
   virtual void setRemoteMute(bool mute) = 0;
 
-  virtual bool join(const std::string &peerId, const std::string &sId, const OJingleContentAv &context) = 0;
 
   virtual bool call(const std::string &peerId, const std::string &sId, bool video) = 0;
 
   virtual bool quit(const std::string &peerId) = 0;
 
-  virtual void createPeerConnection() = 0;
 
   // 获取视频设备数量
   virtual size_t getVideoSize() = 0;

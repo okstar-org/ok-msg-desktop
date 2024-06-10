@@ -35,19 +35,12 @@ public:
 
   void addIceServer(const IceServer &ice);
 
-  void join(const std::string &peerId,
-            const std::string &sId,
-            const OJingleContentAv &context);
-
   size_t getVideoSize();
 
   void CreateOffer(const std::string &peerId);
 
   void CreateOffer(const std::string &peerId,
                    const lib::ortc::OJingleContent &pContent);
-
-//  void CreateAnswer(const std::string &peerId,
-//                    const lib::ortc::OJingleContent &pContent);
 
   void ContentAdd(std::map<std::string, gloox::Jingle::Session> &sdMap,
                   ortc::OkRTCHandler *handler);
@@ -59,7 +52,6 @@ public:
 
   void setMute(bool mute);
   void setRemoteMute(bool mute);
-
 
 
 private:

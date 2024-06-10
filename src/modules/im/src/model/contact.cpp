@@ -99,10 +99,6 @@ const QPixmap &Contact::getAvatar() const
 
 void Contact::setName(const QString &_name) {
 
-  if (_name.isEmpty()) {
-    return;
-  }
-
   if (_name == name) {
     return;
   }

@@ -513,10 +513,10 @@ void FriendListWidget::setGroupInfo(const GroupId &groupId, const GroupInfo &inf
         return;
     }
 
-    g->setPeerCount(info.occupants);
+    g->setName(info.name);
     g->setDesc(info.description);
     g->setSubject("", info.subject);
-    g->setName(info.name);
+    g->setPeerCount(info.occupants);
 
 }
 

@@ -362,6 +362,7 @@ void Profile::onAvatarOfferReceived(QString friendId, QString fileId,
 }
 
 /**
+ *
  * @brief Write the .tox save, encrypted if needed.
  * @param data Byte array of profile save.
  * @return true if successfully saved, false otherwise

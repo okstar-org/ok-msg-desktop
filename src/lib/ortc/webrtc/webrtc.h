@@ -78,7 +78,6 @@ public:
 
   void setRemoteMute(bool mute) override;
 
-  void createPeerConnection() override;
 
   size_t getVideoSize() override;
 
@@ -86,10 +85,6 @@ public:
       std::optional<std::string> deviceId = std::nullopt,
       bool isScreenCapture = false)
       -> std::shared_ptr<VideoCaptureInterface>;
-
-  bool join(const std::string &peerId,
-            const std::string &sId,
-            const OJingleContentAv & context) override;
 
   bool call(const std::string &peerId,
             const std::string &sId,

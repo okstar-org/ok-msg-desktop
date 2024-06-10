@@ -535,6 +535,11 @@ void MessageSessionWidget::setAvStart(const FriendId &friendId, bool video)
     }
     chatForm->startCounter();
 
+    auto frd = FriendList::findFriend(friendId);
+    if(frd){
+        chatForm->updateCallButtons(frd->getStatus());
+    }
+
     auto w = Widget::getInstance();
     w->onStopNotification();
 }
@@ -552,7 +557,7 @@ void MessageSessionWidget::setAvEnd(const FriendId &friendId, bool error)
     chatForm->stopCounter(error);
     //关闭视频显示
     chatForm->hideNetcam();
-
+    chatForm->updateCallButtons();
 
     auto f = FriendList::findFriend(friendId);
     if(f){

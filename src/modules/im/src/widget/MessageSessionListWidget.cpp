@@ -123,10 +123,9 @@ MessageSessionWidget *MessageSessionListWidget::createMessageSession(
         const ContactId &friendPk, const QString &sid, ChatType type) {
   qDebug() << __func__ << "friend:" << friendPk.toString();
 
-  auto core = Core::getInstance();
-  auto profile = Nexus::getProfile();
-
-  auto &settings = Settings::getInstance();
+//  auto core = Core::getInstance();
+//  auto profile = Nexus::getProfile();
+//  auto &settings = Settings::getInstance();
   auto sw = getMessageSession(friendPk.toString());
   if(sw){
       qWarning() <<"Message session is existing.";

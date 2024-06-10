@@ -67,8 +67,9 @@ public slots:
       return;
     }
     auto ele = document.documentElement();
-    bool y = manager->incomingXml(account, ele);
-    qDebug() << "incomingXml=>" << y;
+    manager->incomingXml(account, ele);
+//    bool y =
+//    qDebug() << "incomingXml=>" << y;
   };
 };
 

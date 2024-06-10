@@ -84,7 +84,7 @@ public:
     QDateTime getLatestTime() const;
     QDateTime getFirstTime() const;
 
-  [[__nodiscard__]]  inline ChatFormHeader* getHead() const {
+  [[__nodiscard__]] inline ChatFormHeader* getHead() const {
         return headWidget;
     };
   [[__nodiscard__]] inline ChatLog *getChatLog() const{
@@ -93,6 +93,12 @@ public:
 
     void showNetcam();
     void hideNetcam();
+
+    void updateCallButtons();
+    void updateCallButtons(Status::Status status);
+    void updateMuteMicButton();
+    void updateMuteVolButton();
+
 signals:
     void messageInserted();
     void messageNotFoundShow(SearchDirection direction);
@@ -168,10 +174,6 @@ protected:
     virtual void resizeEvent(QResizeEvent* event) final override;
     virtual bool eventFilter(QObject* object, QEvent* event) final override;
 
-    void updateCallButtons();
-    void updateCallButtons(Status::Status status);
-    void updateMuteMicButton();
-    void updateMuteVolButton();
 
 protected:
     const ContactId* contactId;

@@ -43,6 +43,14 @@ WebRTC::WebRTC()
 }
 
 WebRTC::~WebRTC() {
+
+
+    for(auto it : _pcMap){
+        auto c = it.second;
+        delete c;
+    }
+
+
     if(isStarted()){
         stop();
     }
@@ -131,10 +139,6 @@ bool WebRTC::stop()
     RTC_LOG(LS_INFO) << "WebRTC will be destroy...";
     std::lock_guard<std::recursive_mutex> lock(start_mtx);
 
-    //销毁connection
-    for(auto pc : _pcMap){
-        delete pc.second;
-    }
 
     //销毁factory
     peer_connection_factory = nullptr;
@@ -553,7 +557,6 @@ OJingleContentAv WebRTC::convertFromSdp(webrtc::SessionDescriptionInterface* des
 }
 
 
-
 void WebRTC::addIceServer(const IceServer &ice)
 {
     // Add the ice server.
@@ -568,29 +571,14 @@ void WebRTC::addIceServer(const IceServer &ice)
     _rtcConfig.servers.push_back(ss);
 }
 
-bool WebRTC::join(const std::string &peerId,
-                  const std::string &sId,
-                  const OJingleContentAv &context) {
-  assert(!peerId.empty());
-
-//  createConductor(peerId, sId, context.callType());
-  // RTC_LOG(LS_INFO) << "end";
-
-  return true;
-}
-
-
 Conductor *WebRTC::getConductor(const std::string &peerId) {
     return _pcMap[peerId];
 }
 
-Conductor *WebRTC::createConductor(const std::string &peerId,
-                                 const std::string &sId,
-                                 bool video) {
+Conductor *WebRTC::createConductor(const std::string &peerId, const std::string &sId, bool video) {
 
-   RTC_LOG_F(LS_INFO) << "peer:" << peerId //
-                     << " sid:" << sId                //
-                     << " video:" << video;     //
+  RTC_LOG_F(LS_INFO) << "peer:" << peerId << " sid:" << sId << " video:" << video;
+
   auto conductor = _pcMap[peerId];
   if(conductor){
       return conductor;
@@ -733,11 +721,10 @@ void WebRTC::setMute(bool mute) {
 }
 
 void WebRTC::setRemoteMute(bool mute) {
-//  for (auto it : _pcMap) {
-//    it.second->setRemoteMute(mute);
-//  }
+  for (auto it : _pcMap) {
+    it.second->setRemoteMute(mute);
+  }
 }
-void WebRTC::createPeerConnection() {}
 
 void WebRTC::CreateOffer(const std::string &peerId) {
   Conductor *conductor = getConductor(peerId);

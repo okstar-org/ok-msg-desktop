@@ -333,7 +333,7 @@ void ChatForm::onAcceptCallTriggered(const ToxPeer &peer, bool video) {
 //  emit stopNotification();
     emit acceptCall(peer, video);
 
-//  updateCallButtons();
+  updateCallButtons();
 //  CoreAV *av = CoreAV::getInstance();
 //  if (!av->answerCall(friendId, video)) {
 //    updateCallButtons();

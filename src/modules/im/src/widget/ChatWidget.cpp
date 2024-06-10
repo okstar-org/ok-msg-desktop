@@ -918,7 +918,7 @@ void ChatWidget::setStatusBusy() {
 
 
 void ChatWidget::onAvInvite(ToxPeer peerId, bool video) {
-  auto fId =  peerId.toFriendId();
+  qDebug()<<__func__ <<"friendId" << peerId << video;
   sessionListWidget->setFriendAvInvite(peerId, video);
 
 
@@ -944,31 +944,11 @@ void ChatWidget::onAvInvite(ToxPeer peerId, bool video) {
 }
 
 void ChatWidget::onAvStart(const FriendId& friendId, bool video) {
-//  if (friendId != f->getId()) {
-//    return;
-//  }
-
-//  if (video) {
-//    showNetcam();
-//  } else {
-//    hideNetcam();
-//  }
-
-//  emit stopNotification();
-//  updateCallButtons();
-//  startCounter();
-
-
+    qDebug()<<__func__ <<"friendId" << friendId;
     sessionListWidget->setFriendAvStart(friendId, video);
-
-
 }
 
 void ChatWidget::onAvEnd(const FriendId& friendId, bool error) {
-//  if (friendId != f->getId()) {
-//    return;
-//  }
-
   qDebug()<<__func__ <<"friendId" << friendId <<"error"<<error;
   sessionListWidget->setFriendAvEnd(friendId, error);
 

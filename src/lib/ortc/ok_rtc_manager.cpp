@@ -80,12 +80,6 @@ void OkRTCManager::addIceServer(const IceServer &ice)
   _iceOptions.push_back(ice);
 }
 
-void OkRTCManager::join(const std::string &peerId,
-                        const std::string &sId,
-                        const OJingleContentAv & context) {
-  rtc->join(peerId, sId, context);
-}
-
 void OkRTCManager::CreateOffer(const std::string &peerId) {
   rtc->CreateOffer(peerId);
 }
