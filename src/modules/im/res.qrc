@@ -161,6 +161,7 @@
         <file>themes/default/window/profile.css</file>
         <file>themes/default/window/statusPanel.css</file>
         <file>themes/default/window/window.css</file>
+        <file>themes/default/window/chat.css</file>
         <file>themes/default/chatArea/info.svg</file>
         <file>themes/default/chatArea/spinner.svg</file>
         <file>themes/default/chatArea/typing.svg</file>

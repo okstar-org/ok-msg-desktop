@@ -67,7 +67,8 @@ Nexus::Nexus(QObject *parent)
 
 Nexus::~Nexus() {
   qDebug() << __func__;
-  delete widget;
+  if (widget)
+    delete widget;
   widget = nullptr;
   delete profile;
   profile = nullptr;

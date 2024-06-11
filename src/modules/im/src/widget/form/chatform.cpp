@@ -527,7 +527,8 @@ void ChatForm::onUpdateTime() {
 
 void ChatForm::setFriendTyping(bool typing) {
   isTyping = typing;
-  chatLog->setTypingNotificationVisible(typing);
+  if(chatLog)
+    chatLog->setTypingNotificationVisible(typing);
 //  QString typingDiv = "<div class=typing>%1</div>";
 //  QString name = f->getDisplayedName();
 //  Text *text = static_cast<Text *>(chatLog->getTypingNotification()->centerContent());
@@ -544,12 +545,11 @@ void ChatForm::reloadTheme() {
 }
 
 void ChatForm::showEvent(QShowEvent *event) {
-//  updateCallButtons();
 //  GenericChatForm::showEvent(event);
 }
 
 void ChatForm::hideEvent(QHideEvent *event) {
-  GenericChatForm::hideEvent(event);
+//  GenericChatForm::hideEvent(event);
 }
 
 void ChatForm::retranslateUi() {
