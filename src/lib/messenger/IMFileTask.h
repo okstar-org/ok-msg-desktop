@@ -24,6 +24,7 @@
 #include <bytestreamdatahandler.h>
 #include <inbandbytestream.h>
 #include <jid.h>
+#include "IMFile.h"
 
 class QFile;
 
