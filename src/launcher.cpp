@@ -58,9 +58,9 @@ int Launcher::startup() {
   return result;
 }
 
-int Launcher::shutdown() {
+void Launcher::shutdown() {
   app->closeAllWindows();
-  return 0;
+  qApp->exit(0);
 }
 
 } // namespace core

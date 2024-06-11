@@ -81,6 +81,9 @@ class MessageSessionWidget : public GenericChatroomWidget
     void setAvStart(const FriendId& friendId, bool video);
     void setAvEnd(const FriendId& friendId, bool error);
 
+    void setGroup(const Group* g);
+    void removeGroup();
+
 signals:
     void removeFriend(const FriendId& friendPk);
     void copyFriendIdToClipboard(const FriendId& friendPk);
@@ -110,6 +113,8 @@ private slots:
     void onMessageSent(DispatchedMessageId id, const Message & message);
     void doAcceptCall(const ToxPeer& p, bool video);
     void doRejectCall(const ToxPeer& p);
+    void doCall();
+    void doVideoCall();
 
 protected:
     virtual void mousePressEvent(QMouseEvent* ev) override;

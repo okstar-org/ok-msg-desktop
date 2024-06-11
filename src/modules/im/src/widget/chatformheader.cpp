@@ -26,6 +26,12 @@
 #include <QToolButton>
 
 #include <src/core/FriendId.h>
+#include <src/core/coreav.h>
+
+#include <src/model/contact.h>
+#include <src/model/friend.h>
+
+#include <src/widget/tool/callconfirmwidget.h>
 
 static const QSize AVATAR_SIZE{40, 40};
 static const short HEAD_LAYOUT_SPACING = 5;
@@ -99,8 +105,8 @@ void setStateName(QAbstractButton* btn, State state)
 
 }
 
-ChatFormHeader::ChatFormHeader(QWidget* parent)
-    : QWidget(parent)
+ChatFormHeader::ChatFormHeader(const ContactId &contactId, QWidget* parent)
+    : QWidget(parent), contactId{contactId}
     , mode{Mode::AV}
     , callState{CallButtonState::Disabled}
     , videoState{CallButtonState::Disabled}
@@ -108,21 +114,32 @@ ChatFormHeader::ChatFormHeader(QWidget* parent)
     , micState{ToolButtonState::Disabled}
 {
     QHBoxLayout* headLayout = new QHBoxLayout();
+
+    //头像
     avatar = new MaskablePixmapWidget(this, AVATAR_SIZE, ":/img/avatar_mask.svg");
     avatar->setObjectName("avatar");
+    headLayout->addWidget(avatar);
 
-    nameLabel = new CroppingLabel();
+
+    //名称
+    nameLabel = new CroppingLabel(this);
     nameLabel->setObjectName("nameLabel");
     nameLabel->setMinimumHeight(Style::getFont(Style::Medium).pixelSize());
     nameLabel->setEditable(true);
     nameLabel->setTextFormat(Qt::PlainText);
+    nameLabel->setText(contactId.username);
     connect(nameLabel, &CroppingLabel::editFinished, this, &ChatFormHeader::nameChanged);
 
     headTextLayout = new QVBoxLayout();
     headTextLayout->addStretch();
     headTextLayout->addWidget(nameLabel);
     headTextLayout->addStretch();
+    headLayout->addLayout(headTextLayout);
 
+    //空间
+    headLayout->addSpacing(HEAD_LAYOUT_SPACING);
+
+     //控制按钮
     micButton = createButton("micButton", this, &ChatFormHeader::micMuteToggle);
     volButton = createButton("volButton", this, &ChatFormHeader::volMuteToggle);
     callButton = createButton("callButton", this, &ChatFormHeader::callTriggered);
@@ -140,9 +157,9 @@ ChatFormHeader::ChatFormHeader(QWidget* parent)
     buttonsLayout->setVerticalSpacing(0);
     buttonsLayout->setHorizontalSpacing(BUTTONS_LAYOUT_HOR_SPACING);
 
-    headLayout->addWidget(avatar);
-    headLayout->addSpacing(HEAD_LAYOUT_SPACING);
-    headLayout->addLayout(headTextLayout);
+
+
+
     headLayout->addLayout(buttonsLayout);
 
     setLayout(headLayout);
@@ -153,6 +170,37 @@ ChatFormHeader::ChatFormHeader(QWidget* parent)
 
 ChatFormHeader::~ChatFormHeader() {
     settings::Translator::unregister(this);
+}
+
+void ChatFormHeader::setContact(const Contact *contact_)
+{
+    if(!contact_){
+        return;
+    }
+
+    contact = contact_;
+    connect(contact, &Contact::displayedNameChanged, this, &ChatFormHeader::onDisplayedNameChanged);
+    connect(contact, &Contact::avatarChanged, this, &ChatFormHeader::onAvatarChanged);
+
+    setName(contact->getDisplayedName());
+    setAvatar(contact->getAvatar());
+
+
+    if(!contact->isGroup()){
+
+        const Friend* f = static_cast<const Friend*>(contact);
+        updateCallButtons(f->getStatus());
+
+        connect(f, &Friend::statusChanged, [&](Status::Status status, bool event){
+            updateCallButtons(status);
+        });
+    }
+}
+
+void ChatFormHeader::removeContact()
+{
+    qDebug()<<__func__;
+    contact = nullptr;
 }
 
 void ChatFormHeader::setName(const QString& newName)
@@ -179,6 +227,10 @@ void ChatFormHeader::retranslateUi()
     setStateToolTip(videoButton, videoState, VIDEO_TOOL_TIP);
     setStateToolTip(micButton, micState, MIC_TOOL_TIP);
     setStateToolTip(volButton, volState, VOL_TOOL_TIP);
+
+
+//      updateMuteMicButton();
+//      updateMuteVolButton();
 }
 
 void ChatFormHeader::updateButtonsView()
@@ -191,6 +243,20 @@ void ChatFormHeader::updateButtonsView()
     Style::repolish(this);
 }
 
+void ChatFormHeader::onAvatarChanged(const QPixmap &pic)
+{
+
+//      qDebug() << __func__ <<contactId->toString() << "pic:"<< pic.size();
+     setAvatar(pic);
+
+
+}
+
+void ChatFormHeader::onDisplayedNameChanged(const QString &name)
+{
+    setName(name);
+}
+
 void ChatFormHeader::showOutgoingCall(bool video)
 {
     CallButtonState& state = video ? videoState : callState;
@@ -198,29 +264,52 @@ void ChatFormHeader::showOutgoingCall(bool video)
     updateButtonsView();
 }
 
-void ChatFormHeader::createCallConfirm(const ToxPeer &peer, bool video)
+void ChatFormHeader::createCallConfirm(const ToxPeer &peer, bool video, QString &displayedName)
 {
+    qDebug() << __func__ << "peer:" << peer << "video?" << video;
+
     QWidget* btn = video ? videoButton : callButton;
-    callConfirm = std::unique_ptr<CallConfirmWidget>(new CallConfirmWidget(btn));
+    callConfirm = std::make_unique<CallConfirmWidget>(btn);
+//    callConfirm->move(btn->pos());
+
     connect(callConfirm.get(), &CallConfirmWidget::accepted, [=](){
-        emit callAccepted(peer);
+        emit callAccepted(peer, video);
     });
     connect(callConfirm.get(), &CallConfirmWidget::rejected, [=](){
         emit callRejected(peer);
     });
-//    connect(callConfirm.get(), &CallConfirmWidget::accepted, this, &ChatFormHeader::callAccepted);
-//    connect(callConfirm.get(), &CallConfirmWidget::rejected, this, &ChatFormHeader::callRejected);
 }
 
 void ChatFormHeader::showCallConfirm()
 {
-    if (callConfirm && !callConfirm->isVisible())
-        callConfirm->show();
+   callConfirm->show();
+//   callConfirm->setVisible(true);
 }
 
 void ChatFormHeader::removeCallConfirm()
 {
     callConfirm.reset(nullptr);
+}
+
+void ChatFormHeader::updateMuteVolButton() {
+  const CoreAV *av = CoreAV::getInstance();
+  bool active = av->isCallActive(&contactId);
+  bool outputMuted = av->isCallOutputMuted(&contactId);
+  updateMuteVolButton(active, outputMuted);
+//  if (netcam) {
+//    netcam->updateMuteVolButton(outputMuted);
+//  }
+}
+
+
+void ChatFormHeader::updateMuteMicButton() {
+  const CoreAV *av = CoreAV::getInstance();
+  bool active = av->isCallActive(&contactId);
+  bool inputMuted = av->isCallInputMuted(&contactId);
+  updateMuteMicButton(active, inputMuted);
+//  if (netcam) {
+//    netcam->updateMuteMicButton(inputMuted);
+//  }
 }
 
 void ChatFormHeader::updateCallButtons(bool online, bool audio, bool video)
@@ -274,6 +363,25 @@ void ChatFormHeader::updateMuteVolButton(bool active, bool outputMuted)
     updateButtonsView();
 }
 
+void ChatFormHeader::updateCallButtons()
+{
+    updateMuteMicButton();
+    updateMuteVolButton();
+}
+
+void ChatFormHeader::updateCallButtons(Status::Status status)
+{
+    qDebug() << __func__ << (int)status;
+
+      CoreAV *av = CoreAV::getInstance();
+      const bool audio = av->isCallActive(&contactId);
+      const bool video = av->isCallVideoEnabled(&contactId);
+      const bool online = Status::isOnline(status);
+
+      updateCallButtons(online, audio, video);
+      updateCallButtons();
+}
+
 void ChatFormHeader::setAvatar(const QPixmap &img)
 {
     avatar->setPixmap(img);
@@ -306,3 +414,46 @@ void ChatFormHeader::addStretch()
 {
     headTextLayout->addStretch();
 }
+
+
+
+//void ChatFormHeader::updateCallButtons()
+//{
+//    qDebug() << __func__;
+//    updateMuteMicButton();
+//    updateMuteVolButton();
+//}
+
+//void ChatFormHeader::updateCallButtons(Status::Status status)
+//{
+//      qDebug() << __func__ << (int)status;
+
+//      CoreAV *av = CoreAV::getInstance();
+//      const bool audio = av->isCallActive(contactId);
+//      const bool video = av->isCallVideoEnabled(contactId);
+//      const bool online = Status::isOnline(status);
+//      headWidget->updateCallButtons(online, audio, video);
+
+//      updateCallButtons();
+//}
+
+
+//void ChatFormHeader::updateMuteMicButton() {
+//  const CoreAV *av = CoreAV::getInstance();
+//  bool active = av->isCallActive(contactId);
+//  bool inputMuted = av->isCallInputMuted(contactId);
+//  headWidget->updateMuteMicButton(active, inputMuted);
+//  if (netcam) {
+//    netcam->updateMuteMicButton(inputMuted);
+//  }
+//}
+
+//void ChatFormHeader::updateMuteVolButton() {
+//  const CoreAV *av = CoreAV::getInstance();
+//  bool active = av->isCallActive(contactId);
+//  bool outputMuted = av->isCallOutputMuted(contactId);
+//  headWidget->updateMuteVolButton(active, outputMuted);
+//  if (netcam) {
+//    netcam->updateMuteVolButton(outputMuted);
+//  }
+//}

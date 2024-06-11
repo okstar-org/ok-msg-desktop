@@ -572,39 +572,9 @@ void Widget::connectToCore(Core &core) {
   connect(&core, &Core::usernameSet, this, &Widget::setUsername);
   connect(&core, &Core::avatarSet, this, &Widget::setAvatar);
   connect(&core, &Core::failedToAddFriend, this, &Widget::addFriendFailed);
-  connect(&core, &Core::usernameSet, this, &Widget::refreshPeerListsLocal);
+
   connect(this, &Widget::statusSet, &core, &Core::setStatus);
-
   connect(this, &Widget::changeGroupTitle, &core, &Core::setGroupName);
-
-  //  sharedMessageProcessorParams.setPublicKey(core.getSelfPublicKey().toString());
-
-  //  connect(coreFile, &CoreFile::fileReceiveRequested, this,
-  //          &Widget::onFileReceiveRequested);
-  //  connect(coreFile, &CoreFile::fileDownloadFinished, filesForm,
-  //          &FilesForm::onFileDownloadComplete);
-  //  connect(coreFile, &CoreFile::fileUploadFinished, filesForm,
-  //          &FilesForm::onFileUploadComplete);
-  //  connect(ui->addButton, &QPushButton::clicked, this, &Widget::onAddClicked);
-  //  connect(ui->groupButton, &QPushButton::clicked, this,
-  //          &Widget::onGroupClicked);
-  //  connect(ui->transferButton, &QPushButton::clicked, this,
-  //          &Widget::onTransferClicked);
-  //  connect(ui->settingsButton, &QPushButton::clicked, this,
-  //          &Widget::onShowSettings);
-  //  connect(profilePicture, &MaskablePixmapWidget::clicked, this,
-  //          &Widget::showProfile);
-  //  connect(ui->nameLabel, &CroppingLabel::clicked, this, &Widget::showProfile);
-  //  connect(ui->statusLabel, &CroppingLabel::editFinished, this,
-  //          &Widget::onStatusMessageChanged);
-  //  connect(ui->mainSplitter, &QSplitter::splitterMoved, this,
-  //          &Widget::onSplitterMoved);
-  //  connect(addFriendForm, &AddFriendForm::friendRequested, this,
-  //          &Widget::friendRequestedTo);
-
-
-
-
 
   connect(timer, &QTimer::timeout, this, &Widget::onUserAwayCheck);
   connect(timer, &QTimer::timeout, this, &Widget::onEventIconTick);
@@ -704,12 +674,10 @@ void Widget::onSeparateWindowChanged(bool separate, bool clicked) {
         contentLayout->parentWidget()->resize(size);
         contentLayout->parentWidget()->move(pos);
         settingsWidget->show(contentLayout);
-        setActiveToolMenuButton(ActiveToolMenuButton::None);
       }
     }
 
     setWindowTitle(QString());
-    setActiveToolMenuButton(ActiveToolMenuButton::None);
   }
 }
 
@@ -805,18 +773,18 @@ void Widget::onShowSettings() {
       settingsWidget->show(createContentDialog(DialogType::SettingDialog));
     }
 
-    setActiveToolMenuButton(ActiveToolMenuButton::None);
+//    setActiveToolMenuButton(ActiveToolMenuButton::None);
   } else {
     hideMainForms(nullptr);
 //    settingsWidget->show(contentLayout);
     //    setWindowTitle(fromDialogType(DialogType::SettingDialog));
-    setActiveToolMenuButton(ActiveToolMenuButton::SettingButton);
+//    setActiveToolMenuButton(ActiveToolMenuButton::SettingButton);
   }
 }
 
 
 void Widget::hideMainForms(GenericChatroomWidget *chatroomWidget) {
-  setActiveToolMenuButton(ActiveToolMenuButton::None);
+
 }
 
 void Widget::setUsername(const QString &username) {
@@ -893,26 +861,11 @@ void Widget::outgoingNotification() {
   playNotificationSound(IAudioSink::Sound::OutgoingCall, true);
 }
 
-void Widget::onCallEnd() { playNotificationSound(IAudioSink::Sound::CallEnd); }
-
 /**
  * @brief Widget::onStopNotification Stop the notification sound.
  */
 void Widget::onStopNotification() { audioNotification.reset(); }
 
-
-void Widget::onRejectCall(QString friendId) {
-//  core->getAv()->cancelCall(friendId);
-}
-
-void Widget::addFriend0(const FriendId &friendPk) {
-//  core->requestFriendship(ToxId(friendPk.toString()), core->getNick(), "请求添加好友！");
-}
-
-
-void Widget::addFriendDone() {
-  core->requestBookmarks();
-}
 
 void Widget::addFriendFailed(const FriendId &, const QString &errorInfo) {
   QString info = QString(tr("Couldn't request friendship"));
@@ -1165,75 +1118,6 @@ void Widget::onFileReceiveRequested(const ToxFile &file) {
           FileTransferWidget::getHumanReadableSize(file.fileSize) + ")",
       true, true);
 }
-
-
-//void Widget::removeFriend(IMFriend *f, bool fake) {
-//  qDebug()<<"removeFriend:"<<f->getPublicKey().toString();
-
-//  if (!fake) {
-//    RemoveFriendDialog ask(this, f);
-//    ask.exec();
-
-//    if (!ask.accepted()) {
-//      return;
-//    }
-
-//    if (ask.removeHistory()) {
-//      auto *his = Nexus::getProfile()->getHistory();
-//      if (his) {
-//        his->removeFriendHistory(f->getPublicKey().toString());
-//      }
-//    }
-//  }
-
-//  const ToxPk friendPk = f->getPublicKey();
-////  auto frdWidget = contactListWidget->getFriend(friendPk);
-////  frdWidget->setAsInactiveChatroom();
-////  if (frdWidget == activeChatroomWidget) {
-////    activeChatroomWidget = nullptr;
-////    onAddClicked();
-////  }
-////
-////  friendAlertConnections.remove(friendPk);
-////
-////  contactListWidget->removeFriend(friendPk);
-////
-//  ContentDialog *lastDialog =
-//      ContentDialogManager::getInstance()->getFriendDialog(friendPk);
-//  if (lastDialog != nullptr) {
-//    lastDialog->removeFriend(friendPk);
-//  }
-
-
-//  if (!fake) {
-//    core->removeFriend(f->getPublicKey().toString());
-//    // aliases aren't supported for non-friend peers in groups, revert to basic
-//    // username
-////    for (Group *g : GroupList::getAllGroups()) {
-////      if (g->getPeerList().contains(friendPk)) {
-////        g->updateUsername(friendPk, f->getUserName());
-////      }
-////    }
-//  }
-
-////  frdWidget->removeFriend(friendPk);
-////  delete frdWidget;
-
-////  auto chatForm = chatForms[friendPk];
-////  chatForms.remove(friendPk);
-////  delete chatForm;
-
-//  delete f;
-////  if (contentLayout && contentLayout->mainHead->layout()->isEmpty()) {
-////    onAddClicked();
-////  }
-
-////  contactListWidget->reDraw();
-//}
-
-//void Widget::removeFriend(const ToxPk &receiver) {
-//  removeFriend(FriendList::findFriend(receiver), false);
-//}
 
 void Widget::onDialogShown(GenericChatroomWidget *widget) {
   widget->resetEventFlags();
@@ -1548,25 +1432,6 @@ GroupWidget *Widget::createGroup(QString groupnumber,
 return nullptr;
 }
 
-void Widget::onEmptyGroupCreated(QString groupnumber,
-                                 const GroupId &groupId,
-                                 const QString &title) {
-  GroupWidget *group = createGroup(groupnumber, groupId, title);
-  if (!group) {
-    qWarning() <<"Unable to create group" << groupnumber;
-    return;
-  }
-
-  if (!title.isEmpty()) {
-    group->setName(title);
-    // Only rename group if groups are visible.
-//    if (groupsVisible()) {
-//      groupWidgets[groupId]->editName();
-//    }
-  }
-}
-
-
 /**
  * @brief Used to reset the blinking icon.
  */
@@ -1580,7 +1445,7 @@ bool Widget::event(QEvent *e) {
   switch (e->type()) {
   case QEvent::MouseButtonPress:
   case QEvent::MouseButtonDblClick:
-    focusChatInput();
+//    focusChatInput();
     break;
   case QEvent::Paint:
 //    ui->friendList->updateVisualTracking();
@@ -1590,8 +1455,6 @@ bool Widget::event(QEvent *e) {
     if (eventFlag) {
       resetIcon();
     }
-
-    focusChatInput();
 
 #ifdef Q_OS_MAC
     emit windowStateChanged(windowState());
@@ -1745,60 +1608,8 @@ void Widget::reloadTheme() {
   chatWidget->reloadTheme();
 }
 
-void Widget::nextContact() { cycleContacts(true); }
-
-void Widget::previousContact() { cycleContacts(false); }
-
-
-
-
-
-
-
-
-
-void Widget::friendListContextMenu(const QPoint &pos) {
-  QMenu menu(this);
-  QAction *createGroupAction = menu.addAction(tr("Create new group..."));
-//  QAction *chosenAction = menu.exec(ui->friendList->mapToGlobal(pos));
-//  if (chosenAction == createGroupAction) {
-//    core->createGroup();
-//  }
-//
-//  QAction *addCircleAction = menu.addAction(tr("Add new circle..."));
-//  if (chosenAction == addCircleAction) {
-//    contactListWidget->addCircleWidget();
-//  } else
-}
-
-
-
-
-void Widget::setActiveToolMenuButton(ActiveToolMenuButton newActiveButton) {
-//  ui->addButton->setChecked(newActiveButton == ActiveToolMenuButton::AddButton);
-//  ui->addButton->setDisabled(newActiveButton ==
-//                             ActiveToolMenuButton::AddButton);
-//  ui->groupButton->setChecked(newActiveButton ==
-//                              ActiveToolMenuButton::GroupButton);
-//  ui->groupButton->setDisabled(newActiveButton ==
-//                               ActiveToolMenuButton::GroupButton);
-//  ui->transferButton->setChecked(newActiveButton ==
-//                                 ActiveToolMenuButton::TransferButton);
-//  ui->transferButton->setDisabled(newActiveButton ==
-//                                  ActiveToolMenuButton::TransferButton);
-//  ui->settingsButton->setChecked(newActiveButton ==
-//                                 ActiveToolMenuButton::SettingButton);
-//  ui->settingsButton->setDisabled(newActiveButton ==
-//                                  ActiveToolMenuButton::SettingButton);
-}
-
 void Widget::retranslateUi() {
   ui->retranslateUi(this);
-  //  setUsername(core->getUsername());
-  //  setStatusMessage(core->getStatusMessage());
-
-
-
 
   if (!settings.getSeparateWindow() &&
       (settingsWidget && settingsWidget->isShown())) {
@@ -1822,27 +1633,3 @@ void Widget::retranslateUi() {
   previousConversationAction->setText(tr("Previous Conversation"));
 #endif
 }
-
-void Widget::focusChatInput() {
-//  if (activeChatroomWidget) {
-//    if (const IMFriend *f = activeChatroomWidget->getFriend()) {
-//      chatForms[f->getPublicKey()]->focusInput();
-//    } else if (Group *g = activeChatroomWidget->getGroup()) {
-//      groupChatForms[g->getPersistentId()]->focusInput();
-//    }
-//  }
-}
-
-void Widget::refreshPeerListsLocal(const QString &username) {
-    qDebug() <<__func__ << "username"<<username;
-//  for (Group *g : GroupList::getAllGroups()) {
-//    g->updateUsername(core->getSelfPublicKey(), username);
-//  }
-}
-
-
-
-
-
-
-

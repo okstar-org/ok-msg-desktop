@@ -103,7 +103,7 @@ ChatForm::ChatForm(const FriendId *chatFriend,
       f(chatFriend), isTyping{false}{
 
 
-  headWidget->setAvatar(QPixmap(":/img/contact_dark.svg"));
+//  headWidget->setAvatar(QPixmap(":/img/contact_dark.svg"));
 
   statusMessageLabel = new CroppingLabel();
   statusMessageLabel->setObjectName("statusLabel");
@@ -120,41 +120,36 @@ ChatForm::ChatForm(const FriendId *chatFriend,
   chatLog->setMinimumHeight(CHAT_WIDGET_MIN_HEIGHT);
 
   callDuration = new QLabel();
-  headWidget->addWidget(statusMessageLabel);
-  headWidget->addStretch();
-  headWidget->addWidget(callDuration, 1, Qt::AlignCenter);
   callDuration->hide();
+//  headWidget->addWidget(statusMessageLabel);
+//  headWidget->addStretch();
+//  headWidget->addWidget(callDuration, 1, Qt::AlignCenter);
 
   copyStatusAction =
       statusMessageMenu.addAction(QString(), this, SLOT(onCopyStatusMessage()));
 
-  const Core *core = Core::getInstance();
-  const Profile *profile = Nexus::getProfile();
-  const CoreFile *coreFile = core->getCoreFile();
+//  const Core *core = Core::getInstance();
+//  const Profile *profile = Nexus::getProfile();
+//  const CoreFile *coreFile = core->getCoreFile();
 //  connect(profile, &Profile::friendAvatarChanged, this,
 //          &ChatForm::onAvatarChanged);
-  connect(coreFile, &CoreFile::fileReceiveRequested, this,
-          &ChatForm::updateFriendActivityForFile);
-  connect(coreFile, &CoreFile::fileSendStarted, this,
-          &ChatForm::updateFriendActivityForFile);
-  connect(core, &Core::friendTypingChanged, this,
-          &ChatForm::onFriendTypingChanged);
-//  connect(core, &Core::friendStatusChanged, this,
-//          &ChatForm::onFriendStatusChanged);
-  connect(coreFile, &CoreFile::fileNameChanged, this,
-          &ChatForm::onFileNameChanged);
+//  connect(coreFile, &CoreFile::fileReceiveRequested, this,
+//          &ChatForm::updateFriendActivityForFile);
+//  connect(coreFile, &CoreFile::fileSendStarted, this,
+//          &ChatForm::updateFriendActivityForFile);
 
 
-  connect(headWidget, &ChatFormHeader::callTriggered, this,
-          &ChatForm::onCallTriggered);
+//  connect(coreFile, &CoreFile::fileNameChanged, this,
+//          &ChatForm::onFileNameChanged);
 
-  connect(headWidget, &ChatFormHeader::videoCallTriggered, this,
-          &ChatForm::onVideoCallTriggered);
 
-  connect(headWidget, &ChatFormHeader::micMuteToggle, this,
-          &ChatForm::onMicMuteToggle);
-  connect(headWidget, &ChatFormHeader::volMuteToggle, this,
-          &ChatForm::onVolMuteToggle);
+
+
+//  connect(headWidget, &ChatFormHeader::micMuteToggle, this,
+//          &ChatForm::onMicMuteToggle);
+//  connect(headWidget, &ChatFormHeader::volMuteToggle, this,
+//          &ChatForm::onVolMuteToggle);
+
   connect(sendButton, &QPushButton::pressed, this,
           &ChatForm::callUpdateFriendActivity);
   connect(msgEdit, &ChatTextEdit::enterPressed, this,
@@ -178,20 +173,6 @@ ChatForm::ChatForm(const FriendId *chatFriend,
   //TODO reflect name changes in the header
 //  connect(headWidget, &ChatFormHeader::nameChanged, this,
 //          [this](const QString &newName) { f->setAlias(newName); });
-
-  connect(headWidget, &ChatFormHeader::callAccepted, this,
-          [this](const ToxPeer& p) {
-          onAcceptCallTriggered(p, lastCallIsVideo);
-  });
-
-  connect(headWidget, &ChatFormHeader::callRejected, this,
-          [this](const ToxPeer& p){
-          onRejectCallTriggered(p);
-  });
-
-  setName(contactId->username);
-
-  updateCallButtons();
 
   setAcceptDrops(true);
   retranslateUi();
@@ -286,105 +267,53 @@ void ChatForm::onAttachClicked() {
 
 
 void ChatForm::showOutgoingCall(bool video) {
-  headWidget->showOutgoingCall(video);
+//  headWidget->showOutgoingCall(video);
   addSystemInfoMessage(tr("Calling %1").arg(f->username),
                        ChatMessage::INFO, QDateTime::currentDateTime());
   emit outgoingNotification();
   emit updateFriendActivity(*f);
 }
 
-void ChatForm::showCallConfirm(const ToxPeer &peerId, bool video, const QString &displayedName)
-{
-    qDebug() <<__func__ <<"peerId"<<peerId;
 
-    // 聊天框插入呼叫消息
-//    auto msg = ChatMessage::createChatInfoMessage(
-//                tr("%1 calling").arg(displayedName),
-//                ChatMessage::INFO,
-//                QDateTime::currentDateTime());
-//    insertChatMessage(msg);
-    lastCallIsVideo = video;
-    // 显示呼叫确认
-    headWidget->createCallConfirm(peerId, video);
-    headWidget->showCallConfirm();
-}
+//void ChatForm::onRejectCallTriggered(const ToxPeer &peer) {
+//  headWidget->removeCallConfirm();
+//  emit rejectCall(peer);
+//}
 
-void ChatForm::closeCallConfirm(const FriendId &friendId)
-{
-    qDebug() << __func__ << "friendId" << friendId;
-    lastCallIsVideo = false;
-    headWidget->removeCallConfirm();
-}
-
-void ChatForm::onAcceptCallTriggered(const ToxPeer &peer, bool video) {
-    qDebug() << __func__ << "peer" << peer;
-
-    headWidget->removeCallConfirm();
-
-//    if (video) {
-//      showNetcam();
-//    } else {
-//      hideNetcam();
-//    }
-
-    updateCallButtons();
-//    startCounter();
-
-//  emit stopNotification();
-    emit acceptCall(peer, video);
-
-  updateCallButtons();
+//void ChatForm::onCallTriggered() {
 //  CoreAV *av = CoreAV::getInstance();
-//  if (!av->answerCall(friendId, video)) {
-//    updateCallButtons();
-//    stopCounter();
-//    hideNetcam();
-//    return;
+//  QString friendId = f->getId();
+//  if (av->isCallStarted(f)) {
+//    av->cancelCall(friendId);
+//  } else if (av->startCall(friendId, false)) {
+//    showOutgoingCall(false);
 //  }
+//}
 
-//  onAvStart(friendId, av->isCallVideoEnabled(f));
-}
-
-void ChatForm::onRejectCallTriggered(const ToxPeer &peer) {
-  headWidget->removeCallConfirm();
-  emit rejectCall(peer);
-}
-
-void ChatForm::onCallTriggered() {
-  CoreAV *av = CoreAV::getInstance();
-  QString friendId = f->getId();
-  if (av->isCallStarted(f)) {
-    av->cancelCall(friendId);
-  } else if (av->startCall(friendId, false)) {
-    showOutgoingCall(false);
-  }
-}
-
-void ChatForm::onVideoCallTriggered() {
-  CoreAV *av = CoreAV::getInstance();
-  QString cId = f->getId();
-  if (av->isCallStarted(f)) {
-    // TODO: We want to activate video on the active call.
-    if (av->isCallVideoEnabled(f)) {
-      av->cancelCall(cId);
-    }
-  } else if (av->startCall(cId, true)) {
-    showOutgoingCall(true);
-  }
-}
+//void ChatForm::onVideoCallTriggered() {
+//  CoreAV *av = CoreAV::getInstance();
+//  QString cId = f->getId();
+//  if (av->isCallStarted(f)) {
+//    if (av->isCallVideoEnabled(f)) {
+//      av->cancelCall(cId);
+//    }
+//  } else if (av->startCall(cId, true)) {
+//    showOutgoingCall(true);
+//  }
+//}
 
 
-void ChatForm::onMicMuteToggle() {
-  CoreAV *av = CoreAV::getInstance();
-  av->toggleMuteCallInput(f);
-  updateMuteMicButton();
-}
+//void ChatForm::onMicMuteToggle() {
+//  CoreAV *av = CoreAV::getInstance();
+//  av->toggleMuteCallInput(f);
+//  updateMuteMicButton();
+//}
 
-void ChatForm::onVolMuteToggle() {
-  CoreAV *av = CoreAV::getInstance();
-  av->toggleMuteCallOutput(f);
-  updateMuteVolButton();
-}
+//void ChatForm::onVolMuteToggle() {
+//  CoreAV *av = CoreAV::getInstance();
+//  av->toggleMuteCallOutput(f);
+//  updateMuteVolButton();
+//}
 
 void ChatForm::onFriendStatusChanged(const FriendId& friendId, Status::Status status) {
     qDebug() << __func__ <<friendId.toString()<<(int)status;
@@ -398,7 +327,7 @@ void ChatForm::onFriendStatusChanged(const FriendId& friendId, Status::Status st
 //    setFriendTyping(false);
 //  }
 
-  updateCallButtons();
+//  updateCallButtons();
 
 //  if (Settings::getInstance().getStatusChangeNotificationEnabled()) {
 //    QString fStatus = Status::getSubject(status);
@@ -407,13 +336,6 @@ void ChatForm::onFriendStatusChanged(const FriendId& friendId, Status::Status st
 //                             .arg(fStatus),
 //                         ChatMessage::INFO, QDateTime::currentDateTime());
 //  }
-}
-
-void ChatForm::onFriendTypingChanged(const FriendId& friendId, bool isTyping) {
-    qDebug()<<__func__ << friendId.toString()<<isTyping;
-  if (friendId.toString() == f->toString()) {
-    setFriendTyping(isTyping);
-  }
 }
 
 void ChatForm::onFriendNameChanged(const QString &name) {
@@ -438,18 +360,17 @@ GenericNetCamView *ChatForm::createNetcam() {
   CoreAV *av = CoreAV::getInstance();
 
   VideoSource *source = av->getVideoSourceFromCall(friendId);
-//  VideoSource *selfSource = reinterpret_cast<VideoSource *>(av->getVideoSourceFromSelf());
-//  view->show(source, f->getDisplayedName());
-   view->show(source, f->username);
+  view->show(source, f->username);
 
 
 //  connect(view, &GenericNetCamView::videoCallEnd, this,
 //          &ChatForm::onVideoCallTriggered);
 
-  connect(view, &GenericNetCamView::volMuteToggle, this,
-          &ChatForm::onVolMuteToggle);
-  connect(view, &GenericNetCamView::micMuteToggle, this,
-          &ChatForm::onMicMuteToggle);
+//  connect(view, &GenericNetCamView::volMuteToggle, this,
+//          &ChatForm::onVolMuteToggle);
+//  connect(view, &GenericNetCamView::micMuteToggle, this,
+//          &ChatForm::onMicMuteToggle);
+
   connect(view, &GenericNetCamView::videoPreviewToggle, view,
           &NetCamView::toggleVideoPreview);
   return view;
@@ -605,11 +526,9 @@ void ChatForm::onUpdateTime() {
 }
 
 void ChatForm::setFriendTyping(bool typing) {
-    qDebug() <<__func__ << typing;
-
   isTyping = typing;
   chatLog->setTypingNotificationVisible(typing);
-  QString typingDiv = "<div class=typing>%1</div>";
+//  QString typingDiv = "<div class=typing>%1</div>";
 //  QString name = f->getDisplayedName();
 //  Text *text = static_cast<Text *>(chatLog->getTypingNotification()->centerContent());
 //  text->setText(typingDiv.arg(tr("%1 is typing").arg(name)));
@@ -625,8 +544,8 @@ void ChatForm::reloadTheme() {
 }
 
 void ChatForm::showEvent(QShowEvent *event) {
-  updateCallButtons();
-  GenericChatForm::showEvent(event);
+//  updateCallButtons();
+//  GenericChatForm::showEvent(event);
 }
 
 void ChatForm::hideEvent(QHideEvent *event) {
@@ -636,8 +555,6 @@ void ChatForm::hideEvent(QHideEvent *event) {
 void ChatForm::retranslateUi() {
   copyStatusAction->setText(tr("Copy"));
 
-  updateMuteMicButton();
-  updateMuteVolButton();
 
   if (netcam) {
     netcam->setShowMessages(chatLog->isVisible());

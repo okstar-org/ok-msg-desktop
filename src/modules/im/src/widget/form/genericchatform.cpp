@@ -278,10 +278,10 @@ GenericChatForm::GenericChatForm(const ContactId *contact_,
                                  QWidget *parent)
     : QWidget(parent, Qt::Window), contactId(contact_), contact(nullptr),
       audioInputFlag(false),
-      audioOutputFlag(false), isEncrypt(false), lastCallIsVideo{false} , iChatLog(iChatLog_),
+      audioOutputFlag(false), isEncrypt(false), iChatLog(iChatLog_),
       messageDispatcher(messageDispatcher) {
   curRow = 0;
-  headWidget = new ChatFormHeader();
+
   searchForm = new SearchForm();
   dateInfo = new QLabel(this);
   chatLog = new ChatLog(this);
@@ -509,8 +509,8 @@ void GenericChatForm::reloadTheme() {
 
   searchForm->reloadTheme();
 
-  headWidget->setStyleSheet(Style::getStylesheet("chatArea/chatHead.css"));
-  headWidget->reloadTheme();
+//  headWidget->setStyleSheet(Style::getStylesheet("chatArea/chatHead.css"));
+//  headWidget->reloadTheme();
 
   chatLog->setStyleSheet(Style::getStylesheet("chatArea/chatArea.css"));
   chatLog->reloadTheme();
@@ -521,26 +521,16 @@ void GenericChatForm::reloadTheme() {
   sendButton->setStyleSheet(Style::getStylesheet(STYLE_PATH));
 }
 
-void GenericChatForm::setName(const QString &newName) {
-    headWidget->setName(newName);
-}
-
 void GenericChatForm::setContact(const Contact *contact_)
 {
     qDebug()<<__func__<<contact_;
     contact = contact_;
     connect(contact, &Contact::displayedNameChanged, this, &GenericChatForm::onDisplayedNameChanged);
-    connect(contact, &Contact::avatarChanged, this, &GenericChatForm::onAvatarChanged);
+
     if(contact->isGroup()){
 
     }else{
         const Friend* f = static_cast<const Friend*>(contact);
-        setName(f->getDisplayedName());
-
-        connect(f, &Friend::statusChanged, [&](Status::Status status, bool event){
-            updateCallButtons(status);
-        });
-
         for(auto msg: messages){
             auto p = (ChatMessageBox *)msg.second.get();
             p->nickname()->setText(f->getDisplayedName());
@@ -576,13 +566,13 @@ void GenericChatForm::show(ContentLayout *contentLayout) {
 
 void GenericChatForm::showEvent(QShowEvent *) {
   msgEdit->setFocus();
-  headWidget->showCallConfirm();
+//  headWidget->showCallConfirm();
   if(contact){
       if(contact->isGroup()){
 
       }else{
-        auto status = Core::getInstance()->getFriendStatus(contactId->getId());
-        updateCallButtons(status);
+//        auto status = Core::getInstance()->getFriendStatus(contactId->getId());
+//        updateCallButtons(status);
 
         auto f = FriendList::findFriend(*contactId);
         if(f){
@@ -612,15 +602,10 @@ bool GenericChatForm::event(QEvent *e) {
   return QWidget::event(e);
 }
 
-void GenericChatForm::onAvatarChanged(const QPixmap &pic) {
-  qDebug() << __func__ <<contactId->toString() << "pic:"<< pic.size();
-  headWidget->setAvatar(pic);
-}
-
 void GenericChatForm::onDisplayedNameChanged(const QString &name)
 {
     qDebug() <<__func__<< contactId->toString() << name;
-    headWidget->setName(name);
+//    headWidget->setName(name);
     for(auto msg: messages){
         auto it =msg.second;
         auto p = (ChatMessageBox *)it.get();
@@ -774,47 +759,6 @@ void GenericChatForm::disableSearchText() {
   if (msgIt != messages.end()) {
     auto text = qobject_cast<Text *>(msgIt->second->centerContent());
     text->deselectText();
-  }
-}
-
-void GenericChatForm::updateCallButtons()
-{
-    qDebug() << __func__;
-    updateMuteMicButton();
-    updateMuteVolButton();
-}
-
-void GenericChatForm::updateCallButtons(Status::Status status)
-{
-      qDebug() << __func__ << (int)status;
-
-      CoreAV *av = CoreAV::getInstance();
-      const bool audio = av->isCallActive(contactId);
-      const bool video = av->isCallVideoEnabled(contactId);
-      const bool online = Status::isOnline(status);
-      headWidget->updateCallButtons(online, audio, video);
-
-      updateCallButtons();
-}
-
-
-void GenericChatForm::updateMuteMicButton() {
-  const CoreAV *av = CoreAV::getInstance();
-  bool active = av->isCallActive(contactId);
-  bool inputMuted = av->isCallInputMuted(contactId);
-  headWidget->updateMuteMicButton(active, inputMuted);
-  if (netcam) {
-    netcam->updateMuteMicButton(inputMuted);
-  }
-}
-
-void GenericChatForm::updateMuteVolButton() {
-  const CoreAV *av = CoreAV::getInstance();
-  bool active = av->isCallActive(contactId);
-  bool outputMuted = av->isCallOutputMuted(contactId);
-  headWidget->updateMuteVolButton(active, outputMuted);
-  if (netcam) {
-    netcam->updateMuteVolButton(outputMuted);
   }
 }
 

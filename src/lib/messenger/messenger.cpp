@@ -372,7 +372,6 @@ bool Messenger::sendToFriend(const QString &f, const QString &msg,
 }
 
 void Messenger::receiptReceived(const QString &f, QString receipt) {
-  qDebug() << "receiptReceived receiver:" << f << "receiptNum:" << receipt;
   auto _session = ok::session::AuthSession::Instance();
   auto _im = _session->im();
   return _im->sendReceiptReceived(f, receipt);

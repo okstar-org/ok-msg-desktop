@@ -94,6 +94,10 @@ public:
   void setFriendAvStart(const FriendId &friendId, bool video);
   void setFriendAvEnd(const FriendId &friendId, bool error);
 
+
+  void addGroup(const Group *f);
+  void removeGroup(const Group *f);
+
 signals:
   void sessionAdded(MessageSessionWidget* widget);
   void onCompactChanged(bool compact);

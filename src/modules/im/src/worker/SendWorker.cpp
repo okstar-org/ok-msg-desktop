@@ -22,35 +22,37 @@
 #include <src/persistence/settings.h>
 #include <src/persistence/profile.h>
 #include <src/widget/form/groupchatform.h>
+#include <src/widget/chatformheader.h>
 #include <src/widget/contentdialogmanager.h>
 #include <src/model/chatroom/groupchatroom.h>
 
 
 
-SendWorker::SendWorker(const FriendId &m_friend): contactId{m_friend}
+SendWorker::SendWorker(const FriendId &friendId): contactId{friendId}
 {
-    qDebug() << __func__ <<"friend:"<<m_friend.toString();
+    qDebug() << __func__ <<"friend:"<<friendId.toString();
 
     auto core = Core::getInstance();
     auto &settings = Settings::getInstance();
     auto profile = Nexus::getProfile();
     auto history = profile->getHistory();
 
+    initChatHeader(friendId);
 
        messageDispatcher = std::make_unique<FriendMessageDispatcher>(
-           m_friend, sharedParams, *core, *core);
+           friendId, sharedParams, *core, *core);
 
-       chatHistory = std::make_unique<ChatHistory>(m_friend,
+       chatHistory = std::make_unique<ChatHistory>(friendId,
                                                    history,
                                                    *core,
                                                    settings,
                                                    *messageDispatcher.get());
 
-      chatForm = std::make_unique<ChatForm>(&m_friend,
+      chatForm = std::make_unique<ChatForm>(&friendId,
                                             *chatHistory.get(),
                                             *messageDispatcher.get());
 
-      chatRoom = std::make_unique<FriendChatroom>(&m_friend,
+      chatRoom = std::make_unique<FriendChatroom>(&friendId,
                                                   ContentDialogManager::getInstance());
 
 }
@@ -65,6 +67,8 @@ SendWorker::SendWorker(const GroupId &groupId): contactId{groupId}
     auto core = Core::getInstance();
     auto &settings = Settings::getInstance();
     auto history = profile->getHistory();
+
+    initChatHeader(groupId);
 
     messageDispatcher = std::make_unique<GroupMessageDispatcher>(
         groupId, sharedParams, *core, *core,
@@ -107,4 +111,26 @@ std::unique_ptr<SendWorker> SendWorker::forFriend(const FriendId& friend_){
 std::unique_ptr<SendWorker> SendWorker::forGroup(const GroupId &group)
 {
     return std::make_unique<SendWorker>(group);
+}
+
+void SendWorker::initChatHeader(const ContactId &contactId)
+{
+    headWidget = std::make_unique<ChatFormHeader>(contactId);
+
+
+    connect(headWidget.get(), &ChatFormHeader::callAccepted, this,
+            [this](const ToxPeer& p) {
+         emit acceptCall(p, lastCallIsVideo);
+    });
+
+    connect(headWidget.get(), &ChatFormHeader::callRejected, this,
+            [this](const ToxPeer& p){
+          emit rejectCall(p);
+    });
+
+      connect(headWidget.get(), &ChatFormHeader::callTriggered, this,
+              &SendWorker::onCallTriggered);
+
+      connect(headWidget.get(), &ChatFormHeader::videoCallTriggered, this,
+              &SendWorker::onVideoCallTriggered);
 }

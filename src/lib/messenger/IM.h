@@ -735,7 +735,7 @@ private:
 
   std::unique_ptr<MessageEventFilter> m_messageEventFilter;
 
-  std::map<std::string, ChatStateFilter *> m_chatStateFilters;
+  QMap<QString, ChatStateFilter *> m_chatStateFilters;
 
   QMap<QString, IMRoomInfo> m_roomMap;
 

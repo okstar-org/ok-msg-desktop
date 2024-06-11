@@ -20,16 +20,44 @@
 #include "form/chatform.h"
 #include "src/persistence/settings.h"
 #include "src/widget/form/groupchatform.h"
+#include "src/worker/SendWorker.h"
 #include <QLabel>
 #include <QStyleFactory>
 
-ContentWidget::ContentWidget(QWidget* parent): QWidget(parent){
+ContentWidget::ContentWidget(SendWorker* sendWorker, QWidget* parent): QWidget(parent){
 
   setLayout(new QVBoxLayout(this));
 
   layout()->setMargin(0);
   layout()->setSpacing(0);
-  init();
+
+  mainHead = new QWidget(this);
+  mainHead->setLayout(new QVBoxLayout);
+  mainHead->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+//  mainHead->layout()->setMargin(0);
+//  mainHead->layout()->setSpacing(0);
+//  mainHead->setMouseTracking(true);
+
+//  mainHLine = new QFrame(this);
+//  mainHLine->setFrameShape(QFrame::HLine);
+//  mainHLine->setFrameShadow(QFrame::Plain);
+
+//  mainHLineLayout=new QHBoxLayout(this);
+//  mainHLineLayout->addWidget(mainHLine);
+//  mainHLineLayout->addSpacing(4);
+//  mainHLineLayout->addSpacing(5);
+//  layout()->addItem(mainHLineLayout);
+
+  mainContent = new QWidget(this);
+  mainContent->setLayout(new QVBoxLayout);
+  mainContent->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+
+  layout()->addWidget(mainHead);
+  layout()->addWidget(mainContent);
+
+  mainHead->layout()->addWidget(sendWorker->getHeader());
+  mainContent->layout()->addWidget(sendWorker->getChatForm());
+
 }
 
 ContentWidget::~ContentWidget()
@@ -41,31 +69,11 @@ ContentWidget::~ContentWidget()
 
 void ContentWidget::init() {
 
-  mainHead =  new QWidget(this);
-  mainHead->setLayout(new QVBoxLayout);
-  mainHead->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
-  mainHead->layout()->setMargin(0);
-  mainHead->layout()->setSpacing(0);
-  mainHead->setMouseTracking(true);
-
-  mainHLine = new QFrame(this);
-  mainHLine->setFrameShape(QFrame::HLine);
-  mainHLine->setFrameShadow(QFrame::Plain);
-
-  mainHLineLayout=new QHBoxLayout(this);
-  mainHLineLayout->addWidget(mainHLine);
-  mainHLineLayout->addSpacing(4);
-  mainHLineLayout->addSpacing(5);
-  layout()->addItem(mainHLineLayout);
 
 
-//  QPalette palette = mainHLine.palette();
-//  palette.setBrush(QPalette::WindowText, QBrush(QColor(193, 193, 193)));
-//  mainHLine.setPalette(palette);
-
-  mainContent = new QWidget(this);
-  mainContent->setLayout(new QVBoxLayout);
-  mainContent->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+  //  QPalette palette = mainHLine.palette();
+  //  palette.setBrush(QPalette::WindowText, QBrush(QColor(193, 193, 193)));
+  //  mainHLine.setPalette(palette);
 
 //  if (QStyleFactory::keys().contains(Settings::getInstance().getStyle())
 //      && Settings::getInstance().getStyle() != "None") {
@@ -76,37 +84,34 @@ void ContentWidget::init() {
 //  reloadTheme();
 
 
-  layout()->addWidget(mainHead);
-  layout()->addWidget(mainContent);
+
 
 }
 
 void ContentWidget::showTo(ContentLayout *layout) {
-
-  auto  contentIndex= layout->indexOf(this);
-    if(contentIndex< 0 ){
-     contentIndex=   layout->addWidget(this);
-    }
+//  auto contentIndex = layout->indexOf(this);
+//    if(contentIndex < 0 ){
+//     contentIndex = layout->addWidget(this);
+//    }
   layout->setCurrentWidget(this);
-
+  this->show();
 }
 
 void ContentWidget::setChatForm(GenericChatForm * form) {
 //  auto h = form->getHead();
-  mainHead->layout()->addWidget(form->getHead());
-  mainContent->layout()->addWidget(form);
+//  mainHead->layout()->addWidget(form->getHead());
+//  mainContent->layout()->addWidget(form);
 
 
 }
 
 void ContentWidget::showEvent(QShowEvent *event)
 {
-    qDebug() << __func__ << this;
+
 }
 
 void ContentWidget::hideEvent(QHideEvent *event)
 {
 
-    qDebug() << __func__ << this;
 }
 

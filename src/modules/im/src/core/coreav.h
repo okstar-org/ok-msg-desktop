@@ -131,7 +131,7 @@ private:
 
   CoreAV();
 
-  void connectCallbacks(ToxAV &toxav);
+
   void process();
 
   static void audioFrameCallback(ToxAV *toxAV, QString friendId,

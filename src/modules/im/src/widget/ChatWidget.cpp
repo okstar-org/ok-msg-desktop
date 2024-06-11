@@ -156,6 +156,8 @@ void ChatWidget::init() {
     connect(widget, &Widget::friendAdded, this, &ChatWidget::onFriendAdded);
     connect(widget, &Widget::friendRemoved, this, &ChatWidget::onFriendRemoved);
 
+    connect(widget, &Widget::groupAdded, this, &ChatWidget::onGroupAdded);
+    connect(widget, &Widget::groupRemoved, this, &ChatWidget::onGroupRemoved);
 
     connect(Nexus::getProfile(), &Profile::coreChanged,
             this, &ChatWidget::onCoreChanged);
@@ -252,15 +254,14 @@ void ChatWidget::onCoreChanged(Core &core_) {
   connectToCore(core);
   connectToCoreFile(core->getCoreFile());
 
+  auto username = core->getUsername();
+  qDebug() << "username" << username;
+  ui->nameLabel->setText(username);
+
   const CoreAV *av = CoreAV::getInstance();
   connect(av, &CoreAV::avInvite, this, &ChatWidget::onAvInvite);
   connect(av, &CoreAV::avStart, this, &ChatWidget::onAvStart);
   connect(av, &CoreAV::avEnd, this, &ChatWidget::onAvEnd);
-
-
-  auto username = core->getUsername();
-  qDebug() << "username" << username;
-  ui->nameLabel->setText(username);
 }
 
 
@@ -340,8 +341,17 @@ void ChatWidget::onFriendStatusMessageChanged(const FriendId &friendPk,
 }
 
 void ChatWidget::onFriendTypingChanged(const FriendId &friendId, bool isTyping) {
+      sessionListWidget->setFriendTyping(friendId, isTyping);
+}
 
-  sessionListWidget->setFriendTyping(friendId, isTyping);
+void ChatWidget::onGroupAdded(const Group *g)
+{
+    sessionListWidget->addGroup(g);
+}
+
+void ChatWidget::onGroupRemoved(const Group *g)
+{
+    sessionListWidget->removeGroup(g);
 }
 
 void ChatWidget::showEvent(QShowEvent *e) {}

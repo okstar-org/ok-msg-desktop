@@ -620,6 +620,26 @@ void MessageSessionListWidget::setFriendAvEnd(const FriendId &friendId, bool err
     w->setAvEnd(friendId, error);
 }
 
+void MessageSessionListWidget::addGroup(const Group *g)
+{
+    auto ms = getMessageSession(g->getId());
+    if(!ms){
+      qWarning() <<"Unable to find message session" << g->getId();
+      return;
+    }
+    ms->setGroup(g);
+}
+
+void MessageSessionListWidget::removeGroup(const Group *g)
+{
+    auto ms = getMessageSession(g->getId());
+    if(!ms){
+      qWarning() <<"Unable to find message session" << g->getId();
+      return;
+    }
+    ms->removeGroup();
+}
+
 QLayout *MessageSessionListWidget::nextLayout(QLayout *layout, bool forward) const {
     qDebug() <<"nextLayout:"<<layout<<"forward:"<<forward;
     if (forward) {

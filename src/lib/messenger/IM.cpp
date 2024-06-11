@@ -104,7 +104,7 @@ void IM::run() { doConnect(); }
 std::unique_ptr<Client> IM::makeClient() {
   JID loginJid(_username + "@" + _host + "/" + _resource);
 
-  qDebug() << "Using Jid:" << qstring(loginJid.full());
+  qDebug() << __func__<< "Using Jid:" << qstring(loginJid.full());
 
   /**
    * Client
@@ -472,6 +472,8 @@ void IM::handleMessageSession(MessageSession *session) {
   auto sid = qstring(session->threadID());
   qDebug() << __func__ << "from" << from << "sid:" << sid;
 
+  auto frndId = qstring(session->target().bare());
+
   // 放入最新的session
 
   // m_messageEventFilter = std::make_unique<MessageEventFilter>(session);
@@ -492,27 +494,21 @@ void IM::handleMessageSession(MessageSession *session) {
   //  m_pepEventFilter->registerPersonalEventingProtocolHandler(this);
   //  auto jid = session->target();
   //  sessionMap.emplace(std::pair(jid.bare(), session));
-  session->registerMessageHandler(this);
+//  session->registerMessageHandler(this);
 
-  emit receiveFriendMessageSession(qstring(session->target().bare()), sid);
+  emit receiveFriendMessageSession(frndId, sid);
 
   // 聊天状态过滤器，获取：正在中等输入状态
-  //  if (m_chatStateFilters.size() > 1000) {
-  //    return;
-  //  }
-  //  auto csf = new ChatStateFilter(session);
-  //  csf->registerChatStateHandler(this);
-  //  m_chatStateFilters.emplace(session->target().bare(), csf);
+    auto csf = m_chatStateFilters.value(frndId);
+    if(!csf){
+        csf = new ChatStateFilter(session);
+        csf->registerChatStateHandler(this);
+        m_chatStateFilters.insert(frndId, csf);
+    }
 }
 
 void IM::handleMessage(const gloox::Message &msg, MessageSession *session) {
 
-//  if (!session) {
-//    qWarning() << "session is NULL";
-//    return;
-//  }
-
-//  auto threadId = qstring(session->threadID());
   auto from = msg.from();
   auto peerId = qstring(from.full());
   auto friendId = qstring(from.bare());
@@ -520,11 +516,7 @@ void IM::handleMessage(const gloox::Message &msg, MessageSession *session) {
 
   qDebug() << __func__
            << "from:" << peerId
-//           << "sessionId:" << threadId
            << "subtype:" << (int)msg.subtype();
-
-//  sessionIdMap.emplace(friendId.toStdString(), threadId.toStdString());
-//  sessionMap.emplace(threadId.toStdString(), session);
 
   gloox::Message::MessageType msgType = msg.subtype();
   switch (msgType) {
@@ -754,7 +746,7 @@ void IM::doPubSubEvent(const gloox::PubSub::Event *pse, //
  * @param state
  */
 void IM::handleChatState(const JID &from, ChatStateType state) {
-  qDebug() << "handleChatState from:" << qstring(from.full()) //
+  qDebug() << "from:" << qstring(from.full())
            << "state:" << static_cast<int>(state);
 
   auto friendId = qstring(from.bare());
@@ -768,8 +760,9 @@ void IM::handleChatState(const JID &from, ChatStateType state) {
  */
 void IM::sendChatState(const QString &to, ChatStateType state) {
   qDebug() << "sendChatState" << "to:" << to << "state:" << (static_cast<int>(state));
-  auto csf = m_chatStateFilters[stdstring(to)];
+  auto csf = m_chatStateFilters[to];
   if (!csf) {
+      qWarning() <<"Chat state filter is no existing!";
     return;
   }
   csf->setChatState(state);

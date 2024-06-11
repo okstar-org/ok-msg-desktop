@@ -165,29 +165,24 @@ public slots:
   void setUsername(const QString &username);
 
   void setAvatar( QByteArray avatar);
-  void addFriend0(const FriendId &friendPk);
-  void addFriendDone();
+
   void addFriendFailed(const FriendId &userId, const QString &errorInfo = QString());
 
 
   void onFileReceiveRequested(const ToxFile &file);
 
-  void onEmptyGroupCreated(QString groupnumber, const GroupId &groupId, const QString &title);
-
-
   void titleChangedByUser(const QString &title);
   void onGroupPeerAudioPlaying(QString groupnumber, FriendId peerPk);
 
-  void nextContact();
-  void previousContact();
+
   void onFriendDialogShown(const Friend *f);
   void onGroupDialogShown(const Group *g);
   void toggleFullscreen();
-  void refreshPeerListsLocal(const QString &username);
   void onUpdateAvailable();
   void onCoreChanged(Core &core);
   void incomingNotification(QString friendId);
   void onStopNotification();
+  void outgoingNotification();
 
 signals:
   void friendAdded(const Friend* f);
@@ -196,6 +191,8 @@ signals:
   void friendRequestRejected(const FriendId &friendPk);
   void friendRequested(const ToxId &friendAddress, const QString &nick, const QString &message);
 
+  void groupAdded(const Group* g);
+  void groupRemoved(const Group* g);
 
   void statusSet(Status::Status status);
   void statusSelected(Status::Status status);
@@ -229,16 +226,8 @@ private slots:
   void onTryCreateTrayIcon();
   void onSetShowSystemTray(bool newValue);
   void onSplitterMoved(int pos, int index);
-  void friendListContextMenu(const QPoint &pos);
-
 
   void onDialogShown(GenericChatroomWidget *widget);
-  void outgoingNotification();
-  void onCallEnd();
-
-  void onRejectCall(QString friendId);
-
-
 
 
   void registerContentDialog(ContentDialog &contentDialog) const;
@@ -254,7 +243,7 @@ private:
   void moveEvent(QMoveEvent *event) final override;
 
 
-  void setActiveToolMenuButton(ActiveToolMenuButton newActiveButton);
+//  void setActiveToolMenuButton(ActiveToolMenuButton newActiveButton);
   void hideMainForms(GenericChatroomWidget *chatroomWidget);
   GroupWidget *createGroup(QString groupnumber, const GroupId &groupId, const QString& name);
   void removeFriend(Friend *f, bool fake = false);
@@ -264,7 +253,7 @@ private:
   void cycleContacts(bool forward);
 
   void retranslateUi();
-  void focusChatInput();
+
   void openDialog(GenericChatroomWidget *widget, bool newWindow);
   void playNotificationSound(IAudioSink::Sound sound, bool loop = false);
   void cleanupNotificationSound();

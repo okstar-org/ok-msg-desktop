@@ -37,6 +37,10 @@ public:
  static std::unique_ptr<SendWorker> forGroup(const GroupId& m_group);
 
 
+ChatFormHeader* getHeader()const{
+    return headWidget.get();
+}
+
  GenericChatForm* getChatForm() const {
      return chatForm.get();
  };
@@ -58,6 +62,8 @@ public:
  }
 
 private:
+    void initChatHeader(const ContactId &contactId);
+
     MessageProcessor::SharedParams sharedParams;
 
     std::unique_ptr<IMessageDispatcher> messageDispatcher;
@@ -65,8 +71,17 @@ private:
     std::unique_ptr<SessionChatLog> chatLog;
     std::unique_ptr<GenericChatForm> chatForm;
     std::unique_ptr<Chatroom> chatRoom;
+    std::unique_ptr<ChatFormHeader> headWidget;
 
     ContactId contactId;
+    bool lastCallIsVideo = false;
+
+
+signals:
+    void rejectCall(const ToxPeer& peerId);
+    void acceptCall(const ToxPeer& peerId, bool video);
+      void onCallTriggered();
+      void onVideoCallTriggered();
 };
 
 #endif // OKMSG_PROJECT_SENDWORKER_H

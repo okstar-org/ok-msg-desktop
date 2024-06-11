@@ -99,24 +99,26 @@ GroupChatForm::GroupChatForm(const GroupId* chatGroup, IChatLog& chatLog, IMessa
     nusersLabel->setObjectName("statusLabel");
     retranslateUi();
 
-    const QSize& size = headWidget->getAvatarSize();
-    headWidget->setAvatar(Style::scaleSvgImage(":/img/group_dark.svg", size.width(), size.height()));
+//    const QSize& size = headWidget->getAvatarSize();
+//    headWidget->setAvatar(Style::scaleSvgImage(":/img/group_dark.svg", size.width(), size.height()));
 
     msgEdit->setObjectName("group");
 
-    namesListLayout = new FlowLayout(0, 5, 0);
-    headWidget->addWidget(nusersLabel);
-    headWidget->addLayout(namesListLayout);
-    headWidget->addStretch();
+//    namesListLayout = new FlowLayout(0, 5, 0);
+//    headWidget->addWidget(nusersLabel);
+//    headWidget->addLayout(namesListLayout);
+//    headWidget->addStretch();
 
 //    nameLabel->setMinimumHeight(12);
     nusersLabel->setMinimumHeight(12);
 
 //    connect(msgEdit, &ChatTextEdit::tabPressed, tabber, &TabCompleter::complete);
 //    connect(msgEdit, &ChatTextEdit::keyPressed, tabber, &TabCompleter::reset);
-    connect(headWidget, &ChatFormHeader::callTriggered, this, &GroupChatForm::onCallClicked);
-    connect(headWidget, &ChatFormHeader::micMuteToggle, this, &GroupChatForm::onMicMuteToggle);
-    connect(headWidget, &ChatFormHeader::volMuteToggle, this, &GroupChatForm::onVolMuteToggle);
+
+//    connect(headWidget, &ChatFormHeader::callTriggered, this, &GroupChatForm::onCallClicked);
+//    connect(headWidget, &ChatFormHeader::micMuteToggle, this, &GroupChatForm::onMicMuteToggle);
+//    connect(headWidget, &ChatFormHeader::volMuteToggle, this, &GroupChatForm::onVolMuteToggle);
+
 //    connect(headWidget, &ChatFormHeader::nameChanged, chatGroup, &Group::setName);
 //    connect(group, &Group::subjectChanged, this, &GroupChatForm::onTitleChanged);
 //    connect(group, &Group::userJoined, this, &GroupChatForm::onUserJoined);
@@ -125,7 +127,7 @@ GroupChatForm::GroupChatForm(const GroupId* chatGroup, IChatLog& chatLog, IMessa
 //    connect(group, &Group::peerCountChanged, this, &GroupChatForm::updateUserCount);
     settings.connectTo_blackListChanged(this, [this](QStringList const&) { this->updateUserNames(); });
 
-    updateUserNames();
+//    updateUserNames();
     setAcceptDrops(true);
     settings::Translator::registerHandler(std::bind(&GroupChatForm::retranslateUi, this), this);
 }
@@ -341,7 +343,7 @@ void GroupChatForm::onCallClicked()
         leaveGroupCall();
     }
 
-    headWidget->updateCallButtons(true, inCall);
+//    headWidget->updateCallButtons(true, inCall);
 
 //    CoreAV* av = Core::getInstance()->getAv();
 //    const bool inMute = av->isGroupCallInputMuted(group);
@@ -395,7 +397,7 @@ void GroupChatForm::keyReleaseEvent(QKeyEvent* ev)
 void GroupChatForm::updateUserCount(int numPeers)
 {
     nusersLabel->setText(tr("%n user(s) in chat", "Number of users in chat", numPeers));
-    headWidget->updateCallButtons(true, inCall);
+//    headWidget->updateCallButtons(true, inCall);
 }
 
 void GroupChatForm::retranslateUi()

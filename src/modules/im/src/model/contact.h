@@ -19,6 +19,9 @@
 #include <QPixmap>
 #include <QString>
 
+/**
+ * 联系人（朋友和群的基类）
+ */
 class Contact : public QObject
 {
     Q_OBJECT

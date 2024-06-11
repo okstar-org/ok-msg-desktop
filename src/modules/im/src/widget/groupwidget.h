@@ -82,7 +82,7 @@ private slots:
 
 private:
   Group *group;
-  ContentWidget* contentWidget;
+
   ContentLayout* contentLayout;
   std::unique_ptr<AboutGroupForm> about;
 

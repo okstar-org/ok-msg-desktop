@@ -56,8 +56,7 @@ public:
   void insertChatMessage(IChatItem::Ptr msg) final override;
 
 
-  void showCallConfirm(const ToxPeer &peerId, bool video, const QString &displayedName);
-  void closeCallConfirm(const FriendId &friendId);
+
 
   void startCounter();
   void stopCounter(bool error = false);
@@ -67,8 +66,7 @@ signals:
   void outgoingNotification();
   void stopNotification();
   void endCallNotification();
-  void rejectCall(const ToxPeer& peerId);
-  void acceptCall(const ToxPeer& peerId, bool video);
+
   void updateFriendActivity(const FriendId &frnd);
 
 public slots:
@@ -82,24 +80,21 @@ private slots:
   void onScreenshotClicked() override;
 
   void onTextEditChanged();
-  void onCallTriggered();
-  void onVideoCallTriggered();
-  void onAcceptCallTriggered(const ToxPeer &peer, bool video);
-  void onRejectCallTriggered(const ToxPeer &peer);
-  void onMicMuteToggle();
-  void onVolMuteToggle();
+//  void onCallTriggered();
+//  void onVideoCallTriggered();
+//  void onAcceptCallTriggered(const ToxPeer &peer, bool video);
+//  void onRejectCallTriggered(const ToxPeer &peer);
+//  void onMicMuteToggle();
+//  void onVolMuteToggle();
 
   void onFriendStatusChanged(const FriendId& friendId, Status::Status status);
-  void onFriendTypingChanged(const FriendId& friendId, bool isTyping);
   void onFriendNameChanged(const QString &name);
   void onStatusMessage(const QString &message);
   void onUpdateTime();
   void sendImage(const QPixmap &pixmap);
   void doScreenshot();
   void onCopyStatusMessage();
-
   void callUpdateFriendActivity();
-
 
 protected:
   GenericNetCamView *createNetcam() final override;

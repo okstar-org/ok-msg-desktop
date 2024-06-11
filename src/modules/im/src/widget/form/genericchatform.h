@@ -14,7 +14,7 @@
 #define GENERICCHATFORM_H
 
 #include "src/chatlog/chatmessage.h"
-#include "src/core/FriendId.h"
+
 #include "src/model/ichatlog.h"
 #include "src/widget/searchtypes.h"
 
@@ -68,7 +68,7 @@ public:
                     QWidget* parent = nullptr);
     ~GenericChatForm() override;
 
-    void setName(const QString& newName);
+
     void setContact(const Contact* contact);
     void removeContact();
 
@@ -84,9 +84,10 @@ public:
     QDateTime getLatestTime() const;
     QDateTime getFirstTime() const;
 
-  [[__nodiscard__]] inline ChatFormHeader* getHead() const {
-        return headWidget;
-    };
+//  [[__nodiscard__]] inline ChatFormHeader* getHead() const {
+//        return headWidget;
+//    };
+
   [[__nodiscard__]] inline ChatLog *getChatLog() const{
         return chatLog;
     }
@@ -94,10 +95,6 @@ public:
     void showNetcam();
     void hideNetcam();
 
-    void updateCallButtons();
-    void updateCallButtons(Status::Status status);
-    void updateMuteMicButton();
-    void updateMuteVolButton();
 
 signals:
     void messageInserted();
@@ -107,7 +104,7 @@ public slots:
     void focusInput();
     void onChatMessageFontChanged(const QFont& font);
     void setColorizedNames(bool enable);
-    void onAvatarChanged(  const QPixmap &pic);
+
     void onDisplayedNameChanged(const QString& name);
 
 protected slots:
@@ -202,7 +199,7 @@ protected:
 
     QSplitter* bodySplitter;
 
-    ChatFormHeader* headWidget;
+//    ChatFormHeader* headWidget;
 
     SearchForm *searchForm;
     QLabel *dateInfo;
@@ -214,7 +211,7 @@ protected:
     FlyoutOverlayWidget* fileFlyout;
 
     GenericNetCamView* netcam;
-    bool lastCallIsVideo;
+
 
     Widget* parent;
 

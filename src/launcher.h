@@ -30,7 +30,7 @@ public:
 
   int startup();
 
-  int shutdown();
+  void shutdown();
 
 private:
   int executeApplication();

@@ -17,9 +17,11 @@
 #ifndef CONTENTWIDGET_H
 #define CONTENTWIDGET_H
 
-#include "src/widget/form/groupchatform.h"
 #include <QFrame>
 #include <QHBoxLayout>
+
+#include "src/widget/form/groupchatform.h"
+#include "src/worker/SendWorker.h"
 
 class ContentLayout;
 class ChatForm;
@@ -27,10 +29,10 @@ class ChatForm;
 class ContentWidget : public QWidget {
   Q_OBJECT
 public:
-  explicit ContentWidget(QWidget *parent= nullptr);
+  explicit ContentWidget(SendWorker* sendWorker, QWidget *parent = nullptr);
   ~ContentWidget();
 
-  void showTo(ContentLayout*);
+  void showTo(ContentLayout *);
   void setChatForm(GenericChatForm *);
 
   virtual void showEvent(QShowEvent *event) override;
@@ -38,12 +40,10 @@ public:
 
 private:
   void init();
-  QFrame* mainHLine;
- QHBoxLayout* mainHLineLayout;
- QWidget* mainHead;
-  QWidget* mainContent;
-
-
+  QFrame *mainHLine;
+  QHBoxLayout *mainHLineLayout;
+  QWidget *mainHead;
+  QWidget *mainContent;
 };
 
 #endif // OKMSG_PROJECT_CONTENTWIDGET_H

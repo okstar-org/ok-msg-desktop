@@ -72,22 +72,24 @@ GroupWidget::GroupWidget(ContentLayout *layout, QString groupnumber,
             setName(newName);
           });
 
-
-  contentWidget = new ContentWidget(this);
-  contentWidget->hide();
-
-
   connect(this, &GroupWidget::chatroomWidgetClicked, [this]() {
     this->do_widgetClicked(this);
     emit groupWidgetClicked(this);
   });
 
+
   init();
+
+  emit Widget::getInstance()->groupAdded(group);
 
 //    groupAlertConnections.insert(groupId, notifyReceivedConnection);
 }
 
-GroupWidget::~GroupWidget() { settings::Translator::unregister(this); }
+GroupWidget::~GroupWidget() {
+    qDebug() << __func__;
+    emit Widget::getInstance()->groupRemoved(group);
+    settings::Translator::unregister(this);
+}
 
 void GroupWidget::init()
 {
@@ -284,8 +286,6 @@ void GroupWidget::mouseMoveEvent(QMouseEvent *ev) {
 }
 
 void GroupWidget::do_widgetClicked(GenericChatroomWidget *w) {
-  //  qDebug() << __func__ << "show group:" << group->getId();
-//  contentWidget->showTo(contentLayout);
     showDetails();
 }
 

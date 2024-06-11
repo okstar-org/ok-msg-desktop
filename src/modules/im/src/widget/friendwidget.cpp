@@ -136,9 +136,9 @@ FriendWidget::FriendWidget(ContentLayout *layout,
   menu->addSeparator();
   removeAct = menu->addAction(tr("Remove friend"));
 
-  emit Widget::getInstance()->friendAdded(m_friend);
-
   init();
+
+  emit Widget::getInstance()->friendAdded(m_friend);
 }
 
 FriendWidget::~FriendWidget()
