@@ -450,9 +450,9 @@ void Core::onFriendStatus(QString friendId, lib::messenger::IMStatus status) {
 }
 
 
-void Core::onFriendMessageSession(QString friendId, QString sid) {
-    qDebug() <<__func__<< "friend:" << friendId << "sid:" << sid;
-    emit friendMessageSessionReceived(FriendId(friendId), sid);
+void Core::onMessageSession(QString cId, QString sid) {
+    qDebug() <<__func__<< "contact:" << cId << "sid:" << sid;
+    emit messageSessionReceived(FriendId(cId), sid);
 }
 
 
@@ -586,8 +586,7 @@ void Core::onGroupMessage(const QString groupId,
                           const lib::messenger::IMPeerId peerId,
                           const lib::messenger::IMMessage message) {
 
-  qDebug() << __func__ << "groupId:" << groupId;
-  qDebug() << "from:" << peerId.toString();
+  qDebug() << __func__ << "groupId:" << groupId << "peer:" << peerId.toString();
   qDebug() << "body:" << message.body;
 
   bool isAction = false;

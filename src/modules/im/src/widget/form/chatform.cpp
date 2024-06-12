@@ -67,34 +67,7 @@ static constexpr int TYPING_NOTIFICATION_DURATION = 3000;
 
 const QString ChatForm::ACTION_PREFIX = QStringLiteral("/me ");
 
-namespace {
-QString secondsToDHMS(quint32 duration) {
-  QString res;
-  QString cD = ChatForm::tr("Call duration: ");
-  quint32 seconds = duration % 60;
-  duration /= 60;
-  quint32 minutes = duration % 60;
-  duration /= 60;
-  quint32 hours = duration % 24;
-  quint32 days = duration / 24;
 
-  // I assume no one will ever have call longer than a month
-  if (days) {
-    return cD +
-           res.asprintf("%dd%02dh %02dm %02ds", days, hours, minutes, seconds);
-  }
-
-  if (hours) {
-    return cD + res.asprintf("%02dh %02dm %02ds", hours, minutes, seconds);
-  }
-
-  if (minutes) {
-    return cD + res.asprintf("%02dm %02ds", minutes, seconds);
-  }
-
-  return cD + res.asprintf("%02ds", seconds);
-}
-} // namespace
 
 ChatForm::ChatForm(const FriendId *chatFriend,
                    IChatLog &chatLog_,
@@ -114,13 +87,11 @@ ChatForm::ChatForm(const FriendId *chatFriend,
 
   typingTimer.setSingleShot(true);
 
-  callDurationTimer = nullptr;
+
 
   chatLog->setTypingNotification(ChatMessage::createTypingNotification());
   chatLog->setMinimumHeight(CHAT_WIDGET_MIN_HEIGHT);
 
-  callDuration = new QLabel();
-  callDuration->hide();
 //  headWidget->addWidget(statusMessageLabel);
 //  headWidget->addStretch();
 //  headWidget->addWidget(callDuration, 1, Qt::AlignCenter);
@@ -169,10 +140,6 @@ ChatForm::ChatForm(const FriendId *chatFriend,
     Core::getInstance()->sendTyping(f->toString(), false);
     isTyping = false;
   });
-
-  //TODO reflect name changes in the header
-//  connect(headWidget, &ChatFormHeader::nameChanged, this,
-//          [this](const QString &newName) { f->setAlias(newName); });
 
   setAcceptDrops(true);
   retranslateUi();
@@ -273,47 +240,6 @@ void ChatForm::showOutgoingCall(bool video) {
   emit outgoingNotification();
   emit updateFriendActivity(*f);
 }
-
-
-//void ChatForm::onRejectCallTriggered(const ToxPeer &peer) {
-//  headWidget->removeCallConfirm();
-//  emit rejectCall(peer);
-//}
-
-//void ChatForm::onCallTriggered() {
-//  CoreAV *av = CoreAV::getInstance();
-//  QString friendId = f->getId();
-//  if (av->isCallStarted(f)) {
-//    av->cancelCall(friendId);
-//  } else if (av->startCall(friendId, false)) {
-//    showOutgoingCall(false);
-//  }
-//}
-
-//void ChatForm::onVideoCallTriggered() {
-//  CoreAV *av = CoreAV::getInstance();
-//  QString cId = f->getId();
-//  if (av->isCallStarted(f)) {
-//    if (av->isCallVideoEnabled(f)) {
-//      av->cancelCall(cId);
-//    }
-//  } else if (av->startCall(cId, true)) {
-//    showOutgoingCall(true);
-//  }
-//}
-
-
-//void ChatForm::onMicMuteToggle() {
-//  CoreAV *av = CoreAV::getInstance();
-//  av->toggleMuteCallInput(f);
-//  updateMuteMicButton();
-//}
-
-//void ChatForm::onVolMuteToggle() {
-//  CoreAV *av = CoreAV::getInstance();
-//  av->toggleMuteCallOutput(f);
-//  updateMuteVolButton();
-//}
 
 void ChatForm::onFriendStatusChanged(const FriendId& friendId, Status::Status status) {
     qDebug() << __func__ <<friendId.toString()<<(int)status;
@@ -483,46 +409,11 @@ void ChatForm::insertChatMessage(IChatItem::Ptr msg) {
 
 void ChatForm::onCopyStatusMessage() {
     qDebug() <<__func__;
-//    QString text = f->getStatusMessage();
+//  QString text = f->getStatusMessage();
 //  QClipboard *clipboard = QApplication::clipboard();
 //  if (clipboard) {
 //    clipboard->setText(text, QClipboard::Clipboard);
 //  }
-}
-void ChatForm::startCounter() {
-  if (callDurationTimer) {
-    return;
-  }
-  callDurationTimer = new QTimer();
-  connect(callDurationTimer, &QTimer::timeout, this, &ChatForm::onUpdateTime);
-  callDurationTimer->start(1000);
-  timeElapsed.start();
-  callDuration->show();
-}
-
-void ChatForm::stopCounter(bool error) {
-    qDebug() << __func__;
-  if (!callDurationTimer) {
-    return;
-  }
-  QString dhms = secondsToDHMS(timeElapsed.elapsed() / 1000);
-//  QString name = f->getDisplayedName();
-  QString mess = error ? tr("Call with %1 ended unexpectedly. %2")
-                       : tr("Call with %1 ended. %2");
-  // TODO: add notification once notifications are implemented
-
-//  addSystemInfoMessage(mess.arg(name, dhms), ChatMessage::INFO,
-//                       QDateTime::currentDateTime());
-  callDurationTimer->stop();
-  callDuration->setText("");
-  callDuration->hide();
-
-  delete callDurationTimer;
-  callDurationTimer = nullptr;
-}
-
-void ChatForm::onUpdateTime() {
-  callDuration->setText(secondsToDHMS(timeElapsed.elapsed() / 1000));
 }
 
 void ChatForm::setFriendTyping(bool typing) {

@@ -120,20 +120,17 @@ MessageSessionListWidget::~MessageSessionListWidget() {
 
 
 MessageSessionWidget *MessageSessionListWidget::createMessageSession(
-        const ContactId &friendPk, const QString &sid, ChatType type) {
-  qDebug() << __func__ << "friend:" << friendPk.toString();
+        const ContactId &contactId, const QString &sid, ChatType type) {
+  qDebug() << __func__ << "contactId:" << contactId.toString();
 
-//  auto core = Core::getInstance();
-//  auto profile = Nexus::getProfile();
-//  auto &settings = Settings::getInstance();
-  auto sw = getMessageSession(friendPk.toString());
+  auto sw = getMessageSession(contactId.toString());
   if(sw){
       qWarning() <<"Message session is existing.";
       return sw;
   }
 
-  sw = new MessageSessionWidget(m_contentLayout, friendPk, type);
-  qDebug() << "create friend:" << friendPk.toString() <<" session:" <<sw;
+  sw = new MessageSessionWidget(m_contentLayout, contactId, type);
+  qDebug() << "create session for:" << contactId.toString() <<"=>" <<sw;
   connectSessionWidget(*sw);
 
   listLayout->addWidget(sw);

@@ -66,8 +66,8 @@ public:
 
   void joinGroupCall(const Group &group);
   void leaveGroupCall(QString groupNum);
-  void muteCallInput(const Group *g, bool mute);
-  void muteCallOutput(const Group *g, bool mute);
+  void muteCallInput(const ContactId *g, bool mute);
+  void muteCallOutput(const ContactId *g, bool mute);
   bool isGroupCallInputMuted(const Group *g) const;
   bool isGroupCallOutputMuted(const Group *g) const;
 

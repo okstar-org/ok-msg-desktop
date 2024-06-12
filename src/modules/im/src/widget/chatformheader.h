@@ -59,6 +59,7 @@ public:
 
     void setContact(const Contact* contact);
     void removeContact();
+    const Contact* getContact()const{return contact;}
 
     void setName(const QString& newName);
     void setMode(Mode mode);
@@ -124,13 +125,10 @@ private:
 
     QPushButton* callButton;
     QPushButton* videoButton;
-    QPushButton* volButton;
-    QPushButton* micButton;
 
     CallButtonState callState;
     CallButtonState videoState;
-    ToolButtonState volState;
-    ToolButtonState micState;
+
 
     std::unique_ptr<CallConfirmWidget> callConfirm;
 };

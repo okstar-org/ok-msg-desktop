@@ -60,6 +60,8 @@ ChatFormHeader* getHeader()const{
  IChatLog* getChatLog()const{
      return chatHistory.get();
  }
+    void startCounter();
+    void stopCounter(bool error = false);
 
 private:
     void initChatHeader(const ContactId &contactId);
@@ -76,12 +78,17 @@ private:
     ContactId contactId;
     bool lastCallIsVideo = false;
 
+    std::unique_ptr<CallDurationForm> callDuration;
 
 signals:
     void rejectCall(const ToxPeer& peerId);
     void acceptCall(const ToxPeer& peerId, bool video);
-      void onCallTriggered();
-      void onVideoCallTriggered();
+    void onCallTriggered();
+    void onVideoCallTriggered();
+    void endCall();
+    void muteSpeaker(bool mute);
+    void muteMicrophone(bool mute);
+
 };
 
 #endif // OKMSG_PROJECT_SENDWORKER_H

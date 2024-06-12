@@ -115,6 +115,9 @@ private slots:
     void doRejectCall(const ToxPeer& p);
     void doCall();
     void doVideoCall();
+    void endCall();
+    void doMuteMicrophone(bool mute);
+    void doSilenceSpeaker(bool mute);
 
 protected:
     virtual void mousePressEvent(QMouseEvent* ev) override;

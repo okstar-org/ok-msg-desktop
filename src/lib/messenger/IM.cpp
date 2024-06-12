@@ -472,38 +472,16 @@ void IM::handleMessageSession(MessageSession *session) {
   auto sid = qstring(session->threadID());
   qDebug() << __func__ << "from" << from << "sid:" << sid;
 
-  auto frndId = qstring(session->target().bare());
-
-  // 放入最新的session
-
-  // m_messageEventFilter = std::make_unique<MessageEventFilter>(session);
-  // m_messageEventFilter->registerMessageEventHandler(this);
-  // m_pepEventFilter =
-  // std::make_unique<PersonalEventingProtocolFilter>(session);
-
-  // 注册类别
-  //  m_pepEventFilter->registerPlugin(new SmartBoard::DrawLine());
-  //  m_pepEventFilter->registerPlugin(new SmartBoard::DrawText());
-  //  m_pepEventFilter->registerPlugin(new SmartBoard::DrawFile());
-  //  m_pepEventFilter->registerPlugin(new SmartBoard::DrawMove());
-  //  m_pepEventFilter->registerPlugin(new SmartBoard::DrawRemove());
-
-  // m_pepEventFilter->registerPlugin(new SmartBoard::ControllerSelect());
-  // m_pepEventFilter->registerPlugin(new SmartBoard::ControllerVoice());
-
-  //  m_pepEventFilter->registerPersonalEventingProtocolHandler(this);
-  //  auto jid = session->target();
-  //  sessionMap.emplace(std::pair(jid.bare(), session));
-//  session->registerMessageHandler(this);
-
-  emit receiveFriendMessageSession(frndId, sid);
+  //联系人ID（朋友和群聊）
+  auto contactId = qstring(session->target().bare());
+  emit receiveMessageSession(contactId, sid);
 
   // 聊天状态过滤器，获取：正在中等输入状态
-    auto csf = m_chatStateFilters.value(frndId);
+    auto csf = m_chatStateFilters.value(contactId);
     if(!csf){
         csf = new ChatStateFilter(session);
         csf->registerChatStateHandler(this);
-        m_chatStateFilters.insert(frndId, csf);
+        m_chatStateFilters.insert(contactId, csf);
     }
 }
 

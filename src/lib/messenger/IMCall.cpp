@@ -170,11 +170,11 @@ void IMCall::callReject(const IMPeerId &f, const QString &sId)
 }
 
 void IMCall::setMute(bool mute) {
-//    _jingle->setMute(mute);
+    jingle->setMute(mute);
 }
 
 void IMCall::setRemoteMute(bool mute) {
-    //    _jingle->setRemoteMute(mute);
+    jingle->setRemoteMute(mute);
 }
 
 

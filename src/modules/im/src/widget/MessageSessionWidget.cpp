@@ -79,16 +79,14 @@ MessageSessionWidget::MessageSessionWidget(ContentLayout *layout, const ContactI
     friendId = FriendId(contactId);
 
     sendWorker = std::move(SendWorker::forFriend(friendId));
-
     connect(sendWorker->dispacher(), &IMessageDispatcher::messageSent, this, &MessageSessionWidget::onMessageSent);
-
     connect(sendWorker.get(), &SendWorker::acceptCall, this, &MessageSessionWidget::doAcceptCall);
-
     connect(sendWorker.get(), &SendWorker::rejectCall, this, &MessageSessionWidget::doRejectCall);
-
+    connect(sendWorker.get(), &SendWorker::endCall, this, &MessageSessionWidget::endCall);
     connect(sendWorker.get(), &SendWorker::onCallTriggered, this, &MessageSessionWidget::doCall);
-
     connect(sendWorker.get(), &SendWorker::onVideoCallTriggered, this, &MessageSessionWidget::doVideoCall);
+    connect(sendWorker.get(), &SendWorker::muteMicrophone, this, &MessageSessionWidget::doMuteMicrophone);
+    connect(sendWorker.get(), &SendWorker::muteSpeaker, this, &MessageSessionWidget::doSilenceSpeaker);
 
   } else if (chatType == ChatType::GroupChat) {
     auto nick = core->getNick();
@@ -502,12 +500,14 @@ void MessageSessionWidget::setAvStart(const FriendId &friendId, bool video) {
   } else {
     chatForm->hideNetcam();
   }
-  chatForm->startCounter();
+  sendWorker->startCounter();
 
   auto frd = FriendList::findFriend(friendId);
   if (frd) {
     auto header = sendWorker->getHeader();
     header->updateCallButtons(frd->getStatus());
+    header->removeCallConfirm();
+
   }
 
   auto w = Widget::getInstance();
@@ -531,7 +531,7 @@ void MessageSessionWidget::setAvEnd(const FriendId &friendId, bool error) {
 
   chatForm->stopNotification();
   // 关计时器
-  chatForm->stopCounter(error);
+  sendWorker->stopCounter(error);
   // 关闭视频显示
   chatForm->hideNetcam();
 
@@ -611,6 +611,38 @@ void MessageSessionWidget::doVideoCall() {
     auto w = Widget::getInstance();
     w->outgoingNotification();
   }
+}
+
+void MessageSessionWidget::endCall()
+{
+    auto fId = contactId.getId();
+    qDebug() << __func__ << fId;
+    auto av = CoreAV::getInstance();
+    if (av->isCallStarted(&contactId)) {
+      av->cancelCall(fId);
+    }
+}
+
+void MessageSessionWidget::doMuteMicrophone(bool mute)
+{
+
+    auto fId = contactId.getId();
+    qDebug() << __func__ << fId;
+    auto av = CoreAV::getInstance();
+    if (av->isCallStarted(&contactId)) {
+      av->muteCallOutput(&contactId, mute);
+    }
+
+}
+
+void MessageSessionWidget::doSilenceSpeaker(bool mute)
+{
+    auto fId = contactId.getId();
+    qDebug() << __func__ << fId;
+    auto av = CoreAV::getInstance();
+    if (av->isCallStarted(&contactId)) {
+      av->muteCallInput(&contactId, mute);
+    }
 }
 
 void MessageSessionWidget::setAsActiveChatroom() { setActive(true); }

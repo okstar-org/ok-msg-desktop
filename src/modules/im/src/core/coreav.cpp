@@ -553,27 +553,29 @@ bool CoreAV::sendGroupCallAudio(QString groupId, const int16_t *pcm, size_t samp
  * @param g The group
  * @param mute True to mute, false to unmute
  */
-void CoreAV::muteCallInput(const Group *g, bool mute) {
+void CoreAV::muteCallInput(const ContactId *g, bool mute) {
   QWriteLocker locker{&callsLock};
 
-  auto it = groupCalls.find(g->getId());
-  if (g && (it != groupCalls.end())) {
+  auto it = calls.find(g->getId());
+  if (g && (it != calls.end())) {
     it->second->setMuteMic(mute);
   }
+   imCall->setRemoteMute(mute);
 }
 
 /**
- * @brief Mutes or unmutes the group call's output (speaker).
+ * @brief Mutes or unmutes the call's output (speaker).
  * @param g The group
  * @param mute True to mute, false to unmute
  */
-void CoreAV::muteCallOutput(const Group *g, bool mute) {
+void CoreAV::muteCallOutput(const ContactId *g, bool mute) {
   QWriteLocker locker{&callsLock};
 
-  auto it = groupCalls.find(g->getId());
-  if (g && (it != groupCalls.end())) {
+  auto it = calls.find(g->getId());
+  if (g && (it != calls.end())) {
     it->second->setMuteVol(mute);
   }
+  imCall->setMute(mute);
 }
 
 /**

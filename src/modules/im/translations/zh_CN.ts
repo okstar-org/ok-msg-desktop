@@ -698,6 +698,15 @@ which may lead to problems with video calls.</source>
         <translation>启用局域网发现</translation>
     </message>
 </context>
+
+<context>
+    <name>CallDurationForm</name>
+    <message>
+        <source>Call duration: </source>
+        <translation>通话时长： </translation>
+    </message>
+</context>
+
 <context>
     <name>ChatForm</name>
     <message>

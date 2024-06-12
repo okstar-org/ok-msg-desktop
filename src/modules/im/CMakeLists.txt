@@ -63,7 +63,9 @@ qt5_wrap_ui(
         src/widget/form/settings/avform.ui
         src/widget/form/settings/generalsettings.ui
         src/widget/form/settings/privacysettings.ui
-        src/widget/form/settings/userinterfacesettings.ui)
+        src/widget/form/settings/userinterfacesettings.ui
+    src/widget/form/CallDurationForm.ui
+)
 
 set(${PROJECT_NAME}_SOURCES
         src/audio/audio.cpp
@@ -315,6 +317,8 @@ set(${PROJECT_NAME}_SOURCES
         src/widget/form/settingswidget.h
         src/widget/form/tabcompleter.cpp
         src/widget/form/tabcompleter.h
+    src/widget/form/CallDurationForm.h
+    src/widget/form/CallDurationForm.cpp
         src/widget/friendlistlayout.cpp
         src/widget/friendlistlayout.h
         src/widget/friendlistwidget.cpp

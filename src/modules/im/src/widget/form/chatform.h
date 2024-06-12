@@ -18,6 +18,7 @@
 #include <QSet>
 #include <QTimer>
 
+#include "CallDurationForm.h"
 #include "genericchatform.h"
 #include "src/core/core.h"
 #include "src/model/ichatlog.h"
@@ -35,6 +36,10 @@ class QPixmap;
 class QHideEvent;
 class QMoveEvent;
 
+/**
+ * 聊天框
+ * @brief The ChatForm class
+ */
 class ChatForm : public GenericChatForm {
   Q_OBJECT
 public:
@@ -55,11 +60,6 @@ public:
 
   void insertChatMessage(IChatItem::Ptr msg) final override;
 
-
-
-
-  void startCounter();
-  void stopCounter(bool error = false);
 
 signals:
   void incomingNotification(QString friendId);
@@ -90,7 +90,7 @@ private slots:
   void onFriendStatusChanged(const FriendId& friendId, Status::Status status);
   void onFriendNameChanged(const QString &name);
   void onStatusMessage(const QString &message);
-  void onUpdateTime();
+
   void sendImage(const QPixmap &pixmap);
   void doScreenshot();
   void onCopyStatusMessage();
@@ -113,12 +113,11 @@ private:
   const FriendId *f;
   CroppingLabel *statusMessageLabel;
   QMenu statusMessageMenu;
-  QLabel *callDuration;
-  QTimer *callDurationTimer;
+
   QTimer typingTimer;
-  QElapsedTimer timeElapsed;
   QAction *copyStatusAction;
   bool isTyping;
+
 
 };
 

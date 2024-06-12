@@ -213,10 +213,10 @@ bool Messenger::connectIM( ) {
             }
           });
 
-  connect(_im, &IM::receiveFriendMessageSession, this,
-          [&](QString friendId, QString sid) -> void {
+  connect(_im, &IM::receiveMessageSession, this,
+          [&](QString contactId, QString sid) -> void {
             for (auto handler : friendHandlers) {
-              handler->onFriendMessageSession(friendId, sid);
+              handler->onMessageSession(contactId, sid);
             }
           });
 

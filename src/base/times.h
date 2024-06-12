@@ -18,6 +18,34 @@
 
 namespace base {
 
+inline QString secondsToDHMS(quint32 duration) {
+  QString res;
+  QString cD = "";//
+  quint32 seconds = duration % 60;
+  duration /= 60;
+  quint32 minutes = duration % 60;
+  duration /= 60;
+  quint32 hours = duration % 24;
+  quint32 days = duration / 24;
+
+  // I assume no one will ever have call longer than a month
+  if (days) {
+    return cD +
+           res.asprintf("%dd%02dh %02dm %02ds", days, hours, minutes, seconds);
+  }
+
+  if (hours) {
+    return cD + res.asprintf("%02dh %02dm %02ds", hours, minutes, seconds);
+  }
+
+  if (minutes) {
+    return cD + res.asprintf("%02dm %02ds", minutes, seconds);
+  }
+
+  return cD + res.asprintf("%02ds", seconds);
+}
+
+
 enum class ReadableTime {
   Today,
   Yesterday,

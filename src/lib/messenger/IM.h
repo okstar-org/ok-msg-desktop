@@ -783,7 +783,7 @@ signals:
 
   void receiveFriendStatus(QString friendId, int status);
 
-  void receiveFriendMessageSession(QString friendId, QString sid);
+  void receiveMessageSession(QString contactId, QString sid);
 
   void receiveFriendMessage(QString peerId, IMMessage);
 

@@ -68,8 +68,8 @@ public:
   void SetRemoteDescription(
       std::unique_ptr<webrtc::SessionDescriptionInterface> desc);
 
-  virtual void setMute(bool mute);
-  virtual void setRemoteMute(bool mute);
+  void setMute(bool mute);
+  void setRemoteMute(bool mute);
 
   inline ortc::JoinOptions joinOptions() { return _joinOptions; }
 

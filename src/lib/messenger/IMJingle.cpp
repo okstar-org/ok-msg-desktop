@@ -179,19 +179,11 @@ void IMJingle::join(const JID &room) {
 }
 
 void IMJingle::setMute(bool mute) {
-  for (auto it : m_sessionMap) {
-    auto rtcManager = OkRTCManager::getInstance();
-    if(rtcManager)
-        rtcManager->setMute(mute);
-  }
+  OkRTCManager::getInstance()->getRtc()->setMute(mute);
 }
 
 void IMJingle::setRemoteMute(bool mute) {
-  for (auto it : m_sessionMap) {
-    auto rtcManager = OkRTCManager::getInstance();
-    if(rtcManager)
-        rtcManager->setRemoteMute(mute);
-  }
+ OkRTCManager::getInstance()->getRtc()->setRemoteMute(mute);
 }
 
 void IMJingle::doJingleMessage(const IMPeerId &peerId, const gloox::Jingle::JingleMessage *jm)

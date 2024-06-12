@@ -177,8 +177,7 @@ signals:
                                QString fileId,   //
                                const QByteArray &avatarHash);
 
-  void friendMessageSessionReceived(const FriendId &friendId, //
-                                    const QString &sid);
+  void messageSessionReceived(const ContactId &cId, const QString &sid);
 
   void friendMessageReceived(const FriendId &friendId,        //
                              const FriendMessage &message, //
@@ -291,7 +290,7 @@ private:
 
   virtual void onFriendMessage(QString friendId, lib::messenger::IMMessage message) override;
 
-  virtual void onFriendMessageSession(QString friendId, QString sid) override;
+  virtual void onMessageSession(QString cId, QString sid) override;
 
   virtual void onFriendChatState(QString friendId, int state) override;
 

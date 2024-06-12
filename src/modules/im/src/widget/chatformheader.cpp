@@ -110,10 +110,8 @@ ChatFormHeader::ChatFormHeader(const ContactId &contactId, QWidget* parent)
     , mode{Mode::AV}
     , callState{CallButtonState::Disabled}
     , videoState{CallButtonState::Disabled}
-    , volState{ToolButtonState::Disabled}
-    , micState{ToolButtonState::Disabled}
 {
-    QHBoxLayout* headLayout = new QHBoxLayout();
+    QHBoxLayout* headLayout = new QHBoxLayout(this);
 
     //头像
     avatar = new MaskablePixmapWidget(this, AVATAR_SIZE, ":/img/avatar_mask.svg");
@@ -130,7 +128,7 @@ ChatFormHeader::ChatFormHeader(const ContactId &contactId, QWidget* parent)
     nameLabel->setText(contactId.username);
     connect(nameLabel, &CroppingLabel::editFinished, this, &ChatFormHeader::nameChanged);
 
-    headTextLayout = new QVBoxLayout();
+    headTextLayout = new QVBoxLayout(this);
     headTextLayout->addStretch();
     headTextLayout->addWidget(nameLabel);
     headTextLayout->addStretch();
@@ -140,25 +138,18 @@ ChatFormHeader::ChatFormHeader(const ContactId &contactId, QWidget* parent)
     headLayout->addSpacing(HEAD_LAYOUT_SPACING);
 
      //控制按钮
-    micButton = createButton("micButton", this, &ChatFormHeader::micMuteToggle);
-    volButton = createButton("volButton", this, &ChatFormHeader::volMuteToggle);
     callButton = createButton("callButton", this, &ChatFormHeader::callTriggered);
     videoButton = createButton("videoButton", this, &ChatFormHeader::videoCallTriggered);
 
-    QVBoxLayout* micButtonsLayout = new QVBoxLayout();
+    QVBoxLayout* micButtonsLayout = new QVBoxLayout(this);
     micButtonsLayout->setSpacing(MIC_BUTTONS_LAYOUT_SPACING);
-    micButtonsLayout->addWidget(micButton, Qt::AlignTop | Qt::AlignRight);
-    micButtonsLayout->addWidget(volButton, Qt::AlignTop | Qt::AlignRight);
 
-    QGridLayout* buttonsLayout = new QGridLayout();
+    QGridLayout* buttonsLayout = new QGridLayout(this);
     buttonsLayout->addLayout(micButtonsLayout, 0, 0, 2, 1, Qt::AlignTop | Qt::AlignRight);
     buttonsLayout->addWidget(callButton, 0, 1, 2, 1, Qt::AlignTop);
     buttonsLayout->addWidget(videoButton, 0, 2, 2, 1, Qt::AlignTop);
     buttonsLayout->setVerticalSpacing(0);
     buttonsLayout->setHorizontalSpacing(BUTTONS_LAYOUT_HOR_SPACING);
-
-
-
 
     headLayout->addLayout(buttonsLayout);
 
@@ -188,7 +179,7 @@ void ChatFormHeader::setContact(const Contact *contact_)
 
     if(!contact->isGroup()){
 
-        const Friend* f = static_cast<const Friend*>(contact);
+        auto f = static_cast<const Friend*>(contact);
         updateCallButtons(f->getStatus());
 
         connect(f, &Friend::statusChanged, [&](Status::Status status, bool event){
@@ -216,8 +207,7 @@ void ChatFormHeader::setMode(ChatFormHeader::Mode mode)
     if (mode == Mode::None) {
         callButton->hide();
         videoButton->hide();
-        volButton->hide();
-        micButton->hide();
+
     }
 }
 
@@ -225,31 +215,20 @@ void ChatFormHeader::retranslateUi()
 {
     setStateToolTip(callButton, callState, CALL_TOOL_TIP);
     setStateToolTip(videoButton, videoState, VIDEO_TOOL_TIP);
-    setStateToolTip(micButton, micState, MIC_TOOL_TIP);
-    setStateToolTip(volButton, volState, VOL_TOOL_TIP);
-
-
-//      updateMuteMicButton();
-//      updateMuteVolButton();
 }
 
 void ChatFormHeader::updateButtonsView()
 {
     setStateName(callButton, callState);
     setStateName(videoButton, videoState);
-    setStateName(micButton, micState);
-    setStateName(volButton, volState);
+
     retranslateUi();
     Style::repolish(this);
 }
 
 void ChatFormHeader::onAvatarChanged(const QPixmap &pic)
 {
-
-//      qDebug() << __func__ <<contactId->toString() << "pic:"<< pic.size();
-     setAvatar(pic);
-
-
+   setAvatar(pic);
 }
 
 void ChatFormHeader::onDisplayedNameChanged(const QString &name)
@@ -273,9 +252,11 @@ void ChatFormHeader::createCallConfirm(const ToxPeer &peer, bool video, QString 
 //    callConfirm->move(btn->pos());
 
     connect(callConfirm.get(), &CallConfirmWidget::accepted, [=](){
+        removeCallConfirm();
         emit callAccepted(peer, video);
     });
     connect(callConfirm.get(), &CallConfirmWidget::rejected, [=](){
+        removeCallConfirm();
         emit callRejected(peer);
     });
 }
@@ -341,25 +322,12 @@ void ChatFormHeader::updateCallButtons(bool online, bool audio, bool video)
 
 void ChatFormHeader::updateMuteMicButton(bool active, bool inputMuted)
 {
-    micButton->setEnabled(active);
-    if (active) {
-        micState = inputMuted ? ToolButtonState::On : ToolButtonState::Off;
-    } else {
-        micState = ToolButtonState::Disabled;
-    }
 
     updateButtonsView();
 }
 
 void ChatFormHeader::updateMuteVolButton(bool active, bool outputMuted)
 {
-    volButton->setEnabled(active);
-    if (active) {
-        volState = outputMuted ? ToolButtonState::On : ToolButtonState::Off;
-    } else {
-        volState = ToolButtonState::Disabled;
-    }
-
     updateButtonsView();
 }
 
@@ -396,8 +364,7 @@ void ChatFormHeader::reloadTheme()
 {
     callButton->setStyleSheet(Style::getStylesheet(STYLE_PATH));
     videoButton->setStyleSheet(Style::getStylesheet(STYLE_PATH));
-    volButton->setStyleSheet(Style::getStylesheet(STYLE_PATH));
-    micButton->setStyleSheet(Style::getStylesheet(STYLE_PATH));
+
 }
 
 void ChatFormHeader::addWidget(QWidget* widget, int stretch, Qt::Alignment alignment)

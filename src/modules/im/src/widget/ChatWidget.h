@@ -140,9 +140,9 @@ public slots:
   void onFriendStatusMessageChanged(const FriendId &friendPk,
                                     const QString &message);
 
-  void onFriendMessageSessionReceived(const FriendId &friendPk, const QString &sid);
+  void onMessageSessionReceived(const ContactId &contactId, const QString &sid);
 
-  void onFriendMessageReceived(const FriendId &friendPk,
+  void onFriendMessageReceived(const FriendId &friendId,
                                const FriendMessage &message,
                                bool isAction);
 

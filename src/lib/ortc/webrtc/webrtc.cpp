@@ -715,9 +715,9 @@ void WebRTC::ContentRemove(std::map<std::string, gloox::Jingle::Session> sdMap,
 }
 
 void WebRTC::setMute(bool mute) {
-//  for (auto it : _pcMap) {
-//    it.second->setMute(mute);
-//  }
+  for (auto it : _pcMap) {
+    it.second->setMute(mute);
+  }
 }
 
 void WebRTC::setRemoteMute(bool mute) {
