@@ -205,9 +205,6 @@ void GroupChatForm::updateUserNames()
 //        peerLabels.insert(peerPk, label);
 //    }
 
-    if (netcam != nullptr) {
-        static_cast<GroupNetCamView*>(netcam)->clearPeers();
-    }
 
     // add the labels in alphabetical order into the layout
     auto nickLabelList = peerLabels.values();
@@ -261,9 +258,6 @@ void GroupChatForm::peerAudioPlaying(QString peerPk)
         peerAudioTimers[peerPk] = new QTimer(this);
         peerAudioTimers[peerPk]->setSingleShot(true);
         connect(peerAudioTimers[peerPk], &QTimer::timeout, [this, peerPk] {
-            if (netcam) {
-                static_cast<GroupNetCamView*>(netcam)->removePeer(peerPk);
-            }
             auto it = peerLabels.find(peerPk);
             if (it != peerLabels.end()) {
                 peerLabels[peerPk]->setProperty("playingAudio", LABEL_PEER_NOT_PLAYING_AUDIO);
@@ -273,11 +267,6 @@ void GroupChatForm::peerAudioPlaying(QString peerPk)
             delete peerAudioTimers[peerPk];
             peerAudioTimers[peerPk] = nullptr;
         });
-        if (netcam) {
-            static_cast<GroupNetCamView*>(netcam)->removePeer(peerPk);
-//            const auto nameIt = group->getPeerList().find(peerPk);
-//            static_cast<GroupNetCamView*>(netcam)->addPeer(peerPk, nameIt.value());
-        }
     }
 
     peerLabels[peerPk]->setStyleSheet(Style::getStylesheet(PEER_LABEL_STYLE_SHEET_PATH));
@@ -351,22 +340,6 @@ void GroupChatForm::onCallClicked()
 
 //    const bool outMute = av->isGroupCallOutputMuted(group);
 //    headWidget->updateMuteVolButton(inCall, outMute);
-}
-
-GenericNetCamView* GroupChatForm::createNetcam()
-{
-//    auto view = new GroupNetCamView(group->getId(), this);
-
-//    const auto& names = group->getPeerList();
-//    const auto ownPk = Core::getInstance()->getSelfPublicKey();
-//    for (const auto& peerPk : names.keys()) {
-//        auto timerIt = peerAudioTimers.find(peerPk);
-//        if (peerPk != ownPk.toString() && timerIt != peerAudioTimers.end()) {
-//            static_cast<GroupNetCamView*>(view)->addPeer(peerPk, names.find(peerPk).value());
-//        }
-//    }
-//    return view;
-    return nullptr;
 }
 
 void GroupChatForm::keyPressEvent(QKeyEvent* ev)

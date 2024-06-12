@@ -49,55 +49,7 @@
          <height>120</height>
         </size>
        </property>
-       <layout class="QGridLayout" name="gridLayout_2">
-        <item row="0" column="0" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-         <widget class="QWidget" name="contact" native="true">
-          <layout class="QVBoxLayout" name="verticalLayout_2">
-           <item>
-            <widget class="QLabel" name="avatar">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>48</width>
-               <height>48</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>48</width>
-               <height>48</height>
-              </size>
-             </property>
-             <property name="layoutDirection">
-              <enum>Qt::LeftToRight</enum>
-             </property>
-             <property name="text">
-              <string notr="true">avatar</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="name">
-             <property name="text">
-              <string notr="true">name</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-       </layout>
+       <layout class="QGridLayout" name="gridLayout_2"/>
       </widget>
      </item>
      <item alignment="Qt::AlignHCenter">

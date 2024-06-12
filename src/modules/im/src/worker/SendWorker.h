@@ -60,7 +60,7 @@ ChatFormHeader* getHeader()const{
  IChatLog* getChatLog()const{
      return chatHistory.get();
  }
-    void startCounter();
+    void startCounter(bool video = false);
     void stopCounter(bool error = false);
 
 private:

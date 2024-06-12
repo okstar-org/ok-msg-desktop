@@ -148,8 +148,6 @@ ChatForm::ChatForm(const FriendId *chatFriend,
 
 ChatForm::~ChatForm() {
   settings::Translator::unregister(this);
-  delete netcam;
-  netcam = nullptr;
 }
 
 void ChatForm::setStatusMessage(const QString &newMessage) {
@@ -279,28 +277,6 @@ void ChatForm::onStatusMessage(const QString &message) {
 }
 
 
-GenericNetCamView *ChatForm::createNetcam() {
-  qDebug() <<__func__<< "creating netcam";
-  QString friendId = f->toString();
-  NetCamView *view = new NetCamView(*f, this);
-  CoreAV *av = CoreAV::getInstance();
-
-  VideoSource *source = av->getVideoSourceFromCall(friendId);
-  view->show(source, f->username);
-
-
-//  connect(view, &GenericNetCamView::videoCallEnd, this,
-//          &ChatForm::onVideoCallTriggered);
-
-//  connect(view, &GenericNetCamView::volMuteToggle, this,
-//          &ChatForm::onVolMuteToggle);
-//  connect(view, &GenericNetCamView::micMuteToggle, this,
-//          &ChatForm::onMicMuteToggle);
-
-  connect(view, &GenericNetCamView::videoPreviewToggle, view,
-          &NetCamView::toggleVideoPreview);
-  return view;
-}
 
 void ChatForm::dragEnterEvent(QDragEnterEvent *ev) {
   if (ev->mimeData()->hasUrls()) {
@@ -402,9 +378,6 @@ void ChatForm::sendImage(const QPixmap &pixmap) {
 
 void ChatForm::insertChatMessage(IChatItem::Ptr msg) {
   GenericChatForm::insertChatMessage(msg);
-  if (netcam && bodySplitter->sizes()[1] == 0) {
-    netcam->setShowMessages(true, true);
-  }
 }
 
 void ChatForm::onCopyStatusMessage() {
@@ -445,9 +418,4 @@ void ChatForm::hideEvent(QHideEvent *event) {
 
 void ChatForm::retranslateUi() {
   copyStatusAction->setText(tr("Copy"));
-
-
-  if (netcam) {
-    netcam->setShowMessages(chatLog->isVisible());
-  }
 }

@@ -97,7 +97,6 @@ private slots:
   void callUpdateFriendActivity();
 
 protected:
-  GenericNetCamView *createNetcam() final override;
 
   void dragEnterEvent(QDragEnterEvent *ev) final override;
   void dropEvent(QDropEvent *ev) final override;

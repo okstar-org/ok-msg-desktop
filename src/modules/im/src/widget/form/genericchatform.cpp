@@ -443,7 +443,7 @@ GenericChatForm::GenericChatForm(const ContactId *contact_,
 
   renderMessages(firstChatLogIdx, iChatLog.getNextIdx());
 
-  netcam = nullptr;
+
 }
 
 GenericChatForm::~GenericChatForm() {
@@ -852,19 +852,19 @@ bool GenericChatForm::eventFilter(QObject *object, QEvent *event) {
 }
 
 void GenericChatForm::onSplitterMoved(int, int) {
-  if (netcam)
-    netcam->setShowMessages(bodySplitter->sizes()[1] == 0);
+//  if (netcam)
+//    netcam->setShowMessages(bodySplitter->sizes()[1] == 0);
 }
 
 void GenericChatForm::onShowMessagesClicked() {
-  if (netcam) {
-    if (bodySplitter->sizes()[1] == 0)
-      bodySplitter->setSizes({1, 1});
-    else
-      bodySplitter->setSizes({1, 0});
-
-    onSplitterMoved(0, 0);
-  }
+//  if (netcam) {
+//    if (bodySplitter->sizes()[1] == 0)
+//      bodySplitter->setSizes({1, 1});
+//    else
+//      bodySplitter->setSizes({1, 0});
+//
+//    onSplitterMoved(0, 0);
+//  }
 }
 
 void GenericChatForm::quoteSelectedText() {
@@ -1124,35 +1124,4 @@ void GenericChatForm::retranslateUi() {
   // searchAction->setText(tr("Search in text"));
   // loadHistoryAction->setText(tr("Load chat history..."));selected text
   // exportChatAction->setText(tr("Export to file"));
-}
-
-void GenericChatForm::showNetcam() {
-  if (!netcam)
-    netcam = createNetcam();
-
-  connect(netcam, &GenericNetCamView::showMessageClicked, this,
-          &GenericChatForm::onShowMessagesClicked);
-
-  bodySplitter->insertWidget(0, netcam);
-  bodySplitter->setCollapsible(0, false);
-
-  QSize minSize = netcam->getSurfaceMinSize();
-  ContentDialog *current = ContentDialogManager::getInstance()->current();
-  if (current)
-    current->onVideoShow(minSize);
-}
-
-void GenericChatForm::hideNetcam() {
-  if (!netcam)
-    return;
-
-  ContentDialog *current = ContentDialogManager::getInstance()->current();
-  if (current)
-    current->onVideoHide();
-
-
-  netcam->close();
-  netcam->hide();
-  delete netcam;
-  netcam = nullptr;
 }

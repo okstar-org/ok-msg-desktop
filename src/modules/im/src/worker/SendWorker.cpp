@@ -91,7 +91,7 @@ void SendWorker::initChatHeader(const ContactId &contactId) {
   connect(headWidget.get(), &ChatFormHeader::videoCallTriggered, this, &SendWorker::onVideoCallTriggered);
 }
 
-void SendWorker::startCounter() {
+void SendWorker::startCounter(bool video) {
   qDebug() << __func__;
 
   if (!callDuration) {
@@ -99,13 +99,16 @@ void SendWorker::startCounter() {
     callDuration->setContact(headWidget->getContact());
 
     connect(callDuration.get(), &CallDurationForm::endCall, [&]() { emit endCall(); });
-
     connect(callDuration.get(), &CallDurationForm::muteSpeaker, [&](bool mute) { emit muteSpeaker(mute); });
-
     connect(callDuration.get(), &CallDurationForm::muteMicrophone, [&](bool mute) { emit muteMicrophone(mute); });
   }
 
   callDuration->show();
+  if(video){
+    callDuration->showNetcam();
+  }else{
+    callDuration->showAvatar();
+  }
 }
 
 void SendWorker::stopCounter(bool error) {

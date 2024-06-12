@@ -5,6 +5,7 @@
 #include <QLabel>
 #include <QWidget>
 
+#include "src/video/genericnetcamview.h"
 #include <src/model/contact.h>
 
 namespace Ui {
@@ -21,6 +22,10 @@ public:
     void setContact(const Contact* c);
     void reloadTheme();
 
+    GenericNetCamView* createNetcam();
+    void showNetcam();
+    void hideNetcam();
+    void showAvatar();
 signals:
      void endCall();
      void muteMicrophone(bool);
@@ -31,12 +36,13 @@ protected:
 
 private:
     Ui::CallDurationForm *ui;
-
+    const Contact *contact;
     QTimer *callDurationTimer;
     QElapsedTimer timeElapsed;
 
     bool muteOut;
     bool muteIn;
+    GenericNetCamView* netcam;
 
 private slots:
     void onUpdateTime();

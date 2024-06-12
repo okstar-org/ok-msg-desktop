@@ -2,15 +2,18 @@
 #include "ui_CallDurationForm.h"
 
 #include "base/times.h"
+#include "src/core/coreav.h"
+#include "src/video/netcamview.h"
 #include <QPushButton>
 #include <QTimer>
 #include <src/widget/style.h>
 
 CallDurationForm::CallDurationForm(QWidget *parent)
     :QWidget(parent),//
-      ui(new Ui::CallDurationForm), //
+      ui(new Ui::CallDurationForm),  contact{nullptr},//
       callDurationTimer{new QTimer()}, //
-      muteOut{false}, muteIn{false} {
+      muteOut{false}, muteIn{false}, netcam{nullptr}
+{
   ui->setupUi(this);
 
   setWindowFlags(Qt::FramelessWindowHint);
@@ -47,9 +50,7 @@ CallDurationForm::~CallDurationForm() {
 void CallDurationForm::setContact(const Contact *c) {
   if (!c)
     return;
-
-  ui->avatar->setPixmap(c->getAvatar().scaled(ui->avatar->size()));
-  ui->name->setText(c->getDisplayedName());
+  contact = c;
 }
 
 void CallDurationForm::reloadTheme() { setStyleSheet(Style::getStylesheet(QStringLiteral("CallDurationForm/CallDurationForm.css"))); }
@@ -75,4 +76,63 @@ void CallDurationForm::onMuteIn() {
   ui->volButton->setProperty("state", muteIn?"disabled":"");
   emit muteSpeaker(muteIn);
   reloadTheme();
+}
+
+
+GenericNetCamView *CallDurationForm::createNetcam() {
+  qDebug() <<__func__<< "...";
+
+  if(!contact){
+    qWarning()<<"contact is no existing!";
+    return nullptr;
+  }
+
+  auto fId = FriendId(contact->getId());
+
+  NetCamView *view = new NetCamView(fId, this);
+  CoreAV *av = CoreAV::getInstance();
+
+  VideoSource *source = av->getVideoSourceFromCall(fId.getId());
+  view->show(source, contact->getDisplayedName());
+
+  //  connect(view, &GenericNetCamView::videoCallEnd, this,
+  //          &ChatForm::onVideoCallTriggered);
+
+  //  connect(view, &GenericNetCamView::volMuteToggle, this,
+  //          &ChatForm::onVolMuteToggle);
+  //  connect(view, &GenericNetCamView::micMuteToggle, this,
+  //          &ChatForm::onMicMuteToggle);
+
+  connect(view, &GenericNetCamView::videoPreviewToggle, view,
+          &NetCamView::toggleVideoPreview);
+  return view;
+}
+
+void CallDurationForm::showNetcam() {
+  if (!netcam){
+    netcam = createNetcam();
+    ui->viewbar->layout()->addWidget(netcam);
+  }
+  netcam->show();
+}
+
+void CallDurationForm::hideNetcam() {
+  if (!netcam)
+    return;
+
+  ui->viewbar->layout()->removeWidget(netcam);
+
+  netcam->close();
+  netcam->hide();
+  delete netcam;
+  netcam = nullptr;
+}
+
+void CallDurationForm::showAvatar() {
+  if(contact){
+    auto c = new QLabel();
+    c->setFixedSize(86,86);
+    c->setPixmap(contact->getAvatar().scaled(c->size()));
+    ui->viewbar->layout()->addWidget(c);
+  }
 }

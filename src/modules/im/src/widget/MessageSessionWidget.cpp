@@ -495,12 +495,7 @@ void MessageSessionWidget::setAvStart(const FriendId &friendId, bool video) {
   qDebug() << __func__ << friendId.toString();
   // 显示呼叫请求框
   auto chatForm = (ChatForm *)sendWorker->getChatForm();
-  if (video) {
-    chatForm->showNetcam();
-  } else {
-    chatForm->hideNetcam();
-  }
-  sendWorker->startCounter();
+  sendWorker->startCounter(video);
 
   auto frd = FriendList::findFriend(friendId);
   if (frd) {
@@ -532,8 +527,6 @@ void MessageSessionWidget::setAvEnd(const FriendId &friendId, bool error) {
   chatForm->stopNotification();
   // 关计时器
   sendWorker->stopCounter(error);
-  // 关闭视频显示
-  chatForm->hideNetcam();
 
   auto w = Widget::getInstance();
   w->onStopNotification();

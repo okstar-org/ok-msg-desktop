@@ -92,8 +92,7 @@ public:
         return chatLog;
     }
 
-    void showNetcam();
-    void hideNetcam();
+
 
 
 signals:
@@ -162,7 +161,7 @@ protected:
     bool searchInText(const QString& phrase, const ParameterSearch& parameter, SearchDirection direction);
     std::pair<int, int> indexForSearchInLine(const QString& txt, const QString& phrase, const ParameterSearch& parameter, SearchDirection direction);
 
-    virtual GenericNetCamView* createNetcam() = 0;
+
     virtual void insertChatMessage(IChatItem::Ptr msg);
 
     virtual void hideEvent(QHideEvent* event) override;
@@ -210,9 +209,6 @@ protected:
     Sonnet::SpellCheckDecorator* decorator{nullptr};
 #endif
     FlyoutOverlayWidget* fileFlyout;
-
-    GenericNetCamView* netcam;
-
 
     Widget* parent;
 
