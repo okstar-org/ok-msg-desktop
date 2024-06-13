@@ -93,7 +93,7 @@ modules:
     sources:
       - type: git
         url: https://github.com/okstar-org/ok-rtc.git
-        branch: main
+        branch: master
 
   - name: ok-gloox
     buildsystem: cmake-ninja
