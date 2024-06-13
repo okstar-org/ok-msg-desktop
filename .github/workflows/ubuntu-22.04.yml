@@ -78,7 +78,7 @@ jobs:
         -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}    \
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}    
         cmake --build out
-        install cmake --install out
+        sudo cmake --install out
 
     - name: Set reusable strings
       id: strings
