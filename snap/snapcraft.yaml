@@ -33,6 +33,48 @@ parts:
       - libswscale5
     stage:
       - -./usr/lib/$CRAFT_ARCH_TRIPLET/libjpeg.so.8.2.2
+
+    desktop-qt5:
+      source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
+      source-subdir: qt
+      plugin: make
+      make-parameters: [ "FLAVOR=qt5" ]
+      build-packages:
+        - dpkg-dev
+        - build-essential
+        - qtbase5-dev
+        - qtmultimedia5-dev
+        - libqt5svg5-dev
+        - libqt5xml5
+        - libqt5xmlpatterns5-dev
+        - libqt5opengl5-dev
+        - qttools5-dev
+        - qttools5-dev-tools
+        - libqt5x11extras5-dev
+      stage-packages:
+        - libxkbcommon0
+        #      - ttf-ubuntu-font-family
+        - dmz-cursor-theme
+        - light-themes
+        - adwaita-icon-theme
+        - gnome-themes-standard
+        - shared-mime-info
+        - libqt5core5a
+        - libqt5gui5
+        - libqt5multimedia5
+        - libqt5widgets5
+        - libqt5xml5
+        - libqt5xmlpatterns5
+        - libqt5svg5 # for loading icon themes which are svg
+        - libgdk-pixbuf2.0-0
+        - locales-all
+        - xdg-user-dirs
+        - fcitx-frontend-qt5
+
+    qt5-gtk-platform:
+      plugin: nil
+      stage-packages:
+        - qt5-gtk-platformtheme
 #    after:
 #      - mozjpeg
 #  mozjpeg:
@@ -118,48 +160,6 @@ parts:
       - zlib1g-dev
     stage:
       - zlib1g
-
-  desktop-qt5:
-    source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
-    source-subdir: qt
-    plugin: make
-    make-parameters: ["FLAVOR=qt5"]
-    build-packages:
-      - dpkg-dev
-      - build-essential
-      - qtbase5-dev
-      - qtmultimedia5-dev
-      - libqt5svg5-dev
-      - libqt5xml5
-      - libqt5xmlpatterns5-dev
-      - libqt5opengl5-dev
-      - qttools5-dev
-      - qttools5-dev-tools
-      - libqt5x11extras5-dev
-    stage-packages:
-      - libxkbcommon0
-#      - ttf-ubuntu-font-family
-      - dmz-cursor-theme
-      - light-themes
-      - adwaita-icon-theme
-      - gnome-themes-standard
-      - shared-mime-info
-      - libqt5core5a
-      - libqt5gui5
-      - libqt5multimedia5
-      - libqt5widgets5
-      - libqt5xml5
-      - libqt5xmlpatterns5
-      - libqt5svg5 # for loading icon themes which are svg
-      - libgdk-pixbuf2.0-0
-      - locales-all
-      - xdg-user-dirs
-      - fcitx-frontend-qt5
-
-  qt5-gtk-platform:
-    plugin: nil
-    stage-packages:
-      - qt5-gtk-platformtheme
 
   ok-msg:
     plugin: cmake
@@ -348,7 +348,7 @@ parts:
       - -DCMAKE_INSTALL_PREFIX=/usr
       - -DDESKTOP_APP_USE_PACKAGED=ON
       - -DDESKTOP_LAUNCHER_BASENAME=ok-msg-desktop
-    after: [ desktop-qt5, ok-rtc ]
+    after: [ desktop-qt5, ok-rtc, ok-gloox ]
 layout:
   /usr/share/alsa:
     bind: $SNAP/usr/share/alsa
@@ -391,20 +391,3 @@ apps:
 slots:
   ok-msg-desktop-mpris:
     interface: mpris
-
-#plugs:
-#  # Support for common GTK themes
-#  # https://forum.snapcraft.io/t/how-to-use-the-system-gtk-theme-via-the-gtk-common-themes-snap/6235
-#  gsettings:
-#  gtk-3-themes:
-#    interface: content
-#    target: $SNAP/data-dir/themes
-#    default-provider: gtk-common-themes
-#  icon-themes:
-#    interface: content
-#    target: $SNAP/data-dir/icons
-#    default-provider: gtk-common-themes
-#  sound-themes:
-#    interface: content
-#    target: $SNAP/data-dir/sounds
-#    default-provider: gtk-common-themes
