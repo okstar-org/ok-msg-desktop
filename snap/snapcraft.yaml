@@ -158,7 +158,7 @@ parts:
       - -DCMAKE_INSTALL_PREFIX=/usr
     build-packages:
       - zlib1g-dev
-    stage:
+    stage-packages:
       - zlib1g
 
   ok-msg:
