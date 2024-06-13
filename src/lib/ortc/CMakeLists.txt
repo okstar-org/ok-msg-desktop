@@ -51,8 +51,6 @@ set(${PROJECT_NAME}_SOURCES
 
 		webrtc/Stats.h
 		webrtc/Instance.h
-		webrtc/ThreadLocalObject.h
-		webrtc/ThreadLocalObject.cpp
 		webrtc/VideoCaptureInterface.h
 		webrtc/VideoCaptureInterface.cpp
 		webrtc/VideoCaptureInterfaceImpl.h

@@ -2,7 +2,6 @@
 #define ORTC_VIDEO_CAPTURE_INTERFACE_IMPL_H
 
 #include "VideoCaptureInterface.h"
-#include "ThreadLocalObject.h"
 #include <memory>
 #include <ok-rtc/api/media_stream_interface.h>
 #include <ok-rtc/api/scoped_refptr.h>
@@ -70,7 +69,6 @@ public:
    VideoCaptureInterfaceObject  *object();
 
 private:
-//  ThreadLocalObject<VideoCaptureInterfaceObject> _impl;
   VideoCaptureInterfaceObject *_impl;
 };
 
