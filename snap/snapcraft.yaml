@@ -56,8 +56,7 @@ parts:
 
   ok-rtc:
     source: https://github.com/okstar-org/ok-rtc.git
-    source-depth: 1
-    source-commit: 1e343304df8eb5995229e21733fb1f18839a0668
+    source-branch: master
     plugin: cmake
     cmake-generator: Ninja
     cmake-parameters:
@@ -106,7 +105,19 @@ parts:
       - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.a
     after:
       - ffmpeg
-#      - mozjpeg
+
+  ok-gloox:
+    source: https://github.com/okstar-org/ok-gloox.git
+    source-branch: main
+    plugin: cmake
+    cmake-generator: Ninja
+    cmake-parameters:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DCMAKE_INSTALL_PREFIX=/usr
+    build-packages:
+      - zlib1g-dev
+    stage:
+      - zlib1g
 
   desktop-qt5:
     source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
