@@ -545,40 +545,18 @@ void GenericChatForm::removeContact()
 }
 
 void GenericChatForm::show(ContentLayout *contentLayout) {
-//  auto mainLayout = contentLayout->mainHead->layout();
-//  contentLayout->addWidget(headWidget);
-//  headWidget->show();
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 12, 4) &&                                 \
-    QT_VERSION > QT_VERSION_CHECK(5, 11, 0)
-  // HACK: switching order happens to avoid a Qt bug causing segfault, present
-  // between these versions. this could cause flickering if our form is shown
-  // before added to the layout https://github.com/qTox/qTox/issues/5570
-  QWidget::show();
-  contentLayout->mainContent->layout()->addWidget(this);
-#else
-//  contentLayout->mainContent->layout()->addWidget(this);
-//  contentLayout->layout()->addWidget(this);
-  show();
-//  QWidget::show();
-#endif
 }
 
 void GenericChatForm::showEvent(QShowEvent *) {
   msgEdit->setFocus();
-//  headWidget->showCallConfirm();
   if(contact){
-      if(contact->isGroup()){
-
-      }else{
-//        auto status = Core::getInstance()->getFriendStatus(contactId->getId());
-//        updateCallButtons(status);
-
-        auto f = FriendList::findFriend(*contactId);
-        if(f){
-            setContact(f);
-        }
+    if (!contact->isGroup()) {
+      auto f = FriendList::findFriend(*contactId);
+      if (f) {
+        setContact(f);
       }
+    }
   }
 }
 

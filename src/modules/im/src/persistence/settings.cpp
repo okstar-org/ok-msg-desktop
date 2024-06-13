@@ -49,7 +49,7 @@
  */
 
 const QString Settings::globalSettingsFile =
-    APPLICATION_SHORT_NAME "-" OK_IM_MODULE ".ini";
+    APPLICATION_ALIAS "-" OK_IM_MODULE ".ini";
 
 CompatibleRecursiveMutex Settings::bigLock;
 QThread *Settings::settingsThread{nullptr};

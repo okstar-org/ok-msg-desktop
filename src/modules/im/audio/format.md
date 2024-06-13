@@ -3,7 +3,7 @@ below.
 
 # Format
 
-Internally qTox needs PCM with signed 16Bit integers and a samplerate of
+Internally OkMSG needs PCM with signed 16Bit integers and a samplerate of
 48kHz and one channel (mono).
 
 You can use ffmpeg to create those files as follows:

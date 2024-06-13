@@ -62,7 +62,7 @@ MainWindow::MainWindow(QWidget *parent)
   connect(actionQuit, &QAction::triggered, qApp, &QApplication::quit);
 
   actionShow = new QAction(this);
-  actionShow->setText(tr("Show", "Tray action menu to show qTox window"));
+  actionShow->setText(tr("Show", "Tray action menu to show window"));
   connect(actionShow, &QAction::triggered, this, &MainWindow::forceShow);
 
 
@@ -232,24 +232,6 @@ void MainWindow::updateIcons() {
   }
 
   const QString assetSuffix = "online";
-  // TODO 暂时不考虑状态
-  //      Status::getAssetSuffix(static_cast<Status::Status>(
-  //          ui->statusButton->property("status").toInt())) +
-  //      (eventIcon ? "_event" : "");
-
-  // Some builds of Qt appear to have a bug in icon loading:
-  // QIcon::hasThemeIcon is sometimes unaware that the icon returned
-  // from QIcon::fromTheme was a fallback icon, causing hasThemeIcon to
-  // incorrectly return true.
-  //
-  // In qTox this leads to the tray and window icons using the static qTox logo
-  // icon instead of an icon based on the current presence status.
-  //
-  // This workaround checks for an icon that definitely does not exist to
-  // determine if hasThemeIcon can be trusted.
-  //
-  // On systems with the Qt bug, this workaround will always use our included
-  // icons but user themes will be unable to override them.
   static bool checkedHasThemeIcon = false;
   static bool hasThemeIconBug = false;
 

@@ -193,8 +193,6 @@ set(${PROJECT_NAME}_SOURCES
         src/model/chathistory.h
         src/model/chathistory.cpp
         src/model/toxclientstandards.h
-        src/net/toxuri.cpp
-        src/net/toxuri.h
         src/nexus.cpp
         src/nexus.h
         src/persistence/db/rawdatabase.cpp

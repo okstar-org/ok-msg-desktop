@@ -55,23 +55,17 @@
 #include "src/core/corefile.h"
 #include "src/friendlist.h"
 #include "src/grouplist.h"
-#include "src/model/chathistory.h"
-#include "src/model/chatroom/friendchatroom.h"
-#include "src/model/chatroom/groupchatroom.h"
 #include "src/model/friend.h"
 #include "src/model/group.h"
 #include "src/model/groupinvite.h"
 #include "src/model/profile/profileinfo.h"
 #include "src/model/status.h"
-#include "src/net/updatecheck.h"
 #include "src/nexus.h"
-#include "src/persistence/offlinemsgengine.h"
 #include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
 #include "src/platform/timer.h"
 #include "src/widget/contentdialogmanager.h"
 #include "src/widget/form/addfriendform.h"
-#include "src/widget/form/chatform.h"
 #include "src/widget/form/filesform.h"
 #include "src/widget/form/groupinviteform.h"
 #include "src/widget/form/profileform.h"
@@ -98,7 +92,8 @@ bool toxActivateEventHandler(const QByteArray &) {
 
 static Widget *instance = nullptr;
 
-Widget *Widget::getInstance(IAudioControl *audio){
+Widget *Widget::getInstance(){
+    assert(instance);
     return instance;
 };
 
@@ -126,10 +121,8 @@ Widget::Widget(IAudioControl &audio, QWidget *parent)//
   contactWidget = std::make_unique<ContactWidget>();
   ui->tabWidget->addTab(contactWidget.get(), tr("Contact"));
 
-  settingsWidget = std::make_unique<SettingsWidget>(updateCheck.get());
+  settingsWidget = std::make_unique<SettingsWidget>();
   ui->tabWidget->addTab(settingsWidget.get(), tr("Settings"));
-
-
 
   installEventFilter(this);
   QString locale = settings.getTranslation();

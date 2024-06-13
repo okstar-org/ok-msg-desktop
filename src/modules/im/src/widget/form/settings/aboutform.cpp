@@ -13,7 +13,6 @@
 #include "aboutform.h"
 #include "ui_aboutsettings.h"
 
-#include "src/net/updatecheck.h"
 #include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
 #include "src/widget/style.h"
@@ -45,11 +44,10 @@ enum class updateIndex
 /**
  * @brief Constructor of AboutForm.
  */
-AboutForm::AboutForm(UpdateCheck* updateCheck)
+AboutForm::AboutForm()
     : GenericForm(QPixmap(":/img/settings/general.png"))
     , bodyUI(new Ui::AboutSettings)
     , progressTimer(new QTimer(this))
-    , updateCheck(updateCheck)
 {
     bodyUI->setupUi(this);
 
@@ -104,7 +102,7 @@ void AboutForm::replaceVersions()
 #else
     qDebug() << "AboutForm not showing updates, qTox built without UPDATE_CHECK";
 #endif
-    QString projectLink = ORGANIZATION_HOME "/" APPLICATION_SHORT_NAME;
+    QString projectLink = ORGANIZATION_HOME "/" APPLICATION_ALIAS;
     QString commitLink = projectLink+ "/commit/" + QString(GIT_VERSION);
     bodyUI->gitVersion->setText(tr("Commit hash: %1").arg(createLink(commitLink, QString(GIT_VERSION))));
     bodyUI->qtVersion->setText(tr("Qt version: %1").arg(QT_VERSION_STR));

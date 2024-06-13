@@ -16,11 +16,7 @@
 #include <windows.h>
 
 #ifdef UNICODE
-/**
- * tstring is either std::wstring or std::string, depending on whether the user
- * is building a Unicode or Multi-Byte version of qTox. This makes the code
- * easier to reuse and compatible with both setups.
- */
+
 using tstring = std::wstring;
 static inline tstring toTString(QString s)
 {
@@ -42,7 +38,7 @@ inline tstring currentCommandLine()
 
 inline tstring currentRegistryKeyName()
 {
-    return toTString("qTox - ");
+    return toTString( APPLICATION_EXE_NAME " - ");
 }
 
 

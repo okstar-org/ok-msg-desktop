@@ -124,7 +124,7 @@ which may lead to problems with video calls.</source>
     </message>
     <message>
         <source>You are using qTox version %1.</source>
-        <translation type="unfinished">你正在使用 qTox 的 %1 版本。</translation>
+        <translation type="unfinished">你正在使用的版本是 %1 。</translation>
     </message>
     <message>
         <source>Commit hash: %1</source>

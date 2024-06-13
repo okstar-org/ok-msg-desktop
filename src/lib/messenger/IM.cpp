@@ -79,7 +79,7 @@ IM::IM(QString host, QString user, QString pwd,
 
   // 生成本机resource. 格式:OkEDU.<HOST>.[VER].[UNIQUE]
   _resource = QString("%1.%2.[%3].%4")         //
-                  .arg(APPLICATION_SHORT_NAME, //
+                  .arg(APPLICATION_ALIAS, //
                        osInfo.hostName,
                        GIT_DESCRIBE, //
                        osInfo.uniqueId.mid(0, 6))

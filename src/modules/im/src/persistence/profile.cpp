@@ -75,13 +75,6 @@ void Profile::initCore(const QByteArray &toxsave, ICoreSettings &s,
     return;
   }
 
-  //  if (isNewProfile) {
-  //    core->setStatusMessage(tr("Toxing on qTox"));
-  //    core->setUsername(name);
-  //  }
-
-
-
   // save tox file when Core requests it
   connect(core.get(), &Core::saveRequest, this, &Profile::onSaveToxSave);
   // react to avatar changes
@@ -482,20 +475,8 @@ void Profile::loadDatabase(QString password) {
     qDebug() << "Can't load database of removed profile";
     return;
   }
-  //    auto selfId = core->getSelfId();
-  //    name = selfId.toString();
-  //    QByteArray salt = selfId.getPublicKey().getByteArray();
+
   QByteArray salt = password.toUtf8();
-  //    if (salt.size() != TOX_PASS_SALT_LENGTH) {
-  //      qWarning() << "Couldn't compute salt from public key" << name;
-  //      GUI::showError(
-  //          QObject::tr("Error"),
-  //          QObject::tr(
-  //              "qTox couldn't open your chat logs, they will be disabled."));
-  //    }
-  // At this point it's too early to load the personal settings (Nexus will do
-  // it), so we always load the history, and if it fails we can't change the
-  // setting now, but we keep a nullptr
   qDebug() << "Create database for" << name;
 
   bool ok = false;

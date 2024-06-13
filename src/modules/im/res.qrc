@@ -1,7 +1,4 @@
 <RCC>
-    <qresource prefix="/conf">
-        <file alias="nodes.json">res/nodes.json</file>
-    </qresource>
     <qresource prefix="/font">
         <file alias="DejaVuSans.ttf">res/font/DejaVuSans.ttf</file>
     </qresource>

@@ -27,7 +27,7 @@ QString getAutostartDirPath() {
 }
 
 QString getAutostartFilePath(QString dir) {
-  return dir + "/" APPLICATION_SHORT_NAME + ".desktop";
+  return dir + "/" APPLICATION_NAME + ".desktop";
 }
 
 inline QString currentCommandLine() {
@@ -44,7 +44,7 @@ bool Platform::setAutorun(bool on) {
       return false;
     desktop.write("[Desktop Entry]\n");
     desktop.write("Type=Application\n");
-    desktop.write("Name=qTox\n");
+    desktop.write("Name=" APPLICATION_EXE_NAME "\n");
     desktop.write("Exec=");
     desktop.write(currentCommandLine().toUtf8());
     desktop.write("\n");

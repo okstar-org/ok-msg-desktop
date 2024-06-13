@@ -15,7 +15,6 @@
 #include "src/audio/audio.h"
 #include "src/core/core.h"
 #include "src/core/coreav.h"
-#include "src/net/updatecheck.h"
 #include "src/persistence/settings.h"
 #include "src/video/camerasource.h"
 #include "src/widget/contentlayout.h"
@@ -34,18 +33,13 @@
 
 #include <memory>
 
-SettingsWidget::SettingsWidget(UpdateCheck* updateCheck, Widget* parent)
+SettingsWidget::SettingsWidget(Widget* parent)
     : QWidget(parent, Qt::Window)
 {
-//    setAttribute(Qt::WA_DeleteOnClose);
-//    setGeometry(0,0, parent->width(), parent->height());
 
-//    CoreAV* coreAV = Core::getInstance()->getAv();
     IAudioSettings* audioSettings = &Settings::getInstance();
     IVideoSettings* videoSettings = &Settings::getInstance();
     CameraSource& camera = CameraSource::getInstance();
-
-
 
     settingsWidgets = std::unique_ptr<QTabWidget>(new QTabWidget(this));
     settingsWidgets->setTabPosition(QTabWidget::North);
@@ -64,7 +58,7 @@ SettingsWidget::SettingsWidget(UpdateCheck* updateCheck, Widget* parent)
     AVForm* rawAvfrm = new AVForm( camera, audioSettings, videoSettings);
     std::unique_ptr<AVForm> avfrm(rawAvfrm);
     std::unique_ptr<AdvancedForm> expfrm(new AdvancedForm());
-    std::unique_ptr<AboutForm> abtfrm(new AboutForm(updateCheck));
+    std::unique_ptr<AboutForm> abtfrm(new AboutForm());
 
 #if UPDATE_CHECK_ENABLED
     if (updateCheck != nullptr) {

@@ -72,28 +72,19 @@ public:
     void setContact(const Contact* contact);
     void removeContact();
 
-    virtual void show() final
-    {
-    }
     virtual void show(ContentLayout* contentLayout);
     virtual void reloadTheme();
 
-    void addSystemInfoMessage(const QString& message, ChatMessage::SystemMessageType type,
+    void addSystemInfoMessage(const QString& message,
+                              ChatMessage::SystemMessageType type,
                               const QDateTime& datetime);
     static QString resolveToxPk(const FriendId& pk);
     QDateTime getLatestTime() const;
     QDateTime getFirstTime() const;
 
-//  [[__nodiscard__]] inline ChatFormHeader* getHead() const {
-//        return headWidget;
-//    };
-
-  [[__nodiscard__]] inline ChatLog *getChatLog() const{
+    [[__nodiscard__]] inline ChatLog *getChatLog() const{
         return chatLog;
     }
-
-
-
 
 signals:
     void messageInserted();

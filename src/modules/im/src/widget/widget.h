@@ -112,7 +112,7 @@ public:
   explicit Widget(IAudioControl &audio, QWidget *parent = nullptr);
   ~Widget() override;
 
-  static Widget *getInstance(IAudioControl *audio = nullptr);
+  static Widget *getInstance();
   bool newMessageAlert(QWidget *currentWindow, bool isActive, bool sound = true,
                         bool notify = true);
 
@@ -287,8 +287,6 @@ private:
   Core *core;
   Profile *profile;
 
-  std::unique_ptr<UpdateCheck> updateCheck; // ownership should be moved outside
-                                            // Widget once non-singleton
 //  FilesForm *filesForm;
 
 //  GenericChatroomWidget *activeChatroomWidget;
