@@ -89,6 +89,7 @@ PKG_CONFIG_PATH=<项目根目录>/vcpkg_installed/x64-windows/lib/pkgconfig
 
 - 编译OkRTC库
 ```shell
+sudo apt install libopus-dev libvpx-dev libpipewire-0.3-dev
 git clone https://github.com/okstar-org/ok-rtc.git
 # CMake预处理
  E:\QtWorkspace\ok-rtc> cmake -B out -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE='$env{VCPKG_ROOT}\scripts\buildsystems\vcpkg.cmake' -DCMAKE_PREFIX_PATH='${PROJECT_ROOT}\vcpkg_installed\x64-windows'
