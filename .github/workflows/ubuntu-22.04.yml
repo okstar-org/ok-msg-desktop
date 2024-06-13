@@ -60,20 +60,32 @@ jobs:
         # ffmpeg vpx qrencode 
         sudo apt install -y libvpx-dev libjpeg-dev libexif-dev libtiff-dev libpng16-16 libpng-dev libavcodec-dev libavdevice-dev libqrencode-dev
 
-    - name: Install Qt
-      uses: jurplel/install-qt-action@v3
-
     - name: Install Clang 17
       run: |
         wget https://apt.llvm.org/llvm.sh
         chmod +x ./llvm.sh
         sudo ./llvm.sh 17
 
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v3
+
+    - name: Install ok-gloox
+      run: |
+        git clone https://github.com/okstar-org/ok-gloox.git
+        cd ok-gloox
+        cmake -B out   \
+        -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}          \
+        -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}    \
+        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}    
+        cmake --build out
+        install cmake --install out
+
     - name: Set reusable strings
       id: strings
       shell: bash
       run: |
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+        
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
