@@ -40,12 +40,9 @@ endif ()
 
 if(UNIX)
     find_package(PkgConfig REQUIRED)
-
     # -Wunused-parameter -pedantic -fsanitize=address,undefined,leak,integer -Wextra
     # -Wall -Wmacro-redefined -Wbuiltin-macro-redefined
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}
-        -fstack-protector-all -Wunused-function -Wstrict-overflow -Wstrict-aliasing -Wstack-protector"
-    )
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fstack-protector-all -Wunused-function -Wstrict-overflow -Wstrict-aliasing -Wstack-protector")
 endif(UNIX)
 
 if(MSVC)
