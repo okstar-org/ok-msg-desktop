@@ -82,7 +82,7 @@ jobs:
 
     - name: Install ok-rtc
       run: |
-        sudo apt install libopus-dev libvpx-dev libpipewire-0.3-dev libabsl-dev
+        sudo apt install libopenh264-dev libopus-dev libvpx-dev libpipewire-0.3-dev libabsl-dev
         git clone https://github.com/okstar-org/ok-rtc.git
         cd ok-rtc
         cmake -B out   \
