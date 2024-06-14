@@ -75,26 +75,6 @@ parts:
     plugin: nil
     stage-packages:
       - qt5-gtk-platformtheme
-#    after:
-#      - mozjpeg
-#  mozjpeg:
-#    source: https://github.com/mozilla/mozjpeg.git
-#    source-depth: 1
-#    source-tag: v4.0.3
-#    plugin: cmake
-#    cmake-generator: Ninja
-#    cmake-parameters:
-#      - -DCMAKE_BUILD_TYPE=Release
-#      - -DCMAKE_INSTALL_PREFIX=/usr
-#      - -DENABLE_STATIC=OFF
-#      - -DWITH_JPEG8=ON
-#      - -DPNG_SUPPORTED=OFF
-#    prime:
-#      - -./usr/bin
-#      - -./usr/include
-#      - -./usr/lib/$CRAFT_ARCH_TRIPLET/pkgconfig
-#      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.so
-#      - -./usr/share
 
   ok-rtc:
     source: https://github.com/okstar-org/ok-rtc.git
@@ -156,15 +136,19 @@ parts:
     cmake-parameters:
       - -DCMAKE_BUILD_TYPE=Release
       - -DCMAKE_INSTALL_PREFIX=/usr
+    prime:
+      - -./usr/include
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/cmake
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.a
     build-packages:
       - zlib1g-dev
     stage-packages:
       - zlib1g
 
   ok-msg:
-    plugin: cmake
     source: .
     source-type: git
+    plugin: cmake
     parse-info: [ usr/share/metainfo/ok-msg-desktop.metainfo.xml ]
     build-environment:
       - LD_LIBRARY_PATH: $CRAFT_STAGE/usr/lib/$CRAFT_ARCH_TRIPLET${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
