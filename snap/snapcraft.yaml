@@ -333,6 +333,7 @@ parts:
       - -DDESKTOP_APP_USE_PACKAGED=ON
       - -DDESKTOP_LAUNCHER_BASENAME=ok-msg-desktop
     after: [ desktop-qt5, ok-rtc, ok-gloox ]
+
 layout:
   /usr/share/alsa:
     bind: $SNAP/usr/share/alsa

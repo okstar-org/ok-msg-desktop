@@ -1,14 +1,9 @@
 project(OkRTC)
 
-message(STATUS "${PROJECT_NAME} Implicit include directories: ${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES}")
-message(STATUS "User-added include directories:")
-get_directory_property(USER_INCLUDE_DIRECTORIES INCLUDE_DIRECTORIES)
-foreach (dir ${USER_INCLUDE_DIRECTORIES})
-	message(STATUS "  ${dir}")
-endforeach ()
-
 #ok-rtc
 find_package(ok-rtc REQUIRED)
+message(STATUS "Found ok-rtc=${ok-rtc_FOUND}")
+
 if (ok-rtc_FOUND)
 	if (WIN32)
 		add_definitions(-DWEBRTC_WIN)
@@ -17,14 +12,21 @@ if (ok-rtc_FOUND)
 		add_compile_definitions(-DWEBRTC_POSIX -DWEBRTC_LINUX)
 	endif ()
 	set(webrtc_LIB ok-rtc::ok-rtc)
-
 endif ()
 
 #ok-gloox
 find_package(ok-gloox REQUIRED)
+message(STATUS "Found ok-gloox=${ok-gloox_FOUND}")
 if (ok-gloox_FOUND)
 	set(gloox_LIB ok-gloox::ok-gloox)
 endif ()
+
+message(STATUS "${PROJECT_NAME} Implicit include directories: ${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES}")
+message(STATUS "User-added include directories:")
+get_directory_property(USER_INCLUDE_DIRECTORIES INCLUDE_DIRECTORIES)
+foreach (dir ${USER_INCLUDE_DIRECTORIES})
+	message(STATUS "  ${dir}")
+endforeach ()
 
 set(${PROJECT_NAME}_SOURCES
 		webrtc/platform/PlatformInterface.h
