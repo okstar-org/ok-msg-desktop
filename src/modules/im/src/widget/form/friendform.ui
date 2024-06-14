@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>300</height>
+    <height>48</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,16 +15,16 @@
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_2">
    <item>
-    <widget class="QLabel" name="no">
+    <widget class="QLabel" name="posts">
      <property name="text">
-      <string notr="true">no</string>
+      <string notr="true">posts</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="username">
+    <widget class="QLabel" name="no">
      <property name="text">
-      <string>username</string>
+      <string notr="true">no</string>
      </property>
     </widget>
    </item>
@@ -36,16 +36,16 @@
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="email">
+    <widget class="QLabel" name="phone">
      <property name="text">
-      <string notr="true">email</string>
+      <string notr="true">phone</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="phone">
+    <widget class="QLabel" name="email">
      <property name="text">
-      <string notr="true">phone</string>
+      <string notr="true">email</string>
      </property>
     </widget>
    </item>

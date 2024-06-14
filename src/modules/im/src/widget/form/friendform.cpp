@@ -14,21 +14,20 @@
 #include "lib/backend/UserService.h"
 #include "ui_friendform.h"
 
-FriendForm::FriendForm(ok::backend::OrgStaff *staff_, QWidget *parent)
+FriendForm::FriendForm(const ok::backend::OrgStaff& staff_, QWidget *parent)
     : QFrame(parent), ui(new Ui::FriendForm), staff(staff_) {
   ui->setupUi(this);
-  ui->no->setText(staff->no);
-  ui->username->setText(staff->username);
-  ui->name->setText(staff->name);
-  ui->phone->setText(staff->phone);
-  ui->email->setText(staff->email);
+  ui->no->setText(staff.no);
+  ui->posts->setText(staff.posts);
+  ui->name->setText(staff.name);
+  ui->phone->setText(staff.phone);
+  ui->email->setText(staff.email);
 
   connect(ui->addFriend, &QPushButton::released,
-          [&]() { emit add(staff->toContactId(), staff->name); });
+          [&]() { emit add(staff.toContactId(), staff.name); });
 }
 
 FriendForm::~FriendForm() {
   disconnect(ui->addFriend);
-  delete staff;
   delete ui;
 }

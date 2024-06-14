@@ -27,8 +27,6 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
 - CMake ([New BSD License](https://github.com/Kitware/CMake/blob/master/Copyright.txt))
 - WebRTC ([New BSD License](https://github.com/desktop-app/tg_owt/blob/master/LICENSE))
 - OpenSSL 3.0.x ([OpenSSL License](https://www.openssl.org/source/license.html))
-- qTox([GPL v3](https://github.com/qTox/qTox/LICENSE))
-- gloox ([GPL v3](https://gitee.com/chuanshantech/ok-edu-gloox))
 - OpenAL Soft ([LGPL](https://github.com/kcat/openal-soft/blob/master/COPYING))
 - FFmpeg ([LGPL](https://www.ffmpeg.org/legal.html))
 - Qt 5.15 ([LGPL](http://doc.qt.io/qt-5/lgpl.html))
@@ -37,7 +35,9 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
 - Sodium([ISC license.](https://github.com/jedisct1/libsodium))
 - libexif([GPL v2](https://github.com/libexif/libexif/blob/master/COPYING))
 - libqrencode([GPL v2+](https://github.com/fukuchi/libqrencode))
-
+- qTox([GPL v3](https://github.com/qTox/qTox/LICENSE))
+- gloox ([GPL v3](https://gitee.com/chuanshantech/ok-edu-gloox))
+- 
 # 🖥️ 支持平台
 > 🐧 Linux
 - Ubuntu  已支持

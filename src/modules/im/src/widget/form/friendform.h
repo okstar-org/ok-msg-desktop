@@ -17,6 +17,7 @@
 #include <QFrame>
 
 #include <src/core/contactid.h>
+#include "lib/backend/UserService.h"
 
 namespace Ui {
 class FriendForm;
@@ -31,14 +32,14 @@ class FriendForm : public QFrame
     Q_OBJECT
 
 public:
-    explicit FriendForm(ok::backend::OrgStaff* staff, QWidget *parent = nullptr);
+    explicit FriendForm(const ok::backend::OrgStaff& staff, QWidget *parent = nullptr);
     ~FriendForm();
 
 
 private:
     Ui::FriendForm *ui;
-    QString username;
-    ok::backend::OrgStaff* staff;
+
+    ok::backend::OrgStaff staff;
 
     signals:
       void add(const QString &cId, QString &nick);

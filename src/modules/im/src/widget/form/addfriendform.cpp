@@ -63,18 +63,13 @@ AddFriendForm::AddFriendForm(QWidget *parent) : QWidget(parent), addUi{new Ui::A
 
   friendLayout = new QVBoxLayout(main);
   friendLayout->setAlignment(Qt::AlignTop);
+
   addUi->scrollArea->widget()->setLayout(friendLayout);
 
   tabWidget->addTab(main, "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 
   // accessibility stuff
   addUi->input->setPlaceholderText(tr("Account/E-Mail/Phone Number"));
-  //  toxId.setAccessibleDescription(tr("Type in Tox ID of your friend"));
-  //  messageLabel.setAccessibleDescription(tr("IMFriend request message"));
-  //  message.setAccessibleDescription(
-  //      tr("Type message to send with the friend request or leave empty to send "
-  //         "a default message"));
-  //  message.setTabChangesFocus(true);
 
   retranslateUi();
   settings::Translator::registerHandler(std::bind(&AddFriendForm::retranslateUi, this), this);
@@ -134,7 +129,7 @@ void AddFriendForm::onFriendReceipts(const QList<ok::backend::OrgStaff *> &qList
   for (auto item : qList) {
     if (!item->username.isEmpty()) {
       item->host = signIn->host;
-      auto form = new FriendForm(item);
+      auto form = new FriendForm(*item);
       friendLayout->addWidget(form);
       connect(form, &FriendForm::add, [&](const QString &username, QString &nick) {
         qDebug() << "Send request to" << username;

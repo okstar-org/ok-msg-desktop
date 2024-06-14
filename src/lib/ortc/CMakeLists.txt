@@ -29,18 +29,14 @@ endforeach ()
 
 set(${PROJECT_NAME}_SOURCES
 		webrtc/platform/PlatformInterface.h
-		    # Desktop capturer
-		    webrtc/platform/desktop_capturer/DesktopCaptureSource.h
-		    webrtc/platform/desktop_capturer/DesktopCaptureSource.cpp
-		    webrtc/platform/desktop_capturer/DesktopCaptureSourceHelper.h
-	      webrtc/platform/desktop_capturer/DesktopCaptureSourceHelper.cpp
-		    webrtc/platform/desktop_capturer/DesktopCaptureSourceManager.h
-		    webrtc/platform/desktop_capturer/DesktopCaptureSourceManager.cpp
-
+		# Desktop capturer
+		webrtc/platform/desktop_capturer/DesktopCaptureSource.h
+		webrtc/platform/desktop_capturer/DesktopCaptureSource.cpp
+		webrtc/platform/desktop_capturer/DesktopCaptureSourceHelper.h
+		webrtc/platform/desktop_capturer/DesktopCaptureSourceHelper.cpp
+		webrtc/platform/desktop_capturer/DesktopCaptureSourceManager.h
+		webrtc/platform/desktop_capturer/DesktopCaptureSourceManager.cpp
 		
-		
-
-
 		webrtc/platform/tdesktop/DesktopInterface.cpp
 		webrtc/platform/tdesktop/DesktopInterface.h
 		webrtc/platform/tdesktop/VideoCapturerInterfaceImpl.cpp
