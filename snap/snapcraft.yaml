@@ -332,7 +332,10 @@ parts:
       - -DCMAKE_INSTALL_PREFIX=/usr
       - -DDESKTOP_APP_USE_PACKAGED=ON
       - -DDESKTOP_LAUNCHER_BASENAME=ok-msg-desktop
-    after: [ desktop-qt5, ok-rtc, ok-gloox ]
+    after:
+      - desktop-qt5
+      - ok-rtc
+      - ok-gloox
 
 layout:
   /usr/share/alsa:
