@@ -140,14 +140,14 @@ void LoginWidget::doLogin() {
         return;
 
   if (m_loaded < 1) {
-    onError(tr("Please waiting the page is loaded"));
+    setMsg(tr("Please waiting the page is loaded"));
     return;
   }
 
   // 获取服务提供商
   auto providerIdx = ui->providers->currentIndex();
   if (!(providerIdx > 0)) {
-    onError(tr("Please select service provider"));
+    setMsg(tr("Please select service provider"));
     return;
   }
 
