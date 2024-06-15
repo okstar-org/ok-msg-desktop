@@ -141,11 +141,8 @@ bool NetworkHttp::getJSON(const QUrl &url,
         fn(Jsons::toJSON(buf));
       },
       nullptr,
-      [=](const QString& err) {
-        Q_UNUSED(err)
-        if (errFn)
-          errFn(err);
-      });
+      errFn
+      );
 
 }
 

@@ -47,6 +47,7 @@ public:
   explicit LoginWidget(bool bootstrap, QWidget *parent = nullptr);
   ~LoginWidget() override;
   void onError(const QString &msg);
+  void setMsg(const QString &msg);
   void init();
   void deinit();
 
@@ -62,6 +63,9 @@ private:
 
   core::SettingManager *m_settingManager;
   ok::backend::OkCloudService *okCloudService;
+
+  bool m_error = false;
+
   //加载项
   int m_loaded;
 

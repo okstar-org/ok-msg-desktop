@@ -110,10 +110,7 @@ void LoginWidget::init() {
   retranslateUi();
   //==========国际化==========//
 
-  /**
-   * 处理服务供应商
-   */
-
+  //服务供应商
   okCloudService->GetFederalInfo(
       [&](ok::backend::Res<ok::backend::FederalInfo> &res) {
         for (const auto &item : res.data->states) {
@@ -128,7 +125,9 @@ void LoginWidget::init() {
           m_loaded++;
         }
       },
-      [&](const QString& error) { onError(error); });
+      [&](const QString& error) {
+      onError(error);
+  });
 }
 
 void LoginWidget::deinit()
@@ -137,6 +136,9 @@ void LoginWidget::deinit()
 }
 
 void LoginWidget::doLogin() {
+    if(m_error)
+        return;
+
   if (m_loaded < 1) {
     onError(tr("Please waiting the page is loaded"));
     return;
@@ -217,12 +219,7 @@ void LoginWidget::onConnectResult(ok::session::SignInInfo info,
   }
   case ok::session::Status::FAILURE:
     ui->loginBtn->setText(tr("Login"));
-    ui->loginMessage->setText(result.msg);
-
-    //登录失败退出定时器
-    if(m_timer)
-        m_timer->stop();
-
+    onError(result.msg);
     break;
   }
   emit loginResult(info, result);
@@ -259,6 +256,15 @@ void LoginWidget::on_providers_currentIndexChanged(int index) {
 void LoginWidget::retranslateUi() { ui->retranslateUi(this); }
 
 void LoginWidget::onError(const QString &msg) {
+  qWarning() <<__func__ << msg;
+  setMsg(msg);
+  //登录失败退出定时器
+  m_timer.reset();
+  m_error = true;
+}
+
+void LoginWidget::setMsg(const QString &msg)
+{
   ui->loginMessage->setText(msg);
 }
 

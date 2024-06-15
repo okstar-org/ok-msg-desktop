@@ -38,8 +38,7 @@ public:
 
   void httpFinished();
 
-  bool
-  get(const QUrl &url,                                                      //
+  bool get(const QUrl &url,                                                      //
       Fn<void(QByteArray body, const QString filename)> fn,                 //
       Fn<void(qint64 bytesReceived, qint64 bytesTotal)> progress = nullptr, //
       Fn<void(const QString &errStr)> failed = nullptr);
