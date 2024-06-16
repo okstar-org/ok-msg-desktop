@@ -12,7 +12,7 @@ if (WIN32)
     pkg_check_modules(SWSCALE REQUIRED libswscale)
     pkg_check_modules(SWRESAMPLE REQUIRED libswresample)
 
-    pkg_check_modules(libsodium REQUIRED libsodium-1.0.19-RELEASE )
+    pkg_check_modules(libsodium REQUIRED libsodium )
     pkg_check_modules(QRENCODE REQUIRED libqrencode )
     pkg_check_modules(OpenAL REQUIRED openal)
     pkg_check_modules(sqlite3 REQUIRED sqlite3)
