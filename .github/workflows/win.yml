@@ -70,13 +70,13 @@ jobs:
         cmake --build out --config=${{ matrix.build_type }}
         cmake --install out
 
-    - name: Install mozjpeg
-      run: |
-        git clone -b v4.0.3 https://github.com/mozilla/mozjpeg.git
-        cd mozjpeg
-        cmake -B out -DWITH_JPEG8=ON -DPNG_SUPPORTED=OFF -A ${{ matrix.arch == 'x64' && 'x64' || 'win32' }} ^
-        cmake --build out --config=${{ matrix.build_type }}
-        cmake --install out
+#    - name: Install mozjpeg
+#      run: |
+#        git clone -b v4.0.3 https://github.com/mozilla/mozjpeg.git
+#        cd mozjpeg
+#        cmake -B out -DWITH_JPEG8=ON -DPNG_SUPPORTED=OFF -A ${{ matrix.arch == 'x64' && 'x64' || 'win32' }} ^
+#        cmake --build out --config=${{ matrix.build_type }}
+#        cmake --install out
 
     - name: Install ok-rtc
       run: |   
