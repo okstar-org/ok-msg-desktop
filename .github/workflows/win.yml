@@ -72,24 +72,15 @@ jobs:
     - name: Install pkg-conf
       run: |
         choco install strawberryperl --pre
-        ls C:\Strawberry\perl\bin
-        echo $env:PATH
-
-    - name: Set PKG_CONFIG_PATH
-      run: |
-        setx PKG_CONFIG_PATH ${{ env.VCPKG_INSTALLED_DIR }}/${{ env.VCPKG_DEFAULT_TRIPLET }}/lib/pkgconfig
-        
 
     - name: Install ok-rtc
       run: |   
         git clone https://github.com/okstar-org/ok-rtc.git
-        
         cd ok-rtc
         git submodule update --init
         cmake -B out -DPKG_CONFIG_EXECUTABLE=C:\Strawberry\perl\bin\pkg-config.bat -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_ROOT"/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=${{ env.VCPKG_DEFAULT_TRIPLET }} -DCMAKE_PREFIX_PATH=${{ env.VCPKG_INSTALLED_DIR }}\${{ env.VCPKG_DEFAULT_TRIPLET }}
         cmake --build out --config=${{ matrix.build_type }}
-        cmake --install out
-
+#        cmake --install out --config=${{ matrix.build_type }}
 
     - name: Install ok-gloox
       run: |
@@ -97,7 +88,7 @@ jobs:
         cd ok-gloox
         cmake -B out -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}    
         cmake --build out --config=${{ matrix.build_type }}
-        cmake --install out
+#        cmake --install out --config=${{ matrix.build_type }}
 
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
