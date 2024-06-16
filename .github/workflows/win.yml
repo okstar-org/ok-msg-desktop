@@ -60,21 +60,25 @@ jobs:
       with:
         runVcpkgInstall: true
 
-#    - name: Install Chocolatey
-#      shell: powershell
-#      run: |
-#        # 设置执行策略以允许脚本运行
-#        Set-ExecutionPolicy Bypass -Scope Process -Force
-#        # 下载并安装Chocolatey
-#        iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-#        # 验证安装（可选）
-#        choco --version
+    - name: Install Chocolatey
+      shell: powershell
+      run: |
+        # 设置执行策略以允许脚本运行
+        Set-ExecutionPolicy Bypass -Scope Process -Force
+        # 下载并安装Chocolatey
+        iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+        # 验证安装（可选）
+        choco --version
+    - name: Install pkg-conf
+      run: |
+        choco install strawberryperl --pre
+        ls C:\Strawberry\perl\bin
+        echo $env:PATH
 
-    - name: Set pkg
+    - name: Set PKG_CONFIG_PATH
       run: |
         setx PKG_CONFIG_PATH ${{ env.VCPKG_INSTALLED_DIR }}/${{ env.VCPKG_DEFAULT_TRIPLET }}/lib/pkgconfig
-        echo "$env:PKG_CONFIG_PATH"
-        echo "$env:PATH"
+        
 
     - name: Install ok-rtc
       run: |   
