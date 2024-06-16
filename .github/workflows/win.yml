@@ -49,11 +49,6 @@ jobs:
       with:
         submodules: 'true'
 
-    - name: Install Qt
-      uses: jurplel/install-qt-action@v3
-      with:
-        arch: ${{ matrix.arch == 'x64' && 'win64_msvc2019_64' || 'win32_msvc2019' }}
-
     - name: Native Tools Command Prompt.
       uses: ilammy/msvc-dev-cmd@v1.10.0
       with:
@@ -61,14 +56,6 @@ jobs:
 
     - name: vcpkg build
       uses: lukka/run-vcpkg@v11
-
-    - name: Install ok-gloox
-      run: |
-        git clone https://github.com/okstar-org/ok-gloox.git
-        cd ok-gloox
-        cmake -B out -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}    
-        cmake --build out --config=${{ matrix.build_type }}
-        cmake --install out
 
 #    - name: Install mozjpeg
 #      run: |
@@ -83,6 +70,7 @@ jobs:
         git clone https://github.com/okstar-org/ok-rtc.git
         cd ok-rtc
         git submodule update --init
+        echo $env:VCPKG_ROOT
         cmake -B out ^
           -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} ^
           -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} ^
@@ -92,6 +80,20 @@ jobs:
         
         cmake --build out --config=${{ matrix.build_type }}
         cmake --install out
+
+
+    - name: Install ok-gloox
+      run: |
+        git clone https://github.com/okstar-org/ok-gloox.git
+        cd ok-gloox
+        cmake -B out -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}    
+        cmake --build out --config=${{ matrix.build_type }}
+        cmake --install out
+
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v3
+      with:
+        arch: ${{ matrix.arch == 'x64' && 'win64_msvc2019_64' || 'win32_msvc2019' }}
 
     - name: Set reusable strings
       # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
