@@ -72,8 +72,9 @@ jobs:
 
     - name: Set pkg
       run: |
-        setx PKG_CONFIG_PATH ${{ env.VCPKG_INSTALLED_DIR }}\${{ env.VCPKG_DEFAULT_TRIPLET }}/lib/pkgconfig
+        setx PKG_CONFIG_PATH ${{ env.VCPKG_INSTALLED_DIR }}/${{ env.VCPKG_DEFAULT_TRIPLET }}/lib/pkgconfig
         echo $env:PKG_CONFIG_PATH
+        echo $env:PATH
 
     - name: Install ok-rtc
       run: |   
