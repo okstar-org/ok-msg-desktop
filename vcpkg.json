@@ -15,10 +15,6 @@
   ],
   "overrides": [
     {
-      "name": "libsodium",
-      "version": "1.0.19#1"
-    },
-    {
       "name": "opus",
       "version": "1.4"
     },
