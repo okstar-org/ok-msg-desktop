@@ -73,14 +73,14 @@ jobs:
     - name: Install pkg-conf
       run: |
         choco install strawberryperl
+        setx PKG_CONFIG_PATH ${{ env.VCPKG_INSTALLED_DIR }}\${{ env.VCPKG_DEFAULT_TRIPLET }}/lib/pkgconfig
 
     - name: Install ok-rtc
       run: |   
         git clone https://github.com/okstar-org/ok-rtc.git
         cd ok-rtc
-        git submodule update --init
         
-        set PKG_CONFIG_PATH=${{ env.VCPKG_INSTALLED_DIR }}\${{ env.VCPKG_DEFAULT_TRIPLET }}/lib/pkgconfig
+        git submodule update --init
         
         cmake -B out -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_ROOT"/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=${{ env.VCPKG_DEFAULT_TRIPLET }} -DCMAKE_PREFIX_PATH=${{ env.VCPKG_INSTALLED_DIR }}\${{ env.VCPKG_DEFAULT_TRIPLET }}
         cmake --build out --config=${{ matrix.build_type }}
