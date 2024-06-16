@@ -72,6 +72,8 @@ jobs:
         cd ok-rtc
         git submodule update --init
         echo $env:VCPKG_ROOT
+        echo $env:VCPKG_INSTALLED_DIR
+        ls $env:VCPKG_INSTALLED_DIR\${{ env.VCPKG_DEFAULT_TRIPLET }}
         cmake -B out -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_ROOT"/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=${{ env.VCPKG_DEFAULT_TRIPLET }} -DCMAKE_PREFIX_PATH="$env:VCPKG_INSTALLED_DIR"\${{ env.VCPKG_DEFAULT_TRIPLET }}
         cmake --build out --config=${{ matrix.build_type }}
         cmake --install out
