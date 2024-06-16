@@ -16,46 +16,43 @@
 #include <QDebug>
 #include <QHash>
 
-QHash<const GroupId, Group*> GroupList::groupList;
-QHash<QString, GroupId> GroupList::id2key;
-Group* GroupList::addGroup(QString groupNum, const GroupId& groupId,
-                           const QString& name, bool isAvGroupchat,
+GroupMap GroupList::groupMap;
+
+Group* GroupList::addGroup(const GroupId& groupId,
+                           const QString& name,
+                           bool isAvGroupchat,
                            const QString& selfName)
 {
-    qDebug()<<"addGroup"<<groupNum << "groupId" << groupId.toString();
+    qDebug()<<"addGroup"<< "groupId" << groupId.toString();
 
-    auto checker = groupList.find(groupId);
-    if (checker != groupList.end())
+    auto checker = groupMap.value(groupId.toString());
+    if (checker ){
         qWarning() << "addGroup: groupId already taken";
+        return checker;
+    }
 
-    // TODO: Core instance is bad but grouplist is also an instance so we can
-    // deal with this later
     auto core = Core::getInstance();
-    Group* newGroup = new Group(groupNum, groupId, name, isAvGroupchat, selfName, *core, *core);
-    groupList[groupId] = newGroup;
-    id2key[groupNum] = groupId;
+    Group* newGroup = new Group(groupId, name, isAvGroupchat, selfName, *core, *core);
+    groupMap[groupId.toString()] = newGroup;
+
     return newGroup;
 }
 
 Group* GroupList::findGroup(const GroupId& groupId)
 {
-    auto g_it = groupList.find(groupId);
-    if (g_it != groupList.end())
-        return *g_it;
 
-    return nullptr;
+        return groupMap.value(groupId.toString());
+
 }
 
-const GroupId& GroupList::id2Key(QString groupNum)
-{
-    return id2key[groupNum];
-}
+
 
 void GroupList::removeGroup(const GroupId& groupId, bool /*fake*/)
 {
-    auto g_it = groupList.find(groupId);
-    if (g_it != groupList.end()) {
-        groupList.erase(g_it);
+    auto g_it = groupMap.find(groupId.toString());
+    if (g_it != groupMap.end()) {
+        delete *g_it;
+        groupMap.erase(g_it);
     }
 }
 
@@ -63,7 +60,7 @@ QList<Group*> GroupList::getAllGroups()
 {
     QList<Group*> res;
 
-    for (auto it : groupList)
+    for (auto it : groupMap)
         res.append(it);
 
     return res;
@@ -71,7 +68,7 @@ QList<Group*> GroupList::getAllGroups()
 
 void GroupList::clear()
 {
-    for (auto groupptr : groupList)
+    for (auto groupptr : groupMap)
         delete groupptr;
-    groupList.clear();
+    groupMap.clear();
 }

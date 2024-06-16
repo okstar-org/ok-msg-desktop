@@ -33,6 +33,8 @@
 #include <QObject>
 #include <QPixmap>
 
+#include <src/core/contactid.h>
+
 
 class Profile;
 class QCommandLineParser;
@@ -388,14 +390,14 @@ public:
     int getEmojiFontPointSize() const;
     void setEmojiFontPointSize(int value);
 
-    QString getContactNote(const ToxPk& id) const override;
-    void setContactNote(const ToxPk& id, const QString& note) override;
+    QString getContactNote(const FriendId& id) const override;
+    void setContactNote(const FriendId& id, const QString& note) override;
 
-    QString getAutoAcceptDir(const ToxPk& id) const override;
-    void setAutoAcceptDir(const ToxPk& id, const QString& dir) override;
+    QString getAutoAcceptDir(const FriendId& id) const override;
+    void setAutoAcceptDir(const FriendId& id, const QString& dir) override;
 
-    AutoAcceptCallFlags getAutoAcceptCall(const ToxPk& id) const override;
-    void setAutoAcceptCall(const ToxPk& id, AutoAcceptCallFlags accept) override;
+    AutoAcceptCallFlags getAutoAcceptCall(const FriendId& id) const override;
+    void setAutoAcceptCall(const FriendId& id, AutoAcceptCallFlags accept) override;
 
     QString getGlobalAutoAcceptDir() const;
     void setGlobalAutoAcceptDir(const QString& dir);
@@ -403,8 +405,8 @@ public:
     size_t getMaxAutoAcceptSize() const;
     void setMaxAutoAcceptSize(size_t size);
 
-    bool getAutoGroupInvite(const ToxPk& id) const override;
-    void setAutoGroupInvite(const ToxPk& id, bool accept) override;
+    bool getAutoGroupInvite(const FriendId& id) const override;
+    void setAutoGroupInvite(const FriendId& id, bool accept) override;
 
     // ChatView
     const QFont& getChatMessageFont() const;
@@ -457,23 +459,23 @@ public:
     QString getFriendAddress(const QString& publicKey) const;
     void updateFriendAddress(const QString& newAddr);
 
-    QString getFriendAlias(const ToxPk& id) const override;
-    void setFriendAlias(const ToxPk& id, const QString& alias) override;
+    QString getFriendAlias(const ContactId& id) const override;
+    void setFriendAlias(const FriendId& id, const QString& alias) override;
 
-    int getFriendCircleID(const ToxPk& id) const override;
-    void setFriendCircleID(const ToxPk& id, int circleID) override;
+    int getFriendCircleID(const FriendId& id) const override;
+    void setFriendCircleID(const FriendId& id, int circleID) override;
 
-    QDateTime getFriendActivity(const ToxPk& id) const override;
-    void setFriendActivity(const ToxPk& id, const QDateTime& date) override;
+    QDateTime getFriendActivity(const FriendId& id) const override;
+    void setFriendActivity(const FriendId& id, const QDateTime& date) override;
 
-    void saveFriendSettings(const ToxPk& id) override;
-    void removeFriendSettings(const ToxPk& id) override;
+    void saveFriendSettings(const FriendId& id) override;
+    void removeFriendSettings(const FriendId& id) override;
 
-    SIGNAL_IMPL(Settings, autoAcceptCallChanged, const ToxPk& id,
+    SIGNAL_IMPL(Settings, autoAcceptCallChanged, const FriendId& id,
                 IFriendSettings::AutoAcceptCallFlags accept)
-    SIGNAL_IMPL(Settings, autoGroupInviteChanged, const ToxPk& id, bool accept)
-    SIGNAL_IMPL(Settings, autoAcceptDirChanged, const ToxPk& id, const QString& dir)
-    SIGNAL_IMPL(Settings, contactNoteChanged, const ToxPk& id, const QString& note)
+    SIGNAL_IMPL(Settings, autoGroupInviteChanged, const FriendId& id, bool accept)
+    SIGNAL_IMPL(Settings, autoAcceptDirChanged, const FriendId& id, const QString& dir)
+    SIGNAL_IMPL(Settings, contactNoteChanged, const FriendId& id, const QString& note)
 
     bool getCompactLayout() const;
     void setCompactLayout(bool compact);
@@ -540,7 +542,7 @@ private:
     Settings(Settings& settings) = delete;
     Settings& operator=(const Settings&) = delete;
     void savePersonal(QString profileName, const ToxEncrypt* passkey);
-    friendProp& getOrInsertFriendPropRef(const ToxPk& id);
+    friendProp& getOrInsertFriendPropRef(const FriendId& id);
     ICoreSettings::ProxyType fixInvalidProxyType(ICoreSettings::ProxyType proxyType);
 
 public slots:

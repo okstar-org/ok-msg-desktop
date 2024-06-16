@@ -1,4 +1,4 @@
-<h1 align="center">OkMSG Desktop</h1>
+h1 align="center">OkMSG Desktop</h1>
 
 # 🎁 项目介绍
 
@@ -27,8 +27,6 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
 - CMake ([New BSD License](https://github.com/Kitware/CMake/blob/master/Copyright.txt))
 - WebRTC ([New BSD License](https://github.com/desktop-app/tg_owt/blob/master/LICENSE))
 - OpenSSL 3.0.x ([OpenSSL License](https://www.openssl.org/source/license.html))
-- qTox([GPL v3](https://github.com/qTox/qTox/LICENSE))
-- gloox ([GPL v3](https://gitee.com/chuanshantech/ok-edu-gloox))
 - OpenAL Soft ([LGPL](https://github.com/kcat/openal-soft/blob/master/COPYING))
 - FFmpeg ([LGPL](https://www.ffmpeg.org/legal.html))
 - Qt 5.15 ([LGPL](http://doc.qt.io/qt-5/lgpl.html))
@@ -37,7 +35,9 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
 - Sodium([ISC license.](https://github.com/jedisct1/libsodium))
 - libexif([GPL v2](https://github.com/libexif/libexif/blob/master/COPYING))
 - libqrencode([GPL v2+](https://github.com/fukuchi/libqrencode))
-
+- qTox([GPL v3](https://github.com/qTox/qTox/LICENSE))
+- gloox ([GPL v3](https://gitee.com/chuanshantech/ok-edu-gloox))
+- 
 # 🖥️ 支持平台
 > 🐧 Linux
 - Ubuntu  已支持
@@ -62,14 +62,86 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
 ## Windows 构建
 - 安装`visual studio 17 2022`
 
-- 配置环境变量
+- 配置vcpkg
 ```shell
+#设置vcpkg路径，也可以参考官网下载：https://github.com/microsoft/vcpkg/blob/master/README_zh_CN.md
 VCPKG_ROOT=E:\Program Files\Microsoft Visual Studio\2022\Community\VC\vcpkg
 #可选，默默C盘
 VCPKG_DOWNLOADS=下载路径
 ```
 
-- CMake执行配置
+- 安装vcpkg依赖包
+```shell
+# 进入项目跟目录（包含vcpkg.json），执行安装命令
+vcpkg install --triplet x64-windows
+```
+
+- 配置pkg-config关联
+这一步实现pkg-config到vcpkg安装包的关联，便于cmake pkg-config模块能检索到。
+```shell
+# 配置环境变量
+PKG_CONFIG_PATH=<项目根目录>/vcpkg_installed/x64-windows/lib/pkgconfig
+```
+命令行输入如下，检查是否存在vcpkg安装的新包。
+  
+    pkg-config.bat --list-all
+
+
+- 编译OkRTC库
+```shell
+sudo apt install libopus-dev libvpx-dev libpipewire-0.3-dev
+git clone https://github.com/okstar-org/ok-rtc.git
+cd ok-rtc; 
+git submodule update --init
+# CMake预处理
+cmake -B out -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE='$env{VCPKG_ROOT}\scripts\buildsystems\vcpkg.cmake' -DCMAKE_PREFIX_PATH='${PROJECT_ROOT}\vcpkg_installed\x64-windows'
+# 构建
+cmake --build out --config Release --target ALL_BUILD -j 4
+# 执行安装（用管理员身份打开命令行）
+cmake --install out
+```
+- 编译OkGloox库
+```shell
+git clone https://github.com/okstar-org/ok-gloox.git
+# CMake预处理
+cmake -G "Visual Studio 17 2022" -B .\out\
+# 构建
+cmake --build .\out\ --config Release --target ALL_BUILD -j 4
+# 执行安装（用管理员身份打开命令行）
+cmake --install out
+```
+
+- 构建OkMSG项目
+
+1. 修改CMake预设文件CMakeUserPresets.json(该文件是针对用户本地环境的配置，不要提交)，列子如下：
+> 此处主要利用 `CMAKE_PREFIX_PATH` 关联到第三方库（调试库），比如：Qt、VcPkg下载的库、OkRTC等
+```json
+{
+  "version": 3,
+  "configurePresets": [
+    {
+      "name": "win-x64-release",
+      "displayName": "Windows x64 Release",
+      "binaryDir": "${sourceDir}/out/${presetName}",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_PREFIX_PATH": "E:/QtWorkspace/ok-rtc/out/Release;${sourceDir}/vcpkg_installed/x64-windows;E:/Qt/Qt5.15.7-Windows-x86_64-VS2019-16.11.20-staticFull"
+      }
+    },
+    {
+      "name": "win-x64-debug",
+      "displayName": "Windows x64 Debug",
+      "binaryDir": "${sourceDir}/out/${presetName}",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_PREFIX_PATH": "E:/QtWorkspace/ok-rtc/out/Debug;${sourceDir}/vcpkg_installed/x64-windows;E:/Qt/Qt5.15.11-Windows-x86_64-VS2022-staticFull-debug"
+      }
+    }
+  ]
+}
+```
+
+2. 执行构建命令
 ```shell
 # 预处理
 cmake -B build --preset win-x64-{debug|release}
@@ -80,16 +152,34 @@ cmake --build build
 ## Ubuntu 22.04
 > 安装依赖
 ```shell
+sudo apt install -y gcc g++ clang yasm libstdc++-12-dev libc++1
+sudo apt install -y qtcreator qtbase5-dev  qtmultimedia5-dev libqt5svg5-dev qttools5-dev
+sudo apt install -y libcrypto++-dev  libssl-dev
+sudo apt install -y libpipewire-0.3-dev libxss-dev libgbm-dev libdrm-dev libxdamage-dev libxrender-dev libxrandr-dev libxtst-dev \
+  libasound2-dev libpulse-dev libavcodec-dev libavformat-dev libswscale-dev libavdevice-dev libvpx-dev \
+  libopus-dev libjpeg-dev libopenal-dev libopenh264-dev \
+  libexif-dev libqrencode-dev libsodium-dev libsqlite3-dev
+```
+> 构建OkRtc模块
+```shell
+git clone https://github.com/okstar-org/ok-rtc.git
+cd ok-rtc
 
+# CMake 构建
+cmake -B out  && cmake --build out
+# CMake 安装
+sudo cmake --install out
 ```
 
 ## Fedora 36
 ```shell
 dnf update -y
 dnf install -y gcc g++
-dnf install -y qt5-qtbase-devel qt6-qtbase-gui  qt5-qtmultimedia-devel  qt5-qtsvg-devel qt5-qttools-devel qt5-qttools-static \
-            libavcodec-free-devel libavdevice-free-devel libexif-free-devel qrencode-devel libsodium-devel sqlcipher-devel \
-            libvpx-devel openal-soft-devel openssl-devel
+dnf install -y qt5-qtbase-devel qt6-qtbase-gui  qt5-qtmultimedia-devel \
+  qt5-qtsvg-devel qt5-qttools-devel qt5-qttools-static \
+  libavcodec-free-devel libavdevice-free-devel \
+  libexif-free-devel qrencode-devel libsodium-devel sqlite3-devel \
+  libvpx-devel openal-soft-devel openssl-devel
 ```
 
 ```shell

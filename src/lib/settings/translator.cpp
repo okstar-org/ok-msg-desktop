@@ -34,7 +34,7 @@ static bool m_loadedQtTranslations{false};
  */
 void Translator::translate(const QString &moduleName, const QString &localeName) {
   qDebug() << "translate module:" << moduleName << "locale:" << localeName;
-//  QMutexLocker locker{&lock};
+  QMutexLocker locker{&lock};
 
   qDebug() <<"m_translatorMap" << m_translatorMap.size();
   auto * translator = m_translatorMap.value(moduleName);
@@ -107,7 +107,7 @@ void Translator::translate(const QString &moduleName, const QString &localeName)
  * @param owner Widget to retanslate.
  */
 void Translator::registerHandler(const std::function<void()> &f, void *owner) {
-//  QMutexLocker locker{&lock};
+  QMutexLocker locker{&lock};
   callbacks.push_back({owner, f});
 }
 
@@ -116,10 +116,10 @@ void Translator::registerHandler(const std::function<void()> &f, void *owner) {
  * @param owner Owner to unregister.
  */
 void Translator::unregister(void *owner) {
-//  QMutexLocker locker{&lock};
+  QMutexLocker locker{&lock};
   callbacks.erase(
       std::remove_if(begin(callbacks), end(callbacks),
-                     [=](const Callback &c) { return c.first == owner; }),
+                     [&](const Callback &c) { return c.first == owner; }),
       end(callbacks));
 }
 } // namespace main

@@ -261,11 +261,7 @@ o que pode levar a problemas nas chamadas de vídeo.</translation>
         <translation>Escolher uma pasta onde aceitar ficheiros automaticamente</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the public key of your friend, use it to verify their identity via another channel. You can not send this to other people so they can add this contact.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Isto é a chave pública do seu amigo. Use-a para verificar a identidade dele através de outro meio. Não pode enviar isto para outras pessoas para que elas possam adicionar este contacto.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Public key (not ToxID):</source>
+        <source>Account:</source>
         <translation>Chave pública (não é o ToxID):</translation>
     </message>
     <message>

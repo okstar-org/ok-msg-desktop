@@ -15,6 +15,7 @@
 #include <QByteArray>
 #include <QFile>
 #include <QJsonObject>
+
 #include <QObject>
 #include <QString>
 #include <QUrl>
@@ -24,8 +25,7 @@
 #include <base/timer.h>
 
 class QNetworkAccessManager;
-class QNetworkRequest;
-class QNetworkCookie;
+
 
 namespace network {
 
@@ -38,8 +38,7 @@ public:
 
   void httpFinished();
 
-  bool
-  get(const QUrl &url,                                                      //
+  bool get(const QUrl &url,                                                      //
       Fn<void(QByteArray body, const QString filename)> fn,                 //
       Fn<void(qint64 bytesReceived, qint64 bytesTotal)> progress = nullptr, //
       Fn<void(const QString &errStr)> failed = nullptr);
@@ -72,7 +71,6 @@ public:
                             Fn<void(const QJsonObject &)> readyRead);
 
 protected:
-  std::unique_ptr<QNetworkAccessManager> _manager;
-  QList<QNetworkCookie> _cookies;
+  QNetworkAccessManager *_manager;
 };
 } // namespace network

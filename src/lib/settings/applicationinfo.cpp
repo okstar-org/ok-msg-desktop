@@ -12,8 +12,8 @@
 
 #include "applicationinfo.h"
 
-#ifdef HAVE_CONFIG
-#include "config.h"
+#ifdef OK_HAVE_CONFIG
+#include "ok_config.h"
 #endif
 #include "base/r.h"
 #include "base/system/sys_info.h"
@@ -50,7 +50,7 @@
 
 
 #define PROG_NAME APPLICATION_NAME
-#define PROG_SNAME APPLICATION_SHORT_NAME
+#define PROG_SNAME APPLICATION_ALIAS
 #define PROG_VERSION GIT_VERSION
 #define PROG_DESCRIBE GIT_DESCRIBE
 #define PROG_CAPS_NODE CLIENT_CAPS_NODE

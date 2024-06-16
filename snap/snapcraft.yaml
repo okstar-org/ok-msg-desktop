@@ -17,19 +17,28 @@ architectures:
 #  - build-on: ppc64el
 
 parts:
-  # This part installs the qt5 dependencies and the `desktop-launch` script
-  # which initialises desktop features such as fonts, themes and the XDG
-  # environment.
-  #
-  # It is copied straight from the snapcraft desktop helpers project. Please
-  # periodically check the source for updates and copy the changes.
-  #    https://github.com/ubuntu/snapcraft-desktop-helpers/blob/master/snapcraft.yaml
-  #
+  ffmpeg:
+    plugin: nil
+    build-packages:
+      - libavcodec-dev
+      - libavformat-dev
+      - libavutil-dev
+      - libswresample-dev
+      - libswscale-dev
+    stage-packages:
+      - libavcodec58
+      - libavformat58
+      - libavutil56
+      - libswresample3
+      - libswscale5
+    stage:
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/libjpeg.so.8.2.2
+
   desktop-qt5:
     source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
     source-subdir: qt
     plugin: make
-    make-parameters: ["FLAVOR=qt5"]
+    make-parameters: [ "FLAVOR=qt5" ]
     build-packages:
       - dpkg-dev
       - build-essential
@@ -44,7 +53,7 @@ parts:
       - libqt5x11extras5-dev
     stage-packages:
       - libxkbcommon0
-#      - ttf-ubuntu-font-family
+      #      - ttf-ubuntu-font-family
       - dmz-cursor-theme
       - light-themes
       - adwaita-icon-theme
@@ -67,14 +76,82 @@ parts:
     stage-packages:
       - qt5-gtk-platformtheme
 
-  ok-msg:
+  ok-rtc:
+    source: https://github.com/okstar-org/ok-rtc.git
+    source-branch: master
     plugin: cmake
+    cmake-generator: Ninja
+    cmake-parameters:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DCMAKE_INSTALL_PREFIX=/usr
+    build-packages:
+      - yasm
+      - libdrm-dev
+      - libegl-dev
+      - libgbm-dev
+      - libgl-dev
+      - libglib2.0-dev
+      - libopenh264-dev
+      - libopus-dev
+      - libpipewire-0.3-dev
+      - libvpx-dev
+      - libx11-dev
+      - libxcomposite-dev
+      - libxdamage-dev
+      - libxext-dev
+      - libxfixes-dev
+      - libxrender-dev
+      - libxrandr-dev
+      - libxtst-dev
+    stage-packages:
+      - libdrm2
+      - libegl1
+      - libgbm1
+      - libgl1
+      - libglib2.0-0
+      - libopenh264-6
+      - libopus0
+      - libpipewire-0.3-0
+      - libvpx7
+      - libx11-6
+      - libxcomposite1
+      - libxdamage1
+      - libxext6
+      - libxfixes3
+      - libxrender1
+      - libxrandr2
+      - libxtst6
+    prime:
+      - -./usr/include
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/cmake
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.a
+    after:
+      - ffmpeg
+
+  ok-gloox:
+    source: https://github.com/okstar-org/ok-gloox.git
+    source-branch: main
+    plugin: cmake
+    cmake-generator: Ninja
+    cmake-parameters:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DCMAKE_INSTALL_PREFIX=/usr
+    prime:
+      - -./usr/include
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/cmake
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.a
+    build-packages:
+      - zlib1g-dev
+    stage-packages:
+      - zlib1g
+
+  ok-msg:
     source: .
     source-type: git
+    plugin: cmake
     parse-info: [ usr/share/metainfo/ok-msg-desktop.metainfo.xml ]
     build-environment:
       - LD_LIBRARY_PATH: $CRAFT_STAGE/usr/lib/$CRAFT_ARCH_TRIPLET${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
-
     build-packages:
       - libpcre2-dev
       - libudev-dev
@@ -143,23 +220,7 @@ parts:
       - libqrencode-dev
       - libblas-dev
       - libsignal-protocol-c-dev
-#      Qt
-#      - qtbase5-dev
-#      - qtmultimedia5-dev
-#      - libqt5svg5-dev
-#      - libqt5xml5
-#      - libqt5xmlpatterns5-dev
-#      - libqt5opengl5-dev
-#      - qttools5-dev
-#      - qttools5-dev-tools
-#      - libqt5x11extras5-dev
     stage-packages:
-#      - libqt5core5a
-#      - libqt5gui5
-#      - libqt5widgets5
-#      - libqt5svg5
-#      - libqt5xml5
-#      - libqt5x11extras5
       - libsdl2-2.0-0
       - libdouble-conversion3
       - libmd4c0
@@ -245,6 +306,7 @@ parts:
       - libogg0
       - libopenal1
       - libopenjp2-7
+      - libjpeg8
       - libopenmpt0
       - libopus0
       - libpgm-5.3-0
@@ -270,7 +332,11 @@ parts:
       - -DCMAKE_INSTALL_PREFIX=/usr
       - -DDESKTOP_APP_USE_PACKAGED=ON
       - -DDESKTOP_LAUNCHER_BASENAME=ok-msg-desktop
-    after: [ desktop-qt5 ]
+    after:
+      - desktop-qt5
+      - ok-rtc
+      - ok-gloox
+
 layout:
   /usr/share/alsa:
     bind: $SNAP/usr/share/alsa
@@ -313,20 +379,3 @@ apps:
 slots:
   ok-msg-desktop-mpris:
     interface: mpris
-
-#plugs:
-#  # Support for common GTK themes
-#  # https://forum.snapcraft.io/t/how-to-use-the-system-gtk-theme-via-the-gtk-common-themes-snap/6235
-#  gsettings:
-#  gtk-3-themes:
-#    interface: content
-#    target: $SNAP/data-dir/themes
-#    default-provider: gtk-common-themes
-#  icon-themes:
-#    interface: content
-#    target: $SNAP/data-dir/icons
-#    default-provider: gtk-common-themes
-#  sound-themes:
-#    interface: content
-#    target: $SNAP/data-dir/sounds
-#    default-provider: gtk-common-themes

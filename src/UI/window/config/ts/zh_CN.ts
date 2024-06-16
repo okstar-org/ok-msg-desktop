@@ -2,12 +2,15 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="zh_CN">
 <context>
-    <name>ConfigWindow</name>
+    <name>UI::ConfigWindow</name>
     <message>
         <source>Plugin form</source>
         <translation>插件管理</translation>
    </message>
-   <message>
+</context>
+<context>
+    <name>ok::plugin::PluginInfoForm</name>
+    <message>
         <source>Install</source>
         <translation>安装</translation>
     </message>
@@ -19,10 +22,9 @@
         <source>Uninstall</source>
         <translation>卸载</translation>
     </message>
-
     <message>
-            <source>Uninstalling</source>
-            <translation>卸载中</translation>
-        </message>
+        <source>Uninstalling</source>
+        <translation>卸载中</translation>
+    </message>
 </context>
 </TS>

@@ -28,9 +28,9 @@ class SessionChatLog : public IChatLog
 public:
     SessionChatLog(const ICoreIdHandler& coreIdHandler);
     SessionChatLog(ChatLogIdx initialIdx, const ICoreIdHandler& coreIdHandler);
-
     ~SessionChatLog();
-    const ChatLogItem& at(ChatLogIdx idx) const override;
+
+    const ChatLogItem* at(ChatLogIdx idx) const override;
     SearchResult searchForward(SearchPos startIdx, const QString& phrase,
                                const ParameterSearch& parameter) const override;
     SearchResult searchBackward(SearchPos startIdx, const QString& phrase,
@@ -39,25 +39,30 @@ public:
     ChatLogIdx getNextIdx() const override;
     std::vector<DateChatLogIdxPair> getDateIdxs(const QDate& startDate, size_t maxDates) const override;
 
-    void insertCompleteMessageAtIdx(ChatLogIdx idx, const ToxPk& sender, const QString& senderName,
+    void insertCompleteMessageAtIdx(ChatLogIdx idx, const FriendId& sender, const QString& senderName,
                                     const ChatLogMessage& message);
-    void insertIncompleteMessageAtIdx(ChatLogIdx idx, const ToxPk& sender, const QString& senderName,
+    void insertIncompleteMessageAtIdx(ChatLogIdx idx, const FriendId& sender, const QString& senderName,
                                       const ChatLogMessage& message, DispatchedMessageId dispatchId);
-    void insertBrokenMessageAtIdx(ChatLogIdx idx, const ToxPk& sender, const QString& senderName,
+    void insertBrokenMessageAtIdx(ChatLogIdx idx, const FriendId& sender, const QString& senderName,
                                   const ChatLogMessage& message);
-    void insertFileAtIdx(ChatLogIdx idx, const ToxPk& sender, const QString& senderName, const ChatLogFile& file);
+    void insertFileAtIdx(ChatLogIdx idx, const FriendId& sender, const QString& senderName, const ChatLogFile& file);
 
 public slots:
-    void onMessageReceived(const ToxPk& sender, const Message& message);
+    void onMessageReceived(const FriendId& sender, const Message& message);
     void onMessageSent(DispatchedMessageId id, const Message& message);
     void onMessageComplete(DispatchedMessageId id);
 
-    void onFileUpdated(const ToxPk& sender, const ToxFile& file);
-    void onFileTransferRemotePausedUnpaused(const ToxPk& sender, const ToxFile& file, bool paused);
-    void onFileTransferBrokenUnbroken(const ToxPk& sender, const ToxFile& file, bool broken);
+    void onFileUpdated(const FriendId& sender, const ToxFile& file);
+    void onFileCanceled(const FriendId& sender, const QString& fileId);
+
+    void onFileTransferRemotePausedUnpaused(const FriendId& sender, const ToxFile& file, bool paused);
+    void onFileTransferBrokenUnbroken(const FriendId& sender, const ToxFile& file, bool broken);
 
 private:
     const ICoreIdHandler& coreIdHandler;
+
+    QMap<QString, ChatLogIdx> id2IdxMap;
+    inline ChatLogIdx getNextIdx(QString msgId);
 
     ChatLogIdx nextIdx = ChatLogIdx(0);
 
@@ -81,6 +86,7 @@ private:
      * is marked as completed
      */
     QMap<DispatchedMessageId, ChatLogIdx> outgoingMessages;
+
 };
 
 #endif /*SESSION_CHAT_LOG_H*/

@@ -13,7 +13,7 @@
 #ifndef LOADHISTORYDIALOG_H
 #define LOADHISTORYDIALOG_H
 
-#include "src/core/toxpk.h"
+#include "src/core/FriendId.h"
 #include <QDateTime>
 #include <QDialog>
 

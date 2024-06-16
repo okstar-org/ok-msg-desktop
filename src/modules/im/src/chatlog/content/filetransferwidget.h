@@ -81,7 +81,7 @@ private:
     QColor buttonBackgroundColor;
 
     bool active;
-    ToxFile::FileStatus lastStatus = ToxFile::INITIALIZING;
+    FileStatus lastStatus;
 
     enum class ExifOrientation
     {

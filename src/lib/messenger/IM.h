@@ -21,9 +21,12 @@
 #include "base/task.h"
 #include "base/timer.h"
 
+#include "IMGroup.h"
 #include "lib/backend/OkCloudService.h"
+#include "lib/messenger/IMFriend.h"
 #include "lib/messenger/IMMessage.h"
 #include "lib/session/AuthSession.h"
+#include "messenger.h"
 
 #include <QDomElement>
 #include <bookmarkhandler.h>
@@ -51,6 +54,7 @@
 #include <mucroomhandler.h>
 #include <nativebookmarkhandler.h>
 #include <nativebookmarkstorage.h>
+#include <pinghandler.h>
 #include <presence.h>
 #include <pubsub.h>
 #include <pubsubevent.h>
@@ -63,14 +67,49 @@
 #include <rostermanager.h>
 #include <vcardhandler.h>
 #include <vcardmanager.h>
-#include <pinghandler.h>
-#include "IMRoomHelper.h"
+
+namespace gloox{
+  class MUCRoom;
+};
+
+namespace lib::ortc {
+enum class JingleCallType;
+}
 
 namespace lib {
 namespace messenger {
 
 using namespace gloox;
 using namespace gloox::PubSub;
+enum class CallDirection { CallIn, CallOut };
+
+
+struct IMRoomInfo {
+  MUCRoom *room;
+
+  /**
+   * 显示项
+   * muc#roominfo_<field name>
+   * 参考：
+   * https://xmpp.org/extensions/xep-0045.html#registrar-formtype-roominfo
+   */
+
+  IMGroup info;
+
+  /**
+   * 房间待修改项
+   * 1、修改项放入该字段；
+   * 2、请求`room->requestRoomConfig()`获取服务器房间所有配置;
+   * 3、服务器返回到`handleMUCConfigForm`处理，保存即可；
+   *
+   * muc#roomconfig_<field name>
+   * 参考
+   * https://xmpp.org/extensions/xep-0045.html#registrar-formtype-owner
+   */
+  std::map<std::string, std::string> changes;
+};
+
+class IMJingle;
 
 class IM : public ok::lib::Task,
            public ConnectionListener,
@@ -101,7 +140,7 @@ public:
   explicit IM(QString host, QString user, QString pwd, QStringList features);
   ~IM();
 
-  static IMMessage from(MsgType type, const gloox::Message &msg);
+  inline static IMMessage fromXMsg(MsgType type, const gloox::Message &msg);
 
   std::unique_ptr<Client> makeClient();
 
@@ -114,20 +153,22 @@ public:
 
   void setAvatar(const QByteArray &avatar);
   void changePassword(const QString &password);
-  FriendId getSelfId();
-  PeerId getSelfPeerId();
+  IMContactId getSelfId();
+  IMPeerId getSelfPeerId();
   QString getSelfUsername();
 
   /**
    * fetchVCard
    */
-  void fetchVCard(const QString &friendId);
+  void fetchFriendVCard(const QString &friendId);
+  IMStatus getFriendStatus(const QString &friendId);
+  void requestFriendNickname(const JID &friendId);
 
   /**
    * send
    */
   void sendPresence();
-  void sendPresence(const JID &to);
+  void sendPresence(const JID &to, Presence::PresenceType type);
   void sendReceiptReceived(const QString &id, QString receiptNum);
 
   /**
@@ -146,9 +187,10 @@ public:
   /**
    * 朋友相关
    */
-  void enableRosterManager();
-  void addRosterItem(const QString &username, const QString &nick,
-                     const QString &msg);
+  RosterManager *enableRosterManager();
+
+  void addFriend(const JID &jid, const QString &nick, const QString &msg);
+  bool removeFriend(const JID &jid);
 
   void acceptFriendRequest(const QString &);
   void rejectFriendRequest(const QString &);
@@ -156,18 +198,18 @@ public:
   void sendReceiptRecieved(const JID &to, QString receipt);
 
   size_t getRosterCount();
-  void getRosterList(std::list<FriendId> &);
+  void getRosterList(std::list<IMFriend> &);
+
+  void setFriendAlias(const JID &jid, const std::string &alias);
 
   void retry();
-  bool removeFriend(JID jid);
 
   // gloox log
-  void handleLog(LogLevel level, LogArea area,
-                 const std::string &message) override;
+  void handleLog(LogLevel level, LogArea area, const std::string &message) override;
 
   virtual const JID &self() const { return _client->jid(); }
 
-  virtual Client *getClient() const { return _client.get(); }
+  Client *getClient() const { return _client.get(); }
 
   QDomDocument buildMessage(const QString &to, const QString &msg, QString &id);
 
@@ -179,14 +221,21 @@ public:
    * @param nick
    */
   void setRoomSubject(const QString &groupId, const std::string &nick);
-  void setRoomName(const QString &groupId, const std::string &roomName);
-
+  void setRoomName(const QString &groupId, const std::string &name);
+  void setRoomAlias(const QString &groupId, const std::string &alias);
+  void setRoomDesc(const QString &groupId, const std::string &desc);
   bool inviteToRoom(const JID &roomJid, const JID &peerId);
   bool leaveGroup(const QString &groupId);
   bool destroyGroup(const QString &groupId);
 
-  bool sendToRoom(const QString &to, const QString &msg,
-                  const QString &id = "");
+  /**
+   * @brief sendToRoom
+   * @param to
+   * @param msg
+   * @param id 设置消息ID
+   * @return 成功返回消息ID
+   */
+  QString sendToRoom(const QString &to, const QString &msg, const QString &id = "");
 
   void joinRoom(const QString &jid);
 
@@ -226,24 +275,7 @@ public:
    * @return
    */
   std::set<std::string> getOnlineResources(const std::string &bare);
-  void updateOnlineStatus(const std::string &bare, const std::string &resource,
-                          Presence::PresenceType presenceType);
-
-  /**
-   * jingle-message
-   *    发起呼叫邀请
-   */
-  void proposeJingleMessage(const QString &friendId, const QString &callId,
-                            bool video);
-
-  void rejectJingleMessage(const QString &friendId, const QString &callId);
-
-  void acceptJingleMessage(const QString &friendId, const QString &callId);
-
-  void retractJingleMessage(const QString &friendId, const QString &callId);
-
-  void doJingleMessage(const PeerId &peerId,
-                       const gloox::Jingle::JingleMessage *jm);
+  void updateOnlineStatus(const std::string &bare, const std::string &resource, Presence::PresenceType presenceType);
 
   [[nodiscard]] gloox::JID wrapJid(const QString &f) const;
 
@@ -263,8 +295,7 @@ protected:
   /**
    * ping handler
    */
-  virtual void handlePing(const gloox::PingHandler::PingType type,
-                          const std::string &body) override;
+  virtual void handlePing(const gloox::PingHandler::PingType type, const std::string &body) override;
 #endif
 
   /**
@@ -295,8 +326,7 @@ protected:
   /**
    * Registration
    */
-  virtual void handleRegistrationFields(const JID &from, int fields,
-                                        std::string instructions) override;
+  virtual void handleRegistrationFields(const JID &from, int fields, std::string instructions) override;
 
   virtual void handleAlreadyRegistered(const JID &from) override;
 
@@ -315,8 +345,7 @@ protected:
    */
   void handleVCard(const JID &jid, const VCard *vcard) override;
 
-  void handleVCardResult(VCardContext context, const JID &jid,
-                         StanzaError error = StanzaErrorUndefined) override;
+  void handleVCardResult(VCardContext context, const JID &jid, StanzaError error = StanzaErrorUndefined) override;
 
   /**
    * RosterListener
@@ -329,18 +358,12 @@ protected:
   void handleItemUpdated(const JID &jid) override;
   void handleItemUnsubscribed(const JID &jid) override;
   void handleRoster(const Roster &roster) override;
-  void handleRosterPresence(const RosterItem &item, const std::string &resource,
-                            Presence::PresenceType presence,
-                            const std::string &msg) override;
-  void handleSelfPresence(const RosterItem &item, const std::string &resource,
-                          Presence::PresenceType presence,
-                          const std::string &msg) override;
+  void handleRosterPresence(const RosterItem &item, const std::string &resource, Presence::PresenceType presence, const std::string &msg) override;
+  void handleSelfPresence(const RosterItem &item, const std::string &resource, Presence::PresenceType presence, const std::string &msg) override;
 
-  bool handleSubscriptionRequest(const JID &jid,
-                                 const std::string &msg) override;
+  bool handleSubscriptionRequest(const JID &jid, const std::string &msg) override;
 
-  bool handleUnsubscriptionRequest(const JID &jid,
-                                   const std::string &msg) override;
+  bool handleUnsubscriptionRequest(const JID &jid, const std::string &msg) override;
 
   void handleNonrosterPresence(const Presence &presence) override;
 
@@ -349,19 +372,16 @@ protected:
   void handleRosterItemExchange(const JID &from, const RosterX *items) override;
 
   // MUC config
-  void handleMUCConfigList(MUCRoom *room, const MUCListItemList &items,
-                           MUCOperation operation) override;
+  void handleMUCConfigList(MUCRoom *room, const MUCListItemList &items, MUCOperation operation) override;
 
   void handleMUCConfigForm(MUCRoom *room, const DataForm &form) override;
 
-  void handleMUCConfigResult(MUCRoom *room, bool success,
-                             MUCOperation operation) override;
+  void handleMUCConfigResult(MUCRoom *room, bool success, MUCOperation operation) override;
 
   void handleMUCRequest(MUCRoom *room, const DataForm &form) override;
 
   // MessageSessionHandler
-  void handleMessage(const gloox::Message &msg,
-                     MessageSession *session = nullptr) override;
+  void handleMessage(const gloox::Message &msg, MessageSession *session = nullptr) override;
   void handleMessageSession(MessageSession *session) override;
 
   // MessageEventHandler
@@ -370,47 +390,34 @@ protected:
   void handleChatState(const JID &from, ChatStateType state) override;
 
   // MUC handler
-  void handleMUCParticipantPresence(MUCRoom *room,
-                                    const MUCRoomParticipant participant,
-                                    const Presence &presence) override;
+  void handleMUCParticipantPresence(MUCRoom *room, const MUCRoomParticipant participant, const Presence &presence) override;
 
-  void handleMUCMessage(MUCRoom *room, const gloox::Message &msg,
-                        bool priv) override;
+  void handleMUCMessage(MUCRoom *room, const gloox::Message &msg, bool priv) override;
 
   bool handleMUCRoomCreation(MUCRoom *room) override;
 
-  void handleMUCSubject(MUCRoom *room, const std::string &nick,
-                        const std::string &subject) override;
+  void handleMUCSubject(MUCRoom *room, const std::string &nick, const std::string &subject) override;
 
-  void handleMUCInviteDecline(MUCRoom *room, const JID &invitee,
-                              const std::string &reason) override;
+  void handleMUCInviteDecline(MUCRoom *room, const JID &invitee, const std::string &reason) override;
 
   void handleMUCError(MUCRoom *room, StanzaError error) override;
 
-  void handleMUCInfo(MUCRoom *room, int features, const std::string &name,
-                     const DataForm *infoForm) override;
+  void handleMUCInfo(MUCRoom *room, int features, const std::string &name, const DataForm *infoForm) override;
 
   void handleMUCItems(MUCRoom *room, const Disco::ItemList &items) override;
 
   // Disco handler
-  void handleDiscoInfo(const JID &from, const Disco::Info &,
-                       int ontext) override;
+  void handleDiscoInfo(const JID &from, const Disco::Info &, int ontext) override;
 
-  void handleDiscoItems(const JID &from, const Disco::Items &,
-                        int context) override;
+  void handleDiscoItems(const JID &from, const Disco::Items &, int context) override;
 
-  void handleDiscoError(const JID &from, const gloox::Error *,
-                        int context) override;
+  void handleDiscoError(const JID &from, const gloox::Error *, int context) override;
   // DiscoNodeHandler
-  virtual StringList handleDiscoNodeFeatures(const JID &from,
-                                             const std::string &node) override;
+  virtual StringList handleDiscoNodeFeatures(const JID &from, const std::string &node) override;
 
-  virtual Disco::IdentityList
-  handleDiscoNodeIdentities(const JID &from, const std::string &node) override;
+  virtual Disco::IdentityList handleDiscoNodeIdentities(const JID &from, const std::string &node) override;
 
-  virtual Disco::ItemList
-  handleDiscoNodeItems(const JID &from, const JID &to,
-                       const std::string &node = EmptyString) override;
+  virtual Disco::ItemList handleDiscoNodeItems(const JID &from, const JID &to, const std::string &node = EmptyString) override;
 
   // Presence handler
   void handlePresence(const Presence &presence) override;
@@ -422,8 +429,7 @@ protected:
    * @param node ID of the parent node.
    * @param entry The complete item Tag (do not delete).
    */
-  void handleItem(const JID &service, const std::string &node,
-                  const Tag *entry) override;
+  void handleItem(const JID &service, const std::string &node, const Tag *entry) override;
 
   /**
    * Receives the list of Items for a node.
@@ -436,9 +442,7 @@ protected:
    *
    * @see Manager::requestItems()
    */
-  void handleItems(const std::string &id, const JID &service,
-                   const std::string &node, const ItemList &itemList,
-                   const gloox::Error *error = 0) override;
+  void handleItems(const std::string &id, const JID &service, const std::string &node, const ItemList &itemList, const gloox::Error *error = 0) override;
 
   /**
    * Receives the result for an item publication.
@@ -452,9 +456,7 @@ protected:
    *
    * @see Manager::publishItem
    */
-  void handleItemPublication(const std::string &id, const JID &service,
-                             const std::string &node, const ItemList &itemList,
-                             const gloox::Error *error = 0) override;
+  void handleItemPublication(const std::string &id, const JID &service, const std::string &node, const ItemList &itemList, const gloox::Error *error = 0) override;
 
   /**
    * Receives the result of an item removal.
@@ -468,9 +470,7 @@ protected:
    *
    * @see Manager::deleteItem
    */
-  void handleItemDeletion(const std::string &id, const JID &service,
-                          const std::string &node, const ItemList &itemList,
-                          const gloox::Error *error = 0) override;
+  void handleItemDeletion(const std::string &id, const JID &service, const std::string &node, const ItemList &itemList, const gloox::Error *error = 0) override;
 
   /**
    * Receives the subscription results. In case a problem occured, the
@@ -486,11 +486,8 @@ protected:
    *
    * @see Manager::subscribe
    */
-  void handleSubscriptionResult(const std::string &id, const JID &service,
-                                const std::string &node, const std::string &sid,
-                                const JID &jid,
-                                const gloox::PubSub::SubscriptionType subType,
-                                const gloox::Error *error = 0) override;
+  void handleSubscriptionResult(const std::string &id, const JID &service, const std::string &node, const std::string &sid, const JID &jid,
+                                const gloox::PubSub::SubscriptionType subType, const gloox::Error *error = 0) override;
 
   /**
    * Receives the unsubscription results. In case a problem occured, the
@@ -502,8 +499,7 @@ protected:
    *
    * @see Manager::unsubscribe
    */
-  void handleUnsubscriptionResult(const std::string &id, const JID &service,
-                                  const gloox::Error *error = 0) override;
+  void handleUnsubscriptionResult(const std::string &id, const JID &service, const gloox::Error *error = 0) override;
 
   /**
    * Receives the subscription options for a node.
@@ -518,10 +514,7 @@ protected:
    *
    * @see Manager::getSubscriptionOptions
    */
-  void handleSubscriptionOptions(const std::string &id, const JID &service,
-                                 const JID &jid, const std::string &node,
-                                 const DataForm *options,
-                                 const std::string &sid = EmptyString,
+  void handleSubscriptionOptions(const std::string &id, const JID &service, const JID &jid, const std::string &node, const DataForm *options, const std::string &sid = EmptyString,
                                  const gloox::Error *error = 0) override;
 
   /**
@@ -536,10 +529,7 @@ protected:
    *
    * @see Manager::setSubscriptionOptions
    */
-  void handleSubscriptionOptionsResult(const std::string &id,
-                                       const JID &service, const JID &jid,
-                                       const std::string &node,
-                                       const std::string &sid = EmptyString,
+  void handleSubscriptionOptionsResult(const std::string &id, const JID &service, const JID &jid, const std::string &node, const std::string &sid = EmptyString,
                                        const gloox::Error *error = 0) override;
 
   /**
@@ -553,9 +543,7 @@ protected:
    *
    * @see Manager::getSubscribers
    */
-  void handleSubscribers(const std::string &id, const JID &service,
-                         const std::string &node, const SubscriptionList &list,
-                         const gloox::Error *error = 0) override;
+  void handleSubscribers(const std::string &id, const JID &service, const std::string &node, const SubscriptionList &list, const gloox::Error *error = 0) override;
 
   /**
    * Receives the result of a subscriber list modification.
@@ -568,10 +556,7 @@ protected:
    *
    * @see Manager::setSubscribers
    */
-  void handleSubscribersResult(const std::string &id, const JID &service,
-                               const std::string &node,
-                               const SubscriberList *list,
-                               const gloox::Error *error = 0) override;
+  void handleSubscribersResult(const std::string &id, const JID &service, const std::string &node, const SubscriberList *list, const gloox::Error *error = 0) override;
 
   /**
    * Receives the affiliate list for a node.
@@ -584,9 +569,7 @@ protected:
    *
    * @see Manager::getAffiliates
    */
-  void handleAffiliates(const std::string &id, const JID &service,
-                        const std::string &node, const AffiliateList *list,
-                        const gloox::Error *error = 0) override;
+  void handleAffiliates(const std::string &id, const JID &service, const std::string &node, const AffiliateList *list, const gloox::Error *error = 0) override;
 
   /**
    * Handle the affiliate list for a specific node.
@@ -599,10 +582,7 @@ protected:
    *
    * @see Manager::setAffiliations
    */
-  void handleAffiliatesResult(const std::string &id, const JID &service,
-                              const std::string &node,
-                              const AffiliateList *list,
-                              const gloox::Error *error = 0) override;
+  void handleAffiliatesResult(const std::string &id, const JID &service, const std::string &node, const AffiliateList *list, const gloox::Error *error = 0) override;
 
   /**
    * Receives the configuration for a specific node.
@@ -615,9 +595,7 @@ protected:
    *
    * @see Manager::getNodeConfig
    */
-  void handleNodeConfig(const std::string &id, const JID &service,
-                        const std::string &node, const DataForm *config,
-                        const gloox::Error *error = 0) override;
+  void handleNodeConfig(const std::string &id, const JID &service, const std::string &node, const DataForm *config, const gloox::Error *error = 0) override;
 
   /**
    * Receives the result of a node's configuration modification.
@@ -629,9 +607,7 @@ protected:
    *
    * @see Manager::setNodeConfig
    */
-  void handleNodeConfigResult(const std::string &id, const JID &service,
-                              const std::string &node,
-                              const gloox::Error *error = 0) override;
+  void handleNodeConfigResult(const std::string &id, const JID &service, const std::string &node, const gloox::Error *error = 0) override;
 
   /**
    * Receives the result of a node creation.
@@ -643,9 +619,7 @@ protected:
    *
    * @see Manager::setNodeConfig
    */
-  void handleNodeCreation(const std::string &id, const JID &service,
-                          const std::string &node,
-                          const gloox::Error *error = 0) override;
+  void handleNodeCreation(const std::string &id, const JID &service, const std::string &node, const gloox::Error *error = 0) override;
 
   /**
    * Receives the result for a node removal.
@@ -657,9 +631,7 @@ protected:
    *
    * @see Manager::deleteNode
    */
-  void handleNodeDeletion(const std::string &id, const JID &service,
-                          const std::string &node,
-                          const gloox::Error *error = 0) override;
+  void handleNodeDeletion(const std::string &id, const JID &service, const std::string &node, const gloox::Error *error = 0) override;
 
   /**
    * Receives the result of a node purge request.
@@ -671,9 +643,7 @@ protected:
    *
    * @see Manager::purgeNode
    */
-  void handleNodePurge(const std::string &id, const JID &service,
-                       const std::string &node,
-                       const gloox::Error *error = 0) override;
+  void handleNodePurge(const std::string &id, const JID &service, const std::string &node, const gloox::Error *error = 0) override;
 
   /**
    * Receives the Subscription list for a specific service.
@@ -685,9 +655,7 @@ protected:
    *
    * @see Manager::getSubscriptions
    */
-  void handleSubscriptions(const std::string &id, const JID &service,
-                           const SubscriptionMap &subMap,
-                           const gloox::Error *error = 0) override;
+  void handleSubscriptions(const std::string &id, const JID &service, const SubscriptionMap &subMap, const gloox::Error *error = 0) override;
 
   /**
    * Receives the Affiliation map for a specific service.
@@ -699,9 +667,7 @@ protected:
    *
    * @see Manager::getAffiliations
    */
-  void handleAffiliations(const std::string &id, const JID &service,
-                          const AffiliationMap &affMap,
-                          const gloox::Error *error = 0) override;
+  void handleAffiliations(const std::string &id, const JID &service, const AffiliationMap &affMap, const gloox::Error *error = 0) override;
 
   /**
    * Receives the default configuration for a specific node type.
@@ -721,6 +687,8 @@ protected:
   void handleBookmarks(const BookmarkList &bList, //
                        const ConferenceList &cList) override;
 
+private:
+  QMutex m_mutex;
 
   ok::base::OsInfo osInfo;
 
@@ -735,6 +703,11 @@ protected:
   int _nickChanged = 0;
 
   std::unique_ptr<Client> _client;
+
+  /**
+   * 联系人
+   */
+  gloox::Roster m_roster;
 
   /**
    * k: sessionId
@@ -762,21 +735,19 @@ protected:
 
   std::unique_ptr<MessageEventFilter> m_messageEventFilter;
 
-  std::map<std::string, ChatStateFilter *> m_chatStateFilters;
+  QMap<QString, ChatStateFilter *> m_chatStateFilters;
 
   QMap<QString, IMRoomInfo> m_roomMap;
 
   QThread *thread;
 
   // 连接状态
-  IMStatus _status;
+  IMConnectStatus _status;
   Presence::PresenceType selfPresType = gloox::Presence::Unavailable;
 
-  QString m_addFriendMsg;
+  std::map<IMPeerId, Jingle::RTP::Medias> mPeerRequestMedias;
 
-  std::map<PeerId, Jingle::RTP::Medias> mPeerRequestMedias;
-
-  //发送消息的id
+  // 发送消息的id
   std::list<std::string> sendIds;
 
   ConferenceList mConferenceList;
@@ -788,14 +759,9 @@ protected:
 
   bool mStarted;
 
-  void timerEvent(QTimerEvent *) override;
-
-  void doPubSubEvent(const gloox::PubSub::Event *pse, const Message &msg,
-                     QString &friendId);
-  void doMessageHeadline(const Message &msg, QString &friendId,
-                         const QString &body);
-  void doMessageChat(const Message &msg, QString &friendId,
-                     const QString &body);
+  void doPubSubEvent(const gloox::PubSub::Event *pse, const Message &msg, QString &friendId);
+  void doMessageHeadline(const Message &msg, QString &friendId, const QString &body);
+  void doMessageChat(const Message &msg, QString &friendId, const QString &body);
 
   void doMessageNormal(const Message &msg, QString &friendId);
 
@@ -804,14 +770,12 @@ protected:
   void onAddRoom(const std::string &jid, const std::string &name = "");
 
 signals:
-  void connectResult(IMStatus);
+  void connectResult(IMConnectStatus);
 
-  void receiveRoomMessage(QString groupId, PeerId friendId, IMMessage);
+  void receiveRoomMessage(QString groupId, IMPeerId friendId, IMMessage);
 
   // friend events
-  void receiveFriend(QString friendId);
-
-  void receiveFriendDone();
+  void receiveFriend(IMFriend frnd);
 
   void receiveFriendRequest(QString friendId, QString msg);
 
@@ -819,9 +783,13 @@ signals:
 
   void receiveFriendStatus(QString friendId, int status);
 
+  void receiveMessageSession(QString contactId, QString sid);
+
   void receiveFriendMessage(QString peerId, IMMessage);
 
   void receiveNicknameChange(QString friendId, QString nickname);
+
+  void receiveFriendAliasChanged(JID friendId, std::string alias);
 
   void receiveFriendAvatarChanged(QString friendId, std::string avatar);
 
@@ -833,27 +801,7 @@ signals:
 
   void incoming(QString xml);
 
-  /**
-   * Call events
-   * @param friendId
-   * @param audio
-   * @param video
-   */
-  //呼叫请求
-  void receiveCallRequest(QString friendId, QString callId, bool audio,
-                          bool video);
-  //呼叫撤回
-  void receiveCallRetract(QString friendId, int state);
-  void receiveCallAcceptByOther(QString callId, PeerId peerId);
-  void receiveFriendHangup(QString friendId, int state);
 
-  //对方状态变化
-  void receiveCallStateAccepted(PeerId peerId, QString callId, bool video);
-  void receiveCallStateRejected(PeerId peerId, QString callId, bool video);
-
-  void receiveFileChunk(const FriendId friendId, QString sId, int seq,
-                        const std::string chunk);
-  void receiveFileFinished(const FriendId friendId, QString sId);
 
   // Self events
   void selfIdChanged(QString id);
@@ -865,21 +813,19 @@ signals:
   void started();
   void onStopped();
 
-  void groupListReceived(const QString groupId, const QString name);
+  void groupReceived(const QString groupId, const QString name);
   void groupListReceivedDone();
   void groupOccupants(const QString groupId, const uint size);
-  void groupOccupantStatus(const QString groupId, const QString peerId,
-                           bool online);
-  void groupInvite(const QString groupId, const QString peerId,
-                   const QString message);
+  void groupOccupantStatus(const QString &groupId, IMGroupOccupant occ);
+  void groupInvite(const QString groupId, const QString peerId, const QString message);
 
-  void groupRoomInfo(QString groupId, GroupInfo groupInfo);
+  void groupRoomInfo(QString groupId, IMGroup groupInfo);
+
+  void groupSubjectChanged(const JID group, const std::string subject);
 
   void doPubSubEventDone();
 
 public slots:
-  void onSelfNicknameChanged(const QString &nickname);
-
   void sendServiceDiscoveryItems();
   void sendServiceDiscoveryInfo(const JID &item);
 };

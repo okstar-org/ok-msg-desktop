@@ -5,13 +5,14 @@ include_directories(${CMAKE_BINARY_DIR})
 include_directories(${CMAKE_SOURCE_DIR}/plugins/include)
 
 set(${PROJECT_NAME}_SOURCES
+    basic_types.h
+
     files.h
     logs.cpp
     StringUtils.cpp
     timer.cpp
     times.h
     task.h
-    utils.cpp
     widgets.h
     system/sys_info.h
     jid.h
@@ -32,6 +33,8 @@ set(${PROJECT_NAME}_SOURCES
     OkSettings.h
     OkSettings.cpp
     OkProcess.h
+    utils.h
+    SvgUtils.h
 )
 
 if(WIN32)

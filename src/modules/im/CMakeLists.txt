@@ -1,89 +1,46 @@
 project(IM)
 add_definitions(-DOK_${PROJECT_NAME}_MODULE="${PROJECT_NAME}")
 
-
-
 if (WIN32)
-    message(STATUS "VCPKG_TARGET_TRIPLET=${VCPKG_TARGET_TRIPLET}")
-    message(STATUS "VCPKG_TARGET_ARCHITECTURE=${VCPKG_TARGET_ARCHITECTURE}")
-    message(STATUS "VCPKG_CMAKE_SYSTEM_NAME=${VCPKG_CMAKE_SYSTEM_NAME}")
-    message(STATUS "VCPKG_BUILD_TYPE=${VCPKG_BUILD_TYPE}")
+    find_package(PkgConfig REQUIRED)
+   
 
-    set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET})
-    include_directories(${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/include)
+    pkg_check_modules(AVDEVICE REQUIRED libavdevice)
+    pkg_check_modules(AVCODEC REQUIRED libavcodec)
+    pkg_check_modules(AVFORMAT REQUIRED libavformat)
+    pkg_check_modules(AVUTIL REQUIRED libavutil)
+    pkg_check_modules(SWSCALE REQUIRED libswscale)
+    pkg_check_modules(SWRESAMPLE REQUIRED libswresample)
 
-    message(STATUS "Fetch libsodium")
-    FetchContent_Declare(libsodium
-            URL https://download.libsodium.org/libsodium/releases/libsodium-1.0.19-stable-msvc.zip
-    )
-    FetchContent_MakeAvailable(libsodium)
-    include_directories(${libsodium_SOURCE_DIR}/include)
-    link_directories(${libsodium_SOURCE_DIR}/${ARCH}/${CMAKE_BUILD_TYPE}/static)
-
-
-#    find_package(FFMPEG REQUIRED)
-    include_directories(${FFMPEG_INCLUDE_DIRS})
-    message(STATUS "FFMPEG_INCLUDE_DIRS=${FFMPEG_INCLUDE_DIRS}")
-    message(STATUS "FFMPEG_LIBRARIES=${FFMPEG_LIBRARIES}")
-    set(avcodec_LIBRARIES ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/avcodec.lib)
-    set(avdevice_LIBRARIES ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/avdevice.lib)
-    set(avformat_LIBRARIES ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/avformat.lib)
-    set(avfilter_LIBRARIES ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/avfilter.lib)
-    set(avutil_LIBRARIES ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/avutil.lib)
-    set(swscale_LIBRARIES ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/swscale.lib)
-    list(APPEND ALL_LIBRARIES
-            PRIVATE ${avcodec_LIBRARIES}
-            PRIVATE ${avdevice_LIBRARIES}
-            PRIVATE ${avformat_LIBRARIES}
-            PRIVATE ${avfilter_LIBRARIES}
-            PRIVATE ${avutil_LIBRARIES}
-            PRIVATE ${swscale_LIBRARIES}
-    )
-
-#    find_path(qrencode_INCLUDE_DIR NAMES qrencode.h)
-    set(qrencode_LIBRARIES ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/qrencode.lib)
-    include_directories(${qrencode_INCLUDE_DIR})
-    message(STATUS "QRENCODE_INCLUDE_DIR=${qrencode_INCLUDE_DIR}")
-    message(STATUS "qrencode_LIBRARIES=${qrencode_LIBRARIES}")
-
-
-    find_package(OpenAL CONFIG REQUIRED)
-    include_directories(${OpenAL_INCLUDE_DIR})
-    message(STATUS "OpenAL_INCLUDE_DIR=${OpenAL_INCLUDE_DIR}")
-    set(OpenAL_LIBRARIES ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/OpenAL32.lib)
-    message(STATUS "OpenAL_LIBRARIES=${OpenAL_LIBRARIES}")
-
-
-    #    find_package(sqlite3 REQUIRED)
-    set(sqlite3_LIBRARIES ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/sqlite3.lib)
-    message(STATUS "sqlite3_INCLUDE_DIR=${sqlite3_INCLUDE_DIR}")
-    message(STATUS "sqlite3_LIBRARIES=${sqlite3_LIBRARIES}")
-
-    #    find_package(exif REQUIRED)
-    set(libexif_LIBRARIES ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/exif.lib)
-    message(STATUS "libexif_INCLUDE_DIR=${libexif_INCLUDE_DIR}")
-    message(STATUS "libexif_LIBRARIES=${libexif_LIBRARIES}")
-
-
-    #    find_package(unofficial-libvpx CONFIG REQUIRED)
-    set(libvpx_LIBRARIES ${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/vpx.lib)
-    message(STATUS "libvpx_LIBRARIES=${libvpx_LIBRARIES}")
-
-    #   target_link_libraries(main PRIVATE unofficial::libvpx::libvpx)
+    pkg_check_modules(libsodium REQUIRED libsodium )
+    pkg_check_modules(QRENCODE REQUIRED libqrencode )
+    pkg_check_modules(OpenAL REQUIRED openal)
+    pkg_check_modules(sqlite3 REQUIRED sqlite3)
+    pkg_check_modules(exif REQUIRED libexif)
+    pkg_check_modules(vpx REQUIRED vpx)
+   pkg_check_modules(JPEG REQUIRED libjpeg)
 
     list(APPEND ALL_LIBRARIES
-            PRIVATE ${qrencode_LIBRARIES}
-            PRIVATE ${libvpx_LIBRARIES}
-            PRIVATE ${libexif_LIBRARIES}
-            PRIVATE ${sqlite3_LIBRARIES}
-            PRIVATE ${OpenAL_LIBRARIES}
+            ${AVDEVICE_LINK_LIBRARIES}
+            ${AVCODEC_LINK_LIBRARIES}
+            ${AVFORMAT_LINK_LIBRARIES}
+            ${AVUTIL_LINK_LIBRARIES}
+            ${SWSCALE_LINK_LIBRARIES}
+            ${QRENCODE_LINK_LIBRARIES}
+            ${JPEG_LINK_LIBRARIES}
+    
+            PRIVATE ${libsodium_LINK_LIBRARIES}
+            PRIVATE ${vpx_LINK_LIBRARIES}
+            PRIVATE ${exif_LINK_LIBRARIES}
+            PRIVATE ${sqlite3_LINK_LIBRARIES}
+            PRIVATE ${OpenAL_LINK_LIBRARIES}
     )
 elseif (UNIX)
     include(./cmake/Dependencies.cmake)
 endif ()
 
 
-include_directories(${PROJECT_BINARY_DIR})
+include_directories(${PROJECT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
 set(CMAKE_AUTOUIC_SEARCH_PATHS ./src src/widget src/widget/form)
 
@@ -91,7 +48,11 @@ qt5_wrap_ui(
         ${PROJECT_NAME}_FORMS
         src/mainwindow.ui
         src/chatlog/content/filetransferwidget.ui
-        src/widget/about/aboutfriendform.ui
+        src/widget/ChatWidget.ui
+        src/widget/ContactWidget.ui
+        src/widget/form/aboutfriendform.ui
+        src/widget/form/aboutgroupform.ui
+        src/widget/form/addfriendform.ui
         src/widget/form/loadhistorydialog.ui
         src/widget/form/profileform.ui
         src/widget/tool/removefrienddialog.ui
@@ -102,7 +63,9 @@ qt5_wrap_ui(
         src/widget/form/settings/avform.ui
         src/widget/form/settings/generalsettings.ui
         src/widget/form/settings/privacysettings.ui
-        src/widget/form/settings/userinterfacesettings.ui)
+        src/widget/form/settings/userinterfacesettings.ui
+    src/widget/form/CallDurationForm.ui
+)
 
 set(${PROJECT_NAME}_SOURCES
         src/audio/audio.cpp
@@ -123,6 +86,8 @@ set(${PROJECT_NAME}_SOURCES
         src/chatlog/chatlinecontentproxy.h
         src/chatlog/chatline.cpp
         src/chatlog/chatline.h
+        src/chatlog/chatmessageitem.cpp
+        src/chatlog/chatmessageitem.h
         src/chatlog/chatlog.cpp
         src/chatlog/chatlog.h
         src/chatlog/chatmessage.cpp
@@ -141,6 +106,10 @@ set(${PROJECT_NAME}_SOURCES
         src/chatlog/content/timestamp.h
         src/chatlog/content/broken.cpp
         src/chatlog/content/broken.h
+        src/chatlog/content/contactavatar.cpp
+        src/chatlog/content/contactavatar.h
+        src/chatlog/content/simpletext.cpp
+        src/chatlog/content/simpletext.h
         src/chatlog/customtextdocument.cpp
         src/chatlog/customtextdocument.h
         src/chatlog/documentcache.cpp
@@ -171,26 +140,23 @@ set(${PROJECT_NAME}_SOURCES
         src/core/toxid.h
         src/core/groupid.cpp
         src/core/groupid.h
-        src/core/toxlogger.cpp
-        src/core/toxlogger.h
         src/core/toxoptions.cpp
         src/core/toxoptions.h
-        src/core/toxpk.cpp
-        src/core/toxpk.h
+		    src/core/FriendId.cpp
+		    src/core/FriendId.h
         src/core/contactid.cpp
         src/core/contactid.h
-        src/core/toxstring.cpp
-        src/core/toxstring.h
         src/friendlist.cpp
         src/friendlist.h
         src/grouplist.cpp
         src/grouplist.h
         src/ipc.cpp
         src/ipc.h
-        src/model/about/aboutfriend.cpp
-        src/model/about/aboutfriend.h
-        src/model/about/iaboutfriend.h
+        src/model/aboutfriend.cpp
+        src/model/aboutfriend.h
+        src/model/iaboutfriend.h
         src/model/chatroom/chatroom.h
+        src/model/chatroom/chatroom.cpp
         src/model/chatroom/friendchatroom.cpp
         src/model/chatroom/friendchatroom.h
         src/model/chatroom/groupchatroom.cpp
@@ -227,11 +193,6 @@ set(${PROJECT_NAME}_SOURCES
         src/model/chathistory.h
         src/model/chathistory.cpp
         src/model/toxclientstandards.h
-        # src/net/bootstrapnodeupdater.cpp src/net/bootstrapnodeupdater.h
-        src/net/avatarbroadcaster.cpp
-        src/net/avatarbroadcaster.h
-        src/net/toxuri.cpp
-        src/net/toxuri.h
         src/nexus.cpp
         src/nexus.h
         src/persistence/db/rawdatabase.cpp
@@ -278,14 +239,14 @@ set(${PROJECT_NAME}_SOURCES
         src/video/videosource.h
         src/video/videosurface.cpp
         src/video/videosurface.h
-        src/widget/about/aboutfriendform.cpp
-        src/widget/about/aboutfriendform.h
-        src/widget/categorywidget.cpp
-        src/widget/categorywidget.h
+        src/widget/form/aboutfriendform.cpp
+        src/widget/form/aboutfriendform.h
+#        src/widget/categorywidget.cpp
+#        src/widget/categorywidget.h
         src/widget/chatformheader.cpp
         src/widget/chatformheader.h
-        src/widget/circlewidget.cpp
-        src/widget/circlewidget.h
+#        src/widget/circlewidget.cpp
+#        src/widget/circlewidget.h
         src/widget/contentdialog.cpp
         src/widget/contentdialog.h
         src/widget/contentdialogmanager.cpp
@@ -299,6 +260,16 @@ set(${PROJECT_NAME}_SOURCES
         src/widget/searchform.cpp
         src/widget/searchform.h
         src/widget/searchtypes.h
+        src/widget/ContactWidget.h
+        src/widget/ContactWidget.cpp
+        src/widget/MainLayout.h
+        src/widget/MainLayout.cpp
+        src/widget/MessageSessionListWidget.h
+        src/widget/MessageSessionListWidget.cpp
+        src/widget/MessageSessionWidget.h
+        src/widget/MessageSessionWidget.cpp
+        src/widget/form/aboutgroupform.h
+        src/widget/form/aboutgroupform.cpp
         src/widget/form/addfriendform.cpp
         src/widget/form/addfriendform.h
         src/widget/form/friendform.h
@@ -344,6 +315,8 @@ set(${PROJECT_NAME}_SOURCES
         src/widget/form/settingswidget.h
         src/widget/form/tabcompleter.cpp
         src/widget/form/tabcompleter.h
+    src/widget/form/CallDurationForm.h
+    src/widget/form/CallDurationForm.cpp
         src/widget/friendlistlayout.cpp
         src/widget/friendlistlayout.h
         src/widget/friendlistwidget.cpp
@@ -407,9 +380,19 @@ set(${PROJECT_NAME}_SOURCES
         src/widget/tool/screenshotgrabber.h
         src/widget/tool/toolboxgraphicsitem.cpp
         src/widget/tool/toolboxgraphicsitem.h
+
+        src/widget/ChatWidget.h
+        src/widget/ChatWidget.cpp
+        src/widget/ContentWidget.cpp
+        src/widget/ContentWidget.h
+        src/widget/FriendAddWidget.cpp
+        src/widget/FriendAddWidget.h
         # src/widget/translator.cpp src/widget/translator.h
         src/widget/widget.cpp
-        src/widget/widget.h)
+        src/widget/widget.h
+        src/worker/SendWorker.h
+        src/worker/SendWorker.cpp
+)
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     set(${PROJECT_NAME}_SOURCES
@@ -448,7 +431,8 @@ if (PLATFORM_EXTENSIONS)
     elseif (${APPLE_EXT})
         set(${PROJECT_NAME}_SOURCES
                 ${${PROJECT_NAME}_SOURCES} src/platform/capslock_osx.cpp
-                src/platform/timer_osx.cpp)
+                src/platform/timer_osx.cpp
+ )
     endif ()
 endif ()
 
@@ -513,7 +497,6 @@ qt5_add_resources(
         # DEPENDS ${${PROJECT_NAME}_QM_FILES} # OPTIONS ${RCC_OPTIONS}
 )
 
-include_directories(${PROJECT_BINARY_DIR})
 
 add_library(${PROJECT_NAME} STATIC
         ${${PROJECT_NAME}_FORMS}
@@ -522,6 +505,16 @@ add_library(${PROJECT_NAME} STATIC
         ${${PROJECT_NAME}_RESOURCES})
 
 if (WIN32)
+  target_include_directories(${PROJECT_NAME}
+        PRIVATE
+            ${AVCODEC_INCLUDE_DIRS}
+            ${AVFORMAT_INCLUDE_DIRS}
+            ${AVUTIL_INCLUDE_DIRS}
+            ${SWSCALE_INCLUDE_DIRS}
+          
+        )
+        
+
     set(PLATFORM_LIBS d3d11 dxgi shlwapi
             Iphlpapi dwmapi dmoguids wmcodecdspuuid Winmm
             amstrmid msdmo strmiids strmbase psapi
@@ -532,7 +525,7 @@ elseif (UNIX)
 endif ()
 
 target_link_libraries(${PROJECT_NAME}
-    PUBLIC ${gloox_LIB}
+    PUBLIC ${ok-gloox_LIBRARIES}
     PUBLIC ${Qt5Core_LIBRARIES}
     PUBLIC ${Qt5Gui_LIBRARIES}
     PUBLIC ${Qt5Widgets_LIBRARIES}

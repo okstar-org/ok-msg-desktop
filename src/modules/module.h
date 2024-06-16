@@ -40,14 +40,16 @@ public:
   static QString Name();
   static Module *Create();
 
+
   virtual void init(Profile *p) = 0;
   virtual QString name() = 0;
-  virtual void start(ok::session::SignInInfo &signInInfo,
-                     QWidget *parent = nullptr) = 0;
-  //  virtual void destroy(Module*) = 0;
-  [[nodiscard]] virtual bool isStarted() = 0;
+  virtual void start(ok::session::SignInInfo &signInInfo, QWidget *parent = nullptr) = 0;
+  virtual bool isStarted() = 0;
   virtual void hide() = 0;
   virtual void onSave(SavedInfo &) = 0;
   virtual void cleanup() = 0;
+  virtual void destroy()=0;
 
 };
+
+

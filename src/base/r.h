@@ -27,5 +27,4 @@
 #define FILE_PROFILE_EXT ".profile"
 #define FILE_INIT_EXT ".ini"
 
-#define CLIENT_CAPS_NODE "https://okstar.org"
 

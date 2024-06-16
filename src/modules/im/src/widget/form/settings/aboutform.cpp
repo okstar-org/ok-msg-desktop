@@ -13,14 +13,11 @@
 #include "aboutform.h"
 #include "ui_aboutsettings.h"
 
-#include "src/net/updatecheck.h"
 #include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
 #include "src/widget/style.h"
 #include "src/widget/tool/recursivesignalblocker.h"
 #include "lib/settings/translator.h"
-
-//#include <tox/tox.h>
 
 #include <QDebug>
 #include <QDesktopServices>
@@ -47,24 +44,40 @@ enum class updateIndex
 /**
  * @brief Constructor of AboutForm.
  */
-AboutForm::AboutForm(UpdateCheck* updateCheck)
+AboutForm::AboutForm()
     : GenericForm(QPixmap(":/img/settings/general.png"))
     , bodyUI(new Ui::AboutSettings)
     , progressTimer(new QTimer(this))
-    , updateCheck(updateCheck)
 {
     bodyUI->setupUi(this);
+
+    if (QString(GIT_VERSION).indexOf(" ") > -1)
+        bodyUI->gitVersion->setOpenExternalLinks(false);
+
+    QString lic = QString("Copyright (c) 2022 **%1 %2**\n\r"
+                          "**%3** is licensed under Mulan PubL v2.\n\r"
+                          "You can use this software according to the terms and conditions of the Mulan PubL v2.\n\r"
+                          "You may obtain a copy of Mulan PubL v2 at:\n\r"
+                          "**http://license.coscl.org.cn/MulanPubL-2.0**\n\r"
+                          " THIS SOFTWARE IS PROVIDED ON AN \"AS IS\" BASIS,\n\r"
+                          " WITHOUT WARRANTIES OF ANY KIND,EITHER EXPRESS OR IMPLIED,\n\r"
+                          " INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,\n\r"
+                          " MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.\n\r"
+                          " See the Mulan PubL v2 for more details.\n\r")
+                          .arg(ORGANIZATION_NAME)
+                          .arg(ORGANIZATION_DOMAIN)
+                          .arg(APPLICATION_NAME);
+
+    bodyUI->license->setMarkdown(lic);
 
     // block all child signals during initialization
     const RecursiveSignalBlocker signalBlocker(this);
 
     replaceVersions();
 
-    if (QString(GIT_VERSION).indexOf(" ") > -1)
-        bodyUI->gitVersion->setOpenExternalLinks(false);
-
     eventsInit();
     settings::Translator::registerHandler(std::bind(&AboutForm::retranslateUi, this), this);
+
 }
 
 /**
@@ -89,8 +102,8 @@ void AboutForm::replaceVersions()
 #else
     qDebug() << "AboutForm not showing updates, qTox built without UPDATE_CHECK";
 #endif
-
-    QString commitLink = "https://gitee.com/okstar-org/ok-edu-desktop/commit/" + QString(GIT_VERSION);
+    QString projectLink = ORGANIZATION_HOME "/" APPLICATION_ALIAS;
+    QString commitLink = projectLink+ "/commit/" + QString(GIT_VERSION);
     bodyUI->gitVersion->setText(tr("Commit hash: %1").arg(createLink(commitLink, QString(GIT_VERSION))));
     bodyUI->qtVersion->setText(tr("Qt version: %1").arg(QT_VERSION_STR));
 
@@ -106,34 +119,11 @@ void AboutForm::replaceVersions()
 
     issueBody.replace("#", "%23").replace(":", "%3A");
 
-    bodyUI->knownIssues->setText(
-        tr("如果您在使用OkEDU®过程中遇到任何问题,"
-           " 都可以在 %2"
-           " 上向我们的提交%1，团队将会第一时间处理。",
-           "`%1` is replaced by translation of `Issue`"
-           "\n`%2` is replaced by translation of `Gitee`")
-            .arg(createLink(
-                "https://gitee.com/okstar-org/ok-edu-desktop/"
-                "issues",
-                tr("Issue", "Replaces `%1` in the `If you encounter…`")))
-            .arg(createLink(
-                "https://gitee.com",
-                tr("Gitee", "Replaces `%2` in the `A list of all known…`"))));
-
-//    bodyUI->clickToReport->setText(
-//        createLink("https://github.com/qTox/qTox/issues/new?body=" + QUrl(issueBody).toEncoded(),
-//                   QString("<b>%1</b>").arg(tr("Click here to report a bug."))));
+    QString issue = QString("%1").arg(createLink(projectLink+"/issues", "Issues"));
+    bodyUI->knownIssues->setText(issue);
 
 
-    QString authorInfo =
-        QString("<p>%1 &nbsp; %2</p>")
-            .arg(tr("Original author: %1").arg(createLink("https://gitee.com/okstar-org", "okstar.org")))
-            .arg(
-                tr("See a full list of %1 at Github",
-                   "`%1` is replaced with translation of word `contributors`")
-                    .arg(createLink("https://gitee.com/okstar-org/ok-edu-desktop/contributors?ref=master",
-                                    tr("contributors", "Replaces `%1` in `See a full list of…`"))));
-
+    QString authorInfo = QString("<p>%1</p>").arg(ORGANIZATION_HOME);
     bodyUI->authorInfo->setText(authorInfo);
 }
 

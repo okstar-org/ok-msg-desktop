@@ -33,7 +33,7 @@ class OMainMenu : public QFrame {
 public:
   explicit OMainMenu(QWidget *parent = nullptr);
   ~OMainMenu() override;
-  void setAvatar(const QPixmap &);
+
 
   void onSetting();
 
@@ -45,10 +45,6 @@ private:
 
   Ui::OMainMenu *ui;
 
-  // current menu
-  PageMenu m_current;
-  void *_imView = nullptr;
-  bool _imViewShow;
   int _showTimes;
   // delayCaller
   std::shared_ptr<base::DelayedCallTimer> delayCaller_;
@@ -68,6 +64,10 @@ private slots:
   void on_personalBtn_clicked(bool checked);
   void on_chatBtn_clicked(bool checked);
   void on_settingBtn_clicked(bool checked);
+
+public slots:
+  void setAvatar(const QPixmap &);
+
 };
 
 } // namespace UI

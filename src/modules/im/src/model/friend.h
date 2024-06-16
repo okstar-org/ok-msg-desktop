@@ -21,57 +21,58 @@
 #include <QObject>
 #include <QString>
 
+namespace lib::messenger{
+class IMFriend;
+}
 
 class Friend : public Contact {
   Q_OBJECT
 public:
-  Friend(QString friendId,
-         const ToxPk &friendPk,
+
+  Friend(const FriendId &friendPk,
          bool isFriend,
          const QString &userAlias = {},
          const QString &userName = {});
 
-  Friend(const Friend &other) = delete;
-  Friend &operator=(const Friend &other) = delete;
+  ~Friend();
 
-  void setName(const QString &name) override;
-  void setAlias(const QString &name);
-  QString getDisplayedName() const override;
+  const FriendId& getId() const {return id; };
+
+  QString toString() const;
+
   bool hasAlias() const;
-  QString getUserName() const;
+
   void setStatusMessage(const QString &message);
   QString getStatusMessage() const;
 
   void setEventFlag(bool f) override;
   bool getEventFlag() const override;
 
-  const ToxPk &getPublicKey() const;
-  QString getId() const override;
-  const ContactId &getPersistentId() const override;
+  const FriendId getPublicKey() const{return FriendId{ Contact::getId()};};
+
 
   void setStatus(Status::Status s);
   Status::Status getStatus() const;
 
   bool isFriend()const {return  isFriend_;}
+  void addEnd(const QString& end){ends.append(end);}
 signals:
-  void nameChanged(const ToxPk &friendId, const QString &name);
-  void aliasChanged(const ToxPk &friendId, QString alias);
-  void statusChanged(const ToxPk &friendId, Status::Status status);
-  void onlineOfflineChanged(const ToxPk &friendId, bool isOnline);
-  void statusMessageChanged(const ToxPk &friendId, const QString &message);
+//  void nameChanged(const QString &name);
+//  void aliasChanged(const ToxPk &receiver, QString alias);
+  void statusChanged(Status::Status status, bool event);
+  void onlineOfflineChanged( bool isOnline);
+  void statusMessageChanged( const QString &message);
   void loadChatHistory();
 
 public slots:
 
 private:
-  QString userName;
-  QString userAlias;
-  QString statusMessage;
-  ToxPk friendPk;
-  QString friendId;
-  bool hasNewEvents;
-  Status::Status friendStatus;
+  FriendId id;
+  bool hasNewEvents{};
   bool isFriend_;
+  QString statusMessage;
+  Status::Status friendStatus;
+  QList<QString> ends;//终端列表
 };
 
 #endif // FRIEND_H

@@ -11,48 +11,93 @@
  */
 
 #include "src/core/toxfile.h"
+#include "FriendId.h"
+#include "lib/messenger/IMFile.h"
 #include <QFile>
 #include <QRegularExpression>
+#include <base/jsons.h>
 #include <lib/messenger/messenger.h>
-//#include <tox/tox.h>
+
+FileInfo::FileInfo(
+                   const QString &sId,
+                   const QString &id,
+                   const QString &fileName,
+                   const QString &filePath,
+                   quint64 fileSize,
+                   quint64 bytesSent,
+                   FileStatus status,
+                   FileDirection direction)
+    : sId{sId}, fileId(id), fileName(fileName), filePath(filePath)
+    , fileSize(fileSize), bytesSent(bytesSent), status(status), direction(direction)
+{
+
+}
+
+QString FileInfo::json() const
+{
+    return QString("{\"id\":\"%1\", \"name\":\"%2\", "
+                   "\"path\":\"%3\", \"size\":%4, "
+                   "\"status\":%5, \"direction\":%6, "
+                   "\"sId\":\"%7\"}")
+            .arg(fileId).arg(fileName)
+            .arg(filePath).arg(fileSize)
+            .arg((int)status).arg((int)direction).arg(sId);
+}
 
 
-#define TOX_HEX_ID_LENGTH 2 * TOX_ADDRESS_SIZE
+void FileInfo::parse(const QString &json)
+{
+    auto doc = Jsons::toJSON(json.toUtf8());
+    auto obj = doc.object();
+    fileId = obj.value("id").toString();
+    fileName = obj.value("name").toString();
+    filePath = obj.value("path").toString();
+    sId = obj.value("sid").toString();
+    fileSize = obj.value("size").toInt();
+    status = (FileStatus)obj.value("status").toInt();
+    direction = (FileDirection)obj.value("direction").toInt();
+}
 
-/**
- * @file corestructs.h
- * @brief Some headers use Core structs but don't need to include all of core.h
- *
- * They should include this file directly instead to reduce compilation times
- *
- * @var uint8_t ToxFile::fileKind
- * @brief Data file (default) or avatar
- */
 
-/**
- * @brief ToxFile constructor
- */
-ToxFile::ToxFile(QString sId_,
-                 QString friendId_,
-                 QString fileNum_,
+ToxFile::ToxFile(const QString &sender,
+                 const QString &friendId,
+                 QString sId_,
+                 QString fileId_,
                  QString filename_,
                  QString filePath_,
-                 FileDirection Direction)
-    : fileKind{0},
-      sId(sId_),
-      friendId(friendId_),
-      fileNum(fileNum_),
-      fileName{filename_},
-      filePath{filePath_},
-      file{new QFile(filePath_)},
-      bytesSent{0},
-      filesize{0},
-      status{INITIALIZING},
-      direction{Direction} {}
+                 quint64 fileSize_,
+                 quint64 bytesSent,
+                 FileStatus status,
+                 FileDirection direction)
+    : FileInfo(sId_, fileId_, filename_,
+               filePath_, fileSize_,
+               bytesSent, status, direction)
+    ,file(new QFile(filePath_)), sender{sender}, receiver{friendId}
+{
+}
+
+ToxFile::ToxFile(const QString &sender, const QString &friendId, const lib::messenger::File &file)
+    :FileInfo(file.sId, file.id, file.name, file.path, file.size, 0,
+              (FileStatus)file.status,
+              (FileDirection)file.direction)
+    ,file(new QFile(file.path)), sender{sender},
+      receiver{friendId}
+{
+
+}
+
+ToxFile::ToxFile(const FileInfo &fi): FileInfo(fi)
+{
+
+}
+
+ToxFile::~ToxFile()
+{
+
+}
 
 bool ToxFile::operator==(const ToxFile &other) const {
-  return (fileNum == other.fileNum) && (friendId == other.friendId) &&
-         (direction == other.direction);
+  return (fileId == other.fileId);
 }
 
 bool ToxFile::operator!=(const ToxFile &other) const {
@@ -68,3 +113,16 @@ bool ToxFile::open(bool write) {
   return write ? file->open(QIODevice::ReadWrite)
                : file->open(QIODevice::ReadOnly);
 }
+
+lib::messenger::File ToxFile::toIMFile()
+{
+    return lib::messenger::File{fileId, sId, fileName,   filePath,  fileSize};
+}
+
+const QString& ToxFile::getFriendId() const
+{
+    return direction == FileDirection::RECEIVING ? sender : receiver;
+}
+
+
+

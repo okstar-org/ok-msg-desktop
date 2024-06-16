@@ -35,7 +35,8 @@ ChatLogIdx findFirstMessage(const SessionChatLog& sessionChatLog)
 {
     auto it = sessionChatLog.getFirstIdx();
     while (it < sessionChatLog.getNextIdx()) {
-        if (sessionChatLog.at(it).getContentType() == ChatLogItem::ContentType::message) {
+        auto item = sessionChatLog.at(it);
+        if (item && item->getContentType() == ChatLogItem::ContentType::message) {
             return it;
         }
         it++;
@@ -63,7 +64,7 @@ bool handleActionPrefix(QString& content)
 }
 } // namespace
 
-ChatHistory::ChatHistory(Friend& f_,    //
+ChatHistory::ChatHistory(const ContactId& f_,    //
                          History* history_, //
                          const ICoreIdHandler& coreIdHandler, //
                          const Settings& settings_,   //
@@ -88,6 +89,13 @@ ChatHistory::ChatHistory(Friend& f_,    //
     // Now that we've fired off our unsent messages we can connect the message
     connect(&messageDispatcher, &IMessageDispatcher::messageSent, this, &ChatHistory::onMessageSent);
 
+    connect(&messageDispatcher, &IMessageDispatcher::fileReceived, this, &ChatHistory::onFileUpdated);
+    connect(&messageDispatcher, &IMessageDispatcher::fileReceived, &sessionChatLog, &SessionChatLog::onFileUpdated);
+    connect(&messageDispatcher, &IMessageDispatcher::fileCancelled, this, &ChatHistory::onFileCanceled);
+    connect(&messageDispatcher, &IMessageDispatcher::fileCancelled, &sessionChatLog, &SessionChatLog::onFileCanceled);
+
+
+
     // NOTE: this has to be done _after_ sending all sent messages since initial
     // state of the message has to be marked according to our dispatch state
     constexpr auto defaultNumMessagesToLoad = 100;
@@ -102,15 +110,43 @@ ChatHistory::ChatHistory(Friend& f_,    //
     // We don't manage any of the item updates ourselves, we just forward along
     // the underlying sessionChatLog's updates
     connect(&sessionChatLog, &IChatLog::itemUpdated, this, &IChatLog::itemUpdated);
+
+
 }
 
-const ChatLogItem& ChatHistory::at(ChatLogIdx idx) const
+ChatHistory::~ChatHistory()
+{
+    qDebug()<<__func__;
+}
+
+const ChatLogItem* ChatHistory::at(ChatLogIdx idx) const
 {
     if (canUseHistory()) {
         ensureIdxInSessionChatLog(idx);
     }
 
     return sessionChatLog.at(idx);
+}
+
+QList<Message> ChatHistory::getLastTextMessage(uint size)
+{
+
+    QList<Message> list;
+    auto selfPk = coreIdHandler.getSelfPublicKey();
+    auto messages = history->getLastMessageForFriend(selfPk, FriendId{f}, size, HistMessageContentType::message);
+    for(auto& i: messages){
+            Message msg={.isAction=false,
+                         .id = QString::number(i.id.get()),
+                         .from = i.sender,
+                         .to = i.receiver,
+                         .content = i.asMessage(),
+                         .timestamp = i.timestamp
+                        };
+            list.append(msg);
+    }
+
+    return list;
+
 }
 
 SearchResult ChatHistory::searchForward(SearchPos startIdx, const QString& phrase,
@@ -139,11 +175,11 @@ SearchResult ChatHistory::searchBackward(SearchPos startIdx, const QString& phra
     }
 
     auto earliestMessage = findFirstMessage(sessionChatLog);
+    auto earliestMsg = sessionChatLog.at(earliestMessage);
 
-    auto earliestMessageDate =
-        (earliestMessage == ChatLogIdx(-1))
+    auto earliestMessageDate = (earliestMessage == ChatLogIdx(-1) || !earliestMsg)
             ? QDateTime::currentDateTime()
-            : sessionChatLog.at(earliestMessage).getContentAsMessage().message.timestamp;
+            : earliestMsg->getContentAsMessage().message.timestamp;
 
     // Roundabout way of getting the first idx but I don't want to have to
     // deal with re-implementing so we'll just piece what we want together...
@@ -151,10 +187,10 @@ SearchResult ChatHistory::searchBackward(SearchPos startIdx, const QString& phra
     // If the double disk access is real bad we can optimize this by adding
     // another function to history
     auto dateWherePhraseFound =
-        history->getDateWhereFindPhrase(f.getPublicKey().toString(), earliestMessageDate, phrase,
+        history->getDateWhereFindPhrase(f.toString(), earliestMessageDate, phrase,
                                         parameter);
 
-    auto loadIdx = history->getNumMessagesForFriendBeforeDate(f.getPublicKey(), dateWherePhraseFound);
+    auto loadIdx = history->getNumMessagesForFriendBeforeDate(coreIdHandler.getSelfPublicKey(), FriendId{f}, dateWherePhraseFound);
     loadHistoryIntoSessionChatLog(ChatLogIdx(loadIdx));
 
     // Reset search pos to the message we just loaded to avoid a double search
@@ -181,7 +217,7 @@ std::vector<IChatLog::DateChatLogIdxPair>   //
     ChatHistory::getDateIdxs(const QDate& startDate, size_t maxDates) const
 {
     if (canUseHistory()) {
-        auto counts = history->getNumMessagesForFriendBeforeDateBoundaries(f.getPublicKey(),
+        auto counts = history->getNumMessagesForFriendBeforeDateBoundaries(FriendId(f),
                                                                            startDate, maxDates);
 
         std::vector<IChatLog::DateChatLogIdxPair> ret;
@@ -200,36 +236,30 @@ std::vector<IChatLog::DateChatLogIdxPair>   //
     }
 }
 
-void ChatHistory::onFileUpdated(const ToxPk& sender, const ToxFile& file)
+void ChatHistory::onFileUpdated(const FriendId& sender, const ToxFile& file)
 {
+    qDebug() << __func__ <<"friendId:" << sender.toString();
+
     if (canUseHistory()) {
         switch (file.status) {
-        case ToxFile::INITIALIZING: {
-            // Note: There is some implcit coupling between history and the current
-            // chat log. Both rely on generating a new id based on the state of
-            // initializing. If this is changed in the session chat log we'll end up
-            // with a different order when loading from history
-            history->addNewFileMessage(f.getPublicKey().toString(),
-                                       file.resumeFileId,
-                                       file.fileName,
-                                       file.filePath,
-                                       file.filesize,
+        case FileStatus::INITIALIZING: {
+
+            history->addNewFileMessage(f.toString(),
+                                       file,
                                        sender.toString(),
-                                       QDateTime::currentDateTime(), f.getDisplayedName());
+                                       QDateTime::currentDateTime(),
+                                       {});
             break;
         }
-        case ToxFile::CANCELED:
-        case ToxFile::FINISHED:
-        case ToxFile::BROKEN: {
-            const bool isSuccess = file.status == ToxFile::FINISHED;
-            history->setFileFinished(file.resumeFileId,
-                                     isSuccess,
-                                     file.filePath,
-                                     file.hashGenerator->result());
+        case FileStatus::CANCELED:
+        case FileStatus::FINISHED:
+        case FileStatus::BROKEN: {
+//            const bool isSuccess = file.status == FileStatus::FINISHED;
+            history->setFileMessage(file);
             break;
         }
-        case ToxFile::PAUSED:
-        case ToxFile::TRANSMITTING:
+        case FileStatus::PAUSED:
+        case FileStatus::TRANSMITTING:
         default:
             break;
         }
@@ -238,35 +268,46 @@ void ChatHistory::onFileUpdated(const ToxPk& sender, const ToxFile& file)
     sessionChatLog.onFileUpdated(sender, file);
 }
 
-void ChatHistory::onFileTransferRemotePausedUnpaused(const ToxPk& sender, const ToxFile& file,
+void ChatHistory::onFileCanceled(const FriendId &sender, const QString &fileId)
+{
+    qDebug() << __func__ <<"fileId:" <<fileId;
+    auto files = history->getMessageByDataId(fileId);
+    for(auto f: files){
+        auto ff = f.asFile();
+        ff.status = FileStatus::CANCELED;
+        history->setFileMessage(ToxFile(ff));
+    }
+}
+
+void ChatHistory::onFileTransferRemotePausedUnpaused(const FriendId& sender, const ToxFile& file,
                                                      bool paused)
 {
     sessionChatLog.onFileTransferRemotePausedUnpaused(sender, file, paused);
 }
 
-void ChatHistory::onFileTransferBrokenUnbroken(const ToxPk& sender, const ToxFile& file, bool broken)
+void ChatHistory::onFileTransferBrokenUnbroken(const FriendId& sender, const ToxFile& file, bool broken)
 {
     sessionChatLog.onFileTransferBrokenUnbroken(sender, file, broken);
 }
 
-void ChatHistory::onMessageReceived(const ToxPk& sender, const Message & message)
+void ChatHistory::onMessageReceived(const FriendId& sender, const Message & message)
 {
-    qDebug()<<"onMessageReceived sender:"<<sender.toString()<<" from:"<<message.from.toString();
+    qDebug()<<__func__<<"sender:"<<sender.toString()<<" from:"<<message.from;
     auto selfId = coreIdHandler.getSelfId().toString();
 
-    if(selfId == message.from.toString()){
+    if(selfId == message.from){
       qWarning()<<"Is self message.";
       return;
     }
 
     if (canUseHistory()) {
-        auto friendPk = f.getPublicKey().toString();
-        auto displayName = f.getDisplayedName();
+//        auto friendPk = f.getPublicKey().toString();
+//        auto displayName = f.getDisplayedName();
         auto content = message.content;
         if (message.isAction) {
             content = ChatForm::ACTION_PREFIX + content;
         }
-        history->addNewMessage(friendPk, content, friendPk, message.timestamp, true, displayName);
+        history->addNewMessage(message, HistMessageContentType::message, true);
     }
 
     sessionChatLog.onMessageReceived(sender, message);
@@ -276,7 +317,7 @@ void ChatHistory::onMessageSent(DispatchedMessageId id, const Message & message)
 {
     if (canUseHistory()) {
         auto selfPk = coreIdHandler.getSelfPublicKey().toString();
-        auto friendPk = f.getPublicKey().toString();
+        auto friendPk = f.toString();
 
         auto content = message.content;
         if (message.isAction) {
@@ -287,7 +328,9 @@ void ChatHistory::onMessageSent(DispatchedMessageId id, const Message & message)
 
         auto onInsertion = [this, id](RowId historyId) { handleDispatchedMessage(id, historyId); };
 
-        history->addNewMessage(friendPk, content, selfPk, message.timestamp, false, username,
+        history->addNewMessage(message,
+                               HistMessageContentType::message,
+                               false,
                                onInsertion);
     }
 
@@ -332,41 +375,52 @@ void ChatHistory::loadHistoryIntoSessionChatLog(ChatLogIdx start) const
         return;
     }
 
+    auto core = Core::getInstance();
+
     auto end = sessionChatLog.getFirstIdx();
 
     // We know that both history and us have a start index of 0 so the type
     // conversion should be safe
     assert(getFirstIdx() == ChatLogIdx(0));
-    auto messages = history->getMessagesForFriend(f.getPublicKey(), start.get(), end.get());
 
-    assert(messages.size() == end.get() - start.get());
+    auto messages = history->getMessagesForFriend(core->getSelfPublicKey(), FriendId(f), start.get(), end.get());
+    qDebug() <<"load message for:"<< f.toString() <<"messages:" << messages.size();
+
+//  assert(messages.size() == end.get() - start.get());
     ChatLogIdx nextIdx = start;
 
     for (const auto& message : messages) {
         // Note that message.id is _not_ a valid conversion here since it is a
         // global id not a per-chat id like the ChatLogIdx
         auto currentIdx = nextIdx++;
+
         auto sender = ToxId(message.sender).getPublicKey();
-        switch (message.content.getType()) {
+//        auto frnd = FriendList::findFriend(ContactId{message.sender});
+        auto dispName = sender.username;
+        const auto date = message.timestamp;
+
+        switch (message.type) {
         case HistMessageContentType::file: {
-            const auto date = message.timestamp;
-            const auto file = message.content.asFile();
-            const auto chatLogFile = ChatLogFile{date, file};
-            sessionChatLog.insertFileAtIdx(currentIdx, sender, message.dispName, chatLogFile);
+            auto file = message.asFile();
+            auto tfile =ToxFile  { file };
+            tfile.receiver = message.receiver;
+            tfile.sender = message.sender;
+            auto chatLogFile = ChatLogFile{date, tfile};
+            sessionChatLog.insertFileAtIdx(currentIdx, sender, dispName, chatLogFile);
             break;
         }
         case HistMessageContentType::message: {
-            auto messageContent = message.content.asMessage();
+            QString messageContent = message.asMessage();
 
             auto isAction = handleActionPrefix(messageContent);
 
-            // It's okay to skip the message processor here. The processor is
-            // meant to convert between boundaries of our internal
-            // representation. We already had to go through the processor before
-            // we hit IMessageDispatcher's signals which history listens for.
-            // Items added to history have already been sent so we know they already
-            // reflect what was sent/received.
-            auto processedMessage = Message{isAction, messageContent, message.sender, message.timestamp};
+            auto processedMessage = Message{
+                    .isAction= isAction,
+                    .from= message.sender,
+                    .to = message.receiver,
+                    .content=messageContent,
+                    .timestamp= message.timestamp
+            };
 
             auto dispatchedMessageIt =
                 std::find_if(dispatchedMessageRowIdMap.begin(), dispatchedMessageRowIdMap.end(),
@@ -378,15 +432,15 @@ void ChatHistory::loadHistoryIntoSessionChatLog(ChatLogIdx start) const
             auto chatLogMessage = ChatLogMessage{message.state, processedMessage};
             switch (message.state) {
                 case MessageState::complete:
-                    sessionChatLog.insertCompleteMessageAtIdx(currentIdx, sender, message.dispName,
+                    sessionChatLog.insertCompleteMessageAtIdx(currentIdx, sender, dispName,
                                                               chatLogMessage);
                     break;
                 case MessageState::pending:
-                    sessionChatLog.insertIncompleteMessageAtIdx(currentIdx, sender, message.dispName,
+                    sessionChatLog.insertIncompleteMessageAtIdx(currentIdx, sender, dispName,
                                                                 chatLogMessage, dispatchedMessageIt.key());
                     break;
                 case MessageState::broken:
-                    sessionChatLog.insertBrokenMessageAtIdx(currentIdx, sender, message.dispName,
+                    sessionChatLog.insertBrokenMessageAtIdx(currentIdx, sender, dispName,
                                                             chatLogMessage);
                     break;
             }
@@ -395,7 +449,7 @@ void ChatHistory::loadHistoryIntoSessionChatLog(ChatLogIdx start) const
         }
     }
 
-    assert(nextIdx == end);
+//    assert(nextIdx == end);
 }
 
 /**
@@ -404,13 +458,13 @@ void ChatHistory::loadHistoryIntoSessionChatLog(ChatLogIdx start) const
  */
 void ChatHistory::dispatchUnsentMessages(IMessageDispatcher& messageDispatcher)
 {
-    auto unsentMessages = history->getUndeliveredMessagesForFriend(f.getPublicKey());
+    auto core = Core::getInstance();
+    auto unsentMessages = history->getUndeliveredMessagesForFriend(core->getSelfPublicKey(), FriendId(f));
     for (auto& message : unsentMessages) {
-        // We should only store messages as unsent, if this changes in the
-        // future we need to extend this logic
-        assert(message.content.getType() == HistMessageContentType::message);
+        if(message.type != HistMessageContentType::message)
+            continue;
 
-        auto messageContent = message.content.asMessage();
+        auto messageContent = message.asMessage();
         auto isAction = handleActionPrefix(messageContent);
 
         // NOTE: timestamp will be generated in messageDispatcher but we haven't
@@ -423,7 +477,7 @@ void ChatHistory::dispatchUnsentMessages(IMessageDispatcher& messageDispatcher)
         // We should only send a single message, but in the odd case where we end
         // up having to split more than when we added the message to history we'll
         // just associate the last dispatched id with the history message
-        handleDispatchedMessage(dispatchIds.second, message.id);
+        handleDispatchedMessage(dispatchIds.first, message.id);
 
         // We don't add the messages to the underlying chatlog since
         // 1. We don't even know the ChatLogIdx of this message
@@ -473,7 +527,7 @@ bool ChatHistory::canUseHistory() const
 ChatLogIdx ChatHistory::getInitialChatLogIdx() const
 {
     if (canUseHistory()) {
-        return ChatLogIdx(history->getNumMessagesForFriend(f.getPublicKey()));
+        return ChatLogIdx(history->getNumMessagesForFriend(coreIdHandler.getSelfPublicKey(), FriendId(f)));
     }
     return ChatLogIdx(0);
 }

@@ -31,6 +31,7 @@ void Broken::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
                        QWidget* widget)
 {
     painter->setRenderHint(QPainter::SmoothPixmapTransform);
+    painter->translate(QPointF(-size.width() / 2.0, -size.height() / 2.0));
     painter->drawPixmap(0, 0, pmap);
 
     Q_UNUSED(option)

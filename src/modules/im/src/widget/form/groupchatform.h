@@ -14,7 +14,7 @@
 #define GROUPCHATFORM_H
 
 #include "genericchatform.h"
-#include "src/core/toxpk.h"
+#include "src/core/FriendId.h"
 #include <QMap>
 
 namespace Ui {
@@ -33,10 +33,13 @@ class GroupChatForm : public GenericChatForm
 {
     Q_OBJECT
 public:
-    GroupChatForm(Group* chatGroup, IChatLog& chatLog, IMessageDispatcher& messageDispatcher, IGroupSettings& _settings);
+    GroupChatForm(const GroupId* chatGroup,
+                  IChatLog& chatLog,
+                  IMessageDispatcher& messageDispatcher,
+                  IGroupSettings& _settings);
     ~GroupChatForm();
 
-    void peerAudioPlaying(ToxPk peerPk);
+    void peerAudioPlaying(QString peerPk);
 
 private slots:
     void onScreenshotClicked() override;
@@ -44,14 +47,14 @@ private slots:
     void onMicMuteToggle();
     void onVolMuteToggle();
     void onCallClicked();
-    void onUserJoined(const ToxPk& user, const QString& name);
-    void onUserLeft(const ToxPk& user, const QString& name);
-    void onPeerNameChanged(const ToxPk& peer, const QString& oldName, const QString& newName);
+    void onUserJoined(const FriendId& user, const QString& name);
+    void onUserLeft(const FriendId& user, const QString& name);
+    void onPeerNameChanged(const FriendId& peer, const QString& oldName, const QString& newName);
     void onTitleChanged(const QString& author, const QString& title);
     void onLabelContextMenuRequested(const QPoint& localPos);
 
 protected:
-    virtual GenericNetCamView* createNetcam() final override;
+
     virtual void keyPressEvent(QKeyEvent* ev) final override;
     virtual void keyReleaseEvent(QKeyEvent* ev) final override;
     // drag & drop
@@ -66,9 +69,9 @@ private:
     void leaveGroupCall();
 
 private:
-    Group* group;
-    QMap<ToxPk, QLabel*> peerLabels;
-    QMap<ToxPk, QTimer*> peerAudioTimers;
+    const GroupId* group;
+    QMap<QString, QLabel*> peerLabels;
+    QMap<QString, QTimer*> peerAudioTimers;
     FlowLayout* namesListLayout;
     QLabel* nusersLabel;
     TabCompleter* tabber;

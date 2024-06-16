@@ -9,12 +9,11 @@ include(ProcessorCount)
 ProcessorCount(N)
 message(STATUS "ProcessorCount=" ${N})
 
-message(STATUS "PROJECT_SOURCE_DIR=" ${PROJECT_SOURCE_DIR})
-message(STATUS "PROJECT_BINARY_DIR=" ${PROJECT_BINARY_DIR})
-message(STATUS "CMAKE_SOURCE_DIR=" ${CMAKE_SOURCE_DIR})
-message(STATUS "CMAKE_CURRENT_SOURCE_DIR=" ${CMAKE_CURRENT_SOURCE_DIR})
-message(STATUS "CMAKE_PREFIX_PATH=" ${CMAKE_PREFIX_PATH})
-message(STATUS "Qt5_DIR=" ${Qt5_DIR})
+message(STATUS "PROJECT_SOURCE_DIR=${PROJECT_SOURCE_DIR}")
+message(STATUS "PROJECT_BINARY_DIR=${PROJECT_BINARY_DIR}")
+message(STATUS "CMAKE_SOURCE_DIR=${CMAKE_SOURCE_DIR}")
+message(STATUS "CMAKE_CURRENT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}")
+message(STATUS "CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}")
 
 execute_process(
   COMMAND git rev-parse HEAD
@@ -75,10 +74,11 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}"
 option(PLATFORM_EXTENSIONS "Enable platform specific extensions, requires extra dependencies" ON)
 
 # config.h.in -> config.h
-configure_file(${PROJECT_SOURCE_DIR}/config.h.in ${PROJECT_BINARY_DIR}/config.h @ONLY NEWLINE_STYLE LF)
-include_directories(${PROJECT_BINARY_DIR})
-add_definitions(-DHAVE_CONFIG)
+configure_file(${PROJECT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/ok_config.h @ONLY NEWLINE_STYLE LF)
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+add_definitions(-DOK_HAVE_CONFIG)
 
+set(QT_CREATOR_SKIP_VCPKG_SETUP ON)
 
 # 开启插件（ON/OFF）
 option(ENABLE_PLUGINS "Enable plugins" ON)

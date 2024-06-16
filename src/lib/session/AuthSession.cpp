@@ -17,6 +17,7 @@
 #include <string>
 #include <thread>
 
+#include <QMutexLocker>
 #include <QTimer>
 
 #include "base/logs.h"
@@ -37,6 +38,8 @@ AuthSession::AuthSession(QObject *parent)
 {
   qRegisterMetaType<SignInInfo>("SignInInfo");
   qRegisterMetaType<LoginResult>("LoginResult");
+
+  connect(this, &AuthSession::loginSuccessed, this, &AuthSession::onLoginSuccessed);
 }
 
 AuthSession::~AuthSession() { qDebug() << "~AuthSession"; }
@@ -51,27 +54,82 @@ AuthSession *AuthSession::Instance() {
 
 Status AuthSession::status() const { return _status; }
 
-void AuthSession::initTimer() {
-  //		_timer = std::make_unique<QTimer>(this);
-  //		_timer->start(10 * 1000);
-  //		QObject::connect(_timer.get(), SIGNAL(timeout()), this,
-  // SLOT(timerUp()));
-}
+void AuthSession::onLoginSuccessed(const SignInInfo &signIn)
+{
+    qDebug()<<__func__<<"username"<<signIn.username;
 
-void AuthSession::timerUp() {
-  qDebug(("AuthSession::timerUp"));
-  //  if (_status == CONNECT_STATUS::DISCONNECTED) {
-  //    qDebug(("CONNECT_STATUS::DISCONNECTED doConnect..."));
-  //    doConnect();
-  //  }
+
+    okAccount =
+        std::make_unique<ok::base::OkAccount>(m_signInInfo.username);
+    okAccount->setJid(
+        ::base::Jid(m_signInInfo.username, m_signInInfo.host));
+
+    QStringList l;
+    _im = new ::lib::messenger::IM(m_signInInfo.host,
+                                   m_signInInfo.username,
+                                   m_signInInfo.password, l);
+
+    connect(_im, &::lib::messenger::IM::connectResult,
+            [&](::lib::messenger::IMConnectStatus status) {
+              QString msg;
+              if (status == ::lib::messenger::IMConnectStatus::CONNECTED) {
+                _status = Status::SUCCESS;
+                LoginResult result{Status::SUCCESS, msg};
+                emit loginResult(m_signInInfo, result);
+                return;
+              }
+
+              // 错误处理
+              _status = Status::FAILURE;
+              switch (status) {
+              case ::lib::messenger::IMConnectStatus::NO_SUPPORT:{
+                  msg = tr("NO_SUPPORT");
+                  break;
+              }
+              case ::lib::messenger::IMConnectStatus::AUTH_FAILED: {
+                msg = tr("AUTH_FAILED");
+                break;
+              }
+              case ::lib::messenger::IMConnectStatus::DISCONNECTED: {
+                msg = tr("DISCONNECTED");
+                break;
+              }
+              case ::lib::messenger::IMConnectStatus::CONN_ERROR: {
+                msg = tr("CONN_ERROR");
+                break;
+              }
+              case ::lib::messenger::IMConnectStatus::CONNECTING: {
+                msg = tr("...");
+                break;
+              }
+              case ::lib::messenger::IMConnectStatus::TLS_ERROR: {
+                msg = tr("TLS_ERROR");
+                break;
+              }
+              case ::lib::messenger::IMConnectStatus::OUT_OF_RESOURCE: {
+                msg = tr("OUT_OF_RESOURCE");
+                break;
+              }
+              case ::lib::messenger::IMConnectStatus::TIMEOUT: {
+                msg = "请求超时！";
+                break;
+              }case ::lib::messenger::IMConnectStatus::CONNECTED:{
+                  LoginResult result{Status::FAILURE, msg};
+                  emit loginResult(m_signInInfo, result);
+                  break;
+              }
+              }
+
+            });
+
+    _im->start();
 }
 
 void AuthSession::doConnect() {
-  qDebug(("doConnect..."));
+  qDebug() << __func__;
 
   _status = Status::CONNECTING;
-
-  LoginResult result{_status, "..."};
+  LoginResult result{_status, tr("...")};
   emit loginResult(m_signInInfo, result);
 
   passportService->getAccount(
@@ -94,64 +152,9 @@ void AuthSession::doConnect() {
         }
 
         qDebug() << "Res.data=>" << res.data->toString();
-
         m_signInInfo.username = res.data->username.toLower();
-        okAccount =
-            std::make_unique<ok::base::OkAccount>(m_signInInfo.username);
-        okAccount->setJid(
-            ::base::Jid(m_signInInfo.username, m_signInInfo.host));
+        emit loginSuccessed(m_signInInfo);
 
-        QStringList l;
-        _im = new ::lib::messenger::IM(m_signInInfo.host, m_signInInfo.username,
-                                       m_signInInfo.password, l);
-        connect(_im, &::lib::messenger::IM::connectResult,
-                [&](::lib::messenger::IMStatus status) {
-                  QString msg;
-                  if (status == ::lib::messenger::IMStatus::CONNECTED) {
-                    _status = Status::SUCCESS;
-                    LoginResult result{Status::SUCCESS, msg};
-                    emit loginResult(m_signInInfo, result);
-                    return;
-                  }
-
-                  // 错误处理
-                  _status = Status::FAILURE;
-                  switch (status) {
-                  case ::lib::messenger::IMStatus::AUTH_FAILED: {
-                    msg = "认证失败！";
-                    break;
-                  }
-                  case ::lib::messenger::IMStatus::DISCONNECTED: {
-                    msg = "无法连接！";
-                    break;
-                  }
-                  case ::lib::messenger::IMStatus::CONN_ERROR: {
-                    msg = "连接异常！";
-                    break;
-                  }
-                  case ::lib::messenger::IMStatus::CONNECTING: {
-                    msg = "...";
-                    break;
-                  }
-                  case ::lib::messenger::IMStatus::TLS_ERROR: {
-                    msg = "TLS证书验证失败";
-                    break;
-                  }
-                  case ::lib::messenger::IMStatus::OUT_OF_RESOURCE: {
-                    msg = "系统资源受限！";
-                    break;
-                  }
-                  case ::lib::messenger::IMStatus::TIMEOUT: {
-                    msg = "请求超时！";
-                    break;
-                  }
-                  }
-
-                  LoginResult result{Status::FAILURE, msg};
-                  emit loginResult(m_signInInfo, result);
-                });
-
-        _im->start();
       },
       [&](const QString &msg) {
         _status = Status::FAILURE;
@@ -161,14 +164,9 @@ void AuthSession::doConnect() {
 }
 
 void AuthSession::doLogin(const SignInInfo &signInInfo) {
-  m_signInInfo = signInInfo;
+    QMutexLocker locker(&_mutex);
 
-  qDebug() << "account:" << signInInfo.account
-           << "password:" << signInInfo.password;
-
-  qDebug() << "stackUrl:" << signInInfo.stackUrl;
-  passportService =
-      (std::make_unique<ok::backend::PassportService>(signInInfo.stackUrl));
+    m_signInInfo = signInInfo;
 
   if (_status == ok::session::Status::CONNECTING) {
     qDebug(("The connection is connecting."));
@@ -180,16 +178,15 @@ void AuthSession::doLogin(const SignInInfo &signInInfo) {
     return;
   }
 
-  if (_mutex.try_lock()) {
+  qDebug() << "account:" << signInInfo.account
+           << "password:" << signInInfo.password;
 
-    // 初始化定时器
-    initTimer();
+  qDebug() << "stackUrl:" << signInInfo.stackUrl;
+  passportService = std::make_unique<ok::backend::PassportService>(signInInfo.stackUrl);
 
-    // 建立连接
-    doConnect();
+  // 建立连接
+  doConnect();
 
-    _mutex.unlock();
-  }
 }
 
 } // namespace session

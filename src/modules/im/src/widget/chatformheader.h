@@ -17,12 +17,19 @@
 
 #include <memory>
 
+#include <src/core/FriendId.h>
+#include <src/core/contactid.h>
+#include "src/model/status.h"
+
 class MaskablePixmapWidget;
 class QVBoxLayout;
 class CroppingLabel;
 class QPushButton;
 class QToolButton;
 class CallConfirmWidget;
+class ToxPeer;
+class Contact;
+
 
 class ChatFormHeader : public QWidget
 {
@@ -47,20 +54,36 @@ public:
         AV = Audio | Video
     };
 
-    ChatFormHeader(QWidget* parent = nullptr);
+    ChatFormHeader(const ContactId &contactId, QWidget* parent = nullptr);
     ~ChatFormHeader();
+
+    void setContact(const Contact* contact);
+    void removeContact();
+    const Contact* getContact()const{return contact;}
 
     void setName(const QString& newName);
     void setMode(Mode mode);
 
     void showOutgoingCall(bool video);
-    void createCallConfirm(bool video);
+
+    void createCallConfirm(const ToxPeer& peer, bool video, QString &displayedName);
     void showCallConfirm();
     void removeCallConfirm();
 
-    void updateCallButtons(bool online, bool audio, bool video = false);
+
+
     void updateMuteMicButton(bool active, bool inputMuted);
     void updateMuteVolButton(bool active, bool outputMuted);
+
+    void updateCallButtons();
+    void updateCallButtons(Status::Status status);
+    void updateCallButtons(bool online, bool audio, bool video = false);
+
+    void updateMuteMicButton();
+    void updateMuteVolButton();
+
+    void showCallConfirm(const ToxPeer &peerId, bool video, const QString &displayedName);
+
 
     void setAvatar(const QPixmap& img);
     QSize getAvatarSize() const;
@@ -80,14 +103,21 @@ signals:
 
     void nameChanged(const QString& name);
 
-    void callAccepted();
-    void callRejected();
+    void callAccepted(const ToxPeer& peerId, bool video);
+    void callRejected(const ToxPeer& peerId);
+
+
 
 private slots:
     void retranslateUi();
     void updateButtonsView();
+    void onAvatarChanged(  const QPixmap &pic);
+    void onDisplayedNameChanged(const QString& name);
 
 private:
+    const ContactId& contactId;
+    const Contact* contact;
+
     Mode mode;
     MaskablePixmapWidget* avatar;
     QVBoxLayout* headTextLayout;
@@ -95,13 +125,10 @@ private:
 
     QPushButton* callButton;
     QPushButton* videoButton;
-    QPushButton* volButton;
-    QPushButton* micButton;
 
     CallButtonState callState;
     CallButtonState videoState;
-    ToolButtonState volState;
-    ToolButtonState micState;
+
 
     std::unique_ptr<CallConfirmWidget> callConfirm;
 };

@@ -51,12 +51,12 @@ bool ContentDialogManager::contactWidgetExists(const ContactId& contactId)
     return dialog->hasContact(contactId);
 }
 
-FriendWidget* ContentDialogManager::addFriendToDialog(ContentDialog* dialog,
-                                                      std::shared_ptr<FriendChatroom> chatroom,
+void ContentDialogManager::addFriendToDialog(const FriendId& friendPk,
+                                                      ContentDialog* dialog,
+                                                      FriendChatroom* chatroom,
                                                       GenericChatForm* form)
 {
-    auto friendWidget = dialog->addFriend(chatroom, form);
-    const auto& friendPk = friendWidget->getFriend()->getPublicKey();
+    dialog->addFriend(chatroom, form);
 
     ContentDialog* lastDialog = getFriendDialog(friendPk);
     if (lastDialog) {
@@ -64,15 +64,14 @@ FriendWidget* ContentDialogManager::addFriendToDialog(ContentDialog* dialog,
     }
 
     contactDialogs[friendPk] = dialog;
-    return friendWidget;
 }
 
-GroupWidget* ContentDialogManager::addGroupToDialog(ContentDialog* dialog,
-                                                    std::shared_ptr<GroupChatroom> chatroom,
+ContentDialog* ContentDialogManager::addGroupToDialog(const GroupId& groupId,
+                                                      ContentDialog* dialog,
+                                                     GroupChatroom* chatroom,
                                                     GenericChatForm* form)
 {
-    auto groupWidget = dialog->addGroup(chatroom, form);
-    const auto& groupId = groupWidget->getGroup()->getPersistentId();
+    dialog->addGroup(chatroom, form);
 
     ContentDialog* lastDialog = getGroupDialog(groupId);
     if (lastDialog) {
@@ -80,7 +79,7 @@ GroupWidget* ContentDialogManager::addGroupToDialog(ContentDialog* dialog,
     }
 
     contactDialogs[groupId] = dialog;
-    return groupWidget;
+    return lastDialog;
 }
 
 void ContentDialogManager::focusContact(const ContactId& contactId)
@@ -115,7 +114,7 @@ ContentDialog* ContentDialogManager::focusDialog(const ContactId& id,
     return dialog;
 }
 
-void ContentDialogManager::updateFriendStatus(const ToxPk& friendPk)
+void ContentDialogManager::updateFriendStatus(const FriendId& friendPk)
 {
     auto dialog = contactDialogs.value(friendPk);
     if (dialog == nullptr) {
@@ -154,7 +153,7 @@ bool ContentDialogManager::isContactActive(const ContactId& contactId)
     return dialog->isContactActive(contactId);
 }
 
-ContentDialog* ContentDialogManager::getFriendDialog(const ToxPk& friendPk) const
+ContentDialog* ContentDialogManager::getFriendDialog(const FriendId& friendPk) const
 {
     return contactDialogs.value(friendPk);
 }
@@ -196,7 +195,7 @@ void ContentDialogManager::onDialogClose()
     removeDialog(dialog, contactDialogs);
 }
 
-IDialogs* ContentDialogManager::getFriendDialogs(const ToxPk& friendPk) const
+IDialogs* ContentDialogManager::getFriendDialogs(const FriendId& friendPk) const
 {
     return getFriendDialog(friendPk);
 }

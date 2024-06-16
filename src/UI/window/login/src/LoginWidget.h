@@ -44,28 +44,34 @@ namespace UI {
 class LoginWidget : public QWidget {
   Q_OBJECT
 public:
-  explicit LoginWidget(QWidget *parent = nullptr);
+  explicit LoginWidget(bool bootstrap, QWidget *parent = nullptr);
   ~LoginWidget() override;
   void onError(const QString &msg);
+  void setMsg(const QString &msg);
   void init();
-  void showMainWindow();
+  void deinit();
 
 protected:
   void retranslateUi();
-  bool eventFilter(QObject *obj, QEvent *event) override;
-
+  virtual bool eventFilter(QObject *obj, QEvent *event) override;
+  virtual void showEvent(QShowEvent *e) override;
 private:
+  bool bootstrap;
   Ui::LoginWidget *ui;
 
   QShortcut *m_loginKey;
 
   core::SettingManager *m_settingManager;
   ok::backend::OkCloudService *okCloudService;
+
+  bool m_error = false;
+
   //加载项
   int m_loaded;
 
   QStringList m_hosts;
   QStringList m_stacks;
+  std::unique_ptr<QTimer> m_timer;
 
 signals:
   void loginSuccess(QString name, QString password);
@@ -75,6 +81,7 @@ signals:
                    ok::session::LoginResult &result);
 
 private slots:
+  void onTimeout();
   void doLogin();
   void onConnectResult(ok::session::SignInInfo info,
                        ok::session::LoginResult result);

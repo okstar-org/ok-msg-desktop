@@ -12,6 +12,7 @@
 
 #include "friendmessagedispatcher.h"
 #include "src/model/status.h"
+#include "src/model/message.h"
 #include "src/persistence/settings.h"
 
 namespace {
@@ -23,7 +24,8 @@ namespace {
  * @param[in] message
  * @param[out] receipt
  */
-bool sendMessageToCore(ICoreFriendMessageSender &messageSender, const Friend &f,
+bool sendMessageToCore(ICoreFriendMessageSender &messageSender,
+                       const FriendId &f,
                        const Message &message, ReceiptNum &receipt,
                        bool encrypt) {
   QString friendId = f.getId();
@@ -37,18 +39,28 @@ bool sendMessageToCore(ICoreFriendMessageSender &messageSender, const Friend &f,
 } // namespace
 
 FriendMessageDispatcher::FriendMessageDispatcher(
-    Friend &f_, MessageProcessor processor_,
-    ICoreFriendMessageSender &messageSender_)
-    : f(f_), messageSender(messageSender_),
-      offlineMsgEngine(&f_, &messageSender_), processor(std::move(processor_)) {
-  connect(&f, &Friend::onlineOfflineChanged, this,
-          &FriendMessageDispatcher::onFriendOnlineOfflineChanged);
+        const FriendId &f_,
+        const MessageProcessor::SharedParams& p,
+        ICoreIdHandler &idHandler_,
+        ICoreFriendMessageSender &messageSender_)
+    : f(f_),
+      messageSender(messageSender_),
+      offlineMsgEngine(&f_, &messageSender_),
+      processor(MessageProcessor(idHandler_, f_, p ))
+{
+//  connect(&f, &IMFriend::onlineOfflineChanged,
+//          this, &FriendMessageDispatcher::onFriendOnlineOfflineChanged);
+}
+
+FriendMessageDispatcher::~FriendMessageDispatcher()
+{
+    qDebug()<<__func__;
 }
 
 /**
  * @see IMessageSender::sendMessage
  */
-std::pair<DispatchedMessageId, DispatchedMessageId>
+std::pair<DispatchedMessageId, SentMessageId>
 FriendMessageDispatcher::sendMessage(bool isAction, const QString &content, bool encrypt) {
   qDebug() << "FriendMessageDispatcher::sendMessage" << content;
 
@@ -81,7 +93,7 @@ FriendMessageDispatcher::sendMessage(bool isAction, const QString &content, bool
     }
 
   }
-  return std::make_pair(firstId, lastId);
+  return std::make_pair(firstId, "");
 }
 
 /**
@@ -89,10 +101,9 @@ FriendMessageDispatcher::sendMessage(bool isAction, const QString &content, bool
  * @param[in] isAction True if action message
  * @param[in] content Unprocessed toxcore message
  */
-void FriendMessageDispatcher::onMessageReceived(bool isAction,
-                                                const lib::messenger::IMMessage& msg) {
-  auto msg0 = processor.processIncomingMessage(isAction, msg.body, msg.from, msg.time, f.getDisplayedName());
-  emit this->messageReceived(f.getPublicKey(), msg0);
+void FriendMessageDispatcher::onMessageReceived(FriendMessage& msg) {
+  auto msg0 = processor.processIncomingMessage(msg);
+  emit messageReceived(FriendId(msg.from), msg0);
 }
 
 
@@ -108,8 +119,7 @@ void FriendMessageDispatcher::onReceiptReceived(ReceiptNum receipt) {
  * @brief Handles status change for friend
  * @note Parameters just to fit slot api
  */
-void FriendMessageDispatcher::onFriendOnlineOfflineChanged(const ToxPk &,
-                                                           bool isOnline) {
+void FriendMessageDispatcher::onFriendOnlineOfflineChanged(bool isOnline) {
   if (isOnline) {
     offlineMsgEngine.deliverOfflineMsgs();
   }
@@ -119,5 +129,17 @@ void FriendMessageDispatcher::onFriendOnlineOfflineChanged(const ToxPk &,
  * @brief Clears all currently outgoing messages
  */
 void FriendMessageDispatcher::clearOutgoingMessages() {
-  offlineMsgEngine.removeAllMessages();
+    offlineMsgEngine.removeAllMessages();
+}
+
+void FriendMessageDispatcher::onFileReceived( const ToxFile &file)
+{
+    const auto &friendId = FriendId(f);
+    emit fileReceived(friendId, file);
+}
+
+void FriendMessageDispatcher::onFileCancelled(const QString &fileId)
+{
+    const auto &friendId = FriendId(f);
+    emit fileCancelled(friendId, fileId);
 }

@@ -261,11 +261,7 @@ ce qui peut entraîner des problèmes avec les appels vidéo.</translation>
         <translation>Sélectionner un répertoire d&apos;acceptation automatique</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the public key of your friend, use it to verify their identity via another channel. You can not send this to other people so they can add this contact.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Celle-ci est la clé publique de votre ami, utilisez-la pour vérifier son identité via un autre canal. Vous ne pouvez pas envoyer celle-ci à d&apos;autres personnes pour qu&apos;elles puissent ajouter ce contact.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Public key (not ToxID):</source>
+        <source>Account:</source>
         <translation>Clé publique (non le ToxID) :</translation>
     </message>
     <message>

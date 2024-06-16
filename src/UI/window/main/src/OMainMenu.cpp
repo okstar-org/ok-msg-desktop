@@ -23,13 +23,13 @@
 namespace UI {
 
 OMainMenu::OMainMenu(QWidget *parent)
-    : QFrame(parent), ui(new Ui::OMainMenu), m_current(PageMenu::welcome),
-      _showTimes(0) {
+    : QFrame(parent), ui(new Ui::OMainMenu), _showTimes(0) {
+  qDebug() << __func__ ;
 
   OK_RESOURCE_INIT(UIWindowMain);
 
   ui->setupUi(this);
-  delayCaller_ = (std::make_unique<base::DelayedCallTimer>());
+  delayCaller_ = std::make_unique<base::DelayedCallTimer>();
 
   // 设置样式
   QString qss = ok::base::Files::readStringAll(":/qss/menu.qss");
@@ -37,9 +37,14 @@ OMainMenu::OMainMenu(QWidget *parent)
 
   ui->chatBtn->setCursor(Qt::PointingHandCursor);
   ui->settingBtn->setCursor(Qt::PointingHandCursor);
+
+
 }
 
-OMainMenu::~OMainMenu() { delete ui; }
+OMainMenu::~OMainMenu() {
+  qDebug() << __func__ ;
+  delete ui;
+}
 
 void OMainMenu::setAvatar(const QPixmap &pixmap) {
   auto newImage = base::Images::roundRectPixmap(pixmap, ui->label_avatar->size(), 100);
@@ -66,10 +71,7 @@ void OMainMenu::on_chatBtn_clicked(bool checked) {
 }
 
 void OMainMenu::onSetting() {
-
   ui->settingBtn->setChecked(true);
-  m_current = PageMenu::setting;
-
   emit onPage(PageMenu::setting);
 }
 

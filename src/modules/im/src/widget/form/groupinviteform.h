@@ -13,10 +13,11 @@
 #ifndef GROUPINVITEFORM_H
 #define GROUPINVITEFORM_H
 
+#include "src/model/message.h"
 #include "src/widget/gui.h"
 
-#include <QWidget>
 #include <QScrollArea>
+#include <QWidget>
 
 class ContentLayout;
 class GroupInvite;
@@ -44,7 +45,7 @@ public:
     bool isShown() const;
 
 signals:
-    void groupCreate(uint8_t type);
+    void groupCreate(ConferenceType type);
     void groupInviteAccepted(const GroupInvite& inviteInfo);
     void groupInvitesSeen();
 

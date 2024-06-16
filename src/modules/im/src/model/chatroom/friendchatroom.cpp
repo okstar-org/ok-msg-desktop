@@ -35,38 +35,39 @@ QString getShortName(const QString& name)
 
 }
 
-FriendChatroom::FriendChatroom(Friend* frnd, IDialogsManager* dialogsManager)
+FriendChatroom::FriendChatroom(const FriendId* frnd,
+                               IDialogsManager* dialogsManager)
     : frnd{frnd}
     , dialogsManager{dialogsManager}
 {
+    qDebug()<<__func__ <<"friend"<< frnd->getId();
 }
 
-Friend* FriendChatroom::getFriend()
+FriendChatroom::~FriendChatroom()
+{
+    qDebug()<<__func__;
+}
+
+const FriendId* FriendChatroom::getFriend()
 {
     return frnd;
 }
 
-Contact* FriendChatroom::getContact()
+const ContactId& FriendChatroom::getContactId()
 {
-    return frnd;
+    return *frnd;
 }
 
-void FriendChatroom::setActive(bool _active)
-{
-    if (active != _active) {
-        active = _active;
-        emit activeChanged(active);
-    }
-}
 
 bool FriendChatroom::canBeInvited() const
 {
-    return Status::isOnline(frnd->getStatus());
+    return false;
+//    return Status::isOnline(frnd->getStatus());
 }
 
 int FriendChatroom::getCircleId() const
 {
-    return Settings::getInstance().getFriendCircleID(frnd->getPublicKey());
+    return 0;
 }
 
 QString FriendChatroom::getCircleName() const
@@ -85,14 +86,12 @@ void FriendChatroom::inviteToNewGroup()
 
 QString FriendChatroom::getAutoAcceptDir() const
 {
-    const auto pk = frnd->getPublicKey();
-    return Settings::getInstance().getAutoAcceptDir(pk);
+    return Settings::getInstance().getAutoAcceptDir(*frnd);
 }
 
 void FriendChatroom::setAutoAcceptDir(const QString& dir)
 {
-    const auto pk = frnd->getPublicKey();
-    Settings::getInstance().setAutoAcceptDir(pk, dir);
+    Settings::getInstance().setAutoAcceptDir(*frnd, dir);
 }
 
 void FriendChatroom::disableAutoAccept()
@@ -154,33 +153,32 @@ QVector<CircleToDisplay> FriendChatroom::getOtherCircles() const
 
 void FriendChatroom::resetEventFlags()
 {
-    frnd->setEventFlag(false);
+//    frnd->setEventFlag(false);
 }
 
 bool FriendChatroom::possibleToOpenInNewWindow() const
 {
-    const auto friendPk = frnd->getPublicKey();
-    const auto dialogs = dialogsManager->getFriendDialogs(friendPk);
+//    const auto friendPk = frnd->getId();
+    const auto dialogs = dialogsManager->getFriendDialogs(*frnd);
     return !dialogs || dialogs->chatroomCount() > 1;
 }
 
 bool FriendChatroom::canBeRemovedFromWindow() const
 {
-    const auto friendPk = frnd->getPublicKey();
-    const auto dialogs = dialogsManager->getFriendDialogs(friendPk);
-    return dialogs && dialogs->hasContact(friendPk);
+    const auto friendPk = frnd;
+    const auto dialogs = dialogsManager->getFriendDialogs(*friendPk);
+    return dialogs && dialogs->hasContact(ContactId(frnd->toString()));
 }
 
 bool FriendChatroom::friendCanBeRemoved() const
 {
-    const auto friendPk = frnd->getPublicKey();
-    const auto dialogs = dialogsManager->getFriendDialogs(friendPk);
-    return !dialogs || !dialogs->hasContact(friendPk);
+
+    const auto dialogs = dialogsManager->getFriendDialogs(*frnd);
+    return !dialogs || !dialogs->hasContact(ContactId(frnd->toString()));
 }
 
 void FriendChatroom::removeFriendFromDialogs()
 {
-    const auto friendPk = frnd->getPublicKey();
-    auto dialogs = dialogsManager->getFriendDialogs(friendPk);
-    dialogs->removeFriend(friendPk);
+    auto dialogs = dialogsManager->getFriendDialogs(*frnd);
+    dialogs->removeFriend(*frnd);
 }

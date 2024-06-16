@@ -31,6 +31,8 @@ struct OrgStaff {
   QString phone;
   QString email;
   QString username;
+  QString host;
+  QString posts;
 
   OrgStaff(const QJsonObject &data) {
     no = data.value("no").toString();             //
@@ -38,12 +40,19 @@ struct OrgStaff {
     name = data.value("name").toString();         //
     username = data.value("username").toString(); //
     phone = data.value("phone").toString();       //
+    host = data.value("host").toString();         //
+    posts = data.value("posts").toString();       //
   }
 
   QString toString() {
-    return QString("{no:%1, username:%2, name:%3, phone:%4 email:%5}") //
-        .arg(no, username, name, phone, email);
+    return QString("{no:%1, username:%2, name:%3, phone:%4, email:%5, host:%6, posts: %7}") //
+        .arg(no).arg(username).arg(name).arg(phone).arg(host).arg(posts);
   }
+
+  QString toContactId(){
+      return QString("%1@%2").arg(username).arg(host);
+  }
+
 };
 
 class UserService : public BaseService {

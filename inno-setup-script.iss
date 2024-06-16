@@ -5,9 +5,7 @@
 #define MyAppVersion "1.0"
 #define MyAppPublisher "OkStar"
 #define MyAppURL "https://github.com/okstar-org/ok-msg-desktop"
-#define MyAppExeName "ok-msg-desktop_windows-latest_x64_setup.exe"
-#define MyAppExeFile "ok-msg-desktop_windows-latest_x64_setup"
-#define MyAppExePATH "ok-msg-desktop"
+#define MyAppExeName "OkMSG-Desktop.exe"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
@@ -22,11 +20,11 @@ AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName=C:\Program Files\OkStar\{#MyAppName}
 DisableProgramGroupPage=yes
-LicenseFile={#MyAppExePATH}\LICENSE
+LicenseFile=D:\Work\ok-msg\src\ok-msg-desktop\build\deploy\LICENSE
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
-OutputDir=.\deploy-setup
-OutputBaseFilename={#MyAppExeFile}
+OutputDir=D:\Work\ok-msg\src\ok-msg-desktop\build
+OutputBaseFilename=OkMSG-setup
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
@@ -63,7 +61,8 @@ Name: "ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: ".\{#MyAppExePATH}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "D:\Work\ok-msg\src\ok-msg-desktop\build\deploy\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\Work\ok-msg\src\ok-msg-desktop\build\deploy\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

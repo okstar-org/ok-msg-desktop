@@ -10,26 +10,21 @@
  * See the Mulan PubL v2 for more details.
  */
 
+#include <cassert>
+
 #include <QBuffer>
-#include <QDebug>
 #include <QDir>
 #include <QFileInfo>
 #include <QImage>
 #include <QObject>
 #include <QSaveFile>
-#include <QThread>
 
-#include <cassert>
-#include <sodium.h>
-
-#include "base/files.h"
 #include "profile.h"
 #include "profilelocker.h"
 #include "settings.h"
 #include "src/core/core.h"
 #include "src/core/coreav.h"
 #include "src/core/corefile.h"
-#include "src/net/avatarbroadcaster.h"
 #include "src/nexus.h"
 #include "src/widget/gui.h"
 #include "src/widget/tool/identicon.h"
@@ -79,11 +74,6 @@ void Profile::initCore(const QByteArray &toxsave, ICoreSettings &s,
     qDebug() << "failed to start ToxCore";
     return;
   }
-
-  //  if (isNewProfile) {
-  //    core->setStatusMessage(tr("Toxing on qTox"));
-  //    core->setUsername(name);
-  //  }
 
   // save tox file when Core requests it
   connect(core.get(), &Core::saveRequest, this, &Profile::onSaveToxSave);
@@ -296,23 +286,30 @@ const QStringList Profile::getAllProfileNames() {
 }
 
 Core *Profile::getCore() {
-  // TODO(sudden6): this is evil
   return core.get();
 }
 
-QString Profile::getName() const { return name; }
+const QString& Profile::getName() const { return name; }
+
+const QString& Profile::getDisplayName()
+{
+    nick = core->getNick();
+    if(!nick.isEmpty()){
+        return nick;
+    }
+    return name;
+}
 
 /**
  * @brief Starts the Core thread
  */
 void Profile::startCore() {
-  // kriby: code duplication belongs in initCore, but cannot yet due to
-  // Core/Profile coupling
+  qDebug() <<__func__;
 
   connect(core.get(), &Core::requestSent, this, &Profile::onRequestSent);
-  emit coreChanged(*core);
-
   core->start();
+
+  emit coreChanged(*core);
 
   //  const ToxId &selfId = core->getSelfId();
   //  const ToxPk &selfPk = selfId.getPublicKey();
@@ -325,6 +322,15 @@ void Profile::startCore() {
   //  // reason: Core::getInstance() returns nullptr, because it's not yet
   //  // initialized solution: kill Core::getInstance
   //  setAvatar(data);
+}
+
+void Profile::stopCore()
+{
+    qDebug() <<__func__;
+
+    disconnect(core.get(), &Core::requestSent, this, &Profile::onRequestSent);
+    core->stop();
+
 }
 
 /**
@@ -344,12 +350,12 @@ void Profile::onSaveToxSave() {
 void Profile::onAvatarOfferReceived(QString friendId, QString fileId,
                                     const QByteArray &avatarHash) {
   // accept if we don't have it already
-  const bool accept =
-      getAvatarHash(core->getFriendPublicKey(friendId)) != avatarHash;
-  core->getCoreFile()->handleAvatarOffer(friendId, fileId, accept);
+//  const bool accept = getAvatarHash(core->getFriendPublicKey(friendId)) != avatarHash;
+//  core->getCoreFile()->handleAvatarOffer(friendId, fileId, accept);
 }
 
 /**
+ *
  * @brief Write the .tox save, encrypted if needed.
  * @param data Byte array of profile save.
  * @return true if successfully saved, false otherwise
@@ -398,66 +404,66 @@ bool Profile::saveToxSave(QByteArray data) {
  * if this is an encrypted profile.
  * @return Path to the avatar.
  */
-QString Profile::avatarPath(const ToxPk &owner, bool forceUnencrypted) {
-  const QString ownerStr = owner.toString();
-  return Settings::getInstance().getSettingsDirPath() + "avatars/" + ownerStr + ".png";
+QString Profile::avatarPath(const ContactId &owner, bool forceUnencrypted) {
+  auto ownerStr = owner.toString();
+  auto base=Settings::getInstance().getSettingsDirPath();
+  return base + "avatars/" + ownerStr + ".png";
 }
 
 /**
  * @brief Get our avatar from cache.
  * @return Avatar as QPixmap.
  */
-QPixmap Profile::loadAvatar() {
-  return loadAvatar(core->getSelfId().getPublicKey());
+const QPixmap & Profile::loadAvatar() {
+    if(pixmap.isNull())
+    {
+        //加载本地
+       pixmap= loadAvatar(core->getSelfId().getPublicKey());
+    }
+    if(pixmap.isNull()){
+        if (Settings::getInstance().getShowIdenticons()) {
+            pixmap = QPixmap::fromImage(Identicon(core->getSelfId().getPublicKey().getByteArray()).toImage(16));
+        }
+    }
+  return pixmap;
 }
 
 /**
  * @brief Get a contact's avatar from cache.
- * @param owner Friend PK to load avatar.
+ * @param owner IMFriend PK to load avatar.
  * @return Avatar as QPixmap.
  */
-QPixmap Profile::loadAvatar(const ToxPk &owner) {
-  QPixmap pic;
-  if (Settings::getInstance().getShowIdenticons()) {
+QPixmap Profile::loadAvatar(const ContactId &owner) {
+    QPixmap pixmap;
     const QByteArray avatarData = loadAvatarData(owner);
-    if (avatarData.isEmpty()) {
-      pic = QPixmap::fromImage(Identicon(owner.getByteArray()).toImage(16));
-    } else {
-      pic.loadFromData(avatarData);
+    if(!avatarData.isEmpty()){
+         pixmap.loadFromData(avatarData);
     }
-  } else {
-    pic.loadFromData(loadAvatarData(owner));
-  }
-  return pic;
+    return pixmap;
 }
 
 /**
  * @brief Get a contact's avatar from cache.
- * @param owner Friend PK to load avatar.
+ * @param owner IMFriend PK to load avatar.
  * @return Avatar as QByteArray.
  */
-QByteArray Profile::loadAvatarData(const ToxPk &owner) {
+QByteArray Profile::loadAvatarData(const ContactId &owner) {
+    qDebug() << __func__ << owner.toString();
+
   QString path = avatarPath(owner);
-  bool avatarEncrypted = encrypted;
-  // If the encrypted avatar isn't found, try loading the unencrypted one for
-  // the same ID
-  if (avatarEncrypted && !QFile::exists(path)) {
-    avatarEncrypted = false;
-    path = avatarPath(owner, true);
-  }
+  qDebug() << "read:"<<path;
 
   QFile file(path);
   if (!file.open(QIODevice::ReadOnly)) {
+    qWarning() << "Unable to open file" << path;
     return {};
   }
 
   QByteArray pic = file.readAll();
-  if (avatarEncrypted && !pic.isEmpty()) {
-    pic = passkey->decrypt(pic);
     if (pic.isEmpty()) {
-      qWarning() << "Failed to decrypt avatar at" << path;
+      qWarning() << "Empty avatar at" << path;
     }
-  }
+
 
   return pic;
 }
@@ -469,30 +475,22 @@ void Profile::loadDatabase(QString password) {
     qDebug() << "Can't load database of removed profile";
     return;
   }
-  //    auto selfId = core->getSelfId();
-  //    name = selfId.toString();
-  //    QByteArray salt = selfId.getPublicKey().getByteArray();
+
   QByteArray salt = password.toUtf8();
-  //    if (salt.size() != TOX_PASS_SALT_LENGTH) {
-  //      qWarning() << "Couldn't compute salt from public key" << name;
-  //      GUI::showError(
-  //          QObject::tr("Error"),
-  //          QObject::tr(
-  //              "qTox couldn't open your chat logs, they will be disabled."));
-  //    }
-  // At this point it's too early to load the personal settings (Nexus will do
-  // it), so we always load the history, and if it fails we can't change the
-  // setting now, but we keep a nullptr
   qDebug() << "Create database for" << name;
+
+  bool ok = false;
   database = std::make_shared<RawDatabase>(getDbPath(name), password, salt);
   if (database && database->isOpen()) {
     history.reset(new History(database));
-  } else {
-    qWarning() << "Failed to open database for profile" << name;
-    GUI::showError(
-        QObject::tr("Error"),
-        QObject::tr(
-            "qTox couldn't open your chat logs, they will be disabled."));
+     ok = history->isValid();
+  }
+  if(!ok){
+      qWarning() << "Failed to load database for profile" << name;
+      GUI::showError(
+          QObject::tr("Error"),
+          QObject::tr("Couldn't open your chat logs, they will be exit."));
+      qApp->exit(1);
   }
 }
 
@@ -503,9 +501,9 @@ void Profile::loadDatabase(QString password) {
  */
 void Profile::setAvatar(QByteArray pic) {
   bool loaded = false;
-  QPixmap pixmap;
+
   QByteArray avatarData;
-  const ToxPk &selfPk = core->getSelfPublicKey();
+  const FriendId &selfPk = core->getSelfPublicKey();
   if (!pic.isEmpty()) {
     loaded = pixmap.loadFromData(pic);
     avatarData = pic;
@@ -521,13 +519,11 @@ void Profile::setAvatar(QByteArray pic) {
   if (!loaded) {
     return;
   }
+
   qDebug() << "pixmap" << pixmap.size();
   saveAvatar(selfPk, avatarData);
 
   emit selfAvatarChanged(pixmap);
-  AvatarBroadcaster::setAvatar(avatarData);
-  AvatarBroadcaster::enableAutoBroadcast();
-
   core->setAvatar(avatarData);
 }
 
@@ -539,32 +535,42 @@ void Profile::setAvatarOnly(QPixmap pixmap) { emit selfAvatarChanged(pixmap); }
  * depending on settings
  * @param owner pk of friend
  */
-void Profile::setFriendAvatar(const ToxPk owner, std::string pic) {
-  qDebug() << "Profile::setFriendAvatar:" << owner.toString()
-           << "picSize:" << pic.size();
-
-  QImage pixmap;
-  QByteArray avatarData;
-  if (!pic.empty()) {
-    auto bb = QByteArray::fromStdString(pic);
-
+void Profile::setFriendAvatar(const FriendId owner, const QByteArray & avatarData) {
+  qDebug() << __func__ << owner.toString()
+           << "size:" << avatarData.size();
+  QPixmap pixmap;
+  if (!avatarData.isEmpty()) {
     bool loaded =
-        base::Images::putToImage(bb, pixmap);
+        base::Images::putToPixmap(avatarData, pixmap);
     if (!loaded) {
       return;
     }
-
-    avatarData = bb;
-    emit friendAvatarSet(owner, pic);
+    emit friendAvatarSet(owner, pixmap);
   } else if (Settings::getInstance().getShowIdenticons()) {
-    pixmap = Identicon(owner.getByteArray()).toImage(32);
-    emit friendAvatarSet(owner, pic);
+    pixmap =QPixmap::fromImage( Identicon(owner.getByteArray()).toImage(32));
+    emit friendAvatarSet(owner, pixmap);
   } else {
     pixmap.load(":/img/contact_dark.svg");
     emit friendAvatarRemoved(owner);
   }
-  friendAvatarChanged(owner, QPixmap::fromImage(pixmap));
+  friendAvatarChanged(owner, pixmap);
   saveAvatar(owner, avatarData);
+}
+
+void Profile::saveFriendAlias(const QString &friendPk, const QString &alias)
+{
+    history->setFriendAlias(friendPk, alias);
+}
+
+QString Profile::getFriendAlias(const QString &friendPk)
+{
+    return history->getFriendAlias(friendPk);
+}
+
+uint Profile::addContact(const ContactId &cid)
+{
+    qDebug() << __func__<<cid.toString();
+    return history->addNewContact(cid.toString());
 }
 
 /**
@@ -573,7 +579,7 @@ void Profile::setFriendAvatar(const ToxPk owner, std::string pic) {
  * @param friendPk Pk of a friend which request is destined to
  * @param message Friendship request message
  */
-void Profile::onRequestSent(const ToxPk &friendPk, const QString &message) {
+void Profile::onRequestSent(const FriendId &friendPk, const QString &message) {
   if (!isHistoryEnabled()) {
     return;
   }
@@ -584,7 +590,7 @@ void Profile::onRequestSent(const ToxPk &friendPk, const QString &message) {
   const QString selfStr = core->getSelfPublicKey().toString();
   const QDateTime datetime = QDateTime::currentDateTime();
   const QString name = core->getUsername();
-  history->addNewMessage(pkStr, inviteStr, selfStr, datetime, true, name);
+//  history->addNewMessage(pkStr, inviteStr, selfStr, datetime, true, name);
 }
 
 /**
@@ -592,7 +598,7 @@ void Profile::onRequestSent(const ToxPk &friendPk, const QString &message) {
  * @param pic Picture to save.
  * @param owner PK of avatar owner.
  */
-void Profile::saveAvatar(const ToxPk &owner, const QByteArray &pic) {
+void Profile::saveAvatar(const FriendId &owner, const QByteArray &pic) {
   QString path = avatarPath(owner);
   QDir(Settings::getInstance().getSettingsDirPath()).mkdir("avatars");
   if (pic.isEmpty()) {
@@ -610,10 +616,10 @@ void Profile::saveAvatar(const ToxPk &owner, const QByteArray &pic) {
 
 /**
  * @brief Get the tox hash of a cached avatar.
- * @param owner Friend PK to get hash.
+ * @param owner IMFriend PK to get hash.
  * @return Avatar tox hash.
  */
-QByteArray Profile::getAvatarHash(const ToxPk &owner) {
+QByteArray Profile::getAvatarHash(const FriendId &owner) {
   //  QByteArray pic = loadAvatarData(owner);
   //  QByteArray avatarHash(TOX_HASH_LENGTH, 0);
   //  tox_hash((uint8_t *)avatarHash.data(), (uint8_t *)pic.data(), pic.size());
@@ -631,7 +637,7 @@ void Profile::removeSelfAvatar() {
 /**
  * @brief Removes friend avatar.
  */
-void Profile::removeFriendAvatar(const ToxPk &owner) { removeAvatar(owner); }
+void Profile::removeFriendAvatar(const FriendId &owner) { removeAvatar(owner); }
 
 /**
  * @brief Checks that the history is enabled in the settings, and loaded
@@ -650,9 +656,9 @@ History *Profile::getHistory() { return history.get(); }
 
 /**
  * @brief Removes a cached avatar.
- * @param owner Friend PK whose avater to delete.
+ * @param owner IMFriend PK whose avater to delete.
  */
-void Profile::removeAvatar(const ToxPk &owner) {
+void Profile::removeAvatar(const FriendId &owner) {
   QFile::remove(avatarPath(owner));
   if (owner == core->getSelfId().getPublicKey()) {
     setAvatar({});
@@ -808,29 +814,11 @@ QString Profile::setPassword(const QString &newPassword) {
   // apply new encryption
   onSaveToxSave();
 
-  bool dbSuccess = false;
-
-  // TODO: ensure the database and the tox save file use the same password
-  if (database) {
-    dbSuccess = database->setPassword(newPassword);
-  }
-
   QString error{};
-  if (!dbSuccess) {
-    error = tr("Couldn't change password on the database, it might be "
-               "corrupted or use the old "
-               "password.");
-  }
 
   QByteArray avatar = loadAvatarData(core->getSelfId().getPublicKey());
   saveAvatar(core->getSelfId().getPublicKey(), avatar);
 
-  QVector<QString> friendList = core->getFriendList();
-  QVectorIterator<QString> i(friendList);
-  while (i.hasNext()) {
-    const ToxPk friendPublicKey = core->getFriendPublicKey(i.next());
-    saveAvatar(friendPublicKey, loadAvatarData(friendPublicKey));
-  }
   return error;
 }
 

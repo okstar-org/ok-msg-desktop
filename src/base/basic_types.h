@@ -14,6 +14,7 @@
 #include <string>
 #include <utility>
 #include <functional>
+#include <QStringList>
 
 template <typename Signature>
 using Fn = std::function<Signature>;
@@ -41,6 +42,15 @@ namespace base {
 #define qstr(s) QLatin1String(s, sizeof(s) - 1)
 #define qstring(s) QString::fromStdString(s)
 #define stdstring(s) s.toStdString()
+
+inline QStringList qstringlist(std::list<std::string> sl){
+  QStringList qsl;
+  for(auto s:sl){
+    qsl.append(qstring(s));
+  }
+  return qsl;
+}
+
 
 #define ARRAY_LENGTH_OF(array) (sizeof(array) / sizeof(array[0]))
 

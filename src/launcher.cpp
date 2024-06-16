@@ -40,10 +40,10 @@ Launcher::Launcher(int argc, char *argv[])
 }
 
 int Launcher::executeApplication() {
-  // 初始化程序实例
+
   app = new Application(_argc, _argv);
 
-  // Windows platform plugins DLL hell fix
+  // Windows platform plugins DLL
   app->addLibraryPath(QCoreApplication::applicationDirPath());
   app->addLibraryPath("platforms");
   app->start();
@@ -58,9 +58,9 @@ int Launcher::startup() {
   return result;
 }
 
-int Launcher::shutdown() {
+void Launcher::shutdown() {
   app->closeAllWindows();
-  return 0;
+  qApp->exit(0);
 }
 
 } // namespace core

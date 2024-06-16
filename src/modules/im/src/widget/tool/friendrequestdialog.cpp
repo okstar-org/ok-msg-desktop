@@ -24,14 +24,14 @@ FriendRequestDialog::FriendRequestDialog(QWidget* parent, const QString& userId,
 {
     setAttribute(Qt::WA_QuitOnClose, false);
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
-    setWindowTitle(tr("Friend request", "Title of the window to aceept/deny a friend request"));
+    setWindowTitle(tr("IMFriend request", "Title of the window to aceept/deny a friend request"));
 
     QLabel* friendsLabel = new QLabel(tr("Someone wants to make friends with you"), this);
     QLabel* userIdLabel = new QLabel(tr("User ID:"), this);
     QLineEdit* userIdEdit = new QLineEdit(userId, this);
     userIdEdit->setCursorPosition(0);
     userIdEdit->setReadOnly(true);
-    QLabel* messageLabel = new QLabel(tr("Friend request message:"), this);
+    QLabel* messageLabel = new QLabel(tr("IMFriend request message:"), this);
     QPlainTextEdit* messageEdit = new QPlainTextEdit(message, this);
     messageEdit->setReadOnly(true);
 

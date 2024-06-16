@@ -11,12 +11,11 @@
  */
 
 #include "toxid.h"
-#include "toxpk.h"
+#include "FriendId.h"
 
 #include <QDebug>
 #include <QRegularExpression>
 #include <cstdint>
-//#include <tox/tox.h>
 
 // Tox doesn't publicly define these
 #define NOSPAM_BYTES 4
@@ -163,14 +162,14 @@ const uint8_t *ToxId::getBytes() const {
  * @brief Gets the Public Key part of the ToxID
  * @return Public Key of the ToxID
  */
-ToxPk ToxId::getPublicKey() const {
+FriendId ToxId::getPublicKey() const {
 //  auto const pkBytes = toxId.left(TOX_PUBLIC_KEY_SIZE);
 //  if (pkBytes.isEmpty()) {
 //    return ToxPk{};
 //  } else {
 //    return ToxPk{pkBytes};
 //  }
-    return ToxPk{toxId};
+    return FriendId{toxId};
 }
 
 /**

@@ -4,7 +4,7 @@ set(ORGANIZATION_DOMAIN "okstar.org")
 set(ORGANIZATION_HOME "https://github.com/okstar-org")
 set(APPLICATION_ID "org.okstar.ok-msg-desktop")
 set(APPLICATION_NAME "OkMSG-Desktop")
-set(APPLICATION_SHORT_NAME "OkMSG")
+set(APPLICATION_ALIAS "OkMSG")
 set(APPLICATION_EXE_NAME "ok-msg-desktop")
 set(OK_SUPPORT_EMAIL "gaojie314@gmail.com")
 set(OK_MAINTAINER ${ORGANIZATION_NAME})
@@ -12,9 +12,10 @@ set(OK_MAINTAINER ${ORGANIZATION_NAME})
 add_definitions(
         -DORGANIZATION_NAME="${ORGANIZATION_NAME}"
         -DORGANIZATION_DOMAIN="${ORGANIZATION_DOMAIN}"
+        -DORGANIZATION_HOME="${ORGANIZATION_HOME}"
         -DAPPLICATION_ID="${APPLICATION_ID}"
         -DAPPLICATION_NAME="${APPLICATION_NAME}"
-        -DAPPLICATION_SHORT_NAME="${APPLICATION_SHORT_NAME}"
+        -DAPPLICATION_ALIAS="${APPLICATION_ALIAS}"
         -DAPPLICATION_EXE_NAME="${APPLICATION_EXE_NAME}"
 )
 
@@ -66,7 +67,5 @@ if (UNIX)
             ${CMAKE_PREFIX_PATH}/include/QtLinuxAccessibilitySupport)
 endif ()
 
-
 # 开启插件（ON/OFF）
 option(ENABLE_PLUGINS "Enable plugins" ON)
-

@@ -4,51 +4,114 @@
  * You can use this software according to the terms and conditions of the Mulan
  * PubL v2. You may obtain a copy of Mulan PubL v2 at:
  *          http://license.coscl.org.cn/MulanPubL-2.0
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
- * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
- * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
- * See the Mulan PubL v2 for more details.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY
+ * KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE. See the
+ * Mulan PubL v2 for more details.
  */
-#ifndef TIMES_H
-#define TIMES_H
+#ifndef OK_BASE_TIMES_H
+#define OK_BASE_TIMES_H
 
 #include <QDateTime>
-#include <sstream>
-#include <string>
+#include <QMap>
+#include <QString>
 
-namespace ok::base {
+namespace base {
+
+inline QString secondsToDHMS(quint32 duration) {
+  QString res;
+  QString cD = "";//
+  quint32 seconds = duration % 60;
+  duration /= 60;
+  quint32 minutes = duration % 60;
+  duration /= 60;
+  quint32 hours = duration % 24;
+  quint32 days = duration / 24;
+
+  // I assume no one will ever have call longer than a month
+  if (days) {
+    return cD +
+           res.asprintf("%dd%02dh %02dm %02ds", days, hours, minutes, seconds);
+  }
+
+  if (hours) {
+    return cD + res.asprintf("%02dh %02dm %02ds", hours, minutes, seconds);
+  }
+
+  if (minutes) {
+    return cD + res.asprintf("%02dm %02ds", minutes, seconds);
+  }
+
+  return cD + res.asprintf("%02ds", seconds);
+}
+
+
+enum class ReadableTime {
+  Today,
+  Yesterday,
+  ThisWeek,
+  ThisMonth,
+  Month1Ago,
+  Month2Ago,
+  Month3Ago,
+  Month4Ago,
+  Month5Ago,
+  LongAgo,
+  Never
+};
+
+static const int LAST_TIME = static_cast<int>(ReadableTime::Never);
+
+inline ReadableTime getTimeBucket(const QDateTime &date) {
+  if (date == QDateTime()) {
+    return ReadableTime::Never;
+  }
+
+  QDate today = QDate::currentDate();
+  // clang-format off
+  const QMap<ReadableTime, QDate> dates {
+        { ReadableTime::Today,     today.addDays(0)    },
+        { ReadableTime::Yesterday, today.addDays(-1)   },
+        { ReadableTime::ThisWeek,  today.addDays(-6)   },
+        { ReadableTime::ThisMonth, today.addMonths(-1) },
+        { ReadableTime::Month1Ago, today.addMonths(-2) },
+        { ReadableTime::Month2Ago, today.addMonths(-3) },
+        { ReadableTime::Month3Ago, today.addMonths(-4) },
+        { ReadableTime::Month4Ago, today.addMonths(-5) },
+        { ReadableTime::Month5Ago, today.addMonths(-6) },
+    };
+  // clang-format on
+
+  for (ReadableTime time : dates.keys()) {
+    if (dates[time] <= date.date()) {
+      return time;
+    }
+  }
+
+  return ReadableTime::LongAgo;
+}
 
 class Times {
 public:
-  static QDateTime now(){
-    return QDateTime::currentDateTime();
+  inline static QDateTime now() { return QDateTime::currentDateTime(); }
+
+  static QString formatTime(const QDateTime& dateTime, const QString &fmt) {
+    if(dateTime.isNull()){
+      return {};
+    }
+
+    if(fmt.isNull() || fmt.isEmpty()){
+      return dateTime.toString();
+    }
+
+    return dateTime.toString(fmt);
   }
 
-  static std::string formatTime(int ms) {
-    int s = 1000;
-    int mi = s * 60;
-    int hh = mi * 60;
-    int dd = hh * 24;
-
-    long day = ms / dd;
-    long hour = (ms - day * dd) / hh;
-    long minute = (ms - day * dd - hour * hh) / mi;
-    long second = (ms - day * dd - hour * hh - minute * mi) / s;
-    //        long milliSecond = ms - day * dd - hour * hh - minute * mi -
-    //        second * s;
-
-    //        std::to_string(day)
-
-    //        QString hou = QString::number(hour,10);
-    //        QString min = QString::number(minute,10);
-    //        QString sec = QString::number(second,10);
-    //        QString msec = QString::number(milliSecond,10);
-
-    // qDebug() << "minute:" << min << "second" << sec << "ms" << msec <<endl;
-    std::stringstream ss;
-    ss << std::to_string(hour) << ":" << std::to_string(minute) << ":"
-       << std::to_string(second);
-    return ss.str();
+  inline static qint64 timeUntilTomorrow() {
+    QDateTime now = QDateTime::currentDateTime();
+    QDateTime tomorrow = now.addDays(1); // Tomorrow.
+    tomorrow.setTime(QTime());           // Midnight.
+    return now.msecsTo(tomorrow);
   }
 };
 

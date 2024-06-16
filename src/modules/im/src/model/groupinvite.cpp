@@ -18,7 +18,8 @@
  * @brief This class contains information needed to create a group invite
  */
 
-GroupInvite::GroupInvite(QString groupId, QString friendId, uint8_t inviteType,
+GroupInvite::GroupInvite(QString groupId, QString friendId,
+                         ConferenceType inviteType,
                          const QByteArray &data)
     : groupId{groupId}, friendId{friendId}, type{inviteType}, invite{data},
       date{QDateTime::currentDateTime()} {}
@@ -32,7 +33,7 @@ const QString& GroupInvite::getGroupId() const { return groupId; }
 
 const QString& GroupInvite::getFriendId() const { return friendId; }
 
-uint8_t GroupInvite::getType() const { return type; }
+ConferenceType GroupInvite::getType() const { return type; }
 
 QByteArray GroupInvite::getInvite() const { return invite; }
 

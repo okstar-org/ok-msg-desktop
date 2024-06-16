@@ -19,7 +19,7 @@
 class Core;
 class QTimer;
 class QString;
-class UpdateCheck;
+
 class QLayoutItem;
 
 namespace Ui {
@@ -30,7 +30,7 @@ class AboutForm : public GenericForm
 {
     Q_OBJECT
 public:
-    AboutForm(UpdateCheck* updateCheck);
+    AboutForm();
     ~AboutForm();
     virtual QString getFormName() final override
     {
@@ -50,7 +50,6 @@ private:
 private:
     Ui::AboutSettings* bodyUI;
     QTimer* progressTimer;
-    UpdateCheck* updateCheck;
     QMetaObject::Connection linkConnection;
 };
 

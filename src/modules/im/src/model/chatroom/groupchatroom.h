@@ -17,33 +17,34 @@
 
 #include <QObject>
 
+#include "src/core/groupid.h"
+
 class IDialogsManager;
 class Group;
-class ToxPk;
+class FriendId;
 
-class GroupChatroom : public QObject, public Chatroom
+class GroupChatroom : public Chatroom
 {
     Q_OBJECT
 public:
-    GroupChatroom(Group* group, IDialogsManager* dialogsManager);
+    GroupChatroom(const GroupId* groupId, IDialogsManager* dialogsManager);
+    ~GroupChatroom();
 
-    Contact* getContact() override;
-
-    Group* getGroup();
+    virtual const ContactId& getContactId() override;
 
     bool hasNewMessage() const;
     void resetEventFlags();
 
-    bool friendExists(const ToxPk& pk);
-    void inviteFriend(const ToxPk& pk);
+    bool friendExists(const FriendId& pk);
+    void inviteFriend(const FriendId& pk);
 
-    bool possibleToOpenInNewWindow() const;
-    bool canBeRemovedFromWindow() const;
-    void removeGroupFromDialogs();
+
+
 
 private:
-    Group* group{nullptr};
-    IDialogsManager* dialogsManager{nullptr};
+   const GroupId* groupId{nullptr};
+
+   IDialogsManager* dialogsManager{nullptr};
 };
 
 #endif /* GROUP_CHATROOM_H */

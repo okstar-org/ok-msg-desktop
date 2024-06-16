@@ -12,8 +12,8 @@
 
 #include "groupchatroom.h"
 
+#include "src/core/FriendId.h"
 #include "src/core/core.h"
-#include "src/core/toxpk.h"
 #include "src/friendlist.h"
 #include "src/model/dialogs/idialogsmanager.h"
 #include "src/model/friend.h"
@@ -21,67 +21,50 @@
 #include "src/model/status.h"
 #include "src/persistence/settings.h"
 
-GroupChatroom::GroupChatroom(Group* group, IDialogsManager* dialogsManager)
-    : group{group}
+GroupChatroom::GroupChatroom(const GroupId* groupId_, IDialogsManager* dialogsManager)
+    : groupId{groupId_}
     , dialogsManager{dialogsManager}
 {
 }
 
-Contact* GroupChatroom::getContact()
+GroupChatroom::~GroupChatroom()
 {
-    return group;
+    qDebug() << __func__;
 }
 
-Group* GroupChatroom::getGroup()
+const ContactId &GroupChatroom::getContactId()
 {
-    return group;
+ return *groupId;
 }
+
 
 bool GroupChatroom::hasNewMessage() const
 {
-    return group->getEventFlag();
+   return false;
 }
 
 void GroupChatroom::resetEventFlags()
 {
-    group->setEventFlag(false);
-    group->setMentionedFlag(false);
+//    group->setEventFlag(false);
+//    group->setMentionedFlag(false);
 }
 
-bool GroupChatroom::friendExists(const ToxPk& pk)
+bool GroupChatroom::friendExists(const FriendId& pk)
 {
     return FriendList::findFriend(pk) != nullptr;
 }
 
-void GroupChatroom::inviteFriend(const ToxPk& pk)
+void GroupChatroom::inviteFriend(const FriendId& pk)
 {
     const Friend* frnd = FriendList::findFriend(pk);
     const auto friendId = frnd->getId();
-    const auto groupId = group->getId();
+
     const auto canInvite = Status::isOnline(frnd->getStatus());
 
     if (canInvite) {
-        Core::getInstance()->groupInviteFriend(friendId, groupId);
+        Core::getInstance()->groupInviteFriend(friendId.toString(), groupId->getId());
     }
 }
 
-bool GroupChatroom::possibleToOpenInNewWindow() const
-{
-    const auto groupId = group->getPersistentId();
-    const auto dialogs = dialogsManager->getGroupDialogs(groupId);
-    return !dialogs || dialogs->chatroomCount() > 1;
-}
 
-bool GroupChatroom::canBeRemovedFromWindow() const
-{
-    const auto groupId = group->getPersistentId();
-    const auto dialogs = dialogsManager->getGroupDialogs(groupId);
-    return dialogs && dialogs->hasContact(groupId);
-}
 
-void GroupChatroom::removeGroupFromDialogs()
-{
-    const auto groupId = group->getPersistentId();
-    auto dialogs = dialogsManager->getGroupDialogs(groupId);
-    dialogs->removeGroup(groupId);
-}

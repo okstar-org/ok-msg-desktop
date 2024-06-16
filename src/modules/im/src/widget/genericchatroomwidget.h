@@ -14,40 +14,37 @@
 #define GENERICCHATROOMWIDGET_H
 
 #include "genericchatitemwidget.h"
+#include "src/model/message.h"
+#include "src/model/status.h"
 
 class CroppingLabel;
-class MaskablePixmapWidget;
+
 class QVBoxLayout;
 class QHBoxLayout;
 class ContentLayout;
 class Friend;
 class Group;
 class Contact;
+
+
+
 class GenericChatroomWidget : public GenericChatItemWidget
 {
     Q_OBJECT
 public:
-    explicit GenericChatroomWidget(bool compact, QWidget* parent = nullptr);
+    explicit GenericChatroomWidget(ChatType chatType, const ContactId &cid, QWidget* parent = nullptr);
 
 public slots:
     virtual void setAsActiveChatroom() = 0;
     virtual void setAsInactiveChatroom() = 0;
-    virtual void updateStatusLight() = 0;
+
+
     virtual void resetEventFlags() = 0;
     virtual QString getStatusString() const = 0;
-    virtual const Contact* getContact() const = 0;
-    virtual const Friend* getFriend() const
-    {
-        return nullptr;
-    }
-    virtual Group* getGroup() const
-    {
-        return nullptr;
-    }
+     const ContactId& getContactId() const {return contactId;};
 
     virtual bool eventFilter(QObject*, QEvent*) final override;
 
-    bool isActive();
 
     void setName(const QString& name);
     void setStatusMsg(const QString& status);
@@ -59,6 +56,7 @@ public slots:
     void activate();
     void compactChange(bool compact);
 
+
 signals:
     void chatroomWidgetClicked(GenericChatroomWidget* widget);
     void newWindowOpened(GenericChatroomWidget* widget);
@@ -68,16 +66,18 @@ protected:
     void mouseReleaseEvent(QMouseEvent* event) override;
     void enterEvent(QEvent* e) override;
     void leaveEvent(QEvent* e) override;
-    void setActive(bool active);
+
 
 protected:
+
     QPoint dragStartPos;
     QColor lastColor;
     QHBoxLayout* mainLayout = nullptr;
     QVBoxLayout* textLayout = nullptr;
-    MaskablePixmapWidget* avatar;
-//    CroppingLabel* statusMessageLabel;
-    bool active;
+
+
+
+    ContactId contactId;
 };
 
 #endif // GENERICCHATROOMWIDGET_H

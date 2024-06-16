@@ -173,11 +173,106 @@ which may lead to problems with video calls.</source>
         <translation>贡献者</translation>
     </message>
 </context>
+
+<context>
+<name>AboutGroupForm</name>
+<message>
+<source>Send message</source>
+<translation>发送消息</translation>
+</message>
+<message>
+<source>Name:</source>
+<translation>名称：</translation>
+</message>
+<message>
+<source>Alias:</source>
+<translation>备注名：</translation>
+</message>
+<message>
+<source>Default directory to save files:</source>
+<translation>默认文件保存目录：</translation>
+</message>
+<message>
+<source>Id:</source>
+<translation>Id：</translation>
+</message>
+<message>
+<source>Title:</source>
+<translation>主题：</translation>
+</message>
+<message>
+<source>Description:</source>
+<translation>描述：</translation>
+</message>
+<message>
+<source>Occupants:</source>
+<translation>成员数：</translation>
+</message>
+<message>
+<source>Auto accept for this contact is disabled</source>
+<translation>已针对这个联系人禁用了自动接收</translation>
+</message>
+<message>
+<source>Auto accept call:</source>
+<translation>自动接听呼叫：</translation>
+</message>
+<message>
+<source>Manual</source>
+<translation>手动</translation>
+</message>
+<message>
+<source>Audio</source>
+<translation>音频</translation>
+</message>
+<message>
+<source>Audio + Video</source>
+<translation>音视频</translation>
+</message>
+<message>
+<source>Notes</source>
+<translation>附注</translation>
+</message>
+
+<message>
+<source>Send notice:</source>
+<translation>发送公告：</translation>
+</message>
+
+
+<message>
+<source>History removed</source>
+<translation>已删除历史记录</translation>
+</message>
+
+<message>
+<source>Choose an auto accept directory</source>
+<extracomment>popup title</extracomment>
+<translation>选择自动接受目录</translation>
+</message>
+
+<message>
+<source>Are you sure to clear the history?</source>
+    <translation>您确定要移除聊天记录吗？</translation>
+</message>
+<message>
+<source>Failed to remove the history</source>
+<translation>移除聊天记录失败！</translation>
+</message>
+<message>
+<source>Clear history:</source>
+<translation>清空历史记录：</translation>
+</message>
+<message>
+<source>Clear</source>
+<translation>清空</translation>
+</message>
+</context>
+
 <context>
     <name>AboutFriendForm</name>
     <message>
-        <source>Dialog</source>
-        <translation>对话框</translation>
+        <source>Send message</source>
+        <translation>发送消息</translation>
     </message>
     <message>
         <source>username</source>
@@ -188,12 +283,8 @@ which may lead to problems with video calls.</source>
         <translation>状态消息</translation>
     </message>
     <message>
-        <source>Used aliases:</source>
-        <translation>已用的别名：</translation>
-    </message>
-    <message>
-        <source>HISTORY OF ALIASES</source>
-        <translation>曾用的别名</translation>
+        <source>Alias:</source>
+        <translation>备注名：</translation>
     </message>
     <message>
         <source>Automatically accept files from contact if set</source>
@@ -261,12 +352,8 @@ which may lead to problems with video calls.</source>
         <translation>选择自动接受目录</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the public key of your friend, use it to verify their identity via another channel. You can not send this to other people so they can add this contact.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;这是您朋友的公钥，使用它通过其它渠道来验证朋友的身份。您不能将该密钥发送给其他人以使他们可以添加该朋友为联系人。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Public key (not ToxID):</source>
-        <translation>公钥（不是 ToxID）：</translation>
+        <source>Account:</source>
+        <translation>帐号：</translation>
     </message>
     <message>
         <source>Confirmation</source>
@@ -280,6 +367,14 @@ which may lead to problems with video calls.</source>
         <source>Failed to remove chat history with %1!</source>
         <translation>移除与 %1 的聊天记录失败！</translation>
     </message>
+    <message>
+        <source>Clear history:</source>
+        <translation>清空历史记录：</translation>
+    </message>
+<message>
+<source>Clear</source>
+<translation>清空</translation>
+</message>
 </context>
 <context>
     <name>AboutSettings</name>
@@ -312,8 +407,21 @@ which may lead to problems with video calls.</source>
         <translation>qTox 已经是最新的 ✓</translation>
     </message>
 </context>
+
+<context>
+    <name>FriendForm</name>
+    <message>
+        <source>Add</source>
+        <translation>添加</translation>
+    </message>
+</context>
+
 <context>
     <name>AddFriendForm</name>
+    <message>
+        <source>Search</source>
+        <translation>搜索</translation>
+    </message>
     <message>
         <source>Add Friends</source>
         <translation>添加好友</translation>
@@ -351,8 +459,8 @@ which may lead to problems with video calls.</source>
         <translation>Tox ID，76 位十六进制字符或者类似于 name@example.com</translation>
     </message>
     <message>
-        <source>Type in Tox ID of your friend</source>
-        <translation>输入好友的 Tox ID</translation>
+        <source>Account/E-Mail/Phone Number</source>
+        <translation>帐号/邮箱/手机号</translation>
     </message>
     <message>
         <source>Friend request message</source>
@@ -590,6 +698,15 @@ which may lead to problems with video calls.</source>
         <translation>启用局域网发现</translation>
     </message>
 </context>
+
+<context>
+    <name>CallDurationForm</name>
+    <message>
+        <source>Call duration: </source>
+        <translation>通话时长： </translation>
+    </message>
+</context>
+
 <context>
     <name>ChatForm</name>
     <message>
@@ -955,36 +1072,7 @@ so you can save the file on windows.</source>
         <translation>永不</translation>
     </message>
 </context>
-<context>
-    <name>FriendRequestDialog</name>
-    <message>
-        <source>Friend request</source>
-        <comment>Title of the window to aceept/deny a friend request</comment>
-        <translation>好友请求</translation>
-    </message>
-    <message>
-        <source>Someone wants to make friends with you</source>
-        <translation>有用户想要添加您为好友</translation>
-    </message>
-    <message>
-        <source>User ID:</source>
-        <translation>用户 ID ：</translation>
-    </message>
-    <message>
-        <source>Friend request message:</source>
-        <translation>好友请求消息：</translation>
-    </message>
-    <message>
-        <source>Accept</source>
-        <comment>Accept a friend request</comment>
-        <translation>同意</translation>
-    </message>
-    <message>
-        <source>Reject</source>
-        <comment>Reject a friend request</comment>
-        <translation>拒绝</translation>
-    </message>
-</context>
+
 <context>
     <name>FriendWidget</name>
     <message>
@@ -997,10 +1085,6 @@ so you can save the file on windows.</source>
         <translation>在新窗口打开</translation>
     </message>
     <message>
-        <source>Set alias...</source>
-        <translation>添加备注名...</translation>
-    </message>
-    <message>
         <source>Auto accept files from this friend</source>
         <comment>context menu entry</comment>
         <translation>自动接收此好友发送的文件</translation>
@@ -1009,26 +1093,15 @@ so you can save the file on windows.</source>
         <source>Show details</source>
         <translation>查看详情</translation>
     </message>
-    <message>
-        <source>Online</source>
-        <translation>在线</translation>
-    </message>
-    <message>
-        <source>Away</source>
-        <translation>离开</translation>
-    </message>
-    <message>
-        <source>Busy</source>
-        <translation>忙碌</translation>
-    </message>
-    <message>
-        <source>Offline</source>
-        <translation>离线</translation>
-    </message>
+
     <message>
         <source>Choose an auto accept directory</source>
         <comment>popup title</comment>
         <translation>选择默认接收目录</translation>
+    </message>
+    <message>
+    <source>Confirmation</source>
+<translation>确认框</translation>
     </message>
     <message>
         <source>Remove friend</source>
@@ -1057,8 +1130,8 @@ so you can save the file on windows.</source>
         <translation>到新建圈子</translation>
     </message>
     <message>
-        <source>Remove from circle &apos;%1&apos;</source>
-        <translation>从圈子 &apos;%1&apos; 中移除</translation>
+        <source>Are you sure to remove %1 ?</source>
+        <translation>您确定删除好友 &apos;%1&apos; ？</translation>
     </message>
     <message>
         <source>Move  to circle &quot;%1&quot;</source>
@@ -1260,6 +1333,85 @@ instead of system taskbar.</source>
         <translation>导出到文件</translation>
     </message>
 </context>
+    <context>
+<name>ChatWidget</name>
+<message>
+<source>Online</source>
+<translation>在线</translation>
+</message>
+<message>
+<source>Away</source>
+<translation>离开</translation>
+</message>
+<message>
+<source>Busy</source>
+<translation>忙碌</translation>
+</message>
+<message>
+<source>Offline</source>
+<translation>离线</translation>
+</message>
+<message>
+<source>By Name</source>
+<translation>按名称</translation>
+</message>
+<message>
+<source>By Activity</source>
+<translation>按活动日期</translation>
+</message>
+<message>
+<source>All</source>
+<translation>全部</translation>
+</message>
+<message>
+<source>Friends</source>
+<translation>好友</translation>
+</message>
+<message>
+<source>Groups</source>
+<translation>群组</translation>
+</message>
+<message>
+<source>Search Contacts</source>
+<translation>搜索联系人</translation>
+</message>
+
+<message>
+<source>Filter...</source>
+<translation>筛选...</translation>
+</message>
+
+
+</context>
+
+<context>
+<name>GenericChatItemWidget</name>
+<message>
+<source>I:</source>
+<translation>我：</translation>
+</message>
+<message>
+<source>:</source>
+<translation>：</translation>
+</message>
+</context>
+
+    <context>
+<name>MessageSessionWidget</name>
+
+
+
+<message>
+<source>Delete the session</source>
+<translation>删除该会话</translation>
+</message>
+
+<message>
+<source>Show details</source>
+<translation>显示详情</translation>
+</message>
+    </context>
+
 <context>
     <name>GenericNetCamView</name>
     <message>
@@ -1366,12 +1518,8 @@ instead of system taskbar.</source>
 <context>
     <name>GroupWidget</name>
     <message>
-        <source>Remove chat from this window</source>
-        <translation>从这个窗口中删除会话</translation>
-    </message>
-    <message>
-        <source>Set title...</source>
-        <translation>设置名称...</translation>
+        <source>Are you sure to quit %1 chat group?</source>
+        <translation>您确定退出群聊 %1 吗？</translation>
     </message>
     <message>
         <source>Quit group</source>
@@ -1433,6 +1581,11 @@ Share it with your friends to communicate.</source>
         <comment>import profile button</comment>
         <translation>登出</translation>
     </message>
+<message>
+<source>Exit</source>
+<comment>Tray action menu to exit tox</comment>
+<translation>退出</translation>
+</message>
     <message>
         <source>Remove password</source>
         <translation>删除密码</translation>
@@ -1907,6 +2060,10 @@ You may want to create one.</source>
         <translation>打开文件传输历史记录</translation>
     </message>
     <message>
+        <source>Chat</source>
+        <translation>消息</translation>
+    </message>
+    <message>
         <source>Settings</source>
         <translation>设置</translation>
     </message>
@@ -2038,8 +2195,8 @@ If you are getting spammed with friend requests, change the NoSpam.</source>
 <context>
     <name>Profile</name>
     <message>
-        <source>Failed to derive key from password, the profile won&apos;t use the new password.</source>
-        <translation>从密码获取密钥失败，该帐户将不会使用新的密码。</translation>
+        <source>Couldn't open your chat logs, they will be exit.</source>
+        <translation>无法打开聊天历史，程序将退出。</translation>
     </message>
     <message>
         <source>Couldn&apos;t change password on the database, it might be corrupted or use the old password.</source>
@@ -3001,30 +3158,7 @@ This ID includes the NoSpam code (in blue), and the checksum (in gray).</source>
             <numerusform>%n 个新群聊邀请</numerusform>
         </translation>
     </message>
-    <message>
-        <source>By Name</source>
-        <translation>按名称</translation>
-    </message>
-    <message>
-        <source>By Activity</source>
-        <translation>按活动日期</translation>
-    </message>
-    <message>
-        <source>All</source>
-        <translation>全部</translation>
-    </message>
-    <message>
-        <source>Friends</source>
-        <translation>好友</translation>
-    </message>
-    <message>
-        <source>Search Contacts</source>
-        <translation>搜索联系人</translation>
-    </message>
-    <message>
-        <source>Filter...</source>
-        <translation>筛选...</translation>
-    </message>
+
     <message>
         <source>File</source>
         <translation>文件名</translation>
@@ -3033,6 +3167,10 @@ This ID includes the NoSpam code (in blue), and the checksum (in gray).</source>
         <source>Edit</source>
         <translation>编辑</translation>
     </message>
+<message>
+<source>Contact</source>
+<translation>通讯录</translation>
+</message>
     <message>
         <source>Contacts</source>
         <translation>联系人</translation>
@@ -3082,6 +3220,34 @@ This ID includes the NoSpam code (in blue), and the checksum (in gray).</source>
         <comment>title of the window</comment>
         <translation>设置</translation>
     </message>
+<message>
+<source>Chat</source>
+<translation>消息</translation>
+</message>
+<message>
+<source>By Name</source>
+<translation>按名称</translation>
+</message>
+<message>
+<source>By Activity</source>
+<translation>按活动日期</translation>
+</message>
+<message>
+<source>All</source>
+<translation>全部</translation>
+</message>
+<message>
+<source>Friends</source>
+<translation>好友</translation>
+</message>
+<message>
+<source>Search Contacts</source>
+<translation>搜索联系人</translation>
+</message>
+<message>
+<source>Filter...</source>
+<translation>筛选...</translation>
+</message>
     <message>
         <source>My profile</source>
         <comment>title of the window</comment>

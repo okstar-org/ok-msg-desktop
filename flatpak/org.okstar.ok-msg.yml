@@ -88,17 +88,12 @@ modules:
         url: https://github.com/sqlcipher/sqlcipher/archive/refs/tags/v4.5.6.tar.gz
         sha256: e4a527e38e67090c1d2dc41df28270d16c15f7ca5210a3e7ec4c4b8fda36e28f
 
-  - name: webrtc
-    builddir: false
-    buildsystem: simple
-    build-commands:
-      - mv libwebrtc.a ${FLATPAK_DEST}/lib
-      - mkdir ${FLATPAK_DEST}/include/webrtc
-      - mv * ${FLATPAK_DEST}/include/webrtc/
+  - name: ok-rtc
+    buildsystem: cmake-ninja
     sources:
-      - type: archive
-        url: https://github.com/crow-misia/libwebrtc-bin/releases/download/121.6167.5.0/libwebrtc-linux-x64.tar.xz
-        sha256: d3cd2a45fe790fa1d91703d10550c9129c8bd6f3adf8a257cdc32f350ec69f27
+      - type: git
+        url: https://github.com/okstar-org/ok-rtc.git
+        branch: master
 
   - name: ok-gloox
     buildsystem: cmake-ninja

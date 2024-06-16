@@ -38,6 +38,7 @@ public:
         ThemeMediumDark,
         ThemeMedium,
         ThemeLight,
+        ThemeHighlight,
         Action,
         Link,
         SearchHighlighted,

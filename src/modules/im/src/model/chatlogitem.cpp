@@ -33,46 +33,28 @@ struct ChatLogItemDeleter
         delete static_cast<T*>(ptr);
     }
 };
-
-QString resolveToxPk(const ToxPk& pk)
-{
-    Friend* f = FriendList::findFriend(pk);
-    if (f) {
-        return f->getDisplayedName();
-    }
-
-    for (Group* it : GroupList::getAllGroups()) {
-        QString res = it->resolveToxId(pk);
-        if (!res.isEmpty()) {
-            return res;
-        }
-    }
-
-    return pk.getUsername();
-}
-
 } // namespace
 
-ChatLogItem::ChatLogItem(ToxPk sender_, QString displayName, ChatLogFile file_)
+ChatLogItem::ChatLogItem(FriendId sender_, QString displayName, ChatLogFile file_)
     : ChatLogItem(sender_, displayName, ContentType::fileTransfer,
                   ContentPtr(new ChatLogFile(std::move(file_)),
                              ChatLogItemDeleter<ChatLogFile>::doDelete))
 {}
 
-ChatLogItem::ChatLogItem(ToxPk sender_, QString displayName, ChatLogMessage message_)
+ChatLogItem::ChatLogItem(FriendId sender_, QString displayName, ChatLogMessage message_)
     : ChatLogItem(sender_, displayName, ContentType::message,
                   ContentPtr(new ChatLogMessage(std::move(message_)),
                              ChatLogItemDeleter<ChatLogMessage>::doDelete))
 {}
 
-ChatLogItem::ChatLogItem(ToxPk sender_, QString displayName,  ContentType contentType_, ContentPtr content_)
+ChatLogItem::ChatLogItem(FriendId sender_, QString displayName,  ContentType contentType_, ContentPtr content_)
     : sender(std::move(sender_))
     , displayName(displayName)
     , contentType(contentType_)
     , content(std::move(content_))
 {}
 
-const ToxPk& ChatLogItem::getSender() const
+const FriendId& ChatLogItem::getSender() const
 {
     return sender;
 }
