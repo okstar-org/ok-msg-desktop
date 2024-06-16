@@ -339,7 +339,7 @@ void ChatFormHeader::updateCallButtons()
 
 void ChatFormHeader::updateCallButtons(Status::Status status)
 {
-    qDebug() << __func__ << (int)status;
+//    qDebug() << __func__ << (int)status;
 
       CoreAV *av = CoreAV::getInstance();
       const bool audio = av->isCallActive(&contactId);

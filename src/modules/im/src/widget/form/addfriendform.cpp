@@ -153,7 +153,7 @@ void AddFriendForm::addFriend(const QString &idText, const QString &nick) {
     return;
   }
 
-  if (friendId == Core::getInstance()->getSelfPublicKey()) {
+  if (friendId == Core::getInstance()->getSelfId()) {
     // When trying to add your own Ok ID as friend
     GUI::showWarning(tr("Couldn't add friend"), tr("You can't add yourself as a friend!"));
     return;
@@ -176,7 +176,7 @@ void AddFriendForm::setIdFromClipboard() {
   const QString trimmedId = clipboard->text().trimmed();
   const QString strippedId = getToxId(trimmedId);
   const Core *core = Core::getInstance();
-  const bool isSelf = ToxId::isToxId(strippedId) && ToxId(strippedId) != core->getSelfId();
+  const bool isSelf = ToxId::isToxId(strippedId) && ToxId(strippedId) != core->getSelfPeerId();
   if (!strippedId.isEmpty() && ToxId::isToxId(strippedId) && isSelf) {
     //    toxId.setText(trimmedId);
   }

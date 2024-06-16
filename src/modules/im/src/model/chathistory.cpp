@@ -132,7 +132,7 @@ QList<Message> ChatHistory::getLastTextMessage(uint size)
 {
 
     QList<Message> list;
-    auto selfPk = coreIdHandler.getSelfPublicKey();
+    auto selfPk = coreIdHandler.getSelfId();
     auto messages = history->getLastMessageForFriend(selfPk, FriendId{f}, size, HistMessageContentType::message);
     for(auto& i: messages){
             Message msg={.isAction=false,
@@ -190,7 +190,7 @@ SearchResult ChatHistory::searchBackward(SearchPos startIdx, const QString& phra
         history->getDateWhereFindPhrase(f.toString(), earliestMessageDate, phrase,
                                         parameter);
 
-    auto loadIdx = history->getNumMessagesForFriendBeforeDate(coreIdHandler.getSelfPublicKey(), FriendId{f}, dateWherePhraseFound);
+    auto loadIdx = history->getNumMessagesForFriendBeforeDate(coreIdHandler.getSelfId(), FriendId{f}, dateWherePhraseFound);
     loadHistoryIntoSessionChatLog(ChatLogIdx(loadIdx));
 
     // Reset search pos to the message we just loaded to avoid a double search
@@ -293,7 +293,7 @@ void ChatHistory::onFileTransferBrokenUnbroken(const FriendId& sender, const Tox
 void ChatHistory::onMessageReceived(const FriendId& sender, const Message & message)
 {
     qDebug()<<__func__<<"sender:"<<sender.toString()<<" from:"<<message.from;
-    auto selfId = coreIdHandler.getSelfId().toString();
+    auto selfId = coreIdHandler.getSelfPeerId().toString();
 
     if(selfId == message.from){
       qWarning()<<"Is self message.";
@@ -316,7 +316,7 @@ void ChatHistory::onMessageReceived(const FriendId& sender, const Message & mess
 void ChatHistory::onMessageSent(DispatchedMessageId id, const Message & message)
 {
     if (canUseHistory()) {
-        auto selfPk = coreIdHandler.getSelfPublicKey().toString();
+        auto selfPk = coreIdHandler.getSelfId().toString();
         auto friendPk = f.toString();
 
         auto content = message.content;
@@ -383,7 +383,7 @@ void ChatHistory::loadHistoryIntoSessionChatLog(ChatLogIdx start) const
     // conversion should be safe
     assert(getFirstIdx() == ChatLogIdx(0));
 
-    auto messages = history->getMessagesForFriend(core->getSelfPublicKey(), FriendId(f), start.get(), end.get());
+    auto messages = history->getMessagesForFriend(core->getSelfId(), FriendId(f), start.get(), end.get());
     qDebug() <<"load message for:"<< f.toString() <<"messages:" << messages.size();
 
 //  assert(messages.size() == end.get() - start.get());
@@ -459,7 +459,7 @@ void ChatHistory::loadHistoryIntoSessionChatLog(ChatLogIdx start) const
 void ChatHistory::dispatchUnsentMessages(IMessageDispatcher& messageDispatcher)
 {
     auto core = Core::getInstance();
-    auto unsentMessages = history->getUndeliveredMessagesForFriend(core->getSelfPublicKey(), FriendId(f));
+    auto unsentMessages = history->getUndeliveredMessagesForFriend(core->getSelfId(), FriendId(f));
     for (auto& message : unsentMessages) {
         if(message.type != HistMessageContentType::message)
             continue;
@@ -527,7 +527,7 @@ bool ChatHistory::canUseHistory() const
 ChatLogIdx ChatHistory::getInitialChatLogIdx() const
 {
     if (canUseHistory()) {
-        return ChatLogIdx(history->getNumMessagesForFriend(coreIdHandler.getSelfPublicKey(), FriendId(f)));
+        return ChatLogIdx(history->getNumMessagesForFriend(coreIdHandler.getSelfId(), FriendId(f)));
     }
     return ChatLogIdx(0);
 }

@@ -110,11 +110,18 @@ void Group::setPeerCount(uint32_t count)
  * @return PKs and names of all peers, including our own PK and name
  */
 const QMap<QString, QString> &Group::getPeerList() const {
-  return peerDisplayNames;
+    return peerDisplayNames;
+}
+
+QString Group::getPeerDisplayName(const QString &resource)
+{
+   return peerDisplayNames.value(resource, resource);
 }
 
 void Group::addPeer(const GroupOccupant &occ) {
-  peerDisplayNames[occ.nick] = occ.nick;
+    qDebug() << __func__ << occ.jid << occ.nick ;
+
+  peerDisplayNames[ToxPeer(occ.jid).resource] = occ.nick;
 
   //判断成员是否为自己
   auto core = Core::getInstance();
@@ -123,7 +130,6 @@ void Group::addPeer(const GroupOccupant &occ) {
       role = parseRole(occ.role);
       affiliation=parseAffiliation(occ.affiliation);
       statusCodes = occ.codes;
-
       emit privilegesChanged(role, affiliation, statusCodes);
   }
 }

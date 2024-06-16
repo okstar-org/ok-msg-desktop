@@ -169,9 +169,7 @@ void ChatWidget::connectToCore(Core *core) {
   connect(core, &Core::friendTypingChanged, this, &ChatWidget::onFriendTypingChanged);
   connect(core, &Core::receiptRecieved, this, &ChatWidget::onReceiptReceived);
 
-  connect(core, &Core::groupAdded, this, &ChatWidget::onGroupJoined);
 
-  connect(core, &Core::groupInviteReceived, this, &ChatWidget::onGroupInviteReceived);
   connect(core, &Core::groupMessageReceived, this, &ChatWidget::onGroupMessageReceived);
   connect(core, &Core::groupPeerlistChanged, this, &ChatWidget::onGroupPeerListChanged);
   connect(core, &Core::groupPeerSizeChanged, this, &ChatWidget::onGroupPeerSizeChanged);
@@ -287,7 +285,9 @@ void ChatWidget::onFriendStatusMessageChanged(const FriendId &friendPk, const QS
 
 void ChatWidget::onFriendTypingChanged(const FriendId &friendId, bool isTyping) { sessionListWidget->setFriendTyping(friendId, isTyping); }
 
-void ChatWidget::onGroupAdded(const Group *g) { sessionListWidget->addGroup(g); }
+void ChatWidget::onGroupAdded(const Group *g) {
+    sessionListWidget->addGroup(g);
+}
 
 void ChatWidget::onGroupRemoved(const Group *g) { sessionListWidget->removeGroup(g); }
 
@@ -321,7 +321,7 @@ void ChatWidget::onUsernameSet(const QString &username) {
   ui->nameLabel->setText(username);
   ui->nameLabel->setToolTip(Qt::convertFromPlainText(username, Qt::WhiteSpaceNormal));
 
-  auto self = core->getSelfPublicKey();
+  auto self = core->getSelfId();
   sessionListWidget->setFriendName(self, username);
 
   // for overlength names
@@ -362,42 +362,37 @@ void ChatWidget::onFriendAdded(const Friend *f) { sessionListWidget->addFriend(f
 
 void ChatWidget::onFriendRemoved(const Friend *f) { sessionListWidget->removeFriend(f); }
 
-void ChatWidget::onGroupJoined(const GroupId &groupId, const QString &name) {
-  qDebug() << __func__ << groupId.toString() << name;
-  //  auto group = contactListWidget->addGroup(groupId, name);
-  //  qDebug() << "Created group:" << group << "=>" << groupId.toString();
-}
 
-void ChatWidget::onGroupInviteReceived(const GroupInvite &inviteInfo) {
+//void ChatWidget::onGroupInviteReceived(const GroupInvite &inviteInfo) {
 
-  auto confType = inviteInfo.getType();
-  if (confType == ConferenceType::TEXT || confType == ConferenceType::AV) {
-    if (false
-        // settings.getAutoGroupInvite(f->getPublicKey())
-    ) {
-      onGroupInviteAccepted(inviteInfo);
-    } else {
-      if (!groupInviteForm->addGroupInvite(inviteInfo)) {
-        return;
-      }
+//  auto confType = inviteInfo.getType();
+//  if (confType == ConferenceType::TEXT || confType == ConferenceType::AV) {
+//    if (false
+//        // settings.getAutoGroupInvite(f->getPublicKey())
+//    ) {
+//      onGroupInviteAccepted(inviteInfo);
+//    } else {
+//      if (!groupInviteForm->addGroupInvite(inviteInfo)) {
+//        return;
+//      }
 
-      ++unreadGroupInvites;
-      groupInvitesUpdate();
-      Widget::getInstance()->newMessageAlert(window(), isActiveWindow(), true, true);
+//      ++unreadGroupInvites;
+//      groupInvitesUpdate();
+//      Widget::getInstance()->newMessageAlert(window(), isActiveWindow(), true, true);
 
-#if DESKTOP_NOTIFICATIONS
-      if (settings.getNotifyHide()) {
-        notifier.notifyMessageSimple(DesktopNotify::MessageType::GROUP_INVITE);
-      } else {
-        notifier.notifyMessagePixmap(f->getDisplayedName() + tr(" invites you to join a group."), {}, Nexus::getProfile()->loadAvatar(f->getPublicKey()));
-      }
-#endif
-    }
-  } else {
-    qWarning() << "onGroupInviteReceived: Unknown ConferenceType:" << (int)confType;
-    return;
-  }
-}
+//#if DESKTOP_NOTIFICATIONS
+//      if (settings.getNotifyHide()) {
+//        notifier.notifyMessageSimple(DesktopNotify::MessageType::GROUP_INVITE);
+//      } else {
+//        notifier.notifyMessagePixmap(f->getDisplayedName() + tr(" invites you to join a group."), {}, Nexus::getProfile()->loadAvatar(f->getPublicKey()));
+//      }
+//#endif
+//    }
+//  } else {
+//    qWarning() << "onGroupInviteReceived: Unknown ConferenceType:" << (int)confType;
+//    return;
+//  }
+//}
 
 void ChatWidget::onGroupInviteAccepted(const GroupInvite &inviteInfo) {
   const QString groupId = core->joinGroupchat(inviteInfo);
@@ -453,7 +448,7 @@ void ChatWidget::onGroupPeerStatusChanged(const QString &groupnumber, const Grou
   }
 
   g->addPeer(go);
-  //  g->regeneratePeerList();
+
 }
 
 void ChatWidget::onGroupTitleChanged(QString groupnumber, const QString &author, const QString &title) {
@@ -516,12 +511,11 @@ void ChatWidget::onGroupClicked() {
   auto &settings = Settings::getInstance();
 
   //    hideMainForms(nullptr);
-  if (!groupInviteForm) {
-    groupInviteForm = new GroupInviteForm;
-
-    connect(groupInviteForm, &GroupInviteForm::groupCreate, core, &Core::createGroup);
-  }
-  groupInviteForm->show(contentLayout);
+//  if (!groupInviteForm) {
+//    groupInviteForm = new GroupInviteForm;
+//    connect(groupInviteForm, &GroupInviteForm::groupCreate, core, &Core::createGroup);
+//  }
+//  groupInviteForm->show(contentLayout);
   //    setWindowTitle(fromDialogType(DialogType::GroupDialog));
   //    setActiveToolMenuButton(ActiveToolMenuButton::GroupButton);
 }

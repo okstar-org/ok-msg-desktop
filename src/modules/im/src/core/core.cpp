@@ -49,6 +49,8 @@
 
 #include <src/persistence/profile.h>
 
+#include <lib/messenger/IMFriend.h>
+
 const QString Core::TOX_EXT = ".tox";
 
 #define ASSERT_CORE_THREAD assert(QThread::currentThread() == coreThread.get())
@@ -901,7 +903,7 @@ void Core::setPassword(const QString &password) {
 /**
  * @brief Returns our Ok ID
  */
-ToxId Core::getSelfId() const {
+ToxId Core::getSelfPeerId() const {
   QMutexLocker ml{&coreLoopLock};
   auto selfId = tox->getSelfId();
   return ToxId(selfId.toString().toUtf8());
@@ -911,7 +913,7 @@ ToxId Core::getSelfId() const {
  * @brief Gets self public key
  * @return Self PK
  */
-FriendId Core::getSelfPublicKey() const {
+FriendId Core::getSelfId() const {
   QMutexLocker ml{&coreLoopLock};
   auto friendId = tox->getSelfId();
   return FriendId(friendId.toString());
@@ -1337,9 +1339,9 @@ void Core::joinRoom(const QString &groupId) {
   tox->joinGroup(groupId);
 }
 
-void Core::groupInviteFriend(QString friendId, QString groupId) {
+void Core::inviteToGroup(const ContactId &friendId, const GroupId& groupId) {
   QMutexLocker ml{&coreLoopLock};
-  tox->inviteGroup(groupId, friendId);
+  tox->inviteGroup(lib::messenger::IMContactId{groupId.toString()}, lib::messenger::IMContactId{friendId.toString()});
 
   //
   //  Tox_Err_Conference_Invite error;
@@ -1362,38 +1364,13 @@ void Core::groupInviteFriend(QString friendId, QString groupId) {
   //  }
 }
 
-QString Core::createGroup(ConferenceType type) {
+GroupId Core::createGroup(const QString& name) {
+  qDebug() << __func__ << name;
+
   QMutexLocker ml{&coreLoopLock};
   QString id = QUuid::createUuid().toString(QUuid::StringFormat::WithoutBraces);
-  tox->createGroup(id.split("-").at(0));
-  return id;
-  //    if (type == TOX_CONFERENCE_TYPE_TEXT) {
-  //      Tox_Err_Conference_New error;
-  //      QString groupId = tox_conference_new(tox.get(), &error);
-  //      switch (error) {
-  //      case TOX_ERR_CONFERENCE_NEW_OK:
-  //        emit saveRequest();
-  //        emit emptyGroupCreated(groupId, getGroupPersistentId(groupId));
-  //        return groupId;
-  //
-  //      case TOX_ERR_CONFERENCE_NEW_INIT:
-  //        qCritical() << "The conference instance failed to initialize";
-  //        return std::numeric_limits<uint32_t>::max();
-  //
-  //      default:
-  //        return std::numeric_limits<uint32_t>::max();
-  //      }
-  //    } else if (type == TOX_CONFERENCE_TYPE_AV) {
-  //      QString groupId =
-  //          toxav_add_av_groupchat(tox.get(), CoreAV::groupCallCallback,
-  //          this);
-  //      emit saveRequest();
-  //      emit emptyGroupCreated(groupId, getGroupPersistentId(groupId));
-  //      return groupId;
-  //    } else {
-  //      qWarning() << "createGroup: Unknown type " << type;
-  //      return -1;
-  //    }
+
+  return GroupId{ tox->createGroup(id.split("-").at(0), name)};
 }
 
 /**

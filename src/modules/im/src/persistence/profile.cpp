@@ -418,11 +418,11 @@ const QPixmap & Profile::loadAvatar() {
     if(pixmap.isNull())
     {
         //加载本地
-       pixmap= loadAvatar(core->getSelfId().getPublicKey());
+       pixmap= loadAvatar(core->getSelfPeerId().getPublicKey());
     }
     if(pixmap.isNull()){
         if (Settings::getInstance().getShowIdenticons()) {
-            pixmap = QPixmap::fromImage(Identicon(core->getSelfId().getPublicKey().getByteArray()).toImage(16));
+            pixmap = QPixmap::fromImage(Identicon(core->getSelfPeerId().getPublicKey().getByteArray()).toImage(16));
         }
     }
   return pixmap;
@@ -503,7 +503,7 @@ void Profile::setAvatar(QByteArray pic) {
   bool loaded = false;
 
   QByteArray avatarData;
-  const FriendId &selfPk = core->getSelfPublicKey();
+  const FriendId &selfPk = core->getSelfId();
   if (!pic.isEmpty()) {
     loaded = pixmap.loadFromData(pic);
     avatarData = pic;
@@ -587,7 +587,7 @@ void Profile::onRequestSent(const FriendId &friendPk, const QString &message) {
   const QString pkStr = friendPk.toString();
   const QString inviteStr =
       Core::tr("/me offers friendship, \"%1\"").arg(message);
-  const QString selfStr = core->getSelfPublicKey().toString();
+  const QString selfStr = core->getSelfId().toString();
   const QDateTime datetime = QDateTime::currentDateTime();
   const QString name = core->getUsername();
 //  history->addNewMessage(pkStr, inviteStr, selfStr, datetime, true, name);
@@ -631,7 +631,7 @@ QByteArray Profile::getAvatarHash(const FriendId &owner) {
  * @brief Removes our own avatar.
  */
 void Profile::removeSelfAvatar() {
-  removeAvatar(core->getSelfId().getPublicKey());
+  removeAvatar(core->getSelfPeerId().getPublicKey());
 }
 
 /**
@@ -660,7 +660,7 @@ History *Profile::getHistory() { return history.get(); }
  */
 void Profile::removeAvatar(const FriendId &owner) {
   QFile::remove(avatarPath(owner));
-  if (owner == core->getSelfId().getPublicKey()) {
+  if (owner == core->getSelfPeerId().getPublicKey()) {
     setAvatar({});
   } else {
     setFriendAvatar(owner, {});
@@ -816,8 +816,8 @@ QString Profile::setPassword(const QString &newPassword) {
 
   QString error{};
 
-  QByteArray avatar = loadAvatarData(core->getSelfId().getPublicKey());
-  saveAvatar(core->getSelfId().getPublicKey(), avatar);
+  QByteArray avatar = loadAvatarData(core->getSelfPeerId().getPublicKey());
+  saveAvatar(core->getSelfPeerId().getPublicKey(), avatar);
 
   return error;
 }

@@ -776,6 +776,10 @@ void MessageSessionWidget::setRecvGroupMessage(const GroupMessage &msg) {
   auto frd = FriendList::findFriend(contactId);
   if (frd) {
     m.displayName = frd->getDisplayedName();
+  }else{
+    auto g = GroupList::findGroup(GroupId(msg.from));
+    if (g)
+        m.displayName = g->getPeerDisplayName(ToxPeer(msg.from).getResource());
   }
 
   auto md = (GroupMessageDispatcher *)sendWorker->dispacher();

@@ -615,7 +615,7 @@ void IM::doMessageNormal(const Message &msg, QString &friendId) {
   if (conf) {
     auto jid = conf->jid().bare();
     qDebug() << "New conference is arrival" << qstring(jid);
-    onAddRoom(jid);
+    cacheJoinRoom(jid);
   }
 }
 
@@ -753,9 +753,14 @@ void IM::handleMUCParticipantPresence(gloox::MUCRoom *room,                 //
   auto groupId = qstring(room->jid().full());
   auto nick = qstring(participant.nick->resource());
 
-  qDebug() << __func__ << groupId << "nick" << nick;
+  qDebug() << __func__ << groupId;
+  auto tag = presence.tag();
 
-  auto x = presence.tag()->findChild("x", XMLNS, XMLNS_MUC_USER);
+  auto nickTag = tag->findChild("nick");
+  if(nickTag)
+    nick = qstring(nickTag->cdata());
+
+  auto x = tag->findChild("x", XMLNS, XMLNS_MUC_USER);
   if (x) {
     IMGroupOccupant occ = {.nick = nick};
 
@@ -763,8 +768,8 @@ void IM::handleMUCParticipantPresence(gloox::MUCRoom *room,                 //
     if (item) {
       auto affiliation = qstring(item->findAttribute("affiliation"));
       auto role = qstring(item->findAttribute("role"));
-      auto jid = qstring(item->findAttribute("jid"));
-      occ.jid = jid;
+      auto jid = item->findAttribute("jid");
+      occ.jid = qstring(jid);
       occ.affiliation = affiliation;
       occ.role = role;
       occ.status = presence.presence();
@@ -1009,32 +1014,27 @@ void IM::handleMUCRequest(MUCRoom *room, const DataForm &form) {
  */
 void IM::createRoom(const JID &jid, const std::string &password) {
 
-  auto nick = (getNickname());
-  qDebug() << "createRoom"                  //
-           << "jid:" << qstring(jid.full()) //
-           << "nick:" << nick;              //
+  qDebug() << __func__ << "jid:" << qstring(jid.full()) ;
 
-  JID &roomJid = const_cast<JID &>(jid);
-  roomJid.setResource(stdstring(nick));
+  auto room = new MUCRoom(_client.get(), jid, this, this);
+  if(!password.empty()){
+      room->setPassword(password);
+  }
 
-  auto roomId = qstring(roomJid.bare());
-  qDebug() << ("roomId:") << (roomId);
-
-  auto room = new MUCRoom(_client.get(), roomJid, this, this);
-  room->join();
   room->instantRoom(MUCOperation::CreateInstantRoom);
-  qDebug() << "Creating the room" << roomId;
+  cacheJoinRoom(jid.bare(), jid.resource());
 
   ConferenceListItem item;
-  item.name = room->name();
+  item.name = jid.resource();
   item.jid = room->jid().full();
   item.autojoin = true;
   item.nick = stdstring(getNickname());
   // 添加到书签列表
   mConferenceList.emplace_back(item);
+
   // 存储书签列表
   bookmarkStorage->storeBookmarks(mBookmarkList, mConferenceList);
-  qDebug() << "Store bookmarks is successful for room" << roomId;
+  qDebug() << "Store bookmarks is successful for room";
 }
 
 /**
@@ -1048,7 +1048,7 @@ bool IM::inviteToRoom(const JID &roomJid, const JID &peerId) {
     return false;
   }
 
-  roomInfo->room->invite(peerId, "--");
+  roomInfo->room->invite(peerId, "");
   return true;
 }
 
@@ -1068,8 +1068,8 @@ void IM::joinRoom(MUCRoom *room) {
   _client->disco()->getDiscoItems(room->jid(), XMLNS_BOOKMARKS, this, DISCO_CTX_BOOKMARKS);
 }
 
-void IM::onAddRoom(const std::string &jid, const std::string &name) {
-  qDebug() << "onAddRoom" << qstring(jid);
+void IM::cacheJoinRoom(const std::string &jid, const std::string &name) {
+  qDebug() << __func__ << qstring(jid) << qstring(name);
 
   JID roomJid(jid);
   auto roomId = qstring(roomJid.bare());
@@ -1107,8 +1107,7 @@ void IM::joinRooms() {
 }
 
 QString IM::sendToRoom(const QString &to, const QString &msg, const QString &id) {
-  qDebug() << "sendToRoom=>" << to;
-  qDebug() << "msg:" << msg;
+  qDebug() << __func__ << to << "msg:" << msg;
 
   auto pRoomInfo = findRoom((to));
   if (!pRoomInfo) {
@@ -1267,7 +1266,7 @@ void IM::handleBookmarks(const BookmarkList &bList,   //
     auto name = (!c.name.empty() ? c.name : JID(c.jid).username());
     qDebug() << "room:" << qstring(name) << "jid:" << qstring(c.jid) << "nick:" << qstring(c.nick) << "autojoin:" << c.autojoin;
     // 缓存到本地
-    onAddRoom(c.jid, name);
+    cacheJoinRoom(c.jid, name);
   }
 
 

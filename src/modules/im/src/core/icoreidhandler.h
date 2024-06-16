@@ -21,8 +21,8 @@ class ICoreIdHandler
 
 public:
     virtual ~ICoreIdHandler() = default;
-    virtual ToxId getSelfId() const = 0;
-    virtual FriendId getSelfPublicKey() const = 0;
+    virtual ToxId getSelfPeerId() const = 0;
+    virtual FriendId getSelfId() const = 0;
     virtual QString getUsername() const = 0;
     virtual QString getNick() const = 0;
 };

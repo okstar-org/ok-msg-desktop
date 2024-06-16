@@ -237,7 +237,7 @@ void renderItem(const ChatLogItem &item,
   const Core *core = Core::getInstance();
 
   const auto &sender = item.getSender();
-  const auto &selfPk = core->getSelfId().getPublicKey();
+  const auto &selfPk = core->getSelfPeerId().getPublicKey();
 
   bool isSelf = sender == selfPk; // || sender.getResource() == selfPk.getUsername();
 
@@ -523,7 +523,7 @@ void GenericChatForm::reloadTheme() {
 
 void GenericChatForm::setContact(const Contact *contact_)
 {
-    qDebug()<<__func__<<contact_;
+//    qDebug()<<__func__<<contact_;
     contact = contact_;
     connect(contact, &Contact::displayedNameChanged, this, &GenericChatForm::onDisplayedNameChanged);
 

@@ -180,13 +180,13 @@ public:
   void loadGroupList();
   bool initRoom();
 
-  bool createGroup(const QString &group);
+  QString createGroup(const QString &group, const QString &name);
   void joinGroup(const QString &group);
   void setRoomName(const QString &group, const QString &nick);
   void setRoomDesc(const QString &group, const QString &desc);
   void setRoomSubject(const QString &group, const QString &subject);
   void setRoomAlias(const QString &group, const QString &alias);
-  bool inviteGroup(const QString &group, const QString &f);
+  bool inviteGroup(const IMContactId &group, const IMContactId &f);
   bool leaveGroup(const QString &group);
   bool destroyGroup(const QString &group);
 

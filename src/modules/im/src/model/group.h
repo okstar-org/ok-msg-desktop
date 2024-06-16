@@ -57,12 +57,13 @@ public:
 
     bool isAvGroupchat() const;
 
+    void addPeer(const GroupOccupant &go);
     int getPeersCount() const;
     void setPeerCount(uint32_t count);
-
-    void addPeer(const GroupOccupant &go);
     const QMap<QString, QString>& getPeerList() const;
+
     bool peerHasNickname(FriendId pk);
+    QString getPeerDisplayName(const QString& resource);
 
     void setEventFlag(bool f) override;
     bool getEventFlag() const override;

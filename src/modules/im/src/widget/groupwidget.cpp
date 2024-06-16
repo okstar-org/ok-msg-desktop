@@ -319,9 +319,7 @@ void GroupWidget::do_privilegesChanged(const Group::Role &role, const Group::Aff
 }
 
 void GroupWidget::showDetails(){
-    qDebug() << __func__;
     if(!about){
-        qDebug() << "create about for:" << group->getId();
         about = std::make_unique<AboutGroupForm>(group->getPersistentId(), this);
         contentLayout->addWidget(about.get());
     }

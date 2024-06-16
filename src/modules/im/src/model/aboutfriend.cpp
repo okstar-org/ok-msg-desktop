@@ -133,7 +133,7 @@ bool AboutFriend::isHistoryExistence()
     History* const history = Nexus::getProfile()->getHistory();
     if (history) {
         const FriendId pk = f->getPublicKey();
-        return history->historyExists(core->getSelfPublicKey(), pk);
+        return history->historyExists(core->getSelfId(), pk);
     }
 
     return false;

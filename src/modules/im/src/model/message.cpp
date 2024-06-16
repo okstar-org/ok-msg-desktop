@@ -46,7 +46,7 @@ std::vector<Message> MessageProcessor::processOutgoingMessage(bool isAction, QSt
     Message message;
     message.isAction = isAction;
     message.to = f.getId();
-    message.from = idHandler.getSelfId().toString();
+    message.from = idHandler.getSelfPeerId().toString();
     message.content = part;
     message.timestamp = timestamp;
     return message;
