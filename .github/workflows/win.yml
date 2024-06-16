@@ -62,6 +62,30 @@ jobs:
     - name: vcpkg build
       uses: lukka/run-vcpkg@v11
 
+    - name: Install ok-gloox
+      run: |
+        git clone https://github.com/okstar-org/ok-gloox.git
+        cd ok-gloox
+        cmake -B out   \
+        -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}          \
+        -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}    \
+        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}    
+        cmake --build out --config=${{ matrix.build_type }}
+        cmake --install out
+
+    - name: Install ok-rtc
+      run: |
+        sudo apt install yasm libopenh264-dev libopus-dev libvpx-dev libpipewire-0.3-dev
+        git clone https://github.com/okstar-org/ok-rtc.git
+        cd ok-rtc
+        git submodule update --init
+        cmake -B out   \
+        -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}          \
+        -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}    \
+        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}    
+        cmake --build out --config=${{ matrix.build_type }}
+        cmake --install out
+
     - name: Set reusable strings
       # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
       id: strings
