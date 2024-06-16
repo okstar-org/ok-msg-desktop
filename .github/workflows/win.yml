@@ -56,8 +56,9 @@ jobs:
 
     - name: vcpkg build
       uses: lukka/run-vcpkg@v11
-
-#    - name: Install mozjpeg
+      with:
+        runVcpkgInstall: true
+      #    - name: Install mozjpeg
 #      run: |
 #        git clone -b v4.0.3 https://github.com/mozilla/mozjpeg.git
 #        cd mozjpeg
