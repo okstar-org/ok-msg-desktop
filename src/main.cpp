@@ -18,4 +18,5 @@ int main(int argc, char *argv[]) {
   Q_INIT_RESOURCE(resources);
   const auto launcher = core::Launcher::Create(argc, argv);
   return launcher ? launcher->startup() : 1;
+  
 }
