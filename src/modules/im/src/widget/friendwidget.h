@@ -83,7 +83,7 @@ private:
     QMenu *menu;
     QAction *inviteToGrp;
     QAction *removeAct;
-
+    QAction *newGroupAction;
 
 public slots:
   void onContextMenuCalled(QContextMenuEvent* event);
@@ -91,6 +91,7 @@ public slots:
   void showDetails();
   void removeDetails();
   void changeAutoAccept(bool enable);
+  void inviteToNewGroup();
 
 signals:
     void friendWidgetClicked(FriendWidget* widget);

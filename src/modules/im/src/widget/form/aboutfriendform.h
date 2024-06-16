@@ -51,7 +51,6 @@ private slots:
     void onSendMessageClicked();
     void onAutoAcceptDirClicked();
     void onAutoAcceptCallClicked();
-    void onAutoGroupInvite();
     void onSelectDirClicked();
     void onRemoveHistoryClicked();
 };

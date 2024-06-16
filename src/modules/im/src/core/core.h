@@ -100,8 +100,8 @@ public:
   QString getNick() const override;
   Status::Status getStatus() const;
   QString getStatusMessage() const;
-  ToxId getSelfId() const override;
-  FriendId getSelfPublicKey() const override;
+  ToxId getSelfPeerId() const override;
+  FriendId getSelfId() const override;
   QPair<QByteArray, QByteArray> getKeypair() const;
 
   void sendFile(QString friendId, QString filename, QString filePath, long long filesize);
@@ -116,11 +116,15 @@ public:
 
   void acceptFriendRequest(const FriendId &friendPk);
   void rejectFriendRequest(const FriendId &friendPk);
-  void requestFriendship(const FriendId &friendAddress, const QString &nick, const QString &message);
-  void groupInviteFriend(QString friendId, QString groupId);
-  QString createGroup(ConferenceType type = ConferenceType::TEXT);
-
   void removeFriend(QString friendId);
+  void requestFriendship(const FriendId &friendAddress, const QString &nick, const QString &message);
+  // FriendSender
+  bool sendMessage(QString friendId, const QString &message, ReceiptNum &receipt, bool encrypt = false) override;
+  bool sendAction(QString friendId, const QString &action, ReceiptNum &receipt, bool encrypt = false) override;
+  void sendTyping(QString friendId, bool typing);
+
+  GroupId createGroup(const QString &name="");
+  void inviteToGroup(const ContactId &friendId, const GroupId& groupId);
   void leaveGroup(QString groupId);
   void destroyGroup(QString groupId);
 
@@ -130,10 +134,7 @@ public:
   void setStatusMessage(const QString &message);
   void setAvatar(const QByteArray &avatar);
 
-  // FriendSender
-  bool sendMessage(QString friendId, const QString &message, ReceiptNum &receipt, bool encrypt = false) override;
-  bool sendAction(QString friendId, const QString &action, ReceiptNum &receipt, bool encrypt = false) override;
-  // GroupSender
+ // GroupSender
   QString sendGroupMessage(QString groupId, const QString &message) override;
   QString sendGroupAction(QString groupId, const QString &message) override;
 
@@ -142,7 +143,7 @@ public:
   void setGroupDesc(const QString &groupId, const QString &desc);
   void setGroupAlias(const QString &groupId, const QString &alias);
 
-  void sendTyping(QString friendId, bool typing);
+
 
   void logout();
 

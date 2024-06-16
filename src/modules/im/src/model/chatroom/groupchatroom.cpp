@@ -62,7 +62,7 @@ void GroupChatroom::inviteFriend(const FriendId& pk)
     const auto canInvite = Status::isOnline(frnd->getStatus());
 
     if (canInvite) {
-        Core::getInstance()->groupInviteFriend(friendId.toString(), groupId->getId());
+//        Core::getInstance()->groupInviteFriend(friendId.toString(), groupId->getId());
     }
 }
 

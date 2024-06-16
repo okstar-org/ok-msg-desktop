@@ -287,6 +287,9 @@ set(${PROJECT_NAME}_SOURCES
         src/widget/form/groupinviteform.h
         src/widget/form/groupinvitewidget.cpp
         src/widget/form/groupinvitewidget.h
+				src/widget/form/GroupCreateForm.h
+				src/widget/form/GroupCreateForm.cpp
+				src/widget/form/GroupCreateForm.ui
         src/widget/form/loadhistorydialog.cpp
         src/widget/form/loadhistorydialog.h
         src/widget/form/profileform.cpp

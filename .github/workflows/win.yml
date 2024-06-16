@@ -20,8 +20,7 @@ jobs:
       ARTIFACT_PATH: "ok-msg-desktop"
       UPLOAD_ARTIFACT: "true"
       VCPKG_DEFAULT_TRIPLET: ${{ matrix.arch }}-windows
-      ARTIFACT_Setup_Path: "${{ github.workspace }}/deploy-setup"
-      ARTIFACT_Setup_FileName: "ok-msg-desktop_${{ matrix.os }}_${{ matrix.arch }}_setup"
+      VCPKG_INSTALLED_DIR: /vcpkg_installed
 
     runs-on: ${{ matrix.os }}
 
@@ -51,11 +50,6 @@ jobs:
       with:
         submodules: 'true'
 
-    - name: Install Qt
-      uses: jurplel/install-qt-action@v3
-      with:
-        arch: ${{ matrix.arch == 'x64' && 'win64_msvc2019_64' || 'win32_msvc2019' }}
-
     - name: Native Tools Command Prompt.
       uses: ilammy/msvc-dev-cmd@v1.10.0
       with:
@@ -63,6 +57,47 @@ jobs:
 
     - name: vcpkg build
       uses: lukka/run-vcpkg@v11
+      with:
+        runVcpkgInstall: true
+
+    - name: Install Chocolatey
+      shell: powershell
+      run: |
+        # 设置执行策略以允许脚本运行  
+        Set-ExecutionPolicy Bypass -Scope Process -Force
+        # 下载并安装Chocolatey  
+        iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))  
+        # 验证安装（可选）  
+        choco --version
+
+    - name: Set pkg
+      run: |
+        setx PKG_CONFIG_PATH ${{ env.VCPKG_INSTALLED_DIR }}\${{ env.VCPKG_DEFAULT_TRIPLET }}/lib/pkgconfig
+        echo $env:PKG_CONFIG_PATH
+
+    - name: Install ok-rtc
+      run: |   
+        git clone https://github.com/okstar-org/ok-rtc.git
+        
+        cd ok-rtc
+        git submodule update --init
+        cmake -B out -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_ROOT"/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=${{ env.VCPKG_DEFAULT_TRIPLET }} -DCMAKE_PREFIX_PATH=${{ env.VCPKG_INSTALLED_DIR }}\${{ env.VCPKG_DEFAULT_TRIPLET }}
+        cmake --build out --config=${{ matrix.build_type }}
+        cmake --install out
+
+
+    - name: Install ok-gloox
+      run: |
+        git clone https://github.com/okstar-org/ok-gloox.git
+        cd ok-gloox
+        cmake -B out -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}    
+        cmake --build out --config=${{ matrix.build_type }}
+        cmake --install out
+
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v3
+      with:
+        arch: ${{ matrix.arch == 'x64' && 'win64_msvc2019_64' || 'win32_msvc2019' }}
 
     - name: Set reusable strings
       # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
@@ -105,29 +140,6 @@ jobs:
         xcopy "$env:Qt5_Dir\bin\*.dll" ${{ env.ARTIFACT_PATH }}
         Copy-Item -Recurse $env:Qt5_Dir\plugins ${{ env.ARTIFACT_PATH }}
         xcopy LICENSE ${{ env.ARTIFACT_PATH }}
-
-    - name: Compile .ISS to .EXE Installer
-      uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
-      with:
-        path: inno-setup-script.iss
-
-    - name: Move setup binary.
-      if: env.UPLOAD_ARTIFACT == 'true'
-      run: |
-        mv ${{ env.ARTIFACT_Setup_Path}}\${{ env.ARTIFACT_Setup_FileName }}.exe ${{ env.ARTIFACT_PATH }}
-
-    - name: Upload setup binary to release.
-      uses: softprops/action-gh-release@v1
-      if: ${{ startsWith(github.ref, 'refs/tags/') }}
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        files: |
-          ${{ env.ARTIFACT_PATH }}/${{ env.ARTIFACT_Setup_FileName }}.exe
-
-    - name: Delete setup binary in the origin package release. 
-      if: env.UPLOAD_ARTIFACT == 'true'
-      run: |
-        rm ${{ env.ARTIFACT_PATH }}\${{ env.ARTIFACT_Setup_FileName }}.exe 
 
     - name: Archive Release
       uses: thedoctor0/zip-release@0.7.5

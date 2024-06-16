@@ -180,7 +180,7 @@ void GroupChatForm::updateUserNames()
     /* we store the peer labels by their ToxPk, but the namelist layout
      * needs it in alphabetical order, so we first create and store the labels
      * and then sort them by their text and add them to the layout in that order */
-    const auto selfPk = Core::getInstance()->getSelfPublicKey();
+    const auto selfPk = Core::getInstance()->getSelfId();
 //    for (const auto& peerPk : peers.keys()) {
 //        const QString peerName = peers.value(peerPk);
 //        const QString editedName = editName(peerName);
@@ -297,7 +297,7 @@ void GroupChatForm::dropEvent(QDropEvent* ev)
     QString friendId = frnd->getId().toString();
     QString cid = contactId->toString();
     if (Status::isOnline(frnd->getStatus())) {
-        Core::getInstance()->groupInviteFriend(friendId, cid);
+//        Core::getInstance()->groupInviteFriend(friendId, cid);
     }
 }
 
@@ -391,7 +391,7 @@ void GroupChatForm::onLabelContextMenuRequested(const QPoint& localPos)
     const QString unmuteString = tr("unmute");
     QStringList blackList = settings.getBlackList();
     QMenu* const contextMenu = new QMenu(this);
-    const FriendId selfPk = Core::getInstance()->getSelfPublicKey();
+    const FriendId selfPk = Core::getInstance()->getSelfId();
 
     // delete menu after it stops being used
     connect(contextMenu, &QMenu::aboutToHide, contextMenu, &QObject::deleteLater);

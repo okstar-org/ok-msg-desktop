@@ -153,9 +153,7 @@ public slots:
   void onGroupAdded(const Group* g);
   void onGroupRemoved(const Group* g);
 
-  void onGroupJoined( const GroupId & groupId, const QString& name);
-void onGroupInviteReceived(const GroupInvite &inviteInfo);
-void onGroupMessageReceived(GroupId groupId, GroupMessage msg);
+    void onGroupMessageReceived(GroupId groupId, GroupMessage msg);
 
 
 

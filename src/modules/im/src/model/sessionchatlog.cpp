@@ -364,7 +364,7 @@ void SessionChatLog::onMessageSent(DispatchedMessageId id,
   chatLogMessage.state = MessageState::pending;
   chatLogMessage.message = message;
 
-  items.emplace(messageIdx, ChatLogItem(coreIdHandler.getSelfPublicKey(),
+  items.emplace(messageIdx, ChatLogItem(coreIdHandler.getSelfId(),
                                         coreIdHandler.getNick(), //发送人名称就算自己的昵称
                                         chatLogMessage));
 
@@ -427,7 +427,7 @@ void SessionChatLog::onFileUpdated(const FriendId &friendId, const ToxFile &file
     const auto chatLogFile = ChatLogFile{QDateTime::currentDateTime(), file};
     FriendId senderId{file.sender};
     QString senderName;
-    if (coreIdHandler.getSelfPublicKey().getId() == file.sender) {
+    if (coreIdHandler.getSelfId().getId() == file.sender) {
       senderName = coreIdHandler.getNick();
     } else {
       senderName = FriendList::decideNickname(senderId, senderId.username);

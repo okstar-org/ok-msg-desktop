@@ -767,7 +767,7 @@ private:
 
   void joinRoom(MUCRoom *room);
 
-  void onAddRoom(const std::string &jid, const std::string &name = "");
+  void cacheJoinRoom(const std::string &jid, const std::string &name = "");
 
 signals:
   void connectResult(IMConnectStatus);

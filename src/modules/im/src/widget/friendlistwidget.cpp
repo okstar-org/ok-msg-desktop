@@ -484,12 +484,15 @@ GroupWidget *FriendListWidget::addGroup(const GroupId &groupId,
 
 void FriendListWidget::do_groupDeleted(const ContactId &cid)
 {
+    qDebug() << __func__ << cid.toString();
     removeGroup(GroupId(cid));
 }
 
 void FriendListWidget::removeGroup(const GroupId &cid) {
+    qDebug() << __func__ << cid.toString();
     auto gw = groupWidgets.value(cid.toString());
     gw->deleteLater();
+    groupWidgets.remove(cid.getId());
     groupLayout.removeSortedWidget(gw);
 }
 

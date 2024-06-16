@@ -549,17 +549,22 @@ void Messenger::loadGroupList() {
   ok::session::AuthSession::Instance()->im()->loadGroupList();
 }
 
-bool Messenger::createGroup(const QString &group) {
+QString Messenger::createGroup(const QString &groupId, const QString& groupName) {
   auto _session = ok::session::AuthSession::Instance();
   auto _im = _session->im();
-  _im->createRoom(JID(stdstring(group)));
-  return true;
+  JID self = _im->self();
+  self.setUsername(stdstring(groupId));
+  self.setResource(stdstring(groupName));
+  self.setServer("conference."+self.server());
+
+  _im->createRoom(self);
+  return qstring(self.bare());
 }
 
-bool Messenger::inviteGroup(const QString &group, const QString &f) {
+bool Messenger::inviteGroup(const IMContactId &group, const IMContactId &f) {
   auto _session = ok::session::AuthSession::Instance();
   auto _im = _session->im();
-  return _im->inviteToRoom(JID(stdstring(group)), JID(stdstring(f)));
+  return _im->inviteToRoom(JID(stdstring(group.toString())), JID(stdstring(f.toString())));
 }
 
 bool Messenger::leaveGroup(const QString &group) {

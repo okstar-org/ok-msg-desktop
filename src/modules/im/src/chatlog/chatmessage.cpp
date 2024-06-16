@@ -86,7 +86,7 @@ IChatItem::Ptr ChatMessage::createFileTransferMessage(const ChatLogItem &item,
   qDebug() << __func__ << file.fileName;
   QPixmap avatar;
   if (isMe) {
-    const auto &self = Core::getInstance()->getSelfId().getPublicKey();
+    const auto &self = Core::getInstance()->getSelfPeerId().getPublicKey();
     avatar = Nexus::getProfile()->loadAvatar(self);
   } else {
     avatar = Nexus::getProfile()->loadAvatar(item.getSender());

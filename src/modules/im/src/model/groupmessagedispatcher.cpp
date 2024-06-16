@@ -75,18 +75,18 @@ void GroupMessageDispatcher::onMessageReceived(GroupMessage &msg) {
 
   qDebug() <<__func__ << "id:" << msg.id << "nick:" <<msg.nick<< "msg:" <<msg.content;
   if(sentMsgIdMap.contains(msg.id)){
-      qWarning() << "is sent message!";
+      qWarning() << "Is a sent message!";
       return;
   }
 
-  auto self = idHandler.getSelfId().toString();
+  auto self = idHandler.getSelfPeerId().toString();
   if (self == msg.from) {
     qWarning() << "Is self message (from is mine).";
     return;
   }
 
-  auto myNick= idHandler.getNick();
-  qDebug()<< "Self nick:"<<myNick;
+//  auto myNick= idHandler.getNick();
+//  qDebug()<< "Self nick:"<<myNick;
 
 //  if(nick == idHandler.getNick()){
 //    qWarning()<<"Is self message (nick is mine).";

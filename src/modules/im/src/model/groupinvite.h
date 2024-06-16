@@ -16,7 +16,7 @@
 #include "message.h"
 #include <QByteArray>
 #include <QDateTime>
-#include <cstdint>
+
 
 class GroupInvite {
 public:

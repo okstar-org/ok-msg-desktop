@@ -1501,6 +1501,21 @@ instead of system taskbar.</source>
     </message>
 </context>
 <context>
+<name>GroupCreateForm</name>
+<message>
+<source>Group name</source>
+<translation>群组名称</translation>
+</message>
+<message>
+<source>Create new group</source>
+<translation>创建聊天群组</translation>
+</message>
+<message>
+<source>Confirm</source>
+<translation>确定</translation>
+</message>
+</context>
+<context>
     <name>GroupInviteWidget</name>
     <message>
         <source>Invited by %1 on %2 at %3.</source>

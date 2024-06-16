@@ -357,13 +357,13 @@ void ContactWidget::onGroupClicked() {
   auto &settings = Settings::getInstance();
 
   //    hideMainForms(nullptr);
-  if (!groupInviteForm) {
-    groupInviteForm = new GroupInviteForm;
+//  if (!groupInviteForm) {
+//    groupInviteForm = new GroupInviteForm;
 
-    connect(groupInviteForm, &GroupInviteForm::groupCreate,
-            core, &Core::createGroup);
-  }
-  groupInviteForm->show(contentLayout.get());
+//    connect(groupInviteForm, &GroupInviteForm::groupCreate,
+//            core, &Core::createGroup);
+//  }
+//  groupInviteForm->show(contentLayout.get());
   //    setWindowTitle(fromDialogType(DialogType::GroupDialog));
   //    setActiveToolMenuButton(ActiveToolMenuButton::GroupButton);
 }

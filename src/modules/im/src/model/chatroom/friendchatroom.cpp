@@ -76,13 +76,6 @@ QString FriendChatroom::getCircleName() const
     return Settings::getInstance().getCircleName(circleId);
 }
 
-void FriendChatroom::inviteToNewGroup()
-{
-    auto core = Core::getInstance();
-    const auto friendId = frnd->getId();
-    const auto groupId = core->createGroup();
-    core->groupInviteFriend(friendId, groupId);
-}
 
 QString FriendChatroom::getAutoAcceptDir() const
 {
@@ -108,7 +101,7 @@ void FriendChatroom::inviteFriend(const Group* group)
 {
     const auto friendId = frnd->getId();
     const auto groupId = group->getId();
-    Core::getInstance()->groupInviteFriend(friendId, groupId);
+//    Core::getInstance()->groupInviteFriend(friendId, groupId);
 }
 
 QVector<GroupToDisplay> FriendChatroom::getGroups() const

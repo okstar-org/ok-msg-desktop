@@ -89,7 +89,7 @@ bool ProfileInfo::isEncrypted() const
  */
 void ProfileInfo::copyId() const
 {
-    ToxId selfId = core->getSelfId();
+    ToxId selfId = core->getSelfPeerId();
     QString txt = selfId.toString();
     QClipboard* clip = QApplication::clipboard();
     clip->setText(txt, QClipboard::Clipboard);

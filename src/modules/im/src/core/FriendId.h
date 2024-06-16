@@ -67,6 +67,10 @@ public:
 
   QString toString() const override;
 
+  QString getResource() const {
+      return resource;
+  }
+
   const FriendId toFriendId() const {
       return FriendId{username+"@"+server};
   }

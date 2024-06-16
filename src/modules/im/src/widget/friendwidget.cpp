@@ -47,7 +47,8 @@
 #include "form/chatform.h"
 #include "src/model/chathistory.h"
 #include "src/persistence/profile.h"
-#include <cassert>
+#include "src/widget/form/GroupCreateForm.h"
+
 
 /**
  * @class FriendWidget
@@ -133,6 +134,13 @@ FriendWidget::FriendWidget(ContentLayout *layout,
 
   menu = new QMenu(this);
   inviteToGrp= menu->addAction(tr("Invite to group"));
+  newGroupAction = menu->addAction(tr("To new group"));
+
+    connect(newGroupAction, &QAction::triggered, this,
+            &FriendWidget::inviteToNewGroup);
+
+  //  inviteMenu->addSeparator();
+
   menu->addSeparator();
   removeAct = menu->addAction(tr("Remove friend"));
 
@@ -361,6 +369,27 @@ void FriendWidget::changeAutoAccept(bool enable) {
 //  } else {
 //    chatRoom->disableAutoAccept();
     //  }
+}
+
+void FriendWidget::inviteToNewGroup()
+{
+//    auto core = Core::getInstance();
+//    const auto friendId = contact->getId();
+//    const auto groupId = core->createGroup();
+//    core->groupInviteFriend(friendId, groupId);
+
+    auto groupCreate = new GroupCreateForm();
+    connect(groupCreate, &GroupCreateForm::confirmed, [&, groupCreate](const QString name){
+        auto core = Core::getInstance();
+        auto groupId = core->createGroup(name);
+        qDebug() << "Create group successful:"<<groupId;
+        if(groupId.isValid()){
+            core->inviteToGroup(m_friend->getId(), groupId);
+            groupCreate->close();
+        }
+    });
+    groupCreate->show();
+
 }
 
 void FriendWidget::showDetails() {
