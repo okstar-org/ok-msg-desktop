@@ -11,8 +11,7 @@
     "libvpx",
     "opus",
     "openh264",
-    "libsodium",
-    "pkgconf"
+    "libsodium"
   ],
   "overrides": [
     {

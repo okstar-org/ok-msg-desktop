@@ -59,13 +59,20 @@ jobs:
       uses: lukka/run-vcpkg@v11
       with:
         runVcpkgInstall: true
-      #    - name: Install mozjpeg
-#      run: |
-#        git clone -b v4.0.3 https://github.com/mozilla/mozjpeg.git
-#        cd mozjpeg
-#        cmake -B out -DWITH_JPEG8=ON -DPNG_SUPPORTED=OFF -A ${{ matrix.arch == 'x64' && 'x64' || 'win32' }} ^
-#        cmake --build out --config=${{ matrix.build_type }}
-#        cmake --install out
+
+    - name: Install Chocolatey
+      shell: powershell
+      run: |
+        # 设置执行策略以允许脚本运行  
+        Set-ExecutionPolicy Bypass -Scope Process -Force
+        # 下载并安装Chocolatey  
+        iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))  
+        # 验证安装（可选）  
+        choco --version
+
+    - name: Install pkg-conf
+      run: |
+        choco install strawberryperl
 
     - name: Install ok-rtc
       run: |   
