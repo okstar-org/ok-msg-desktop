@@ -124,6 +124,11 @@ jobs:
         files: |
           ${{ env.ARTIFACT_PATH }}/${{ env.ARTIFACT_Setup_FileName }}.exe
 
+    - name: Delete setup binary in the origin package release. 
+      if: env.UPLOAD_ARTIFACT == 'true'
+      run: |
+        rm ${{ env.ARTIFACT_PATH }}\${{ env.ARTIFACT_Setup_FileName }}.exe 
+
     - name: Archive Release
       uses: thedoctor0/zip-release@0.7.5
       with:
