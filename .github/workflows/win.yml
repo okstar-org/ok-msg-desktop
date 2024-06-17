@@ -30,8 +30,8 @@ jobs:
         arch: [x64]
         os: [windows-latest]
         build_type: [Release]
-        c_compiler: [clang]
-        cpp_compiler: [clang++]
+        c_compiler: [C:\Program Files\LLVM\bin\cc.exe]
+        cpp_compiler: [C:\Program Files\LLVM\bin\c++.exe]
 
     steps:
     - name: Checkout repository and submodules
