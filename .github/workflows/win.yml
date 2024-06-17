@@ -28,14 +28,14 @@ jobs:
       fail-fast: false
       matrix:
         arch: [x64]
-        os: [windows-latest]
+        os: [windows-2019]
         build_type: [Release]
-        c_compiler: [clang]
-        cpp_compiler: [clang++]
+        c_compiler: [cl]
+        cpp_compiler: [cl]
         include:
           - os: windows-latest
-            c_compiler: clang
-            cpp_compiler: clang++
+            c_compiler: cl
+            cpp_compiler: cl
 
     steps:
     - name: Checkout repository and submodules
