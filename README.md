@@ -60,9 +60,14 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
 - Qt版本：Qt5.15.x
 
 ## Windows 构建
-- 安装`visual studio 17 2022`
 
-- 配置vcpkg
+### 安装必备依赖
+- 安装`visual studio 17 2022`
+- 安装`strawberry-perl`
+
+### 配置vcpkg
+> 以为VS已经自带vcpkg，所以无需安装
+
 ```shell
 #设置vcpkg路径，也可以参考官网下载：https://github.com/microsoft/vcpkg/blob/master/README_zh_CN.md
 VCPKG_ROOT=E:\Program Files\Microsoft Visual Studio\2022\Community\VC\vcpkg
@@ -87,7 +92,7 @@ PKG_CONFIG_PATH=<项目根目录>/vcpkg_installed/x64-windows/lib/pkgconfig
     pkg-config.bat --list-all
 
 
-- 编译OkRTC库
+### 编译OkRTC库
 ```shell
 sudo apt install libopus-dev libvpx-dev libpipewire-0.3-dev
 git clone https://github.com/okstar-org/ok-rtc.git
@@ -100,7 +105,7 @@ cmake --build out --config Release --target ALL_BUILD -j 4
 # 执行安装（用管理员身份打开命令行）
 cmake --install out
 ```
-- 编译OkGloox库
+### 编译OkGloox库
 ```shell
 git clone https://github.com/okstar-org/ok-gloox.git
 # CMake预处理
@@ -111,7 +116,7 @@ cmake --build .\out\ --config Release --target ALL_BUILD -j 4
 cmake --install out
 ```
 
-- 构建OkMSG项目
+### 构建OkMSG项目
 
 1. 修改CMake预设文件CMakeUserPresets.json(该文件是针对用户本地环境的配置，不要提交)，列子如下：
 > 此处主要利用 `CMAKE_PREFIX_PATH` 关联到第三方库（调试库），比如：Qt、VcPkg下载的库、OkRTC等
@@ -144,8 +149,8 @@ cmake --install out
 2. 执行构建命令
 ```shell
 # 预处理
-cmake -B build --preset win-x64-{debug|release}
-cmake --build build
+cmake -B out --preset win-x64-{debug|release}
+cmake --build out
 ```
 
 # Linux 构建
