@@ -80,6 +80,7 @@ jobs:
         git submodule update --init
         cmake -B out -DPKG_CONFIG_EXECUTABLE=C:\Strawberry\perl\bin\pkg-config.bat -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_ROOT"/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=${{ env.VCPKG_DEFAULT_TRIPLET }} -DCMAKE_PREFIX_PATH=${{ env.VCPKG_INSTALLED_DIR }}\${{ env.VCPKG_DEFAULT_TRIPLET }}
         cmake --build out --config=${{ matrix.build_type }}
+        ls out
         ls out/Release
         cmake --install out --config=${{ matrix.build_type }} --prefix=${{ github.workspace }}/
 
