@@ -30,8 +30,8 @@ jobs:
         arch: [x64]
         os: [windows-latest]
         build_type: [Release]
-        c_compiler: ["C:/Program Files/LLVM/bin/cc.exe"]
-        cpp_compiler: ["C:/Program Files/LLVM/bin/c++.exe"]
+        c_compiler: [cl]
+        cpp_compiler: [cl]
 
     steps:
     - name: Checkout repository and submodules
@@ -79,7 +79,7 @@ jobs:
         git clone -b master https://github.com/okstar-org/ok-rtc.git
         cd ok-rtc
         git submodule update --init
-        cmake -B out -DPKG_CONFIG_EXECUTABLE=C:\Strawberry\perl\bin\pkg-config.bat -DCMAKE_SYSTEM_VERSION=10.0.22000.0 -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_ROOT"/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=${{ env.VCPKG_DEFAULT_TRIPLET }} -DCMAKE_PREFIX_PATH=${{ env.VCPKG_INSTALLED_DIR }}\${{ env.VCPKG_DEFAULT_TRIPLET }}
+        cmake -B out -DPKG_CONFIG_EXECUTABLE=C:\Strawberry\perl\bin\pkg-config.bat -DOK_RTC_BUILD_AUDIO_BACKENDS=OFF -DCMAKE_SYSTEM_VERSION=10.0.22000.0 -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_ROOT"/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=${{ env.VCPKG_DEFAULT_TRIPLET }} -DCMAKE_PREFIX_PATH=${{ env.VCPKG_INSTALLED_DIR }}\${{ env.VCPKG_DEFAULT_TRIPLET }}
         cmake --build out --config=${{ matrix.build_type }}
 #        cmake --install out --config=${{ matrix.build_type }} --prefix=${{ github.workspace }}/
 
