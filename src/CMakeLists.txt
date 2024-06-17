@@ -150,7 +150,7 @@ if(LINUX AND OK_CPACK)
         set(CPACK_RPM_PACKAGE_AUTOREQ ${OK_MAINTAINER})
         set(CPACK_RPM_PACKAGE_REQUIRES "qt5-qtbase,qt5-qtbase-gui,qt5-qtsvg,qt5-qtmultimedia,qt5-linguist,qt5-qttools,qt5-qtscxml,qt5-qttools-static,\
             libvpx,ffmpeg-free, libavcodec-free-devel, libavdevice-free,libexif,\
-            qrencode-libs, libsodium-devel sqlcipher, \
+						qrencode-libs, \
             openal-soft,openssl-libs")
     endif ()
 

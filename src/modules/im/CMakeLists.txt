@@ -12,7 +12,6 @@ if (WIN32)
     pkg_check_modules(SWSCALE REQUIRED libswscale)
     pkg_check_modules(SWRESAMPLE REQUIRED libswresample)
 
-    pkg_check_modules(libsodium REQUIRED libsodium )
     pkg_check_modules(QRENCODE REQUIRED libqrencode )
     pkg_check_modules(OpenAL REQUIRED openal)
     pkg_check_modules(sqlite3 REQUIRED sqlite3)
@@ -29,7 +28,6 @@ if (WIN32)
             ${QRENCODE_LINK_LIBRARIES}
             ${JPEG_LINK_LIBRARIES}
     
-            PRIVATE ${libsodium_LINK_LIBRARIES}
             PRIVATE ${vpx_LINK_LIBRARIES}
             PRIVATE ${exif_LINK_LIBRARIES}
             PRIVATE ${sqlite3_LINK_LIBRARIES}

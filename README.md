@@ -32,7 +32,6 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
 - Qt 5.15 ([LGPL](http://doc.qt.io/qt-5/lgpl.html))
 - zlib ([zlib License](http://www.zlib.net/zlib_license.html))
 - Sqlite3 ([Public Domain](https://sqlite.org/copyright.html))
-- Sodium([ISC license.](https://github.com/jedisct1/libsodium))
 - libexif([GPL v2](https://github.com/libexif/libexif/blob/master/COPYING))
 - libqrencode([GPL v2+](https://github.com/fukuchi/libqrencode))
 - qTox([GPL v3](https://github.com/qTox/qTox/LICENSE))
@@ -91,22 +90,23 @@ PKG_CONFIG_PATH=<项目根目录>/vcpkg_installed/x64-windows/lib/pkgconfig
 ```shell
 sudo apt install libopus-dev libvpx-dev libpipewire-0.3-dev
 git clone https://github.com/okstar-org/ok-rtc.git
-cd ok-rtc; 
+cd ok-rtc
 git submodule update --init
 # CMake预处理
 cmake -B out -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE='$env{VCPKG_ROOT}\scripts\buildsystems\vcpkg.cmake' -DCMAKE_PREFIX_PATH='${PROJECT_ROOT}\vcpkg_installed\x64-windows'
 # 构建
-cmake --build out --config Release --target ALL_BUILD -j 4
+cmake --build out --config Release
 # 执行安装（用管理员身份打开命令行）
 cmake --install out
 ```
 - 编译OkGloox库
 ```shell
 git clone https://github.com/okstar-org/ok-gloox.git
+cd ok-gloox
 # CMake预处理
-cmake -G "Visual Studio 17 2022" -B .\out\
+cmake -B out -DCMAKE_BUILD_TYPE=Release
 # 构建
-cmake --build .\out\ --config Release --target ALL_BUILD -j 4
+cmake --build out --config Release
 # 执行安装（用管理员身份打开命令行）
 cmake --install out
 ```
@@ -158,7 +158,7 @@ sudo apt install -y libcrypto++-dev  libssl-dev
 sudo apt install -y libpipewire-0.3-dev libxss-dev libgbm-dev libdrm-dev libxdamage-dev libxrender-dev libxrandr-dev libxtst-dev \
   libasound2-dev libpulse-dev libavcodec-dev libavformat-dev libswscale-dev libavdevice-dev libvpx-dev \
   libopus-dev libjpeg-dev libopenal-dev libopenh264-dev \
-  libexif-dev libqrencode-dev libsodium-dev libsqlite3-dev
+  libexif-dev libqrencode-dev libsqlite3-dev
 ```
 > 构建OkRtc模块
 ```shell
@@ -178,7 +178,7 @@ dnf install -y gcc g++
 dnf install -y qt5-qtbase-devel qt6-qtbase-gui  qt5-qtmultimedia-devel \
   qt5-qtsvg-devel qt5-qttools-devel qt5-qttools-static \
   libavcodec-free-devel libavdevice-free-devel \
-  libexif-free-devel qrencode-devel libsodium-devel sqlite3-devel \
+  libexif-free-devel qrencode-devel sqlite3-devel \
   libvpx-devel openal-soft-devel openssl-devel
 ```
 

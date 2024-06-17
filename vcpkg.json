@@ -10,8 +10,7 @@
     "openal-soft",
     "libvpx",
     "opus",
-    "openh264",
-    "libsodium"
+    "openh264"
   ],
   "overrides": [
     {
