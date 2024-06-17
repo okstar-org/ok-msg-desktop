@@ -25,15 +25,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     strategy:
-      # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
       fail-fast: false
-
-      # Set up a matrix to run the following 3 configurations:
-      # 1. <Windows, Release, latest MSVC compiler toolchain on the default runner image, default generator>
-      # 2. <Linux, Release, latest GCC compiler toolchain on the default runner image, default generator>
-      # 3. <Linux, Release, latest Clang compiler toolchain on the default runner image, default generator>
-      #
-      # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the build_type list.
       matrix:
         arch: [x64]
         os: [windows-latest]
@@ -51,10 +43,17 @@ jobs:
       with:
         submodules: 'true'
 
-    - name: Native Tools Command Prompt.
-      uses: ilammy/msvc-dev-cmd@v1.10.0
+#    - name: Native Tools Command Prompt.
+#      uses: ilammy/msvc-dev-cmd@v1.10.0
+#      with:
+#        arch: ${{ matrix.arch }}
+
+    - name: Set up Clang
+      uses: egor-tensin/setup-clang@v1
       with:
-        arch: ${{ matrix.arch }}
+        version: latest
+        platform: x64
+
 
     - name: vcpkg build
       uses: lukka/run-vcpkg@v11
@@ -73,12 +72,6 @@ jobs:
     - name: Install pkg-conf
       run: |
         choco install strawberryperl --pre
-
-    - name: Set up Clang
-      uses: egor-tensin/setup-clang@v1
-      with:
-        version: latest
-        platform: x64
 
     - name: Install ok-rtc
       shell: powershell
