@@ -55,9 +55,6 @@ jobs:
         version: latest
         platform: x64
 
-    - name: Set up cygwin
-      uses: cygwin/cygwin-install-action@master
-
     - name: Install Chocolatey
       shell: powershell
       run: |
@@ -79,8 +76,12 @@ jobs:
         git clone  https://github.com/webmproject/libvpx.git
         cd libvpx
         git switch -c v1.13.1      
-        mintty ./configure --target=x86_64-win64-vs17
-        mintty make
+        
+
+    - name: Configure libvpx
+      run: |
+        bash ./configure --target=x86_64-win64-vs17
+        bash make
 
     - name: Build libvpx
       shell: powershell
