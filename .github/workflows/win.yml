@@ -88,7 +88,8 @@ jobs:
     - name: Make libvpx
       working-directory: libvpx
       shell: bash
-      run: make
+      run: |
+        bash --login make
 
     - name: Build libvpx
       working-directory: libvpx
