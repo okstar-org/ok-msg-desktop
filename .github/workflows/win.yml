@@ -77,7 +77,7 @@ jobs:
       run: |
         git clone https://github.com/webmproject/libvpx.git
         cd libvpx
-        ./configure --enable-static --target=x86_64-pc-msys  # 根据需要调整选项  
+        ./configure --enable-static  # 根据需要调整选项  
         make
         make install  # 如果需要安装到指定目录
 
