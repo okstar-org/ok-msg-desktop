@@ -90,7 +90,6 @@ jobs:
         make
 
     - name: Build libvpx
-      uses: cygwin/cygwin-install-action@master
       run: |
         cd libvpx
         msbuild.exe vpx.sln
