@@ -67,7 +67,7 @@ jobs:
 
     - name: Install Cygwin
       run: |
-        choco install cygwin
+        choco install cygwin cyg-get
 
 
     - name: Install Yasm
@@ -82,12 +82,12 @@ jobs:
 
     - name: Configure libvpx
       working-directory: libvpx
+      shell: bash
       run: |
-        bash curl https://rawgit.com/transcode-open/apt-cyg/master/apt-cyg -O apt-cyg
-        bash install apt-cyg /bin
-        bash apt-cyg install make
-        bash ./configure --target=x86_64-win64-vs17
-        bash make
+        ./configure --target=x86_64-win64-vs17
+
+        apt-cyg install make
+        make
 
     - name: Build libvpx
       shell: powershell
