@@ -55,11 +55,6 @@ jobs:
         version: latest
         platform: x64
 
-    - name: vcpkg build
-      uses: lukka/run-vcpkg@v11
-      with:
-        runVcpkgInstall: true
-
     - name: Install Chocolatey
       shell: powershell
       run: |
@@ -70,8 +65,8 @@ jobs:
         # 验证安装（可选）
         choco --version
 
-    - name: Install MSYS2
-      run: choco install msys2
+    - name: Install Cygwin
+      run: choco install cygwin
 
     - name: Install Yasm
       run: choco install yasm
@@ -80,9 +75,28 @@ jobs:
       run: |
         git clone https://github.com/webmproject/libvpx.git
         cd libvpx
-        sh ./configure --enable-static --target=x86_64-win64-vs17 # 根据需要调整选项  
+        ./configure --target=x86_64-win64-vs17 # 根据需要调整选项  
         make
         msbuild.exe vpx.sln  # 如果需要安装到指定目录
+
+    - name: Make libvpx
+      uses: cygwin/cygwin-install-action@master
+      shell: bash
+      run: | 
+        cd libvpx
+        ./configure --target=x86_64-win64-vs17
+        make
+
+    - name: Build libvpx
+      uses: cygwin/cygwin-install-action@master
+      run: |
+        cd libvpx
+        msbuild.exe vpx.sln
+
+    - name: vcpkg build
+      uses: lukka/run-vcpkg@v11
+      with:
+        runVcpkgInstall: true
 
     - name: Install pkg-conf
       run: |
