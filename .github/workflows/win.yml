@@ -55,6 +55,9 @@ jobs:
         version: latest
         platform: x64
 
+    - name: Set up cygwin
+      uses: cygwin/cygwin-install-action@master
+
     - name: Install Chocolatey
       shell: powershell
       run: |
@@ -80,7 +83,6 @@ jobs:
         msbuild.exe vpx.sln  # 如果需要安装到指定目录
 
     - name: Make libvpx
-      uses: cygwin/cygwin-install-action@master
       shell: bash
       run: | 
         cd libvpx
