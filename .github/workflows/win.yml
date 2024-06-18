@@ -77,10 +77,6 @@ jobs:
     - name: Clone libvpx
       run: |
         git clone https://github.com/webmproject/libvpx.git
-        cd libvpx
-        ./configure --target=x86_64-win64-vs17 # 根据需要调整选项  
-        make
-        msbuild.exe vpx.sln  # 如果需要安装到指定目录
 
     - name: Make libvpx
       shell: bash
