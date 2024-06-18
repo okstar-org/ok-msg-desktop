@@ -79,6 +79,7 @@ jobs:
         
 
     - name: Configure libvpx
+      working-directory: libvpx
       run: |
         bash ./configure --target=x86_64-win64-vs17
         bash make
