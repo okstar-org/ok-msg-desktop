@@ -998,7 +998,7 @@ bool Widget::newGroupMessageAlert(const GroupId &groupId, const FriendId &author
                                   const QString &message, bool notify) {
 
     qDebug() << __func__ <<"groupId" << groupId.toString()<< "message"<< message;
-    bool hasActive;
+    bool hasActive = false;
     QWidget *currentWindow =
     currentWindow = window();
 

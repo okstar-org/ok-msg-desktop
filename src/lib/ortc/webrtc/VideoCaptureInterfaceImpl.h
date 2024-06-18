@@ -3,8 +3,8 @@
 
 #include "VideoCaptureInterface.h"
 #include <memory>
-#include <ok-rtc/api/media_stream_interface.h>
-#include <ok-rtc/api/scoped_refptr.h>
+#include <api/media_stream_interface.h>
+#include <api/scoped_refptr.h>
 
 namespace lib::ortc {
 

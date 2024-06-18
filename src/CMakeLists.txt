@@ -52,24 +52,14 @@ else ()
 endif ()
 
 
-
-
 target_link_libraries(
     ${PROJECT_NAME}
     PRIVATE ${OK_LIBS}
-    #        PRIVATE ${Qt5Core_LIBRARIES}
-    #        PRIVATE ${Qt5Gui_LIBRARIES}
-    #        PRIVATE ${Qt5Network_LIBRARIES}
-    #        PRIVATE ${Qt5Widgets_LIBRARIES}
-    #        PRIVATE ${Qt5MultimediaWidgets_LIBRARIES}
-    #        PRIVATE ${Qt5Multimedia_LIBRARIES}
-    #        PRIVATE ${Qt5Xml_LIBRARIES}
 )
 
 if (MSVC)
-    set_property(
-        TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY
-        "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    set_property(TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    target_link_options(${PROJECT_NAME} PRIVATE "/NODEFAULTLIB:MSVCRT")  
 endif (MSVC)
 
 set(PNG_NAME "ok-msg.png")

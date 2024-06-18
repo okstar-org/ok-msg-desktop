@@ -17,7 +17,7 @@ if (WIN32)
     pkg_check_modules(sqlite3 REQUIRED sqlite3)
     pkg_check_modules(exif REQUIRED libexif)
     pkg_check_modules(vpx REQUIRED vpx)
-   pkg_check_modules(JPEG REQUIRED libjpeg)
+    pkg_check_modules(JPEG REQUIRED libjpeg)
 
     list(APPEND ALL_LIBRARIES
             ${AVDEVICE_LINK_LIBRARIES}
@@ -140,8 +140,8 @@ set(${PROJECT_NAME}_SOURCES
         src/core/groupid.h
         src/core/toxoptions.cpp
         src/core/toxoptions.h
-		    src/core/FriendId.cpp
-		    src/core/FriendId.h
+        src/core/FriendId.cpp
+	src/core/FriendId.h
         src/core/contactid.cpp
         src/core/contactid.h
         src/friendlist.cpp
@@ -512,14 +512,13 @@ if (WIN32)
             ${AVFORMAT_INCLUDE_DIRS}
             ${AVUTIL_INCLUDE_DIRS}
             ${SWSCALE_INCLUDE_DIRS}
-          
         )
         
 
     set(PLATFORM_LIBS d3d11 dxgi shlwapi
             Iphlpapi dwmapi dmoguids wmcodecdspuuid Winmm
             amstrmid msdmo strmiids strmbase psapi
-            Vfw32 shell32 oleaut32 ole32 user32 advapi32
+            Kernel32 Vfw32 shell32 oleaut32 ole32 user32 advapi32
             bcrypt Mf Mfplat Mfreadwrite mfuuid dxva2 evr )
 elseif (UNIX)
     set(PLATFORM_LIBS z OpenSSL::SSL OpenSSL::Crypto atomic X11)
@@ -539,7 +538,5 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 if (MSVC)
-    set_property(
-            TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY
-            "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    set_property(TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif (MSVC)

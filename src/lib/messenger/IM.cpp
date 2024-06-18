@@ -1404,7 +1404,6 @@ void IM::handleItemUpdated(const JID &jid) {
 
   if (data->sub() == "both") {
     qDebug() << "建立订阅双向关联";
-//    requestFriendNickname(jid);
     emit receiveFriendAliasChanged(jid, data->name());
   }
 }
