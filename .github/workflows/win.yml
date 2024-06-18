@@ -68,7 +68,7 @@ jobs:
     - name: Install Cygwin
       run: |
         choco install cygwin cyg-get
-        sudo apt-cyg install make
+        bash apt-cyg install make
 
 
     - name: Install Yasm
