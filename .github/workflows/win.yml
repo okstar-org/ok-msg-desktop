@@ -79,8 +79,8 @@ jobs:
         git clone  https://github.com/webmproject/libvpx.git
         cd libvpx
         git switch -c v1.13.1      
-        ./configure --target=x86_64-win64-vs17
-        make
+        mintty ./configure --target=x86_64-win64-vs17
+        mintty make
 
     - name: Build libvpx
       shell: powershell
