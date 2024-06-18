@@ -85,7 +85,7 @@ jobs:
       shell: bash
       run: |
         ./configure --target=x86_64-win64-vs17
-        bash make
+        mintty make
 
     - name: Build libvpx
       shell: powershell
