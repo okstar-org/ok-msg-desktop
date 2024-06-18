@@ -44,10 +44,10 @@ jobs:
       with:
         sdk-version: 22000
 
-#    - name: Native Tools Command Prompt.
-#      uses: ilammy/msvc-dev-cmd@v1.10.0
-#      with:
-#        arch: ${{ matrix.arch }}
+    - name: Native Tools Command Prompt.
+      uses: ilammy/msvc-dev-cmd@v1.10.0
+      with:
+        arch: ${{ matrix.arch }}
 
     - name: Set up Clang
       uses: egor-tensin/setup-clang@v1
