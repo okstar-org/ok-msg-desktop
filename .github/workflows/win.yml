@@ -77,20 +77,22 @@ jobs:
       run: |
         git clone  https://github.com/webmproject/libvpx.git
         cd libvpx
-        git switch -c v1.13.1      
-        
+        git switch -c v1.13.1
 
     - name: Configure libvpx
       working-directory: libvpx
       shell: bash
       run: |
         ./configure --target=x86_64-win64-vs17
-        mintty make
+
+    - name: Make libvpx
+      working-directory: libvpx
+      shell: bash
+      run: make
 
     - name: Build libvpx
-      shell: powershell
+      working-directory: libvpx
       run: |
-        cd libvpx
         msbuild.exe vpx.sln
 
     - name: vcpkg build
