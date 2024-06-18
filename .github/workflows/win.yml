@@ -68,8 +68,7 @@ jobs:
     - name: Install Cygwin
       run: |
         choco install cygwin cyg-get
-        cyg-get install make
-
+        cyg-get make
 
     - name: Install Yasm
       run: choco install yasm
@@ -86,8 +85,6 @@ jobs:
       shell: bash
       run: |
         ./configure --target=x86_64-win64-vs17
-
-        
         make
 
     - name: Build libvpx
