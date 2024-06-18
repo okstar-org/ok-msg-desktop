@@ -79,7 +79,7 @@ jobs:
         cd libvpx
         sh ./configure --enable-static --target=x86_64-win64-vs17 # 根据需要调整选项  
         make
-        make install  # 如果需要安装到指定目录
+        msbuild.exe vpx.sln  # 如果需要安装到指定目录
 
     - name: Install pkg-conf
       run: |
