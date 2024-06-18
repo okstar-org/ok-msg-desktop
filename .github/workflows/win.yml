@@ -66,7 +66,10 @@ jobs:
         choco --version
 
     - name: Install Cygwin
-      run: choco install cygwin
+      run: |
+        choco install cygwin
+        bash lynx -source rawgit.com/transcode-open/apt-cyg/master/apt-cyg > apt-cyg
+        bash install apt-cyg /bin
 
     - name: Install Yasm
       run: choco install yasm
