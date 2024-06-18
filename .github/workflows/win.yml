@@ -81,7 +81,7 @@ jobs:
         git switch -c v1.13.1
 
     - name: make libvpx
-      shell: cygwin
+      shell: minitty
       run: |
         ./configure --target=x86_64-win64-vs17
         make
