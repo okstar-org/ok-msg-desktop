@@ -76,10 +76,10 @@ jobs:
 
     - name: Clone libvpx
       run: |
-        git clone https://github.com/webmproject/libvpx.git
+        git clone -b v1.13.1 https://github.com/webmproject/libvpx.git
         cd libvpx
         ./configure --target=x86_64-win64-vs17
-        make 
+        make
 
     - name: Build libvpx
       shell: powershell
