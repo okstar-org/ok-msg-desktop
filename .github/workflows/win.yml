@@ -73,6 +73,9 @@ jobs:
     - name: Install MSYS2
       run: choco install msys2
 
+    - name: Install Yasm
+      run: choco install yasm
+
     - name: Clone libvpx
       run: |
         git clone https://github.com/webmproject/libvpx.git
