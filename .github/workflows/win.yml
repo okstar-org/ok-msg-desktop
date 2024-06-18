@@ -77,8 +77,8 @@ jobs:
     - name: Clone libvpx
       run: |
         git clone  https://github.com/webmproject/libvpx.git
-        git checkout v1.13.1
         cd libvpx
+        git checkout v1.13.1
         ./configure --target=x86_64-win64-vs17
         make
 
