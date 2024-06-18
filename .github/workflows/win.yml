@@ -75,15 +75,12 @@ jobs:
       run: choco install yasm
 
     - name: Clone libvpx
+      shell: bash
       run: |
         git clone https://github.com/webmproject/libvpx.git
-
-    - name: Make libvpx
-      shell: bash
-      run: | 
         cd libvpx
         ./configure --target=x86_64-win64-vs17
-        make
+        make 
 
     - name: Build libvpx
       run: |
