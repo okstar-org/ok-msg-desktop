@@ -67,7 +67,8 @@ jobs:
 
     - name: Install Cygwin
       run: |
-        choco install cygwin cyg-get mingw msys2
+        choco install cygwin cyg-get
+        cyg-get make
 
     - name: Install Yasm
       run: choco install yasm
@@ -86,9 +87,8 @@ jobs:
 
     - name: Make libvpx
       working-directory: libvpx
-      shell: bash
       run: |
-        bash --login make
+        bash make
 
     - name: Build libvpx
       working-directory: libvpx
