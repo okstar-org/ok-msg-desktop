@@ -28,36 +28,32 @@ jobs:
       fail-fast: false
       matrix:
         arch: [x64]
-        os: [windows-2019]
+        os: [windows-latest]
         build_type: [Release]
-        c_compiler: [cl]
-        cpp_compiler: [cl]
-        include:
-          - os: windows-latest
-            c_compiler: cl
-            cpp_compiler: cl
+        c_compiler: [clang]
+        cpp_compiler: [clang++]
 
     steps:
     - name: Checkout repository and submodules
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         submodules: 'true'
+
+    - name: Set up windows 10 SDK
+      uses: GuillaumeFalourd/setup-windows10-sdk-action@v2
+      with:
+        sdk-version: 22000
 
     - name: Native Tools Command Prompt.
       uses: ilammy/msvc-dev-cmd@v1.10.0
       with:
         arch: ${{ matrix.arch }}
 
-#    - name: Set up Clang
-#      uses: egor-tensin/setup-clang@v1
-#      with:
-#        version: latest
-#        platform: x64
-
-    - name: vcpkg build
-      uses: lukka/run-vcpkg@v11
+    - name: Set up Clang
+      uses: egor-tensin/setup-clang@v1
       with:
-        runVcpkgInstall: true
+        version: latest
+        platform: x64
 
     - name: Install Chocolatey
       shell: powershell
@@ -68,6 +64,42 @@ jobs:
         iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
         # 验证安装（可选）
         choco --version
+
+    - name: Install Cygwin
+      run: |
+        choco install cygwin cyg-get
+        cyg-get make
+
+    - name: Install Yasm
+      run: choco install yasm
+
+    - name: Clone libvpx
+      run: |
+        git clone  https://github.com/webmproject/libvpx.git
+        cd libvpx
+        git switch -c v1.13.1
+
+    - name: Configure libvpx
+      working-directory: libvpx
+      shell: bash
+      run: |
+        ./configure --target=x86_64-win64-vs17
+
+    - name: Make libvpx
+      working-directory: libvpx
+      run: |
+        C:\tools\cygwin\bin\make.exe
+
+    - name: Build libvpx
+      working-directory: libvpx
+      run: |
+        msbuild.exe vpx.sln
+
+    - name: vcpkg build
+      uses: lukka/run-vcpkg@v11
+      with:
+        runVcpkgInstall: true
+
     - name: Install pkg-conf
       run: |
         choco install strawberryperl --pre
@@ -75,13 +107,11 @@ jobs:
     - name: Install ok-rtc
       shell: powershell
       run: |   
-        git clone -b master https://github.com/okstar-org/ok-rtc.git
+        git clone -b misc https://github.com/okstar-org/ok-rtc.git
         cd ok-rtc
         git submodule update --init
         cmake -B out -DPKG_CONFIG_EXECUTABLE=C:\Strawberry\perl\bin\pkg-config.bat -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_ROOT"/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=${{ env.VCPKG_DEFAULT_TRIPLET }} -DCMAKE_PREFIX_PATH=${{ env.VCPKG_INSTALLED_DIR }}\${{ env.VCPKG_DEFAULT_TRIPLET }}
         cmake --build out --config=${{ matrix.build_type }}
-        ls out
-        ls out/Release
         cmake --install out --config=${{ matrix.build_type }} --prefix=${{ github.workspace }}/
 
     - name: Install ok-gloox
@@ -107,7 +137,7 @@ jobs:
     - name: Configure CMake for windows
       run: >
         cmake -B ${{ steps.strings.outputs.build-output-dir }}
-        -DCMAKE_PREFIX_PATH=${{ github.workspace }}/lib/cmake/ok-rtc;${{ github.workspace }}/lib/cmake/ok-gloox
+        -DCMAKE_PREFIX_PATH="${{ github.workspace }}/lib/cmake/ok-rtc;${{ github.workspace }}/lib/cmake/ok-gloox"
         -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
         -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}

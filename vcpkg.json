@@ -8,7 +8,6 @@
     "mozjpeg",
     "sqlite3",
     "openal-soft",
-    "libvpx",
     "opus",
     "openh264"
   ],
