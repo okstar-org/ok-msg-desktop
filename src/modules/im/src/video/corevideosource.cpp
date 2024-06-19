@@ -13,11 +13,11 @@
 extern "C" {
 #include <libavcodec/avcodec.h>
 #include <libavutil/imgutils.h>
-#include <vpx/vpx_image.h>
 }
 
 #include "corevideosource.h"
 #include "videoframe.h"
+#include "../core/toxcall.h"
 
 /**
  * @class CoreVideoSource

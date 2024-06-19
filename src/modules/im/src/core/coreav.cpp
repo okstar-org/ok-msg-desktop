@@ -23,10 +23,8 @@
 #include <QDebug>
 #include <QThread>
 #include <QTimer>
-#include <QtConcurrent/QtConcurrentRun>
 #include <cassert>
 #include <src/nexus.h>
-#include <vpx/vpx_image.h>
 
 /**
  * 音视频

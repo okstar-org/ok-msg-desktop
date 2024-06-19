@@ -16,7 +16,7 @@ if (WIN32)
     pkg_check_modules(OpenAL REQUIRED openal)
     pkg_check_modules(sqlite3 REQUIRED sqlite3)
     pkg_check_modules(exif REQUIRED libexif)
-    pkg_check_modules(vpx REQUIRED vpx)
+
     pkg_check_modules(JPEG REQUIRED libjpeg)
 
     list(APPEND ALL_LIBRARIES
