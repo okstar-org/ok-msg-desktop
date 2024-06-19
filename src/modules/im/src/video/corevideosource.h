@@ -17,7 +17,8 @@
 #include "videosource.h"
 #include <QMutex>
 #include <atomic>
-#include <vpx/vpx_image.h>
+
+struct vpx_image_t;
 
 class CoreVideoSource : public VideoSource
 {

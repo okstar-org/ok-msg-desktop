@@ -26,6 +26,7 @@
 #include <QtConcurrent/QtConcurrentRun>
 #include <cassert>
 #include <src/nexus.h>
+#include <vpx/vpx_image.h>
 
 /**
  * 音视频
@@ -39,6 +40,7 @@ CoreAV::CoreAV() : audioCtrl{Nexus::getInstance().audio()}, coreavThread{new QTh
   qDebug() << __func__;
 
   qRegisterMetaType<FriendId>("FriendId");
+  qRegisterMetaType<vpx_image>("vpx_image");
 
   connect(this, &CoreAV::createCallToPeerId, this, &CoreAV::doCreateCallToPeerId);
 
