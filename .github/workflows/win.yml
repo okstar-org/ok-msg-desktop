@@ -49,6 +49,11 @@ jobs:
       with:
         arch: ${{ matrix.arch }}
 
+    - name: vcpkg build
+      uses: lukka/run-vcpkg@v11
+      with:
+        runVcpkgInstall: true
+
     - name: Install Yasm
       run: choco install yasm
 
