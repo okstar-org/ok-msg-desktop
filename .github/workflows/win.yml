@@ -67,8 +67,7 @@ jobs:
 
     - name: Install Cygwin
       run: |
-        choco install cygwin cyg-get
-        cyg-get make
+        choco install cygwin cyg-get mingw msys2
 
     - name: Install Yasm
       run: choco install yasm
