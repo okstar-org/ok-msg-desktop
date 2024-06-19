@@ -125,8 +125,8 @@ void Nexus::onSave(SavedInfo &savedInfo) {
 
 
     if (!profile) {
-      qWarning() << "不能创建新的Profile，个人信息初始化异常或者重复登录";
-      emit createProfileFailed("个人信息初始化异常或者重复登录!");
+      qWarning() << tr("Can not create profile!");
+      emit createProfileFailed(tr("Can not create profile!"));
       return;
     }
 
