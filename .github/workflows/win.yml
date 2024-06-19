@@ -42,63 +42,15 @@ jobs:
     - name: Set up windows 10 SDK
       uses: GuillaumeFalourd/setup-windows10-sdk-action@v2
       with:
-        sdk-version: 22000
+        sdk-version: 20348
 
     - name: Native Tools Command Prompt.
       uses: ilammy/msvc-dev-cmd@v1.10.0
       with:
         arch: ${{ matrix.arch }}
 
-    - name: Set up Clang
-      uses: egor-tensin/setup-clang@v1
-      with:
-        version: latest
-        platform: x64
-
-    - name: Install Chocolatey
-      shell: powershell
-      run: |
-        # 设置执行策略以允许脚本运行
-        Set-ExecutionPolicy Bypass -Scope Process -Force
-        # 下载并安装Chocolatey
-        iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-        # 验证安装（可选）
-        choco --version
-
-    - name: Install Cygwin
-      run: |
-        choco install cygwin cyg-get
-        cyg-get make
-
     - name: Install Yasm
       run: choco install yasm
-
-    - name: Clone libvpx
-      run: |
-        git clone  https://github.com/webmproject/libvpx.git
-        cd libvpx
-        git switch -c v1.13.1
-
-    - name: Configure libvpx
-      working-directory: libvpx
-      shell: bash
-      run: |
-        ./configure --target=x86_64-win64-vs17
-
-    - name: Make libvpx
-      working-directory: libvpx
-      run: |
-        C:\tools\cygwin\bin\make.exe
-
-    - name: Build libvpx
-      working-directory: libvpx
-      run: |
-        msbuild.exe vpx.sln
-
-    - name: vcpkg build
-      uses: lukka/run-vcpkg@v11
-      with:
-        runVcpkgInstall: true
 
     - name: Install pkg-conf
       run: |
