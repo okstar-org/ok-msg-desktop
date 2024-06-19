@@ -515,11 +515,12 @@ if (WIN32)
         )
         
 
-    set(PLATFORM_LIBS d3d11 dxgi shlwapi
-            Iphlpapi dwmapi dmoguids wmcodecdspuuid Winmm
-            amstrmid msdmo strmiids strmbase psapi
-            Kernel32 Vfw32 shell32 oleaut32 ole32 user32 advapi32
-            bcrypt Mf Mfplat Mfreadwrite mfuuid dxva2 evr )
+    set(PLATFORM_LIBS  d3d11 dxgi dxva2  
+                        wmcodecdspuuid Winmm Mf Mfplat Mfreadwrite mfuuid evr 
+                        amstrmid msdmo strmiids strmbase
+                        Kernel32 Vfw32 shell32 oleaut32 ole32 advapi32
+                        shlwapi iphlpapi
+                        )
 elseif (UNIX)
     set(PLATFORM_LIBS z OpenSSL::SSL OpenSSL::Crypto atomic X11)
 endif ()
