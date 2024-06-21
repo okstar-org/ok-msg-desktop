@@ -58,8 +58,7 @@ target_link_libraries(
 )
 
 if (MSVC)
-    set_property(TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-    target_link_options(${PROJECT_NAME} PRIVATE "/NODEFAULTLIB:MSVCRT")  
+    set_property(TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>") 
 endif (MSVC)
 
 set(PNG_NAME "ok-msg.png")
