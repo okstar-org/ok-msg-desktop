@@ -105,7 +105,7 @@ search_dependency(LIBEXIF PACKAGE libexif)
 search_dependency(LIBQRENCODE PACKAGE libqrencode)
 search_dependency(LIBSWSCALE PACKAGE libswscale)
 search_dependency(LIBSQLITE PACKAGE sqlite3)
-search_dependency(VPX PACKAGE vpx)
+
 
 if(${SPELL_CHECK})
   find_package(KF5Sonnet)
