@@ -42,15 +42,6 @@ void str_join(std::vector<std::string> &v, std::string &out,
   }
 }
 
-void str_split(std::vector<std::string> &v, std::string &input,
-               const std::string &dot) {
-  char *token = std::strtok(const_cast<char *>(input.data()), dot.data());
-  while (token != nullptr) {
-    v.emplace_back(token);
-    token = std::strtok(nullptr, dot.data());
-  }
-}
-
 } // namespace base
 
 } // namespace olc

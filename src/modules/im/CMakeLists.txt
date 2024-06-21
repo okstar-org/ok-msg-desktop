@@ -27,8 +27,6 @@ if (WIN32)
             ${SWSCALE_LINK_LIBRARIES}
             ${QRENCODE_LINK_LIBRARIES}
             ${JPEG_LINK_LIBRARIES}
-    
-            PRIVATE ${vpx_LINK_LIBRARIES}
             PRIVATE ${exif_LINK_LIBRARIES}
             PRIVATE ${sqlite3_LINK_LIBRARIES}
             PRIVATE ${OpenAL_LINK_LIBRARIES}
@@ -399,7 +397,7 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     set(${PROJECT_NAME}_SOURCES
             ${${PROJECT_NAME}_SOURCES} src/platform/camera/directshow.cpp
             src/platform/camera/directshow.h)
-    set(${PROJECT_NAME}_RESOURCES ${${PROJECT_NAME}_RESOURCES} windows/qtox.rc)
+    set(${PROJECT_NAME}_RESOURCES ${${PROJECT_NAME}_RESOURCES})
 elseif (${CMAKE_SYSTEM_NAME} MATCHES "Linux" OR ${CMAKE_SYSTEM_NAME} MATCHES
         "FreeBSD")
     set(${PROJECT_NAME}_SOURCES
@@ -515,12 +513,12 @@ if (WIN32)
         )
         
 
-    set(PLATFORM_LIBS  d3d11 dxgi dxva2  
+    set(PLATFORM_LIBS msvcrt d3d11 dxgi dxva2 gdi32
                         wmcodecdspuuid Winmm Mf Mfplat Mfreadwrite mfuuid evr 
                         amstrmid msdmo strmiids strmbase
-                        Kernel32 Vfw32 shell32 oleaut32 ole32 advapi32
-                        shlwapi iphlpapi
-                        )
+                        winspool comdlg32 uuid shlwapi iphlpapi 
+                        kernel32 user32 Vfw32 shell32 oleaut32 ole32 advapi32
+    )
 elseif (UNIX)
     set(PLATFORM_LIBS z OpenSSL::SSL OpenSSL::Crypto atomic X11)
 endif ()
