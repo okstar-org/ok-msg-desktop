@@ -15,12 +15,12 @@
 
 #include "contact.h"
 
+#include "src/core/FriendId.h"
 #include "src/core/contactid.h"
 #include "src/core/groupid.h"
 #include "src/core/icoregroupquery.h"
 #include "src/core/icoreidhandler.h"
-#include "src/core/toxpk.h"
-
+#include "src/model/message.h"
 #include <QMap>
 #include <QObject>
 #include <QStringList>
@@ -29,17 +29,41 @@ class Group : public Contact
 {
     Q_OBJECT
 public:
-    Group(QString groupId, const GroupId persistentGroupId, const QString& name, bool isAvGroupchat,
-          const QString& selfName, ICoreGroupQuery& groupQuery, ICoreIdHandler& idHandler);
-    bool isAvGroupchat() const;
-    QString getId() const override;
-    const GroupId& getPersistentId() const override;
-    int getPeersCount() const;
-    void regeneratePeerList();
+    enum class Role {
+        //https://xmpp.org/extensions/xep-0045.html#roles
+        None,
+        Visitor,
+        Participant,
+        Moderator,
 
-    void addPeerName(GroupId peerName);
-    const QMap<ToxPk, QString>& getPeerList() const;
-    bool peerHasNickname(ToxPk pk);
+    };
+
+    enum class Affiliation {
+        //https://xmpp.org/extensions/xep-0045.html#affil
+        Outcast,//被驱逐
+        None,
+        Owner,
+        Admin,
+        Member,
+    };
+
+
+    Group(const GroupId persistentGroupId,
+          const QString& name,
+          bool isAvGroupchat,
+          const QString& selfName,
+          ICoreGroupQuery& groupQuery,
+          ICoreIdHandler& idHandler);
+
+    bool isAvGroupchat() const;
+
+    void addPeer(const GroupOccupant &go);
+    int getPeersCount() const;
+    void setPeerCount(uint32_t count);
+    const QMap<QString, QString>& getPeerList() const;
+
+    bool peerHasNickname(FriendId pk);
+    QString getPeerDisplayName(const QString& resource);
 
     void setEventFlag(bool f) override;
     bool getEventFlag() const override;
@@ -47,37 +71,56 @@ public:
     void setMentionedFlag(bool f);
     bool getMentionedFlag() const;
 
-    void updateUsername(ToxPk pk, const QString newName);
-    void setName(const QString& newTitle) override;
-    void setTitle(const QString& author, const QString& newTitle);
-    QString getName() const;
-    QString getDisplayedName() const override;
-    QString resolveToxId(const ToxPk& id) const;
+    void updateUsername(const QString oldName, const QString newName);
+
+    void setSubject(const QString& author, const QString& subject);
+    const QString &getSubject()const{return subject;};
+
     void setSelfName(const QString& name);
     QString getSelfName() const;
 
+    void setDesc(const QString& desc_);
+    const QString & getDesc() const;
+
+    const Role& getRole()const{return role;}
+
+    const Affiliation& getAffiliation() const {
+        return affiliation;
+    }
+
+    const GroupId& getPersistentId() const {return groupId;};
+
+    void setName(const QString& name);
+
 signals:
     void titleChangedByUser(const QString& title);
-    void titleChanged(const QString& author, const QString& title);
-    void userJoined(const ToxPk& user, const QString& name);
-    void userLeft(const ToxPk& user, const QString& name);
-    void numPeersChanged(int numPeers);
-    void peerNameChanged(const ToxPk& peer, const QString& oldName, const QString& newName);
+    void subjectChanged(const QString& author, const QString& title);
+    void userJoined(const FriendId& user, const QString& name);
+    void userLeft(const FriendId& user, const QString& name);
+    void peerCountChanged(uint32_t numPeers);
+    void peerNameChanged(const QString& oldName, const QString& newName);
+    void descChanged(const QString&);
+    void privilegesChanged(const Role &role,
+                           const Affiliation &aff,
+                           const QList<int> codes);
 
 private:
-    void stopAudioOfDepartedPeers(const ToxPk& peerPk);
+    void stopAudioOfDepartedPeers(const FriendId& peerPk);
 
 private:
     ICoreGroupQuery& groupQuery;
     ICoreIdHandler& idHandler;
-    QString selfName;
-    QString title;
-    QMap<ToxPk, QString> peerDisplayNames;
+    QString subject;
+    QString desc;
+    uint32_t peerCount;
+    QMap<QString, QString> peerDisplayNames;
     bool hasNewMessages;
     bool userWasMentioned;
-    QString toxGroupNum;
     const GroupId groupId;
     bool avGroupchat;
+    Role role{Role::None};
+    Affiliation affiliation{Affiliation::None};
+    QList<int> statusCodes;
 };
 
 #endif // GROUP_H

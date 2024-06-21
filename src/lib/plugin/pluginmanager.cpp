@@ -61,14 +61,15 @@ public:
 
 public slots:
   void doDom(QString xml) {
-    qDebug() << "incomingXml=>" << xml;
+//    qDebug() << "incomingXml=>" << xml;
     QDomDocument document;
     if (!document.setContent(xml, true)) {
       return;
     }
     auto ele = document.documentElement();
-    bool y = manager->incomingXml(account, ele);
-    qDebug() << "incomingXml=>" << y;
+    manager->incomingXml(account, ele);
+//    bool y =
+//    qDebug() << "incomingXml=>" << y;
   };
 };
 

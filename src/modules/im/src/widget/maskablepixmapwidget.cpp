@@ -51,7 +51,7 @@ void MaskablePixmapWidget::setPixmap(const QPixmap& pmap)
     }
 
     unscaled = pmap;
-    pixmap = pmap.scaled(width(), height(),
+    pixmap = pmap.scaled(size() * devicePixelRatioF(),
                          Qt::KeepAspectRatio,
                          Qt::SmoothTransformation);
     updatePixmap();
@@ -67,15 +67,18 @@ void MaskablePixmapWidget::setSize(QSize size)
 {
     setFixedSize(size);
     delete renderTarget;
-    renderTarget = new QPixmap(size);
+
+    QSize targetSize = size * devicePixelRatioF();
+    renderTarget = new QPixmap(targetSize);
 
     QPixmap pmapMask = QPixmap(maskName);
     if (!pmapMask.isNull()) {
-        mask = pmapMask.scaled(size, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+        mask = pmapMask.scaled(targetSize,
+                               Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
     }
 
     if (!unscaled.isNull()) {
-        pixmap = unscaled.scaled(width(), height(),
+        pixmap = unscaled.scaled(targetSize,
                                  Qt::KeepAspectRatio,
                                  Qt::SmoothTransformation);
         updatePixmap();
@@ -94,14 +97,17 @@ void MaskablePixmapWidget::updatePixmap()
 {
     renderTarget->fill(Qt::transparent);
 
-    QPoint offset((width() - pixmap.size().width()) / 2,
-                  (height() - pixmap.size().height()) / 2); // centering the pixmap
-
+    QSize actualSize = size() * devicePixelRatioF();
+    QPoint offset((actualSize.width() - pixmap.size().width()) / 2,
+                  (actualSize.height() - pixmap.size().height()) /
+                      2); // centering the pixmap
+    renderTarget->setDevicePixelRatio(1.0);
     QPainter painter(renderTarget);
     painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
     painter.drawPixmap(offset, pixmap);
     painter.setCompositionMode(QPainter::CompositionMode_DestinationIn);
     painter.drawPixmap(0, 0, mask);
     painter.end();
+    renderTarget->setDevicePixelRatio(this->devicePixelRatioF());
     QLabel::setPixmap(*renderTarget);
 }

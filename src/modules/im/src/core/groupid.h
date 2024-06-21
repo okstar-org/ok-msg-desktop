@@ -14,19 +14,22 @@
 #define GROUPID_H
 
 #include "src/core/contactid.h"
-#include "lib/messenger/IMMessage.h"
+
 
 class GroupId : public ContactId{
 public:
     GroupId();
     GroupId(const GroupId& other);
     explicit GroupId(const QByteArray& rawId);
-    explicit GroupId(const lib::messenger::FriendId& rawId);
-    int getSize() const override;
+    explicit GroupId(const QString& rawId);
+    explicit GroupId(const ContactId& contactId);
+    int getSize() const;
 
     bool operator==(const GroupId &other) const;
     bool operator<(const GroupId &other) const;
 
+    QString name;
+    QString nick;
 };
 
 #endif // GROUPID_H

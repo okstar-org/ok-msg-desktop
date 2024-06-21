@@ -10,7 +10,10 @@
  * Mulan PubL v2 for more details.
  */
 
+#include "IM.h"
 #include "IMFile.h"
+#include "IMJingle.h"
+#include "lib/session/AuthSession.h"
 #include "base/logs.h"
 #include <QEventLoop>
 #include <bytestream.h>
@@ -19,115 +22,114 @@
 
 namespace lib {
 namespace messenger {
-IMFile::IMFile(const JID &friendId, FileHandler::File file, const IM *im)
-    : m_friendId(friendId), m_file(std::move(file)), m_im(im),
-      m_byteStream(nullptr) {
-  qDebug() << "Create for:" << m_file.id;
+
+QString File::toString() const
+{
+    return QString("{id:%1, sId:%2, name:%3, path:%4, size:%5, status:%6, direction:%7}")
+           .arg(id).arg(sId).arg(name).arg(path).arg(size)
+           .arg((int)status).arg((int)direction);
 }
 
-IMFile::~IMFile() { qDebug() << "Destroyed for:" << m_file.id; }
+QDebug &operator<<(QDebug &debug, const File &f) {
+  QDebugStateSaver saver(debug);
+  debug.nospace() << f.toString();
+  return debug;
+}
 
-void IMFile::run() {
+IMFile::IMFile(QObject *parent): QObject(parent)
+{
+    qRegisterMetaType<File>("File");
 
-  QThread::currentThread()->setObjectName(
-      tr("FileSender-%1-%2")
-          .arg(qstring(m_friendId.username()))
-          .arg(m_file.id));
+    auto _session = ok::session::AuthSession::Instance();
+    auto _im = _session->im();
 
-  qDebug() << "Start file:%1" << m_file.id;
+    jingle = IMJingle::getInstance();
+    jingle->setFileHandlers(&fileHandlers);
 
-  /**
-   * 1、创建流通道
-   * https://xmpp.org/extensions/xep-0047.html#create
-   *
-   */
-  auto client = m_im->getClient();
-  //  client->registerStanzaExtension(new InBandBytestream::IBB);
+    /*file handler*/
+    connect(jingle, &IMJingle::receiveFileChunk, this,
+            [&](const IMContactId &friendId, const QString &sId,
+                int seq, const std::string& chunk) -> void {
+              for (auto handler : fileHandlers) {
+                handler->onFileRecvChunk(friendId.toString(), sId, seq, chunk);
+              }
+            });
 
-  auto iqId = client->getID();
+    connect(jingle, &IMJingle::receiveFileFinished, this,
+        [&](const IMContactId &friendId,const QString &sId) -> void {
+          for (auto handler : fileHandlers) {
+                handler->onFileRecvFinished(friendId.toString(), sId);
+          }
+        });
 
-  m_ibb = std::make_unique<InBandBytestream>(client,
-                                             client->logInstance(), //
-                                             m_im->self(), m_friendId,
-                                             stdstring(m_file.id));
+    connect(jingle, &IMJingle::receiveFileRequest, this,
+            [&](const QString &friendId, const File &file) {
+              for (auto h : fileHandlers) {
+                h->onFileRequest(friendId, file);
+              }
+            });
 
-  m_ibb->registerBytestreamDataHandler(this);
-  m_ibb->setBlockSize(m_buf);
+}
 
-  bool c = m_ibb->connect();
-  qDebug() << "IBBConnect=>" << c;
-  qFile = std::make_unique<QFile>(m_file.path);
+IMFile::~IMFile()
+{
+//    disconnect(jingle, &IMJingle::receiveFileChunk, this);
 
-  //  QEventLoop loop;
-  //  connect(this, &IMFile::fileSent, &loop, &QEventLoop::quit);
-  //  loop.exec();
+}
 
-  for (;;) {
+void IMFile::addFileHandler(FileHandler *handler) {
+  fileHandlers.emplace_back(handler);
+}
 
-    if (!m_byteStream) {
-      sleep(100);
-      continue;
+void IMFile::fileRejectRequest(QString friendId, const File &file) {
+    auto sId = file.sId;
+    qDebug() << __func__<<sId;
+    jingle->rejectFileRequest(friendId, sId);
+}
+
+void IMFile::fileAcceptRequest(QString friendId, const File &file) {
+   auto sId = file.sId;
+   qDebug() << __func__<<sId;
+    jingle->acceptFileRequest(friendId, file);
+}
+
+void IMFile::fileCancel(QString fileId) {
+  qDebug() << __func__ << "file" << fileId;
+}
+
+void IMFile::fileFinishRequest(QString friendId, const QString &sId) {
+  qDebug() << __func__<<sId;
+  jingle->finishFileRequest(friendId, sId);
+}
+
+void IMFile::fileFinishTransfer(QString friendId, const QString &sId) {
+    qDebug() << __func__<<sId;
+    jingle->finishFileTransfer(friendId, sId);
+}
+
+
+bool IMFile::fileSendToFriend(const QString &f, const File &file) {
+    qDebug() << __func__ <<"friend:" << f <<"file:" <<file.id;
+
+    auto bare = stdstring(f);
+
+    auto im = ok::session::AuthSession::Instance()->im();
+    auto resources = im->getOnlineResources(bare);
+    if (resources.empty()) {
+      qWarning() << "Can not find online friends:" << f;
+      return false;
     }
 
-    QByteArray buf = qFile->read(m_buf);
-    if (buf.isEmpty()) {
-      break;
+    JID jid(bare);
+    for (auto &r : resources) {
+      jid.setResource(r);
+      jingle->sendFileToResource(jid, file);
     }
-    bool b = m_byteStream->send(buf.toStdString());
-    if (!b) {
-      qWarning() << "send error";
-      emit fileError(m_friendId, m_file, m_sentBytes);
-      break;
-    }
-    m_seq += 1;
-    m_sentBytes += buf.size();
-    emit fileSending(m_friendId, m_file, m_ack_seq, m_ack_seq * m_buf, false);
-  }
 
-  m_byteStream->close();
-  qFile->close();
-
-  emit fileSending(m_friendId, m_file, m_ack_seq, m_sentBytes, true);
-
-  qDebug("finished.");
+    return jingle;
 }
 
-void IMFile::abort() { emit fileAbort(m_friendId, m_file, m_sentBytes); }
 
-void IMFile::handleBytestreamOpen(gloox::Bytestream *bs) {
-  qDebug() << ("file:%1") << qFile->fileName();
-  if (!qFile->open(QIODevice::ReadOnly)) {
-    return;
-  }
-  m_byteStream = bs;
-}
 
-void IMFile::handleBytestreamClose(gloox::Bytestream *bs) {
-  qDebug() << "closed:" <<(qstring(bs->sid()));
-  emit fileSent(m_friendId, m_file);
-}
-
-void IMFile::handleBytestreamData(gloox::Bytestream *bs,
-                                  const std::string &data) {
-  qDebug() << "data:" << qstring(bs->sid());
-}
-
-void IMFile::handleBytestreamDataAck(gloox::Bytestream *bs) {
-  qDebug() << "acked:" << qstring(bs->sid());
-  m_ack_seq += 1;
-  // TODO 考虑性能关系暂时不处理实时反馈ack
-  //   if(m_ack_seq < m_seq){
-  //     emit fileSending(m_friendId, m_file, m_ack_seq, m_ack_seq*m_buf,
-  //     false);
-  //   } else{
-  //     emit fileSending(m_friendId, m_file, m_ack_seq, m_sentBytes, true);
-  //   }
-}
-
-void IMFile::handleBytestreamError(gloox::Bytestream *bs, const gloox::IQ &iq) {
-  qDebug() << "error:" << qstring(bs->sid());
-  fileError(m_friendId, m_file, m_sentBytes);
-}
-
-} // namespace messenger
+} // namespace IMFile
 } // namespace lib

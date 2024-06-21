@@ -15,7 +15,7 @@
 
 #include "genericnetcamview.h"
 
-#include "src/core/toxpk.h"
+#include "src/core/FriendId.h"
 
 #include <QMap>
 
@@ -27,12 +27,12 @@ class GroupNetCamView : public GenericNetCamView
 public:
     GroupNetCamView(QString group, QWidget* parent = nullptr);
     void clearPeers();
-    void addPeer(const ToxPk& peer, const QString& name);
-    void removePeer(const ToxPk& peer);
+    void addPeer(const QString& peer, const QString& name);
+    void removePeer(const QString& peer);
 
 private slots:
     void onUpdateActivePeer();
-    void friendAvatarChanged(ToxPk friendPk, const QPixmap& pixmap);
+    void friendAvatarChanged(QString friendPk, const QPixmap& pixmap);
 
 private:
     struct PeerVideo
@@ -40,10 +40,10 @@ private:
         LabeledVideo* video;
     };
 
-    void setActive(const ToxPk& peer = ToxPk{});
+    void setActive(const FriendId& peer = FriendId{});
 
     QHBoxLayout* horLayout;
-    QMap<ToxPk, PeerVideo> videoList;
+    QMap<QString, PeerVideo> videoList;
     LabeledVideo* videoLabelSurface;
     LabeledVideo* selfVideoSurface;
     int activePeer;

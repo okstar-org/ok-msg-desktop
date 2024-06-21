@@ -73,15 +73,15 @@ QRegularExpression getRegexpForPhrase(const QString &phrase,
 /**
  * @return True if the given status indicates no future updates will come in
  */
-bool toxFileIsComplete(ToxFile::FileStatus status) {
+bool toxFileIsComplete(FileStatus status) {
   switch (status) {
-  case ToxFile::INITIALIZING:
-  case ToxFile::PAUSED:
-  case ToxFile::TRANSMITTING:
+  case FileStatus::INITIALIZING:
+  case FileStatus::PAUSED:
+  case FileStatus::TRANSMITTING:
     return false;
-  case ToxFile::BROKEN:
-  case ToxFile::CANCELED:
-  case ToxFile::FINISHED:
+  case FileStatus::BROKEN:
+  case FileStatus::CANCELED:
+  case FileStatus::FINISHED:
   default:
     return true;
   }
@@ -103,7 +103,9 @@ firstItemAfterDate(QDate date, const std::map<ChatLogIdx, ChatLogItem> &items) {
 } // namespace
 
 SessionChatLog::SessionChatLog(const ICoreIdHandler &coreIdHandler)
-    : coreIdHandler(coreIdHandler) {}
+    : coreIdHandler(coreIdHandler) {
+
+}
 
 /**
  * @brief Alternate constructor that allows for an initial index to be set
@@ -112,15 +114,17 @@ SessionChatLog::SessionChatLog(ChatLogIdx initialIdx,
                                const ICoreIdHandler &coreIdHandler)
     : coreIdHandler(coreIdHandler), nextIdx(initialIdx) {}
 
-SessionChatLog::~SessionChatLog() = default;
+SessionChatLog::~SessionChatLog(){
+    qDebug() << __func__;
+}
 
-const ChatLogItem &SessionChatLog::at(ChatLogIdx idx) const {
-  auto item = items.find(idx);
-  if (item == items.end()) {
-    std::terminate();
+const ChatLogItem* SessionChatLog::at(ChatLogIdx idx) const {
+  auto it = items.find(idx);
+  if (it == items.end()) {
+      qWarning()<<"Unable to find ChatLogItem:" << idx.get();
+      return nullptr;
   }
-
-  return item->second;
+  return &(it->second);
 }
 
 SearchResult
@@ -284,7 +288,7 @@ SessionChatLog::getDateIdxs(const QDate &startDate, size_t maxDates) const {
 }
 
 void SessionChatLog::insertCompleteMessageAtIdx(ChatLogIdx idx,
-                                                const ToxPk &sender,
+                                                const FriendId &sender,
                                                 const QString &senderName,
                                                 const ChatLogMessage &message) {
   auto item = ChatLogItem(sender, senderName, message);
@@ -293,7 +297,7 @@ void SessionChatLog::insertCompleteMessageAtIdx(ChatLogIdx idx,
 }
 
 void SessionChatLog::insertIncompleteMessageAtIdx(
-    ChatLogIdx idx, const ToxPk &sender, const QString &senderName,
+    ChatLogIdx idx, const FriendId &sender, const QString &senderName,
     const ChatLogMessage &message, DispatchedMessageId dispatchId) {
 
   auto item = ChatLogItem(sender,senderName, message);
@@ -304,7 +308,7 @@ void SessionChatLog::insertIncompleteMessageAtIdx(
 }
 
 void SessionChatLog::insertBrokenMessageAtIdx(ChatLogIdx idx,
-                                              const ToxPk &sender,
+                                              const FriendId &sender,
                                               const QString &senderName,
                                               const ChatLogMessage &message) {
   auto item = ChatLogItem(sender, senderName, message);
@@ -313,7 +317,7 @@ void SessionChatLog::insertBrokenMessageAtIdx(ChatLogIdx idx,
   items.emplace(idx, std::move(item));
 }
 
-void SessionChatLog::insertFileAtIdx(ChatLogIdx idx, const ToxPk &sender,
+void SessionChatLog::insertFileAtIdx(ChatLogIdx idx, const FriendId &sender,
                                      const QString &senderName,
                                      const ChatLogFile &file) {
 
@@ -326,19 +330,21 @@ void SessionChatLog::insertFileAtIdx(ChatLogIdx idx, const ToxPk &sender,
  * @note Owner of SessionChatLog is in charge of attaching this to the
  * appropriate IMessageDispatcher
  */
-void SessionChatLog::onMessageReceived(const ToxPk &sender,
+void SessionChatLog::onMessageReceived(const FriendId &sender,
                                        const Message &message) {
-  qDebug()<<"onMessageReceived sender:"<<sender.toString() ;
-  qDebug()<<"from:"<< message.from.toString();
+  qDebug()<<__func__<< "msgId:"<<message.id;
+  qDebug()<<"sender:"<<sender.toString() ;
+  qDebug()<<"from:"<< message.from;
+  qDebug()<<"displayName:"<< message.displayName;
   qDebug()<<"msg:"<< message.content;
 
-  auto messageIdx = nextIdx++;
+  auto messageIdx = getNextIdx(message.id);
 
   ChatLogMessage chatLogMessage;
   chatLogMessage.state = MessageState::complete;
   chatLogMessage.message = message;
 
-  ToxPk pk(lib::messenger::FriendId(message.from));
+  FriendId pk(message.from);
   items.emplace(messageIdx, ChatLogItem(pk, message.displayName, chatLogMessage));
 
   emit itemUpdated(messageIdx);
@@ -351,19 +357,20 @@ void SessionChatLog::onMessageReceived(const ToxPk &sender,
  */
 void SessionChatLog::onMessageSent(DispatchedMessageId id,
                                    const Message &message) {
-  auto messageIdx = nextIdx++;
+
+  auto messageIdx = getNextIdx(message.id);
 
   ChatLogMessage chatLogMessage;
   chatLogMessage.state = MessageState::pending;
   chatLogMessage.message = message;
 
-  items.emplace(messageIdx, ChatLogItem(coreIdHandler.getSelfPublicKey(),
+  items.emplace(messageIdx, ChatLogItem(coreIdHandler.getSelfId(),
                                         coreIdHandler.getNick(), //发送人名称就算自己的昵称
                                         chatLogMessage));
 
   outgoingMessages.insert(id, messageIdx);
 
-  emit this->itemUpdated(messageIdx);
+  emit itemUpdated(messageIdx);
 }
 
 /**
@@ -400,26 +407,34 @@ void SessionChatLog::onMessageComplete(DispatchedMessageId id) {
  * validation
  * @note This should be attached to any CoreFile signal that fits the signature
  */
-void SessionChatLog::onFileUpdated(const ToxPk &sender, const ToxFile &file) {
-  auto fileIt =
-      std::find_if(currentFileTransfers.begin(), currentFileTransfers.end(),
+void SessionChatLog::onFileUpdated(const FriendId &friendId, const ToxFile &file) {
+    qDebug() <<__func__ <<"friendId:" <<friendId.toString()<<"file" <<file.fileName;
+
+  auto fileIt = std::find_if(currentFileTransfers.begin(), currentFileTransfers.end(),
                    [&](const CurrentFileTransfer &transfer) {
                      return transfer.file == file;
                    });
 
   ChatLogIdx messageIdx;
   if (fileIt == currentFileTransfers.end() &&
-      file.status == ToxFile::INITIALIZING) {
-    assert(file.status == ToxFile::INITIALIZING);
+      file.status == FileStatus::INITIALIZING) {
+    assert(file.status == FileStatus::INITIALIZING);
     CurrentFileTransfer currentTransfer;
     currentTransfer.file = file;
     currentTransfer.idx = nextIdx++;
     currentFileTransfers.push_back(currentTransfer);
 
     const auto chatLogFile = ChatLogFile{QDateTime::currentDateTime(), file};
-    items.emplace(currentTransfer.idx, ChatLogItem(sender,
-                                                   coreIdHandler.getNick(),
-                                                   chatLogFile));
+    FriendId senderId{file.sender};
+    QString senderName;
+    if (coreIdHandler.getSelfId().getId() == file.sender) {
+      senderName = coreIdHandler.getNick();
+    } else {
+      senderName = FriendList::decideNickname(senderId, senderId.username);
+    }
+    items.emplace(currentTransfer.idx, ChatLogItem(senderId,
+                                           senderName,
+                                           chatLogFile));
     messageIdx = currentTransfer.idx;
   } else if (fileIt != currentFileTransfers.end()) {
     messageIdx = fileIt->idx;
@@ -435,17 +450,68 @@ void SessionChatLog::onFileUpdated(const ToxPk &sender, const ToxFile &file) {
     currentFileTransfers.erase(fileIt);
   }
 
+  qDebug() <<"file messageIdx"<< messageIdx.get();
   emit this->itemUpdated(messageIdx);
 }
 
-void SessionChatLog::onFileTransferRemotePausedUnpaused(const ToxPk &sender,
+void SessionChatLog::onFileCanceled(const FriendId &sender, const QString &fileId)
+{
+    qDebug() <<__func__<< fileId;
+
+    ChatLogIdx messageIdx;
+
+    if(currentFileTransfers.empty()){
+        //db
+       for(auto &item : items){
+           if(item.second.getContentType() == ChatLogItem:: ContentType::fileTransfer){
+               auto f = item.second.getContentAsFile();
+               if(f.file.fileId == fileId){
+                   messageIdx = item.first;
+                    break;
+               }
+           }
+       }
+    }else{
+        //cache
+        auto fileIt = std::find_if(currentFileTransfers.begin(), currentFileTransfers.end(),
+                         [&](const CurrentFileTransfer &transfer) {
+                           return transfer.file.fileId == fileId;
+                         });
+        if (fileIt != currentFileTransfers.end()) {
+          messageIdx = fileIt->idx;
+        }
+    }
+
+    //Update status to canceled
+    qDebug() <<"messageIdx" << messageIdx.get();
+    items.at(messageIdx).getContentAsFile().file.status = FileStatus::CANCELED;
+    emit this->itemUpdated(messageIdx);
+}
+
+void SessionChatLog::onFileTransferRemotePausedUnpaused(const FriendId &sender,
                                                         const ToxFile &file,
                                                         bool /*paused*/) {
   onFileUpdated(sender, file);
 }
 
-void SessionChatLog::onFileTransferBrokenUnbroken(const ToxPk &sender,
+void SessionChatLog::onFileTransferBrokenUnbroken(const FriendId &sender,
                                                   const ToxFile &file,
                                                   bool /*broken*/) {
-  onFileUpdated(sender, file);
+    onFileUpdated(sender, file);
+}
+
+ChatLogIdx SessionChatLog::getNextIdx(QString msgId)
+{
+    if(msgId.isEmpty()){
+        qWarning() << "msgId is empty.";
+        return ++nextIdx;
+    }
+    auto idx = id2IdxMap.value(msgId, ChatLogIdx(0));
+    if(idx.get()==0){
+        idx = ++nextIdx;
+        id2IdxMap.insert(msgId, idx);
+    }
+
+    qDebug()<<"make next msgId:"<< msgId<< " idx:" << idx.get();
+    return idx;
 }

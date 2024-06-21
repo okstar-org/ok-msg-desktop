@@ -18,12 +18,29 @@
 #include <cstdint>
 #include <QHash>
 #include <memory>
+#include <QRegularExpression>
+#include <QRegularExpressionMatch>
 
 #include "lib/messenger/messenger.h"
 
-class ContactId : public lib::messenger::FriendId
+inline QRegularExpressionMatch JidMatch(const QString& strId){
+      // 正则表达式模式，这里假设username不包含@，server不包含/
+      QRegularExpression re("([^@]+)@([^/]+)(/[^/]+)?");
+      // 匹配输入字符串
+      return re.match(strId);
+}
+
+class ContactId
 {
 public:
+
+
+    explicit ContactId();
+    explicit ContactId(const ContactId &contactId);
+    explicit ContactId(const QByteArray &rawId);
+    explicit ContactId(const QString &strId);
+    explicit ContactId(const QString &username, const QString &server);
+
     virtual ~ContactId() = default;
     ContactId& operator=(const ContactId& other) = default;
     ContactId& operator=(ContactId&& other) = default;
@@ -32,18 +49,23 @@ public:
     bool operator<(const ContactId& other) const;
 
     QByteArray getByteArray() const;
-    bool isEmpty() const;
-    virtual int getSize() const = 0;
+    virtual bool isValid() const;
+    int getSize();
 
-    QString getUsername() const;
-    QString getServer() const;
-//    QString getResource() const;
+    virtual QString toString() const {
+        return username+"@"+server;
+    };
 
-protected:
-    ContactId();
-    explicit ContactId(const lib::messenger::FriendId& rawId);
-    explicit ContactId(const QByteArray &rawId);
+    inline QString getId() const {return toString();}
 
+    //用户名
+    QString username;
+    //服务器地址
+    QString server;
+
+    bool isGroup = false;
+
+    friend QDebug& operator<<(QDebug& debug, const ContactId &f);
 };
 
 inline uint qHash(const ContactId& id)

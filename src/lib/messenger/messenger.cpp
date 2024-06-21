@@ -21,6 +21,7 @@
 #include "lib/plugin/pluginmanager.h"
 
 #include <QThread>
+#include <jid.h>
 #include <memory>
 
 namespace lib {
@@ -31,24 +32,16 @@ Messenger::Messenger(QObject *parent)
     : QObject(parent),                                       //
       _delayer(std::make_unique<::base::DelayedCallTimer>()) //
 {
+    qDebug() << __func__;
 
-  qRegisterMetaType<FileHandler::File>("FileHandler::File");
-  qRegisterMetaType<FriendId>("FriendId");
-  qRegisterMetaType<PeerId>("PeerId");
-  qRegisterMetaType<std::string>("std::string");
-  qRegisterMetaType<IMMessage>("IMMessage");
 
   connect(this, &Messenger::disconnect, this, &Messenger::onDisconnect);
-
+  auto _session = ok::session::AuthSession::Instance();
   /**
    * IM
    */
   connectIM();
 
-  /**
-   * Jingle
-   */
-  connectJingle();
 
   QStringList features;
 #ifdef OK_PLUGIN
@@ -56,7 +49,7 @@ Messenger::Messenger(QObject *parent)
   auto features0 = pm->pluginFeatures();
   features << features0;
 
-  auto _session = ok::session::AuthSession::Instance();
+
   int acc = pm->addAccount(_session->account(), this);
   qDebug() << "PluginManager account id=>"<<acc;
 
@@ -70,22 +63,22 @@ Messenger::Messenger(QObject *parent)
 #endif
 }
 
-Messenger::~Messenger() {}
-
-Messenger *Messenger::getInstance() {
-  static Messenger *self = nullptr;
-  if (!self)
-    self = new Messenger();
-  return self;
+Messenger::~Messenger() {
+    qDebug() << __func__;
 }
+
+//Messenger *Messenger::getInstance() {
+//  static Messenger *self = nullptr;
+//  if (!self)
+//    self = new Messenger();
+//  return self;
+//}
 
 void Messenger::start() {
-
+qDebug() << __func__;
 }
 
-void Messenger::setMute(bool mute) { _jingle->setMute(mute); }
 
-void Messenger::setRemoteMute(bool mute) { _jingle->setRemoteMute(mute); }
 
 void Messenger::sendChatState(const QString &friendId, int state) {
   auto _session = ok::session::AuthSession::Instance();
@@ -93,11 +86,11 @@ void Messenger::sendChatState(const QString &friendId, int state) {
   _im->sendChatState(friendId, static_cast<ChatStateType>(state));
 }
 
-void Messenger::onConnectResult(IMStatus status) {
-  qDebug() << ("status:") << qstring(IMStatusToString(status));
+void Messenger::onConnectResult(lib::messenger::IMConnectStatus status) {
+  qDebug() << ("status:") << (int)status;
   auto _session = ok::session::AuthSession::Instance();
   auto _im = _session->im();
-  if (status == IMStatus::DISCONNECTED) {
+  if (status == lib::messenger::IMConnectStatus::DISCONNECTED) {
     _delayer->call(1000 * 5, [&]() {
       qDebug(("Retry connect..."));
       _im->doConnect();
@@ -111,9 +104,9 @@ void Messenger::onStarted() {
   auto _session = ok::session::AuthSession::Instance();
   auto _im = _session->im();
 
-  _im->enableRosterManager();
-  _im->sendPresence();
-  _im->sendServiceDiscoveryItems();
+//  _im->enableRosterManager();
+//  _im->sendPresence();
+//  _im->sendServiceDiscoveryItems();
 
 #ifdef OK_PLUGIN
   qDebug() << "Initialize plugin manager...";
@@ -130,9 +123,9 @@ bool Messenger::connectIM( ) {
   auto _session = ok::session::AuthSession::Instance();
   auto _im = _session->im();
 
-  connect(_im, &IM::connected, this, [&]() {
-    emit connected();
-  });
+//  connect(_im, &IM::connected, this, [&]() {
+//    emit connected();
+//  });
 
   connect(_im, &IM::started, this, &Messenger::onStarted);
 //  connect(this, &Messenger::stopped, this, &Messenger::onStopped);
@@ -163,7 +156,7 @@ bool Messenger::connectIM( ) {
   connect(_im, &IM::selfStatusChanged, this,
           [&](int type, const std::string &status) {
             for (auto handler : selfHandlers) {
-              handler->onSelfStatusChanged(static_cast<Tox_User_Status>(type),
+              handler->onSelfStatusChanged(static_cast<IMStatus>(type),
                                            status);
             }
           });
@@ -174,18 +167,16 @@ bool Messenger::connectIM( ) {
           handler->onSelfIdChanged(id);
         }
       });
+
   /**
    * friendHandlers
    */
-  connect(_im, &IM::receiveFriend, this, &Messenger::onFriendReceived, Qt::QueuedConnection);
-
-  connect(
-      _im, &IM::receiveFriendDone, this,//
-      [&]() {
-        for (auto handler : friendHandlers) {
-          handler->onFriendDone();
-        }
-      }, Qt::QueuedConnection);
+  connect(_im, &IM::receiveFriend, this,
+          [&](const IMFriend & frnd){
+            for (auto handler : friendHandlers) {
+              handler->onFriend(frnd);
+            }
+          });
 
   connect(_im, &IM::receiveFriendRequest, this,
           [&](const QString friendId, QString msg) -> void {
@@ -204,7 +195,7 @@ bool Messenger::connectIM( ) {
   connect(_im, &IM::receiveFriendStatus, this,
           [&](QString friendId, int type) -> void {
             for (auto handler : friendHandlers) {
-              handler->onFriendStatus(friendId, static_cast<Tox_User_Status>(type));
+              handler->onFriendStatus(friendId, static_cast<IMStatus>(type));
             }
           });
 
@@ -222,12 +213,19 @@ bool Messenger::connectIM( ) {
             }
           });
 
+  connect(_im, &IM::receiveMessageSession, this,
+          [&](QString contactId, QString sid) -> void {
+            for (auto handler : friendHandlers) {
+              handler->onMessageSession(contactId, sid);
+            }
+          });
+
   connect(_im, &IM::receiveNicknameChange, this,
           [&](QString friendId, QString nickname) {
             for (auto handler : friendHandlers) {
               handler->onFriendNameChanged(friendId, nickname);
             }
-          }, Qt::QueuedConnection);
+          });
 
   connect(_im, &IM::receiveFriendAvatarChanged, this,
           [&](QString friendId, std::string avatar) {
@@ -235,52 +233,17 @@ bool Messenger::connectIM( ) {
               handler->onFriendAvatarChanged(friendId, avatar);
             }
           });
-  /**
-   * callHandlers
-   */
-  connect(_im, &IM::receiveCallRequest, this,
-          [&](QString friendId, QString callId, bool audio, bool video) {
-            for (auto handler : callHandlers) {
-              handler->onCall(friendId, callId, audio, video);
+
+  connect(_im, &IM::receiveFriendAliasChanged, this,
+          [&](const JID& friendId, const std::string& alias) {
+            for (auto handler : friendHandlers) {
+              handler->onFriendAliasChanged(IMContactId(friendId.bareJID()), qstring(alias));
             }
           });
 
-  connect(_im, &IM::receiveCallRetract, this,
-          [&](QString friendId, int state) {
-            for (auto handler : callHandlers) {
-              handler->onCallRetract(friendId, state);
-            }
-          });
 
-  connect(_im, &IM::receiveCallAcceptByOther, this,
-          [&](const QString& callId, const PeerId& peerId) {
-            for (auto handler : callHandlers) {
-              handler->onCallAcceptByOther(callId, peerId);
-            }
-          });
 
-  connect(_im, &IM::receiveCallStateAccepted, this,
-          [&](PeerId friendId, QString callId, bool video) {
-            for (auto handler : callHandlers) {
-              handler->receiveCallStateAccepted(friendId, callId, video);
-            }
-          });
-
-  connect(_im, &IM::receiveCallStateRejected, this,
-          [&](PeerId friendId, QString callId, bool video) {
-            for (auto handler : callHandlers) {
-              handler->receiveCallStateRejected(friendId, callId, video);
-            }
-          });
-
-  connect(_im, &IM::receiveFriendHangup, this,
-          [&](QString friendId, int state) {
-            for (auto handler : callHandlers) {
-              handler->onHangup(
-                  friendId, (TOXAV_FRIEND_CALL_STATE)state);
-            }
-          });
-
+  //group
   connect(_im, &IM::groupInvite, this,
           [&](const QString &groupId, const QString &peerId,
               const QString &message) {
@@ -289,18 +252,19 @@ bool Messenger::connectIM( ) {
             }
           });
 
-  connect(_im, &IM::groupListReceived, this,
-          &Messenger::onGroupReceived);
 
-  connect(_im, &IM::groupListReceivedDone, this,
-          [&]() {
+  connect(_im, &IM::groupSubjectChanged, this,
+          [&](const JID &group, const std::string &subject) -> void {
             for (auto handler : groupHandlers) {
-              handler->onGroupListDone();
+              handler->onGroupSubjectChanged(qstring(group.bare()), qstring(subject));
             }
           });
 
+  connect(_im, &IM::groupReceived, this,
+          &Messenger::onGroupReceived);
+
   connect(_im, &IM::receiveRoomMessage, this,
-          [&](QString groupId, PeerId peerId, IMMessage msg) -> void {
+          [&](QString groupId, IMPeerId peerId, IMMessage msg) -> void {
             for (auto handler : groupHandlers) {
               handler->onGroupMessage(groupId, peerId, msg);
             }
@@ -315,104 +279,24 @@ bool Messenger::connectIM( ) {
 
   connect(
       _im, &IM::groupOccupantStatus, this,
-      [&](const QString &groupId, const QString &peerId, bool online) -> void {
+      [&](const QString &groupId, const IMGroupOccupant &go) -> void {
         for (auto handler : groupHandlers) {
-          handler->onGroupOccupantStatus(groupId, peerId, online);
+          handler->onGroupOccupantStatus(groupId, go);
         }
       });
 
+  qRegisterMetaType<IMGroup>("IMGroup");
   connect(_im, &IM::groupRoomInfo, this,
-          [&](const QString &groupId, const  GroupInfo info) -> void {
+          [&](const QString &groupId, const IMGroup info) -> void {
             for (auto handler : groupHandlers) {
               handler->onGroupInfo(groupId, info);
             }
           });
 
-  /*file handler*/
-  connect(_im, &IM::receiveFileChunk, this,
-          [&](const FriendId &friendId, const QString &sId,
-              int seq, const std::string& chunk) -> void {
-            for (auto handler : fileHandlers) {
-              handler->onFileRecvChunk(friendId.toString(), sId, seq, chunk);
-            }
-          });
-  connect(
-      _im, &IM::receiveFileFinished, this,
-      [&](const FriendId &friendId,const QString &sId) -> void {
-        for (auto handler : fileHandlers) {
-              handler->onFileRecvFinished(friendId.toString(), sId);
-        }
-      });
+
   return true;
 }
 
-bool Messenger::connectJingle() {
-  qDebug()<<"connectJingle...";
-
-  auto _session = ok::session::AuthSession::Instance();
-  auto _im = _session->im();
-
-  _jingle = std::make_unique<IMJingle>(_im);
-
-  connect(_jingle.get(), &IMJingle::receiveFriendHangup, this,
-          [&](QString friendId, int state) {
-            for (auto handler : callHandlers) {
-              handler->onHangup(friendId, (TOXAV_FRIEND_CALL_STATE)state);
-            }
-          });
-
-  connect(_jingle.get(), &IMJingle::receiveFriendVideoFrame,
-          this,
-          [&](const QString &friendId, //
-              uint16_t w, uint16_t h,  //
-              const uint8_t *y, const uint8_t *u, const uint8_t *v,
-              int32_t ystride, int32_t ustride, int32_t vstride) {
-            emit receiveFriendVideoFrame(friendId, //
-                                         w, h,     //
-                                         y, u, v,  //
-                                         ystride, ustride, vstride);
-          });
-
-  connect(_jingle.get(), &IMJingle::receiveSelfVideoFrame, this,
-          [&](uint16_t w, uint16_t h, //
-              const uint8_t *y, const uint8_t *u, const uint8_t *v,
-              int32_t ystride, int32_t ustride, int32_t vstride) {
-            emit receiveSelfVideoFrame(w, h,    //
-                                       y, u, v, //
-                                       ystride, ustride, vstride);
-          });
-
-  connect(_jingle.get(), &IMJingle::receiveFileRequest, this,
-          [&](const QString &friendId, const FileHandler::File &file) {
-            for (auto h : fileHandlers) {
-              h->onFileRequest(friendId, file);
-            }
-          });
-  connect(_jingle.get(), &IMJingle::sendFileInfo, this,
-          [&](const QString &friendId, const FileHandler::File &file, int m_seq,
-              int m_sentBytes, bool end) {
-            for (auto h : fileHandlers) {
-              h->onFileSendInfo(friendId, file, m_seq, m_sentBytes, end);
-            }
-          });
-  connect(_jingle.get(), &IMJingle::sendFileAbort, this,
-          [&](const QString &friendId, const FileHandler::File &file,
-              int m_sentBytes) {
-            for (auto h : fileHandlers) {
-              h->onFileSendAbort(friendId, file, m_sentBytes);
-            }
-          });
-  connect(_jingle.get(), &IMJingle::sendFileError, this,
-          [&](const QString &friendId, const FileHandler::File &file,
-              int m_sentBytes) {
-            for (auto h : fileHandlers) {
-              h->onFileSendError(friendId, file, m_sentBytes);
-            }
-          });
-
-  qDebug()<<"connectJingle done";
-  return true;
-}
 
 bool Messenger::initRoom() {
   auto _session = ok::session::AuthSession::Instance();
@@ -441,15 +325,14 @@ bool Messenger::sendToGroup(const QString &g,   //
   auto _session = ok::session::AuthSession::Instance();
   auto _im = _session->im();
 
-  auto y = _im->sendToRoom(g, msg, "");
-  return y;
+  auto id = _im->sendToRoom(g, msg, "");
+  if(id.isEmpty())
+      return false;
+
+  receiptNum = id;
+  return true;
 }
 
-bool Messenger::sendFileToFriend(const QString &f,
-                                 const FileHandler::File &file) {
-  qDebug() << QString("file:%1=>%2").arg(file.name).arg(f);
-  return _jingle->sendFile(f, file);
-}
 
 bool Messenger::sendToFriend(const QString &f, const QString &msg,
                              QString &receiptNum, bool encrypt) {
@@ -489,41 +372,19 @@ bool Messenger::sendToFriend(const QString &f, const QString &msg,
 }
 
 void Messenger::receiptReceived(const QString &f, QString receipt) {
-  qDebug() << "receiptReceived friendId:" << f << "receiptNum:" << receipt;
   auto _session = ok::session::AuthSession::Instance();
   auto _im = _session->im();
   return _im->sendReceiptReceived(f, receipt);
 }
 
-bool Messenger::callToFriend(const QString &f, const QString &sId, bool video) {
-  qDebug() << QString("friend:%1 video:%2").arg((f)).arg(video);
-  return _jingle->startCall(f, sId, video);
-}
-
-bool Messenger::createCallToPeerId(const PeerId &to,
-                                   const QString &sId, bool video) {
-
-  qDebug() << QString("peerId:%1 video:%2").arg((to.toString())).arg(video);
-  return _jingle->createCall(to, sId, video);
-}
-
-bool Messenger::answerToFriend(const QString &f, const QString &callId,
-                               bool video) {
-  qDebug() << QString("friend:%1 video:%2").arg((f)).arg(video);
-  return _jingle->answer(f, callId, video);
-}
-
-bool Messenger::cancelToFriend(const QString &f, const QString &callId) {
-  _jingle->cancelCall(f, callId);
-  return true;
-}
-
-void Messenger::sendFriendRequest(const QString &username,const QString &nick, const QString &message) {
-  qDebug() << "sendFriendRequest: " << username << nick << message;
+void Messenger::sendFriendRequest(const QString &f,const QString &nick, const QString &message) {
+  qDebug() <<__func__ << f << nick << message;
   auto _session = ok::session::AuthSession::Instance();
   auto _im = _session->im();
-  _im->addRosterItem(username, nick, message);
+  _im->addFriend(JID(stdstring(f)), nick, message);
 }
+
+
 
 void Messenger::acceptFriendRequest(const QString &f) {
   auto _session = ok::session::AuthSession::Instance();
@@ -540,13 +401,13 @@ void Messenger::rejectFriendRequest(const QString &f) {
 void Messenger::getFriendVCard(const QString &f) {
   auto _session = ok::session::AuthSession::Instance();
   auto _im = _session->im();
-  _im->fetchVCard(f);
+  _im->fetchFriendVCard(f);
 }
 
 bool Messenger::removeFriend(const QString &f) {
   auto _session = ok::session::AuthSession::Instance();
   auto _im = _session->im();
-  return _im->removeFriend(_im->wrapJid(f));
+  return _im->removeFriend(JID(f.toStdString()));
 }
 
 size_t Messenger::getFriendCount() {
@@ -555,13 +416,23 @@ size_t Messenger::getFriendCount() {
   return _im->getRosterCount();
 }
 
-std::list<FriendId> Messenger::getFriendList() {
-  std::list<FriendId> list;
+void Messenger::getFriendList(std::list<IMFriend>& list) {
+  auto _session = ok::session::AuthSession::Instance();
+  _session->im()->getRosterList(list);
+}
+
+void Messenger::setFriendAlias(const QString &f, const QString &alias)
+{
+    auto _session = ok::session::AuthSession::Instance();
+    _session->im()->setFriendAlias(JID(stdstring(f)), stdstring(alias));
+}
+
+IMStatus Messenger::getFriendStatus(const QString &f) {
   auto _session = ok::session::AuthSession::Instance();
   auto _im = _session->im();
-  _im->getRosterList(list);
-  return list;
+ return _im->getFriendStatus(f);
 }
+
 
 void Messenger::addSelfHandler(SelfHandler *handler) {
   selfHandlers.push_back(handler);
@@ -575,13 +446,8 @@ void Messenger::addGroupHandler(GroupHandler *handler) {
   groupHandlers.push_back(handler);
 }
 
-void Messenger::addCallHandler(CallHandler *handler) {
-  callHandlers.emplace_back(handler);
-}
 
-void Messenger::addFileHandler(FileHandler *handler) {
-  fileHandlers.emplace_back(handler);
-}
+
 
 void Messenger::stop() {
   auto _session = ok::session::AuthSession::Instance();
@@ -595,16 +461,15 @@ void Messenger::send(const QString &xml) {
   _im->send(xml);
 }
 
-PeerId Messenger::getSelfId() const {
+IMPeerId Messenger::getSelfId() const {
   auto _session = ok::session::AuthSession::Instance();
   auto _im = _session->im();
   return _im->getSelfPeerId();
 }
 
-Tox_User_Status Messenger::getSelfStatus() const {
+IMStatus Messenger::getSelfStatus() const {
   auto pt = gloox::Presence::PresenceType::Available;
-  // _im->getPresenceType();
-  return static_cast<Tox_User_Status>(pt);
+  return static_cast<IMStatus>(pt);
 }
 
 void Messenger::setSelfNickname(const QString &nickname) {
@@ -668,27 +533,38 @@ void Messenger::onEncryptedMessage(QString xml) {
     return;
   }
 
-  QString from = dom.documentElement().attribute("from");
-  QString to = dom.documentElement().attribute("to");
+  auto from = ele.attribute("from");
+  auto to = ele.attribute("to");
+  auto id = ele.attribute("id");
 
-  IMMessage msg(MsgType::Chat, from, body);
+  auto msg = IMMessage{MsgType::Chat, id, from, to, body, QDateTime::currentDateTime()};
+
   for (auto handler : friendHandlers) {
     handler->onFriendMessage(qstring(JID(stdstring(from)).bareJID().bare()), msg);
   }
 #endif
 }
 
-bool Messenger::createGroup(const QString &group) {
-  auto _session = ok::session::AuthSession::Instance();
-  auto _im = _session->im();
-  _im->createRoom(_im->wrapRoomJid(group));
-  return true;
+void Messenger::loadGroupList() {
+  ok::session::AuthSession::Instance()->im()->loadGroupList();
 }
 
-bool Messenger::inviteGroup(const QString &group, const QString &f) {
+QString Messenger::createGroup(const QString &groupId, const QString& groupName) {
   auto _session = ok::session::AuthSession::Instance();
   auto _im = _session->im();
-  return _im->inviteToRoom(_im->wrapRoomJid(group), _im->wrapJid(f));
+  JID self = _im->self();
+  self.setUsername(stdstring(groupId));
+  self.setResource(stdstring(groupName));
+  self.setServer("conference."+self.server());
+
+  _im->createRoom(self);
+  return qstring(self.bare());
+}
+
+bool Messenger::inviteGroup(const IMContactId &group, const IMContactId &f) {
+  auto _session = ok::session::AuthSession::Instance();
+  auto _im = _session->im();
+  return _im->inviteToRoom(JID(stdstring(group.toString())), JID(stdstring(f.toString())));
 }
 
 bool Messenger::leaveGroup(const QString &group) {
@@ -710,10 +586,25 @@ void Messenger::setRoomName(const QString &group, const QString &nick) {
   _im->setRoomName(group, stdstring(nick));
 }
 
-bool Messenger::callToGroup(const QString &g) {
-  Q_UNUSED(g)
-  return true;
+void Messenger::setRoomDesc(const QString &group, const QString &nick)
+{
+    auto _session = ok::session::AuthSession::Instance();
+    auto _im = _session->im();
+    _im->setRoomDesc(group, stdstring(nick));
 }
+
+void Messenger::setRoomSubject(const QString &group, const QString &notice) {
+  auto _session = ok::session::AuthSession::Instance();
+  auto _im = _session->im();
+  _im->setRoomSubject(group, stdstring(notice));
+}
+
+void Messenger::setRoomAlias(const QString &group, const QString &alias)
+{
+    auto _session = ok::session::AuthSession::Instance();
+    _session->im()->setRoomAlias(group, stdstring(alias));
+}
+
 
 void Messenger::joinGroup(const QString &group) {
   qDebug() << QString("group:%1").arg(group);
@@ -727,32 +618,6 @@ void Messenger::setSelfAvatar(const QByteArray &avatar) {
   auto _im = _session->im();
   _im->setAvatar(avatar);
 }
-
-void Messenger::rejectFileRequest(QString friendId,
-                                  const FileHandler::File &file) {
-  _jingle->rejectFileRequest(friendId, file);
-}
-
-void Messenger::acceptFileRequest(QString friendId,
-                                  const FileHandler::File &file) {
-  _jingle->acceptFileRequest(friendId, file);
-}
-
-void Messenger::cancelFile(QString fileId) {
-  qDebug() << QString("fileId:%1").arg(fileId);
-}
-
-void Messenger::finishFileRequest(QString friendId, const FileHandler::File &file) {
-  qDebug() << QString("fileId:%1").arg(friendId);
-  _jingle->finishFileRequest(friendId, file);
-}
-
-void Messenger::finishFileTransfer(QString friendId,
-                                   const FileHandler::File &file) {
-  qDebug() << QString("friendId:%1 file:%2").arg(friendId).arg(file.name);
-  _jingle->finishFileTransfer(friendId, file);
-}
-
 void Messenger::requestBookmarks() {
   auto session = ok::session::AuthSession::Instance();
   auto im = session->im();
@@ -770,14 +635,11 @@ void Messenger::setUIStarted(){
 
 void Messenger::onGroupReceived(QString groupId, QString name) {
     for (auto handler : groupHandlers) {
-      handler->onGroupList(groupId, name);
+      handler->onGroup(groupId, name);
     }
 }
-void Messenger::onFriendReceived(QString friendId) {
-  for (auto handler : friendHandlers) {
-    handler->onFriend(friendId);
-  }
-}
+
+
 
 } // namespace messenger
 } // namespace lib

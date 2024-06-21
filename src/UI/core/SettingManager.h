@@ -21,9 +21,6 @@
 
 namespace core {
 
-class SettingManager;
-
-
 class SettingManager : public QObject {
   Q_OBJECT
 
@@ -31,11 +28,8 @@ public:
   SettingManager(QObject *parent = nullptr);
   ~SettingManager();
 
-  static SettingManager *InitGet();
-
   void saveAccount(QString &account, QString &password);
   void getAccount(Fn<void(QString account, QString password)> callback);
-
   void clearAccount();
 
 private:

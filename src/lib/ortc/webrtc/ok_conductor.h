@@ -30,10 +30,10 @@
 
 #include <rtc_base/ref_count.h>
 
-#include "../ok_rtc_proxy.h"
+#include "../ok_rtc.h"
 
-#include "ok_videosink.h"
-#include "vcm_capturer.h"
+#include "ok_video_sink.h"
+#include "webrtc.h"
 
 namespace lib {
 namespace ortc {
@@ -41,31 +41,24 @@ namespace ortc {
 class Conductor : public webrtc::PeerConnectionObserver,
                   public webrtc::CreateSessionDescriptionObserver,
                   public webrtc::SetSessionDescriptionObserver,
-                  public webrtc::SetRemoteDescriptionObserverInterface {
+                  public webrtc::SetRemoteDescriptionObserverInterface
+{
 public:
-  Conductor(const webrtc::PeerConnectionInterface::RTCConfiguration &config, //
-            rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> pcf,
-            const std::string &peerId_,                                       //
-            const std::string &sId,
-            OkRTCHandler *rtcHandler,
-            OkRTCRenderer *rtcRenderer);
+  Conductor(WebRTC* webrtc, const std::string &peerId_, const std::string &sId);
 
-  virtual ~Conductor() override;
+  ~Conductor() ;
 
-  void CreateAnswer(std::unique_ptr<webrtc::SessionDescriptionInterface> desc);
+  void CreateAnswer();
 
   void CreateOffer();
 
   void sessionTerminate();
 
-  void
-  setTransportInfo(std::unique_ptr<webrtc::IceCandidateInterface> candidate);
+  void setTransportInfo(std::unique_ptr<webrtc::IceCandidateInterface> candidate);
 
-  virtual void OnContentAdd(std::map<std::string, gloox::Jingle::Session> sdMap,
-                            ortc::OkRTCHandler *handler);
+  virtual void OnContentAdd(std::map<std::string, gloox::Jingle::Session> sdMap, ortc::OkRTCHandler *handler);
 
-  virtual void
-  OnContentRemove(std::map<std::string, gloox::Jingle::Session> sdMap,
+  virtual void OnContentRemove(std::map<std::string, gloox::Jingle::Session> sdMap,
                   ortc::OkRTCHandler *handler);
 
   virtual void OnSessionTerminate(const std::string &sid,
@@ -75,33 +68,32 @@ public:
   void SetRemoteDescription(
       std::unique_ptr<webrtc::SessionDescriptionInterface> desc);
 
-  virtual void setMute(bool mute);
-  virtual void setRemoteMute(bool mute);
+  void setMute(bool mute);
+  void setRemoteMute(bool mute);
 
   inline ortc::JoinOptions joinOptions() { return _joinOptions; }
 
-  rtc::scoped_refptr<webrtc::PeerConnectionInterface> getConnection() {
-    return peer_connection_;
-  }
-
   size_t getVideoCaptureSize();
 
-  JingleContents toJingleSdp(const webrtc::SessionDescriptionInterface *desc);
+  OJingleContentAv toJingleSdp(const webrtc::SessionDescriptionInterface *desc);
 
-  virtual void AddRef() const {};
-  virtual rtc::RefCountReleaseStatus Release() const {
+  virtual void AddRef() const override {};
+  virtual rtc::RefCountReleaseStatus Release() const override {
     return rtc::RefCountReleaseStatus::kDroppedLastRef;
   };
 
-  void
-  OnSessionAccept(std::unique_ptr<webrtc::SessionDescriptionInterface> desc);
+  void OnSessionAccept(std::unique_ptr<webrtc::SessionDescriptionInterface> desc);
 
-  void AddTrack(webrtc::AudioSourceInterface* _audioSource);
+  bool AddAudioTrack(webrtc::AudioSourceInterface* _audioSource);
+  bool RemoveAudioTrack();
 
-  void AddTrack(webrtc::VideoTrackSourceInterface* _videoTrackSource);
+  bool AddVideoTrack(webrtc::VideoTrackSourceInterface* _videoTrackSource);
+  bool RemoveVideoTrack();
+
+
 
 protected:
-  rtc::scoped_refptr<webrtc::PeerConnectionInterface> CreatePeerConnection();
+  void CreatePeerConnection();
   void DestroyPeerConnection();
 
   //
@@ -117,8 +109,7 @@ protected:
   OnAddTrack(rtc::scoped_refptr<webrtc::RtpReceiverInterface> receiver,
              const std::vector<rtc::scoped_refptr<webrtc::MediaStreamInterface>>
                  &streams) override;
-  void
-  OnTrack(rtc::scoped_refptr<RtpTransceiverInterface> transceiver) override;
+  void OnTrack(rtc::scoped_refptr<webrtc::RtpTransceiverInterface> transceiver) override;
   void OnRemoveTrack(
       rtc::scoped_refptr<webrtc::RtpReceiverInterface> receiver) override;
   void OnDataChannel(
@@ -154,28 +145,24 @@ protected:
   virtual bool started() const { return _started; }
 
 private:
-  void updateCandidates();
 
   bool _started = false;
   std::mutex _session_mutex;
 
-  std::unique_ptr<webrtc::PeerConnectionInterface::RTCConfiguration> config;
+
   std::string peerId;
   std::string sId;
 
-  OkRTCHandler *rtcHandler;
-  OkRTCRenderer *rtcRenderer;
+
+
+  WebRTC * webRtc;
 
   ortc::JoinOptions _joinOptions;
 
   rtc::scoped_refptr<webrtc::PeerConnectionInterface> peer_connection_;
 
-  rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> peer_connection_factory_;
 
-  std::list<webrtc::IceCandidateInterface *> _candidates;
-  std::unique_ptr<OVideoSink> _videoSink;
-
-//  std::map<std::string, std::shared_ptr<OVideoSink>> _VideoSinkMap;
+  std::unique_ptr<VideoSink> _videoSink;
 
   rtc::scoped_refptr<webrtc::AudioTrackInterface> _audioTrack;
   rtc::scoped_refptr<webrtc::VideoTrackInterface> _videoTrack;
@@ -183,8 +170,8 @@ private:
   webrtc::AudioTrackInterface * _remote_audio_track;
   webrtc::VideoTrackInterface * _remote_video_track;
 
-  rtc::scoped_refptr<RtpSenderInterface> _audioRtpSender;
-  rtc::scoped_refptr<RtpSenderInterface> _videoRtpSender;
+  rtc::scoped_refptr<webrtc::RtpSenderInterface> _audioRtpSender;
+  rtc::scoped_refptr<webrtc::RtpSenderInterface> _videoRtpSender;
 //  rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> _videoTrackSource;
 };
 

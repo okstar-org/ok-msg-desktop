@@ -29,8 +29,11 @@ public:
   explicit PluginItemForm(int row, ok::backend::PluginInfo &pluginInfo,
                           QWidget *parent = nullptr);
   ~PluginItemForm();
-  void timesUp();
-  void setLogo(const QImage &pixmap);
+  void downLogo();
+  void setLogo(const QPixmap &pixmap);
+  bool isSetLogo();
+protected:
+  void showEvent(QShowEvent*);
 
 private:
   Ui::PluginItemForm *ui;

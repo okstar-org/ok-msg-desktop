@@ -261,11 +261,7 @@ which may lead to problems with video calls.</source>
         <translation>Выбрать папку для автоматического приема</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the public key of your friend, use it to verify their identity via another channel. You can not send this to other people so they can add this contact.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Это открытый ключ вашего друга, используйте его, чтобы подтвердить свою личность через другой канал. Вы не можете отправить его другим людям для добавления этого контакта.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Public key (not ToxID):</source>
+        <source>Account:</source>
         <translation>Открытый ключ (не ToxID):</translation>
     </message>
     <message>

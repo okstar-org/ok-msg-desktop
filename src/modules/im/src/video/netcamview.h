@@ -13,12 +13,13 @@
 #ifndef NETCAMVIEW_H
 #define NETCAMVIEW_H
 
-#include "src/core/toxpk.h"
 #include "genericnetcamview.h"
+#include "src/core/FriendId.h"
 #include <QVector>
 
-class QHBoxLayout;
 struct vpx_image;
+
+class QHBoxLayout;
 class VideoSource;
 class QFrame;
 class MovableWidget;
@@ -28,7 +29,7 @@ class NetCamView : public GenericNetCamView
     Q_OBJECT
 
 public:
-    NetCamView(ToxPk friendPk, QWidget* parent = nullptr);
+    NetCamView(FriendId friendPk, QWidget* parent = nullptr);
     ~NetCamView();
 
     virtual void show(VideoSource* source, const QString& title);
@@ -49,7 +50,7 @@ private:
 
     VideoSurface* selfVideoSurface;
     MovableWidget* selfFrame;
-    ToxPk friendPk;
+    FriendId friendPk;
     bool e;
     QVector<QMetaObject::Connection> connections;
 };

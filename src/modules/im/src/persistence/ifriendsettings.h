@@ -18,7 +18,9 @@
 #include <QObject>
 #include <QFlag>
 
-class ToxPk;
+#include <src/core/contactid.h>
+
+class FriendId;
 
 class IFriendSettings
 {
@@ -34,35 +36,35 @@ public:
 
     virtual ~IFriendSettings() = default;
 
-    virtual QString getContactNote(const ToxPk& pk) const = 0;
-    virtual void setContactNote(const ToxPk& pk, const QString& note) = 0;
+    virtual QString getContactNote(const FriendId& pk) const = 0;
+    virtual void setContactNote(const FriendId& pk, const QString& note) = 0;
 
-    virtual QString getAutoAcceptDir(const ToxPk& pk) const = 0;
-    virtual void setAutoAcceptDir(const ToxPk& pk, const QString& dir) = 0;
+    virtual QString getAutoAcceptDir(const FriendId& pk) const = 0;
+    virtual void setAutoAcceptDir(const FriendId& pk, const QString& dir) = 0;
 
-    virtual AutoAcceptCallFlags getAutoAcceptCall(const ToxPk& pk) const = 0;
-    virtual void setAutoAcceptCall(const ToxPk& pk, AutoAcceptCallFlags accept) = 0;
+    virtual AutoAcceptCallFlags getAutoAcceptCall(const FriendId& pk) const = 0;
+    virtual void setAutoAcceptCall(const FriendId& pk, AutoAcceptCallFlags accept) = 0;
 
-    virtual bool getAutoGroupInvite(const ToxPk& pk) const = 0;
-    virtual void setAutoGroupInvite(const ToxPk& pk, bool accept) = 0;
+    virtual bool getAutoGroupInvite(const FriendId& pk) const = 0;
+    virtual void setAutoGroupInvite(const FriendId& pk, bool accept) = 0;
 
-    virtual QString getFriendAlias(const ToxPk& pk) const = 0;
-    virtual void setFriendAlias(const ToxPk& pk, const QString& alias) = 0;
+    virtual QString getFriendAlias(const ContactId& pk) const = 0;
+    virtual void setFriendAlias(const FriendId& pk, const QString& alias) = 0;
 
-    virtual int getFriendCircleID(const ToxPk& pk) const = 0;
-    virtual void setFriendCircleID(const ToxPk& pk, int circleID) = 0;
+    virtual int getFriendCircleID(const FriendId& pk) const = 0;
+    virtual void setFriendCircleID(const FriendId& pk, int circleID) = 0;
 
-    virtual QDateTime getFriendActivity(const ToxPk& pk) const = 0;
-    virtual void setFriendActivity(const ToxPk& pk, const QDateTime& date) = 0;
+    virtual QDateTime getFriendActivity(const FriendId& pk) const = 0;
+    virtual void setFriendActivity(const FriendId& pk, const QDateTime& date) = 0;
 
-    virtual void saveFriendSettings(const ToxPk& pk) = 0;
-    virtual void removeFriendSettings(const ToxPk& pk) = 0;
+    virtual void saveFriendSettings(const FriendId& pk) = 0;
+    virtual void removeFriendSettings(const FriendId& pk) = 0;
 
 signals:
-    DECLARE_SIGNAL(autoAcceptCallChanged, const ToxPk& pk, AutoAcceptCallFlags accept);
-    DECLARE_SIGNAL(autoGroupInviteChanged, const ToxPk& pk, bool accept);
-    DECLARE_SIGNAL(autoAcceptDirChanged, const ToxPk& pk, const QString& dir);
-    DECLARE_SIGNAL(contactNoteChanged, const ToxPk& pk, const QString& note);
+    DECLARE_SIGNAL(autoAcceptCallChanged, const FriendId& pk, AutoAcceptCallFlags accept);
+    DECLARE_SIGNAL(autoGroupInviteChanged, const FriendId& pk, bool accept);
+    DECLARE_SIGNAL(autoAcceptDirChanged, const FriendId& pk, const QString& dir);
+    DECLARE_SIGNAL(contactNoteChanged, const FriendId& pk, const QString& note);
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(IFriendSettings::AutoAcceptCallFlags)

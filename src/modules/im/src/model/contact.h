@@ -14,24 +14,65 @@
 #define CONTACT_H
 
 #include "src/core/contactid.h"
+#include "src/model/status.h"
 #include <QObject>
+#include <QPixmap>
 #include <QString>
 
+/**
+ * 联系人（朋友和群的基类）
+ */
 class Contact : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~Contact() = 0;
+    Contact();
+    Contact(const ContactId& id, const QString& name, const QString& alias="", bool isGroup = false);
+    ~Contact() override;
 
-    virtual void setName(const QString& name) = 0;
-    virtual QString getDisplayedName() const = 0;
-    virtual QString getId() const = 0;
-    virtual const ContactId& getPersistentId() const = 0;
-    virtual void setEventFlag(bool flag) = 0;
-    virtual bool getEventFlag() const = 0;
+    bool isGroup()const{return group;}
+
+    void setName(const QString& name);
+    const QString& getName() const{return name;};
+
+    void setAlias(const QString &name);
+    const QString& getAlias() const{return alias;};
+    bool hasAlias() const { return !alias.isEmpty(); }
+
+
+    QString getDisplayedName() const ;
+
+    const ContactId& getPersistentId() const {return id;};
+    QString getId() const {return id.toString(); };
+
+    const QPixmap& setDefaultAvatar();
+    void setAvatar(const QPixmap& pix);
+    void clearAvatar();
+    const QPixmap& getAvatar() const;
+
+    virtual void setEventFlag(bool flag) ;
+    virtual bool getEventFlag() const ;
 
 signals:
+    void nameChanged(const QString &name);
     void displayedNameChanged(const QString& newName);
+    void aliasChanged(QString alias);
+    void avatarChanged(const QPixmap& avatar);
+
+protected:
+    //是否群聊
+    bool group;
+    //联系人Id
+    ContactId id;
+
+    //名称(nick)： https://xmpp.org/extensions/xep-0172.html
+    QString name;
+    //别名(自己备注，即书签名称)https://xmpp.org/extensions/xep-0048.html
+    QString alias;
+
+    //头像
+    QPixmap avatar;
+    Status::AvatarSet avatarSetStatus;
 };
 
 #endif // CONTACT_H

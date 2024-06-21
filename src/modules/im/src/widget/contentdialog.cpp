@@ -121,11 +121,11 @@ ContentDialog::ContentDialog(QWidget* parent)
 
     setAcceptDrops(true);
 
-    new QShortcut(Qt::CTRL + Qt::Key_Q, this, SLOT(close()));
-    new QShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_Tab, this, SLOT(previousContact()));
-    new QShortcut(Qt::CTRL + Qt::Key_Tab, this, SLOT(nextContact()));
-    new QShortcut(Qt::CTRL + Qt::Key_PageUp, this, SLOT(previousContact()));
-    new QShortcut(Qt::CTRL + Qt::Key_PageDown, this, SLOT(nextContact()));
+    new QShortcut(QKeySequence(Qt::CTRL , Qt::Key_Q), this, SLOT(close()));
+    new QShortcut(QKeySequence(Qt::CTRL , Qt::SHIFT , Qt::Key_Tab), this, SLOT(previousContact()));
+    new QShortcut(QKeySequence(Qt::CTRL , Qt::Key_Tab), this, SLOT(nextContact()));
+    new QShortcut(QKeySequence(Qt::CTRL , Qt::Key_PageUp), this, SLOT(previousContact()));
+    new QShortcut(QKeySequence(Qt::CTRL , Qt::Key_PageDown), this, SLOT(nextContact()));
 
     connect(&s, &Settings::groupchatPositionChanged, this, &ContentDialog::onGroupchatPositionChanged);
     connect(splitter, &QSplitter::splitterMoved, this, &ContentDialog::saveSplitterState);
@@ -144,104 +144,29 @@ void ContentDialog::closeEvent(QCloseEvent* event)
     event->accept();
 }
 
-FriendWidget* ContentDialog::addFriend(std::shared_ptr<FriendChatroom> chatroom, GenericChatForm* form)
+void ContentDialog::addFriend(FriendChatroom* chatroom,
+                              GenericChatForm* form)
 {
-    const auto compact = Settings::getInstance().getCompactLayout();
-    auto frnd = chatroom->getFriend();
-    const auto& friendPk = frnd->getPublicKey();
-    auto friendWidget = new FriendWidget(chatroom, compact);
-    emit connectFriendWidget(*friendWidget);
-    contactWidgets[friendPk] = friendWidget;
-    friendLayout->addFriendWidget(friendWidget, frnd->getStatus());
-    contactChatForms[friendPk] = form;
 
-    // TODO(sudden6): move this connection to the Friend::displayedNameChanged signal
-    connect(frnd, &Friend::aliasChanged, this, &ContentDialog::updateFriendWidget);
-    connect(frnd, &Friend::statusMessageChanged, this, &ContentDialog::setStatusMessage);
-    connect(friendWidget, &FriendWidget::chatroomWidgetClicked, this, &ContentDialog::activate);
-
-    // FIXME: emit should be removed
-    emit friendWidget->chatroomWidgetClicked(friendWidget);
-
-    return friendWidget;
 }
 
-GroupWidget* ContentDialog::addGroup(std::shared_ptr<GroupChatroom> chatroom, GenericChatForm* form)
+void ContentDialog::addGroup(GroupChatroom* chatroom, GenericChatForm* form)
 {
-    const auto g = chatroom->getGroup();
-    const auto& groupId = g->getPersistentId();
-    const auto compact = Settings::getInstance().getCompactLayout();
-    auto groupWidget = new GroupWidget(chatroom, compact);
-    contactWidgets[groupId] = groupWidget;
-    contactChatForms[groupId] = form;
-    groupLayout.addSortedWidget(groupWidget);
 
-    connect(groupWidget, &GroupWidget::chatroomWidgetClicked, this, &ContentDialog::activate);
-
-    // FIXME: emit should be removed
-    emit groupWidget->chatroomWidgetClicked(groupWidget);
-
-    return groupWidget;
 }
 
-void ContentDialog::removeFriend(const ToxPk& friendPk)
+void ContentDialog::removeFriend(const FriendId& friendPk)
 {
-    auto chatroomWidget = qobject_cast<FriendWidget*>(contactWidgets[friendPk]);
-    disconnect(chatroomWidget->getFriend(), &Friend::aliasChanged, this,
-               &ContentDialog::updateFriendWidget);
 
-    // Need to find replacement to show here instead.
-    if (activeChatroomWidget == chatroomWidget) {
-        cycleContacts(/* forward = */ true, /* inverse = */ false);
-    }
-
-    friendLayout->removeFriendWidget(chatroomWidget, Status::Status::Offline);
-    friendLayout->removeFriendWidget(chatroomWidget, Status::Status::Online);
-
-    chatroomWidget->deleteLater();
-
-    if (chatroomCount() == 0) {
-        contentLayout->clear();
-        activeChatroomWidget = nullptr;
-        deleteLater();
-    } else {
-        update();
-    }
-
-    contactWidgets.remove(friendPk);
-    contactChatForms.remove(friendPk);
-    closeIfEmpty();
 }
 
 void ContentDialog::removeGroup(const GroupId& groupId)
 {
-    auto chatroomWidget = qobject_cast<GroupWidget*>(contactWidgets[groupId]);
-    // Need to find replacement to show here instead.
-    if (activeChatroomWidget == chatroomWidget) {
-        cycleContacts(true, false);
-    }
-
-    groupLayout.removeSortedWidget(chatroomWidget);
-    chatroomWidget->deleteLater();
-
-    if (chatroomCount() == 0) {
-        contentLayout->clear();
-        activeChatroomWidget = nullptr;
-        deleteLater();
-    } else {
-        update();
-    }
-
-    contactWidgets.remove(groupId);
-    contactChatForms.remove(groupId);
-    closeIfEmpty();
 }
 
 void ContentDialog::closeIfEmpty()
 {
-    if (contactWidgets.isEmpty()) {
-        close();
-    }
+
 }
 
 int ContentDialog::chatroomCount() const
@@ -378,14 +303,13 @@ void ContentDialog::updateTitleAndStatusIcon()
 
     setWindowTitle(activeChatroomWidget->getTitle() + QStringLiteral(" - ") + username);
 
-    bool isGroupchat = activeChatroomWidget->getGroup() != nullptr;
-    if (isGroupchat) {
+    if (activeChatroomWidget->isGroup()) {
         setWindowIcon(QIcon(":/img/group.svg"));
         return;
     }
 
-    Status::Status currentStatus = activeChatroomWidget->getFriend()->getStatus();
-    setWindowIcon(QIcon{Status::getIconPath(currentStatus)});
+//    Status::Status currentStatus = activeChatroomWidget->getFriend()->getStatus();
+//    setWindowIcon(QIcon{Status::getIconPath(currentStatus)});
 }
 
 /**
@@ -430,28 +354,28 @@ void ContentDialog::setUsername(const QString& newName)
 
 bool ContentDialog::event(QEvent* event)
 {
-    switch (event->type()) {
-    case QEvent::WindowActivate:
-        if (activeChatroomWidget) {
-            activeChatroomWidget->resetEventFlags();
-            activeChatroomWidget->updateStatusLight();
+//    switch (event->type()) {
+//    case QEvent::WindowActivate:
+//        if (activeChatroomWidget) {
+//            activeChatroomWidget->resetEventFlags();
+//            activeChatroomWidget->updateStatusLight();
 
-            updateTitleAndStatusIcon();
+//            updateTitleAndStatusIcon();
 
-            const Friend* frnd = activeChatroomWidget->getFriend();
-            Group* group = activeChatroomWidget->getGroup();
+//            const IMFriend* frnd = activeChatroomWidget->getFriend();
+//            const Group* group = activeChatroomWidget->getGroup();
 
-            if (frnd) {
-                emit friendDialogShown(frnd);
-            } else if (group) {
-                emit groupDialogShown(group);
-            }
-        }
+//            if (frnd) {
+//                emit friendDialogShown(frnd);
+//            } else if (group) {
+//                emit groupDialogShown(group);
+//            }
+//        }
 
-        emit activated();
-    default:
-        break;
-    }
+//        emit activated();
+//    default:
+//        break;
+//    }
 
     return ActivateDialog::event(event);
 }
@@ -463,13 +387,13 @@ void ContentDialog::dragEnterEvent(QDragEnterEvent* event)
     GroupWidget* group = qobject_cast<GroupWidget*>(o);
     if (frnd) {
         assert(event->mimeData()->hasFormat("toxPk"));
-        ToxPk toxPk{event->mimeData()->data("toxPk")};
+        FriendId toxPk{event->mimeData()->data("toxPk")};
         Friend* contact = FriendList::findFriend(toxPk);
         if (!contact) {
             return;
         }
 
-        ToxPk friendId = contact->getPublicKey();
+        FriendId friendId = contact->getPublicKey();
 
         // If friend is already in a dialog then you can't drop friend where it already is.
         if (!hasContact(friendId)) {
@@ -496,7 +420,7 @@ void ContentDialog::dropEvent(QDropEvent* event)
     GroupWidget* group = qobject_cast<GroupWidget*>(o);
     if (frnd) {
         assert(event->mimeData()->hasFormat("toxPk"));
-        const ToxPk toxId(event->mimeData()->data("toxPk"));
+        const FriendId toxId(event->mimeData()->data("toxPk"));
         Friend* contact = FriendList::findFriend(toxId);
         if (!contact) {
             return;
@@ -549,7 +473,7 @@ void ContentDialog::keyPressEvent(QKeyEvent* event)
 
 void ContentDialog::focusContact(const ContactId& contactId)
 {
-    focusCommon(contactId, contactWidgets);
+//    focusCommon(contactId, contactWidgets);
 }
 
 void ContentDialog::focusCommon(const ContactId& id, QHash<const ContactId&, GenericChatroomWidget*> list)
@@ -563,7 +487,7 @@ void ContentDialog::focusCommon(const ContactId& id, QHash<const ContactId&, Gen
 }
 
 /**
- * @brief Show ContentDialog, activate chatroom widget.
+ * @brief Show ContentDialog, activate chatRoom widget.
  * @param widget Widget which should be activated.
  */
 void ContentDialog::activate(GenericChatroomWidget* widget)
@@ -580,57 +504,57 @@ void ContentDialog::activate(GenericChatroomWidget* widget)
     }
 
     activeChatroomWidget = widget;
-    const Contact* contact = widget->getContact();
-    contactChatForms[contact->getPersistentId()]->show(contentLayout);
+//    const Contact* contact = widget->getContact();
+//    contactChatForms[contact->getPersistentId()]->show(contentLayout);
 
     widget->setAsActiveChatroom();
     widget->resetEventFlags();
-    widget->updateStatusLight();
+//    widget->updateStatusLight();
     updateTitleAndStatusIcon();
 }
 
-void ContentDialog::updateFriendStatus(const ToxPk& friendPk, Status::Status status)
+void ContentDialog::updateFriendStatus(const FriendId& friendPk, Status::Status status)
 {
-    auto widget = qobject_cast<FriendWidget*>(contactWidgets.value(friendPk));
-    addFriendWidget(widget, status);
+//    auto widget = qobject_cast<FriendWidget*>(contactWidgets.value(friendPk));
+//    addFriendWidget(widget, status);
 }
 
 void ContentDialog::updateContactStatusLight(const ContactId& contactId)
 {
-    auto widget = contactWidgets.value(contactId);
-    if (widget != nullptr) {
-        widget->updateStatusLight();
-    }
+//    auto widget = contactWidgets.value(contactId);
+//    if (widget != nullptr) {
+//        widget->updateStatusLight();
+//    }
 }
 
 bool ContentDialog::isContactActive(const ContactId& contactId) const
 {
-    auto widget = contactWidgets.value(contactId);
-    if (widget == nullptr) {
-        return false;
-    }
-
-    return widget->isActive();
+//    auto widget = contactWidgets.value(contactId);
+//    if (widget == nullptr) {
+//        return false;
+//    }
+return false;
+//    return widget->isActive();
 }
 
 // TODO: Connect to widget directly
-void ContentDialog::setStatusMessage(const ToxPk& friendPk, const QString& message)
+void ContentDialog::setStatusMessage(const FriendId& friendPk, const QString& message)
 {
-    auto widget = contactWidgets.value(friendPk);
-    if (widget != nullptr) {
-        widget->setStatusMsg(message);
-    }
+//    auto widget = contactWidgets.value(friendPk);
+//    if (widget != nullptr) {
+//        widget->setStatusMsg(message);
+//    }
 }
 
 /**
  * @brief Update friend widget name and position.
- * @param friendId Friend Id.
+ * @param friendId IMFriend Id.
  * @param alias Alias to display on widget.
  */
-void ContentDialog::updateFriendWidget(const ToxPk& friendPk, QString alias)
+void ContentDialog::updateFriendWidget(const FriendId& friendPk, QString alias)
 {
     Friend* f = FriendList::findFriend(friendPk);
-    FriendWidget* friendWidget = qobject_cast<FriendWidget*>(contactWidgets[friendPk]);
+    FriendWidget* friendWidget = qobject_cast<FriendWidget*>(contactWidget);
 
     Status::Status status = f->getStatus();
     friendLayout->addFriendWidget(friendWidget, status);
@@ -674,7 +598,7 @@ void ContentDialog::saveSplitterState()
 
 bool ContentDialog::hasContact(const ContactId& contactId) const
 {
-    return contactWidgets.contains(contactId);
+    return true;
 }
 
 /**

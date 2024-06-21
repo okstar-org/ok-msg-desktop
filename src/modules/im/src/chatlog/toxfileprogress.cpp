@@ -55,9 +55,9 @@ void ToxFileProgress::addSample(ToxFile const& file)
 
     lastTick = now;
 
-    progress = static_cast<double>(file.bytesSent) / static_cast<double>(file.filesize);
+    progress = static_cast<double>(file.bytesSent) / static_cast<double>(file.fileSize);
     speedBytesPerSecond = meanBytesPerSec;
-    timeLeftSeconds = (file.filesize - file.bytesSent) / getSpeed();
+    timeLeftSeconds = (file.fileSize - file.bytesSent) / getSpeed();
 
     lastBytesSent = file.bytesSent;
 }

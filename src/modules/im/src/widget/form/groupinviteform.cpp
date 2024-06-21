@@ -30,7 +30,7 @@
 #include <QWindow>
 
 #include <algorithm>
-//#include <tox/tox.h>
+
 
 /**
  * @class GroupInviteForm
@@ -47,7 +47,7 @@ GroupInviteForm::GroupInviteForm()
 {
     QVBoxLayout* layout = new QVBoxLayout(this);
     connect(createButton, &QPushButton::clicked,
-            [this]() { emit groupCreate(TOX_CONFERENCE_TYPE_AV); });
+            [this]() { emit groupCreate(ConferenceType::AV); });
 
     QWidget* innerWidget = new QWidget(scroll);
     innerWidget->setLayout(new QVBoxLayout());
@@ -96,8 +96,8 @@ bool GroupInviteForm::isShown() const
  */
 void GroupInviteForm::show(ContentLayout* contentLayout)
 {
-    contentLayout->mainContent->layout()->addWidget(this);
-    contentLayout->mainHead->layout()->addWidget(headWidget);
+//    contentLayout->mainContent->layout()->addWidget(this);
+//    contentLayout->mainHead->layout()->addWidget(headWidget);
     QWidget::show();
     headWidget->show();
 }
@@ -147,7 +147,7 @@ void GroupInviteForm::showEvent(QShowEvent* event)
 void GroupInviteForm::deleteInviteWidget(const GroupInvite& inviteInfo)
 {
     auto deletingWidget =
-        std::find_if(invites.begin(), invites.end(), [=](const GroupInviteWidget* widget) {
+        std::find_if(invites.begin(), invites.end(), [&](const GroupInviteWidget* widget) {
             return inviteInfo == widget->getInviteInfo();
         });
     (*deletingWidget)->deleteLater();

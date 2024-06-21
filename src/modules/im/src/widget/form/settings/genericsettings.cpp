@@ -24,8 +24,8 @@
  * It provides correct behaviour of controls for settings forms.
  */
 
-GenericForm::GenericForm(const QPixmap& icon)
-    : formIcon(icon)
+GenericForm::GenericForm(const QPixmap& icon, QWidget* parent)
+    : QWidget(parent), formIcon(icon)
 {
 }
 

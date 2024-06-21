@@ -12,13 +12,12 @@ if (WIN32)
     pkg_check_modules(SWSCALE REQUIRED libswscale)
     pkg_check_modules(SWRESAMPLE REQUIRED libswresample)
 
-    pkg_check_modules(libsodium REQUIRED libsodium )
     pkg_check_modules(QRENCODE REQUIRED libqrencode )
     pkg_check_modules(OpenAL REQUIRED openal)
     pkg_check_modules(sqlite3 REQUIRED sqlite3)
     pkg_check_modules(exif REQUIRED libexif)
-    pkg_check_modules(vpx REQUIRED vpx)
-   pkg_check_modules(JPEG REQUIRED libjpeg)
+
+    pkg_check_modules(JPEG REQUIRED libjpeg)
 
     list(APPEND ALL_LIBRARIES
             ${AVDEVICE_LINK_LIBRARIES}
@@ -29,7 +28,6 @@ if (WIN32)
             ${QRENCODE_LINK_LIBRARIES}
             ${JPEG_LINK_LIBRARIES}
     
-            PRIVATE ${libsodium_LINK_LIBRARIES}
             PRIVATE ${vpx_LINK_LIBRARIES}
             PRIVATE ${exif_LINK_LIBRARIES}
             PRIVATE ${sqlite3_LINK_LIBRARIES}
@@ -40,7 +38,7 @@ elseif (UNIX)
 endif ()
 
 
-include_directories(${PROJECT_BINARY_DIR})
+include_directories(${PROJECT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
 set(CMAKE_AUTOUIC_SEARCH_PATHS ./src src/widget src/widget/form)
 
@@ -48,7 +46,11 @@ qt5_wrap_ui(
         ${PROJECT_NAME}_FORMS
         src/mainwindow.ui
         src/chatlog/content/filetransferwidget.ui
-        src/widget/about/aboutfriendform.ui
+        src/widget/ChatWidget.ui
+        src/widget/ContactWidget.ui
+        src/widget/form/aboutfriendform.ui
+        src/widget/form/aboutgroupform.ui
+        src/widget/form/addfriendform.ui
         src/widget/form/loadhistorydialog.ui
         src/widget/form/profileform.ui
         src/widget/tool/removefrienddialog.ui
@@ -59,7 +61,9 @@ qt5_wrap_ui(
         src/widget/form/settings/avform.ui
         src/widget/form/settings/generalsettings.ui
         src/widget/form/settings/privacysettings.ui
-        src/widget/form/settings/userinterfacesettings.ui)
+        src/widget/form/settings/userinterfacesettings.ui
+    src/widget/form/CallDurationForm.ui
+)
 
 set(${PROJECT_NAME}_SOURCES
         src/audio/audio.cpp
@@ -80,6 +84,8 @@ set(${PROJECT_NAME}_SOURCES
         src/chatlog/chatlinecontentproxy.h
         src/chatlog/chatline.cpp
         src/chatlog/chatline.h
+        src/chatlog/chatmessageitem.cpp
+        src/chatlog/chatmessageitem.h
         src/chatlog/chatlog.cpp
         src/chatlog/chatlog.h
         src/chatlog/chatmessage.cpp
@@ -98,6 +104,10 @@ set(${PROJECT_NAME}_SOURCES
         src/chatlog/content/timestamp.h
         src/chatlog/content/broken.cpp
         src/chatlog/content/broken.h
+        src/chatlog/content/contactavatar.cpp
+        src/chatlog/content/contactavatar.h
+        src/chatlog/content/simpletext.cpp
+        src/chatlog/content/simpletext.h
         src/chatlog/customtextdocument.cpp
         src/chatlog/customtextdocument.h
         src/chatlog/documentcache.cpp
@@ -128,26 +138,23 @@ set(${PROJECT_NAME}_SOURCES
         src/core/toxid.h
         src/core/groupid.cpp
         src/core/groupid.h
-        src/core/toxlogger.cpp
-        src/core/toxlogger.h
         src/core/toxoptions.cpp
         src/core/toxoptions.h
-        src/core/toxpk.cpp
-        src/core/toxpk.h
+        src/core/FriendId.cpp
+	src/core/FriendId.h
         src/core/contactid.cpp
         src/core/contactid.h
-        src/core/toxstring.cpp
-        src/core/toxstring.h
         src/friendlist.cpp
         src/friendlist.h
         src/grouplist.cpp
         src/grouplist.h
         src/ipc.cpp
         src/ipc.h
-        src/model/about/aboutfriend.cpp
-        src/model/about/aboutfriend.h
-        src/model/about/iaboutfriend.h
+        src/model/aboutfriend.cpp
+        src/model/aboutfriend.h
+        src/model/iaboutfriend.h
         src/model/chatroom/chatroom.h
+        src/model/chatroom/chatroom.cpp
         src/model/chatroom/friendchatroom.cpp
         src/model/chatroom/friendchatroom.h
         src/model/chatroom/groupchatroom.cpp
@@ -184,11 +191,6 @@ set(${PROJECT_NAME}_SOURCES
         src/model/chathistory.h
         src/model/chathistory.cpp
         src/model/toxclientstandards.h
-        # src/net/bootstrapnodeupdater.cpp src/net/bootstrapnodeupdater.h
-        src/net/avatarbroadcaster.cpp
-        src/net/avatarbroadcaster.h
-        src/net/toxuri.cpp
-        src/net/toxuri.h
         src/nexus.cpp
         src/nexus.h
         src/persistence/db/rawdatabase.cpp
@@ -235,14 +237,14 @@ set(${PROJECT_NAME}_SOURCES
         src/video/videosource.h
         src/video/videosurface.cpp
         src/video/videosurface.h
-        src/widget/about/aboutfriendform.cpp
-        src/widget/about/aboutfriendform.h
-        src/widget/categorywidget.cpp
-        src/widget/categorywidget.h
+        src/widget/form/aboutfriendform.cpp
+        src/widget/form/aboutfriendform.h
+#        src/widget/categorywidget.cpp
+#        src/widget/categorywidget.h
         src/widget/chatformheader.cpp
         src/widget/chatformheader.h
-        src/widget/circlewidget.cpp
-        src/widget/circlewidget.h
+#        src/widget/circlewidget.cpp
+#        src/widget/circlewidget.h
         src/widget/contentdialog.cpp
         src/widget/contentdialog.h
         src/widget/contentdialogmanager.cpp
@@ -256,6 +258,16 @@ set(${PROJECT_NAME}_SOURCES
         src/widget/searchform.cpp
         src/widget/searchform.h
         src/widget/searchtypes.h
+        src/widget/ContactWidget.h
+        src/widget/ContactWidget.cpp
+        src/widget/MainLayout.h
+        src/widget/MainLayout.cpp
+        src/widget/MessageSessionListWidget.h
+        src/widget/MessageSessionListWidget.cpp
+        src/widget/MessageSessionWidget.h
+        src/widget/MessageSessionWidget.cpp
+        src/widget/form/aboutgroupform.h
+        src/widget/form/aboutgroupform.cpp
         src/widget/form/addfriendform.cpp
         src/widget/form/addfriendform.h
         src/widget/form/friendform.h
@@ -273,6 +285,9 @@ set(${PROJECT_NAME}_SOURCES
         src/widget/form/groupinviteform.h
         src/widget/form/groupinvitewidget.cpp
         src/widget/form/groupinvitewidget.h
+				src/widget/form/GroupCreateForm.h
+				src/widget/form/GroupCreateForm.cpp
+				src/widget/form/GroupCreateForm.ui
         src/widget/form/loadhistorydialog.cpp
         src/widget/form/loadhistorydialog.h
         src/widget/form/profileform.cpp
@@ -301,6 +316,8 @@ set(${PROJECT_NAME}_SOURCES
         src/widget/form/settingswidget.h
         src/widget/form/tabcompleter.cpp
         src/widget/form/tabcompleter.h
+    src/widget/form/CallDurationForm.h
+    src/widget/form/CallDurationForm.cpp
         src/widget/friendlistlayout.cpp
         src/widget/friendlistlayout.h
         src/widget/friendlistwidget.cpp
@@ -364,9 +381,19 @@ set(${PROJECT_NAME}_SOURCES
         src/widget/tool/screenshotgrabber.h
         src/widget/tool/toolboxgraphicsitem.cpp
         src/widget/tool/toolboxgraphicsitem.h
+
+        src/widget/ChatWidget.h
+        src/widget/ChatWidget.cpp
+        src/widget/ContentWidget.cpp
+        src/widget/ContentWidget.h
+        src/widget/FriendAddWidget.cpp
+        src/widget/FriendAddWidget.h
         # src/widget/translator.cpp src/widget/translator.h
         src/widget/widget.cpp
-        src/widget/widget.h)
+        src/widget/widget.h
+        src/worker/SendWorker.h
+        src/worker/SendWorker.cpp
+)
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     set(${PROJECT_NAME}_SOURCES
@@ -405,7 +432,8 @@ if (PLATFORM_EXTENSIONS)
     elseif (${APPLE_EXT})
         set(${PROJECT_NAME}_SOURCES
                 ${${PROJECT_NAME}_SOURCES} src/platform/capslock_osx.cpp
-                src/platform/timer_osx.cpp)
+                src/platform/timer_osx.cpp
+ )
     endif ()
 endif ()
 
@@ -470,7 +498,6 @@ qt5_add_resources(
         # DEPENDS ${${PROJECT_NAME}_QM_FILES} # OPTIONS ${RCC_OPTIONS}
 )
 
-include_directories(${PROJECT_BINARY_DIR})
 
 add_library(${PROJECT_NAME} STATIC
         ${${PROJECT_NAME}_FORMS}
@@ -485,15 +512,15 @@ if (WIN32)
             ${AVFORMAT_INCLUDE_DIRS}
             ${AVUTIL_INCLUDE_DIRS}
             ${SWSCALE_INCLUDE_DIRS}
-          
         )
         
 
-    set(PLATFORM_LIBS d3d11 dxgi shlwapi
-            Iphlpapi dwmapi dmoguids wmcodecdspuuid Winmm
-            amstrmid msdmo strmiids strmbase psapi
-            Vfw32 shell32 oleaut32 ole32 user32 advapi32
-            bcrypt Mf Mfplat Mfreadwrite mfuuid dxva2 evr )
+    set(PLATFORM_LIBS  d3d11 dxgi dxva2  
+                        wmcodecdspuuid Winmm Mf Mfplat Mfreadwrite mfuuid evr 
+                        amstrmid msdmo strmiids strmbase
+                        Kernel32 Vfw32 shell32 oleaut32 ole32 advapi32
+                        shlwapi iphlpapi
+                        )
 elseif (UNIX)
     set(PLATFORM_LIBS z OpenSSL::SSL OpenSSL::Crypto atomic X11)
 endif ()
@@ -512,7 +539,5 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 if (MSVC)
-    set_property(
-            TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY
-            "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    set_property(TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif (MSVC)

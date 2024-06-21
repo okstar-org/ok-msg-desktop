@@ -15,7 +15,7 @@
 
 class ContactId;
 class GroupId;
-class ToxPk;
+class FriendId;
 
 class IDialogs
 {
@@ -24,7 +24,7 @@ public:
     virtual bool hasContact(const ContactId& contactId) const = 0;
     virtual bool isContactActive(const ContactId& contactId) const = 0;
 
-    virtual void removeFriend(const ToxPk& friendPk) = 0;
+    virtual void removeFriend(const FriendId& friendPk) = 0;
     virtual void removeGroup(const GroupId& groupId) = 0;
 
     virtual int chatroomCount() const = 0;

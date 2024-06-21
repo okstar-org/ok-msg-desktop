@@ -13,18 +13,15 @@
 #ifndef COREAV_H
 #define COREAV_H
 
-#include "src/core/toxcall.h"
-#include "base/compatiblerecursivemutex.h"
-
 #include <QMutex>
 #include <QObject>
 #include <QReadWriteLock>
 #include <atomic>
 #include <memory>
 
-#include "lib/messenger/messenger.h"
-#include "lib/messenger/tox/tox.h"
-
+#include "src/core/toxcall.h"
+#include "base/compatiblerecursivemutex.h"
+#include "lib/messenger/IMCall.h"
 
 class Friend;
 class Group;
@@ -32,7 +29,6 @@ class IAudioControl;
 class QThread;
 class QTimer;
 class CoreVideoSource;
-class CameraSource;
 class VideoSource;
 class VideoFrame;
 class Core;
@@ -43,68 +39,67 @@ class CoreAV : public QObject, public lib::messenger::CallHandler {
 
 public:
   using CoreAVPtr = std::unique_ptr<CoreAV>;
-  static CoreAVPtr makeCoreAV(Tox *core, CompatibleRecursiveMutex &coreLock);
+
+  static CoreAVPtr makeCoreAV();
+  static CoreAV* getInstance();
 
   void setAudio(IAudioControl &newAudio);
   IAudioControl *getAudio();
 
   ~CoreAV();
 
-  bool isCallStarted(const Friend *f) const;
-  bool isCallStarted(const Group *f) const;
-  bool isCallActive(const Friend *f) const;
-  bool isCallActive(const Group *g) const;
-  bool isCallVideoEnabled(const Friend *f) const;
+  bool isCallStarted(const ContactId *f) const;
+  bool isCallActive(const ContactId *f) const;
+  bool isCallVideoEnabled(const ContactId *f) const;
   bool sendCallAudio(QString friendId, const int16_t *pcm, size_t samples,
                      uint8_t chans, uint32_t rate) const;
   void sendCallVideo(QString friendId, std::shared_ptr<VideoFrame> frame);
   bool sendGroupCallAudio(QString groupNum, const int16_t *pcm, size_t samples,
                           uint8_t chans, uint32_t rate) const;
 
-//  CoreVideoSource *getVideoSourceFromSelf() const{
-//    return selfVideoSource.get();
-//  }
+  CoreVideoSource *getSelfVideoSource()  {
+    return selfVideoSource.get();
+  }
 
   VideoSource *getVideoSourceFromCall(QString callNumber) const;
   void sendNoVideo();
 
   void joinGroupCall(const Group &group);
   void leaveGroupCall(QString groupNum);
-  void muteCallInput(const Group *g, bool mute);
-  void muteCallOutput(const Group *g, bool mute);
+  void muteCallInput(const ContactId *g, bool mute);
+  void muteCallOutput(const ContactId *g, bool mute);
   bool isGroupCallInputMuted(const Group *g) const;
   bool isGroupCallOutputMuted(const Group *g) const;
 
-  bool isCallInputMuted(const Friend *f) const;
-  bool isCallOutputMuted(const Friend *f) const;
-  void toggleMuteCallInput(const Friend *f);
-  void toggleMuteCallOutput(const Friend *f);
+  bool isCallInputMuted(const ContactId *f) const;
+  bool isCallOutputMuted(const ContactId *f) const;
+  void toggleMuteCallInput(const ContactId *f);
+  void toggleMuteCallOutput(const ContactId *f);
   static void groupCallCallback(void *tox, QString group, QString peer,
                                 const int16_t *data, unsigned samples,
                                 uint8_t channels, uint32_t sample_rate,
                                 void *core);
-  void invalidateGroupCallPeerSource(QString group, ToxPk peerPk);
+  void invalidateGroupCallPeerSource(QString group, FriendId peerPk);
 
 public slots:
   bool startCall(QString friendId, bool video);
-  bool answerCall(QString friendId, bool video);
+  bool answerCall(ToxPeer peerId, bool video);
   bool cancelCall(QString friendId);
+  void rejectCall(const ToxPeer &peerId);
   void timeoutCall(QString friendId);
   void start();
 
 signals:
-  void avInvite(QString friendId, bool video);
-  void avStart(QString friendId, bool video);
-  void avEnd(QString friendId, bool error = false);
-  void createCallToPeerId(lib::messenger::PeerId friendId, QString callId, bool video);
+  void avInvite(ToxPeer peerId, bool video);
+  void avStart(FriendId friendId, bool video);
+  void avEnd(FriendId friendId, bool error = false);
+  void createCallToPeerId(lib::messenger::IMPeerId friendId, QString callId, bool video);
 
 private slots:
-  void doCreateCallToPeerId(lib::messenger::PeerId friendId, QString callId, bool video);
+  void doCreateCallToPeerId(lib::messenger::IMPeerId friendId, QString callId, bool video);
 
-  static void callCallback(ToxAV *toxAV, QString friendId, QString callId,
-                           bool audio, bool video, void *self);
-  static void stateCallback(ToxAV *, QString friendId, uint32_t state,
-                            void *self);
+  void stateCallback(QString friendId, uint32_t state);
+
   static void bitrateCallback(ToxAV *toxAV, QString friendId, uint32_t arate,
                               uint32_t vrate, void *self);
   static void audioBitrateCallback(ToxAV *toxAV, QString friendId,
@@ -134,34 +129,36 @@ private:
     }
   };
 
-  CoreAV(std::unique_ptr<ToxAV, ToxAVDeleter> tox,
-         CompatibleRecursiveMutex &toxCoreLock);
-  void connectCallbacks(ToxAV &toxav);
+  CoreAV();
+
 
   void process();
+
   static void audioFrameCallback(ToxAV *toxAV, QString friendId,
                                  const int16_t *pcm, size_t sampleCount,
                                  uint8_t channels, uint32_t samplingRate,
                                  void *self);
 
-  void videoFrameCallback(ToxAV *toxAV, QString friendId, uint16_t w,
-                          uint16_t h, const uint8_t *y, const uint8_t *u,
-                          const uint8_t *v, int32_t ystride, int32_t ustride,
-                          int32_t vstride, void *self);
+//  void videoFrameCallback(ToxAV *toxAV, QString friendId, uint16_t w,
+//                          uint16_t h, const uint8_t *y, const uint8_t *u,
+//                          const uint8_t *v, int32_t ystride, int32_t ustride,
+//                          int32_t vstride, void *self);
 
-  void videoFramePush(CoreVideoSource *vs, uint16_t w, uint16_t h,
-                          const uint8_t *y, const uint8_t *u, const uint8_t *v,
-                          int32_t ystride, int32_t ustride, int32_t vstride);
+  vpx_image makeVpxFrame( uint16_t w, uint16_t h,
+                     const uint8_t *y, const uint8_t *u, const uint8_t *v,
+                     int32_t ystride, int32_t ustride, int32_t vstride);
 
-  void onCall(const QString &friendId, const QString& callId, bool audio, bool video) override;
+  void videoFramePush(CoreVideoSource *vs, const vpx_image &frame);
+
+  void onCall(const lib::messenger::IMPeerId &peerId, const QString& callId, bool audio, bool video) override;
 
   void onCallRetract(const QString &friendId, int state) override;
 
-   void onCallAcceptByOther(const QString& callId, const lib::messenger::PeerId& peerId) override;
+  void onCallAcceptByOther(const QString& callId, const lib::messenger::IMPeerId & peerId) override;
 
-  void receiveCallStateAccepted(lib::messenger::PeerId friendId, QString callId, bool video) override;
+  void receiveCallStateAccepted(lib::messenger::IMPeerId friendId, QString callId, bool video) override;
 
-  void receiveCallStateRejected(lib::messenger::PeerId friendId, QString callId, bool video) override;
+  void receiveCallStateRejected(lib::messenger::IMPeerId friendId, QString callId, bool video) override;
 
   void onHangup(const QString &friendId,
                 TOXAV_FRIEND_CALL_STATE state) override;
@@ -170,18 +167,23 @@ private:
   static constexpr uint32_t VIDEO_DEFAULT_BITRATE = 2500;
 
 private:
-//  std::unique_ptr<CoreVideoSource> selfVideoSource;
+  //  std::unique_ptr<CoreVideoSource> selfVideoSource;
   // atomic because potentially accessed by different threads
-  std::atomic<IAudioControl *> audio;
-  std::unique_ptr<ToxAV, ToxAVDeleter> toxav;
+
+  std::atomic<IAudioControl *> audioCtrl;
+  std::unique_ptr<ToxAV> imCall;
   std::unique_ptr<QThread> coreavThread;
   QTimer *iterateTimer = nullptr;
-  using ToxFriendCallPtr = std::unique_ptr<ToxFriendCall>;
+
+  std::unique_ptr<CoreVideoSource> selfVideoSource;
+
+
   /**
    * @brief Maps friend IDs to ToxFriendCall.
    * @note Need to use STL container here, because Qt containers need a copy
    * constructor.
    */
+  using ToxFriendCallPtr = std::unique_ptr<ToxFriendCall>;
   std::map<QString, ToxFriendCallPtr> calls;
 
   using ToxGroupCallPtr = std::unique_ptr<ToxGroupCall>;
@@ -195,12 +197,6 @@ private:
   // protect 'calls' and 'groupCalls'
   mutable QReadWriteLock callsLock{QReadWriteLock::Recursive};
 
-  /**
-   * @brief needed to synchronize with the Core thread, some toxav_* functions
-   *        must not execute at the same time as tox_iterate()
-   * @note This must be a recursive mutex as we're going to lock it in callbacks
-   */
-  CompatibleRecursiveMutex &coreLock;
 };
 
 #endif // COREAV_H

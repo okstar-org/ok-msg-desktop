@@ -46,7 +46,7 @@ ProfileInfo::ProfileInfo(Core* core, Profile* profile)
     connect(core, &Core::statusMessageSet, this, &ProfileInfo::statusMessageChanged);
 
 //    connectTo_usernameChanged(this,
-//                              [=](const QString& val) {
+//                              [this](const QString& val) {
 //                                profile->rename(val);
 //                              });
 
@@ -89,7 +89,7 @@ bool ProfileInfo::isEncrypted() const
  */
 void ProfileInfo::copyId() const
 {
-    ToxId selfId = core->getSelfId();
+    ToxId selfId = core->getSelfPeerId();
     QString txt = selfId.toString();
     QClipboard* clip = QApplication::clipboard();
     clip->setText(txt, QClipboard::Clipboard);
@@ -112,6 +112,11 @@ void ProfileInfo::setAvatar(const QPixmap &avatar) {
     profile->setAvatarOnly(avatar);
 }
 
+const QPixmap &ProfileInfo::getAvatar()
+{
+    return profile->loadAvatar();
+}
+
 /**
  * @brief Set self status message.
  * @param status New status message.
@@ -125,9 +130,14 @@ void ProfileInfo::setStatusMessage(const QString& status)
  * @brief Get name of tox profile file.
  * @return Profile name.
  */
-QString ProfileInfo::getProfileName() const
+QString ProfileInfo::getUsername() const
 {
     return profile->getName();
+}
+
+const QString &ProfileInfo::getDisplayName() const
+{
+    return profile->getDisplayName();
 }
 
 /**
@@ -234,14 +244,16 @@ QStringList ProfileInfo::removeProfile()
  */
 void ProfileInfo::logout()
 {
-    // TODO(kriby): Refactor all of these invokeMethod calls with connect() properly when possible
-    Settings::getInstance().saveGlobal();
-    core->logout();
-//    QMetaObject::invokeMethod(&Nexus::getInstance(), "showLogin",
-//                              Q_ARG(QString, Settings::getInstance().getCurrentProfile()));
-  //TODO 暂时退出程序，后续优化。
-    qApp->exit();
+    qDebug()<<__func__;
+    emit Nexus::getInstance().destroyProfile(getUsername());
 }
+
+void ProfileInfo::exit()
+{
+    qDebug()<<__func__;
+    emit Nexus::getInstance().exit(getUsername());
+}
+
 
 /**
  * @brief Copy image to clipboard.

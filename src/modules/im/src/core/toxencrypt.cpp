@@ -251,28 +251,7 @@ QByteArray ToxEncrypt::encrypt(const QByteArray &plaintext) const {
  * @param  ciphertext The encrypted data.
  */
 QByteArray ToxEncrypt::decrypt(const QByteArray &ciphertext) const {
-  if (!isEncrypted(ciphertext)) {
-    qWarning()
-        << "The data was not encrypted using this module or it's corrupted.";
-    return QByteArray{};
-  }
-  return QByteArray{};
-
-  //  QByteArray plaintext(ciphertext.length() -
-  //  TOX_PASS_ENCRYPTION_EXTRA_LENGTH,
-  //                       0x00);
-  //  TOX_ERR_DECRYPTION error;
-  //  tox_pass_key_decrypt(
-  //      passKey, reinterpret_cast<const uint8_t *>(ciphertext.constData()),
-  //      static_cast<size_t>(ciphertext.size()),
-  //      reinterpret_cast<uint8_t *>(plaintext.data()), &error);
-  //
-  //  if (error != TOX_ERR_DECRYPTION_OK) {
-  //    qWarning() << getDecryptionError(error);
-  //    return QByteArray{};
-  //  }
-  //
-  //  return plaintext;
+  return ciphertext;
 }
 
 /**

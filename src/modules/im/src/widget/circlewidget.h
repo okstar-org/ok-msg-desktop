@@ -17,7 +17,7 @@
 
 class ContentDialog;
 
-class CircleWidget final : public CategoryWidget
+class CircleWidget : public CategoryWidget
 {
     Q_OBJECT
 public:

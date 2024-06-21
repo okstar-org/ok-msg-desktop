@@ -17,6 +17,7 @@ extern "C" {
 
 #include "corevideosource.h"
 #include "videoframe.h"
+#include "../core/toxcall.h"
 
 /**
  * @class CoreVideoSource
@@ -87,7 +88,8 @@ void CoreVideoSource::pushFrame(const vpx_image_t* vpxframe)
         for (int j = 0; j < size; ++j) {
             uint8_t* dst = avframe->data[i] + dstStride * j;
             uint8_t* src = vpxframe->planes[i] + srcStride * j;
-            memcpy(dst, src, minStride);  //TODO: windows10 下在渲染自己视频时存在崩溃可能
+            //TODO: windows10 下在渲染自己视频时存在崩溃可能
+            memcpy(dst, src, minStride);
         }
     }
 

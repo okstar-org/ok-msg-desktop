@@ -14,9 +14,9 @@
 #define _CONTENT_DIALOG_MANAGER_H_
 
 #include "contentdialog.h"
+#include "src/core/FriendId.h"
 #include "src/core/contactid.h"
 #include "src/core/groupid.h"
-#include "src/core/toxpk.h"
 #include "src/model/dialogs/idialogsmanager.h"
 
 #include <QObject>
@@ -31,19 +31,24 @@ public:
     ContentDialog* current();
     bool contactWidgetExists(const ContactId& groupId);
     void focusContact(const ContactId& contactId);
-    void updateFriendStatus(const ToxPk& friendPk);
+    void updateFriendStatus(const FriendId& friendPk);
     void updateGroupStatus(const GroupId& friendPk);
     bool isContactActive(const ContactId& contactId);
-    ContentDialog* getFriendDialog(const ToxPk& friendPk) const;
+    ContentDialog* getFriendDialog(const FriendId& friendPk) const;
     ContentDialog* getGroupDialog(const GroupId& friendPk) const;
 
-    IDialogs* getFriendDialogs(const ToxPk& friendPk) const;
+    IDialogs* getFriendDialogs(const FriendId& friendPk) const;
     IDialogs* getGroupDialogs(const GroupId& groupId) const;
 
-    FriendWidget* addFriendToDialog(ContentDialog* dialog, std::shared_ptr<FriendChatroom> chatroom,
+    void addFriendToDialog(const FriendId& friendPx,
+                                    ContentDialog* dialog,
+                                    FriendChatroom* chatroom,
                                     GenericChatForm* form);
-    GroupWidget* addGroupToDialog(ContentDialog* dialog, std::shared_ptr<GroupChatroom> chatroom,
-                                  GenericChatForm* form);
+
+    ContentDialog* addGroupToDialog(const GroupId& groupId,
+                                    ContentDialog* dialog,
+                                    GroupChatroom* chatroom,
+                                    GenericChatForm* form);
 
     void addContentDialog(ContentDialog& dialog);
 

@@ -48,16 +48,19 @@ class ProfileForm : public QWidget
 public:
     ProfileForm(IProfileInfo* profileInfo, QWidget* parent = nullptr);
     ~ProfileForm();
-    virtual void show() final
-    {
-    }
-    void show(ContentLayout* contentLayout);
+
+    void showTo(ContentLayout* contentLayout);
     bool isShown() const;
     void setQrCode(const QString& id);
 
 public slots:
     void onSelfAvatarLoaded(const QPixmap& pic);
     void onLogoutClicked();
+    void onExitClicked();
+
+protected:
+    virtual bool eventFilter(QObject* object, QEvent* event) override;
+    virtual void showEvent(QShowEvent *e) override;
 
 private slots:
     void setPasswordButtonsText();
@@ -78,7 +81,6 @@ private slots:
 private:
     void retranslateUi();
     void prFileLabelUpdate();
-    bool eventFilter(QObject* object, QEvent* event);
     void refreshProfiles();
     static QString getSupportedImageFilter();
 

@@ -17,6 +17,7 @@
 #include <QShortcut>
 #include <QTranslator>
 #include <QWidget>
+#include <memory>
 
 #include "UI/core/SettingManager.h"
 #include "base/logs.h"
@@ -32,32 +33,57 @@ using namespace core;
 using namespace ok::session;
 using namespace ok::base;
 
-LoginWidget::LoginWidget(QWidget *parent)
+LoginWidget::LoginWidget(bool bootstrap, QWidget *parent)
     : QWidget(parent),           //
       ui(new Ui::LoginWidget),   //
+      bootstrap{bootstrap},
       m_loginKey(nullptr),       //
       m_settingManager(nullptr), //
       m_loaded(0) {
+    qDebug() <<__func__;
 
   ui->setupUi(this);
   ui->loginBtn->setCursor(Qt::PointingHandCursor);
+  /**
+   * 安装事件过滤器
+   */
+  ui->signUp->installEventFilter(this);
+  ui->findPwd->installEventFilter(this);
+
+  /**
+   * 增加快捷键
+   */
+  m_loginKey = new QShortcut(QKeySequence(Qt::Key_Return), this);
+  connect(m_loginKey, SIGNAL(activated()), //
+          this, SLOT(on_loginBtn_released()));
+
+  okCloudService = new ok::backend::OkCloudService(this);
+
+  settings::Translator::registerHandler([&] { retranslateUi(); }, this);
+
+  m_settingManager = new SettingManager(this);
+
+
+  if(bootstrap){
+    qDebug()<<__func__ <<"Init timer";
+    m_timer=std::make_unique<QTimer>();
+    m_timer->start(1000);
+    connect(m_timer.get(), &QTimer::timeout, this, &LoginWidget::onTimeout);
+  }
 
   // 初始化
   init();
 }
 
 LoginWidget::~LoginWidget() {
-  // 卸载语言处理器
-  settings::Translator::unregister(this);
-  disconnect(m_loginKey);
-  delete m_loginKey;
-  delete ui;
-  delete okCloudService;
+    qDebug() <<__func__;
+    settings::Translator::unregister(this);
+    delete ui;
 }
 
 void LoginWidget::init() {
-  m_settingManager = SettingManager::InitGet();
-  m_settingManager->getAccount([&](QString acc, QString password) {
+
+  m_settingManager->getAccount([&](const QString& acc, const QString& password) {
     ui->rember->setChecked(!acc.isEmpty());
     ui->accountInput->setText(acc);
     ui->passwordInput->setText(password);
@@ -79,16 +105,12 @@ void LoginWidget::init() {
   if (i >= 0 && i < ui->language->count())
     ui->language->setCurrentIndex(i + 1);
 
-  settings::Translator::registerHandler(
-      std::bind(&LoginWidget::retranslateUi, this), this);
+
 
   retranslateUi();
   //==========国际化==========//
 
-  /**
-   * 处理服务供应商
-   */
-  okCloudService = new ok::backend::OkCloudService;
+  //服务供应商
   okCloudService->GetFederalInfo(
       [&](ok::backend::Res<ok::backend::FederalInfo> &res) {
         for (const auto &item : res.data->states) {
@@ -103,33 +125,29 @@ void LoginWidget::init() {
           m_loaded++;
         }
       },
-      [&](QString error) { onError(error); });
+      [&](const QString& error) {
+      onError(error);
+  });
+}
 
-  /**
-   * 安装事件过滤器
-   */
-  ui->signUp->installEventFilter(this);
-  ui->findPwd->installEventFilter(this);
+void LoginWidget::deinit()
+{
 
-  /**
-   * 增加快捷键
-   */
-  m_loginKey = new QShortcut(QKeySequence(Qt::Key_Return), this);
-  connect(m_loginKey, SIGNAL(activated()), //
-          this, SLOT(on_loginBtn_released()));
 }
 
 void LoginWidget::doLogin() {
+    if(m_error)
+        return;
+
   if (m_loaded < 1) {
-    //    QMessageBox::warning(this,tr("WARNING"), tr("请确认页面加载完成"));
-    onError(tr("请确认页面加载完成!"));
+    setMsg(tr("Please waiting the page is loaded"));
     return;
   }
 
   // 获取服务提供商
   auto providerIdx = ui->providers->currentIndex();
   if (!(providerIdx > 0)) {
-    onError(tr("请选择服务提供商!"));
+    setMsg(tr("Please select service provider"));
     return;
   }
 
@@ -162,10 +180,11 @@ void LoginWidget::doLogin() {
       m_settingManager->clearAccount();
     }
 
-    SignInInfo info = {.host = host,
-                       .account = account,
-                       .password = password,
-                       .stackUrl = m_stacks.at(providerIdx - 1)};
+    SignInInfo info = {
+        .account = account,
+        .password = password,
+        .host = host,
+        .stackUrl = m_stacks.at(providerIdx - 1)};
     auto _session = ok::session::AuthSession::Instance();
     connect(_session, &AuthSession::loginResult, //
             this, &LoginWidget::onConnectResult);
@@ -185,6 +204,7 @@ void LoginWidget::onConnectResult(ok::session::SignInInfo info,
     break;
   case ok::session::Status::CONNECTING: {
     ui->loginMessage->setText(tr("..."));
+    ui->loginBtn->setText(tr("Logging in"));
     QString account(ui->accountInput->text());
     QString password(ui->passwordInput->text());
     emit loginFailed(account, password);
@@ -198,7 +218,8 @@ void LoginWidget::onConnectResult(ok::session::SignInInfo info,
     break;
   }
   case ok::session::Status::FAILURE:
-    ui->loginMessage->setText(result.msg);
+    ui->loginBtn->setText(tr("Login"));
+    onError(result.msg);
     break;
   }
   emit loginResult(info, result);
@@ -235,6 +256,15 @@ void LoginWidget::on_providers_currentIndexChanged(int index) {
 void LoginWidget::retranslateUi() { ui->retranslateUi(this); }
 
 void LoginWidget::onError(const QString &msg) {
+  qWarning() <<__func__ << msg;
+  setMsg(msg);
+  //登录失败退出定时器
+  m_timer.reset();
+  m_error = true;
+}
+
+void LoginWidget::setMsg(const QString &msg)
+{
   ui->loginMessage->setText(msg);
 }
 
@@ -242,8 +272,7 @@ bool LoginWidget::eventFilter(QObject *obj, QEvent *event) {
   switch (event->type()) {
   case QEvent::MouseButtonPress: {
     if (obj == ui->signUp) {
-      QDesktopServices::openUrl(
-          QUrl("http://stack.okstar.org.cn/auth/register"));
+      QDesktopServices::openUrl(QUrl("http://stack.okstar.org.cn/auth/register"));
     } else if (obj == ui->findPwd) {
       QDesktopServices::openUrl(QUrl("http://stack.okstar.org.cn/auth/forgot"));
     }
@@ -253,6 +282,20 @@ bool LoginWidget::eventFilter(QObject *obj, QEvent *event) {
     break;
   };
   return QObject::eventFilter(obj, event);
+}
+
+void LoginWidget::showEvent(QShowEvent *e)
+{
+
+}
+
+void LoginWidget::onTimeout()
+{
+    if(ui->rember->isChecked() && ui->providers->count()>0){
+        if(!ui->passwordInput->text().isEmpty()&&!ui->accountInput->text().isEmpty()){
+            on_loginBtn_released();
+        }
+    }
 }
 
 } // namespace UI

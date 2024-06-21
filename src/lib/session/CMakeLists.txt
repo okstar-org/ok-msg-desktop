@@ -3,10 +3,10 @@ project(OkSession)
 include_directories(${WebRTC_DIR}/include)
 
 find_package(ok-gloox REQUIRED)
+message(STATUS "Found ok-gloox=${ok-gloox_FOUND}")
 if(ok-gloox_FOUND)
     set(gloox_LIB ok-gloox::ok-gloox)
 endif ()
-
 
 set(${PROJECT_NAME}_SOURCES
         AccountItem.cpp

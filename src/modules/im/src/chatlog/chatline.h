@@ -17,6 +17,9 @@
 #include <QRectF>
 #include <QVector>
 #include <memory>
+#include <QDateTime>
+#include <QPixmap>
+#include "src/persistence/history.h"
 
 class ChatLog;
 class ChatLineContent;
@@ -24,90 +27,60 @@ class QGraphicsScene;
 class QStyleOptionGraphicsItem;
 class QFont;
 
-struct ColumnFormat
-{
-    enum Policy
-    {
-        FixedSize,
-        VariableSize,
-    };
-
-    enum Align
-    {
-        Left,
-        Center,
-        Right,
-    };
-
-    ColumnFormat()
-    {
-    }
-    ColumnFormat(qreal s, Policy p, Align halign = Left)
-        : size(s)
-        , policy(p)
-        , hAlign(halign)
-    {
-    }
-
-    qreal size = 1.0;
-    Policy policy = VariableSize;
-    Align hAlign = Left;
-};
-
-using ColumnFormats = QVector<ColumnFormat>;
-
-class ChatLine
+class IChatItem
 {
 public:
-    using Ptr = std::shared_ptr<ChatLine>;
+    using Ptr = std::shared_ptr<IChatItem>;
+    virtual ~IChatItem(){}
+    virtual int itemType() = 0;
+    virtual void layout(qreal width, QPointF scenePos) = 0;
+    virtual QRectF sceneBoundingRect() const = 0;
+    virtual void moveBy(qreal dx, qreal dy);
+    virtual void addToScene(QGraphicsScene *scene);
+    virtual void removeFromScene();
+    virtual void setVisible(bool visible);
 
-    ChatLine();
-    virtual ~ChatLine();
+    virtual void markAsDelivered(const QDateTime &time){};
 
-    QRectF sceneBoundingRect() const;
+    virtual ChatLineContent* contentAtPos(QPointF scenePos) const
+    {
+        return nullptr;
+    }
+    virtual ChatLineContent *centerContent() const;
 
-    void replaceContent(int col, ChatLineContent* lineContent);
-    void layout(qreal width, QPointF scenePos);
-    void moveBy(qreal deltaY);
-    void removeFromScene();
-    void addToScene(QGraphicsScene* scene);
-    void setVisible(bool visible);
-    void selectionCleared();
-    void selectionFocusChanged(bool focusIn);
-    void fontChanged(const QFont& font);
+    virtual bool selectable() const
+    {
+        return false;
+    }
+   
+    virtual void visibilityChanged(bool visible);
+    virtual void selectionFocusChanged(bool focusIn);
+
+public:
+    void fontChanged(const QFont &font);
     void reloadTheme();
-
-    int getColumnCount();
-    int getRow() const;
-
-    ChatLineContent* getContent(int col) const;
-    ChatLineContent* getContent(QPointF scenePos) const;
-
-    bool isOverSelection(QPointF scenePos);
-
-    // comparators
-    static bool lessThanBSRectTop(const ChatLine::Ptr& lhs, const qreal& rhs);
-    static bool lessThanBSRectBottom(const ChatLine::Ptr& lhs, const qreal& rhs);
-    static bool lessThanRowIndex(const ChatLine::Ptr& lhs, const ChatLine::Ptr& rhs);
+    void selectionCleared();
+    void selectAll();
+    void setTime(const QDateTime &time) {
+        datetime = time;
+    }
+    QDateTime getTime(){
+        return datetime;
+    }
+    
+    void setRow(int row);
+    int getRow(){
+        return row;
+    }
 
 protected:
     friend class ChatLog;
-
-    QPointF mapToContent(ChatLineContent* c, QPointF pos);
-
-    void addColumn(ChatLineContent* item, ColumnFormat fmt);
-    void updateBBox();
-    void setRow(int idx);
-    void visibilityChanged(bool visible);
-
-private:
+    virtual QList<ChatLineContent *> contents() {
+        return QList<ChatLineContent *>{};
+    };
+    QDateTime datetime;
     int row = -1;
-    QVector<ChatLineContent*> content;
-    QVector<ColumnFormat> format;
-    qreal width = 100.0;
-    qreal columnSpacing = 15.0;
-    QRectF bbox;
-    bool isVisible = false;
 };
 
 #endif // CHATLINE_H
+

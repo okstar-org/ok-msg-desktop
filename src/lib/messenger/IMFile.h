@@ -12,67 +12,104 @@
 #ifndef IMFILE_H
 #define IMFILE_H
 
-#include "IM.h"
 #include "lib/messenger/messenger.h"
 #include <QFile>
 #include <QThread>
-#include <bytestreamdatahandler.h>
-#include <inbandbytestream.h>
-#include <iqhandler.h>
+
+namespace gloox{
+class JID;
+class BytestreamDataHandler;
+}
 
 namespace lib {
 namespace messenger {
 
-class IMFile : public QThread, public BytestreamDataHandler {
-  Q_OBJECT
+class IM;
+
+//不要修改顺序和值
+enum class FileStatus {
+  INITIALIZING = 0,
+  PAUSED = 1,
+  TRANSMITTING = 2,
+  BROKEN = 3,
+  CANCELED = 4,
+  FINISHED = 5,
+};
+
+//不要修改顺序和值
+enum class FileDirection {
+  SENDING = 0,
+  RECEIVING = 1,
+};
+
+enum class FileControl{
+  RESUME, PAUSE, CANCEL
+};
+
+
+struct FileTxIBB {
+    QString sid;
+    int blockSize;
+};
+
+struct File {
 public:
-  IMFile(const JID &friendId,           //
-         FileHandler::File file,        //
-         const lib::messenger::IM *im); //
+  //id(file id = ibb id) 和 sId(session id)
+  QString id;
+  QString sId;
+  QString name;
+  QString path;
+  quint64 size;
+  FileStatus status;
+  FileDirection direction;
+  FileTxIBB txIbb;
+  [[__nodiscard__ ]] QString toString() const;
+  friend QDebug &operator<<(QDebug &debug, const File &f);
+};
 
-  virtual ~IMFile();
+class FileHandler {
+public:
 
-  void run() override;
+  virtual void onFileRequest(const QString &friendId, const File &file) = 0;
+  virtual void onFileRecvChunk(const QString &friendId, const QString &fileId,
+                               int seq, const std::string &chunk) = 0;
+  virtual void onFileRecvFinished(const QString &friendId,
+                                  const QString &fileId) = 0;
+  virtual void onFileSendInfo(const QString &friendId, const File &file,
+                              int m_seq, int m_sentBytes, bool end) = 0;
+  virtual void onFileSendAbort(const QString &friendId, const File &file,
+                               int m_sentBytes) = 0;
+  virtual void onFileSendError(const QString &friendId, const File &file,
+                               int m_sentBytes) = 0;
+};
 
-  void abort();
 
-  void handleBytestreamData(Bytestream *bs, const std::string &data) override;
+class IMFile : public QObject{
+public:
+    IMFile(QObject* parent=nullptr);
+    ~IMFile();
+    void addFileHandler(FileHandler *);
 
-  void handleBytestreamDataAck(Bytestream *bs) override;
+    /**
+     * File
+     */
+    void fileRejectRequest(QString friendId, const File &file);
+    void fileAcceptRequest(QString friendId, const File &file);
+    void fileFinishRequest(QString friendId, const QString &sId);
+    void fileFinishTransfer(QString friendId, const QString &sId);
+    void fileCancel(QString fileId);
+    bool fileSendToFriend(const QString &f, const File &file);
 
-  void handleBytestreamError(Bytestream *bs, const IQ &iq) override;
-
-  void handleBytestreamOpen(Bytestream *bs) override;
-
-  void handleBytestreamClose(Bytestream *bs) override;
-
-  bool sendFinished() const { return m_file.size == m_sentBytes; }
-  bool ackFinished() const { return m_seq > 0 && m_seq == m_ack_seq; }
 
 private:
-  JID m_friendId;
-  FileHandler::File m_file;
-  const IM *m_im;
-  int m_buf = 4096; // 4k
-  int m_seq = 0;
-  quint64 m_sentBytes = 0;
-  int m_ack_seq = 0;
+     IMJingle *jingle;
+     std::vector<FileHandler *> fileHandlers;
 
-  std::unique_ptr<InBandBytestream> m_ibb;
-  std::unique_ptr<QFile> qFile;
-  gloox::Bytestream *m_byteStream;
-
-public:
-signals:
-  void fileSent(const JID &m_friendId, const FileHandler::File &m_file);
-  void fileError(const JID &m_friendId, const FileHandler::File &m_file,
-                 int m_sentBytes);
-  void fileAbort(const JID &m_friendId, const FileHandler::File &m_file,
-                 int m_sentBytes);
-  void fileSending(const JID &m_friendId, const FileHandler::File &m_file,
-                   int m_seq, int m_sentBytes, bool end);
 };
 
 } // namespace messenger
 } // namespace lib
+
+using ToxFile1 = lib::messenger::IMFile;
+
 #endif // OKEDU_CLASSROOM_DESKTOP_IMFILE_H

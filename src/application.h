@@ -40,7 +40,6 @@ public:
   static Application *Instance();
 
   void start();
-
   void finish();
 
   inline SettingManager *settingManager() { return _settingManager.get(); }
@@ -50,8 +49,6 @@ public:
   }
 
 protected:
-  void initScreenCaptor();
-
   void initIM();
 
 private:
@@ -68,22 +65,23 @@ private:
 
   std::unique_ptr<ControllerManager> _controllerManager;
 
-  std::unique_ptr<base::DelayedCallTimer> _delayCaller;
-  UI::WindowManager *m_windowManager;
   ok::session::SignInInfo m_signInInfo;
 
   std::unique_ptr<UI::LoginWindow> m_loginWindow;
+  std::unique_ptr<UI::MainWindow> m_mainWindow;
 
   void loadService();
-
-  void createLoginUI();
-  void deleteLoginUI();
+  void doLogout();
+  /**
+   * bootstrap: 打开程序首次启动为true，登出启动为false
+   */
+  void createLoginUI(bool bootstrap);
   void closeLoginUI();
 
   void startMainUI();
   void stopMainUI();
 
-  void initModuleIM(ok::session::SignInInfo &signInInfo);
+  Module * initModuleIM(ok::session::SignInInfo &signInInfo);
 
 #ifdef OK_MODULE_PAINTER
   void initModulePainter();
@@ -102,5 +100,9 @@ public slots:
   void onMenuReleased(UI::PageMenu menu, bool checked);
 
   void onAvatar(const QPixmap &);
+
+  void on_logout(const QString &profile);
+  void on_exit(const QString &profile);
+
 };
 } // namespace core

@@ -13,7 +13,7 @@
 #ifndef TOXID_H
 #define TOXID_H
 
-#include "toxpk.h"
+#include "FriendId.h"
 
 #include <QByteArray>
 #include <QString>
@@ -39,7 +39,7 @@ public:
   static bool isToxId(const QString &id);
   const uint8_t *getBytes() const;
   QByteArray getToxId() const;
-  ToxPk getPublicKey() const;
+  FriendId getPublicKey() const;
   QString getNoSpamString() const;
 
   QString getToxIdAsStr() const;

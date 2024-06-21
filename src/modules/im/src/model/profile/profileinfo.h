@@ -10,10 +10,10 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#include <QObject>
-#include "src/model/interface.h"
-#include "src/core/toxpk.h"
 #include "iprofileinfo.h"
+#include "src/core/FriendId.h"
+#include "src/model/interface.h"
+#include <QObject>
 
 class Core;
 class QFile;
@@ -33,14 +33,19 @@ public:
     void copyId() const override;
 
     void setUsername(const QString& name) override;
+
     void setAvatar(const QPixmap& avatar) override;
+    const QPixmap& getAvatar() override;
     void setStatusMessage(const QString& status) override;
 
-    QString getProfileName() const override;
+    QString getUsername() const override;
+    virtual const QString& getDisplayName() const override;
+
     RenameResult renameProfile(const QString& name) override;
     SaveResult exportProfile(const QString& path) const override;
     QStringList removeProfile() override;
     void logout() override;
+    void exit() override;
 
     void copyQr(const QImage& image) const override;
     SaveResult saveQr(const QImage& image, const QString& path) const override;
@@ -59,5 +64,8 @@ private:
     IProfileInfo::SetAvatarResult scalePngToAvatar(QByteArray& avatar);
     Profile* const profile;
     Core* const core;
+
+signals:
+    void logouted();
 
 };

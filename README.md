@@ -1,4 +1,4 @@
-<h1 align="center">OkMSG Desktop</h1>
+h1 align="center">OkMSG Desktop</h1>
 
 # 🎁 项目介绍
 
@@ -27,17 +27,16 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
 - CMake ([New BSD License](https://github.com/Kitware/CMake/blob/master/Copyright.txt))
 - WebRTC ([New BSD License](https://github.com/desktop-app/tg_owt/blob/master/LICENSE))
 - OpenSSL 3.0.x ([OpenSSL License](https://www.openssl.org/source/license.html))
-- qTox([GPL v3](https://github.com/qTox/qTox/LICENSE))
-- gloox ([GPL v3](https://gitee.com/chuanshantech/ok-edu-gloox))
 - OpenAL Soft ([LGPL](https://github.com/kcat/openal-soft/blob/master/COPYING))
 - FFmpeg ([LGPL](https://www.ffmpeg.org/legal.html))
 - Qt 5.15 ([LGPL](http://doc.qt.io/qt-5/lgpl.html))
 - zlib ([zlib License](http://www.zlib.net/zlib_license.html))
 - Sqlite3 ([Public Domain](https://sqlite.org/copyright.html))
-- Sodium([ISC license.](https://github.com/jedisct1/libsodium))
 - libexif([GPL v2](https://github.com/libexif/libexif/blob/master/COPYING))
 - libqrencode([GPL v2+](https://github.com/fukuchi/libqrencode))
-
+- qTox([GPL v3](https://github.com/qTox/qTox/LICENSE))
+- gloox ([GPL v3](https://gitee.com/chuanshantech/ok-edu-gloox))
+- 
 # 🖥️ 支持平台
 > 🐧 Linux
 - Ubuntu  已支持
@@ -60,9 +59,16 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
 - Qt版本：Qt5.15.x
 
 ## Windows 构建
-- 安装`visual studio 17 2022`
 
-- 配置vcpkg
+### 安装必备依赖
+- 安装`visual studio 17 2022`
+  选择 `Windows SdK 10 20348`
+  
+- 安装`strawberry-perl`
+
+### 配置vcpkg
+> 以为VS已经自带vcpkg，所以无需安装
+
 ```shell
 #设置vcpkg路径，也可以参考官网下载：https://github.com/microsoft/vcpkg/blob/master/README_zh_CN.md
 VCPKG_ROOT=E:\Program Files\Microsoft Visual Studio\2022\Community\VC\vcpkg
@@ -87,16 +93,32 @@ PKG_CONFIG_PATH=<项目根目录>/vcpkg_installed/x64-windows/lib/pkgconfig
     pkg-config.bat --list-all
 
 
-- 编译OkRTC库
+### 编译OkRTC库
 ```shell
+sudo apt install libopus-dev libvpx-dev libpipewire-0.3-dev
 git clone https://github.com/okstar-org/ok-rtc.git
+cd ok-rtc
+git submodule update --init
 # CMake预处理
- E:\QtWorkspace\ok-rtc> cmake -B out/Debug -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE='$env{VCPKG_ROOT}\scripts\buildsystems\vcpkg.cmake' -DCMAKE_PREFIX_PATH='${PROJECT_ROOT}\vcpkg_installed\x64-windows'
+cmake -B out -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE='$env{VCPKG_ROOT}\scripts\buildsystems\vcpkg.cmake' -DCMAKE_PREFIX_PATH='${PROJECT_ROOT}\vcpkg_installed\x64-windows'
 # 构建
-E:\QtWorkspace\ok-rtc> cmake --build out/Debug
-
+cmake --build out --config Release
+# 执行安装（用管理员身份打开命令行）
+cmake --install out
 ```
-- 构建项目
+### 编译OkGloox库
+```shell
+git clone https://github.com/okstar-org/ok-gloox.git
+cd ok-gloox
+# CMake预处理
+cmake -B out -DCMAKE_BUILD_TYPE=Release
+# 构建
+cmake --build out --config Release
+# 执行安装（用管理员身份打开命令行）
+cmake --install out
+```
+
+### 构建OkMSG项目
 
 1. 修改CMake预设文件CMakeUserPresets.json(该文件是针对用户本地环境的配置，不要提交)，列子如下：
 > 此处主要利用 `CMAKE_PREFIX_PATH` 关联到第三方库（调试库），比如：Qt、VcPkg下载的库、OkRTC等
@@ -129,21 +151,21 @@ E:\QtWorkspace\ok-rtc> cmake --build out/Debug
 2. 执行构建命令
 ```shell
 # 预处理
-cmake -B build --preset win-x64-{debug|release}
-cmake --build build
+cmake -B out --preset win-x64-{debug|release}
+cmake --build out
 ```
 
 # Linux 构建
 ## Ubuntu 22.04
 > 安装依赖
 ```shell
-sudo apt install -y gcc g++ clang yasm  
+sudo apt install -y gcc g++ clang yasm libstdc++-12-dev libc++1
 sudo apt install -y qtcreator qtbase5-dev  qtmultimedia5-dev libqt5svg5-dev qttools5-dev
 sudo apt install -y libcrypto++-dev  libssl-dev
 sudo apt install -y libpipewire-0.3-dev libxss-dev libgbm-dev libdrm-dev libxdamage-dev libxrender-dev libxrandr-dev libxtst-dev \
   libasound2-dev libpulse-dev libavcodec-dev libavformat-dev libswscale-dev libavdevice-dev libvpx-dev \
   libopus-dev libjpeg-dev libopenal-dev libopenh264-dev \
-  libexif-dev libqrencode-dev libsodium-dev libsqlcipher-dev
+  libexif-dev libqrencode-dev libsqlite3-dev
 ```
 > 构建OkRtc模块
 ```shell
@@ -163,7 +185,7 @@ dnf install -y gcc g++
 dnf install -y qt5-qtbase-devel qt6-qtbase-gui  qt5-qtmultimedia-devel \
   qt5-qtsvg-devel qt5-qttools-devel qt5-qttools-static \
   libavcodec-free-devel libavdevice-free-devel \
-  libexif-free-devel qrencode-devel libsodium-devel sqlcipher-devel \
+  libexif-free-devel qrencode-devel sqlite3-devel \
   libvpx-devel openal-soft-devel openssl-devel
 ```
 

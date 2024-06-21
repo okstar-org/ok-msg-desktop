@@ -34,6 +34,7 @@
 using namespace core;
 using namespace base;
 
+
 namespace core {
 
 Application::Application(int &argc, char *argv[])
@@ -109,9 +110,6 @@ Application::Application(int &argc, char *argv[])
   FontManager fm;
   fm.loadFonts();
 
-  // 延时器
-  _delayCaller = std::make_unique<DelayedCallTimer>();
-
   // 设置
   _settingManager = std::make_unique<SettingManager>(this);
 
@@ -129,15 +127,15 @@ Application *Application::Instance() {
 void Application::start() {
 
   // if (!session()->authenticated()) {
-  this->createLoginUI();
+  this->createLoginUI(true);
   // } else {
   //   this->startMainUI();
   // }
   // nexus->start();
 }
 
-void Application::createLoginUI() {
-  m_loginWindow = std::make_unique<UI::LoginWindow>();
+void Application::createLoginUI(bool bootstrap) {
+  m_loginWindow = std::make_unique<UI::LoginWindow>(bootstrap);
 
   connect(m_loginWindow.get(), &UI::LoginWindow::loginResult,
         [&](ok::session::SignInInfo &signInInfo,
@@ -157,72 +155,70 @@ void Application::createLoginUI() {
 
 }
 
-void Application::deleteLoginUI() {
-  disconnect(m_loginWindow.get());
-  m_loginWindow.reset();
-}
-
+/**
+ *  关闭login窗口
+ */
 void Application::closeLoginUI() {
-  // 关闭login窗口
-  deleteLoginUI();
+    disconnect(m_loginWindow.get());
+    m_loginWindow->close();
 }
 
 void Application::onLoginSuccess(ok::session::SignInInfo &signInInfo) {
   qDebug() << qsl("onLoginSuccess account:%1").arg(signInInfo.account);
   m_signInInfo = signInInfo;
 
-  // 初始化 IM 模块
-  initModuleIM(signInInfo);
+  // 启动主界面
+  startMainUI();
+#ifdef OK_PLUGIN
+  // 初始化插件平台
+  initPluginManager();
+#endif
 
   // 初始化 Painter 模块
 #ifdef OK_MODULE_PAINTER
   initModulePainter();
 #endif
 
-  // 初始化截屏模块
-  initScreenCaptor();
-
-  // 启动主界面
-  startMainUI();
-
-#ifdef OK_PLUGIN
-  // 初始化插件平台
-  initPluginManager();
-#endif
   // 关闭登录界面
   closeLoginUI();
 }
 
 void Application::startMainUI() {
-  this->loadService();
 
-  m_windowManager = UI::WindowManager::Instance();
+    m_mainWindow = std::make_unique<UI::MainWindow>();
 
-  connect(m_windowManager, &UI::WindowManager::menuPushed, this,
-          &Application::onMenuPushed);
-  connect(m_windowManager, &UI::WindowManager::mainClose, this,
-          [&](SavedInfo savedInfo) {
-            for (auto m : m_moduleMap) {
-              m->onSave(savedInfo);
-            }
-          });
+    /**
+     * connect menu's button events.
+     */
+//    connect(m_mainWindow.get(), &UI::MainWindow::toClose, //
+//            [&](){
+//              emit mainClose({
+//                m_mainWindow->saveGeometry()
+//              });
+//            } );
 
-  m_windowManager->startMainUI();
+      connect(m_mainWindow.get(), &UI::MainWindow::menuPushed,
+              this, &Application::onMenuPushed);
+
+
+    m_mainWindow->show();
+
+//  m_windowManager = UI::WindowManager::Instance();
+
+//  connect(m_windowManager, &UI::WindowManager::menuPushed, this,
+//          &Application::onMenuPushed);
+//  connect(m_windowManager, &UI::WindowManager::mainClose, this,
+//          [&](SavedInfo savedInfo) {
+//            for (auto m : m_moduleMap) {
+//              m->onSave(savedInfo);
+//            }
+//          });
+
+//  m_windowManager->startMainUI();
 }
 
 void Application::stopMainUI() {
-  m_windowManager->stopMainUI();
-  delete m_windowManager;
-  m_windowManager = nullptr;
-}
-
-void Application::loadService() {}
-
-void Application::initScreenCaptor() {
-  //  qDebug(("initScreenCaptor ..."));
-  //  auto _screenCaptor = new OEScreenshot();
-  //  m_moduleMap.insert(_screenCaptor->name(), _screenCaptor);
-  //  qDebug(("initScreenCaptor finished"));
+  m_mainWindow.reset();
 }
 
 void Application::cleanup() {
@@ -240,9 +236,12 @@ void Application::onMenuPushed(UI::PageMenu menu, bool checked) {
   switch (menu) {
   case UI::PageMenu::chat: {
     Module *m = m_moduleMap.value(Nexus::Name());
+    if(!m){
+        m = initModuleIM(m_signInInfo);
+    }
     if (checked) {
       if (!m->isStarted()) {
-        auto container = m_windowManager->getContainer(menu);
+        auto container = m_mainWindow->getContainer(menu);
         m->start(m_signInInfo, container);
       }
     }
@@ -256,21 +255,23 @@ void Application::onMenuPushed(UI::PageMenu menu, bool checked) {
 
 void Application::onMenuReleased(UI::PageMenu menu, bool checked) {}
 
-void Application::initModuleIM(ok::session::SignInInfo &signInInfo) {
-  qDebug(("IM..."));
+Module * Application::initModuleIM(ok::session::SignInInfo &signInInfo) {
+  qDebug() << __func__ << signInInfo.username;
+  auto im = m_moduleMap.value(Nexus::Name());
+  if(!im){
+      qDebug() <<"Creating module:" << Nexus::Name();
+      im = Nexus::Create();
+      auto nexus = static_cast<Nexus *>(im);
 
-  auto im = Nexus::Create();
+      connect(nexus, &Nexus::updateAvatar,   //
+              this, &Application::onAvatar);
 
-  //  connect(im, &Module::createProfileFailed, //
-  //          m_loginWindow.get(), &LoginWindow::onProfileLoadFailed);
+      connect(nexus, &Nexus::destroyProfile, this, &Application::on_logout);
+      connect(nexus, &Nexus::exit, this, &Application::on_exit);
 
-  //  Module &nexus = Nexus::getInstance();
-  //  nexus.init(static_cast<Profile *>(profile));
-
-  connect(static_cast<Nexus *>(im), &Nexus::updateAvatar, this,
-          &Application::onAvatar);
-
-  m_moduleMap.insert(im->name(), im);
+      m_moduleMap.insert(im->name(), im);
+  }
+  return im;
 }
 
 #ifdef OK_PLUGIN
@@ -284,11 +285,40 @@ void Application::initPluginManager() {
 #endif
 
 void Application::onAvatar(const QPixmap &pixmap) {
-  auto menu = m_windowManager->getMainMenu();
+  auto menu = m_mainWindow->menu();
   if (!menu)
     return;
 
   menu->setAvatar(pixmap);
+}
+
+void Application::on_logout(const QString &profile)
+{
+    qDebug() << __func__<<profile;
+    doLogout();
+    QThread::currentThread()->sleep(1);
+    createLoginUI(false);
+}
+
+void Application::on_exit(const QString &profile)
+{
+    qDebug() << __func__<<profile;
+    doLogout();
+    qApp->exit();
+}
+
+void Application::doLogout(){
+    qDebug() << __func__<<profile;
+    QVector<QString> remove;
+    for(auto mod :  m_moduleMap){
+         qDebug() <<"delete module:" <<mod->name();
+         remove.push_back(mod->name());
+         mod->cleanup();
+    }
+    for(auto &name:remove){
+        m_moduleMap.remove(name);
+    }
+     stopMainUI();
 }
 
 #ifdef OK_MODULE_PAINTER

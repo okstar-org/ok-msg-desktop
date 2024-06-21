@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include <QMutex>
 #include <QObject>
 #include <QThread>
 #include <QTimer>
@@ -19,7 +20,6 @@
 
 #include <memory>
 #include <utility>
-
 #include "base/OkAccount.h"
 #include "base/basic_types.h"
 #include "base/jsons.h"
@@ -87,8 +87,6 @@ private:
  * 登录信息
  */
 struct SignInInfo {
-  //xmpp host
-  QString host;
   // 账号
   QString account;
   // 密码
@@ -96,6 +94,8 @@ struct SignInInfo {
 
   // username
   QString username;
+  // xmpp host
+  QString host;
   // stack url
   QString stackUrl;
 };
@@ -125,20 +125,18 @@ public:
   ::lib::messenger::IM *im() { return _im; }
 
 protected:
-  void initTimer();
-
   void doConnect();
 
 private:
   SignInInfo m_signInInfo;
 
   std::shared_ptr<AuthSession> _session;
-  std::unique_ptr<QTimer> _timer;
+
 
   std::unique_ptr<network::NetworkHttp> m_networkManager;
   AuthInfo _authInfo;
 
-  std::mutex _mutex;
+  QMutex _mutex;
 
   std::unique_ptr<ok::base::OkAccount> okAccount;
   std::unique_ptr<ok::backend::PassportService> passportService;
@@ -148,9 +146,10 @@ private:
 
 signals:
   void loginResult(SignInInfo, LoginResult); // LoginResult
+  void loginSuccessed(const SignInInfo& signIn);
 
 public slots:
-  void timerUp();
+  void onLoginSuccessed(const SignInInfo& signIn);
 };
 } // namespace session
 } // namespace ok

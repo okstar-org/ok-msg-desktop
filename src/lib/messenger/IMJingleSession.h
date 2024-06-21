@@ -12,10 +12,14 @@
 
 #pragma once
 #include <QMap>
+#include "IM.h"
+#include "IMFile.h"
+#include "IMFileTask.h"
 #include "base/basic_types.h"
 #include "lib/ortc/ok_rtc_defs.h"
 #include "lib/ortc/ok_rtc_manager.h"
 #include <jinglesession.h>
+
 
 namespace ortc{
 struct IceServer;
@@ -30,49 +34,50 @@ enum CallStage {
   StageSession  // XEP-0166: Jingle https://xmpp.org/extensions/xep-0166.html
 };
 
-enum CallDirection { CallNone, CallIn, CallOut };
-
 using namespace gloox;
 using namespace gloox::Jingle;
 
-class IMJingleSession {
-
+class IMJingleSession : public QObject {
+    Q_OBJECT
 public:
-  explicit IMJingleSession(const std::string &peerId,
-                           const std::string &sId,
+  explicit IMJingleSession(IM* im,
+                           const IMPeerId &peerId,
+                           const QString &sId,
                            lib::ortc::JingleCallType callType,
                            Session *mSession,
-                           std::list<ortc::IceServer> iceServers,
-                           ortc::OkRTCHandler *handler,
-                           ortc::OkRTCRenderer *renderer);
+                           std::vector<FileHandler *>* fileHandlers,
+                           ortc::OkRTCHandler *handler);
   virtual ~IMJingleSession();
 
 
   [[nodiscard]] Session *getSession() const;
-  [[nodiscard]] inline const ortc::JingleContext &getContext() const {
+  [[nodiscard]] inline const ortc::OJingleContent &getContext() const {
     return context;
   }
 
-  void setContext(const ortc::JingleContext&);
+  void onAccept();
+  //被动结束
+  void onTerminate();
+  //主动结束
+  void doTerminate();
+
+  void createOffer(const std::string &peerId);
+
+  void setContext(const ortc::OJingleContent &);
 
   const Session::Jingle *getJingle() const;
   void setJingle(const Session::Jingle *jingle);
 
-  [[nodiscard]] CallDirection direction() const {
-    return _callDirection;
-  }
+  [[nodiscard]] CallDirection direction() const;
 
-  void setDirection(CallDirection direction){
-    _callDirection = direction;
-  }
+  void setCallStage(CallStage state);
 
   void setAccepted(bool y) { accepted = y; }
 
   [[nodiscard]] bool isAccepted() const { return accepted; }
 
-  [[nodiscard]] ortc::OkRTCManager *getRtcManager(){return _rtcManager.get();}
 
-  const std::string & getId() const {
+  const QString & getId() const {
     return sId;
   }
 
@@ -86,19 +91,54 @@ public:
       pendingIceCandidates.pop_back();
     }
   }
+
+  void addFile(const File &f) {
+      m_waitSendFiles.append(f);
+  }
+  /**
+   * 启动文件发送任务
+   * @param session
+   * @param file
+   */
+  void doStartFileSendTask(const Jingle::Session *session,
+                           const File &file);
+
+  /**
+   * 停止文件发送任务
+   * @param session
+   * @param file
+   */
+  void doStopFileSendTask(const Jingle::Session *session,
+                          const File &file);
 private:
-  std::string sId;
+  IM* im;
+  QString sId;
   Session *session;
   const Session::Jingle *jingle;
-  ortc::JingleContext context;
+  ortc::OJingleContent context;
 
+
+
+  lib::ortc::JingleCallType m_callType;
   CallStage m_callStage;
   bool accepted;
 
-  std::unique_ptr<ortc::OkRTCManager> _rtcManager;
-  CallDirection _callDirection;
-
+  //file
+  QList<File> m_waitSendFiles;
+  //k: file.id
+  QMap<QString, IMFileTask *> m_fileSenderMap;
+  std::vector<FileHandler *> *fileHandlers;
   std::list<ortc::OIceUdp> pendingIceCandidates;
+
+signals:
+  void sendFileInfo(const QString &friendId, const File &file,
+                    int m_seq, int m_sentBytes, bool end);
+
+  void sendFileAbort(const QString &friendId, const File &file,
+                     int m_sentBytes);
+  void sendFileError(const QString &friendId, const File &file,
+                     int m_sentBytes);
+
 };
 
 } // namespace IM

@@ -48,12 +48,11 @@
  * Restores all controls from the settings.
  */
 UserInterfaceForm::UserInterfaceForm(SettingsWidget* myParent)
-    : GenericForm(QPixmap(":/img/settings/general.png"))
+    : GenericForm(QPixmap(":/img/settings/general.png"), myParent),
+      bodyUI{new Ui::UserInterfaceSettings}
 {
-    parent = myParent;
-
-    bodyUI = new Ui::UserInterfaceSettings;
     bodyUI->setupUi(this);
+    parent = myParent;
 
     // block all child signals during initialization
     const RecursiveSignalBlocker signalBlocker(this);
@@ -84,12 +83,12 @@ UserInterfaceForm::UserInterfaceForm(SettingsWidget* myParent)
 
     bodyUI->showWindow->setChecked(s.getShowWindow());
 
-    bodyUI->cbGroupchatPosition->setChecked(s.getGroupchatPosition());
-    bodyUI->cbCompactLayout->setChecked(s.getCompactLayout());
-    bodyUI->cbSeparateWindow->setChecked(s.getSeparateWindow());
-    bodyUI->cbDontGroupWindows->setChecked(s.getDontGroupWindows());
-    bodyUI->cbDontGroupWindows->setEnabled(s.getSeparateWindow());
-    bodyUI->cbShowIdenticons->setChecked(s.getShowIdenticons());
+//    bodyUI->cbGroupchatPosition->setChecked(s.getGroupchatPosition());
+//    bodyUI->cbCompactLayout->setChecked(s.getCompactLayout());
+//    bodyUI->cbSeparateWindow->setChecked(s.getSeparateWindow());
+//    bodyUI->cbDontGroupWindows->setChecked(s.getDontGroupWindows());
+//    bodyUI->cbDontGroupWindows->setEnabled(s.getSeparateWindow());
+//    bodyUI->cbShowIdenticons->setChecked(s.getShowIdenticons());
 
     bodyUI->useEmoticons->setChecked(s.getUseEmoticons());
     for (auto entry : SmileyPack::listSmileyPacks())
@@ -301,32 +300,6 @@ void UserInterfaceForm::on_groupOnlyNotfiyWhenMentioned_stateChanged()
     Settings::getInstance().setGroupAlwaysNotify(!bodyUI->groupOnlyNotfiyWhenMentioned->isChecked());
 }
 
-void UserInterfaceForm::on_cbCompactLayout_stateChanged()
-{
-    Settings::getInstance().setCompactLayout(bodyUI->cbCompactLayout->isChecked());
-}
-
-void UserInterfaceForm::on_cbSeparateWindow_stateChanged()
-{
-    bool checked = bodyUI->cbSeparateWindow->isChecked();
-    bodyUI->cbDontGroupWindows->setEnabled(checked);
-    Settings::getInstance().setSeparateWindow(checked);
-}
-
-void UserInterfaceForm::on_cbDontGroupWindows_stateChanged()
-{
-    Settings::getInstance().setDontGroupWindows(bodyUI->cbDontGroupWindows->isChecked());
-}
-
-void UserInterfaceForm::on_cbGroupchatPosition_stateChanged()
-{
-    Settings::getInstance().setGroupchatPosition(bodyUI->cbGroupchatPosition->isChecked());
-}
-
-void UserInterfaceForm::on_cbShowIdenticons_stateChanged()
-{
-    Settings::getInstance().setShowIdenticons(bodyUI->cbShowIdenticons->isChecked());
-}
 
 void UserInterfaceForm::on_themeColorCBox_currentIndexChanged(int)
 {

@@ -78,15 +78,6 @@ public:
     };
 
 public:
-    enum class SqlCipherParams {
-        // keep these sorted in upgrade order
-        p3_0, // SQLCipher 3.0 default encryption params
-        // SQLCipher 4.0 default params where SQLCipher 3.0 supports them, but 3.0 params where not possible.
-        // We accidentally got to this state when attemption to update all databases to 4.0 defaults even when using
-        // SQLCipher 3.x, but might as well keep using these for people with SQLCipher 3.x.
-        halfUpgradedTo4,
-        p4_0 // SQLCipher 4.0 default encryption params
-    };
 
     RawDatabase(const QString& path,
                 const QString& password,
@@ -105,23 +96,7 @@ public:
 
     void sync();
 
-    static QString toString(SqlCipherParams params)
-    {
-        switch (params)
-        {
-        case SqlCipherParams::p3_0:
-            return "3.0 default";
-        case SqlCipherParams::halfUpgradedTo4:
-            return "3.x max compatible";
-        case SqlCipherParams::p4_0:
-            return "4.0 default";
-        }
-        assert(false);
-        return {};
-    }
-
 public slots:
-    bool setPassword(const QString& password);
     bool rename(const QString& newPath);
     bool remove();
 
@@ -132,11 +107,6 @@ protected slots:
 
 private:
     QString anonymizeQuery(const QByteArray& query);
-    bool openEncryptedDatabaseAtLatestSupportedVersion(const QString& hexKey);
-    bool updateSavedCipherParameters(const QString& hexKey, SqlCipherParams newParams);
-    bool setCipherParameters(SqlCipherParams params, const QString& database = {});
-    SqlCipherParams highestSupportedParams();
-    SqlCipherParams readSavedCipherParams(const QString& hexKey, SqlCipherParams newParams);
     bool setKey(const QString& hexKey);
     int getUserVersion();
     bool encryptDatabase(const QString& newHexKey);

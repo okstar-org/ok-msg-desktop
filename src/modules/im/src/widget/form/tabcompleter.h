@@ -22,7 +22,7 @@ class TabCompleter : public QObject
 {
     Q_OBJECT
 public:
-    TabCompleter(ChatTextEdit* msgEdit, Group* group);
+    TabCompleter(ChatTextEdit* msgEdit, const Group* group);
 
 public slots:
     void complete();
@@ -40,7 +40,7 @@ private:
     };
 
     ChatTextEdit* msgEdit;
-    Group* group;
+    const Group* group;
     bool enabled;
     const static QString nickSuffix;
 

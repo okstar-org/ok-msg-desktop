@@ -10,8 +10,6 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#include "NetworkHttp.h"
-
 #include <memory>
 
 #include <QByteArray>
@@ -30,28 +28,33 @@
 #include <QTimer>
 #include <QUrlQuery>
 
+#include "NetworkHttp.h"
 #include "base/jsons.h"
 #include <base/files.h>
-#include <base/logs.h>
+
 
 namespace network {
 
-NetworkHttp::NetworkHttp(QObject *parent) : QObject(parent) {
+NetworkHttp::NetworkHttp(QObject *parent) : QObject(parent),
+    _manager{nullptr} {
+    qDebug() << __func__;
 #ifndef QT_NO_SSL
    bool supportsSsl = QSslSocket::supportsSsl();
-   qDebug()<<("supportsSsl    :")<<(supportsSsl);
+   qDebug() << "supportsSsl    :" << supportsSsl;
    QString buildVersion = QSslSocket::sslLibraryBuildVersionString();
-   qDebug()<<("buildVersion   :")<<(buildVersion);
+   qDebug() << "buildVersion   :" << buildVersion;
    QString libraryVersion = QSslSocket::sslLibraryVersionString();
-   qDebug()<<("libraryVersion :")<<(libraryVersion);
+   qDebug() << "libraryVersion :" << libraryVersion;
 #endif
   //  QNetworkAccessManager
-  _manager = std::make_unique<QNetworkAccessManager>(this);
+  _manager = new QNetworkAccessManager(this);
   auto schemes = _manager->supportedSchemes();
-  qDebug()<<("supportedSchemes:")<<(schemes.join(" "));
+  qDebug() << "supportedSchemes:" << schemes.join(" ");
 }
 
-NetworkHttp::~NetworkHttp() {}
+NetworkHttp::~NetworkHttp() {
+    qDebug() << __func__;
+}
 
 bool NetworkHttp::get(
     const QUrl &url,                                            //
@@ -108,10 +111,7 @@ QByteArray NetworkHttp::get(
     const QUrl &url,
     const Fn<void(qint64 bytesReceived, qint64 bytesTotal)> &downloadProgress) {
   qDebug() << "Url:" << url.toString();
-
-  QNetworkRequest request(url);
-
-  auto _reply = _manager->get(request);
+  auto _reply = _manager->get(QNetworkRequest(url));
   _reply->ignoreSslErrors();
   if (!_reply->errorString().isEmpty()) {
     return {};
@@ -141,11 +141,8 @@ bool NetworkHttp::getJSON(const QUrl &url,
         fn(Jsons::toJSON(buf));
       },
       nullptr,
-      [=](const QString& err) {
-        Q_UNUSED(err)
-        if (errFn)
-          errFn(err);
-      });
+      errFn
+      );
 
 }
 
@@ -196,7 +193,7 @@ QByteArray NetworkHttp::post(const QUrl &url, const QString &data) {
   request.setRawHeader("Accept", "application/json");
 
   auto postData = QByteArray::fromStdString(data.toStdString());
-  QNetworkReply *_reply = (_manager->post(request, postData));
+  QNetworkReply *_reply = _manager->post(request, postData);
   _reply->ignoreSslErrors();
 
   connect(_reply, &QNetworkReply::finished, this, &NetworkHttp::httpFinished);

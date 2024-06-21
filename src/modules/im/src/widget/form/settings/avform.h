@@ -35,7 +35,7 @@ class AVForm : public GenericForm, private Ui::AVForm
 {
     Q_OBJECT
 public:
-    AVForm(IAudioControl& audio, CoreAV* coreAV, CameraSource& camera,
+    AVForm(CameraSource& camera,
            IAudioSettings* audioSettings, IVideoSettings* videoSettings);
     ~AVForm() override;
     QString getFormName() final override
@@ -89,8 +89,8 @@ private:
     void trackNewScreenGeometry(QScreen* qScreen);
 
 private:
-    IAudioControl& audio;
-    CoreAV* coreAV;
+    std::unique_ptr<IAudioControl> audio;
+
     IAudioSettings* audioSettings;
     IVideoSettings* videoSettings;
 

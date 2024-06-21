@@ -27,7 +27,8 @@
 
 const QString TabCompleter::nickSuffix = QString(": ");
 
-TabCompleter::TabCompleter(ChatTextEdit* msgEdit, Group* group)
+TabCompleter::TabCompleter(ChatTextEdit* msgEdit,
+                           const Group* group)
     : QObject{msgEdit}
     , msgEdit{msgEdit}
     , group{group}
@@ -61,7 +62,7 @@ void TabCompleter::buildCompletionList()
     QRegExp regex(QString("^[-_\\[\\]{}|`^.\\\\]*").append(QRegExp::escape(tabAbbrev)),
                   Qt::CaseInsensitive);
 
-    const QString ownNick = group->getSelfName();
+    const QString ownNick = group->getName();
     for (const auto& name : group->getPeerList()) {
         if (name == ownNick) {
             continue;   // don't auto complete own name

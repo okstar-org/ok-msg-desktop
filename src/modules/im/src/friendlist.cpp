@@ -11,67 +11,58 @@
  */
 
 #include "friendlist.h"
-#include "src/core/contactid.h"
-#include "src/core/toxpk.h"
+#include "src/core/FriendId.h"
 #include "src/model/friend.h"
 #include "src/persistence/settings.h"
-#include <QDebug>
 #include <QHash>
 #include <QMenu>
 
-QHash<ToxPk, Friend *> FriendList::friendList;
-QHash<QString, ToxPk> FriendList::id2key;
 
-Friend *FriendList::addFriend(QString friendId, const ToxPk &friendPk, bool isFriend) {
-  qDebug() << "addFriend friendId:" << friendId << "friendPk:" << friendPk.toString();
+FriendMap FriendList::friendMap;
 
-  auto friendChecker = friendList.find(friendPk);
-  if (friendChecker != friendList.end()) {
-    qWarning() << "sendFriendRequest: friendPk already taken";
+Friend *FriendList::addFriend(const FriendInfo &friendInfo) {
+  qDebug() << __func__ << "friendInfo:" << friendInfo.toString();
+
+  auto frnd = findFriend(friendInfo.id);
+  if(frnd){
+      qWarning() <<"friend:" << friendInfo.toString() <<"is existing";
+      return frnd;
   }
 
-  QString alias = Settings::getInstance().getFriendAlias(friendPk);
-  qDebug()<<"friendId:"<< friendId <<" alias:"<<alias;
+  Friend *newfriend = new Friend(friendInfo.id,
+                                 friendInfo.isFriend(),
+                                 friendInfo.getAlias(),
+                                 {});
+  friendMap[((ContactId&)friendInfo).toString()] = newfriend;
 
-  Friend *newfriend = new Friend(friendId, friendPk,isFriend, alias, friendPk.getUsername());
-
-  friendList[friendPk] = newfriend;
-  id2key[friendId] = friendPk;
-
+//  if(friendInfo.resource.isEmpty()){
+//      newfriend->addEnd(friendInfo.resource);
+//  }
   return newfriend;
 }
 
-Friend *FriendList::findFriend(const ToxPk &friendPk) {
-  auto f_it = friendList.find(friendPk);
-  if (f_it != friendList.end()) {
-    return *f_it;
-  }
-  return nullptr;
+Friend *FriendList::findFriend(const ContactId &cId) {
+  return friendMap.value(cId.toString());
 }
 
-const ToxPk &FriendList::id2Key(QString friendId) {
-  return id2key[friendId];
+void FriendList::removeFriend(const FriendId &friendPk, bool fake) {
+    auto f = findFriend(friendPk);
+    if(f){
+        friendMap.remove(((ContactId&)friendPk).toString());
+        f->deleteLater();
+    }
 }
 
-void FriendList::removeFriend(const ToxPk &friendPk, bool fake) {
-  auto f_it = friendList.find(friendPk);
-  if (f_it != friendList.end()) {
-    if (!fake)
-      Settings::getInstance().removeFriendSettings(
-          f_it.value()->getPublicKey());
-    friendList.erase(f_it);
-  }
-}
 
 void FriendList::clear() {
-  for (auto friendptr : friendList)
+  for (auto friendptr : friendMap)
     delete friendptr;
-  friendList.clear();
+  friendMap.clear();
 }
 
-QList<Friend *> FriendList::getAllFriends() { return friendList.values(); }
+QList<Friend *> FriendList::getAllFriends() { return friendMap.values(); }
 
-QString FriendList::decideNickname(const ToxPk &friendPk,
+QString FriendList::decideNickname(const FriendId &friendPk,
                                    const QString &origName) {
   Friend *f = FriendList::findFriend(friendPk);
   if (f != nullptr) {

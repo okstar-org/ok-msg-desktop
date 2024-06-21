@@ -45,8 +45,8 @@ public:
 
         QPalette palette =  t->palette() ;
         t->setAutoFillBackground(true);
-        palette.setColor(QPalette::Background, QColor(("#838383")));
-        palette.setColor(QPalette::Text, QColor("#fff"));
+        palette.setColor(QPalette::Window, QColor("#838383"));
+        palette.setColor(QPalette::Text, QColor("#ffffff"));
         t->setPalette(palette);
 
 //        widgets_.push_back(t);

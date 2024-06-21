@@ -33,31 +33,52 @@ parts:
       - libswscale5
     stage:
       - -./usr/lib/$CRAFT_ARCH_TRIPLET/libjpeg.so.8.2.2
-#    after:
-#      - mozjpeg
-#  mozjpeg:
-#    source: https://github.com/mozilla/mozjpeg.git
-#    source-depth: 1
-#    source-tag: v4.0.3
-#    plugin: cmake
-#    cmake-generator: Ninja
-#    cmake-parameters:
-#      - -DCMAKE_BUILD_TYPE=Release
-#      - -DCMAKE_INSTALL_PREFIX=/usr
-#      - -DENABLE_STATIC=OFF
-#      - -DWITH_JPEG8=ON
-#      - -DPNG_SUPPORTED=OFF
-#    prime:
-#      - -./usr/bin
-#      - -./usr/include
-#      - -./usr/lib/$CRAFT_ARCH_TRIPLET/pkgconfig
-#      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.so
-#      - -./usr/share
+
+  desktop-qt5:
+    source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
+    source-subdir: qt
+    plugin: make
+    make-parameters: [ "FLAVOR=qt5" ]
+    build-packages:
+      - dpkg-dev
+      - build-essential
+      - qtbase5-dev
+      - qtmultimedia5-dev
+      - libqt5svg5-dev
+      - libqt5xml5
+      - libqt5xmlpatterns5-dev
+      - libqt5opengl5-dev
+      - qttools5-dev
+      - qttools5-dev-tools
+      - libqt5x11extras5-dev
+    stage-packages:
+      - libxkbcommon0
+      #      - ttf-ubuntu-font-family
+      - dmz-cursor-theme
+      - light-themes
+      - adwaita-icon-theme
+      - gnome-themes-standard
+      - shared-mime-info
+      - libqt5core5a
+      - libqt5gui5
+      - libqt5multimedia5
+      - libqt5widgets5
+      - libqt5xml5
+      - libqt5xmlpatterns5
+      - libqt5svg5 # for loading icon themes which are svg
+      - libgdk-pixbuf2.0-0
+      - locales-all
+      - xdg-user-dirs
+      - fcitx-frontend-qt5
+
+  qt5-gtk-platform:
+    plugin: nil
+    stage-packages:
+      - qt5-gtk-platformtheme
 
   ok-rtc:
     source: https://github.com/okstar-org/ok-rtc.git
-    source-depth: 1
-    source-commit: 1e343304df8eb5995229e21733fb1f18839a0668
+    source-branch: master
     plugin: cmake
     cmake-generator: Ninja
     cmake-parameters:
@@ -106,54 +127,28 @@ parts:
       - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.a
     after:
       - ffmpeg
-#      - mozjpeg
 
-  desktop-qt5:
-    source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
-    source-subdir: qt
-    plugin: make
-    make-parameters: ["FLAVOR=qt5"]
+  ok-gloox:
+    source: https://github.com/okstar-org/ok-gloox.git
+    source-branch: main
+    plugin: cmake
+    cmake-generator: Ninja
+    cmake-parameters:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DCMAKE_INSTALL_PREFIX=/usr
+    prime:
+      - -./usr/include
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/cmake
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.a
     build-packages:
-      - dpkg-dev
-      - build-essential
-      - qtbase5-dev
-      - qtmultimedia5-dev
-      - libqt5svg5-dev
-      - libqt5xml5
-      - libqt5xmlpatterns5-dev
-      - libqt5opengl5-dev
-      - qttools5-dev
-      - qttools5-dev-tools
-      - libqt5x11extras5-dev
+      - zlib1g-dev
     stage-packages:
-      - libxkbcommon0
-#      - ttf-ubuntu-font-family
-      - dmz-cursor-theme
-      - light-themes
-      - adwaita-icon-theme
-      - gnome-themes-standard
-      - shared-mime-info
-      - libqt5core5a
-      - libqt5gui5
-      - libqt5multimedia5
-      - libqt5widgets5
-      - libqt5xml5
-      - libqt5xmlpatterns5
-      - libqt5svg5 # for loading icon themes which are svg
-      - libgdk-pixbuf2.0-0
-      - locales-all
-      - xdg-user-dirs
-      - fcitx-frontend-qt5
-
-  qt5-gtk-platform:
-    plugin: nil
-    stage-packages:
-      - qt5-gtk-platformtheme
+      - zlib1g
 
   ok-msg:
-    plugin: cmake
     source: .
     source-type: git
+    plugin: cmake
     parse-info: [ usr/share/metainfo/ok-msg-desktop.metainfo.xml ]
     build-environment:
       - LD_LIBRARY_PATH: $CRAFT_STAGE/usr/lib/$CRAFT_ARCH_TRIPLET${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
@@ -167,12 +162,9 @@ parts:
       - libgtk-3-dev
       - freeglut3-dev
       - libkrb5-dev
-        # sqlite sqlcipher
       - libssl-dev
       - libcrypt-dev
-      - libsodium-dev
       - libsqlite3-dev
-      - libsqlcipher-dev
       - libvulkan-dev
       - libwayland-dev
 #      X11
@@ -326,7 +318,6 @@ parts:
       - libx265-199
       - libswscale5
       - libswresample3
-      - libsqlcipher0
       - libvorbis0a
       - libvorbisenc2
       - libvorbisfile3
@@ -337,7 +328,11 @@ parts:
       - -DCMAKE_INSTALL_PREFIX=/usr
       - -DDESKTOP_APP_USE_PACKAGED=ON
       - -DDESKTOP_LAUNCHER_BASENAME=ok-msg-desktop
-    after: [ desktop-qt5, ok-rtc ]
+    after:
+      - desktop-qt5
+      - ok-rtc
+      - ok-gloox
+
 layout:
   /usr/share/alsa:
     bind: $SNAP/usr/share/alsa
@@ -380,20 +375,3 @@ apps:
 slots:
   ok-msg-desktop-mpris:
     interface: mpris
-
-#plugs:
-#  # Support for common GTK themes
-#  # https://forum.snapcraft.io/t/how-to-use-the-system-gtk-theme-via-the-gtk-common-themes-snap/6235
-#  gsettings:
-#  gtk-3-themes:
-#    interface: content
-#    target: $SNAP/data-dir/themes
-#    default-provider: gtk-common-themes
-#  icon-themes:
-#    interface: content
-#    target: $SNAP/data-dir/icons
-#    default-provider: gtk-common-themes
-#  sound-themes:
-#    interface: content
-#    target: $SNAP/data-dir/sounds
-#    default-provider: gtk-common-themes

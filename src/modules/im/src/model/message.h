@@ -19,9 +19,13 @@
 
 #include <vector>
 
+#include "lib/messenger/IMFile.h"
 #include "lib/messenger/IMMessage.h"
+#include "src/core/icoreidhandler.h"
+#include <src/core/FriendId.h>
+#include <src/core/groupid.h>
 
-class Friend;
+#include "contact.h"
 
 // NOTE: This could be extended in the future to handle all text processing (see
 // ChatMessage::createChatMessage)
@@ -40,12 +44,85 @@ struct MessageMetadata {
 };
 
 struct Message {
+public:
+  bool isGroup{false};
   bool isAction;
+  QString id;
+  QString from;
+  QString to;
+  QString displayName;
   QString content;
-  lib::messenger::PeerId from;
+  QString dataId;
   QDateTime timestamp;
   std::vector<MessageMetadata> metadata;
-  QString displayName;
+  QString toString() const { return QString("{id:%1, from:%2, to:%3, time:%4, content:%5, sId:%6}")
+              .arg(id).arg(from).arg(to).arg(timestamp.toString()).arg(content).arg(dataId);
+                           }
+};
+
+struct FriendMessage : Message {
+  //    ToxPk to;
+};
+
+struct GroupMessage : public Message {
+public:
+  GroupMessage() { isGroup = true; }
+  QString nick;
+  QString resource;
+
+  QString toString() const {
+    return QString("{id:%1, from:%2, to:%3, time:%4, content:%5, nick:%6, resource:%7}").arg(id).arg(from).arg(to).arg(timestamp.toString()).arg(content).arg(nick).arg(resource);
+  }
+};
+
+struct FriendInfo {
+  FriendId id;
+  QString alias;
+  bool is_friend;
+  bool online;
+  QStringList groups;
+
+  explicit FriendInfo(const lib::messenger::IMFriend &aFriend);
+
+  [[nodiscard]] inline const FriendId &getId() const { return id; }
+
+  [[nodiscard]] inline const QString &getAlias() const { return alias; }
+
+  [[nodiscard]] inline bool isFriend() const { return is_friend; };
+
+  [[nodiscard]] inline QString toString() const {
+    return QString("{id: %1, alias: %2, is_friend:%3, online:%4, groups:[%5]}") //
+            .arg(id.toString()).arg(alias).arg(is_friend).arg(online).arg(groups.join(","));
+  }
+
+  friend QDebug &operator<<(QDebug &debug, const FriendInfo &f);
+};
+
+struct GroupInfo {
+  QString name;
+  QString description;
+  QString subject;
+  QString creationdate;
+  uint64_t occupants = 0;
+};
+
+struct GroupOccupant {
+  QString jid;
+  QString nick;
+  QString affiliation;
+  QString role;
+  int status;
+  QList<int> codes;
+};
+
+enum class ChatType {
+  Chat,     // 单聊
+  GroupChat // 群聊
+};
+
+enum class ConferenceType {
+  TEXT,
+  AV
 };
 
 class MessageProcessor {
@@ -58,12 +135,12 @@ public:
   class SharedParams {
 
   public:
-      //模式匹配
-    QRegularExpression GetNameMention() const { return nameMention; }
-    QRegularExpression GetSanitizedNameMention() const {
-      return sanitizedNameMention;
-    }
-    QRegularExpression GetPublicKeyMention() const { return pubKeyMention; }
+    // 模式匹配
+    const QRegularExpression &GetNameMention() const { return nameMention; }
+
+    const QRegularExpression &GetSanitizedNameMention() const { return sanitizedNameMention; }
+    const QRegularExpression &GetPublicKeyMention() const { return pubKeyMention; }
+
     void onUserNameSet(const QString &username);
     void setPublicKey(const QString &pk);
 
@@ -73,17 +150,11 @@ public:
     QRegularExpression pubKeyMention;
   };
 
-  MessageProcessor(const SharedParams &sharedParams);
+  MessageProcessor(ICoreIdHandler &idHandler, const ContactId &f, const SharedParams &sharedParams);
 
-  std::vector<Message> processOutgoingMessage(bool isAction,
+  std::vector<Message> processOutgoingMessage(bool isAction, QString const &content);
 
-                                              QString const &content);
-
-  Message processIncomingMessage(bool isAction,
-                                 QString const &from,
-                                 QString const &message,
-                                 const QDateTime& time,
-                                 QString const &displayName);
+  Message processIncomingMessage(Message &message);
 
   /**
    * @brief Enables mention detection in the processor
@@ -97,6 +168,8 @@ public:
 
 private:
   bool detectingMentions = false;
+  ICoreIdHandler &idHandler;
+  const ContactId &f;
   const SharedParams &sharedParams;
 };
 

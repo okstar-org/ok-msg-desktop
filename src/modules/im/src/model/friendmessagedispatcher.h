@@ -28,20 +28,29 @@ class FriendMessageDispatcher : public IMessageDispatcher
 {
     Q_OBJECT
 public:
-    FriendMessageDispatcher(Friend& f, MessageProcessor processor,
+    FriendMessageDispatcher(const FriendId& f,
+                            const MessageProcessor::SharedParams &sharedParams,
+                            ICoreIdHandler &idHandler_,
                             ICoreFriendMessageSender& messageSender);
+    ~FriendMessageDispatcher();
 
-    std::pair<DispatchedMessageId, DispatchedMessageId> sendMessage(bool isAction,
-                                                                    const QString& content,
-                                                                    bool encrypt = false) override;
-    void onMessageReceived(bool isAction, const lib::messenger::IMMessage &msg);
+    std::pair<DispatchedMessageId, SentMessageId> sendMessage(
+            bool isAction,
+            const QString& content,
+            bool encrypt = false) override;
+
+    void onMessageReceived(FriendMessage &msg);
     void onReceiptReceived(ReceiptNum receipt);
     void clearOutgoingMessages();
+
+    void onFileReceived(const ToxFile &file);
+    void onFileCancelled(const QString &fileId);
+
 private slots:
-    void onFriendOnlineOfflineChanged(const ToxPk& key, bool isOnline);
+    void onFriendOnlineOfflineChanged(  bool isOnline);
 
 private:
-    Friend& f;
+    const FriendId& f;
     DispatchedMessageId nextMessageId = DispatchedMessageId(0);
 
     ICoreFriendMessageSender& messageSender;

@@ -35,6 +35,8 @@ public:
   explicit MainWindow(QWidget *parent = nullptr);
   ~MainWindow();
 
+  static MainWindow* getInstance();
+
   void init();
   QFrame *getPage(PageMenu menu);
   QFrame *initPage(PageMenu menu);
@@ -66,7 +68,7 @@ private:
 
 signals:
   void toClose();
-
+ void menuPushed(PageMenu menu, bool checked);
 
 private slots:
   void onSwitchPage(PageMenu menu);

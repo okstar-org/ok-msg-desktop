@@ -78,6 +78,7 @@ configure_file(${PROJECT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/ok_
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 add_definitions(-DOK_HAVE_CONFIG)
 
+set(QT_CREATOR_SKIP_VCPKG_SETUP ON)
 
 # 开启插件（ON/OFF）
 option(ENABLE_PLUGINS "Enable plugins" ON)

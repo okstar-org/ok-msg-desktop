@@ -19,7 +19,7 @@ class GenericForm : public QWidget
 {
     Q_OBJECT
 public:
-    explicit GenericForm(const QPixmap& icon);
+    explicit GenericForm(const QPixmap& icon, QWidget* parent=nullptr);
     virtual ~GenericForm()
     {
     }

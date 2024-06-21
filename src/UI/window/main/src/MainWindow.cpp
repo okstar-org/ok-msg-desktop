@@ -27,22 +27,25 @@
 #include <QTimer>
 #include <cstdlib>
 
+#include <modules/im/src/nexus.h>
+
 namespace UI {
+
+static MainWindow* instance = nullptr;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
 
   ui->setupUi(this);
 
-  setAttribute(Qt::WA_QuitOnClose, true);
-
   setWindowTitle(APPLICATION_NAME);
+  setAttribute(Qt::WA_QuitOnClose, true);
 
   m_menu = ui->menu_widget;
   connect(m_menu, SIGNAL(toggleChat(bool)), this, SLOT(onToggleChat(bool)));
   connect(m_menu, SIGNAL(onPage(PageMenu)), this, SLOT(onSwitchPage(PageMenu)));
 
-  timer = new QTimer();
+  timer = new QTimer(this);
   timer->start(1000);
   connect(timer, &QTimer::timeout, this, &MainWindow::onTryCreateTrayIcon);
 
@@ -59,14 +62,25 @@ MainWindow::MainWindow(QWidget *parent)
   connect(actionQuit, &QAction::triggered, qApp, &QApplication::quit);
 
   actionShow = new QAction(this);
-  actionShow->setText(tr("Show", "Tray action menu to show qTox window"));
+  actionShow->setText(tr("Show", "Tray action menu to show window"));
   connect(actionShow, &QAction::triggered, this, &MainWindow::forceShow);
+
+
+  connect(menu(), &OMainMenu::menuPushed,
+          [&](PageMenu menu, bool checked) { emit menuPushed(menu, checked); });
+
+  instance = this;
 }
 
 MainWindow::~MainWindow() {
   qDebug() << "~MainWindow";
   disconnect(m_menu);
   delete ui;
+}
+
+MainWindow *MainWindow::getInstance()
+{
+    return instance;
 }
 
 // Preparing needed to set correct size of icons for GTK tray backend
@@ -110,14 +124,14 @@ inline QIcon MainWindow::prepareIcon(QString path, int w, int h) {
 void MainWindow::showEvent(QShowEvent *event) {}
 
 void MainWindow::closeEvent(QCloseEvent *event) {
-  qDebug(("closeEvent..."));
-  auto &settings = ok::base::OkSettings::getInstance();
+  qDebug()<<__func__<<"closeEvent...";
+//  auto &settings = ok::base::OkSettings::getInstance();
 
-  if (settings.getShowSystemTray() && settings.getCloseToTray()) {
+//  if (settings.getShowSystemTray() && settings.getCloseToTray()) {
 //    QWidget::closeEvent(event);
-    close();
-    return;
-  }
+//    close();
+//    return;
+//  }
 
   //    if (autoAwayActive) {
   //      emit statusSet(Status::Status::Online);
@@ -130,6 +144,8 @@ void MainWindow::closeEvent(QCloseEvent *event) {
   //    saveSplitterGeometry();
   //    QWidget::closeEvent(event);
   //    qApp->quit();
+
+  emit Nexus::getInstance().exit("");
 }
 
 void MainWindow::init() {}
@@ -216,24 +232,6 @@ void MainWindow::updateIcons() {
   }
 
   const QString assetSuffix = "online";
-  // TODO 暂时不考虑状态
-  //      Status::getAssetSuffix(static_cast<Status::Status>(
-  //          ui->statusButton->property("status").toInt())) +
-  //      (eventIcon ? "_event" : "");
-
-  // Some builds of Qt appear to have a bug in icon loading:
-  // QIcon::hasThemeIcon is sometimes unaware that the icon returned
-  // from QIcon::fromTheme was a fallback icon, causing hasThemeIcon to
-  // incorrectly return true.
-  //
-  // In qTox this leads to the tray and window icons using the static qTox logo
-  // icon instead of an icon based on the current presence status.
-  //
-  // This workaround checks for an icon that definitely does not exist to
-  // determine if hasThemeIcon can be trusted.
-  //
-  // On systems with the Qt bug, this workaround will always use our included
-  // icons but user themes will be unable to override them.
   static bool checkedHasThemeIcon = false;
   static bool hasThemeIconBug = false;
 

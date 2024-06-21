@@ -41,6 +41,7 @@
 #include <QMessageBox>
 #include <QMouseEvent>
 #include <QWindow>
+#include <src/nexus.h>
 
 static const QMap<IProfileInfo::SetAvatarResult, QString> SET_AVATAR_ERROR = {
     { IProfileInfo::SetAvatarResult::CanNotOpen,
@@ -132,7 +133,7 @@ ProfileForm::ProfileForm(IProfileInfo* profileInfo, QWidget* parent)
 
     timer.setInterval(750);
     timer.setSingleShot(true);
-    connect(&timer, &QTimer::timeout, this, [=]() {
+    connect(&timer, &QTimer::timeout, this, [this]() {
         // QString x = bodyUI->toxIdLabel->text().replace(" ✔");
         // bodyUI->toxIdLabel->setText(x);
         hasCheck = false;
@@ -140,13 +141,13 @@ ProfileForm::ProfileForm(IProfileInfo* profileInfo, QWidget* parent)
 
     connect(bodyUI->toxIdLabel, &CroppingLabel::clicked, this, &ProfileForm::copyIdClicked);
     connect(toxId, &ClickableTE::clicked, this, &ProfileForm::copyIdClicked);
-    profileInfo->connectTo_idChanged(this, [=](const ToxId& id) { setToxId(id); });
+    profileInfo->connectTo_idChanged(this, [this](const ToxId& id) { setToxId(id); });
     connect(bodyUI->userName, &QLineEdit::editingFinished, this, &ProfileForm::onUserNameEdited);
     connect(bodyUI->statusMessage, &QLineEdit::editingFinished,
             this, &ProfileForm::onStatusMessageEdited);
     connect(bodyUI->exportButton, &QPushButton::clicked, this, &ProfileForm::onExportClicked);
     connect(bodyUI->logoutButton, &QPushButton::clicked, this, &ProfileForm::onLogoutClicked);
-//    connect(bodyUI->renameButton, &QPushButton::clicked, this, &ProfileForm::onRenameClicked);
+    connect(bodyUI->exitButton, &QPushButton::clicked, this, &ProfileForm::onExitClicked);
 //    connect(bodyUI->deleteButton, &QPushButton::clicked, this, &ProfileForm::onDeleteClicked);
 //    connect(bodyUI->deletePassButton, &QPushButton::clicked,
 //            this, &ProfileForm::onDeletePassClicked);
@@ -161,10 +162,10 @@ ProfileForm::ProfileForm(IProfileInfo* profileInfo, QWidget* parent)
 
     profileInfo->connectTo_usernameChanged(
             this,
-            [=](const QString& val) { bodyUI->userName->setText(val); });
+            [this](const QString& val) { bodyUI->userName->setText(val); });
     profileInfo->connectTo_statusMessageChanged(
             this,
-            [=](const QString& val) { bodyUI->statusMessage->setText(val); });
+            [this](const QString& val) { bodyUI->statusMessage->setText(val); });
 
     for (QComboBox* cb : findChildren<QComboBox*>()) {
         cb->installEventFilter(this);
@@ -177,7 +178,7 @@ ProfileForm::ProfileForm(IProfileInfo* profileInfo, QWidget* parent)
 
 void ProfileForm::prFileLabelUpdate()
 {
-    const QString name = profileInfo->getProfileName();
+    const QString name = profileInfo->getUsername();
     bodyUI->prFileLabel->setText(tr("Current profile: ") + name + ".tox");
 }
 
@@ -197,10 +198,14 @@ bool ProfileForm::isShown() const
     return false;
 }
 
-void ProfileForm::show(ContentLayout* contentLayout)
+void ProfileForm::showTo(ContentLayout* contentLayout)
 {
-    contentLayout->mainContent->layout()->addWidget(this);
-    QWidget::show();
+    auto idx = contentLayout->indexOf(this);
+    if(idx < 0){
+        contentLayout->addWidget(this);
+    }
+    contentLayout->setCurrentWidget(this);
+
     prFileLabelUpdate();
     bool portable = Settings::getInstance().getMakeToxPortable();
     QString defaultPath = QDir(Settings::getInstance().getSettingsDirPath()).path().trimmed();
@@ -226,6 +231,14 @@ bool ProfileForm::eventFilter(QObject* object, QEvent* event)
             return true;
     }
     return false;
+}
+
+void ProfileForm::showEvent(QShowEvent *e)
+{
+    auto avt = profileInfo->getAvatar();
+    onSelfAvatarLoaded(avt);
+
+    bodyUI->userName->setText(profileInfo->getDisplayName());
 }
 
 void ProfileForm::showProfilePictureContextMenu(const QPoint& point)
@@ -311,7 +324,7 @@ void ProfileForm::onAvatarClicked()
 
 void ProfileForm::onRenameClicked()
 {
-    const QString cur = profileInfo->getProfileName();
+    const QString cur = profileInfo->getUsername();
     const QString title = tr("Rename \"%1\"", "renaming a profile").arg(cur);
     const QString name = QInputDialog::getText(this, title, title + ":");
     if (name.isEmpty()) {
@@ -329,7 +342,7 @@ void ProfileForm::onRenameClicked()
 
 void ProfileForm::onExportClicked()
 {
-    const QString current = profileInfo->getProfileName() + Core::TOX_EXT;
+    const QString current = profileInfo->getUsername() + Core::TOX_EXT;
     //:save dialog title
     const QString path = QFileDialog::getSaveFileName(Q_NULLPTR, tr("Export profile"), current,
                                                       //: save dialog filter
@@ -378,6 +391,11 @@ void ProfileForm::onLogoutClicked()
     profileInfo->logout();
 }
 
+void ProfileForm::onExitClicked()
+{
+    profileInfo->exit();
+}
+
 void ProfileForm::setPasswordButtonsText()
 {
 //    if (profileInfo->isEncrypted()) {
@@ -397,7 +415,7 @@ void ProfileForm::onCopyQrClicked()
 
 void ProfileForm::onSaveQrClicked()
 {
-    const QString current = profileInfo->getProfileName() + ".png";
+    const QString current = profileInfo->getUsername() + ".png";
 
     const QString path = QFileDialog::getSaveFileName(
                 Q_NULLPTR, tr("Save", "save qr image"), current,

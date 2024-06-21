@@ -124,7 +124,7 @@ which may lead to problems with video calls.</source>
     </message>
     <message>
         <source>You are using qTox version %1.</source>
-        <translation type="unfinished">你正在使用 qTox 的 %1 版本。</translation>
+        <translation type="unfinished">你正在使用的版本是 %1 。</translation>
     </message>
     <message>
         <source>Commit hash: %1</source>
@@ -257,11 +257,7 @@ which may lead to problems with video calls.</source>
         <translation type="unfinished">選擇自動接受目錄</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the public key of your friend, use it to verify their identity via another channel. You can not send this to other people so they can add this contact.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Public key (not ToxID):</source>
+        <source>Account:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

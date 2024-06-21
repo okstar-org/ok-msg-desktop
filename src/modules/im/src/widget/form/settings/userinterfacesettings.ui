@@ -243,75 +243,75 @@
          </layout>
         </widget>
        </item>
-       <item>
-        <widget class="QGroupBox" name="contactListGroup">
-         <property name="title">
-          <string>Contact list</string>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout_5">
-          <item>
-           <widget class="QCheckBox" name="cbGroupchatPosition">
-            <property name="toolTip">
-             <string comment="toolTip for groupchat positioning">If checked, groupchats will be placed at the top of the friends list, otherwise, they'll be placed below online friends.</string>
-            </property>
-            <property name="text">
-             <string>Place groupchats at top of friend list</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="cbCompactLayout">
-            <property name="toolTip">
-             <string comment="toolTip for compact layout setting">Your contact list will be shown in compact mode.</string>
-            </property>
-            <property name="text">
-             <string>Compact contact list</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="cbSeparateWindow">
-            <property name="text">
-             <string>Multiple windows mode</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <layout class="QVBoxLayout" name="verticalLayout_12">
-            <property name="leftMargin">
-             <number>40</number>
-            </property>
-            <item>
-             <widget class="QCheckBox" name="cbDontGroupWindows">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
-               <string>Open each chat in an individual window</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="cbShowIdenticons">
-            <property name="toolTip">
-             <string comment="toolTip for show identicons">If enabled every contact without an avatar set will have a generated avatar based on their Ok ID instead of a default picture. Requires restart to apply.</string>
-            </property>
-            <property name="text">
-             <string>Use identicons instead of empty avatars</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
+<!--       <item>-->
+<!--        <widget class="QGroupBox" name="contactListGroup">-->
+<!--         <property name="title">-->
+<!--          <string>Contact list</string>-->
+<!--         </property>-->
+<!--         <layout class="QVBoxLayout" name="verticalLayout_5">-->
+<!--          <item>-->
+<!--           <widget class="QCheckBox" name="cbGroupchatPosition">-->
+<!--            <property name="toolTip">-->
+<!--             <string comment="toolTip for groupchat positioning">If checked, groupchats will be placed at the top of the friends list, otherwise, they'll be placed below online friends.</string>-->
+<!--            </property>-->
+<!--            <property name="text">-->
+<!--             <string>Place groupchats at top of friend list</string>-->
+<!--            </property>-->
+<!--           </widget>-->
+<!--          </item>-->
+<!--          <item>-->
+<!--           <widget class="QCheckBox" name="cbCompactLayout">-->
+<!--            <property name="toolTip">-->
+<!--             <string comment="toolTip for compact layout setting">Your contact list will be shown in compact mode.</string>-->
+<!--            </property>-->
+<!--            <property name="text">-->
+<!--             <string>Compact contact list</string>-->
+<!--            </property>-->
+<!--           </widget>-->
+<!--          </item>-->
+<!--          <item>-->
+<!--           <widget class="QCheckBox" name="cbSeparateWindow">-->
+<!--            <property name="text">-->
+<!--             <string>Multiple windows mode</string>-->
+<!--            </property>-->
+<!--           </widget>-->
+<!--          </item>-->
+<!--          <item>-->
+<!--           <layout class="QVBoxLayout" name="verticalLayout_12">-->
+<!--            <property name="leftMargin">-->
+<!--             <number>40</number>-->
+<!--            </property>-->
+<!--            <item>-->
+<!--             <widget class="QCheckBox" name="cbDontGroupWindows">-->
+<!--              <property name="enabled">-->
+<!--               <bool>false</bool>-->
+<!--              </property>-->
+<!--              <property name="sizePolicy">-->
+<!--               <sizepolicy hsizetype="Minimum" vsizetype="Minimum">-->
+<!--                <horstretch>0</horstretch>-->
+<!--                <verstretch>0</verstretch>-->
+<!--               </sizepolicy>-->
+<!--              </property>-->
+<!--              <property name="text">-->
+<!--               <string>Open each chat in an individual window</string>-->
+<!--              </property>-->
+<!--             </widget>-->
+<!--            </item>-->
+<!--           </layout>-->
+<!--          </item>-->
+<!--          <item>-->
+<!--           <widget class="QCheckBox" name="cbShowIdenticons">-->
+<!--            <property name="toolTip">-->
+<!--             <string comment="toolTip for show identicons">If enabled every contact without an avatar set will have a generated avatar based on their Ok ID instead of a default picture. Requires restart to apply.</string>-->
+<!--            </property>-->
+<!--            <property name="text">-->
+<!--             <string>Use identicons instead of empty avatars</string>-->
+<!--            </property>-->
+<!--           </widget>-->
+<!--          </item>-->
+<!--         </layout>-->
+<!--        </widget>-->
+<!--       </item>-->
        <item>
         <widget class="QGroupBox" name="emoticonsGroupBox">
          <property name="title">

@@ -18,7 +18,6 @@
 namespace ok::backend {
 
 PluginInfo PluginInfo::fromJson(const QJsonObject &data) {
-
     return PluginInfo(data);
 }
 
@@ -26,7 +25,9 @@ PluginInfo PluginInfo::fromJson(const QJsonObject &data) {
 OkCloudService::OkCloudService(QObject *parent)
     : BaseService(BACKEND_CLOUD_URL, parent) {}
 
-OkCloudService::~OkCloudService() {}
+OkCloudService::~OkCloudService() {
+    qDebug() <<__func__;
+}
 
 bool OkCloudService::GetFederalInfo(Fn<void(Res<FederalInfo> &)> fn, Fn<void(QString)> err) {
   QString url = _baseUrl + "/federal/.well-known/info.json";
@@ -42,11 +43,20 @@ bool OkCloudService::GetFederalInfo(Fn<void(Res<FederalInfo> &)> fn, Fn<void(QSt
 
 bool OkCloudService::GetPluginPage(Fn<void(ResPage<ok::backend::PluginInfo> &)> fn, Fn<void(QString)> err) {
 
-  auto osInfo = ok::base::SystemInfo::instance()->osInfo();
   auto cpuInfo = ok::base::SystemInfo::instance()->cpuInfo();
-  auto platform = osInfo.kernelName;
+  if(cpuInfo.arch.isEmpty()){
+      qWarning() << "Unable to read cpu info!";
+      return false;
+  }
+  auto platform = ok::base::SystemInfo::instance()->osInfo().kernelName;
+    if(platform.isEmpty()){
+        qWarning() << "Unable to read os info!";
+        return false;
+    }
 
   QString url = _baseUrl + "/plugin/page?platform="+platform+"&arch="+cpuInfo.arch;
+  qDebug() << __func__ << url;
+
   return http->getJSON(
       QUrl(url),
       // success

@@ -15,8 +15,6 @@
 
 #include <QGraphicsItem>
 
-class ChatLine;
-
 class ChatLineContent : public QObject, public QGraphicsItem
 {
     Q_OBJECT
@@ -40,6 +38,7 @@ public:
     virtual void selectionDoubleClick(QPointF scenePos);
     virtual void selectionTripleClick(QPointF scenePos);
     virtual void selectionFocusChanged(bool focusIn);
+    virtual void selectAll();
     virtual bool isOverSelection(QPointF scenePos) const;
     virtual QString getSelectedText() const;
     virtual void fontChanged(const QFont& font);
@@ -55,7 +54,7 @@ public:
     virtual void reloadTheme();
 
 private:
-    friend class ChatLine;
+    friend class IChatItem;
     void setIndex(int row, int col);
 
 private:

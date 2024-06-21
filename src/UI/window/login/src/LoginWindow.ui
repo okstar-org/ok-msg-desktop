@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>740</width>
+    <width>345</width>
     <height>340</height>
    </rect>
   </property>
@@ -14,10 +14,7 @@
    <string>Form</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout_2">
-    <property name="spacing">
-     <number>0</number>
-    </property>
+   <layout class="QGridLayout" name="gridLayout">
     <property name="leftMargin">
      <number>0</number>
     </property>
@@ -30,50 +27,12 @@
     <property name="bottomMargin">
      <number>0</number>
     </property>
-    <item>
-     <widget class="QWidget" name="widget" native="true">
-      <layout class="QHBoxLayout" name="horizontalLayout" stretch="5,5">
-       <property name="spacing">
-        <number>0</number>
-       </property>
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <property name="rightMargin">
-        <number>0</number>
-       </property>
-       <property name="bottomMargin">
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="UI::BannerWidget" name="bannerWidget" native="true"/>
-       </item>
-       <item>
-        <widget class="UI::LoginWidget" name="loginWidget" native="true"/>
-       </item>
-      </layout>
-     </widget>
+    <item row="0" column="0">
+     <layout class="QHBoxLayout" name="hBoxLayout"/>
     </item>
    </layout>
   </widget>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>UI::LoginWidget</class>
-   <extends>QWidget</extends>
-   <header>UI/window/login/src/LoginWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>UI::BannerWidget</class>
-   <extends>QWidget</extends>
-   <header>UI/window/login/src/BannerWidget.h</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>

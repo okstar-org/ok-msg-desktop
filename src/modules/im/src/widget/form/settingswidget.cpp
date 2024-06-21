@@ -15,7 +15,6 @@
 #include "src/audio/audio.h"
 #include "src/core/core.h"
 #include "src/core/coreav.h"
-#include "src/net/updatecheck.h"
 #include "src/persistence/settings.h"
 #include "src/video/camerasource.h"
 #include "src/widget/contentlayout.h"
@@ -34,21 +33,20 @@
 
 #include <memory>
 
-SettingsWidget::SettingsWidget(UpdateCheck* updateCheck, IAudioControl& audio, Widget* parent)
+SettingsWidget::SettingsWidget(Widget* parent)
     : QWidget(parent, Qt::Window)
 {
-    CoreAV* coreAV = Core::getInstance()->getAv();
+
     IAudioSettings* audioSettings = &Settings::getInstance();
     IVideoSettings* videoSettings = &Settings::getInstance();
     CameraSource& camera = CameraSource::getInstance();
 
-    setAttribute(Qt::WA_DeleteOnClose);
-
-    bodyLayout = std::unique_ptr<QVBoxLayout>(new QVBoxLayout());
-
     settingsWidgets = std::unique_ptr<QTabWidget>(new QTabWidget(this));
     settingsWidgets->setTabPosition(QTabWidget::North);
+
+    bodyLayout = std::unique_ptr<QVBoxLayout>(new QVBoxLayout(this));
     bodyLayout->addWidget(settingsWidgets.get());
+    setLayout(bodyLayout.get());
 
     std::unique_ptr<GeneralForm> gfrm(new GeneralForm(this));
     connect(gfrm.get(), &GeneralForm::updateIcons, parent, &Widget::updateIcons);
@@ -57,10 +55,10 @@ SettingsWidget::SettingsWidget(UpdateCheck* updateCheck, IAudioControl& audio, W
     std::unique_ptr<PrivacyForm> pfrm(new PrivacyForm());
     connect(pfrm.get(), &PrivacyForm::clearAllReceipts, parent, &Widget::clearAllReceipts);
 
-    AVForm* rawAvfrm = new AVForm(audio, coreAV, camera, audioSettings, videoSettings);
+    AVForm* rawAvfrm = new AVForm( camera, audioSettings, videoSettings);
     std::unique_ptr<AVForm> avfrm(rawAvfrm);
     std::unique_ptr<AdvancedForm> expfrm(new AdvancedForm());
-    std::unique_ptr<AboutForm> abtfrm(new AboutForm(updateCheck));
+    std::unique_ptr<AboutForm> abtfrm(new AboutForm());
 
 #if UPDATE_CHECK_ENABLED
     if (updateCheck != nullptr) {
@@ -113,7 +111,7 @@ bool SettingsWidget::isShown() const
 
 void SettingsWidget::show(ContentLayout* contentLayout)
 {
-    contentLayout->mainContent->layout()->addWidget(settingsWidgets.get());
+//    contentLayout->mainContent->layout()->addWidget(settingsWidgets.get());
     settingsWidgets->show();
     onTabChanged(settingsWidgets->currentIndex());
 }

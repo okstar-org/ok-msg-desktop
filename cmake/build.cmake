@@ -1,6 +1,3 @@
-set(CMAKE_CONFIGURATION_TYPES Debug;Release)
-
-
 # Compile Standard
 set(CMAKE_C_STANDARD 11)
 message(STATUS "CMAKE_C_STANDARD=${CMAKE_C_STANDARD}")
@@ -33,32 +30,30 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)
 set(BUILD_SHARED_LIBS OFF)
 
 if (WIN32)
-    # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D_ITERATOR_DEBUG_LEVEL=0" )
-    # add_definitions(-D_ITERATOR_DEBUG_LEVEL=0)
+#    add_definitions(-DWIN32_LEAN_AND_MEAN=1 -D_ITERATOR_DEBUG_LEVEL=0 -DWINAPI_FAMILY_PARTITION=1 )
+#    set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} /DWINAPI_FAMILY_PARTITION=1") 
 endif ()
 
 
 if(UNIX)
     find_package(PkgConfig REQUIRED)
-
     # -Wunused-parameter -pedantic -fsanitize=address,undefined,leak,integer -Wextra
     # -Wall -Wmacro-redefined -Wbuiltin-macro-redefined
-    set(CMAKE_CXX_FLAGS
-        "${CMAKE_CXX_FLAGS} -fstack-protector-all -Wunused-function -Wstrict-overflow -Wstrict-aliasing -Wstack-protector"
-    )
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fstack-protector-all -Wunused-function -Wstrict-overflow -Wstrict-aliasing -Wstack-protector")
 endif(UNIX)
 
 if(MSVC)
     option(USE_MP "use multiple" ON)
     option(ProjectConfig_Global_COMPILE_FLAGS_WITH_MP "Set The Global Option COMPILE_FLAGS /MP to target." ON)
+    
     if(ProjectConfig_Global_COMPILE_FLAGS_WITH_MP OR USE_MP)
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /MP ")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP ")
     endif()
-    #set(VS_STARTUP_PROJECT ${PROJECT_NAME})
-    #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /DNDEBUG")
+
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT /DNDEBUG")
+
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif()
 

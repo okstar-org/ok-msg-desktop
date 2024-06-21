@@ -80,7 +80,9 @@ RawDatabase::RawDatabase(const QString& path, const QString& password, const QBy
     , path{path}
     , currentSalt{salt} // we need the salt later if a new password should be set
     , currentHexKey{deriveKey(password, salt)}
+    , sqlite{nullptr}
 {
+    qDebug() <<__func__ <<"path:" << path;
     workerThread->setObjectName("Database");
     moveToThread(workerThread.get());
     workerThread->start();
@@ -101,21 +103,9 @@ RawDatabase::RawDatabase(const QString& path, const QString& password, const QBy
         upgrade = false;
     }
 
-    // fall back to the old salt
-    currentHexKey = deriveKey(password);
-    if (open(path, currentHexKey)) {
-        // upgrade only if backup successful
-        if (upgrade) {
-            // still using old salt, upgrade
-            if (setPassword(password)) {
-                qDebug() << "Successfully upgraded to dynamic salt";
-            } else {
-                qWarning() << "Failed to set password with new salt";
-            }
-        }
-    } else {
-        qDebug() << "Failed to open database with old salt";
-    }
+  if (!open(path)) {
+    qFatal( "Failed to open database");
+  }
 }
 
 RawDatabase::~RawDatabase()
@@ -171,173 +161,13 @@ bool RawDatabase::open(const QString& path, const QString& hexKey)
         return false;
     }
 
-    if (!hexKey.isEmpty()) {
-        if (!openEncryptedDatabaseAtLatestSupportedVersion(hexKey)) {
-            close();
-            return false;
-        }
-    }
     return true;
-}
-
-bool RawDatabase::openEncryptedDatabaseAtLatestSupportedVersion(const QString& hexKey)
-{
-    // old qTox database are saved with SQLCipher 3.x defaults. For a period after 1.16.3 but before 1.17.0, databases
-    // could be partially upgraded to SQLCipher 4.0 defaults, since SQLCipher 3.x isn't capable of setitng all the same
-    // params. If SQLCipher 4.x happened to be used, they would have been fully upgraded to 4.0 default params.
-    // We need to support all three of these cases, so also upgrade to the latest possible params while we're here
-    if (!setKey(hexKey)) {
-        return false;
-    }
-
-    auto highestSupportedVersion = highestSupportedParams();
-    if (setCipherParameters(highestSupportedVersion)) {
-        if (testUsable()) {
-            qInfo() << "Opened database with SQLCipher" << toString(highestSupportedVersion) << "parameters";
-            return true;
-        } else {
-            return updateSavedCipherParameters(hexKey, highestSupportedVersion);
-        }
-    } else {
-        qCritical() << "Failed to set latest supported SQLCipher params!";
-        return false;
-    }
 }
 
 bool RawDatabase::testUsable()
 {
     // this will unfortunately log a warning if it fails, even though we may expect failure
     return execNow("SELECT count(*) FROM sqlite_master;");
-}
-
-/**
- * @brief Changes stored db encryption from SQLCipher 3.x defaults to 4.x defaults
- */
-bool RawDatabase::updateSavedCipherParameters(const QString& hexKey, SqlCipherParams newParams)
-{
-    auto currentParams = readSavedCipherParams(hexKey, newParams);
-    setKey(hexKey); // setKey again because a SELECT has already been run, causing crypto settings to take effect
-    if (!setCipherParameters(currentParams)) {
-        return false;
-    }
-
-    const auto user_version = getUserVersion();
-    if (user_version < 0) {
-        return false;
-    }
-    if (!execNow("ATTACH DATABASE '" + path + ".tmp' AS newParams KEY \"x'" + hexKey + "'\";")) {
-        return false;
-    }
-    if (!setCipherParameters(newParams, "newParams")) {
-        return false;
-    }
-    if (!execNow("SELECT sqlcipher_export('newParams');")) {
-        return false;
-    }
-    if (!execNow(QString("PRAGMA newParams.user_version = %1;").arg(user_version))) {
-        return false;
-    }
-    if (!execNow("DETACH DATABASE newParams;")) {
-        return false;
-    }
-    if (!commitDbSwap(hexKey)) {
-        return false;
-    }
-    qInfo() << "Upgraded database from SQLCipher" << toString(currentParams) << "params to" <<
-        toString(newParams) << "params complete";
-    return true;
-}
-
-bool RawDatabase::setCipherParameters(SqlCipherParams params, const QString& database)
-{
-    QString prefix;
-    if (!database.isNull()) {
-        prefix = database + ".";
-    }
-    // from https://www.zetetic.net/blog/2018/11/30/sqlcipher-400-release/
-    const QString default3_xParams{"PRAGMA database.cipher_page_size = 1024;"
-                   "PRAGMA database.kdf_iter = 64000;"
-                   "PRAGMA database.cipher_hmac_algorithm = HMAC_SHA1;"
-                   "PRAGMA database.cipher_kdf_algorithm = PBKDF2_HMAC_SHA1;"};
-    // cipher_hmac_algorithm and cipher_kdf_algorithm weren't supported in sqlcipher 3.x, so our upgrade to 4 only
-    // applied some of the new params if sqlcipher 3.x was used at the time
-    const QString halfUpgradedTo4Params{"PRAGMA database.cipher_page_size = 4096;"
-                   "PRAGMA database.kdf_iter = 256000;"
-                   "PRAGMA database.cipher_hmac_algorithm = HMAC_SHA1;"
-                   "PRAGMA database.cipher_kdf_algorithm = PBKDF2_HMAC_SHA1;"};
-    const QString default4_xParams{"PRAGMA database.cipher_page_size = 4096;"
-                   "PRAGMA database.kdf_iter = 256000;"
-                   "PRAGMA database.cipher_hmac_algorithm = HMAC_SHA512;"
-                   "PRAGMA database.cipher_kdf_algorithm = PBKDF2_HMAC_SHA512;"
-                   "PRAGMA database.cipher_memory_security = ON;"}; // got disabled by default in 4.5.0, so manually enable it
-
-    QString defaultParams;
-    switch(params) {
-        case SqlCipherParams::p3_0: {
-            defaultParams = default3_xParams;
-            break;
-        }
-        case SqlCipherParams::halfUpgradedTo4: {
-            defaultParams = halfUpgradedTo4Params;
-            break;
-        }
-        case SqlCipherParams::p4_0: {
-            defaultParams = default4_xParams;
-            break;
-        }
-    }
-
-    qDebug() << "Setting SQLCipher" << toString(params) << "parameters";
-    return execNow(defaultParams.replace("database.", prefix));
-}
-
-RawDatabase::SqlCipherParams RawDatabase::highestSupportedParams()
-{
-    // Note: This is just calling into the sqlcipher library, not touching the database.
-    QString cipherVersion;
-    if (!execNow(RawDatabase::Query("PRAGMA cipher_version", [&](const QVector<QVariant>& row) {
-            cipherVersion = row[0].toString();
-        }))) {
-        qCritical() << "Failed to read cipher_version";
-        return SqlCipherParams::p3_0;
-    }
-
-    auto majorVersion = cipherVersion.split('.')[0].toInt();
-
-    SqlCipherParams highestSupportedParams;
-    switch (majorVersion) {
-        case 3:
-            highestSupportedParams = SqlCipherParams::halfUpgradedTo4;
-            break;
-        case 4:
-            highestSupportedParams = SqlCipherParams::p4_0;
-            break;
-        default:
-            qCritical() << "Unsupported SQLCipher version detected!";
-            return SqlCipherParams::p3_0;
-    }
-    qDebug() << "Highest supported SQLCipher params on this system are" << toString(highestSupportedParams);
-    return highestSupportedParams;
-}
-
-RawDatabase::SqlCipherParams RawDatabase::readSavedCipherParams(const QString& hexKey, SqlCipherParams newParams)
-{
-    for (int i = static_cast<int>(SqlCipherParams::p3_0); i < static_cast<int>(newParams); ++i)
-    {
-        if (!setKey(hexKey)) {
-            break;
-        }
-
-        if (!setCipherParameters(static_cast<SqlCipherParams>(i))) {
-            break;
-        }
-
-        if (testUsable()) {
-            return static_cast<SqlCipherParams>(i);
-        }
-    }
-    qCritical() << "Failed to check saved SQLCipher params";
-    return SqlCipherParams::p3_0;
 }
 
 bool RawDatabase::setKey(const QString& hexKey)
@@ -352,7 +182,7 @@ bool RawDatabase::setKey(const QString& hexKey)
 
 int RawDatabase::getUserVersion()
 {
-    int64_t user_version;
+    int user_version;
     if (!execNow(RawDatabase::Query("PRAGMA user_version", [&](const QVector<QVariant>& row) {
             user_version = row[0].toLongLong();
         }))) {
@@ -481,108 +311,6 @@ void RawDatabase::sync()
     QMetaObject::invokeMethod(this, "process", Qt::BlockingQueuedConnection);
 }
 
-/**
- * @brief Changes the database password, encrypting or decrypting if necessary.
- * @param password If password is empty, the database will be decrypted.
- * @return True if success, false otherwise.
- * @note Will process all transactions before changing the password.
- */
-bool RawDatabase::setPassword(const QString& password)
-{
-    if (!sqlite) {
-        qWarning() << "Trying to change the password, but the database is not open";
-        return false;
-    }
-
-    if (QThread::currentThread() != workerThread.get()) {
-        bool ret;
-        QMetaObject::invokeMethod(this, "changePassword", Qt::BlockingQueuedConnection,
-                                  Q_RETURN_ARG(bool, ret), Q_ARG(const QString&, password));
-        return ret;
-    }
-
-    // If we need to decrypt or encrypt, we'll need to sync and close,
-    // so we always process the pending queue before rekeying for consistency
-    process();
-
-    if (QFile::exists(path + ".tmp")) {
-        qWarning() << "Found old temporary export file while rekeying, deleting it";
-        QFile::remove(path + ".tmp");
-    }
-
-    if (!password.isEmpty()) {
-        QString newHexKey = deriveKey(password, currentSalt);
-        if (!currentHexKey.isEmpty()) {
-            if (!execNow("PRAGMA rekey = \"x'" + newHexKey + "'\"")) {
-                qWarning() << "Failed to change encryption key";
-                close();
-                return false;
-            }
-        } else {
-            if (!encryptDatabase(newHexKey)) {
-                close();
-                return false;
-            }
-            currentHexKey = newHexKey;
-        }
-    } else {
-        if (currentHexKey.isEmpty())
-            return true;
-
-        if (!decryptDatabase()) {
-            close();
-            return false;
-        }
-    }
-    return true;
-}
-
-bool RawDatabase::encryptDatabase(const QString& newHexKey)
-{
-    const auto user_version = getUserVersion();
-    if (user_version < 0) {
-        return false;
-    }
-    if (!execNow("ATTACH DATABASE '" + path + ".tmp' AS encrypted KEY \"x'" + newHexKey
-                    + "'\";")) {
-        qWarning() << "Failed to export encrypted database";
-        return false;
-    }
-    if (!setCipherParameters(SqlCipherParams::p4_0, "encrypted")) {
-        return false;
-    }
-    if (!execNow("SELECT sqlcipher_export('encrypted');")) {
-        return false;
-    }
-    if (!execNow(QString("PRAGMA encrypted.user_version = %1;").arg(user_version))) {
-        return false;
-    }
-    if (!execNow("DETACH DATABASE encrypted;")) {
-        return false;
-    }
-    return commitDbSwap(newHexKey);
-}
-
-bool RawDatabase::decryptDatabase()
-{
-    const auto user_version = getUserVersion();
-    if (user_version < 0) {
-        return false;
-    }
-    if (!execNow("ATTACH DATABASE '" + path + ".tmp' AS plaintext KEY '';"
-                                                "SELECT sqlcipher_export('plaintext');")) {
-        qWarning() << "Failed to export decrypted database";
-        return false;
-    }
-    if (!execNow(QString("PRAGMA plaintext.user_version = %1;").arg(user_version))) {
-        return false;
-    }
-    if (!execNow("DETACH DATABASE plaintext;")) {
-        return false;
-    }
-    return commitDbSwap({});
-}
-
 bool RawDatabase::commitDbSwap(const QString& hexKey)
 {
     // This is racy as hell, but nobody will race with us since we hold the profile lock
@@ -660,44 +388,6 @@ bool RawDatabase::remove()
 }
 
 /**
- * @brief Functor used to free tox_pass_key memory.
- *
- * This functor can be used as Deleter for smart pointers.
- * @note Doesn't take care of overwriting the key.
- */
-struct PassKeyDeleter
-{
-//    void operator()(Tox_Pass_Key* pass_key)
-//    {
-//        tox_pass_key_free(pass_key);
-//    }
-};
-
-/**
- * @brief Derives a 256bit key from the password and returns it hex-encoded
- * @param password Password to decrypt database
- * @return String representation of key
- * @deprecated deprecated on 2016-11-06, kept for compatibility, replaced by the salted version
- */
-QString RawDatabase::deriveKey(const QString& password)
-{
-    if (password.isEmpty())
-        return {};
-
-    const QByteArray passData = password.toUtf8();
-
-//    static_assert(TOX_PASS_KEY_LENGTH >= 32, "toxcore must provide 256bit or longer keys");
-
-//    static const uint8_t expandConstant[TOX_PASS_SALT_LENGTH + 1] =
-//        "L'ignorance est le pire des maux";
-//    const std::unique_ptr<Tox_Pass_Key, PassKeyDeleter> key(tox_pass_key_derive_with_salt(
-//        reinterpret_cast<const uint8_t*>(passData.data()),
-//        static_cast<std::size_t>(passData.size()), expandConstant, nullptr));
-//    return QByteArray(reinterpret_cast<char*>(key.get()) + 32, 32).toHex();
-    return QString();
-}
-
-/**
  * @brief Derives a 256bit key from the password and returns it hex-encoded
  * @param password Password to decrypt database
  * @param salt Salt to improve password strength, must be TOX_PASS_SALT_LENGTH bytes
@@ -705,24 +395,6 @@ QString RawDatabase::deriveKey(const QString& password)
  */
 QString RawDatabase::deriveKey(const QString& password, const QByteArray& salt)
 {
-    if (password.isEmpty()) {
-        return {};
-    }
-
-//    if (salt.length() != TOX_PASS_SALT_LENGTH) {
-//        qWarning() << "Salt length doesn't match toxencryptsave expections";
-//        return {};
-//    }
-//
-//    const QByteArray passData = password.toUtf8();
-//
-//    static_assert(TOX_PASS_KEY_LENGTH >= 32, "toxcore must provide 256bit or longer keys");
-//
-//    const std::unique_ptr<Tox_Pass_Key, PassKeyDeleter> key(tox_pass_key_derive_with_salt(
-//        reinterpret_cast<const uint8_t*>(passData.data()),
-//        static_cast<std::size_t>(passData.size()),
-//        reinterpret_cast<const uint8_t*>(salt.constData()), nullptr));
-//    return QByteArray(reinterpret_cast<char*>(key.get()) + 32, 32).toHex();
     return QString{};
 }
 
@@ -756,7 +428,7 @@ void RawDatabase::process()
 
         // Add transaction commands if necessary
         if (trans.queries.size() > 1) {
-            trans.queries.prepend({"BEGIN;"});
+            trans.queries.prepend({"BEGIN TRANSACTION;"});
             trans.queries.append({"COMMIT;"});
         }
 
@@ -776,9 +448,8 @@ void RawDatabase::process()
                                                 - static_cast<int>(compileTail - query.query.data()),
                                             &stmt, &compileTail))
                     != SQLITE_OK) {
-                    qWarning() << "Failed to prepare statement" << anonymizeQuery(query.query)
-                               << "and returned" << r;
-                    qWarning("The full error is %d: %s", sqlite3_errcode(sqlite), sqlite3_errmsg(sqlite));
+                    qWarning() << "Failed to prepare statement:" << anonymizeQuery(query.query);
+                    qWarning("The error code is %d errmsg is %s", sqlite3_errcode(sqlite), sqlite3_errmsg(sqlite));
                     goto cleanupStatements;
                 }
                 query.statements += stmt;
@@ -833,6 +504,9 @@ void RawDatabase::process()
                     goto cleanupStatements;
                 case SQLITE_CONSTRAINT:
                     qWarning() << "Constraint error executing query" << anonQuery;
+                    goto cleanupStatements;
+                case SQLITE_BUSY:
+                    qWarning() << "Is busying executing query" << anonQuery;
                     goto cleanupStatements;
                 default:
                     qWarning() << "Unknown error" << result << "executing query" << anonQuery;

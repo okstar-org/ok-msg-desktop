@@ -13,12 +13,11 @@
 #ifndef TOXCALL_H
 #define TOXCALL_H
 
+#include "lib/messenger/IMCall.h"
 #include "src/audio/iaudiocontrol.h"
 #include "src/audio/iaudiosink.h"
 #include "src/audio/iaudiosource.h"
-#include <src/core/toxpk.h>
-#include "lib/messenger/tox/tox.h"
-
+#include "src/core/FriendId.h"
 #include <QMap>
 #include <QMetaObject>
 #include <QtGlobal>
@@ -31,6 +30,23 @@ class AudioFilterer;
 class CoreVideoSource;
 class CoreAV;
 class Group;
+
+
+/**\brief Image Descriptor */
+typedef struct vpx_image {
+
+  /* Image storage dimensions */
+  unsigned int w;         /**< Stored image width */
+  unsigned int h;         /**< Stored image height */
+  unsigned int bit_depth; /**< Stored image bit-depth */
+
+  /* Image display dimensions */
+  unsigned int d_w; /**< Displayed image width */
+  unsigned int d_h; /**< Displayed image height */
+
+  unsigned char *planes[4]; /**< pointer to the top left pixel for each plane */
+  int stride[4];            /**< stride between rows for each plane */
+} vpx_image_t;   /**< alias for struct vpx_image */
 
 class ToxCall : public QObject {
   Q_OBJECT
@@ -86,17 +102,20 @@ class ToxFriendCall : public ToxCall {
   Q_OBJECT
 public:
   ToxFriendCall() = delete;
-  ToxFriendCall(QString friendId, bool VideoEnabled, CoreAV &av,
-                IAudioControl &audio);
+  ToxFriendCall(QString peerId, bool VideoEnabled, CoreAV &av, IAudioControl &audio);
   ToxFriendCall(ToxFriendCall &&other) = delete;
-  ToxFriendCall &operator=(ToxFriendCall &&other) = delete;
+
   ~ToxFriendCall();
 
+  ToxFriendCall &operator=(ToxFriendCall &&other) = delete;
+
   TOXAV_FRIEND_CALL_STATE getState() const;
+
   void setState(const TOXAV_FRIEND_CALL_STATE &value);
 
-  void playAudioBuffer(const int16_t *data, int samples, unsigned channels,
-                       int sampleRate) const;
+  void playAudioBuffer(const int16_t *data, int samples, unsigned channels, int sampleRate) const;
+
+  const QString& getPeerId(){return peerId;}
 
 private slots:
   void onAudioSourceInvalidated();
@@ -106,7 +125,7 @@ private:
   QMetaObject::Connection audioSinkInvalid;
   TOXAV_FRIEND_CALL_STATE state{TOXAV_FRIEND_CALL_STATE_NONE};
   std::unique_ptr<IAudioSink> sink = nullptr;
-  QString friendId;
+  QString peerId;
 };
 
 class ToxGroupCall : public ToxCall {
@@ -118,23 +137,23 @@ public:
   ~ToxGroupCall();
 
   ToxGroupCall &operator=(ToxGroupCall &&other) = delete;
-  void removePeer(ToxPk peerId);
+  void removePeer(FriendId peerId);
 
-  void playAudioBuffer(const ToxPk &peer, const int16_t *data, int samples,
+  void playAudioBuffer(const FriendId &peer, const int16_t *data, int samples,
                        unsigned channels, int sampleRate);
 
 private:
-  void addPeer(ToxPk peerId);
-  bool havePeer(ToxPk peerId);
+  void addPeer(FriendId peerId);
+  bool havePeer(FriendId peerId);
   void clearPeers();
 
-  std::map<ToxPk, std::unique_ptr<IAudioSink>> peers;
-  std::map<ToxPk, QMetaObject::Connection> sinkInvalid;
+  std::map<FriendId, std::unique_ptr<IAudioSink>> peers;
+  std::map<FriendId, QMetaObject::Connection> sinkInvalid;
   const Group &group;
 
 private slots:
   void onAudioSourceInvalidated();
-  void onAudioSinkInvalidated(ToxPk peerId);
+  void onAudioSinkInvalidated(FriendId peerId);
 };
 
 #endif // TOXCALL_H

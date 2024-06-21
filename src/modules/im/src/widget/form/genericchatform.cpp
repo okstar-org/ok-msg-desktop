@@ -17,6 +17,7 @@
 #include "src/chatlog/chatlog.h"
 #include "src/chatlog/content/filetransferwidget.h"
 #include "src/chatlog/content/timestamp.h"
+#include "src/chatlog/content/simpletext.h"
 #include "src/core/core.h"
 #include "src/friendlist.h"
 #include "src/grouplist.h"
@@ -24,6 +25,7 @@
 #include "src/model/group.h"
 #include "src/persistence/settings.h"
 #include "src/persistence/smileypack.h"
+#include "src/persistence/profile.h"
 #include "src/video/genericnetcamview.h"
 #include "src/widget/chatformheader.h"
 #include "src/widget/contentdialog.h"
@@ -54,6 +56,13 @@
 
 #ifdef OK_PLUGIN
 #include "lib/plugin/pluginmanager.h"
+
+#include <src/chatlog/chatmessageitem.h>
+
+#include <src/nexus.h>
+#include <src/nexus.h>
+
+#include <src/core/coreav.h>
 #endif
 
 /**
@@ -93,18 +102,18 @@ static QString fontToCss(const QFont &font, const QString &name) {
  * @return Name or alias of someone with such public key, or public key string
  * representation if no one was found
  */
-QString GenericChatForm::resolveToxPk(const ToxPk &pk) {
+QString GenericChatForm::resolveToxPk(const FriendId &pk) {
   Friend *f = FriendList::findFriend(pk);
   if (f) {
     return f->getDisplayedName();
   }
 
-  for (Group *it : GroupList::getAllGroups()) {
-    QString res = it->resolveToxId(pk);
-    if (!res.isEmpty()) {
-      return res;
-    }
-  }
+//  for (Group *it : GroupList::getAllGroups()) {
+//    QString res = it->resolveToxId(pk);
+//    if (!res.isEmpty()) {
+//      return res;
+//    }
+//  }
 
   return pk.toString();
 }
@@ -129,27 +138,33 @@ QPushButton *createButton(const QString &name, T *self, Fun onClickSlot) {
   return btn;
 }
 
-ChatMessage::Ptr
+IChatItem::Ptr
 getChatMessageForIdx(ChatLogIdx idx,
-                     const std::map<ChatLogIdx, ChatMessage::Ptr> &messages) {
+                     const std::map<ChatLogIdx, IChatItem::Ptr> &messages) {
 
   auto existingMessageIt = messages.find(idx);
   if (existingMessageIt == messages.end()) {
-    return ChatMessage::Ptr();
+    return IChatItem::Ptr();
   }
 
   return existingMessageIt->second;
 }
 
 bool shouldRenderDate(ChatLogIdx idxToRender, const IChatLog &chatLog) {
-  if (idxToRender == chatLog.getFirstIdx())
+  if (idxToRender.get() == chatLog.getFirstIdx().get())
     return true;
 
-  return chatLog.at(idxToRender - 1).getTimestamp().date() !=
-         chatLog.at(idxToRender).getTimestamp().date();
+
+  auto prev = chatLog.at(idxToRender - 1);
+  auto cur = chatLog.at(idxToRender);
+  if(!prev || !cur)
+      return false;
+
+  return prev->getTimestamp().date() !=
+         cur->getTimestamp().date();
 }
 
-ChatMessage::Ptr dateMessageForItem(const ChatLogItem &item) {
+IChatItem::Ptr dateMessageForItem(const ChatLogItem &item) {
   const auto &s = Settings::getInstance();
   const auto date = item.getTimestamp().date();
   auto dateText = date.toString(s.getDateFormat());
@@ -157,7 +172,7 @@ ChatMessage::Ptr dateMessageForItem(const ChatLogItem &item) {
                                             QDateTime());
 }
 
-ChatMessage::Ptr createMessage(const QString &displayName, bool isSelf,
+IChatItem::Ptr createMessage(const ChatLogItem &item, bool isSelf,
                                bool colorizeNames,
                                const ChatLogMessage &chatLogMessage) {
 //  qDebug() << "createMessage displayName:" << displayName;
@@ -178,67 +193,72 @@ ChatMessage::Ptr createMessage(const QString &displayName, bool isSelf,
 
   const auto timestamp = chatLogMessage.message.timestamp;
   return ChatMessage::createChatMessage(
-      displayName, chatLogMessage.message.content, messageType, isSelf,
+      item, chatLogMessage.message.content, messageType,
+      isSelf,
       chatLogMessage.state, timestamp, colorizeNames);
 }
 
-void renderMessage(const QString &displayName, bool isSelf, bool colorizeNames,
+
+void renderMessage(const ChatLogItem &item, bool isSelf, bool colorizeNames,
                    const ChatLogMessage &chatLogMessage,
-                   ChatMessage::Ptr &chatMessage) {
+                   IChatItem::Ptr &chatMessage) {
   if (chatMessage) {
     if (chatLogMessage.state == MessageState::complete) {
       chatMessage->markAsDelivered(chatLogMessage.message.timestamp);
     }
   } else {
-    chatMessage =
-        createMessage(displayName, isSelf, colorizeNames, chatLogMessage);
+    chatMessage = createMessage(item, isSelf, colorizeNames,
+                                chatLogMessage);
   }
 }
 
-void renderFile(QString displayName, ToxFile file, bool isSelf,
-                QDateTime timestamp, ChatMessage::Ptr &chatMessage) {
+void renderFile(const ChatLogItem &item, ToxFile file, bool isSelf,
+                QDateTime timestamp, IChatItem::Ptr &chatMessage) {
+
+    qDebug() << __func__ <<"file"<<file.fileName;
+
   if (!chatMessage) {
-    chatMessage = ChatMessage::createFileTransferMessage(displayName, file,
-                                                         isSelf, timestamp);
+    chatMessage = ChatMessage::createFileTransferMessage(item, file, isSelf, timestamp);
   } else {
-    auto proxy =
-        static_cast<ChatLineContentProxy *>(chatMessage->getContent(1));
-    assert(proxy->getWidgetType() ==
-           ChatLineContentProxy::FileTransferWidgetType);
-    auto ftWidget = static_cast<FileTransferWidget *>(proxy->getWidget());
-    ftWidget->onFileTransferUpdate(file);
+    auto proxy = static_cast<ChatLineContentProxy *>(chatMessage->centerContent());
+    if(proxy->getWidgetType() == ChatLineContentProxy::FileTransferWidgetType){
+        auto ftWidget = static_cast<FileTransferWidget *>(proxy->getWidget());
+        ftWidget->onFileTransferUpdate(file);
+        qDebug() <<"update file"<<file.fileName;
+    }
   }
 }
 
 void renderItem(const ChatLogItem &item,
                 bool hideName,
                 bool colorizeNames,
-                ChatMessage::Ptr &chatMessage) {
+                IChatItem::Ptr &chatMessage) {
 
   const Core *core = Core::getInstance();
 
   const auto &sender = item.getSender();
-  const auto &selfPk = core->getSelfId().getPublicKey();
+  const auto &selfPk = core->getSelfPeerId().getPublicKey();
 
   bool isSelf = sender == selfPk; // || sender.getResource() == selfPk.getUsername();
 
   switch (item.getContentType()) {
   case ChatLogItem::ContentType::message: {
     const auto &chatLogMessage = item.getContentAsMessage();
-    renderMessage(item.getDisplayName(), isSelf, colorizeNames, chatLogMessage,
+    renderMessage(item, isSelf,
+                  colorizeNames,
+                  chatLogMessage,
                   chatMessage);
     break;
   }
   case ChatLogItem::ContentType::fileTransfer: {
     const auto &file = item.getContentAsFile();
-    renderFile(item.getDisplayName(), file.file, isSelf, item.getTimestamp(),
+    renderFile(item,
+               file.file,
+               isSelf,
+               item.getTimestamp(),
                chatMessage);
     break;
   }
-  }
-
-  if (hideName) {
-    chatMessage->hideSender();
   }
 }
 
@@ -252,26 +272,27 @@ ChatLogIdx firstItemAfterDate(QDate date, const IChatLog &chatLog) {
 }
 } // namespace
 
-GenericChatForm::GenericChatForm(const Contact *contact_,
-                                 IChatLog &chatLog,
+GenericChatForm::GenericChatForm(const ContactId *contact_,
+                                 IChatLog &iChatLog_,
                                  IMessageDispatcher &messageDispatcher,
                                  QWidget *parent)
-    : QWidget(parent, Qt::Window), contact(contact_), audioInputFlag(false),
-      audioOutputFlag(false), isEncrypt(false), chatLog(chatLog),
+    : QWidget(parent, Qt::Window), contactId(contact_), contact(nullptr),
+      audioInputFlag(false),
+      audioOutputFlag(false), isEncrypt(false), iChatLog(iChatLog_),
       messageDispatcher(messageDispatcher) {
   curRow = 0;
-  headWidget = new ChatFormHeader();
+
   searchForm = new SearchForm();
   dateInfo = new QLabel(this);
-  chatWidget = new ChatLog(this);
-  chatWidget->setBusyNotification(ChatMessage::createBusyNotification());
+  chatLog = new ChatLog(this);
+  chatLog->setBusyNotification(ChatMessage::createBusyNotification());
   searchForm->hide();
   dateInfo->setAlignment(Qt::AlignHCenter);
   dateInfo->setVisible(false);
 
   // settings
   const Settings &s = Settings::getInstance();
-  connect(&s, &Settings::emojiFontPointSizeChanged, chatWidget,
+  connect(&s, &Settings::emojiFontPointSizeChanged, chatLog,
           &ChatLog::forceRelayout);
   connect(&s, &Settings::chatMessageFontChanged, this,
           &GenericChatForm::onChatMessageFontChanged);
@@ -348,12 +369,12 @@ GenericChatForm::GenericChatForm(const Contact *contact_,
   QVBoxLayout *contentLayout = new QVBoxLayout(contentWidget);
   contentLayout->addWidget(searchForm);
   contentLayout->addWidget(dateInfo);
-  contentLayout->addWidget(chatWidget);
+  contentLayout->addWidget(chatLog);
   contentLayout->addLayout(mainFootLayout);
 
   quoteAction =
       menu.addAction(QIcon(), QString(), this, SLOT(quoteSelectedText()),
-                     QKeySequence(Qt::ALT + Qt::Key_Q));
+                     QKeySequence(Qt::ALT , Qt::Key_Q));
   addAction(quoteAction);
   menu.addSeparator();
 
@@ -364,7 +385,7 @@ GenericChatForm::GenericChatForm(const Contact *contact_,
 
   menu.addSeparator();
 
-  menu.addActions(chatWidget->actions());
+  menu.addActions(chatLog->actions());
   menu.addSeparator();
 
   clearAction = menu.addAction(QIcon::fromTheme("edit-clear"), QString(), this,
@@ -380,12 +401,15 @@ GenericChatForm::GenericChatForm(const Contact *contact_,
   // exportChatAction = menu.addAction(QIcon::fromTheme("document-save"),
   //                                   QString(), this, SLOT(onExportChat()));
 
-  connect(chatWidget, &ChatLog::customContextMenuRequested, this,
+  connect(chatLog, &ChatLog::customContextMenuRequested, this,
           &GenericChatForm::onChatContextMenuRequested);
-  connect(chatWidget, &ChatLog::firstVisibleLineChanged, this,
+  connect(chatLog, &ChatLog::firstVisibleLineChanged, this,
           &GenericChatForm::updateShowDateInfo);
-  connect(chatWidget, &ChatLog::loadHistoryLower, this,
+  connect(chatLog, &ChatLog::loadHistoryLower, this,
           &GenericChatForm::loadHistoryLower);
+
+  connect(&iChatLog, &IChatLog::itemUpdated,
+          this,&GenericChatForm::renderMessage);
 
   connect(searchForm, &SearchForm::searchInBegin, this,
           &GenericChatForm::searchInBegin);
@@ -398,44 +422,39 @@ GenericChatForm::GenericChatForm(const Contact *contact_,
   connect(this, &GenericChatForm::messageNotFoundShow, searchForm,
           &SearchForm::showMessageNotFound);
 
-  connect(&chatLog, &IChatLog::itemUpdated, this,
-          &GenericChatForm::renderMessage);
-
   connect(msgEdit, &ChatTextEdit::enterPressed, this,
           &GenericChatForm::onSendTriggered);
 
-  reloadTheme();
+
 
   fileFlyout->setFixedSize(FILE_FLYOUT_SIZE);
   fileFlyout->setParent(this);
   fileButton->installEventFilter(this);
   fileFlyout->installEventFilter(this);
 
+  reloadTheme();
   retranslateUi();
   settings::Translator::registerHandler(
       std::bind(&GenericChatForm::retranslateUi, this), this);
 
-  // update header on name/title change
-  connect(contact, &Contact::displayedNameChanged, this,
-          &GenericChatForm::setName);
+  auto chatLogIdxRange = iChatLog.getNextIdx() - iChatLog.getFirstIdx();
+  auto firstChatLogIdx = (chatLogIdxRange < 100) ? iChatLog.getFirstIdx()
+                                                 : iChatLog.getNextIdx() - 100;
 
-  auto chatLogIdxRange = chatLog.getNextIdx() - chatLog.getFirstIdx();
-  auto firstChatLogIdx = (chatLogIdxRange < 100) ? chatLog.getFirstIdx()
-                                                 : chatLog.getNextIdx() - 100;
+  renderMessages(firstChatLogIdx, iChatLog.getNextIdx());
 
-  renderMessages(firstChatLogIdx, chatLog.getNextIdx());
 
-  netcam = nullptr;
 }
 
 GenericChatForm::~GenericChatForm() {
+    qDebug()<<__func__;
   settings::Translator::unregister(this);
   delete searchForm;
 }
 
 #ifdef OK_PLUGIN
 void GenericChatForm::onPluginEnabled(const QString &shortName) {
-  qDebug() << "Plugin is enabled" << shortName <<"for"<<contact->getDisplayedName();
+//  qDebug() << "Plugin is enabled" << shortName <<"for"<<contact->getDisplayedName();
   if (shortName == "omemo") {
     auto encryptButton_ =
         mainFootLayout->findChild<QPushButton *>("encryptButton");
@@ -475,11 +494,11 @@ void GenericChatForm::hideFileMenu() {
 }
 
 QDateTime GenericChatForm::getLatestTime() const {
-  return getTime(chatWidget->getLatestLine());
+  return getTime(chatLog->getLatestLine());
 }
 
 QDateTime GenericChatForm::getFirstTime() const {
-  return getTime(chatWidget->getFirstLine());
+  return getTime(chatLog->getFirstLine());
 }
 
 void GenericChatForm::reloadTheme() {
@@ -488,11 +507,13 @@ void GenericChatForm::reloadTheme() {
   msgEdit->setStyleSheet(Style::getStylesheet("msgEdit/msgEdit.css") +
                          fontToCss(s.getChatMessageFont(), "QTextEdit"));
 
-  chatWidget->setStyleSheet(Style::getStylesheet("chatArea/chatArea.css"));
-  headWidget->setStyleSheet(Style::getStylesheet("chatArea/chatHead.css"));
-  chatWidget->reloadTheme();
-  headWidget->reloadTheme();
   searchForm->reloadTheme();
+
+//  headWidget->setStyleSheet(Style::getStylesheet("chatArea/chatHead.css"));
+//  headWidget->reloadTheme();
+
+  chatLog->setStyleSheet(Style::getStylesheet("chatArea/chatArea.css"));
+  chatLog->reloadTheme();
 
   emoteButton->setStyleSheet(Style::getStylesheet(STYLE_PATH));
   fileButton->setStyleSheet(Style::getStylesheet(STYLE_PATH));
@@ -500,30 +521,43 @@ void GenericChatForm::reloadTheme() {
   sendButton->setStyleSheet(Style::getStylesheet(STYLE_PATH));
 }
 
-void GenericChatForm::setName(const QString &newName) {
-  headWidget->setName(newName);
+void GenericChatForm::setContact(const Contact *contact_)
+{
+//    qDebug()<<__func__<<contact_;
+    contact = contact_;
+    connect(contact, &Contact::displayedNameChanged, this, &GenericChatForm::onDisplayedNameChanged);
+
+    if(contact->isGroup()){
+
+    }else{
+        const Friend* f = static_cast<const Friend*>(contact);
+        for(auto msg: messages){
+            auto p = (ChatMessageBox *)msg.second.get();
+            p->nickname()->setText(f->getDisplayedName());
+        }
+    }
+}
+
+void GenericChatForm::removeContact()
+{
+    qDebug()<<__func__;
+    contact = nullptr;
 }
 
 void GenericChatForm::show(ContentLayout *contentLayout) {
-  contentLayout->mainHead->layout()->addWidget(headWidget);
-  headWidget->show();
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 12, 4) &&                                 \
-    QT_VERSION > QT_VERSION_CHECK(5, 11, 0)
-  // HACK: switching order happens to avoid a Qt bug causing segfault, present
-  // between these versions. this could cause flickering if our form is shown
-  // before added to the layout https://github.com/qTox/qTox/issues/5570
-  QWidget::show();
-  contentLayout->mainContent->layout()->addWidget(this);
-#else
-  contentLayout->mainContent->layout()->addWidget(this);
-  QWidget::show();
-#endif
 }
 
 void GenericChatForm::showEvent(QShowEvent *) {
   msgEdit->setFocus();
-  headWidget->showCallConfirm();
+  if(contact){
+    if (!contact->isGroup()) {
+      auto f = FriendList::findFriend(*contactId);
+      if (f) {
+        setContact(f);
+      }
+    }
+  }
 }
 
 bool GenericChatForm::event(QEvent *e) {
@@ -546,6 +580,17 @@ bool GenericChatForm::event(QEvent *e) {
   return QWidget::event(e);
 }
 
+void GenericChatForm::onDisplayedNameChanged(const QString &name)
+{
+    qDebug() <<__func__<< contactId->toString() << name;
+//    headWidget->setName(name);
+    for(auto msg: messages){
+        auto it =msg.second;
+        auto p = (ChatMessageBox *)it.get();
+        p->nickname()->setText(name);
+    }
+}
+
 void GenericChatForm::onChatContextMenuRequested(QPoint pos) {
   QWidget *sender = static_cast<QWidget *>(QObject::sender());
   pos = sender->mapToGlobal(pos);
@@ -553,9 +598,9 @@ void GenericChatForm::onChatContextMenuRequested(QPoint pos) {
   // If we right-clicked on a link, give the option to copy it
   bool clickedOnLink = false;
   Text *clickedText =
-      qobject_cast<Text *>(chatWidget->getContentFromGlobalPos(pos));
+      qobject_cast<Text *>(chatLog->getContentFromGlobalPos(pos));
   if (clickedText) {
-    QPointF scenePos = chatWidget->mapToScene(chatWidget->mapFromGlobal(pos));
+    QPointF scenePos = chatLog->mapToScene(chatLog->mapFromGlobal(pos));
     QString linkTarget = clickedText->getLinkAt(scenePos);
     if (!linkTarget.isEmpty()) {
       clickedOnLink = true;
@@ -599,19 +644,20 @@ bool GenericChatForm::needsToHideName(ChatLogIdx idx) const {
     return false;
   }
 
-  const auto &prevItem = chatLog.at(idx - 1);
-  const auto &currentItem = chatLog.at(idx);
-
+  const auto prevItem = iChatLog.at(idx - 1);
+  const auto currentItem = iChatLog.at(idx);
+  if(!prevItem || !currentItem){
+      return false;
+  }
   // Always show the * in the name field for action messages
-  if (currentItem.getContentType() == ChatLogItem::ContentType::message &&
-      currentItem.getContentAsMessage().message.isAction) {
+  if (currentItem->getContentType() == ChatLogItem::ContentType::message &&
+      currentItem->getContentAsMessage().message.isAction) {
     return false;
   }
 
-  qint64 messagesTimeDiff =
-      prevItem.getTimestamp().secsTo(currentItem.getTimestamp());
-  return currentItem.getSender() == prevItem.getSender() &&
-         messagesTimeDiff < chatWidget->repNameAfter;
+  qint64 messagesTimeDiff = prevItem->getTimestamp().secsTo(currentItem->getTimestamp());
+  return currentItem->getSender() == prevItem->getSender() &&
+         messagesTimeDiff < chatLog->repNameAfter;
 }
 
 void GenericChatForm::onEncryptButtonClicked() {
@@ -649,14 +695,14 @@ void GenericChatForm::onEmoteInsertRequested(QString str) {
   msgEdit->setFocus(); // refocus so that we can continue typing
 }
 
-void GenericChatForm::onCopyLogClicked() { chatWidget->copySelectedText(); }
+void GenericChatForm::onCopyLogClicked() { chatLog->copySelectedText(); }
 
 void GenericChatForm::focusInput() { msgEdit->setFocus(); }
 
 void GenericChatForm::onChatMessageFontChanged(const QFont &font) {
   // chat log
-  chatWidget->fontChanged(font);
-  chatWidget->forceRelayout();
+  chatLog->fontChanged(font);
+  chatLog->forceRelayout();
   // message editor
   msgEdit->setStyleSheet(Style::getStylesheet("msgEdit/msgEdit.css") +
                          fontToCss(font, "QTextEdit"));
@@ -679,28 +725,21 @@ void GenericChatForm::addSystemDateMessage(const QDate &date) {
       dateText, ChatMessage::INFO, QDateTime()));
 }
 
-QDateTime GenericChatForm::getTime(const ChatLine::Ptr &chatLine) const {
+QDateTime GenericChatForm::getTime(const IChatItem::Ptr &chatLine) const {
   if (chatLine) {
-    Timestamp *const timestamp =
-        qobject_cast<Timestamp *>(chatLine->getContent(2));
-
-    if (timestamp) {
-      return timestamp->getTime();
-    } else {
-      return QDateTime();
-    }
+    chatLine->getTime();
   }
-
   return QDateTime();
 }
 
 void GenericChatForm::disableSearchText() {
   auto msgIt = messages.find(searchPos.logIdx);
   if (msgIt != messages.end()) {
-    auto text = qobject_cast<Text *>(msgIt->second->getContent(1));
+    auto text = qobject_cast<Text *>(msgIt->second->centerContent());
     text->deselectText();
   }
 }
+
 
 void GenericChatForm::clearChatArea() {
   clearChatArea(/* confirm = */ true, /* inform = */ true);
@@ -717,7 +756,7 @@ void GenericChatForm::clearChatArea(bool confirm, bool inform) {
     }
   }
 
-  chatWidget->clear();
+  chatLog->clear();
 
   if (inform)
     addSystemInfoMessage(tr("Cleared"), ChatMessage::INFO,
@@ -726,10 +765,11 @@ void GenericChatForm::clearChatArea(bool confirm, bool inform) {
   messages.clear();
 }
 
-void GenericChatForm::onSelectAllClicked() { chatWidget->selectAll(); }
+void GenericChatForm::onSelectAllClicked() { chatLog->selectAll(); }
 
-void GenericChatForm::insertChatMessage(ChatMessage::Ptr msg) {
-  chatWidget->insertChatlineAtBottom(std::static_pointer_cast<ChatLine>(msg));
+void GenericChatForm::insertChatMessage(IChatItem::Ptr msg) {
+  qDebug() << __func__ << msg->getRow();
+  chatLog->insertChatlineAtBottom(msg);
   emit messageInserted();
 }
 
@@ -790,23 +830,23 @@ bool GenericChatForm::eventFilter(QObject *object, QEvent *event) {
 }
 
 void GenericChatForm::onSplitterMoved(int, int) {
-  if (netcam)
-    netcam->setShowMessages(bodySplitter->sizes()[1] == 0);
+//  if (netcam)
+//    netcam->setShowMessages(bodySplitter->sizes()[1] == 0);
 }
 
 void GenericChatForm::onShowMessagesClicked() {
-  if (netcam) {
-    if (bodySplitter->sizes()[1] == 0)
-      bodySplitter->setSizes({1, 1});
-    else
-      bodySplitter->setSizes({1, 0});
-
-    onSplitterMoved(0, 0);
-  }
+//  if (netcam) {
+//    if (bodySplitter->sizes()[1] == 0)
+//      bodySplitter->setSizes({1, 1});
+//    else
+//      bodySplitter->setSizes({1, 0});
+//
+//    onSplitterMoved(0, 0);
+//  }
 }
 
 void GenericChatForm::quoteSelectedText() {
-  QString selectedText = chatWidget->getSelectedText();
+  QString selectedText = chatLog->getSelectedText();
 
   if (selectedText.isEmpty())
     return;
@@ -840,11 +880,11 @@ void GenericChatForm::searchFormShow() {
 }
 
 void GenericChatForm::onLoadHistory() {
-  LoadHistoryDialog dlg(&chatLog);
+  LoadHistoryDialog dlg(&iChatLog);
   if (dlg.exec()) {
     QDateTime time = dlg.getFromDate();
-    auto idx = firstItemAfterDate(dlg.getFromDate().date(), chatLog);
-    renderMessages(idx, chatLog.getNextIdx());
+    auto idx = firstItemAfterDate(dlg.getFromDate().date(), iChatLog);
+    renderMessages(idx, iChatLog.getNextIdx());
   }
 }
 
@@ -860,19 +900,19 @@ void GenericChatForm::onExportChat() {
   }
 
   QString buffer;
-  for (auto i = chatLog.getFirstIdx(); i < chatLog.getNextIdx(); ++i) {
-    const auto &item = chatLog.at(i);
-    if (item.getContentType() != ChatLogItem::ContentType::message) {
+  for (auto i = iChatLog.getFirstIdx(); i < iChatLog.getNextIdx(); ++i) {
+    const auto &item = iChatLog.at(i);
+    if (!item || item->getContentType() != ChatLogItem::ContentType::message) {
       continue;
     }
 
-    QString timestamp = item.getTimestamp().time().toString("hh:mm:ss");
-    QString datestamp = item.getTimestamp().date().toString("yyyy-MM-dd");
-    QString author = item.getDisplayName();
+    QString timestamp = item->getTimestamp().time().toString("hh:mm:ss");
+    QString datestamp = item->getTimestamp().date().toString("yyyy-MM-dd");
+    QString author = item->getDisplayName();
 
     buffer =
         buffer % QString{datestamp % '\t' % timestamp % '\t' % author % '\t' %
-                         item.getContentAsMessage().message.content % '\n'};
+                         item->getContentAsMessage().message.content % '\n'};
   }
   file.write(buffer.toUtf8());
   file.close();
@@ -893,26 +933,26 @@ void GenericChatForm::searchInBegin(const QString &phrase,
   switch (parameter.period) {
   case PeriodSearch::WithTheFirst: {
     bForwardSearch = true;
-    searchPos.logIdx = chatLog.getFirstIdx();
+    searchPos.logIdx = iChatLog.getFirstIdx();
     searchPos.numMatches = 0;
     break;
   }
   case PeriodSearch::WithTheEnd:
   case PeriodSearch::None: {
     bForwardSearch = false;
-    searchPos.logIdx = chatLog.getNextIdx();
+    searchPos.logIdx = iChatLog.getNextIdx();
     searchPos.numMatches = 0;
     break;
   }
   case PeriodSearch::AfterDate: {
     bForwardSearch = true;
-    searchPos.logIdx = firstItemAfterDate(parameter.date, chatLog);
+    searchPos.logIdx = firstItemAfterDate(parameter.date, iChatLog);
     searchPos.numMatches = 0;
     break;
   }
   case PeriodSearch::BeforeDate: {
     bForwardSearch = false;
-    searchPos.logIdx = firstItemAfterDate(parameter.date, chatLog);
+    searchPos.logIdx = firstItemAfterDate(parameter.date, iChatLog);
     searchPos.numMatches = 0;
     break;
   }
@@ -927,13 +967,13 @@ void GenericChatForm::searchInBegin(const QString &phrase,
 
 void GenericChatForm::onSearchUp(const QString &phrase,
                                  const ParameterSearch &parameter) {
-  auto result = chatLog.searchBackward(searchPos, phrase, parameter);
+  auto result = iChatLog.searchBackward(searchPos, phrase, parameter);
   handleSearchResult(result, SearchDirection::Up);
 }
 
 void GenericChatForm::onSearchDown(const QString &phrase,
                                    const ParameterSearch &parameter) {
-  auto result = chatLog.searchForward(searchPos, phrase, parameter);
+  auto result = iChatLog.searchForward(searchPos, phrase, parameter);
   handleSearchResult(result, SearchDirection::Down);
 }
 
@@ -949,62 +989,71 @@ void GenericChatForm::handleSearchResult(SearchResult result,
   searchPos = result.pos;
 
   auto const firstRenderedIdx =
-      (messages.empty()) ? chatLog.getNextIdx() : messages.begin()->first;
+      (messages.empty()) ? iChatLog.getNextIdx() : messages.begin()->first;
 
   renderMessages(searchPos.logIdx, firstRenderedIdx, [this, result] {
     auto msg = messages.at(searchPos.logIdx);
-    chatWidget->scrollToLine(msg);
+    chatLog->scrollToLine(msg);
 
-    auto text = qobject_cast<Text *>(msg->getContent(1));
+    auto text = qobject_cast<Text *>(msg->centerContent());
     text->selectText(result.exp, std::make_pair(result.start, result.len));
   });
 }
 
 void GenericChatForm::renderMessage(ChatLogIdx idx) {
+  qDebug()<<__func__ <<"idx"<<idx.get();
   renderMessages(idx, idx + 1);
 }
 
 void GenericChatForm::renderMessages(ChatLogIdx begin, ChatLogIdx end,
                                      std::function<void(void)> onCompletion) {
-  QList<ChatLine::Ptr> beforeLines;
-  QList<ChatLine::Ptr> afterLines;
+  QList<IChatItem::Ptr> beforeLines;
+  QList<IChatItem::Ptr> afterLines;
 
   for (auto i = begin; i < end; ++i) {
+    auto item = iChatLog.at(i);
+    if(!item){
+        qWarning() <<"chatLog have no msg idx is:" << i.get();
+        continue;
+    }
+
     auto chatMessage = getChatMessageForIdx(i, messages);
-    renderItem(chatLog.at(i), needsToHideName(i), colorizeNames, chatMessage);
+    renderItem(*item, needsToHideName(i), colorizeNames, chatMessage);
 
     if (messages.find(i) == messages.end()) {
-      QList<ChatLine::Ptr> *lines =
+      QList<IChatItem::Ptr> *lines =
           (messages.empty() || i > messages.rbegin()->first) ? &afterLines
                                                              : &beforeLines;
 
       messages.insert({i, chatMessage});
 
-      if (shouldRenderDate(i, chatLog)) {
-        lines->push_back(dateMessageForItem(chatLog.at(i)));
+      if (shouldRenderDate(i, iChatLog)) {
+          auto msg=iChatLog.at(i);
+          if(msg)
+            lines->push_back(dateMessageForItem(*msg));
       }
       lines->push_back(chatMessage);
     }
   }
 
   for (auto const &line : afterLines) {
-    chatWidget->insertChatlineAtBottom(line);
+    chatLog->insertChatlineAtBottom(line);
   }
 
   if (!beforeLines.empty()) {
-    // Rendering upwards is expensive and has async behavior for chatWidget.
+    // Rendering upwards is expensive and has async behavior for chatLog.
     // Once rendering completes we call our completion callback once and
     // then disconnect the signal
     if (onCompletion) {
       auto connection = std::make_shared<QMetaObject::Connection>();
-      *connection = connect(chatWidget, &ChatLog::workerTimeoutFinished,
+      *connection = connect(chatLog, &ChatLog::workerTimeoutFinished,
                             [onCompletion, connection] {
                               onCompletion();
                               disconnect(*connection);
                             });
     }
 
-    chatWidget->insertChatlinesOnTop(beforeLines);
+    chatLog->insertChatlinesOnTop(beforeLines);
   } else if (onCompletion) {
     onCompletion();
   }
@@ -1019,11 +1068,11 @@ void GenericChatForm::loadHistoryLower() {
     begin = ChatLogIdx(0);
   }
 
-  renderMessages(begin, chatLog.getNextIdx());
+  renderMessages(begin, iChatLog.getNextIdx());
 }
 
-void GenericChatForm::updateShowDateInfo(const ChatLine::Ptr &prevLine,
-                                         const ChatLine::Ptr &topLine) {
+void GenericChatForm::updateShowDateInfo(const IChatItem::Ptr &prevLine,
+                                         const IChatItem::Ptr &topLine) {
   // If the dateInfo is visible we need to pretend the top line is the one
   // covered by the date to prevent oscillations
   const auto effectiveTopLine =
@@ -1053,34 +1102,4 @@ void GenericChatForm::retranslateUi() {
   // searchAction->setText(tr("Search in text"));
   // loadHistoryAction->setText(tr("Load chat history..."));selected text
   // exportChatAction->setText(tr("Export to file"));
-}
-
-void GenericChatForm::showNetcam() {
-  if (!netcam)
-    netcam = createNetcam();
-
-  connect(netcam, &GenericNetCamView::showMessageClicked, this,
-          &GenericChatForm::onShowMessagesClicked);
-
-  bodySplitter->insertWidget(0, netcam);
-  bodySplitter->setCollapsible(0, false);
-
-  QSize minSize = netcam->getSurfaceMinSize();
-  ContentDialog *current = ContentDialogManager::getInstance()->current();
-  if (current)
-    current->onVideoShow(minSize);
-}
-
-void GenericChatForm::hideNetcam() {
-  if (!netcam)
-    return;
-
-  ContentDialog *current = ContentDialogManager::getInstance()->current();
-  if (current)
-    current->onVideoHide();
-
-  netcam->close();
-  netcam->hide();
-  delete netcam;
-  netcam = nullptr;
 }
