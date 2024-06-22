@@ -30,8 +30,12 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)
 set(BUILD_SHARED_LIBS OFF)
 
 if (WIN32)
-#    add_definitions(-DWIN32_LEAN_AND_MEAN=1 -D_ITERATOR_DEBUG_LEVEL=0 -DWINAPI_FAMILY_PARTITION=1 )
-#    set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} /DWINAPI_FAMILY_PARTITION=1") 
+    add_definitions(-DWIN32_LEAN_AND_MEAN=1)
+    if(CMAKE_BUILD_TYPE MATCHES Release)
+        add_definitions(-D_ITERATOR_DEBUG_LEVEL=0)
+    elseif(CMAKE_BUILD_TYPE MATCHES Debug)
+        add_definitions(-D_ITERATOR_DEBUG_LEVEL=2)        
+    endif()
 endif ()
 
 
