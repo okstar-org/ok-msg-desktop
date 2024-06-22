@@ -40,7 +40,7 @@ NetworkHttp::NetworkHttp(QObject *parent) : QObject(parent),
     qDebug() << __func__;
 #ifndef QT_NO_SSL
    QString buildVersion = QSslSocket::sslLibraryBuildVersionString();
-   qDebug() << "The build ssl library version is:" << buildVersion;
+   qDebug() << "The build-in ssl library version is:" << buildVersion;
 
    bool supportsSsl = QSslSocket::supportsSsl();
    qDebug() << "Detected ssl:" << supportsSsl;
