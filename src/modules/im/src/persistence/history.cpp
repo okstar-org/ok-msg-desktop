@@ -113,7 +113,7 @@ bool dbSchema0to1(RawDatabase& db)
 */
 bool dbSchemaUpgrade(std::shared_ptr<RawDatabase>& db)
 {
-//    qDebug() << __func__;
+    qDebug() << __func__;
 
     int64_t databaseSchemaVersion;
     if (!db->execNow(RawDatabase::Query("PRAGMA user_version", [&](const QVector<QVariant>& row) {
