@@ -278,9 +278,9 @@ private:
 
 
 
-  std::unique_ptr<ChatWidget > chatWidget;
-  std::unique_ptr<ContactWidget> contactWidget;
-  std::unique_ptr<SettingsWidget> settingsWidget;
+  ChatWidget * chatWidget;
+  ContactWidget* contactWidget;
+  SettingsWidget* settingsWidget;
 
 
 

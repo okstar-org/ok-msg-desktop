@@ -114,15 +114,8 @@ ChatWidget::ChatWidget(QWidget *parent)
   setupSearch();
   init();
 
-  //  QString locale = Settings::getInstance().getTranslation();
-  //  settings::Translator::translate(OK_IM_MODULE, locale);
-  //  circleWidget= contactListWidget->createCircleWidget();
-  //  connectCircleWidget();
-
-  //  connect(contactListWidget, &FriendListWidget::searchCircle, this,
-  //          &FriendListWidget::searchCircle);
-  //  connect(contactListWidget, &FriendListWidget::connectCircleWidget, this,
-  //          &FriendListWidget::connectCircleWidget);
+  retranslateUi();
+  settings::Translator::registerHandler(std::bind(&ChatWidget::retranslateUi, this), this);
 }
 
 ChatWidget::~ChatWidget() { deinit(); }
@@ -684,7 +677,22 @@ bool ChatWidget::groupsVisible() const {
   return !filterGroups(filter);
 }
 
-void ChatWidget::retranslateUi() { ui->retranslateUi(this); }
+void ChatWidget::retranslateUi() {
+    ui->searchContactText->setPlaceholderText(tr("Search Contacts"));
+    ui->retranslateUi(this);
+
+    filterDisplayName->setText(tr("By Name"));
+    filterDisplayActivity->setText(tr("By Activity"));
+    filterAllAction->setText(tr("All"));
+    filterOnlineAction->setText(tr("Online"));
+    filterOfflineAction->setText(tr("Offline"));
+    filterFriendsAction->setText(tr("Friends"));
+    filterGroupsAction->setText(tr("Groups"));
+
+    statusOnline->setText(tr("Online", "Button to set your status to 'Online'"));
+    statusAway->setText(tr("Away", "Button to set your status to 'Away'"));
+    statusBusy->setText(tr("Busy", "Button to set your status to 'Busy'"));
+}
 
 void ChatWidget::setupStatus() {
   int icon_size = 15;
