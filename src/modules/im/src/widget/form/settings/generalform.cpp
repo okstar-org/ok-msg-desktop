@@ -77,11 +77,11 @@ GeneralForm::GeneralForm(SettingsWidget* myParent)
     }
     //当前语言下拉框状态
     bodyUI->transComboBox->setCurrentIndex(okSettings.getLocales().indexOf(s.getTranslation()));
-    //复选框
+
+    // autorun
     bodyUI->cbAutorun->setChecked(okSettings.getAutorun());
 
     bodyUI->cbSpellChecking->setChecked(s.getSpellCheckingEnabled());
-    bodyUI->lightTrayIcon->setChecked(s.getLightTrayIcon());
 
 
     bool showSystemTray = okSettings.getShowSystemTray();
@@ -122,6 +122,7 @@ void GeneralForm::on_transComboBox_currentIndexChanged(int index)
     auto & s = ok::base::OkSettings::getInstance();
     const QString& locale = s.getLocales().at(index);
     s.setTranslation(locale);
+    s.saveGlobal();
     settings::Translator::translate(OK_IM_MODULE, locale);
 }
 
@@ -149,12 +150,6 @@ void GeneralForm::on_startInTray_stateChanged()
 void GeneralForm::on_closeToTray_stateChanged()
 {
     ok::base::OkSettings::getInstance().setCloseToTray(bodyUI->closeToTray->isChecked());
-}
-
-void GeneralForm::on_lightTrayIcon_stateChanged()
-{
-    Settings::getInstance().setLightTrayIcon(bodyUI->lightTrayIcon->isChecked());
-    emit updateIcons();
 }
 
 void GeneralForm::on_minimizeToTray_stateChanged()
