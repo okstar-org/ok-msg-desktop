@@ -83,9 +83,6 @@ signals:
 public slots:
   void renameGroupWidget(GroupWidget *groupWidget, const QString &newName);
 
-//  void renameCircleWidget(CircleWidget *circleWidget, const QString &newName);
-  void onFriendWidgetRenamed(FriendWidget *friendWidget);
-
   void slot_friendClicked(GenericChatroomWidget *);
   void moveWidget(FriendWidget *w, Status::Status s, bool add = false);
 
@@ -107,8 +104,7 @@ private slots:
 private:
 
   QLayout *nextLayout(QLayout *layout, bool forward) const;
-  void moveFriends(QLayout *layout);
-//  CategoryWidget *getTimeCategoryWidget(const IMFriend *frd) const;
+
   void sortByMode(SortingMode mode);
   void connectFriendWidget(FriendWidget &friendWidget);
   void updateFriendActivity(const Friend &frnd);
