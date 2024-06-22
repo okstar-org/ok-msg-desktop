@@ -31,7 +31,7 @@ QString getAutostartFilePath(QString dir) {
 }
 
 inline QString currentCommandLine() {
-  return "\"" + QApplication::applicationFilePath();
+  return QApplication::applicationFilePath();
 }
 } // namespace Platform
 
@@ -45,9 +45,9 @@ bool Platform::setAutorun(bool on) {
     desktop.write("[Desktop Entry]\n");
     desktop.write("Type=Application\n");
     desktop.write("Name=" APPLICATION_EXE_NAME "\n");
-    desktop.write("Exec=");
+    desktop.write("Exec=\"");
     desktop.write(currentCommandLine().toUtf8());
-    desktop.write("\n");
+    desktop.write("\"\n");
     desktop.close();
     return true;
   } else

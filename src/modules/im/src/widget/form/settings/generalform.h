@@ -41,7 +41,6 @@ private slots:
     void on_showSystemTray_stateChanged();
     void on_startInTray_stateChanged();
     void on_closeToTray_stateChanged();
-    void on_lightTrayIcon_stateChanged();
     void on_autoAwaySpinBox_editingFinished();
     void on_minimizeToTray_stateChanged();
     void on_statusChanges_stateChanged();

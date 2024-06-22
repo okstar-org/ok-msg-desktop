@@ -39,12 +39,15 @@ NetworkHttp::NetworkHttp(QObject *parent) : QObject(parent),
     _manager{nullptr} {
     qDebug() << __func__;
 #ifndef QT_NO_SSL
-   bool supportsSsl = QSslSocket::supportsSsl();
-   qDebug() << "supportsSsl    :" << supportsSsl;
    QString buildVersion = QSslSocket::sslLibraryBuildVersionString();
-   qDebug() << "buildVersion   :" << buildVersion;
-   QString libraryVersion = QSslSocket::sslLibraryVersionString();
-   qDebug() << "libraryVersion :" << libraryVersion;
+   qDebug() << "The build ssl library version is:" << buildVersion;
+
+   bool supportsSsl = QSslSocket::supportsSsl();
+   qDebug() << "Detected ssl:" << supportsSsl;
+   if(supportsSsl){
+       QString libraryVersion = QSslSocket::sslLibraryVersionString();
+        qDebug() << "libraryVersion:" << libraryVersion;
+   }
 #endif
   //  QNetworkAccessManager
   _manager = new QNetworkAccessManager(this);
