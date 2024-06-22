@@ -513,12 +513,18 @@ if (WIN32)
         )
         
 
-    set(PLATFORM_LIBS msvcrt d3d11 dxgi dxva2 gdi32
+    set(PLATFORM_LIBS d3d11 dxgi dxva2 gdi32
                         wmcodecdspuuid Winmm Mf Mfplat Mfreadwrite mfuuid evr 
                         amstrmid msdmo strmiids strmbase
                         winspool comdlg32 uuid shlwapi iphlpapi 
                         kernel32 user32 Vfw32 shell32 oleaut32 ole32 advapi32
     )
+
+    if(CMAKE_BUILD_TYPE MATCHES "Debug")
+        set(PLATFORM_LIBS ${PLATFORM_LIBS} MSVCRTD)
+    else()
+        set(PLATFORM_LIBS ${PLATFORM_LIBS} MSVCRT)
+    endif()
 elseif (UNIX)
     set(PLATFORM_LIBS z OpenSSL::SSL OpenSSL::Crypto atomic X11)
 endif ()
