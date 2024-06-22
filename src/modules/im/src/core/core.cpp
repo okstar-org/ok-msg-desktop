@@ -1527,6 +1527,10 @@ void Core::onSelfAvatarChanged(const std::string avatar) {
 
 //  emit avatarSet(a);
   auto p = Nexus::getProfile();
+  if (!p) {
+    qWarning() << "Can not get profile!";
+    return;
+  }
   p->setAvatar(a);
 
 }

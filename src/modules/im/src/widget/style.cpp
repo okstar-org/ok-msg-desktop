@@ -247,8 +247,7 @@ const QString Style::resolve(const QString& filename, const QFont& baseFont)
 
     if (dictFont.isEmpty()) {
         dictFont = {
-            {"@baseFont",
-             QString::fromUtf8("'%1' %2px").arg(baseFont.family()).arg(QFontInfo(baseFont).pixelSize())},
+            {"@baseFont", QString::fromUtf8("'%1' %2px").arg(baseFont.family()).arg(QFontInfo(baseFont).pixelSize())},
             {"@extraBig", qssifyFont(Style::getFont(Style::ExtraBig))},
             {"@big", qssifyFont(Style::getFont(Style::Big))},
             {"@bigBold", qssifyFont(Style::getFont(Style::BigBold))},
