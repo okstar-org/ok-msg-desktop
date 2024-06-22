@@ -111,7 +111,7 @@ void AuthSession::onLoginSuccessed(const SignInInfo &signIn)
                 break;
               }
               case ::lib::messenger::IMConnectStatus::TIMEOUT: {
-                msg = "请求超时！";
+                msg = tr("TIMEOUT");
                 break;
               }case ::lib::messenger::IMConnectStatus::CONNECTED:{
                   LoginResult result{Status::FAILURE, msg};

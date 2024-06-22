@@ -115,14 +115,14 @@ Widget::Widget(IAudioControl &audio, QWidget *parent)//
   setObjectName(qsl("Page:%1").arg(static_cast<int>(UI::PageMenu::chat)));
 
 
-  chatWidget = std::make_unique<ChatWidget>();
-  ui->tabWidget->addTab(chatWidget.get(), tr("Chat"));
+  chatWidget = new ChatWidget(this);
+  ui->tabWidget->addTab(chatWidget, tr("Chat"));
 
-  contactWidget = std::make_unique<ContactWidget>();
-  ui->tabWidget->addTab(contactWidget.get(), tr("Contact"));
+  contactWidget = new ContactWidget(this);
+  ui->tabWidget->addTab(contactWidget, tr("Contact"));
 
-  settingsWidget = std::make_unique<SettingsWidget>();
-  ui->tabWidget->addTab(settingsWidget.get(), tr("Settings"));
+  settingsWidget = new SettingsWidget(this);
+  ui->tabWidget->addTab(settingsWidget, tr("Settings"));
 
   installEventFilter(this);
   QString locale = settings.getTranslation();
@@ -1603,12 +1603,9 @@ void Widget::reloadTheme() {
 
 void Widget::retranslateUi() {
   ui->retranslateUi(this);
-
-  if (!settings.getSeparateWindow() &&
-      (settingsWidget && settingsWidget->isShown())) {
-    setWindowTitle(fromDialogType(DialogType::SettingDialog));
-  }
-
+  ui->tabWidget->setTabText(0, tr("Chat"));
+  ui->tabWidget->setTabText(1, tr("Contact"));
+  ui->tabWidget->setTabText(2, tr("Settings"));
 
 #ifdef Q_OS_MAC
   Nexus::getInstance().retranslateUi();

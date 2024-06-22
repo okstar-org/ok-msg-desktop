@@ -31,6 +31,10 @@
         <source>OUT_OF_RESOURCE</source>
         <translation>系统资源受限</translation>
         </message>
+            <message>
+                <source>TIMEOUT</source>
+                <translation>超时</translation>
+            </message>
         <message>
         <source>...</source>
         <translation>进行中</translation>

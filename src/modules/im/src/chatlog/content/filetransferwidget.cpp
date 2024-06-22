@@ -507,6 +507,8 @@ void FileTransferWidget::handleButton(QPushButton* btn)
 
 void FileTransferWidget::showPreview(const QString& filename)
 {
+    qDebug() << __func__ << filename;
+
     static const QStringList previewExtensions = {"png", "jpeg", "jpg", "gif", "svg",
                                                   "PNG", "JPEG", "JPG", "GIF", "SVG"};
 
@@ -518,10 +520,15 @@ void FileTransferWidget::showPreview(const QString& filename)
         if (!imageFile.open(QIODevice::ReadOnly)) {
             return;
         }
-        const QByteArray imageFileData = imageFile.readAll();
-        QImage image = QImage::fromData(imageFileData);
-        const int exifOrientation =
-            getExifOrientation(imageFileData.constData(), imageFileData.size());
+
+        auto imageFileData = imageFile.readAll();
+        auto image = QImage::fromData(imageFileData);
+        if(image.isNull()){
+            qWarning() <<"Unable to read the image data!";
+            return;
+        }
+
+        const int exifOrientation = getExifOrientation(imageFileData.constData(), imageFileData.size());
         if (exifOrientation) {
             applyTransformation(exifOrientation, image);
         }
@@ -531,6 +538,7 @@ void FileTransferWidget::showPreview(const QString& filename)
         ui->previewButton->setIcon(QIcon(iconPixmap));
         ui->previewButton->setIconSize(iconPixmap.size());
         ui->previewButton->show();
+
         // Show mouseover preview, but make sure it's not larger than 50% of the screen
         // width/height
         const QRect desktopSize = QApplication::desktop()->geometry();
