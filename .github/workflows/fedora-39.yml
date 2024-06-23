@@ -16,7 +16,7 @@ on:
 
 jobs:
   build:
-    runs-on: [self-hosted, fedora-39]
+    runs-on: [fedora-39, fedora39]
 
     strategy:
       # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
@@ -28,6 +28,7 @@ jobs:
         os: [fedora-39]
         build_type: [Release]
         c_compiler: [gcc]
+        cpp_compiler: [g++]
         include:
           - os: fedora-39
             c_compiler: gcc
