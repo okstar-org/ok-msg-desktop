@@ -2,16 +2,17 @@
   "name": "ok-msg-project",
   "version": "2.0",
   "dependencies": [
-    "ffmpeg",
+    {
+      "name": "ffmpeg",
+      "features": ["vpx"]
+    },
     "libexif",
     "libqrencode",
     "mozjpeg",
     "sqlite3",
     "openal-soft",
-    "libvpx",
     "opus",
-    "openh264",
-    "libsodium"
+    "openh264"
   ],
   "overrides": [
     {
@@ -29,10 +30,6 @@
     {
       "name": "libexif",
       "version": "0.6.24#1"
-    },
-    {
-      "name": "libvpx",
-      "version": "1.13.1"
     },
     {
       "name": "libqrencode",

@@ -31,7 +31,7 @@
 #include <QThread>
 #include <cassert>
 #include <src/audio/audio.h>
-#include <vpx/vpx_image.h>
+
 
 #ifdef Q_OS_MAC
 #include <QActionGroup>
@@ -125,8 +125,8 @@ void Nexus::onSave(SavedInfo &savedInfo) {
 
 
     if (!profile) {
-      qWarning() << "不能创建新的Profile，个人信息初始化异常或者重复登录";
-      emit createProfileFailed("个人信息初始化异常或者重复登录!");
+      qWarning() << tr("Can not create profile!");
+      emit createProfileFailed(tr("Can not create profile!"));
       return;
     }
 
@@ -150,7 +150,7 @@ void Nexus::onSave(SavedInfo &savedInfo) {
 
     // Setup the environment
     qRegisterMetaType<Status::Status>("Status::Status");
-    qRegisterMetaType<vpx_image>("vpx_image");
+   
     qRegisterMetaType<uint8_t>("uint8_t");
     qRegisterMetaType<uint16_t>("uint16_t");
     qRegisterMetaType<uint32_t>("uint32_t");

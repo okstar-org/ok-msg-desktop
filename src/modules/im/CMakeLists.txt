@@ -12,13 +12,12 @@ if (WIN32)
     pkg_check_modules(SWSCALE REQUIRED libswscale)
     pkg_check_modules(SWRESAMPLE REQUIRED libswresample)
 
-    pkg_check_modules(libsodium REQUIRED libsodium )
     pkg_check_modules(QRENCODE REQUIRED libqrencode )
     pkg_check_modules(OpenAL REQUIRED openal)
     pkg_check_modules(sqlite3 REQUIRED sqlite3)
     pkg_check_modules(exif REQUIRED libexif)
-    pkg_check_modules(vpx REQUIRED vpx)
-   pkg_check_modules(JPEG REQUIRED libjpeg)
+
+    pkg_check_modules(JPEG REQUIRED libjpeg)
 
     list(APPEND ALL_LIBRARIES
             ${AVDEVICE_LINK_LIBRARIES}
@@ -28,9 +27,6 @@ if (WIN32)
             ${SWSCALE_LINK_LIBRARIES}
             ${QRENCODE_LINK_LIBRARIES}
             ${JPEG_LINK_LIBRARIES}
-    
-            PRIVATE ${libsodium_LINK_LIBRARIES}
-            PRIVATE ${vpx_LINK_LIBRARIES}
             PRIVATE ${exif_LINK_LIBRARIES}
             PRIVATE ${sqlite3_LINK_LIBRARIES}
             PRIVATE ${OpenAL_LINK_LIBRARIES}
@@ -142,8 +138,8 @@ set(${PROJECT_NAME}_SOURCES
         src/core/groupid.h
         src/core/toxoptions.cpp
         src/core/toxoptions.h
-		    src/core/FriendId.cpp
-		    src/core/FriendId.h
+        src/core/FriendId.cpp
+	src/core/FriendId.h
         src/core/contactid.cpp
         src/core/contactid.h
         src/friendlist.cpp
@@ -401,7 +397,7 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     set(${PROJECT_NAME}_SOURCES
             ${${PROJECT_NAME}_SOURCES} src/platform/camera/directshow.cpp
             src/platform/camera/directshow.h)
-    set(${PROJECT_NAME}_RESOURCES ${${PROJECT_NAME}_RESOURCES} windows/qtox.rc)
+    set(${PROJECT_NAME}_RESOURCES ${${PROJECT_NAME}_RESOURCES})
 elseif (${CMAKE_SYSTEM_NAME} MATCHES "Linux" OR ${CMAKE_SYSTEM_NAME} MATCHES
         "FreeBSD")
     set(${PROJECT_NAME}_SOURCES
@@ -514,15 +510,21 @@ if (WIN32)
             ${AVFORMAT_INCLUDE_DIRS}
             ${AVUTIL_INCLUDE_DIRS}
             ${SWSCALE_INCLUDE_DIRS}
-          
         )
         
 
-    set(PLATFORM_LIBS d3d11 dxgi shlwapi
-            Iphlpapi dwmapi dmoguids wmcodecdspuuid Winmm
-            amstrmid msdmo strmiids strmbase psapi
-            Vfw32 shell32 oleaut32 ole32 user32 advapi32
-            bcrypt Mf Mfplat Mfreadwrite mfuuid dxva2 evr )
+    set(PLATFORM_LIBS d3d11 dxgi dxva2 gdi32
+                        wmcodecdspuuid Winmm Mf Mfplat Mfreadwrite mfuuid evr 
+                        amstrmid msdmo strmiids strmbase
+                        winspool comdlg32 uuid shlwapi iphlpapi 
+                        kernel32 user32 Vfw32 shell32 oleaut32 ole32 advapi32
+    )
+
+    if(CMAKE_BUILD_TYPE MATCHES "Debug")
+        set(PLATFORM_LIBS ${PLATFORM_LIBS} MSVCRTD)
+    else()
+        set(PLATFORM_LIBS ${PLATFORM_LIBS} MSVCRT)
+    endif()
 elseif (UNIX)
     set(PLATFORM_LIBS z OpenSSL::SSL OpenSSL::Crypto atomic X11)
 endif ()
@@ -541,7 +543,5 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 if (MSVC)
-    set_property(
-            TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY
-            "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    set_property(TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif (MSVC)

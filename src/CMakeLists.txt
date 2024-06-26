@@ -52,24 +52,13 @@ else ()
 endif ()
 
 
-
-
 target_link_libraries(
     ${PROJECT_NAME}
     PRIVATE ${OK_LIBS}
-    #        PRIVATE ${Qt5Core_LIBRARIES}
-    #        PRIVATE ${Qt5Gui_LIBRARIES}
-    #        PRIVATE ${Qt5Network_LIBRARIES}
-    #        PRIVATE ${Qt5Widgets_LIBRARIES}
-    #        PRIVATE ${Qt5MultimediaWidgets_LIBRARIES}
-    #        PRIVATE ${Qt5Multimedia_LIBRARIES}
-    #        PRIVATE ${Qt5Xml_LIBRARIES}
 )
 
 if (MSVC)
-    set_property(
-        TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY
-        "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    set_property(TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>") 
 endif (MSVC)
 
 set(PNG_NAME "ok-msg.png")
@@ -150,7 +139,7 @@ if(LINUX AND OK_CPACK)
         set(CPACK_RPM_PACKAGE_AUTOREQ ${OK_MAINTAINER})
         set(CPACK_RPM_PACKAGE_REQUIRES "qt5-qtbase,qt5-qtbase-gui,qt5-qtsvg,qt5-qtmultimedia,qt5-linguist,qt5-qttools,qt5-qtscxml,qt5-qttools-static,\
             libvpx,ffmpeg-free, libavcodec-free-devel, libavdevice-free,libexif,\
-            qrencode-libs, libsodium-devel sqlcipher, \
+						qrencode-libs, \
             openal-soft,openssl-libs")
     endif ()
 

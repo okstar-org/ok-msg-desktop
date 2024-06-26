@@ -23,7 +23,6 @@
 #include <QDebug>
 #include <QThread>
 #include <QTimer>
-#include <QtConcurrent/QtConcurrentRun>
 #include <cassert>
 #include <src/nexus.h>
 
@@ -39,6 +38,7 @@ CoreAV::CoreAV() : audioCtrl{Nexus::getInstance().audio()}, coreavThread{new QTh
   qDebug() << __func__;
 
   qRegisterMetaType<FriendId>("FriendId");
+  qRegisterMetaType<vpx_image>("vpx_image");
 
   connect(this, &CoreAV::createCallToPeerId, this, &CoreAV::doCreateCallToPeerId);
 

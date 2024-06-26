@@ -48,16 +48,16 @@ jobs:
         sudo apt-get update -y
         sudo apt-get install -y libpcre2-dev libudev-dev libmtdev-dev  libinput-dev libdrm-dev libgbm-dev \
         libgtk-3-dev libkrb5-dev
-        # ssl libsodium sqlite sqlcipher
-        sudo apt-get install -y libssl-dev libcrypt-dev libsodium-dev libsqlite3-dev libsqlcipher-dev
+        # ssl sqlite
+        sudo apt-get install -y libssl-dev libcrypt-dev libsqlite3-dev 
         # x11
         sudo apt-get install -y libxcb* libxkb* libfontconfig1-dev \
         libfreetype6-dev libx11-dev libx11-xcb-dev \
         libxext-dev libxfixes-dev libxi-dev libxrender-dev libxss-dev
         # Multimedia
         sudo apt-get install -y libasound2-dev libpulse-dev libopenal-dev libopenal-dev
-        # sqlite sqlcipher sodium
-        sudo apt install -y libsqlite3-dev libsqlcipher-dev libsodium-dev
+        # sqlite
+        sudo apt install -y libsqlite3-dev
         # ffmpeg vpx qrencode 
         sudo apt install -y libvpx-dev libjpeg-dev libexif-dev libtiff-dev libpng16-16 libpng-dev libavcodec-dev libavdevice-dev libqrencode-dev
 

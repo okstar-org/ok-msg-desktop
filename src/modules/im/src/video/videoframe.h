@@ -19,15 +19,14 @@
 #include <QRect>
 #include <QSize>
 
-extern "C" {
-#include <libavcodec/avcodec.h>
-}
 
 #include <atomic>
 #include <cstdint>
 #include <functional>
 #include <memory>
 #include <unordered_map>
+
+struct AVFrame;
 
 struct ToxYUVFrame
 {

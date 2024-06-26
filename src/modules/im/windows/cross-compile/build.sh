@@ -688,39 +688,6 @@ else
   echo "Using cached build of Opus `cat $OPUS_PREFIX_DIR/done`"
 fi
 
-
-# Sodium
-
-SODIUM_PREFIX_DIR="$DEP_DIR/libsodium"
-SODIUM_VERSION=1.0.18
-SODIUM_HASH="6f504490b342a4f8a4c4a02fc9b866cbef8622d5df4e5452b46be121e46636c1"
-SODIUM_FILENAME="libsodium-$SODIUM_VERSION.tar.gz"
-if [ ! -f "$SODIUM_PREFIX_DIR/done" ]
-then
-  rm -rf "$SODIUM_PREFIX_DIR"
-  mkdir -p "$SODIUM_PREFIX_DIR"
-
-  curl $CURL_OPTIONS -O "https://download.libsodium.org/libsodium/releases/$SODIUM_FILENAME"
-  check_sha256 "$SODIUM_HASH" "$SODIUM_FILENAME"
-  bsdtar --no-same-owner --no-same-permissions -xf "$SODIUM_FILENAME"
-  rm "$SODIUM_FILENAME"
-  cd libsodium*
-
-  ./configure --host="$ARCH-w64-mingw32" \
-              --prefix="$SODIUM_PREFIX_DIR" \
-              --enable-shared \
-              --disable-static
-  make
-  make install
-  echo -n $SODIUM_VERSION > $SODIUM_PREFIX_DIR/done
-
-  cd ..
-  rm -rf ./libsodium*
-else
-  echo "Using cached build of Sodium `cat $SODIUM_PREFIX_DIR/done`"
-fi
-
-
 # VPX
 
 VPX_PREFIX_DIR="$DEP_DIR/libvpx"

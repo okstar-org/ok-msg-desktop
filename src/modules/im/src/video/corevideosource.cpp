@@ -17,6 +17,7 @@ extern "C" {
 
 #include "corevideosource.h"
 #include "videoframe.h"
+#include "../core/toxcall.h"
 
 /**
  * @class CoreVideoSource

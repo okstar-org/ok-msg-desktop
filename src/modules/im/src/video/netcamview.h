@@ -17,8 +17,9 @@
 #include "src/core/FriendId.h"
 #include <QVector>
 
-class QHBoxLayout;
 struct vpx_image;
+
+class QHBoxLayout;
 class VideoSource;
 class QFrame;
 class MovableWidget;

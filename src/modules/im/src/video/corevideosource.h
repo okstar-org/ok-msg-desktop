@@ -17,7 +17,8 @@
 #include "videosource.h"
 #include <QMutex>
 #include <atomic>
-#include <vpx/vpx_image.h>
+
+struct vpx_image;
 
 class CoreVideoSource : public VideoSource
 {
@@ -32,7 +33,7 @@ public:
 private:
 
 
-    void pushFrame(const vpx_image_t* frame);
+    void pushFrame(const vpx_image* frame);
     void setDeleteOnClose(bool newstate);
 
     void stopSource();

@@ -72,22 +72,6 @@ modules:
         url: https://sourceforge.net/projects/tcl/files/Tcl/8.6.14/tk8.6.14-src.tar.gz
         sha256: 8ffdb720f47a6ca6107eac2dd877e30b0ef7fac14f3a84ebbd0b3612cee41a94
 
-  - name: libsodium
-    buildsystem: autotools
-    builddir: true
-    sources:
-      - type: archive
-        url: https://github.com/jedisct1/libsodium/archive/refs/tags/1.0.19-RELEASE.tar.gz
-        sha256: 4fb996013283f482f46a457c8ff2c1495e797788e78e8ec56b1aa1b19253bf75
-
-  - name: sqlcipher
-    buildsystem: autotools
-    builddir: true
-    sources:
-      - type: archive
-        url: https://github.com/sqlcipher/sqlcipher/archive/refs/tags/v4.5.6.tar.gz
-        sha256: e4a527e38e67090c1d2dc41df28270d16c15f7ca5210a3e7ec4c4b8fda36e28f
-
   - name: ok-rtc
     buildsystem: cmake-ninja
     sources:
