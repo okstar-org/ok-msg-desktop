@@ -26,6 +26,8 @@ QDialog
 QWidget#contentWidget
 {
     background: @groundBase;
+    border: 0px solid;
+    border-radius: 10px;
 }
 
 QTabWidget

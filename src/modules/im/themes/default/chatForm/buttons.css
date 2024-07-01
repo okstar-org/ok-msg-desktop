@@ -14,53 +14,67 @@
 
 QAbstractButton#emoteButton
 {
-    background-image: url("@getImagePath(chatForm/emoteButton.svg)");
-    border-top-right-radius: 5px;
+    icon: url("@getImagePath(chatForm/emoteButton.svg)");
     width: 24px;
     height: 24px;
 }
 
 QAbstractButton#fileButton
 {
-    background-image: url("@getImagePath(chatForm/fileButton.svg)");
-    border-bottom-right-radius: 5px;
+    icon: url("@getImagePath(chatForm/fileButton.svg)");
     width: 24px;
     height: 24px;
 }
 
 QAbstractButton#screenshotButton
 {
-    background-image: url("@getImagePath(chatForm/screenshotButton.svg)");
-    border-top-left-radius: 5px;
+    icon: url("@getImagePath(chatForm/screenshotButton.svg)");
     width: 24px;
     height: 24px;
 }
 
+QAbstractButton#emoteButton,
+QAbstractButton#fileButton,
+QAbstractButton#screenshotButton
+{
+    icon-size: 20px;
+    background-color: white;
+    border-radius: 3px;
+}
+
+QAbstractButton#emoteButton:hover,
+QAbstractButton#fileButton:hover,
+QAbstractButton#screenshotButton:hover
+{
+    background-color: #F0F3F8;
+}
+
 QAbstractButton#sendButton
 {
-    background-image: url("@getImagePath(chatForm/sendButton.svg)");
+    icon: url("@getImagePath(chatForm/sendButton.svg)");
+    icon-size: 16px;
     border-radius: 5px;
+    background-color: #2A67F6;
     width: 50px;
-    height: 50px;
+    height: 26px;
 }
 
 QAbstractButton#encryptButton
 {
-    background-image: url("@getImagePath(chatForm/encrypt_off.svg)");
-    border-radius: 5px;
-    width: 50px;
-    height: 50px;
+    icon: url("@getImagePath(chatForm/encrypt_off.svg)");
+    icon-size: 20px;
+    width: 24px;
+    height: 24px;
     background-color: #c84e4e;
 }
 
 QAbstractButton#encryptButton:checked
 {
-    background-image: url("@getImagePath(chatForm/encrypt_on.svg)");
-    border-radius: 5px;
-    width: 50px;
-    height: 50px;
+    icon: url("@getImagePath(chatForm/encrypt_on.svg)");
+    icon-size: 20px;
+    width: 24px;
+    height: 24px;
     background-color: #51b244;
-
 }
 
 /* Header */
@@ -83,18 +97,22 @@ QAbstractButton#micButton
 
 QAbstractButton#videoButton
 {
-    background-image: url("@getImagePath(chatForm/videoButton.svg)");
-    border-radius: 5px;
-    width: 50px;
-    height: 40px;
+    icon: url("@getImagePath(chatForm/videoButton.svg)");
+    icon-size: 18px;
+    background-color: #FC034D;
+    border-radius: 16px;
+    width: 32px;
+    height: 32px;
 }
 
 QAbstractButton#callButton
 {
-    background-image: url("@getImagePath(chatForm/callButton.svg)");
-    border-radius: 5px;
-    width: 50px;
-    height: 40px;
+    icon: url("@getImagePath(chatForm/callButton.svg)");
+    icon-size: 18px;
+    background-color: #372E7F;
+    border-radius: 16px;
+    width: 32px;
+    height: 32px;
 }
 
 /* SearchLine */
