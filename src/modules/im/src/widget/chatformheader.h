@@ -29,6 +29,7 @@ class QToolButton;
 class CallConfirmWidget;
 class ToxPeer;
 class Contact;
+class QLabel;
 
 
 class ChatFormHeader : public QWidget
@@ -71,7 +72,6 @@ public:
     void removeCallConfirm();
 
 
-
     void updateMuteMicButton(bool active, bool inputMuted);
     void updateMuteVolButton(bool active, bool outputMuted);
 
@@ -106,8 +106,6 @@ signals:
     void callAccepted(const ToxPeer& peerId, bool video);
     void callRejected(const ToxPeer& peerId);
 
-
-
 private slots:
     void retranslateUi();
     void updateButtonsView();
@@ -115,13 +113,18 @@ private slots:
     void onDisplayedNameChanged(const QString& name);
 
 private:
-    const ContactId& contactId;
-    const Contact* contact;
+    void updateContactStatus(Status::Status status);
+
+private:
+    const Contact* contact = nullptr;
+    bool isSelf = false;
 
     Mode mode;
     MaskablePixmapWidget* avatar;
     QVBoxLayout* headTextLayout;
     CroppingLabel* nameLabel;
+    QLabel *statusLabel = nullptr;
+    QToolButton *statusIcon = nullptr;
 
     QPushButton* callButton;
     QPushButton* videoButton;
@@ -129,8 +132,7 @@ private:
     CallButtonState callState;
     CallButtonState videoState;
 
-
     std::unique_ptr<CallConfirmWidget> callConfirm;
-};
+}; 
 
 #endif // CHAT_FORM_HEADER

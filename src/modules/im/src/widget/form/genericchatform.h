@@ -110,8 +110,6 @@ protected slots:
     void clearChatArea();
     void clearChatArea(bool confirm, bool inform);
     void onSelectAllClicked();
-    void showFileMenu();
-    void hideFileMenu();
     void onShowMessagesClicked();
     void onSplitterMoved(int pos, int index);
     void quoteSelectedText();
@@ -147,7 +145,6 @@ protected:
     //                                const QDateTime& datetime, bool isAction, bool isSent, bool colorizeName = false);
     bool needsToHideName(ChatLogIdx idx) const;
 
-    void adjustFileMenuPosition();
     void disableSearchText();
     bool searchInText(const QString& phrase, const ParameterSearch& parameter, SearchDirection direction);
     std::pair<int, int> indexForSearchInLine(const QString& txt, const QString& phrase, const ParameterSearch& parameter, SearchDirection direction);
@@ -155,10 +152,8 @@ protected:
 
     virtual void insertChatMessage(IChatItem::Ptr msg);
 
-    virtual void hideEvent(QHideEvent* event) override;
     virtual void showEvent(QShowEvent*) override;
     virtual bool event(QEvent*) final override;
-    virtual void resizeEvent(QResizeEvent* event) final override;
     virtual bool eventFilter(QObject* object, QEvent* event) final override;
 
 
@@ -199,7 +194,6 @@ protected:
 #ifdef SPELL_CHECKING
     Sonnet::SpellCheckDecorator* decorator{nullptr};
 #endif
-    FlyoutOverlayWidget* fileFlyout;
 
     Widget* parent;
 

@@ -15,6 +15,9 @@
 #include <QLineEdit>
 #include <QResizeEvent>
 #include <QTextDocument>
+#include <QStyle>
+#include <QStyleOptionFrame>
+#include <QApplication>
 
 CroppingLabel::CroppingLabel(QWidget* parent)
     : QLabel(parent)
@@ -99,10 +102,16 @@ QSize CroppingLabel::sizeHint() const
 QSize CroppingLabel::minimumSizeHint() const
 {
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
-    return QSize(fontMetrics().horizontalAdvance("..."), QLabel::minimumSizeHint().height());
+    QSize s(fontMetrics().horizontalAdvance("..."), QLabel::minimumSizeHint().height());
 #else
-    return QSize(fontMetrics().width("..."), QLabel::minimumSizeHint().height());
+    QSize s(fontMetrics().width("..."), QLabel::minimumSizeHint().height());
 #endif
+    const int v_margin = 2; // from Qt
+    const int h_margin = 4; // from Qt
+    s += QSize(h_margin, v_margin);
+    QStyleOptionFrame opt;
+    initStyleOption(&opt);
+    return (style()->sizeFromContents(QStyle::CT_LineEdit, &opt, s.expandedTo(QApplication::globalStrut()), this));
 }
 
 void CroppingLabel::mouseReleaseEvent(QMouseEvent* e)

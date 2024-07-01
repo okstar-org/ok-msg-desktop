@@ -15,3 +15,8 @@
     border-radius: 6px;
     background-color: #ccc;
 }
+
+ProfileForm QScrollArea
+{
+   border: 0px solid; 
+}

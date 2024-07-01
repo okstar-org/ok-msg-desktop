@@ -17,10 +17,14 @@
 #include <QStackedWidget>
 #include <QVBoxLayout>
 #include <QVector>
+#include <QAbstractListModel>
+#include <QTableView>
+#include <QStyledItemDelegate>
 
 #include <memory>
 
 class QIcon;
+class QPushButton;
 
 class EmoticonsWidget : public QMenu
 {
@@ -32,7 +36,7 @@ signals:
     void insertEmoticon(QString str);
 
 private slots:
-    void onSmileyClicked();
+    void onSmileyClicked(const QString & text);
     void onPageButtonClicked();
     void PageButtonsUpdate();
 
@@ -49,6 +53,53 @@ private:
 
 public:
     QSize sizeHint() const override;
+};
+
+class EmoticonsPageModel;
+
+class EmoticonsPageView : public QTableView {
+  public:
+    QSize sizeHint() const override;
+    QSize minimumSizeHint() const override;
+    EmoticonsPageView(QWidget *parent);
+    void setRange(int start, int end);
+
+  private:
+    EmoticonsPageModel *pageModel = nullptr;
+};
+
+class EmoticonsPageModel : public QAbstractTableModel {
+  public:
+    enum PageModelRole {
+        EmojiText = Qt::UserRole + 0x0100,
+        HasContent
+    };
+    EmoticonsPageModel(QObject *parent);
+    void setRange(int start, int end);
+    int rowCount(const QModelIndex &parent) const override;
+    int columnCount(const QModelIndex &parent) const override;
+    QVariant data(const QModelIndex &index, int role) const override;
+    Qt::ItemFlags flags(const QModelIndex &index) const override;
+
+  private:
+    int start = 0;
+    int end = 0;
+    int hoverIndex = -1;
+    const QList<QStringList> allEmoticons;
+};
+
+class EmoticonsPageDelegate : public QStyledItemDelegate
+{
+  public:
+    EmoticonsPageDelegate(QObject *parent);
+    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
+  protected:
+    void initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const;
+    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    
+  private:
+    int iconSize = 24;
+
 };
 
 #endif // EMOTICONSWIDGET_H

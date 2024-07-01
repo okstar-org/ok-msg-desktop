@@ -13,3 +13,7 @@
 ChatWidget {
 
 }
+
+QWidget#ContentSeperator{
+    background: white;
+}
