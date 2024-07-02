@@ -120,6 +120,10 @@ jobs:
         cp ${{ steps.strings.outputs.build-output-dir }}\src\${{ matrix.build_type }}\ok-msg-desktop.exe ${{ env.ARTIFACT_PATH }}
         xcopy build\vcpkg_installed\${{ env.VCPKG_DEFAULT_TRIPLET }}\bin\*.dll ${{ env.ARTIFACT_PATH }}
         xcopy "$env:Qt5_Dir\bin\*.dll" ${{ env.ARTIFACT_PATH }}
+        echo "$env:Qt5_Dir\..\..\Tools\QtCreator\bin\libcrypto-1_1-x64.dll"
+        echo "$env:Qt5_Dir\..\..\Tools\QtCreator\bin\libssl-1_1-x64.dl"
+        xcopy "$env:Qt5_Dir\..\..\Tools\QtCreator\bin\libcrypto-1_1-x64.dll" ${{ env.ARTIFACT_PATH }}
+        xcopy "$env:Qt5_Dir\..\..\Tools\QtCreator\bin\libssl-1_1-x64.dll" ${{ env.ARTIFACT_PATH }}
         Copy-Item -Recurse $env:Qt5_Dir\plugins ${{ env.ARTIFACT_PATH }}
         xcopy LICENSE ${{ env.ARTIFACT_PATH }}
 
