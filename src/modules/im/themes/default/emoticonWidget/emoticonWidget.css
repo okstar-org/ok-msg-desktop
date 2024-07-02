@@ -10,13 +10,29 @@
  * See the Mulan PubL v2 for more details.
  */
 
-QPushButton
+#PageIndexContainer QPushButton
 {
-    background-color: transparent;
-    background-repeat: none;
-    border: none;
-    width: 24px;
-    height: 24px;
+     icon: url(@getImagePath(emoticonWidget/dot_page.svg));
+     icon-size: 10px;
+     height: 12px;
+     width: 12px;
+     background: transparent;
+     padding: 0px;
+}
+
+#PageIndexContainer QPushButton:unchecked:hover
+{
+     icon: url(@getImagePath(emoticonWidget/dot_page_hover.svg));
+}
+
+#PageIndexContainer QPushButton:unchecked:pressed
+{
+     icon: url(@getImagePath(emoticonWidget/dot_page_hover.svg));
+}
+
+#PageIndexContainer QPushButton:checked
+{
+     icon: url(@getImagePath(emoticonWidget/dot_page_current.svg));
 }
 
 QRadioButton::indicator
@@ -51,19 +67,20 @@ QMenu
      border: 0px solid;
 }
 
-QAbstractItemView
+EmoticonsPageView
 {
      background: transparent;
 }
 
-QAbstractItemView::item
+EmoticonsPageView #emoticonsItem
 {
      border: 0px solid;
      border-radius: 4px;
      background: transparent;
+     padding: 0px;
 }
 
-QAbstractItemView::item:hover
+EmoticonsPageView #emoticonsItem:hover
 {
      background:rgba(255, 255, 255, 20%)
 }
