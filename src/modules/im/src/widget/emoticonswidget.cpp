@@ -21,14 +21,16 @@
 #include <QMouseEvent>
 #include <QPushButton>
 #include <QRadioButton>
-#include <QHeaderView>
 #include <QApplication>
+#include <QToolButton>
+#include <QPainter>
+#include <QButtonGroup>
 
 #include <math.h>
 
 constexpr int emoji_layout_rows = 8;
 constexpr int emoji_layout_cols = 8;
-constexpr int emoji_cell_ext = 6;
+constexpr int emoji_layout_spacing = 4;
 
 EmoticonsWidget::EmoticonsWidget(QWidget* parent)
     : QMenu(parent)
@@ -38,8 +40,9 @@ EmoticonsWidget::EmoticonsWidget(QWidget* parent)
     layout.addWidget(&stack);
 
     QWidget* pageButtonsContainer = new QWidget;
-    QHBoxLayout* buttonLayout = new QHBoxLayout;
-    pageButtonsContainer->setLayout(buttonLayout);
+    pageButtonsContainer->setObjectName("PageIndexContainer");
+    QHBoxLayout *buttonLayout = new QHBoxLayout(pageButtonsContainer);
+    pageIndexGroup = new QButtonGroup(this);
 
     layout.addWidget(pageButtonsContainer);
 
@@ -50,10 +53,6 @@ EmoticonsWidget::EmoticonsWidget(QWidget* parent)
     const QList<QStringList>& emoticons = SmileyPack::getInstance().getEmoticons();
     int itemCount = emoticons.size();
     int pageCount = ceil(float(itemCount) / float(itemsPerPage));
-    int currPage = 0;
-    int currItem = 0;
-    int row = 0;
-    int col = 0;
 
     // respect configured emoticon size
     const int px = Settings::getInstance().getEmojiFontPointSize();
@@ -65,22 +64,20 @@ EmoticonsWidget::EmoticonsWidget(QWidget* parent)
         EmoticonsPageView *page = new EmoticonsPageView(this);
         page->setRange(itemsPerPage * i, std::min(itemsPerPage * (i + 1), itemCount) - 1);
         stack.addWidget(page);
-        connect(page, &EmoticonsPageView::clicked, this, [this](const QModelIndex &index) {
-            if (index.isValid())
-            {
-                QVariant val = index.data(EmoticonsPageModel::EmojiText);
-                if (val.isValid())
-                    onSmileyClicked(val.toString());
-            }
+        connect(page, &EmoticonsPageView::clicked, this, [this](int index) {
+            const auto emoticons = SmileyPack::getInstance().getEmoticons();
+            onSmileyClicked(emoticons.at(index).at(0));
         });
 
         // page buttons are only needed if there is more than 1 page
         if (pageCount > 1) {
-            QRadioButton* pageButton = new QRadioButton;
+            QPushButton *pageButton = new QPushButton(pageButtonsContainer);
+            pageButton->setCheckable(true);
             pageButton->setProperty("pageIndex", i);
             pageButton->setCursor(Qt::PointingHandCursor);
             pageButton->setChecked(i == 0);
             buttonLayout->addWidget(pageButton);
+            pageIndexGroup->addButton(pageButton);
 
             connect(pageButton, &QRadioButton::clicked, this, &EmoticonsWidget::onPageButtonClicked);
         }
@@ -100,7 +97,7 @@ void EmoticonsWidget::onSmileyClicked(const QString &text) {
 
 void EmoticonsWidget::onPageButtonClicked()
 {
-    QWidget* sender = qobject_cast<QRadioButton*>(QObject::sender());
+    QWidget *sender = qobject_cast<QAbstractButton *>(QObject::sender());
     if (sender) {
         int page = sender->property("pageIndex").toInt();
         stack.setCurrentIndex(page);
@@ -144,8 +141,8 @@ void EmoticonsWidget::wheelEvent(QWheelEvent* e)
 
 void EmoticonsWidget::PageButtonsUpdate()
 {
-    QList<QRadioButton*> pageButtons = this->findChildren<QRadioButton*>(QString());
-    foreach (QRadioButton* t_pageButton, pageButtons) {
+    QList<QAbstractButton *> pageButtons = pageIndexGroup->buttons();
+    foreach (QAbstractButton *t_pageButton, pageButtons) {
         if (t_pageButton->property("pageIndex").toInt() == stack.currentIndex())
             t_pageButton->setChecked(true);
         else
@@ -159,25 +156,17 @@ void EmoticonsWidget::keyPressEvent(QKeyEvent* e)
     hide();
 }
 
+EmoticonsPageView::EmoticonsPageView(QWidget *parent) 
+    : QWidget(parent)
+{
+    setMouseTracking(true);
 
-
-EmoticonsPageView::EmoticonsPageView(QWidget *parent) : QTableView(parent) {
-    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    horizontalHeader()->setVisible(false);
-    verticalHeader()->setVisible(false);
-    horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
-    verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
-
-    int iconSize = Settings::getInstance().getEmojiFontPointSize();
-    horizontalHeader()->setDefaultSectionSize(iconSize + emoji_cell_ext);
-    verticalHeader()->setDefaultSectionSize(iconSize + emoji_cell_ext);
-    
-    setShowGrid(false);
-    setFrameShape(QFrame::NoFrame);
-    pageModel = new EmoticonsPageModel(this);
-    setModel(pageModel);
-    setItemDelegate(new EmoticonsPageDelegate(this));
+    int s = Settings::getInstance().getEmojiFontPointSize();
+    invisible_button = new QToolButton(this);
+    invisible_button->setObjectName("emoticonsItem");
+    invisible_button->setVisible(false);
+    invisible_button->setIconSize(QSize(s, s));
+    invisible_button->setToolButtonStyle(Qt::ToolButtonIconOnly);
 }
 
 QSize EmoticonsPageView::sizeHint() const
@@ -185,134 +174,174 @@ QSize EmoticonsPageView::sizeHint() const
     return minimumSizeHint();
 }
 
-QSize EmoticonsPageView::minimumSizeHint() const {
-
-    int w = horizontalHeader()->length();
-    int h = verticalHeader()->length();
-    return QSize(w, h);
+QSize EmoticonsPageView::minimumSizeHint() const
+{
+    QMargins m = this->contentsMargins();
+    int baseSize = itemSize();
+    int w = (baseSize + emoji_layout_spacing) * emoji_layout_cols - emoji_layout_spacing;
+    int h = (baseSize + emoji_layout_spacing) * emoji_layout_rows - emoji_layout_spacing;
+    return QSize(w + m.top() + m.bottom(), h + m.left() + m.right());
 }
 
 void EmoticonsPageView::setRange(int start, int end)
-{
-    pageModel->setRange(start, end);
-    updateGeometry();
-}
-
-
-EmoticonsPageModel::EmoticonsPageModel(QObject *parent) 
-    : QAbstractTableModel(parent), allEmoticons(SmileyPack::getInstance().getEmoticons()) {
-
-}
-
-void EmoticonsPageModel::setRange(int start, int end)
 {
     this->start = std::max(start, 0);
     this->end = std::max(end, 0);
     if (this->end < this->start)
         std::swap(this->start, this->end);
-}
 
-int EmoticonsPageModel::rowCount(const QModelIndex &parent) const {
-    return emoji_layout_rows;
-}
-
-int EmoticonsPageModel::columnCount(const QModelIndex &parent) const {
-    return emoji_layout_cols;
-}
-
-QVariant EmoticonsPageModel::data(const QModelIndex &index, int role) const {
-    if (!index.isValid())
-        return QVariant();
-    int offset = index.row() * emoji_layout_cols + index.column() + start;
-    if (offset >= allEmoticons.size())
-        return QVariant();
-
-    const QStringList & set = allEmoticons.at(offset);
-    switch (role) {
-    case Qt::DisplayRole:
-        return QVariant();
-    case Qt::DecorationRole:
-        return *SmileyPack::getInstance().getAsIcon(set.value(0)).get();
-    case Qt::ToolTipRole:
-        return set.join(' ');
-    case EmojiText:
-        return set.value(0);
-    case HasContent:
-        return true;
-    default:
-        break;
+    const auto emoticons = SmileyPack::getInstance().getEmoticons();
+    for (int i = this->start; i <= this->end && i < emoticons.count(); i++)
+    {
+        displayCache.append(emoticons.at(i).at(0));
     }
-    return QVariant();
+    updateGeometry();
 }
 
-Qt::ItemFlags EmoticonsPageModel::flags(const QModelIndex &index) const
+void EmoticonsPageView::mouseMoveEvent(QMouseEvent *event)
 {
-    if (data(index, HasContent).toBool())
-        return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
-    return Qt::ItemFlags();
+    int index = indexAtPostion(event->pos());
+    if (index != hoverIndex)
+    {
+        if (hoverIndex >= 0)
+            updateIndex(hoverIndex);
+
+        hoverIndex = index;
+
+        if (hoverIndex >= 0)
+            updateIndex(hoverIndex);
+    }
 }
 
-EmoticonsPageDelegate::EmoticonsPageDelegate(QObject *parent):QStyledItemDelegate(parent)
+void EmoticonsPageView::mousePressEvent(QMouseEvent *event)
 {
-    iconSize = Settings::getInstance().getEmojiFontPointSize();
+    if (event->button() == Qt::LeftButton)
+    {
+        pressedIndex = indexAtPostion(event->pos());
+    }
 }
 
-QSize EmoticonsPageDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
+void EmoticonsPageView::mouseDoubleClickEvent(QMouseEvent *event)
 {
-    return QSize(iconSize, iconSize) + QSize(emoji_cell_ext, emoji_cell_ext);
+    if (event->button() == Qt::LeftButton)
+    {
+        int index = indexAtPostion(event->pos());
+        if (pressedIndex != index)
+            pressedIndex = -1;
+    }
 }
 
-void EmoticonsPageDelegate::initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const
+void EmoticonsPageView::mouseReleaseEvent(QMouseEvent *event)
 {
-    option->index = index;
-    option->features = QStyleOptionViewItem::HasDisplay;
-    option->decorationSize = QSize(iconSize, iconSize); 
-    QVariant value = index.data(Qt::DecorationRole);
-    if (value.isValid() && !value.isNull()) {
-        switch (value.userType()) {
-        case QMetaType::QIcon: {
-            option->icon = qvariant_cast<QIcon>(value);
-            break;
-        }
-        case QMetaType::QColor: {
-            QPixmap pixmap(option->decorationSize);
-            pixmap.fill(qvariant_cast<QColor>(value));
-            option->icon = QIcon(pixmap);
-            break;
-        }
-        case QMetaType::QImage: {
-            QImage image = qvariant_cast<QImage>(value);
-            option->icon = QIcon(QPixmap::fromImage(image));
-            option->decorationSize = image.size() / image.devicePixelRatio();
-            break;
-        }
-        case QMetaType::QPixmap: {
-            QPixmap pixmap = qvariant_cast<QPixmap>(value);
-            option->icon = QIcon(pixmap);
-            option->decorationSize = pixmap.size() / pixmap.devicePixelRatio();
-            break;
-        }
-        default:
-            break;
+    if (event->button() == Qt::LeftButton)
+    {
+        int index = indexAtPostion(event->pos());
+        if (pressedIndex == index && pressedIndex >= 0)
+        {
+            int tmp = pressedIndex + start;
+
+            const auto emoticons = SmileyPack::getInstance().getEmoticons();
+            if (tmp < emoticons.count())
+                emit clicked(tmp);
         }
     }
 }
 
-void EmoticonsPageDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+void EmoticonsPageView::paintEvent(QPaintEvent *event)
 {
-    if (!index.data(EmoticonsPageModel::HasContent).toBool())
+    QWidget::paintEvent(event);
+
+    QRect dirty = event->rect();
+    // 非精确匹配需要避免越界
+    int first = qBound(0, indexAtPostion(dirty.topLeft(), false), displayCache.count() - 1);
+    int last = qBound(0, indexAtPostion(dirty.bottomRight(), false), displayCache.count() - 1);
+
+    QPainter painter(this);
+    if (first == last)
+    {
+        drawCell(&painter, first);
+    }
+    else
+    {
+        int row_start = first / emoji_layout_cols;
+        int row_end = last / emoji_layout_cols;
+        int col_start = first % emoji_layout_cols;
+        int col_end = last % emoji_layout_cols;
+        for (int r = row_start; r <= row_end; r++) {
+            for (int c = col_start; c <= col_end; c++)
+            {
+                int i = r *emoji_layout_cols + c;
+                drawCell(&painter, i);
+            }
+        }
+    }
+}
+
+int EmoticonsPageView::indexAtPostion(const QPoint &pos, bool accurately)
+{
+    QRect rc = this->contentsRect();
+    if (accurately && !rc.contains(pos)) {
+        return -1;
+    }
+
+    int x = std::max(pos.x(), 0);
+    int y = std::max(pos.y(), 0);
+    const int grid_w = itemSize() + emoji_layout_spacing;
+    int row = (y - rc.top()) / grid_w;
+    int col = (x - rc.left()) / grid_w;
+    if (accurately) {
+        if (y - rc.top() < ((row + 1) * grid_w - emoji_layout_spacing)) {
+            if (x - rc.right() < ((col + 1) * grid_w - emoji_layout_spacing)) {
+                return row * emoji_layout_cols + col;
+            }
+        }
+        return -1;
+    }
+    return row * emoji_layout_cols + col;
+}
+
+void EmoticonsPageView::updateIndex(int index) {
+    if (index < 0 || index > (end - start) || index >= emoji_layout_rows * emoji_layout_cols)
         return;
+    update(indexRect(index));
+}
 
-    QStyleOptionViewItem opt = option;
-    initStyleOption(&opt, index);
+QRect EmoticonsPageView::indexRect(int index)
+{
+    int baseSize = itemSize();
+    int row = index / emoji_layout_cols;
+    int col = index % emoji_layout_cols;
+    const int grid_w = baseSize + emoji_layout_spacing;
+    QRect rc = this->contentsRect();
+    return QRect(col * grid_w + rc.left(), row * grid_w + rc.top(), baseSize, baseSize);
+}
 
-    const QWidget *widget = option.widget;
-    QStyle *style = widget ? widget->style() : QApplication::style();
-    style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, widget);
+void EmoticonsPageView::drawCell(QPainter *painter, int index)
+{
+    QStyleOptionToolButton opt;
+    opt.initFrom(invisible_button);
+    opt.subControls = QStyle::SC_ToolButton;
+    opt.activeSubControls = QStyle::SC_None;
+    opt.features = QStyleOptionToolButton::None;
+    opt.toolButtonStyle = Qt::ToolButtonIconOnly;
+    opt.iconSize = invisible_button->iconSize();
 
-    // draw decoration
-    QRect cr = style->subElementRect(QStyle::SE_ItemViewItemText, &opt, widget);
-    cr = QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, opt.decorationSize, cr);
-    if (!opt.icon.isNull())
-        opt.icon.paint(painter, cr, Qt::AlignCenter, QIcon::Normal);
+    opt.rect = indexRect(index);
+    if (hoverIndex == index)
+        opt.state |= QStyle::State_MouseOver;
+    if (pressedIndex == index)
+        opt.state |= QStyle::State_Sunken;
+
+    opt.icon = *SmileyPack::getInstance().getAsIcon(displayCache.at(index));
+    painter->save();
+    painter->translate(0.5, 0.5);
+    style()->drawComplexControl(QStyle::CC_ToolButton, &opt, painter, invisible_button);
+    painter->restore();
+}
+
+int EmoticonsPageView::itemSize() const
+{
+    if (_itemSize < 0)
+        _itemSize = invisible_button->sizeHint().width();
+    return _itemSize;
 }

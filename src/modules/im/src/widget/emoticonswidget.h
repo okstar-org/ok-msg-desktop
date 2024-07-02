@@ -24,7 +24,8 @@
 #include <memory>
 
 class QIcon;
-class QPushButton;
+class QToolButton;
+class QButtonGroup;
 
 class EmoticonsWidget : public QMenu
 {
@@ -50,56 +51,46 @@ private:
     QStackedWidget stack;
     QVBoxLayout layout;
     QList<std::shared_ptr<QIcon>> emoticonsIcons;
+    QButtonGroup *pageIndexGroup = nullptr;
 
 public:
     QSize sizeHint() const override;
 };
 
-class EmoticonsPageModel;
+class EmoticonsPageView : public QWidget
+{
+    Q_OBJECT
+signals:
+    void clicked(int offset);
 
-class EmoticonsPageView : public QTableView {
   public:
+    EmoticonsPageView(QWidget *parent);
     QSize sizeHint() const override;
     QSize minimumSizeHint() const override;
-    EmoticonsPageView(QWidget *parent);
     void setRange(int start, int end);
 
-  private:
-    EmoticonsPageModel *pageModel = nullptr;
-};
-
-class EmoticonsPageModel : public QAbstractTableModel {
-  public:
-    enum PageModelRole {
-        EmojiText = Qt::UserRole + 0x0100,
-        HasContent
-    };
-    EmoticonsPageModel(QObject *parent);
-    void setRange(int start, int end);
-    int rowCount(const QModelIndex &parent) const override;
-    int columnCount(const QModelIndex &parent) const override;
-    QVariant data(const QModelIndex &index, int role) const override;
-    Qt::ItemFlags flags(const QModelIndex &index) const override;
-
-  private:
-    int start = 0;
-    int end = 0;
-    int hoverIndex = -1;
-    const QList<QStringList> allEmoticons;
-};
-
-class EmoticonsPageDelegate : public QStyledItemDelegate
-{
-  public:
-    EmoticonsPageDelegate(QObject *parent);
-    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
   protected:
-    void initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const;
-    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-    
-  private:
-    int iconSize = 24;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseDoubleClickEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+    void paintEvent(QPaintEvent *event) override;
 
+  private:
+    int indexAtPostion(const QPoint &pos, bool accurately = false);
+    void updateIndex(int index);
+    QRect indexRect(int index);
+    void drawCell(QPainter * painter,  int index);
+    int itemSize() const;
+
+  private:
+    QToolButton *invisible_button = nullptr;
+    int start = -1;
+    int end = -1;
+    int hoverIndex = -1;
+    int pressedIndex = -1;
+    mutable int _itemSize = -1;
+    QStringList displayCache;
 };
 
 #endif // EMOTICONSWIDGET_H
