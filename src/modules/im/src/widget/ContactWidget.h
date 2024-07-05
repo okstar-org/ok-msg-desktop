@@ -40,6 +40,8 @@ public:
         return contentLayout.get();
     }
 
+    void reloadTheme();
+
 public slots:
     /**
      * do开头接受界面事件，调用core执行操作

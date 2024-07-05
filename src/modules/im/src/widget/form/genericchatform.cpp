@@ -40,6 +40,7 @@
 #include "src/widget/tool/chattextedit.h"
 #include "src/widget/tool/flyoutoverlaywidget.h"
 #include "src/widget/widget.h"
+#include "src/widget/gui.h"
 
 #include <QClipboard>
 #include <QFileDialog>
@@ -434,7 +435,9 @@ GenericChatForm::GenericChatForm(const ContactId *contact_,
   connect(msgEdit, &ChatTextEdit::enterPressed, this,
           &GenericChatForm::onSendTriggered);
 
+  connect(&GUI::getInstance(), &GUI::themeApplyRequest, this, &GenericChatForm::reloadTheme);
   reloadTheme();
+
   retranslateUi();
   settings::Translator::registerHandler(
       std::bind(&GenericChatForm::retranslateUi, this), this);

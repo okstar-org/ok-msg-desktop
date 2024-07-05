@@ -36,11 +36,18 @@ ContactWidget::ContactWidget(QWidget *parent) : MainLayout(parent), ui(new Ui::C
   ui->mainSplitter->setSizes(QList<int>() << 200 << 500);
 
   init();
+
 }
 
 ContactWidget::~ContactWidget() {
   deinit();
   delete ui;
+}
+
+void ContactWidget::reloadTheme()
+{
+    contactListWidget->reloadTheme();
+    contentLayout->reloadTheme();
 }
 
 AddFriendForm *ContactWidget::makeAddForm() {
