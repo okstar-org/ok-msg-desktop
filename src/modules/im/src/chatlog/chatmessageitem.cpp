@@ -18,7 +18,8 @@ ChatMessageBox::ChatMessageBox(const QPixmap &avatar,
     avatarItem = new ContactAvatar(avatar);
     QFont baseFont = Settings::getInstance().getChatMessageFont();
     QFont nameFont = nicknameFont(baseFont);
-    nicknameItem = new SimpleText(contactName, nameFont, QColor(0xB2B2B2));
+    nicknameItem = new SimpleText(contactName, nameFont);
+    nicknameItem->setColor(Style::NameActive);
 
     Text *text = nullptr;
     if (!isSelf)
@@ -45,7 +46,8 @@ ChatMessageBox::ChatMessageBox(const QPixmap &avatar, const QString &contactName
     avatarItem = new ContactAvatar(avatar);
     QFont baseFont = Settings::getInstance().getChatMessageFont();
     QFont nameFont = nicknameFont(baseFont);
-    nicknameItem = new SimpleText(contactName, nameFont, QColor(0xB2B2B2));
+    nicknameItem = new SimpleText(contactName, nameFont);
+    nicknameItem->setColor(Style::NameActive);
     this->messageItem = messageItem;
     customMsg = true;
     if (isSelf)

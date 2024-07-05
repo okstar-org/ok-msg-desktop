@@ -38,6 +38,7 @@ public:
     void setName(const QString &name);
 
 private:
+    void reloadTheme();
     Ui::AboutFriendForm* ui;
     const std::unique_ptr<IAboutFriend> about;
     Widget *widget;

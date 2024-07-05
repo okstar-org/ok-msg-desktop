@@ -91,6 +91,8 @@ FileTransferWidget::FileTransferWidget(QWidget* parent, ToxFile file)
     updateWidget(file);
 
     setFixedHeight(64);
+
+    connect(&GUI::getInstance(), &GUI::themeApplyRequest, this, &FileTransferWidget::reloadTheme);
 }
 
 FileTransferWidget::~FileTransferWidget()
@@ -152,8 +154,7 @@ void FileTransferWidget::setBackgroundColor(const QColor& c, bool whiteFont)
 
     setProperty("fontColor", whiteFont ? "white" : "black");
 
-    setStyleSheet(Style::getStylesheet("fileTransferInstance/filetransferWidget.css"));
-    Style::repolish(this);
+    reloadTheme();
 
     update();
 }
@@ -683,4 +684,10 @@ void FileTransferWidget::updateWidget(ToxFile const& file)
     default:
         update();
     }
+}
+
+void FileTransferWidget::reloadTheme()
+{
+    setStyleSheet(Style::getStylesheet("fileTransferInstance/filetransferWidget.css"));
+    Style::repolish(this);
 }
