@@ -143,8 +143,6 @@ void GenericChatroomWidget::reloadTheme()
     p.setColor(QPalette::Highlight, Style::getColor(Style::ThemeHighlight)); // On mouse over
     p.setColor(QPalette::Light, Style::getColor(Style::ThemeLight));          // When active
     setPalette(p);
-
-
 }
 
 void GenericChatroomWidget::activate()

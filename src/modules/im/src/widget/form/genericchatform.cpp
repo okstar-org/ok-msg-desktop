@@ -40,6 +40,7 @@
 #include "src/widget/tool/chattextedit.h"
 #include "src/widget/tool/flyoutoverlaywidget.h"
 #include "src/widget/widget.h"
+#include "src/widget/gui.h"
 
 #include <QClipboard>
 #include <QFileDialog>
@@ -74,7 +75,8 @@
 static const QSize FILE_FLYOUT_SIZE{24, 24};
 static const short FOOT_BUTTONS_SPACING = 2;
 static const short MESSAGE_EDIT_HEIGHT = 50;
-static const short MAIN_FOOT_LAYOUT_SPACING = 5;
+static const short MAIN_FOOT_MARGIN = 8;
+static const short EDIT_SEND_SPACING = 5;
 static const QString FONT_STYLE[]{"normal", "italic", "oblique"};
 
 /**
@@ -130,8 +132,9 @@ QPushButton *createButton(const QString &name, T *self, Fun onClickSlot) {
   // Fix for incorrect layouts on OS X as per
   // https://bugreports.qt-project.org/browse/QTBUG-14591
   btn->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+  btn->setCursor(Qt::PointingHandCursor);
   btn->setObjectName(name);
-  btn->setProperty("state", "green");
+  //btn->setProperty("state", "green");
   btn->setStyleSheet(Style::getStylesheet(STYLE_PATH));
   btn->setCheckable(true);
   QObject::connect(btn, &QPushButton::clicked, self, onClickSlot);
@@ -281,7 +284,7 @@ GenericChatForm::GenericChatForm(const ContactId *contact_,
       audioOutputFlag(false), isEncrypt(false), iChatLog(iChatLog_),
       messageDispatcher(messageDispatcher) {
   curRow = 0;
-
+  setContentsMargins(0, 0, 0, 0);
   searchForm = new SearchForm();
   dateInfo = new QLabel(this);
   chatLog = new ChatLog(this);
@@ -320,13 +323,6 @@ GenericChatForm::GenericChatForm(const ContactId *contact_,
   // TODO: Make updateCallButtons (see ChatForm) abstract
   //       and call here to set tooltips.
 
-  fileFlyout = new FlyoutOverlayWidget;
-  QHBoxLayout *fileLayout = new QHBoxLayout(fileFlyout);
-  fileLayout->addWidget(screenshotButton);
-  fileLayout->setContentsMargins(0, 0, 0, 0);
-  fileLayout->setSpacing(0);
-  fileLayout->setMargin(0);
-
   msgEdit->setFixedHeight(MESSAGE_EDIT_HEIGHT);
   msgEdit->setFrameStyle(QFrame::NoFrame);
 
@@ -334,6 +330,7 @@ GenericChatForm::GenericChatForm(const ContactId *contact_,
   connect(bodySplitter, &QSplitter::splitterMoved, this,
           &GenericChatForm::onSplitterMoved);
   QWidget *contentWidget = new QWidget(this);
+  contentWidget->setObjectName("ChatContentContainer");
   bodySplitter->addWidget(contentWidget);
 
   QVBoxLayout *mainLayout = new QVBoxLayout();
@@ -342,12 +339,14 @@ GenericChatForm::GenericChatForm(const ContactId *contact_,
 
   setLayout(mainLayout);
 
-  QVBoxLayout *footButtonsSmall = new QVBoxLayout();
+  QWidget *footContainer = new QWidget(contentWidget);
+  footContainer->setAttribute(Qt::WA_StyledBackground);
+  footContainer->setObjectName("ChatFootContainer");
+  QHBoxLayout *footButtonsSmall = new QHBoxLayout();
   footButtonsSmall->setSpacing(FOOT_BUTTONS_SPACING);
   footButtonsSmall->addWidget(emoteButton);
   footButtonsSmall->addWidget(fileButton);
-
-  mainFootLayout = new QHBoxLayout();
+  footButtonsSmall->addWidget(screenshotButton);
 #ifdef OK_PLUGIN
   auto pm = ok::plugin::PluginManager::instance();
   connect(pm, &ok::plugin::PluginManager::pluginEnabled, //
@@ -356,21 +355,32 @@ GenericChatForm::GenericChatForm(const ContactId *contact_,
           this, &::GenericChatForm::onPluginDisabled);
   auto omemo = pm->plugin("omemo");
   if (omemo) {
-    mainFootLayout->addWidget(encryptButton);
+      footButtonsSmall->addWidget(encryptButton);
   }
 #endif
-  mainFootLayout->addSpacing(MAIN_FOOT_LAYOUT_SPACING);
-  mainFootLayout->addWidget(msgEdit);
-  mainFootLayout->addLayout(footButtonsSmall);
-  mainFootLayout->addSpacing(MAIN_FOOT_LAYOUT_SPACING);
-  mainFootLayout->addWidget(sendButton);
-  mainFootLayout->setSpacing(0);
+  footButtonsSmall->addStretch(1);
+
+  QVBoxLayout *sendButtonLyt = new QVBoxLayout();
+  sendButtonLyt->addStretch(1);
+  sendButtonLyt->addWidget(sendButton);
+
+  QVBoxLayout *inputLayout = new QVBoxLayout();
+  inputLayout->addLayout(footButtonsSmall);
+  inputLayout->setSpacing(FOOT_BUTTONS_SPACING);
+  inputLayout->addWidget(msgEdit);
+
+  mainFootLayout = new QHBoxLayout(footContainer);
+  mainFootLayout->setContentsMargins(MAIN_FOOT_MARGIN, MAIN_FOOT_MARGIN, MAIN_FOOT_MARGIN, MAIN_FOOT_MARGIN);
+  mainFootLayout->setSpacing(EDIT_SEND_SPACING);
+  mainFootLayout->addLayout(inputLayout);
+  mainFootLayout->addLayout(sendButtonLyt);
 
   QVBoxLayout *contentLayout = new QVBoxLayout(contentWidget);
+  contentLayout->setContentsMargins(0, 0, 0, 0);
   contentLayout->addWidget(searchForm);
   contentLayout->addWidget(dateInfo);
-  contentLayout->addWidget(chatLog);
-  contentLayout->addLayout(mainFootLayout);
+  contentLayout->addWidget(chatLog, 1);
+  contentLayout->addWidget(footContainer, 0);
 
   quoteAction =
       menu.addAction(QIcon(), QString(), this, SLOT(quoteSelectedText()),
@@ -425,14 +435,9 @@ GenericChatForm::GenericChatForm(const ContactId *contact_,
   connect(msgEdit, &ChatTextEdit::enterPressed, this,
           &GenericChatForm::onSendTriggered);
 
-
-
-  fileFlyout->setFixedSize(FILE_FLYOUT_SIZE);
-  fileFlyout->setParent(this);
-  fileButton->installEventFilter(this);
-  fileFlyout->installEventFilter(this);
-
+  connect(&GUI::getInstance(), &GUI::themeApplyRequest, this, &GenericChatForm::reloadTheme);
   reloadTheme();
+
   retranslateUi();
   settings::Translator::registerHandler(
       std::bind(&GenericChatForm::retranslateUi, this), this);
@@ -442,8 +447,6 @@ GenericChatForm::GenericChatForm(const ContactId *contact_,
                                                  : iChatLog.getNextIdx() - 100;
 
   renderMessages(firstChatLogIdx, iChatLog.getNextIdx());
-
-
 }
 
 GenericChatForm::~GenericChatForm() {
@@ -474,25 +477,6 @@ void GenericChatForm::onPluginDisabled(const QString &shortName) {
 }
 #endif
 
-void GenericChatForm::adjustFileMenuPosition() {
-  QPoint pos = fileButton->mapTo(bodySplitter, QPoint());
-  QSize size = fileFlyout->size();
-  fileFlyout->move(pos.x() - size.width(), pos.y());
-}
-
-void GenericChatForm::showFileMenu() {
-  if (!fileFlyout->isShown() && !fileFlyout->isBeingShown()) {
-    adjustFileMenuPosition();
-  }
-
-  fileFlyout->animateShow();
-}
-
-void GenericChatForm::hideFileMenu() {
-  if (fileFlyout->isShown() || fileFlyout->isBeingShown())
-    fileFlyout->animateHide();
-}
-
 QDateTime GenericChatForm::getLatestTime() const {
   return getTime(chatLog->getLatestLine());
 }
@@ -515,8 +499,8 @@ void GenericChatForm::reloadTheme() {
   chatLog->setStyleSheet(Style::getStylesheet("chatArea/chatArea.css"));
   chatLog->reloadTheme();
 
-  emoteButton->setStyleSheet(Style::getStylesheet(STYLE_PATH));
   fileButton->setStyleSheet(Style::getStylesheet(STYLE_PATH));
+  emoteButton->setStyleSheet(Style::getStylesheet(STYLE_PATH));
   screenshotButton->setStyleSheet(Style::getStylesheet(STYLE_PATH));
   sendButton->setStyleSheet(Style::getStylesheet(STYLE_PATH));
 }
@@ -773,16 +757,6 @@ void GenericChatForm::insertChatMessage(IChatItem::Ptr msg) {
   emit messageInserted();
 }
 
-void GenericChatForm::hideEvent(QHideEvent *event) {
-  hideFileMenu();
-  QWidget::hideEvent(event);
-}
-
-void GenericChatForm::resizeEvent(QResizeEvent *event) {
-  adjustFileMenuPosition();
-  QWidget::resizeEvent(event);
-}
-
 bool GenericChatForm::eventFilter(QObject *object, QEvent *event) {
   EmoticonsWidget *ev = qobject_cast<EmoticonsWidget *>(object);
   if (ev && event->type() == QEvent::KeyPress) {
@@ -791,41 +765,6 @@ bool GenericChatForm::eventFilter(QObject *object, QEvent *event) {
     msgEdit->setFocus();
     return false;
   }
-
-  if (object != this->fileButton && object != this->fileFlyout)
-    return false;
-
-  if (!qobject_cast<QWidget *>(object)->isEnabled())
-    return false;
-
-  switch (event->type()) {
-  case QEvent::Enter:
-    showFileMenu();
-    break;
-
-  case QEvent::Leave: {
-    QPoint flyPos = fileFlyout->mapToGlobal(QPoint());
-    QSize flySize = fileFlyout->size();
-
-    QPoint filePos = fileButton->mapToGlobal(QPoint());
-    QSize fileSize = fileButton->size();
-
-    QRect region = QRect(flyPos, flySize).united(QRect(filePos, fileSize));
-
-    if (!region.contains(QCursor::pos()))
-      hideFileMenu();
-
-    break;
-  }
-
-  case QEvent::MouseButtonPress:
-    hideFileMenu();
-    break;
-
-  default:
-    break;
-  }
-
   return false;
 }
 

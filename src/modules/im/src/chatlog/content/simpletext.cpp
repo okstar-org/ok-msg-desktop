@@ -1,9 +1,9 @@
 #include "simpletext.h"
 #include <QPainter>
 
-SimpleText::SimpleText(const QString &txt, const QFont &font,
-                       const QColor &custom)
+SimpleText::SimpleText(const QString &txt, const QFont &font)
     : text(txt), defFont(font) {
+    color = Style::getColor(colorRole);
     updateBoundingRect();
 }
 
@@ -23,6 +23,7 @@ void SimpleText::paint(QPainter *painter,
                        QWidget *widget) {
     if (!text.isEmpty()) {
         painter->setFont(defFont);
+        painter->setPen(QPen(color));
         int y_offset = QFontMetricsF(defFont).leading() / 2.0;
         painter->drawText(QRectF(QPointF(0, y_offset), boundSize),
                           Qt::AlignCenter, text);
@@ -39,6 +40,19 @@ void SimpleText::setWidth(qreal width) {
     }
 }
 
+void SimpleText::setColor(Style::ColorPalette role)
+{
+    customColor = false;
+    colorRole = role;
+    color = Style::getColor(colorRole);
+}
+
+void SimpleText::setColor(const QColor &color)
+{
+    customColor = true;
+    this->color = color;
+}
+
 void SimpleText::updateBoundingRect() {
     QFontMetricsF fm(defFont);
     if (!text.isEmpty())
@@ -47,4 +61,9 @@ void SimpleText::updateBoundingRect() {
         boundSize = QSizeF(fm.height(), fm.height());
     if (forceWidth > 0)
         boundSize.rwidth() = forceWidth;
+}
+
+void SimpleText::reloadTheme() {
+    if (!customColor)
+        color = Style::getColor(colorRole);
 }

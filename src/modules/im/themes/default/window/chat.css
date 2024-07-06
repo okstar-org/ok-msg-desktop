@@ -11,5 +11,11 @@
  */
 
 ChatWidget {
+    background: @groundBase;
+    border: 0px solid;
+    border-radius: 10px;
+}
 
+QWidget#ContentSeperator{
+    background: white;
 }

@@ -69,6 +69,7 @@ private:
     static bool tryRemoveFile(const QString &filepath);
 
     void updateWidget(ToxFile const& file);
+    void reloadTheme();
 
 private:
     Ui::FileTransferWidget* ui;

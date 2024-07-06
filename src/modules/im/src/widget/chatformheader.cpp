@@ -32,6 +32,7 @@
 #include <src/model/friend.h>
 
 #include <src/widget/tool/callconfirmwidget.h>
+#include <src/friendlist.h>
 
 static const QSize AVATAR_SIZE{40, 40};
 static const short HEAD_LAYOUT_SPACING = 5;
@@ -102,22 +103,20 @@ void setStateName(QAbstractButton* btn, State state)
     btn->setProperty("state", STATE_NAME[index]);
     btn->setEnabled(index != 0);
 }
-
 }
 
 ChatFormHeader::ChatFormHeader(const ContactId &contactId, QWidget* parent)
-    : QWidget(parent), contactId{contactId}
+    : QWidget(parent)
     , mode{Mode::AV}
     , callState{CallButtonState::Disabled}
     , videoState{CallButtonState::Disabled}
 {
     QHBoxLayout* headLayout = new QHBoxLayout(this);
-
+    headLayout->setContentsMargins(0, 0, 0, 0);
     //头像
     avatar = new MaskablePixmapWidget(this, AVATAR_SIZE, ":/img/avatar_mask.svg");
     avatar->setObjectName("avatar");
     headLayout->addWidget(avatar);
-
 
     //名称
     nameLabel = new CroppingLabel(this);
@@ -128,11 +127,21 @@ ChatFormHeader::ChatFormHeader(const ContactId &contactId, QWidget* parent)
     nameLabel->setText(contactId.username);
     connect(nameLabel, &CroppingLabel::editFinished, this, &ChatFormHeader::nameChanged);
 
+    // 状态
+    statusLabel = new QLabel(this);
+    statusIcon = new QToolButton(this);
+    statusIcon->setIconSize(QSize(10, 10));
+    statusIcon->setStyleSheet("border:0px solid; padding:0px");
+    QHBoxLayout *status_lyt = new QHBoxLayout();
+    status_lyt->addWidget(statusIcon);
+    status_lyt->addWidget(statusLabel);
+    status_lyt->addStretch(1);
+
     headTextLayout = new QVBoxLayout(this);
-    headTextLayout->addStretch();
     headTextLayout->addWidget(nameLabel);
+    headTextLayout->addLayout(status_lyt);
     headTextLayout->addStretch();
-    headLayout->addLayout(headTextLayout);
+    headLayout->addLayout(headTextLayout, 1);
 
     //空间
     headLayout->addSpacing(HEAD_LAYOUT_SPACING);
@@ -140,23 +149,26 @@ ChatFormHeader::ChatFormHeader(const ContactId &contactId, QWidget* parent)
      //控制按钮
     callButton = createButton("callButton", this, &ChatFormHeader::callTriggered);
     videoButton = createButton("videoButton", this, &ChatFormHeader::videoCallTriggered);
+    QHBoxLayout *buttonsLayout = new QHBoxLayout(this);
+    buttonsLayout->addWidget(callButton);
+    buttonsLayout->addWidget(videoButton);
+    buttonsLayout->setSpacing(BUTTONS_LAYOUT_HOR_SPACING);
 
-    QVBoxLayout* micButtonsLayout = new QVBoxLayout(this);
-    micButtonsLayout->setSpacing(MIC_BUTTONS_LAYOUT_SPACING);
-
-    QGridLayout* buttonsLayout = new QGridLayout(this);
-    buttonsLayout->addLayout(micButtonsLayout, 0, 0, 2, 1, Qt::AlignTop | Qt::AlignRight);
-    buttonsLayout->addWidget(callButton, 0, 1, 2, 1, Qt::AlignTop);
-    buttonsLayout->addWidget(videoButton, 0, 2, 2, 1, Qt::AlignTop);
-    buttonsLayout->setVerticalSpacing(0);
-    buttonsLayout->setHorizontalSpacing(BUTTONS_LAYOUT_HOR_SPACING);
-
-    headLayout->addLayout(buttonsLayout);
+    headLayout->addLayout(buttonsLayout, 0);
 
     setLayout(headLayout);
 
     updateButtonsView();
     settings::Translator::registerHandler(std::bind(&ChatFormHeader::retranslateUi, this), this);
+
+    statusLabel->setVisible(false);
+    statusIcon->setVisible(false);
+    // todo: 当时是自己时，FriendList::findFriend会返回空，更新状态、按钮等逻辑不会触发
+    FriendId self = Core::getInstance()->getSelfId();
+    isSelf = self.toString() == contactId.toString();
+    if (!isSelf) {
+        setContact(FriendList::findFriend(contactId));
+    }
 }
 
 ChatFormHeader::~ChatFormHeader() {
@@ -165,27 +177,46 @@ ChatFormHeader::~ChatFormHeader() {
 
 void ChatFormHeader::setContact(const Contact *contact_)
 {
-    if(!contact_){
+    if (contact_ == contact)
         return;
-    }
 
+    if (contact) {
+        contact->disconnect(this);
+        // 是否有必要？
+        if (!contact->isGroup()) {
+            auto f = static_cast<const Friend *>(contact);
+            f->disconnect(this);
+        }
+    }
     contact = contact_;
-    connect(contact, &Contact::displayedNameChanged, this, &ChatFormHeader::onDisplayedNameChanged);
-    connect(contact, &Contact::avatarChanged, this, &ChatFormHeader::onAvatarChanged);
+    if (contact)
+    {
+        connect(contact, &Contact::displayedNameChanged, this, &ChatFormHeader::onDisplayedNameChanged);
+        connect(contact, &Contact::avatarChanged, this, &ChatFormHeader::onAvatarChanged);
 
-    setName(contact->getDisplayedName());
-    setAvatar(contact->getAvatar());
+        setName(contact->getDisplayedName());
+        setAvatar(contact->getAvatar());
 
+        if (!contact->isGroup()) {
+            auto f = static_cast<const Friend *>(contact);
+            updateCallButtons(f->getStatus());
+            updateContactStatus(f->getStatus());
 
-    if(!contact->isGroup()){
+            connect(f, &Friend::statusChanged, [&](Status::Status status, bool event) {
+                updateCallButtons(status);
+                updateContactStatus(status);
+            });
 
-        auto f = static_cast<const Friend*>(contact);
-        updateCallButtons(f->getStatus());
-
-        connect(f, &Friend::statusChanged, [&](Status::Status status, bool event){
-            updateCallButtons(status);
-        });
+            statusLabel->setVisible(true);
+            statusIcon->setVisible(true);
+        }
+        else
+        {
+            statusLabel->setVisible(false);
+            statusIcon->setVisible(false);
+        }
     }
+    
 }
 
 void ChatFormHeader::removeContact()
@@ -207,7 +238,6 @@ void ChatFormHeader::setMode(ChatFormHeader::Mode mode)
     if (mode == Mode::None) {
         callButton->hide();
         videoButton->hide();
-
     }
 }
 
@@ -233,7 +263,13 @@ void ChatFormHeader::onAvatarChanged(const QPixmap &pic)
 
 void ChatFormHeader::onDisplayedNameChanged(const QString &name)
 {
-    setName(name);
+    setName(name); }
+
+void ChatFormHeader::updateContactStatus(Status::Status status)
+{
+    auto pix = Status::getIconPath(status, false);
+    statusIcon->setIcon(QIcon(pix));
+    statusLabel->setText(Status::getTitle(status));
 }
 
 void ChatFormHeader::showOutgoingCall(bool video)
@@ -273,24 +309,28 @@ void ChatFormHeader::removeCallConfirm()
 }
 
 void ChatFormHeader::updateMuteVolButton() {
-  const CoreAV *av = CoreAV::getInstance();
-  bool active = av->isCallActive(&contactId);
-  bool outputMuted = av->isCallOutputMuted(&contactId);
-  updateMuteVolButton(active, outputMuted);
-//  if (netcam) {
-//    netcam->updateMuteVolButton(outputMuted);
-//  }
+    if (!contact)
+        return;
+    const CoreAV *av = CoreAV::getInstance();
+    bool active = av->isCallActive(&contact->getPersistentId());
+    bool outputMuted = av->isCallOutputMuted(&contact->getPersistentId());
+    updateMuteVolButton(active, outputMuted);
+    //  if (netcam) {
+    //    netcam->updateMuteVolButton(outputMuted);
+    //  }
 }
 
 
 void ChatFormHeader::updateMuteMicButton() {
-  const CoreAV *av = CoreAV::getInstance();
-  bool active = av->isCallActive(&contactId);
-  bool inputMuted = av->isCallInputMuted(&contactId);
-  updateMuteMicButton(active, inputMuted);
-//  if (netcam) {
-//    netcam->updateMuteMicButton(inputMuted);
-//  }
+    if (!contact)
+        return;
+    const CoreAV *av = CoreAV::getInstance();
+    bool active = av->isCallActive(&contact->getPersistentId());
+    bool inputMuted = av->isCallInputMuted(&contact->getPersistentId());
+    updateMuteMicButton(active, inputMuted);
+    //  if (netcam) {
+    //    netcam->updateMuteMicButton(inputMuted);
+    //  }
 }
 
 void ChatFormHeader::updateCallButtons(bool online, bool audio, bool video)
@@ -322,7 +362,6 @@ void ChatFormHeader::updateCallButtons(bool online, bool audio, bool video)
 
 void ChatFormHeader::updateMuteMicButton(bool active, bool inputMuted)
 {
-
     updateButtonsView();
 }
 
@@ -340,14 +379,15 @@ void ChatFormHeader::updateCallButtons()
 void ChatFormHeader::updateCallButtons(Status::Status status)
 {
 //    qDebug() << __func__ << (int)status;
+    if (!contact)
+        return;
+    CoreAV *av = CoreAV::getInstance();
+    const bool audio = av->isCallActive(&contact->getPersistentId());
+    const bool video = av->isCallVideoEnabled(&contact->getPersistentId());
+    const bool online = Status::isOnline(status);
 
-      CoreAV *av = CoreAV::getInstance();
-      const bool audio = av->isCallActive(&contactId);
-      const bool video = av->isCallVideoEnabled(&contactId);
-      const bool online = Status::isOnline(status);
-
-      updateCallButtons(online, audio, video);
-      updateCallButtons();
+    updateCallButtons(online, audio, video);
+    updateCallButtons();
 }
 
 void ChatFormHeader::setAvatar(const QPixmap &img)

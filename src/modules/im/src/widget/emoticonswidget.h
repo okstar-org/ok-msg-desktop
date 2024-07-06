@@ -17,10 +17,15 @@
 #include <QStackedWidget>
 #include <QVBoxLayout>
 #include <QVector>
+#include <QAbstractListModel>
+#include <QTableView>
+#include <QStyledItemDelegate>
 
 #include <memory>
 
 class QIcon;
+class QToolButton;
+class QButtonGroup;
 
 class EmoticonsWidget : public QMenu
 {
@@ -32,7 +37,7 @@ signals:
     void insertEmoticon(QString str);
 
 private slots:
-    void onSmileyClicked();
+    void onSmileyClicked(const QString & text);
     void onPageButtonClicked();
     void PageButtonsUpdate();
 
@@ -46,9 +51,46 @@ private:
     QStackedWidget stack;
     QVBoxLayout layout;
     QList<std::shared_ptr<QIcon>> emoticonsIcons;
+    QButtonGroup *pageIndexGroup = nullptr;
 
 public:
     QSize sizeHint() const override;
+};
+
+class EmoticonsPageView : public QWidget
+{
+    Q_OBJECT
+signals:
+    void clicked(int offset);
+
+  public:
+    EmoticonsPageView(QWidget *parent);
+    QSize sizeHint() const override;
+    QSize minimumSizeHint() const override;
+    void setRange(int start, int end);
+
+  protected:
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseDoubleClickEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+    void paintEvent(QPaintEvent *event) override;
+
+  private:
+    int indexAtPostion(const QPoint &pos, bool accurately = false);
+    void updateIndex(int index);
+    QRect indexRect(int index);
+    void drawCell(QPainter * painter,  int index);
+    int itemSize() const;
+
+  private:
+    QToolButton *invisible_button = nullptr;
+    int start = -1;
+    int end = -1;
+    int hoverIndex = -1;
+    int pressedIndex = -1;
+    mutable int _itemSize = -1;
+    QStringList displayCache;
 };
 
 #endif // EMOTICONSWIDGET_H

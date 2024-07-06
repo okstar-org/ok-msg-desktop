@@ -24,6 +24,10 @@
 #include <QLabel>
 #include <QStyleFactory>
 
+static constexpr int HEADER_MARIGN = 8;
+static constexpr int CONTENT_MARIGN = 8;
+static constexpr int SEPERATOR_WIDTH = 3;
+
 ContentWidget::ContentWidget(SendWorker* sendWorker, QWidget* parent): QWidget(parent){
 
   setLayout(new QVBoxLayout(this));
@@ -34,8 +38,8 @@ ContentWidget::ContentWidget(SendWorker* sendWorker, QWidget* parent): QWidget(p
   mainHead = new QWidget(this);
   mainHead->setLayout(new QVBoxLayout);
   mainHead->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
-//  mainHead->layout()->setMargin(0);
-//  mainHead->layout()->setSpacing(0);
+  mainHead->layout()->setContentsMargins(HEADER_MARIGN, HEADER_MARIGN, HEADER_MARIGN, HEADER_MARIGN);
+  //  mainHead->layout()->setSpacing(0);
 //  mainHead->setMouseTracking(true);
 
 //  mainHLine = new QFrame(this);
@@ -51,13 +55,18 @@ ContentWidget::ContentWidget(SendWorker* sendWorker, QWidget* parent): QWidget(p
   mainContent = new QWidget(this);
   mainContent->setLayout(new QVBoxLayout);
   mainContent->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+  mainContent->layout()->setContentsMargins(CONTENT_MARIGN, 0, CONTENT_MARIGN, CONTENT_MARIGN);
+
+  seperator = new QWidget(this);
+  seperator->setObjectName("ContentSeperator");
+  seperator->setFixedHeight(SEPERATOR_WIDTH);
 
   layout()->addWidget(mainHead);
+  layout()->addWidget(seperator);
   layout()->addWidget(mainContent);
 
   mainHead->layout()->addWidget(sendWorker->getHeader());
   mainContent->layout()->addWidget(sendWorker->getChatForm());
-
 }
 
 ContentWidget::~ContentWidget()
