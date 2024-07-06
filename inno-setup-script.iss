@@ -5,7 +5,7 @@
 #define MyAppVersion "1.0"
 #define MyAppPublisher "OkStar"
 #define MyAppURL "https://github.com/okstar-org/ok-msg-desktop"
-#define MyAppExeName "ok-msg-desktop_windows-latest_x64_setup.exe"
+#define MyAppExeName "ok-msg-desktop.exe"
 #define MyAppExeFile "ok-msg-desktop_windows-latest_x64_setup"
 #define MyAppExePATH "ok-msg-desktop"
 
