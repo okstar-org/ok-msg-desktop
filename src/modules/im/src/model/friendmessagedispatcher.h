@@ -41,7 +41,7 @@ public:
 
     void onMessageReceived(FriendMessage &msg);
     void onReceiptReceived(ReceiptNum receipt);
-    void clearOutgoingMessages();
+    void clearOutgoingMessages() override;
 
     void onFileReceived(const ToxFile &file);
     void onFileCancelled(const QString &fileId);

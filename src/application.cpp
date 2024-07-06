@@ -135,14 +135,14 @@ void Application::start() {
 }
 
 void Application::createLoginUI(bool bootstrap) {
-  m_loginWindow = std::make_unique<UI::LoginWindow>(bootstrap);
+  m_loginWindow = new UI::LoginWindow(bootstrap);
 
-  connect(m_loginWindow.get(), &UI::LoginWindow::loginResult,
+  connect(m_loginWindow, &UI::LoginWindow::loginResult,
         [&](ok::session::SignInInfo &signInInfo,
             ok::session::LoginResult &result) {
           if (result.status == ok::session::Status::SUCCESS) {
             onLoginSuccess(signInInfo);
-            disconnect(m_loginWindow.get());
+            disconnect(m_loginWindow);
           }
         });
 
@@ -159,8 +159,10 @@ void Application::createLoginUI(bool bootstrap) {
  *  关闭login窗口
  */
 void Application::closeLoginUI() {
-    disconnect(m_loginWindow.get());
+    disconnect(m_loginWindow);
     m_loginWindow->close();
+    //no need to delete
+    m_loginWindow = nullptr;
 }
 
 void Application::onLoginSuccess(ok::session::SignInInfo &signInInfo) {

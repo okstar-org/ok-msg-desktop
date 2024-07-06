@@ -101,3 +101,8 @@ void GroupMessageDispatcher::onMessageReceived(GroupMessage &msg) {
   auto msg0 = processor.processIncomingMessage(msg);
   emit messageReceived(FriendId(msg.from), msg0);
 }
+
+void GroupMessageDispatcher::clearOutgoingMessages()
+{
+    //noop
+}

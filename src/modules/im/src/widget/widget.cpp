@@ -465,33 +465,14 @@ void Widget::updateIcons() {
 }
 
 Widget::~Widget() {
-//  QWidgetList windowList = QApplication::topLevelWidgets();
-//  for (QWidget *window : windowList) {
-//    if (window != this) {
-//      window->close();
-//    }
-//  }
+  qDebug() << __func__;
 
   settings::Translator::unregister(this);
   if (icon) {
     icon->hide();
   }
 
-//  for (Group *g : GroupList::getAllGroups()) {
-//    removeGroup(g, true);
-//  }
-
-//  for (IMFriend *f : FriendList::getAllFriends()) {
-//    removeFriend(f, true);
-//  }
-
-
-//  delete filesForm;
   delete timer;
-
-
-//  FriendList::clear();
-//  GroupList::clear();
   delete trayMenu;
   delete ui;
 }
@@ -1590,10 +1571,7 @@ void Widget::cycleContacts(bool forward) {
 
 
 void Widget::clearAllReceipts() {
-  QList<Friend *> frnds = FriendList::getAllFriends();
-  for (Friend *f : frnds) {
-//    friendMessageDispatchers[f->getPublicKey()]->clearOutgoingMessages();
-  }
+  chatWidget->clearAllReceipts();
 }
 
 void Widget::reloadTheme() {

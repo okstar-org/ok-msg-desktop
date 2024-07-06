@@ -551,28 +551,6 @@ void MessageSessionListWidget::setRecvGroupMessage(const GroupId &groupId, const
 
 }
 
-//CircleWidget *MessageSessionListWidget::createCircleWidget(int id) {
-//  if (id == -1)
-//    id = Settings::getInstance().addCircle();
-
-//  // Stop, after it has been created. Code after this is for displaying.
-//  if (mode == SortingMode::Activity)
-//    return nullptr;
-
-//  //  assert(circleLayout != nullptr);
-
-////  CircleWidget *circleWidget = new CircleWidget(this, id);
-////  emit connectCircleWidget(*circleWidget);
-//  //  circleLayout->addSortedWidget(circleWidget);
-////  connect(this, &MessageSessionListWidget::onCompactChanged, circleWidget,
-////          &CircleWidget::onCompactChanged);
-////  connect(circleWidget, &CircleWidget::renameRequested, this,
-////          &MessageSessionListWidget::renameCircleWidget);
-////  circleWidget->show(); // Avoid flickering.
-
-////  return circleWidget;
-//  return nullptr;
-//}
 
 void MessageSessionListWidget::toSendMessage(const FriendId &pk, bool isGroup)
 {
@@ -635,6 +613,13 @@ void MessageSessionListWidget::removeGroup(const Group *g)
       return;
     }
     ms->removeGroup();
+}
+
+void MessageSessionListWidget::clearAllReceipts()
+{
+   for(auto sw: sessionWidgets){
+       sw->clearReceipts();
+   }
 }
 
 QLayout *MessageSessionListWidget::nextLayout(QLayout *layout, bool forward) const {

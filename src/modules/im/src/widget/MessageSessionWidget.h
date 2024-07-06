@@ -84,6 +84,8 @@ class MessageSessionWidget : public GenericChatroomWidget
     void setGroup(const Group* g);
     void removeGroup();
 
+    void clearReceipts();
+
 signals:
     void removeFriend(const FriendId& friendPk);
     void copyFriendIdToClipboard(const FriendId& friendPk);
