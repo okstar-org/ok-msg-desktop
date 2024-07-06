@@ -57,6 +57,7 @@ public:
   void reloadTheme();
   void retranslateUi();
   void showProfile();
+  void clearAllReceipts();
 
 protected:
   void showEvent(QShowEvent*) override;
@@ -135,6 +136,7 @@ public slots:
 
   void onFriendAdded(const Friend* f);
   void onFriendRemoved(const Friend* f);
+  void doSendMessage(const QString &to, bool isGroup);
 
   void onFriendStatusChanged(const FriendId &friendPk, Status::Status status);
   void onFriendStatusMessageChanged(const FriendId &friendPk,

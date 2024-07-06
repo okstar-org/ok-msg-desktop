@@ -78,9 +78,7 @@ void Conductor::CreatePeerConnection() {
   }
 
   peer_connection_ = maybe.value();
-  RTC_LOG(LS_INFO) << __FUNCTION__<<"done.";
-
-
+  RTC_LOG(LS_INFO) << __FUNCTION__<<" done.";
 }
 
 void Conductor::DestroyPeerConnection() {
@@ -195,7 +193,7 @@ void Conductor::OnIceConnectionChange(
 }
 
 void Conductor::OnIceGatheringChange(webrtc::PeerConnectionInterface::IceGatheringState state) {
-   RTC_LOG(LS_INFO) << __FUNCTION__ << webrtc::PeerConnectionInterface::AsString(state).data();
+   RTC_LOG(LS_INFO) << __FUNCTION__ <<"=>"<< webrtc::PeerConnectionInterface::AsString(state).data();
 }
 
 void Conductor::OnIceCandidate(const webrtc::IceCandidateInterface *ice) {
@@ -203,7 +201,7 @@ void Conductor::OnIceCandidate(const webrtc::IceCandidateInterface *ice) {
   std::string str;
   ice->ToString(&str);
 
-  RTC_LOG(LS_INFO) << __FUNCTION__ << " mid:" << ice->sdp_mid() << " "<< str;
+  RTC_LOG(LS_INFO) << __FUNCTION__ << "=> mid:" << ice->sdp_mid() << " "<< str;
 
   auto &cand = ice->candidate();
 
@@ -286,7 +284,7 @@ void Conductor::OnIceConnectionReceivingChange(bool receiving) {
 }
 
 void Conductor::OnSignalingChange(webrtc::PeerConnectionInterface::SignalingState state) {
-   RTC_LOG(LS_INFO) << __FUNCTION__ << webrtc::PeerConnectionInterface::AsString(state).data();
+   RTC_LOG(LS_INFO) << __FUNCTION__ <<"=>"<< webrtc::PeerConnectionInterface::AsString(state).data();
 }
 
 
@@ -296,11 +294,11 @@ void Conductor::OnAddTrack(
         &streams) {
 
   std::string receiverId = receiver->id();
-  RTC_LOG(LS_INFO) << "RtpReceiverId:" << receiverId;
+  RTC_LOG(LS_INFO) << __FUNCTION__ << "receiver id:" << receiverId;
 
   // track
   auto track = receiver->track();
-  RTC_LOG(LS_INFO) << "Track Id:" << track->id() << " kind:"<<track->kind();
+  RTC_LOG(LS_INFO) << __FUNCTION__ << "track id:" << track->id() << " kind:"<<track->kind();
 
   if ( track->kind() == webrtc::MediaStreamTrackInterface::kAudioKind) {
     _remote_audio_track = static_cast<webrtc::AudioTrackInterface *>(track.get());
@@ -313,7 +311,8 @@ void Conductor::OnAddTrack(
 
 void Conductor::OnTrack(
     rtc::scoped_refptr<webrtc::RtpTransceiverInterface> transceiver) {
-  RTC_LOG(LS_INFO) << "OnTrack mid:" << transceiver->mid()->data()
+  RTC_LOG(LS_INFO) <<__FUNCTION__
+                   << " mid:" << transceiver->mid()->data()
                    << " type:"<<transceiver->media_type();
 }
 

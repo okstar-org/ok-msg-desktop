@@ -42,6 +42,8 @@ public:
     virtual std::pair<DispatchedMessageId, SentMessageId>
     sendMessage(bool isAction, const QString& content, bool encrypt = false) = 0;
 
+    virtual void clearOutgoingMessages() = 0;
+
 signals:
     /**
      * @brief Emitted when a message is received and processed

@@ -553,6 +553,11 @@ void MessageSessionWidget::removeGroup() {
   sendWorker->getHeader()->removeContact();
 }
 
+void MessageSessionWidget::clearReceipts()
+{
+    sendWorker->dispacher()->clearOutgoingMessages();
+}
+
 void MessageSessionWidget::doAcceptCall(const ToxPeer &p, bool video) {
   qDebug() << __func__ << p.toString();
 
