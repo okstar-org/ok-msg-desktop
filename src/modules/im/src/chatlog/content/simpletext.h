@@ -10,8 +10,7 @@ class SimpleText : public ChatLineContent {
     Q_OBJECT
 
 public:
-    SimpleText(const QString &txt = "", const QFont &font = QFont(),
-               const QColor &custom = Style::getColor(Style::MainText));
+    SimpleText(const QString &txt = "", const QFont &font = QFont());
     ~SimpleText() {
     }
 
@@ -22,14 +21,20 @@ public:
                QWidget *widget) override;
     void setWidth(qreal width) override;
 
+    void setColor(Style::ColorPalette role);
+    void setColor(const QColor &color);
+
 private:
     void updateBoundingRect();
+    void reloadTheme() override;
 
 private:
     QString text;
     QSizeF boundSize;
     QFont defFont;
     QColor color;
+    Style::ColorPalette colorRole = Style::MainText;
+    bool customColor = false;
     qreal forceWidth = -1;
 };
 

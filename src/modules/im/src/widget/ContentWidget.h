@@ -43,6 +43,7 @@ private:
   QFrame *mainHLine;
   QHBoxLayout *mainHLineLayout;
   QWidget *mainHead;
+  QWidget *seperator;
   QWidget *mainContent;
 };
 

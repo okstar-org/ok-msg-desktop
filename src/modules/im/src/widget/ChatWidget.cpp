@@ -108,7 +108,7 @@ ChatWidget::ChatWidget(QWidget *parent)
   ui->mainSplitter->setSizes(QList<int>() << 200 << 500);
 
   const Settings &s = Settings::getInstance();
-  setStyleSheet(Style::getStylesheet("window/chat.css"));
+ 
   reloadTheme();
   setupStatus();
   setupSearch();
@@ -539,6 +539,7 @@ void ChatWidget::onGroupClicked() {
   //    setActiveToolMenuButton(ActiveToolMenuButton::GroupButton);
 }
 void ChatWidget::reloadTheme() {
+  setStyleSheet(Style::getStylesheet("window/chat.css"));
   QString statusPanelStyle = Style::getStylesheet("window/statusPanel.css");
   //  ui->tooliconsZone->setStyleSheet(
   //      Style::getStylesheet("tooliconsZone/tooliconsZone.css"));

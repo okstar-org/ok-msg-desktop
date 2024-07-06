@@ -34,7 +34,7 @@ AboutFriendForm::AboutFriendForm(std::unique_ptr<IAboutFriend> _about, QWidget* 
     , profile{Nexus::getInstance().getProfile()}
 {
     ui->setupUi(this);
-    setStyleSheet(Style::getStylesheet("window/general.css"));
+    reloadTheme();
 
     connect(ui->sendMessage, &QPushButton::clicked, this, &AboutFriendForm::onSendMessageClicked);
     connect(ui->autoacceptfile, &QCheckBox::clicked, this, &AboutFriendForm::onAutoAcceptDirClicked);
@@ -77,6 +77,7 @@ AboutFriendForm::AboutFriendForm(std::unique_ptr<IAboutFriend> _about, QWidget* 
 
     connect(ui->alias, &QLineEdit::textChanged, this, &AboutFriendForm::onAliasChanged);
 
+    connect(&GUI::getInstance(), &GUI::themeApplyRequest, this, &AboutFriendForm::reloadTheme);
 }
 
 static QString getAutoAcceptDir(const QString& dir)
@@ -162,6 +163,11 @@ AboutFriendForm::~AboutFriendForm()
 void AboutFriendForm::setName(const QString &name)
 {
     ui->userName->setText(name);
+}
+
+void AboutFriendForm::reloadTheme()
+{
+    setStyleSheet(Style::getStylesheet("window/general.css"));
 }
 
 void AboutFriendForm::onAliasChanged(const QString &text)

@@ -11,10 +11,10 @@ class NotificationIcon;
 class ChatMessageBox : public IChatItem {
 public:
   ChatMessageBox(const QPixmap &avatar, const QString &contactName,
-                    const QString &message);
+                    const QString &message, bool isSelf = false);
 
   ChatMessageBox(const QPixmap &avatar, const QString &contactName,
-                    ChatLineContent *messageItem);
+                    ChatLineContent *messageItem, bool isSelf = false);
 
     void setMessageState(MessageState state);
 
@@ -62,6 +62,7 @@ private:
     QPointF scenePos;
     Qt::LayoutDirection layoutDirection = Qt::LeftToRight;
     bool showNickname = true;
+    bool customMsg = false;
 };
 
 class ChatNotificationBox : public IChatItem {

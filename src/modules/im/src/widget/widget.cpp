@@ -1577,6 +1577,7 @@ void Widget::clearAllReceipts() {
 void Widget::reloadTheme() {
   this->setStyleSheet(Style::getStylesheet("window/general.css"));
   chatWidget->reloadTheme();
+  contactWidget->reloadTheme();
 }
 
 void Widget::retranslateUi() {

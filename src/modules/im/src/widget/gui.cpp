@@ -92,6 +92,7 @@ void GUI::reloadTheme()
 {
     if (QThread::currentThread() == qApp->thread()) {
         getInstance()._reloadTheme();
+        emit getInstance().themeApplyRequest();
     } else {
         QMetaObject::invokeMethod(&getInstance(), "_reloadTheme", Qt::BlockingQueuedConnection);
     }
