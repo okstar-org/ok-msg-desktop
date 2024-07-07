@@ -136,6 +136,8 @@ void Application::start() {
 }
 
 void Application::createLoginUI(bool bootstrap) {
+  qDebug() << __func__ ;
+
   m_loginWindow = new UI::LoginWindow(bootstrap);
 
   connect(m_loginWindow, &UI::LoginWindow::loginResult,
@@ -160,6 +162,10 @@ void Application::createLoginUI(bool bootstrap) {
  *  关闭login窗口
  */
 void Application::closeLoginUI() {
+  qDebug() << __func__ ;
+  if(!m_loginWindow){
+    return;
+  }
     disconnect(m_loginWindow);
     m_loginWindow->close();
     //no need to delete
