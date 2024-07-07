@@ -48,9 +48,10 @@ Application::Application(int &argc, char *argv[])
   setDesktopFileName(APPLICATION_NAME);
 #endif
 
+
   //Initialize log manager.
   ok::lib::LogManager::Instance();
-
+  qDebug() << "QT_VERSION:" <<  QT_VERSION_STR;
   qDebug() << QString("argc:%1").arg(argc);
   for (int i = 0; i < argc; i++) {
     qDebug() << QString("argv:%1->%2").arg(i).arg(argv[i]);
