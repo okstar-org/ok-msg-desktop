@@ -108,17 +108,20 @@ ChatWidget::ChatWidget(QWidget *parent)
   ui->mainSplitter->setSizes(QList<int>() << 200 << 500);
 
   const Settings &s = Settings::getInstance();
-  setStyleSheet(Style::getStylesheet("window/chat.css"));
+ 
   reloadTheme();
   setupStatus();
   setupSearch();
   init();
 
   retranslateUi();
-  settings::Translator::registerHandler(std::bind(&ChatWidget::retranslateUi, this), this);
+
 }
 
-ChatWidget::~ChatWidget() { deinit(); }
+ChatWidget::~ChatWidget() {
+    deinit();
+    delete ui;
+}
 
 void ChatWidget::init() {
 
@@ -126,18 +129,31 @@ void ChatWidget::init() {
 
   auto widget = Widget::getInstance();
 
-  connect(widget, &Widget::toSendMessage, [&](const QString &to, bool isGroup) { sessionListWidget->toSendMessage(FriendId(to), isGroup); });
-
+  connect(widget, &Widget::toSendMessage, this, &ChatWidget::doSendMessage);
   connect(widget, &Widget::friendAdded, this, &ChatWidget::onFriendAdded);
   connect(widget, &Widget::friendRemoved, this, &ChatWidget::onFriendRemoved);
-
   connect(widget, &Widget::groupAdded, this, &ChatWidget::onGroupAdded);
   connect(widget, &Widget::groupRemoved, this, &ChatWidget::onGroupRemoved);
 
   connect(Nexus::getProfile(), &Profile::coreChanged, this, &ChatWidget::onCoreChanged);
+
+  settings::Translator::registerHandler(std::bind(&ChatWidget::retranslateUi, this), this);
 }
 
 void ChatWidget::deinit() {
+
+  settings::Translator::unregister(this);
+
+  disconnect(ui->nameLabel, &CroppingLabel::clicked, this, &ChatWidget::on_nameClicked);
+
+  auto widget = Widget::getInstance();
+
+  disconnect(widget, &Widget::toSendMessage , this, &ChatWidget::doSendMessage);
+  disconnect(widget, &Widget::friendAdded, this, &ChatWidget::onFriendAdded);
+  disconnect(widget, &Widget::friendRemoved, this, &ChatWidget::onFriendRemoved);
+  disconnect(widget, &Widget::groupAdded, this, &ChatWidget::onGroupAdded);
+  disconnect(widget, &Widget::groupRemoved, this, &ChatWidget::onGroupRemoved);
+
 
   disconnect(Nexus::getProfile(), &Profile::coreChanged, this, &ChatWidget::onCoreChanged);
 
@@ -355,6 +371,11 @@ void ChatWidget::onFriendAdded(const Friend *f) { sessionListWidget->addFriend(f
 
 void ChatWidget::onFriendRemoved(const Friend *f) { sessionListWidget->removeFriend(f); }
 
+void ChatWidget::doSendMessage(const QString &to, bool isGroup)
+{
+     sessionListWidget->toSendMessage(FriendId(to), isGroup);
+}
+
 
 //void ChatWidget::onGroupInviteReceived(const GroupInvite &inviteInfo) {
 
@@ -494,6 +515,11 @@ void ChatWidget::showProfile() {
   }
 }
 
+void ChatWidget::clearAllReceipts()
+{
+    sessionListWidget->clearAllReceipts();
+}
+
 void ChatWidget::on_nameClicked() {
   qDebug() << __func__;
 
@@ -513,6 +539,7 @@ void ChatWidget::onGroupClicked() {
   //    setActiveToolMenuButton(ActiveToolMenuButton::GroupButton);
 }
 void ChatWidget::reloadTheme() {
+  setStyleSheet(Style::getStylesheet("window/chat.css"));
   QString statusPanelStyle = Style::getStylesheet("window/statusPanel.css");
   //  ui->tooliconsZone->setStyleSheet(
   //      Style::getStylesheet("tooliconsZone/tooliconsZone.css"));

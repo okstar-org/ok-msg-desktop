@@ -36,8 +36,10 @@ public:
     static bool askQuestion(const QString& title, const QString& msg, const QString& button1,
                             const QString& button2, bool defaultAns = false, bool warning = true);
 
+signals:
+    void themeApplyRequest();
 
-private:
+  private:
     explicit GUI(QObject* parent = nullptr);
 
 private slots:

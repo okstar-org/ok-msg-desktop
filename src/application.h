@@ -67,7 +67,7 @@ private:
 
   ok::session::SignInInfo m_signInInfo;
 
-  std::unique_ptr<UI::LoginWindow> m_loginWindow;
+  UI::LoginWindow* m_loginWindow;
   std::unique_ptr<UI::MainWindow> m_mainWindow;
 
   void loadService();

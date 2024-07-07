@@ -7,29 +7,54 @@
 #include "src/persistence/settings.h"
 
 #include <QGraphicsScene>
+#include <QGraphicsProxyWidget>
+#include <QWidget>
 
 ChatMessageBox::ChatMessageBox(const QPixmap &avatar,
                                  const QString &contactName,
-                                 const QString &message) {
+                                 const QString &message,
+                                 bool isSelf) {
 
     avatarItem = new ContactAvatar(avatar);
     QFont baseFont = Settings::getInstance().getChatMessageFont();
     QFont nameFont = nicknameFont(baseFont);
-    nicknameItem = new SimpleText(contactName, nameFont, QColor(0xB2B2B2));
+    nicknameItem = new SimpleText(contactName, nameFont);
+    nicknameItem->setColor(Style::NameActive);
 
-    Text *text = new Text(message, baseFont, false, message);
+    Text *text = nullptr;
+    if (!isSelf)
+    {
+        text = new Text(message, baseFont, false, message);
+        text->setBackgroundColor(Qt::white);
+    }
+    else
+    {
+        text = new Text(message, baseFont, false, message, Text::CUSTOM, Qt::white);
+        text->setBackgroundColor(QColor(0x4979ED));
+    }
     text->setBoundingRadius(4.0);
-    text->setBackgroundColor(QColor(0x80C342));
     text->setContentsMargins(QMarginsF(3, 3, 3, 3));
     messageItem = text;
+    if (isSelf)
+    {
+        setLayoutDirection(Qt::RightToLeft);
+        setShowNickname(false);
+    }
 }
 
-ChatMessageBox::ChatMessageBox(const QPixmap &avatar, const QString &contactName, ChatLineContent *messageItem) {
+ChatMessageBox::ChatMessageBox(const QPixmap &avatar, const QString &contactName, ChatLineContent *messageItem, bool isSelf) {
     avatarItem = new ContactAvatar(avatar);
     QFont baseFont = Settings::getInstance().getChatMessageFont();
     QFont nameFont = nicknameFont(baseFont);
-    nicknameItem = new SimpleText(contactName, nameFont, QColor(0xB2B2B2));
+    nicknameItem = new SimpleText(contactName, nameFont);
+    nicknameItem->setColor(Style::NameActive);
     this->messageItem = messageItem;
+    customMsg = true;
+    if (isSelf)
+    {
+        setLayoutDirection(Qt::RightToLeft);
+        setShowNickname(false);
+    }
 }
 
 void ChatMessageBox::setMessageState(MessageState state) {

@@ -34,13 +34,15 @@ public:
                          ICoreIdHandler &idHandler,
                          ICoreGroupMessageSender &messageSender,
                          const IGroupSettings &groupSettings);
-    ~GroupMessageDispatcher();
+  ~GroupMessageDispatcher();
 
   std::pair<DispatchedMessageId, SentMessageId>
   sendMessage(bool isAction, QString const &content,
               bool encrypt = false) override;
 
   void onMessageReceived(GroupMessage &msg);
+
+  void clearOutgoingMessages() override;
 
 private:
   const GroupId &groupId;

@@ -336,7 +336,7 @@ bool Messenger::sendToGroup(const QString &g,   //
 
 bool Messenger::sendToFriend(const QString &f, const QString &msg,
                              QString &receiptNum, bool encrypt) {
-  qDebug() << QString("msg:%1=>%2").arg(msg).arg(f);
+  qDebug() << __func__ << msg << "=>" << f;
   sentCount++;
 
   auto _session = ok::session::AuthSession::Instance();
@@ -366,7 +366,6 @@ bool Messenger::sendToFriend(const QString &f, const QString &msg,
   }
   if (!y) {
     y = _im->sendTo(f, msg, receiptNum);
-    qDebug() << QString("sendTo=>%1").arg(y);
   }
   return y;
 }

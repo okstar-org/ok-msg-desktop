@@ -98,6 +98,8 @@ public:
   void addGroup(const Group *f);
   void removeGroup(const Group *f);
 
+  void clearAllReceipts();
+
 signals:
   void sessionAdded(MessageSessionWidget* widget);
   void onCompactChanged(bool compact);
