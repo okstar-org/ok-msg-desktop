@@ -56,7 +56,7 @@ void OfflineMsgEngine::onReceiptReceived(ReceiptNum receipt) {
  */
 void OfflineMsgEngine::addUnsentMessage(Message const &message,
                                         CompletionFn completionCallback) {
-  qDebug() << "OfflineMsgEngine::addUnsentMessage:" << message.content;
+  qDebug() << __func__ << message.content;
 
   QMutexLocker ml(&mutex);
   unsentMessages.append(OfflineMessage{
@@ -81,13 +81,15 @@ void OfflineMsgEngine::addUnsentMessage(Message const &message,
 void OfflineMsgEngine::addSentMessage(ReceiptNum receipt,
                                       Message const &message,
                                       CompletionFn completionCallback) {
+
+  qDebug() << __func__ << message.content;
+
   QMutexLocker ml(&mutex);
   //    assert(!sentMessages.contains(receipt));
   if (sentMessages.contains(receipt)) {
     sentMessages.remove(receipt);
   }
-  sentMessages.insert(
-      receipt, {message, std::chrono::steady_clock::now(), completionCallback});
+  sentMessages.insert(receipt, {message, std::chrono::steady_clock::now(), completionCallback});
   checkForCompleteMessages(receipt);
 }
 
@@ -153,16 +155,16 @@ void OfflineMsgEngine::completeMessage(
 }
 
 void OfflineMsgEngine::checkForCompleteMessages(ReceiptNum receipt) {
-  qDebug() << "checkForCompleteMessages receipt:" << receipt;
+  qDebug() << __func__ << receipt;
   auto msgIt = sentMessages.find(receipt);
   if (msgIt == sentMessages.end()) {
     return;
   }
 
-//  const bool receiptReceived = receivedReceipts.contains(receipt);
-//  if (!receiptReceived) {
-//    return;
-//  }
+  const bool receiptReceived = receivedReceipts.contains(receipt);
+  if (!receiptReceived) {
+    return;
+  }
 
   completeMessage(msgIt);
 }

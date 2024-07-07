@@ -72,8 +72,7 @@ FriendMessageDispatcher::sendMessage(bool isAction, const QString &content, bool
     auto messageId = nextMessageId++;
     lastId = messageId;
     auto onOfflineMsgComplete = [this, messageId] {
-      qDebug() << "FriendMessageDispatcher::onOfflineMsgComplete messageId:" << messageId.get();
-      emit this->messageComplete(messageId);
+      emit messageComplete(messageId);
     };
 
     ReceiptNum receipt;
