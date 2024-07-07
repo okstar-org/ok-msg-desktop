@@ -120,12 +120,11 @@ jobs:
         cp ${{ steps.strings.outputs.build-output-dir }}\src\${{ matrix.build_type }}\ok-msg-desktop.exe ${{ env.ARTIFACT_PATH }}
         xcopy build\vcpkg_installed\${{ env.VCPKG_DEFAULT_TRIPLET }}\bin\*.dll ${{ env.ARTIFACT_PATH }}
         xcopy "$env:Qt5_Dir\bin\*.dll" ${{ env.ARTIFACT_PATH }}
-        echo "$env:IQTA_TOOLS"
         xcopy "C:\Program Files\OpenSSL\bin\libcrypto-1_1-x64.dll" ${{ env.ARTIFACT_PATH }}
         xcopy "C:\Program Files\OpenSSL\bin\libssl-1_1-x64.dll" ${{ env.ARTIFACT_PATH }}
         Copy-Item -Recurse $env:Qt5_Dir\plugins ${{ env.ARTIFACT_PATH }}
         xcopy LICENSE ${{ env.ARTIFACT_PATH }}
-
+        rm ${{ env.ARTIFACT_PATH }}\*[d].dll | !(*[dd].dll)
 
     - name: Compile .ISS to .EXE Installer
       uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
