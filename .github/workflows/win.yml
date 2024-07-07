@@ -125,6 +125,7 @@ jobs:
         Copy-Item -Recurse $env:Qt5_Dir\plugins ${{ env.ARTIFACT_PATH }}
         xcopy LICENSE ${{ env.ARTIFACT_PATH }}
         rm ${{ env.ARTIFACT_PATH }}\*d.dll
+        xcopy ChineseSimplified.isl "C:\Program Files (x86)\Inno Setup 6\Languages\"
 
     - name: Compile .ISS to .EXE Installer
       uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
