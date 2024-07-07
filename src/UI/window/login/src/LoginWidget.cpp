@@ -260,7 +260,7 @@ void LoginWidget::onError(const QString &msg) {
   setMsg(msg);
   //登录失败退出定时器
   m_timer.reset();
-  m_error = true;
+//  m_error = true;
 }
 
 void LoginWidget::setMsg(const QString &msg)
