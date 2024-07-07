@@ -281,7 +281,10 @@ GenericChatForm::GenericChatForm(const ContactId *contact_,
                                  QWidget *parent)
     : QWidget(parent, Qt::Window), contactId(contact_), contact(nullptr),
       audioInputFlag(false),
-      audioOutputFlag(false), isEncrypt(false), iChatLog(iChatLog_),
+      audioOutputFlag(false),
+      isEncrypt(false),
+      iChatLog(iChatLog_),
+      emoticonsWidget{nullptr},
       messageDispatcher(messageDispatcher) {
   curRow = 0;
   setContentsMargins(0, 0, 0, 0);
@@ -656,17 +659,20 @@ void GenericChatForm::onEmoteButtonClicked() {
   if (SmileyPack::getInstance().getEmoticons().empty())
     return;
 
-  EmoticonsWidget widget;
-  connect(&widget, SIGNAL(insertEmoticon(QString)), this,
-          SLOT(onEmoteInsertRequested(QString)));
-  widget.installEventFilter(this);
+
+  if(!emoticonsWidget){
+    emoticonsWidget = new EmoticonsWidget(this);
+    emoticonsWidget->installEventFilter(this);
+    connect(emoticonsWidget, SIGNAL(insertEmoticon(QString)),
+          this, SLOT(onEmoteInsertRequested(QString)));
+  }
 
   QWidget *sender = qobject_cast<QWidget *>(QObject::sender());
   if (sender) {
     QPoint pos =
-        -QPoint(widget.sizeHint().width() / 2, widget.sizeHint().height()) -
-        QPoint(0, 10);
-    widget.exec(sender->mapToGlobal(pos));
+        -QPoint(emoticonsWidget->sizeHint().width() / 2, emoticonsWidget->sizeHint().height())
+        -QPoint(0, 10);
+    emoticonsWidget->exec(sender->mapToGlobal(pos));
   }
 }
 
@@ -676,7 +682,14 @@ void GenericChatForm::onEmoteInsertRequested(QString str) {
   if (sender)
     msgEdit->insertPlainText(str);
 
-  msgEdit->setFocus(); // refocus so that we can continue typing
+  // refocus so that we can continue typing
+  msgEdit->setFocus();
+
+  if(emoticonsWidget)
+  {
+    //close
+    emoticonsWidget->close();
+  }
 }
 
 void GenericChatForm::onCopyLogClicked() { chatLog->copySelectedText(); }
@@ -711,7 +724,7 @@ void GenericChatForm::addSystemDateMessage(const QDate &date) {
 
 QDateTime GenericChatForm::getTime(const IChatItem::Ptr &chatLine) const {
   if (chatLine) {
-    chatLine->getTime();
+    return chatLine->getTime();
   }
   return QDateTime();
 }

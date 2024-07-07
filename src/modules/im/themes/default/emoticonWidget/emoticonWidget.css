@@ -12,7 +12,7 @@
 
 #PageIndexContainer QPushButton
 {
-     icon: url(@getImagePath(emoticonWidget/dot_page.svg));
+     qproperty-icon: url(@getImagePath(emoticonWidget/dot_page.svg));
      icon-size: 10px;
      height: 12px;
      width: 12px;
@@ -22,17 +22,17 @@
 
 #PageIndexContainer QPushButton:unchecked:hover
 {
-     icon: url(@getImagePath(emoticonWidget/dot_page_hover.svg));
+     qproperty-icon: url(@getImagePath(emoticonWidget/dot_page_hover.svg));
 }
 
 #PageIndexContainer QPushButton:unchecked:pressed
 {
-     icon: url(@getImagePath(emoticonWidget/dot_page_hover.svg));
+     qproperty-icon: url(@getImagePath(emoticonWidget/dot_page_hover.svg));
 }
 
 #PageIndexContainer QPushButton:checked
 {
-     icon: url(@getImagePath(emoticonWidget/dot_page_current.svg));
+     qproperty-icon: url(@getImagePath(emoticonWidget/dot_page_current.svg));
 }
 
 QRadioButton::indicator
