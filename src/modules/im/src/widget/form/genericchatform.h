@@ -46,6 +46,7 @@ class QToolButton;
 class QVBoxLayout;
 class QHBoxLayout;
 class IMessageDispatcher;
+class EmoticonsWidget;
 struct Message;
 
 namespace Ui {
@@ -202,6 +203,7 @@ protected:
     SearchPos searchPos;
     std::map<ChatLogIdx, IChatItem::Ptr> messages;
     bool colorizeNames = false;
+    EmoticonsWidget* emoticonsWidget;
 };
 
 #endif // GENERICCHATFORM_H

@@ -14,21 +14,21 @@
 
 QAbstractButton#emoteButton
 {
-    icon: url("@getImagePath(chatForm/emoteButton.svg)");
+    qproperty-icon: url("@getImagePath(chatForm/emoteButton.svg)");
     width: 24px;
     height: 24px;
 }
 
 QAbstractButton#fileButton
 {
-    icon: url("@getImagePath(chatForm/fileButton.svg)");
+    qproperty-icon: url("@getImagePath(chatForm/fileButton.svg)");
     width: 24px;
     height: 24px;
 }
 
 QAbstractButton#screenshotButton
 {
-    icon: url("@getImagePath(chatForm/screenshotButton.svg)");
+    qproperty-icon: url("@getImagePath(chatForm/screenshotButton.svg)");
     width: 24px;
     height: 24px;
 }
@@ -51,7 +51,7 @@ QAbstractButton#screenshotButton:hover
 
 QAbstractButton#sendButton
 {
-    icon: url("@getImagePath(chatForm/sendButton.svg)");
+    qproperty-icon: url("@getImagePath(chatForm/sendButton.svg)");
     icon-size: 16px;
     border-radius: 5px;
     background-color: #2A67F6;
@@ -61,7 +61,7 @@ QAbstractButton#sendButton
 
 QAbstractButton#encryptButton
 {
-    icon: url("@getImagePath(chatForm/encrypt_off.svg)");
+    qproperty-icon: url("@getImagePath(chatForm/encrypt_off.svg)");
     icon-size: 20px;
     border-radius: 3px;
     width: 24px;
@@ -71,7 +71,7 @@ QAbstractButton#encryptButton
 
 QAbstractButton#encryptButton:checked
 {
-    icon: url("@getImagePath(chatForm/encrypt_on.svg)");
+    qproperty-icon: url("@getImagePath(chatForm/encrypt_on.svg)");
     icon-size: 16px;
     width: 24px;
     height: 24px;
@@ -99,7 +99,7 @@ QAbstractButton#micButton
 
 QAbstractButton#videoButton
 {
-    icon: url("@getImagePath(chatForm/videoButton.svg)");
+    qproperty-icon: url("@getImagePath(chatForm/videoButton.svg)");
     icon-size: 18px;
     background-color: #FC034D;
     border-radius: 16px;
@@ -109,7 +109,7 @@ QAbstractButton#videoButton
 
 QAbstractButton#callButton
 {
-    icon: url("@getImagePath(chatForm/callButton.svg)");
+    qproperty-icon: url("@getImagePath(chatForm/callButton.svg)");
     icon-size: 18px;
     background-color: #372E7F;
     border-radius: 16px;
