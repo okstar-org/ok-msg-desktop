@@ -4,6 +4,7 @@
 #include "src/persistence/profile.h"
 #include "ui_ContactWidget.h"
 #include "widget.h"
+#include "style.h"
 
 #include <src/friendlist.h>
 #include <src/grouplist.h>
@@ -12,6 +13,7 @@
 #include <src/widget/form/groupinviteform.h>
 
 #include <QLabel>
+#include <QStyle>
 
 ContactWidget::ContactWidget(QWidget *parent) : MainLayout(parent), ui(new Ui::ContactWidget), addForm{nullptr} {
   ui->setupUi(this);
@@ -20,6 +22,8 @@ ContactWidget::ContactWidget(QWidget *parent) : MainLayout(parent), ui(new Ui::C
 
   // 右侧内容容器
   contentWidget = std::make_unique<QWidget>(this);
+  contentWidget->setObjectName("ContactContentWidget");
+  contentWidget->setContentsMargins(8, 8, 8, 8);
   contentLayout = std::make_unique<ContentLayout>(contentWidget.get());
 
   // 左侧
@@ -35,8 +39,11 @@ ContactWidget::ContactWidget(QWidget *parent) : MainLayout(parent), ui(new Ui::C
   ui->mainSplitter->addWidget(contentWidget.get());
   ui->mainSplitter->setSizes(QList<int>() << 200 << 500);
 
+  //ui->searchText->setPlaceholderText(tr("Search Contacts"));
+
   init();
 
+  reloadTheme();
 }
 
 ContactWidget::~ContactWidget() {
@@ -46,8 +53,23 @@ ContactWidget::~ContactWidget() {
 
 void ContactWidget::reloadTheme()
 {
+    setStyleSheet(Style::getStylesheet("contact/ContactWidget.css"));
+    // I don't know why
+    QTimer::singleShot(0, this, [this]() {
+        style()->unpolish(ui->searchText);
+        style()->unpolish(ui->addBtn);
+        style()->polish(ui->searchText);
+        style()->polish(ui->addBtn);
+        ui->searchText->updateGeometry();
+    });
+    
+
+    ui->friendList->setStyleSheet(Style::getStylesheet("contact/ContactList.css"));
     contactListWidget->reloadTheme();
     contentLayout->reloadTheme();
+
+    ui->friendList->setAutoFillBackground(false);
+    ui->friendList->viewport()->setAutoFillBackground(false);
 }
 
 AddFriendForm *ContactWidget::makeAddForm() {

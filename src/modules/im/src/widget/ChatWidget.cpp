@@ -91,7 +91,7 @@ ChatWidget::ChatWidget(QWidget *parent)
 
   // 右侧容器
   contentWidget = std::make_unique<QWidget>(this);
-  contentWidget->setObjectName("contentWidget");
+  contentWidget->setObjectName("ChatContentWidget");
   contentLayout = new ContentLayout(contentWidget.get());
   contentWidget->setLayout(contentLayout);
 
@@ -116,6 +116,8 @@ ChatWidget::ChatWidget(QWidget *parent)
 
   retranslateUi();
 
+  // todo: delete from ui
+  ui->searchContactFilterBox->setVisible(false);
 }
 
 ChatWidget::~ChatWidget() {
@@ -561,6 +563,9 @@ void ChatWidget::reloadTheme() {
   //  }
 
   sessionListWidget->reloadTheme();
+
+  ui->friendList->setAutoFillBackground(false);
+  ui->friendList->viewport()->setAutoFillBackground(false);
 }
 void ChatWidget::setupSearch() {
 

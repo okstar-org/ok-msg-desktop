@@ -15,7 +15,6 @@
 QAbstractButton#emoteButton
 {
     qproperty-icon: url("@getImagePath(chatForm/emoteButton.svg)");
-    border-top-right-radius: 5px;
     width: 24px;
     height: 24px;
 }
@@ -23,7 +22,6 @@ QAbstractButton#emoteButton
 QAbstractButton#fileButton
 {
     qproperty-icon: url("@getImagePath(chatForm/fileButton.svg)");
-    border-bottom-right-radius: 5px;
     width: 24px;
     height: 24px;
 }
@@ -31,37 +29,55 @@ QAbstractButton#fileButton
 QAbstractButton#screenshotButton
 {
     qproperty-icon: url("@getImagePath(chatForm/screenshotButton.svg)");
-    border-top-left-radius: 5px;
     width: 24px;
     height: 24px;
+}
+
+QAbstractButton#emoteButton,
+QAbstractButton#fileButton,
+QAbstractButton#screenshotButton
+{
+    icon-size: 20px;
+    background-color: #F7F8FF;
+    border-radius: 5px;
+}
+
+QAbstractButton#emoteButton:hover,
+QAbstractButton#fileButton:hover,
+QAbstractButton#screenshotButton:hover
+{
+    background-color: #e7e8f4;
 }
 
 QAbstractButton#sendButton
 {
     qproperty-icon: url("@getImagePath(chatForm/sendButton.svg)");
+    icon-size: 16px;
     border-radius: 5px;
+    background-color: #2A67F6;
     width: 50px;
-    height: 50px;
+    height: 26px;
 }
 
 QAbstractButton#encryptButton
 {
     qproperty-icon: url("@getImagePath(chatForm/encrypt_off.svg)");
-    border-radius: 5px;
-    width: 50px;
-    height: 50px;
+    icon-size: 20px;
+    border-radius: 3px;
+    width: 24px;
+    height: 24px;
     background-color: #c84e4e;
 }
 
 QAbstractButton#encryptButton:checked
 {
     qproperty-icon: url("@getImagePath(chatForm/encrypt_on.svg)");
-    border-radius: 5px;
-    width: 50px;
-    height: 50px;
+    icon-size: 16px;
+    width: 24px;
+    height: 24px;
     background-color: #51b244;
-
 }
+
 
 /* Header */
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
@@ -91,15 +107,26 @@ QAbstractButton#videoButton
     height: 32px;
 }
 
+QAbstractButton#videoButton:disabled
+{
+    background-color: #c01146;
+}
+
 QAbstractButton#callButton
 {
     qproperty-icon: url("@getImagePath(chatForm/callButton.svg)");
     icon-size: 18px;
-    background-color: #372E7F;
+    background-color: #372D7A;
     border-radius: 16px;
     width: 32px;
     height: 32px;
 }
+
+QAbstractButton#callButton:disabled
+{
+    background-color: #2d2560;
+}
+
 
 /* SearchLine */
 
@@ -169,49 +196,4 @@ QAbstractButton:disabled
 QAbstractButton:focus
 {
     outline: none;
-}
-
-QAbstractButton[state="green"]
-{
-    background-color: #6bc260;
-}
-
-QAbstractButton[state="green"]:hover
-{
-    background-color: #79c76f;
-}
-
-QAbstractButton[state="green"]:pressed
-{
-    background-color: #51b244;
-}
-
-QAbstractButton[state="red"]
-{
-    background-color: #c84e4e;
-}
-
-QAbstractButton[state="red"]:hover
-{
-    background-color: #e87474;
-}
-
-QAbstractButton[state="red"]:pressed
-{
-    background-color: #df3b3b;
-}
-
-QAbstractButton[state="yellow"]
-{
-    background-color: #e6e465;
-}
-
-QAbstractButton[state="yellow"]:hover
-{
-    background-color: #e8e774;
-}
-
-QAbstractButton[state="yellow"]:pressed
-{
-    background-color: #e3e155;
 }

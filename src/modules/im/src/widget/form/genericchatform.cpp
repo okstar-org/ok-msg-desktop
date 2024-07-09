@@ -337,8 +337,9 @@ GenericChatForm::GenericChatForm(const ContactId *contact_,
 
   setLayout(mainLayout);
 
-  QWidget *footContainer = new QWidget(contentWidget);
+  QWidget *footContainer = new QFrame(contentWidget);
   footContainer->setAttribute(Qt::WA_StyledBackground);
+  footContainer->setAutoFillBackground(true);
   footContainer->setObjectName("ChatFootContainer");
   QHBoxLayout *footButtonsSmall = new QHBoxLayout();
   footButtonsSmall->setSpacing(FOOT_BUTTONS_SPACING);

@@ -10,11 +10,11 @@
  * See the Mulan PubL v2 for more details.
  */
 
-QWidget#ChatFootContainer
+QFrame#ChatFootContainer
 {
-    border: 1px solid #E9EAEF;
+    border: 1px solid #131313;
     border-radius: 10px;
-    background-color: white;
+    background-color: #262626;
 }
 
 .QWidget,

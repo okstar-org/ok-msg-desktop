@@ -1,0 +1,49 @@
+/*
+ * Copyright (c) 2022 船山信息 chuanshaninfo.com
+ * The project is licensed under Mulan PubL v2.
+ * You can use this software according to the terms and conditions of the Mulan
+ * PubL v2. You may obtain a copy of Mulan PubL v2 at:
+ *          http://license.coscl.org.cn/MulanPubL-2.0
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PubL v2 for more details.
+ */
+
+AdjustingScrollArea
+{
+    background: @groundBase;
+    border: 0px solid;
+}
+
+/* it is necessary for the rounded effect*/
+FriendListWidget,
+#scrollAreaWidgetContents
+{
+    border: 0px solid;
+    background: @groundBase;
+}
+
+FriendWidget{
+    border: 0px solid;
+    border-radius: 5px;
+}
+
+FriendWidget:hover{
+    background-color:#2b2b2b;
+}
+
+FriendWidget:selected{
+    background-color:#333333;
+}
+
+FriendWidget QLabel#nameLabel{
+    color: #e8e8e8;
+}
+
+FriendWidget QLabel#lastMessageLabel:!active{
+    color: #b3b1b3;
+}
+FriendWidget QLabel#lastMessageLabel:active{
+    color: #b3b1b3;
+}
