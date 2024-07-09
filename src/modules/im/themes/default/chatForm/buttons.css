@@ -84,17 +84,21 @@ QAbstractButton#micButton
 QAbstractButton#videoButton
 {
     qproperty-icon: url("@getImagePath(chatForm/videoButton.svg)");
-    border-radius: 5px;
-    width: 50px;
-    height: 40px;
+    icon-size: 18px;
+    background-color: #FC034D;
+    border-radius: 16px;
+    width: 32px;
+    height: 32px;
 }
 
 QAbstractButton#callButton
 {
     qproperty-icon: url("@getImagePath(chatForm/callButton.svg)");
-    border-radius: 5px;
-    width: 50px;
-    height: 40px;
+    icon-size: 18px;
+    background-color: #372E7F;
+    border-radius: 16px;
+    width: 32px;
+    height: 32px;
 }
 
 /* SearchLine */
