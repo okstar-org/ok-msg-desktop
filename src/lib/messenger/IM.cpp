@@ -20,9 +20,8 @@
 #include "base/logs.h"
 #include "base/times.h"
 #include "base/xmls.h"
-#include <algorithm>
+
 #include <list>
-#include <ranges>
 #include <string>
 #include <thread>
 #include <utility>
@@ -60,31 +59,33 @@ using namespace gloox;
  * @param pwd
  * @param features_
  */
-IM::IM(QString host, QString user, QString pwd,
-       QStringList features_)                             //
-    : osInfo(ok::base::SystemInfo::instance()->osInfo()), //
+IM::IM(QString host,
+       QString user,
+       QString pwd,
+       QStringList  features_)                             //
+    :
       features(std::move(features_)),                     //
-      _host(stdstring(host)),                             //
-      _username(stdstring(user)),                         //
-      _password(stdstring(pwd)),                          //
-      _status(IMConnectStatus::DISCONNECTED),             //
-      mExtDisco{ExtDisco()},                              //
-      mUIStarted(false),                                  //
-      mStarted(false)                                     //
+      _host(std::move(host)),                             //
+      _username(std::move(user)),                         //
+      _password(std::move(pwd))
 {
 
   qDebug() << __func__ << "Create instance...";
 
   setObjectName("IM-Connect");
 
+  auto osInfo = ok::base::SystemInfo::instance()->osInfo();
+
+  discoVal = osInfo.prettyName;
+
   // 生成本机resource. 格式:OkEDU.<HOST>.[VER].[UNIQUE]
   _resource = QString("%1.%2.[%3].%4")    //
-                  .arg(APPLICATION_ALIAS, //
-                       osInfo.hostName,
-                       GIT_DESCRIBE, //
-                       osInfo.uniqueId.mid(0, 6))
-                  .toStdString();
-  qDebug() << "Generate self resource:" << _resource.c_str();
+                  .arg(APPLICATION_ALIAS)
+                  .arg(osInfo.hostName)
+                  .arg(GIT_DESCRIBE)
+                  .arg(osInfo.uniqueId.mid(0, 6));
+
+  qDebug() << "Generate self resource:" << _resource;
 
   // qRegisterMetaType
   qRegisterMetaType<JID>("JID");
@@ -94,7 +95,7 @@ IM::IM(QString host, QString user, QString pwd,
   qRegisterMetaType<IMMessage>("IMMessage");
   qRegisterMetaType<IMGroupOccupant>("IMGroupOccupant");
 
-  qDebug() << ("Create messenger instance is successfully");
+  qDebug() << "Create messenger instance is successfully";
 }
 
 IM::~IM() { qDebug() << __func__; }
@@ -102,17 +103,17 @@ IM::~IM() { qDebug() << __func__; }
 void IM::run() { doConnect(); }
 
 std::unique_ptr<Client> IM::makeClient() {
-  JID loginJid(_username + "@" + _host + "/" + _resource);
+  JID loginJid(QString("%1@%2/%3").arg(_username).arg(_host).arg( _resource).toStdString());
 
   qDebug() << __func__ << "Using Jid:" << qstring(loginJid.full());
 
   /**
    * Client
    */
-  auto client = std::make_unique<Client>(loginJid, _password);
+  auto client = std::make_unique<Client>(loginJid, _password.toStdString());
   auto disco = client->disco();
 
-  disco->setVersion("disco", APPLICATION_VERSION, stdstring(osInfo.prettyName));
+  disco->setVersion("disco", APPLICATION_VERSION, discoVal.toStdString());
   disco->setIdentity("client", "pc", APPLICATION_RELEASE);
   disco->addIdentity("pubsub", "pep");
   disco->addFeature(XMLNS_PUBSUB);
@@ -221,18 +222,69 @@ std::unique_ptr<Client> IM::makeClient() {
 }
 
 void IM::stop() {
-  if (_status != IMConnectStatus::CONNECTED) {
-    return;
-  }
+  qDebug() << "...";
   doDisconnect();
   emit onStopped();
 }
 
+
+void IM::onDisconnect(ConnectionError e) {
+  qDebug() << __func__ << "error:" << e;
+  IMConnectStatus _status;
+  switch (e) {
+  case ConnAuthenticationFailed:
+    _status = IMConnectStatus::AUTH_FAILED;
+    break;
+  case ConnNoError:
+    _status = IMConnectStatus::DISCONNECTED;
+    break;
+  case ConnStreamError:
+  case ConnStreamVersionError:
+    _status = IMConnectStatus::CONN_ERROR;
+    break;
+  case ConnStreamClosed:
+    _status = IMConnectStatus::DISCONNECTED;
+    break;
+  case ConnProxyGatewayTimeout:
+    _status = IMConnectStatus::TIMEOUT;
+    break;
+  case ConnProxyAuthRequired:
+  case ConnProxyAuthFailed:
+  case ConnProxyNoSupportedAuth:
+  case ConnIoError:
+  case ConnParseError:
+  case ConnConnectionRefused:
+  case ConnDnsError:
+    _status = IMConnectStatus::CONN_ERROR;
+    break;
+  case ConnOutOfMemory:
+    _status = IMConnectStatus::OUT_OF_RESOURCE;
+    break;
+  case ConnNoSupportedAuth:
+    _status = IMConnectStatus::NO_SUPPORT;
+    break;
+  case ConnTlsFailed:
+  case ConnTlsNotAvailable:
+    _status = IMConnectStatus::TLS_ERROR;
+    break;
+  case ConnCompressionFailed:
+  case ConnUserDisconnected:
+  case ConnNotConnected:
+    _status = IMConnectStatus::DISCONNECTED;
+    break;
+  case ConnAttemptTimeout:
+    _status = IMConnectStatus::TIMEOUT;
+    break;
+  default:
+    _status = IMConnectStatus::DISCONNECTED;
+    break;
+  }
+
+  emit connectResult(_status);
+}
+
 void IM::onConnect() {
   qDebug() << __func__ << "connected";
-  assert(_client);
-
-  _status = IMConnectStatus::CONNECTED;
 
   auto res = _client->resource();
   qDebug() << __func__ << ("resource:") << (qstring(res));
@@ -240,28 +292,19 @@ void IM::onConnect() {
   //  fetchVCard(qstring(self().bare()));
 
   //  emit selfIdChanged(qstring(_client->username()));
-  emit connectResult(_status);
-  emit connected();
+  emit connectResult( IMConnectStatus::CONNECTED);
 
-  if (!mStarted) {
-    qWarning() << "Waiting UI to ready.";
-    sleep(1);
-  }
+
   qDebug() << __func__ << "Resume.";
 }
 
 void IM::doConnect() {
-  qDebug() << __func__ << "connecting ...";
-  if (_status == IMConnectStatus::CONNECTED || _status == IMConnectStatus::CONNECTING) {
-    return;
-  }
-  // set status to connecting
-  _status = IMConnectStatus::CONNECTING;
-
   qDebug() << __func__ << "Create IM client...";
   _client = makeClient();
   qDebug() << __func__ << "Create IM client is:" << _client.get();
   _client->connect(true);
+
+  emit connectResult(IMConnectStatus::CONNECTING);
 }
 
 void IM::send(const QString &xml) {
@@ -273,11 +316,7 @@ void IM::send(const QString &xml) {
 }
 
 void IM::interrupt() {
-  _status = IMConnectStatus::DISCONNECTED;
-  emit connectResult(_status);
-  if (_client) {
-    _client->disconnect();
-  }
+
 }
 
 IMMessage IM::fromXMsg(MsgType type, const gloox::Message &msg) {
@@ -407,7 +446,7 @@ gloox::RosterManager *IM::enableRosterManager() {
   _client->send(iq);
 
   // request ext server disco
-  IQ iq2(gloox::IQ::Get, JID(_host));
+  IQ iq2(gloox::IQ::Get, JID(_host.toStdString()));
   auto t = iq2.tag();
   t->addChild(gloox::ExtDisco::newRequest());
   _client->send(t);
@@ -795,7 +834,7 @@ void IM::handleMUCMessage(MUCRoom *room, const gloox::Message &msg, bool priv) {
   for (const auto &id : sendIds) {
     if (id == msg.id()) {
       qDebug() << "自己发出消息，忽略！";
-      sendIds.remove(id);
+      sendIds.erase(id);
       return;
     }
   }
@@ -1022,12 +1061,13 @@ void IM::createRoom(const JID &jid, const std::string &password) {
   item.jid = room->jid().full();
   item.autojoin = true;
   item.nick = stdstring(getNickname());
+
   // 添加到书签列表
-  mConferenceList.emplace_back(item);
+//  mConferenceList.emplace_back(item);
 
   // 存储书签列表
-  bookmarkStorage->storeBookmarks(mBookmarkList, mConferenceList);
-  qDebug() << "Store bookmarks is successful for room";
+//  bookmarkStorage->storeBookmarks(mBookmarkList, mConferenceList);
+//  qDebug() << "Store bookmarks is successful for room";
 }
 
 /**
@@ -1111,7 +1151,7 @@ QString IM::sendToRoom(const QString &to, const QString &msg, const QString &id)
   std::string msgId = !id.isEmpty() ? id.toStdString() : getClient()->getID();
   qDebug() << "msgId:" << qstring(msgId);
 
-  sendIds.emplace_back(msgId);
+  sendIds.insert(msgId);
 
   auto mid = pRoomInfo->room->send(msg.toStdString());
   return qstring(mid);
@@ -1141,19 +1181,19 @@ void IM::setRoomName(const QString &groupId, const std::string &roomName) {
 void IM::setRoomAlias(const QString &groupId, const std::string &alias) {
   qDebug() << __func__ << groupId << alias.c_str();
   // 修改书签列表
-  bool update = false;
-  for (auto &item : mConferenceList) {
-    if (item.jid == groupId.toStdString()) {
-      item.name = alias;
-      update = true;
-      break;
-    }
-  }
-  // 存储书签列表
-  if (update) {
-    bookmarkStorage->storeBookmarks(mBookmarkList, mConferenceList);
-    qDebug() << "Store the bookmarks：" << groupId;
-  }
+//  bool update = false;
+//  for (auto &item : mConferenceList) {
+//    if (item.jid == groupId.toStdString()) {
+//      item.name = alias;
+//      update = true;
+//      break;
+//    }
+//  }
+//  // 存储书签列表
+//  if (update) {
+//    bookmarkStorage->storeBookmarks(mBookmarkList, mConferenceList);
+//    qDebug() << "Store the bookmarks：" << groupId;
+//  }
 }
 
 void IM::setRoomDesc(const QString &groupId, const std::string &desc) {
@@ -1174,7 +1214,7 @@ void IM::setRoomDesc(const QString &groupId, const std::string &desc) {
 void IM::handlePing(const gloox::PingHandler::PingType type, const std::string &body) {
   qDebug() << "ping" << type << qstring(body);
   if (type != websocketPong) {
-    IQ iq(IQ::IqType::Result, JID(_host));
+    IQ iq(IQ::IqType::Result, JID(_host.toStdString()));
     _client->send(iq);
   }
 }
@@ -1226,8 +1266,6 @@ bool IM::handleIq(const IQ &iq) {
 
 void IM::handleIqID(const IQ &iq, int context) {}
 
-void IM::setUIStarted() { mUIStarted = true; }
-
 void IM::requestBookmarks() {
   /**
    * bookmark
@@ -1249,19 +1287,19 @@ void IM::handleBookmarks(const BookmarkList &bList,   //
   qDebug() << "BookmarkList:" << bList.size();
 
   //  缓存群聊书签列表（新增加群聊加入该书签一起保存）
-  mConferenceList = cList;
+//  mConferenceList = cList;
 
-  for (auto &c : mConferenceList) {
+  for (auto &c : cList) {
     auto name = (!c.name.empty() ? c.name : JID(c.jid).username());
     qDebug() << "room:" << qstring(name) << "jid:" << qstring(c.jid) << "nick:" << qstring(c.nick) << "autojoin:" << c.autojoin;
     // 缓存到本地
     cacheJoinRoom(c.jid, name);
   }
 
-  mBookmarkList = bList;
-  for (auto &c : mBookmarkList) {
-    qDebug() << "Bookmark name:" << qstring(c.name) << "url:" << qstring(c.url);
-  }
+//  mBookmarkList = bList;
+//  for (auto &c : mBookmarkList) {
+//    qDebug() << "Bookmark name:" << qstring(c.name) << "url:" << qstring(c.url);
+//  }
 }
 
 void IM::handleBookmarks(const BMConferenceList &cList) {
@@ -1484,7 +1522,6 @@ void IM::setFriendAlias(const JID &jid, const std::string &alias) {
 
 void IM::handleRoster(const Roster &roster) {
   qDebug() << __func__ << "size:" << roster.size();
-  m_roster = roster;
 
   for (auto &it : roster) {
     auto &key = it.first;
@@ -1567,11 +1604,15 @@ void IM::handleSelfPresence(const RosterItem &item,              //
                             Presence::PresenceType presenceType, //
                             const std::string &msg) {
 
-  qDebug() << QString("item:%1 resource:%2 presenceType:%3 msg:%4").arg(qstring(item.jid().full())).arg(qstring(resource)).arg(presenceType).arg(qstring(msg));
+  qDebug() << QString("item:%1 resource:%2 presenceType:%3 msg:%4") //
+                  .arg(qstring(item.jid().full()))  //
+                  .arg(qstring(resource)) //
+                  .arg(presenceType)  //
+                  .arg(qstring(msg));
 
-  selfPresType = presenceType;
+  auto st = _client->resource() == resource ? presenceType : (int)gloox::Presence::Available;
 
-  emit selfStatusChanged(_client->resource() == resource ? selfPresType : (int)gloox::Presence::Available, msg);
+  emit selfStatusChanged(st, msg);
 
   //  if (presenceType == gloox::Presence::Available) {
   for (auto &it : item.resources()) {
@@ -1773,8 +1814,6 @@ void IM::loadRosterInfo() {
     _client->disco()->getDiscoItems(it->first, "", this, DISCO_CTX_ROSTER);
   }
 }
-
-Presence::PresenceType IM::getPresenceType() { return selfPresType; }
 
 void IM::sendPresence() {
   //
@@ -2004,9 +2043,8 @@ bool IM::leaveGroup(const QString &groupId) {
   m_roomMap.remove(groupId);
 
   // 从书签删除，再保存书签
-  mConferenceList.remove_if([&](ConferenceListItem &a) { return a.jid == stdstring(groupId); });
-
-  bookmarkStorage->storeBookmarks(mBookmarkList, mConferenceList);
+//  mConferenceList.remove_if([&](ConferenceListItem &a) { return a.jid == stdstring(groupId); });
+//  bookmarkStorage->storeBookmarks(mBookmarkList, mConferenceList);
 
   return true;
 }
@@ -2026,9 +2064,8 @@ bool IM::destroyGroup(const QString &groupId) {
   m_roomMap.remove(groupId);
 
   // 从书签删除，再保存书签
-  mConferenceList.remove_if([&](ConferenceListItem &a) { return a.jid == stdstring(groupId); });
-
-  bookmarkStorage->storeBookmarks(mBookmarkList, mConferenceList);
+//  mConferenceList.remove_if([&](ConferenceListItem &a) { return a.jid == stdstring(groupId); });
+//  bookmarkStorage->storeBookmarks(mBookmarkList, mConferenceList);
 
   return true;
 }
@@ -2047,66 +2084,13 @@ StringList IM::handleDiscoNodeFeatures(const JID &from, const std::string &node)
 void IM::endJingle() { mPeerRequestMedias.clear(); }
 
 void IM::handleIncoming(gloox::Tag *tag) {
-  auto services = tag->findChild("services", XMLNS, XMLNS_EXTERNAL_SERVICE_DISCOVERY);
-  if (services) {
-    mExtDisco = ExtDisco(services);
-  }
+//  auto services = tag->findChild("services", XMLNS, XMLNS_EXTERNAL_SERVICE_DISCOVERY);
+//  if (services) {
+//    mExtDisco = ExtDisco(services);
+//  }
   //  emit incoming(::base::Xmls::parse(qstring(tag->xml())));
 }
 
-void IM::onDisconnect(ConnectionError e) {
-  qDebug() << __func__ << "error:" << e;
-  switch (e) {
-  case ConnAuthenticationFailed:
-    _status = IMConnectStatus::AUTH_FAILED;
-    break;
-  case ConnNoError:
-    _status = IMConnectStatus::DISCONNECTED;
-    break;
-  case ConnStreamError:
-  case ConnStreamVersionError:
-    _status = IMConnectStatus::CONN_ERROR;
-    break;
-  case ConnStreamClosed:
-    _status = IMConnectStatus::DISCONNECTED;
-    break;
-  case ConnProxyGatewayTimeout:
-    _status = IMConnectStatus::TIMEOUT;
-    break;
-  case ConnProxyAuthRequired:
-  case ConnProxyAuthFailed:
-  case ConnProxyNoSupportedAuth:
-  case ConnIoError:
-  case ConnParseError:
-  case ConnConnectionRefused:
-  case ConnDnsError:
-    _status = IMConnectStatus::CONN_ERROR;
-    break;
-  case ConnOutOfMemory:
-    _status = IMConnectStatus::OUT_OF_RESOURCE;
-    break;
-  case ConnNoSupportedAuth:
-    _status = IMConnectStatus::NO_SUPPORT;
-    break;
-  case ConnTlsFailed:
-  case ConnTlsNotAvailable:
-    _status = IMConnectStatus::TLS_ERROR;
-    break;
-  case ConnCompressionFailed:
-  case ConnUserDisconnected:
-  case ConnNotConnected:
-    _status = IMConnectStatus::DISCONNECTED;
-    break;
-  case ConnAttemptTimeout:
-    _status = IMConnectStatus::TIMEOUT;
-    break;
-  default:
-    _status = IMConnectStatus::DISCONNECTED;
-    break;
-  }
-
-  emit connectResult(_status);
-}
 
 bool IM::onTLSConnect(const CertInfo &info) {
   qDebug() << QString("CertInfo:");

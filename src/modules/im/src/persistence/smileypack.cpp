@@ -98,13 +98,11 @@ QString getAsRichText(const QString& key)
     return RICH_TEXT_PATTERN.arg(key);
 }
 
-SmileyPack::SmileyPack()
-    : cleanupTimer{new QTimer(this)}
+SmileyPack::SmileyPack() : cleanupTimer{new QTimer(this)}
 {
-    loadingMutex.lock();
     QtConcurrent::run(this, &SmileyPack::load, Settings::getInstance().getSmileyPack());
-    connect(&Settings::getInstance(), &Settings::smileyPackChanged, this,
-            &SmileyPack::onSmileyPackChanged);
+
+    connect(&Settings::getInstance(), &Settings::smileyPackChanged, this, &SmileyPack::onSmileyPackChanged);
     connect(cleanupTimer, &QTimer::timeout, this, &SmileyPack::cleanupIconsCache);
     cleanupTimer->start(CLEANUP_TIMEOUT);
 }
@@ -300,7 +298,7 @@ QString SmileyPack::smileyfied(const QString& msg)
  */
 QList<QStringList> SmileyPack::getEmoticons() const
 {
-    QMutexLocker locker(&loadingMutex);
+//    QMutexLocker locker(&loadingMutex);
     return emoticons;
 }
 
@@ -329,6 +327,5 @@ std::shared_ptr<QIcon> SmileyPack::getAsIcon(const QString& emoticon) const
 
 void SmileyPack::onSmileyPackChanged()
 {
-    loadingMutex.lock();
     QtConcurrent::run(this, &SmileyPack::load, Settings::getInstance().getSmileyPack());
 }

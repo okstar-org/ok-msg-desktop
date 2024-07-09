@@ -70,7 +70,7 @@ void ChatMessageBox::setMessageState(MessageState state) {
     switch (state) {
     case MessageState::pending: {
         stateItem = new Spinner(Style::getImagePath("chatArea/spinner.svg"),
-                                QSize(16, 16), 360.0 / 1.6);
+                              QSize(16, 16), 360.0 / 1.6);
     } break;
     case MessageState::broken: {
         stateItem = new Broken(Style::getImagePath("chatArea/error.svg"),

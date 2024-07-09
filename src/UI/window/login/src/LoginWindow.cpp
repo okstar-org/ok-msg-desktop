@@ -60,7 +60,6 @@ LoginWindow::LoginWindow(bool bootstrap, QWidget *parent)
 
 LoginWindow::~LoginWindow() {
     qDebug() << __func__;
-    delete ui;
 }
 
 void LoginWindow::onProfileLoadFailed(QString msg) {
