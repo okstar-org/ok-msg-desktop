@@ -899,7 +899,7 @@ void IM::handleMUCMessage(MUCRoom *room, const gloox::Message &msg, bool priv) {
 bool IM::handleMUCRoomCreation(MUCRoom *room) {
   qDebug() << "handleMUCRoomCreation" << room->jid().full().c_str();
 
-  //  room->requestRoomConfig();
+  room->requestRoomConfig();
 
   // 添加到缓存
   auto roomId = qstring(room->jid().bare());
@@ -987,7 +987,7 @@ void IM::handleMUCConfigList(MUCRoom *room,                //
 void IM::handleMUCConfigForm(MUCRoom *room, const DataForm &form) {
   qDebug() << __func__ << "room:" << room->jid().full().c_str();
 
-  auto roomId = qstring(room->jid().full());
+  auto roomId = qstring(room->jid().bare());
 
   auto find = m_roomMap.find(roomId);
   if (find == m_roomMap.end()) {
@@ -1065,11 +1065,14 @@ void IM::createRoom(const JID &jid, const std::string &password) {
   room->instantRoom(MUCOperation::CreateInstantRoom);
   cacheJoinRoom(jid.bare(), jid.resource());
 
-    ConferenceListItem item;
-    item.name = jid.resource();
-    item.jid = room->jid().full();
-    item.autojoin = true;
-    item.nick = stdstring(getNickname());
+
+  setRoomName(qstring(jid.bare()),jid.resource());
+
+  ConferenceListItem item;
+  item.name = jid.resource();
+  item.jid = room->jid().full();
+  item.autojoin = true;
+  item.nick = stdstring(getNickname());
 
   // 添加到书签列表
   mConferenceList.emplace_back(item);
@@ -1174,7 +1177,7 @@ void IM::setRoomSubject(const QString &groupId, const std::string &subject) {
 }
 
 void IM::setRoomName(const QString &groupId, const std::string &roomName) {
-  qDebug() << "setRoomName" << groupId << roomName.c_str();
+  qDebug() << __func__ << groupId << roomName.c_str();
   const IMRoomInfo *pRoomInfo = findRoom(groupId);
   if (!pRoomInfo) {
     qDebug() << "room is not exist." << groupId;
@@ -1190,19 +1193,19 @@ void IM::setRoomName(const QString &groupId, const std::string &roomName) {
 void IM::setRoomAlias(const QString &groupId, const std::string &alias) {
   qDebug() << __func__ << groupId << alias.c_str();
   // 修改书签列表
-//  bool update = false;
-//  for (auto &item : mConferenceList) {
-//    if (item.jid == groupId.toStdString()) {
-//      item.name = alias;
-//      update = true;
-//      break;
-//    }
-//  }
-//  // 存储书签列表
-//  if (update) {
-//    bookmarkStorage->storeBookmarks(mBookmarkList, mConferenceList);
-//    qDebug() << "Store the bookmarks：" << groupId;
-//  }
+  bool update = false;
+  for (auto &item : mConferenceList) {
+    if (item.jid == groupId.toStdString()) {
+      item.name = alias;
+      update = true;
+      break;
+    }
+  }
+  // 存储书签列表
+  if (update) {
+    bookmarkStorage->storeBookmarks(mBookmarkList, mConferenceList);
+    qDebug() << "Store the bookmarks：" << groupId;
+  }
 }
 
 void IM::setRoomDesc(const QString &groupId, const std::string &desc) {
@@ -1305,10 +1308,10 @@ void IM::handleBookmarks(const BookmarkList &bList,   //
     cacheJoinRoom(c.jid, name);
   }
 
-//  mBookmarkList = bList;
-//  for (auto &c : mBookmarkList) {
-//    qDebug() << "Bookmark name:" << qstring(c.name) << "url:" << qstring(c.url);
-//  }
+  mBookmarkList = bList;
+  for (auto &c : mBookmarkList) {
+    qDebug() << "Bookmark name:" << qstring(c.name) << "url:" << qstring(c.url);
+  }
 }
 
 void IM::handleBookmarks(const BMConferenceList &cList) {
@@ -2052,8 +2055,8 @@ bool IM::leaveGroup(const QString &groupId) {
   m_roomMap.remove(groupId);
 
   // 从书签删除，再保存书签
-//  mConferenceList.remove_if([&](ConferenceListItem &a) { return a.jid == stdstring(groupId); });
-//  bookmarkStorage->storeBookmarks(mBookmarkList, mConferenceList);
+  mConferenceList.remove_if([&](ConferenceListItem &a) { return a.jid == stdstring(groupId); });
+  bookmarkStorage->storeBookmarks(mBookmarkList, mConferenceList);
 
   return true;
 }
@@ -2073,8 +2076,8 @@ bool IM::destroyGroup(const QString &groupId) {
   m_roomMap.remove(groupId);
 
   // 从书签删除，再保存书签
-//  mConferenceList.remove_if([&](ConferenceListItem &a) { return a.jid == stdstring(groupId); });
-//  bookmarkStorage->storeBookmarks(mBookmarkList, mConferenceList);
+  mConferenceList.remove_if([&](ConferenceListItem &a) { return a.jid == stdstring(groupId); });
+  bookmarkStorage->storeBookmarks(mBookmarkList, mConferenceList);
 
   return true;
 }

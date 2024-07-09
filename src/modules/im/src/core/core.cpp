@@ -1343,26 +1343,6 @@ void Core::joinRoom(const QString &groupId) {
 void Core::inviteToGroup(const ContactId &friendId, const GroupId& groupId) {
   QMutexLocker ml{&coreLoopLock};
   tox->inviteGroup(lib::messenger::IMContactId{groupId.toString()}, lib::messenger::IMContactId{friendId.toString()});
-
-  //
-  //  Tox_Err_Conference_Invite error;
-  //  //  tox_conference_invite(tox.get(), receiver, groupId, &error);
-  //
-  //  switch (error) {
-  //  case TOX_ERR_CONFERENCE_INVITE_OK:
-  //    break;
-  //
-  //  case TOX_ERR_CONFERENCE_INVITE_CONFERENCE_NOT_FOUND:
-  //    qCritical() << "Conference not found";
-  //    break;
-  //
-  //  case TOX_ERR_CONFERENCE_INVITE_FAIL_SEND:
-  //    qCritical() << "Conference invite failed to send";
-  //    break;
-  //
-  //  default:
-  //    break;
-  //  }
 }
 
 GroupId Core::createGroup(const QString& name) {
