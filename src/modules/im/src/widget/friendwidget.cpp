@@ -373,11 +373,6 @@ void FriendWidget::changeAutoAccept(bool enable) {
 
 void FriendWidget::inviteToNewGroup()
 {
-//    auto core = Core::getInstance();
-//    const auto friendId = contact->getId();
-//    const auto groupId = core->createGroup();
-//    core->groupInviteFriend(friendId, groupId);
-
     auto groupCreate = new GroupCreateForm();
     connect(groupCreate, &GroupCreateForm::confirmed, [&, groupCreate](const QString name){
         auto core = Core::getInstance();
@@ -389,7 +384,6 @@ void FriendWidget::inviteToNewGroup()
         }
     });
     groupCreate->show();
-
 }
 
 void FriendWidget::showDetails() {
