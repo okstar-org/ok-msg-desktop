@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "OkMSG"
-#define MyAppVersion "1.0"
+#define MyAppVersion "24.06.18.0"
 #define MyAppPublisher "OkStar"
 #define MyAppURL "https://github.com/okstar-org/ok-msg-desktop"
 #define MyAppExeName "ok-msg-desktop.exe"
@@ -14,7 +14,7 @@
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{A8FE8EAC-3A4F-44E4-9B03-D41D5B20F749}
 AppName={#MyAppName}
-;AppVersion={#MyAppVersion}
+AppVersion={#MyAppVersion}
 AppVerName={#MyAppName}
 AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
@@ -30,6 +30,18 @@ OutputBaseFilename={#MyAppExeFile}
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
+
+; 默认值yes(即在[Setup]段不加入UseSetupLdr这个参数时, Inno Setup会认为它的值是yes).
+; 主要功能是告诉安装编译器将要创建何种类型的安装文件。如果值是yes, 则安装编译器会将所有的setup数据编译生成一个独立的EXE文件; 如果值为no, 则安装编译器将会把安装数据文件至少编译到三个文件中: setup.exe, setup-0.bin, setup-1.bin。
+; 而你要使用no的唯一原因应该是出于调试的目的。
+; 注意: 当一个安装需要跨磁盘的时候(DiskSpanning=yes)不要将该参数的值设置为no. 当这个值为yes的时候, 安装程序会被拷贝到用户临时目录并在这个临时目录下运行, 但当这个参数为no时这些操作不会发生, 如果Windows试图在磁盘上找到setup.exe
+; 文件而找不到该文件, 则可能导致错误, 因为驱动器中存在其他的磁盘。
+; 注意: 不要使用UseSetupLdr=no可以避免大型安装程序上的数字签名验证启动延迟, 而应使用磁盘跨接。可以查看SignTool获取更详细的信息。另外要注意对基于UseSetupLdr=no的安装程序进行数字签名将导致无效的数字签名进行卸载。
+UseSetupLdr=yesr
+; VersionInfoVesion是在[Setup]段里面用来指示二进制文件的版本的, 它是由'.'(点号)及'.'(点号)分开的4个整型数值组成的,如果不写这个字段的话, 默认是: 0.0.0.0
+; 如果只写部份的版本号数值也是可以的, 缺失的数值部份会自动追加0, 比如输入的如果是1.2则会自动被补充为1.2.0.0
+; 当UseSetupLdr的值为no时, 这个参数就不会对生成的二进制文件有任何的影响了
+VersionInfoVersion={#MyAppVersion}
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
