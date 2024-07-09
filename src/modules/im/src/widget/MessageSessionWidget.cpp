@@ -44,6 +44,7 @@
 #include <QMenu>
 #include <QMimeData>
 #include <QScrollBar>
+#include <QStyleOption>
 
 #include <cassert>
 
@@ -66,6 +67,7 @@
 MessageSessionWidget::MessageSessionWidget(ContentLayout *layout, const ContactId &cId, ChatType chatType)
     : GenericChatroomWidget(chatType, cId), contentLayout(layout), sendWorker{nullptr}, contactId(cId) {
 
+    setAutoFillBackground(false);
   qDebug() << __func__ << "contactId:" << cId.toString();
 
   auto profile = Nexus::getProfile();
@@ -647,7 +649,21 @@ void MessageSessionWidget::setAsActiveChatroom() { setActive(true); }
 
 void MessageSessionWidget::setAsInactiveChatroom() { setActive(false); }
 
-void MessageSessionWidget::onActiveSet(bool active) {}
+void MessageSessionWidget::onActiveSet(bool active) {
+    setBackgroundRole(QPalette::Window);
+}
+
+void MessageSessionWidget::paintEvent(QPaintEvent *e)
+{
+    QPainter painter(this);
+    QStyleOptionFrame opt;
+    initStyleOption(&opt);
+    if (active)
+    {
+        opt.state |= QStyle::State_Selected;
+    }
+    style()->drawPrimitive(QStyle::PE_Widget, &opt, &painter, this);
+}
 
 QString MessageSessionWidget::getStatusString() const {
   qDebug() << __func__;

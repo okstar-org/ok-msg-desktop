@@ -55,10 +55,10 @@ public:
    
     virtual void visibilityChanged(bool visible);
     virtual void selectionFocusChanged(bool focusIn);
+    virtual void reloadTheme();
 
 public:
     void fontChanged(const QFont &font);
-    void reloadTheme();
     void selectionCleared();
     void selectAll();
     void setTime(const QDateTime &time) {

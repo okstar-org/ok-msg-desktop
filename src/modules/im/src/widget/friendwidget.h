@@ -58,12 +58,10 @@ class FriendWidget : public GenericChatroomWidget
     void setRecvMessage(const FriendMessage &message,
                         bool isAction);
 
-
-
-
 protected:
     virtual void mousePressEvent(QMouseEvent* ev) override;
     virtual void mouseMoveEvent(QMouseEvent* ev) override;
+    void paintEvent(QPaintEvent *e) override;
 
     void onActiveSet(bool active) override;
 private:

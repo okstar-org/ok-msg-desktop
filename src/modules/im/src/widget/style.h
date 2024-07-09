@@ -74,6 +74,7 @@ public:
     static QString getThemeFolder();
     static QString getThemeName();
     static QColor getColor(ColorPalette entry);
+    static QColor getExtColor(const QString & key);
     static QFont getFont(Font font);
     static const QString resolve(const QString& filename, const QFont& baseFont = QFont());
     static void repolish(QWidget* w);

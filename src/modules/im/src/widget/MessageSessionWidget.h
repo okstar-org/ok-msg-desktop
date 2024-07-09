@@ -126,6 +126,7 @@ protected:
     virtual void mouseMoveEvent(QMouseEvent* ev) override;
     void setFriendAlias();
     void onActiveSet(bool active) override;
+    void paintEvent(QPaintEvent *e) override;
 
 private:
 

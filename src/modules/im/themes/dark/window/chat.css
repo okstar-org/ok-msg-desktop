@@ -13,9 +13,39 @@
 ChatWidget {
     background: @groundBase;
     border: 0px solid;
+}
+
+QWidget#ChatContentWidget
+{
+    background: @groundBase;
+    border: 0px solid;
     border-radius: 10px;
+}
+
+QWidget#searchContactsContainer
+{
+    background: @groundBase; 
+}
+
+RoundedMaskContainer#statusPanel{
+    background: @groundBase;
+    qproperty-radius: 10;
+    border: 0px solid;
 }
 
 QWidget#ContentSeperator{
     background: #474747;
+}
+
+QLineEdit#searchContactText{
+    color: #e8e8e8;
+    border: 1px solid #131313;
+    background-color: #262626;
+    border-radius: 5px;
+    padding: 6px;
+}
+
+QSplitter::handle
+{
+    background: black;
 }
