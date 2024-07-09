@@ -25,15 +25,9 @@ class Text : public ChatLineContent
     Q_OBJECT
 
 public:
-    enum TextType
-    {
-        NORMAL,
-        ACTION,
-        CUSTOM
-    };
 
     Text(const QString& txt = "", const QFont& font = QFont(), bool enableElide = false,
-         const QString& rawText = QString(), const TextType& type = NORMAL, const QColor& custom = Style::getColor(Style::MainText));
+         const QString& rawText = QString());
     virtual ~Text();
 
     void setTextSelectable(bool selectable);
@@ -73,6 +67,8 @@ public:
 
     void setBoundingRadius(qreal radius);
     void setBackgroundColor(const QColor &color);
+    void setColor(Style::ColorPalette role);
+    void setColor(const QColor &color);
 
 protected:
     // dynamic resource management
@@ -107,10 +103,12 @@ private:
     qreal ascent = 0.0;
     QFont defFont;
     QString defStyleSheet;
-    TextType textType;
-    QColor color;
-    QColor customColor;
+    
     QColor backgroundColor;
+    bool isCustomColor = false;
+    Style::ColorPalette colorRole = Style::MainText;
+    QColor color;
+
     qreal boundRadius = 0.0;
     QMarginsF margins;
     bool selectable = true;

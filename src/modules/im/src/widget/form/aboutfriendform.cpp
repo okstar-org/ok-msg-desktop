@@ -34,6 +34,8 @@ AboutFriendForm::AboutFriendForm(std::unique_ptr<IAboutFriend> _about, QWidget* 
     , profile{Nexus::getInstance().getProfile()}
 {
     ui->setupUi(this);
+
+    setAttribute(Qt::WA_StyledBackground);
     reloadTheme();
 
     connect(ui->sendMessage, &QPushButton::clicked, this, &AboutFriendForm::onSendMessageClicked);

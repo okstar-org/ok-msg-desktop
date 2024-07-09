@@ -10,9 +10,17 @@
  * See the Mulan PubL v2 for more details.
  */
 
-QScrollArea
+AdjustingScrollArea
 {
-    background: @themeMedium;
+    background: @groundBase;
+    border: 0px solid;
+}
+
+/* it is necessary for the rounded effect*/
+MessageSessionListWidget,
+#scrollAreaWidgetContents
+{
+    border: 0px solid;
 }
 
 QScrollBar:vertical
@@ -93,4 +101,28 @@ QWidget#circleWidgetContainer > QLabel#name
 
 QLabel {
     color: @mainText;
+}
+
+MessageSessionWidget{
+    border: 0px solid;
+    border-radius: 5px;
+}
+
+MessageSessionWidget:hover{
+    background-color:#2b2b2b;
+}
+
+MessageSessionWidget:selected{
+    background-color:#333333;
+}
+
+MessageSessionWidget QLabel#nameLabel{
+    color: #e8e8e8;
+}
+
+MessageSessionWidget QLabel#lastMessageLabel:!active{
+    color: #b3b1b3;
+}
+MessageSessionWidget QLabel#lastMessageLabel:active{
+    color: #b3b1b3;
 }

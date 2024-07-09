@@ -41,6 +41,7 @@
         <file>themes/default/window/chat.css</file>
         <file>themes/default/fileTransferInstance/filetransferWidget.css</file>
         <file>themes/default/genericChatForm/genericChatForm.css</file>
+        <file>themes/dark/genericChatForm/genericChatForm.css</file>
         <file>themes/default/addFriendForm/toxId.css</file>
         <file>themes/default/notificationEdge/notificationEdge.css</file>
         <file>themes/default/loginScreen/loginScreen.css</file>
@@ -185,5 +186,12 @@
 
         <file>img/others/logout-icon.svg</file>
         <file>img/caps_lock.svg</file>
+        <file>themes/default/contact/ContactWidget.css</file>
+        <file>themes/dark/contact/ContactWidget.css</file>
+        <file>themes/default/contact/ContactList.css</file>
+        <file>themes/dark/contact/ContactList.css</file>
+        <file>themes/default/contact/add.svg</file>
+        <file>themes/dark/contact/add.svg</file>
+
     </qresource>
 </RCC>
