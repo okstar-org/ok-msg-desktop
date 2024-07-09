@@ -194,11 +194,10 @@ IChatItem::Ptr createMessage(const ChatLogItem &item, bool isSelf,
     messageType = ChatMessage::MessageType::ALERT;
   }
 
-  const auto timestamp = chatLogMessage.message.timestamp;
+
   return ChatMessage::createChatMessage(
-      item, chatLogMessage.message.content, messageType,
-      isSelf,
-      chatLogMessage.state, timestamp, colorizeNames);
+      item, chatLogMessage.message.content, messageType,isSelf,
+      chatLogMessage.state, chatLogMessage.message.timestamp, colorizeNames);
 }
 
 
@@ -210,8 +209,7 @@ void renderMessage(const ChatLogItem &item, bool isSelf, bool colorizeNames,
       chatMessage->markAsDelivered(chatLogMessage.message.timestamp);
     }
   } else {
-    chatMessage = createMessage(item, isSelf, colorizeNames,
-                                chatLogMessage);
+    chatMessage = createMessage(item, isSelf, colorizeNames, chatLogMessage);
   }
 }
 
@@ -247,19 +245,12 @@ void renderItem(const ChatLogItem &item,
   switch (item.getContentType()) {
   case ChatLogItem::ContentType::message: {
     const auto &chatLogMessage = item.getContentAsMessage();
-    renderMessage(item, isSelf,
-                  colorizeNames,
-                  chatLogMessage,
-                  chatMessage);
+    renderMessage(item, isSelf, colorizeNames, chatLogMessage,chatMessage);
     break;
   }
   case ChatLogItem::ContentType::fileTransfer: {
     const auto &file = item.getContentAsFile();
-    renderFile(item,
-               file.file,
-               isSelf,
-               item.getTimestamp(),
-               chatMessage);
+    renderFile(item,file.file,isSelf,item.getTimestamp(),chatMessage);
     break;
   }
   }
@@ -286,8 +277,12 @@ GenericChatForm::GenericChatForm(const ContactId *contact_,
       iChatLog(iChatLog_),
       emoticonsWidget{nullptr},
       messageDispatcher(messageDispatcher) {
-  curRow = 0;
+
   setContentsMargins(0, 0, 0, 0);
+
+  qDebug() << __func__ << "contact:" << contact_;
+
+  curRow = 0;
   searchForm = new SearchForm();
   dateInfo = new QLabel(this);
   chatLog = new ChatLog(this);
@@ -441,13 +436,11 @@ GenericChatForm::GenericChatForm(const ContactId *contact_,
   connect(&GUI::getInstance(), &GUI::themeApplyRequest, this, &GenericChatForm::reloadTheme);
   reloadTheme();
 
+  settings::Translator::registerHandler([this] { retranslateUi(); }, this);
   retranslateUi();
-  settings::Translator::registerHandler(
-      std::bind(&GenericChatForm::retranslateUi, this), this);
 
   auto chatLogIdxRange = iChatLog.getNextIdx() - iChatLog.getFirstIdx();
-  auto firstChatLogIdx = (chatLogIdxRange < 100) ? iChatLog.getFirstIdx()
-                                                 : iChatLog.getNextIdx() - 100;
+  auto firstChatLogIdx = chatLogIdxRange < 100 ? iChatLog.getFirstIdx() : iChatLog.getNextIdx() - 100;
 
   renderMessages(firstChatLogIdx, iChatLog.getNextIdx());
 }
@@ -491,10 +484,11 @@ QDateTime GenericChatForm::getFirstTime() const {
 void GenericChatForm::reloadTheme() {
   const Settings &s = Settings::getInstance();
   setStyleSheet(Style::getStylesheet("genericChatForm/genericChatForm.css"));
+
   msgEdit->setStyleSheet(Style::getStylesheet("msgEdit/msgEdit.css") +
                          fontToCss(s.getChatMessageFont(), "QTextEdit"));
 
-  searchForm->reloadTheme();
+//  searchForm->reloadTheme();
 
 //  headWidget->setStyleSheet(Style::getStylesheet("chatArea/chatHead.css"));
 //  headWidget->reloadTheme();
@@ -765,7 +759,6 @@ void GenericChatForm::clearChatArea(bool confirm, bool inform) {
 void GenericChatForm::onSelectAllClicked() { chatLog->selectAll(); }
 
 void GenericChatForm::insertChatMessage(IChatItem::Ptr msg) {
-  qDebug() << __func__ << msg->getRow();
   chatLog->insertChatlineAtBottom(msg);
   emit messageInserted();
 }
@@ -957,8 +950,7 @@ void GenericChatForm::renderMessage(ChatLogIdx idx) {
   renderMessages(idx, idx + 1);
 }
 
-void GenericChatForm::renderMessages(ChatLogIdx begin, ChatLogIdx end,
-                                     std::function<void(void)> onCompletion) {
+void GenericChatForm::renderMessages(ChatLogIdx begin, ChatLogIdx end, std::function<void(void)> onCompletion) {
   QList<IChatItem::Ptr> beforeLines;
   QList<IChatItem::Ptr> afterLines;
 

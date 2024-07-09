@@ -52,7 +52,7 @@ void Translator::translate(const QString &moduleName, const QString &localeName)
   QString locale = localeName.isEmpty()
                        ? QLocale::system().name().section('_', 0, 0)
                        : localeName;
-  qDebug() << "Loaded  locale" << locale <<"=>" << moduleName ;
+  qDebug() << "Loaded locale" << locale <<"=>" << moduleName ;
   if (locale != "en") {
 
     if(!m_loadedQtTranslations){

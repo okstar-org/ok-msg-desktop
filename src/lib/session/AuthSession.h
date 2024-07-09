@@ -24,6 +24,7 @@
 #include "base/basic_types.h"
 #include "base/jsons.h"
 
+#include "lib/messenger/messenger.h"
 #include "lib/network/NetworkHttp.h"
 #include "lib/network/network.h"
 
@@ -128,6 +129,8 @@ protected:
   void doConnect();
 
 private:
+  QStringList l;
+
   SignInInfo m_signInInfo;
 
   std::shared_ptr<AuthSession> _session;
@@ -146,10 +149,11 @@ private:
 
 signals:
   void loginResult(SignInInfo, LoginResult); // LoginResult
-  void loginSuccessed(const SignInInfo& signIn);
+  void loginSuccessed();
 
 public slots:
-  void onLoginSuccessed(const SignInInfo& signIn);
+  void onLoginSuccessed();
+  void onIMConnectStatus(::lib::messenger::IMConnectStatus status);
 };
 } // namespace session
 } // namespace ok

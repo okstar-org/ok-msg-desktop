@@ -55,9 +55,11 @@ Messenger::Messenger(QObject *parent)
 
   ok::session::AuthSession::Instance();
   auto _im = _session->im();
-  connect(_im, &IM::connected, this, [pm,_session]() {
-//    pm->accountBeforeLogin(acc);
-    pm->startLogin(_session->account());
+
+  connect(_im, &IM::connectResult, this, [pm,_session](lib::messenger::IMConnectStatus status) {
+    if(status == lib::messenger::IMConnectStatus::CONNECTED){
+      pm->startLogin(_session->account());
+    }
   });
 
 #endif
@@ -629,7 +631,7 @@ void Messenger::requestBookmarks() {
 void Messenger::setUIStarted(){
   auto session = ok::session::AuthSession::Instance();
   auto im = session->im();
-  im->setUIStarted();
+//  im->setUIStarted();
 }
 
 void Messenger::onGroupReceived(QString groupId, QString name) {
