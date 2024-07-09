@@ -53,6 +53,11 @@ using namespace gloox;
 #define DISCO_CTX_ROSTER 1
 #define DISCO_CTX_BOOKMARKS 2
 #define DISCO_CTX_CONF_MEMBERS 3
+
+
+  ConferenceList mConferenceList;
+  BookmarkList mBookmarkList;
+
 /**
  * 聊天通讯核心类
  * @param user
@@ -925,7 +930,11 @@ void IM::handleMUCInviteDecline(MUCRoom *room, const JID &invitee, const std::st
   qDebug() << QString("invitee:%1 reason:%2").arg(qstring(invitee.full())).arg(qstring(reason));
 }
 
-void IM::handleMUCError(MUCRoom *room, StanzaError error) { qDebug() << QString("MUCRoom:%1 error:%2").arg(qstring(room->name())).arg(static_cast<int>(error)); }
+void IM::handleMUCError(MUCRoom *room, StanzaError error) {
+  qDebug() << __func__
+           << "MUCRoom:"<< qstring(room->name())
+           << error;
+}
 
 void IM::handleMUCInfo(MUCRoom *room,              //
                        int features,               //
@@ -1056,18 +1065,18 @@ void IM::createRoom(const JID &jid, const std::string &password) {
   room->instantRoom(MUCOperation::CreateInstantRoom);
   cacheJoinRoom(jid.bare(), jid.resource());
 
-  ConferenceListItem item;
-  item.name = jid.resource();
-  item.jid = room->jid().full();
-  item.autojoin = true;
-  item.nick = stdstring(getNickname());
+    ConferenceListItem item;
+    item.name = jid.resource();
+    item.jid = room->jid().full();
+    item.autojoin = true;
+    item.nick = stdstring(getNickname());
 
   // 添加到书签列表
-//  mConferenceList.emplace_back(item);
+  mConferenceList.emplace_back(item);
 
   // 存储书签列表
-//  bookmarkStorage->storeBookmarks(mBookmarkList, mConferenceList);
-//  qDebug() << "Store bookmarks is successful for room";
+  bookmarkStorage->storeBookmarks(mBookmarkList, mConferenceList);
+  qDebug() << "Store bookmarks is successful for room";
 }
 
 /**
@@ -1287,7 +1296,7 @@ void IM::handleBookmarks(const BookmarkList &bList,   //
   qDebug() << "BookmarkList:" << bList.size();
 
   //  缓存群聊书签列表（新增加群聊加入该书签一起保存）
-//  mConferenceList = cList;
+  mConferenceList = cList;
 
   for (auto &c : cList) {
     auto name = (!c.name.empty() ? c.name : JID(c.jid).username());

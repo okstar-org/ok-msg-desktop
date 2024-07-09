@@ -454,7 +454,9 @@ void Core::onFriendStatus(QString friendId, lib::messenger::IMStatus status) {
 
 void Core::onMessageSession(QString cId, QString sid) {
     qDebug() <<__func__<< "contact:" << cId << "sid:" << sid;
-    emit messageSessionReceived(FriendId(cId), sid);
+
+    auto contactId = ContactId(cId);
+    emit messageSessionReceived(contactId, sid);
 }
 
 
@@ -728,9 +730,8 @@ bool Core::sendMessageWithType(QString friendId,
 
   qDebug() << __func__ <<"receiver"<< friendId <<"message:"<< message;
   if(friendId.isEmpty())
-
   {
-qWarning() <<"receiver is empty.";
+    qWarning() <<"receiver is empty.";
     return false;
   }
 

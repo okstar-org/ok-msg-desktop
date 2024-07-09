@@ -227,7 +227,8 @@ void ChatWidget::onCoreChanged(Core &core_) {
 
 void ChatWidget::onMessageSessionReceived(const ContactId &contactId, const QString &sid) {
   qDebug() << __func__ << "contactId:" << contactId.toString() << "sid:" << sid;
-  sessionListWidget->createMessageSession(contactId, sid, ChatType::Chat);
+  sessionListWidget->createMessageSession(contactId, sid,
+                                          contactId.isGroup() ? ChatType::GroupChat : ChatType::Chat);
 }
 
 void ChatWidget::onFriendMessageReceived(const FriendId &friendId, const FriendMessage &message, bool isAction) {
