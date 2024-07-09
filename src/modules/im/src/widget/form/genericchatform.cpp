@@ -609,7 +609,8 @@ void GenericChatForm::onSendTriggered() {
   msgEdit->clear();
 
   qDebug() << "Input text:" << msg;
-  messageDispatcher.sendMessage(isAction, msg, isEncrypt);
+  auto sent= messageDispatcher.sendMessage(isAction, msg, isEncrypt);
+  qDebug() << &messageDispatcher << "sendMessage=>" << sent.first.get() <<sent.second;
 }
 
 /**

@@ -403,8 +403,6 @@ void ChatLog::insertChatlineAtBottom(IChatItem::Ptr l) {
 
     // insert
     int from = lines.size();
-    qDebug() << __func__ << from;
-
     l->setRow(from);
     l->addToScene(scene);
 

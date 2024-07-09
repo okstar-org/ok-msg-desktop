@@ -50,7 +50,8 @@ public:
 
     QByteArray getByteArray() const;
     virtual bool isValid() const;
-    int getSize();
+    bool isGroup() const;
+
 
     virtual QString toString() const {
         return username+"@"+server;
@@ -62,8 +63,6 @@ public:
     QString username;
     //服务器地址
     QString server;
-
-    bool isGroup = false;
 
     friend QDebug& operator<<(QDebug& debug, const ContactId &f);
 };
