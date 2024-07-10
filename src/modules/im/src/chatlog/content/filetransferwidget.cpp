@@ -92,7 +92,10 @@ FileTransferWidget::FileTransferWidget(QWidget* parent, ToxFile file)
 
     setFixedHeight(64);
 
-    connect(&GUI::getInstance(), &GUI::themeApplyRequest, this, &FileTransferWidget::reloadTheme);
+    connect(&GUI::getInstance(), &GUI::themeApplyRequest, this, [this]() {
+        backgroundColorAnimation->stop();
+        setBackgroundColor(lastStatus, true);    
+    });
 }
 
 FileTransferWidget::~FileTransferWidget()
@@ -144,19 +147,47 @@ void FileTransferWidget::acceptTransfer(const QString& filepath)
     coreFile->acceptFileRecvRequest(fileInfo.receiver, fileInfo.fileId, filepath);
 }
 
-void FileTransferWidget::setBackgroundColor(const QColor& c, bool whiteFont)
-{
-    if (c != backgroundColor) {
-        backgroundColorAnimation->setStartValue(backgroundColor);
-        backgroundColorAnimation->setEndValue(c);
-        backgroundColorAnimation->start();
+void FileTransferWidget::setBackgroundColor(FileStatus status, bool useAnima) {
+
+    QColor color;
+    bool whiteFont;
+    switch (status) {
+    case FileStatus::INITIALIZING:
+    case FileStatus::PAUSED:
+    case FileStatus::TRANSMITTING:
+        color = Style::getColor(Style::TransferMiddle);
+        whiteFont = false;
+        break;
+    case FileStatus::BROKEN:
+    case FileStatus::CANCELED:
+        color = Style::getColor(Style::TransferBad);
+        whiteFont = true;
+        break;
+    case FileStatus::FINISHED:
+        color = Style::getColor(Style::TransferGood);
+        whiteFont = true;
+        break;
+    default:
+        return;
+        break;
+    }
+
+    if (color != backgroundColor)
+    {
+        if (useAnima) {
+            backgroundColorAnimation->setStartValue(backgroundColor);
+            backgroundColorAnimation->setEndValue(color);
+            backgroundColorAnimation->start();
+        }
+        else
+        {
+            backgroundColor = color;
+        }
     }
 
     setProperty("fontColor", whiteFont ? "white" : "black");
 
-    reloadTheme();
-
-    update();
+    setStyleSheet(Style::getStylesheet("fileTransferInstance/filetransferWidget.css"));
 }
 
 void FileTransferWidget::setButtonColor(const QColor& c)
@@ -247,14 +278,10 @@ void FileTransferWidget::updateWidgetColor(ToxFile const& file)
     case FileStatus::INITIALIZING:
     case FileStatus::PAUSED:
     case FileStatus::TRANSMITTING:
-        setBackgroundColor(Style::getColor(Style::TransferMiddle), false);
-        break;
     case FileStatus::BROKEN:
     case FileStatus::CANCELED:
-        setBackgroundColor(Style::getColor(Style::TransferBad), true);
-        break;
     case FileStatus::FINISHED:
-        setBackgroundColor(Style::getColor(Style::TransferGood), true);
+        setBackgroundColor(file.status);
         break;
     default:
         qWarning() << "Invalid file status" << file.fileId;
@@ -686,8 +713,3 @@ void FileTransferWidget::updateWidget(ToxFile const& file)
     }
 }
 
-void FileTransferWidget::reloadTheme()
-{
-    setStyleSheet(Style::getStylesheet("fileTransferInstance/filetransferWidget.css"));
-    Style::repolish(this);
-}
