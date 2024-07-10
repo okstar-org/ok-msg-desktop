@@ -40,6 +40,7 @@
         <file>themes/default/window/window.css</file>
         <file>themes/default/window/chat.css</file>
         <file>themes/default/fileTransferInstance/filetransferWidget.css</file>
+        <file>themes/dark/fileTransferInstance/filetransferWidget.css</file>
         <file>themes/default/genericChatForm/genericChatForm.css</file>
         <file>themes/dark/genericChatForm/genericChatForm.css</file>
         <file>themes/default/addFriendForm/toxId.css</file>
