@@ -286,6 +286,7 @@ void IM::onDisconnect(ConnectionError e) {
   }
 
   emit connectResult(_status);
+  emit stoped();
 }
 
 void IM::onConnect() {
@@ -298,7 +299,7 @@ void IM::onConnect() {
 
   //  emit selfIdChanged(qstring(_client->username()));
   emit connectResult( IMConnectStatus::CONNECTED);
-
+  emit started();
 
   qDebug() << __func__ << "Resume.";
 }
