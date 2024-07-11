@@ -57,6 +57,7 @@ using namespace gloox;
 
   ConferenceList mConferenceList;
   BookmarkList mBookmarkList;
+  bool __started = false;
 
 /**
  * 聊天通讯核心类
@@ -103,9 +104,14 @@ IM::IM(QString host,
   qDebug() << "Create messenger instance is successfully";
 }
 
-IM::~IM() { qDebug() << __func__; }
+IM::~IM() {
+    qDebug() << __func__;
+}
 
-void IM::run() { doConnect(); }
+void IM::run() {
+    qDebug() << __func__;
+    doConnect();
+}
 
 std::unique_ptr<Client> IM::makeClient() {
   JID loginJid(QString("%1@%2/%3").arg(_username).arg(_host).arg( _resource).toStdString());
@@ -227,7 +233,7 @@ std::unique_ptr<Client> IM::makeClient() {
 }
 
 void IM::stop() {
-  qDebug() << "...";
+  qDebug() << __func__;
   doDisconnect();
   emit stopped();
 }
@@ -235,6 +241,13 @@ void IM::stop() {
 
 void IM::onDisconnect(ConnectionError e) {
   qDebug() << __func__ << "error:" << e;
+
+  if(!__started){
+      return;
+  }
+
+  __started = false;
+
   IMConnectStatus _status;
   switch (e) {
   case ConnAuthenticationFailed:
@@ -291,13 +304,18 @@ void IM::onDisconnect(ConnectionError e) {
 
 void IM::onConnect() {
   qDebug() << __func__ << "connected";
+  if(__started){
+      return;
+  }
+
+  __started = true;
 
   auto res = _client->resource();
-  qDebug() << __func__ << ("resource:") << (qstring(res));
+  qDebug() << __func__ << "resource:" << (qstring(res));
 
   //  fetchVCard(qstring(self().bare()));
-
   //  emit selfIdChanged(qstring(_client->username()));
+
   emit connectResult( IMConnectStatus::CONNECTED);
   emit started();
 

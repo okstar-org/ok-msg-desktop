@@ -59,8 +59,6 @@ private:
   int _argc;
   char **_argv;
 
-  std::unique_ptr<ok::session::AuthSession> _session;
-
   std::unique_ptr<SettingManager> _settingManager;
 
   std::unique_ptr<ControllerManager> _controllerManager;

@@ -66,8 +66,16 @@ void AuthSession::onLoginSuccessed() {
 
   connect(_im, &::lib::messenger::IM::connectResult,
           this, &AuthSession::onIMConnectStatus);
+  qRegisterMetaType<ok::session::SignInInfo>("ok::session::SignInInfo");
+
+  connect(_im, &::lib::messenger::IM::started, this, &AuthSession::onIMStarted);
 
   _im->start();
+}
+
+void AuthSession::onIMStarted()
+{
+    emit imStarted(m_signInInfo);
 }
 
 void AuthSession::doConnect() {
@@ -180,5 +188,7 @@ void AuthSession::onIMConnectStatus(::lib::messenger::IMConnectStatus status) {
   LoginResult result{Status::FAILURE, msg};
   emit loginResult(m_signInInfo, result);
 }
+
+
 } // namespace session
 } // namespace ok

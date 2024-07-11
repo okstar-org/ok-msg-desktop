@@ -53,9 +53,7 @@ int Launcher::executeApplication() {
 }
 
 int Launcher::startup() {
-  auto result = executeApplication();
-  qDebug() << QString("finished, result: %1").arg(result);
-  return result;
+  return executeApplication();
 }
 
 void Launcher::shutdown() {
