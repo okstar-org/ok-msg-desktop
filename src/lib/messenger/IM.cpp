@@ -286,7 +286,7 @@ void IM::onDisconnect(ConnectionError e) {
   }
 
   emit connectResult(_status);
-  emit stoped();
+  emit stopped();
 }
 
 void IM::onConnect() {
