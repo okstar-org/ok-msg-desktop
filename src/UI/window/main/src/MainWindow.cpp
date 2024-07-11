@@ -36,6 +36,8 @@ static MainWindow* instance = nullptr;
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
 
+  qDebug() << __func__;
+
   ui->setupUi(this);
 
   setWindowTitle(APPLICATION_NAME);
@@ -73,7 +75,7 @@ MainWindow::MainWindow(QWidget *parent)
 }
 
 MainWindow::~MainWindow() {
-  qDebug() << "~MainWindow";
+  qDebug() << __func__;
   disconnect(m_menu);
   delete ui;
 }

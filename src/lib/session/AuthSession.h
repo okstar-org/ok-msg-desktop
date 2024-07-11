@@ -150,10 +150,12 @@ private:
 signals:
   void loginResult(SignInInfo, LoginResult); // LoginResult
   void loginSuccessed();
+  void imStarted(SignInInfo);
 
 public slots:
   void onLoginSuccessed();
   void onIMConnectStatus(::lib::messenger::IMConnectStatus status);
+  void onIMStarted();
 };
 } // namespace session
 } // namespace ok
