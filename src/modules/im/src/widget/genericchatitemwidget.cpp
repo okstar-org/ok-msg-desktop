@@ -108,9 +108,13 @@ void GenericChatItemWidget::updateLastMessage(const Message &m)
 
 void GenericChatItemWidget::updateStatusLight(Status::Status status, bool event)
 {
+    if(!statusPic)
+      return;
+
     auto pix = Status::getIconPath(status, event);
     if(pix.isEmpty())
         return;
+
     statusPic->setPixmap(QPixmap(pix));
 }
 
