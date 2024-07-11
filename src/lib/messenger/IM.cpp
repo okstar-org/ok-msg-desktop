@@ -229,7 +229,7 @@ std::unique_ptr<Client> IM::makeClient() {
 void IM::stop() {
   qDebug() << "...";
   doDisconnect();
-  emit onStopped();
+  emit stopped();
 }
 
 

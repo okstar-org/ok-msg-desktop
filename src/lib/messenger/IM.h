@@ -806,7 +806,7 @@ signals:
 
 
   void started();
-  void onStopped();
+  void stopped();
 
   void groupReceived(const QString groupId, const QString name);
   void groupListReceivedDone();
