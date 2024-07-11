@@ -127,8 +127,8 @@ ChatLog::ChatLog(QWidget* parent)
         copySelectedText(true);
     });
 
+    settings::Translator::registerHandler([this] { retranslateUi(); }, this);
     retranslateUi();
-    settings::Translator::registerHandler(std::bind(&ChatLog::retranslateUi, this), this);
 }
 
 ChatLog::~ChatLog()
@@ -136,7 +136,7 @@ ChatLog::~ChatLog()
     settings::Translator::unregister(this);
 
     // Remove chatlines from scene
-    for (IChatItem::Ptr l : lines)
+    for (const IChatItem::Ptr& l : lines)
         l->removeFromScene();
 
     if (busyNotification)
