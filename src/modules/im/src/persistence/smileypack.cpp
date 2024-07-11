@@ -109,7 +109,10 @@ SmileyPack::SmileyPack() : cleanupTimer{new QTimer(this)}
 
 SmileyPack::~SmileyPack()
 {
-    delete cleanupTimer;
+  if(cleanupTimer->isActive()){
+    cleanupTimer->stop();
+  }
+  cleanupTimer->deleteLater();
 }
 
 void SmileyPack::cleanupIconsCache()
