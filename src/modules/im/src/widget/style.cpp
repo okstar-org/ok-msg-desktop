@@ -77,6 +77,7 @@ QString qssifyFont(QFont font)
 }
 
 static QMap<Style::ColorPalette, QColor> palette;
+static QMap<QString, QColor> extPalette;
 
 static QMap<QString, QString> dictColor;
 static QMap<QString, QString> dictFont;
@@ -192,6 +193,11 @@ const QString Style::getImagePath(const QString& filename)
 QColor Style::getColor(Style::ColorPalette entry)
 {
     return palette[entry];
+}
+
+QColor Style::getExtColor(const QString &key)
+{
+    return extPalette.value(key, QColor(0,0,0));
 }
 
 QFont Style::getFont(Style::Font font)
@@ -385,6 +391,13 @@ void Style::initPalette()
     auto p = palette;
     settings.endGroup();
 
+    settings.beginGroup("extends-colors");
+    for (auto k : settings.childKeys()) {
+        QColor color(settings.value(k).toString());
+        if (color.isValid())
+            extPalette.insert(k, color);
+    }
+    settings.endGroup();
 }
 
 void Style::initDictColor()

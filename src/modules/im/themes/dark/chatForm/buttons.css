@@ -38,7 +38,7 @@ QAbstractButton#fileButton,
 QAbstractButton#screenshotButton
 {
     icon-size: 20px;
-    background-color: white;
+    background-color: #262626;
     border-radius: 5px;
 }
 
@@ -46,7 +46,7 @@ QAbstractButton#emoteButton:hover,
 QAbstractButton#fileButton:hover,
 QAbstractButton#screenshotButton:hover
 {
-    background-color: #F0F3F8;
+    background-color: #161616;
 }
 
 QAbstractButton#sendButton
@@ -107,14 +107,24 @@ QAbstractButton#videoButton
     height: 32px;
 }
 
+QAbstractButton#videoButton:disabled
+{
+    background-color: #cc708b;
+}
+
 QAbstractButton#callButton
 {
     qproperty-icon: url("@getImagePath(chatForm/callButton.svg)");
     icon-size: 18px;
-    background-color: #372E7F;
+    background-color: #372D7A;
     border-radius: 16px;
     width: 32px;
     height: 32px;
+}
+
+QAbstractButton#callButton:disabled
+{
+    background-color: #675da3;
 }
 
 /* SearchLine */
@@ -185,49 +195,4 @@ QAbstractButton:disabled
 QAbstractButton:focus
 {
     outline: none;
-}
-
-QAbstractButton[state="green"]
-{
-    background-color: #529449;
-}
-
-QAbstractButton[state="green"]:hover
-{
-    background-color: #589f4e;
-}
-
-QAbstractButton[state="green"]:pressed
-{
-    background-color: #437a3c;
-}
-
-QAbstractButton[state="red"]
-{
-    background-color: #9e2525;
-}
-
-QAbstractButton[state="red"]:hover
-{
-    background-color: #bd2c2c;
-}
-
-QAbstractButton[state="red"]:pressed
-{
-    background-color: #8f2121;
-}
-
-QAbstractButton[state="yellow"]
-{
-    background-color: #e6a850;
-}
-
-QAbstractButton[state="yellow"]:hover
-{
-    background-color: #e6bd5d;
-}
-
-QAbstractButton[state="yellow"]:pressed
-{
-    background-color: #e6843e;
 }

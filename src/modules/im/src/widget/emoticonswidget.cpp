@@ -32,6 +32,15 @@ constexpr int emoji_layout_rows = 8;
 constexpr int emoji_layout_cols = 8;
 constexpr int emoji_layout_spacing = 4;
 
+class PageDotButton : public QRadioButton {
+  public:
+    using QRadioButton::QRadioButton;
+    QSize sizeHint() const override {
+        QSize s = QRadioButton::sizeHint();
+        return QSize(s.height(), s.height());
+    }
+};
+
 EmoticonsWidget::EmoticonsWidget(QWidget* parent)
     : QMenu(parent)
 {
@@ -71,7 +80,7 @@ EmoticonsWidget::EmoticonsWidget(QWidget* parent)
 
         // page buttons are only needed if there is more than 1 page
         if (pageCount > 1) {
-            QPushButton *pageButton = new QPushButton(pageButtonsContainer);
+            QRadioButton *pageButton = new PageDotButton(pageButtonsContainer);
             pageButton->setCheckable(true);
             pageButton->setProperty("pageIndex", i);
             pageButton->setCursor(Qt::PointingHandCursor);

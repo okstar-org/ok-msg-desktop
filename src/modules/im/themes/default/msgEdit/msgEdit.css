@@ -12,22 +12,10 @@
 
 QTextEdit
 {
-    border-color: @groundExtra;
-    border-style: solid;
-    border-width: 1px;
+    border: 1px solid #D7D4D1;
     border-radius: 5px;
     background: white;
     padding: 3px;
-}
-
-QTextEdit:hover
-{
-    border-color: #d7d4d1;
-}
-
-QTextEdit:pressed
-{
-    border-color: #4ea6ea;
 }
 
 QTextEdit#group

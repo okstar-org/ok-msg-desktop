@@ -50,7 +50,7 @@ protected:
     void handleButton(QPushButton* btn);
     void showPreview(const QString& filename);
     void acceptTransfer(const QString& filepath);
-    void setBackgroundColor(const QColor& c, bool whiteFont);
+    void setBackgroundColor(FileStatus status, bool useAnima = true);
     void setButtonColor(const QColor& c);
 
     bool drawButtonAreaNeeded() const;
@@ -69,7 +69,6 @@ private:
     static bool tryRemoveFile(const QString &filepath);
 
     void updateWidget(ToxFile const& file);
-    void reloadTheme();
 
 private:
     Ui::FileTransferWidget* ui;
