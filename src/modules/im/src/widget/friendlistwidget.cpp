@@ -330,8 +330,10 @@ void FriendListWidget::searchChatrooms(const QString &searchString,
 
 void FriendListWidget::renameGroupWidget(GroupWidget *groupWidget,
                                          const QString &newName) {
-  groupLayout.removeSortedWidget(groupWidget);
-  groupLayout.addSortedWidget(groupWidget);
+//  groupLayout.removeSortedWidget(groupWidget);
+//  groupLayout.addSortedWidget(groupWidget);
+
+  groupWidget->setName(newName);
 }
 
 

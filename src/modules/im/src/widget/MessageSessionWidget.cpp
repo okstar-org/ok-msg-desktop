@@ -176,7 +176,9 @@ MessageSessionWidget::MessageSessionWidget(ContentLayout *layout, const ContactI
   //            });
 }
 
-MessageSessionWidget::~MessageSessionWidget() { qDebug() << __func__; }
+MessageSessionWidget::~MessageSessionWidget() {
+  qDebug() << __func__ << contactId;
+}
 
 void MessageSessionWidget::do_widgetClicked() {
   //    qDebug() << __func__ << "contactId:" << contactId.toString();
