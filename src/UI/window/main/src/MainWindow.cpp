@@ -39,9 +39,12 @@ MainWindow::MainWindow(QWidget *parent)
   qDebug() << __func__;
 
   ui->setupUi(this);
+//TODO(kuma) ui->module_box
 
   setWindowTitle(APPLICATION_NAME);
   setAttribute(Qt::WA_QuitOnClose, true);
+  //黄金分割比例 874/520 = 1.618
+  setMinimumSize(QSize(874, 520));
 
   m_menu = ui->menu_widget;
   connect(m_menu, SIGNAL(toggleChat(bool)), this, SLOT(onToggleChat(bool)));
