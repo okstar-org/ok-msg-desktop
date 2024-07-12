@@ -47,6 +47,7 @@ QString getToxId(const QString &id) { return id.trimmed(); }
  */
 AddFriendForm::AddFriendForm(QWidget *parent) : QWidget(parent), addUi{new Ui::AddFriendForm} {
 
+  setAttribute(Qt::WA_StyledBackground);
   setLayout(new QGridLayout);
   layout()->setMargin(0);
   layout()->setSpacing(0);

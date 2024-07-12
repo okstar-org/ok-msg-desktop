@@ -9,30 +9,13 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PubL v2 for more details.
  */
-
-#PageIndexContainer QPushButton
+#PageIndexContainer
 {
-     qproperty-icon: url(@getImagePath(emoticonWidget/dot_page.svg));
-     icon-size: 10px;
-     height: 12px;
-     width: 12px;
      background: transparent;
-     padding: 0px;
 }
 
-#PageIndexContainer QPushButton:unchecked:hover
-{
-     qproperty-icon: url(@getImagePath(emoticonWidget/dot_page_hover.svg));
-}
-
-#PageIndexContainer QPushButton:unchecked:pressed
-{
-     qproperty-icon: url(@getImagePath(emoticonWidget/dot_page_hover.svg));
-}
-
-#PageIndexContainer QPushButton:checked
-{
-     qproperty-icon: url(@getImagePath(emoticonWidget/dot_page_current.svg));
+QRadioButton{
+     background: transparent;
 }
 
 QRadioButton::indicator

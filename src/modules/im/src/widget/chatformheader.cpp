@@ -249,9 +249,8 @@ void ChatFormHeader::retranslateUi()
 
 void ChatFormHeader::updateButtonsView()
 {
-    setStateName(callButton, callState);
-    setStateName(videoButton, videoState);
-
+    callButton->setEnabled(callState != CallButtonState::Disabled);
+    videoButton->setEnabled(videoState != CallButtonState::Disabled);
     retranslateUi();
     Style::repolish(this);
 }

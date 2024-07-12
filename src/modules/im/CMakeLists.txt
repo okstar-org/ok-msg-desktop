@@ -379,6 +379,8 @@ set(${PROJECT_NAME}_SOURCES
         src/widget/tool/screenshotgrabber.h
         src/widget/tool/toolboxgraphicsitem.cpp
         src/widget/tool/toolboxgraphicsitem.h
+        src/widget/tool/roundedmaskcontainer.cpp
+        src/widget/tool/roundedmaskcontainer.h
 
         src/widget/ChatWidget.h
         src/widget/ChatWidget.cpp

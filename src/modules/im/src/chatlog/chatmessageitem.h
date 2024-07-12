@@ -42,6 +42,7 @@ public:
     }
 protected:
     QList<ChatLineContent *> contents() override;
+    void reloadTheme() override;
 
 private:
     inline QPointF mapToLayout(const QPointF &pos, qreal width, qreal offset) {
@@ -51,6 +52,7 @@ private:
         return pos;
     }
     QFont nicknameFont(const QFont &baseFont);
+    void updateTextTheme();
     int itemType() override;
 
 private:
@@ -63,6 +65,7 @@ private:
     Qt::LayoutDirection layoutDirection = Qt::LeftToRight;
     bool showNickname = true;
     bool customMsg = false;
+    bool _IsSelf = false;
 };
 
 class ChatNotificationBox : public IChatItem {

@@ -171,9 +171,9 @@ void CoreFile::cancelFileSend(QString friendId, QString fileId) {
 
     file->status = FileStatus::CANCELED;
     tox->fileCancel(file->fileId);
-    removeFile( fileId);
 
     emit fileTransferCancelled(*file);
+    removeFile(fileId);
 }
 
 void CoreFile::cancelFileRecv(QString friendId, QString fileId) {
@@ -187,7 +187,7 @@ void CoreFile::cancelFileRecv(QString friendId, QString fileId) {
     file->status = FileStatus::CANCELED;
     tox->fileRejectRequest(friendId, file->toIMFile());
     emit fileTransferCancelled(*file);
-    removeFile(  fileId);
+    removeFile(fileId);
 }
 
 void CoreFile::rejectFileRecvRequest(QString friendId, QString fileId) {
@@ -200,8 +200,8 @@ void CoreFile::rejectFileRecvRequest(QString friendId, QString fileId) {
     }
     file->status = FileStatus::CANCELED;
     tox->fileRejectRequest(friendId, file->toIMFile());
-    removeFile( fileId);
     emit fileTransferCancelled(*file);
+    removeFile( fileId);
 }
 
 void CoreFile::acceptFileRecvRequest(QString friendId,
@@ -499,8 +499,8 @@ void CoreFile::onFileSendAbort(const QString &friendId, const lib::messenger::Fi
     }
     file->bytesSent = m_sentBytes;
     file->status = FileStatus::CANCELED;
-    removeFile(file->fileId);
     emit fileTransferCancelled(*file);
+    removeFile(file->fileId);
 }
 
 void CoreFile::onFileSendError(const QString &friendId,

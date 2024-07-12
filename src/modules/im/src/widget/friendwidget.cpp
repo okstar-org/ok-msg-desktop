@@ -43,6 +43,8 @@
 #include <QInputDialog>
 #include <QMenu>
 #include <QMimeData>
+#include <QPainter>
+#include <QStyleOption>
 
 #include "form/chatform.h"
 #include "src/model/chathistory.h"
@@ -416,7 +418,7 @@ void FriendWidget::setAsInactiveChatroom() { setActive(false); }
 
 
 void FriendWidget::onActiveSet(bool active) {
-
+    setBackgroundRole(QPalette::Window);
 }
 
 
@@ -481,6 +483,17 @@ void FriendWidget::mouseMoveEvent(QMouseEvent *ev) {
     drag->setPixmap(avatar->getPixmap());
     drag->exec(Qt::CopyAction | Qt::MoveAction);
   }
+}
+
+void FriendWidget::paintEvent(QPaintEvent *e)
+{
+    QPainter painter(this);
+    QStyleOptionFrame opt;
+    initStyleOption(&opt);
+    if (active) {
+        opt.state |= QStyle::State_Selected;
+    }
+    style()->drawPrimitive(QStyle::PE_Widget, &opt, &painter, this);
 }
 
 ContentDialog *FriendWidget::createContentDialog() const {
