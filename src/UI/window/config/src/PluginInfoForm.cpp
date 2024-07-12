@@ -120,8 +120,8 @@ void PluginInfoForm::toInstall() {
         ui->progressBar->setValue(bytesReceived);
       },
 
-      [&](const QString& err){
-        qWarning()<<"Install"<<err;
+      [&](int code, const QString& err){
+        qWarning()<<"Install code:" << code <<err;
         isDownloading = false;
         setUninstalled();
       });

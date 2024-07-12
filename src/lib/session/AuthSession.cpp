@@ -85,21 +85,19 @@ void AuthSession::doConnect() {
   LoginResult result{_status, tr("...")};
   emit loginResult(m_signInInfo, result);
 
-  passportService->getAccount(
-      m_signInInfo.account,
-      [&](Res<SysAccount> &res) {
+  passportService->getAccount( m_signInInfo.account, [&](Res<SysAccount> &res) {
         qDebug() << "Res.code:" << res.code;
 
         if (res.code != 0) {
           _status = Status::FAILURE;
-          LoginResult result{_status, res.msg};
+          LoginResult result{_status, res.msg, 200};
           emit loginResult(m_signInInfo, result);
           return;
         }
 
         if (!res.success()) {
           _status = Status::FAILURE;
-          LoginResult result{_status, res.msg};
+          LoginResult result{_status, res.msg, 200};
           emit loginResult(m_signInInfo, result);
           return;
         }
@@ -108,9 +106,9 @@ void AuthSession::doConnect() {
         m_signInInfo.username = res.data->username.toLower();
         emit loginSuccessed();
       },
-      [&](const QString &msg) {
+      [&](int statusCode, const QString &msg) {
         _status = Status::FAILURE;
-        LoginResult result{Status::FAILURE, msg};
+        LoginResult result{Status::FAILURE, msg, statusCode};
         emit loginResult(m_signInInfo, result);
       });
 }

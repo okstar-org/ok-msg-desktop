@@ -61,9 +61,9 @@ NetworkHttp::~NetworkHttp() {
 
 bool NetworkHttp::get(
     const QUrl &url,                                            //
-    Fn<void(QByteArray body, const QString filename)> fn,       //
-    Fn<void(qint64 bytesReceived, qint64 bytesTotal)> progress, //
-    Fn<void(const QString &errStr)> failed) {
+    HttpBodyFn fn,
+    HttpProgressFn progress,
+    HttpErrorFn failed) {
 
   qDebug() << "Url:" << url.toString();
   if(url.isEmpty())
@@ -72,42 +72,9 @@ bool NetworkHttp::get(
     return false;
   }
   QNetworkRequest req(url);
-  req.setAttribute(QNetworkRequest::RedirectPolicyAttribute, true);
   auto *reply = _manager->get(req);
-  reply->ignoreSslErrors();
-
-  connect(reply, &QNetworkReply::finished, [=]() {
-    if (reply->error()) {
-      qWarning() << "Error:" << reply->errorString();
-      if (failed)
-        failed("网络连接错误");
-      return;
-    }
-    auto bytes = reply->readAll();
-    auto size = bytes.size();
-    qDebug() << "Received bytes:" << size;
-    if (size <= 0)
-      return;
-
-    if (!fn)
-      return;
-
-    auto header = reply->header(QNetworkRequest::KnownHeaders::ContentDispositionHeader);
-    if (!header.isNull()) {
-      QString filename = header.toString().split("=").last().trimmed();
-      fn(bytes, filename);
-    } else {
-      fn(bytes, url.fileName());
-    }
-    //delete reply
-//    reply->deleteLater();
-  });
-
-  if (progress) {
-    connect(reply, &QNetworkReply::downloadProgress, progress);
-  }
-
-  return true;
+  doRequest(req, reply, fn, progress, failed);
+  return reply;
 }
 
 QByteArray NetworkHttp::get(
@@ -136,7 +103,7 @@ QByteArray NetworkHttp::get(
 
 bool NetworkHttp::getJSON(const QUrl &url,
                           Fn<void(QJsonDocument)> fn,
-                          Fn<void(const QString &)> errFn) {
+                          HttpErrorFn errFn) {
   return get(
       url,
       [=](const QByteArray &buf, const QString &fileName) {
@@ -258,6 +225,65 @@ void NetworkHttp::PostFormData(
   if(uploadProgress){
     connect(reply, &QNetworkReply::uploadProgress, uploadProgress);
   }
+}
+
+void NetworkHttp::doRequest(QNetworkRequest& req,
+                            QNetworkReply* reply,
+                             HttpBodyFn fn  ,
+                            const HttpProgressFn& progress,
+                            const HttpErrorFn& failed)
+{
+    req.setAttribute(QNetworkRequest::RedirectPolicyAttribute, true);
+//    auto *reply = _manager->get(req);
+    reply->ignoreSslErrors();
+
+    connect(reply, &QNetworkReply::finished, [=]() {
+        // 获取HTTP状态码
+        QVariant statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
+        if (statusCode.isValid()) {
+          qDebug() << "statusCode:" << statusCode.toInt();
+        }
+
+      if (statusCode.toInt() / 100 != 2) {
+        qWarning() << "Error:" << reply->errorString();
+        if (failed){
+            failed(statusCode.toInt(), reply->errorString());
+        }
+        return;
+      }
+
+      auto bytes = reply->readAll();
+      auto size = bytes.size();
+      qDebug() << "Received bytes:" << size;
+      if (size <= 0)
+        return;
+
+      if (!fn)
+        return;
+
+      auto cth = reply->header(QNetworkRequest::KnownHeaders::ContentTypeHeader);
+      if(cth.isValid() ){
+          auto type = cth.toString();
+          qDebug() <<"content-type:"<<type;
+          if(type.startsWith("text/", Qt::CaseInsensitive) || type.startsWith("application/json", Qt::CaseInsensitive)){
+              qDebug() << qstring("body:%1").arg(QString::fromUtf8(bytes));
+          }
+      }
+
+      auto cdh = reply->header(QNetworkRequest::KnownHeaders::ContentDispositionHeader);
+      if (!cdh.isNull()) {
+        QString filename = cdh.toString().split("=").last().trimmed();
+        fn(bytes, filename);
+      } else {
+        fn(bytes, req.url().fileName());
+      }
+      //delete reply
+  //    reply->deleteLater();
+    });
+
+    if (progress) {
+      connect(reply, &QNetworkReply::downloadProgress, progress);
+    }
 }
 
 /**上传表单数据

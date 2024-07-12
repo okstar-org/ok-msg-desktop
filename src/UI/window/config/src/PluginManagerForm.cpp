@@ -48,7 +48,7 @@ PluginManagerForm::PluginManagerForm(QWidget *parent)
             add(item, i++);
           }
         },
-        [](QString err) { qWarning()<<"GetPluginPage" << err; });
+        [](int code, const QString &err) { qWarning()<<"GetPluginPage" << err; });
   });
 }
 

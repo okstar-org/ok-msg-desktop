@@ -69,6 +69,9 @@ LoginWidget::LoginWidget(bool bootstrap, QWidget *parent)
     connect(m_timer.get(), &QTimer::timeout, this, &LoginWidget::onTimeout);
   }
 
+  auto _session = ok::session::AuthSession::Instance();
+  connect(_session, &AuthSession::loginResult, this, &LoginWidget::onConnectResult);
+
   // 初始化
   init();
 }
@@ -121,7 +124,7 @@ void LoginWidget::init() {
           m_loaded++;
         }
       },
-      [&](const QString &error) { onError(error); });
+      [&](int code, const QString &error) { onError(code, error); });
 }
 
 void LoginWidget::deinit() {}
@@ -172,16 +175,15 @@ void LoginWidget::doLogin() {
     }
 
     SignInInfo info = {.account = account, .password = password, .host = host, .stackUrl = m_stacks.at(providerIdx - 1)};
-    auto _session = ok::session::AuthSession::Instance();
-    connect(_session, &AuthSession::loginResult, //
-            this, &LoginWidget::onConnectResult);
-    _session->doLogin(info);
+
+    ok::session::AuthSession::Instance()->doLogin(info);
     break;
   }
   }
 }
 
-void LoginWidget::onConnectResult(ok::session::SignInInfo info, ok::session::LoginResult result) {
+void LoginWidget::onConnectResult(ok::session::SignInInfo info,
+                                  ok::session::LoginResult result) {
 
   qDebug() << __func__ << result.msg;
 
@@ -205,7 +207,7 @@ void LoginWidget::onConnectResult(ok::session::SignInInfo info, ok::session::Log
   }
   case ok::session::Status::FAILURE:
     ui->loginBtn->setText(tr("Login"));
-    onError(result.msg);
+    onError(result.statusCode, result.msg);
     break;
   }
   emit loginResult(info, result);
@@ -241,10 +243,23 @@ void LoginWidget::on_providers_currentIndexChanged(int index) {
 
 void LoginWidget::retranslateUi() { ui->retranslateUi(this); }
 
-void LoginWidget::onError(const QString &msg) {
-  qWarning() << __func__ << msg;
-  setMsg(msg);
-  // 登录失败退出定时器
+void LoginWidget::onError(int statusCode, const QString &msg) {
+  QString newMsg =  msg;
+  switch (statusCode / 100) {
+  case 0:{
+      newMsg = tr("Network is not available!");
+      break;
+  }
+  case 4:{
+      newMsg = tr("Account does not exist!");
+      break;
+  }case 5:{
+      newMsg = tr("Server error, please try again later!");
+      break;
+  }
+  }
+
+  setMsg(newMsg);
   m_timer.reset();
 }
 

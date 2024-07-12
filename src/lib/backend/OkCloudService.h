@@ -101,8 +101,8 @@ public:
   OkCloudService(QObject *parent = nullptr);
   ~OkCloudService();
 
-  bool GetFederalInfo(Fn<void(Res<FederalInfo> &)> fn, Fn<void(QString)> err);
-  bool GetPluginPage(Fn<void(ResPage<PluginInfo> &)> fn, Fn<void(QString)> err);
+  bool GetFederalInfo(Fn<void(Res<FederalInfo> &)> fn, network::HttpErrorFn err = nullptr);
+  bool GetPluginPage(Fn<void(ResPage<PluginInfo> &)> fn, network::HttpErrorFn err = nullptr);
 
 };
 } // namespace ok::backend
