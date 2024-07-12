@@ -115,7 +115,6 @@ void PluginInfoForm::toInstall() {
         emit downloadFinished(path);
       },
       [&](qint64 bytesReceived, qint64 bytesTotal) {
-//        qDebug() << "Received bytes:" << bytesReceived << "/" << bytesTotal;
         ui->progressBar->setMaximum(bytesTotal);
         ui->progressBar->setValue(bytesReceived);
       },
