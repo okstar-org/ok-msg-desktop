@@ -10,42 +10,41 @@
  * See the Mulan PubL v2 for more details.
  */
 
-ChatWidget {
-    background: @groundBase;
-    border: 0px solid;
-}
-
-QWidget#ChatContentWidget
+AdjustingScrollArea
 {
     background: @groundBase;
     border: 0px solid;
-    border-radius: 10px;
 }
 
-QWidget#searchContactsContainer
+/* it is necessary for the rounded effect*/
+FriendListWidget,
+#scrollAreaWidgetContents
 {
-    background: @groundBase; 
-}
-
-RoundedMaskContainer#statusPanel{
-    background: @groundBase;
-    qproperty-radius: 10;
     border: 0px solid;
+    background: @groundBase;
 }
 
-QWidget#ContentSeperator{
-    background: #474747;
-}
 
-QLineEdit#searchContactText{
-    color: #e8e8e8;
-    border: 1px solid #131313;
-    background-color: #262626;
+FriendWidget{
+    border: 0px solid;
     border-radius: 5px;
-    padding: 6px;
 }
 
-QSplitter::handle
-{
-    background: black;
+FriendWidget:hover{
+    background-color:#F1F4F9;
+}
+
+FriendWidget:selected{
+    background-color:white;
+}
+
+FriendWidget QLabel#nameLabel{
+    color: #19171b;
+}
+
+FriendWidget QLabel#lastMessageLabel:!active{
+    color: #b3b1b3;
+}
+FriendWidget QLabel#lastMessageLabel:active{
+    color: #b3b1b3;
 }

@@ -454,7 +454,9 @@ void Core::onFriendStatus(QString friendId, lib::messenger::IMStatus status) {
 
 void Core::onMessageSession(QString cId, QString sid) {
     qDebug() <<__func__<< "contact:" << cId << "sid:" << sid;
-    emit messageSessionReceived(FriendId(cId), sid);
+
+    auto contactId = ContactId(cId);
+    emit messageSessionReceived(contactId, sid);
 }
 
 
@@ -728,9 +730,8 @@ bool Core::sendMessageWithType(QString friendId,
 
   qDebug() << __func__ <<"receiver"<< friendId <<"message:"<< message;
   if(friendId.isEmpty())
-
   {
-qWarning() <<"receiver is empty.";
+    qWarning() <<"receiver is empty.";
     return false;
   }
 
@@ -1342,26 +1343,6 @@ void Core::joinRoom(const QString &groupId) {
 void Core::inviteToGroup(const ContactId &friendId, const GroupId& groupId) {
   QMutexLocker ml{&coreLoopLock};
   tox->inviteGroup(lib::messenger::IMContactId{groupId.toString()}, lib::messenger::IMContactId{friendId.toString()});
-
-  //
-  //  Tox_Err_Conference_Invite error;
-  //  //  tox_conference_invite(tox.get(), receiver, groupId, &error);
-  //
-  //  switch (error) {
-  //  case TOX_ERR_CONFERENCE_INVITE_OK:
-  //    break;
-  //
-  //  case TOX_ERR_CONFERENCE_INVITE_CONFERENCE_NOT_FOUND:
-  //    qCritical() << "Conference not found";
-  //    break;
-  //
-  //  case TOX_ERR_CONFERENCE_INVITE_FAIL_SEND:
-  //    qCritical() << "Conference invite failed to send";
-  //    break;
-  //
-  //  default:
-  //    break;
-  //  }
 }
 
 GroupId Core::createGroup(const QString& name) {

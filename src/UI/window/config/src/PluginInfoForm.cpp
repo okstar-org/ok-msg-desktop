@@ -115,13 +115,12 @@ void PluginInfoForm::toInstall() {
         emit downloadFinished(path);
       },
       [&](qint64 bytesReceived, qint64 bytesTotal) {
-//        qDebug() << "Received bytes:" << bytesReceived << "/" << bytesTotal;
         ui->progressBar->setMaximum(bytesTotal);
         ui->progressBar->setValue(bytesReceived);
       },
 
-      [&](const QString& err){
-        qWarning()<<"Install"<<err;
+      [&](int code, const QString& err){
+        qWarning()<<"Install code:" << code <<err;
         isDownloading = false;
         setUninstalled();
       });

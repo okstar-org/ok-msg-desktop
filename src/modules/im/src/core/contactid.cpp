@@ -38,9 +38,9 @@ ContactId::ContactId(const QString &strId) {
           qWarning() << "Unable to parse contactId:"<<strId;
           return;
       }
-          // 提取各个部分
-          username = match.captured(1);
-          server = match.captured(2);
+      // 提取各个部分
+      username = match.captured(1);
+      server = match.captured(2);
 
 }
 
@@ -92,9 +92,9 @@ QByteArray ContactId::getByteArray() const {
  */
 bool ContactId::isValid() const { return !username.isEmpty() && !server.isEmpty(); }
 
-int ContactId::getSize()
+bool ContactId::isGroup() const
 {
-    return toString().size();
+    return server.startsWith("conference.")||server.startsWith("room.");
 }
 
 QDebug &operator<<(QDebug &debug, const ContactId &f) {

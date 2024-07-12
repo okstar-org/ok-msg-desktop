@@ -11,10 +11,7 @@
  */
 #pragma once
 
-#include <QMutex>
-#include <QString>
-#include <memory>
-#include <set>
+
 
 #include "base/r.h"
 #include "base/system/sys_info.h"
@@ -28,6 +25,12 @@
 #include "lib/session/AuthSession.h"
 #include "messenger.h"
 
+
+#include <memory>
+#include <set>
+
+#include <QMutex>
+#include <QString>
 #include <QDomElement>
 #include <bookmarkhandler.h>
 #include <bookmarkstorage.h>
@@ -137,7 +140,10 @@ class IM : public ok::lib::Task,
            public NativeBookmarkHandler {
   Q_OBJECT
 public:
-  explicit IM(QString host, QString user, QString pwd, QStringList features);
+  explicit IM(QString host,
+              QString user,
+              QString pwd,
+              QStringList features);
   ~IM();
 
   inline static IMMessage fromXMsg(MsgType type, const gloox::Message &msg);
@@ -260,7 +266,6 @@ public:
 
   void interrupt();
 
-  Presence::PresenceType getPresenceType();
 
   /**
    * 获取第一个在线终端resource
@@ -284,7 +289,7 @@ public:
 
   void makeId(QString &id);
 
-  ExtDisco &extDisco() { return mExtDisco; }
+//  ExtDisco &extDisco() { return mExtDisco; }
 
 protected:
   void run() override;
@@ -687,27 +692,37 @@ protected:
   void handleBookmarks(const BookmarkList &bList, //
                        const ConferenceList &cList) override;
 
+  void doPubSubEvent(const gloox::PubSub::Event *pse, const Message &msg, QString &friendId);
+  void doMessageHeadline(const Message &msg, QString &friendId, const QString &body);
+  void doMessageChat(const Message &msg, QString &friendId, const QString &body);
+
+  void doMessageNormal(const Message &msg, QString &friendId);
+
+  void joinRoom(MUCRoom *room);
+
+  void cacheJoinRoom(const std::string &jid, const std::string &name = "");
+
 private:
   QMutex m_mutex;
 
-  ok::base::OsInfo osInfo;
+
 
   QStringList features;
 
-  std::string _host;
-  std::string _username;
-  std::string _password;
-  std::string _resource;
+  QString discoVal;
+  QString _host;
+  QString _username;
+  QString _password;
+  QString _resource;
 
   QString _nick;
-  int _nickChanged = 0;
+
 
   std::unique_ptr<Client> _client;
 
-  /**
-   * 联系人
-   */
-  gloox::Roster m_roster;
+
+  // 发送消息的id
+  std::set<std::string> sendIds;
 
   /**
    * k: sessionId
@@ -727,6 +742,9 @@ private:
    */
   std::map<std::string, std::set<std::string>> onlineMap;
 
+  std::map<IMPeerId, Jingle::RTP::Medias> mPeerRequestMedias;
+
+
   std::unique_ptr<VCardManager> vCardManager;
   std::unique_ptr<PubSub::Manager> pubSubManager;
   std::unique_ptr<BookmarkStorage> bookmarkStorage;
@@ -741,33 +759,10 @@ private:
 
   QThread *thread;
 
-  // 连接状态
-  IMConnectStatus _status;
-  Presence::PresenceType selfPresType = gloox::Presence::Unavailable;
-
-  std::map<IMPeerId, Jingle::RTP::Medias> mPeerRequestMedias;
-
-  // 发送消息的id
-  std::list<std::string> sendIds;
-
-  ConferenceList mConferenceList;
-  BookmarkList mBookmarkList;
-
-  ExtDisco mExtDisco;
-
-  bool mUIStarted;
-
-  bool mStarted;
-
-  void doPubSubEvent(const gloox::PubSub::Event *pse, const Message &msg, QString &friendId);
-  void doMessageHeadline(const Message &msg, QString &friendId, const QString &body);
-  void doMessageChat(const Message &msg, QString &friendId, const QString &body);
-
-  void doMessageNormal(const Message &msg, QString &friendId);
-
-  void joinRoom(MUCRoom *room);
-
-  void cacheJoinRoom(const std::string &jid, const std::string &name = "");
+//
+//  ConferenceList mConferenceList;
+//  BookmarkList &mBookmarkList;
+//  ExtDisco mExtDisco;
 
 signals:
   void connectResult(IMConnectStatus);
@@ -809,9 +804,9 @@ signals:
   void selfAvatarChanged(std::string avatar);
   void selfStatusChanged(int type, const std::string status);
 
-  void connected();
+
   void started();
-  void onStopped();
+  void stopped();
 
   void groupReceived(const QString groupId, const QString name);
   void groupListReceivedDone();

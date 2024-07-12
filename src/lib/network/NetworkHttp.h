@@ -25,9 +25,15 @@
 #include <base/timer.h>
 
 class QNetworkAccessManager;
-
+class QNetworkRequest;
+class QNetworkReply;
 
 namespace network {
+
+using HttpErrorFn = Fn<void(int statusCode, const QString &errStr)>;
+using HttpDownloadProgressFn = Fn<void(qint64 bytesReceived, qint64 bytesTotal)>;
+using HttpUploadProgressFn = Fn<void(qint64 bytesSent, qint64 bytesTotal)>;
+using HttpBodyFn = Fn<void(QByteArray body, QString filename)>;
 
 class NetworkHttp : public QObject {
   Q_OBJECT
@@ -38,37 +44,43 @@ public:
 
   void httpFinished();
 
-  bool get(const QUrl &url,                                                      //
-      Fn<void(QByteArray body, const QString filename)> fn,                 //
-      Fn<void(qint64 bytesReceived, qint64 bytesTotal)> progress = nullptr, //
-      Fn<void(const QString &errStr)> failed = nullptr);
+  bool get(const QUrl &url,
+           const HttpBodyFn &fn,
+           const HttpDownloadProgressFn &progress = nullptr,
+           const HttpErrorFn &failed = nullptr);
 
   QByteArray get(const QUrl &url,
-                 const Fn<void(qint64 bytesReceived, qint64 bytesTotal)>
-                     &downloadProgress = nullptr);
+                 const Fn<void(qint64 bytesReceived, qint64 bytesTotal)> &downloadProgress = nullptr);
 
-  bool getJSON(const QUrl &url,
-               Fn<void(QJsonDocument)> fn = nullptr,
-               Fn<void(const QString &)> err = nullptr);
+  bool getJSON(const QUrl &url, Fn<void(QJsonDocument)> fn = nullptr, const HttpErrorFn& err = nullptr);
 
-  void post(const QUrl &url, const QString &str, Fn<void(QByteArray)> fn);
+  void post(const QUrl &url,
+            const QByteArray &data,
+            const QString& contentType,
+            const HttpBodyFn &fn = nullptr,
+            const HttpDownloadProgressFn &progress= nullptr,
+            const HttpUploadProgressFn& upload= nullptr,
+            const HttpErrorFn &failed= nullptr);
 
   QByteArray post(const QUrl &url, const QString &str);
 
-  void postJSON(const QUrl &url, const QJsonObject &data,
-                Fn<void(const QJsonDocument &)> fn);
+  void postJSON(const QUrl &url,
+                const QJsonObject &data,
+                Fn<void(const QJsonDocument &)> fn,
+          const HttpDownloadProgressFn &progress= nullptr,
+          const HttpUploadProgressFn& upload= nullptr,
+          const HttpErrorFn &failed= nullptr);
 
-  void postJSON(const QUrl &url, const QString &data,
-                Fn<void(const QJsonDocument &)> fn);
+  void PostFormData(const QUrl &url, QFile *file, Fn<void(int bytesSent, int bytesTotal)> uploadProgress, Fn<void(const QJsonObject &json)> readyRead);
 
-  void PostFormData(const QUrl &url, QFile *file,
-                    Fn<void(int bytesSent, int bytesTotal)> uploadProgress,
-                    Fn<void(const QJsonObject &json)> readyRead);
-
-  virtual void PostFormData(const QUrl &url, const QByteArray &byteArray,
-                            const QString &contentType, const QString &filename,
-                            Fn<void(int, int)> uploadProgress,
+  virtual void PostFormData(const QUrl &url, const QByteArray &byteArray, const QString &contentType, const QString &filename, Fn<void(int, int)> uploadProgress,
                             Fn<void(const QJsonObject &)> readyRead);
+
+  void doRequest(QNetworkRequest &req, QNetworkReply *reply,
+                 const HttpBodyFn &fn = nullptr,
+                 const HttpDownloadProgressFn & = nullptr,
+                 const HttpUploadProgressFn& = nullptr,
+                 const HttpErrorFn & = nullptr);
 
 protected:
   QNetworkAccessManager *_manager;

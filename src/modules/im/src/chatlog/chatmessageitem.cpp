@@ -14,24 +14,14 @@ ChatMessageBox::ChatMessageBox(const QPixmap &avatar,
                                  const QString &contactName,
                                  const QString &message,
                                  bool isSelf) {
-
+    _IsSelf = isSelf;
     avatarItem = new ContactAvatar(avatar);
     QFont baseFont = Settings::getInstance().getChatMessageFont();
     QFont nameFont = nicknameFont(baseFont);
     nicknameItem = new SimpleText(contactName, nameFont);
     nicknameItem->setColor(Style::NameActive);
 
-    Text *text = nullptr;
-    if (!isSelf)
-    {
-        text = new Text(message, baseFont, false, message);
-        text->setBackgroundColor(Qt::white);
-    }
-    else
-    {
-        text = new Text(message, baseFont, false, message, Text::CUSTOM, Qt::white);
-        text->setBackgroundColor(QColor(0x4979ED));
-    }
+    Text *text = new Text(message, baseFont, false, message);
     text->setBoundingRadius(4.0);
     text->setContentsMargins(QMarginsF(3, 3, 3, 3));
     messageItem = text;
@@ -40,6 +30,7 @@ ChatMessageBox::ChatMessageBox(const QPixmap &avatar,
         setLayoutDirection(Qt::RightToLeft);
         setShowNickname(false);
     }
+    updateTextTheme();
 }
 
 ChatMessageBox::ChatMessageBox(const QPixmap &avatar, const QString &contactName, ChatLineContent *messageItem, bool isSelf) {
@@ -50,6 +41,7 @@ ChatMessageBox::ChatMessageBox(const QPixmap &avatar, const QString &contactName
     nicknameItem->setColor(Style::NameActive);
     this->messageItem = messageItem;
     customMsg = true;
+    _IsSelf = isSelf; 
     if (isSelf)
     {
         setLayoutDirection(Qt::RightToLeft);
@@ -70,7 +62,7 @@ void ChatMessageBox::setMessageState(MessageState state) {
     switch (state) {
     case MessageState::pending: {
         stateItem = new Spinner(Style::getImagePath("chatArea/spinner.svg"),
-                                QSize(16, 16), 360.0 / 1.6);
+                              QSize(16, 16), 360.0 / 1.6);
     } break;
     case MessageState::broken: {
         stateItem = new Broken(Style::getImagePath("chatArea/error.svg"),
@@ -184,11 +176,36 @@ QList<ChatLineContent *> ChatMessageBox::contents() {
     return result;
 }
 
+void ChatMessageBox::reloadTheme()
+{
+    IChatItem::reloadTheme();
+    updateTextTheme();
+}
+
 QFont ChatMessageBox::nicknameFont(const QFont &baseFont) {
 
     QFont font = baseFont;
     font.setPixelSize(font.pixelSize() - 1);
     return font;
+}
+
+void ChatMessageBox::updateTextTheme()
+{
+    if (customMsg)
+        return;
+    if (Text* text_item = dynamic_cast<Text*>(messageItem))
+    {
+        if (_IsSelf)
+        {
+            text_item->setBackgroundColor(Style::getExtColor("chat.message.self.background"));
+            text_item->setColor(Style::getExtColor("chat.message.self.color"));
+        }
+        else
+        {
+            text_item->setBackgroundColor(Style::getExtColor("chat.message.background"));
+            text_item->setColor(Style::getExtColor("chat.message.color"));
+        }
+    }
 }
 
 int ChatMessageBox::itemType() {

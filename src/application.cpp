@@ -48,9 +48,10 @@ Application::Application(int &argc, char *argv[])
   setDesktopFileName(APPLICATION_NAME);
 #endif
 
+
   //Initialize log manager.
   ok::lib::LogManager::Instance();
-
+  qDebug() << "QT_VERSION:" <<  QT_VERSION_STR;
   qDebug() << QString("argc:%1").arg(argc);
   for (int i = 0; i < argc; i++) {
     qDebug() << QString("argv:%1->%2").arg(i).arg(argv[i]);
@@ -115,7 +116,18 @@ Application::Application(int &argc, char *argv[])
 
   connect(this, &QApplication::aboutToQuit, this, &Application::cleanup);
 
-  _session = std::make_unique<ok::session::AuthSession>(this);
+ auto _session = ok::session::AuthSession::Instance();
+
+  connect(_session, &ok::session::AuthSession::loginResult,
+          [&](ok::session::SignInInfo signInInfo, ok::session::LoginResult result) {
+            qDebug()<<"result:" << result.msg;
+          });
+
+
+  connect(_session, &ok::session::AuthSession::imStarted,
+          [&](ok::session::SignInInfo signInInfo){
+      onLoginSuccess(signInInfo);
+  });
 
   qDebug() << "Application has be created";
 }
@@ -125,40 +137,23 @@ Application *Application::Instance() {
 }
 
 void Application::start() {
-
-  // if (!session()->authenticated()) {
   this->createLoginUI(true);
-  // } else {
-  //   this->startMainUI();
-  // }
-  // nexus->start();
 }
 
 void Application::createLoginUI(bool bootstrap) {
+  qDebug() << __func__ ;
   m_loginWindow = new UI::LoginWindow(bootstrap);
-
-  connect(m_loginWindow, &UI::LoginWindow::loginResult,
-        [&](ok::session::SignInInfo &signInInfo,
-            ok::session::LoginResult &result) {
-          if (result.status == ok::session::Status::SUCCESS) {
-            onLoginSuccess(signInInfo);
-            disconnect(m_loginWindow);
-          }
-        });
-
-  connect(_session.get(), &ok::session::AuthSession::loginResult,
-          [&](ok::session::SignInInfo signInInfo, ok::session::LoginResult result) {
-            qDebug()<<"result:" << result.msg;
-          }
-  );
   m_loginWindow->show();
-
 }
 
 /**
  *  关闭login窗口
  */
 void Application::closeLoginUI() {
+  qDebug() << __func__ ;
+  if(!m_loginWindow){
+    return;
+  }
     disconnect(m_loginWindow);
     m_loginWindow->close();
     //no need to delete
@@ -186,7 +181,7 @@ void Application::onLoginSuccess(ok::session::SignInInfo &signInInfo) {
 }
 
 void Application::startMainUI() {
-
+    qDebug() << __func__;
     m_mainWindow = std::make_unique<UI::MainWindow>();
 
     /**

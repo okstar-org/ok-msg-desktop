@@ -55,9 +55,11 @@ Messenger::Messenger(QObject *parent)
 
   ok::session::AuthSession::Instance();
   auto _im = _session->im();
-  connect(_im, &IM::connected, this, [pm,_session]() {
-//    pm->accountBeforeLogin(acc);
-    pm->startLogin(_session->account());
+
+  connect(_im, &IM::connectResult, this, [pm,_session](lib::messenger::IMConnectStatus status) {
+    if(status == lib::messenger::IMConnectStatus::CONNECTED){
+      pm->startLogin(_session->account());
+    }
   });
 
 #endif
@@ -123,18 +125,7 @@ bool Messenger::connectIM( ) {
   auto _session = ok::session::AuthSession::Instance();
   auto _im = _session->im();
 
-//  connect(_im, &IM::connected, this, [&]() {
-//    emit connected();
-//  });
-
   connect(_im, &IM::started, this, &Messenger::onStarted);
-//  connect(this, &Messenger::stopped, this, &Messenger::onStopped);
-
-
-//  connect(_im, &IM::onStopped, this, [&]() {
-//    onStopped();
-//  });
-
   connect(_im, &IM::incoming, this,
           [=, this](QString xml) { emit incoming(xml); }, Qt::QueuedConnection);
 
@@ -522,10 +513,8 @@ void Messenger::onEncryptedMessage(QString xml) {
   pm->addAccount(_session->account(), this);
   auto ele= dom.documentElement();
   bool decrypted = pm->decryptMessageElement(_session->account(), ele);
-  if (!decrypted){
-    qWarning()<<"decrypted failed.";
-    return;
-  }
+  qDebug()<<"decrypt message=>" << decrypted;
+
   auto body = ele.firstChildElement("body").text();
   if (body.isEmpty()){
     qWarning()<<"Empty body!";
@@ -629,7 +618,7 @@ void Messenger::requestBookmarks() {
 void Messenger::setUIStarted(){
   auto session = ok::session::AuthSession::Instance();
   auto im = session->im();
-  im->setUIStarted();
+//  im->setUIStarted();
 }
 
 void Messenger::onGroupReceived(QString groupId, QString name) {

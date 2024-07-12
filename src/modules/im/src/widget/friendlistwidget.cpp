@@ -232,8 +232,9 @@ GroupWidget *FriendListWidget::addGroup(const GroupId &groupId,
     qWarning() << "Group already exist.";
     return groupWidgets.value(groupId.toString());
   }
+  g = GroupList::addGroup(groupId, groupName);
 
-  auto core = Core::getInstance();
+
   auto &settings = Settings::getInstance();
 
 //  const bool enabled = core->getGroupAvEnabled(groupId.toString());
@@ -329,8 +330,10 @@ void FriendListWidget::searchChatrooms(const QString &searchString,
 
 void FriendListWidget::renameGroupWidget(GroupWidget *groupWidget,
                                          const QString &newName) {
-  groupLayout.removeSortedWidget(groupWidget);
-  groupLayout.addSortedWidget(groupWidget);
+//  groupLayout.removeSortedWidget(groupWidget);
+//  groupLayout.addSortedWidget(groupWidget);
+
+  groupWidget->setName(newName);
 }
 
 

@@ -91,7 +91,7 @@ ChatWidget::ChatWidget(QWidget *parent)
 
   // 右侧容器
   contentWidget = std::make_unique<QWidget>(this);
-  contentWidget->setObjectName("contentWidget");
+  contentWidget->setObjectName("ChatContentWidget");
   contentLayout = new ContentLayout(contentWidget.get());
   contentWidget->setLayout(contentLayout);
 
@@ -116,6 +116,8 @@ ChatWidget::ChatWidget(QWidget *parent)
 
   retranslateUi();
 
+  // todo: delete from ui
+  ui->searchContactFilterBox->setVisible(false);
 }
 
 ChatWidget::~ChatWidget() {
@@ -227,7 +229,8 @@ void ChatWidget::onCoreChanged(Core &core_) {
 
 void ChatWidget::onMessageSessionReceived(const ContactId &contactId, const QString &sid) {
   qDebug() << __func__ << "contactId:" << contactId.toString() << "sid:" << sid;
-  sessionListWidget->createMessageSession(contactId, sid, ChatType::Chat);
+  sessionListWidget->createMessageSession(contactId, sid,
+                                          contactId.isGroup() ? ChatType::GroupChat : ChatType::Chat);
 }
 
 void ChatWidget::onFriendMessageReceived(const FriendId &friendId, const FriendMessage &message, bool isAction) {
@@ -560,6 +563,9 @@ void ChatWidget::reloadTheme() {
   //  }
 
   sessionListWidget->reloadTheme();
+
+  ui->friendList->setAutoFillBackground(false);
+  ui->friendList->viewport()->setAutoFillBackground(false);
 }
 void ChatWidget::setupSearch() {
 

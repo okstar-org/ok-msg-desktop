@@ -114,6 +114,7 @@ Widget::Widget(IAudioControl &audio, QWidget *parent)//
 
   setObjectName(qsl("Page:%1").arg(static_cast<int>(UI::PageMenu::chat)));
 
+  ui->tabWidget->setObjectName("mainTab");
 
   chatWidget = new ChatWidget(this);
   ui->tabWidget->addTab(chatWidget, tr("Chat"));

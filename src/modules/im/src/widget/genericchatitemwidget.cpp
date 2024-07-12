@@ -23,7 +23,6 @@
 #include "src/model/group.h"
 #include "src/persistence/profile.h"
 
-
 GenericChatItemWidget::GenericChatItemWidget(ChatType type, const ContactId &cid, QWidget* parent)
     : QFrame(parent)
     , chatType(type), statusPic{nullptr},
@@ -32,10 +31,12 @@ GenericChatItemWidget::GenericChatItemWidget(ChatType type, const ContactId &cid
       active{false}
 {
     nameLabel = new CroppingLabel(this);
+    nameLabel->setObjectName("nameLabel");
     nameLabel->setTextFormat(Qt::PlainText);
     nameLabel->setText(cid.username);
 
     lastMessageLabel = new CroppingLabel(this);
+    lastMessageLabel->setObjectName("lastMessageLabel");
     lastMessageLabel->setTextFormat(Qt::PlainText);
     lastMessageLabel->setText("");
   auto p = lastMessageLabel->palette();
@@ -108,9 +109,13 @@ void GenericChatItemWidget::updateLastMessage(const Message &m)
 
 void GenericChatItemWidget::updateStatusLight(Status::Status status, bool event)
 {
+    if(!statusPic)
+      return;
+
     auto pix = Status::getIconPath(status, event);
     if(pix.isEmpty())
         return;
+
     statusPic->setPixmap(QPixmap(pix));
 }
 
@@ -118,8 +123,6 @@ void GenericChatItemWidget::clearStatusLight()
 {
     statusPic->clear();
 }
-
-
 
 bool GenericChatItemWidget::isActive()
 {
@@ -192,4 +195,3 @@ void GenericChatItemWidget::showEvent(QShowEvent *e)
        setAvatar(contact->getAvatar());
    }
 }
-

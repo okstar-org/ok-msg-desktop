@@ -24,14 +24,11 @@
 #include <QTextBlock>
 #include <QTextFragment>
 
-Text::Text(const QString& txt, const QFont& font, bool enableElide, const QString& rwText,
-           const TextType& type, const QColor& custom)
+Text::Text(const QString& txt, const QFont& font, bool enableElide, const QString& rwText)
     : rawText(rwText)
     , elide(enableElide)
     , defFont(font)
     , defStyleSheet(Style::getStylesheet(QStringLiteral("chatArea/innerStyle.css"), font))
-    , textType(type)
-    , customColor(custom)
 {
     color = textColor();
     setText(txt);
@@ -367,6 +364,27 @@ void Text::setBackgroundColor(const QColor &color)
     }
 }
 
+void Text::setColor(Style::ColorPalette role)
+{
+    if (isCustomColor || colorRole != role)
+    {
+        isCustomColor = false;
+        colorRole = role;
+        color = textColor();
+        update();
+    }
+}
+
+void Text::setColor(const QColor &color)
+{
+    if (!isCustomColor || this->color != color)
+    {
+        isCustomColor = true;
+        this->color = color;
+        update();
+    }
+}
+
 void Text::regenerate()
 {
     if (!doc) {
@@ -531,12 +549,5 @@ void Text::selectText(QTextCursor& cursor, const std::pair<int, int>& point)
 
 QColor Text::textColor() const
 {
-    QColor c = Style::getColor(Style::MainText);
-    if (textType == ACTION) {
-        c = Style::getColor(Style::Action);
-    } else if (textType == CUSTOM) {
-        c = customColor;
-    }
-
-    return c;
+    return isCustomColor ? color : Style::getColor(colorRole);
 }

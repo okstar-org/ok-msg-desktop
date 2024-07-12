@@ -53,13 +53,17 @@ public:
     virtual void setEventFlag(bool flag) ;
     virtual bool getEventFlag() const ;
 
-signals:
+  signals:
+    // 用户名称
     void nameChanged(const QString &name);
-    void displayedNameChanged(const QString& newName);
+    // 备注名称
     void aliasChanged(QString alias);
-    void avatarChanged(const QPixmap& avatar);
+    // 显示名称（备注名》用户姓名》用户名）
+    void displayedNameChanged(const QString &newName);
+    // 头像
+    void avatarChanged(const QPixmap &avatar);
 
-protected:
+  protected:
     //是否群聊
     bool group;
     //联系人Id

@@ -20,10 +20,10 @@
 #include <memory>
 
 #include "UI/core/SettingManager.h"
+#include "base/OkSettings.h"
 #include "base/logs.h"
 #include "base/widgets.h"
 #include "lib/backend/OkCloudService.h"
-#include "base/OkSettings.h"
 #include "lib/settings/translator.h"
 #include "ui_LoginWidget.h"
 
@@ -34,13 +34,12 @@ using namespace ok::session;
 using namespace ok::base;
 
 LoginWidget::LoginWidget(bool bootstrap, QWidget *parent)
-    : QWidget(parent),           //
-      ui(new Ui::LoginWidget),   //
-      bootstrap{bootstrap},
-      m_loginKey(nullptr),       //
-      m_settingManager(nullptr), //
+    : QWidget(parent),                           //
+      ui(new Ui::LoginWidget),                   //
+      bootstrap{bootstrap}, m_loginKey(nullptr), //
+      m_settingManager(nullptr),                 //
       m_loaded(0) {
-    qDebug() <<__func__;
+  qDebug() << __func__;
 
   ui->setupUi(this);
   ui->loginBtn->setCursor(Qt::PointingHandCursor);
@@ -63,27 +62,29 @@ LoginWidget::LoginWidget(bool bootstrap, QWidget *parent)
 
   m_settingManager = new SettingManager(this);
 
-
-  if(bootstrap){
-    qDebug()<<__func__ <<"Init timer";
-    m_timer=std::make_unique<QTimer>();
+  if (bootstrap) {
+    qDebug() << __func__ << "Init timer";
+    m_timer = std::make_unique<QTimer>();
     m_timer->start(1000);
     connect(m_timer.get(), &QTimer::timeout, this, &LoginWidget::onTimeout);
   }
+
+  auto _session = ok::session::AuthSession::Instance();
+  connect(_session, &AuthSession::loginResult, this, &LoginWidget::onConnectResult);
 
   // 初始化
   init();
 }
 
 LoginWidget::~LoginWidget() {
-    qDebug() <<__func__;
-    settings::Translator::unregister(this);
-    delete ui;
+  qDebug() << __func__;
+  settings::Translator::unregister(this);
+  delete ui;
 }
 
 void LoginWidget::init() {
 
-  m_settingManager->getAccount([&](const QString& acc, const QString& password) {
+  m_settingManager->getAccount([&](const QString &acc, const QString &password) {
     ui->rember->setChecked(!acc.isEmpty());
     ui->accountInput->setText(acc);
     ui->passwordInput->setText(password);
@@ -105,12 +106,10 @@ void LoginWidget::init() {
   if (i >= 0 && i < ui->language->count())
     ui->language->setCurrentIndex(i + 1);
 
-
-
   retranslateUi();
   //==========国际化==========//
 
-  //服务供应商
+  // 服务供应商
   okCloudService->GetFederalInfo(
       [&](ok::backend::Res<ok::backend::FederalInfo> &res) {
         for (const auto &item : res.data->states) {
@@ -125,19 +124,14 @@ void LoginWidget::init() {
           m_loaded++;
         }
       },
-      [&](const QString& error) {
-      onError(error);
-  });
+      [&](int code, const QString &error) { onError(code, error); });
 }
 
-void LoginWidget::deinit()
-{
-
-}
+void LoginWidget::deinit() {}
 
 void LoginWidget::doLogin() {
-    if(m_error)
-        return;
+  if (m_error)
+    return;
 
   if (m_loaded < 1) {
     setMsg(tr("Please waiting the page is loaded"));
@@ -180,15 +174,9 @@ void LoginWidget::doLogin() {
       m_settingManager->clearAccount();
     }
 
-    SignInInfo info = {
-        .account = account,
-        .password = password,
-        .host = host,
-        .stackUrl = m_stacks.at(providerIdx - 1)};
-    auto _session = ok::session::AuthSession::Instance();
-    connect(_session, &AuthSession::loginResult, //
-            this, &LoginWidget::onConnectResult);
-    _session->doLogin(info);
+    SignInInfo info = {.account = account, .password = password, .host = host, .stackUrl = m_stacks.at(providerIdx - 1)};
+
+    ok::session::AuthSession::Instance()->doLogin(info);
     break;
   }
   }
@@ -197,7 +185,7 @@ void LoginWidget::doLogin() {
 void LoginWidget::onConnectResult(ok::session::SignInInfo info,
                                   ok::session::LoginResult result) {
 
-  qDebug()<<("msg:")<<(result.msg);
+  qDebug() << __func__ << result.msg;
 
   switch (result.status) {
   case ok::session::Status::NONE:
@@ -219,7 +207,7 @@ void LoginWidget::onConnectResult(ok::session::SignInInfo info,
   }
   case ok::session::Status::FAILURE:
     ui->loginBtn->setText(tr("Login"));
-    onError(result.msg);
+    onError(result.statusCode, result.msg);
     break;
   }
   emit loginResult(info, result);
@@ -255,26 +243,40 @@ void LoginWidget::on_providers_currentIndexChanged(int index) {
 
 void LoginWidget::retranslateUi() { ui->retranslateUi(this); }
 
-void LoginWidget::onError(const QString &msg) {
-  qWarning() <<__func__ << msg;
-  setMsg(msg);
-  //登录失败退出定时器
+void LoginWidget::onError(int statusCode, const QString &msg) {
+  QString newMsg =  msg;
+  switch (statusCode / 100) {
+  case 0:{
+      newMsg = tr("Network is not available!");
+      break;
+  }
+  case 4:{
+      newMsg = tr("Account does not exist!");
+      break;
+  }case 5:{
+      newMsg = tr("Server error, please try again later!");
+      break;
+  }
+  }
+
+  setMsg(newMsg);
   m_timer.reset();
-  m_error = true;
 }
 
-void LoginWidget::setMsg(const QString &msg)
-{
-  ui->loginMessage->setText(msg);
-}
+void LoginWidget::setMsg(const QString &msg) { ui->loginMessage->setText(msg); }
 
 bool LoginWidget::eventFilter(QObject *obj, QEvent *event) {
   switch (event->type()) {
   case QEvent::MouseButtonPress: {
+
+    auto providerIdx = ui->providers->currentIndex();
+    QString host = m_stacks.at(providerIdx - 1);
+    qDebug() << "Select provider host:" << host;
+
     if (obj == ui->signUp) {
-      QDesktopServices::openUrl(QUrl("http://stack.okstar.org.cn/auth/register"));
+      QDesktopServices::openUrl(QUrl(host + "/auth/register"));
     } else if (obj == ui->findPwd) {
-      QDesktopServices::openUrl(QUrl("http://stack.okstar.org.cn/auth/forgot"));
+      QDesktopServices::openUrl(QUrl(host + "/auth/forgot"));
     }
     break;
   }
@@ -284,18 +286,14 @@ bool LoginWidget::eventFilter(QObject *obj, QEvent *event) {
   return QObject::eventFilter(obj, event);
 }
 
-void LoginWidget::showEvent(QShowEvent *e)
-{
+void LoginWidget::showEvent(QShowEvent *e) {}
 
-}
-
-void LoginWidget::onTimeout()
-{
-    if(ui->rember->isChecked() && ui->providers->count()>0){
-        if(!ui->passwordInput->text().isEmpty()&&!ui->accountInput->text().isEmpty()){
-            on_loginBtn_released();
-        }
+void LoginWidget::onTimeout() {
+  if (ui->rember->isChecked() && ui->providers->count() > 0) {
+    if (!ui->passwordInput->text().isEmpty() && !ui->accountInput->text().isEmpty()) {
+      on_loginBtn_released();
     }
+  }
 }
 
 } // namespace UI

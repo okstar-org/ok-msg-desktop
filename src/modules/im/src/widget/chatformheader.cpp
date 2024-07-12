@@ -159,7 +159,6 @@ ChatFormHeader::ChatFormHeader(const ContactId &contactId, QWidget* parent)
     setLayout(headLayout);
 
     updateButtonsView();
-    settings::Translator::registerHandler(std::bind(&ChatFormHeader::retranslateUi, this), this);
 
     statusLabel->setVisible(false);
     statusIcon->setVisible(false);
@@ -169,6 +168,10 @@ ChatFormHeader::ChatFormHeader(const ContactId &contactId, QWidget* parent)
     if (!isSelf) {
         setContact(FriendList::findFriend(contactId));
     }
+
+    settings::Translator::registerHandler([this] { retranslateUi(); }, this);
+    retranslateUi();
+
 }
 
 ChatFormHeader::~ChatFormHeader() {
@@ -249,10 +252,8 @@ void ChatFormHeader::retranslateUi()
 
 void ChatFormHeader::updateButtonsView()
 {
-    setStateName(callButton, callState);
-    setStateName(videoButton, videoState);
-
-    retranslateUi();
+    callButton->setEnabled(callState != CallButtonState::Disabled);
+    videoButton->setEnabled(videoState != CallButtonState::Disabled);
     Style::repolish(this);
 }
 

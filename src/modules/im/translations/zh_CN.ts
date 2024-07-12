@@ -1114,7 +1114,7 @@ so you can save the file on windows.</source>
     </message>
     <message>
         <source>To new group</source>
-        <translation>到新建群组</translation>
+        <translation>邀请新建群组</translation>
     </message>
     <message>
         <source>Invite to group &apos;%1&apos;</source>

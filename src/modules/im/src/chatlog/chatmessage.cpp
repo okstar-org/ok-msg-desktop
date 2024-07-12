@@ -40,11 +40,11 @@ IChatItem::Ptr ChatMessage::createChatMessage(
     const ChatLogItem &item, const QString &rawMessage, MessageType type,
     bool isMe, MessageState state, const QDateTime &date, bool colorizeName) {
   
-  QPixmap avatar = Nexus::getProfile()->loadAvatar(item.getSender());
-  QString text = rawMessage.toHtmlEscaped();
-  QString senderText = item.getDisplayName();
-
-  ChatMessageBox *msg = new ChatMessageBox(avatar, senderText, text, isMe);
+  auto avatar = Nexus::getProfile()->loadAvatar(item.getSender());
+  auto *msg = new ChatMessageBox(avatar,
+                                           item.getDisplayName(),
+                                           rawMessage.toHtmlEscaped(),
+                                           isMe);
   msg->setMessageState(state);
   msg->setTime(date);
   return IChatItem::Ptr(msg);
