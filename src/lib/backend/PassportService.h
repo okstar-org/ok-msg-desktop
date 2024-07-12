@@ -68,6 +68,8 @@ public:
   PassportService(const QString& base, QObject *parent = nullptr);
   ~PassportService();
 
-  bool getAccount(const QString &account, Fn<void(Res<SysAccount> &)> fn, Fn<void(const QString &)> err = nullptr);
+  bool getAccount(const QString &account,
+                  Fn<void(Res<SysAccount> &)> fn,
+                  network::HttpErrorFn err = nullptr);
 };
 } // namespace ok::backend

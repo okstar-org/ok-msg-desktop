@@ -46,7 +46,7 @@ class LoginWidget : public QWidget {
 public:
   explicit LoginWidget(bool bootstrap, QWidget *parent = nullptr);
   ~LoginWidget() override;
-  void onError(const QString &msg);
+  void onError(int code, const QString &msg);
   void setMsg(const QString &msg);
   void init();
   void deinit();

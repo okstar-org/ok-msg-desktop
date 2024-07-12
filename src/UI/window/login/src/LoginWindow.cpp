@@ -63,7 +63,7 @@ LoginWindow::~LoginWindow() {
 }
 
 void LoginWindow::onProfileLoadFailed(QString msg) {
-  loginWidget->onError(msg);
+  loginWidget->onError(200, msg);
 }
 
 } // namespace UI

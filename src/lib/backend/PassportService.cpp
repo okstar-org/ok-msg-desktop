@@ -27,7 +27,7 @@ PassportService::~PassportService() {}
 
 bool PassportService::getAccount(const QString &account,
                                  Fn<void(Res<SysAccount> &)> fn,
-                                 Fn<void(const QString &)> err) {
+                                 network::HttpErrorFn err) {
   QString url = _baseUrl + "/api/open/passport/account/" + account;
   http->getJSON(
       QUrl(url),
@@ -37,9 +37,7 @@ bool PassportService::getAccount(const QString &account,
         fn(res);
       },
       // error
-      [=](QString msg) {
-        err(msg);
-      });
+      err);
   return true;
 }
 

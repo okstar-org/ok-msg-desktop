@@ -142,17 +142,8 @@ void Application::start() {
 
 void Application::createLoginUI(bool bootstrap) {
   qDebug() << __func__ ;
-
   m_loginWindow = new UI::LoginWindow(bootstrap);
-//  connect(m_loginWindow, &UI::LoginWindow::loginResult,
-//        [&](ok::session::SignInInfo &signInInfo,
-//            ok::session::LoginResult &result) {
-//          if (result.status == ok::session::Status::SUCCESS) {
-//          }
-//        });
-
   m_loginWindow->show();
-
 }
 
 /**

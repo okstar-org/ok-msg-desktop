@@ -50,6 +50,7 @@ class LoginResult {
 public:
   Status status = Status::NONE;
   QString msg;
+  int statusCode;
 };
 
 class AuthInfo {
