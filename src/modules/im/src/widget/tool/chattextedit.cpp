@@ -22,11 +22,14 @@
 ChatTextEdit::ChatTextEdit(QWidget* parent)
     : QTextEdit(parent)
 {
-    retranslateUi();
+
     setAcceptRichText(false);
     setAcceptDrops(false);
     setAttribute(Qt::WA_InputMethodEnabled,true);
-    settings::Translator::registerHandler(std::bind(&ChatTextEdit::retranslateUi, this), this);
+
+
+    settings::Translator::registerHandler([this] { retranslateUi(); }, this);
+    retranslateUi();
 }
 
 ChatTextEdit::~ChatTextEdit()
