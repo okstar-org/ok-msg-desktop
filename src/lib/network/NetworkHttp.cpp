@@ -135,33 +135,12 @@ void NetworkHttp::post(const QUrl &url,
   doRequest(request, _reply, fn, progress, upload, failed);
 }
 
-QByteArray NetworkHttp::post(const QUrl &url, const QString &data) {
-  qDebug() << "Url:" << url.toString();
-
-  if (data.isEmpty()) {
-    qWarning() << "data isEmpty!";
-    return QByteArray::fromStdString("");
-  }
-
-  QNetworkRequest request(url);
-  request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("application/json"));
-  request.setRawHeader("Accept", "application/json");
-
-  auto postData = QByteArray::fromStdString(data.toStdString());
-  QNetworkReply *_reply = _manager->post(request, postData);
-  _reply->ignoreSslErrors();
-
-  connect(_reply, &QNetworkReply::finished, this, &NetworkHttp::httpFinished);
-  QEventLoop loop;
-  connect(_reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
-  loop.exec();
-
-  QByteArray byteArr = _reply->readAll();
-  return (byteArr);
-}
-
-void NetworkHttp::PostFormData(const QUrl &url, const QByteArray &byteArray, const QString &contentType, const QString &filename,
-                               Fn<void(int bytesSent, int bytesTotal)> uploadProgress, Fn<void(const QJsonObject &)> readyRead) {
+void NetworkHttp::PostFormData(const QUrl &url,
+                               const QByteArray &byteArray,
+                               const QString &contentType,
+                               const QString &filename,
+                               const HttpUploadProgressFn &uploadProgress,
+                               Fn<void(const QJsonObject &)> readyRead) {
 
   if (url.isEmpty()) {
     qWarning() << "url is empty!";
@@ -285,7 +264,9 @@ void NetworkHttp::doRequest(QNetworkRequest &req,
  * @param file
  * @param fn
  */
-void NetworkHttp::PostFormData(const QUrl &url, QFile *file, Fn<void(int bytesSent, int bytesTotal)> uploadProgress, Fn<void(const QJsonObject &)> readyRead) {
+void NetworkHttp::PostFormData(const QUrl &url, QFile *file,
+                               const HttpUploadProgressFn &uploadProgress,
+                               Fn<void(const QJsonObject &)> readyRead) {
   if (url.isEmpty()) {
     qWarning() << "url is empty!";
     return;
