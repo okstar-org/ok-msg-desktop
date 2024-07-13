@@ -23,6 +23,7 @@
 #include <QMessageBox>
 #include <QPainter>
 #include <QSvgRenderer>
+#include <QStyledItemDelegate>
 
 #include <base/SvgUtils.h>
 
@@ -36,6 +37,8 @@ AboutFriendForm::AboutFriendForm(std::unique_ptr<IAboutFriend> _about, QWidget* 
     ui->setupUi(this);
 
     setAttribute(Qt::WA_StyledBackground);
+    ui->autoacceptcall->setItemDelegate(new QStyledItemDelegate(ui->autoacceptcall));
+
     reloadTheme();
 
     connect(ui->sendMessage, &QPushButton::clicked, this, &AboutFriendForm::onSendMessageClicked);
@@ -169,7 +172,7 @@ void AboutFriendForm::setName(const QString &name)
 
 void AboutFriendForm::reloadTheme()
 {
-    setStyleSheet(Style::getStylesheet("window/general.css"));
+    setStyleSheet(Style::getStylesheet("window/aboutFriend.css"));
 }
 
 void AboutFriendForm::onAliasChanged(const QString &text)

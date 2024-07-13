@@ -49,3 +49,16 @@ QSplitter::handle
 {
     background: black;
 }
+
+ChatLog QScrollBar::handle
+{
+    background-color: #343232;
+}
+ChatLog QScrollBar::handle:hover
+{
+    background-color: #3e3c3c;
+}
+ChatLog QScrollBar::handle:pressed
+{
+    background-color: #474545;
+}

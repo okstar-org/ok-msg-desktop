@@ -33,3 +33,26 @@ QTextEdit#group:pressed
 {
     border-color: #46465b;
 }
+
+QScrollBar
+{
+    margin: 0px;
+}
+
+QScrollBar
+{
+    background-color: @groundBase;
+}
+
+QScrollBar::handle
+{
+    background-color: #343232;
+}
+QScrollBar::handle:hover
+{
+    background-color: #3e3c3c;
+}
+QScrollBar::handle:pressed
+{
+    background-color: #474545;
+}

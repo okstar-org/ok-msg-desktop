@@ -24,6 +24,23 @@ FriendListWidget,
     background: @groundBase;
 }
 
+#friendList QScrollBar:vertical
+{
+    width: 8px;
+    padding: 0px 0px 0px 3px;
+}
+#friendList QScrollBar::handle
+{
+    background-color: #f7f7f7; 
+}
+#friendList QScrollBar::handle:hover
+{
+    background-color: white; 
+}
+#friendList QScrollBar::handle:pressed
+{
+    background-color: white; 
+}
 
 FriendWidget{
     border: 0px solid;
