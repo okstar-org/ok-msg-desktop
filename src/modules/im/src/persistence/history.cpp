@@ -127,7 +127,7 @@ bool dbSchemaUpgrade(std::shared_ptr<RawDatabase>& db)
     if (databaseSchemaVersion > SCHEMA_VERSION) {
         qWarning().nospace() << "Database version (" << databaseSchemaVersion <<
             ") is newer than we currently support (" << SCHEMA_VERSION << "). Please upgrade the program!";
-        // We don't know what future versions have done, we have to disable db access until we re-upgrade
+        db->remove();
         return false;
     }
 
