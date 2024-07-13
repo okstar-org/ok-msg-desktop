@@ -1,0 +1,51 @@
+QLabel{
+    color: #e8e8e8;
+}
+
+.QPushButton
+{
+    color: #e8e8e8;
+    background: #262626;
+    border:0px solid;
+    border-radius: 3px;
+    padding: 6px 10px;
+}
+
+.QPushButton:hover
+{
+    background: #303030;
+}
+
+.QPushButton:pressed
+{
+    background: #202020;
+}
+
+.QPushButton#sendMessage{
+    color:white;
+    qproperty-icon: url("@getImagePath(chatForm/sendButton.svg)");
+    icon-size: 16px;
+    border-radius: 5px;
+    background-color: #2A67F6;
+    padding: 6px 10px;
+}
+
+QLineEdit{
+    color: #e8e8e8;
+    border: 1px solid #131313;
+    background-color: #262626;
+    border-radius: 3px;
+    padding: 4px;
+}
+
+QComboBox{
+    color: #e8e8e8;
+    border: 1px solid #131313;
+    background-color: #262626;
+    border-radius: 3px;
+    padding: 4px;
+}
+
+QAbstractItemView::item{
+    padding: 3px;
+}

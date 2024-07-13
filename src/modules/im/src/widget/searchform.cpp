@@ -28,14 +28,16 @@ static std::array<QString, 3> STATE_NAME = {
     QStringLiteral("red"),
 };
 
+
 SearchForm::SearchForm(QWidget* parent) : QWidget(parent)
 {
+    using namespace SearchFormUI;
     QVBoxLayout* layout = new QVBoxLayout();
     QHBoxLayout* layoutNavigation = new QHBoxLayout();
     QHBoxLayout* layoutMessage = new QHBoxLayout();
     QSpacerItem *lSpacer = new QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Ignored);
     QSpacerItem *rSpacer = new QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Ignored);
-    searchLine = new LineEdit();
+    searchLine = new SearchFormUI::LineEdit();
     settings = new SearchSettingsForm();
     messageLabel = new QLabel();
 
@@ -297,6 +299,8 @@ void SearchForm::showMessageNotFound(SearchDirection direction)
     }
     messageLabel->setVisible(true);
 }
+
+using namespace SearchFormUI;
 
 LineEdit::LineEdit(QWidget* parent) : QLineEdit(parent)
 {

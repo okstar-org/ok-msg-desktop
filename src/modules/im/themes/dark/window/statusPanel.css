@@ -109,6 +109,7 @@ QListView
     border-radius: 6px;
     width: 20px;
     height: 40px;
+    padding: 1px;
 }
 
 /*Bugged in Qt, but it's probably better to leave enabled so that users can tell it's clickable*/

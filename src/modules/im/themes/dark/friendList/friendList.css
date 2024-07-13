@@ -23,50 +23,6 @@ MessageSessionListWidget,
     border: 0px solid;
 }
 
-QScrollBar:vertical
-{
-    background: @themeMedium;
-    width: 16px;
-    padding: 0px 3px 0px 3px;
-}
-
-QScrollBar:handle:vertical
-{
-    background: @themeDark;
-    min-height: 20px;
-    border-radius: 5px;
-    margin: 3px 0px 3px 0px;
-}
-
-QScrollBar:handle:vertical:hover
-{
-    background: @themeMediumDark;
-}
-
-QScrollBar:handle:vertical:pressed
-{
-    background: @themeDark;
-}
-
-QScrollBar:add-line:vertical
-{
-    height: 0px;
-    subcontrol-position: bottom;
-    subcontrol-origin: margin;
-}
-
-QScrollBar:sub-line:vertical
-{
-    height: 0px;
-    subcontrol-position: top;
-    subcontrol-origin: margin;
-}
-
-QScrollBar:add-page:vertical, QScrollBar::sub-page:vertical
-{
-    background: none;
-}
-
 QWidget#circleWidgetContainer > QFrame#line
 {
     color: white;
@@ -101,6 +57,24 @@ QWidget#circleWidgetContainer > QLabel#name
 
 QLabel {
     color: @mainText;
+}
+
+#friendList QScrollBar:vertical
+{
+    width: 8px;
+    padding: 0px 0px 0px 3px;
+}
+#friendList QScrollBar::handle
+{
+    background-color: #343232;
+}
+#friendList QScrollBar::handle:hover
+{
+    background-color: #3e3c3c;
+}
+#friendList QScrollBar::handle:pressed
+{
+    background-color: #474545;
 }
 
 MessageSessionWidget{
