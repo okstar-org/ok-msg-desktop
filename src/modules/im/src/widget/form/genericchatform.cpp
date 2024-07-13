@@ -451,7 +451,7 @@ GenericChatForm::GenericChatForm(const ContactId *contact_,
 GenericChatForm::~GenericChatForm() {
     qDebug()<<__func__;
   settings::Translator::unregister(this);
-  delete searchForm;
+//  delete searchForm;
 }
 
 #ifdef OK_PLUGIN

@@ -186,9 +186,8 @@ protected:
 
     QSplitter* bodySplitter;
 
-//    ChatFormHeader* headWidget;
+//    SearchForm *searchForm;
 
-    SearchForm *searchForm;
     QLabel *dateInfo;
     ChatLog* chatLog;
     ChatTextEdit* msgEdit;
