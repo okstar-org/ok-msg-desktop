@@ -253,8 +253,8 @@ set(${PROJECT_NAME}_SOURCES
         src/widget/emoticonswidget.h
         src/widget/flowlayout.cpp
         src/widget/flowlayout.h
-        src/widget/searchform.cpp
-        src/widget/searchform.h
+        #src/widget/searchform.cpp
+        #src/widget/searchform.h
         src/widget/searchtypes.h
         src/widget/ContactWidget.h
         src/widget/ContactWidget.cpp

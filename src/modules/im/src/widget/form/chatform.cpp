@@ -30,7 +30,7 @@
 #include "src/widget/chatformheader.h"
 #include "src/widget/form/loadhistorydialog.h"
 #include "src/widget/maskablepixmapwidget.h"
-#include "src/widget/searchform.h"
+//#include "src/widget/searchform.h"
 #include "src/widget/style.h"
 #include "src/widget/tool/callconfirmwidget.h"
 #include "src/widget/tool/chattextedit.h"
