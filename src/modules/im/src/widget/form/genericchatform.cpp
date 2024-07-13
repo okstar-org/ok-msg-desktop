@@ -35,7 +35,7 @@
 #include "src/widget/form/chatform.h"
 #include "src/widget/form/loadhistorydialog.h"
 #include "src/widget/maskablepixmapwidget.h"
-#include "src/widget/searchform.h"
+//#include "src/widget/searchform.h"
 #include "src/widget/style.h"
 #include "src/widget/tool/chattextedit.h"
 #include "src/widget/tool/flyoutoverlaywidget.h"
@@ -283,11 +283,13 @@ GenericChatForm::GenericChatForm(const ContactId *contact_,
   qDebug() << __func__ << "contact:" << contact_;
 
   curRow = 0;
-  searchForm = new SearchForm();
+  //searchForm = new SearchForm();
+  //searchForm->hide();
+
   dateInfo = new QLabel(this);
   chatLog = new ChatLog(this);
   chatLog->setBusyNotification(ChatMessage::createBusyNotification());
-  searchForm->hide();
+ 
   dateInfo->setAlignment(Qt::AlignHCenter);
   dateInfo->setVisible(false);
 
@@ -376,7 +378,7 @@ GenericChatForm::GenericChatForm(const ContactId *contact_,
 
   QVBoxLayout *contentLayout = new QVBoxLayout(contentWidget);
   contentLayout->setContentsMargins(0, 0, 0, 0);
-  contentLayout->addWidget(searchForm);
+  //contentLayout->addWidget(searchForm);
   contentLayout->addWidget(dateInfo);
   contentLayout->addWidget(chatLog, 1);
   contentLayout->addWidget(footContainer, 0);
@@ -420,16 +422,16 @@ GenericChatForm::GenericChatForm(const ContactId *contact_,
   connect(&iChatLog, &IChatLog::itemUpdated,
           this,&GenericChatForm::renderMessage);
 
-  connect(searchForm, &SearchForm::searchInBegin, this,
-          &GenericChatForm::searchInBegin);
-  connect(searchForm, &SearchForm::searchUp, this,
-          &GenericChatForm::onSearchUp);
-  connect(searchForm, &SearchForm::searchDown, this,
-          &GenericChatForm::onSearchDown);
-  connect(searchForm, &SearchForm::visibleChanged, this,
-          &GenericChatForm::onSearchTriggered);
-  connect(this, &GenericChatForm::messageNotFoundShow, searchForm,
-          &SearchForm::showMessageNotFound);
+  //connect(searchForm, &SearchForm::searchInBegin, this,
+  //        &GenericChatForm::searchInBegin);
+  //connect(searchForm, &SearchForm::searchUp, this,
+  //        &GenericChatForm::onSearchUp);
+  //connect(searchForm, &SearchForm::searchDown, this,
+  //        &GenericChatForm::onSearchDown);
+  //connect(searchForm, &SearchForm::visibleChanged, this,
+  //        &GenericChatForm::onSearchTriggered);
+  //connect(this, &GenericChatForm::messageNotFoundShow, searchForm,
+  //        &SearchForm::showMessageNotFound);
 
   connect(msgEdit, &ChatTextEdit::enterPressed, this,
           &GenericChatForm::onSendTriggered);
@@ -449,7 +451,7 @@ GenericChatForm::GenericChatForm(const ContactId *contact_,
 GenericChatForm::~GenericChatForm() {
     qDebug()<<__func__;
   settings::Translator::unregister(this);
-  delete searchForm;
+//  delete searchForm;
 }
 
 #ifdef OK_PLUGIN
@@ -545,7 +547,7 @@ void GenericChatForm::showEvent(QShowEvent *) {
 bool GenericChatForm::event(QEvent *e) {
   // If the user accidentally starts typing outside of the msgEdit, focus it
   // automatically
-  if (e->type() == QEvent::KeyPress) {
+ /* if (e->type() == QEvent::KeyPress) {
     QKeyEvent *ke = static_cast<QKeyEvent *>(e);
     if ((ke->modifiers() == Qt::NoModifier ||
          ke->modifiers() == Qt::ShiftModifier) &&
@@ -558,7 +560,7 @@ bool GenericChatForm::event(QEvent *e) {
         searchForm->setFocusEditor();
       }
     }
-  }
+  }*/
   return QWidget::event(e);
 }
 
@@ -820,10 +822,10 @@ void GenericChatForm::copyLink() {
 }
 
 void GenericChatForm::searchFormShow() {
-  if (searchForm->isHidden()) {
+ /* if (searchForm->isHidden()) {
     searchForm->show();
     searchForm->setFocusEditor();
-  }
+  }*/
 }
 
 void GenericChatForm::onLoadHistory() {
@@ -866,9 +868,9 @@ void GenericChatForm::onExportChat() {
 }
 
 void GenericChatForm::onSearchTriggered() {
-  if (searchForm->isHidden()) {
-    searchForm->removeSearchPhrase();
-  }
+  //if (searchForm->isHidden()) {
+  //  searchForm->removeSearchPhrase();
+  //}
   disableSearchText();
 }
 
