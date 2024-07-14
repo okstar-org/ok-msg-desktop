@@ -159,6 +159,7 @@ cmake --build out
 ## Ubuntu 22.04
 > 安装依赖
 ```shell
+sudo apt update
 sudo apt install -y gcc g++ clang yasm libstdc++-12-dev libc++1
 sudo apt install -y qtcreator qtbase5-dev  qtmultimedia5-dev libqt5svg5-dev qttools5-dev
 sudo apt install -y libcrypto++-dev  libssl-dev
@@ -166,10 +167,12 @@ sudo apt install -y libpipewire-0.3-dev libxss-dev libgbm-dev libdrm-dev libxdam
   libasound2-dev libpulse-dev libavcodec-dev libavformat-dev libswscale-dev libavdevice-dev libvpx-dev \
   libopus-dev libjpeg-dev libopenal-dev libopenh264-dev \
   libexif-dev libqrencode-dev libsqlite3-dev
+sudo apt install -y libx11-dev libxcomposite-dev
 ```
 > 构建OkRtc模块
 ```shell
 git clone https://github.com/okstar-org/ok-rtc.git
+git submodule update --init --recursive
 cd ok-rtc
 
 # CMake 构建
@@ -177,6 +180,16 @@ cmake -B out  && cmake --build out
 # CMake 安装
 sudo cmake --install out
 ```
+### 编译OkGloox库
+```shell
+git clone https://github.com/okstar-org/ok-gloox.git
+cd ok-gloox
+# CMake预处理
+cmake -B out -DCMAKE_BUILD_TYPE=Release
+# 构建
+cmake --build out --config Release
+# 执行安装（用管理员身份打开命令行）
+cmake --install out
 
 ## Fedora 36
 ```shell
@@ -195,7 +208,13 @@ cmake -B build -DCMAKE_BUILD_TYPE={Debug|Release} [-DOK_CPACK=1  #(打包DEB、R
 # 构建
 cmake --build build [--target package #(打包DEB、RPM)]
 ```
+### 构建OkMSG项目
 
+```shell
+# 预处理
+cmake -B out 
+cmake --build out
+```
 # Downloads
 本项目支持Windows、Linux支持多种安装方式
 - 下载地址: https://github.com/okstar-org/ok-msg-desktop/releases
