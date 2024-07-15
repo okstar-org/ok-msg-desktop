@@ -15,7 +15,6 @@
 
 #include "LoginWidget.h"
 #include "base/files.h"
-#include "base/r.h"
 #include "base/resources.h"
 #include "ui_LoginWindow.h"
 
@@ -34,7 +33,8 @@ LoginWindow::LoginWindow(bool bootstrap, QWidget *parent)
 
   setAttribute(Qt::WA_DeleteOnClose, true);
   setWindowTitle(APPLICATION_NAME);
-  setFixedSize(LOGIN_WINDOW_WIDTH, LOGIN_WINDOW_HEIGHT);
+  //黄金分割比例 874/520 = 1.618
+  setMinimumSize(QSize(874, 520));
 
   ui->setupUi(this);
 

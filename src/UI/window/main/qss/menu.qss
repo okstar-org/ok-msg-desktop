@@ -1,3 +1,7 @@
+QFrame {
+    background-color: #203864;
+}
+
 QPushButton {
 	background-color: transparent;
 	background-repeat: no-repeat;

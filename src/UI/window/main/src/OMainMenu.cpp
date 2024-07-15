@@ -29,15 +29,16 @@ OMainMenu::OMainMenu(QWidget *parent)
   OK_RESOURCE_INIT(UIWindowMain);
 
   ui->setupUi(this);
-  delayCaller_ = std::make_unique<base::DelayedCallTimer>();
 
   // 设置样式
   QString qss = ok::base::Files::readStringAll(":/qss/menu.qss");
   setStyleSheet(qss);
 
+
   ui->chatBtn->setCursor(Qt::PointingHandCursor);
   ui->settingBtn->setCursor(Qt::PointingHandCursor);
 
+  delayCaller_ = std::make_unique<base::DelayedCallTimer>();
 
 }
 

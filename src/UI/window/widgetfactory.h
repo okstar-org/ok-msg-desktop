@@ -43,11 +43,11 @@ public:
 
         T* t = new T(parent);
 
-        QPalette palette =  t->palette() ;
-        t->setAutoFillBackground(true);
-        palette.setColor(QPalette::Window, QColor("#838383"));
-        palette.setColor(QPalette::Text, QColor("#ffffff"));
-        t->setPalette(palette);
+//        QPalette palette =  t->palette() ;
+//        t->setAutoFillBackground(true);
+//        palette.setColor(QPalette::Window, QColor("#838383"));
+//        palette.setColor(QPalette::Text, QColor("#ffffff"));
+//        t->setPalette(palette);
 
 //        widgets_.push_back(t);
 
