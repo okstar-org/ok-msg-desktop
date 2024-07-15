@@ -39,7 +39,16 @@ MainWindow::MainWindow(QWidget *parent)
   qDebug() << __func__;
 
   ui->setupUi(this);
-//TODO(kuma) ui->module_box
+//  setStyleSheet("QMainWindow{background-color: white;}");
+//  setAutoFillBackground(false);
+
+  setAutoFillBackground(true);
+  // 创建一个QPalette对象
+  QPalette palette = this->palette();
+  // 设置背景颜色为浅蓝色
+  palette.setColor(QPalette::Window, Qt::white);
+  // 应用新的调色板
+  this->setPalette(palette);
 
   setWindowTitle(APPLICATION_NAME);
   setAttribute(Qt::WA_QuitOnClose, true);

@@ -37,10 +37,6 @@ class AuthSession;
 
 namespace UI {
 
-#define LOGIN_WINDOW_WIDTH 1024
-#define LOGIN_WINDOW_HEIGHT 520
-
-
 class LoginWidget : public QWidget {
   Q_OBJECT
 public:
