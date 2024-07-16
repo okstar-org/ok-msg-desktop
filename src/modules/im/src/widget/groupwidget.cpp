@@ -39,10 +39,10 @@ GroupWidget::GroupWidget(ContentLayout *layout, QString groupnumber,
     : GenericChatroomWidget(ChatType::GroupChat, groupId),
       contentLayout{layout},
       quitGroup{nullptr},
-      destroyGrpAct{nullptr} {
+      destroyGrpAct{nullptr},
+      about{nullptr}
+{
 
-  settings::Translator::registerHandler(
-      std::bind(&GroupWidget::retranslateUi, this), this);
 
   setAcceptDrops(true);
 
@@ -77,6 +77,8 @@ GroupWidget::GroupWidget(ContentLayout *layout, QString groupnumber,
     emit groupWidgetClicked(this);
   });
 
+  settings::Translator::registerHandler([this] { retranslateUi(); }, this);
+  retranslateUi();
 
   init();
 
@@ -320,10 +322,10 @@ void GroupWidget::do_privilegesChanged(const Group::Role &role, const Group::Aff
 
 void GroupWidget::showDetails(){
     if(!about){
-        about = std::make_unique<AboutGroupForm>(group->getPersistentId(), this);
-        contentLayout->addWidget(about.get());
+        about = new AboutGroupForm(group->getPersistentId(), this);
+        contentLayout->addWidget(about);
     }
-    contentLayout->setCurrentWidget(about.get());
+    contentLayout->setCurrentWidget(about);
 }
 
 void GroupWidget::updateUserCount(int numPeers) {

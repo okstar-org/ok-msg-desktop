@@ -84,11 +84,11 @@ private:
   Group *group;
 
   ContentLayout* contentLayout;
-  std::unique_ptr<AboutGroupForm> about;
+  AboutGroupForm* about;
 
   QMenu *menu;
-   QAction *destroyGrpAct;
-   QAction *quitGroup;
+  QAction *destroyGrpAct;
+  QAction *quitGroup;
 };
 
 #endif // GROUPWIDGET_H
