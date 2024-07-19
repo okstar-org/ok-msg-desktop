@@ -182,8 +182,7 @@ void LoginWidget::doLogin() {
   }
 }
 
-void LoginWidget::onConnectResult(ok::session::SignInInfo info,
-                                  ok::session::LoginResult result) {
+void LoginWidget::onConnectResult(ok::session::SignInInfo info, ok::session::LoginResult result) {
 
   qDebug() << __func__ << result.msg;
 
@@ -237,25 +236,24 @@ void LoginWidget::on_language_currentIndexChanged(int index) {
 /**
  * 服务提供者事件
  */
-void LoginWidget::on_providers_currentIndexChanged(int index) {
-  qDebug() << "Select provider:" << index;
-}
+void LoginWidget::on_providers_currentIndexChanged(int index) { qDebug() << "Select provider:" << index; }
 
 void LoginWidget::retranslateUi() { ui->retranslateUi(this); }
 
 void LoginWidget::onError(int statusCode, const QString &msg) {
-  QString newMsg =  msg;
+  QString newMsg = msg;
   switch (statusCode / 100) {
-  case 0:{
-      newMsg = tr("Network is not available!");
-      break;
+  case 0: {
+    newMsg = tr("Network is not available!");
+    break;
   }
-  case 4:{
-      newMsg = tr("Account does not exist!");
-      break;
-  }case 5:{
-      newMsg = tr("Server error, please try again later!");
-      break;
+  case 4: {
+    newMsg = tr("Account does not exist!");
+    break;
+  }
+  case 5: {
+    newMsg = tr("Server error, please try again later!");
+    break;
   }
   }
 
@@ -268,8 +266,12 @@ void LoginWidget::setMsg(const QString &msg) { ui->loginMessage->setText(msg); }
 bool LoginWidget::eventFilter(QObject *obj, QEvent *event) {
   switch (event->type()) {
   case QEvent::MouseButtonPress: {
-
     auto providerIdx = ui->providers->currentIndex();
+    // validate
+    if (providerIdx <= 0 || m_stacks.size() <= 0) {
+      qWarning() << "providerIdx is illegal or servers is null";
+      break;
+    }
     QString host = m_stacks.at(providerIdx - 1);
     qDebug() << "Select provider host:" << host;
 
