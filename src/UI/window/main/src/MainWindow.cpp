@@ -79,10 +79,8 @@ MainWindow::MainWindow(QWidget *parent)
   actionShow->setText(tr("Show", "Tray action menu to show window"));
   connect(actionShow, &QAction::triggered, this, &MainWindow::forceShow);
 
-
-  connect(menu(), &OMainMenu::menuPushed,
-          [&](PageMenu menu, bool checked) { emit menuPushed(menu, checked); });
-
+  connect(menu(), &OMainMenu::menuPushed,this,&MainWindow::menuPushed);
+  
   instance = this;
 }
 
