@@ -124,10 +124,9 @@ ProfileForm::ProfileForm(IProfileInfo* profileInfo, QWidget* parent)
     
     setStyleSheet(Style::getStylesheet("window/profile.css"));
 
-//    connect(profilePicture, &MaskablePixmapWidget::clicked, this, &ProfileForm::onAvatarClicked);
+    connect(profilePicture, &MaskablePixmapWidget::clicked, this, &ProfileForm::onAvatarClicked);
     connect(profilePicture, &MaskablePixmapWidget::customContextMenuRequested,
             this, &ProfileForm::showProfilePictureContextMenu);
-
     QHBoxLayout* publicGrouplayout = qobject_cast<QHBoxLayout*>(bodyUI->publicGroup->layout());
     publicGrouplayout->insertWidget(0, profilePicture);
     publicGrouplayout->insertSpacing(1, 7);
@@ -316,7 +315,7 @@ void ProfileForm::onAvatarClicked()
         return;
     }
     const IProfileInfo::SetAvatarResult result = profileInfo->setAvatar(path);
-    if (result == IProfileInfo::SetAvatarResult::OK) {
+    if (result == IProfileInfo::SetAvatarResult::OK) {     
         return;
     }
 
