@@ -85,7 +85,7 @@
        </spacer>
       </item>
       <item alignment="Qt::AlignHCenter">
-       <widget class="QLabel" name="label_avatar">
+       <widget class="CroppingLabel" name="label_avatar">
         <property name="minimumSize">
          <size>
           <width>50</width>
@@ -202,6 +202,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CroppingLabel</class>
+   <extends>QLabel</extends>
+   <header location="global">src/modules/im/src/widget/tool/croppinglabel.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../../../../resources/resources.qrc"/>
  </resources>
