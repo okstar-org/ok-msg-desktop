@@ -22,15 +22,15 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
 # 🖼️ 界面展示
 - 登录界面
 
-<img src="docs/assets/login.png" width="240" alt="登录界面"/>
+<img src="docs/assets/login.png" width="1100" alt="登录界面"/>
 
 - 主界面
 
-<img src="docs/assets/preview.png" width="240" alt="登录界面"/>
+<img src="docs/assets/preview.png" width="1100" alt="主界面"/>
 
 - 效果图
 
-<img src="docs/assets/design.png" width="240" alt="登录界面"/>
+<img src="docs/assets/design.png" width="1100" alt="效果图"/>
 
 
 # ⛽ 第三方库
