@@ -28,6 +28,10 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
 
 <img src="docs/assets/preview.png" width="240" alt="登录界面"/>
 
+- 效果图
+
+<img src="docs/assets/design.png" width="240" alt="登录界面"/>
+
 
 # ⛽ 第三方库
 
