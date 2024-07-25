@@ -43,9 +43,15 @@ LoginWidget::LoginWidget(bool bootstrap, QWidget *parent)
 
   ui->setupUi(this);
   ui->loginBtn->setCursor(Qt::PointingHandCursor);
-  /**
-   * 安装事件过滤器
-   */
+
+  //sign up and  find passwd need to refactor #TODO
+  ui->signUp->setStyleSheet("QLabel { color: blue; text-decoration: underline; } "
+                            "QLabel:hover { color: red; }");
+  ui->signUp->setCursor(Qt::PointingHandCursor);
+  ui->findPwd->setStyleSheet("QLabel { color: blue; text-decoration: underline; } "
+                            "QLabel:hover { color: red; }");
+  ui->findPwd->setCursor(Qt::PointingHandCursor);
+
   ui->signUp->installEventFilter(this);
   ui->findPwd->installEventFilter(this);
 
@@ -65,6 +71,7 @@ LoginWidget::LoginWidget(bool bootstrap, QWidget *parent)
   if (bootstrap) {
     qDebug() << __func__ << "Init timer";
     m_timer = std::make_unique<QTimer>();
+   // m_timer->setSingleShot(true);
     m_timer->start(1000);
     connect(m_timer.get(), &QTimer::timeout, this, &LoginWidget::onTimeout);
   }
@@ -72,7 +79,6 @@ LoginWidget::LoginWidget(bool bootstrap, QWidget *parent)
   auto _session = ok::session::AuthSession::Instance();
   connect(_session, &AuthSession::loginResult, this, &LoginWidget::onConnectResult);
 
-  // 初始化
   init();
 }
 
@@ -134,6 +140,7 @@ void LoginWidget::doLogin() {
     return;
 
   if (m_loaded < 1) {
+    m_currentOriginalMsg = "Please waiting the page is loaded";
     setMsg(tr("Please waiting the page is loaded"));
     return;
   }
@@ -141,6 +148,7 @@ void LoginWidget::doLogin() {
   // 获取服务提供商
   auto providerIdx = ui->providers->currentIndex();
   if (!(providerIdx > 0)) {
+    m_currentOriginalMsg = "Please select service provider";
     setMsg(tr("Please select service provider"));
     return;
   }
@@ -182,8 +190,7 @@ void LoginWidget::doLogin() {
   }
 }
 
-void LoginWidget::onConnectResult(ok::session::SignInInfo info,
-                                  ok::session::LoginResult result) {
+void LoginWidget::onConnectResult(ok::session::SignInInfo info, ok::session::LoginResult result) {
 
   qDebug() << __func__ << result.msg;
 
@@ -237,25 +244,31 @@ void LoginWidget::on_language_currentIndexChanged(int index) {
 /**
  * 服务提供者事件
  */
-void LoginWidget::on_providers_currentIndexChanged(int index) {
-  qDebug() << "Select provider:" << index;
+void LoginWidget::on_providers_currentIndexChanged(int index) { qDebug() << "Select provider:" << index; }
+
+void LoginWidget::retranslateUi() {
+  ui->retranslateUi(this);
+  QString translatedMessage = tr(m_currentOriginalMsg.toUtf8().constData());
+  setMsg(translatedMessage);
 }
 
-void LoginWidget::retranslateUi() { ui->retranslateUi(this); }
-
 void LoginWidget::onError(int statusCode, const QString &msg) {
-  QString newMsg =  msg;
+  QString newMsg = msg;
   switch (statusCode / 100) {
-  case 0:{
-      newMsg = tr("Network is not available!");
-      break;
+  case 0: {
+    newMsg = tr("Network is not available!");
+    m_currentOriginalMsg = "Network is not available!";
+    break;
   }
-  case 4:{
-      newMsg = tr("Account does not exist!");
-      break;
-  }case 5:{
-      newMsg = tr("Server error, please try again later!");
-      break;
+  case 4: {
+    newMsg = tr("Account does not exist!");
+    m_currentOriginalMsg = "Account does not exist!";
+    break;
+  }
+  case 5: {
+    newMsg = tr("Server error, please try again later!");
+    m_currentOriginalMsg = "Server error, please try again later!";
+    break;
   }
   }
 
@@ -268,8 +281,12 @@ void LoginWidget::setMsg(const QString &msg) { ui->loginMessage->setText(msg); }
 bool LoginWidget::eventFilter(QObject *obj, QEvent *event) {
   switch (event->type()) {
   case QEvent::MouseButtonPress: {
-
     auto providerIdx = ui->providers->currentIndex();
+    // validate
+    if (providerIdx <= 0 || m_stacks.size() <= 0) {
+      qWarning() << "providerIdx is illegal or servers is null";
+      break;
+    }
     QString host = m_stacks.at(providerIdx - 1);
     qDebug() << "Select provider host:" << host;
 

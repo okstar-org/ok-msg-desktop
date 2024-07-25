@@ -107,7 +107,7 @@ QString AddFriendForm::getMessage() {
   //  message.setPlaceholderText(tr("%1 here! OkEDU me maybe?").arg(Core::getInstance()->getNick()));
   //  const QString msg = message.toPlainText();
   //  return !msg.isEmpty() ? msg : message.placeholderText();
-  return "您好，我是" + Core::getInstance()->getNick();
+  return tr("hello,I'm ") + Core::getInstance()->getNick();
 }
 
 void AddFriendForm::onUsernameSet(const QString &username) { lastUsername = username; }
