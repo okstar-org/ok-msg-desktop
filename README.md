@@ -1,4 +1,4 @@
-h1 align="center">OkMSG Desktop</h1>
+<h1 align="center">OkMSG Desktop</h1>
 
 # 🎁 项目介绍
 
@@ -74,7 +74,7 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
 ### 安装必备依赖
 - 安装`visual studio 17 2022`
   选择 `Windows SdK 10 20348`
-  
+
 - 安装`strawberry-perl`
 
 ### 配置vcpkg
