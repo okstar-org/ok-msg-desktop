@@ -68,6 +68,7 @@ private:
   QStringList m_hosts;
   QStringList m_stacks;
   std::unique_ptr<QTimer> m_timer;
+  QString m_currentOriginalMsg{""};
 
 signals:
   void loginSuccess(QString name, QString password);

@@ -43,9 +43,15 @@ LoginWidget::LoginWidget(bool bootstrap, QWidget *parent)
 
   ui->setupUi(this);
   ui->loginBtn->setCursor(Qt::PointingHandCursor);
-  /**
-   * 安装事件过滤器
-   */
+
+  //sign up and  find passwd need to refactor #TODO
+  ui->signUp->setStyleSheet("QLabel { color: blue; text-decoration: underline; } "
+                            "QLabel:hover { color: red; }");
+  ui->signUp->setCursor(Qt::PointingHandCursor);
+  ui->findPwd->setStyleSheet("QLabel { color: blue; text-decoration: underline; } "
+                            "QLabel:hover { color: red; }");
+  ui->findPwd->setCursor(Qt::PointingHandCursor);
+
   ui->signUp->installEventFilter(this);
   ui->findPwd->installEventFilter(this);
 
@@ -65,6 +71,7 @@ LoginWidget::LoginWidget(bool bootstrap, QWidget *parent)
   if (bootstrap) {
     qDebug() << __func__ << "Init timer";
     m_timer = std::make_unique<QTimer>();
+   // m_timer->setSingleShot(true);
     m_timer->start(1000);
     connect(m_timer.get(), &QTimer::timeout, this, &LoginWidget::onTimeout);
   }
@@ -72,7 +79,6 @@ LoginWidget::LoginWidget(bool bootstrap, QWidget *parent)
   auto _session = ok::session::AuthSession::Instance();
   connect(_session, &AuthSession::loginResult, this, &LoginWidget::onConnectResult);
 
-  // 初始化
   init();
 }
 
@@ -134,6 +140,7 @@ void LoginWidget::doLogin() {
     return;
 
   if (m_loaded < 1) {
+    m_currentOriginalMsg = "Please waiting the page is loaded";
     setMsg(tr("Please waiting the page is loaded"));
     return;
   }
@@ -141,6 +148,7 @@ void LoginWidget::doLogin() {
   // 获取服务提供商
   auto providerIdx = ui->providers->currentIndex();
   if (!(providerIdx > 0)) {
+    m_currentOriginalMsg = "Please select service provider";
     setMsg(tr("Please select service provider"));
     return;
   }
@@ -238,21 +246,28 @@ void LoginWidget::on_language_currentIndexChanged(int index) {
  */
 void LoginWidget::on_providers_currentIndexChanged(int index) { qDebug() << "Select provider:" << index; }
 
-void LoginWidget::retranslateUi() { ui->retranslateUi(this); }
+void LoginWidget::retranslateUi() {
+  ui->retranslateUi(this);
+  QString translatedMessage = tr(m_currentOriginalMsg.toUtf8().constData());
+  setMsg(translatedMessage);
+}
 
 void LoginWidget::onError(int statusCode, const QString &msg) {
   QString newMsg = msg;
   switch (statusCode / 100) {
   case 0: {
     newMsg = tr("Network is not available!");
+    m_currentOriginalMsg = "Network is not available!";
     break;
   }
   case 4: {
     newMsg = tr("Account does not exist!");
+    m_currentOriginalMsg = "Account does not exist!";
     break;
   }
   case 5: {
     newMsg = tr("Server error, please try again later!");
+    m_currentOriginalMsg = "Server error, please try again later!";
     break;
   }
   }
