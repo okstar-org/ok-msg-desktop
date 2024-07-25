@@ -188,7 +188,7 @@ protected:
 
 //    SearchForm *searchForm;
 
-    QLabel *dateInfo;
+//    QLabel *dateInfo;
     ChatLog* chatLog;
     ChatTextEdit* msgEdit;
 #ifdef SPELL_CHECKING

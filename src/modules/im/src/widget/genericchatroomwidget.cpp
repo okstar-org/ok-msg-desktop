@@ -50,49 +50,38 @@ void GenericChatroomWidget::compactChange(bool _compact)
     textLayout = new QVBoxLayout;
 
     setLayout(mainLayout);
-    mainLayout->setSpacing(0);
-    mainLayout->setMargin(0);
     textLayout->setSpacing(0);
     textLayout->setMargin(0);
     setLayoutDirection(Qt::LeftToRight); // parent might have set Qt::RightToLeft
 
     // avatar
     if (isCompact()) {
+        mainLayout->setContentsMargins(5, 5, 5, 5);
+        mainLayout->setSpacing(5);
         delete textLayout; // Not needed
-        setFixedHeight(25);
         avatar->setSize(QSize(20, 20));
-        mainLayout->addSpacing(18);
         mainLayout->addWidget(avatar);
-        mainLayout->addSpacing(5);
         mainLayout->addWidget(nameLabel);
         mainLayout->addWidget(lastMessageLabel);
-        mainLayout->addSpacing(5);
-
         if(statusPic){
             mainLayout->addWidget(statusPic);
-            mainLayout->addSpacing(5);
         }
-
         mainLayout->activate();
-//        statusMessageLabel->setFont(Style::getFont(Style::Small));
         nameLabel->setFont(Style::getFont(Style::Medium));
     } else {
-        setFixedHeight(55);
+        mainLayout->setContentsMargins(8, 8, 8, 8);
+        mainLayout->setSpacing(10);
         avatar->setSize(QSize(40, 40));
         textLayout->addStretch();
         textLayout->addWidget(nameLabel);
         textLayout->addWidget(lastMessageLabel);
         textLayout->addStretch();
-        mainLayout->addSpacing(20);
         mainLayout->addWidget(avatar);
-        mainLayout->addSpacing(10);
         mainLayout->addLayout(textLayout);
-        mainLayout->addSpacing(10);
         if(statusPic){
         mainLayout->addWidget(statusPic);
-        mainLayout->addSpacing(10);}
+        }
         mainLayout->activate();
-//        statusMessageLabel->setFont(Style::getFont(Style::Medium));
         nameLabel->setFont(Style::getFont(Style::Big));
     }
 }

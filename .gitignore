@@ -83,3 +83,4 @@ config.h
 .flatpak-builder
 out/
 vcpkg_installed
+CMakePresets.json

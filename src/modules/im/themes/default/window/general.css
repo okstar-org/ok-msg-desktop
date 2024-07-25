@@ -13,6 +13,7 @@
  .Widget
 {
     background-color: white;
+    padding: 8px;
 }
 
 QToolTip
@@ -43,6 +44,12 @@ QTabBar::tab:!selected
 {
     background: #d0d1d1;
     color: #5e5e5e;
+}
+
+/* using last is a bit of a hack, but QTabBar otherwise doesn't allow selecting single tabs */
+QTabBar::tab:last:!selected[update-available=true]
+{
+    background-color: #80c580;
 }
 
 QTabWidget#mainTab,
@@ -142,6 +149,7 @@ QComboBox
 
 QComboBox QAbstractItemView {
     background-color: white;
+    outline: none;
 }
 
 QLineEdit
@@ -175,28 +183,15 @@ QScrollArea::corner
 QScrollBar:vertical
 {
     background: transparent;
-    width: 12px;
-    margin-top: 2px;
-    margin-bottom: 2px;
-}
-
-/* using last is a bit of a hack, but QTabBar otherwise doesn't allow selecting single tabs */
-QTabBar::tab:last:!selected[update-available=true]
-{
-    background-color: #80c580;
-}
-
-QPushButton#updateAvailableButton
-{
-    background-color: #21da21;
+    width: 5px;
+    margin: 2px 0px 2px 0px;
 }
 
 QScrollBar::handle:vertical
 {
     background-color: #d1d1d1;
     min-height: 20px;
-    border-radius: 3px;
-    margin-left: 2px;
+    border-radius: 2px;
 }
 
 QScrollBar::handle:vertical:hover
@@ -227,15 +222,15 @@ QScrollBar::sub-line:vertical
 
 QScrollBar:QScrollBar::down-arrow:vertical
 {
-    width: 10;
-    height: 10px;
+    width: 0px;
+    height: 0px;
     background-color: white;
 }
 
 QScrollBar:QScrollBar::up-arrow:vertical
 {
-    width: 10px;
-    height: 10px;
+    width: 0px;
+    height: 0px;
     background-color: white;
 }
 
@@ -247,7 +242,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical
 QScrollBar:horizontal
 {
     background-color: white;
-    height: 10px;
+    height: 5px;
     margin: 0 2px 0 2px;
 }
 
@@ -284,17 +279,17 @@ QScrollBar::sub-line:horizontal
     subcontrol-origin: margin;
 }
 
-QScrollBar:QScrollBar::down-arrow:horizontal
+QScrollBar:QScrollBar::right-arrow:horizontal
 {
-    width: 10;
-    height: 10px;
+    width: 0px;
+    height: 0px;
     background-color: white;
 }
 
-QScrollBar:QScrollBar::up-arrow:horizontal
+QScrollBar:QScrollBar::left-arrow:horizontal
 {
-    width: 10px;
-    height: 10px;
+    width: 0px;
+    height: 0px;
     background-color: white;
 }
 
@@ -313,6 +308,11 @@ QPushButton
 {
     background: #ebebeb;
     color: @mainText;
+}
+
+QPushButton#updateAvailableButton
+{
+    background-color: #21da21;
 }
 
 QSplitter:handle

@@ -107,7 +107,6 @@ Widget::Widget(IAudioControl &audio, QWidget *parent)//
   instance = this;
 
   ui->setupUi(this);
-  layout()->setMargin(0);
   layout()->setSpacing(0);
 
   setMinimumWidth(777);
@@ -172,7 +171,8 @@ Widget::Widget(IAudioControl &audio, QWidget *parent)//
         Style::getImagePath("rejectCall/rejectCall.svg"), icon_size, icon_size));
     connect(actionQuit, &QAction::triggered, qApp, &QApplication::quit);
 
-    layout()->setContentsMargins(0, 0, 0, 0);
+    //  layout()->setContentsMargins(0, 0, 0, 0);
+    setAttribute(Qt::WA_LayoutOnEntireRect, false); // style sheet will make content margins
     //  setContentsMargins(0,0,0,0);
     //  setAutoFillBackground(true);
 

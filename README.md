@@ -17,9 +17,20 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
   - 消息端到端加密。
 
 # 🏢 软件架构
-
+暂略
 
 # 🖼️ 界面展示
+- 登录界面
+
+<img src="docs/assets/login.png" width="1100" alt="登录界面"/>
+
+- 主界面
+
+<img src="docs/assets/preview.png" width="1100" alt="主界面"/>
+
+- 效果图
+
+<img src="docs/assets/design.png" width="1100" alt="效果图"/>
 
 
 # ⛽ 第三方库
@@ -92,12 +103,12 @@ PKG_CONFIG_PATH=<项目根目录>/vcpkg_installed/x64-windows/lib/pkgconfig
   
     pkg-config.bat --list-all
 
-
 ### 编译OkRTC库
 ```shell
 sudo apt install libopus-dev libvpx-dev libpipewire-0.3-dev
 git clone https://github.com/okstar-org/ok-rtc.git
 cd ok-rtc
+# 拉取子模块
 git submodule update --init
 # CMake预处理
 cmake -B out -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE='$env{VCPKG_ROOT}\scripts\buildsystems\vcpkg.cmake' -DCMAKE_PREFIX_PATH='${PROJECT_ROOT}\vcpkg_installed\x64-windows'
@@ -106,6 +117,7 @@ cmake --build out --config Release
 # 执行安装（用管理员身份打开命令行）
 cmake --install out
 ```
+
 ### 编译OkGloox库
 ```shell
 git clone https://github.com/okstar-org/ok-gloox.git
@@ -155,9 +167,8 @@ cmake -B out --preset win-x64-{debug|release}
 cmake --build out
 ```
 
-# Linux 构建
 ## Ubuntu 22.04
-> 安装依赖
+### 安装依赖
 ```shell
 sudo apt install -y gcc g++ clang yasm libstdc++-12-dev libc++1
 sudo apt install -y qtcreator qtbase5-dev  qtmultimedia5-dev libqt5svg5-dev qttools5-dev
@@ -167,10 +178,12 @@ sudo apt install -y libpipewire-0.3-dev libxss-dev libgbm-dev libdrm-dev libxdam
   libopus-dev libjpeg-dev libopenal-dev libopenh264-dev \
   libexif-dev libqrencode-dev libsqlite3-dev
 ```
-> 构建OkRtc模块
+### 构建OkRtc模块
 ```shell
 git clone https://github.com/okstar-org/ok-rtc.git
 cd ok-rtc
+# 拉取子模块
+git submodule update --init
 
 # CMake 构建
 cmake -B out  && cmake --build out
@@ -178,7 +191,21 @@ cmake -B out  && cmake --build out
 sudo cmake --install out
 ```
 
+### 编译OkGloox库
+```shell
+git clone https://github.com/okstar-org/ok-gloox.git
+cd ok-gloox
+# CMake预处理
+cmake -B out -DCMAKE_BUILD_TYPE=Release
+# 构建
+cmake --build out --config Release
+# 执行安装（用管理员身份打开命令行）
+cmake --install out
+```
+
 ## Fedora 36
+
+### 安装依赖
 ```shell
 dnf update -y
 dnf install -y gcc g++
@@ -188,7 +215,32 @@ dnf install -y qt5-qtbase-devel qt6-qtbase-gui  qt5-qtmultimedia-devel \
   libexif-free-devel qrencode-devel sqlite3-devel \
   libvpx-devel openal-soft-devel openssl-devel
 ```
+### 构建OkRtc模块
+```shell
+git clone https://github.com/okstar-org/ok-rtc.git
+cd ok-rtc
+# 拉取子模块
+git submodule update --init
 
+# CMake 构建
+cmake -B out  && cmake --build out
+# CMake 安装
+sudo cmake --install out
+```
+
+### 编译OkGloox库
+```shell
+git clone https://github.com/okstar-org/ok-gloox.git
+cd ok-gloox
+# CMake预处理
+cmake -B out -DCMAKE_BUILD_TYPE=Release
+# 构建
+cmake --build out --config Release
+# 执行安装（用管理员身份打开命令行）
+cmake --install out
+```
+
+### 构建项目
 ```shell
 # 预处理
 cmake -B build -DCMAKE_BUILD_TYPE={Debug|Release} [-DOK_CPACK=1  #(打包DEB、RPM)]

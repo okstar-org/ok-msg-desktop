@@ -55,6 +55,10 @@ NetworkHttp::NetworkHttp(QObject *parent) : QObject(parent), _manager{nullptr} {
 
 NetworkHttp::~NetworkHttp() { qDebug() << __func__; }
 
+inline void forRequest(QNetworkRequest &req){
+  req.setAttribute(QNetworkRequest::RedirectPolicyAttribute, true);
+}
+
 bool NetworkHttp::get(const QUrl &url,
                       const HttpBodyFn& fn,
                       const HttpDownloadProgressFn &progress,
@@ -65,7 +69,10 @@ bool NetworkHttp::get(const QUrl &url,
     qWarning() << "url is empty";
     return false;
   }
+
   QNetworkRequest req(url);
+  forRequest(req);
+
   auto *reply = _manager->get(req);
   doRequest(req, reply, fn, progress, nullptr, failed);
   return reply;
@@ -128,11 +135,12 @@ void NetworkHttp::post(const QUrl &url,
                        const HttpErrorFn &failed) {
   qDebug() << __func__ << url.toString();
 
-  QNetworkRequest request(url);
-  request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant(contentType));
+  QNetworkRequest req(url);
+  forRequest(req);
+  req.setHeader(QNetworkRequest::ContentTypeHeader, QVariant(contentType));
 
-  auto _reply = _manager->post(request, data);
-  doRequest(request, _reply, fn, progress, upload, failed);
+  auto _reply = _manager->post(req, data);
+  doRequest(req, _reply, fn, progress, upload, failed);
 }
 
 void NetworkHttp::PostFormData(const QUrl &url,
@@ -167,7 +175,8 @@ void NetworkHttp::PostFormData(const QUrl &url,
   imagePart.setBody(byteArray);
   multiPart->append(imagePart);
 
-  QNetworkRequest request(url);
+  QNetworkRequest req(url);
+  forRequest(req);
 
   QList<QNetworkCookie> cookies = _manager->cookieJar()->cookiesForUrl(url);
   // cookies.append(QNetworkCookie(QString("ticket").toUtf8(),
@@ -175,8 +184,8 @@ void NetworkHttp::PostFormData(const QUrl &url,
   QVariant var;
   var.setValue(cookies);
 
-  request.setHeader(QNetworkRequest::CookieHeader, var);
-  QNetworkReply *reply = _manager->post(request, multiPart);
+  req.setHeader(QNetworkRequest::CookieHeader, var);
+  QNetworkReply *reply = _manager->post(req, multiPart);
   multiPart->setParent(reply);
 
   if (uploadProgress) {
@@ -196,8 +205,6 @@ void NetworkHttp::doRequest(QNetworkRequest &req,
   if (!reply) {
     return;
   }
-
-  req.setAttribute(QNetworkRequest::RedirectPolicyAttribute, true);
   reply->ignoreSslErrors();
 
   connect(reply, &QNetworkReply::finished, [=]() {

@@ -26,7 +26,7 @@
 
 static constexpr int HEADER_MARIGN = 8;
 static constexpr int CONTENT_MARIGN = 8;
-static constexpr int SEPERATOR_WIDTH = 3;
+static constexpr int SEPERATOR_WIDTH = 2;
 
 ContentWidget::ContentWidget(SendWorker* sendWorker, QWidget* parent): QWidget(parent){
 

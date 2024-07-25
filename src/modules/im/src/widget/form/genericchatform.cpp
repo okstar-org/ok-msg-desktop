@@ -286,12 +286,12 @@ GenericChatForm::GenericChatForm(const ContactId *contact_,
   //searchForm = new SearchForm();
   //searchForm->hide();
 
-  dateInfo = new QLabel(this);
   chatLog = new ChatLog(this);
   chatLog->setBusyNotification(ChatMessage::createBusyNotification());
- 
-  dateInfo->setAlignment(Qt::AlignHCenter);
-  dateInfo->setVisible(false);
+
+//  dateInfo = new QLabel(this);
+//  dateInfo->setAlignment(Qt::AlignHCenter);
+//  dateInfo->setVisible(false);
 
   // settings
   const Settings &s = Settings::getInstance();
@@ -379,7 +379,7 @@ GenericChatForm::GenericChatForm(const ContactId *contact_,
   QVBoxLayout *contentLayout = new QVBoxLayout(contentWidget);
   contentLayout->setContentsMargins(0, 0, 0, 0);
   //contentLayout->addWidget(searchForm);
-  contentLayout->addWidget(dateInfo);
+//  contentLayout->addWidget(dateInfo);
   contentLayout->addWidget(chatLog, 1);
   contentLayout->addWidget(footContainer, 0);
 
@@ -1023,20 +1023,20 @@ void GenericChatForm::updateShowDateInfo(const IChatItem::Ptr &prevLine,
                                          const IChatItem::Ptr &topLine) {
   // If the dateInfo is visible we need to pretend the top line is the one
   // covered by the date to prevent oscillations
-  const auto effectiveTopLine =
-      (dateInfo->isVisible() && prevLine) ? prevLine : topLine;
-
-  const auto date = getTime(effectiveTopLine);
-
-  if (date.isValid() && date.date() != QDate::currentDate()) {
-    const auto dateText =
-        QStringLiteral("<b>%1<\b>")
-            .arg(date.toString(Settings::getInstance().getDateFormat()));
-    dateInfo->setText(dateText);
-    dateInfo->setVisible(true);
-  } else {
-    dateInfo->setVisible(false);
-  }
+//  const auto effectiveTopLine =
+//      (dateInfo->isVisible() && prevLine) ? prevLine : topLine;
+//
+//  const auto date = getTime(effectiveTopLine);
+//
+//  if (date.isValid() && date.date() != QDate::currentDate()) {
+//    const auto dateText =
+//        QStringLiteral("<b>%1<\b>")
+//            .arg(date.toString(Settings::getInstance().getDateFormat()));
+//    dateInfo->setText(dateText);
+//    dateInfo->setVisible(true);
+//  } else {
+//    dateInfo->setVisible(false);
+//  }
 }
 
 void GenericChatForm::retranslateUi() {

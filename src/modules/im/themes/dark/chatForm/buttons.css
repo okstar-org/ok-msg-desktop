@@ -12,34 +12,32 @@
 
 /* Message edit */
 
-QAbstractButton#emoteButton
-{
-    qproperty-icon: url("@getImagePath(chatForm/emoteButton.svg)");
-    width: 24px;
-    height: 24px;
-}
-
-QAbstractButton#fileButton
-{
-    qproperty-icon: url("@getImagePath(chatForm/fileButton.svg)");
-    width: 24px;
-    height: 24px;
-}
-
-QAbstractButton#screenshotButton
-{
-    qproperty-icon: url("@getImagePath(chatForm/screenshotButton.svg)");
-    width: 24px;
-    height: 24px;
-}
-
 QAbstractButton#emoteButton,
 QAbstractButton#fileButton,
 QAbstractButton#screenshotButton
 {
     icon-size: 20px;
+    width: 24px;
+    height: 24px;
     background-color: #262626;
     border-radius: 5px;
+    padding: 2px;
+}
+
+QAbstractButton#emoteButton
+{
+    qproperty-icon: url("@getImagePath(chatForm/emoteButton.svg)");
+}
+
+QAbstractButton#fileButton
+{
+    qproperty-icon: url("@getImagePath(chatForm/fileButton.svg)");
+}
+
+QAbstractButton#screenshotButton
+{
+    qproperty-icon: url("@getImagePath(chatForm/screenshotButton.svg)");
+    
 }
 
 QAbstractButton#emoteButton:hover,
@@ -55,6 +53,7 @@ QAbstractButton#sendButton
     icon-size: 16px;
     border-radius: 5px;
     background-color: #2A67F6;
+    padding: 2px;
     width: 50px;
     height: 26px;
 }
@@ -97,14 +96,20 @@ QAbstractButton#micButton
     height: 18px;
 }
 
+QAbstractButton#videoButton,
+QAbstractButton#callButton
+{
+    icon-size: 18px;
+    width: 32px;
+    height: 32px;
+    border-radius: 16px;
+    padding: 0px;
+}
+
 QAbstractButton#videoButton
 {
     qproperty-icon: url("@getImagePath(chatForm/videoButton.svg)");
-    icon-size: 18px;
     background-color: #FC034D;
-    border-radius: 16px;
-    width: 32px;
-    height: 32px;
 }
 
 QAbstractButton#videoButton:disabled
@@ -115,11 +120,7 @@ QAbstractButton#videoButton:disabled
 QAbstractButton#callButton
 {
     qproperty-icon: url("@getImagePath(chatForm/callButton.svg)");
-    icon-size: 18px;
     background-color: #372D7A;
-    border-radius: 16px;
-    width: 32px;
-    height: 32px;
 }
 
 QAbstractButton#callButton:disabled
