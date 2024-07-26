@@ -82,8 +82,8 @@ public:
   uint32_t getCurrentProfileId() ;
   void setCurrentProfile(const QString& profile);
 
-
-
+  QString getProvider() ;
+  void setProvider(QString val);
 
 private:
   static uint32_t makeProfileId(const QString& profile);
@@ -92,6 +92,7 @@ private:
 
   CompatibleRecursiveMutex bigLock;
   QString translation;
+  QString provider;
 
   bool showSystemTray;
   bool closeToTray;
@@ -106,6 +107,8 @@ private:
 
 signals:
   void translationChanged(const QString &translation);
+  void providerChanged(const QString &p);
+ 
   void showSystemTrayChanged(bool enabled);
 
   void closeToTrayChanged(bool enabled);

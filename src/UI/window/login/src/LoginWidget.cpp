@@ -34,50 +34,30 @@ using namespace ok::session;
 using namespace ok::base;
 
 LoginWidget::LoginWidget(bool bootstrap, QWidget *parent)
-    : QWidget(parent),                           //
-      ui(new Ui::LoginWidget),                   //
-      bootstrap{bootstrap}, m_loginKey(nullptr), //
-      m_settingManager(nullptr),                 //
+    : QWidget(parent),                            //
+      ui(new Ui::LoginWidget),                    //
+      bootstrap{bootstrap}, m_loginKey(nullptr),  //
+      m_settingManager(new SettingManager(this)), //
       m_loaded(0) {
   qDebug() << __func__;
-
   ui->setupUi(this);
-  ui->loginBtn->setCursor(Qt::PointingHandCursor);
 
-  //sign up and  find passwd need to refactor #TODO
-  ui->signUp->setStyleSheet("QLabel { color: blue; text-decoration: underline; } "
-                            "QLabel:hover { color: red; }");
-  ui->signUp->setCursor(Qt::PointingHandCursor);
-  ui->findPwd->setStyleSheet("QLabel { color: blue; text-decoration: underline; } "
-                            "QLabel:hover { color: red; }");
-  ui->findPwd->setCursor(Qt::PointingHandCursor);
-
-  ui->signUp->installEventFilter(this);
-  ui->findPwd->installEventFilter(this);
-
-  /**
-   * 增加快捷键
-   */
+  // return keyboard
   m_loginKey = new QShortcut(QKeySequence(Qt::Key_Return), this);
-  connect(m_loginKey, SIGNAL(activated()), //
-          this, SLOT(on_loginBtn_released()));
+  connect(m_loginKey, SIGNAL(activated()), this, SLOT(on_loginBtn_released()));
 
-  okCloudService = new ok::backend::OkCloudService(this);
-
+  // translator
   settings::Translator::registerHandler([&] { retranslateUi(); }, this);
 
-  m_settingManager = new SettingManager(this);
-
+  // timer for login #TODO need to refactor
   if (bootstrap) {
     qDebug() << __func__ << "Init timer";
     m_timer = std::make_unique<QTimer>();
-   // m_timer->setSingleShot(true);
     m_timer->start(1000);
     connect(m_timer.get(), &QTimer::timeout, this, &LoginWidget::onTimeout);
   }
-
-  auto _session = ok::session::AuthSession::Instance();
-  connect(_session, &AuthSession::loginResult, this, &LoginWidget::onConnectResult);
+  // connect login result
+  connect(ok::session::AuthSession::Instance(), &AuthSession::loginResult, this, &LoginWidget::onConnectResult);
 
   init();
 }
@@ -89,33 +69,31 @@ LoginWidget::~LoginWidget() {
 }
 
 void LoginWidget::init() {
-
+  // 1. get remember account
   m_settingManager->getAccount([&](const QString &acc, const QString &password) {
     ui->rember->setChecked(!acc.isEmpty());
     ui->accountInput->setText(acc);
     ui->passwordInput->setText(password);
   });
 
-  //==========国际化==========//
-  // 先获取当前语言
-  auto &s = ok::base::OkSettings::getInstance();
-  qDebug() << "Settings translation:" << s.getTranslation();
+  // 2. i18n
+  auto &setting = ok::base::OkSettings::getInstance();
+  qDebug() << "Last settings translation:" << setting.getTranslation();
 
-  for (int i = 0; i < s.getLocales().size(); ++i) {
-    auto &locale = s.getLocales().at(i);
+  for (int i = 0; i < setting.getLocales().size(); ++i) {
+    auto &locale = setting.getLocales().at(i);
     QString langName = QLocale(locale).nativeLanguageName();
     ui->language->addItem(langName);
   }
-
-  // 当前语言状态
-  auto i = s.getLocales().indexOf(s.getTranslation());
+  // set default
+  auto i = setting.getLocales().indexOf(setting.getTranslation());
   if (i >= 0 && i < ui->language->count())
     ui->language->setCurrentIndex(i + 1);
 
   retranslateUi();
-  //==========国际化==========//
 
-  // 服务供应商
+  // 3.provider
+  okCloudService = new ok::backend::OkCloudService(this);
   okCloudService->GetFederalInfo(
       [&](ok::backend::Res<ok::backend::FederalInfo> &res) {
         for (const auto &item : res.data->states) {
@@ -125,12 +103,36 @@ void LoginWidget::init() {
             m_stacks.push_back(item.stackUrl);
           }
         }
-        if (ui->providers->maxCount() > 0) {
-          ui->providers->setCurrentIndex(1);
+
+        if (ui->providers->count() > 1) {
+          auto &setting = ok::base::OkSettings::getInstance();
+          int index = ui->providers->findText(setting.getProvider());
+          // found
+          if (index != -1) {
+            ui->providers->setCurrentIndex(index);
+          } else {
+            qDebug() << "provide not found in the comboBox: " << setting.getProvider();
+            ui->providers->setCurrentIndex(1);
+          }
+
           m_loaded++;
         }
       },
       [&](int code, const QString &error) { onError(code, error); });
+
+  // 4. UI
+  ui->signUp->setStyleSheet("QLabel { color: blue; text-decoration: underline; } "
+                            "QLabel:hover { color: red; }");
+  ui->signUp->setCursor(Qt::PointingHandCursor);
+
+  ui->findPwd->setStyleSheet("QLabel { color: blue; text-decoration: underline; } "
+                             "QLabel:hover { color: red; }");
+  ui->findPwd->setCursor(Qt::PointingHandCursor);
+
+  ui->loginBtn->setCursor(Qt::PointingHandCursor);
+
+  ui->signUp->installEventFilter(this);
+  ui->findPwd->installEventFilter(this);
 }
 
 void LoginWidget::deinit() {}
@@ -244,7 +246,27 @@ void LoginWidget::on_language_currentIndexChanged(int index) {
 /**
  * 服务提供者事件
  */
-void LoginWidget::on_providers_currentIndexChanged(int index) { qDebug() << "Select provider:" << index; }
+void LoginWidget::on_providers_currentIndexChanged(int index) {
+  qDebug() << "providers currentIndexChanged : " << index;
+  if (index <= 0) {
+    qDebug() << "provider index illegal";
+    return;
+  }
+
+  auto &setting = ok::base::OkSettings::getInstance();
+  QString provider = ui->providers->currentText();
+  QString settingProvider = setting.getProvider();
+
+  qDebug() << "setting provider: " << settingProvider << " wanna change to: " << provider;
+
+  if (settingProvider == provider) {
+    qDebug() << "already in provider: " << provider;
+    return;
+  }
+  setting.setProvider(provider);
+  setting.saveGlobal();
+  qDebug() << "change to provider:" << provider;
+}
 
 void LoginWidget::retranslateUi() {
   ui->retranslateUi(this);
