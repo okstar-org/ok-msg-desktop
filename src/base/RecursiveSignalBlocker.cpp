@@ -10,7 +10,7 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#include "recursivesignalblocker.h"
+#include "RecursiveSignalBlocker.h"
 
 #include <QObject>
 #include <QSignalBlocker>

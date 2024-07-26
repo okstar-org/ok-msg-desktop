@@ -11,7 +11,7 @@
  */
 
 #include "notificationedgewidget.h"
-#include "style.h"
+#include "src/lib/settings/style.h"
 #include <QBoxLayout>
 #include <QLabel>
 

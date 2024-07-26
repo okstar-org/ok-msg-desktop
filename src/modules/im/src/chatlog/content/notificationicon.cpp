@@ -12,7 +12,7 @@
 
 #include "notificationicon.h"
 #include "../pixmapcache.h"
-#include "src/widget/style.h"
+#include "src/lib/settings/style.h"
 
 #include <QGraphicsScene>
 #include <QPainter>

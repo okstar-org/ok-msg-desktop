@@ -12,8 +12,8 @@
 
 #include "genericchatroomwidget.h"
 #include "maskablepixmapwidget.h"
+#include "src/lib/settings/style.h"
 #include "src/persistence/settings.h"
-#include "src/widget/style.h"
 #include "src/widget/tool/croppinglabel.h"
 #include <QBoxLayout>
 #include <QMouseEvent>

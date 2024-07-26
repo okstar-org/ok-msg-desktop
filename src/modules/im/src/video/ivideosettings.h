@@ -13,7 +13,7 @@
 #ifndef I_VIDEO_SETTINGS_H
 #define I_VIDEO_SETTINGS_H
 
-#include "src/model/interface.h"
+#include "src/base/interface.h"
 
 #include <QString>
 #include <QRect>

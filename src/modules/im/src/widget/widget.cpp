@@ -55,6 +55,7 @@
 #include "src/core/corefile.h"
 #include "src/friendlist.h"
 #include "src/grouplist.h"
+#include "src/lib/settings/style.h"
 #include "src/model/friend.h"
 #include "src/model/group.h"
 #include "src/model/groupinvite.h"
@@ -64,6 +65,7 @@
 #include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
 #include "src/platform/timer.h"
+#include "src/widget/ContactWidget.h"
 #include "src/widget/contentdialogmanager.h"
 #include "src/widget/form/addfriendform.h"
 #include "src/widget/form/filesform.h"
@@ -71,11 +73,8 @@
 #include "src/widget/form/profileform.h"
 #include "src/widget/form/settingswidget.h"
 #include "src/widget/gui.h"
-#include "src/widget/style.h"
-#include "src/widget/ContactWidget.h"
 #include "tool/removefrienddialog.h"
 #include "ui_mainwindow.h"
-
 
 bool toxActivateEventHandler(const QByteArray &) {
   Widget *widget = Nexus::getDesktopGUI();

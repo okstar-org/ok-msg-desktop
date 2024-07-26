@@ -13,14 +13,14 @@
 #include "chatmessage.h"
 #include "chatlinecontentproxy.h"
 #include "content/broken.h"
+#include "content/contactavatar.h"
 #include "content/filetransferwidget.h"
 #include "content/image.h"
 #include "content/notificationicon.h"
 #include "content/spinner.h"
 #include "content/text.h"
-#include "content/contactavatar.h"
 #include "content/timestamp.h"
-#include "src/widget/style.h"
+#include "src/lib/settings/style.h"
 #include "textformatter.h"
 
 #include <QCryptographicHash>

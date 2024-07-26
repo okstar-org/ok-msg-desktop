@@ -17,7 +17,7 @@
 
 #include <QObject>
 
-#include "src/model/interface.h"
+#include "src/base/interface.h"
 
 /**
  * @brief The IAudioSink class represents an interface to devices that can play audio.

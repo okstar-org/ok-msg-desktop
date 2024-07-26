@@ -10,12 +10,12 @@
  * See the Mulan PubL v2 for more details.
  */
 
-
 #include "callconfirmwidget.h"
-#include "src/widget/style.h"
+#include "src/lib/settings/style.h"
 #include "src/widget/widget.h"
 #include <QDialogButtonBox>
 #include <QFontMetrics>
+#include <QGuiApplication>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QPaintEvent>
@@ -24,7 +24,6 @@
 #include <QPushButton>
 #include <QRect>
 #include <QVBoxLayout>
-#include <QGuiApplication>
 #include <assert.h>
 
 /**

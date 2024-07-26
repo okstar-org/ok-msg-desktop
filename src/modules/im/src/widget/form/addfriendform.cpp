@@ -16,11 +16,11 @@
 #include "lib/session/AuthSession.h"
 #include "lib/settings/translator.h"
 #include "src/core/core.h"
+#include "src/lib/settings/style.h"
 #include "src/nexus.h"
 #include "src/persistence/settings.h"
 #include "src/widget/contentlayout.h"
 #include "src/widget/gui.h"
-#include "src/widget/style.h"
 #include "src/widget/tool/croppinglabel.h"
 #include "ui_addfriendform.h"
 #include <QApplication>

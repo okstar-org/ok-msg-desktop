@@ -11,7 +11,7 @@
  */
 
 #include "style.h"
-#include "src/persistence/settings.h"
+#include "settings.h"
 #include "src/widget/gui.h"
 
 #include <QDebug>
@@ -180,7 +180,6 @@ const QString Style::getImagePath(const QString& filename)
         qWarning() << "Failed to open file (using defaults):" << fullPath;
 
         fullPath = getThemePath() % filename;
-
         if (QFileInfo::exists(fullPath)) {
             return fullPath;
         } else {
@@ -379,11 +378,10 @@ QPixmap Style::scaleSvgImage(const QString& path, uint32_t width, uint32_t heigh
 void Style::initPalette()
 {
     QSettings settings(getThemePath() % "palette.ini", QSettings::IniFormat);
-
-    auto keys = aliasColors.keys();
-
+    
     settings.beginGroup("colors");
     QMap<Style::ColorPalette, QString> c;
+    auto keys = aliasColors.keys();
     for (auto k : keys) {
         c[k] = settings.value(aliasColors[k], "#000").toString();
         palette[k] = QColor(settings.value(aliasColors[k], "#000").toString());
@@ -425,6 +423,5 @@ QString Style::getThemePath()
     if (themeNameColors[num].type == Dark) {
         return BuiltinThemeDarkPath;
     }
-
     return BuiltinThemeDefaultPath;
 }

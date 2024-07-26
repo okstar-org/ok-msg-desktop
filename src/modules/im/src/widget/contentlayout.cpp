@@ -11,7 +11,7 @@
  */
 
 #include "contentlayout.h"
-#include "style.h"
+#include "src/lib/settings/style.h"
 #include "src/persistence/settings.h"
 #include <QFrame>
 #include <QStyleFactory>

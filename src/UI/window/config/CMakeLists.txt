@@ -2,18 +2,34 @@ project(UIWindowConfig)
 
 add_definitions(-DOK_${PROJECT_NAME}_MODULE="${PROJECT_NAME}")
 
-file( GLOB ${PROJECT_NAME}_SOURCES src/*.cpp )
-file( GLOB ${PROJECT_NAME}_UIS src/*.ui )
-file( GLOB ${PROJECT_NAME}_TSS ts/*.ts )
-file( GLOB ${PROJECT_NAME}_QSS qss/*.qss )
-file( GLOB ${PROJECT_NAME}_ICONS icon/*.png )
-
-qt5_wrap_ui(${PROJECT_NAME}_FORMS
-       ${${PROJECT_NAME}_UIS}
+file( GLOB ${PROJECT_NAME}_SOURCES
+    src/*.cpp
+    plugin/src/*.cpp
+    settings/src/*.cpp)
+file( GLOB ${PROJECT_NAME}_UIS
+    src/*.ui
+    plugin/src/*.ui
+    settings/src/*.ui)
+file( GLOB ${PROJECT_NAME}_TSS
+    ts/*.ts
+    plugin/ts/*.ts
+    settings/ts/*.ts
 )
+file( GLOB ${PROJECT_NAME}_QSS
+    plugin/qss/*.qss
+    settings/qss/*.qss)
+file( GLOB ${PROJECT_NAME}_ICONS
+    icon/*.png
+    plugin/icon/*.png )
 
-qt5_add_translation(${PROJECT_NAME}_QM_FILES
-       ${${PROJECT_NAME}_TSS}
+
+qt5_wrap_ui(${PROJECT_NAME}_FORMS ${${PROJECT_NAME}_UIS})
+
+message(STATUS "${${PROJECT_NAME}_TSS}")
+
+qt5_add_translation(
+    ${PROJECT_NAME}_QM_FILES
+    ${${PROJECT_NAME}_TSS}
 )
 
 set(RESOURCE_NAME "${PROJECT_BINARY_DIR}/${PROJECT_NAME}.qrc.in")
@@ -24,12 +40,12 @@ file(WRITE "${RESOURCE_NAME}"
 ")
 
 # ts
-file(APPEND "${RESOURCE_NAME}"
-        "<qresource prefix=\"/translations/${PROJECT_NAME}\">
-")
+file(APPEND "${RESOURCE_NAME}" "<qresource prefix=\"/translations/${PROJECT_NAME}\">
+") #换行
 foreach (qm ${${PROJECT_NAME}_QM_FILES})
     get_filename_component(qm_name ${qm} NAME)
     file(APPEND "${RESOURCE_NAME}"
+        #留出格式空间
         "    <file alias=\"${qm_name}\">${qm}</file>\n")
 endforeach (qm)
 file(APPEND "${RESOURCE_NAME}"

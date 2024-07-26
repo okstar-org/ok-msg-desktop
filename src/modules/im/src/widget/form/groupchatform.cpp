@@ -12,25 +12,25 @@
 
 #include "groupchatform.h"
 
-#include "tabcompleter.h"
+#include "lib/settings/translator.h"
+#include "src/chatlog/chatlog.h"
+#include "src/chatlog/content/text.h"
 #include "src/core/core.h"
 #include "src/core/coreav.h"
 #include "src/core/groupid.h"
-#include "src/chatlog/chatlog.h"
-#include "src/chatlog/content/text.h"
-#include "src/model/friend.h"
 #include "src/friendlist.h"
+#include "src/lib/settings/style.h"
+#include "src/model/friend.h"
 #include "src/model/group.h"
+#include "src/persistence/igroupsettings.h"
 #include "src/video/groupnetcamview.h"
 #include "src/widget/chatformheader.h"
 #include "src/widget/flowlayout.h"
 #include "src/widget/form/chatform.h"
 #include "src/widget/groupwidget.h"
 #include "src/widget/maskablepixmapwidget.h"
-#include "src/widget/style.h"
 #include "src/widget/tool/croppinglabel.h"
-#include "lib/settings/translator.h"
-#include "src/persistence/igroupsettings.h"
+#include "tabcompleter.h"
 
 #include <QDragEnterEvent>
 #include <QMimeData>

@@ -9,25 +9,26 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PubL v2 for more details.
  */
+#pragma  once
 
-#ifndef QTOX_RECURSIVESIGNALBLOCKER_H
-#define QTOX_RECURSIVESIGNALBLOCKER_H
+#include <QWidget>
 
-#include <QVector>
+namespace UI {
 
-class QObject;
-class QSignalBlocker;
-
-class RecursiveSignalBlocker
-{
+class GenericForm : public QWidget {
+  Q_OBJECT
 public:
-    explicit RecursiveSignalBlocker(QObject* object);
-    ~RecursiveSignalBlocker();
+  explicit GenericForm(const QPixmap &icon, QWidget *parent = nullptr);
+  virtual ~GenericForm() {}
 
-    void recursiveBlock(QObject* object);
+  virtual QString getFormName() = 0;
+  QPixmap getFormIcon();
 
-private:
-    QVector<const QSignalBlocker*> mBlockers;
+protected:
+  bool eventFilter(QObject *o, QEvent *e) final override;
+  void eventsInit();
+
+protected:
+  QPixmap formIcon;
 };
-
-#endif
+} // namespace UI

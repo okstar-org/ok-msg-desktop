@@ -13,8 +13,6 @@
 #ifndef TOXENCRYPT_H
 #define TOXENCRYPT_H
 
-//#include <tox/toxencryptsave.h>
-
 #include <QByteArray>
 #include <QString>
 

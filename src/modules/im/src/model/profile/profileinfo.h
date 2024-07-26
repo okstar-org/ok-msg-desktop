@@ -11,8 +11,8 @@
  */
 
 #include "iprofileinfo.h"
+#include "src/base/interface.h"
 #include "src/core/FriendId.h"
-#include "src/model/interface.h"
 #include <QObject>
 
 class Core;

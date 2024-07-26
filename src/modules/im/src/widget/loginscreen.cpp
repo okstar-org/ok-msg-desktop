@@ -10,16 +10,15 @@
  * See the Mulan PubL v2 for more details.
  */
 
-
 #include "loginscreen.h"
-#include "ui_loginscreen.h"
+#include "lib/settings/translator.h"
+#include "src/lib/settings/style.h"
 #include "src/persistence/profile.h"
 #include "src/persistence/profilelocker.h"
 #include "src/persistence/settings.h"
 #include "src/widget/form/setpassworddialog.h"
-#include "src/widget/style.h"
 #include "src/widget/tool/profileimporter.h"
-#include "lib/settings/translator.h"
+#include "ui_loginscreen.h"
 #include <QDebug>
 #include <QDialog>
 #include <QMessageBox>

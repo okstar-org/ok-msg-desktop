@@ -11,18 +11,18 @@
  */
 
 #include "groupwidget.h"
-#include "contentlayout.h"
 #include "contentdialogmanager.h"
+#include "contentlayout.h"
 #include "form/groupchatform.h"
-#include "lib/settings/translator.h"
 #include "groupwidget.h"
 #include "gui.h"
+#include "lib/settings/translator.h"
 #include "maskablepixmapwidget.h"
+#include "src/lib/settings/style.h"
 #include "src/model/sessionchatlog.h"
 #include "src/model/status.h"
 #include "src/persistence/settings.h"
 #include "src/widget/friendwidget.h"
-#include "src/widget/style.h"
 #include "src/widget/widget.h"
 #include "tool/croppinglabel.h"
 #include <QApplication>

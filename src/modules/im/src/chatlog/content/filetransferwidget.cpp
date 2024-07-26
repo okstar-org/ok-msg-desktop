@@ -15,9 +15,9 @@
 
 #include "src/core/core.h"
 #include "src/core/corefile.h"
+#include "src/lib/settings/style.h"
 #include "src/persistence/settings.h"
 #include "src/widget/gui.h"
-#include "src/widget/style.h"
 #include "src/widget/widget.h"
 
 #include <libexif/exif-loader.h>

@@ -178,7 +178,7 @@ set(${PROJECT_NAME}_SOURCES
         src/model/group.h
         src/model/status.cpp
         src/model/status.h
-        src/model/interface.h
+		../../base/interface.h
         src/model/profile/iprofileinfo.h
         src/model/profile/profileinfo.cpp
         src/model/profile/profileinfo.h
@@ -345,8 +345,8 @@ set(${PROJECT_NAME}_SOURCES
         src/widget/qrwidget.h
         src/widget/splitterrestorer.cpp
         src/widget/splitterrestorer.h
-        src/widget/style.cpp
-        src/widget/style.h
+    ../../lib/settings/style.cpp
+    ../../lib/settings/style.h
         src/widget/tool/activatedialog.cpp
         src/widget/tool/activatedialog.h
         src/widget/tool/adjustingscrollarea.cpp
@@ -367,9 +367,7 @@ set(${PROJECT_NAME}_SOURCES
         src/widget/tool/movablewidget.h
         src/widget/tool/profileimporter.cpp
         src/widget/tool/profileimporter.h
-        src/widget/tool/recursivesignalblocker.cpp
-        src/widget/tool/recursivesignalblocker.h
-        src/widget/tool/removefrienddialog.cpp
+    src/widget/tool/removefrienddialog.cpp
         src/widget/tool/removefrienddialog.h
         src/widget/tool/screengrabberchooserrectitem.cpp
         src/widget/tool/screengrabberchooserrectitem.h

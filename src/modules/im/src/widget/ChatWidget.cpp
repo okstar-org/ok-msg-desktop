@@ -26,6 +26,7 @@
 #include "lib/settings/translator.h"
 #include "src/core/corefile.h"
 #include "src/friendlist.h"
+#include "src/lib/settings/style.h"
 #include "src/model/group.h"
 #include "src/model/groupinvite.h"
 #include "src/modules/im/src/grouplist.h"
@@ -33,7 +34,6 @@
 #include "src/persistence/profile.h"
 #include "src/widget/form/addfriendform.h"
 #include "src/widget/form/groupinviteform.h"
-#include "style.h"
 #include "ui_ChatWidget.h"
 #include "widget.h"
 #include <QMenu>

@@ -12,13 +12,12 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
 
-#include "base/PageFactory.h"
 #include "UI/window/config/src/ConfigWindow.h"
-#include "base/logs.h"
-#include "base/r.h"
 #include "base/OkSettings.h"
+#include "base/PageFactory.h"
+#include "base/logs.h"
 #include "modules/im/src/model/status.h"
-#include "modules/im/src/widget/style.h"
+#include "src/lib/settings/style.h"
 
 #include <QLabel>
 #include <QMenu>

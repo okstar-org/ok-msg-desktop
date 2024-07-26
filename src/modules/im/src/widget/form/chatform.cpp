@@ -31,12 +31,12 @@
 #include "src/widget/form/loadhistorydialog.h"
 #include "src/widget/maskablepixmapwidget.h"
 //#include "src/widget/searchform.h"
-#include "src/widget/style.h"
+#include "lib/settings/translator.h"
+#include "src/lib/settings/style.h"
 #include "src/widget/tool/callconfirmwidget.h"
 #include "src/widget/tool/chattextedit.h"
 #include "src/widget/tool/croppinglabel.h"
 #include "src/widget/tool/screenshotgrabber.h"
-#include "lib/settings/translator.h"
 #include "src/widget/widget.h"
 
 #include <QApplication>

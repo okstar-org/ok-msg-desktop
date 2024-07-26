@@ -18,8 +18,8 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+#include "src/lib/settings/style.h"
 #include "src/video/videosurface.h"
-#include "src/widget/style.h"
 
 class GenericNetCamView : public QWidget
 {

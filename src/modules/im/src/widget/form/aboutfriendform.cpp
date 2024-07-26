@@ -12,10 +12,10 @@
 
 #include "aboutfriendform.h"
 #include "src/core/core.h"
+#include "src/lib/settings/style.h"
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
 #include "src/widget/gui.h"
-#include "src/widget/style.h"
 #include "src/widget/widget.h"
 #include "ui_aboutfriendform.h"
 

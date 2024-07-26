@@ -1,10 +1,10 @@
 #include "ContactWidget.h"
 #include "friendlistwidget.h"
+#include "src/lib/settings/style.h"
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
 #include "ui_ContactWidget.h"
 #include "widget.h"
-#include "style.h"
 
 #include <src/friendlist.h>
 #include <src/grouplist.h>

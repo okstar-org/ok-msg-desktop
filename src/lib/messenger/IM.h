@@ -150,10 +150,6 @@ public:
 
   std::unique_ptr<Client> makeClient();
 
-  /**
-   * 个人相关
-   * @param nickname
-   */
   void setNickname(const QString &nickname);
   QString getNickname();
 
@@ -201,7 +197,6 @@ public:
   void acceptFriendRequest(const QString &);
   void rejectFriendRequest(const QString &);
 
-  void sendReceiptRecieved(const JID &to, QString receipt);
 
   size_t getRosterCount();
   void getRosterList(std::list<IMFriend> &);

@@ -16,9 +16,9 @@
 #include <QMutex>
 #include <QObject>
 
-#include "src/model/interface.h"
-#include "src/audio/iaudiosink.h"
 #include "base/compatiblerecursivemutex.h"
+#include "src/audio/iaudiosink.h"
+#include "src/base/interface.h"
 
 class OpenAL;
 class QMutex;

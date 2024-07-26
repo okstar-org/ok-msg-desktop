@@ -12,11 +12,11 @@
 
 #include "chatformheader.h"
 
+#include "lib/settings/translator.h"
+#include "src/lib/settings/style.h"
 #include "src/widget/maskablepixmapwidget.h"
-#include "src/widget/style.h"
 #include "src/widget/tool/callconfirmwidget.h"
 #include "src/widget/tool/croppinglabel.h"
-#include "lib/settings/translator.h"
 
 #include <QDebug>
 #include <QHBoxLayout>

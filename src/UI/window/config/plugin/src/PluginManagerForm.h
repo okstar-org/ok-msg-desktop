@@ -39,7 +39,8 @@ public:
   ~PluginManagerForm() override;
 
   void add(ok::backend::PluginInfo &info, int i);
-
+protected:
+  void retranslateUi();
 private:
   Ui::PluginManagerForm *ui;
   QList<ok::backend::PluginInfo> mPluginInfos;

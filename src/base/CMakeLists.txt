@@ -35,6 +35,8 @@ set(${PROJECT_NAME}_SOURCES
     OkProcess.h
     utils.h
     SvgUtils.h
+    RecursiveSignalBlocker.h
+    RecursiveSignalBlocker.cpp
 )
 
 if(WIN32)

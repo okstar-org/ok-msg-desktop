@@ -23,11 +23,11 @@
 #include "base/OkSettings.h"
 #include "lib/log/LogManager.h"
 #include "lib/settings/translator.h"
+#include "src/base/RecursiveSignalBlocker.h"
 #include "src/model/status.h"
 #include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
 #include "src/widget/gui.h"
-#include "src/widget/tool/recursivesignalblocker.h"
 
 /**
  * @class AdvancedForm

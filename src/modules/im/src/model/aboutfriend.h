@@ -14,7 +14,7 @@
 #define ABOUT_FRIEND_H
 
 #include "iaboutfriend.h"
-#include "src/model/interface.h"
+#include "src/base/interface.h"
 #include "src/persistence/ifriendsettings.h"
 
 #include <QObject>

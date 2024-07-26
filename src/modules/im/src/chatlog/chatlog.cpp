@@ -16,7 +16,7 @@
 #include "chatmessage.h"
 #include "content/filetransferwidget.h"
 #include "lib/settings/translator.h"
-#include "src/widget/style.h"
+#include "src/lib/settings/style.h"
 
 #include <QAction>
 #include <QApplication>

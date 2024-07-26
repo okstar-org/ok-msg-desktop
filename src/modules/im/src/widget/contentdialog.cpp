@@ -21,9 +21,11 @@
 #include <QShortcut>
 #include <QSplitter>
 
+#include "lib/settings/translator.h"
 #include "src/core/core.h"
 #include "src/friendlist.h"
 #include "src/grouplist.h"
+#include "src/lib/settings/style.h"
 #include "src/model/chatroom/friendchatroom.h"
 #include "src/model/friend.h"
 #include "src/model/group.h"
@@ -34,9 +36,7 @@
 #include "src/widget/friendlistlayout.h"
 #include "src/widget/friendwidget.h"
 #include "src/widget/groupwidget.h"
-#include "src/widget/style.h"
 #include "src/widget/tool/adjustingscrollarea.h"
-#include "lib/settings/translator.h"
 #include "src/widget/widget.h"
 
 static const int minWidget = 220;

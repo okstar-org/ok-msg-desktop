@@ -13,7 +13,7 @@
 #ifndef IGROUP_SETTINGS_H
 #define IGROUP_SETTINGS_H
 
-#include "src/model/interface.h"
+#include "src/base/interface.h"
 
 #include <QStringList>
 

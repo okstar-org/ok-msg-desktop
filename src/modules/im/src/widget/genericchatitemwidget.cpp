@@ -12,16 +12,16 @@
 
 #include "genericchatitemwidget.h"
 #include "maskablepixmapwidget.h"
+#include "src/lib/settings/style.h"
+#include "src/model/friend.h"
+#include "src/model/group.h"
+#include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
-#include "src/widget/style.h"
 #include "src/widget/tool/croppinglabel.h"
 #include <QVariant>
 #include <src/core/core.h>
 #include <src/friendlist.h>
 #include <src/nexus.h>
-#include "src/model/friend.h"
-#include "src/model/group.h"
-#include "src/persistence/profile.h"
 
 GenericChatItemWidget::GenericChatItemWidget(ChatType type, const ContactId &cid, QWidget* parent)
     : QFrame(parent)

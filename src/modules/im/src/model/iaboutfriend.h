@@ -13,7 +13,7 @@
 #ifndef I_ABOUT_FRIEND_H
 #define I_ABOUT_FRIEND_H
 
-#include "src/model/interface.h"
+#include "src/base/interface.h"
 #include "src/persistence/ifriendsettings.h"
 
 #include <QObject>

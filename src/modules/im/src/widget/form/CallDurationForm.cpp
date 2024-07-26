@@ -3,10 +3,10 @@
 
 #include "base/times.h"
 #include "src/core/coreav.h"
+#include "src/lib/settings/style.h"
 #include "src/video/netcamview.h"
 #include <QPushButton>
 #include <QTimer>
-#include <src/widget/style.h>
 
 CallDurationForm::CallDurationForm(QWidget *parent)
     :QWidget(parent),//

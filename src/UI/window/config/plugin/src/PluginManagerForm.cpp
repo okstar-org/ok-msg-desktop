@@ -18,7 +18,9 @@
 #include "PluginInfoForm.h"
 #include "PluginItemForm.h"
 #include "lib/network/NetworkHttp.h"
+#include "lib/settings/translator.h"
 #include "ui_PluginManagerForm.h"
+#include "base/OkSettings.h"
 
 namespace ok {
 namespace plugin {
@@ -31,13 +33,16 @@ PluginManagerForm::PluginManagerForm(QWidget *parent)
     setGeometry(parent->contentsRect());
   }
 
+//  QString locale = ok::base::OkSettings::getInstance().getTranslation();
+//  settings::Translator::translate(OK_UIWindowConfig_MODULE, "plugin_"+locale);
+//  settings::Translator::registerHandler([this] { retranslateUi(); }, this);
+//  retranslateUi();
+
   connect(ui->listWidget, &QListWidget::itemClicked, this,
           &PluginManagerForm::pluginClicked, Qt::UniqueConnection);
 
   delayCaller_ = std::make_unique<::base::DelayedCallTimer>();
   http = std::make_unique<ok::backend::OkCloudService>(this);
-
-
 
   delayCaller_->call(400, [&]() {
     http->GetPluginPage(
@@ -50,6 +55,7 @@ PluginManagerForm::PluginManagerForm(QWidget *parent)
         },
         [](int code, const QString &err) { qWarning()<<"GetPluginPage" << err; });
   });
+
 }
 
 PluginManagerForm::~PluginManagerForm() { delete ui; }
@@ -75,7 +81,7 @@ void PluginManagerForm::createPlugin(ok::backend::PluginInfo &info, int i) {
   ui->listWidget->addItem(aitem);
   ui->listWidget->setItemWidget(aitem, pitem);
 
-
+  retranslateUi();
 }
 
 void PluginManagerForm::setPluginInfo(ok::backend::PluginInfo &info) {
@@ -91,6 +97,12 @@ void PluginManagerForm::setPluginInfo(ok::backend::PluginInfo &info) {
   auto selectedInfoForm = new PluginInfoForm(info);
   ui->stackedWidget->addWidget(selectedInfoForm);
   ui->stackedWidget->setCurrentWidget(selectedInfoForm);
+}
+
+void PluginManagerForm::retranslateUi() {
+//  QString locale = ok::base::OkSettings::getInstance().getTranslation();
+//  settings::Translator::translate(OK_UIWindowConfig_MODULE, "plugin_"+locale);
+  ui->retranslateUi(this);
 }
 
 } // namespace plugin

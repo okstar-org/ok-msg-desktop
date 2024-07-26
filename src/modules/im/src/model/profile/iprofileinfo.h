@@ -10,7 +10,7 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#include "src/model/interface.h"
+#include "src/base/interface.h"
 
 #include <QObject>
 

@@ -14,8 +14,8 @@
 #include "friendlistlayout.h"
 #include "friendlistwidget.h"
 #include "friendwidget.h"
+#include "src/lib/settings/style.h"
 #include "src/model/status.h"
-#include "src/widget/style.h"
 #include "tool/croppinglabel.h"
 #include <QBoxLayout>
 #include <QMouseEvent>

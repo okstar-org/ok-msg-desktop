@@ -16,18 +16,19 @@
 #include <QFileDialog>
 #include <cmath>
 
+#include "base/OkSettings.h"
+#include "lib/settings/translator.h"
+#include "src/base/RecursiveSignalBlocker.h"
 #include "src/core/core.h"
 #include "src/core/coreav.h"
+#include "src/lib/settings/style.h"
 #include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
 #include "src/persistence/smileypack.h"
 #include "src/widget/form/settingswidget.h"
-#include "src/widget/style.h"
-#include "src/widget/tool/recursivesignalblocker.h"
-#include "lib/settings/translator.h"
-#include "base/OkSettings.h"
 
 #include "src/widget/widget.h"
+
 
 /**
  * @class GeneralForm

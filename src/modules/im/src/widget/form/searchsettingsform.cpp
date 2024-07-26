@@ -11,10 +11,10 @@
  */
 
 #include "searchsettingsform.h"
-#include "ui_searchsettingsform.h"
+#include "src/lib/settings/style.h"
 #include "src/persistence/settings.h"
-#include "src/widget/style.h"
 #include "src/widget/form/loadhistorydialog.h"
+#include "ui_searchsettingsform.h"
 
 SearchSettingsForm::SearchSettingsForm(QWidget *parent) :
     QWidget(parent),

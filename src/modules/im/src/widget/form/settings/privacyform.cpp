@@ -20,6 +20,8 @@
 #include <QRandomGenerator>
 #endif
 
+#include "lib/settings/translator.h"
+#include "src/base/RecursiveSignalBlocker.h"
 #include "src/core/core.h"
 #include "src/nexus.h"
 #include "src/persistence/history.h"
@@ -28,8 +30,6 @@
 #include "src/widget/form/setpassworddialog.h"
 #include "src/widget/form/settingswidget.h"
 #include "src/widget/gui.h"
-#include "src/widget/tool/recursivesignalblocker.h"
-#include "lib/settings/translator.h"
 #include "src/widget/widget.h"
 
 PrivacyForm::PrivacyForm()

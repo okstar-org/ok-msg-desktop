@@ -13,11 +13,12 @@
 #ifndef I_CORE_SETTINGS_H
 #define I_CORE_SETTINGS_H
 
-#include "src/model/interface.h"
+#include "src/base/interface.h"
 
 #include <QList>
-#include <QNetworkProxy>
 #include <QString>
+
+class QNetworkProxy;
 
 class ICoreSettings {
 public:

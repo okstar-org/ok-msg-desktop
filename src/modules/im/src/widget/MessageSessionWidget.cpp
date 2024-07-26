@@ -20,6 +20,7 @@
 #include "contentdialogmanager.h"
 #include "src/core/core.h"
 #include "src/friendlist.h"
+#include "src/lib/settings/style.h"
 #include "src/model/aboutfriend.h"
 #include "src/model/chatroom/friendchatroom.h"
 #include "src/model/friend.h"
@@ -30,7 +31,6 @@
 #include "src/widget/contentlayout.h"
 #include "src/widget/form/aboutfriendform.h"
 #include "src/widget/form/chatform.h"
-#include "src/widget/style.h"
 #include "src/widget/tool/croppinglabel.h"
 #include "src/widget/widget.h"
 
