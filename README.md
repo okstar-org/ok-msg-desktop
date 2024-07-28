@@ -137,9 +137,11 @@ cmake -B out --preset win-x64-debug #或者选择win-x64-release
 cmake --build out --config Debug #或者Release
 ```
 - 增加构建环境（该步骤为可选）
-> 比如要增加gcc构建环境
-- 修改CMake预设文件CMakeUserPresets.json(该文件是针对用户本地环境的配置，不要提交)，列子如下：
-> 此处主要利用 `CMAKE_PREFIX_PATH` 关联到第三方库（调试库），比如：Qt、VcPkg下载的库、OkRTC等
+> - CMakePresets.json 为平台无关性公共全局配置（请勿修改）。
+> - CMakeUserPresets.json 该文件是针对用户本地环境的配置（不要提交)。
+> - 利用 `CMAKE_PREFIX_PATH` 关联到第三方库（调试库），比如：Qt、VcPkg下载的库、OkRTC等，再比如要增加gcc构建环境。
+
+修改CMake预设文件CMakeUserPresets.json(该文件是针对用户本地环境的配置，不要提交)，列子如下：
 ```json
 {
   "version": 3,
