@@ -238,7 +238,7 @@ void UserInterfaceForm::on_showWindow_stateChanged()
 void UserInterfaceForm::on_groupOnlyNotfiyWhenMentioned_stateChanged()
 {
     // Note: UI is boolean inversed from settings to maintain setting file backwards compatibility
-    Settings::getInstance().setGroupAlwaysNotify(!bodyUI->groupOnlyNotfiyWhenMentioned->isChecked());
+//    Settings::getInstance().setGroupAlwaysNotify(!bodyUI->groupOnlyNotfiyWhenMentioned->isChecked());
 }
 
 
