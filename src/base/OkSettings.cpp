@@ -54,10 +54,9 @@ OkSettings::OkSettings(QObject *parent) //
   loadGlobal();
 }
 
-
 void OkSettings::loadGlobal() {
 
-  QString filePath =  getGlobalSettingsFile() ;
+  QString filePath = getGlobalSettingsFile();
   qDebug() << "Loading settings from " + filePath;
 
   QSettings s(filePath, QSettings::IniFormat);
@@ -71,6 +70,7 @@ void OkSettings::loadGlobal() {
     }
 
     translation = s.value("translation", true).toString();
+    provider = s.value("provider", "").toString();
     showSystemTray = s.value("showSystemTray", true).toBool();
     closeToTray = s.value("closeToTray", false).toBool();
     autostartInTray = s.value("autostartInTray", false).toBool();
@@ -99,6 +99,7 @@ void OkSettings::saveGlobal() {
     //
     s.setValue("currentProfile", currentProfile);
     s.setValue("translation", translation);
+    s.setValue("provider", provider);
     s.setValue("showSystemTray", showSystemTray);
     s.setValue("closeToTray", closeToTray);
     s.setValue("autostartInTray", autostartInTray);
@@ -133,38 +134,23 @@ void OkSettings::setTranslation(const QString &newValue) {
   }
 }
 
-QDir OkSettings::downloadDir() {
-  return ok::base::PlatformInfo::getAppDownloadDirPath();
-}
+QDir OkSettings::downloadDir() { return ok::base::PlatformInfo::getAppDownloadDirPath(); }
 
-QDir OkSettings::cacheDir() {
-  return ok::base::PlatformInfo::getAppCacheDirPath();
-}
+QDir OkSettings::cacheDir() { return ok::base::PlatformInfo::getAppCacheDirPath(); }
 
-QDir OkSettings::configDir() {
-  return ok::base::PlatformInfo::getAppConfigDirPath();
-}
+QDir OkSettings::configDir() { return ok::base::PlatformInfo::getAppConfigDirPath(); }
 
-QDir OkSettings::dataDir() {
-  return  ok::base::PlatformInfo::getAppDataDirPath();
-}
-
+QDir OkSettings::dataDir() { return ok::base::PlatformInfo::getAppDataDirPath(); }
 
 /**
  * @brief Get path to directory, where the application cache are stored.
  * @return Path to application cache, ends with a directory separator.
  */
-QDir OkSettings::getAppCacheDirPath() {
-  return PlatformInfo::getAppCacheDirPath();
-}
+QDir OkSettings::getAppCacheDirPath() { return PlatformInfo::getAppCacheDirPath(); }
 
-QDir OkSettings::getAppPluginPath()  {
-  return PlatformInfo::getAppPluginDirPath();
-}
+QDir OkSettings::getAppPluginPath() { return PlatformInfo::getAppPluginDirPath(); }
 
-QDir OkSettings::getAppLogPath() {
-  return PlatformInfo::getAppLogDirPath();
-}
+QDir OkSettings::getAppLogPath() { return PlatformInfo::getAppLogDirPath(); }
 
 bool OkSettings::getShowSystemTray() {
   QMutexLocker locker{&bigLock};
@@ -283,15 +269,24 @@ void OkSettings::setCurrentProfile(const QString &profile) {
 }
 
 uint32_t OkSettings::makeProfileId(const QString &profile) {
-  QByteArray data =
-      QCryptographicHash::hash(profile.toUtf8(), QCryptographicHash::Md5);
+  QByteArray data = QCryptographicHash::hash(profile.toUtf8(), QCryptographicHash::Md5);
   const uint32_t *dwords = reinterpret_cast<const uint32_t *>(data.constData());
   return dwords[0] ^ dwords[1] ^ dwords[2] ^ dwords[3];
 }
 
+QString OkSettings::getGlobalSettingsFile() { return ok::base::PlatformInfo::getGlobalSettingsFile(); }
 
-QString OkSettings::getGlobalSettingsFile() {
-  return ok::base::PlatformInfo::getGlobalSettingsFile();
+QString OkSettings::getProvider()  {
+  QMutexLocker locker{&bigLock};
+  return provider;
 }
 
-} // namespace base
+void OkSettings::setProvider(QString val) {
+  QMutexLocker locker{&bigLock};
+  if (val != provider) {
+    provider = val;
+    emit providerChanged(provider);
+  }
+}
+
+} // namespace ok::base
