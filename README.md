@@ -111,10 +111,10 @@ cd ok-rtc
 git submodule update --init
 # CMake预处理
 cmake -B out -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE='$env{VCPKG_ROOT}\scripts\buildsystems\vcpkg.cmake' -DCMAKE_PREFIX_PATH='${PROJECT_ROOT}\vcpkg_installed\x64-windows'
-# 构建
+# 构建（Release也可以为Debug，后面相同）
 cmake --build out --config Release
 # 执行安装（用管理员身份打开命令行）
-cmake --install out
+cmake --install out --config Release
 ```
 
 ### 编译OkGloox库
@@ -123,15 +123,22 @@ git clone https://github.com/okstar-org/ok-gloox.git
 cd ok-gloox
 # CMake预处理
 cmake -B out -DCMAKE_BUILD_TYPE=Release
-# 构建
+# 构建（Release也可以为Debug，后面相同）
 cmake --build out --config Release
 # 执行安装（用管理员身份打开命令行）
-cmake --install out
+cmake --install out --config Release
 ```
 
 ### 构建OkMSG项目
-
-1. 修改CMake预设文件CMakeUserPresets.json(该文件是针对用户本地环境的配置，不要提交)，列子如下：
+- 执行构建命令
+```shell
+# 预处理
+cmake -B out --preset win-x64-debug #或者选择win-x64-release
+cmake --build out --config Debug #或者Release
+```
+- 增加构建环境（该步骤为可选）
+> 比如要增加gcc构建环境
+- 修改CMake预设文件CMakeUserPresets.json(该文件是针对用户本地环境的配置，不要提交)，列子如下：
 > 此处主要利用 `CMAKE_PREFIX_PATH` 关联到第三方库（调试库），比如：Qt、VcPkg下载的库、OkRTC等
 ```json
 {
@@ -154,17 +161,27 @@ cmake --install out
         "CMAKE_BUILD_TYPE": "Debug",
         "CMAKE_PREFIX_PATH": "E:/QtWorkspace/ok-rtc/out/Debug;${sourceDir}/vcpkg_installed/x64-windows;E:/Qt/Qt5.15.11-Windows-x86_64-VS2022-staticFull-debug"
       }
+    },
+    {
+      "name": "gcc",
+      "displayName": "GCC 11.4.0 x86_64-linux-gnu",
+      "description": "使用编译器: C = /usr/bin/gcc, CXX = /usr/bin/g++",
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+        "CMAKE_C_COMPILER": "/usr/bin/gcc",
+        "CMAKE_CXX_COMPILER": "/usr/bin/g++",
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
     }
   ]
 }
 ```
 
-2. 执行构建命令
-```shell
-# 预处理
-cmake -B out --preset win-x64-{debug|release}
-cmake --build out
-```
+### 用Qt Creator 打开OkMSG项目
+- 选择最新的QtCreator版本(对CMake的支持更好)。
+- 以 ***CMake*** 方式打开项目，即可！
+> 首次打开需要加载vcpkg以及下载和构建相关依赖，需要耗费一些时间，请耐心等待！
 
 ## Ubuntu 22.04
 ### 安装依赖
