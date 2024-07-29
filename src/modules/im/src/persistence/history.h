@@ -72,9 +72,10 @@ enum class HistMessageContentType
 
 enum class MessageState
 {
-    complete,
-    pending,
-    broken
+    complete,   //消息发送成功
+    pending,    //消息发送中
+    broken,     //消息失败
+    receipt,    //消息接收
 };
 
 class History : public QObject, public std::enable_shared_from_this<History>
@@ -189,6 +190,7 @@ public:
                                                                const QDate& from, size_t maxNum);
 
     void markAsDelivered(RowId messageId);
+    void markAsReceipt(RowId messageId);
 
 
     void setFriendAlias(const QString& friendPk, const QString& alias);

@@ -63,11 +63,11 @@ public:
 
   void setFriendStatus(const FriendId &friendPk,  Status::Status status);
   void setFriendStatusMsg(const FriendId &friendPk,  const QString& statusMsg);
-  void setFriendName(const FriendId &friendPk,  const QString& name);
-  void setFriendAvatar(const FriendId &friendPk, const QByteArray& avatar);
-  void setFriendTyping(const FriendId &pk, bool typing);
-  void setFriendFileReceived(const FriendId &friendPk, const ToxFile &file);
-  void setFriendFileCancelled(const FriendId &friendId, const QString &fileId);
+  void setFriendName(const FriendId &fId,  const QString& name);
+  void setFriendAvatar(const FriendId &fId, const QByteArray& avatar);
+  void setFriendTyping(const ContactId &cId, bool typing);
+  void setFriendFileReceived(const ContactId &cId, const ToxFile &file);
+  void setFriendFileCancelled(const ContactId &cId, const QString &fileId);
 
   void searchChatrooms(const QString &searchString, bool hideOnline = false,
                        bool hideOffline = false, bool hideGroups = false);

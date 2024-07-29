@@ -34,11 +34,14 @@ class OfflineMsgEngine : public QObject
 {
     Q_OBJECT
 public:
-    explicit OfflineMsgEngine(const FriendId* f, ICoreFriendMessageSender* messageSender);
-
     using CompletionFn = std::function<void()>;
+    using ReceiptFn = std::function<void()>;
+
+    explicit OfflineMsgEngine(const FriendId* f, ICoreFriendMessageSender* messageSender);
     void addUnsentMessage(Message const& message, CompletionFn completionCallback);
-    void addSentMessage(ReceiptNum receipt, Message const& message, CompletionFn completionCallback);
+    void addSentMessage(ReceiptNum receipt, Message const& message,
+                        CompletionFn completionCallback,
+                        ReceiptFn receiptCallback);
     void deliverOfflineMsgs();
 
 public slots:
@@ -51,10 +54,12 @@ private:
         Message message;
         std::chrono::time_point<std::chrono::steady_clock> authorshipTime;
         CompletionFn completionFn;
+        ReceiptFn receiptFn;
     };
 
 private slots:
     void completeMessage(QMap<ReceiptNum, OfflineMessage>::iterator msgIt);
+    void receiptMessage(QMap<ReceiptNum, OfflineMessage>::iterator msgIt);
 
 private:
     void checkForCompleteMessages(ReceiptNum receipt);

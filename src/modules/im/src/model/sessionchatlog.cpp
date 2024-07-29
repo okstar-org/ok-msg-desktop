@@ -379,10 +379,9 @@ void SessionChatLog::onMessageSent(DispatchedMessageId id,
  * appropriate IMessageDispatcher
  */
 void SessionChatLog::onMessageComplete(DispatchedMessageId id) {
-  qDebug() << "onMessageComplete dispatchedMessageId:" << id.get();
+  qDebug() <<__func__<< "dispatchedMessageId:" << id.get();
 
   auto chatLogIdxIt = outgoingMessages.find(id);
-
   if (chatLogIdxIt == outgoingMessages.end()) {
     qWarning() << "Failed to find outgoing message";
     return;
@@ -390,15 +389,31 @@ void SessionChatLog::onMessageComplete(DispatchedMessageId id) {
 
   const auto &chatLogIdx = *chatLogIdxIt;
   auto messageIt = items.find(chatLogIdx);
-
   if (messageIt == items.end()) {
     qWarning() << "Failed to look up message in chat log";
     return;
   }
-
   messageIt->second.getContentAsMessage().state = MessageState::complete;
-
   emit this->itemUpdated(messageIt->first);
+}
+
+void SessionChatLog::onMessageReceipt(DispatchedMessageId id)
+{
+    qDebug() <<__func__<< "dispatchedMessageId:" << id.get();
+    auto chatLogIdxIt = outgoingMessages.find(id);
+    if (chatLogIdxIt == outgoingMessages.end()) {
+      qWarning() << "Failed to find outgoing message";
+      return;
+    }
+
+    const auto &chatLogIdx = *chatLogIdxIt;
+    auto messageIt = items.find(chatLogIdx);
+    if (messageIt == items.end()) {
+      qWarning() << "Failed to look up message in chat log";
+      return;
+    }
+    messageIt->second.getContentAsMessage().state = MessageState::receipt;
+    emit this->itemUpdated(messageIt->first);
 }
 
 /**

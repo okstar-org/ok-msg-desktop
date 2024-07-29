@@ -255,13 +255,13 @@ DesktopSourceRenderer::DesktopSourceRenderer(
 : _scheduler(scheduler)
 , _callback(data.aspectSize, data.fps)
 , _delayMs(1000. / data.fps) {
-	_callback.setOnFatalError([=] {
+	_callback.setOnFatalError([this] {
 		stop();
 		_fatalError = true;
 		if (_onFatalError) _onFatalError();
 	});
 
-    _callback.setOnPause([=] (bool pause) {
+    _callback.setOnPause([this] (bool pause) {
         bool previousOnPause = _currentlyOnPause;
         _currentlyOnPause = pause;
         if (previousOnPause != _currentlyOnPause) {
@@ -333,7 +333,7 @@ void DesktopSourceRenderer::loop() {
 
     _capturer->CaptureFrame();
     const auto guard = std::weak_ptr<bool>(_timerGuard);
-    _scheduler.runDelayed(_delayMs, [=] {
+    _scheduler.runDelayed(_delayMs, [this,guard] {
         if (guard.lock()) {
             loop();
         }

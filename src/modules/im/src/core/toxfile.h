@@ -62,6 +62,9 @@ public:
 public:
     [[nodiscard]] QString json() const;
     void parse(const QString &json);
+    void setFilePath(const QString & path)  {
+        this->filePath = path;
+    }
 };
 Q_DECLARE_METATYPE(FileInfo);
 

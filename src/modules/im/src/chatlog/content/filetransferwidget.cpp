@@ -499,6 +499,7 @@ void FileTransferWidget::setupButtons(ToxFile const& file)
 void FileTransferWidget::handleButton(QPushButton* btn)
 {
     CoreFile* coreFile = Core::getInstance()->getCoreFile();
+    qDebug() <<"handle button for file:" << fileInfo.fileName;
     if (fileInfo.direction == FileDirection::SENDING) {
         if (btn->objectName() == "cancel") {
             coreFile->cancelFileSend(fileInfo.receiver, fileInfo.fileId);
@@ -516,11 +517,12 @@ void FileTransferWidget::handleButton(QPushButton* btn)
         } else if (btn->objectName() == "resume") {
             coreFile->pauseResumeFile(fileInfo.receiver, fileInfo.fileId);
         } else if (btn->objectName() == "accept") {
-            QString path =
-                QFileDialog::getSaveFileName(Q_NULLPTR,
-                                             tr("Save a file", "Title of the file saving dialog"),
-                                             Settings::getInstance().getGlobalAutoAcceptDir() + "/"
-                                                 + fileInfo.fileName);
+            QString path = Settings::getInstance().getGlobalAutoAcceptDir()
+                          + "/" + fileInfo.fileName;
+            if(path.isEmpty())
+                return;
+
+            qDebug() <<"accept file save to path:" << path;
             acceptTransfer(path);
         }
     }

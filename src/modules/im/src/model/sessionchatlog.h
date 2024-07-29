@@ -49,8 +49,12 @@ public:
 
 public slots:
     void onMessageReceived(const FriendId& sender, const Message& message);
+    //消息发送
     void onMessageSent(DispatchedMessageId id, const Message& message);
+    //消息发送成功
     void onMessageComplete(DispatchedMessageId id);
+    //消息接收
+    void onMessageReceipt(DispatchedMessageId id);
 
     void onFileUpdated(const FriendId& sender, const ToxFile& file);
     void onFileCanceled(const FriendId& sender, const QString& fileId);

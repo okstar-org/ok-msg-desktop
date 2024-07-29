@@ -55,13 +55,14 @@ private slots:
     void onMessageReceived(const FriendId& sender, const Message& message);
     void onMessageSent(DispatchedMessageId id, const Message& message);
     void onMessageComplete(DispatchedMessageId id);
-
+    void onMessageReceipt(DispatchedMessageId id);
 private:
     void ensureIdxInSessionChatLog(ChatLogIdx idx) const;
     void loadHistoryIntoSessionChatLog(ChatLogIdx start) const;
     void dispatchUnsentMessages(IMessageDispatcher& messageDispatcher);
     void handleDispatchedMessage(DispatchedMessageId dispatchId, RowId historyId);
     void completeMessage(DispatchedMessageId id);
+    void receiptMessage(DispatchedMessageId id);
     bool canUseHistory() const;
     ChatLogIdx getInitialChatLogIdx() const;
 

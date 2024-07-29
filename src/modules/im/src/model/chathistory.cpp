@@ -75,8 +75,14 @@ ChatHistory::ChatHistory(const ContactId& f_,    //
     , coreIdHandler(coreIdHandler)
     , sessionChatLog(getInitialChatLogIdx(), coreIdHandler)
 {
+    //消息发送成功
     connect(&messageDispatcher, &IMessageDispatcher::messageComplete, this,
             &ChatHistory::onMessageComplete);
+    //送达
+    connect(&messageDispatcher, &IMessageDispatcher::messageReceipt, this,
+            &ChatHistory::onMessageReceipt);
+
+    //消息接受
     connect(&messageDispatcher, &IMessageDispatcher::messageReceived, this,
             &ChatHistory::onMessageReceived);
 
@@ -238,7 +244,7 @@ std::vector<IChatLog::DateChatLogIdxPair>   //
 
 void ChatHistory::onFileUpdated(const FriendId& sender, const ToxFile& file)
 {
-    qDebug() << __func__ <<"friendId:" << sender.toString();
+    qDebug() << __func__ <<"friendId:" << sender.toString() << file.fileName;
 
     if (canUseHistory()) {
         switch (file.status) {
@@ -345,6 +351,17 @@ void ChatHistory::onMessageComplete(DispatchedMessageId id)
 
     sessionChatLog.onMessageComplete(id);
 }
+
+void ChatHistory::onMessageReceipt(DispatchedMessageId id)
+{
+    qDebug() <<__func__<< id.get();
+    if (canUseHistory()) {
+        receiptMessage(id);
+    }
+    sessionChatLog.onMessageReceipt(id);
+}
+
+
 
 /**
  * @brief Forces the given index and all future indexes to be in the chatlog
@@ -503,11 +520,19 @@ void ChatHistory::handleDispatchedMessage(DispatchedMessageId dispatchId, RowId 
 void ChatHistory::completeMessage(DispatchedMessageId id)
 {
     auto dispatchedMessageIt = dispatchedMessageRowIdMap.find(id);
-
     if (dispatchedMessageIt == dispatchedMessageRowIdMap.end()) {
         completedMessages.insert(id);
     } else {
         history->markAsDelivered(*dispatchedMessageIt);
+//        dispatchedMessageRowIdMap.erase(dispatchedMessageIt);
+    }
+}
+
+void ChatHistory::receiptMessage(DispatchedMessageId id)
+{
+    auto dispatchedMessageIt = dispatchedMessageRowIdMap.find(id);
+    if (dispatchedMessageIt != dispatchedMessageRowIdMap.end()) {
+        history->markAsReceipt(*dispatchedMessageIt);
         dispatchedMessageRowIdMap.erase(dispatchedMessageIt);
     }
 }

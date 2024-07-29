@@ -548,13 +548,14 @@ void IMJingle::doSessionAccept(Jingle::Session *session,
                                const IMPeerId &peerId) {
 
   auto sid = qstring(jingle->sid());
-  qDebug() << __func__ << sid << peerId.toString();
+  qDebug() << __func__ << sid << "peerId:" << peerId.toString();
 
   auto ws = findSession(sid);
   if(!ws){
       qWarning() <<"Unable to find session"<<sid;
       return;
   }
+
   ws->onAccept();
 }
 

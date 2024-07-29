@@ -71,24 +71,24 @@ FriendMessageDispatcher::sendMessage(bool isAction, const QString &content, bool
 
     auto messageId = nextMessageId++;
     lastId = messageId;
+
     auto onOfflineMsgComplete = [this, messageId] {
       emit messageComplete(messageId);
     };
 
+    auto onMsgRead = [this, messageId]{
+      emit messageReceipt(messageId);
+    };
+
     ReceiptNum receipt;
-
-    bool messageSent = false;
-
     emit this->messageSent(messageId, message);
+    bool messageSent = sendMessageToCore(messageSender, f, message, receipt, encrypt);
+    qDebug() << "receipt:" << receipt;
 
-//    if (Status::isOnline(f.getStatus())) {
-      messageSent = sendMessageToCore(messageSender, f, message, receipt, encrypt);
-//    }
-
-    if (!messageSent) {
-      offlineMsgEngine.addUnsentMessage(message, onOfflineMsgComplete);
+    if (messageSent) {
+        offlineMsgEngine.addSentMessage(receipt, message, onOfflineMsgComplete, onMsgRead);
     } else {
-      offlineMsgEngine.addSentMessage(receipt, message, onOfflineMsgComplete);
+        offlineMsgEngine.addUnsentMessage(message, onOfflineMsgComplete);
     }
 
   }

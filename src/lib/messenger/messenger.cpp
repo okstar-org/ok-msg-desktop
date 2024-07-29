@@ -325,8 +325,10 @@ bool Messenger::sendToGroup(const QString &g,   //
 }
 
 
-bool Messenger::sendToFriend(const QString &f, const QString &msg,
-                             QString &receiptNum, bool encrypt) {
+bool Messenger::sendToFriend(const QString &f,
+                             const QString &msg,
+                             QString &receiptNum,
+                             bool encrypt) {
   qDebug() << __func__ << msg << "=>" << f;
   sentCount++;
 

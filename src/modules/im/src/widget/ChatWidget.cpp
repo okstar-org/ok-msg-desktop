@@ -58,7 +58,7 @@ bool tryRemoveFile(const QString &filepath) {
   return writable;
 }
 
-void acceptFileTransfer(const ToxFile &file, const QString &path) {
+void acceptFileTransfer(ToxFile &file, const QString &path) {
   QString filepath;
   int number = 0;
 
@@ -66,10 +66,12 @@ void acceptFileTransfer(const ToxFile &file, const QString &path) {
   QString base = QFileInfo(file.fileName).baseName();
 
   do {
-    filepath = QString("%1/%2%3.%4").arg(path, base, number > 0 ? QString(" (%1)").arg(QString::number(number)) : QString(), suffix);
+    filepath = QString("%1/%2%3.%4").arg(path, base, number > 0 ? QString("(%1)").arg(QString::number(number)) : QString(), suffix);
     ++number;
   } while (QFileInfo(filepath).exists());
 
+
+  file.setFilePath(filepath);
   // Do not automatically accept the file-transfer if the path is not writable.
   // The user can still accept it manually.
   if (tryRemoveFile(filepath)) {
@@ -201,9 +203,7 @@ void ChatWidget::connectToCoreFile(CoreFile *coreFile) {
   connect(coreFile, &CoreFile::fileReceiveRequested, this, &ChatWidget::dispatchFile);
   connect(coreFile, &CoreFile::fileTransferAccepted, this, &ChatWidget::dispatchFile);
   connect(coreFile, &CoreFile::fileTransferCancelled, this, &ChatWidget::dispatchFile);
-  //
   connect(coreFile, &CoreFile::fileTransferNoExisting, this, &ChatWidget::cancelFile);
-
   connect(coreFile, &CoreFile::fileTransferFinished, this, &ChatWidget::dispatchFile);
   connect(coreFile, &CoreFile::fileTransferPaused, this, &ChatWidget::dispatchFile);
   connect(coreFile, &CoreFile::fileTransferInfo, this, &ChatWidget::dispatchFile);
@@ -368,11 +368,17 @@ void ChatWidget::updateIcons() {
   setWindowIcon(ico);
 }
 
-void ChatWidget::onStatusMessageSet(const QString &statusMessage) { ui->statusLabel->setText(statusMessage); }
+void ChatWidget::onStatusMessageSet(const QString &statusMessage) {
+    ui->statusLabel->setText(statusMessage);
+}
 
-void ChatWidget::onFriendAdded(const Friend *f) { sessionListWidget->addFriend(f); }
+void ChatWidget::onFriendAdded(const Friend *f) {
+    sessionListWidget->addFriend(f);
+}
 
-void ChatWidget::onFriendRemoved(const Friend *f) { sessionListWidget->removeFriend(f); }
+void ChatWidget::onFriendRemoved(const Friend *f) {
+    sessionListWidget->removeFriend(f);
+}
 
 void ChatWidget::doSendMessage(const QString &to, bool isGroup)
 {
@@ -774,30 +780,26 @@ void ChatWidget::cancelFile(const QString &friendId, const QString &fileId) {
 void ChatWidget::dispatchFile(ToxFile file) {
   qDebug() << __func__ << "file:" << file.toString();
 
-  const auto &friendId = FriendId(file.getFriendId());
-  Friend *f = FriendList::findFriend(friendId);
-  if (!f) {
-    qWarning() << "IMFriend is no existing!" << friendId;
-    return;
-  }
+  const auto &cId = ContactId(file.getFriendId());
+
 
   if (file.status == FileStatus::INITIALIZING && file.direction == FileDirection::RECEIVING) {
 
     const Settings &settings = Settings::getInstance();
-    QString autoAcceptDir = settings.getAutoAcceptDir(f->getPublicKey());
-    if (autoAcceptDir.isEmpty() && ok::base::OkSettings::getInstance().getAutoSaveEnabled()) {
-      autoAcceptDir = settings.getGlobalAutoAcceptDir();
-    }
+//    QString autoAcceptDir = settings.getAutoAcceptDir(cId);
+//    if (autoAcceptDir.isEmpty() && ok::base::OkSettings::getInstance().getAutoSaveEnabled()) {
+    auto  autoAcceptDir = settings.getGlobalAutoAcceptDir();
+//    }
 
-    auto maxAutoAcceptSize = settings.getMaxAutoAcceptSize();
-    bool autoAcceptSizeCheckPassed = maxAutoAcceptSize == 0 || maxAutoAcceptSize >= file.fileSize;
+//    auto maxAutoAcceptSize = settings.getMaxAutoAcceptSize();
+//    bool autoAcceptSizeCheckPassed = maxAutoAcceptSize == 0 || maxAutoAcceptSize >= file.fileSize;
 
-    if (!autoAcceptDir.isEmpty() && autoAcceptSizeCheckPassed) {
+//    if (!autoAcceptDir.isEmpty() && autoAcceptSizeCheckPassed) {
       acceptFileTransfer(file, autoAcceptDir);
-    }
+//    }
   }
 
-  sessionListWidget->setFriendFileReceived(friendId, file);
+  sessionListWidget->setFriendFileReceived(cId, file);
 }
 
 void ChatWidget::dispatchFileWithBool(ToxFile file, bool) { dispatchFile(file); }

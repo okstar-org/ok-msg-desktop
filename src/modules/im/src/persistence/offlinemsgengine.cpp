@@ -27,19 +27,33 @@ OfflineMsgEngine::OfflineMsgEngine(const FriendId *frnd,
     : f(frnd), messageSender(messageSender) {}
 
 /**
- * @brief Notification that the message is now delivered.
+ * @brief Notification that the message is now receipt by peer.
  *
- * @param[in] receipt   Toxcore message ID which the receipt is for.
  */
 void OfflineMsgEngine::onReceiptReceived(ReceiptNum receipt) {
-  QMutexLocker ml(&mutex);
+
+     qDebug() << __func__ << receipt;
+
+    QMutexLocker ml(&mutex);
   if (receivedReceipts.contains(receipt)) {
     qWarning() << "Receievd duplicate receipt" << receipt << "from friend"
                << f->getId();
     return;
   }
   receivedReceipts.append(receipt);
-  checkForCompleteMessages(receipt);
+//  checkForCompleteMessages(receipt);
+
+  if(receipt.isEmpty()){
+      qWarning()<<"receipt is empty!";
+      return;
+  }
+
+  auto msgIt = sentMessages.find(receipt);
+  if (msgIt == sentMessages.end()) {
+    return;
+  }
+
+  receiptMessage(msgIt);
 }
 
 /**
@@ -80,16 +94,22 @@ void OfflineMsgEngine::addUnsentMessage(Message const &message,
  */
 void OfflineMsgEngine::addSentMessage(ReceiptNum receipt,
                                       Message const &message,
-                                      CompletionFn completionCallback) {
+                                      CompletionFn completionCallback,
+                                      ReceiptFn readCallback) {
 
-  qDebug() << __func__ << message.content;
+  qDebug() << __func__ << message.content << receipt;
 
   QMutexLocker ml(&mutex);
   //    assert(!sentMessages.contains(receipt));
   if (sentMessages.contains(receipt)) {
     sentMessages.remove(receipt);
   }
-  sentMessages.insert(receipt, {message, std::chrono::steady_clock::now(), completionCallback});
+
+  sentMessages.insert(receipt, {message,
+                                std::chrono::steady_clock::now(),
+                                completionCallback,
+                                readCallback});
+
   checkForCompleteMessages(receipt);
 }
 
@@ -129,7 +149,7 @@ void OfflineMsgEngine::deliverOfflineMsgs() {
     }
     if (messageSent) {
       qDebug() <<"receipt:"<<receipt;
-      addSentMessage(receipt, message.message, message.completionFn);
+      addSentMessage(receipt, message.message, message.completionFn, message.receiptFn);
     } else {
       qCritical() << "deliverOfflineMsgs failed to send message";
       addUnsentMessage(message.message, message.completionFn);
@@ -147,24 +167,36 @@ void OfflineMsgEngine::removeAllMessages() {
   unsentMessages.clear();
 }
 
-void OfflineMsgEngine::completeMessage(
-    QMap<ReceiptNum, OfflineMessage>::iterator msgIt) {
+void OfflineMsgEngine::completeMessage(QMap<ReceiptNum, OfflineMessage>::iterator msgIt) {
   msgIt->completionFn();
-  receivedReceipts.removeOne(msgIt.key());
-  sentMessages.erase(msgIt);
+//  sentMessages.erase(msgIt);
+}
+
+void OfflineMsgEngine::receiptMessage(QMap<ReceiptNum, OfflineMessage>::iterator msgIt)
+{
+    qDebug() << __func__ << msgIt.key();
+    msgIt->receiptFn();
+    receivedReceipts.removeOne(msgIt.key());
+    sentMessages.erase(msgIt);
 }
 
 void OfflineMsgEngine::checkForCompleteMessages(ReceiptNum receipt) {
   qDebug() << __func__ << receipt;
+  if(receipt.isEmpty()){
+      qWarning()<<"receipt is empty!";
+      return;
+  }
+
   auto msgIt = sentMessages.find(receipt);
   if (msgIt == sentMessages.end()) {
     return;
   }
 
-  const bool receiptReceived = receivedReceipts.contains(receipt);
-  if (!receiptReceived) {
-    return;
-  }
+//  const bool receiptReceived = receivedReceipts.contains(receipt);
+//  if (!receiptReceived) {
+//    return;
+//  }
 
-  completeMessage(msgIt);
+    //发送消息即标识成功
+    completeMessage(msgIt);
 }

@@ -90,7 +90,7 @@ void IMFile::fileRejectRequest(QString friendId, const File &file) {
 void IMFile::fileAcceptRequest(QString friendId, const File &file) {
    auto sId = file.sId;
    qDebug() << __func__<<sId;
-    jingle->acceptFileRequest(friendId, file);
+   jingle->acceptFileRequest(friendId, file);
 }
 
 void IMFile::fileCancel(QString fileId) {

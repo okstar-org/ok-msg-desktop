@@ -63,6 +63,11 @@ signals:
      */
     void messageComplete(DispatchedMessageId id);
 
+    /**
+     * @brief 消息被对方接收或者被读
+     * @param id
+     */
+    void messageReceipt(DispatchedMessageId id);
 
     void fileReceived(const FriendId& f, const ToxFile & file);
 

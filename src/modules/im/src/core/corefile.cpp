@@ -209,7 +209,9 @@ void CoreFile::acceptFileRecvRequest(QString friendId,
                                      QString path) {
     QMutexLocker{coreLoopLock};
 
-    ToxFile *file = findFile(  fileId);
+    qInfo() << __func__ <<"fileId:" << fileId <<"friendId:" << friendId << "path:" << path;
+
+    ToxFile *file = findFile(fileId);
     if (!file) {
       qWarning("acceptFileRecvRequest: No such file in queue");
       return;

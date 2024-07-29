@@ -765,24 +765,24 @@ void MessageSessionListWidget::setFriendAvatar(const FriendId &friendPk, const Q
   fw->setAvatar(p);
 }
 
-void MessageSessionListWidget::setFriendTyping(const FriendId &friendId, bool isTyping) {
-  auto fw = getMessageSession(friendId.toString());
+void MessageSessionListWidget::setFriendTyping(const ContactId &f, bool isTyping) {
+  auto fw = getMessageSession(f.toString());
   if (fw)
       fw->setTyping(isTyping);
 }
 
-void MessageSessionListWidget::setFriendFileReceived(const FriendId &friendPk, const ToxFile &file)
+void MessageSessionListWidget::setFriendFileReceived(const ContactId &f, const ToxFile &file)
 {
-    auto ms = getMessageSession(ContactId(friendPk).toString());
+    auto ms = getMessageSession(f.toString());
     if(ms){
         ms->setFileReceived(file);
     }
 
 }
 
-void MessageSessionListWidget::setFriendFileCancelled(const FriendId &f, const QString &fileId)
+void MessageSessionListWidget::setFriendFileCancelled(const ContactId &f, const QString &fileId)
 {
-    auto ms = getMessageSession(ContactId(f).toString());
+    auto ms = getMessageSession(f.toString());
     if(ms){
         ms->setFileCancelled(fileId);
     }

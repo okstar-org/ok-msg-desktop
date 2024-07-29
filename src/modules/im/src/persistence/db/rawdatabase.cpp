@@ -427,14 +427,17 @@ void RawDatabase::process()
             trans.success->store(false, std::memory_order_release);
 
         // Add transaction commands if necessary
-        if (trans.queries.size() > 1) {
-            trans.queries.prepend({"BEGIN TRANSACTION;"});
-            trans.queries.append({"COMMIT;"});
-        }
+//        if (trans.queries.size() > 1) {
+//            trans.queries.prepend({"BEGIN TRANSACTION;"});
+//            trans.queries.append({"COMMIT;"});
+//        }
 
         // Compile queries
         for (Query& query : trans.queries) {
             assert(query.statements.isEmpty());
+
+            qDebug() <<"execute sql:" << query.query;
+
             // sqlite3_prepare_v2 only compiles one statement at a time in the query,
             // we need to loop over them all
             int curParam = 0;
