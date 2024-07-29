@@ -13,29 +13,24 @@
 #ifndef ABOUTFORM_H
 #define ABOUTFORM_H
 
-#include "genericsettings.h"
+#include "src/UI/window/config/settings/src/GenericForm.h"
+#include "ui_aboutsettings.h"
 
 #include <memory>
-class Core;
+
+
 class QTimer;
 class QString;
-
 class QLayoutItem;
 
-namespace Ui {
-class AboutSettings;
-}
+namespace UI{
 
-class AboutForm : public GenericForm
+class AboutForm : public QWidget
 {
     Q_OBJECT
 public:
-    AboutForm();
+    AboutForm(QWidget *parent= nullptr);
     ~AboutForm();
-    virtual QString getFormName() final override
-    {
-        return tr("About");
-    }
 
 public slots:
     void onUpdateAvailable(QString latestVersion, QUrl link);
@@ -52,5 +47,7 @@ private:
     QTimer* progressTimer;
     QMetaObject::Connection linkConnection;
 };
+
+}
 
 #endif // ABOUTFORM_H

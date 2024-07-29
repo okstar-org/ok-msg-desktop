@@ -36,7 +36,7 @@ public:
   ConfigWindow(QWidget *parent = nullptr);
  ~ConfigWindow() ;
 
-  void init();
+
 
 protected:
   void retranslateUi();

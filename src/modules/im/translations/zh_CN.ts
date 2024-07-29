@@ -1164,18 +1164,7 @@ so you can save the file on windows.</source>
         <source>The translation may not load until qTox restarts.</source>
         <translation>翻译将在qTox重启后生效。</translation>
     </message>
-    <message>
-        <source>Start in tray</source>
-        <translation>启动到托盘</translation>
-    </message>
-    <message>
-        <source>Close to tray</source>
-        <translation>关闭到托盘</translation>
-    </message>
-    <message>
-        <source>Minimize to tray</source>
-        <translation>最小化到托盘</translation>
-    </message>
+
     <message>
         <source>Start qTox on operating system startup (current profile).</source>
         <translation>开机自动启动 qTox（当前账户）。</translation>
@@ -1192,10 +1181,7 @@ so you can save the file on windows.</source>
         <source>Set to 0 to disable</source>
         <translation>设为 0 禁用</translation>
     </message>
-    <message>
-        <source>Language:</source>
-        <translation>语言：</translation>
-    </message>
+
     <message>
         <source>Enable light tray icon.</source>
         <comment>toolTip for light icon setting</comment>
@@ -1220,10 +1206,7 @@ instead of system taskbar.</source>
         <translation>最小化按钮将隐藏 qTox 到系统托盘，
 而非系统任务栏。</translation>
     </message>
-    <message>
-        <source>Autostart</source>
-        <translation>开机自动启动</translation>
-    </message>
+
     <message>
         <source>Set where files will be saved.</source>
         <translation>设置文件保存位置。</translation>
@@ -1236,10 +1219,7 @@ instead of system taskbar.</source>
         <source>Default directory to save files:</source>
         <translation>默认文件保存目录：</translation>
     </message>
-    <message>
-        <source>Show system tray icon</source>
-        <translation>显示系统托盘图标</translation>
-    </message>
+
     <message>
         <source>Light icon</source>
         <translation>使用亮色图标</translation>

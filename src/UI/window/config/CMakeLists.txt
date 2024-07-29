@@ -5,22 +5,27 @@ add_definitions(-DOK_${PROJECT_NAME}_MODULE="${PROJECT_NAME}")
 file( GLOB ${PROJECT_NAME}_SOURCES
     src/*.cpp
     plugin/src/*.cpp
-    settings/src/*.cpp)
+    settings/src/*.cpp
+    about/src/*.cpp
+)
 file( GLOB ${PROJECT_NAME}_UIS
     src/*.ui
     plugin/src/*.ui
-    settings/src/*.ui)
-file( GLOB ${PROJECT_NAME}_TSS
-    ts/*.ts
-    plugin/ts/*.ts
-    settings/ts/*.ts
+    settings/src/*.ui
+    about/src/*.ui
 )
+
 file( GLOB ${PROJECT_NAME}_QSS
     plugin/qss/*.qss
     settings/qss/*.qss)
+
 file( GLOB ${PROJECT_NAME}_ICONS
     icon/*.png
     plugin/icon/*.png )
+
+file( GLOB ${PROJECT_NAME}_TSS
+    ts/*.ts
+)
 
 
 qt5_wrap_ui(${PROJECT_NAME}_FORMS ${${PROJECT_NAME}_UIS})

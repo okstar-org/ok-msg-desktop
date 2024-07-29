@@ -18,7 +18,6 @@
 #include "src/persistence/settings.h"
 #include "src/video/camerasource.h"
 #include "src/widget/contentlayout.h"
-#include "src/widget/form/settings/aboutform.h"
 #include "src/widget/form/settings/advancedform.h"
 #include "src/widget/form/settings/avform.h"
 #include "src/widget/form/settings/generalform.h"
@@ -59,7 +58,6 @@ SettingsWidget::SettingsWidget(Widget* parent)
     AVForm* rawAvfrm = new AVForm( camera, audioSettings, videoSettings);
     std::unique_ptr<AVForm> avfrm(rawAvfrm);
     std::unique_ptr<AdvancedForm> expfrm(new AdvancedForm());
-    std::unique_ptr<AboutForm> abtfrm(new AboutForm());
 
 #if UPDATE_CHECK_ENABLED
     if (updateCheck != nullptr) {
@@ -73,8 +71,7 @@ SettingsWidget::SettingsWidget(Widget* parent)
                  std::move(uifrm),  //
                  std::move(pfrm),   //
                  std::move(avfrm),  //
-                 std::move(expfrm), //
-                 std::move(abtfrm)  //
+                 std::move(expfrm)
     }};
 
     for (auto& cfgForm : cfgForms)

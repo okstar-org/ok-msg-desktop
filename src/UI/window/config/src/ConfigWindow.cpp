@@ -23,6 +23,7 @@
 #include "src/base/widgets.h"
 
 #if OK_PLUGIN
+#include "about/src/aboutform.h"
 #include "plugin/src/PluginManagerForm.h"
 #include "settings/src/SettingsForm.h"
 #endif
@@ -44,21 +45,17 @@ ConfigWindow::ConfigWindow(QWidget *parent): QFrame(parent),ui(new Ui::ConfigWin
   settings::Translator::registerHandler([this] { retranslateUi(); }, this);
   retranslateUi();
 
-  init();
-
-}
-
-ConfigWindow::~ConfigWindow() {
-  settings::Translator::unregister(this);
-  delete ui;
-}
-
-void ConfigWindow::init() {
 #if OK_PLUGIN
   qDebug()<<tr("Plugin form");
   ui->tabWidget->addTab(new ok::plugin::PluginManagerForm(this), tr("Plugin form"));
 #endif
   ui->tabWidget->addTab(new SettingsWidget(this), tr("Settings form"));
+  ui->tabWidget->addTab(new AboutForm(this), tr("About form"));
+}
+
+ConfigWindow::~ConfigWindow() {
+  settings::Translator::unregister(this);
+  delete ui;
 }
 
 void ConfigWindow::retranslateUi() {

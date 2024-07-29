@@ -14,7 +14,7 @@
 #define GENERALFORM_H
 
 #include "GenericForm.h"
-#include "ui_GenericForm.h"
+#include "ui_GeneralForm.h"
 
 
 namespace UI{
@@ -46,7 +46,7 @@ private:
     void retranslateUi();
 
 private:
-    Ui::GenericForm* bodyUI;
+    Ui::GeneralForm* bodyUI;
     SettingsWidget* parent;
 };
 }

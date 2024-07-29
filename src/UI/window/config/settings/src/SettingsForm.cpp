@@ -12,11 +12,10 @@
 
 #include "SettingsForm.h"
 
-#include "generalform.h"
+#include "GeneralForm.h"
 #include "UserInterfaceForm.h"
 #include "lib/settings/translator.h"
 #include "modules/im/src/widget/contentlayout.h"
-#include "modules/im/src/widget/form/settings/aboutform.h"
 #include "modules/im/src/widget/form/settings/advancedform.h"
 #include "modules/im/src/widget/form/settings/generalform.h"
 #include "modules/im/src/widget/form/settings/privacyform.h"
@@ -47,7 +46,7 @@ SettingsWidget::SettingsWidget(QWidget *parent) : QWidget(parent) {
   //    connect(pfrm.get(), &PrivacyForm::clearAllReceipts, parent, &Widget::clearAllReceipts);
 
   std::unique_ptr<AdvancedForm> expfrm(new AdvancedForm());
-  std::unique_ptr<AboutForm> abtfrm(new AboutForm());
+//  std::unique_ptr<AboutForm> abtfrm(new AboutForm());
 
 #if UPDATE_CHECK_ENABLED
   if (updateCheck != nullptr) {

@@ -10,7 +10,7 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#include "generalform.h"
+#include "GeneralForm.h"
 #include <QFileDialog>
 #include <cmath>
 
@@ -28,7 +28,7 @@ namespace UI {
  */
 GeneralForm::GeneralForm(SettingsWidget *myParent)
     : GenericForm(QPixmap(":/img/settings/general.png")),
-      bodyUI(new Ui::GenericForm) {
+      bodyUI(new Ui::GeneralForm) {
   parent = myParent;
 
   bodyUI->setupUi(this);
@@ -37,6 +37,12 @@ GeneralForm::GeneralForm(SettingsWidget *myParent)
   const RecursiveSignalBlocker signalBlocker(this);
 
   Settings &s = Settings::getInstance();
+
+  QString locale0 = ok::base::OkSettings::getInstance().getTranslation();
+  settings::Translator::translate(OK_UIWindowConfig_MODULE, locale0);
+  settings::Translator::registerHandler([this] { retranslateUi(); }, this);
+
+
 
   // 先获取当前语言
 #ifndef UPDATE_CHECK_ENABLED
@@ -84,12 +90,11 @@ GeneralForm::GeneralForm(SettingsWidget *myParent)
   bodyUI->closeToTray->setChecked(okSettings.getCloseToTray());
   bodyUI->closeToTray->setEnabled(showSystemTray);
 
-  eventsInit();
-  settings::Translator::registerHandler(std::bind(&GeneralForm::retranslateUi, this), this);
+  retranslateUi();
 }
 
 GeneralForm::~GeneralForm() {
-  settings::Translator::unregister(this);
+//  settings::Translator::unregister(this);
   delete bodyUI;
 }
 
