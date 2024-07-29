@@ -34,7 +34,7 @@ LoginWindow::LoginWindow(bool bootstrap, QWidget *parent)
   setAttribute(Qt::WA_DeleteOnClose, true);
   setWindowTitle(APPLICATION_NAME);
   //黄金分割比例 874/520 = 1.618
-  setMinimumSize(QSize(874, 520));
+  setFixedSize(QSize(874, 520));
 
   ui->setupUi(this);
 

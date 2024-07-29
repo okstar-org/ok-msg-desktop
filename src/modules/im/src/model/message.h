@@ -55,9 +55,12 @@ public:
   QString dataId;
   QDateTime timestamp;
   std::vector<MessageMetadata> metadata;
-  QString toString() const { return QString("{id:%1, from:%2, to:%3, time:%4, content:%5, sId:%6}")
-              .arg(id).arg(from).arg(to).arg(timestamp.toString()).arg(content).arg(dataId);
-                           }
+  QString toString() const {
+      return QString("{id:%1, from:%2, to:%3, "
+                     "time:%4, content:%5, sId:%6}")
+              .arg(id).arg(from).arg(to)
+              .arg(timestamp.toString()).arg(content).arg(dataId);
+      }
 };
 
 struct FriendMessage : Message {

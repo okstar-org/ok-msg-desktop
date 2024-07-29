@@ -44,6 +44,8 @@ public:
                         ReceiptFn receiptCallback);
     void deliverOfflineMsgs();
 
+    bool isFromThis(const Message &msg);
+
 public slots:
     void removeAllMessages();
     void onReceiptReceived(ReceiptNum receipt);

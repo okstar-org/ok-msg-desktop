@@ -101,6 +101,13 @@ FriendMessageDispatcher::sendMessage(bool isAction, const QString &content, bool
  * @param[in] content Unprocessed toxcore message
  */
 void FriendMessageDispatcher::onMessageReceived(FriendMessage& msg) {
+
+    //判断是否本peer发出
+  if(offlineMsgEngine.isFromThis(msg))   {
+      qWarning() <<"Is from local msg.";
+      return;
+  }
+
   auto msg0 = processor.processIncomingMessage(msg);
   emit messageReceived(FriendId(msg.from), msg0);
 }

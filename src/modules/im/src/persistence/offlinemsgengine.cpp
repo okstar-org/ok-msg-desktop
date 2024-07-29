@@ -157,6 +157,14 @@ void OfflineMsgEngine::deliverOfflineMsgs() {
   }
 }
 
+bool OfflineMsgEngine::isFromThis(const Message &msg)
+{
+    if(sentMessages.contains(msg.id)){
+        return true;
+    }
+    return false;
+}
+
 /**
  * @brief Removes all messages which are being tracked.
  */
