@@ -37,14 +37,13 @@ GeneralForm::GeneralForm(SettingsWidget *myParent)
   const RecursiveSignalBlocker signalBlocker(this);
 
   Settings &s = Settings::getInstance();
-//
+
+  // 先获取当前语言
 //  QString locale0 = ok::base::OkSettings::getInstance().getTranslation();
 //  settings::Translator::translate(OK_UIWindowConfig_MODULE, locale0);
 //  settings::Translator::registerHandler([this] { retranslateUi(); }, this);
-//
+//  retranslateUi();
 
-
-  // 先获取当前语言
 #ifndef UPDATE_CHECK_ENABLED
   bodyUI->checkUpdates->setVisible(false);
 #endif
@@ -90,7 +89,7 @@ GeneralForm::GeneralForm(SettingsWidget *myParent)
   bodyUI->closeToTray->setChecked(okSettings.getCloseToTray());
   bodyUI->closeToTray->setEnabled(showSystemTray);
 
-  retranslateUi();
+
 }
 
 GeneralForm::~GeneralForm() {
@@ -103,7 +102,11 @@ void GeneralForm::on_transComboBox_currentIndexChanged(int index) {
   const QString &locale = s.getLocales().at(index);
   s.setTranslation(locale);
   s.saveGlobal();
-  settings::Translator::translate(OK_UIWindowConfig_MODULE, "settings_"+locale);
+  emit onLanguageChanged(locale);
+
+
+
+  settings::Translator::translate(OK_UIWindowConfig_MODULE, locale);
 }
 
 void GeneralForm::on_cbAutorun_stateChanged() { ok::base::OkSettings::getInstance().setAutorun(bodyUI->cbAutorun->isChecked()); }
@@ -127,5 +130,8 @@ void GeneralForm::on_checkUpdates_stateChanged() { Settings::getInstance().setCh
 /**
  * @brief Retranslate all elements in the form.
  */
-void GeneralForm::retranslateUi() { bodyUI->retranslateUi(this); }
+void GeneralForm::retranslateUi() {
+  bodyUI->retranslateUi(this);
+}
+
 } // namespace UI

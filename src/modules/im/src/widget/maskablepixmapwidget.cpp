@@ -96,18 +96,19 @@ void MaskablePixmapWidget::mousePressEvent(QMouseEvent*)
 void MaskablePixmapWidget::updatePixmap()
 {
     renderTarget->fill(Qt::transparent);
+    renderTarget->setDevicePixelRatio(1.0);
 
     QSize actualSize = size() * devicePixelRatioF();
     QPoint offset((actualSize.width() - pixmap.size().width()) / 2,
-                  (actualSize.height() - pixmap.size().height()) /
-                      2); // centering the pixmap
-    renderTarget->setDevicePixelRatio(1.0);
+                  (actualSize.height() - pixmap.size().height()) / 2); // centering the pixmap
+
     QPainter painter(renderTarget);
     painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
     painter.drawPixmap(offset, pixmap);
     painter.setCompositionMode(QPainter::CompositionMode_DestinationIn);
     painter.drawPixmap(0, 0, mask);
     painter.end();
+
     renderTarget->setDevicePixelRatio(this->devicePixelRatioF());
     QLabel::setPixmap(*renderTarget);
 }

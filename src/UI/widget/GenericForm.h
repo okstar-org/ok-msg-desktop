@@ -23,6 +23,7 @@ public:
 
   virtual QString getFormName() = 0;
   QPixmap getFormIcon();
+  virtual void retranslateUi() = 0;
 
 protected:
   bool eventFilter(QObject *o, QEvent *e) final override;

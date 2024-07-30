@@ -175,8 +175,8 @@ void UserInterfaceForm::on_timestamp_editTextChanged(const QString& format)
     bodyUI->timeExample->setText(timeExample);
 
     Settings::getInstance().setTimestampFormat(format);
-    QString locale = Settings::getInstance().getTranslation();
-    settings::Translator::translate(OK_UIWindowConfig_MODULE, locale);
+//    QString locale = Settings::getInstance().getTranslation();
+//    settings::Translator::translate(OK_UIWindowConfig_MODULE, locale);
 }
 
 void UserInterfaceForm::on_dateFormats_editTextChanged(const QString& format)
@@ -185,8 +185,8 @@ void UserInterfaceForm::on_dateFormats_editTextChanged(const QString& format)
     bodyUI->dateExample->setText(dateExample);
 
     Settings::getInstance().setDateFormat(format);
-    QString locale = Settings::getInstance().getTranslation();
-    settings::Translator::translate(OK_UIWindowConfig_MODULE, locale);
+//    QString locale = Settings::getInstance().getTranslation();
+//    settings::Translator::translate(OK_UIWindowConfig_MODULE, locale);
 }
 
 void UserInterfaceForm::on_useEmoticons_stateChanged()

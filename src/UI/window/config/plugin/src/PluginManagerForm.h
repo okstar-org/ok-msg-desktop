@@ -13,11 +13,12 @@
 #ifndef PLUGINFORM_H
 #define PLUGINFORM_H
 
+#include "UI/widget/GenericForm.h"
 #include "base/timer.h"
+#include "lib/backend/OkCloudService.h"
 #include "lib/plugin/PluginInfo.h"
 #include <QMap>
 #include <QWidget>
-#include "lib/backend/OkCloudService.h"
 
 namespace Ui {
 class PluginManagerForm;
@@ -31,16 +32,19 @@ namespace plugin {
 
 class PluginInfoForm;
 
-class PluginManagerForm : public QWidget {
+class PluginManagerForm : public UI::GenericForm {
   Q_OBJECT
 
 public:
   explicit PluginManagerForm(QWidget *parent = nullptr);
   ~PluginManagerForm() override;
 
+  virtual QString getFormName() final override { return tr("Plugin manager"); }
+
   void add(ok::backend::PluginInfo &info, int i);
-protected:
-  void retranslateUi();
+
+  void retranslateUi() override;
+
 private:
   Ui::PluginManagerForm *ui;
   QList<ok::backend::PluginInfo> mPluginInfos;

@@ -16,33 +16,38 @@
 #include <QPushButton>
 #include <QStyleFactory>
 
-#include "GenericForm.h"
-#include "modules/im/src/widget/contentlayout.h"
+#include "GeneralForm.h"
+#include "src/UI/widget/GenericForm.h"
 #include <QTabWidget>
 #include <array>
 #include <memory>
 
 namespace UI {
-class SettingsWidget : public QWidget {
+class SettingsWidget : public GenericForm {
   Q_OBJECT
 public:
   SettingsWidget(QWidget *parent = nullptr);
   ~SettingsWidget();
 
+  virtual QString getFormName() final override
+  {
+      return tr("Settings");
+  }
+
   bool isShown() const;
-  void show(ContentLayout *contentLayout);
   void setBodyHeadStyle(QString style);
 
   void showAbout();
+  GeneralForm * general(){
+     return static_cast<GeneralForm*>( cfgForms.at(0));
+  }
+  void retranslateUi() override ;
 
 public slots:
   void onUpdateAvailable(void);
 
 private slots:
   void onTabChanged(int);
-
-private:
-  void retranslateUi();
 
 private:
   std::unique_ptr<QVBoxLayout> bodyLayout;

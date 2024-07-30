@@ -45,7 +45,7 @@ public:
 
   void toInstall();
   void toUninstall();
-
+  void retranslateUi();
 private:
   Ui::PluginInfoForm *ui;
   PluginManager *pluginManager;

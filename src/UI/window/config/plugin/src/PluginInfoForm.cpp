@@ -151,6 +151,10 @@ void PluginInfoForm::setUninstalling() {
   ui->progressBar->show();
   ui->installBtn->setText(tr("Uninstalling"));
 }
+void PluginInfoForm::retranslateUi() {
+  ui->retranslateUi(this);
+  ui->installBtn->setText(tr("Install"));
+}
 
 } // namespace plugin
 } // namespace ok

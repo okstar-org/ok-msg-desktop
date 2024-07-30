@@ -116,63 +116,6 @@ which may lead to problems with video calls.</source>
         <translation>阈值</translation>
     </message>
 </context>
-<context>
-    <name>AboutForm</name>
-    <message>
-        <source>About</source>
-        <translation>关于</translation>
-    </message>
-    <message>
-        <source>Original author: %1</source>
-        <translation>原作者：%1</translation>
-    </message>
-    <message>
-        <source>You are using qTox version %1.</source>
-        <translation>正在使用 OkEDU 版本 %1。</translation>
-    </message>
-    <message>
-        <source>Commit hash: %1</source>
-        <translation>此版本哈希值： %1</translation>
-    </message>
-    <message>
-        <source>toxcore version: %1</source>
-        <translation>toxcore 版本：%1</translation>
-    </message>
-    <message>
-        <source>Qt version: %1</source>
-        <translation>Qt 版本：%1</translation>
-    </message>
-    <message>
-        <source>A list of all known issues may be found at our %1 at Github. If you discover a bug or security vulnerability within qTox, please report it according to the guidelines in our %2 wiki article.</source>
-        <comment>`%1` is replaced by translation of `bug tracker`
-`%2` is replaced by translation of `Writing Useful Bug Reports`</comment>
-        <translation>所有已知问题的列表可以在 GitHub 上我们的 %1 里找到。如果您发现 qTox 的错误或者安全漏洞，请根据我们的维基文章 %2 提交报告。</translation>
-    </message>
-    <message>
-        <source>Click here to report a bug.</source>
-        <translation>单击这里提交错误报告。</translation>
-    </message>
-    <message>
-        <source>See a full list of %1 at Github</source>
-        <comment>`%1` is replaced with translation of word `contributors`</comment>
-        <translation>在 Github 上查看 %1 完整列表</translation>
-    </message>
-    <message>
-        <source>bug-tracker</source>
-        <comment>Replaces `%1` in the `A list of all knownâ¦`</comment>
-        <translation>漏洞追踪器</translation>
-    </message>
-    <message>
-        <source>Writing Useful Bug Reports</source>
-        <comment>Replaces `%2` in the `A list of all knownâ¦`</comment>
-        <translation>编写有用的错误报告</translation>
-    </message>
-    <message>
-        <source>contributors</source>
-        <comment>Replaces `%1` in `See a full list ofâ¦`</comment>
-        <translation>贡献者</translation>
-    </message>
-</context>
 
 <context>
 <name>AboutGroupForm</name>

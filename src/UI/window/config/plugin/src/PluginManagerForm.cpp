@@ -17,29 +17,29 @@
 
 #include "PluginInfoForm.h"
 #include "PluginItemForm.h"
+#include "base/OkSettings.h"
 #include "lib/network/NetworkHttp.h"
 #include "lib/settings/translator.h"
+#include "src/UI/widget/GenericForm.h"
 #include "ui_PluginManagerForm.h"
-#include "base/OkSettings.h"
 
 namespace ok {
 namespace plugin {
 
-PluginManagerForm::PluginManagerForm(QWidget *parent)
-    : QWidget(parent), ui(new Ui::PluginManagerForm) {
+PluginManagerForm::PluginManagerForm(QWidget *parent) : UI::GenericForm(QPixmap(":/img/settings/general.png"), parent), ui(new Ui::PluginManagerForm) {
+
   ui->setupUi(this);
 
   if (parent) {
     setGeometry(parent->contentsRect());
   }
 
-//  QString locale = ok::base::OkSettings::getInstance().getTranslation();
-//  settings::Translator::translate(OK_UIWindowConfig_MODULE, "plugin_"+locale);
-//  settings::Translator::registerHandler([this] { retranslateUi(); }, this);
-//  retranslateUi();
+  //  QString locale = ok::base::OkSettings::getInstance().getTranslation();
+  //  settings::Translator::translate(OK_UIWindowConfig_MODULE, "plugin_"+locale);
+  //  settings::Translator::registerHandler([this] { retranslateUi(); }, this);
+  //  retranslateUi();
 
-  connect(ui->listWidget, &QListWidget::itemClicked, this,
-          &PluginManagerForm::pluginClicked, Qt::UniqueConnection);
+  connect(ui->listWidget, &QListWidget::itemClicked, this, &PluginManagerForm::pluginClicked, Qt::UniqueConnection);
 
   delayCaller_ = std::make_unique<::base::DelayedCallTimer>();
   http = std::make_unique<ok::backend::OkCloudService>(this);
@@ -49,13 +49,12 @@ PluginManagerForm::PluginManagerForm(QWidget *parent)
         [&](backend::ResPage<ok::backend::PluginInfo> &resList) {
           int i = 0;
           for (auto &item : resList.data.list) {
-            qDebug() <<"add plugin:" << item.name;
+            qDebug() << "add plugin:" << item.name;
             add(item, i++);
           }
         },
-        [](int code, const QString &err) { qWarning()<<"GetPluginPage" << err; });
+        [](int code, const QString &err) { qWarning() << "GetPluginPage" << err; });
   });
-
 }
 
 PluginManagerForm::~PluginManagerForm() { delete ui; }
@@ -100,9 +99,11 @@ void PluginManagerForm::setPluginInfo(ok::backend::PluginInfo &info) {
 }
 
 void PluginManagerForm::retranslateUi() {
-//  QString locale = ok::base::OkSettings::getInstance().getTranslation();
-//  settings::Translator::translate(OK_UIWindowConfig_MODULE, "plugin_"+locale);
   ui->retranslateUi(this);
+  for (int i = 0; i < ui->stackedWidget->count(); i++) {
+    auto form = static_cast<PluginInfoForm*> (ui->stackedWidget->widget(i));
+    form->retranslateUi();
+  }
 }
 
 } // namespace plugin

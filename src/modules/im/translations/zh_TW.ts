@@ -112,63 +112,7 @@ which may lead to problems with video calls.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
-<context>
-    <name>AboutForm</name>
-    <message>
-        <source>About</source>
-        <translation>關於</translation>
-    </message>
-    <message>
-        <source>Original author: %1</source>
-        <translation>原始作者：%1</translation>
-    </message>
-    <message>
-        <source>You are using qTox version %1.</source>
-        <translation type="unfinished">你正在使用的版本是 %1 。</translation>
-    </message>
-    <message>
-        <source>Commit hash: %1</source>
-        <translation>認可雜湊：%1</translation>
-    </message>
-    <message>
-        <source>toxcore version: %1</source>
-        <translation>toxcore 版本：%1</translation>
-    </message>
-    <message>
-        <source>Qt version: %1</source>
-        <translation>Qt 版本：%1</translation>
-    </message>
-    <message>
-        <source>A list of all known issues may be found at our %1 at Github. If you discover a bug or security vulnerability within qTox, please report it according to the guidelines in our %2 wiki article.</source>
-        <comment>`%1` is replaced by translation of `bug tracker`
-`%2` is replaced by translation of `Writing Useful Bug Reports`</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Click here to report a bug.</source>
-        <translation>點選此處報告 Bug。</translation>
-    </message>
-    <message>
-        <source>See a full list of %1 at Github</source>
-        <comment>`%1` is replaced with translation of word `contributors`</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>bug-tracker</source>
-        <comment>Replaces `%1` in the `A list of all knownâ¦`</comment>
-        <translation type="unfinished">Bug 追蹤器</translation>
-    </message>
-    <message>
-        <source>Writing Useful Bug Reports</source>
-        <comment>Replaces `%2` in the `A list of all knownâ¦`</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>contributors</source>
-        <comment>Replaces `%1` in `See a full list ofâ¦`</comment>
-        <translation type="unfinished">參與者</translation>
-    </message>
-</context>
+
 <context>
     <name>AboutFriendForm</name>
     <message>

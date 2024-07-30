@@ -26,6 +26,8 @@
 #include "about/src/aboutform.h"
 #include "plugin/src/PluginManagerForm.h"
 #include "settings/src/SettingsForm.h"
+
+#include <settings/src/GeneralForm.h>
 #endif
 
 
@@ -46,10 +48,16 @@ ConfigWindow::ConfigWindow(QWidget *parent): QFrame(parent),ui(new Ui::ConfigWin
   retranslateUi();
 
 #if OK_PLUGIN
-  qDebug()<<tr("Plugin form");
   ui->tabWidget->addTab(new ok::plugin::PluginManagerForm(this), tr("Plugin form"));
 #endif
-  ui->tabWidget->addTab(new SettingsWidget(this), tr("Settings form"));
+
+  auto sw = new SettingsWidget(this);
+  connect( sw->general(), &GeneralForm::onLanguageChanged, [](QString locale){
+    settings::Translator::translate(OK_UIWindowConfig_MODULE, locale);
+  });
+
+
+  ui->tabWidget->addTab(sw, tr("Settings form"));
   ui->tabWidget->addTab(new AboutForm(this), tr("About form"));
 }
 
@@ -60,6 +68,15 @@ ConfigWindow::~ConfigWindow() {
 
 void ConfigWindow::retranslateUi() {
   ui->retranslateUi(this);
+     ui->tabWidget->setTabText(0,tr("Plugin form") );
+     ui->tabWidget->setTabText(1,tr("Settings form") );
+     ui->tabWidget->setTabText(2,tr("About form") );
+
+  for(int i = 0; i < ui->tabWidget->count(); i++){
+    auto gf = static_cast<GenericForm*>( ui->tabWidget->widget(i));
+    gf->retranslateUi();
+  }
+
 }
 
 } // namespace UI

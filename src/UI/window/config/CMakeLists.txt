@@ -25,8 +25,8 @@ file( GLOB ${PROJECT_NAME}_ICONS
 
 file( GLOB ${PROJECT_NAME}_TSS
     ts/*.ts
+    ts/*.xml
 )
-
 
 qt5_wrap_ui(${PROJECT_NAME}_FORMS ${${PROJECT_NAME}_UIS})
 

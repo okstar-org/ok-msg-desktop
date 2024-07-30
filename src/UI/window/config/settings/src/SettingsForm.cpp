@@ -28,7 +28,8 @@
 #include <memory>
 
 namespace UI {
-SettingsWidget::SettingsWidget(QWidget *parent) : QWidget(parent) {
+SettingsWidget::SettingsWidget(QWidget *parent) :
+    GenericForm(QPixmap(":/img/settings/general.png"), parent) {
   settingsWidgets = std::unique_ptr<QTabWidget>(new QTabWidget(this));
   settingsWidgets->setTabPosition(QTabWidget::North);
 
@@ -89,12 +90,6 @@ bool SettingsWidget::isShown() const {
   return false;
 }
 
-void SettingsWidget::show(ContentLayout *contentLayout) {
-  //    contentLayout->mainContent->layout()->addWidget(settingsWidgets.get());
-  settingsWidgets->show();
-  onTabChanged(settingsWidgets->currentIndex());
-}
-
 void SettingsWidget::onTabChanged(int index) { settingsWidgets->setCurrentIndex(index); }
 
 void SettingsWidget::onUpdateAvailable(void) {
@@ -106,6 +101,7 @@ void SettingsWidget::onUpdateAvailable(void) {
 void SettingsWidget::retranslateUi() {
   for (size_t i = 0; i < cfgForms.size(); ++i){
     settingsWidgets->setTabText(i, cfgForms.at(i)->getFormName());
+    cfgForms.at(i)->retranslateUi();
   }
 }
 

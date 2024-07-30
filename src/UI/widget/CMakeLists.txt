@@ -1,6 +1,6 @@
 project(UIWidget)
 
-set(${PROJECT_NAME}_RESOUCRES MoveableBar.cpp)
+set(${PROJECT_NAME}_RESOUCRES MoveableBar.cpp GenericForm.h GenericForm.cpp)
 
 add_library(${PROJECT_NAME} STATIC
         ${${PROJECT_NAME}_RESOUCRES})

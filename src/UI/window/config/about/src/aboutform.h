@@ -13,7 +13,7 @@
 #ifndef ABOUTFORM_H
 #define ABOUTFORM_H
 
-#include "src/UI/window/config/settings/src/GenericForm.h"
+#include "src/UI/widget/GenericForm.h"
 #include "ui_aboutsettings.h"
 
 #include <memory>
@@ -25,12 +25,16 @@ class QLayoutItem;
 
 namespace UI{
 
-class AboutForm : public QWidget
+class AboutForm : public GenericForm
 {
     Q_OBJECT
 public:
     AboutForm(QWidget *parent= nullptr);
     ~AboutForm();
+    virtual QString getFormName() final override
+    {
+      return tr("About form");
+    }
 
 public slots:
     void onUpdateAvailable(QString latestVersion, QUrl link);

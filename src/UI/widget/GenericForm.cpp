@@ -35,6 +35,7 @@ QPixmap GenericForm::getFormIcon()
     return formIcon;
 }
 
+
 /**
  * @brief Prevent stealing mouse wheel scroll.
  *

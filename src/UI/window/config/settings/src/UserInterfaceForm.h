@@ -12,8 +12,8 @@
 
 #pragma
 
-#include "GenericForm.h"
 #include "SettingsForm.h"
+#include "src/UI/widget/GenericForm.h"
 
 #include <QLabel>
 #include <memory>

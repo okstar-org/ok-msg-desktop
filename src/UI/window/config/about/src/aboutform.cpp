@@ -13,7 +13,7 @@
 #include "aboutform.h"
 
 #include "lib/settings/translator.h"
-#include "src/UI/window/config/settings/src/GenericForm.h"
+#include "src/UI/widget/GenericForm.h"
 #include "src/base/RecursiveSignalBlocker.h"
 #include "src/lib/settings/style.h"
 #include <QDebug>
@@ -37,9 +37,11 @@ enum class updateIndex { available = 0, upToDate = 1, failed = 2 };
 /**
  * @brief Constructor of AboutForm.
  */
-AboutForm::AboutForm(QWidget *parent) : QWidget(parent),
-                         bodyUI(new Ui::AboutSettings),
-                         progressTimer(new QTimer(this)) {
+AboutForm::AboutForm(QWidget *parent)
+    :GenericForm(QPixmap(":/img/settings/general.png"), parent),
+      bodyUI(new Ui::AboutSettings),
+      progressTimer(new QTimer(this)) {
+
   bodyUI->setupUi(this);
 
   if (QString(GIT_VERSION).indexOf(" ") > -1)

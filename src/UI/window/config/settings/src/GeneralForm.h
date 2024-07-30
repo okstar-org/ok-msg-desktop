@@ -13,7 +13,7 @@
 #ifndef GENERALFORM_H
 #define GENERALFORM_H
 
-#include "GenericForm.h"
+#include "src/UI/widget/GenericForm.h"
 #include "ui_GeneralForm.h"
 
 
@@ -29,8 +29,11 @@ public:
     {
         return tr("General");
     }
+
+    void retranslateUi() override;
 signals:
     void updateIcons();
+    void onLanguageChanged(QString locale);
 
 private slots:
     void on_transComboBox_currentIndexChanged(int index);
@@ -42,8 +45,6 @@ private slots:
     void on_minimizeToTray_stateChanged();
     void on_checkUpdates_stateChanged();
 
-private:
-    void retranslateUi();
 
 private:
     Ui::GeneralForm* bodyUI;
