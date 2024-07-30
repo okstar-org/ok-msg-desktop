@@ -170,7 +170,7 @@ public:
 
   IMStatus getFriendStatus(const QString &f);
 
-  bool sendToFriend(const QString &f, const QString &msg, QString &receiptNum,
+  bool sendToFriend(const QString &f, const QString &msg, const QString &id,
                     bool encrypt = false);
   bool removeFriend(const QString &f);
 

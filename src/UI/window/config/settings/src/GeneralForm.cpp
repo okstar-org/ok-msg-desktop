@@ -37,11 +37,11 @@ GeneralForm::GeneralForm(SettingsWidget *myParent)
   const RecursiveSignalBlocker signalBlocker(this);
 
   Settings &s = Settings::getInstance();
-
-  QString locale0 = ok::base::OkSettings::getInstance().getTranslation();
-  settings::Translator::translate(OK_UIWindowConfig_MODULE, locale0);
-  settings::Translator::registerHandler([this] { retranslateUi(); }, this);
-
+//
+//  QString locale0 = ok::base::OkSettings::getInstance().getTranslation();
+//  settings::Translator::translate(OK_UIWindowConfig_MODULE, locale0);
+//  settings::Translator::registerHandler([this] { retranslateUi(); }, this);
+//
 
 
   // 先获取当前语言

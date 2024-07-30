@@ -212,9 +212,9 @@ public:
 
   Client *getClient() const { return _client.get(); }
 
-  QDomDocument buildMessage(const QString &to, const QString &msg, QString &id);
+  QDomDocument buildMessage(const QString &to, const QString &msg, const QString &id);
 
-  bool sendTo(const QString &to, const QString &msg, QString &id);
+  bool sendTo(const QString &to, const QString &msg, const QString &id);
 
   /**
    * 群组相关

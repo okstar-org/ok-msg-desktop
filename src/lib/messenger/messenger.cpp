@@ -327,14 +327,14 @@ bool Messenger::sendToGroup(const QString &g,   //
 
 bool Messenger::sendToFriend(const QString &f,
                              const QString &msg,
-                             QString &receiptNum,
+                             const QString &id,
                              bool encrypt) {
   qDebug() << __func__ << msg << "=>" << f;
   sentCount++;
 
   auto _session = ok::session::AuthSession::Instance();
   auto _im = _session->im();
-  _im->makeId(receiptNum);
+
 
   bool y = false;
   if (encrypt) {
@@ -346,7 +346,7 @@ bool Messenger::sendToFriend(const QString &f,
     auto pm = ok::plugin::PluginManager::instance();
     pm->addAccount(_session->account(), this);
 
-    auto dom = _im->buildMessage(f, msg, receiptNum);
+    auto dom = _im->buildMessage(f, msg, id);
     auto ele = dom.documentElement();
 
     if (pm->encryptMessageElement(_session->account(), ele)) {
@@ -358,7 +358,7 @@ bool Messenger::sendToFriend(const QString &f,
 #endif
   }
   if (!y) {
-    y = _im->sendTo(f, msg, receiptNum);
+    y = _im->sendTo(f, msg, id);
   }
   return y;
 }

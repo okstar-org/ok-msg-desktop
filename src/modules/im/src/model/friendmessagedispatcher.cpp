@@ -26,7 +26,8 @@ namespace {
  */
 bool sendMessageToCore(ICoreFriendMessageSender &messageSender,
                        const FriendId &f,
-                       const Message &message, ReceiptNum &receipt,
+                       const Message &message,
+                       const ReceiptNum &receipt,
                        bool encrypt) {
   QString friendId = f.getId();
 
@@ -62,31 +63,38 @@ FriendMessageDispatcher::~FriendMessageDispatcher()
  */
 std::pair<DispatchedMessageId, SentMessageId>
 FriendMessageDispatcher::sendMessage(bool isAction, const QString &content, bool encrypt) {
-  qDebug() << "FriendMessageDispatcher::sendMessage" << content;
+  qDebug() << __func__ << content;
 
   const auto firstId = nextMessageId;
   auto lastId = nextMessageId;
 
   for (const auto &message : processor.processOutgoingMessage(isAction, content)) {
+    qDebug() << "Generated a new message:" << message.id;
 
-    auto messageId = nextMessageId++;
-    lastId = messageId;
+    auto dispatcherId = nextMessageId++;
+    qDebug() <<"dispatcherId:" << dispatcherId.get();
 
-    auto onOfflineMsgComplete = [this, messageId] {
-      emit messageComplete(messageId);
+    lastId = dispatcherId;
+
+    auto onOfflineMsgComplete = [this, dispatcherId] {
+      emit messageComplete(dispatcherId);
     };
 
-    auto onMsgRead = [this, messageId]{
-      emit messageReceipt(messageId);
+    auto onMsgRead = [this, dispatcherId]{
+      emit messageReceipt(dispatcherId);
     };
 
-    ReceiptNum receipt;
-    emit this->messageSent(messageId, message);
-    bool messageSent = sendMessageToCore(messageSender, f, message, receipt, encrypt);
-    qDebug() << "receipt:" << receipt;
+    emit messageSent(dispatcherId, message);
+
+
+    bool messageSent = sendMessageToCore(messageSender, f, message, message.id, encrypt);
+    qDebug() << "sendMessage=>"<<messageSent<<
+    QString("{msgId:%1, dispatcherId:%2}")
+            .arg(message.id)
+            .arg(dispatcherId.get());
 
     if (messageSent) {
-        offlineMsgEngine.addSentMessage(receipt, message, onOfflineMsgComplete, onMsgRead);
+        offlineMsgEngine.addSentMessage(message.id, message, onOfflineMsgComplete, onMsgRead);
     } else {
         offlineMsgEngine.addUnsentMessage(message, onOfflineMsgComplete);
     }

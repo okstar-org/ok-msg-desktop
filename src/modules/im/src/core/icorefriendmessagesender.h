@@ -22,9 +22,9 @@ class ICoreFriendMessageSender {
 public:
   virtual ~ICoreFriendMessageSender() = default;
   virtual bool sendAction(QString friendId, const QString &action,
-                          ReceiptNum &receipt, bool encrypt = false) = 0;
+                          const ReceiptNum &receipt, bool encrypt = false) = 0;
   virtual bool sendMessage(QString friendId, const QString &message,
-                           ReceiptNum &receipt, bool encrypt = false) = 0;
+                          const ReceiptNum &receipt, bool encrypt = false) = 0;
 };
 
 #endif /* ICORE_FRIEND_MESSAGE_SENDER_H */

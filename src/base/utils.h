@@ -15,7 +15,7 @@
 #include <QDateTime>
 #include <QDir>
 #include <QObject>
-#include <QUuid>
+
 
 #include "basic_types.h"
 
@@ -23,10 +23,6 @@ namespace ok::base {
 
 class KeyUtils {
 public:
-  static QString GetUUID() {
-    // 去除前后“{}”
-    return QUuid::createUuid().toString().remove(0, 1).remove(36, 1);
-  }
 
   static QString GetISOTime() {
     return QDateTime::currentDateTime().toString(Qt::DateFormat::ISODate);

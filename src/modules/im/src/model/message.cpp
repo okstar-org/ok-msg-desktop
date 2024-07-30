@@ -13,6 +13,7 @@
 #include "message.h"
 #include "friend.h"
 #include "src/core/core.h"
+#include "base/uuid.h"
 
 void MessageProcessor::SharedParams::onUserNameSet(const QString &username) {
   QString sanename = username;
@@ -44,6 +45,7 @@ std::vector<Message> MessageProcessor::processOutgoingMessage(bool isAction, QSt
   QDateTime timestamp = QDateTime::currentDateTime();
   std::transform(splitMsgs.begin(), splitMsgs.end(), std::back_inserter(ret), [&](const QString &part) {
     Message message;
+    message.id = base::UUID::make();
     message.isAction = isAction;
     message.to = f.getId();
     message.from = idHandler.getSelfPeerId().toString();

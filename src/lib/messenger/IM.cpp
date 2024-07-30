@@ -489,43 +489,27 @@ void IM::doDisconnect() {
 
 QDomDocument IM::buildMessage(const QString &to,  //
                               const QString &msg, //
-                              QString &id) {
-
-  std::string msgId = id.isEmpty() ? _client->getID() : id.toStdString();
+                              const QString &id) {
 
   gloox::Message m(gloox::Message::MessageType::Chat, JID(stdstring(to)), msg.toStdString());
   m.setFrom(_client->jid());
-  m.setID(msgId);
+  m.setID(stdstring(id));
   m.addExtension(new Receipt(Receipt::Request));
-
-  id.clear();
-  id.append(qstring(msgId));
 
   return ::base::Xmls::parse(qstring(m.tag()->xml()));
 }
 
-bool IM::sendTo(const QString &friendId, const QString &msg, QString &id) {
+bool IM::sendTo(const QString &friendId, const QString &msg, const QString &id) {
   qDebug() << "sendTo:" << friendId;
-  qDebug() << "msg:" << msg;
-
-  std::string msgId = id.isEmpty() ? _client->getID() : id.toStdString();
-  qDebug() << "msgId:" << qstring(msgId);
+  qDebug() << "msgId:" << id << "msg:" << msg ;
 
   gloox::Message m(gloox::Message::MessageType::Chat, JID(stdstring(friendId)), msg.toStdString());
   m.setFrom(_client->jid());
-  m.setID(msgId);
+  m.setID(stdstring(id));
   m.addExtension(new Receipt(Receipt::Request));
-
-  id.clear();
-  id.append(qstring(msgId));
 
   _client->send(m);
   return true;
-}
-
-void IM::makeId(QString &id) {
-  if (id.isEmpty())
-    id.append(qstring(_client->getID()));
 }
 
 // Handle Message session

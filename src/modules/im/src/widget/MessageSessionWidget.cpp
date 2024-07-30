@@ -449,7 +449,9 @@ void MessageSessionWidget::showDetails() {
   }
 }
 
-void MessageSessionWidget::onMessageSent(DispatchedMessageId id, const Message &message) { updateLastMessage(message); }
+void MessageSessionWidget::onMessageSent(DispatchedMessageId id, const Message &message) {
+    updateLastMessage(message);
+}
 
 void MessageSessionWidget::setFriend(const Friend *f) {
   qDebug() << __func__ << f;

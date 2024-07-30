@@ -950,7 +950,7 @@ void GenericChatForm::handleSearchResult(SearchResult result,
 }
 
 void GenericChatForm::renderMessage(ChatLogIdx idx) {
-  qDebug()<<__func__ <<"idx"<<idx.get();
+  qDebug()<<__func__ << "idx:"<<idx.get();
   renderMessages(idx, idx + 1);
 }
 

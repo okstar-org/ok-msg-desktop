@@ -97,7 +97,7 @@ void OfflineMsgEngine::addSentMessage(ReceiptNum receipt,
                                       CompletionFn completionCallback,
                                       ReceiptFn readCallback) {
 
-  qDebug() << __func__ << message.content << receipt;
+  qDebug() << __func__  << "receipt:" <<receipt << "content:" << message.content;
 
   QMutexLocker ml(&mutex);
   //    assert(!sentMessages.contains(receipt));
@@ -144,8 +144,7 @@ void OfflineMsgEngine::deliverOfflineMsgs() {
     if (message.message.isAction) {
       messageSent = messageSender->sendAction(f->getId(), messageText, receipt);
     } else {
-      messageSent =
-          messageSender->sendMessage(f->getId(), messageText, receipt);
+      messageSent = messageSender->sendMessage(f->getId(), messageText, receipt);
     }
     if (messageSent) {
       qDebug() <<"receipt:"<<receipt;

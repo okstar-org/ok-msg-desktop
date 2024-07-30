@@ -725,7 +725,7 @@ void Core::requestFriendship(const FriendId &friendId,const QString &nick, const
 
 bool Core::sendMessageWithType(QString friendId,
                                const QString &message,
-                               ReceiptNum &receipt,
+                               const ReceiptNum &id,
                                bool encrypt) {
 
   qDebug() << __func__ <<"receiver"<< friendId <<"message:"<< message;
@@ -735,8 +735,8 @@ bool Core::sendMessageWithType(QString friendId,
     return false;
   }
 
-  QString receipts = 0;
-  bool yes = tox->sendToFriend(friendId, message, receipts, encrypt);
+
+  bool yes = tox->sendToFriend(friendId, message, id, encrypt);
 
   //  int size = message.toUtf8().size();
   //  auto maxSize = tox_max_message_length();
@@ -748,7 +748,7 @@ bool Core::sendMessageWithType(QString friendId,
   //
   //  ToxString cMessage(message);
   //  Tox_Err_Friend_Send_Message error;
-  receipt = ReceiptNum{receipts};
+//  receipt = ReceiptNum{receipts};
   //  if (parseFriendSendMessageError(error)) {
   //    return true;
   //  }
@@ -756,14 +756,14 @@ bool Core::sendMessageWithType(QString friendId,
 }
 
 bool Core::sendMessage(QString friendId, const QString &message,
-                       ReceiptNum &receipt, bool encrypt) {
+                      const ReceiptNum &receipt, bool encrypt) {
   QMutexLocker ml(&coreLoopLock);
   return sendMessageWithType(friendId, message,
                              receipt, encrypt);
 }
 
 bool Core::sendAction(QString friendId, const QString &action,
-                      ReceiptNum &receipt, bool encrypt) {
+                     const ReceiptNum &receipt, bool encrypt) {
   QMutexLocker ml(&coreLoopLock);
   return sendMessageWithType(friendId, action, receipt,
                              encrypt);

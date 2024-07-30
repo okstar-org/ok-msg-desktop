@@ -27,6 +27,7 @@
 #include <cassert>
 #include <memory>
 #include <base/utils.h>
+#include "base/uuid.h"
 
 /**
  * @class CoreFile
@@ -93,8 +94,8 @@ void CoreFile::sendFile(QString friendId,
 
     auto sender= tox0->getSelfId().toFriendId();
 
-    auto fileId = ok::base::KeyUtils::GetUUID();
-    auto sId = ok::base::KeyUtils::GetUUID();
+    auto fileId = base::UUID::make();
+    auto sId = base::UUID::make();
 
     auto file = ToxFile {
         sender,

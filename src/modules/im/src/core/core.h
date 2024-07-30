@@ -119,8 +119,8 @@ public:
   void removeFriend(QString friendId);
   void requestFriendship(const FriendId &friendAddress, const QString &nick, const QString &message);
   // FriendSender
-  bool sendMessage(QString friendId, const QString &message, ReceiptNum &receipt, bool encrypt = false) override;
-  bool sendAction(QString friendId, const QString &action, ReceiptNum &receipt, bool encrypt = false) override;
+  bool sendMessage(QString friendId, const QString &message, const ReceiptNum &receipt, bool encrypt = false) override;
+  bool sendAction(QString friendId, const QString &action, const ReceiptNum &receipt, bool encrypt = false) override;
   void sendTyping(QString friendId, bool typing);
 
   GroupId createGroup(const QString &name="");
@@ -260,7 +260,7 @@ private:
   QString sendGroupMessageWithType(QString groupId, const QString &message);
 
   bool sendMessageWithType(QString friendId, const QString &message,
-                           ReceiptNum &receipt, bool encrypt = false);
+                           const ReceiptNum &receipt, bool encrypt = false);
 
   void sendReceiptReceived(const QString &friendId, QString receipt);
 

@@ -355,8 +355,8 @@ void SessionChatLog::onMessageReceived(const FriendId &sender,
  * @note Owner of SessionChatLog is in charge of attaching this to the
  * appropriate IMessageDispatcher
  */
-void SessionChatLog::onMessageSent(DispatchedMessageId id,
-                                   const Message &message) {
+void SessionChatLog::onMessageSent(DispatchedMessageId dispatchedId, const Message &message) {
+  qDebug() <<__func__ << "dispatchedId:" << dispatchedId.get() <<"msg:"<<message.content;
 
   auto messageIdx = getNextIdx(message.id);
 
@@ -368,7 +368,7 @@ void SessionChatLog::onMessageSent(DispatchedMessageId id,
                                         coreIdHandler.getNick(), //发送人名称就算自己的昵称
                                         chatLogMessage));
 
-  outgoingMessages.insert(id, messageIdx);
+  outgoingMessages.insert(dispatchedId, messageIdx);
 
   emit itemUpdated(messageIdx);
 }
@@ -521,8 +521,9 @@ ChatLogIdx SessionChatLog::getNextIdx(QString msgId)
         qWarning() << "msgId is empty.";
         return ++nextIdx;
     }
+
     auto idx = id2IdxMap.value(msgId, ChatLogIdx(0));
-    if(idx.get()==0){
+    if(idx.get() == 0){
         idx = ++nextIdx;
         id2IdxMap.insert(msgId, idx);
     }

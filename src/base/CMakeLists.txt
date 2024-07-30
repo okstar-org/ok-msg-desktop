@@ -37,6 +37,7 @@ set(${PROJECT_NAME}_SOURCES
     SvgUtils.h
     RecursiveSignalBlocker.h
     RecursiveSignalBlocker.cpp
+		uuid.h
 )
 
 if(WIN32)
