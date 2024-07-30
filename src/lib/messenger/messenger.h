@@ -133,7 +133,7 @@ public:
   void addGroupHandler(GroupHandler *);
 
 
-  bool sendToGroup(const QString &g, const QString &msg, QString &receiptNum);
+  bool sendToGroup(const QString &g, const QString &msg, const QString &id);
 
 
 

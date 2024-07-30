@@ -1154,22 +1154,29 @@ void IM::joinRooms() {
   }
 }
 
-QString IM::sendToRoom(const QString &to, const QString &msg, const QString &id) {
-  qDebug() << __func__ << to << "msg:" << msg;
+bool IM::sendToRoom(const QString &to, const QString &msg, const QString &id) {
+  qDebug() << __func__ << "=>" << to;
+  qDebug() << "msgId:" << id <<"content:" << msg;
+
+  if(msg.isEmpty()){
+    qWarning() <<"empty message!";
+    return false;
+  }
+
+  if(id.isEmpty()){
+    qWarning() <<"id is empty!";
+    return false;
+  }
 
   auto pRoomInfo = findRoom((to));
   if (!pRoomInfo) {
-    qDebug() << "The room is not exist!";
-    return QString{};
+    qWarning() << "The room is not exist!";
+    return false;
   }
 
-  std::string msgId = !id.isEmpty() ? id.toStdString() : getClient()->getID();
-  qDebug() << "msgId:" << qstring(msgId);
-
+  auto msgId = stdstring(id);
   sendIds.insert(msgId);
-
-  auto mid = pRoomInfo->room->send(msg.toStdString());
-  return qstring(mid);
+  return pRoomInfo->room->send(msg.toStdString(),msgId);
 }
 
 void IM::setRoomSubject(const QString &groupId, const std::string &subject) {

@@ -64,7 +64,7 @@ class MessageSessionWidget : public GenericChatroomWidget
     void setRecvMessage(const FriendMessage &message,
                         bool isAction);
 
-    void setMessageReceipt(const ReceiptNum &receipt);
+    void setMessageReceipt(const MsgId &msgId);
 
 
     void setRecvGroupMessage(const GroupMessage& msg);

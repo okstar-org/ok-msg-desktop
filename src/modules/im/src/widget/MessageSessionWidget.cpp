@@ -789,9 +789,9 @@ void MessageSessionWidget::setRecvMessage(const FriendMessage &msg, bool isActio
   }
 }
 
-void MessageSessionWidget::setMessageReceipt(const ReceiptNum &receipt) {
+void MessageSessionWidget::setMessageReceipt(const MsgId &msgId) {
   auto md = (FriendMessageDispatcher *)sendWorker->dispacher();
-  md->onReceiptReceived(receipt);
+  md->onReceiptReceived(msgId);
 }
 
 void MessageSessionWidget::setRecvGroupMessage(const GroupMessage &msg) {

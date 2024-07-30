@@ -170,7 +170,7 @@ void Nexus::onSave(SavedInfo &savedInfo) {
     qRegisterMetaType<GroupId>("GroupId");
     qRegisterMetaType<ContactId>("ContactId");
     qRegisterMetaType<GroupInvite>("GroupInvite");
-    qRegisterMetaType<ReceiptNum>("ReceiptNum");
+    qRegisterMetaType<MsgId>("MsgId");
     qRegisterMetaType<RowId>("RowId");
 
     qApp->setQuitOnLastWindowClosed(false);

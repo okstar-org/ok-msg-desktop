@@ -39,7 +39,7 @@ public:
 
     explicit OfflineMsgEngine(const FriendId* f, ICoreFriendMessageSender* messageSender);
     void addUnsentMessage(Message const& message, CompletionFn completionCallback);
-    void addSentMessage(ReceiptNum receipt, Message const& message,
+    void addSentMessage(MsgId receipt, Message const& message,
                         CompletionFn completionCallback,
                         ReceiptFn receiptCallback);
     void deliverOfflineMsgs();
@@ -48,7 +48,7 @@ public:
 
 public slots:
     void removeAllMessages();
-    void onReceiptReceived(ReceiptNum receipt);
+    void onReceiptReceived(MsgId receipt);
 
 private:
     struct OfflineMessage
@@ -60,17 +60,17 @@ private:
     };
 
 private slots:
-    void completeMessage(QMap<ReceiptNum, OfflineMessage>::iterator msgIt);
-    void receiptMessage(QMap<ReceiptNum, OfflineMessage>::iterator msgIt);
+    void completeMessage(QMap<MsgId, OfflineMessage>::iterator msgIt);
+    void receiptMessage(QMap<MsgId, OfflineMessage>::iterator msgIt);
 
 private:
-    void checkForCompleteMessages(ReceiptNum receipt);
+    void checkForCompleteMessages(MsgId receipt);
 
     CompatibleRecursiveMutex mutex;
     const FriendId* f;
     ICoreFriendMessageSender* messageSender;
-    QVector<ReceiptNum> receivedReceipts;
-    QMap<ReceiptNum, OfflineMessage> sentMessages;
+    QVector<MsgId> receivedReceipts;
+    QMap<MsgId, OfflineMessage> sentMessages;
     QVector<OfflineMessage> unsentMessages;
 };
 

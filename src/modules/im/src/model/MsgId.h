@@ -18,9 +18,9 @@
 #include <QMetaType>
 #include <cstdint>
 
-using ReceiptNum = QString;
+using MsgId = QString;
 
 //NamedType<uint32_t, struct ReceiptNumTag, Orderable>;
-//Q_DECLARE_METATYPE(ReceiptNum);
+//Q_DECLARE_METATYPE(MsgId);
 
 #endif /* RECEIPT_NUM_H */

@@ -234,9 +234,8 @@ public:
    * @param to
    * @param msg
    * @param id 设置消息ID
-   * @return 成功返回消息ID
    */
-  QString sendToRoom(const QString &to, const QString &msg, const QString &id = "");
+  bool sendToRoom(const QString &to, const QString &msg, const QString &id = "");
 
   void joinRoom(const QString &jid);
 

@@ -306,22 +306,13 @@ QString Messenger::genUniqueId() {
   return qstring(_im->getClient()->getID());
 }
 
-bool Messenger::sendToGroup(const QString &g,   //
-                            const QString &msg, //
-                            QString &receiptNum) {
-  Q_UNUSED(receiptNum)
-  qDebug() << QString("sendToGroup=>%1 msg:%2").arg(g).arg(msg);
+bool Messenger::sendToGroup(const QString &g,const QString &msg,const QString &id) {
+
+  qDebug() << QString("sendToGroup=>%1 id:%2 msg:%2").arg(g).arg(id).arg(msg);
   sentCount++;
 
   auto _session = ok::session::AuthSession::Instance();
-  auto _im = _session->im();
-
-  auto id = _im->sendToRoom(g, msg, "");
-  if(id.isEmpty())
-      return false;
-
-  receiptNum = id;
-  return true;
+  return _session->im()->sendToRoom(g, msg, id);
 }
 
 

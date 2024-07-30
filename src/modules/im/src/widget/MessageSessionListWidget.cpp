@@ -715,13 +715,13 @@ void MessageSessionListWidget::setRecvFriendMessage(
 }
 
 void MessageSessionListWidget::setFriendMessageReceipt(const FriendId &friendId,
-                                                       const ReceiptNum &receipt)
+                                                       const MsgId &msgId)
 {
     auto fw = getMessageSession(friendId.toString());
     if(!fw){
         return;
     }
-    fw->setMessageReceipt(receipt);
+    fw->setMessageReceipt(msgId);
 }
 
 

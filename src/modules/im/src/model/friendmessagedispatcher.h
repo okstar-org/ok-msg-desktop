@@ -34,13 +34,13 @@ public:
                             ICoreFriendMessageSender& messageSender);
     ~FriendMessageDispatcher();
 
-    std::pair<DispatchedMessageId, SentMessageId> sendMessage(
+    std::pair<DispatchedMessageId, MsgId> sendMessage(
             bool isAction,
             const QString& content,
             bool encrypt = false) override;
 
     void onMessageReceived(FriendMessage &msg);
-    void onReceiptReceived(ReceiptNum receipt);
+    void onReceiptReceived(MsgId receipt);
     void clearOutgoingMessages() override;
 
     void onFileReceived(const ToxFile &file);

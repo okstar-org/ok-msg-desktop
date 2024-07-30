@@ -25,6 +25,7 @@
 #include <src/core/FriendId.h>
 #include <src/core/groupid.h>
 
+#include "MsgId.h"
 #include "contact.h"
 
 // NOTE: This could be extended in the future to handle all text processing (see
@@ -47,7 +48,7 @@ struct Message {
 public:
   bool isGroup{false};
   bool isAction;
-  QString id;
+  MsgId id;
   QString from;
   QString to;
   QString displayName;

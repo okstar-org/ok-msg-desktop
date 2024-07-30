@@ -13,7 +13,7 @@
 #ifndef ICORE_FRIEND_MESSAGE_SENDER_H
 #define ICORE_FRIEND_MESSAGE_SENDER_H
 
-#include "receiptnum.h"
+#include "src/model/MsgId.h"
 
 #include <QString>
 #include <cstdint>
@@ -22,9 +22,9 @@ class ICoreFriendMessageSender {
 public:
   virtual ~ICoreFriendMessageSender() = default;
   virtual bool sendAction(QString friendId, const QString &action,
-                          const ReceiptNum &receipt, bool encrypt = false) = 0;
+                          const MsgId &msgId, bool encrypt = false) = 0;
   virtual bool sendMessage(QString friendId, const QString &message,
-                          const ReceiptNum &receipt, bool encrypt = false) = 0;
+                          const MsgId &msgId, bool encrypt = false) = 0;
 };
 
 #endif /* ICORE_FRIEND_MESSAGE_SENDER_H */

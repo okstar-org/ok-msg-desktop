@@ -36,7 +36,7 @@ public:
                          const IGroupSettings &groupSettings);
   ~GroupMessageDispatcher();
 
-  std::pair<DispatchedMessageId, SentMessageId>
+  std::pair<DispatchedMessageId, MsgId>
   sendMessage(bool isAction, QString const &content,
               bool encrypt = false) override;
 

@@ -238,7 +238,7 @@ void ChatWidget::onFriendMessageReceived(const FriendId &friendId, const FriendM
   sessionListWidget->setRecvFriendMessage(friendId, message, isAction);
 }
 
-void ChatWidget::onReceiptReceived(const FriendId &friendId, ReceiptNum receipt) {
+void ChatWidget::onReceiptReceived(const FriendId &friendId, MsgId receipt) {
   qDebug() << __func__ << "receiver:" << friendId.toString() << receipt;
   sessionListWidget->setFriendMessageReceipt(friendId, receipt);
 }

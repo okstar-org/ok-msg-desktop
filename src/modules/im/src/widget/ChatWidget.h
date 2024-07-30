@@ -148,7 +148,7 @@ public slots:
                                const FriendMessage &message,
                                bool isAction);
 
-  void onReceiptReceived(const FriendId &friendPk, ReceiptNum receipt);
+  void onReceiptReceived(const FriendId &friendPk, MsgId receipt);
 
   void onFriendTypingChanged(const FriendId &friendnumber, bool isTyping);
 

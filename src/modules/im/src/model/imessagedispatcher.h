@@ -33,13 +33,7 @@ class IMessageDispatcher : public QObject
 public:
     virtual ~IMessageDispatcher() = default;
 
-    /**
-     * @brief Sends message to associated chat
-     * @param[in] isAction True if is action message
-     * @param[in] content Message content
-     * @return Pair of first and last dispatched message IDs
-     */
-    virtual std::pair<DispatchedMessageId, SentMessageId>
+    virtual std::pair<DispatchedMessageId, MsgId>
     sendMessage(bool isAction, const QString& content, bool encrypt = false) = 0;
 
     virtual void clearOutgoingMessages() = 0;

@@ -83,7 +83,7 @@ public:
                             const FriendMessage &message, //
                             bool isAction);
 
-  void setFriendMessageReceipt(const FriendId &friendId, const ReceiptNum& receipt);
+  void setFriendMessageReceipt(const FriendId &friendId, const MsgId& receipt);
 
 //  CircleWidget *createCircleWidget(int id = -1);
 

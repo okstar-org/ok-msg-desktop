@@ -30,7 +30,7 @@ OfflineMsgEngine::OfflineMsgEngine(const FriendId *frnd,
  * @brief Notification that the message is now receipt by peer.
  *
  */
-void OfflineMsgEngine::onReceiptReceived(ReceiptNum receipt) {
+void OfflineMsgEngine::onReceiptReceived(MsgId receipt) {
 
      qDebug() << __func__ << receipt;
 
@@ -92,7 +92,7 @@ void OfflineMsgEngine::addUnsentMessage(Message const &message,
  * @param[in] msg         chat message line in the chatlog, used to eventually
  * set the message's receieved timestamp
  */
-void OfflineMsgEngine::addSentMessage(ReceiptNum receipt,
+void OfflineMsgEngine::addSentMessage(MsgId receipt,
                                       Message const &message,
                                       CompletionFn completionCallback,
                                       ReceiptFn readCallback) {
@@ -139,7 +139,7 @@ void OfflineMsgEngine::deliverOfflineMsgs() {
 
   for (const auto &message : messages) {
     QString messageText = message.message.content;
-    ReceiptNum receipt;
+    MsgId receipt;
     bool messageSent{false};
     if (message.message.isAction) {
       messageSent = messageSender->sendAction(f->getId(), messageText, receipt);
@@ -174,12 +174,12 @@ void OfflineMsgEngine::removeAllMessages() {
   unsentMessages.clear();
 }
 
-void OfflineMsgEngine::completeMessage(QMap<ReceiptNum, OfflineMessage>::iterator msgIt) {
+void OfflineMsgEngine::completeMessage(QMap<MsgId, OfflineMessage>::iterator msgIt) {
   msgIt->completionFn();
 //  sentMessages.erase(msgIt);
 }
 
-void OfflineMsgEngine::receiptMessage(QMap<ReceiptNum, OfflineMessage>::iterator msgIt)
+void OfflineMsgEngine::receiptMessage(QMap<MsgId, OfflineMessage>::iterator msgIt)
 {
     qDebug() << __func__ << msgIt.key();
     msgIt->receiptFn();
@@ -187,7 +187,7 @@ void OfflineMsgEngine::receiptMessage(QMap<ReceiptNum, OfflineMessage>::iterator
     sentMessages.erase(msgIt);
 }
 
-void OfflineMsgEngine::checkForCompleteMessages(ReceiptNum receipt) {
+void OfflineMsgEngine::checkForCompleteMessages(MsgId receipt) {
   qDebug() << __func__ << receipt;
   if(receipt.isEmpty()){
       qWarning()<<"receipt is empty!";

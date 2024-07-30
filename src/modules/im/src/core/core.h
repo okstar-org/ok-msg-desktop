@@ -19,7 +19,7 @@
 #include "icoregroupmessagesender.h"
 #include "icoregroupquery.h"
 #include "icoreidhandler.h"
-#include "receiptnum.h"
+#include "src/model/MsgId.h"
 #include "toxfile.h"
 #include "toxid.h"
 
@@ -119,8 +119,8 @@ public:
   void removeFriend(QString friendId);
   void requestFriendship(const FriendId &friendAddress, const QString &nick, const QString &message);
   // FriendSender
-  bool sendMessage(QString friendId, const QString &message, const ReceiptNum &receipt, bool encrypt = false) override;
-  bool sendAction(QString friendId, const QString &action, const ReceiptNum &receipt, bool encrypt = false) override;
+  bool sendMessage(QString friendId, const QString &message, const MsgId &msgId, bool encrypt = false) override;
+  bool sendAction(QString friendId, const QString &action, const MsgId &msgId, bool encrypt = false) override;
   void sendTyping(QString friendId, bool typing);
 
   GroupId createGroup(const QString &name="");
@@ -135,8 +135,8 @@ public:
   void setAvatar(const QByteArray &avatar);
 
  // GroupSender
-  QString sendGroupMessage(QString groupId, const QString &message) override;
-  QString sendGroupAction(QString groupId, const QString &message) override;
+  bool sendGroupMessage(QString groupId, const QString &message, const MsgId& id) override;
+  bool sendGroupAction(QString groupId, const QString &message, const MsgId& id) override;
 
   void setGroupName(const QString &groupId, const QString &name);
   void setGroupSubject(const QString &groupId, const QString &subject);
@@ -221,7 +221,7 @@ signals:
 
   void actionSentResult(QString friendId, const QString &action, int success);
 
-  void receiptRecieved(const FriendId &friedId, ReceiptNum receipt);
+  void receiptRecieved(const FriendId &friedId, MsgId receipt);
 
   void failedToRemoveFriend(QString friendId);
 
@@ -236,31 +236,10 @@ private:
   virtual void onSelfAvatarChanged(const std::string avatar) override;
   virtual void onSelfStatusChanged(lib::messenger::IMStatus status, const std::string &msg) override;
 
-  //
-  //  static void onFriendRequest(Tox *tox, const QString &cUserId,
-  //                              const uint8_t *cMessage, size_t cMessageSize,
-  //                              void *core);
-  //
-  //
-  //  static void onGroupInvite(Tox *tox, QString receiver,
-  //                            Tox_Conference_Type type, const uint8_t *cookie,
-  //                            size_t length, void *vCore);
-
-  //  static void onGroupPeerListChange(Tox *, QString groupId, void *core);
-  //
-  //  static void onGroupPeerNameChange(Tox *, QString groupId, QString peerId,
-  //                                    const uint8_t *name, size_t length,
-  //                                    void *core);
-  //  static void onGroupTitleChange(Tox *tox, QString groupId, QString peerId,
-  //                                 const uint8_t *cTitle, size_t length,
-  //                                 void *vCore);
-  //  static void onReadReceiptCallback(Tox *tox, QString receiver,
-  //                                    ReceiptNum receipt, void *core);
-
-  QString sendGroupMessageWithType(QString groupId, const QString &message);
+  bool sendGroupMessageWithType(QString groupId, const QString &message,const MsgId &msgId);
 
   bool sendMessageWithType(QString friendId, const QString &message,
-                           const ReceiptNum &receipt, bool encrypt = false);
+                           const MsgId &msgId, bool encrypt = false);
 
   void sendReceiptReceived(const QString &friendId, QString receipt);
 
@@ -300,7 +279,7 @@ private:
   virtual void onFriendAvatarChanged(const QString friendId, const std::string avatar) override;
 
   virtual void onFriendAliasChanged(const lib::messenger::IMContactId &fId, const QString &alias) override;
-  virtual void onMessageReceipt(QString friendId, ReceiptNum receipt) override;
+  virtual void onMessageReceipt(QString friendId, MsgId receipt) override;
 
   /**
    * GroupHandler
@@ -340,7 +319,7 @@ private:
 
   std::unique_ptr<CoreFile> file;
 //  std::unique_ptr<CoreAV> av;
-  ReceiptNum m_receipt;
+  MsgId m_receipt;
   QTimer *toxTimer = nullptr;
   // recursive, since we might call our own functions
   mutable CompatibleRecursiveMutex coreLoopLock;

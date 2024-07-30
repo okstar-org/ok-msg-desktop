@@ -27,7 +27,7 @@ namespace {
 bool sendMessageToCore(ICoreFriendMessageSender &messageSender,
                        const FriendId &f,
                        const Message &message,
-                       const ReceiptNum &receipt,
+                       const MsgId &msgId,
                        bool encrypt) {
   QString friendId = f.getId();
 
@@ -35,7 +35,7 @@ bool sendMessageToCore(ICoreFriendMessageSender &messageSender,
                     ? std::mem_fn(&ICoreFriendMessageSender::sendAction)
                     : std::mem_fn(&ICoreFriendMessageSender::sendMessage);
 
-  return sendFn(messageSender, friendId, message.content, receipt, encrypt);
+  return sendFn(messageSender, friendId, message.content, msgId, encrypt);
 }
 } // namespace
 
@@ -61,7 +61,7 @@ FriendMessageDispatcher::~FriendMessageDispatcher()
 /**
  * @see IMessageSender::sendMessage
  */
-std::pair<DispatchedMessageId, SentMessageId>
+std::pair<DispatchedMessageId, MsgId>
 FriendMessageDispatcher::sendMessage(bool isAction, const QString &content, bool encrypt) {
   qDebug() << __func__ << content;
 
@@ -69,7 +69,7 @@ FriendMessageDispatcher::sendMessage(bool isAction, const QString &content, bool
   auto lastId = nextMessageId;
 
   for (const auto &message : processor.processOutgoingMessage(isAction, content)) {
-    qDebug() << "Generated a new message:" << message.id;
+    qDebug() << "Preparing to send a message:" << message.id;
 
     auto dispatcherId = nextMessageId++;
     qDebug() <<"dispatcherId:" << dispatcherId.get();
@@ -88,8 +88,7 @@ FriendMessageDispatcher::sendMessage(bool isAction, const QString &content, bool
 
 
     bool messageSent = sendMessageToCore(messageSender, f, message, message.id, encrypt);
-    qDebug() << "sendMessage=>"<<messageSent<<
-    QString("{msgId:%1, dispatcherId:%2}")
+    qDebug() << "sendMessage=>"<<messageSent<< QString("{msgId:%1, dispatcherId:%2}")
             .arg(message.id)
             .arg(dispatcherId.get());
 
@@ -125,7 +124,7 @@ void FriendMessageDispatcher::onMessageReceived(FriendMessage& msg) {
  * @brief Handles received receipt from toxcore
  * @param[in] receipt receipt id
  */
-void FriendMessageDispatcher::onReceiptReceived(ReceiptNum receipt) {
+void FriendMessageDispatcher::onReceiptReceived(MsgId receipt) {
   offlineMsgEngine.onReceiptReceived(receipt);
 }
 

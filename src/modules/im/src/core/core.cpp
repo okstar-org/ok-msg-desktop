@@ -635,7 +635,7 @@ void Core::onGroupInfo( QString groupId, lib::messenger::IMGroup groupInfo) {
   emit groupInfoReceipt(GroupId(groupId), info);
 }
 
-void Core::onMessageReceipt(QString friendId, ReceiptNum receipt) {
+void Core::onMessageReceipt(QString friendId, MsgId receipt) {
     qDebug()<<__func__<<friendId<<receipt;
   emit receiptRecieved(getFriendPublicKey(friendId), receipt);
 }
@@ -725,7 +725,7 @@ void Core::requestFriendship(const FriendId &friendId,const QString &nick, const
 
 bool Core::sendMessageWithType(QString friendId,
                                const QString &message,
-                               const ReceiptNum &id,
+                               const MsgId &id,
                                bool encrypt) {
 
   qDebug() << __func__ <<"receiver"<< friendId <<"message:"<< message;
@@ -748,7 +748,7 @@ bool Core::sendMessageWithType(QString friendId,
   //
   //  ToxString cMessage(message);
   //  Tox_Err_Friend_Send_Message error;
-//  receipt = ReceiptNum{receipts};
+//  receipt = MsgId{receipts};
   //  if (parseFriendSendMessageError(error)) {
   //    return true;
   //  }
@@ -756,17 +756,15 @@ bool Core::sendMessageWithType(QString friendId,
 }
 
 bool Core::sendMessage(QString friendId, const QString &message,
-                      const ReceiptNum &receipt, bool encrypt) {
+                      const MsgId &msgId, bool encrypt) {
   QMutexLocker ml(&coreLoopLock);
-  return sendMessageWithType(friendId, message,
-                             receipt, encrypt);
+  return sendMessageWithType(friendId, message,msgId, encrypt);
 }
 
 bool Core::sendAction(QString friendId, const QString &action,
-                     const ReceiptNum &receipt, bool encrypt) {
+                     const MsgId &msgId, bool encrypt) {
   QMutexLocker ml(&coreLoopLock);
-  return sendMessageWithType(friendId, action, receipt,
-                             encrypt);
+  return sendMessageWithType(friendId, action, msgId,encrypt);
 }
 
 void Core::sendTyping(QString friendId, bool typing) {
@@ -775,38 +773,19 @@ void Core::sendTyping(QString friendId, bool typing) {
   emit failedToSetTyping(typing);
 }
 
-QString Core::sendGroupMessageWithType(QString groupId,const QString &message) {
+bool Core::sendGroupMessageWithType(QString groupId,const QString &message, const MsgId &id) {
   QMutexLocker ml{&coreLoopLock};
-  QString r;
-  tox->sendToGroup(groupId, message, r);
-  return r;
-
-  //  int size = message.toUtf8().size();
-  //  auto maxSize = tox_max_message_length();
-  //  if (size > maxSize) {
-  //    qCritical() << "Core::sendMessageWithType called with message of size:"
-  //                << size << "when max is:" << maxSize << ". Ignoring.";
-  //    return;
-  //  }
-  //
-  //  ToxString cMsg(message);
-  //  Tox_Err_Conference_Send_Message error;
-  //  tox_conference_send_message(tox.get(), groupId, type, cMsg.data(),
-  //                              cMsg.size(), &error);
-  //  if (!parseConferenceSendMessageError(error)) {
-  //    emit groupSentFailed(groupId);
-  //    return;
-  //  }
+  return tox->sendToGroup(groupId, message, id);
 }
 
-QString  Core::sendGroupMessage(QString groupId, const QString &message) {
+bool Core::sendGroupMessage(QString groupId, const QString &message, const MsgId &id) {
   QMutexLocker ml{&coreLoopLock};
-    return sendGroupMessageWithType(groupId, message);
+    return sendGroupMessageWithType(groupId, message, id);
 }
 
-QString  Core::sendGroupAction(QString groupId, const QString &message) {
+bool Core::sendGroupAction(QString groupId, const QString &message, const MsgId &id) {
   QMutexLocker ml{&coreLoopLock};
-  return sendGroupMessageWithType(groupId, message);
+  return sendGroupMessageWithType(groupId, message, id);
 }
 
 void Core::setGroupName(const QString &groupId, const QString &name) {

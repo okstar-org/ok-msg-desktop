@@ -98,9 +98,9 @@ struct Orderable : EqualityComparible<T, Underlying>
  * Usage: Declare named type with arbitrary tag, then hook up Qt metatype for use
  * in signals/slots. For queued connections, registering the metatype is also
  * required before the type is used.
- *   using ReceiptNum = NamedType<uint32_t, struct ReceiptNumTag>;
- *   Q_DECLARE_METATYPE(ReceiptNum);
- *   qRegisterMetaType<ReceiptNum>();
+ *   using MsgId = NamedType<uint32_t, struct ReceiptNumTag>;
+ *   Q_DECLARE_METATYPE(MsgId);
+ *   qRegisterMetaType<MsgId>();
  */
 
 template <typename T, typename Tag, template <typename, typename> class... Properties>

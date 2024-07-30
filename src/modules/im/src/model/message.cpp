@@ -51,9 +51,9 @@ std::vector<Message> MessageProcessor::processOutgoingMessage(bool isAction, QSt
     message.from = idHandler.getSelfPeerId().toString();
     message.content = part;
     message.timestamp = timestamp;
+    qDebug() << "Generated a new message:" << message.id;
     return message;
   });
-
   return ret;
 }
 
