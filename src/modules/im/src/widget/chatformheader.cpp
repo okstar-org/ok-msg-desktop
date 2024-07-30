@@ -205,7 +205,7 @@ void ChatFormHeader::setContact(const Contact *contact_)
             updateCallButtons(f->getStatus());
             updateContactStatus(f->getStatus());
 
-            connect(f, &Friend::statusChanged, [&](Status::Status status, bool event) {
+            connect(f, &Friend::statusChanged, this, [this](Status::Status status, bool event) {
                 updateCallButtons(status);
                 updateContactStatus(status);
             });
@@ -288,11 +288,11 @@ void ChatFormHeader::createCallConfirm(const ToxPeer &peer, bool video, QString 
     callConfirm = std::make_unique<CallConfirmWidget>(btn);
 //    callConfirm->move(btn->pos());
 
-    connect(callConfirm.get(), &CallConfirmWidget::accepted, [=](){
+    connect(callConfirm.get(), &CallConfirmWidget::accepted, this, [=](){
         removeCallConfirm();
         emit callAccepted(peer, video);
     });
-    connect(callConfirm.get(), &CallConfirmWidget::rejected, [=](){
+    connect(callConfirm.get(), &CallConfirmWidget::rejected, this, [=](){
         removeCallConfirm();
         emit callRejected(peer);
     });
