@@ -61,11 +61,11 @@
         <translation>Seleccione por favor</translation>
     </message>
     <message>
-        <source>Sign Up</source>
+        <source>Sign up</source>
         <translation>Registar uma conta</translation>
     </message>
     <message>
-        <source>Retrieve Password</source>
+        <source>Forgot password</source>
         <translation>Obter a senha</translation>
     </message>
 	<message>

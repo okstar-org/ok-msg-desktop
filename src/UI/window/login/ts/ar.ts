@@ -61,11 +61,11 @@
         <translation>الرجاء اختيار</translation>
     </message>
     <message>
-        <source>Sign Up</source>
+        <source>Sign up</source>
         <translation>رقم التسجيل</translation>
     </message>
     <message>
-        <source>Retrieve Password</source>
+        <source>Forgot password</source>
         <translation>استرجاع كلمة السر</translation>
     </message>
 	<message>

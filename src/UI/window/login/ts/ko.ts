@@ -61,11 +61,11 @@
         <translation>선택하십시오.</translation>
     </message>
     <message>
-        <source>Sign Up</source>
+        <source>Sign up</source>
         <translation>계정 등록</translation>
     </message>
     <message>
-        <source>Retrieve Password</source>
+        <source>Forgot password</source>
         <translation>비밀번호 찾기</translation>
     </message>
 	<message>
