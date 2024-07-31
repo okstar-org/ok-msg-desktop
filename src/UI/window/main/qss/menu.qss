@@ -13,19 +13,25 @@ QPushButton {
 *QPushButton:hover, QPushButton:!hover:checked { background-color: #28292c}
 */
 
-QPushButton#chatBtn {
-	background-image:url(:/icon/UIWindowMain/menu_chat.png) ;
+QPushButton#chatBtn,
+QPushButton#settingBtn
+{
+	qproperty-use_indicator: true;
 }
 
-QPushButton#chatBtn:hover, QPushButton#chatBtn:checked  {
-	background-image:url(:/icon/UIWindowMain/menu_chat_active.png) ;
+QPushButton#chatBtn::indicator {
+	image:url(:/icon/UIWindowMain/menu_chat.svg) ;
+}
+
+QPushButton#chatBtn::indicator:hover, QPushButton#chatBtn::indicator:checked  {
+	image:url(:/icon/UIWindowMain/menu_chat_active.svg) ;
 }
 
 
-QPushButton#settingBtn {
-	background-image:url(:/icon/UIWindowMain/menu_setting.png) ;
+QPushButton#settingBtn::indicator {
+	image:url(:/icon/UIWindowMain/menu_setting.svg) ;
 }
 
-QPushButton#settingBtn:hover, QPushButton#settingBtn:!hover:checked {
-	background-image:url(:/icon/UIWindowMain/menu_setting_active.png) ;
+QPushButton#settingBtn::indicator:hover, QPushButton#settingBtn::indicator:!hover:checked {
+	image:url(:/icon/UIWindowMain/menu_setting_active.svg) ;
 }

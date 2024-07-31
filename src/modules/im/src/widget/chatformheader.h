@@ -60,7 +60,7 @@ public:
 
     void setContact(const Contact* contact);
     void removeContact();
-    const Contact* getContact()const{return contact;}
+    const Contact *getContact() const;
 
     void setName(const QString& newName);
     void setMode(Mode mode);
@@ -101,7 +101,6 @@ signals:
     void micMuteToggle();
     void volMuteToggle();
 
-    void nameChanged(const QString& name);
 
     void callAccepted(const ToxPeer& peerId, bool video);
     void callRejected(const ToxPeer& peerId);
@@ -109,14 +108,14 @@ signals:
 private slots:
     void retranslateUi();
     void updateButtonsView();
-    void onAvatarChanged(  const QPixmap &pic);
     void onDisplayedNameChanged(const QString& name);
 
 private:
+    void nameChanged(const QString &name);
     void updateContactStatus(Status::Status status);
 
 private:
-    const Contact* contact = nullptr;
+    ContactId contactId;
     bool isSelf = false;
 
     Mode mode;
