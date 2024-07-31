@@ -7,6 +7,8 @@ set(${PROJECT_NAME}_SOURCES
         translator.cpp
         applicationinfo.h
         applicationinfo.cpp
+    style.h
+    style.cpp
 )
 
 add_library(${PROJECT_NAME} STATIC

@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (c) 2022 船山信息 chuanshaninfo.com
  * The project is licensed under Mulan PubL v2.
  * You can use this software according to the terms and conditions of the Mulan
@@ -10,24 +10,28 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#pragma once
+//
+// Created by gaojie on 24-7-31.
+//
 
-#include "UI/core/ui.h"
-#include <QFrame>
+#include "Platform.h"
 
-namespace UI {
+namespace platform {
 
-enum class PageMenu {
-  chat,
-  setting,
-  platform
-};
+Platform::Platform(): m_widget{nullptr} {
+  m_widget = new Widget();
+}
 
-class Page : public QFrame {
-  Q_OBJECT
-public:
- explicit Page(QWidget *parent = nullptr) ;
-~Page() ;
-};
+Platform::~Platform() {
 
-} // namespace UI
+}
+
+void Platform::init(Profile *p) {}
+QString Platform::name() { return QString(); }
+void Platform::start(ok::session::SignInInfo &signInInfo) {}
+bool Platform::isStarted() { return false; }
+void Platform::onSave(SavedInfo &) {}
+void Platform::cleanup() {}
+void Platform::destroy() {}
+void Platform::hide() {}
+} // namespace platform

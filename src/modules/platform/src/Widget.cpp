@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (c) 2022 船山信息 chuanshaninfo.com
  * The project is licensed under Mulan PubL v2.
  * You can use this software according to the terms and conditions of the Mulan
@@ -10,24 +10,25 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#pragma once
+//
+// Created by gaojie on 24-7-31.
+//
 
-#include "UI/core/ui.h"
-#include <QFrame>
+#include "Widget.h"
 
-namespace UI {
+#include <QGridLayout>
+#include <QUrl>
+#include <QtWebEngineWidgets/QWebEngineView>
 
-enum class PageMenu {
-  chat,
-  setting,
-  platform
-};
+namespace platform {
 
-class Page : public QFrame {
-  Q_OBJECT
-public:
- explicit Page(QWidget *parent = nullptr) ;
-~Page() ;
-};
+Widget::Widget(QWidget *parent): UI::OMenuWidget(parent) {
+  setLayout(new QGridLayout());
 
-} // namespace UI
+
+  webView = new QWebEngineView(this);
+  webView->load(QUrl("https://stack.okstar.org.cn")); // 加载网页
+
+  layout()->addWidget(webView);
+}
+} // namespace platform

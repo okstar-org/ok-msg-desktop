@@ -11,6 +11,7 @@
  */
 
 #include "videosurface.h"
+#include "base/SvgUtils.h"
 #include "src/core/core.h"
 #include "src/friendlist.h"
 #include "src/lib/settings/style.h"
@@ -176,7 +177,7 @@ void VideoSurface::paintEvent(QPaintEvent*)
         QPixmap drawnAvatar = avatar;
 
         if (drawnAvatar.isNull())
-            drawnAvatar = Style::scaleSvgImage(":/img/contact_dark.svg", boundingRect.width(),
+            drawnAvatar = SvgUtils::scaleSvgImage(":/img/contact_dark.svg", boundingRect.width(),
                                                boundingRect.height());
 
         painter.drawPixmap(boundingRect, drawnAvatar, drawnAvatar.rect());

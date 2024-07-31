@@ -1,9 +1,13 @@
 project(UIWidget)
 
-set(${PROJECT_NAME}_RESOUCRES MoveableBar.cpp GenericForm.h GenericForm.cpp)
+file( GLOB  ${PROJECT_NAME}_SOURCES
+		*.h
+		*.cpp
+)
 
 add_library(${PROJECT_NAME} STATIC
-        ${${PROJECT_NAME}_RESOUCRES})
+		${${PROJECT_NAME}_SOURCES}
+)
 
 target_link_libraries(${PROJECT_NAME}
         PRIVATE ${Qt5Core_LIBRARIES}

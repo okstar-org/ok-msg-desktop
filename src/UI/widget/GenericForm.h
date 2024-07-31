@@ -15,11 +15,14 @@
 
 namespace UI {
 
+/**
+ * 代表模块内标签页（一个模块内子标签页）
+ */
 class GenericForm : public QWidget {
   Q_OBJECT
 public:
   explicit GenericForm(const QPixmap &icon, QWidget *parent = nullptr);
-  virtual ~GenericForm() {}
+  ~GenericForm() ;
 
   virtual QString getFormName() = 0;
   QPixmap getFormIcon();

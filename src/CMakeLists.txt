@@ -27,8 +27,8 @@ set(${PROJECT_NAME}_SOURCES
 
 list(APPEND OK_LIBS
     UI
+    Platform
     IM
-    OkIMCore
     OkSession
     OkLog
     OkSettings

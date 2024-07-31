@@ -50,6 +50,18 @@ public:
     return QIcon{path};
 #endif
   }
+
+ static QPixmap scaleSvgImage(const QString& path,
+                               quint32 width,
+                               quint32 height)
+  {
+      QSvgRenderer render(path);
+      QPixmap pixmap(width, height);
+      pixmap.fill(QColor(0, 0, 0, 0));
+      QPainter painter(&pixmap);
+      render.render(&painter, pixmap.rect());
+      return pixmap;
+  }
 };
 
 #endif // OKMSG_PROJECT_SVGUTILS_H

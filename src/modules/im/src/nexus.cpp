@@ -53,7 +53,7 @@ Q_DECLARE_OPAQUE_POINTER(ToxAV *)
 static Nexus *nexus{nullptr};
 
 Nexus::Nexus(QObject *parent)
-    : QObject(parent), stared(false), profile{nullptr}, widget{nullptr} {
+    : stared(false), profile{nullptr}, m_widget{nullptr} {
 
     qDebug() << __func__;
 
@@ -67,9 +67,9 @@ Nexus::Nexus(QObject *parent)
 
 Nexus::~Nexus() {
   qDebug() << __func__;
-  if (widget)
-    delete widget;
-  widget = nullptr;
+  if (m_widget)
+    m_widget->deleteLater();
+
   delete profile;
   profile = nullptr;
   emit saveGlobal();
@@ -96,7 +96,7 @@ void Nexus::onSave(SavedInfo &savedInfo) {
 
     settings->setWindowGeometry(savedInfo.windowGeometry);
     settings->saveGlobal();
-    widget->close();
+    m_widget->close();
   }
 
   /**
@@ -105,7 +105,7 @@ void Nexus::onSave(SavedInfo &savedInfo) {
    * Hides the login screen and shows the GUI for the given profile.
    * Will delete the current GUI, if it exists.
    */
-  void Nexus::start(ok::session::SignInInfo & signInInfo, QWidget * parent_) {
+  void Nexus::start(ok::session::SignInInfo &signInInfo) {
 
     qDebug()<<__func__ << signInInfo.username;
 
@@ -132,8 +132,6 @@ void Nexus::onSave(SavedInfo &savedInfo) {
 
     qDebug() << "Starting up";
     stared = true;
-
-    parent = parent_;
 
     auto &s = ok::base::OkSettings::getInstance();
     QString locale = s.getTranslation();
@@ -210,7 +208,7 @@ void Nexus::onSave(SavedInfo &savedInfo) {
     showMainGUI();
   }
 
-  void Nexus::hide() { widget->hide(); }
+  void Nexus::hide() { m_widget->hide(); }
 
 
   QString Nexus::name() { return Nexus::Name(); }
@@ -321,12 +319,9 @@ void Nexus::onSave(SavedInfo &savedInfo) {
 
 
     // Create GUI
-    widget = new Widget(*audioControl, parent);
-    if (parent) {
-      static_cast<QStackedWidget *>(parent)->addWidget(widget);
-    }
+    m_widget = new Widget(*audioControl);
     // Start GUI
-    widget->init();
+    m_widget->init();
     GUI::getInstance();
 
     // Zetok protection
@@ -336,7 +331,7 @@ void Nexus::onSave(SavedInfo &savedInfo) {
     GUI::setEnabled(false);
 
     // Connections
-    connect(profile, &Profile::selfAvatarChanged, widget,
+    connect(profile, &Profile::selfAvatarChanged, m_widget,
             &Widget::onSelfAvatarLoaded);
 
     connect(profile, &Profile::selfAvatarChanged,
@@ -344,12 +339,12 @@ void Nexus::onSave(SavedInfo &savedInfo) {
         emit updateAvatar(pixmap);
     });
 
-    connect(profile, &Profile::coreChanged, widget, &Widget::onCoreChanged);
+    connect(profile, &Profile::coreChanged, m_widget, &Widget::onCoreChanged);
 
-    connect(profile, &Profile::failedToStart, widget,
+    connect(profile, &Profile::failedToStart, m_widget,
             &Widget::onFailedToStartCore, Qt::BlockingQueuedConnection);
 
-    connect(profile, &Profile::badProxy, widget, &Widget::onBadProxyCore,
+    connect(profile, &Profile::badProxy, m_widget, &Widget::onBadProxyCore,
             Qt::BlockingQueuedConnection);
 
     profile->startCore();
@@ -452,7 +447,7 @@ void Nexus::onSave(SavedInfo &savedInfo) {
    * @brief Get desktop GUI widget.
    * @return nullptr if not started, desktop widget otherwise.
    */
-  Widget *Nexus::getDesktopGUI() { return getInstance().widget; }
+  Widget *Nexus::getDesktopGUI() { return dynamic_cast<Widget *>(getInstance().widget()); }
 
   void Nexus::bootstrapWithProfileName(const QString &profileName) {
     qDebug() << "bootstrapWithProfileName" << profileName;
@@ -475,6 +470,7 @@ void Nexus::onSave(SavedInfo &savedInfo) {
   }
 
   QString Nexus::Name() { return OK_IM_MODULE; }
+  QWidget *Nexus::widget() { return m_widget->getInstance(); }
 
 #ifdef Q_OS_MAC
   void Nexus::retranslateUi() {

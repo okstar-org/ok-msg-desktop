@@ -21,12 +21,13 @@
 #include "UI/core/ControllerManager.h"
 #include "UI/core/SettingManager.h"
 #include "UI/window/login/src/LoginWindow.h"
-#include "UI/window/main/src/MainWindow.h"
 #include "UI/window/WindowManager.h"
 
 #include "modules/module.h"
 
-
+namespace UI{
+  class MainWindow;
+}
 
 namespace core {
 
@@ -47,9 +48,6 @@ public:
   inline ControllerManager *controllerManager() {
     return _controllerManager.get();
   }
-
-protected:
-  void initIM();
 
 private:
   QMap<QString, Module *> m_moduleMap;
@@ -76,10 +74,9 @@ private:
   void createLoginUI(bool bootstrap);
   void closeLoginUI();
 
-  void startMainUI();
+  void startMainUI(ok::session::SignInInfo &m_signInInfo);
   void stopMainUI();
 
-  Module * initModuleIM(ok::session::SignInInfo &signInInfo);
 
 #ifdef OK_MODULE_PAINTER
   void initModulePainter();
@@ -93,9 +90,6 @@ public slots:
   void cleanup();
 
   void onLoginSuccess(ok::session::SignInInfo &);
-
-  void onMenuPushed(UI::PageMenu menu, bool checked);
-  void onMenuReleased(UI::PageMenu menu, bool checked);
 
   void onAvatar(const QPixmap &);
 

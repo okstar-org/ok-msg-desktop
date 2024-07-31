@@ -12,7 +12,7 @@
 
 #include "style.h"
 #include "settings.h"
-#include "src/widget/gui.h"
+//#include "src/widget/gui.h"
 
 #include <QDebug>
 #include <QDir>
@@ -25,7 +25,6 @@
 #include <QStandardPaths>
 #include <QStringBuilder>
 #include <QStyle>
-#include <QSvgRenderer>
 #include <QWidget>
 
 /**
@@ -362,18 +361,9 @@ void Style::setThemeColor(const QColor& color)
  */
 void Style::applyTheme()
 {
-    GUI::reloadTheme();
+//    GUI::reloadTheme();
 }
 
-QPixmap Style::scaleSvgImage(const QString& path, uint32_t width, uint32_t height)
-{
-    QSvgRenderer render(path);
-    QPixmap pixmap(width, height);
-    pixmap.fill(QColor(0, 0, 0, 0));
-    QPainter painter(&pixmap);
-    render.render(&painter, pixmap.rect());
-    return pixmap;
-}
 
 void Style::initPalette()
 {
@@ -419,9 +409,9 @@ void Style::initDictColor()
 
 QString Style::getThemePath()
 {
-    const int num = Settings::getInstance().getThemeColor();
-    if (themeNameColors[num].type == Dark) {
-        return BuiltinThemeDarkPath;
-    }
+//    const int num = Settings::getInstance().getThemeColor();
+//    if (themeNameColors[num].type == Dark) {
+//        return BuiltinThemeDarkPath;
+//    }
     return BuiltinThemeDefaultPath;
 }

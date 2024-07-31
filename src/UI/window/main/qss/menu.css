@@ -7,6 +7,8 @@ QPushButton {
 	background-repeat: no-repeat;
 	background-position: center;
 	border-radius: 12px;
+	width: 52px;
+	height: 52px;
 }
 
 /**
@@ -21,6 +23,13 @@ QPushButton#chatBtn:hover, QPushButton#chatBtn:checked  {
 	background-image:url(:/icon/UIWindowMain/menu_chat_active.png) ;
 }
 
+QPushButton#platformBtn {
+	background-image:url(:/icon/UIWindowMain/menu_platform.png) ;
+}
+
+QPushButton#platformBtn:hover, QPushButton#platformBtn:checked  {
+	background-image:url(:/icon/UIWindowMain/menu_platform_active.png) ;
+}
 
 QPushButton#settingBtn {
 	background-image:url(:/icon/UIWindowMain/menu_setting.png) ;

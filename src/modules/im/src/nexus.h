@@ -63,9 +63,9 @@ public:
   virtual void destroy() override;
 
   QString name() override;
+  QWidget* widget() override;
   void init(Profile *) override;
-  void start(ok::session::SignInInfo &signInInfo,
-             QWidget *parent = nullptr) override;
+  void start(ok::session::SignInInfo &signInInfo) override;
   bool isStarted() override { return stared; }
   void hide() override;
   void onSave(SavedInfo& ) override;
@@ -131,8 +131,7 @@ private:
   Profile *profile;
 
   Settings *settings;
-  QWidget *parent;
-  QPointer<Widget> widget;  //某些异常情况下widget会被提前释放
+  QPointer<Widget> m_widget;  //某些异常情况下widget会被提前释放
   std::unique_ptr<IAudioControl> audioControl;
   QCommandLineParser *parser = nullptr;
 };

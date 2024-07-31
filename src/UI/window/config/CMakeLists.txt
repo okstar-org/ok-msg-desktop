@@ -8,6 +8,7 @@ file( GLOB ${PROJECT_NAME}_SOURCES
     settings/src/*.cpp
     about/src/*.cpp
 )
+
 file( GLOB ${PROJECT_NAME}_UIS
     src/*.ui
     plugin/src/*.ui
@@ -29,8 +30,6 @@ file( GLOB ${PROJECT_NAME}_TSS
 )
 
 qt5_wrap_ui(${PROJECT_NAME}_FORMS ${${PROJECT_NAME}_UIS})
-
-message(STATUS "${${PROJECT_NAME}_TSS}")
 
 qt5_add_translation(
     ${PROJECT_NAME}_QM_FILES
@@ -105,8 +104,8 @@ add_library(${PROJECT_NAME} STATIC
     ${${PROJECT_NAME}_SOURCES})
 
 target_link_libraries(${PROJECT_NAME}
-        PRIVATE OkNetwork
-        PRIVATE Plugin
+    PRIVATE OkNetwork
+    PRIVATE Plugin
         PRIVATE ${Qt5Widgets_LIBRARIES}
         PRIVATE ${Qt5Xml_LIBRARIES}
 )

@@ -13,10 +13,12 @@
 #include "ui_MainWindow.h"
 
 #include "UI/window/config/src/ConfigWindow.h"
+#include "application.h"
 #include "base/OkSettings.h"
 #include "base/PageFactory.h"
 #include "base/logs.h"
 #include "modules/im/src/model/status.h"
+#include "modules/platform/src/Platform.h"
 #include "src/lib/settings/style.h"
 
 #include <QLabel>
@@ -27,19 +29,20 @@
 #include <cstdlib>
 
 #include <modules/im/src/nexus.h>
+#include <modules/platform/src/Platform.h>
 
 namespace UI {
 
-static MainWindow* instance = nullptr;
+static MainWindow *instance = nullptr;
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow) {
+MainWindow::MainWindow(ok::session::SignInInfo &m_signInInfo_, QWidget *parent)
+    : QMainWindow(parent), ui(new Ui::MainWindow), m_signInInfo{m_signInInfo_} {
 
   qDebug() << __func__;
 
   ui->setupUi(this);
-//  setStyleSheet("QMainWindow{background-color: white;}");
-//  setAutoFillBackground(false);
+  //  setStyleSheet("QMainWindow{background-color: white;}");
+  //  setAutoFillBackground(false);
 
   setAutoFillBackground(true);
   // 创建一个QPalette对象
@@ -51,12 +54,10 @@ MainWindow::MainWindow(QWidget *parent)
 
   setWindowTitle(APPLICATION_NAME);
   setAttribute(Qt::WA_QuitOnClose, true);
-  //黄金分割比例 874/520 = 1.618
+  // 黄金分割比例 874/520 = 1.618
   setMinimumSize(QSize(874, 520));
 
   m_menu = ui->menu_widget;
-  connect(m_menu, SIGNAL(toggleChat(bool)), this, SLOT(onToggleChat(bool)));
-  connect(m_menu, SIGNAL(onPage(PageMenu)), this, SLOT(onSwitchPage(PageMenu)));
 
   timer = new QTimer(this);
   timer->start(1000);
@@ -69,8 +70,7 @@ MainWindow::MainWindow(QWidget *parent)
   actionQuit->setMenuRole(QAction::QuitRole);
 #endif
 
-  actionQuit->setIcon(prepareIcon(
-      Style::getImagePath("rejectCall/rejectCall.svg"), icon_size, icon_size));
+  actionQuit->setIcon(prepareIcon(Style::getImagePath("rejectCall/rejectCall.svg"), icon_size, icon_size));
   actionQuit->setText(tr("Exit", "Tray action menu to exit tox"));
   connect(actionQuit, &QAction::triggered, qApp, &QApplication::quit);
 
@@ -78,8 +78,9 @@ MainWindow::MainWindow(QWidget *parent)
   actionShow->setText(tr("Show", "Tray action menu to show window"));
   connect(actionShow, &QAction::triggered, this, &MainWindow::forceShow);
 
-  connect(menu(), &OMainMenu::menuPushed,this,&MainWindow::menuPushed);
-  
+  // connect to menu
+  connect(m_menu, &OMainMenu::menuPushed, this, &MainWindow::onSwitchPage);
+
   instance = this;
 }
 
@@ -89,10 +90,7 @@ MainWindow::~MainWindow() {
   delete ui;
 }
 
-MainWindow *MainWindow::getInstance()
-{
-    return instance;
-}
+MainWindow *MainWindow::getInstance() { return instance; }
 
 // Preparing needed to set correct size of icons for GTK tray backend
 inline QIcon MainWindow::prepareIcon(QString path, int w, int h) {
@@ -104,8 +102,7 @@ inline QIcon MainWindow::prepareIcon(QString path, int w, int h) {
   }
 
   desktop = desktop.toLower();
-  if (desktop == "xfce" || desktop.contains("gnome") || desktop == "mate" ||
-      desktop == "x-cinnamon") {
+  if (desktop == "xfce" || desktop.contains("gnome") || desktop == "mate" || desktop == "x-cinnamon") {
     if (w > 0 && h > 0) {
       QSvgRenderer renderer(path);
 
@@ -135,14 +132,14 @@ inline QIcon MainWindow::prepareIcon(QString path, int w, int h) {
 void MainWindow::showEvent(QShowEvent *event) {}
 
 void MainWindow::closeEvent(QCloseEvent *event) {
-  qDebug()<<__func__<<"closeEvent...";
-//  auto &settings = ok::base::OkSettings::getInstance();
+  qDebug() << __func__ << "closeEvent...";
+  //  auto &settings = ok::base::OkSettings::getInstance();
 
-//  if (settings.getShowSystemTray() && settings.getCloseToTray()) {
-//    QWidget::closeEvent(event);
-//    close();
-//    return;
-//  }
+  //  if (settings.getShowSystemTray() && settings.getCloseToTray()) {
+  //    QWidget::closeEvent(event);
+  //    close();
+  //    return;
+  //  }
 
   //    if (autoAwayActive) {
   //      emit statusSet(Status::Status::Online);
@@ -150,13 +147,13 @@ void MainWindow::closeEvent(QCloseEvent *event) {
   //    }
   //    saveWindowGeometry();
 
-//      emit toClose();
+  //      emit toClose();
 
   //    saveSplitterGeometry();
   //    QWidget::closeEvent(event);
   //    qApp->quit();
 
-  emit Nexus::getInstance().exit("");
+//  emit Nexus::getInstance().exit("");
 }
 
 void MainWindow::init() {}
@@ -182,8 +179,7 @@ void MainWindow::onTryCreateTrayIcon() {
       trayMenu->addAction(actionQuit);
       icon->setContextMenu(trayMenu);
 
-      connect(icon.get(), &QSystemTrayIcon::activated, this,
-              &MainWindow::onIconClick);
+      connect(icon.get(), &QSystemTrayIcon::activated, this, &MainWindow::onIconClick);
 
       if (settings.getShowSystemTray()) {
         icon->show();
@@ -262,8 +258,7 @@ void MainWindow::updateIcons() {
   } else {
     //    QString color = Settings.getLightTrayIcon() ? "light" : "dark";
     QString color = "light";
-    QString path =
-        ":/img/taskbar/" + color + "/taskbar_" + assetSuffix + ".svg";
+    QString path = ":/img/taskbar/" + color + "/taskbar_" + assetSuffix + ".svg";
 
     QSvgRenderer renderer(path);
 
@@ -281,62 +276,33 @@ void MainWindow::updateIcons() {
   }
 }
 
-QFrame *MainWindow::initPage(PageMenu menu) {
+OMenuWidget *MainWindow::initMenuWindow(PageMenu menu) {
 
-  QFrame *w = Q_NULLPTR;
-
+  OMenuWidget *w = nullptr;
   switch (menu) {
-  case PageMenu::welcome:
-    //              w = new page::Welcome(this);
-    break;
-
   case PageMenu::chat:
-    // ignore
+    w = createChatModule(this);
     break;
-
+  case PageMenu::platform:
+    w = createPlatformModule(this);
+    break;
   case PageMenu::setting:
     w = new ConfigWindow(this);
     break;
   }
 
-  qDebug(("initPage finished"));
   if (w) {
     ui->stacked_widget->addWidget(w);
   }
   return w;
 }
 
-QFrame *MainWindow::getPage(PageMenu menu) {
-  int idx = static_cast<int>(menu);
-  qDebug() << "menu:" << idx;
-  for (int i = 0; i < ui->stacked_widget->count(); i++) {
-    QFrame *p = static_cast<QFrame *>(ui->stacked_widget->widget(i));
-    if (p->objectName().compare(qsl("Page:%1").arg(static_cast<int>(menu))) ==
-        0) {
-      return qobject_cast<QFrame *>(p);
-    }
-  }
-  return nullptr;
-}
+OMenuWidget *MainWindow::getMenuWindow(PageMenu menu) { return menuWindow.value(menu); }
 
-void MainWindow::onToggleChat(bool checked) {
-
-  QStackedWidget *stackedWidget = ui->stacked_widget;
-  if (!stackedWidget)
-    return;
-
-  //  QFrame *classingPage = getPage(PageMenu::classing);
-  //  if (classingPage) {
-  //    page::PageClassing *c = qobject_cast<page::PageClassing
-  //    *>(classingPage);
-  //        c->toggleChat(checked);
-  //  }
-}
-
-void MainWindow::onSwitchPage(PageMenu menu) {
-  QWidget *p = getPage(menu);
+void MainWindow::onSwitchPage(PageMenu menu, bool checked) {
+  OMenuWidget *p = getMenuWindow(menu);
   if (!p) {
-    p = initPage(menu);
+    p = initMenuWindow(menu);
   }
 
   if (!p) {
@@ -387,5 +353,33 @@ void MainWindow::onSwitchPage(PageMenu menu) {
 //}
 
 QWidget *MainWindow::getContainer(PageMenu menu) { return ui->stacked_widget; }
+
+
+OMenuWidget *MainWindow::createChatModule(MainWindow *pWindow) {
+
+  qDebug() <<"Creating module:" << Nexus::Name();
+  auto module = Nexus::Create();
+  auto nexus = static_cast<Nexus *>(module);
+  connect(nexus, &Nexus::updateAvatar,   //
+          core::Application::Instance(), &core::Application::onAvatar);
+
+//  connect(nexus, &Nexus::destroyProfile, this, &core::Application::on_logout);
+//  connect(nexus, &Nexus::exit, this, &core::Application::on_exit);
+
+  module->start(m_signInInfo);
+
+  auto m= new OMenuWidget(this);
+  m->setLayout(new QGridLayout());
+  m->layout()->addWidget(module->widget());
+  return m;
+}
+
+OMenuWidget *MainWindow::createPlatformModule(MainWindow *pWindow) {
+  auto module = new platform::Platform();
+  auto m= new OMenuWidget(this);
+  m->setLayout(new QGridLayout());
+  m->layout()->addWidget(module->widget());
+  return m;
+}
 
 } // namespace UI

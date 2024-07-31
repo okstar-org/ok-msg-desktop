@@ -18,6 +18,7 @@ add_library(${PROJECT_NAME} STATIC
         ${${PROJECT_NAME}_SOURCES})
 
 target_link_libraries(${PROJECT_NAME}
+    PRIVATE OkIMCore
     PRIVATE ${gloox_LIB}
     PUBLIC ${Qt5Core_LIBRARIES}
     PUBLIC ${Qt5Xml_LIBRARIES}

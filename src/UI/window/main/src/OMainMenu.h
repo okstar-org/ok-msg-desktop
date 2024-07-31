@@ -52,19 +52,13 @@ private:
   void updateUI();
 
 signals:
-  void onPage(PageMenu menu);
-
-  void toggleChat(bool);
-  void toggleBook(bool);
-
-  void menuReleased(PageMenu menu, bool checked);
   void menuPushed(PageMenu menu, bool checked);
 
 private slots:
   void on_personalBtn_clicked(bool checked);
   void on_chatBtn_clicked(bool checked);
   void on_settingBtn_clicked(bool checked);
-
+  void on_platformBtn_clicked(bool checked);
 public slots:
   void setAvatar(const QPixmap &);
 

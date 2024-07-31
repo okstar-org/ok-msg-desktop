@@ -31,24 +31,24 @@ public:
   QString getFormName() final override { return tr("User Interface"); }
 
 private slots:
-  void on_styleBrowser_currentIndexChanged(QString style);
+//  void on_styleBrowser_currentIndexChanged(QString style);
   void on_timestamp_editTextChanged(const QString &format);
   void on_dateFormats_editTextChanged(const QString &format);
-  void on_textStyleComboBox_currentTextChanged();
-  void on_useEmoticons_stateChanged();
-  void on_notify_stateChanged();
-  void on_desktopNotify_stateChanged();
-  void on_notifySound_stateChanged();
-  void on_notifyHide_stateChanged(int);
-  void on_busySound_stateChanged();
-  void on_showWindow_stateChanged();
-  void on_groupOnlyNotfiyWhenMentioned_stateChanged();
-
-  void on_themeColorCBox_currentIndexChanged(int);
-
-  void on_txtChatFont_currentFontChanged(const QFont &f);
-  void on_txtChatFontSize_valueChanged(int arg1);
-  void on_useNameColors_stateChanged(int value);
+//  void on_textStyleComboBox_currentTextChanged();
+//  void on_useEmoticons_stateChanged();
+//  void on_notify_stateChanged();
+//  void on_desktopNotify_stateChanged();
+//  void on_notifySound_stateChanged();
+//  void on_notifyHide_stateChanged(int);
+//  void on_busySound_stateChanged();
+//  void on_showWindow_stateChanged();
+//  void on_groupOnlyNotfiyWhenMentioned_stateChanged();
+//
+//  void on_themeColorCBox_currentIndexChanged(int);
+//
+//  void on_txtChatFont_currentFontChanged(const QFont &f);
+//  void on_txtChatFontSize_valueChanged(int arg1);
+//  void on_useNameColors_stateChanged(int value);
 
 private:
   void retranslateUi();

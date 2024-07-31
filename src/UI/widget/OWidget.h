@@ -20,12 +20,9 @@ namespace UI {
 
 class OWidget : public QWidget {
   Q_OBJECT
-
 public:
-  OWidget(QWidget *parent = nullptr,
-          Qt::WindowFlags f = Qt::FramelessWindowHint |
-                              Qt::WindowSystemMenuHint);
-  virtual ~OWidget() override {}
+  OWidget(QWidget *parent = nullptr);
+  virtual ~OWidget() override;
 
 protected:
   virtual void paintEvent(QPaintEvent *event) override;

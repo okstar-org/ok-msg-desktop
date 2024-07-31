@@ -21,6 +21,7 @@
 
 #include "base/Page.h"
 #include "base/resources.h"
+#include "src/UI/widget/OMenuWidget.h"
 
 OK_RESOURCE_LOADER(UIWindowConfig)
 
@@ -30,13 +31,11 @@ class ConfigWindow;
 
 namespace UI {
 
-class ConfigWindow : public QFrame {
+class ConfigWindow : public OMenuWidget {
   Q_OBJECT
 public:
   ConfigWindow(QWidget *parent = nullptr);
  ~ConfigWindow() ;
-
-
 
 protected:
   void retranslateUi();

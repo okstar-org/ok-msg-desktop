@@ -17,13 +17,9 @@
 #include <QPainter>
 #include <QFrame>
 
-
-
-
 namespace UI {
 
-OWidget::OWidget(QWidget *parent, Qt::WindowFlags f)
-    : QWidget(parent, f)
+OWidget::OWidget(QWidget *parent): QWidget(parent)
 {
 //   QPalette palette = this->palette();
 
@@ -52,6 +48,7 @@ void OWidget::paintEvent(QPaintEvent *event)
 {
 
 }
+OWidget::~OWidget() {}
 
 }
-}
+

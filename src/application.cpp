@@ -20,6 +20,7 @@
 #include <QTranslator>
 
 #include "UI/core/FontManager.h"
+#include "UI/window/main/src/OMainMenu.h"
 #include "UI/window/login/src/LoginWindow.h"
 #include "base/OkSettings.h"
 #include "base/files.h"
@@ -165,7 +166,7 @@ void Application::onLoginSuccess(ok::session::SignInInfo &signInInfo) {
   m_signInInfo = signInInfo;
 
   // 启动主界面
-  startMainUI();
+  startMainUI(m_signInInfo);
 #ifdef OK_PLUGIN
   // 初始化插件平台
   initPluginManager();
@@ -180,9 +181,9 @@ void Application::onLoginSuccess(ok::session::SignInInfo &signInInfo) {
   closeLoginUI();
 }
 
-void Application::startMainUI() {
+void Application::startMainUI(ok::session::SignInInfo &m_signInInfo) {
     qDebug() << __func__;
-    m_mainWindow = std::make_unique<UI::MainWindow>();
+    m_mainWindow = std::make_unique<UI::MainWindow>(m_signInInfo);
 
     /**
      * connect menu's button events.
@@ -194,8 +195,8 @@ void Application::startMainUI() {
 //              });
 //            } );
 
-      connect(m_mainWindow.get(), &UI::MainWindow::menuPushed,
-              this, &Application::onMenuPushed);
+//      connect(m_mainWindow.get(), &UI::MainWindow::menuPushed,
+//              this, &Application::onMenuPushed);
 
 
     m_mainWindow->show();
@@ -226,50 +227,6 @@ void Application::cleanup() {
 }
 
 void Application::finish() {}
-
-void Application::onMenuPushed(UI::PageMenu menu, bool checked) {
-  qDebug() << QString("menu:%1 checked:%2").arg((int)menu).arg(checked);
-
-  switch (menu) {
-  case UI::PageMenu::chat: {
-    Module *m = m_moduleMap.value(Nexus::Name());
-    if(!m){
-        m = initModuleIM(m_signInInfo);
-    }
-    if (checked) {
-      if (!m->isStarted()) {
-        auto container = m_mainWindow->getContainer(menu);
-        m->start(m_signInInfo, container);
-      }
-    }
-    break;
-  }
-  default:{
-    //ignore
-  }
-  }
-}
-
-void Application::onMenuReleased(UI::PageMenu menu, bool checked) {}
-
-Module * Application::initModuleIM(ok::session::SignInInfo &signInInfo) {
-  qDebug() << __func__ << signInInfo.username;
-  auto im = m_moduleMap.value(Nexus::Name());
-  if(!im){
-      qDebug() <<"Creating module:" << Nexus::Name();
-      im = Nexus::Create();
-      auto nexus = static_cast<Nexus *>(im);
-
-      connect(nexus, &Nexus::updateAvatar,   //
-              this, &Application::onAvatar);
-
-      connect(nexus, &Nexus::destroyProfile, this, &Application::on_logout);
-      connect(nexus, &Nexus::exit, this, &Application::on_exit);
-
-      m_moduleMap.insert(im->name(), im);
-  }
-  return im;
-}
 
 #ifdef OK_PLUGIN
 void Application::initPluginManager() {
@@ -317,12 +274,5 @@ void Application::doLogout(){
     }
      stopMainUI();
 }
-
-#ifdef OK_MODULE_PAINTER
-void Application::initModulePainter() {
-  auto p = Painter::Create();
-  qDebug() << "painter:" << p;
-}
-#endif
 
 } // namespace core

@@ -7,8 +7,15 @@ OkMSG是由OkStar(okstar.org)社区开发和维护的注重数据安全与保护
 OkMSG is an enterprise communication collaboration tool developed and maintained by the OkStar (okstar. org) community that focuses on data security and protection. It supports independent private deployment and is an open-source project that integrates multiple functions such as instant messaging, voice, video calling, file sending, and meetings. It enables your enterprise to more effectively initiate collaboration, communicate effectively, control costs, explore new businesses, and help you accelerate business development.
 
 OkMSG的诞生主要解决企业信息化过程中面对的问题：
-• 远程协同工具提高工作效率同时,如何保障企业数据安全和隐私、自主可控将成为企业最核心的问题。
-• 市面上现有产品同质化严重，市场需要一款有本质化差异的产品。
+- 远程协同工具提高工作效率同时,如何保障企业数据安全和隐私、自主可控将成为企业最核心的问题。
+- 市面上现有产品同质化严重，市场需要一款有本质化差异的产品。
+
+# Support platform
+| Platform   | Lastest Build Status                                                                                                                                                                         |
+|------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Windows-x64 | [![Build on Windows](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/win.yml/badge.svg)](https://github.com/CefView/QCefView/actions/workflows/build-windows-x86_64.yml)      | 
+| Linux-x64  | [![Build on macOS](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/ubuntu-22.04.yml/badge.svg)](https://github.com/CefView/QCefView/actions/workflows/build-macos-x86_64.yml) | 
+| macOS-x64 | None                                                                                                                                                                                         | 
 
 # 🧭 功能介绍
 - 聊天模块

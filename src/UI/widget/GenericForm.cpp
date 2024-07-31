@@ -77,4 +77,7 @@ bool GenericForm::eventFilter(QObject* o, QEvent* e)
 
     return QWidget::eventFilter(o, e);
 }
+GenericForm::~GenericForm() {
+
+}
 }

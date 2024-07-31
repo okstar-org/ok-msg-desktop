@@ -15,10 +15,6 @@
 #include "GeneralForm.h"
 #include "UserInterfaceForm.h"
 #include "lib/settings/translator.h"
-#include "modules/im/src/widget/contentlayout.h"
-#include "modules/im/src/widget/form/settings/advancedform.h"
-#include "modules/im/src/widget/form/settings/generalform.h"
-#include "modules/im/src/widget/form/settings/privacyform.h"
 
 #include <QLabel>
 #include <QTabWidget>
@@ -43,10 +39,10 @@ SettingsWidget::SettingsWidget(QWidget *parent) :
 
 
   std::unique_ptr<UserInterfaceForm> uifrm(new UserInterfaceForm(this));
-  std::unique_ptr<PrivacyForm> pfrm(new PrivacyForm());
+//  std::unique_ptr<PrivacyForm> pfrm(new PrivacyForm());
   //    connect(pfrm.get(), &PrivacyForm::clearAllReceipts, parent, &Widget::clearAllReceipts);
 
-  std::unique_ptr<AdvancedForm> expfrm(new AdvancedForm());
+//  std::unique_ptr<AdvancedForm> expfrm(new AdvancedForm());
 //  std::unique_ptr<AboutForm> abtfrm(new AboutForm());
 
 #if UPDATE_CHECK_ENABLED
@@ -75,7 +71,9 @@ SettingsWidget::SettingsWidget(QWidget *parent) :
   retranslateUi();
 }
 
-SettingsWidget::~SettingsWidget() { settings::Translator::unregister(this); }
+SettingsWidget::~SettingsWidget() {
+  settings::Translator::unregister(this);
+}
 
 void SettingsWidget::setBodyHeadStyle(QString style) { settingsWidgets->setStyle(QStyleFactory::create(style)); }
 

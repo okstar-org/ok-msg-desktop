@@ -20,7 +20,8 @@
 #include <QMap>
 
 #include "base/Page.h"
-#include "OMainMenu.h"
+#include "lib/session/AuthSession.h"
+#include "modules/module.h"
 
 namespace Ui {
 class MainWindow;
@@ -28,18 +29,21 @@ class MainWindow;
 
 namespace UI {
 
+class OMainMenu;
+class OMenuWidget;
+
 class MainWindow : public QMainWindow {
   Q_OBJECT
 
 public:
-  explicit MainWindow(QWidget *parent = nullptr);
+  explicit MainWindow(ok::session::SignInInfo &m_signInInfo, QWidget *parent = nullptr);
   ~MainWindow();
 
   static MainWindow* getInstance();
 
   void init();
-  QFrame *getPage(PageMenu menu);
-  QFrame *initPage(PageMenu menu);
+  OMenuWidget *getMenuWindow(PageMenu menu);
+  OMenuWidget *initMenuWindow(PageMenu menu);
   inline OMainMenu *menu() { return m_menu; }
   QWidget *getContainer(PageMenu menu);
 
@@ -52,7 +56,7 @@ private:
   Ui::MainWindow *ui;
 
   OMainMenu *m_menu;
-  QMap<PageMenu, QWidget *> m_pageMap;
+  QMap<PageMenu, OMenuWidget *> menuWindow;
 
   std::unique_ptr<QSystemTrayIcon> icon;
   QMenu *trayMenu;
@@ -64,21 +68,24 @@ private:
 
   //  void saveWindowGeometry();
   //  void saveSplitterGeometry();
+
+  ok::session::SignInInfo &m_signInInfo;
+
   static inline QIcon prepareIcon(QString path, int w = 0, int h = 0);
 
 signals:
   void toClose();
- void menuPushed(PageMenu menu, bool checked);
 
 private slots:
-  void onSwitchPage(PageMenu menu);
-  void onToggleChat(bool);
+  void onSwitchPage(PageMenu menu, bool checked);
 
   void onIconClick(QSystemTrayIcon::ActivationReason);
 
   void onTryCreateTrayIcon();
 
   void forceShow();
+  OMenuWidget *createChatModule(MainWindow *pWindow);
+  OMenuWidget *createPlatformModule(MainWindow *pWindow);
 };
 
 

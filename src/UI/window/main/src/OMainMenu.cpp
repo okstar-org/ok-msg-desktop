@@ -31,7 +31,7 @@ OMainMenu::OMainMenu(QWidget *parent)
   ui->setupUi(this);
 
   // 设置样式
-  QString qss = ok::base::Files::readStringAll(":/qss/menu.qss");
+  QString qss = ok::base::Files::readStringAll(":/qss/menu.css");
   setStyleSheet(qss);
 
 
@@ -64,16 +64,16 @@ void OMainMenu::updateUI() { on_chatBtn_clicked(true); }
 
 void OMainMenu::on_personalBtn_clicked(bool checked) {}
 
+/**
+ * 聊天
+ * @brief OMainMenu::on_chatBtn_clicked
+ * @param checked
+ */
 void OMainMenu::on_chatBtn_clicked(bool checked) {
   ui->chatBtn->setChecked(true);
   ui->settingBtn->setChecked(false);
+  ui->platformBtn->setChecked(false);
   emit menuPushed(UI::PageMenu::chat, ui->chatBtn->isChecked());
-  emit onPage(UI::PageMenu::chat);
-}
-
-void OMainMenu::onSetting() {
-  ui->settingBtn->setChecked(true);
-  emit onPage(PageMenu::setting);
 }
 
 /**
@@ -81,11 +81,21 @@ void OMainMenu::onSetting() {
  * @param checked
  */
 void OMainMenu::on_settingBtn_clicked(bool checked) {
-
+  ui->platformBtn->setChecked(false);
   ui->chatBtn->setChecked(false);
-
+  ui->settingBtn->setChecked(true);
   emit menuPushed(UI::PageMenu::setting, ui->settingBtn->isChecked());
-  emit onPage(UI::PageMenu::setting);
+}
+
+/**
+ * 工作平台
+ * @param checked
+ */
+void OMainMenu::on_platformBtn_clicked(bool checked) {
+  ui->chatBtn->setChecked(false);
+  ui->settingBtn->setChecked(false);
+  ui->platformBtn->setChecked(true);
+  emit menuPushed(UI::PageMenu::platform, ui->platformBtn->isChecked());
 }
 
 } // namespace UI

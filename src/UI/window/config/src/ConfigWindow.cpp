@@ -33,7 +33,9 @@
 
 namespace UI {
 
-ConfigWindow::ConfigWindow(QWidget *parent): QFrame(parent),ui(new Ui::ConfigWindow){
+ConfigWindow::ConfigWindow(QWidget *parent)
+    : OMenuWidget(parent), ui(new Ui::ConfigWindow){
+
   OK_RESOURCE_INIT(UIWindowConfig);
 
   ui->setupUi(this);

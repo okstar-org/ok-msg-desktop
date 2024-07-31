@@ -36,7 +36,7 @@ GeneralForm::GeneralForm(SettingsWidget *myParent)
   // block all child signals during initialization
   const RecursiveSignalBlocker signalBlocker(this);
 
-  Settings &s = Settings::getInstance();
+//  Settings &s = Settings::getInstance();
 
   // 先获取当前语言
 //  QString locale0 = ok::base::OkSettings::getInstance().getTranslation();
@@ -52,7 +52,7 @@ GeneralForm::GeneralForm(SettingsWidget *myParent)
   bodyUI->cbSpellChecking->setVisible(false);
 #endif
   // 获取复选框状态
-  bodyUI->checkUpdates->setChecked(s.getCheckUpdates());
+//  bodyUI->checkUpdates->setChecked(s.getCheckUpdates());
 
   auto &okSettings = ok::base::OkSettings::getInstance();
 
@@ -73,12 +73,12 @@ GeneralForm::GeneralForm(SettingsWidget *myParent)
     bodyUI->transComboBox->insertItem(i, langName);
   }
   // 当前语言下拉框状态
-  bodyUI->transComboBox->setCurrentIndex(okSettings.getLocales().indexOf(s.getTranslation()));
+  bodyUI->transComboBox->setCurrentIndex(okSettings.getLocales().indexOf(okSettings.getTranslation()));
 
   // autorun
   bodyUI->cbAutorun->setChecked(okSettings.getAutorun());
 
-  bodyUI->cbSpellChecking->setChecked(s.getSpellCheckingEnabled());
+//  bodyUI->cbSpellChecking->setChecked(s.getSpellCheckingEnabled());
 
   bool showSystemTray = okSettings.getShowSystemTray();
   bodyUI->showSystemTray->setChecked(showSystemTray);
@@ -109,13 +109,16 @@ void GeneralForm::on_transComboBox_currentIndexChanged(int index) {
   settings::Translator::translate(OK_UIWindowConfig_MODULE, locale);
 }
 
-void GeneralForm::on_cbAutorun_stateChanged() { ok::base::OkSettings::getInstance().setAutorun(bodyUI->cbAutorun->isChecked()); }
+void GeneralForm::on_cbAutorun_stateChanged() {
+  ok::base::OkSettings::getInstance().setAutorun(bodyUI->cbAutorun->isChecked()); }
 
-void GeneralForm::on_cbSpellChecking_stateChanged() { Settings::getInstance().setSpellCheckingEnabled(bodyUI->cbSpellChecking->isChecked()); }
+void GeneralForm::on_cbSpellChecking_stateChanged() {
+//  Settings::getInstance().setSpellCheckingEnabled(bodyUI->cbSpellChecking->isChecked());
+}
 
 void GeneralForm::on_showSystemTray_stateChanged() {
   ok::base::OkSettings::getInstance().setShowSystemTray(bodyUI->showSystemTray->isChecked());
-  Settings::getInstance().saveGlobal();
+//  Settings::getInstance().saveGlobal();
 }
 
 void GeneralForm::on_startInTray_stateChanged() { ok::base::OkSettings::getInstance().setAutostartInTray(bodyUI->startInTray->isChecked()); }
@@ -125,7 +128,9 @@ void GeneralForm::on_closeToTray_stateChanged() { ok::base::OkSettings::getInsta
 void GeneralForm::on_minimizeToTray_stateChanged() { ok::base::OkSettings::getInstance().setMinimizeToTray(bodyUI->minimizeToTray->isChecked()); }
 
 
-void GeneralForm::on_checkUpdates_stateChanged() { Settings::getInstance().setCheckUpdates(bodyUI->checkUpdates->isChecked()); }
+void GeneralForm::on_checkUpdates_stateChanged() {
+//  Settings::getInstance().setCheckUpdates(bodyUI->checkUpdates->isChecked());
+}
 
 /**
  * @brief Retranslate all elements in the form.
