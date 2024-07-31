@@ -37,6 +37,8 @@ OMainMenu::OMainMenu(QWidget *parent)
 
   ui->chatBtn->setCursor(Qt::PointingHandCursor);
   ui->settingBtn->setCursor(Qt::PointingHandCursor);
+  ui->chatBtn->setIconSize(QSize(40, 40));
+  ui->settingBtn->setIconSize(QSize(40, 40));
 
   delayCaller_ = std::make_unique<base::DelayedCallTimer>();
 
@@ -48,7 +50,9 @@ OMainMenu::~OMainMenu() {
 }
 
 void OMainMenu::setAvatar(const QPixmap &pixmap) {
-  auto newImage = base::Images::roundRectPixmap(pixmap, ui->label_avatar->size(), 100);
+  QSize size = ui->label_avatar->size() * ui->label_avatar->devicePixelRatioF();
+  auto newImage = base::Images::roundRectPixmap(pixmap, size, 100 * ui->label_avatar->devicePixelRatioF());
+  newImage.setDevicePixelRatio(ui->label_avatar->devicePixelRatioF());
   ui->label_avatar->setPixmap(newImage);
 }
 

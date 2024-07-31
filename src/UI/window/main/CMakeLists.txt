@@ -7,6 +7,7 @@ file( GLOB ${PROJECT_NAME}_UIS src/*.ui )
 file( GLOB ${PROJECT_NAME}_TSS ts/*.ts )
 file( GLOB ${PROJECT_NAME}_QSS qss/*.qss )
 file( GLOB ${PROJECT_NAME}_ICONS icon/*.png )
+file( GLOB ${PROJECT_NAME}_ICONS_SVG icon/*.svg )
 
 qt5_wrap_ui(${PROJECT_NAME}_FORMS
        ${${PROJECT_NAME}_UIS}
@@ -58,6 +59,13 @@ foreach (file ${${PROJECT_NAME}_ICONS})
     file(APPEND "${RESOURCE_NAME}"
             "    <file alias=\"${file_name}\">${file}</file>\n")
 endforeach (file)
+
+foreach (file ${${PROJECT_NAME}_ICONS_SVG})
+    get_filename_component(file_name ${file} NAME)
+    file(APPEND "${RESOURCE_NAME}"
+            "    <file alias=\"${file_name}\">${file}</file>\n")
+endforeach (file)
+
 file(APPEND "${RESOURCE_NAME}"
         "</qresource>")
 
@@ -90,5 +98,5 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 if(MSVC)
-    set_property(TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    set_property(TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 endif (MSVC)

@@ -38,6 +38,8 @@ set(${PROJECT_NAME}_SOURCES
     RecursiveSignalBlocker.h
     RecursiveSignalBlocker.cpp
 		uuid.h
+    stylediconbutton.h
+    stylediconbutton.cpp
 )
 
 if(WIN32)
