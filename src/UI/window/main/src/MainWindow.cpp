@@ -361,7 +361,7 @@ OMenuWidget *MainWindow::createChatModule(MainWindow *pWindow) {
   auto module = Nexus::Create();
   auto nexus = static_cast<Nexus *>(module);
   connect(nexus, &Nexus::updateAvatar,   //
-          core::Application::Instance(), &core::Application::onAvatar);
+          ok::Application::Instance(), &ok::Application::onAvatar);
 
 //  connect(nexus, &Nexus::destroyProfile, this, &core::Application::on_logout);
 //  connect(nexus, &Nexus::exit, this, &core::Application::on_exit);

@@ -29,8 +29,9 @@ namespace UI{
   class MainWindow;
 }
 
-namespace core {
+namespace ok {
 
+class Bus;
 using namespace network;
 
 class Application : public QApplication {
@@ -49,6 +50,10 @@ public:
     return _controllerManager.get();
   }
 
+  inline   Bus* bus() const {
+    return _bus.get();
+  }
+
 private:
   QMap<QString, Module *> m_moduleMap;
 
@@ -56,7 +61,7 @@ private:
 
   int _argc;
   char **_argv;
-
+  std::unique_ptr<Bus> _bus;
   std::unique_ptr<SettingManager> _settingManager;
 
   std::unique_ptr<ControllerManager> _controllerManager;

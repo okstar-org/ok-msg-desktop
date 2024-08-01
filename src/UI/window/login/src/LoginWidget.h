@@ -18,7 +18,7 @@
 class QShortcut;
 class QPaintEvent;
 
-namespace core {
+namespace ok {
 class SettingManager;
 }
 
@@ -57,7 +57,7 @@ private:
 
   QShortcut *m_loginKey;
 
-  core::SettingManager *m_settingManager;
+  ok::SettingManager *m_settingManager;
   ok::backend::OkCloudService *okCloudService;
 
   bool m_error = false;

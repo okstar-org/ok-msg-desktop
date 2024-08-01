@@ -19,7 +19,7 @@
 
 #include <base/basic_types.h>
 
-namespace core {
+namespace ok {
 
 class SettingManager : public QObject {
   Q_OBJECT

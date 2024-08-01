@@ -19,6 +19,7 @@
 #include <QString>
 #include <QTranslator>
 
+#include "Bus.h"
 #include "UI/core/FontManager.h"
 #include "UI/window/main/src/OMainMenu.h"
 #include "UI/window/login/src/LoginWindow.h"
@@ -32,11 +33,7 @@
 #include "lib/settings/translator.h"
 #include "modules/im/src/nexus.h"
 
-using namespace core;
-using namespace base;
-
-
-namespace core {
+namespace ok {
 
 Application::Application(int &argc, char *argv[])
     : QApplication(argc, argv), _argc(argc), _argv(argv) {
@@ -102,8 +99,7 @@ Application::Application(int &argc, char *argv[])
   QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath());
   addLibraryPath("platforms");
 
-  // 统一注册类型
-  qRegisterMetaType<UI::PageMenu>("PageMenu");
+  _bus = std::make_unique<Bus>();
 
   QString qss = ok::base::Files::readStringAll("application.qss");
   qApp->setStyleSheet(qss);

@@ -13,7 +13,7 @@
 
 #include "ControllerManager.h"
 
-namespace core {
+namespace ok {
 
 
 	ControllerManager::ControllerManager(QObject *parent) : QObject(parent)

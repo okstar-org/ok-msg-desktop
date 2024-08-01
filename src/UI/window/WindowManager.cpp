@@ -54,6 +54,8 @@ void WindowManager::startMainUI() {
           } );
 
 
+    // 统一注册类型
+  qRegisterMetaType<UI::PageMenu>("PageMenu");
   connect(m_mainWindow->menu(), &OMainMenu::menuPushed,
           [&](PageMenu menu, bool checked) { emit menuPushed(menu, checked); });
   m_mainWindow->show();

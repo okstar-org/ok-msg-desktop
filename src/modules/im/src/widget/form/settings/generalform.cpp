@@ -48,51 +48,8 @@ GeneralForm::GeneralForm(SettingsWidget* myParent)
 
     Settings& s = Settings::getInstance();
     //先获取当前语言
-#ifndef UPDATE_CHECK_ENABLED
-    bodyUI->checkUpdates->setVisible(false);
-#endif
-
-#ifndef SPELL_CHECKING
-    bodyUI->cbSpellChecking->setVisible(false);
-#endif
-    //获取复选框状态
-    bodyUI->checkUpdates->setChecked(s.getCheckUpdates());
-
     auto & okSettings = ok::base::OkSettings::getInstance();
 
-    for (int i = 0; i < okSettings.getLocales().size(); ++i) {
-        QString langName;
-        auto & locale = okSettings.getLocales().at(i);
-        if (locale.startsWith(QLatin1String("eo"))) // QTBUG-57802
-            langName = QLocale::languageToString(QLocale::Esperanto);
-        else if (locale.startsWith(QLatin1String("jbo")))
-            langName = QLatin1String("Lojban");
-        else if (locale.startsWith(QLatin1String("pr")))
-            langName = QLatin1String("Pirate");
-        else if (locale == (QLatin1String("pt"))) // QTBUG-47891
-            langName = QStringLiteral("português");
-        else
-            langName = QLocale(locale).nativeLanguageName();
-
-        bodyUI->transComboBox->insertItem(i, langName);
-    }
-    //当前语言下拉框状态
-    bodyUI->transComboBox->setCurrentIndex(okSettings.getLocales().indexOf(s.getTranslation()));
-
-    // autorun
-    bodyUI->cbAutorun->setChecked(okSettings.getAutorun());
-
-    bodyUI->cbSpellChecking->setChecked(s.getSpellCheckingEnabled());
-
-
-    bool showSystemTray = okSettings.getShowSystemTray();
-    bodyUI->showSystemTray->setChecked(showSystemTray);
-    bodyUI->startInTray->setChecked(okSettings.getAutostartInTray());
-    bodyUI->startInTray->setEnabled(showSystemTray);
-    bodyUI->minimizeToTray->setChecked(okSettings.getMinimizeToTray());
-    bodyUI->minimizeToTray->setEnabled(showSystemTray);
-    bodyUI->closeToTray->setChecked(okSettings.getCloseToTray());
-    bodyUI->closeToTray->setEnabled(showSystemTray);
 
     bodyUI->statusChanges->setChecked(s.getStatusChangeNotificationEnabled());
     bodyUI->groupJoinLeaveMessages->setChecked(s.getShowGroupJoinLeaveMessages());
@@ -116,46 +73,6 @@ GeneralForm::~GeneralForm()
 {
     settings::Translator::unregister(this);
     delete bodyUI;
-}
-
-void GeneralForm::on_transComboBox_currentIndexChanged(int index)
-{
-    auto & s = ok::base::OkSettings::getInstance();
-    const QString& locale = s.getLocales().at(index);
-    s.setTranslation(locale);
-    s.saveGlobal();
-    settings::Translator::translate(OK_IM_MODULE, locale);
-}
-
-void GeneralForm::on_cbAutorun_stateChanged()
-{
-    ok::base::OkSettings::getInstance().setAutorun(bodyUI->cbAutorun->isChecked());
-}
-
-void GeneralForm::on_cbSpellChecking_stateChanged()
-{
-    Settings::getInstance().setSpellCheckingEnabled(bodyUI->cbSpellChecking->isChecked());
-}
-
-void GeneralForm::on_showSystemTray_stateChanged()
-{
-    ok::base::OkSettings::getInstance().setShowSystemTray(bodyUI->showSystemTray->isChecked());
-    Settings::getInstance().saveGlobal();
-}
-
-void GeneralForm::on_startInTray_stateChanged()
-{
-    ok::base::OkSettings::getInstance().setAutostartInTray(bodyUI->startInTray->isChecked());
-}
-
-void GeneralForm::on_closeToTray_stateChanged()
-{
-    ok::base::OkSettings::getInstance().setCloseToTray(bodyUI->closeToTray->isChecked());
-}
-
-void GeneralForm::on_minimizeToTray_stateChanged()
-{
-    ok::base::OkSettings::getInstance().setMinimizeToTray(bodyUI->minimizeToTray->isChecked());
 }
 
 void GeneralForm::on_statusChanges_stateChanged()
@@ -199,11 +116,6 @@ void GeneralForm::on_maxAutoAcceptSizeMB_editingFinished()
     auto newMaxSizeB = std::lround(newMaxSizeMB * 1024 * 1024);
 
     Settings::getInstance().setMaxAutoAcceptSize(newMaxSizeB);
-}
-
-void GeneralForm::on_checkUpdates_stateChanged()
-{
-    Settings::getInstance().setCheckUpdates(bodyUI->checkUpdates->isChecked());
 }
 
 /**

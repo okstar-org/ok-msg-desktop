@@ -18,7 +18,7 @@
 #define LOGIN_ACCOUNT_KEY "LOGIN_account"
 #define LOGIN_PASSWORD_KEY "LOGIN_password"
 
-namespace core {
+namespace ok {
 
 SettingManager::SettingManager(QObject *parent) : QObject(parent),
     settings{std::make_unique<QSettings>(ORGANIZATION_NAME, ORGANIZATION_DOMAIN)}

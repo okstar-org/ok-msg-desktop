@@ -39,8 +39,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>617</width>
-        <height>541</height>
+        <width>638</width>
+        <height>495</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,0">
@@ -57,146 +57,12 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <item>
-           <layout class="QHBoxLayout" name="generalLayout">
-            <item>
-             <widget class="QLabel" name="transLabel">
-              <property name="toolTip">
-               <string>The translation may not load until qTox restarts.</string>
-              </property>
-              <property name="text">
-               <string>Language:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="transComboBox">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="toolTip">
-               <string>The translation may not load until qTox restarts.</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="generalSpacer">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QVBoxLayout" name="startupLayout">
-            <item>
-             <widget class="QCheckBox" name="cbAutorun">
-              <property name="toolTip">
-               <string>Start qTox on operating system startup (current profile).</string>
-              </property>
-              <property name="text">
-               <string>Autostart</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="checkUpdates">
-              <property name="text">
-               <string>Check for updates</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
            <layout class="QVBoxLayout" name="verticalLayout_6">
-            <item>
-             <widget class="QCheckBox" name="cbSpellChecking">
-              <property name="text">
-               <string>Spell checking</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="showSystemTray">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
-               <string>Show system tray icon</string>
-              </property>
-             </widget>
-            </item>
             <item>
              <layout class="QVBoxLayout" name="verticalLayout_8">
               <property name="leftMargin">
                <number>40</number>
               </property>
-              <item>
-               <widget class="QCheckBox" name="startInTray">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="toolTip">
-                 <string comment="toolTip for Start in tray setting">qTox will start minimized in tray.</string>
-                </property>
-                <property name="text">
-                 <string>Start in tray</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QCheckBox" name="minimizeToTray">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="toolTip">
-                 <string comment="toolTip for minimize to tray setting">After pressing minimize (_) qTox will minimize itself to tray,
-instead of system taskbar.</string>
-                </property>
-                <property name="text">
-                 <string>Minimize to tray</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QCheckBox" name="closeToTray">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="toolTip">
-                 <string comment="toolTip for close to tray setting">After pressing close (X) qTox will minimize to tray,
-instead of closing itself.</string>
-                </property>
-                <property name="text">
-                 <string>Close to tray</string>
-                </property>
-               </widget>
-              </item>
              </layout>
             </item>
             <item>
@@ -346,13 +212,6 @@ instead of closing itself.</string>
  </customwidgets>
  <tabstops>
   <tabstop>scrollArea</tabstop>
-  <tabstop>transComboBox</tabstop>
-  <tabstop>cbAutorun</tabstop>
-  <tabstop>checkUpdates</tabstop>
-  <tabstop>showSystemTray</tabstop>
-  <tabstop>startInTray</tabstop>
-  <tabstop>minimizeToTray</tabstop>
-  <tabstop>closeToTray</tabstop>
   <tabstop>statusChanges</tabstop>
   <tabstop>groupJoinLeaveMessages</tabstop>
   <tabstop>autoAwaySpinBox</tabstop>
@@ -360,54 +219,5 @@ instead of closing itself.</string>
   <tabstop>autoacceptFiles</tabstop>
  </tabstops>
  <resources/>
- <connections>
-  <connection>
-   <sender>showSystemTray</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>closeToTray</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>205</x>
-     <y>146</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>224</x>
-     <y>178</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>showSystemTray</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>minimizeToTray</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>180</x>
-     <y>144</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>359</x>
-     <y>178</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>showSystemTray</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>startInTray</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>105</x>
-     <y>144</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>119</x>
-     <y>177</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (c) 2022 船山信息 chuanshaninfo.com
  * The project is licensed under Mulan PubL v2.
  * You can use this software according to the terms and conditions of the Mulan
@@ -9,14 +9,20 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PubL v2 for more details.
  */
-#include "lib/log/LogManager.h"
-#include "launcher.h"
-#include <QDebug>
 
-int main(int argc, char *argv[]) {
+//
+// Created by gaojie on 24-8-1.
+//
 
-  Q_INIT_RESOURCE(resources);
-  const auto launcher = ok::Launcher::Create(argc, argv);
-  return launcher ? launcher->startup() : 1;
+#include "Bus.h"
+
+namespace ok{
+Bus::Bus(QObject *parent): QObject(parent) {
+
+}
+
+Bus::~Bus(){
+
+}
 
 }

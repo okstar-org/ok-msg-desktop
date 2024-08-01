@@ -14,11 +14,14 @@
 #include <QFileDialog>
 #include <cmath>
 
+#include "application.h"
 #include "base/OkSettings.h"
 #include "lib/settings/settings.h"
 #include "lib/settings/translator.h"
 #include "src/base/RecursiveSignalBlocker.h"
 #include "src/lib/settings/style.h"
+#include "Bus.h"
+
 
 namespace UI {
 /**
@@ -103,9 +106,7 @@ void GeneralForm::on_transComboBox_currentIndexChanged(int index) {
   s.setTranslation(locale);
   s.saveGlobal();
   emit onLanguageChanged(locale);
-
-
-
+  emit ok::Application::Instance()->bus()->languageChanged(locale);
   settings::Translator::translate(OK_UIWindowConfig_MODULE, locale);
 }
 

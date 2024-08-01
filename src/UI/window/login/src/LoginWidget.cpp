@@ -29,7 +29,7 @@
 
 namespace UI {
 
-using namespace core;
+using namespace ok;
 using namespace ok::session;
 using namespace ok::base;
 

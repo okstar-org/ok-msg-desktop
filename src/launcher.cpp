@@ -16,11 +16,9 @@
 #include <base/logs.h>
 #include <memory>
 
-namespace core {
+namespace ok {
 
-std::unique_ptr<Launcher> Launcher::Create(int argc, char *argv[]) {
-  return std::make_unique<Launcher>(argc, argv);
-}
+std::unique_ptr<Launcher> Launcher::Create(int argc, char *argv[]) { return std::make_unique<Launcher>(argc, argv); }
 
 Launcher::Launcher(int argc, char *argv[])
     : _argc(argc), //
@@ -34,8 +32,7 @@ Launcher::Launcher(int argc, char *argv[])
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
   qputenv("QT_ENABLE_HIGHDPI_SCALING", "1");
-  QGuiApplication::setHighDpiScaleFactorRoundingPolicy(
-      Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
+  QGuiApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
 #endif
 }
 
@@ -52,13 +49,11 @@ int Launcher::executeApplication() {
   return app->exec();
 }
 
-int Launcher::startup() {
-  return executeApplication();
-}
+int Launcher::startup() { return executeApplication(); }
 
 void Launcher::shutdown() {
   app->closeAllWindows();
   qApp->exit(0);
 }
 
-} // namespace core
+} // namespace ok

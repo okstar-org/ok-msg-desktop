@@ -23,6 +23,8 @@ set(${PROJECT_NAME}_SOURCES
     main.cpp
     application.cpp
     launcher.cpp
+    Bus.h
+    Bus.cpp
 )
 
 list(APPEND OK_LIBS

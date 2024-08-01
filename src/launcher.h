@@ -16,7 +16,7 @@
 #include <QStringList>
 #include <memory>
 
-namespace core {
+namespace ok {
 
 class Application;
 

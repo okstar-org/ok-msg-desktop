@@ -347,6 +347,7 @@ void Nexus::onSave(SavedInfo &savedInfo) {
     profile->startCore();
 
     GUI::setEnabled(true);
+
   }
 
   Module *Nexus::Create() {

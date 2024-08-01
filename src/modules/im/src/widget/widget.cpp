@@ -75,6 +75,8 @@
 #include "src/widget/gui.h"
 #include "tool/removefrienddialog.h"
 #include "ui_mainwindow.h"
+#include "application.h"
+#include "Bus.h"
 
 bool toxActivateEventHandler(const QByteArray &) {
   Widget *widget = Nexus::getDesktopGUI();
@@ -121,8 +123,14 @@ Widget::Widget(IAudioControl &audio, QWidget *parent)//
   ui->tabWidget->addTab(settingsWidget, tr("Settings"));
 
   installEventFilter(this);
+
   QString locale = settings.getTranslation();
   settings::Translator::translate(OK_IM_MODULE, locale);
+  connect(ok::Application::Instance()->bus(), &ok::Bus::languageChanged, [](QString locale0){
+    settings::Translator::translate(OK_IM_MODULE, locale0);
+  });
+
+
   qRegisterMetaType<ToxFile>("ToxFile");
 
     QIcon themeIcon = QIcon::fromTheme("qtox");
