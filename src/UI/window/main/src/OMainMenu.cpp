@@ -34,14 +34,14 @@ OMainMenu::OMainMenu(QWidget *parent)
   QString qss = ok::base::Files::readStringAll(":/qss/menu.css");
   setStyleSheet(qss);
 
-
   ui->chatBtn->setCursor(Qt::PointingHandCursor);
-  ui->settingBtn->setCursor(Qt::PointingHandCursor);
   ui->chatBtn->setIconSize(QSize(40, 40));
+  ui->settingBtn->setCursor(Qt::PointingHandCursor);
   ui->settingBtn->setIconSize(QSize(40, 40));
+  ui->platformBtn->setCursor(Qt::PointingHandCursor);
   ui->platformBtn->setIconSize(QSize(40, 40));
-  delayCaller_ = std::make_unique<base::DelayedCallTimer>();
 
+  delayCaller_ = std::make_unique<base::DelayedCallTimer>();
 }
 
 OMainMenu::~OMainMenu() {

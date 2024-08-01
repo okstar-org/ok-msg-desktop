@@ -30,11 +30,12 @@ inline QRegularExpressionMatch JidMatch(const QString& strId){
       return re.match(strId);
 }
 
+/**
+ * 联系人ID
+ */
 class ContactId
 {
 public:
-
-
     explicit ContactId();
     explicit ContactId(const ContactId &contactId);
     explicit ContactId(const QByteArray &rawId);
