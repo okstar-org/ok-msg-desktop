@@ -358,19 +358,20 @@ void SessionChatLog::onMessageReceived(const FriendId &sender,
 void SessionChatLog::onMessageSent(DispatchedMessageId dispatchedId, const Message &message) {
   qDebug() <<__func__ << "dispatchedId:" << dispatchedId.get() <<"msg:"<<message.content;
 
-  auto messageIdx = getNextIdx(message.id);
+  auto msgLogIdx = getNextIdx(message.id);
 
   ChatLogMessage chatLogMessage;
   chatLogMessage.state = MessageState::pending;
   chatLogMessage.message = message;
 
-  items.emplace(messageIdx, ChatLogItem(coreIdHandler.getSelfId(),
-                                        coreIdHandler.getNick(), //发送人名称就算自己的昵称
+  items.emplace(msgLogIdx, ChatLogItem(coreIdHandler.getSelfId(),
+                                        //发送人名称就算自己的昵称
+                                        coreIdHandler.getNick(),
                                         chatLogMessage));
 
-  outgoingMessages.insert(dispatchedId, messageIdx);
+  outgoingMessages.insert(dispatchedId, msgLogIdx);
 
-  emit itemUpdated(messageIdx);
+  emit itemUpdated(msgLogIdx);
 }
 
 /**
@@ -379,7 +380,7 @@ void SessionChatLog::onMessageSent(DispatchedMessageId dispatchedId, const Messa
  * appropriate IMessageDispatcher
  */
 void SessionChatLog::onMessageComplete(DispatchedMessageId id) {
-  qDebug() <<__func__<< "dispatchedMessageId:" << id.get();
+  qDebug() <<__func__ << "dispatchedMessageId:" << id.get();
 
   auto chatLogIdxIt = outgoingMessages.find(id);
   if (chatLogIdxIt == outgoingMessages.end()) {
@@ -393,6 +394,7 @@ void SessionChatLog::onMessageComplete(DispatchedMessageId id) {
     qWarning() << "Failed to look up message in chat log";
     return;
   }
+
   messageIt->second.getContentAsMessage().state = MessageState::complete;
   emit this->itemUpdated(messageIt->first);
 }
@@ -515,16 +517,13 @@ void SessionChatLog::onFileTransferBrokenUnbroken(const FriendId &sender,
     onFileUpdated(sender, file);
 }
 
-ChatLogIdx SessionChatLog::getNextIdx(QString msgId)
+ChatLogIdx SessionChatLog::getNextIdx(MsgId msgId)
 {
-    if(msgId.isEmpty()){
-        qWarning() << "msgId is empty.";
-        return ++nextIdx;
-    }
+    assert(!msgId.isEmpty());
 
-    auto idx = id2IdxMap.value(msgId, ChatLogIdx(0));
-    if(idx.get() == 0){
-        idx = ++nextIdx;
+    auto idx = id2IdxMap.value(msgId, ChatLogIdx(-1));
+    if(idx.get() == -1){
+        idx = nextIdx++;
         id2IdxMap.insert(msgId, idx);
     }
 

@@ -61,15 +61,15 @@ public slots:
 
     void onFileTransferRemotePausedUnpaused(const FriendId& sender, const ToxFile& file, bool paused);
     void onFileTransferBrokenUnbroken(const FriendId& sender, const ToxFile& file, bool broken);
+    inline ChatLogIdx getNextIdx(MsgId msgId);
 
 private:
     const ICoreIdHandler& coreIdHandler;
 
-    QMap<QString, ChatLogIdx> id2IdxMap;
-    inline ChatLogIdx getNextIdx(QString msgId);
+    ChatLogIdx nextIdx = ChatLogIdx(-1);
+    QMap<MsgId, ChatLogIdx> id2IdxMap;
 
-    ChatLogIdx nextIdx = ChatLogIdx(0);
-
+    QMap<DispatchedMessageId, ChatLogIdx> outgoingMessages;
     std::map<ChatLogIdx, ChatLogItem> items;
 
     struct CurrentFileTransfer
@@ -85,11 +85,7 @@ private:
      */
     std::vector<CurrentFileTransfer> currentFileTransfers;
 
-    /**
-     * Maps DispatchedMessageIds back to ChatLogIdxs. Messages are removed when the message
-     * is marked as completed
-     */
-    QMap<DispatchedMessageId, ChatLogIdx> outgoingMessages;
+
 
 };
 
