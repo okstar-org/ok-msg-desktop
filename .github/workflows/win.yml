@@ -86,6 +86,7 @@ jobs:
       uses: jurplel/install-qt-action@v3
       with:
         arch: ${{ matrix.arch == 'x64' && 'win64_msvc2019_64' || 'win32_msvc2019' }}
+        modules: 'qtwebengine'
 
     - name: Set reusable strings
       id: strings
