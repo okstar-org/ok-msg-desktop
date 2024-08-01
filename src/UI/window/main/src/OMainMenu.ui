@@ -114,7 +114,7 @@
        </spacer>
       </item>
       <item alignment="Qt::AlignHCenter">
-       <widget class="QPushButton" name="chatBtn">
+       <widget class="StyledIconButton" name="chatBtn">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -182,8 +182,8 @@
         </property>
        </spacer>
       </item>
-      <item>
-       <widget class="QPushButton" name="settingBtn">
+      <item alignment="Qt::AlignHCenter">
+       <widget class="StyledIconButton" name="settingBtn">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -220,6 +220,11 @@
    <class>CroppingLabel</class>
    <extends>QLabel</extends>
    <header location="global">src/modules/im/src/widget/tool/croppinglabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>StyledIconButton</class>
+   <extends>QPushButton</extends>
+   <header location="global">base/stylediconbutton.h</header>
   </customwidget>
  </customwidgets>
  <resources>
