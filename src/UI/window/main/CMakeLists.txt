@@ -6,7 +6,7 @@ file(GLOB ${PROJECT_NAME}_SOURCES src/*.h src/*.cpp)
 file( GLOB ${PROJECT_NAME}_SOURCES src/*.cpp )
 file( GLOB ${PROJECT_NAME}_UIS src/*.ui )
 file( GLOB ${PROJECT_NAME}_TSS ts/*.ts )
-file( GLOB ${PROJECT_NAME}_QSS qss/*.qss )
+file( GLOB ${PROJECT_NAME}_QSS qss/*.qss qss/*.css)
 file( GLOB ${PROJECT_NAME}_ICONS icon/*.png )
 file( GLOB ${PROJECT_NAME}_ICONS_SVG icon/*.svg )
 

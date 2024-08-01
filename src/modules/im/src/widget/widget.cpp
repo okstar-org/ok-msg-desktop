@@ -107,9 +107,6 @@ Widget::Widget(IAudioControl &audio, QWidget *parent)//
 
   ui->setupUi(this);
   layout()->setSpacing(0);
-
-  setMinimumWidth(777);
-
   setObjectName(qsl("Page:%1").arg(static_cast<int>(UI::PageMenu::chat)));
 
   ui->tabWidget->setObjectName("mainTab");

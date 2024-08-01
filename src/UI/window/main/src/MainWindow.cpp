@@ -368,7 +368,8 @@ OMenuWidget *MainWindow::createChatModule(MainWindow *pWindow) {
 
   module->start(m_signInInfo);
 
-  auto m= new OMenuWidget(this);
+
+  auto m = new OMenuWidget(this);
   m->setLayout(new QGridLayout());
   m->layout()->addWidget(module->widget());
   return m;

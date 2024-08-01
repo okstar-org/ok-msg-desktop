@@ -39,7 +39,7 @@ OMainMenu::OMainMenu(QWidget *parent)
   ui->settingBtn->setCursor(Qt::PointingHandCursor);
   ui->chatBtn->setIconSize(QSize(40, 40));
   ui->settingBtn->setIconSize(QSize(40, 40));
-
+  ui->platformBtn->setIconSize(QSize(40, 40));
   delayCaller_ = std::make_unique<base::DelayedCallTimer>();
 
 }

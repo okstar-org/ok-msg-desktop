@@ -97,7 +97,7 @@ void SettingsWidget::onUpdateAvailable(void) {
 }
 
 void SettingsWidget::retranslateUi() {
-  for (size_t i = 0; i < cfgForms.size(); ++i){
+  for (int i = 0; i < cfgForms.size(); ++i){
     settingsWidgets->setTabText(i, cfgForms.at(i)->getFormName());
     cfgForms.at(i)->retranslateUi();
   }

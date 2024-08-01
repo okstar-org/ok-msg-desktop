@@ -62,6 +62,12 @@ Nexus::Nexus(QObject *parent)
     Q_INIT_RESOURCE(smileys);
     Q_INIT_RESOURCE(IM);
 
+    auto &settings = Settings::getInstance();
+
+    audioControl = std::unique_ptr<IAudioControl>(Audio::makeAudio(settings));
+
+
+
 //    connect(this, &Nexus::destroyProfile, this, &Nexus::do_logout);
 }
 
@@ -107,7 +113,7 @@ void Nexus::onSave(SavedInfo &savedInfo) {
    */
   void Nexus::start(ok::session::SignInInfo &signInInfo) {
 
-    qDebug()<<__func__ << signInInfo.username;
+    qDebug() << __func__ <<"for user:" << signInInfo.username;
 
     if (stared) {
       qWarning("This module is already started.");
@@ -116,14 +122,12 @@ void Nexus::onSave(SavedInfo &savedInfo) {
 
     QCommandLineParser parser;
     if (!Profile::exists(signInInfo.username)) {
-      profile = Profile::createProfile(signInInfo.username, &parser,
-                                       signInInfo.password);
+      profile = Profile::createProfile(signInInfo.username, &parser, signInInfo.password);
     } else {
-      profile = Profile::loadProfile(signInInfo.username, &parser,
-                                     signInInfo.password);
+      profile = Profile::loadProfile(signInInfo.username, &parser, signInInfo.password);
     }
 
-
+    assert(profile);
     if (!profile) {
       qWarning() << tr("Can not create profile!");
       emit createProfileFailed(tr("Can not create profile!"));
@@ -140,11 +144,7 @@ void Nexus::onSave(SavedInfo &savedInfo) {
     //  add_definitions(-D${PROJECT_NAME}_MODULE="${PROJECT_NAME}")
     settings::Translator::translate(OK_IM_MODULE, locale);
 
-    assert(profile);
 
-    auto &settings = Settings::getInstance();
-
-    audioControl = std::unique_ptr<IAudioControl>(Audio::makeAudio(settings));
 
     // Setup the environment
     qRegisterMetaType<Status::Status>("Status::Status");
@@ -315,9 +315,6 @@ void Nexus::onSave(SavedInfo &savedInfo) {
     // TODO(kriby): Rewrite as view-model connect sequence only, add to a
     // controller class object
     assert(profile);
-
-
-
     // Create GUI
     m_widget = new Widget(*audioControl);
     // Start GUI
