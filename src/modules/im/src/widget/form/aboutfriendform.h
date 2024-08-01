@@ -27,22 +27,21 @@ class AboutFriendForm;
 class Widget;
 class Profile;
 
-class AboutFriendForm : public QWidget
-{
+class AboutFriendForm : public QWidget {
     Q_OBJECT
 
 public:
     AboutFriendForm(std::unique_ptr<IAboutFriend> about, QWidget* parent = nullptr);
     ~AboutFriendForm();
 
-    void setName(const QString &name);
+    void setName(const QString& name);
 
 private:
     void reloadTheme();
     Ui::AboutFriendForm* ui;
     const std::unique_ptr<IAboutFriend> about;
-    Widget *widget;
-    Profile *profile;
+    Widget* widget;
+    Profile* profile;
 signals:
     void histroyRemoved();
 
@@ -56,4 +55,4 @@ private slots:
     void onRemoveHistoryClicked();
 };
 
-#endif // ABOUT_USER_FORM_H
+#endif  // ABOUT_USER_FORM_H

@@ -27,15 +27,12 @@
 
 const QString TabCompleter::nickSuffix = QString(": ");
 
-TabCompleter::TabCompleter(ChatTextEdit* msgEdit,
-                           const Group* group)
-    : QObject{msgEdit}
-    , msgEdit{msgEdit}
-    , group{group}
-    , enabled{false}
-    , lastCompletionLength{0}
-{
-}
+TabCompleter::TabCompleter(ChatTextEdit* msgEdit, const Group* group)
+        : QObject{msgEdit}
+        , msgEdit{msgEdit}
+        , group{group}
+        , enabled{false}
+        , lastCompletionLength{0} {}
 
 /* from quassel/src/uisupport/multilineedit.h
     // Compatibility methods with the rest of the classes which still expect this to be a QLineEdit
@@ -47,8 +44,7 @@ TabCompleter::TabCompleter(ChatTextEdit* msgEdit,
    Qt::NoModifier)); }
 */
 
-void TabCompleter::buildCompletionList()
-{
+void TabCompleter::buildCompletionList() {
     // ensure a safe state in case we return early.
     completionMap.clear();
     nextCompletion = completionMap.begin();
@@ -56,8 +52,8 @@ void TabCompleter::buildCompletionList()
     // split the string on the given RE (not chars, nums or braces/brackets) and take the last
     // section
     QString tabAbbrev = msgEdit->toPlainText()
-                            .left(msgEdit->textCursor().position())
-                            .section(QRegExp("[^\\w\\d\\$:@--_\\[\\]{}|`^.\\\\]"), -1, -1);
+                                .left(msgEdit->textCursor().position())
+                                .section(QRegExp("[^\\w\\d\\$:@--_\\[\\]{}|`^.\\\\]"), -1, -1);
     // that section is then used as the completion regex
     QRegExp regex(QString("^[-_\\[\\]{}|`^.\\\\]*").append(QRegExp::escape(tabAbbrev)),
                   Qt::CaseInsensitive);
@@ -65,7 +61,7 @@ void TabCompleter::buildCompletionList()
     const QString ownNick = group->getName();
     for (const auto& name : group->getPeerList()) {
         if (name == ownNick) {
-            continue;   // don't auto complete own name
+            continue;  // don't auto complete own name
         }
         if (regex.indexIn(name) > -1) {
             SortableString lower = SortableString(name.toLower());
@@ -77,9 +73,7 @@ void TabCompleter::buildCompletionList()
     lastCompletionLength = tabAbbrev.length();
 }
 
-
-void TabCompleter::complete()
-{
+void TabCompleter::complete() {
     if (!enabled) {
         buildCompletionList();
         enabled = true;
@@ -106,7 +100,7 @@ void TabCompleter::complete()
             msgEdit->insertPlainText(nickSuffix);
             lastCompletionLength += nickSuffix.length();
         }
-    } else { // we're at the end of the list -> start over again
+    } else {  // we're at the end of the list -> start over again
         if (!completionMap.isEmpty()) {
             nextCompletion = completionMap.begin();
             complete();
@@ -114,23 +108,19 @@ void TabCompleter::complete()
     }
 }
 
-void TabCompleter::reset()
-{
-    enabled = false;
-}
+void TabCompleter::reset() { enabled = false; }
 
 // this determines the sort order
-bool TabCompleter::SortableString::operator<(const SortableString& other) const
-{
+bool TabCompleter::SortableString::operator<(const SortableString& other) const {
     /*  QDateTime thisTime = thisUser->lastChannelActivity(_currentBufferId);
     QDateTime thatTime = thatUser->lastChannelActivity(_currentBufferId);
 
 
     if (thisTime.isValid() || thatTime.isValid())
         return thisTime > thatTime;
-*/ // this could be a
-                                                                              // useful feature at
-                                                                              // some point
+*/  // this could be a
+    // useful feature at
+    // some point
 
     return QString::localeAwareCompare(this->contents, other.contents) < 0;
 }

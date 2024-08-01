@@ -21,8 +21,7 @@
 
 #include <cstdint>
 
-class ICoreGroupQuery
-{
+class ICoreGroupQuery {
 public:
     virtual ~ICoreGroupQuery() = default;
     virtual GroupId getGroupPersistentId(QString groupId) const = 0;

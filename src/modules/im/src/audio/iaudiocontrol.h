@@ -93,8 +93,7 @@
 
 class IAudioSink;
 class IAudioSource;
-class IAudioControl : public QObject
-{
+class IAudioControl : public QObject {
     Q_OBJECT
 
 public:
@@ -136,9 +135,8 @@ protected:
     static constexpr uint32_t AUDIO_SAMPLE_RATE = 48000;
     static constexpr uint32_t AUDIO_FRAME_DURATION = 20;
     static constexpr uint32_t AUDIO_FRAME_SAMPLE_COUNT_PER_CHANNEL =
-        AUDIO_FRAME_DURATION * AUDIO_SAMPLE_RATE / 1000;
+            AUDIO_FRAME_DURATION * AUDIO_SAMPLE_RATE / 1000;
     uint32_t AUDIO_FRAME_SAMPLE_COUNT_TOTAL = 0;
 };
 
-
-#endif // IAUDIOCONTROL_H
+#endif  // IAUDIOCONTROL_H

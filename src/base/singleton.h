@@ -16,34 +16,27 @@
 
 template <class T>
 
-class singleton
-{
+class singleton {
 protected:
     singleton(){};
+
 private:
     singleton(const singleton&){};
-    singleton& operator=(const singleton&){};
+    singleton& operator=(const singleton&) {};
     static T* m_instance;
+
 public:
-    template <typename... Args>
-    static T* GetInstance(Args&&... args)
-    {
-        if(m_instance == NULL)
-            m_instance = new T(std::forward<Args>(args)...);
+    template <typename... Args> static T* GetInstance(Args&&... args) {
+        if (m_instance == NULL) m_instance = new T(std::forward<Args>(args)...);
         return m_instance;
     }
 
-
-    static void DestroyInstance()
-    {
-        if(m_instance )
-            delete m_instance;
+    static void DestroyInstance() {
+        if (m_instance) delete m_instance;
         m_instance = NULL;
     }
 };
 
+template <class T> T* singleton<T>::m_instance = NULL;
 
-template <class T>
-T* singleton<T>::m_instance = NULL;
-
-#endif // SINGLETON_H
+#endif  // SINGLETON_H

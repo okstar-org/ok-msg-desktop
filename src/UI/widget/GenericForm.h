@@ -9,7 +9,7 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PubL v2 for more details.
  */
-#pragma  once
+#pragma once
 
 #include <QWidget>
 
@@ -19,20 +19,20 @@ namespace UI {
  * 代表模块内标签页（一个模块内子标签页）
  */
 class GenericForm : public QWidget {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  explicit GenericForm(const QPixmap &icon, QWidget *parent = nullptr);
-  ~GenericForm() ;
+    explicit GenericForm(const QPixmap& icon, QWidget* parent = nullptr);
+    ~GenericForm();
 
-  virtual QString getFormName() = 0;
-  QPixmap getFormIcon();
-  virtual void retranslateUi() = 0;
-
-protected:
-  bool eventFilter(QObject *o, QEvent *e) final override;
-  void eventsInit();
+    virtual QString getFormName() = 0;
+    QPixmap getFormIcon();
+    virtual void retranslateUi() = 0;
 
 protected:
-  QPixmap formIcon;
+    bool eventFilter(QObject* o, QEvent* e) final override;
+    void eventsInit();
+
+protected:
+    QPixmap formIcon;
 };
-} // namespace UI
+}  // namespace UI

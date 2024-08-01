@@ -13,40 +13,41 @@
 #ifndef PLUGINITEMFORM_H
 #define PLUGINITEMFORM_H
 
+#include <QWidget>
 #include "base/timer.h"
-#include "lib/plugin/PluginInfo.h"
 #include "lib/backend/OkCloudService.h"
 #include "lib/network/NetworkHttp.h"
-#include <QWidget>
+#include "lib/plugin/PluginInfo.h"
 
 namespace Ui {
 class PluginItemForm;
 }
 
 class PluginItemForm : public QWidget {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  explicit PluginItemForm(int row, ok::backend::PluginInfo &pluginInfo,
-                          QWidget *parent = nullptr);
-  ~PluginItemForm();
-  void downLogo();
-  void setLogo(const QPixmap &pixmap);
-  bool isSetLogo();
+    explicit PluginItemForm(int row, ok::backend::PluginInfo& pluginInfo,
+                            QWidget* parent = nullptr);
+    ~PluginItemForm();
+    void downLogo();
+    void setLogo(const QPixmap& pixmap);
+    bool isSetLogo();
+
 protected:
-  void showEvent(QShowEvent*);
+    void showEvent(QShowEvent*);
 
 private:
-  Ui::PluginItemForm *ui;
-  ok::backend::PluginInfo info;
-  int row;
-  std::unique_ptr<network::NetworkHttp> http;
+    Ui::PluginItemForm* ui;
+    ok::backend::PluginInfo info;
+    int row;
+    std::unique_ptr<network::NetworkHttp> http;
 
 signals:
-  void loadLogo();
-  void logoDownloaded(const QString &fileName, QByteArray &img);
+    void loadLogo();
+    void logoDownloaded(const QString& fileName, QByteArray& img);
 
 public slots:
-  void onLogoDownloaded(const QString &fileName, QByteArray &img);
+    void onLogoDownloaded(const QString& fileName, QByteArray& img);
 };
 
-#endif // PLUGINITEMFORM_H
+#endif  // PLUGINITEMFORM_H

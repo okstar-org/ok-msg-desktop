@@ -11,6 +11,11 @@
  */
 
 #include "groupnetcamview.h"
+#include <QBoxLayout>
+#include <QMap>
+#include <QScrollArea>
+#include <QSplitter>
+#include <QTimer>
 #include "src/audio/audio.h"
 #include "src/core/FriendId.h"
 #include "src/core/core.h"
@@ -20,19 +25,13 @@
 #include "src/persistence/profile.h"
 #include "src/video/videosurface.h"
 #include "src/widget/tool/croppinglabel.h"
-#include <QBoxLayout>
-#include <QMap>
-#include <QScrollArea>
-#include <QSplitter>
-#include <QTimer>
 
 #include <QDebug>
-class LabeledVideo : public QFrame
-{
+class LabeledVideo : public QFrame {
 public:
-    LabeledVideo(const QPixmap& avatar, QString fontColorString, QWidget* parent = nullptr, bool expanding = true)
-        : QFrame(parent)
-    {
+    LabeledVideo(const QPixmap& avatar, QString fontColorString, QWidget* parent = nullptr,
+                 bool expanding = true)
+            : QFrame(parent) {
         qDebug() << "Created expanding? " << expanding;
         videoSurface = new VideoSurface(avatar, nullptr, expanding);
         videoSurface->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -52,23 +51,13 @@ public:
 
     ~LabeledVideo() {}
 
-    VideoSurface* getVideoSurface() const
-    {
-        return videoSurface;
-    }
+    VideoSurface* getVideoSurface() const { return videoSurface; }
 
-    void setText(const QString& text)
-    {
-        label->setText(text);
-    }
+    void setText(const QString& text) { label->setText(text); }
 
-    QString getText() const
-    {
-        return label->text();
-    }
+    QString getText() const { return label->text(); }
 
-    void setActive(bool active = true)
-    {
+    void setActive(bool active = true) {
         if (active)
             setStyleSheet("QFrame { background-color: #414141; border-radius: 10px; }");
         else
@@ -76,15 +65,13 @@ public:
     }
 
 protected:
-    void resizeEvent(QResizeEvent* event) final override
-    {
+    void resizeEvent(QResizeEvent* event) final override {
         updateSize();
         QWidget::resizeEvent(event);
     }
 
 private slots:
-    void updateSize()
-    {
+    void updateSize() {
         if (videoSurface->isExpanding()) {
             int width = videoSurface->height() * videoSurface->getRatio();
             videoSurface->setMinimumWidth(width);
@@ -98,9 +85,7 @@ private:
 };
 
 GroupNetCamView::GroupNetCamView(QString group, QWidget* parent)
-    : GenericNetCamView(parent)
-    , group(group)
-{
+        : GenericNetCamView(parent), group(group) {
     videoLabelSurface = new LabeledVideo(QPixmap(), "white", this, false);
     videoSurface = videoLabelSurface->getVideoSurface();
     videoSurface->setMinimumHeight(256);
@@ -117,7 +102,8 @@ GroupNetCamView::GroupNetCamView(QString group, QWidget* parent)
     verLayout->insertWidget(0, splitter, 1);
     splitter->addWidget(videoLabelSurface);
     splitter->setStyleSheet(
-        "QSplitter { background-color: black; } QSplitter::handle { background-color: black; }");
+            "QSplitter { background-color: black; } QSplitter::handle { background-color: black; "
+            "}");
 
     QScrollArea* scrollArea = new QScrollArea();
     scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -153,35 +139,32 @@ GroupNetCamView::GroupNetCamView(QString group, QWidget* parent)
         setActive();
     });
 
-//    connect(Nexus::getProfile(), &Profile::friendAvatarChanged, this,
-//            &GroupNetCamView::friendAvatarChanged);
+    //    connect(Nexus::getProfile(), &Profile::friendAvatarChanged, this,
+    //            &GroupNetCamView::friendAvatarChanged);
 
     selfVideoSurface->setText(Core::getInstance()->getUsername());
 }
 
-void GroupNetCamView::clearPeers()
-{
+void GroupNetCamView::clearPeers() {
     for (const auto& peerPk : videoList.keys()) {
         removePeer(peerPk);
     }
 }
 
-void GroupNetCamView::addPeer(const QString& peer, const QString& name)
-{
+void GroupNetCamView::addPeer(const QString& peer, const QString& name) {
     qDebug() << __func__;
-//    QPixmap groupAvatar = Nexus::getProfile()->loadAvatar(peer);
-//    LabeledVideo* labeledVideo = new LabeledVideo(groupAvatar, "black", this);
-//    labeledVideo->setText(name);
-//    horLayout->insertWidget(horLayout->count() - 1, labeledVideo);
-//    PeerVideo peerVideo;
-//    peerVideo.video = labeledVideo;
-//    videoList.insert(peer, peerVideo);
+    //    QPixmap groupAvatar = Nexus::getProfile()->loadAvatar(peer);
+    //    LabeledVideo* labeledVideo = new LabeledVideo(groupAvatar, "black", this);
+    //    labeledVideo->setText(name);
+    //    horLayout->insertWidget(horLayout->count() - 1, labeledVideo);
+    //    PeerVideo peerVideo;
+    //    peerVideo.video = labeledVideo;
+    //    videoList.insert(peer, peerVideo);
 
-//    setActive();
+    //    setActive();
 }
 
-void GroupNetCamView::removePeer(const QString& peer)
-{
+void GroupNetCamView::removePeer(const QString& peer) {
     auto peerVideo = videoList.find(peer);
 
     if (peerVideo != videoList.end()) {
@@ -194,13 +177,9 @@ void GroupNetCamView::removePeer(const QString& peer)
     }
 }
 
-void GroupNetCamView::onUpdateActivePeer()
-{
-    setActive();
-}
+void GroupNetCamView::onUpdateActivePeer() { setActive(); }
 
-void GroupNetCamView::setActive(const FriendId& peer)
-{
+void GroupNetCamView::setActive(const FriendId& peer) {
     if (!peer.isValid()) {
         videoLabelSurface->setText(selfVideoSurface->getText());
         activePeer = -1;
@@ -230,8 +209,7 @@ void GroupNetCamView::setActive(const FriendId& peer)
 #endif
 }
 
-void GroupNetCamView::friendAvatarChanged(QString friendPk, const QPixmap& pixmap)
-{
+void GroupNetCamView::friendAvatarChanged(QString friendPk, const QPixmap& pixmap) {
     auto peerVideo = videoList.find(friendPk);
     if (peerVideo != videoList.end()) {
         peerVideo.value().video->getVideoSurface()->setAvatar(pixmap);

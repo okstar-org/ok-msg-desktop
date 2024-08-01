@@ -10,14 +10,12 @@
  * See the Mulan PubL v2 for more details.
  */
 
-
 #ifndef QRWIDGET_H
 #define QRWIDGET_H
 
 #include <QWidget>
 
-class QRWidget : public QWidget
-{
+class QRWidget : public QWidget {
     Q_OBJECT
 
 public:
@@ -34,4 +32,4 @@ private:
     QSize size;
 };
 
-#endif // QRWIDGET_H
+#endif  // QRWIDGET_H

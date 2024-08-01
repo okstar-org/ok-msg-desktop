@@ -21,15 +21,9 @@
 
 namespace ok::base {
 
-class OkProcess{
+class OkProcess {
 public:
-
-  static qint64 selfPid(){
-   return QCoreApplication::applicationPid();
-  }
-
-
+    static qint64 selfPid() { return QCoreApplication::applicationPid(); }
 };
 
-
-}
+}  // namespace ok::base

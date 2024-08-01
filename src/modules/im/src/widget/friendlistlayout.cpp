@@ -11,27 +11,18 @@
  */
 
 #include "friendlistlayout.h"
+#include <cassert>
 #include "friendlistwidget.h"
 #include "friendwidget.h"
+#include "src/friendlist.h"
 #include "src/model/friend.h"
 #include "src/model/status.h"
-#include "src/friendlist.h"
-#include <cassert>
 
+FriendListLayout::FriendListLayout(QWidget* parent) : QVBoxLayout(parent) { init(); }
 
-FriendListLayout::FriendListLayout(QWidget* parent)
-    : QVBoxLayout(parent)
-{
-    init();
-}
+FriendListLayout::~FriendListLayout() {}
 
-FriendListLayout::~FriendListLayout()
-{
-
-}
-
-void FriendListLayout::init()
-{
+void FriendListLayout::init() {
     setSpacing(0);
     setMargin(0);
 
@@ -45,8 +36,7 @@ void FriendListLayout::init()
     addLayout(friendOfflineLayout.getLayout());
 }
 
-void FriendListLayout::addFriendWidget(FriendWidget* w, Status::Status s)
-{
+void FriendListLayout::addFriendWidget(FriendWidget* w, Status::Status s) {
     friendOfflineLayout.removeSortedWidget(w);
     friendOnlineLayout.removeSortedWidget(w);
 
@@ -58,23 +48,18 @@ void FriendListLayout::addFriendWidget(FriendWidget* w, Status::Status s)
     friendOnlineLayout.addSortedWidget(w);
 }
 
-void FriendListLayout::removeFriendWidget(FriendWidget* widget )
-{
+void FriendListLayout::removeFriendWidget(FriendWidget* widget) {
+    friendOfflineLayout.removeSortedWidget(widget);
 
-        friendOfflineLayout.removeSortedWidget(widget);
-
-        friendOnlineLayout.removeSortedWidget(widget);
+    friendOnlineLayout.removeSortedWidget(widget);
 }
 
-int FriendListLayout::indexOfFriendWidget(GenericChatItemWidget* widget, bool online) const
-{
-    if (online)
-        return friendOnlineLayout.indexOfSortedWidget(widget);
+int FriendListLayout::indexOfFriendWidget(GenericChatItemWidget* widget, bool online) const {
+    if (online) return friendOnlineLayout.indexOfSortedWidget(widget);
     return friendOfflineLayout.indexOfSortedWidget(widget);
 }
 
-void FriendListLayout::moveFriendWidgets(FriendListWidget* listWidget)
-{
+void FriendListLayout::moveFriendWidgets(FriendListWidget* listWidget) {
     while (!friendOnlineLayout.getLayout()->isEmpty()) {
         QWidget* getWidget = friendOnlineLayout.getLayout()->takeAt(0)->widget();
 
@@ -91,38 +76,28 @@ void FriendListLayout::moveFriendWidgets(FriendListWidget* listWidget)
     }
 }
 
-int FriendListLayout::friendOnlineCount() const
-{
-    return friendOnlineLayout.getLayout()->count();
-}
+int FriendListLayout::friendOnlineCount() const { return friendOnlineLayout.getLayout()->count(); }
 
-int FriendListLayout::friendTotalCount() const
-{
+int FriendListLayout::friendTotalCount() const {
     return friendOfflineLayout.getLayout()->count() + friendOnlineCount();
 }
 
-bool FriendListLayout::hasChatrooms() const
-{
-    return !(friendOfflineLayout.getLayout()->isEmpty() && friendOnlineLayout.getLayout()->isEmpty());
+bool FriendListLayout::hasChatrooms() const {
+    return !(friendOfflineLayout.getLayout()->isEmpty() &&
+             friendOnlineLayout.getLayout()->isEmpty());
 }
 
-void FriendListLayout::searchChatrooms(const QString& searchString, bool hideOnline, bool hideOffline)
-{
+void FriendListLayout::searchChatrooms(const QString& searchString, bool hideOnline,
+                                       bool hideOffline) {
     friendOnlineLayout.search(searchString, hideOnline);
     friendOfflineLayout.search(searchString, hideOffline);
 }
 
-QLayout* FriendListLayout::getLayoutOnline() const
-{
-    return friendOnlineLayout.getLayout();
-}
+QLayout* FriendListLayout::getLayoutOnline() const { return friendOnlineLayout.getLayout(); }
 
-QLayout* FriendListLayout::getLayoutOffline() const
-{
-    return friendOfflineLayout.getLayout();
-}
+QLayout* FriendListLayout::getLayoutOffline() const { return friendOfflineLayout.getLayout(); }
 
-QLayout* FriendListLayout::getFriendLayout(Status::Status s) const
-{
-    return s == Status::Status::Offline ? friendOfflineLayout.getLayout() : friendOnlineLayout.getLayout();
+QLayout* FriendListLayout::getFriendLayout(Status::Status s) const {
+    return s == Status::Status::Offline ? friendOfflineLayout.getLayout()
+                                        : friendOnlineLayout.getLayout();
 }

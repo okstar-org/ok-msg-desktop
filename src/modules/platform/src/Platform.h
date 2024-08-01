@@ -19,28 +19,25 @@
 #include "Widget.h"
 #include "modules/module.h"
 
-namespace platform{
+namespace platform {
 class Platform : public QObject, public Module {
-Q_OBJECT
+    Q_OBJECT
 public:
-  Platform();
-  ~Platform();
-  void init(Profile *p) override;
-  QString name() override;
-  void start(ok::session::SignInInfo &signInInfo) override;
-  bool isStarted() override;
-  void onSave(SavedInfo &) override;
-  void cleanup() override;
-  void destroy() override;
+    Platform();
+    ~Platform();
+    void init(Profile* p) override;
+    QString name() override;
+    void start(ok::session::SignInInfo& signInInfo) override;
+    bool isStarted() override;
+    void onSave(SavedInfo&) override;
+    void cleanup() override;
+    void destroy() override;
 
-  QWidget * widget(){
-    return m_widget;
-  }
-  void hide() override;
+    QWidget* widget() { return m_widget; }
+    void hide() override;
+
 private:
-
-  Widget* m_widget;
+    Widget* m_widget;
 };
 
-}
-
+}  // namespace platform

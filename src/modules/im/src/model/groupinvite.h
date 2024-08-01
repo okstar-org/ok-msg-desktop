@@ -13,29 +13,29 @@
 #ifndef GROUPINVITE_H
 #define GROUPINVITE_H
 
-#include "message.h"
 #include <QByteArray>
 #include <QDateTime>
-
+#include "message.h"
 
 class GroupInvite {
 public:
-  GroupInvite() = default;
-  GroupInvite(QString groupId, QString friendId, ConferenceType inviteType, const QByteArray &data);
-  bool operator==(const GroupInvite &other) const;
+    GroupInvite() = default;
+    GroupInvite(QString groupId, QString friendId, ConferenceType inviteType,
+                const QByteArray& data);
+    bool operator==(const GroupInvite& other) const;
 
-  const QString &getGroupId() const;
-  const QString &getFriendId() const;
-  ConferenceType getType() const;
-  QByteArray getInvite() const;
-  QDateTime getInviteDate() const;
+    const QString& getGroupId() const;
+    const QString& getFriendId() const;
+    ConferenceType getType() const;
+    QByteArray getInvite() const;
+    QDateTime getInviteDate() const;
 
 private:
-  QString groupId;
-  QString friendId;
-  ConferenceType type{ConferenceType::TEXT};
-  QByteArray invite;
-  QDateTime date;
+    QString groupId;
+    QString friendId;
+    ConferenceType type{ConferenceType::TEXT};
+    QByteArray invite;
+    QDateTime date;
 };
 
-#endif // GROUPINVITE_H
+#endif  // GROUPINVITE_H

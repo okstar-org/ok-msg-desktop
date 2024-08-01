@@ -13,35 +13,31 @@
 #ifndef I18N_H
 #define I18N_H
 
-
 #include <QTranslator>
-
 
 namespace core {
 
 class I18N;
 
-static I18N *self = nullptr;
+static I18N* self = nullptr;
 
-class I18N
-{
+class I18N {
 public:
-    I18N(const QString & path, const QString & encoding);
+    I18N(const QString& path, const QString& encoding);
 
     static void Init();
 
     QString getPath() const;
-    void setPath(const QString & path);
+    void setPath(const QString& path);
 
     QString getEncoding() const;
-    void setEncoding(const QString & encoding);
+    void setEncoding(const QString& encoding);
 
-    void translate( );
+    void translate();
 
 private:
     QString m_path, m_encoding;
-
 };
-}
+}  // namespace core
 
-#endif // I18N_H
+#endif  // I18N_H

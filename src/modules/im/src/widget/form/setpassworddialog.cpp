@@ -19,10 +19,7 @@
 const double SetPasswordDialog::reasonablePasswordLength = 8.;
 
 SetPasswordDialog::SetPasswordDialog(QString body, QString extraButton, QWidget* parent)
-    : QDialog(parent)
-    , ui(new Ui::SetPasswordDialog)
-    , body(body + "\n\n")
-{
+        : QDialog(parent), ui(new Ui::SetPasswordDialog), body(body + "\n\n") {
     ui->setupUi(this);
 
     connect(ui->passwordlineEdit, SIGNAL(textChanged(QString)), this, SLOT(onPasswordEdit()));
@@ -42,13 +39,9 @@ SetPasswordDialog::SetPasswordDialog(QString body, QString extraButton, QWidget*
     }
 }
 
-SetPasswordDialog::~SetPasswordDialog()
-{
-    delete ui;
-}
+SetPasswordDialog::~SetPasswordDialog() { delete ui; }
 
-void SetPasswordDialog::onPasswordEdit()
-{
+void SetPasswordDialog::onPasswordEdit() {
     QString pswd = ui->passwordlineEdit->text();
 
     if (pswd.isEmpty()) {
@@ -68,10 +61,8 @@ void SetPasswordDialog::onPasswordEdit()
     ui->passStrengthMeter->setValue(getPasswordStrength(pswd));
 }
 
-int SetPasswordDialog::getPasswordStrength(QString pass)
-{
-    if (pass.size() < 6)
-        return 0;
+int SetPasswordDialog::getPasswordStrength(QString pass) {
+    if (pass.size() < 6) return 0;
 
     double fscore = 0;
     QHash<QChar, int> charCounts;
@@ -95,7 +86,4 @@ int SetPasswordDialog::getPasswordStrength(QString pass)
     return score;
 }
 
-QString SetPasswordDialog::getPassword()
-{
-    return ui->passwordlineEdit->text();
-}
+QString SetPasswordDialog::getPassword() { return ui->passwordlineEdit->text(); }

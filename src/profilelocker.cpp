@@ -10,11 +10,10 @@
  * See the Mulan PubL v2 for more details.
  */
 
-
 #include "profilelocker.h"
-#include "persistence/im/settings.h"
 #include <QDebug>
 #include <QDir>
+#include "persistence/im/settings.h"
 
 /**
  * @class ProfileLocker
@@ -29,8 +28,7 @@ using namespace std;
 unique_ptr<QLockFile> ProfileLocker::lockfile;
 QString ProfileLocker::curLockName;
 
-QString ProfileLocker::lockPathFromName(const QString& name)
-{
+QString ProfileLocker::lockPathFromName(const QString& name) {
     return Settings::getInstance().getSettingsDirPath() + '/' + name + ".lock";
 }
 
@@ -42,11 +40,9 @@ QString ProfileLocker::lockPathFromName(const QString& name)
  * @param profile Profile name to check.
  * @return True, if profile locked, false otherwise.
  */
-bool ProfileLocker::isLockable(QString profile)
-{
+bool ProfileLocker::isLockable(QString profile) {
     // If we already have the lock, it's definitely lockable
-    if (lockfile && curLockName == profile)
-        return true;
+    if (lockfile && curLockName == profile) return true;
 
     QLockFile newLock(lockPathFromName(profile));
     return newLock.tryLock();
@@ -57,10 +53,8 @@ bool ProfileLocker::isLockable(QString profile)
  * @param profile Profile to lock.
  * @return Returns true if we already own the lock.
  */
-bool ProfileLocker::lock(QString profile)
-{
-    if (lockfile && curLockName == profile)
-        return true;
+bool ProfileLocker::lock(QString profile) {
+    if (lockfile && curLockName == profile) return true;
 
     QLockFile* newLock = new QLockFile(lockPathFromName(profile));
     newLock->setStaleLockTime(0);
@@ -78,10 +72,8 @@ bool ProfileLocker::lock(QString profile)
 /**
  * @brief Releases the lock on the current profile.
  */
-void ProfileLocker::unlock()
-{
-    if (!lockfile)
-        return;
+void ProfileLocker::unlock() {
+    if (!lockfile) return;
 
     lockfile->unlock();
     lockfile.reset();
@@ -94,8 +86,7 @@ void ProfileLocker::unlock()
  * If we can't get a lock, exit qTox immediately.
  * If we never had a lock in the first place, exit immediately.
  */
-void ProfileLocker::assertLock()
-{
+void ProfileLocker::assertLock() {
     if (!lockfile) {
         qCritical() << "assertLock: We don't seem to own any lock!";
         deathByBrokenLock();
@@ -116,8 +107,7 @@ void ProfileLocker::assertLock()
 /**
  * @brief Print an error then exit immediately.
  */
-void ProfileLocker::deathByBrokenLock()
-{
+void ProfileLocker::deathByBrokenLock() {
     qCritical() << "Lock is *BROKEN*, exiting immediately";
     abort();
 }
@@ -126,17 +116,13 @@ void ProfileLocker::deathByBrokenLock()
  * @brief Chacks, that profile locked.
  * @return Returns true if we're currently holding a lock.
  */
-bool ProfileLocker::hasLock()
-{
-    return lockfile.operator bool();
-}
+bool ProfileLocker::hasLock() { return lockfile.operator bool(); }
 
 /**
  * @brief Get current locked profile name.
  * @return Return the name of the currently loaded profile, a null string if there is none.
  */
-QString ProfileLocker::getCurLockName()
-{
+QString ProfileLocker::getCurLockName() {
     if (lockfile)
         return curLockName;
     else

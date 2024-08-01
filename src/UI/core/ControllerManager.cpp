@@ -15,12 +15,7 @@
 
 namespace ok {
 
+ControllerManager::ControllerManager(QObject* parent) : QObject(parent) {}
 
-	ControllerManager::ControllerManager(QObject *parent) : QObject(parent)
-	{
-	}
-
-	ControllerManager::~ControllerManager()
-	{
-	}
-}
+ControllerManager::~ControllerManager() {}
+}  // namespace ok

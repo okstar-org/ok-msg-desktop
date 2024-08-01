@@ -11,18 +11,16 @@
  */
 
 #include <QtCore/qsystemdetection.h>
-#include "src/platform/timer.h"
 #include <windows.h>
+#include "src/platform/timer.h"
 
 namespace Platform {
 
-uint32_t getIdleTime()
-{
+uint32_t getIdleTime() {
     LASTINPUTINFO info = {0, 0};
     info.cbSize = sizeof(info);
-    if (GetLastInputInfo(&info))
-        return GetTickCount() - info.dwTime;
+    if (GetLastInputInfo(&info)) return GetTickCount() - info.dwTime;
     return 0;
 }
 
-}
+}  // namespace Platform

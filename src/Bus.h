@@ -24,12 +24,12 @@ namespace ok {
  * 全局系统总线，负责多模块直接交互事件
  */
 class Bus : public QObject {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  Bus(QObject *parent = nullptr);
-  ~Bus();
+    Bus(QObject* parent = nullptr);
+    ~Bus();
 signals:
-  void languageChanged(QString locale);
+    void languageChanged(QString locale);
 };
 
-} // namespace ok
+}  // namespace ok

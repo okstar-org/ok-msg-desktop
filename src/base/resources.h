@@ -12,25 +12,22 @@
 
 #pragma once
 
-#include <memory>
 #include <QDebug>
+#include <memory>
 
-#define OK_RESOURCE_LOADER(name) \
-  class name ## Loader {              \
-  public:                                 \
-  name ## Loader() {                \
-    qDebug()<<"loading resource:" << #name ;   \
-    Q_INIT_RESOURCE(name);       \
-  };                                      \
-  ~name ## Loader(){                \
-    qDebug()<<"cleanup resource:" << #name;   \
-    Q_CLEANUP_RESOURCE(name);    \
-  }                                       \
-  };                                      \
+#define OK_RESOURCE_LOADER(name)                      \
+    class name##Loader {                              \
+    public:                                           \
+        name##Loader() {                              \
+            qDebug() << "loading resource:" << #name; \
+            Q_INIT_RESOURCE(name);                    \
+        };                                            \
+        ~name##Loader() {                             \
+            qDebug() << "cleanup resource:" << #name; \
+            Q_CLEANUP_RESOURCE(name);                 \
+        }                                             \
+    };
 
+#define OK_RESOURCE_PTR(name) std::unique_ptr<name##Loader> _ok##name##_ptr
 
-#define OK_RESOURCE_PTR(name) \
-  std::unique_ptr<name ## Loader> _ok ## name ## _ptr\
-
-#define OK_RESOURCE_INIT(name) \
-  _ok ## name ## _ptr = std::make_unique<name ## Loader>()
+#define OK_RESOURCE_INIT(name) _ok##name##_ptr = std::make_unique<name##Loader>()

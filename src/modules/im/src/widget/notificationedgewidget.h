@@ -17,15 +17,10 @@
 
 class QLabel;
 
-class NotificationEdgeWidget final : public QWidget
-{
+class NotificationEdgeWidget final : public QWidget {
     Q_OBJECT
 public:
-    enum Position : uint8_t
-    {
-        Top,
-        Bottom
-    };
+    enum Position : uint8_t { Top, Bottom };
 
     explicit NotificationEdgeWidget(Position position, QWidget* parent = nullptr);
     void updateNotificationCount(int count);
@@ -40,4 +35,4 @@ private:
     QLabel* textLabel;
 };
 
-#endif // NOTIFICATIONEDGEWIDGET_H
+#endif  // NOTIFICATIONEDGEWIDGET_H

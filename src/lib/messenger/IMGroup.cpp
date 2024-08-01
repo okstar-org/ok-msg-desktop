@@ -16,6 +16,4 @@
 
 #include "IMGroup.h"
 
-namespace lib::messenger{
-
-}
+namespace lib::messenger {}

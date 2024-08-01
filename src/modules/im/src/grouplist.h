@@ -15,19 +15,17 @@
 
 #include "src/core/groupid.h"
 
-template <class A, class B>
-class QHash;
-template <class T>
-class QList;
+template <class A, class B> class QHash;
+template <class T> class QList;
 class Group;
 class QString;
 
 using GroupMap = QHash<QString, Group*>;
 
-class GroupList
-{
+class GroupList {
 public:
-    static Group* addGroup(const GroupId& groupId, const QString& name="", bool isAvGroupchat=true, const QString& selfName="");
+    static Group* addGroup(const GroupId& groupId, const QString& name = "",
+                           bool isAvGroupchat = true, const QString& selfName = "");
     static Group* findGroup(const GroupId& groupId);
     static const GroupId& id2Key(QString groupNum);
     static void removeGroup(const GroupId& groupId, bool fake = false);
@@ -38,4 +36,4 @@ private:
     static GroupMap groupMap;
 };
 
-#endif // GROUPLIST_H
+#endif  // GROUPLIST_H

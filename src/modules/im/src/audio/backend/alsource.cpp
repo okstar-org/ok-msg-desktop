@@ -21,12 +21,9 @@
  * @brief Reserves ressources for an audio source
  * @param audio Main audio object, must have longer lifetime than this object.
  */
-AlSource::AlSource(OpenAL& al)
-    : audio(al)
-{}
+AlSource::AlSource(OpenAL& al) : audio(al) {}
 
-AlSource::~AlSource()
-{
+AlSource::~AlSource() {
     QMutexLocker{&killLock};
 
     // unsubscribe only if not already killed
@@ -36,14 +33,12 @@ AlSource::~AlSource()
     }
 }
 
-AlSource::operator bool() const
-{
+AlSource::operator bool() const {
     QMutexLocker{&killLock};
     return !killed;
 }
 
-void AlSource::kill()
-{
+void AlSource::kill() {
     killLock.lock();
     // this flag is only set once here, afterwards the object is considered dead
     killed = true;

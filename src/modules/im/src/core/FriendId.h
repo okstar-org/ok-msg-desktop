@@ -13,69 +13,58 @@
 #ifndef OK_FRIEND_ID_H
 #define OK_FRIEND_ID_H
 
-#include "src/core/contactid.h"
 #include <QByteArray>
 #include <QHash>
+#include "src/core/contactid.h"
 
-namespace lib::messenger{
+namespace lib::messenger {
 class IMContactId;
 class IMPeerId;
-}
+}  // namespace lib::messenger
 
 /**
  * 朋友ID
  * 格式：user@server
  * 比如：jidlpdyibulw@meet.chuanshaninfo.com
  */
-class FriendId : public ContactId
-{
+class FriendId : public ContactId {
 public:
     FriendId();
     FriendId(const FriendId& other);
     explicit FriendId(const QByteArray& rawId);
     explicit FriendId(const QString& rawId);
     explicit FriendId(const ContactId& rawId);
-    explicit FriendId(const lib::messenger::IMContactId & fId);
+    explicit FriendId(const lib::messenger::IMContactId& fId);
 
     bool operator==(const FriendId& other) const;
     bool operator<(const FriendId& other) const;
-
 
     int getSize() const;
 
     QByteArray getByteArray() const;
 
     QString toString() const override;
-
 };
 
-
-inline uint qHash(const FriendId& id)
-{
-    return qHash(id.getByteArray());
-}
+inline uint qHash(const FriendId& id) { return qHash(id.getByteArray()); }
 
 class ToxPeer : public FriendId {
 public:
-  explicit ToxPeer() = default;
+    explicit ToxPeer() = default;
 
-  explicit ToxPeer(const lib::messenger::IMPeerId& peerId);
+    explicit ToxPeer(const lib::messenger::IMPeerId& peerId);
 
-  explicit ToxPeer(const QString& rawId);
+    explicit ToxPeer(const QString& rawId);
 
-  bool isValid() const override;
+    bool isValid() const override;
 
-  QString toString() const override;
+    QString toString() const override;
 
-  QString getResource() const {
-      return resource;
-  }
+    QString getResource() const { return resource; }
 
-  const FriendId toFriendId() const {
-      return FriendId{username+"@"+server};
-  }
+    const FriendId toFriendId() const { return FriendId{username + "@" + server}; }
 
-  QString resource;
+    QString resource;
 };
 
-#endif // TOXPK_H
+#endif  // TOXPK_H

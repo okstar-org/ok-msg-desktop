@@ -18,8 +18,7 @@
 
 #include <cstdint>
 
-class ToxString
-{
+class ToxString {
 public:
     explicit ToxString(const QString& text);
     explicit ToxString(const QByteArray& text);
@@ -33,4 +32,4 @@ public:
 private:
     QByteArray string;
 };
-#endif // TOXSTRING_H
+#endif  // TOXSTRING_H

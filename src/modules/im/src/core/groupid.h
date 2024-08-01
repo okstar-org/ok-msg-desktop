@@ -15,8 +15,7 @@
 
 #include "src/core/contactid.h"
 
-
-class GroupId : public ContactId{
+class GroupId : public ContactId {
 public:
     GroupId();
     GroupId(const GroupId& other);
@@ -25,11 +24,11 @@ public:
     explicit GroupId(const ContactId& contactId);
     int getSize() const;
 
-    bool operator==(const GroupId &other) const;
-    bool operator<(const GroupId &other) const;
+    bool operator==(const GroupId& other) const;
+    bool operator<(const GroupId& other) const;
 
     QString name;
     QString nick;
 };
 
-#endif // GROUPID_H
+#endif  // GROUPID_H

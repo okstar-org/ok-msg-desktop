@@ -11,22 +11,21 @@
  */
 
 #include "grouplist.h"
-#include "src/core/core.h"
-#include "src/model/group.h"
 #include <QDebug>
 #include <QHash>
+#include "src/core/core.h"
+#include "src/model/group.h"
 
 GroupMap GroupList::groupMap;
 
 Group* GroupList::addGroup(const GroupId& groupId,
                            const QString& name,
                            bool isAvGroupchat,
-                           const QString& selfName)
-{
-    qDebug()<<"addGroup"<< "groupId" << groupId.toString();
+                           const QString& selfName) {
+    qDebug() << "addGroup" << "groupId" << groupId.toString();
 
     auto checker = groupMap.value(groupId.toString());
-    if (checker ){
+    if (checker) {
         qWarning() << "addGroup: groupId already taken";
         return checker;
     }
@@ -38,17 +37,9 @@ Group* GroupList::addGroup(const GroupId& groupId,
     return newGroup;
 }
 
-Group* GroupList::findGroup(const GroupId& groupId)
-{
+Group* GroupList::findGroup(const GroupId& groupId) { return groupMap.value(groupId.toString()); }
 
-        return groupMap.value(groupId.toString());
-
-}
-
-
-
-void GroupList::removeGroup(const GroupId& groupId, bool /*fake*/)
-{
+void GroupList::removeGroup(const GroupId& groupId, bool /*fake*/) {
     auto g_it = groupMap.find(groupId.toString());
     if (g_it != groupMap.end()) {
         delete *g_it;
@@ -56,19 +47,15 @@ void GroupList::removeGroup(const GroupId& groupId, bool /*fake*/)
     }
 }
 
-QList<Group*> GroupList::getAllGroups()
-{
+QList<Group*> GroupList::getAllGroups() {
     QList<Group*> res;
 
-    for (auto it : groupMap)
-        res.append(it);
+    for (auto it : groupMap) res.append(it);
 
     return res;
 }
 
-void GroupList::clear()
-{
-    for (auto groupptr : groupMap)
-        delete groupptr;
+void GroupList::clear() {
+    for (auto groupptr : groupMap) delete groupptr;
     groupMap.clear();
 }

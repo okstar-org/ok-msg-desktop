@@ -14,8 +14,8 @@ enum class CallStatsConnectionEndpointType {
 
 struct CallStatsNetworkRecord {
     int32_t timestamp = 0;
-    CallStatsConnectionEndpointType endpointType
-        = CallStatsConnectionEndpointType::ConnectionEndpointP2P;
+    CallStatsConnectionEndpointType endpointType =
+            CallStatsConnectionEndpointType::ConnectionEndpointP2P;
     bool isLowCost = false;
 };
 
@@ -30,6 +30,6 @@ struct CallStats {
     std::vector<CallStatsBitrateRecord> bitrateRecords;
 };
 
-} // namespace lib::ortc
+}  // namespace lib::ortc
 
 #endif

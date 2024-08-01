@@ -29,47 +29,48 @@ using namespace ok::session;
 
 class SysAccount {
 public:
-  quint64 id;
-  QString iso;
-  QString name;
-  QString username;
-  QString nickname;
+    quint64 id;
+    QString iso;
+    QString name;
+    QString username;
+    QString nickname;
 
-  SysAccount(const QJsonObject &data) {
-    /**
-     * {
-     * "id":2001,
-     * "iso":"CN",
-     * "username":"On1qv1AfQmap",
-     * "nickname":"OkStar",
-     * "firstName":"",
-     * "lastName":"",
-     * "no":null,
-     * "avatar":"/assets/images/avatar.jpg",
-     * "name":"OkStar"
-     * }
-     */
-    id = data.value("id").toVariant().toULongLong(); //
-    iso = data.value("iso").toString();              //
-    name = data.value("name").toString();            //
-    username = data.value("username").toString();    //
-    nickname = data.value("nickname").toString();    //
-  }
+    SysAccount(const QJsonObject& data) {
+        /**
+         * {
+         * "id":2001,
+         * "iso":"CN",
+         * "username":"On1qv1AfQmap",
+         * "nickname":"OkStar",
+         * "firstName":"",
+         * "lastName":"",
+         * "no":null,
+         * "avatar":"/assets/images/avatar.jpg",
+         * "name":"OkStar"
+         * }
+         */
+        id = data.value("id").toVariant().toULongLong();  //
+        iso = data.value("iso").toString();               //
+        name = data.value("name").toString();             //
+        username = data.value("username").toString();     //
+        nickname = data.value("nickname").toString();     //
+    }
 
-  QString toString() {
-    return QString("{id:%1, username:%2, name:%3, nickname:%4 iso:%5}") //
-        .arg(QString::number(id), username, name, nickname, iso);
-  }
+    QString toString() {
+        return QString("{id:%1, username:%2, name:%3, nickname:%4 iso:%5}")  //
+                .arg(QString::number(id), username, name, nickname, iso);
+    }
 };
 
 class PassportService : BaseService {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  PassportService(const QString& base, QObject *parent = nullptr);
-  ~PassportService();
+    PassportService(const QString& base, QObject* parent = nullptr);
+    ~PassportService();
 
-  bool getAccount(const QString &account,
-                  Fn<void(Res<SysAccount> &)> fn,
-                  network::HttpErrorFn err = nullptr);
+    bool getAccount(const QString& account,
+                    Fn<void(Res<SysAccount>&)>
+                            fn,
+                    network::HttpErrorFn err = nullptr);
 };
-} // namespace ok::backend
+}  // namespace ok::backend

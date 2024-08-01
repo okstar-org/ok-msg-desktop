@@ -18,9 +18,7 @@
 #include <QPropertyAnimation>
 #include <QTimer>
 
-FlyoutOverlayWidget::FlyoutOverlayWidget(QWidget* parent)
-    : QWidget(parent)
-{
+FlyoutOverlayWidget::FlyoutOverlayWidget(QWidget* parent) : QWidget(parent) {
     setContentsMargins(0, 0, 0, 0);
 
     animation = new QPropertyAnimation(this, QByteArrayLiteral("flyoutPercent"), this);
@@ -28,32 +26,21 @@ FlyoutOverlayWidget::FlyoutOverlayWidget(QWidget* parent)
     animation->setKeyValueAt(1, 1.0f);
     animation->setDuration(200);
 
-    connect(animation, &QAbstractAnimation::finished, this, &FlyoutOverlayWidget::finishedAnimation);
+    connect(animation, &QAbstractAnimation::finished, this,
+            &FlyoutOverlayWidget::finishedAnimation);
     setFlyoutPercent(0);
     hide();
 }
 
-FlyoutOverlayWidget::~FlyoutOverlayWidget()
-{
-}
+FlyoutOverlayWidget::~FlyoutOverlayWidget() {}
 
-int FlyoutOverlayWidget::animationDuration() const
-{
-    return animation->duration();
-}
+int FlyoutOverlayWidget::animationDuration() const { return animation->duration(); }
 
-void FlyoutOverlayWidget::setAnimationDuration(int timeMs)
-{
-    animation->setDuration(timeMs);
-}
+void FlyoutOverlayWidget::setAnimationDuration(int timeMs) { animation->setDuration(timeMs); }
 
-qreal FlyoutOverlayWidget::flyoutPercent() const
-{
-    return percent;
-}
+qreal FlyoutOverlayWidget::flyoutPercent() const { return percent; }
 
-void FlyoutOverlayWidget::setFlyoutPercent(qreal progress)
-{
+void FlyoutOverlayWidget::setFlyoutPercent(qreal progress) {
     percent = progress;
 
     QSize self = size();
@@ -62,51 +49,38 @@ void FlyoutOverlayWidget::setFlyoutPercent(qreal progress)
     setVisible(progress != 0);
 }
 
-bool FlyoutOverlayWidget::isShown() const
-{
-    return (percent == 1);
-}
+bool FlyoutOverlayWidget::isShown() const { return (percent == 1); }
 
-bool FlyoutOverlayWidget::isBeingAnimated() const
-{
+bool FlyoutOverlayWidget::isBeingAnimated() const {
     return (animation->state() == QAbstractAnimation::Running);
 }
 
-bool FlyoutOverlayWidget::isBeingShown() const
-{
+bool FlyoutOverlayWidget::isBeingShown() const {
     return (isBeingAnimated() && animation->direction() == QAbstractAnimation::Forward);
 }
 
-void FlyoutOverlayWidget::animateShow()
-{
-    if (percent == 1.0f)
-        return;
+void FlyoutOverlayWidget::animateShow() {
+    if (percent == 1.0f) return;
 
-    if (animation->state() != QAbstractAnimation::Running)
-        this->startPos = pos();
+    if (animation->state() != QAbstractAnimation::Running) this->startPos = pos();
 
     startAnimation(true);
 }
 
-void FlyoutOverlayWidget::animateHide()
-{
-    if (animation->state() != QAbstractAnimation::Running)
-        this->startPos = pos();
+void FlyoutOverlayWidget::animateHide() {
+    if (animation->state() != QAbstractAnimation::Running) this->startPos = pos();
 
     startAnimation(false);
 }
 
-void FlyoutOverlayWidget::finishedAnimation()
-{
+void FlyoutOverlayWidget::finishedAnimation() {
     bool hide = (animation->direction() == QAbstractAnimation::Backward);
 
     // Delay it by a few frames to let the system catch up on rendering
-    if (hide)
-        QTimer::singleShot(50, this, SIGNAL(hidden()));
+    if (hide) QTimer::singleShot(50, this, SIGNAL(hidden()));
 }
 
-void FlyoutOverlayWidget::startAnimation(bool forward)
-{
+void FlyoutOverlayWidget::startAnimation(bool forward) {
     setAttribute(Qt::WA_TransparentForMouseEvents, !forward);
     animation->setDirection(forward ? QAbstractAnimation::Forward : QAbstractAnimation::Backward);
     animation->start();

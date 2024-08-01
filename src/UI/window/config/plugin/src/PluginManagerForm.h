@@ -13,17 +13,17 @@
 #ifndef PLUGINFORM_H
 #define PLUGINFORM_H
 
+#include <QMap>
+#include <QWidget>
 #include "UI/widget/GenericForm.h"
 #include "base/timer.h"
 #include "lib/backend/OkCloudService.h"
 #include "lib/plugin/PluginInfo.h"
-#include <QMap>
-#include <QWidget>
 
 namespace Ui {
 class PluginManagerForm;
 class PluginInfoForm;
-} // namespace Ui
+}  // namespace Ui
 
 class QListWidgetItem;
 
@@ -33,30 +33,30 @@ namespace plugin {
 class PluginInfoForm;
 
 class PluginManagerForm : public UI::GenericForm {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  explicit PluginManagerForm(QWidget *parent = nullptr);
-  ~PluginManagerForm() override;
+    explicit PluginManagerForm(QWidget* parent = nullptr);
+    ~PluginManagerForm() override;
 
-  virtual QString getFormName() final override { return tr("Plugin manager"); }
+    virtual QString getFormName() final override { return tr("Plugin manager"); }
 
-  void add(ok::backend::PluginInfo &info, int i);
+    void add(ok::backend::PluginInfo& info, int i);
 
-  void retranslateUi() override;
+    void retranslateUi() override;
 
 private:
-  Ui::PluginManagerForm *ui;
-  QList<ok::backend::PluginInfo> mPluginInfos;
-  std::unique_ptr<::base::DelayedCallTimer> delayCaller_;
-  std::unique_ptr<ok::backend::OkCloudService> http;
+    Ui::PluginManagerForm* ui;
+    QList<ok::backend::PluginInfo> mPluginInfos;
+    std::unique_ptr<::base::DelayedCallTimer> delayCaller_;
+    std::unique_ptr<ok::backend::OkCloudService> http;
 
-  void createPlugin(ok::backend::PluginInfo &, int i);
-  void setPluginInfo(ok::backend::PluginInfo &);
+    void createPlugin(ok::backend::PluginInfo&, int i);
+    void setPluginInfo(ok::backend::PluginInfo&);
 
 protected slots:
-  void pluginClicked(QListWidgetItem *);
+    void pluginClicked(QListWidgetItem*);
 };
-} // namespace plugin
-} // namespace ok
-#endif // PLUGINFORM_H
+}  // namespace plugin
+}  // namespace ok
+#endif  // PLUGINFORM_H

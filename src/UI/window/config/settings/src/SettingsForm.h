@@ -16,43 +16,38 @@
 #include <QPushButton>
 #include <QStyleFactory>
 
-#include "GeneralForm.h"
-#include "src/UI/widget/GenericForm.h"
 #include <QTabWidget>
 #include <array>
 #include <memory>
+#include "GeneralForm.h"
+#include "src/UI/widget/GenericForm.h"
 
 namespace UI {
 class SettingsWidget : public GenericForm {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  SettingsWidget(QWidget *parent = nullptr);
-  ~SettingsWidget();
+    SettingsWidget(QWidget* parent = nullptr);
+    ~SettingsWidget();
 
-  virtual QString getFormName() final override
-  {
-      return tr("Settings");
-  }
+    virtual QString getFormName() final override { return tr("Settings"); }
 
-  bool isShown() const;
-  void setBodyHeadStyle(QString style);
+    bool isShown() const;
+    void setBodyHeadStyle(QString style);
 
-  void showAbout();
-  GeneralForm * general(){
-     return static_cast<GeneralForm*>( cfgForms.at(0));
-  }
-  void retranslateUi() override ;
+    void showAbout();
+    GeneralForm* general() { return static_cast<GeneralForm*>(cfgForms.at(0)); }
+    void retranslateUi() override;
 
 public slots:
-  void onUpdateAvailable(void);
+    void onUpdateAvailable(void);
 
 private slots:
-  void onTabChanged(int);
+    void onTabChanged(int);
 
 private:
-  std::unique_ptr<QVBoxLayout> bodyLayout;
-  std::unique_ptr<QTabWidget> settingsWidgets;
-  std::vector<GenericForm*> cfgForms;
-  int currentIndex;
+    std::unique_ptr<QVBoxLayout> bodyLayout;
+    std::unique_ptr<QTabWidget> settingsWidgets;
+    std::vector<GenericForm*> cfgForms;
+    int currentIndex;
 };
-} // namespace UI
+}  // namespace UI

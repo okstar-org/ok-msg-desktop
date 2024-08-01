@@ -23,8 +23,8 @@
 #include "contentdialog.h"
 #include "friendlistwidget.h"
 #include "friendwidget.h"
-#include "widget.h"
 #include "tool/croppinglabel.h"
+#include "widget.h"
 
 #include "src/friendlist.h"
 #include "src/model/friend.h"
@@ -33,50 +33,37 @@
 
 QHash<int, CircleWidget*> CircleWidget::circleList;
 
-CircleWidget::CircleWidget(FriendListWidget* parent, int id)
-    : CategoryWidget(parent)
-    , id(id)
-{
+CircleWidget::CircleWidget(FriendListWidget* parent, int id) : CategoryWidget(parent), id(id) {
     setName(Settings::getInstance().getCircleName(id), false);
     circleList[id] = this;
 
     connect(nameLabel, &CroppingLabel::editFinished, [this](const QString& newName) {
-        if (!newName.isEmpty())
-            emit renameRequested(this, newName);
+        if (!newName.isEmpty()) emit renameRequested(this, newName);
     });
 
     connect(nameLabel, &CroppingLabel::editRemoved, [this]() {
-        if (isCompact())
-            nameLabel->minimizeMaximumWidth();
+        if (isCompact()) nameLabel->minimizeMaximumWidth();
     });
 
     setExpanded(Settings::getInstance().getCircleExpanded(id), false);
     updateStatus();
 }
 
-CircleWidget::~CircleWidget()
-{
-    if (circleList[id] == this)
-        circleList.remove(id);
+CircleWidget::~CircleWidget() {
+    if (circleList[id] == this) circleList.remove(id);
 }
 
-void CircleWidget::editName()
-{
-    CategoryWidget::editName();
-}
+void CircleWidget::editName() { CategoryWidget::editName(); }
 
-CircleWidget* CircleWidget::getFromID(int id)
-{
+CircleWidget* CircleWidget::getFromID(int id) {
     auto circleIt = circleList.find(id);
 
-    if (circleIt != circleList.end())
-        return circleIt.value();
+    if (circleIt != circleList.end()) return circleIt.value();
 
     return nullptr;
 }
 
-void CircleWidget::contextMenuEvent(QContextMenuEvent* event)
-{
+void CircleWidget::contextMenuEvent(QContextMenuEvent* event) {
     QMenu menu;
     QAction* renameAction = menu.addAction(tr("Rename circle", "Menu for renaming a circle"));
     QAction* removeAction = menu.addAction(tr("Remove circle", "Menu for removing a circle"));
@@ -102,7 +89,7 @@ void CircleWidget::contextMenuEvent(QContextMenuEvent* event)
             if (circleReplace != circleList.end())
                 circleReplace.value()->updateID(id);
             else
-                assert(true); // This should never happen.
+                assert(true);  // This should never happen.
 
             circleList.remove(replacedCircle);
         } else if (selectedItem == openAction) {
@@ -133,33 +120,28 @@ void CircleWidget::contextMenuEvent(QContextMenuEvent* event)
     setContainerAttribute(Qt::WA_UnderMouse, false);
 }
 
-void CircleWidget::dragEnterEvent(QDragEnterEvent* event)
-{
+void CircleWidget::dragEnterEvent(QDragEnterEvent* event) {
     if (!event->mimeData()->hasFormat("toxPk")) {
         return;
     }
     ToxPk toxPk(event->mimeData()->data("toxPk"));
     Friend* f = FriendList::findFriend(toxPk);
-    if (f != nullptr)
-        event->acceptProposedAction();
+    if (f != nullptr) event->acceptProposedAction();
 
-    setContainerAttribute(Qt::WA_UnderMouse, true); // Simulate hover.
+    setContainerAttribute(Qt::WA_UnderMouse, true);  // Simulate hover.
 }
 
-void CircleWidget::dragLeaveEvent(QDragLeaveEvent*)
-{
+void CircleWidget::dragLeaveEvent(QDragLeaveEvent*) {
     setContainerAttribute(Qt::WA_UnderMouse, false);
 }
 
-void CircleWidget::dropEvent(QDropEvent* event)
-{
+void CircleWidget::dropEvent(QDropEvent* event) {
     setExpanded(true, false);
 
     // Check, that the element is dropped from qTox
     QObject* o = event->source();
     FriendWidget* widget = qobject_cast<FriendWidget*>(o);
-    if (!widget)
-        return;
+    if (!widget) return;
 
     if (!event->mimeData()->hasFormat("toxPk")) {
         return;
@@ -167,8 +149,7 @@ void CircleWidget::dropEvent(QDropEvent* event)
     // Check, that the user has a friend with the same ToxId
     ToxPk toxPk{event->mimeData()->data("toxPk")};
     Friend* f = FriendList::findFriend(toxPk);
-    if (!f)
-        return;
+    if (!f) return;
 
     // Save CircleWidget before changing the Id
     int circleId = Settings::getInstance().getFriendCircleID(toxPk);
@@ -185,26 +166,20 @@ void CircleWidget::dropEvent(QDropEvent* event)
     setContainerAttribute(Qt::WA_UnderMouse, false);
 }
 
-void CircleWidget::onSetName()
-{
-    Settings::getInstance().setCircleName(id, getName());
-}
+void CircleWidget::onSetName() { Settings::getInstance().setCircleName(id, getName()); }
 
-void CircleWidget::onExpand()
-{
+void CircleWidget::onExpand() {
     Settings::getInstance().setCircleExpanded(id, isExpanded());
     Settings::getInstance().savePersonal();
 }
 
-void CircleWidget::onAddFriendWidget(FriendWidget* w)
-{
+void CircleWidget::onAddFriendWidget(FriendWidget* w) {
     const Friend* f = w->getFriend();
     ToxPk toxId = f->getPublicKey();
     Settings::getInstance().setFriendCircleID(toxId, id);
 }
 
-void CircleWidget::updateID(int index)
-{
+void CircleWidget::updateID(int index) {
     // For when a circle gets destroyed, another takes its id.
     // This function updates all friends widgets for this new id.
 

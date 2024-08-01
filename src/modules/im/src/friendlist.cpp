@@ -11,65 +11,56 @@
  */
 
 #include "friendlist.h"
+#include <QHash>
+#include <QMenu>
 #include "src/core/FriendId.h"
 #include "src/model/friend.h"
 #include "src/persistence/settings.h"
-#include <QHash>
-#include <QMenu>
-
 
 FriendMap FriendList::friendMap;
 
-Friend *FriendList::addFriend(const FriendInfo &friendInfo) {
-  qDebug() << __func__ << "friendInfo:" << friendInfo.toString();
+Friend* FriendList::addFriend(const FriendInfo& friendInfo) {
+    qDebug() << __func__ << "friendInfo:" << friendInfo.toString();
 
-  auto frnd = findFriend(friendInfo.id);
-  if(frnd){
-      qWarning() <<"friend:" << friendInfo.toString() <<"is existing";
-      return frnd;
-  }
+    auto frnd = findFriend(friendInfo.id);
+    if (frnd) {
+        qWarning() << "friend:" << friendInfo.toString() << "is existing";
+        return frnd;
+    }
 
-  Friend *newfriend = new Friend(friendInfo.id,
-                                 friendInfo.isFriend(),
-                                 friendInfo.getAlias(),
-                                 {});
-  friendMap[((ContactId&)friendInfo).toString()] = newfriend;
+    Friend* newfriend = new Friend(friendInfo.id, friendInfo.isFriend(), friendInfo.getAlias(), {});
+    friendMap[((ContactId&)friendInfo).toString()] = newfriend;
 
-//  if(friendInfo.resource.isEmpty()){
-//      newfriend->addEnd(friendInfo.resource);
-//  }
-  return newfriend;
+    //  if(friendInfo.resource.isEmpty()){
+    //      newfriend->addEnd(friendInfo.resource);
+    //  }
+    return newfriend;
 }
 
-Friend *FriendList::findFriend(const ContactId &cId) {
-  return friendMap.value(cId.toString());
-}
+Friend* FriendList::findFriend(const ContactId& cId) { return friendMap.value(cId.toString()); }
 
-void FriendList::removeFriend(const FriendId &friendPk, bool fake) {
+void FriendList::removeFriend(const FriendId& friendPk, bool fake) {
     auto f = findFriend(friendPk);
-    if(f){
+    if (f) {
         friendMap.remove(((ContactId&)friendPk).toString());
         f->deleteLater();
     }
 }
 
-
 void FriendList::clear() {
-  for (auto friendptr : friendMap)
-    delete friendptr;
-  friendMap.clear();
+    for (auto friendptr : friendMap) delete friendptr;
+    friendMap.clear();
 }
 
-QList<Friend *> FriendList::getAllFriends() { return friendMap.values(); }
+QList<Friend*> FriendList::getAllFriends() { return friendMap.values(); }
 
-QString FriendList::decideNickname(const FriendId &friendPk,
-                                   const QString &origName) {
-  Friend *f = FriendList::findFriend(friendPk);
-  if (f != nullptr) {
-    return f->getDisplayedName();
-  } else if (!origName.isEmpty()) {
-    return origName;
-  } else {
-    return friendPk.toString();
-  }
+QString FriendList::decideNickname(const FriendId& friendPk, const QString& origName) {
+    Friend* f = FriendList::findFriend(friendPk);
+    if (f != nullptr) {
+        return f->getDisplayedName();
+    } else if (!origName.isEmpty()) {
+        return origName;
+    } else {
+        return friendPk.toString();
+    }
 }

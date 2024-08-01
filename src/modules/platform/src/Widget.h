@@ -16,21 +16,19 @@
 
 #pragma once
 
-#include "UI/widget/OMenuWidget.h"
 #include <QWidget>
+#include "UI/widget/OMenuWidget.h"
 
 class QWebEngineView;
 
-namespace platform{
+namespace platform {
 
-class Widget : public UI::OMenuWidget{
-Q_OBJECT
+class Widget : public UI::OMenuWidget {
+    Q_OBJECT
 public:
-  Widget(QWidget *parent= nullptr);
+    Widget(QWidget* parent = nullptr);
 
 private:
-  QWebEngineView *webView;
+    QWebEngineView* webView;
 };
-}
-
-
+}  // namespace platform

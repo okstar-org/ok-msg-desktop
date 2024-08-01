@@ -18,20 +18,16 @@
 
 namespace platform {
 
-Platform::Platform(): m_widget{nullptr} {
-  m_widget = new Widget();
-}
+Platform::Platform() : m_widget{nullptr} { m_widget = new Widget(); }
 
-Platform::~Platform() {
+Platform::~Platform() {}
 
-}
-
-void Platform::init(Profile *p) {}
+void Platform::init(Profile* p) {}
 QString Platform::name() { return QString(); }
-void Platform::start(ok::session::SignInInfo &signInInfo) {}
+void Platform::start(ok::session::SignInInfo& signInInfo) {}
 bool Platform::isStarted() { return false; }
-void Platform::onSave(SavedInfo &) {}
+void Platform::onSave(SavedInfo&) {}
 void Platform::cleanup() {}
 void Platform::destroy() {}
 void Platform::hide() {}
-} // namespace platform
+}  // namespace platform

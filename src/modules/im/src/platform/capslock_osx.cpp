@@ -14,7 +14,4 @@
 #include "src/platform/capslock.h"
 
 // TODO: Implement for osx
-bool Platform::capsLockEnabled()
-{
-    return false;
-}
+bool Platform::capsLockEnabled() { return false; }

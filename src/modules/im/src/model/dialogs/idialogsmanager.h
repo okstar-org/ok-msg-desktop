@@ -18,12 +18,11 @@
 class GroupId;
 class FriendId;
 
-class IDialogsManager
-{
+class IDialogsManager {
 public:
     virtual ~IDialogsManager() = default;
     virtual IDialogs* getFriendDialogs(const FriendId& friendId) const = 0;
     virtual IDialogs* getGroupDialogs(const GroupId& groupId) const = 0;
 };
 
-#endif // I_DIALOGS_MANAGER
+#endif  // I_DIALOGS_MANAGER

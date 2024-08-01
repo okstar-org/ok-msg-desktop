@@ -16,13 +16,12 @@
 #include <QString>
 #include <QStringList>
 
-class Paths
-{
+class Paths {
 public:
     enum class Portable {
-        Auto,           /** Auto detect if portable or non-portable */
-        Portable,       /** Force portable mode */
-        NonPortable     /** Force non-portable mode */
+        Auto,       /** Auto detect if portable or non-portable */
+        Portable,   /** Force portable mode */
+        NonPortable /** Force non-portable mode */
     };
 
     static Paths* makePaths(Portable mode = Portable::Auto);
@@ -37,11 +36,11 @@ public:
     QString getScreenshotsDir() const;
 
 private:
-    Paths(const QString &basePath, bool portable);
+    Paths(const QString& basePath, bool portable);
 
 private:
     QString basePath{};
     bool portable = false;
 };
 
-#endif // PATHS_H
+#endif  // PATHS_H

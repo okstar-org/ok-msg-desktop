@@ -10,45 +10,35 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#include <QtCore/qsystemdetection.h>
 #include "src/platform/x11_display.h"
-#include <QMutex>
+#include <QtCore/qsystemdetection.h>
 #include <X11/Xlib.h>
+#include <QMutex>
 
 namespace Platform {
 
-struct X11DisplayPrivate
-{
+struct X11DisplayPrivate {
     Display* display;
     QMutex mutex;
 
-    X11DisplayPrivate()
-        : display(XOpenDisplay(nullptr))
-    {
-    }
-    ~X11DisplayPrivate()
-    {
+    X11DisplayPrivate() : display(XOpenDisplay(nullptr)) {}
+    ~X11DisplayPrivate() {
         if (display) {
             XCloseDisplay(display);
         }
     }
-    static X11DisplayPrivate& getSingleInstance()
-    {
+    static X11DisplayPrivate& getSingleInstance() {
         // object created on-demand
         static X11DisplayPrivate singleInstance;
         return singleInstance;
     }
 };
 
-Display* X11Display::lock()
-{
+Display* X11Display::lock() {
     X11DisplayPrivate& singleInstance = X11DisplayPrivate::getSingleInstance();
     singleInstance.mutex.lock();
     return singleInstance.display;
 }
 
-void X11Display::unlock()
-{
-    X11DisplayPrivate::getSingleInstance().mutex.unlock();
-}
-}
+void X11Display::unlock() { X11DisplayPrivate::getSingleInstance().mutex.unlock(); }
+}  // namespace Platform

@@ -22,8 +22,7 @@
 class ContentLayout;
 class QListWidget;
 
-class FilesForm : public QObject
-{
+class FilesForm : public QObject {
     Q_OBJECT
 
 public:
@@ -52,4 +51,4 @@ private:
     QListWidget *sent, *recvd;
 };
 
-#endif // FILESFORM_H
+#endif  // FILESFORM_H

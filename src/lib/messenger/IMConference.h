@@ -13,56 +13,54 @@
 #ifndef IM_CONFERENCE_H
 #define IM_CONFERENCE_H
 
-#include "base/timer.h"
 #include <client.h>
 #include <jinglesessionhandler.h>
 #include <mucroom.h>
 #include <memory>
+#include "base/timer.h"
 
 namespace lib {
 namespace messenger {
 
 using namespace gloox;
 
-class IMConference : public QObject,
-                     public DiscoHandler {
-  Q_OBJECT
+class IMConference : public QObject, public DiscoHandler {
+    Q_OBJECT
 public:
-  IMConference(Client *client, Jingle::SessionHandler *sessionHandler);
+    IMConference(Client* client, Jingle::SessionHandler* sessionHandler);
 
-  void start(const JID &jid);
+    void start(const JID& jid);
 
-  void join(const std::string &room);
+    void join(const std::string& room);
 
-  void setVideoMute(const std::string &room);
+    void setVideoMute(const std::string& room);
 
-  // Disco handler
-  virtual void handleDiscoInfo(const JID &from,     //
-                               const Disco::Info &, //
-                               int ontext) override;
+    // Disco handler
+    virtual void handleDiscoInfo(const JID& from,     //
+                                 const Disco::Info&,  //
+                                 int ontext) override;
 
-  virtual void handleDiscoItems(const JID &from,      //
-                                const Disco::Items &, //
-                                int context) override;
+    virtual void handleDiscoItems(const JID& from,      //
+                                  const Disco::Items&,  //
+                                  int context) override;
 
-  virtual void handleDiscoError(const JID &from,      //
-                                const gloox::Error *, //
-                                int context) override;
+    virtual void handleDiscoError(const JID& from,      //
+                                  const gloox::Error*,  //
+                                  int context) override;
 
-//  virtual void onStart(const gloox::Conference *j) override;
+    //  virtual void onStart(const gloox::Conference *j) override;
 
 private:
-  Client *_client;
-  Jingle::SessionHandler *_sessionHandler;
+    Client* _client;
+    Jingle::SessionHandler* _sessionHandler;
 
-//  std::unique_ptr<gloox::ConferenceManager> _conferenceManager;
-  std::shared_ptr<::base::DelayedCallTimer> delayCaller_;
+    //  std::unique_ptr<gloox::ConferenceManager> _conferenceManager;
+    std::shared_ptr<::base::DelayedCallTimer> delayCaller_;
 
 signals:
-  void groupListReceived(const QString &peerId);
-
+    void groupListReceived(const QString& peerId);
 };
-} // namespace IM
-} // namespace lib
+}  // namespace messenger
+}  // namespace lib
 
 #endif
