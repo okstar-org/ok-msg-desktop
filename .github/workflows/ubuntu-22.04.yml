@@ -63,6 +63,8 @@ jobs:
 
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
+      with:
+        modules: 'qtwebengine'
 
     - name: Install ok-gloox
       run: |

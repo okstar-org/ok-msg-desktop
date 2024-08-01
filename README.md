@@ -11,11 +11,11 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
 - 市面上现有产品同质化严重，市场需要一款有本质化差异的产品。
 
 # Support platform
-| Platform   | Lastest Build Status                                                                                                                                                                         |
-|------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Windows-x64 | [![Build on Windows](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/win.yml/badge.svg)](https://github.com/CefView/QCefView/actions/workflows/build-windows-x86_64.yml)      | 
-| Linux-x64  | [![Build on macOS](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/ubuntu-22.04.yml/badge.svg)](https://github.com/CefView/QCefView/actions/workflows/build-macos-x86_64.yml) | 
-| macOS-x64 | None                                                                                                                                                                                         | 
+| Platform    | Lastest Build Status                                                                                                                                                                          |
+|-------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Windows-x64 | [![Build on Windows](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/win.yml/badge.svg)](https://github.com/CefView/QCefView/actions/workflows/build-windows-x86_64.yml)       | 
+| Linux-x64   | [![Build on Ubuntu](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/ubuntu-22.04.yml/badge.svg)](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/ubuntu-22.04.yml/badge.svg) | 
+| macOS-x64   | None                                                                                                                                                                                          | 
 
 # 🧭 功能介绍
 - 聊天模块
@@ -196,7 +196,7 @@ cmake --build out --config Debug #或者Release
 ### 安装依赖
 ```shell
 sudo apt install -y gcc g++ clang yasm libstdc++-12-dev libc++1
-sudo apt install -y qtcreator qtbase5-dev  qtmultimedia5-dev libqt5svg5-dev qttools5-dev
+sudo apt install -y qtcreator qtbase5-dev  qtmultimedia5-dev libqt5svg5-dev qttools5-dev qtwebengine5-dev qtwebengine5-dev-tools
 sudo apt install -y libcrypto++-dev  libssl-dev
 sudo apt install -y libpipewire-0.3-dev libxss-dev libgbm-dev libdrm-dev libxdamage-dev libxrender-dev libxrandr-dev libxtst-dev \
   libasound2-dev libpulse-dev libavcodec-dev libavformat-dev libswscale-dev libavdevice-dev libvpx-dev \
