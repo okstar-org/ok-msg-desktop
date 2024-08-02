@@ -9,11 +9,12 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PubL v2 for more details.
  */
-
+// clang-format off
 #include <QDebug>
 #include <X11/extensions/scrnsaver.h>
 #include "src/platform/timer.h"
 #include "src/platform/x11_display.h"
+// clang-format on
 
 uint32_t Platform::getIdleTime() {
     uint32_t idleTime = 0;
@@ -33,9 +34,8 @@ uint32_t Platform::getIdleTime() {
             XScreenSaverQueryInfo(display, DefaultRootWindow(display), info);
             idleTime = info->idle;
             XFree(info);
-        }
-        //        else
-        //            qDebug() << "XScreenSaverAllocInfo() failed";
+        } else
+            qWarning() << "XScreenSaverAllocInfo() failed";
     }
     X11Display::unlock();
     return idleTime;

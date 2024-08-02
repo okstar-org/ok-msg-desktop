@@ -16,6 +16,7 @@
 
 #include "Widget.h"
 
+#include <QFile>
 #include <QGridLayout>
 #include <QUrl>
 #include <QtWebEngineWidgets/QWebEngineView>
@@ -23,11 +24,25 @@
 namespace platform {
 
 Widget::Widget(QWidget* parent) : UI::OMenuWidget(parent) {
+    OK_RESOURCE_INIT(Platform);
+
     setLayout(new QGridLayout());
 
-    webView = new QWebEngineView(this);
-    webView->load(QUrl("https://stack.okstar.org.cn"));  // 加载网页
+    QString htmlContent;
+    QFile file(":/res/Platform/app.html");
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QTextStream in(&file);
+        htmlContent = in.readAll();
+        file.close();
+    }
 
+    webView = new QWebEngineView(this);
+    webView->setContent(htmlContent.toUtf8(), "text/html", QUrl("file:///"));
     layout()->addWidget(webView);
+
 }
+Widget::~Widget() {
+
+}
+
 }  // namespace platform

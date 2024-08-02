@@ -123,7 +123,6 @@ void Nexus::start(std::shared_ptr<ok::session::AuthSession> session) {
                                        signInInfo.password);
     }
 
-    assert(profile);
     if (!profile) {
         qWarning() << tr("Can not create profile!");
         emit createProfileFailed(tr("Can not create profile!"));

@@ -227,10 +227,10 @@ Profile* Profile::createProfile(QString host,
         return nullptr;
     }
 
-    if (!ProfileLocker::lock(name)) {
-        qWarning() << "Failed to lock profile " << name;
-        return nullptr;
-    }
+//    if (!ProfileLocker::lock(name)) {
+//        qWarning() << "Failed to lock profile " << name;
+//        return nullptr;
+//    }
 
     Settings::getInstance().createPersonal(name);
     Profile* p = new Profile(host, name, password, true);

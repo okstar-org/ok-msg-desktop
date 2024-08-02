@@ -18,8 +18,12 @@
 
 #include <QWidget>
 #include "UI/widget/OMenuWidget.h"
+#include "base/resources.h"
 
 class QWebEngineView;
+
+
+OK_RESOURCE_LOADER(Platform)
 
 namespace platform {
 
@@ -27,8 +31,11 @@ class Widget : public UI::OMenuWidget {
     Q_OBJECT
 public:
     Widget(QWidget* parent = nullptr);
+    ~Widget() override;
 
 private:
+    OK_RESOURCE_PTR(Platform);
+
     QWebEngineView* webView;
 };
 }  // namespace platform
