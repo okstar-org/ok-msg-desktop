@@ -81,6 +81,7 @@ static QMap<QString, QColor> extPalette;
 static QMap<QString, QString> dictColor;
 static QMap<QString, QString> dictFont;
 static QMap<QString, QString> dictTheme;
+static QMap<QString, QString> dictExtColor;
 
 QList<Style::ThemeNameColor> Style::themeNameColors = {
     {Style::Light, QObject::tr("Default"), QColor()},
@@ -261,16 +262,33 @@ const QString Style::resolve(const QString& filename, const QFont& baseFont)
             {"@smallLight", qssifyFont(Style::getFont(Style::SmallLight))}};
     }
 
-    for (const QString& key : dictColor.keys()) {
-        qss.replace(QRegularExpression(key % QLatin1String{"\\b"}), dictColor[key]);
+    if (dictExtColor.isEmpty() && !extPalette.isEmpty()) {
+      auto it = extPalette.begin();
+      while (it != extPalette.end()) {
+        dictExtColor.insert("@" + it.key(), it.value().name());
+        it++;
+      }
     }
 
-    for (const QString& key : dictFont.keys()) {
-        qss.replace(QRegularExpression(key % QLatin1String{"\\b"}), dictFont[key]);
-    }
-
-    for (const QString& key : dictTheme.keys()) {
-        qss.replace(QRegularExpression(key % QLatin1String{"\\b"}), dictTheme[key]);
+    QRegularExpression anchorReg(R"(@([a-zA-z0-9\.]+))");
+    int from = 0;
+    int index = qss.indexOf('@');
+    while (index >= 0) {
+      QRegularExpressionMatch match = anchorReg.match(qss, from);
+      if (match.hasMatch()) {
+        QString key = match.captured(0);
+        // c++17
+        if (auto it = dictColor.find(key); it != dictColor.end())
+          qss.replace(key, it.value());
+        else if (auto it = dictFont.find(key); it != dictFont.end())
+          qss.replace(key, it.value());
+        else if (auto it = dictTheme.find(key); it != dictTheme.end())
+          qss.replace(key, it.value());
+        else if (auto it = dictExtColor.find(key); it != dictExtColor.end())
+          qss.replace(key, it.value());
+      }
+      from++;
+      index = qss.indexOf('@', from);
     }
 
     // @getImagePath() function
@@ -321,6 +339,7 @@ void Style::setThemeColor(int color)
     stylesheetsCache.clear(); // clear stylesheet cache which includes color info
     palette.clear();
     dictColor.clear();
+    dictExtColor.clear();
     initPalette();
     initDictColor();
     if (color < 0 || color >= themeNameColors.size())
