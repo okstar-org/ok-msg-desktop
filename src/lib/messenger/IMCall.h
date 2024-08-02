@@ -18,9 +18,8 @@
 #define OKMSG_PROJECT_IMCALL_H
 
 #include "IMFriend.h"
-#include "tox/toxav.h"
 #include "IMJingle.h"
-
+#include "tox/toxav.h"
 
 enum TOXAV_FRIEND_CALL_STATE {
 
@@ -76,24 +75,23 @@ class OkRTCManager;
 
 namespace lib::messenger {
 
-
 class CallHandler {
 public:
   virtual void onCall(const IMPeerId &peerId, //
-                      const QString &callId,   //
+                      const QString &callId,  //
                       bool audio, bool video) = 0;
 
   virtual void onCallRetract(const QString &friendId, //
-                      int state) = 0;
+                             int state) = 0;
 
-  virtual void onCallAcceptByOther(const QString& callId, const IMPeerId & peerId) = 0;
+  virtual void onCallAcceptByOther(const QString &callId, const IMPeerId &peerId) = 0;
 
   virtual void receiveCallStateAccepted(IMPeerId friendId, //
-                                        QString callId,  //
+                                        QString callId,    //
                                         bool video) = 0;
 
   virtual void receiveCallStateRejected(IMPeerId friendId, //
-                                        QString callId,  //
+                                        QString callId,    //
                                         bool video) = 0;
 
   virtual void onHangup(const QString &friendId, //
@@ -122,112 +120,102 @@ class IMJingle;
 enum class CallDirection;
 
 struct IMCall0 {
-    QString id;
-    QString sId;
-    CallDirection direction;
+  QString id;
+  QString sId;
+  CallDirection direction;
 };
 
-class IMCall : public IMJingle , public lib::ortc::OkRTCHandler {
-    Q_OBJECT
+class IMCall : public IMJingle, public lib::ortc::OkRTCHandler {
+  Q_OBJECT
 public:
-    IMCall(IM* im, QObject *parent = nullptr);
+  IMCall(IM *im, QObject *parent = nullptr);
 
+  void onCreatePeerConnection(const std::string &sId, const std::string &peerId, bool ok) override;
 
-    void onCreatePeerConnection(const std::string &sId,
-                                const std::string &peerId,
-                                bool ok) override;
+  // onRTP
+  void onRTP(const std::string &sId,      //
+             const std::string &friendId, //
+             const lib::ortc::OJingleContentAv &oContext) override;
 
-    // onRTP
-    void onRTP(const std::string &sId,      //
-               const std::string &friendId, //
-               const lib::ortc::OJingleContentAv &oContext) override;
+  // onIce
+  void onIce(const std::string &sId,      //
+             const std::string &friendId, //
+             const lib::ortc::OIceUdp &) override;
 
-    // onIce
-    void onIce(const std::string &sId,      //
-               const std::string &friendId, //
-               const lib::ortc::OIceUdp &) override;
+  // Renderer
+  void onRender(const std::string &peerId, lib::ortc::RendererImage image) override;
 
-    // Renderer
-    void onRender(const std::string &peerId,
-                  lib::ortc::RendererImage image) override;
+  void addCallHandler(CallHandler *);
+  bool callToGroup(const QString &g);
 
-    void addCallHandler(CallHandler *);
-    bool callToGroup(const QString &g);
+  // 发起呼叫邀请
+  bool callToFriend(const QString &f, const QString &sId, bool video);
+  // 创建呼叫
+  bool callToPeerId(const IMPeerId &to, const QString &sId, bool video);
+  // 应答呼叫
+  bool callAnswerToFriend(const IMPeerId &peer, const QString &callId, bool video);
+  // 取消呼叫
+  void callRetract(const IMContactId &f, const QString &sId);
+  // 拒绝呼叫
+  void callReject(const IMPeerId &f, const QString &sId);
 
-
-    // 发起呼叫邀请
-    bool callToFriend(const QString &f, const QString &sId, bool video);
-    // 创建呼叫
-    bool callToPeerId(const IMPeerId &to, const QString &sId, bool video);
-    // 应答呼叫
-    bool callAnswerToFriend(const IMPeerId &peer, const QString &callId, bool video);
-    // 取消呼叫
-    void callRetract(const IMContactId &f, const QString &sId);
-    // 拒绝呼叫
-    void callReject(const IMPeerId &f, const QString &sId);
-
-    // 静音功能
-    void setMute(bool mute);
-    void setRemoteMute(bool mute);
-
+  // 静音功能
+  void setMute(bool mute);
+  void setRemoteMute(bool mute);
 
 signals:
-      void sig_createPeerConnection(const QString sId,
-                                    const QString peerId,
-                                    bool ok);
+  void sig_createPeerConnection(const QString sId, const QString peerId, bool ok);
 
-      void receiveSelfVideoFrame(uint16_t w, uint16_t h, //
-                                 const uint8_t *y,       //
-                                 const uint8_t *u,       //
-                                 const uint8_t *v,       //
-                                 int32_t ystride,        //
-                                 int32_t ustride,        //
-                                 int32_t vstride);
+  void receiveSelfVideoFrame(uint16_t w, uint16_t h, //
+                             const uint8_t *y,       //
+                             const uint8_t *u,       //
+                             const uint8_t *v,       //
+                             int32_t ystride,        //
+                             int32_t ustride,        //
+                             int32_t vstride);
 
-      void receiveFriendVideoFrame(const QString &friendId, //
-                                   uint16_t w, uint16_t h,  //
-                                   const uint8_t *y,        //
-                                   const uint8_t *u,        //
-                                   const uint8_t *v,        //
-                                   int32_t ystride,         //
-                                   int32_t ustride,         //
-                                   int32_t vstride);
+  void receiveFriendVideoFrame(const QString &friendId, //
+                               uint16_t w, uint16_t h,  //
+                               const uint8_t *y,        //
+                               const uint8_t *u,        //
+                               const uint8_t *v,        //
+                               int32_t ystride,         //
+                               int32_t ustride,         //
+                               int32_t vstride);
 
 private:
-     void connectJingle(IMJingle *jingle);
+  void connectJingle(IMJingle *jingle);
 
-     /**
+  /**
    * 发起呼叫
    * @param friendId
    * @param video
    * @return
-      */
-     bool startCall(const QString &friendId, const QString &sId, bool video);
+   */
+  bool startCall(const QString &friendId, const QString &sId, bool video);
 
-     bool sendCallToResource(const QString &friendId, const QString &sId, bool video);
+  bool sendCallToResource(const QString &friendId, const QString &sId, bool video);
 
-     bool createCall(const IMPeerId &to, const QString &sId, bool video);
+  bool createCall(const IMPeerId &to, const QString &sId, bool video);
 
-     bool answer(const IMPeerId &to, const QString &callId, bool video);
+  bool answer(const IMPeerId &to, const QString &callId, bool video);
 
-     void cancel(const QString &friendId);
-     //取消呼叫
-     void cancelCall(const IMContactId &friendId, const QString &sId);
-     void rejectCall(const IMPeerId &friendId, const QString &sId);
+  void cancel(const QString &friendId);
+  // 取消呼叫
+  void cancelCall(const IMContactId &friendId, const QString &sId);
+  void rejectCall(const IMPeerId &friendId, const QString &sId);
 
-     void join(const JID &room);
+  void join(const JID &room);
 
-
-     IM *im;
-     IMJingle *jingle;
-     ok::session::AuthSession *session;
-     std::vector<CallHandler *> callHandlers;
+  IM *im;
+  IMJingle *jingle;
+  ok::session::AuthSession *session;
+  std::vector<CallHandler *> callHandlers;
 
 public slots:
-     void onCallAccepted(IMPeerId peerId, QString callId, bool video);
-
+  void onCallAccepted(IMPeerId peerId, QString callId, bool video);
 };
 
 } // namespace lib::messenger
-using ToxAV = lib::messenger::IMCall;
-#endif // OKMSG_PROJECT_IMCALL_H
+
+#endif

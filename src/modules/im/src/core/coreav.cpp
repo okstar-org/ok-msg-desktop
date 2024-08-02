@@ -31,7 +31,11 @@
  * @brief CoreAV::CoreAV
  */
 
-CoreAV::CoreAV() : audioCtrl{Nexus::getInstance().audio()},
+static CoreAV *instance = nullptr;
+
+CoreAV::CoreAV(Core* core)
+    :core{core},
+      audioCtrl{Nexus::getInstance().audio()},
                    coreavThread{new QThread{this}},
                    selfVideoSource{std::make_unique<CoreVideoSource>()},
                    iterateTimer{new QTimer{this}} {
@@ -56,19 +60,37 @@ CoreAV::CoreAV() : audioCtrl{Nexus::getInstance().audio()},
   qDebug() << __func__ << "done.";
 }
 
+
+CoreAV::~CoreAV() {
+  /* Gracefully leave calls and group calls to avoid deadlocks in destructor */
+  for (const auto &call : calls) {
+    cancelCall(call.first);
+  }
+  for (const auto &call : groupCalls) {
+    leaveGroupCall(call.first);
+  }
+
+  assert(calls.empty());
+  assert(groupCalls.empty());
+
+  coreavThread->exit(0);
+  coreavThread->wait();
+}
+
 /**
  * @brief Factory method for CoreAV
  * @param core pointer to the Tox instance
  * @return CoreAV instance on success, {} on failure
  */
-CoreAV::CoreAVPtr CoreAV::makeCoreAV() { return CoreAVPtr{new CoreAV}; }
+CoreAV::CoreAVPtr CoreAV::makeCoreAV(Core* core) {
+  if(!instance){
+    instance = new CoreAV(core);
+  }
+  return CoreAVPtr{instance};
+}
 
 CoreAV *CoreAV::getInstance() {
-  static CoreAV *instance = nullptr;
-  if (!instance) {
-    instance = new CoreAV;
-    instance->start();
-  }
+  assert(instance);
   return instance;
 }
 
@@ -89,21 +111,6 @@ void CoreAV::setAudio(IAudioControl &newAudio) { audioCtrl.exchange(&newAudio); 
  */
 IAudioControl *CoreAV::getAudio() { return audioCtrl; }
 
-CoreAV::~CoreAV() {
-  /* Gracefully leave calls and group calls to avoid deadlocks in destructor */
-  for (const auto &call : calls) {
-    cancelCall(call.first);
-  }
-  for (const auto &call : groupCalls) {
-    leaveGroupCall(call.first);
-  }
-
-  assert(calls.empty());
-  assert(groupCalls.empty());
-
-  coreavThread->exit(0);
-  coreavThread->wait();
-}
 
 /**
  * @brief Starts the CoreAV main loop that calls toxav's main loop
@@ -118,12 +125,11 @@ void CoreAV::process() {
 
   assert(QThread::currentThread() == coreavThread.get());
 
-  imCall = std::make_unique<ToxAV>(nullptr);
+  imCall = std::make_unique<lib::messenger::IMCall>(nullptr);
   imCall->addCallHandler(this);
 
-  connect(imCall.get(), &ToxAV::receiveFriendVideoFrame, this, &CoreAV::onFriendVideoFrame);
-
-  connect(imCall.get(), &ToxAV::receiveSelfVideoFrame, this, &CoreAV::onSelfVideoFrame);
+  connect(imCall.get(), &lib::messenger::IMCall::receiveFriendVideoFrame, this, &CoreAV::onFriendVideoFrame);
+  connect(imCall.get(), &lib::messenger::IMCall::receiveSelfVideoFrame, this, &CoreAV::onSelfVideoFrame);
 }
 
 bool CoreAV::isCallStarted(const ContactId *f) const {
@@ -841,33 +847,23 @@ void CoreAV::stateCallback(QString friendNum, uint32_t state) {
 }
 
 // This is only a dummy implementation for now
-void CoreAV::bitrateCallback(ToxAV *toxav, QString friendNum, uint32_t arate, uint32_t vrate, void *vSelf) {
-  CoreAV *self = static_cast<CoreAV *>(vSelf);
-  Q_UNUSED(self);
-  Q_UNUSED(toxav);
-
+void CoreAV::bitrateCallback(QString friendNum, uint32_t arate, uint32_t vrate, void *vSelf) {
   qDebug() << "Recommended bitrate with" << friendNum << " is now " << arate << "/" << vrate << ", ignoring it";
 }
 
 // This is only a dummy implementation for now
-void CoreAV::audioBitrateCallback(ToxAV *toxav, QString friendNum, uint32_t rate, void *vSelf) {
-  CoreAV *self = static_cast<CoreAV *>(vSelf);
-  Q_UNUSED(self);
-  Q_UNUSED(toxav);
-
+void CoreAV::audioBitrateCallback( QString friendNum, uint32_t rate, void *vSelf) {
   qDebug() << "Recommended audio bitrate with" << friendNum << " is now " << rate << ", ignoring it";
 }
 
 // This is only a dummy implementation for now
-void CoreAV::videoBitrateCallback(ToxAV *toxav, QString friendNum, uint32_t rate, void *vSelf) {
+void CoreAV::videoBitrateCallback(QString friendNum, uint32_t rate, void *vSelf) {
   CoreAV *self = static_cast<CoreAV *>(vSelf);
   Q_UNUSED(self);
-  Q_UNUSED(toxav);
-
   qDebug() << "Recommended video bitrate with" << friendNum << " is now " << rate << ", ignoring it";
 }
 
-void CoreAV::audioFrameCallback(ToxAV *, QString friendNum, const int16_t *pcm, size_t sampleCount, uint8_t channels, uint32_t samplingRate, void *vSelf) {
+void CoreAV::audioFrameCallback(QString friendNum, const int16_t *pcm, size_t sampleCount, uint8_t channels, uint32_t samplingRate, void *vSelf) {
   CoreAV *self = static_cast<CoreAV *>(vSelf);
   // This callback should come from the CoreAV thread
   assert(QThread::currentThread() == self->coreavThread.get());

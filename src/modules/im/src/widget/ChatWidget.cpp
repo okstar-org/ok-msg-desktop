@@ -140,7 +140,7 @@ void ChatWidget::init() {
   connect(widget, &Widget::groupAdded, this, &ChatWidget::onGroupAdded);
   connect(widget, &Widget::groupRemoved, this, &ChatWidget::onGroupRemoved);
 
-  connect(ok::Application::Instance()->bus(), &ok::Bus::coreStarted, this, [&](Core *core) { connectToCore(core); });
+  connect(ok::Application::Instance()->bus(), &ok::Bus::coreChanged, this, [&](Core *core) { connectToCore(core); });
 
   settings::Translator::registerHandler([this] { retranslateUi(); }, this);
 }
@@ -159,45 +159,36 @@ void ChatWidget::deinit() {
   disconnect(widget, &Widget::groupAdded, this, &ChatWidget::onGroupAdded);
   disconnect(widget, &Widget::groupRemoved, this, &ChatWidget::onGroupRemoved);
 
-  disconnect(Nexus::getProfile(), &Profile::coreChanged, this, &ChatWidget::onCoreChanged);
-
   delete profileForm;
   delete profileInfo;
 }
 
-void ChatWidget::connectToCore(Core *core) {
-  qDebug() << __func__ << "core" << core;
+void ChatWidget::connectToCore(Core *core_) {
+  qDebug() << __func__ << "core:" << core_;
+  core = core_; //TODO: 待优化
+  connect(Nexus::getProfile(), &Profile::nickChanged, this, &ChatWidget::onUsernameSet);
 
-  connect(core, &Core::usernameSet, this, &ChatWidget::onUsernameSet);
-  connect(core, &Core::statusSet, this, &ChatWidget::onStatusSet);
-  connect(core, &Core::statusMessageSet, this, &ChatWidget::onStatusMessageSet);
+  connect(core_, &Core::statusSet, this, &ChatWidget::onStatusSet);
+  connect(core_, &Core::statusMessageSet, this, &ChatWidget::onStatusMessageSet);
+  connect(core_, &Core::messageSessionReceived, this, &ChatWidget::onMessageSessionReceived);
+  connect(core_, &Core::friendUsernameChanged, this, &ChatWidget::onFriendNicknameChanged);
+  connect(core_, &Core::friendMessageReceived, this, &ChatWidget::onFriendMessageReceived);
+  connect(core_, &Core::friendStatusChanged, this, &ChatWidget::onFriendStatusChanged);
+  connect(core_, &Core::friendStatusMessageChanged, this, &ChatWidget::onFriendStatusMessageChanged);
+  connect(core_, &Core::friendTypingChanged, this, &ChatWidget::onFriendTypingChanged);
+  connect(core_, &Core::receiptRecieved, this, &ChatWidget::onReceiptReceived);
+  connect(core_, &Core::groupMessageReceived, this, &ChatWidget::onGroupMessageReceived);
+  connect(core_, &Core::groupPeerlistChanged, this, &ChatWidget::onGroupPeerListChanged);
+  connect(core_, &Core::groupPeerSizeChanged, this, &ChatWidget::onGroupPeerSizeChanged);
+  connect(core_, &Core::groupPeerNameChanged, this, &ChatWidget::onGroupPeerNameChanged);
+  connect(core_, &Core::groupPeerStatusChanged, this, &ChatWidget::onGroupPeerStatusChanged);
 
-  connect(core, &Core::messageSessionReceived, this, &ChatWidget::onMessageSessionReceived);
-
-
-  connect(core, &Core::friendUsernameChanged, this, &ChatWidget::onFriendNicknameChanged);
-
-  connect(core, &Core::friendMessageReceived, this, &ChatWidget::onFriendMessageReceived);
-
-  connect(core, &Core::friendStatusChanged, this, &ChatWidget::onFriendStatusChanged);
-
-  connect(core, &Core::friendStatusMessageChanged, this, &ChatWidget::onFriendStatusMessageChanged);
-
-  connect(core, &Core::friendTypingChanged, this, &ChatWidget::onFriendTypingChanged);
-  connect(core, &Core::receiptRecieved, this, &ChatWidget::onReceiptReceived);
-
-  connect(core, &Core::groupMessageReceived, this, &ChatWidget::onGroupMessageReceived);
-  connect(core, &Core::groupPeerlistChanged, this, &ChatWidget::onGroupPeerListChanged);
-  connect(core, &Core::groupPeerSizeChanged, this, &ChatWidget::onGroupPeerSizeChanged);
-  connect(core, &Core::groupPeerNameChanged, this, &ChatWidget::onGroupPeerNameChanged);
-  connect(core, &Core::groupPeerStatusChanged, this, &ChatWidget::onGroupPeerStatusChanged);
-
-  //    connect(core, &Core::groupPeerAudioPlaying, this,
+  //    connect(core_, &Core::groupPeerAudioPlaying, this,
   //            &ChatWidget::onGroupPeerAudioPlaying);
-  //    connect(core, &Core::emptyGroupCreated, this,
+  //    connect(core_, &Core::emptyGroupCreated, this,
   //           &ChatWidget::onEmptyGroupCreated);
 
-  //    connect(&core, &Core::groupSentFailed, this,
+  //    connect(&core_, &Core::groupSentFailed, this,
   //            &ChatWidget::onGroupSendFailed);
 }
 
@@ -332,12 +323,7 @@ void ChatWidget::onUsernameSet(const QString &username) {
   qDebug() << __func__ << username;
   ui->nameLabel->setText(username);
   ui->nameLabel->setToolTip(Qt::convertFromPlainText(username, Qt::WhiteSpaceNormal));
-
-  auto self = core->getSelfId();
-  sessionListWidget->setFriendName(self, username);
-
-  // for overlength names
-  //  sharedMessageProcessorParams.onUserNameSet(username);
+  sessionListWidget->setFriendName(core->getSelfId(), username);
 }
 
 void ChatWidget::onStatusSet(Status::Status status) {
@@ -517,7 +503,6 @@ void ChatWidget::clearAllReceipts() { sessionListWidget->clearAllReceipts(); }
 
 void ChatWidget::on_nameClicked() {
   qDebug() << __func__;
-
   showProfile();
 }
 

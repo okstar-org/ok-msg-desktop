@@ -33,7 +33,7 @@ public:
 signals:
   void languageChanged(QString locale);
   void moduleCreated(Module* module);
-  void coreStarted(Core* core);
+  void coreChanged(Core* core);
 };
 
 } // namespace ok

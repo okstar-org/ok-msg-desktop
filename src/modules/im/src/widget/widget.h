@@ -288,7 +288,7 @@ private:
 
 
   Core *core;
-  Profile *profile;
+//  Profile *profile;
 
 //  FilesForm *filesForm;
 

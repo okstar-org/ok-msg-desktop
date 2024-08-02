@@ -1,4 +1,6 @@
 #include "ContactWidget.h"
+#include "Bus.h"
+#include "application.h"
 #include "friendlistwidget.h"
 #include "src/lib/settings/style.h"
 #include "src/nexus.h"
@@ -15,7 +17,8 @@
 #include <QLabel>
 #include <QStyle>
 
-ContactWidget::ContactWidget(QWidget *parent) : MainLayout(parent), ui(new Ui::ContactWidget), addForm{nullptr} {
+ContactWidget::ContactWidget(QWidget *parent)
+    : MainLayout(parent), ui(new Ui::ContactWidget), addForm{nullptr} {
   ui->setupUi(this);
   layout()->setMargin(0);
   layout()->setSpacing(0);
@@ -26,7 +29,7 @@ ContactWidget::ContactWidget(QWidget *parent) : MainLayout(parent), ui(new Ui::C
   contentWidget->setContentsMargins(8, 8, 8, 8);
   contentLayout = std::make_unique<ContentLayout>(contentWidget.get());
 
-  // 左侧
+  // 左侧朋友列表
   contactListWidget = new FriendListWidget(this, contentLayout.get(), false);
   contactListWidget->setGeometry(0, 0, 400, 400);
   contactListWidget->layout()->setAlignment(Qt::AlignTop | Qt::AlignVCenter);
@@ -86,34 +89,37 @@ AddFriendForm *ContactWidget::makeAddForm() {
   return addForm;
 }
 
-void ContactWidget::do_openAddForm() { makeAddForm()->showTo(getContentLayout()); }
+void ContactWidget::do_openAddForm() {
+  makeAddForm()->showTo(getContentLayout());
+}
 
 void ContactWidget::init() {
-//  connect(Nexus::getProfile(), &Profile::coreChanged, this, &ContactWidget::onCoreChanged);
+  connect(ok::Application::Instance()->bus(), &ok::Bus::coreChanged, this, &ContactWidget::onCoreChanged);
   connect(ui->addBtn, &QPushButton::released, this, &ContactWidget::do_openAddForm);
 }
 
 void ContactWidget::deinit() {
-  disconnect(Nexus::getProfile(), &Profile::coreChanged, this, &ContactWidget::onCoreChanged);
+  disconnect(ok::Application::Instance()->bus(), &ok::Bus::coreChanged,  this, &ContactWidget::onCoreChanged);
   disconnect(ui->addBtn, &QPushButton::released, this, &ContactWidget::do_openAddForm);
 }
 
-void ContactWidget::onCoreChanged(Core &core_) {
+void ContactWidget::onCoreChanged(Core *core_) {
   qDebug() << __func__ << &core_;
-  core = &core_;
+  core = core_;
   connectToCore(core);
-
-  std::list<FriendInfo> fl;
-  core->loadFriendList(fl);
-  for (auto &fk : fl) {
-    contactListWidget->addFriend(fk);
-  }
-
-  core->loadGroupList();
 }
 
 void ContactWidget::connectToCore(Core *core) {
   qDebug() << __func__ << core;
+
+  connect(core, &Core::started, [core, this](){
+    std::list<FriendInfo> fl;
+    core->loadFriendList(fl);
+    for (auto &fk : fl) {
+      contactListWidget->addFriend(fk);
+    }
+    core->loadGroupList();
+  });
 
   // 好友请求
   connect(core, &Core::friendRequestReceived, this, &ContactWidget::onFriendRequest);

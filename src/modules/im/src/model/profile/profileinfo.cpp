@@ -90,14 +90,17 @@ void ProfileInfo::copyId() const {
  * @brief Set self user name.
  * @param name New name.
  */
-void ProfileInfo::setUsername(const QString &name) { core->setUsername(name); }
+void ProfileInfo::setUsername(const QString &name) {
+  profile->setNick(name, true);
+}
 
 void ProfileInfo::setAvatar(const QPixmap &avatar) {
-  // set avatar.
   profile->setAvatarOnly(avatar);
 }
 
-const QPixmap &ProfileInfo::getAvatar() { return profile->loadAvatar(); }
+const QPixmap &ProfileInfo::getAvatar() {
+  return profile->loadAvatar();
+}
 
 /**
  * @brief Set self status message.

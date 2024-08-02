@@ -112,12 +112,6 @@ Application::Application(int &argc, char *argv[]) : QApplication(argc, argv), _a
   // 设置
   _settingManager = std::make_unique<SettingManager>(this);
 
-  session = std::make_shared<ok::session::AuthSession>();
-  connect(session.get(), &ok::session::AuthSession::tokenSet, //
-          [&]() {        //
-            startMainUI(session);
-          });
-
   qDebug() << "Application has be created";
 }
 
@@ -129,7 +123,11 @@ void Application::start() {
 
 void Application::createLoginUI(bool bootstrap) {
   qDebug() << __func__;
-
+  session = std::make_shared<ok::session::AuthSession>();
+  connect(session.get(), &ok::session::AuthSession::tokenSet, //
+          [&]() {        //
+            startMainUI(session);
+          });
   m_loginWindow = new UI::LoginWindow(session, bootstrap);
   m_loginWindow->show();
 }
@@ -224,6 +222,7 @@ void Application::doLogout() {
   for (auto &name : remove) {
     m_moduleMap.remove(name);
   }
+  session.reset();
   stopMainUI();
 }
 

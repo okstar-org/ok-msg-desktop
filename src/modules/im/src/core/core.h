@@ -50,6 +50,10 @@ class Core;
 
 using ToxCorePtr = std::unique_ptr<Core>;
 
+/**
+ * IM Core 聊天核心
+ * 维护av(音视频)、file(文件传输)
+ */
 class Core : public QObject,
              public ICoreIdHandler,
              public ICoreFriendMessageSender,
@@ -59,8 +63,6 @@ class Core : public QObject,
              public lib::messenger::GroupHandler,
              public lib::messenger::SelfHandler {
   Q_OBJECT
-
-
 public:
   enum class ToxCoreErrors { BAD_PROXY, INVALID_SAVE, FAILED_TO_START, ERROR_ALLOC };
 
@@ -136,7 +138,7 @@ public:
   void destroyGroup(QString groupId);
 
   void setStatus(Status::Status status);
-  void setUsername(const QString &username);
+  void setNick(const QString &nick);
   void setPassword(const QString &password);
   void setStatusMessage(const QString &message);
   void setAvatar(const QByteArray &avatar);
@@ -312,19 +314,18 @@ private slots:
   void onStarted();
 
 private:
-  struct ToxDeleter {
-    void operator()(lib::messenger::Messenger *tox) {
-      if (tox) {
-        tox->stop();
-      }
-    }
-  };
+//  struct ToxDeleter {
+//    void operator()(lib::messenger::Messenger *tox) {
+//      if (tox) {
+//        tox->stop();
+//      }
+//    }
+//  };
 
-  using ToxPtr = std::unique_ptr<lib::messenger::Messenger, ToxDeleter>;
-  ToxPtr tox;
-
+  std::unique_ptr<lib::messenger::Messenger> tox;
   std::unique_ptr<CoreFile> file;
-//  std::unique_ptr<CoreAV> av;
+  std::unique_ptr<CoreAV> av;
+
   MsgId m_receipt;
   QTimer *toxTimer = nullptr;
 

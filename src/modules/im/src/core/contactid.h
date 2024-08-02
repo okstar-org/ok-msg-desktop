@@ -31,7 +31,9 @@ inline QRegularExpressionMatch JidMatch(const QString& strId){
 }
 
 /**
- * 联系人ID
+ * 联系人ID（群聊ID和个人ID的父类）
+ * @see FriendId
+ * @see GroupId
  */
 class ContactId
 {

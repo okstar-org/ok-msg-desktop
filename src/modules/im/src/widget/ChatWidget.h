@@ -117,7 +117,7 @@ private:
   static bool filterOffline(FilterCriteria index);
   bool groupsVisible() const;
 
-  void connectToCore(Core* core);
+  void connectToCore(Core*core_);
   void connectToCoreFile(CoreFile* coreFile);
 
   void groupInvitesUpdate();

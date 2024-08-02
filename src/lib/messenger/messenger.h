@@ -103,10 +103,13 @@ public:
                                      IMGroupOccupant) = 0;
 };
 
+/**
+ * OkIM模块对外接口
+ */
 class Messenger : public QObject {
   Q_OBJECT
 public:
-  //  using Ptr = std::shared_ptr<Messenger>;
+
   explicit Messenger(const QString &host, const QString &name, const QString &password, QObject *parent = nullptr);
   ~Messenger() override;
 

@@ -55,7 +55,6 @@ signals:
   void menuPushed(PageMenu menu, bool checked);
 
 private slots:
-  void on_personalBtn_clicked(bool checked);
   void on_chatBtn_clicked(bool checked);
   void on_settingBtn_clicked(bool checked);
   void on_platformBtn_clicked(bool checked);

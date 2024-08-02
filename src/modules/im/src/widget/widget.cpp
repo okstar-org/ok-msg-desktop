@@ -531,7 +531,9 @@ void Widget::resizeEvent(QResizeEvent *event) {
   QWidget::resizeEvent(event);
 }
 
-QString Widget::getUsername() { return core->getUsername(); }
+QString Widget::getUsername() {
+  return Nexus::getProfile()->getCore()->getUsername();
+}
 
 void Widget::onSelfAvatarLoaded(const QPixmap &pic) {
 
@@ -1061,7 +1063,8 @@ bool Widget::newMessageAlert(QWidget *currentWindow, bool isActive, bool sound,
 #endif
         eventFlag = true;
       }
-      bool isBusy = core->getStatus() == Status::Status::Busy;
+
+      bool isBusy = Nexus::getCore()->getStatus() == Status::Status::Busy;
       bool busySound = settings.getBusySound();
       bool notifySound = settings.getNotifySound();
 

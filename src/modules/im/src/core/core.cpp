@@ -146,111 +146,12 @@ ToxCorePtr Core::makeToxCore(const QString &host, const QString &name, const QSt
     return {};
   }
 
-  //  Tox_Err_New tox_err;
-  //    core->tox = ToxPtr(tox_new(*toxOptions, &tox_err));
-  auto &nexus = Nexus::getInstance();
-  auto profile = nexus.getProfile();
-  core->tox = ToxPtr(new lib::messenger::Messenger(host, name, password));
+  core->tox = std::make_unique<lib::messenger::Messenger>(host, name, password);
 
-  //  switch (tox_err) {
-  //  case TOX_ERR_NEW_OK:
-  //    break;
-  //
-  //  case TOX_ERR_NEW_LOAD_BAD_FORMAT:
-  //    qCritical() << "failed to parse Tox save data";
-  //    if (err) {
-  //      *err = ToxCoreErrors::BAD_PROXY;
-  //    }
-  //    return {};
-  //
-  //  case TOX_ERR_NEW_PORT_ALLOC:
-  //    if (toxOptions->getIPv6Enabled()) {
-  //      toxOptions->setIPv6Enabled(false);
-  //      core->tox = ToxPtr(tox_new(*toxOptions, &tox_err));
-  //      if (tox_err == TOX_ERR_NEW_OK) {
-  //        qWarning() << "Core failed to start with IPv6, falling back to IPv4.
-  //        "
-  //                      "LAN discovery "
-  //                      "may not work properly.";
-  //        break;
-  //      }
-  //    }
-  //
-  //    qCritical() << "can't to bind the port";
-  //    if (err) {
-  //      *err = ToxCoreErrors::FAILED_TO_START;
-  //    }
-  //    return {};
-  //
-  //  case TOX_ERR_NEW_PROXY_BAD_HOST:
-  //  case TOX_ERR_NEW_PROXY_BAD_PORT:
-  //  case TOX_ERR_NEW_PROXY_BAD_TYPE:
-  //    qCritical() << "bad proxy, error code:" << tox_err;
-  //    if (err) {
-  //      *err = ToxCoreErrors::BAD_PROXY;
-  //    }
-  //    return {};
-  //
-  //  case TOX_ERR_NEW_PROXY_NOT_FOUND:
-  //    qCritical() << "proxy not found";
-  //    if (err) {
-  //      *err = ToxCoreErrors::BAD_PROXY;
-  //    }
-  //    return {};
-  //
-  //  case TOX_ERR_NEW_LOAD_ENCRYPTED:
-  //    qCritical() << "attempted to load encrypted Tox save data";
-  //    if (err) {
-  //      *err = ToxCoreErrors::INVALID_SAVE;
-  //    }
-  //    return {};
-  //
-  //  case TOX_ERR_NEW_MALLOC:
-  //    qCritical() << "memory allocation failed";
-  //    if (err) {
-  //      *err = ToxCoreErrors::ERROR_ALLOC;
-  //    }
-  //    return {};
-  //
-  //  case TOX_ERR_NEW_NULL:
-  //    qCritical() << "a parameter was null";
-  //    if (err) {
-  //      *err = ToxCoreErrors::FAILED_TO_START;
-  //    }
-  //    return {};
-  //
-  //  default:
-  //    qCritical() << "Tox core failed to start, unknown error code:" <<
-  //    tox_err; if (err) {
-  //      *err = ToxCoreErrors::FAILED_TO_START;
-  //    }
-  //    return {};
-  //  }
-
-  // tox should be valid by now
-  assert(core->tox != nullptr);
-
-  // toxcore is successfully created, create toxav
-  // TODO(sudden6): don't create CoreAv here, Core should be usable without
   // CoreAV
-  //  core->av = CoreAV::makeCoreAV(core->tox.get(), core->coreLoopLock);
-  //  if (!core->av) {
-  //    qCritical() << "Toxav failed to start";
-  //    if (err) {
-  //      *err = ToxCoreErrors::FAILED_TO_START;
-  //    }
-  //    return {};
-  //  }
-
-  // create CoreFile
-//  core->file = CoreFile::makeCoreFile(core.get(), core->coreLoopLock);
-//  if (!core->file) {
-//    qCritical() << "CoreFile failed to start";
-//    if (err) {
-//      *err = ToxCoreErrors::FAILED_TO_START;
-//    }
-//    return {};
-//  }
+  core->av = CoreAV::makeCoreAV(core.get());
+  // CoreFile
+  core->file = CoreFile::makeCoreFile(core.get(), core->coreLoopLock);
 
   core->registerCallbacks(core->tox.get());
 
@@ -804,20 +705,19 @@ void Core::destroyGroup(QString groupId) {
  */
 QString Core::getUsername() const {
   QMutexLocker ml{&coreLoopLock};
-  QString sname = tox->getSelfUsername();
-  return sname;
+  return tox->getSelfUsername();
 }
 
-void Core::setUsername(const QString &username) {
+void Core::setNick(const QString &nick) {
   QMutexLocker ml{&coreLoopLock};
 
-  if (username == getUsername()) {
+  if (nick == getNick()) {
     return;
   }
 
-  tox->setSelfNickname(username);
+  tox->setSelfNickname(nick);
 
-  emit usernameSet(username);
+  emit usernameSet(nick);
   emit saveRequest();
 }
 
@@ -1421,7 +1321,12 @@ void Core::logout() { tox->stop(); }
 
 void Core::onSelfNameChanged(QString name) {
   QMutexLocker ml{&coreLoopLock};
-  //  qDebug()<<"onSelfNameChanged:"<<name;
+  qDebug() << __func__ <<name;
+
+  auto &nexus = Nexus::getInstance();
+  auto profile = nexus.getProfile();
+  //避免死循环 set saveToCore to false
+  profile->setNick(name, false);
   emit usernameSet(name);
 }
 

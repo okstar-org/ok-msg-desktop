@@ -285,12 +285,16 @@ void ChatFormHeader::onDisplayedNameChanged(const QString &name)
 }
 
 void ChatFormHeader::nameChanged(const QString &name){
+
+    if (Core::getInstance()->getSelfId().getId() == contactId.getId()){
+        auto profile = Nexus::getProfile();
+        profile->setNick(name, true);
+        return;
+    }
+
     if (auto f = FriendList::findFriend(contactId)){
         f->setAlias(name);
         Core::getInstance()->setFriendAlias(contactId.getId(), name);
-    }
-    else if (Core::getInstance()->getSelfId().getId() == contactId.getId()){
-        Core::getInstance()->setUsername(name);
     }
 }
 

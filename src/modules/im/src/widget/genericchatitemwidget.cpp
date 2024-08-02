@@ -151,12 +151,11 @@ void GenericChatItemWidget::setActive(bool _active)
 
 void GenericChatItemWidget::setAvatar(const QPixmap &pic)
 {
-//    qDebug() << __func__ << "pic:" << pic;
+    qDebug() << __func__ << "pic:" << pic;
     if(pic.isNull()){
         return;
     }
     avatar->setPixmap(pic);
-
 }
 
 void GenericChatItemWidget::clearAvatar()

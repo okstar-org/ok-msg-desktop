@@ -40,7 +40,7 @@ class CoreAV : public QObject, public lib::messenger::CallHandler {
 public:
   using CoreAVPtr = std::unique_ptr<CoreAV>;
 
-  static CoreAVPtr makeCoreAV();
+  static CoreAVPtr makeCoreAV(Core* core);
   static CoreAV* getInstance();
 
   void setAudio(IAudioControl &newAudio);
@@ -100,11 +100,11 @@ private slots:
 
   void stateCallback(QString friendId, uint32_t state);
 
-  static void bitrateCallback(ToxAV *toxAV, QString friendId, uint32_t arate,
+  void bitrateCallback(QString friendId, uint32_t arate,
                               uint32_t vrate, void *self);
-  static void audioBitrateCallback(ToxAV *toxAV, QString friendId,
+  void audioBitrateCallback(QString friendId,
                                    uint32_t rate, void *self);
-  static void videoBitrateCallback(ToxAV *toxAV, QString friendId,
+  void videoBitrateCallback(QString friendId,
                                    uint32_t rate, void *self);
   void onFriendVideoFrame(const QString &friendId, //
                           uint16_t w, uint16_t h,  //
@@ -124,17 +124,13 @@ private slots:
                         int32_t vstride) override;
 
 private:
-  struct ToxAVDeleter {
-    void operator()(ToxAV *tox) { /* toxav_kill(tox);*/
-    }
-  };
 
-  CoreAV();
+  CoreAV(Core* core);
 
 
   void process();
 
-  static void audioFrameCallback(ToxAV *toxAV, QString friendId,
+  void audioFrameCallback(QString friendId,
                                  const int16_t *pcm, size_t sampleCount,
                                  uint8_t channels, uint32_t samplingRate,
                                  void *self);
@@ -169,9 +165,9 @@ private:
 private:
   //  std::unique_ptr<CoreVideoSource> selfVideoSource;
   // atomic because potentially accessed by different threads
-
+  Core* core;
   std::atomic<IAudioControl *> audioCtrl;
-  std::unique_ptr<ToxAV> imCall;
+  std::unique_ptr<lib::messenger::IMCall> imCall;
   std::unique_ptr<QThread> coreavThread;
   QTimer *iterateTimer = nullptr;
 

@@ -29,6 +29,12 @@
 class Settings;
 class QCommandLineParser;
 
+/**
+ * 个人中心（包含Core）
+ * 1、对个人帐号的抽象，一个用户登录即产生一个Profile
+ * 2、包含基本帐号信息
+ * 3、维护聊天核心Core
+ */
 class Profile : public QObject {
   Q_OBJECT
 public:
@@ -84,36 +90,16 @@ public:
   void saveFriendAlias(const QString& friendPk, const QString& alias);
   QString getFriendAlias(const QString& friendPk);
 
-
   uint addContact(const ContactId& cid);
 
-signals:
-  void selfAvatarChanged(const QPixmap &pixmap);
-  // emit on any change, including default avatar. Used by those that don't care
-  // about active on default avatar.
-  void friendAvatarChanged(const FriendId &friendPk, const QPixmap &pixmap);
-  // emit on a set of avatar, including identicon, used by those two care about
-  // active for default, so can't use friendAvatarChanged
-  void friendAvatarSet(const FriendId &friendPk, const QPixmap &pixmap);
-  // emit on set to default, used by those that modify on active
-  void friendAvatarRemoved(const FriendId &friendPk);
-  // TODO(sudden6): this doesn't seem to be the right place for Core errors
-  void failedToStart();
-  void badProxy();
-  void coreChanged(Core &core);
-
-public slots:
-  void onRequestSent(const FriendId &friendPk, const QString &message);
-
-private slots:
-  void loadDatabase(QString password);
-  void removeAvatar(const FriendId &owner);
-
-  void onSaveToxSave();
-  // TODO(sudden6): use ToxPk instead of receiver
-  void onAvatarOfferReceived(QString friendId, QString fileId,
-                             const QByteArray &avatarHash);
-  void setFriendAvatar(const FriendId owner, const QByteArray &pic);
+  /**
+   * 保存昵称
+   * @param nick
+   * @param saveToCore 是否存入聊天模块
+   *
+   * 修改昵称后，同时发射信号 `nickChanged`
+   */
+  void setNick(const QString& nick, bool saveToCore);
 
 private:
   Profile(const QString & host, const QString & name, const QString &password, bool newProfile );
@@ -137,6 +123,37 @@ private:
   bool encrypted = false;
   static QStringList profiles;
   QPixmap pixmap;
+
+
+signals:
+  void selfAvatarChanged(const QPixmap &pixmap);
+  // emit on any change, including default avatar. Used by those that don't care
+  // about active on default avatar.
+  void friendAvatarChanged(const FriendId &friendPk, const QPixmap &pixmap);
+  // emit on a set of avatar, including identicon, used by those two care about
+  // active for default, so can't use friendAvatarChanged
+  void friendAvatarSet(const FriendId &friendPk, const QPixmap &pixmap);
+  // emit on set to default, used by those that modify on active
+  void friendAvatarRemoved(const FriendId &friendPk);
+  // TODO(sudden6): this doesn't seem to be the right place for Core errors
+  void failedToStart();
+  void badProxy();
+  void coreChanged(Core &core);
+  void nickChanged(const QString& nick);
+
+public slots:
+  void onRequestSent(const FriendId &friendPk, const QString &message);
+
+private slots:
+  void loadDatabase(QString password);
+  void removeAvatar(const FriendId &owner);
+
+  void onSaveToxSave();
+  // TODO(sudden6): use ToxPk instead of receiver
+  void onAvatarOfferReceived(QString friendId, QString fileId,
+                             const QByteArray &avatarHash);
+  void setFriendAvatar(const FriendId owner, const QByteArray &pic);
+
 };
 
 #endif // PROFILE_H

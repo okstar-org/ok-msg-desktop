@@ -159,10 +159,11 @@ void CroppingLabel::minimizeMaximumWidth() {
 
 void CroppingLabel::editingFinished() {
   hideTextEdit();
-  QString newText = textEdit->text().trimmed().remove(QRegExp("[\\t\\n\\v\\f\\r\\x0000]"));
 
-  if (origText != newText)
-    emit editFinished(textEdit->text());
-
+  QString newText = textEdit->text();
+  if (origText != newText){
+    setText(newText);
+    emit editFinished(newText);
+  }
   emit editRemoved();
 }

@@ -48,9 +48,6 @@
  * and forwarding signals appropriately to the right objects,
  * it is in charge of starting the GUI and the Core.
  */
-
-Q_DECLARE_OPAQUE_POINTER(ToxAV *)
-
 static Nexus *nexus{nullptr};
 
 Nexus::Nexus(QObject *parent)
@@ -159,7 +156,6 @@ void Nexus::onSave(SavedInfo &savedInfo) {
     qRegisterMetaType<size_t>("size_t");
     qRegisterMetaType<QPixmap>("QPixmap");
     qRegisterMetaType<Profile *>("Profile*");
-    qRegisterMetaType<ToxAV *>("ToxAV*");
     qRegisterMetaType<ToxFile>("ToxFile");
     qRegisterMetaType<FileDirection>("FileDirection");
     qRegisterMetaType<FileStatus>("FileStatus");
@@ -175,8 +171,17 @@ void Nexus::onSave(SavedInfo &savedInfo) {
     qApp->setQuitOnLastWindowClosed(false);
 
 
+    // Connections
+    connect(profile, &Profile::selfAvatarChanged, m_widget,
+            &Widget::onSelfAvatarLoaded);
+
+    connect(profile, &Profile::selfAvatarChanged,
+            [&](const QPixmap &pixmap) {
+              emit updateAvatar(pixmap);
+            });
+
     connect(profile, &Profile::coreChanged, [&](Core &core){
-      emit ok::Application::Instance()->bus()->coreStarted(&core);
+      emit ok::Application::Instance() -> bus()->coreChanged(&core);
     });
 
     profile->startCore();

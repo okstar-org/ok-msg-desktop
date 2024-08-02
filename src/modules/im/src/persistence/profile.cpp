@@ -837,3 +837,14 @@ QString Profile::setPassword(const QString &newPassword) {
 QString Profile::getDbPath(const QString &profileName) {
   return Settings::getInstance().getSettingsDirPath() + profileName + ".db";
 }
+
+void Profile::setNick(const QString &nick_, bool saveToCore) {
+  if (nick == nick_)
+    return;
+
+  nick = nick_;
+  emit nickChanged(nick);
+
+  if(saveToCore)
+    core->setNick(nick);
+}
