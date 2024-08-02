@@ -139,6 +139,9 @@ Widget::Widget(IAudioControl &audio, QWidget *parent)//
     }
 
     timer = new QTimer();
+    connect(timer, &QTimer::timeout, this, &Widget::onUserAwayCheck);
+    connect(timer, &QTimer::timeout, this, &Widget::onEventIconTick);
+    connect(timer, &QTimer::timeout, this, &Widget::onTryCreateTrayIcon);
     timer->start(1000);
 
     icon_size = 15;
@@ -365,7 +368,7 @@ Widget::Widget(IAudioControl &audio, QWidget *parent)//
 }
 
 void Widget::init() {
-  profile = Nexus::getProfile();
+//  profile = Nexus::getProfile();
 
   connect(this, &Widget::toSendMessage, [&](){
       ui->tabWidget->setCurrentIndex(0);
@@ -555,13 +558,6 @@ void Widget::connectToCore(Core &core) {
   connect(this, &Widget::statusSet, &core, &Core::setStatus);
   connect(this, &Widget::changeGroupTitle, &core, &Core::setGroupName);
 
-  connect(timer, &QTimer::timeout, this, &Widget::onUserAwayCheck);
-  connect(timer, &QTimer::timeout, this, &Widget::onEventIconTick);
-  connect(timer, &QTimer::timeout, this, &Widget::onTryCreateTrayIcon);
-
-
-
-  core.setUIStarted();
 }
 
 void Widget::onConnected() {
@@ -1607,4 +1603,10 @@ void Widget::retranslateUi() {
   nextConversationAction->setText(tr("Next Conversation"));
   previousConversationAction->setText(tr("Previous Conversation"));
 #endif
+}
+
+void Widget::showEvent(QShowEvent *e) {
+  QWidget::showEvent(e);
+
+
 }

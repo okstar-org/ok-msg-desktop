@@ -27,6 +27,7 @@
 #include <QSvgRenderer>
 #include <QTimer>
 #include <cstdlib>
+#include <memory>
 
 #include <modules/im/src/nexus.h>
 #include <modules/platform/src/Platform.h>
@@ -35,8 +36,12 @@ namespace UI {
 
 static MainWindow *instance = nullptr;
 
-MainWindow::MainWindow(ok::session::SignInInfo &m_signInInfo_, QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow), m_signInInfo{m_signInInfo_} {
+MainWindow::MainWindow(std::shared_ptr<ok::session::AuthSession> session,
+                       QWidget *parent)
+    : QMainWindow(parent),
+      ui(new Ui::MainWindow),
+      delayCaller(std::make_unique<base::DelayedCallTimer>()),
+      session{session} {
 
   qDebug() << __func__;
 
@@ -59,9 +64,9 @@ MainWindow::MainWindow(ok::session::SignInInfo &m_signInInfo_, QWidget *parent)
 
   m_menu = ui->menu_widget;
 
-  timer = new QTimer(this);
+  timer = std::make_unique<QTimer>();
   timer->start(1000);
-  connect(timer, &QTimer::timeout, this, &MainWindow::onTryCreateTrayIcon);
+  connect(timer.get(), &QTimer::timeout, this, &MainWindow::onTryCreateTrayIcon);
 
   int icon_size = 15;
 
@@ -164,7 +169,7 @@ void MainWindow::onTryCreateTrayIcon() {
   static int32_t tries = 15;
   if (!icon && tries--) {
     if (QSystemTrayIcon::isSystemTrayAvailable()) {
-      icon = std::unique_ptr<QSystemTrayIcon>(new QSystemTrayIcon);
+      icon = std::make_unique<QSystemTrayIcon>();
       updateIcons();
       trayMenu = new QMenu(this);
 
@@ -195,7 +200,7 @@ void MainWindow::onTryCreateTrayIcon() {
       show();
     }
   } else {
-    disconnect(timer, &QTimer::timeout, this, &MainWindow::onTryCreateTrayIcon);
+    disconnect(timer.get(), &QTimer::timeout, this, &MainWindow::onTryCreateTrayIcon);
     if (!icon) {
       qWarning() << "No system tray detected!";
       show();
@@ -290,14 +295,16 @@ OMenuWidget *MainWindow::initMenuWindow(PageMenu menu) {
     w = new ConfigWindow(this);
     break;
   }
-
   if (w) {
+    menuWindow.insert(menu, w);
     ui->stacked_widget->addWidget(w);
   }
   return w;
 }
 
-OMenuWidget *MainWindow::getMenuWindow(PageMenu menu) { return menuWindow.value(menu); }
+OMenuWidget *MainWindow::getMenuWindow(PageMenu menu) {
+  return menuWindow.value(menu);
+}
 
 void MainWindow::onSwitchPage(PageMenu menu, bool checked) {
   OMenuWidget *p = getMenuWindow(menu);
@@ -360,18 +367,24 @@ OMenuWidget *MainWindow::createChatModule(MainWindow *pWindow) {
   qDebug() <<"Creating module:" << Nexus::Name();
   auto module = Nexus::Create();
   auto nexus = static_cast<Nexus *>(module);
+
   connect(nexus, &Nexus::updateAvatar,   //
           ok::Application::Instance(), &ok::Application::onAvatar);
-
-//  connect(nexus, &Nexus::destroyProfile, this, &core::Application::on_logout);
-//  connect(nexus, &Nexus::exit, this, &core::Application::on_exit);
-
-  module->start(m_signInInfo);
-
+  connect(nexus, &Nexus::destroyProfile, //
+          ok::Application::Instance(), &ok::Application::on_logout);
+  connect(nexus, &Nexus::exit,  //
+          ok::Application::Instance(), &ok::Application::on_exit);
 
   auto m = new OMenuWidget(this);
   m->setLayout(new QGridLayout());
   m->layout()->addWidget(module->widget());
+
+  delayCaller->call(1000,[module, this]() {
+    assert(module);
+    assert(session);
+    module->start(session);
+  });
+
   return m;
 }
 

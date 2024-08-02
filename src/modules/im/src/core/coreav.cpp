@@ -31,7 +31,10 @@
  * @brief CoreAV::CoreAV
  */
 
-CoreAV::CoreAV() : audioCtrl{Nexus::getInstance().audio()}, coreavThread{new QThread{this}}, selfVideoSource{std::make_unique<CoreVideoSource>()}, iterateTimer{new QTimer{this}} {
+CoreAV::CoreAV() : audioCtrl{Nexus::getInstance().audio()},
+                   coreavThread{new QThread{this}},
+                   selfVideoSource{std::make_unique<CoreVideoSource>()},
+                   iterateTimer{new QTimer{this}} {
   assert(coreavThread);
   assert(iterateTimer);
 
@@ -115,7 +118,7 @@ void CoreAV::process() {
 
   assert(QThread::currentThread() == coreavThread.get());
 
-  imCall = std::make_unique<ToxAV>();
+  imCall = std::make_unique<ToxAV>(nullptr);
   imCall->addCallHandler(this);
 
   connect(imCall.get(), &ToxAV::receiveFriendVideoFrame, this, &CoreAV::onFriendVideoFrame);

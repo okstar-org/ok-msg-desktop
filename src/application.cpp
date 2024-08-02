@@ -17,12 +17,12 @@
 #include <QApplication>
 #include <QCoreApplication>
 #include <QString>
-#include <QTranslator>
 
 #include "Bus.h"
 #include "UI/core/FontManager.h"
-#include "UI/window/main/src/OMainMenu.h"
+#include "UI/window/login/src/LoginWidget.h"
 #include "UI/window/login/src/LoginWindow.h"
+#include "UI/window/main/src/OMainMenu.h"
 #include "base/OkSettings.h"
 #include "base/files.h"
 #include "base/logs.h"
@@ -35,10 +35,11 @@
 
 namespace ok {
 
-Application::Application(int &argc, char *argv[])
-    : QApplication(argc, argv), _argc(argc), _argv(argv) {
+Application::Application(int &argc, char *argv[]) : QApplication(argc, argv), _argc(argc), _argv(argv) {
 
-  //Qt application settings.
+  connect(this, &QApplication::aboutToQuit, this, &Application::cleanup);
+
+  // Qt application settings.
   setApplicationName(APPLICATION_NAME);
   setApplicationVersion(APPLICATION_VERSION_ID);
 
@@ -46,19 +47,19 @@ Application::Application(int &argc, char *argv[])
   setDesktopFileName(APPLICATION_NAME);
 #endif
 
-
-  //Initialize log manager.
+  // Initialize log manager.
   ok::lib::LogManager::Instance();
-  qDebug() << "QT_VERSION:" <<  QT_VERSION_STR;
+  qDebug() << "QT_VERSION:" << QT_VERSION_STR;
   qDebug() << QString("argc:%1").arg(argc);
   for (int i = 0; i < argc; i++) {
     qDebug() << QString("argv:%1->%2").arg(i).arg(argv[i]);
   }
 
+  // Print os & cpu info
   ok::base::CpuInfo cpuInfo;
   ok::base::SysInfo::GetCpuInfo(cpuInfo);
 
-  qDebug() << "CpuInfo  :"          //
+  qDebug() << "CpuInfo  :"         //
            << cpuInfo.arch         //
            << cpuInfo.manufacturer //
            << cpuInfo.name         //
@@ -67,7 +68,7 @@ Application::Application(int &argc, char *argv[])
 
   ok::base::OsInfo osInfo;
   ok::base::SysInfo::GetOsInfo(osInfo);
-  qDebug() << "OsInfo   :"           //
+  qDebug() << "OsInfo   :"         //
            << osInfo.kernelName    //"linux"
            << osInfo.kernelVersion //"5.19.0-50-generic"
            << osInfo.name          //"ubuntu"
@@ -76,24 +77,24 @@ Application::Application(int &argc, char *argv[])
            << osInfo.hostName      //"root-host"
            << osInfo.uniqueId;     //"OWVjYjNmZTY0OTFmNGZiZGFhYjI0ODA2OTgwY2QxODQ="
 
-  qDebug() <<"APPLICATION_RELEASE   :" << APPLICATION_RELEASE;
-  qDebug() <<"APPLICATION_VERSION_ID:" << APPLICATION_VERSION_ID;
-  qDebug() <<"APPLICATION_ID        :" << APPLICATION_ID;
-  qDebug() <<"APPLICATION_NAME      :" << APPLICATION_NAME;
+  qDebug() << "APPLICATION_RELEASE   :" << APPLICATION_RELEASE;
+  qDebug() << "APPLICATION_VERSION_ID:" << APPLICATION_VERSION_ID;
+  qDebug() << "APPLICATION_ID        :" << APPLICATION_ID;
+  qDebug() << "APPLICATION_NAME      :" << APPLICATION_NAME;
 
   auto configDir = ok::base::OkSettings::configDir();
-  qDebug()<< "ConfigDir  :"<< configDir.path();
+  qDebug() << "ConfigDir  :" << configDir.path();
   auto cacheDir = ok::base::OkSettings::cacheDir();
-  qDebug()<<"CacheDir   :"<< cacheDir.path();
+  qDebug() << "CacheDir   :" << cacheDir.path();
   auto dataDir = ok::base::OkSettings::dataDir();
-  qDebug()<<"DataDir    :"<< dataDir.path();
+  qDebug() << "DataDir    :" << dataDir.path();
   auto downloadDir = ok::base::OkSettings::downloadDir();
-  qDebug()<<"DownloadDir:"<< downloadDir.path();
+  qDebug() << "DownloadDir:" << downloadDir.path();
 
   auto pluginDir = ok::base::OkSettings::getAppPluginPath();
-  qDebug()<<"PluginDir  :"<< pluginDir.path();
+  qDebug() << "PluginDir  :" << pluginDir.path();
   auto logDir = ok::base::OkSettings::getAppLogPath();
-  qDebug()<<"LogDir     :"<< logDir.path();
+  qDebug() << "LogDir     :" << logDir.path();
 
   // Windows platform plugins DLL hell fix
   QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath());
@@ -111,35 +112,25 @@ Application::Application(int &argc, char *argv[])
   // 设置
   _settingManager = std::make_unique<SettingManager>(this);
 
-  connect(this, &QApplication::aboutToQuit, this, &Application::cleanup);
-
- auto _session = ok::session::AuthSession::Instance();
-
-  connect(_session, &ok::session::AuthSession::loginResult,
-          [&](ok::session::SignInInfo signInInfo, ok::session::LoginResult result) {
-            qDebug()<<"result:" << result.msg;
+  session = std::make_shared<ok::session::AuthSession>();
+  connect(session.get(), &ok::session::AuthSession::tokenSet, //
+          [&]() {        //
+            startMainUI(session);
           });
-
-
-  connect(_session, &ok::session::AuthSession::imStarted,
-          [&](ok::session::SignInInfo signInInfo){
-      onLoginSuccess(signInInfo);
-  });
 
   qDebug() << "Application has be created";
 }
 
-Application *Application::Instance() {
-  return qobject_cast<Application *>(qApp);
-}
+Application *Application::Instance() { return qobject_cast<Application *>(qApp); }
 
 void Application::start() {
   this->createLoginUI(true);
 }
 
 void Application::createLoginUI(bool bootstrap) {
-  qDebug() << __func__ ;
-  m_loginWindow = new UI::LoginWindow(bootstrap);
+  qDebug() << __func__;
+
+  m_loginWindow = new UI::LoginWindow(session, bootstrap);
   m_loginWindow->show();
 }
 
@@ -147,22 +138,28 @@ void Application::createLoginUI(bool bootstrap) {
  *  关闭login窗口
  */
 void Application::closeLoginUI() {
-  qDebug() << __func__ ;
-  if(!m_loginWindow){
+  qDebug() << __func__;
+  if (!m_loginWindow) {
     return;
   }
-    disconnect(m_loginWindow);
-    m_loginWindow->close();
-    //no need to delete
-    m_loginWindow = nullptr;
+  disconnect(m_loginWindow);
+  m_loginWindow->close();
+  // no need to delete
+  m_loginWindow = nullptr;
 }
 
-void Application::onLoginSuccess(ok::session::SignInInfo &signInInfo) {
-  qDebug() << qsl("onLoginSuccess account:%1").arg(signInInfo.account);
-  m_signInInfo = signInInfo;
+void Application::startMainUI(std::shared_ptr<ok::session::AuthSession> session) {
+  qDebug() << __func__;
 
-  // 启动主界面
-  startMainUI(m_signInInfo);
+  // Check the access token.
+  assert(session);
+  assert(!session->getToken().accessToken.isEmpty());
+
+  // Create main window
+  m_mainWindow = std::make_unique<UI::MainWindow>(session);
+  m_mainWindow->show();
+  closeLoginUI();
+
 #ifdef OK_PLUGIN
   // 初始化插件平台
   initPluginManager();
@@ -172,48 +169,9 @@ void Application::onLoginSuccess(ok::session::SignInInfo &signInInfo) {
 #ifdef OK_MODULE_PAINTER
   initModulePainter();
 #endif
-
-  // 关闭登录界面
-  closeLoginUI();
 }
 
-void Application::startMainUI(ok::session::SignInInfo &m_signInInfo) {
-    qDebug() << __func__;
-    m_mainWindow = std::make_unique<UI::MainWindow>(m_signInInfo);
-
-    /**
-     * connect menu's button events.
-     */
-//    connect(m_mainWindow.get(), &UI::MainWindow::toClose, //
-//            [&](){
-//              emit mainClose({
-//                m_mainWindow->saveGeometry()
-//              });
-//            } );
-
-//      connect(m_mainWindow.get(), &UI::MainWindow::menuPushed,
-//              this, &Application::onMenuPushed);
-
-
-    m_mainWindow->show();
-
-//  m_windowManager = UI::WindowManager::Instance();
-
-//  connect(m_windowManager, &UI::WindowManager::menuPushed, this,
-//          &Application::onMenuPushed);
-//  connect(m_windowManager, &UI::WindowManager::mainClose, this,
-//          [&](SavedInfo savedInfo) {
-//            for (auto m : m_moduleMap) {
-//              m->onSave(savedInfo);
-//            }
-//          });
-
-//  m_windowManager->startMainUI();
-}
-
-void Application::stopMainUI() {
-  m_mainWindow.reset();
-}
+void Application::stopMainUI() { m_mainWindow.reset(); }
 
 void Application::cleanup() {
   qDebug(("Cleanup..."));
@@ -242,33 +200,31 @@ void Application::onAvatar(const QPixmap &pixmap) {
   menu->setAvatar(pixmap);
 }
 
-void Application::on_logout(const QString &profile)
-{
-    qDebug() << __func__<<profile;
-    doLogout();
-    QThread::currentThread()->sleep(1);
-    createLoginUI(false);
+void Application::on_logout(const QString &profile) {
+  qDebug() << __func__ << profile;
+  doLogout();
+  QThread::currentThread()->sleep(1);
+  createLoginUI(false);
 }
 
-void Application::on_exit(const QString &profile)
-{
-    qDebug() << __func__<<profile;
-    doLogout();
-    qApp->exit();
+void Application::on_exit(const QString &profile) {
+  qDebug() << __func__ << profile;
+  doLogout();
+  qApp->exit();
 }
 
-void Application::doLogout(){
-    qDebug() << __func__<<profile;
-    QVector<QString> remove;
-    for(auto mod :  m_moduleMap){
-         qDebug() <<"delete module:" <<mod->name();
-         remove.push_back(mod->name());
-         mod->cleanup();
-    }
-    for(auto &name:remove){
-        m_moduleMap.remove(name);
-    }
-     stopMainUI();
+void Application::doLogout() {
+  qDebug() << __func__ << profile;
+  QVector<QString> remove;
+  for (auto mod : m_moduleMap) {
+    qDebug() << "delete module:" << mod->name();
+    remove.push_back(mod->name());
+    mod->cleanup();
+  }
+  for (auto &name : remove) {
+    m_moduleMap.remove(name);
+  }
+  stopMainUI();
 }
 
-} // namespace core
+} // namespace ok

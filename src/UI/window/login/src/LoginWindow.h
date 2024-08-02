@@ -34,8 +34,13 @@ class BannerWidget;
 class LoginWindow : public QMainWindow {
   Q_OBJECT
 public:
-  explicit LoginWindow(bool bootstrap, QWidget *parent = nullptr);
+  explicit LoginWindow(std::shared_ptr<ok::session::AuthSession> session,
+                       bool bootstrap, QWidget *parent = nullptr);
   ~LoginWindow();
+
+  [[nodiscard]] LoginWidget* widget(){
+    return loginWidget;
+  }
 
 private:
   Ui::LoginWindow *ui;
@@ -44,9 +49,6 @@ private:
 
   //资源指针申明
   OK_RESOURCE_PTR(UIWindowLogin);
-
-signals:
-  void loginResult(ok::session::SignInInfo &, ok::session::LoginResult &);
 
 public slots:
   void onProfileLoadFailed(QString msg);

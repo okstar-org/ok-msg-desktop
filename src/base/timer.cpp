@@ -114,8 +114,7 @@ void Timer::timerEvent(QTimerEvent *e) {
   }
 }
 
-int DelayedCallTimer::call(TimeMs timeout, Fn<void()> callback,
-                           Qt::TimerType type) {
+int DelayedCallTimer::call(TimeMs timeout, Fn<void()> callback, Qt::TimerType type) {
   if (!(timeout >= 0)) {
     return 0;
   }

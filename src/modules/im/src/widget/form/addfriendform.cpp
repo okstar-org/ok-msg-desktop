@@ -11,6 +11,7 @@
  */
 
 #include "addfriendform.h"
+#include "application.h"
 #include "friendform.h"
 #include "lib/backend/UserService.h"
 #include "lib/session/AuthSession.h"
@@ -75,7 +76,8 @@ AddFriendForm::AddFriendForm(QWidget *parent) : QWidget(parent), addUi{new Ui::A
   retranslateUi();
   settings::Translator::registerHandler(std::bind(&AddFriendForm::retranslateUi, this), this);
 
-  signIn = &ok::session::AuthSession::Instance()->getSignInInfo();
+  auto _session = ok::Application::Instance()->getSession();
+  signIn = &_session->getSignInInfo();
   userService = std::make_unique<ok::backend::UserService>(signIn->stackUrl);
 }
 

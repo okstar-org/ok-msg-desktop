@@ -33,9 +33,9 @@ using namespace ok;
 using namespace ok::session;
 using namespace ok::base;
 
-LoginWidget::LoginWidget(bool bootstrap, QWidget *parent)
+LoginWidget::LoginWidget(std::shared_ptr<ok::session::AuthSession> session, bool bootstrap, QWidget *parent)
     : QWidget(parent),                            //
-      ui(new Ui::LoginWidget),                    //
+      ui(new Ui::LoginWidget), session(session),  //
       bootstrap{bootstrap}, m_loginKey(nullptr),  //
       m_settingManager(new SettingManager(this)), //
       m_loaded(0) {
@@ -53,12 +53,14 @@ LoginWidget::LoginWidget(bool bootstrap, QWidget *parent)
   if (bootstrap) {
     qDebug() << __func__ << "Init timer";
     m_timer = std::make_unique<QTimer>();
-    m_timer->start(1000);
+    m_timer->start(3000);
     connect(m_timer.get(), &QTimer::timeout, this, &LoginWidget::onTimeout);
   }
-  // connect login result
-  connect(ok::session::AuthSession::Instance(), &AuthSession::loginResult, this, &LoginWidget::onConnectResult);
 
+  // session
+  connect(session.get(),             //
+          &AuthSession::loginResult, //
+          this, &LoginWidget::onLoginResult);
   init();
 }
 
@@ -156,7 +158,7 @@ void LoginWidget::doLogin() {
   }
 
   // 对登录时状态判断
-  auto status = ok::session::AuthSession::Instance()->status();
+  auto status = session->status();
   switch (status) {
   case ok::session::Status::SUCCESS: {
     qDebug(("SUCCESS ..."));
@@ -176,6 +178,7 @@ void LoginWidget::doLogin() {
     QString password(ui->passwordInput->text());
     // 对账号和密码判断
     if (account.isEmpty()) {
+      qWarning() << "account is empty!";
       return;
     }
     if (ui->rember->isCheckable()) {
@@ -185,16 +188,14 @@ void LoginWidget::doLogin() {
     }
 
     SignInInfo info = {.account = account, .password = password, .host = host, .stackUrl = m_stacks.at(providerIdx - 1)};
-
-    ok::session::AuthSession::Instance()->doLogin(info);
+    session->doLogin(info);
     break;
   }
   }
 }
 
-void LoginWidget::onConnectResult(ok::session::SignInInfo info, ok::session::LoginResult result) {
-
-  qDebug() << __func__ << result.msg;
+void LoginWidget::onLoginResult(ok::session::SignInInfo info, ok::session::LoginResult result) {
+  qDebug() << __func__ << info.account << info.password << result.msg;
 
   switch (result.status) {
   case ok::session::Status::NONE:
@@ -219,7 +220,6 @@ void LoginWidget::onConnectResult(ok::session::SignInInfo info, ok::session::Log
     onError(result.statusCode, result.msg);
     break;
   }
-  emit loginResult(info, result);
 }
 
 void LoginWidget::on_loginBtn_released() { doLogin(); }

@@ -11,14 +11,14 @@
  */
 
 #include "PassportService.h"
-
+#include "base/times.h"
+#include <QJsonDocument>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QString>
+#include <base/jsons.h>
 
 namespace ok::backend {
-
-using namespace session;
 
 PassportService::PassportService(const QString& base, QObject *parent)
     : BaseService(base, parent) {}
@@ -29,16 +29,40 @@ bool PassportService::getAccount(const QString &account,
                                  Fn<void(Res<SysAccount> &)> fn,
                                  network::HttpErrorFn err) {
   QString url = _baseUrl + "/api/open/passport/account/" + account;
-  http->getJSON(
+  return http->getJSON(
       QUrl(url),
-      // success
       [=](QJsonDocument doc) {
         Res<SysAccount> res(doc);
         fn(res);
       },
-      // error
       err);
-  return true;
+}
+
+bool PassportService::signIn(const QString &account,
+                             const QString &password,
+                             Fn<void(Res<SysToken> &)> fn,
+                             const network::HttpErrorFn &err,
+                             bool rememberMe, const QString &grantType) {
+  QString url = _baseUrl + "/api/auth/passport/signIn";
+  QJsonObject data;
+  /**
+   * "ts": 0,
+    "iso": "string",
+    "grantType": "string",
+    "account": "string",
+    "password": "string",
+    "rememberMe": true
+   */
+  data.insert("ts",  ::base::Times::now().toMSecsSinceEpoch());
+  data.insert("grantType", grantType);
+  data.insert("account", account);
+  data.insert("password", password);
+  data.insert("rememberMe", rememberMe ? "true" : "false");
+
+  return http->postJson(QUrl(url), QJsonDocument(data), [=](QByteArray doc, QString name) {
+    Res<SysToken> res(Jsons::toJSON(doc));
+    fn(res);
+  }, nullptr, nullptr, err);
 }
 
 } // namespace ok::backend

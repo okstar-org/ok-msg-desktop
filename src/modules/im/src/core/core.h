@@ -60,16 +60,24 @@ class Core : public QObject,
              public lib::messenger::SelfHandler {
   Q_OBJECT
 
+
 public:
   enum class ToxCoreErrors { BAD_PROXY, INVALID_SAVE, FAILED_TO_START, ERROR_ALLOC };
 
-  static ToxCorePtr makeToxCore(const QByteArray &savedata, const ICoreSettings *const settings, ToxCoreErrors *err = nullptr);
+  static ToxCorePtr makeToxCore(const QString &host,
+                                const QString &name,
+                                const QString &password,
+                                const QByteArray &savedata,
+                                const ICoreSettings *const settings,
+                                ToxCoreErrors *err = nullptr);
   static Core *getInstance();
 //  const CoreAV *getAv() const;
 //  CoreAV *getAv();
   CoreFile *getCoreFile() const;
   ~Core();
-
+  lib::messenger::Messenger* messenger(){
+    return  tox.get();
+  }
   static const QString TOX_EXT;
   static QStringList splitMessage(const QString &message);
   QString getPeerName(const FriendId &id) const;
@@ -107,7 +115,6 @@ public:
   void sendFile(QString friendId, QString filename, QString filePath, long long filesize);
 
   void requestBookmarks();
-  void setUIStarted();
 
   void start();
   void stop();
@@ -143,11 +150,10 @@ public:
   void setGroupDesc(const QString &groupId, const QString &desc);
   void setGroupAlias(const QString &groupId, const QString &alias);
 
-
-
   void logout();
 
 signals:
+  void started();
   void connected();
   void disconnected();
 
@@ -253,7 +259,7 @@ private:
   void checkLastOnline(QString friendId);
 
   QString getFriendRequestErrorMessage(const ToxId &friendId, const QString &message) const;
-  void registerCallbacks(Tox *tox);
+  void registerCallbacks(lib::messenger::Messenger *messenger);
 
   /**
    * FriendHandler
@@ -307,20 +313,21 @@ private slots:
 
 private:
   struct ToxDeleter {
-    void operator()(Tox *tox) {
+    void operator()(lib::messenger::Messenger *tox) {
       if (tox) {
         tox->stop();
       }
     }
   };
 
-  using ToxPtr = std::unique_ptr<Tox, ToxDeleter>;
+  using ToxPtr = std::unique_ptr<lib::messenger::Messenger, ToxDeleter>;
   ToxPtr tox;
 
   std::unique_ptr<CoreFile> file;
 //  std::unique_ptr<CoreAV> av;
   MsgId m_receipt;
   QTimer *toxTimer = nullptr;
+
   // recursive, since we might call our own functions
   mutable CompatibleRecursiveMutex coreLoopLock;
 

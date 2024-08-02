@@ -18,13 +18,8 @@
 #define OKMSG_PROJECT_IMCALL_H
 
 #include "IMFriend.h"
-
-#include <QObject>
-#include <QString>
-
 #include "tox/toxav.h"
-
-
+#include "IMJingle.h"
 
 
 enum TOXAV_FRIEND_CALL_STATE {
@@ -81,6 +76,7 @@ class OkRTCManager;
 
 namespace lib::messenger {
 
+
 class CallHandler {
 public:
   virtual void onCall(const IMPeerId &peerId, //
@@ -121,7 +117,7 @@ public:
                                   int32_t vstride) = 0;
 };
 
-class Messenger;
+class IM;
 class IMJingle;
 enum class CallDirection;
 
@@ -131,12 +127,33 @@ struct IMCall0 {
     CallDirection direction;
 };
 
-class IMCall : public QObject {
+class IMCall : public IMJingle , public lib::ortc::OkRTCHandler {
     Q_OBJECT
 public:
-    IMCall ( QObject *parent = nullptr);
+    IMCall(IM* im, QObject *parent = nullptr);
+
+
+    void onCreatePeerConnection(const std::string &sId,
+                                const std::string &peerId,
+                                bool ok) override;
+
+    // onRTP
+    void onRTP(const std::string &sId,      //
+               const std::string &friendId, //
+               const lib::ortc::OJingleContentAv &oContext) override;
+
+    // onIce
+    void onIce(const std::string &sId,      //
+               const std::string &friendId, //
+               const lib::ortc::OIceUdp &) override;
+
+    // Renderer
+    void onRender(const std::string &peerId,
+                  lib::ortc::RendererImage image) override;
+
     void addCallHandler(CallHandler *);
     bool callToGroup(const QString &g);
+
 
     // 发起呼叫邀请
     bool callToFriend(const QString &f, const QString &sId, bool video);
@@ -178,12 +195,37 @@ signals:
 
 private:
      void connectJingle(IMJingle *jingle);
+
+     /**
+   * 发起呼叫
+   * @param friendId
+   * @param video
+   * @return
+      */
+     bool startCall(const QString &friendId, const QString &sId, bool video);
+
+     bool sendCallToResource(const QString &friendId, const QString &sId, bool video);
+
+     bool createCall(const IMPeerId &to, const QString &sId, bool video);
+
+     bool answer(const IMPeerId &to, const QString &callId, bool video);
+
+     void cancel(const QString &friendId);
+     //取消呼叫
+     void cancelCall(const IMContactId &friendId, const QString &sId);
+     void rejectCall(const IMPeerId &friendId, const QString &sId);
+
+     void join(const JID &room);
+
+
+     IM *im;
      IMJingle *jingle;
      ok::session::AuthSession *session;
      std::vector<CallHandler *> callHandlers;
 
 public slots:
      void onCallAccepted(IMPeerId peerId, QString callId, bool video);
+
 };
 
 } // namespace lib::messenger

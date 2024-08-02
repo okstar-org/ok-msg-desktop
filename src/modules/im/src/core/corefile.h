@@ -41,8 +41,7 @@ class CoreFile : public QObject, public lib::messenger::FileHandler {
 
 public:
 
-  static CoreFilePtr makeCoreFile(Core *core, Tox *tox,
-                                  CompatibleRecursiveMutex &coreLoopLock);
+  static CoreFilePtr makeCoreFile(Core *core, CompatibleRecursiveMutex &coreLoopLock);
 
   void handleAvatarOffer(QString friendId, QString fileId, bool accept);
 
@@ -93,7 +92,7 @@ signals:
   void fileSendFailed(QString friendId, const QString &fname);
 
 private:
-  CoreFile();
+  CoreFile(Core *);
 
   ToxFile *findFile(QString fileId);
   const QString& addFile(ToxFile &file);
@@ -105,16 +104,15 @@ private:
 
   lib::messenger::File buildHandlerFile(const ToxFile* toxFile);
 
-  void connectCallbacks(ToxFile1 &tox);
-  static void onFileReceiveCallback(Tox *tox, QString friendId, QString fileId,
+  static void onFileReceiveCallback(lib::messenger::Messenger *tox, QString friendId, QString fileId,
                                     uint32_t kind, uint64_t filesize,
                                     const uint8_t *fname, size_t fnameLen,
                                     void *vCore);
-  static void onFileControlCallback(Tox *tox, QString friendId, QString fileId,
+  static void onFileControlCallback(lib::messenger::Messenger *tox, QString friendId, QString fileId,
                                     lib::messenger::FileControl control, void *vCore);
-  static void onFileDataCallback(Tox *tox, QString friendId, QString fileId,
+  static void onFileDataCallback(lib::messenger::Messenger *tox, QString friendId, QString fileId,
                                  uint64_t pos, size_t length, void *vCore);
-  static void onFileRecvChunkCallback(Tox *tox, QString friendId,
+  static void onFileRecvChunkCallback(lib::messenger::Messenger *tox, QString friendId,
                                       QString fileId, uint64_t position,
                                       const uint8_t *data, size_t length,
                                       void *vCore);
@@ -126,8 +124,7 @@ private slots:
 
 private:
   QHash<QString, ToxFile> fileMap;
-  ToxFile1 *tox;
-  Tox *tox0;
+  lib::messenger::Messenger *messenger;
   CompatibleRecursiveMutex *coreLoopLock = nullptr;
 };
 

@@ -77,8 +77,8 @@ FriendListWidget::FriendListWidget(MainLayout *parent, ContentLayout*contentLayo
   connect(widget, &Widget::toShowDetails, this,
           &FriendListWidget::do_toShowDetails);
 
-  connect(Nexus::getProfile(), &Profile::coreChanged,
-          this, &FriendListWidget::onCoreChanged);
+//  connect(Nexus::getProfile(), &Profile::coreChanged,
+//          this, &FriendListWidget::onCoreChanged);
 
 }
 

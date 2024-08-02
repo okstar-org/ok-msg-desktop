@@ -12,57 +12,63 @@
 
 #include "messenger.h"
 
+#include <QThread>
+#include <jid.h>
+#include <memory>
+
+#include "src/application.h"
 #include "base/logs.h"
 #include "base/xmls.h"
 
 #include "lib/messenger/IM.h"
 #include "lib/messenger/IMConference.h"
-#include "lib/messenger/IMJingle.h"
+#include "lib/messenger/IMFile.h"
 #include "lib/plugin/pluginmanager.h"
 
-#include <QThread>
-#include <jid.h>
-#include <memory>
 
 namespace lib {
 namespace messenger {
 
 
-Messenger::Messenger(QObject *parent)
-    : QObject(parent),                                       //
+Messenger::Messenger(const QString& host,
+                     const QString &name,
+                     const QString &password,
+                     QObject *parent)
+    : QObject(parent),
+      _im{nullptr},
       _delayer(std::make_unique<::base::DelayedCallTimer>()) //
 {
     qDebug() << __func__;
 
 
   connect(this, &Messenger::disconnect, this, &Messenger::onDisconnect);
-  auto _session = ok::session::AuthSession::Instance();
-  /**
-   * IM
-   */
-  connectIM();
 
+  auto _session = ok::Application::Instance()->getSession();
 
   QStringList features;
 #ifdef OK_PLUGIN
   auto pm = ok::plugin::PluginManager::instance();
-  auto features0 = pm->pluginFeatures();
-  features << features0;
-
-
+  features << pm->pluginFeatures();
   int acc = pm->addAccount(_session->account(), this);
   qDebug() << "PluginManager account id=>"<<acc;
-
-  ok::session::AuthSession::Instance();
-  auto _im = _session->im();
-
-  connect(_im, &IM::connectResult, this, [pm,_session](lib::messenger::IMConnectStatus status) {
-    if(status == lib::messenger::IMConnectStatus::CONNECTED){
-      pm->startLogin(_session->account());
-    }
-  });
-
 #endif
+
+    _im = new ::lib::messenger::IM(host,name,password,features);
+    connectIM();
+
+    //    connect(_im, &::lib::messenger::IM::connectResult,
+    //            this, &AuthSession::onIMConnectStatus);
+    //    qRegisterMetaType<ok::session::SignInInfo>("ok::session::SignInInfo");
+
+    //    connect(_im, &::lib::messenger::IM::started, this, &AuthSession::onIMStarted);
+
+//    connect(_im, &IM::connectResult, this, [pm, &_session](lib::messenger::IMConnectStatus status) {
+//      if(status == lib::messenger::IMConnectStatus::CONNECTED){
+//        pm->startLogin(_session->account());
+//      }
+//    });
+
+
 }
 
 Messenger::~Messenger() {
@@ -77,21 +83,20 @@ Messenger::~Messenger() {
 //}
 
 void Messenger::start() {
-qDebug() << __func__;
+    qDebug() << __func__;
+    _im->start();
+    connect(_im, &IM::started, [&](){
+      _imFile = new IMFile(_im, this);
+      emit started();
+    });
 }
 
-
-
 void Messenger::sendChatState(const QString &friendId, int state) {
-  auto _session = ok::session::AuthSession::Instance();
-  auto _im = _session->im();
   _im->sendChatState(friendId, static_cast<ChatStateType>(state));
 }
 
 void Messenger::onConnectResult(lib::messenger::IMConnectStatus status) {
   qDebug() << ("status:") << (int)status;
-  auto _session = ok::session::AuthSession::Instance();
-  auto _im = _session->im();
   if (status == lib::messenger::IMConnectStatus::DISCONNECTED) {
     _delayer->call(1000 * 5, [&]() {
       qDebug(("Retry connect..."));
@@ -101,10 +106,7 @@ void Messenger::onConnectResult(lib::messenger::IMConnectStatus status) {
 }
 
 void Messenger::onStarted() {
-  qDebug() << "connected...";
-
-  auto _session = ok::session::AuthSession::Instance();
-  auto _im = _session->im();
+  qDebug() << __func__;
 
 //  _im->enableRosterManager();
 //  _im->sendPresence();
@@ -122,8 +124,6 @@ void Messenger::onStarted() {
 void Messenger::onStopped() { qDebug() << "onStopped..."; }
 
 bool Messenger::connectIM( ) {
-  auto _session = ok::session::AuthSession::Instance();
-  auto _im = _session->im();
 
   connect(_im, &IM::started, this, &Messenger::onStarted);
   connect(_im, &IM::incoming, this,
@@ -232,8 +232,6 @@ bool Messenger::connectIM( ) {
             }
           });
 
-
-
   //group
   connect(_im, &IM::groupInvite, this,
           [&](const QString &groupId, const QString &peerId,
@@ -242,7 +240,6 @@ bool Messenger::connectIM( ) {
               handler->onGroupInvite(groupId, peerId, message);
             }
           });
-
 
   connect(_im, &IM::groupSubjectChanged, this,
           [&](const JID &group, const std::string &subject) -> void {
@@ -290,8 +287,6 @@ bool Messenger::connectIM( ) {
 
 
 bool Messenger::initRoom() {
-  auto _session = ok::session::AuthSession::Instance();
-  auto _im = _session->im();
   _im->loadGroupList();
   return true;
 }
@@ -301,18 +296,13 @@ void Messenger::onReceiveGroupMessage(IMMessage msg) {
 }
 
 QString Messenger::genUniqueId() {
-  auto _session = ok::session::AuthSession::Instance();
-  auto _im = _session->im();
   return qstring(_im->getClient()->getID());
 }
 
 bool Messenger::sendToGroup(const QString &g,const QString &msg,const QString &id) {
-
   qDebug() << QString("sendToGroup=>%1 id:%2 msg:%2").arg(g).arg(id).arg(msg);
   sentCount++;
-
-  auto _session = ok::session::AuthSession::Instance();
-  return _session->im()->sendToRoom(g, msg, id);
+  return _im->sendToRoom(g, msg, id);
 }
 
 
@@ -322,15 +312,11 @@ bool Messenger::sendToFriend(const QString &f,
                              bool encrypt) {
   qDebug() << __func__ << msg << "=>" << f;
   sentCount++;
-
-  auto _session = ok::session::AuthSession::Instance();
-  auto _im = _session->im();
-
-
   bool y = false;
   if (encrypt) {
 #ifdef OK_PLUGIN
-    auto _session = ok::session::AuthSession::Instance();
+    auto _session = ok::Application::Instance()->getSession();
+
     base::Jid ownJid(qstring(_im->self().full()));
     _session->account()->setJid(ownJid);
 
@@ -355,64 +341,46 @@ bool Messenger::sendToFriend(const QString &f,
 }
 
 void Messenger::receiptReceived(const QString &f, QString receipt) {
-  auto _session = ok::session::AuthSession::Instance();
-  auto _im = _session->im();
   return _im->sendReceiptReceived(f, receipt);
 }
 
 void Messenger::sendFriendRequest(const QString &f,const QString &nick, const QString &message) {
   qDebug() <<__func__ << f << nick << message;
-  auto _session = ok::session::AuthSession::Instance();
-  auto _im = _session->im();
   _im->addFriend(JID(stdstring(f)), nick, message);
 }
 
 
 
 void Messenger::acceptFriendRequest(const QString &f) {
-  auto _session = ok::session::AuthSession::Instance();
-  auto _im = _session->im();
   _im->acceptFriendRequest(f);
 }
 
 void Messenger::rejectFriendRequest(const QString &f) {
-  auto _session = ok::session::AuthSession::Instance();
-  auto _im = _session->im();
   _im->rejectFriendRequest(f);
 }
 
 void Messenger::getFriendVCard(const QString &f) {
-  auto _session = ok::session::AuthSession::Instance();
-  auto _im = _session->im();
   _im->fetchFriendVCard(f);
 }
 
 bool Messenger::removeFriend(const QString &f) {
-  auto _session = ok::session::AuthSession::Instance();
-  auto _im = _session->im();
   return _im->removeFriend(JID(f.toStdString()));
 }
 
 size_t Messenger::getFriendCount() {
-  auto _session = ok::session::AuthSession::Instance();
-  auto _im = _session->im();
   return _im->getRosterCount();
 }
 
 void Messenger::getFriendList(std::list<IMFriend>& list) {
-  auto _session = ok::session::AuthSession::Instance();
-  _session->im()->getRosterList(list);
+  _im->getRosterList(list);
 }
 
 void Messenger::setFriendAlias(const QString &f, const QString &alias)
 {
-    auto _session = ok::session::AuthSession::Instance();
-    _session->im()->setFriendAlias(JID(stdstring(f)), stdstring(alias));
+    _im->setFriendAlias(JID(stdstring(f)), stdstring(alias));
 }
 
 IMStatus Messenger::getFriendStatus(const QString &f) {
-  auto _session = ok::session::AuthSession::Instance();
-  auto _im = _session->im();
  return _im->getFriendStatus(f);
 }
 
@@ -433,20 +401,17 @@ void Messenger::addGroupHandler(GroupHandler *handler) {
 
 
 void Messenger::stop() {
-  auto _session = ok::session::AuthSession::Instance();
-  auto _im = _session->im();
+
   _im->stop();
 }
 
 void Messenger::send(const QString &xml) {
-  auto _session = ok::session::AuthSession::Instance();
-  auto _im = _session->im();
+
   _im->send(xml);
 }
 
 IMPeerId Messenger::getSelfId() const {
-  auto _session = ok::session::AuthSession::Instance();
-  auto _im = _session->im();
+
   return _im->getSelfPeerId();
 }
 
@@ -456,34 +421,28 @@ IMStatus Messenger::getSelfStatus() const {
 }
 
 void Messenger::setSelfNickname(const QString &nickname) {
-  auto _session = ok::session::AuthSession::Instance();
-  auto _im = _session->im();
+
   _im->setNickname(nickname);
 }
 
 QString Messenger::getSelfUsername() const {
-  auto _session = ok::session::AuthSession::Instance();
-  auto _im = _session->im();
+
   return _im->getSelfUsername();
 }
 
 QString Messenger::getSelfNick() const {
-  auto _session = ok::session::AuthSession::Instance();
-  auto _im = _session->im();
+
   return _im->getNickname();
 }
 
 void Messenger::changePassword(const QString &password) {
-  auto _session = ok::session::AuthSession::Instance();
-  auto _im = _session->im();
+
   _im->changePassword(password);
 }
 
 void Messenger::onDisconnect() {
   _delayer->call(1000 * 5, [&]() {
     qDebug(("retry connect..."));
-    auto _session = ok::session::AuthSession::Instance();
-    auto _im = _session->im();
     _im->start();
   });
 }
@@ -498,12 +457,13 @@ void Messenger::onEncryptedMessage(QString xml) {
   auto dom = ::base::Xmls::parse(xml);
 
   qDebug() << "onEncryptedMessage:"<<dom.toString();
-  auto _session = ok::session::AuthSession::Instance();
+  auto _session = ok::Application::Instance()->getSession();
   auto info = _session->getSignInInfo();
-  auto _im = _session->im();
+
   _session->account()->setJid(qstring(_im->self().full()));
   auto pm = ok::plugin::PluginManager::instance();
   pm->addAccount(_session->account(), this);
+
   auto ele= dom.documentElement();
   bool decrypted = pm->decryptMessageElement(_session->account(), ele);
   qDebug()<<"decrypt message=>" << decrypted;
@@ -527,12 +487,11 @@ void Messenger::onEncryptedMessage(QString xml) {
 }
 
 void Messenger::loadGroupList() {
-  ok::session::AuthSession::Instance()->im()->loadGroupList();
+  _im->loadGroupList();
 }
 
 QString Messenger::createGroup(const QString &groupId, const QString& groupName) {
-  auto _session = ok::session::AuthSession::Instance();
-  auto _im = _session->im();
+
   JID self = _im->self();
   self.setUsername(stdstring(groupId));
   self.setResource(stdstring(groupName));
@@ -543,75 +502,54 @@ QString Messenger::createGroup(const QString &groupId, const QString& groupName)
 }
 
 bool Messenger::inviteGroup(const IMContactId &group, const IMContactId &f) {
-  auto _session = ok::session::AuthSession::Instance();
-  auto _im = _session->im();
+
   return _im->inviteToRoom(JID(stdstring(group.toString())), JID(stdstring(f.toString())));
 }
 
 bool Messenger::leaveGroup(const QString &group) {
-  auto _session = ok::session::AuthSession::Instance();
-  auto _im = _session->im();
+
   return _im->leaveGroup(group);
 }
 
 
 bool Messenger::destroyGroup(const QString &group) {
-  auto _session = ok::session::AuthSession::Instance();
-  auto _im = _session->im();
+
   return _im->destroyGroup(group);
 }
 
 void Messenger::setRoomName(const QString &group, const QString &nick) {
-  auto _session = ok::session::AuthSession::Instance();
-  auto _im = _session->im();
+
   _im->setRoomName(group, stdstring(nick));
 }
 
 void Messenger::setRoomDesc(const QString &group, const QString &nick)
 {
-    auto _session = ok::session::AuthSession::Instance();
-    auto _im = _session->im();
     _im->setRoomDesc(group, stdstring(nick));
 }
 
 void Messenger::setRoomSubject(const QString &group, const QString &notice) {
-  auto _session = ok::session::AuthSession::Instance();
-  auto _im = _session->im();
+
   _im->setRoomSubject(group, stdstring(notice));
 }
 
 void Messenger::setRoomAlias(const QString &group, const QString &alias)
 {
-    auto _session = ok::session::AuthSession::Instance();
-    _session->im()->setRoomAlias(group, stdstring(alias));
+    _im->setRoomAlias(group, stdstring(alias));
 }
-
 
 void Messenger::joinGroup(const QString &group) {
   qDebug() << QString("group:%1").arg(group);
-  auto _session = ok::session::AuthSession::Instance();
-  auto _im = _session->im();
   _im->joinRoom(group);
 }
 
 void Messenger::setSelfAvatar(const QByteArray &avatar) {
-  auto _session = ok::session::AuthSession::Instance();
-  auto _im = _session->im();
   _im->setAvatar(avatar);
 }
+
 void Messenger::requestBookmarks() {
-  auto session = ok::session::AuthSession::Instance();
-  auto im = session->im();
-  im->requestVCards();
-
- // im->requestBookmarks();
+  _im->requestVCards();
+  // im->requestBookmarks();
   //im->enablePubSubManager();
-}
-
-void Messenger::setUIStarted(){
-  auto session = ok::session::AuthSession::Instance();
-  auto im = session->im();
-//  im->setUIStarted();
 }
 
 void Messenger::onGroupReceived(QString groupId, QString name) {

@@ -25,7 +25,8 @@ namespace UI {
 using namespace ok::session;
 
 /* 登录主窗口 */
-LoginWindow::LoginWindow(bool bootstrap, QWidget *parent)
+LoginWindow::LoginWindow(std::shared_ptr<ok::session::AuthSession> session,
+                         bool bootstrap, QWidget *parent)
     : QMainWindow(parent), ui(new Ui::LoginWindow) {
 
   //初始化资源
@@ -43,7 +44,7 @@ LoginWindow::LoginWindow(bool bootstrap, QWidget *parent)
 
   ui->hBoxLayout->addWidget(bannerWidget);
 
-  loginWidget = new LoginWidget(bootstrap, this);
+  loginWidget = new LoginWidget(session, bootstrap, this);
   ui->hBoxLayout->addWidget(loginWidget);
 
 
@@ -51,11 +52,11 @@ LoginWindow::LoginWindow(bool bootstrap, QWidget *parent)
   QString qss = ok::base::Files::readStringAll(":/qss/login.qss");
   setStyleSheet(qss);
 
-  connect(loginWidget, &UI::LoginWidget::loginResult,
-          [&](ok::session::SignInInfo &info,  //
-              ok::session::LoginResult &result) {
-            emit loginResult(info, result);
-          });
+//  connect(loginWidget, &UI::LoginWidget::loginResult,
+//          [&](ok::session::SignInInfo &info,  //
+//              ok::session::LoginResult &result) {
+//            emit loginResult(info, result);
+//          });
 }
 
 LoginWindow::~LoginWindow() {

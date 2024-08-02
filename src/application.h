@@ -54,6 +54,10 @@ public:
     return _bus.get();
   }
 
+  inline ok::session::AuthSession *getSession(){
+    return session.get();
+  }
+
 private:
   QMap<QString, Module *> m_moduleMap;
 
@@ -61,12 +65,12 @@ private:
 
   int _argc;
   char **_argv;
+
+  std::shared_ptr<ok::session::AuthSession> session;
+
   std::unique_ptr<Bus> _bus;
   std::unique_ptr<SettingManager> _settingManager;
-
   std::unique_ptr<ControllerManager> _controllerManager;
-
-  ok::session::SignInInfo m_signInInfo;
 
   UI::LoginWindow* m_loginWindow;
   std::unique_ptr<UI::MainWindow> m_mainWindow;
@@ -79,7 +83,7 @@ private:
   void createLoginUI(bool bootstrap);
   void closeLoginUI();
 
-  void startMainUI(ok::session::SignInInfo &m_signInInfo);
+  void startMainUI(std::shared_ptr<ok::session::AuthSession> session);
   void stopMainUI();
 
 
@@ -93,8 +97,6 @@ private:
 
 public slots:
   void cleanup();
-
-  void onLoginSuccess(ok::session::SignInInfo &);
 
   void onAvatar(const QPixmap &);
 

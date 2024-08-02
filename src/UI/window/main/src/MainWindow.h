@@ -36,7 +36,8 @@ class MainWindow : public QMainWindow {
   Q_OBJECT
 
 public:
-  explicit MainWindow(ok::session::SignInInfo &m_signInInfo, QWidget *parent = nullptr);
+  explicit MainWindow(std::shared_ptr<ok::session::AuthSession> session,
+                      QWidget *parent = nullptr);
   ~MainWindow();
 
   static MainWindow* getInstance();
@@ -53,23 +54,23 @@ protected:
   void updateIcons();
 
 private:
-  Ui::MainWindow *ui;
+  std::shared_ptr<ok::session::AuthSession> session;
+  std::unique_ptr<QTimer> timer;
+  std::shared_ptr<::base::DelayedCallTimer> delayCaller;
 
+  Ui::MainWindow *ui;
   OMainMenu *m_menu;
   QMap<PageMenu, OMenuWidget *> menuWindow;
 
   std::unique_ptr<QSystemTrayIcon> icon;
   QMenu *trayMenu;
-  QTimer *timer;
   QAction *actionQuit;
   QAction *actionShow;
   bool wasMaximized = false;
-  //  bool autoAwayActive = false;
 
+  //  bool autoAwayActive = false;
   //  void saveWindowGeometry();
   //  void saveSplitterGeometry();
-
-  ok::session::SignInInfo &m_signInInfo;
 
   static inline QIcon prepareIcon(QString path, int w = 0, int h = 0);
 

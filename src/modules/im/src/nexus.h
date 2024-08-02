@@ -21,14 +21,8 @@
 class Widget;
 class Profile;
 class Settings;
-// class LoginScreen;
 class Core;
 class QCommandLineParser;
-//
-//#include "UI/window/login/src/LoginWindow.h"
-//#include "UI/window/main/MainWindow.h"
-
-//using LoginScreen = UI::LoginWindow;
 
 #ifdef Q_OS_MAC
 class QMenuBar;
@@ -65,7 +59,7 @@ public:
   QString name() override;
   QWidget* widget() override;
   void init(Profile *) override;
-  void start(ok::session::SignInInfo &signInInfo) override;
+  void start(std::shared_ptr<ok::session::AuthSession> session) override;
   bool isStarted() override { return stared; }
   void hide() override;
   void onSave(SavedInfo& ) override;
@@ -105,6 +99,7 @@ signals:
   void currentProfileChanged(Profile *Profile);
   void profileLoaded();
   void profileLoadFailed();
+  void coreChanged(Core &);
   void saveGlobal();
   void updateAvatar(const QPixmap &pixmap);
   void createProfileFailed(QString msg);
@@ -112,10 +107,10 @@ signals:
   void exit(const QString &profile);
 
 public slots:
-  void onCreateNewProfile(const QString &name, const QString &pass);
-  void onLoadProfile(const QString &name, const QString &pass);
+  void onCreateNewProfile(const QString &host, const QString &name, const QString &pass);
+  void onLoadProfile(const QString &host, const QString &name, const QString &pass);
   void bootstrapWithProfile(Profile *p);
-  void bootstrapWithProfileName(const QString &p);
+  void bootstrapWithProfileName(const QString &host,const QString &p);
   int showLogin(const QString &profileName = QString());
   void do_logout(const QString & profile);
 

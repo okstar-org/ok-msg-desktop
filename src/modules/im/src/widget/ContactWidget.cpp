@@ -89,8 +89,7 @@ AddFriendForm *ContactWidget::makeAddForm() {
 void ContactWidget::do_openAddForm() { makeAddForm()->showTo(getContentLayout()); }
 
 void ContactWidget::init() {
-  connect(Nexus::getProfile(), &Profile::coreChanged, this, &ContactWidget::onCoreChanged);
-
+//  connect(Nexus::getProfile(), &Profile::coreChanged, this, &ContactWidget::onCoreChanged);
   connect(ui->addBtn, &QPushButton::released, this, &ContactWidget::do_openAddForm);
 }
 

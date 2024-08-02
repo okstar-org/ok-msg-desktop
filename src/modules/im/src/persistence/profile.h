@@ -31,12 +31,13 @@ class QCommandLineParser;
 
 class Profile : public QObject {
   Q_OBJECT
-
 public:
-  static Profile *loadProfile(QString name, //
+  static Profile *loadProfile(QString host, //
+                              QString name, //
                               const QCommandLineParser *parser,//
                               const QString &password = QString());
-  static Profile *createProfile(QString name,//
+  static Profile *createProfile(QString host,
+                                QString name,//
                                 const QCommandLineParser *parser,//
                                 QString password);
   ~Profile();
@@ -115,8 +116,7 @@ private slots:
   void setFriendAvatar(const FriendId owner, const QByteArray &pic);
 
 private:
-  Profile(QString name, const QString &password, bool newProfile,
-          const QByteArray &toxsave, std::unique_ptr<ToxEncrypt> passKey);
+  Profile(const QString & host, const QString & name, const QString &password, bool newProfile );
   static QStringList getFilesByExt(QString extension);
   QString avatarPath(const ContactId &owner, bool forceUnencrypted = false);
   bool saveToxSave(QByteArray data);
@@ -124,10 +124,12 @@ private:
 
 private:
   std::unique_ptr<Core> core = nullptr;
-  //is username
+  QString host;
+  //akka username
   QString name;
+  QString password;
   QString nick;
-
+  QByteArray toxsave;
   std::unique_ptr<ToxEncrypt> passkey = nullptr;
   std::shared_ptr<RawDatabase> database;
   std::shared_ptr<History> history;

@@ -16,6 +16,7 @@
 
 #include "ChatWidget.h"
 #include "MessageSessionListWidget.h"
+#include "application.h"
 #include "base/OkSettings.h"
 #include "base/SvgUtils.h"
 #include "base/utils.h"
@@ -42,6 +43,7 @@
 #include <src/model/profile/profileinfo.h>
 #include <src/widget/form/profileform.h>
 
+#include "src/Bus.h"
 #include <src/core/coreav.h>
 
 namespace {
@@ -69,7 +71,6 @@ void acceptFileTransfer(ToxFile &file, const QString &path) {
     filepath = QString("%1/%2%3.%4").arg(path, base, number > 0 ? QString("(%1)").arg(QString::number(number)) : QString(), suffix);
     ++number;
   } while (QFileInfo(filepath).exists());
-
 
   file.setFilePath(filepath);
   // Do not automatically accept the file-transfer if the path is not writable.
@@ -110,7 +111,7 @@ ChatWidget::ChatWidget(QWidget *parent)
   ui->mainSplitter->setSizes(QList<int>() << 200 << 500);
 
   const Settings &s = Settings::getInstance();
- 
+
   reloadTheme();
   setupStatus();
   setupSearch();
@@ -123,8 +124,8 @@ ChatWidget::ChatWidget(QWidget *parent)
 }
 
 ChatWidget::~ChatWidget() {
-    deinit();
-    delete ui;
+  deinit();
+  delete ui;
 }
 
 void ChatWidget::init() {
@@ -139,9 +140,9 @@ void ChatWidget::init() {
   connect(widget, &Widget::groupAdded, this, &ChatWidget::onGroupAdded);
   connect(widget, &Widget::groupRemoved, this, &ChatWidget::onGroupRemoved);
 
-  connect(Nexus::getProfile(), &Profile::coreChanged, this, &ChatWidget::onCoreChanged);
+  connect(ok::Application::Instance()->bus(), &ok::Bus::coreStarted, this, [&](Core *core) { connectToCore(core); });
 
-  settings::Translator::registerHandler(std::bind(&ChatWidget::retranslateUi, this), this);
+  settings::Translator::registerHandler([this] { retranslateUi(); }, this);
 }
 
 void ChatWidget::deinit() {
@@ -152,12 +153,11 @@ void ChatWidget::deinit() {
 
   auto widget = Widget::getInstance();
 
-  disconnect(widget, &Widget::toSendMessage , this, &ChatWidget::doSendMessage);
+  disconnect(widget, &Widget::toSendMessage, this, &ChatWidget::doSendMessage);
   disconnect(widget, &Widget::friendAdded, this, &ChatWidget::onFriendAdded);
   disconnect(widget, &Widget::friendRemoved, this, &ChatWidget::onFriendRemoved);
   disconnect(widget, &Widget::groupAdded, this, &ChatWidget::onGroupAdded);
   disconnect(widget, &Widget::groupRemoved, this, &ChatWidget::onGroupRemoved);
-
 
   disconnect(Nexus::getProfile(), &Profile::coreChanged, this, &ChatWidget::onCoreChanged);
 
@@ -167,11 +167,15 @@ void ChatWidget::deinit() {
 
 void ChatWidget::connectToCore(Core *core) {
   qDebug() << __func__ << "core" << core;
+
   connect(core, &Core::usernameSet, this, &ChatWidget::onUsernameSet);
   connect(core, &Core::statusSet, this, &ChatWidget::onStatusSet);
   connect(core, &Core::statusMessageSet, this, &ChatWidget::onStatusMessageSet);
 
   connect(core, &Core::messageSessionReceived, this, &ChatWidget::onMessageSessionReceived);
+
+
+  connect(core, &Core::friendUsernameChanged, this, &ChatWidget::onFriendNicknameChanged);
 
   connect(core, &Core::friendMessageReceived, this, &ChatWidget::onFriendMessageReceived);
 
@@ -181,7 +185,6 @@ void ChatWidget::connectToCore(Core *core) {
 
   connect(core, &Core::friendTypingChanged, this, &ChatWidget::onFriendTypingChanged);
   connect(core, &Core::receiptRecieved, this, &ChatWidget::onReceiptReceived);
-
 
   connect(core, &Core::groupMessageReceived, this, &ChatWidget::onGroupMessageReceived);
   connect(core, &Core::groupPeerlistChanged, this, &ChatWidget::onGroupPeerListChanged);
@@ -229,8 +232,7 @@ void ChatWidget::onCoreChanged(Core &core_) {
 
 void ChatWidget::onMessageSessionReceived(const ContactId &contactId, const QString &sid) {
   qDebug() << __func__ << "contactId:" << contactId.toString() << "sid:" << sid;
-  sessionListWidget->createMessageSession(contactId, sid,
-                                          contactId.isGroup() ? ChatType::GroupChat : ChatType::Chat);
+  sessionListWidget->createMessageSession(contactId, sid, contactId.isGroup() ? ChatType::GroupChat : ChatType::Chat);
 }
 
 void ChatWidget::onFriendMessageReceived(const FriendId &friendId, const FriendMessage &message, bool isAction) {
@@ -297,9 +299,7 @@ void ChatWidget::onFriendStatusMessageChanged(const FriendId &friendPk, const QS
 
 void ChatWidget::onFriendTypingChanged(const FriendId &friendId, bool isTyping) { sessionListWidget->setFriendTyping(friendId, isTyping); }
 
-void ChatWidget::onGroupAdded(const Group *g) {
-    sessionListWidget->addGroup(g);
-}
+void ChatWidget::onGroupAdded(const Group *g) { sessionListWidget->addGroup(g); }
 
 void ChatWidget::onGroupRemoved(const Group *g) { sessionListWidget->removeGroup(g); }
 
@@ -368,25 +368,15 @@ void ChatWidget::updateIcons() {
   setWindowIcon(ico);
 }
 
-void ChatWidget::onStatusMessageSet(const QString &statusMessage) {
-    ui->statusLabel->setText(statusMessage);
-}
+void ChatWidget::onStatusMessageSet(const QString &statusMessage) { ui->statusLabel->setText(statusMessage); }
 
-void ChatWidget::onFriendAdded(const Friend *f) {
-    sessionListWidget->addFriend(f);
-}
+void ChatWidget::onFriendAdded(const Friend *f) { sessionListWidget->addFriend(f); }
 
-void ChatWidget::onFriendRemoved(const Friend *f) {
-    sessionListWidget->removeFriend(f);
-}
+void ChatWidget::onFriendRemoved(const Friend *f) { sessionListWidget->removeFriend(f); }
 
-void ChatWidget::doSendMessage(const QString &to, bool isGroup)
-{
-     sessionListWidget->toSendMessage(FriendId(to), isGroup);
-}
+void ChatWidget::doSendMessage(const QString &to, bool isGroup) { sessionListWidget->toSendMessage(FriendId(to), isGroup); }
 
-
-//void ChatWidget::onGroupInviteReceived(const GroupInvite &inviteInfo) {
+// void ChatWidget::onGroupInviteReceived(const GroupInvite &inviteInfo) {
 
 //  auto confType = inviteInfo.getType();
 //  if (confType == ConferenceType::TEXT || confType == ConferenceType::AV) {
@@ -403,19 +393,19 @@ void ChatWidget::doSendMessage(const QString &to, bool isGroup)
 //      groupInvitesUpdate();
 //      Widget::getInstance()->newMessageAlert(window(), isActiveWindow(), true, true);
 
-//#if DESKTOP_NOTIFICATIONS
-//      if (settings.getNotifyHide()) {
-//        notifier.notifyMessageSimple(DesktopNotify::MessageType::GROUP_INVITE);
-//      } else {
-//        notifier.notifyMessagePixmap(f->getDisplayedName() + tr(" invites you to join a group."), {}, Nexus::getProfile()->loadAvatar(f->getPublicKey()));
-//      }
-//#endif
-//    }
-//  } else {
-//    qWarning() << "onGroupInviteReceived: Unknown ConferenceType:" << (int)confType;
-//    return;
-//  }
-//}
+// #if DESKTOP_NOTIFICATIONS
+//       if (settings.getNotifyHide()) {
+//         notifier.notifyMessageSimple(DesktopNotify::MessageType::GROUP_INVITE);
+//       } else {
+//         notifier.notifyMessagePixmap(f->getDisplayedName() + tr(" invites you to join a group."), {}, Nexus::getProfile()->loadAvatar(f->getPublicKey()));
+//       }
+// #endif
+//     }
+//   } else {
+//     qWarning() << "onGroupInviteReceived: Unknown ConferenceType:" << (int)confType;
+//     return;
+//   }
+// }
 
 void ChatWidget::onGroupInviteAccepted(const GroupInvite &inviteInfo) {
   const QString groupId = core->joinGroupchat(inviteInfo);
@@ -471,7 +461,6 @@ void ChatWidget::onGroupPeerStatusChanged(const QString &groupnumber, const Grou
   }
 
   g->addPeer(go);
-
 }
 
 void ChatWidget::onGroupTitleChanged(QString groupnumber, const QString &author, const QString &title) {
@@ -524,10 +513,7 @@ void ChatWidget::showProfile() {
   }
 }
 
-void ChatWidget::clearAllReceipts()
-{
-    sessionListWidget->clearAllReceipts();
-}
+void ChatWidget::clearAllReceipts() { sessionListWidget->clearAllReceipts(); }
 
 void ChatWidget::on_nameClicked() {
   qDebug() << __func__;
@@ -539,11 +525,11 @@ void ChatWidget::onGroupClicked() {
   auto &settings = Settings::getInstance();
 
   //    hideMainForms(nullptr);
-//  if (!groupInviteForm) {
-//    groupInviteForm = new GroupInviteForm;
-//    connect(groupInviteForm, &GroupInviteForm::groupCreate, core, &Core::createGroup);
-//  }
-//  groupInviteForm->show(contentLayout);
+  //  if (!groupInviteForm) {
+  //    groupInviteForm = new GroupInviteForm;
+  //    connect(groupInviteForm, &GroupInviteForm::groupCreate, core, &Core::createGroup);
+  //  }
+  //  groupInviteForm->show(contentLayout);
   //    setWindowTitle(fromDialogType(DialogType::GroupDialog));
   //    setActiveToolMenuButton(ActiveToolMenuButton::GroupButton);
 }
@@ -717,20 +703,20 @@ bool ChatWidget::groupsVisible() const {
 }
 
 void ChatWidget::retranslateUi() {
-    ui->searchContactText->setPlaceholderText(tr("Search Contacts"));
-    ui->retranslateUi(this);
+  ui->searchContactText->setPlaceholderText(tr("Search Contacts"));
+  ui->retranslateUi(this);
 
-    filterDisplayName->setText(tr("By Name"));
-    filterDisplayActivity->setText(tr("By Activity"));
-    filterAllAction->setText(tr("All"));
-    filterOnlineAction->setText(tr("Online"));
-    filterOfflineAction->setText(tr("Offline"));
-    filterFriendsAction->setText(tr("Friends"));
-    filterGroupsAction->setText(tr("Groups"));
+  filterDisplayName->setText(tr("By Name"));
+  filterDisplayActivity->setText(tr("By Activity"));
+  filterAllAction->setText(tr("All"));
+  filterOnlineAction->setText(tr("Online"));
+  filterOfflineAction->setText(tr("Offline"));
+  filterFriendsAction->setText(tr("Friends"));
+  filterGroupsAction->setText(tr("Groups"));
 
-    statusOnline->setText(tr("Online", "Button to set your status to 'Online'"));
-    statusAway->setText(tr("Away", "Button to set your status to 'Away'"));
-    statusBusy->setText(tr("Busy", "Button to set your status to 'Busy'"));
+  statusOnline->setText(tr("Online", "Button to set your status to 'Online'"));
+  statusAway->setText(tr("Away", "Button to set your status to 'Away'"));
+  statusBusy->setText(tr("Busy", "Button to set your status to 'Busy'"));
 }
 
 void ChatWidget::setupStatus() {
@@ -782,21 +768,20 @@ void ChatWidget::dispatchFile(ToxFile file) {
 
   const auto &cId = ContactId(file.getFriendId());
 
-
   if (file.status == FileStatus::INITIALIZING && file.direction == FileDirection::RECEIVING) {
 
     const Settings &settings = Settings::getInstance();
-//    QString autoAcceptDir = settings.getAutoAcceptDir(cId);
-//    if (autoAcceptDir.isEmpty() && ok::base::OkSettings::getInstance().getAutoSaveEnabled()) {
-    auto  autoAcceptDir = settings.getGlobalAutoAcceptDir();
-//    }
+    //    QString autoAcceptDir = settings.getAutoAcceptDir(cId);
+    //    if (autoAcceptDir.isEmpty() && ok::base::OkSettings::getInstance().getAutoSaveEnabled()) {
+    auto autoAcceptDir = settings.getGlobalAutoAcceptDir();
+    //    }
 
-//    auto maxAutoAcceptSize = settings.getMaxAutoAcceptSize();
-//    bool autoAcceptSizeCheckPassed = maxAutoAcceptSize == 0 || maxAutoAcceptSize >= file.fileSize;
+    //    auto maxAutoAcceptSize = settings.getMaxAutoAcceptSize();
+    //    bool autoAcceptSizeCheckPassed = maxAutoAcceptSize == 0 || maxAutoAcceptSize >= file.fileSize;
 
-//    if (!autoAcceptDir.isEmpty() && autoAcceptSizeCheckPassed) {
-      acceptFileTransfer(file, autoAcceptDir);
-//    }
+    //    if (!autoAcceptDir.isEmpty() && autoAcceptSizeCheckPassed) {
+    acceptFileTransfer(file, autoAcceptDir);
+    //    }
   }
 
   sessionListWidget->setFriendFileReceived(cId, file);
@@ -883,4 +868,8 @@ void ChatWidget::onAvEnd(const FriendId &friendId, bool error) {
   //  updateCallButtons(status);
   //    stopCounter(error);
   //  hideNetcam();
+}
+
+void ChatWidget::onFriendNicknameChanged(const FriendId &friendPk, const QString &nickname) {
+  sessionListWidget->setFriendName(friendPk, nickname);
 }

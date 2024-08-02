@@ -20,7 +20,7 @@
 namespace gloox {
 class JID;
 class RosterItem;
-}
+} // namespace gloox
 
 namespace lib::messenger {
 
@@ -39,4 +39,3 @@ struct IMMessage {
 };
 
 } // namespace lib::messenger
-

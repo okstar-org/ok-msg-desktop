@@ -11,19 +11,14 @@
  */
 
 #pragma once
+
 #include <QMap>
+#include <ok-gloox/jinglesession.h>
 #include "IM.h"
-#include "IMFile.h"
-#include "IMFileTask.h"
 #include "base/basic_types.h"
 #include "lib/ortc/ok_rtc_defs.h"
 #include "lib/ortc/ok_rtc_manager.h"
-#include <jinglesession.h>
 
-
-namespace ortc{
-struct IceServer;
-}
 
 namespace lib {
 namespace messenger {
@@ -44,9 +39,7 @@ public:
                            const IMPeerId &peerId,
                            const QString &sId,
                            lib::ortc::JingleCallType callType,
-                           Session *mSession,
-                           std::vector<FileHandler *>* fileHandlers,
-                           ortc::OkRTCHandler *handler);
+                           Session *mSession);
   virtual ~IMJingleSession();
 
 
@@ -92,24 +85,8 @@ public:
     }
   }
 
-  void addFile(const File &f) {
-      m_waitSendFiles.append(f);
-  }
-  /**
-   * 启动文件发送任务
-   * @param session
-   * @param file
-   */
-  void doStartFileSendTask(const Jingle::Session *session,
-                           const File &file);
 
-  /**
-   * 停止文件发送任务
-   * @param session
-   * @param file
-   */
-  void doStopFileSendTask(const Jingle::Session *session,
-                          const File &file);
+
 private:
   IM* im;
   QString sId;
@@ -117,27 +94,14 @@ private:
   const Session::Jingle *jingle;
   ortc::OJingleContent context;
 
-
-
   lib::ortc::JingleCallType m_callType;
   CallStage m_callStage;
   bool accepted;
 
-  //file
-  QList<File> m_waitSendFiles;
-  //k: file.id
-  QMap<QString, IMFileTask *> m_fileSenderMap;
-  std::vector<FileHandler *> *fileHandlers;
+
   std::list<ortc::OIceUdp> pendingIceCandidates;
 
-signals:
-  void sendFileInfo(const QString &friendId, const File &file,
-                    int m_seq, int m_sentBytes, bool end);
 
-  void sendFileAbort(const QString &friendId, const File &file,
-                     int m_sentBytes);
-  void sendFileError(const QString &friendId, const File &file,
-                     int m_sentBytes);
 
 };
 

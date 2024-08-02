@@ -12,9 +12,9 @@
 
 #pragma once
 
-#include "IMMessage.h"
 #include "IMFriend.h"
 #include "IMGroup.h"
+#include "IMMessage.h"
 #include "base/task.h"
 #include "base/timer.h"
 
@@ -47,16 +47,14 @@ class AuthSession;
 namespace lib {
 namespace messenger {
 
+class IM;
+class IMFile;
 
 /**
  * 连接状态
  *
  */
-enum class IMConnectStatus {
-  CONNECTING, AUTH_FAILED, CONNECTED,
-  DISCONNECTED, TIMEOUT, CONN_ERROR,
-  TLS_ERROR, OUT_OF_RESOURCE, NO_SUPPORT
-};
+enum class IMConnectStatus { CONNECTING, AUTH_FAILED, CONNECTED, DISCONNECTED, TIMEOUT, CONN_ERROR, TLS_ERROR, OUT_OF_RESOURCE, NO_SUPPORT };
 
 class SelfHandler {
 public:
@@ -68,17 +66,16 @@ public:
 
 class FriendHandler {
 public:
-  virtual void onFriend(const IMFriend & frnd) = 0;
+  virtual void onFriend(const IMFriend &frnd) = 0;
   virtual void onFriendRequest(QString friendId, QString msg) = 0;
   virtual void onFriendRemoved(QString friendId) = 0;
   virtual void onFriendStatus(QString friendId, IMStatus status) = 0;
   virtual void onFriendMessage(QString friendId, IMMessage message) = 0;
   virtual void onMessageSession(QString contactId, QString sid) = 0;
   virtual void onFriendNameChanged(QString friendId, QString name) = 0;
-  virtual void onFriendAvatarChanged(const QString friendId,
-                                     const std::string avatar) = 0;
+  virtual void onFriendAvatarChanged(const QString friendId, const std::string avatar) = 0;
 
-  virtual void onFriendAliasChanged(const IMContactId & fId, const QString& alias)=0;
+  virtual void onFriendAliasChanged(const IMContactId &fId, const QString &alias) = 0;
 
   virtual void onFriendChatState(QString friendId, int state) = 0;
   virtual void onMessageReceipt(QString friendId, QString receipt) = 0;
@@ -86,17 +83,16 @@ public:
 
 class GroupHandler {
 public:
-  virtual void onGroup(const QString groupId,
-                       const QString name) = 0;
+  virtual void onGroup(const QString groupId, const QString name) = 0;
 
   virtual void onGroupInvite(const QString groupId, //
                              const QString peerId,  //
                              const QString message) = 0;
 
-  virtual void onGroupSubjectChanged(const QString &groupId, const QString &subject)=0;
+  virtual void onGroupSubjectChanged(const QString &groupId, const QString &subject) = 0;
 
   virtual void onGroupMessage(const QString groupId, //
-                              const IMPeerId peerId,   //
+                              const IMPeerId peerId, //
                               const IMMessage message) = 0;
 
   virtual void onGroupOccupants(const QString groupId, uint size) = 0;
@@ -107,22 +103,27 @@ public:
                                      IMGroupOccupant) = 0;
 };
 
-
-
-
 class Messenger : public QObject {
   Q_OBJECT
 public:
-//  using Ptr = std::shared_ptr<Messenger>;
-  explicit Messenger(QObject *parent = nullptr);
+  //  using Ptr = std::shared_ptr<Messenger>;
+  explicit Messenger(const QString &host, const QString &name, const QString &password, QObject *parent = nullptr);
   ~Messenger() override;
-
-//  static Messenger *getInstance();
 
   void start();
   void stop();
 
   void send(const QString &xml);
+
+  IM *im() const {
+    assert(_im);
+    return _im;
+  }
+
+  IMFile *imFile() const {
+    assert(_imFile);
+      return _imFile;
+  }
 
   IMPeerId getSelfId() const;
   QString getSelfUsername() const;
@@ -132,13 +133,9 @@ public:
   void addSelfHandler(SelfHandler *);
   void addGroupHandler(GroupHandler *);
 
-
   bool sendToGroup(const QString &g, const QString &msg, const QString &id);
 
-
-
   void receiptReceived(const QString &f, QString receipt);
-
 
   QString genUniqueId();
 
@@ -165,13 +162,12 @@ public:
   void acceptFriendRequest(const QString &f);
   // 拒绝朋友邀请
   void rejectFriendRequest(const QString &f);
-  
+
   void getFriendVCard(const QString &f);
 
   IMStatus getFriendStatus(const QString &f);
 
-  bool sendToFriend(const QString &f, const QString &msg, const QString &id,
-                    bool encrypt = false);
+  bool sendToFriend(const QString &f, const QString &msg, const QString &id, bool encrypt = false);
   bool removeFriend(const QString &f);
 
   /**
@@ -190,30 +186,24 @@ public:
   bool leaveGroup(const QString &group);
   bool destroyGroup(const QString &group);
 
-
-
-
   void sendChatState(const QString &friendId, int state);
 
   void requestBookmarks();
-  void setUIStarted();
 
 private:
-
-
   bool connectIM();
 
+  IM *_im;
   IMJingle *jingle;
+  IMFile *_imFile;
 
-  //key: sId value:Jingle
-//  QMap<QString, lib::messenger::IMJingle*> jingleMap;
+  // key: sId value:Jingle
+  //  QMap<QString, lib::messenger::IMJingle*> jingleMap;
   std::unique_ptr<lib::messenger::IMConference> _conference;
 
   std::vector<FriendHandler *> friendHandlers;
   std::vector<SelfHandler *> selfHandlers;
   std::vector<GroupHandler *> groupHandlers;
-
-
 
   size_t sentCount = 0;
   std::unique_ptr<base::DelayedCallTimer> _delayer;
@@ -228,7 +218,6 @@ signals:
   void receivedGroupMessage(lib::messenger::IMMessage imMsg); //
   void messageSent(const IMMessage &message);                 //
 
-
 private slots:
   void onConnectResult(lib::messenger::IMConnectStatus);
   void onStarted();
@@ -238,11 +227,8 @@ private slots:
   void onEncryptedMessage(QString dom);
 
   void onGroupReceived(QString groupId, QString name);
-
 };
-
 
 } // namespace messenger
 } // namespace lib
 
-using Tox = lib::messenger::Messenger;

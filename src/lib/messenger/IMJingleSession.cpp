@@ -27,14 +27,12 @@ IMJingleSession::IMJingleSession(IM* im,
                                  const IMPeerId &peerId,
                                  const QString &sId_,
                                  lib::ortc::JingleCallType callType,
-                                 Session *mSession,
-                                 std::vector<FileHandler *> *fileHandlers,
-                                 ortc::OkRTCHandler *handler)
+                                 Session *mSession)
     : im{im},
       sId(sId_),
       session(mSession),
       accepted(false),
-      fileHandlers{fileHandlers},
+//      fileHandlers{fileHandlers},
       m_callType{callType}
 {
   qDebug() << __func__
@@ -54,9 +52,9 @@ void IMJingleSession::onAccept()
 {
     if (m_callType == lib::ortc::JingleCallType::file) {
       // file
-      for (auto &file : m_waitSendFiles) {
-        doStartFileSendTask(session, file);
-      }
+//      for (auto &file : m_waitSendFiles) {
+//        doStartFileSendTask(session, file);
+//      }
     }else{
         // av
         auto peerId = session->remote().full();
@@ -124,70 +122,6 @@ void IMJingleSession::setContext(const ortc::OJingleContent &jc) {
 }
 
 
-void IMJingleSession::doStartFileSendTask(const Session *session,
-                                   const File &file) {
-  qDebug()<<__func__<<file.sId ;
-
-  auto *fileTask = new IMFileTask(session->remote(), &file, im);
-  connect(fileTask, &IMFileTask::fileSending,
-          [&](const JID &m_friendId, const File &m_file, int m_seq,
-              int m_sentBytes, bool end) {
-
-            for(auto h: *fileHandlers){
-                h->onFileSendInfo(qstring(m_friendId.bare()),
-                                  m_file,
-                                  m_seq,
-                                  m_sentBytes, end);
-            }
-
-//            emit sendFileInfo(qstring(m_friendId.bare()), m_file, m_seq,
-//                              m_sentBytes, end);
-          });
-
-  connect(fileTask, &IMFileTask::fileAbort,
-          [&](const JID &m_friendId, const File &m_file,
-              int m_sentBytes) {
-//            emit sendFileAbort(qstring(m_friendId.bare()), m_file, m_sentBytes);
-            for(auto h: *fileHandlers){
-                h->onFileSendAbort(qstring(m_friendId.bare()), m_file, m_sentBytes);
-            }
-          });
-
-  connect(fileTask, &IMFileTask::fileError,
-          [&](const JID &m_friendId, const File &m_file, int m_sentBytes) {
-      for(auto h: *fileHandlers){
-          h->onFileSendError(qstring(m_friendId.bare()), m_file, m_sentBytes);
-      }
-//            emit sendFileError(qstring(m_friendId.bare()), m_file,
-//                               m_sentBytes);
-          });
-  fileTask->start();
-  m_fileSenderMap.insert(file.id, fileTask);
-  qDebug()<<__func__<<("Send file task has been stared.")<<((file.id));
-}
-
-
-void IMJingleSession::doStopFileSendTask(const Session *session,
-                                  const File &file) {
-    Q_UNUSED(session)
-  qDebug()<<__func__<<file.sId ;
-  auto *fileTask = m_fileSenderMap.value(file.sId);
-  if (!fileTask) {
-    return;
-  }
-
-  qDebug()<<__func__<<"Send file task will be clear."<<file.id;
-  if (fileTask->isRunning()) {
-    fileTask->forceQuit();
-  }
-  disconnect(fileTask);
-  delete fileTask;
-
-  // 返回截断后续处理
-  m_fileSenderMap.remove(file.sId);
-  qDebug() << "Send file task has been clean."<<file.id;
-
-}
 
 } // namespace IM
 } // namespace lib

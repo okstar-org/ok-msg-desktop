@@ -56,7 +56,7 @@ public:
                Fn<void(QJsonDocument)> fn = nullptr,
                const HttpErrorFn& err = nullptr);
 
-  void post(const QUrl &url,
+  bool post(const QUrl &url,
             const QByteArray &data,
             const QString& contentType,
             const HttpBodyFn &fn = nullptr,
@@ -64,9 +64,9 @@ public:
             const HttpUploadProgressFn& upload= nullptr,
             const HttpErrorFn &failed= nullptr);
 
-  void postJSON(const QUrl &url,
-                const QJsonObject &data,
-                Fn<void(const QJsonDocument &)> fn,
+  bool postJson(const QUrl &url,
+                const QJsonDocument &data,
+          const HttpBodyFn &fn = nullptr,
           const HttpDownloadProgressFn &progress= nullptr,
           const HttpUploadProgressFn& upload= nullptr,
           const HttpErrorFn &failed= nullptr);

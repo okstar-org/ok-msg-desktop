@@ -34,13 +34,11 @@
  * @brief Manages the file transfer service of toxcore
  */
 
-CoreFilePtr CoreFile::makeCoreFile(Core *core, Tox *tox,
-                                   CompatibleRecursiveMutex &coreLoopLock) {
+CoreFilePtr CoreFile::makeCoreFile(Core *core, CompatibleRecursiveMutex &coreLoopLock) {
   assert(core != nullptr);
-  assert(tox != nullptr);
 
+  CoreFilePtr result = CoreFilePtr{new CoreFile{core}};
 
-  CoreFilePtr result = CoreFilePtr{new CoreFile{}};
 
   //  connect(core, &Core::friendStatusChanged, result.get(),
 //          &CoreFile::onConnectionStatusChanged);
@@ -48,9 +46,10 @@ CoreFilePtr CoreFile::makeCoreFile(Core *core, Tox *tox,
   return result;
 }
 
-CoreFile::CoreFile() {
-  tox = new lib::messenger::IMFile(this);
-  connectCallbacks(*tox);
+CoreFile::CoreFile(Core *core) {
+  qDebug() << __func__;
+//  lib::messenger::IMFile *imFile = core->messenger()->imFile();
+//  imFile->addFileHandler(this);
 }
 
 /**
@@ -77,11 +76,6 @@ unsigned CoreFile::corefileIterationInterval() {
   return idleInterval;
 }
 
-void CoreFile::connectCallbacks(ToxFile1 &tox) {
-  qDebug() << __func__ << &tox;
-  tox.addFileHandler(this);
-}
-
 void CoreFile::sendFile(QString friendId,
                         QString filename,
                         QString filePath,
@@ -92,7 +86,7 @@ void CoreFile::sendFile(QString friendId,
 
     QMutexLocker{coreLoopLock};
 
-    auto sender= tox0->getSelfId().toFriendId();
+    auto sender= messenger->getSelfId().toFriendId();
 
     auto fileId = base::UUID::make();
     auto sId = base::UUID::make();
@@ -112,8 +106,7 @@ void CoreFile::sendFile(QString friendId,
 
     addFile(file);
     qDebug() << "The file info is:" << file.toString();
-
-    bool y = tox->fileSendToFriend(friendId, file.toIMFile());
+    bool y = messenger->imFile()->fileSendToFriend(friendId, file.toIMFile());
     if (!y) {
       qWarning() << "sendFile: Sending file is failed.";
       emit fileSendFailed(friendId, filename);
@@ -171,7 +164,7 @@ void CoreFile::cancelFileSend(QString friendId, QString fileId) {
     }
 
     file->status = FileStatus::CANCELED;
-    tox->fileCancel(file->fileId);
+    messenger->imFile()->fileCancel(file->fileId);
 
     emit fileTransferCancelled(*file);
     removeFile(fileId);
@@ -186,7 +179,7 @@ void CoreFile::cancelFileRecv(QString friendId, QString fileId) {
       return;
     }
     file->status = FileStatus::CANCELED;
-    tox->fileRejectRequest(friendId, file->toIMFile());
+    messenger->imFile()->fileRejectRequest(friendId, file->toIMFile());
     emit fileTransferCancelled(*file);
     removeFile(fileId);
 }
@@ -200,7 +193,7 @@ void CoreFile::rejectFileRecvRequest(QString friendId, QString fileId) {
       return;
     }
     file->status = FileStatus::CANCELED;
-    tox->fileRejectRequest(friendId, file->toIMFile());
+    messenger->imFile()->fileRejectRequest(friendId, file->toIMFile());
     emit fileTransferCancelled(*file);
     removeFile( fileId);
 }
@@ -223,7 +216,7 @@ void CoreFile::acceptFileRecvRequest(QString friendId,
       return;
     }
     file->status = FileStatus::TRANSMITTING;
-    tox->fileAcceptRequest(friendId, file->toIMFile());
+    messenger->imFile()->fileAcceptRequest(friendId, file->toIMFile());
     emit fileTransferAccepted(*file);
 }
 
@@ -269,7 +262,7 @@ QString CoreFile::getCleanFileName(QString filename) {
   return filename;
 }
 
-void CoreFile::onFileReceiveCallback(Tox *tox, QString friendId,
+void CoreFile::onFileReceiveCallback(lib::messenger::Messenger *tox, QString friendId,
                                      QString fileId, uint32_t kind,
                                      uint64_t filesize, const uint8_t *fname,
                                      size_t fnameLen, void *vCore) {
@@ -373,14 +366,14 @@ void CoreFile::onFileRequest(const QString &from,
                              const lib::messenger::File &file) {
   qDebug() << __func__<< file.name << "from"<< from;
 
-  auto receiver = tox0->getSelfId().toFriendId();
+  auto receiver = messenger->getSelfId().toFriendId();
   ToxFile toxFile(from, receiver, file);
   addFile(toxFile);
   qDebug() <<"file:" << toxFile.toString();
   emit fileReceiveRequested(toxFile);
 }
 
-void CoreFile::onFileControlCallback(Tox *, QString friendId,
+void CoreFile::onFileControlCallback(lib::messenger::Messenger *tox, QString friendId,
                                      QString fileId,
                                      lib::messenger::FileControl control,
                                      void *vCore) {
@@ -411,7 +404,7 @@ void CoreFile::onFileControlCallback(Tox *, QString friendId,
   }
 }
 
-void CoreFile::onFileDataCallback(Tox *tox, QString friendId, QString fileId,
+void CoreFile::onFileDataCallback(lib::messenger::Messenger *tox, QString friendId, QString fileId,
                                   uint64_t pos, size_t length, void *vCore) {
 
   //  Core *core = static_cast<Core *>(vCore);
@@ -521,7 +514,7 @@ void CoreFile::onFileSendError(const QString &friendId,
     emit fileSendFailed(friendId, file->fileName);
 }
 
-void CoreFile::onFileRecvChunkCallback(Tox *tox, QString friendId,
+void CoreFile::onFileRecvChunkCallback(lib::messenger::Messenger *tox, QString friendId,
                                        QString fileId, uint64_t position,
                                        const uint8_t *data, size_t length,
                                        void *vCore) {
@@ -591,7 +584,7 @@ void CoreFile::onFileRecvChunk(const QString &friendId, const QString &fileId, i
       emit fileTransferCancelled(*file);
 
 //    取消传输
-      tox->fileCancel(fileId);
+      messenger->imFile()->fileCancel(fileId);
       removeFile(fileId);
       return;
     }
@@ -613,7 +606,7 @@ void CoreFile::onFileRecvFinished(const QString &friendId, const QString &fileId
 
     file->status = FileStatus::FINISHED;
 
-    tox->fileFinishTransfer(friendId, file->sId);
+    messenger->imFile()->fileFinishTransfer(friendId, file->sId);
 
     emit fileTransferFinished(*file);
     emit fileDownloadFinished(file->filePath);

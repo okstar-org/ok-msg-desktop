@@ -41,6 +41,7 @@ public:
   int code;
   QString msg;
   T *data;
+  QMap<QString, QJsonValue> extra;
 
   Res(const QJsonDocument &doc) : code{-1}, data{nullptr} {
     if (doc.isEmpty()) {
@@ -52,8 +53,13 @@ public:
     if (obj.contains("code")) {
       code = obj.value(("code")).toInt();
       msg = obj.value("msg").toString();
-      if (code == 0)
+      if (code == 0){
         data = new T(obj.value("data").toObject());
+        auto extra = obj.value("extra").toObject();
+        for(auto key : extra.keys()){
+            extra.insert(key, extra.value(key));
+        }
+      }
     } else {
       data = new T(obj);
     }

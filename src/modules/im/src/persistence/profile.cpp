@@ -58,7 +58,7 @@ void Profile::initCore(const QByteArray &toxsave, ICoreSettings &s,
   }
 
   Core::ToxCoreErrors err;
-  core = Core::makeToxCore(toxsave, &s, &err);
+  core = Core::makeToxCore(host, name, password, toxsave, &s, &err);
   if (!core) {
     switch (err) {
     case Core::ToxCoreErrors::BAD_PROXY:
@@ -86,9 +86,14 @@ void Profile::initCore(const QByteArray &toxsave, ICoreSettings &s,
           Qt::ConnectionType::QueuedConnection);
 }
 
-Profile::Profile(QString name, const QString &password, bool isNewProfile,
-                 const QByteArray &toxsave, std::unique_ptr<ToxEncrypt> passkey)
-    : name{name}, passkey{std::move(passkey)}, isRemoved{false},
+Profile::Profile(const QString & host,
+                 const QString & name,
+                 const QString &password,
+                 bool isNewProfile)
+    : host{host},
+      name{name},
+      password{password},
+      isRemoved{false},
       encrypted{this->passkey != nullptr} {
 
   qDebug() << "Initialize profile for" << name;
@@ -114,7 +119,9 @@ Profile::Profile(QString name, const QString &password, bool isNewProfile,
  *
  * @example If the profile is already in use return nullptr.
  */
-Profile *Profile::loadProfile(QString name, const QCommandLineParser *parser,
+Profile *Profile::loadProfile(QString host,
+                              QString name,
+                              const QCommandLineParser *parser,
                               const QString &password) {
   if (ProfileLocker::hasLock()) {
     qCritical() << "Tried to load profile " << name
@@ -181,8 +188,7 @@ Profile *Profile::loadProfile(QString name, const QCommandLineParser *parser,
   //  }
 
   saveFile.close();
-  p = new Profile(name, password, false, data, std::move(tmpKey));
-
+  p = new Profile(host, name, password, false);
   s.updateProfileData(p, parser);
   return p;
 
@@ -201,7 +207,9 @@ fail:
  *
  * @note If the profile is already in use return nullptr.
  */
-Profile *Profile::createProfile(QString name, const QCommandLineParser *parser,
+Profile *Profile::createProfile(QString host,
+                                QString name,
+                                const QCommandLineParser *parser,
                                 QString password) {
 
   std::unique_ptr<ToxEncrypt> tmpKey;
@@ -231,8 +239,7 @@ Profile *Profile::createProfile(QString name, const QCommandLineParser *parser,
   }
 
   Settings::getInstance().createPersonal(name);
-  Profile *p =
-      new Profile(name, password, true, QByteArray(), std::move(tmpKey));
+  Profile *p = new Profile(host, name, password, true);
   return p;
 }
 

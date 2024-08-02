@@ -34,6 +34,10 @@
 
 namespace network {
 
+
+static QString CONTENT_TYPE_JSON = "application/json";
+
+
 NetworkHttp::NetworkHttp(QObject *parent) : QObject(parent), _manager{nullptr} {
   qDebug() << __func__;
 #ifndef QT_NO_SSL
@@ -75,7 +79,7 @@ bool NetworkHttp::get(const QUrl &url,
 
   auto *reply = _manager->get(req);
   doRequest(req, reply, fn, progress, nullptr, failed);
-  return reply;
+  return reply->isOpen();
 }
 
 QByteArray NetworkHttp::get(const QUrl &url,
@@ -111,22 +115,27 @@ bool NetworkHttp::getJSON(const QUrl &url,
       nullptr,  errFn);
 }
 
-void NetworkHttp::postJSON(const QUrl &url,
-                            const QJsonObject &data,
-                            Fn<void(const QJsonDocument &)> fn,
+/**
+ * 发送Post请求Json数据
+ * @brief NetworkHttp::postJson
+ * @param url
+ * @param data
+ * @param fn
+ * @param progress
+ * @param upload
+ * @param failed
+ * @return
+ */
+bool NetworkHttp::postJson(const QUrl &url,
+                            const QJsonDocument &data,
+                            const HttpBodyFn &fn,
                             const HttpDownloadProgressFn &progress,
                             const HttpUploadProgressFn& upload,
                             const HttpErrorFn &failed) {
-  post(url,
-       QJsonDocument(data).toJson() ,
-       "application/json",
-       [&](QByteArray buf, QString name) {
-         fn(Jsons::toJSON(buf));
-       },
-       progress, upload, failed);
+  return post(url, data.toJson(), CONTENT_TYPE_JSON, fn, progress, upload, failed);
 }
 
-void NetworkHttp::post(const QUrl &url,
+bool NetworkHttp::post(const QUrl &url,
                        const QByteArray &data,
                        const QString& contentType,
                        const HttpBodyFn &fn,
@@ -141,6 +150,7 @@ void NetworkHttp::post(const QUrl &url,
 
   auto _reply = _manager->post(req, data);
   doRequest(req, _reply, fn, progress, upload, failed);
+  return _reply->isOpen();
 }
 
 void NetworkHttp::PostFormData(const QUrl &url,
@@ -240,7 +250,7 @@ void NetworkHttp::doRequest(QNetworkRequest &req,
     if (cth.isValid()) {
       auto type = cth.toString();
       qDebug() << "content-type:" << type;
-      if (type.startsWith("text/", Qt::CaseInsensitive) || type.startsWith("application/json", Qt::CaseInsensitive)) {
+      if (type.startsWith("text/", Qt::CaseInsensitive) || type.startsWith(CONTENT_TYPE_JSON, Qt::CaseInsensitive)) {
         qDebug() << qstring("body:%1").arg(QString::fromUtf8(bytes));
       }
     }
@@ -253,7 +263,7 @@ void NetworkHttp::doRequest(QNetworkRequest &req,
       fn(bytes, req.url().fileName());
     }
     // delete reply
-    reply->deleteLater();
+//    reply->deleteLater();
   });
 
   if (progress) {

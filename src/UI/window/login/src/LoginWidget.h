@@ -40,7 +40,8 @@ namespace UI {
 class LoginWidget : public QWidget {
   Q_OBJECT
 public:
-  explicit LoginWidget(bool bootstrap, QWidget *parent = nullptr);
+  explicit LoginWidget(std::shared_ptr<ok::session::AuthSession> session,
+                       bool bootstrap, QWidget *parent = nullptr);
   ~LoginWidget() override;
   void onError(int code, const QString &msg);
   void setMsg(const QString &msg);
@@ -52,8 +53,9 @@ protected:
   virtual bool eventFilter(QObject *obj, QEvent *event) override;
   virtual void showEvent(QShowEvent *e) override;
 private:
-  bool bootstrap;
   Ui::LoginWidget *ui;
+  std::shared_ptr<ok::session::AuthSession> session;
+  bool bootstrap;
 
   QShortcut *m_loginKey;
 
@@ -74,13 +76,11 @@ signals:
   void loginSuccess(QString name, QString password);
   void loginFailed(QString name, QString password);
   void loginTimeout(QString name);
-  void loginResult(ok::session::SignInInfo &info,
-                   ok::session::LoginResult &result);
 
 private slots:
   void onTimeout();
   void doLogin();
-  void onConnectResult(ok::session::SignInInfo info,
+  void onLoginResult(ok::session::SignInInfo info,
                        ok::session::LoginResult result);
   void on_loginBtn_released();
   void on_language_currentIndexChanged(int index);

@@ -28,7 +28,7 @@ Platform::~Platform() {
 
 void Platform::init(Profile *p) {}
 QString Platform::name() { return QString(); }
-void Platform::start(ok::session::SignInInfo &signInInfo) {}
+void Platform::start(std::shared_ptr<ok::session::AuthSession> session) {}
 bool Platform::isStarted() { return false; }
 void Platform::onSave(SavedInfo &) {}
 void Platform::cleanup() {}

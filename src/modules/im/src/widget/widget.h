@@ -208,6 +208,9 @@ signals:
   void toDeleteChat(const QString &to);
   void toClearHistory(const QString &to);
 
+protected:
+  void showEvent(QShowEvent* e) override;
+
 private slots:
 
   void onTransferClicked();

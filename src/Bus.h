@@ -18,6 +18,8 @@
 
 #include <QObject>
 
+class Module;
+class Core;
 namespace ok {
 
 /**
@@ -30,6 +32,8 @@ public:
   ~Bus();
 signals:
   void languageChanged(QString locale);
+  void moduleCreated(Module* module);
+  void coreStarted(Core* core);
 };
 
 } // namespace ok

@@ -14,9 +14,9 @@
 #define IM_CONFERENCE_H
 
 #include "base/timer.h"
-#include <client.h>
-#include <jinglesessionhandler.h>
-#include <mucroom.h>
+#include <ok-gloox/client.h>
+#include <ok-gloox/jinglesessionhandler.h>
+#include <ok-gloox/mucroom.h>
 #include <memory>
 
 namespace lib {

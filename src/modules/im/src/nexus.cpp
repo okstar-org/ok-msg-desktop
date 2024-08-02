@@ -31,7 +31,8 @@
 #include <QThread>
 #include <cassert>
 #include <src/audio/audio.h>
-
+#include "application.h"
+#include "Bus.h"
 
 #ifdef Q_OS_MAC
 #include <QActionGroup>
@@ -65,8 +66,8 @@ Nexus::Nexus(QObject *parent)
     auto &settings = Settings::getInstance();
 
     audioControl = std::unique_ptr<IAudioControl>(Audio::makeAudio(settings));
-
-
+    // Create GUI
+    m_widget = new Widget(*audioControl);
 
 //    connect(this, &Nexus::destroyProfile, this, &Nexus::do_logout);
 }
@@ -111,8 +112,8 @@ void Nexus::onSave(SavedInfo &savedInfo) {
    * Hides the login screen and shows the GUI for the given profile.
    * Will delete the current GUI, if it exists.
    */
-  void Nexus::start(ok::session::SignInInfo &signInInfo) {
-
+  void Nexus::start(std::shared_ptr<ok::session::AuthSession> session) {
+    auto& signInInfo = session->getSignInInfo();
     qDebug() << __func__ <<"for user:" << signInInfo.username;
 
     if (stared) {
@@ -122,9 +123,9 @@ void Nexus::onSave(SavedInfo &savedInfo) {
 
     QCommandLineParser parser;
     if (!Profile::exists(signInInfo.username)) {
-      profile = Profile::createProfile(signInInfo.username, &parser, signInInfo.password);
+      profile = Profile::createProfile(signInInfo.host, signInInfo.username, &parser, signInInfo.password);
     } else {
-      profile = Profile::loadProfile(signInInfo.username, &parser, signInInfo.password);
+      profile = Profile::loadProfile(signInInfo.host, signInInfo.username, &parser, signInInfo.password);
     }
 
     assert(profile);
@@ -173,6 +174,13 @@ void Nexus::onSave(SavedInfo &savedInfo) {
 
     qApp->setQuitOnLastWindowClosed(false);
 
+
+    connect(profile, &Profile::coreChanged, [&](Core &core){
+      emit ok::Application::Instance()->bus()->coreStarted(&core);
+    });
+
+    profile->startCore();
+
 #ifdef Q_OS_MAC
     // TODO: still needed?
     globalMenuBar = new QMenuBar(0);
@@ -205,7 +213,6 @@ void Nexus::onSave(SavedInfo &savedInfo) {
 
     retranslateUi();
 #endif
-    showMainGUI();
   }
 
   void Nexus::hide() { m_widget->hide(); }
@@ -315,8 +322,7 @@ void Nexus::onSave(SavedInfo &savedInfo) {
     // TODO(kriby): Rewrite as view-model connect sequence only, add to a
     // controller class object
     assert(profile);
-    // Create GUI
-    m_widget = new Widget(*audioControl);
+
     // Start GUI
     m_widget->init();
     GUI::getInstance();
@@ -334,6 +340,10 @@ void Nexus::onSave(SavedInfo &savedInfo) {
     connect(profile, &Profile::selfAvatarChanged,
             [&](const QPixmap &pixmap) {
         emit updateAvatar(pixmap);
+    });
+
+    connect(profile, &Profile::coreChanged, [&](Core& core){
+      emit coreChanged(core);
     });
 
     connect(profile, &Profile::coreChanged, m_widget, &Widget::onCoreChanged);
@@ -411,16 +421,16 @@ void Nexus::onSave(SavedInfo &savedInfo) {
    * @param name New username
    * @param pass New password
    */
-  void Nexus::onCreateNewProfile(const QString &name, const QString &pass) {
-    setProfile(Profile::createProfile(name, parser, pass));
+  void Nexus::onCreateNewProfile(const QString &host, const QString &name, const QString &pass) {
+    setProfile(Profile::createProfile(host, name, parser, pass));
     parser = nullptr; // only apply cmdline proxy settings once
   }
 
   /**
    * Loads an existing profile and replaces the current one.
    */
-  void Nexus::onLoadProfile(const QString &name, const QString &pass) {
-    setProfile(Profile::loadProfile(name, parser, pass));
+  void Nexus::onLoadProfile(const QString &host, const QString &name, const QString &pass) {
+    setProfile(Profile::loadProfile(host, name, parser, pass));
     parser = nullptr; // only apply cmdline proxy settings once
   }
   /**
@@ -447,7 +457,7 @@ void Nexus::onSave(SavedInfo &savedInfo) {
    */
   Widget *Nexus::getDesktopGUI() { return dynamic_cast<Widget *>(getInstance().widget()); }
 
-  void Nexus::bootstrapWithProfileName(const QString &profileName) {
+  void Nexus::bootstrapWithProfileName(const QString &host, const QString &profileName) {
     qDebug() << "bootstrapWithProfileName" << profileName;
 
     Profile *profile = nullptr;
@@ -459,7 +469,7 @@ void Nexus::onSave(SavedInfo &savedInfo) {
     QCommandLineParser parser;
 
     if (Profile::exists(profileName)) {
-      profile = Profile::loadProfile(profileName, &parser);
+      profile = Profile::loadProfile(host, profileName, &parser);
     }
 
     if (profile) {
@@ -468,7 +478,9 @@ void Nexus::onSave(SavedInfo &savedInfo) {
   }
 
   QString Nexus::Name() { return OK_IM_MODULE; }
-  QWidget *Nexus::widget() { return m_widget->getInstance(); }
+  QWidget *Nexus::widget() {
+    return m_widget->getInstance();
+  }
 
 #ifdef Q_OS_MAC
   void Nexus::retranslateUi() {

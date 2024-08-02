@@ -44,7 +44,7 @@ public:
   virtual void init(Profile *p) = 0;
   virtual QString name() = 0;
   virtual QWidget *widget() = 0;
-  virtual void start(ok::session::SignInInfo &signInInfo) = 0;
+  virtual void start(std::shared_ptr<ok::session::AuthSession> session) = 0;
   virtual bool isStarted() = 0;
   virtual void hide() = 0;
   virtual void onSave(SavedInfo &) = 0;

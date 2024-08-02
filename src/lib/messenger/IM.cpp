@@ -678,9 +678,11 @@ void IM::doPubSubEvent(const gloox::PubSub::Event *pse, //
       auto newNick = qstring(nickname.nick());
       qDebug() << "nick:" << newNick;
       emit receiveNicknameChange(friendId, newNick);
-      if (isSelf && _nick != newNick) {
-        _nick = newNick;
-        emit selfNicknameChanged(newNick);
+      if (isSelf) {
+        if( _nick != newNick){
+          _nick = newNick;
+          emit selfNicknameChanged(newNick);
+        }
       }
     }
     auto avatarData = item->payload->findChild("data", XMLNS, XMLNS_AVATAR);
