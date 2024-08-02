@@ -112,7 +112,6 @@ Application::Application(int& argc, char* argv[])
   qDebug() << "Application has be created";
 }
 
-Application *Application::Instance() { return qobject_cast<Application *>(qApp); }
 Application* Application::Instance() { return qobject_cast<Application*>(qApp); }
 
 void Application::start() { this->createLoginUI(true); }

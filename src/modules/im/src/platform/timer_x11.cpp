@@ -10,9 +10,8 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#include <QtCore/qsystemdetection.h>
-#include <X11/extensions/scrnsaver.h>
 #include <QDebug>
+#include <X11/extensions/scrnsaver.h>
 #include "src/platform/timer.h"
 #include "src/platform/x11_display.h"
 
@@ -21,7 +20,7 @@ uint32_t Platform::getIdleTime() {
 
     Display* display = X11Display::lock();
     if (!display) {
-        qDebug() << "XOpenDisplay failed";
+        qWarning() << "XOpenDisplay failed";
         X11Display::unlock();
         return 0;
     }
@@ -34,8 +33,9 @@ uint32_t Platform::getIdleTime() {
             XScreenSaverQueryInfo(display, DefaultRootWindow(display), info);
             idleTime = info->idle;
             XFree(info);
-        } else
-            qDebug() << "XScreenSaverAllocInfo() failed";
+        }
+//        else
+//            qDebug() << "XScreenSaverAllocInfo() failed";
     }
     X11Display::unlock();
     return idleTime;
