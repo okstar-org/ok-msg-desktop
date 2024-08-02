@@ -10,8 +10,8 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#include <X11/extensions/scrnsaver.h>
 #include <QDebug>
+#include <X11/extensions/scrnsaver.h>
 #include "src/platform/timer.h"
 #include "src/platform/x11_display.h"
 
