@@ -70,6 +70,7 @@
 
 namespace gloox {
 class MUCRoom;
+class Message;
 };
 
 namespace lib::ortc {
@@ -78,6 +79,7 @@ enum class JingleCallType;
 
 namespace lib {
 namespace messenger {
+
 
 using namespace gloox;
 using namespace gloox::PubSub;
@@ -710,11 +712,11 @@ protected:
     void handleBookmarks(const BookmarkList& bList,  //
                          const ConferenceList& cList) override;
 
-    void doPubSubEvent(const gloox::PubSub::Event* pse, const Message& msg, QString& friendId);
-    void doMessageHeadline(const Message& msg, QString& friendId, const QString& body);
-    void doMessageChat(const Message& msg, QString& friendId, const QString& body);
+    void doPubSubEvent(const gloox::PubSub::Event* pse, const gloox::Message& msg, QString& friendId);
+    void doMessageHeadline(const gloox::Message& msg, QString& friendId, const QString& body);
+    void doMessageChat(const gloox::Message& msg, QString& friendId, const QString& body);
 
-    void doMessageNormal(const Message& msg, QString& friendId);
+    void doMessageNormal(const gloox::Message& msg, QString& friendId);
 
     void joinRoom(MUCRoom* room);
 

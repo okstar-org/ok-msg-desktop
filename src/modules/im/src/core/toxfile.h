@@ -25,14 +25,28 @@ class QFile;
 class QTimer;
 class FriendId;
 
+
+// 不要修改顺序和值
+enum class FileStatus {
+    INITIALIZING = 0,
+    PAUSED = 1,
+    TRANSMITTING = 2,
+    BROKEN = 3,
+    CANCELED = 4,
+    FINISHED = 5,
+};
+
+// 不要修改顺序和值
+enum class FileDirection {
+    SENDING = 0,
+    RECEIVING = 1,
+};
+
 namespace lib::messenger {
 class File;
 enum class FileStatus;
 enum class FileDirection;
 }  // namespace lib::messenger
-
-using FileStatus = lib::messenger::FileStatus;
-using FileDirection = lib::messenger::FileDirection;
 
 struct FileInfo {
 public:

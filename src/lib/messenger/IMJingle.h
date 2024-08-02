@@ -47,7 +47,7 @@ namespace lib::messenger {
 enum class CallDirection;
 
 class IMJingle : public QObject,
-                 public MessageHandler,
+                 public gloox::MessageHandler,
                  public gloox::IqHandler,
                  public gloox::MessageSessionHandler,
                  public gloox::Jingle::SessionHandler {
@@ -59,8 +59,8 @@ public:
     IMJingle(IM* im, QObject* parent = nullptr);
     ~IMJingle() override;
 
-    virtual void handleMessageSession(MessageSession* session) override;
-    virtual void handleMessage(const Message& msg, MessageSession* session = 0) override;
+    virtual void handleMessageSession(gloox::MessageSession* session) override;
+    virtual void handleMessage(const gloox::Message& msg, gloox::MessageSession* session = 0) override;
 
     /**
      * jingle-message

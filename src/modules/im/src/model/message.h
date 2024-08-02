@@ -21,7 +21,7 @@
 
 #include <src/core/FriendId.h>
 #include <src/core/groupid.h>
-#include "lib/messenger/IMFile.h"
+
 #include "lib/messenger/IMMessage.h"
 #include "src/core/icoreidhandler.h"
 

@@ -12,8 +12,8 @@
 
 #pragma once
 
-#include <ok-gloox/jinglesession.h>
 #include <QMap>
+
 #include "IM.h"
 #include "base/basic_types.h"
 #include "lib/ortc/ok_rtc_defs.h"
