@@ -13,9 +13,9 @@
 #include "videoframe.h"
 
 extern "C" {
+#include <libavcodec/avcodec.h>
 #include <libavutil/imgutils.h>
 #include <libswscale/swscale.h>
-#include <libavcodec/avcodec.h>
 }
 
 /**
@@ -70,8 +70,9 @@ extern "C" {
 VideoFrame::AtomicIDType VideoFrame::frameIDs{0};
 
 std::unordered_map<VideoFrame::IDType, QMutex> VideoFrame::mutexMap{};
-std::unordered_map<VideoFrame::IDType, std::unordered_map<VideoFrame::IDType, std::weak_ptr<VideoFrame>>>
-    VideoFrame::refsMap{};
+std::unordered_map<VideoFrame::IDType,
+                   std::unordered_map<VideoFrame::IDType, std::weak_ptr<VideoFrame>>>
+        VideoFrame::refsMap{};
 
 QReadWriteLock VideoFrame::refsLock{};
 
@@ -86,65 +87,60 @@ QReadWriteLock VideoFrame::refsLock{};
  */
 VideoFrame::VideoFrame(IDType sourceID, AVFrame* sourceFrame, QRect dimensions, int pixFmt,
                        bool freeSourceFrame)
-    : frameID(frameIDs++)
-    , sourceID(sourceID)
-    , sourceDimensions(dimensions)
-    , sourceFrameKey(getFrameKey(dimensions.size(), pixFmt, sourceFrame->linesize[0]))
-    , freeSourceFrame(freeSourceFrame)
-{
-
+        : frameID(frameIDs++)
+        , sourceID(sourceID)
+        , sourceDimensions(dimensions)
+        , sourceFrameKey(getFrameKey(dimensions.size(), pixFmt, sourceFrame->linesize[0]))
+        , freeSourceFrame(freeSourceFrame) {
     // We override the pixel format in the case a deprecated one is used
     switch (pixFmt) {
-    case AV_PIX_FMT_YUVJ420P: {
-        sourcePixelFormat = AV_PIX_FMT_YUV420P;
-        sourceFrame->color_range = AVCOL_RANGE_MPEG;
-        break;
-    }
+        case AV_PIX_FMT_YUVJ420P: {
+            sourcePixelFormat = AV_PIX_FMT_YUV420P;
+            sourceFrame->color_range = AVCOL_RANGE_MPEG;
+            break;
+        }
 
-    case AV_PIX_FMT_YUVJ411P: {
-        sourcePixelFormat = AV_PIX_FMT_YUV411P;
-        sourceFrame->color_range = AVCOL_RANGE_MPEG;
-        break;
-    }
+        case AV_PIX_FMT_YUVJ411P: {
+            sourcePixelFormat = AV_PIX_FMT_YUV411P;
+            sourceFrame->color_range = AVCOL_RANGE_MPEG;
+            break;
+        }
 
-    case AV_PIX_FMT_YUVJ422P: {
-        sourcePixelFormat = AV_PIX_FMT_YUV422P;
-        sourceFrame->color_range = AVCOL_RANGE_MPEG;
-        break;
-    }
+        case AV_PIX_FMT_YUVJ422P: {
+            sourcePixelFormat = AV_PIX_FMT_YUV422P;
+            sourceFrame->color_range = AVCOL_RANGE_MPEG;
+            break;
+        }
 
-    case AV_PIX_FMT_YUVJ444P: {
-        sourcePixelFormat = AV_PIX_FMT_YUV444P;
-        sourceFrame->color_range = AVCOL_RANGE_MPEG;
-        break;
-    }
+        case AV_PIX_FMT_YUVJ444P: {
+            sourcePixelFormat = AV_PIX_FMT_YUV444P;
+            sourceFrame->color_range = AVCOL_RANGE_MPEG;
+            break;
+        }
 
-    case AV_PIX_FMT_YUVJ440P: {
-        sourcePixelFormat = AV_PIX_FMT_YUV440P;
-        sourceFrame->color_range = AVCOL_RANGE_MPEG;
-        break;
-    }
+        case AV_PIX_FMT_YUVJ440P: {
+            sourcePixelFormat = AV_PIX_FMT_YUV440P;
+            sourceFrame->color_range = AVCOL_RANGE_MPEG;
+            break;
+        }
 
-    default: {
-        sourcePixelFormat = pixFmt;
-        sourceFrame->color_range = AVCOL_RANGE_UNSPECIFIED;
-    }
+        default: {
+            sourcePixelFormat = pixFmt;
+            sourceFrame->color_range = AVCOL_RANGE_UNSPECIFIED;
+        }
     }
 
     frameBuffer[sourceFrameKey] = sourceFrame;
 }
 
 VideoFrame::VideoFrame(IDType sourceID, AVFrame* sourceFrame, bool freeSourceFrame)
-    : VideoFrame(sourceID, sourceFrame, QRect{0, 0, sourceFrame->width, sourceFrame->height},
-                 sourceFrame->format, freeSourceFrame)
-{
-}
+        : VideoFrame(sourceID, sourceFrame, QRect{0, 0, sourceFrame->width, sourceFrame->height},
+                     sourceFrame->format, freeSourceFrame) {}
 
 /**
  * @brief Destructor for VideoFrame.
  */
-VideoFrame::~VideoFrame()
-{
+VideoFrame::~VideoFrame() {
     // Release frame
     frameLock.lockForWrite();
 
@@ -174,8 +170,7 @@ VideoFrame::~VideoFrame()
  *
  * @return true if the VideoFrame is valid, false otherwise.
  */
-bool VideoFrame::isValid()
-{
+bool VideoFrame::isValid() {
     frameLock.lockForRead();
     bool retValue = frameBuffer.size() > 0;
     frameLock.unlock();
@@ -191,8 +186,7 @@ bool VideoFrame::isValid()
  *
  * @return a std::shared_ptr holding a reference to this frame.
  */
-std::shared_ptr<VideoFrame> VideoFrame::trackFrame()
-{
+std::shared_ptr<VideoFrame> VideoFrame::trackFrame() {
     // Add frame to tracked reference list
     refsLock.lockForRead();
 
@@ -227,8 +221,7 @@ std::shared_ptr<VideoFrame> VideoFrame::trackFrame()
  * @param releaseFrames true to release the frames as necessary, false otherwise. Defaults to
  * false.
  */
-void VideoFrame::untrackFrames(const VideoFrame::IDType& sourceID, bool releaseFrames)
-{
+void VideoFrame::untrackFrames(const VideoFrame::IDType& sourceID, bool releaseFrames) {
     refsLock.lockForWrite();
 
     if (refsMap.count(sourceID) == 0) {
@@ -265,8 +258,7 @@ void VideoFrame::untrackFrames(const VideoFrame::IDType& sourceID, bool releaseF
 /**
  * @brief Releases all frames managed by this VideoFrame and invalidates it.
  */
-void VideoFrame::releaseFrame()
-{
+void VideoFrame::releaseFrame() {
     frameLock.lockForWrite();
 
     deleteFrameBuffer();
@@ -287,14 +279,14 @@ void VideoFrame::releaseFrame()
  * @return a pointer to a AVFrame with the given parameters or nullptr if the VideoFrame is no
  * longer valid.
  */
-const AVFrame* VideoFrame::getAVFrame(QSize frameSize, const int pixelFormat, const bool requireAligned)
-{
+const AVFrame* VideoFrame::getAVFrame(QSize frameSize, const int pixelFormat,
+                                      const bool requireAligned) {
     if (!frameSize.isValid()) {
         frameSize = sourceDimensions.size();
     }
 
     // Since we are retrieving the AVFrame* directly, we merely need to pass the arguement through
-    const std::function<AVFrame*(AVFrame * const)> converter = [](AVFrame* const frame) {
+    const std::function<AVFrame*(AVFrame* const)> converter = [](AVFrame* const frame) {
         return frame;
     };
 
@@ -316,14 +308,13 @@ const AVFrame* VideoFrame::getAVFrame(QSize frameSize, const int pixelFormat, co
  * @return a QImage that represents this VideoFrame, sharing it's buffers or a null image if
  * this VideoFrame is no longer valid.
  */
-QImage VideoFrame::toQImage(QSize frameSize)
-{
+QImage VideoFrame::toQImage(QSize frameSize) {
     if (!frameSize.isValid()) {
         frameSize = sourceDimensions.size();
     }
 
     // Converter function (constructs QImage out of AVFrame*)
-    const std::function<QImage(AVFrame * const)> converter = [&](AVFrame* const frame) {
+    const std::function<QImage(AVFrame* const)> converter = [&](AVFrame* const frame) {
         return QImage{*(frame->data), frameSize.width(), frameSize.height(), *(frame->linesize),
                       QImage::Format_RGB888};
     };
@@ -343,14 +334,13 @@ QImage VideoFrame::toQImage(QSize frameSize)
  * @return a ToxAVFrame structure that represents this VideoFrame, sharing it's buffers or an
  * empty structure if this VideoFrame is no longer valid.
  */
-ToxYUVFrame VideoFrame::toToxYUVFrame(QSize frameSize)
-{
+ToxYUVFrame VideoFrame::toToxYUVFrame(QSize frameSize) {
     if (!frameSize.isValid()) {
         frameSize = sourceDimensions.size();
     }
 
     // Converter function (constructs ToxAVFrame out of AVFrame*)
-    const std::function<ToxYUVFrame(AVFrame * const)> converter = [&](AVFrame* const frame) {
+    const std::function<ToxYUVFrame(AVFrame* const)> converter = [&](AVFrame* const frame) {
         ToxYUVFrame ret{static_cast<std::uint16_t>(frameSize.width()),
                         static_cast<std::uint16_t>(frameSize.height()), frame->data[0],
                         frame->data[1], frame->data[2]};
@@ -369,41 +359,28 @@ ToxYUVFrame VideoFrame::toToxYUVFrame(QSize frameSize)
  *
  * @return an integer representing the ID of this frame.
  */
-VideoFrame::IDType VideoFrame::getFrameID() const
-{
-    return frameID;
-}
+VideoFrame::IDType VideoFrame::getFrameID() const { return frameID; }
 
 /**
  * @brief Returns the ID for the VideoSource which created this frame.
  *
  * @return an integer representing the ID of the VideoSource which created this frame.
  */
-VideoFrame::IDType VideoFrame::getSourceID() const
-{
-    return sourceID;
-}
+VideoFrame::IDType VideoFrame::getSourceID() const { return sourceID; }
 
 /**
  * @brief Retrieves a copy of the source VideoFrame's dimensions.
  *
  * @return QRect copy representing the source VideoFrame's dimensions.
  */
-QRect VideoFrame::getSourceDimensions() const
-{
-    return sourceDimensions;
-}
+QRect VideoFrame::getSourceDimensions() const { return sourceDimensions; }
 
 /**
  * @brief Retrieves a copy of the source VideoFormat's pixel format.
  *
  * @return integer copy representing the source VideoFrame's pixel format.
  */
-int VideoFrame::getSourcePixelFormat() const
-{
-    return sourcePixelFormat;
-}
-
+int VideoFrame::getSourcePixelFormat() const { return sourcePixelFormat; }
 
 /**
  * @brief Constructs a new FrameBufferKey with the given attributes.
@@ -415,12 +392,10 @@ int VideoFrame::getSourcePixelFormat() const
  */
 VideoFrame::FrameBufferKey::FrameBufferKey(const int width, const int height, const int pixFmt,
                                            const bool lineAligned)
-    : frameWidth(width)
-    , frameHeight(height)
-    , pixelFormat(pixFmt)
-    , linesizeAligned(lineAligned)
-{
-}
+        : frameWidth(width)
+        , frameHeight(height)
+        , pixelFormat(pixFmt)
+        , linesizeAligned(lineAligned) {}
 
 /**
  * @brief Comparison operator for FrameBufferKey.
@@ -428,10 +403,9 @@ VideoFrame::FrameBufferKey::FrameBufferKey(const int width, const int height, co
  * @param other instance to compare against.
  * @return true if instances are equivilent, false otherwise.
  */
-bool VideoFrame::FrameBufferKey::operator==(const FrameBufferKey& other) const
-{
-    return pixelFormat == other.pixelFormat && frameWidth == other.frameWidth
-           && frameHeight == other.frameHeight && linesizeAligned == other.linesizeAligned;
+bool VideoFrame::FrameBufferKey::operator==(const FrameBufferKey& other) const {
+    return pixelFormat == other.pixelFormat && frameWidth == other.frameWidth &&
+           frameHeight == other.frameHeight && linesizeAligned == other.linesizeAligned;
 }
 
 /**
@@ -440,8 +414,7 @@ bool VideoFrame::FrameBufferKey::operator==(const FrameBufferKey& other) const
  * @param other instance to compare against
  * @return true if instances are not equivilent, false otherwise.
  */
-bool VideoFrame::FrameBufferKey::operator!=(const FrameBufferKey& other) const
-{
+bool VideoFrame::FrameBufferKey::operator!=(const FrameBufferKey& other) const {
     return !operator==(other);
 }
 
@@ -453,8 +426,7 @@ bool VideoFrame::FrameBufferKey::operator!=(const FrameBufferKey& other) const
  * @param key the given instance to compute hash value of.
  * @return the hash of the given instance.
  */
-size_t VideoFrame::FrameBufferKey::hash(const FrameBufferKey& key)
-{
+size_t VideoFrame::FrameBufferKey::hash(const FrameBufferKey& key) {
     std::hash<int> intHasher;
     std::hash<bool> boolHasher;
 
@@ -480,8 +452,7 @@ size_t VideoFrame::FrameBufferKey::hash(const FrameBufferKey& key)
  * @return a FrameBufferKey object representing the key for the frameBuffer map.
  */
 VideoFrame::FrameBufferKey VideoFrame::getFrameKey(const QSize& frameSize, const int pixFmt,
-                                                   const int linesize)
-{
+                                                   const int linesize) {
     return getFrameKey(frameSize, pixFmt, frameSize.width() == linesize);
 }
 
@@ -494,8 +465,7 @@ VideoFrame::FrameBufferKey VideoFrame::getFrameKey(const QSize& frameSize, const
  * @return a FrameBufferKey object representing the key for the frameBuffer map.
  */
 VideoFrame::FrameBufferKey VideoFrame::getFrameKey(const QSize& frameSize, const int pixFmt,
-                                                   const bool frameAligned)
-{
+                                                   const bool frameAligned) {
     return {frameSize.width(), frameSize.height(), pixFmt, frameAligned};
 }
 
@@ -515,8 +485,7 @@ VideoFrame::FrameBufferKey VideoFrame::getFrameKey(const QSize& frameSize, const
  * found.
  */
 AVFrame* VideoFrame::retrieveAVFrame(const QSize& dimensions, const int pixelFormat,
-                                     const bool requireAligned)
-{
+                                     const bool requireAligned) {
     if (!requireAligned) {
         /*
          * We attempt to obtain a unaligned frame first because an unaligned linesize corresponds
@@ -549,8 +518,7 @@ AVFrame* VideoFrame::retrieveAVFrame(const QSize& dimensions, const int pixelFor
  * @return an AVFrame with the given specifications.
  */
 AVFrame* VideoFrame::generateAVFrame(const QSize& dimensions, const int pixelFormat,
-                                     const bool requireAligned)
-{
+                                     const bool requireAligned) {
     AVFrame* ret = av_frame_alloc();
 
     if (!ret) {
@@ -569,7 +537,8 @@ AVFrame* VideoFrame::generateAVFrame(const QSize& dimensions, const int pixelFor
 
     int bufSize;
 
-    const bool alreadyAligned = dimensions.width() % dataAlignment == 0 && dimensions.height() % dataAlignment == 0;
+    const bool alreadyAligned =
+            dimensions.width() % dataAlignment == 0 && dimensions.height() % dataAlignment == 0;
 
     if (!requireAligned || alreadyAligned) {
         bufSize = av_image_alloc(ret->data, ret->linesize, dimensions.width(), dimensions.height(),
@@ -587,11 +556,10 @@ AVFrame* VideoFrame::generateAVFrame(const QSize& dimensions, const int pixelFor
     // Bilinear is better for shrinking, bicubic better for upscaling
     int resizeAlgo = sourceDimensions.width() > dimensions.width() ? SWS_BILINEAR : SWS_BICUBIC;
 
-    SwsContext* swsCtx =
-        sws_getContext(sourceDimensions.width(), sourceDimensions.height(),
-                       static_cast<AVPixelFormat>(sourcePixelFormat), dimensions.width(),
-                       dimensions.height(), static_cast<AVPixelFormat>(pixelFormat), resizeAlgo,
-                       nullptr, nullptr, nullptr);
+    SwsContext* swsCtx = sws_getContext(
+            sourceDimensions.width(), sourceDimensions.height(),
+            static_cast<AVPixelFormat>(sourcePixelFormat), dimensions.width(), dimensions.height(),
+            static_cast<AVPixelFormat>(pixelFormat), resizeAlgo, nullptr, nullptr, nullptr);
 
     if (!swsCtx) {
         av_freep(&ret->data[0]);
@@ -633,8 +601,7 @@ AVFrame* VideoFrame::generateAVFrame(const QSize& dimensions, const int pixelFor
  * @param pixelFormat the pixel format of the frame.
  * @return The given AVFrame* or a pre-existing AVFrame* that already exists in the frameBuffer.
  */
-AVFrame* VideoFrame::storeAVFrame(AVFrame* frame, const QSize& dimensions, const int pixelFormat)
-{
+AVFrame* VideoFrame::storeAVFrame(AVFrame* frame, const QSize& dimensions, const int pixelFormat) {
     FrameBufferKey frameKey = getFrameKey(dimensions, pixelFormat, frame->linesize[0]);
 
     // We check the prescence of the frame in case of double-computation
@@ -661,8 +628,7 @@ AVFrame* VideoFrame::storeAVFrame(AVFrame* frame, const QSize& dimensions, const
  *
  * This function is not thread-safe and must be called from a thread-safe context.
  */
-void VideoFrame::deleteFrameBuffer()
-{
+void VideoFrame::deleteFrameBuffer() {
     // An empty framebuffer represents a frame that's already been freed
     if (frameBuffer.empty()) {
         return;
@@ -713,10 +679,10 @@ void VideoFrame::deleteFrameBuffer()
  * when the generation process fails.
  */
 template <typename T>
-T VideoFrame::toGenericObject(const QSize& dimensions, const int pixelFormat, const bool requireAligned,
+T VideoFrame::toGenericObject(const QSize& dimensions, const int pixelFormat,
+                              const bool requireAligned,
                               const std::function<T(AVFrame* const)>& objectConstructor,
-                              const T& nullObject)
-{
+                              const T& nullObject) {
     frameLock.lockForRead();
 
     // We return nullObject if the VideoFrame is no longer valid
@@ -757,11 +723,12 @@ T VideoFrame::toGenericObject(const QSize& dimensions, const int pixelFormat, co
 
 // Explicitly specialize VideoFrame::toGenericObject() function
 template QImage VideoFrame::toGenericObject<QImage>(
-    const QSize& dimensions, const int pixelFormat, const bool requireAligned,
-    const std::function<QImage(AVFrame* const)> &objectConstructor, const QImage& nullObject);
+        const QSize& dimensions, const int pixelFormat, const bool requireAligned,
+        const std::function<QImage(AVFrame* const)>& objectConstructor, const QImage& nullObject);
 template ToxYUVFrame VideoFrame::toGenericObject<ToxYUVFrame>(
-    const QSize& dimensions, const int pixelFormat, const bool requireAligned,
-    const std::function<ToxYUVFrame(AVFrame* const)> &objectConstructor, const ToxYUVFrame& nullObject);
+        const QSize& dimensions, const int pixelFormat, const bool requireAligned,
+        const std::function<ToxYUVFrame(AVFrame* const)>& objectConstructor,
+        const ToxYUVFrame& nullObject);
 
 /**
  * @brief Returns whether the given ToxYUVFrame represents a valid frame or not.
@@ -770,15 +737,9 @@ template ToxYUVFrame VideoFrame::toGenericObject<ToxYUVFrame>(
  *
  * @return true if the frame is valid, false otherwise.
  */
-bool ToxYUVFrame::isValid() const
-{
-    return width > 0 && height > 0;
-}
+bool ToxYUVFrame::isValid() const { return width > 0 && height > 0; }
 
 /**
  * @brief Checks if the given ToxYUVFrame is valid or not, delegates to isValid().
  */
-ToxYUVFrame::operator bool() const
-{
-    return isValid();
-}
+ToxYUVFrame::operator bool() const { return isValid(); }

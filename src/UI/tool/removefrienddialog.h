@@ -13,27 +13,18 @@
 #ifndef DELETEFRIENDDIALOG_H
 #define DELETEFRIENDDIALOG_H
 
-
-#include "ui_removefrienddialog.h"
-#include "lib/lib/messenger/model/friend.h"
 #include <QDialog>
+#include "lib/lib/messenger/model/friend.h"
+#include "ui_removefrienddialog.h"
 
-
-class RemoveFriendDialog : public QDialog
-{
+class RemoveFriendDialog : public QDialog {
     Q_OBJECT
 public:
     explicit RemoveFriendDialog(QWidget* parent, const lib::IM::Friend* f);
 
-    inline bool removeHistory()
-    {
-        return ui.removeHistory->isChecked();
-    }
+    inline bool removeHistory() { return ui.removeHistory->isChecked(); }
 
-    inline bool accepted()
-    {
-        return _accepted;
-    }
+    inline bool accepted() { return _accepted; }
 
 public slots:
     void onAccepted();
@@ -43,4 +34,4 @@ protected:
     bool _accepted = false;
 };
 
-#endif // DELETEFRIENDDIALOG_H
+#endif  // DELETEFRIENDDIALOG_H

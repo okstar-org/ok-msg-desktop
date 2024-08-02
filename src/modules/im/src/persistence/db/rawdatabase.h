@@ -19,11 +19,11 @@
 #include <QMutex>
 #include <QPair>
 #include <QQueue>
+#include <QRegularExpression>
 #include <QString>
 #include <QThread>
 #include <QVariant>
 #include <QVector>
-#include <QRegularExpression>
 
 #include <atomic>
 #include <cassert>
@@ -40,31 +40,19 @@
 using RowId = NamedType<int64_t, struct RowIdTag, Orderable>;
 Q_DECLARE_METATYPE(RowId);
 
-class RawDatabase : QObject
-{
+class RawDatabase : QObject {
     Q_OBJECT
 
 public:
-    class Query
-    {
+    class Query {
     public:
         Query(QString query, QVector<QByteArray> blobs = {},
               const std::function<void(RowId)>& insertCallback = {})
-            : query{query.toUtf8()}
-            , blobs{blobs}
-            , insertCallback{insertCallback}
-        {
-        }
+                : query{query.toUtf8()}, blobs{blobs}, insertCallback{insertCallback} {}
         Query(QString query, const std::function<void(RowId)>& insertCallback)
-            : query{query.toUtf8()}
-            , insertCallback{insertCallback}
-        {
-        }
+                : query{query.toUtf8()}, insertCallback{insertCallback} {}
         Query(QString query, const std::function<void(const QVector<QVariant>&)>& rowCallback)
-            : query{query.toUtf8()}
-            , rowCallback{rowCallback}
-        {
-        }
+                : query{query.toUtf8()}, rowCallback{rowCallback} {}
         Query() = default;
 
     private:
@@ -78,10 +66,7 @@ public:
     };
 
 public:
-
-    RawDatabase(const QString& path,
-                const QString& password,
-                const QByteArray& salt);
+    RawDatabase(const QString& path, const QString& password, const QByteArray& salt);
 
     ~RawDatabase();
     bool isOpen();
@@ -122,10 +107,10 @@ protected:
     static void regexpSensitive(sqlite3_context* ctx, int argc, sqlite3_value** argv);
 
 private:
-    static void regexp(sqlite3_context* ctx, int argc, sqlite3_value** argv, const QRegularExpression::PatternOptions cs);
+    static void regexp(sqlite3_context* ctx, int argc, sqlite3_value** argv,
+                       const QRegularExpression::PatternOptions cs);
 
-    struct Transaction
-    {
+    struct Transaction {
         QVector<Query> queries;
         std::atomic_bool* success = nullptr;
         std::atomic_bool* done = nullptr;
@@ -141,4 +126,4 @@ private:
     QString currentHexKey;
 };
 
-#endif // RAWDATABASE_H
+#endif  // RAWDATABASE_H

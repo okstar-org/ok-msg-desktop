@@ -11,13 +11,12 @@
  */
 
 #include <QtCore/qsystemdetection.h>
+#include <X11/extensions/scrnsaver.h>
+#include <QDebug>
 #include "src/platform/timer.h"
 #include "src/platform/x11_display.h"
-#include <QDebug>
-#include <X11/extensions/scrnsaver.h>
 
-uint32_t Platform::getIdleTime()
-{
+uint32_t Platform::getIdleTime() {
     uint32_t idleTime = 0;
 
     Display* display = X11Display::lock();

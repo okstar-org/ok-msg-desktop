@@ -15,8 +15,7 @@
 
 #include <QDialog>
 
-class ActivateDialog : public QDialog
-{
+class ActivateDialog : public QDialog {
     Q_OBJECT
 public:
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
@@ -30,4 +29,4 @@ signals:
     void windowStateChanged(Qt::WindowStates state);
 };
 
-#endif // ACTIVATEDIALOG_H
+#endif  // ACTIVATEDIALOG_H

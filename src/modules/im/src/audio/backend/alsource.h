@@ -13,14 +13,13 @@
 #ifndef ALSOURCE_H
 #define ALSOURCE_H
 
-#include "src/audio/iaudiosource.h"
-#include "base/compatiblerecursivemutex.h"
 #include <QMutex>
 #include <QObject>
+#include "base/compatiblerecursivemutex.h"
+#include "src/audio/iaudiosource.h"
 
 class OpenAL;
-class AlSource : public IAudioSource
-{
+class AlSource : public IAudioSource {
     Q_OBJECT
 public:
     AlSource(OpenAL& al);
@@ -40,4 +39,4 @@ private:
     mutable CompatibleRecursiveMutex killLock;
 };
 
-#endif // ALSOURCE_H
+#endif  // ALSOURCE_H

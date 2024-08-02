@@ -14,107 +14,78 @@
 
 #include "src/model/friend.h"
 #include "src/nexus.h"
-#include "src/persistence/profile.h"
 #include "src/persistence/ifriendsettings.h"
+#include "src/persistence/profile.h"
 
-AboutFriend::AboutFriend(const Friend* f, IFriendSettings* const s)
-    : f{f}
-    , settings{s}
-{
-    s->connectTo_contactNoteChanged(this, [this](const FriendId& pk, const QString& note) {
-        emit noteChanged(note);
-    });
-    s->connectTo_autoAcceptCallChanged(this,
-            [this](const FriendId& pk, IFriendSettings::AutoAcceptCallFlags flag) {
-        emit autoAcceptCallChanged(flag);
-    });
+AboutFriend::AboutFriend(const Friend* f, IFriendSettings* const s) : f{f}, settings{s} {
+    s->connectTo_contactNoteChanged(
+            this, [this](const FriendId& pk, const QString& note) { emit noteChanged(note); });
+    s->connectTo_autoAcceptCallChanged(
+            this, [this](const FriendId& pk, IFriendSettings::AutoAcceptCallFlags flag) {
+                emit autoAcceptCallChanged(flag);
+            });
     s->connectTo_autoAcceptDirChanged(this, [this](const FriendId& pk, const QString& dir) {
         emit autoAcceptDirChanged(dir);
     });
-    s->connectTo_autoGroupInviteChanged(this, [this](const FriendId& pk, bool enable) {
-        emit autoGroupInviteChanged(enable);
-    });
+    s->connectTo_autoGroupInviteChanged(
+            this, [this](const FriendId& pk, bool enable) { emit autoGroupInviteChanged(enable); });
 }
 
-QString AboutFriend::getName() const
-{
-    return f->getName();
-}
+QString AboutFriend::getName() const { return f->getName(); }
 
-const QString &AboutFriend::getAlias() const
-{
-    return f->getAlias();
-}
+const QString& AboutFriend::getAlias() const { return f->getAlias(); }
 
-QString AboutFriend::getStatusMessage() const
-{
-    return f->getStatusMessage();
-}
+QString AboutFriend::getStatusMessage() const { return f->getStatusMessage(); }
 
-FriendId AboutFriend::getPublicKey() const
-{
-    return f->getPublicKey();
-}
+FriendId AboutFriend::getPublicKey() const { return f->getPublicKey(); }
 
-QPixmap AboutFriend::getAvatar() const
-{
-    return f->getAvatar();
-}
+QPixmap AboutFriend::getAvatar() const { return f->getAvatar(); }
 
-QString AboutFriend::getNote() const
-{
+QString AboutFriend::getNote() const {
     const FriendId pk = f->getPublicKey();
     return settings->getContactNote(pk);
 }
 
-void AboutFriend::setNote(const QString& note)
-{
+void AboutFriend::setNote(const QString& note) {
     const FriendId pk = f->getPublicKey();
     settings->setContactNote(pk, note);
     settings->saveFriendSettings(pk);
 }
 
-QString AboutFriend::getAutoAcceptDir() const
-{
+QString AboutFriend::getAutoAcceptDir() const {
     const FriendId pk = f->getPublicKey();
     return settings->getAutoAcceptDir(pk);
 }
 
-void AboutFriend::setAutoAcceptDir(const QString& path)
-{
+void AboutFriend::setAutoAcceptDir(const QString& path) {
     const FriendId pk = f->getPublicKey();
     settings->setAutoAcceptDir(pk, path);
     settings->saveFriendSettings(pk);
 }
 
-IFriendSettings::AutoAcceptCallFlags AboutFriend::getAutoAcceptCall() const
-{
+IFriendSettings::AutoAcceptCallFlags AboutFriend::getAutoAcceptCall() const {
     const FriendId pk = f->getPublicKey();
     return settings->getAutoAcceptCall(pk);
 }
 
-void AboutFriend::setAutoAcceptCall(IFriendSettings::AutoAcceptCallFlags flag)
-{
+void AboutFriend::setAutoAcceptCall(IFriendSettings::AutoAcceptCallFlags flag) {
     const FriendId pk = f->getPublicKey();
     settings->setAutoAcceptCall(pk, flag);
     settings->saveFriendSettings(pk);
 }
 
-bool AboutFriend::getAutoGroupInvite() const
-{
+bool AboutFriend::getAutoGroupInvite() const {
     const FriendId pk = f->getPublicKey();
     return settings->getAutoGroupInvite(pk);
 }
 
-void AboutFriend::setAutoGroupInvite(bool enabled)
-{
+void AboutFriend::setAutoGroupInvite(bool enabled) {
     const FriendId pk = f->getPublicKey();
     settings->setAutoGroupInvite(pk, enabled);
     settings->saveFriendSettings(pk);
 }
 
-bool AboutFriend::clearHistory()
-{
+bool AboutFriend::clearHistory() {
     const FriendId pk = f->getPublicKey();
     History* const history = Nexus::getProfile()->getHistory();
     if (history) {
@@ -125,8 +96,7 @@ bool AboutFriend::clearHistory()
     return false;
 }
 
-bool AboutFriend::isHistoryExistence()
-{
+bool AboutFriend::isHistoryExistence() {
     auto profile = Nexus::getProfile();
     auto core = profile->getCore();
 

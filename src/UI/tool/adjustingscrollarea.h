@@ -15,8 +15,7 @@
 
 #include <QScrollArea>
 
-class AdjustingScrollArea : public QScrollArea
-{
+class AdjustingScrollArea : public QScrollArea {
     Q_OBJECT
 public:
     explicit AdjustingScrollArea(QWidget* parent = nullptr);
@@ -27,4 +26,4 @@ protected:
     virtual QSize sizeHint() const final override;
 };
 
-#endif // ADJUSTINGSCROLLAREA_H
+#endif  // ADJUSTINGSCROLLAREA_H

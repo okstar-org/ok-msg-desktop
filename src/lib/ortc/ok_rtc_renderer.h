@@ -16,11 +16,5 @@
 #include <string>
 
 namespace lib {
-namespace ortc {
-
-
-
-
-
-} // namespace ortc
-} // namespace lib
+namespace ortc {}  // namespace ortc
+}  // namespace lib

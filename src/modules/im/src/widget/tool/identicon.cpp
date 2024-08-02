@@ -53,8 +53,7 @@
  * @brief Creates an Identicon, that visualizes a hash in graphical form.
  * @param data Data to visualize
  */
-Identicon::Identicon(const QByteArray& data)
-{
+Identicon::Identicon(const QByteArray& data) {
     static_assert(Identicon::COLORS == 2, "Only two colors are implemented");
     // hash with sha256
     QByteArray hash = QCryptographicHash::hash(data, QCryptographicHash::Sha256);
@@ -85,8 +84,7 @@ Identicon::Identicon(const QByteArray& data)
  * @param bytes Bytes to convert to a color
  * @return Value in the range of 0.0..1.0
  */
-float Identicon::bytesToColor(QByteArray bytes)
-{
+float Identicon::bytesToColor(QByteArray bytes) {
     static_assert(IDENTICON_COLOR_BYTES <= 8, "IDENTICON_COLOR max value is 8");
     const uint8_t* const bytesChr = reinterpret_cast<const uint8_t*>(bytes.constData());
     assert(bytes.length() == IDENTICON_COLOR_BYTES);
@@ -101,8 +99,8 @@ float Identicon::bytesToColor(QByteArray bytes)
     }
 
     // normalize to 0.0 ... 1.0
-    return (static_cast<float>(hue))
-           / (static_cast<float>(((static_cast<uint64_t>(1)) << (8 * IDENTICON_COLOR_BYTES)) - 1));
+    return (static_cast<float>(hue)) /
+           (static_cast<float>(((static_cast<uint64_t>(1)) << (8 * IDENTICON_COLOR_BYTES)) - 1));
 }
 
 /**
@@ -111,8 +109,7 @@ float Identicon::bytesToColor(QByteArray bytes)
  *                    must be >= 1
  * @return a QImage with the identicon
  */
-QImage Identicon::toImage(int scaleFactor)
-{
+QImage Identicon::toImage(int scaleFactor) {
     if (scaleFactor < 1) {
         qDebug() << "Can't scale with values <1, clamping to 1";
         scaleFactor = 1;

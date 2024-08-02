@@ -15,8 +15,7 @@
 
 #include <QLabel>
 
-class MaskablePixmapWidget final : public QLabel
-{
+class MaskablePixmapWidget final : public QLabel {
     Q_OBJECT
 public:
     MaskablePixmapWidget(QWidget* parent, QSize size, QString maskName = QString());
@@ -43,4 +42,4 @@ private:
     bool clickable;
 };
 
-#endif // MASKABLEPIXMAPWIDGET_H
+#endif  // MASKABLEPIXMAPWIDGET_H

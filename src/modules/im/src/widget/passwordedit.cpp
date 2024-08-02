@@ -23,10 +23,7 @@
 
 PasswordEdit::EventHandler* PasswordEdit::eventHandler{nullptr};
 
-PasswordEdit::PasswordEdit(QWidget* parent)
-    : QLineEdit(parent)
-    , action(new QAction(this))
-{
+PasswordEdit::PasswordEdit(QWidget* parent) : QLineEdit(parent), action(new QAction(this)) {
     setEchoMode(QLineEdit::Password);
 
 #ifdef ENABLE_CAPSLOCK_INDICATOR
@@ -36,23 +33,16 @@ PasswordEdit::PasswordEdit(QWidget* parent)
 #endif
 }
 
-PasswordEdit::~PasswordEdit()
-{
-    unregisterHandler();
-}
+PasswordEdit::~PasswordEdit() { unregisterHandler(); }
 
-void PasswordEdit::registerHandler()
-{
+void PasswordEdit::registerHandler() {
 #ifdef ENABLE_CAPSLOCK_INDICATOR
-    if (!eventHandler)
-        eventHandler = new EventHandler();
-    if (!eventHandler->actions.contains(action))
-        eventHandler->actions.append(action);
+    if (!eventHandler) eventHandler = new EventHandler();
+    if (!eventHandler->actions.contains(action)) eventHandler->actions.append(action);
 #endif
 }
 
-void PasswordEdit::unregisterHandler()
-{
+void PasswordEdit::unregisterHandler() {
 #ifdef ENABLE_CAPSLOCK_INDICATOR
     int idx;
 
@@ -66,49 +56,40 @@ void PasswordEdit::unregisterHandler()
 #endif
 }
 
-void PasswordEdit::showEvent(QShowEvent*)
-{
+void PasswordEdit::showEvent(QShowEvent*) {
 #ifdef ENABLE_CAPSLOCK_INDICATOR
     action->setVisible(Platform::capsLockEnabled());
 #endif
     registerHandler();
 }
 
-void PasswordEdit::hideEvent(QHideEvent*)
-{
-    unregisterHandler();
-}
+void PasswordEdit::hideEvent(QHideEvent*) { unregisterHandler(); }
 
 #ifdef ENABLE_CAPSLOCK_INDICATOR
-PasswordEdit::EventHandler::EventHandler()
-{
+PasswordEdit::EventHandler::EventHandler() {
     QCoreApplication::instance()->installEventFilter(this);
 }
 
-PasswordEdit::EventHandler::~EventHandler()
-{
+PasswordEdit::EventHandler::~EventHandler() {
     QCoreApplication::instance()->removeEventFilter(this);
 }
 
-void PasswordEdit::EventHandler::updateActions()
-{
+void PasswordEdit::EventHandler::updateActions() {
     bool caps = Platform::capsLockEnabled();
 
-    for (QAction* action : actions)
-        action->setVisible(caps);
+    for (QAction* action : actions) action->setVisible(caps);
 }
 
-bool PasswordEdit::EventHandler::eventFilter(QObject* obj, QEvent* event)
-{
+bool PasswordEdit::EventHandler::eventFilter(QObject* obj, QEvent* event) {
     switch (event->type()) {
-    case QEvent::WindowActivate:
-    case QEvent::KeyRelease:
-        updateActions();
-        break;
-    default:
-        break;
+        case QEvent::WindowActivate:
+        case QEvent::KeyRelease:
+            updateActions();
+            break;
+        default:
+            break;
     }
 
     return QObject::eventFilter(obj, event);
 }
-#endif // ENABLE_CAPSLOCK_INDICATOR
+#endif  // ENABLE_CAPSLOCK_INDICATOR

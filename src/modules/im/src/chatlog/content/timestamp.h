@@ -13,14 +13,13 @@
 #ifndef TIMESTAMP_H
 #define TIMESTAMP_H
 
-#include "text.h"
 #include <QDateTime>
 #include <QTextDocument>
+#include "text.h"
 
 class QTextDocument;
 
-class Timestamp : public Text
-{
+class Timestamp : public Text {
     Q_OBJECT
 public:
     Timestamp(const QDateTime& time, const QString& format, const QFont& font);
@@ -33,4 +32,4 @@ private:
     QDateTime time;
 };
 
-#endif // TIMESTAMP_H
+#endif  // TIMESTAMP_H

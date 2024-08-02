@@ -26,8 +26,8 @@
 #define CHECKSUM_HEX_CHARS (2 * CHECKSUM_BYTES)
 #define TOXID_HEX_CHARS (2 * TOX_ADDRESS_SIZE)
 
-//const QRegularExpression ToxId::ToxIdRegEx(
-//    QString("(^|\\s)[A-Fa-f0-9]{%1}($|\\s)").arg(TOXID_HEX_CHARS));
+// const QRegularExpression ToxId::ToxIdRegEx(
+//     QString("(^|\\s)[A-Fa-f0-9]{%1}($|\\s)").arg(TOXID_HEX_CHARS));
 
 /**
  * @class ToxId
@@ -45,7 +45,7 @@ ToxId::ToxId() : toxId() {}
  * @brief The copy constructor.
  * @param other ToxId to copy
  */
-ToxId::ToxId(const ToxId &other) : toxId(other.toxId) {}
+ToxId::ToxId(const ToxId& other) : toxId(other.toxId) {}
 
 /**
  * @brief Create a Tox ID from a QString.
@@ -57,19 +57,19 @@ ToxId::ToxId(const ToxId &other) : toxId(other.toxId) {}
  *
  * @param id Ok ID string to convert to ToxId object
  */
-ToxId::ToxId(const QString &id) {
-//  qDebug() << "ToxId::ToxId (id)" << id;
-  // TODO: remove construction from PK only
-  //  if (isToxId(id)) {
-  //    toxId = QByteArray::fromHex(id.toLatin1());
-  //  } else if (id.length() >= PUBLIC_KEY_HEX_CHARS) {
-  //    toxId = QByteArray::fromHex(id.left(PUBLIC_KEY_HEX_CHARS).toLatin1());
-  //  } else {
-  //    toxId = QByteArray(); // invalid id string
-  //  }
-  if (isToxId(id)) {
-    toxId = (id.toUtf8());
-  }
+ToxId::ToxId(const QString& id) {
+    //  qDebug() << "ToxId::ToxId (id)" << id;
+    // TODO: remove construction from PK only
+    //  if (isToxId(id)) {
+    //    toxId = QByteArray::fromHex(id.toLatin1());
+    //  } else if (id.length() >= PUBLIC_KEY_HEX_CHARS) {
+    //    toxId = QByteArray::fromHex(id.left(PUBLIC_KEY_HEX_CHARS).toLatin1());
+    //  } else {
+    //    toxId = QByteArray(); // invalid id string
+    //  }
+    if (isToxId(id)) {
+        toxId = (id.toUtf8());
+    }
 }
 
 /**
@@ -82,7 +82,7 @@ ToxId::ToxId(const QString &id) {
  *
  * @param rawId Ok ID bytes to convert to ToxId object
  */
-ToxId::ToxId(const QByteArray &rawId) { constructToxId(rawId); }
+ToxId::ToxId(const QByteArray& rawId) { constructToxId(rawId); }
 
 /**
  * @brief Create a Ok ID from uint8_t bytes and lenght, convenience function
@@ -97,22 +97,22 @@ ToxId::ToxId(const QByteArray &rawId) { constructToxId(rawId); }
  * @param len Number of bytes to read. Must be TOX_SECRET_KEY_SIZE for a Public
  * Key or TOX_ADDRESS_SIZE for a Ok ID.
  */
-ToxId::ToxId(const uint8_t *rawId, int len) {
-  QByteArray tmpId(reinterpret_cast<const char *>(rawId), len);
-  constructToxId(tmpId);
+ToxId::ToxId(const uint8_t* rawId, int len) {
+    QByteArray tmpId(reinterpret_cast<const char*>(rawId), len);
+    constructToxId(tmpId);
 }
 
-void ToxId::constructToxId(const QByteArray &rawId) {
-  // TODO: remove construction from PK only
-  //  if (rawId.length() == TOX_SECRET_KEY_SIZE) {
-  //    toxId = QByteArray(rawId); // construct from PK only
-  //  } else if (rawId.length() == TOX_ADDRESS_SIZE &&
-  //             isToxId(rawId.toHex().toUpper())) {
-  //    toxId = QByteArray(rawId); // construct from full toxid
-  //  } else {
-  //    toxId = QByteArray(); // invalid id
-  //  }
-  toxId = QByteArray(rawId);
+void ToxId::constructToxId(const QByteArray& rawId) {
+    // TODO: remove construction from PK only
+    //  if (rawId.length() == TOX_SECRET_KEY_SIZE) {
+    //    toxId = QByteArray(rawId); // construct from PK only
+    //  } else if (rawId.length() == TOX_ADDRESS_SIZE &&
+    //             isToxId(rawId.toHex().toUpper())) {
+    //    toxId = QByteArray(rawId); // construct from full toxid
+    //  } else {
+    //    toxId = QByteArray(); // invalid id
+    //  }
+    toxId = QByteArray(rawId);
 }
 
 /**
@@ -120,18 +120,14 @@ void ToxId::constructToxId(const QByteArray &rawId) {
  * @param other Ok ID to compare.
  * @return True if both Tox IDs have the same public keys, false otherwise.
  */
-bool ToxId::operator==(const ToxId &other) const {
-  return toxId.compare(other.toxId) == 0;
-}
+bool ToxId::operator==(const ToxId& other) const { return toxId.compare(other.toxId) == 0; }
 
 /**
  * @brief Compares the inequality of the Public Key.
  * @param other Ok ID to compare.
  * @return True if both Tox IDs have different public keys, false otherwise.
  */
-bool ToxId::operator!=(const ToxId &other) const {
-  return getPublicKey() != other.getPublicKey();
-}
+bool ToxId::operator!=(const ToxId& other) const { return getPublicKey() != other.getPublicKey(); }
 
 /**
  * @brief Returns the Ok ID converted to QString.
@@ -150,12 +146,12 @@ void ToxId::clear() { toxId.clear(); }
  * @brief Gets the ToxID as bytes, convenience function for toxcore interface.
  * @return The ToxID as uint8_t* if isValid() is true, else a nullptr.
  */
-const uint8_t *ToxId::getBytes() const {
-  if (isValid()) {
-    return reinterpret_cast<const uint8_t *>(toxId.constData());
-  }
+const uint8_t* ToxId::getBytes() const {
+    if (isValid()) {
+        return reinterpret_cast<const uint8_t*>(toxId.constData());
+    }
 
-  return nullptr;
+    return nullptr;
 }
 
 /**
@@ -163,12 +159,12 @@ const uint8_t *ToxId::getBytes() const {
  * @return Public Key of the ToxID
  */
 FriendId ToxId::getPublicKey() const {
-//  auto const pkBytes = toxId.left(TOX_PUBLIC_KEY_SIZE);
-//  if (pkBytes.isEmpty()) {
-//    return ToxPk{};
-//  } else {
-//    return ToxPk{pkBytes};
-//  }
+    //  auto const pkBytes = toxId.left(TOX_PUBLIC_KEY_SIZE);
+    //  if (pkBytes.isEmpty()) {
+    //    return ToxPk{};
+    //  } else {
+    //    return ToxPk{pkBytes};
+    //  }
     return FriendId{toxId};
 }
 
@@ -177,10 +173,7 @@ FriendId ToxId::getPublicKey() const {
  * @return The NoSpam value as QString or "" if the ToxId was constructed from a
  * Public Key.
  */
-QString ToxId::getNoSpamString() const {
-
-  return {};
-}
+QString ToxId::getNoSpamString() const { return {}; }
 
 /**
  * @brief Check, that id is a valid Ok ID.
@@ -188,9 +181,7 @@ QString ToxId::getNoSpamString() const {
  * @return True if id is a valid Ok ID, false otherwise.
  * @note Validates the checksum.
  */
-bool ToxId::isValidToxId(const QString &id) {
-  return isToxId(id) && ToxId(id).isValid();
-}
+bool ToxId::isValidToxId(const QString& id) { return isToxId(id) && ToxId(id).isValid(); }
 
 /**
  * @brief Check, that id is probably a valid Ok ID.
@@ -198,9 +189,9 @@ bool ToxId::isValidToxId(const QString &id) {
  * @return True if the string can be a ToxID, false otherwise.
  * @note Doesn't validate checksum.
  */
-bool ToxId::isToxId(const QString &id) {
-  //    return id.length() == TOXID_HEX_CHARS && id.contains(ToxIdRegEx);
-  return id.length() > 0;
+bool ToxId::isToxId(const QString& id) {
+    //    return id.length() == TOXID_HEX_CHARS && id.contains(ToxIdRegEx);
+    return id.length() > 0;
 }
 
 /**
@@ -208,12 +199,10 @@ bool ToxId::isToxId(const QString &id) {
  * @return True if it is a valid Ok ID, false otherwise.
  */
 bool ToxId::isValid() const {
-  if (toxId.length() > 0) {
-    return true;
-  }
-  return false;
+    if (toxId.length() > 0) {
+        return true;
+    }
+    return false;
 }
 
-QString ToxId::getToxIdAsStr() const {
-  return QString::fromUtf8(toxId);
-}
+QString ToxId::getToxIdAsStr() const { return QString::fromUtf8(toxId); }

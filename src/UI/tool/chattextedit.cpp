@@ -19,71 +19,67 @@
 #include <QKeyEvent>
 #include <QMimeData>
 
-ChatTextEdit::ChatTextEdit(QWidget *parent) : QTextEdit(parent) {
-  retranslateUi();
-  setAcceptRichText(false);
-  setAcceptDrops(false);
+ChatTextEdit::ChatTextEdit(QWidget* parent) : QTextEdit(parent) {
+    retranslateUi();
+    setAcceptRichText(false);
+    setAcceptDrops(false);
 
-  settings::Translator::registerHandler(std::bind(&ChatTextEdit::retranslateUi, this),
-                              this);
+    settings::Translator::registerHandler(std::bind(&ChatTextEdit::retranslateUi, this), this);
 }
 
 ChatTextEdit::~ChatTextEdit() { Translator::unregister(this); }
 
-void ChatTextEdit::keyPressEvent(QKeyEvent *event) {
-  int key = event->key();
-  if ((key == Qt::Key_Enter || key == Qt::Key_Return) &&
-      !(event->modifiers() & Qt::ShiftModifier)) {
-    emit enterPressed();
-    return;
-  }
-  if (key == Qt::Key_Tab) {
-    if (event->modifiers())
-      event->ignore();
-    else {
-      emit tabPressed();
-      event->ignore();
+void ChatTextEdit::keyPressEvent(QKeyEvent* event) {
+    int key = event->key();
+    if ((key == Qt::Key_Enter || key == Qt::Key_Return) &&
+        !(event->modifiers() & Qt::ShiftModifier)) {
+        emit enterPressed();
+        return;
     }
-    return;
-  }
-  if (key == Qt::Key_Up && this->toPlainText().isEmpty()) {
-    this->setPlainText(lastMessage);
-    this->setFocus();
-    this->moveCursor(QTextCursor::MoveOperation::End,
-                     QTextCursor::MoveMode::MoveAnchor);
-    return;
-  }
-  if (event->matches(QKeySequence::Paste) && pasteIfImage(event)) {
-    return;
-  }
-  emit keyPressed();
-  QTextEdit::keyPressEvent(event);
+    if (key == Qt::Key_Tab) {
+        if (event->modifiers())
+            event->ignore();
+        else {
+            emit tabPressed();
+            event->ignore();
+        }
+        return;
+    }
+    if (key == Qt::Key_Up && this->toPlainText().isEmpty()) {
+        this->setPlainText(lastMessage);
+        this->setFocus();
+        this->moveCursor(QTextCursor::MoveOperation::End, QTextCursor::MoveMode::MoveAnchor);
+        return;
+    }
+    if (event->matches(QKeySequence::Paste) && pasteIfImage(event)) {
+        return;
+    }
+    emit keyPressed();
+    QTextEdit::keyPressEvent(event);
 }
 
 void ChatTextEdit::setLastMessage(QString lm) { lastMessage = lm; }
 
-void ChatTextEdit::retranslateUi() {
-  setPlaceholderText(tr("Type your message here..."));
-}
+void ChatTextEdit::retranslateUi() { setPlaceholderText(tr("Type your message here...")); }
 
-void ChatTextEdit::sendKeyEvent(QKeyEvent *event) { emit keyPressEvent(event); }
+void ChatTextEdit::sendKeyEvent(QKeyEvent* event) { emit keyPressEvent(event); }
 
-bool ChatTextEdit::pasteIfImage(QKeyEvent *event) {
-  const QClipboard *const clipboard = QApplication::clipboard();
-  if (!clipboard) {
-    return false;
-  }
+bool ChatTextEdit::pasteIfImage(QKeyEvent* event) {
+    const QClipboard* const clipboard = QApplication::clipboard();
+    if (!clipboard) {
+        return false;
+    }
 
-  const QMimeData *const mimeData = clipboard->mimeData();
-  if (!mimeData || !mimeData->hasImage()) {
-    return false;
-  }
+    const QMimeData* const mimeData = clipboard->mimeData();
+    if (!mimeData || !mimeData->hasImage()) {
+        return false;
+    }
 
-  const QPixmap pixmap(clipboard->pixmap());
-  if (pixmap.isNull()) {
-    return false;
-  }
+    const QPixmap pixmap(clipboard->pixmap());
+    if (pixmap.isNull()) {
+        return false;
+    }
 
-  emit pasteImage(pixmap);
-  return true;
+    emit pasteImage(pixmap);
+    return true;
 }

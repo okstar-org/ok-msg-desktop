@@ -28,241 +28,238 @@
 #include <QTimer>
 #include <QUrlQuery>
 
+#include <base/files.h>
 #include "NetworkHttp.h"
 #include "base/jsons.h"
-#include <base/files.h>
 
 namespace network {
 
-NetworkHttp::NetworkHttp(QObject *parent) : QObject(parent), _manager{nullptr} {
-  qDebug() << __func__;
+NetworkHttp::NetworkHttp(QObject* parent) : QObject(parent), _manager{nullptr} {
+    qDebug() << __func__;
 #ifndef QT_NO_SSL
-  QString buildVersion = QSslSocket::sslLibraryBuildVersionString();
-  qDebug() << "The build-in ssl library version is:" << buildVersion;
+    QString buildVersion = QSslSocket::sslLibraryBuildVersionString();
+    qDebug() << "The build-in ssl library version is:" << buildVersion;
 
-  bool supportsSsl = QSslSocket::supportsSsl();
-  qDebug() << "Detected ssl:" << supportsSsl;
-  if (supportsSsl) {
-    QString libraryVersion = QSslSocket::sslLibraryVersionString();
-    qDebug() << "libraryVersion:" << libraryVersion;
-  }
+    bool supportsSsl = QSslSocket::supportsSsl();
+    qDebug() << "Detected ssl:" << supportsSsl;
+    if (supportsSsl) {
+        QString libraryVersion = QSslSocket::sslLibraryVersionString();
+        qDebug() << "libraryVersion:" << libraryVersion;
+    }
 #endif
-  //  QNetworkAccessManager
-  _manager = new QNetworkAccessManager(this);
-  auto schemes = _manager->supportedSchemes();
-  qDebug() << "supportedSchemes:" << schemes.join(" ");
+    //  QNetworkAccessManager
+    _manager = new QNetworkAccessManager(this);
+    auto schemes = _manager->supportedSchemes();
+    qDebug() << "supportedSchemes:" << schemes.join(" ");
 }
 
 NetworkHttp::~NetworkHttp() { qDebug() << __func__; }
 
-inline void forRequest(QNetworkRequest &req){
-  req.setAttribute(QNetworkRequest::RedirectPolicyAttribute, true);
+inline void forRequest(QNetworkRequest& req) {
+    req.setAttribute(QNetworkRequest::RedirectPolicyAttribute, true);
 }
 
-bool NetworkHttp::get(const QUrl &url,
+bool NetworkHttp::get(const QUrl& url,
                       const HttpBodyFn& fn,
-                      const HttpDownloadProgressFn &progress,
-                      const HttpErrorFn &failed) {
+                      const HttpDownloadProgressFn& progress,
+                      const HttpErrorFn& failed) {
+    qDebug() << "Url:" << url.toString();
+    if (url.isEmpty()) {
+        qWarning() << "url is empty";
+        return false;
+    }
 
-  qDebug() << "Url:" << url.toString();
-  if (url.isEmpty()) {
-    qWarning() << "url is empty";
-    return false;
-  }
+    QNetworkRequest req(url);
+    forRequest(req);
 
-  QNetworkRequest req(url);
-  forRequest(req);
-
-  auto *reply = _manager->get(req);
-  doRequest(req, reply, fn, progress, nullptr, failed);
-  return reply;
+    auto* reply = _manager->get(req);
+    doRequest(req, reply, fn, progress, nullptr, failed);
+    return reply;
 }
 
-QByteArray NetworkHttp::get(const QUrl &url,
-                            const HttpDownloadProgressFn &downloadProgress) {
-  qDebug() << "Url:" << url.toString();
-  auto _reply = _manager->get(QNetworkRequest(url));
-  _reply->ignoreSslErrors();
-  if (!_reply->errorString().isEmpty()) {
-    return {};
-  }
+QByteArray NetworkHttp::get(const QUrl& url, const HttpDownloadProgressFn& downloadProgress) {
+    qDebug() << "Url:" << url.toString();
+    auto _reply = _manager->get(QNetworkRequest(url));
+    _reply->ignoreSslErrors();
+    if (!_reply->errorString().isEmpty()) {
+        return {};
+    }
 
-  if (downloadProgress) {
-    connect(_reply, &QNetworkReply::downloadProgress, downloadProgress);
-  }
+    if (downloadProgress) {
+        connect(_reply, &QNetworkReply::downloadProgress, downloadProgress);
+    }
 
-  QEventLoop loop;
-  connect(_reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
-  loop.exec();
+    QEventLoop loop;
+    connect(_reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+    loop.exec();
 
-  QByteArray byteArr = _reply->readAll();
-  int size = byteArr.size();
-  qDebug() << ("Received bytes:") << (size);
-  return byteArr;
+    QByteArray byteArr = _reply->readAll();
+    int size = byteArr.size();
+    qDebug() << ("Received bytes:") << (size);
+    return byteArr;
 }
 
-bool NetworkHttp::getJSON(const QUrl &url,
-                          Fn<void(QJsonDocument)> fn,
-                          const HttpErrorFn& errFn) {
-  return get(url,[=](QByteArray buf, QString fileName) {
-        Q_UNUSED(fileName)
-        fn(Jsons::toJSON(buf));
-      },
-      nullptr,  errFn);
+bool NetworkHttp::getJSON(const QUrl& url, Fn<void(QJsonDocument)> fn, const HttpErrorFn& errFn) {
+    return get(
+            url,
+            [=](QByteArray buf, QString fileName) {
+                Q_UNUSED(fileName)
+                fn(Jsons::toJSON(buf));
+            },
+            nullptr, errFn);
 }
 
-void NetworkHttp::postJSON(const QUrl &url,
-                            const QJsonObject &data,
-                            Fn<void(const QJsonDocument &)> fn,
-                            const HttpDownloadProgressFn &progress,
-                            const HttpUploadProgressFn& upload,
-                            const HttpErrorFn &failed) {
-  post(url,
-       QJsonDocument(data).toJson() ,
-       "application/json",
-       [&](QByteArray buf, QString name) {
-         fn(Jsons::toJSON(buf));
-       },
-       progress, upload, failed);
+void NetworkHttp::postJSON(const QUrl& url,
+                           const QJsonObject& data,
+                           Fn<void(const QJsonDocument&)>
+                                   fn,
+                           const HttpDownloadProgressFn& progress,
+                           const HttpUploadProgressFn& upload,
+                           const HttpErrorFn& failed) {
+    post(
+            url, QJsonDocument(data).toJson(), "application/json",
+            [&](QByteArray buf, QString name) { fn(Jsons::toJSON(buf)); }, progress, upload,
+            failed);
 }
 
-void NetworkHttp::post(const QUrl &url,
-                       const QByteArray &data,
+void NetworkHttp::post(const QUrl& url,
+                       const QByteArray& data,
                        const QString& contentType,
-                       const HttpBodyFn &fn,
-                       const HttpDownloadProgressFn &progress,
+                       const HttpBodyFn& fn,
+                       const HttpDownloadProgressFn& progress,
                        const HttpUploadProgressFn& upload,
-                       const HttpErrorFn &failed) {
-  qDebug() << __func__ << url.toString();
+                       const HttpErrorFn& failed) {
+    qDebug() << __func__ << url.toString();
 
-  QNetworkRequest req(url);
-  forRequest(req);
-  req.setHeader(QNetworkRequest::ContentTypeHeader, QVariant(contentType));
+    QNetworkRequest req(url);
+    forRequest(req);
+    req.setHeader(QNetworkRequest::ContentTypeHeader, QVariant(contentType));
 
-  auto _reply = _manager->post(req, data);
-  doRequest(req, _reply, fn, progress, upload, failed);
+    auto _reply = _manager->post(req, data);
+    doRequest(req, _reply, fn, progress, upload, failed);
 }
 
-void NetworkHttp::PostFormData(const QUrl &url,
-                               const QByteArray &byteArray,
-                               const QString &contentType,
-                               const QString &filename,
-                               const HttpUploadProgressFn &uploadProgress,
-                               Fn<void(const QJsonObject &)> readyRead) {
+void NetworkHttp::PostFormData(const QUrl& url,
+                               const QByteArray& byteArray,
+                               const QString& contentType,
+                               const QString& filename,
+                               const HttpUploadProgressFn& uploadProgress,
+                               Fn<void(const QJsonObject&)>
+                                       readyRead) {
+    if (url.isEmpty()) {
+        qWarning() << "url is empty!";
+        return;
+    }
 
-  if (url.isEmpty()) {
-    qWarning() << "url is empty!";
-    return;
-  }
+    if (byteArray.size() <= 0) {
+        qWarning() << "byteArray is empty!";
+        return;
+    }
+    // 添加认证信息
+    auto* multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
 
-  if (byteArray.size() <= 0) {
-    qWarning() << "byteArray is empty!";
-    return;
-  }
-  // 添加认证信息
-  auto *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
+    /* type */
+    QUrlQuery uQuery(url.query());
+    // uQuery.addQueryItem("type", (UploadFileFolders[(int)folder]));
+    const_cast<QUrl&>(url).setQuery(uQuery);
 
-  /* type */
-  QUrlQuery uQuery(url.query());
-  // uQuery.addQueryItem("type", (UploadFileFolders[(int)folder]));
-  const_cast<QUrl &>(url).setQuery(uQuery);
+    // file
+    QHttpPart imagePart;
+    imagePart.setHeader(QNetworkRequest::ContentTypeHeader, QVariant(contentType));
+    imagePart.setHeader(QNetworkRequest::ContentDispositionHeader,
+                        QVariant("form-data; name=\"file\"; filename=\"" + filename + "\""));
 
-  // file
-  QHttpPart imagePart;
-  imagePart.setHeader(QNetworkRequest::ContentTypeHeader, QVariant(contentType));
-  imagePart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"file\"; filename=\"" + filename + "\""));
+    imagePart.setBody(byteArray);
+    multiPart->append(imagePart);
 
-  imagePart.setBody(byteArray);
-  multiPart->append(imagePart);
+    QNetworkRequest req(url);
+    forRequest(req);
 
-  QNetworkRequest req(url);
-  forRequest(req);
+    QList<QNetworkCookie> cookies = _manager->cookieJar()->cookiesForUrl(url);
+    // cookies.append(QNetworkCookie(QString("ticket").toUtf8(),
+    // client->token().toUtf8()));
+    QVariant var;
+    var.setValue(cookies);
 
-  QList<QNetworkCookie> cookies = _manager->cookieJar()->cookiesForUrl(url);
-  // cookies.append(QNetworkCookie(QString("ticket").toUtf8(),
-  // client->token().toUtf8()));
-  QVariant var;
-  var.setValue(cookies);
+    req.setHeader(QNetworkRequest::CookieHeader, var);
+    QNetworkReply* reply = _manager->post(req, multiPart);
+    multiPart->setParent(reply);
 
-  req.setHeader(QNetworkRequest::CookieHeader, var);
-  QNetworkReply *reply = _manager->post(req, multiPart);
-  multiPart->setParent(reply);
-
-  if (uploadProgress) {
-    connect(reply, &QNetworkReply::uploadProgress, uploadProgress);
-  }
+    if (uploadProgress) {
+        connect(reply, &QNetworkReply::uploadProgress, uploadProgress);
+    }
 }
 
-void NetworkHttp::doRequest(QNetworkRequest &req,
-                            QNetworkReply *reply,
-                            const HttpBodyFn &fn,
-                            const HttpDownloadProgressFn &progress,
+void NetworkHttp::doRequest(QNetworkRequest& req,
+                            QNetworkReply* reply,
+                            const HttpBodyFn& fn,
+                            const HttpDownloadProgressFn& progress,
                             const HttpUploadProgressFn& upload,
-                            const HttpErrorFn &failed) {
+                            const HttpErrorFn& failed) {
+    qDebug() << __func__;
 
-  qDebug() << __func__;
+    if (!reply) {
+        return;
+    }
+    reply->ignoreSslErrors();
 
-  if (!reply) {
-    return;
-  }
-  reply->ignoreSslErrors();
+    connect(reply, &QNetworkReply::finished, [=]() {
+        // 获取HTTP状态码
+        QVariant statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
+        if (statusCode.isValid()) {
+            qDebug() << "statusCode:" << statusCode.toInt();
+        }
 
-  connect(reply, &QNetworkReply::finished, [=]() {
-    // 获取HTTP状态码
-    QVariant statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
-    if (statusCode.isValid()) {
-      qDebug() << "statusCode:" << statusCode.toInt();
+        if (statusCode.toInt() / 100 != 2) {
+            qWarning() << "Error:" << reply->errorString();
+            if (failed) {
+                failed(statusCode.toInt(), reply->errorString());
+            }
+            return;
+        }
+
+        auto bytes = reply->readAll();
+        auto size = bytes.size();
+        qDebug() << "Received bytes:" << size;
+
+        if (size <= 0) {
+            qWarning() << "No content!";
+            return;
+        }
+
+        if (!fn) {
+            qWarning() << "Not put callback for content!";
+            return;
+        }
+
+        auto cth = reply->header(QNetworkRequest::KnownHeaders::ContentTypeHeader);
+        if (cth.isValid()) {
+            auto type = cth.toString();
+            qDebug() << "content-type:" << type;
+            if (type.startsWith("text/", Qt::CaseInsensitive) ||
+                type.startsWith("application/json", Qt::CaseInsensitive)) {
+                qDebug() << qstring("body:%1").arg(QString::fromUtf8(bytes));
+            }
+        }
+
+        auto cdh = reply->header(QNetworkRequest::KnownHeaders::ContentDispositionHeader);
+        if (!cdh.isNull()) {
+            QString filename = cdh.toString().split("=").last().trimmed();
+            fn(bytes, filename);
+        } else {
+            fn(bytes, req.url().fileName());
+        }
+        // delete reply
+        reply->deleteLater();
+    });
+
+    if (progress) {
+        connect(reply, &QNetworkReply::downloadProgress, progress);
     }
 
-    if (statusCode.toInt() / 100 != 2) {
-      qWarning() << "Error:" << reply->errorString();
-      if (failed) {
-        failed(statusCode.toInt(), reply->errorString());
-      }
-      return;
+    if (upload) {
+        connect(reply, &QNetworkReply::uploadProgress, upload);
     }
-
-    auto bytes = reply->readAll();
-    auto size = bytes.size();
-    qDebug() << "Received bytes:" << size;
-
-    if (size <= 0) {
-      qWarning() << "No content!";
-      return;
-    }
-
-    if (!fn) {
-      qWarning() << "Not put callback for content!";
-      return;
-    }
-
-    auto cth = reply->header(QNetworkRequest::KnownHeaders::ContentTypeHeader);
-    if (cth.isValid()) {
-      auto type = cth.toString();
-      qDebug() << "content-type:" << type;
-      if (type.startsWith("text/", Qt::CaseInsensitive) || type.startsWith("application/json", Qt::CaseInsensitive)) {
-        qDebug() << qstring("body:%1").arg(QString::fromUtf8(bytes));
-      }
-    }
-
-    auto cdh = reply->header(QNetworkRequest::KnownHeaders::ContentDispositionHeader);
-    if (!cdh.isNull()) {
-      QString filename = cdh.toString().split("=").last().trimmed();
-      fn(bytes, filename);
-    } else {
-      fn(bytes, req.url().fileName());
-    }
-    // delete reply
-    reply->deleteLater();
-  });
-
-  if (progress) {
-    connect(reply, &QNetworkReply::downloadProgress, progress);
-  }
-
-  if(upload){
-    connect(reply, &QNetworkReply::uploadProgress, upload);
-  }
 }
 
 /**上传表单数据
@@ -271,26 +268,27 @@ void NetworkHttp::doRequest(QNetworkRequest &req,
  * @param file
  * @param fn
  */
-void NetworkHttp::PostFormData(const QUrl &url, QFile *file,
-                               const HttpUploadProgressFn &uploadProgress,
-                               Fn<void(const QJsonObject &)> readyRead) {
-  if (url.isEmpty()) {
-    qWarning() << "url is empty!";
-    return;
-  }
+void NetworkHttp::PostFormData(const QUrl& url, QFile* file,
+                               const HttpUploadProgressFn& uploadProgress,
+                               Fn<void(const QJsonObject&)> readyRead) {
+    if (url.isEmpty()) {
+        qWarning() << "url is empty!";
+        return;
+    }
 
-  if (!file) {
-    qWarning() << "file is nullptr!";
-    return;
-  }
+    if (!file) {
+        qWarning() << "file is nullptr!";
+        return;
+    }
 
-  QString contentType = ok::base::Files::GetContentTypeStr(file->fileName());
-  file->open(QIODevice::ReadOnly);
+    QString contentType = ok::base::Files::GetContentTypeStr(file->fileName());
+    file->open(QIODevice::ReadOnly);
 
-  QByteArray byteArray = file->readAll();
-  PostFormData(url, byteArray, ok::base::Files::GetContentTypeStr(file->fileName()), file->fileName(), uploadProgress, readyRead);
+    QByteArray byteArray = file->readAll();
+    PostFormData(url, byteArray, ok::base::Files::GetContentTypeStr(file->fileName()),
+                 file->fileName(), uploadProgress, readyRead);
 }
 
 void NetworkHttp::httpFinished() { qDebug() << "finished."; }
 
-} // namespace network
+}  // namespace network

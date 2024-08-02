@@ -15,7 +15,7 @@
 
 namespace UI {
 
-Page::Page(QWidget *parent) : QFrame(parent) {}
+Page::Page(QWidget* parent) : QFrame(parent) {}
 Page::~Page() {}
 
-} // namespace UI
+}  // namespace UI

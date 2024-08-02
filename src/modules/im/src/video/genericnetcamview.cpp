@@ -13,25 +13,22 @@
 #include "genericnetcamview.h"
 
 #include <QApplication>
-#include <QScreen>
 #include <QBoxLayout>
 #include <QDesktopWidget>
 #include <QKeyEvent>
 #include <QPushButton>
+#include <QScreen>
 #include <QVariant>
 
-namespace
-{
+namespace {
 const auto BTN_STATE_NONE = QVariant("none");
 const auto BTN_STATE_RED = QVariant("red");
 const int BTN_PANEL_HEIGHT = 55;
 const int BTN_PANEL_WIDTH = 250;
 const auto BTN_STYLE_SHEET_PATH = QStringLiteral("chatForm/fullScreenButtons.css");
-}
+}  // namespace
 
-GenericNetCamView::GenericNetCamView(QWidget* parent)
-    : QWidget(parent)
-{
+GenericNetCamView::GenericNetCamView(QWidget* parent) : QWidget(parent) {
     verLayout = new QVBoxLayout(this);
     setWindowTitle(tr("Tox video"));
 
@@ -45,8 +42,10 @@ GenericNetCamView::GenericNetCamView(QWidget* parent)
     buttonLayout->addWidget(toggleMessagesButton);
     buttonLayout->addWidget(enterFullScreenButton);
 
-    connect(toggleMessagesButton, &QPushButton::clicked, this, &GenericNetCamView::showMessageClicked);
-    connect(enterFullScreenButton, &QPushButton::clicked, this, &GenericNetCamView::toggleFullScreen);
+    connect(toggleMessagesButton, &QPushButton::clicked, this,
+            &GenericNetCamView::showMessageClicked);
+    connect(enterFullScreenButton, &QPushButton::clicked, this,
+            &GenericNetCamView::toggleFullScreen);
 
     verLayout->addLayout(buttonLayout);
     verLayout->setContentsMargins(0, 0, 0, 0);
@@ -76,11 +75,13 @@ GenericNetCamView::GenericNetCamView(QWidget* parent)
     exitFullScreenButton = createButton("exitFullScreenButton", "none");
     exitFullScreenButton->setToolTip(tr("Exit full screen"));
 
-    connect(videoPreviewButton, &QPushButton::clicked, this, &GenericNetCamView::toggleVideoPreview);
+    connect(videoPreviewButton, &QPushButton::clicked, this,
+            &GenericNetCamView::toggleVideoPreview);
     connect(volumeButton, &QPushButton::clicked, this, &GenericNetCamView::volMuteToggle);
     connect(microphoneButton, &QPushButton::clicked, this, &GenericNetCamView::micMuteToggle);
     connect(endVideoButton, &QPushButton::clicked, this, &GenericNetCamView::endVideoCall);
-    connect(exitFullScreenButton, &QPushButton::clicked, this, &GenericNetCamView::toggleFullScreen);
+    connect(exitFullScreenButton, &QPushButton::clicked, this,
+            &GenericNetCamView::toggleFullScreen);
 
     buttonPanelLayout->addStretch();
     buttonPanelLayout->addWidget(videoPreviewButton);
@@ -91,8 +92,7 @@ GenericNetCamView::GenericNetCamView(QWidget* parent)
     buttonPanelLayout->addStretch();
 }
 
-QSize GenericNetCamView::getSurfaceMinSize()
-{
+QSize GenericNetCamView::getSurfaceMinSize() {
     QSize surfaceSize = videoSurface->minimumSize();
     QSize buttonSize = toggleMessagesButton->size();
     QSize panelSize(0, 45);
@@ -100,8 +100,7 @@ QSize GenericNetCamView::getSurfaceMinSize()
     return surfaceSize + buttonSize + panelSize;
 }
 
-void GenericNetCamView::setShowMessages(bool show, bool notify)
-{
+void GenericNetCamView::setShowMessages(bool show, bool notify) {
     if (!show) {
         toggleMessagesButton->setText(tr("Hide Messages"));
         toggleMessagesButton->setIcon(QIcon());
@@ -115,8 +114,7 @@ void GenericNetCamView::setShowMessages(bool show, bool notify)
     }
 }
 
-void GenericNetCamView::toggleFullScreen()
-{
+void GenericNetCamView::toggleFullScreen() {
     if (isFullScreen()) {
         exitFullScreen();
     } else {
@@ -124,8 +122,7 @@ void GenericNetCamView::toggleFullScreen()
     }
 }
 
-void GenericNetCamView::enterFullScreen()
-{
+void GenericNetCamView::enterFullScreen() {
     setWindowFlags(Qt::Window | Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
     showFullScreen();
     enterFullScreenButton->hide();
@@ -136,14 +133,14 @@ void GenericNetCamView::enterFullScreen()
     const QRect screenSize = QApplication::desktop()->screenGeometry(this);
 #endif
     buttonPanel->setGeometry((screenSize.width() / 2) - buttonPanel->width() / 2,
-            screenSize.height() - BTN_PANEL_HEIGHT - 25, BTN_PANEL_WIDTH, BTN_PANEL_HEIGHT);
+                             screenSize.height() - BTN_PANEL_HEIGHT - 25, BTN_PANEL_WIDTH,
+                             BTN_PANEL_HEIGHT);
     buttonPanel->show();
     buttonPanel->activateWindow();
     buttonPanel->raise();
 }
 
-void GenericNetCamView::exitFullScreen()
-{
+void GenericNetCamView::exitFullScreen() {
     setWindowFlags(Qt::Widget);
     showNormal();
     buttonPanel->hide();
@@ -151,20 +148,17 @@ void GenericNetCamView::exitFullScreen()
     toggleMessagesButton->show();
 }
 
-void GenericNetCamView::endVideoCall()
-{
+void GenericNetCamView::endVideoCall() {
     toggleFullScreen();
     emit videoCallEnd();
 }
 
-void GenericNetCamView::toggleVideoPreview()
-{
+void GenericNetCamView::toggleVideoPreview() {
     toggleButtonState(videoPreviewButton);
     emit videoPreviewToggle();
 }
 
-QPushButton *GenericNetCamView::createButton(const QString& name, const QString& state)
-{
+QPushButton* GenericNetCamView::createButton(const QString& name, const QString& state) {
     QPushButton* btn = new QPushButton();
     btn->setAttribute(Qt::WA_LayoutUsesWidgetRect);
     btn->setObjectName(name);
@@ -174,18 +168,15 @@ QPushButton *GenericNetCamView::createButton(const QString& name, const QString&
     return btn;
 }
 
-void GenericNetCamView::updateMuteVolButton(bool isMuted)
-{
+void GenericNetCamView::updateMuteVolButton(bool isMuted) {
     updateButtonState(volumeButton, !isMuted);
 }
 
-void GenericNetCamView::updateMuteMicButton(bool isMuted)
-{
+void GenericNetCamView::updateMuteMicButton(bool isMuted) {
     updateButtonState(microphoneButton, !isMuted);
 }
 
-void GenericNetCamView::toggleButtonState(QPushButton* btn)
-{
+void GenericNetCamView::toggleButtonState(QPushButton* btn) {
     if (btn->property("state") == BTN_STATE_RED) {
         btn->setProperty("state", BTN_STATE_NONE);
     } else {
@@ -195,8 +186,7 @@ void GenericNetCamView::toggleButtonState(QPushButton* btn)
     btn->setStyleSheet(Style::getStylesheet(BTN_STYLE_SHEET_PATH));
 }
 
-void GenericNetCamView::updateButtonState(QPushButton* btn, bool active)
-{
+void GenericNetCamView::updateButtonState(QPushButton* btn, bool active) {
     if (active) {
         btn->setProperty("state", BTN_STATE_NONE);
     } else {
@@ -206,16 +196,14 @@ void GenericNetCamView::updateButtonState(QPushButton* btn, bool active)
     btn->setStyleSheet(Style::getStylesheet(BTN_STYLE_SHEET_PATH));
 }
 
-void GenericNetCamView::keyPressEvent(QKeyEvent *event)
-{
+void GenericNetCamView::keyPressEvent(QKeyEvent* event) {
     int key = event->key();
     if (key == Qt::Key_Escape && isFullScreen()) {
         exitFullScreen();
     }
 }
 
-void GenericNetCamView::closeEvent(QCloseEvent *event)
-{
+void GenericNetCamView::closeEvent(QCloseEvent* event) {
     exitFullScreen();
     event->ignore();
 }

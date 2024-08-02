@@ -17,46 +17,43 @@
 
 namespace UI {
 
-
-MoveableBar::MoveableBar(QWidget *parent)
-    : QWidget(parent), _moveable(true), m_target(nullptr) {}
+MoveableBar::MoveableBar(QWidget* parent) : QWidget(parent), _moveable(true), m_target(nullptr) {}
 
 MoveableBar::~MoveableBar() {}
 
-void MoveableBar::mousePressEvent(QMouseEvent *event) {
-  if (_moveable) {
-    m_isPressed = true;
-    m_startMovePos = event->globalPos();
-  }
-  return QWidget::mousePressEvent(event);
-}
-
-void MoveableBar::mouseMoveEvent(QMouseEvent *event) {
-  if (m_isPressed) {
-    QWidget *p = m_target;
-
-    if (!p) {
-      p = this->parentWidget();
+void MoveableBar::mousePressEvent(QMouseEvent* event) {
+    if (_moveable) {
+        m_isPressed = true;
+        m_startMovePos = event->globalPos();
     }
+    return QWidget::mousePressEvent(event);
+}
 
-    if (p) {
-      QPoint movePoint = event->globalPos() - m_startMovePos;
-      QPoint widgetPos = p->pos() + movePoint;
-      m_startMovePos = event->globalPos();
-      p->move(widgetPos.x(), widgetPos.y());
+void MoveableBar::mouseMoveEvent(QMouseEvent* event) {
+    if (m_isPressed) {
+        QWidget* p = m_target;
+
+        if (!p) {
+            p = this->parentWidget();
+        }
+
+        if (p) {
+            QPoint movePoint = event->globalPos() - m_startMovePos;
+            QPoint widgetPos = p->pos() + movePoint;
+            m_startMovePos = event->globalPos();
+            p->move(widgetPos.x(), widgetPos.y());
+        }
     }
-  }
-  return QWidget::mouseMoveEvent(event);
+    return QWidget::mouseMoveEvent(event);
 }
 
-void MoveableBar::mouseReleaseEvent(QMouseEvent *event) {
-  m_isPressed = false;
-  return QWidget::mouseReleaseEvent(event);
+void MoveableBar::mouseReleaseEvent(QMouseEvent* event) {
+    m_isPressed = false;
+    return QWidget::mouseReleaseEvent(event);
 }
 
-void MoveableBar::setTarget(QWidget *target) { m_target = target; }
+void MoveableBar::setTarget(QWidget* target) { m_target = target; }
 
 void MoveableBar::setMoveable(bool moveable) { _moveable = moveable; }
 
-
-} // namespace UI
+}  // namespace UI

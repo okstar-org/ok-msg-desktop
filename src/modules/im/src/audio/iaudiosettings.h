@@ -63,4 +63,4 @@ public:
     DECLARE_SIGNAL(enableTestSoundChanged, bool newValue);
 };
 
-#endif // I_AUDIO_SETTINGS_H
+#endif  // I_AUDIO_SETTINGS_H

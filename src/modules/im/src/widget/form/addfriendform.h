@@ -36,71 +36,69 @@ class AddFriendForm;
 namespace ok::backend {
 class UserService;
 struct OrgStaff;
-} // namespace ok::backend
+}  // namespace ok::backend
 
 namespace ok::session {
 class SignInInfo;
 }
 
 class AddFriendForm : public QWidget {
-  Q_OBJECT
+    Q_OBJECT
 public:
+    AddFriendForm(QWidget* parent);
+    ~AddFriendForm();
 
+    bool isShown() const;
+    void showTo(ContentLayout* contentLayout);
 
-  AddFriendForm(QWidget *parent);
-  ~AddFriendForm();
-
-  bool isShown() const;
-  void showTo(ContentLayout *contentLayout);
-
-
-  bool addFriendRequest(const QString &friendAddress, const QString &message);
+    bool addFriendRequest(const QString& friendAddress, const QString& message);
 
 signals:
-  void friendRequested(const FriendId &friendAddress, const QString &nick, const QString &message);
-  void friendRequestAccepted(const FriendId &friendAddress);
-  void friendRequestRejected(const FriendId &friendAddress);
-  void friendRequestsSeen();
-  void friendReceipts(const QList<ok::backend::OrgStaff *> &qList);
+    void friendRequested(const FriendId& friendAddress, const QString& nick,
+                         const QString& message);
+    void friendRequestAccepted(const FriendId& friendAddress);
+    void friendRequestRejected(const FriendId& friendAddress);
+    void friendRequestsSeen();
+    void friendReceipts(const QList<ok::backend::OrgStaff*>& qList);
 
 public slots:
-  void onUsernameSet(const QString &userName);
+    void onUsernameSet(const QString& userName);
 
 protected:
-  virtual void showEvent(QShowEvent *e) override;
+    virtual void showEvent(QShowEvent* e) override;
 
 private slots:
-  void onSearchTriggered();
-  void onCurrentChanged(int index);
-  void onFriendReceipts(const QList<ok::backend::OrgStaff *> &qList);
+    void onSearchTriggered();
+    void onCurrentChanged(int index);
+    void onFriendReceipts(const QList<ok::backend::OrgStaff*>& qList);
 
 private:
-  void searchFriend(const QString &idText);
-  void addFriend(const QString &idText, const QString &nick);
-  void retranslateUi();
+    void searchFriend(const QString& idText);
+    void addFriend(const QString& idText, const QString& nick);
+    void retranslateUi();
 
-  void setIdFromClipboard();
-  QString getMessage();
+    void setIdFromClipboard();
+    QString getMessage();
 
-  Ui::AddFriendForm *addUi;
+    Ui::AddFriendForm* addUi;
 
-  QLabel messageLabel;
+    QLabel messageLabel;
 
-  QVBoxLayout *friendLayout;
+    QVBoxLayout* friendLayout;
 
-  QPushButton searchButton;
-  QScrollArea friendArea;
+    QPushButton searchButton;
+    QScrollArea friendArea;
 
-  QWidget *main;
+    QWidget* main;
 
-  QString lastUsername;
-  QTabWidget *tabWidget;
-  QVBoxLayout *requestsLayout;
-  QList<QPushButton *> acceptButtons;
-  QList<QPushButton *> rejectButtons;
+    QString lastUsername;
+    QTabWidget* tabWidget;
+    QVBoxLayout* requestsLayout;
+    QList<QPushButton*> acceptButtons;
+    QList<QPushButton*> rejectButtons;
 
-  const ok::session::SignInInfo *signIn;
-  std::unique_ptr<ok::backend::UserService> userService;
+    const ok::session::SignInInfo* signIn;
+    std::unique_ptr<ok::backend::UserService> userService;
 };
 
-#endif // ADDFRIENDFORM_H
+#endif  // ADDFRIENDFORM_H

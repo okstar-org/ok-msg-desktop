@@ -12,26 +12,20 @@
 
 #include "BaseWindow.h"
 
-#include <QDesktopWidget>
 #include <QApplication>
-#include <QPainter>
+#include <QDesktopWidget>
 #include <QFile>
-#include <QStyleOption>
 #include <QGraphicsDropShadowEffect>
+#include <QPainter>
+#include <QStyleOption>
 
 #include <base/utils.h>
 
-BaseWindow::BaseWindow(QWidget *parent) : QWidget(parent)
-{
-	this->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowMinimizeButtonHint);
-	// setAttribute(Qt::WA_TranslucentBackground);
+BaseWindow::BaseWindow(QWidget* parent) : QWidget(parent) {
+    this->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowMinimizeButtonHint);
+    // setAttribute(Qt::WA_TranslucentBackground);
 }
 
-BaseWindow::~BaseWindow()
-{
-}
+BaseWindow::~BaseWindow() {}
 
-void BaseWindow::paintEvent(QPaintEvent *event)
-{
-	return QWidget::paintEvent(event);
-}
+void BaseWindow::paintEvent(QPaintEvent* event) { return QWidget::paintEvent(event); }

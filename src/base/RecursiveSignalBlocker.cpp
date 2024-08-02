@@ -28,22 +28,15 @@ blocker gets destroyed. According to QSignalBlocker, we are also exception safe.
 @brief      Creates a QSignalBlocker recursively on the object and child objects.
 @param[in]  object  the object, which signals should be blocked
 */
-RecursiveSignalBlocker::RecursiveSignalBlocker(QObject* object)
-{
-    recursiveBlock(object);
-}
+RecursiveSignalBlocker::RecursiveSignalBlocker(QObject* object) { recursiveBlock(object); }
 
-RecursiveSignalBlocker::~RecursiveSignalBlocker()
-{
-    qDeleteAll(mBlockers);
-}
+RecursiveSignalBlocker::~RecursiveSignalBlocker() { qDeleteAll(mBlockers); }
 
 /**
 @brief      Recursively blocks all signals of the object.
 @param[in]  object  the object to block
 */
-void RecursiveSignalBlocker::recursiveBlock(QObject* object)
-{
+void RecursiveSignalBlocker::recursiveBlock(QObject* object) {
     mBlockers << new QSignalBlocker(object);
 
     for (QObject* child : object->children()) {

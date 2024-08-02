@@ -30,8 +30,7 @@
 class Friend;
 class ICoreFriendMessageSender;
 
-class OfflineMsgEngine : public QObject
-{
+class OfflineMsgEngine : public QObject {
     Q_OBJECT
 public:
     using CompletionFn = std::function<void()>;
@@ -39,20 +38,18 @@ public:
 
     explicit OfflineMsgEngine(const FriendId* f, ICoreFriendMessageSender* messageSender);
     void addUnsentMessage(Message const& message, CompletionFn completionCallback);
-    void addSentMessage(MsgId receipt, Message const& message,
-                        CompletionFn completionCallback,
+    void addSentMessage(MsgId receipt, Message const& message, CompletionFn completionCallback,
                         ReceiptFn receiptCallback);
     void deliverOfflineMsgs();
 
-    bool isFromThis(const Message &msg);
+    bool isFromThis(const Message& msg);
 
 public slots:
     void removeAllMessages();
     void onReceiptReceived(MsgId receipt);
 
 private:
-    struct OfflineMessage
-    {
+    struct OfflineMessage {
         Message message;
         std::chrono::time_point<std::chrono::steady_clock> authorshipTime;
         CompletionFn completionFn;
@@ -74,4 +71,4 @@ private:
     QVector<OfflineMessage> unsentMessages;
 };
 
-#endif // OFFLINEMSGENGINE_H
+#endif  // OFFLINEMSGENGINE_H

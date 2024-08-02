@@ -11,11 +11,8 @@
  */
 
 #include <QtCore/qsystemdetection.h>
-#include "src/platform/capslock.h"
 #include <windows.h>
+#include "src/platform/capslock.h"
 namespace Platform {
-bool capsLockEnabled()
-{
-    return GetKeyState(VK_CAPITAL) == 1;
-}
-}
+bool capsLockEnabled() { return GetKeyState(VK_CAPITAL) == 1; }
+}  // namespace Platform

@@ -15,11 +15,10 @@
 #ifndef PLATFORM_CAPSLOCK_H
 #define PLATFORM_CAPSLOCK_H
 
-
 namespace Platform {
 bool capsLockEnabled();
 }
 
-#endif // PLATFORM_CAPSLOCK_H
+#endif  // PLATFORM_CAPSLOCK_H
 
-#endif // QTOX_PLATFORM_EXT
+#endif  // QTOX_PLATFORM_EXT

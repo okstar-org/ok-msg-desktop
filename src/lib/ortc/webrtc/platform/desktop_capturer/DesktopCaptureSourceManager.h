@@ -17,33 +17,30 @@
 namespace webrtc {
 class DesktopCapturer;
 class DesktopCaptureOptions;
-} // namespace webrtc
+}  // namespace webrtc
 
 namespace lib::ortc {
 
 enum class DesktopCaptureType {
-	Screen,
-	Window,
+    Screen,
+    Window,
 };
 
 class DesktopCaptureSourceManager {
 public:
-	explicit DesktopCaptureSourceManager(DesktopCaptureType type);
-	~DesktopCaptureSourceManager();
+    explicit DesktopCaptureSourceManager(DesktopCaptureType type);
+    ~DesktopCaptureSourceManager();
 
-	std::vector<DesktopCaptureSource> sources();
+    std::vector<DesktopCaptureSource> sources();
 
 private:
-	static webrtc::DesktopCaptureOptions OptionsForType(
-		DesktopCaptureType type);
-	static std::unique_ptr<webrtc::DesktopCapturer> CreateForType(
-		DesktopCaptureType type);
+    static webrtc::DesktopCaptureOptions OptionsForType(DesktopCaptureType type);
+    static std::unique_ptr<webrtc::DesktopCapturer> CreateForType(DesktopCaptureType type);
 
-	std::unique_ptr<webrtc::DesktopCapturer> _capturer;
-	DesktopCaptureType _type = DesktopCaptureType::Screen;
-
+    std::unique_ptr<webrtc::DesktopCapturer> _capturer;
+    DesktopCaptureType _type = DesktopCaptureType::Screen;
 };
 
-} // namespace lib::ortc
+}  // namespace lib::ortc
 
-#endif // TGCALLS_DESKTOP_CAPTURE_SOURCE_MANAGER_H__
+#endif  // TGCALLS_DESKTOP_CAPTURE_SOURCE_MANAGER_H__

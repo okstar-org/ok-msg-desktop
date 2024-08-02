@@ -1,7 +1,3 @@
 #include "MainLayout.h"
 
-MainLayout::MainLayout(QWidget *parent)
-    : QWidget{parent}
-{
-
-}
+MainLayout::MainLayout(QWidget* parent) : QWidget{parent} {}

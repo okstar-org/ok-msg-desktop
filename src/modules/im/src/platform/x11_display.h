@@ -22,10 +22,10 @@ namespace Platform {
 namespace X11Display {
 Display* lock();
 void unlock();
-}
+}  // namespace X11Display
 
-}
+}  // namespace Platform
 
-#endif // PLATFORM_X11_DISPLAY_H
+#endif  // PLATFORM_X11_DISPLAY_H
 
-#endif // QTOX_PLATFORM_EXT
+#endif  // QTOX_PLATFORM_EXT

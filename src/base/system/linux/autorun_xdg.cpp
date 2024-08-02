@@ -12,48 +12,40 @@
 
 #include "base/autorun.h"
 
-#include "base/r.h"
 #include <QApplication>
 #include <QDir>
 #include <QProcessEnvironment>
+#include "base/r.h"
 
 namespace Platform {
 QString getAutostartDirPath() {
-  QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-  QString config = env.value("XDG_CONFIG_HOME");
-  if (config.isEmpty())
-    config = QDir::homePath() + "/" + ".config";
-  return config + "/autostart";
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+    QString config = env.value("XDG_CONFIG_HOME");
+    if (config.isEmpty()) config = QDir::homePath() + "/" + ".config";
+    return config + "/autostart";
 }
 
-QString getAutostartFilePath(QString dir) {
-  return dir + "/" APPLICATION_NAME + ".desktop";
-}
+QString getAutostartFilePath(QString dir) { return dir + "/" APPLICATION_NAME + ".desktop"; }
 
-inline QString currentCommandLine() {
-  return QApplication::applicationFilePath();
-}
-} // namespace Platform
+inline QString currentCommandLine() { return QApplication::applicationFilePath(); }
+}  // namespace Platform
 
 bool Platform::setAutorun(bool on) {
-  QString dirPath = getAutostartDirPath();
-  QFile desktop(getAutostartFilePath(dirPath));
-  if (on) {
-    if (!QDir().mkpath(dirPath) ||
-        !desktop.open(QFile::WriteOnly | QFile::Truncate))
-      return false;
-    desktop.write("[Desktop Entry]\n");
-    desktop.write("Type=Application\n");
-    desktop.write("Name=" APPLICATION_EXE_NAME "\n");
-    desktop.write("Exec=\"");
-    desktop.write(currentCommandLine().toUtf8());
-    desktop.write("\"\n");
-    desktop.close();
-    return true;
-  } else
-    return desktop.remove();
+    QString dirPath = getAutostartDirPath();
+    QFile desktop(getAutostartFilePath(dirPath));
+    if (on) {
+        if (!QDir().mkpath(dirPath) || !desktop.open(QFile::WriteOnly | QFile::Truncate))
+            return false;
+        desktop.write("[Desktop Entry]\n");
+        desktop.write("Type=Application\n");
+        desktop.write("Name=" APPLICATION_EXE_NAME "\n");
+        desktop.write("Exec=\"");
+        desktop.write(currentCommandLine().toUtf8());
+        desktop.write("\"\n");
+        desktop.close();
+        return true;
+    } else
+        return desktop.remove();
 }
 
-bool Platform::getAutorun() {
-  return QFile(getAutostartFilePath(getAutostartDirPath())).exists();
-}
+bool Platform::getAutorun() { return QFile(getAutostartFilePath(getAutostartDirPath())).exists(); }

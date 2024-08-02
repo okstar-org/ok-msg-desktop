@@ -20,8 +20,7 @@
 
 class VideoFrame;
 
-class VideoSource : public QObject
-{
+class VideoSource : public QObject {
     Q_OBJECT
 
 public:
@@ -30,10 +29,7 @@ public:
     using AtomicIDType = std::atomic_uint_fast64_t;
 
 public:
-    VideoSource()
-        : id(sourceIDs++)
-    {
-    }
+    VideoSource() : id(sourceIDs++) {}
 
     virtual ~VideoSource() = default;
     /**
@@ -65,4 +61,4 @@ private:
     static AtomicIDType sourceIDs;
 };
 
-#endif // VIDEOSOURCE_H
+#endif  // VIDEOSOURCE_H

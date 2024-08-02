@@ -15,11 +15,7 @@
 namespace UI {
 namespace window {
 
-OWindow::OWindow(QWidget *parent, Qt::WindowFlags f):
-    QDialog(parent, f)
-{
+OWindow::OWindow(QWidget* parent, Qt::WindowFlags f) : QDialog(parent, f) {}
 
-}
-
-}
-}
+}  // namespace window
+}  // namespace UI

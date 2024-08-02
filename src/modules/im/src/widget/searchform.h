@@ -13,26 +13,24 @@
 #ifndef SEARCHFORM_H
 #define SEARCHFORM_H
 
-#include <QWidget>
 #include <QLineEdit>
+#include <QWidget>
 #include "searchtypes.h"
 
 class QPushButton;
 class QLabel;
 class SearchSettingsForm;
-namespace SearchFormUI
-{
-    class LineEdit;
+namespace SearchFormUI {
+class LineEdit;
 }
 
-class SearchForm final : public QWidget
-{
+class SearchForm final : public QWidget {
     Q_OBJECT
 public:
     enum class ToolButtonState {
-        Disabled = 0,    // Grey
-        Common = 1,      // Green
-        Active = 2,      // Red
+        Disabled = 0,  // Grey
+        Common = 1,    // Green
+        Active = 2,    // Red
     };
 
     explicit SearchForm(QWidget* parent = nullptr);
@@ -40,7 +38,7 @@ public:
     QString getSearchPhrase() const;
     ParameterSearch getParameterSearch();
     void setFocusEditor();
-    void insertEditor(const QString &text);
+    void insertEditor(const QString& text);
     void reloadTheme();
 
 protected:
@@ -58,7 +56,7 @@ private:
     QPushButton* downButton;
     QPushButton* hideButton;
     QPushButton* startButton;
-    SearchFormUI::LineEdit *searchLine;
+    SearchFormUI::LineEdit* searchLine;
     SearchSettingsForm* settings;
     QLabel* messageLabel;
 
@@ -89,23 +87,21 @@ signals:
     void visibleChanged();
 };
 
-namespace SearchFormUI
-{
+namespace SearchFormUI {
 class LineEdit : public QLineEdit {
     Q_OBJECT
 
-  public:
-    LineEdit(QWidget *parent = nullptr);
+public:
+    LineEdit(QWidget* parent = nullptr);
 
-  protected:
-    virtual void keyPressEvent(QKeyEvent *event) final override;
+protected:
+    virtual void keyPressEvent(QKeyEvent* event) final override;
 
-  signals:
+signals:
     void clickEnter();
     void clickShiftEnter();
     void clickEsc();
 };
-}
+}  // namespace SearchFormUI
 
-
-#endif // SEARCHFORM_H
+#endif  // SEARCHFORM_H

@@ -25,56 +25,30 @@
 /**
  * @brief The default constructor. Creates an empty Tox group ID.
  */
-GroupId::GroupId() : ContactId()
-{
-}
+GroupId::GroupId() : ContactId() {}
 
 /**
  * @brief The copy constructor.
  * @param other GroupId to copy
  */
-GroupId::GroupId(const GroupId& other)
-    : ContactId(other.toString().toUtf8())
-{
-}
+GroupId::GroupId(const GroupId& other) : ContactId(other.toString().toUtf8()) {}
 
-GroupId::GroupId(const QByteArray &rawId)
-    : ContactId(rawId)
-{
+GroupId::GroupId(const QByteArray& rawId) : ContactId(rawId) {}
 
-}
-
-GroupId::GroupId(const QString &rawId):ContactId(rawId)
-{
-
-}
+GroupId::GroupId(const QString& rawId) : ContactId(rawId) {}
 /**
  * @brief Constructs a GroupId from bytes.
  * @param rawId The bytes to construct the GroupId from. The lenght must be exactly
  *              TOX_CONFERENCE_UID_SIZE, else the GroupId will be empty.
  */
-GroupId::GroupId(const ContactId& contactId)
-  : ContactId(contactId)
-{
-
-}
+GroupId::GroupId(const ContactId& contactId) : ContactId(contactId) {}
 
 /**
  * @brief Get size of public id in bytes.
  * @return Size of public id in bytes.
  */
-int GroupId::getSize() const
-{
-    return toString().size();
-}
+int GroupId::getSize() const { return toString().size(); }
 
-bool GroupId::operator==(const GroupId& other) const
-{
-    return ContactId::operator==(other);
-}
+bool GroupId::operator==(const GroupId& other) const { return ContactId::operator==(other); }
 
-bool GroupId::operator<(const GroupId& other) const
-{
-    return toString() < other.toString();
-}
-
+bool GroupId::operator<(const GroupId& other) const { return toString() < other.toString(); }

@@ -20,25 +20,24 @@ namespace ok::backend {
 
 using namespace session;
 
-PassportService::PassportService(const QString& base, QObject *parent)
-    : BaseService(base, parent) {}
+PassportService::PassportService(const QString& base, QObject* parent)
+        : BaseService(base, parent) {}
 
 PassportService::~PassportService() {}
 
-bool PassportService::getAccount(const QString &account,
-                                 Fn<void(Res<SysAccount> &)> fn,
-                                 network::HttpErrorFn err) {
-  QString url = _baseUrl + "/api/open/passport/account/" + account;
-  http->getJSON(
-      QUrl(url),
-      // success
-      [=](QJsonDocument doc) {
-        Res<SysAccount> res(doc);
-        fn(res);
-      },
-      // error
-      err);
-  return true;
+bool PassportService::getAccount(
+        const QString& account, Fn<void(Res<SysAccount>&)> fn, network::HttpErrorFn err) {
+    QString url = _baseUrl + "/api/open/passport/account/" + account;
+    http->getJSON(
+            QUrl(url),
+            // success
+            [=](QJsonDocument doc) {
+                Res<SysAccount> res(doc);
+                fn(res);
+            },
+            // error
+            err);
+    return true;
 }
 
-} // namespace ok::backend
+}  // namespace ok::backend

@@ -15,20 +15,16 @@
 
 #include <QDialog>
 
-
 namespace UI {
 namespace window {
 
-
-class OWindow : public QDialog
-{
+class OWindow : public QDialog {
 public:
-   explicit OWindow(QWidget *parent = nullptr,
-                    Qt::WindowFlags f = Qt::FramelessWindowHint|Qt::WindowSystemMenuHint);
-    virtual ~OWindow() override{}
+    explicit OWindow(QWidget* parent = nullptr,
+                     Qt::WindowFlags f = Qt::FramelessWindowHint | Qt::WindowSystemMenuHint);
+    virtual ~OWindow() override {}
 };
 
-
-}
-}
-#endif // OWINDOW_H
+}  // namespace window
+}  // namespace UI
+#endif  // OWINDOW_H
