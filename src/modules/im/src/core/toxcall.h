@@ -13,17 +13,18 @@
 #ifndef TOXCALL_H
 #define TOXCALL_H
 
+
+#include <cstdint>
+#include <memory>
+
 #include <QMap>
 #include <QMetaObject>
 #include <QtGlobal>
-#include "lib/messenger/IMCall.h"
+
 #include "src/audio/iaudiocontrol.h"
 #include "src/audio/iaudiosink.h"
 #include "src/audio/iaudiosource.h"
 #include "src/core/FriendId.h"
-
-#include <cstdint>
-#include <memory>
 
 class QTimer;
 class AudioFilterer;
@@ -108,9 +109,9 @@ public:
 
     ToxFriendCall& operator=(ToxFriendCall&& other) = delete;
 
-    TOXAV_FRIEND_CALL_STATE getState() const;
+    lib::messenger::CallState getState() const;
 
-    void setState(const TOXAV_FRIEND_CALL_STATE& value);
+    void setState(const lib::messenger::CallState& value);
 
     void playAudioBuffer(const int16_t* data, int samples, unsigned channels, int sampleRate) const;
 
@@ -122,7 +123,7 @@ private slots:
 
 private:
     QMetaObject::Connection audioSinkInvalid;
-    TOXAV_FRIEND_CALL_STATE state{TOXAV_FRIEND_CALL_STATE_NONE};
+    lib::messenger::CallState state{lib::messenger::CallState::NONE};
     std::unique_ptr<IAudioSink> sink = nullptr;
     QString peerId;
 };

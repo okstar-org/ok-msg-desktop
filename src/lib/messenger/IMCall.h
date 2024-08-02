@@ -21,50 +21,6 @@
 #include "IMJingle.h"
 #include "tox/toxav.h"
 
-enum TOXAV_FRIEND_CALL_STATE {
-
-    /**
-     * The empty bit mask. None of the bits specified below are set.
-     */
-    TOXAV_FRIEND_CALL_STATE_NONE = 0,
-
-    /**
-     * Set by the AV core if an error occurred on the remote end or if friend
-     * timed out. This is the final state after which no more state
-     * transitions can occur for the call. This call state will never be triggered
-     * in combination with other call states.
-     */
-    TOXAV_FRIEND_CALL_STATE_ERROR = 1,
-
-    /**
-     * The call has finished. This is the final state after which no more state
-     * transitions can occur for the call. This call state will never be
-     * triggered in combination with other call states.
-     */
-    TOXAV_FRIEND_CALL_STATE_FINISHED = 2,
-
-    /**
-     * The flag that marks that friend is sending audio.
-     */
-    TOXAV_FRIEND_CALL_STATE_SENDING_A = 4,
-
-    /**
-     * The flag that marks that friend is sending video.
-     */
-    TOXAV_FRIEND_CALL_STATE_SENDING_V = 8,
-
-    /**
-     * The flag that marks that friend is receiving audio.
-     */
-    TOXAV_FRIEND_CALL_STATE_ACCEPTING_A = 16,
-
-    /**
-     * The flag that marks that friend is receiving video.
-     */
-    TOXAV_FRIEND_CALL_STATE_ACCEPTING_V = 32,
-
-};
-
 namespace ok::session {
 class AuthSession;
 }
@@ -75,45 +31,6 @@ class OkRTCManager;
 
 namespace lib::messenger {
 
-class CallHandler {
-public:
-    virtual void onCall(const IMPeerId& peerId,  //
-                        const QString& callId,   //
-                        bool audio, bool video) = 0;
-
-    virtual void onCallRetract(const QString& friendId,  //
-                               int state) = 0;
-
-    virtual void onCallAcceptByOther(const QString& callId, const IMPeerId& peerId) = 0;
-
-    virtual void receiveCallStateAccepted(IMPeerId friendId,  //
-                                          QString callId,     //
-                                          bool video) = 0;
-
-    virtual void receiveCallStateRejected(IMPeerId friendId,  //
-                                          QString callId,     //
-                                          bool video) = 0;
-
-    virtual void onHangup(const QString& friendId,  //
-                          TOXAV_FRIEND_CALL_STATE state) = 0;
-
-    virtual void onSelfVideoFrame(uint16_t w, uint16_t h,  //
-                                  const uint8_t* y,        //
-                                  const uint8_t* u,        //
-                                  const uint8_t* v,        //
-                                  int32_t ystride,         //
-                                  int32_t ustride,         //
-                                  int32_t vstride) = 0;
-
-    virtual void onFriendVideoFrame(const QString& friendId,  //
-                                    uint16_t w, uint16_t h,   //
-                                    const uint8_t* y,         //
-                                    const uint8_t* u,         //
-                                    const uint8_t* v,         //
-                                    int32_t ystride,          //
-                                    int32_t ustride,          //
-                                    int32_t vstride) = 0;
-};
 
 class IM;
 class IMJingle;

@@ -21,9 +21,9 @@
 #include <memory>
 #include "IMFile.h"
 
-#include <ok-gloox/bytestreamdatahandler.h>
-#include <ok-gloox/inbandbytestream.h>
-#include <ok-gloox/jid.h>
+#include <bytestreamdatahandler.h>
+#include <inbandbytestream.h>
+#include <jid.h>
 
 class QFile;
 

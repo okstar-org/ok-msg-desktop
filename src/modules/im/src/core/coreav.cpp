@@ -123,12 +123,12 @@ void CoreAV::process() {
 
     assert(QThread::currentThread() == coreavThread.get());
 
-    imCall = std::make_unique<lib::messenger::IMCall>(nullptr);
+    imCall = std::make_unique<lib::messenger::MessengerCall>(core->getMessenger());
     imCall->addCallHandler(this);
 
-    connect(imCall.get(), &lib::messenger::IMCall::receiveFriendVideoFrame, this,
+    connect(imCall.get(), &lib::messenger::MessengerCall::receiveFriendVideoFrame, this,
             &CoreAV::onFriendVideoFrame);
-    connect(imCall.get(), &lib::messenger::IMCall::receiveSelfVideoFrame, this,
+    connect(imCall.get(), &lib::messenger::MessengerCall::receiveSelfVideoFrame, this,
             &CoreAV::onSelfVideoFrame);
 }
 
@@ -302,8 +302,7 @@ bool CoreAV::sendCallAudio(QString callId, const int16_t* pcm, size_t samples, u
 
     ToxFriendCall const& call = *it->second;
 
-    if (call.getMuteMic() || !call.isActive() ||
-        !(call.getState() & TOXAV_FRIEND_CALL_STATE_ACCEPTING_A)) {
+    if (call.getMuteMic() || !call.isActive() || !(call.getState() == lib::messenger::CallState::ACCEPTING_A)) {
         return true;
     }
 
@@ -344,7 +343,7 @@ void CoreAV::sendCallVideo(QString callId, std::shared_ptr<VideoFrame> vframe) {
     ToxFriendCall& call = *it->second;
 
     if (!call.getVideoEnabled() || !call.isActive() ||
-        !(call.getState() & TOXAV_FRIEND_CALL_STATE_ACCEPTING_V)) {
+        !(call.getState() == lib::messenger::CallState::ACCEPTING_V)) {
         return;
     }
 
@@ -531,7 +530,7 @@ void CoreAV::joinGroupCall(const Group& group) {
     ret.first->second->setActive(true);
 
     // TODO 发起群视频
-    imCall->callToGroup(group.getId());
+//    imCall->callToGroup(group.getId());
 }
 
 /**
@@ -711,10 +710,13 @@ void CoreAV::onCall(const lib::messenger::IMPeerId& peerId, const QString& callI
 
     // We don't get a state callback when answering, so fill the state ourselves
     // in advance
-    int state = 0;
-    if (audioCtrl) state |= TOXAV_FRIEND_CALL_STATE_SENDING_A | TOXAV_FRIEND_CALL_STATE_ACCEPTING_A;
-    if (video) state |= TOXAV_FRIEND_CALL_STATE_SENDING_V | TOXAV_FRIEND_CALL_STATE_ACCEPTING_V;
-    it.first->second->setState(static_cast<TOXAV_FRIEND_CALL_STATE>(state));
+//    int state = 0;
+//    if (audioCtrl){
+//        state |= lib::messenger::CallState::SENDING_A | lib::messenger::CallState::ACCEPTING_A;
+//    }
+//    if (video)
+//        state == lib::messenger::CallState::SENDING_V | lib::messenger::CallState::ACCEPTING_V;
+//    it.first->second->setState(static_cast<lib::messenger::CallState>(state));
 
     // Must explicitly unlock, because a deadlock can happen via ChatForm/Audio
     //  locker.unlock();
@@ -762,8 +764,8 @@ void CoreAV::receiveCallStateAccepted(lib::messenger::IMPeerId peerId, QString c
     qDebug() << __func__ << "peerId" << peerId.toString() << "callId:" << callId;
 
     stateCallback(peerId.toFriendId(),  //
-                  video ? TOXAV_FRIEND_CALL_STATE::TOXAV_FRIEND_CALL_STATE_ACCEPTING_V
-                        : TOXAV_FRIEND_CALL_STATE::TOXAV_FRIEND_CALL_STATE_ACCEPTING_A);
+                  video ? lib::messenger::CallState::ACCEPTING_V
+                        : lib::messenger::CallState::ACCEPTING_A);
 
     if (QThread::currentThread() != coreavThread.get()) {
         emit createCallToPeerId(peerId, callId, video);
@@ -779,10 +781,10 @@ void CoreAV::doCreateCallToPeerId(lib::messenger::IMPeerId friendId, QString cal
 void CoreAV::receiveCallStateRejected(lib::messenger::IMPeerId friendId, QString callId,
                                       bool video) {
     qDebug() << __func__ << "peerId:" << friendId.toString() << "callId:" << callId;
-    stateCallback(friendId.toFriendId(), TOXAV_FRIEND_CALL_STATE::TOXAV_FRIEND_CALL_STATE_FINISHED);
+    stateCallback(friendId.toFriendId(), lib::messenger::CallState::FINISHED);
 }
 
-void CoreAV::onHangup(const QString& friendId, TOXAV_FRIEND_CALL_STATE state) {
+void CoreAV::onHangup(const QString& friendId, lib::messenger::CallState state) {
     qDebug() << __func__ << "peerId:" << friendId;
     stateCallback(friendId, state);
 }
@@ -809,7 +811,7 @@ void CoreAV::onSelfVideoFrame(uint16_t w, uint16_t h, const uint8_t* y, const ui
     selfVideoSource->pushFrame(&frame);
 }
 
-void CoreAV::stateCallback(QString friendNum, uint32_t state) {
+void CoreAV::stateCallback(QString friendNum, lib::messenger::CallState state) {
     qDebug() << "stateCallback friend:" << friendNum;
 
     auto friendId = FriendId{friendNum};
@@ -824,31 +826,31 @@ void CoreAV::stateCallback(QString friendNum, uint32_t state) {
     // QWriteLocker locker{&self->callsLock};
 
     ToxFriendCall& call = *it->second;
-    if (state & TOXAV_FRIEND_CALL_STATE_ERROR) {
+    if (state == lib::messenger::CallState::ERROR) {
         qWarning() << "Call with friend" << friendNum << "died of unnatural causes!";
         calls.erase(friendNum);
         emit avEnd(friendId, true);
-    } else if (state & TOXAV_FRIEND_CALL_STATE_FINISHED) {
+    } else if (state == lib::messenger::CallState::FINISHED) {
         qDebug() << "Call with friend" << friendNum << "finished quietly";
         calls.erase(friendNum);
         emit avEnd(friendId);
     } else {
         // If our state was null, we started the call and were still ringing
-        if (!call.getState() && state) {
+        if (call.getState() != state) {
             call.setActive(true);
             bool videoEnabled = call.getVideoEnabled();
-            call.setState(static_cast<TOXAV_FRIEND_CALL_STATE>(state));
+            call.setState(static_cast<lib::messenger::CallState>(state));
             emit avStart(FriendId{friendNum}, videoEnabled);
-        } else if ((call.getState() & TOXAV_FRIEND_CALL_STATE_SENDING_V) &&
-                   !(state & TOXAV_FRIEND_CALL_STATE_SENDING_V)) {
+        } else if ((call.getState() == lib::messenger::CallState::SENDING_V) &&
+                   !(state == lib::messenger::CallState::SENDING_V)) {
             qDebug() << "IMFriend" << friendNum << "stopped sending video";
             if (call.getVideoSource()) {
                 call.getVideoSource()->stopSource();
             }
 
-            call.setState(static_cast<TOXAV_FRIEND_CALL_STATE>(state));
-        } else if (!(call.getState() & TOXAV_FRIEND_CALL_STATE_SENDING_V) &&
-                   (state & TOXAV_FRIEND_CALL_STATE_SENDING_V)) {
+            call.setState(static_cast<lib::messenger::CallState>(state));
+        } else if (!(call.getState() == lib::messenger::CallState::SENDING_V) &&
+                   (state == lib::messenger::CallState::SENDING_V)) {
             // Workaround toxav sometimes firing callbacks for "send last frame" ->
             // "stop sending video" out of orders (even though they were sent in order
             // by the other end). We simply stop the videoSource from emitting
@@ -857,7 +859,7 @@ void CoreAV::stateCallback(QString friendNum, uint32_t state) {
                 call.getVideoSource()->restartSource();
             }
 
-            call.setState(static_cast<TOXAV_FRIEND_CALL_STATE>(state));
+            call.setState(static_cast<lib::messenger::CallState>(state));
         }
     }
 

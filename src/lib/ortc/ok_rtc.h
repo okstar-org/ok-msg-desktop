@@ -12,8 +12,8 @@
 
 #pragma once
 
-#include <ok-gloox/client.h>
-#include <ok-gloox/jinglesession.h>
+#include <client.h>
+#include <jinglesession.h>
 #include <sstream>
 #include <string>
 

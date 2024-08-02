@@ -62,8 +62,8 @@ void IMJingleSession::onAccept() {
         lib::ortc::OkRTCManager::getInstance()->getRtc()->setRemoteDescription(peerId, cav);
 
         //        emit receiveFriendHangup(
-        //            peerId.username, answer.hasVideo() ? TOXAV_FRIEND_CALL_STATE_SENDING_V
-        //                                               : TOXAV_FRIEND_CALL_STATE_SENDING_A);
+        //            peerId.username, answer.hasVideo() ? SENDING_V
+        //                                               : SENDING_A);
     }
 }
 

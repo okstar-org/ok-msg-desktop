@@ -20,7 +20,6 @@
 #include <memory>
 
 #include "base/compatiblerecursivemutex.h"
-#include "lib/messenger/IMCall.h"
 #include "src/core/toxcall.h"
 
 class Friend;
@@ -36,7 +35,6 @@ struct vpx_image;
 
 class CoreAV : public QObject, public lib::messenger::CallHandler {
     Q_OBJECT
-
 public:
     using CoreAVPtr = std::unique_ptr<CoreAV>;
 
@@ -95,7 +93,7 @@ signals:
 private slots:
     void doCreateCallToPeerId(lib::messenger::IMPeerId friendId, QString callId, bool video);
 
-    void stateCallback(QString friendId, uint32_t state);
+    void stateCallback(QString friendId, lib::messenger::CallState state);
 
     void bitrateCallback(QString friendId, uint32_t arate, uint32_t vrate, void* self);
     void audioBitrateCallback(QString friendId, uint32_t rate, void* self);
@@ -149,7 +147,7 @@ private:
     void receiveCallStateRejected(lib::messenger::IMPeerId friendId, QString callId,
                                   bool video) override;
 
-    void onHangup(const QString& friendId, TOXAV_FRIEND_CALL_STATE state) override;
+    void onHangup(const QString& friendId, lib::messenger::CallState state) override;
 
 private:
     static constexpr uint32_t VIDEO_DEFAULT_BITRATE = 2500;
@@ -159,7 +157,7 @@ private:
     // atomic because potentially accessed by different threads
     Core* core;
     std::atomic<IAudioControl*> audioCtrl;
-    std::unique_ptr<lib::messenger::IMCall> imCall;
+    std::unique_ptr<lib::messenger::MessengerCall> imCall;
     std::unique_ptr<QThread> coreavThread;
     QTimer* iterateTimer = nullptr;
 

@@ -77,7 +77,7 @@ public:
     //  CoreAV *getAv();
     CoreFile* getCoreFile() const;
     ~Core();
-    lib::messenger::Messenger* messenger() { return tox.get(); }
+    lib::messenger::Messenger* getMessenger() { return tox.get(); }
     static const QString TOX_EXT;
     static QStringList splitMessage(const QString& message);
     QString getPeerName(const FriendId& id) const;

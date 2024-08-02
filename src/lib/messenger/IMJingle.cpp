@@ -407,8 +407,8 @@ void IMJingle::doSessionInitiate(Jingle::Session* session,
 
     //    _rtcManager->CreateAnswer(stdstring(peerId.toString()), answer);
     //    emit receiveFriendHangup((peerId.username),
-    //                             isVideo ? TOXAV_FRIEND_CALL_STATE_SENDING_V
-    //                                     : TOXAV_FRIEND_CALL_STATE_SENDING_A);
+    //                             isVideo ? SENDING_V
+    //                                     : SENDING_A);
     //  } else {
 
     //    emit receiveFriendCall((peerId.username), qstring(session->sid()), true,
@@ -450,11 +450,11 @@ void IMJingle::doSessionTerminate(Jingle::Session* session,
         </jingle>
         reason busy:正忙 decline：拒绝
      */
-    //  auto state = TOXAV_FRIEND_CALL_STATE_FINISHED;
+    //  auto state = FINISHED;
     //  auto reason = jingle->tag()->findChild("reason");
     //  if (reason) {
     //    if (reason->findChild("busy")) {
-    //      state = TOXAV_FRIEND_CALL_STATE_SENDING_A;
+    //      state = SENDING_A;
     //    }
     //  }
     // rtc

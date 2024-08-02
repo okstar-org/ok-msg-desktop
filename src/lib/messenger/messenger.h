@@ -49,6 +49,7 @@ namespace messenger {
 
 class IM;
 class IMFile;
+class IMCall;
 
 /**
  * 连接状态
@@ -113,6 +114,7 @@ public:
                                        IMGroupOccupant) = 0;
 };
 
+
 /**
  * OkIM模块对外接口
  */
@@ -138,6 +140,11 @@ public:
     IMFile* imFile() const {
         assert(_imFile);
         return _imFile;
+    }
+
+    IMCall* imCall()const{
+        assert(_imCall);
+        return _imCall;
     }
 
     IMPeerId getSelfId() const;
@@ -214,6 +221,7 @@ private:
     IM* _im;
     IMJingle* jingle;
     IMFile* _imFile;
+    IMCall* _imCall;
 
     // key: sId value:Jingle
     //  QMap<QString, lib::messenger::IMJingle*> jingleMap;
@@ -232,7 +240,6 @@ signals:
     void connected();
     void disconnect();
     void incoming(const QString dom);
-
     void receivedGroupMessage(lib::messenger::IMMessage imMsg);  //
     void messageSent(const IMMessage& message);                  //
 
@@ -243,9 +250,224 @@ private slots:
     void onReceiveGroupMessage(lib::messenger::IMMessage imMsg);
     void onDisconnect();
     void onEncryptedMessage(QString dom);
-
     void onGroupReceived(QString groupId, QString name);
 };
+
+class IMCall;
+
+enum class CallState {
+
+    /**
+     * The empty bit mask. None of the bits specified below are set.
+     */
+    NONE = 0,
+
+    /**
+     * Set by the AV core if an error occurred on the remote end or if friend
+     * timed out. This is the final state after which no more state
+     * transitions can occur for the call. This call state will never be triggered
+     * in combination with other call states.
+     */
+    ERROR = 1,
+
+    /**
+     * The call has finished. This is the final state after which no more state
+     * transitions can occur for the call. This call state will never be
+     * triggered in combination with other call states.
+     */
+    FINISHED = 2,
+
+    /**
+     * The flag that marks that friend is sending audio.
+     */
+    SENDING_A = 4,
+
+    /**
+     * The flag that marks that friend is sending video.
+     */
+    SENDING_V = 8,
+
+    /**
+     * The flag that marks that friend is receiving audio.
+     */
+    ACCEPTING_A = 16,
+
+    /**
+     * The flag that marks that friend is receiving video.
+     */
+    ACCEPTING_V = 32,
+
+};
+
+class CallHandler {
+public:
+    virtual void onCall(const IMPeerId& peerId,  //
+                        const QString& callId,   //
+                        bool audio, bool video) = 0;
+
+    virtual void onCallRetract(const QString& friendId,  //
+                               int state) = 0;
+
+    virtual void onCallAcceptByOther(const QString& callId, const IMPeerId& peerId) = 0;
+
+    virtual void receiveCallStateAccepted(IMPeerId friendId,  //
+                                          QString callId,     //
+                                          bool video) = 0;
+
+    virtual void receiveCallStateRejected(IMPeerId friendId,  //
+                                          QString callId,     //
+                                          bool video) = 0;
+
+    virtual void onHangup(const QString& friendId,  //
+                          CallState state) = 0;
+
+    virtual void onSelfVideoFrame(uint16_t w, uint16_t h,  //
+                                  const uint8_t* y,        //
+                                  const uint8_t* u,        //
+                                  const uint8_t* v,        //
+                                  int32_t ystride,         //
+                                  int32_t ustride,         //
+                                  int32_t vstride) = 0;
+
+    virtual void onFriendVideoFrame(const QString& friendId,  //
+                                    uint16_t w, uint16_t h,   //
+                                    const uint8_t* y,         //
+                                    const uint8_t* u,         //
+                                    const uint8_t* v,         //
+                                    int32_t ystride,          //
+                                    int32_t ustride,          //
+                                    int32_t vstride) = 0;
+};
+
+class MessengerCall : public QObject{
+    Q_OBJECT
+public:
+    MessengerCall(Messenger *messenger, QObject* parent = nullptr);
+    void addCallHandler(CallHandler*);
+
+    // 发起呼叫邀请
+    bool callToFriend(const QString& f, const QString& sId, bool video);
+    // 创建呼叫
+    bool callToPeerId(const IMPeerId& to, const QString& sId, bool video);
+    // 应答呼叫
+    bool callAnswerToFriend(const IMPeerId& peer, const QString& callId, bool video);
+    // 取消呼叫
+    void callRetract(const IMContactId& f, const QString& sId);
+    // 拒绝呼叫
+    void callReject(const IMPeerId& f, const QString& sId);
+
+    // 静音功能
+    void setMute(bool mute);
+    void setRemoteMute(bool mute);
+
+private:
+    IMCall* call;
+
+    signals:
+        void receiveSelfVideoFrame(uint16_t w, uint16_t h,  //
+                                   const uint8_t* y,        //
+                                   const uint8_t* u,        //
+                                   const uint8_t* v,        //
+                                   int32_t ystride,         //
+                                   int32_t ustride,         //
+                                   int32_t vstride);
+
+        void receiveFriendVideoFrame(const QString& friendId,  //
+                                     uint16_t w, uint16_t h,   //
+                                     const uint8_t* y,         //
+                                     const uint8_t* u,         //
+                                     const uint8_t* v,         //
+                                     int32_t ystride,          //
+                                     int32_t ustride,          //
+                                     int32_t vstride);
+};
+
+// 不要修改顺序和值
+enum class FileStatus {
+    INITIALIZING = 0,
+    PAUSED = 1,
+    TRANSMITTING = 2,
+    BROKEN = 3,
+    CANCELED = 4,
+    FINISHED = 5,
+};
+
+// 不要修改顺序和值
+enum class FileDirection {
+    SENDING = 0,
+    RECEIVING = 1,
+};
+
+enum class FileControl { RESUME, PAUSE, CANCEL };
+
+struct FileTxIBB {
+    QString sid;
+    int blockSize;
+};
+
+struct File {
+public:
+    // id(file id = ibb id) 和 sId(session id)
+    QString id;
+    QString sId;
+    QString name;
+    QString path;
+    quint64 size;
+    FileStatus status;
+    FileDirection direction;
+    FileTxIBB txIbb;
+    [[__nodiscard__]] QString toString() const;
+    friend QDebug& operator<<(QDebug& debug, const File& f);
+};
+
+class FileHandler {
+public:
+    virtual void onFileRequest(const QString& friendId, const File& file) = 0;
+    virtual void onFileRecvChunk(const QString& friendId, const QString& fileId, int seq,
+                                 const std::string& chunk) = 0;
+    virtual void onFileRecvFinished(const QString& friendId, const QString& fileId) = 0;
+    virtual void onFileSendInfo(const QString& friendId, const File& file, int m_seq,
+                                int m_sentBytes, bool end) = 0;
+    virtual void onFileSendAbort(const QString& friendId, const File& file, int m_sentBytes) = 0;
+    virtual void onFileSendError(const QString& friendId, const File& file, int m_sentBytes) = 0;
+};
+
+class MessengerFile : public QObject{
+    Q_OBJECT
+public:
+    MessengerFile(Messenger *messenger, QObject* parent = nullptr);
+
+    void addFileHandler(FileHandler*);
+
+    /**
+     * File
+     */
+    void fileRejectRequest(QString friendId, const File& file);
+    void fileAcceptRequest(QString friendId, const File& file);
+    void fileFinishRequest(QString friendId, const QString& sId);
+    void fileFinishTransfer(QString friendId, const QString& sId);
+    void fileCancel(QString fileId);
+    bool fileSendToFriend(const QString& f, const File& file);
+
+//    /**
+//     * 启动文件发送任务
+//     * @param session
+//     * @param file
+//     */
+//    void doStartFileSendTask(const Jingle::Session* session, const File& file);
+//
+//    /**
+//     * 停止文件发送任务
+//     * @param session
+//     * @param file
+//     */
+//    void doStopFileSendTask(const Jingle::Session* session, const File& file);
+
+private:
+    IMFile *fileSender;
+
+};
+
 
 }  // namespace messenger
 }  // namespace lib

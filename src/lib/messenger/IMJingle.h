@@ -17,15 +17,15 @@
 #include <list>
 #include <map>
 
-#include <ok-gloox/client.h>
-#include <ok-gloox/jinglesession.h>
-#include <ok-gloox/jinglesessionhandler.h>
-#include <ok-gloox/jinglesessionmanager.h>
+#include <client.h>
+#include <jinglesession.h>
+#include <jinglesessionhandler.h>
+#include <jinglesessionmanager.h>
 
-#include <ok-gloox/error.h>
-#include <ok-gloox/inbandbytestream.h>
-#include <ok-gloox/messagesessionhandler.h>
-#include <ok-gloox/presencehandler.h>
+#include <error.h>
+#include <inbandbytestream.h>
+#include <messagesessionhandler.h>
+#include <presencehandler.h>
 
 #include "IMConference.h"
 #include "IMJingleSession.h"

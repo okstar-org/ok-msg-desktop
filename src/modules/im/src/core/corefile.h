@@ -29,7 +29,6 @@
 #include <cstdint>
 #include <memory>
 
-#include "lib/messenger/IMFile.h"
 #include "lib/messenger/messenger.h"
 
 class CoreFile;
@@ -123,6 +122,7 @@ private slots:
 private:
     QHash<QString, ToxFile> fileMap;
     lib::messenger::Messenger* messenger;
+    lib::messenger::MessengerFile* messengerFile;
     CompatibleRecursiveMutex* coreLoopLock = nullptr;
 };
 

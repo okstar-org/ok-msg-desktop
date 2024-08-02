@@ -22,7 +22,7 @@
 #include "base/compatiblerecursivemutex.h"
 #include "base/uuid.h"
 #include "core.h"
-#include "lib/messenger/IMFile.h"
+
 #include "src/model/status.h"
 #include "src/model/toxclientstandards.h"
 #include "src/persistence/settings.h"
@@ -99,7 +99,7 @@ void CoreFile::sendFile(
 
     addFile(file);
     qDebug() << "The file info is:" << file.toString();
-    bool y = messenger->imFile()->fileSendToFriend(friendId, file.toIMFile());
+    bool y = messengerFile->fileSendToFriend(friendId, file.toIMFile());
     if (!y) {
         qWarning() << "sendFile: Sending file is failed.";
         emit fileSendFailed(friendId, filename);
@@ -157,7 +157,7 @@ void CoreFile::cancelFileSend(QString friendId, QString fileId) {
     }
 
     file->status = FileStatus::CANCELED;
-    messenger->imFile()->fileCancel(file->fileId);
+    messengerFile->fileCancel(file->fileId);
 
     emit fileTransferCancelled(*file);
     removeFile(fileId);
@@ -172,7 +172,7 @@ void CoreFile::cancelFileRecv(QString friendId, QString fileId) {
         return;
     }
     file->status = FileStatus::CANCELED;
-    messenger->imFile()->fileRejectRequest(friendId, file->toIMFile());
+    messengerFile->fileRejectRequest(friendId, file->toIMFile());
     emit fileTransferCancelled(*file);
     removeFile(fileId);
 }
@@ -186,7 +186,7 @@ void CoreFile::rejectFileRecvRequest(QString friendId, QString fileId) {
         return;
     }
     file->status = FileStatus::CANCELED;
-    messenger->imFile()->fileRejectRequest(friendId, file->toIMFile());
+    messengerFile->fileRejectRequest(friendId, file->toIMFile());
     emit fileTransferCancelled(*file);
     removeFile(fileId);
 }
@@ -207,7 +207,7 @@ void CoreFile::acceptFileRecvRequest(QString friendId, QString fileId, QString p
         return;
     }
     file->status = FileStatus::TRANSMITTING;
-    messenger->imFile()->fileAcceptRequest(friendId, file->toIMFile());
+    messengerFile->fileAcceptRequest(friendId, file->toIMFile());
     emit fileTransferAccepted(*file);
 }
 
@@ -566,7 +566,7 @@ void CoreFile::onFileRecvChunk(const QString& friendId, const QString& fileId, i
         emit fileTransferCancelled(*file);
 
         //    取消传输
-        messenger->imFile()->fileCancel(fileId);
+        messengerFile->fileCancel(fileId);
         removeFile(fileId);
         return;
     }
@@ -588,7 +588,7 @@ void CoreFile::onFileRecvFinished(const QString& friendId, const QString& fileId
 
     file->status = FileStatus::FINISHED;
 
-    messenger->imFile()->fileFinishTransfer(friendId, file->sId);
+    messengerFile->fileFinishTransfer(friendId, file->sId);
 
     emit fileTransferFinished(*file);
     emit fileDownloadFinished(file->filePath);

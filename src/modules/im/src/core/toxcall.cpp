@@ -36,7 +36,7 @@
  * @var bool ToxFriendCall::nullVideoBitrate
  * @brief True if our video bitrate is zero, i.e. if the device is closed.
  *
- * @var TOXAV_FRIEND_CALL_STATE ToxFriendCall::state
+ * @var CallState ToxFriendCall::state
  * @brief State of the peer (not ours!)
  *
  * @var QMap ToxGroupCall::peers
@@ -143,9 +143,9 @@ void ToxFriendCall::onAudioSinkInvalidated() {
     sink = std::move(newSink);
 }
 
-TOXAV_FRIEND_CALL_STATE ToxFriendCall::getState() const { return state; }
+lib::messenger::CallState ToxFriendCall::getState() const { return state; }
 
-void ToxFriendCall::setState(const TOXAV_FRIEND_CALL_STATE& value) { state = value; }
+void ToxFriendCall::setState(const lib::messenger::CallState& value) { state = value; }
 
 void ToxFriendCall::playAudioBuffer(const int16_t* data, int samples, unsigned channels,
                                     int sampleRate) const {

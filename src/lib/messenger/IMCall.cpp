@@ -69,13 +69,13 @@ void IMCall::connectJingle(IMJingle* _jingle) {
 
     connect(_jingle, &IMCall::receiveFriendHangup, this, [&](QString friendId, int state) {
         for (auto handler : callHandlers) {
-            handler->onHangup(friendId, (TOXAV_FRIEND_CALL_STATE)state);
+            handler->onHangup(friendId, (CallState)state);
         }
     });
 
     connect(_jingle, &IMCall::receiveFriendHangup, this, [&](QString friendId, int state) {
         for (auto handler : callHandlers) {
-            handler->onHangup(friendId, (TOXAV_FRIEND_CALL_STATE)state);
+            handler->onHangup(friendId, (CallState)state);
         }
     });
 

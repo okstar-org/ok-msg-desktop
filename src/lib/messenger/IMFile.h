@@ -26,56 +26,6 @@ namespace lib::messenger {
 class IMFileTask;
 class IM;
 
-// 不要修改顺序和值
-enum class FileStatus {
-    INITIALIZING = 0,
-    PAUSED = 1,
-    TRANSMITTING = 2,
-    BROKEN = 3,
-    CANCELED = 4,
-    FINISHED = 5,
-};
-
-// 不要修改顺序和值
-enum class FileDirection {
-    SENDING = 0,
-    RECEIVING = 1,
-};
-
-enum class FileControl { RESUME, PAUSE, CANCEL };
-
-struct FileTxIBB {
-    QString sid;
-    int blockSize;
-};
-
-struct File {
-public:
-    // id(file id = ibb id) 和 sId(session id)
-    QString id;
-    QString sId;
-    QString name;
-    QString path;
-    quint64 size;
-    FileStatus status;
-    FileDirection direction;
-    FileTxIBB txIbb;
-    [[__nodiscard__]] QString toString() const;
-    friend QDebug& operator<<(QDebug& debug, const File& f);
-};
-
-class FileHandler {
-public:
-    virtual void onFileRequest(const QString& friendId, const File& file) = 0;
-    virtual void onFileRecvChunk(const QString& friendId, const QString& fileId, int seq,
-                                 const std::string& chunk) = 0;
-    virtual void onFileRecvFinished(const QString& friendId, const QString& fileId) = 0;
-    virtual void onFileSendInfo(const QString& friendId, const File& file, int m_seq,
-                                int m_sentBytes, bool end) = 0;
-    virtual void onFileSendAbort(const QString& friendId, const File& file, int m_sentBytes) = 0;
-    virtual void onFileSendError(const QString& friendId, const File& file, int m_sentBytes) = 0;
-};
-
 class IMFile : public IMJingle {
     Q_OBJECT
 public:

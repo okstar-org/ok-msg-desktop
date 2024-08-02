@@ -295,12 +295,12 @@
 // *
 // ******************************************************************************/
 
-// enum TOXAV_FRIEND_CALL_STATE {
+// enum CallState {
 
 //  /**
 //   * The empty bit mask. None of the bits specified below are set.
 //   */
-//  TOXAV_FRIEND_CALL_STATE_NONE = 0,
+//  NONE = 0,
 
 //  /**
 //   * Set by the AV core if an error occurred on the remote end or if friend
@@ -308,34 +308,34 @@
 //   * transitions can occur for the call. This call state will never be triggered
 //   * in combination with other call states.
 //   */
-//  TOXAV_FRIEND_CALL_STATE_ERROR = 1,
+//  ERROR = 1,
 
 //  /**
 //   * The call has finished. This is the final state after which no more state
 //   * transitions can occur for the call. This call state will never be
 //   * triggered in combination with other call states.
 //   */
-//  TOXAV_FRIEND_CALL_STATE_FINISHED = 2,
+//  FINISHED = 2,
 
 //  /**
 //   * The flag that marks that friend is sending audio.
 //   */
-//  TOXAV_FRIEND_CALL_STATE_SENDING_A = 4,
+//  SENDING_A = 4,
 
 //  /**
 //   * The flag that marks that friend is sending video.
 //   */
-//  TOXAV_FRIEND_CALL_STATE_SENDING_V = 8,
+//  SENDING_V = 8,
 
 //  /**
 //   * The flag that marks that friend is receiving audio.
 //   */
-//  TOXAV_FRIEND_CALL_STATE_ACCEPTING_A = 16,
+//  ACCEPTING_A = 16,
 
 //  /**
 //   * The flag that marks that friend is receiving video.
 //   */
-//  TOXAV_FRIEND_CALL_STATE_ACCEPTING_V = 32,
+//  ACCEPTING_V = 32,
 
 //};
 

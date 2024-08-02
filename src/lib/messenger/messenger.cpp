@@ -23,6 +23,7 @@
 #include "lib/messenger/IM.h"
 #include "lib/messenger/IMConference.h"
 #include "lib/messenger/IMFile.h"
+#include "lib/messenger/IMCall.h"
 #include "lib/plugin/pluginmanager.h"
 
 namespace lib {
@@ -457,6 +458,61 @@ void Messenger::onGroupReceived(QString groupId, QString name) {
     for (auto handler : groupHandlers) {
         handler->onGroup(groupId, name);
     }
+}
+
+//Call
+MessengerCall::MessengerCall(Messenger* messenger, QObject* parent) {
+    call = messenger->imCall();
+}
+
+void MessengerCall::addCallHandler(CallHandler* h) {
+    call->addCallHandler(h);
+}
+bool MessengerCall::callToFriend(const QString& f, const QString& sId, bool video) {
+    return call->callToFriend(f, sId, video);
+}
+bool MessengerCall::callToPeerId(const IMPeerId& to, const QString& sId, bool video) {
+    return call->callToPeerId(to, sId,video);
+}
+bool MessengerCall::callAnswerToFriend(const IMPeerId& peer, const QString& callId, bool video) {
+    return call->callAnswerToFriend(peer, callId, video);
+}
+void MessengerCall::callRetract(const IMContactId& f, const QString& sId) {
+    call->callRetract(f, sId);
+}
+void MessengerCall::callReject(const IMPeerId& f, const QString& sId) {
+    call->callReject(f, sId);
+}
+void MessengerCall::setMute(bool mute) {
+    call->setMute(mute);
+}
+void MessengerCall::setRemoteMute(bool mute) {
+    call->setRemoteMute(mute);
+}
+
+//File
+
+MessengerFile::MessengerFile(Messenger* messenger, QObject* parent) : QObject(parent){
+    fileSender = messenger->imFile();
+}
+
+void MessengerFile::fileRejectRequest(QString friendId, const File& file) {
+    fileSender->fileRejectRequest(friendId, file);
+}
+void MessengerFile::fileAcceptRequest(QString friendId, const File& file) {
+    fileSender->fileAcceptRequest(friendId, file);
+}
+void MessengerFile::fileFinishRequest(QString friendId, const QString& sId) {
+    fileSender->fileFinishRequest(friendId, sId);
+}
+void MessengerFile::fileFinishTransfer(QString friendId, const QString& sId) {
+    fileSender->fileFinishTransfer(friendId, sId);
+}
+void MessengerFile::fileCancel(QString fileId) {
+    fileSender->fileCancel(fileId);
+}
+bool MessengerFile::fileSendToFriend(const QString& f, const File& file) {
+    return fileSender->fileSendToFriend(f, file);
 }
 
 }  // namespace messenger

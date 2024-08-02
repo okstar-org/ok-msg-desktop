@@ -16,7 +16,7 @@
 #include <QFile>
 #include <QRegularExpression>
 #include "FriendId.h"
-#include "lib/messenger/IMFile.h"
+
 
 FileInfo::FileInfo(const QString& sId,
                    const QString& id,
