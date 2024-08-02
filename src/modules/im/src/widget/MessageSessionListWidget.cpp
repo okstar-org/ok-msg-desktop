@@ -756,13 +756,14 @@ void MessageSessionListWidget::setFriendName(const FriendId &friendPk,  const QS
 void MessageSessionListWidget::setFriendAvatar(const FriendId &friendPk, const QByteArray &avatar) {
   auto fw = getMessageSession(friendPk.toString());
   if (!fw) {
-    qWarning() << "friend is no exist.";
+    qWarning() << "message session is no exist.";
     return;
   }
 
   QPixmap p;
   p.loadFromData(avatar);
   fw->setAvatar(p);
+
 }
 
 void MessageSessionListWidget::setFriendTyping(const ContactId &f, bool isTyping) {

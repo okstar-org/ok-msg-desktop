@@ -171,7 +171,8 @@ void ChatWidget::connectToCore(Core *core_) {
   connect(core_, &Core::statusSet, this, &ChatWidget::onStatusSet);
   connect(core_, &Core::statusMessageSet, this, &ChatWidget::onStatusMessageSet);
   connect(core_, &Core::messageSessionReceived, this, &ChatWidget::onMessageSessionReceived);
-  connect(core_, &Core::friendUsernameChanged, this, &ChatWidget::onFriendNicknameChanged);
+  connect(core_, &Core::friendUsernameChanged, this, &ChatWidget::onFriendNickChanged);
+  connect(core_, &Core::friendAvatarChanged, this, &ChatWidget::onFriendAvatarChanged);
   connect(core_, &Core::friendMessageReceived, this, &ChatWidget::onFriendMessageReceived);
   connect(core_, &Core::friendStatusChanged, this, &ChatWidget::onFriendStatusChanged);
   connect(core_, &Core::friendStatusMessageChanged, this, &ChatWidget::onFriendStatusMessageChanged);
@@ -855,6 +856,9 @@ void ChatWidget::onAvEnd(const FriendId &friendId, bool error) {
   //  hideNetcam();
 }
 
-void ChatWidget::onFriendNicknameChanged(const FriendId &friendPk, const QString &nickname) {
+void ChatWidget::onFriendNickChanged(const FriendId &friendPk, const QString &nickname) {
   sessionListWidget->setFriendName(friendPk, nickname);
+}
+void ChatWidget::onFriendAvatarChanged(const FriendId &friendPk, const QByteArray &avatar) {
+  sessionListWidget->setFriendAvatar(friendPk, avatar);
 }

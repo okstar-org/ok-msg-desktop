@@ -214,7 +214,7 @@ bool Messenger::connectIM( ) {
   connect(_im, &IM::receiveNicknameChange, this,
           [&](QString friendId, QString nickname) {
             for (auto handler : friendHandlers) {
-              handler->onFriendNameChanged(friendId, nickname);
+              handler->onFriendNickChanged(friendId, nickname);
             }
           });
 

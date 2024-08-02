@@ -381,9 +381,9 @@ void Core::onFriendChatState(QString friendId, int state) {
   emit friendTypingChanged(getFriendPublicKey(friendId), state == 2);
 }
 
-void Core::onFriendNameChanged(QString friendId, QString name) {
-  qDebug() << __func__ << friendId << name;
-  emit friendUsernameChanged(getFriendPublicKey(friendId), name);
+void Core::onFriendNickChanged(QString friendId, QString nick) {
+  qDebug() << __func__ << friendId << nick;
+  emit friendUsernameChanged(getFriendPublicKey(friendId), nick);
 }
 
 void Core::onFriendAvatarChanged(const QString friendId, const std::string avatar) {

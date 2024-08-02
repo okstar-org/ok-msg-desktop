@@ -282,7 +282,7 @@ private:
 
   virtual void onFriendChatState(QString friendId, int state) override;
 
-  virtual void onFriendNameChanged(QString friendId, QString name) override;
+  virtual void onFriendNickChanged(QString friendId, QString nick) override;
 
   virtual void onFriendAvatarChanged(const QString friendId, const std::string avatar) override;
 

@@ -69,7 +69,7 @@ public:
     void setActive(bool active);
     virtual void onActiveSet(bool active) = 0;
 
-    void setAvatar(const QPixmap& pic);
+    virtual void setAvatar(const QPixmap& pic);
     void clearAvatar();
     void setDefaultAvatar();
 

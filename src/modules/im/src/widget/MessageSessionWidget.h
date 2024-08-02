@@ -50,11 +50,12 @@ class MessageSessionWidget : public GenericChatroomWidget
     void contextMenuEvent(QContextMenuEvent* event) override final;
     void setAsActiveChatroom() override final;
     void setAsInactiveChatroom() override final;
-
+    void setAvatar(const QPixmap& avatar) override final;
     void setStatus(Status::Status status, bool event);
     void setStatusMsg(const QString& msg) ;
     void setTyping(bool typing);
     void setName(const QString& name);
+
     void resetEventFlags() override final;
     QString getStatusString() const override final;
 

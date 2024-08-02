@@ -134,7 +134,8 @@ public slots:
   void onUsernameSet(const QString& username);
   void onStatusMessageSet(const QString &statusMessage) ;
 
-  void onFriendNicknameChanged(const FriendId &friendPk, const QString &nickname);
+  void onFriendNickChanged(const FriendId &friendPk, const QString &nickname);
+  void onFriendAvatarChanged(const FriendId &friendPk, const QByteArray &avatar);
   void onFriendAdded(const Friend* f);
   void onFriendRemoved(const Friend* f);
   void doSendMessage(const QString &to, bool isGroup);

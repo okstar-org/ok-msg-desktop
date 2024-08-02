@@ -72,7 +72,7 @@ public:
   virtual void onFriendStatus(QString friendId, IMStatus status) = 0;
   virtual void onFriendMessage(QString friendId, IMMessage message) = 0;
   virtual void onMessageSession(QString contactId, QString sid) = 0;
-  virtual void onFriendNameChanged(QString friendId, QString name) = 0;
+  virtual void onFriendNickChanged(QString friendId, QString name) = 0;
   virtual void onFriendAvatarChanged(const QString friendId, const std::string avatar) = 0;
 
   virtual void onFriendAliasChanged(const IMContactId &fId, const QString &alias) = 0;

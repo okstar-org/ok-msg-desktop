@@ -460,9 +460,7 @@ void MessageSessionWidget::setFriend(const Friend *f) {
   }
 
   connect(f, &Friend::displayedNameChanged, this, [&](const QString &name) { setName(name); });
-
   connect(f, &Friend::statusChanged, this, [this](Status::Status status, bool event) { setStatus(status, event); });
-
   connect(f, &Friend::avatarChanged, this, [this](const QPixmap &avatar) { setAvatar(avatar); });
 
   setContact(*f);
@@ -860,6 +858,11 @@ void MessageSessionWidget::setTyping(bool typing) {
 }
 
 void MessageSessionWidget::setName(const QString &name) {
-  qDebug() << __func__ << name;
   GenericChatroomWidget::setName(name);
+  sendWorker->getHeader()->setName(name);
+}
+
+void MessageSessionWidget::setAvatar(const QPixmap &avatar) {
+  GenericChatroomWidget::setAvatar(avatar);
+  sendWorker->getHeader()->setAvatar(avatar);
 }

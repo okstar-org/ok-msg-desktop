@@ -52,7 +52,7 @@ public slots:
 
   void onCoreChanged(Core *core);
   void onFriendAdded(const FriendInfo &frnd);
-  void onFriendUsernameChanged(const FriendId &friendPk, const QString &username);
+  void onFriendNickChanged(const FriendId &friendPk, const QString &nick);
 
   void onFriendStatusChanged(const FriendId &friendPk, Status::Status status);
   void onFriendStatusMessageChanged(const FriendId &friendPk,
