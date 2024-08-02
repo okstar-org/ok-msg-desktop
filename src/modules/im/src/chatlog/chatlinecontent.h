@@ -15,14 +15,12 @@
 
 #include <QGraphicsItem>
 
-class ChatLineContent : public QObject, public QGraphicsItem
-{
+class ChatLineContent : public QObject, public QGraphicsItem {
     Q_OBJECT
     Q_INTERFACES(QGraphicsItem)
 
 public:
-    enum GraphicsItemType
-    {
+    enum GraphicsItemType {
         ChatLineContentType = QGraphicsItem::UserType + 1,
     };
 
@@ -48,7 +46,8 @@ public:
     virtual qreal getAscent() const;
 
     virtual QRectF boundingRect() const = 0;
-    virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) = 0;
+    virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
+                       QWidget* widget) = 0;
 
     virtual void visibilityChanged(bool visible);
     virtual void reloadTheme();
@@ -62,4 +61,4 @@ private:
     int col = -1;
 };
 
-#endif // CHATLINECONTENT_H
+#endif  // CHATLINECONTENT_H

@@ -10,7 +10,6 @@
  * See the Mulan PubL v2 for more details.
  */
 
-
 #ifndef IPC_H
 #define IPC_H
 
@@ -25,8 +24,7 @@ using IPCEventHandler = std::function<bool(const QByteArray&)>;
 
 #define IPC_PROTOCOL_VERSION "2"
 
-class IPC : public QObject
-{
+class IPC : public QObject {
     Q_OBJECT
 
 protected:
@@ -39,8 +37,7 @@ public:
     IPC(uint32_t profileId);
     ~IPC();
 
-    struct IPCEvent
-    {
+    struct IPCEvent {
         uint32_t dest;
         int32_t sender;
         char name[16];
@@ -52,8 +49,7 @@ public:
         bool global;
     };
 
-    struct IPCMemory
-    {
+    struct IPCMemory {
         uint64_t globalId;
         time_t lastEvent;
         time_t lastProcessed;
@@ -85,4 +81,4 @@ private:
     QMap<QString, IPCEventHandler> eventHandlers;
 };
 
-#endif // IPC_H
+#endif  // IPC_H

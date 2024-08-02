@@ -12,10 +12,10 @@
 #ifndef V4L2_H
 #define V4L2_H
 
-#include "src/video/videomode.h"
 #include <QPair>
 #include <QString>
 #include <QVector>
+#include "src/video/videomode.h"
 
 #if !(defined(Q_OS_LINUX) || defined(Q_OS_FREEBSD))
 #error "This file is only meant to be compiled for Linux or FreeBSD targets"
@@ -26,6 +26,6 @@ QVector<VideoMode> getDeviceModes(QString devName);
 QVector<QPair<QString, QString>> getDeviceList();
 QString getPixelFormatString(uint32_t pixel_format);
 bool betterPixelFormat(uint32_t a, uint32_t b);
-}
+}  // namespace v4l2
 
-#endif // V4L2_H
+#endif  // V4L2_H

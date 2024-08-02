@@ -12,7 +12,6 @@
  */
 #pragma once
 
-#include "basic_types.h"
 #include <QDateTime>
 #include <QDebug>
 #include <QFile>
@@ -23,6 +22,7 @@
 #include <QThread>
 #include <QtGlobal>
 #include <memory>
+#include "basic_types.h"
 
 #ifndef __FILE_NAME__
 #define __FILE_NAME__ (strrchr("/" __FILE__, '/') + 1)
@@ -35,10 +35,8 @@ namespace Logs {
 #define L_WARN "W"
 #define L_ERROR "E"
 
-void writeDebug(const char *file, int line, const char *func,
-                const QString &str);
+void writeDebug(const char* file, int line, const char* func, const QString& str);
 
-void writeDebug(const char *file, int line, const char *func,
-                const std::string &str);
+void writeDebug(const char* file, int line, const char* func, const std::string& str);
 
-} // namespace Logs
+}  // namespace Logs

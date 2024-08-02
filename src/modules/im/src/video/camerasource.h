@@ -13,20 +13,19 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include "src/video/videomode.h"
-#include "src/video/videosource.h"
 #include <QFuture>
 #include <QHash>
 #include <QReadWriteLock>
 #include <QString>
 #include <QVector>
 #include <atomic>
+#include "src/video/videomode.h"
+#include "src/video/videosource.h"
 
 class CameraDevice;
 struct AVCodecContext;
 
-class CameraSource : public VideoSource
-{
+class CameraSource : public VideoSource {
     Q_OBJECT
 
 public:
@@ -40,7 +39,7 @@ public:
     virtual void unsubscribe() override;
 
 public slots:
-    void setupDevice(const QString&deviceName_, const VideoMode& mode);
+    void setupDevice(const QString& deviceName_, const VideoMode& mode);
 
 signals:
     void deviceOpened();
@@ -76,4 +75,4 @@ private:
     static CameraSource* instance;
 };
 
-#endif // CAMERA_H
+#endif  // CAMERA_H

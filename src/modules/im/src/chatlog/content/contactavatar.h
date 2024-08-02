@@ -17,10 +17,9 @@
 
 #include <QPixmap>
 
-class ContactAvatar : public ChatLineContent
-{
+class ContactAvatar : public ChatLineContent {
 public:
-    ContactAvatar(const QPixmap & avatar);
+    ContactAvatar(const QPixmap& avatar);
 
     virtual QRectF boundingRect() const override;
     virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
@@ -32,4 +31,4 @@ private:
     QPixmap avatar;
 };
 
-#endif // CONTACTAVATAR_H
+#endif  // CONTACTAVATAR_H

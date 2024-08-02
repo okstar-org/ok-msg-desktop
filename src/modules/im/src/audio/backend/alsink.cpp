@@ -21,8 +21,7 @@
  *        and frees the audio ressources internally.
  */
 
-AlSink::~AlSink()
-{
+AlSink::~AlSink() {
     QMutexLocker{&killLock};
 
     // unsubscribe only if not already killed
@@ -32,8 +31,8 @@ AlSink::~AlSink()
     }
 }
 
-void AlSink::playAudioBuffer(const int16_t* data, int samples, unsigned channels, int sampleRate) const
-{
+void AlSink::playAudioBuffer(const int16_t* data, int samples, unsigned channels,
+                             int sampleRate) const {
     QMutexLocker{&killLock};
 
     if (killed) {
@@ -43,8 +42,7 @@ void AlSink::playAudioBuffer(const int16_t* data, int samples, unsigned channels
     }
 }
 
-void AlSink::playMono16Sound(const IAudioSink::Sound& sound)
-{
+void AlSink::playMono16Sound(const IAudioSink::Sound& sound) {
     QMutexLocker{&killLock};
 
     if (killed) {
@@ -54,8 +52,7 @@ void AlSink::playMono16Sound(const IAudioSink::Sound& sound)
     }
 }
 
-void AlSink::startLoop()
-{
+void AlSink::startLoop() {
     QMutexLocker{&killLock};
 
     if (killed) {
@@ -65,8 +62,7 @@ void AlSink::startLoop()
     }
 }
 
-void AlSink::stopLoop()
-{
+void AlSink::stopLoop() {
     QMutexLocker{&killLock};
 
     if (killed) {
@@ -76,14 +72,12 @@ void AlSink::stopLoop()
     }
 }
 
-uint AlSink::getSourceId() const
-{
+uint AlSink::getSourceId() const {
     uint tmp = sourceId;
     return tmp;
 }
 
-void AlSink::kill()
-{
+void AlSink::kill() {
     killLock.lock();
     // this flag is only set once here, afterwards the object is considered dead
     killed = true;
@@ -91,13 +85,9 @@ void AlSink::kill()
     emit invalidated();
 }
 
-AlSink::AlSink(OpenAL& al, uint sourceId)
-    : audio(al)
-    , sourceId{sourceId}
-{}
+AlSink::AlSink(OpenAL& al, uint sourceId) : audio(al), sourceId{sourceId} {}
 
-AlSink::operator bool() const
-{
+AlSink::operator bool() const {
     QMutexLocker{&killLock};
 
     return !killed;

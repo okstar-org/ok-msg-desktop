@@ -14,14 +14,12 @@
 
 #include <QObject>
 
-class FileNameHandler : public QObject
-{
+class FileNameHandler : public QObject {
     Q_OBJECT
 public:
     explicit FileNameHandler(QObject* parent = nullptr);
 
-    QString properScreenshotPath(QString filename,
-                                 const QString& format = QString());
+    QString properScreenshotPath(QString filename, const QString& format = QString());
 
     static const int MAX_CHARACTERS = 70;
 

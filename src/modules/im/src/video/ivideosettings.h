@@ -15,8 +15,8 @@
 
 #include "src/base/interface.h"
 
-#include <QString>
 #include <QRect>
+#include <QString>
 
 class IVideoSettings {
 public:
@@ -44,4 +44,4 @@ public:
     DECLARE_SIGNAL(camVideoFPSChanged, unsigned short fps);
 };
 
-#endif // I_VIDEO_SETTINGS_H
+#endif  // I_VIDEO_SETTINGS_H

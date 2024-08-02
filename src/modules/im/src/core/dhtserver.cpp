@@ -17,10 +17,9 @@
  * @param   other   the compared instance
  * @return  true, if equal; false otherwise
  */
-bool DhtServer::operator==(const DhtServer& other) const
-{
-    return this == &other || (port == other.port && address == other.address
-                              && userId == other.userId && name == other.name);
+bool DhtServer::operator==(const DhtServer& other) const {
+    return this == &other || (port == other.port && address == other.address &&
+                              userId == other.userId && name == other.name);
 }
 
 /**
@@ -28,7 +27,4 @@ bool DhtServer::operator==(const DhtServer& other) const
  * @param   other   the compared instance
  * @return  true, if not equal; false otherwise
  */
-bool DhtServer::operator!=(const DhtServer& other) const
-{
-    return !(*this == other);
-}
+bool DhtServer::operator!=(const DhtServer& other) const { return !(*this == other); }

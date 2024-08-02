@@ -17,8 +17,7 @@
 
 struct ToxFile;
 
-class ToxFileProgress
-{
+class ToxFileProgress {
 public:
     bool needsUpdate() const;
     void addSample(ToxFile const& file);
@@ -42,5 +41,4 @@ private:
     double progress;
 };
 
-
-#endif // TOXFILEPROGRESS_H
+#endif  // TOXFILEPROGRESS_H

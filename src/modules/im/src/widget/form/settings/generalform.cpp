@@ -29,16 +29,13 @@
 
 #include "src/widget/widget.h"
 
-
 /**
  * @class GeneralForm
  *
  * This form contains all settings that are not suited to other forms
  */
 GeneralForm::GeneralForm(SettingsWidget* myParent)
-    : GenericForm(QPixmap(":/img/settings/general.png"))
-    , bodyUI(new Ui::GeneralSettings)
-{
+        : GenericForm(QPixmap(":/img/settings/general.png")), bodyUI(new Ui::GeneralSettings) {
     parent = myParent;
 
     bodyUI->setupUi(this);
@@ -47,71 +44,63 @@ GeneralForm::GeneralForm(SettingsWidget* myParent)
     const RecursiveSignalBlocker signalBlocker(this);
 
     Settings& s = Settings::getInstance();
-    //先获取当前语言
-    auto & okSettings = ok::base::OkSettings::getInstance();
-
+    // 先获取当前语言
+    auto& okSettings = ok::base::OkSettings::getInstance();
 
     bodyUI->statusChanges->setChecked(s.getStatusChangeNotificationEnabled());
     bodyUI->groupJoinLeaveMessages->setChecked(s.getShowGroupJoinLeaveMessages());
 
     bodyUI->autoAwaySpinBox->setValue(s.getAutoAwayTime());
     bodyUI->autoSaveFilesDir->setText(s.getGlobalAutoAcceptDir());
-    bodyUI->maxAutoAcceptSizeMB->setValue(static_cast<double>(s.getMaxAutoAcceptSize()) / 1024 / 1024);
+    bodyUI->maxAutoAcceptSizeMB->setValue(static_cast<double>(s.getMaxAutoAcceptSize()) / 1024 /
+                                          1024);
     bodyUI->autoacceptFiles->setChecked(okSettings.getAutoSaveEnabled());
 
-
 #ifndef QTOX_PLATFORM_EXT
-    bodyUI->autoAwayLabel->setEnabled(false); // these don't seem to change the appearance of the widgets,
-    bodyUI->autoAwaySpinBox->setEnabled(false); // though they are unusable
+    bodyUI->autoAwayLabel->setEnabled(
+            false);  // these don't seem to change the appearance of the widgets,
+    bodyUI->autoAwaySpinBox->setEnabled(false);  // though they are unusable
 #endif
 
     eventsInit();
     settings::Translator::registerHandler(std::bind(&GeneralForm::retranslateUi, this), this);
 }
 
-GeneralForm::~GeneralForm()
-{
+GeneralForm::~GeneralForm() {
     settings::Translator::unregister(this);
     delete bodyUI;
 }
 
-void GeneralForm::on_statusChanges_stateChanged()
-{
+void GeneralForm::on_statusChanges_stateChanged() {
     Settings::getInstance().setStatusChangeNotificationEnabled(bodyUI->statusChanges->isChecked());
 }
 
-void GeneralForm::on_groupJoinLeaveMessages_stateChanged()
-{
-    Settings::getInstance().setShowGroupJoinLeaveMessages(bodyUI->groupJoinLeaveMessages->isChecked());
+void GeneralForm::on_groupJoinLeaveMessages_stateChanged() {
+    Settings::getInstance().setShowGroupJoinLeaveMessages(
+            bodyUI->groupJoinLeaveMessages->isChecked());
 }
 
-void GeneralForm::on_autoAwaySpinBox_editingFinished()
-{
+void GeneralForm::on_autoAwaySpinBox_editingFinished() {
     int minutes = bodyUI->autoAwaySpinBox->value();
     Settings::getInstance().setAutoAwayTime(minutes);
 }
 
-void GeneralForm::on_autoacceptFiles_stateChanged()
-{
+void GeneralForm::on_autoacceptFiles_stateChanged() {
     ok::base::OkSettings::getInstance().setAutoSaveEnabled(bodyUI->autoacceptFiles->isChecked());
 }
 
-void GeneralForm::on_autoSaveFilesDir_clicked()
-{
+void GeneralForm::on_autoSaveFilesDir_clicked() {
     QString previousDir = Settings::getInstance().getGlobalAutoAcceptDir();
-    QString directory =
-        QFileDialog::getExistingDirectory(Q_NULLPTR,
-                                          tr("Choose an auto accept directory", "popup title"),
-                                          QDir::homePath());
-    if (directory.isEmpty()) // cancel was pressed
+    QString directory = QFileDialog::getExistingDirectory(
+            Q_NULLPTR, tr("Choose an auto accept directory", "popup title"), QDir::homePath());
+    if (directory.isEmpty())  // cancel was pressed
         directory = previousDir;
 
     Settings::getInstance().setGlobalAutoAcceptDir(directory);
     bodyUI->autoSaveFilesDir->setText(directory);
 }
 
-void GeneralForm::on_maxAutoAcceptSizeMB_editingFinished()
-{
+void GeneralForm::on_maxAutoAcceptSizeMB_editingFinished() {
     auto newMaxSizeMB = bodyUI->maxAutoAcceptSizeMB->value();
     auto newMaxSizeB = std::lround(newMaxSizeMB * 1024 * 1024);
 
@@ -121,7 +110,4 @@ void GeneralForm::on_maxAutoAcceptSizeMB_editingFinished()
 /**
  * @brief Retranslate all elements in the form.
  */
-void GeneralForm::retranslateUi()
-{
-    bodyUI->retranslateUi(this);
-}
+void GeneralForm::retranslateUi() { bodyUI->retranslateUi(this); }

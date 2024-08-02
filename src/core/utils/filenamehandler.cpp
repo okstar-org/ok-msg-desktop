@@ -19,11 +19,7 @@
 #include <exception>
 #include <locale>
 
-FileNameHandler::FileNameHandler(QObject* parent)
-  : QObject(parent)
-{
-
-}
+FileNameHandler::FileNameHandler(QObject* parent) : QObject(parent) {}
 
 /**
  * @brief Generate a valid destination path from the possibly incomplete `path`.
@@ -45,9 +41,7 @@ FileNameHandler::FileNameHandler(QObject* parent)
  * @param path Possibly incomplete file name to transform
  * @param format Desired output file suffix (excluding an initial '.' character)
  */
-QString FileNameHandler::properScreenshotPath(QString path,
-                                              const QString& format)
-{
+QString FileNameHandler::properScreenshotPath(QString path, const QString& format) {
     QFileInfo info(path);
     QString suffix = info.suffix();
 
@@ -56,8 +50,7 @@ QString FileNameHandler::properScreenshotPath(QString path,
         path = QDir(QDir(path).absolutePath() + "/" + "xxx").path();
     } else {
         // path points to a file => strip it of its suffix for now
-        path = QDir(info.dir().absolutePath() + "/" + info.completeBaseName())
-                 .path();
+        path = QDir(info.dir().absolutePath() + "/" + info.completeBaseName()).path();
     }
 
     if (!format.isEmpty()) {
@@ -77,13 +70,11 @@ QString FileNameHandler::properScreenshotPath(QString path,
     }
 }
 
-QString FileNameHandler::autoNumerateDuplicate(QString path)
-{
+QString FileNameHandler::autoNumerateDuplicate(QString path) {
     // add numeration in case of repeated filename in the directory
     // find unused name adding _n where n is a number
     QFileInfo checkFile(path);
-    QString directory = checkFile.dir().absolutePath(),
-            filename = checkFile.completeBaseName(),
+    QString directory = checkFile.dir().absolutePath(), filename = checkFile.completeBaseName(),
             suffix = checkFile.suffix();
     if (!suffix.isEmpty()) {
         suffix = QStringLiteral(".") + suffix;
@@ -92,8 +83,7 @@ QString FileNameHandler::autoNumerateDuplicate(QString path)
         filename += QLatin1String("_");
         int i = 1;
         while (true) {
-            checkFile.setFile(directory + "/" + filename + QString::number(i) +
-                              suffix);
+            checkFile.setFile(directory + "/" + filename + QString::number(i) + suffix);
             if (!checkFile.exists()) {
                 filename += QString::number(i);
                 break;

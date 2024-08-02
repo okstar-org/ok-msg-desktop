@@ -12,7 +12,7 @@
 
 #include "style.h"
 #include "settings.h"
-//#include "src/widget/gui.h"
+// #include "src/widget/gui.h"
 
 #include <QDebug>
 #include <QDir>
@@ -56,23 +56,24 @@
  */
 
 namespace {
-    const QLatin1String ThemeSubFolder{"themes/"};
-    const QLatin1String BuiltinThemeDefaultPath{":themes/default/"};
-    const QLatin1String BuiltinThemeDarkPath{":themes/dark/"};
-}
+const QLatin1String ThemeSubFolder{"themes/"};
+const QLatin1String BuiltinThemeDefaultPath{":themes/default/"};
+const QLatin1String BuiltinThemeDarkPath{":themes/dark/"};
+}  // namespace
 
 // helper functions
-QFont appFont(int pixelSize, int weight)
-{
+QFont appFont(int pixelSize, int weight) {
     QFont font;
     font.setPixelSize(pixelSize);
     font.setWeight(weight);
     return font;
 }
 
-QString qssifyFont(QFont font)
-{
-    return QString("%1 %2px \"%3\"").arg(font.weight() * 8).arg(font.pixelSize()).arg(font.family());
+QString qssifyFont(QFont font) {
+    return QString("%1 %2px \"%3\"")
+            .arg(font.weight() * 8)
+            .arg(font.pixelSize())
+            .arg(font.family());
 }
 
 static QMap<Style::ColorPalette, QColor> palette;
@@ -84,51 +85,47 @@ static QMap<QString, QString> dictTheme;
 static QMap<QString, QString> dictExtColor;
 
 QList<Style::ThemeNameColor> Style::themeNameColors = {
-    {Style::Light, QObject::tr("Default"), QColor()},
-    {Style::Dark, QObject::tr("Dark"), QColor()},
+        {Style::Light, QObject::tr("Default"), QColor()},
+        {Style::Dark, QObject::tr("Dark"), QColor()},
 };
 
-QStringList Style::getThemeColorNames()
-{
+QStringList Style::getThemeColorNames() {
     QStringList l;
 
-    for (auto &t : themeNameColors) {
+    for (auto& t : themeNameColors) {
         l << t.name;
     }
 
     return l;
 }
 
-QString Style::getThemeName()
-{
-    //TODO: return name of the current theme
+QString Style::getThemeName() {
+    // TODO: return name of the current theme
     const QString themeName = "default";
     return QStringLiteral("default");
 }
 
-QString Style::getThemeFolder()
-{
+QString Style::getThemeFolder() {
     const QString themeName = getThemeName();
     const QString themeFolder = ThemeSubFolder % themeName;
-    const QString fullPath = QStandardPaths::locate(QStandardPaths::AppDataLocation,
-                                  themeFolder, QStandardPaths::LocateDirectory);
+    const QString fullPath = QStandardPaths::locate(QStandardPaths::AppDataLocation, themeFolder,
+                                                    QStandardPaths::LocateDirectory);
 
     // No themes available, fallback to builtin
-    if(fullPath.isEmpty()) {
+    if (fullPath.isEmpty()) {
         return getThemePath();
     }
 
     return fullPath % QDir::separator();
 }
 
-
 QMap<Style::ColorPalette, QString> Style::aliasColors = {{TransferGood, "transferGood"},
                                                          {TransferWait, "transferWait"},
                                                          {TransferBad, "transferBad"},
                                                          {TransferMiddle, "transferMiddle"},
-                                                         {MainText,"mainText"},
+                                                         {MainText, "mainText"},
                                                          {NameActive, "nameActive"},
-                                                         {StatusActive,"statusActive"},
+                                                         {StatusActive, "statusActive"},
                                                          {GroundExtra, "groundExtra"},
                                                          {GroundBase, "groundBase"},
                                                          {Orange, "orange"},
@@ -146,13 +143,11 @@ QMap<Style::ColorPalette, QString> Style::aliasColors = {{TransferGood, "transfe
 // QString implicit sharing deduplicates stylesheets rather than constructing a new one each time
 std::map<std::pair<const QString, const QFont>, const QString> Style::stylesheetsCache;
 
-const QString Style::getStylesheet(const QString& filename, const QFont& baseFont)
-{
+const QString Style::getStylesheet(const QString& filename, const QFont& baseFont) {
     const QString fullPath = getThemeFolder() + filename;
     const std::pair<const QString, const QFont> cacheKey(fullPath, baseFont);
     auto it = stylesheetsCache.find(cacheKey);
-    if (it != stylesheetsCache.end())
-    {
+    if (it != stylesheetsCache.end()) {
         // cache hit
         return it->second;
     }
@@ -163,8 +158,7 @@ const QString Style::getStylesheet(const QString& filename, const QFont& baseFon
 }
 
 static QStringList existingImagesCache;
-const QString Style::getImagePath(const QString& filename)
-{
+const QString Style::getImagePath(const QString& filename) {
     QString fullPath = getThemeFolder() + filename;
 
     // search for image in cache
@@ -189,38 +183,30 @@ const QString Style::getImagePath(const QString& filename)
     }
 }
 
-QColor Style::getColor(Style::ColorPalette entry)
-{
-    return palette[entry];
-}
+QColor Style::getColor(Style::ColorPalette entry) { return palette[entry]; }
 
-QColor Style::getExtColor(const QString &key)
-{
-    return extPalette.value(key, QColor(0,0,0));
-}
+QColor Style::getExtColor(const QString& key) { return extPalette.value(key, QColor(0, 0, 0)); }
 
-QFont Style::getFont(Style::Font font)
-{
+QFont Style::getFont(Style::Font font) {
     // fonts as defined in
     // https://github.com/ItsDuke/Tox-UI/blob/master/UI%20GUIDELINES.md
 
     static int defSize = QFontInfo(QFont()).pixelSize();
 
     static QFont fonts[] = {
-        appFont(defSize + 3, QFont::Bold),   // extra big
-        appFont(defSize + 1, QFont::Normal), // big
-        appFont(defSize + 1, QFont::Bold),   // big bold
-        appFont(defSize, QFont::Normal),     // medium
-        appFont(defSize, QFont::Bold),       // medium bold
-        appFont(defSize - 1, QFont::Normal), // small
-        appFont(defSize - 1, QFont::Light),  // small light
+            appFont(defSize + 3, QFont::Bold),    // extra big
+            appFont(defSize + 1, QFont::Normal),  // big
+            appFont(defSize + 1, QFont::Bold),    // big bold
+            appFont(defSize, QFont::Normal),      // medium
+            appFont(defSize, QFont::Bold),        // medium bold
+            appFont(defSize - 1, QFont::Normal),  // small
+            appFont(defSize - 1, QFont::Light),   // small light
     };
 
     return fonts[font];
 }
 
-const QString Style::resolve(const QString& filename, const QFont& baseFont)
-{
+const QString Style::resolve(const QString& filename, const QFont& baseFont) {
     QString themePath = getThemeFolder();
     QString fullPath = themePath + filename;
     QString qss;
@@ -251,44 +237,45 @@ const QString Style::resolve(const QString& filename, const QFont& baseFont)
     }
 
     if (dictFont.isEmpty()) {
-        dictFont = {
-            {"@baseFont", QString::fromUtf8("'%1' %2px").arg(baseFont.family()).arg(QFontInfo(baseFont).pixelSize())},
-            {"@extraBig", qssifyFont(Style::getFont(Style::ExtraBig))},
-            {"@big", qssifyFont(Style::getFont(Style::Big))},
-            {"@bigBold", qssifyFont(Style::getFont(Style::BigBold))},
-            {"@medium", qssifyFont(Style::getFont(Style::Medium))},
-            {"@mediumBold", qssifyFont(Style::getFont(Style::MediumBold))},
-            {"@small", qssifyFont(Style::getFont(Style::Small))},
-            {"@smallLight", qssifyFont(Style::getFont(Style::SmallLight))}};
+        dictFont = {{"@baseFont", QString::fromUtf8("'%1' %2px")
+                                          .arg(baseFont.family())
+                                          .arg(QFontInfo(baseFont).pixelSize())},
+                    {"@extraBig", qssifyFont(Style::getFont(Style::ExtraBig))},
+                    {"@big", qssifyFont(Style::getFont(Style::Big))},
+                    {"@bigBold", qssifyFont(Style::getFont(Style::BigBold))},
+                    {"@medium", qssifyFont(Style::getFont(Style::Medium))},
+                    {"@mediumBold", qssifyFont(Style::getFont(Style::MediumBold))},
+                    {"@small", qssifyFont(Style::getFont(Style::Small))},
+                    {"@smallLight", qssifyFont(Style::getFont(Style::SmallLight))}};
     }
 
     if (dictExtColor.isEmpty() && !extPalette.isEmpty()) {
-      auto it = extPalette.begin();
-      while (it != extPalette.end()) {
-        dictExtColor.insert("@" + it.key(), it.value().name());
-        it++;
-      }
+        auto it = extPalette.begin();
+        while (it != extPalette.end()) {
+            dictExtColor.insert("@" + it.key(), it.value().name());
+            it++;
+        }
     }
 
     QRegularExpression anchorReg(R"(@([a-zA-z0-9\.]+))");
     int from = 0;
     int index = qss.indexOf('@');
     while (index >= 0) {
-      QRegularExpressionMatch match = anchorReg.match(qss, from);
-      if (match.hasMatch()) {
-        QString key = match.captured(0);
-        // c++17
-        if (auto it = dictColor.find(key); it != dictColor.end())
-          qss.replace(key, it.value());
-        else if (auto it = dictFont.find(key); it != dictFont.end())
-          qss.replace(key, it.value());
-        else if (auto it = dictTheme.find(key); it != dictTheme.end())
-          qss.replace(key, it.value());
-        else if (auto it = dictExtColor.find(key); it != dictExtColor.end())
-          qss.replace(key, it.value());
-      }
-      from++;
-      index = qss.indexOf('@', from);
+        QRegularExpressionMatch match = anchorReg.match(qss, from);
+        if (match.hasMatch()) {
+            QString key = match.captured(0);
+            // c++17
+            if (auto it = dictColor.find(key); it != dictColor.end())
+                qss.replace(key, it.value());
+            else if (auto it = dictFont.find(key); it != dictFont.end())
+                qss.replace(key, it.value());
+            else if (auto it = dictTheme.find(key); it != dictTheme.end())
+                qss.replace(key, it.value());
+            else if (auto it = dictExtColor.find(key); it != dictExtColor.end())
+                qss.replace(key, it.value());
+        }
+        from++;
+        index = qss.indexOf('@', from);
     }
 
     // @getImagePath() function
@@ -320,8 +307,7 @@ const QString Style::resolve(const QString& filename, const QFont& baseFont)
     return qss;
 }
 
-void Style::repolish(QWidget* w)
-{
+void Style::repolish(QWidget* w) {
     w->style()->unpolish(w);
     w->style()->polish(w);
 
@@ -334,9 +320,8 @@ void Style::repolish(QWidget* w)
     }
 }
 
-void Style::setThemeColor(int color)
-{
-    stylesheetsCache.clear(); // clear stylesheet cache which includes color info
+void Style::setThemeColor(int color) {
+    stylesheetsCache.clear();  // clear stylesheet cache which includes color info
     palette.clear();
     dictColor.clear();
     dictExtColor.clear();
@@ -354,8 +339,7 @@ void Style::setThemeColor(int color)
  *
  * Pass an invalid QColor to reset to defaults.
  */
-void Style::setThemeColor(const QColor& color)
-{
+void Style::setThemeColor(const QColor& color) {
     if (!color.isValid()) {
         // Reset to default
         palette[ThemeDark] = getColor(ThemeDark);
@@ -378,16 +362,13 @@ void Style::setThemeColor(const QColor& color)
 /**
  * @brief Reloads some CCS
  */
-void Style::applyTheme()
-{
-//    GUI::reloadTheme();
+void Style::applyTheme() {
+    //    GUI::reloadTheme();
 }
 
-
-void Style::initPalette()
-{
+void Style::initPalette() {
     QSettings settings(getThemePath() % "palette.ini", QSettings::IniFormat);
-    
+
     settings.beginGroup("colors");
     QMap<Style::ColorPalette, QString> c;
     auto keys = aliasColors.keys();
@@ -401,36 +382,32 @@ void Style::initPalette()
     settings.beginGroup("extends-colors");
     for (auto k : settings.childKeys()) {
         QColor color(settings.value(k).toString());
-        if (color.isValid())
-            extPalette.insert(k, color);
+        if (color.isValid()) extPalette.insert(k, color);
     }
     settings.endGroup();
 }
 
-void Style::initDictColor()
-{
-    dictColor = {
-            {"@transferGood", Style::getColor(Style::TransferGood).name()},
-            {"@transferWait", Style::getColor(Style::TransferWait).name()},
-            {"@transferBad", Style::getColor(Style::TransferBad).name()},
-            {"@transferMiddle", Style::getColor(Style::TransferMiddle).name()},
-            {"@mainText", Style::getColor(Style::MainText).name()},
-            {"@nameActive", Style::getColor(Style::NameActive).name()},
-            {"@statusActive", Style::getColor(Style::StatusActive).name()},
-            {"@groundExtra", Style::getColor(Style::GroundExtra).name()},
-            {"@groundBase", Style::getColor(Style::GroundBase).name()},
-            {"@orange", Style::getColor(Style::Orange).name()},
-            {"@action", Style::getColor(Style::Action).name()},
-            {"@link", Style::getColor(Style::Link).name()},
-            {"@searchHighlighted", Style::getColor(Style::SearchHighlighted).name()},
-            {"@selectText", Style::getColor(Style::SelectText).name()}};
+void Style::initDictColor() {
+    dictColor = {{"@transferGood", Style::getColor(Style::TransferGood).name()},
+                 {"@transferWait", Style::getColor(Style::TransferWait).name()},
+                 {"@transferBad", Style::getColor(Style::TransferBad).name()},
+                 {"@transferMiddle", Style::getColor(Style::TransferMiddle).name()},
+                 {"@mainText", Style::getColor(Style::MainText).name()},
+                 {"@nameActive", Style::getColor(Style::NameActive).name()},
+                 {"@statusActive", Style::getColor(Style::StatusActive).name()},
+                 {"@groundExtra", Style::getColor(Style::GroundExtra).name()},
+                 {"@groundBase", Style::getColor(Style::GroundBase).name()},
+                 {"@orange", Style::getColor(Style::Orange).name()},
+                 {"@action", Style::getColor(Style::Action).name()},
+                 {"@link", Style::getColor(Style::Link).name()},
+                 {"@searchHighlighted", Style::getColor(Style::SearchHighlighted).name()},
+                 {"@selectText", Style::getColor(Style::SelectText).name()}};
 }
 
-QString Style::getThemePath()
-{
-//    const int num = Settings::getInstance().getThemeColor();
-//    if (themeNameColors[num].type == Dark) {
-//        return BuiltinThemeDarkPath;
-//    }
+QString Style::getThemePath() {
+    //    const int num = Settings::getInstance().getThemeColor();
+    //    if (themeNameColors[num].type == Dark) {
+    //        return BuiltinThemeDarkPath;
+    //    }
     return BuiltinThemeDefaultPath;
 }

@@ -13,11 +13,11 @@
 #ifndef IDENTITYFORM_H
 #define IDENTITYFORM_H
 
-#include "src/widget/qrwidget.h"
 #include <QLabel>
 #include <QLineEdit>
 #include <QTimer>
 #include <QVBoxLayout>
+#include "src/widget/qrwidget.h"
 
 class ContentLayout;
 class CroppingLabel;
@@ -28,22 +28,17 @@ namespace Ui {
 class IdentitySettings;
 }
 class ToxId;
-class ClickableTE : public QLabel
-{
+class ClickableTE : public QLabel {
     Q_OBJECT
 public:
 signals:
     void clicked();
 
 protected:
-    virtual void mouseReleaseEvent(QMouseEvent*) final override
-    {
-        emit clicked();
-    }
+    virtual void mouseReleaseEvent(QMouseEvent*) final override { emit clicked(); }
 };
 
-class ProfileForm : public QWidget
-{
+class ProfileForm : public QWidget {
     Q_OBJECT
 public:
     ProfileForm(IProfileInfo* profileInfo, QWidget* parent = nullptr);
@@ -60,7 +55,7 @@ public slots:
 
 protected:
     virtual bool eventFilter(QObject* object, QEvent* event) override;
-    virtual void showEvent(QShowEvent *e) override;
+    virtual void showEvent(QShowEvent* e) override;
 
 private slots:
     void setPasswordButtonsText();

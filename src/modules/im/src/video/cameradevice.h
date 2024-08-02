@@ -10,24 +10,22 @@
  * See the Mulan PubL v2 for more details.
  */
 
-
 #ifndef CAMERADEVICE_H
 #define CAMERADEVICE_H
 
-#include "videomode.h"
 #include <QHash>
 #include <QMutex>
 #include <QString>
 #include <QVector>
 #include <atomic>
+#include "videomode.h"
 
 struct AVFormatContext;
 struct AVInputFormat;
 struct AVDeviceInfoList;
 struct AVDictionary;
 
-class CameraDevice
-{
+class CameraDevice {
 public:
     static CameraDevice* open(QString devName, VideoMode mode = VideoMode());
     void open();
@@ -60,4 +58,4 @@ private:
     static QMutex openDeviceLock, iformatLock;
 };
 
-#endif // CAMERADEVICE_H
+#endif  // CAMERADEVICE_H

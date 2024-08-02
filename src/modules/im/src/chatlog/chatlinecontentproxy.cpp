@@ -11,11 +11,11 @@
  */
 
 #include "chatlinecontentproxy.h"
-#include "src/chatlog/content/filetransferwidget.h"
 #include <QDebug>
 #include <QLayout>
 #include <QPainter>
 #include <QWidget>
+#include "src/chatlog/content/filetransferwidget.h"
 
 /**
  * @enum ChatLineContentProxy::ChatLineContentProxyType
@@ -27,55 +27,39 @@
 
 ChatLineContentProxy::ChatLineContentProxy(QWidget* widget, ChatLineContentProxyType type,
                                            int minWidth, float widthInPercent)
-    : widthPercent(widthInPercent)
-    , widthMin(minWidth)
-    , widgetType{type}
-{
+        : widthPercent(widthInPercent), widthMin(minWidth), widgetType{type} {
     proxy = new QGraphicsProxyWidget(this);
     proxy->setWidget(widget);
 }
 
 ChatLineContentProxy::ChatLineContentProxy(QWidget* widget, int minWidth, float widthInPercent)
-    : ChatLineContentProxy(widget, GenericType, minWidth, widthInPercent)
-{
-}
+        : ChatLineContentProxy(widget, GenericType, minWidth, widthInPercent) {}
 
-ChatLineContentProxy::ChatLineContentProxy(FileTransferWidget* widget, int minWidth, float widthInPercent)
-    : ChatLineContentProxy(widget, FileTransferWidgetType, minWidth, widthInPercent)
-{
-}
+ChatLineContentProxy::ChatLineContentProxy(FileTransferWidget* widget, int minWidth,
+                                           float widthInPercent)
+        : ChatLineContentProxy(widget, FileTransferWidgetType, minWidth, widthInPercent) {}
 
-QRectF ChatLineContentProxy::boundingRect() const
-{
+QRectF ChatLineContentProxy::boundingRect() const {
     QRectF result = proxy->boundingRect();
     result.setHeight(result.height() + 5);
     return result;
 }
 
 void ChatLineContentProxy::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
-                                 QWidget* widget)
-{
+                                 QWidget* widget) {
     painter->setClipRect(boundingRect());
     proxy->paint(painter, option, widget);
 }
 
-qreal ChatLineContentProxy::getAscent() const
-{
-    return 7.0;
-}
+qreal ChatLineContentProxy::getAscent() const { return 7.0; }
 
-QWidget* ChatLineContentProxy::getWidget() const
-{
-    return proxy->widget();
-}
+QWidget* ChatLineContentProxy::getWidget() const { return proxy->widget(); }
 
-void ChatLineContentProxy::setWidth(qreal width)
-{
+void ChatLineContentProxy::setWidth(qreal width) {
     prepareGeometryChange();
     proxy->widget()->setFixedWidth(qMax(static_cast<int>(width * widthPercent), widthMin));
 }
 
-ChatLineContentProxy::ChatLineContentProxyType ChatLineContentProxy::getWidgetType() const
-{
+ChatLineContentProxy::ChatLineContentProxyType ChatLineContentProxy::getWidgetType() const {
     return widgetType;
 }

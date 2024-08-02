@@ -15,9 +15,6 @@
 
 #include <QString>
 
-namespace network {
+namespace network {}
 
-}
-
-
-#endif // NETWORK_H
+#endif  // NETWORK_H

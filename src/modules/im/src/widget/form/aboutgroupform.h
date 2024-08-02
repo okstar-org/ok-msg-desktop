@@ -8,22 +8,20 @@ namespace Ui {
 class AboutGroupForm;
 }
 
-class AboutGroupForm : public QWidget
-{
+class AboutGroupForm : public QWidget {
     Q_OBJECT
 
 public:
-    explicit AboutGroupForm(const GroupId & gId, QWidget *parent = nullptr);
+    explicit AboutGroupForm(const GroupId& gId, QWidget* parent = nullptr);
     ~AboutGroupForm();
     void init();
 
     void updateUI();
 
 private:
-
-    Ui::AboutGroupForm *ui;
+    Ui::AboutGroupForm* ui;
     GroupId groupId;
-     Group* group;
+    Group* group;
 
 private slots:
     void onSendMessageClicked();
@@ -33,4 +31,4 @@ private slots:
     void doDescChanged(const QString& text);
 };
 
-#endif // ABOUTGROUPFORM_H
+#endif  // ABOUTGROUPFORM_H

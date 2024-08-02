@@ -17,8 +17,7 @@
 
 class ScreenshotGrabber;
 
-class ScreenGrabberOverlayItem final : public QObject, public QGraphicsRectItem
-{
+class ScreenGrabberOverlayItem final : public QObject, public QGraphicsRectItem {
     Q_OBJECT
 public:
     explicit ScreenGrabberOverlayItem(ScreenshotGrabber* grabber);
@@ -37,4 +36,4 @@ private:
     QRect chosenRect;
 };
 
-#endif // SCREENGRABBEROVERLAYITEM_HPP
+#endif  // SCREENGRABBEROVERLAYITEM_HPP

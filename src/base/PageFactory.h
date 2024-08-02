@@ -16,20 +16,20 @@
 
 #include <QWidget>
 
-
 namespace UI {
 
-class PageFactory{
+class PageFactory {
 public:
-    template<typename T>
+    template <typename T>
     static
-      //Restrict type T to Page
-      typename std::enable_if<true, Page>::type //T -> Page
-      *Create(QWidget *parent = Q_NULLPTR){
+            // Restrict type T to Page
+            typename std::enable_if<true, Page>::type  // T -> Page
+                    *
+                    Create(QWidget* parent = Q_NULLPTR) {
         return new T(parent);
     }
 };
 
-}
+}  // namespace UI
 
-#endif // PAGEFACTORY_H
+#endif  // PAGEFACTORY_H

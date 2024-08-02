@@ -22,8 +22,7 @@ class CroppingLabel;
 class QHBoxLayout;
 class QPushButton;
 
-class GroupInviteWidget : public QWidget
-{
+class GroupInviteWidget : public QWidget {
     Q_OBJECT
 public:
     GroupInviteWidget(QWidget* parent, const GroupInvite& invite);
@@ -42,4 +41,4 @@ private:
     GroupInvite inviteInfo;
 };
 
-#endif // GROUPINVITEWIDGET_H
+#endif  // GROUPINVITEWIDGET_H

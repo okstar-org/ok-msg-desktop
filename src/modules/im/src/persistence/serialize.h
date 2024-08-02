@@ -10,7 +10,6 @@
  * See the Mulan PubL v2 for more details.
  */
 
-
 #ifndef SERIALIZE_H
 #define SERIALIZE_H
 
@@ -26,4 +25,4 @@ unsigned getVUint32Size(QByteArray data);
 QByteArray vintToData(int num);
 QByteArray vuintToData(size_t num);
 
-#endif // SERIALIZE_H
+#endif  // SERIALIZE_H

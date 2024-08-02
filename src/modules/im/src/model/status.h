@@ -10,36 +10,23 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#include <QString>
 #include <QPixmap>
+#include <QString>
 
 #ifndef STATUS_H
 #define STATUS_H
 
-namespace Status
-{
+namespace Status {
 
-enum class AvatarSet {
-    None,
-    DefaultSet,
-    UserSet
-};
+enum class AvatarSet { None, DefaultSet, UserSet };
 
-    // Status::Status is weird, but Status is a fitting name for both the namespace and enum class..
-    enum class Status
-    {
-        None=-1,
-        Online = 0,
-        Away,
-        Busy,
-        Offline,
-        Blocked
-    };
+// Status::Status is weird, but Status is a fitting name for both the namespace and enum class..
+enum class Status { None = -1, Online = 0, Away, Busy, Offline, Blocked };
 
-    QString getIconPath(Status status, bool event = false);
-    QString getTitle(Status status);
-    QString getAssetSuffix(Status status);
-    bool isOnline(Status status);
-}
+QString getIconPath(Status status, bool event = false);
+QString getTitle(Status status);
+QString getAssetSuffix(Status status);
+bool isOnline(Status status);
+}  // namespace Status
 
-#endif // STATUS_H
+#endif  // STATUS_H

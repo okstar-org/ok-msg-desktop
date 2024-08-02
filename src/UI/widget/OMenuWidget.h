@@ -23,10 +23,9 @@ namespace UI {
  * 代表一个菜单控件(左侧一级业务功能)，内部维护菜单内所有关联（模块、页面集）
  */
 class OMenuWidget : public QFrame {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  explicit OMenuWidget(QWidget *parent = nullptr);
-  ~OMenuWidget();
+    explicit OMenuWidget(QWidget* parent = nullptr);
+    ~OMenuWidget();
 };
-} // namespace UI
-
+}  // namespace UI

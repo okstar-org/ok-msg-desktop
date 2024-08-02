@@ -22,13 +22,12 @@
 
 namespace platform {
 
-Widget::Widget(QWidget *parent): UI::OMenuWidget(parent) {
-  setLayout(new QGridLayout());
+Widget::Widget(QWidget* parent) : UI::OMenuWidget(parent) {
+    setLayout(new QGridLayout());
 
+    webView = new QWebEngineView(this);
+    webView->load(QUrl("https://stack.okstar.org.cn"));  // 加载网页
 
-  webView = new QWebEngineView(this);
-  webView->load(QUrl("https://stack.okstar.org.cn")); // 加载网页
-
-  layout()->addWidget(webView);
+    layout()->addWidget(webView);
 }
-} // namespace platform
+}  // namespace platform

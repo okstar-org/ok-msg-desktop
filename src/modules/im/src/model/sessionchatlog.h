@@ -21,9 +21,7 @@
 
 struct SessionChatLogMetadata;
 
-
-class SessionChatLog : public IChatLog
-{
+class SessionChatLog : public IChatLog {
     Q_OBJECT
 public:
     SessionChatLog(const ICoreIdHandler& coreIdHandler);
@@ -37,29 +35,33 @@ public:
                                 const ParameterSearch& parameter) const override;
     ChatLogIdx getFirstIdx() const override;
     ChatLogIdx getNextIdx() const override;
-    std::vector<DateChatLogIdxPair> getDateIdxs(const QDate& startDate, size_t maxDates) const override;
+    std::vector<DateChatLogIdxPair> getDateIdxs(const QDate& startDate,
+                                                size_t maxDates) const override;
 
-    void insertCompleteMessageAtIdx(ChatLogIdx idx, const FriendId& sender, const QString& senderName,
-                                    const ChatLogMessage& message);
-    void insertIncompleteMessageAtIdx(ChatLogIdx idx, const FriendId& sender, const QString& senderName,
-                                      const ChatLogMessage& message, DispatchedMessageId dispatchId);
+    void insertCompleteMessageAtIdx(ChatLogIdx idx, const FriendId& sender,
+                                    const QString& senderName, const ChatLogMessage& message);
+    void insertIncompleteMessageAtIdx(ChatLogIdx idx, const FriendId& sender,
+                                      const QString& senderName, const ChatLogMessage& message,
+                                      DispatchedMessageId dispatchId);
     void insertBrokenMessageAtIdx(ChatLogIdx idx, const FriendId& sender, const QString& senderName,
                                   const ChatLogMessage& message);
-    void insertFileAtIdx(ChatLogIdx idx, const FriendId& sender, const QString& senderName, const ChatLogFile& file);
+    void insertFileAtIdx(ChatLogIdx idx, const FriendId& sender, const QString& senderName,
+                         const ChatLogFile& file);
 
 public slots:
     void onMessageReceived(const FriendId& sender, const Message& message);
-    //消息发送
+    // 消息发送
     void onMessageSent(DispatchedMessageId id, const Message& message);
-    //消息发送成功
+    // 消息发送成功
     void onMessageComplete(DispatchedMessageId id);
-    //消息接收
+    // 消息接收
     void onMessageReceipt(DispatchedMessageId id);
 
     void onFileUpdated(const FriendId& sender, const ToxFile& file);
     void onFileCanceled(const FriendId& sender, const QString& fileId);
 
-    void onFileTransferRemotePausedUnpaused(const FriendId& sender, const ToxFile& file, bool paused);
+    void onFileTransferRemotePausedUnpaused(const FriendId& sender, const ToxFile& file,
+                                            bool paused);
     void onFileTransferBrokenUnbroken(const FriendId& sender, const ToxFile& file, bool broken);
     inline ChatLogIdx getNextIdx(MsgId msgId);
 
@@ -72,8 +74,7 @@ private:
     QMap<DispatchedMessageId, ChatLogIdx> outgoingMessages;
     std::map<ChatLogIdx, ChatLogItem> items;
 
-    struct CurrentFileTransfer
-    {
+    struct CurrentFileTransfer {
         ChatLogIdx idx;
         ToxFile file;
     };
@@ -84,9 +85,6 @@ private:
      * in order to find our existing transfers
      */
     std::vector<CurrentFileTransfer> currentFileTransfers;
-
-
-
 };
 
 #endif /*SESSION_CHAT_LOG_H*/

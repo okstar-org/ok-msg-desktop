@@ -14,8 +14,5 @@
 
 #include <string>
 
-namespace UI
-{
-
-}
-#endif // UI_H
+namespace UI {}
+#endif  // UI_H

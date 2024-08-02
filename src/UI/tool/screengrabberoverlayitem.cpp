@@ -20,35 +20,27 @@
 #include "screenshotgrabber.h"
 
 ScreenGrabberOverlayItem::ScreenGrabberOverlayItem(ScreenshotGrabber* grabber)
-    : screnshootGrabber(grabber)
-{
-
-    QBrush overlayBrush(QColor(0x00, 0x00, 0x00, 0x70)); // Translucent black
+        : screnshootGrabber(grabber) {
+    QBrush overlayBrush(QColor(0x00, 0x00, 0x00, 0x70));  // Translucent black
 
     setCursor(QCursor(Qt::CrossCursor));
     setBrush(overlayBrush);
     setPen(QPen(Qt::NoPen));
 }
 
-ScreenGrabberOverlayItem::~ScreenGrabberOverlayItem()
-{
-}
+ScreenGrabberOverlayItem::~ScreenGrabberOverlayItem() {}
 
-void ScreenGrabberOverlayItem::setChosenRect(QRect rect)
-{
+void ScreenGrabberOverlayItem::setChosenRect(QRect rect) {
     QRect oldRect = chosenRect;
     chosenRect = rect;
     update(oldRect.united(rect));
 }
 
-void ScreenGrabberOverlayItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
-{
-    if (event->button() == Qt::LeftButton)
-        this->screnshootGrabber->beginRectChooser(event);
+void ScreenGrabberOverlayItem::mousePressEvent(QGraphicsSceneMouseEvent* event) {
+    if (event->button() == Qt::LeftButton) this->screnshootGrabber->beginRectChooser(event);
 }
 
-void ScreenGrabberOverlayItem::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*)
-{
+void ScreenGrabberOverlayItem::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*) {
     painter->setBrush(brush());
     painter->setPen(pen());
 
@@ -58,9 +50,9 @@ void ScreenGrabberOverlayItem::paint(QPainter* painter, const QStyleOptionGraphi
     qreal topY = chosenRect.y();
     qreal bottomY = chosenRect.y() + chosenRect.height();
 
-    painter->drawRect(0, 0, leftX, self.height());                      // Left of chosen
-    painter->drawRect(rightX, 0, self.width() - rightX, self.height()); // Right of chosen
-    painter->drawRect(leftX, 0, chosenRect.width(), topY);              // Top of chosen
+    painter->drawRect(0, 0, leftX, self.height());                       // Left of chosen
+    painter->drawRect(rightX, 0, self.width() - rightX, self.height());  // Right of chosen
+    painter->drawRect(leftX, 0, chosenRect.width(), topY);               // Top of chosen
     painter->drawRect(leftX, bottomY, chosenRect.width(),
-                      self.height() - bottomY); // Bottom of chosen
+                      self.height() - bottomY);  // Bottom of chosen
 }

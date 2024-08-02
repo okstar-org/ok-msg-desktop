@@ -23,8 +23,7 @@
  * Always connect with a blocking queued connection lambda, else the behaviour is undefined
  */
 
-class IAudioSource : public QObject
-{
+class IAudioSource : public QObject {
     Q_OBJECT
 public:
     virtual ~IAudioSource() = default;
@@ -40,4 +39,4 @@ signals:
     void invalidated();
 };
 
-#endif // IAUDIOSOURCE_H
+#endif  // IAUDIOSOURCE_H

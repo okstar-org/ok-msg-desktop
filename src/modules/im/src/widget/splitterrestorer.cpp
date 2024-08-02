@@ -31,9 +31,7 @@ static int defaultWidth = 0;
  */
 const static int leftWidthPercent = 33;
 
-SplitterRestorer::SplitterRestorer(QSplitter* splitter)
-    : splitter{splitter}
-{
+SplitterRestorer::SplitterRestorer(QSplitter* splitter) : splitter{splitter} {
     if (defaultWidth == 0) {
         defaultWidth = QSplitter().handleWidth();
     }
@@ -45,10 +43,10 @@ SplitterRestorer::SplitterRestorer(QSplitter* splitter)
  * @param state State saved by QSplitter::saveState()
  * @param windowSize Widnow size (used to calculate splitter size)
  */
-void SplitterRestorer::restore(const QByteArray& state, const QSize& windowSize)
-{
-    bool brokenSplitter = !splitter->restoreState(state) || splitter->orientation() != Qt::Horizontal
-                          || splitter->handleWidth() > defaultWidth;
+void SplitterRestorer::restore(const QByteArray& state, const QSize& windowSize) {
+    bool brokenSplitter = !splitter->restoreState(state) ||
+                          splitter->orientation() != Qt::Horizontal ||
+                          splitter->handleWidth() > defaultWidth;
 
     if (splitter->count() == 2 && brokenSplitter) {
         splitter->setOrientation(Qt::Horizontal);

@@ -39,94 +39,93 @@ class QCloseEvent;
 class QSplitter;
 
 class ContentDialog : public ActivateDialog, public IDialogs {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  explicit ContentDialog(QWidget *parent = nullptr);
-  ~ContentDialog() override;
+    explicit ContentDialog(QWidget* parent = nullptr);
+    ~ContentDialog() override;
 
-  void addFriend(FriendChatroom *chatroom, GenericChatForm *form);
-  void addGroup(GroupChatroom *chatroom, GenericChatForm *form);
-  void removeFriend(const FriendId &friendPk) override;
-  void removeGroup(const GroupId &groupId) override;
-  int chatroomCount() const override;
-  void ensureSplitterVisible();
-  void updateTitleAndStatusIcon();
+    void addFriend(FriendChatroom* chatroom, GenericChatForm* form);
+    void addGroup(GroupChatroom* chatroom, GenericChatForm* form);
+    void removeFriend(const FriendId& friendPk) override;
+    void removeGroup(const GroupId& groupId) override;
+    int chatroomCount() const override;
+    void ensureSplitterVisible();
+    void updateTitleAndStatusIcon();
 
-  void cycleContacts(bool forward, bool loop = true);
-  void onVideoShow(QSize size);
-  void onVideoHide();
+    void cycleContacts(bool forward, bool loop = true);
+    void onVideoShow(QSize size);
+    void onVideoHide();
 
-  void addFriendWidget(FriendWidget *widget, Status::Status status);
-  bool isActiveWidget(GenericChatroomWidget *widget);
+    void addFriendWidget(FriendWidget* widget, Status::Status status);
+    bool isActiveWidget(GenericChatroomWidget* widget);
 
-  bool hasContact(const ContactId &contactId) const override;
-  bool isContactActive(const ContactId &contactId) const override;
+    bool hasContact(const ContactId& contactId) const override;
+    bool isContactActive(const ContactId& contactId) const override;
 
-  void focusContact(const ContactId &friendPk);
-  void updateFriendStatus(const FriendId &friendPk, Status::Status status);
-  void updateContactStatusLight(const ContactId &contactId);
+    void focusContact(const ContactId& friendPk);
+    void updateFriendStatus(const FriendId& friendPk, Status::Status status);
+    void updateContactStatusLight(const ContactId& contactId);
 
-  void setStatusMessage(const FriendId &friendPk, const QString &message);
+    void setStatusMessage(const FriendId& friendPk, const QString& message);
 
 signals:
-  void friendDialogShown(const Friend *f);
-  void groupDialogShown(const Group *g);
-  void addFriendDialog(Friend *frnd, ContentDialog *contentDialog);
-  void addGroupDialog(Group *group, ContentDialog *contentDialog);
-  void activated();
-  void willClose();
-  void connectFriendWidget(FriendWidget &friendWidget);
+    void friendDialogShown(const Friend* f);
+    void groupDialogShown(const Group* g);
+    void addFriendDialog(Friend* frnd, ContentDialog* contentDialog);
+    void addGroupDialog(Group* group, ContentDialog* contentDialog);
+    void activated();
+    void willClose();
+    void connectFriendWidget(FriendWidget& friendWidget);
 
 public slots:
-  void reorderLayouts(bool newGroupOnTop);
-  void previousContact();
-  void nextContact();
-  void setUsername(const QString &newName);
+    void reorderLayouts(bool newGroupOnTop);
+    void previousContact();
+    void nextContact();
+    void setUsername(const QString& newName);
 
 protected:
-  bool event(QEvent *event) final override;
-  void dragEnterEvent(QDragEnterEvent *event) final override;
-  void dropEvent(QDropEvent *event) final override;
-  void changeEvent(QEvent *event) override;
-  void resizeEvent(QResizeEvent *event) override;
-  void moveEvent(QMoveEvent *event) override;
-  void keyPressEvent(QKeyEvent *event) override;
+    bool event(QEvent* event) final override;
+    void dragEnterEvent(QDragEnterEvent* event) final override;
+    void dropEvent(QDropEvent* event) final override;
+    void changeEvent(QEvent* event) override;
+    void resizeEvent(QResizeEvent* event) override;
+    void moveEvent(QMoveEvent* event) override;
+    void keyPressEvent(QKeyEvent* event) override;
 
 public slots:
-  void activate(GenericChatroomWidget *widget);
+    void activate(GenericChatroomWidget* widget);
 
 private slots:
-  void updateFriendWidget(const FriendId &friendPk, QString alias);
-  void onGroupchatPositionChanged(bool top);
+    void updateFriendWidget(const FriendId& friendPk, QString alias);
+    void onGroupchatPositionChanged(bool top);
 
 private:
-  void closeIfEmpty();
-  void closeEvent(QCloseEvent *event) override;
+    void closeIfEmpty();
+    void closeEvent(QCloseEvent* event) override;
 
-  void retranslateUi();
-  void saveDialogGeometry();
-  void saveSplitterState();
-  QLayout *nextLayout(QLayout *layout, bool forward) const;
-  int getCurrentLayout(QLayout *&layout);
-  void focusCommon(const ContactId &id,
-                   QHash<const ContactId &, GenericChatroomWidget *> list);
+    void retranslateUi();
+    void saveDialogGeometry();
+    void saveSplitterState();
+    QLayout* nextLayout(QLayout* layout, bool forward) const;
+    int getCurrentLayout(QLayout*& layout);
+    void focusCommon(const ContactId& id, QHash<const ContactId&, GenericChatroomWidget*> list);
 
 private:
-  QList<QLayout *> layouts;
-  QSplitter *splitter;
-  FriendListLayout *friendLayout;
-  GenericChatItemLayout groupLayout;
-  ContentLayout *contentLayout;
-  GenericChatroomWidget *activeChatroomWidget;
-  QSize videoSurfaceSize;
-  int videoCount;
+    QList<QLayout*> layouts;
+    QSplitter* splitter;
+    FriendListLayout* friendLayout;
+    GenericChatItemLayout groupLayout;
+    ContentLayout* contentLayout;
+    GenericChatroomWidget* activeChatroomWidget;
+    QSize videoSurfaceSize;
+    int videoCount;
 
-  GenericChatroomWidget *contactWidget;
+    GenericChatroomWidget* contactWidget;
 
-  GenericChatForm *m_chatForm;
-  Chatroom *m_chatroom;
+    GenericChatForm* m_chatForm;
+    Chatroom* m_chatroom;
 
-  QString username;
+    QString username;
 };
 
-#endif // CONTENTDIALOG_H
+#endif  // CONTENTDIALOG_H

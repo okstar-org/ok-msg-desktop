@@ -20,11 +20,11 @@
 
 class ICoreFriendMessageSender {
 public:
-  virtual ~ICoreFriendMessageSender() = default;
-  virtual bool sendAction(QString friendId, const QString &action,
-                          const MsgId &msgId, bool encrypt = false) = 0;
-  virtual bool sendMessage(QString friendId, const QString &message,
-                          const MsgId &msgId, bool encrypt = false) = 0;
+    virtual ~ICoreFriendMessageSender() = default;
+    virtual bool sendAction(QString friendId, const QString& action, const MsgId& msgId,
+                            bool encrypt = false) = 0;
+    virtual bool sendMessage(QString friendId, const QString& message, const MsgId& msgId,
+                             bool encrypt = false) = 0;
 };
 
 #endif /* ICORE_FRIEND_MESSAGE_SENDER_H */

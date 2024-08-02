@@ -16,11 +16,7 @@
 
 #include "OMenuWidget.h"
 
-namespace UI{
-OMenuWidget::OMenuWidget(QWidget *parent): QFrame(parent){
-
-}
-OMenuWidget::~OMenuWidget(){
-
-}
-}
+namespace UI {
+OMenuWidget::OMenuWidget(QWidget* parent) : QFrame(parent) {}
+OMenuWidget::~OMenuWidget() {}
+}  // namespace UI

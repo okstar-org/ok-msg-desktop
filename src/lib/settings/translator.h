@@ -13,35 +13,31 @@
 #ifndef TRANSLATOR_H
 #define TRANSLATOR_H
 
+#include <QMap>
 #include <QMutex>
 #include <QPair>
 #include <QVector>
-#include <QMap>
 #include <functional>
 
 class QTranslator;
 
 namespace settings {
 
-using Callback = QPair<void *, std::function<void()>>;
- static QMutex lock;
-
+using Callback = QPair<void*, std::function<void()>>;
+static QMutex lock;
 
 class Translator {
-
 public:
-  static void translate(const QString &moduleName, const QString &localeName);
-  static void registerHandler(const std::function<void()> &, void *owner);
-  static void unregister(void *owner);
+    static void translate(const QString& moduleName, const QString& localeName);
+    static void registerHandler(const std::function<void()>&, void* owner);
+    static void unregister(void* owner);
 
 private:
+    //  static QVector<Callback> callbacks;
 
-//  static QVector<Callback> callbacks;
-
-
-//  static QTranslator *translator;
-//  static bool m_loadedQtTranslations;
+    //  static QTranslator *translator;
+    //  static bool m_loadedQtTranslations;
 };
-} // namespace main
+}  // namespace settings
 
-#endif // TRANSLATOR_H
+#endif  // TRANSLATOR_H

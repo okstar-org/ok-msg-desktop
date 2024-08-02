@@ -12,29 +12,28 @@
 
 #pragma once
 
-
-#include "../ok_rtc_renderer.h"
-#include <mutex>
-#include <ok_rtc.h>
-#include <api/video/video_sink_interface.h>
 #include <api/video/video_frame.h>
+#include <api/video/video_sink_interface.h>
+#include <ok_rtc.h>
+#include <mutex>
+#include "../ok_rtc_renderer.h"
 
 namespace lib {
 namespace ortc {
 
 class VideoSink : public rtc::VideoSinkInterface<webrtc::VideoFrame> {
 public:
-  VideoSink(OkRTCHandler *handler, std::string peerId = {});
+    VideoSink(OkRTCHandler* handler, std::string peerId = {});
 
-  virtual ~VideoSink() override;
+    virtual ~VideoSink() override;
 
-  virtual void OnFrame(const webrtc::VideoFrame &frame) override;
+    virtual void OnFrame(const webrtc::VideoFrame& frame) override;
 
 private:
-  uint64_t _renderCount;
-  std::string _peer_id;
-  OkRTCHandler *handler;
+    uint64_t _renderCount;
+    std::string _peer_id;
+    OkRTCHandler* handler;
 };
 
-} // namespace ortc
-} // namespace lib
+}  // namespace ortc
+}  // namespace lib

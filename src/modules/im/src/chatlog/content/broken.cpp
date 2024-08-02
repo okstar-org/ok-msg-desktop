@@ -11,45 +11,29 @@
  */
 
 #include "broken.h"
-#include "src/chatlog/pixmapcache.h"
 #include <QPainter>
+#include "src/chatlog/pixmapcache.h"
 
 class QStyleOptionGraphicsItem;
 
 Broken::Broken(const QString& img, QSize size)
-    : pmap{PixmapCache::getInstance().get(img, size)}
-    , size{size}
-{
-}
+        : pmap{PixmapCache::getInstance().get(img, size)}, size{size} {}
 
-QRectF Broken::boundingRect() const
-{
+QRectF Broken::boundingRect() const {
     return QRectF(QPointF(-size.width() / 2.0, -size.height() / 2.0), size);
 }
 
-void Broken::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
-                       QWidget* widget)
-{
+void Broken::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) {
     painter->setRenderHint(QPainter::SmoothPixmapTransform);
     painter->translate(QPointF(-size.width() / 2.0, -size.height() / 2.0));
     painter->drawPixmap(0, 0, pmap);
 
     Q_UNUSED(option)
     Q_UNUSED(widget)
-
 }
 
-void Broken::setWidth(qreal width)
-{
-    Q_UNUSED(width);
-}
+void Broken::setWidth(qreal width) { Q_UNUSED(width); }
 
-void Broken::visibilityChanged(bool visible)
-{
-    Q_UNUSED(visible);
-}
+void Broken::visibilityChanged(bool visible) { Q_UNUSED(visible); }
 
-qreal Broken::getAscent() const
-{
-    return 0.0;
-}
+qreal Broken::getAscent() const { return 0.0; }

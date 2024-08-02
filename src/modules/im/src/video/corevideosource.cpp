@@ -15,9 +15,9 @@ extern "C" {
 #include <libavutil/imgutils.h>
 }
 
+#include "../core/toxcall.h"
 #include "corevideosource.h"
 #include "videoframe.h"
-#include "../core/toxcall.h"
 
 /**
  * @class CoreVideoSource
@@ -37,21 +37,15 @@ extern "C" {
  * @note Only CoreAV should create a CoreVideoSource since
  * only CoreAV can push images to it.
  */
-CoreVideoSource::CoreVideoSource()
-    : subscribers{0}
-    , deleteOnClose{false}
-    , stopped{false}
-{
-}
+CoreVideoSource::CoreVideoSource() : subscribers{0}, deleteOnClose{false}, stopped{false} {}
 
 /**
  * @brief Makes a copy of the vpx_image_t and emits it as a new VideoFrame.
  * @param vpxframe Frame to copy.
  */
-void CoreVideoSource::pushFrame(const vpx_image_t* vpxframe)
-{
-    //if (stopped)
-      //  return;
+void CoreVideoSource::pushFrame(const vpx_image_t* vpxframe) {
+    // if (stopped)
+    //   return;
 
     QMutexLocker locker(&biglock);
 
@@ -59,20 +53,18 @@ void CoreVideoSource::pushFrame(const vpx_image_t* vpxframe)
     int width = vpxframe->d_w;
     int height = vpxframe->d_h;
 
-    if (subscribers <= 0)
-        return;
+    if (subscribers <= 0) return;
 
     AVFrame* avframe = av_frame_alloc();
-    if (!avframe)
-        return;
+    if (!avframe) return;
 
     avframe->width = width;
     avframe->height = height;
     avframe->format = AV_PIX_FMT_YUV420P;
 
-    int bufSize =
-        av_image_alloc(avframe->data, avframe->linesize, width, height,
-                       static_cast<AVPixelFormat>(AV_PIX_FMT_YUV420P), VideoFrame::dataAlignment);
+    int bufSize = av_image_alloc(avframe->data, avframe->linesize, width, height,
+                                 static_cast<AVPixelFormat>(AV_PIX_FMT_YUV420P),
+                                 VideoFrame::dataAlignment);
 
     if (bufSize < 0) {
         av_frame_free(&avframe);
@@ -88,7 +80,7 @@ void CoreVideoSource::pushFrame(const vpx_image_t* vpxframe)
         for (int j = 0; j < size; ++j) {
             uint8_t* dst = avframe->data[i] + dstStride * j;
             uint8_t* src = vpxframe->planes[i] + srcStride * j;
-            //TODO: windows10 下在渲染自己视频时存在崩溃可能
+            // TODO: windows10 下在渲染自己视频时存在崩溃可能
             memcpy(dst, src, minStride);
         }
     }
@@ -97,14 +89,12 @@ void CoreVideoSource::pushFrame(const vpx_image_t* vpxframe)
     emit frameAvailable(vframe);
 }
 
-void CoreVideoSource::subscribe()
-{
+void CoreVideoSource::subscribe() {
     QMutexLocker locker(&biglock);
     ++subscribers;
 }
 
-void CoreVideoSource::unsubscribe()
-{
+void CoreVideoSource::unsubscribe() {
     biglock.lock();
     if (--subscribers == 0) {
         if (deleteOnClose) {
@@ -121,8 +111,7 @@ void CoreVideoSource::unsubscribe()
  * @brief Setup delete on close
  * @param If true, self-delete after the last suscriber is gone
  */
-void CoreVideoSource::setDeleteOnClose(bool newstate)
-{
+void CoreVideoSource::setDeleteOnClose(bool newstate) {
     QMutexLocker locker(&biglock);
     deleteOnClose = newstate;
 }
@@ -133,15 +122,13 @@ void CoreVideoSource::setDeleteOnClose(bool newstate)
  *
  * Stopping the source will block any pushFrame calls from doing anything
  */
-void CoreVideoSource::stopSource()
-{
+void CoreVideoSource::stopSource() {
     QMutexLocker locker(&biglock);
     stopped = true;
     emit sourceStopped();
 }
 
-void CoreVideoSource::restartSource()
-{
+void CoreVideoSource::restartSource() {
     QMutexLocker locker(&biglock);
     stopped = false;
 }

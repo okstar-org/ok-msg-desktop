@@ -13,12 +13,12 @@
 #ifndef CHATLINE_H
 #define CHATLINE_H
 
+#include <QDateTime>
+#include <QPixmap>
 #include <QPointF>
 #include <QRectF>
 #include <QVector>
 #include <memory>
-#include <QDateTime>
-#include <QPixmap>
 #include "src/persistence/history.h"
 
 class ChatLog;
@@ -27,60 +27,44 @@ class QGraphicsScene;
 class QStyleOptionGraphicsItem;
 class QFont;
 
-class IChatItem
-{
+class IChatItem {
 public:
     using Ptr = std::shared_ptr<IChatItem>;
-    virtual ~IChatItem(){}
+    virtual ~IChatItem() {}
     virtual int itemType() = 0;
     virtual void layout(qreal width, QPointF scenePos) = 0;
     virtual QRectF sceneBoundingRect() const = 0;
     virtual void moveBy(qreal dx, qreal dy);
-    virtual void addToScene(QGraphicsScene *scene);
+    virtual void addToScene(QGraphicsScene* scene);
     virtual void removeFromScene();
     virtual void setVisible(bool visible);
 
-    virtual void markAsDelivered(const QDateTime &time){};
+    virtual void markAsDelivered(const QDateTime& time) {};
 
-    virtual ChatLineContent* contentAtPos(QPointF scenePos) const
-    {
-        return nullptr;
-    }
-    virtual ChatLineContent *centerContent() const;
+    virtual ChatLineContent* contentAtPos(QPointF scenePos) const { return nullptr; }
+    virtual ChatLineContent* centerContent() const;
 
-    virtual bool selectable() const
-    {
-        return false;
-    }
-   
+    virtual bool selectable() const { return false; }
+
     virtual void visibilityChanged(bool visible);
     virtual void selectionFocusChanged(bool focusIn);
     virtual void reloadTheme();
 
 public:
-    void fontChanged(const QFont &font);
+    void fontChanged(const QFont& font);
     void selectionCleared();
     void selectAll();
-    void setTime(const QDateTime &time) {
-        datetime = time;
-    }
-    QDateTime getTime(){
-        return datetime;
-    }
-    
+    void setTime(const QDateTime& time) { datetime = time; }
+    QDateTime getTime() { return datetime; }
+
     void setRow(int row);
-    int getRow(){
-        return row;
-    }
+    int getRow() { return row; }
 
 protected:
     friend class ChatLog;
-    virtual QList<ChatLineContent *> contents() {
-        return QList<ChatLineContent *>{};
-    };
+    virtual QList<ChatLineContent*> contents() { return QList<ChatLineContent*>{}; };
     QDateTime datetime;
     int row = -1;
 };
 
-#endif // CHATLINE_H
-
+#endif  // CHATLINE_H

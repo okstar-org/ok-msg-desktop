@@ -22,8 +22,8 @@ namespace lib {
 
 class Task : public QThread {
 public:
-  virtual void run() override = 0;
+    virtual void run() override = 0;
 };
 
-} // namespace lib
-} // namespace ok
+}  // namespace lib
+}  // namespace ok

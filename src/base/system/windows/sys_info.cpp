@@ -11,50 +11,49 @@
  */
 
 #include "base/system/sys_info.h"
-#include <QProcess>
-#include <algorithm>
 #include <QCoreApplication>
 #include <QDir>
+#include <QProcess>
 #include <QStandardPaths>
+#include <algorithm>
 
 namespace ok::base {
 
-bool SysInfo::GetCpuInfo(CpuInfo &info) {
-  auto arch = QSysInfo::currentCpuArchitecture();
-  info.arch = arch == "x86_64" ? "x64" : arch;
-  // 获取CPU型号和核心数
-  return true;
+bool SysInfo::GetCpuInfo(CpuInfo& info) {
+    auto arch = QSysInfo::currentCpuArchitecture();
+    info.arch = arch == "x86_64" ? "x64" : arch;
+    // 获取CPU型号和核心数
+    return true;
 }
 
-bool SysInfo::GetOsInfo(OsInfo &info) {
-  info.uniqueId = QSysInfo::machineUniqueId().toBase64();
-  info.hostName = QSysInfo::machineHostName();
-  info.kernelName = QSysInfo::kernelType();
-  info.prettyName = QSysInfo::prettyProductName();
-  info.name = QSysInfo::productType();
-  info.version = QSysInfo::productVersion();
-  return true;
+bool SysInfo::GetOsInfo(OsInfo& info) {
+    info.uniqueId = QSysInfo::machineUniqueId().toBase64();
+    info.hostName = QSysInfo::machineHostName();
+    info.kernelName = QSysInfo::kernelType();
+    info.prettyName = QSysInfo::prettyProductName();
+    info.name = QSysInfo::productType();
+    info.version = QSysInfo::productVersion();
+    return true;
 }
 
-SystemInfo *SystemInfo::instance() {
-  static SystemInfo *instance_ = nullptr;
-  if (!instance_)
-    instance_ = new SystemInfo();
-  return instance_;
+SystemInfo* SystemInfo::instance() {
+    static SystemInfo* instance_ = nullptr;
+    if (!instance_) instance_ = new SystemInfo();
+    return instance_;
 }
 
 QString SystemInfo::osVersion() { return osInfo().name; }
 
 OsInfo SystemInfo::osInfo() {
-  OsInfo info;
-  SysInfo::GetOsInfo(info);
-  return info;
+    OsInfo info;
+    SysInfo::GetOsInfo(info);
+    return info;
 }
 
 CpuInfo SystemInfo::cpuInfo() {
-  CpuInfo info;
-  SysInfo::GetCpuInfo(info);
-  return info;
+    CpuInfo info;
+    SysInfo::GetCpuInfo(info);
+    return info;
 }
 
-} // namespace base
+}  // namespace ok::base

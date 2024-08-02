@@ -19,11 +19,9 @@
 class QString;
 class QWidget;
 
-class Style
-{
+class Style {
 public:
-    enum ColorPalette
-    {
+    enum ColorPalette {
         TransferGood,
         TransferWait,
         TransferBad,
@@ -45,22 +43,9 @@ public:
         SelectText
     };
 
-    enum Font
-    {
-        ExtraBig,
-        Big,
-        BigBold,
-        Medium,
-        MediumBold,
-        Small,
-        SmallLight
-    };
+    enum Font { ExtraBig, Big, BigBold, Medium, MediumBold, Small, SmallLight };
 
-    enum MainTheme
-    {
-        Light,
-        Dark
-    };
+    enum MainTheme { Light, Dark };
 
     struct ThemeNameColor {
         MainTheme type;
@@ -74,7 +59,7 @@ public:
     static QString getThemeFolder();
     static QString getThemeName();
     static QColor getColor(ColorPalette entry);
-    static QColor getExtColor(const QString & key);
+    static QColor getExtColor(const QString& key);
     static QFont getFont(Font font);
     static const QString resolve(const QString& filename, const QFont& baseFont = QFont());
     static void repolish(QWidget* w);
@@ -97,4 +82,4 @@ private:
     static QMap<ColorPalette, QString> aliasColors;
 };
 
-#endif // STYLE_H
+#endif  // STYLE_H

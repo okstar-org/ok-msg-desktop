@@ -22,16 +22,12 @@ namespace Ui {
 class UserInterfaceSettings;
 }
 
-class UserInterfaceForm : public GenericForm
-{
+class UserInterfaceForm : public GenericForm {
     Q_OBJECT
 public:
     explicit UserInterfaceForm(SettingsWidget* myParent);
     ~UserInterfaceForm();
-    virtual QString getFormName() final override
-    {
-        return tr("User Interface");
-    }
+    virtual QString getFormName() final override { return tr("User Interface"); }
 
 private slots:
     void on_smileyPackBrowser_currentIndexChanged(int index);
@@ -48,8 +44,6 @@ private slots:
     void on_busySound_stateChanged();
     void on_showWindow_stateChanged();
     void on_groupOnlyNotfiyWhenMentioned_stateChanged();
-
-
 
     void on_themeColorCBox_currentIndexChanged(int);
 

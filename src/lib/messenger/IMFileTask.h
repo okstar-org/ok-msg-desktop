@@ -33,54 +33,55 @@ class IM;
 struct File;
 
 class IMFileTask : public QThread, public gloox::BytestreamDataHandler {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  IMFileTask(const gloox::JID &friendId, //
-             const File *file,           //
-             const IM *im);              //
+    IMFileTask(const gloox::JID& friendId,  //
+               const File* file,            //
+               const IM* im);               //
 
-  ~IMFileTask();
+    ~IMFileTask();
 
-  void run() override;
+    void run() override;
 
-  void abort();
+    void abort();
 
-  void handleBytestreamData(gloox::Bytestream *bs, const std::string &data) override;
+    void handleBytestreamData(gloox::Bytestream* bs, const std::string& data) override;
 
-  void handleBytestreamDataAck(gloox::Bytestream *bs) override;
+    void handleBytestreamDataAck(gloox::Bytestream* bs) override;
 
-  void handleBytestreamError(gloox::Bytestream *bs, const gloox::IQ &iq) override;
+    void handleBytestreamError(gloox::Bytestream* bs, const gloox::IQ& iq) override;
 
-  void handleBytestreamOpen(gloox::Bytestream *bs) override;
+    void handleBytestreamOpen(gloox::Bytestream* bs) override;
 
-  void handleBytestreamClose(gloox::Bytestream *bs) override;
+    void handleBytestreamClose(gloox::Bytestream* bs) override;
 
-  void forceQuit();
+    void forceQuit();
 
-  bool sendFinished() const;
-  bool ackFinished() const;
+    bool sendFinished() const;
+    bool ackFinished() const;
 
 private:
-  gloox::JID m_friendId;
-  const File *m_file;
-  const IM *m_im;
-  int m_buf;
-  int m_seq;
-  quint64 m_sentBytes;
-  int m_ack_seq;
+    gloox::JID m_friendId;
+    const File* m_file;
+    const IM* m_im;
+    int m_buf;
+    int m_seq;
+    quint64 m_sentBytes;
+    int m_ack_seq;
 
-  std::unique_ptr<gloox::InBandBytestream> m_ibb;
-  std::unique_ptr<QFile> qFile;
-  gloox::Bytestream *m_byteStream;
+    std::unique_ptr<gloox::InBandBytestream> m_ibb;
+    std::unique_ptr<QFile> qFile;
+    gloox::Bytestream* m_byteStream;
 
 public:
 signals:
-  void fileSent(const gloox::JID &m_friendId, const File &m_file);
-  void fileError(const gloox::JID &m_friendId, const File &m_file, int m_sentBytes);
-  void fileAbort(const gloox::JID &m_friendId, const File &m_file, int m_sentBytes);
-  void fileSending(const gloox::JID &m_friendId, const File &m_file, int m_seq, int m_sentBytes, bool end);
+    void fileSent(const gloox::JID& m_friendId, const File& m_file);
+    void fileError(const gloox::JID& m_friendId, const File& m_file, int m_sentBytes);
+    void fileAbort(const gloox::JID& m_friendId, const File& m_file, int m_sentBytes);
+    void fileSending(
+            const gloox::JID& m_friendId, const File& m_file, int m_seq, int m_sentBytes, bool end);
 };
 
-} // namespace lib::messenger
+}  // namespace lib::messenger
 
-#endif // OKMSG_PROJECT_IMFILETASK_H
+#endif  // OKMSG_PROJECT_IMFILETASK_H

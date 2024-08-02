@@ -19,16 +19,12 @@ namespace Ui {
 class PrivacySettings;
 }
 
-class PrivacyForm : public GenericForm
-{
+class PrivacyForm : public GenericForm {
     Q_OBJECT
 public:
     PrivacyForm();
     ~PrivacyForm();
-    virtual QString getFormName() final override
-    {
-        return tr("Privacy");
-    }
+    virtual QString getFormName() final override { return tr("Privacy"); }
 
 signals:
     void clearAllReceipts();

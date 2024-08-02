@@ -13,9 +13,9 @@
 #ifndef GROUPCHATFORM_H
 #define GROUPCHATFORM_H
 
+#include <QMap>
 #include "genericchatform.h"
 #include "src/core/FriendId.h"
-#include <QMap>
 
 namespace Ui {
 class MainWindow;
@@ -29,8 +29,7 @@ class IMessageDispatcher;
 struct Message;
 class IGroupSettings;
 
-class GroupChatForm : public GenericChatForm
-{
+class GroupChatForm : public GenericChatForm {
     Q_OBJECT
 public:
     GroupChatForm(const GroupId* chatGroup,
@@ -54,7 +53,6 @@ private slots:
     void onLabelContextMenuRequested(const QPoint& localPos);
 
 protected:
-
     virtual void keyPressEvent(QKeyEvent* ev) final override;
     virtual void keyReleaseEvent(QKeyEvent* ev) final override;
     // drag & drop
@@ -79,4 +77,4 @@ private:
     IGroupSettings& settings;
 };
 
-#endif // GROUPCHATFORM_H
+#endif  // GROUPCHATFORM_H

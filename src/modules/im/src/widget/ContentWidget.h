@@ -27,24 +27,24 @@ class ContentLayout;
 class ChatForm;
 
 class ContentWidget : public QWidget {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  explicit ContentWidget(SendWorker* sendWorker, QWidget *parent = nullptr);
-  ~ContentWidget();
+    explicit ContentWidget(SendWorker* sendWorker, QWidget* parent = nullptr);
+    ~ContentWidget();
 
-  void showTo(ContentLayout *);
-  void setChatForm(GenericChatForm *);
+    void showTo(ContentLayout*);
+    void setChatForm(GenericChatForm*);
 
-  virtual void showEvent(QShowEvent *event) override;
-  virtual void hideEvent(QHideEvent *event) override;
+    virtual void showEvent(QShowEvent* event) override;
+    virtual void hideEvent(QHideEvent* event) override;
 
 private:
-  void init();
-  QFrame *mainHLine;
-  QHBoxLayout *mainHLineLayout;
-  QWidget *mainHead;
-  QWidget *seperator;
-  QWidget *mainContent;
+    void init();
+    QFrame* mainHLine;
+    QHBoxLayout* mainHLineLayout;
+    QWidget* mainHead;
+    QWidget* seperator;
+    QWidget* mainContent;
 };
 
-#endif // OKMSG_PROJECT_CONTENTWIDGET_H
+#endif  // OKMSG_PROJECT_CONTENTWIDGET_H

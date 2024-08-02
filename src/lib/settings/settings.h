@@ -34,88 +34,92 @@ namespace Db {
 enum class syncType;
 }
 
-class Settings : public QObject, ICoreSettings
-{
+class Settings : public QObject, ICoreSettings {
     Q_OBJECT
     Q_ENUMS(StyleType)
 
     // general
-    Q_PROPERTY(bool compactLayout READ getCompactLayout WRITE setCompactLayout NOTIFY compactLayoutChanged FINAL)
+    Q_PROPERTY(bool compactLayout READ getCompactLayout WRITE setCompactLayout NOTIFY
+                       compactLayoutChanged FINAL)
 
     // GUI
     Q_PROPERTY(bool separateWindow READ getSeparateWindow WRITE setSeparateWindow NOTIFY
-                   separateWindowChanged FINAL)
-    Q_PROPERTY(QString smileyPack READ getSmileyPack WRITE setSmileyPack NOTIFY smileyPackChanged FINAL)
+                       separateWindowChanged FINAL)
+    Q_PROPERTY(QString smileyPack READ getSmileyPack WRITE setSmileyPack NOTIFY smileyPackChanged
+                       FINAL)
     Q_PROPERTY(int emojiFontPointSize READ getEmojiFontPointSize WRITE setEmojiFontPointSize NOTIFY
-                   emojiFontPointSizeChanged FINAL)
+                       emojiFontPointSizeChanged FINAL)
 
     Q_PROPERTY(QByteArray windowGeometry READ getWindowGeometry WRITE setWindowGeometry NOTIFY
-                   windowGeometryChanged FINAL)
-    Q_PROPERTY(QByteArray windowState READ getWindowState WRITE setWindowState NOTIFY windowStateChanged FINAL)
+                       windowGeometryChanged FINAL)
+    Q_PROPERTY(QByteArray windowState READ getWindowState WRITE setWindowState NOTIFY
+                       windowStateChanged FINAL)
     Q_PROPERTY(QByteArray splitterState READ getSplitterState WRITE setSplitterState NOTIFY
-                   splitterStateChanged FINAL)
+                       splitterStateChanged FINAL)
     Q_PROPERTY(QByteArray dialogGeometry READ getDialogGeometry WRITE setDialogGeometry NOTIFY
-                   dialogGeometryChanged FINAL)
+                       dialogGeometryChanged FINAL)
     Q_PROPERTY(QByteArray dialogSplitterState READ getDialogSplitterState WRITE
-                   setDialogSplitterState NOTIFY dialogSplitterStateChanged FINAL)
+                       setDialogSplitterState NOTIFY dialogSplitterStateChanged FINAL)
     Q_PROPERTY(QByteArray dialogSettingsGeometry READ getDialogSettingsGeometry WRITE
-                   setDialogSettingsGeometry NOTIFY dialogSettingsGeometryChanged FINAL)
+                       setDialogSettingsGeometry NOTIFY dialogSettingsGeometryChanged FINAL)
     Q_PROPERTY(QString style READ getStyle WRITE setStyle NOTIFY styleChanged FINAL)
 
     Q_PROPERTY(bool showIdenticons READ getShowIdenticons WRITE setShowIdenticons NOTIFY
-                   showIdenticonsChanged FINAL)
+                       showIdenticonsChanged FINAL)
 
     // ChatView
     Q_PROPERTY(bool groupchatPosition READ getGroupchatPosition WRITE setGroupchatPosition NOTIFY
-                   groupchatPositionChanged FINAL)
+                       groupchatPositionChanged FINAL)
     Q_PROPERTY(QFont chatMessageFont READ getChatMessageFont WRITE setChatMessageFont NOTIFY
-                   chatMessageFontChanged FINAL)
+                       chatMessageFontChanged FINAL)
     Q_PROPERTY(StyleType stylePreference READ getStylePreference WRITE setStylePreference NOTIFY
-                   stylePreferenceChanged FINAL)
+                       stylePreferenceChanged FINAL)
     Q_PROPERTY(QString timestampFormat READ getTimestampFormat WRITE setTimestampFormat NOTIFY
-                   timestampFormatChanged FINAL)
-    Q_PROPERTY(QString dateFormat READ getDateFormat WRITE setDateFormat NOTIFY dateFormatChanged FINAL)
+                       timestampFormatChanged FINAL)
+    Q_PROPERTY(QString dateFormat READ getDateFormat WRITE setDateFormat NOTIFY dateFormatChanged
+                       FINAL)
     Q_PROPERTY(bool statusChangeNotificationEnabled READ getStatusChangeNotificationEnabled WRITE
-                   setStatusChangeNotificationEnabled NOTIFY statusChangeNotificationEnabledChanged FINAL)
+                       setStatusChangeNotificationEnabled NOTIFY
+                               statusChangeNotificationEnabledChanged FINAL)
     Q_PROPERTY(bool spellCheckingEnabled READ getSpellCheckingEnabled WRITE setSpellCheckingEnabled
-                   NOTIFY spellCheckingEnabledChanged FINAL)
+                       NOTIFY spellCheckingEnabledChanged FINAL)
 
     // Privacy
     Q_PROPERTY(bool typingNotification READ getTypingNotification WRITE setTypingNotification NOTIFY
-                   typingNotificationChanged FINAL)
-    Q_PROPERTY(QStringList blackList READ getBlackList WRITE setBlackList NOTIFY blackListChanged FINAL)
+                       typingNotificationChanged FINAL)
+    Q_PROPERTY(QStringList blackList READ getBlackList WRITE setBlackList NOTIFY blackListChanged
+                       FINAL)
 
     // Audio
     Q_PROPERTY(QString inDev READ getInDev WRITE setInDev NOTIFY inDevChanged FINAL)
     Q_PROPERTY(bool audioInDevEnabled READ getAudioInDevEnabled WRITE setAudioInDevEnabled NOTIFY
-                   audioInDevEnabledChanged FINAL)
+                       audioInDevEnabledChanged FINAL)
     Q_PROPERTY(qreal audioInGainDecibel READ getAudioInGainDecibel WRITE setAudioInGainDecibel
-                   NOTIFY audioInGainDecibelChanged FINAL)
+                       NOTIFY audioInGainDecibelChanged FINAL)
     Q_PROPERTY(qreal audioThreshold READ getAudioThreshold WRITE setAudioThreshold NOTIFY
-                   audioThresholdChanged FINAL)
+                       audioThresholdChanged FINAL)
     Q_PROPERTY(QString outDev READ getOutDev WRITE setOutDev NOTIFY outDevChanged FINAL)
     Q_PROPERTY(bool audioOutDevEnabled READ getAudioOutDevEnabled WRITE setAudioOutDevEnabled NOTIFY
-                   audioOutDevEnabledChanged FINAL)
+                       audioOutDevEnabledChanged FINAL)
     Q_PROPERTY(int outVolume READ getOutVolume WRITE setOutVolume NOTIFY outVolumeChanged FINAL)
-    Q_PROPERTY(int audioBitrate READ getAudioBitrate WRITE setAudioBitrate NOTIFY audioBitrateChanged FINAL)
+    Q_PROPERTY(int audioBitrate READ getAudioBitrate WRITE setAudioBitrate NOTIFY
+                       audioBitrateChanged FINAL)
 
     // Video
     Q_PROPERTY(QString videoDev READ getVideoDev WRITE setVideoDev NOTIFY videoDevChanged FINAL)
-    Q_PROPERTY(QRect camVideoRes READ getCamVideoRes WRITE setCamVideoRes NOTIFY camVideoResChanged FINAL)
-    Q_PROPERTY(QRect screenRegion READ getScreenRegion WRITE setScreenRegion NOTIFY screenRegionChanged FINAL)
-    Q_PROPERTY(bool screenGrabbed READ getScreenGrabbed WRITE setScreenGrabbed NOTIFY screenGrabbedChanged FINAL)
-    Q_PROPERTY(float camVideoFPS READ getCamVideoFPS WRITE setCamVideoFPS NOTIFY camVideoFPSChanged FINAL)
+    Q_PROPERTY(QRect camVideoRes READ getCamVideoRes WRITE setCamVideoRes NOTIFY camVideoResChanged
+                       FINAL)
+    Q_PROPERTY(QRect screenRegion READ getScreenRegion WRITE setScreenRegion NOTIFY
+                       screenRegionChanged FINAL)
+    Q_PROPERTY(bool screenGrabbed READ getScreenGrabbed WRITE setScreenGrabbed NOTIFY
+                       screenGrabbedChanged FINAL)
+    Q_PROPERTY(float camVideoFPS READ getCamVideoFPS WRITE setCamVideoFPS NOTIFY camVideoFPSChanged
+                       FINAL)
 
 public:
-    enum class StyleType
-    {
-        NONE = 0,
-        WITH_CHARS = 1,
-        WITHOUT_CHARS = 2
-    };
+    enum class StyleType { NONE = 0, WITH_CHARS = 1, WITHOUT_CHARS = 2 };
 
-    enum class FriendListSortingMode
-    {
+    enum class FriendListSortingMode {
         Name,
         Activity,
     };
@@ -137,10 +141,9 @@ public:
 
     void resetToDefault();
 
-//    QStringList getLocales();
+    //    QStringList getLocales();
 
-    struct Request
-    {
+    struct Request {
         QString address;
         QString message;
         bool read;
@@ -164,7 +167,6 @@ signals:
     void notifySoundChanged(bool enabled);
     void notifyHideChanged(bool enabled);
     void groupAlwaysNotifyChanged(bool enabled);
-
 
     void enableLoggingChanged(bool enabled);
     void autoAwayTimeChanged(int minutes);
@@ -213,7 +215,6 @@ public:
     bool getMakeToxPortable() const;
     void setMakeToxPortable(bool newValue);
 
-
     bool getLightTrayIcon() const;
     void setLightTrayIcon(bool newValue);
 
@@ -223,28 +224,26 @@ public:
     bool getUseEmoticons() const;
     void setUseEmoticons(bool newValue);
 
-
     QString getTranslation() const;
     void setTranslation(const QString& newValue);
 
     // ICoreSettings
-    bool getEnableIPv6() const ;
-    void setEnableIPv6(bool enabled) ;
+    bool getEnableIPv6() const;
+    void setEnableIPv6(bool enabled);
 
-    bool getForceTCP() const ;
-    void setForceTCP(bool enabled) ;
+    bool getForceTCP() const;
+    void setForceTCP(bool enabled);
 
-    bool getEnableLanDiscovery() const ;
-    void setEnableLanDiscovery(bool enabled) ;
+    bool getEnableLanDiscovery() const;
+    void setEnableLanDiscovery(bool enabled);
 
-    QString getProxyAddr() const ;
-    void setProxyAddr(const QString& address) ;
+    QString getProxyAddr() const;
+    void setProxyAddr(const QString& address);
 
+    quint16 getProxyPort() const;
+    void setProxyPort(quint16 port);
 
-    quint16 getProxyPort() const ;
-    void setProxyPort(quint16 port) ;
-
-    QNetworkProxy getProxy() const ;
+    QNetworkProxy getProxy() const;
 
     SIGNAL_IMPL(Settings, enableIPv6Changed, bool enabled)
     SIGNAL_IMPL(Settings, forceTCPChanged, bool enabled)
@@ -283,58 +282,52 @@ public:
     bool getBusySound() const;
     void setBusySound(bool newValue);
 
-    bool getGroupAlwaysNotify() const ;
-    void setGroupAlwaysNotify(bool newValue) ;
+    bool getGroupAlwaysNotify() const;
+    void setGroupAlwaysNotify(bool newValue);
 
-    QString getInDev() const ;
-    void setInDev(const QString& deviceSpecifier) ;
+    QString getInDev() const;
+    void setInDev(const QString& deviceSpecifier);
 
-    bool getAudioInDevEnabled() const ;
-    void setAudioInDevEnabled(bool enabled) ;
+    bool getAudioInDevEnabled() const;
+    void setAudioInDevEnabled(bool enabled);
 
-    QString getOutDev() const ;
-    void setOutDev(const QString& deviceSpecifier) ;
+    QString getOutDev() const;
+    void setOutDev(const QString& deviceSpecifier);
 
-    bool getAudioOutDevEnabled() const ;
-    void setAudioOutDevEnabled(bool enabled) ;
+    bool getAudioOutDevEnabled() const;
+    void setAudioOutDevEnabled(bool enabled);
 
-    qreal getAudioInGainDecibel() const ;
-    void setAudioInGainDecibel(qreal dB) ;
+    qreal getAudioInGainDecibel() const;
+    void setAudioInGainDecibel(qreal dB);
 
-    qreal getAudioThreshold() const ;
-    void setAudioThreshold(qreal percent) ;
+    qreal getAudioThreshold() const;
+    void setAudioThreshold(qreal percent);
 
-    int getOutVolume() const ;
-    int getOutVolumeMin() const
-    {
-        return 0;
-    }
-    int getOutVolumeMax() const
-    {
-        return 100;
-    }
-    void setOutVolume(int volume) ;
+    int getOutVolume() const;
+    int getOutVolumeMin() const { return 0; }
+    int getOutVolumeMax() const { return 100; }
+    void setOutVolume(int volume);
 
-    int getAudioBitrate() const ;
-    void setAudioBitrate(int bitrate) ;
+    int getAudioBitrate() const;
+    void setAudioBitrate(int bitrate);
 
-    bool getEnableTestSound() const ;
-    void setEnableTestSound(bool newValue) ;
+    bool getEnableTestSound() const;
+    void setEnableTestSound(bool newValue);
 
-    QString getVideoDev() const ;
-    void setVideoDev(const QString& deviceSpecifier) ;
+    QString getVideoDev() const;
+    void setVideoDev(const QString& deviceSpecifier);
 
-    QRect getScreenRegion() const ;
-    void setScreenRegion(const QRect& value) ;
+    QRect getScreenRegion() const;
+    void setScreenRegion(const QRect& value);
 
-    bool getScreenGrabbed() const ;
-    void setScreenGrabbed(bool value) ;
+    bool getScreenGrabbed() const;
+    void setScreenGrabbed(bool value);
 
-    QRect getCamVideoRes() const ;
-    void setCamVideoRes(QRect newValue) ;
+    QRect getCamVideoRes() const;
+    void setCamVideoRes(QRect newValue);
 
-    float getCamVideoFPS() const ;
-    void setCamVideoFPS(float newValue) ;
+    float getCamVideoFPS() const;
+    void setCamVideoFPS(float newValue);
 
     bool isAnimationEnabled() const;
     void setAnimationEnabled(bool newValue);
@@ -370,7 +363,6 @@ public:
     const QString& getDateFormat() const;
     void setDateFormat(const QString& format);
 
-
     bool getStatusChangeNotificationEnabled() const;
     void setStatusChangeNotificationEnabled(bool newValue);
 
@@ -381,8 +373,8 @@ public:
     bool getTypingNotification() const;
     void setTypingNotification(bool enabled);
 
-    bool getShowGroupJoinLeaveMessages() const ;
-    void setShowGroupJoinLeaveMessages(bool newValue) ;
+    bool getShowGroupJoinLeaveMessages() const;
+    void setShowGroupJoinLeaveMessages(bool newValue);
 
     // State
     QByteArray getWindowGeometry() const;
@@ -449,19 +441,14 @@ public:
 
     // Wrappers around getWidgetData() and setWidgetData()
     // Assume widget has a unique objectName set
-    template <class T>
-    void restoreGeometryState(T* widget) const
-    {
+    template <class T> void restoreGeometryState(T* widget) const {
         widget->restoreGeometry(getWidgetData(widget->objectName() + "Geometry"));
         widget->restoreState(getWidgetData(widget->objectName() + "State"));
     }
-    template <class T>
-    void saveGeometryState(const T* widget)
-    {
+    template <class T> void saveGeometryState(const T* widget) {
         setWidgetData(widget->objectName() + "Geometry", widget->saveGeometry());
         setWidgetData(widget->objectName() + "State", widget->saveState());
     }
-
 
 private:
     struct friendProp;
@@ -491,7 +478,7 @@ private:
     bool dontGroupWindows;
     bool showIdenticons;
     bool enableIPv6;
-//    QString translation;
+    //    QString translation;
     bool makeToxPortable;
 
     bool lightTrayIcon;
@@ -512,8 +499,6 @@ private:
     ICoreSettings::ProxyType proxyType;
     QString proxyAddr;
     quint16 proxyPort;
-
-
 
     bool enableLogging;
 
@@ -571,8 +556,7 @@ private:
     bool screenGrabbed;
     float camVideoFPS;
 
-    struct circleProp
-    {
+    struct circleProp {
         QString name;
         bool expanded;
     };
@@ -588,4 +572,4 @@ private:
     static QThread* settingsThread;
 };
 
-#endif // SETTINGS_HPP
+#endif  // SETTINGS_HPP
