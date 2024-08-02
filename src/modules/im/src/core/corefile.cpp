@@ -17,6 +17,8 @@
 #include <QFile>
 #include <QRegularExpression>
 #include <QThread>
+#include <QMutexLocker>
+
 #include <cassert>
 #include <memory>
 #include "base/compatiblerecursivemutex.h"
@@ -353,11 +355,11 @@ void CoreFile::handleAvatarOffer(QString friendId, QString fileId, bool accept) 
 void CoreFile::onFileRequest(const QString& from, const lib::messenger::File& file) {
     qDebug() << __func__ << file.name << "from" << from;
 
-    auto receiver = messenger->getSelfId().toFriendId();
-    ToxFile toxFile(from, receiver, file);
-    addFile(toxFile);
-    qDebug() << "file:" << toxFile.toString();
-    emit fileReceiveRequested(toxFile);
+//    auto receiver = messenger->getSelfId().toFriendId();
+//    ToxFile toxFile(from, receiver, file);
+//    addFile(toxFile);
+//    qDebug() << "file:" << toxFile.toString();
+//    emit fileReceiveRequested(toxFile);
 }
 
 void CoreFile::onFileControlCallback(lib::messenger::Messenger* tox, QString friendId,

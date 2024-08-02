@@ -80,8 +80,8 @@ public:
 Q_DECLARE_METATYPE(FileInfo);
 
 struct ToxFile : public FileInfo {
-    ToxFile() = default;
-    ToxFile(const QString& sender,
+    explicit ToxFile() = default;
+    explicit ToxFile(const QString& sender,
             const QString& friendId,
             QString sId,
             QString FileId,
@@ -92,8 +92,8 @@ struct ToxFile : public FileInfo {
             FileStatus status,
             FileDirection Direction);
 
-    ToxFile(const QString& sender, const QString& friendId, const lib::messenger::File& file);
-    ToxFile(const FileInfo& fi);
+    explicit ToxFile(const QString& sender, const QString& friendId, const lib::messenger::File& file);
+    explicit ToxFile(const FileInfo& fi);
     ~ToxFile();
 
     bool operator==(const ToxFile& other) const;
@@ -122,7 +122,5 @@ struct ToxFile : public FileInfo {
     //  std::shared_ptr<QCryptographicHash> hashGenerator =
     //  std::make_shared<QCryptographicHash>(QCryptographicHash::Sha256);
 };
-
-Q_DECLARE_METATYPE(ToxFile);
 
 #endif  // CORESTRUCTS_H

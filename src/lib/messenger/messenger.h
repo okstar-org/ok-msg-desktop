@@ -268,7 +268,7 @@ enum class CallState {
      * transitions can occur for the call. This call state will never be triggered
      * in combination with other call states.
      */
-    ERROR = 1,
+    ERROR0 = 1,
 
     /**
      * The call has finished. This is the final state after which no more state
@@ -296,7 +296,6 @@ enum class CallState {
      * The flag that marks that friend is receiving video.
      */
     ACCEPTING_V = 32,
-
 };
 
 class CallHandler {

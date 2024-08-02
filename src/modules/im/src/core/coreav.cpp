@@ -11,11 +11,11 @@
  */
 
 #include "coreav.h"
-#include <src/nexus.h>
 #include <QCoreApplication>
 #include <QDebug>
 #include <QThread>
 #include <QTimer>
+#include <src/nexus.h>
 #include <cassert>
 #include "base/compatiblerecursivemutex.h"
 #include "core.h"
@@ -826,7 +826,7 @@ void CoreAV::stateCallback(QString friendNum, lib::messenger::CallState state) {
     // QWriteLocker locker{&self->callsLock};
 
     ToxFriendCall& call = *it->second;
-    if (state == lib::messenger::CallState::ERROR) {
+    if (state == lib::messenger::CallState::ERROR0) {
         qWarning() << "Call with friend" << friendNum << "died of unnatural causes!";
         calls.erase(friendNum);
         emit avEnd(friendId, true);
