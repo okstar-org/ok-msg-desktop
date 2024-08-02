@@ -35,14 +35,14 @@ class IMJingle;
 class IMConference;
 enum class IMStatus;
 
-} // namespace messenger
-} // namespace lib
+}  // namespace messenger
+}  // namespace lib
 
 namespace ok {
 namespace session {
 class AuthSession;
 }
-} // namespace ok
+}  // namespace ok
 
 namespace lib {
 namespace messenger {
@@ -54,184 +54,198 @@ class IMFile;
  * 连接状态
  *
  */
-enum class IMConnectStatus { CONNECTING, AUTH_FAILED, CONNECTED, DISCONNECTED, TIMEOUT, CONN_ERROR, TLS_ERROR, OUT_OF_RESOURCE, NO_SUPPORT };
+enum class IMConnectStatus {
+    CONNECTING,
+    AUTH_FAILED,
+    CONNECTED,
+    DISCONNECTED,
+    TIMEOUT,
+    CONN_ERROR,
+    TLS_ERROR,
+    OUT_OF_RESOURCE,
+    NO_SUPPORT
+};
 
 class SelfHandler {
 public:
-  virtual void onSelfIdChanged(QString id) = 0;
-  virtual void onSelfNameChanged(QString name) = 0;
-  virtual void onSelfAvatarChanged(const std::string avatar) = 0;
-  virtual void onSelfStatusChanged(IMStatus status, const std::string &msg) = 0;
+    virtual void onSelfIdChanged(QString id) = 0;
+    virtual void onSelfNameChanged(QString name) = 0;
+    virtual void onSelfAvatarChanged(const std::string avatar) = 0;
+    virtual void onSelfStatusChanged(IMStatus status, const std::string& msg) = 0;
 };
 
 class FriendHandler {
 public:
-  virtual void onFriend(const IMFriend &frnd) = 0;
-  virtual void onFriendRequest(QString friendId, QString msg) = 0;
-  virtual void onFriendRemoved(QString friendId) = 0;
-  virtual void onFriendStatus(QString friendId, IMStatus status) = 0;
-  virtual void onFriendMessage(QString friendId, IMMessage message) = 0;
-  virtual void onMessageSession(QString contactId, QString sid) = 0;
-  virtual void onFriendNickChanged(QString friendId, QString name) = 0;
-  virtual void onFriendAvatarChanged(const QString friendId, const std::string avatar) = 0;
+    virtual void onFriend(const IMFriend& frnd) = 0;
+    virtual void onFriendRequest(QString friendId, QString msg) = 0;
+    virtual void onFriendRemoved(QString friendId) = 0;
+    virtual void onFriendStatus(QString friendId, IMStatus status) = 0;
+    virtual void onFriendMessage(QString friendId, IMMessage message) = 0;
+    virtual void onMessageSession(QString contactId, QString sid) = 0;
+    virtual void onFriendNickChanged(QString friendId, QString name) = 0;
+    virtual void onFriendAvatarChanged(const QString friendId, const std::string avatar) = 0;
 
-  virtual void onFriendAliasChanged(const IMContactId &fId, const QString &alias) = 0;
+    virtual void onFriendAliasChanged(const IMContactId& fId, const QString& alias) = 0;
 
-  virtual void onFriendChatState(QString friendId, int state) = 0;
-  virtual void onMessageReceipt(QString friendId, QString receipt) = 0;
+    virtual void onFriendChatState(QString friendId, int state) = 0;
+    virtual void onMessageReceipt(QString friendId, QString receipt) = 0;
 };
 
 class GroupHandler {
 public:
-  virtual void onGroup(const QString groupId, const QString name) = 0;
+    virtual void onGroup(const QString groupId, const QString name) = 0;
 
-  virtual void onGroupInvite(const QString groupId, //
-                             const QString peerId,  //
-                             const QString message) = 0;
+    virtual void onGroupInvite(const QString groupId,  //
+                               const QString peerId,   //
+                               const QString message) = 0;
 
-  virtual void onGroupSubjectChanged(const QString &groupId, const QString &subject) = 0;
+    virtual void onGroupSubjectChanged(const QString& groupId, const QString& subject) = 0;
 
-  virtual void onGroupMessage(const QString groupId, //
-                              const IMPeerId peerId, //
-                              const IMMessage message) = 0;
+    virtual void onGroupMessage(const QString groupId,  //
+                                const IMPeerId peerId,  //
+                                const IMMessage message) = 0;
 
-  virtual void onGroupOccupants(const QString groupId, uint size) = 0;
+    virtual void onGroupOccupants(const QString groupId, uint size) = 0;
 
-  virtual void onGroupInfo(QString groupId, IMGroup groupInfo) = 0;
+    virtual void onGroupInfo(QString groupId, IMGroup groupInfo) = 0;
 
-  virtual void onGroupOccupantStatus(const QString groupId, //
-                                     IMGroupOccupant) = 0;
+    virtual void onGroupOccupantStatus(const QString groupId,  //
+                                       IMGroupOccupant) = 0;
 };
 
 /**
  * OkIM模块对外接口
  */
 class Messenger : public QObject {
-  Q_OBJECT
+    Q_OBJECT
 public:
+    explicit Messenger(const QString& host,
+                       const QString& name,
+                       const QString& password,
+                       QObject* parent = nullptr);
+    ~Messenger() override;
 
-  explicit Messenger(const QString &host, const QString &name, const QString &password, QObject *parent = nullptr);
-  ~Messenger() override;
+    void start();
+    void stop();
 
-  void start();
-  void stop();
+    void send(const QString& xml);
 
-  void send(const QString &xml);
+    IM* im() const {
+        assert(_im);
+        return _im;
+    }
 
-  IM *im() const {
-    assert(_im);
-    return _im;
-  }
+    IMFile* imFile() const {
+        assert(_imFile);
+        return _imFile;
+    }
 
-  IMFile *imFile() const {
-    assert(_imFile);
-      return _imFile;
-  }
+    IMPeerId getSelfId() const;
+    QString getSelfUsername() const;
+    QString getSelfNick() const;
+    IMStatus getSelfStatus() const;
 
-  IMPeerId getSelfId() const;
-  QString getSelfUsername() const;
-  QString getSelfNick() const;
-  IMStatus getSelfStatus() const;
+    void addSelfHandler(SelfHandler*);
+    void addGroupHandler(GroupHandler*);
 
-  void addSelfHandler(SelfHandler *);
-  void addGroupHandler(GroupHandler *);
+    bool sendToGroup(const QString& g, const QString& msg, const QString& id);
 
-  bool sendToGroup(const QString &g, const QString &msg, const QString &id);
+    void receiptReceived(const QString& f, QString receipt);
 
-  void receiptReceived(const QString &f, QString receipt);
+    QString genUniqueId();
 
-  QString genUniqueId();
+    /** self */
+    void setSelfNickname(const QString& nickname);
+    void changePassword(const QString& password);
+    void setSelfAvatar(const QByteArray& avatar);
+    // void setMute(bool mute);
 
-  /** self */
-  void setSelfNickname(const QString &nickname);
-  void changePassword(const QString &password);
-  void setSelfAvatar(const QByteArray &avatar);
-  // void setMute(bool mute);
+    /**
+     * IMFriend (audio/video)
+     */
+    void addFriendHandler(FriendHandler*);
 
-  /**
-   * IMFriend (audio/video)
-   */
-  void addFriendHandler(FriendHandler *);
+    size_t getFriendCount();
 
-  size_t getFriendCount();
+    void getFriendList(std::list<lib::messenger::IMFriend>&);
 
-  void getFriendList(std::list<lib::messenger::IMFriend> &);
+    void setFriendAlias(const QString& f, const QString& alias);
 
-  void setFriendAlias(const QString &f, const QString &alias);
+    // 添加好友
+    void sendFriendRequest(const QString& username, const QString& nick, const QString& message);
+    // 接受朋友邀请
+    void acceptFriendRequest(const QString& f);
+    // 拒绝朋友邀请
+    void rejectFriendRequest(const QString& f);
 
-  // 添加好友
-  void sendFriendRequest(const QString &username, const QString &nick, const QString &message);
-  // 接受朋友邀请
-  void acceptFriendRequest(const QString &f);
-  // 拒绝朋友邀请
-  void rejectFriendRequest(const QString &f);
+    void getFriendVCard(const QString& f);
 
-  void getFriendVCard(const QString &f);
+    IMStatus getFriendStatus(const QString& f);
 
-  IMStatus getFriendStatus(const QString &f);
+    bool sendToFriend(const QString& f,
+                      const QString& msg,
+                      const QString& id,
+                      bool encrypt = false);
+    bool removeFriend(const QString& f);
 
-  bool sendToFriend(const QString &f, const QString &msg, const QString &id, bool encrypt = false);
-  bool removeFriend(const QString &f);
+    /**
+     * Group
+     */
+    void loadGroupList();
+    bool initRoom();
 
-  /**
-   * Group
-   */
-  void loadGroupList();
-  bool initRoom();
+    QString createGroup(const QString& group, const QString& name);
+    void joinGroup(const QString& group);
+    void setRoomName(const QString& group, const QString& nick);
+    void setRoomDesc(const QString& group, const QString& desc);
+    void setRoomSubject(const QString& group, const QString& subject);
+    void setRoomAlias(const QString& group, const QString& alias);
+    bool inviteGroup(const IMContactId& group, const IMContactId& f);
+    bool leaveGroup(const QString& group);
+    bool destroyGroup(const QString& group);
 
-  QString createGroup(const QString &group, const QString &name);
-  void joinGroup(const QString &group);
-  void setRoomName(const QString &group, const QString &nick);
-  void setRoomDesc(const QString &group, const QString &desc);
-  void setRoomSubject(const QString &group, const QString &subject);
-  void setRoomAlias(const QString &group, const QString &alias);
-  bool inviteGroup(const IMContactId &group, const IMContactId &f);
-  bool leaveGroup(const QString &group);
-  bool destroyGroup(const QString &group);
+    void sendChatState(const QString& friendId, int state);
 
-  void sendChatState(const QString &friendId, int state);
-
-  void requestBookmarks();
+    void requestBookmarks();
 
 private:
-  bool connectIM();
+    bool connectIM();
 
-  IM *_im;
-  IMJingle *jingle;
-  IMFile *_imFile;
+    IM* _im;
+    IMJingle* jingle;
+    IMFile* _imFile;
 
-  // key: sId value:Jingle
-  //  QMap<QString, lib::messenger::IMJingle*> jingleMap;
-  std::unique_ptr<lib::messenger::IMConference> _conference;
+    // key: sId value:Jingle
+    //  QMap<QString, lib::messenger::IMJingle*> jingleMap;
+    std::unique_ptr<lib::messenger::IMConference> _conference;
 
-  std::vector<FriendHandler *> friendHandlers;
-  std::vector<SelfHandler *> selfHandlers;
-  std::vector<GroupHandler *> groupHandlers;
+    std::vector<FriendHandler*> friendHandlers;
+    std::vector<SelfHandler*> selfHandlers;
+    std::vector<GroupHandler*> groupHandlers;
 
-  size_t sentCount = 0;
-  std::unique_ptr<base::DelayedCallTimer> _delayer;
+    size_t sentCount = 0;
+    std::unique_ptr<base::DelayedCallTimer> _delayer;
 
 signals:
-  void started();
-  void stopped();
-  void connected();
-  void disconnect();
-  void incoming(const QString dom);
+    void started();
+    void stopped();
+    void connected();
+    void disconnect();
+    void incoming(const QString dom);
 
-  void receivedGroupMessage(lib::messenger::IMMessage imMsg); //
-  void messageSent(const IMMessage &message);                 //
+    void receivedGroupMessage(lib::messenger::IMMessage imMsg);  //
+    void messageSent(const IMMessage& message);                  //
 
 private slots:
-  void onConnectResult(lib::messenger::IMConnectStatus);
-  void onStarted();
-  void onStopped();
-  void onReceiveGroupMessage(lib::messenger::IMMessage imMsg);
-  void onDisconnect();
-  void onEncryptedMessage(QString dom);
+    void onConnectResult(lib::messenger::IMConnectStatus);
+    void onStarted();
+    void onStopped();
+    void onReceiveGroupMessage(lib::messenger::IMMessage imMsg);
+    void onDisconnect();
+    void onEncryptedMessage(QString dom);
 
-  void onGroupReceived(QString groupId, QString name);
+    void onGroupReceived(QString groupId, QString name);
 };
 
-} // namespace messenger
-} // namespace lib
-
+}  // namespace messenger
+}  // namespace lib

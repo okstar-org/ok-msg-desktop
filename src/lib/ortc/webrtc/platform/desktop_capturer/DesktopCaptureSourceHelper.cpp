@@ -123,8 +123,8 @@ private:
 
 SourceFrameCallbackImpl::SourceFrameCallbackImpl(DesktopSize size, int fps) : size_(size) {}
 
-void SourceFrameCallbackImpl::OnCaptureResult(
-        webrtc::DesktopCapturer::Result result, std::unique_ptr<webrtc::DesktopFrame> frame) {
+void SourceFrameCallbackImpl::OnCaptureResult(webrtc::DesktopCapturer::Result result,
+                                              std::unique_ptr<webrtc::DesktopFrame> frame) {
     const auto failed = (result != webrtc::DesktopCapturer::Result::SUCCESS) || !frame ||
                         frame->size().equals({1, 1});
     if (failed) {

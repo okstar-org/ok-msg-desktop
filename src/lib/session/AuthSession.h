@@ -18,11 +18,11 @@
 #include <QTimer>
 #include <QUrl>
 
+#include <memory>
+#include <utility>
 #include "base/OkAccount.h"
 #include "base/basic_types.h"
 #include "base/jsons.h"
-#include <memory>
-#include <utility>
 
 #include "lib/backend/PassportService.h"
 #include "lib/messenger/messenger.h"
@@ -31,76 +31,75 @@ namespace ok {
 namespace session {
 
 enum class Status {
-  NONE = 0,
-  CONNECTING,
-  SUCCESS,
-  FAILURE,
+    NONE = 0,
+    CONNECTING,
+    SUCCESS,
+    FAILURE,
 };
 
 class LoginResult {
 public:
-  Status status = Status::NONE;
-  QString msg;
-  int statusCode;
+    Status status = Status::NONE;
+    QString msg;
+    int statusCode;
 };
 
 /**
  * 登录信息
  */
 struct SignInInfo {
-  // 账号
-  QString account;
-  // 密码
-  QString password;
+    // 账号
+    QString account;
+    // 密码
+    QString password;
 
-  // username
-  QString username;
-  // xmpp host
-  QString host;
-  // stack url
-  QString stackUrl;
+    // username
+    QString username;
+    // xmpp host
+    QString host;
+    // stack url
+    QString stackUrl;
 };
 
 class AuthSession : public QObject {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  AuthSession(QObject *parent = nullptr);
-  ~AuthSession() override;
+    AuthSession(QObject* parent = nullptr);
+    ~AuthSession() override;
 
-  Status status() const;
+    Status status() const;
 
-  void doLogin(const SignInInfo &signInInfo);
+    void doLogin(const SignInInfo& signInInfo);
 
-  [[nodiscard]] const SignInInfo &getSignInInfo() const { return m_signInInfo; };
+    [[nodiscard]] const SignInInfo& getSignInInfo() const { return m_signInInfo; };
 
-  [[nodiscard]] const ok::backend::SysToken &getToken() const { return m_token; };
+    [[nodiscard]] const ok::backend::SysToken& getToken() const { return m_token; };
 
-  [[nodiscard]] ok::base::OkAccount *account() const { return okAccount.get(); }
+    [[nodiscard]] ok::base::OkAccount* account() const { return okAccount.get(); }
 
 protected:
-  /**
-   * 执行登录
-   */
-  void doSignIn();
+    /**
+     * 执行登录
+     */
+    void doSignIn();
 
-//  void doConnect();
+    //  void doConnect();
 
 private:
-  QMutex _mutex;
-  SignInInfo m_signInInfo;
-  ok::backend::SysToken m_token;
+    QMutex _mutex;
+    SignInInfo m_signInInfo;
+    ok::backend::SysToken m_token;
 
-  std::unique_ptr<network::NetworkHttp> m_networkManager;
-  std::unique_ptr<ok::base::OkAccount> okAccount;
-  std::unique_ptr<ok::backend::PassportService> passportService;
+    std::unique_ptr<network::NetworkHttp> m_networkManager;
+    std::unique_ptr<ok::base::OkAccount> okAccount;
+    std::unique_ptr<ok::backend::PassportService> passportService;
 
-  Status _status;
+    Status _status;
 
-  void setToken(const ok::backend::SysToken& m_token);
+    void setToken(const ok::backend::SysToken& m_token);
 signals:
-  void loginResult(SignInInfo, LoginResult);
-  void tokenSet();
-
+    void loginResult(SignInInfo, LoginResult);
+    void tokenSet();
 };
-} // namespace session
-} // namespace ok
+}  // namespace session
+}  // namespace ok

@@ -66,7 +66,6 @@ void OMainMenu::showEvent(QShowEvent* e) {
 
 void OMainMenu::updateUI() { on_chatBtn_clicked(true); }
 
-
 /**
  * 聊天
  * @brief OMainMenu::on_chatBtn_clicked

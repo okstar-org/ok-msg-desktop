@@ -10,8 +10,8 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#include <QDebug>
 #include <X11/extensions/scrnsaver.h>
+#include <QDebug>
 #include "src/platform/timer.h"
 #include "src/platform/x11_display.h"
 
@@ -34,8 +34,8 @@ uint32_t Platform::getIdleTime() {
             idleTime = info->idle;
             XFree(info);
         }
-//        else
-//            qDebug() << "XScreenSaverAllocInfo() failed";
+        //        else
+        //            qDebug() << "XScreenSaverAllocInfo() failed";
     }
     X11Display::unlock();
     return idleTime;

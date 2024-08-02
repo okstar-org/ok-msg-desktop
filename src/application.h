@@ -50,26 +50,24 @@ public:
 
     inline Bus* bus() const { return _bus.get(); }
 
-  inline ok::session::AuthSession *getSession(){
-    return session.get();
-  }
+    inline ok::session::AuthSession* getSession() { return session.get(); }
 
 private:
     QMap<QString, Module*> m_moduleMap;
 
     void* profile = nullptr;
 
-  int _argc;
-  char **_argv;
+    int _argc;
+    char** _argv;
 
-  std::shared_ptr<ok::session::AuthSession> session;
+    std::shared_ptr<ok::session::AuthSession> session;
 
-  std::unique_ptr<Bus> _bus;
-  std::unique_ptr<SettingManager> _settingManager;
-  std::unique_ptr<ControllerManager> _controllerManager;
+    std::unique_ptr<Bus> _bus;
+    std::unique_ptr<SettingManager> _settingManager;
+    std::unique_ptr<ControllerManager> _controllerManager;
 
-  UI::LoginWindow* m_loginWindow;
-  std::unique_ptr<UI::MainWindow> m_mainWindow;
+    UI::LoginWindow* m_loginWindow;
+    std::unique_ptr<UI::MainWindow> m_mainWindow;
 
     void loadService();
     void doLogout();
@@ -79,8 +77,8 @@ private:
     void createLoginUI(bool bootstrap);
     void closeLoginUI();
 
-  void startMainUI(std::shared_ptr<ok::session::AuthSession> session);
-  void stopMainUI();
+    void startMainUI(std::shared_ptr<ok::session::AuthSession> session);
+    void stopMainUI();
 
 #ifdef OK_MODULE_PAINTER
     void initModulePainter();
@@ -93,7 +91,7 @@ private:
 public slots:
     void cleanup();
 
-  void onAvatar(const QPixmap &);
+    void onAvatar(const QPixmap&);
 
     void on_logout(const QString& profile);
     void on_exit(const QString& profile);

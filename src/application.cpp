@@ -109,7 +109,7 @@ Application::Application(int& argc, char* argv[])
     // 设置
     _settingManager = std::make_unique<SettingManager>(this);
 
-  qDebug() << "Application has be created";
+    qDebug() << "Application has be created";
 }
 
 Application* Application::Instance() { return qobject_cast<Application*>(qApp); }
@@ -117,41 +117,41 @@ Application* Application::Instance() { return qobject_cast<Application*>(qApp); 
 void Application::start() { this->createLoginUI(true); }
 
 void Application::createLoginUI(bool bootstrap) {
-  qDebug() << __func__;
-  session = std::make_shared<ok::session::AuthSession>();
-  connect(session.get(), &ok::session::AuthSession::tokenSet, //
-          [&]() {        //
-            startMainUI(session);
-          });
-  m_loginWindow = new UI::LoginWindow(session, bootstrap);
-  m_loginWindow->show();
+    qDebug() << __func__;
+    session = std::make_shared<ok::session::AuthSession>();
+    connect(session.get(), &ok::session::AuthSession::tokenSet,  //
+            [&]() {                                              //
+                startMainUI(session);
+            });
+    m_loginWindow = new UI::LoginWindow(session, bootstrap);
+    m_loginWindow->show();
 }
 
 /**
  *  关闭login窗口
  */
 void Application::closeLoginUI() {
-  qDebug() << __func__;
-  if (!m_loginWindow) {
-    return;
-  }
-  disconnect(m_loginWindow);
-  m_loginWindow->close();
-  // no need to delete
-  m_loginWindow = nullptr;
+    qDebug() << __func__;
+    if (!m_loginWindow) {
+        return;
+    }
+    disconnect(m_loginWindow);
+    m_loginWindow->close();
+    // no need to delete
+    m_loginWindow = nullptr;
 }
 
 void Application::startMainUI(std::shared_ptr<ok::session::AuthSession> session) {
-  qDebug() << __func__;
+    qDebug() << __func__;
 
-  // Check the access token.
-  assert(session);
-  assert(!session->getToken().accessToken.isEmpty());
+    // Check the access token.
+    assert(session);
+    assert(!session->getToken().accessToken.isEmpty());
 
-  // Create main window
-  m_mainWindow = std::make_unique<UI::MainWindow>(session);
-  m_mainWindow->show();
-  closeLoginUI();
+    // Create main window
+    m_mainWindow = std::make_unique<UI::MainWindow>(session);
+    m_mainWindow->show();
+    closeLoginUI();
 
 #ifdef OK_PLUGIN
     // 初始化插件平台
@@ -219,4 +219,4 @@ void Application::doLogout() {
     stopMainUI();
 }
 
-} // namespace ok
+}  // namespace ok

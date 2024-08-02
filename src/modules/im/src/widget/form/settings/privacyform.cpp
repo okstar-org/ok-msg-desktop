@@ -33,9 +33,7 @@
 #include "src/widget/widget.h"
 
 PrivacyForm::PrivacyForm()
-    : GenericForm(QPixmap(":/img/settings/privacy.png"))
-    , bodyUI(new Ui::PrivacySettings)
-{
+        : GenericForm(QPixmap(":/img/settings/privacy.png")), bodyUI(new Ui::PrivacySettings) {
     bodyUI->setupUi(this);
 
     // block all child signals during initialization
@@ -45,34 +43,33 @@ PrivacyForm::PrivacyForm()
     settings::Translator::registerHandler(std::bind(&PrivacyForm::retranslateUi, this), this);
 }
 
-PrivacyForm::~PrivacyForm()
-{
+PrivacyForm::~PrivacyForm() {
     settings::Translator::unregister(this);
     delete bodyUI;
 }
 
-//void PrivacyForm::on_cbKeepHistory_stateChanged()
+// void PrivacyForm::on_cbKeepHistory_stateChanged()
 //{
-//    Settings::getInstance().setEnableLogging(bodyUI->cbKeepHistory->isChecked());
-//    if (!bodyUI->cbKeepHistory->isChecked()) {
-//        emit clearAllReceipts();
-//        QMessageBox::StandardButton dialogDelHistory;
-//        dialogDelHistory =
-//            QMessageBox::question(nullptr, tr("Confirmation"),
-//                                  tr("Do you want to permanently delete all chat history?"),
-//                                  QMessageBox::Yes | QMessageBox::No);
-//        if (dialogDelHistory == QMessageBox::Yes) {
-//            Nexus::getProfile()->getHistory()->eraseHistory();
-//        }
-//    }
-//}
+//     Settings::getInstance().setEnableLogging(bodyUI->cbKeepHistory->isChecked());
+//     if (!bodyUI->cbKeepHistory->isChecked()) {
+//         emit clearAllReceipts();
+//         QMessageBox::StandardButton dialogDelHistory;
+//         dialogDelHistory =
+//             QMessageBox::question(nullptr, tr("Confirmation"),
+//                                   tr("Do you want to permanently delete all chat history?"),
+//                                   QMessageBox::Yes | QMessageBox::No);
+//         if (dialogDelHistory == QMessageBox::Yes) {
+//             Nexus::getProfile()->getHistory()->eraseHistory();
+//         }
+//     }
+// }
 //
-//void PrivacyForm::on_cbTypingNotification_stateChanged()
+// void PrivacyForm::on_cbTypingNotification_stateChanged()
 //{
-//    Settings::getInstance().setTypingNotification(bodyUI->cbTypingNotification->isChecked());
-//}
+//     Settings::getInstance().setTypingNotification(bodyUI->cbTypingNotification->isChecked());
+// }
 //
-//void PrivacyForm::on_nospamLineEdit_editingFinished()
+// void PrivacyForm::on_nospamLineEdit_editingFinished()
 //{
 ////    QString newNospam = bodyUI->nospamLineEdit->text();
 //
@@ -82,54 +79,51 @@ PrivacyForm::~PrivacyForm()
 ////        Core::getInstance()->setNospam(nospam);
 //}
 
-void PrivacyForm::showEvent(QShowEvent*)
-{
+void PrivacyForm::showEvent(QShowEvent*) {
     const Settings& s = Settings::getInstance();
-//    bodyUI->nospamLineEdit->setText(Core::getInstance()->getSelfId().getNoSpamString());
+    //    bodyUI->nospamLineEdit->setText(Core::getInstance()->getSelfId().getNoSpamString());
     bodyUI->cbTypingNotification->setChecked(s.getTypingNotification());
     bodyUI->cbKeepHistory->setChecked(Settings::getInstance().getEnableLogging());
     bodyUI->blackListTextEdit->setText(s.getBlackList().join('\n'));
 }
 //
-//void PrivacyForm::on_randomNosapamButton_clicked()
+// void PrivacyForm::on_randomNosapamButton_clicked()
 //{
 //    QTime time = QTime::currentTime();
-//#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
+// #if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
 //    QRandomGenerator((uint)time.msec());
-//#else
+// #else
 //    qsrand((uint)time.msec());
-//#endif
+// #endif
 //
 //    uint32_t newNospam{0};
 //    for (int i = 0; i < 4; ++i)
-//#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
-//        newNospam = (newNospam << 8) + (QRandomGenerator::global()->generate() % 256); // Generate byte by byte. For some reason.
-//#else
+// #if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
+//        newNospam = (newNospam << 8) + (QRandomGenerator::global()->generate() % 256); // Generate
+//        byte by byte. For some reason.
+// #else
 //        newNospam = (newNospam << 8) + (qrand() % 256); // Generate byte by byte. For some reason.
-//#endif
+// #endif
 //
 ////    Core::getInstance()->setNospam(newNospam);
 ////    bodyUI->nospamLineEdit->setText(Core::getInstance()->getSelfId().getNoSpamString());
 //}
 
-//void PrivacyForm::on_nospamLineEdit_textChanged()
+// void PrivacyForm::on_nospamLineEdit_textChanged()
 //{
-//    QString str = bodyUI->nospamLineEdit->text();
-//    int curs = bodyUI->nospamLineEdit->cursorPosition();
-//    if (str.length() != 8) {
-//        str = QString("00000000").replace(0, str.length(), str);
-//        bodyUI->nospamLineEdit->setText(str);
-//        bodyUI->nospamLineEdit->setCursorPosition(curs);
-//    };
-//}
+//     QString str = bodyUI->nospamLineEdit->text();
+//     int curs = bodyUI->nospamLineEdit->cursorPosition();
+//     if (str.length() != 8) {
+//         str = QString("00000000").replace(0, str.length(), str);
+//         bodyUI->nospamLineEdit->setText(str);
+//         bodyUI->nospamLineEdit->setCursorPosition(curs);
+//     };
+// }
 
-//void PrivacyForm::on_blackListTextEdit_textChanged()
+// void PrivacyForm::on_blackListTextEdit_textChanged()
 //{
-//    const QStringList strlist = bodyUI->blackListTextEdit->toPlainText().split('\n');
-//    Settings::getInstance().setBlackList(strlist);
-//}
+//     const QStringList strlist = bodyUI->blackListTextEdit->toPlainText().split('\n');
+//     Settings::getInstance().setBlackList(strlist);
+// }
 
-void PrivacyForm::retranslateUi()
-{
-    bodyUI->retranslateUi(this);
-}
+void PrivacyForm::retranslateUi() { bodyUI->retranslateUi(this); }

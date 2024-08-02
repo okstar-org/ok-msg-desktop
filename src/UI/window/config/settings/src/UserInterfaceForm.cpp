@@ -234,7 +234,7 @@ void UserInterfaceForm::on_dateFormats_editTextChanged(const QString& format) {
 //     // Note: UI is boolean inversed from settings to maintain setting file backwards
 //     compatibility
 ////
-///Settings::getInstance().setGroupAlwaysNotify(!bodyUI->groupOnlyNotfiyWhenMentioned->isChecked());
+/// Settings::getInstance().setGroupAlwaysNotify(!bodyUI->groupOnlyNotfiyWhenMentioned->isChecked());
 //}
 
 // void UserInterfaceForm::on_themeColorCBox_currentIndexChanged(int)

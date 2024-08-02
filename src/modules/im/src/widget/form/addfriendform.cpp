@@ -75,9 +75,9 @@ AddFriendForm::AddFriendForm(QWidget* parent) : QWidget(parent), addUi{new Ui::A
     retranslateUi();
     settings::Translator::registerHandler(std::bind(&AddFriendForm::retranslateUi, this), this);
 
-  auto _session = ok::Application::Instance()->getSession();
-  signIn = &_session->getSignInInfo();
-  userService = std::make_unique<ok::backend::UserService>(signIn->stackUrl);
+    auto _session = ok::Application::Instance()->getSession();
+    signIn = &_session->getSignInInfo();
+    userService = std::make_unique<ok::backend::UserService>(signIn->stackUrl);
 }
 
 AddFriendForm::~AddFriendForm() {

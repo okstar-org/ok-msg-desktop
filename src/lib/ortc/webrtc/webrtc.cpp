@@ -281,8 +281,8 @@ std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertToSdp(
                 // rtcp-mux
                 acd->set_rtcp_mux(rtp.rtcpMux);
 
-                sessionDescription->AddContent(
-                        content.name, ::cricket::MediaProtocolType::kRtp, std::move(acd));
+                sessionDescription->AddContent(content.name, ::cricket::MediaProtocolType::kRtp,
+                                               std::move(acd));
                 break;
             }
             case gloox::Jingle::video: {
@@ -327,8 +327,8 @@ std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertToSdp(
                 streamParams.ssrc_groups.emplace_back(ssrcGroup);
                 vcd->AddStream(streamParams);
 
-                sessionDescription->AddContent(
-                        content.name, ::cricket::MediaProtocolType::kRtp, std::move(vcd));
+                sessionDescription->AddContent(content.name, ::cricket::MediaProtocolType::kRtp,
+                                               std::move(vcd));
                 break;
             }
             default:
@@ -337,8 +337,8 @@ std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertToSdp(
     }
 
     sessionDescription->AddGroup(group);
-    return webrtc::CreateSessionDescription(
-            sdpType, context.sessionId, context.sessionVersion, std::move(sessionDescription));
+    return webrtc::CreateSessionDescription(sdpType, context.sessionId, context.sessionVersion,
+                                            std::move(sessionDescription));
 }
 
 OJingleContentAv WebRTC::convertFromSdp(webrtc::SessionDescriptionInterface* desc) {

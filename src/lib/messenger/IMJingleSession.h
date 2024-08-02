@@ -12,21 +12,20 @@
 
 #pragma once
 
-#include <QMap>
 #include <ok-gloox/jinglesession.h>
+#include <QMap>
 #include "IM.h"
 #include "base/basic_types.h"
 #include "lib/ortc/ok_rtc_defs.h"
 #include "lib/ortc/ok_rtc_manager.h"
 
-
 namespace lib {
 namespace messenger {
 
 enum CallStage {
-  StageNone,
-  StageMessage, // XEP-0353: Jingle Message Initiation
-  StageSession  // XEP-0166: Jingle https://xmpp.org/extensions/xep-0166.html
+    StageNone,
+    StageMessage,  // XEP-0353: Jingle Message Initiation
+    StageSession   // XEP-0166: Jingle https://xmpp.org/extensions/xep-0166.html
 };
 
 using namespace gloox;
@@ -35,75 +34,61 @@ using namespace gloox::Jingle;
 class IMJingleSession : public QObject {
     Q_OBJECT
 public:
-  explicit IMJingleSession(IM* im,
-                           const IMPeerId &peerId,
-                           const QString &sId,
-                           lib::ortc::JingleCallType callType,
-                           Session *mSession);
-  virtual ~IMJingleSession();
+    explicit IMJingleSession(IM* im,
+                             const IMPeerId& peerId,
+                             const QString& sId,
+                             lib::ortc::JingleCallType callType,
+                             Session* mSession);
+    virtual ~IMJingleSession();
 
+    [[nodiscard]] Session* getSession() const;
+    [[nodiscard]] inline const ortc::OJingleContent& getContext() const { return context; }
 
-  [[nodiscard]] Session *getSession() const;
-  [[nodiscard]] inline const ortc::OJingleContent &getContext() const {
-    return context;
-  }
+    void onAccept();
+    // 被动结束
+    void onTerminate();
+    // 主动结束
+    void doTerminate();
 
-  void onAccept();
-  //被动结束
-  void onTerminate();
-  //主动结束
-  void doTerminate();
+    void createOffer(const std::string& peerId);
 
-  void createOffer(const std::string &peerId);
+    void setContext(const ortc::OJingleContent&);
 
-  void setContext(const ortc::OJingleContent &);
+    const Session::Jingle* getJingle() const;
+    void setJingle(const Session::Jingle* jingle);
 
-  const Session::Jingle *getJingle() const;
-  void setJingle(const Session::Jingle *jingle);
+    [[nodiscard]] CallDirection direction() const;
 
-  [[nodiscard]] CallDirection direction() const;
+    void setCallStage(CallStage state);
 
-  void setCallStage(CallStage state);
+    void setAccepted(bool y) { accepted = y; }
 
-  void setAccepted(bool y) { accepted = y; }
+    [[nodiscard]] bool isAccepted() const { return accepted; }
 
-  [[nodiscard]] bool isAccepted() const { return accepted; }
+    const QString& getId() const { return sId; }
 
+    void appendIce(const ortc::OIceUdp& ice) { pendingIceCandidates.emplace_back(ice); }
 
-  const QString & getId() const {
-    return sId;
-  }
-
-  void appendIce(const ortc::OIceUdp& ice){
-    pendingIceCandidates.emplace_back(ice);
-  }
-
-  void pollIce(Fn<void(const ortc::OIceUdp&)> fn){
-    while (!pendingIceCandidates.empty()){
-      fn(pendingIceCandidates.back());
-      pendingIceCandidates.pop_back();
+    void pollIce(Fn<void(const ortc::OIceUdp&)> fn) {
+        while (!pendingIceCandidates.empty()) {
+            fn(pendingIceCandidates.back());
+            pendingIceCandidates.pop_back();
+        }
     }
-  }
-
-
 
 private:
-  IM* im;
-  QString sId;
-  Session *session;
-  const Session::Jingle *jingle;
-  ortc::OJingleContent context;
+    IM* im;
+    QString sId;
+    Session* session;
+    const Session::Jingle* jingle;
+    ortc::OJingleContent context;
 
-  lib::ortc::JingleCallType m_callType;
-  CallStage m_callStage;
-  bool accepted;
+    lib::ortc::JingleCallType m_callType;
+    CallStage m_callStage;
+    bool accepted;
 
-
-  std::list<ortc::OIceUdp> pendingIceCandidates;
-
-
-
+    std::list<ortc::OIceUdp> pendingIceCandidates;
 };
 
-} // namespace IM
-} // namespace lib
+}  // namespace messenger
+}  // namespace lib

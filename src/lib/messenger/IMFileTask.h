@@ -17,9 +17,9 @@
 #ifndef OKMSG_PROJECT_IMFILETASK_H
 #define OKMSG_PROJECT_IMFILETASK_H
 
-#include "IMFile.h"
-#include <memory>
 #include <QThread>
+#include <memory>
+#include "IMFile.h"
 
 #include <ok-gloox/bytestreamdatahandler.h>
 #include <ok-gloox/inbandbytestream.h>
