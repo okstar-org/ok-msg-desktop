@@ -11,33 +11,26 @@
  */
 
 //
-// Created by gaojie on 24-7-31.
+// Created by gaojie on 24-8-3.
 //
 
-#pragma once
-
-#include "Widget.h"
-#include "modules/module.h"
-
+#include "Backend.h"
 namespace ok::platform {
-class Platform : public QObject, public Module {
-    Q_OBJECT
-public:
-    Platform();
-    ~Platform();
-    void init(Profile* p) override;
-    QString name() override;
-    void start(std::shared_ptr<ok::session::AuthSession> session) override;
-    bool isStarted() override;
-    void onSave(SavedInfo&) override;
-    void cleanup() override;
-    void destroy() override;
 
-    QWidget* widget() { return m_widget.get(); }
-    void hide() override;
+Backend::Backend(const QString& baseUrl, QObject* parent)
+        : ok::backend::BaseService(baseUrl, parent) {}
 
-private:
-    std::unique_ptr<Widget> m_widget;
-};
+bool Backend::getAppList(const network::HttpBodyFn& fn, int pageIndex, int pageSize) {
+    QString url = _baseUrl + "/api/sys/work/app/page";
+
+    QJsonDocument doc;
+    QJsonObject obj;
+    obj.insert("pageIndex", pageIndex);
+    obj.insert("pageSize", pageSize);
+    doc.setObject(obj);
+    headers.insert("Origin", _baseUrl);
+    http->setHeaders(headers);
+    return http->postJson(QUrl(url), doc, fn, nullptr, nullptr, nullptr);
+}
 
 }  // namespace ok::platform

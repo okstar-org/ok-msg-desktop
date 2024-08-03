@@ -24,10 +24,10 @@ PassportService::PassportService(const QString& base, QObject* parent)
 
 PassportService::~PassportService() {}
 
-bool PassportService::getAccount(
-        const QString& account, Fn<void(Res<SysAccount>&)> fn, network::HttpErrorFn err) {
+bool PassportService::getAccount(const QString& account, Fn<void(Res<SysAccount>&)> fn,
+                                 network::HttpErrorFn err) {
     QString url = _baseUrl + "/api/open/passport/account/" + account;
-    return http->getJSON(
+    return http->getJson(
             QUrl(url),
             [=](QJsonDocument doc) {
                 Res<SysAccount> res(doc);

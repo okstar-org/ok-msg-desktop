@@ -446,7 +446,9 @@ void Messenger::joinGroup(const QString& group) {
     _im->joinRoom(group);
 }
 
-void Messenger::setSelfAvatar(const QByteArray& avatar) { _im->setAvatar(avatar); }
+void Messenger::setSelfAvatar(const QByteArray& avatar) {
+    _im->setAvatar(avatar);
+}
 
 void Messenger::requestBookmarks() {
     _im->requestVCards();

@@ -57,8 +57,11 @@ NetworkHttp::NetworkHttp(QObject* parent) : QObject(parent), _manager{nullptr} {
 
 NetworkHttp::~NetworkHttp() { qDebug() << __func__; }
 
-inline void forRequest(QNetworkRequest& req) {
+inline void NetworkHttp::forRequest(QNetworkRequest& req) {
     req.setAttribute(QNetworkRequest::RedirectPolicyAttribute, true);
+    for(const auto& k: headers.keys()){
+        req.setRawHeader(k.toUtf8(), headers[k].toUtf8());
+    }
 }
 
 bool NetworkHttp::get(const QUrl& url,
@@ -101,14 +104,14 @@ QByteArray NetworkHttp::get(const QUrl& url, const HttpDownloadProgressFn& downl
     return byteArr;
 }
 
-bool NetworkHttp::getJSON(const QUrl& url, Fn<void(QJsonDocument)> fn, const HttpErrorFn& errFn) {
+bool NetworkHttp::getJson(const QUrl& url, Fn<void(QJsonDocument)> fn, const HttpErrorFn& err) {
     return get(
             url,
             [=](QByteArray buf, QString fileName) {
                 Q_UNUSED(fileName)
                 fn(Jsons::toJSON(buf));
             },
-            nullptr, errFn);
+            nullptr, err);
 }
 
 /**
@@ -129,6 +132,14 @@ bool NetworkHttp::postJson(const QUrl& url,
                            const HttpUploadProgressFn& upload,
                            const HttpErrorFn& failed) {
     return post(url, data.toJson(), CONTENT_TYPE_JSON, fn, progress, upload, failed);
+}
+
+bool NetworkHttp::postJson1(const QUrl &url, const QJsonDocument &data, const HttpJsonBodyFn &fn, const HttpDownloadProgressFn &progress, const HttpUploadProgressFn &upload, const HttpErrorFn &failed)
+{
+    return post(url, data.toJson(), CONTENT_TYPE_JSON, [&](QByteArray body, QString name){
+        auto doc=QJsonDocument::fromJson(body);
+        fn(doc, name);
+    }, progress, upload, failed);
 }
 
 bool NetworkHttp::post(const QUrl& url,
@@ -206,8 +217,6 @@ void NetworkHttp::doRequest(QNetworkRequest& req,
                             const HttpDownloadProgressFn& progress,
                             const HttpUploadProgressFn& upload,
                             const HttpErrorFn& failed) {
-    qDebug() << __func__;
-
     if (!reply) {
         return;
     }
@@ -247,9 +256,8 @@ void NetworkHttp::doRequest(QNetworkRequest& req,
             auto type = cth.toString();
             qDebug() << "content-type:" << type;
             if (type.startsWith("text/", Qt::CaseInsensitive) ||
-                type.startsWith(CONTENT_TYPE_JSON, Qt::CaseInsensitive)) {
-                qDebug() << qstring("body:%1").arg(QString::fromUtf8(bytes));
-            }
+                type.startsWith(CONTENT_TYPE_JSON, Qt::CaseInsensitive))
+                qDebug() << "body:" << (QString::fromUtf8(bytes));
         }
 
         auto cdh = reply->header(QNetworkRequest::KnownHeaders::ContentDispositionHeader);

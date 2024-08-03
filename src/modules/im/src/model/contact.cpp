@@ -74,7 +74,7 @@ void Contact::setAvatar(const QPixmap& pix) {
     auto profile = Nexus::getProfile();
     QByteArray buf;
     avatar.save(buf);
-    profile->saveAvatar(FriendId{id}, buf);
+    profile->saveFriendAvatar(FriendId{id}, buf);
 
     emit avatarChanged(avatar);
 }

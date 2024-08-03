@@ -11,33 +11,32 @@
  */
 
 //
-// Created by gaojie on 24-7-31.
+// Created by gaojie on 24-8-3.
 //
 
 #pragma once
-
-#include "Widget.h"
-#include "modules/module.h"
-
+#include <QObject>
+namespace ok {
+namespace backend {
+class SysToken;
+}
+}  // namespace ok
 namespace ok::platform {
-class Platform : public QObject, public Module {
+
+class AccessToken : public QObject {
     Q_OBJECT
 public:
-    Platform();
-    ~Platform();
-    void init(Profile* p) override;
-    QString name() override;
-    void start(std::shared_ptr<ok::session::AuthSession> session) override;
-    bool isStarted() override;
-    void onSave(SavedInfo&) override;
-    void cleanup() override;
-    void destroy() override;
+    AccessToken();
+    AccessToken(backend::SysToken& sysToken);
+    ~AccessToken();
 
-    QWidget* widget() { return m_widget.get(); }
-    void hide() override;
-
-private:
-    std::unique_ptr<Widget> m_widget;
+    QString username;
+    QString tokenType;
+    QString accessToken;
+    quint64 expiresIn;
+    QString refreshToken;
+    quint64 refreshExpiresIn;
+    QString session_state;
 };
 
 }  // namespace ok::platform

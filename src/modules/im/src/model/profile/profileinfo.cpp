@@ -282,7 +282,7 @@ IProfileInfo::SetAvatarResult ProfileInfo::setAvatar(const QString& path) {
     QByteArray avatar;
     const auto err = createAvatarFromFile(file, avatar);
     if (err == SetAvatarResult::OK) {
-        profile->setAvatar(avatar);
+        profile->setAvatar(avatar, true);
     }
     return err;
 }
@@ -353,8 +353,6 @@ IProfileInfo::SetAvatarResult ProfileInfo::scalePngToAvatar(QByteArray& avatar) 
     }
     return SetAvatarResult::OK;
 }
-
-/**
- * @brief Remove self avatar.
- */
-void ProfileInfo::removeAvatar() { profile->removeSelfAvatar(); }
+void ProfileInfo::removeAvatar() {
+    profile->removeAvatar(true);
+}

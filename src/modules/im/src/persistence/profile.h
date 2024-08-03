@@ -62,15 +62,20 @@ public:
     const ToxEncrypt* getPasskey() const;
 
     const QPixmap& loadAvatar();
-    void setAvatar(QByteArray pic);
-    void setAvatarOnly(QPixmap pic);
+    void setAvatar(QByteArray pic, bool saveToCore);
+    void setAvatarOnly(const QPixmap& pic);
 
     QPixmap loadAvatar(const ContactId& owner);
     QByteArray loadAvatarData(const ContactId& owner);
+    void removeAvatar(bool saveToCore);
 
-    QByteArray getAvatarHash(const FriendId& owner);
-    void removeSelfAvatar();
-    void removeFriendAvatar(const FriendId& owner);
+    QByteArray getFriendAvatarHash(const FriendId& owner);
+
+    void saveFriendAvatar(const FriendId& owner, const QByteArray& avatar);
+    void saveFriendAlias(const QString& friendPk, const QString& alias);
+    QString getFriendAlias(const QString& friendPk);
+
+
     bool isHistoryEnabled();
     History* getHistory();
 
@@ -84,9 +89,6 @@ public:
     static bool isEncrypted(QString name);
     static QString getDbPath(const QString& profileName);
 
-    void saveAvatar(const FriendId& owner, const QByteArray& avatar);
-    void saveFriendAlias(const QString& friendPk, const QString& alias);
-    QString getFriendAlias(const QString& friendPk);
 
     uint addContact(const ContactId& cid);
 
@@ -141,14 +143,17 @@ signals:
 public slots:
     void onRequestSent(const FriendId& friendPk, const QString& message);
 
-private slots:
     void loadDatabase(QString password);
-    void removeAvatar(const FriendId& owner);
+
+    void removeFriendAvatar(const FriendId& owner);
 
     void onSaveToxSave();
-    // TODO(sudden6): use ToxPk instead of receiver
-    void onAvatarOfferReceived(QString friendId, QString fileId, const QByteArray& avatarHash);
-    void setFriendAvatar(const FriendId owner, const QByteArray& pic);
+
+//    void onAvatarOfferReceived(const QString& friendId,
+//                               const QString &fileId,
+//                               const QByteArray& avatarHash);
+
+    void setFriendAvatar(const FriendId& owner, const QByteArray& pic);
 };
 
 #endif  // PROFILE_H

@@ -10,25 +10,29 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#pragma once
+#ifndef WEBSOCKETTRANSPORT_H
+#define WEBSOCKETTRANSPORT_H
 
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonValue>
-#include <QString>
+#include <QWebChannelAbstractTransport>
 
-class Jsons {
+QT_BEGIN_NAMESPACE
+class QWebSocket;
+QT_END_NAMESPACE
+
+class WebSocketTransport : public QWebChannelAbstractTransport {
+    Q_OBJECT
 public:
-    inline static QString toString(const QJsonDocument& document) {
-        return QString{document.toJson(QJsonDocument::Compact)};
-    }
+    explicit WebSocketTransport(QWebSocket* socket);
+    virtual ~WebSocketTransport();
 
-    inline static QJsonDocument toJSON(const QByteArray& buf) {
-        return QJsonDocument::fromJson(buf);
-    }
+    void sendMessage(const QJsonObject& message) override;
+    void sendMessage(const QString& json);
+
+private slots:
+    void textMessageReceived(const QString& message);
+
+private:
+    QWebSocket* m_socket;
 };
 
-template <typename T> class JsonAble {
-public:
-    virtual T fromJson(const QJsonObject& data) = 0;
-};
+#endif  // WEBSOCKETTRANSPORT_H

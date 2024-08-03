@@ -21,21 +21,39 @@
 #include "base/resources.h"
 
 class QWebEngineView;
+class QWebChannel;
+class QThread;
+class QWebSocketServer;
 
+class WebSocketClientWrapper;
+class WebSocketTransport;
 
 OK_RESOURCE_LOADER(Platform)
 
-namespace platform {
+namespace ok::platform {
 
 class Widget : public UI::OMenuWidget {
     Q_OBJECT
 public:
     Widget(QWidget* parent = nullptr);
     ~Widget() override;
+    void start();
 
 private:
     OK_RESOURCE_PTR(Platform);
 
     QWebEngineView* webView;
+    QWebChannel* webChannel;
+    QWebSocketServer* wss;
+    WebSocketClientWrapper* clientWrapper;
+    std::unique_ptr<QThread> thread;
+
+    void startWsServer();
+    void startWebEngine();
+
+public slots:
+
+    void doStart();
+    void clientConnected(WebSocketTransport* transport);
 };
-}  // namespace platform
+}  // namespace ok::platform

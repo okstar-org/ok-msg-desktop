@@ -25,7 +25,7 @@ OkCloudService::~OkCloudService() { qDebug() << __func__; }
 
 bool OkCloudService::GetFederalInfo(Fn<void(Res<FederalInfo>&)> fn, network::HttpErrorFn err) {
     QString url = _baseUrl + "/federal/.well-known/info.json";
-    return http->getJSON(
+    return http->getJson(
             QUrl(url),
             // success
             [=](QJsonDocument doc) {
@@ -51,7 +51,7 @@ bool OkCloudService::GetPluginPage(Fn<void(ResPage<ok::backend::PluginInfo>&)> f
     QString url = _baseUrl + "/plugin/page?platform=" + platform + "&arch=" + cpuInfo.arch;
     qDebug() << __func__ << url;
 
-    return http->getJSON(
+    return http->getJson(
             QUrl(url),
             // success
             [=](QJsonDocument doc) {

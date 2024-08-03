@@ -34,6 +34,7 @@ using HttpErrorFn = Fn<void(int statusCode, const QString& errStr)>;
 using HttpDownloadProgressFn = Fn<void(qint64 bytesReceived, qint64 bytesTotal)>;
 using HttpUploadProgressFn = Fn<void(qint64 bytesSent, qint64 bytesTotal)>;
 using HttpBodyFn = Fn<void(QByteArray body, QString filename)>;
+using HttpJsonBodyFn = Fn<void(QJsonDocument json, QString filename)>;
 
 class NetworkHttp : public QObject {
     Q_OBJECT
@@ -41,6 +42,14 @@ class NetworkHttp : public QObject {
 public:
     explicit NetworkHttp(QObject* parent = nullptr);
     ~NetworkHttp() override;
+
+    void setHeader(QString k, QString v){
+        headers.insert(k, v);
+    };
+
+    void setHeaders(const QMap<QString, QString> map){
+        headers.insert(map);
+    }
 
     void httpFinished();
 
@@ -51,7 +60,7 @@ public:
 
     QByteArray get(const QUrl& url, const HttpDownloadProgressFn& downloadProgress = nullptr);
 
-    bool getJSON(const QUrl& url,
+    bool getJson(const QUrl& url,
                  Fn<void(QJsonDocument)> fn = nullptr,
                  const HttpErrorFn& err = nullptr);
 
@@ -66,6 +75,13 @@ public:
     bool postJson(const QUrl& url,
                   const QJsonDocument& data,
                   const HttpBodyFn& fn = nullptr,
+                  const HttpDownloadProgressFn& progress = nullptr,
+                  const HttpUploadProgressFn& upload = nullptr,
+                  const HttpErrorFn& failed = nullptr);
+
+    bool postJson1(const QUrl& url,
+                  const QJsonDocument& data,
+                  const HttpJsonBodyFn& fn = nullptr,
                   const HttpDownloadProgressFn& progress = nullptr,
                   const HttpUploadProgressFn& upload = nullptr,
                   const HttpErrorFn& failed = nullptr);
@@ -85,7 +101,10 @@ public:
                    const HttpDownloadProgressFn& = nullptr, const HttpUploadProgressFn& = nullptr,
                    const HttpErrorFn& = nullptr);
 
+    void forRequest(QNetworkRequest &req);
+
 protected:
     QNetworkAccessManager* _manager;
+    QMap<QString, QString> headers;
 };
 }  // namespace network

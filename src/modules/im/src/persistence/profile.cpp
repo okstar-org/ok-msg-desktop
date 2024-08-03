@@ -77,10 +77,10 @@ void Profile::initCore(const QByteArray& toxsave, ICoreSettings& s, bool isNewPr
     // save tox file when Core requests it
     connect(core.get(), &Core::saveRequest, this, &Profile::onSaveToxSave);
     // react to avatar changes
-    connect(core.get(), &Core::friendAvatarRemoved, this, &Profile::removeAvatar);
+    connect(core.get(), &Core::friendAvatarRemoved, this, &Profile::removeFriendAvatar);
     connect(core.get(), &Core::friendAvatarChanged, this, &Profile::setFriendAvatar);
-    connect(core.get(), &Core::fileAvatarOfferReceived, this, &Profile::onAvatarOfferReceived,
-            Qt::ConnectionType::QueuedConnection);
+//    connect(core.get(), &Core::fileAvatarOfferReceived, this, &Profile::onAvatarOfferReceived,
+//            Qt::ConnectionType::QueuedConnection);
 }
 
 Profile::Profile(const QString& host,
@@ -342,14 +342,6 @@ void Profile::onSaveToxSave() {
     saveToxSave(data);
 }
 
-// TODO(sudden6): handle this better maybe?
-void Profile::onAvatarOfferReceived(QString friendId, QString fileId,
-                                    const QByteArray& avatarHash) {
-    // accept if we don't have it already
-    //  const bool accept = getAvatarHash(core->getFriendPublicKey(friendId)) != avatarHash;
-    //  core->getCoreFile()->handleAvatarOffer(friendId, fileId, accept);
-}
-
 /**
  *
  * @brief Write the .tox save, encrypted if needed.
@@ -493,7 +485,7 @@ void Profile::loadDatabase(QString password) {
  * @param pic Picture to use as avatar, if empty an Identicon will be used
  * depending on settings
  */
-void Profile::setAvatar(QByteArray pic) {
+void Profile::setAvatar(QByteArray pic, bool saveToCore) {
     bool loaded = false;
 
     QByteArray avatarData;
@@ -515,13 +507,16 @@ void Profile::setAvatar(QByteArray pic) {
     }
 
     qDebug() << "pixmap" << pixmap.size();
-    saveAvatar(selfPk, avatarData);
+    saveFriendAvatar(selfPk, avatarData);
 
     emit selfAvatarChanged(pixmap);
-    core->setAvatar(avatarData);
+    if(saveToCore) core->setAvatar(avatarData);
 }
 
-void Profile::setAvatarOnly(QPixmap pixmap) { emit selfAvatarChanged(pixmap); }
+void Profile::setAvatarOnly(const QPixmap& pixmap_) {
+    pixmap = pixmap_;
+    emit selfAvatarChanged(pixmap);
+}
 
 /**
  * @brief Sets a friends avatar
@@ -529,7 +524,7 @@ void Profile::setAvatarOnly(QPixmap pixmap) { emit selfAvatarChanged(pixmap); }
  * depending on settings
  * @param owner pk of friend
  */
-void Profile::setFriendAvatar(const FriendId owner, const QByteArray& avatarData) {
+void Profile::setFriendAvatar(const FriendId& owner, const QByteArray& avatarData) {
     qDebug() << __func__ << owner.toString() << "size:" << avatarData.size();
     QPixmap pixmap;
     if (!avatarData.isEmpty()) {
@@ -546,7 +541,7 @@ void Profile::setFriendAvatar(const FriendId owner, const QByteArray& avatarData
         emit friendAvatarRemoved(owner);
     }
     friendAvatarChanged(owner, pixmap);
-    saveAvatar(owner, avatarData);
+    saveFriendAvatar(owner, avatarData);
 }
 
 void Profile::saveFriendAlias(const QString& friendPk, const QString& alias) {
@@ -583,13 +578,13 @@ void Profile::onRequestSent(const FriendId& friendPk, const QString& message) {
 
 /**
  * @brief Save an avatar to cache.
- * @param pic Picture to save.
+ * @param avatar Picture to save.
  * @param owner PK of avatar owner.
  */
-void Profile::saveAvatar(const FriendId& owner, const QByteArray& pic) {
+void Profile::saveFriendAvatar(const FriendId& owner, const QByteArray& avatar) {
     QString path = avatarPath(owner);
     QDir(Settings::getInstance().getSettingsDirPath()).mkdir("avatars");
-    if (pic.isEmpty()) {
+    if (avatar.isEmpty()) {
         QFile::remove(path);
     } else {
         QSaveFile file(path);
@@ -597,7 +592,7 @@ void Profile::saveAvatar(const FriendId& owner, const QByteArray& pic) {
             qWarning() << "Tox avatar " << path << " couldn't be saved";
             return;
         }
-        file.write(pic);
+        file.write(avatar);
         file.commit();
     }
 }
@@ -607,7 +602,7 @@ void Profile::saveAvatar(const FriendId& owner, const QByteArray& pic) {
  * @param owner IMFriend PK to get hash.
  * @return Avatar tox hash.
  */
-QByteArray Profile::getAvatarHash(const FriendId& owner) {
+QByteArray Profile::getFriendAvatarHash(const FriendId& owner) {
     //  QByteArray pic = loadAvatarData(owner);
     //  QByteArray avatarHash(TOX_HASH_LENGTH, 0);
     //  tox_hash((uint8_t *)avatarHash.data(), (uint8_t *)pic.data(), pic.size());
@@ -618,12 +613,20 @@ QByteArray Profile::getAvatarHash(const FriendId& owner) {
 /**
  * @brief Removes our own avatar.
  */
-void Profile::removeSelfAvatar() { removeAvatar(core->getSelfPeerId().getPublicKey()); }
+void Profile::removeAvatar(bool saveToCore) {
+    removeFriendAvatar(core->getSelfPeerId().getPublicKey());
+    if(saveToCore){
+        //TODO 用默认头像覆盖
+        core->setAvatar({});
+    }
+}
 
 /**
  * @brief Removes friend avatar.
  */
-void Profile::removeFriendAvatar(const FriendId& owner) { removeAvatar(owner); }
+void Profile::removeFriendAvatar(const FriendId& owner) {
+    QFile::remove(avatarPath(owner));
+}
 
 /**
  * @brief Checks that the history is enabled in the settings, and loaded
@@ -637,19 +640,6 @@ bool Profile::isHistoryEnabled() { return Settings::getInstance().getEnableLoggi
  * @return May return a nullptr if the history failed to load.
  */
 History* Profile::getHistory() { return history.get(); }
-
-/**
- * @brief Removes a cached avatar.
- * @param owner IMFriend PK whose avater to delete.
- */
-void Profile::removeAvatar(const FriendId& owner) {
-    QFile::remove(avatarPath(owner));
-    if (owner == core->getSelfPeerId().getPublicKey()) {
-        setAvatar({});
-    } else {
-        setFriendAvatar(owner, {});
-    }
-}
 
 bool Profile::exists(QString name) {
     QString path = Settings::getInstance().getSettingsDirPath() + name;
@@ -800,7 +790,7 @@ QString Profile::setPassword(const QString& newPassword) {
     QString error{};
 
     QByteArray avatar = loadAvatarData(core->getSelfPeerId().getPublicKey());
-    saveAvatar(core->getSelfPeerId().getPublicKey(), avatar);
+    saveFriendAvatar(core->getSelfPeerId().getPublicKey(), avatar);
 
     return error;
 }

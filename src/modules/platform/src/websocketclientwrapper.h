@@ -10,25 +10,31 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#pragma once
+#ifndef WEBSOCKETCLIENTWRAPPER_H
+#define WEBSOCKETCLIENTWRAPPER_H
 
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonValue>
-#include <QString>
+#include <QObject>
 
-class Jsons {
+class WebSocketTransport;
+
+QT_BEGIN_NAMESPACE
+class QWebSocketServer;
+QT_END_NAMESPACE
+
+class WebSocketClientWrapper : public QObject {
+    Q_OBJECT
+
 public:
-    inline static QString toString(const QJsonDocument& document) {
-        return QString{document.toJson(QJsonDocument::Compact)};
-    }
+    WebSocketClientWrapper(QWebSocketServer* server, QObject* parent = nullptr);
 
-    inline static QJsonDocument toJSON(const QByteArray& buf) {
-        return QJsonDocument::fromJson(buf);
-    }
+signals:
+    void clientConnected(WebSocketTransport* client);
+
+private slots:
+    void handleNewConnection();
+
+private:
+    QWebSocketServer* m_server;
 };
 
-template <typename T> class JsonAble {
-public:
-    virtual T fromJson(const QJsonObject& data) = 0;
-};
+#endif  // WEBSOCKETCLIENTWRAPPER_H

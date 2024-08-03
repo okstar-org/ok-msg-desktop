@@ -16,18 +16,20 @@
 
 #include "Platform.h"
 
-namespace platform {
+namespace ok::platform {
 
-Platform::Platform() : m_widget{nullptr} { m_widget = new Widget(); }
+Platform::Platform() : m_widget{nullptr} { m_widget = std::make_unique<Widget>(); }
 
 Platform::~Platform() {}
 
 void Platform::init(Profile* p) {}
-QString Platform::name() { return QString(); }
-void Platform::start(std::shared_ptr<ok::session::AuthSession> session) {}
+QString Platform::name() { return {"Platform"}; }
+
+void Platform::start(std::shared_ptr<ok::session::AuthSession> session) { m_widget->start(); }
+
 bool Platform::isStarted() { return false; }
 void Platform::onSave(SavedInfo&) {}
 void Platform::cleanup() {}
 void Platform::destroy() {}
 void Platform::hide() {}
-}  // namespace platform
+}  // namespace ok::platform

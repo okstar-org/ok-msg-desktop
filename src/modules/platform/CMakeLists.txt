@@ -1,7 +1,7 @@
 project(Platform)
 
-file(GLOB ${PROJECT_NAME}_SOURCES src/*.h src/*.cpp)
-file(GLOB_RECURSE ${PROJECT_NAME}_RESOURCES res/*.html)
+file(GLOB_RECURSE ${PROJECT_NAME}_SOURCES src/*.h src/*.cpp)
+file(GLOB_RECURSE ${PROJECT_NAME}_RESOURCES res/*.html res/*.js)
 
 
 set(RESOURCE_NAME "${PROJECT_BINARY_DIR}/${PROJECT_NAME}.qrc.in")
@@ -40,9 +40,11 @@ add_library(${PROJECT_NAME} STATIC
 	${${PROJECT_NAME}_RESOURCES}
 )
 
-find_package(Qt5 COMPONENTS Core Widgets WebEngine WebEngineWidgets REQUIRED)
+find_package(Qt5 COMPONENTS Core Widgets WebChannel WebSockets WebEngine WebEngineWidgets REQUIRED)
 
 target_link_libraries(${PROJECT_NAME}
+		PRIVATE ${Qt5WebChannel_LIBRARIES}
+		PRIVATE ${Qt5WebSockets_LIBRARIES}
 		PRIVATE ${Qt5WebEngineWidgets_LIBRARIES}
 		PRIVATE ${Qt5WebEngine_LIBRARIES}
 		PRIVATE ${Qt5Widgets_LIBRARIES}

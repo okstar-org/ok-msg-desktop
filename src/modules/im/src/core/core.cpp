@@ -4,10 +4,10 @@
  * You can use this software according to the terms and conditions of the Mulan
  * PubL v2. You may obtain a copy of Mulan PubL v2 at:
  *          http://license.coscl.org.cn/MulanPubL-2.0
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
- * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
- * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
- * See the Mulan PubL v2 for more details.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY
+ * KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE. See the
+ * Mulan PubL v2 for more details.
  */
 
 #include "core.h"
@@ -55,7 +55,8 @@ const QString Core::TOX_EXT = ".tox";
 
 #define ASSERT_CORE_THREAD assert(QThread::currentThread() == coreThread.get())
 
-Core::Core(QThread* coreThread) : tox(nullptr), toxTimer{new QTimer{this}}, coreThread(coreThread) {
+Core::Core(QThread* coreThread)
+        : tox(nullptr), toxTimer{new QTimer{this}}, coreThread(coreThread) {
     assert(toxTimer);
 
     qRegisterMetaType<ToxPeer>("ToxPeer");
@@ -77,7 +78,8 @@ Core::~Core() {
     tox.reset();
 }
 
-Status::Status Core::fromToxStatus(const lib::messenger::IMStatus& status_) const {
+Status::Status Core::fromToxStatus(
+        const lib::messenger::IMStatus& status_) const {
     Status::Status status;
     switch (status_) {
         case lib::messenger::IMStatus::Available:
@@ -106,10 +108,11 @@ void Core::registerCallbacks(lib::messenger::Messenger* messenger) {
     messenger->addGroupHandler(this);
     messenger->addSelfHandler(this);
 
-    connect(messenger, &lib::messenger::Messenger::started, [this, messenger]() {
-        messenger->requestBookmarks();
-        emit started();
-    });
+    connect(messenger, &lib::messenger::Messenger::started,
+            [this, messenger]() {
+                messenger->requestBookmarks();
+                emit started();
+            });
 }
 
 /**
@@ -118,8 +121,10 @@ void Core::registerCallbacks(lib::messenger::Messenger* messenger) {
  * @param settings Settings specific to Core
  * @return nullptr or a Core object ready to start
  */
-ToxCorePtr Core::makeToxCore(const QString& host, const QString& name, const QString& password,
-                             const QByteArray& savedata, const ICoreSettings* const settings,
+ToxCorePtr Core::makeToxCore(const QString& host, const QString& name,
+                             const QString& password,
+                             const QByteArray& savedata,
+                             const ICoreSettings* const settings,
                              ToxCoreErrors* err) {
     QThread* thread = new QThread();
     if (!thread) {
@@ -145,7 +150,8 @@ ToxCorePtr Core::makeToxCore(const QString& host, const QString& name, const QSt
         return {};
     }
 
-    core->tox = std::make_unique<lib::messenger::Messenger>(host, name, password);
+    core->tox =
+            std::make_unique<lib::messenger::Messenger>(host, name, password);
 
     // CoreAV
     core->av = CoreAV::makeCoreAV(core.get());
@@ -203,7 +209,6 @@ void Core::onStarted() {
 void Core::start() {
     qDebug() << __func__ << "...";
     coreThread->start();
-    coreThread->quit();
 }
 
 void Core::stop() {
@@ -355,7 +360,8 @@ void Core::onMessageSession(QString cId, QString sid) {
     emit messageSessionReceived(contactId, sid);
 }
 
-void Core::onFriendMessage(QString friendId, lib::messenger::IMMessage message) {
+void Core::onFriendMessage(QString friendId,
+                           lib::messenger::IMMessage message) {
     qDebug() << __func__ << "friend:" << friendId;
     qDebug() << "content:" << message.body;
 
@@ -385,14 +391,17 @@ void Core::onFriendNickChanged(QString friendId, QString nick) {
     emit friendUsernameChanged(getFriendPublicKey(friendId), nick);
 }
 
-void Core::onFriendAvatarChanged(const QString friendId, const std::string avatar) {
+void Core::onFriendAvatarChanged(const QString friendId,
+                                 const std::string avatar) {
     qDebug() << __func__ << friendId << "avatar size" << avatar.size();
     if (avatar.empty()) return;
 
-    emit friendAvatarChanged(getFriendPublicKey(friendId), QByteArray::fromStdString(avatar));
+    emit friendAvatarChanged(getFriendPublicKey(friendId),
+                             QByteArray::fromStdString(avatar));
 }
 
-void Core::onFriendAliasChanged(const lib::messenger::IMContactId& fId, const QString& alias) {
+void Core::onFriendAliasChanged(const lib::messenger::IMContactId& fId,
+                                const QString& alias) {
     emit friendAliasChanged(FriendId{fId}, alias);
 }
 
@@ -402,7 +411,8 @@ void Core::onGroup(const QString groupId, const QString name) {
 }
 
 //
-// void Core::onGroupInvite(Tox *tox, QString receiver, Tox_Conference_Type type,
+// void Core::onGroupInvite(Tox *tox, QString receiver, Tox_Conference_Type
+// type,
 //                         const uint8_t *cookie, size_t length, void *vCore) {
 //  Core *core = static_cast<Core *>(vCore);
 //  const QByteArray data(reinterpret_cast<const char *>(cookie), length);
@@ -426,7 +436,8 @@ void Core::onGroup(const QString groupId, const QString name) {
 // void Core::onGroupPeerListChange(Tox *, QString groupId, void *vCore) {
 //  const auto core = static_cast<Core *>(vCore);
 //  qDebug() << QString("Group %1 peerlist changed").arg(groupId);
-//  // no saveRequest, this callback is called on every connection to group peer,
+//  // no saveRequest, this callback is called on every connection to group
+//  peer,
 //  // not just on brand new peers
 //  emit core->groupPeerlistChanged(groupId);
 //}
@@ -454,21 +465,26 @@ void Core::onGroup(const QString groupId, const QString name) {
 //                               ToxString(cTitle, length).getQString());
 //}
 
-void Core::onGroupInvite(const QString groupId, const QString peerId, const QString message) {
-    qDebug() << __func__ << "groupId:" << groupId << " receiver:" << peerId << " msg:" << message;
+void Core::onGroupInvite(const QString groupId, const QString peerId,
+                         const QString message) {
+    qDebug() << __func__ << "groupId:" << groupId << " receiver:" << peerId
+             << " msg:" << message;
 
     GroupInvite invite(groupId, peerId, ConferenceType::TEXT, message.toUtf8());
     emit groupInviteReceived(invite);
 }
 
-void Core::onGroupSubjectChanged(const QString& groupId, const QString& subject) {
+void Core::onGroupSubjectChanged(const QString& groupId,
+                                 const QString& subject) {
     qDebug() << __func__ << "groupId:" << groupId << " subject:" << subject;
     emit groupSubjectChanged(GroupId(groupId), subject);
 }
 
-void Core::onGroupMessage(const QString groupId, const lib::messenger::IMPeerId peerId,
+void Core::onGroupMessage(const QString groupId,
+                          const lib::messenger::IMPeerId peerId,
                           const lib::messenger::IMMessage message) {
-    qDebug() << __func__ << "groupId:" << groupId << "peer:" << peerId.toString();
+    qDebug() << __func__ << "groupId:" << groupId
+             << "peer:" << peerId.toString();
     qDebug() << "body:" << message.body;
 
     bool isAction = false;
@@ -540,7 +556,8 @@ void Core::rejectFriendRequest(const FriendId& friendPk) {
  * @return Returns empty string if sending request is correct, according error
  * message otherwise
  */
-QString Core::getFriendRequestErrorMessage(const ToxId& friendId, const QString& message) const {
+QString Core::getFriendRequestErrorMessage(const ToxId& friendId,
+                                           const QString& message) const {
     QMutexLocker ml{&coreLoopLock};
 
     if (!friendId.isValid()) {
@@ -552,14 +569,16 @@ QString Core::getFriendRequestErrorMessage(const ToxId& friendId, const QString&
                   "Error while sending friendship request");
     }
 
-    //  if (message.length() > static_cast<int>(tox_max_friend_request_length()))
+    //  if (message.length() >
+    //  static_cast<int>(tox_max_friend_request_length()))
     //  {
     //    return tr("Your message is too long!",
     //              "Error while sending friendship request");
     //  }
 
     //  if (hasFriendWithPublicKey(receiver.getPublicKey())) {
-    return tr("IMFriend is already added", "Error while sending friendship request");
+    return tr("IMFriend is already added",
+              "Error while sending friendship request");
     //  }
 
     return QString{};
@@ -598,8 +617,8 @@ void Core::requestFriendship(const FriendId& friendId, const QString& nick,
     emit saveRequest();
 }
 
-bool Core::sendMessageWithType(QString friendId, const QString& message, const MsgId& id,
-                               bool encrypt) {
+bool Core::sendMessageWithType(QString friendId, const QString& message,
+                               const MsgId& id, bool encrypt) {
     qDebug() << __func__ << "receiver" << friendId << "message:" << message;
     if (friendId.isEmpty()) {
         qWarning() << "receiver is empty.";
@@ -611,7 +630,8 @@ bool Core::sendMessageWithType(QString friendId, const QString& message, const M
     //  int size = message.toUtf8().size();
     //  auto maxSize = tox_max_message_length();
     //  if (size > maxSize) {
-    //    qCritical() << "Core::sendMessageWithType called with message of size:"
+    //    qCritical() << "Core::sendMessageWithType called with message of
+    //    size:"
     //                << size << "when max is:" << maxSize << ". Ignoring.";
     //    return false;
     //  }
@@ -625,12 +645,14 @@ bool Core::sendMessageWithType(QString friendId, const QString& message, const M
     return yes;
 }
 
-bool Core::sendMessage(QString friendId, const QString& message, const MsgId& msgId, bool encrypt) {
+bool Core::sendMessage(QString friendId, const QString& message,
+                       const MsgId& msgId, bool encrypt) {
     QMutexLocker ml(&coreLoopLock);
     return sendMessageWithType(friendId, message, msgId, encrypt);
 }
 
-bool Core::sendAction(QString friendId, const QString& action, const MsgId& msgId, bool encrypt) {
+bool Core::sendAction(QString friendId, const QString& action,
+                      const MsgId& msgId, bool encrypt) {
     QMutexLocker ml(&coreLoopLock);
     return sendMessageWithType(friendId, action, msgId, encrypt);
 }
@@ -641,17 +663,20 @@ void Core::sendTyping(QString friendId, bool typing) {
     emit failedToSetTyping(typing);
 }
 
-bool Core::sendGroupMessageWithType(QString groupId, const QString& message, const MsgId& id) {
+bool Core::sendGroupMessageWithType(QString groupId, const QString& message,
+                                    const MsgId& id) {
     QMutexLocker ml{&coreLoopLock};
     return tox->sendToGroup(groupId, message, id);
 }
 
-bool Core::sendGroupMessage(QString groupId, const QString& message, const MsgId& id) {
+bool Core::sendGroupMessage(QString groupId, const QString& message,
+                            const MsgId& id) {
     QMutexLocker ml{&coreLoopLock};
     return sendGroupMessageWithType(groupId, message, id);
 }
 
-bool Core::sendGroupAction(QString groupId, const QString& message, const MsgId& id) {
+bool Core::sendGroupAction(QString groupId, const QString& message,
+                           const MsgId& id) {
     QMutexLocker ml{&coreLoopLock};
     return sendGroupMessageWithType(groupId, message, id);
 }
@@ -903,8 +928,8 @@ void Core::loadFriends() {
 
     //   emit friendAdded(ids[i], ToxPk(friendPk));
     //   GET_FRIEND_PROPERTY(Username, tox_friend_get_name, true);
-    //   GET_FRIEND_PROPERTY(StatusMessage, tox_friend_get_status_message, false);
-    //   checkLastOnline(ids[i]);
+    //   GET_FRIEND_PROPERTY(StatusMessage, tox_friend_get_status_message,
+    //   false); checkLastOnline(ids[i]);
     // }
     // delete[] ids;
 }
@@ -962,7 +987,8 @@ void Core::checkLastOnline(QString friendId) {
     //  const uint64_t lastOnline =
     //      tox_friend_get_last_online(tox.get(), receiver, nullptr);
     //  if (lastOnline != std::numeric_limits<uint64_t>::max()) {
-    //    emit friendLastSeenChanged(receiver, QDateTime::fromTime_t(lastOnline));
+    //    emit friendLastSeenChanged(receiver,
+    //    QDateTime::fromTime_t(lastOnline));
     //  }
 }
 
@@ -1019,7 +1045,8 @@ QString Core::getGroupPeerName(QString groupId, QString peerId) const {
 
     //  Tox_Err_Conference_Peer_Query error;
     //  size_t length =
-    //      tox_conference_peer_get_name_size(tox.get(), groupId, peerId, &error);
+    //      tox_conference_peer_get_name_size(tox.get(), groupId, peerId,
+    //      &error);
     //  if (!parsePeerQueryError(error)) {
     //    return QString{};
     //  }
@@ -1188,7 +1215,8 @@ GroupId Core::createGroup(const QString& name) {
     qDebug() << __func__ << name;
 
     QMutexLocker ml{&coreLoopLock};
-    QString id = QUuid::createUuid().toString(QUuid::StringFormat::WithoutBraces);
+    QString id =
+            QUuid::createUuid().toString(QUuid::StringFormat::WithoutBraces);
 
     return GroupId{tox->createGroup(id.split("-").at(0), name)};
 }
@@ -1228,7 +1256,8 @@ inline FriendId Core::getFriendPublicKey(QString friendNumber) const {
     // qDebug() << "getFriendPublicKey" << friendNumber;
     //   QMutexLocker ml{&coreLoopLock};
     //   uint8_t rawid[TOX_PUBLIC_KEY_SIZE];
-    //   if (!tox_friend_get_public_key(tox.get(), friendNumber, rawid, nullptr)) {
+    //   if (!tox_friend_get_public_key(tox.get(), friendNumber, rawid,
+    //   nullptr)) {
     //     qWarning() << "getFriendPublicKey: Getting public key failed";
     //     return ToxPk();
     //   }
@@ -1244,12 +1273,15 @@ void Core::setFriendAlias(const QString& friendId, const QString& alias) {
     tox->setFriendAlias(friendId, alias);
 }
 
-void Core::getFriendInfo(const QString& friendnumber) const { tox->getFriendVCard(friendnumber); }
+void Core::getFriendInfo(const QString& friendnumber) const {
+    tox->getFriendVCard(friendnumber);
+}
 
 Status::Status Core::getFriendStatus(const QString& friendNumber) const {
     auto status = tox->getFriendStatus(friendNumber);
-    return status == lib::messenger::IMStatus::Available ? Status::Status::Online
-                                                         : Status::Status::Offline;
+    return status == lib::messenger::IMStatus::Available
+                   ? Status::Status::Online
+                   : Status::Status::Offline;
 }
 
 QStringList Core::splitMessage(const QString& message) {
@@ -1258,8 +1290,8 @@ QStringList Core::splitMessage(const QString& message) {
 
     /*
      * TODO: Remove this hack; the reported max message length we receive from
-     * c-toxcore as of 08-02-2019 is inaccurate, causing us to generate too large
-     * messages when splitting them up.
+     * c-toxcore as of 08-02-2019 is inaccurate, causing us to generate too
+     * large messages when splitting them up.
      *
      * The inconsistency lies in c-toxcore group.c:2480 using
      * MAX_GROUP_MESSAGE_DATA_LEN to verify message size is within limit, but
@@ -1283,7 +1315,8 @@ QStringList Core::splitMessage(const QString& message) {
             splitPos = maxLen;
             // don't split a utf8 character
             if ((ba_message[splitPos] & multiByteMask) == multiByteMask) {
-                while ((ba_message[splitPos] & firstOfMultiByteMask) != firstOfMultiByteMask) {
+                while ((ba_message[splitPos] & firstOfMultiByteMask) !=
+                       firstOfMultiByteMask) {
                     --splitPos;
                 }
             }
@@ -1352,10 +1385,11 @@ void Core::onSelfAvatarChanged(const std::string avatar) {
         qWarning() << "Can not get profile!";
         return;
     }
-    p->setAvatar(a);
+    p->setAvatar(a, false);
 }
 
-void Core::onSelfStatusChanged(lib::messenger::IMStatus userStatus, const std::string& msg) {
+void Core::onSelfStatusChanged(lib::messenger::IMStatus userStatus,
+                               const std::string& msg) {
     QMutexLocker ml{&coreLoopLock};
     auto st = fromToxStatus(userStatus);
     emit statusSet(st);

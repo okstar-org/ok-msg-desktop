@@ -94,7 +94,6 @@ public:
 
 class OkCloudService : public BaseService {
     Q_OBJECT
-
 public:
     OkCloudService(QObject* parent = nullptr);
     ~OkCloudService();

@@ -295,6 +295,14 @@ OMenuWidget* MainWindow::initMenuWindow(PageMenu menu) {
             break;
     }
     if (w) {
+
+
+    delayCaller->call(1000, [w, this]() {
+        assert(w);
+        assert(session);
+        w->getModule()->start(session);
+    });
+
         menuWindow.insert(menu, w);
         ui->stacked_widget->addWidget(w);
     }
@@ -359,9 +367,9 @@ void MainWindow::onSwitchPage(PageMenu menu, bool checked) {
 QWidget* MainWindow::getContainer(PageMenu menu) { return ui->stacked_widget; }
 
 OMenuWidget* MainWindow::createChatModule(MainWindow* pWindow) {
-    qDebug() << "Creating module:" << Nexus::Name();
-    auto module = Nexus::Create();
-    auto nexus = static_cast<Nexus*>(module);
+    qDebug() << "Creating m:" << Nexus::Name();
+    auto m = Nexus::Create();
+    auto nexus = static_cast<Nexus*>(m);
 
     connect(nexus, &Nexus::updateAvatar,  //
             ok::Application::Instance(), &ok::Application::onAvatar);
@@ -370,25 +378,22 @@ OMenuWidget* MainWindow::createChatModule(MainWindow* pWindow) {
     connect(nexus, &Nexus::exit,  //
             ok::Application::Instance(), &ok::Application::on_exit);
 
-    auto m = new OMenuWidget(this);
-    m->setLayout(new QGridLayout());
-    m->layout()->addWidget(module->widget());
-
-    delayCaller->call(1000, [module, this]() {
-        assert(module);
-        assert(session);
-        module->start(session);
-    });
-
-    return m;
+    auto w = new OMenuWidget(this);
+    w->setModule(m);
+    w->setLayout(new QGridLayout());
+    w->layout()->addWidget(m->widget());
+    return w;
 }
 
 OMenuWidget* MainWindow::createPlatformModule(MainWindow* pWindow) {
-    auto module = new platform::Platform();
-    auto m = new OMenuWidget(this);
-    m->setLayout(new QGridLayout());
-    m->layout()->addWidget(module->widget());
-    return m;
+    auto m = new ok::platform::Platform();
+
+    auto w = new OMenuWidget(this);
+    w->setModule(m);
+    w->setLayout(new QGridLayout());
+    w->layout()->addWidget(m->widget());
+
+    return w;
 }
 
 }  // namespace UI

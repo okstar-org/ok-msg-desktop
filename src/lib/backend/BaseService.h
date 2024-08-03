@@ -175,10 +175,11 @@ public:
     ~BaseService();
 
     [[maybe_unused]] inline const QString& baseUrl() const { return _baseUrl; }
-
+    void setHeader(QString k, QString v);
 protected:
     std::unique_ptr<network::NetworkHttp> http;
     QString _baseUrl;
+    QMap<QString, QString> headers;
 };
 
 }  // namespace ok::backend
