@@ -18,14 +18,24 @@
 #include "ui_Widget.h"
 
 #include "AppCenterWidget.h"
+#include "Bus.h"
+#include "application.h"
+#include "base/OkSettings.h"
+#include "lib/settings/translator.h"
 
 namespace ok::platform {
 
 Widget::Widget(QWidget* parent) : UI::OMenuWidget(parent), ui(new Ui::WorkPlatform) {
     OK_RESOURCE_INIT(Platform);
     ui->setupUi(this);
-
     ui->tabWidget->setObjectName("mainTab");
+
+    QString locale = ok::base::OkSettings::getInstance().getTranslation();
+    settings::Translator::translate(OK_Platform_MODULE, locale);
+    settings::Translator::registerHandler([this] { retranslateUi(); }, this);
+    retranslateUi();
+    connect(ok::Application::Instance()->bus(), &ok::Bus::languageChanged,
+            [](QString locale0) { settings::Translator::translate(OK_Platform_MODULE, locale0); });
 
     centerWidget = new AppCenterWidget(this);
     ui->tabWidget->addTab(centerWidget, tr("App center"));
@@ -37,10 +47,18 @@ Widget::Widget(QWidget* parent) : UI::OMenuWidget(parent), ui(new Ui::WorkPlatfo
     //
 }
 
-Widget::~Widget() {}
+Widget::~Widget() {
+    settings::Translator::unregister(this);
+    delete ui;
+}
 
 void Widget::start() { centerWidget->start(); }
 
 void Widget::doStart() {}
+
+void Widget::retranslateUi() {
+    ui->retranslateUi(this);
+    ui->tabWidget->setTabText(0, tr("App center"));
+}
 
 }  // namespace ok::platform

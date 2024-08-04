@@ -37,6 +37,9 @@ public:
     ~Widget() override;
     void start();
 
+protected:
+    void retranslateUi();
+
 private:
     OK_RESOURCE_PTR(Platform);
     Ui::WorkPlatform* ui;
