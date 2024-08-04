@@ -24,7 +24,23 @@
 
 namespace ok::backend {
 
-struct SysToken {
+struct SysRefreshToken {
+    QString accessToken;
+    quint64 expiresIn;  // 有效期（s）
+    QString refreshToken;
+    quint64 refreshExpiresIn;
+
+    SysRefreshToken() : expiresIn{0}, refreshExpiresIn{0} {}
+
+    SysRefreshToken(const QJsonObject& data) {
+        expiresIn = data.value("expiresIn").toVariant().toULongLong();                //
+        refreshExpiresIn = data.value("refreshExpiresIn").toVariant().toULongLong();  //
+        refreshToken = data.value("refreshToken").toString();                         //
+        accessToken = data.value("accessToken").toString();                           //
+    }
+};
+
+struct SysToken : public SysRefreshToken {
     /**
      * "tokenType": "string",
   "accessToken": "string",
@@ -35,12 +51,8 @@ struct SysToken {
      */
     QString username;
     QString tokenType;
-    QString accessToken;
-    quint64 expiresIn;
-    QString refreshToken;
-    quint64 refreshExpiresIn;
     QString session_state;
-    SysToken() : expiresIn{0}, refreshExpiresIn{0} {}
+    SysToken() : SysRefreshToken() {}
     SysToken(const QJsonObject& data) {
         expiresIn = data.value("expiresIn").toVariant().toULongLong();                //
         refreshExpiresIn = data.value("refreshExpiresIn").toVariant().toULongLong();  //
@@ -104,7 +116,7 @@ public:
                 const network::HttpErrorFn& err, bool rememberMe = false,
                 const QString& grantType = "password");
 
-    bool getAccount(const QString& account, Fn<void(Res<SysAccount>&)> fn,
-                    network::HttpErrorFn err = nullptr);
+    bool refresh(const SysToken& token, Fn<void(Res<SysRefreshToken>&)> fn,
+                 network::HttpErrorFn err = nullptr);
 };
 }  // namespace ok::backend

@@ -63,7 +63,7 @@ public slots:
     void onFileTransferRemotePausedUnpaused(const FriendId& sender, const ToxFile& file,
                                             bool paused);
     void onFileTransferBrokenUnbroken(const FriendId& sender, const ToxFile& file, bool broken);
-    inline ChatLogIdx getNextIdx(MsgId msgId);
+    ChatLogIdx getNextIdx(MsgId msgId);
 
 private:
     const ICoreIdHandler& coreIdHandler;

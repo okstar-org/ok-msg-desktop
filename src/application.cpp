@@ -148,6 +148,11 @@ void Application::startMainUI(std::shared_ptr<ok::session::AuthSession> session)
     assert(session);
     assert(!session->getToken().accessToken.isEmpty());
 
+    if (m_mainWindow) {
+        qWarning() << "Main window was show.";
+        return;
+    }
+
     // Create main window
     m_mainWindow = std::make_unique<UI::MainWindow>(session);
     m_mainWindow->show();

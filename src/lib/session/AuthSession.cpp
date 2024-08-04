@@ -4,16 +4,13 @@
  * You can use this software according to the terms and conditions of the Mulan
  * PubL v2. You may obtain a copy of Mulan PubL v2 at:
  *          http://license.coscl.org.cn/MulanPubL-2.0
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY
- * KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
- * NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE. See the
- * Mulan PubL v2 for more details.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PubL v2 for more details.
  */
 
 #include "AuthSession.h"
-
-#include <list>
-#include <thread>
 
 #include <QMutexLocker>
 #include <QTimer>
@@ -29,8 +26,7 @@ using namespace ok::backend;
 AuthSession::AuthSession(QObject* parent)
         : QObject(parent)
         , m_networkManager(std::make_unique<network::NetworkHttp>(this))
-        ,                      //
-        _status(Status::NONE)  //
+        , _status(Status::NONE)  //
 {
     qRegisterMetaType<SignInInfo>("SignInInfo");
     qRegisterMetaType<LoginResult>("LoginResult");
@@ -48,6 +44,7 @@ void AuthSession::doSignIn() {
     LoginResult result{_status, tr("...")};
     emit loginResult(m_signInInfo, result);
 
+    passportService = std::make_unique<ok::backend::PassportService>(m_signInInfo.stackUrl);
     passportService->signIn(
             m_signInInfo.account, m_signInInfo.password,
             [&](Res<SysToken>& res) {
@@ -80,50 +77,10 @@ void AuthSession::doSignIn() {
             });
 }
 
-// void AuthSession::doConnect() {
-//   qDebug() << __func__;
-//
-//   _status = Status::CONNECTING;
-//   LoginResult result{_status, tr("...")};
-//   emit loginResult(m_signInInfo, result);
-//
-//   passportService->getAccount(
-//       m_signInInfo.account,
-//       [&](Res<SysAccount> &res) {
-//         qDebug() << "Res.code:" << res.code;
-//
-//         if (res.code != 0) {
-//           _status = Status::FAILURE;
-//           LoginResult result{_status, res.msg, 200};
-//           emit loginResult(m_signInInfo, result);
-//           return;
-//         }
-//
-//         if (!res.success()) {
-//           _status = Status::FAILURE;
-//           LoginResult result{_status, res.msg, 200};
-//           emit loginResult(m_signInInfo, result);
-//           return;
-//         }
-//
-//         qDebug() << "Res.data=>" << res.data->toString();
-//         m_signInInfo.username = res.data->username.toLower();
-////        emit loginSuccessed();
-//      },
-//      [&](int statusCode, const QString &msg) {
-//        _status = Status::FAILURE;
-//        LoginResult result{Status::FAILURE, msg, statusCode};
-//        emit loginResult(m_signInInfo, result);
-//      });
-//}
-
 void AuthSession::doLogin(const SignInInfo& signInInfo) {
     qDebug() << __func__ << signInInfo.account;
-
     QMutexLocker locker(&_mutex);
-
     m_signInInfo = signInInfo;
-
     if (_status == ok::session::Status::CONNECTING) {
         qDebug(("The connection is connecting."));
         return;
@@ -136,66 +93,36 @@ void AuthSession::doLogin(const SignInInfo& signInInfo) {
 
     qDebug() << "account:" << signInInfo.account << "password:" << signInInfo.password;
     qDebug() << "stackUrl:" << signInInfo.stackUrl;
-    passportService = std::make_unique<ok::backend::PassportService>(signInInfo.stackUrl);
     doSignIn();
 }
 
 void AuthSession::setToken(const SysToken& token) {
     m_token = token;
     m_signInInfo.username = token.username.toLower();
+    QTimer::singleShot((token.expiresIn - 10) * 1000, this, &AuthSession::doRefreshToken);
     emit tokenSet();
 }
 
-//
-// void AuthSession::onIMConnectStatus(::lib::messenger::IMConnectStatus status) {
-//  QString msg;
-//  if (status == ::lib::messenger::IMConnectStatus::CONNECTED) {
-//    _status = Status::SUCCESS;
-//    LoginResult result{Status::SUCCESS, msg};
-//    emit loginResult(m_signInInfo, result);
-//    return;
-//  }
-//
-//  // 错误处理
-//  _status = Status::FAILURE;
-//  switch (status) {
-//  case ::lib::messenger::IMConnectStatus::NO_SUPPORT: {
-//    msg = tr("NO_SUPPORT");
-//    break;
-//  }
-//  case ::lib::messenger::IMConnectStatus::AUTH_FAILED: {
-//    msg = tr("AUTH_FAILED");
-//    break;
-//  }
-//  case ::lib::messenger::IMConnectStatus::DISCONNECTED: {
-//    msg = tr("DISCONNECTED");
-//    break;
-//  }
-//  case ::lib::messenger::IMConnectStatus::CONN_ERROR: {
-//    msg = tr("CONN_ERROR");
-//    break;
-//  }
-//  case ::lib::messenger::IMConnectStatus::CONNECTING: {
-//    msg = tr("...");
-//    break;
-//  }
-//  case ::lib::messenger::IMConnectStatus::TLS_ERROR: {
-//    msg = tr("TLS_ERROR");
-//    break;
-//  }
-//  case ::lib::messenger::IMConnectStatus::OUT_OF_RESOURCE: {
-//    msg = tr("OUT_OF_RESOURCE");
-//    break;
-//  }
-//  case ::lib::messenger::IMConnectStatus::TIMEOUT: {
-//    msg = tr("TIMEOUT");
-//    break;
-//  }
-//  }
-//
-//  LoginResult result{Status::FAILURE, msg};
-//  emit loginResult(m_signInInfo, result);
-//}
+void AuthSession::setRefreshToken(const SysRefreshToken& token) {
+    m_token.accessToken = token.accessToken;
+    m_token.refreshToken = token.refreshToken;
+    m_token.expiresIn = token.expiresIn;
+
+    QTimer::singleShot((token.expiresIn - 10) * 1000, this, &AuthSession::doRefreshToken);
+    emit refreshTokenSet(token);
+}
+
+void AuthSession::doRefreshToken() {
+    qDebug() << __func__;
+    passportService = std::make_unique<ok::backend::PassportService>(m_signInInfo.stackUrl);
+    passportService->refresh(m_token, [&](Res<SysRefreshToken>& res) {
+        if (res.code != 0) {
+            qWarning() << "Refresh token error" << res.msg;
+            return;
+        }
+        setRefreshToken(*res.data);
+    });
+}
 
 }  // namespace session
 }  // namespace ok

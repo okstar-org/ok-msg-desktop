@@ -24,18 +24,6 @@ PassportService::PassportService(const QString& base, QObject* parent)
 
 PassportService::~PassportService() {}
 
-bool PassportService::getAccount(const QString& account, Fn<void(Res<SysAccount>&)> fn,
-                                 network::HttpErrorFn err) {
-    QString url = _baseUrl + "/api/open/passport/account/" + account;
-    return http->getJson(
-            QUrl(url),
-            [=](QJsonDocument doc) {
-                Res<SysAccount> res(doc);
-                fn(res);
-            },
-            err);
-}
-
 bool PassportService::signIn(const QString& account, const QString& password,
                              Fn<void(Res<SysToken>&)> fn, const network::HttpErrorFn& err,
                              bool rememberMe, const QString& grantType) {
@@ -59,6 +47,23 @@ bool PassportService::signIn(const QString& account, const QString& password,
             QUrl(url), QJsonDocument(data),
             [=](QByteArray doc, QString name) {
                 Res<SysToken> res(Jsons::toJSON(doc));
+                fn(res);
+            },
+            nullptr, nullptr, err);
+}
+
+bool PassportService::refresh(const SysToken& token, Fn<void(Res<SysRefreshToken>&)> fn,
+                              network::HttpErrorFn err) {
+    QJsonObject data;
+    data.insert("ts", ::base::Times::now().toMSecsSinceEpoch());
+    data.insert("accessToken", token.accessToken);
+    data.insert("refreshToken", token.refreshToken);
+
+    QString url = _baseUrl + "/api/auth/passport/refresh";
+    return http->postJson(
+            QUrl(url), QJsonDocument(data),
+            [=](QByteArray doc, QString name) {
+                Res<SysRefreshToken> res(Jsons::toJSON(doc));
                 fn(res);
             },
             nullptr, nullptr, err);

@@ -78,12 +78,12 @@ public:
     [[nodiscard]] ok::base::OkAccount* account() const { return okAccount.get(); }
 
 protected:
-    /**
-     * 执行登录
-     */
+    // 执行登录
     void doSignIn();
 
-    //  void doConnect();
+protected slots:
+    // 刷新token
+    void doRefreshToken();
 
 private:
     QMutex _mutex;
@@ -96,10 +96,12 @@ private:
 
     Status _status;
 
-    void setToken(const ok::backend::SysToken& m_token);
+    void setToken(const ok::backend::SysToken& token);
+    void setRefreshToken(const backend::SysRefreshToken& token);
 signals:
     void loginResult(SignInInfo, LoginResult);
     void tokenSet();
+    void refreshTokenSet(const ok::backend::SysRefreshToken& token);
 };
 }  // namespace session
 }  // namespace ok
