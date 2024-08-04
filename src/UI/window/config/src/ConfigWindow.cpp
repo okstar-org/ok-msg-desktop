@@ -36,7 +36,6 @@ ConfigWindow::ConfigWindow(QWidget* parent) : OMenuWidget(parent), ui(new Ui::Co
     OK_RESOURCE_INIT(UIWindowConfig);
 
     ui->setupUi(this);
-    setObjectName(qsl("Page:%1").arg(static_cast<int>(PageMenu::setting)));
 
     auto qss = ok::base::Files::readStringAll(":/qss/plugin.qss");
     setStyleSheet(qss);

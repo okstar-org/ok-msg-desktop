@@ -2,6 +2,7 @@ project(Platform)
 
 file(GLOB_RECURSE ${PROJECT_NAME}_SOURCES src/*.h src/*.cpp)
 file(GLOB_RECURSE ${PROJECT_NAME}_RESOURCES res/*.html res/*.js)
+file(GLOB_RECURSE ${PROJECT_NAME}_UIS src/*.ui)
 
 
 set(RESOURCE_NAME "${PROJECT_BINARY_DIR}/${PROJECT_NAME}.qrc.in")
@@ -34,10 +35,14 @@ qt5_add_resources(
 		${PROJECT_BINARY_DIR}/${PROJECT_NAME}.qrc
 )
 
+qt5_wrap_ui(${PROJECT_NAME}_FORMS
+		${${PROJECT_NAME}_UIS}
+)
 
 add_library(${PROJECT_NAME} STATIC
 	${${PROJECT_NAME}_SOURCES}
 	${${PROJECT_NAME}_RESOURCES}
+		${${PROJECT_NAME}_FORMS}
 )
 
 find_package(Qt5 COMPONENTS Core Widgets WebChannel WebSockets WebEngine WebEngineWidgets REQUIRED)

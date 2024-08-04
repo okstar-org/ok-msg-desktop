@@ -101,22 +101,17 @@ Widget::Widget(IAudioControl& audio, QWidget* parent)  //
         : QFrame(parent)
         , icon{nullptr}
         , trayMenu{nullptr}
-        ,  //
-        ui(new Ui::IMMainWindow)
+        , ui(new Ui::IMMainWindow)
         , eventFlag(false)
-        ,  //
-        eventIcon(false)
+        , eventIcon(false)
         , audio(audio)
-        ,  //
-        settings(Settings::getInstance())
-        ,                                                        //
-        delayCaller(std::make_unique<base::DelayedCallTimer>())  //
+        , settings(Settings::getInstance())
+        , delayCaller(std::make_unique<base::DelayedCallTimer>())  //
 {
     instance = this;
 
     ui->setupUi(this);
     layout()->setSpacing(0);
-    setObjectName(qsl("Page:%1").arg(static_cast<int>(UI::PageMenu::chat)));
 
     ui->tabWidget->setObjectName("mainTab");
 

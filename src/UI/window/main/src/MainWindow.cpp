@@ -295,13 +295,15 @@ OMenuWidget* MainWindow::initMenuWindow(PageMenu menu) {
             break;
     }
     if (w) {
-
-
-    delayCaller->call(1000, [w, this]() {
-        assert(w);
-        assert(session);
-        w->getModule()->start(session);
-    });
+        auto m = w->getModule();
+        if (m) {
+            delayCaller->call(1000, [=, this]() {
+                assert(w);
+                assert(session);
+                qDebug() << "Start module:" << m->name();
+                m->start(session);
+            });
+        }
 
         menuWindow.insert(menu, w);
         ui->stacked_widget->addWidget(w);

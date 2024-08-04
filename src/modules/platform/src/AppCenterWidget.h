@@ -11,40 +11,39 @@
  */
 
 //
-// Created by gaojie on 24-7-31.
+// Created by gaojie on 24-8-4.
 //
 
 #pragma once
 
-#include <QWidget>
-#include "UI/widget/OMenuWidget.h"
-#include "base/resources.h"
+#include "UI/widget/OWidget.h"
 
-OK_RESOURCE_LOADER(Platform)
-
-namespace Ui {
-class WorkPlatform;
-}
+class QWebEngineView;
+class QWebChannel;
+class QThread;
+class QWebSocketServer;
+class WebSocketClientWrapper;
+class WebSocketTransport;
 
 namespace ok::platform {
-
-class AppCenterWidget;
-
-class Widget : public UI::OMenuWidget {
+class AppCenterWidget : public UI::OWidget {
     Q_OBJECT
 public:
-    Widget(QWidget* parent = nullptr);
-    ~Widget() override;
+    AppCenterWidget(QWidget* parent = nullptr);
     void start();
 
 private:
-    OK_RESOURCE_PTR(Platform);
-    Ui::WorkPlatform* ui;
+    std::unique_ptr<QThread> thread;
 
-    // tab
-    AppCenterWidget* centerWidget;
+    QWebEngineView* webView;
+    QWebChannel* webChannel;
+    QWebSocketServer* wss;
+    WebSocketClientWrapper* clientWrapper;
+
+    void startWsServer();
+    void startWebEngine();
 
 public slots:
-    void doStart();
+    void clientConnected(WebSocketTransport* transport);
 };
 }  // namespace ok::platform
