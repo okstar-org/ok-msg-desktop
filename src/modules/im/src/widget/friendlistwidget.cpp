@@ -51,8 +51,6 @@ FriendListWidget::FriendListWidget(MainLayout* parent, ContentLayout* contentLay
 
     // Prevent QLayout's add child warning before setting the mode.
     listLayout = new FriendListLayout(this);
-    listLayout->removeItem(listLayout->getLayoutOnline());
-    listLayout->removeItem(listLayout->getLayoutOffline());
     setLayout(listLayout);
 
     mode = Settings::getInstance().getFriendSortingMode();
