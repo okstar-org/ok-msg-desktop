@@ -511,12 +511,14 @@ void Nexus::updateWindowsArg(QWindow* closedWindow) {
     for (int i = 0; i < windowList.size(); ++i) {
         if (closedWindow == windowList[i]) continue;
 
+
         QAction* action = windowActions->addAction(windowList[i]->title());
         action->setCheckable(true);
         action->setChecked(windowList[i] == activeWindow);
-        connect(action, &QAction::triggered, [this] { onOpenWindow(windowList[i]); });
+        connect(action, &QAction::triggered, [&] { onOpenWindow(windowList[i]); });
         windowMenu->addAction(action);
         dockMenu->insertAction(dockLast, action);
+
     }
 
     if (dockLast && !dockLast->isSeparator()) dockMenu->insertSeparator(dockLast);
