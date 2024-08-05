@@ -16,14 +16,10 @@
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
 #include <QRecursiveMutex>
-class CompatibleRecursiveMutex : public QRecursiveMutex
-{};
+class CompatibleRecursiveMutex : public QRecursiveMutex {};
 #else
-class CompatibleRecursiveMutex : public QMutex
-{
+class CompatibleRecursiveMutex : public QMutex {
 public:
-    CompatibleRecursiveMutex()
-        : QMutex(QMutex::Recursive)
-    {}
+    CompatibleRecursiveMutex() : QMutex(QMutex::Recursive) {}
 };
 #endif

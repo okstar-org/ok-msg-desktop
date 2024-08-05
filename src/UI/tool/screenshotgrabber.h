@@ -27,8 +27,7 @@ class ScreenGrabberChooserRectItem;
 class ScreenGrabberOverlayItem;
 class ToolBoxGraphicsItem;
 
-class ScreenshotGrabber : public QObject
-{
+class ScreenshotGrabber : public QObject {
     Q_OBJECT
 public:
     ScreenshotGrabber();
@@ -84,5 +83,4 @@ private:
     QVector<QPointer<QWidget>> mHiddenWindows;
 };
 
-
-#endif // SCREENSHOTGRABBER_H
+#endif  // SCREENSHOTGRABBER_H

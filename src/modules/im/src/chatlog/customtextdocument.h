@@ -13,15 +13,14 @@
 #ifndef CUSTOMTEXTDOCUMENT_H
 #define CUSTOMTEXTDOCUMENT_H
 
-#include <QTextDocument>
 #include <QList>
+#include <QTextDocument>
 
 #include <memory>
 
 class QIcon;
 
-class CustomTextDocument : public QTextDocument
-{
+class CustomTextDocument : public QTextDocument {
     Q_OBJECT
 public:
     explicit CustomTextDocument(QObject* parent = nullptr);
@@ -33,4 +32,4 @@ private:
     QList<std::shared_ptr<QIcon>> emoticonIcons;
 };
 
-#endif // CUSTOMTEXTDOCUMENT_H
+#endif  // CUSTOMTEXTDOCUMENT_H

@@ -16,13 +16,13 @@
 #include <string>
 #include <vector>
 
-#include <ok-gloox/jinglecontent.h>
-#include <ok-gloox/jinglefiletransfer.h>
-#include <ok-gloox/jinglegroup.h>
-#include <ok-gloox/jingleibb.h>
-#include <ok-gloox/jingleiceudp.h>
-#include <ok-gloox/jinglertp.h>
-#include <ok-gloox/jinglesession.h>
+#include <jinglecontent.h>
+#include <jinglefiletransfer.h>
+#include <jinglegroup.h>
+#include <jingleibb.h>
+#include <jingleiceudp.h>
+#include <jinglertp.h>
+#include <jinglesession.h>
 
 namespace lib {
 namespace ortc {
@@ -34,98 +34,90 @@ using namespace gloox;
 using namespace gloox::Jingle;
 
 struct OIceUdp {
-  std::string mid;
-  int mline;
-  std::string ufrag;
-  std::string pwd;
-  ICEUDP::Dtls dtls;
-  ICEUDP::CandidateList candidates;
+    std::string mid;
+    int mline;
+    std::string ufrag;
+    std::string pwd;
+    ICEUDP::Dtls dtls;
+    ICEUDP::CandidateList candidates;
 };
 
 struct ORTP {
-  Media media;
-  RTP::PayloadTypes payloadTypes;
-  RTP::HdrExts hdrExts;
-  RTP::Sources sources;
-  RTP::SsrcGroup ssrcGroup;
-  bool rtcpMux;
+    Media media;
+    RTP::PayloadTypes payloadTypes;
+    RTP::HdrExts hdrExts;
+    RTP::Sources sources;
+    RTP::SsrcGroup ssrcGroup;
+    bool rtcpMux;
 };
 
 struct OFile {
-  Jingle::FileTransfer::FileList files;
-  Jingle::IBB ibb;
+    Jingle::FileTransfer::FileList files;
+    Jingle::IBB ibb;
 };
 
 struct OContent {
-  std::string name;
-  OFile file;
+    std::string name;
+    OFile file;
 };
 
 struct OSdp {
-  std::string name;
-  ORTP rtp;
-  OIceUdp iceUdp;
+    std::string name;
+    ORTP rtp;
+    OIceUdp iceUdp;
 };
 
 enum class JingleSdpType {
-  Offer,
-  Answer,
-  Rollback,
+    Offer,
+    Answer,
+    Rollback,
 };
 
 // 呼叫类型
 enum class JingleCallType {
-  none,     // none
-  file,     // file
-  av,       // audio & video
+    none,  // none
+    file,  // file
+    av,    // audio & video
 };
 
 struct OJingleContent {
 public:
+    [[nodiscard]] inline JingleCallType getCallType() const { return callType; }
 
-  [[nodiscard]] inline JingleCallType getCallType() const {
-    return callType;
-  }
+    [[nodiscard]] inline JingleSdpType getSdpType() { return sdpType; }
 
-  [[nodiscard]] inline JingleSdpType getSdpType(){
-    return sdpType;
-  }
+    JingleSdpType sdpType;
 
-  JingleSdpType sdpType;
+    std::string sessionId;
+    std::string sessionVersion;
 
-  std::string sessionId;
-  std::string sessionVersion;
+    JingleCallType callType;
 
-  JingleCallType callType;
-
-  virtual void toPlugins(PluginList& plugins) const;
-  virtual void parse(const Jingle::Session::Jingle *jingle);
-
+    virtual void toPlugins(PluginList& plugins) const;
+    virtual void parse(const Jingle::Session::Jingle* jingle);
 };
-
 
 struct OJingleContentFile : public OJingleContent {
     void toPlugins(PluginList& plugins) const override;
-    void parse(const Jingle::Session::Jingle *jingle) override;
+    void parse(const Jingle::Session::Jingle* jingle) override;
     std::vector<OContent> contents;
 };
 
 struct OJingleContentAv : public OJingleContent {
 public:
     void toPlugins(PluginList& plugins) const override;
-    void parse(const Jingle::Session::Jingle *jingle) override;
+    void parse(const Jingle::Session::Jingle* jingle) override;
     std::vector<OSdp> contents;
 
     inline bool isVideo() const {
-        for(auto s : contents){
-           if(s.rtp.media == Jingle::Media::video){
-               return true;
-           }
+        for (auto s : contents) {
+            if (s.rtp.media == Jingle::Media::video) {
+                return true;
+            }
         }
         return false;
     }
-
 };
 
-} // namespace ortc
-} // namespace lib
+}  // namespace ortc
+}  // namespace lib

@@ -16,8 +16,7 @@
 #include <QAction>
 #include <QLineEdit>
 
-class PasswordEdit : public QLineEdit
-{
+class PasswordEdit : public QLineEdit {
     Q_OBJECT
 public:
     explicit PasswordEdit(QWidget* parent);
@@ -28,8 +27,7 @@ protected:
     virtual void hideEvent(QHideEvent* event);
 
 private:
-    class EventHandler : QObject
-    {
+    class EventHandler : QObject {
     public:
         QVector<QAction*> actions;
 
@@ -47,4 +45,4 @@ private:
 
     static EventHandler* eventHandler;
 };
-#endif // PASSWORDEDIT_H
+#endif  // PASSWORDEDIT_H

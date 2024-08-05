@@ -15,8 +15,7 @@
 
 #include <QWidget>
 
-class ProfileImporter : public QWidget
-{
+class ProfileImporter : public QWidget {
     Q_OBJECT
 
 public:
@@ -28,4 +27,4 @@ private:
     bool askQuestion(QString title, QString message);
 };
 
-#endif // PROFILEIMPORTER_H
+#endif  // PROFILEIMPORTER_H

@@ -16,8 +16,6 @@
 namespace Platform {
 bool setAutorun(bool on);
 bool getAutorun();
-}
+}  // namespace Platform
 
-#endif // PLATFORM_AUTORUN_H
-
-
+#endif  // PLATFORM_AUTORUN_H

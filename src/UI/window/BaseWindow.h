@@ -17,18 +17,18 @@
 #include <QWidget>
 
 class BaseWindow : public QWidget {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  BaseWindow(QWidget *parent = 0);
-  ~BaseWindow();
+    BaseWindow(QWidget* parent = 0);
+    ~BaseWindow();
 
 protected:
-  void paintEvent(QPaintEvent *event);
+    void paintEvent(QPaintEvent* event);
 
 private slots:
 
 protected:
 };
 
-#endif // BASEWINDOW_H
+#endif  // BASEWINDOW_H

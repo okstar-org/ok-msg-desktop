@@ -10,44 +10,31 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#include <QApplication>
-#include "base/autorun.h"
-#include <string>
 #include <windows.h>
+#include <QApplication>
+#include <string>
+#include "base/autorun.h"
 
 #ifdef UNICODE
 
 using tstring = std::wstring;
-static inline tstring toTString(QString s)
-{
-    return s.toStdWString();
-}
+static inline tstring toTString(QString s) { return s.toStdWString(); }
 #else
 using tstring = std::string;
-static inline tstring toTString(QString s)
-{
-    return s.toStdString();
-}
+static inline tstring toTString(QString s) { return s.toStdString(); }
 #endif
 
 namespace Platform {
-inline tstring currentCommandLine()
-{
+inline tstring currentCommandLine() {
     return toTString("\"" + QApplication::applicationFilePath().replace('/', '\\'));
 }
 
-inline tstring currentRegistryKeyName()
-{
-    return toTString( APPLICATION_EXE_NAME " - ");
-}
+inline tstring currentRegistryKeyName() { return toTString(APPLICATION_EXE_NAME " - "); }
 
-
-bool setAutorun(bool on)
-{
+bool setAutorun(bool on) {
     HKEY key = 0;
     if (RegOpenKeyEx(HKEY_CURRENT_USER, TEXT("Software\\Microsoft\\Windows\\CurrentVersion\\Run"),
-                     0, KEY_ALL_ACCESS, &key)
-        != ERROR_SUCCESS)
+                     0, KEY_ALL_ACCESS, &key) != ERROR_SUCCESS)
         return false;
 
     bool result = false;
@@ -56,8 +43,7 @@ bool setAutorun(bool on)
     if (on) {
         tstring path = currentCommandLine();
         result = RegSetValueEx(key, keyName.c_str(), 0, REG_SZ, (PBYTE)path.c_str(),
-                               path.length() * sizeof(TCHAR))
-                 == ERROR_SUCCESS;
+                               path.length() * sizeof(TCHAR)) == ERROR_SUCCESS;
     } else
         result = RegDeleteValue(key, keyName.c_str()) == ERROR_SUCCESS;
 
@@ -65,12 +51,10 @@ bool setAutorun(bool on)
     return result;
 }
 
-bool getAutorun()
-{
+bool getAutorun() {
     HKEY key = 0;
     if (RegOpenKeyEx(HKEY_CURRENT_USER, TEXT("Software\\Microsoft\\Windows\\CurrentVersion\\Run"),
-                     0, KEY_ALL_ACCESS, &key)
-        != ERROR_SUCCESS)
+                     0, KEY_ALL_ACCESS, &key) != ERROR_SUCCESS)
         return false;
 
     tstring keyName = currentRegistryKeyName();
@@ -80,12 +64,12 @@ bool getAutorun()
     DWORD type = REG_SZ;
     bool result = false;
 
-    if (RegQueryValueEx(key, keyName.c_str(), 0, &type, (PBYTE)path, &length) == ERROR_SUCCESS
-        && type == REG_SZ)
+    if (RegQueryValueEx(key, keyName.c_str(), 0, &type, (PBYTE)path, &length) == ERROR_SUCCESS &&
+        type == REG_SZ)
         result = true;
 
     RegCloseKey(key);
     return result;
 }
 
-}
+}  // namespace Platform

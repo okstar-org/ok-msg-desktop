@@ -12,84 +12,41 @@
 
 #include "chatlinecontent.h"
 
-void ChatLineContent::setIndex(int r, int c)
-{
+void ChatLineContent::setIndex(int r, int c) {
     row = r;
     col = c;
 }
 
-int ChatLineContent::getColumn() const
-{
-    return col;
-}
+int ChatLineContent::getColumn() const { return col; }
 
-int ChatLineContent::getRow() const
-{
-    return row;
-}
+int ChatLineContent::getRow() const { return row; }
 
-int ChatLineContent::type() const
-{
-    return GraphicsItemType::ChatLineContentType;
-}
+int ChatLineContent::type() const { return GraphicsItemType::ChatLineContentType; }
 
-void ChatLineContent::selectionMouseMove(QPointF)
-{
-}
+void ChatLineContent::selectionMouseMove(QPointF) {}
 
-void ChatLineContent::selectionStarted(QPointF)
-{
-}
+void ChatLineContent::selectionStarted(QPointF) {}
 
-void ChatLineContent::selectionCleared()
-{
-}
+void ChatLineContent::selectionCleared() {}
 
-void ChatLineContent::selectionDoubleClick(QPointF)
-{
-}
+void ChatLineContent::selectionDoubleClick(QPointF) {}
 
-void ChatLineContent::selectionTripleClick(QPointF)
-{
-}
+void ChatLineContent::selectionTripleClick(QPointF) {}
 
-void ChatLineContent::selectionFocusChanged(bool)
-{
-}
+void ChatLineContent::selectionFocusChanged(bool) {}
 
-void ChatLineContent::selectAll()
-{
-}
+void ChatLineContent::selectAll() {}
 
-bool ChatLineContent::isOverSelection(QPointF) const
-{
-    return false;
-}
+bool ChatLineContent::isOverSelection(QPointF) const { return false; }
 
-QString ChatLineContent::getSelectedText() const
-{
-    return QString();
-}
+QString ChatLineContent::getSelectedText() const { return QString(); }
 
-void ChatLineContent::fontChanged(const QFont& font)
-{
-    Q_UNUSED(font);
-}
+void ChatLineContent::fontChanged(const QFont& font) { Q_UNUSED(font); }
 
-qreal ChatLineContent::getAscent() const
-{
-    return 0.0;
-}
+qreal ChatLineContent::getAscent() const { return 0.0; }
 
-void ChatLineContent::visibilityChanged(bool)
-{
-}
+void ChatLineContent::visibilityChanged(bool) {}
 
-void ChatLineContent::reloadTheme()
-{
-}
+void ChatLineContent::reloadTheme() {}
 
-QString ChatLineContent::getText() const
-{
-    return QString();
-}
+QString ChatLineContent::getText() const { return QString(); }

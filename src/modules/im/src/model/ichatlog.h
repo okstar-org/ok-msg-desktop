@@ -28,41 +28,27 @@
 
 #include <cassert>
 
-using ChatLogIdx =
-    NamedType<size_t, struct ChatLogIdxTag, Orderable, UnderlyingAddable, UnitlessDifferencable, Incrementable>;
+using ChatLogIdx = NamedType<size_t, struct ChatLogIdxTag, Orderable, UnderlyingAddable,
+                             UnitlessDifferencable, Incrementable>;
 Q_DECLARE_METATYPE(ChatLogIdx);
 
-struct SearchPos
-{
+struct SearchPos {
     // Index to the chat log item we want
     ChatLogIdx logIdx;
     // Number of matches we've had. This is always number of matches from the
     // start even if we're searching backwards.
     size_t numMatches;
 
-    bool operator==(const SearchPos& other) const
-    {
-        return tie() == other.tie();
-    }
+    bool operator==(const SearchPos& other) const { return tie() == other.tie(); }
 
-    bool operator!=(const SearchPos& other) const
-    {
-        return tie() != other.tie();
-    }
+    bool operator!=(const SearchPos& other) const { return tie() != other.tie(); }
 
-    bool operator<(const SearchPos& other) const
-    {
-        return tie() < other.tie();
-    }
+    bool operator<(const SearchPos& other) const { return tie() < other.tie(); }
 
-    std::tuple<ChatLogIdx, size_t> tie() const
-    {
-        return std::tie(logIdx, numMatches);
-    }
+    std::tuple<ChatLogIdx, size_t> tie() const { return std::tie(logIdx, numMatches); }
 };
 
-struct SearchResult
-{
+struct SearchResult {
     bool found;
     SearchPos pos;
     size_t start;
@@ -74,8 +60,7 @@ struct SearchResult
     QRegularExpression exp;
 };
 
-class IChatLog : public QObject
-{
+class IChatLog : public QObject {
     Q_OBJECT
 public:
     virtual ~IChatLog() = default;
@@ -117,8 +102,7 @@ public:
      */
     virtual ChatLogIdx getNextIdx() const = 0;
 
-    struct DateChatLogIdxPair
-    {
+    struct DateChatLogIdxPair {
         QDate date;
         ChatLogIdx idx;
     };

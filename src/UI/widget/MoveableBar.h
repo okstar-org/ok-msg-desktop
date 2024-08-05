@@ -16,29 +16,28 @@
 
 namespace UI {
 
-
 class MoveableBar : public QWidget {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  MoveableBar(QWidget *parent = nullptr);
-  ~MoveableBar();
+    MoveableBar(QWidget* parent = nullptr);
+    ~MoveableBar();
 
-  void setMoveable(bool);
-  virtual void setTarget(QWidget *);
+    void setMoveable(bool);
+    virtual void setTarget(QWidget*);
 
 protected:
-  bool _moveable;
+    bool _moveable;
 
-  QWidget *m_target;
+    QWidget* m_target;
 
-  virtual void mousePressEvent(QMouseEvent *);
-  virtual void mouseMoveEvent(QMouseEvent *);
-  virtual void mouseReleaseEvent(QMouseEvent *);
+    virtual void mousePressEvent(QMouseEvent*);
+    virtual void mouseMoveEvent(QMouseEvent*);
+    virtual void mouseReleaseEvent(QMouseEvent*);
 
 private:
-  bool m_isPressed = false;
-  QPoint m_startMovePos;
+    bool m_isPressed = false;
+    QPoint m_startMovePos;
 };
 
-} // namespace UI
+}  // namespace UI

@@ -11,12 +11,11 @@
  */
 
 #include "toxsave.h"
+#include <QCoreApplication>
 #include "src/widget/gui.h"
 #include "src/widget/tool/profileimporter.h"
-#include <QCoreApplication>
 
-bool toxSaveEventHandler(const QByteArray& eventData)
-{
+bool toxSaveEventHandler(const QByteArray& eventData) {
     if (!eventData.endsWith(".tox")) {
         return false;
     }
@@ -31,8 +30,7 @@ bool toxSaveEventHandler(const QByteArray& eventData)
  * @param path Path to .tox file.
  * @return True if import success, false, otherwise.
  */
-bool handleToxSave(const QString& path)
-{
+bool handleToxSave(const QString& path) {
     ProfileImporter importer(GUI::getMainWidget());
     return importer.importProfile(path);
 }

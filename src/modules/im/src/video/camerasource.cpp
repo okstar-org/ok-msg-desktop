@@ -17,17 +17,17 @@ extern "C" {
 #include <libavformat/avformat.h>
 #include <libswscale/swscale.h>
 }
-#include "cameradevice.h"
-#include "camerasource.h"
-#include "videoframe.h"
-#include "src/persistence/settings.h"
 #include <QDebug>
+#include <QMessageBox>
 #include <QReadLocker>
 #include <QWriteLocker>
 #include <QtConcurrent/QtConcurrentRun>
 #include <functional>
 #include <memory>
-#include <QMessageBox>
+#include "cameradevice.h"
+#include "camerasource.h"
+#include "src/persistence/settings.h"
+#include "videoframe.h"
 
 /**
  * @class CameraSource
@@ -85,11 +85,11 @@ extern "C" {
 CameraSource* CameraSource::instance{nullptr};
 
 CameraSource::CameraSource()
-    : deviceThread{new QThread}
-    , deviceName{"none"}
-    , device{nullptr}
-    , mode(VideoMode())
-    // clang-format off
+        : deviceThread{new QThread}
+        , deviceName{"none"}
+        , device{nullptr}
+        , mode(VideoMode())
+        // clang-format off
     , cctx{nullptr}
 #if LIBAVCODEC_VERSION_INT < 3747941
     , cctxOrig{nullptr}
@@ -119,17 +119,14 @@ CameraSource::CameraSource()
 /**
  * @brief Returns the singleton instance.
  */
-CameraSource& CameraSource::getInstance()
-{
+CameraSource& CameraSource::getInstance() {
     qDebug() << __func__;
-    if (!instance)
-        instance = new CameraSource();
+    if (!instance) instance = new CameraSource();
     instance->setupDefault();
     return *instance;
 }
 
-void CameraSource::destroyInstance()
-{
+void CameraSource::destroyInstance() {
     qDebug() << __func__;
 
     if (instance) {
@@ -142,8 +139,7 @@ void CameraSource::destroyInstance()
  * @brief Setup default device
  * @note If a device is already open, the source will seamlessly switch to the new device.
  */
-void CameraSource::setupDefault()
-{
+void CameraSource::setupDefault() {
     QString deviceName = CameraDevice::getDefaultDeviceName();
     qDebug() << "Setup default device:" << deviceName;
     bool isScreen = CameraDevice::isScreen(deviceName);
@@ -160,8 +156,7 @@ void CameraSource::setupDefault()
  * @brief Change the device and mode.
  * @note If a device is already open, the source will seamlessly switch to the new device.
  */
-void CameraSource::setupDevice(const QString&deviceName_, const VideoMode& Mode)
-{
+void CameraSource::setupDevice(const QString& deviceName_, const VideoMode& Mode) {
     qDebug() << "Setup device:" << deviceName_;
     if (QThread::currentThread() != deviceThread) {
         QMetaObject::invokeMethod(this, "setupDevice", Q_ARG(const QString&, deviceName_),
@@ -192,13 +187,9 @@ void CameraSource::setupDevice(const QString&deviceName_, const VideoMode& Mode)
     }
 }
 
-bool CameraSource::isNone() const
-{
-    return _isNone;
-}
+bool CameraSource::isNone() const { return _isNone; }
 
-CameraSource::~CameraSource()
-{
+CameraSource::~CameraSource() {
     QWriteLocker locker{&streamMutex};
     QWriteLocker locker2{&deviceMutex};
 
@@ -224,8 +215,7 @@ CameraSource::~CameraSource()
 #endif
 
     if (device) {
-        for (int i = 0; i < subscriptions; ++i)
-            device->close();
+        for (int i = 0; i < subscriptions; ++i) device->close();
 
         device = nullptr;
     }
@@ -233,20 +223,17 @@ CameraSource::~CameraSource()
     locker.unlock();
 
     // Synchronize with our stream thread
-    while (streamFuture.isRunning())
-        QThread::yieldCurrentThread();
+    while (streamFuture.isRunning()) QThread::yieldCurrentThread();
 }
 
-void CameraSource::subscribe()
-{
+void CameraSource::subscribe() {
     QWriteLocker locker{&deviceMutex};
 
     ++subscriptions;
     openDevice();
 }
 
-void CameraSource::unsubscribe()
-{
+void CameraSource::unsubscribe() {
     QWriteLocker locker{&deviceMutex};
 
     --subscriptions;
@@ -259,8 +246,7 @@ void CameraSource::unsubscribe()
  * @brief Opens the video device and starts streaming.
  * @note Callers must own the biglock.
  */
-void CameraSource::openDevice()
-{
+void CameraSource::openDevice() {
     if (QThread::currentThread() != deviceThread) {
         QMetaObject::invokeMethod(this, "openDevice");
         return;
@@ -273,12 +259,11 @@ void CameraSource::openDevice()
 
     qDebug() << "Opening device" << deviceName << "subscriptions:" << subscriptions;
 
-
-//    if (device) {
-//        device->open();
-//        emit openFailed();
-//        return;
-//    }
+    //    if (device) {
+    //        device->open();
+    //        emit openFailed();
+    //        return;
+    //    }
 
     // We need to create a new CameraDevice
     device = CameraDevice::open(deviceName, mode);
@@ -332,7 +317,6 @@ void CameraSource::openDevice()
         return;
     }
 
-
 #if LIBAVCODEC_VERSION_INT < 3747941
     // Copy context, since we apparently aren't allowed to use the original
     cctx = avcodec_alloc_context3(codec);
@@ -366,8 +350,7 @@ void CameraSource::openDevice()
         streamFuture = QtConcurrent::run(std::bind(&CameraSource::stream, this));
 
     // Synchronize with our stream thread
-    while (!streamFuture.isRunning())
-        QThread::yieldCurrentThread();
+    while (!streamFuture.isRunning()) QThread::yieldCurrentThread();
 
     emit deviceOpened();
 }
@@ -376,8 +359,7 @@ void CameraSource::openDevice()
  * @brief Closes the video device and stops streaming.
  * @note Callers must own the biglock.
  */
-void CameraSource::closeDevice()
-{
+void CameraSource::closeDevice() {
     if (QThread::currentThread() != deviceThread) {
         QMetaObject::invokeMethod(this, "closeDevice");
         return;
@@ -400,7 +382,7 @@ void CameraSource::closeDevice()
     avcodec_close(cctxOrig);
     cctxOrig = nullptr;
 #endif
-    if(device) {
+    if (device) {
         device->close();
         device = nullptr;
     }
@@ -410,8 +392,7 @@ void CameraSource::closeDevice()
  * @brief Blocking. Decodes video stream and emits new frames.
  * @note Designed to run in its own thread.
  */
-void CameraSource::stream()
-{
+void CameraSource::stream() {
     auto streamLoop = [this]() {
         AVPacket packet;
         if (av_read_frame(device->context, &packet) != 0) {
@@ -456,8 +437,7 @@ void CameraSource::stream()
         av_packet_unref(&packet);
     };
 
-    forever
-    {
+    forever {
         QReadLocker locker{&streamMutex};
 
         // Exit if device is no longer valid

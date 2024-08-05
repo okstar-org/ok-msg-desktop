@@ -12,22 +12,18 @@
 
 #pragma once
 
-#include "UI/core/ui.h"
 #include <QFrame>
+#include "UI/core/ui.h"
 
 namespace UI {
 
-enum class PageMenu {
-  chat,
-  setting,
-  platform
-};
+enum class PageMenu { chat, setting, platform };
 
 class Page : public QFrame {
-  Q_OBJECT
+    Q_OBJECT
 public:
- explicit Page(QWidget *parent = nullptr) ;
-~Page() ;
+    explicit Page(QWidget* parent = nullptr);
+    ~Page();
 };
 
-} // namespace UI
+}  // namespace UI

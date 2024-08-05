@@ -17,13 +17,11 @@
 
 #include "../model/MsgId.h"
 
-
-class ICoreGroupMessageSender
-{
+class ICoreGroupMessageSender {
 public:
     virtual ~ICoreGroupMessageSender() = default;
-    virtual bool sendGroupAction(QString groupId, const QString& message, const MsgId &id) = 0;
-    virtual bool sendGroupMessage(QString groupId, const QString& message, const MsgId &id) = 0;
+    virtual bool sendGroupAction(QString groupId, const QString& message, const MsgId& id) = 0;
+    virtual bool sendGroupMessage(QString groupId, const QString& message, const MsgId& id) = 0;
 };
 
 #endif /*ICORE_GROUP_MESSAGE_SENDER_H*/

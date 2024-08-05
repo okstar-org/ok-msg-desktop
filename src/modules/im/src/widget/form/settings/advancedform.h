@@ -21,16 +21,12 @@ namespace Ui {
 class AdvancedSettings;
 }
 
-class AdvancedForm : public GenericForm
-{
+class AdvancedForm : public GenericForm {
     Q_OBJECT
 public:
     AdvancedForm();
     ~AdvancedForm();
-    virtual QString getFormName() final override
-    {
-        return tr("Advanced");
-    }
+    virtual QString getFormName() final override { return tr("Advanced"); }
 
 private slots:
     // Portable
@@ -54,4 +50,4 @@ private:
     Ui::AdvancedSettings* bodyUI;
 };
 
-#endif // ADVANCEDFORM_H
+#endif  // ADVANCEDFORM_H

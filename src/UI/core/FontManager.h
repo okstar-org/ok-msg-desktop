@@ -16,11 +16,11 @@
 #include <QObject>
 
 class FontManager : public QObject {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  FontManager(QObject *parent = nullptr);
-  ~FontManager();
+    FontManager(QObject* parent = nullptr);
+    ~FontManager();
 
-  void loadFonts();
+    void loadFonts();
 };

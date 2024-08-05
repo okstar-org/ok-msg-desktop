@@ -15,16 +15,15 @@
 #include <QMainWindow>
 #include <memory>
 
-#include "lib/session/AuthSession.h"
 #include "base/resources.h"
+#include "lib/session/AuthSession.h"
 
-
-//初始化资源加载器
+// 初始化资源加载器
 OK_RESOURCE_LOADER(UIWindowLogin)
 
 namespace Ui {
 class LoginWindow;
-} // namespace Ui
+}  // namespace Ui
 
 namespace UI {
 
@@ -32,26 +31,24 @@ class LoginWidget;
 class BannerWidget;
 
 class LoginWindow : public QMainWindow {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  explicit LoginWindow(std::shared_ptr<ok::session::AuthSession> session,
-                       bool bootstrap, QWidget *parent = nullptr);
-  ~LoginWindow();
+    explicit LoginWindow(std::shared_ptr<ok::session::AuthSession> session, bool bootstrap,
+                         QWidget* parent = nullptr);
+    ~LoginWindow();
 
-  [[nodiscard]] LoginWidget* widget(){
-    return loginWidget;
-  }
+    [[nodiscard]] LoginWidget* widget() { return loginWidget; }
 
 private:
-  Ui::LoginWindow *ui;
-  LoginWidget* loginWidget;
-  BannerWidget* bannerWidget;
+    Ui::LoginWindow* ui;
+    LoginWidget* loginWidget;
+    BannerWidget* bannerWidget;
 
-  //资源指针申明
-  OK_RESOURCE_PTR(UIWindowLogin);
+    // 资源指针申明
+    OK_RESOURCE_PTR(UIWindowLogin);
 
 public slots:
-  void onProfileLoadFailed(QString msg);
+    void onProfileLoadFailed(QString msg);
 };
 
-} // namespace UI
+}  // namespace UI

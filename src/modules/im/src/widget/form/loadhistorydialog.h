@@ -13,17 +13,16 @@
 #ifndef LOADHISTORYDIALOG_H
 #define LOADHISTORYDIALOG_H
 
-#include "src/core/FriendId.h"
 #include <QDateTime>
 #include <QDialog>
+#include "src/core/FriendId.h"
 
 namespace Ui {
 class LoadHistoryDialog;
 }
 class IChatLog;
 
-class LoadHistoryDialog : public QDialog
-{
+class LoadHistoryDialog : public QDialog {
     Q_OBJECT
 
 public:
@@ -43,4 +42,4 @@ private:
     const IChatLog* chatLog;
 };
 
-#endif // LOADHISTORYDIALOG_H
+#endif  // LOADHISTORYDIALOG_H

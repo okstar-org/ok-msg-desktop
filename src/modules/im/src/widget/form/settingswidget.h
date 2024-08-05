@@ -31,8 +31,7 @@ class QTabWidget;
 class ContentLayout;
 class Widget;
 
-class SettingsWidget : public QWidget
-{
+class SettingsWidget : public QWidget {
     Q_OBJECT
 public:
     SettingsWidget(Widget* parent = nullptr);
@@ -60,4 +59,4 @@ private:
     int currentIndex;
 };
 
-#endif // SETTINGSWIDGET_H
+#endif  // SETTINGSWIDGET_H

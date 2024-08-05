@@ -32,38 +32,37 @@ class ContentLayout;
 class Widget;
 class AboutFriendForm;
 
-class FriendWidget : public GenericChatroomWidget
-{
+class FriendWidget : public GenericChatroomWidget {
     Q_OBJECT
 
-  public:
-    FriendWidget(ContentLayout* layout, const FriendInfo& f, QWidget* parent=nullptr);
+public:
+    FriendWidget(ContentLayout* layout, const FriendInfo& f, QWidget* parent = nullptr);
     ~FriendWidget();
     void contextMenuEvent(QContextMenuEvent* event) override final;
     void setAsActiveChatroom() override final;
     void setAsInactiveChatroom() override final;
 
     void setStatus(Status::Status status, bool event);
-    void setStatusMsg(const QString& msg) ;
+    void setStatusMsg(const QString& msg);
     void setTyping(bool typing);
     void setName(const QString& name);
 
     void resetEventFlags() override final;
     QString getStatusString() const override final;
 
-    const Friend* getFriend() const ;
-    const Contact* getContact() const ;
+    const Friend* getFriend() const;
+    const Contact* getContact() const;
 
     void search(const QString& searchString, bool hide = false);
-    void setRecvMessage(const FriendMessage &message,
-                        bool isAction);
+    void setRecvMessage(const FriendMessage& message, bool isAction);
 
 protected:
     virtual void mousePressEvent(QMouseEvent* ev) override;
     virtual void mouseMoveEvent(QMouseEvent* ev) override;
-    void paintEvent(QPaintEvent *e) override;
+    void paintEvent(QPaintEvent* e) override;
 
     void onActiveSet(bool active) override;
+
 private:
     void init();
     void deinit();
@@ -72,24 +71,24 @@ private:
 
     AboutFriendForm* about;
 
-    Friend *m_friend;
+    Friend* m_friend;
 
-    ContentDialog *createContentDialog() const;
-    ContentDialog * addFriendDialog(const Friend *frnd );
+    ContentDialog* createContentDialog() const;
+    ContentDialog* addFriendDialog(const Friend* frnd);
 
-    //右键菜单
-    QMenu *menu;
-    QAction *inviteToGrp;
-    QAction *removeAct;
-    QAction *newGroupAction;
+    // 右键菜单
+    QMenu* menu;
+    QAction* inviteToGrp;
+    QAction* removeAct;
+    QAction* newGroupAction;
 
 public slots:
-  void onContextMenuCalled(QContextMenuEvent* event);
-  void do_widgetClicked(GenericChatroomWidget *w);
-  void showDetails();
-  void removeDetails();
-  void changeAutoAccept(bool enable);
-  void inviteToNewGroup();
+    void onContextMenuCalled(QContextMenuEvent* event);
+    void do_widgetClicked(GenericChatroomWidget* w);
+    void showDetails();
+    void removeDetails();
+    void changeAutoAccept(bool enable);
+    void inviteToNewGroup();
 
 signals:
     void friendWidgetClicked(FriendWidget* widget);
@@ -101,7 +100,7 @@ signals:
     void friendWidgetRenamed(FriendWidget* friendWidget);
     void searchCircle(CircleWidget& circleWidget);
     void updateFriendActivity(const Friend& frnd);
-//    void setActive(bool active);
+    //    void setActive(bool active);
 };
 
-#endif // FRIENDWIDGET_H
+#endif  // FRIENDWIDGET_H

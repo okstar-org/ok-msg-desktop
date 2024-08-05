@@ -10,18 +10,16 @@
  * See the Mulan PubL v2 for more details.
  */
 
-
 #ifndef COREVIDEOSOURCE_H
 #define COREVIDEOSOURCE_H
 
-#include "videosource.h"
 #include <QMutex>
 #include <atomic>
+#include "videosource.h"
 
 struct vpx_image;
 
-class CoreVideoSource : public VideoSource
-{
+class CoreVideoSource : public VideoSource {
     Q_OBJECT
 public:
     CoreVideoSource();
@@ -31,8 +29,6 @@ public:
     virtual void unsubscribe() override;
 
 private:
-
-
     void pushFrame(const vpx_image* frame);
     void setDeleteOnClose(bool newstate);
 
@@ -49,4 +45,4 @@ private:
     friend class ToxFriendCall;
 };
 
-#endif // COREVIDEOSOURCE_H
+#endif  // COREVIDEOSOURCE_H

@@ -22,8 +22,7 @@ class QNetworkProxy;
 
 class ICoreSettings {
 public:
-    enum class ProxyType
-    {
+    enum class ProxyType {
         // If changed, don't forget to update Settings::fixInvalidProxyType
         ptNone = 0,
         ptSOCKS5 = 1,
@@ -59,4 +58,4 @@ public:
     DECLARE_SIGNAL(proxyPortChanged, quint16 port);
 };
 
-#endif // I_CORE_SETTINGS_H
+#endif  // I_CORE_SETTINGS_H

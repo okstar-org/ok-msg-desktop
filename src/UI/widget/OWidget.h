@@ -19,14 +19,14 @@
 namespace UI {
 
 class OWidget : public QWidget {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  OWidget(QWidget *parent = nullptr);
-  virtual ~OWidget() override;
+    OWidget(QWidget* parent = nullptr);
+    virtual ~OWidget() override;
 
 protected:
-  virtual void paintEvent(QPaintEvent *event) override;
+    virtual void paintEvent(QPaintEvent* event) override;
 
 private:
 };
-} // namespace UI
+}  // namespace UI

@@ -17,7 +17,5 @@
 #pragma once
 
 namespace ok {
-namespace plugin {
-
-} // namespace plugin
-} // namespace ok
+namespace plugin {}  // namespace plugin
+}  // namespace ok

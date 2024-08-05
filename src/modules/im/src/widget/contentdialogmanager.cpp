@@ -22,8 +22,7 @@
 #include <tuple>
 
 namespace {
-void removeDialog(ContentDialog* dialog, QHash<const ContactId&, ContentDialog*>& dialogs)
-{
+void removeDialog(ContentDialog* dialog, QHash<const ContactId&, ContentDialog*>& dialogs) {
     for (auto it = dialogs.begin(); it != dialogs.end();) {
         if (*it == dialog) {
             it = dialogs.erase(it);
@@ -32,17 +31,13 @@ void removeDialog(ContentDialog* dialog, QHash<const ContactId&, ContentDialog*>
         }
     }
 }
-} // namespace
+}  // namespace
 
 ContentDialogManager* ContentDialogManager::instance;
 
-ContentDialog* ContentDialogManager::current()
-{
-    return currentDialog;
-}
+ContentDialog* ContentDialogManager::current() { return currentDialog; }
 
-bool ContentDialogManager::contactWidgetExists(const ContactId& contactId)
-{
+bool ContentDialogManager::contactWidgetExists(const ContactId& contactId) {
     const auto dialog = contactDialogs.value(contactId, nullptr);
     if (dialog == nullptr) {
         return false;
@@ -52,10 +47,9 @@ bool ContentDialogManager::contactWidgetExists(const ContactId& contactId)
 }
 
 void ContentDialogManager::addFriendToDialog(const FriendId& friendPk,
-                                                      ContentDialog* dialog,
-                                                      FriendChatroom* chatroom,
-                                                      GenericChatForm* form)
-{
+                                             ContentDialog* dialog,
+                                             FriendChatroom* chatroom,
+                                             GenericChatForm* form) {
     dialog->addFriend(chatroom, form);
 
     ContentDialog* lastDialog = getFriendDialog(friendPk);
@@ -68,9 +62,8 @@ void ContentDialogManager::addFriendToDialog(const FriendId& friendPk,
 
 ContentDialog* ContentDialogManager::addGroupToDialog(const GroupId& groupId,
                                                       ContentDialog* dialog,
-                                                     GroupChatroom* chatroom,
-                                                    GenericChatForm* form)
-{
+                                                      GroupChatroom* chatroom,
+                                                      GenericChatForm* form) {
     dialog->addGroup(chatroom, form);
 
     ContentDialog* lastDialog = getGroupDialog(groupId);
@@ -82,8 +75,7 @@ ContentDialog* ContentDialogManager::addGroupToDialog(const GroupId& groupId,
     return lastDialog;
 }
 
-void ContentDialogManager::focusContact(const ContactId& contactId)
-{
+void ContentDialogManager::focusContact(const ContactId& contactId) {
     auto dialog = focusDialog(contactId, contactDialogs);
     if (dialog != nullptr) {
         dialog->focusContact(contactId);
@@ -96,9 +88,8 @@ void ContentDialogManager::focusContact(const ContactId& contactId)
  * @param list List with dialogs
  * @return ContentDialog if found, nullptr otherwise
  */
-ContentDialog* ContentDialogManager::focusDialog(const ContactId& id,
-                                                 const QHash<const ContactId&, ContentDialog*>& list)
-{
+ContentDialog* ContentDialogManager::focusDialog(
+        const ContactId& id, const QHash<const ContactId&, ContentDialog*>& list) {
     auto iter = list.find(id);
     if (iter == list.end()) {
         return nullptr;
@@ -114,8 +105,7 @@ ContentDialog* ContentDialogManager::focusDialog(const ContactId& id,
     return dialog;
 }
 
-void ContentDialogManager::updateFriendStatus(const FriendId& friendPk)
-{
+void ContentDialogManager::updateFriendStatus(const FriendId& friendPk) {
     auto dialog = contactDialogs.value(friendPk);
     if (dialog == nullptr) {
         return;
@@ -130,8 +120,7 @@ void ContentDialogManager::updateFriendStatus(const FriendId& friendPk)
     dialog->updateFriendStatus(friendPk, f->getStatus());
 }
 
-void ContentDialogManager::updateGroupStatus(const GroupId& groupId)
-{
+void ContentDialogManager::updateGroupStatus(const GroupId& groupId) {
     auto dialog = contactDialogs.value(groupId);
     if (dialog == nullptr) {
         return;
@@ -143,8 +132,7 @@ void ContentDialogManager::updateGroupStatus(const GroupId& groupId)
     }
 }
 
-bool ContentDialogManager::isContactActive(const ContactId& contactId)
-{
+bool ContentDialogManager::isContactActive(const ContactId& contactId) {
     const auto dialog = contactDialogs.value(contactId);
     if (dialog == nullptr) {
         return false;
@@ -153,18 +141,15 @@ bool ContentDialogManager::isContactActive(const ContactId& contactId)
     return dialog->isContactActive(contactId);
 }
 
-ContentDialog* ContentDialogManager::getFriendDialog(const FriendId& friendPk) const
-{
+ContentDialog* ContentDialogManager::getFriendDialog(const FriendId& friendPk) const {
     return contactDialogs.value(friendPk);
 }
 
-ContentDialog* ContentDialogManager::getGroupDialog(const GroupId& groupId) const
-{
+ContentDialog* ContentDialogManager::getGroupDialog(const GroupId& groupId) const {
     return contactDialogs.value(groupId);
 }
 
-ContentDialogManager* ContentDialogManager::getInstance()
-{
+ContentDialogManager* ContentDialogManager::getInstance() {
     if (instance == nullptr) {
         instance = new ContentDialogManager();
     }
@@ -172,21 +157,18 @@ ContentDialogManager* ContentDialogManager::getInstance()
     return instance;
 }
 
-void ContentDialogManager::addContentDialog(ContentDialog& dialog)
-{
+void ContentDialogManager::addContentDialog(ContentDialog& dialog) {
     currentDialog = &dialog;
     connect(&dialog, &ContentDialog::willClose, this, &ContentDialogManager::onDialogClose);
     connect(&dialog, &ContentDialog::activated, this, &ContentDialogManager::onDialogActivate);
 }
 
-void ContentDialogManager::onDialogActivate()
-{
+void ContentDialogManager::onDialogActivate() {
     ContentDialog* dialog = qobject_cast<ContentDialog*>(sender());
     currentDialog = dialog;
 }
 
-void ContentDialogManager::onDialogClose()
-{
+void ContentDialogManager::onDialogClose() {
     ContentDialog* dialog = qobject_cast<ContentDialog*>(sender());
     if (currentDialog == dialog) {
         currentDialog = nullptr;
@@ -195,12 +177,10 @@ void ContentDialogManager::onDialogClose()
     removeDialog(dialog, contactDialogs);
 }
 
-IDialogs* ContentDialogManager::getFriendDialogs(const FriendId& friendPk) const
-{
+IDialogs* ContentDialogManager::getFriendDialogs(const FriendId& friendPk) const {
     return getFriendDialog(friendPk);
 }
 
-IDialogs* ContentDialogManager::getGroupDialogs(const GroupId& groupId) const
-{
+IDialogs* ContentDialogManager::getGroupDialogs(const GroupId& groupId) const {
     return getGroupDialog(groupId);
 }

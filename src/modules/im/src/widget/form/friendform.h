@@ -13,7 +13,6 @@
 #ifndef FRIENDFORM_H
 #define FRIENDFORM_H
 
-
 #include <QFrame>
 
 #include <src/core/contactid.h>
@@ -23,26 +22,24 @@ namespace Ui {
 class FriendForm;
 }
 
-namespace ok::backend{
+namespace ok::backend {
 struct OrgStaff;
 }
 
-class FriendForm : public QFrame
-{
+class FriendForm : public QFrame {
     Q_OBJECT
 
 public:
-    explicit FriendForm(const ok::backend::OrgStaff& staff, QWidget *parent = nullptr);
+    explicit FriendForm(const ok::backend::OrgStaff& staff, QWidget* parent = nullptr);
     ~FriendForm();
 
-
 private:
-    Ui::FriendForm *ui;
+    Ui::FriendForm* ui;
 
     ok::backend::OrgStaff staff;
 
-    signals:
-      void add(const QString &cId, QString &nick);
+signals:
+    void add(const QString& cId, QString& nick);
 };
 
-#endif // FRIENDFORM_H
+#endif  // FRIENDFORM_H

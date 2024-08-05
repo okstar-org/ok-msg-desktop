@@ -17,39 +17,34 @@
 #ifndef OKMSG_PROJECT_LOGMANAGER_H
 #define OKMSG_PROJECT_LOGMANAGER_H
 
-#include <QFile>
 #include <QDir>
+#include <QFile>
 #include <QMutex>
 #include <memory>
 
 namespace ok {
 namespace lib {
 
-
 class LogManager {
 public:
-  static const LogManager& Instance();
-  static void Destroy();
+    static const LogManager& Instance();
+    static void Destroy();
 
-  [[nodiscard]] const QString& getLogFile() const {
-    return logName;
-  };
+    [[nodiscard]] const QString& getLogFile() const { return logName; };
 
-  [[nodiscard]] QFile& getFile() const {
-    return *file.get();
-  }
+    [[nodiscard]] QFile& getFile() const { return *file.get(); }
 
-  ~LogManager();
+    ~LogManager();
+
 private:
-  LogManager();
+    LogManager();
 
-  QString logName;
-  QDir logFileDir;
-  std::unique_ptr< QFile> file;
-
+    QString logName;
+    QDir logFileDir;
+    std::unique_ptr<QFile> file;
 };
 
-} // namespace lib
-} // namespace ok
+}  // namespace lib
+}  // namespace ok
 
-#endif // OKMSG_PROJECT_LOGMANAGER_H
+#endif  // OKMSG_PROJECT_LOGMANAGER_H

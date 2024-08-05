@@ -10,13 +10,12 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#include <QtCore/qsystemdetection.h>
-#include "src/platform/timer.h"
 #include <CoreFoundation/CoreFoundation.h>
 #include <IOKit/IOKitLib.h>
+#include <QtCore/qsystemdetection.h>
+#include "src/platform/timer.h"
 
-uint32_t Platform::getIdleTime()
-{
+uint32_t Platform::getIdleTime() {
     // https://hg.pidgin.im/pidgin/main/file/13e4ae613a6a/pidgin/gtkidle.c
     // relevant code introduced to Pidgin in:
     // https://hg.pidgin.im/pidgin/main/diff/8ff1c408ef3e/src/gtkidle.c
@@ -30,7 +29,8 @@ uint32_t Platform::getIdleTime()
         service = IOServiceGetMatchingService(master, IOServiceMatching("IOHIDSystem"));
     }
 
-    property = IORegistryEntryCreateCFProperty(service, CFSTR("HIDIdleTime"), kCFAllocatorDefault, 0);
+    property =
+            IORegistryEntryCreateCFProperty(service, CFSTR("HIDIdleTime"), kCFAllocatorDefault, 0);
     CFNumberGetValue((CFNumberRef)property, kCFNumberSInt64Type, &idleTime_ns);
     CFRelease(property);
 

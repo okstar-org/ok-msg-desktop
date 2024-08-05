@@ -15,14 +15,11 @@
 
 #include <QWidget>
 
-class GenericForm : public QWidget
-{
+class GenericForm : public QWidget {
     Q_OBJECT
 public:
-    explicit GenericForm(const QPixmap& icon, QWidget* parent=nullptr);
-    virtual ~GenericForm()
-    {
-    }
+    explicit GenericForm(const QPixmap& icon, QWidget* parent = nullptr);
+    virtual ~GenericForm() {}
 
     virtual QString getFormName() = 0;
     QPixmap getFormIcon();

@@ -10,23 +10,22 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#include "base/autorun.h"
 #include <QCoreApplication>
 #include <QDir>
 #include <QFile>
 #include <QSettings>
 #include <QStandardPaths>
+#include "base/autorun.h"
 
 int state;
 
-bool Platform::setAutorun(bool on)
-{
+bool Platform::setAutorun(bool on) {
     QString qtoxPlist =
-        QDir::cleanPath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)
-                        + QDir::separator() + "Library" + QDir::separator() + "LaunchAgents"
-                        + QDir::separator() + "chat.tox.qtox.autorun.plist");
+            QDir::cleanPath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation) +
+                            QDir::separator() + "Library" + QDir::separator() + "LaunchAgents" +
+                            QDir::separator() + "chat.tox.qtox.autorun.plist");
     QString qtoxDir =
-        QDir::cleanPath(QCoreApplication::applicationDirPath() + QDir::separator() + "qtox");
+            QDir::cleanPath(QCoreApplication::applicationDirPath() + QDir::separator() + "qtox");
     QSettings autoRun(qtoxPlist, QSettings::NativeFormat);
     autoRun.setValue("Label", "chat.tox.qtox.autorun");
     autoRun.setValue("Program", qtoxDir);
@@ -36,7 +35,4 @@ bool Platform::setAutorun(bool on)
     return true;
 }
 
-bool Platform::getAutorun()
-{
-    return state;
-}
+bool Platform::getAutorun() { return state; }

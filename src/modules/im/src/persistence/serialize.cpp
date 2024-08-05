@@ -18,8 +18,7 @@
  * @warning Do not use them on untrusted data (e.g. check a signature first).
  */
 
-QString dataToString(QByteArray data)
-{
+QString dataToString(QByteArray data) {
     char num3;
     int strlen = 0;
     int num2 = 0;
@@ -30,8 +29,7 @@ QString dataToString(QByteArray data)
         num2 += 7;
     } while ((num3 & 0x80) != 0);
 
-    if (strlen <= 0)
-        return QString();
+    if (strlen <= 0) return QString();
 
     // Remove the strlen
     data.remove(0, i);
@@ -40,16 +38,14 @@ QString dataToString(QByteArray data)
     return QString(data);
 }
 
-uint64_t dataToUint64(const QByteArray& data)
-{
-    return static_cast<uint64_t>(data[0]) | (static_cast<uint64_t>(data[1]) << 8)
-           | (static_cast<uint64_t>(data[2]) << 16) | (static_cast<uint64_t>(data[3]) << 24)
-           | (static_cast<uint64_t>(data[4]) << 32) | (static_cast<uint64_t>(data[5]) << 40)
-           | (static_cast<uint64_t>(data[6]) << 48) | (static_cast<uint64_t>(data[7]) << 56);
+uint64_t dataToUint64(const QByteArray& data) {
+    return static_cast<uint64_t>(data[0]) | (static_cast<uint64_t>(data[1]) << 8) |
+           (static_cast<uint64_t>(data[2]) << 16) | (static_cast<uint64_t>(data[3]) << 24) |
+           (static_cast<uint64_t>(data[4]) << 32) | (static_cast<uint64_t>(data[5]) << 40) |
+           (static_cast<uint64_t>(data[6]) << 48) | (static_cast<uint64_t>(data[7]) << 56);
 }
 
-int dataToVInt(const QByteArray& data)
-{
+int dataToVInt(const QByteArray& data) {
     char num3;
     int num = 0;
     int num2 = 0;
@@ -62,8 +58,7 @@ int dataToVInt(const QByteArray& data)
     return num;
 }
 
-size_t dataToVUint(const QByteArray& data)
-{
+size_t dataToVUint(const QByteArray& data) {
     char num3;
     size_t num = 0;
     int num2 = 0;
@@ -76,8 +71,7 @@ size_t dataToVUint(const QByteArray& data)
     return num;
 }
 
-unsigned getVUint32Size(QByteArray data)
-{
+unsigned getVUint32Size(QByteArray data) {
     unsigned lensize = 0;
 
     char num3;
@@ -89,8 +83,7 @@ unsigned getVUint32Size(QByteArray data)
     return lensize;
 }
 
-QByteArray vintToData(int num)
-{
+QByteArray vintToData(int num) {
     QByteArray data(sizeof(int), 0);
     // Write the size in a Uint of variable lenght (8-32 bits)
     int i = 0;
@@ -104,8 +97,7 @@ QByteArray vintToData(int num)
     return data;
 }
 
-QByteArray vuintToData(size_t num)
-{
+QByteArray vuintToData(size_t num) {
     QByteArray data(sizeof(size_t), 0);
     // Write the size in a Uint of variable lenght (8-32 bits)
     int i = 0;

@@ -9,6 +9,7 @@ QPushButton {
 	border-radius: 12px;
 	width: 52px;
 	height: 52px;
+	outline: none;
 }
 
 QPushButton#chatBtn,

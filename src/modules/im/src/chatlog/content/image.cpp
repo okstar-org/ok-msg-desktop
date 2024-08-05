@@ -15,24 +15,17 @@
 
 #include <QPainter>
 
-Image::Image(QSize Size, const QString& filename)
-    : size(Size)
-{
+Image::Image(QSize Size, const QString& filename) : size(Size) {
     pmap = PixmapCache::getInstance().get(filename, size);
 }
 
-QRectF Image::boundingRect() const
-{
+QRectF Image::boundingRect() const {
     return QRectF(QPointF(-size.width() / 2.0, -size.height() / 2.0), size);
 }
 
-qreal Image::getAscent() const
-{
-    return 0.0;
-}
+qreal Image::getAscent() const { return 0.0; }
 
-void Image::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
-{
+void Image::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) {
     painter->setClipRect(boundingRect());
 
     painter->setRenderHint(QPainter::SmoothPixmapTransform);
@@ -43,7 +36,4 @@ void Image::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWi
     Q_UNUSED(widget)
 }
 
-void Image::setWidth(qreal width)
-{
-    Q_UNUSED(width)
-}
+void Image::setWidth(qreal width) { Q_UNUSED(width) }

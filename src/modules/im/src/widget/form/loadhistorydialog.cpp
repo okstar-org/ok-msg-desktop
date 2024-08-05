@@ -11,20 +11,17 @@
  */
 
 #include "loadhistorydialog.h"
-#include "ui_loadhistorydialog.h"
+#include <QCalendarWidget>
+#include <QDate>
+#include <QTextCharFormat>
 #include "src/model/ichatlog.h"
 #include "src/nexus.h"
 #include "src/persistence/history.h"
 #include "src/persistence/profile.h"
-#include <QCalendarWidget>
-#include <QDate>
-#include <QTextCharFormat>
+#include "ui_loadhistorydialog.h"
 
 LoadHistoryDialog::LoadHistoryDialog(const IChatLog* chatLog, QWidget* parent)
-    : QDialog(parent)
-    , ui(new Ui::LoadHistoryDialog)
-    , chatLog(chatLog)
-{
+        : QDialog(parent), ui(new Ui::LoadHistoryDialog), chatLog(chatLog) {
     ui->setupUi(this);
     highlightDates(QDate::currentDate().year(), QDate::currentDate().month());
     connect(ui->fromDate, &QCalendarWidget::currentPageChanged, this,
@@ -32,26 +29,20 @@ LoadHistoryDialog::LoadHistoryDialog(const IChatLog* chatLog, QWidget* parent)
 }
 
 LoadHistoryDialog::LoadHistoryDialog(QWidget* parent)
-    : QDialog(parent)
-    , ui(new Ui::LoadHistoryDialog)
-{
+        : QDialog(parent), ui(new Ui::LoadHistoryDialog) {
     ui->setupUi(this);
 }
 
-LoadHistoryDialog::~LoadHistoryDialog()
-{
-    delete ui;
-}
+LoadHistoryDialog::~LoadHistoryDialog() { delete ui; }
 
-QDateTime LoadHistoryDialog::getFromDate()
-{
+QDateTime LoadHistoryDialog::getFromDate() {
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
     QDateTime res(ui->fromDate->selectedDate().startOfDay());
 #else
     QDateTime res(ui->fromDate->selectedDate());
 #endif
-    if (res.date().month() != ui->fromDate->monthShown()
-        || res.date().year() != ui->fromDate->yearShown()) {
+    if (res.date().month() != ui->fromDate->monthShown() ||
+        res.date().year() != ui->fromDate->yearShown()) {
         QDate newDate(ui->fromDate->yearShown(), ui->fromDate->monthShown(), 1);
         res.setDate(newDate);
     }
@@ -59,18 +50,11 @@ QDateTime LoadHistoryDialog::getFromDate()
     return res;
 }
 
-void LoadHistoryDialog::setTitle(const QString& title)
-{
-    setWindowTitle(title);
-}
+void LoadHistoryDialog::setTitle(const QString& title) { setWindowTitle(title); }
 
-void LoadHistoryDialog::setInfoLabel(const QString& info)
-{
-    ui->fromLabel->setText(info);
-}
+void LoadHistoryDialog::setInfoLabel(const QString& info) { ui->fromLabel->setText(info); }
 
-void LoadHistoryDialog::highlightDates(int year, int month)
-{
+void LoadHistoryDialog::highlightDates(int year, int month) {
     History* history = Nexus::getProfile()->getHistory();
     QDate monthStart(year, month, 1);
     QDate monthEnd(year, month + 1, 1);

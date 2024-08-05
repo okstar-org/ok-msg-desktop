@@ -19,13 +19,10 @@
 #include <QTime>
 #include <QVariantAnimation>
 
-Spinner::Spinner(const QString& img, QSize Size, qreal speed)
-    : size(Size)
-    , rotSpeed(speed)
-{
+Spinner::Spinner(const QString& img, QSize Size, qreal speed) : size(Size), rotSpeed(speed) {
     pmap = PixmapCache::getInstance().get(img, size);
 
-    timer.setInterval(1000 / 30); // 30Hz
+    timer.setInterval(1000 / 30);  // 30Hz
     timer.setSingleShot(false);
 
     blendAnimation = new QVariantAnimation(this);
@@ -40,18 +37,17 @@ Spinner::Spinner(const QString& img, QSize Size, qreal speed)
     QObject::connect(&timer, &QTimer::timeout, this, &Spinner::timeout);
 }
 
-QRectF Spinner::boundingRect() const
-{
+QRectF Spinner::boundingRect() const {
     return QRectF(QPointF(-size.width() / 2.0, -size.height() / 2.0), size);
 }
 
-void Spinner::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
-{
+void Spinner::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) {
     painter->setClipRect(boundingRect());
 
-    QTransform trans = QTransform()
-                           .rotate(QTime::currentTime().msecsSinceStartOfDay() / 1000.0 * rotSpeed)
-                           .translate(-size.width() / 2.0, -size.height() / 2.0);
+    QTransform trans =
+            QTransform()
+                    .rotate(QTime::currentTime().msecsSinceStartOfDay() / 1000.0 * rotSpeed)
+                    .translate(-size.width() / 2.0, -size.height() / 2.0);
     painter->setOpacity(alpha);
     painter->setTransform(trans, true);
     painter->setRenderHint(QPainter::SmoothPixmapTransform);
@@ -61,26 +57,17 @@ void Spinner::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, Q
     Q_UNUSED(widget)
 }
 
-void Spinner::setWidth(qreal width)
-{
-    Q_UNUSED(width)
-}
+void Spinner::setWidth(qreal width) { Q_UNUSED(width) }
 
-void Spinner::visibilityChanged(bool visible)
-{
+void Spinner::visibilityChanged(bool visible) {
     if (visible)
         timer.start();
     else
         timer.stop();
 }
 
-qreal Spinner::getAscent() const
-{
-    return 0.0;
-}
+qreal Spinner::getAscent() const { return 0.0; }
 
-void Spinner::timeout()
-{
-    if (scene())
-        scene()->invalidate(sceneBoundingRect());
+void Spinner::timeout() {
+    if (scene()) scene()->invalidate(sceneBoundingRect());
 }

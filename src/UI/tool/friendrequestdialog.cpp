@@ -19,9 +19,9 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 
-FriendRequestDialog::FriendRequestDialog(QWidget* parent, const QString& userId, const QString& message)
-    : QDialog(parent)
-{
+FriendRequestDialog::FriendRequestDialog(QWidget* parent, const QString& userId,
+                                         const QString& message)
+        : QDialog(parent) {
     setAttribute(Qt::WA_QuitOnClose, false);
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
     setWindowTitle(tr("Friend request", "Title of the window to aceept/deny a friend request"));
@@ -34,7 +34,6 @@ FriendRequestDialog::FriendRequestDialog(QWidget* parent, const QString& userId,
     QLabel* messageLabel = new QLabel(tr("Friend request message:"), this);
     QPlainTextEdit* messageEdit = new QPlainTextEdit(message, this);
     messageEdit->setReadOnly(true);
-
 
     QDialogButtonBox* buttonBox = new QDialogButtonBox(Qt::Horizontal, this);
 

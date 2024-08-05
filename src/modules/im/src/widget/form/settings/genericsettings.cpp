@@ -24,15 +24,9 @@
  * It provides correct behaviour of controls for settings forms.
  */
 
-GenericForm::GenericForm(const QPixmap& icon, QWidget* parent)
-    : QWidget(parent), formIcon(icon)
-{
-}
+GenericForm::GenericForm(const QPixmap& icon, QWidget* parent) : QWidget(parent), formIcon(icon) {}
 
-QPixmap GenericForm::getFormIcon()
-{
-    return formIcon;
-}
+QPixmap GenericForm::getFormIcon() { return formIcon; }
 
 /**
  * @brief Prevent stealing mouse wheel scroll.
@@ -42,8 +36,7 @@ QPixmap GenericForm::getFormIcon()
  * theme / skin / icons etc.
  * @see GenericForm::eventFilter(QObject *o, QEvent *e) at the bottom of this file for more
  */
-void GenericForm::eventsInit()
-{
+void GenericForm::eventsInit() {
     for (QComboBox* cb : findChildren<QComboBox*>()) {
         cb->installEventFilter(this);
         cb->setFocusPolicy(Qt::StrongFocus);
@@ -54,7 +47,8 @@ void GenericForm::eventsInit()
         sp->setFocusPolicy(Qt::WheelFocus);
     }
 
-    for (QCheckBox* cb : findChildren<QCheckBox*>()) // this one is to allow scrolling on checkboxes
+    for (QCheckBox* cb :
+         findChildren<QCheckBox*>())  // this one is to allow scrolling on checkboxes
         cb->installEventFilter(this);
 }
 
@@ -64,11 +58,10 @@ void GenericForm::eventsInit()
  * @param e Event object.
  * @return True to stop it being handled further, false otherwise.
  */
-bool GenericForm::eventFilter(QObject* o, QEvent* e)
-{
-    if ((e->type() == QEvent::Wheel)
-        && (qobject_cast<QComboBox*>(o) || qobject_cast<QAbstractSpinBox*>(o)
-            || qobject_cast<QCheckBox*>(o))) {
+bool GenericForm::eventFilter(QObject* o, QEvent* e) {
+    if ((e->type() == QEvent::Wheel) &&
+        (qobject_cast<QComboBox*>(o) || qobject_cast<QAbstractSpinBox*>(o) ||
+         qobject_cast<QCheckBox*>(o))) {
         e->ignore();
         return true;
     }

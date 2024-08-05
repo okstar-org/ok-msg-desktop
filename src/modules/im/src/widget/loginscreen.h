@@ -10,7 +10,6 @@
  * See the Mulan PubL v2 for more details.
  */
 
-
 #ifndef LOGINSCREEN_H
 #define LOGINSCREEN_H
 
@@ -24,8 +23,7 @@ namespace Ui {
 class LoginScreen;
 }
 
-class LoginScreen : public QDialog
-{
+class LoginScreen : public QDialog {
     Q_OBJECT
 
 public:
@@ -69,4 +67,4 @@ private:
     QShortcut quitShortcut;
 };
 
-#endif // LOGINSCREEN_H
+#endif  // LOGINSCREEN_H
