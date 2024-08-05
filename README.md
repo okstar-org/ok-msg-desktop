@@ -62,12 +62,12 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
 - C++版本：C++20
 - Qt版本：Qt5.15.x
 
-| Platform       | Build Document                              |
-|----------------|---------------------------------------------|
-| 🪟 Windows-x64 | [windows.md](docs%2Fbuildings%2Fwindows.md) | 
-| 🐧 Linux-x64   | [ubuntu.md](docs%2Fbuildings%2Fubuntu.md)   | 
-| 🍎 macOS-x64   | [macos.md](docs%2Fbuildings%2Fmacos.md)     |
-| 🍎 macOS-arm   | Coming soon                                 |
+| Platform       | Build Document                                      |
+|----------------|-----------------------------------------------------|
+| 🪟 Windows-x64 | [Build on Windows](docs%2Fbuildings%2Fwindows.md)   | 
+| 🐧 Linux-x64   | [Build on Ubuntu](docs%2Fbuildings%2Fubuntu.md)     | 
+| 🍎 macOS-x64   | [Build on macOS(x64) ](docs%2Fbuildings%2Fmacos.md) |
+| 🍎 macOS-arm   | Coming soon                                         |
 
 
 ## Fedora 36
