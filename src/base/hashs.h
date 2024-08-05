@@ -18,7 +18,7 @@ namespace base {
 
 class Hashs {
 public:
-  static QString sha1(const QByteArray &buf);
+    static QString sha1(const QByteArray& buf);
 };
-} // namespace base
-} // namespace lib
+}  // namespace base
+}  // namespace lib

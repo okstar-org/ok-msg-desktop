@@ -17,8 +17,7 @@
 
 #include <QPixmap>
 
-class Image : public ChatLineContent
-{
+class Image : public ChatLineContent {
 public:
     Image(QSize size, const QString& filename);
 
@@ -33,4 +32,4 @@ private:
     QPixmap pmap;
 };
 
-#endif // IMAGE_H
+#endif  // IMAGE_H

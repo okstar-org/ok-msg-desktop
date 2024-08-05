@@ -10,10 +10,8 @@
  * See the Mulan PubL v2 for more details.
  */
 
-
 #include "gui.h"
-#include "widget.h"
-#include "src/nexus.h"
+#include <assert.h>
 #include <QApplication>
 #include <QCoreApplication>
 #include <QDebug>
@@ -23,7 +21,8 @@
 #include <QMessageBox>
 #include <QPushButton>
 #include <QThread>
-#include <assert.h>
+#include "src/nexus.h"
+#include "widget.h"
 
 /**
  * @class GUI
@@ -36,9 +35,7 @@
  * @brief Emitted when the GUI is resized on supported platforms.
  */
 
-GUI::GUI(QObject* parent)
-    : QObject(parent)
-{
+GUI::GUI(QObject* parent) : QObject(parent) {
     assert(QThread::currentThread() == qApp->thread());
     assert(Nexus::getDesktopGUI());
 }
@@ -46,8 +43,7 @@ GUI::GUI(QObject* parent)
 /**
  * @brief Returns the singleton instance.
  */
-GUI& GUI::getInstance()
-{
+GUI& GUI::getInstance() {
     static GUI gui;
     return gui;
 }
@@ -59,8 +55,7 @@ GUI& GUI::getInstance()
  * @note A disabled GUI can't be interacted with by the user.
  * @param state Enable/disable GUI.
  */
-void GUI::setEnabled(bool state)
-{
+void GUI::setEnabled(bool state) {
     if (QThread::currentThread() == qApp->thread()) {
         getInstance()._setEnabled(state);
     } else {
@@ -75,8 +70,7 @@ void GUI::setEnabled(bool state)
  *
  * This is usually always visible to the user.
  */
-void GUI::setWindowTitle(const QString& title)
-{
+void GUI::setWindowTitle(const QString& title) {
     if (QThread::currentThread() == qApp->thread()) {
         getInstance()._setWindowTitle(title);
     } else {
@@ -88,8 +82,7 @@ void GUI::setWindowTitle(const QString& title)
 /**
  * @brief Reloads the application theme and redraw the window.
  */
-void GUI::reloadTheme()
-{
+void GUI::reloadTheme() {
     if (QThread::currentThread() == qApp->thread()) {
         getInstance()._reloadTheme();
         emit getInstance().themeApplyRequest();
@@ -103,8 +96,7 @@ void GUI::reloadTheme()
  * @param title Title of information window.
  * @param msg Text in information window.
  */
-void GUI::showInfo(const QString& title, const QString& msg)
-{
+void GUI::showInfo(const QString& title, const QString& msg) {
     if (QThread::currentThread() == qApp->thread()) {
         getInstance()._showInfo(title, msg);
     } else {
@@ -118,8 +110,7 @@ void GUI::showInfo(const QString& title, const QString& msg)
  * @param title Title of warning window.
  * @param msg Text in warning window.
  */
-void GUI::showWarning(const QString& title, const QString& msg)
-{
+void GUI::showWarning(const QString& title, const QString& msg) {
     if (QThread::currentThread() == qApp->thread()) {
         getInstance()._showWarning(title, msg);
     } else {
@@ -133,8 +124,7 @@ void GUI::showWarning(const QString& title, const QString& msg)
  * @param title Title of error window.
  * @param msg Text in error window.
  */
-void GUI::showError(const QString& title, const QString& msg)
-{
+void GUI::showError(const QString& title, const QString& msg) {
     if (QThread::currentThread() == qApp->thread()) {
         // If the GUI hasn't started yet and we're on the main thread,
         // we still want to be able to show error messages
@@ -157,8 +147,8 @@ void GUI::showError(const QString& title, const QString& msg)
  * @param yesno Show "Yes" and "No" buttons.
  * @return True if the answer is positive, false otherwise.
  */
-bool GUI::askQuestion(const QString& title, const QString& msg, bool defaultAns, bool warning, bool yesno)
-{
+bool GUI::askQuestion(const QString& title, const QString& msg, bool defaultAns, bool warning,
+                      bool yesno) {
     if (QThread::currentThread() == qApp->thread()) {
         return getInstance()._askQuestion(title, msg, defaultAns, warning, yesno);
     } else {
@@ -184,8 +174,7 @@ bool GUI::askQuestion(const QString& title, const QString& msg, bool defaultAns,
  * @return True if the answer is positive, false otherwise.
  */
 bool GUI::askQuestion(const QString& title, const QString& msg, const QString& button1,
-                      const QString& button2, bool defaultAns, bool warning)
-{
+                      const QString& button2, bool defaultAns, bool warning) {
     if (QThread::currentThread() == qApp->thread()) {
         return getInstance()._askQuestion(title, msg, button1, button2, defaultAns, warning);
     } else {
@@ -200,55 +189,45 @@ bool GUI::askQuestion(const QString& title, const QString& msg, const QString& b
 
 // Private implementations
 
-void GUI::_setEnabled(bool state)
-{
+void GUI::_setEnabled(bool state) {
     Widget* w = Nexus::getDesktopGUI();
-    if (w)
-        w->setEnabled(state);
+    if (w) w->setEnabled(state);
 }
 
-void GUI::_setWindowTitle(const QString& title)
-{
+void GUI::_setWindowTitle(const QString& title) {
     QWidget* w = getMainWidget();
-    if (!w)
-        return;
+    if (!w) return;
     if (title.isEmpty())
         w->setWindowTitle("qTox");
     else
         w->setWindowTitle("qTox - " + title);
 }
 
-void GUI::_reloadTheme()
-{
+void GUI::_reloadTheme() {
     Widget* w = Nexus::getDesktopGUI();
-    if (w)
-        w->reloadTheme();
+    if (w) w->reloadTheme();
 }
 
-void GUI::_showInfo(const QString& title, const QString& msg)
-{
+void GUI::_showInfo(const QString& title, const QString& msg) {
     QMessageBox messageBox(QMessageBox::Information, title, msg, QMessageBox::Ok, getMainWidget());
     messageBox.setButtonText(QMessageBox::Ok, QApplication::tr("Ok"));
     messageBox.exec();
 }
 
-void GUI::_showWarning(const QString& title, const QString& msg)
-{
+void GUI::_showWarning(const QString& title, const QString& msg) {
     QMessageBox messageBox(QMessageBox::Warning, title, msg, QMessageBox::Ok, getMainWidget());
     messageBox.setButtonText(QMessageBox::Ok, QApplication::tr("Ok"));
     messageBox.exec();
 }
 
-void GUI::_showError(const QString& title, const QString& msg)
-{
+void GUI::_showError(const QString& title, const QString& msg) {
     QMessageBox messageBox(QMessageBox::Critical, title, msg, QMessageBox::Ok, getMainWidget());
     messageBox.setButtonText(QMessageBox::Ok, QApplication::tr("Ok"));
     messageBox.exec();
 }
 
 bool GUI::_askQuestion(const QString& title, const QString& msg, bool defaultAns, bool warning,
-                       bool yesno)
-{
+                       bool yesno) {
     QString positiveButton = yesno ? QApplication::tr("Yes") : QApplication::tr("Ok");
     QString negativeButton = yesno ? QApplication::tr("No") : QApplication::tr("Cancel");
 
@@ -256,8 +235,7 @@ bool GUI::_askQuestion(const QString& title, const QString& msg, bool defaultAns
 }
 
 bool GUI::_askQuestion(const QString& title, const QString& msg, const QString& button1,
-                       const QString& button2, bool defaultAns, bool warning)
-{
+                       const QString& button2, bool defaultAns, bool warning) {
     QMessageBox::Icon icon = warning ? QMessageBox::Warning : QMessageBox::Question;
     QMessageBox box(icon, title, msg, QMessageBox::NoButton, getMainWidget());
     QPushButton* pushButton1 = box.addButton(button1, QMessageBox::AcceptRole);
@@ -275,8 +253,7 @@ bool GUI::_askQuestion(const QString& title, const QString& msg, const QString& 
  * @brief Get the main widget.
  * @return The main QWidget* of the application
  */
-QWidget* GUI::getMainWidget()
-{
+QWidget* GUI::getMainWidget() {
     QWidget* maingui{nullptr};
     maingui = Nexus::getDesktopGUI();
     return maingui;

@@ -15,18 +15,11 @@
 //
 #include "chatroom.h"
 
-Chatroom::Chatroom()
-{
+Chatroom::Chatroom() {}
 
-}
+Chatroom::~Chatroom() {}
 
-Chatroom::~Chatroom()
-{
-
-}
-
-void Chatroom::setActive(bool _active)
-{
+void Chatroom::setActive(bool _active) {
     if (active != _active) {
         active = _active;
         emit activeChanged(active);

@@ -14,10 +14,9 @@
 
 #include "src/core/toxfile.h"
 
-bool ToxFileProgress::needsUpdate() const
-{
+bool ToxFileProgress::needsUpdate() const {
     QTime now = QTime::currentTime();
-    qint64 dt = lastTick.msecsTo(now); // ms
+    qint64 dt = lastTick.msecsTo(now);  // ms
 
     if (dt < 1000) {
         return false;
@@ -26,10 +25,9 @@ bool ToxFileProgress::needsUpdate() const
     return true;
 }
 
-void ToxFileProgress::addSample(ToxFile const& file)
-{
+void ToxFileProgress::addSample(ToxFile const& file) {
     QTime now = QTime::currentTime();
-    qint64 dt = lastTick.msecsTo(now); // ms
+    qint64 dt = lastTick.msecsTo(now);  // ms
 
     if (dt < 1000) {
         return;
@@ -62,25 +60,15 @@ void ToxFileProgress::addSample(ToxFile const& file)
     lastBytesSent = file.bytesSent;
 }
 
-void ToxFileProgress::resetSpeed()
-{
+void ToxFileProgress::resetSpeed() {
     meanIndex = 0;
     for (auto& item : meanData) {
         item = 0;
     }
 }
 
-double ToxFileProgress::getProgress() const
-{
-    return progress;
-}
+double ToxFileProgress::getProgress() const { return progress; }
 
-double ToxFileProgress::getSpeed() const
-{
-    return speedBytesPerSecond;
-}
+double ToxFileProgress::getSpeed() const { return speedBytesPerSecond; }
 
-double ToxFileProgress::getTimeLeftSeconds() const
-{
-    return timeLeftSeconds;
-}
+double ToxFileProgress::getTimeLeftSeconds() const { return timeLeftSeconds; }

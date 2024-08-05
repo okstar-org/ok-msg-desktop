@@ -37,7 +37,7 @@ const QLatin1String TCSToxFileFolder{"~/Library/Application Support/Tox"};
 #else
 const QLatin1String TCSToxFileFolder{"~/.config/tox/"};
 #endif
-} // namespace
+}  // namespace
 
 /**
  * @class Profile
@@ -71,32 +71,32 @@ const QLatin1String TCSToxFileFolder{"~/.config/tox/"};
  * @param mode
  * @return Pointer to Paths object on success, nullptr else
  */
-Paths* Paths::makePaths(Portable mode)
-{
+Paths* Paths::makePaths(Portable mode) {
     bool portable = false;
     const QString basePortable = qApp->applicationDirPath();
-    const QString baseNonPortable = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    const QString baseNonPortable =
+            QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
     const QString portableSettingsPath = basePortable % QDir::separator() % globalSettingsFile;
 
     switch (mode) {
-    case Portable::Portable:
-        qDebug() << "Forcing portable";
-        portable = true;
-        break;
-    case Portable::NonPortable:
-        qDebug() << "Forcing non-portable";
-        portable = false;
-        break;
-    case Portable::Auto:
-        // auto detect
-        if (QFile{portableSettingsPath}.exists()) {
-            qDebug() << "Automatic portable";
+        case Portable::Portable:
+            qDebug() << "Forcing portable";
             portable = true;
-        } else {
-            qDebug() << "Automatic non-portable";
+            break;
+        case Portable::NonPortable:
+            qDebug() << "Forcing non-portable";
             portable = false;
-        }
-        break;
+            break;
+        case Portable::Auto:
+            // auto detect
+            if (QFile{portableSettingsPath}.exists()) {
+                qDebug() << "Automatic portable";
+                portable = true;
+            } else {
+                qDebug() << "Automatic non-portable";
+                portable = false;
+            }
+            break;
     }
 
     QString basePath = portable ? basePortable : baseNonPortable;
@@ -109,26 +109,19 @@ Paths* Paths::makePaths(Portable mode)
     return new Paths(basePath, portable);
 }
 
-Paths::Paths(const QString& basePath, bool portable)
-    : basePath{basePath}
-    , portable{portable}
-{}
+Paths::Paths(const QString& basePath, bool portable) : basePath{basePath}, portable{portable} {}
 
 /**
  * @brief Check if qTox is running in portable mode.
  * @return True if running in portable mode, false else.
  */
-bool Paths::isPortable() const
-{
-    return portable;
-}
+bool Paths::isPortable() const { return portable; }
 
 /**
  * @brief Returns the path to the global settings file "qtox.ini"
  * @return The path to the folder.
  */
-QString Paths::getGlobalSettingsPath() const
-{
+QString Paths::getGlobalSettingsPath() const {
     QString path;
 
     if (portable) {
@@ -150,8 +143,7 @@ QString Paths::getGlobalSettingsPath() const
  * @brief Get the folder where profile specific information is stored, e.g. <profile>.ini
  * @return The path to the folder.
  */
-QString Paths::getProfilesDir() const
-{
+QString Paths::getProfilesDir() const {
     return basePath % QDir::separator() % profileFolder % QDir::separator();
 }
 
@@ -160,34 +152,33 @@ QString Paths::getProfilesDir() const
  * @note Expect a change here, since TCS will probably be updated.
  * @return The path to the folder on success, empty string else.
  */
-QString Paths::getToxSaveDir() const
-{
+QString Paths::getToxSaveDir() const {
     if (isPortable()) {
         return basePath % QDir::separator() % profileFolder % QDir::separator();
     }
 
-        // GenericDataLocation would be a better solution, but we keep this code for backward
-        // compatibility
+    // GenericDataLocation would be a better solution, but we keep this code for backward
+    // compatibility
 
 // workaround for https://bugreports.qt-project.org/browse/QTBUG-38845
 #ifdef Q_OS_WIN
     // TODO(sudden6): this doesn't really follow the Tox Client Standard and probably
     // breaks when %APPDATA% is changed
-    return QDir::cleanPath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)
-                           + QDir::separator() + "AppData" + QDir::separator() + "Roaming"
-                           + QDir::separator() + "tox")
-           + QDir::separator();
+    return QDir::cleanPath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation) +
+                           QDir::separator() + "AppData" + QDir::separator() + "Roaming" +
+                           QDir::separator() + "tox") +
+           QDir::separator();
 #elif defined(Q_OS_OSX)
-    return QDir::cleanPath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)
-                           + QDir::separator() + "Library" + QDir::separator()
-                           + "Application Support" + QDir::separator() + "Tox")
-           + QDir::separator();
+    return QDir::cleanPath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation) +
+                           QDir::separator() + "Library" + QDir::separator() +
+                           "Application Support" + QDir::separator() + "Tox") +
+           QDir::separator();
 #else
     // TODO(sudden6): This does not respect the XDG_* environment variables and also
     // stores user data in a config location
-    return QDir::cleanPath(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation)
-                           + QDir::separator() + "tox")
-           + QDir::separator();
+    return QDir::cleanPath(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) +
+                           QDir::separator() + "tox") +
+           QDir::separator();
 #endif
 }
 
@@ -196,8 +187,7 @@ QString Paths::getToxSaveDir() const
  * @note Expect a change here, since TCS will probably be updated.
  * @return The path to the folder on success, empty string else.
  */
-QString Paths::getAvatarsDir() const
-{
+QString Paths::getAvatarsDir() const {
     // follow the layout in
     // https://tox.gitbooks.io/tox-client-standard/content/data_storage/export_format.html
     QString path = getToxSaveDir();
@@ -213,8 +203,7 @@ QString Paths::getAvatarsDir() const
  * @brief Get the folder where screenshots are stored
  * @return The path to the folder.
  */
-QString Paths::getScreenshotsDir() const
-{
+QString Paths::getScreenshotsDir() const {
     return basePath % QDir::separator() % screenshotsFolder % QDir::separator();
 }
 
@@ -222,8 +211,7 @@ QString Paths::getScreenshotsDir() const
  * @brief Get the folder where file transfer data is stored
  * @return The path to the folder.
  */
-QString Paths::getTransfersDir() const
-{
+QString Paths::getTransfersDir() const {
     return basePath % QDir::separator() % transfersFolder % QDir::separator();
 }
 
@@ -232,8 +220,7 @@ QString Paths::getTransfersDir() const
  * @return A list of directories sorted from most important to least important.
  * @note Users of this function should use the theme from the folder that appears first in the list.
  */
-QStringList Paths::getThemeDirs() const
-{
+QStringList Paths::getThemeDirs() const {
     QStringList themeFolders{};
 
     if (!isPortable()) {

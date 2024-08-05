@@ -17,8 +17,7 @@
 
 class ContentDialog;
 
-class CircleWidget : public CategoryWidget
-{
+class CircleWidget : public CategoryWidget {
     Q_OBJECT
 public:
     explicit CircleWidget(FriendListWidget* parent, int id);
@@ -48,4 +47,4 @@ private:
     int id;
 };
 
-#endif // CIRCLEWIDGET_H
+#endif  // CIRCLEWIDGET_H

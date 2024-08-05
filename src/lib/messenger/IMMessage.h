@@ -20,23 +20,22 @@
 namespace gloox {
 class JID;
 class RosterItem;
-}
+}  // namespace gloox
 
 namespace lib::messenger {
 
 enum class MsgType {
-  Chat = 1,
-  Groupchat = 4,
+    Chat = 1,
+    Groupchat = 4,
 };
 
 struct IMMessage {
-  MsgType type;
-  QString id;
-  QString from;
-  QString to;
-  QString body;
-  QDateTime timestamp;
+    MsgType type;
+    QString id;
+    QString from;
+    QString to;
+    QString body;
+    QDateTime timestamp;
 };
 
-} // namespace lib::messenger
-
+}  // namespace lib::messenger

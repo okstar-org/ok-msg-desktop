@@ -20,32 +20,28 @@
 
 #include <memory>
 
-struct ChatLogMessage
-{
+struct ChatLogMessage {
     MessageState state;
     Message message;
 };
 
-struct ChatLogFile
-{
+struct ChatLogFile {
     QDateTime timestamp;
     ToxFile file;
 };
 
-class ChatLogItem
-{
+class ChatLogItem {
 private:
     using ContentPtr = std::unique_ptr<void, void (*)(void*)>;
 
 public:
-    enum class ContentType
-    {
+    enum class ContentType {
         message,
         fileTransfer,
     };
 
-    ChatLogItem(FriendId sender,QString displayName, ChatLogFile file);
-    ChatLogItem(FriendId sender,QString displayName, ChatLogMessage message);
+    ChatLogItem(FriendId sender, QString displayName, ChatLogFile file);
+    ChatLogItem(FriendId sender, QString displayName, ChatLogMessage message);
     const FriendId& getSender() const;
     ContentType getContentType() const;
     ChatLogFile& getContentAsFile();

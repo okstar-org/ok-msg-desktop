@@ -25,35 +25,28 @@
 #include <QTextFragment>
 
 Text::Text(const QString& txt, const QFont& font, bool enableElide, const QString& rwText)
-    : rawText(rwText)
-    , elide(enableElide)
-    , defFont(font)
-    , defStyleSheet(Style::getStylesheet(QStringLiteral("chatArea/innerStyle.css"), font))
-{
+        : rawText(rwText)
+        , elide(enableElide)
+        , defFont(font)
+        , defStyleSheet(Style::getStylesheet(QStringLiteral("chatArea/innerStyle.css"), font)) {
     color = textColor();
     setText(txt);
     setAcceptedMouseButtons(Qt::LeftButton);
     setAcceptHoverEvents(true);
 }
 
-Text::~Text()
-{
-    if (doc)
-        DocumentCache::getInstance().push(doc);
+Text::~Text() {
+    if (doc) DocumentCache::getInstance().push(doc);
 }
 
-void Text::setTextSelectable(bool selectable)
-{
-    this->selectable = selectable;
-}
+void Text::setTextSelectable(bool selectable) { this->selectable = selectable; }
 
-void Text::setText(const QString &txt) {
+void Text::setText(const QString& txt) {
     text = txt;
     dirty = true;
 }
 
-void Text::selectText(const QString& txt, const std::pair<int, int>& point)
-{
+void Text::selectText(const QString& txt, const std::pair<int, int>& point) {
     regenerate();
 
     if (!doc || !selectable) {
@@ -65,8 +58,7 @@ void Text::selectText(const QString& txt, const std::pair<int, int>& point)
     selectText(cursor, point);
 }
 
-void Text::selectText(const QRegularExpression &exp, const std::pair<int, int>& point)
-{
+void Text::selectText(const QRegularExpression& exp, const std::pair<int, int>& point) {
     regenerate();
 
     if (!doc || !selectable) {
@@ -78,25 +70,21 @@ void Text::selectText(const QRegularExpression &exp, const std::pair<int, int>& 
     selectText(cursor, point);
 }
 
-void Text::deselectText()
-{
+void Text::deselectText() {
     dirty = true;
     regenerate();
     update();
 }
 
-void Text::setWidth(qreal w)
-{
+void Text::setWidth(qreal w) {
     width = w;
     dirty = true;
 
     regenerate();
 }
 
-void Text::selectionMouseMove(QPointF scenePos)
-{
-    if (!doc || !selectable)
-        return;
+void Text::selectionMouseMove(QPointF scenePos) {
+    if (!doc || !selectable) return;
 
     int cur = cursorFromPos(scenePos);
     if (cur >= 0) {
@@ -107,8 +95,7 @@ void Text::selectionMouseMove(QPointF scenePos)
     update();
 }
 
-void Text::selectionStarted(QPointF scenePos)
-{
+void Text::selectionStarted(QPointF scenePos) {
     int cur = cursorFromPos(scenePos);
     if (cur >= 0) {
         selectionEnd = cur;
@@ -116,8 +103,7 @@ void Text::selectionStarted(QPointF scenePos)
     }
 }
 
-void Text::selectionCleared()
-{
+void Text::selectionCleared() {
     selectedText.clear();
     selectedText.squeeze();
 
@@ -127,10 +113,8 @@ void Text::selectionCleared()
     update();
 }
 
-void Text::selectionDoubleClick(QPointF scenePos)
-{
-    if (!doc)
-        return;
+void Text::selectionDoubleClick(QPointF scenePos) {
+    if (!doc) return;
 
     int cur = cursorFromPos(scenePos);
 
@@ -148,10 +132,8 @@ void Text::selectionDoubleClick(QPointF scenePos)
     update();
 }
 
-void Text::selectionTripleClick(QPointF scenePos)
-{
-    if (!doc)
-        return;
+void Text::selectionTripleClick(QPointF scenePos) {
+    if (!doc) return;
 
     int cur = cursorFromPos(scenePos);
 
@@ -163,8 +145,7 @@ void Text::selectionTripleClick(QPointF scenePos)
         selectionAnchor = cursor.selectionStart();
         selectionEnd = cursor.selectionEnd();
 
-        if (cursor.block().isValid() && cursor.block().blockNumber() != 0)
-            selectionAnchor++;
+        if (cursor.block().isValid() && cursor.block().blockNumber() != 0) selectionAnchor++;
 
         selectedText = extractSanitizedText(getSelectionStart(), getSelectionEnd());
     }
@@ -172,16 +153,13 @@ void Text::selectionTripleClick(QPointF scenePos)
     update();
 }
 
-void Text::selectionFocusChanged(bool focusIn)
-{
+void Text::selectionFocusChanged(bool focusIn) {
     selectionHasFocus = focusIn;
     update();
 }
 
-void Text::selectAll()
-{
-    if (!doc)
-        return;
+void Text::selectAll() {
+    if (!doc) return;
 
     QTextCursor cursor(doc);
     cursor.setPosition(0);
@@ -192,52 +170,37 @@ void Text::selectAll()
     update();
 }
 
-bool Text::isOverSelection(QPointF scenePos) const
-{
+bool Text::isOverSelection(QPointF scenePos) const {
     int cur = cursorFromPos(scenePos);
-    if (getSelectionStart() < cur && getSelectionEnd() >= cur)
-        return true;
+    if (getSelectionStart() < cur && getSelectionEnd() >= cur) return true;
 
     return false;
 }
 
-QString Text::getSelectedText() const
-{
-    return selectedText;
+QString Text::getSelectedText() const { return selectedText; }
+
+void Text::fontChanged(const QFont& font) { defFont = font; }
+
+QRectF Text::boundingRect() const {
+    return QRectF(QPointF(0, 0),
+                  size + QSize(margins.left() + margins.right(), margins.top() + margins.bottom()));
 }
 
-void Text::fontChanged(const QFont& font)
-{
-    defFont = font;
-}
-
-QRectF Text::boundingRect() const
-{
-    return QRectF(QPointF(0, 0), size + QSize(margins.left() + margins.right(),
-                                              margins.top() + margins.bottom()));
-}
-
-void Text::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
-{
+void Text::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) {
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
-    if (!doc)
-        return;
+    if (!doc) return;
 
     painter->setRenderHint(QPainter::Antialiasing);
-    if (backgroundColor.isValid())
-    {
+    if (backgroundColor.isValid()) {
         painter->save();
         painter->translate(0.5, 0.5);
-        if (boundRadius > 0)
-        {
+        if (boundRadius > 0) {
             QPainterPath path;
             path.addRoundedRect(boundingRect(), boundRadius, boundRadius);
             painter->fillPath(path, backgroundColor);
-        }
-        else
-        {
+        } else {
             painter->fillRect(boundingRect(), backgroundColor);
         }
         painter->restore();
@@ -268,16 +231,14 @@ void Text::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWid
     painter->restore();
 }
 
-void Text::visibilityChanged(bool visible)
-{
+void Text::visibilityChanged(bool visible) {
     keepInMemory = visible;
 
     regenerate();
     update();
 }
 
-void Text::reloadTheme()
-{
+void Text::reloadTheme() {
     defStyleSheet = Style::getStylesheet(QStringLiteral("chatArea/innerStyle.css"), defFont);
     color = textColor();
     dirty = true;
@@ -285,33 +246,23 @@ void Text::reloadTheme()
     update();
 }
 
-qreal Text::getAscent() const
-{
-    return ascent;
+qreal Text::getAscent() const { return ascent; }
+
+void Text::mousePressEvent(QGraphicsSceneMouseEvent* event) {
+    if (event->button() == Qt::LeftButton) event->accept();  // grabber
 }
 
-void Text::mousePressEvent(QGraphicsSceneMouseEvent* event)
-{
-    if (event->button() == Qt::LeftButton)
-        event->accept(); // grabber
-}
-
-void Text::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
-{
-    if (!doc)
-        return;
+void Text::mouseReleaseEvent(QGraphicsSceneMouseEvent* event) {
+    if (!doc) return;
 
     QString anchor = doc->documentLayout()->anchorAt(event->pos());
 
     // open anchor in browser
-    if (!anchor.isEmpty())
-        QDesktopServices::openUrl(anchor);
+    if (!anchor.isEmpty()) QDesktopServices::openUrl(anchor);
 }
 
-void Text::hoverMoveEvent(QGraphicsSceneHoverEvent* event)
-{
-    if (!doc)
-        return;
+void Text::hoverMoveEvent(QGraphicsSceneHoverEvent* event) {
+    if (!doc) return;
 
     QString anchor = doc->documentLayout()->anchorAt(event->pos());
 
@@ -324,50 +275,37 @@ void Text::hoverMoveEvent(QGraphicsSceneHoverEvent* event)
     setToolTip(extractImgTooltip(cursorFromPos(event->scenePos(), false)));
 }
 
-QString Text::getText() const
-{
-    return rawText;
-}
+QString Text::getText() const { return rawText; }
 
 /**
  * @brief Extracts the target of a link from the text at a given coordinate
  * @param scenePos Position in scene coordinates
  * @return The link target URL, or an empty string if there is no link there
  */
-QString Text::getLinkAt(QPointF scenePos) const
-{
+QString Text::getLinkAt(QPointF scenePos) const {
     QTextCursor cursor(doc);
     cursor.setPosition(cursorFromPos(scenePos));
     return cursor.charFormat().anchorHref();
 }
 
-void Text::setContentsMargins(QMarginsF margins)
-{
-    this->margins = margins;
-}
+void Text::setContentsMargins(QMarginsF margins) { this->margins = margins; }
 
-void Text::setBoundingRadius(qreal radius)
-{ 
-    if (boundRadius != radius)
-    {
+void Text::setBoundingRadius(qreal radius) {
+    if (boundRadius != radius) {
         boundRadius = radius;
         update();
     }
 }
 
-void Text::setBackgroundColor(const QColor &color)
-{
-    if (backgroundColor != color)
-    {
+void Text::setBackgroundColor(const QColor& color) {
+    if (backgroundColor != color) {
         backgroundColor = color;
         update();
     }
 }
 
-void Text::setColor(Style::ColorPalette role)
-{
-    if (isCustomColor || colorRole != role)
-    {
+void Text::setColor(Style::ColorPalette role) {
+    if (isCustomColor || colorRole != role) {
         isCustomColor = false;
         colorRole = role;
         color = textColor();
@@ -375,18 +313,15 @@ void Text::setColor(Style::ColorPalette role)
     }
 }
 
-void Text::setColor(const QColor &color)
-{
-    if (!isCustomColor || this->color != color)
-    {
+void Text::setColor(const QColor& color) {
+    if (!isCustomColor || this->color != color) {
         isCustomColor = true;
         this->color = color;
         update();
     }
 }
 
-void Text::regenerate()
-{
+void Text::regenerate() {
     if (!doc) {
         doc = DocumentCache::getInstance().pop();
         dirty = true;
@@ -419,8 +354,7 @@ void Text::regenerate()
             ascent = doc->firstBlock().layout()->lineAt(0).ascent();
 
         // let the scene know about our change in size
-        if (size != idealSize())
-            prepareGeometryChange();
+        if (size != idealSize()) prepareGeometryChange();
 
         // get the new width and height
         size = idealSize();
@@ -429,58 +363,41 @@ void Text::regenerate()
     }
 
     // if we are not visible -> free mem
-    if (!keepInMemory)
-        freeResources();
+    if (!keepInMemory) freeResources();
 }
 
-void Text::freeResources()
-{
+void Text::freeResources() {
     DocumentCache::getInstance().push(doc);
     doc = nullptr;
 }
 
-QSizeF Text::idealSize()
-{
-    if (doc)
-        return doc->size();
+QSizeF Text::idealSize() {
+    if (doc) return doc->size();
 
     return size;
 }
 
-int Text::cursorFromPos(QPointF scenePos, bool fuzzy) const
-{
-    if (doc)
-    {
+int Text::cursorFromPos(QPointF scenePos, bool fuzzy) const {
+    if (doc) {
         QPointF pos = mapFromScene(scenePos);
         QRectF rect = this->boundingRect();
-        if (rect.contains(pos))
-        {
-            pos.ry() = qBound(rect.top() + margins.top() + 1, pos.y(), rect.bottom() - margins.bottom() - 1);
+        if (rect.contains(pos)) {
+            pos.ry() = qBound(
+                    rect.top() + margins.top() + 1, pos.y(), rect.bottom() - margins.bottom() - 1);
         }
         return doc->documentLayout()->hitTest(pos, fuzzy ? Qt::FuzzyHit : Qt::ExactHit);
     }
     return -1;
 }
 
-int Text::getSelectionEnd() const
-{
-    return qMax(selectionAnchor, selectionEnd);
-}
+int Text::getSelectionEnd() const { return qMax(selectionAnchor, selectionEnd); }
 
-int Text::getSelectionStart() const
-{
-    return qMin(selectionAnchor, selectionEnd);
-}
+int Text::getSelectionStart() const { return qMin(selectionAnchor, selectionEnd); }
 
-bool Text::hasSelection() const
-{
-    return selectionEnd >= 0;
-}
+bool Text::hasSelection() const { return selectionEnd >= 0; }
 
-QString Text::extractSanitizedText(int from, int to) const
-{
-    if (!doc)
-        return "";
+QString Text::extractSanitizedText(int from, int to) const {
+    if (!doc) return "";
 
     QString txt;
 
@@ -488,12 +405,12 @@ QString Text::extractSanitizedText(int from, int to) const
     QTextBlock end = doc->findBlock(to);
     for (QTextBlock block = begin; block != end.next() && block.isValid(); block = block.next()) {
         for (QTextBlock::Iterator itr = block.begin(); itr != block.end(); ++itr) {
-            int pos = itr.fragment().position(); // fragment position -> position of the first
-                                                 // character in the fragment
+            int pos = itr.fragment().position();  // fragment position -> position of the first
+                                                  // character in the fragment
 
             if (itr.fragment().charFormat().isImageFormat()) {
                 QTextImageFormat imgFmt = itr.fragment().charFormat().toImageFormat();
-                QString key = imgFmt.name(); // img key (eg. key::D for :D)
+                QString key = imgFmt.name();  // img key (eg. key::D for :D)
                 QString rune = key.mid(4);
 
                 if (pos >= from && pos < to) {
@@ -502,8 +419,7 @@ QString Text::extractSanitizedText(int from, int to) const
                 }
             } else {
                 for (QChar c : itr.fragment().text()) {
-                    if (pos >= from && pos < to)
-                        txt += c;
+                    if (pos >= from && pos < to) txt += c;
 
                     ++pos;
                 }
@@ -518,9 +434,9 @@ QString Text::extractSanitizedText(int from, int to) const
     return txt;
 }
 
-QString Text::extractImgTooltip(int pos) const
-{
-    for (QTextBlock::Iterator itr = doc->firstBlock().begin(); itr != doc->firstBlock().end(); ++itr) {
+QString Text::extractImgTooltip(int pos) const {
+    for (QTextBlock::Iterator itr = doc->firstBlock().begin(); itr != doc->firstBlock().end();
+         ++itr) {
         if (itr.fragment().contains(pos) && itr.fragment().charFormat().isImageFormat()) {
             QTextImageFormat imgFmt = itr.fragment().charFormat().toImageFormat();
             return imgFmt.toolTip();
@@ -530,8 +446,7 @@ QString Text::extractImgTooltip(int pos) const
     return QString();
 }
 
-void Text::selectText(QTextCursor& cursor, const std::pair<int, int>& point)
-{
+void Text::selectText(QTextCursor& cursor, const std::pair<int, int>& point) {
     if (!cursor.isNull()) {
         cursor.beginEditBlock();
         cursor.setPosition(point.first);
@@ -547,7 +462,4 @@ void Text::selectText(QTextCursor& cursor, const std::pair<int, int>& point)
     }
 }
 
-QColor Text::textColor() const
-{
-    return isCustomColor ? color : Style::getColor(colorRole);
-}
+QColor Text::textColor() const { return isCustomColor ? color : Style::getColor(colorRole); }

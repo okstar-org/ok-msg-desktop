@@ -17,8 +17,7 @@
 
 class QPropertyAnimation;
 
-class FlyoutOverlayWidget : public QWidget
-{
+class FlyoutOverlayWidget : public QWidget {
     Q_OBJECT
     Q_PROPERTY(qreal flyoutPercent READ flyoutPercent WRITE setFlyoutPercent)
 public:
@@ -52,4 +51,4 @@ private:
     QPoint startPos;
 };
 
-#endif // FLYOUTOVERLAYWIDGET_HPP
+#endif  // FLYOUTOVERLAYWIDGET_HPP

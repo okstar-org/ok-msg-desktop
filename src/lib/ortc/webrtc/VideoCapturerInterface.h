@@ -3,40 +3,39 @@
 
 #include "Instance.h"
 
-#include <memory>
 #include <functional>
+#include <memory>
 
 namespace rtc {
-template <typename VideoFrameT>
-class VideoSinkInterface;
-} // namespace rtc
+template <typename VideoFrameT> class VideoSinkInterface;
+}  // namespace rtc
 
 namespace webrtc {
 class VideoFrame;
-} // namespace webrtc
+}  // namespace webrtc
 
 namespace lib::ortc {
 
 class VideoCapturerInterface {
 public:
-	virtual ~VideoCapturerInterface() = default;
+    virtual ~VideoCapturerInterface() = default;
 
-	virtual void setState(VideoState state) = 0;
-	virtual void setPreferredCaptureAspectRatio(float aspectRatio) = 0;
-	virtual void setUncroppedOutput(std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> sink) = 0;
+    virtual void setState(VideoState state) = 0;
+    virtual void setPreferredCaptureAspectRatio(float aspectRatio) = 0;
+    virtual void setUncroppedOutput(
+            std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> sink) = 0;
     virtual int getRotation() = 0;
     virtual void setOnFatalError(std::function<void()> error) {
-      // TODO: make this function pure virtual when everybody implements it.
+        // TODO: make this function pure virtual when everybody implements it.
     }
     virtual void setOnPause(std::function<void(bool)> pause) {
-      // TODO: make this function pure virtual when everybody implements it.
+        // TODO: make this function pure virtual when everybody implements it.
     }
-    virtual void withNativeImplementation(std::function<void(void *)> completion) {
+    virtual void withNativeImplementation(std::function<void(void*)> completion) {
         completion(nullptr);
     }
-    
 };
 
-} // namespace lib::ortc
+}  // namespace lib::ortc
 
 #endif

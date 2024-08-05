@@ -18,8 +18,7 @@
 class QObject;
 class QSignalBlocker;
 
-class RecursiveSignalBlocker
-{
+class RecursiveSignalBlocker {
 public:
     explicit RecursiveSignalBlocker(QObject* object);
     ~RecursiveSignalBlocker();

@@ -17,8 +17,7 @@
 #include <QObject>
 #include <QPropertyAnimation>
 
-class ToolBoxGraphicsItem final : public QObject, public QGraphicsItemGroup
-{
+class ToolBoxGraphicsItem final : public QObject, public QGraphicsItemGroup {
     Q_OBJECT
     Q_PROPERTY(qreal opacity READ opacity WRITE setOpacity)
 public:
@@ -41,4 +40,4 @@ private:
     int fadeTimeMs = 300;
 };
 
-#endif // TOOLBOXGRAPHICSITEM_HPP
+#endif  // TOOLBOXGRAPHICSITEM_HPP

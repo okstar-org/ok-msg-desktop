@@ -16,9 +16,7 @@
 #include "FriendId.h"
 #include "toxid.h"
 
-class ICoreIdHandler
-{
-
+class ICoreIdHandler {
 public:
     virtual ~ICoreIdHandler() = default;
     virtual ToxId getSelfPeerId() const = 0;
@@ -26,6 +24,5 @@ public:
     virtual QString getUsername() const = 0;
     virtual QString getNick() const = 0;
 };
-
 
 #endif /*ICORE_ID_HANDLER_H*/

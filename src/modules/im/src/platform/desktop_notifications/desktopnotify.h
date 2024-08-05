@@ -18,19 +18,12 @@
 #include <QObject>
 #include <memory>
 
-class DesktopNotify : public QObject
-{
+class DesktopNotify : public QObject {
     Q_OBJECT
 public:
     DesktopNotify();
 
-    enum class MessageType {
-        FRIEND,
-        FRIEND_FILE,
-        FRIEND_REQUEST,
-        GROUP,
-        GROUP_INVITE
-    };
+    enum class MessageType { FRIEND, FRIEND_FILE, FRIEND_REQUEST, GROUP, GROUP_INVITE };
 
 public slots:
     void notifyMessage(const QString& title, const QString& message);
@@ -46,4 +39,4 @@ private:
     Snore::Icon snoreIcon;
 };
 
-#endif // DESKTOPNOTIFY_H
+#endif  // DESKTOPNOTIFY_H

@@ -19,17 +19,11 @@ namespace Ui {
 class SetPasswordDialog;
 }
 
-class SetPasswordDialog : public QDialog
-{
+class SetPasswordDialog : public QDialog {
     Q_OBJECT
 
 public:
-    enum ReturnCode
-    {
-        Rejected = QDialog::Rejected,
-        Accepted = QDialog::Accepted,
-        Tertiary
-    };
+    enum ReturnCode { Rejected = QDialog::Rejected, Accepted = QDialog::Accepted, Tertiary };
     explicit SetPasswordDialog(QString body, QString extraButton, QWidget* parent = nullptr);
     ~SetPasswordDialog();
     QString getPassword();
@@ -44,4 +38,4 @@ private:
     static const double reasonablePasswordLength;
 };
 
-#endif // SETPASSWORDDIALOG_H
+#endif  // SETPASSWORDDIALOG_H

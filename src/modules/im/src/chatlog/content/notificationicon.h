@@ -20,8 +20,7 @@
 
 class QTimer;
 
-class NotificationIcon : public ChatLineContent
-{
+class NotificationIcon : public ChatLineContent {
     Q_OBJECT
 public:
     explicit NotificationIcon(QSize size);
@@ -45,4 +44,4 @@ private:
     qreal alpha = 0.0;
 };
 
-#endif // NOTIFICATIONICON_H
+#endif  // NOTIFICATIONICON_H

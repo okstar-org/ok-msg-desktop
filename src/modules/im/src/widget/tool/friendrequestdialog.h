@@ -15,11 +15,10 @@
 
 #include <QDialog>
 
-class FriendRequestDialog : public QDialog
-{
+class FriendRequestDialog : public QDialog {
     Q_OBJECT
 public:
     explicit FriendRequestDialog(QWidget* parent, const QString& userId, const QString& message);
 };
 
-#endif // FRIENDREQUESTDIALOG_HPP
+#endif  // FRIENDREQUESTDIALOG_HPP

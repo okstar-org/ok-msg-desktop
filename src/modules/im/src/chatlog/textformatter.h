@@ -19,4 +19,4 @@ QString highlightURI(const QString& message);
 
 QString applyMarkdown(const QString& message, bool showFormattingSymbols);
 
-#endif // TEXTFORMATTER_H
+#endif  // TEXTFORMATTER_H

@@ -15,8 +15,7 @@
 
 #include <QString>
 
-struct DhtServer
-{
+struct DhtServer {
     QString name;
     QString userId;
     QString address;
@@ -26,4 +25,4 @@ struct DhtServer
     bool operator!=(const DhtServer& other) const;
 };
 
-#endif // DHT_SERVER_H
+#endif  // DHT_SERVER_H

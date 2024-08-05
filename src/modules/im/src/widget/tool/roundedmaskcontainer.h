@@ -8,15 +8,13 @@ class RoundMaskGraphicsEffect;
 class RoundedMaskContainer : public QFrame {
     Q_OBJECT
     Q_PROPERTY(int radius READ roundRadius WRITE setRoundRadius)
-  public:
-    RoundedMaskContainer(QWidget *parent);
+public:
+    RoundedMaskContainer(QWidget* parent);
     Q_INVOKABLE void setRoundRadius(int radius);
-    Q_INVOKABLE int roundRadius() const {
-        return _radius;
-    }
+    Q_INVOKABLE int roundRadius() const { return _radius; }
 
-  private:
+private:
     int _radius = 0;
-    RoundMaskGraphicsEffect *effect = nullptr;
+    RoundMaskGraphicsEffect* effect = nullptr;
 };
-#endif // !ROUNDEDMASKCONTAINER_H
+#endif  // !ROUNDEDMASKCONTAINER_H

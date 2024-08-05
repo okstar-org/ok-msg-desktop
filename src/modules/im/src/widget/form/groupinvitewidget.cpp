@@ -29,13 +29,12 @@
  */
 
 GroupInviteWidget::GroupInviteWidget(QWidget* parent, const GroupInvite& invite)
-    : QWidget(parent)
-    , acceptButton(new QPushButton(this))
-    , rejectButton(new QPushButton(this))
-    , inviteMessageLabel(new CroppingLabel(this))
-    , widgetLayout(new QHBoxLayout(this))
-    , inviteInfo(invite)
-{
+        : QWidget(parent)
+        , acceptButton(new QPushButton(this))
+        , rejectButton(new QPushButton(this))
+        , inviteMessageLabel(new CroppingLabel(this))
+        , widgetLayout(new QHBoxLayout(this))
+        , inviteInfo(invite) {
     connect(acceptButton, &QPushButton::clicked, [this]() { emit accepted(inviteInfo); });
     connect(rejectButton, &QPushButton::clicked, [this]() { emit rejected(inviteInfo); });
     widgetLayout->addWidget(inviteMessageLabel);
@@ -48,15 +47,15 @@ GroupInviteWidget::GroupInviteWidget(QWidget* parent, const GroupInvite& invite)
 /**
  * @brief Retranslate all elements in the form.
  */
-void GroupInviteWidget::retranslateUi()
-{
+void GroupInviteWidget::retranslateUi() {
     QString name = Nexus::getCore()->getFriendUsername(inviteInfo.getFriendId());
     QDateTime inviteDate = inviteInfo.getInviteDate();
     QString date = inviteDate.toString(Settings::getInstance().getDateFormat());
     QString time = inviteDate.toString(Settings::getInstance().getTimestampFormat());
 
-    inviteMessageLabel->setText(
-        tr("Invited by %1 on %2 at %3.").arg("<b>%1</b>").arg(name.toHtmlEscaped(), date, time));
+    inviteMessageLabel->setText(tr("Invited by %1 on %2 at %3.")
+                                        .arg("<b>%1</b>")
+                                        .arg(name.toHtmlEscaped(), date, time));
     acceptButton->setText(tr("Join"));
     rejectButton->setText(tr("Decline"));
 }
@@ -65,7 +64,4 @@ void GroupInviteWidget::retranslateUi()
  * @brief Returns infomation about invitation - e.g., who and when sent
  * @return Invite information object
  */
-const GroupInvite GroupInviteWidget::getInviteInfo() const
-{
-    return inviteInfo;
-}
+const GroupInvite GroupInviteWidget::getInviteInfo() const { return inviteInfo; }

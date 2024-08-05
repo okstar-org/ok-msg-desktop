@@ -15,8 +15,7 @@
 
 #include <QGraphicsItemGroup>
 
-class ScreenGrabberChooserRectItem final : public QObject, public QGraphicsItemGroup
-{
+class ScreenGrabberChooserRectItem final : public QObject, public QGraphicsItemGroup {
     Q_OBJECT
 public:
     explicit ScreenGrabberChooserRectItem(QGraphicsScene* scene);
@@ -39,8 +38,7 @@ protected:
     virtual bool sceneEventFilter(QGraphicsItem* watched, QEvent* event) final override;
 
 private:
-    enum State
-    {
+    enum State {
         None,
         Resizing,
         HandleResizing,
@@ -80,5 +78,4 @@ private:
     QGraphicsRectItem* leftCenter;
 };
 
-
-#endif // SCREENGRABBERCHOOSERRECTITEM_HPP
+#endif  // SCREENGRABBERCHOOSERRECTITEM_HPP

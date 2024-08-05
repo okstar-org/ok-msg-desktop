@@ -24,44 +24,41 @@
 
 class SvgUtils {
 public:
-  /**
-   * 将SVG渲染到QPixmap以支持不失真的伸缩
-   * @brief renderTo
-   * @param path
-   * @param pm
-   */
-  inline static void renderTo(const QString &path, QPixmap &pm) {
-    QSvgRenderer renderer(path);
-    pm.fill(Qt::transparent);
-    QPainter painter(&pm);
-    renderer.render(&painter, pm.rect());
-  }
-
-  inline static QIcon prepareIcon(const QString &path, int w, int h) {
-    if (!(w > 0 && h > 0)) {
-      return QIcon{path};
+    /**
+     * 将SVG渲染到QPixmap以支持不失真的伸缩
+     * @brief renderTo
+     * @param path
+     * @param pm
+     */
+    inline static void renderTo(const QString& path, QPixmap& pm) {
+        QSvgRenderer renderer(path);
+        pm.fill(Qt::transparent);
+        QPainter painter(&pm);
+        renderer.render(&painter, pm.rect());
     }
 
-#ifdef Q_OS_LINUX
-    QPixmap pm(w, h);
-    renderTo(path, pm);
-    return QIcon{pm};
-#else
-    return QIcon{path};
-#endif
-  }
+    inline static QIcon prepareIcon(const QString& path, int w, int h) {
+        if (!(w > 0 && h > 0)) {
+            return QIcon{path};
+        }
 
- static QPixmap scaleSvgImage(const QString& path,
-                               quint32 width,
-                               quint32 height)
-  {
-      QSvgRenderer render(path);
-      QPixmap pixmap(width, height);
-      pixmap.fill(QColor(0, 0, 0, 0));
-      QPainter painter(&pixmap);
-      render.render(&painter, pixmap.rect());
-      return pixmap;
-  }
+#ifdef Q_OS_LINUX
+        QPixmap pm(w, h);
+        renderTo(path, pm);
+        return QIcon{pm};
+#else
+        return QIcon{path};
+#endif
+    }
+
+    static QPixmap scaleSvgImage(const QString& path, quint32 width, quint32 height) {
+        QSvgRenderer render(path);
+        QPixmap pixmap(width, height);
+        pixmap.fill(QColor(0, 0, 0, 0));
+        QPainter painter(&pixmap);
+        render.render(&painter, pixmap.rect());
+        return pixmap;
+    }
 };
 
-#endif // OKMSG_PROJECT_SVGUTILS_H
+#endif  // OKMSG_PROJECT_SVGUTILS_H

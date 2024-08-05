@@ -16,21 +16,38 @@
 
 #pragma once
 
-#include "UI/widget/OMenuWidget.h"
 #include <QWidget>
+#include "UI/widget/OMenuWidget.h"
+#include "base/resources.h"
 
-class QWebEngineView;
+OK_RESOURCE_LOADER(Platform)
 
-namespace platform{
-
-class Widget : public UI::OMenuWidget{
-Q_OBJECT
-public:
-  Widget(QWidget *parent= nullptr);
-
-private:
-  QWebEngineView *webView;
-};
+namespace Ui {
+class WorkPlatform;
 }
 
+namespace ok::platform {
 
+class AppCenterWidget;
+
+class Widget : public UI::OMenuWidget {
+    Q_OBJECT
+public:
+    Widget(QWidget* parent = nullptr);
+    ~Widget() override;
+    void start();
+
+protected:
+    void retranslateUi();
+
+private:
+    OK_RESOURCE_PTR(Platform);
+    Ui::WorkPlatform* ui;
+
+    // tab
+    AppCenterWidget* centerWidget;
+
+public slots:
+    void doStart();
+};
+}  // namespace ok::platform

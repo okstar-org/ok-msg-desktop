@@ -11,12 +11,12 @@
  */
 
 #include "ipc.h"
+#include <unistd.h>
 #include <QCoreApplication>
 #include <QDebug>
 #include <QThread>
 #include <ctime>
 #include <random>
-#include <unistd.h>
 
 /**
  * @var time_t IPC::lastEvent
@@ -31,10 +31,7 @@
  * @brief Inter-process communication
  */
 
-IPC::IPC(uint32_t profileId)
-    : profileId{profileId}
-    , globalMemory{"qtox-" IPC_PROTOCOL_VERSION}
-{
+IPC::IPC(uint32_t profileId) : profileId{profileId}, globalMemory{"qtox-" IPC_PROTOCOL_VERSION} {
     qRegisterMetaType<IPCEventHandler>("IPCEventHandler");
 
     timer.setInterval(EVENT_TIMER_MS);
@@ -67,14 +64,13 @@ IPC::IPC(uint32_t profileId)
     } else {
         qDebug() << "Failed to attach to the global shared memory, giving up. Error:"
                  << globalMemory.error();
-        return; // We won't be able to do any IPC without being attached, let's get outta here
+        return;  // We won't be able to do any IPC without being attached, let's get outta here
     }
 
     processEvents();
 }
 
-IPC::~IPC()
-{
+IPC::~IPC() {
     if (!globalMemory.lock()) {
         qWarning() << "Failed to lock in ~IPC";
         return;
@@ -93,8 +89,7 @@ IPC::~IPC()
  * @param dest Settings::getCurrentProfileId() or 0 (main instance, default).
  * @return Time the event finished or 0 on error.
  */
-time_t IPC::postEvent(const QString& name, const QByteArray& data, uint32_t dest)
-{
+time_t IPC::postEvent(const QString& name, const QByteArray& data, uint32_t dest) {
     QByteArray binName = name.toUtf8();
     if (binName.length() > (int32_t)sizeof(IPCEvent::name)) {
         return 0;
@@ -133,8 +128,7 @@ time_t IPC::postEvent(const QString& name, const QByteArray& data, uint32_t dest
     return result;
 }
 
-bool IPC::isCurrentOwner()
-{
+bool IPC::isCurrentOwner() {
     if (globalMemory.lock()) {
         const bool isOwner = isCurrentOwnerNoLock();
         globalMemory.unlock();
@@ -149,13 +143,11 @@ bool IPC::isCurrentOwner()
  * @brief Register a handler for an IPC event
  * @param handler The handler callback. Should not block for more than a second, at worst
  */
-void IPC::registerEventHandler(const QString& name, IPCEventHandler handler)
-{
+void IPC::registerEventHandler(const QString& name, IPCEventHandler handler) {
     eventHandlers[name] = handler;
 }
 
-bool IPC::isEventAccepted(time_t time)
-{
+bool IPC::isEventAccepted(time_t time) {
     bool result = false;
     if (!globalMemory.lock()) {
         return result;
@@ -175,12 +167,10 @@ bool IPC::isEventAccepted(time_t time)
     return result;
 }
 
-bool IPC::waitUntilAccepted(time_t postTime, int32_t timeout /*=-1*/)
-{
+bool IPC::waitUntilAccepted(time_t postTime, int32_t timeout /*=-1*/) {
     bool result = false;
     time_t start = time(nullptr);
-    forever
-    {
+    forever {
         result = isEventAccepted(postTime);
         if (result || (timeout > 0 && difftime(time(nullptr), start) >= timeout)) {
             break;
@@ -192,22 +182,15 @@ bool IPC::waitUntilAccepted(time_t postTime, int32_t timeout /*=-1*/)
     return result;
 }
 
-bool IPC::isAttached() const
-{
-    return globalMemory.isAttached();
-}
+bool IPC::isAttached() const { return globalMemory.isAttached(); }
 
-void IPC::setProfileId(uint32_t profileId)
-{
-    this->profileId = profileId;
-}
+void IPC::setProfileId(uint32_t profileId) { this->profileId = profileId; }
 
 /**
  * @brief Only called when global memory IS LOCKED.
  * @return nullptr if no evnts present, IPC event otherwise
  */
-IPC::IPCEvent* IPC::fetchEvent()
-{
+IPC::IPCEvent* IPC::fetchEvent() {
     IPCMemory* mem = global();
     for (uint32_t i = 0; i < EVENT_QUEUE_SIZE; ++i) {
         IPCEvent* evt = &mem->events[i];
@@ -215,13 +198,13 @@ IPC::IPCEvent* IPC::fetchEvent()
         // Garbage-collect events that were not processed in EVENT_GC_TIMEOUT
         // and events that were processed and EVENT_GC_TIMEOUT passed after
         // so sending instance has time to react to those events.
-        if ((evt->processed && difftime(time(nullptr), evt->processed) > EVENT_GC_TIMEOUT)
-            || (!evt->processed && difftime(time(nullptr), evt->posted) > EVENT_GC_TIMEOUT)) {
+        if ((evt->processed && difftime(time(nullptr), evt->processed) > EVENT_GC_TIMEOUT) ||
+            (!evt->processed && difftime(time(nullptr), evt->posted) > EVENT_GC_TIMEOUT)) {
             memset(evt, 0, sizeof(IPCEvent));
         }
 
-        if (evt->posted && !evt->processed && evt->sender != getpid()
-            && (evt->dest == profileId || (evt->dest == 0 && isCurrentOwnerNoLock()))) {
+        if (evt->posted && !evt->processed && evt->sender != getpid() &&
+            (evt->dest == profileId || (evt->dest == 0 && isCurrentOwnerNoLock()))) {
             return evt;
         }
     }
@@ -229,8 +212,7 @@ IPC::IPCEvent* IPC::fetchEvent()
     return nullptr;
 }
 
-bool IPC::runEventHandler(IPCEventHandler handler, const QByteArray& arg)
-{
+bool IPC::runEventHandler(IPCEventHandler handler, const QByteArray& arg) {
     bool result = false;
     if (QThread::currentThread() == qApp->thread()) {
         result = handler(arg);
@@ -243,8 +225,7 @@ bool IPC::runEventHandler(IPCEventHandler handler, const QByteArray& arg)
     return result;
 }
 
-void IPC::processEvents()
-{
+void IPC::processEvents() {
     if (!globalMemory.lock()) {
         timer.start();
         return;
@@ -300,8 +281,7 @@ void IPC::processEvents()
  * @brief Only called when global memory IS LOCKED.
  * @return true if owner, false if not owner or if error
  */
-bool IPC::isCurrentOwnerNoLock()
-{
+bool IPC::isCurrentOwnerNoLock() {
     const void* const data = globalMemory.data();
     if (!data) {
         qWarning() << "isCurrentOwnerNoLock failed to access the memory, returning false";
@@ -310,7 +290,4 @@ bool IPC::isCurrentOwnerNoLock()
     return (*static_cast<const uint64_t*>(data) == globalId);
 }
 
-IPC::IPCMemory* IPC::global()
-{
-    return static_cast<IPCMemory*>(globalMemory.data());
-}
+IPC::IPCMemory* IPC::global() { return static_cast<IPCMemory*>(globalMemory.data()); }

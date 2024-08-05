@@ -14,8 +14,7 @@
 
 #include <QPainter>
 
-ToolBoxGraphicsItem::ToolBoxGraphicsItem()
-{
+ToolBoxGraphicsItem::ToolBoxGraphicsItem() {
     this->opacityAnimation = new QPropertyAnimation(this, QByteArrayLiteral("opacity"), this);
 
     this->opacityAnimation->setKeyValueAt(0, this->idleOpacity);
@@ -25,31 +24,25 @@ ToolBoxGraphicsItem::ToolBoxGraphicsItem()
     setOpacity(this->activeOpacity);
 }
 
-ToolBoxGraphicsItem::~ToolBoxGraphicsItem()
-{
-}
+ToolBoxGraphicsItem::~ToolBoxGraphicsItem() {}
 
-void ToolBoxGraphicsItem::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
-{
+void ToolBoxGraphicsItem::hoverEnterEvent(QGraphicsSceneHoverEvent* event) {
     startAnimation(QAbstractAnimation::Backward);
     QGraphicsItemGroup::hoverEnterEvent(event);
 }
 
-void ToolBoxGraphicsItem::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
-{
+void ToolBoxGraphicsItem::hoverLeaveEvent(QGraphicsSceneHoverEvent* event) {
     startAnimation(QAbstractAnimation::Forward);
     QGraphicsItemGroup::hoverLeaveEvent(event);
 }
 
-void ToolBoxGraphicsItem::startAnimation(QAbstractAnimation::Direction direction)
-{
+void ToolBoxGraphicsItem::startAnimation(QAbstractAnimation::Direction direction) {
     this->opacityAnimation->setDirection(direction);
     this->opacityAnimation->start();
 }
 
 void ToolBoxGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
-                                QWidget* widget)
-{
+                                QWidget* widget) {
     painter->save();
     painter->setPen(Qt::NoPen);
     painter->setBrush(QBrush(QColor(0xFF, 0xE2, 0x82)));

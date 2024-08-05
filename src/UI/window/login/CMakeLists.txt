@@ -55,7 +55,7 @@ execute_process(COMMAND ${CMAKE_COMMAND} -E copy_if_different
 
 qt5_add_resources(
     ${PROJECT_NAME}_RESOURCES
-        ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.qrc
+    ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.qrc
 )
 
 add_library(${PROJECT_NAME} STATIC

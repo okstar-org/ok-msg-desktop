@@ -11,64 +11,53 @@
  */
 
 #include "PluginItemForm.h"
+#include <QTimer>
 #include "base/files.h"
+#include "base/images.h"
 #include "lib/network/NetworkHttp.h"
 #include "ui_PluginItemForm.h"
-#include <QTimer>
-#include "base/images.h"
 
-PluginItemForm::PluginItemForm(int row_, ok::backend::PluginInfo &pluginInfo,
-                               QWidget *parent)
-    : QWidget(parent), ui(new Ui::PluginItemForm), info(pluginInfo), row(row_) {
-  ui->setupUi(this);
-  ui->name->setText(pluginInfo.name);
-  ui->version->setText(pluginInfo.version);
+PluginItemForm::PluginItemForm(int row_, ok::backend::PluginInfo& pluginInfo, QWidget* parent)
+        : QWidget(parent), ui(new Ui::PluginItemForm), info(pluginInfo), row(row_) {
+    ui->setupUi(this);
+    ui->name->setText(pluginInfo.name);
+    ui->version->setText(pluginInfo.version);
 
-
-  http = std::make_unique<network::NetworkHttp>();
-  connect(this, &PluginItemForm::logoDownloaded, this,
-          &PluginItemForm::onLogoDownloaded);
-
-
+    http = std::make_unique<network::NetworkHttp>();
+    connect(this, &PluginItemForm::logoDownloaded, this, &PluginItemForm::onLogoDownloaded);
 }
 
 PluginItemForm::~PluginItemForm() {
-  disconnect(this, &PluginItemForm::loadLogo, this, &PluginItemForm::downLogo);
-  disconnect(this, &PluginItemForm::logoDownloaded, this,
-             &PluginItemForm::onLogoDownloaded);
-  delete ui;
+    disconnect(this, &PluginItemForm::loadLogo, this, &PluginItemForm::downLogo);
+    disconnect(this, &PluginItemForm::logoDownloaded, this, &PluginItemForm::onLogoDownloaded);
+    delete ui;
 }
 
 void PluginItemForm::downLogo() {
-  if(isSetLogo())
-      return;
-  http->get(info.logoUrl, [&](QByteArray img, const QString &fileName) {
-    Q_UNUSED(fileName);
-    qDebug() << "download image:" << fileName << img.size();
-    emit logoDownloaded(fileName, img);
-  });
+    if (isSetLogo()) return;
+    http->get(info.logoUrl, [&](QByteArray img, const QString& fileName) {
+        Q_UNUSED(fileName);
+        qDebug() << "download image:" << fileName << img.size();
+        emit logoDownloaded(fileName, img);
+    });
 }
 
-void PluginItemForm::setLogo(const QPixmap &pixmap) {
-  ui->logoLabel->setPixmap(pixmap);
-  ui->logoLabel->setScaledContents(true);
+void PluginItemForm::setLogo(const QPixmap& pixmap) {
+    ui->logoLabel->setPixmap(pixmap);
+    ui->logoLabel->setScaledContents(true);
 }
 
-bool PluginItemForm::isSetLogo()
-{
+bool PluginItemForm::isSetLogo() {
     auto p = ui->logoLabel->pixmap(Qt::ReturnByValueConstant::ReturnByValue);
     return !p.isNull();
 }
 
-void PluginItemForm::showEvent(QShowEvent *)
-{
-    downLogo();
-}
+void PluginItemForm::showEvent(QShowEvent*) { downLogo(); }
 
-void PluginItemForm::onLogoDownloaded(const QString &fileName, QByteArray &img) {
-  qDebug() <<"logo downloaded"<<fileName;
-  QPixmap pixmap;
-  if (base::Images::putToPixmap(img, pixmap)) {
-    setLogo(pixmap);
-  }
+void PluginItemForm::onLogoDownloaded(const QString& fileName, QByteArray& img) {
+    qDebug() << "logo downloaded" << fileName;
+    QPixmap pixmap;
+    if (base::Images::putToPixmap(img, pixmap)) {
+        setLogo(pixmap);
+    }
 }

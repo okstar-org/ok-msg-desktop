@@ -10,24 +10,20 @@
  * See the Mulan PubL v2 for more details.
  */
 #include "notificationscrollarea.h"
-#include "genericchatroomwidget.h"
-#include "notificationedgewidget.h"
 #include <QScrollBar>
 #include <cassert>
+#include "genericchatroomwidget.h"
+#include "notificationedgewidget.h"
 
-NotificationScrollArea::NotificationScrollArea(QWidget* parent)
-    : AdjustingScrollArea(parent)
-{
+NotificationScrollArea::NotificationScrollArea(QWidget* parent) : AdjustingScrollArea(parent) {
     connect(verticalScrollBar(), &QAbstractSlider::valueChanged, this,
             &NotificationScrollArea::updateVisualTracking);
     connect(verticalScrollBar(), &QAbstractSlider::rangeChanged, this,
             &NotificationScrollArea::updateVisualTracking);
 }
 
-void NotificationScrollArea::trackWidget(GenericChatroomWidget* widget)
-{
-    if (trackedWidgets.find(widget) != trackedWidgets.end())
-        return;
+void NotificationScrollArea::trackWidget(GenericChatroomWidget* widget) {
+    if (trackedWidgets.find(widget) != trackedWidgets.end()) return;
 
     Visibility visibility = widgetVisible(widget);
     if (visibility != Visible) {
@@ -60,17 +56,13 @@ void NotificationScrollArea::trackWidget(GenericChatroomWidget* widget)
 /**
  * @brief Delete notification bar from visible elements on scroll area
  */
-void NotificationScrollArea::updateVisualTracking()
-{
-    updateTracking(nullptr);
-}
+void NotificationScrollArea::updateVisualTracking() { updateTracking(nullptr); }
 
 /**
  * @brief Delete notification bar from visible elements and widget on scroll area
  * @param widget Chatroom widget to remove from tracked widgets
  */
-void NotificationScrollArea::updateTracking(GenericChatroomWidget* widget)
-{
+void NotificationScrollArea::updateTracking(GenericChatroomWidget* widget) {
     QHash<GenericChatroomWidget*, Visibility>::iterator i = trackedWidgets.begin();
     while (i != trackedWidgets.end()) {
         if (i.key() == widget || widgetVisible(i.key()) == Visible) {
@@ -96,18 +88,14 @@ void NotificationScrollArea::updateTracking(GenericChatroomWidget* widget)
     }
 }
 
-void NotificationScrollArea::resizeEvent(QResizeEvent* event)
-{
-    if (topEdge != nullptr)
-        recalculateTopEdge();
-    if (bottomEdge != nullptr)
-        recalculateBottomEdge();
+void NotificationScrollArea::resizeEvent(QResizeEvent* event) {
+    if (topEdge != nullptr) recalculateTopEdge();
+    if (bottomEdge != nullptr) recalculateBottomEdge();
 
     AdjustingScrollArea::resizeEvent(event);
 }
 
-void NotificationScrollArea::findNextWidget()
-{
+void NotificationScrollArea::findNextWidget() {
     int value = 0;
     GenericChatroomWidget* next = nullptr;
     QHash<GenericChatroomWidget*, Visibility>::iterator i = trackedWidgets.begin();
@@ -136,8 +124,7 @@ void NotificationScrollArea::findNextWidget()
         ensureWidgetVisible(next, 0, referencesBelow != 1 ? bottomEdge->height() : 0);
 }
 
-void NotificationScrollArea::findPreviousWidget()
-{
+void NotificationScrollArea::findPreviousWidget() {
     int value = 0;
     GenericChatroomWidget* next = nullptr;
     QHash<GenericChatroomWidget*, Visibility>::iterator i = trackedWidgets.begin();
@@ -162,12 +149,10 @@ void NotificationScrollArea::findPreviousWidget()
         }
     }
 
-    if (next != nullptr)
-        ensureWidgetVisible(next, 0, referencesAbove != 1 ? topEdge->height() : 0);
+    if (next != nullptr) ensureWidgetVisible(next, 0, referencesAbove != 1 ? topEdge->height() : 0);
 }
 
-NotificationScrollArea::Visibility NotificationScrollArea::widgetVisible(QWidget* widget) const
-{
+NotificationScrollArea::Visibility NotificationScrollArea::widgetVisible(QWidget* widget) const {
     int y = widget->mapTo(viewport(), QPoint()).y();
 
     if (y < 0)
@@ -178,14 +163,12 @@ NotificationScrollArea::Visibility NotificationScrollArea::widgetVisible(QWidget
     return Visible;
 }
 
-void NotificationScrollArea::recalculateTopEdge()
-{
+void NotificationScrollArea::recalculateTopEdge() {
     topEdge->move(viewport()->pos());
     topEdge->resize(viewport()->width(), topEdge->height());
 }
 
-void NotificationScrollArea::recalculateBottomEdge()
-{
+void NotificationScrollArea::recalculateBottomEdge() {
     QPoint position = viewport()->pos();
     position.setY(position.y() + viewport()->height() - bottomEdge->height());
     bottomEdge->move(position);

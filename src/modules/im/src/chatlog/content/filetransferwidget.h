@@ -20,7 +20,6 @@
 #include "src/chatlog/toxfileprogress.h"
 #include "src/core/toxfile.h"
 
-
 namespace Ui {
 class FileTransferWidget;
 }
@@ -28,8 +27,7 @@ class FileTransferWidget;
 class QVariantAnimation;
 class QPushButton;
 
-class FileTransferWidget : public QWidget
-{
+class FileTransferWidget : public QWidget {
     Q_OBJECT
 
 public:
@@ -66,7 +64,7 @@ private:
     static QPixmap scaleCropIntoSquare(const QPixmap& source, int targetSize);
     static int getExifOrientation(const char* data, const int size);
     static void applyTransformation(const int oritentation, QImage& image);
-    static bool tryRemoveFile(const QString &filepath);
+    static bool tryRemoveFile(const QString& filepath);
 
     void updateWidget(ToxFile const& file);
 
@@ -83,8 +81,7 @@ private:
     bool active;
     FileStatus lastStatus;
 
-    enum class ExifOrientation
-    {
+    enum class ExifOrientation {
         /* do not change values, this is exif spec
          *
          * name corresponds to where the 0 row and 0 column is in form row-column
@@ -103,4 +100,4 @@ private:
     };
 };
 
-#endif // FILETRANSFERWIDGET_H
+#endif  // FILETRANSFERWIDGET_H
