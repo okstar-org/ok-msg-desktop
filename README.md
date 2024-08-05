@@ -54,7 +54,7 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
 |----------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | 🪟 Windows-x64 | [![Build on Windows](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/win.yml/badge.svg)](https://github.com/CefView/QCefView/actions/workflows/build-windows-x86_64.yml)                    | 
 | 🐧 Linux-x64   | [![Build on Ubuntu](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/ubuntu-22.04.yml/badge.svg)](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/ubuntu-22.04.yml/badge.svg) | 
-| 🍎 macOS-x64   | None                                                                                                                                                                                                       |
+| 🍎 macOS-x64   | Coming soon                                                                                                                                                                                                |
 
 # ⚙️ 构建与开发
 
@@ -67,7 +67,7 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
 | 🪟 Windows-x64 | [windows.md](docs%2Fbuildings%2Fwindows.md) | 
 | 🐧 Linux-x64   | [ubuntu.md](docs%2Fbuildings%2Fubuntu.md)   | 
 | 🍎 macOS-x64   | [macos.md](docs%2Fbuildings%2Fmacos.md)     |
-| 🍎 macOS-arm   | ---                                         |
+| 🍎 macOS-arm   | Coming soon                                 |
 
 
 ## Fedora 36

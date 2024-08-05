@@ -23,11 +23,8 @@
 ## Install dependencies
 
 ```shell
-brew install pkg-config make yasm
-brew install openssl@1.1.1
-brew install mozjpeg
-brew install ffmpeg@5
-brew install openh264
+brew install pkg-config make yasm openssl@1.1.1
+brew install mozjpeg libexif openh264 openal-soft ffmpeg@5
 ```
 
 ## Build ok-rtc library
