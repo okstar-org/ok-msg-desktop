@@ -14,7 +14,7 @@
 #include "lib/settings/applicationinfo.h"
 
 #ifdef Q_OS_MAC
-#include "CocoaUtilities/cocoacommon.h"
+// #include "CocoaUtilities/cocoacommon.h"
 #endif
 #ifdef HAVE_X11
 #include "x11windowsystem.h"

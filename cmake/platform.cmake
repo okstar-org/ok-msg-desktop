@@ -41,7 +41,7 @@ elseif(LINUX)
     add_definitions(-DQ_OS_POSIX)
 elseif(APPLE)
     # do something related to APPLE
-    message(ERROR "暂不支持 Not supported temporarily")
+    add_definitions(-DAPPLE)
 endif()
 
 

@@ -1,7 +1,8 @@
 project(IM)
 add_definitions(-DOK_${PROJECT_NAME}_MODULE="${PROJECT_NAME}")
 
-if (WIN32)
+include_directories(${PROJECT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+
     find_package(PkgConfig REQUIRED)
    
 
@@ -16,8 +17,9 @@ if (WIN32)
     pkg_check_modules(OpenAL REQUIRED openal)
     pkg_check_modules(sqlite3 REQUIRED sqlite3)
     pkg_check_modules(exif REQUIRED libexif)
-
+    pkg_check_modules(OpenSSL REQUIRED libssl libcrypto)
     pkg_check_modules(JPEG REQUIRED libjpeg)
+
 
     list(APPEND ALL_LIBRARIES
             ${AVDEVICE_LINK_LIBRARIES}
@@ -27,16 +29,18 @@ if (WIN32)
             ${SWSCALE_LINK_LIBRARIES}
             ${QRENCODE_LINK_LIBRARIES}
             ${JPEG_LINK_LIBRARIES}
-            PRIVATE ${exif_LINK_LIBRARIES}
-            PRIVATE ${sqlite3_LINK_LIBRARIES}
-            PRIVATE ${OpenAL_LINK_LIBRARIES}
+            ${exif_LINK_LIBRARIES}
+            ${sqlite3_LINK_LIBRARIES}
+            ${OpenAL_LINK_LIBRARIES}
     )
-elseif (UNIX)
-    include(./cmake/Dependencies.cmake)
-endif ()
 
 
-include_directories(${PROJECT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+
+include_directories(${OPENAL_INCLUDE_DIRS})
+include_directories(${exif_INCLUDE_DIRS})
+include_directories(${AVCODEC_INCLUDE_DIRS})
+include_directories(${AVDEVICE_INCLUDE_DIRS})
+include_directories(${QRENCODE_INCLUDE_DIRS})
 
 set(CMAKE_AUTOUIC_SEARCH_PATHS ./src src/widget src/widget/form)
 
@@ -237,12 +241,8 @@ set(${PROJECT_NAME}_SOURCES
         src/video/videosurface.h
         src/widget/form/aboutfriendform.cpp
         src/widget/form/aboutfriendform.h
-#        src/widget/categorywidget.cpp
-#        src/widget/categorywidget.h
         src/widget/chatformheader.cpp
         src/widget/chatformheader.h
-#        src/widget/circlewidget.cpp
-#        src/widget/circlewidget.h
         src/widget/contentdialog.cpp
         src/widget/contentdialog.h
         src/widget/contentdialogmanager.cpp
@@ -392,43 +392,46 @@ set(${PROJECT_NAME}_SOURCES
 )
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-    set(${PROJECT_NAME}_SOURCES
-            ${${PROJECT_NAME}_SOURCES} src/platform/camera/directshow.cpp
+    set(${PROJECT_NAME}_SOURCES ${${PROJECT_NAME}_SOURCES}
+            src/platform/camera/directshow.cpp
             src/platform/camera/directshow.h)
     set(${PROJECT_NAME}_RESOURCES ${${PROJECT_NAME}_RESOURCES})
-elseif (${CMAKE_SYSTEM_NAME} MATCHES "Linux" OR ${CMAKE_SYSTEM_NAME} MATCHES
-        "FreeBSD")
-    set(${PROJECT_NAME}_SOURCES
-            ${${PROJECT_NAME}_SOURCES} src/platform/camera/v4l2.cpp
+elseif (${CMAKE_SYSTEM_NAME} MATCHES "Linux" OR ${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD")
+    set(${PROJECT_NAME}_SOURCES ${${PROJECT_NAME}_SOURCES}
+            src/platform/camera/v4l2.cpp
             src/platform/camera/v4l2.h)
 elseif (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    set(${PROJECT_NAME}_SOURCES
-            ${${PROJECT_NAME}_SOURCES} src/platform/install_osx.cpp
-            src/platform/install_osx.h)
+    set(${PROJECT_NAME}_SOURCES ${${PROJECT_NAME}_SOURCES}
+            src/platform/install_osx.cpp
+            src/platform/install_osx.h
+            src/platform/camera/avfoundation.h
+            src/platform/camera/avfoundation.mm
+        )
 endif ()
 
 if (UNIX)
-    set(${PROJECT_NAME}_SOURCES
-            ${${PROJECT_NAME}_SOURCES} src/platform/posixsignalnotifier.cpp
+    set(${PROJECT_NAME}_SOURCES ${${PROJECT_NAME}_SOURCES}
+            src/platform/posixsignalnotifier.cpp
             src/platform/posixsignalnotifier.h)
 endif ()
 
 if (PLATFORM_EXTENSIONS)
     set(${PROJECT_NAME}_SOURCES ${${PROJECT_NAME}_SOURCES}
-            src/platform/capslock.h src/platform/timer.h)
-
+            src/platform/capslock.h
+            src/platform/timer.h)
     if (WIN32)
-        set(${PROJECT_NAME}_SOURCES
-                ${${PROJECT_NAME}_SOURCES} src/platform/capslock_win.cpp
-                src/platform/timer_win.cpp)
+        set(${PROJECT_NAME}_SOURCES ${${PROJECT_NAME}_SOURCES}
+            src/platform/capslock_win.cpp
+            src/platform/timer_win.cpp)
     elseif (${X11_EXT})
-        set(${PROJECT_NAME}_SOURCES
-                ${${PROJECT_NAME}_SOURCES} src/platform/capslock_x11.cpp
-                src/platform/timer_x11.cpp src/platform/x11_display.cpp)
+        set(${PROJECT_NAME}_SOURCES ${${PROJECT_NAME}_SOURCES}
+            src/platform/capslock_x11.cpp
+            src/platform/timer_x11.cpp
+            src/platform/x11_display.cpp)
     elseif (${APPLE_EXT})
-        set(${PROJECT_NAME}_SOURCES
-                ${${PROJECT_NAME}_SOURCES} src/platform/capslock_osx.cpp
-                src/platform/timer_osx.cpp
+        set(${PROJECT_NAME}_SOURCES ${${PROJECT_NAME}_SOURCES}
+            src/platform/capslock_osx.cpp
+            src/platform/timer_osx.cpp
  )
     endif ()
 endif ()
@@ -502,29 +505,38 @@ add_library(${PROJECT_NAME} STATIC
         ${${PROJECT_NAME}_RESOURCES})
 
 if (WIN32)
-  target_include_directories(${PROJECT_NAME}
-        PRIVATE
-            ${AVCODEC_INCLUDE_DIRS}
-            ${AVFORMAT_INCLUDE_DIRS}
-            ${AVUTIL_INCLUDE_DIRS}
-            ${SWSCALE_INCLUDE_DIRS}
-        )
-        
-
     set(PLATFORM_LIBS d3d11 dxgi dxva2 gdi32
                         wmcodecdspuuid Winmm Mf Mfplat Mfreadwrite mfuuid evr 
                         amstrmid msdmo strmiids strmbase
                         winspool comdlg32 uuid shlwapi iphlpapi 
                         kernel32 user32 Vfw32 shell32 oleaut32 ole32 advapi32
     )
+elseif (APPLE)
 
-    if(CMAKE_BUILD_TYPE MATCHES "Debug")
-        set(PLATFORM_LIBS ${PLATFORM_LIBS} MSVCRTD)
-    else()
-        set(PLATFORM_LIBS ${PLATFORM_LIBS} MSVCRT)
-    endif()
-elseif (UNIX)
-    set(PLATFORM_LIBS z OpenSSL::SSL OpenSSL::Crypto atomic X11)
+    find_library(APPLICATION_SERVICES ApplicationServices)
+    find_library(CORE_FOUNDATION CoreFoundation)
+    find_library(CORE_SERVICES CoreServices)
+    find_library(COREGRAPHICS CoreGraphics)
+    find_library(CORE_AUDIO CoreAudio)
+    find_library(CORE_VIDEO CoreVIDEO)
+    find_library(CoreMedia CoreMedia)
+    find_library(AudioToolbox AudioToolbox)
+    find_library(VideoToolbox VideoToolbox)
+    find_library(OpenGL OpenGL)
+    find_library(IOKit IOKit)
+    find_library(AppKit AppKit)
+    find_library(IOSurface IOSurface)
+    find_library(AVFOUNDATION AVFoundation)
+    find_library(Foundation Foundation)
+    find_library(Metal Metal)
+
+    set(PLATFORM_LIBS ${AppKit} ${Metal} ${IOSurface} ${AudioToolbox} ${VideoToolbox}
+        ${AVFOUNDATION} ${Foundation} ${IOKit} ${OpenGL}
+        ${CoreMedia} ${CORE_AUDIO} ${CORE_VIDEO} ${COREGRAPHICS}
+        ${CORE_FOUNDATION} ${APPLICATION_SERVICES} ${CORE_SERVICES})
+
+elseif (LINUX)
+    set(PLATFORM_LIBS z atomic X11)
 endif ()
 
 target_link_libraries(${PROJECT_NAME}

@@ -11,8 +11,8 @@
  */
 
 
-#ifndef OPENAL_H
-#define OPENAL_H
+#ifndef OK_OPENAL_H
+#define OK_OPENAL_H
 
 #include "src/audio/iaudiocontrol.h"
 #include "src/audio/backend/alsink.h"

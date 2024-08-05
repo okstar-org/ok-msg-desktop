@@ -518,16 +518,16 @@ ContentDialog *FriendWidget::createContentDialog() const {
   //  connect(&contentDialog, &ContentDialog::connectFriendWidget, this,
   //          &Widget::connectFriendWidget);
 
-#ifdef Q_OS_MAC
-  Nexus &n = Nexus::getInstance();
-  connect(&contentDialog, &ContentDialog::destroyed, &n,
-          &Nexus::updateWindowsClosed);
-  connect(&contentDialog, &ContentDialog::windowStateChanged, &n,
-          &Nexus::onWindowStateChanged);
-  connect(contentDialog.windowHandle(), &QWindow::windowTitleChanged, &n,
-          &Nexus::updateWindows);
-  n.updateWindows();
-#endif
+// #ifdef Q_OS_MAC
+//   Nexus &n = Nexus::getInstance();
+//   connect(&contentDialog, &ContentDialog::destroyed, &n,
+//           &Nexus::updateWindowsClosed);
+//   connect(&contentDialog, &ContentDialog::windowStateChanged, &n,
+//           &Nexus::onWindowStateChanged);
+//   connect(contentDialog.windowHandle(), &QWindow::windowTitleChanged, &n,
+//           &Nexus::updateWindows);
+//   n.updateWindows();
+// #endif
 
   ContentDialogManager::getInstance()->addContentDialog(*contentDialog);
   return contentDialog;

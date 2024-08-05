@@ -33,7 +33,7 @@ public:
   void cleanup() override;
   void destroy() override;
 
-  QWidget * widget(){
+  QWidget * widget() override {
     return m_widget;
   }
   void hide() override;

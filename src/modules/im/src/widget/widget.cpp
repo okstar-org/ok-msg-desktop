@@ -224,91 +224,91 @@ Widget::Widget(IAudioControl &audio, QWidget *parent)//
     new QShortcut(QKeySequence(Qt::CTRL , Qt::Key_PageDown), this, SLOT(nextContact()));
     new QShortcut(Qt::Key_F11, this, SLOT(toggleFullscreen()));
 
-#ifdef Q_OS_MAC
-    QMenuBar *globalMenu = Nexus::getInstance().globalMenuBar;
-    QAction *windowMenu = Nexus::getInstance().windowMenu->menuAction();
-    QAction *viewMenu = Nexus::getInstance().viewMenu->menuAction();
-    QAction *frontAction = Nexus::getInstance().frontAction;
+// #ifdef Q_OS_MAC
+//     QMenuBar *globalMenu = Nexus::getInstance().globalMenuBar;
+//     QAction *windowMenu = Nexus::getInstance().windowMenu->menuAction();
+//     QAction *viewMenu = Nexus::getInstance().viewMenu->menuAction();
+//     QAction *frontAction = Nexus::getInstance().frontAction;
 
-    fileMenu = globalMenu->insertMenu(viewMenu, new QMenu(this));
+//     fileMenu = globalMenu->insertMenu(viewMenu, new QMenu(this));
 
-    editProfileAction = fileMenu->menu()->addAction(QString());
-    connect(editProfileAction, &QAction::triggered, this, &Widget::showProfile);
+//     editProfileAction = fileMenu->menu()->addAction(QString());
+//     connect(editProfileAction, &QAction::triggered, this, &Widget::showProfile);
 
-    changeStatusMenu = fileMenu->menu()->addMenu(QString());
-    fileMenu->menu()->addAction(changeStatusMenu->menuAction());
-    changeStatusMenu->addAction(statusOnline);
-    changeStatusMenu->addSeparator();
-    changeStatusMenu->addAction(statusAway);
-    changeStatusMenu->addAction(statusBusy);
+//     changeStatusMenu = fileMenu->menu()->addMenu(QString());
+//     fileMenu->menu()->addAction(changeStatusMenu->menuAction());
+//     changeStatusMenu->addAction(statusOnline);
+//     changeStatusMenu->addSeparator();
+//     changeStatusMenu->addAction(statusAway);
+//     changeStatusMenu->addAction(statusBusy);
 
-    fileMenu->menu()->addSeparator();
-    logoutAction = fileMenu->menu()->addAction(QString());
-    connect(logoutAction, &QAction::triggered,
-            [this]() { Nexus::getInstance().showLogin(); });
+//     fileMenu->menu()->addSeparator();
+//     logoutAction = fileMenu->menu()->addAction(QString());
+//     connect(logoutAction, &QAction::triggered,
+//             [this]() { Nexus::getInstance().showLogin(); });
 
-    editMenu = globalMenu->insertMenu(viewMenu, new QMenu(this));
-    editMenu->menu()->addSeparator();
+//     editMenu = globalMenu->insertMenu(viewMenu, new QMenu(this));
+//     editMenu->menu()->addSeparator();
 
-    viewMenu->menu()->insertMenu(Nexus::getInstance().fullscreenAction,
-                                 filterMenu);
+//     viewMenu->menu()->insertMenu(Nexus::getInstance().fullscreenAction,
+//                                  filterMenu);
 
-    viewMenu->menu()->insertSeparator(Nexus::getInstance().fullscreenAction);
+//     viewMenu->menu()->insertSeparator(Nexus::getInstance().fullscreenAction);
 
-    contactMenu = globalMenu->insertMenu(windowMenu, new QMenu(this));
+//     contactMenu = globalMenu->insertMenu(windowMenu, new QMenu(this));
 
-    addContactAction = contactMenu->menu()->addAction(QString());
-    connect(addContactAction, &QAction::triggered, this, &Widget::onAddClicked);
+//     addContactAction = contactMenu->menu()->addAction(QString());
+//     connect(addContactAction, &QAction::triggered, this, &Widget::onAddClicked);
 
-    nextConversationAction = new QAction(this);
-    Nexus::getInstance().windowMenu->insertAction(frontAction,
-                                                  nextConversationAction);
-    nextConversationAction->setShortcut(QKeySequence::SelectNextPage);
-    connect(nextConversationAction, &QAction::triggered, [this]() {
-      if (ContentDialogManager::getInstance()->current() ==
-          QApplication::activeWindow())
-        ContentDialogManager::getInstance()->current()->cycleContacts(true);
-      else if (QApplication::activeWindow() == this)
-        cycleContacts(true);
-    });
+//     nextConversationAction = new QAction(this);
+//     Nexus::getInstance().windowMenu->insertAction(frontAction,
+//                                                   nextConversationAction);
+//     nextConversationAction->setShortcut(QKeySequence::SelectNextPage);
+//     connect(nextConversationAction, &QAction::triggered, [this]() {
+//       if (ContentDialogManager::getInstance()->current() ==
+//           QApplication::activeWindow())
+//         ContentDialogManager::getInstance()->current()->cycleContacts(true);
+//       else if (QApplication::activeWindow() == this)
+//         cycleContacts(true);
+//     });
 
-    previousConversationAction = new QAction(this);
-    Nexus::getInstance().windowMenu->insertAction(frontAction,
-                                                  previousConversationAction);
-    previousConversationAction->setShortcut(QKeySequence::SelectPreviousPage);
-    connect(previousConversationAction, &QAction::triggered, [this] {
-      if (ContentDialogManager::getInstance()->current() ==
-          QApplication::activeWindow())
-        ContentDialogManager::getInstance()->current()->cycleContacts(false);
-      else if (QApplication::activeWindow() == this)
-        cycleContacts(false);
-    });
+//     previousConversationAction = new QAction(this);
+//     Nexus::getInstance().windowMenu->insertAction(frontAction,
+//                                                   previousConversationAction);
+//     previousConversationAction->setShortcut(QKeySequence::SelectPreviousPage);
+//     connect(previousConversationAction, &QAction::triggered, [this] {
+//       if (ContentDialogManager::getInstance()->current() ==
+//           QApplication::activeWindow())
+//         ContentDialogManager::getInstance()->current()->cycleContacts(false);
+//       else if (QApplication::activeWindow() == this)
+//         cycleContacts(false);
+//     });
 
-    windowMenu->menu()->insertSeparator(frontAction);
+//     windowMenu->menu()->insertSeparator(frontAction);
 
-    QAction *preferencesAction = viewMenu->menu()->addAction(QString());
-    preferencesAction->setMenuRole(QAction::PreferencesRole);
-    connect(preferencesAction, &QAction::triggered, this,
-            &Widget::onShowSettings);
+//     QAction *preferencesAction = viewMenu->menu()->addAction(QString());
+//     preferencesAction->setMenuRole(QAction::PreferencesRole);
+//     connect(preferencesAction, &QAction::triggered, this,
+//             &Widget::onShowSettings);
 
-    QAction *aboutAction = viewMenu->menu()->addAction(QString());
-    aboutAction->setMenuRole(QAction::AboutRole);
-    connect(aboutAction, &QAction::triggered, [this]() {
-      onShowSettings();
-      settingsWidget->showAbout();
-    });
+//     QAction *aboutAction = viewMenu->menu()->addAction(QString());
+//     aboutAction->setMenuRole(QAction::AboutRole);
+//     connect(aboutAction, &QAction::triggered, [this]() {
+//       onShowSettings();
+//       settingsWidget->showAbout();
+//     });
 
-    QMenu *dockChangeStatusMenu = new QMenu(tr("Status"), this);
-    dockChangeStatusMenu->addAction(statusOnline);
-    statusOnline->setIconVisibleInMenu(true);
-    dockChangeStatusMenu->addSeparator();
-    dockChangeStatusMenu->addAction(statusAway);
-    dockChangeStatusMenu->addAction(statusBusy);
-    Nexus::getInstance().dockMenu->addAction(dockChangeStatusMenu->menuAction());
+//     QMenu *dockChangeStatusMenu = new QMenu(tr("Status"), this);
+//     dockChangeStatusMenu->addAction(statusOnline);
+//     statusOnline->setIconVisibleInMenu(true);
+//     dockChangeStatusMenu->addSeparator();
+//     dockChangeStatusMenu->addAction(statusAway);
+//     dockChangeStatusMenu->addAction(statusBusy);
+//     Nexus::getInstance().dockMenu->addAction(dockChangeStatusMenu->menuAction());
 
-    connect(this, &Widget::windowStateChanged, &Nexus::getInstance(),
-            &Nexus::onWindowStateChanged);
-#endif
+//     connect(this, &Widget::windowStateChanged, &Nexus::getInstance(),
+//             &Nexus::onWindowStateChanged);
+// #endif
 
 
 //    onSeparateWindowChanged(settings.getSeparateWindow(), false);
@@ -1592,19 +1592,19 @@ void Widget::retranslateUi() {
   ui->tabWidget->setTabText(1, tr("Contact"));
   ui->tabWidget->setTabText(2, tr("Settings"));
 
-#ifdef Q_OS_MAC
-  Nexus::getInstance().retranslateUi();
+// #ifdef Q_OS_MAC
+//   Nexus::getInstance().retranslateUi();
 
-  filterMenu->menuAction()->setText(tr("Filter..."));
+//   filterMenu->menuAction()->setText(tr("Filter..."));
 
-  fileMenu->setText(tr("File"));
-  editMenu->setText(tr("Edit"));
-  contactMenu->setText(tr("Contacts"));
-  changeStatusMenu->menuAction()->setText(tr("Change Status"));
-  editProfileAction->setText(tr("Edit Profile"));
-  logoutAction->setText(tr("Log out"));
-  addContactAction->setText(tr("Add Contact..."));
-  nextConversationAction->setText(tr("Next Conversation"));
-  previousConversationAction->setText(tr("Previous Conversation"));
-#endif
+//   fileMenu->setText(tr("File"));
+//   editMenu->setText(tr("Edit"));
+//   contactMenu->setText(tr("Contacts"));
+//   changeStatusMenu->menuAction()->setText(tr("Change Status"));
+//   editProfileAction->setText(tr("Edit Profile"));
+//   logoutAction->setText(tr("Log out"));
+//   addContactAction->setText(tr("Add Contact..."));
+//   nextConversationAction->setText(tr("Next Conversation"));
+//   previousConversationAction->setText(tr("Previous Conversation"));
+// #endif
 }
