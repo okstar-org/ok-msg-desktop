@@ -65,55 +65,11 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
 | Platform       | Build Document                                      |
 |----------------|-----------------------------------------------------|
 | 🪟 Windows-x64 | [Build on Windows](docs%2Fbuildings%2Fwindows.md)   | 
-| 🐧 Linux-x64   | [Build on Ubuntu](docs%2Fbuildings%2Fubuntu.md)     | 
+| 🐧 Ubuntu-x64  | [Build on Ubuntu](docs%2Fbuildings%2Fubuntu.md)     | 
+| 🐧 Fedora-x64  | [Build on Fedora](docs%2Fbuildings%2Ffedora.md)     | 
 | 🍎 macOS-x64   | [Build on macOS(x64) ](docs%2Fbuildings%2Fmacos.md) |
 | 🍎 macOS-arm   | Coming soon                                         |
 
-
-## Fedora 36
-
-### 安装依赖
-```shell
-dnf update -y
-dnf install -y gcc g++
-dnf install -y qt5-qtbase-devel qt6-qtbase-gui  qt5-qtmultimedia-devel \
-  qt5-qtsvg-devel qt5-qttools-devel qt5-qttools-static \
-  libavcodec-free-devel libavdevice-free-devel \
-  libexif-free-devel qrencode-devel sqlite3-devel \
-  libvpx-devel openal-soft-devel openssl-devel
-```
-### 构建OkRtc模块
-```shell
-git clone https://github.com/okstar-org/ok-rtc.git
-cd ok-rtc
-# 拉取子模块
-git submodule update --init
-
-# CMake 构建
-cmake -B out  && cmake --build out
-# CMake 安装
-sudo cmake --install out
-```
-
-### 编译OkGloox库
-```shell
-git clone https://github.com/okstar-org/ok-gloox.git
-cd ok-gloox
-# CMake预处理
-cmake -B out -DCMAKE_BUILD_TYPE=Release
-# 构建
-cmake --build out --config Release
-# 执行安装（用管理员身份打开命令行）
-cmake --install out
-```
-
-### 构建项目
-```shell
-# 预处理
-cmake -B build -DCMAKE_BUILD_TYPE={Debug|Release} [-DOK_CPACK=1  #(打包DEB、RPM)]
-# 构建
-cmake --build build [--target package #(打包DEB、RPM)]
-```
 
 # Downloads
 本项目支持Windows、Linux支持多种安装方式
