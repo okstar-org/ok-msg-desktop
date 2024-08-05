@@ -17,7 +17,8 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
   - 消息端到端加密。
 
 # 🏢 软件架构
-暂略
+
+<img src="docs/assets/ok-msg-architecture-diagram.png" width="1000" alt="Architecture diagram"/>
 
 # 🖼️ 界面展示
 - 登录界面
