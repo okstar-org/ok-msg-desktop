@@ -40,6 +40,6 @@ public:
     }
 
 private:
-    Module* module;
+    Module* module = nullptr;
 };
 }  // namespace UI

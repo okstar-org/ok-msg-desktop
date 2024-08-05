@@ -14,6 +14,8 @@
 #include <src/core/core.h>
 #include <src/friendlist.h>
 #include <src/nexus.h>
+#include <QIcon>
+#include <QSvgRenderer>
 #include <QVariant>
 #include "maskablepixmapwidget.h"
 #include "src/lib/settings/style.h"
@@ -75,7 +77,12 @@ void GenericChatItemWidget::searchName(const QString& searchString, bool hide) {
     setVisible(!hide && getName().contains(searchString, Qt::CaseInsensitive));
 }
 
-void GenericChatItemWidget::setLastMessage(const QString& msg) { lastMessageLabel->setText(msg); }
+void GenericChatItemWidget::setLastMessage(const QString& msg) {
+    if (msg.contains(QChar('\n')))
+        lastMessageLabel->setText(QString(msg).replace(QChar('\n'), QChar(' ')));
+    else
+        lastMessageLabel->setText(msg);
+}
 
 void GenericChatItemWidget::updateLastMessage(const Message& m) {
     QString prefix;
@@ -102,7 +109,10 @@ void GenericChatItemWidget::updateStatusLight(Status::Status status, bool event)
     auto pix = Status::getIconPath(status, event);
     if (pix.isEmpty()) return;
 
-    statusPic->setPixmap(QPixmap(pix));
+    // 图片是svg格式，按照原有逻辑先获取默认尺寸
+    QSvgRenderer svgrender(pix);
+    QSize s = svgrender.defaultSize();
+    statusPic->setPixmap(QIcon(pix).pixmap(this->window()->windowHandle(), s));
 }
 
 void GenericChatItemWidget::clearStatusLight() { statusPic->clear(); }
