@@ -22,6 +22,8 @@
 #include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
 #include "src/widget/tool/croppinglabel.h"
+#include <QSvgRenderer>
+#include <QIcon>
 
 GenericChatItemWidget::GenericChatItemWidget(ChatType type, const ContactId& cid, QWidget* parent)
         : QFrame(parent)
@@ -75,7 +77,13 @@ void GenericChatItemWidget::searchName(const QString& searchString, bool hide) {
     setVisible(!hide && getName().contains(searchString, Qt::CaseInsensitive));
 }
 
-void GenericChatItemWidget::setLastMessage(const QString& msg) { lastMessageLabel->setText(msg); }
+void GenericChatItemWidget::setLastMessage(const QString &msg)
+{
+  if (msg.contains(QChar('\n')))
+    lastMessageLabel->setText(QString(msg).replace(QChar('\n'), QChar(' ')));
+  else
+    lastMessageLabel->setText(msg);
+}
 
 void GenericChatItemWidget::updateLastMessage(const Message& m) {
     QString prefix;
@@ -97,12 +105,17 @@ void GenericChatItemWidget::updateLastMessage(const Message& m) {
 }
 
 void GenericChatItemWidget::updateStatusLight(Status::Status status, bool event) {
-    if (!statusPic) return;
+    if (!statusPic)
+        return;
 
     auto pix = Status::getIconPath(status, event);
-    if (pix.isEmpty()) return;
-
-    statusPic->setPixmap(QPixmap(pix));
+    if(pix.isEmpty())
+        return;
+    
+    // 图片是svg格式，按照原有逻辑先获取默认尺寸
+    QSvgRenderer svgrender(pix);
+    QSize s = svgrender.defaultSize();
+    statusPic->setPixmap(QIcon(pix).pixmap(this->window()->windowHandle(), s));
 }
 
 void GenericChatItemWidget::clearStatusLight() { statusPic->clear(); }

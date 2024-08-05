@@ -383,6 +383,7 @@ OMenuWidget* MainWindow::createChatModule(MainWindow* pWindow) {
     auto w = new OMenuWidget(this);
     w->setModule(m);
     w->setLayout(new QGridLayout());
+    w->layout()->setContentsMargins(0, 0, 0, 0);
     w->layout()->addWidget(m->widget());
     return w;
 }
@@ -393,6 +394,7 @@ OMenuWidget* MainWindow::createPlatformModule(MainWindow* pWindow) {
     auto w = new OMenuWidget(this);
     w->setModule(m);
     w->setLayout(new QGridLayout());
+    w->layout()->setContentsMargins(0, 0, 0, 0);
     w->layout()->addWidget(m->widget());
 
     return w;
