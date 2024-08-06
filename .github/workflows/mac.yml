@@ -93,7 +93,7 @@ jobs:
         id: strings
         shell: bash
         run: |
-          echo "build-output-dir=${{ github.workspace }}/out" >> "$GITHUB_OUTPUT"
+          echo "build-output-dir=${{ env.REPO_NAME }}/${{ github.workspace }}/out" >> "$GITHUB_OUTPUT"
 
       - name: CMake Configure
         run: |
