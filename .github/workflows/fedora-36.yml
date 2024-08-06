@@ -8,11 +8,11 @@ permissions:
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: [ develop, develop-linux, develop-fedora ]
     tags:
       - "v*.*.*"
   pull_request:
-    branches: [ "develop" ]
+    branches: [ develop, develop-linux, develop-fedora ]
 
 jobs:
   build:

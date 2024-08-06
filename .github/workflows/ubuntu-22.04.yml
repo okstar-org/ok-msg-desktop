@@ -8,12 +8,25 @@ permissions:
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: [ develop, develop-linux, develop-ubuntu ]
     tags:
       - "v*.*.*"
   pull_request:
-    branches: [ "develop" ]
-
+    branches: [ develop, develop-linux, develop-ubuntu ]
+  paths-ignore:
+    - '**.md'
+    - 'changelog.txt'
+    - 'LEGAL'
+    - 'LICENSE'
+    - '.clang-*'
+    - '.gitignore'
+    - 'snap/**'
+    - 'docs/**'
+    - 'flatpak/**'
+    - '.github/**'
+    - 'src/base/platform/windows/**'
+    - 'src/base/platform/macos/**'
+    - '!.github/workflows/ubuntu-22.04.yml'
 jobs:
   build:
     runs-on: ${{ matrix.os }}

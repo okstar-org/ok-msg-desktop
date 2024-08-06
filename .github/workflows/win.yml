@@ -8,12 +8,26 @@ permissions:
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: [ develop, develop-windows ]
     tags:
       - "v*.*.*"
   pull_request:
-    branches: [ "develop" ]
-
+    branches: [ develop, develop-windows ]
+  paths-ignore:
+    - '**.md'
+    - 'changelog.txt'
+    - 'LEGAL'
+    - 'LICENSE'
+    - '.clang-*'
+    - '.gitignore'
+    - 'lib/xdg/**'
+    - 'snap/**'
+    - 'docs/**'
+    - 'flatpak/**'
+    - '.github/**'
+    - 'src/base/platform/linux/**'
+    - 'src/base/platform/macos/**'
+    - '!.github/workflows/win.yml'
 jobs:
   build:
     env:
