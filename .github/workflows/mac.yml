@@ -69,6 +69,7 @@ jobs:
 
       - name: Libraries.
         run: |
+          chmod a+x ./$REPO_NAME/build-script/prepare-mac.sh
           ./$REPO_NAME/build-script/prepare-mac.sh
 
       - name: Free up some disk space.
