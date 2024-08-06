@@ -91,7 +91,7 @@ jobs:
 
       - name: CMake Configure
         run: |
-          cmake -B ${{ steps.strings.outputs.build-output-dir }} -S ${{ github.workspace }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          cmake -B ${{ steps.strings.outputs.build-output-dir }} -S ${{ github.workspace }}/${{ env.REPO_NAME }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
 
       - name: CMake Build
         run: |
