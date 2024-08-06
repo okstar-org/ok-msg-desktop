@@ -19,7 +19,7 @@ on:
       - 'vcpkg-*.json'
       - 'src/base/platform/win/**'
       - 'src/base/platform/linux/**'
-    branches: [ "develop" ]
+    branches: [ develop, develop-macos ]
     tags:
       - "v*.*.*"
   pull_request:
