@@ -15,7 +15,7 @@
 ## Install dependencies
 brew install pkg-config make
 brew install yasm
-brew install openssl@1.1
+# brew install openssl@1.1(be installed on runner)
 brew install mozjpeg libexif openh264 openal-soft ffmpeg@5
 
 

@@ -89,14 +89,16 @@ jobs:
           cmake -B out -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DJPEG_LIBRARY=/usr/local/opt/mozjpeg/lib -DJPEF_INCLUDE_DIR=/usr/local/opt/mozjpeg/include
           cmake --build out --config=${{ matrix.build_type }}
 
+      - name: Set reusable strings
+        id: strings
+        shell: bash
+        run: |
+          echo "build-output-dir=${{ github.workspace }}/out" >> "$GITHUB_OUTPUT"
+
       - name: CMake Configure
         run: |
-          cmake -B out -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          cmake -B ${{ steps.strings.outputs.build-output-dir }} -S ${{ github.workspace }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
 
       - name: CMake Build
         run: |
-          cmake --build out --config ${{ matrix.build_type }} 
-
-      - name: Free up some disk space.
-        run: |
-          rm -rf out
+          cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
