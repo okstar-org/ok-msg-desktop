@@ -82,6 +82,11 @@ jobs:
           cmake -B out -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DJPEG_LIBRARY=/usr/local/opt/mozjpeg/lib -DJPEF_INCLUDE_DIR=/usr/local/opt/mozjpeg/include
           cmake --build out --config=${{ matrix.build_type }}
 
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: '5.15.2'
+          modules: 'qtwebengine'
 
       - name: Set reusable strings
         id: strings
