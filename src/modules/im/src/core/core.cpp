@@ -4,10 +4,10 @@
  * You can use this software according to the terms and conditions of the Mulan
  * PubL v2. You may obtain a copy of Mulan PubL v2 at:
  *          http://license.coscl.org.cn/MulanPubL-2.0
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY
- * KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
- * NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE. See the
- * Mulan PubL v2 for more details.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PubL v2 for more details.
  */
 
 #include "core.h"
@@ -334,17 +334,17 @@ void Core::bootstrapDht() {
 }
 
 void Core::onFriend(const lib::messenger::IMFriend& frnd) {
-    qDebug() << __func__ << frnd;
+    qDebug() << __func__ << frnd.toString();
     emit friendAdded(FriendInfo{frnd});
 }
 
 void Core::onFriendRequest(const QString friendId, QString msg) {
-    qDebug() << "onFriendRequest" << friendId;
+    qDebug() << __func__ << friendId;
     emit friendRequestReceived(FriendId(friendId), msg);
 }
 
 void Core::onFriendRemoved(QString friendId) {
-    qDebug() << "removed" << friendId;
+    qDebug() << __func__ << friendId;
     emit friendRemoved(friendId);
 }
 

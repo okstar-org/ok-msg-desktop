@@ -99,9 +99,9 @@ public:
 
     IMContactId id;
     QString alias;
+    QStringList groups;
     int subscription;
     bool online;
-    QStringList groups;
 
     // 互相关注才是朋友
     [[nodiscard]] bool isFriend() const;
@@ -116,7 +116,6 @@ public:
     }
 
     friend std::ostream& operator<<(std::ostream& os, const IMFriend& f);
-    friend QDebug& operator<<(QDebug& debug, const IMFriend& f);
 };
 
 }  // namespace lib::messenger

@@ -98,10 +98,4 @@ IMFriend::IMFriend() {}
 
 bool IMFriend::isFriend() const { return subscription == gloox::SubscriptionType::S10nBoth; }
 
-QDebug& operator<<(QDebug& debug, const IMFriend& f) {
-    QDebugStateSaver saver(debug);
-    debug.nospace() << f.toString();
-    return debug;
-}
-
 }  // namespace lib::messenger
