@@ -72,11 +72,6 @@ jobs:
           chmod a+x ./$REPO_NAME/build-script/prepare-mac.sh
           ./$REPO_NAME/build-script/prepare-mac.sh
 
-      - name: Free up some disk space.
-        run: |
-          cd Libraries
-          find . -iname "*.dir" -exec rm -rf {} || true \;
-
       - name: Build ok-gloox
         run: |
           git clone https://github.com/okstar-org/ok-gloox.git
