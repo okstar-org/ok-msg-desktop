@@ -52,6 +52,19 @@ cmake --build out --config=Debug
 
 ```
 
+## Build ok-gloox library
+
+```shell
+git clone https://github.com/okstar-org/ok-gloox.git
+cd ok-gloox
+# CMake预处理
+cmake -B out -DCMAKE_BUILD_TYPE=Release
+# 构建
+cmake --build out --config Release
+# 执行安装
+cmake --install out --config Release
+```
+
 ## 用Qt Creator 打开OkMSG项目
 
 - 选择最新的QtCreator版本(对CMake的支持更好)。

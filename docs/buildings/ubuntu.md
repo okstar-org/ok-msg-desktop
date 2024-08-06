@@ -24,9 +24,10 @@ cd ok-rtc
 git submodule update --init
 
 # CMake 构建
-cmake -B out  && cmake --build out
+cmake -B out  -DCMAKE_BUILD_TYPE=Release
+cmake --build out --config Release
 # CMake 安装
-sudo cmake --install out
+sudo cmake --install out --config Release
 ```
 
 ## 编译OkGloox库
@@ -38,8 +39,8 @@ cd ok-gloox
 cmake -B out -DCMAKE_BUILD_TYPE=Release
 # 构建
 cmake --build out --config Release
-# 执行安装（用管理员身份打开命令行）
-cmake --install out
+# 执行安装
+sudo cmake --install out --config Release
 ```
 
 ## 用Qt Creator 打开OkMSG项目
