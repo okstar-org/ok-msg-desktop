@@ -10,7 +10,7 @@ on:
       - '.clang-*'
       - '.gitignore'
       - '.github/**'
-      - '!.github/workflows/mac.yml'
+      - '!.github/workflows/mac-x64.yml'
       - 'lib/xdg/**'
       - 'snap/**'
       - 'docs/**'
