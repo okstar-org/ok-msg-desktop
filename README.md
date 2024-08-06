@@ -21,24 +21,20 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
 <img src="docs/assets/ok-msg-architecture-diagram.png" width="1000" alt="Architecture diagram"/>
 
 # 🖼️ 界面展示
-- 登录界面
 
-<img src="docs/assets/login.png" width="1100" alt="登录界面"/>
+- Login window
 
-- 主界面
+<img src="docs/assets/login.png" width="1100"/>
 
-<img src="docs/assets/preview.png" width="1100" alt="主界面"/>
+- Main window
 
-- 效果图
+<img src="docs/assets/design.png" width="1100" />
 
-<img src="docs/assets/design.png" width="1100" alt="效果图"/>
-
-
-# ⛽ 第三方库
+# ⛽ Thirty party（第三方库）
 
 - CMake ([New BSD License](https://github.com/Kitware/CMake/blob/master/Copyright.txt))
 - WebRTC ([New BSD License](https://github.com/desktop-app/tg_owt/blob/master/LICENSE))
-- OpenSSL 3.0.x ([OpenSSL License](https://www.openssl.org/source/license.html))
+- OpenSSL ([OpenSSL License](https://www.openssl.org/source/license.html))
 - OpenAL Soft ([LGPL](https://github.com/kcat/openal-soft/blob/master/COPYING))
 - FFmpeg ([LGPL](https://www.ffmpeg.org/legal.html))
 - Qt 5.15 ([LGPL](http://doc.qt.io/qt-5/lgpl.html))
@@ -55,9 +51,10 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
 |----------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | 🪟 Windows-x64 | [![Build on Windows](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/win.yml/badge.svg)](https://github.com/CefView/QCefView/actions/workflows/build-windows-x86_64.yml)                    | 
 | 🐧 Linux-x64   | [![Build on Ubuntu](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/ubuntu-22.04.yml/badge.svg)](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/ubuntu-22.04.yml/badge.svg) | 
-| 🍎 macOS-x64   | Coming soon                                                                                                                                                                                                |
+| 🍎 macOS-x64   | [![Build on macOS-x64](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/mac-x64.yml/badge.svg)](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/mac-x64.yml/badge.svg         |
+| 🍎 macOS-arm   | [![Build on macOS-arm](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/mac-arm.yml/badge.svg)](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/mac-arm.yml/badge.svg         |
 
-# ⚙️ 构建与开发
+# ⚙️ Buildings
 
 本项目目前支持Windows、Linux、macOS环境开发
 - C++版本：C++20
@@ -73,9 +70,8 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
 
 
 # Downloads
-本项目支持Windows、Linux支持多种安装方式
-- 下载地址: https://github.com/okstar-org/ok-msg-desktop/releases
 
+- Link: https://github.com/okstar-org/ok-msg-desktop/releases
 <table>
     <tr>
         <th></th>
@@ -96,7 +92,7 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
             <a href="https://snapcraft.io/ok-msg"><img decoding="async" class="aligncenter" src="https://snapcraft.io/static/images/badges/en/snap-store-black.svg" alt="Get it from the Snap Store"><br></a>
         </td>
         <td>
-            <a href="https://github.com/okstar-org/ok-msg-desktop/releases/download/v24.03.0/ok-msg-desktop_fedora-36_x86_64.deb">Fedora 36</a><br>
+            <a href="https://github.com/okstar-org/ok-msg-desktop/releases/download/v24.03.0/ok-msg-desktop_fedora-36_x86_64.deb">Fedora</a><br>
         </td>
         <td><a href="https://www.pgyer.com/0UruoU">Android</a></td>
         <td>
@@ -106,25 +102,10 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
     </tr>
 </table>
 
-# ⚒️ 开发规范
-- 开发者规约（进行中）
-
-# 🗓️ 版本规则
-
 
 # 🙏 感谢支持
 - 感谢社区成员的鼎力支持等
 - [感谢 JetBrains 对本项目的支持（Drive by JetBrains）](https://jb.gg/OpenSourceSupport) <img width="64" src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg?_ga=2.83044246.1221182059.1672752920-1856866598.1665301971&_gl=1*3fzoi7*_ga*MTg1Njg2NjU5OC4xNjY1MzAxOTcx*_ga_9J976DJZ68*MTY3Mjc1MjkyMC40LjEuMTY3Mjc1NDM0Ni4wLjAuMA">
-
-# ❤️ 捐赠方式
-
-> 您的捐款是OkMSG开源项目持续前进的动力，希望该项目可以让任何人从中受益。
-> 捐赠列表 https://kdocs.cn/l/cr7rVyXnbxuK
-
-<div>
-<img src="./docs/donate/wx.png" width="240"  alt=""/> 
-<img src="./docs/donate/zfb.png" width="240"  alt=""/>
-</div>
 
 > 欢迎大家 Clone 本项目，捐赠收入将用于对贡献者的奖励。
 
