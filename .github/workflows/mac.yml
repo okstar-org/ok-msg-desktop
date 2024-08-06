@@ -38,6 +38,7 @@ jobs:
     env:
       UPLOAD_ARTIFACT: "false"
       ONLY_CACHE: "false"
+      PREPARE_PATH: "build-script/prepare-mac.sh"
 
     steps:
       - name: Get repository name.
@@ -59,18 +60,10 @@ jobs:
 
           sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
 
-      - name: Libraries cache.
-        id: cache-libs
-        uses: actions/cache@v2
-        with:
-          path: Libraries
-          key: ${{ runner.OS }}-libs-${{ hashFiles(format('{0}/{1}', env.REPO_NAME, env.PREPARE_PATH)) }}
-          restore-keys: ${{ runner.OS }}-libs-
-
-      - name: Libraries.
+      - name: Prepare
         run: |
-          chmod a+x ./$REPO_NAME/build-script/prepare-mac.sh
-          ./$REPO_NAME/build-script/prepare-mac.sh
+          chmod a+x ./$REPO_NAME/$PREPARE_PATH
+          ./$REPO_NAME/$PREPARE_PATH
 
       - name: Build ok-gloox
         run: |
@@ -88,6 +81,7 @@ jobs:
           export PKG_CONFIG_PATH="/usr/local/opt/openssl@1.1/lib/pkgconfig:/usr/local/opt/mozjpeg/lib/pkgconfig:/usr/local/opt/ffmpeg@5/lib/pkgconfig"
           cmake -B out -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DJPEG_LIBRARY=/usr/local/opt/mozjpeg/lib -DJPEF_INCLUDE_DIR=/usr/local/opt/mozjpeg/include
           cmake --build out --config=${{ matrix.build_type }}
+
 
       - name: Set reusable strings
         id: strings
