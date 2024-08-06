@@ -1,4 +1,4 @@
-name: MacOS.
+name: Build on macOS-arm
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
       - '.clang-*'
       - '.gitignore'
       - '.github/**'
-      - '!.github/workflows/mac-x64.yml'
+      - '!.github/workflows/mac-arm.yml'
       - 'lib/xdg/**'
       - 'snap/**'
       - 'docs/**'
