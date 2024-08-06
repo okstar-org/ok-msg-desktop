@@ -66,7 +66,7 @@ private:
 
     ChatReplyForm* reply;
 
-    EmoticonsWidget* emoticonsWidget;
+    EmoticonsWidget* emoticonsWidget = nullptr;
 
     void doScreenshot();
 
