@@ -264,9 +264,6 @@ Widget::Widget(IAudioControl& audio, QWidget* parent)  //
 
     connect(&settings, &Settings::separateWindowChanged, this, &Widget::onSeparateWindowClicked);
 
-#ifdef Q_OS_MAC
-    Nexus::getInstance().updateWindows();
-#endif
 
     init();
 }
@@ -1355,9 +1352,7 @@ void Widget::onTryCreateTrayIcon() {
                 show();
             }
 
-#ifdef Q_OS_MAC
-            Nexus::getInstance().dockMenu->setAsDockMenu();
-#endif
+
         } else if (!isVisible()) {
             show();
         }

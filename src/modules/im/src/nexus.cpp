@@ -539,7 +539,7 @@ void Nexus::updateWindowsStates() {
         }
     }
 
-    frontAction->setEnabled(exists);
+
 }
 
 void Nexus::onOpenWindow(QObject* object) {

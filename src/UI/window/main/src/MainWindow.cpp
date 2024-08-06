@@ -193,9 +193,6 @@ void MainWindow::onTryCreateTrayIcon() {
                 show();
             }
 
-#ifdef Q_OS_MAC
-            Nexus::getInstance().dockMenu->setAsDockMenu();
-#endif
         } else if (!isVisible()) {
             show();
         }
