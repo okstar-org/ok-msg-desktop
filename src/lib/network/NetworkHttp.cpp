@@ -229,18 +229,17 @@ void NetworkHttp::doRequest(QNetworkRequest& req,
             qDebug() << "statusCode:" << statusCode.toInt();
         }
 
+        auto bytes = reply->readAll();
         if (statusCode.toInt() / 100 != 2) {
-            qWarning() << "Error:" << reply->errorString();
+            qWarning() << "body:" << bytes;
             if (failed) {
-                failed(statusCode.toInt(), reply->errorString());
+                failed(statusCode.toInt(), bytes);
             }
             return;
         }
 
-        auto bytes = reply->readAll();
         auto size = bytes.size();
         qDebug() << "Received bytes:" << size;
-
         if (size <= 0) {
             qWarning() << "No content!";
             return;
@@ -257,7 +256,7 @@ void NetworkHttp::doRequest(QNetworkRequest& req,
             qDebug() << "content-type:" << type;
             if (type.startsWith("text/", Qt::CaseInsensitive) ||
                 type.startsWith(CONTENT_TYPE_JSON, Qt::CaseInsensitive))
-                qDebug() << "body:" << (QString::fromUtf8(bytes));
+                qDebug() << "body:" << QString::fromUtf8(bytes);
         }
 
         auto cdh = reply->header(QNetworkRequest::KnownHeaders::ContentDispositionHeader);

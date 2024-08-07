@@ -49,7 +49,11 @@ bool PassportService::signIn(const QString& account, const QString& password,
                 Res<SysToken> res(Jsons::toJSON(doc));
                 fn(res);
             },
-            nullptr, nullptr, err);
+            nullptr, nullptr,
+            [=](int statusCode, QByteArray body) {
+                Res<SysToken> res(Jsons::toJSON(body));
+                err(statusCode, res.msg.toUtf8());
+            });
 }
 
 bool PassportService::refresh(const SysToken& token, Fn<void(Res<SysRefreshToken>&)> fn,

@@ -292,11 +292,6 @@ void LoginWidget::onError(int statusCode, const QString& msg) {
             m_currentOriginalMsg = "Network is not available!";
             break;
         }
-        case 4: {
-            newMsg = tr("Account does not exist!");
-            m_currentOriginalMsg = "Account does not exist!";
-            break;
-        }
         case 5: {
             newMsg = tr("Server error, please try again later!");
             m_currentOriginalMsg = "Server error, please try again later!";

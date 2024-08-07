@@ -30,7 +30,7 @@ class QNetworkReply;
 
 namespace network {
 
-using HttpErrorFn = Fn<void(int statusCode, const QString& errStr)>;
+using HttpErrorFn = Fn<void(int statusCode, const QByteArray body)>;
 using HttpDownloadProgressFn = Fn<void(qint64 bytesReceived, qint64 bytesTotal)>;
 using HttpUploadProgressFn = Fn<void(qint64 bytesSent, qint64 bytesTotal)>;
 using HttpBodyFn = Fn<void(QByteArray body, QString filename)>;
