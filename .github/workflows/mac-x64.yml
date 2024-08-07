@@ -78,7 +78,7 @@ jobs:
           git clone https://github.com/okstar-org/ok-rtc.git
           cd ok-rtc
           git submodule update --init
-          export PKG_CONFIG_PATH="/usr/local/opt/openssl@1.1/lib/pkgconfig:/usr/local/opt/mozjpeg/lib/pkgconfig:/usr/local/opt/ffmpeg@5/lib/pkgconfig"
+          export PKG_CONFIG_PATH="/usr/local/opt/openssl@1.1/lib/pkgconfig:/usr/local/opt/mozjpeg/lib/pkgconfig:/opt/homebrew/opt/ffmpeg@5/lib/pkgconfig"
           cmake -B out -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DJPEG_LIBRARY=/usr/local/opt/mozjpeg/lib -DJPEF_INCLUDE_DIR=/usr/local/opt/mozjpeg/include
           cmake --build out --config=${{ matrix.build_type }}
           cmake --install out --config ${{ matrix.build_type }}
@@ -97,7 +97,7 @@ jobs:
 
       - name: CMake Configure
         run: |
-          export PKG_CONFIG_PATH="/usr/local/opt/mozjpeg/lib/pkgconfig:/usr/local/opt/ffmpeg@5/lib/pkgconfig:/usr/local/opt/openal-soft/lib/pkgconfig"
+          export PKG_CONFIG_PATH="/usr/local/opt/mozjpeg/lib/pkgconfig:/opt/homebrew/opt/ffmpeg@5/lib/pkgconfig:/usr/local/opt/openal-soft/lib/pkgconfig"
           cmake -B ${{ steps.strings.outputs.build-output-dir }} -S ${{ github.workspace }}/${{ env.REPO_NAME }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
 
       - name: CMake Build
