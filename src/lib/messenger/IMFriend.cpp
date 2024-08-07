@@ -77,11 +77,6 @@ bool IMPeerId::operator==(const IMPeerId& peerId) const {
            && peerId.resource == resource;  //
 }
 
-std::ostream& operator<<(std::ostream& os, const IMFriend& f) {
-    os << f.toString().toStdString();
-    return os;
-}
-
 IMFriend::IMFriend(gloox::RosterItem* item)  //
         : id{IMContactId{qstring(item->jid().bare())}}
         , alias{qstring(item->name())}

@@ -71,7 +71,7 @@ jobs:
           cd ok-gloox
           cmake -B out -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
           cmake --build out --config ${{ matrix.build_type }}
-          cmake --install out --config ${{ matrix.build_type }}
+          sudo cmake --install out --config ${{ matrix.build_type }}
 
       - name: Build ok-rtc
         run: |
@@ -81,7 +81,7 @@ jobs:
           export PKG_CONFIG_PATH="/usr/local/opt/openssl@1.1/lib/pkgconfig:/usr/local/opt/mozjpeg/lib/pkgconfig:/usr/local/opt/ffmpeg@5/lib/pkgconfig"
           cmake -B out -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DJPEG_LIBRARY=/usr/local/opt/mozjpeg/lib -DJPEF_INCLUDE_DIR=/usr/local/opt/mozjpeg/include
           cmake --build out --config=${{ matrix.build_type }}
-          cmake --install out --config ${{ matrix.build_type }}
+          sudo cmake --install out --config ${{ matrix.build_type }}
 
       - name: Install Qt
         uses: jurplel/install-qt-action@v3
