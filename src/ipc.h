@@ -34,7 +34,7 @@ protected:
     static const int OWNERSHIP_TIMEOUT_S = 5;
 
 public:
-    IPC(uint32_t profileId);
+    IPC(uint32_t profileId = 0);
     ~IPC();
 
     struct IPCEvent {

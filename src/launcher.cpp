@@ -11,10 +11,10 @@
  */
 #include "launcher.h"
 
-#include <base/logs.h>
-#include <QTranslator>
 #include <memory>
+
 #include "application.h"
+#include "ipc.h"
 
 namespace ok {
 
@@ -22,11 +22,7 @@ std::unique_ptr<Launcher> Launcher::Create(int argc, char* argv[]) {
     return std::make_unique<Launcher>(argc, argv);
 }
 
-Launcher::Launcher(int argc, char* argv[])
-        : _argc(argc)
-        ,            //
-        _argv(argv)  //
-{
+Launcher::Launcher(int argc, char* argv[]) : _argc(argc), _argv(argv) {
     QThread::currentThread()->setObjectName("Launcher");
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 0))
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
@@ -41,6 +37,28 @@ Launcher::Launcher(int argc, char* argv[])
 }
 
 int Launcher::executeApplication() {
+    IPC ipc;
+    if (!ipc.isAttached()) {
+        qWarning() << "Unable to run the app.";
+        return -1;
+    }
+
+    QString eventType = "activate";
+    if (!ipc.isCurrentOwner()) {
+        time_t event = ipc.postEvent(eventType, "", 0);
+        // If someone else processed it, we're done here, no need to actually start qTox
+        if (ipc.waitUntilAccepted(event, 2)) {
+            if (eventType == "activate")
+                qDebug()
+                        << ("Another app instance is already running, you can not start multiple "
+                            "application on one device.");
+            else {
+                qDebug() << "Event" << eventType << "was handled by other client.";
+            }
+            return EXIT_SUCCESS;
+        }
+    }
+
     app = new Application(_argc, _argv);
 
     // Windows platform plugins DLL
@@ -48,7 +66,6 @@ int Launcher::executeApplication() {
     app->addLibraryPath("platforms");
     app->start();
     app->finish();
-
     return app->exec();
 }
 

@@ -150,8 +150,6 @@ set(${PROJECT_NAME}_SOURCES
         src/friendlist.h
         src/grouplist.cpp
         src/grouplist.h
-        src/ipc.cpp
-        src/ipc.h
         src/model/aboutfriend.cpp
         src/model/aboutfriend.h
         src/model/iaboutfriend.h
