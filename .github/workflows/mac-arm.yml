@@ -79,7 +79,7 @@ jobs:
           cd ok-rtc
           git submodule update --init
           export PKG_CONFIG_PATH="/usr/local/opt/openssl@1.1/lib/pkgconfig:/opt/homebrew/opt/mozjpeg/lib/pkgconfig:/opt/homebrew/opt/ffmpeg@5/lib/pkgconfig"
-          cmake -B out -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DJPEG_LIBRARY=/usr/local/opt/mozjpeg/lib -DJPEF_INCLUDE_DIR=/usr/local/opt/mozjpeg/include
+          cmake -B out -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DJPEG_LIBRARY=/opt/homebrew/opt/mozjpeg/lib -DJPEF_INCLUDE_DIR=/opt/homebrew/opt/mozjpeg/include
           cmake --build out --config=${{ matrix.build_type }}
           sudo cmake --install out --config ${{ matrix.build_type }}
 
