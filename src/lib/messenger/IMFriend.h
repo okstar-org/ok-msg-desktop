@@ -114,8 +114,6 @@ public:
                 .arg(online)
                 .arg(groups.join(","));
     }
-
-    friend std::ostream& operator<<(std::ostream& os, const IMFriend& f);
 };
 
 }  // namespace lib::messenger

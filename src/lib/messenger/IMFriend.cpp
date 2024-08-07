@@ -84,15 +84,10 @@ std::ostream& operator<<(std::ostream& os, const IMFriend& f) {
 
 IMFriend::IMFriend(gloox::RosterItem* item)  //
         : id{IMContactId{qstring(item->jid().bare())}}
-        ,  //
-        alias{qstring(item->name())}
-        ,  //
-        subscription{item->subscription()}
-        ,  //
-        online{item->online()}
-        ,                                    //
-        groups{qstringlist(item->groups())}  //
-{}
+        , alias{qstring(item->name())}
+        , subscription{item->subscription()}
+        , online{item->online()}
+        , groups{qstringlist(item->groups())} {}
 
 IMFriend::IMFriend() {}
 
