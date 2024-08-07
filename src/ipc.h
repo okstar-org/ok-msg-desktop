@@ -20,21 +20,21 @@
 #include <ctime>
 #include <functional>
 
-using IPCEventHandler = std::function<bool(const QByteArray&)>;
+namespace ok {
 
-#define IPC_PROTOCOL_VERSION "2"
+using IPCEventHandler = std::function<bool(const QByteArray&)>;
 
 class IPC : public QObject {
     Q_OBJECT
 
 protected:
-    static const int EVENT_TIMER_MS = 1000;
+    static const int EVENT_TIMER_MS = 3 * 1000;
     static const int EVENT_GC_TIMEOUT = 5;
     static const int EVENT_QUEUE_SIZE = 32;
     static const int OWNERSHIP_TIMEOUT_S = 5;
 
 public:
-    IPC(uint32_t profileId = 0);
+    IPC(uint32_t profileId = 0, QObject* parent = nullptr);
     ~IPC();
 
     struct IPCEvent {
@@ -62,15 +62,12 @@ public:
     bool isEventAccepted(time_t time);
     bool waitUntilAccepted(time_t time, int32_t timeout = -1);
     bool isAttached() const;
-
-public slots:
-    void setProfileId(uint32_t profileId);
+    bool isAlive();
 
 private:
     IPCMemory* global();
-    bool runEventHandler(IPCEventHandler handler, const QByteArray& arg);
     IPCEvent* fetchEvent();
-    void processEvents();
+    bool runEventHandler(IPCEventHandler handler, const QByteArray& arg);
     bool isCurrentOwnerNoLock();
 
 private:
@@ -79,6 +76,11 @@ private:
     uint32_t profileId;
     QSharedMemory globalMemory;
     QMap<QString, IPCEventHandler> eventHandlers;
+
+public slots:
+    void setProfileId(uint32_t profileId);
+    void processIpcEvents();
 };
+}  // namespace ok
 
 #endif  // IPC_H

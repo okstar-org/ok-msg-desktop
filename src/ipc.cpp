@@ -23,20 +23,26 @@
  * @brief When last event was posted.
  *
  * @var time_t IPC::lastProcessed
- * @brief When processEvents() ran last time
+ * @brief When processIpcEvents() ran last time
  */
 
 /**
  * @class IPC
  * @brief Inter-process communication
  */
+namespace ok {
+#define IPC_PROTOCOL_VERSION "1"
 
-IPC::IPC(uint32_t profileId) : profileId{profileId}, globalMemory{"qtox-" IPC_PROTOCOL_VERSION} {
+IPC::IPC(uint32_t profileId, QObject* parent)
+        : QObject(parent)
+        , profileId{profileId}
+        , globalMemory{APPLICATION_ID "-" IPC_PROTOCOL_VERSION} {
     qRegisterMetaType<IPCEventHandler>("IPCEventHandler");
 
     timer.setInterval(EVENT_TIMER_MS);
     timer.setSingleShot(true);
-    connect(&timer, &QTimer::timeout, this, &IPC::processEvents);
+    connect(&timer, &QTimer::timeout, this, &IPC::processIpcEvents);
+    timer.start();
 
     // The first started instance gets to manage the shared memory by taking ownership
     // Every time it processes events it updates the global shared timestamp "lastProcessed"
@@ -48,6 +54,7 @@ IPC::IPC(uint32_t profileId) : profileId{profileId}, globalMemory{"qtox-" IPC_PR
     std::default_random_engine randEngine((std::random_device())());
     std::uniform_int_distribution<uint64_t> distribution;
     globalId = distribution(randEngine);
+
     qDebug() << "Our global IPC ID is " << globalId;
     if (globalMemory.create(sizeof(IPCMemory))) {
         if (globalMemory.lock()) {
@@ -66,8 +73,6 @@ IPC::IPC(uint32_t profileId) : profileId{profileId}, globalMemory{"qtox-" IPC_PR
                  << globalMemory.error();
         return;  // We won't be able to do any IPC without being attached, let's get outta here
     }
-
-    processEvents();
 }
 
 IPC::~IPC() {
@@ -153,7 +158,10 @@ bool IPC::isEventAccepted(time_t time) {
         return result;
     }
 
-    if (difftime(global()->lastProcessed, time) > 0) {
+    auto last = global()->lastProcessed;
+    qDebug() << "last:" << last;
+
+    if (difftime(last, time) > 0) {
         IPCMemory* mem = global();
         for (uint32_t i = 0; i < EVENT_QUEUE_SIZE; ++i) {
             if (mem->events[i].posted == time && mem->events[i].processed) {
@@ -225,14 +233,13 @@ bool IPC::runEventHandler(IPCEventHandler handler, const QByteArray& arg) {
     return result;
 }
 
-void IPC::processEvents() {
+void IPC::processIpcEvents() {
     if (!globalMemory.lock()) {
-        timer.start();
         return;
     }
+    timer.start();
 
     IPCMemory* mem = global();
-
     if (mem->globalId == globalId) {
         // We're the owner, let's process those events
         mem->lastProcessed = time(nullptr);
@@ -274,7 +281,7 @@ void IPC::processEvents() {
     }
 
     globalMemory.unlock();
-    timer.start();
+    //    timer.start();
 }
 
 /**
@@ -291,3 +298,18 @@ bool IPC::isCurrentOwnerNoLock() {
 }
 
 IPC::IPCMemory* IPC::global() { return static_cast<IPCMemory*>(globalMemory.data()); }
+
+bool IPC::isAlive() {
+    auto mem = global();
+    if (!mem) {
+        return false;
+    }
+
+    if (difftime(time(nullptr), mem->lastProcessed) >= OWNERSHIP_TIMEOUT_S) {
+        return false;
+    }
+
+    return true;
+}
+
+}  // namespace ok

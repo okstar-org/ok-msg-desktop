@@ -31,7 +31,9 @@ class MainWindow;
 
 namespace ok {
 
+class IPC;
 class Bus;
+
 using namespace network;
 
 class Application : public QApplication {
@@ -62,6 +64,7 @@ private:
 
     std::shared_ptr<ok::session::AuthSession> session;
 
+    IPC* ipc;
     std::unique_ptr<Bus> _bus;
     std::unique_ptr<SettingManager> _settingManager;
     std::unique_ptr<ControllerManager> _controllerManager;

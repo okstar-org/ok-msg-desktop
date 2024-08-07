@@ -37,27 +37,6 @@ Launcher::Launcher(int argc, char* argv[]) : _argc(argc), _argv(argv) {
 }
 
 int Launcher::executeApplication() {
-    IPC ipc;
-    if (!ipc.isAttached()) {
-        qWarning() << "Unable to run the app.";
-        return -1;
-    }
-
-    QString eventType = "activate";
-    if (!ipc.isCurrentOwner()) {
-        time_t event = ipc.postEvent(eventType, "", 0);
-        // If someone else processed it, we're done here, no need to actually start qTox
-        if (ipc.waitUntilAccepted(event, 2)) {
-            if (eventType == "activate")
-                qDebug()
-                        << ("Another app instance is already running, you can not start multiple "
-                            "application on one device.");
-            else {
-                qDebug() << "Event" << eventType << "was handled by other client.";
-            }
-            return EXIT_SUCCESS;
-        }
-    }
 
     app = new Application(_argc, _argv);
 

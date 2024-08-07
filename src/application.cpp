@@ -28,6 +28,7 @@
 #include "base/logs.h"
 #include "base/r.h"
 #include "base/system/sys_info.h"
+#include "ipc.h"
 #include "lib/log/LogManager.h"
 #include "lib/plugin/pluginmanager.h"
 #include "lib/settings/translator.h"
@@ -97,6 +98,7 @@ Application::Application(int& argc, char* argv[])
     QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath());
     addLibraryPath("platforms");
 
+    ipc = new IPC(0, this);
     _bus = std::make_unique<Bus>();
 
     QString qss = ok::base::Files::readStringAll("application.qss");
@@ -114,7 +116,20 @@ Application::Application(int& argc, char* argv[])
 
 Application* Application::Instance() { return qobject_cast<Application*>(qApp); }
 
-void Application::start() { this->createLoginUI(true); }
+void Application::start() {
+    if (!ipc->isAttached()) {
+        qWarning() << "Unable to run the app.";
+        return;
+    }
+
+    if (ipc->isAlive()) {
+        qFatal("Another app instance is already running, you can not start multiple "
+               "application on one device.");
+        return;
+    }
+
+    this->createLoginUI(true);
+}
 
 void Application::createLoginUI(bool bootstrap) {
     qDebug() << __func__;
