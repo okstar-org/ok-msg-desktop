@@ -77,31 +77,15 @@ bool IMPeerId::operator==(const IMPeerId& peerId) const {
            && peerId.resource == resource;  //
 }
 
-std::ostream& operator<<(std::ostream& os, const IMFriend& f) {
-    os << f.toString().toStdString();
-    return os;
-}
-
 IMFriend::IMFriend(gloox::RosterItem* item)  //
         : id{IMContactId{qstring(item->jid().bare())}}
-        ,  //
-        alias{qstring(item->name())}
-        ,  //
-        subscription{item->subscription()}
-        ,  //
-        online{item->online()}
-        ,                                    //
-        groups{qstringlist(item->groups())}  //
-{}
+        , alias{qstring(item->name())}
+        , subscription{item->subscription()}
+        , online{item->online()}
+        , groups{qstringlist(item->groups())} {}
 
 IMFriend::IMFriend() {}
 
 bool IMFriend::isFriend() const { return subscription == gloox::SubscriptionType::S10nBoth; }
-
-QDebug& operator<<(QDebug& debug, const IMFriend& f) {
-    QDebugStateSaver saver(debug);
-    debug.nospace() << f.toString();
-    return debug;
-}
 
 }  // namespace lib::messenger

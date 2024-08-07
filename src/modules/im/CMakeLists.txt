@@ -35,8 +35,7 @@ include_directories(${PROJECT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR})
     )
 
 
-
-include_directories(${OPENAL_INCLUDE_DIRS})
+include_directories(${OpenAL_INCLUDE_DIRS})
 include_directories(${exif_INCLUDE_DIRS})
 include_directories(${AVCODEC_INCLUDE_DIRS})
 include_directories(${AVDEVICE_INCLUDE_DIRS})
