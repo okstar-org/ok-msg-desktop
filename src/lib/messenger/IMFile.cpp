@@ -343,5 +343,46 @@ void IMFile::sessionOnTerminate(const QString& sId, const IMPeerId& peerId) {
     delete sess;
 }
 
+void IMFile::sessionOnInitiate(const QString& sId,
+                               const Jingle::Session::Jingle* jingle,
+                               const IMPeerId& peerId) {
+    qDebug() << __func__ << "receive file:" << sId;
+
+    for (auto p : jingle->plugins()) {
+        auto pt = p->pluginType();
+        switch (pt) {
+            case JinglePluginType::PluginContent: {
+                auto file = p->findPlugin<FileTransfer>(PluginFileTransfer);
+                auto ibb = p->findPlugin<IBB>(PluginIBB);
+                if (file && ibb) {
+                    for (auto f : file->files()) {
+                        auto id = qstring(ibb->sid());
+                        //                        auto sId = qstring(session->sid());
+
+                        qDebug() << "receive file:" << id << sId;
+                        File file0 = {.id = id,
+                                      .sId = sId,
+                                      .name = qstring(f.name),
+                                      .path = {},
+                                      .size = (quint64)f.size,
+                                      .status = FileStatus::INITIALIZING,
+                                      .direction = FileDirection::RECEIVING};
+                        qDebug() << "receive file:" << file0.toString();
+                        for (auto h : fileHandlers) {
+                            h->onFileRequest(peerId.toFriendId(), file0);
+                        }
+
+                        //                  emit receiveFileRequest(peerId.toFriendId(), file);
+                    }
+                    //                    isFile = true;
+                }
+                break;
+            }
+            default: {
+            }
+        }
+    }
+}
+
 }  // namespace messenger
 }  // namespace lib

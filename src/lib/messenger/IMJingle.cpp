@@ -342,54 +342,58 @@ void IMJingle::doSessionInitiate(Jingle::Session* session,
     auto sid = qstring(session->sid());
     qDebug() << __func__ << "sId:" << sid << "peerId:" << peerId.toString();
 
-    bool isFile = false;
-    for (auto p : jingle->plugins()) {
-        auto pt = p->pluginType();
-        switch (pt) {
-            case JinglePluginType::PluginContent: {
-                auto file = p->findPlugin<FileTransfer>(PluginFileTransfer);
-                auto ibb = p->findPlugin<IBB>(PluginIBB);
-                if (file && ibb) {
-                    for (auto f : file->files()) {
-                        auto id = qstring(ibb->sid());
-                        auto sId = qstring(session->sid());
+    sessionOnInitiate(sid, jingle, peerId);
 
-                        qDebug() << "receive file:" << id << sId;
-
-                        //                  File file = {.id= id,
-                        //                               .sId= sId,
-                        //                               .name = qstring(f.name),
-                        //                               .path= {},
-                        //                               .size = (quint64)f.size,
-                        //                               .status = FileStatus::INITIALIZING,
-                        //                               .direction=FileDirection::RECEIVING};
-                        //                  qDebug() << "receive file:" << file.toString();
-                        //                  emit receiveFileRequest(peerId.toFriendId(), file);
-                    }
-                    isFile = true;
-                } else {
-                    // av
-                    //                auto group = p->findPlugin<FileTransfer>(PluginGroup);
-                }
-                break;
-            }
-            default: {
-            }
-        }
-    }
-
-    if (isFile) {
-        cacheSessionInfo(session, lib::ortc::JingleCallType::file);
-        return;
-    } else {
-        // av
-        cacheSessionInfo(session, lib::ortc::JingleCallType::av);
-
-        OJingleContentAv cav;
-        cav.parse(jingle);
-        cav.sdpType = lib::ortc::JingleSdpType::Offer;
-        OkRTCManager::getInstance()->getRtc()->CreateAnswer(stdstring(peerId.toString()), cav);
-    }
+    //    bool isFile = false;
+    //    for (auto p : jingle->plugins()) {
+    //        auto pt = p->pluginType();
+    //        switch (pt) {
+    //            case JinglePluginType::PluginContent: {
+    //                auto file = p->findPlugin<FileTransfer>(PluginFileTransfer);
+    //                auto ibb = p->findPlugin<IBB>(PluginIBB);
+    //                if (file && ibb) {
+    //                    for (auto f : file->files()) {
+    //                        auto id = qstring(ibb->sid());
+    //                        auto sId = qstring(session->sid());
+    //
+    //                        qDebug() << "receive file:" << id << sId;
+    //
+    //                        //                  File file = {.id= id,
+    //                        //                               .sId= sId,
+    //                        //                               .name = qstring(f.name),
+    //                        //                               .path= {},
+    //                        //                               .size = (quint64)f.size,
+    //                        //                               .status = FileStatus::INITIALIZING,
+    //                        //                               .direction=FileDirection::RECEIVING};
+    //                        //                  qDebug() << "receive file:" << file.toString();
+    //                        //                  emit receiveFileRequest(peerId.toFriendId(),
+    //                        file);
+    //                    }
+    //                    isFile = true;
+    //                } else {
+    //                    // av
+    //                    //                auto group = p->findPlugin<FileTransfer>(PluginGroup);
+    //                }
+    //                break;
+    //            }
+    //            default: {
+    //            }
+    //        }
+    //    }
+    //
+    //    if (isFile) {
+    //        cacheSessionInfo(session, lib::ortc::JingleCallType::file);
+    //        return;
+    //    } else {
+    //        // av
+    //        cacheSessionInfo(session, lib::ortc::JingleCallType::av);
+    //
+    //        OJingleContentAv cav;
+    //        cav.parse(jingle);
+    //        cav.sdpType = lib::ortc::JingleSdpType::Offer;
+    //        OkRTCManager::getInstance()->getRtc()->CreateAnswer(stdstring(peerId.toString()),
+    //        cav);
+    //    }
 
     //  bool isVideo = lib::ortc::JingleCallType::video == callType;
     //  auto _rtcManager = s->getRtcManager();

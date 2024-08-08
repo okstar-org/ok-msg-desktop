@@ -109,7 +109,9 @@ protected:
 
     virtual void sessionOnAccept(const QString& sId, const IMPeerId& peerId) = 0;
     virtual void sessionOnTerminate(const QString& sId, const IMPeerId& peerId) = 0;
-
+    virtual void sessionOnInitiate(const QString& sId,
+                                   const Jingle::Session::Jingle* jingle,
+                                   const IMPeerId& peerId) = 0;
     IM* _im;
 
 private:

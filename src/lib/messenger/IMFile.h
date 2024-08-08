@@ -68,7 +68,13 @@ public:
     void fileCancel(QString fileId);
     bool fileSendToFriend(const QString& f, const File& file);
 
+    // 收到对方发起
+    void sessionOnInitiate(const QString& sId,
+                           const Jingle::Session::Jingle* jingle,
+                           const IMPeerId& peerId);
+    // 对方接受
     void sessionOnAccept(const QString& sId, const IMPeerId& peerId) override;
+    // 对方终止
     void sessionOnTerminate(const QString& sId, const IMPeerId& peerId) override;
 
     /**
