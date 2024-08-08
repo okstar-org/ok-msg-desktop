@@ -1,3 +1,15 @@
+/*
+ * Copyright (c) 2022 船山信息 chuanshaninfo.com
+ * The project is licensed under Mulan PubL v2.
+ * You can use this software according to the terms and conditions of the Mulan
+ * PubL v2. You may obtain a copy of Mulan PubL v2 at:
+ *          http://license.coscl.org.cn/MulanPubL-2.0
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PubL v2 for more details.
+ */
+
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
 <TS version="2.0" language="it_IT">
@@ -492,92 +504,7 @@ questo può causare problemi con le chiamate video.</translation>
         <translation>I Log (*.log)</translation>
     </message>
 </context>
-<context>
-    <name>AdvancedSettings</name>
-    <message>
-        <source>Save settings to the working directory instead of the usual conf dir</source>
-        <extracomment>describes makeToxPortable checkbox</extracomment>
-        <translation>Slava le impostazioni nella directory di lavoro corrente, invece della directory di default</translation>
-    </message>
-    <message>
-        <source>Make Tox portable</source>
-        <translation>Rendi qTox portabile</translation>
-    </message>
-    <message>
-        <source>Reset to default settings</source>
-        <translation>Reimposta impostazioni di default</translation>
-    </message>
-    <message>
-        <source>Portable</source>
-        <translation>Potabile</translation>
-    </message>
-    <message>
-        <source>Connection Settings</source>
-        <translation>Impostazioni Connessione</translation>
-    </message>
-    <message>
-        <source>Enable IPv6 (recommended)</source>
-        <extracomment>Text on a checkbox to enable IPv6</extracomment>
-        <translation>Abilita IPv6 (consigliato)</translation>
-    </message>
-    <message>
-        <source>Disabling this allows, e.g., toxing over Tor. It adds load to the Tox network however, so uncheck only when necessary.</source>
-        <extracomment>force tcp checkbox tooltip</extracomment>
-        <translation>Disabilitando questo sarà possibile usare qTox con Tor. Tuttavia verrà aggiunto carico alla rete Tox, quindi disabilitare solo se necessario.</translation>
-    </message>
-    <message>
-        <source>Enable UDP (recommended)</source>
-        <extracomment>Text on checkbox to disable UDP</extracomment>
-        <translation>Abilita UDP (consigliato)</translation>
-    </message>
-    <message>
-        <source>Proxy type:</source>
-        <translation>Proxy:</translation>
-    </message>
-    <message>
-        <source>Address:</source>
-        <extracomment>Text on proxy addr label</extracomment>
-        <translation>Indirizzo:</translation>
-    </message>
-    <message>
-        <source>Port:</source>
-        <extracomment>Text on proxy port label</extracomment>
-        <translation>Porta:</translation>
-    </message>
-    <message>
-        <source>None</source>
-        <translation>Nessuno</translation>
-    </message>
-    <message>
-        <source>SOCKS5</source>
-        <translation>SOCKS5</translation>
-    </message>
-    <message>
-        <source>HTTP</source>
-        <translation>HTTP</translation>
-    </message>
-    <message>
-        <source>Reconnect</source>
-        <comment>reconnect button</comment>
-        <translation>Riconnetti</translation>
-    </message>
-    <message>
-        <source>Debug</source>
-        <translation>Debug</translation>
-    </message>
-    <message>
-        <source>Export Debug Log</source>
-        <translation>Esporta il Log di Debug</translation>
-    </message>
-    <message>
-        <source>Copy Debug Log</source>
-        <translation>Copia il Log di Debug</translation>
-    </message>
-    <message>
-        <source>Enable LAN discovery</source>
-        <translation>Attivare la scoperta della LAN</translation>
-    </message>
-</context>
+
 <context>
     <name>ChatForm</name>
     <message>

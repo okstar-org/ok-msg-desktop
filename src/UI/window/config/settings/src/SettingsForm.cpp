@@ -10,18 +10,18 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#include "SettingsForm.h"
-
-#include "GeneralForm.h"
-#include "UserInterfaceForm.h"
-#include "lib/settings/translator.h"
-
 #include <QLabel>
 #include <QTabWidget>
 #include <QWidget>
 #include <QWindow>
 
 #include <memory>
+
+#include "ConnectForm.h"
+#include "GeneralForm.h"
+#include "SettingsForm.h"
+#include "UserInterfaceForm.h"
+#include "lib/settings/translator.h"
 
 namespace UI {
 SettingsWidget::SettingsWidget(QWidget* parent)
@@ -30,7 +30,7 @@ SettingsWidget::SettingsWidget(QWidget* parent)
     settingsWidgets->setTabPosition(QTabWidget::North);
 
     bodyLayout = std::unique_ptr<QVBoxLayout>(new QVBoxLayout(this));
-    bodyLayout->setContentsMargins(0, 0, 0, 0);
+    //    bodyLayout->setContentsMargins(0, 0, 0, 0);
     bodyLayout->addWidget(settingsWidgets.get());
     setLayout(bodyLayout.get());
 
@@ -54,16 +54,15 @@ SettingsWidget::SettingsWidget(QWidget* parent)
 #endif
 
     cfgForms = {{
-            new GeneralForm(this),  //
-                                    //      std::move(uifrm),  //
-                                    //      std::move(pfrm),   //
+            new GeneralForm(this),
+            new ConnectForm(this)  //
+                                   //      std::move(pfrm),   //
                                     //      std::move(expfrm), //
                                     //      std::move(abtfrm)  //
     }};
 
     for (auto& cfgForm : cfgForms)
         settingsWidgets->addTab(cfgForm, cfgForm->getFormIcon(), cfgForm->getFormName());
-    //    settingsWidgets->addTab(gfrm, gfrm->getFormIcon(), gfrm->getFormName());
 
     connect(settingsWidgets.get(), &QTabWidget::currentChanged, this,
             &SettingsWidget::onTabChanged);

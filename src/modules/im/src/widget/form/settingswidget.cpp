@@ -19,7 +19,6 @@
 #include "src/persistence/settings.h"
 #include "src/video/camerasource.h"
 #include "src/widget/contentlayout.h"
-#include "src/widget/form/settings/advancedform.h"
 #include "src/widget/form/settings/avform.h"
 #include "src/widget/form/settings/generalform.h"
 #include "src/widget/form/settings/privacyform.h"
@@ -54,7 +53,6 @@ SettingsWidget::SettingsWidget(Widget* parent) : QWidget(parent, Qt::Window) {
 
     AVForm* rawAvfrm = new AVForm(camera, audioSettings, videoSettings);
     std::unique_ptr<AVForm> avfrm(rawAvfrm);
-    std::unique_ptr<AdvancedForm> expfrm(new AdvancedForm());
 
 #if UPDATE_CHECK_ENABLED
     if (updateCheck != nullptr) {
@@ -65,11 +63,10 @@ SettingsWidget::SettingsWidget(Widget* parent) : QWidget(parent, Qt::Window) {
     }
 #endif
 
-    cfgForms = {{std::move(gfrm),   //
-                 std::move(uifrm),  //
-                 std::move(pfrm),   //
-                 std::move(avfrm),  //
-                 std::move(expfrm)}};
+    cfgForms.push_back(std::move(gfrm));   //
+    cfgForms.push_back(std::move(uifrm));  //
+    cfgForms.push_back(std::move(pfrm));   //
+    cfgForms.push_back(std::move(avfrm));  //
 
     for (auto& cfgForm : cfgForms)
         settingsWidgets->addTab(cfgForm.get(), cfgForm->getFormIcon(), cfgForm->getFormName());

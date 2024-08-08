@@ -1,3 +1,15 @@
+/*
+ * Copyright (c) 2022 船山信息 chuanshaninfo.com
+ * The project is licensed under Mulan PubL v2.
+ * You can use this software according to the terms and conditions of the Mulan
+ * PubL v2. You may obtain a copy of Mulan PubL v2 at:
+ *          http://license.coscl.org.cn/MulanPubL-2.0
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PubL v2 for more details.
+ */
+
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
 <TS version="2.0" language="fr_FR">
@@ -492,92 +504,7 @@ ce qui peut entraîner des problèmes avec les appels vidéo.</translation>
         <translation>Journaux  (*.log)</translation>
     </message>
 </context>
-<context>
-    <name>AdvancedSettings</name>
-    <message>
-        <source>Save settings to the working directory instead of the usual conf dir</source>
-        <extracomment>describes makeToxPortable checkbox</extracomment>
-        <translation>Sauvegardera les paramètres dans le répertoire courant au lieu du répertoire habituel de configuration</translation>
-    </message>
-    <message>
-        <source>Make Tox portable</source>
-        <translation>Rendre Tox portable</translation>
-    </message>
-    <message>
-        <source>Reset to default settings</source>
-        <translation>Réinitialiser vers les paramètres par défaut</translation>
-    </message>
-    <message>
-        <source>Portable</source>
-        <translation>Portable</translation>
-    </message>
-    <message>
-        <source>Connection Settings</source>
-        <translation>Paramètres de connexion</translation>
-    </message>
-    <message>
-        <source>Enable IPv6 (recommended)</source>
-        <extracomment>Text on a checkbox to enable IPv6</extracomment>
-        <translation>Activer IPv6 (recommandé)</translation>
-    </message>
-    <message>
-        <source>Disabling this allows, e.g., toxing over Tor. It adds load to the Tox network however, so uncheck only when necessary.</source>
-        <extracomment>force tcp checkbox tooltip</extracomment>
-        <translation>Désactiver ceci permettra par exemple d&apos;utiliser Tox à travers Tor. Désactiver seulement si nécessaire, car cela ajoutera une charge supplémentaire au réseau Tox.</translation>
-    </message>
-    <message>
-        <source>Enable UDP (recommended)</source>
-        <extracomment>Text on checkbox to disable UDP</extracomment>
-        <translation>Activer UDP (recommandé)</translation>
-    </message>
-    <message>
-        <source>Proxy type:</source>
-        <translation>Type de proxy :</translation>
-    </message>
-    <message>
-        <source>Address:</source>
-        <extracomment>Text on proxy addr label</extracomment>
-        <translation>Adresse :</translation>
-    </message>
-    <message>
-        <source>Port:</source>
-        <extracomment>Text on proxy port label</extracomment>
-        <translation>Port :</translation>
-    </message>
-    <message>
-        <source>None</source>
-        <translation>Aucun(e)</translation>
-    </message>
-    <message>
-        <source>SOCKS5</source>
-        <translation>SOCKS5</translation>
-    </message>
-    <message>
-        <source>HTTP</source>
-        <translation>HTTP</translation>
-    </message>
-    <message>
-        <source>Reconnect</source>
-        <comment>reconnect button</comment>
-        <translation>Se reconnecter</translation>
-    </message>
-    <message>
-        <source>Debug</source>
-        <translation>Déboguer</translation>
-    </message>
-    <message>
-        <source>Export Debug Log</source>
-        <translation>Exporter la journalisation de débogage</translation>
-    </message>
-    <message>
-        <source>Copy Debug Log</source>
-        <translation>Copier le journal de débogage</translation>
-    </message>
-    <message>
-        <source>Enable LAN discovery</source>
-        <translation>Activer la découverte du réseau local</translation>
-    </message>
-</context>
+
 <context>
     <name>ChatForm</name>
     <message>

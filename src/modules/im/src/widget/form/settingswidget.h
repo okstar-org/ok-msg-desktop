@@ -55,7 +55,7 @@ private:
 private:
     std::unique_ptr<QVBoxLayout> bodyLayout;
     std::unique_ptr<QTabWidget> settingsWidgets;
-    std::array<std::unique_ptr<GenericForm>, 5> cfgForms;
+    std::vector<std::unique_ptr<GenericForm>> cfgForms;
     int currentIndex;
 };
 

@@ -21,7 +21,7 @@ class SettingsWidget;
 class GeneralForm : public GenericForm {
     Q_OBJECT
 public:
-    explicit GeneralForm(SettingsWidget* parent);
+    explicit GeneralForm(SettingsWidget* parent = nullptr);
     ~GeneralForm();
     virtual QString getFormName() final override { return tr("General"); }
 
