@@ -11,23 +11,24 @@ on:
     branches: [ develop, develop-windows ]
     tags:
       - "v*.*.*"
+    paths-ignore:
+      - '**.md'
+      - 'changelog.txt'
+      - 'LEGAL'
+      - 'LICENSE'
+      - '.clang-*'
+      - '.gitignore'
+      - 'lib/xdg/**'
+      - 'snap/**'
+      - 'docs/**'
+      - 'flatpak/**'
+      - '.github/**'
+      - 'src/base/platform/linux/**'
+      - 'src/base/platform/macos/**'
+      - '!.github/workflows/win.yml'
   pull_request:
     branches: [ develop, develop-windows ]
-  paths-ignore:
-    - '**.md'
-    - 'changelog.txt'
-    - 'LEGAL'
-    - 'LICENSE'
-    - '.clang-*'
-    - '.gitignore'
-    - 'lib/xdg/**'
-    - 'snap/**'
-    - 'docs/**'
-    - 'flatpak/**'
-    - '.github/**'
-    - 'src/base/platform/linux/**'
-    - 'src/base/platform/macos/**'
-    - '!.github/workflows/win.yml'
+
 jobs:
   build:
     env:

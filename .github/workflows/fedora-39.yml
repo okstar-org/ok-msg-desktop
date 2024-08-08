@@ -11,23 +11,24 @@ on:
     branches: [ develop, develop-fedora ]
     tags:
       - "v*.*.*"
+    paths-ignore:
+      - '**.md'
+      - 'changelog.txt'
+      - 'LEGAL'
+      - 'LICENSE'
+      - '.clang-*'
+      - '.gitignore'
+      - 'lib/xdg/**'
+      - 'snap/**'
+      - 'docs/**'
+      - 'flatpak/**'
+      - '.github/**'
+      - 'src/base/platform/windows/**'
+      - 'src/base/platform/macos/**'
+      - '!.github/workflows/win.yml'
   pull_request:
     branches: [ develop, develop-fedora ]
-  paths-ignore:
-    - '**.md'
-    - 'changelog.txt'
-    - 'LEGAL'
-    - 'LICENSE'
-    - '.clang-*'
-    - '.gitignore'
-    - 'lib/xdg/**'
-    - 'snap/**'
-    - 'docs/**'
-    - 'flatpak/**'
-    - '.github/**'
-    - 'src/base/platform/windows/**'
-    - 'src/base/platform/macos/**'
-    - '!.github/workflows/win.yml'
+
 jobs:
   build:
     runs-on: [fedora-39, fedora39]

@@ -1,5 +1,9 @@
 name: Build on macOS-x64
 
+permissions:
+  contents: write
+  discussions: write
+
 on:
   push:
     paths-ignore:
