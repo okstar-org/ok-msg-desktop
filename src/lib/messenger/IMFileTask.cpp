@@ -33,10 +33,10 @@ IMFileTask::IMFileTask(const QString& friendId, const File* file, IMFile* im)
         , m_seq{0}
         , m_sentBytes{0}
         , m_ack_seq{0} {
-    qDebug() << __func__ << "Create FileSender:" << m_file->id;
+    qDebug() << __func__ << "Create file sender:" << m_file->id;
 }
 
-IMFileTask::~IMFileTask() { qDebug() << __func__ << "Destroyed FileSender:" << m_file->id; }
+IMFileTask::~IMFileTask() { qDebug() << __func__ << "Destroy file sender:" << m_file->id; }
 
 void IMFileTask::run() {
     QThread::currentThread()->setObjectName(tr("FileSender-%1").arg(m_file->id));

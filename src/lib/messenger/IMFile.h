@@ -37,9 +37,11 @@ public:
                   const IMPeerId& peerId,
                   IMFile* sender,
                   File* file);
+    ~IMFileSession();
     void start();
     void stop();
 
+    File* getFile() { return file; }
     Session* getJingleSession() { return session; }
 
 protected:
@@ -123,10 +125,7 @@ private:
     // file
     QList<File> m_waitSendFiles;
 
-    // k: file.id
-    //    QMap<QString, IMFileTask*> m_fileSenderMap;
-
-    // 文件传输会话（key= session.dataId=file.id）
+    // 文件传输会话（key = session.dataId=file.id）
     QMap<QString, IMFileSession*> m_fileSessionMap;
 
 signals:

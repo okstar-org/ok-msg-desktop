@@ -85,39 +85,15 @@ void IMFileSession::start() {
     }
 }
 
+IMFileSession::~IMFileSession() { qDebug() << __func__ << "sId" << sId; }
+
 IMFile::IMFile(IM* im, QObject* parent) : IMJingle(im, parent) {
     qRegisterMetaType<File>("File");
     auto client = im->getClient();
     client->registerIqHandler(this, ExtIBB);
-    //  jingle = IMJingle::getInstance();
-    //  jingle->setFileHandlers(&fileHandlers);
-
-    /*file handler*/
-    //  connect(jingle, &IMFile::receiveFileChunk, this, [&](const IMContactId &friendId, const
-    //  QString &sId, int seq, const std::string &chunk) -> void {
-    //    for (auto handler : fileHandlers) {
-    //      handler->onFileRecvChunk(friendId.toString(), sId, seq, chunk);
-    //    }
-    //  });
-    //
-    //  connect(jingle, &IMFile::receiveFileFinished, this, [&](const IMContactId &friendId, const
-    //  QString &sId) -> void {
-    //    for (auto handler : fileHandlers) {
-    //      handler->onFileRecvFinished(friendId.toString(), sId);
-    //    }
-    //  });
-
-    //  connect(jingle, &IMFile::receiveFileRequest, this, [&](const QString &friendId, const File
-    //  &file) {
-    //    for (auto h : fileHandlers) {
-    //      h->onFileRequest(friendId, file);
-    //    }
-    //  });
 }
 
-IMFile::~IMFile() {
-    //    disconnect(jingle, &IMFile::receiveFileChunk, this);
-}
+IMFile::~IMFile() { qDebug() << __func__; }
 
 void IMFile::addFileHandler(FileHandler* handler) { fileHandlers.push_back(handler); }
 
@@ -129,7 +105,7 @@ void IMFile::fileRejectRequest(QString friendId, const File& file) {
 
 void IMFile::fileAcceptRequest(QString friendId, const File& file) {
     auto sId = file.sId;
-    qDebug() << __func__ << sId;
+    qDebug() << __func__ << "sId:" << sId;
     acceptFileRequest(friendId, file);
 }
 
@@ -222,7 +198,7 @@ void IMFile::rejectFileRequest(const QString& friendId, const QString& sId) {
 }
 
 void IMFile::acceptFileRequest(const QString& friendId, const File& file) {
-    qDebug() << __func__ << file.name;
+    qDebug() << __func__ << "file:" << file.name;
     qDebug() << __func__ << "sId:" << file.sId;
     qDebug() << __func__ << "fileId:" << file.id;
 
@@ -421,16 +397,23 @@ bool IMFile::handleIq(const IQ& iq) {
         }
         case InBandBytestream::IBBClose: {
             qDebug() << __func__ << QString("Close");
-            auto sId = qstring(ibb->sid());
-            //            auto ss = m_fileSessionMap.value(sId);
-            for (auto k : m_fileSessionMap.keys()) {
+            auto fileId = qstring(ibb->sid());
+            for (auto& k : m_fileSessionMap.keys()) {
                 auto ss = m_fileSessionMap.value(k);
-                ss->getJingleSession()->sessionTerminate(
-                        new Session::Reason(Session::Reason::Success));
+                auto file = ss->getFile();
+                if (file->id == fileId) {
+                    ss->getJingleSession()->sessionTerminate(
+                            new Session::Reason(Session::Reason::Success));
+                    m_fileSessionMap.remove(k);
+                    delete ss;
+                    break;
+                }
             }
+
             for (auto h : fileHandlers) {
-                h->onFileRecvFinished(friendId.toString(), sId);
+                h->onFileRecvFinished(friendId.toString(), fileId);
             }
+
             break;
         }
         default: {
