@@ -433,17 +433,17 @@ endif ()
 
 qt5_add_translation(
         ${PROJECT_NAME}_QM_FILES
-        translations/de.ts
-        translations/es.ts
-        translations/fr.ts
-        translations/it.ts
-        translations/ja.ts
-        translations/ko.ts
-        translations/pt.ts
-        translations/ru.ts
-        translations/ar.ts
-        translations/zh_CN.ts
-        translations/zh_TW.ts)
+    translations/de.xml
+    translations/es.xml
+    translations/fr.xml
+    translations/it.xml
+    translations/ja.xml
+    translations/ko.xml
+    translations/pt.xml
+    translations/ru.xml
+    translations/ar.xml
+    translations/zh_CN.xml
+    translations/zh_TW.xml)
 
 set(RESOURCE_NAME "${PROJECT_BINARY_DIR}/${PROJECT_NAME}.qrc.in")
 
