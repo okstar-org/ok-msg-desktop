@@ -24,8 +24,8 @@
 namespace lib::messenger {
 
 IMCall::IMCall(IM* im, QObject* parent) : IMJingle(im, parent) {
-    jingle = IMCall::getInstance();
-    connectJingle(jingle);
+    //    jingle = nullptr //IMCall::getInstance();
+    //    connectJingle(jingle);
 }
 
 void IMCall::addCallHandler(CallHandler* hdr) { callHandlers.push_back(hdr); }

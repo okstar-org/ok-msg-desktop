@@ -1,3 +1,15 @@
+/*
+ * Copyright (c) 2022 船山信息 chuanshaninfo.com
+ * The project is licensed under Mulan PubL v2.
+ * You can use this software according to the terms and conditions of the Mulan
+ * PubL v2. You may obtain a copy of Mulan PubL v2 at:
+ *          http://license.coscl.org.cn/MulanPubL-2.0
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PubL v2 for more details.
+ */
+
 //
 // Created by gaojie on 24-5-28.
 //
@@ -12,7 +24,7 @@ namespace lib::messenger {
 
 constexpr int BUF_SIZE = 100 * 1024;  // 100k
 
-IMFileTask::IMFileTask(const gloox::JID& friendId, const File* file, const IM* im)
+IMFileTask::IMFileTask(const QString& friendId, const File* file, IMFile* im)
         : m_friendId(friendId)
         , m_file(file)
         , m_im(im)
@@ -27,8 +39,7 @@ IMFileTask::IMFileTask(const gloox::JID& friendId, const File* file, const IM* i
 IMFileTask::~IMFileTask() { qDebug() << __func__ << "Destroyed FileSender:" << m_file->id; }
 
 void IMFileTask::run() {
-    QThread::currentThread()->setObjectName(
-            tr("FileSender-%1-%2").arg(qstring(m_friendId.username())).arg(m_file->id));
+    QThread::currentThread()->setObjectName(tr("FileSender-%1").arg(m_file->id));
 
     qDebug() << "Start file" << m_file->id;
 
@@ -37,15 +48,16 @@ void IMFileTask::run() {
      * https://xmpp.org/extensions/xep-0047.html#create
      *
      */
-    auto client = m_im->getClient();
+    IM* im = m_im->getIM();
+    auto client = im->getClient();
     //  client->registerStanzaExtension(new InBandBytestream::IBB);
 
     auto iqId = client->getID();
 
-    m_ibb = std::make_unique<InBandBytestream>(client,
-                                               client->logInstance(),  //
-                                               m_im->self(),           //
-                                               m_friendId,             //
+    m_ibb = std::make_unique<InBandBytestream>(client,                      //
+                                               client->logInstance(),       //
+                                               im->self(),                  //
+                                               JID(stdstring(m_friendId)),  //
                                                stdstring(m_file->id));
 
     m_ibb->registerBytestreamDataHandler(this);

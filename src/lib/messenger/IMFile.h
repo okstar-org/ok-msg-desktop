@@ -4,10 +4,10 @@
  * You can use this software according to the terms and conditions of the Mulan
  * PubL v2. You may obtain a copy of Mulan PubL v2 at:
  *          http://license.coscl.org.cn/MulanPubL-2.0
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY
- * KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
- * NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE. See the
- * Mulan PubL v2 for more details.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PubL v2 for more details.
  */
 #ifndef IMFILE_H
 #define IMFILE_H
@@ -25,6 +25,29 @@ namespace lib::messenger {
 
 class IMFileTask;
 class IM;
+
+/**
+ * 传输文件会话，一次会话代表一次文件传输请求
+ */
+class IMFileSession : public QObject, IMJingSession {
+    Q_OBJECT
+public:
+    IMFileSession(const QString& sId, const IMPeerId& peerId, IMFile* sender, File* file);
+    void stop();
+
+protected:
+private:
+    QString sId;
+    IMFile* sender;
+    File* file;
+
+    // 对方
+    IMPeerId target;
+    // 自己
+    QString self;
+
+    std::unique_ptr<IMFileTask> task;
+};
 
 class IMFile : public IMJingle {
     Q_OBJECT
@@ -45,6 +68,9 @@ public:
     void fileCancel(QString fileId);
     bool fileSendToFriend(const QString& f, const File& file);
 
+    void sessionOnAccept(const QString& sId, const IMPeerId& peerId) override;
+    void sessionOnTerminate(const QString& sId, const IMPeerId& peerId) override;
+
     /**
      * 启动文件发送任务
      * @param session
@@ -59,6 +85,8 @@ public:
      */
     void doStopFileSendTask(const Jingle::Session* session, const File& file);
 
+    std::vector<FileHandler*> getHandlers() { return fileHandlers; }
+
 private:
     void rejectFileRequest(const QString& friendId, const QString& sId);
     void acceptFileRequest(const QString& friendId, const File& file);
@@ -68,14 +96,16 @@ private:
     bool sendFile(const QString& friendId, const File& file);
     bool sendFileToResource(const JID& friendId, const File& file);
 
-    IM* im;
-    IMJingle* jingle;
     std::vector<FileHandler*> fileHandlers;
 
     // file
     QList<File> m_waitSendFiles;
+
     // k: file.id
-    QMap<QString, IMFileTask*> m_fileSenderMap;
+    //    QMap<QString, IMFileTask*> m_fileSenderMap;
+
+    // 文件传输会话（key= session.dataId=file.id）
+    QMap<QString, IMFileSession*> m_fileSessionMap;
 
 signals:
     void sendFileInfo(const QString& friendId, const File& file, int m_seq, int m_sentBytes,

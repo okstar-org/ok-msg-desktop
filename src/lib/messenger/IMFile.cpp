@@ -4,10 +4,10 @@
  * You can use this software according to the terms and conditions of the Mulan
  * PubL v2. You may obtain a copy of Mulan PubL v2 at:
  *          http://license.coscl.org.cn/MulanPubL-2.0
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY
- * KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
- * NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE. See the
- * Mulan PubL v2 for more details.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PubL v2 for more details.
  */
 
 #include "IMFile.h"
@@ -39,6 +39,45 @@ QDebug& operator<<(QDebug& debug, const File& f) {
     QDebugStateSaver saver(debug);
     debug.nospace() << f.toString();
     return debug;
+}
+
+IMFileSession::IMFileSession(const QString& sId,
+                             const IMPeerId& peerId,
+                             IMFile* sender_,
+                             File* file)
+        : sId(sId), target(peerId), sender(sender_), file(file) {
+    qDebug() << __func__ << "Create file task:" << sId;
+
+    task = std::make_unique<IMFileTask>(target.toString(), file, sender);
+    connect(task.get(), &IMFileTask::fileSending,
+            [&](const QString& m_friendId, const File& m_file, int m_seq, int m_sentBytes,
+                bool end) {
+                for (auto h : sender->getHandlers())
+                    h->onFileSendInfo(m_friendId, m_file, m_seq, m_sentBytes, end);
+            });
+
+    connect(task.get(), &IMFileTask::fileAbort,
+            [&](const QString& m_friendId, const File& m_file, int m_sentBytes) {
+                //            emit sendFileAbort(qstring(m_friendId.bare()), m_file, m_sentBytes);
+                for (auto h : sender->getHandlers()) {
+                    h->onFileSendAbort(m_friendId, m_file, m_sentBytes);
+                }
+            });
+
+    connect(task.get(), &IMFileTask::fileError,
+            [&](const QString& m_friendId, const File& m_file, int m_sentBytes) {
+                for (auto h : sender->getHandlers()) {
+                    h->onFileSendError(m_friendId, m_file, m_sentBytes);
+                }
+            });
+    task->start();
+}
+
+void IMFileSession::stop() {
+    qDebug() << __func__ << "Send file task will be clear." << sId;
+    if (task->isRunning()) {
+        task->forceQuit();
+    }
 }
 
 IMFile::IMFile(IM* im, QObject* parent) : IMJingle(im, parent) {
@@ -74,7 +113,7 @@ IMFile::~IMFile() {
     //    disconnect(jingle, &IMFile::receiveFileChunk, this);
 }
 
-void IMFile::addFileHandler(FileHandler* handler) { fileHandlers.emplace_back(handler); }
+void IMFile::addFileHandler(FileHandler* handler) { fileHandlers.push_back(handler); }
 
 void IMFile::fileRejectRequest(QString friendId, const File& file) {
     auto sId = file.sId;
@@ -105,7 +144,7 @@ bool IMFile::fileSendToFriend(const QString& f, const File& file) {
 
     auto bare = stdstring(f);
 
-    auto resources = im->getOnlineResources(bare);
+    auto resources = _im->getOnlineResources(bare);
     if (resources.empty()) {
         qWarning() << "Can not find online friends:" << f;
         return false;
@@ -117,64 +156,35 @@ bool IMFile::fileSendToFriend(const QString& f, const File& file) {
         sendFileToResource(jid, file);
     }
 
-    return jingle;
+    return true;
 }
 
 void IMFile::addFile(const File& f) { m_waitSendFiles.append(f); }
 
 void IMFile::doStartFileSendTask(const Session* session, const File& file) {
-    qDebug() << __func__ << file.sId;
-
-    auto* fileTask = new IMFileTask(session->remote(), &file, im);
-    connect(fileTask, &IMFileTask::fileSending,
-            [&](const JID& m_friendId, const File& m_file, int m_seq, int m_sentBytes, bool end) {
-                for (auto h : fileHandlers) {
-                    h->onFileSendInfo(qstring(m_friendId.bare()), m_file, m_seq, m_sentBytes, end);
-                }
-
-                //            emit sendFileInfo(qstring(m_friendId.bare()), m_file, m_seq,
-                //                              m_sentBytes, end);
-            });
-
-    connect(fileTask, &IMFileTask::fileAbort,
-            [&](const JID& m_friendId, const File& m_file, int m_sentBytes) {
-                //            emit sendFileAbort(qstring(m_friendId.bare()), m_file, m_sentBytes);
-                for (auto h : fileHandlers) {
-                    h->onFileSendAbort(qstring(m_friendId.bare()), m_file, m_sentBytes);
-                }
-            });
-
-    connect(fileTask, &IMFileTask::fileError,
-            [&](const JID& m_friendId, const File& m_file, int m_sentBytes) {
-                for (auto h : fileHandlers) {
-                    h->onFileSendError(qstring(m_friendId.bare()), m_file, m_sentBytes);
-                }
-                //            emit sendFileError(qstring(m_friendId.bare()), m_file,
-                //                               m_sentBytes);
-            });
-    fileTask->start();
-    m_fileSenderMap.insert(file.id, fileTask);
-    qDebug() << __func__ << ("Send file task has been stared.") << ((file.id));
+    //    qDebug() << __func__ << file.sId;
+    //    m_fileSenderMap.insert(file.id, task);
+    //    qDebug() << __func__ << ("Send file task has been stared.") << ((file.id));
 }
 
 void IMFile::doStopFileSendTask(const Session* session, const File& file) {
     Q_UNUSED(session)
     qDebug() << __func__ << file.sId;
-    auto* fileTask = m_fileSenderMap.value(file.sId);
-    if (!fileTask) {
-        return;
-    }
-
-    qDebug() << __func__ << "Send file task will be clear." << file.id;
-    if (fileTask->isRunning()) {
-        fileTask->forceQuit();
-    }
-    disconnect(fileTask);
-    delete fileTask;
+    //    auto* task = m_fileSenderMap.value(file.sId);
+    //    if (!task) {
+    //        return;
+    //    }
+    //
+    //    qDebug() << __func__ << "Send file task will be clear." << file.id;
+    //    if (task->isRunning()) {
+    //        task->forceQuit();
+    //    }
+    //    disconnect(task);
+    //    delete task;
 
     // 返回截断后续处理
-    m_fileSenderMap.remove(file.sId);
-    qDebug() << "Send file task has been clean." << file.id;
+    //    m_fileSenderMap.remove(file.sId);
+    //    qDebug() << "Send file task has been clean." << file.id;
 }
 
 /**
@@ -248,14 +258,14 @@ void IMFile::finishFileTransfer(const QString& friendId, const QString& sId) {
 }
 
 bool IMFile::sendFile(const QString& friendId, const File& file) {
-    qDebug() << __func__ << (friendId) << (file.name);
+    qDebug() << __func__ << friendId << (file.name);
     if (file.id.isEmpty()) {
         qWarning() << "file id is no existing";
         return false;
     }
 
     auto bare = stdstring(friendId);
-    auto resources = im->getOnlineResources(bare);
+    auto resources = _im->getOnlineResources(bare);
     if (resources.empty()) {
         qWarning() << "目标用户不在线！";
         return false;
@@ -305,6 +315,32 @@ bool IMFile::sendFileToResource(const JID& jid, const File& file) {
     addFile(nf);
 
     return true;
+}
+
+// 对方接收文件
+void IMFile::sessionOnAccept(const QString& sId, const IMPeerId& peerId) {
+    IMFileSession* sess = m_fileSessionMap.value(sId);
+    if (sess) {
+        qWarning() << "File session is existing, the sId is" << sId;
+        return;
+    }
+
+    // 创建session
+    for (auto& file : m_waitSendFiles) {
+        auto s = new IMFileSession(sId, peerId, this, &file);
+        m_fileSessionMap.insert(sId, s);
+    }
+}
+
+void IMFile::sessionOnTerminate(const QString& sId, const IMPeerId& peerId) {
+    IMFileSession* sess = m_fileSessionMap.value(sId);
+    if (!sess) {
+        qWarning() << "File session is no existing, the sId is" << sId;
+        return;
+    }
+
+    m_fileSessionMap.remove(sId);
+    delete sess;
 }
 
 }  // namespace messenger

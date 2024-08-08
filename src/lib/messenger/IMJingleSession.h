@@ -31,6 +31,11 @@ enum CallStage {
 using namespace gloox;
 using namespace gloox::Jingle;
 
+class IMJingSession {
+public:
+    virtual void stop() = 0;
+};
+
 class IMJingleSession : public QObject {
     Q_OBJECT
 public:

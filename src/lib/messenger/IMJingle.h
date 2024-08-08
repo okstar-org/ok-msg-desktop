@@ -54,10 +54,10 @@ class IMJingle : public QObject,
     Q_OBJECT
 
 public:
-    static IMJingle* getInstance();
-
     IMJingle(IM* im, QObject* parent = nullptr);
     ~IMJingle() override;
+
+    IM* getIM() { return _im; }
 
     virtual void handleMessageSession(gloox::MessageSession* session) override;
     virtual void handleMessage(const gloox::Message& msg, gloox::MessageSession* session = 0) override;
@@ -107,6 +107,11 @@ protected:
 
     IMJingleSession* cacheSessionInfo(Jingle::Session* session, lib::ortc::JingleCallType callType);
 
+    virtual void sessionOnAccept(const QString& sId, const IMPeerId& peerId) = 0;
+    virtual void sessionOnTerminate(const QString& sId, const IMPeerId& peerId) = 0;
+
+    IM* _im;
+
 private:
     QString getSessionByFriendId(const QString& friendId);
 
@@ -133,7 +138,6 @@ private:
     void doDescriptionInfo(const Jingle::Session::Jingle*, const IMPeerId&);
     void doInvalidAction(const Jingle::Session::Jingle*, const IMPeerId&);
 
-    IM* _im;
 
     //  std::vector<FileHandler *> *fileHandlers;
 

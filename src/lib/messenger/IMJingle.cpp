@@ -4,10 +4,10 @@
  * You can use this software according to the terms and conditions of the Mulan
  * PubL v2. You may obtain a copy of Mulan PubL v2 at:
  *          http://license.coscl.org.cn/MulanPubL-2.0
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY
- * KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
- * NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE. See the
- * Mulan PubL v2 for more details.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PubL v2 for more details.
  */
 
 #include "IMJingle.h"
@@ -107,12 +107,6 @@ IMJingle::IMJingle(IM* im, QObject* parent) : QObject(parent), _im(im) {
     }
 
     qDebug() << __func__ << ("Created");
-}
-
-IMJingle* IMJingle::getInstance() {
-    static IMJingle* jingle = nullptr;
-    assert(jingle);
-    return jingle;
 }
 
 IMJingle::~IMJingle() {
@@ -421,14 +415,16 @@ void IMJingle::doSessionTerminate(Jingle::Session* session,
                                   const IMPeerId& peerId) {
     auto sid = qstring(jingle->sid());
     qDebug() << __func__ << "sId:" << sid << "peerId" << peerId.toString();
+    //
+    //    auto ws = findSession(sid);
+    //    if (!ws) {
+    //        qWarning() << "session is no existing.";
+    //        return;
+    //    }
+    //
+    sessionOnTerminate(sid, peerId);
 
-    auto ws = findSession(sid);
-    if (!ws) {
-        qWarning() << "session is no existing.";
-        return;
-    }
-
-    ws->onTerminate();
+    //    ws->onTerminate();
 
     //  int ri = 0;
     //  for (auto &file : m_waitSendFiles) {
@@ -476,14 +472,7 @@ void IMJingle::doSessionAccept(Jingle::Session* session,
                                const IMPeerId& peerId) {
     auto sid = qstring(jingle->sid());
     qDebug() << __func__ << sid << "peerId:" << peerId.toString();
-
-    auto ws = findSession(sid);
-    if (!ws) {
-        qWarning() << "Unable to find session" << sid;
-        return;
-    }
-
-    ws->onAccept();
+    sessionOnAccept(sid, peerId);
 }
 
 void IMJingle::doSessionInfo(const Session::Jingle* jingle, const IMPeerId& friendId) {

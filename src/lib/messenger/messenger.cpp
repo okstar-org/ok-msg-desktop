@@ -81,7 +81,6 @@ void Messenger::start() {
     qDebug() << __func__;
     _im->start();
     connect(_im, &IM::started, [&]() {
-        _imFile = new IMFile(_im, this);
         emit started();
     });
 }
@@ -494,8 +493,8 @@ void MessengerCall::setRemoteMute(bool mute) {
 
 //File
 
-MessengerFile::MessengerFile(Messenger* messenger, QObject* parent) : QObject(parent){
-    fileSender = messenger->imFile();
+MessengerFile::MessengerFile(Messenger* messenger, QObject* parent) : QObject(parent) {
+    fileSender = new IMFile(messenger->im(), this);
 }
 
 void MessengerFile::fileRejectRequest(QString friendId, const File& file) {
@@ -516,6 +515,7 @@ void MessengerFile::fileCancel(QString fileId) {
 bool MessengerFile::fileSendToFriend(const QString& f, const File& file) {
     return fileSender->fileSendToFriend(f, file);
 }
+void MessengerFile::addFileHandler(FileHandler* h) { fileSender->addFileHandler(h); }
 
 }  // namespace messenger
 }  // namespace lib

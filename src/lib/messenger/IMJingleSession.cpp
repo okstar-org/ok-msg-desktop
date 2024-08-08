@@ -45,11 +45,14 @@ IMJingleSession::~IMJingleSession() { qDebug() << __func__ << sId; }
 Session* IMJingleSession::getSession() const { return session; }
 
 void IMJingleSession::onAccept() {
+    // 对方接收
+    qDebug() << __func__;
+
     if (m_callType == lib::ortc::JingleCallType::file) {
-        // file
-        //      for (auto &file : m_waitSendFiles) {
-        //        doStartFileSendTask(session, file);
-        //      }
+        //  file
+        //        for (auto& file : m_waitSendFiles) {
+        //            doStartFileSendTask(session, file);
+        //        }
     } else {
         // av
         auto peerId = session->remote().full();
