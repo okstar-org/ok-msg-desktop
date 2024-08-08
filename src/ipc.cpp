@@ -11,7 +11,7 @@
  */
 
 #include "ipc.h"
-#include <unistd.h>
+
 #include <QCoreApplication>
 #include <QDebug>
 #include <QThread>
@@ -125,7 +125,7 @@ time_t IPC::postEvent(const QString& name, const QByteArray& data, uint32_t dest
         memcpy(evt->data, data.constData(), data.length());
         mem->lastEvent = evt->posted = result = qMax(mem->lastEvent + 1, time(nullptr));
         evt->dest = dest;
-        evt->sender = getpid();
+//        evt->sender = getpid();
         qDebug() << "postEvent " << name << "to" << dest;
     }
 
