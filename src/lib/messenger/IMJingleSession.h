@@ -33,6 +33,7 @@ using namespace gloox::Jingle;
 
 class IMJingSession {
 public:
+    virtual void start() = 0;
     virtual void stop() = 0;
 };
 

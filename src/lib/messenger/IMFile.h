@@ -32,8 +32,15 @@ class IM;
 class IMFileSession : public QObject, IMJingSession {
     Q_OBJECT
 public:
-    IMFileSession(const QString& sId, const IMPeerId& peerId, IMFile* sender, File* file);
+    IMFileSession(const QString& sId,
+                  Jingle::Session* session_,
+                  const IMPeerId& peerId,
+                  IMFile* sender,
+                  File* file);
+    void start();
     void stop();
+
+    Session* getJingleSession() { return session; }
 
 protected:
 private:
@@ -43,8 +50,12 @@ private:
 
     // 对方
     IMPeerId target;
+
     // 自己
     QString self;
+
+    // session
+    Session* session;
 
     std::unique_ptr<IMFileTask> task;
 };
@@ -70,12 +81,17 @@ public:
 
     // 收到对方发起
     void sessionOnInitiate(const QString& sId,
+                           Jingle::Session* session,
                            const Jingle::Session::Jingle* jingle,
                            const IMPeerId& peerId);
     // 对方接受
-    void sessionOnAccept(const QString& sId, const IMPeerId& peerId) override;
+    void sessionOnAccept(const QString& sId,
+                         Jingle::Session* session,
+                         const IMPeerId& peerId) override;
     // 对方终止
     void sessionOnTerminate(const QString& sId, const IMPeerId& peerId) override;
+
+    bool handleIq(const IQ& iq) override;
 
     /**
      * 启动文件发送任务

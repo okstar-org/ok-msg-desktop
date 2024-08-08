@@ -107,9 +107,12 @@ protected:
 
     IMJingleSession* cacheSessionInfo(Jingle::Session* session, lib::ortc::JingleCallType callType);
 
-    virtual void sessionOnAccept(const QString& sId, const IMPeerId& peerId) = 0;
+    virtual void sessionOnAccept(const QString& sId,
+                                 Jingle::Session* session,
+                                 const IMPeerId& peerId) = 0;
     virtual void sessionOnTerminate(const QString& sId, const IMPeerId& peerId) = 0;
     virtual void sessionOnInitiate(const QString& sId,
+                                   Jingle::Session* session,
                                    const Jingle::Session::Jingle* jingle,
                                    const IMPeerId& peerId) = 0;
     IM* _im;

@@ -40,7 +40,6 @@ IMJingle::IMJingle(IM* im, QObject* parent) : QObject(parent), _im(im) {
 
     auto client = _im->getClient();
     client->registerMessageHandler(this);
-    client->registerIqHandler(this, ExtIBB);
     client->registerStanzaExtension(new Jingle::JingleMessage());
 
     // jingle session
@@ -342,7 +341,7 @@ void IMJingle::doSessionInitiate(Jingle::Session* session,
     auto sid = qstring(session->sid());
     qDebug() << __func__ << "sId:" << sid << "peerId:" << peerId.toString();
 
-    sessionOnInitiate(sid, jingle, peerId);
+    sessionOnInitiate(sid, session, jingle, peerId);
 
     //    bool isFile = false;
     //    for (auto p : jingle->plugins()) {
@@ -476,7 +475,7 @@ void IMJingle::doSessionAccept(Jingle::Session* session,
                                const IMPeerId& peerId) {
     auto sid = qstring(jingle->sid());
     qDebug() << __func__ << sid << "peerId:" << peerId.toString();
-    sessionOnAccept(sid, peerId);
+    sessionOnAccept(sid, session, peerId);
 }
 
 void IMJingle::doSessionInfo(const Session::Jingle* jingle, const IMPeerId& friendId) {
@@ -637,39 +636,7 @@ void IMJingle::retractJingleMessage(const QString& friendId, const QString& call
 }
 
 bool IMJingle::handleIq(const IQ& iq) {
-    const auto* ibb = iq.findExtension<InBandBytestream::IBB>(ExtIBB);
-    if (ibb) {
-        IMContactId friendId(qstring(iq.from().bare()));
-        qDebug() << __func__ << QString("IBB stream id:%1").arg(qstring(ibb->sid()));
-
-        switch (ibb->type()) {
-            case InBandBytestream::IBBOpen: {
-                qDebug() << __func__ << QString("Open");
-                break;
-            }
-                //      case InBandBytestream::IBBData: {
-                //        qDebug() << __func__ << QString("Data seq:%1").arg(ibb->seq());
-                //        emit receiveFileChunk(friendId, qstring(ibb->sid()), ibb->seq(),
-                //        ibb->data()); break;
-                //      }
-                //      case InBandBytestream::IBBClose: {
-                //        qDebug() << __func__ << QString("Close");
-                //        emit receiveFileFinished(friendId, qstring(ibb->sid()));
-                //        break;
-                //      }
-            default: {
-            }
-        }
-
-        IQ riq(IQ::IqType::Result, iq.from(), iq.id());
-        _im->getClient()->send(riq);
-    }
-
     return true;
-    //    auto services = iq.tag()->findChild("services", "xmlns",
-    //    XMLNS_EXTERNAL_SERVICE_DISCOVERY); if (services) {
-    //      mExtDisco = ExtDisco(services);
-    //    }
 }
 
 void IMJingle::handleIqID(const IQ& iq, int context) {}

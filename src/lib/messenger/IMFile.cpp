@@ -42,10 +42,11 @@ QDebug& operator<<(QDebug& debug, const File& f) {
 }
 
 IMFileSession::IMFileSession(const QString& sId,
+                             Jingle::Session* session_,
                              const IMPeerId& peerId,
                              IMFile* sender_,
                              File* file)
-        : sId(sId), target(peerId), sender(sender_), file(file) {
+        : sId(sId), target(peerId), sender(sender_), file(file), session(session_) {
     qDebug() << __func__ << "Create file task:" << sId;
 
     task = std::make_unique<IMFileTask>(target.toString(), file, sender);
@@ -58,7 +59,6 @@ IMFileSession::IMFileSession(const QString& sId,
 
     connect(task.get(), &IMFileTask::fileAbort,
             [&](const QString& m_friendId, const File& m_file, int m_sentBytes) {
-                //            emit sendFileAbort(qstring(m_friendId.bare()), m_file, m_sentBytes);
                 for (auto h : sender->getHandlers()) {
                     h->onFileSendAbort(m_friendId, m_file, m_sentBytes);
                 }
@@ -70,7 +70,6 @@ IMFileSession::IMFileSession(const QString& sId,
                     h->onFileSendError(m_friendId, m_file, m_sentBytes);
                 }
             });
-    task->start();
 }
 
 void IMFileSession::stop() {
@@ -80,9 +79,16 @@ void IMFileSession::stop() {
     }
 }
 
+void IMFileSession::start() {
+    if (task && !task->isRunning()) {
+        task->start();
+    }
+}
+
 IMFile::IMFile(IM* im, QObject* parent) : IMJingle(im, parent) {
     qRegisterMetaType<File>("File");
-
+    auto client = im->getClient();
+    client->registerIqHandler(this, ExtIBB);
     //  jingle = IMJingle::getInstance();
     //  jingle->setFileHandlers(&fileHandlers);
 
@@ -216,10 +222,12 @@ void IMFile::rejectFileRequest(const QString& friendId, const QString& sId) {
 }
 
 void IMFile::acceptFileRequest(const QString& friendId, const File& file) {
-    qDebug() << __func__ << file.name << file.sId << file.id;
+    qDebug() << __func__ << file.name;
+    qDebug() << __func__ << "sId:" << file.sId;
+    qDebug() << __func__ << "fileId:" << file.id;
 
-    auto* ws = findSession(file.sId);
-    if (!ws) {
+    auto session = m_fileSessionMap.value(file.sId);
+    if (!session) {
         qWarning() << "Unable to find session sId:" << file.sId;
         return;
     }
@@ -239,7 +247,8 @@ void IMFile::acceptFileRequest(const QString& friendId, const File& file) {
     pluginList.emplace_back(ibb);
 
     auto c = new Jingle::Content("file", pluginList);
-    ws->getSession()->sessionAccept(c);
+    auto js = session->getJingleSession();
+    if (js) js->sessionAccept(c);
 }
 
 void IMFile::finishFileRequest(const QString& friendId, const QString& sId) {
@@ -318,7 +327,7 @@ bool IMFile::sendFileToResource(const JID& jid, const File& file) {
 }
 
 // 对方接收文件
-void IMFile::sessionOnAccept(const QString& sId, const IMPeerId& peerId) {
+void IMFile::sessionOnAccept(const QString& sId, Jingle::Session* session, const IMPeerId& peerId) {
     IMFileSession* sess = m_fileSessionMap.value(sId);
     if (sess) {
         qWarning() << "File session is existing, the sId is" << sId;
@@ -327,7 +336,8 @@ void IMFile::sessionOnAccept(const QString& sId, const IMPeerId& peerId) {
 
     // 创建session
     for (auto& file : m_waitSendFiles) {
-        auto s = new IMFileSession(sId, peerId, this, &file);
+        auto s = new IMFileSession(sId, session, peerId, this, &file);
+        s->start();
         m_fileSessionMap.insert(sId, s);
     }
 }
@@ -338,12 +348,12 @@ void IMFile::sessionOnTerminate(const QString& sId, const IMPeerId& peerId) {
         qWarning() << "File session is no existing, the sId is" << sId;
         return;
     }
-
     m_fileSessionMap.remove(sId);
     delete sess;
 }
 
 void IMFile::sessionOnInitiate(const QString& sId,
+                               Jingle::Session* session,
                                const Jingle::Session::Jingle* jingle,
                                const IMPeerId& peerId) {
     qDebug() << __func__ << "receive file:" << sId;
@@ -360,21 +370,22 @@ void IMFile::sessionOnInitiate(const QString& sId,
                         //                        auto sId = qstring(session->sid());
 
                         qDebug() << "receive file:" << id << sId;
-                        File file0 = {.id = id,
-                                      .sId = sId,
-                                      .name = qstring(f.name),
-                                      .path = {},
-                                      .size = (quint64)f.size,
-                                      .status = FileStatus::INITIALIZING,
-                                      .direction = FileDirection::RECEIVING};
-                        qDebug() << "receive file:" << file0.toString();
+                        File* file0 = new File{.id = id,
+                                               .sId = sId,
+                                               .name = qstring(f.name),
+                                               .path = {},
+                                               .size = (quint64)f.size,
+                                               .status = FileStatus::INITIALIZING,
+                                               .direction = FileDirection::RECEIVING};
+                        qDebug() << "receive file:" << file0->sId;
                         for (auto h : fileHandlers) {
-                            h->onFileRequest(peerId.toFriendId(), file0);
+                            h->onFileRequest(peerId.toFriendId(), *file0);
                         }
 
-                        //                  emit receiveFileRequest(peerId.toFriendId(), file);
+                        // 创建session
+                        auto s = new IMFileSession(sId, session, peerId, this, file0);
+                        m_fileSessionMap.insert(sId, s);
                     }
-                    //                    isFile = true;
                 }
                 break;
             }
@@ -382,6 +393,53 @@ void IMFile::sessionOnInitiate(const QString& sId,
             }
         }
     }
+}
+
+bool IMFile::handleIq(const IQ& iq) {
+    const auto* ibb = iq.findExtension<InBandBytestream::IBB>(ExtIBB);
+    if (!ibb) {
+        return false;
+    }
+
+    IMContactId friendId(qstring(iq.from().bare()));
+    qDebug() << __func__ << QString("IBB stream id:%1").arg(qstring(ibb->sid()));
+
+    switch (ibb->type()) {
+        case InBandBytestream::IBBOpen: {
+            qDebug() << __func__ << QString("Open");
+            break;
+        }
+        case InBandBytestream::IBBData: {
+            auto sId = qstring(ibb->sid());
+
+            qDebug() << __func__ << QString("Data seq:%1").arg(ibb->seq());
+            for (auto h : fileHandlers) {
+                h->onFileRecvChunk(friendId.toString(), sId, ibb->seq(), ibb->data());
+            }
+
+            break;
+        }
+        case InBandBytestream::IBBClose: {
+            qDebug() << __func__ << QString("Close");
+            auto sId = qstring(ibb->sid());
+            //            auto ss = m_fileSessionMap.value(sId);
+            for (auto k : m_fileSessionMap.keys()) {
+                auto ss = m_fileSessionMap.value(k);
+                ss->getJingleSession()->sessionTerminate(
+                        new Session::Reason(Session::Reason::Success));
+            }
+            for (auto h : fileHandlers) {
+                h->onFileRecvFinished(friendId.toString(), sId);
+            }
+            break;
+        }
+        default: {
+        }
+    }
+
+    IQ riq(IQ::IqType::Result, iq.from(), iq.id());
+    _im->getClient()->send(riq);
+    return true;
 }
 
 }  // namespace messenger
