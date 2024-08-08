@@ -222,7 +222,6 @@ Widget::Widget(IAudioControl& audio, QWidget* parent)  //
     new QShortcut(QKeySequence(Qt::CTRL, Qt::Key_PageDown), this, SLOT(nextContact()));
     new QShortcut(Qt::Key_F11, this, SLOT(toggleFullscreen()));
 
-
     //    onSeparateWindowChanged(settings.getSeparateWindow(), false);
 
     //  ui->addButton->setCheckable(true);
@@ -264,6 +263,9 @@ Widget::Widget(IAudioControl& audio, QWidget* parent)  //
 
     connect(&settings, &Settings::separateWindowChanged, this, &Widget::onSeparateWindowClicked);
 
+#ifdef Q_OS_MAC
+    // Nexus::getInstance().updateWindows();
+#endif
 
     init();
 }
@@ -1352,7 +1354,6 @@ void Widget::onTryCreateTrayIcon() {
                 show();
             }
 
-
         } else if (!isVisible()) {
             show();
         }
@@ -1431,23 +1432,21 @@ void Widget::retranslateUi() {
     ui->tabWidget->setTabText(1, tr("Contact"));
     ui->tabWidget->setTabText(2, tr("Settings"));
 
+    // #ifdef Q_OS_MAC
+    //   Nexus::getInstance().retranslateUi();
 
-// #ifdef Q_OS_MAC
-//   Nexus::getInstance().retranslateUi();
+    //   filterMenu->menuAction()->setText(tr("Filter..."));
 
-//   filterMenu->menuAction()->setText(tr("Filter..."));
-
-//   fileMenu->setText(tr("File"));
-//   editMenu->setText(tr("Edit"));
-//   contactMenu->setText(tr("Contacts"));
-//   changeStatusMenu->menuAction()->setText(tr("Change Status"));
-//   editProfileAction->setText(tr("Edit Profile"));
-//   logoutAction->setText(tr("Log out"));
-//   addContactAction->setText(tr("Add Contact..."));
-//   nextConversationAction->setText(tr("Next Conversation"));
-//   previousConversationAction->setText(tr("Previous Conversation"));
-// #endif
-
+    //   fileMenu->setText(tr("File"));
+    //   editMenu->setText(tr("Edit"));
+    //   contactMenu->setText(tr("Contacts"));
+    //   changeStatusMenu->menuAction()->setText(tr("Change Status"));
+    //   editProfileAction->setText(tr("Edit Profile"));
+    //   logoutAction->setText(tr("Log out"));
+    //   addContactAction->setText(tr("Add Contact..."));
+    //   nextConversationAction->setText(tr("Next Conversation"));
+    //   previousConversationAction->setText(tr("Previous Conversation"));
+    // #endif
 }
 
 void Widget::showEvent(QShowEvent* e) { QWidget::showEvent(e); }

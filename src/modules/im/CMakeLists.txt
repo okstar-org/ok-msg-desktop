@@ -41,6 +41,9 @@ include_directories(${AVCODEC_INCLUDE_DIRS})
 include_directories(${AVDEVICE_INCLUDE_DIRS})
 include_directories(${QRENCODE_INCLUDE_DIRS})
 
+
+#include(./cmake/Dependencies.cmake)
+ 
 set(CMAKE_AUTOUIC_SEARCH_PATHS ./src src/widget src/widget/form)
 
 qt5_wrap_ui(
@@ -90,7 +93,7 @@ set(${PROJECT_NAME}_SOURCES
         src/chatlog/chatlog.cpp
         src/chatlog/chatlog.h
         src/chatlog/chatmessage.cpp
-        src/chatlog/chatmessage.h
+        src/chatlog/chatmessage.h 
         src/chatlog/content/filetransferwidget.cpp
         src/chatlog/content/filetransferwidget.h
         src/chatlog/content/image.cpp
@@ -300,7 +303,7 @@ set(${PROJECT_NAME}_SOURCES
         src/widget/form/settings/privacyform.cpp
         src/widget/form/settings/privacyform.h
         src/widget/form/settings/userinterfaceform.h
-        src/widget/form/settings/userinterfaceform.cpp
+        src/widget/form/settings/userinterfaceform.cpp 
         src/widget/form/settings/verticalonlyscroller.cpp
         src/widget/form/settings/verticalonlyscroller.h
         src/widget/form/settingswidget.cpp
@@ -309,12 +312,12 @@ set(${PROJECT_NAME}_SOURCES
         src/widget/form/tabcompleter.h
     src/widget/form/CallDurationForm.h
     src/widget/form/CallDurationForm.cpp
-        src/widget/friendlistlayout.cpp
+        src/widget/friendlistlayout.cpp   
         src/widget/friendlistlayout.h
-        src/widget/friendlistwidget.cpp
+        src/widget/friendlistwidget.cpp        
         src/widget/friendlistwidget.h
         src/widget/friendwidget.cpp
-        src/widget/friendwidget.h
+        src/widget/friendwidget.h 
         src/widget/genericchatitemlayout.cpp
         src/widget/genericchatitemlayout.h
         src/widget/genericchatitemwidget.cpp

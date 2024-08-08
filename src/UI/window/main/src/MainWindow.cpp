@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (c) 2022 船山信息 chuanshaninfo.com
  * The project is licensed under Mulan PubL v2.
  * You can use this software according to the terms and conditions of the Mulan
@@ -193,6 +193,9 @@ void MainWindow::onTryCreateTrayIcon() {
                 show();
             }
 
+#ifdef Q_OS_MAC
+            // Nexus::getInstance().dockMenu->setAsDockMenu();
+#endif
         } else if (!isVisible()) {
             show();
         }
