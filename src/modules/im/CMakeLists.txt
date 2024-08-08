@@ -17,7 +17,7 @@ include_directories(${PROJECT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR})
     pkg_check_modules(OpenAL REQUIRED openal)
     pkg_check_modules(sqlite3 REQUIRED sqlite3)
     pkg_check_modules(exif REQUIRED libexif)
-    pkg_check_modules(OpenSSL REQUIRED libssl libcrypto)
+#    pkg_check_modules(OpenSSL REQUIRED libssl libcrypto)
     pkg_check_modules(JPEG REQUIRED libjpeg)
 
 
