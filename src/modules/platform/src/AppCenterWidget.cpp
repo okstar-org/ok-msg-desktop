@@ -82,7 +82,7 @@ void AppCenterWidget::clientConnected(WebSocketTransport* transport) {
     auto backend = new Backend(session->getSignInInfo().stackUrl);
     backend->setHeader("Authorization", token.tokenType + " " + token.accessToken);
     backend->getAppList([=](QByteArray body, QString name) {
-        auto arr = Jsons::toJSON(body).object().value("data").toObject().value("list").toArray();
+        auto arr = ok::base::Jsons::toJSON(body).object().value("data").toObject().value("list").toArray();
         for (auto app : arr) {
             auto a = app.toObject();
             //           qDebug() <<QString::fromUtf8( QJsonDocument(a).toJson());

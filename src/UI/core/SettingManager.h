@@ -28,7 +28,7 @@ public:
     ~SettingManager();
 
     void saveAccount(QString& account, QString& password);
-    void getAccount(Fn<void(QString account, QString password)> callback);
+    void getAccount(ok::base::Fn<void(QString account, QString password)> callback);
     void clearAccount();
 
 private:

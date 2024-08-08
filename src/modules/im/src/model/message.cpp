@@ -51,7 +51,7 @@ std::vector<Message> MessageProcessor::processOutgoingMessage(bool isAction,
     std::transform(splitMsgs.begin(), splitMsgs.end(), std::back_inserter(ret),
                    [&](const QString& part) {
                        Message message;
-                       message.id = base::UUID::make();
+                       message.id = ok::base::UUID::make();
                        message.isAction = isAction;
                        message.to = f.getId();
                        message.from = idHandler.getSelfPeerId().toString();

@@ -89,8 +89,8 @@ void CoreFile::sendFile(QString friendId, QString filename, QString filePath, qu
 
     auto sender = messenger->getSelfId().toFriendId();
 
-    auto fileId = base::UUID::make();
-    auto sId = base::UUID::make();
+    auto fileId = ok::base::UUID::make();
+    auto sId = ok::base::UUID::make();
 
     auto file = ToxFile{sender,
                         friendId,

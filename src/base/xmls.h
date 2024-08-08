@@ -15,8 +15,8 @@
 //
 
 #include <QDomElement>
-
-namespace base {
+#include<QTextStream>
+namespace ok::base {
 class Xmls {
 public:
     inline static QDomDocument parse(const QString& xmlData) {
@@ -45,4 +45,4 @@ public:
     }
 };
 
-}  // namespace base
+}  // namespace ok::base

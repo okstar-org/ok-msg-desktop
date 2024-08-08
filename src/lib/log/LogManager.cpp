@@ -40,7 +40,7 @@ void logMessageHandler(QtMsgType type, const QMessageLogContext& ctxt, const QSt
     }
 
     // Time should be in UTC to save user privacy on log sharing
-    QString time = ::base::Times::formatTime(::base::Times::now(), "yy-MM-dd HH:mm:ss.zzz");
+    QString time = ok::base::Times::formatTime(ok::base::Times::now(), "yy-MM-dd HH:mm:ss.zzz");
     QString line = QString("[%1] [%2] [%3:%4] - ")
                            .arg(time)
                            .arg(QThread::currentThread()->objectName())
@@ -85,7 +85,7 @@ LogManager::LogManager() {
     qDebug() << "Log file dir is:" << logFileDir;
 
     logName = APPLICATION_NAME "-" +
-              ::base::Times::formatTime(::base::Times::now(), "yyyyMMddHHmmss") + "-" +
+              ::ok::base::Times::formatTime(::ok::base::Times::now(), "yyyyMMddHHmmss") + "-" +
               QString::number(base::OkProcess::selfPid()) + ".log";
 
     QString logFilePath = logFileDir.path() + QDir::separator() + logName;

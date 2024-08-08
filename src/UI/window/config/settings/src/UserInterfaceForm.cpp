@@ -50,7 +50,7 @@ UserInterfaceForm::UserInterfaceForm(SettingsWidget* myParent)
     parent = myParent;
 
     // block all child signals during initialization
-    const RecursiveSignalBlocker signalBlocker(this);
+    const ok::base::RecursiveSignalBlocker signalBlocker(this);
 
 //    Settings& s = Settings::getInstance();
 //    const QFont chatBaseFont = s.getChatMessageFont();
@@ -250,7 +250,7 @@ void UserInterfaceForm::on_dateFormats_editTextChanged(const QString& format) {
  */
 void UserInterfaceForm::retranslateUi() {
     // Block signals during translation to prevent settings change
-    RecursiveSignalBlocker signalBlocker{this};
+    ok::base::RecursiveSignalBlocker signalBlocker{this};
 
     bodyUI->retranslateUi(this);
 

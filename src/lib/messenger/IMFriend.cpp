@@ -82,7 +82,7 @@ IMFriend::IMFriend(gloox::RosterItem* item)  //
         , alias{qstring(item->name())}
         , subscription{item->subscription()}
         , online{item->online()}
-        , groups{qstringlist(item->groups())} {}
+        , groups{ok::base::qstringlist(item->groups())} {}
 
 IMFriend::IMFriend() {}
 

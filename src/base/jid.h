@@ -17,8 +17,7 @@
 #include <QHash>
 #include <QScopedPointer>
 #include <QString>
-
-namespace base {
+namespace ok::base {
 class StringPrepCache {
 public:
     static bool nameprep(const QString& in, int maxbytes, QString& out);
@@ -88,6 +87,6 @@ private:
 Q_DECL_PURE_FUNCTION inline uint qHash(const Jid& key, uint seed = 0) Q_DECL_NOTHROW {
     return qHash(key.full(), seed);
 }
-}  // namespace base
+}
 
 #endif  // XMPP_JID_H

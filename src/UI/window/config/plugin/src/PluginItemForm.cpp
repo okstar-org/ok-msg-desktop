@@ -57,7 +57,7 @@ void PluginItemForm::showEvent(QShowEvent*) { downLogo(); }
 void PluginItemForm::onLogoDownloaded(const QString& fileName, QByteArray& img) {
     qDebug() << "logo downloaded" << fileName;
     QPixmap pixmap;
-    if (base::Images::putToPixmap(img, pixmap)) {
+    if (ok::base::Images::putToPixmap(img, pixmap)) {
         setLogo(pixmap);
     }
 }

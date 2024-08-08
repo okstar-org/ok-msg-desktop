@@ -406,7 +406,7 @@ QIcon PsiIcon::icon() const {
     }
 
     if (d->svgRenderer) {
-        auto eng = new SvgIconEngine(d->name, d->svgRenderer);
+        auto eng = new ok::base::SvgIconEngine(d->name, d->svgRenderer);
         return QIcon(eng);
     }
     const_cast<Private*>(d.data())->icon = new QIcon(d->impix.pixmap());

@@ -12,13 +12,10 @@
 #pragma once
 
 #include <QString>
-
-namespace lib {
-namespace base {
+namespace ok::base {
 
 class Hashs {
 public:
     static QString sha1(const QByteArray& buf);
 };
-}  // namespace base
-}  // namespace lib
+}  // namespace ok::base

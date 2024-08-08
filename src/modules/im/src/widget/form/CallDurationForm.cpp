@@ -37,7 +37,7 @@ CallDurationForm::CallDurationForm(QWidget* parent)
 }
 
 CallDurationForm::~CallDurationForm() {
-    QString dhms = base::secondsToDHMS(timeElapsed.elapsed() / 1000);
+    QString dhms = ok::base::secondsToDHMS(timeElapsed.elapsed() / 1000);
 
     //    QString mess = error ? tr("Call with %1 ended unexpectedly. %2")
     //                         : tr("Call with %1 ended. %2");
@@ -64,7 +64,7 @@ void CallDurationForm::reloadTheme() {
 void CallDurationForm::closeEvent(QCloseEvent* e) {}
 
 void CallDurationForm::onUpdateTime() {
-    auto time = tr("Call duration: ") + base::secondsToDHMS(timeElapsed.elapsed() / 1000);
+    auto time = tr("Call duration: ") + ok::base::secondsToDHMS(timeElapsed.elapsed() / 1000);
     ui->duration->setText(time);
 }
 

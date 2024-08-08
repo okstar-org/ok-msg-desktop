@@ -1208,7 +1208,7 @@ QStringList PluginManager::resources(int account, const QString& jid) const {
 QString PluginManager::realJid(int account, const QString& jid) const {
     OkAccount* acc = accountIds_.account(account);
     if (acc) {
-        ::base::Jid realJid = acc->realJid(::base::Jid(jid));
+        ok::base::Jid realJid = acc->realJid(ok::base::Jid(jid));
         return realJid.isNull() ? jid : realJid.full();
     }
     return jid;

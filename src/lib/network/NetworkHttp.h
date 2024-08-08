@@ -30,11 +30,11 @@ class QNetworkReply;
 
 namespace network {
 
-using HttpErrorFn = Fn<void(int statusCode, const QByteArray body)>;
-using HttpDownloadProgressFn = Fn<void(qint64 bytesReceived, qint64 bytesTotal)>;
-using HttpUploadProgressFn = Fn<void(qint64 bytesSent, qint64 bytesTotal)>;
-using HttpBodyFn = Fn<void(QByteArray body, QString filename)>;
-using HttpJsonBodyFn = Fn<void(QJsonDocument json, QString filename)>;
+using HttpErrorFn = ok::base::Fn<void(int statusCode, const QByteArray body)>;
+using HttpDownloadProgressFn = ok::base::Fn<void(qint64 bytesReceived, qint64 bytesTotal)>;
+using HttpUploadProgressFn = ok::base::Fn<void(qint64 bytesSent, qint64 bytesTotal)>;
+using HttpBodyFn = ok::base::Fn<void(QByteArray body, QString filename)>;
+using HttpJsonBodyFn = ok::base::Fn<void(QJsonDocument json, QString filename)>;
 
 class NetworkHttp : public QObject {
     Q_OBJECT
@@ -61,7 +61,7 @@ public:
     QByteArray get(const QUrl& url, const HttpDownloadProgressFn& downloadProgress = nullptr);
 
     bool getJson(const QUrl& url,
-                 Fn<void(QJsonDocument)> fn = nullptr,
+                 ok::base::Fn<void(QJsonDocument)> fn = nullptr,
                  const HttpErrorFn& err = nullptr);
 
     bool post(const QUrl& url,
@@ -87,14 +87,14 @@ public:
                   const HttpErrorFn& failed = nullptr);
 
     void PostFormData(const QUrl& url, QFile* file, const HttpUploadProgressFn& uploadProgress,
-                      Fn<void(const QJsonObject& json)> readyRead);
+                      ok::base::Fn<void(const QJsonObject& json)> readyRead);
 
     virtual void PostFormData(const QUrl& url,
                               const QByteArray& byteArray,
                               const QString& contentType,
                               const QString& filename,
                               const HttpUploadProgressFn& uploadProgress,
-                              Fn<void(const QJsonObject&)>
+                              ok::base::Fn<void(const QJsonObject&)>
                                       readyRead);
 
     void doRequest(QNetworkRequest& req, QNetworkReply* reply, const HttpBodyFn& fn = nullptr,

@@ -31,7 +31,7 @@ public:
     ImageLoader(QObject* parent = nullptr);
     ~ImageLoader();
 
-    void load(const QString& url, Fn<void(const QByteArray&)> fn);
+    void load(const QString& url, ok::base::Fn<void(const QByteArray&)> fn);
 
 private:
 };

@@ -75,7 +75,7 @@ public:
 
     void appendIce(const ortc::OIceUdp& ice) { pendingIceCandidates.emplace_back(ice); }
 
-    void pollIce(Fn<void(const ortc::OIceUdp&)> fn) {
+    void pollIce(ok::base::Fn<void(const ortc::OIceUdp&)> fn) {
         while (!pendingIceCandidates.empty()) {
             fn(pendingIceCandidates.back());
             pendingIceCandidates.pop_back();

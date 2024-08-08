@@ -2,7 +2,7 @@
 
 #include <QStyleOptionButton>
 #include <QStylePainter>
-
+namespace ok::base {
 void StyledIconButton::paintEvent(QPaintEvent* event) {
     if (icon_use_indicator) {
         QStylePainter p(this);
@@ -15,4 +15,5 @@ void StyledIconButton::paintEvent(QPaintEvent* event) {
         p.drawPrimitive(QStyle::PE_IndicatorCheckBox, option);
     }
     QPushButton::paintEvent(event);
+}
 }

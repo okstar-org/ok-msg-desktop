@@ -29,7 +29,7 @@ ImageLoader::ImageLoader(QObject* parent) : QObject(parent) {}
 
 ImageLoader::~ImageLoader() {}
 
-void ImageLoader::load(const QString& url, Fn<void(const QByteArray&)> fn) {
+void ImageLoader::load(const QString& url, ok::base::Fn<void(const QByteArray&)> fn) {
     QNetworkAccessManager manager;
     QEventLoop loop;
 

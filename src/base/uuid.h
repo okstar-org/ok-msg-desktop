@@ -19,8 +19,7 @@
 
 #include <QString>
 #include <QUuid>
-
-namespace base {
+namespace ok::base {
 class UUID {
 public:
     inline static QString make() {
@@ -28,5 +27,5 @@ public:
     }
 };
 
-}  // namespace base
+}  // namespace ok::base
 #endif  // MD5_H

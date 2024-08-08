@@ -12,7 +12,7 @@
 
 #include "jid.h"
 #include <QDebug>
-
+namespace ok{
 namespace base {
 
 //----------------------------------------------------------------------------
@@ -324,3 +324,4 @@ bool Jid::compare(const Jid& a, bool compareRes) const {
     return !(compareRes ? (f != a.f) : (b != a.b));
 }
 }  // namespace base
+}

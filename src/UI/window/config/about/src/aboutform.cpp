@@ -63,7 +63,7 @@ AboutForm::AboutForm(QWidget* parent)
     bodyUI->license->setMarkdown(lic);
 
     // block all child signals during initialization
-    const RecursiveSignalBlocker signalBlocker(this);
+    const ok::base::RecursiveSignalBlocker signalBlocker(this);
 
     replaceVersions();
 

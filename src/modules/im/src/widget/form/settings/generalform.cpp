@@ -41,7 +41,7 @@ GeneralForm::GeneralForm(SettingsWidget* myParent)
     bodyUI->setupUi(this);
 
     // block all child signals during initialization
-    const RecursiveSignalBlocker signalBlocker(this);
+    const ok::base::RecursiveSignalBlocker signalBlocker(this);
 
     Settings& s = Settings::getInstance();
     // 先获取当前语言

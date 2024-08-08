@@ -10,7 +10,7 @@
  * See the Mulan PubL v2 for more details.
  */
 #pragma once
-
+namespace ok::base {
 #define APPLICATION_VERSION GIT_DESCRIBE
 #define APPLICATION_VERSION_ID GIT_VERSION
 #define APPLICATION_RELEASE APPLICATION_NAME "-" APPLICATION_VERSION
@@ -25,3 +25,4 @@
 
 #define FILE_PROFILE_EXT ".profile"
 #define FILE_INIT_EXT ".ini"
+}
