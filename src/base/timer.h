@@ -27,16 +27,16 @@ namespace base {
 
 class Timer final : private QObject {
 public:
-    explicit Timer(QThread* thread, Fn<void()> callback = nullptr);
+    explicit Timer(QThread* thread, ok::base::Fn<void()> callback = nullptr);
 
-    explicit Timer(Fn<void()> callback = nullptr);
+    explicit Timer(ok::base::Fn<void()> callback = nullptr);
 
     static Qt::TimerType DefaultType(TimeMs timeout) {
         constexpr auto kThreshold = TimeMs(1000);
         return (timeout > kThreshold) ? Qt::CoarseTimer : Qt::PreciseTimer;
     }
 
-    void setCallback(Fn<void()> callback) { _callback = std::move(callback); }
+    void setCallback(ok::base::Fn<void()> callback) { _callback = std::move(callback); }
 
     void callOnce(TimeMs timeout) { callOnce(timeout, DefaultType(timeout)); }
 
@@ -70,7 +70,7 @@ private:
     void setRepeat(Repeat repeat) { _repeat = static_cast<unsigned>(repeat); }
     Repeat repeat() const { return static_cast<Repeat>(_repeat); }
 
-    Fn<void()> _callback;
+    ok::base::Fn<void()> _callback;
     TimeMs _next = 0;
     int _timeout = 0;
     int _timerId = 0;
@@ -82,9 +82,9 @@ private:
 
 class DelayedCallTimer final : private QObject {
 public:
-    int call(TimeMs timeout, Fn<void()> callback, Qt::TimerType type);
+    int call(TimeMs timeout, ok::base::Fn<void()> callback, Qt::TimerType type);
 
-    int call(TimeMs timeout, Fn<void()> callback) {
+    int call(TimeMs timeout, ok::base::Fn<void()> callback) {
         return call(timeout, std::move(callback), Timer::DefaultType(timeout));
     }
 
@@ -94,7 +94,7 @@ protected:
     void timerEvent(QTimerEvent* e) override;
 
 private:
-    std::map<int, Fn<void()>> _callbacks;
+    std::map<int, ok::base::Fn<void()>> _callbacks;
 };
 
 }  // namespace base

@@ -25,7 +25,7 @@ PassportService::PassportService(const QString& base, QObject* parent)
 PassportService::~PassportService() {}
 
 bool PassportService::signIn(const QString& account, const QString& password,
-                             Fn<void(Res<SysToken>&)> fn, const network::HttpErrorFn& err,
+                             ok::base::Fn<void(Res<SysToken>&)> fn, const network::HttpErrorFn& err,
                              bool rememberMe, const QString& grantType) {
     QString url = _baseUrl + "/api/auth/passport/signIn";
     QJsonObject data;
@@ -37,7 +37,7 @@ bool PassportService::signIn(const QString& account, const QString& password,
       "password": "string",
       "rememberMe": true
      */
-    data.insert("ts", ::base::Times::now().toMSecsSinceEpoch());
+    data.insert("ts", ok::base::Times::now().toMSecsSinceEpoch());
     data.insert("grantType", grantType);
     data.insert("account", account);
     data.insert("password", password);
@@ -46,20 +46,20 @@ bool PassportService::signIn(const QString& account, const QString& password,
     return http->postJson(
             QUrl(url), QJsonDocument(data),
             [=](QByteArray doc, QString name) {
-                Res<SysToken> res(Jsons::toJSON(doc));
+                Res<SysToken> res(ok::base::Jsons::toJSON(doc));
                 fn(res);
             },
             nullptr, nullptr,
             [=](int statusCode, QByteArray body) {
-                Res<SysToken> res(Jsons::toJSON(body));
+                Res<SysToken> res(ok::base::Jsons::toJSON(body));
                 err(statusCode, res.msg.toUtf8());
             });
 }
 
-bool PassportService::refresh(const SysToken& token, Fn<void(Res<SysRefreshToken>&)> fn,
+bool PassportService::refresh(const SysToken& token, ok::base::Fn<void(Res<SysRefreshToken>&)> fn,
                               network::HttpErrorFn err) {
     QJsonObject data;
-    data.insert("ts", ::base::Times::now().toMSecsSinceEpoch());
+    data.insert("ts", ok::base::Times::now().toMSecsSinceEpoch());
     data.insert("accessToken", token.accessToken);
     data.insert("refreshToken", token.refreshToken);
 
@@ -67,7 +67,7 @@ bool PassportService::refresh(const SysToken& token, Fn<void(Res<SysRefreshToken
     return http->postJson(
             QUrl(url), QJsonDocument(data),
             [=](QByteArray doc, QString name) {
-                Res<SysRefreshToken> res(Jsons::toJSON(doc));
+                Res<SysRefreshToken> res(ok::base::Jsons::toJSON(doc));
                 fn(res);
             },
             nullptr, nullptr, err);

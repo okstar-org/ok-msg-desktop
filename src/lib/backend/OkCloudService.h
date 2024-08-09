@@ -61,7 +61,7 @@ public:
     QList<State> states;
 };
 
-class PluginInfo : public JsonAble<PluginInfo> {
+class PluginInfo : public ok::base::JsonAble<PluginInfo> {
 public:
     quint64 id;         // 插件id
     quint64 ver;        // 数字版本
@@ -98,7 +98,7 @@ public:
     OkCloudService(QObject* parent = nullptr);
     ~OkCloudService();
 
-    bool GetFederalInfo(Fn<void(Res<FederalInfo>&)> fn, network::HttpErrorFn err = nullptr);
-    bool GetPluginPage(Fn<void(ResPage<PluginInfo>&)> fn, network::HttpErrorFn err = nullptr);
+    bool GetFederalInfo(ok::base::Fn<void(Res<FederalInfo>&)> fn, network::HttpErrorFn err = nullptr);
+    bool GetPluginPage(ok::base::Fn<void(ResPage<PluginInfo>&)> fn, network::HttpErrorFn err = nullptr);
 };
 }  // namespace ok::backend

@@ -50,7 +50,7 @@ QString FileInfo::json() const {
 }
 
 void FileInfo::parse(const QString& json) {
-    auto doc = Jsons::toJSON(json.toUtf8());
+    auto doc = ok::base::Jsons::toJSON(json.toUtf8());
     auto obj = doc.object();
     fileId = obj.value("id").toString();
     fileName = obj.value("name").toString();

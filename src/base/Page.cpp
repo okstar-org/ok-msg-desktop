@@ -12,10 +12,9 @@
  */
 
 #include "Page.h"
-
-namespace UI {
+namespace ok::base {
 
 Page::Page(QWidget* parent) : QFrame(parent) {}
 Page::~Page() {}
 
-}  // namespace UI
+}// namespace ok::base

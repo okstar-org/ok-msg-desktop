@@ -42,10 +42,10 @@ public:
     static MainWindow* getInstance();
 
     void init();
-    OMenuWidget* getMenuWindow(PageMenu menu);
-    OMenuWidget* initMenuWindow(PageMenu menu);
+    OMenuWidget* getMenuWindow(ok::base::PageMenu menu);
+    OMenuWidget* initMenuWindow(ok::base::PageMenu menu);
     inline OMainMenu* menu() { return m_menu; }
-    QWidget* getContainer(PageMenu menu);
+    QWidget* getContainer(ok::base::PageMenu menu);
 
 protected:
     void showEvent(QShowEvent* event) override;
@@ -59,7 +59,7 @@ private:
 
     Ui::MainWindow* ui;
     OMainMenu* m_menu;
-    QMap<PageMenu, OMenuWidget*> menuWindow;
+    QMap<ok::base::PageMenu, OMenuWidget*> menuWindow;
 
     std::unique_ptr<QSystemTrayIcon> icon;
     QMenu* trayMenu;
@@ -77,7 +77,7 @@ signals:
     void toClose();
 
 private slots:
-    void onSwitchPage(PageMenu menu, bool checked);
+    void onSwitchPage(ok::base::PageMenu menu, bool checked);
 
     void onIconClick(QSystemTrayIcon::ActivationReason);
 

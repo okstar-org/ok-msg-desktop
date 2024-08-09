@@ -15,10 +15,9 @@
 #include <functional>
 #include <string>
 #include <utility>
-
+namespace ok::base {
 template <typename Signature> using Fn = std::function<Signature>;
 
-namespace base {
 template <typename Type> inline Type take(Type& value) { return std::exchange(value, Type{}); }
 
 template <typename Type> inline Type duplicate(const Type& value) { return value; }
@@ -26,7 +25,6 @@ template <typename Type> inline Type duplicate(const Type& value) { return value
 template <typename Type, size_t Size> inline constexpr size_t array_size(const Type (&)[Size]) {
     return Size;
 }
-}  // namespace base
 
 #define qsl(s) QStringLiteral(s)
 #define qstr(s) QLatin1String(s, sizeof(s) - 1)
@@ -42,3 +40,4 @@ inline QStringList qstringlist(std::list<std::string> sl) {
 }
 
 #define ARRAY_LENGTH_OF(array) (sizeof(array) / sizeof(array[0]))
+}

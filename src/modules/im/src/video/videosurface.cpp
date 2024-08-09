@@ -148,7 +148,7 @@ void VideoSurface::paintEvent(QPaintEvent*) {
         QPixmap drawnAvatar = avatar;
 
         if (drawnAvatar.isNull())
-            drawnAvatar = SvgUtils::scaleSvgImage(":/img/contact_dark.svg", boundingRect.width(),
+            drawnAvatar = ok::base::SvgUtils::scaleSvgImage(":/img/contact_dark.svg", boundingRect.width(),
                                                   boundingRect.height());
 
         painter.drawPixmap(boundingRect, drawnAvatar, drawnAvatar.rect());

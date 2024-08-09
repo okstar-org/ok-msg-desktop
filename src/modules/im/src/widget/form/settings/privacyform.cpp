@@ -37,7 +37,7 @@ PrivacyForm::PrivacyForm()
     bodyUI->setupUi(this);
 
     // block all child signals during initialization
-    const RecursiveSignalBlocker signalBlocker(this);
+    const ok::base::RecursiveSignalBlocker signalBlocker(this);
 
     eventsInit();
     settings::Translator::registerHandler(std::bind(&PrivacyForm::retranslateUi, this), this);

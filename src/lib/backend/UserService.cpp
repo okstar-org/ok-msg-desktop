@@ -23,7 +23,7 @@ UserService::UserService(const QString& base, QObject* parent) : BaseService(bas
 
 UserService::~UserService() {}
 
-void UserService::search(const QString& query, Fn<void(const QList<OrgStaff*>&)> fn,
+void UserService::search(const QString& query, ok::base::Fn<void(const QList<OrgStaff*>&)> fn,
                          network::HttpErrorFn errFn) {
     QUrl url(QString(_baseUrl + "/api/open/staff/search?q=%1").arg(query));
     http->getJson(

@@ -21,7 +21,7 @@
 #include <QPainter>
 #include <QPixmap>
 #include <QSvgRenderer>
-
+namespace ok::base {
 class SvgUtils {
 public:
     /**
@@ -60,5 +60,5 @@ public:
         return pixmap;
     }
 };
-
+}
 #endif  // OKMSG_PROJECT_SVGUTILS_H

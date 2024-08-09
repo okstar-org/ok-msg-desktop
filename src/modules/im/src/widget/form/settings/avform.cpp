@@ -48,7 +48,7 @@ AVForm::AVForm(CameraSource& camera, IAudioSettings* audioSettings, IVideoSettin
     setupUi(this);
 
     // block all child signals during initialization
-    const RecursiveSignalBlocker signalBlocker(this);
+    const ok::base::RecursiveSignalBlocker signalBlocker(this);
 
     cbEnableTestSound->setChecked(audioSettings->getEnableTestSound());
     cbEnableTestSound->setToolTip(tr("Play a test sound while changing the output volume."));

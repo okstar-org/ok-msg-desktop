@@ -348,7 +348,7 @@ void ChatWidget::onUsernameSet(const QString& username) {
 void ChatWidget::onStatusSet(Status::Status status) {
     int icon_size = 15;
     ui->statusButton->setProperty("status", static_cast<int>(status));
-    ui->statusButton->setIcon(SvgUtils::prepareIcon(getIconPath(status), icon_size, icon_size));
+    ui->statusButton->setIcon(ok::base::SvgUtils::prepareIcon(getIconPath(status), icon_size, icon_size));
 
     updateIcons();
 }
@@ -737,18 +737,18 @@ void ChatWidget::setupStatus() {
 
     // Preparing icons and set their size
     statusOnline = new QAction(this);
-    statusOnline->setIcon(SvgUtils::prepareIcon(Status::getIconPath(Status::Status::Online),
+    statusOnline->setIcon(ok::base::SvgUtils::prepareIcon(Status::getIconPath(Status::Status::Online),
                                                 icon_size, icon_size));
     connect(statusOnline, &QAction::triggered, this, &ChatWidget::setStatusOnline);
 
     statusAway = new QAction(this);
     statusAway->setIcon(
-            SvgUtils::prepareIcon(Status::getIconPath(Status::Status::Away), icon_size, icon_size));
+            ok::base::SvgUtils::prepareIcon(Status::getIconPath(Status::Status::Away), icon_size, icon_size));
     connect(statusAway, &QAction::triggered, this, &ChatWidget::setStatusAway);
 
     statusBusy = new QAction(this);
     statusBusy->setIcon(
-            SvgUtils::prepareIcon(Status::getIconPath(Status::Status::Busy), icon_size, icon_size));
+            ok::base::SvgUtils::prepareIcon(Status::getIconPath(Status::Status::Busy), icon_size, icon_size));
     connect(statusBusy, &QAction::triggered, this, &ChatWidget::setStatusBusy);
 
     QMenu* statusButtonMenu = new QMenu(ui->statusButton);

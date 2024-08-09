@@ -14,8 +14,7 @@
 
 #include <QFrame>
 #include "UI/core/ui.h"
-
-namespace UI {
+namespace ok::base {
 
 enum class PageMenu { chat, setting, platform };
 
@@ -26,4 +25,4 @@ public:
     ~Page();
 };
 
-}  // namespace UI
+}  // namespace ok::base

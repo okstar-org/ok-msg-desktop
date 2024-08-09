@@ -22,9 +22,9 @@ namespace base {
 
 OkAccount::OkAccount(const QString& username_) : username(username_) {}
 
-void OkAccount::setJid(const ::base::Jid& jid) { m_jid = jid; }
+void OkAccount::setJid(const  ok::base::Jid& jid) { m_jid = jid; }
 
-::base::Jid OkAccount::realJid(::base::Jid jid) { return jid; }
+ok::base::Jid OkAccount::realJid(ok::base::Jid jid) { return jid; }
 
 }  // namespace base
 }  // namespace ok

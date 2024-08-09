@@ -17,7 +17,7 @@
 #include <QPixmapCache>
 #include <QSvgRenderer>
 #include <memory>
-
+namespace ok::base {
 class SvgIconEngine : public QIconEngine {
     QString name;
     std::shared_ptr<QSvgRenderer> renderer;
@@ -42,5 +42,5 @@ public:
 private:
     QPixmap renderPixmap(const QSize& size, QIcon::Mode mode, QIcon::State state);
 };
-
+}
 #endif  // SVGICONENGINE_H

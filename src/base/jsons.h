@@ -16,7 +16,7 @@
 #include <QJsonObject>
 #include <QJsonValue>
 #include <QString>
-
+namespace ok::base {
 class Jsons {
 public:
     inline static QString toString(const QJsonDocument& document) {
@@ -32,3 +32,4 @@ template <typename T> class JsonAble {
 public:
     virtual T fromJson(const QJsonObject& data) = 0;
 };
+}

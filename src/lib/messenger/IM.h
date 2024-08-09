@@ -112,7 +112,7 @@ struct IMRoomInfo {
 
 class IMJingle;
 
-class IM : public ok::lib::Task,
+class IM : public ok::base::Task,
            public ConnectionListener,
 #ifdef WANT_PING
            public PingHandler,

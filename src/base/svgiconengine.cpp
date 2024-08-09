@@ -16,7 +16,7 @@
 #include <QPainter>
 #include <QPalette>
 #include <QPixmapCache>
-
+namespace ok::base {
 QSize SvgIconEngine::actualSize(const QSize& size, QIcon::Mode mode, QIcon::State state) {
     Q_UNUSED(mode);
     Q_UNUSED(state);
@@ -138,4 +138,5 @@ QPixmap SvgIconEngine::renderPixmap(const QSize& size, QIcon::Mode mode, QIcon::
     QPainter p(&pix);
     renderer->render(&p);
     return pix;
+}
 }

@@ -51,7 +51,7 @@ private:
     void updateUI();
 
 signals:
-    void menuPushed(PageMenu menu, bool checked);
+    void menuPushed(ok::base::PageMenu menu, bool checked);
 
 private slots:
     void on_chatBtn_clicked(bool checked);

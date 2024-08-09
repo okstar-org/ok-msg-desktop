@@ -19,8 +19,7 @@
 #include <QPainter>
 #include <QPainterPath>
 #include <QPixmap>
-
-namespace base {
+namespace ok::base {
 class Images {
 public:
     inline static bool putToImage(const QByteArray& data, QImage& image) {
@@ -61,5 +60,4 @@ public:
         return destImage;
     }
 };
-
-}  // namespace base
+}

@@ -13,23 +13,22 @@
 
 #ifndef PAGEFACTORY_H
 #define PAGEFACTORY_H
-
+#include "Page.h"
 #include <QWidget>
-
-namespace UI {
+namespace ok::base {
 
 class PageFactory {
 public:
     template <typename T>
     static
             // Restrict type T to Page
-            typename std::enable_if<true, Page>::type  // T -> Page
+            typename std::enable_if<true, ok::base::Page>::type  // T -> Page
                     *
                     Create(QWidget* parent = Q_NULLPTR) {
         return new T(parent);
     }
 };
 
-}  // namespace UI
+} // namespace ok::base
 
 #endif  // PAGEFACTORY_H
