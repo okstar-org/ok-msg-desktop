@@ -27,13 +27,13 @@ QObject* TimersAdjuster() {
 }
 }  // namespace
 
-Timer::Timer(QThread* thread, Fn<void()> callback)
+Timer::Timer(QThread* thread, ok::base::Fn<void()> callback)
         : Timer(std::move(callback))  //
 {
     moveToThread(thread);
 }
 
-Timer::Timer(Fn<void()> callback)
+Timer::Timer(ok::base::Fn<void()> callback)
         : QObject(nullptr)
         ,  //
         _callback(std::move(callback))
@@ -66,7 +66,7 @@ void Timer::start(TimeMs timeout, Qt::TimerType type, Repeat repeat) {
 
 void Timer::cancel() {
     if (isActive()) {
-        killTimer(::base::take(_timerId));
+        killTimer(ok::base::take(_timerId));
     }
 }
 
@@ -117,7 +117,7 @@ void Timer::timerEvent(QTimerEvent* e) {
     }
 }
 
-int DelayedCallTimer::call(TimeMs timeout, Fn<void()> callback, Qt::TimerType type) {
+int DelayedCallTimer::call(TimeMs timeout, ok::base::Fn<void()> callback, Qt::TimerType type) {
     if (!(timeout >= 0)) {
         return 0;
     }

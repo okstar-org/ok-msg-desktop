@@ -104,12 +104,12 @@ QByteArray NetworkHttp::get(const QUrl& url, const HttpDownloadProgressFn& downl
     return byteArr;
 }
 
-bool NetworkHttp::getJson(const QUrl& url, Fn<void(QJsonDocument)> fn, const HttpErrorFn& err) {
+bool NetworkHttp::getJson(const QUrl& url, ok::base::Fn<void(QJsonDocument)> fn, const HttpErrorFn& err) {
     return get(
             url,
             [=](QByteArray buf, QString fileName) {
                 Q_UNUSED(fileName)
-                fn(Jsons::toJSON(buf));
+                fn(ok::base::Jsons::toJSON(buf));
             },
             nullptr, err);
 }
@@ -165,7 +165,7 @@ void NetworkHttp::PostFormData(const QUrl& url,
                                const QString& contentType,
                                const QString& filename,
                                const HttpUploadProgressFn& uploadProgress,
-                               Fn<void(const QJsonObject&)>
+                               ok::base::Fn<void(const QJsonObject&)>
                                        readyRead) {
     if (url.isEmpty()) {
         qWarning() << "url is empty!";
@@ -287,7 +287,7 @@ void NetworkHttp::doRequest(QNetworkRequest& req,
  */
 void NetworkHttp::PostFormData(const QUrl& url, QFile* file,
                                const HttpUploadProgressFn& uploadProgress,
-                               Fn<void(const QJsonObject&)> readyRead) {
+                               ok::base::Fn<void(const QJsonObject&)> readyRead) {
     if (url.isEmpty()) {
         qWarning() << "url is empty!";
         return;

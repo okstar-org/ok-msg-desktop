@@ -31,7 +31,6 @@ class OkRTCManager;
 
 namespace lib::messenger {
 
-
 class IM;
 class IMJingle;
 enum class CallDirection;
@@ -81,6 +80,62 @@ public:
     void setMute(bool mute);
     void setRemoteMute(bool mute);
 
+    /**
+     * jingle-message
+     */
+    // 处理JingleMessage消息
+    void doJingleMessage(const IMPeerId& peerId, const gloox::Jingle::JingleMessage* jm);
+
+    // 发起呼叫邀请
+    void proposeJingleMessage(const QString& friendId, const QString& callId, bool video);
+    // 接受
+    void acceptJingleMessage(const IMPeerId& peerId, const QString& callId, bool video);
+    // 拒绝
+    void rejectJingleMessage(const QString& friendId, const QString& callId);
+    // 撤回
+    void retractJingleMessage(const QString& friendId, const QString& callId);
+
+protected:
+    void handleJingleMessage(const IMPeerId& peerId, const Jingle::JingleMessage* jm) override;
+
+    virtual void doSessionInfo(const Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual void doContentAdd(const Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual void doContentRemove(const Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual void doContentModify(const Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual void doContentAccept(const Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual void doContentReject(const Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual void doTransportInfo(const Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual void doTransportAccept(const Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual void doTransportReject(const Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual void doTransportReplace(const Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual void doSecurityInfo(const Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual void doDescriptionInfo(const Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual void doInvalidAction(const Jingle::Session::Jingle*, const IMPeerId&) override;
+
+    IMJingleSession* cacheSessionInfo(const IMContactId& from,
+                                      const IMPeerId& to,
+                                      const QString& sId,
+                                      lib::ortc::JingleCallType callType);
+
+    void clearSessionInfo(Jingle::Session* session);
+
+    IMJingleSession* createSession(const IMContactId& from,
+                                   const IMPeerId& to,
+                                   const QString& sId,
+                                   lib::ortc::JingleCallType ct);
+
+    IMJingleSession* findSession(const QString& sId) { return m_sessionMap.value(sId); }
+
+    void sessionOnAccept(const QString& sId,
+                         Jingle::Session* session,
+                         const IMPeerId& peerId,
+                         const Jingle::Session::Jingle* jingle) override;
+    void sessionOnTerminate(const QString& sId, const IMPeerId& peerId) override;
+    void sessionOnInitiate(const QString& sId,
+                           Jingle::Session* session,
+                           const Jingle::Session::Jingle* jingle,
+                           const IMPeerId& peerId) override;
+
 signals:
     void sig_createPeerConnection(const QString sId, const QString peerId, bool ok);
 
@@ -127,8 +182,14 @@ private:
 
     IM* im;
     IMJingle* jingle;
-    ok::session::AuthSession* session;
+    //    ok::session::AuthSession* session;
     std::vector<CallHandler*> callHandlers;
+
+    // sid -> session
+    QMap<QString, IMJingleSession*> m_sessionMap;
+
+    // sid -> isVideo,在jingle-message阶段暂时保留呼叫的类型是视频（音频无需保存）。
+    QMap<QString, bool> m_sidVideo;
 
 public slots:
     void onCallAccepted(IMPeerId peerId, QString callId, bool video);

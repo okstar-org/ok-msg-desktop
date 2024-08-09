@@ -281,16 +281,16 @@ void MainWindow::updateIcons() {
     }
 }
 
-OMenuWidget* MainWindow::initMenuWindow(PageMenu menu) {
+OMenuWidget* MainWindow::initMenuWindow(ok::base::PageMenu menu) {
     OMenuWidget* w = nullptr;
     switch (menu) {
-        case PageMenu::chat:
+        case ok::base::PageMenu::chat:
             w = createChatModule(this);
             break;
-        case PageMenu::platform:
+        case ok::base::PageMenu::platform:
             w = createPlatformModule(this);
             break;
-        case PageMenu::setting:
+        case ok::base::PageMenu::setting:
             w = new ConfigWindow(this);
             break;
     }
@@ -311,9 +311,9 @@ OMenuWidget* MainWindow::initMenuWindow(PageMenu menu) {
     return w;
 }
 
-OMenuWidget* MainWindow::getMenuWindow(PageMenu menu) { return menuWindow.value(menu); }
+OMenuWidget* MainWindow::getMenuWindow(ok::base::PageMenu menu) { return menuWindow.value(menu); }
 
-void MainWindow::onSwitchPage(PageMenu menu, bool checked) {
+void MainWindow::onSwitchPage(ok::base::PageMenu menu, bool checked) {
     OMenuWidget* p = getMenuWindow(menu);
     if (!p) {
         p = initMenuWindow(menu);
@@ -366,7 +366,7 @@ void MainWindow::onSwitchPage(PageMenu menu, bool checked) {
 //   messenger->initRoom();
 //}
 
-QWidget* MainWindow::getContainer(PageMenu menu) { return ui->stacked_widget; }
+QWidget* MainWindow::getContainer(ok::base::PageMenu menu) { return ui->stacked_widget; }
 
 OMenuWidget* MainWindow::createChatModule(MainWindow* pWindow) {
     qDebug() << "Creating m:" << Nexus::Name();

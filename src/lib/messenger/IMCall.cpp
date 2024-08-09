@@ -24,8 +24,8 @@
 namespace lib::messenger {
 
 IMCall::IMCall(IM* im, QObject* parent) : IMJingle(im, parent) {
-    jingle = IMCall::getInstance();
-    connectJingle(jingle);
+    //    jingle = nullptr //IMCall::getInstance();
+    //    connectJingle(jingle);
 }
 
 void IMCall::addCallHandler(CallHandler* hdr) { callHandlers.push_back(hdr); }
@@ -112,7 +112,7 @@ void IMCall::onCallAccepted(IMPeerId peerId, QString callId, bool video) {
 bool IMCall::callToFriend(const QString& friendId, const QString& sId, bool video) {
     qDebug() << __func__ << "friend:" << friendId << "sId" << sId << "video?" << video;
 
-    jingle->proposeJingleMessage(friendId, sId, video);
+    proposeJingleMessage(friendId, sId, video);
 
     auto resources = im->getOnlineResources(stdstring(friendId));
     if (resources.empty()) {
@@ -120,7 +120,7 @@ bool IMCall::callToFriend(const QString& friendId, const QString& sId, bool vide
         return false;
     }
 
-    jingle->proposeJingleMessage(friendId, sId, video);
+    proposeJingleMessage(friendId, sId, video);
     qDebug() << "Sent propose jingle message.";
     return true;
 }
@@ -162,7 +162,7 @@ bool IMCall::sendCallToResource(const QString& friendId, const QString& sId, boo
 bool IMCall::createCall(const IMPeerId& to, const QString& sId, bool video) {
     qDebug() << __func__ << "to:" << to.toString() << "sId:" << sId;
 
-    auto ws = createSession(to, sId, lib::ortc::JingleCallType::av);
+    auto ws = createSession(im->getSelfId(), to, sId, lib::ortc::JingleCallType::av);
 
     auto rtc = lib::ortc::OkRTCManager::getInstance()->getRtc();
     rtc->addRTCHandler(this);
@@ -302,6 +302,280 @@ void IMCall::onRender(const std::string& peerId, lib::ortc::RendererImage image)
         emit receiveFriendVideoFrame(IMPeerId(peerId).toFriendId(), image.width_, image.height_,
                                      image.y, image.u, image.v, image.ystride, image.ustride,
                                      image.vstride);
+    }
+}
+
+void IMCall::sessionOnAccept(const QString& sId,
+                             Jingle::Session* session,
+                             const IMPeerId& peerId,
+                             const Jingle::Session::Jingle* jingle) {
+    auto sess = m_sessionMap.value(sId);
+    if (sess) {
+        qWarning() << "Call session is existing, the sId is" << sId;
+        return;
+    }
+    // self id
+    auto selfId = im->getSelfId();
+
+    // 创建session
+    for (auto& file : m_sessionMap) {
+        auto s = new IMJingleSession(sId, session, selfId, peerId, ortc::JingleCallType::av);
+        m_sessionMap.insert(sId, s);
+    }
+
+    lib::ortc::OJingleContentAv cav;
+    cav.sdpType = lib::ortc::JingleSdpType::Answer;
+    cav.parse(jingle);
+
+    // RTC 接受会话
+    lib::ortc::OkRTCManager::getInstance()
+            ->getRtc()  //
+            ->setRemoteDescription(stdstring(peerId.toString()), cav);
+}
+
+void IMCall::doJingleMessage(const IMPeerId& peerId, const gloox::Jingle::JingleMessage* jm) {
+    qDebug() << __func__ << "peerId:" << peerId.toString() << "sId:" << qstring(jm->id())
+             << "action:" << Jingle::ActionValues[jm->action()];
+
+    auto friendId = peerId.toFriendId();
+    qDebug() << "friendId:" << friendId;
+
+    auto sId = qstring(jm->id());
+
+    switch (jm->action()) {
+        case Jingle::JingleMessage::reject: {
+            /**
+             * 对方拒绝
+             */
+            //      mPeerRequestMedias.clear();
+            auto ms = jm->medias();
+            emit receiveCallStateRejected(peerId, sId, ms.size() > 1);
+            //      emit receiveFriendHangup(friendId, 0);
+            break;
+        }
+        case Jingle::JingleMessage::propose: {
+            // 被对方发起呼叫
+            qDebug() << "On call from:" << peerId.toString();
+
+            // 获取呼叫类型
+            bool audio = false;
+            bool video = false;
+            for (auto& m : jm->medias()) {
+                if (m == Jingle::audio) {
+                    audio = true;
+                } else if (m == Jingle::video) {
+                    video = true;
+                }
+            }
+
+            emit receiveCallRequest(peerId, sId, audio, video);
+            //      emit receiveCallAcceptByOther(sId, peerId);
+            break;
+        }
+        case Jingle::JingleMessage::retract: {
+            /**
+             * 撤回(需要判断是对方还是自己其它终端)
+             */
+            emit receiveCallRetract(friendId, 0);
+            break;
+        }
+        case Jingle::JingleMessage::accept: {
+            // 自己其它终端接受，挂断自己
+            if (peerId != _im->getSelfPeerId()) {
+                emit receiveFriendHangup(friendId, 0);
+            } else {
+                // 自己终端接受，不处理
+                //            OkRTCManager::getInstance()->getRtc()->CreateAnswer(peerId.toString());
+            }
+            break;
+        }
+        case Jingle::JingleMessage::proceed: {
+            // 对方接受
+            auto removed = m_sidVideo.remove(sId);  // 确定发起的是否是视频？
+            emit receiveCallStateAccepted(peerId, sId, removed == 1);
+            break;
+        }
+        case Jingle::JingleMessage::finish:
+            break;
+    }
+}
+
+void IMCall::proposeJingleMessage(const QString& friendId, const QString& callId, bool video) {
+    qDebug() << __func__ << "friend:" << friendId << callId;
+
+    StanzaExtensionList exts;
+    auto jm = new JingleMessage(JingleMessage::propose, stdstring(callId));
+    jm->addMedia(Jingle::Media::audio);
+    if (video) {
+        jm->addMedia(Jingle::Media::video);
+        m_sidVideo.insert(callId, true);
+    }
+    exts.push_back(jm);
+
+    auto jid = JID{stdstring(friendId)};
+    Message m(Message::Chat, jid, {}, {});
+    for (auto ext : exts) m.addExtension(ext);
+
+    _im->getClient()->send(m);
+}
+
+void IMCall::rejectJingleMessage(const QString& peerId, const QString& callId) {
+    qDebug() << __func__ << "friend:" << peerId << callId;
+
+    StanzaExtensionList exts;
+    auto reject = new Jingle::JingleMessage(Jingle::JingleMessage::reject, stdstring(callId));
+    exts.push_back(reject);
+
+    auto jid = JID{stdstring(peerId)};
+    Message m(Message::Chat, jid, {}, {});
+    for (auto ext : exts) m.addExtension(ext);
+
+    _im->getClient()->send(m);
+}
+
+void IMCall::retractJingleMessage(const QString& friendId, const QString& callId) {
+    qDebug() << __func__ << "friend:" << friendId << callId;
+
+    auto* jm = new Jingle::JingleMessage(Jingle::JingleMessage::retract, stdstring(callId));
+
+    auto jid = JID{stdstring(friendId)};
+    Message m(Message::Chat, jid, {}, {});
+    m.addExtension(jm);
+
+    _im->getClient()->send(m);
+}
+
+void IMCall::acceptJingleMessage(const IMPeerId& peerId, const QString& callId, bool video) {
+    qDebug() << __func__ << "friend:" << peerId.toFriendId() << callId;
+
+    auto proceed = new Jingle::JingleMessage(Jingle::JingleMessage::proceed, stdstring(callId));
+    Message proceedMsg(gloox::Message::Chat, JID(stdstring(peerId.toString())));
+    proceedMsg.addExtension(proceed);
+    _im->getClient()->send(proceedMsg);
+    qDebug() << "Sent proceed=>" << peerId.toString();
+
+    // 发送给自己其它终端
+    auto accept = new Jingle::JingleMessage(Jingle::JingleMessage::accept, stdstring(callId));
+
+    auto self = _im->self().bareJID();
+
+    Message msg(gloox::Message::Chat, self);
+    msg.addExtension(accept);
+    _im->getClient()->send(msg);
+    qDebug() << "Sent accept=>" << qstring(self.full());
+
+    // 设置状态为接受
+    auto ws = findSession(callId);
+    if (!ws) {
+        ws = createSession(_im->getSelfId(), peerId, callId, ortc::JingleCallType::av);
+    }
+    ws->setAccepted(true);
+}
+
+IMJingleSession* IMCall::cacheSessionInfo(const IMContactId& from,
+                                          const IMPeerId& to,
+                                          const QString& sId,
+                                          lib::ortc::JingleCallType callType) {
+    qDebug() << __func__ << "target:" << to.toString();
+
+    auto session = _sessionManager  //
+                           ->createSession(JID(stdstring(to.toString())), this, stdstring(sId));
+
+    m_friendSessionMap.insert(to, sId);
+
+    auto ws = new IMJingleSession(sId, session, from, to, ortc::JingleCallType::av);
+    m_sessionMap.insert(sId, ws);
+
+    return ws;
+}
+
+void IMCall::clearSessionInfo(Jingle::Session* session) {
+    auto sId = qstring(session->sid());
+
+    qDebug() << __func__ << sId;
+
+    auto& responder = session->remote();
+    m_friendSessionMap.remove(IMPeerId(responder));
+    m_sessionMap.remove(sId);
+
+    _sessionManager->discardSession(session);
+}
+
+IMJingleSession* IMCall::createSession(const IMContactId& self,
+                                       const IMPeerId& peer,
+                                       const QString& sId,
+                                       ortc::JingleCallType ct) {
+    return cacheSessionInfo(self, peer, sId, ct);
+}
+
+void IMCall::handleJingleMessage(const IMPeerId& peerId, const Jingle::JingleMessage* jm) {
+    doJingleMessage(peerId, jm);
+}
+
+void IMCall::doSessionInfo(const Session::Jingle* jingle, const IMPeerId& friendId) {
+    qDebug() << "jingle:%1 peerId:%2"   //
+             << qstring(jingle->sid())  //
+             << friendId.toString();
+}
+
+void IMCall::doContentAdd(const Session::Jingle*, const IMPeerId&) {}
+
+void IMCall::doContentRemove(const Session::Jingle*, const IMPeerId&) {}
+
+void IMCall::doContentModify(const Session::Jingle*, const IMPeerId&) {}
+
+void IMCall::doContentAccept(const Session::Jingle*, const IMPeerId&) {}
+
+void IMCall::doContentReject(const Session::Jingle*, const IMPeerId&) {}
+
+void IMCall::doTransportInfo(const Session::Jingle* jingle, const IMPeerId& peerId) {
+    auto sid = qstring(jingle->sid());
+    qDebug() << __func__ << "sId:" << sid << "peerId:" << peerId.toString();
+
+    auto s = findSession(sid);
+    if (!s) {
+        qWarning() << ("Session is no existing.");
+        return;
+    }
+
+    ortc::OJingleContentAv content;
+    content.parse(jingle);
+
+    for (auto& it : content.contents) {
+        ortc::OkRTCManager::getInstance()
+                ->getRtc()  //
+                ->setTransportInfo(stdstring(peerId.toString()), jingle->sid(), it.iceUdp);
+    }
+}
+
+void IMCall::doTransportAccept(const Session::Jingle*, const IMPeerId&) {}
+
+void IMCall::doTransportReject(const Session::Jingle*, const IMPeerId&) {}
+
+void IMCall::doTransportReplace(const Session::Jingle*, const IMPeerId&) {}
+
+void IMCall::doSecurityInfo(const Session::Jingle*, const IMPeerId&) {}
+
+void IMCall::doDescriptionInfo(const Session::Jingle*, const IMPeerId&) {}
+
+void IMCall::doInvalidAction(const Session::Jingle*, const IMPeerId&) {}
+
+void IMCall::sessionOnInitiate(const QString& sId,
+                               Jingle::Session* session,
+                               const Jingle::Session::Jingle* jingle,
+                               const IMPeerId& peerId) {
+    ortc::OJingleContentAv cav;
+    cav.parse(jingle);
+    cav.sdpType = lib::ortc::JingleSdpType::Offer;
+    ortc::OkRTCManager::getInstance()->getRtc()->CreateAnswer(stdstring(peerId.toString()), cav);
+}
+
+void IMCall::sessionOnTerminate(const QString& sId, const IMPeerId& peerId) {
+    // rtc
+    qDebug() << __func__;
+    auto s = findSession(sId);
+    if (s) {
+        s->doTerminate();
     }
 }
 

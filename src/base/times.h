@@ -15,8 +15,7 @@
 #include <QDateTime>
 #include <QMap>
 #include <QString>
-
-namespace base {
+namespace ok::base {
 
 inline QString secondsToDHMS(quint32 duration) {
     QString res;
@@ -113,6 +112,6 @@ public:
     }
 };
 
-}  // namespace base
+}  // namespace ok::base
 
 #endif  // TIMES_H

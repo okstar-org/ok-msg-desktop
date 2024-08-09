@@ -60,7 +60,7 @@ FriendListWidget::FriendListWidget(MainLayout* parent, ContentLayout* contentLay
     dayTimer = new QTimer(this);
     dayTimer->setTimerType(Qt::VeryCoarseTimer);
     connect(dayTimer, &QTimer::timeout, this, &FriendListWidget::dayTimeout);
-    dayTimer->start(base::Times::timeUntilTomorrow());
+    dayTimer->start(ok::base::Times::timeUntilTomorrow());
 
     setAcceptDrops(true);
 
@@ -176,18 +176,18 @@ void FriendListWidget::sortByMode(SortingMode mode) {
         QDate today = QDate::currentDate();
 #define COMMENT "Category for sorting friends by activity"
         // clang-format off
-        const QMap<base::ReadableTime, QString> names {
-            { base::ReadableTime::Today,     tr("Today",                      COMMENT) },
-            { base::ReadableTime::Yesterday, tr("Yesterday",                  COMMENT) },
-            { base::ReadableTime::ThisWeek,  tr("Last 7 days",                COMMENT) },
-            { base::ReadableTime::ThisMonth, tr("This month",                 COMMENT) },
-            { base::ReadableTime::LongAgo,   tr("Older than 6 Months",        COMMENT) },
-            { base::ReadableTime::Never,     tr("Never",                      COMMENT) },
-            { base::ReadableTime::Month1Ago, ql.monthName(today.addMonths(-1).month()) },
-            { base::ReadableTime::Month2Ago, ql.monthName(today.addMonths(-2).month()) },
-            { base::ReadableTime::Month3Ago, ql.monthName(today.addMonths(-3).month()) },
-            { base::ReadableTime::Month4Ago, ql.monthName(today.addMonths(-4).month()) },
-            { base::ReadableTime::Month5Ago, ql.monthName(today.addMonths(-5).month()) },
+        const QMap<ok::base::ReadableTime, QString> names {
+            { ok::base::ReadableTime::Today,     tr("Today",                      COMMENT) },
+            { ok::base::ReadableTime::Yesterday, tr("Yesterday",                  COMMENT) },
+            { ok::base::ReadableTime::ThisWeek,  tr("Last 7 days",                COMMENT) },
+            { ok::base::ReadableTime::ThisMonth, tr("This month",                 COMMENT) },
+            { ok::base::ReadableTime::LongAgo,   tr("Older than 6 Months",        COMMENT) },
+            { ok::base::ReadableTime::Never,     tr("Never",                      COMMENT) },
+            { ok::base::ReadableTime::Month1Ago, ql.monthName(today.addMonths(-1).month()) },
+            { ok::base::ReadableTime::Month2Ago, ql.monthName(today.addMonths(-2).month()) },
+            { ok::base::ReadableTime::Month3Ago, ql.monthName(today.addMonths(-3).month()) },
+            { ok::base::ReadableTime::Month4Ago, ql.monthName(today.addMonths(-4).month()) },
+            { ok::base::ReadableTime::Month5Ago, ql.monthName(today.addMonths(-5).month()) },
         };
 // clang-format on
 #undef COMMENT
@@ -366,7 +366,7 @@ void FriendListWidget::dayTimeout() {
         setMode(SortingMode::Activity);  // Refresh all.
     }
 
-    dayTimer->start(base::Times::timeUntilTomorrow());
+    dayTimer->start(ok::base::Times::timeUntilTomorrow());
 }
 
 void FriendListWidget::moveWidget(FriendWidget* widget, Status::Status s, bool add) {
@@ -395,7 +395,7 @@ void FriendListWidget::moveWidget(FriendWidget* widget, Status::Status s, bool a
 void FriendListWidget::updateActivityTime(const QDateTime& time) {
     if (mode != SortingMode::Activity) return;
 
-    int timeIndex = static_cast<int>(base::getTimeBucket(time));
+    int timeIndex = static_cast<int>(ok::base::getTimeBucket(time));
     //  QWidget *widget = activityLayout->itemAt(timeIndex)->widget();
     //  CategoryWidget *categoryWidget = static_cast<CategoryWidget *>(widget);
     //  categoryWidget->updateStatus();

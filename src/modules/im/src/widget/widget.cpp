@@ -151,30 +151,30 @@ Widget::Widget(IAudioControl& audio, QWidget* parent)  //
 
     // Preparing icons and set their size
     statusOnline = new QAction(this);
-    statusOnline->setIcon(SvgUtils::prepareIcon(Status::getIconPath(Status::Status::Online),
+    statusOnline->setIcon(ok::base::SvgUtils::prepareIcon(Status::getIconPath(Status::Status::Online),
                                                 icon_size, icon_size));
     connect(statusOnline, &QAction::triggered, this, &Widget::setStatusOnline);
 
     statusAway = new QAction(this);
     statusAway->setIcon(
-            SvgUtils::prepareIcon(Status::getIconPath(Status::Status::Away), icon_size, icon_size));
+            ok::base::SvgUtils::prepareIcon(Status::getIconPath(Status::Status::Away), icon_size, icon_size));
     connect(statusAway, &QAction::triggered, this, &Widget::setStatusAway);
 
     statusBusy = new QAction(this);
     statusBusy->setIcon(
-            SvgUtils::prepareIcon(Status::getIconPath(Status::Status::Busy), icon_size, icon_size));
+            ok::base::SvgUtils::prepareIcon(Status::getIconPath(Status::Status::Busy), icon_size, icon_size));
     connect(statusBusy, &QAction::triggered, this, &Widget::setStatusBusy);
 
     actionLogout = new QAction(this);
     actionLogout->setIcon(
-            SvgUtils::prepareIcon(":/img/others/logout-icon.svg", icon_size, icon_size));
+            ok::base::SvgUtils::prepareIcon(":/img/others/logout-icon.svg", icon_size, icon_size));
 
     actionQuit = new QAction(this);
 #ifndef Q_OS_OSX
     actionQuit->setMenuRole(QAction::QuitRole);
 #endif
 
-    actionQuit->setIcon(SvgUtils::prepareIcon(Style::getImagePath("rejectCall/rejectCall.svg"),
+    actionQuit->setIcon(ok::base::SvgUtils::prepareIcon(Style::getImagePath("rejectCall/rejectCall.svg"),
                                               icon_size, icon_size));
     connect(actionQuit, &QAction::triggered, qApp, &QApplication::quit);
 
@@ -661,7 +661,7 @@ void Widget::setAvatar(QByteArray avatar) {
     }
 
     QPixmap pixmap;
-    if (!base::Images::putToPixmap(avatar, pixmap)) {
+    if (!ok::base::Images::putToPixmap(avatar, pixmap)) {
         qWarning() << "loadFromData failed.";
         return;
     }

@@ -81,7 +81,6 @@ void Messenger::start() {
     qDebug() << __func__;
     _im->start();
     connect(_im, &IM::started, [&]() {
-        _imFile = new IMFile(_im, this);
         emit started();
     });
 }
@@ -285,7 +284,7 @@ bool Messenger::sendToFriend(const QString& f,
 #ifdef OK_PLUGIN
         auto _session = ok::Application::Instance()->getSession();
 
-        base::Jid ownJid(qstring(_im->self().full()));
+        ok::base::Jid ownJid(qstring(_im->self().full()));
         _session->account()->setJid(ownJid);
 
         auto pm = ok::plugin::PluginManager::instance();
@@ -296,7 +295,7 @@ bool Messenger::sendToFriend(const QString& f,
 
         if (pm->encryptMessageElement(_session->account(), ele)) {
             qDebug() << "encryptMessageElement=>" << ele.ownerDocument().toString();
-            auto xml = ::base::Xmls::format(ele);
+            auto xml = ok::base::Xmls::format(ele);
             _im->send(xml);
             y = true;
         }
@@ -373,7 +372,7 @@ void Messenger::onEncryptedMessage(QString xml) {
         qWarning() << "Empty encryptedMessage!";
         return;
     }
-    auto dom = ::base::Xmls::parse(xml);
+    auto dom = ok::base::Xmls::parse(xml);
 
     qDebug() << "onEncryptedMessage:" << dom.toString();
     auto _session = ok::Application::Instance()->getSession();
@@ -494,8 +493,8 @@ void MessengerCall::setRemoteMute(bool mute) {
 
 //File
 
-MessengerFile::MessengerFile(Messenger* messenger, QObject* parent) : QObject(parent){
-    fileSender = messenger->imFile();
+MessengerFile::MessengerFile(Messenger* messenger, QObject* parent) : QObject(parent) {
+    fileSender = new IMFile(messenger->im(), this);
 }
 
 void MessengerFile::fileRejectRequest(QString friendId, const File& file) {
@@ -516,6 +515,7 @@ void MessengerFile::fileCancel(QString fileId) {
 bool MessengerFile::fileSendToFriend(const QString& f, const File& file) {
     return fileSender->fileSendToFriend(f, file);
 }
+void MessengerFile::addFileHandler(FileHandler* h) { fileSender->addFileHandler(h); }
 
 }  // namespace messenger
 }  // namespace lib

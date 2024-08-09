@@ -112,11 +112,11 @@ public:
      * @param grantType
      * @return
      */
-    bool signIn(const QString& account, const QString& password, Fn<void(Res<SysToken>&)> fn,
+    bool signIn(const QString& account, const QString& password, ok::base::Fn<void(Res<SysToken>&)> fn,
                 const network::HttpErrorFn& err, bool rememberMe = false,
                 const QString& grantType = "password");
 
-    bool refresh(const SysToken& token, Fn<void(Res<SysRefreshToken>&)> fn,
+    bool refresh(const SysToken& token, ok::base::Fn<void(Res<SysRefreshToken>&)> fn,
                  network::HttpErrorFn err = nullptr);
 };
 }  // namespace ok::backend

@@ -54,30 +54,18 @@ class IMJingle : public QObject,
     Q_OBJECT
 
 public:
-    static IMJingle* getInstance();
-
     IMJingle(IM* im, QObject* parent = nullptr);
     ~IMJingle() override;
 
+    IM* getIM() { return _im; }
+
     virtual void handleMessageSession(gloox::MessageSession* session) override;
-    virtual void handleMessage(const gloox::Message& msg, gloox::MessageSession* session = 0) override;
-
-    /**
-     * jingle-message
-     */
-    // 处理JingleMessage消息
-    void doJingleMessage(const IMPeerId& peerId, const gloox::Jingle::JingleMessage* jm);
-
-    // 发起呼叫邀请
-    void proposeJingleMessage(const QString& friendId, const QString& callId, bool video);
-
-    void rejectJingleMessage(const QString& friendId, const QString& callId);
-
-    void acceptJingleMessage(const IMPeerId& peerId, const QString& callId, bool video);
-
-    void retractJingleMessage(const QString& friendId, const QString& callId);
+    virtual void handleMessage(const gloox::Message& msg,
+                               gloox::MessageSession* session = 0) override;
 
 protected:
+    virtual void handleJingleMessage(const IMPeerId& peerId, const Jingle::JingleMessage* jm) = 0;
+
     bool handleIq(const IQ& iq) override;
 
     void handleIqID(const IQ& iq, int context) override;
@@ -90,55 +78,50 @@ protected:
 
     void handleIncomingSession(Jingle::Session* session) override;
 
-    IMJingleSession* findSession(const QString& sId);
-
-    IMJingleSession* createSession(const IMPeerId& to, const QString& sId,
-                                   lib::ortc::JingleCallType ct);
-
     // receiver -> sid
     QMap<IMPeerId, QString> m_friendSessionMap;
 
-    // sid -> session
-    QMap<QString, IMJingleSession*> m_sessionMap;
-
-    void clearSessionInfo(Jingle::Session* session);
-
     std::unique_ptr<Jingle::SessionManager> _sessionManager;
 
-    IMJingleSession* cacheSessionInfo(Jingle::Session* session, lib::ortc::JingleCallType callType);
+    virtual void sessionOnAccept(const QString& sId,
+                                 Jingle::Session* session,
+                                 const IMPeerId& peerId,
+                                 const Jingle::Session::Jingle* jingle) = 0;
+    virtual void sessionOnTerminate(const QString& sId, const IMPeerId& peerId) = 0;
+    virtual void sessionOnInitiate(const QString& sId,
+                                   Jingle::Session* session,
+                                   const Jingle::Session::Jingle* jingle,
+                                   const IMPeerId& peerId) = 0;
+    IM* _im;
 
 private:
     QString getSessionByFriendId(const QString& friendId);
 
-    void doSessionInitiate(Jingle::Session* session, const Jingle::Session::Jingle*,
+    void doSessionInitiate(Jingle::Session* session,        //
+                           const Jingle::Session::Jingle*,  //
                            const IMPeerId&);
 
-    void doSessionTerminate(Jingle::Session* session, const Jingle::Session::Jingle*,
+    void doSessionTerminate(Jingle::Session* session,        //
+                            const Jingle::Session::Jingle*,  //
                             const IMPeerId&);
 
     void doSessionAccept(Jingle::Session* session,        //
                          const Jingle::Session::Jingle*,  //
                          const IMPeerId&);
-    void doSessionInfo(const Jingle::Session::Jingle*, const IMPeerId&);
-    void doContentAdd(const Jingle::Session::Jingle*, const IMPeerId&);
-    void doContentRemove(const Jingle::Session::Jingle*, const IMPeerId&);
-    void doContentModify(const Jingle::Session::Jingle*, const IMPeerId&);
-    void doContentAccept(const Jingle::Session::Jingle*, const IMPeerId&);
-    void doContentReject(const Jingle::Session::Jingle*, const IMPeerId&);
-    void doTransportAccept(const Jingle::Session::Jingle*, const IMPeerId&);
-    void doTransportInfo(const Jingle::Session::Jingle*, const IMPeerId&);
-    void doTransportReject(const Jingle::Session::Jingle*, const IMPeerId&);
-    void doTransportReplace(const Jingle::Session::Jingle*, const IMPeerId&);
-    void doSecurityInfo(const Jingle::Session::Jingle*, const IMPeerId&);
-    void doDescriptionInfo(const Jingle::Session::Jingle*, const IMPeerId&);
-    void doInvalidAction(const Jingle::Session::Jingle*, const IMPeerId&);
 
-    IM* _im;
-
-    //  std::vector<FileHandler *> *fileHandlers;
-
-    // sid -> isVideo,在jingle-message阶段暂时保留呼叫的类型是视频（音频无需保存）。
-    QMap<QString, bool> m_sidVideo;
+    virtual void doSessionInfo(const Jingle::Session::Jingle*, const IMPeerId&) = 0;
+    virtual void doContentAdd(const Jingle::Session::Jingle*, const IMPeerId&) = 0;
+    virtual void doContentRemove(const Jingle::Session::Jingle*, const IMPeerId&) = 0;
+    virtual void doContentModify(const Jingle::Session::Jingle*, const IMPeerId&) = 0;
+    virtual void doContentAccept(const Jingle::Session::Jingle*, const IMPeerId&) = 0;
+    virtual void doContentReject(const Jingle::Session::Jingle*, const IMPeerId&) = 0;
+    virtual void doTransportInfo(const Jingle::Session::Jingle*, const IMPeerId&) = 0;
+    virtual void doTransportAccept(const Jingle::Session::Jingle*, const IMPeerId&) = 0;
+    virtual void doTransportReject(const Jingle::Session::Jingle*, const IMPeerId&) = 0;
+    virtual void doTransportReplace(const Jingle::Session::Jingle*, const IMPeerId&) = 0;
+    virtual void doSecurityInfo(const Jingle::Session::Jingle*, const IMPeerId&) = 0;
+    virtual void doDescriptionInfo(const Jingle::Session::Jingle*, const IMPeerId&) = 0;
+    virtual void doInvalidAction(const Jingle::Session::Jingle*, const IMPeerId&) = 0;
 
     QList<Jingle::Content*> m_ices;
 

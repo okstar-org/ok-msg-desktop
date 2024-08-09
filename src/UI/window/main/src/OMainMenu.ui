@@ -1,4 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Copyright (c) 2022 船山信息 chuanshaninfo.com
+  - The project is licensed under Mulan PubL v2.
+  - You can use this software according to the terms and conditions of the Mulan
+  - PubL v2. You may obtain a copy of Mulan PubL v2 at:
+  -          http://license.coscl.org.cn/MulanPubL-2.0
+  - THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+  - EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+  - MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+  - See the Mulan PubL v2 for more details.
+  -->
+
 <ui version="4.0">
  <class>OMainMenu</class>
  <widget class="QFrame" name="OMainMenu">
@@ -114,7 +126,7 @@
        </spacer>
       </item>
       <item alignment="Qt::AlignHCenter">
-       <widget class="StyledIconButton" name="chatBtn">
+          <widget class="ok::base::StyledIconButton" name="chatBtn">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -142,7 +154,7 @@
        </widget>
       </item>
       <item alignment="Qt::AlignHCenter">
-       <widget class="StyledIconButton" name="platformBtn">
+          <widget class="ok::base::StyledIconButton" name="platformBtn">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -183,7 +195,7 @@
        </spacer>
       </item>
       <item alignment="Qt::AlignHCenter">
-       <widget class="StyledIconButton" name="settingBtn">
+          <widget class="ok::base::StyledIconButton" name="settingBtn">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -222,9 +234,9 @@
    <header location="global">src/modules/im/src/widget/tool/croppinglabel.h</header>
   </customwidget>
   <customwidget>
-   <class>StyledIconButton</class>
+      <class>ok::base::StyledIconButton</class>
    <extends>QPushButton</extends>
-   <header location="global">base/stylediconbutton.h</header>
+      <header location="global">src/base/stylediconbutton.h</header>
   </customwidget>
  </customwidgets>
  <resources>

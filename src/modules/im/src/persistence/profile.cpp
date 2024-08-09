@@ -528,7 +528,7 @@ void Profile::setFriendAvatar(const FriendId& owner, const QByteArray& avatarDat
     qDebug() << __func__ << owner.toString() << "size:" << avatarData.size();
     QPixmap pixmap;
     if (!avatarData.isEmpty()) {
-        bool loaded = base::Images::putToPixmap(avatarData, pixmap);
+        bool loaded = ok::base::Images::putToPixmap(avatarData, pixmap);
         if (!loaded) {
             return;
         }

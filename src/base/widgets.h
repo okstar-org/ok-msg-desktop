@@ -24,7 +24,7 @@
 #include <QTime>
 #include <QWidget>
 
-namespace base {
+namespace ok::base {
 
 class Widgets {
 public:
@@ -80,6 +80,6 @@ public:
 
     static void OpenExternUrl(const QUrl& url) { QDesktopServices::openUrl(url); }
 };
-}  // namespace base
+}  // namespace ok::base
 
 #endif  // WIDGETS_H

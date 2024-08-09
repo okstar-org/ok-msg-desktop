@@ -33,7 +33,7 @@ void SettingManager::saveAccount(QString& account, QString& password) {
     settings->setValue(LOGIN_PASSWORD_KEY, QVariant(password));
 }
 
-void SettingManager::getAccount(Fn<void(QString account, QString password)> callback) {
+void SettingManager::getAccount(ok::base::Fn<void(QString account, QString password)> callback) {
     QString a = settings->value(LOGIN_ACCOUNT_KEY, QVariant("")).toString();
     QString p = settings->value(LOGIN_PASSWORD_KEY, QVariant("")).toString();
 

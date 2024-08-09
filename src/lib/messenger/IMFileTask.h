@@ -35,9 +35,9 @@ struct File;
 class IMFileTask : public QThread, public gloox::BytestreamDataHandler {
     Q_OBJECT
 public:
-    IMFileTask(const gloox::JID& friendId,  //
-               const File* file,            //
-               const IM* im);               //
+    IMFileTask(const QString& friendId,  //
+               const File* file,         //
+               IMFile* sender);          //
 
     ~IMFileTask();
 
@@ -61,9 +61,9 @@ public:
     bool ackFinished() const;
 
 private:
-    gloox::JID m_friendId;
+    QString m_friendId;
     const File* m_file;
-    const IM* m_im;
+    IMFile* m_im;
     int m_buf;
     int m_seq;
     quint64 m_sentBytes;
@@ -75,11 +75,11 @@ private:
 
 public:
 signals:
-    void fileSent(const gloox::JID& m_friendId, const File& m_file);
-    void fileError(const gloox::JID& m_friendId, const File& m_file, int m_sentBytes);
-    void fileAbort(const gloox::JID& m_friendId, const File& m_file, int m_sentBytes);
+    void fileSent(const QString& m_friendId, const File& m_file);
+    void fileError(const QString& m_friendId, const File& m_file, int m_sentBytes);
+    void fileAbort(const QString& m_friendId, const File& m_file, int m_sentBytes);
     void fileSending(
-            const gloox::JID& m_friendId, const File& m_file, int m_seq, int m_sentBytes, bool end);
+            const QString& m_friendId, const File& m_file, int m_seq, int m_sentBytes, bool end);
 };
 
 }  // namespace lib::messenger

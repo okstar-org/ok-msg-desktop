@@ -18,9 +18,7 @@
 
 #include <QObject>
 #include "jid.h"
-
-namespace ok {
-namespace base {
+namespace ok::base {
 
 class OkAccount : public QObject {
     Q_OBJECT
@@ -31,17 +29,19 @@ public:
 
     [[nodiscard]] inline const QString& getUsername() const { return username; }
 
-    [[maybe_unused]] inline const ::base::Jid& jid() const { return m_jid; }
+    [[maybe_unused]] inline const base::Jid& jid() const { return m_jid; }
 
-    void setJid(const ::base::Jid& jid);
+    void setJid(const base::Jid& jid);
 
-    [[maybe_unused]] ::base::Jid realJid(::base::Jid jid);
+    [[maybe_unused]] base::Jid realJid(base::Jid jid);
     [[maybe_unused]] QString id() const { return username; }
 
 private:
     QString username;
-    ::base::Jid m_jid;
+
+    base::Jid m_jid;
 };
 
-}  // namespace base
-}  // namespace ok
+
+}  // namespace ok::base
+

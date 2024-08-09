@@ -496,7 +496,7 @@ qt5_add_resources(
 )
 
 
-add_library(${PROJECT_NAME} STATIC
+add_library(${PROJECT_NAME} SHARED
         ${${PROJECT_NAME}_FORMS}
         ${${PROJECT_NAME}_SOURCES}
         ${${PROJECT_NAME}_QM_FILES}
@@ -550,6 +550,7 @@ target_link_libraries(${PROJECT_NAME}
     PUBLIC ${PLATFORM_LIBS}
 )
 
-if (MSVC)
-    set_property(TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-endif (MSVC)
+#if (MSVC)
+#    set_property(TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+#endif (MSVC)
+

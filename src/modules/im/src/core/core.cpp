@@ -110,8 +110,14 @@ void Core::registerCallbacks(lib::messenger::Messenger* messenger) {
 
     connect(messenger, &lib::messenger::Messenger::started,
             [this, messenger]() {
-                messenger->requestBookmarks();
-                emit started();
+        messenger->requestBookmarks();
+
+        // CoreAV
+        av = CoreAV::makeCoreAV(this);
+        // CoreFile
+        file = CoreFile::makeCoreFile(this, coreLoopLock);
+
+        emit started();
             });
 }
 
@@ -153,11 +159,6 @@ ToxCorePtr Core::makeToxCore(const QString& host, const QString& name,
     core->tox =
             std::make_unique<lib::messenger::Messenger>(host, name, password);
 
-    // CoreAV
-    core->av = CoreAV::makeCoreAV(core.get());
-    // CoreFile
-    core->file = CoreFile::makeCoreFile(core.get(), core->coreLoopLock);
-
     core->registerCallbacks(core->tox.get());
 
     // connect the thread with the Core
@@ -170,8 +171,7 @@ ToxCorePtr Core::makeToxCore(const QString& host, const QString& name,
 }
 
 void Core::onStarted() {
-    qDebug() << "connected...";
-    ASSERT_CORE_THREAD;
+    qDebug() << __func__;
 
     // One time initialization stuff
     //  QString name = getUsername();

@@ -28,6 +28,8 @@ blocker gets destroyed. According to QSignalBlocker, we are also exception safe.
 @brief      Creates a QSignalBlocker recursively on the object and child objects.
 @param[in]  object  the object, which signals should be blocked
 */
+namespace ok::base
+{
 RecursiveSignalBlocker::RecursiveSignalBlocker(QObject* object) { recursiveBlock(object); }
 
 RecursiveSignalBlocker::~RecursiveSignalBlocker() { qDeleteAll(mBlockers); }
@@ -42,4 +44,5 @@ void RecursiveSignalBlocker::recursiveBlock(QObject* object) {
     for (QObject* child : object->children()) {
         recursiveBlock(child);
     }
+}
 }

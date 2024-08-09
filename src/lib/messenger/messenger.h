@@ -137,11 +137,6 @@ public:
         return _im;
     }
 
-    IMFile* imFile() const {
-        assert(_imFile);
-        return _imFile;
-    }
-
     IMCall* imCall()const{
         assert(_imCall);
         return _imCall;
@@ -220,7 +215,6 @@ private:
 
     IM* _im;
     IMJingle* jingle;
-    IMFile* _imFile;
     IMCall* _imCall;
 
     // key: sId value:Jingle

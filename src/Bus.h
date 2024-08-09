@@ -20,6 +20,8 @@
 
 class Module;
 class Core;
+class CoreFile;
+
 namespace ok {
 
 /**
@@ -34,6 +36,7 @@ signals:
     void languageChanged(QString locale);
     void moduleCreated(Module* module);
     void coreChanged(Core* core);
+    void coreFileChanged(CoreFile* coreFile);
 };
 
 }  // namespace ok

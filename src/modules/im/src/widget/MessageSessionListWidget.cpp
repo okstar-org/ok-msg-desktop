@@ -74,7 +74,7 @@ MessageSessionListWidget::MessageSessionListWidget(MainLayout* parent,
     dayTimer = new QTimer(this);
     dayTimer->setTimerType(Qt::VeryCoarseTimer);
     connect(dayTimer, &QTimer::timeout, this, &MessageSessionListWidget::dayTimeout);
-    dayTimer->start(base::Times::timeUntilTomorrow());
+    dayTimer->start(ok::base::Times::timeUntilTomorrow());
 
     setAcceptDrops(true);
 
@@ -330,7 +330,7 @@ void MessageSessionListWidget::cycleContacts(GenericChatroomWidget* activeChatro
         }
 
         const auto activityTime = getActiveTimeFriend(friendWidget->getFriend());
-        index = static_cast<int>(base::getTimeBucket(activityTime));
+        index = static_cast<int>(ok::base::getTimeBucket(activityTime));
         QWidget* widget = activityLayout->itemAt(index)->widget();
         //    CategoryWidget *categoryWidget = qobject_cast<CategoryWidget *>(widget);
         //    if (categoryWidget == nullptr ||
@@ -478,7 +478,7 @@ void MessageSessionListWidget::dayTimeout() {
         setMode(SortingMode::Activity);  // Refresh all.
     }
 
-    dayTimer->start(base::Times::timeUntilTomorrow());
+    dayTimer->start(ok::base::Times::timeUntilTomorrow());
 }
 
 void MessageSessionListWidget::moveWidget(MessageSessionWidget* widget, Status::Status s,

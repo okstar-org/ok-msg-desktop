@@ -4,10 +4,10 @@
  * You can use this software according to the terms and conditions of the Mulan
  * PubL v2. You may obtain a copy of Mulan PubL v2 at:
  *          http://license.coscl.org.cn/MulanPubL-2.0
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY
- * KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
- * NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE. See the
- * Mulan PubL v2 for more details.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PubL v2 for more details.
  */
 
 #include "IM.h"
@@ -341,7 +341,7 @@ IMMessage IM::fromXMsg(MsgType type, const gloox::Message& msg) {
     IMMessage imMsg = {.from = qstring(msg.from().full()),
                        .to = qstring(msg.to().full()),
                        .body = qstring(msg.body()),
-                       .timestamp = ::base::Times::now()};
+                       .timestamp = ok::base::Times::now()};
 
     if (!msg.id().empty()) {
         imMsg.id = (qstring(msg.id()));
@@ -491,7 +491,7 @@ QDomDocument IM::buildMessage(const QString& to,   //
     m.setID(stdstring(id));
     m.addExtension(new Receipt(Receipt::Request));
 
-    return ::base::Xmls::parse(qstring(m.tag()->xml()));
+    return ok::base::Xmls::parse(qstring(m.tag()->xml()));
 }
 
 bool IM::sendTo(const QString& friendId, const QString& msg, const QString& id) {
@@ -1771,7 +1771,7 @@ QString IM::getNickname() {
 void IM::setAvatar(const QByteArray& avatar) {
     if (avatar.isEmpty()) return;
 
-    QString sha1 = lib::base::Hashs::sha1(avatar);
+    QString sha1 = ok::base::Hashs::sha1(avatar);
     qDebug() << QString("avatar size:%1 sha1:%2").arg(avatar.size()).arg(sha1);
 
     auto base64 = avatar.toBase64().toStdString();
@@ -2122,7 +2122,6 @@ StringList IM::handleDiscoNodeFeatures(const JID& from, const std::string& node)
     return gloox::StringList();
 }
 
-void IM::endJingle() { mPeerRequestMedias.clear(); }
 
 void IM::handleIncoming(gloox::Tag* tag) {
     //  auto services = tag->findChild("services", XMLNS, XMLNS_EXTERNAL_SERVICE_DISCOVERY);

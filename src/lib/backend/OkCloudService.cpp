@@ -23,7 +23,7 @@ OkCloudService::OkCloudService(QObject* parent) : BaseService(BACKEND_CLOUD_URL,
 
 OkCloudService::~OkCloudService() { qDebug() << __func__; }
 
-bool OkCloudService::GetFederalInfo(Fn<void(Res<FederalInfo>&)> fn, network::HttpErrorFn err) {
+bool OkCloudService::GetFederalInfo(ok::base::Fn<void(Res<FederalInfo>&)> fn, network::HttpErrorFn err) {
     QString url = _baseUrl + "/federal/.well-known/info.json";
     return http->getJson(
             QUrl(url),
@@ -35,7 +35,7 @@ bool OkCloudService::GetFederalInfo(Fn<void(Res<FederalInfo>&)> fn, network::Htt
             err);
 }
 
-bool OkCloudService::GetPluginPage(Fn<void(ResPage<ok::backend::PluginInfo>&)> fn,
+bool OkCloudService::GetPluginPage(ok::base::Fn<void(ResPage<ok::backend::PluginInfo>&)> fn,
                                    network::HttpErrorFn err) {
     auto cpuInfo = ok::base::SystemInfo::instance()->cpuInfo();
     if (cpuInfo.arch.isEmpty()) {

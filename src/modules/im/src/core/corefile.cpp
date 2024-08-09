@@ -15,9 +15,9 @@
 #include <QDebug>
 #include <QDir>
 #include <QFile>
+#include <QMutexLocker>
 #include <QRegularExpression>
 #include <QThread>
-#include <QMutexLocker>
 
 #include <cassert>
 #include <memory>
@@ -25,6 +25,8 @@
 #include "base/uuid.h"
 #include "core.h"
 
+#include "Bus.h"
+#include "application.h"
 #include "src/model/status.h"
 #include "src/model/toxclientstandards.h"
 #include "src/persistence/settings.h"
@@ -47,10 +49,12 @@ CoreFilePtr CoreFile::makeCoreFile(Core* core, CompatibleRecursiveMutex& coreLoo
     return result;
 }
 
-CoreFile::CoreFile(Core* core) {
+CoreFile::CoreFile(Core* core) : messenger{nullptr}, messengerFile{nullptr} {
     qDebug() << __func__;
-    //  lib::messenger::IMFile *imFile = core->messenger()->imFile();
-    //  imFile->addFileHandler(this);
+    messenger = core->getMessenger();
+    messengerFile = new lib::messenger::MessengerFile(core->getMessenger());
+    messengerFile->addFileHandler(this);
+    emit ok::Application::Instance() -> bus()->coreFileChanged(this);
 }
 
 /**
@@ -77,16 +81,16 @@ unsigned CoreFile::corefileIterationInterval() {
     return idleInterval;
 }
 
-void CoreFile::sendFile(
-        QString friendId, QString filename, QString filePath, quint64 filesize, quint64 sent) {
+void CoreFile::sendFile(QString friendId, QString filename, QString filePath, quint64 filesize,
+                        quint64 sent) {
     qDebug() << __func__ << friendId << filename;
 
     QMutexLocker{coreLoopLock};
 
     auto sender = messenger->getSelfId().toFriendId();
 
-    auto fileId = base::UUID::make();
-    auto sId = base::UUID::make();
+    auto fileId = ok::base::UUID::make();
+    auto sId = ok::base::UUID::make();
 
     auto file = ToxFile{sender,
                         friendId,
@@ -355,11 +359,11 @@ void CoreFile::handleAvatarOffer(QString friendId, QString fileId, bool accept) 
 void CoreFile::onFileRequest(const QString& from, const lib::messenger::File& file) {
     qDebug() << __func__ << file.name << "from" << from;
 
-//    auto receiver = messenger->getSelfId().toFriendId();
-//    ToxFile toxFile(from, receiver, file);
-//    addFile(toxFile);
-//    qDebug() << "file:" << toxFile.toString();
-//    emit fileReceiveRequested(toxFile);
+    auto receiver = messenger->getSelfId().toFriendId();
+    ToxFile toxFile(from, receiver, file);
+    addFile(toxFile);
+    qDebug() << "file:" << toxFile.toString();
+    emit fileReceiveRequested(toxFile);
 }
 
 void CoreFile::onFileControlCallback(lib::messenger::Messenger* tox, QString friendId,

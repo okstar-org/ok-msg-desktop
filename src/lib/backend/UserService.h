@@ -63,7 +63,7 @@ public:
     ~UserService();
 
     void search(const QString& query,
-                Fn<void(const QList<OrgStaff*>&)>
+                ok::base::Fn<void(const QList<OrgStaff*>&)>
                         callback,
                 network::HttpErrorFn errFn = nullptr);
 };
