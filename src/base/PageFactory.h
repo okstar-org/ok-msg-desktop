@@ -22,7 +22,7 @@ public:
     template <typename T>
     static
             // Restrict type T to Page
-            typename std::enable_if<true, ok::base::UI::Page>::type  // T -> Page
+            typename std::enable_if<true, ok::base::Page>::type  // T -> Page
                     *
                     Create(QWidget* parent = Q_NULLPTR) {
         return new T(parent);

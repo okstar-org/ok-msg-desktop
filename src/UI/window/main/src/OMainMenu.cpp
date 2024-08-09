@@ -50,8 +50,8 @@ OMainMenu::~OMainMenu() {
 
 void OMainMenu::setAvatar(const QPixmap& pixmap) {
     QSize size = ui->label_avatar->size() * ui->label_avatar->devicePixelRatioF();
-    auto newImage = base::Images::roundRectPixmap(pixmap, size,
-                                                  100 * ui->label_avatar->devicePixelRatioF());
+    auto newImage = ok::base::Images::roundRectPixmap(pixmap, size,
+                                                      100 * ui->label_avatar->devicePixelRatioF());
     newImage.setDevicePixelRatio(ui->label_avatar->devicePixelRatioF());
     ui->label_avatar->setPixmap(newImage);
 }
@@ -75,7 +75,7 @@ void OMainMenu::on_chatBtn_clicked(bool checked) {
     ui->chatBtn->setChecked(true);
     ui->settingBtn->setChecked(false);
     ui->platformBtn->setChecked(false);
-    emit menuPushed(UI::PageMenu::chat, ui->chatBtn->isChecked());
+    emit menuPushed(ok::base::PageMenu::chat, ui->chatBtn->isChecked());
 }
 
 /**
@@ -86,7 +86,7 @@ void OMainMenu::on_settingBtn_clicked(bool checked) {
     ui->platformBtn->setChecked(false);
     ui->chatBtn->setChecked(false);
     ui->settingBtn->setChecked(true);
-    emit menuPushed(UI::PageMenu::setting, ui->settingBtn->isChecked());
+    emit menuPushed(ok::base::PageMenu::setting, ui->settingBtn->isChecked());
 }
 
 /**
@@ -97,7 +97,7 @@ void OMainMenu::on_platformBtn_clicked(bool checked) {
     ui->chatBtn->setChecked(false);
     ui->settingBtn->setChecked(false);
     ui->platformBtn->setChecked(true);
-    emit menuPushed(UI::PageMenu::platform, ui->platformBtn->isChecked());
+    emit menuPushed(ok::base::PageMenu::platform, ui->platformBtn->isChecked());
 }
 
 }  // namespace UI
