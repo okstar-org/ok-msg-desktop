@@ -23,18 +23,12 @@
 namespace lib {
 namespace messenger {
 
-IMJingleSession::IMJingleSession(IM* im,
+IMJingleSession::IMJingleSession(const QString& sId_,
+                                 Session* mSession,
+                                 const IMContactId& selfId,
                                  const IMPeerId& peerId,
-                                 const QString& sId_,
-                                 lib::ortc::JingleCallType callType,
-                                 Session* mSession)
-        : im{im}
-        , sId(sId_)
-        , session(mSession)
-        , accepted(false)
-        ,
-        //      fileHandlers{fileHandlers},
-        m_callType{callType} {
+                                 lib::ortc::JingleCallType callType)
+        : sId(sId_), session(mSession), selfId(selfId), accepted(false), m_callType{callType} {
     qDebug() << __func__ << "type:" << (int)m_callType << "sid:" << sId
              << "to peer:" << peerId.toString();
     qDebug() << __func__ << "be created.";
@@ -47,32 +41,10 @@ Session* IMJingleSession::getSession() const { return session; }
 void IMJingleSession::onAccept() {
     // 对方接收
     qDebug() << __func__;
-
-    if (m_callType == lib::ortc::JingleCallType::file) {
-        //  file
-        //        for (auto& file : m_waitSendFiles) {
-        //            doStartFileSendTask(session, file);
-        //        }
-    } else {
-        // av
-        auto peerId = session->remote().full();
-
-        lib::ortc::OJingleContentAv cav;
-        cav.sdpType = lib::ortc::JingleSdpType::Answer;
-        cav.parse(jingle);
-
-        // RTC 接受会话
-        lib::ortc::OkRTCManager::getInstance()->getRtc()->setRemoteDescription(peerId, cav);
-
-        //        emit receiveFriendHangup(
-        //            peerId.username, answer.hasVideo() ? SENDING_V
-        //                                               : SENDING_A);
-    }
 }
 
 void IMJingleSession::onTerminate() {
     qDebug() << __func__;
-
     lib::ortc::OkRTCManager::getInstance()->destroyRtc();
 }
 
@@ -81,6 +53,8 @@ void IMJingleSession::doTerminate() {
 
     // 发送结束协议
     session->sessionTerminate(new Session::Reason(Session::Reason::Reasons::Success));
+
+    // 销毁rtc
     lib::ortc::OkRTCManager::getInstance()->destroyRtc();
 }
 
@@ -97,13 +71,17 @@ void IMJingleSession::setJingle(const Session::Jingle* jingle_) { jingle = jingl
 
 CallDirection IMJingleSession::direction() const {
     auto sender = session->initiator().bareJID();
-    auto self = im->self().bareJID();
+    auto self = JID(stdstring(selfId.toString())).bareJID();
     return (sender == self) ? CallDirection::CallOut : CallDirection::CallIn;
 }
 
 void IMJingleSession::setCallStage(CallStage state) { m_callStage = state; }
 
 void IMJingleSession::setContext(const ortc::OJingleContent& jc) { context = jc; }
+
+void IMJingleSession::start() {}
+
+void IMJingleSession::stop() {}
 
 }  // namespace messenger
 }  // namespace lib

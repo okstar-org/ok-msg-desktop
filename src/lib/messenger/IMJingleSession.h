@@ -37,15 +37,19 @@ public:
     virtual void stop() = 0;
 };
 
-class IMJingleSession : public QObject {
-    Q_OBJECT
+class IMJingleSession : public IMJingSession, public QObject {
+    //    Q_OBJECT
 public:
-    explicit IMJingleSession(IM* im,
+    explicit IMJingleSession(const QString& sId,
+                             Jingle::Session* session,
+                             const IMContactId& selfId,
                              const IMPeerId& peerId,
-                             const QString& sId,
-                             lib::ortc::JingleCallType callType,
-                             Session* mSession);
+                             lib::ortc::JingleCallType callType);
+
     virtual ~IMJingleSession();
+
+    virtual void start() override;
+    virtual void stop() override;
 
     [[nodiscard]] Session* getSession() const;
     [[nodiscard]] inline const ortc::OJingleContent& getContext() const { return context; }
@@ -83,9 +87,9 @@ public:
     }
 
 private:
-    IM* im;
     QString sId;
     Session* session;
+    IMContactId selfId;
     const Session::Jingle* jingle;
     ortc::OJingleContent context;
 

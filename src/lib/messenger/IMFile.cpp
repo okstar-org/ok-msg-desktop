@@ -179,14 +179,14 @@ void IMFile::rejectFileRequest(const QString& friendId, const QString& sId) {
 
     //  void IMJingle::cancelCall(const IMContactId &friendId, const QString &sId) {
     qDebug() << __func__ << friendId << sId;
-
-    IMJingleSession* s = findSession(sId);
-    if (s) {
-        s->doTerminate();
-        s->setCallStage(CallStage::StageNone);
-        clearSessionInfo(s->getSession());
-    }
-    retractJingleMessage(friendId, sId);
+    //
+    //    IMJingleSession* s = findSession(sId);
+    //    if (s) {
+    //        s->doTerminate();
+    //        s->setCallStage(CallStage::StageNone);
+    //        clearSessionInfo(s->getSession());
+    //    }
+    //    retractJingleMessage(friendId, sId);
     //  else {
     // jingle-message
     //    if (s->direction() == CallDirection:: CallOut) {
@@ -234,7 +234,7 @@ void IMFile::finishFileRequest(const QString& friendId, const QString& sId) {
         qWarning() << "Can not find file session" << sId;
         return;
     }
-    s->getSession()->sessionTerminate(new Session::Reason(Session::Reason::Success));
+    s->getJingleSession()->sessionTerminate(new Session::Reason(Session::Reason::Success));
 }
 
 void IMFile::finishFileTransfer(const QString& friendId, const QString& sId) {
@@ -273,7 +273,6 @@ bool IMFile::sendFileToResource(const JID& jid, const File& file) {
         return false;
     }
 
-    auto ws = cacheSessionInfo(session, ortc::JingleCallType::file);
 
     PluginList pl;
 
@@ -303,7 +302,10 @@ bool IMFile::sendFileToResource(const JID& jid, const File& file) {
 }
 
 // 对方接收文件
-void IMFile::sessionOnAccept(const QString& sId, Jingle::Session* session, const IMPeerId& peerId) {
+void IMFile::sessionOnAccept(const QString& sId,
+                             Jingle::Session* session,
+                             const IMPeerId& peerId,
+                             const Jingle::Session::Jingle* jingle) {
     IMFileSession* sess = m_fileSessionMap.value(sId);
     if (sess) {
         qWarning() << "File session is existing, the sId is" << sId;

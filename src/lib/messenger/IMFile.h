@@ -89,7 +89,8 @@ public:
     // 对方接受
     void sessionOnAccept(const QString& sId,
                          Jingle::Session* session,
-                         const IMPeerId& peerId) override;
+                         const IMPeerId& peerId,
+                         const Jingle::Session::Jingle* jingle) override;
     // 对方终止
     void sessionOnTerminate(const QString& sId, const IMPeerId& peerId) override;
 
@@ -110,6 +111,25 @@ public:
     void doStopFileSendTask(const Jingle::Session* session, const File& file);
 
     std::vector<FileHandler*> getHandlers() { return fileHandlers; }
+
+    IMFileSession* findSession(const QString& sId) { return m_fileSessionMap.value(sId); }
+
+protected:
+    void handleJingleMessage(const IMPeerId& peerId, const Jingle::JingleMessage* jm) override {}
+
+    void doSessionInfo(const Jingle::Session::Jingle*, const IMPeerId&) override {};
+    void doContentAdd(const Jingle::Session::Jingle*, const IMPeerId&) override {};
+    void doContentRemove(const Jingle::Session::Jingle*, const IMPeerId&) override {};
+    void doContentModify(const Jingle::Session::Jingle*, const IMPeerId&) override {};
+    void doContentAccept(const Jingle::Session::Jingle*, const IMPeerId&) override {};
+    void doContentReject(const Jingle::Session::Jingle*, const IMPeerId&) override {};
+    void doTransportInfo(const Jingle::Session::Jingle*, const IMPeerId&) override {};
+    void doTransportAccept(const Jingle::Session::Jingle*, const IMPeerId&) override {};
+    void doTransportReject(const Jingle::Session::Jingle*, const IMPeerId&) override {};
+    void doTransportReplace(const Jingle::Session::Jingle*, const IMPeerId&) override {};
+    void doSecurityInfo(const Jingle::Session::Jingle*, const IMPeerId&) override {};
+    void doDescriptionInfo(const Jingle::Session::Jingle*, const IMPeerId&) override {};
+    void doInvalidAction(const Jingle::Session::Jingle*, const IMPeerId&) override {};
 
 private:
     void rejectFileRequest(const QString& friendId, const QString& sId);
