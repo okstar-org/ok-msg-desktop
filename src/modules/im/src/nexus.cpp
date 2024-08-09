@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (c) 2022 船山信息 chuanshaninfo.com
  * The project is licensed under Mulan PubL v2.
  * You can use this software according to the terms and conditions of the Mulan
@@ -511,14 +511,12 @@ void Nexus::updateWindowsArg(QWindow* closedWindow) {
     for (int i = 0; i < windowList.size(); ++i) {
         if (closedWindow == windowList[i]) continue;
 
-
         QAction* action = windowActions->addAction(windowList[i]->title());
         action->setCheckable(true);
         action->setChecked(windowList[i] == activeWindow);
         connect(action, &QAction::triggered, [&] { onOpenWindow(windowList[i]); });
         windowMenu->addAction(action);
         dockMenu->insertAction(dockLast, action);
-
     }
 
     if (dockLast && !dockLast->isSeparator()) dockMenu->insertSeparator(dockLast);
@@ -538,8 +536,9 @@ void Nexus::updateWindowsStates() {
             break;
         }
     }
-
-
+    if (frontAction) {
+        frontAction->setEnabled(exists);
+    }
 }
 
 void Nexus::onOpenWindow(QObject* object) {
