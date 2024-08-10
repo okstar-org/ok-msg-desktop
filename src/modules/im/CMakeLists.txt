@@ -437,8 +437,7 @@ if (PLATFORM_EXTENSIONS)
     endif ()
 endif ()
 
-qt5_add_translation(
-        ${PROJECT_NAME}_QM_FILES
+set(TS_FILES
         translations/de.ts
         translations/es.ts
         translations/fr.ts
@@ -449,7 +448,15 @@ qt5_add_translation(
         translations/ru.ts
         translations/ar.ts
         translations/zh_CN.ts
-        translations/zh_TW.ts)
+        translations/zh_TW.ts
+)
+
+qt5_create_translation(${PROJECT_NAME}_QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES} OPTIONS -no-obsolete)
+
+qt5_add_translation(
+        ${PROJECT_NAME}_QM_FILES
+        ${TS_FILES}
+)
 
 set(RESOURCE_NAME "${PROJECT_BINARY_DIR}/${PROJECT_NAME}.qrc.in")
 

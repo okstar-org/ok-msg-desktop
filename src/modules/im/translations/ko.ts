@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="ko" sourcelanguage="en_US">
+<TS version="2.1" language="ko" sourcelanguage="en_US">
 <context>
     <name>AVForm</name>
     <message>
@@ -78,14 +78,6 @@ which may lead to problems with video calls.</source>
         <translation>사운드검사</translation>
     </message>
     <message>
-        <source>Enables the experimental audio backend with echo cancelling support, needs qTox restart to take effect.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable experimental audio backend</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Audio quality</source>
         <translation>오디오 음질</translation>
     </message>
@@ -113,16 +105,24 @@ which may lead to problems with video calls.</source>
         <source>Threshold</source>
         <translation>한계점</translation>
     </message>
+    <message>
+        <source>Play a test sound while changing the output volume.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use slider to set the gain of your input device ranging from %1dB to %2dB.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use slider to set the activation volume for your input device.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>AboutForm</name>
     <message>
         <source>About</source>
         <translation>About</translation>
-    </message>
-    <message>
-        <source>Original author: %1</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>You are using qTox version %1.</source>
@@ -133,42 +133,8 @@ which may lead to problems with video calls.</source>
         <translation>Commit hash: %1</translation>
     </message>
     <message>
-        <source>toxcore version: %1</source>
-        <translation>toxcore version: %1</translation>
-    </message>
-    <message>
         <source>Qt version: %1</source>
         <translation>Qt version: %1</translation>
-    </message>
-    <message>
-        <source>A list of all known issues may be found at our %1 at Github. If you discover a bug or security vulnerability within qTox, please report it according to the guidelines in our %2 wiki article.</source>
-        <comment>`%1` is replaced by translation of `bug tracker`
-`%2` is replaced by translation of `Writing Useful Bug Reports`</comment>
-        <translation>%1 에서 qTox의 알려진 문제들을 확인할 수 있습니다. 버그나 보안 취약점을 발견하면 %2 위키 가이드라인에 따라 %3.</translation>
-    </message>
-    <message>
-        <source>Click here to report a bug.</source>
-        <translation>버그 제출하기.</translation>
-    </message>
-    <message>
-        <source>See a full list of %1 at Github</source>
-        <comment>`%1` is replaced with translation of word `contributors`</comment>
-        <translation type="unfinished">%1의 전체 리스트 보기</translation>
-    </message>
-    <message>
-        <source>bug-tracker</source>
-        <comment>Replaces `%1` in the `A list of all knownâ¦`</comment>
-        <translation type="unfinished">버그추적</translation>
-    </message>
-    <message>
-        <source>Writing Useful Bug Reports</source>
-        <comment>Replaces `%2` in the `A list of all knownâ¦`</comment>
-        <translation type="unfinished">버그 리포트 작성</translation>
-    </message>
-    <message>
-        <source>contributors</source>
-        <comment>Replaces `%1` in `See a full list ofâ¦`</comment>
-        <translation type="unfinished">contributors</translation>
     </message>
 </context>
 <context>
@@ -184,14 +150,6 @@ which may lead to problems with video calls.</source>
     <message>
         <source>status message</source>
         <translation type="unfinished">상태 메시지</translation>
-    </message>
-    <message>
-        <source>Used aliases:</source>
-        <translation type="unfinished">사용한 닉네임:</translation>
-    </message>
-    <message>
-        <source>HISTORY OF ALIASES</source>
-        <translation type="unfinished">닉네임 기록</translation>
     </message>
     <message>
         <source>Automatically accept files from contact if set</source>
@@ -226,34 +184,6 @@ which may lead to problems with video calls.</source>
         <translation>오디오 + 비디오</translation>
     </message>
     <message>
-        <source>Automatically accept group chat invitations from this contact if set.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Auto accept group invites</source>
-        <translation>그룹 초대를 받아드립니다.</translation>
-    </message>
-    <message>
-        <source>Remove history (operation can not be undone!)</source>
-        <translation type="unfinished">기록 삭제하기 (삭제된 기록은 복구할 수 없습니다!)</translation>
-    </message>
-    <message>
-        <source>Notes</source>
-        <translation type="unfinished">메모</translation>
-    </message>
-    <message>
-        <source>Input field for notes about the contact</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>You can save comment about this contact here.</source>
-        <translation type="unfinished">이 주소에 대한 설명을 보관할 수 있습니다.</translation>
-    </message>
-    <message>
-        <source>History removed</source>
-        <translation>기록 삭제</translation>
-    </message>
-    <message>
         <source>Choose an auto accept directory</source>
         <extracomment>popup title</extracomment>
         <translation type="unfinished">자동받기 폴더 선택</translation>
@@ -271,7 +201,106 @@ which may lead to problems with video calls.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Failed to remove chat history with %1!</source>
+        <source>Send message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alias:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clear history:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AboutGroupForm</name>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished">폼</translation>
+    </message>
+    <message>
+        <source>groupname</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Auto accept call:</source>
+        <translation type="unfinished">호출 자동 수락:</translation>
+    </message>
+    <message>
+        <source>Automatically accept files from contact if set</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Auto accept files</source>
+        <translation type="unfinished">파일전송 자동 수락</translation>
+    </message>
+    <message>
+        <source>Description:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Id:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Auto accept for this contact is disabled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Default directory to save files:</source>
+        <translation type="unfinished">파일 저장 폴더:</translation>
+    </message>
+    <message>
+        <source>Manual</source>
+        <translation type="unfinished">설명서</translation>
+    </message>
+    <message>
+        <source>Audio</source>
+        <translation type="unfinished">오디오</translation>
+    </message>
+    <message>
+        <source>Audio + Video</source>
+        <translation type="unfinished">오디오 + 비디오</translation>
+    </message>
+    <message>
+        <source>Clear history:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Automatically accept group chat invitations from this contact if set.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Auto accept group invites</source>
+        <translation type="unfinished">그룹 초대를 받아드립니다.</translation>
+    </message>
+    <message>
+        <source>Occupants:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Send notice:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alias:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Send message</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -301,7 +330,7 @@ which may lead to problems with video calls.</source>
         <source>Update available</source>
         <translation type="unfinished"></translation>
     </message>
-    <message utf8="true">
+    <message>
         <source>qTox is up to date ✓</source>
         <translation type="unfinished"></translation>
     </message>
@@ -309,126 +338,36 @@ which may lead to problems with video calls.</source>
 <context>
     <name>AddFriendForm</name>
     <message>
-        <source>Add Friends</source>
-        <translation>친구 추가</translation>
-    </message>
-    <message>
-        <source>Invalid Tox ID format</source>
-        <translation>Tox ID 형식이 정확하지 않습니다</translation>
-    </message>
-    <message>
-        <source>Send friend request</source>
-        <translation>친구 요청하기</translation>
-    </message>
-    <message>
         <source>Add a friend</source>
         <translation>친구 추가</translation>
-    </message>
-    <message>
-        <source>Friend requests</source>
-        <translation>친구 요청</translation>
-    </message>
-    <message>
-        <source>Accept</source>
-        <translation>수락</translation>
-    </message>
-    <message>
-        <source>Reject</source>
-        <translation>거부</translation>
     </message>
     <message>
         <source>Couldn&apos;t add friend</source>
         <translation>친구를 추가할 수 없습니다</translation>
     </message>
     <message>
-        <source>Tox ID, either 76 hexadecimal characters or name@example.com</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Type in Tox ID of your friend</source>
-        <translation>친구의 Tox 아이디를 입력</translation>
-    </message>
-    <message>
-        <source>Friend request message</source>
-        <translation>친구 요청 메시지</translation>
-    </message>
-    <message>
-        <source>Type message to send with the friend request or leave empty to send a default message</source>
-        <translation>친구요청 메시지를 입력하세요</translation>
-    </message>
-    <message>
-        <source>%1 Tox ID is invalid or does not exist</source>
-        <comment>Toxme error</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>You can&apos;t add yourself as a friend!</source>
-        <extracomment>When trying to add your own Tox ID as friend</extracomment>
         <translation>자신을 친구로 추가할 수 없습니다!</translation>
     </message>
     <message>
-        <source>Open contact list</source>
+        <source>Form</source>
+        <translation type="unfinished">폼</translation>
+    </message>
+    <message>
+        <source>Search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Couldn&apos;t open file</source>
-        <translation>파일을 열 수 없습니다</translation>
-    </message>
-    <message>
-        <source>Couldn&apos;t open the contact file</source>
-        <extracomment>Error message when trying to open a contact list file to import</extracomment>
+        <source>Account/E-Mail/Phone Number</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Invalid file</source>
+        <source>%1 Ok ID is invalid</source>
+        <comment>Tox address error</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>We couldn&apos;t find any contacts to import in this file!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Tox ID</source>
-        <extracomment>Tox ID of the person you&apos;re sending a friend request to</extracomment>
-        <translation type="unfinished">Tox ID</translation>
-    </message>
-    <message>
-        <source>either 76 hexadecimal characters or name@example.com</source>
-        <extracomment>Tox ID format description</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Message</source>
-        <extracomment>The message you send in friend requests</extracomment>
-        <translation>메시지</translation>
-    </message>
-    <message>
-        <source>Open</source>
-        <extracomment>Button to choose a file with a list of contacts to import</extracomment>
-        <translation>열기</translation>
-    </message>
-    <message>
-        <source>Send friend requests</source>
-        <translation>친구 요청을 보냄</translation>
-    </message>
-    <message>
-        <source>%1 here! Tox me maybe?</source>
-        <extracomment>Default message in friend requests if the field is left blank. Write something appropriate!</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Import a list of contacts, one Tox ID per line</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message numerus="yes">
-        <source>Ready to import %n contact(s), click send to confirm</source>
-        <extracomment>Shows the number of contacts we&apos;re about to import from a file (at least one)</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>Import contacts</source>
+        <source>Search users</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -436,22 +375,6 @@ which may lead to problems with video calls.</source>
     <name>AdvancedForm</name>
     <message>
         <source>Advanced</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Unless you %1 know what you are doing, please do %2 change anything here. Changes made here may lead to problems with qTox, and even to loss of your data, e.g. history.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>really</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>not</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>IMPORTANT NOTE</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -471,16 +394,6 @@ which may lead to problems with video calls.</source>
         <translation>아니오</translation>
     </message>
     <message>
-        <source>Call active</source>
-        <comment>popup title</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>You can&apos;t disconnect while a call is active!</source>
-        <comment>popup text</comment>
-        <translation>통화중에는 연결을 종료할 수 없습니다!</translation>
-    </message>
-    <message>
         <source>Save File</source>
         <translation>파일저장</translation>
     </message>
@@ -492,21 +405,8 @@ which may lead to problems with video calls.</source>
 <context>
     <name>AdvancedSettings</name>
     <message>
-        <source>Save settings to the working directory instead of the usual conf dir</source>
-        <extracomment>describes makeToxPortable checkbox</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Make Tox portable</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Reset to default settings</source>
         <translation>설정초기화</translation>
-    </message>
-    <message>
-        <source>Portable</source>
-        <translation>이동가능</translation>
     </message>
     <message>
         <source>Connection Settings</source>
@@ -554,11 +454,6 @@ which may lead to problems with video calls.</source>
         <translation>HTTP</translation>
     </message>
     <message>
-        <source>Reconnect</source>
-        <comment>reconnect button</comment>
-        <translation>다시 연결</translation>
-    </message>
-    <message>
         <source>Debug</source>
         <translation>디버그</translation>
     </message>
@@ -572,6 +467,28 @@ which may lead to problems with video calls.</source>
     </message>
     <message>
         <source>Enable LAN discovery</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>BannerWidget</name>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished">폼</translation>
+    </message>
+</context>
+<context>
+    <name>CallDurationForm</name>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished">폼</translation>
+    </message>
+    <message>
+        <source>00:00:00</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Call duration: </source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -594,10 +511,6 @@ which may lead to problems with video calls.</source>
         <translation>좋지않은 의견</translation>
     </message>
     <message>
-        <source>%1 calling</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Calling %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -612,32 +525,11 @@ which may lead to problems with video calls.</source>
         <translation>스크린샷을 저장할 수 없었습니다.</translation>
     </message>
     <message>
-        <source>Call with %1 ended. %2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Call duration: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1 is typing</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Copy</source>
         <translation>복사</translation>
     </message>
     <message>
         <source>You&apos;re trying to send a sequential file, which is not going to work!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1 is now %2</source>
-        <comment>e.g. &quot;Dubslow is now online&quot;</comment>
-        <translation>%1님은 현재 %2</translation>
-    </message>
-    <message>
-        <source>Call with %1 ended unexpectedly. %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -647,6 +539,10 @@ which may lead to problems with video calls.</source>
     <message>
         <source>Illegal characters have been changed to _ 
 so you can save the file on windows.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Wasn&apos;t able to open %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -727,16 +623,124 @@ so you can save the file on windows.</source>
         <source>Select all</source>
         <translation>전체 선택</translation>
     </message>
-    <message>
-        <source>pending</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>ChatTextEdit</name>
     <message>
         <source>Type your message here...</source>
         <translation>여기에 메시지를 입력하세요...</translation>
+    </message>
+</context>
+<context>
+    <name>ChatWidget</name>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished">폼</translation>
+    </message>
+    <message>
+        <source>Open profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open profile page when clicked</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your name</source>
+        <translation type="unfinished">이름</translation>
+    </message>
+    <message>
+        <source>Status message input</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set your status message that will be shown to others</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your status</source>
+        <translation type="unfinished">상태</translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation type="unfinished">상태</translation>
+    </message>
+    <message>
+        <source>Set availability status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Contact search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Contact search input for known friends</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sorting and visibility</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set friends sorting and visibility</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <source>%n New Group Invite(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>By Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>By Activity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All</source>
+        <translation type="unfinished">전체</translation>
+    </message>
+    <message>
+        <source>Online</source>
+        <translation type="unfinished">온라인</translation>
+    </message>
+    <message>
+        <source>Offline</source>
+        <translation type="unfinished">오프라인</translation>
+    </message>
+    <message>
+        <source>Friends</source>
+        <translation type="unfinished">친구</translation>
+    </message>
+    <message>
+        <source>Groups</source>
+        <translation type="unfinished">그룹</translation>
+    </message>
+    <message>
+        <source>Search Contacts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Online</source>
+        <comment>Button to set your status to &apos;Online&apos;</comment>
+        <translation type="unfinished">온라인</translation>
+    </message>
+    <message>
+        <source>Away</source>
+        <comment>Button to set your status to &apos;Away&apos;</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Busy</source>
+        <comment>Button to set your status to &apos;Busy&apos;</comment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -757,14 +761,43 @@ so you can save the file on windows.</source>
     </message>
 </context>
 <context>
-    <name>Core</name>
+    <name>ConfigWindow</name>
     <message>
-        <source>/me offers friendship, &quot;%1&quot;</source>
+        <source>MainWindow</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ContactWidget</name>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished">폼</translation>
+    </message>
+    <message>
+        <source>Contact search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Invalid Tox ID</source>
-        <comment>Error while sending friendship request</comment>
+        <source>Contact search input for known friends</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> sent you a friend request.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> invites you to join a group.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Core</name>
+    <message>
+        <source>/me offers friendship, &quot;%1&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -773,17 +806,13 @@ so you can save the file on windows.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Your message is too long!</source>
+        <source>Invalid Ok ID</source>
         <comment>Error while sending friendship request</comment>
-        <translation>제한된 메시지 길이를 초과했습니다!</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Friend is already added</source>
+        <source>IMFriend is already added</source>
         <comment>Error while sending friendship request</comment>
-        <translation>이미 추가된 친구입니다</translation>
-    </message>
-    <message>
-        <source>Groupchat %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -871,20 +900,11 @@ so you can save the file on windows.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Paused</source>
-        <comment>file transfer widget</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Open file</source>
         <translation>파일열기</translation>
     </message>
     <message>
         <source>Open file directory</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Resume transfer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -895,11 +915,6 @@ so you can save the file on windows.</source>
         <source>Save a file</source>
         <comment>Title of the file saving dialog</comment>
         <translation>파일보관</translation>
-    </message>
-    <message>
-        <source>Remote Paused</source>
-        <comment>file transfer widget</comment>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -916,6 +931,17 @@ so you can save the file on windows.</source>
     <message>
         <source>Uploads</source>
         <translation>업로드</translation>
+    </message>
+</context>
+<context>
+    <name>FriendForm</name>
+    <message>
+        <source>Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>+</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -974,69 +1000,21 @@ so you can save the file on windows.</source>
         <comment>Reject a friend request</comment>
         <translation>거부</translation>
     </message>
+    <message>
+        <source>IMFriend request</source>
+        <comment>Title of the window to aceept/deny a friend request</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>IMFriend request message:</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FriendWidget</name>
     <message>
-        <source>Invite to group</source>
-        <comment>Menu to invite a friend to a groupchat</comment>
-        <translation>그룹 초대</translation>
-    </message>
-    <message>
-        <source>Move to circle...</source>
-        <comment>Menu to move a friend into a different circle</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>To new circle</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove from circle &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Move  to circle &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Open chat in new window</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove chat from this window</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>To new group</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Invite to group &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Set alias...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Auto accept files from this friend</source>
-        <comment>context menu entry</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove friend</source>
-        <comment>Menu to remove the friend from our friendlist</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Show details</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Choose an auto accept directory</source>
-        <comment>popup title</comment>
-        <translation type="unfinished">자동받기 폴더 선택</translation>
     </message>
     <message>
         <source>New message</source>
@@ -1058,6 +1036,22 @@ so you can save the file on windows.</source>
         <source>Offline</source>
         <translatorcomment>Ausgelassen</translatorcomment>
         <translation type="unfinished">오프라인</translation>
+    </message>
+    <message>
+        <source>Invite to group</source>
+        <translation type="unfinished">그룹 초대</translation>
+    </message>
+    <message>
+        <source>Remove friend</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Confirmation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Are you sure to remove %1 ?</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1185,6 +1179,10 @@ instead of system taskbar.</source>
         <source> MB</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Add a chat message when a user joins or leaves a group</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>GenericChatForm</name>
@@ -1217,10 +1215,6 @@ instead of system taskbar.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Quote selected text</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Copy link address</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1233,19 +1227,18 @@ instead of system taskbar.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Search in text</source>
+        <source>Quote</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>GenericChatItemWidget</name>
+    <message>
+        <source>I:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Go to current date</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Load chat history...</source>
-        <translation type="unfinished">채팅 기록을 불러오는중...</translation>
-    </message>
-    <message>
-        <source>Export to file</source>
+        <source>:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1323,6 +1316,25 @@ instead of system taskbar.</source>
     </message>
 </context>
 <context>
+    <name>GroupCreateForm</name>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished">폼</translation>
+    </message>
+    <message>
+        <source>Group name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create new group</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>GroupInviteForm</name>
     <message>
         <source>Groups</source>
@@ -1355,36 +1367,29 @@ instead of system taskbar.</source>
 <context>
     <name>GroupWidget</name>
     <message>
-        <source>Set title...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Open chat in new window</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove chat from this window</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Quit group</source>
         <comment>Menu to quit a groupchat</comment>
         <translation type="unfinished"></translation>
     </message>
-    <message numerus="yes">
-        <source>%n user(s) in chat</source>
-        <comment>Number of users in chat</comment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-        </translation>
-    </message>
     <message>
-        <source>New Message</source>
+        <source>Confirmation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Online</source>
-        <translation type="unfinished">온라인</translation>
+        <source>Are you sure to quit %1 chat group?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Destroy group</source>
+        <comment>Destroy the groupchat</comment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>IMMainWindow</name>
+    <message>
+        <source>Close</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1394,27 +1399,8 @@ instead of system taskbar.</source>
         <translation>공개 정보</translation>
     </message>
     <message>
-        <source>Tox ID</source>
-        <translation>Tox ID</translation>
-    </message>
-    <message>
-        <source>This bunch of characters tells other Tox clients how to contact you.
-Share it with your friends to communicate.</source>
-        <comment>Tox ID tooltip</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Your Tox ID (click to copy)</source>
-        <translation>Tox ID (클릭해서 복사)</translation>
-    </message>
-    <message>
         <source>Profile</source>
         <translation>프로필</translation>
-    </message>
-    <message>
-        <source>Rename profile.</source>
-        <comment>tooltip for renaming profile button</comment>
-        <translation>프로필 이름 변경.</translation>
     </message>
     <message>
         <source>Go back to the login screen</source>
@@ -1427,34 +1413,12 @@ Share it with your friends to communicate.</source>
         <translation>로그아웃</translation>
     </message>
     <message>
-        <source>Remove password</source>
-        <translation>계정 비밀번호 삭제</translation>
-    </message>
-    <message>
-        <source>Change password</source>
-        <translation>계정 비밀번호 변경</translation>
-    </message>
-    <message>
-        <source>This QR code contains your Tox ID. You may share this with your friends as well.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save image</source>
         <translation>이미지 저장</translation>
     </message>
     <message>
         <source>Copy image</source>
         <translation>이미지 복사</translation>
-    </message>
-    <message>
-        <source>Rename</source>
-        <comment>rename profile button</comment>
-        <translation>이름변경</translation>
-    </message>
-    <message>
-        <source>Delete profile.</source>
-        <comment>delete profile button tooltip</comment>
-        <translation>프로필 삭제.</translation>
     </message>
     <message>
         <source>Allows you to export your Tox profile to a file.
@@ -1466,64 +1430,6 @@ Profile does not contain your history.</source>
         <source>Export</source>
         <comment>export profile button</comment>
         <translation>내보내기</translation>
-    </message>
-    <message>
-        <source>Delete</source>
-        <comment>delete profile button</comment>
-        <translation>삭제</translation>
-    </message>
-    <message>
-        <source>Server</source>
-        <translation>서버</translation>
-    </message>
-    <message>
-        <source>Hide my name from the public list</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Register</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Your password</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Update</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Register on ToxMe</source>
-        <translation>ToxMe 등록</translation>
-    </message>
-    <message>
-        <source>Name for the ToxMe service.</source>
-        <comment>Tooltip for the `Username` ToxMe field.</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Optional. Something about you. Or your cat.</source>
-        <comment>Tooltip for the Biography text.</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Optional. Something about you. Or your cat.</source>
-        <comment>Tooltip for the Biography field.</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>ToxMe service to register on.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>If not set, ToxMe entries are publicly visible.</source>
-        <comment>Tooltip for the `Hide my name from public list` ToxMe checkbox.</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove your password and encryption from your profile.</source>
-        <comment>Tooltip for the `Remove password` button.</comment>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Name input</source>
@@ -1542,10 +1448,6 @@ Profile does not contain your history.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Your Tox ID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save QR image as file</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1554,47 +1456,7 @@ Profile does not contain your history.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>ToxMe username to be shown on ToxMe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Optional ToxMe biography to be shown on ToxMe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>ToxMe service address</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Visibility on the ToxMe service</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Password</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Update ToxMe entry</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Rename profile.</source>
-        <translation type="unfinished">프로필 이름 변경.</translation>
-    </message>
-    <message>
-        <source>Delete profile.</source>
-        <translation type="unfinished">프로필 삭제.</translation>
-    </message>
-    <message>
         <source>Export profile</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove password from profile</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change profile password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1606,16 +1468,31 @@ Profile does not contain your history.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>My username</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>My biography</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>My profile</source>
         <translation type="unfinished">내 프로필</translation>
+    </message>
+    <message>
+        <source>Ok ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This bunch of characters tells other Tox clients how to contact you.
+Share it with your friends to communicate.</source>
+        <comment>Ok ID tooltip</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your Ok ID (click to copy)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your Ok ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Exit</source>
+        <comment>import profile button</comment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1625,72 +1502,12 @@ Profile does not contain your history.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Load history</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>from</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>to</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>(about 100 messages are loaded)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Select Date Dialog</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Select a date</source>
+        <source>Load history from:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>LoginScreen</name>
-    <message>
-        <source>Username:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Password:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Confirm:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Password strength: %p%</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create Profile</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>If the profile does not have a password, qTox can skip the login screen</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Load automatically</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Load</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Load Profile</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>New Profile</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message>
         <source>Couldn&apos;t create a new profile</source>
         <translation type="unfinished"></translation>
@@ -1738,160 +1555,111 @@ You may want to create one.</source>
         <source>Wrong password.</source>
         <translation type="unfinished"></translation>
     </message>
+</context>
+<context>
+    <name>LoginWidget</name>
     <message>
-        <source>Import</source>
+        <source>Form</source>
+        <translation type="unfinished">폼</translation>
+    </message>
+    <message>
+        <source>Welcome Login</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Username input field</source>
+        <source>Username</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Password input field, you can leave it empty (no password), or type at least 6 characters</source>
+        <source>Please input phone number</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Password confirmation field</source>
+        <source>Password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Create a new profile button</source>
+        <source>Please input password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Profile list</source>
+        <source>Provider</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>List of profiles</source>
+        <source>Select</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Password input</source>
+        <source>Language</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Load automatically checkbox</source>
+        <source>Remember</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Import profile</source>
+        <source>Login</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Load selected profile button</source>
+        <source>Sign Up</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>New profile creation page</source>
+        <source>Retrieve Password</source>
         <translation type="unfinished"></translation>
     </message>
+</context>
+<context>
+    <name>LoginWindow</name>
     <message>
-        <source>Loading existing profile page</source>
-        <translation type="unfinished"></translation>
+        <source>Form</source>
+        <translation type="unfinished">폼</translation>
     </message>
 </context>
 <context>
     <name>MainWindow</name>
     <message>
-        <source>Your name</source>
-        <translation type="unfinished">이름</translation>
+        <source>MainWindow</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>MessageSessionListWidget</name>
+    <message>
+        <source>Today</source>
+        <translation type="unfinished">오늘</translation>
     </message>
     <message>
-        <source>Your status</source>
-        <translation type="unfinished">상태</translation>
+        <source>Yesterday</source>
+        <translation type="unfinished">어제</translation>
     </message>
     <message>
-        <source>...</source>
-        <translatorcomment>Ausgelassen</translatorcomment>
+        <source>Last 7 days</source>
+        <translation type="unfinished">지난 7일</translation>
+    </message>
+    <message>
+        <source>This month</source>
+        <translation type="unfinished">이 달</translation>
+    </message>
+    <message>
+        <source>Older than 6 Months</source>
+        <translation type="unfinished">6개월 이전</translation>
+    </message>
+    <message>
+        <source>Never</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>MessageSessionWidget</name>
+    <message>
+        <source>Delete the session</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Add friends</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create a group chat</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>View completed file transfers</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change your settings</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Open profile</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Open profile page when clicked</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Status message input</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Set your status message that will be shown to others</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Status</source>
-        <translation type="unfinished">상태</translation>
-    </message>
-    <message>
-        <source>Set availability status</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Contact search</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Contact search input for known friends</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Sorting and visibility</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Set friends sorting and visibility</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Open Add friends page</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Groupchat</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Open groupchat management page</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>File transfers history</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Open File transfers history</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Settings</source>
-        <translation type="unfinished">설정</translation>
-    </message>
-    <message>
-        <source>Open Settings</source>
+        <source>Show details</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1925,6 +1693,10 @@ You may want to create one.</source>
         <source>Enter Fullscreen</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Can not create profile!</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>NotificationEdgeWidget</name>
@@ -1936,10 +1708,54 @@ You may want to create one.</source>
     </message>
 </context>
 <context>
+    <name>OMainMenu</name>
+    <message>
+        <source>Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>PasswordEdit</name>
     <message>
         <source>CAPS-LOCK ENABLED</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>PluginInfoForm</name>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished">폼</translation>
+    </message>
+    <message>
+        <source>name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>version</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>home</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>install</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>PluginItemForm</name>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished">폼</translation>
+    </message>
+</context>
+<context>
+    <name>PluginManagerForm</name>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished">폼</translation>
     </message>
 </context>
 <context>
@@ -1973,26 +1789,6 @@ You may want to create one.</source>
         <translation>채팅기록 유지</translation>
     </message>
     <message>
-        <source>NoSpam is part of your Tox ID.
-If you are being spammed with friend requests, you should change your NoSpam.
-People will be unable to add you with your old ID, but you will keep your current friends.</source>
-        <comment>toolTip for nospam</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>NoSpam</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>NoSpam is a part of your ID that can be changed at will.
-If you are getting spammed with friend requests, change the NoSpam.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Generate random NoSpam</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Chat history keeping is still in development.
 Save format changes are possible, which may result in data loss.</source>
         <comment>toolTip for Keep History setting</comment>
@@ -2008,21 +1804,6 @@ Save format changes are possible, which may result in data loss.</source>
     </message>
     <message>
         <source>Filter group message by group member&apos;s public key. Put public key here, one per line.</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>Profile</name>
-    <message>
-        <source>Failed to derive key from password, the profile won&apos;t use the new password.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Couldn&apos;t change password on the database, it might be corrupted or use the old password.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Toxing on qTox</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2127,48 +1908,6 @@ Please use another image.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Register (processing)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Update (processing)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Done!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Account %1@%2 updated successfully</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Successfully added %1@%2 to the database. Save your password</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Toxme error</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Register</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Update</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change password</source>
-        <comment>button text</comment>
-        <translation type="unfinished">계정 비밀번호 변경</translation>
-    </message>
-    <message>
-        <source>Set profile password</source>
-        <comment>button text</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Current profile location: %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2242,6 +1981,10 @@ This ID includes the NoSpam code (in blue), and the checksum (in gray).</source>
     <message>
         <source>Images (%1)</source>
         <comment>filetype filter</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tox user names cannot exceed %1 characters.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2319,62 +2062,13 @@ This ID includes the NoSpam code (in blue), and the checksum (in gray).</source>
     </message>
 </context>
 <context>
-    <name>QMessageBox</name>
-    <message>
-        <source>Couldn&apos;t add friend</source>
-        <translation type="unfinished">친구를 추가할 수 없습니다</translation>
-    </message>
-    <message>
-        <source>%1 is not a valid Toxme address.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>You can&apos;t add yourself as a friend!</source>
-        <comment>When trying to add your own Tox ID as friend</comment>
-        <translation type="unfinished">자기 자신을 친구로 추가할 수 없습니다!</translation>
-    </message>
-</context>
-<context>
     <name>QObject</name>
-    <message>
-        <source>Tox URI to parse</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Starts new instance and loads specified profile.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>profile</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message>
         <source>Default</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Blue</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Olive</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Red</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Violet</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Incoming call...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1 here! Tox me maybe?</source>
-        <comment>Default message in Tox URI friend requests. Write something appropriate!</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2388,59 +2082,7 @@ This ID includes the NoSpam code (in blue), and the checksum (in gray).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Server doesn&apos;t support Toxme</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>You&apos;re making too many requests. Wait an hour and try again</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This name is already in use</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This Tox ID is already registered under another name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Please don&apos;t use a space in your name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Password incorrect</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>You can&apos;t use this name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Name not found</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Tox ID not sent</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>That user does not exist</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Error</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>qTox couldn&apos;t open your chat logs, they will be disabled.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Problem with HTTPS connection</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Internal ToxMe error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2448,31 +2090,7 @@ This ID includes the NoSpam code (in blue), and the checksum (in gray).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Starts new instance and opens the login screen.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Dark</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Dark blue</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Dark olive</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Dark red</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Dark violet</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Failed to load profile automatically.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2498,6 +2116,10 @@ This ID includes the NoSpam code (in blue), and the checksum (in gray).</source>
     <message>
         <source>blocked</source>
         <comment>contact status</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t open your chat logs, they will be exit.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2605,6 +2227,14 @@ This ID includes the NoSpam code (in blue), and the checksum (in gray).</source>
         <source>Use regular expressions</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Select Date Dialog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select a date</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SetPasswordDialog</name>
@@ -2657,33 +2287,50 @@ This ID includes the NoSpam code (in blue), and the checksum (in gray).</source>
     </message>
 </context>
 <context>
-    <name>ToxURIDialog</name>
+    <name>UI::ConfigWindow</name>
     <message>
-        <source>Add a friend</source>
-        <comment>Title of the window to add a friend through Tox URI</comment>
-        <translation type="unfinished">친구 추가</translation>
+        <source>Plugin form</source>
+        <translation type="unfinished"></translation>
     </message>
+</context>
+<context>
+    <name>UI::LoginWidget</name>
     <message>
-        <source>Do you want to add %1 as a friend?</source>
+        <source>Please waiting the page is loaded</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>User ID:</source>
-        <translation type="unfinished">사용자 아이디:</translation>
-    </message>
-    <message>
-        <source>Friend request message:</source>
-        <translation type="unfinished">친구 요청 메시지:</translation>
-    </message>
-    <message>
-        <source>Send</source>
-        <comment>Send a friend request</comment>
+        <source>Please select service provider</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Cancel</source>
-        <comment>Don&apos;t send a friend request</comment>
+        <source>...</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Logging in</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>login success</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Login</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>UI::MainWindow</name>
+    <message>
+        <source>Exit</source>
+        <comment>Tray action menu to exit tox</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show</source>
+        <comment>Tray action menu to show window</comment>
+        <translation type="unfinished">보기</translation>
     </message>
 </context>
 <context>
@@ -2753,36 +2400,6 @@ This ID includes the NoSpam code (in blue), and the checksum (in gray).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Contact list</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>If checked, groupchats will be placed at the top of the friends list, otherwise, they&apos;ll be placed below online friends.</source>
-        <comment>toolTip for groupchat positioning</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Place groupchats at top of friend list</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Your contact list will be shown in compact mode.</source>
-        <comment>toolTip for compact layout setting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Compact contact list</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Multiple windows mode</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Open each chat in an individual window</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Emoticons</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2821,15 +2438,6 @@ This ID includes the NoSpam code (in blue), and the checksum (in gray).</source>
     </message>
     <message>
         <source>Date format:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>If enabled every contact without an avatar set will have a generated avatar based on their Tox ID instead of a default picture. Requires restart to apply.</source>
-        <comment>toolTip for show identicons</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Use identicons instead of empty avatars</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2874,21 +2482,6 @@ This ID includes the NoSpam code (in blue), and the checksum (in gray).</source>
 <context>
     <name>Widget</name>
     <message>
-        <source>Online</source>
-        <comment>Button to set your status to &apos;Online&apos;</comment>
-        <translation type="unfinished">온라인</translation>
-    </message>
-    <message>
-        <source>Away</source>
-        <comment>Button to set your status to &apos;Away&apos;</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Busy</source>
-        <comment>Button to set your status to &apos;Busy&apos;</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>toxcore failed to start, the application will terminate after you close this message.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2916,16 +2509,6 @@ This ID includes the NoSpam code (in blue), and the checksum (in gray).</source>
     <message>
         <source>Edit</source>
         <translation>편집</translation>
-    </message>
-    <message>
-        <source>Logout</source>
-        <comment>Tray action menu to logout user</comment>
-        <translation type="unfinished">로그아웃</translation>
-    </message>
-    <message>
-        <source>Exit</source>
-        <comment>Tray action menu to exit tox</comment>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Filter...</source>
@@ -2966,76 +2549,6 @@ This ID includes the NoSpam code (in blue), and the checksum (in gray).</source>
         <translation>상태</translation>
     </message>
     <message>
-        <source>Your name</source>
-        <translation>이름</translation>
-    </message>
-    <message>
-        <source>Message failed to send</source>
-        <translation>메시지 전송에 실패하였습니다</translation>
-    </message>
-    <message>
-        <source>Create new group...</source>
-        <translation>새 그룹 만들기...</translation>
-    </message>
-    <message>
-        <source>Add new circle...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message numerus="yes">
-        <source>%n New Friend Request(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-        </translation>
-    </message>
-    <message numerus="yes">
-        <source>%n New Group Invite(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>By Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>By Activity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>All</source>
-        <translation>전체</translation>
-    </message>
-    <message>
-        <source>Online</source>
-        <translation>온라인</translation>
-    </message>
-    <message>
-        <source>Offline</source>
-        <translatorcomment>Ausgelassen</translatorcomment>
-        <translation>오프라인</translation>
-    </message>
-    <message>
-        <source>Friends</source>
-        <translation>친구</translation>
-    </message>
-    <message>
-        <source>Groups</source>
-        <translation>그룹</translation>
-    </message>
-    <message>
-        <source>Search Contacts</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Groupchat #%1</source>
-        <translation>그룹채팅 #%1</translation>
-    </message>
-    <message>
-        <source>Show</source>
-        <comment>Tray action menu to show qTox window</comment>
-        <translation>보기</translation>
-    </message>
-    <message>
         <source>Add friend</source>
         <comment>title of the window</comment>
         <translation>친구 추가</translation>
@@ -3061,19 +2574,83 @@ This ID includes the NoSpam code (in blue), and the checksum (in gray).</source>
         <translation>내 프로필</translation>
     </message>
     <message>
-        <source>Failed to send file &quot;%1&quot;</source>
-        <translation type="unfinished">&quot;%1&quot; 파일을 전송하는데 실패하였습니다</translation>
-    </message>
-    <message>
         <source>File sent</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source> sent you a friend request.</source>
+        <source>Chat</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source> invites you to join a group.</source>
+        <source>Contact</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Settings</source>
+        <translation type="unfinished">설정</translation>
+    </message>
+</context>
+<context>
+    <name>lib::messenger::IMFileTask</name>
+    <message>
+        <source>FileSender-%1-%2</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ok::plugin::PluginInfoForm</name>
+    <message>
+        <source>Install</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Uninstall</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Installing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Uninstalling</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ok::plugin::PluginManager</name>
+    <message>
+        <source>This plugin has no user configurable options</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ok::session::AuthSession</name>
+    <message>
+        <source>NO_SUPPORT</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>AUTH_FAILED</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DISCONNECTED</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>CONN_ERROR</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TLS_ERROR</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OUT_OF_RESOURCE</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
