@@ -314,8 +314,11 @@ void ProfileForm::onAvatarClicked()
     if (path.isEmpty()) {
         return;
     }
+    
     const IProfileInfo::SetAvatarResult result = profileInfo->setAvatar(path);
-    if (result == IProfileInfo::SetAvatarResult::OK) {     
+    if (result == IProfileInfo::SetAvatarResult::OK) {   
+        qDebug()<<__func__<<"result:"<<(int)result;
+        profilePicture->setPixmap(profileInfo->getAvatar());  
         return;
     }
 

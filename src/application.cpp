@@ -292,9 +292,11 @@ void Application::onAvatar(const QPixmap &pixmap) {
 void Application::on_logout(const QString &profile)
 {
     qDebug() << __func__<<profile;
-    doLogout();
-    QThread::currentThread()->sleep(1);
+     doLogout();
+    QThread::currentThread()->msleep(100);
     createLoginUI(false);
+   
+    
 }
 
 void Application::on_exit(const QString &profile)
