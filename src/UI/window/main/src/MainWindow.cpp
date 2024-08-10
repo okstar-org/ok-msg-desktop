@@ -297,7 +297,7 @@ OMenuWidget* MainWindow::initMenuWindow(ok::base::PageMenu menu) {
     if (w) {
         auto m = w->getModule();
         if (m) {
-            delayCaller->call(1000, [=, this]() {
+            delayCaller->call(1, [=, this]() {
                 assert(w);
                 assert(session);
                 qDebug() << "Start module:" << m->name();

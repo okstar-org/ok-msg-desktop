@@ -136,13 +136,10 @@ FriendWidget::FriendWidget(ContentLayout* layout, const FriendInfo& f, QWidget* 
     removeAct = menu->addAction(tr("Remove friend"));
 
     init();
-
-    emit Widget::getInstance() -> friendAdded(m_friend);
 }
 
 FriendWidget::~FriendWidget() {
     qDebug() << __func__;
-    emit Widget::getInstance() -> friendRemoved(m_friend);
     removeDetails();
     deinit();
     FriendList::removeFriend(FriendId{contactId});

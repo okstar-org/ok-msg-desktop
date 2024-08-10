@@ -43,7 +43,7 @@ enum class FileDirection {
 };
 
 namespace lib::messenger {
-class File;
+struct File;
 enum class FileStatus;
 enum class FileDirection;
 }  // namespace lib::messenger
