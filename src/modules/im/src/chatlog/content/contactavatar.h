@@ -29,8 +29,8 @@ public:
 
 private:
     static QIcon invalidAvatar();
+
 private:
-    
     QPixmap avatar;
 };
 
