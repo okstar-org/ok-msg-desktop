@@ -21,6 +21,7 @@
 #include <QWebSocketServer>
 #include <QtWebEngineWidgets/QWebEngineView>
 
+#include <QPushButton>
 #include "Backend.h"
 #include "application.h"
 #include "websocketclientwrapper.h"
@@ -33,16 +34,15 @@ AppCenterWidget::AppCenterWidget(QWidget* parent) : UI::OWidget(parent) {
 }
 
 void AppCenterWidget::startWebEngine() {
-    QString htmlContent;
+    QByteArray htmlContent;
     QFile file(":/res/Platform/platform.html");
     if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        QTextStream in(&file);
-        htmlContent = in.readAll();
+        htmlContent = file.readAll();
         file.close();
     }
 
     webView = new QWebEngineView(this);
-    webView->setContent(htmlContent.toUtf8(), "text/html", QUrl("file:///"));
+    webView->setContent(htmlContent, "text/html", QUrl("file:///"));
 
     //    auto page = webView->page();
     //    webChannel = new QWebChannel(page);
@@ -50,6 +50,31 @@ void AppCenterWidget::startWebEngine() {
     //    page->setWebChannel(webChannel);
 
     layout()->addWidget(webView);
+}
+
+void AppCenterWidget::requestAppList() {
+    hasRequested = true;
+    auto session = ok::Application::Instance()->getSession();
+    auto token = session->getToken();
+    auto backend = new Backend(session->getSignInInfo().stackUrl);
+    backend->setHeader("Authorization", token.tokenType + " " + token.accessToken);
+    backend->getAppList([this, backend](QByteArray body, QString name) {
+        auto arr = ok::base::Jsons::toJSON(body).object().value("data").toObject().value("list").toArray();
+        sendAppListToView(arr);
+        hasRequested = false;
+        delete backend;
+    });
+}
+
+void AppCenterWidget::sendAppListToView(const QJsonArray& appList) {
+    if (this->wsTransport) {
+        for (auto app : appList) {
+            auto a = app.toObject();
+            wsTransport->sendMessage(a);
+        }
+    } else {
+        cachedAppList = appList;
+    }
 }
 
 void AppCenterWidget::startWsServer() {
@@ -76,23 +101,19 @@ void AppCenterWidget::startWsServer() {
 }
 
 void AppCenterWidget::clientConnected(WebSocketTransport* transport) {
-    auto session = ok::Application::Instance()->getSession();
-    auto token = session->getToken();
-
-    auto backend = new Backend(session->getSignInInfo().stackUrl);
-    backend->setHeader("Authorization", token.tokenType + " " + token.accessToken);
-    backend->getAppList([=](QByteArray body, QString name) {
-        auto arr = ok::base::Jsons::toJSON(body).object().value("data").toObject().value("list").toArray();
-        for (auto app : arr) {
-            auto a = app.toObject();
-            //           qDebug() <<QString::fromUtf8( QJsonDocument(a).toJson());
-            transport->sendMessage(a);
-        }
-    });
+    this->wsTransport = transport;
+    if (!cachedAppList.isEmpty()) {
+        sendAppListToView(cachedAppList);
+        cachedAppList = QJsonArray();
+    } else if (!hasRequested) {
+        // 第二次加载，是否应该通过某种方式，并发处理
+        requestAppList();
+    }
 }
 void AppCenterWidget::start() {
-    startWebEngine();
     startWsServer();
+    requestAppList();
+    startWebEngine();
 }
 
 }  // namespace ok::platform

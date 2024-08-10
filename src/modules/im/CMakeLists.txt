@@ -341,8 +341,6 @@ set(${PROJECT_NAME}_SOURCES
         src/widget/qrwidget.h
         src/widget/splitterrestorer.cpp
         src/widget/splitterrestorer.h
-    ../../lib/settings/style.cpp
-    ../../lib/settings/style.h
         src/widget/tool/activatedialog.cpp
         src/widget/tool/activatedialog.h
         src/widget/tool/adjustingscrollarea.cpp
@@ -496,7 +494,7 @@ qt5_add_resources(
 )
 
 
-add_library(${PROJECT_NAME} SHARED
+add_library(${PROJECT_NAME}
         ${${PROJECT_NAME}_FORMS}
         ${${PROJECT_NAME}_SOURCES}
         ${${PROJECT_NAME}_QM_FILES}
