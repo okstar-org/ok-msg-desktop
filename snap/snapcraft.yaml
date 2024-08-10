@@ -48,6 +48,7 @@ parts:
       - qttools5-dev-tools
       - qtwebengine5-dev
       - qtwebengine5-dev-tools
+      - libqt5websockets5-dev
       - libqt5xml5
       - libqt5svg5-dev
       - libqt5xmlpatterns5-dev
