@@ -20,6 +20,7 @@
 #include <QSaveFile>
 
 #include "base/OkSettings.h"
+#include "base/hashs.h"
 #include "base/images.h"
 #include "profile.h"
 #include "profilelocker.h"
@@ -603,11 +604,8 @@ void Profile::saveFriendAvatar(const FriendId& owner, const QByteArray& avatar) 
  * @return Avatar tox hash.
  */
 QByteArray Profile::getFriendAvatarHash(const FriendId& owner) {
-    //  QByteArray pic = loadAvatarData(owner);
-    //  QByteArray avatarHash(TOX_HASH_LENGTH, 0);
-    //  tox_hash((uint8_t *)avatarHash.data(), (uint8_t *)pic.data(), pic.size());
-    //  return avatarHash;
-    return QByteArray{};
+    QByteArray pic = loadAvatarData(owner);
+    return ok::base::Hashs::hash(pic, QCryptographicHash::Algorithm::Md5);
 }
 
 /**
