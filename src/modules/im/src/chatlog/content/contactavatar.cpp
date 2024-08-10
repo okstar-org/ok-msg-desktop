@@ -22,11 +22,11 @@ QRectF ContactAvatar::boundingRect() const { return QRectF(0, 0, avatar_size, av
 
 qreal ContactAvatar::getAscent() const { return 0.0; }
 
-QIcon ContactAvatar::invalidAvatar()
-{
+QIcon ContactAvatar::invalidAvatar() {
     static QIcon icon;
-    if (icon.isNull())
+    if (icon.isNull()) {
         icon.addFile(":/img/contact_dark.svg");
+    }
     return icon;
 }
 
@@ -47,9 +47,7 @@ void ContactAvatar::paint(QPainter* painter,
         painter->setClipPath(path);
         painter->drawPixmap(paint_r.toRect(), avatar);
         painter->restore();
-    }
-    else
-    {
+    } else {
         painter->save();
         painter->setRenderHints(QPainter::SmoothPixmapTransform | QPainter::Antialiasing);
         painter->setClipPath(path);
