@@ -22,29 +22,39 @@ QRectF ContactAvatar::boundingRect() const { return QRectF(0, 0, avatar_size, av
 
 qreal ContactAvatar::getAscent() const { return 0.0; }
 
+QIcon ContactAvatar::invalidAvatar()
+{
+    static QIcon icon;
+    if (icon.isNull())
+        icon.addFile(":/img/contact_dark.svg");
+    return icon;
+}
+
 void ContactAvatar::paint(QPainter* painter,
                           const QStyleOptionGraphicsItem* option,
                           QWidget* widget) {
     QRectF r = boundingRect();
     QPainterPath path;
     path.addRoundedRect(r.adjusted(0, 0, -1, -1), 4.0, 4.0);
-    painter->setRenderHints(QPainter::SmoothPixmapTransform | QPainter::Antialiasing);
 
     if (!avatar.isNull()) {
-        qreal factor = painter->device()->devicePixelRatioF();
-        QPixmap temp(avatar_size * factor, avatar_size * factor);
-        temp.fill(QColor(0, 0, 0, 0));
-        temp.setDevicePixelRatio(factor);
-        QPainter p(&temp);
-        p.setRenderHints(QPainter::SmoothPixmapTransform | QPainter::Antialiasing);
-        p.fillPath(path, QColor(0xffffff));
-        p.setCompositionMode(QPainter::CompositionMode_SourceIn);
-        p.drawPixmap(r.toRect(), avatar);
-        p.end();
-        painter->drawPixmap(0, 0, temp);
-    } else {
-        painter->translate(0.5, 0.5);
-        painter->fillPath(path, QColor(0x4D90FE));
+        QSizeF s = QSizeF(avatar.size()) / painter->device()->devicePixelRatioF();
+        s.scale(r.size(), Qt::KeepAspectRatioByExpanding);
+        QRectF paint_r(QPointF(0, 0), s);
+        paint_r.moveCenter(r.center());
+        painter->save();
+        painter->setRenderHints(QPainter::SmoothPixmapTransform | QPainter::Antialiasing);
+        painter->setClipPath(path);
+        painter->drawPixmap(paint_r.toRect(), avatar);
+        painter->restore();
+    }
+    else
+    {
+        painter->save();
+        painter->setRenderHints(QPainter::SmoothPixmapTransform | QPainter::Antialiasing);
+        painter->setClipPath(path);
+        invalidAvatar().paint(painter, r.toRect(), Qt::AlignCenter);
+        painter->restore();
     }
 
     Q_UNUSED(option)

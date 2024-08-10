@@ -28,6 +28,9 @@ public:
     virtual qreal getAscent() const override;
 
 private:
+    static QIcon invalidAvatar();
+private:
+    
     QPixmap avatar;
 };
 
