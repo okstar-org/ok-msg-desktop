@@ -104,6 +104,12 @@ FriendWidget* FriendListWidget::addFriend(const FriendInfo& friendInfo) {
     auto fw = new FriendWidget(m_contentLayout, friendInfo, this);
     connectFriendWidget(*fw);
     friendWidgets.insert(friendInfo.getId().toString(), fw);
+
+    {
+        auto frid = FriendList::findFriend(friendInfo.getId());
+        emit Widget::getInstance()->friendAdded(frid);
+    }
+
     //  CircleWidget *circleWidget = CircleWidget::getFromID(circleIndex);
     //  if (circleWidget == nullptr)
     //    moveWidget(fw, s, true);
@@ -466,7 +472,11 @@ void FriendListWidget::removeFriend(const FriendId& friendPk) {
     }
     listLayout->removeFriendWidget(fw);
     friendWidgets.remove(friendPk.toString());
+
     emit deleteFriendWidget(friendPk);
+
+    auto frid = FriendList::findFriend(friendPk);
+    emit Widget::getInstance()->friendRemoved(frid);
     delete fw;
 }
 
