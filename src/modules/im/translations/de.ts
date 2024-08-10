@@ -471,13 +471,6 @@ Zu hohe Auflösungen können daher zu Problemen in Videoanrufen führen, wenn di
     </message>
 </context>
 <context>
-    <name>BannerWidget</name>
-    <message>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>CallDurationForm</name>
     <message>
         <source>Form</source>
@@ -763,13 +756,6 @@ um sie in Windows speichern zu können.</translation>
     </message>
 </context>
 <context>
-    <name>ConfigWindow</name>
-    <message>
-        <source>MainWindow</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>ContactWidget</name>
     <message>
         <source>Form</source>
@@ -978,21 +964,12 @@ um sie in Windows speichern zu können.</translation>
 <context>
     <name>FriendRequestDialog</name>
     <message>
-        <source>Friend request</source>
-        <comment>Title of the window to aceept/deny a friend request</comment>
-        <translation>Freundschaftsanfrage</translation>
-    </message>
-    <message>
         <source>Someone wants to make friends with you</source>
         <translation>Jemand lädt dich in seine Freundesliste ein</translation>
     </message>
     <message>
         <source>User ID:</source>
         <translation>Benutzer-ID:</translation>
-    </message>
-    <message>
-        <source>Friend request message:</source>
-        <translation>Nachrichtentext der Freundschaftsanfrage:</translation>
     </message>
     <message>
         <source>Accept</source>
@@ -1567,75 +1544,6 @@ Du kannst aber eins erstellen.</translation>
     </message>
 </context>
 <context>
-    <name>LoginWidget</name>
-    <message>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Welcome Login</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Username</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Please input phone number</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Password</source>
-        <translation type="unfinished">Passwort</translation>
-    </message>
-    <message>
-        <source>Please input password</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Provider</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Select</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Language</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remember</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Login</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Sign Up</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Retrieve Password</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>LoginWindow</name>
-    <message>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>MainWindow</name>
-    <message>
-        <source>MainWindow</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>MessageSessionListWidget</name>
     <message>
         <source>Today</source>
@@ -1719,54 +1627,10 @@ Du kannst aber eins erstellen.</translation>
     </message>
 </context>
 <context>
-    <name>OMainMenu</name>
-    <message>
-        <source>Frame</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>PasswordEdit</name>
     <message>
         <source>CAPS-LOCK ENABLED</source>
         <translation>FESTSTELLTASTE AKTIVIERT</translation>
-    </message>
-</context>
-<context>
-    <name>PluginInfoForm</name>
-    <message>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>version</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>home</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>install</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>PluginItemForm</name>
-    <message>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>PluginManagerForm</name>
-    <message>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2072,11 +1936,6 @@ Diese ID beinhaltet den NoSpam-Code (in blau), und die Prüfsumme (in grau).</tr
         <source>No</source>
         <translation>Nein</translation>
     </message>
-    <message>
-        <source>LTR</source>
-        <comment>Translate this string to the string &apos;RTL&apos; in right-to-left languages (for example Hebrew and Arabic) to get proper widget layout</comment>
-        <translation>rechtsläufige Schreibrichtung</translation>
-    </message>
 </context>
 <context>
     <name>QObject</name>
@@ -2301,53 +2160,6 @@ Diese ID beinhaltet den NoSpam-Code (in blau), und die Prüfsumme (in grau).</tr
     <message>
         <source>Circle #%1</source>
         <translation>Kreis #%1</translation>
-    </message>
-</context>
-<context>
-    <name>UI::ConfigWindow</name>
-    <message>
-        <source>Plugin form</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>UI::LoginWidget</name>
-    <message>
-        <source>Please waiting the page is loaded</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Please select service provider</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Logging in</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>login success</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Login</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>UI::MainWindow</name>
-    <message>
-        <source>Exit</source>
-        <comment>Tray action menu to exit tox</comment>
-        <translation type="unfinished">Beenden</translation>
-    </message>
-    <message>
-        <source>Show</source>
-        <comment>Tray action menu to show window</comment>
-        <translation type="unfinished">Öffnen</translation>
     </message>
 </context>
 <context>
@@ -2606,70 +2418,6 @@ Leider führen deine Proxy-Einstellungen zu Problemen. Bitte ändere deine Einst
     <message>
         <source>Settings</source>
         <translation type="unfinished">Einstellungen</translation>
-    </message>
-</context>
-<context>
-    <name>lib::messenger::IMFileTask</name>
-    <message>
-        <source>FileSender-%1-%2</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>ok::plugin::PluginInfoForm</name>
-    <message>
-        <source>Install</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Uninstall</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Installing</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Uninstalling</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>ok::plugin::PluginManager</name>
-    <message>
-        <source>This plugin has no user configurable options</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>ok::session::AuthSession</name>
-    <message>
-        <source>NO_SUPPORT</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>AUTH_FAILED</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>DISCONNECTED</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>CONN_ERROR</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>TLS_ERROR</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>OUT_OF_RESOURCE</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

@@ -451,7 +451,7 @@ set(TS_FILES
         translations/zh_TW.ts
 )
 
-qt5_create_translation(${PROJECT_NAME}_QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES} OPTIONS -no-obsolete)
+qt5_create_translation(${PROJECT_NAME}_QM_FILES ${CMAKE_CURRENT_SOURCE_DIR} ${TS_FILES} OPTIONS -no-obsolete)
 
 qt5_add_translation(
         ${PROJECT_NAME}_QM_FILES

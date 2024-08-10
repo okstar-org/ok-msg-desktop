@@ -473,13 +473,6 @@ which may lead to problems with video calls.</source>
     </message>
 </context>
 <context>
-    <name>BannerWidget</name>
-    <message>
-        <source>Form</source>
-        <translation type="unfinished">النوع</translation>
-    </message>
-</context>
-<context>
     <name>CallDurationForm</name>
     <message>
         <source>Form</source>
@@ -767,13 +760,6 @@ so you can save the file on windows.</source>
     </message>
 </context>
 <context>
-    <name>ConfigWindow</name>
-    <message>
-        <source>MainWindow</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>ContactWidget</name>
     <message>
         <source>Form</source>
@@ -975,21 +961,12 @@ so you can save the file on windows.</source>
 <context>
     <name>FriendRequestDialog</name>
     <message>
-        <source>Friend request</source>
-        <comment>Title of the window to aceept/deny a friend request</comment>
-        <translation>طلب صداقة</translation>
-    </message>
-    <message>
         <source>Someone wants to make friends with you</source>
         <translation>هناك شخص يريد ان يجعلك صديقاً</translation>
     </message>
     <message>
         <source>User ID:</source>
         <translation>معرف الحساب:</translation>
-    </message>
-    <message>
-        <source>Friend request message:</source>
-        <translation>رسالة طلب الصداقة:</translation>
     </message>
     <message>
         <source>Accept</source>
@@ -1566,75 +1543,6 @@ You may want to create one.</source>
     </message>
 </context>
 <context>
-    <name>LoginWidget</name>
-    <message>
-        <source>Form</source>
-        <translation type="unfinished">النوع</translation>
-    </message>
-    <message>
-        <source>Welcome Login</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Username</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Please input phone number</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Password</source>
-        <translation type="unfinished">كلمة المرور</translation>
-    </message>
-    <message>
-        <source>Please input password</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Provider</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Select</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Language</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remember</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Login</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Sign Up</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Retrieve Password</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>LoginWindow</name>
-    <message>
-        <source>Form</source>
-        <translation type="unfinished">النوع</translation>
-    </message>
-</context>
-<context>
-    <name>MainWindow</name>
-    <message>
-        <source>MainWindow</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>MessageSessionListWidget</name>
     <message>
         <source>Today</source>
@@ -1722,54 +1630,10 @@ You may want to create one.</source>
     </message>
 </context>
 <context>
-    <name>OMainMenu</name>
-    <message>
-        <source>Frame</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>PasswordEdit</name>
     <message>
         <source>CAPS-LOCK ENABLED</source>
         <translation>CAPS-LOCK مُفعل</translation>
-    </message>
-</context>
-<context>
-    <name>PluginInfoForm</name>
-    <message>
-        <source>Form</source>
-        <translation type="unfinished">النوع</translation>
-    </message>
-    <message>
-        <source>name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>version</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>home</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>install</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>PluginItemForm</name>
-    <message>
-        <source>Form</source>
-        <translation type="unfinished">النوع</translation>
-    </message>
-</context>
-<context>
-    <name>PluginManagerForm</name>
-    <message>
-        <source>Form</source>
-        <translation type="unfinished">النوع</translation>
     </message>
 </context>
 <context>
@@ -2056,11 +1920,6 @@ This ID includes the NoSpam code (in blue), and the checksum (in gray).</source>
 <context>
     <name>QApplication</name>
     <message>
-        <source>LTR</source>
-        <comment>Translate this string to the string &apos;RTL&apos; in right-to-left languages (for example Hebrew and Arabic) to get proper widget layout</comment>
-        <translation>RTL</translation>
-    </message>
-    <message>
         <source>Ok</source>
         <translation>موافق</translation>
     </message>
@@ -2300,53 +2159,6 @@ This ID includes the NoSpam code (in blue), and the checksum (in gray).</source>
     <message>
         <source>Circle #%1</source>
         <translation>قائمة #%1</translation>
-    </message>
-</context>
-<context>
-    <name>UI::ConfigWindow</name>
-    <message>
-        <source>Plugin form</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>UI::LoginWidget</name>
-    <message>
-        <source>Please waiting the page is loaded</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Please select service provider</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>...</source>
-        <translation type="unfinished">...</translation>
-    </message>
-    <message>
-        <source>Logging in</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>login success</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Login</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>UI::MainWindow</name>
-    <message>
-        <source>Exit</source>
-        <comment>Tray action menu to exit tox</comment>
-        <translation type="unfinished">خروج</translation>
-    </message>
-    <message>
-        <source>Show</source>
-        <comment>Tray action menu to show window</comment>
-        <translation type="unfinished">عرض</translation>
     </message>
 </context>
 <context>
@@ -2604,70 +2416,6 @@ This ID includes the NoSpam code (in blue), and the checksum (in gray).</source>
     <message>
         <source>Settings</source>
         <translation type="unfinished">الاعدادات</translation>
-    </message>
-</context>
-<context>
-    <name>lib::messenger::IMFileTask</name>
-    <message>
-        <source>FileSender-%1-%2</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>ok::plugin::PluginInfoForm</name>
-    <message>
-        <source>Install</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Uninstall</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Installing</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Uninstalling</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>ok::plugin::PluginManager</name>
-    <message>
-        <source>This plugin has no user configurable options</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>ok::session::AuthSession</name>
-    <message>
-        <source>NO_SUPPORT</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>AUTH_FAILED</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>DISCONNECTED</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>CONN_ERROR</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>...</source>
-        <translation type="unfinished">...</translation>
-    </message>
-    <message>
-        <source>TLS_ERROR</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>OUT_OF_RESOURCE</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

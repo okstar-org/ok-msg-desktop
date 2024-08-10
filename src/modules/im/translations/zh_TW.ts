@@ -473,13 +473,6 @@ which may lead to problems with video calls.</source>
     </message>
 </context>
 <context>
-    <name>BannerWidget</name>
-    <message>
-        <source>Form</source>
-        <translation>表單</translation>
-    </message>
-</context>
-<context>
     <name>CallDurationForm</name>
     <message>
         <source>Form</source>
@@ -764,13 +757,6 @@ so you can save the file on windows.</source>
     </message>
 </context>
 <context>
-    <name>ConfigWindow</name>
-    <message>
-        <source>MainWindow</source>
-        <translation>主窗口</translation>
-    </message>
-</context>
-<context>
     <name>ContactWidget</name>
     <message>
         <source>Form</source>
@@ -977,21 +963,12 @@ so you can save the file on windows.</source>
 <context>
     <name>FriendRequestDialog</name>
     <message>
-        <source>Friend request</source>
-        <comment>Title of the window to aceept/deny a friend request</comment>
-        <translation>好友請求</translation>
-    </message>
-    <message>
         <source>Someone wants to make friends with you</source>
         <translation>有人想和你交朋友</translation>
     </message>
     <message>
         <source>User ID:</source>
         <translation>用戶標識:</translation>
-    </message>
-    <message>
-        <source>Friend request message:</source>
-        <translation>好友請求消息：</translation>
     </message>
     <message>
         <source>Accept</source>
@@ -1567,75 +1544,6 @@ You may want to create one.</source>
     </message>
 </context>
 <context>
-    <name>LoginWidget</name>
-    <message>
-        <source>Form</source>
-        <translation>表單</translation>
-    </message>
-    <message>
-        <source>Welcome Login</source>
-        <translation>歡迎登錄</translation>
-    </message>
-    <message>
-        <source>Username</source>
-        <translation>用戶名</translation>
-    </message>
-    <message>
-        <source>Please input phone number</source>
-        <translation>請輸入電話號碼</translation>
-    </message>
-    <message>
-        <source>Password</source>
-        <translation>密碼</translation>
-    </message>
-    <message>
-        <source>Please input password</source>
-        <translation>請輸入密碼</translation>
-    </message>
-    <message>
-        <source>Provider</source>
-        <translation>提供者</translation>
-    </message>
-    <message>
-        <source>Select</source>
-        <translation>選擇</translation>
-    </message>
-    <message>
-        <source>Language</source>
-        <translation>語言</translation>
-    </message>
-    <message>
-        <source>Remember</source>
-        <translation>記住</translation>
-    </message>
-    <message>
-        <source>Login</source>
-        <translation>登錄</translation>
-    </message>
-    <message>
-        <source>Sign Up</source>
-        <translation>註冊</translation>
-    </message>
-    <message>
-        <source>Retrieve Password</source>
-        <translation>獲取密碼</translation>
-    </message>
-</context>
-<context>
-    <name>LoginWindow</name>
-    <message>
-        <source>Form</source>
-        <translation>表單</translation>
-    </message>
-</context>
-<context>
-    <name>MainWindow</name>
-    <message>
-        <source>MainWindow</source>
-        <translation>主窗口</translation>
-    </message>
-</context>
-<context>
     <name>MessageSessionListWidget</name>
     <message>
         <source>Today</source>
@@ -1718,54 +1626,10 @@ You may want to create one.</source>
     </message>
 </context>
 <context>
-    <name>OMainMenu</name>
-    <message>
-        <source>Frame</source>
-        <translation>框架</translation>
-    </message>
-</context>
-<context>
     <name>PasswordEdit</name>
     <message>
         <source>CAPS-LOCK ENABLED</source>
         <translation>大寫鎖定啓用</translation>
-    </message>
-</context>
-<context>
-    <name>PluginInfoForm</name>
-    <message>
-        <source>Form</source>
-        <translation>表單</translation>
-    </message>
-    <message>
-        <source>name</source>
-        <translation>名字</translation>
-    </message>
-    <message>
-        <source>version</source>
-        <translation>版本</translation>
-    </message>
-    <message>
-        <source>home</source>
-        <translation>首頁</translation>
-    </message>
-    <message>
-        <source>install</source>
-        <translation>安裝</translation>
-    </message>
-</context>
-<context>
-    <name>PluginItemForm</name>
-    <message>
-        <source>Form</source>
-        <translation>表單</translation>
-    </message>
-</context>
-<context>
-    <name>PluginManagerForm</name>
-    <message>
-        <source>Form</source>
-        <translation>表單</translation>
     </message>
 </context>
 <context>
@@ -2070,11 +1934,6 @@ This ID includes the NoSpam code (in blue), and the checksum (in gray).</source>
         <source>No</source>
         <translation>沒有</translation>
     </message>
-    <message>
-        <source>LTR</source>
-        <comment>Translate this string to the string &apos;RTL&apos; in right-to-left languages (for example Hebrew and Arabic) to get proper widget layout</comment>
-        <translation>LTR</translation>
-    </message>
 </context>
 <context>
     <name>QObject</name>
@@ -2299,53 +2158,6 @@ This ID includes the NoSpam code (in blue), and the checksum (in gray).</source>
     <message>
         <source>Circle #%1</source>
         <translation># % 1圈</translation>
-    </message>
-</context>
-<context>
-    <name>UI::ConfigWindow</name>
-    <message>
-        <source>Plugin form</source>
-        <translation>插件形式</translation>
-    </message>
-</context>
-<context>
-    <name>UI::LoginWidget</name>
-    <message>
-        <source>Please waiting the page is loaded</source>
-        <translation>請等待頁面載入完成</translation>
-    </message>
-    <message>
-        <source>Please select service provider</source>
-        <translation>請選擇服務提供者</translation>
-    </message>
-    <message>
-        <source>...</source>
-        <translation>...</translation>
-    </message>
-    <message>
-        <source>Logging in</source>
-        <translation>登錄</translation>
-    </message>
-    <message>
-        <source>login success</source>
-        <translation>登錄成功</translation>
-    </message>
-    <message>
-        <source>Login</source>
-        <translation>登錄</translation>
-    </message>
-</context>
-<context>
-    <name>UI::MainWindow</name>
-    <message>
-        <source>Exit</source>
-        <comment>Tray action menu to exit tox</comment>
-        <translation>結束</translation>
-    </message>
-    <message>
-        <source>Show</source>
-        <comment>Tray action menu to show window</comment>
-        <translation>顯示</translation>
     </message>
 </context>
 <context>
@@ -2603,70 +2415,6 @@ This ID includes the NoSpam code (in blue), and the checksum (in gray).</source>
     <message>
         <source>Settings</source>
         <translation>設定</translation>
-    </message>
-</context>
-<context>
-    <name>lib::messenger::IMFileTask</name>
-    <message>
-        <source>FileSender-%1-%2</source>
-        <translation>檔發送器-%1-%2</translation>
-    </message>
-</context>
-<context>
-    <name>ok::plugin::PluginInfoForm</name>
-    <message>
-        <source>Install</source>
-        <translation>安裝</translation>
-    </message>
-    <message>
-        <source>Uninstall</source>
-        <translation>卸載</translation>
-    </message>
-    <message>
-        <source>Installing</source>
-        <translation>安裝</translation>
-    </message>
-    <message>
-        <source>Uninstalling</source>
-        <translation>卸載</translation>
-    </message>
-</context>
-<context>
-    <name>ok::plugin::PluginManager</name>
-    <message>
-        <source>This plugin has no user configurable options</source>
-        <translation>此外掛程式沒有使用者可設定的選項</translation>
-    </message>
-</context>
-<context>
-    <name>ok::session::AuthSession</name>
-    <message>
-        <source>NO_SUPPORT</source>
-        <translation>NO_SUPPORT</translation>
-    </message>
-    <message>
-        <source>AUTH_FAILED</source>
-        <translation>驗證失敗</translation>
-    </message>
-    <message>
-        <source>DISCONNECTED</source>
-        <translation>斷開連接</translation>
-    </message>
-    <message>
-        <source>CONN_ERROR</source>
-        <translation>連接失敗</translation>
-    </message>
-    <message>
-        <source>...</source>
-        <translation>...</translation>
-    </message>
-    <message>
-        <source>TLS_ERROR</source>
-        <translation>TLS 錯誤</translation>
-    </message>
-    <message>
-        <source>OUT_OF_RESOURCE</source>
-        <translation>資源不足</translation>
     </message>
 </context>
 </TS>
