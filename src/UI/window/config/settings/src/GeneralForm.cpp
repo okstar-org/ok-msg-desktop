@@ -92,7 +92,66 @@ GeneralForm::GeneralForm(SettingsWidget *myParent)
   bodyUI->closeToTray->setChecked(okSettings.getCloseToTray());
   bodyUI->closeToTray->setEnabled(showSystemTray);
 
+  //主题
+  /*
+  bodyUI->styleBrowser->addItem(tr("None"));
+  bodyUI->styleBrowser->addItems(QStyleFactory::keys());
 
+  QString style;
+  if (QStyleFactory::keys().contains(s.getStyle()))
+      style = s.getStyle();
+  else
+      style = tr("None");
+
+  bodyUI->styleBrowser->setCurrentText(style);
+
+  for (QString color : Style::getThemeColorNames())
+      bodyUI->themeColorCBox->addItem(color);
+
+  bodyUI->themeColorCBox->setCurrentIndex(s.getThemeColor());
+  bodyUI->emoticonSize->setValue(s.getEmojiFontPointSize());
+  */
+
+  QLocale ql;
+  QStringList timeFormats;
+  timeFormats << ql.timeFormat(QLocale::ShortFormat) << ql.timeFormat(QLocale::LongFormat)
+              << "hh:mm AP"
+              << "hh:mm:ss AP"
+              << "hh:mm:ss";
+  timeFormats.removeDuplicates();
+  bodyUI->timestamp->addItems(timeFormats);
+
+  QRegularExpression re(QString("^[^\\n]{0,%0}$").arg(MAX_FORMAT_LENGTH));
+  QRegularExpressionValidator* validator = new QRegularExpressionValidator(re, this);
+    Settings& s = Settings::getInstance();
+    QString timeFormat = s.getTimestampFormat();
+
+    if (!re.match(timeFormat).hasMatch())
+       timeFormat = timeFormats[0];
+
+    bodyUI->timestamp->setCurrentText(timeFormat);
+    bodyUI->timestamp->setValidator(validator);
+   // on_timestamp_editTextChanged(timeFormat);
+
+    QStringList dateFormats;
+    dateFormats << QStringLiteral("yyyy-MM-dd") // ISO 8601
+                                                // format strings from system locale
+                << ql.dateFormat(QLocale::LongFormat) << ql.dateFormat(QLocale::ShortFormat)
+                << ql.dateFormat(QLocale::NarrowFormat) << "dd-MM-yyyy"
+                << "d-MM-yyyy"
+                << "dddd dd-MM-yyyy"
+                << "dddd d-MM";
+
+    dateFormats.removeDuplicates();
+    bodyUI->dateFormats->addItems(dateFormats);
+
+    QString dateFormat = s.getDateFormat();
+    if (!re.match(dateFormat).hasMatch())
+        dateFormat = dateFormats[0];
+
+    bodyUI->dateFormats->setCurrentText(dateFormat);
+    bodyUI->dateFormats->setValidator(validator);
+   // on_dateFormats_editTextChanged(dateFormat);
 }
 
 GeneralForm::~GeneralForm() {
@@ -131,6 +190,26 @@ void GeneralForm::on_minimizeToTray_stateChanged() { ok::base::OkSettings::getIn
 
 void GeneralForm::on_checkUpdates_stateChanged() {
 //  Settings::getInstance().setCheckUpdates(bodyUI->checkUpdates->isChecked());
+}
+
+void GeneralForm::on_timestamp_editTextChanged(const QString& format)
+{
+    QString timeExample = QTime::currentTime().toString(format);
+    bodyUI->timeExample->setText(timeExample);
+
+//    Settings::getInstance().setTimestampFormat(format);
+//    QString locale = Settings::getInstance().getTranslation();
+//    settings::Translator::translate(OK_UIWindowConfig_MODULE, locale);
+}
+
+void GeneralForm::on_dateFormats_editTextChanged(const QString& format)
+{
+    QString dateExample = QDate::currentDate().toString(format);
+    bodyUI->dateExample->setText(dateExample);
+
+//    Settings::getInstance().setDateFormat(format);
+//    QString locale = Settings::getInstance().getTranslation();
+//    settings::Translator::translate(OK_UIWindowConfig_MODULE, locale);
 }
 
 /**

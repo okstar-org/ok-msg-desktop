@@ -65,17 +65,17 @@
         </widget>
        </item>
        <item>
-           <widget class="QStackedWidget" name="stacked_widget">
-            <property name="autoFillBackground">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
+        <widget class="QStackedWidget" name="stacked_widget">
+         <property name="autoFillBackground">
+          <bool>false</bool>
+         </property>
         </widget>
        </item>
       </layout>
      </widget>
+    </item>
+   </layout>
+  </widget>
  </widget>
  <customwidgets>
   <customwidget>

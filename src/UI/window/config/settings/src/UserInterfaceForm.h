@@ -28,7 +28,7 @@ class UserInterfaceForm : public GenericForm {
 public:
   explicit UserInterfaceForm(SettingsWidget *myParent);
   ~UserInterfaceForm();
-  QString getFormName() final override { return tr("User Interface"); }
+  QString getFormName() final override { return tr("Save Setting"); }
 
 private slots:
 //  void on_styleBrowser_currentIndexChanged(QString style);

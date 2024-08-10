@@ -14,7 +14,7 @@
 #include "ui_generalsettings.h"
 
 #include <QFileDialog>
-#include <cmath>
+#include <QDesktopWidget>
 
 #include "base/OkSettings.h"
 #include "lib/settings/translator.h"
@@ -49,15 +49,68 @@ GeneralForm::GeneralForm(SettingsWidget* myParent)
     Settings& s = Settings::getInstance();
     //先获取当前语言
     auto & okSettings = ok::base::OkSettings::getInstance();
+    const QFont chatBaseFont = s.getChatMessageFont();
+    bodyUI->txtChatFontSize->setValue(QFontInfo(chatBaseFont).pixelSize());
+    bodyUI->txtChatFont->setCurrentFont(chatBaseFont);
+    int index = static_cast<int>(s.getStylePreference());
+    bodyUI->textStyleComboBox->setCurrentIndex(index);
+    bodyUI->useNameColors->setChecked(s.getEnableGroupChatsColor());
 
+    bodyUI->notify->setChecked(s.getNotify());
+    // Note: UI is boolean inversed from settings to maintain setting file backwards compatibility
+    bodyUI->groupOnlyNotfiyWhenMentioned->setChecked(!s.getGroupAlwaysNotify());
+    bodyUI->groupOnlyNotfiyWhenMentioned->setEnabled(s.getNotify());
+    bodyUI->notifySound->setChecked(s.getNotifySound());
+    bodyUI->notifyHide->setChecked(s.getNotifyHide());
+    bodyUI->notifySound->setEnabled(s.getNotify());
+    bodyUI->busySound->setChecked(s.getBusySound());
+    bodyUI->busySound->setEnabled(s.getNotifySound() && s.getNotify());
+#if DESKTOP_NOTIFICATIONS
+    bodyUI->desktopNotify->setChecked(s.getDesktopNotify());
+    bodyUI->desktopNotify->setEnabled(s.getNotify());
+#else
+    bodyUI->desktopNotify->hide();
+#endif
 
-    bodyUI->statusChanges->setChecked(s.getStatusChangeNotificationEnabled());
-    bodyUI->groupJoinLeaveMessages->setChecked(s.getShowGroupJoinLeaveMessages());
+    bodyUI->showWindow->setChecked(s.getShowWindow());
 
-    bodyUI->autoAwaySpinBox->setValue(s.getAutoAwayTime());
-    bodyUI->autoSaveFilesDir->setText(s.getGlobalAutoAcceptDir());
-    bodyUI->maxAutoAcceptSizeMB->setValue(static_cast<double>(s.getMaxAutoAcceptSize()) / 1024 / 1024);
-    bodyUI->autoacceptFiles->setChecked(okSettings.getAutoSaveEnabled());
+//    bodyUI->cbGroupchatPosition->setChecked(s.getGroupchatPosition());
+//    bodyUI->cbCompactLayout->setChecked(s.getCompactLayout());
+//    bodyUI->cbSeparateWindow->setChecked(s.getSeparateWindow());
+//    bodyUI->cbDontGroupWindows->setChecked(s.getDontGroupWindows());
+//    bodyUI->cbDontGroupWindows->setEnabled(s.getSeparateWindow());
+//    bodyUI->cbShowIdenticons->setChecked(s.getShowIdenticons());
+
+    bodyUI->useEmoticons->setChecked(s.getUseEmoticons());
+    for (auto entry : SmileyPack::listSmileyPacks())
+        bodyUI->smileyPackBrowser->addItem(entry.first, entry.second);
+
+    smileLabels = {bodyUI->smile1, bodyUI->smile2, bodyUI->smile3, bodyUI->smile4, bodyUI->smile5};
+
+    int currentPack = bodyUI->smileyPackBrowser->findData(s.getSmileyPack());
+    bodyUI->smileyPackBrowser->setCurrentIndex(currentPack);
+    reloadSmileys();
+    bodyUI->smileyPackBrowser->setEnabled(bodyUI->useEmoticons->isChecked());
+
+  /*
+    bodyUI->styleBrowser->addItem(tr("None"));
+    bodyUI->styleBrowser->addItems(QStyleFactory::keys());
+
+    QString style;
+    if (QStyleFactory::keys().contains(s.getStyle()))
+        style = s.getStyle();
+    else
+        style = tr("None");
+
+    bodyUI->styleBrowser->setCurrentText(style);
+
+    for (QString color : Style::getThemeColorNames())
+        bodyUI->themeColorCBox->addItem(color);
+
+    bodyUI->themeColorCBox->setCurrentIndex(s.getThemeColor());
+    */
+    bodyUI->emoticonSize->setValue(s.getEmojiFontPointSize());
+
 
 
 #ifndef QTOX_PLATFORM_EXT
@@ -75,53 +128,165 @@ GeneralForm::~GeneralForm()
     delete bodyUI;
 }
 
-void GeneralForm::on_statusChanges_stateChanged()
+//
+/*
+void GeneralForm::on_styleBrowser_currentIndexChanged(QString style)
 {
-    Settings::getInstance().setStatusChangeNotificationEnabled(bodyUI->statusChanges->isChecked());
+    if (bodyUI->styleBrowser->currentIndex() == 0)
+        Settings::getInstance().setStyle("None");
+    else
+        Settings::getInstance().setStyle(style);
+
+    this->setStyle(QStyleFactory::create(style));
+    parent->setBodyHeadStyle(style);
+}
+*/
+
+/*
+void GeneralForm::on_emoticonSize_editingFinished()
+{
+    Settings::getInstance().setEmojiFontPointSize(bodyUI->emoticonSize->value());
+}
+*/
+
+void GeneralForm::on_useEmoticons_stateChanged()
+{
+    Settings::getInstance().setUseEmoticons(bodyUI->useEmoticons->isChecked());
+    bodyUI->smileyPackBrowser->setEnabled(bodyUI->useEmoticons->isChecked());
 }
 
-void GeneralForm::on_groupJoinLeaveMessages_stateChanged()
+void GeneralForm::on_textStyleComboBox_currentTextChanged()
 {
-    Settings::getInstance().setShowGroupJoinLeaveMessages(bodyUI->groupJoinLeaveMessages->isChecked());
+    Settings::StyleType styleType =
+        static_cast<Settings::StyleType>(bodyUI->textStyleComboBox->currentIndex());
+    Settings::getInstance().setStylePreference(styleType);
 }
 
-void GeneralForm::on_autoAwaySpinBox_editingFinished()
+void GeneralForm::on_smileyPackBrowser_currentIndexChanged(int index)
 {
-    int minutes = bodyUI->autoAwaySpinBox->value();
-    Settings::getInstance().setAutoAwayTime(minutes);
+    QString filename = bodyUI->smileyPackBrowser->itemData(index).toString();
+    Settings::getInstance().setSmileyPack(filename);
+    reloadSmileys();
 }
 
-void GeneralForm::on_autoacceptFiles_stateChanged()
+/**
+ * @brief Reload smileys and size information.
+ */
+void GeneralForm::reloadSmileys()
 {
-    ok::base::OkSettings::getInstance().setAutoSaveEnabled(bodyUI->autoacceptFiles->isChecked());
+    QList<QStringList> emoticons = SmileyPack::getInstance().getEmoticons();
+
+    // sometimes there are no emoticons available, don't crash in this case
+    if (emoticons.isEmpty()) {
+        qDebug() << "reloadSmilies: No emoticons found";
+        return;
+    }
+
+    QStringList smileys;
+    for (int i = 0; i < emoticons.size(); ++i)
+        smileys.push_front(emoticons.at(i).first());
+
+    emoticonsIcons.clear();
+    const QSize size(18, 18);
+    for (int i = 0; i < smileLabels.size(); ++i) {
+        std::shared_ptr<QIcon> icon = SmileyPack::getInstance().getAsIcon(smileys[i]);
+        emoticonsIcons.append(icon);
+        smileLabels[i]->setPixmap(icon->pixmap(size));
+        smileLabels[i]->setToolTip(smileys[i]);
+    }
+
+    // set maximum size of emoji
+    QDesktopWidget desktop;
+    // 8 is the count of row and column in emoji's in widget
+    const int sideSize = 8;
+    int maxSide = qMin(desktop.geometry().height() / sideSize, desktop.geometry().width() / sideSize);
+    QSize maxSize(maxSide, maxSide);
+
+    QSize actualSize = emoticonsIcons.first()->actualSize(maxSize);
+    bodyUI->emoticonSize->setMaximum(actualSize.width());
 }
 
-void GeneralForm::on_autoSaveFilesDir_clicked()
+void GeneralForm::on_notify_stateChanged()
 {
-    QString previousDir = Settings::getInstance().getGlobalAutoAcceptDir();
-    QString directory =
-        QFileDialog::getExistingDirectory(Q_NULLPTR,
-                                          tr("Choose an auto accept directory", "popup title"),
-                                          QDir::homePath());
-    if (directory.isEmpty()) // cancel was pressed
-        directory = previousDir;
-
-    Settings::getInstance().setGlobalAutoAcceptDir(directory);
-    bodyUI->autoSaveFilesDir->setText(directory);
+    const bool notify = bodyUI->notify->isChecked();
+    Settings::getInstance().setNotify(notify);
+    bodyUI->groupOnlyNotfiyWhenMentioned->setEnabled(notify);
+    bodyUI->notifySound->setEnabled(notify);
+    bodyUI->busySound->setEnabled(notify && bodyUI->notifySound->isChecked());
+    bodyUI->desktopNotify->setEnabled(notify);
+}
+/*
+void GeneralForm::on_notifySound_stateChanged()
+{
+    const bool notify = bodyUI->notifySound->isChecked();
+    Settings::getInstance().setNotifySound(notify);
+    bodyUI->busySound->setEnabled(notify);
+}
+*/
+void GeneralForm::on_desktopNotify_stateChanged()
+{
+    const bool notify = bodyUI->desktopNotify->isChecked();
+    Settings::getInstance().setDesktopNotify(notify);
 }
 
-void GeneralForm::on_maxAutoAcceptSizeMB_editingFinished()
+void GeneralForm::on_busySound_stateChanged()
 {
-    auto newMaxSizeMB = bodyUI->maxAutoAcceptSizeMB->value();
-    auto newMaxSizeB = std::lround(newMaxSizeMB * 1024 * 1024);
-
-    Settings::getInstance().setMaxAutoAcceptSize(newMaxSizeB);
+    Settings::getInstance().setBusySound(bodyUI->busySound->isChecked());
 }
+
+void GeneralForm::on_showWindow_stateChanged()
+{
+    Settings::getInstance().setShowWindow(bodyUI->showWindow->isChecked());
+}
+
+void GeneralForm::on_groupOnlyNotfiyWhenMentioned_stateChanged()
+{
+    // Note: UI is boolean inversed from settings to maintain setting file backwards compatibility
+    Settings::getInstance().setGroupAlwaysNotify(!bodyUI->groupOnlyNotfiyWhenMentioned->isChecked());
+}
+
+/*
+void GeneralForm::on_themeColorCBox_currentIndexChanged(int)
+{
+    int index = bodyUI->themeColorCBox->currentIndex();
+    Settings::getInstance().setThemeColor(index);
+    Style::setThemeColor(index);
+    Style::applyTheme();
+}*/
 
 /**
  * @brief Retranslate all elements in the form.
  */
 void GeneralForm::retranslateUi()
 {
+    // Block signals during translation to prevent settings change
+    RecursiveSignalBlocker signalBlocker{this};
+
     bodyUI->retranslateUi(this);
+
+    // Restore text style index once translation is complete
+    bodyUI->textStyleComboBox->setCurrentIndex(
+        static_cast<int>(Settings::getInstance().getStylePreference()));
+/*
+    QStringList colorThemes(Style::getThemeColorNames());
+    for (int i = 0; i < colorThemes.size(); ++i) {
+        bodyUI->themeColorCBox->setItemText(i, colorThemes[i]);
+    }
+
+    bodyUI->styleBrowser->setItemText(0, tr("None"));*/
 }
+
+void GeneralForm::on_txtChatFont_currentFontChanged(const QFont& f)
+{
+    QFont tmpFont = f;
+    const int px = bodyUI->txtChatFontSize->value();
+
+    if (QFontInfo(tmpFont).pixelSize() != px)
+        tmpFont.setPixelSize(px);
+
+    Settings::getInstance().setChatMessageFont(tmpFont);
+}
+
+
+//
+
