@@ -33,8 +33,7 @@ namespace Ui {
 class MainWindow;
 }
 
-class GroupInviteForm : public QWidget
-{
+class GroupInviteForm : public QWidget {
     Q_OBJECT
 public:
     GroupInviteForm();
@@ -65,4 +64,4 @@ private:
     QScrollArea* scroll;
 };
 
-#endif // GROUPINVITEFORM_H
+#endif  // GROUPINVITEFORM_H

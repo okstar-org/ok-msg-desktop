@@ -14,7 +14,7 @@
 #include "lib/settings/applicationinfo.h"
 
 #ifdef Q_OS_MAC
-#include "CocoaUtilities/cocoacommon.h"
+// #include "CocoaUtilities/cocoacommon.h"
 #endif
 #ifdef HAVE_X11
 #include "x11windowsystem.h"
@@ -43,7 +43,7 @@
 #endif
 #include <stdio.h>
 #ifdef Q_OS_MAC
-#include <Carbon/Carbon.h> // for HIToolbox/InternetConfig
+#include <Carbon/Carbon.h>  // for HIToolbox/InternetConfig
 #include <CoreServices/CoreServices.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -58,22 +58,20 @@ Qt::WindowFlags psi_dialog_flags = (Qt::WindowSystemMenuHint | Qt::WindowMinMaxB
 // FIXME find it a new home!
 int common_smallFontSize = 0;
 
-QString CAP(const QString &str) { return QString("%1: %2").arg(ApplicationInfo::name(), str); }
+QString CAP(const QString& str) { return QString("%1: %2").arg(ApplicationInfo::name(), str); }
 
 // clips plain text
-QString clipStatus(const QString &str, int width, int height)
-{
+QString clipStatus(const QString& str, int width, int height) {
     QString out = "";
-    int     at  = 0;
-    int     len = str.length();
-    if (len == 0)
-        return out;
+    int at = 0;
+    int len = str.length();
+    if (len == 0) return out;
 
     // only take the first "height" lines
     for (int n2 = 0; n2 < height; ++n2) {
         // only take the first "width" chars
         QString line;
-        bool    hasNewline = false;
+        bool hasNewline = false;
         for (int n = 0; at < len; ++n, ++at) {
             if (str.at(at) == '\n') {
                 hasNewline = true;
@@ -99,17 +97,16 @@ QString clipStatus(const QString &str, int width, int height)
     return out;
 }
 
-QString encodePassword(const QString &pass, const QString &key)
-{
+QString encodePassword(const QString& pass, const QString& key) {
     QString result;
-    int     n1, n2;
+    int n1, n2;
 
     if (key.length() == 0) {
         return pass;
     }
 
     for (n1 = 0, n2 = 0; n1 < pass.length(); ++n1) {
-        ushort  x   = pass.at(n1).unicode() ^ key.at(n2++).unicode();
+        ushort x = pass.at(n1).unicode() ^ key.at(n2++).unicode();
         QString hex = QString::asprintf("%04x", x);
         result += hex;
         if (n2 >= key.length()) {
@@ -119,10 +116,9 @@ QString encodePassword(const QString &pass, const QString &key)
     return result;
 }
 
-QString decodePassword(const QString &pass, const QString &key)
-{
+QString decodePassword(const QString& pass, const QString& key) {
     QString result;
-    int     n1, n2;
+    int n1, n2;
 
     if (key.length() == 0) {
         return pass;
@@ -147,23 +143,20 @@ QString decodePassword(const QString &pass, const QString &key)
 }
 
 #ifdef HAVE_KEYCHAIN
-bool isKeychainEnabled()
-{
-    return !ApplicationInfo::isPortable()
-        && PsiOptions::instance()->getOption("options.keychain.enabled", true).toBool();
+bool isKeychainEnabled() {
+    return !ApplicationInfo::isPortable() &&
+           PsiOptions::instance()->getOption("options.keychain.enabled", true).toBool();
 }
 #endif
 
-QString logencode(QString str)
-{
-    str.replace(QRegExp("\\\\"), "\\\\"); // backslash to double-backslash
-    str.replace(QRegExp("\\|"), "\\p");   // pipe to \p
-    str.replace(QRegExp("\n"), "\\n");    // newline to \n
+QString logencode(QString str) {
+    str.replace(QRegExp("\\\\"), "\\\\");  // backslash to double-backslash
+    str.replace(QRegExp("\\|"), "\\p");    // pipe to \p
+    str.replace(QRegExp("\n"), "\\n");     // newline to \n
     return str;
 }
 
-QString logdecode(const QString &str)
-{
+QString logdecode(const QString& str) {
     QString ret;
 
     for (int n = 0; n < str.length(); ++n) {
@@ -189,8 +182,7 @@ QString logdecode(const QString &str)
     return ret;
 }
 
-bool fileCopy(const QString &src, const QString &dest)
-{
+bool fileCopy(const QString& src, const QString& dest) {
     QFile in(src);
     QFile out(dest);
 
@@ -201,8 +193,8 @@ bool fileCopy(const QString &src, const QString &dest)
         return false;
     }
 
-    char *dat = new char[16384];
-    int   n   = 0;
+    char* dat = new char[16384];
+    int n = 0;
     while (!in.atEnd()) {
         n = int(in.read(dat, 16384));
         if (n == -1) {
@@ -221,8 +213,7 @@ bool fileCopy(const QString &src, const QString &dest)
 
 /** Detect default player helper on unix like systems
  */
-QString soundDetectPlayer()
-{
+QString soundDetectPlayer() {
     // prefer ALSA on linux
     if (QFile("/proc/asound").exists()) {
         return "aplay -q";
@@ -232,15 +223,14 @@ QString soundDetectPlayer()
 }
 
 #include <QLayout>
-QLayout *rw_recurseFindLayout(QLayout *lo, QWidget *w)
-{
+QLayout* rw_recurseFindLayout(QLayout* lo, QWidget* w) {
     // printf("scanning layout: %p\n", lo);
     for (int index = 0; index < lo->count(); ++index) {
-        QLayoutItem *i = lo->itemAt(index);
+        QLayoutItem* i = lo->itemAt(index);
         // printf("found: %p,%p\n", i->layout(), i->widget());
-        QLayout *slo = i->layout();
+        QLayout* slo = i->layout();
         if (slo) {
-            QLayout *tlo = rw_recurseFindLayout(slo, w);
+            QLayout* tlo = rw_recurseFindLayout(slo, w);
             if (tlo) {
                 return tlo;
             }
@@ -251,49 +241,48 @@ QLayout *rw_recurseFindLayout(QLayout *lo, QWidget *w)
     return nullptr;
 }
 
-QLayout *rw_findLayoutOf(QWidget *w) { return rw_recurseFindLayout(w->parentWidget()->layout(), w); }
+QLayout* rw_findLayoutOf(QWidget* w) {
+    return rw_recurseFindLayout(w->parentWidget()->layout(), w);
+}
 
-void replaceWidget(QWidget *a, QWidget *b)
-{
+void replaceWidget(QWidget* a, QWidget* b) {
     if (!a) {
         return;
     }
 
-    QLayout *lo = rw_findLayoutOf(a);
+    QLayout* lo = rw_findLayoutOf(a);
     if (!lo) {
         return;
     }
     // printf("decided on this: %p\n", lo);
 
     if (lo->inherits("QBoxLayout")) {
-        QBoxLayout *bo = static_cast<QBoxLayout *>(lo);
-        int         n  = bo->indexOf(a);
+        QBoxLayout* bo = static_cast<QBoxLayout*>(lo);
+        int n = bo->indexOf(a);
         bo->insertWidget(n + 1, b);
         delete a;
     }
 }
 
-void closeDialogs(QWidget *w)
-{
+void closeDialogs(QWidget* w) {
     // close qmessagebox?
-    QList<QDialog *> dialogs;
-    QObjectList      list = w->children();
+    QList<QDialog*> dialogs;
+    QObjectList list = w->children();
     for (QObjectList::Iterator it = list.begin(); it != list.end(); ++it) {
         if ((*it)->inherits("QDialog")) {
-            dialogs.append(static_cast<QDialog *>(*it));
+            dialogs.append(static_cast<QDialog*>(*it));
         }
     }
-    for (QDialog *w : dialogs) {
+    for (QDialog* w : dialogs) {
         w->close();
     }
 }
 
-void reorderGridLayout(QGridLayout *layout, int maxCols)
-{
-    QList<QLayoutItem *> items;
+void reorderGridLayout(QGridLayout* layout, int maxCols) {
+    QList<QLayoutItem*> items;
     for (int i = 0; i < layout->rowCount(); i++) {
         for (int j = 0; j < layout->columnCount(); j++) {
-            QLayoutItem *item = layout->itemAtPosition(i, j);
+            QLayoutItem* item = layout->itemAtPosition(i, j);
             if (item) {
                 layout->removeItem(item);
                 if (item->isEmpty()) {
@@ -306,7 +295,7 @@ void reorderGridLayout(QGridLayout *layout, int maxCols)
     }
     int col = 0, row = 0;
     while (!items.isEmpty()) {
-        QLayoutItem *item = items.takeAt(0);
+        QLayoutItem* item = items.takeAt(0);
         layout->addItem(item, row, col);
         col++;
         if (col >= maxCols) {
@@ -316,38 +305,36 @@ void reorderGridLayout(QGridLayout *layout, int maxCols)
     }
 }
 
-void clearMenu(QMenu *m)
-{
+void clearMenu(QMenu* m) {
     m->clear();
     QObjectList l = m->children();
-    for (QObject *obj : l) {
-        QMenu *child = dynamic_cast<QMenu *>(obj);
+    for (QObject* obj : l) {
+        QMenu* child = dynamic_cast<QMenu*>(obj);
         if (child) {
             delete child;
         }
     }
 }
 
-bool isKde()
-{
-    return qgetenv("XDG_SESSION_DESKTOP") == "KDE" || qgetenv("DESKTOP_SESSION").endsWith("plasma")
-        || qgetenv("DESKTOP_SESSION").endsWith("plasma5");
+bool isKde() {
+    return qgetenv("XDG_SESSION_DESKTOP") == "KDE" ||
+           qgetenv("DESKTOP_SESSION").endsWith("plasma") ||
+           qgetenv("DESKTOP_SESSION").endsWith("plasma5");
 }
 
-void bringToFront(QWidget *widget, bool)
-{
+void bringToFront(QWidget* widget, bool) {
     Q_ASSERT(widget);
-    QWidget *w = widget->window();
+    QWidget* w = widget->window();
 
 #ifdef HAVE_X11
     if (QX11Info::isPlatformX11()) {
         // If we're not on the current desktop, do the hide/show trick
-        long   dsk, curr_dsk;
+        long dsk, curr_dsk;
         Window win = w->winId();
-        if (X11WindowSystem::instance()->desktopOfWindow(&win, &dsk)
-            && X11WindowSystem::instance()->currentDesktop(&curr_dsk)) {
+        if (X11WindowSystem::instance()->desktopOfWindow(&win, &dsk) &&
+            X11WindowSystem::instance()->currentDesktop(&curr_dsk)) {
             // qDebug() << "bringToFront current desktop=" << curr_dsk << " windowDesktop=" << dsk;
-            if ((dsk != curr_dsk) && (dsk != -1)) { // second condition for sticky windows
+            if ((dsk != curr_dsk) && (dsk != -1)) {  // second condition for sticky windows
                 w->hide();
             }
         }
@@ -385,10 +372,8 @@ void bringToFront(QWidget *widget, bool)
 #endif
 }
 
-bool operator!=(const QMap<QString, QString> &m1, const QMap<QString, QString> &m2)
-{
-    if (m1.size() != m2.size())
-        return true;
+bool operator!=(const QMap<QString, QString>& m1, const QMap<QString, QString>& m2) {
+    if (m1.size() != m2.size()) return true;
 
     QMap<QString, QString>::ConstIterator it = m1.begin(), it2;
     for (; it != m1.end(); ++it) {
@@ -408,33 +393,30 @@ bool operator!=(const QMap<QString, QString> &m1, const QMap<QString, QString> &
 // ToolbarPrefs
 //----------------------------------------------------------------------------
 
-ToolbarPrefs::ToolbarPrefs() :
-    dock(Qt3Dock_Top)
-    // , dirty(true)
-    ,
-    on(false), locked(false)
-    // , stretchable(false)
-    // , index(0)
-    ,
-    nl(true)
+ToolbarPrefs::ToolbarPrefs()
+        : dock(Qt3Dock_Top)
+        // , dirty(true)
+        , on(false)
+        , locked(false)
+        // , stretchable(false)
+        // , index(0)
+        , nl(true)
 // , extraOffset(0)
 {
     id = QUuid::createUuid().toString();
 }
 
-bool ToolbarPrefs::operator==(const ToolbarPrefs &other)
-{
+bool ToolbarPrefs::operator==(const ToolbarPrefs& other) {
     return id == other.id && name == other.name && keys == other.keys && dock == other.dock &&
-        // dirty == other.dirty &&
-        on == other.on && locked == other.locked &&
-        // stretchable == other.stretchable &&
-        // index == other.index &&
-        nl == other.nl;
+           // dirty == other.dirty &&
+           on == other.on && locked == other.locked &&
+           // stretchable == other.stretchable &&
+           // index == other.index &&
+           nl == other.nl;
     // extraOffset == other.extraOffset;
 }
 
-int versionStringToInt(const char *version)
-{
+int versionStringToInt(const char* version) {
     QString str = QString::fromLatin1(version);
 #if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
     QStringList parts = str.split('.', Qt::KeepEmptyParts);
@@ -448,7 +430,7 @@ int versionStringToInt(const char *version)
     int versionInt = 0;
     for (int n = 0; n < 3; ++n) {
         bool ok;
-        int  x = parts[n].toInt(&ok);
+        int x = parts[n].toInt(&ok);
         if (ok && x >= 0 && x <= 0xff) {
             versionInt <<= 8;
             versionInt += x;
@@ -459,8 +441,7 @@ int versionStringToInt(const char *version)
     return versionInt;
 }
 
-int qVersionInt()
-{
+int qVersionInt() {
     static int out = -1;
     if (out == -1) {
         out = versionStringToInt(qVersion());

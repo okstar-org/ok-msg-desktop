@@ -26,25 +26,21 @@ class Friend;
 class Group;
 class Contact;
 
-
-
-class GenericChatroomWidget : public GenericChatItemWidget
-{
+class GenericChatroomWidget : public GenericChatItemWidget {
     Q_OBJECT
 public:
-    explicit GenericChatroomWidget(ChatType chatType, const ContactId &cid, QWidget* parent = nullptr);
+    explicit GenericChatroomWidget(ChatType chatType, const ContactId& cid,
+                                   QWidget* parent = nullptr);
 
 public slots:
     virtual void setAsActiveChatroom() = 0;
     virtual void setAsInactiveChatroom() = 0;
 
-
     virtual void resetEventFlags() = 0;
     virtual QString getStatusString() const = 0;
-     const ContactId& getContactId() const {return contactId;};
+    const ContactId& getContactId() const { return contactId; };
 
     virtual bool eventFilter(QObject*, QEvent*) final override;
-
 
     void setName(const QString& name);
     void setStatusMsg(const QString& status);
@@ -56,7 +52,6 @@ public slots:
     void activate();
     void compactChange(bool compact);
 
-
 signals:
     void chatroomWidgetClicked(GenericChatroomWidget* widget);
     void newWindowOpened(GenericChatroomWidget* widget);
@@ -67,17 +62,13 @@ protected:
     void enterEvent(QEvent* e) override;
     void leaveEvent(QEvent* e) override;
 
-
 protected:
-
     QPoint dragStartPos;
     QColor lastColor;
     QHBoxLayout* mainLayout = nullptr;
     QVBoxLayout* textLayout = nullptr;
 
-
-
     ContactId contactId;
 };
 
-#endif // GENERICCHATROOMWIDGET_H
+#endif  // GENERICCHATROOMWIDGET_H

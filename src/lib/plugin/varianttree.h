@@ -41,46 +41,47 @@ class QDomElement;
 class VariantTree : public QObject {
     Q_OBJECT
 public:
-    VariantTree(QObject *parent = nullptr);
+    VariantTree(QObject* parent = nullptr);
     ~VariantTree();
 
-    void     setValue(QString node, QVariant value);
-    QVariant getValue(const QString &node) const;
+    void setValue(QString node, QVariant value);
+    QVariant getValue(const QString& node) const;
 
     bool isInternalNode(QString node) const;
 
-    void    setComment(QString node, QString comment);
+    void setComment(QString node, QString comment);
     QString getComment(QString node) const;
 
-    bool remove(const QString &node, bool internal_nodes = false);
+    bool remove(const QString& node, bool internal_nodes = false);
 
-    QStringList nodeChildren(const QString &node = "", bool direct = false, bool internal_nodes = false) const;
+    QStringList nodeChildren(const QString& node = "", bool direct = false,
+                             bool internal_nodes = false) const;
 
-    void toXml(QDomDocument &doc, QDomElement &ele) const;
-    void fromXml(const QDomElement &ele);
+    void toXml(QDomDocument& doc, QDomElement& ele) const;
+    void fromXml(const QDomElement& ele);
 
-    static bool isValidNodeName(const QString &name);
+    static bool isValidNodeName(const QString& name);
 
     static const QVariant missingValue;
-    static const QString  missingComment;
+    static const QString missingComment;
 
 protected:
-    static QVariant elementToVariant(const QDomElement &);
-    static void     variantToElement(const QVariant &, QDomElement &);
+    static QVariant elementToVariant(const QDomElement&);
+    static void variantToElement(const QVariant&, QDomElement&);
 
-    static bool getKeyRest(const QString &node, QString &key, QString &rest);
+    static bool getKeyRest(const QString& node, QString& key, QString& rest);
 
 private:
-    QHash<QString, VariantTree *>        trees_;
-    QHash<QString, QVariant>             values_;
-    QHash<QString, QString>              comments_;
+    QHash<QString, VariantTree*> trees_;
+    QHash<QString, QVariant> values_;
+    QHash<QString, QString> comments_;
     QHash<QString, QDomDocumentFragment> unknowns_;  // unknown types preservation
-    QHash<QString, QString>              unknowns2_; // unknown types preservation
+    QHash<QString, QString> unknowns2_;              // unknown types preservation
 
     // needed to have a document for the fragments.
-    static QDomDocument *unknownsDoc;
+    static QDomDocument* unknownsDoc;
     friend class OptionsTreeReader;
     friend class OptionsTreeWriter;
 };
 
-#endif // VARIANTTREE_H
+#endif  // VARIANTTREE_H

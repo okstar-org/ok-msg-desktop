@@ -15,22 +15,21 @@
 
 #include "contact.h"
 
+#include <QMap>
+#include <QObject>
+#include <QStringList>
 #include "src/core/FriendId.h"
 #include "src/core/contactid.h"
 #include "src/core/groupid.h"
 #include "src/core/icoregroupquery.h"
 #include "src/core/icoreidhandler.h"
 #include "src/model/message.h"
-#include <QMap>
-#include <QObject>
-#include <QStringList>
 
-class Group : public Contact
-{
+class Group : public Contact {
     Q_OBJECT
 public:
     enum class Role {
-        //https://xmpp.org/extensions/xep-0045.html#roles
+        // https://xmpp.org/extensions/xep-0045.html#roles
         None,
         Visitor,
         Participant,
@@ -39,14 +38,13 @@ public:
     };
 
     enum class Affiliation {
-        //https://xmpp.org/extensions/xep-0045.html#affil
-        Outcast,//被驱逐
+        // https://xmpp.org/extensions/xep-0045.html#affil
+        Outcast,  // 被驱逐
         None,
         Owner,
         Admin,
         Member,
     };
-
 
     Group(const GroupId persistentGroupId,
           const QString& name,
@@ -57,7 +55,7 @@ public:
 
     bool isAvGroupchat() const;
 
-    void addPeer(const GroupOccupant &go);
+    void addPeer(const GroupOccupant& go);
     int getPeersCount() const;
     void setPeerCount(uint32_t count);
     const QMap<QString, QString>& getPeerList() const;
@@ -74,21 +72,19 @@ public:
     void updateUsername(const QString oldName, const QString newName);
 
     void setSubject(const QString& author, const QString& subject);
-    const QString &getSubject()const{return subject;};
+    const QString& getSubject() const { return subject; };
 
     void setSelfName(const QString& name);
     QString getSelfName() const;
 
     void setDesc(const QString& desc_);
-    const QString & getDesc() const;
+    const QString& getDesc() const;
 
-    const Role& getRole()const{return role;}
+    const Role& getRole() const { return role; }
 
-    const Affiliation& getAffiliation() const {
-        return affiliation;
-    }
+    const Affiliation& getAffiliation() const { return affiliation; }
 
-    const GroupId& getPersistentId() const {return groupId;};
+    const GroupId& getPersistentId() const { return groupId; };
 
     void setName(const QString& name);
 
@@ -100,9 +96,7 @@ signals:
     void peerCountChanged(uint32_t numPeers);
     void peerNameChanged(const QString& oldName, const QString& newName);
     void descChanged(const QString&);
-    void privilegesChanged(const Role &role,
-                           const Affiliation &aff,
-                           const QList<int> codes);
+    void privilegesChanged(const Role& role, const Affiliation& aff, const QList<int> codes);
 
 private:
     void stopAudioOfDepartedPeers(const FriendId& peerPk);
@@ -123,4 +117,4 @@ private:
     QList<int> statusCodes;
 };
 
-#endif // GROUP_H
+#endif  // GROUP_H

@@ -13,9 +13,9 @@
 #ifndef NETCAMVIEW_H
 #define NETCAMVIEW_H
 
+#include <QVector>
 #include "genericnetcamview.h"
 #include "src/core/FriendId.h"
-#include <QVector>
 
 struct vpx_image;
 
@@ -24,8 +24,7 @@ class VideoSource;
 class QFrame;
 class MovableWidget;
 
-class NetCamView : public GenericNetCamView
-{
+class NetCamView : public GenericNetCamView {
     Q_OBJECT
 
 public:
@@ -55,4 +54,4 @@ private:
     QVector<QMetaObject::Connection> connections;
 };
 
-#endif // NETCAMVIEW_H
+#endif  // NETCAMVIEW_H

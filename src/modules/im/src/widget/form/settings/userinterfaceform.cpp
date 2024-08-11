@@ -50,14 +50,13 @@
  * Restores all controls from the settings.
  */
 UserInterfaceForm::UserInterfaceForm(SettingsWidget* myParent)
-    : GenericForm(QPixmap(":/img/settings/general.png"), myParent),
-      bodyUI{new Ui::UserInterfaceSettings}
-{
+        : GenericForm(QPixmap(":/img/settings/general.png"), myParent)
+        , bodyUI{new Ui::UserInterfaceSettings} {
     bodyUI->setupUi(this);
     parent = myParent;
 
     // block all child signals during initialization
-    const RecursiveSignalBlocker signalBlocker(this);
+    const ok::base::RecursiveSignalBlocker signalBlocker(this);
 
     Settings& s = Settings::getInstance();
 
@@ -71,53 +70,12 @@ UserInterfaceForm::UserInterfaceForm(SettingsWidget* myParent)
     bodyUI->autoSaveFilesDir->setText(s.getGlobalAutoAcceptDir());
     bodyUI->maxAutoAcceptSizeMB->setValue(static_cast<double>(s.getMaxAutoAcceptSize()) / 1024 / 1024);
     bodyUI->autoacceptFiles->setChecked(okSettings.getAutoSaveEnabled());
-/*
-    QLocale ql;
-    QStringList timeFormats;
-    timeFormats << ql.timeFormat(QLocale::ShortFormat) << ql.timeFormat(QLocale::LongFormat)
-                << "hh:mm AP"
-                << "hh:mm:ss AP"
-                << "hh:mm:ss";
-    timeFormats.removeDuplicates();
-    bodyUI->timestamp->addItems(timeFormats);
 
-    QRegularExpression re(QString("^[^\\n]{0,%0}$").arg(MAX_FORMAT_LENGTH));
-    QRegularExpressionValidator* validator = new QRegularExpressionValidator(re, this);
-    QString timeFormat = s.getTimestampFormat();
-
-    if (!re.match(timeFormat).hasMatch())
-        timeFormat = timeFormats[0];
-
-    bodyUI->timestamp->setCurrentText(timeFormat);
-    bodyUI->timestamp->setValidator(validator);
-    on_timestamp_editTextChanged(timeFormat);
-
-    QStringList dateFormats;
-    dateFormats << QStringLiteral("yyyy-MM-dd") // ISO 8601
-                                                // format strings from system locale
-                << ql.dateFormat(QLocale::LongFormat) << ql.dateFormat(QLocale::ShortFormat)
-                << ql.dateFormat(QLocale::NarrowFormat) << "dd-MM-yyyy"
-                << "d-MM-yyyy"
-                << "dddd dd-MM-yyyy"
-                << "dddd d-MM";
-
-    dateFormats.removeDuplicates();
-    bodyUI->dateFormats->addItems(dateFormats);
-
-    QString dateFormat = s.getDateFormat();
-    if (!re.match(dateFormat).hasMatch())
-        dateFormat = dateFormats[0];
-
-    bodyUI->dateFormats->setCurrentText(dateFormat);
-    bodyUI->dateFormats->setValidator(validator);
-    on_dateFormats_editTextChanged(dateFormat);
-*/
     eventsInit();
     settings::Translator::registerHandler(std::bind(&UserInterfaceForm::retranslateUi, this), this);
 }
 
-UserInterfaceForm::~UserInterfaceForm()
-{
+UserInterfaceForm::~UserInterfaceForm() {
     settings::Translator::unregister(this);
     delete bodyUI;
 }
@@ -164,6 +122,7 @@ void UserInterfaceForm::on_maxAutoAcceptSizeMB_editingFinished()
     auto newMaxSizeB = std::lround(newMaxSizeMB * 1024 * 1024);
 
     Settings::getInstance().setMaxAutoAcceptSize(newMaxSizeB);
+
 }
 
 /**
@@ -173,5 +132,6 @@ void UserInterfaceForm::retranslateUi()
 {
     bodyUI->retranslateUi(this);
 }
+
 
 

@@ -13,11 +13,11 @@
 #ifndef PLUGININFOFORM_H
 #define PLUGININFOFORM_H
 
-#include "lib/plugin/PluginInfo.h"
-#include "lib/plugin/pluginmanager.h"
-#include "lib/backend/OkCloudService.h"
 #include <QRecursiveMutex>
 #include <QWidget>
+#include "lib/backend/OkCloudService.h"
+#include "lib/plugin/PluginInfo.h"
+#include "lib/plugin/pluginmanager.h"
 
 namespace Ui {
 class PluginInfoForm;
@@ -31,41 +31,40 @@ namespace ok {
 namespace plugin {
 
 class PluginInfoForm : public QWidget {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  explicit PluginInfoForm(ok::backend::PluginInfo &info, QWidget *parent = nullptr);
-  ~PluginInfoForm();
+    explicit PluginInfoForm(ok::backend::PluginInfo& info, QWidget* parent = nullptr);
+    ~PluginInfoForm();
 
-  const qint64 pluginId() const { return id; }
-  void setInstalling();
-  void setInstalled();
-  void setUninstalling();
-  void setUninstalled();
+    const qint64 pluginId() const { return id; }
+    void setInstalling();
+    void setInstalled();
+    void setUninstalling();
+    void setUninstalled();
 
-  void toInstall();
-  void toUninstall();
-  void retranslateUi();
+    void toInstall();
+    void toUninstall();
+    void retranslateUi();
+
 private:
-  Ui::PluginInfoForm *ui;
-  PluginManager *pluginManager;
-  quint64 id;
-  QString downUrl;
-  ok::backend::PluginInfo mPluginInfo;
-  std::unique_ptr<network::NetworkHttp> http;
-  QRecursiveMutex mMutex;
+    Ui::PluginInfoForm* ui;
+    PluginManager* pluginManager;
+    quint64 id;
+    QString downUrl;
+    ok::backend::PluginInfo mPluginInfo;
+    std::unique_ptr<network::NetworkHttp> http;
+    QRecursiveMutex mMutex;
 
-  bool mDownloaded;
-  bool isDownloading;
+    bool mDownloaded;
+    bool isDownloading;
 
 signals:
-  void downloadFinished(const QString& path);
-  
+    void downloadFinished(const QString& path);
 
 private slots:
-  void on_installBtn_released();
-  
+    void on_installBtn_released();
 };
-} // namespace plugin
-} // namespace ok
-#endif // PLUGININFOFORM_H
+}  // namespace plugin
+}  // namespace ok
+#endif  // PLUGININFOFORM_H

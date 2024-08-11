@@ -17,36 +17,35 @@
 #ifndef OKMSG_PROJECT_IMGROUP_H
 #define OKMSG_PROJECT_IMGROUP_H
 
-#include <QString>
 #include <QList>
+#include <QString>
 
-
-namespace lib::messenger{
+namespace lib::messenger {
 
 /**
  * 群聊
  */
 struct IMGroup {
-  QString name;
-  QString description;
-  QString subject;
-  QString creationdate;
-  uint64_t occupants=0;
-} ;
+    QString name;
+    QString description;
+    QString subject;
+    QString creationdate;
+    uint64_t occupants = 0;
+};
 
 /**
  * 群聊名称
  */
 struct IMGroupOccupant {
-  QString jid;
-  QString nick;
-  QString affiliation;
-  QString role;
-  int status;
-  //https://xmpp.org/registrar/mucstatus.html
-  QList<int> codes;
+    QString jid;
+    QString nick;
+    QString affiliation;
+    QString role;
+    int status;
+    // https://xmpp.org/registrar/mucstatus.html
+    QList<int> codes;
 };
 
-}
+}  // namespace lib::messenger
 
-#endif // OKMSG_PROJECT_IMGROUP_H
+#endif  // OKMSG_PROJECT_IMGROUP_H

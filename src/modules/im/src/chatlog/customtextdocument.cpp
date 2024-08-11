@@ -19,15 +19,12 @@
 #include <QIcon>
 #include <QUrl>
 
-CustomTextDocument::CustomTextDocument(QObject* parent)
-    : QTextDocument(parent)
-{
+CustomTextDocument::CustomTextDocument(QObject* parent) : QTextDocument(parent) {
     setUndoRedoEnabled(false);
     setUseDesignMetrics(false);
 }
 
-QVariant CustomTextDocument::loadResource(int type, const QUrl& name)
-{
+QVariant CustomTextDocument::loadResource(int type, const QUrl& name) {
     if (type == QTextDocument::ImageResource && name.scheme() == "key") {
         QSize size = QSize(Settings::getInstance().getEmojiFontPointSize(),
                            Settings::getInstance().getEmojiFontPointSize());

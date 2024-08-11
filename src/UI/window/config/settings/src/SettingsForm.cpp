@@ -10,12 +10,6 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#include "SettingsForm.h"
-
-#include "GeneralForm.h"
-#include "UserInterfaceForm.h"
-#include "lib/settings/translator.h"
-
 #include <QLabel>
 #include <QTabWidget>
 #include <QWidget>
@@ -23,84 +17,89 @@
 
 #include <memory>
 
+#include "ConnectForm.h"
+#include "GeneralForm.h"
+#include "SettingsForm.h"
+#include "lib/settings/translator.h"
+
 namespace UI {
-SettingsWidget::SettingsWidget(QWidget *parent) :
-    GenericForm(QPixmap(":/img/settings/general.png"), parent) {
-  settingsWidgets = std::unique_ptr<QTabWidget>(new QTabWidget(this));
-  settingsWidgets->setTabPosition(QTabWidget::North);
+SettingsWidget::SettingsWidget(QWidget* parent)
+        : GenericForm(QPixmap(":/img/settings/general.png"), parent) {
+    settingsWidgets = std::unique_ptr<QTabWidget>(new QTabWidget(this));
+    settingsWidgets->setTabPosition(QTabWidget::North);
 
-  bodyLayout = std::unique_ptr<QVBoxLayout>(new QVBoxLayout(this));
-  bodyLayout->setContentsMargins(0, 0, 0, 0);
-  bodyLayout->addWidget(settingsWidgets.get());
-  setLayout(bodyLayout.get());
+    bodyLayout = std::unique_ptr<QVBoxLayout>(new QVBoxLayout(this));
+    //    bodyLayout->setContentsMargins(0, 0, 0, 0);
+    bodyLayout->addWidget(settingsWidgets.get());
+    setLayout(bodyLayout.get());
 
-//  std::unique_ptr<GeneralForm> gfrm(new GeneralForm(this));
-  //    connect(gfrm.get(), &GeneralForm::updateIcons, parent, &Widget::updateIcons);
+    //  std::unique_ptr<GeneralForm> gfrm(new GeneralForm(this));
+    //    connect(gfrm.get(), &GeneralForm::updateIcons, parent, &Widget::updateIcons);
 
+    //std::unique_ptr<UserInterfaceForm> uifrm(new UserInterfaceForm(this));
+    //  std::unique_ptr<PrivacyForm> pfrm(new PrivacyForm());
+    //    connect(pfrm.get(), &PrivacyForm::clearAllReceipts, parent, &Widget::clearAllReceipts);
 
-  std::unique_ptr<UserInterfaceForm> uifrm(new UserInterfaceForm(this));
-//  std::unique_ptr<PrivacyForm> pfrm(new PrivacyForm());
-  //    connect(pfrm.get(), &PrivacyForm::clearAllReceipts, parent, &Widget::clearAllReceipts);
-
-//  std::unique_ptr<AdvancedForm> expfrm(new AdvancedForm());
-//  std::unique_ptr<AboutForm> abtfrm(new AboutForm());
+    //  std::unique_ptr<AdvancedForm> expfrm(new AdvancedForm());
+    //  std::unique_ptr<AboutForm> abtfrm(new AboutForm());
 
 #if UPDATE_CHECK_ENABLED
-  if (updateCheck != nullptr) {
-    connect(updateCheck, &UpdateCheck::updateAvailable, this, &SettingsWidget::onUpdateAvailable);
-  } else {
-    qWarning() << "SettingsWidget passed null UpdateCheck!";
-  }
+    if (updateCheck != nullptr) {
+        connect(updateCheck, &UpdateCheck::updateAvailable, this,
+                &SettingsWidget::onUpdateAvailable);
+    } else {
+        qWarning() << "SettingsWidget passed null UpdateCheck!";
+    }
 #endif
 
-  cfgForms = {{
-      new GeneralForm(this),   //
-//      std::move(uifrm),  //
-//      std::move(pfrm),   //
-//      std::move(expfrm), //
-//      std::move(abtfrm)  //
-  }};
+    cfgForms = {{
+            new GeneralForm(this),
+            new ConnectForm(this)  //
+                                   //      std::move(pfrm),   //
+                                    //      std::move(expfrm), //
+                                    //      std::move(abtfrm)  //
+    }};
 
-  for (auto &cfgForm : cfgForms)
-    settingsWidgets->addTab(cfgForm, cfgForm->getFormIcon(), cfgForm->getFormName());
-//    settingsWidgets->addTab(gfrm, gfrm->getFormIcon(), gfrm->getFormName());
+    for (auto& cfgForm : cfgForms)
+        settingsWidgets->addTab(cfgForm, cfgForm->getFormIcon(), cfgForm->getFormName());
 
-  connect(settingsWidgets.get(), &QTabWidget::currentChanged, this, &SettingsWidget::onTabChanged);
+    connect(settingsWidgets.get(), &QTabWidget::currentChanged, this,
+            &SettingsWidget::onTabChanged);
 
-  settings::Translator::registerHandler([this] { retranslateUi(); }, this);
-  retranslateUi();
+    settings::Translator::registerHandler([this] { retranslateUi(); }, this);
+    retranslateUi();
 }
 
-SettingsWidget::~SettingsWidget() {
-  settings::Translator::unregister(this);
-}
+SettingsWidget::~SettingsWidget() { settings::Translator::unregister(this); }
 
-void SettingsWidget::setBodyHeadStyle(QString style) { settingsWidgets->setStyle(QStyleFactory::create(style)); }
+void SettingsWidget::setBodyHeadStyle(QString style) {
+    settingsWidgets->setStyle(QStyleFactory::create(style));
+}
 
 void SettingsWidget::showAbout() { onTabChanged(settingsWidgets->count() - 1); }
 
 bool SettingsWidget::isShown() const {
-  if (settingsWidgets->isVisible()) {
-    settingsWidgets->window()->windowHandle()->alert(0);
-    return true;
-  }
+    if (settingsWidgets->isVisible()) {
+        settingsWidgets->window()->windowHandle()->alert(0);
+        return true;
+    }
 
-  return false;
+    return false;
 }
 
 void SettingsWidget::onTabChanged(int index) { settingsWidgets->setCurrentIndex(index); }
 
 void SettingsWidget::onUpdateAvailable(void) {
-  //    settingsWidgets->tabBar()->setProperty("update-available", true);
-  //    settingsWidgets->tabBar()->style()->unpolish(settingsWidgets->tabBar());
-  //    settingsWidgets->tabBar()->style()->polish(settingsWidgets->tabBar());
+    //    settingsWidgets->tabBar()->setProperty("update-available", true);
+    //    settingsWidgets->tabBar()->style()->unpolish(settingsWidgets->tabBar());
+    //    settingsWidgets->tabBar()->style()->polish(settingsWidgets->tabBar());
 }
 
 void SettingsWidget::retranslateUi() {
-  for (int i = 0; i < cfgForms.size(); ++i){
-    settingsWidgets->setTabText(i, cfgForms.at(i)->getFormName());
-    cfgForms.at(i)->retranslateUi();
-  }
+    for (int i = 0; i < cfgForms.size(); ++i) {
+        settingsWidgets->setTabText(i, cfgForms.at(i)->getFormName());
+        cfgForms.at(i)->retranslateUi();
+    }
 }
 
-} // namespace UI
+}  // namespace UI

@@ -21,8 +21,7 @@
 
 class QVariantAnimation;
 
-class Spinner : public ChatLineContent
-{
+class Spinner : public ChatLineContent {
     Q_OBJECT
 public:
     Spinner(const QString& img, QSize size, qreal speed);
@@ -46,4 +45,4 @@ private:
     QVariantAnimation* blendAnimation;
 };
 
-#endif // SPINNER_H
+#endif  // SPINNER_H

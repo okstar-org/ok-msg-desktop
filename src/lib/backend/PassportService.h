@@ -21,21 +21,50 @@
 #include <base/basic_types.h>
 
 #include <lib/backend/BaseService.h>
-#include <lib/session/AuthSession.h>
 
 namespace ok::backend {
 
-using namespace ok::session;
+struct SysRefreshToken {
+    QString accessToken;
+    quint64 expiresIn;  // 有效期（s）
+    QString refreshToken;
+    quint64 refreshExpiresIn;
 
-class SysAccount {
-public:
-  quint64 id;
-  QString iso;
-  QString name;
-  QString username;
-  QString nickname;
+    SysRefreshToken() : expiresIn{0}, refreshExpiresIn{0} {}
 
-  SysAccount(const QJsonObject &data) {
+    SysRefreshToken(const QJsonObject& data) {
+        expiresIn = data.value("expiresIn").toVariant().toULongLong();                //
+        refreshExpiresIn = data.value("refreshExpiresIn").toVariant().toULongLong();  //
+        refreshToken = data.value("refreshToken").toString();                         //
+        accessToken = data.value("accessToken").toString();                           //
+    }
+};
+
+struct SysToken : public SysRefreshToken {
+    /**
+     * "tokenType": "string",
+  "accessToken": "string",
+  "expiresIn": 0,
+  "refreshToken": "string",
+  "refreshExpiresIn": 0,
+  "session_state": "string"
+     */
+    QString username;
+    QString tokenType;
+    QString session_state;
+    SysToken() : SysRefreshToken() {}
+    SysToken(const QJsonObject& data) {
+        expiresIn = data.value("expiresIn").toVariant().toULongLong();                //
+        refreshExpiresIn = data.value("refreshExpiresIn").toVariant().toULongLong();  //
+        username = data.value("username").toString();
+        tokenType = data.value("tokenType").toString();          //
+        refreshToken = data.value("refreshToken").toString();    //
+        session_state = data.value("session_state").toString();  //
+        accessToken = data.value("accessToken").toString();      //
+    }
+};
+
+struct SysAccount {
     /**
      * {
      * "id":2001,
@@ -49,27 +78,45 @@ public:
      * "name":"OkStar"
      * }
      */
-    id = data.value("id").toVariant().toULongLong(); //
-    iso = data.value("iso").toString();              //
-    name = data.value("name").toString();            //
-    username = data.value("username").toString();    //
-    nickname = data.value("nickname").toString();    //
-  }
+    quint64 id;
+    QString iso;
+    QString name;
+    QString username;
+    QString nickname;
 
-  QString toString() {
-    return QString("{id:%1, username:%2, name:%3, nickname:%4 iso:%5}") //
-        .arg(QString::number(id), username, name, nickname, iso);
-  }
+    SysAccount(const QJsonObject& data) {
+        id = data.value("id").toVariant().toULongLong();  //
+        iso = data.value("iso").toString();               //
+        name = data.value("name").toString();             //
+        username = data.value("username").toString();     //
+        nickname = data.value("nickname").toString();     //
+    }
+
+    QString toString() {
+        return QString("{id:%1, username:%2, name:%3, nickname:%4 iso:%5}")  //
+                .arg(QString::number(id), username, name, nickname, iso);
+    }
 };
 
 class PassportService : BaseService {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  PassportService(const QString& base, QObject *parent = nullptr);
-  ~PassportService();
+    PassportService(const QString& base, QObject* parent = nullptr);
+    ~PassportService();
 
-  bool getAccount(const QString &account,
-                  Fn<void(Res<SysAccount> &)> fn,
-                  network::HttpErrorFn err = nullptr);
+    /**
+     * 登录
+     * @param account 帐号（邮箱、手机号）
+     * @param password 密码
+     * @param rememberMe
+     * @param grantType
+     * @return
+     */
+    bool signIn(const QString& account, const QString& password, ok::base::Fn<void(Res<SysToken>&)> fn,
+                const network::HttpErrorFn& err, bool rememberMe = false,
+                const QString& grantType = "password");
+
+    bool refresh(const SysToken& token, ok::base::Fn<void(Res<SysRefreshToken>&)> fn,
+                 network::HttpErrorFn err = nullptr);
 };
-} // namespace ok::backend
+}  // namespace ok::backend

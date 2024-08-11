@@ -20,11 +20,11 @@
 
 namespace osx {
 static constexpr int EXIT_UPDATE_MACX =
-    218; // We track our state using unique exit codes when debugging
+        218;  // We track our state using unique exit codes when debugging
 static constexpr int EXIT_UPDATE_MACX_FAIL = 216;
 
 void moveToAppFolder();
 void migrateProfiles();
-}
+}  // namespace osx
 
-#endif // INSTALLOSX_H
+#endif  // INSTALLOSX_H

@@ -39,12 +39,12 @@ if (WIN32)
 endif ()
 
 
-if(UNIX)
+if(LINUX)
     find_package(PkgConfig REQUIRED)
     # -Wunused-parameter -pedantic -fsanitize=address,undefined,leak,integer -Wextra
     # -Wall -Wmacro-redefined -Wbuiltin-macro-redefined
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fstack-protector-all -Wunused-function -Wstrict-overflow -Wstrict-aliasing -Wstack-protector")
-endif(UNIX)
+endif(LINUX)
 
 if(MSVC)
     option(USE_MP "use multiple" ON)

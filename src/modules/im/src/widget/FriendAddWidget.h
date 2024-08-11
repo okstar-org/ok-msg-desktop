@@ -19,4 +19,4 @@
 
 class FriendAddWidget {};
 
-#endif // OKMSG_PROJECT_FRIENDADDWIDGET_H
+#endif  // OKMSG_PROJECT_FRIENDADDWIDGET_H

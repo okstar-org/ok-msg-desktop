@@ -25,46 +25,47 @@
 namespace ok::backend {
 
 struct OrgStaff {
+    QString no;
+    QString name;
+    QString phone;
+    QString email;
+    QString username;
+    QString host;
+    QString posts;
 
-  QString no;
-  QString name;
-  QString phone;
-  QString email;
-  QString username;
-  QString host;
-  QString posts;
+    OrgStaff(const QJsonObject& data) {
+        no = data.value("no").toString();              //
+        email = data.value("email").toString();        //
+        name = data.value("name").toString();          //
+        username = data.value("username").toString();  //
+        phone = data.value("phone").toString();        //
+        host = data.value("host").toString();          //
+        posts = data.value("posts").toString();        //
+    }
 
-  OrgStaff(const QJsonObject &data) {
-    no = data.value("no").toString();             //
-    email = data.value("email").toString();       //
-    name = data.value("name").toString();         //
-    username = data.value("username").toString(); //
-    phone = data.value("phone").toString();       //
-    host = data.value("host").toString();         //
-    posts = data.value("posts").toString();       //
-  }
+    QString toString() {
+        return QString("{no:%1, username:%2, name:%3, phone:%4, email:%5, host:%6, posts: %7}")  //
+                .arg(no)
+                .arg(username)
+                .arg(name)
+                .arg(phone)
+                .arg(host)
+                .arg(posts);
+    }
 
-  QString toString() {
-    return QString("{no:%1, username:%2, name:%3, phone:%4, email:%5, host:%6, posts: %7}") //
-        .arg(no).arg(username).arg(name).arg(phone).arg(host).arg(posts);
-  }
-
-  QString toContactId(){
-      return QString("%1@%2").arg(username).arg(host);
-  }
-
+    QString toContactId() { return QString("%1@%2").arg(username).arg(host); }
 };
 
 class UserService : public BaseService {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  UserService(const QString &base, QObject *parent = nullptr);
-  ~UserService();
+    UserService(const QString& base, QObject* parent = nullptr);
+    ~UserService();
 
-  void search(const QString &query,
-              Fn<void(const QList<OrgStaff*> &)> callback,
-              network::HttpErrorFn errFn = nullptr);
-
+    void search(const QString& query,
+                ok::base::Fn<void(const QList<OrgStaff*>&)>
+                        callback,
+                network::HttpErrorFn errFn = nullptr);
 };
 
-} // namespace ok::backend
+}  // namespace ok::backend

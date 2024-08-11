@@ -15,20 +15,50 @@
 //
 
 #include "Widget.h"
+#include "ui_Widget.h"
 
-#include <QGridLayout>
-#include <QUrl>
-#include <QtWebEngineWidgets/QWebEngineView>
+#include "AppCenterWidget.h"
+#include "Bus.h"
+#include "application.h"
+#include "base/OkSettings.h"
+#include "lib/settings/translator.h"
 
-namespace platform {
+namespace ok::platform {
 
-Widget::Widget(QWidget *parent): UI::OMenuWidget(parent) {
-  setLayout(new QGridLayout());
+Widget::Widget(QWidget* parent) : UI::OMenuWidget(parent), ui(new Ui::WorkPlatform) {
+    OK_RESOURCE_INIT(Platform);
+    ui->setupUi(this);
+    ui->tabWidget->setObjectName("mainTab");
 
+    QString locale = ok::base::OkSettings::getInstance().getTranslation();
+    settings::Translator::translate(OK_Platform_MODULE, locale);
+    settings::Translator::registerHandler([this] { retranslateUi(); }, this);
+    retranslateUi();
+    connect(ok::Application::Instance()->bus(), &ok::Bus::languageChanged,
+            [](QString locale0) { settings::Translator::translate(OK_Platform_MODULE, locale0); });
 
-  webView = new QWebEngineView(this);
-  webView->load(QUrl("https://stack.okstar.org.cn")); // 加载网页
+    centerWidget = new AppCenterWidget(this);
+    ui->tabWidget->addTab(centerWidget, tr("App center"));
 
-  layout()->addWidget(webView);
+    //    thread = (std::make_unique<QThread>());
+    //    thread->setObjectName("WorkPlatform");
+    //    connect(thread.get(), &QThread::started, this, &Widget::doStart);
+    //    moveToThread(thread.get());
+    //
 }
-} // namespace platform
+
+Widget::~Widget() {
+    settings::Translator::unregister(this);
+    delete ui;
+}
+
+void Widget::start() { centerWidget->start(); }
+
+void Widget::doStart() {}
+
+void Widget::retranslateUi() {
+    ui->retranslateUi(this);
+    ui->tabWidget->setTabText(0, tr("App center"));
+}
+
+}  // namespace ok::platform

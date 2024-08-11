@@ -16,19 +16,14 @@
 #include "src/UI/widget/GenericForm.h"
 #include "ui_GeneralForm.h"
 
-
-namespace UI{
+namespace UI {
 class SettingsWidget;
-class GeneralForm : public GenericForm
-{
+class GeneralForm : public GenericForm {
     Q_OBJECT
 public:
-    explicit GeneralForm(SettingsWidget* parent);
+    explicit GeneralForm(SettingsWidget* parent = nullptr);
     ~GeneralForm();
-    virtual QString getFormName() final override
-    {
-        return tr("General");
-    }
+    virtual QString getFormName() final override { return tr("General"); }
 
     void retranslateUi() override;
 signals:
@@ -44,14 +39,13 @@ private slots:
     void on_closeToTray_stateChanged();
     void on_minimizeToTray_stateChanged();
     void on_checkUpdates_stateChanged();
-    void on_timestamp_editTextChanged(const QString& format);
-    void on_dateFormats_editTextChanged(const QString& format);
-
+    //void on_timestamp_editTextChanged(const QString& format);
+    //void on_dateFormats_editTextChanged(const QString& format);
 
 private:
     Ui::GeneralForm* bodyUI;
     SettingsWidget* parent;
     const int MAX_FORMAT_LENGTH = 128;
 };
-}
+}  // namespace UI
 #endif

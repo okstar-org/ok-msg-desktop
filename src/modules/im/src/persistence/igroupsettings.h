@@ -17,8 +17,7 @@
 
 #include <QStringList>
 
-class IGroupSettings
-{
+class IGroupSettings {
 public:
     virtual ~IGroupSettings() = default;
     virtual QStringList getBlackList() const = 0;

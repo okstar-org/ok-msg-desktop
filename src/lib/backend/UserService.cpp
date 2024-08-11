@@ -12,28 +12,28 @@
 
 #include "UserService.h"
 
-#include <QUrl>
 #include <base/logs.h>
+#include <QUrl>
 
 namespace ok::backend {
 
 using namespace network;
 
-UserService::UserService(const QString& base, QObject *parent) : BaseService(base, parent) {}
+UserService::UserService(const QString& base, QObject* parent) : BaseService(base, parent) {}
 
 UserService::~UserService() {}
 
-void UserService::search(const QString &query, Fn<void(const QList<OrgStaff*> &)> fn, network::HttpErrorFn errFn) {
-  QUrl url(QString(_baseUrl + "/api/open/staff/search?q=%1").arg(query));
-  http->getJSON(
-      QUrl(url),
-      // success
-      [=](QJsonDocument doc) {
-        ResList<OrgStaff> res(doc);
-        fn(res.data);
-      }, errFn);
+void UserService::search(const QString& query, ok::base::Fn<void(const QList<OrgStaff*>&)> fn,
+                         network::HttpErrorFn errFn) {
+    QUrl url(QString(_baseUrl + "/api/open/staff/search?q=%1").arg(query));
+    http->getJson(
+            QUrl(url),
+            // success
+            [=](QJsonDocument doc) {
+                ResList<OrgStaff> res(doc);
+                fn(res.data);
+            },
+            errFn);
 }
 
-
-
-} // namespace ok::backend
+}  // namespace ok::backend

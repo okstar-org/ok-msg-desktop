@@ -21,18 +21,16 @@ class BannerWidget;
 
 namespace UI {
 
-
-
 class BannerWidget : public QWidget {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  explicit BannerWidget(QWidget *parent = nullptr);
+    explicit BannerWidget(QWidget* parent = nullptr);
 
-  ~BannerWidget();
+    ~BannerWidget();
 
 private:
-  std::unique_ptr<Ui::BannerWidget> ui;
+    std::unique_ptr<Ui::BannerWidget> ui;
 };
 
-} // namespace UI
+}  // namespace UI

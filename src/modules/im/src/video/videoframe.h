@@ -19,7 +19,6 @@
 #include <QRect>
 #include <QSize>
 
-
 #include <atomic>
 #include <cstdint>
 #include <functional>
@@ -28,8 +27,7 @@
 
 struct AVFrame;
 
-struct ToxYUVFrame
-{
+struct ToxYUVFrame {
 public:
     bool isValid() const;
     explicit operator bool() const;
@@ -42,8 +40,7 @@ public:
     const uint8_t* v;
 };
 
-class VideoFrame
-{
+class VideoFrame {
 public:
     // Declare type aliases
     using IDType = std::uint_fast64_t;
@@ -84,8 +81,7 @@ public:
     static constexpr int dataAlignment = 32;
 
 private:
-    class FrameBufferKey
-    {
+    class FrameBufferKey {
     public:
         FrameBufferKey(const int width, const int height, const int pixFmt, const bool lineAligned);
 
@@ -117,15 +113,18 @@ private:
     static FrameBufferKey getFrameKey(const QSize& frameSize, const int pixFmt,
                                       const bool frameAligned);
 
-    AVFrame* retrieveAVFrame(const QSize& dimensions, const int pixelFormat, const bool requireAligned);
-    AVFrame* generateAVFrame(const QSize& dimensions, const int pixelFormat, const bool requireAligned);
+    AVFrame* retrieveAVFrame(const QSize& dimensions, const int pixelFormat,
+                             const bool requireAligned);
+    AVFrame* generateAVFrame(const QSize& dimensions, const int pixelFormat,
+                             const bool requireAligned);
     AVFrame* storeAVFrame(AVFrame* frame, const QSize& dimensions, const int pixelFormat);
 
     void deleteFrameBuffer();
 
     template <typename T>
     T toGenericObject(const QSize& dimensions, const int pixelFormat, const bool requireAligned,
-                      const std::function<T(AVFrame* const)>& objectConstructor, const T& nullObject);
+                      const std::function<T(AVFrame* const)>& objectConstructor,
+                      const T& nullObject);
 
 private:
     // ID
@@ -134,7 +133,7 @@ private:
 
     // Main framebuffer store
     std::unordered_map<FrameBufferKey, AVFrame*, std::function<decltype(FrameBufferKey::hash)>>
-        frameBuffer{3, FrameBufferKey::hash};
+            frameBuffer{3, FrameBufferKey::hash};
 
     // Source frame
     const QRect sourceDimensions;
@@ -146,11 +145,12 @@ private:
     static AtomicIDType frameIDs;
 
     static std::unordered_map<IDType, QMutex> mutexMap;
-    static std::unordered_map<IDType, std::unordered_map<IDType, std::weak_ptr<VideoFrame>>> refsMap;
+    static std::unordered_map<IDType, std::unordered_map<IDType, std::weak_ptr<VideoFrame>>>
+            refsMap;
 
     // Concurrency
     QReadWriteLock frameLock{};
     static QReadWriteLock refsLock;
 };
 
-#endif // VIDEOFRAME_H
+#endif  // VIDEOFRAME_H

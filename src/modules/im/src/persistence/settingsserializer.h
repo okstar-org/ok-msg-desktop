@@ -20,8 +20,7 @@
 #include <QString>
 #include <QVector>
 
-class SettingsSerializer
-{
+class SettingsSerializer {
 public:
     SettingsSerializer(QString filePath, const ToxEncrypt* passKey = nullptr);
 
@@ -42,35 +41,21 @@ public:
     QVariant value(const QString& key, const QVariant& defaultValue = QVariant()) const;
 
 private:
-    enum class RecordTag : uint8_t
-    {
+    enum class RecordTag : uint8_t {
         Value = 0,
         GroupStart = 1,
         ArrayStart = 2,
         ArrayValue = 3,
         ArrayEnd = 4,
     };
-    friend QDataStream& writeStream(QDataStream& dataStream, const SettingsSerializer::RecordTag& tag);
+    friend QDataStream& writeStream(QDataStream& dataStream,
+                                    const SettingsSerializer::RecordTag& tag);
     friend QDataStream& readStream(QDataStream& dataStream, SettingsSerializer::RecordTag& tag);
 
-    struct Value
-    {
-        Value()
-            : group{-2}
-            , array{-2}
-            , arrayIndex{-2}
-            , key{QString()}
-            , value{}
-        {
-        }
+    struct Value {
+        Value() : group{-2}, array{-2}, arrayIndex{-2}, key{QString()}, value{} {}
         Value(qint64 group, qint64 array, int arrayIndex, QString key, QVariant value)
-            : group{group}
-            , array{array}
-            , arrayIndex{arrayIndex}
-            , key{key}
-            , value{value}
-        {
-        }
+                : group{group}, array{array}, arrayIndex{arrayIndex}, key{key}, value{value} {}
         qint64 group;
         qint64 array;
         int arrayIndex;
@@ -78,8 +63,7 @@ private:
         QVariant value;
     };
 
-    struct Array
-    {
+    struct Array {
         qint64 group;
         int size;
         QString name;
@@ -105,4 +89,4 @@ private:
     static const char magic[];
 };
 
-#endif // SETTINGSSERIALIZER_H
+#endif  // SETTINGSSERIALIZER_H

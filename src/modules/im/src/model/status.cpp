@@ -12,18 +12,16 @@
 
 #include <src/model/status.h>
 
-#include <QString>
-#include <QPixmap>
 #include <QDebug>
 #include <QObject>
+#include <QPixmap>
+#include <QString>
 
 #include <cassert>
 
-namespace Status
-{
-    QString getTitle(Status status)
-    {
-        switch (status) {
+namespace Status {
+QString getTitle(Status status) {
+    switch (status) {
         case Status::Online:
             return QObject::tr("online", "contact status");
         case Status::Away:
@@ -34,15 +32,14 @@ namespace Status
             return QObject::tr("offline", "contact status");
         case Status::Blocked:
             return QObject::tr("blocked", "contact status");
-        }
-
-//        assert(false);
-        return QStringLiteral("");
     }
 
-    QString getAssetSuffix(Status status)
-    {
-        switch (status) {
+    //        assert(false);
+    return QStringLiteral("");
+}
+
+QString getAssetSuffix(Status status) {
+    switch (status) {
         case Status::Online:
             return "online";
         case Status::Away:
@@ -53,24 +50,20 @@ namespace Status
             return "offline";
         case Status::Blocked:
             return "blocked";
-        }
-        assert(false);
-        return QStringLiteral("");
     }
+    assert(false);
+    return QStringLiteral("");
+}
 
-    QString getIconPath(Status status, bool event)
-    {
-        const QString eventSuffix = event ? QStringLiteral("_notification") : QString();
-        const QString statusSuffix = getAssetSuffix(status);
-        if (status == Status::Blocked) {
-            return ":/img/status/" + statusSuffix + ".svg";
-        } else {
-            return ":/img/status/" + statusSuffix + eventSuffix + ".svg";
-        }
+QString getIconPath(Status status, bool event) {
+    const QString eventSuffix = event ? QStringLiteral("_notification") : QString();
+    const QString statusSuffix = getAssetSuffix(status);
+    if (status == Status::Blocked) {
+        return ":/img/status/" + statusSuffix + ".svg";
+    } else {
+        return ":/img/status/" + statusSuffix + eventSuffix + ".svg";
     }
+}
 
-    bool isOnline(Status status)
-    {
-        return status != Status::Offline && status != Status::Blocked;
-    }
-} // namespace Status
+bool isOnline(Status status) { return status != Status::Offline && status != Status::Blocked; }
+}  // namespace Status

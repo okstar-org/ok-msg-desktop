@@ -23,82 +23,78 @@
 namespace settings {
 
 // module, QTranslator
-static QMap<QString, QTranslator *> m_translatorMap{};
+static QMap<QString, QTranslator*> m_translatorMap{};
 static QVector<Callback> callbacks{};
-//static QMutex Translator::lock;
+// static QMutex Translator::lock;
 static bool m_loadedQtTranslations{false};
-
 
 /**
  * @brief Loads the translations according to the settings or locale.
  */
-void Translator::translate(const QString &moduleName, const QString &localeName) {
-  qDebug() << "translate module:" << moduleName << "locale:" << localeName;
-  QMutexLocker locker{&lock};
+void Translator::translate(const QString& moduleName, const QString& localeName) {
+    qDebug() << "translate module:" << moduleName << "locale:" << localeName;
+    QMutexLocker locker{&lock};
 
-  qDebug() <<"m_translatorMap" << m_translatorMap.size();
-  auto * translator = m_translatorMap.value(moduleName);
-  if(translator){
-      qDebug() << "remove translator:" << translator;
-    QCoreApplication::removeTranslator(translator);
-    m_translatorMap.remove(moduleName);
-    delete translator;
-  }
-
-  qDebug() << "New translator=>" << moduleName;
-  translator = new QTranslator();
-
-  // Load translations
-  QString locale = localeName.isEmpty()
-                       ? QLocale::system().name().section('_', 0, 0)
-                       : localeName;
-  qDebug() << "Loaded locale" << locale <<"=>" << moduleName ;
-  if (locale != "en") {
-
-    if(!m_loadedQtTranslations){
-      // system menu translation (Qt国际化配置)
-      QTranslator *qtTranslator = new QTranslator();
-      QString s_locale = "qt_" + locale;
-      QString location = QLibraryInfo::location(QLibraryInfo::TranslationsPath);
-      if (qtTranslator->load(s_locale, location)) {
-        QApplication::installTranslator(qtTranslator);
-        qDebug() << "System translation loaded" << locale;
-      } else {
-        qDebug() << "System translation not loaded" << locale;
-      }
-      m_loadedQtTranslations = true;
+    qDebug() << "m_translatorMap" << m_translatorMap.size();
+    auto* translator = m_translatorMap.value(moduleName);
+    if (translator) {
+        qDebug() << "remove translator:" << translator;
+        QCoreApplication::removeTranslator(translator);
+        m_translatorMap.remove(moduleName);
+        delete translator;
     }
 
-    //增加 {translations}/{module}
-    QString path = ":translations/"+moduleName;
-    qDebug() << "Loading translation path" << path << "locale" << locale;
-    if (translator->load(locale+".qm", path)) {
-      qDebug() << "Loaded translation successful locale" <<locale<<"for"<<moduleName;
-      bool installed = QCoreApplication::installTranslator(translator);
-      qDebug() << "Installed translator locale" <<locale<<"for"<<moduleName <<"=>"<<installed;
+    qDebug() << "New translator=>" << moduleName;
+    translator = new QTranslator();
 
-      m_translatorMap.insert(moduleName, translator);
-    } else {
-      delete translator;
-      qWarning() << "Error loading translation" << locale <<"for"<< moduleName;
-      return;
+    // Load translations
+    QString locale =
+            localeName.isEmpty() ? QLocale::system().name().section('_', 0, 0) : localeName;
+    qDebug() << "Loaded locale" << locale << "=>" << moduleName;
+    if (locale != "en") {
+        if (!m_loadedQtTranslations) {
+            // system menu translation (Qt国际化配置)
+            QTranslator* qtTranslator = new QTranslator();
+            QString s_locale = "qt_" + locale;
+            QString location = QLibraryInfo::location(QLibraryInfo::TranslationsPath);
+            if (qtTranslator->load(s_locale, location)) {
+                QApplication::installTranslator(qtTranslator);
+                qDebug() << "System translation loaded" << locale;
+            } else {
+                qDebug() << "System translation not loaded" << locale;
+            }
+            m_loadedQtTranslations = true;
+        }
+
+        // 增加 {translations}/{module}
+        QString path = ":translations/" + moduleName;
+        qDebug() << "Loading translation path" << path << "locale" << locale;
+        if (translator->load(locale + ".qm", path)) {
+            qDebug() << "Loaded translation successful locale" << locale << "for" << moduleName;
+            bool installed = QCoreApplication::installTranslator(translator);
+            qDebug() << "Installed translator locale" << locale << "for" << moduleName << "=>"
+                     << installed;
+
+            m_translatorMap.insert(moduleName, translator);
+        } else {
+            delete translator;
+            qWarning() << "Error loading translation" << locale << "for" << moduleName;
+            return;
+        }
     }
 
-  }
+    // After the language is changed from RTL to LTR, the layout direction isn't
+    // always restored
+    const QString direction = QApplication::tr("LTR",
+                                               "Translate this string to the string 'RTL' in"
+                                               " right-to-left languages (for example Hebrew and"
+                                               " Arabic) to get proper widget layout");
 
-  // After the language is changed from RTL to LTR, the layout direction isn't
-  // always restored
-  const QString direction =
-      QApplication::tr("LTR", "Translate this string to the string 'RTL' in"
-                              " right-to-left languages (for example Hebrew and"
-                              " Arabic) to get proper widget layout");
+    QGuiApplication::setLayoutDirection(direction == "RTL" ? Qt::RightToLeft : Qt::LeftToRight);
 
-  QGuiApplication::setLayoutDirection(direction == "RTL" ? Qt::RightToLeft
-                                                         : Qt::LeftToRight);
-
-  for (auto &pair : callbacks){
-      pair.second();
-  }
+    for (auto& pair : callbacks) {
+        pair.second();
+    }
 }
 
 /**
@@ -106,20 +102,19 @@ void Translator::translate(const QString &moduleName, const QString &localeName)
  * @param f Function, wich will called.
  * @param owner Widget to retanslate.
  */
-void Translator::registerHandler(const std::function<void()> &f, void *owner) {
-  QMutexLocker locker{&lock};
-  callbacks.push_back({owner, f});
+void Translator::registerHandler(const std::function<void()>& f, void* owner) {
+    QMutexLocker locker{&lock};
+    callbacks.push_back({owner, f});
 }
 
 /**
  * @brief Unregisters all handlers of an owner.
  * @param owner Owner to unregister.
  */
-void Translator::unregister(void *owner) {
-  QMutexLocker locker{&lock};
-  callbacks.erase(
-      std::remove_if(begin(callbacks), end(callbacks),
-                     [&](const Callback &c) { return c.first == owner; }),
-      end(callbacks));
+void Translator::unregister(void* owner) {
+    QMutexLocker locker{&lock};
+    callbacks.erase(std::remove_if(begin(callbacks), end(callbacks),
+                                   [&](const Callback& c) { return c.first == owner; }),
+                    end(callbacks));
 }
-} // namespace main
+}  // namespace settings

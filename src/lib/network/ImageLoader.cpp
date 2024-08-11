@@ -25,21 +25,19 @@
 
 namespace utils {
 
-ImageLoader::ImageLoader(QObject *parent) : QObject(parent) {}
+ImageLoader::ImageLoader(QObject* parent) : QObject(parent) {}
 
 ImageLoader::~ImageLoader() {}
 
-void ImageLoader::load(const QString &url, Fn<void(const QByteArray &)> fn) {
+void ImageLoader::load(const QString& url, ok::base::Fn<void(const QByteArray&)> fn) {
+    QNetworkAccessManager manager;
+    QEventLoop loop;
 
-  QNetworkAccessManager manager;
-  QEventLoop loop;
+    QNetworkReply* reply = manager.get(QNetworkRequest(url));
+    QObject::connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
+    loop.exec();
 
-  QNetworkReply *reply = manager.get(QNetworkRequest(url));
-  QObject::connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
-  loop.exec();
-
-  fn(reply->readAll());
+    fn(reply->readAll());
 }
 
-
-} // namespace utils
+}  // namespace utils

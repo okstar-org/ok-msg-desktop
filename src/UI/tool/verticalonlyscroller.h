@@ -18,8 +18,7 @@
 class QResizeEvent;
 class QShowEvent;
 
-class VerticalOnlyScroller : public QScrollArea
-{
+class VerticalOnlyScroller : public QScrollArea {
     Q_OBJECT
 public:
     explicit VerticalOnlyScroller(QWidget* parent = nullptr);
@@ -29,4 +28,4 @@ protected:
     virtual void showEvent(QShowEvent* event) final override;
 };
 
-#endif // VERTICALONLYSCROLLER_H
+#endif  // VERTICALONLYSCROLLER_H

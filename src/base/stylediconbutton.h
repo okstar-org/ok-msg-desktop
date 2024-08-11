@@ -13,23 +13,25 @@
 #define STYLEDICONBUTTON_H
 
 #include <QPushButton>
-
+namespace ok::base {
 class StyledIconButton : public QPushButton {
-  Q_OBJECT
-  Q_PROPERTY(bool use_indicator READ iconUseIndicator WRITE setIconUseIndicator)
+    Q_OBJECT
+    Q_PROPERTY(bool use_indicator READ iconUseIndicator WRITE setIconUseIndicator)
 public:
-  using QPushButton::QPushButton;
-  void setIconUseIndicator(bool set) {
-    icon_use_indicator = set;
-    update();
-  }
-  bool iconUseIndicator() {
-    return icon_use_indicator;
-  }
+    using QPushButton::QPushButton;
+    void setIconUseIndicator(bool set) {
+        icon_use_indicator = set;
+        update();
+    }
+    bool iconUseIndicator() { return icon_use_indicator; }
+
 protected:
-  void paintEvent(QPaintEvent *event) override;
+    void paintEvent(QPaintEvent* event) override;
+
 private:
-  bool icon_use_indicator = false;
+    bool icon_use_indicator = false;
 };
+}
+
 
 #endif

@@ -10,14 +10,13 @@
  * See the Mulan PubL v2 for more details.
  */
 
-
 #ifndef DIRECTSHOW_H
 #define DIRECTSHOW_H
 
-#include "src/video/videomode.h"
 #include <QPair>
 #include <QString>
 #include <QVector>
+#include "src/video/videomode.h"
 
 #ifndef Q_OS_WIN
 #error "This file is only meant to be compiled for Windows targets"
@@ -26,6 +25,6 @@
 namespace DirectShow {
 QVector<QPair<QString, QString>> getDeviceList();
 QVector<VideoMode> getDeviceModes(QString devName);
-}
+}  // namespace DirectShow
 
-#endif // DIRECTSHOW_H
+#endif  // DIRECTSHOW_H

@@ -22,8 +22,7 @@
 
 class QTimer;
 
-class SmileyPack : public QObject
-{
+class SmileyPack : public QObject {
     Q_OBJECT
 
 public:
@@ -57,4 +56,4 @@ private:
     mutable QMutex loadingMutex;
 };
 
-#endif // SMILEYPACK_H
+#endif  // SMILEYPACK_H

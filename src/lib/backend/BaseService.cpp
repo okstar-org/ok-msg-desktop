@@ -18,17 +18,19 @@
 #include "base/r.h"
 #include "lib/network/NetworkHttp.h"
 
-#include <algorithm>
 #include <base/singleton.h>
 #include <lib/session/AuthSession.h>
+#include <algorithm>
 
 namespace ok::backend {
 
-BaseService::BaseService(const QString &baseUrl, QObject *parent) //
-    : QObject(parent),                                            //
-      http(std::make_unique<network::NetworkHttp>(this)),         //
-      _baseUrl(baseUrl) {}
+BaseService::BaseService(const QString& baseUrl, QObject* parent)  //
+        : QObject(parent), http(std::make_unique<network::NetworkHttp>(this)), _baseUrl(baseUrl) {
+    if (!headers.isEmpty()) http->setHeaders(headers);
+}
 
 BaseService::~BaseService() {}
 
-} // namespace ok::backend
+void BaseService::setHeader(QString k, QString v) { headers.insert(k, v); }
+
+}  // namespace ok::backend

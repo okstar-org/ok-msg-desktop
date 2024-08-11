@@ -18,23 +18,18 @@
 
 #include <memory>
 
-
 class QTimer;
 class QString;
 class QLayoutItem;
 
-namespace UI{
+namespace UI {
 
-class AboutForm : public GenericForm
-{
+class AboutForm : public GenericForm {
     Q_OBJECT
 public:
-    AboutForm(QWidget *parent= nullptr);
+    AboutForm(QWidget* parent = nullptr);
     ~AboutForm();
-    virtual QString getFormName() final override
-    {
-      return tr("About form");
-    }
+    virtual QString getFormName() final override { return tr("About form"); }
 
 public slots:
     void onUpdateAvailable(QString latestVersion, QUrl link);
@@ -52,6 +47,6 @@ private:
     QMetaObject::Connection linkConnection;
 };
 
-}
+}  // namespace UI
 
-#endif // ABOUTFORM_H
+#endif  // ABOUTFORM_H

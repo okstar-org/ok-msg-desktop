@@ -17,8 +17,7 @@
 
 class QTextDocument;
 
-class DocumentCache
-{
+class DocumentCache {
 public:
     static DocumentCache& getInstance();
 
@@ -35,4 +34,4 @@ private:
     QStack<QTextDocument*> documents;
 };
 
-#endif // DOCUMENTCACHE_H
+#endif  // DOCUMENTCACHE_H

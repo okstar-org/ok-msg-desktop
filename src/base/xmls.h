@@ -15,36 +15,34 @@
 //
 
 #include <QDomElement>
-
-namespace base {
+#include<QTextStream>
+namespace ok::base {
 class Xmls {
 public:
-  inline static QDomDocument parse(const QString &xmlData) {
-    QDomDocument document;
-    if (!document.setContent(xmlData, true)) {
-      return QDomDocument{};
+    inline static QDomDocument parse(const QString& xmlData) {
+        QDomDocument document;
+        if (!document.setContent(xmlData, true)) {
+            return QDomDocument{};
+        }
+        return document;
     }
-    return document;
-  }
 
-  inline static QString format(QDomElement& element){
-    if(element.isNull())
-      return QString{};
+    inline static QString format(QDomElement& element) {
+        if (element.isNull()) return QString{};
 
-    QTextStream stream;
-    stream.setString(new QString());
-    element.save(stream, 0);
-    return *stream.string();
-  }
+        QTextStream stream;
+        stream.setString(new QString());
+        element.save(stream, 0);
+        return *stream.string();
+    }
 
-  inline static QString format(QDomDocument&document){
-    if(document.isNull())
-      return QString{};
-    QTextStream stream;
-    stream.setString(new QString());
-    document.save(stream, 0);
-    return *stream.string();
-  }
+    inline static QString format(QDomDocument& document) {
+        if (document.isNull()) return QString{};
+        QTextStream stream;
+        stream.setString(new QString());
+        document.save(stream, 0);
+        return *stream.string();
+    }
 };
 
-} // namespace base
+}  // namespace ok::base

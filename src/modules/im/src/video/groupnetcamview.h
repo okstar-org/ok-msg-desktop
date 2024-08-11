@@ -22,8 +22,7 @@
 class LabeledVideo;
 class QHBoxLayout;
 
-class GroupNetCamView : public GenericNetCamView
-{
+class GroupNetCamView : public GenericNetCamView {
 public:
     GroupNetCamView(QString group, QWidget* parent = nullptr);
     void clearPeers();
@@ -35,8 +34,7 @@ private slots:
     void friendAvatarChanged(QString friendPk, const QPixmap& pixmap);
 
 private:
-    struct PeerVideo
-    {
+    struct PeerVideo {
         LabeledVideo* video;
     };
 
@@ -50,4 +48,4 @@ private:
     QString group;
 };
 
-#endif // GROUPNETCAMVIEW_H
+#endif  // GROUPNETCAMVIEW_H

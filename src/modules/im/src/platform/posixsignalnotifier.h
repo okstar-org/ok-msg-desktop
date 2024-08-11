@@ -17,8 +17,7 @@
 
 class QSocketNotifier;
 
-class PosixSignalNotifier : public QObject
-{
+class PosixSignalNotifier : public QObject {
     Q_OBJECT
 
 public:
@@ -43,4 +42,4 @@ private:
     QSocketNotifier* notifier{nullptr};
 };
 
-#endif // POSIXSIGNALNOTIFIER_H
+#endif  // POSIXSIGNALNOTIFIER_H

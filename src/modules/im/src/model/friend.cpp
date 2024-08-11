@@ -15,32 +15,32 @@
 #include "src/persistence/profile.h"
 #include "src/widget/form/chatform.h"
 
-Friend::Friend(const FriendId &friendPk, //
-               bool isFriend, //
-               const QString &userAlias, //
-               const QString &userName)//
-    : Contact(friendPk, userName, userAlias, false),//
-      id{friendPk}, //
-      hasNewEvents{false}, //
-      friendStatus{Status::Status::Offline},//
-      isFriend_{isFriend} {
-  auto core = Core::getInstance();
-  friendStatus = core->getFriendStatus(friendPk.toString());
+Friend::Friend(const FriendId& friendPk,  //
+               bool isFriend,             //
+               const QString& userAlias,  //
+               const QString& userName)   //
+        : Contact(friendPk, userName, userAlias, false)
+        ,  //
+        id{friendPk}
+        ,  //
+        hasNewEvents{false}
+        ,  //
+        friendStatus{Status::Status::Offline}
+        ,  //
+        isFriend_{isFriend} {
+    auto core = Core::getInstance();
+    friendStatus = core->getFriendStatus(friendPk.toString());
 }
-
 
 Friend::~Friend() { qDebug() << __func__; }
 
-QString Friend::toString() const
-{
-    return getId().toString();
-}
+QString Friend::toString() const { return getId().toString(); }
 
-void Friend::setStatusMessage(const QString &message) {
-  if (statusMessage != message) {
-    statusMessage = message;
-    emit statusMessageChanged(message);
-  }
+void Friend::setStatusMessage(const QString& message) {
+    if (statusMessage != message) {
+        statusMessage = message;
+        emit statusMessageChanged(message);
+    }
 }
 
 QString Friend::getStatusMessage() const { return statusMessage; }
@@ -50,17 +50,16 @@ void Friend::setEventFlag(bool flag) { hasNewEvents = flag; }
 bool Friend::getEventFlag() const { return hasNewEvents; }
 
 void Friend::setStatus(Status::Status s) {
-  if (friendStatus != s) {
-    auto oldStatus = friendStatus;
-    friendStatus = s;
-    emit statusChanged(friendStatus, hasNewEvents);
-    if (!Status::isOnline(oldStatus) && Status::isOnline(friendStatus)) {
-      emit onlineOfflineChanged(true);
-    } else if (Status::isOnline(oldStatus) && !Status::isOnline(friendStatus)) {
-      emit onlineOfflineChanged(false);
+    if (friendStatus != s) {
+        auto oldStatus = friendStatus;
+        friendStatus = s;
+        emit statusChanged(friendStatus, hasNewEvents);
+        if (!Status::isOnline(oldStatus) && Status::isOnline(friendStatus)) {
+            emit onlineOfflineChanged(true);
+        } else if (Status::isOnline(oldStatus) && !Status::isOnline(friendStatus)) {
+            emit onlineOfflineChanged(false);
+        }
     }
-  }
 }
 
 Status::Status Friend::getStatus() const { return friendStatus; }
-

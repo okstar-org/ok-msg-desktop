@@ -22,8 +22,7 @@ namespace Ui {
 class UserInterfaceSettings;
 }
 
-class UserInterfaceForm : public GenericForm
-{
+class UserInterfaceForm : public GenericForm {
     Q_OBJECT
 public:
     explicit UserInterfaceForm(SettingsWidget* myParent);
@@ -34,7 +33,6 @@ public:
     }
 
 private slots:
-    //
     void on_statusChanges_stateChanged();
     void on_groupJoinLeaveMessages_stateChanged();
     void on_autoacceptFiles_stateChanged();

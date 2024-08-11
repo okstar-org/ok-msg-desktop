@@ -29,22 +29,19 @@
 
 #include "src/widget/widget.h"
 
-
 /**
  * @class GeneralForm
  *
  * This form contains all settings that are not suited to other forms
  */
 GeneralForm::GeneralForm(SettingsWidget* myParent)
-    : GenericForm(QPixmap(":/img/settings/general.png"))
-    , bodyUI(new Ui::GeneralSettings)
-{
+        : GenericForm(QPixmap(":/img/settings/general.png")), bodyUI(new Ui::GeneralSettings) {
     parent = myParent;
 
     bodyUI->setupUi(this);
 
     // block all child signals during initialization
-    const RecursiveSignalBlocker signalBlocker(this);
+    const ok::base::RecursiveSignalBlocker signalBlocker(this);
 
     Settings& s = Settings::getInstance();
     //先获取当前语言
@@ -112,18 +109,17 @@ GeneralForm::GeneralForm(SettingsWidget* myParent)
     bodyUI->emoticonSize->setValue(s.getEmojiFontPointSize());
 
 
-
 #ifndef QTOX_PLATFORM_EXT
-    bodyUI->autoAwayLabel->setEnabled(false); // these don't seem to change the appearance of the widgets,
-    bodyUI->autoAwaySpinBox->setEnabled(false); // though they are unusable
+   // bodyUI->autoAwayLabel->setEnabled(
+    //        false);  // these don't seem to change the appearance of the widgets,
+   // bodyUI->autoAwaySpinBox->setEnabled(false);  // though they are unusable
 #endif
 
     eventsInit();
     settings::Translator::registerHandler(std::bind(&GeneralForm::retranslateUi, this), this);
 }
 
-GeneralForm::~GeneralForm()
-{
+GeneralForm::~GeneralForm() {
     settings::Translator::unregister(this);
     delete bodyUI;
 }
@@ -257,36 +253,6 @@ void GeneralForm::on_themeColorCBox_currentIndexChanged(int)
 /**
  * @brief Retranslate all elements in the form.
  */
-void GeneralForm::retranslateUi()
-{
-    // Block signals during translation to prevent settings change
-    RecursiveSignalBlocker signalBlocker{this};
 
-    bodyUI->retranslateUi(this);
-
-    // Restore text style index once translation is complete
-    bodyUI->textStyleComboBox->setCurrentIndex(
-        static_cast<int>(Settings::getInstance().getStylePreference()));
-/*
-    QStringList colorThemes(Style::getThemeColorNames());
-    for (int i = 0; i < colorThemes.size(); ++i) {
-        bodyUI->themeColorCBox->setItemText(i, colorThemes[i]);
-    }
-
-    bodyUI->styleBrowser->setItemText(0, tr("None"));*/
-}
-
-void GeneralForm::on_txtChatFont_currentFontChanged(const QFont& f)
-{
-    QFont tmpFont = f;
-    const int px = bodyUI->txtChatFontSize->value();
-
-    if (QFontInfo(tmpFont).pixelSize() != px)
-        tmpFont.setPixelSize(px);
-
-    Settings::getInstance().setChatMessageFont(tmpFont);
-}
-
-
-//
+void GeneralForm::retranslateUi() { bodyUI->retranslateUi(this); }
 

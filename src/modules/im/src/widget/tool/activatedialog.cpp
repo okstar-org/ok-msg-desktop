@@ -10,17 +10,12 @@
  * See the Mulan PubL v2 for more details.
  */
 
-
 #include "activatedialog.h"
 #include <QEvent>
 
-ActivateDialog::ActivateDialog(QWidget* parent, Qt::WindowFlags f)
-    : QDialog(parent, f)
-{
-}
+ActivateDialog::ActivateDialog(QWidget* parent, Qt::WindowFlags f) : QDialog(parent, f) {}
 
-bool ActivateDialog::event(QEvent* event)
-{
+bool ActivateDialog::event(QEvent* event) {
     if (event->type() == QEvent::WindowActivate || event->type() == QEvent::WindowStateChange)
         emit windowStateChanged(windowState());
 

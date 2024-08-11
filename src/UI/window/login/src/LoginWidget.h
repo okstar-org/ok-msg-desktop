@@ -26,7 +26,6 @@ namespace Ui {
 class LoginWidget;
 }
 
-
 namespace ok::backend {
 class OkCloudService;
 }
@@ -34,57 +33,56 @@ namespace session {
 class AuthSession;
 }
 
-
 namespace UI {
 
 class LoginWidget : public QWidget {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  explicit LoginWidget(bool bootstrap, QWidget *parent = nullptr);
-  ~LoginWidget() override;
-  void onError(int code, const QString &msg);
-  void setMsg(const QString &msg);
-  void init();
-  void deinit();
+    explicit LoginWidget(std::shared_ptr<ok::session::AuthSession> session, bool bootstrap,
+                         QWidget* parent = nullptr);
+    ~LoginWidget() override;
+    void onError(int code, const QString& msg);
+    void setMsg(const QString& msg);
+    void init();
+    void deinit();
 
 protected:
-  void retranslateUi();
-  virtual bool eventFilter(QObject *obj, QEvent *event) override;
-  virtual void showEvent(QShowEvent *e) override;
+    void retranslateUi();
+    virtual bool eventFilter(QObject* obj, QEvent* event) override;
+    virtual void showEvent(QShowEvent* e) override;
+
 private:
-  bool bootstrap;
-  Ui::LoginWidget *ui;
+    Ui::LoginWidget* ui;
+    std::shared_ptr<ok::session::AuthSession> session;
+    bool bootstrap;
 
-  QShortcut *m_loginKey;
+    QShortcut* m_loginKey;
 
-  ok::SettingManager *m_settingManager;
-  ok::backend::OkCloudService *okCloudService;
+    ok::SettingManager* m_settingManager;
+    ok::backend::OkCloudService* okCloudService;
 
-  bool m_error = false;
+    bool m_error = false;
 
-  //加载项
-  int m_loaded;
+    // 加载项
+    int m_loaded;
 
-  QStringList m_hosts;
-  QStringList m_stacks;
-  std::unique_ptr<QTimer> m_timer;
-  QString m_currentOriginalMsg{""};
+    QStringList m_hosts;
+    QStringList m_stacks;
+    std::unique_ptr<QTimer> m_timer;
+    QString m_currentOriginalMsg{""};
 
 signals:
-  void loginSuccess(QString name, QString password);
-  void loginFailed(QString name, QString password);
-  void loginTimeout(QString name);
-  void loginResult(ok::session::SignInInfo &info,
-                   ok::session::LoginResult &result);
+    void loginSuccess(QString name, QString password);
+    void loginFailed(QString name, QString password);
+    void loginTimeout(QString name);
 
 private slots:
-  void onTimeout();
-  void doLogin();
-  void onConnectResult(ok::session::SignInInfo info,
-                       ok::session::LoginResult result);
-  void on_loginBtn_released();
-  void on_language_currentIndexChanged(int index);
-  void on_providers_currentIndexChanged(int index);
+    void onTimeout();
+    void doLogin();
+    void onLoginResult(ok::session::SignInInfo info, ok::session::LoginResult result);
+    void on_loginBtn_released();
+    void on_language_currentIndexChanged(int index);
+    void on_providers_currentIndexChanged(int index);
 };
 
-} // namespace UI
+}  // namespace UI

@@ -17,54 +17,48 @@
 
 namespace ok::backend {
 
-PluginInfo PluginInfo::fromJson(const QJsonObject &data) {
-    return PluginInfo(data);
+PluginInfo PluginInfo::fromJson(const QJsonObject& data) { return PluginInfo(data); }
+
+OkCloudService::OkCloudService(QObject* parent) : BaseService(BACKEND_CLOUD_URL, parent) {}
+
+OkCloudService::~OkCloudService() { qDebug() << __func__; }
+
+bool OkCloudService::GetFederalInfo(ok::base::Fn<void(Res<FederalInfo>&)> fn, network::HttpErrorFn err) {
+    QString url = _baseUrl + "/federal/.well-known/info.json";
+    return http->getJson(
+            QUrl(url),
+            // success
+            [=](QJsonDocument doc) {
+                Res<FederalInfo> res(doc);
+                fn(res);
+            },
+            err);
 }
 
-
-OkCloudService::OkCloudService(QObject *parent)
-    : BaseService(BACKEND_CLOUD_URL, parent) {}
-
-OkCloudService::~OkCloudService() {
-    qDebug() <<__func__;
-}
-
-bool OkCloudService::GetFederalInfo(Fn<void(Res<FederalInfo> &)> fn, network::HttpErrorFn err) {
-  QString url = _baseUrl + "/federal/.well-known/info.json";
-  return http->getJSON(
-      QUrl(url),
-      // success
-      [=](QJsonDocument doc) {
-        Res<FederalInfo> res(doc);
-        fn(res);
-      },
-      err);
-}
-
-bool OkCloudService::GetPluginPage(Fn<void(ResPage<ok::backend::PluginInfo> &)> fn, network::HttpErrorFn err) {
-
-  auto cpuInfo = ok::base::SystemInfo::instance()->cpuInfo();
-  if(cpuInfo.arch.isEmpty()){
-      qWarning() << "Unable to read cpu info!";
-      return false;
-  }
-  auto platform = ok::base::SystemInfo::instance()->osInfo().kernelName;
-    if(platform.isEmpty()){
+bool OkCloudService::GetPluginPage(ok::base::Fn<void(ResPage<ok::backend::PluginInfo>&)> fn,
+                                   network::HttpErrorFn err) {
+    auto cpuInfo = ok::base::SystemInfo::instance()->cpuInfo();
+    if (cpuInfo.arch.isEmpty()) {
+        qWarning() << "Unable to read cpu info!";
+        return false;
+    }
+    auto platform = ok::base::SystemInfo::instance()->osInfo().kernelName;
+    if (platform.isEmpty()) {
         qWarning() << "Unable to read os info!";
         return false;
     }
 
-  QString url = _baseUrl + "/plugin/page?platform="+platform+"&arch="+cpuInfo.arch;
-  qDebug() << __func__ << url;
+    QString url = _baseUrl + "/plugin/page?platform=" + platform + "&arch=" + cpuInfo.arch;
+    qDebug() << __func__ << url;
 
-  return http->getJSON(
-      QUrl(url),
-      // success
-      [=](QJsonDocument doc) {
-        ResPage<PluginInfo> res(doc);
-        fn(res);
-      },
-      err);
+    return http->getJson(
+            QUrl(url),
+            // success
+            [=](QJsonDocument doc) {
+                ResPage<PluginInfo> res(doc);
+                fn(res);
+            },
+            err);
 }
 
-} // namespace ok::backend
+}  // namespace ok::backend

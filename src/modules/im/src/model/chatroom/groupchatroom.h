@@ -23,8 +23,7 @@ class IDialogsManager;
 class Group;
 class FriendId;
 
-class GroupChatroom : public Chatroom
-{
+class GroupChatroom : public Chatroom {
     Q_OBJECT
 public:
     GroupChatroom(const GroupId* groupId, IDialogsManager* dialogsManager);
@@ -38,13 +37,10 @@ public:
     bool friendExists(const FriendId& pk);
     void inviteFriend(const FriendId& pk);
 
-
-
-
 private:
-   const GroupId* groupId{nullptr};
+    const GroupId* groupId{nullptr};
 
-   IDialogsManager* dialogsManager{nullptr};
+    IDialogsManager* dialogsManager{nullptr};
 };
 
 #endif /* GROUP_CHATROOM_H */

@@ -10,13 +10,12 @@
  * See the Mulan PubL v2 for more details.
  */
 
-
 #include "qrwidget.h"
+#include <qrencode.h>
 #include <QBuffer>
 #include <QDebug>
 #include <QImage>
 #include <QPainter>
-#include <qrencode.h>
 
 #ifdef Q_OS_WIN32
 #include <errno.h>
@@ -30,8 +29,8 @@
  */
 
 QRWidget::QRWidget(QWidget* parent)
-    : QWidget(parent)
-    , data("0")
+        : QWidget(parent)
+        , data("0")
 // Note: The encoding fails with empty string so I just default to something else.
 // Use the setQRData() call to change this.
 {
@@ -41,36 +40,27 @@ QRWidget::QRWidget(QWidget* parent)
     image = new QImage(size, QImage::Format_RGB32);
 }
 
-QRWidget::~QRWidget()
-{
-    delete image;
-}
+QRWidget::~QRWidget() { delete image; }
 
-void QRWidget::setQRData(const QString& data)
-{
+void QRWidget::setQRData(const QString& data) {
     this->data = data;
     paintImage();
 }
 
-QImage* QRWidget::getImage()
-{
-    return image;
-}
+QImage* QRWidget::getImage() { return image; }
 
 /**
  * @brief QRWidget::saveImage
  * @param path Full path to the file with extension.
  * @return indicate if saving was successful.
  */
-bool QRWidget::saveImage(QString path)
-{
+bool QRWidget::saveImage(QString path) {
     // 0 - image format same as file extension, 75-quality, png file is ~6.3kb
     return image->save(path, nullptr, 75);
 }
 
 // http://stackoverflow.com/questions/21400254/how-to-draw-a-qr-code-with-qt-in-native-c-c
-void QRWidget::paintImage()
-{
+void QRWidget::paintImage() {
     QPainter painter(image);
     // NOTE: I have hardcoded some parameters here that would make more sense as variables.
     // ECLEVEL_M is much faster recognizable by barcodescanner any any other type

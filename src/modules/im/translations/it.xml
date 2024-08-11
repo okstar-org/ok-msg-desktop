@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2022 船山信息 chuanshaninfo.com
+  ~ The project is licensed under Mulan PubL v2.
+  ~ You can use this software according to the terms and conditions of the Mulan
+  ~ PubL v2. You may obtain a copy of Mulan PubL v2 at:
+  ~          http://license.coscl.org.cn/MulanPubL-2.0
+  ~ THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+  ~ EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+  ~ MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+  ~ See the Mulan PubL v2 for more details.
+  -->
+
 <!DOCTYPE TS>
-<TS version="2.0" language="de_DE" sourcelanguage="en_US">
+<TS version="2.0" language="it_IT">
 <context>
     <name>AVForm</name>
     <message>
@@ -9,51 +21,51 @@
     </message>
     <message>
         <source>Default resolution</source>
-        <translation>Standardauflösung</translation>
+        <translation>Risoluzione di default</translation>
     </message>
     <message>
         <source>Disabled</source>
-        <translation>Deaktiviert</translation>
+        <translation>Disabilitato</translation>
     </message>
     <message>
         <source>Select region</source>
-        <translation>Region auswählen</translation>
+        <translation>Seleziona regione</translation>
     </message>
     <message>
         <source>Screen %1</source>
-        <translation>Bildschirm %1</translation>
+        <translation>Schermo %1</translation>
     </message>
     <message>
         <source>Audio Settings</source>
-        <translation>Audioeinstellungen</translation>
+        <translation>Impostazioni Audio</translation>
     </message>
     <message>
         <source>Gain</source>
-        <translation>Aufnahmelautstärke</translation>
+        <translation>Volume microfono</translation>
     </message>
     <message>
         <source>Playback device</source>
-        <translation>Wiedergabegerät</translation>
+        <translation>Dispositivo di output</translation>
     </message>
     <message>
         <source>Use slider to set volume of your speakers.</source>
-        <translation>Verwende den Schieberegler, um die Wiedergabelautstärke deiner Lautsprecher anzupassen.</translation>
+        <translation>Usa il cursore per impostare il volume degli altoparlanti.</translation>
     </message>
     <message>
         <source>Capture device</source>
-        <translation>Aufnahmegerät</translation>
+        <translation>Dispositivo di input</translation>
     </message>
     <message>
         <source>Volume</source>
-        <translation>Wiedergabelautstärke</translation>
+        <translation>Livello audio</translation>
     </message>
     <message>
         <source>Video Settings</source>
-        <translation>Videoeinstellungen</translation>
+        <translation>Impostazioni Video</translation>
     </message>
     <message>
         <source>Video device</source>
-        <translation>Kamera</translation>
+        <translation>Dispositivo video</translation>
     </message>
     <message>
         <source>Set resolution of your camera.
@@ -61,161 +73,163 @@ The higher values, the better video quality your friends may get.
 Note though that with better video quality there is needed better internet connection.
 Sometimes your connection may not be good enough to handle higher video quality,
 which may lead to problems with video calls.</source>
-        <translation>Wähle deine Kameraauflösung.
-Höhere Werte führen zu einem schärferen Bild für deine Freunde, allerdings wird eine bessere Internetverbindung benötigt.
-Zu hohe Auflösungen können daher zu Problemen in Videoanrufen führen, wenn die Verbindung nicht schnell und stabil genug ist.</translation>
+        <translation>Imposta la risoluzione della tua webcam.
+Più alto è il valore, migliore sarà la qualità del video che vedranno i tuoi amici.
+Nota tuttavia,che per una qualità video migliore è richiesta una connessione ad internet più veloce.
+Può capitare che la tua connessione ad internet non sia abbastanza veloce per gestire qualità video elevate,
+questo può causare problemi con le chiamate video.</translation>
     </message>
     <message>
         <source>Resolution</source>
-        <translation>Kameraauflösung</translation>
+        <translation>Risoluzione</translation>
     </message>
     <message>
         <source>Rescan devices</source>
-        <translation>Geräte aktualisieren</translation>
+        <translation>Controlla nuovamente i dispositivi</translation>
     </message>
     <message>
         <source>Test Sound</source>
-        <translation>Testton</translation>
+        <translation>Suono di prova</translation>
     </message>
     <message>
         <source>Enables the experimental audio backend with echo cancelling support, needs qTox restart to take effect.</source>
-        <translation>Aktiviert den experimentellen Audio Back-End mit Echo Dämpfung, benötigt jedoch einen Neustart von qTox.</translation>
+        <translation>Abilita il backend sonoro sperimentale con cancellazione dell&apos;eco, riavvio di qTox neccessario.</translation>
     </message>
     <message>
         <source>Enable experimental audio backend</source>
-        <translation>Aktiviere den experimentellen Audio Back-End</translation>
+        <translation>Abilita il backend audio sperimentale</translation>
     </message>
     <message>
         <source>Audio quality</source>
-        <translation>Tonqualität</translation>
+        <translation>Qualità audio</translation>
     </message>
     <message>
         <source>Transmitted audio quality. Lower this setting if your bandwidth is not high enough or if you want to lower the internet usage.</source>
-        <translation>Übertragene Tonqualität. Verringern Sie diese Einstellung, wenn Ihre Bandbreite nicht ausreichend ist oder wenn Sie die Internetauslastung verringern möchten.</translation>
+        <translation>Qualità audio trasmessa. Abbassa questo parametro se non hai abbastanza banda o se vuoi limitare il tuo traffico di rete.</translation>
     </message>
     <message>
         <source>High (64 kbps)</source>
-        <translation>Hoch (64 kbps)</translation>
+        <translation>Alta (64 kbps)</translation>
     </message>
     <message>
         <source>Medium (32 kbps)</source>
-        <translation>Mittel (32 kbps)</translation>
+        <translation>Media (32 kbps)</translation>
     </message>
     <message>
         <source>Low (16 kbps)</source>
-        <translation>Niedrig (16 kbps)</translation>
+        <translation>Bassa (16 kbps)</translation>
     </message>
     <message>
         <source>Very low (8 kbps)</source>
-        <translation>Sehr niedrig (8 kbps)</translation>
+        <translation>Molto bassa (8 kbps)</translation>
     </message>
     <message>
         <source>Threshold</source>
-        <translation>Schwellenwert</translation>
+        <translation>Ingresso</translation>
     </message>
 </context>
 <context>
     <name>AboutForm</name>
     <message>
         <source>About</source>
-        <translation>Über</translation>
+        <translation>Informazioni su qTox</translation>
     </message>
     <message>
         <source>Original author: %1</source>
-        <translation>Originalauthor: %1</translation>
+        <translation>Autore originale: %1</translation>
     </message>
     <message>
         <source>You are using qTox version %1.</source>
-        <translation>Du verwendest die qTox-Version %1.</translation>
+        <translation>Stai utilizzando la versione %1.</translation>
     </message>
     <message>
         <source>Commit hash: %1</source>
-        <translation>Commit-Hash: %1</translation>
+        <translation>Commit hash: %1</translation>
     </message>
     <message>
         <source>toxcore version: %1</source>
-        <translation>Toxcore-Version: %1</translation>
+        <translation>Versione toxcore: %1</translation>
     </message>
     <message>
         <source>Qt version: %1</source>
-        <translation>Qt-Version: %1</translation>
+        <translation>Versione Qt: %1</translation>
     </message>
     <message>
         <source>A list of all known issues may be found at our %1 at Github. If you discover a bug or security vulnerability within qTox, please report it according to the guidelines in our %2 wiki article.</source>
         <comment>`%1` is replaced by translation of `bug tracker`
 `%2` is replaced by translation of `Writing Useful Bug Reports`</comment>
-        <translation>Eine Liste von bekannten Problemen kann in unserem %1 angesehen werden. Wenn Du einen Bug oder eine Sicherheitslücke findest, melde ihn bitte entsprechend unseren Richtlinien, die Du in unserem Wiki-Artikel %2 findest.</translation>
+        <translation>Una lista di tutti i problemi può essere trovata alla nostra %1 su Github.Se scopri un bug o una vulnerabilità di sicurezza in qTox, ti preghiamo di segnalarcelo in accordo con le nostre linee guida nel nostro %2 articolo del wiki.</translation>
     </message>
     <message>
         <source>Click here to report a bug.</source>
-        <translation>Hier klicken, um einen Fehler zu melden.</translation>
+        <translation>Clicca qui per segnalare un bug.</translation>
     </message>
     <message>
         <source>See a full list of %1 at Github</source>
         <comment>`%1` is replaced with translation of word `contributors`</comment>
-        <translation>Eine vollkommene Liste von %1 findest du auf Github</translation>
+        <translation>Consulta l&apos;elenco completo dei %1 su Github</translation>
     </message>
     <message>
         <source>bug-tracker</source>
         <comment>Replaces `%1` in the `A list of all knownâ¦`</comment>
-        <translation>Bug-Tracker</translation>
+        <translation>Log dei bug</translation>
     </message>
     <message>
         <source>Writing Useful Bug Reports</source>
         <comment>Replaces `%2` in the `A list of all knownâ¦`</comment>
-        <translation>„Schreiben von nützlichen Fehlerberichten” (Englisch)</translation>
+        <translation>Segnalazione di bug</translation>
     </message>
     <message>
         <source>contributors</source>
         <comment>Replaces `%1` in `See a full list ofâ¦`</comment>
-        <translation>Mitwirkende</translation>
+        <translation>contributori</translation>
     </message>
 </context>
 <context>
     <name>AboutFriendForm</name>
     <message>
         <source>Dialog</source>
-        <translation>Dialog</translation>
+        <translation>Finestra di dialogo</translation>
     </message>
     <message>
         <source>username</source>
-        <translation>Benutzername</translation>
+        <translation>Username</translation>
     </message>
     <message>
         <source>status message</source>
-        <translation>Statusmeldung</translation>
+        <translation>messaggio di stato</translation>
     </message>
     <message>
         <source>Used aliases:</source>
-        <translation>Verwendete Nutzernamen:</translation>
+        <translation>Soprannomi usati:</translation>
     </message>
     <message>
         <source>HISTORY OF ALIASES</source>
-        <translation>Verlauf der verwendeten Nutzernamen</translation>
+        <translation>Cronologia dei soprannomi</translation>
     </message>
     <message>
         <source>Automatically accept files from contact if set</source>
-        <translation>Nimmt Dateien dieses Kontaktes automatisch an, wenn aktiviert</translation>
+        <translation>Accetta automaticamente files dal contatto se selezionato</translation>
     </message>
     <message>
         <source>Auto accept files</source>
-        <translation>Dateien automatisch annehmen</translation>
+        <translation>Accetta automaticamente i file ricevuti</translation>
     </message>
     <message>
         <source>Default directory to save files:</source>
-        <translation>Standartordner für das Speichern von Dateien:</translation>
+        <translation>Cartella predefinita per salvare i files:</translation>
     </message>
     <message>
         <source>Auto accept for this contact is disabled</source>
-        <translation>Automatische Annahme von Dateien ist für diesem Kontakt deaktiviert</translation>
+        <translation>Non scaricare automaticamente i file per questo contatto</translation>
     </message>
     <message>
         <source>Auto accept call:</source>
-        <translation>Anruf automatisch annehmen:</translation>
+        <translation>Accetta automaticamente le chiamate:</translation>
     </message>
     <message>
         <source>Manual</source>
-        <translation>Manuell</translation>
+        <translation>Manuale</translation>
     </message>
     <message>
         <source>Audio</source>
@@ -227,518 +241,432 @@ Zu hohe Auflösungen können daher zu Problemen in Videoanrufen führen, wenn di
     </message>
     <message>
         <source>Automatically accept group chat invitations from this contact if set.</source>
-        <translation>Akzeptieren Sie automatisch Gruppenchat-Einladungen von diesem Kontakt, falls festgelegt.</translation>
+        <translation>Accetta automaticamente inviti per chat di gruppo da questo contatto.</translation>
     </message>
     <message>
         <source>Auto accept group invites</source>
-        <translation>Gruppeneinladungen automatisch annehmen</translation>
+        <translation>Accetta automaticamente gli inviti alle chat di gruppo</translation>
     </message>
     <message>
         <source>Remove history (operation can not be undone!)</source>
-        <translation>Chatverlauf löschen (kann nicht rückgängig gemacht werden!)</translation>
+        <translation>Rimuovi la cronologia (questa operazione non può essere annullata!)</translation>
     </message>
     <message>
         <source>Notes</source>
-        <translation>Notizen</translation>
+        <translation>Appunti</translation>
     </message>
     <message>
         <source>Input field for notes about the contact</source>
-        <translation>Eingabefeld für Notizen über den Kontakt</translation>
+        <translation>Campo per gli appunti sul contatto</translation>
     </message>
     <message>
         <source>You can save comment about this contact here.</source>
-        <translation>Hier können Sie Notizen über diesen Kontakt eintragen.</translation>
+        <translation>Puoi salvare un commento per questo contatto qui.</translation>
     </message>
     <message>
         <source>History removed</source>
-        <translation>Chatverlauf gelöscht</translation>
+        <translation>Cronologia rimossa</translation>
     </message>
     <message>
         <source>Choose an auto accept directory</source>
         <extracomment>popup title</extracomment>
-        <translation>Wählen Sie einen Ordner aus, in dem die automatisch-akzeptierten Dateien gespeichert werden sollen</translation>
+        <translation>Scegli dove salvare i file scaricati automaticamente</translation>
     </message>
     <message>
         <source>Account:</source>
-        <translation>Öffentlicher Schlüssel (nicht ToxID):</translation>
+        <translation>Chiave pubblica (non ToxID):</translation>
     </message>
     <message>
         <source>Confirmation</source>
-        <translation>Bestätigung</translation>
+        <translation>Conferma</translation>
     </message>
     <message>
         <source>Are you sure to remove %1 chat history?</source>
-        <translation>Soll der Chatverlauf mit %1 gelöscht werden?</translation>
+        <translation>Sei sicuro di rimuovere %1 cronologia chat?</translation>
     </message>
     <message>
         <source>Failed to remove chat history with %1!</source>
-        <translation>Der Chatverlauf mit %1 konnte nicht gelöscht werden!</translation>
+        <translation>Impossibile rimuovere la cronologia delle chat con %1!</translation>
     </message>
 </context>
 <context>
     <name>AboutSettings</name>
     <message>
         <source>Version</source>
-        <translation>Version</translation>
+        <translation>Versione</translation>
     </message>
     <message>
         <source>License</source>
-        <translation>Lizenz</translation>
+        <translation>Licenza</translation>
     </message>
     <message>
         <source>Authors</source>
-        <translation>Entwickler</translation>
+        <translation>Autori</translation>
     </message>
     <message>
         <source>Known Issues</source>
-        <translation>Bekannte Probleme</translation>
+        <translation>Problemi Noti</translation>
     </message>
     <message>
         <source>Open update download link</source>
-        <translation>Update herunterladen</translation>
+        <translation>Apri il link per il download dell&apos;aggiornamento</translation>
     </message>
     <message>
         <source>Update available</source>
-        <translation>Update verfügbar</translation>
+        <translation>Aggiornamento disponibile</translation>
     </message>
     <message utf8="true">
         <source>qTox is up to date ✓</source>
-        <translation>qTox ist auf dem neusten Stand ✓</translation>
+        <translation>qTox è aggiornato ✓</translation>
     </message>
 </context>
 <context>
     <name>AddFriendForm</name>
     <message>
         <source>Add Friends</source>
-        <translation>Freunde hinzufügen</translation>
-    </message>
-    <message>
-        <source>Invalid Tox ID format</source>
-        <translation>Ungültige Tox ID</translation>
+        <translation>Aggiungi Contatto</translation>
     </message>
     <message>
         <source>Send friend request</source>
-        <translation>Freundschaftsanfrage senden</translation>
-    </message>
-    <message>
-        <source>Add a friend</source>
-        <translation>Einen Freund hinzufügen</translation>
-    </message>
-    <message>
-        <source>Friend requests</source>
-        <translation>Freundschaftsanfragen</translation>
-    </message>
-    <message>
-        <source>Accept</source>
-        <translation>Annehmen</translation>
-    </message>
-    <message>
-        <source>Reject</source>
-        <translation>Ablehnen</translation>
+        <translation>Invia richiesta d&apos;amicizia</translation>
     </message>
     <message>
         <source>Couldn&apos;t add friend</source>
-        <translation>Freund konnte nicht hinzugefügt werden</translation>
+        <translation>Impossibile aggiungere il contatto</translation>
+    </message>
+    <message>
+        <source>Invalid Tox ID format</source>
+        <translation>Tox ID non valido</translation>
+    </message>
+    <message>
+        <source>Add a friend</source>
+        <translation>Aggiungi un contatto</translation>
+    </message>
+    <message>
+        <source>Friend requests</source>
+        <translation>Richieste di amicizia</translation>
+    </message>
+    <message>
+        <source>Accept</source>
+        <translation>Accetta</translation>
+    </message>
+    <message>
+        <source>Reject</source>
+        <translation>Rifiuta</translation>
     </message>
     <message>
         <source>Tox ID, either 76 hexadecimal characters or name@example.com</source>
-        <translation>Tox ID, entweder 76 hexadezimale Zeichen oder name@beispiel.de</translation>
+        <translation>Tox ID, 76 caratteri esadecimali oppure nome@example.com</translation>
     </message>
     <message>
         <source>Type in Tox ID of your friend</source>
-        <translation>Tox ID deines Freundes eingeben</translation>
+        <translation>Inserisci il Tox ID di un tuo amico</translation>
     </message>
     <message>
         <source>Friend request message</source>
-        <translation>Nachricht deiner Freundschaftsanfrage</translation>
+        <translation>Messaggio di richiesta dell&apos;amico</translation>
     </message>
     <message>
         <source>Type message to send with the friend request or leave empty to send a default message</source>
-        <translation>Nachricht eingeben, die mit der Freundschaftsanfrage gesendet werden soll (optional)</translation>
+        <translation>Scrivi un messaggio da inviare con la richiesta di amicizia o lascia vuoto per inviare il messaggio predefinito</translation>
     </message>
     <message>
         <source>%1 Tox ID is invalid or does not exist</source>
         <comment>Toxme error</comment>
-        <translation>%1 Tox ID ist ungültig oder existiert nicht</translation>
+        <translation>%1 ID Tox non valido o inesistente</translation>
     </message>
     <message>
         <source>You can&apos;t add yourself as a friend!</source>
         <extracomment>When trying to add your own Tox ID as friend</extracomment>
-        <translation>Du kannst dich nicht selbst als Freund hinzufügen!</translation>
+        <translation>Non puoi aggiungerti come amico!</translation>
     </message>
     <message>
         <source>Open contact list</source>
-        <translation>Öffne Kontaktliste</translation>
+        <translation>Apri la lista dei contatti</translation>
     </message>
     <message>
         <source>Couldn&apos;t open file</source>
-        <translation>Kann Datei nicht öffnen</translation>
+        <translation>Impossibile aprire il file</translation>
     </message>
     <message>
         <source>Couldn&apos;t open the contact file</source>
         <extracomment>Error message when trying to open a contact list file to import</extracomment>
-        <translation>Kann Kontaktdatei nicht öffnen</translation>
+        <translation>Impossibile aprire il file contatto</translation>
     </message>
     <message>
         <source>Invalid file</source>
-        <translation>Ungültige Datei</translation>
+        <translation>File non valido</translation>
     </message>
     <message>
         <source>We couldn&apos;t find any contacts to import in this file!</source>
-        <translation>Die Datei enthält keine Kontakte zum Importieren!</translation>
+        <translation>Non abbiamo trovato nessun contatto da importare in questo file!</translation>
     </message>
     <message>
         <source>Tox ID</source>
         <extracomment>Tox ID of the person you&apos;re sending a friend request to</extracomment>
-        <translation>ToxID</translation>
+        <translation>ID Tox</translation>
     </message>
     <message>
         <source>either 76 hexadecimal characters or name@example.com</source>
         <extracomment>Tox ID format description</extracomment>
-        <translation>Entweder 76 hexadezimale Zeichen oder name@example.com</translation>
+        <translation>76 caratteri esadecimali oppure nome@esempio.com</translation>
     </message>
     <message>
         <source>Message</source>
         <extracomment>The message you send in friend requests</extracomment>
-        <translation>Nachricht</translation>
+        <translation>Messaggio</translation>
     </message>
     <message>
         <source>Open</source>
         <extracomment>Button to choose a file with a list of contacts to import</extracomment>
-        <translation>Öffnen</translation>
+        <translation>Apri</translation>
     </message>
     <message>
         <source>Send friend requests</source>
-        <translation>Freundschaftsanfragen senden</translation>
+        <translation>Invia richieste di amicizia</translation>
     </message>
     <message>
         <source>%1 here! OkEDU me maybe?</source>
         <extracomment>Default message in friend requests if the field is left blank. Write something appropriate!</extracomment>
-        <translation>Hier ist %1! Lust sich mit mir zu unterhalten?</translation>
+        <translation>Ciao, sono %1! OkEDUiamo?</translation>
     </message>
     <message>
         <source>Import a list of contacts, one Tox ID per line</source>
-        <translation>Importiere Kontaktliste, eine Tox ID pro Zeile</translation>
+        <translation>Importa una lista di contatti, un ID Tox per linea</translation>
     </message>
     <message numerus="yes">
         <source>Ready to import %n contact(s), click send to confirm</source>
         <extracomment>Shows the number of contacts we&apos;re about to import from a file (at least one)</extracomment>
         <translation>
-            <numerusform>%n Kontakt wird importiert. Klicken Sie auf Senden, um den Import zu bestätigen.</numerusform>
-            <numerusform>%n Kontakte werden importiert. Kicken Sie auf Senden, um den Import zu bestätigen.</numerusform>
+            <numerusform>Pronto per importare %n contatto(i), premi invia per confermare</numerusform>
+            <numerusform>Pronto per importare %n contatti, premi invia per confermare</numerusform>
         </translation>
     </message>
     <message>
         <source>Import contacts</source>
-        <translation>Importiere Kontakte</translation>
+        <translation>Importa contatti</translation>
     </message>
 </context>
 <context>
     <name>AdvancedForm</name>
     <message>
         <source>Advanced</source>
-        <translation>Erweitert</translation>
+        <translation>Avanzate</translation>
     </message>
     <message>
         <source>Unless you %1 know what you are doing, please do %2 change anything here. Changes made here may lead to problems with qTox, and even to loss of your data, e.g. history.</source>
-        <translation>Wenn du nicht %1 weißt, was du tust, solltest du hier %2 ändern. Änderungen, die du hier machst, könnten zu Problemen mit qTox und sogar dem Verlust deiner Daten, z.B. dem Verlauf, führen.</translation>
+        <translation>A meno che non sai %1 cosa stai facendo, si prega di %2 cambiare nulla qui. Le modifiche apportate qui potrebbero portare a problemi con qTox, e anche per la perdita di dati, ad esempio la cronologia.</translation>
     </message>
     <message>
         <source>really</source>
-        <translation>wirklich</translation>
+        <translation>realmente</translation>
     </message>
     <message>
         <source>not</source>
-        <translation>nicht</translation>
+        <translation>non</translation>
     </message>
     <message>
         <source>IMPORTANT NOTE</source>
-        <translation>WICHTIGER HINWEIS</translation>
+        <translation>NOTA IMPORTANTE</translation>
     </message>
     <message>
         <source>Reset settings</source>
-        <translation>Einstellungen zurücksetzen</translation>
+        <translation>Resetta impostazioni</translation>
     </message>
     <message>
         <source>All settings will be reset to default. Are you sure?</source>
-        <translation>Alle Einstellungen werden zurückgesetzt. Bist Du dir sicher?</translation>
+        <translation>Tutte le impostazioni saranno ripristinate ai valori predefiniti. Sei sicuro?</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation>Ja</translation>
+        <translation>Si</translation>
     </message>
     <message>
         <source>No</source>
-        <translation>Nein</translation>
+        <translation>No</translation>
     </message>
     <message>
         <source>Call active</source>
         <comment>popup title</comment>
-        <translation>Anruf aktiv</translation>
+        <translation>Chiamata in corso</translation>
     </message>
     <message>
         <source>You can&apos;t disconnect while a call is active!</source>
         <comment>popup text</comment>
-        <translation>Du kannst dich nicht abmelden, solange ein Anruf noch aktiv ist!</translation>
+        <translation>Non puoi disconnetterti mentre c&apos;è una chiamata in corso!</translation>
     </message>
     <message>
         <source>Save File</source>
-        <translation>Datei speichern</translation>
+        <translation>Salva File</translation>
     </message>
     <message>
         <source>Logs (*.log)</source>
-        <translation>Protokolle (*.log)</translation>
+        <translation>I Log (*.log)</translation>
     </message>
 </context>
-<context>
-    <name>AdvancedSettings</name>
-    <message>
-        <source>Save settings to the working directory instead of the usual conf dir</source>
-        <extracomment>describes makeToxPortable checkbox</extracomment>
-        <translation>Einstellungen im Arbeitsverzeichnis (anstelle des üblichen Konfigurationsverzeichnis) speichern</translation>
-    </message>
-    <message>
-        <source>Make Tox portable</source>
-        <translation>Tox portabel machen</translation>
-    </message>
-    <message>
-        <source>Reset to default settings</source>
-        <translation>Einstellungen zurücksetzen</translation>
-    </message>
-    <message>
-        <source>Portable</source>
-        <translation>Portabel</translation>
-    </message>
-    <message>
-        <source>Connection Settings</source>
-        <translation>Verbindungseinstellungen</translation>
-    </message>
-    <message>
-        <source>Enable IPv6 (recommended)</source>
-        <extracomment>Text on a checkbox to enable IPv6</extracomment>
-        <translation>IPv6 aktivieren (empfohlen)</translation>
-    </message>
-    <message>
-        <source>Disabling this allows, e.g., toxing over Tor. It adds load to the Tox network however, so uncheck only when necessary.</source>
-        <extracomment>force tcp checkbox tooltip</extracomment>
-        <translation>Wenn deaktiviert, lässt sich z.B. qTox über Tor verwenden. Die Deaktivierung belastet allerdings das Tox-Netzwerk, also bitte deaktiviere es nur wenn nötig.</translation>
-    </message>
-    <message>
-        <source>Enable UDP (recommended)</source>
-        <extracomment>Text on checkbox to disable UDP</extracomment>
-        <translation>UDP aktivieren (Empfohlen)</translation>
-    </message>
-    <message>
-        <source>Proxy type:</source>
-        <translation>Proxy-Typ:</translation>
-    </message>
-    <message>
-        <source>Address:</source>
-        <extracomment>Text on proxy addr label</extracomment>
-        <translation>Adresse:</translation>
-    </message>
-    <message>
-        <source>Port:</source>
-        <extracomment>Text on proxy port label</extracomment>
-        <translation>Port:</translation>
-    </message>
-    <message>
-        <source>None</source>
-        <translation>Kein Proxy</translation>
-    </message>
-    <message>
-        <source>SOCKS5</source>
-        <translation>SOCKS5</translation>
-    </message>
-    <message>
-        <source>HTTP</source>
-        <translation>HTTP</translation>
-    </message>
-    <message>
-        <source>Reconnect</source>
-        <comment>reconnect button</comment>
-        <translation>Erneut verbinden</translation>
-    </message>
-    <message>
-        <source>Debug</source>
-        <translation>Debug</translation>
-    </message>
-    <message>
-        <source>Export Debug Log</source>
-        <translation>Fehlerbericht exportieren</translation>
-    </message>
-    <message>
-        <source>Copy Debug Log</source>
-        <translation>Fehlerbericht kopieren</translation>
-    </message>
-    <message>
-        <source>Enable LAN discovery</source>
-        <translation>Netzwerkerkennung aktivieren</translation>
-    </message>
-</context>
+
 <context>
     <name>ChatForm</name>
     <message>
         <source>Send a file</source>
-        <translation>Datei versenden</translation>
+        <translation>Invia un file</translation>
     </message>
     <message>
         <source>qTox wasn&apos;t able to open %1</source>
-        <translation>%1 konnte nicht geöffnet werden</translation>
-    </message>
-    <message>
-        <source>Unable to open</source>
-        <translation>Kann nicht geöffnet werden</translation>
-    </message>
-    <message>
-        <source>Bad idea</source>
-        <translation>Datei nicht gesendet</translation>
+        <translation>qTox non è riuscito ad aprire %1</translation>
     </message>
     <message>
         <source>%1 calling</source>
-        <translation>%1 ruft an</translation>
+        <translation>%1 ti sta chiamando</translation>
     </message>
     <message>
         <source>Calling %1</source>
-        <translation>Anruf %1</translation>
+        <translation>Stai chiamando %1</translation>
     </message>
     <message>
         <source>Failed to open temporary file</source>
         <comment>Temporary file for screenshot</comment>
-        <translation>Temporäre Datei konnte nicht geöffnet werden</translation>
+        <translation>Impossibile aprire il file temporaneo</translation>
     </message>
     <message>
         <source>qTox wasn&apos;t able to save the screenshot</source>
-        <translatorcomment>laut Duden ist Screenshot schon deutsch</translatorcomment>
-        <translation>qTox konnte den Screenshot nicht speichern</translation>
+        <translation>qTox non è stato in grado di salvare lo screenshot</translation>
     </message>
     <message>
         <source>Call with %1 ended. %2</source>
-        <translation>Anruf mit %1 beendet. %2</translation>
+        <translation>Chiamata con %1 terminata. %2</translation>
     </message>
     <message>
         <source>Call duration: </source>
-        <translation>Anrufdauer: </translation>
+        <translation>Durata chiamata: </translation>
+    </message>
+    <message>
+        <source>Unable to open</source>
+        <translation>Impossibile da aprire</translation>
+    </message>
+    <message>
+        <source>Bad idea</source>
+        <translation>Cattiva idea</translation>
     </message>
     <message>
         <source>%1 is typing</source>
-        <translation>%1 tippt gerade</translation>
+        <translation>%1 sta scrivendo</translation>
     </message>
     <message>
         <source>Copy</source>
-        <translation>Kopieren</translation>
+        <translation>Copia</translation>
     </message>
     <message>
         <source>You&apos;re trying to send a sequential file, which is not going to work!</source>
-        <translation>Du versuchst eine kontinuierliche Datei zu senden, das wird nicht funktionieren!</translation>
+        <translation>Stai cercando di mandare un file sequenziale,che non funzionerà!</translation>
     </message>
     <message>
         <source>%1 is now %2</source>
         <comment>e.g. &quot;Dubslow is now online&quot;</comment>
-        <translation>%1 ist jetzt %2</translation>
+        <translation>%1 è %2 adesso</translation>
     </message>
     <message>
         <source>Call with %1 ended unexpectedly. %2</source>
-        <translation>Anruf mit %1 brach unerwartet ab. %2</translation>
+        <translation>La chiamata con %1 è terminata inaspettatamente. %2</translation>
     </message>
     <message>
         <source>Filename contained illegal characters</source>
-        <translation>Der Dateiname enthält nicht unterstützte Satzzeichen</translation>
+        <translation>Il nome del file conteneva caratteri non autorizzati</translation>
     </message>
     <message>
         <source>Illegal characters have been changed to _ 
 so you can save the file on windows.</source>
-        <translation>Nicht unterstützte Satzzeichen wurden zu  _  geändert, 
-um sie in Windows speichern zu können.</translation>
+        <translation>I caratteri non autorizzati sono stati cambiati in _
+in modo da poter salvare il file su windows.</translation>
     </message>
 </context>
 <context>
     <name>ChatFormHeader</name>
     <message>
         <source>Can&apos;t start audio call</source>
-        <translation>Sprachanruf konnte nicht gestartet werden</translation>
+        <translation>Impossibile avviare chiamate audio</translation>
     </message>
     <message>
         <source>Start audio call</source>
-        <translation>Sprachanruf starten</translation>
+        <translation>Avvia chiamata audio</translation>
     </message>
     <message>
         <source>End audio call</source>
-        <translation>Sprachanruf beenden</translation>
+        <translation>Termina chiamata</translation>
     </message>
     <message>
         <source>Cancel audio call</source>
-        <translation>Sprachanruf abbrechen</translation>
+        <translation>Annulla chiamata</translation>
     </message>
     <message>
         <source>Accept audio call</source>
-        <translation>Sprachanruf annehmen</translation>
+        <translation>Accetta chiamata</translation>
     </message>
     <message>
         <source>Can&apos;t start video call</source>
-        <translation>Videoanruf konnte nicht gestartet werden</translation>
+        <translation>Impossibile avviare una videochiamata</translation>
     </message>
     <message>
         <source>Start video call</source>
-        <translation>Videoanruf starten</translation>
+        <translation>Avvia videochiamata</translation>
     </message>
     <message>
         <source>End video call</source>
-        <translation>Videoanruf beenden</translation>
+        <translation>Termina videochiamata</translation>
     </message>
     <message>
         <source>Cancel video call</source>
-        <translation>Videoanruf abbrechen</translation>
+        <translation>Annulla videochiamata</translation>
     </message>
     <message>
         <source>Accept video call</source>
-        <translation>Videoanruf annehmen</translation>
+        <translation>Accetta videochiamata</translation>
     </message>
     <message>
         <source>Sound can be disabled only during a call</source>
-        <translation>Lautsprecher kann nur während eines Anrufs stumm geschaltet werden</translation>
+        <translation>Il suono può essere disabilitato solo durante una chiamata</translation>
     </message>
     <message>
         <source>Unmute call</source>
-        <translation>Stummschaltung deaktivieren</translation>
+        <translation>Attiva audio</translation>
     </message>
     <message>
         <source>Mute call</source>
-        <translation>Anruf stummschalten</translation>
+        <translation>Disattiva audio</translation>
     </message>
     <message>
         <source>Microphone can be muted only during a call</source>
-        <translation>Mikrofon kann nur während eines Anrufs stummgeschaltet werden</translation>
+        <translation>Il microfono può essere silenziato solo durante una chiamata</translation>
     </message>
     <message>
         <source>Unmute microphone</source>
-        <translation>Stummschaltung für Mikrofon aufheben</translation>
+        <translation>Attiva microfono</translation>
     </message>
     <message>
         <source>Mute microphone</source>
-        <translation>Mikrofon stummschalten</translation>
+        <translation>Disattiva microfono</translation>
     </message>
 </context>
 <context>
     <name>ChatLog</name>
     <message>
         <source>Copy</source>
-        <translation>Kopieren</translation>
+        <translation>Copia</translation>
     </message>
     <message>
         <source>Select all</source>
-        <translation>Alles auswählen</translation>
+        <translation>Seleziona tutto</translation>
     </message>
     <message>
         <source>pending</source>
-        <translation>Ausstehend</translation>
+        <translation>in attesa</translation>
     </message>
 </context>
 <context>
     <name>ChatTextEdit</name>
     <message>
         <source>Type your message here...</source>
-        <translation>Hier eine Nachricht eingeben ...</translation>
+        <translation>Scrivi il tuo messaggio qui...</translation>
     </message>
 </context>
 <context>
@@ -746,164 +674,157 @@ um sie in Windows speichern zu können.</translation>
     <message>
         <source>Rename circle</source>
         <comment>Menu for renaming a circle</comment>
-        <translation>Kreis umbenennen</translation>
+        <translation>Rinomina circolo</translation>
     </message>
     <message>
         <source>Remove circle</source>
         <comment>Menu for removing a circle</comment>
-        <translation>Kreis entfernen</translation>
+        <translation>Elimina circolo</translation>
     </message>
     <message>
         <source>Open all in new window</source>
-        <translation>Alle in neuem Fenster öffnen</translation>
+        <translation>Apri tutto in una nuova finestra</translation>
     </message>
 </context>
 <context>
     <name>Core</name>
     <message>
         <source>/me offers friendship, &quot;%1&quot;</source>
-        <translation>/me macht eine Freundschaftsanfrage:
-
-„%1“</translation>
+        <translation>/me ti ha aggiunto come contatto, &quot;%1&quot;</translation>
     </message>
     <message>
         <source>Invalid Tox ID</source>
         <comment>Error while sending friendship request</comment>
-        <translation>Ungültige Tox ID</translation>
+        <translation>ID di Tox non valido</translation>
     </message>
     <message>
         <source>You need to write a message with your request</source>
         <comment>Error while sending friendship request</comment>
-        <translation>Du musst eine Nachricht mit deiner Anfrage schreiben</translation>
+        <translation>Scrivi un messaggio per la richiesta d&apos;amicizia</translation>
     </message>
     <message>
         <source>Your message is too long!</source>
         <comment>Error while sending friendship request</comment>
-        <translation>Deine Nachricht ist zu lang!</translation>
+        <translation>Il tuo messaggio è troppo lungo!</translation>
     </message>
     <message>
         <source>Friend is already added</source>
         <comment>Error while sending friendship request</comment>
-        <translation>Dieser Freund wurde bereits hinzugefügt</translation>
+        <translation>Questo contatto è già presente</translation>
     </message>
     <message>
         <source>Groupchat %1</source>
-        <translation>Gruppenchat %1</translation>
+        <translation>Chat di gruppo %1</translation>
     </message>
 </context>
 <context>
     <name>DesktopNotify</name>
     <message>
         <source>New message</source>
-        <translation>Neue Nachricht</translation>
+        <translation>Nuovo messaggio</translation>
     </message>
     <message>
         <source>Incoming file transfer</source>
-        <translation>Eingehende Dateiübertragung</translation>
+        <translation>Trasferimento file in arrivo</translation>
     </message>
     <message>
         <source>Friend request received</source>
-        <translation>Freundschaftsanfrage erhalten</translation>
+        <translation>Richiesta di amicizia ricevuta</translation>
     </message>
     <message>
         <source>New group message</source>
-        <translation>Neue Gruppennachricht</translation>
+        <translation>Nuovo messaggio di gruppo</translation>
     </message>
     <message>
         <source>Group invite received</source>
-        <translation>Gruppeneinladung erhalten</translation>
+        <translation>Invito di gruppo ricevuto</translation>
     </message>
 </context>
 <context>
     <name>FileTransferWidget</name>
     <message>
         <source>Form</source>
-        <translatorcomment>Ausgelassen</translatorcomment>
-        <translation>Eingabemaske</translation>
+        <translation>Modulo</translation>
     </message>
     <message>
         <source>10Mb</source>
-        <translatorcomment>Ausgelassen</translatorcomment>
-        <translation></translation>
+        <translation>10Mb</translation>
     </message>
     <message>
         <source>0kb/s</source>
-        <translatorcomment>Ausgelassen</translatorcomment>
-        <translation></translation>
+        <translation>0kb/s</translation>
     </message>
     <message>
         <source>ETA:10:10</source>
-        <translatorcomment>Ausgelassen</translatorcomment>
-        <translation></translation>
+        <translation>ETA:10:10</translation>
     </message>
     <message>
         <source>Filename</source>
-        <translatorcomment>Ausgelassen</translatorcomment>
-        <translation>Dateiname</translation>
+        <translation>Nome file</translation>
     </message>
     <message>
         <source>Waiting to send...</source>
         <comment>file transfer widget</comment>
-        <translation>Dateitransfer läuft ...</translation>
+        <translation>In attesa di inviare...</translation>
     </message>
     <message>
         <source>Accept to receive this file</source>
         <comment>file transfer widget</comment>
-        <translation>Akzeptiere, um die Datei zu empfangen</translation>
+        <translation>Accetta la ricezione di questo file</translation>
     </message>
     <message>
         <source>Location not writable</source>
         <comment>Title of permissions popup</comment>
-        <translation>Keine Schreibrechte für diesen Ordner</translation>
+        <translation>Posizione non scrivibile</translation>
     </message>
     <message>
         <source>You do not have permission to write that location. Choose another, or cancel the save dialog.</source>
         <comment>text of permissions popup</comment>
-        <translation>Du besitzt nicht die Rechte, um hier eine Datei zu speichern. Bitte wähle einen anderen Ordner oder brich die Aktion ab.</translation>
+        <translation>Non hai sufficienti permessi per scrivere in questa locazione. Scegli un&apos;altra posizione, o annulla il salvataggio.</translation>
     </message>
     <message>
         <source>Resuming...</source>
         <comment>file transfer widget</comment>
-        <translation>Fortsetzen ...</translation>
+        <translation>Riprendendo...</translation>
     </message>
     <message>
         <source>Cancel transfer</source>
-        <translation>Übertragung abbrechen</translation>
+        <translation>Annulla trasferimento</translation>
     </message>
     <message>
         <source>Pause transfer</source>
-        <translation>Übertragung anhalten</translation>
-    </message>
-    <message>
-        <source>Paused</source>
-        <comment>file transfer widget</comment>
-        <translation>Angehalten</translation>
-    </message>
-    <message>
-        <source>Open file</source>
-        <translation>Datei öffnen</translation>
-    </message>
-    <message>
-        <source>Open file directory</source>
-        <translation>Ordner öffnen</translation>
+        <translation>Metti in pausa il trasferimento</translation>
     </message>
     <message>
         <source>Resume transfer</source>
-        <translation>Übertragung fortsetzen</translation>
+        <translation>Riprendi trasferimento</translation>
     </message>
     <message>
         <source>Accept transfer</source>
-        <translation>Übertragung annehmen</translation>
+        <translation>Accetta trasferimento</translation>
     </message>
     <message>
         <source>Save a file</source>
         <comment>Title of the file saving dialog</comment>
-        <translation>Datei speichern</translation>
+        <translation>Salva file</translation>
+    </message>
+    <message>
+        <source>Paused</source>
+        <comment>file transfer widget</comment>
+        <translation>In pausa</translation>
+    </message>
+    <message>
+        <source>Open file</source>
+        <translation>Apri file</translation>
+    </message>
+    <message>
+        <source>Open file directory</source>
+        <translation>Apri cartella</translation>
     </message>
     <message>
         <source>Remote Paused</source>
         <comment>file transfer widget</comment>
-        <translation>Remote Angehalten</translation>
+        <translation>Remoto in pausa</translation>
     </message>
 </context>
 <context>
@@ -911,42 +832,42 @@ um sie in Windows speichern zu können.</translation>
     <message>
         <source>Transferred Files</source>
         <comment>&quot;Headline&quot; of the window</comment>
-        <translation>Übertragene Dateien</translation>
+        <translation>File Trasferiti</translation>
     </message>
     <message>
         <source>Downloads</source>
-        <translation>Heruntergeladene Dateien</translation>
+        <translation>File Ricevuti</translation>
     </message>
     <message>
         <source>Uploads</source>
-        <translation>Hochgeladene Dateien</translation>
+        <translation>File Inviati</translation>
     </message>
 </context>
 <context>
     <name>FriendListWidget</name>
     <message>
         <source>Today</source>
-        <translation>Heute</translation>
+        <translation>Oggi</translation>
     </message>
     <message>
         <source>Yesterday</source>
-        <translation>Gestern</translation>
+        <translation>Ieri</translation>
     </message>
     <message>
         <source>Last 7 days</source>
-        <translation>letzte Woche</translation>
+        <translation>Ultimi 7 giorni</translation>
     </message>
     <message>
         <source>This month</source>
-        <translation>Diesen Monat</translation>
+        <translation>Questo mese</translation>
     </message>
     <message>
         <source>Older than 6 Months</source>
-        <translation>Älter als 6 Monate</translation>
+        <translation>Più vecchi di 6 mesi</translation>
     </message>
     <message>
         <source>Never</source>
-        <translation>Nie</translation>
+        <translation>Mai</translation>
     </message>
 </context>
 <context>
@@ -954,97 +875,81 @@ um sie in Windows speichern zu können.</translation>
     <message>
         <source>Friend request</source>
         <comment>Title of the window to aceept/deny a friend request</comment>
-        <translation>Freundschaftsanfrage</translation>
+        <translation>Richiesta d&apos;amicizia</translation>
     </message>
     <message>
         <source>Someone wants to make friends with you</source>
-        <translation>Jemand lädt dich in seine Freundesliste ein</translation>
+        <translation>Qualcuno vuole chattare con te</translation>
     </message>
     <message>
         <source>User ID:</source>
-        <translation>Benutzer-ID:</translation>
+        <translation>ID Utente:</translation>
     </message>
     <message>
         <source>Friend request message:</source>
-        <translation>Nachrichtentext der Freundschaftsanfrage:</translation>
+        <translation>Messaggio della richiesta d&apos;amicizia:</translation>
     </message>
     <message>
         <source>Accept</source>
         <comment>Accept a friend request</comment>
-        <translation>Annehmen</translation>
+        <translation>Accetta</translation>
     </message>
     <message>
         <source>Reject</source>
         <comment>Reject a friend request</comment>
-        <translation>Ablehnen</translation>
+        <translation>Rifiuta</translation>
     </message>
 </context>
 <context>
     <name>FriendWidget</name>
     <message>
+        <source>Auto accept files from this friend</source>
+        <comment>context menu entry</comment>
+        <translation>Accetta automaticamente i file inviati da questo contatto</translation>
+    </message>
+    <message>
         <source>Invite to group</source>
         <comment>Menu to invite a friend to a groupchat</comment>
-        <translation>Gruppeneinladung</translation>
+        <translation>Invita nel gruppo</translation>
     </message>
     <message>
         <source>Move to circle...</source>
         <comment>Menu to move a friend into a different circle</comment>
-        <translation>Verschieben in Kreis...</translation>
+        <translation>Sposta nel circolo...</translation>
     </message>
     <message>
         <source>To new circle</source>
-        <translation>Zu neuem Kreis</translation>
+        <translation>In un nuovo circolo</translation>
     </message>
     <message>
         <source>Remove from circle &apos;%1&apos;</source>
-        <translation>Aus Kreis &quot;%1&quot; entfernen</translation>
+        <translation>Rimuovi dal circolo &quot;%1&quot;</translation>
     </message>
     <message>
         <source>Move  to circle &quot;%1&quot;</source>
-        <translation>In Kreis &quot;%1&quot; verschieben</translation>
-    </message>
-    <message>
-        <source>Open chat in new window</source>
-        <translation>Chat in neuem Fenster öffnen</translation>
-    </message>
-    <message>
-        <source>Remove chat from this window</source>
-        <translation>Chat aus diesem Fenster entfernen</translation>
-    </message>
-    <message>
-        <source>To new group</source>
-        <translation>Zu einer neuen Gruppe</translation>
-    </message>
-    <message>
-        <source>Invite to group &apos;%1&apos;</source>
-        <translation>In Gruppe „%1“ einladen</translation>
+        <translation>Sposta nel circolo &quot;%1&quot;</translation>
     </message>
     <message>
         <source>Set alias...</source>
-        <translation>Pseudonym wählen...</translation>
-    </message>
-    <message>
-        <source>Auto accept files from this friend</source>
-        <comment>context menu entry</comment>
-        <translation>Dateien von diesem Freund automatisch annehmen</translation>
+        <translation>Imposta soprannome...</translation>
     </message>
     <message>
         <source>Remove friend</source>
         <comment>Menu to remove the friend from our friendlist</comment>
-        <translation>Freund löschen</translation>
+        <translation>Rimuovi contatto</translation>
     </message>
     <message>
         <source>Show details</source>
-        <translation>Zeige Details</translation>
+        <translation>Mostra dettagli</translation>
     </message>
     <message>
         <source>Choose an auto accept directory</source>
         <comment>popup title</comment>
-        <translation>Speicherort für empfangene Dateien wählen</translation>
+        <translation>Scegli dove salvare i file accettati automaticamente</translation>
     </message>
     <message>
         <source>New message</source>
-        <translation>Neue Nachricht</translation>
+        <translation>Nuovo messaggio</translation>
     </message>
     <message>
         <source>Online</source>
@@ -1052,138 +957,155 @@ um sie in Windows speichern zu können.</translation>
     </message>
     <message>
         <source>Away</source>
-        <translation>Abwesend</translation>
+        <translation>Assente</translation>
     </message>
     <message>
         <source>Busy</source>
-        <translation>Beschäftigt</translation>
+        <translation>Occupato</translation>
     </message>
     <message>
         <source>Offline</source>
-        <translatorcomment>Ausgelassen</translatorcomment>
-        <translation></translation>
+        <translation>Offline</translation>
+    </message>
+    <message>
+        <source>Open chat in new window</source>
+        <translation>Apri la chat in una nuova finestra</translation>
+    </message>
+    <message>
+        <source>Remove chat from this window</source>
+        <translation>Rimuovi chat da questa finestra</translation>
+    </message>
+    <message>
+        <source>To new group</source>
+        <translation>In un nuovo gruppo</translation>
+    </message>
+    <message>
+        <source>Invite to group &apos;%1&apos;</source>
+        <translation>Invita nel gruppo &apos;%1&apos;</translation>
     </message>
 </context>
 <context>
     <name>GeneralForm</name>
     <message>
         <source>General</source>
-        <translation>Allgemein</translation>
+        <translation>Generale</translation>
     </message>
     <message>
         <source>Choose an auto accept directory</source>
         <comment>popup title</comment>
-        <translation>Speicherort für empfangenen Dateien wählen</translation>
+        <translation>Scegli dove salvare i file accettati automaticamente</translation>
     </message>
 </context>
 <context>
     <name>GeneralSettings</name>
     <message>
         <source>General Settings</source>
-        <translation>Allgemeine Einstellungen</translation>
+        <translation>Impostazioni Generali</translation>
     </message>
     <message>
         <source>The translation may not load until qTox restarts.</source>
-        <translation>Die Änerung wird erst nach Neustart von qtox aktiv.</translation>
+        <translation>La traduzione potrebbe non essere caricata fino al prossimo riavvio di qTox.</translation>
     </message>
     <message>
         <source>Language:</source>
-        <translation>Sprache:</translation>
+        <translation>Lingua:</translation>
     </message>
     <message>
         <source>Show system tray icon</source>
-        <translation>Icon in Systemleiste anzeigen</translation>
+        <translation>Mostra icona nella barra di sistema</translation>
+    </message>
+    <message>
+        <source>Light icon</source>
+        <translation>Usa icona brillante</translation>
     </message>
     <message>
         <source>Enable light tray icon.</source>
         <comment>toolTip for light icon setting</comment>
-        <translation>Helles Icon aktivieren.</translation>
-    </message>
-    <message>
-        <source>Light icon</source>
-        <translation>Helles Icon</translation>
+        <translation>Abilita icona brillante nella trybar.</translation>
     </message>
     <message>
         <source>qTox will start minimized in tray.</source>
         <comment>toolTip for Start in tray setting</comment>
-        <translation>qTox wird in der Systemleiste minimiert starten.</translation>
-    </message>
-    <message>
-        <source>Start in tray</source>
-        <translation>Im Hintergrund starten</translation>
+        <translation>qTox sarà avviato minimizzato nella barra di sistema.</translation>
     </message>
     <message>
         <source>After pressing close (X) qTox will minimize to tray,
 instead of closing itself.</source>
         <comment>toolTip for close to tray setting</comment>
-        <translation>Durch das Klicken auf „Schließen“ (X) wird qTox nicht beendet, sondern in die Systemleiste minimiert.</translation>
-    </message>
-    <message>
-        <source>Close to tray</source>
-        <translation>In Systemleiste minimieren</translation>
+        <translation>Premendo l&apos;icona &quot;chiudi&quot; (X) qTox sarà minimizzato
+nella barra di sistema invece che essere chiuso.</translation>
     </message>
     <message>
         <source>After pressing minimize (_) qTox will minimize itself to tray,
 instead of system taskbar.</source>
         <comment>toolTip for minimize to tray setting</comment>
-        <translation>Durch Klicken auf „Minimieren“ (_) wird qTox in den Systemabschnitt minimiert und verschwindet von der Startleiste.</translation>
-    </message>
-    <message>
-        <source>Minimize to tray</source>
-        <translation>In Systemleiste minimieren</translation>
-    </message>
-    <message>
-        <source>Autostart</source>
-        <translation>Autostart</translation>
+        <translation>Premendo l&apos;icona &quot;minimizza&quot; (_) qTox sarà minimizzato
+nella barra di sistema invece che nella barra delle applicazioni.</translation>
     </message>
     <message>
         <source>Set where files will be saved.</source>
-        <translation>Datei-Speicherort festlegen.</translation>
+        <translation>Scegli dove salvare i file ricevuti.</translation>
+    </message>
+    <message>
+        <source>Set to 0 to disable</source>
+        <translation>Imposta 0 per disabilitare</translation>
+    </message>
+    <message>
+        <source>Auto away after (0 to disable):</source>
+        <translation>Mostra come assente dopo (0 per disabilitare):</translation>
+    </message>
+    <message>
+        <source>Autoaccept files</source>
+        <translation>Accetta automaticamente i file</translation>
+    </message>
+    <message>
+        <source>Default directory to save files:</source>
+        <translation>Cartella predefinita per salvare i file:</translation>
+    </message>
+    <message>
+        <source>Start qTox on operating system startup (current profile).</source>
+        <translation>Apri qTox all&apos;avvio del sistema operativo (profilo corrente).</translation>
+    </message>
+    <message>
+        <source>Start in tray</source>
+        <translation>Avvia nella barra di sistema</translation>
+    </message>
+    <message>
+        <source>Close to tray</source>
+        <translation>Chiudi nella barra di sistema</translation>
+    </message>
+    <message>
+        <source>Minimize to tray</source>
+        <translation>Minimizza nella barra di sistema</translation>
+    </message>
+    <message>
+        <source>Show contacts&apos; status changes</source>
+        <translation>Mostra quando i contatti cambiano stato</translation>
+    </message>
+    <message>
+        <source>Autostart</source>
+        <translation>Avvia automaticamente</translation>
     </message>
     <message>
         <source>You can set this on a per-friend basis by right clicking them.</source>
         <comment>autoaccept cb tooltip</comment>
-        <translation>Dies lässt sich für jeden Kontakt per Rechtsklick einstellen.</translation>
-    </message>
-    <message>
-        <source>Autoaccept files</source>
-        <translation>Dateien automatisch annehmen</translation>
-    </message>
-    <message>
-        <source>Set to 0 to disable</source>
-        <translation>&apos;0&apos; deaktiviert die Funktion</translation>
+        <translation>Puoi impostare questa preferenza per ogni singolo contatto usando il click destro sul suo nome.</translation>
     </message>
     <message>
         <source>Your status is changed to Away after set period of inactivity.</source>
-        <translation>Nach der festgelegten Zeit wird dein Status auf „Abwesend“ gesetzt.</translation>
-    </message>
-    <message>
-        <source>Auto away after (0 to disable):</source>
-        <translation>Automatisch abwesend nach (Aus = 0):</translation>
-    </message>
-    <message>
-        <source>Show contacts&apos; status changes</source>
-        <translation>Statusänderungen deiner Freunde anzeigen</translation>
-    </message>
-    <message>
-        <source>Start qTox on operating system startup (current profile).</source>
-        <translation>Mit Betriebssystem starten (aktuelles Profil).</translation>
-    </message>
-    <message>
-        <source>Default directory to save files:</source>
-        <translation>Standardordner für Dateien:</translation>
+        <translation>Il tuo stato sarà cambiato in &quot;Assente&quot; dopo il periodo di inattività indicato.</translation>
     </message>
     <message>
         <source>Check for updates</source>
-        <translation>Auf Aktualisierungen prüfen</translation>
+        <translation>Controllare gli aggiornamenti</translation>
     </message>
     <message>
         <source>Spell checking</source>
-        <translation>Rechtschreibprüfung</translation>
+        <translation>Controllo ortografico</translation>
     </message>
     <message>
         <source>Max autoaccept file size (0 to disable):</source>
-        <translation>Max. automatisch akzeptierte Dateigröße (0 zum Deaktivieren):</translation>
+        <translation>Dimensione massima del file per autoaccettare (0 per disabilitare):</translation>
     </message>
     <message>
         <source> MB</source>
@@ -1194,7 +1116,7 @@ instead of system taskbar.</source>
     <name>GenericChatForm</name>
     <message>
         <source>Send message</source>
-        <translation>Nachricht versenden</translation>
+        <translation>Invia messaggio</translation>
     </message>
     <message>
         <source>Smileys</source>
@@ -1202,191 +1124,191 @@ instead of system taskbar.</source>
     </message>
     <message>
         <source>Send file(s)</source>
-        <translation>Datei(en) senden</translation>
+        <translation>Invia file</translation>
     </message>
     <message>
         <source>Send a screenshot</source>
-        <translation>Screenshot versenden</translation>
+        <translation>Invia uno screenshot</translation>
     </message>
     <message>
         <source>Save chat log</source>
-        <translation>Gesprächsverlauf speichern</translation>
+        <translation>Salva il log della chat</translation>
     </message>
     <message>
         <source>Clear displayed messages</source>
-        <translation>Angezeigte Nachrichten entfernen</translation>
+        <translation>Rimuovi messaggi visualizzati</translation>
     </message>
     <message>
         <source>Cleared</source>
-        <translation>Gelöscht</translation>
+        <translation>Pulito</translation>
     </message>
     <message>
         <source>Quote</source>
-        <translation>Ausgewählten Text zitieren</translation>
+        <translation>Quota testo selezionato</translation>
     </message>
     <message>
         <source>Copy link address</source>
-        <translation>Link-Adresse kopieren</translation>
+        <translation>Copia il link dell&apos;indirizzo</translation>
     </message>
     <message>
         <source>Confirmation</source>
-        <translation>Bestätigung</translation>
+        <translation>Conferma</translation>
     </message>
     <message>
         <source>You are sure that you want to clear all displayed messages?</source>
-        <translation>Sollen wirklich alle angezeigten Nachrichten gelöscht werden?</translation>
+        <translation>Sei sicuro di voler cancellare tutti i messaggi visualizzati?</translation>
     </message>
     <message>
         <source>Search in text</source>
-        <translation>Suche im Text</translation>
+        <translation>Cerca nel testo</translation>
     </message>
     <message>
         <source>Go to current date</source>
-        <translation>Zum aktuellen Datum gehen</translation>
+        <translation>Vai alla data corrente</translation>
     </message>
     <message>
         <source>Load chat history...</source>
-        <translation>Gesprächsverlauf laden...</translation>
+        <translation>Carica cronologia chat...</translation>
     </message>
     <message>
         <source>Export to file</source>
-        <translation>In Datei exportieren</translation>
+        <translation>Esporta su file</translation>
     </message>
 </context>
 <context>
     <name>GenericNetCamView</name>
     <message>
         <source>Tox video</source>
-        <translation>Tox-Videokonferenz</translation>
+        <translation>Video Tox</translation>
     </message>
     <message>
         <source>Show Messages</source>
-        <translation>Nachrichten anzeigen</translation>
+        <translation>Mostra messaggi</translation>
     </message>
     <message>
         <source>Hide Messages</source>
-        <translation>Nachrichten nicht anzeigen</translation>
+        <translation>Nascondi messaggi</translation>
     </message>
     <message>
         <source>Full Screen</source>
-        <translation>Vollbild</translation>
+        <translation>Schermo intero</translation>
     </message>
     <message>
         <source>Toggle video preview</source>
-        <translation>Videovorschau umschalten</translation>
+        <translation>Attiva/Disattiva anteprima video</translation>
     </message>
     <message>
         <source>Mute audio</source>
-        <translation>Ton stummschalten</translation>
+        <translation>Disattiva audio</translation>
     </message>
     <message>
         <source>Mute microphone</source>
-        <translation>Mikrofon stummschalten</translation>
+        <translation>Disattiva microfono</translation>
     </message>
     <message>
         <source>End video call</source>
-        <translation>Videoanruf beenden</translation>
+        <translation>Terminare videochiamata</translation>
     </message>
     <message>
         <source>Exit full screen</source>
-        <translation>Vollbild verlassen</translation>
+        <translation>Esci da schermo intero</translation>
     </message>
 </context>
 <context>
     <name>GroupChatForm</name>
     <message>
         <source>%1 has set the title to %2</source>
-        <translation>%1 hat den Titel zu %2 geändert.</translation>
+        <translation>%1 ha impostato il titolo a %2</translation>
     </message>
     <message>
         <source>%1 has joined the group</source>
-        <translation>%1 ist der Gruppe beigetreten</translation>
+        <translation>%1 ha aderito al gruppo</translation>
     </message>
     <message>
         <source>%1 is now known as %2</source>
-        <translation>%1 heißt ab sofort %2</translation>
+        <translation>% 1 è ora noto come %2</translation>
     </message>
     <message>
         <source>%1 has left the group</source>
-        <translation>%1 hat die Gruppe verlassen</translation>
+        <translation>%1 ha lasciato il gruppo</translation>
     </message>
     <message numerus="yes">
         <source>%n user(s) in chat</source>
         <comment>Number of users in chat</comment>
         <translation>
-            <numerusform>%n Benutzer im Chat</numerusform>
-            <numerusform>%n Benutzer im Chat</numerusform>
+            <numerusform>%n utente in chat</numerusform>
+            <numerusform>%n utenti in chat</numerusform>
         </translation>
     </message>
     <message>
         <source>mute</source>
-        <translation>stumm</translation>
+        <translation>muto</translation>
     </message>
     <message>
         <source>unmute</source>
-        <translation>Stummschaltung aufheben</translation>
+        <translation>riattivare l&apos;audio</translation>
     </message>
 </context>
 <context>
     <name>GroupInviteForm</name>
     <message>
         <source>Groups</source>
-        <translation>Gruppen</translation>
+        <translation>Gruppi</translation>
     </message>
     <message>
         <source>Create new group</source>
-        <translation>Neue Gruppe erstellen</translation>
+        <translation>Crea un nuovo gruppo</translation>
     </message>
     <message>
         <source>Group invites</source>
-        <translation>Gruppeneinladungen</translation>
+        <translation>Inviti di gruppo</translation>
     </message>
 </context>
 <context>
     <name>GroupInviteWidget</name>
     <message>
         <source>Invited by %1 on %2 at %3.</source>
-        <translation>Eingeladen von %1 am %2 um %3.</translation>
+        <translation>Invitato da %1 il %2 alle %3.</translation>
     </message>
     <message>
         <source>Join</source>
-        <translation>Beitreten</translation>
+        <translation>Unisciti</translation>
     </message>
     <message>
         <source>Decline</source>
-        <translation>Ablehnen</translation>
+        <translation>Rifiuta</translation>
     </message>
 </context>
 <context>
     <name>GroupWidget</name>
     <message>
+        <source>Quit group</source>
+        <comment>Menu to quit a groupchat</comment>
+        <translation>Esci dal gruppo</translation>
+    </message>
+    <message>
         <source>Set title...</source>
-        <translation>Namen festlegen …</translation>
+        <translation>Imposta nome gruppo...</translation>
     </message>
     <message>
         <source>Open chat in new window</source>
-        <translation>Chat in neuem Fenster öffnen</translation>
+        <translation>Apri la chat in una nuova finestra</translation>
     </message>
     <message>
         <source>Remove chat from this window</source>
-        <translation>Chat aus diesem Fenster entfernen</translation>
-    </message>
-    <message>
-        <source>Quit group</source>
-        <comment>Menu to quit a groupchat</comment>
-        <translation>Gruppe verlassen</translation>
+        <translation>Rimuovi la chat da questa finestra</translation>
     </message>
     <message numerus="yes">
         <source>%n user(s) in chat</source>
         <comment>Number of users in chat</comment>
         <translation>
-            <numerusform>%n Benutzer im Chat</numerusform>
-            <numerusform>%n Benutzer im Chat</numerusform>
+            <numerusform>%n utente in chat</numerusform>
+            <numerusform>%n utenti in chat</numerusform>
         </translation>
     </message>
     <message>
         <source>New Message</source>
-        <translation>Neue Nachricht</translation>
+        <translation>Nuovo messaggio</translation>
     </message>
     <message>
         <source>Online</source>
@@ -1397,88 +1319,89 @@ instead of system taskbar.</source>
     <name>IdentitySettings</name>
     <message>
         <source>Public Information</source>
-        <translation>Öffentliche Informationen</translation>
+        <translation>Informazioni Pubbliche</translation>
     </message>
     <message>
         <source>Tox ID</source>
-        <translation>Tox-ID</translation>
+        <translation>ID Tox</translation>
     </message>
     <message>
         <source>This bunch of characters tells other Tox clients how to contact you.
 Share it with your friends to communicate.</source>
         <comment>Tox ID tooltip</comment>
-        <translation>Mit dieser Zeichenkette können dich andere Tox-Clients kontaktieren. 
-Teile sie mit deinen Freunden, um mit ihnen zu chatten.</translation>
+        <translation>Questo mucchio di caratteri serve agli altri client Tox per contattarti.
+Condividilo con chi vuoi comunicare.</translation>
     </message>
     <message>
         <source>Your Tox ID (click to copy)</source>
-        <translation>Deine Tox ID (Klicken zum Kopieren)</translation>
+        <translation>Il tuo Tox ID (clicca per copiare)</translation>
+    </message>
+    <message>
+        <source>This QR code contains your Tox ID. You may share this with your friends as well.</source>
+        <translation>Questo codice QR contiene il tuo Tox ID.
+Puoi condividere questo codice QR al posto del tuo Tox ID.</translation>
+    </message>
+    <message>
+        <source>Save image</source>
+        <translation>Salva immagine</translation>
+    </message>
+    <message>
+        <source>Copy image</source>
+        <translation>Copia immagine</translation>
     </message>
     <message>
         <source>Profile</source>
-        <translation>Profil</translation>
+        <translation>Profilo</translation>
     </message>
     <message>
         <source>Rename profile.</source>
         <comment>tooltip for renaming profile button</comment>
-        <translation>Profil umbenennen.</translation>
-    </message>
-    <message>
-        <source>Go back to the login screen</source>
-        <comment>tooltip for logout button</comment>
-        <translation>Zurück zum Login-Fenster</translation>
-    </message>
-    <message>
-        <source>Logout</source>
-        <comment>import profile button</comment>
-        <translation>Ausloggen</translation>
-    </message>
-    <message>
-        <source>Remove password</source>
-        <translation>Passwort entfernen</translation>
-    </message>
-    <message>
-        <source>Change password</source>
-        <translation>Passwort ändern</translation>
-    </message>
-    <message>
-        <source>This QR code contains your Tox ID. You may share this with your friends as well.</source>
-        <translation>Dieser QR-Code enthält deine Tox ID. So kannst du sie auch mit deinen Freunden teilen.</translation>
-    </message>
-    <message>
-        <source>Save image</source>
-        <translation>Bild speichern</translation>
-    </message>
-    <message>
-        <source>Copy image</source>
-        <translation>Bild kopieren</translation>
-    </message>
-    <message>
-        <source>Rename</source>
-        <comment>rename profile button</comment>
-        <translation>Umbenennen</translation>
+        <translation>Rinomina profilo.</translation>
     </message>
     <message>
         <source>Delete profile.</source>
         <comment>delete profile button tooltip</comment>
-        <translation>Profil löschen.</translation>
+        <translation>Elimina profilo.</translation>
+    </message>
+    <message>
+        <source>Go back to the login screen</source>
+        <comment>tooltip for logout button</comment>
+        <translation>Torna alla schermata di login</translation>
+    </message>
+    <message>
+        <source>Logout</source>
+        <comment>import profile button</comment>
+        <translation>Esci</translation>
+    </message>
+    <message>
+        <source>Remove password</source>
+        <translation>Rimuovi password</translation>
+    </message>
+    <message>
+        <source>Change password</source>
+        <translation>Cambia password</translation>
+    </message>
+    <message>
+        <source>Rename</source>
+        <comment>rename profile button</comment>
+        <translation>Rinomina</translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <comment>export profile button</comment>
+        <translation>Esporta</translation>
     </message>
     <message>
         <source>Allows you to export your Tox profile to a file.
 Profile does not contain your history.</source>
         <comment>tooltip for profile exporting button</comment>
-        <translation>Speichert dein Tox Profil in eine Datei.
-Das Profil beinhaltet keine Gesprächsverläufe.</translation>
-    </message>
-    <message>
-        <source>Export</source>
-        <comment>export profile button</comment>
-        <translation>Exportieren</translation>
+        <translation>Esporta il profilo corrente in un file.
+I profili non contengono la cronologia messaggi.</translation>
     </message>
     <message>
         <source>Delete</source>
         <comment>delete profile button</comment>
-        <translation>Löschen</translation>
+        <translation>Elimina</translation>
     </message>
     <message>
         <source>Server</source>
@@ -1486,424 +1409,423 @@ Das Profil beinhaltet keine Gesprächsverläufe.</translation>
     </message>
     <message>
         <source>Hide my name from the public list</source>
-        <translation>Name nicht zur öffentlichen Liste hinzufügen</translation>
+        <translation>Nascondi il mio nome dalla lista pubblica</translation>
     </message>
     <message>
         <source>Register</source>
-        <translation>Registrieren</translation>
+        <translation>Registrati</translation>
     </message>
     <message>
         <source>Your password</source>
-        <translation>Dein Passwort</translation>
+        <translation>La tua password</translation>
     </message>
     <message>
         <source>Update</source>
-        <translation>Aktualisieren</translation>
+        <translation>Aggiorna</translation>
     </message>
     <message>
         <source>Register on ToxMe</source>
-        <translation>Auf ToxMe registrieren</translation>
+        <translation>Registrati su ToxMe</translation>
     </message>
     <message>
         <source>Name for the ToxMe service.</source>
         <comment>Tooltip for the `Username` ToxMe field.</comment>
-        <translation>Name für den ToxMe Service.</translation>
+        <translation>Nome per il servizio ToxMe.</translation>
     </message>
     <message>
         <source>Optional. Something about you. Or your cat.</source>
         <comment>Tooltip for the Biography text.</comment>
-        <translation>Optional. Etwas über dich. Oder deine Katze.</translation>
+        <translation>Facoltativo. Qualcosa su di te o il tuo gatto.</translation>
     </message>
     <message>
         <source>Optional. Something about you. Or your cat.</source>
         <comment>Tooltip for the Biography field.</comment>
-        <translation>Optional. Etwas über dich. Oder deine Katze.</translation>
+        <translation>Facoltativo. Qualcosa su di te o il tuo gatto.</translation>
     </message>
     <message>
         <source>ToxMe service to register on.</source>
-        <translation>ToxMe Dienst bei dem du dich registrieren willst.</translation>
+        <translation>Servizio ToxMe a cui registrarsi.</translation>
     </message>
     <message>
         <source>If not set, ToxMe entries are publicly visible.</source>
         <comment>Tooltip for the `Hide my name from public list` ToxMe checkbox.</comment>
-        <translation>Wenn nicht gesetzt, sind ToxMe Einträge öffentlich sichtbar.</translation>
+        <translation>Se non è impostata, le registrazioni ToxMe sono pubblicamente visibili.</translation>
     </message>
     <message>
         <source>Remove your password and encryption from your profile.</source>
         <comment>Tooltip for the `Remove password` button.</comment>
-        <translation>Entferne dein Passwort und die Verschlüsselung von deinem Profil.</translation>
+        <translation>Rimuovi la password e la crittografia dal tuo profilo.</translation>
     </message>
     <message>
         <source>Name input</source>
-        <translation>Namenseingabe</translation>
+        <translation>Immissione Nome</translation>
     </message>
     <message>
         <source>Name visible to contacts</source>
-        <translation>Der für Kontakte sichtbare Name</translation>
+        <translation>Nome visibile ai contatti</translation>
     </message>
     <message>
         <source>Status message input</source>
-        <translation>Eingabe für Statusmeldungen</translation>
+        <translation>Immissione stato messaggio</translation>
     </message>
     <message>
         <source>Status message visible to contacts</source>
-        <translation>Für deine Kontakte sichtbare Statusnachricht</translation>
+        <translation>Stato del messaggio visibile ai contatti</translation>
     </message>
     <message>
         <source>Your Tox ID</source>
-        <translation>Deine Tox ID</translation>
+        <translation>Il tuo ID Tox</translation>
     </message>
     <message>
         <source>Save QR image as file</source>
-        <translation>QR-Code als Bild speichern</translation>
+        <translation>Salva immagine QR come file</translation>
     </message>
     <message>
         <source>Copy QR image to clipboard</source>
-        <translation>QR-Code in Zwischenablage kopieren</translation>
+        <translation>Copia immagine QR negli appunti</translation>
     </message>
     <message>
         <source>ToxMe username to be shown on ToxMe</source>
-        <translation>ToxMe Benutzername, sichtbar auf ToxMe</translation>
+        <translation>Nome utente ToxMe da mostrare su ToxMe</translation>
     </message>
     <message>
         <source>Optional ToxMe biography to be shown on ToxMe</source>
-        <translation>Auf ToxMe angezeigte Biografie (optional)</translation>
+        <translation>Biografia opzionale ToxMe da mostrare su ToxMe</translation>
     </message>
     <message>
         <source>ToxMe service address</source>
-        <translation>Adresse des ToxMe Dienstes</translation>
+        <translation>Servizio indirizzo ToxMe</translation>
     </message>
     <message>
         <source>Visibility on the ToxMe service</source>
-        <translation>Sichtbarkeit auf ToxMe</translation>
+        <translation>Visibilità sul servizio ToxMe</translation>
     </message>
     <message>
         <source>Password</source>
-        <translation>Passwort</translation>
+        <translation>Password</translation>
     </message>
     <message>
         <source>Update ToxMe entry</source>
-        <translation>ToxMe Eintrag aktualisieren</translation>
+        <translation>Aggiorna accesso ToxMe</translation>
     </message>
     <message>
         <source>Rename profile.</source>
-        <translation>Profil umbenennen.</translation>
+        <translation>Cambio nome profilo.</translation>
     </message>
     <message>
         <source>Delete profile.</source>
-        <translation>Profil löschen.</translation>
+        <translation>Cancella profilo.</translation>
     </message>
     <message>
         <source>Export profile</source>
-        <translation>Profil exportieren</translation>
+        <translation>Salva profilo</translation>
     </message>
     <message>
         <source>Remove password from profile</source>
-        <translation>Passwort des Profils löschen</translation>
+        <translation>Rimuovi password dal profilo</translation>
     </message>
     <message>
         <source>Change profile password</source>
-        <translation>Passwort des Profils ändern</translation>
+        <translation>Cambia la  password del profilo</translation>
     </message>
     <message>
         <source>My name:</source>
-        <translation>Mein Name:</translation>
+        <translation>Il mio nome:</translation>
     </message>
     <message>
         <source>My status:</source>
-        <translation>Mein Status:</translation>
+        <translation>Il mio stato:</translation>
     </message>
     <message>
         <source>My username</source>
-        <translation>Mein Benutzername</translation>
+        <translation>Il mio username</translation>
     </message>
     <message>
         <source>My biography</source>
-        <translation>Meine Biografie</translation>
+        <translation>La mia biografia</translation>
     </message>
     <message>
         <source>My profile</source>
-        <translation>Mein Profil</translation>
+        <translation>Il mio profilo</translation>
     </message>
 </context>
 <context>
     <name>LoadHistoryDialog</name>
     <message>
         <source>Load History Dialog</source>
-        <translation>Gesprächsverlauf laden</translation>
+        <translation>Carica cronologia chat</translation>
     </message>
     <message>
         <source>Load history</source>
-        <translation>Lade Verlauf</translation>
+        <translation>Carica cronologia</translation>
     </message>
     <message>
         <source>from</source>
-        <translation>von</translation>
+        <translation>da</translation>
     </message>
     <message>
         <source>to</source>
-        <translation>zu</translation>
+        <translation>a</translation>
     </message>
     <message>
         <source>(about 100 messages are loaded)</source>
-        <translation>(es werden ca. 100 Nachrichten geladen)</translation>
+        <translation>(circa 100 messaggi sono caricati)</translation>
     </message>
     <message>
         <source>Select Date Dialog</source>
-        <translation>Datumsauswahl-Dialog</translation>
+        <translation>Finestra di dialogo Seleziona data</translation>
     </message>
     <message>
         <source>Select a date</source>
-        <translation>Wählen Sie ein Datum</translation>
+        <translation>Seleziona una data</translation>
     </message>
 </context>
 <context>
     <name>LoginScreen</name>
     <message>
         <source>Username:</source>
-        <translation>Benutzername:</translation>
+        <translation>Nome profilo:</translation>
     </message>
     <message>
         <source>Password:</source>
-        <translation>Passwort:</translation>
+        <translation>Password:</translation>
     </message>
     <message>
         <source>Confirm:</source>
-        <translation>Passwort bestätigen:</translation>
+        <translation>Conferma:</translation>
     </message>
     <message>
         <source>Password strength: %p%</source>
-        <translation>Passwortstärke: %p %</translation>
-    </message>
-    <message>
-        <source>Create Profile</source>
-        <translation>Profil erstellen</translation>
-    </message>
-    <message>
-        <source>If the profile does not have a password, qTox can skip the login screen</source>
-        <translation>Für Profile ohne Passwort kann das Login-Fenster übersprungen werden</translation>
+        <translation>Robustezza password: %p%</translation>
     </message>
     <message>
         <source>Load automatically</source>
-        <translation>Automatisch laden</translation>
+        <translation>Accedi automaticamente</translation>
     </message>
     <message>
         <source>Load</source>
-        <translation>Laden</translation>
+        <translation>Accedi</translation>
     </message>
     <message>
         <source>Load Profile</source>
-        <translation>Profil laden</translation>
+        <translation>Accedi al profilo</translation>
+    </message>
+    <message>
+        <source>If the profile does not have a password, qTox can skip the login screen</source>
+        <translation>Se il profilo non è protetto da una password, qTox può saltare questa schermata</translation>
     </message>
     <message>
         <source>New Profile</source>
-        <translation>Neues Profil</translation>
+        <translation>Nuovo Profilo</translation>
+    </message>
+    <message>
+        <source>Create Profile</source>
+        <translation>Crea Profilo</translation>
     </message>
     <message>
         <source>Couldn&apos;t create a new profile</source>
-        <translation>Es konnte kein neues Profil angelegt werden</translation>
+        <translation>Impossibile creare un nuovo profilo</translation>
     </message>
     <message>
         <source>The username must not be empty.</source>
-        <translation>Der Benutzername darf nicht leer sein.</translation>
+        <translation>Il nome non può essere vuoto.</translation>
     </message>
     <message>
         <source>The password must be at least 6 characters long.</source>
-        <translation>Das Passwort muss mindestens 6 Zeichen lang sein.</translation>
+        <translation>La password deve essere lunga almeno 6 caratteri.</translation>
     </message>
     <message>
         <source>The passwords you&apos;ve entered are different.
 Please make sure to enter same password twice.</source>
-        <translation>Die Passwörter stimmen nicht überein.
-Bitte gib in beide Felder das gleiche Passwort ein.</translation>
+        <translation>Le password che hai inserito sono diverse.
+Assicurati di inserire la stessa password due volte.</translation>
     </message>
     <message>
         <source>A profile with this name already exists.</source>
-        <translation>Ein Profil mit diesem Namen existiert bereits.</translation>
+        <translation>Un profilo con questo nome esiste già.</translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t load this profile</source>
+        <translation>Impossibile caricare il profilo</translation>
+    </message>
+    <message>
+        <source>This profile is already in use.</source>
+        <translation>Questo profilo è già in uso.</translation>
+    </message>
+    <message>
+        <source>Wrong password.</source>
+        <translation>Password errata.</translation>
+    </message>
+    <message>
+        <source>Import</source>
+        <translation>Importa</translation>
     </message>
     <message>
         <source>Password protected profiles can&apos;t be automatically loaded.</source>
-        <translation>Passwortgeschützte Profile können nicht automatisch geladen werden.</translation>
+        <translation>I profili protetti da una password non possono essere caricati automaticamente.</translation>
     </message>
     <message>
         <source>Couldn&apos;t load profile</source>
-        <translation>Profil konnte nicht geladen werden</translation>
+        <translation>Impossibile aprire il profilo</translation>
     </message>
     <message>
         <source>There is no selected profile.
 
 You may want to create one.</source>
-        <translation>Es wurde kein Profil ausgewählt.
+        <translation>Non è stato selezionato nessuno profilo.
 
-Du kannst aber eins erstellen.</translation>
-    </message>
-    <message>
-        <source>Couldn&apos;t load this profile</source>
-        <translation>Das Profil konnte nicht geladen werden</translation>
-    </message>
-    <message>
-        <source>This profile is already in use.</source>
-        <translation>Dieses Profil wird gerade verwendet.</translation>
-    </message>
-    <message>
-        <source>Wrong password.</source>
-        <translation>Falsches Passwort.</translation>
-    </message>
-    <message>
-        <source>Import</source>
-        <translation>Importieren</translation>
+È possibile crearne uno nuovo.</translation>
     </message>
     <message>
         <source>Username input field</source>
-        <translation>Eingabefeld für den Benutzernamen</translation>
+        <translation>Campo per l&apos;inserimento dell&apos;Username</translation>
     </message>
     <message>
         <source>Password input field, you can leave it empty (no password), or type at least 6 characters</source>
-        <translation>Eingabefeld für das Passwort. Du kannst es leer lassen oder ein Passwort mit mindestens 6 Zeichen eingeben</translation>
+        <translation>Campo per l&apos;inserimento della Password, si può lasciare vuota (nessuna password), o digitare almeno 6 caratteri</translation>
     </message>
     <message>
         <source>Password confirmation field</source>
-        <translation>Feld um das Passwort zu bestätigen</translation>
+        <translation>Campo per la conferma della password</translation>
     </message>
     <message>
         <source>Create a new profile button</source>
-        <translation>Schaltfläche zum Erstellen eines neuen Profils</translation>
+        <translation>Pulsante per la creazione di un nuovo profilo</translation>
     </message>
     <message>
         <source>Profile list</source>
-        <translation>Profilliste</translation>
+        <translation>Lista profili</translation>
     </message>
     <message>
         <source>List of profiles</source>
-        <translation>Profilliste</translation>
+        <translation>Lista dei profili</translation>
     </message>
     <message>
         <source>Password input</source>
-        <translation>Passworteingabe</translation>
+        <translation>Inserimento password</translation>
     </message>
     <message>
         <source>Load automatically checkbox</source>
-        <translation>Kontrollkästchen für automatisches Laden</translation>
+        <translation>Casella per caricare automaticamente</translation>
     </message>
     <message>
         <source>Import profile</source>
-        <translation>Profil importieren</translation>
+        <translation>Importa profilo</translation>
     </message>
     <message>
         <source>Load selected profile button</source>
-        <translation>Schaltfläche Ausgewähltes Profil laden</translation>
+        <translation>Pulsante per caricare il profilo selezionato</translation>
     </message>
     <message>
         <source>New profile creation page</source>
-        <translation>Seite zum erstellen eines neuen Profils</translation>
+        <translation>Pagina per la creazione di un nuovo profilo</translation>
     </message>
     <message>
         <source>Loading existing profile page</source>
-        <translation>Lade bestehende Profilseite</translation>
+        <translation>Carica la pagina del profilo esistente</translation>
     </message>
 </context>
 <context>
     <name>MainWindow</name>
     <message>
         <source>Your name</source>
-        <translation>Dein Name</translation>
+        <translation>qTox User</translation>
     </message>
     <message>
         <source>Your status</source>
-        <translation>Dein Status</translation>
-    </message>
-    <message>
-        <source>...</source>
-        <translatorcomment>Ausgelassen</translatorcomment>
-        <translation></translation>
+        <translation>Toxing on qTox</translation>
     </message>
     <message>
         <source>Add friends</source>
-        <translation>Freunde hinzufügen</translation>
+        <translation>Aggiungi contatto</translation>
     </message>
     <message>
         <source>Create a group chat</source>
-        <translation>Einen Gruppenchat eröffnen</translation>
+        <translation>Crea un gruppo</translation>
     </message>
     <message>
         <source>View completed file transfers</source>
-        <translation>Dateiverläufe anzeigen</translation>
+        <translation>Visualizza i trasferimenti completati</translation>
     </message>
     <message>
         <source>Change your settings</source>
-        <translation>Einstellungen ändern</translation>
+        <translation>Cambia le impostazioni</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation>Schließen</translation>
+        <translation>Chiudi</translation>
+    </message>
+    <message>
+        <source>...</source>
+        <translation>...</translation>
     </message>
     <message>
         <source>Open profile</source>
-        <translation>Profil öffnen</translation>
+        <translation>Apri profilo</translation>
     </message>
     <message>
         <source>Open profile page when clicked</source>
-        <translation>Profilseite öffnen wenn angeklickt</translation>
+        <translation>Apri pagina profilo quando selezionata</translation>
     </message>
     <message>
         <source>Status message input</source>
-        <translation>Eingabefeld für deine Statusnachricht</translation>
+        <translation>Immissione messaggio di stato</translation>
     </message>
     <message>
         <source>Set your status message that will be shown to others</source>
-        <translation>Status-Nachricht eingeben, die bei Anderen angezeigt werden soll</translation>
+        <translation>Imposta il tuo messaggio di stato che sarà mostrato agli altri</translation>
     </message>
     <message>
         <source>Status</source>
-        <translation>Status</translation>
+        <translation>Stato</translation>
     </message>
     <message>
         <source>Set availability status</source>
-        <translation>Verfügbarkeitsstatus setzen</translation>
+        <translation>Imposta lo stato di disponibilità</translation>
     </message>
     <message>
         <source>Contact search</source>
-        <translation>Kontaktsuche</translation>
+        <translation>Ricerca Contatto</translation>
     </message>
     <message>
         <source>Contact search input for known friends</source>
-        <translation>Suche nach bekannten Freunde</translation>
+        <translation>Immissione ricerca contatto per amici conosciuti</translation>
     </message>
     <message>
         <source>Sorting and visibility</source>
-        <translation>Sortierung und Sichtbarkeit</translation>
+        <translation>Ordinamento e visibilità</translation>
     </message>
     <message>
         <source>Set friends sorting and visibility</source>
-        <translation>Sortierung und Sichtbarkeit deiner Freunde einstellen</translation>
+        <translation>Imposta ordinamento e visibilità degli amici</translation>
     </message>
     <message>
         <source>Open Add friends page</source>
-        <translation>Seite „Freunde hinzufügen” öffnen</translation>
+        <translation>Apri pagina aggiungi amici</translation>
     </message>
     <message>
         <source>Groupchat</source>
-        <translation>Gruppenchat</translation>
+        <translation>Chat di Gruppo</translation>
     </message>
     <message>
         <source>Open groupchat management page</source>
-        <translation>Gruppenchat-Verwaltung öffnen</translation>
+        <translation>Apri pagina di gestione chat di gruppo</translation>
     </message>
     <message>
         <source>File transfers history</source>
-        <translation>Dateiübertragungsverlauf</translation>
+        <translation>Storia dei trasferimenti file</translation>
     </message>
     <message>
         <source>Open File transfers history</source>
-        <translation>Öffne Dateitransferverlauf</translation>
+        <translation>Apri la cronologia dei trasferimenti del file</translation>
     </message>
     <message>
         <source>Settings</source>
-        <translation>Einstellungen</translation>
+        <translation>Impostazioni</translation>
     </message>
     <message>
         <source>Open Settings</source>
-        <translation>Einstellungen öffnen</translation>
+        <translation>Apri Impostazioni</translation>
     </message>
 </context>
 <context>
@@ -1911,30 +1833,30 @@ Du kannst aber eins erstellen.</translation>
     <message>
         <source>View</source>
         <comment>OS X Menu bar</comment>
-        <translation>Ansicht</translation>
+        <translation>Vedi</translation>
     </message>
     <message>
         <source>Window</source>
         <comment>OS X Menu bar</comment>
-        <translation>Fenster</translation>
+        <translation>Finestra</translation>
     </message>
     <message>
         <source>Minimize</source>
         <comment>OS X Menu bar</comment>
-        <translation>Minimieren</translation>
+        <translation>Minimizza</translation>
     </message>
     <message>
         <source>Bring All to Front</source>
         <comment>OS X Menu bar</comment>
-        <translation>Alles in den Vordergrund bringen</translation>
+        <translation>Porta tutto in primo piano</translation>
     </message>
     <message>
         <source>Exit Fullscreen</source>
-        <translation>Vollbildmodus verlassen</translation>
+        <translation>Esci dal Fullscreen</translation>
     </message>
     <message>
         <source>Enter Fullscreen</source>
-        <translation>Vollbildmodus</translation>
+        <translation>Metti in Fullscreen</translation>
     </message>
 </context>
 <context>
@@ -1942,8 +1864,8 @@ Du kannst aber eins erstellen.</translation>
     <message numerus="yes">
         <source>Unread message(s)</source>
         <translation>
-            <numerusform>Ungelesene Nachricht</numerusform>
-            <numerusform>Ungelesene Nachrichten</numerusform>
+            <numerusform>Messaggio non letto</numerusform>
+            <numerusform>Messaggi non letti</numerusform>
         </translation>
     </message>
 </context>
@@ -1951,22 +1873,22 @@ Du kannst aber eins erstellen.</translation>
     <name>PasswordEdit</name>
     <message>
         <source>CAPS-LOCK ENABLED</source>
-        <translation>FESTSTELLTASTE AKTIVIERT</translation>
+        <translation>CAPS-LOCK ABILITATO</translation>
     </message>
 </context>
 <context>
     <name>PrivacyForm</name>
     <message>
         <source>Privacy</source>
-        <translation>Privatsphäre</translation>
+        <translation>Privacy</translation>
     </message>
     <message>
         <source>Confirmation</source>
-        <translation>Bestätigung</translation>
+        <translation>Conferma</translation>
     </message>
     <message>
         <source>Do you want to permanently delete all chat history?</source>
-        <translation>Möchtest du den kompletten Gesprächsverlauf endgültig löschen?</translation>
+        <translation>Vuoi cancellare permanentemente la cronologia della chat?</translation>
     </message>
 </context>
 <context>
@@ -1974,297 +1896,295 @@ Du kannst aber eins erstellen.</translation>
     <message>
         <source>Your friends will be able to see when you are typing.</source>
         <comment>tooltip for typing notifications setting</comment>
-        <translation>Deine Kontakte können sehen, wenn du eine Nachricht tippst.</translation>
+        <translation>I tuoi contatti potranno vedere se stai digitando un messaggio.</translation>
     </message>
     <message>
         <source>Send typing notifications</source>
-        <translation>Schreibbenachrichtigungen senden</translation>
+        <translation>Mostra agli altri quando sto scrivendo</translation>
     </message>
     <message>
         <source>Keep chat history</source>
-        <translation>Chatverlauf speichern</translation>
+        <translation>Salva cronologia chat</translation>
+    </message>
+    <message>
+        <source>NoSpam</source>
+        <translation>Niente Spam</translation>
     </message>
     <message>
         <source>NoSpam is part of your Tox ID.
 If you are being spammed with friend requests, you should change your NoSpam.
 People will be unable to add you with your old ID, but you will keep your current friends.</source>
         <comment>toolTip for nospam</comment>
-        <translation>NoSpam ist ein Teil deiner Tox ID.
-Wenn du mit Freundesanfragen überhäuft wirst, solltest du den NoSpam-Wert ändern.
-Deine jetzigen Freunde bleiben erhalten, aber mit deiner alten Tox ID kann dich dann niemand mehr hinzufügen.</translation>
-    </message>
-    <message>
-        <source>NoSpam</source>
-        <translation>NoSpam</translation>
-    </message>
-    <message>
-        <source>NoSpam is a part of your ID that can be changed at will.
-If you are getting spammed with friend requests, change the NoSpam.</source>
-        <translation>NoSpam ist ein Teil deiner Tox ID.
-Wenn du mit Freundesanfragen überhäuft wirst, solltest du den NoSpam-Wert ändern.
-Deine jetzigen Freunde bleiben erhalten, aber mit deiner alten Tox ID kann dich dann niemand mehr hinzufügen.</translation>
+        <translation>Il valore NoSpam è parte del tuo ID Tox.
+Se ricevi molte richieste di amicizia indesiderate, cambia questo valore.
+Le persone non saranno più in grado di aggiungerti con il tuo vecchio Tox ID, ma manterrai i contatti attuali.</translation>
     </message>
     <message>
         <source>Generate random NoSpam</source>
-        <translation>Zufällige NoSpam-ID generieren</translation>
+        <translation>Genera valore casuale</translation>
     </message>
     <message>
         <source>Chat history keeping is still in development.
 Save format changes are possible, which may result in data loss.</source>
         <comment>toolTip for Keep History setting</comment>
-        <translation>Wenn aktiviert, wird der Gesprächsverlauf dauerhaft gesichert.
-Die Sicherung des Verlaufs ist noch in Entwicklung.
-Formatierungsänderungen beim Speichern sind möglich, die zu Datenverlust führen können.</translation>
+        <translation>Il salavataggio della cronologia chat è ancora in sviluppo.
+Il formato del file potrebbe cambiare (questo potrebbe causare perdita di dati).</translation>
+    </message>
+    <message>
+        <source>NoSpam is a part of your ID that can be changed at will.
+If you are getting spammed with friend requests, change the NoSpam.</source>
+        <translation>Il valore NoSpam è parte del tuo Tox ID che può essere cambiata a piacimento.
+Se ricevi molte richieste di amicizia indesiderate cambia questo valore.</translation>
     </message>
     <message>
         <source>Privacy</source>
-        <translation>Datenschutz</translation>
+        <translation>Privacy</translation>
     </message>
     <message>
         <source>BlackList</source>
-        <translation>Schwarze Liste</translation>
+        <translation>Lista Nera</translation>
     </message>
     <message>
         <source>Filter group message by group member&apos;s public key. Put public key here, one per line.</source>
-        <translation>Gruppennachricht nach öffentlichen Schlüssel des Gruppenmitglieds filtern.  Füge öffentlichen Schlüssel hier ein, ein Schlüssel pro Zeile.</translation>
+        <translation>Filtra i messaggi di gruppo in base alla chiave publica di un membro. Inserisci le chiavi qui, una per linea.</translation>
     </message>
 </context>
 <context>
     <name>Profile</name>
     <message>
         <source>Failed to derive key from password, the profile won&apos;t use the new password.</source>
-        <translation>Ableiten des Schlüssels vom Passwort fehlgeschlagen, das Profil wird das neue Passwort nicht verwenden.</translation>
+        <translation>Impossibile derivare alla chiave dalla password, questo profilo continuerà ad utilizzare la vecchia password.</translation>
     </message>
     <message>
         <source>Couldn&apos;t change password on the database, it might be corrupted or use the old password.</source>
-        <translation>Datenbankänderung des Passwortes nicht möglich, es ist möglich, dass ein älteres Passwort verwendet wurde.</translation>
+        <translation>Impossiblie cambiare la password nel database, potrebbe essere corrotto o usare una vecchia password.</translation>
     </message>
     <message>
         <source>Toxing on qTox</source>
-        <translation>Toxen mit qTox</translation>
+        <translation>Toxando su qTox</translation>
     </message>
 </context>
 <context>
     <name>ProfileForm</name>
     <message>
         <source>Choose a profile picture</source>
-        <translation>Wähle ein Profilbild</translation>
-    </message>
-    <message>
-        <source>Error</source>
-        <translation>Fehler</translation>
-    </message>
-    <message>
-        <source>Rename &quot;%1&quot;</source>
-        <comment>renaming a profile</comment>
-        <translation>Profil &apos;%1&apos; umbenennen</translation>
-    </message>
-    <message>
-        <source>Unable to open this file.</source>
-        <translation>Datei kann nicht geöffnet werden.</translation>
+        <translation>Scegli un&apos;immagine per il profilo</translation>
     </message>
     <message>
         <source>Current profile: </source>
-        <translation>Aktuelles Profil: </translation>
+        <translation>Profilo attuale: </translation>
     </message>
     <message>
-        <source>Remove</source>
-        <translation>Löschen</translation>
-    </message>
-    <message>
-        <source>Unable to read this image.</source>
-        <translation>Bild kann nicht gelesen  werden.</translation>
+        <source>Error</source>
+        <translation>Errore</translation>
     </message>
     <message>
         <source>The supplied image is too large.
 Please use another image.</source>
-        <translation>Das Bild ist zu groß.
-Bitte verwende ein anderes.</translation>
+        <translation>L&apos;immagine selezionata è troppo grande.
+Per favore scegli un&apos;immagine più piccola.</translation>
+    </message>
+    <message>
+        <source>Rename &quot;%1&quot;</source>
+        <comment>renaming a profile</comment>
+        <translation>Rinomina &quot;%1&quot;</translation>
     </message>
     <message>
         <source>Couldn&apos;t rename the profile to &quot;%1&quot;</source>
-        <translation>Profil konnte nicht in „%1“ umbenannt werden</translation>
+        <translation>Impossibile rinominare il profilo in &quot;%1&quot;</translation>
     </message>
     <message>
         <source>Location not writable</source>
         <comment>Title of permissions popup</comment>
-        <translation>Keine Schreibrechte für diesen Ordner</translation>
+        <translation>Posizione non scrivibile</translation>
     </message>
     <message>
         <source>You do not have permission to write that location. Choose another, or cancel the save dialog.</source>
         <comment>text of permissions popup</comment>
-        <translation>Du scheinst nicht die nötigen Rechte zu haben, um hier eine Datei zu speichern. Wähle doch ein anderes Verzeichnis.</translation>
-    </message>
-    <message>
-        <source>Failed to copy file</source>
-        <translation>Kopieren fehlgeschlagen</translation>
-    </message>
-    <message>
-        <source>The file you chose could not be written to.</source>
-        <translation>In die gewählte Datei konnte leider nicht geschrieben werden.</translation>
+        <translation>Non hai sufficienti permessi per scrivere in questa locazione. Scegli un&apos;altra posizione, o annulla il salvataggio.</translation>
     </message>
     <message>
         <source>Really delete profile?</source>
         <comment>deletion confirmation title</comment>
-        <translation>Das Profil wirklich löschen?</translation>
-    </message>
-    <message>
-        <source>Nothing to remove</source>
-        <translation>Nichts zu entfernen</translation>
-    </message>
-    <message>
-        <source>Your profile does not have a password!</source>
-        <translation>Dein Profil hat kein Passwort!</translation>
-    </message>
-    <message>
-        <source>Really delete password?</source>
-        <comment>deletion confirmation title</comment>
-        <translation>Password wirklich löschen?</translation>
-    </message>
-    <message>
-        <source>Please enter a new password.</source>
-        <translation>Bitte gib ein neues Passwort ein.</translation>
-    </message>
-    <message>
-        <source>Are you sure you want to delete this profile?</source>
-        <comment>deletion confirmation text</comment>
-        <translation>Bist du sicher, dass das gewählte Profil gelöscht werden soll?</translation>
+        <translation>Eliminare profilo?</translation>
     </message>
     <message>
         <source>Save</source>
         <comment>save qr image</comment>
-        <translation>Speichern</translation>
+        <translation>Salva</translation>
     </message>
     <message>
         <source>Save QrCode (*.png)</source>
         <comment>save dialog filter</comment>
-        <translation>QR-Code speichern (*.png)</translation>
+        <translation>Salva Codice QR (*.png)</translation>
+    </message>
+    <message>
+        <source>Nothing to remove</source>
+        <translation>Nulla da rimuovere</translation>
+    </message>
+    <message>
+        <source>Your profile does not have a password!</source>
+        <translation>Il profilo non ha nessuna password!</translation>
+    </message>
+    <message>
+        <source>Really delete password?</source>
+        <comment>deletion confirmation title</comment>
+        <translation>Rimuovere password?</translation>
+    </message>
+    <message>
+        <source>Please enter a new password.</source>
+        <translation>Inserisci una nuova password.</translation>
+    </message>
+    <message>
+        <source>Failed to copy file</source>
+        <translation>Impossibile copiare il file</translation>
+    </message>
+    <message>
+        <source>Unable to open this file.</source>
+        <translation>Impossibile aprire il file.</translation>
+    </message>
+    <message>
+        <source>Unable to read this image.</source>
+        <translation>Impossibile leggere l&apos;immagine.</translation>
+    </message>
+    <message>
+        <source>The file you chose could not be written to.</source>
+        <translation>Il file che hai scelto non può essere copiato.</translation>
+    </message>
+    <message>
+        <source>Are you sure you want to delete this profile?</source>
+        <comment>deletion confirmation text</comment>
+        <translation>Sei sicuro di voler eliminare questo profilo?</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Rimuovi</translation>
     </message>
     <message>
         <source>Files could not be deleted!</source>
         <comment>deletion failed title</comment>
-        <translation>Dateien konnten nicht gelöscht werden!</translation>
+        <translation>I file non possono essere cancellati!</translation>
     </message>
     <message>
         <source>Register (processing)</source>
-        <translation>Registrieren (in Arbeit)</translation>
+        <translation>Registrazione (In corso)</translation>
     </message>
     <message>
         <source>Update (processing)</source>
-        <translation>Aktualisieren (in Arbeit)</translation>
+        <translation>Aggiornamento (In corso)</translation>
     </message>
     <message>
         <source>Done!</source>
-        <translation>Erledigt!</translation>
+        <translation>Finito!</translation>
     </message>
     <message>
         <source>Account %1@%2 updated successfully</source>
-        <translation>Account %1@%2 wurde erfolgreich aktualisiert</translation>
+        <translation>L&apos;Account %1@%2 è stato aggiornato con successo</translation>
     </message>
     <message>
         <source>Successfully added %1@%2 to the database. Save your password</source>
-        <translation>%1@%2 wurde erfolgreich der Datenbank hinzugefügt. Bitte Passwort speichern</translation>
+        <translation>Aggiunto con successo %1@% 2 al database. Salva la tua password</translation>
     </message>
     <message>
         <source>Toxme error</source>
-        <translation>ToxMe-Fehler</translation>
+        <translation>Errore Toxme</translation>
     </message>
     <message>
         <source>Register</source>
-        <translation>Registrieren</translation>
+        <translation>Registra</translation>
     </message>
     <message>
         <source>Update</source>
-        <translation>Aktualisieren</translation>
+        <translation>Aggiorna</translation>
     </message>
     <message>
         <source>Change password</source>
         <comment>button text</comment>
-        <translation>Passwort ändern</translation>
+        <translation>Cambia password</translation>
     </message>
     <message>
         <source>Set profile password</source>
         <comment>button text</comment>
-        <translation>Profilpasswort festlegen</translation>
+        <translation>Imposta una password per il profilo</translation>
     </message>
     <message>
         <source>Current profile location: %1</source>
-        <translation>Aktuelles Profil in: %1</translation>
+        <translation>Posizione del profilo attuale: %1</translation>
     </message>
     <message>
         <source>Couldn&apos;t change password</source>
-        <translation>Passwortänderung nicht möglich</translation>
+        <translation>Impossibile cambiare la password</translation>
     </message>
     <message>
         <source>This bunch of characters tells other Tox clients how to contact you.
 Share it with your friends to communicate.
 
 This ID includes the NoSpam code (in blue), and the checksum (in gray).</source>
-        <translation>Diese Zeichenkette teilt anderen Tox-Clients mit, wie sie dich kontaktieren können.
-Teile sie mit deinen Freunden um zu kommunizieren.
+        <translation>Questa serie di cartteri informa i client Tox su come contattarti.
+Condividila con i tuoi amici per comunicare.
 
-Diese ID beinhaltet den NoSpam-Code (in blau), und die Prüfsumme (in grau).</translation>
+Questo ID include il codice NoSpam (in blu), e il checksum (in grigio).</translation>
     </message>
     <message>
         <source>Empty path is unavaliable</source>
-        <translation>Leerer Pfad ist nicht verfügbar</translation>
+        <translation>Percorso vuoto non permesso</translation>
     </message>
     <message>
         <source>Failed to rename</source>
-        <translation>Fehler beim Umbenennen</translation>
+        <translation>Impossibile rinominare</translation>
     </message>
     <message>
         <source>Profile already exists</source>
-        <translation>Profil bereits vorhanden</translation>
+        <translation>Profilo già esistente</translation>
     </message>
     <message>
         <source>A profile named &quot;%1&quot; already exists.</source>
-        <translation>Ein Profil namens „%1“ existiert bereits.</translation>
+        <translation>Il profilo &quot;%1&quot; esiste già.</translation>
     </message>
     <message>
         <source>Empty name</source>
-        <translation>Leerer Name</translation>
+        <translation>Nome vuoto</translation>
     </message>
     <message>
         <source>Empty name is unavaliable</source>
-        <translation>Leerer Name ist nicht verfügbar</translation>
+        <translation>Nome vuoto non disponibile</translation>
     </message>
     <message>
         <source>Empty path</source>
-        <translation>Leerer Pfad</translation>
+        <translation>Percorso vuoto</translation>
     </message>
     <message>
         <source>Couldn&apos;t change password on the database, it might be corrupted or use the old password.</source>
-        <translation>Das Passwort der Datenbank konnte nicht geändert werden, sie ist möglicherweise fehlerhaft oder verwendet das alte Passwort.</translation>
+        <translation>Impossibile cambiare la password nel database, potrebbe essere corrotto o usare una password vecchia.</translation>
     </message>
     <message>
         <source>Export profile</source>
-        <translation>Profil exportieren</translation>
+        <translation>Esporta profilo</translation>
     </message>
     <message>
         <source>Tox save file (*.tox)</source>
         <extracomment>save dialog filter</extracomment>
-        <translation>Tox-Datei (*.tox) speichern</translation>
+        <translation>File di salvataggio di Tox (*.tox)</translation>
     </message>
     <message>
         <source>The following files could not be deleted:</source>
         <extracomment>deletion failed text part 1</extracomment>
-        <translation>Die folgenden Dateien konnten nicht gelöscht werden:</translation>
+        <translation>I seguenti file non possono essere cancellati:</translation>
     </message>
     <message>
         <source>Please manually remove them.</source>
         <extracomment>deletion failed text part 2</extracomment>
-        <translation>Bitte manuell löschen.</translation>
+        <translation>Rimuovili manualmente.</translation>
     </message>
     <message>
         <source>Are you sure you want to delete your password?</source>
         <extracomment>deletion confirmation text</extracomment>
-        <translation>Bist du sicher, dass du dein Passwort löschen möchtest?</translation>
+        <translation>Sei sicuro di voler rimuovere la password?</translation>
     </message>
     <message>
         <source>Images (%1)</source>
         <comment>filetype filter</comment>
-        <translation>Bilder (%1)</translation>
+        <translation>Immagini (%1)</translation>
     </message>
 </context>
 <context>
@@ -2272,48 +2192,48 @@ Diese ID beinhaltet den NoSpam-Code (in blau), und die Prüfsumme (in grau).</tr
     <message>
         <source>Import profile</source>
         <comment>import dialog title</comment>
-        <translation>Profil importieren</translation>
+        <translation>Importa profilo</translation>
     </message>
     <message>
         <source>Tox save file (*.tox)</source>
         <comment>import dialog filter</comment>
-        <translation>Tox-Datei (*.tox)</translation>
+        <translation>File di salvataggio di Tox (*.tox)</translation>
     </message>
     <message>
         <source>Ignoring non-Tox file</source>
         <comment>popup title</comment>
-        <translation>Nicht-Tox-Datei ignoriert</translation>
+        <translation>File ignorato</translation>
     </message>
     <message>
         <source>Warning: You have chosen a file that is not a Tox save file; ignoring.</source>
         <comment>popup text</comment>
-        <translation>Warnung: Die von dir gewählte Datei ist keine Tox-Datei. Sie wird ignoriert.</translation>
+        <translation>Attenzione: Hai scelto un file che non contiene un profilo Tox; Questo file verrà ignorato.</translation>
     </message>
     <message>
         <source>Profile already exists</source>
         <comment>import confirm title</comment>
-        <translation>Profil bereits vorhanden</translation>
+        <translation>Profilo già esistente</translation>
     </message>
     <message>
         <source>A profile named &quot;%1&quot; already exists. Do you want to erase it?</source>
         <comment>import confirm text</comment>
-        <translation>Ein Profil namens „%1“ existiert bereits. Möchtest du es überschreiben?</translation>
+        <translation>Un profilo chiamato &quot;%1&quot; esiste già. Vuoi sovrascriverlo?</translation>
     </message>
     <message>
         <source>File doesn&apos;t exist</source>
-        <translation>Datei existiert nicht</translation>
+        <translation>File non esistente</translation>
     </message>
     <message>
         <source>Profile doesn&apos;t exist</source>
-        <translation>Profil existiert nicht</translation>
+        <translation>Profilo non esistente</translation>
     </message>
     <message>
         <source>Profile imported</source>
-        <translation>Profil importiert</translation>
+        <translation>Profilo importato</translation>
     </message>
     <message>
         <source>%1.tox was successfully imported</source>
-        <translation>Die Datei %1.tox wurde erfolgreich importiert</translation>
+        <translation>%1.tox è stato importato con successo</translation>
     </message>
 </context>
 <context>
@@ -2324,193 +2244,193 @@ Diese ID beinhaltet den NoSpam-Code (in blau), und die Prüfsumme (in grau).</tr
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation>Annulla</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation>Ja</translation>
+        <translation>Si</translation>
     </message>
     <message>
         <source>No</source>
-        <translation>Nein</translation>
+        <translation>No</translation>
     </message>
     <message>
         <source>LTR</source>
         <comment>Translate this string to the string &apos;RTL&apos; in right-to-left languages (for example Hebrew and Arabic) to get proper widget layout</comment>
-        <translation>rechtsläufige Schreibrichtung</translation>
+        <translation>LTR</translation>
     </message>
 </context>
 <context>
     <name>QMessageBox</name>
     <message>
         <source>Couldn&apos;t add friend</source>
-        <translation>Freund konnte nicht hinzugefügt werden</translation>
+        <translation>Impossibile aggiungere l&apos;amico</translation>
     </message>
     <message>
         <source>%1 is not a valid Toxme address.</source>
-        <translation>%1 ist keine gültige Toxme-Adresse.</translation>
+        <translation>%1 non è un indirizzo Toxme valido.</translation>
     </message>
     <message>
         <source>You can&apos;t add yourself as a friend!</source>
         <comment>When trying to add your own Tox ID as friend</comment>
-        <translation>Du kannst dich nicht selbst als Freund hinzufügen!</translation>
+        <translation>Non puoi aggiungere te stesso come amico!</translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
         <source>Tox URI to parse</source>
-        <translation>Zu parsende Tox-URI</translation>
+        <translation>URI Tox da interpretare</translation>
     </message>
     <message>
         <source>Starts new instance and loads specified profile.</source>
-        <translation>Startet eine neue Instanz und lädt das angegebene Profil.</translation>
+        <translation>Avvia una nuova istanza caricando il profilo selezionato.</translation>
     </message>
     <message>
         <source>profile</source>
-        <translation>Profil</translation>
+        <translation>profilo</translation>
     </message>
     <message>
         <source>Default</source>
-        <translation>Standard</translation>
+        <translation>Default</translation>
     </message>
     <message>
         <source>Blue</source>
-        <translation>Blau</translation>
+        <translation>Blu</translation>
     </message>
     <message>
         <source>Olive</source>
-        <translation>Oliv</translation>
+        <translation>Oliva</translation>
     </message>
     <message>
         <source>Red</source>
-        <translation>Rot</translation>
+        <translation>Rosso</translation>
     </message>
     <message>
         <source>Violet</source>
-        <translation>Violett</translation>
+        <translation>Viola</translation>
     </message>
     <message>
         <source>Incoming call...</source>
-        <translation>Eingehender Anruf ...</translation>
+        <translation>Chiamata in arrivo...</translation>
     </message>
     <message>
         <source>%1 here! OkEDU me maybe?</source>
         <comment>Default message in Tox URI friend requests. Write something appropriate!</comment>
-        <translation>Hier ist %1! Lust dich mit mir zu unterhalten?</translation>
+        <translation>Ciao, sono %1! Posso aggiungerti alla mia lista contatti?</translation>
     </message>
     <message>
         <source>None</source>
         <comment>No camera device set</comment>
-        <translation>Keine Kamera ausgewählt</translation>
+        <translation>Nessuno</translation>
+    </message>
+    <message>
+        <source>Server doesn&apos;t support Toxme</source>
+        <translation>Il server non supporta Toxme</translation>
+    </message>
+    <message>
+        <source>You&apos;re making too many requests. Wait an hour and try again</source>
+        <translation>Stai generando troppe richieste. Aspetta un&apos;ora e prova di nuovo</translation>
+    </message>
+    <message>
+        <source>This name is already in use</source>
+        <translation>Questo nome è già in uso</translation>
+    </message>
+    <message>
+        <source>This Tox ID is already registered under another name</source>
+        <translation>Questo Tox ID è gia registrato con un altro nome</translation>
+    </message>
+    <message>
+        <source>Please don&apos;t use a space in your name</source>
+        <translation>Non usare spazi nel tuo nome</translation>
+    </message>
+    <message>
+        <source>Password incorrect</source>
+        <translation>Password non corretta</translation>
+    </message>
+    <message>
+        <source>You can&apos;t use this name</source>
+        <translation>Non puoi usare questo nome</translation>
+    </message>
+    <message>
+        <source>Name not found</source>
+        <translation>Nome non trovato</translation>
+    </message>
+    <message>
+        <source>Tox ID not sent</source>
+        <translation>Tox ID non inviato</translation>
+    </message>
+    <message>
+        <source>That user does not exist</source>
+        <translation>Questo utente non esiste</translation>
+    </message>
+    <message>
+        <source>Error</source>
+        <translation>Errore</translation>
+    </message>
+    <message>
+        <source>qTox couldn&apos;t open your chat logs, they will be disabled.</source>
+        <translation>Impossibile aprire la cronologia chat, verrà disibilitata.</translation>
     </message>
     <message>
         <source>Desktop</source>
         <comment>Desktop as a camera input for screen sharing</comment>
-        <translation>Bildschirm</translation>
-    </message>
-    <message>
-        <source>Server doesn&apos;t support Toxme</source>
-        <translation>Server unterstützt ToxMe nicht</translation>
-    </message>
-    <message>
-        <source>You&apos;re making too many requests. Wait an hour and try again</source>
-        <translation>Du machst zu viele Anfragen. Bitte versuche es in einer Stunde erneut.</translation>
-    </message>
-    <message>
-        <source>This name is already in use</source>
-        <translation>Dieser Name wird bereits verwendet</translation>
-    </message>
-    <message>
-        <source>This Tox ID is already registered under another name</source>
-        <translation>Diese Tox ID ist bereits unter einem anderen Namen registriert.</translation>
-    </message>
-    <message>
-        <source>Please don&apos;t use a space in your name</source>
-        <translation>Dein Name darf keine Leerzeichen enthalten.</translation>
-    </message>
-    <message>
-        <source>Password incorrect</source>
-        <translation>Passwort falsch</translation>
-    </message>
-    <message>
-        <source>You can&apos;t use this name</source>
-        <translation>Du kannst diesen Namen nicht verwenden.</translation>
-    </message>
-    <message>
-        <source>Name not found</source>
-        <translation>Name nicht gefunden</translation>
-    </message>
-    <message>
-        <source>Tox ID not sent</source>
-        <translation>Tox ID wurde nicht gesendet</translation>
-    </message>
-    <message>
-        <source>That user does not exist</source>
-        <translation>Dieser Benutzer existiert nicht.</translation>
-    </message>
-    <message>
-        <source>Error</source>
-        <translation>Fehler</translation>
-    </message>
-    <message>
-        <source>qTox couldn&apos;t open your chat logs, they will be disabled.</source>
-        <translation>qTox konnte Ihr Gesprächsprotokoll nicht öffnen. Das Speichern der Gespräche wird deaktiviert!</translation>
+        <translation>Scrivania</translation>
     </message>
     <message>
         <source>Problem with HTTPS connection</source>
-        <translation>Problem mit der HTTPS-Verbindung</translation>
+        <translation>Problema con la connessione HTTPS</translation>
     </message>
     <message>
         <source>Internal ToxMe error</source>
-        <translation>Interner ToxMe Fehler</translation>
+        <translation>Errore interno di ToxMe</translation>
     </message>
     <message>
         <source>Reformatting text in progress..</source>
-        <translation>Neuformatierung des Textes in Arbeit...</translation>
+        <translation>Riformattazione del testo in corso..</translation>
     </message>
     <message>
         <source>Starts new instance and opens the login screen.</source>
-        <translation>Startet eine neue Instanz und öffnet den Anmeldebildschirm.</translation>
+        <translation>Apre una nuova istanza con la finestra d&apos;accesso.</translation>
     </message>
     <message>
         <source>Dark</source>
-        <translation>Dunkel</translation>
+        <translation>Scuro</translation>
     </message>
     <message>
         <source>Dark blue</source>
-        <translation>Dunkelblau</translation>
+        <translation>Blu scuro</translation>
     </message>
     <message>
         <source>Dark olive</source>
-        <translation>Dunkeloliv</translation>
+        <translation>Verde scuro</translation>
     </message>
     <message>
         <source>Dark red</source>
-        <translation>Dunkelrot</translation>
+        <translation>Rosso scuro</translation>
     </message>
     <message>
         <source>Dark violet</source>
-        <translation>Dunkelviolett</translation>
+        <translation>Viola scuro</translation>
     </message>
     <message>
         <source>Failed to load profile automatically.</source>
-        <translation>Das automatische Laden des Profils ist fehlgeschlagen.</translation>
+        <translation>Impossibile caricare automaticamente il profilo.</translation>
     </message>
     <message>
         <source>online</source>
         <comment>contact status</comment>
-        <translation>Online</translation>
+        <translation>online</translation>
     </message>
     <message>
         <source>away</source>
         <comment>contact status</comment>
-        <translation>abwesend</translation>
+        <translation>assente</translation>
     </message>
     <message>
         <source>busy</source>
         <comment>contact status</comment>
-        <translation>beschäftigt</translation>
+        <translation>occupato</translation>
     </message>
     <message>
         <source>offline</source>
@@ -2520,30 +2440,30 @@ Diese ID beinhaltet den NoSpam-Code (in blau), und die Prüfsumme (in grau).</tr
     <message>
         <source>blocked</source>
         <comment>contact status</comment>
-        <translation>blockiert</translation>
+        <translation>bloccato</translation>
     </message>
 </context>
 <context>
     <name>RemoveFriendDialog</name>
     <message>
         <source>Remove friend</source>
-        <translation>Kontakt löschen</translation>
+        <translation>Rimuovi contatto</translation>
     </message>
     <message>
         <source>Also remove chat history</source>
-        <translation>Gesprächsverlauf ebenfalls löschen</translation>
+        <translation>Rimuovi anche la cronologia chat</translation>
     </message>
     <message>
         <source>Remove</source>
-        <translation>Löschen</translation>
+        <translation>Rimuovi</translation>
     </message>
     <message>
         <source>Are you sure you want to remove %1 from your contacts list?</source>
-        <translation>Bist du dir sicher, dass du %1 aus deiner Kontaktliste entfernen möchtest?</translation>
+        <translation>Sei sicuro di voler rimuovere %1 dalla tua lista contatti?</translation>
     </message>
     <message>
         <source>Remove all chat history with the friend if set</source>
-        <translation>Löscht den gesamten Chatverlauf mit diesem Freund, wenn aktiviert</translation>
+        <translation>Rimuove tutta la cronologia della chat con l&apos;amico se impostata</translation>
     </message>
 </context>
 <context>
@@ -2551,12 +2471,12 @@ Diese ID beinhaltet den NoSpam-Code (in blau), und die Prüfsumme (in grau).</tr
     <message>
         <source>Click and drag to select a region. Press %1 to hide/show qTox window, or %2 to cancel.</source>
         <comment>Help text shown when no region has been selected yet</comment>
-        <translation>Klicke und ziehe, um einen Ausschnitt auszuwählen. Drücke %1, um das qTox-Fenster auszublenden/anzuzeigen oder drücke %2, um abzubrechen.</translation>
+        <translation>Fare clic e trascinare per selezionare una regione. Premere %1 per nascondere/mostrare la finestra qTox, o %2 per annullare.</translation>
     </message>
     <message>
         <source>Space</source>
         <comment>[Space] key on the keyboard</comment>
-        <translation>Leertaste</translation>
+        <translation>Spazio</translation>
     </message>
     <message>
         <source>Escape</source>
@@ -2566,7 +2486,7 @@ Diese ID beinhaltet den NoSpam-Code (in blau), und die Prüfsumme (in grau).</tr
     <message>
         <source>Press %1 to send a screenshot of the selection, %2 to hide/show qTox window, or %3 to cancel.</source>
         <comment>Help text shown when a region has been selected</comment>
-        <translation>Drücke %1, um einen Screenshot des ausgewählten Ausschnitts zu senden, %2, um das qTox-Fenster auszublenden/einzublenden oder %3, um abzubrechen.</translation>
+        <translation>Premi %1 per inviare uno screenshot della selezione, %2 per nascondere/mostrare la finestra qTox, o %3 per annullare.</translation>
     </message>
     <message>
         <source>Enter</source>
@@ -2578,104 +2498,104 @@ Diese ID beinhaltet den NoSpam-Code (in blau), und die Prüfsumme (in grau).</tr
     <name>SearchForm</name>
     <message>
         <source>The text could not be found.</source>
-        <translation>Der Text konnte nicht gefunden werden.</translation>
+        <translation>Testo non trovato.</translation>
     </message>
     <message>
         <source>Start</source>
-        <translation>Start</translation>
+        <translation>Inizio</translation>
     </message>
 </context>
 <context>
     <name>SearchSettingsForm</name>
     <message>
         <source>Form</source>
-        <translation>Formular</translation>
+        <translation>Formulario</translation>
     </message>
     <message>
         <source>Start search:</source>
-        <translation>Suche starten:</translation>
+        <translation>Iniziare ricerca:</translation>
     </message>
     <message>
         <source>from the end</source>
-        <translation>vom Ende</translation>
+        <translation>dalla fine</translation>
     </message>
     <message>
         <source>from the beginning</source>
-        <translation>vom Anfang</translation>
+        <translation>dall&apos;inizio</translation>
     </message>
     <message>
         <source>after date</source>
-        <translation>nach dem Datum</translation>
+        <translation>dopo la data</translation>
     </message>
     <message>
         <source>before date</source>
-        <translation>vor dem Datum</translation>
+        <translation>prima della data</translation>
     </message>
     <message>
         <source>00.00.0000</source>
-        <translation>00.00.0000</translation>
+        <translation>00/00/0000</translation>
     </message>
     <message>
         <source>Case sensitive</source>
-        <translation>Groß-/Kleinschreibung beachten</translation>
+        <translation>Sensibile alle maiuscole e minuscole</translation>
     </message>
     <message>
         <source>Whole words only</source>
-        <translation>Nur ganze Wörter</translation>
+        <translation>Solo parole intere</translation>
     </message>
     <message>
         <source>Use regular expressions</source>
-        <translation>Reguläre Ausdrücke verwenden</translation>
+        <translation>Utilizzare espressioni comuni</translation>
     </message>
 </context>
 <context>
     <name>SetPasswordDialog</name>
     <message>
         <source>Set your password</source>
-        <translation>Setze dein Passwort</translation>
+        <translation>Imposta password</translation>
     </message>
     <message>
         <source>Confirm:</source>
-        <translation>Passwort bestätigen:</translation>
-    </message>
-    <message>
-        <source>Password:</source>
-        <translation>Passwort:</translation>
+        <translation>Conferma:</translation>
     </message>
     <message>
         <source>Password strength: %p%</source>
-        <translation>Passwortstärke: %p %</translation>
+        <translation>Robustezza password: %p%</translation>
     </message>
     <message>
         <source>The password is too short</source>
-        <translation>Das Passwort ist zu kurz</translation>
+        <translation>La password è troppo corta</translation>
     </message>
     <message>
         <source>The password doesn&apos;t match.</source>
-        <translation>Die Passwörter stimmen nicht überein.</translation>
+        <translation>Le password non corrispondono.</translation>
+    </message>
+    <message>
+        <source>Password:</source>
+        <translation>Password:</translation>
     </message>
     <message>
         <source>Confirm password</source>
-        <translation>Passwort bestätigen</translation>
+        <translation>Conferma password</translation>
     </message>
     <message>
         <source>Confirm password input</source>
-        <translation>Bestätige Passworteingabe</translation>
+        <translation>Conferma immissione password</translation>
     </message>
     <message>
         <source>Password input</source>
-        <translation>Passworteingabe</translation>
+        <translation>Immissione password</translation>
     </message>
     <message>
         <source>Password input field, minimum 6 characters long</source>
-        <translation>Passworteingabefeld, mindestens 6 Zeichen lang</translation>
+        <translation>Campo immissione password,minimo 6 caratteri lungo</translation>
     </message>
 </context>
 <context>
     <name>Settings</name>
     <message>
         <source>Circle #%1</source>
-        <translation>Kreis #%1</translation>
+        <translation>Circolo #%1</translation>
     </message>
 </context>
 <context>
@@ -2683,40 +2603,40 @@ Diese ID beinhaltet den NoSpam-Code (in blau), und die Prüfsumme (in grau).</tr
     <message>
         <source>Add a friend</source>
         <comment>Title of the window to add a friend through Tox URI</comment>
-        <translation>Einen Kontakt hinzufügen</translation>
+        <translation>Aggiungi un contatto</translation>
     </message>
     <message>
         <source>Do you want to add %1 as a friend?</source>
-        <translation>Möchtest du %1 als Kontakt in deine Liste aufnehmen?</translation>
+        <translation>Vuoi aggiungere %1 come contatto?</translation>
     </message>
     <message>
         <source>User ID:</source>
-        <translation>ID:</translation>
+        <translation>Tox ID del contatto:</translation>
     </message>
     <message>
         <source>Friend request message:</source>
-        <translation>Freundschaftsanfrage:</translation>
+        <translation>Messaggio da inviare assieme alla richiesta d&apos;amicizia:</translation>
     </message>
     <message>
         <source>Send</source>
         <comment>Send a friend request</comment>
-        <translation>Senden</translation>
+        <translation>Invia</translation>
     </message>
     <message>
         <source>Cancel</source>
         <comment>Don&apos;t send a friend request</comment>
-        <translation>Abbrechen</translation>
+        <translation>Annulla</translation>
     </message>
 </context>
 <context>
     <name>UserInterfaceForm</name>
     <message>
         <source>None</source>
-        <translation>Ohne</translation>
+        <translation>Nessuno</translation>
     </message>
     <message>
         <source>User Interface</source>
-        <translation>Benutzeroberfläche</translation>
+        <translation>Interfaccia Utente</translation>
     </message>
 </context>
 <context>
@@ -2727,170 +2647,170 @@ Diese ID beinhaltet den NoSpam-Code (in blau), und die Prüfsumme (in grau).</tr
     </message>
     <message>
         <source>Base font:</source>
-        <translation>Schriftart:</translation>
+        <translation>Carattere di base:</translation>
     </message>
     <message>
         <source>px</source>
-        <translation>Px</translation>
+        <translation>px</translation>
     </message>
     <message>
         <source>Size: </source>
-        <translation>Größe: </translation>
+        <translation>Grandezza: </translation>
     </message>
     <message>
         <source>New text styling preference may not load until qTox restarts.</source>
-        <translation>Änderungen am Aussehen des Textes werden eventuell erst nach einem Neustart von qTox angezeigt.</translation>
+        <translation>La nuova preferenza dello stile del testo sarà caricata al riavvio qTox.</translation>
     </message>
     <message>
         <source>Text Style format:</source>
-        <translation>Textformat:</translation>
+        <translation>Formato dello stile del testo:</translation>
     </message>
     <message>
         <source>Select text styling preference.</source>
-        <translation>Wählen Sie die Textstil Einstellung.</translation>
+        <translation>Selezionare lo stile del testo.</translation>
     </message>
     <message>
         <source>Plaintext</source>
-        <translation>Klartext</translation>
+        <translation>Testo in chiaro</translation>
     </message>
     <message>
         <source>Show formatting characters</source>
-        <translation>Formatierungszeichen anzeigen</translation>
+        <translation>Mostra caratteri di formattazione</translation>
     </message>
     <message>
         <source>Don&apos;t show formatting characters</source>
-        <translation>Formatierungszeichen nicht anzeigen</translation>
+        <translation>Non mostrare i caratteri di formattazione</translation>
     </message>
     <message>
         <source>New message</source>
-        <translation>Neue Nachricht</translation>
+        <translation>Nuovo messaggio</translation>
     </message>
     <message>
         <source>Open qTox&apos;s window when you receive a new message and no window is open yet.</source>
         <comment>tooltip for Show window setting</comment>
-        <translation>Öffne qTox bei neuen Nachrichten, falls noch kein Fenster geöffnet ist.</translation>
+        <translation>Apri la finestra di qTox quando si riceve un nuovo messaggio e nessuna finestra è ancora aperta.</translation>
     </message>
     <message>
         <source>Open window</source>
-        <translation>Fenster öffnen</translation>
+        <translation>Apri finestra</translation>
     </message>
     <message>
         <source>Contact list</source>
-        <translation>Kontaktliste</translation>
+        <translation>Lista contatti</translation>
     </message>
     <message>
         <source>If checked, groupchats will be placed at the top of the friends list, otherwise, they&apos;ll be placed below online friends.</source>
         <comment>toolTip for groupchat positioning</comment>
-        <translation>Falls aktiviert, werden Gruppenchats an erster Stelle deiner Kontaktliste platziert, andernfalls werden sie unter deinen Kontakten platziert.</translation>
+        <translation>Le chat di gruppo saranno posizionate all&apos;inizio della lista contatti, altrimenti saranno posizionate sotto ai contatti online.</translation>
     </message>
     <message>
         <source>Place groupchats at top of friend list</source>
-        <translation>Gruppenchats an erster Stelle der Kontaktliste anzeigen</translation>
+        <translation>Posiziona le chat di gruppo in cima alla lista contatti</translation>
     </message>
     <message>
         <source>Your contact list will be shown in compact mode.</source>
         <comment>toolTip for compact layout setting</comment>
-        <translation>Die Kontaktliste wird kompakt dargestellt.</translation>
+        <translation>La lista contatti sarà visualizzata in modo compatto.</translation>
     </message>
     <message>
         <source>Compact contact list</source>
-        <translation>Kompakte Kontaktliste</translation>
+        <translation>Usa lista contatti compatta</translation>
     </message>
     <message>
         <source>Multiple windows mode</source>
-        <translation>Mehrfenster-Modus</translation>
+        <translation>Modalità finestre multiple</translation>
     </message>
     <message>
         <source>Open each chat in an individual window</source>
-        <translation>Jeden Chat in einem separaten Fenster öffnen</translation>
+        <translation>Apri ogni chat in una finestra singola</translation>
     </message>
     <message>
         <source>Emoticons</source>
-        <translation>Emoticons</translation>
+        <translation>Faccine</translation>
     </message>
     <message>
         <source>Use emoticons</source>
-        <translation>Emoticons verwenden</translation>
+        <translation>Usa emoticons</translation>
     </message>
     <message>
         <source>Smiley Pack:</source>
         <extracomment>Text on smiley pack label</extracomment>
-        <translation>Smileyart:</translation>
+        <translation>Emoticons:</translation>
     </message>
     <message>
         <source>Emoticon size:</source>
-        <translation>Emoticongröße:</translation>
+        <translation>Dimensione emoticon:</translation>
     </message>
     <message>
         <source> px</source>
-        <translation> Pixel</translation>
+        <translation> px</translation>
     </message>
     <message>
         <source>Theme</source>
-        <translation>Farbschema</translation>
+        <translation>Impostazioni Tema</translation>
     </message>
     <message>
         <source>Style:</source>
-        <translation>Stil:</translation>
+        <translation>Stile:</translation>
     </message>
     <message>
         <source>Theme color:</source>
-        <translation>Farbschema:</translation>
+        <translation>Colore tema:</translation>
     </message>
     <message>
         <source>Timestamp format:</source>
-        <translation>Zeitstempelformat:</translation>
+        <translation>Formato data/ora:</translation>
     </message>
     <message>
         <source>Date format:</source>
-        <translation>Datumsformat:</translation>
+        <translation>Formato data:</translation>
     </message>
     <message>
         <source>If enabled every contact without an avatar set will have a generated avatar based on their Tox ID instead of a default picture. Requires restart to apply.</source>
         <comment>toolTip for show identicons</comment>
-        <translation>Wenn diese Option aktiviert ist, erhält jeder Kontakt ohne festgelegtem Avatar einen generierten Avatar basierend auf seiner Tox-ID anstelle eines Standardbildes. Neustart erforderlich.</translation>
+        <translation>Se attivato, ad ogni contatto senza foto profilo verrà generata una foto profilo basata sull&apos;ID Tox invece della foto predefinita. Richiede il riavvio di qTox.</translation>
     </message>
     <message>
         <source>Use identicons instead of empty avatars</source>
-        <translation>Identitätssymbol statt leerer Avatare verwenden</translation>
+        <translation>Usa icone identificative al posto delle foto profilo vuote</translation>
     </message>
     <message>
         <source>Use colored nicknames in chats</source>
-        <translation>Farbige Spitznamen in Chats verwenden</translation>
+        <translation>Usare soprannomi colorati nelle chat</translation>
     </message>
     <message>
         <source>Show a notification when you receive a new message and the window is not selected.</source>
         <comment>tooltip for Notify setting</comment>
-        <translation>Zeigt eine Benachrichtigung an, wenn Sie eine neue Nachricht erhalten und das Fenster nicht ausgewählt ist.</translation>
+        <translation>Mostrare una notifica quando ricevi un nuovo messaggio e la finestra non è selezionata.</translation>
     </message>
     <message>
         <source>Notify</source>
-        <translation>Benachrichtigen</translation>
+        <translation>Notificare</translation>
     </message>
     <message>
         <source>Onlys notify about new messages in groupchats when mentioned.</source>
         <comment>toolTip for Group chats only notify when mentioned</comment>
-        <translation>Nur über neue Nachrichten in Gruppenchats benachrichtigen , wenn sie erwähnt werden.</translation>
+        <translation>Solo notificare i nuovi messaggi nelle chat di gruppo quando veni menzionato.</translation>
     </message>
     <message>
         <source>Group chats only notify when mentioned</source>
-        <translation>Gruppen-Chats benachrichtigen nur, wenn sie erwähnt werden</translation>
+        <translation>Solo notificare i chat di gruppo quando menzionato</translation>
     </message>
     <message>
         <source>Play sound</source>
-        <translation>Ton abspielen</translation>
+        <translation>Riprodurre suono</translation>
     </message>
     <message>
         <source>Play sound while Busy</source>
-        <translation>Ton abspielen wenn „Beschäftigt”</translation>
+        <translation>Riprodurre suono mentre sei occupato</translation>
     </message>
     <message>
         <source>Notify via desktop notifications</source>
-        <translation>Über Desktop-Benachrichtigungen benachrichtigen</translation>
+        <translation>Notifica tramite notifiche sul desktop</translation>
     </message>
     <message>
         <source>Hide message sender and contents</source>
-        <translation>Absender und Nachrichteninhalte ausblenden</translation>
+        <translation>Nascondere il mittente e il contenuto del messaggio</translation>
     </message>
 </context>
 <context>
@@ -2903,132 +2823,33 @@ Diese ID beinhaltet den NoSpam-Code (in blau), und die Prüfsumme (in grau).</tr
     <message>
         <source>Away</source>
         <comment>Button to set your status to &apos;Away&apos;</comment>
-        <translation>Abwesend</translation>
+        <translation>Assente</translation>
     </message>
     <message>
         <source>Busy</source>
         <comment>Button to set your status to &apos;Busy&apos;</comment>
-        <translation>Beschäftigt</translation>
-    </message>
-    <message>
-        <source>toxcore failed to start, the application will terminate after you close this message.</source>
-        <translation>Toxcore konnte nicht gestartet werden, die Anwendung wird beendet nachdem sie diese Nachricht geschlossen haben.</translation>
+        <translation>Occupato</translation>
     </message>
     <message>
         <source>toxcore failed to start with your proxy settings. qTox cannot run; please modify your settings and restart.</source>
         <comment>popup text</comment>
-        <translation>Es ist ein Fehler aufgetreten, und die Anwendung kann nicht gestartet werden.
-Leider führen deine Proxy-Einstellungen zu Problemen. Bitte ändere deine Einstellungen und versuch es erneut.</translation>
-    </message>
-    <message>
-        <source>File</source>
-        <translation>Datei</translation>
-    </message>
-    <message>
-        <source>Edit Profile</source>
-        <translation>Profil bearbeiten</translation>
-    </message>
-    <message>
-        <source>Change Status</source>
-        <translation>Status ändern</translation>
-    </message>
-    <message>
-        <source>Log out</source>
-        <translation>Ausloggen</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <translation>Bearbeiten</translation>
-    </message>
-    <message>
-        <source>Logout</source>
-        <comment>Tray action menu to logout user</comment>
-        <translation>Ausloggen</translation>
-    </message>
-    <message>
-        <source>Exit</source>
-        <comment>Tray action menu to exit tox</comment>
-        <translation>Beenden</translation>
-    </message>
-    <message>
-        <source>Filter...</source>
-        <translation>Filter ...</translation>
-    </message>
-    <message>
-        <source>Contacts</source>
-        <translation>Kontakte</translation>
-    </message>
-    <message>
-        <source>Add Contact...</source>
-        <translation>Kontakt hinzufügen ...</translation>
-    </message>
-    <message>
-        <source>Next Conversation</source>
-        <translation>Nächste Unterhaltung</translation>
-    </message>
-    <message>
-        <source>Previous Conversation</source>
-        <translation>Vorherige Unterhaltung</translation>
-    </message>
-    <message>
-        <source>Executable file</source>
-        <comment>popup title</comment>
-        <translation>Ausführbare Datei</translation>
-    </message>
-    <message>
-        <source>You have asked qTox to open an executable file. Executable files can potentially damage your computer. Are you sure want to open this file?</source>
-        <comment>popup text</comment>
-        <translation>Du hast qTox aufgefordert, eine Datei auszuführen. Bitte beachte, dass ausführbare Dateien ein Sicherheitsrisiko darstellen können. Bist du dir sicher, dass du die Datei ausführen möchtest?</translation>
-    </message>
-    <message>
-        <source>Couldn&apos;t request friendship</source>
-        <translation>Freundschaftsanfrage konnte nicht gesendet werden</translation>
-    </message>
-    <message>
-        <source>Status</source>
-        <translation>Status</translation>
-    </message>
-    <message>
-        <source>Your name</source>
-        <translation>Dein Name</translation>
-    </message>
-    <message>
-        <source>Message failed to send</source>
-        <translation>Nachricht konnte nicht gesendet werden</translation>
-    </message>
-    <message>
-        <source>Create new group...</source>
-        <translation>Neue Gruppe erstellen ...</translation>
+        <translation>Impossibile avviare Toxcore con le tue impostazione proxy. qTox non può funzionare correttamente, per favore modifica le impostazioni e riavvia il programma.</translation>
     </message>
     <message>
         <source>Add new circle...</source>
-        <translation>Neuen Kreis hinzufügen ...</translation>
-    </message>
-    <message numerus="yes">
-        <source>%n New Friend Request(s)</source>
-        <translation>
-            <numerusform>%n neue Freundschaftsanfrage</numerusform>
-            <numerusform>%n neue Freundschaftsanfragen</numerusform>
-        </translation>
-    </message>
-    <message numerus="yes">
-        <source>%n New Group Invite(s)</source>
-        <translation>
-            <numerusform>%n neue Gruppeneinladung</numerusform>
-            <numerusform>%n neue Gruppeneinladungen</numerusform>
-        </translation>
+        <translation>Aggiungi un nuovo circolo...</translation>
     </message>
     <message>
         <source>By Name</source>
-        <translation>Nach Namen</translation>
+        <translation>Per Nome</translation>
     </message>
     <message>
         <source>By Activity</source>
-        <translation>Nach Aktivität</translation>
+        <translation>Per Attività</translation>
     </message>
     <message>
         <source>All</source>
-        <translation>Alle</translation>
+        <translation>Tutti</translation>
     </message>
     <message>
         <source>Online</source>
@@ -3036,70 +2857,167 @@ Leider führen deine Proxy-Einstellungen zu Problemen. Bitte ändere deine Einst
     </message>
     <message>
         <source>Offline</source>
-        <translatorcomment>Ausgelassen</translatorcomment>
-        <translation></translation>
+        <translation>Offline</translation>
     </message>
     <message>
         <source>Friends</source>
-        <translation>Freunde</translation>
+        <translation>Contatti</translation>
     </message>
     <message>
         <source>Groups</source>
-        <translation>Gruppen</translation>
+        <translation>Gruppi</translation>
     </message>
     <message>
         <source>Search Contacts</source>
-        <translation>Kontakte durchsuchen</translation>
+        <translation>Cerca tra i contatti</translation>
+    </message>
+    <message>
+        <source>Executable file</source>
+        <comment>popup title</comment>
+        <translation>File eseguibile</translation>
+    </message>
+    <message>
+        <source>You have asked qTox to open an executable file. Executable files can potentially damage your computer. Are you sure want to open this file?</source>
+        <comment>popup text</comment>
+        <translation>Hai chiesto a qTox di aprire un file eseguibile. I file eseguibili possono danneggiare il tuo computer. Sei sicuro di voler aprire questo file?</translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t request friendship</source>
+        <translation>Impossibile inviare la richiesta d&apos;amicizia</translation>
+    </message>
+    <message>
+        <source>Message failed to send</source>
+        <translation>Impossibile inviare il messaggio</translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation>Stato</translation>
+    </message>
+    <message>
+        <source>toxcore failed to start, the application will terminate after you close this message.</source>
+        <translation>toxcore non è stato in grado di avviarsi, l&apos;applicazione si chiuderà dopo aver chiuso questo messaggio.</translation>
+    </message>
+    <message>
+        <source>Your name</source>
+        <translation>qTox User</translation>
     </message>
     <message>
         <source>Groupchat #%1</source>
-        <translation>Gruppenchat #%1</translation>
+        <translation>Gruppo #%1</translation>
+    </message>
+    <message>
+        <source>Create new group...</source>
+        <translation>Crea un nuovo gruppo...</translation>
+    </message>
+    <message numerus="yes">
+        <source>%n New Friend Request(s)</source>
+        <translation>
+            <numerusform>%n Nuova Richiesta di Amicizia</numerusform>
+            <numerusform>%n Nuove Richieste di Amicizia</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <source>%n New Group Invite(s)</source>
+        <translation>
+            <numerusform>%n Nuovo Invito ad un Gruppo</numerusform>
+            <numerusform>%n Nuovi Inviti ad un Gruppo</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Logout</source>
+        <comment>Tray action menu to logout user</comment>
+        <translation>Esci</translation>
+    </message>
+    <message>
+        <source>Exit</source>
+        <comment>Tray action menu to exit tox</comment>
+        <translation>Esci</translation>
+    </message>
+    <message>
+        <source>Filter...</source>
+        <translation>Filtro...</translation>
+    </message>
+    <message>
+        <source>File</source>
+        <translation>File</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>Modifica</translation>
+    </message>
+    <message>
+        <source>Contacts</source>
+        <translation>Contatti</translation>
+    </message>
+    <message>
+        <source>Change Status</source>
+        <translation>Cambia stato</translation>
+    </message>
+    <message>
+        <source>Edit Profile</source>
+        <translation>Modifica profilo</translation>
+    </message>
+    <message>
+        <source>Log out</source>
+        <translation>Esci</translation>
+    </message>
+    <message>
+        <source>Add Contact...</source>
+        <translation>Aggiungi contatto...</translation>
+    </message>
+    <message>
+        <source>Next Conversation</source>
+        <translation>Conversazione successiva</translation>
+    </message>
+    <message>
+        <source>Previous Conversation</source>
+        <translation>Conversazione precedente</translation>
     </message>
     <message>
         <source>Show</source>
         <comment>Tray action menu to show qTox window</comment>
-        <translation>Öffnen</translation>
+        <translation>Mostra</translation>
     </message>
     <message>
         <source>Add friend</source>
         <comment>title of the window</comment>
-        <translation>FreundIn hinzufügen</translation>
+        <translation>Aggiungi amico</translation>
     </message>
     <message>
         <source>Group invites</source>
         <comment>title of the window</comment>
-        <translation>Gruppeneinladungen</translation>
+        <translation>Inviti di gruppo</translation>
     </message>
     <message>
         <source>File transfers</source>
         <comment>title of the window</comment>
-        <translation>Dateiübertragungen</translation>
+        <translation>Trasferimenti file</translation>
     </message>
     <message>
         <source>Settings</source>
         <comment>title of the window</comment>
-        <translation>Einstellungen</translation>
+        <translation>Impostazioni</translation>
     </message>
     <message>
         <source>My profile</source>
         <comment>title of the window</comment>
-        <translation>Mein Profil</translation>
+        <translation>Il mio profilo</translation>
     </message>
     <message>
         <source>Failed to send file &quot;%1&quot;</source>
-        <translation>Datei „%1“ konnte nicht gesendet werden</translation>
+        <translation>Impossibile inviare il file &quot;%1&quot;</translation>
     </message>
     <message>
         <source>File sent</source>
-        <translation>Datei gesendet</translation>
+        <translation>File inviato</translation>
     </message>
     <message>
         <source> sent you a friend request.</source>
-        <translation> schickte Dir eine Freundschaftsanfrage.</translation>
+        <translation> ti ha inviato una richiesta di amicizia.</translation>
     </message>
     <message>
         <source> invites you to join a group.</source>
-        <translation> lädt Dich ein, einer Gruppe beizutreten.</translation>
+        <translation> ti invita a unirti a un gruppo.</translation>
     </message>
 </context>
 </TS>

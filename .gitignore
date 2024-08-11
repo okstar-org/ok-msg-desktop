@@ -84,3 +84,5 @@ config.h
 out/
 vcpkg_installed
 CMakePresets.json
+
+.DS_Store

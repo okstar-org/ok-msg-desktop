@@ -17,17 +17,15 @@
 #ifndef BASE_UUID_H
 #define BASE_UUID_H
 
-#include <QUuid>
 #include <QString>
-
-namespace base {
+#include <QUuid>
+namespace ok::base {
 class UUID {
 public:
-    inline static QString make(){
+    inline static QString make() {
         return QUuid::createUuid().toString().remove(0, 1).remove(36, 1);
     }
-
 };
 
-}
-#endif // MD5_H
+}  // namespace ok::base
+#endif  // MD5_H

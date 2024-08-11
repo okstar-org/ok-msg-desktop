@@ -21,8 +21,12 @@ set(${PROJECT_NAME}_RESOURCES
 
 set(${PROJECT_NAME}_SOURCES
     main.cpp
+    application.h
     application.cpp
+    launcher.h
     launcher.cpp
+    ipc.h
+    ipc.cpp
     Bus.h
     Bus.cpp
 )

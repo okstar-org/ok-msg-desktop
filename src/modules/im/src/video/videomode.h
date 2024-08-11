@@ -16,8 +16,7 @@
 #include <QRect>
 #include <cstdint>
 
-struct VideoMode
-{
+struct VideoMode {
     int width, height;
     int x, y;
     float FPS = -1.0f;
@@ -35,4 +34,4 @@ struct VideoMode
     uint32_t tolerance() const;
 };
 
-#endif // VIDEOMODE_H
+#endif  // VIDEOMODE_H

@@ -17,9 +17,8 @@
 
 class QObject;
 class QSignalBlocker;
-
-class RecursiveSignalBlocker
-{
+namespace ok::base {
+class RecursiveSignalBlocker {
 public:
     explicit RecursiveSignalBlocker(QObject* object);
     ~RecursiveSignalBlocker();
@@ -29,5 +28,6 @@ public:
 private:
     QVector<const QSignalBlocker*> mBlockers;
 };
+}
 
 #endif

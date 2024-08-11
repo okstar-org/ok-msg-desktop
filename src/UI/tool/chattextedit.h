@@ -15,8 +15,7 @@
 
 #include <QTextEdit>
 
-class ChatTextEdit final : public QTextEdit
-{
+class ChatTextEdit final : public QTextEdit {
     Q_OBJECT
 public:
     explicit ChatTextEdit(QWidget* parent = nullptr);
@@ -41,4 +40,4 @@ private:
     QString lastMessage;
 };
 
-#endif // CHATTEXTEDIT_H
+#endif  // CHATTEXTEDIT_H

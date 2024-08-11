@@ -17,8 +17,7 @@
 #include <QFrame>
 #include <QStackedLayout>
 
-class ContentLayout : public QStackedLayout
-{
+class ContentLayout : public QStackedLayout {
 public:
     ContentLayout();
     explicit ContentLayout(QWidget* parent);
@@ -27,13 +26,13 @@ public:
     void reloadTheme();
     void clear();
 
-//    QFrame mainHLine;
-//    QHBoxLayout mainHLineLayout;
-//    QWidget* mainContent;
-//    QWidget* mainHead;
+    //    QFrame mainHLine;
+    //    QHBoxLayout mainHLineLayout;
+    //    QWidget* mainContent;
+    //    QWidget* mainHead;
 
 private:
     void init();
 };
 
-#endif // CONTENTLAYOUT_H
+#endif  // CONTENTLAYOUT_H
