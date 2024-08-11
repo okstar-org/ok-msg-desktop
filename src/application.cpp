@@ -114,8 +114,6 @@ Application::Application(int& argc, char* argv[])
     qDebug() << "Application has be created";
 }
 
-Application* Application::Instance() { return qobject_cast<Application*>(qApp); }
-
 void Application::start() {
     if (!ipc->isAttached()) {
         qWarning() << "Unable to run the app.";

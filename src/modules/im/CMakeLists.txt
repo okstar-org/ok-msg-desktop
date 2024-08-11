@@ -337,8 +337,6 @@ set(${PROJECT_NAME}_SOURCES
         src/widget/qrwidget.h
         src/widget/splitterrestorer.cpp
         src/widget/splitterrestorer.h
-    ../../lib/settings/style.cpp
-    ../../lib/settings/style.h
         src/widget/tool/activatedialog.cpp
         src/widget/tool/activatedialog.h
         src/widget/tool/adjustingscrollarea.cpp

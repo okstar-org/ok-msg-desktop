@@ -19,9 +19,16 @@
 #include <QString>
 namespace ok::base {
 
-QString Hashs::sha1(const QByteArray& buf) {
-    QCryptographicHash hash(QCryptographicHash::Algorithm::Sha1);
+QByteArray Hashs::hash(const QByteArray& buf, QCryptographicHash::Algorithm algorithm) {
+    QCryptographicHash hash(algorithm);
     hash.addData(buf);
-    return QString{hash.result().toHex()};
+    return hash.result();
 }
+
+QByteArray Hashs::sha1(const QByteArray& buf) {
+    return hash(buf, QCryptographicHash::Algorithm::Md5);
+}
+
+QString Hashs::sha1String(const QByteArray& buf) { return QString{sha1(buf).toHex()}; }
+
 }  // namespace ok::base

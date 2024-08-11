@@ -18,6 +18,9 @@
 
 #include "UI/widget/OWidget.h"
 
+#include <QPointer>
+#include <QJsonArray>
+
 class QWebEngineView;
 class QWebChannel;
 class QThread;
@@ -43,7 +46,17 @@ private:
     void startWsServer();
     void startWebEngine();
 
+    void requestAppList();
+
 public slots:
     void clientConnected(WebSocketTransport* transport);
+
+private:
+    void sendAppListToView(const QJsonArray& appList);
+
+private:
+    QPointer<WebSocketTransport> wsTransport;
+    QJsonArray cachedAppList;
+    bool hasRequested = false;
 };
 }  // namespace ok::platform
