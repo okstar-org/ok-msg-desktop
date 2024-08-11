@@ -12,15 +12,12 @@ include_directories(${PROJECT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR})
     pkg_check_modules(AVUTIL REQUIRED libavutil)
     pkg_check_modules(SWSCALE REQUIRED libswscale)
     pkg_check_modules(SWRESAMPLE REQUIRED libswresample)
-
     pkg_check_modules(QRENCODE REQUIRED libqrencode )
     pkg_check_modules(OpenAL REQUIRED openal)
     pkg_check_modules(sqlite3 REQUIRED sqlite3)
     pkg_check_modules(exif REQUIRED libexif)
-#    pkg_check_modules(OpenSSL REQUIRED libssl libcrypto)
     pkg_check_modules(JPEG REQUIRED libjpeg)
-
-
+   
     list(APPEND ALL_LIBRARIES
             ${AVDEVICE_LINK_LIBRARIES}
             ${AVCODEC_LINK_LIBRARIES}
@@ -40,7 +37,6 @@ include_directories(${exif_INCLUDE_DIRS})
 include_directories(${AVCODEC_INCLUDE_DIRS})
 include_directories(${AVDEVICE_INCLUDE_DIRS})
 include_directories(${QRENCODE_INCLUDE_DIRS})
-
 
 #include(./cmake/Dependencies.cmake)
  
@@ -496,7 +492,8 @@ qt5_add_resources(
 )
 
 
-add_library(${PROJECT_NAME} SHARED
+
+add_library(${PROJECT_NAME} STATIC
         ${${PROJECT_NAME}_FORMS}
         ${${PROJECT_NAME}_SOURCES}
         ${${PROJECT_NAME}_QM_FILES}
@@ -509,6 +506,13 @@ if (WIN32)
                         winspool comdlg32 uuid shlwapi iphlpapi 
                         kernel32 user32 Vfw32 shell32 oleaut32 ole32 advapi32
     )
+    
+    if(CMAKE_BUILD_TYPE MATCHES "Debug")
+        set(PLATFORM_LIBS ${PLATFORM_LIBS} MSVCRTD)
+    else()
+        set(PLATFORM_LIBS ${PLATFORM_LIBS} MSVCRT)
+    endif()
+
 elseif (APPLE)
 
     find_library(APPLICATION_SERVICES ApplicationServices)
@@ -550,7 +554,8 @@ target_link_libraries(${PROJECT_NAME}
     PUBLIC ${PLATFORM_LIBS}
 )
 
-#if (MSVC)
-#    set_property(TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-#endif (MSVC)
+if (WIN32)
+    set_property(TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
+endif ()
 
