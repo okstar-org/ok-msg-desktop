@@ -614,7 +614,6 @@ QByteArray Profile::getFriendAvatarHash(const FriendId& owner) {
 void Profile::removeAvatar(bool saveToCore) {
     removeFriendAvatar(core->getSelfPeerId().getPublicKey());
     if(saveToCore){
-        //TODO 用默认头像覆盖
         core->setAvatar({});
     }
 }
