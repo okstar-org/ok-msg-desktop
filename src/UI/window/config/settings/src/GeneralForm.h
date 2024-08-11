@@ -39,10 +39,13 @@ private slots:
     void on_closeToTray_stateChanged();
     void on_minimizeToTray_stateChanged();
     void on_checkUpdates_stateChanged();
+    //void on_timestamp_editTextChanged(const QString& format);
+    //void on_dateFormats_editTextChanged(const QString& format);
 
 private:
     Ui::GeneralForm* bodyUI;
     SettingsWidget* parent;
+    const int MAX_FORMAT_LENGTH = 128;
 };
 }  // namespace UI
 #endif
