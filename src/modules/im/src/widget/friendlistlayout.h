@@ -13,19 +13,17 @@
 #ifndef FRIENDLISTLAYOUT_H
 #define FRIENDLISTLAYOUT_H
 
-#include "genericchatitemlayout.h"
-#include "src/model/status.h"
-#include "src/core/core.h"
 #include <QBoxLayout>
+#include "genericchatitemlayout.h"
+#include "src/core/core.h"
+#include "src/model/status.h"
 
 class FriendWidget;
 class FriendListWidget;
 
-class FriendListLayout : public QVBoxLayout
-{
+class FriendListLayout : public QVBoxLayout {
     Q_OBJECT
 public:
-
     explicit FriendListLayout(QWidget* parent);
     ~FriendListLayout();
 
@@ -51,4 +49,4 @@ private:
     GenericChatItemLayout friendOfflineLayout;
 };
 
-#endif // FRIENDLISTLAYOUT_H
+#endif  // FRIENDLISTLAYOUT_H

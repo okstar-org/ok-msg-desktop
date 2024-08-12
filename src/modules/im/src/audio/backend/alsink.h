@@ -16,14 +16,13 @@
 #include <QMutex>
 #include <QObject>
 
-#include "src/model/interface.h"
-#include "src/audio/iaudiosink.h"
 #include "base/compatiblerecursivemutex.h"
+#include "src/audio/iaudiosink.h"
+#include "src/base/interface.h"
 
 class OpenAL;
 class QMutex;
-class AlSink : public QObject, public IAudioSink
-{
+class AlSink : public QObject, public IAudioSink {
     Q_OBJECT
 public:
     AlSink(OpenAL& al, uint sourceId);
@@ -33,7 +32,8 @@ public:
     AlSink& operator=(AlSink&& other) = delete;
     ~AlSink();
 
-    void playAudioBuffer(const int16_t* data, int samples, unsigned channels, int sampleRate) const override;
+    void playAudioBuffer(const int16_t* data, int samples, unsigned channels,
+                         int sampleRate) const override;
     void playMono16Sound(const IAudioSink::Sound& sound) override;
     void startLoop() override;
     void stopLoop() override;
@@ -53,4 +53,4 @@ private:
     mutable CompatibleRecursiveMutex killLock;
 };
 
-#endif // ALSINK_H
+#endif  // ALSINK_H

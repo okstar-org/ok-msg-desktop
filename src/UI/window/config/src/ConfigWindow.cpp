@@ -16,51 +16,63 @@
 
 #include <QWidget>
 
-#include "base/files.h"
 #include "base/OkSettings.h"
+#include "base/files.h"
 #include "lib/settings/translator.h"
-#include <base/basic_types.h>
-#include <base/widgets.h>
+#include "src/base/basic_types.h"
+#include "src/base/widgets.h"
 
 #if OK_PLUGIN
-#include "PluginManagerForm.h"
-#endif
+#include "about/src/aboutform.h"
+#include "plugin/src/PluginManagerForm.h"
+#include "settings/src/SettingsForm.h"
 
+#include <settings/src/GeneralForm.h>
+#endif
 
 namespace UI {
 
-ConfigWindow::ConfigWindow(QWidget *parent): QFrame(parent),ui(new Ui::ConfigWindow){
-  OK_RESOURCE_INIT(UIWindowConfig);
+ConfigWindow::ConfigWindow(QWidget* parent) : OMenuWidget(parent), ui(new Ui::ConfigWindow) {
+    OK_RESOURCE_INIT(UIWindowConfig);
 
-  ui->setupUi(this);
-  setObjectName(qsl("Page:%1").arg(static_cast<int>(PageMenu::setting)));
+    ui->setupUi(this);
 
-  QString locale = ok::base::OkSettings::getInstance().getTranslation();
-  qDebug()<<"locale"<<locale;
-  settings::Translator::registerHandler(std::bind(&ConfigWindow::retranslateUi, this), this);
+    auto qss = ok::base::Files::readStringAll(":/qss/plugin.qss");
+    setStyleSheet(qss);
 
-  settings::Translator::translate(OK_UIWindowConfig_MODULE, locale);
-//  retranslateUi();
+    QString locale = ok::base::OkSettings::getInstance().getTranslation();
+    settings::Translator::translate(OK_UIWindowConfig_MODULE, locale);
+    settings::Translator::registerHandler([this] { retranslateUi(); }, this);
+    retranslateUi();
 
-  auto qss = ok::base::Files::readStringAll(":/qss/plugin.qss");
-  setStyleSheet(qss);
+#if OK_PLUGIN
+    ui->tabWidget->addTab(new ok::plugin::PluginManagerForm(this), tr("Plugin form"));
+#endif
 
-  init();
+    auto sw = new SettingsWidget(this);
+    connect(sw->general(), &GeneralForm::onLanguageChanged, [](QString locale) {
+        settings::Translator::translate(OK_UIWindowConfig_MODULE, locale);
+    });
+
+    ui->tabWidget->addTab(sw, tr("Settings form"));
+    ui->tabWidget->addTab(new AboutForm(this), tr("About form"));
 }
 
 ConfigWindow::~ConfigWindow() {
-delete ui;
-}
-
-void ConfigWindow::init() {
-#if OK_PLUGIN
-  qDebug()<<tr("Plugin form");
-  ui->tabWidget->addTab(new ok::plugin::PluginManagerForm(this), tr("Plugin form"));
-#endif
+    settings::Translator::unregister(this);
+    delete ui;
 }
 
 void ConfigWindow::retranslateUi() {
-  ui->retranslateUi(this);
+    ui->retranslateUi(this);
+    ui->tabWidget->setTabText(0, tr("Plugin form"));
+    ui->tabWidget->setTabText(1, tr("Settings form"));
+    ui->tabWidget->setTabText(2, tr("About form"));
+
+    for (int i = 0; i < ui->tabWidget->count(); i++) {
+        auto gf = static_cast<GenericForm*>(ui->tabWidget->widget(i));
+        gf->retranslateUi();
+    }
 }
 
-} // namespace UI
+}  // namespace UI

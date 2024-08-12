@@ -14,26 +14,18 @@
 #define TEXT_H
 
 #include "../chatlinecontent.h"
-#include "src/widget/style.h"
+#include "src/lib/settings/style.h"
 
 #include <QFont>
 
 class QTextDocument;
 
-class Text : public ChatLineContent
-{
+class Text : public ChatLineContent {
     Q_OBJECT
 
 public:
-    enum TextType
-    {
-        NORMAL,
-        ACTION,
-        CUSTOM
-    };
-
     Text(const QString& txt = "", const QFont& font = QFont(), bool enableElide = false,
-         const QString& rawText = QString(), const TextType& type = NORMAL, const QColor& custom = Style::getColor(Style::MainText));
+         const QString& rawText = QString());
     virtual ~Text();
 
     void setTextSelectable(bool selectable);
@@ -56,7 +48,8 @@ public:
     virtual void fontChanged(const QFont& font) final;
 
     virtual QRectF boundingRect() const final;
-    virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) final;
+    virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
+                       QWidget* widget) final;
 
     virtual void visibilityChanged(bool keepInMemory) final;
     virtual void reloadTheme() final override;
@@ -64,7 +57,7 @@ public:
     virtual qreal getAscent() const final;
     virtual void mousePressEvent(QGraphicsSceneMouseEvent* event) final override;
     virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) final override;
-    void hoverMoveEvent(QGraphicsSceneHoverEvent* event) final override;    
+    void hoverMoveEvent(QGraphicsSceneHoverEvent* event) final override;
 
     virtual QString getText() const final;
     QString getLinkAt(QPointF scenePos) const;
@@ -72,7 +65,9 @@ public:
     void setContentsMargins(QMarginsF margins);
 
     void setBoundingRadius(qreal radius);
-    void setBackgroundColor(const QColor &color);
+    void setBackgroundColor(const QColor& color);
+    void setColor(Style::ColorPalette role);
+    void setColor(const QColor& color);
 
 protected:
     // dynamic resource management
@@ -107,13 +102,15 @@ private:
     qreal ascent = 0.0;
     QFont defFont;
     QString defStyleSheet;
-    TextType textType;
-    QColor color;
-    QColor customColor;
+
     QColor backgroundColor;
+    bool isCustomColor = false;
+    Style::ColorPalette colorRole = Style::MainText;
+    QColor color;
+
     qreal boundRadius = 0.0;
     QMarginsF margins;
     bool selectable = true;
 };
 
-#endif // TEXT_H
+#endif  // TEXT_H

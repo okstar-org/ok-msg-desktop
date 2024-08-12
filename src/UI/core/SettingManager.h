@@ -16,23 +16,22 @@
 #include <QString>
 #include <memory>
 
-
 #include <base/basic_types.h>
 
-namespace core {
+namespace ok {
 
 class SettingManager : public QObject {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  SettingManager(QObject *parent = nullptr);
-  ~SettingManager();
+    SettingManager(QObject* parent = nullptr);
+    ~SettingManager();
 
-  void saveAccount(QString &account, QString &password);
-  void getAccount(Fn<void(QString account, QString password)> callback);
-  void clearAccount();
+    void saveAccount(QString& account, QString& password);
+    void getAccount(ok::base::Fn<void(QString account, QString password)> callback);
+    void clearAccount();
 
 private:
-  std::unique_ptr<QSettings> settings;
+    std::unique_ptr<QSettings> settings;
 };
-} // namespace core
+}  // namespace ok

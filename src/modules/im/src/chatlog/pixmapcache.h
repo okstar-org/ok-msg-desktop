@@ -17,16 +17,13 @@
 #include <QIcon>
 #include <QPixmap>
 
-class PixmapCache
-{
+class PixmapCache {
 public:
     QPixmap get(const QString& filename, QSize size);
     static PixmapCache& getInstance();
 
 protected:
-    PixmapCache()
-    {
-    }
+    PixmapCache() {}
     PixmapCache(PixmapCache&) = delete;
     PixmapCache& operator=(const PixmapCache&) = delete;
 
@@ -34,4 +31,4 @@ private:
     QHash<QString, QIcon> cache;
 };
 
-#endif // ICONCACHE_H
+#endif  // ICONCACHE_H

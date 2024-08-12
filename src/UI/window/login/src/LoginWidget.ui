@@ -498,7 +498,7 @@
             </size>
            </property>
            <property name="text">
-            <string>Remember</string>
+            <string>Remember me</string>
            </property>
            <property name="checkable">
             <bool>true</bool>
@@ -705,7 +705,7 @@ color: rgb(255, 255, 255);</string>
          <item>
           <widget class="QLabel" name="signUp">
            <property name="text">
-            <string>Sign Up</string>
+            <string>Sign up</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
@@ -721,7 +721,7 @@ color: rgb(255, 255, 255);</string>
             </size>
            </property>
            <property name="text">
-            <string>Retrieve Password</string>
+            <string>Forgot password</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>

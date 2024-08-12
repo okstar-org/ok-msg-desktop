@@ -13,12 +13,12 @@
 #pragma once
 
 #include <map>
-#include <string>
 #include <mutex>
+#include <string>
 
 #include <api/peer_connection_interface.h>
-#include <optional>
 #include <rtc_base/thread.h>
+#include <optional>
 
 #include "../ok_rtc.h"
 #include "../ok_rtc_defs.h"
@@ -32,7 +32,7 @@ class AudioEncoderFactory;
 class AudioDecoderFactory;
 class VideoEncoderFactory;
 class VideoDecoderFactory;
-} // namespace webrtc
+}  // namespace webrtc
 
 namespace lib {
 namespace ortc {
@@ -41,113 +41,103 @@ class Conductor;
 
 class WebRTC : public OkRTC {
 public:
-  WebRTC();
+    WebRTC();
 
-  ~WebRTC();
+    ~WebRTC();
 
-  bool start() override;
+    bool start() override;
 
-  bool stop() override;
+    bool stop() override;
 
-  bool isStarted() override;
+    bool isStarted() override;
 
-  bool ensureStart() override;
+    bool ensureStart() override;
 
-  void addRTCHandler(OkRTCHandler* hand) override;
+    void addRTCHandler(OkRTCHandler* hand) override;
 
-  void setRemoteDescription(const std::string &peerId, const OJingleContentAv &context) override;
+    void setRemoteDescription(const std::string& peerId, const OJingleContentAv& context) override;
 
-  void CreateOffer(const std::string &peerId) override;
+    void CreateOffer(const std::string& peerId) override;
 
-  void CreateAnswer(const std::string &peerId,
-                    const OJingleContentAv &content) override;
+    void CreateAnswer(const std::string& peerId, const OJingleContentAv& content) override;
 
-  void setTransportInfo(const std::string &peerId,
-                        const std::string &sId,
-                        const ortc::OIceUdp &iceUdp) override;
+    void setTransportInfo(const std::string& peerId,
+                          const std::string& sId,
+                          const ortc::OIceUdp& iceUdp) override;
 
-  void ContentAdd(std::map<std::string, gloox::Jingle::Session> sdMap,
-                  ortc::OkRTCHandler *handler) override;
+    void ContentAdd(std::map<std::string, gloox::Jingle::Session> sdMap,
+                    ortc::OkRTCHandler* handler) override;
 
-  void ContentRemove(std::map<std::string, gloox::Jingle::Session> sdMap,
-                     OkRTCHandler *handler) override;
+    void ContentRemove(std::map<std::string, gloox::Jingle::Session> sdMap,
+                       OkRTCHandler* handler) override;
 
-  void SessionTerminate(const std::string &peerId) override;
+    void SessionTerminate(const std::string& peerId) override;
 
-  void setMute(bool mute) override;
+    void setMute(bool mute) override;
 
-  void setRemoteMute(bool mute) override;
+    void setRemoteMute(bool mute) override;
 
+    size_t getVideoSize() override;
 
-  size_t getVideoSize() override;
+    [[nodiscard]] auto createVideoCapture(std::optional<std::string> deviceId = std::nullopt,
+                                          bool isScreenCapture = false)
+            -> std::shared_ptr<VideoCaptureInterface>;
 
-  [[nodiscard]] auto createVideoCapture(
-      std::optional<std::string> deviceId = std::nullopt,
-      bool isScreenCapture = false)
-      -> std::shared_ptr<VideoCaptureInterface>;
+    bool call(const std::string& peerId, const std::string& sId, bool video) override;
 
-  bool call(const std::string &peerId,
-            const std::string &sId,
-            bool video) override;
+    bool quit(const std::string& peerId) override;
 
-  bool quit(const std::string &peerId) override;
+    void setIceOptions(std::list<IceServer>& ices) override;
 
-  void setIceOptions(std::list<IceServer>& ices) override;
+    webrtc::SdpType convertToSdpType(JingleSdpType sdpType);
 
-  webrtc::SdpType convertToSdpType(JingleSdpType sdpType);
+    JingleSdpType convertFromSdpType(webrtc::SdpType sdpType);
 
-  JingleSdpType convertFromSdpType(webrtc::SdpType sdpType);
+    std::unique_ptr<webrtc::SessionDescriptionInterface> convertToSdp(
+            const OJingleContentAv& context);
 
-  std::unique_ptr<webrtc::SessionDescriptionInterface> convertToSdp(const OJingleContentAv &context);
+    OJingleContentAv convertFromSdp(webrtc::SessionDescriptionInterface* sdp);
 
-  OJingleContentAv convertFromSdp( webrtc::SessionDescriptionInterface* sdp);
+    OkRTCHandler* getHandler() const { return _rtcHandler; }
 
+    const webrtc::PeerConnectionInterface::RTCConfiguration& getConfig() const {
+        return _rtcConfig;
+    }
 
-  OkRTCHandler* getHandler()const {
-      return _rtcHandler;
-  }
-
-  const webrtc::PeerConnectionInterface::RTCConfiguration& getConfig() const {
-      return _rtcConfig;
-  }
-
-  rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface>  getFactory(){
-      return peer_connection_factory;
-  }
+    rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> getFactory() {
+        return peer_connection_factory;
+    }
 
 private:
-//    std::unique_ptr<LogSinkImpl> _logSink;
-  void addIceServer(const IceServer &ice);
+    //    std::unique_ptr<LogSinkImpl> _logSink;
+    void addIceServer(const IceServer& ice);
 
-  Conductor *createConductor(const std::string &peerId,
-                             const std::string &sId,
-                             bool video);
+    Conductor* createConductor(const std::string& peerId, const std::string& sId, bool video);
 
-  Conductor *getConductor(const std::string &peerId);
+    Conductor* getConductor(const std::string& peerId);
 
-  std::recursive_mutex start_mtx;
+    std::recursive_mutex start_mtx;
 
-  webrtc::PeerConnectionInterface::RTCConfiguration _rtcConfig;
+    webrtc::PeerConnectionInterface::RTCConfiguration _rtcConfig;
 
+    std::unique_ptr<rtc::Thread> network_thread;
+    std::unique_ptr<rtc::Thread> worker_thread;
+    std::unique_ptr<rtc::Thread> signaling_thread;
 
-  std::unique_ptr<rtc::Thread> network_thread;
-  std::unique_ptr<rtc::Thread> worker_thread;
-  std::unique_ptr<rtc::Thread> signaling_thread;
+    std::map<std::string, Conductor*> _pcMap;
 
-  std::map<std::string, Conductor *> _pcMap;
+    OkRTCHandler* _rtcHandler;
 
-  OkRTCHandler *_rtcHandler;
+    // 音频源
+    rtc::scoped_refptr<webrtc::AudioSourceInterface> audioSource;
 
-  // 音频源
-  rtc::scoped_refptr<webrtc::AudioSourceInterface> audioSource;
+    // 视频源
+    std::shared_ptr<VideoCaptureInterface> videoCapture;
 
-  //视频源
-  std::shared_ptr<VideoCaptureInterface> videoCapture;
+    // sink
+    std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> sink;
 
-  //sink
-  std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> sink;
-
-  rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> peer_connection_factory;
+    rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> peer_connection_factory;
 };
-} // namespace ortc
-} // namespace lib
+}  // namespace ortc
+}  // namespace lib

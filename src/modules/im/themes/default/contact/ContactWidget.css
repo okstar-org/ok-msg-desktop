@@ -1,0 +1,59 @@
+/*
+ * Copyright (c) 2022 船山信息 chuanshaninfo.com
+ * The project is licensed under Mulan PubL v2.
+ * You can use this software according to the terms and conditions of the Mulan
+ * PubL v2. You may obtain a copy of Mulan PubL v2 at:
+ *          http://license.coscl.org.cn/MulanPubL-2.0
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PubL v2 for more details.
+ */
+
+ContactWidget,
+AddFriendForm
+{
+    background-color: @groundBase;
+    border: 0px solid;
+}
+
+QWidget#ContactContentWidget
+{
+    background: @groundBase;
+    border: 0px solid;
+    border-radius: 10px;
+}
+  
+RoundedMaskContainer#statusPanel
+{
+    background-color: @groundBase;
+    qproperty-radius: 10;
+    border: 0px solid;
+}
+
+QSplitter::handle
+{
+    background: white;
+}
+
+#searchText{
+    color: #19171b;
+    border: 1px solid @themeMedium;
+    background-color: @themeMedium;
+    border-radius: 5px;
+    padding: 6px;
+}
+
+QPushButton#addBtn
+{
+    border: 1px solid transparent;
+    padding: 5px 5px;
+    border-radius: 5px;
+    background-color: white;
+    qproperty-icon: url("@getImagePath(contact/add.svg)");
+}
+
+QPushButton#addBtn:hover
+{
+    background-color: #f3f5f7;
+}

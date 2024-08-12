@@ -18,11 +18,10 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+#include "src/lib/settings/style.h"
 #include "src/video/videosurface.h"
-#include "src/widget/style.h"
 
-class GenericNetCamView : public QWidget
-{
+class GenericNetCamView : public QWidget {
     Q_OBJECT
 public:
     explicit GenericNetCamView(QWidget* parent);
@@ -64,8 +63,8 @@ private:
     void toggleVideoPreview();
     void toggleButtonState(QPushButton* btn);
     void updateButtonState(QPushButton* btn, bool active);
-    void keyPressEvent(QKeyEvent *event) override;
-    void closeEvent(QCloseEvent *event) override;
+    void keyPressEvent(QKeyEvent* event) override;
+    void closeEvent(QCloseEvent* event) override;
 };
 
-#endif // GENERICNETCAMVIEW_H
+#endif  // GENERICNETCAMVIEW_H

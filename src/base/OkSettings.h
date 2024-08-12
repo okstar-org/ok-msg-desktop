@@ -16,112 +16,111 @@
 
 #pragma once
 
-#include "base/compatiblerecursivemutex.h"
 #include <QDir>
 #include <QObject>
+#include "base/compatiblerecursivemutex.h"
 
 namespace ok::base {
 
 class OkSettings : public QObject {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  explicit OkSettings(QObject *parent = nullptr);
-  ~OkSettings() override {}
-  static OkSettings &getInstance();
+    explicit OkSettings(QObject* parent = nullptr);
+    ~OkSettings() override {}
+    static OkSettings& getInstance();
 
-  QString getGlobalSettingsFile();
+    QString getGlobalSettingsFile();
 
-  void loadGlobal();
+    void loadGlobal();
 
-  QStringList getLocales();
-  QString getTranslation() ;
-  void setTranslation(const QString &newValue);
+    QStringList getLocales();
+    QString getTranslation();
+    void setTranslation(const QString& newValue);
 
-  static QDir downloadDir();
-  static QDir cacheDir();
-  static QDir configDir();
-  static QDir dataDir();
+    static QDir downloadDir();
+    static QDir cacheDir();
+    static QDir configDir();
+    static QDir dataDir();
 
-  static QDir getAppCacheDirPath() ;
-  static QDir getAppLogPath() ;
-  static QDir getAppPluginPath() ;
+    static QDir getAppCacheDirPath();
+    static QDir getAppLogPath();
+    static QDir getAppPluginPath();
 
-  bool getShowSystemTray() ;
-  void setShowSystemTray(bool newValue);
+    bool getShowSystemTray();
+    void setShowSystemTray(bool newValue);
 
-  Q_PROPERTY(bool showSystemTray
-                 READ getShowSystemTray
-                 WRITE setShowSystemTray NOTIFY
-                 showSystemTrayChanged FINAL)
+    Q_PROPERTY(bool showSystemTray READ getShowSystemTray WRITE setShowSystemTray NOTIFY
+                       showSystemTrayChanged FINAL)
 
+    bool getCloseToTray();
+    void setCloseToTray(bool newValue);
 
-  bool getCloseToTray() ;
-  void setCloseToTray(bool newValue);
+    Q_PROPERTY(bool autorun READ getAutorun WRITE setAutorun NOTIFY autorunChanged FINAL)
+    bool getAutorun();
+    void setAutorun(bool newValue);
 
-  Q_PROPERTY(bool autorun READ getAutorun WRITE setAutorun NOTIFY autorunChanged FINAL)
-  bool getAutorun() ;
-  void setAutorun(bool newValue);
+    bool getAutostartInTray();
+    void setAutostartInTray(bool newValue);
 
-  bool getAutostartInTray() ;
-  void setAutostartInTray(bool newValue);
+    bool getMinimizeToTray();
+    void setMinimizeToTray(bool newValue);
 
-  bool getMinimizeToTray();
-  void setMinimizeToTray(bool newValue);
+    void setAutoSaveEnabled(bool newValue);
+    bool getAutoSaveEnabled();
 
-  void setAutoSaveEnabled(bool newValue);
-  bool getAutoSaveEnabled() ;
+    Q_PROPERTY(bool minimizeOnClose READ getMinimizeOnClose WRITE setMinimizeOnClose NOTIFY
+                       minimizeOnCloseChanged FINAL)
 
-  Q_PROPERTY(bool minimizeOnClose READ getMinimizeOnClose WRITE setMinimizeOnClose NOTIFY
-                 minimizeOnCloseChanged FINAL)
+    bool getMinimizeOnClose();
+    void setMinimizeOnClose(bool newValue);
 
-  bool getMinimizeOnClose() ;
-  void setMinimizeOnClose(bool newValue);
+    QString getCurrentProfile();
+    uint32_t getCurrentProfileId();
+    void setCurrentProfile(const QString& profile);
 
-
-  QString getCurrentProfile() ;
-  uint32_t getCurrentProfileId() ;
-  void setCurrentProfile(const QString& profile);
-
-
-
+    QString getProvider();
+    void setProvider(QString val);
 
 private:
-  static uint32_t makeProfileId(const QString& profile);
+    static uint32_t makeProfileId(const QString& profile);
 
-  QThread* settingsThread;
+    QThread* settingsThread;
 
-  CompatibleRecursiveMutex bigLock;
-  QString translation;
+    CompatibleRecursiveMutex bigLock;
+    QString translation;
+    QString provider;
 
-  bool showSystemTray;
-  bool closeToTray;
-  bool autostartInTray;
-  bool minimizeToTray;
-  bool minimizeOnClose;
+    bool showSystemTray;
+    bool closeToTray;
+    bool autostartInTray;
+    bool minimizeToTray;
+    bool minimizeOnClose;
 
-  bool autoSaveEnabled;
+    bool autoSaveEnabled;
 
-  QString currentProfile;
-  uint32_t currentProfileId;
+    QString currentProfile;
+    uint32_t currentProfileId;
 
 signals:
-  void translationChanged(const QString &translation);
-  void showSystemTrayChanged(bool enabled);
+    void translationChanged(const QString& translation);
+    void providerChanged(const QString& p);
 
-  void closeToTrayChanged(bool enabled);
+    void showSystemTrayChanged(bool enabled);
 
-  void autostartInTrayChanged(bool enabled);
+    void closeToTrayChanged(bool enabled);
 
-  bool minimizeOnCloseChanged(bool enabled);
-  void minimizeToTrayChanged(bool enabled);
+    void autostartInTrayChanged(bool enabled);
 
-  void autorunChanged(bool enabled);
-  void autoSaveEnabledChanged(bool enabled);
+    bool minimizeOnCloseChanged(bool enabled);
+    void minimizeToTrayChanged(bool enabled);
 
-  void currentProfileIdChanged(quint32 id);
+    void autorunChanged(bool enabled);
+    void autoSaveEnabledChanged(bool enabled);
+
+    void currentProfileIdChanged(quint32 id);
 
 public slots:
-  void saveGlobal();
+    void saveGlobal();
 };
 
-} // namespace base
+}  // namespace ok::base

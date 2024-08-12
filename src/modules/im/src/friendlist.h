@@ -13,12 +13,12 @@
 #ifndef FRIENDLIST_H
 #define FRIENDLIST_H
 
-#include <cstdint>
 #include <QMap>
+#include <cstdint>
 
-#include "src/model/message.h"
 #include <src/core/FriendId.h>
 #include <src/core/contactid.h>
+#include "src/model/message.h"
 
 template <class T> class QList;
 template <class A, class B> class QHash;
@@ -27,19 +27,19 @@ class QByteArray;
 class QString;
 class FriendId;
 
-using FriendMap = QMap<QString, Friend *>;
+using FriendMap = QMap<QString, Friend*>;
 
 class FriendList {
 public:
-  static Friend *addFriend(const FriendInfo &friendInfo);
-  static Friend *findFriend(const ContactId &cId);
-  static QList<Friend *> getAllFriends();
-  static void removeFriend(const FriendId &friendPk, bool fake = false);
-  static void clear();
-  static QString decideNickname(const FriendId &friendPk, const QString &origName);
+    static Friend* addFriend(const FriendInfo& friendInfo);
+    static Friend* findFriend(const ContactId& cId);
+    static QList<Friend*> getAllFriends();
+    static void removeFriend(const FriendId& friendPk, bool fake = false);
+    static void clear();
+    static QString decideNickname(const FriendId& friendPk, const QString& origName);
 
 private:
-  static FriendMap friendMap;
+    static FriendMap friendMap;
 };
 
-#endif // FRIENDLIST_H
+#endif  // FRIENDLIST_H

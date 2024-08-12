@@ -28,23 +28,23 @@
  * to create dialog forms.
  */
 
-ProfileImporter::ProfileImporter(QWidget *parent) : QWidget(parent) {}
+ProfileImporter::ProfileImporter(QWidget* parent) : QWidget(parent) {}
 
 /**
  * @brief Show a file dialog. Selected file will be imported as Tox profile.
  * @return True, if the import was succesful. False otherwise.
  */
 bool ProfileImporter::importProfile() {
-  QString title = tr("Import profile", "import dialog title");
-  QString filter = tr("Tox save file (*.tox)", "import dialog filter");
-  QString dir = QDir::homePath();
+    QString title = tr("Import profile", "import dialog title");
+    QString filter = tr("Tox save file (*.tox)", "import dialog filter");
+    QString dir = QDir::homePath();
 
-  // TODO: Change all QFileDialog instances across project to use
-  // this instead of Q_NULLPTR. Possibly requires >Qt 5.9 due to:
-  // https://bugreports.qt.io/browse/QTBUG-59184
-  QString path = QFileDialog::getOpenFileName(Q_NULLPTR, title, dir, filter);
+    // TODO: Change all QFileDialog instances across project to use
+    // this instead of Q_NULLPTR. Possibly requires >Qt 5.9 due to:
+    // https://bugreports.qt.io/browse/QTBUG-59184
+    QString path = QFileDialog::getOpenFileName(Q_NULLPTR, title, dir, filter);
 
-  return importProfile(path);
+    return importProfile(path);
 }
 
 /**
@@ -54,17 +54,15 @@ bool ProfileImporter::importProfile() {
  * @return True if the answer is positive, false otherwise.
  */
 bool ProfileImporter::askQuestion(QString title, QString message) {
-  QMessageBox::Icon icon = QMessageBox::Warning;
-  QMessageBox box(icon, title, message, QMessageBox::NoButton, this);
-  QPushButton *pushButton1 =
-      box.addButton(QApplication::tr("Yes"), QMessageBox::AcceptRole);
-  QPushButton *pushButton2 =
-      box.addButton(QApplication::tr("No"), QMessageBox::RejectRole);
-  box.setDefaultButton(pushButton2);
-  box.setEscapeButton(pushButton2);
+    QMessageBox::Icon icon = QMessageBox::Warning;
+    QMessageBox box(icon, title, message, QMessageBox::NoButton, this);
+    QPushButton* pushButton1 = box.addButton(QApplication::tr("Yes"), QMessageBox::AcceptRole);
+    QPushButton* pushButton2 = box.addButton(QApplication::tr("No"), QMessageBox::RejectRole);
+    box.setDefaultButton(pushButton2);
+    box.setEscapeButton(pushButton2);
 
-  box.exec();
-  return box.clickedButton() == pushButton1;
+    box.exec();
+    return box.clickedButton() == pushButton1;
 }
 
 /**
@@ -72,52 +70,49 @@ bool ProfileImporter::askQuestion(QString title, QString message) {
  * @param path Path to Tox profile.
  * @return True, if the import was succesful. False otherwise.
  */
-bool ProfileImporter::importProfile(const QString &path) {
-  if (path.isEmpty())
-    return false;
+bool ProfileImporter::importProfile(const QString& path) {
+    if (path.isEmpty()) return false;
 
-  QFileInfo info(path);
-  if (!info.exists()) {
-    QMessageBox::warning(this, tr("File doesn't exist"),
-                         tr("Profile doesn't exist"), QMessageBox::Ok);
-    return false;
-  }
+    QFileInfo info(path);
+    if (!info.exists()) {
+        QMessageBox::warning(this, tr("File doesn't exist"), tr("Profile doesn't exist"),
+                             QMessageBox::Ok);
+        return false;
+    }
 
-  QString profile = info.completeBaseName();
+    QString profile = info.completeBaseName();
 
-  if (info.suffix() != "tox") {
-    QMessageBox::warning(this, tr("Ignoring non-Tox file", "popup title"),
-                         tr("Warning: You have chosen a file that is not a "
-                            "Tox save file; ignoring.",
-                            "popup text"),
-                         QMessageBox::Ok);
-    return false; // ingore importing non-tox file
-  }
+    if (info.suffix() != "tox") {
+        QMessageBox::warning(this, tr("Ignoring non-Tox file", "popup title"),
+                             tr("Warning: You have chosen a file that is not a "
+                                "Tox save file; ignoring.",
+                                "popup text"),
+                             QMessageBox::Ok);
+        return false;  // ingore importing non-tox file
+    }
 
-  QString settingsPath = Settings::getInstance().getSettingsDirPath();
-  QString profilePath = QDir(settingsPath).filePath(profile + lib::IM::Core::TOX_EXT);
+    QString settingsPath = Settings::getInstance().getSettingsDirPath();
+    QString profilePath = QDir(settingsPath).filePath(profile + lib::IM::Core::TOX_EXT);
 
-  if (QFileInfo(profilePath).exists()) {
-    QString title = tr("Profile already exists", "import confirm title");
-    QString message = tr("A profile named \"%1\" already exists. "
-                         "Do you want to erase it?",
-                         "import confirm text")
-                          .arg(profile);
-    bool erase = askQuestion(title, message);
+    if (QFileInfo(profilePath).exists()) {
+        QString title = tr("Profile already exists", "import confirm title");
+        QString message = tr("A profile named \"%1\" already exists. "
+                             "Do you want to erase it?",
+                             "import confirm text")
+                                  .arg(profile);
+        bool erase = askQuestion(title, message);
 
-    if (!erase)
-      return false; // import canelled
+        if (!erase) return false;  // import canelled
 
-    QFile(profilePath).remove();
-  }
+        QFile(profilePath).remove();
+    }
 
-  QFile::copy(path, profilePath);
-  // no good way to update the ui from here... maybe we need a
-  // Widget:refreshUi() function... such a thing would simplify other code as
-  // well I believe
-  QMessageBox::information(this, tr("Profile imported"),
-                           tr("%1.tox was successfully imported").arg(profile),
-                           QMessageBox::Ok);
+    QFile::copy(path, profilePath);
+    // no good way to update the ui from here... maybe we need a
+    // Widget:refreshUi() function... such a thing would simplify other code as
+    // well I believe
+    QMessageBox::information(this, tr("Profile imported"),
+                             tr("%1.tox was successfully imported").arg(profile), QMessageBox::Ok);
 
-  return true; // import successfull
+    return true;  // import successfull
 }

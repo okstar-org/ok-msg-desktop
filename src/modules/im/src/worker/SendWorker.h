@@ -17,14 +17,14 @@
 #ifndef OKMSG_PROJECT_SENDWORKER_H
 #define OKMSG_PROJECT_SENDWORKER_H
 
-#include <QObject>
-#include "src/model/message.h"
 #include <src/model/chathistory.h>
 #include <src/model/chatroom/friendchatroom.h>
 #include <src/model/imessagedispatcher.h>
 #include <src/widget/form/chatform.h>
+#include <QObject>
+#include "src/model/message.h"
 
-class SendWorker : public QObject{
+class SendWorker : public QObject {
     Q_OBJECT
 public:
     SendWorker(const FriendId& m_friend);
@@ -33,38 +33,25 @@ public:
 
     void clearHistory();
 
- static std::unique_ptr<SendWorker> forFriend(const FriendId& m_friend);
- static std::unique_ptr<SendWorker> forGroup(const GroupId& m_group);
+    static std::unique_ptr<SendWorker> forFriend(const FriendId& m_friend);
+    static std::unique_ptr<SendWorker> forGroup(const GroupId& m_group);
 
+    ChatFormHeader* getHeader() const { return headWidget.get(); }
 
-ChatFormHeader* getHeader()const{
-    return headWidget.get();
-}
+    GenericChatForm* getChatForm() const { return chatForm.get(); };
 
- GenericChatForm* getChatForm() const {
-     return chatForm.get();
- };
+    Chatroom* getChatroom() const { return chatRoom.get(); }
 
- Chatroom* getChatroom() const {
-     return chatRoom.get();
- }
+    IMessageDispatcher* dispacher() { return messageDispatcher.get(); }
 
- IMessageDispatcher* dispacher(){
-     return messageDispatcher.get();
- }
+    QList<Message> getLastTextMessage() { return chatHistory->getLastTextMessage(1); }
 
- QList<Message> getLastTextMessage(){
-    return chatHistory->getLastTextMessage(1);
- }
-
- IChatLog* getChatLog()const{
-     return chatHistory.get();
- }
+    IChatLog* getChatLog() const { return chatHistory.get(); }
     void startCounter(bool video = false);
     void stopCounter(bool error = false);
 
 private:
-    void initChatHeader(const ContactId &contactId);
+    void initChatHeader(const ContactId& contactId);
 
     MessageProcessor::SharedParams sharedParams;
 
@@ -88,7 +75,6 @@ signals:
     void endCall();
     void muteSpeaker(bool mute);
     void muteMicrophone(bool mute);
-
 };
 
-#endif // OKMSG_PROJECT_SENDWORKER_H
+#endif  // OKMSG_PROJECT_SENDWORKER_H

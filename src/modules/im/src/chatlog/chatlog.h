@@ -19,7 +19,7 @@
 
 #include "chatline.h"
 #include "chatmessage.h"
-#include "src/widget/style.h"
+#include "src/lib/settings/style.h"
 
 class QGraphicsScene;
 class QGraphicsRectItem;
@@ -28,8 +28,7 @@ class QTimer;
 class ChatLineContent;
 struct ToxFile;
 
-class ChatLog : public QGraphicsView
-{
+class ChatLog : public QGraphicsView {
     Q_OBJECT
 public:
     explicit ChatLog(QWidget* parent = nullptr);
@@ -37,7 +36,7 @@ public:
 
     void insertChatlineAtBottom(IChatItem::Ptr l);
     void insertChatlineOnTop(IChatItem::Ptr l);
-    void insertChatlinesOnTop(const QList<IChatItem::Ptr> &newLines);
+    void insertChatlinesOnTop(const QList<IChatItem::Ptr>& newLines);
     void clearSelection();
     void clear();
     void copySelectedText(bool toSelectionBuffer = false) const;
@@ -61,9 +60,7 @@ public:
     ChatLineContent* getContentFromGlobalPos(QPoint pos) const;
     const uint repNameAfter = 5 * 60;
 
-    constexpr inline int getVScrollBarValue() const {
-        return scrollBarValue;
-    }
+    constexpr inline int getVScrollBarValue() const { return scrollBarValue; }
 signals:
     void selectionChanged();
     void workerTimeoutFinished();
@@ -112,7 +109,6 @@ protected:
 
     IChatItem::Ptr findLineByPosY(qreal yPos) const;
 
-
 private:
     void retranslateUi();
     bool isActiveFileTransfer(IChatItem::Ptr l);
@@ -125,15 +121,13 @@ private:
     void moveMultiSelectionDown(int offset);
 
 private:
-    enum class SelectionMode
-    {
+    enum class SelectionMode {
         None,
         Precise,
         Multi,
     };
 
-    enum class AutoScrollDirection
-    {
+    enum class AutoScrollDirection {
         NoDirection,
         Up,
         Down,
@@ -149,7 +143,7 @@ private:
     IChatItem::Ptr busyNotification;
 
     // selection
-    int selClickedRow = -1; // These 4 are only valid while selectionMode != None
+    int selClickedRow = -1;  // These 4 are only valid while selectionMode != None
     int selClickedCol = -1;
     int selFirstRow = -1;
     int selLastRow = -1;
@@ -175,7 +169,7 @@ private:
     QMargins margins = QMargins(10, 10, 10, 10);
     qreal lineSpacing = 20.0f;
 
-    int scrollBarValue  = 0;
+    int scrollBarValue = 0;
 };
 
-#endif // CHATLOG_H
+#endif  // CHATLOG_H

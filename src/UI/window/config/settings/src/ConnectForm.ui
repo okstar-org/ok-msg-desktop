@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Copyright (c) 2022 船山信息 chuanshaninfo.com
+  - The project is licensed under Mulan PubL v2.
+  - You can use this software according to the terms and conditions of the Mulan
+  - PubL v2. You may obtain a copy of Mulan PubL v2 at:
+  -          http://license.coscl.org.cn/MulanPubL-2.0
+  - THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+  - EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+  - MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+  - See the Mulan PubL v2 for more details.
+  -->
+
+<ui version="4.0">
+    <class>ConnectForm</class>
+    <widget class="QWidget" name="ConnectForm">
+        <property name="geometry">
+            <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>459</width>
+                <height>451</height>
+            </rect>
+        </property>
+        <property name="windowTitle">
+            <string>Form</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout">
+            <property name="spacing">
+                <number>0</number>
+            </property>
+            <property name="leftMargin">
+                <number>0</number>
+            </property>
+            <property name="topMargin">
+                <number>0</number>
+            </property>
+            <property name="rightMargin">
+                <number>0</number>
+            </property>
+            <property name="bottomMargin">
+                <number>0</number>
+            </property>
+            <item>
+                <widget class="QGroupBox" name="groupBox">
+                    <property name="title">
+                        <string/>
+                    </property>
+                    <layout class="QVBoxLayout" name="verticalLayout_2">
+                        <item>
+                            <layout class="QHBoxLayout" name="horizontalLayout">
+                                <item>
+                                    <widget class="QLabel" name="proxyTypeLabel">
+                                        <property name="minimumSize">
+                                            <size>
+                                                <width>88</width>
+                                                <height>0</height>
+                                            </size>
+                                        </property>
+                                        <property name="text">
+                                            <string>Proxy type:</string>
+                                        </property>
+                                    </widget>
+                                </item>
+                                <item alignment="Qt::AlignLeft">
+                                    <widget class="QComboBox" name="proxyType">
+                                        <property name="sizePolicy">
+                                            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                                                <horstretch>0</horstretch>
+                                                <verstretch>0</verstretch>
+                                            </sizepolicy>
+                                        </property>
+                                        <property name="maximumSize">
+                                            <size>
+                                                <width>120</width>
+                                                <height>16777215</height>
+                                            </size>
+                                        </property>
+                                        <item>
+                                            <property name="text">
+                                                <string>None</string>
+                                            </property>
+                                        </item>
+                                    </widget>
+                                </item>
+                                <item>
+                                    <spacer name="horizontalSpacer">
+                                        <property name="orientation">
+                                            <enum>Qt::Horizontal</enum>
+                                        </property>
+                                        <property name="sizeHint" stdset="0">
+                                            <size>
+                                                <width>40</width>
+                                                <height>20</height>
+                                            </size>
+                                        </property>
+                                    </spacer>
+                                </item>
+                            </layout>
+                        </item>
+                        <item>
+                            <layout class="QHBoxLayout" name="horizontalLayout_2">
+                                <item>
+                                    <widget class="QLabel" name="proxyAddrLabel">
+                                        <property name="minimumSize">
+                                            <size>
+                                                <width>88</width>
+                                                <height>0</height>
+                                            </size>
+                                        </property>
+                                        <property name="text">
+                                            <string extracomment="Text on proxy addr label">Address:</string>
+                                        </property>
+                                    </widget>
+                                </item>
+                                <item>
+                                    <widget class="QLineEdit" name="proxyAddr">
+                                        <property name="minimumSize">
+                                            <size>
+                                                <width>220</width>
+                                                <height>0</height>
+                                            </size>
+                                        </property>
+                                    </widget>
+                                </item>
+                                <item>
+                                    <widget class="QLabel" name="proxyPortLabel">
+                                        <property name="text">
+                                            <string extracomment="Text on proxy port label">Port:</string>
+                                        </property>
+                                    </widget>
+                                </item>
+                                <item>
+                                    <widget class="QSpinBox" name="proxyPort">
+                                        <property name="minimum">
+                                            <number>0</number>
+                                        </property>
+                                        <property name="maximum">
+                                            <number>65535</number>
+                                        </property>
+                                    </widget>
+                                </item>
+                                <item>
+                                    <spacer name="horizontalSpacer_2">
+                                        <property name="orientation">
+                                            <enum>Qt::Horizontal</enum>
+                                        </property>
+                                        <property name="sizeHint" stdset="0">
+                                            <size>
+                                                <width>40</width>
+                                                <height>20</height>
+                                            </size>
+                                        </property>
+                                    </spacer>
+                                </item>
+                            </layout>
+                        </item>
+                        <item>
+                            <spacer name="verticalSpacer">
+                                <property name="orientation">
+                                    <enum>Qt::Vertical</enum>
+                                </property>
+                                <property name="sizeHint" stdset="0">
+                                    <size>
+                                        <width>20</width>
+                                        <height>40</height>
+                                    </size>
+                                </property>
+                            </spacer>
+                        </item>
+                    </layout>
+                </widget>
+            </item>
+        </layout>
+    </widget>
+    <resources/>
+    <connections/>
+</ui>

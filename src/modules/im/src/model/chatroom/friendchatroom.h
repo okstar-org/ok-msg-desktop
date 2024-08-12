@@ -15,30 +15,27 @@
 
 #include "chatroom.h"
 
-#include "src/core/FriendId.h"
 #include <QLabel>
 #include <QObject>
 #include <QString>
 #include <QVector>
+#include "src/core/FriendId.h"
 
 class IDialogsManager;
 class Friend;
 class Group;
 
-struct GroupToDisplay
-{
+struct GroupToDisplay {
     QString name;
     Group* group;
 };
 
-struct CircleToDisplay
-{
+struct CircleToDisplay {
     QString name;
     int circleId;
 };
 
-class FriendChatroom : public Chatroom
-{
+class FriendChatroom : public Chatroom {
     Q_OBJECT
 public:
     FriendChatroom(const FriendId* frnd, IDialogsManager* dialogsManager);
@@ -48,15 +45,12 @@ public:
 
 public slots:
 
-  const  FriendId* getFriend();
-
-
+    const FriendId* getFriend();
 
     bool canBeInvited() const;
 
     int getCircleId() const;
     QString getCircleName() const;
-
 
     void inviteFriend(const Group* group);
 
@@ -75,12 +69,10 @@ public slots:
     bool friendCanBeRemoved() const;
     void removeFriendFromDialogs();
 
-
 private:
     bool active{false};
     const FriendId* frnd{nullptr};
     IDialogsManager* dialogsManager{nullptr};
-
 };
 
-#endif // FRIEND_H
+#endif  // FRIEND_H

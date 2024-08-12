@@ -11,5 +11,56 @@
  */
 
 ChatWidget {
+    background: @groundBase;
+    border: 0px solid;
+}
 
+QWidget#ChatContentWidget
+{
+    background: @groundBase;
+    border: 0px solid;
+    border-radius: 10px;
+}
+
+QWidget#searchContactsContainer
+{
+    background: @groundBase; 
+}
+
+RoundedMaskContainer#statusPanel{
+    background: @groundBase;
+    qproperty-radius: 10;
+    border: 0px solid;
+}
+
+QWidget#ContentSeperator{
+    background: white;
+}
+
+QLineEdit#searchContactText{
+    color: #525a72;
+    border: 1px solid @themeMedium;
+    background-color: @themeMedium;
+    border-radius: 5px;
+    padding: 6px;
+}
+
+QSplitter::handle
+{
+    background: white;
+}
+
+ChatLog QScrollBar::handle
+{
+    background-color: #f7f7f7; 
+}
+
+ChatLog QScrollBar::handle:hover
+{
+    background-color: white; 
+}
+
+ChatLog QScrollBar::handle:pressed
+{
+    background-color: white; 
 }

@@ -12,13 +12,12 @@
 
 #include "rawdatabase.h"
 
-#include <cassert>
 #include <QCoreApplication>
 #include <QDebug>
 #include <QFile>
 #include <QMetaObject>
 #include <QMutexLocker>
-
+#include <cassert>
 
 /**
  * @class RawDatabase
@@ -76,21 +75,20 @@
  * Otherwise we will use toxencryptsave to derive a key and encrypt the database.
  */
 RawDatabase::RawDatabase(const QString& path, const QString& password, const QByteArray& salt)
-    : workerThread{new QThread}
-    , path{path}
-    , currentSalt{salt} // we need the salt later if a new password should be set
-    , currentHexKey{deriveKey(password, salt)}
-    , sqlite{nullptr}
-{
-    qDebug() <<__func__ <<"path:" << path;
+        : workerThread{new QThread}
+        , path{path}
+        , currentSalt{salt}  // we need the salt later if a new password should be set
+        , currentHexKey{deriveKey(password, salt)}
+        , sqlite{nullptr} {
+    qDebug() << __func__ << "path:" << path;
     workerThread->setObjectName("Database");
     moveToThread(workerThread.get());
     workerThread->start();
 
     // first try with the new salt
     if (open(path, currentHexKey)) {
-      qWarning() << "Opened the db path" << path;
-      return;
+        qWarning() << "Opened the db path" << path;
+        return;
     }
 
     // avoid opening the same db twice
@@ -103,17 +101,15 @@ RawDatabase::RawDatabase(const QString& path, const QString& password, const QBy
         upgrade = false;
     }
 
-  if (!open(path)) {
-    qFatal( "Failed to open database");
-  }
+    if (!open(path)) {
+        qFatal("Failed to open database");
+    }
 }
 
-RawDatabase::~RawDatabase()
-{
+RawDatabase::~RawDatabase() {
     close();
     workerThread->exit(0);
-    while (workerThread->isRunning())
-        workerThread->wait(50);
+    while (workerThread->isRunning()) workerThread->wait(50);
 }
 
 /**
@@ -122,16 +118,13 @@ RawDatabase::~RawDatabase()
  * @param hexKey Hex representation of the key in string.
  * @return True if success, false otherwise.
  */
-bool RawDatabase::open(const QString& path, const QString& hexKey)
-{
+bool RawDatabase::open(const QString& path, const QString& hexKey) {
     qDebug() << "open" << path;
 
     if (QThread::currentThread() != workerThread.get()) {
         bool ret;
-        QMetaObject::invokeMethod(this, "open",
-                                  Qt::BlockingQueuedConnection,
-                                  Q_RETURN_ARG(bool, ret),
-                                  Q_ARG(const QString&, path),
+        QMetaObject::invokeMethod(this, "open", Qt::BlockingQueuedConnection,
+                                  Q_RETURN_ARG(bool, ret), Q_ARG(const QString&, path),
                                   Q_ARG(const QString&, hexKey));
         return ret;
     }
@@ -143,19 +136,21 @@ bool RawDatabase::open(const QString& path, const QString& hexKey)
     }
 
     if (sqlite3_open_v2(path.toUtf8().data(), &sqlite,
-                        SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_NOMUTEX, nullptr)
-        != SQLITE_OK) {
+                        SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_NOMUTEX,
+                        nullptr) != SQLITE_OK) {
         qWarning() << "Failed to open database" << path << "with error:" << sqlite3_errmsg(sqlite);
         return false;
     }
 
-    if (sqlite3_create_function(sqlite, "regexp", 2, SQLITE_UTF8, nullptr, &RawDatabase::regexpInsensitive, nullptr, nullptr)) {
+    if (sqlite3_create_function(sqlite, "regexp", 2, SQLITE_UTF8, nullptr,
+                                &RawDatabase::regexpInsensitive, nullptr, nullptr)) {
         qWarning() << "Failed to create function regexp";
         close();
         return false;
     }
 
-    if (sqlite3_create_function(sqlite, "regexpsensitive", 2, SQLITE_UTF8, nullptr, &RawDatabase::regexpSensitive, nullptr, nullptr)) {
+    if (sqlite3_create_function(sqlite, "regexpsensitive", 2, SQLITE_UTF8, nullptr,
+                                &RawDatabase::regexpSensitive, nullptr, nullptr)) {
         qWarning() << "Failed to create function regexpsensitive";
         close();
         return false;
@@ -164,14 +159,12 @@ bool RawDatabase::open(const QString& path, const QString& hexKey)
     return true;
 }
 
-bool RawDatabase::testUsable()
-{
+bool RawDatabase::testUsable() {
     // this will unfortunately log a warning if it fails, even though we may expect failure
     return execNow("SELECT count(*) FROM sqlite_master;");
 }
 
-bool RawDatabase::setKey(const QString& hexKey)
-{
+bool RawDatabase::setKey(const QString& hexKey) {
     // setKey again to clear old bad cipher settings
     if (!execNow("PRAGMA key = \"x'" + hexKey + "'\"")) {
         qWarning() << "Failed to set encryption key";
@@ -180,8 +173,7 @@ bool RawDatabase::setKey(const QString& hexKey)
     return true;
 }
 
-int RawDatabase::getUserVersion()
-{
+int RawDatabase::getUserVersion() {
     int user_version;
     if (!execNow(RawDatabase::Query("PRAGMA user_version", [&](const QVector<QVariant>& row) {
             user_version = row[0].toLongLong();
@@ -195,8 +187,7 @@ int RawDatabase::getUserVersion()
 /**
  * @brief Close the database and free its associated resources.
  */
-void RawDatabase::close()
-{
+void RawDatabase::close() {
     if (QThread::currentThread() != workerThread.get())
         return (void)QMetaObject::invokeMethod(this, "close", Qt::BlockingQueuedConnection);
 
@@ -213,8 +204,7 @@ void RawDatabase::close()
  * @brief Checks, that the database is open.
  * @return True if the database was opened successfully.
  */
-bool RawDatabase::isOpen()
-{
+bool RawDatabase::isOpen() {
     // We don't need thread safety since only the ctor/dtor can write this pointer
     return sqlite != nullptr;
 }
@@ -224,18 +214,14 @@ bool RawDatabase::isOpen()
  * @param statement Statement to execute.
  * @return Whether the transaction was successful.
  */
-bool RawDatabase::execNow(const QString& statement)
-{
-    return execNow(Query{statement});
-}
+bool RawDatabase::execNow(const QString& statement) { return execNow(Query{statement}); }
 
 /**
  * @brief Executes a SQL transaction synchronously.
  * @param statement Statement to execute.
  * @return Whether the transaction was successful.
  */
-bool RawDatabase::execNow(const RawDatabase::Query& statement)
-{
+bool RawDatabase::execNow(const RawDatabase::Query& statement) {
     return execNow(QVector<Query>{statement});
 }
 
@@ -244,8 +230,7 @@ bool RawDatabase::execNow(const RawDatabase::Query& statement)
  * @param statements List of statements to execute.
  * @return Whether the transaction was successful.
  */
-bool RawDatabase::execNow(const QVector<RawDatabase::Query>& statements)
-{
+bool RawDatabase::execNow(const QVector<RawDatabase::Query>& statements) {
     if (!sqlite) {
         qWarning() << "Trying to startup, but the database is not open";
         return false;
@@ -266,8 +251,7 @@ bool RawDatabase::execNow(const QVector<RawDatabase::Query>& statements)
     // We can't use blocking queued here, otherwise we might process future transactions
     // before returning, but we only want to wait until this transaction is done.
     QMetaObject::invokeMethod(this, "process");
-    while (!done.load(std::memory_order_acquire))
-        QThread::msleep(10);
+    while (!done.load(std::memory_order_acquire)) QThread::msleep(10);
 
     return success.load(std::memory_order_acquire);
 }
@@ -276,18 +260,13 @@ bool RawDatabase::execNow(const QVector<RawDatabase::Query>& statements)
  * @brief Executes a SQL transaction asynchronously.
  * @param statement Statement to execute.
  */
-void RawDatabase::execLater(const QString& statement)
-{
-    execLater(Query{statement});
-}
+void RawDatabase::execLater(const QString& statement) { execLater(Query{statement}); }
 
-void RawDatabase::execLater(const RawDatabase::Query& statement)
-{
+void RawDatabase::execLater(const RawDatabase::Query& statement) {
     execLater(QVector<Query>{statement});
 }
 
-void RawDatabase::execLater(const QVector<RawDatabase::Query>& statements)
-{
+void RawDatabase::execLater(const QVector<RawDatabase::Query>& statements) {
     if (!sqlite) {
         qWarning() << "Trying to startup, but the database is not open";
         return;
@@ -306,13 +285,11 @@ void RawDatabase::execLater(const QVector<RawDatabase::Query>& statements)
 /**
  * @brief Waits until all the pending transactions are executed.
  */
-void RawDatabase::sync()
-{
+void RawDatabase::sync() {
     QMetaObject::invokeMethod(this, "process", Qt::BlockingQueuedConnection);
 }
 
-bool RawDatabase::commitDbSwap(const QString& hexKey)
-{
+bool RawDatabase::commitDbSwap(const QString& hexKey) {
     // This is racy as hell, but nobody will race with us since we hold the profile lock
     // If we crash or die here, the rename should be atomic, so we can recover no matter
     // what
@@ -334,8 +311,7 @@ bool RawDatabase::commitDbSwap(const QString& hexKey)
  *
  * @note Will process all transactions before renaming
  */
-bool RawDatabase::rename(const QString& newPath)
-{
+bool RawDatabase::rename(const QString& newPath) {
     if (!sqlite) {
         qWarning() << "Trying to change the password, but the database is not open";
         return false;
@@ -350,15 +326,12 @@ bool RawDatabase::rename(const QString& newPath)
 
     process();
 
-    if (path == newPath)
-        return true;
+    if (path == newPath) return true;
 
-    if (QFile::exists(newPath))
-        return false;
+    if (QFile::exists(newPath)) return false;
 
     close();
-    if (!QFile::rename(path, newPath))
-        return false;
+    if (!QFile::rename(path, newPath)) return false;
     path = newPath;
     return open(path, currentHexKey);
 }
@@ -368,8 +341,7 @@ bool RawDatabase::rename(const QString& newPath)
  * @note Will process all transactions before deletings.
  * @return True if success, false otherwise.
  */
-bool RawDatabase::remove()
-{
+bool RawDatabase::remove() {
     if (!sqlite) {
         qWarning() << "Trying to remove the database, but it is not open";
         return false;
@@ -393,8 +365,7 @@ bool RawDatabase::remove()
  * @param salt Salt to improve password strength, must be TOX_PASS_SALT_LENGTH bytes
  * @return String representation of key
  */
-QString RawDatabase::deriveKey(const QString& password, const QByteArray& salt)
-{
+QString RawDatabase::deriveKey(const QString& password, const QByteArray& salt) {
     return QString{};
 }
 
@@ -404,37 +375,35 @@ QString RawDatabase::deriveKey(const QString& password, const QByteArray& salt)
  *
  * @warning MUST only be called from the worker thread
  */
-void RawDatabase::process()
-{
+void RawDatabase::process() {
     assert(QThread::currentThread() == workerThread.get());
 
-    if (!sqlite)
-        return;
+    if (!sqlite) return;
 
-    forever
-    {
+    forever {
         // Fetch the next transaction
         Transaction trans;
         {
             QMutexLocker locker{&transactionsMutex};
-            if (pendingTransactions.isEmpty())
-                return;
+            if (pendingTransactions.isEmpty()) return;
             trans = pendingTransactions.dequeue();
         }
 
         // In case we exit early, prepare to signal errors
-        if (trans.success != nullptr)
-            trans.success->store(false, std::memory_order_release);
+        if (trans.success != nullptr) trans.success->store(false, std::memory_order_release);
 
         // Add transaction commands if necessary
-        if (trans.queries.size() > 1) {
-            trans.queries.prepend({"BEGIN TRANSACTION;"});
-            trans.queries.append({"COMMIT;"});
-        }
+        //        if (trans.queries.size() > 1) {
+        //            trans.queries.prepend({"BEGIN TRANSACTION;"});
+        //            trans.queries.append({"COMMIT;"});
+        //        }
 
         // Compile queries
         for (Query& query : trans.queries) {
             assert(query.statements.isEmpty());
+
+            qDebug() << "execute sql:" << query.query;
+
             // sqlite3_prepare_v2 only compiles one statement at a time in the query,
             // we need to loop over them all
             int curParam = 0;
@@ -443,13 +412,14 @@ void RawDatabase::process()
                 // Compile the next statement
                 sqlite3_stmt* stmt;
                 int r;
-                if ((r = sqlite3_prepare_v2(sqlite, compileTail,
-                                            query.query.size()
-                                                - static_cast<int>(compileTail - query.query.data()),
-                                            &stmt, &compileTail))
-                    != SQLITE_OK) {
+                if ((r = sqlite3_prepare_v2(
+                             sqlite, compileTail,
+                             query.query.size() -
+                                     static_cast<int>(compileTail - query.query.data()),
+                             &stmt, &compileTail)) != SQLITE_OK) {
                     qWarning() << "Failed to prepare statement:" << anonymizeQuery(query.query);
-                    qWarning("The error code is %d errmsg is %s", sqlite3_errcode(sqlite), sqlite3_errmsg(sqlite));
+                    qWarning("The error code is %d errmsg is %s", sqlite3_errcode(sqlite),
+                             sqlite3_errmsg(sqlite));
                     goto cleanupStatements;
                 }
                 query.statements += stmt;
@@ -463,8 +433,8 @@ void RawDatabase::process()
                 }
                 for (int i = 0; i < nParams; ++i) {
                     const QByteArray& blob = query.blobs[curParam + i];
-                    if (sqlite3_bind_blob(stmt, i + 1, blob.data(), blob.size(), SQLITE_STATIC)
-                        != SQLITE_OK) {
+                    if (sqlite3_bind_blob(stmt, i + 1, blob.data(), blob.size(), SQLITE_STATIC) !=
+                        SQLITE_OK) {
                         qWarning() << "Failed to bind param" << curParam + i << "to query"
                                    << anonymizeQuery(query.query);
                         goto cleanupStatements;
@@ -472,7 +442,6 @@ void RawDatabase::process()
                 }
                 curParam += nParams;
             } while (compileTail != query.query.data() + query.query.size());
-
 
             // Execute each statement of each query of our transaction
             for (sqlite3_stmt* stmt : query.statements) {
@@ -484,33 +453,31 @@ void RawDatabase::process()
                     // Execute our row callback
                     if (result == SQLITE_ROW && query.rowCallback) {
                         QVector<QVariant> row;
-                        for (int i = 0; i < column_count; ++i)
-                            row += extractData(stmt, i);
+                        for (int i = 0; i < column_count; ++i) row += extractData(stmt, i);
 
                         query.rowCallback(row);
                     }
                 } while (result == SQLITE_ROW);
 
-                if (result == SQLITE_DONE)
-                    continue;
+                if (result == SQLITE_DONE) continue;
 
                 QString anonQuery = anonymizeQuery(query.query);
                 switch (result) {
-                case SQLITE_ERROR:
-                    qWarning() << "Error executing query" << anonQuery;
-                    goto cleanupStatements;
-                case SQLITE_MISUSE:
-                    qWarning() << "Misuse executing query" << anonQuery;
-                    goto cleanupStatements;
-                case SQLITE_CONSTRAINT:
-                    qWarning() << "Constraint error executing query" << anonQuery;
-                    goto cleanupStatements;
-                case SQLITE_BUSY:
-                    qWarning() << "Is busying executing query" << anonQuery;
-                    goto cleanupStatements;
-                default:
-                    qWarning() << "Unknown error" << result << "executing query" << anonQuery;
-                    goto cleanupStatements;
+                    case SQLITE_ERROR:
+                        qWarning() << "Error executing query" << anonQuery;
+                        goto cleanupStatements;
+                    case SQLITE_MISUSE:
+                        qWarning() << "Misuse executing query" << anonQuery;
+                        goto cleanupStatements;
+                    case SQLITE_CONSTRAINT:
+                        qWarning() << "Constraint error executing query" << anonQuery;
+                        goto cleanupStatements;
+                    case SQLITE_BUSY:
+                        qWarning() << "Is busying executing query" << anonQuery;
+                        goto cleanupStatements;
+                    default:
+                        qWarning() << "Unknown error" << result << "executing query" << anonQuery;
+                        goto cleanupStatements;
                 }
             }
 
@@ -518,20 +485,17 @@ void RawDatabase::process()
                 query.insertCallback(RowId{sqlite3_last_insert_rowid(sqlite)});
         }
 
-        if (trans.success != nullptr)
-            trans.success->store(true, std::memory_order_release);
+        if (trans.success != nullptr) trans.success->store(true, std::memory_order_release);
 
     // Free our statements
     cleanupStatements:
         for (Query& query : trans.queries) {
-            for (sqlite3_stmt* stmt : query.statements)
-                sqlite3_finalize(stmt);
+            for (sqlite3_stmt* stmt : query.statements) sqlite3_finalize(stmt);
             query.statements.clear();
         }
 
         // Signal transaction results
-        if (trans.done != nullptr)
-            trans.done->store(true, std::memory_order_release);
+        if (trans.done != nullptr) trans.done->store(true, std::memory_order_release);
     }
 }
 
@@ -540,8 +504,7 @@ void RawDatabase::process()
  * @param query Source query, which should be anonymized.
  * @return Query without timestamps and public keys.
  */
-QString RawDatabase::anonymizeQuery(const QByteArray& query)
-{
+QString RawDatabase::anonymizeQuery(const QByteArray& query) {
     QString queryString(query);
     queryString.replace(QRegularExpression("chat.public_key='[A-F0-9]{64}'"),
                         "char.public_key='<HERE IS PUBLIC KEY>'");
@@ -557,8 +520,7 @@ QString RawDatabase::anonymizeQuery(const QByteArray& query)
  * @param col Number of column to extract.
  * @return Extracted data.
  */
-QVariant RawDatabase::extractData(sqlite3_stmt* stmt, int col)
-{
+QVariant RawDatabase::extractData(sqlite3_stmt* stmt, int col) {
     int type = sqlite3_column_type(stmt, col);
     if (type == SQLITE_INTEGER) {
         return sqlite3_column_int64(stmt, col);
@@ -576,29 +538,31 @@ QVariant RawDatabase::extractData(sqlite3_stmt* stmt, int col)
 }
 
 /**
- * @brief Use for create function in db for search data use regular experessions without case sensitive
+ * @brief Use for create function in db for search data use regular experessions without case
+ * sensitive
  * @param ctx ctx the context in which an SQL function executes
  * @param argc number of arguments
  * @param argv arguments
  */
-void RawDatabase::regexpInsensitive(sqlite3_context* ctx, int argc, sqlite3_value** argv)
-{
-    regexp(ctx, argc, argv, QRegularExpression::CaseInsensitiveOption | QRegularExpression::UseUnicodePropertiesOption);
+void RawDatabase::regexpInsensitive(sqlite3_context* ctx, int argc, sqlite3_value** argv) {
+    regexp(ctx, argc, argv,
+           QRegularExpression::CaseInsensitiveOption |
+                   QRegularExpression::UseUnicodePropertiesOption);
 }
 
 /**
- * @brief Use for create function in db for search data use regular experessions without case sensitive
+ * @brief Use for create function in db for search data use regular experessions without case
+ * sensitive
  * @param ctx the context in which an SQL function executes
  * @param argc number of arguments
  * @param argv arguments
  */
-void RawDatabase::regexpSensitive(sqlite3_context* ctx, int argc, sqlite3_value** argv)
-{
+void RawDatabase::regexpSensitive(sqlite3_context* ctx, int argc, sqlite3_value** argv) {
     regexp(ctx, argc, argv, QRegularExpression::UseUnicodePropertiesOption);
 }
 
-void RawDatabase::regexp(sqlite3_context* ctx, int argc, sqlite3_value** argv, const QRegularExpression::PatternOptions cs)
-{
+void RawDatabase::regexp(sqlite3_context* ctx, int argc, sqlite3_value** argv,
+                         const QRegularExpression::PatternOptions cs) {
     QRegularExpression regex;
     const QString str1(reinterpret_cast<const char*>(sqlite3_value_text(argv[0])));
     const QString str2(reinterpret_cast<const char*>(sqlite3_value_text(argv[1])));

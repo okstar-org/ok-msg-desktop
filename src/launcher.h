@@ -16,28 +16,26 @@
 #include <QStringList>
 #include <memory>
 
-namespace core {
+namespace ok {
 
 class Application;
 
 class Launcher {
-
 public:
-  static std::unique_ptr<Launcher> Create(int argc, char *argv[]);
+    static std::unique_ptr<Launcher> Create(int argc, char* argv[]);
 
-  Launcher(int argc, char *argv[]);
+    Launcher(int argc, char* argv[]);
 
+    int startup();
 
-  int startup();
-
-  void shutdown();
+    void shutdown();
 
 private:
-  int executeApplication();
+    int executeApplication();
 
-  int _argc;
-  char **_argv;
-  Application *app;
-  QStringList _arguments;
+    int _argc;
+    char** _argv;
+    Application* app;
+    QStringList _arguments;
 };
-} // namespace core
+}  // namespace ok

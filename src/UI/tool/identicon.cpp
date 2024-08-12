@@ -53,31 +53,30 @@
  * @brief Creates an Identicon, that visualizes a hash in graphical form.
  * @param data Data to visualize
  */
-Identicon::Identicon(const QByteArray &data) {
-  static_assert(Identicon::COLORS == 2, "Only two colors are implemented");
-  // hash with sha256
-  QByteArray hash = QCryptographicHash::hash(data, QCryptographicHash::Sha256);
-  for (int colorIndex = 0; colorIndex < COLORS; ++colorIndex) {
-    const QByteArray hashPart = hash.right(IDENTICON_COLOR_BYTES);
-    hash.truncate(hash.length() - IDENTICON_COLOR_BYTES);
+Identicon::Identicon(const QByteArray& data) {
+    static_assert(Identicon::COLORS == 2, "Only two colors are implemented");
+    // hash with sha256
+    QByteArray hash = QCryptographicHash::hash(data, QCryptographicHash::Sha256);
+    for (int colorIndex = 0; colorIndex < COLORS; ++colorIndex) {
+        const QByteArray hashPart = hash.right(IDENTICON_COLOR_BYTES);
+        hash.truncate(hash.length() - IDENTICON_COLOR_BYTES);
 
-    const qreal hue = bytesToColor(hashPart);
-    // change offset when COLORS != 2
-    const qreal lig = static_cast<qreal>(colorIndex) / COLORS + 0.3;
-    const qreal sat = 0.5;
-    colors[colorIndex].setHslF(hue, sat, lig);
-  }
-
-  const uint8_t *const hashBytes =
-      reinterpret_cast<const uint8_t *>(hash.constData());
-  // compute the block colors from the hash
-  for (int row = 0; row < IDENTICON_ROWS; ++row) {
-    for (int col = 0; col < ACTIVE_COLS; ++col) {
-      const int hashIdx = row * ACTIVE_COLS + col;
-      const uint8_t colorIndex = hashBytes[hashIdx] % COLORS;
-      identiconColors[row][col] = colorIndex;
+        const qreal hue = bytesToColor(hashPart);
+        // change offset when COLORS != 2
+        const qreal lig = static_cast<qreal>(colorIndex) / COLORS + 0.3;
+        const qreal sat = 0.5;
+        colors[colorIndex].setHslF(hue, sat, lig);
     }
-  }
+
+    const uint8_t* const hashBytes = reinterpret_cast<const uint8_t*>(hash.constData());
+    // compute the block colors from the hash
+    for (int row = 0; row < IDENTICON_ROWS; ++row) {
+        for (int col = 0; col < ACTIVE_COLS; ++col) {
+            const int hashIdx = row * ACTIVE_COLS + col;
+            const uint8_t colorIndex = hashBytes[hashIdx] % COLORS;
+            identiconColors[row][col] = colorIndex;
+        }
+    }
 }
 
 /**
@@ -87,24 +86,22 @@ Identicon::Identicon(const QByteArray &data) {
  * @return Value in the range of 0.0..1.0
  */
 float Identicon::bytesToColor(QByteArray bytes) {
-  static_assert(IDENTICON_COLOR_BYTES <= 8, "IDENTICON_COLOR max value is 8");
-  const uint8_t *const bytesChr =
-      reinterpret_cast<const uint8_t *>(bytes.constData());
-  assert(bytes.length() == IDENTICON_COLOR_BYTES);
+    static_assert(IDENTICON_COLOR_BYTES <= 8, "IDENTICON_COLOR max value is 8");
+    const uint8_t* const bytesChr = reinterpret_cast<const uint8_t*>(bytes.constData());
+    assert(bytes.length() == IDENTICON_COLOR_BYTES);
 
-  // get foreground color
-  uint64_t hue = bytesChr[0];
+    // get foreground color
+    uint64_t hue = bytesChr[0];
 
-  // convert the last bytes to an uint
-  for (int i = 1; i < IDENTICON_COLOR_BYTES; ++i) {
-    hue = hue << 8;
-    hue += bytesChr[i];
-  }
+    // convert the last bytes to an uint
+    for (int i = 1; i < IDENTICON_COLOR_BYTES; ++i) {
+        hue = hue << 8;
+        hue += bytesChr[i];
+    }
 
-  // normalize to 0.0 ... 1.0
-  return (static_cast<float>(hue)) /
-         (static_cast<float>(
-             ((static_cast<uint64_t>(1)) << (8 * IDENTICON_COLOR_BYTES)) - 1));
+    // normalize to 0.0 ... 1.0
+    return (static_cast<float>(hue)) /
+           (static_cast<float>(((static_cast<uint64_t>(1)) << (8 * IDENTICON_COLOR_BYTES)) - 1));
 }
 
 /**
@@ -114,25 +111,24 @@ float Identicon::bytesToColor(QByteArray bytes) {
  * @return a QImage with the identicon
  */
 QImage Identicon::toImage(int scaleFactor) {
-  if (scaleFactor < 1) {
-    qDebug() << "Can't scale with values <1, clamping to 1";
-    scaleFactor = 1;
-  }
-
-  scaleFactor *= IDENTICON_ROWS;
-
-  QImage pixels(IDENTICON_ROWS, IDENTICON_ROWS, QImage::Format_RGB888);
-
-  for (int row = 0; row < IDENTICON_ROWS; ++row) {
-    for (int col = 0; col < IDENTICON_ROWS; ++col) {
-      // mirror on vertical axis
-      const int columnIdx = abs((col * 2 - (IDENTICON_ROWS - 1)) / 2);
-      const int colorIdx = identiconColors[row][columnIdx];
-      pixels.setPixel(col, row, colors[colorIdx].rgb());
+    if (scaleFactor < 1) {
+        qDebug() << "Can't scale with values <1, clamping to 1";
+        scaleFactor = 1;
     }
-  }
 
-  // scale up without smoothing to make it look sharp
-  return pixels.scaled(scaleFactor, scaleFactor, Qt::IgnoreAspectRatio,
-                       Qt::FastTransformation);
+    scaleFactor *= IDENTICON_ROWS;
+
+    QImage pixels(IDENTICON_ROWS, IDENTICON_ROWS, QImage::Format_RGB888);
+
+    for (int row = 0; row < IDENTICON_ROWS; ++row) {
+        for (int col = 0; col < IDENTICON_ROWS; ++col) {
+            // mirror on vertical axis
+            const int columnIdx = abs((col * 2 - (IDENTICON_ROWS - 1)) / 2);
+            const int colorIdx = identiconColors[row][columnIdx];
+            pixels.setPixel(col, row, colors[colorIdx].rgb());
+        }
+    }
+
+    // scale up without smoothing to make it look sharp
+    return pixels.scaled(scaleFactor, scaleFactor, Qt::IgnoreAspectRatio, Qt::FastTransformation);
 }

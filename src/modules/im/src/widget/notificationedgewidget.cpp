@@ -11,22 +11,21 @@
  */
 
 #include "notificationedgewidget.h"
-#include "style.h"
 #include <QBoxLayout>
 #include <QLabel>
+#include "src/lib/settings/style.h"
 
 #include <QDebug>
 
 NotificationEdgeWidget::NotificationEdgeWidget(Position position, QWidget* parent)
-    : QWidget(parent)
-{
-    setAttribute(Qt::WA_StyledBackground); // Show background.
+        : QWidget(parent) {
+    setAttribute(Qt::WA_StyledBackground);  // Show background.
     setStyleSheet(Style::getStylesheet("notificationEdge/notificationEdge.css"));
     QHBoxLayout* layout = new QHBoxLayout(this);
     layout->addStretch();
 
     textLabel = new QLabel(this);
-    textLabel->setMinimumHeight(textLabel->sizeHint().height()); // Prevent cut-off text.
+    textLabel->setMinimumHeight(textLabel->sizeHint().height());  // Prevent cut-off text.
     layout->addWidget(textLabel);
 
     QLabel* arrowLabel = new QLabel(this);
@@ -42,13 +41,11 @@ NotificationEdgeWidget::NotificationEdgeWidget(Position position, QWidget* paren
     setCursor(Qt::PointingHandCursor);
 }
 
-void NotificationEdgeWidget::updateNotificationCount(int count)
-{
+void NotificationEdgeWidget::updateNotificationCount(int count) {
     textLabel->setText(tr("Unread message(s)", "", count));
 }
 
-void NotificationEdgeWidget::mouseReleaseEvent(QMouseEvent* event)
-{
+void NotificationEdgeWidget::mouseReleaseEvent(QMouseEvent* event) {
     emit clicked();
     QWidget::mousePressEvent(event);
 }

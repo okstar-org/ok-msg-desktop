@@ -23,8 +23,7 @@ class FriendWidget;
 class QVBoxLayout;
 class QHBoxLayout;
 
-class CategoryWidget : public GenericChatItemWidget
-{
+class CategoryWidget : public GenericChatItemWidget {
     Q_OBJECT
 public:
     explicit CategoryWidget(bool compact, QWidget* parent = nullptr);
@@ -58,15 +57,9 @@ protected:
     void emitChatroomWidget(QLayout* layout, int index);
 
 private:
-    virtual void onSetName()
-    {
-    }
-    virtual void onExpand()
-    {
-    }
-    virtual void onAddFriendWidget(FriendWidget*)
-    {
-    }
+    virtual void onSetName() {}
+    virtual void onExpand() {}
+    virtual void onAddFriendWidget(FriendWidget*) {}
 
     QWidget* listWidget;
     FriendListLayout* listLayout;
@@ -79,4 +72,4 @@ private:
     bool expanded = false;
 };
 
-#endif // CATEGORYWIDGET_H
+#endif  // CATEGORYWIDGET_H

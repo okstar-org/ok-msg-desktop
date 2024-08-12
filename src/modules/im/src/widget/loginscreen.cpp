@@ -10,26 +10,24 @@
  * See the Mulan PubL v2 for more details.
  */
 
-
 #include "loginscreen.h"
-#include "ui_loginscreen.h"
-#include "src/persistence/profile.h"
-#include "src/persistence/profilelocker.h"
-#include "src/persistence/settings.h"
-#include "src/widget/form/setpassworddialog.h"
-#include "src/widget/style.h"
-#include "src/widget/tool/profileimporter.h"
-#include "lib/settings/translator.h"
 #include <QDebug>
 #include <QDialog>
 #include <QMessageBox>
 #include <QToolButton>
+#include "lib/settings/translator.h"
+#include "src/lib/settings/style.h"
+#include "src/persistence/profile.h"
+#include "src/persistence/profilelocker.h"
+#include "src/persistence/settings.h"
+#include "src/widget/form/setpassworddialog.h"
+#include "src/widget/tool/profileimporter.h"
+#include "ui_loginscreen.h"
 
 LoginScreen::LoginScreen(const QString& initialProfileName, QWidget* parent)
-    : QDialog(parent)
-    , ui(new Ui::LoginScreen)
-    , quitShortcut{QKeySequence(Qt::CTRL + Qt::Key_Q), this}
-{
+        : QDialog(parent)
+        , ui(new Ui::LoginScreen)
+        , quitShortcut{QKeySequence(Qt::CTRL + Qt::Key_Q), this} {
     ui->setupUi(this);
 
     // permanently disables maximize button https://github.com/qTox/qTox/issues/1973
@@ -37,7 +35,8 @@ LoginScreen::LoginScreen(const QString& initialProfileName, QWidget* parent)
     this->setFixedSize(this->size());
 
     connect(&quitShortcut, &QShortcut::activated, this, &LoginScreen::close);
-    connect(ui->newProfilePgbtn, &QPushButton::clicked, this, &LoginScreen::onNewProfilePageClicked);
+    connect(ui->newProfilePgbtn, &QPushButton::clicked, this,
+            &LoginScreen::onNewProfilePageClicked);
     connect(ui->loginPgbtn, &QPushButton::clicked, this, &LoginScreen::onLoginPageClicked);
     connect(ui->createAccountButton, &QPushButton::clicked, this, &LoginScreen::onCreateNewProfile);
     connect(ui->newUsername, &QLineEdit::returnPressed, this, &LoginScreen::onCreateNewProfile);
@@ -49,7 +48,8 @@ LoginScreen::LoginScreen(const QString& initialProfileName, QWidget* parent)
     connect(ui->loginPassword, &QLineEdit::returnPressed, this, &LoginScreen::onLogin);
     connect(ui->newPass, &QLineEdit::textChanged, this, &LoginScreen::onPasswordEdited);
     connect(ui->newPassConfirm, &QLineEdit::textChanged, this, &LoginScreen::onPasswordEdited);
-    connect(ui->autoLoginCB, &QCheckBox::stateChanged, this, &LoginScreen::onAutoLoginCheckboxChanged);
+    connect(ui->autoLoginCB, &QCheckBox::stateChanged, this,
+            &LoginScreen::onAutoLoginCheckboxChanged);
     connect(ui->importButton, &QPushButton::clicked, this, &LoginScreen::onImportProfile);
 
     reset(initialProfileName);
@@ -59,8 +59,7 @@ LoginScreen::LoginScreen(const QString& initialProfileName, QWidget* parent)
     settings::Translator::registerHandler(std::bind(&LoginScreen::retranslateUi, this), this);
 }
 
-LoginScreen::~LoginScreen()
-{
+LoginScreen::~LoginScreen() {
     settings::Translator::unregister(this);
     delete ui;
 }
@@ -68,8 +67,7 @@ LoginScreen::~LoginScreen()
 /**
  * @brief Resets the UI, clears all fields.
  */
-void LoginScreen::reset(const QString& initialProfileName)
-{
+void LoginScreen::reset(const QString& initialProfileName) {
     ui->newUsername->clear();
     ui->newPass->clear();
     ui->newPassConfirm->clear();
@@ -92,51 +90,36 @@ void LoginScreen::reset(const QString& initialProfileName)
     }
 }
 
-void LoginScreen::onProfileLoaded()
-{
-    done(QDialog::Accepted);
-}
+void LoginScreen::onProfileLoaded() { done(QDialog::Accepted); }
 
-void LoginScreen::onProfileLoadFailed()
-{
+void LoginScreen::onProfileLoadFailed() {
     QMessageBox::critical(this, tr("Couldn't load this profile"), tr("Wrong password."));
     ui->loginPassword->setFocus();
     ui->loginPassword->selectAll();
 }
 
-void LoginScreen::onAutoLoginChanged(bool state)
-{
-    ui->autoLoginCB->setChecked(state);
-}
+void LoginScreen::onAutoLoginChanged(bool state) { ui->autoLoginCB->setChecked(state); }
 
-bool LoginScreen::event(QEvent* event)
-{
+bool LoginScreen::event(QEvent* event) {
     switch (event->type()) {
 #ifdef Q_OS_MAC
-    case QEvent::WindowActivate:
-    case QEvent::WindowStateChange:
-        emit windowStateChanged(windowState());
-        break;
+        case QEvent::WindowActivate:
+        case QEvent::WindowStateChange:
+            emit windowStateChanged(windowState());
+            break;
 #endif
-    default:
-        break;
+        default:
+            break;
     }
 
     return QWidget::event(event);
 }
 
-void LoginScreen::onNewProfilePageClicked()
-{
-    ui->stackedWidget->setCurrentIndex(0);
-}
+void LoginScreen::onNewProfilePageClicked() { ui->stackedWidget->setCurrentIndex(0); }
 
-void LoginScreen::onLoginPageClicked()
-{
-    ui->stackedWidget->setCurrentIndex(1);
-}
+void LoginScreen::onLoginPageClicked() { ui->stackedWidget->setCurrentIndex(1); }
 
-void LoginScreen::onCreateNewProfile()
-{
+void LoginScreen::onCreateNewProfile() {
     QString name = ui->newUsername->text();
     QString pass = ui->newPass->text();
 
@@ -168,10 +151,8 @@ void LoginScreen::onCreateNewProfile()
     emit createNewProfile(name, pass);
 }
 
-void LoginScreen::onLoginUsernameSelected(const QString& name)
-{
-    if (name.isEmpty())
-        return;
+void LoginScreen::onLoginUsernameSelected(const QString& name) {
+    if (name.isEmpty()) return;
 
     ui->loginPassword->clear();
     if (Profile::isEncrypted(name)) {
@@ -186,12 +167,11 @@ void LoginScreen::onLoginUsernameSelected(const QString& name)
         ui->loginPassword->hide();
         ui->autoLoginCB->show();
         ui->autoLoginCB->setToolTip(
-            tr("Password protected profiles can't be automatically loaded."));
+                tr("Password protected profiles can't be automatically loaded."));
     }
 }
 
-void LoginScreen::onLogin()
-{
+void LoginScreen::onLogin() {
     QString name = ui->loginUsernames->currentText();
     QString pass = ui->loginPassword->text();
 
@@ -212,24 +192,18 @@ void LoginScreen::onLogin()
     emit loadProfile(name, pass);
 }
 
-void LoginScreen::onPasswordEdited()
-{
+void LoginScreen::onPasswordEdited() {
     ui->passStrengthMeter->setValue(SetPasswordDialog::getPasswordStrength(ui->newPass->text()));
 }
 
-void LoginScreen::onAutoLoginCheckboxChanged(int state)
-{
+void LoginScreen::onAutoLoginCheckboxChanged(int state) {
     auto cstate = static_cast<Qt::CheckState>(state);
     emit autoLoginChanged(cstate == Qt::CheckState::Checked);
 }
 
-void LoginScreen::retranslateUi()
-{
-    ui->retranslateUi(this);
-}
+void LoginScreen::retranslateUi() { ui->retranslateUi(this); }
 
-void LoginScreen::onImportProfile()
-{
+void LoginScreen::onImportProfile() {
     ProfileImporter pi(this);
     if (pi.importProfile()) {
         reset();

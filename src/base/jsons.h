@@ -16,20 +16,20 @@
 #include <QJsonObject>
 #include <QJsonValue>
 #include <QString>
-
+namespace ok::base {
 class Jsons {
 public:
-  inline static QString toString(const QJsonDocument &document) {
-    return QString{document.toJson()};
-  }
+    inline static QString toString(const QJsonDocument& document) {
+        return QString{document.toJson(QJsonDocument::Compact)};
+    }
 
-  inline static QJsonDocument toJSON(const QByteArray &buf) {
-    return QJsonDocument::fromJson(buf);
-  }
+    inline static QJsonDocument toJSON(const QByteArray& buf) {
+        return QJsonDocument::fromJson(buf);
+    }
 };
 
-template <typename T>
-class JsonAble {
+template <typename T> class JsonAble {
 public:
- virtual T fromJson(const QJsonObject &data) = 0;
+    virtual T fromJson(const QJsonObject& data) = 0;
 };
+}

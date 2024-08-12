@@ -24,8 +24,7 @@
 /**
  * @breaf Manage all content dialogs
  */
-class ContentDialogManager : public QObject, public IDialogsManager
-{
+class ContentDialogManager : public QObject, public IDialogsManager {
     Q_OBJECT
 public:
     ContentDialog* current();
@@ -41,9 +40,9 @@ public:
     IDialogs* getGroupDialogs(const GroupId& groupId) const;
 
     void addFriendToDialog(const FriendId& friendPx,
-                                    ContentDialog* dialog,
-                                    FriendChatroom* chatroom,
-                                    GenericChatForm* form);
+                           ContentDialog* dialog,
+                           FriendChatroom* chatroom,
+                           GenericChatForm* form);
 
     ContentDialog* addGroupToDialog(const GroupId& groupId,
                                     ContentDialog* dialog,
@@ -69,4 +68,4 @@ private:
     static ContentDialogManager* instance;
 };
 
-#endif // _CONTENT_DIALOG_MANAGER_H_
+#endif  // _CONTENT_DIALOG_MANAGER_H_

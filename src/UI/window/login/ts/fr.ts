@@ -61,11 +61,11 @@
         <translation>Veuillez sélectionner</translation>
     </message>
     <message>
-        <source>Sign Up</source>
+        <source>Sign up</source>
         <translation>Numéro de compte enregistré</translation>
     </message>
     <message>
-        <source>Retrieve Password</source>
+        <source>Forgot password</source>
         <translation>Récupérer le mot de passe</translation>
     </message>
 	<message>

@@ -24,62 +24,62 @@
 #include <QTime>
 #include <QWidget>
 
-namespace base {
+namespace ok::base {
 
 class Widgets {
 public:
-  Widgets();
+    Widgets();
 
-  static void SetPalette(QWidget *w, QPalette::ColorRole role, QColor color) {
-    if (w) {
-      QPalette palette(w->palette());
-      palette.setColor(role, color);
-      w->setPalette(palette);
-      w->setAutoFillBackground(true);
+    static void SetPalette(QWidget* w, QPalette::ColorRole role, QColor color) {
+        if (w) {
+            QPalette palette(w->palette());
+            palette.setColor(role, color);
+            w->setPalette(palette);
+            w->setAutoFillBackground(true);
+        }
     }
-  }
 
-  static void SetPalette(QWidget *w, QPalette::ColorRole role, QBrush brush) {
-    if (w) {
-      w->setAutoFillBackground(true);
-      QPalette palette(w->palette());
-      palette.setBrush(role, brush);
-      w->setPalette(palette);
+    static void SetPalette(QWidget* w, QPalette::ColorRole role, QBrush brush) {
+        if (w) {
+            w->setAutoFillBackground(true);
+            QPalette palette(w->palette());
+            palette.setBrush(role, brush);
+            w->setPalette(palette);
+        }
     }
-  }
 
-  static void SetNoMargins(QWidget *w) {
-    if (w) {
-      w->setContentsMargins(QMargins(0, 0, 0, 0));
+    static void SetNoMargins(QWidget* w) {
+        if (w) {
+            w->setContentsMargins(QMargins(0, 0, 0, 0));
+        }
     }
-  }
 
-  static void SetNoMargins(QLayout *w) {
-    if (w) {
-      w->setContentsMargins(QMargins(0, 0, 0, 0));
+    static void SetNoMargins(QLayout* w) {
+        if (w) {
+            w->setContentsMargins(QMargins(0, 0, 0, 0));
+        }
     }
-  }
 
-  /**
-   * 实例阴影shadow
-   * @param w
-   * @param offset
-   * @param color
-   * @param blurRadius
-   */
-  static void SetShadowEffect(QWidget *w,
-                              const QPointF &offset,
-                              const QColor &color,
-                              qreal blurRadius) {
-    auto *shadow_effect = new QGraphicsDropShadowEffect(w);
-    shadow_effect->setOffset(offset);
-    shadow_effect->setColor(color);
-    shadow_effect->setBlurRadius(blurRadius);
-    w->setGraphicsEffect(shadow_effect);
-  }
+    /**
+     * 实例阴影shadow
+     * @param w
+     * @param offset
+     * @param color
+     * @param blurRadius
+     */
+    static void SetShadowEffect(QWidget* w,
+                                const QPointF& offset,
+                                const QColor& color,
+                                qreal blurRadius) {
+        auto* shadow_effect = new QGraphicsDropShadowEffect(w);
+        shadow_effect->setOffset(offset);
+        shadow_effect->setColor(color);
+        shadow_effect->setBlurRadius(blurRadius);
+        w->setGraphicsEffect(shadow_effect);
+    }
 
-  static void OpenExternUrl(const QUrl &url) { QDesktopServices::openUrl(url); }
+    static void OpenExternUrl(const QUrl& url) { QDesktopServices::openUrl(url); }
 };
-} // namespace base
+}  // namespace ok::base
 
-#endif // WIDGETS_H
+#endif  // WIDGETS_H

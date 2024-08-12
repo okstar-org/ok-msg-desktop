@@ -13,14 +13,13 @@
 #ifndef NOTIFICATIONSCROLLAREA_H
 #define NOTIFICATIONSCROLLAREA_H
 
-#include "tool/adjustingscrollarea.h"
 #include <QHash>
+#include "tool/adjustingscrollarea.h"
 
 class GenericChatroomWidget;
 class NotificationEdgeWidget;
 
-class NotificationScrollArea final : public AdjustingScrollArea
-{
+class NotificationScrollArea final : public AdjustingScrollArea {
 public:
     explicit NotificationScrollArea(QWidget* parent = nullptr);
 
@@ -37,12 +36,7 @@ private slots:
     void findPreviousWidget();
 
 private:
-    enum Visibility : uint8_t
-    {
-        Visible,
-        Above,
-        Below
-    };
+    enum Visibility : uint8_t { Visible, Above, Below };
     Visibility widgetVisible(QWidget* widget) const;
     void recalculateTopEdge();
     void recalculateBottomEdge();
@@ -54,4 +48,4 @@ private:
     size_t referencesBelow = 0;
 };
 
-#endif // NOTIFICATIONSCROLLAREA_H
+#endif  // NOTIFICATIONSCROLLAREA_H

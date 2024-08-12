@@ -46,6 +46,7 @@ class QToolButton;
 class QVBoxLayout;
 class QHBoxLayout;
 class IMessageDispatcher;
+class EmoticonsWidget;
 struct Message;
 
 namespace Ui {
@@ -58,8 +59,7 @@ class SpellCheckDecorator;
 }
 #endif
 
-class GenericChatForm : public QWidget
-{
+class GenericChatForm : public QWidget {
     Q_OBJECT
 public:
     GenericChatForm(const ContactId* contact,
@@ -67,7 +67,6 @@ public:
                     IMessageDispatcher& messageDispatcher,
                     QWidget* parent = nullptr);
     ~GenericChatForm() override;
-
 
     void setContact(const Contact* contact);
     void removeContact();
@@ -82,9 +81,7 @@ public:
     QDateTime getLatestTime() const;
     QDateTime getFirstTime() const;
 
-    [[__nodiscard__]] inline ChatLog *getChatLog() const{
-        return chatLog;
-    }
+    [[__nodiscard__]] inline ChatLog* getChatLog() const { return chatLog; }
 
 signals:
     void messageInserted();
@@ -110,8 +107,6 @@ protected slots:
     void clearChatArea();
     void clearChatArea(bool confirm, bool inform);
     void onSelectAllClicked();
-    void showFileMenu();
-    void hideFileMenu();
     void onShowMessagesClicked();
     void onSplitterMoved(int pos, int index);
     void quoteSelectedText();
@@ -120,7 +115,7 @@ protected slots:
     void onExportChat();
     void searchFormShow();
     void onSearchTriggered();
-    void updateShowDateInfo(const IChatItem::Ptr &prevLine, const IChatItem::Ptr &topLine);
+    void updateShowDateInfo(const IChatItem::Ptr& prevLine, const IChatItem::Ptr& topLine);
 
     void searchInBegin(const QString& phrase, const ParameterSearch& parameter);
     void onSearchUp(const QString& phrase, const ParameterSearch& parameter);
@@ -133,8 +128,8 @@ protected slots:
     void loadHistoryLower();
 
 #ifdef OK_PLUGIN
-    void onPluginEnabled(const QString &shortName);
-    void onPluginDisabled(const QString &shortName);
+    void onPluginEnabled(const QString& shortName);
+    void onPluginDisabled(const QString& shortName);
 #endif
 
 private:
@@ -144,28 +139,26 @@ private:
 
 protected:
     // ChatMessage::Ptr createMessage(const ToxPk& author, const QString& message,
-    //                                const QDateTime& datetime, bool isAction, bool isSent, bool colorizeName = false);
+    //                                const QDateTime& datetime, bool isAction, bool isSent, bool
+    //                                colorizeName = false);
     bool needsToHideName(ChatLogIdx idx) const;
 
-    void adjustFileMenuPosition();
     void disableSearchText();
-    bool searchInText(const QString& phrase, const ParameterSearch& parameter, SearchDirection direction);
-    std::pair<int, int> indexForSearchInLine(const QString& txt, const QString& phrase, const ParameterSearch& parameter, SearchDirection direction);
-
+    bool searchInText(const QString& phrase, const ParameterSearch& parameter,
+                      SearchDirection direction);
+    std::pair<int, int> indexForSearchInLine(const QString& txt, const QString& phrase,
+                                             const ParameterSearch& parameter,
+                                             SearchDirection direction);
 
     virtual void insertChatMessage(IChatItem::Ptr msg);
 
-    virtual void hideEvent(QHideEvent* event) override;
     virtual void showEvent(QShowEvent*) override;
     virtual bool event(QEvent*) final override;
-    virtual void resizeEvent(QResizeEvent* event) final override;
     virtual bool eventFilter(QObject* object, QEvent* event) final override;
-
 
 protected:
     const ContactId* contactId;
-    const Contact *contact = nullptr;
- 
+    const Contact* contact = nullptr;
 
     bool audioInputFlag;
     bool audioOutputFlag;
@@ -179,7 +172,7 @@ protected:
     // QAction* exportChatAction;
 
     QMenu menu;
-    QHBoxLayout *mainFootLayout;
+    QHBoxLayout* mainFootLayout;
     bool isEncrypt;
     QPushButton* encryptButton;
 
@@ -190,16 +183,14 @@ protected:
 
     QSplitter* bodySplitter;
 
-//    ChatFormHeader* headWidget;
+    //    SearchForm *searchForm;
 
-    SearchForm *searchForm;
-    QLabel *dateInfo;
+    //    QLabel *dateInfo;
     ChatLog* chatLog;
     ChatTextEdit* msgEdit;
 #ifdef SPELL_CHECKING
     Sonnet::SpellCheckDecorator* decorator{nullptr};
 #endif
-    FlyoutOverlayWidget* fileFlyout;
 
     Widget* parent;
 
@@ -208,6 +199,7 @@ protected:
     SearchPos searchPos;
     std::map<ChatLogIdx, IChatItem::Ptr> messages;
     bool colorizeNames = false;
+    EmoticonsWidget* emoticonsWidget;
 };
 
-#endif // GENERICCHATFORM_H
+#endif  // GENERICCHATFORM_H

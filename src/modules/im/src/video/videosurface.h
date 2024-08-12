@@ -13,13 +13,12 @@
 #ifndef SELFCAMVIEW_H
 #define SELFCAMVIEW_H
 
-#include "src/video/videosource.h"
 #include <QWidget>
 #include <atomic>
 #include <memory>
+#include "src/video/videosource.h"
 
-class VideoSurface : public QWidget
-{
+class VideoSurface : public QWidget {
     Q_OBJECT
 
 public:
@@ -65,4 +64,4 @@ private:
     bool expanding;
 };
 
-#endif // SELFCAMVIEW_H
+#endif  // SELFCAMVIEW_H

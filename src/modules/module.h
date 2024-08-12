@@ -12,44 +12,41 @@
 
 #pragma once
 
-#include "lib/session/AuthSession.h"
 #include <QObject>
 #include <QString>
 #include <QWidget>
+#include "lib/session/AuthSession.h"
 
 class Profile;
 class QWidget;
 class IAudioControl;
 
 typedef struct {
-  QByteArray windowGeometry;
+    QByteArray windowGeometry;
 } SavedInfo;
 
 typedef enum {
-  MM_Avatar //头像
+    MM_Avatar  // 头像
 } PayloadType;
 
 typedef struct {
-  PayloadType type;
-  QByteArray payload;
+    PayloadType type;
+    QByteArray payload;
 } ModuleMessage;
 
-class Module  {
-
+class Module {
 public:
-  static QString Name();
-  static Module *Create();
+    static QString Name();
+    static Module* Create();
 
-
-  virtual void init(Profile *p) = 0;
-  virtual QString name() = 0;
-  virtual void start(ok::session::SignInInfo &signInInfo, QWidget *parent = nullptr) = 0;
-  virtual bool isStarted() = 0;
-  virtual void hide() = 0;
-  virtual void onSave(SavedInfo &) = 0;
-  virtual void cleanup() = 0;
-  virtual void destroy()=0;
-
+    virtual ~Module(){};
+    virtual void init(Profile* p) = 0;
+    virtual QString name() = 0;
+    virtual QWidget* widget() = 0;
+    virtual void start(std::shared_ptr<ok::session::AuthSession> session) = 0;
+    virtual bool isStarted() = 0;
+    virtual void hide() = 0;
+    virtual void onSave(SavedInfo&) = 0;
+    virtual void cleanup() = 0;
+    virtual void destroy() = 0;
 };
-
-

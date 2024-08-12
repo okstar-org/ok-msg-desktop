@@ -11,13 +11,14 @@
  */
 
 #include "videosurface.h"
+#include "base/SvgUtils.h"
 #include "src/core/core.h"
-#include "src/model/friend.h"
 #include "src/friendlist.h"
+#include "src/lib/settings/style.h"
+#include "src/model/friend.h"
 #include "src/persistence/settings.h"
 #include "src/video/videoframe.h"
 #include "src/widget/friendwidget.h"
-#include "src/widget/style.h"
 
 #include <QDebug>
 #include <QLabel>
@@ -28,38 +29,27 @@
  * @brief Fast lock for lastFrame.
  */
 
-float getSizeRatio(const QSize size)
-{
-    return size.width() / static_cast<float>(size.height());
-}
+float getSizeRatio(const QSize size) { return size.width() / static_cast<float>(size.height()); }
 
 VideoSurface::VideoSurface(const QPixmap& avatar, QWidget* parent, bool expanding)
-    : QWidget{parent}
-    , source{nullptr}
-    , frameLock{false}
-    , hasSubscribed{0}
-    , avatar{avatar}
-    , ratio{1.0f}
-    , expanding{expanding}
-{
+        : QWidget{parent}
+        , source{nullptr}
+        , frameLock{false}
+        , hasSubscribed{0}
+        , avatar{avatar}
+        , ratio{1.0f}
+        , expanding{expanding} {
     recalulateBounds();
 }
 
 VideoSurface::VideoSurface(const QPixmap& avatar, VideoSource* source, QWidget* parent)
-    : VideoSurface(avatar, parent)
-{
+        : VideoSurface(avatar, parent) {
     setSource(source);
 }
 
-VideoSurface::~VideoSurface()
-{
-    unsubscribe();
-}
+VideoSurface::~VideoSurface() { unsubscribe(); }
 
-bool VideoSurface::isExpanding() const
-{
-    return expanding;
-}
+bool VideoSurface::isExpanding() const { return expanding; }
 
 /**
  * @brief Update source.
@@ -68,41 +58,30 @@ bool VideoSurface::isExpanding() const
  *
  * Unsubscribe from old source and subscribe to new.
  */
-void VideoSurface::setSource(VideoSource* src)
-{
-    if (source == src)
-        return;
+void VideoSurface::setSource(VideoSource* src) {
+    if (source == src) return;
 
     unsubscribe();
     source = src;
     subscribe();
 }
 
-QRect VideoSurface::getBoundingRect() const
-{
+QRect VideoSurface::getBoundingRect() const {
     QRect bRect = boundingRect;
     bRect.setBottomRight(QPoint(boundingRect.bottom() + 1, boundingRect.right() + 1));
     return boundingRect;
 }
 
-float VideoSurface::getRatio() const
-{
-    return ratio;
-}
+float VideoSurface::getRatio() const { return ratio; }
 
-void VideoSurface::setAvatar(const QPixmap& pixmap)
-{
+void VideoSurface::setAvatar(const QPixmap& pixmap) {
     avatar = pixmap;
     update();
 }
 
-QPixmap VideoSurface::getAvatar() const
-{
-    return avatar;
-}
+QPixmap VideoSurface::getAvatar() const { return avatar; }
 
-void VideoSurface::subscribe()
-{
+void VideoSurface::subscribe() {
     if (source && hasSubscribed++ == 0) {
         source->subscribe();
         connect(source, &VideoSource::frameAvailable, this, &VideoSurface::onNewFrameAvailable);
@@ -110,13 +89,10 @@ void VideoSurface::subscribe()
     }
 }
 
-void VideoSurface::unsubscribe()
-{
-    if (!source || hasSubscribed == 0)
-        return;
+void VideoSurface::unsubscribe() {
+    if (!source || hasSubscribed == 0) return;
 
-    if (--hasSubscribed != 0)
-        return;
+    if (--hasSubscribed != 0) return;
 
     lock();
     lastFrame.reset();
@@ -132,8 +108,7 @@ void VideoSurface::unsubscribe()
     source->unsubscribe();
 }
 
-void VideoSurface::onNewFrameAvailable(const std::shared_ptr<VideoFrame>& newFrame)
-{
+void VideoSurface::onNewFrameAvailable(const std::shared_ptr<VideoFrame>& newFrame) {
     QSize newSize;
 
     lock();
@@ -143,7 +118,7 @@ void VideoSurface::onNewFrameAvailable(const std::shared_ptr<VideoFrame>& newFra
 
     float newRatio = getSizeRatio(newSize);
 
-    if (!qFuzzyCompare(newRatio, ratio)  && isVisible()) {
+    if (!qFuzzyCompare(newRatio, ratio) && isVisible()) {
         ratio = newRatio;
         recalulateBounds();
         emit ratioChanged();
@@ -153,31 +128,28 @@ void VideoSurface::onNewFrameAvailable(const std::shared_ptr<VideoFrame>& newFra
     update();
 }
 
-void VideoSurface::onSourceStopped()
-{
+void VideoSurface::onSourceStopped() {
     // If the source's stream is on hold, just revert back to the avatar view
     lastFrame.reset();
     update();
 }
 
-void VideoSurface::paintEvent(QPaintEvent*)
-{
+void VideoSurface::paintEvent(QPaintEvent*) {
     lock();
 
     QPainter painter(this);
     painter.fillRect(painter.viewport(), Qt::black);
     if (lastFrame) {
         QImage frame = lastFrame->toQImage(rect().size());
-        if (frame.isNull())
-            lastFrame.reset();
+        if (frame.isNull()) lastFrame.reset();
         painter.drawImage(boundingRect, frame, frame.rect(), Qt::NoFormatConversion);
     } else {
         painter.fillRect(boundingRect, Qt::white);
         QPixmap drawnAvatar = avatar;
 
         if (drawnAvatar.isNull())
-            drawnAvatar = Style::scaleSvgImage(":/img/contact_dark.svg", boundingRect.width(),
-                                               boundingRect.height());
+            drawnAvatar = ok::base::SvgUtils::scaleSvgImage(":/img/contact_dark.svg", boundingRect.width(),
+                                                  boundingRect.height());
 
         painter.drawPixmap(boundingRect, drawnAvatar, drawnAvatar.rect());
     }
@@ -185,21 +157,18 @@ void VideoSurface::paintEvent(QPaintEvent*)
     unlock();
 }
 
-void VideoSurface::resizeEvent(QResizeEvent* event)
-{
+void VideoSurface::resizeEvent(QResizeEvent* event) {
     QWidget::resizeEvent(event);
     recalulateBounds();
     emit boundaryChanged();
 }
 
-void VideoSurface::showEvent(QShowEvent* e)
-{
+void VideoSurface::showEvent(QShowEvent* e) {
     Q_UNUSED(e);
     emit ratioChanged();
 }
 
-void VideoSurface::recalulateBounds()
-{
+void VideoSurface::recalulateBounds() {
     if (expanding) {
         boundingRect = contentsRect();
     } else {
@@ -221,15 +190,10 @@ void VideoSurface::recalulateBounds()
     update();
 }
 
-void VideoSurface::lock()
-{
+void VideoSurface::lock() {
     // Fast lock
     bool expected = false;
-    while (!frameLock.compare_exchange_weak(expected, true))
-        expected = false;
+    while (!frameLock.compare_exchange_weak(expected, true)) expected = false;
 }
 
-void VideoSurface::unlock()
-{
-    frameLock = false;
-}
+void VideoSurface::unlock() { frameLock = false; }

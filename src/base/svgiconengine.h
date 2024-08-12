@@ -17,30 +17,30 @@
 #include <QPixmapCache>
 #include <QSvgRenderer>
 #include <memory>
-
+namespace ok::base {
 class SvgIconEngine : public QIconEngine {
-
-    QString                       name;
+    QString name;
     std::shared_ptr<QSvgRenderer> renderer;
 
     struct CacheEntry {
         QPixmapCache::Key key;
-        QSize             size;
+        QSize size;
     };
     std::list<CacheEntry> normalCache, disabledCache;
 
 public:
-    SvgIconEngine(const QString &name, std::shared_ptr<QSvgRenderer> renderer) : name(name), renderer(renderer) { }
+    SvgIconEngine(const QString& name, std::shared_ptr<QSvgRenderer> renderer)
+            : name(name), renderer(renderer) {}
 
-    QSize        actualSize(const QSize &size, QIcon::Mode mode, QIcon::State state) override;
-    QIconEngine *clone() const override;
-    void         paint(QPainter *painter, const QRect &rect, QIcon::Mode mode, QIcon::State state) override;
-    void         virtual_hook(int id, void *data) override;
+    QSize actualSize(const QSize& size, QIcon::Mode mode, QIcon::State state) override;
+    QIconEngine* clone() const override;
+    void paint(QPainter* painter, const QRect& rect, QIcon::Mode mode, QIcon::State state) override;
+    void virtual_hook(int id, void* data) override;
 
-    QPixmap pixmap(const QSize &size, QIcon::Mode mode, QIcon::State state) override;
+    QPixmap pixmap(const QSize& size, QIcon::Mode mode, QIcon::State state) override;
 
 private:
-    QPixmap renderPixmap(const QSize &size, QIcon::Mode mode, QIcon::State state);
+    QPixmap renderPixmap(const QSize& size, QIcon::Mode mode, QIcon::State state);
 };
-
-#endif // SVGICONENGINE_H
+}
+#endif  // SVGICONENGINE_H

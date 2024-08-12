@@ -12,7 +12,6 @@
 
 #include "optionstree.h"
 
-
 #include <QDomDocument>
 #include <QDomElement>
 #include <QStringList>
@@ -20,20 +19,19 @@
 /**
  * Default constructor
  */
-OptionsTree::OptionsTree(QObject *parent) : QObject(parent) { }
+OptionsTree::OptionsTree(QObject* parent) : QObject(parent) {}
 
 /**
  * Destructor
  */
-OptionsTree::~OptionsTree() { }
+OptionsTree::~OptionsTree() {}
 
 /**
  * Returns the value of the specified option
  * \param name 'Path' to the option ("appearance.emoticons.useSmilies")
  * \return value of the option. Will be invalid if non-existent.
  */
-QVariant OptionsTree::getOption(const QString &name, const QVariant &defaultValue) const
-{
+QVariant OptionsTree::getOption(const QString& name, const QVariant& defaultValue) const {
     QVariant value = tree_.getValue(name);
     if (value == VariantTree::missingValue) {
         value = defaultValue;
@@ -54,9 +52,8 @@ QVariant OptionsTree::getOption(const QString &name, const QVariant &defaultValu
  * \param name "Path" to the option
  * \param value Value of the option
  */
-void OptionsTree::setOption(const QString &name, const QVariant &value)
-{
-    const QVariant &prev = tree_.getValue(name);
+void OptionsTree::setOption(const QString& name, const QVariant& value) {
+    const QVariant& prev = tree_.getValue(name);
     if (prev == value) {
         return;
     }
@@ -73,23 +70,24 @@ void OptionsTree::setOption(const QString &name, const QVariant &value)
 /**
  * @brief returns true if the node @a node is an internal node.
  */
-bool OptionsTree::isInternalNode(const QString &node) const { return tree_.isInternalNode(node); }
+bool OptionsTree::isInternalNode(const QString& node) const { return tree_.isInternalNode(node); }
 
 /**
  * \brief Sets the comment of the named option.
  * \param name "Path" to the option
  * \param comment the comment to store
  */
-void OptionsTree::setComment(const QString &name, const QString &comment) { tree_.setComment(name, comment); }
+void OptionsTree::setComment(const QString& name, const QString& comment) {
+    tree_.setComment(name, comment);
+}
 
 /**
  * \brief Returns the comment of the specified option.
  * \param name "Path" to the option
  */
-QString OptionsTree::getComment(const QString &name) const { return tree_.getComment(name); }
+QString OptionsTree::getComment(const QString& name) const { return tree_.getComment(name); }
 
-bool OptionsTree::removeOption(const QString &name, bool internal_nodes)
-{
+bool OptionsTree::removeOption(const QString& name, bool internal_nodes) {
     emit optionAboutToBeRemoved(name);
     bool ok = tree_.remove(name, internal_nodes);
     emit optionRemoved(name);
@@ -108,41 +106,38 @@ QStringList OptionsTree::allOptionNames() const { return tree_.nodeChildren(); }
  * \param internal_nodes include internal (non-final) nodes
  * \return Full names of options
  */
-QStringList OptionsTree::getChildOptionNames(const QString &parent, bool direct, bool internal_nodes) const
-{
+QStringList OptionsTree::getChildOptionNames(const QString& parent, bool direct,
+                                             bool internal_nodes) const {
     return tree_.nodeChildren(parent, direct, internal_nodes);
 }
 
-bool OptionsTree::isValidName(const QString &name)
-{
-    const auto &parts = name.split('.');
-    for (const QString &part : parts) {
-        if (!VariantTree::isValidNodeName(part))
-            return false;
+bool OptionsTree::isValidName(const QString& name) {
+    const auto& parts = name.split('.');
+    for (const QString& part : parts) {
+        if (!VariantTree::isValidNodeName(part)) return false;
     }
     return true;
 }
 
-QString OptionsTree::mapLookup(const QString &basename, const QVariant &key) const
-{
+QString OptionsTree::mapLookup(const QString& basename, const QVariant& key) const {
     QStringList children = getChildOptionNames(basename, true, true);
-    for (const QString &path : children) {
+    for (const QString& path : children) {
         if (getOption(path + ".key") == key) {
             return path;
         }
     }
-    qWarning("Accessing missing key '%s' in option map '%s'", qPrintable(key.toString()), qPrintable(basename));
+    qWarning("Accessing missing key '%s' in option map '%s'", qPrintable(key.toString()),
+             qPrintable(basename));
     return basename + "XXX";
 }
 
-QVariant OptionsTree::mapGet(const QString &basename, const QVariant &key, const QString &node) const
-{
+QVariant OptionsTree::mapGet(const QString& basename, const QVariant& key,
+                             const QString& node) const {
     return getOption(mapLookup(basename, key) + '.' + node);
 }
 
-QVariant OptionsTree::mapGet(const QString &basename, const QVariant &key, const QString &node,
-                             const QVariant &def) const
-{
+QVariant OptionsTree::mapGet(const QString& basename, const QVariant& key, const QString& node,
+                             const QVariant& def) const {
     QVariantList keys = mapKeyList(basename);
     if (keys.contains(key)) {
         return getOption(mapLookup(basename, key) + '.' + node);
@@ -151,10 +146,9 @@ QVariant OptionsTree::mapGet(const QString &basename, const QVariant &key, const
     }
 }
 
-QString OptionsTree::mapPut(const QString &basename, const QVariant &key)
-{
+QString OptionsTree::mapPut(const QString& basename, const QVariant& key) {
     QStringList children = getChildOptionNames(basename, true, true);
-    for (const QString &path : children) {
+    for (const QString& path : children) {
         if (getOption(path + ".key") == key) {
             return path;
         }
@@ -163,7 +157,7 @@ QString OptionsTree::mapPut(const QString &basename, const QVariant &key)
 
     // allocate first unused index
     QString path;
-    int     i = 0;
+    int i = 0;
     do {
         path = basename + ".m" + QString::number(i);
         ++i;
@@ -172,18 +166,17 @@ QString OptionsTree::mapPut(const QString &basename, const QVariant &key)
     return path;
 }
 
-void OptionsTree::mapPut(const QString &basename, const QVariant &key, const QString &node, const QVariant &value)
-{
+void OptionsTree::mapPut(const QString& basename, const QVariant& key, const QString& node,
+                         const QVariant& value) {
     setOption(mapPut(basename, key) + '.' + node, value);
 }
 
-bool mapKeyListLessThanByNumber(const QString &s1, const QString &s2)
-{
+bool mapKeyListLessThanByNumber(const QString& s1, const QString& s2) {
     int dotpos = s1.lastIndexOf('.');
     if (s1.leftRef(dotpos + 1).compare(s2.leftRef(dotpos + 1)) == 0) {
         QString name1 = s1.mid(dotpos + 1), name2 = s2.mid(dotpos + 1);
         if (name1[0] == 'm' && name2[0] == 'm') {
-            bool         ok1 = false, ok2 = false;
+            bool ok1 = false, ok2 = false;
             unsigned int n1 = name1.midRef(1).toUInt(&ok1), n2 = name2.midRef(1).toUInt(&ok2);
             if (ok1 && ok2) {
                 return n1 < n2;
@@ -194,14 +187,13 @@ bool mapKeyListLessThanByNumber(const QString &s1, const QString &s2)
     return s1 < s2;
 }
 
-QVariantList OptionsTree::mapKeyList(const QString &basename, bool sortedByNumbers) const
-{
+QVariantList OptionsTree::mapKeyList(const QString& basename, bool sortedByNumbers) const {
     QVariantList ret;
-    QStringList  children = getChildOptionNames(basename, true, true);
+    QStringList children = getChildOptionNames(basename, true, true);
     if (sortedByNumbers) {
         std::sort(children.begin(), children.end(), mapKeyListLessThanByNumber);
     }
-    for (const QString &path : children) {
+    for (const QString& path : children) {
         ret << getOption(path + ".key");
     }
     return ret;
@@ -215,27 +207,27 @@ QVariantList OptionsTree::mapKeyList(const QString &basename, bool sortedByNumbe
  * \param configNS Namespace of the config format
  * \return 'true' if the file saves, 'false' if it fails
  */
-bool OptionsTree::saveOptions(const QString &fileName, const QString &configName, const QString &configNS,
-                              const QString &configVersion, bool streamWriter) const
-{
-//    AtomicXmlFile f(fileName);
-//    if (streamWriter) {
-//        OptionsTreeWriter writer(this);
-//        writer.setName(configName);
-//        writer.setNameSpace(configNS);
-//        writer.setVersion(configVersion);
-//        return f.saveDocument(&writer);
-//    }
-//    QDomDocument doc(configName);
-//
-//    QDomElement base = doc.createElement(configName);
-//    base.setAttribute("version", configVersion);
-//    if (!configNS.isEmpty())
-//        base.setAttribute("xmlns", configNS);
-//    doc.appendChild(base);
-//
-//    tree_.toXml(doc, base);
-//    return f.saveDocument(doc);
+bool OptionsTree::saveOptions(const QString& fileName, const QString& configName,
+                              const QString& configNS, const QString& configVersion,
+                              bool streamWriter) const {
+    //    AtomicXmlFile f(fileName);
+    //    if (streamWriter) {
+    //        OptionsTreeWriter writer(this);
+    //        writer.setName(configName);
+    //        writer.setNameSpace(configNS);
+    //        writer.setVersion(configVersion);
+    //        return f.saveDocument(&writer);
+    //    }
+    //    QDomDocument doc(configName);
+    //
+    //    QDomElement base = doc.createElement(configName);
+    //    base.setAttribute("version", configVersion);
+    //    if (!configNS.isEmpty())
+    //        base.setAttribute("xmlns", configNS);
+    //    doc.appendChild(base);
+    //
+    //    tree_.toXml(doc, base);
+    //    return f.saveDocument(doc);
     return false;
 }
 
@@ -247,20 +239,20 @@ bool OptionsTree::saveOptions(const QString &fileName, const QString &configName
  * \param configNS Namespace of the config format
  * \return 'true' if the file loads, 'false' if it fails
  */
-bool OptionsTree::loadOptions(const QString &fileName, const QString &configName, const QString &configNS,
-                              const QString &configVersion, bool streamReader)
-{
-//    AtomicXmlFile f(fileName);
-//    if (streamReader) {
-//        OptionsTreeReader reader(this);
-//        return f.loadDocument(&reader);
-//    }
-//
-//    QDomDocument doc;
-//    if (!f.loadDocument(&doc))
-//        return false;
+bool OptionsTree::loadOptions(const QString& fileName, const QString& configName,
+                              const QString& configNS, const QString& configVersion,
+                              bool streamReader) {
+    //    AtomicXmlFile f(fileName);
+    //    if (streamReader) {
+    //        OptionsTreeReader reader(this);
+    //        return f.loadDocument(&reader);
+    //    }
+    //
+    //    QDomDocument doc;
+    //    if (!f.loadDocument(&doc))
+    //        return false;
 
-//    return loadOptions(doc.documentElement(), configName, configVersion, configNS);
+    //    return loadOptions(doc.documentElement(), configName, configVersion, configNS);
     return false;
 }
 
@@ -270,7 +262,7 @@ bool OptionsTree::loadOptions(const QString &fileName, const QString &configName
  */
 bool OptionsTree::exists(QString fileName) {
     return false;
-//    return AtomicXmlFile::exists(fileName);
+    //    return AtomicXmlFile::exists(fileName);
 }
 
 /**
@@ -280,9 +272,8 @@ bool OptionsTree::exists(QString fileName) {
  * \param configNS Namespace of the config format
  * \param configVersion If specified, the function will fail if the file version doesn't match
  */
-bool OptionsTree::loadOptions(const QDomElement &base, const QString &configName, const QString &configNS,
-                              const QString &configVersion)
-{
+bool OptionsTree::loadOptions(const QDomElement& base, const QString& configName,
+                              const QString& configNS, const QString& configVersion) {
     Q_UNUSED(configName);
     Q_UNUSED(configNS);
     Q_UNUSED(configVersion);

@@ -44,12 +44,15 @@ parts:
       - build-essential
       - qtbase5-dev
       - qtmultimedia5-dev
-      - libqt5svg5-dev
-      - libqt5xml5
-      - libqt5xmlpatterns5-dev
-      - libqt5opengl5-dev
       - qttools5-dev
       - qttools5-dev-tools
+      - qtwebengine5-dev
+      - qtwebengine5-dev-tools
+      - libqt5websockets5-dev
+      - libqt5xml5
+      - libqt5svg5-dev
+      - libqt5xmlpatterns5-dev
+      - libqt5opengl5-dev
       - libqt5x11extras5-dev
     stage-packages:
       - libxkbcommon0

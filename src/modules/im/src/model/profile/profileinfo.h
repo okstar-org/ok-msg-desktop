@@ -10,18 +10,17 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#include "iprofileinfo.h"
-#include "src/core/FriendId.h"
-#include "src/model/interface.h"
 #include <QObject>
+#include "iprofileinfo.h"
+#include "src/base/interface.h"
+#include "src/core/FriendId.h"
 
 class Core;
 class QFile;
 class QPoint;
 class Profile;
 
-class ProfileInfo : public QObject, public IProfileInfo
-{
+class ProfileInfo : public QObject, public IProfileInfo {
     Q_OBJECT
 public:
     ProfileInfo(Core* core, Profile* profile);
@@ -67,5 +66,4 @@ private:
 
 signals:
     void logouted();
-
 };

@@ -15,60 +15,57 @@
 #include <QDateTime>
 #include <QMap>
 #include <QString>
-
-namespace base {
+namespace ok::base {
 
 inline QString secondsToDHMS(quint32 duration) {
-  QString res;
-  QString cD = "";//
-  quint32 seconds = duration % 60;
-  duration /= 60;
-  quint32 minutes = duration % 60;
-  duration /= 60;
-  quint32 hours = duration % 24;
-  quint32 days = duration / 24;
+    QString res;
+    QString cD = "";  //
+    quint32 seconds = duration % 60;
+    duration /= 60;
+    quint32 minutes = duration % 60;
+    duration /= 60;
+    quint32 hours = duration % 24;
+    quint32 days = duration / 24;
 
-  // I assume no one will ever have call longer than a month
-  if (days) {
-    return cD +
-           res.asprintf("%dd%02dh %02dm %02ds", days, hours, minutes, seconds);
-  }
+    // I assume no one will ever have call longer than a month
+    if (days) {
+        return cD + res.asprintf("%dd%02dh %02dm %02ds", days, hours, minutes, seconds);
+    }
 
-  if (hours) {
-    return cD + res.asprintf("%02dh %02dm %02ds", hours, minutes, seconds);
-  }
+    if (hours) {
+        return cD + res.asprintf("%02dh %02dm %02ds", hours, minutes, seconds);
+    }
 
-  if (minutes) {
-    return cD + res.asprintf("%02dm %02ds", minutes, seconds);
-  }
+    if (minutes) {
+        return cD + res.asprintf("%02dm %02ds", minutes, seconds);
+    }
 
-  return cD + res.asprintf("%02ds", seconds);
+    return cD + res.asprintf("%02ds", seconds);
 }
 
-
 enum class ReadableTime {
-  Today,
-  Yesterday,
-  ThisWeek,
-  ThisMonth,
-  Month1Ago,
-  Month2Ago,
-  Month3Ago,
-  Month4Ago,
-  Month5Ago,
-  LongAgo,
-  Never
+    Today,
+    Yesterday,
+    ThisWeek,
+    ThisMonth,
+    Month1Ago,
+    Month2Ago,
+    Month3Ago,
+    Month4Ago,
+    Month5Ago,
+    LongAgo,
+    Never
 };
 
 static const int LAST_TIME = static_cast<int>(ReadableTime::Never);
 
-inline ReadableTime getTimeBucket(const QDateTime &date) {
-  if (date == QDateTime()) {
-    return ReadableTime::Never;
-  }
+inline ReadableTime getTimeBucket(const QDateTime& date) {
+    if (date == QDateTime()) {
+        return ReadableTime::Never;
+    }
 
-  QDate today = QDate::currentDate();
-  // clang-format off
+    QDate today = QDate::currentDate();
+    // clang-format off
   const QMap<ReadableTime, QDate> dates {
         { ReadableTime::Today,     today.addDays(0)    },
         { ReadableTime::Yesterday, today.addDays(-1)   },
@@ -80,41 +77,41 @@ inline ReadableTime getTimeBucket(const QDateTime &date) {
         { ReadableTime::Month4Ago, today.addMonths(-5) },
         { ReadableTime::Month5Ago, today.addMonths(-6) },
     };
-  // clang-format on
+    // clang-format on
 
-  for (ReadableTime time : dates.keys()) {
-    if (dates[time] <= date.date()) {
-      return time;
+    for (ReadableTime time : dates.keys()) {
+        if (dates[time] <= date.date()) {
+            return time;
+        }
     }
-  }
 
-  return ReadableTime::LongAgo;
+    return ReadableTime::LongAgo;
 }
 
 class Times {
 public:
-  inline static QDateTime now() { return QDateTime::currentDateTime(); }
+    inline static QDateTime now() { return QDateTime::currentDateTime(); }
 
-  inline static QString formatTime(const QDateTime& dateTime, const QString &fmt) {
-    if(dateTime.isNull()){
-      return {};
+    inline static QString formatTime(const QDateTime& dateTime, const QString& fmt) {
+        if (dateTime.isNull()) {
+            return {};
+        }
+
+        if (fmt.isNull() || fmt.isEmpty()) {
+            return dateTime.toString();
+        }
+
+        return dateTime.toString(fmt);
     }
 
-    if(fmt.isNull() || fmt.isEmpty()){
-      return dateTime.toString();
+    inline static qint64 timeUntilTomorrow() {
+        QDateTime now = QDateTime::currentDateTime();
+        QDateTime tomorrow = now.addDays(1);  // Tomorrow.
+        tomorrow.setTime(QTime());            // Midnight.
+        return now.msecsTo(tomorrow);
     }
-
-    return dateTime.toString(fmt);
-  }
-
-  inline static qint64 timeUntilTomorrow() {
-    QDateTime now = QDateTime::currentDateTime();
-    QDateTime tomorrow = now.addDays(1); // Tomorrow.
-    tomorrow.setTime(QTime());           // Midnight.
-    return now.msecsTo(tomorrow);
-  }
 };
 
-} // namespace base
+}  // namespace ok::base
 
-#endif // TIMES_H
+#endif  // TIMES_H

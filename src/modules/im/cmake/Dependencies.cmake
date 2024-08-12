@@ -21,6 +21,8 @@
 include(CMakeParseArguments)
 # include(Qt5CorePatches)
 
+find_package(PkgConfig REQUIRED)
+
 function(search_dependency pkg)
   set(options OPTIONAL STATIC_PACKAGE)
   set(oneValueArgs PACKAGE LIBRARY FRAMEWORK HEADER)
@@ -97,8 +99,8 @@ function(search_dependency pkg)
       PARENT_SCOPE)
 endfunction()
 
-search_dependency(LIBAVCODEC PACKAGE libavcodec)
 search_dependency(LIBAVDEVICE PACKAGE libavdevice)
+search_dependency(LIBAVCODEC PACKAGE libavcodec)
 search_dependency(LIBAVFORMAT PACKAGE libavformat)
 search_dependency(LIBAVUTIL PACKAGE libavutil)
 search_dependency(LIBEXIF  PACKAGE libexif)
@@ -133,7 +135,9 @@ if(APPLE)
   search_dependency(COREGRAPHICS FRAMEWORK CoreGraphics)
   search_dependency(FOUNDATION FRAMEWORK Foundation OPTIONAL)
   search_dependency(IOKIT FRAMEWORK IOKit OPTIONAL)
+
 endif()
+
 
 if(WIN32)
   set(ALL_LIBRARIES ${ALL_LIBRARIES} strmiids)

@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2022 船山信息 chuanshaninfo.com
+  ~ The project is licensed under Mulan PubL v2.
+  ~ You can use this software according to the terms and conditions of the Mulan
+  ~ PubL v2. You may obtain a copy of Mulan PubL v2 at:
+  ~          http://license.coscl.org.cn/MulanPubL-2.0
+  ~ THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+  ~ EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+  ~ MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+  ~ See the Mulan PubL v2 for more details.
+  -->
+
+<!DOCTYPE TS>
+<TS version="2.1" language="zh_CN">
+    <context>
+        <name>UI::ConfigWindow</name>
+        <message>
+            <source>Plugin form</source>
+            <translation>插件管理</translation>
+        </message>
+        <message>
+            <source>Settings form</source>
+            <translation>系統設置</translation>
+        </message>
+        <message>
+            <source>About form</source>
+            <translation>關於</translation>
+        </message>
+    </context>
+    <context>
+        <name>UI::GeneralForm</name>
+        <message>
+            <source>General</source>
+            <translation>通用</translation>
+        </message>
+    </context>
+    <context>
+        <name>GeneralForm</name>
+        <message>
+            <source>Language:</source>
+            <translation>語言：</translation>
+        </message>
+        <message>
+            <source>Autostart</source>
+            <translation>開機自動啓動</translation>
+        </message>
+        <message>
+            <source>Show system tray icon</source>
+            <translation>顯示系統託盤圖標</translation>
+        </message>
+        <message>
+            <source>Start in tray</source>
+            <translation>啓動到託盤</translation>
+        </message>
+        <message>
+            <source>Close to tray</source>
+            <translation>關閉到託盤</translation>
+        </message>
+        <message>
+            <source>Minimize to tray</source>
+            <translation>最小化到託盤</translation>
+        </message>
+    </context>
+    <context>
+        <name>ok::plugin::PluginInfoForm</name>
+        <message>
+            <source>Install</source>
+            <translation>安裝</translation>
+        </message>
+        <message>
+            <source>Installing</source>
+            <translation>安裝中</translation>
+        </message>
+        <message>
+            <source>Uninstall</source>
+            <translation>卸載</translation>
+        </message>
+        <message>
+            <source>Uninstalling</source>
+            <translation>卸載中</translation>
+        </message>
+    </context>
+
+    <context>
+        <name>UI::AboutForm</name>
+        <message>
+            <source>About</source>
+            <translation>關於</translation>
+        </message>
+        <message>
+            <source>Original author: %1</source>
+            <translation>原始作者：%1</translation>
+        </message>
+        <message>
+            <source>You are using qTox version %1.</source>
+            <translation type="unfinished">你正在使用的版本是 %1 。</translation>
+        </message>
+        <message>
+            <source>Commit hash: %1</source>
+            <translation>認可雜湊：%1</translation>
+        </message>
+        <message>
+            <source>toxcore version: %1</source>
+            <translation>toxcore 版本：%1</translation>
+        </message>
+        <message>
+            <source>Qt version: %1</source>
+            <translation>Qt 版本：%1</translation>
+        </message>
+        <message>
+            <source>A list of all known issues may be found at our %1 at Github. If you discover a bug or security
+                vulnerability within qTox, please report it according to the guidelines in our %2 wiki article.
+            </source>
+            <comment>`%1` is replaced by translation of `bug tracker`
+                `%2` is replaced by translation of `Writing Useful Bug Reports`
+            </comment>
+            <translation>所有已知问题的列表可以在 GitHub 上我们的 %1 里找到。如果您发现 qTox 的错误或者安全漏洞，请根据我们的维基文章
+                %2 提交报告。
+            </translation>
+        </message>
+        <message>
+            <source>Click here to report a bug.</source>
+            <translation>點選此處報告錯誤。</translation>
+        </message>
+        <message>
+            <source>See a full list of %1 at Github</source>
+            <comment>`%1` is replaced with translation of word `contributors`</comment>
+            <translation type="unfinished"></translation>
+        </message>
+        <message>
+            <source>bug-tracker</source>
+            <comment>Replaces `%1` in the `A list of all knownâ¦`</comment>
+            <translation type="unfinished">Bug 追蹤器</translation>
+        </message>
+        <message>
+            <source>Writing Useful Bug Reports</source>
+            <comment>Replaces `%2` in the `A list of all knownâ¦`</comment>
+            <translation type="unfinished"></translation>
+        </message>
+        <message>
+            <source>contributors</source>
+            <comment>Replaces `%1` in `See a full list ofâ¦`</comment>
+            <translation type="unfinished">參與者</translation>
+        </message>
+    </context>
+
+    <context>
+        <name>UI::ConnectForm</name>
+        <message>
+            <source>Connection</source>
+            <translation>連接</translation>
+        </message>
+    </context>
+    <context>
+        <name>ConnectForm</name>
+        <message>
+            <source>Connection Settings</source>
+            <translation>連接設置</translation>
+        </message>
+        <message>
+            <source>Proxy type:</source>
+            <translation>代理類型：</translation>
+        </message>
+        <message>
+            <source>Address:</source>
+            <translation>代理地址：</translation>
+        </message>
+        <message>
+            <source>Port:</source>
+            <translation>代理端口</translation>
+        </message>
+        <message>
+            <source>None</source>
+            <translation>無</translation>
+        </message>
+        <message>
+            <source>SOCKS5</source>
+            <translation>SOCKS5</translation>
+        </message>
+        <message>
+            <source>HTTP</source>
+            <translation>HTTP</translation>
+        </message>
+        <message>
+            <source>HTTPS</source>
+            <translation>HTTPS</translation>
+        </message>
+    </context>
+</TS>

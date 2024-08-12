@@ -17,8 +17,7 @@
 
 class QLineEdit;
 
-class CroppingLabel : public QLabel
-{
+class CroppingLabel : public QLabel {
     Q_OBJECT
 public:
     explicit CroppingLabel(QWidget* parent = nullptr);
@@ -61,4 +60,4 @@ private:
     Qt::TextElideMode elideMode;
 };
 
-#endif // CROPPINGLABEL_H
+#endif  // CROPPINGLABEL_H

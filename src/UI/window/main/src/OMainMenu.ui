@@ -1,4 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Copyright (c) 2022 船山信息 chuanshaninfo.com
+  - The project is licensed under Mulan PubL v2.
+  - You can use this software according to the terms and conditions of the Mulan
+  - PubL v2. You may obtain a copy of Mulan PubL v2 at:
+  -          http://license.coscl.org.cn/MulanPubL-2.0
+  - THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+  - EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+  - MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+  - See the Mulan PubL v2 for more details.
+  -->
+
 <ui version="4.0">
  <class>OMainMenu</class>
  <widget class="QFrame" name="OMainMenu">
@@ -6,85 +18,9 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>94</width>
+    <width>228</width>
     <height>725</height>
    </rect>
-  </property>
-  <property name="minimumSize">
-   <size>
-    <width>70</width>
-    <height>0</height>
-   </size>
-  </property>
-  <property name="maximumSize">
-   <size>
-    <width>94</width>
-    <height>16777215</height>
-   </size>
-  </property>
-  <property name="palette">
-   <palette>
-    <active>
-     <colorrole role="Base">
-      <brush brushstyle="SolidPattern">
-       <color alpha="255">
-        <red>255</red>
-        <green>255</green>
-        <blue>255</blue>
-       </color>
-      </brush>
-     </colorrole>
-     <colorrole role="Window">
-      <brush brushstyle="SolidPattern">
-       <color alpha="255">
-        <red>83</red>
-        <green>83</green>
-        <blue>83</blue>
-       </color>
-      </brush>
-     </colorrole>
-    </active>
-    <inactive>
-     <colorrole role="Base">
-      <brush brushstyle="SolidPattern">
-       <color alpha="255">
-        <red>255</red>
-        <green>255</green>
-        <blue>255</blue>
-       </color>
-      </brush>
-     </colorrole>
-     <colorrole role="Window">
-      <brush brushstyle="SolidPattern">
-       <color alpha="255">
-        <red>83</red>
-        <green>83</green>
-        <blue>83</blue>
-       </color>
-      </brush>
-     </colorrole>
-    </inactive>
-    <disabled>
-     <colorrole role="Base">
-      <brush brushstyle="SolidPattern">
-       <color alpha="255">
-        <red>83</red>
-        <green>83</green>
-        <blue>83</blue>
-       </color>
-      </brush>
-     </colorrole>
-     <colorrole role="Window">
-      <brush brushstyle="SolidPattern">
-       <color alpha="255">
-        <red>83</red>
-        <green>83</green>
-        <blue>83</blue>
-       </color>
-      </brush>
-     </colorrole>
-    </disabled>
-   </palette>
   </property>
   <property name="windowTitle">
    <string>Frame</string>
@@ -95,10 +31,7 @@
   <property name="styleSheet">
    <string notr="true"/>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="spacing">
-    <number>0</number>
-   </property>
+  <layout class="QGridLayout" name="gridLayout">
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -111,7 +44,7 @@
    <property name="bottomMargin">
     <number>0</number>
    </property>
-   <item alignment="Qt::AlignHCenter">
+   <item row="0" column="0" alignment="Qt::AlignHCenter">
     <widget class="QWidget" name="centralWidget" native="true">
      <property name="layoutDirection">
       <enum>Qt::RightToLeft</enum>
@@ -149,7 +82,7 @@
        </spacer>
       </item>
       <item alignment="Qt::AlignHCenter">
-       <widget class="QLabel" name="label_avatar">
+       <widget class="CroppingLabel" name="label_avatar">
         <property name="minimumSize">
          <size>
           <width>50</width>
@@ -166,7 +99,7 @@
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap>:/resources/images/avatar.png</pixmap>
+         <pixmap resource="../../../../resources/resources.qrc">:/resources/images/avatar.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -193,7 +126,7 @@
        </spacer>
       </item>
       <item alignment="Qt::AlignHCenter">
-       <widget class="QPushButton" name="chatBtn">
+          <widget class="ok::base::StyledIconButton" name="chatBtn">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -208,8 +141,36 @@
         </property>
         <property name="maximumSize">
          <size>
-          <width>46</width>
-          <height>46</height>
+          <width>52</width>
+          <height>52</height>
+         </size>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item alignment="Qt::AlignHCenter">
+          <widget class="ok::base::StyledIconButton" name="platformBtn">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>52</width>
+          <height>52</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>52</width>
+          <height>52</height>
          </size>
         </property>
         <property name="text">
@@ -234,7 +195,7 @@
        </spacer>
       </item>
       <item alignment="Qt::AlignHCenter">
-       <widget class="QPushButton" name="settingBtn">
+          <widget class="ok::base::StyledIconButton" name="settingBtn">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -266,6 +227,20 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <customwidgets>
+  <customwidget>
+   <class>CroppingLabel</class>
+   <extends>QLabel</extends>
+   <header location="global">src/modules/im/src/widget/tool/croppinglabel.h</header>
+  </customwidget>
+  <customwidget>
+      <class>ok::base::StyledIconButton</class>
+   <extends>QPushButton</extends>
+      <header location="global">src/base/stylediconbutton.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../../../../resources/resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

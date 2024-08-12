@@ -9,14 +9,12 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PubL v2 for more details.
  */
-#include "lib/log/LogManager.h"
-#include "launcher.h"
 #include <QDebug>
+#include "launcher.h"
+#include "lib/log/LogManager.h"
 
-int main(int argc, char *argv[]) {
-
-  Q_INIT_RESOURCE(resources);
-  const auto launcher = core::Launcher::Create(argc, argv);
-  return launcher ? launcher->startup() : 1;
-
+int main(int argc, char* argv[]) {
+    Q_INIT_RESOURCE(resources);
+    const auto launcher = ok::Launcher::Create(argc, argv);
+    return launcher ? launcher->startup() : 1;
 }

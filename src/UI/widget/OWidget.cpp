@@ -11,47 +11,35 @@
  */
 #include "OWidget.h"
 
-#include <QWidget>
+#include <QFrame>
+#include <QPainter>
 #include <QPalette>
 #include <QRgb>
-#include <QPainter>
-#include <QFrame>
-
-
-
+#include <QWidget>
 
 namespace UI {
 
-OWidget::OWidget(QWidget *parent, Qt::WindowFlags f)
-    : QWidget(parent, f)
-{
-//   QPalette palette = this->palette();
+OWidget::OWidget(QWidget* parent) : QWidget(parent) {
+    //   QPalette palette = this->palette();
 
-//   QBrush brush;
-//   brush.setColor(QColor(83,83,83, 20));
-//   palette.setBrush(QPalette::Background, brush);
+    //   QBrush brush;
+    //   brush.setColor(QColor(83,83,83, 20));
+    //   palette.setBrush(QPalette::Background, brush);
 
-//   setPalette(palette);
-//   setAutoFillBackground(true);
+    //   setPalette(palette);
+    //   setAutoFillBackground(true);
 
-//    setAttribute(Qt::WA_TranslucentBackground); //设置窗口透明
+    //    setAttribute(Qt::WA_TranslucentBackground); //设置窗口透明
 
+    //   QGraphicsDropShadowEffect *effect = new QGraphicsDropShadowEffect;
+    //   effect->setOffset(4,4);
+    //   effect->setColor(QColor(0,0,0,50));
+    //   effect->setBlurRadius(10);
 
-
-
-
-//   QGraphicsDropShadowEffect *effect = new QGraphicsDropShadowEffect;
-//   effect->setOffset(4,4);
-//   effect->setColor(QColor(0,0,0,50));
-//   effect->setBlurRadius(10);
-
-//   setGraphicsEffect(effect);
+    //   setGraphicsEffect(effect);
 }
 
-void OWidget::paintEvent(QPaintEvent *event)
-{
+void OWidget::paintEvent(QPaintEvent* event) {}
+OWidget::~OWidget() {}
 
-}
-
-}
-}
+}  // namespace UI

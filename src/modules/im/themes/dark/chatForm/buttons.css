@@ -12,54 +12,68 @@
 
 /* Message edit */
 
-QAbstractButton#emoteButton
+QAbstractButton#emoteButton,
+QAbstractButton#fileButton,
+QAbstractButton#screenshotButton
 {
-    background-image: url("@getImagePath(chatForm/emoteButton.svg)");
-    border-top-right-radius: 5px;
+    icon-size: 20px;
     width: 24px;
     height: 24px;
+    background-color: #262626;
+    border-radius: 5px;
+    padding: 2px;
+}
+
+QAbstractButton#emoteButton
+{
+    qproperty-icon: url("@getImagePath(chatForm/emoteButton.svg)");
 }
 
 QAbstractButton#fileButton
 {
-    background-image: url("@getImagePath(chatForm/fileButton.svg)");
-    border-bottom-right-radius: 5px;
-    width: 24px;
-    height: 24px;
+    qproperty-icon: url("@getImagePath(chatForm/fileButton.svg)");
 }
 
 QAbstractButton#screenshotButton
 {
-    background-image: url("@getImagePath(chatForm/screenshotButton.svg)");
-    border-top-left-radius: 5px;
-    width: 24px;
-    height: 24px;
+    qproperty-icon: url("@getImagePath(chatForm/screenshotButton.svg)");
+    
+}
+
+QAbstractButton#emoteButton:hover,
+QAbstractButton#fileButton:hover,
+QAbstractButton#screenshotButton:hover
+{
+    background-color: #161616;
 }
 
 QAbstractButton#sendButton
 {
-    background-image: url("@getImagePath(chatForm/sendButton.svg)");
+    qproperty-icon: url("@getImagePath(chatForm/sendButton.svg)");
+    icon-size: 16px;
     border-radius: 5px;
+    background-color: #2A67F6;
+    padding: 2px;
     width: 50px;
-    height: 50px;
-
+    height: 26px;
 }
 
 QAbstractButton#encryptButton
 {
-    background-image: url("@getImagePath(chatForm/encrypt_off.svg)");
-    border-radius: 5px;
-    width: 50px;
-    height: 50px;
+    qproperty-icon: url("@getImagePath(chatForm/encrypt_off.svg)");
+    icon-size: 20px;
+    border-radius: 3px;
+    width: 24px;
+    height: 24px;
     background-color: #c84e4e;
 }
 
 QAbstractButton#encryptButton:checked
 {
-    background-image: url("@getImagePath(chatForm/encrypt_on.svg)");
-    border-radius: 5px;
-    width: 50px;
-    height: 50px;
+    qproperty-icon: url("@getImagePath(chatForm/encrypt_on.svg)");
+    icon-size: 16px;
+    width: 24px;
+    height: 24px;
     background-color: #51b244;
 }
 
@@ -82,20 +96,36 @@ QAbstractButton#micButton
     height: 18px;
 }
 
+QAbstractButton#videoButton,
+QAbstractButton#callButton
+{
+    icon-size: 18px;
+    width: 32px;
+    height: 32px;
+    border-radius: 16px;
+    padding: 0px;
+}
+
 QAbstractButton#videoButton
 {
-    background-image: url("@getImagePath(chatForm/videoButton.svg)");
-    border-radius: 5px;
-    width: 50px;
-    height: 40px;
+    qproperty-icon: url("@getImagePath(chatForm/videoButton.svg)");
+    background-color: #FC034D;
+}
+
+QAbstractButton#videoButton:disabled
+{
+    background-color: #cc708b;
 }
 
 QAbstractButton#callButton
 {
-    background-image: url("@getImagePath(chatForm/callButton.svg)");
-    border-radius: 5px;
-    width: 50px;
-    height: 40px;
+    qproperty-icon: url("@getImagePath(chatForm/callButton.svg)");
+    background-color: #372D7A;
+}
+
+QAbstractButton#callButton:disabled
+{
+    background-color: #675da3;
 }
 
 /* SearchLine */
@@ -166,49 +196,4 @@ QAbstractButton:disabled
 QAbstractButton:focus
 {
     outline: none;
-}
-
-QAbstractButton[state="green"]
-{
-    background-color: #529449;
-}
-
-QAbstractButton[state="green"]:hover
-{
-    background-color: #589f4e;
-}
-
-QAbstractButton[state="green"]:pressed
-{
-    background-color: #437a3c;
-}
-
-QAbstractButton[state="red"]
-{
-    background-color: #9e2525;
-}
-
-QAbstractButton[state="red"]:hover
-{
-    background-color: #bd2c2c;
-}
-
-QAbstractButton[state="red"]:pressed
-{
-    background-color: #8f2121;
-}
-
-QAbstractButton[state="yellow"]
-{
-    background-color: #e6a850;
-}
-
-QAbstractButton[state="yellow"]:hover
-{
-    background-color: #e6bd5d;
-}
-
-QAbstractButton[state="yellow"]:pressed
-{
-    background-color: #e6843e;
 }

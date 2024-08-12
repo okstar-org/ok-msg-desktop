@@ -165,8 +165,7 @@ typedef enum {
     STATUS_NOTIFIER_SCROLL_ORIENTATION_VERTICAL
 } StatusNotifierScrollOrientation;
 
-struct _StatusNotifier
-{
+struct _StatusNotifier {
     /*< private >*/
     GObject parent;
     StatusNotifierPrivate* priv;
@@ -191,8 +190,7 @@ struct _StatusNotifier
  * @scroll: The user asked for a scroll action. This is caused from input such
  * as mouse wheel over the graphical representation of the item.
  */
-struct _StatusNotifierClass
-{
+struct _StatusNotifierClass {
     GObjectClass parent_class;
 
     /* signals */
@@ -210,7 +208,8 @@ StatusNotifier* status_notifier_new_from_icon_name(const gchar* id, StatusNotifi
                                                    const gchar* icon_name);
 const gchar* status_notifier_get_id(StatusNotifier* sn);
 StatusNotifierCategory status_notifier_get_category(StatusNotifier* sn);
-void status_notifier_set_from_pixbuf(StatusNotifier* sn, StatusNotifierIcon icon, GdkPixbuf* pixbuf);
+void status_notifier_set_from_pixbuf(StatusNotifier* sn, StatusNotifierIcon icon,
+                                     GdkPixbuf* pixbuf);
 void status_notifier_set_from_icon_name(StatusNotifier* sn, StatusNotifierIcon icon,
                                         const gchar* icon_name);
 gboolean status_notifier_has_pixbuf(StatusNotifier* sn, StatusNotifierIcon icon);

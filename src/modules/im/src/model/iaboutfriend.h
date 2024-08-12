@@ -13,22 +13,21 @@
 #ifndef I_ABOUT_FRIEND_H
 #define I_ABOUT_FRIEND_H
 
-#include "src/model/interface.h"
+#include "src/base/interface.h"
 #include "src/persistence/ifriendsettings.h"
 
 #include <QObject>
 
 class Friend;
 
-class IAboutFriend
-{
+class IAboutFriend {
 public:
     virtual ~IAboutFriend() = default;
 
     virtual const Friend* getFriend() const = 0;
 
     virtual QString getName() const = 0;
-    virtual const QString & getAlias() const =0;
+    virtual const QString& getAlias() const = 0;
 
     virtual QString getStatusMessage() const = 0;
     virtual FriendId getPublicKey() const = 0;
@@ -63,4 +62,4 @@ public:
     DECLARE_SIGNAL(autoGroupInviteChanged, bool);
 };
 
-#endif // I_ABOUT_FRIEND_H
+#endif  // I_ABOUT_FRIEND_H

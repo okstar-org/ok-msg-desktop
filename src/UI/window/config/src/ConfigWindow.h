@@ -21,45 +21,43 @@
 
 #include "base/Page.h"
 #include "base/resources.h"
+#include "src/UI/widget/OMenuWidget.h"
 
 OK_RESOURCE_LOADER(UIWindowConfig)
 
-namespace Ui{
+namespace Ui {
 class ConfigWindow;
 }
 
 namespace UI {
 
-class ConfigWindow : public QFrame {
-  Q_OBJECT
+class ConfigWindow : public OMenuWidget {
+    Q_OBJECT
 public:
-  ConfigWindow(QWidget *parent = nullptr);
- ~ConfigWindow() ;
-
-  void init();
+    ConfigWindow(QWidget* parent = nullptr);
+    ~ConfigWindow();
 
 protected:
-  void retranslateUi();
+    void retranslateUi();
 
 private:
+    OK_RESOURCE_PTR(UIWindowConfig);
 
-  OK_RESOURCE_PTR(UIWindowConfig);
+    Ui::ConfigWindow* ui;
+    bool inited = false;
 
-  Ui::ConfigWindow *ui;
-  bool inited = false;
+    std::unique_ptr<QVBoxLayout> bodyLayout;
+    std::unique_ptr<QTabWidget> settingsWidgets;
 
-  std::unique_ptr<QVBoxLayout> bodyLayout;
-  std::unique_ptr<QTabWidget> settingsWidgets;
-
-  //  std::unique_ptr<QHBoxLayout> _hLayout;
-  //  QGridLayout *_gLayout;
-  //  std::unique_ptr<SettingView> _stack_view;
+    //  std::unique_ptr<QHBoxLayout> _hLayout;
+    //  QGridLayout *_gLayout;
+    //  std::unique_ptr<SettingView> _stack_view;
 
 signals:
-  //  void view(widget::SettingViewMenu menu);
+    //  void view(widget::SettingViewMenu menu);
 
 public slots:
-  //  void onMenu(int id);
+    //  void onMenu(int id);
 };
 
-} // namespace UI
+}  // namespace UI

@@ -22,45 +22,40 @@ namespace lib {
 namespace ortc {
 
 class OkRTCManager {
-
 public:
+    static OkRTCManager* getInstance();
+    static void destroyInstance();
 
-  static OkRTCManager* getInstance();
-  static void destroyInstance();
+    ~OkRTCManager();
 
-  ~OkRTCManager();
+    OkRTC* getRtc();
+    void destroyRtc();
 
-  OkRTC* getRtc();
-  void destroyRtc();
+    void addIceServer(const IceServer& ice);
 
-  void addIceServer(const IceServer &ice);
+    size_t getVideoSize();
 
-  size_t getVideoSize();
+    void CreateOffer(const std::string& peerId);
 
-  void CreateOffer(const std::string &peerId);
+    void CreateOffer(const std::string& peerId, const lib::ortc::OJingleContent& pContent);
 
-  void CreateOffer(const std::string &peerId,
-                   const lib::ortc::OJingleContent &pContent);
+    void ContentAdd(std::map<std::string, gloox::Jingle::Session>& sdMap,
+                    ortc::OkRTCHandler* handler);
 
-  void ContentAdd(std::map<std::string, gloox::Jingle::Session> &sdMap,
-                  ortc::OkRTCHandler *handler);
+    void ContentRemove(std::map<std::string, gloox::Jingle::Session>& sdMap,
+                       ortc::OkRTCHandler* handler);
 
-  void ContentRemove(std::map<std::string, gloox::Jingle::Session> &sdMap,
-                     ortc::OkRTCHandler *handler);
+    void SessionTerminate(const std::string& peerId);
 
-  void SessionTerminate(const std::string &peerId);
-
-  void setMute(bool mute);
-  void setRemoteMute(bool mute);
-
+    void setMute(bool mute);
+    void setRemoteMute(bool mute);
 
 private:
-  OkRTCManager();
+    OkRTCManager();
 
-  std::list<IceServer> _iceOptions;
-  std::unique_ptr<OkRTC> rtc;
-
+    std::list<IceServer> _iceOptions;
+    std::unique_ptr<OkRTC> rtc;
 };
 
-} // namespace ortc
-} // namespace lib
+}  // namespace ortc
+}  // namespace lib

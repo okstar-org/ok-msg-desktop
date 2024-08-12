@@ -19,76 +19,75 @@
 #include "src/model/chatroom/groupchatroom.h"
 #include "src/model/message.h"
 
+#include <src/widget/form/aboutgroupform.h>
+#include <memory>
 #include "ContentWidget.h"
 #include "contentdialog.h"
 #include "form/groupchatform.h"
 #include "src/model/groupmessagedispatcher.h"
 #include "src/model/sessionchatlog.h"
-#include <memory>
-#include <src/widget/form/aboutgroupform.h>
 
 class GroupWidget final : public GenericChatroomWidget {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  GroupWidget(ContentLayout *layout,
-              QString groupnumber,
-              const GroupId &groupId,
-              const QString &groupName,
-              bool compact);
+    GroupWidget(ContentLayout* layout,
+                QString groupnumber,
+                const GroupId& groupId,
+                const QString& groupName,
+                bool compact);
 
-  ~GroupWidget();
-  void init();
+    ~GroupWidget();
+    void init();
 
-  void setAsInactiveChatroom() final override;
-  void setAsActiveChatroom() final override;
-  void updateStatusLight(Status::Status status, bool event) final override;
-  void resetEventFlags() final override;
-  QString getStatusString() const final override;
-  const Group *getGroup() const {return group;};
+    void setAsInactiveChatroom() final override;
+    void setAsActiveChatroom() final override;
+    void updateStatusLight(Status::Status status, bool event) final override;
+    void resetEventFlags() final override;
+    QString getStatusString() const final override;
+    const Group* getGroup() const { return group; };
 
-  void editName();
-  ContentDialog * addGroupDialog(Group *group);
-  ContentDialog * createContentDialog()const ;
+    void editName();
+    ContentDialog* addGroupDialog(Group* group);
+    ContentDialog* createContentDialog() const;
 
-  void showDetails();
-  void reloadTheme() ;
+    void showDetails();
+    void reloadTheme();
 
 signals:
-  void groupWidgetClicked(GroupWidget *widget);
-  void removeGroup(const GroupId &groupId);
-  void destroyGroup(const GroupId &groupId);
+    void groupWidgetClicked(GroupWidget* widget);
+    void removeGroup(const GroupId& groupId);
+    void destroyGroup(const GroupId& groupId);
 
 protected:
-  void contextMenuEvent(QContextMenuEvent *event) final override;
-  void mousePressEvent(QMouseEvent *event) final override;
-  void mouseMoveEvent(QMouseEvent *event) final override;
-  void dragEnterEvent(QDragEnterEvent *ev) override;
-  void dragLeaveEvent(QDragLeaveEvent *ev) override;
-  void dropEvent(QDropEvent *ev) override;
-  void onActiveSet(bool active) override;
+    void contextMenuEvent(QContextMenuEvent* event) final override;
+    void mousePressEvent(QMouseEvent* event) final override;
+    void mouseMoveEvent(QMouseEvent* event) final override;
+    void dragEnterEvent(QDragEnterEvent* ev) override;
+    void dragLeaveEvent(QDragLeaveEvent* ev) override;
+    void dropEvent(QDropEvent* ev) override;
+    void onActiveSet(bool active) override;
 
 private slots:
-  void retranslateUi();
-  void updateTitle(const QString &author, const QString &newName);
-  void updateUserCount(int numPeers);
-  void do_widgetClicked(GenericChatroomWidget *w);
-  void updateDesc(const QString &);
-  void do_removeGroup(const GroupId &groupId);
-  void do_destroyGroup(const GroupId &groupId);
-    void do_privilegesChanged(const Group::Role &role,
-                              const Group::Affiliation &aff,
-                              const QList<int> codes);
+    void retranslateUi();
+    void updateTitle(const QString& author, const QString& newName);
+    void updateUserCount(int numPeers);
+    void do_widgetClicked(GenericChatroomWidget* w);
+    void updateDesc(const QString&);
+    void do_removeGroup(const GroupId& groupId);
+    void do_destroyGroup(const GroupId& groupId);
+    void do_privilegesChanged(
+            const Group::Role& role, const Group::Affiliation& aff, const QList<int> codes);
 
 private:
-  Group *group;
+    Group* group;
 
-  ContentLayout* contentLayout;
-  std::unique_ptr<AboutGroupForm> about;
+    ContentLayout* contentLayout;
+    AboutGroupForm* about;
 
-  QMenu *menu;
-   QAction *destroyGrpAct;
-   QAction *quitGroup;
+    QMenu* menu;
+    QAction* destroyGrpAct;
+    QAction* quitGroup;
 };
 
-#endif // GROUPWIDGET_H
+#endif  // GROUPWIDGET_H

@@ -18,8 +18,8 @@
 #include <QRegularExpression>
 #include <QStandardPaths>
 #include <QStringBuilder>
-#include <QtConcurrent/QtConcurrentRun>
 #include <QTimer>
+#include <QtConcurrent/QtConcurrentRun>
 
 #if defined(Q_OS_FREEBSD)
 #include <locale.h>
@@ -53,15 +53,14 @@ static const QString RICH_TEXT_PATTERN = QStringLiteral("<img title=\"%1\" src=\
 
 static const QString EMOTICONS_FILE_NAME = QStringLiteral("emoticons.xml");
 
-static constexpr int CLEANUP_TIMEOUT = 5 * 60 * 1000; // 5 minutes
+static constexpr int CLEANUP_TIMEOUT = 5 * 60 * 1000;  // 5 minutes
 
 /**
  * @brief Construct list of standard directories with "emoticons" sub dir, whether these directories
  * exist or not
  * @return Constructed list of default emoticons directories
  */
-QStringList loadDefaultPaths()
-{
+QStringList loadDefaultPaths() {
 #if defined(Q_OS_FREEBSD)
     // TODO: Remove when will be fixed.
     // Workaround to fix https://bugreports.qt.io/browse/QTBUG-57522
@@ -93,29 +92,25 @@ QStringList loadDefaultPaths()
  * @param key Describes which smiley is needed
  * @return Key that wrapped into image ref
  */
-QString getAsRichText(const QString& key)
-{
-    return RICH_TEXT_PATTERN.arg(key);
-}
+QString getAsRichText(const QString& key) { return RICH_TEXT_PATTERN.arg(key); }
 
-SmileyPack::SmileyPack()
-    : cleanupTimer{new QTimer(this)}
-{
-    loadingMutex.lock();
+SmileyPack::SmileyPack() : cleanupTimer{new QTimer(this)} {
     QtConcurrent::run(this, &SmileyPack::load, Settings::getInstance().getSmileyPack());
+
     connect(&Settings::getInstance(), &Settings::smileyPackChanged, this,
             &SmileyPack::onSmileyPackChanged);
     connect(cleanupTimer, &QTimer::timeout, this, &SmileyPack::cleanupIconsCache);
     cleanupTimer->start(CLEANUP_TIMEOUT);
 }
 
-SmileyPack::~SmileyPack()
-{
-    delete cleanupTimer;
+SmileyPack::~SmileyPack() {
+    if (cleanupTimer->isActive()) {
+        cleanupTimer->stop();
+    }
+    cleanupTimer->deleteLater();
 }
 
-void SmileyPack::cleanupIconsCache()
-{
+void SmileyPack::cleanupIconsCache() {
     QMutexLocker locker(&loadingMutex);
     for (auto it = cachedIcon.begin(); it != cachedIcon.end();) {
         std::shared_ptr<QIcon>& icon = it->second;
@@ -130,8 +125,7 @@ void SmileyPack::cleanupIconsCache()
 /**
  * @brief Returns the singleton instance.
  */
-SmileyPack& SmileyPack::getInstance()
-{
+SmileyPack& SmileyPack::getInstance() {
     static SmileyPack smileyPack;
     return smileyPack;
 }
@@ -139,8 +133,7 @@ SmileyPack& SmileyPack::getInstance()
 /**
  * @brief Does the same as listSmileyPaths, but with default paths
  */
-QList<QPair<QString, QString>> SmileyPack::listSmileyPacks()
-{
+QList<QPair<QString, QString>> SmileyPack::listSmileyPacks() {
     return listSmileyPacks(DEFAULT_PATHS);
 }
 
@@ -149,8 +142,7 @@ QList<QPair<QString, QString>> SmileyPack::listSmileyPacks()
  * @param paths Paths where to search for file
  * @return Vector of pairs: {directoryName, absolutePathToFile}
  */
-QList<QPair<QString, QString>> SmileyPack::listSmileyPacks(const QStringList& paths)
-{
+QList<QPair<QString, QString>> SmileyPack::listSmileyPacks(const QStringList& paths) {
     QList<QPair<QString, QString>> smileyPacks;
     const QString homePath = QDir::homePath();
     for (QString path : paths) {
@@ -186,11 +178,11 @@ QList<QPair<QString, QString>> SmileyPack::listSmileyPacks(const QStringList& pa
  * @param filename Filename of smile pack.
  * @return False if cannot open file, true otherwise.
  */
-bool SmileyPack::load(const QString& filename)
-{
-    qDebug()<<"SmileyPack::load"<<filename;
+bool SmileyPack::load(const QString& filename) {
+    qDebug() << "SmileyPack::load" << filename;
+    loadingMutex.lock();
     QFile xmlFile(filename);
-    qDebug()<<"exist?"<<xmlFile.exists();
+    qDebug() << "exist?" << xmlFile.exists();
     if (!xmlFile.exists() || !xmlFile.open(QIODevice::ReadOnly)) {
         loadingMutex.unlock();
         return false;
@@ -249,8 +241,7 @@ bool SmileyPack::load(const QString& filename)
 /**
  * @brief Creates the regex for replacing emoticons with the path to their pictures
  */
-void SmileyPack::constructRegex()
-{
+void SmileyPack::constructRegex() {
     QString allPattern = QStringLiteral("(");
 
     // construct one big regex that matches on every emoticon
@@ -259,8 +250,10 @@ void SmileyPack::constructRegex()
             // UTF-8 emoji
             allPattern = allPattern % emote;
         } else {
-            // patterns like ":)" or ":smile:", don't match inside a word or else will hit punctuation and html tags
-            allPattern = allPattern % QStringLiteral(R"((?<=^|\s))") % QRegularExpression::escape(emote) % QStringLiteral(R"((?=$|\s))");
+            // patterns like ":)" or ":smile:", don't match inside a word or else will hit
+            // punctuation and html tags
+            allPattern = allPattern % QStringLiteral(R"((?<=^|\s))") %
+                         QRegularExpression::escape(emote) % QStringLiteral(R"((?=$|\s))");
         }
         allPattern = allPattern % QStringLiteral("|");
     }
@@ -277,8 +270,7 @@ void SmileyPack::constructRegex()
  * @param msg Message where to search for emoticons
  * @return Formatted copy of message
  */
-QString SmileyPack::smileyfied(const QString& msg)
-{
+QString SmileyPack::smileyfied(const QString& msg) {
     QMutexLocker locker(&loadingMutex);
     QString result(msg);
 
@@ -298,9 +290,8 @@ QString SmileyPack::smileyfied(const QString& msg)
 /**
  * @brief Returns all emoticons that was extracted from files, grouped by according icon file
  */
-QList<QStringList> SmileyPack::getEmoticons() const
-{
-    QMutexLocker locker(&loadingMutex);
+QList<QStringList> SmileyPack::getEmoticons() const {
+    //    QMutexLocker locker(&loadingMutex);
     return emoticons;
 }
 
@@ -309,8 +300,7 @@ QList<QStringList> SmileyPack::getEmoticons() const
  * @param emoticon Passed emoticon
  * @return Returns cached icon according to passed emoticon, null if no icon mapped to this emoticon
  */
-std::shared_ptr<QIcon> SmileyPack::getAsIcon(const QString& emoticon) const
-{
+std::shared_ptr<QIcon> SmileyPack::getAsIcon(const QString& emoticon) const {
     QMutexLocker locker(&loadingMutex);
     if (cachedIcon.find(emoticon) != cachedIcon.end()) {
         return cachedIcon[emoticon];
@@ -327,8 +317,6 @@ std::shared_ptr<QIcon> SmileyPack::getAsIcon(const QString& emoticon) const
     return icon;
 }
 
-void SmileyPack::onSmileyPackChanged()
-{
-    loadingMutex.lock();
+void SmileyPack::onSmileyPackChanged() {
     QtConcurrent::run(this, &SmileyPack::load, Settings::getInstance().getSmileyPack());
 }

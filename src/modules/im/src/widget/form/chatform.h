@@ -41,83 +41,75 @@ class QMoveEvent;
  * @brief The ChatForm class
  */
 class ChatForm : public GenericChatForm {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  static const QString ACTION_PREFIX;
+    static const QString ACTION_PREFIX;
 
-  ChatForm(const FriendId *contact,
-           IChatLog &chatLog,
-           IMessageDispatcher &messageDispatcher);
-  ~ChatForm();
+    ChatForm(const FriendId* contact, IChatLog& chatLog, IMessageDispatcher& messageDispatcher);
+    ~ChatForm();
 
-  void setStatusMessage(const QString &newMessage);
+    void setStatusMessage(const QString& newMessage);
 
-  void setFriendTyping(bool isTyping);
+    void setFriendTyping(bool isTyping);
 
-  virtual void show(ContentLayout *contentLayout) final override;
+    virtual void show(ContentLayout* contentLayout) final override;
 
-  virtual void reloadTheme() final override;
+    virtual void reloadTheme() final override;
 
-  void insertChatMessage(IChatItem::Ptr msg) final override;
-
+    void insertChatMessage(IChatItem::Ptr msg) final override;
 
 signals:
-  void incomingNotification(QString friendId);
-  void outgoingNotification();
-  void stopNotification();
-  void endCallNotification();
+    void incomingNotification(QString friendId);
+    void outgoingNotification();
+    void stopNotification();
+    void endCallNotification();
 
-  void updateFriendActivity(const FriendId &frnd);
+    void updateFriendActivity(const FriendId& frnd);
 
 public slots:
 
-  void onFileNameChanged(const FriendId &friendPk);
-  void clearChatArea();
+    void onFileNameChanged(const FriendId& friendPk);
+    void clearChatArea();
 
 private slots:
-  void updateFriendActivityForFile(const ToxFile &file);
-  void onAttachClicked() override;
-  void onScreenshotClicked() override;
+    void updateFriendActivityForFile(const ToxFile& file);
+    void onAttachClicked() override;
+    void onScreenshotClicked() override;
 
-  void onTextEditChanged();
-//  void onCallTriggered();
-//  void onVideoCallTriggered();
-//  void onAcceptCallTriggered(const ToxPeer &peer, bool video);
-//  void onRejectCallTriggered(const ToxPeer &peer);
-//  void onMicMuteToggle();
-//  void onVolMuteToggle();
+    void onTextEditChanged();
+    //  void onCallTriggered();
+    //  void onVideoCallTriggered();
+    //  void onAcceptCallTriggered(const ToxPeer &peer, bool video);
+    //  void onRejectCallTriggered(const ToxPeer &peer);
+    //  void onMicMuteToggle();
+    //  void onVolMuteToggle();
 
-  void onFriendStatusChanged(const FriendId& friendId, Status::Status status);
-  void onFriendNameChanged(const QString &name);
-  void onStatusMessage(const QString &message);
+    void onFriendStatusChanged(const FriendId& friendId, Status::Status status);
+    void onFriendNameChanged(const QString& name);
+    void onStatusMessage(const QString& message);
 
-  void sendImage(const QPixmap &pixmap);
-  void doScreenshot();
-  void onCopyStatusMessage();
-  void callUpdateFriendActivity();
+    void sendImage(const QPixmap& pixmap);
+    void doScreenshot();
+    void onCopyStatusMessage();
+    void callUpdateFriendActivity();
 
 protected:
-
-  void dragEnterEvent(QDragEnterEvent *ev) final override;
-  void dropEvent(QDropEvent *ev) final override;
-  void hideEvent(QHideEvent *event) final override;
-  void showEvent(QShowEvent *event) final override;
+    void dragEnterEvent(QDragEnterEvent* ev) final override;
+    void dropEvent(QDropEvent* ev) final override;
+    void hideEvent(QHideEvent* event) final override;
+    void showEvent(QShowEvent* event) final override;
 
 private:
+    void retranslateUi();
+    void showOutgoingCall(bool video);
 
-  void retranslateUi();
-  void showOutgoingCall(bool video);
+    const FriendId* f;
+    CroppingLabel* statusMessageLabel;
+    QMenu statusMessageMenu;
 
-
-  const FriendId *f;
-  CroppingLabel *statusMessageLabel;
-  QMenu statusMessageMenu;
-
-  QTimer typingTimer;
-  QAction *copyStatusAction;
-  bool isTyping;
-
-
+    QTimer typingTimer;
+    QAction* copyStatusAction;
+    bool isTyping;
 };
 
-#endif // CHATFORM_H
+#endif  // CHATFORM_H

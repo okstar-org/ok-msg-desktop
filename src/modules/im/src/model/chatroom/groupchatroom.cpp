@@ -22,49 +22,30 @@
 #include "src/persistence/settings.h"
 
 GroupChatroom::GroupChatroom(const GroupId* groupId_, IDialogsManager* dialogsManager)
-    : groupId{groupId_}
-    , dialogsManager{dialogsManager}
-{
+        : groupId{groupId_}, dialogsManager{dialogsManager} {}
+
+GroupChatroom::~GroupChatroom() { qDebug() << __func__; }
+
+const ContactId& GroupChatroom::getContactId() { return *groupId; }
+
+bool GroupChatroom::hasNewMessage() const { return false; }
+
+void GroupChatroom::resetEventFlags() {
+    //    group->setEventFlag(false);
+    //    group->setMentionedFlag(false);
 }
 
-GroupChatroom::~GroupChatroom()
-{
-    qDebug() << __func__;
-}
-
-const ContactId &GroupChatroom::getContactId()
-{
- return *groupId;
-}
-
-
-bool GroupChatroom::hasNewMessage() const
-{
-   return false;
-}
-
-void GroupChatroom::resetEventFlags()
-{
-//    group->setEventFlag(false);
-//    group->setMentionedFlag(false);
-}
-
-bool GroupChatroom::friendExists(const FriendId& pk)
-{
+bool GroupChatroom::friendExists(const FriendId& pk) {
     return FriendList::findFriend(pk) != nullptr;
 }
 
-void GroupChatroom::inviteFriend(const FriendId& pk)
-{
+void GroupChatroom::inviteFriend(const FriendId& pk) {
     const Friend* frnd = FriendList::findFriend(pk);
     const auto friendId = frnd->getId();
 
     const auto canInvite = Status::isOnline(frnd->getStatus());
 
     if (canInvite) {
-//        Core::getInstance()->groupInviteFriend(friendId.toString(), groupId->getId());
+        //        Core::getInstance()->groupInviteFriend(friendId.toString(), groupId->getId());
     }
 }
-
-
-

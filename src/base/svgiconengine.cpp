@@ -16,52 +16,52 @@
 #include <QPainter>
 #include <QPalette>
 #include <QPixmapCache>
-
-QSize SvgIconEngine::actualSize(const QSize &size, QIcon::Mode mode, QIcon::State state)
-{
+namespace ok::base {
+QSize SvgIconEngine::actualSize(const QSize& size, QIcon::Mode mode, QIcon::State state) {
     Q_UNUSED(mode);
     Q_UNUSED(state);
-    return size.isEmpty() ? renderer->defaultSize() : renderer->defaultSize().scaled(size, Qt::KeepAspectRatio);
+    return size.isEmpty() ? renderer->defaultSize()
+                          : renderer->defaultSize().scaled(size, Qt::KeepAspectRatio);
 }
 
-QIconEngine *SvgIconEngine::clone() const { return new SvgIconEngine(name, renderer); }
+QIconEngine* SvgIconEngine::clone() const { return new SvgIconEngine(name, renderer); }
 
-void SvgIconEngine::paint(QPainter *painter, const QRect &rect, QIcon::Mode mode, QIcon::State state)
-{
+void SvgIconEngine::paint(QPainter* painter, const QRect& rect, QIcon::Mode mode,
+                          QIcon::State state) {
     Q_UNUSED(mode);
     Q_UNUSED(state);
-    auto r = rect.isEmpty() ? QRect(0, 0, painter->device()->width(), painter->device()->height()) : rect;
+    auto r = rect.isEmpty() ? QRect(0, 0, painter->device()->width(), painter->device()->height())
+                            : rect;
     renderer->render(painter, r);
 }
 
-void SvgIconEngine::virtual_hook(int id, void *data)
-{
+void SvgIconEngine::virtual_hook(int id, void* data) {
     switch (id) {
-    case QIconEngine::AvailableSizesHook:
-        reinterpret_cast<AvailableSizesArgument *>(data)->sizes.clear();
-        break;
-    case QIconEngine::IconNameHook:
-        *reinterpret_cast<QString *>(data) = name;
-        break;
+        case QIconEngine::AvailableSizesHook:
+            reinterpret_cast<AvailableSizesArgument*>(data)->sizes.clear();
+            break;
+        case QIconEngine::IconNameHook:
+            *reinterpret_cast<QString*>(data) = name;
+            break;
 #if QT_VERSION >= QT_VERSION_CHECK(5, 7, 0)
-    case QIconEngine::IsNullHook:
-        *reinterpret_cast<bool *>(data) = !(renderer && renderer->isValid());
-        break;
+        case QIconEngine::IsNullHook:
+            *reinterpret_cast<bool*>(data) = !(renderer && renderer->isValid());
+            break;
 #endif
 #if QT_VERSION >= QT_VERSION_CHECK(5, 9, 0)
-    case QIconEngine::ScaledPixmapHook: {
-        auto arg    = reinterpret_cast<ScaledPixmapArgument *>(data);
-        arg->pixmap = pixmap(arg->size * arg->scale, arg->mode, arg->state);
-        break;
-    }
+        case QIconEngine::ScaledPixmapHook: {
+            auto arg = reinterpret_cast<ScaledPixmapArgument*>(data);
+            arg->pixmap = pixmap(arg->size * arg->scale, arg->mode, arg->state);
+            break;
+        }
 #endif
     }
 }
 
-QPixmap SvgIconEngine::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State state)
-{
-    QPixmap     pm;
-    static auto findCache = [](std::list<CacheEntry> &cache, const QSize &size, QPixmap &pm) mutable {
+QPixmap SvgIconEngine::pixmap(const QSize& size, QIcon::Mode mode, QIcon::State state) {
+    QPixmap pm;
+    static auto findCache = [](std::list<CacheEntry>& cache, const QSize& size,
+                               QPixmap& pm) mutable {
         auto it = cache.begin();
         while (it != cache.end()) {
             if (it->size == size) {
@@ -76,25 +76,24 @@ QPixmap SvgIconEngine::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State 
         return false;
     };
 
-    static auto insertCache = [](std::list<CacheEntry> &cache, const QSize &size, const QPixmap &pm) mutable {
-        cache.push_back(CacheEntry { QPixmapCache::insert(pm), size });
+    static auto insertCache = [](std::list<CacheEntry>& cache, const QSize& size,
+                                 const QPixmap& pm) mutable {
+        cache.push_back(CacheEntry{QPixmapCache::insert(pm), size});
         if (cache.size() > 5) {
             QPixmapCache::remove(cache.front().key);
         }
     };
 
-    if (mode == QIcon::Disabled && findCache(disabledCache, size, pm))
-        return pm;
+    if (mode == QIcon::Disabled && findCache(disabledCache, size, pm)) return pm;
 
     if (findCache(normalCache, size, pm)) {
-        if (mode == QIcon::Active || mode == QIcon::Normal)
-            return pm;
+        if (mode == QIcon::Active || mode == QIcon::Normal) return pm;
     }
 
     if (!pm) {
         pm = renderPixmap(size, mode, state);
         insertCache(normalCache, size, pm);
-    } // else we need selected or disabled from normal which we took from the cache
+    }  // else we need selected or disabled from normal which we took from the cache
 
     if (mode == QIcon::Selected) {
         auto hlColor = qApp->palette().color(QPalette::Normal, QPalette::Highlight);
@@ -129,14 +128,15 @@ QPixmap SvgIconEngine::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State 
     return pm;
 }
 
-QPixmap SvgIconEngine::renderPixmap(const QSize &size, QIcon::Mode mode, QIcon::State state)
-{
+QPixmap SvgIconEngine::renderPixmap(const QSize& size, QIcon::Mode mode, QIcon::State state) {
     Q_UNUSED(mode)
     Q_UNUSED(state)
-    auto    sz = size.isEmpty() ? renderer->defaultSize() : renderer->defaultSize().scaled(size, Qt::KeepAspectRatio);
+    auto sz = size.isEmpty() ? renderer->defaultSize()
+                             : renderer->defaultSize().scaled(size, Qt::KeepAspectRatio);
     QPixmap pix(sz);
     pix.fill(Qt::transparent);
     QPainter p(&pix);
     renderer->render(&p);
     return pix;
+}
 }

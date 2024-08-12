@@ -22,26 +22,22 @@
 
 namespace Logs {
 
-void _logsWrite(const QString &msg) { qDebug().noquote() << msg; }
+void _logsWrite(const QString& msg) { qDebug().noquote() << msg; }
 
-void writeDebug(const char *file, int line, const char *func,
-                const std::string &str) {
-
-  writeDebug(file, line, func, qstring(str));
+void writeDebug(const char* file, int line, const char* func, const std::string& str) {
+    writeDebug(file, line, func, qstring(str));
 }
 
-void writeDebug(const char *file, int line, const char *func,
-                const QString &v) {
-  QString msg(
-      QString("LOG:%1 [%2] (%3:%4) %5 %6")
-          .arg(QDateTime::currentDateTime().toString(Qt::DateFormat::ISODate))
-          .arg(QThread::currentThread()->objectName())
-          .arg(file)
-          .arg(line)
-          .arg(func)
-          .arg(v));
+void writeDebug(const char* file, int line, const char* func, const QString& v) {
+    QString msg(QString("LOG:%1 [%2] (%3:%4) %5 %6")
+                        .arg(QDateTime::currentDateTime().toString(Qt::DateFormat::ISODate))
+                        .arg(QThread::currentThread()->objectName())
+                        .arg(file)
+                        .arg(line)
+                        .arg(func)
+                        .arg(v));
 
-  _logsWrite(msg);
+    _logsWrite(msg);
 }
 
-} // namespace Logs
+}  // namespace Logs

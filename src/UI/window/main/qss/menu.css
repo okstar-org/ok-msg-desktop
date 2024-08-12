@@ -1,0 +1,44 @@
+QFrame {
+    background-color: #203864;
+}
+
+QPushButton {
+	background-color: transparent;
+	background-repeat: no-repeat;
+	background-position: center;
+	border-radius: 12px;
+	width: 52px;
+	height: 52px;
+	outline: none;
+}
+
+QPushButton#chatBtn,
+QPushButton#settingBtn,
+QPushButton#platformBtn
+{
+	qproperty-use_indicator: true;
+}
+
+QPushButton#chatBtn::indicator {
+	image:url(:/icon/UIWindowMain/menu_chat.svg) ;
+}
+
+QPushButton#chatBtn::indicator:hover, QPushButton#chatBtn::indicator:checked  {
+	image:url(:/icon/UIWindowMain/menu_chat_active.svg) ;
+}
+
+QPushButton#platformBtn::indicator {
+	image:url(:/icon/UIWindowMain/menu_platform.svg) ;
+}
+
+QPushButton#platformBtn::indicator:hover, QPushButton#platformBtn::indicator:checked  {
+	image:url(:/icon/UIWindowMain/menu_platform_active.svg) ;
+}
+
+QPushButton#settingBtn::indicator {
+	image:url(:/icon/UIWindowMain/menu_setting.svg) ;
+}
+
+QPushButton#settingBtn::indicator:hover, QPushButton#settingBtn::indicator:!hover:checked {
+	image:url(:/icon/UIWindowMain/menu_setting_active.svg) ;
+}

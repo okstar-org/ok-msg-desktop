@@ -25,52 +25,86 @@
 #include <base/timer.h>
 
 class QNetworkAccessManager;
-
+class QNetworkRequest;
+class QNetworkReply;
 
 namespace network {
 
+using HttpErrorFn = ok::base::Fn<void(int statusCode, const QByteArray body)>;
+using HttpDownloadProgressFn = ok::base::Fn<void(qint64 bytesReceived, qint64 bytesTotal)>;
+using HttpUploadProgressFn = ok::base::Fn<void(qint64 bytesSent, qint64 bytesTotal)>;
+using HttpBodyFn = ok::base::Fn<void(QByteArray body, QString filename)>;
+using HttpJsonBodyFn = ok::base::Fn<void(QJsonDocument json, QString filename)>;
+
 class NetworkHttp : public QObject {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  explicit NetworkHttp(QObject *parent = nullptr);
-  ~NetworkHttp() override;
+    explicit NetworkHttp(QObject* parent = nullptr);
+    ~NetworkHttp() override;
 
-  void httpFinished();
+    void setHeader(QString k, QString v){
+        headers.insert(k, v);
+    };
 
-  bool get(const QUrl &url,                                                      //
-      Fn<void(QByteArray body, const QString filename)> fn,                 //
-      Fn<void(qint64 bytesReceived, qint64 bytesTotal)> progress = nullptr, //
-      Fn<void(const QString &errStr)> failed = nullptr);
+    void setHeaders(const QMap<QString, QString> map){
+        headers.insert(map);
+    }
 
-  QByteArray get(const QUrl &url,
-                 const Fn<void(qint64 bytesReceived, qint64 bytesTotal)>
-                     &downloadProgress = nullptr);
+    void httpFinished();
 
-  bool getJSON(const QUrl &url,
-               Fn<void(QJsonDocument)> fn = nullptr,
-               Fn<void(const QString &)> err = nullptr);
+    bool get(const QUrl& url,
+             const HttpBodyFn& fn,
+             const HttpDownloadProgressFn& progress = nullptr,
+             const HttpErrorFn& failed = nullptr);
 
-  void post(const QUrl &url, const QString &str, Fn<void(QByteArray)> fn);
+    QByteArray get(const QUrl& url, const HttpDownloadProgressFn& downloadProgress = nullptr);
 
-  QByteArray post(const QUrl &url, const QString &str);
+    bool getJson(const QUrl& url,
+                 ok::base::Fn<void(QJsonDocument)> fn = nullptr,
+                 const HttpErrorFn& err = nullptr);
 
-  void postJSON(const QUrl &url, const QJsonObject &data,
-                Fn<void(const QJsonDocument &)> fn);
+    bool post(const QUrl& url,
+              const QByteArray& data,
+              const QString& contentType,
+              const HttpBodyFn& fn = nullptr,
+              const HttpDownloadProgressFn& progress = nullptr,
+              const HttpUploadProgressFn& upload = nullptr,
+              const HttpErrorFn& failed = nullptr);
 
-  void postJSON(const QUrl &url, const QString &data,
-                Fn<void(const QJsonDocument &)> fn);
+    bool postJson(const QUrl& url,
+                  const QJsonDocument& data,
+                  const HttpBodyFn& fn = nullptr,
+                  const HttpDownloadProgressFn& progress = nullptr,
+                  const HttpUploadProgressFn& upload = nullptr,
+                  const HttpErrorFn& failed = nullptr);
 
-  void PostFormData(const QUrl &url, QFile *file,
-                    Fn<void(int bytesSent, int bytesTotal)> uploadProgress,
-                    Fn<void(const QJsonObject &json)> readyRead);
+    bool postJson1(const QUrl& url,
+                  const QJsonDocument& data,
+                  const HttpJsonBodyFn& fn = nullptr,
+                  const HttpDownloadProgressFn& progress = nullptr,
+                  const HttpUploadProgressFn& upload = nullptr,
+                  const HttpErrorFn& failed = nullptr);
 
-  virtual void PostFormData(const QUrl &url, const QByteArray &byteArray,
-                            const QString &contentType, const QString &filename,
-                            Fn<void(int, int)> uploadProgress,
-                            Fn<void(const QJsonObject &)> readyRead);
+    void PostFormData(const QUrl& url, QFile* file, const HttpUploadProgressFn& uploadProgress,
+                      ok::base::Fn<void(const QJsonObject& json)> readyRead);
+
+    virtual void PostFormData(const QUrl& url,
+                              const QByteArray& byteArray,
+                              const QString& contentType,
+                              const QString& filename,
+                              const HttpUploadProgressFn& uploadProgress,
+                              ok::base::Fn<void(const QJsonObject&)>
+                                      readyRead);
+
+    void doRequest(QNetworkRequest& req, QNetworkReply* reply, const HttpBodyFn& fn = nullptr,
+                   const HttpDownloadProgressFn& = nullptr, const HttpUploadProgressFn& = nullptr,
+                   const HttpErrorFn& = nullptr);
+
+    void forRequest(QNetworkRequest &req);
 
 protected:
-  QNetworkAccessManager *_manager;
+    QNetworkAccessManager* _manager;
+    QMap<QString, QString> headers;
 };
-} // namespace network
+}  // namespace network

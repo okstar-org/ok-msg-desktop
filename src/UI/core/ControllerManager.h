@@ -15,19 +15,16 @@
 
 // #include <painter/Base.h>
 
-
-
-namespace core {
+namespace ok {
 
 // using namespace painter;
 
-class ControllerManager : public QObject
-{
+class ControllerManager : public QObject {
     Q_OBJECT
 
 public:
-    ControllerManager(QObject *parent);
+    ControllerManager(QObject* parent);
     ~ControllerManager();
 };
 
-}
+}  // namespace ok

@@ -8,11 +8,25 @@ permissions:
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: [ develop, develop-linux, develop-ubuntu ]
     tags:
       - "v*.*.*"
+    paths-ignore:
+      - '**.md'
+      - 'changelog.txt'
+      - 'LEGAL'
+      - 'LICENSE'
+      - '.clang-*'
+      - '.gitignore'
+      - 'snap/**'
+      - 'docs/**'
+      - 'flatpak/**'
+      - '.github/**'
+      - 'src/base/platform/windows/**'
+      - 'src/base/platform/macos/**'
+      - '!.github/workflows/ubuntu-22.04.yml'
   pull_request:
-    branches: [ "develop" ]
+    branches: [ develop, develop-linux, develop-ubuntu ]
 
 jobs:
   build:
@@ -63,6 +77,9 @@ jobs:
 
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
+      with:
+        version: '5.15.2'
+        modules: 'qtwebengine'
 
     - name: Install ok-gloox
       run: |
@@ -119,7 +136,7 @@ jobs:
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: ctest --build-config ${{ matrix.build_type }}
 
-    - name: Upload deb to release
+    - name: Upload to release
       uses: softprops/action-gh-release@v1
       if: ${{ startsWith(github.ref, 'refs/tags/') }}
       with:

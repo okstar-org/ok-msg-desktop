@@ -12,13 +12,11 @@
 
 #pragma once
 
-#include "messenger.h"
 #include <QString>
 #include <map>
 #include <string>
+#include "messenger.h"
 
 namespace lib {
-namespace messenger {
-
-} // namespace messenger
-} // namespace lib
+namespace messenger {}  // namespace messenger
+}  // namespace lib

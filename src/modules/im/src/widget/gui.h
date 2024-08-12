@@ -10,7 +10,6 @@
  * See the Mulan PubL v2 for more details.
  */
 
-
 #ifndef GUI_H
 #define GUI_H
 
@@ -18,8 +17,7 @@
 
 class QWidget;
 
-class GUI : public QObject
-{
+class GUI : public QObject {
     Q_OBJECT
 public:
     static GUI& getInstance();
@@ -36,6 +34,8 @@ public:
     static bool askQuestion(const QString& title, const QString& msg, const QString& button1,
                             const QString& button2, bool defaultAns = false, bool warning = true);
 
+signals:
+    void themeApplyRequest();
 
 private:
     explicit GUI(QObject* parent = nullptr);
@@ -54,4 +54,4 @@ private slots:
                       const QString& button2, bool defaultAns = false, bool warning = true);
 };
 
-#endif // GUI_H
+#endif  // GUI_H

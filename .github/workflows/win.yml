@@ -8,11 +8,26 @@ permissions:
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: [ develop, develop-windows ]
     tags:
       - "v*.*.*"
+    paths-ignore:
+      - '**.md'
+      - 'changelog.txt'
+      - 'LEGAL'
+      - 'LICENSE'
+      - '.clang-*'
+      - '.gitignore'
+      - 'lib/xdg/**'
+      - 'snap/**'
+      - 'docs/**'
+      - 'flatpak/**'
+      - '.github/**'
+      - 'src/base/platform/linux/**'
+      - 'src/base/platform/macos/**'
+      - '!.github/workflows/win.yml'
   pull_request:
-    branches: [ "develop" ]
+    branches: [ develop, develop-windows ]
 
 jobs:
   build:
@@ -32,8 +47,8 @@ jobs:
         arch: [x64]
         os: [windows-latest]
         build_type: [Release]
-        c_compiler: [clang]
-        cpp_compiler: [clang++]
+        c_compiler: [cl]
+        cpp_compiler: [cl]
 
     steps:
     - name: Checkout repository and submodules
@@ -85,7 +100,9 @@ jobs:
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
       with:
+        version: '5.15.2'
         arch: ${{ matrix.arch == 'x64' && 'win64_msvc2019_64' || 'win32_msvc2019' }}
+        modules: 'qtwebengine'
 
     - name: Set reusable strings
       id: strings

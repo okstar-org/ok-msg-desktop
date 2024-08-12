@@ -10,10 +10,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # Build Type
-if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE "Release")
-endif()
-string(TOLOWER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
 message(STATUS "CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}")
 
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
@@ -30,17 +26,21 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)
 set(BUILD_SHARED_LIBS OFF)
 
 if (WIN32)
-#    add_definitions(-DWIN32_LEAN_AND_MEAN=1 -D_ITERATOR_DEBUG_LEVEL=0 -DWINAPI_FAMILY_PARTITION=1 )
-#    set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} /DWINAPI_FAMILY_PARTITION=1") 
+    add_definitions(-DWIN32_LEAN_AND_MEAN=1)
+    if(CMAKE_BUILD_TYPE MATCHES Release)
+        add_definitions(-D_ITERATOR_DEBUG_LEVEL=0)
+    elseif(CMAKE_BUILD_TYPE MATCHES Debug)
+        add_definitions(-D_ITERATOR_DEBUG_LEVEL=2)        
+    endif()
 endif ()
 
 
-if(UNIX)
+if(LINUX)
     find_package(PkgConfig REQUIRED)
     # -Wunused-parameter -pedantic -fsanitize=address,undefined,leak,integer -Wextra
     # -Wall -Wmacro-redefined -Wbuiltin-macro-redefined
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fstack-protector-all -Wunused-function -Wstrict-overflow -Wstrict-aliasing -Wstack-protector")
-endif(UNIX)
+endif(LINUX)
 
 if(MSVC)
     option(USE_MP "use multiple" ON)
@@ -54,8 +54,9 @@ if(MSVC)
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT /DNDEBUG")
 
-    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
 endif()
+
 
 message(STATUS "CMAKE_C_COMPILER_ID=" ${CMAKE_C_COMPILER_ID})
 message(STATUS "CMAKE_C_COMPILER=" ${CMAKE_C_COMPILER})

@@ -28,17 +28,13 @@
  * to create dialog forms.
  */
 
-ProfileImporter::ProfileImporter(QWidget* parent)
-    : QWidget(parent)
-{
-}
+ProfileImporter::ProfileImporter(QWidget* parent) : QWidget(parent) {}
 
 /**
  * @brief Show a file dialog. Selected file will be imported as Tox profile.
  * @return True, if the import was succesful. False otherwise.
  */
-bool ProfileImporter::importProfile()
-{
+bool ProfileImporter::importProfile() {
     QString title = tr("Import profile", "import dialog title");
     QString filter = tr("Tox save file (*.tox)", "import dialog filter");
     QString dir = QDir::homePath();
@@ -57,8 +53,7 @@ bool ProfileImporter::importProfile()
  * @param message Text in question window.
  * @return True if the answer is positive, false otherwise.
  */
-bool ProfileImporter::askQuestion(QString title, QString message)
-{
+bool ProfileImporter::askQuestion(QString title, QString message) {
     QMessageBox::Icon icon = QMessageBox::Warning;
     QMessageBox box(icon, title, message, QMessageBox::NoButton, this);
     QPushButton* pushButton1 = box.addButton(QApplication::tr("Yes"), QMessageBox::AcceptRole);
@@ -75,10 +70,8 @@ bool ProfileImporter::askQuestion(QString title, QString message)
  * @param path Path to Tox profile.
  * @return True, if the import was succesful. False otherwise.
  */
-bool ProfileImporter::importProfile(const QString& path)
-{
-    if (path.isEmpty())
-        return false;
+bool ProfileImporter::importProfile(const QString& path) {
+    if (path.isEmpty()) return false;
 
     QFileInfo info(path);
     if (!info.exists()) {
@@ -95,7 +88,7 @@ bool ProfileImporter::importProfile(const QString& path)
                                 "Tox save file; ignoring.",
                                 "popup text"),
                              QMessageBox::Ok);
-        return false; // ingore importing non-tox file
+        return false;  // ingore importing non-tox file
     }
 
     QString settingsPath = Settings::getInstance().getSettingsDirPath();
@@ -106,11 +99,10 @@ bool ProfileImporter::importProfile(const QString& path)
         QString message = tr("A profile named \"%1\" already exists. "
                              "Do you want to erase it?",
                              "import confirm text")
-                              .arg(profile);
+                                  .arg(profile);
         bool erase = askQuestion(title, message);
 
-        if (!erase)
-            return false; // import canelled
+        if (!erase) return false;  // import canelled
 
         QFile(profilePath).remove();
     }
@@ -121,5 +113,5 @@ bool ProfileImporter::importProfile(const QString& path)
     QMessageBox::information(this, tr("Profile imported"),
                              tr("%1.tox was successfully imported").arg(profile), QMessageBox::Ok);
 
-    return true; // import successfull
+    return true;  // import successfull
 }

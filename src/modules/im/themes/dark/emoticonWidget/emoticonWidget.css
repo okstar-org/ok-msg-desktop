@@ -9,14 +9,14 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PubL v2 for more details.
  */
+ 
+ #PageIndexContainer
+ {
+      background: transparent;
+ }
 
-QPushButton
-{
-    background-color: transparent;
-    background-repeat: none;
-    border: none;
-    width: 24px;
-    height: 24px;
+QRadioButton{
+     background: transparent;
 }
 
 QRadioButton::indicator
@@ -50,3 +50,22 @@ QMenu
      background-color: #363434; /* sets background of the menu */
      border: 0px solid;
 }
+
+EmoticonsPageView
+{
+     background: transparent;
+}
+
+EmoticonsPageView #emoticonsItem
+{
+     border: 0px;
+     border-radius: 4px;
+     background: transparent;
+     padding: 0px;
+}
+
+EmoticonsPageView #emoticonsItem:hover
+{
+     background:rgba(255, 255, 255, 20%)
+}
+

@@ -17,11 +17,10 @@
 
 #include <cstdint>
 
-
 namespace Platform {
 uint32_t getIdleTime();
 }
 
-#endif // PLATFORM_TIMER_H
+#endif  // PLATFORM_TIMER_H
 
-#endif // QTOX_PLATFORM_EXT
+#endif  // QTOX_PLATFORM_EXT

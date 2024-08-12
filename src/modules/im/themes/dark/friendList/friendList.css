@@ -10,53 +10,17 @@
  * See the Mulan PubL v2 for more details.
  */
 
-QScrollArea
+AdjustingScrollArea
 {
-    background: @themeMedium;
+    background: @groundBase;
+    border: 0px solid;
 }
 
-QScrollBar:vertical
+/* it is necessary for the rounded effect*/
+MessageSessionListWidget,
+#scrollAreaWidgetContents
 {
-    background: @themeMedium;
-    width: 16px;
-    padding: 0px 3px 0px 3px;
-}
-
-QScrollBar:handle:vertical
-{
-    background: @themeDark;
-    min-height: 20px;
-    border-radius: 5px;
-    margin: 3px 0px 3px 0px;
-}
-
-QScrollBar:handle:vertical:hover
-{
-    background: @themeMediumDark;
-}
-
-QScrollBar:handle:vertical:pressed
-{
-    background: @themeDark;
-}
-
-QScrollBar:add-line:vertical
-{
-    height: 0px;
-    subcontrol-position: bottom;
-    subcontrol-origin: margin;
-}
-
-QScrollBar:sub-line:vertical
-{
-    height: 0px;
-    subcontrol-position: top;
-    subcontrol-origin: margin;
-}
-
-QScrollBar:add-page:vertical, QScrollBar::sub-page:vertical
-{
-    background: none;
+    border: 0px solid;
 }
 
 QWidget#circleWidgetContainer > QFrame#line
@@ -93,4 +57,46 @@ QWidget#circleWidgetContainer > QLabel#name
 
 QLabel {
     color: @mainText;
+}
+
+#friendList QScrollBar:vertical
+{
+    width: 8px;
+    padding: 0px 0px 0px 3px;
+}
+#friendList QScrollBar::handle
+{
+    background-color: #343232;
+}
+#friendList QScrollBar::handle:hover
+{
+    background-color: #3e3c3c;
+}
+#friendList QScrollBar::handle:pressed
+{
+    background-color: #474545;
+}
+
+MessageSessionWidget{
+    border: 0px solid;
+    border-radius: 5px;
+}
+
+MessageSessionWidget:hover{
+    background-color:#2b2b2b;
+}
+
+MessageSessionWidget:selected{
+    background-color:#333333;
+}
+
+MessageSessionWidget QLabel#nameLabel{
+    color: #e8e8e8;
+}
+
+MessageSessionWidget QLabel#lastMessageLabel:!active{
+    color: #b3b1b3;
+}
+MessageSessionWidget QLabel#lastMessageLabel:active{
+    color: #b3b1b3;
 }

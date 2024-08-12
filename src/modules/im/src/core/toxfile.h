@@ -25,32 +25,44 @@ class QFile;
 class QTimer;
 class FriendId;
 
+
+// 不要修改顺序和值
+enum class FileStatus {
+    INITIALIZING = 0,
+    PAUSED = 1,
+    TRANSMITTING = 2,
+    BROKEN = 3,
+    CANCELED = 4,
+    FINISHED = 5,
+};
+
+// 不要修改顺序和值
+enum class FileDirection {
+    SENDING = 0,
+    RECEIVING = 1,
+};
+
 namespace lib::messenger {
-class File;
+struct File;
 enum class FileStatus;
 enum class FileDirection;
-}
-
-using FileStatus = lib::messenger::FileStatus;
-using FileDirection = lib::messenger::FileDirection;
+}  // namespace lib::messenger
 
 struct FileInfo {
 public:
-    FileInfo()=default;
-    FileInfo(
-             const QString &sId, 
+    FileInfo() = default;
+    FileInfo(const QString& sId,
              const QString& id,
-             const QString &fileName,
-             const QString & filePath,
+             const QString& fileName,
+             const QString& filePath,
              quint64 fileSize,
              quint64 bytesSent,
              FileStatus status,
-             FileDirection direction
-            );
+             FileDirection direction);
 
-    //sessionId
+    // sessionId
     QString sId;
-    //uuid
+    // uuid
     QString fileId;
     QString fileName;
     QString filePath;
@@ -59,53 +71,56 @@ public:
     FileStatus status;
     FileDirection direction;
     QString sha256;
+
 public:
     [[nodiscard]] QString json() const;
-    void parse(const QString &json);
+    void parse(const QString& json);
+    void setFilePath(const QString& path) { this->filePath = path; }
 };
 Q_DECLARE_METATYPE(FileInfo);
 
-
 struct ToxFile : public FileInfo {
-  ToxFile() = default;
-  ToxFile(const QString &sender,
-          const QString &friendId,
-          QString sId,
-          QString FileId,
-          QString FileName,
-          QString filePath,
-          quint64 fileSize_,
-          quint64 bytesSent,
-          FileStatus status,
-          FileDirection Direction);
+    explicit ToxFile() = default;
+    explicit ToxFile(const QString& sender,
+            const QString& friendId,
+            QString sId,
+            QString FileId,
+            QString FileName,
+            QString filePath,
+            quint64 fileSize_,
+            quint64 bytesSent,
+            FileStatus status,
+            FileDirection Direction);
 
-  ToxFile(const QString &sender, const QString &friendId, const lib::messenger::File &file);
-  ToxFile(const FileInfo& fi);
-  ~ToxFile();
+    explicit ToxFile(const QString& sender, const QString& friendId, const lib::messenger::File& file);
+    explicit ToxFile(const FileInfo& fi);
+    ~ToxFile();
 
-  bool operator==(const ToxFile &other) const;
-  bool operator!=(const ToxFile &other) const;
+    bool operator==(const ToxFile& other) const;
+    bool operator!=(const ToxFile& other) const;
 
-  void setFilePath(QString path);
-  bool open(bool write);
+    void setFilePath(QString path);
+    bool open(bool write);
 
-  lib::messenger::File toIMFile();
+    lib::messenger::File toIMFile();
 
-  const QString& getFriendId() const;
+    const QString& getFriendId() const;
 
-  inline QString toString() const
-  {
-      return QString("{id:%1, sId:%2, name:%3, path:%4, size:%5}")
-              .arg(fileId).arg(sId).arg(fileName).arg(filePath).arg(fileSize);
-  }
+    inline QString toString() const {
+        return QString("{id:%1, sId:%2, name:%3, path:%4, size:%5}")
+                .arg(fileId)
+                .arg(sId)
+                .arg(fileName)
+                .arg(filePath)
+                .arg(fileSize);
+    }
 
-  QString sender;
-  QString receiver;
+    QString sender;
+    QString receiver;
 
-  std::shared_ptr<QFile> file;
-//  std::shared_ptr<QCryptographicHash> hashGenerator = std::make_shared<QCryptographicHash>(QCryptographicHash::Sha256);
+    std::shared_ptr<QFile> file;
+    //  std::shared_ptr<QCryptographicHash> hashGenerator =
+    //  std::make_shared<QCryptographicHash>(QCryptographicHash::Sha256);
 };
 
-Q_DECLARE_METATYPE(ToxFile);
-
-#endif // CORESTRUCTS_H
+#endif  // CORESTRUCTS_H

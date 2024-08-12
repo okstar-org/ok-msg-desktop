@@ -61,11 +61,11 @@
         <translation>選択してください</translation>
     </message>
 	 <message>
-        <source>Sign Up</source>
+        <source>Sign up</source>
         <translation>アカウントの登録</translation>
     </message>
     <message>
-        <source>Retrieve Password</source>
+        <source>Forgot password</source>
         <translation>パスワードを取り戻す</translation>
     </message>
     <message>

@@ -12,57 +12,45 @@
 #ifndef WIDGETFACTORY_H
 #define WIDGETFACTORY_H
 
-#include <list>
 #include <QObject>
 #include <QWidget>
+#include <list>
 
-namespace UI{
+namespace UI {
 
-
-
-
-class WidgetFactory : public QObject
-{
+class WidgetFactory : public QObject {
     Q_OBJECT
 
-
-
 private:
-    explicit WidgetFactory(QObject *parent = nullptr);
+    explicit WidgetFactory(QObject* parent = nullptr);
 
 public:
-
     typedef std::list<QWidget*> WidgetList;
 
-    template<typename T>
-    static T* CreateWidget(QWidget *parent = nullptr)
-    {
-
-//        static_assert(sizeof(QWidget) == sizeof(T),
-//                      "T type is not the QWidget");
+    template <typename T> static T* CreateWidget(QWidget* parent = nullptr) {
+        //        static_assert(sizeof(QWidget) == sizeof(T),
+        //                      "T type is not the QWidget");
 
         T* t = new T(parent);
 
-        QPalette palette =  t->palette() ;
-        t->setAutoFillBackground(true);
-        palette.setColor(QPalette::Window, QColor("#838383"));
-        palette.setColor(QPalette::Text, QColor("#ffffff"));
-        t->setPalette(palette);
+        //        QPalette palette =  t->palette() ;
+        //        t->setAutoFillBackground(true);
+        //        palette.setColor(QPalette::Window, QColor("#838383"));
+        //        palette.setColor(QPalette::Text, QColor("#ffffff"));
+        //        t->setPalette(palette);
 
-//        widgets_.push_back(t);
+        //        widgets_.push_back(t);
 
         return t;
     }
 
 private:
-
-//    WidgetList widgets_;
+    //    WidgetList widgets_;
 
 signals:
 
 public slots:
 };
 
-
-}
-#endif // WIDGETFACTORY_H
+}  // namespace UI
+#endif  // WIDGETFACTORY_H

@@ -19,27 +19,17 @@ namespace Ui {
 class PrivacySettings;
 }
 
-class PrivacyForm : public GenericForm
-{
+class PrivacyForm : public GenericForm {
     Q_OBJECT
 public:
     PrivacyForm();
     ~PrivacyForm();
-    virtual QString getFormName() final override
-    {
-        return tr("Privacy");
-    }
+    virtual QString getFormName() final override { return tr("Privacy"); }
 
 signals:
     void clearAllReceipts();
 
 private slots:
-    void on_cbKeepHistory_stateChanged();
-    void on_cbTypingNotification_stateChanged();
-    void on_nospamLineEdit_editingFinished();
-    void on_randomNosapamButton_clicked();
-    void on_nospamLineEdit_textChanged();
-    void on_blackListTextEdit_textChanged();
     virtual void showEvent(QShowEvent*) final override;
 
 private:

@@ -85,7 +85,6 @@ static const QVector<QRegularExpression> URI_WORD_PATTERNS = {
     QRegularExpression(QStringLiteral(R"((?<=^|\s)\S*(magnet:[?]((xt(.\d)?=urn:)|(mt=)|(kt=)|(tr=)|(dn=)|(xl=)|(xs=)|(as=)|(x.))[\S| ]+))")),
 };
 
-
 // clang-format on
 
 struct MatchingUri {
@@ -94,40 +93,33 @@ struct MatchingUri {
 };
 
 // pairs of characters that are ignored when surrounding a URI
-static const QPair<QString, QString> URI_WRAPPING_CHARS[] = {
-        {QString("("), QString(")")},
-        {QString("["), QString("]")},
-        {QString("&quot;"), QString("&quot;")},
-        {QString("'"), QString("'")}
-};
+static const QPair<QString, QString> URI_WRAPPING_CHARS[] = {{QString("("), QString(")")},
+                                                             {QString("["), QString("]")},
+                                                             {QString("&quot;"), QString("&quot;")},
+                                                             {QString("'"), QString("'")}};
 
 // characters which are ignored from the end of URI
-static const QChar URI_ENDING_CHARS[] = {
-        QChar::fromLatin1('?'),
-        QChar::fromLatin1('.'),
-        QChar::fromLatin1('!'),
-        QChar::fromLatin1(':'),
-        QChar::fromLatin1(',')
-};
+static const QChar URI_ENDING_CHARS[] = {QChar::fromLatin1('?'), QChar::fromLatin1('.'),
+                                         QChar::fromLatin1('!'), QChar::fromLatin1(':'),
+                                         QChar::fromLatin1(',')};
 
 /**
  * @brief Strips wrapping characters and ending punctuation from URI
  * @param QRegularExpressionMatch of a word containing a URI
  * @return MatchingUri containing info on the stripped URI
  */
-MatchingUri stripSurroundingChars(const QStringRef wrappedUri, const int startOfBareUri)
-{
+MatchingUri stripSurroundingChars(const QStringRef wrappedUri, const int startOfBareUri) {
     bool matchFound;
     int curValidationStartPos = 0;
     int curValidationEndPos = wrappedUri.length();
     do {
         matchFound = false;
-        for (auto const& surroundChars : URI_WRAPPING_CHARS)
-        {
+        for (auto const& surroundChars : URI_WRAPPING_CHARS) {
             const int openingCharLength = surroundChars.first.length();
             const int closingCharLength = surroundChars.second.length();
             if (surroundChars.first == wrappedUri.mid(curValidationStartPos, openingCharLength) &&
-                surroundChars.second == wrappedUri.mid(curValidationEndPos - closingCharLength, closingCharLength)) {
+                surroundChars.second == wrappedUri.mid(curValidationEndPos - closingCharLength,
+                                                       closingCharLength)) {
                 curValidationStartPos += openingCharLength;
                 curValidationEndPos -= closingCharLength;
                 matchFound = true;
@@ -161,8 +153,9 @@ MatchingUri stripSurroundingChars(const QStringRef wrappedUri, const int startOf
  * @note done separately from URI since the link must have a scheme added to be valid
  * @return Copy of message with highlighted URLs
  */
-QString highlight(const QString& message, const QVector<QRegularExpression>& patterns, const QString& wrapper)
-{
+QString highlight(const QString& message,
+                  const QVector<QRegularExpression>& patterns,
+                  const QString& wrapper) {
     QString result = message;
     for (const QRegularExpression& exp : patterns) {
         const int startLength = result.length();
@@ -172,13 +165,17 @@ QString highlight(const QString& message, const QVector<QRegularExpression>& pat
             const QRegularExpressionMatch match = iter.next();
             const int uriWithWrapMatch{0};
             const int uriWithoutWrapMatch{1};
-            MatchingUri matchUri = stripSurroundingChars(match.capturedRef(uriWithWrapMatch),
-                   match.capturedStart(uriWithoutWrapMatch) - match.capturedStart(uriWithWrapMatch));
+            MatchingUri matchUri =
+                    stripSurroundingChars(match.capturedRef(uriWithWrapMatch),
+                                          match.capturedStart(uriWithoutWrapMatch) -
+                                                  match.capturedStart(uriWithWrapMatch));
             if (!matchUri.valid) {
                 continue;
             }
-            const QString wrappedURL = wrapper.arg(match.captured(uriWithoutWrapMatch).left(matchUri.length));
-            result.replace(match.capturedStart(uriWithoutWrapMatch) + offset, matchUri.length, wrappedURL);
+            const QString wrappedURL =
+                    wrapper.arg(match.captured(uriWithoutWrapMatch).left(matchUri.length));
+            result.replace(
+                    match.capturedStart(uriWithoutWrapMatch) + offset, matchUri.length, wrappedURL);
             offset = result.length() - startLength;
         }
     }
@@ -190,8 +187,7 @@ QString highlight(const QString& message, const QVector<QRegularExpression>& pat
  * @param message Where search for URLs
  * @return Copy of message with highlighted URLs
  */
-QString highlightURI(const QString& message)
-{
+QString highlightURI(const QString& message) {
     QString result = highlight(message, URI_WORD_PATTERNS, HREF_WRAPPER);
     result = highlight(result, WWW_WORD_PATTERN, WWW_WRAPPER);
     return result;
@@ -202,8 +198,7 @@ QString highlightURI(const QString& message)
  * @param str Checking string
  * @return True, if tag intersection detected
  */
-static bool isTagIntersection(const QString& str)
-{
+static bool isTagIntersection(const QString& str) {
     const QRegularExpression TAG_PATTERN("(?<=<)/?[a-zA-Z0-9]+(?=>)");
 
     int openingTagCount = 0;
@@ -223,8 +218,7 @@ static bool isTagIntersection(const QString& str)
  * string
  * @return Copy of message with markdown applied
  */
-QString applyMarkdown(const QString& message, bool showFormattingSymbols)
-{
+QString applyMarkdown(const QString& message, bool showFormattingSymbols) {
     QString result = message;
     for (const QPair<QRegularExpression, QString>& pair : REGEX_TO_WRAPPER) {
         QRegularExpressionMatchIterator iter = pair.first.globalMatch(result);

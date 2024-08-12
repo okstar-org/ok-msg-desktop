@@ -10,15 +10,13 @@
  * See the Mulan PubL v2 for more details.
  */
 
-
 #ifndef PROFILELOCKER_H
 #define PROFILELOCKER_H
 
 #include <QLockFile>
 #include <memory>
 
-class ProfileLocker
-{
+class ProfileLocker {
 private:
     ProfileLocker() = delete;
 
@@ -39,4 +37,4 @@ private:
     static QString curLockName;
 };
 
-#endif // PROFILELOCKER_H
+#endif  // PROFILELOCKER_H

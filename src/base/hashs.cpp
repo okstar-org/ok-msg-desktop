@@ -17,14 +17,18 @@
 #include "hashs.h"
 #include <QCryptographicHash>
 #include <QString>
+namespace ok::base {
 
-namespace lib {
-namespace base {
-
-QString Hashs::sha1(const QByteArray &buf) {
-  QCryptographicHash hash(QCryptographicHash::Algorithm::Sha1);
-  hash.addData(buf);
-  return QString{hash.result().toHex()};
+QByteArray Hashs::hash(const QByteArray& buf, QCryptographicHash::Algorithm algorithm) {
+    QCryptographicHash hash(algorithm);
+    hash.addData(buf);
+    return hash.result();
 }
-} // namespace base
-} // namespace lib
+
+QByteArray Hashs::sha1(const QByteArray& buf) {
+    return hash(buf, QCryptographicHash::Algorithm::Md5);
+}
+
+QString Hashs::sha1String(const QByteArray& buf) { return QString{sha1(buf).toHex()}; }
+
+}  // namespace ok::base
