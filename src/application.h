@@ -41,7 +41,7 @@ class Application : public QApplication {
 public:
     Application(int& argc, char** argv);
 
-    static Application* Instance();
+    static Application* Instance() { return dynamic_cast<Application*>(qApp); }
 
     void start();
     void finish();

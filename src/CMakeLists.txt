@@ -63,9 +63,9 @@ target_link_libraries(
     PRIVATE ${OK_LIBS}
 )
 
-if (MSVC)
+if (WIN32)
     set_property(TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>") 
-endif (MSVC)
+endif ()
 
 set(PNG_NAME "ok-msg.png")
 

@@ -12,14 +12,11 @@ include_directories(${PROJECT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR})
     pkg_check_modules(AVUTIL REQUIRED libavutil)
     pkg_check_modules(SWSCALE REQUIRED libswscale)
     pkg_check_modules(SWRESAMPLE REQUIRED libswresample)
-
     pkg_check_modules(QRENCODE REQUIRED libqrencode )
     pkg_check_modules(OpenAL REQUIRED openal)
     pkg_check_modules(sqlite3 REQUIRED sqlite3)
     pkg_check_modules(exif REQUIRED libexif)
-#    pkg_check_modules(OpenSSL REQUIRED libssl libcrypto)
     pkg_check_modules(JPEG REQUIRED libjpeg)
-
 
     list(APPEND ALL_LIBRARIES
             ${AVDEVICE_LINK_LIBRARIES}
@@ -41,9 +38,8 @@ include_directories(${AVCODEC_INCLUDE_DIRS})
 include_directories(${AVDEVICE_INCLUDE_DIRS})
 include_directories(${QRENCODE_INCLUDE_DIRS})
 
-
 #include(./cmake/Dependencies.cmake)
- 
+
 set(CMAKE_AUTOUIC_SEARCH_PATHS ./src src/widget src/widget/form)
 
 qt5_wrap_ui(
@@ -93,7 +89,7 @@ set(${PROJECT_NAME}_SOURCES
         src/chatlog/chatlog.cpp
         src/chatlog/chatlog.h
         src/chatlog/chatmessage.cpp
-        src/chatlog/chatmessage.h 
+        src/chatlog/chatmessage.h
         src/chatlog/content/filetransferwidget.cpp
         src/chatlog/content/filetransferwidget.h
         src/chatlog/content/image.cpp
@@ -303,7 +299,7 @@ set(${PROJECT_NAME}_SOURCES
         src/widget/form/settings/privacyform.cpp
         src/widget/form/settings/privacyform.h
         src/widget/form/settings/userinterfaceform.h
-        src/widget/form/settings/userinterfaceform.cpp 
+        src/widget/form/settings/userinterfaceform.cpp
         src/widget/form/settings/verticalonlyscroller.cpp
         src/widget/form/settings/verticalonlyscroller.h
         src/widget/form/settingswidget.cpp
@@ -312,12 +308,12 @@ set(${PROJECT_NAME}_SOURCES
         src/widget/form/tabcompleter.h
     src/widget/form/CallDurationForm.h
     src/widget/form/CallDurationForm.cpp
-        src/widget/friendlistlayout.cpp   
+        src/widget/friendlistlayout.cpp
         src/widget/friendlistlayout.h
-        src/widget/friendlistwidget.cpp        
+        src/widget/friendlistwidget.cpp
         src/widget/friendlistwidget.h
         src/widget/friendwidget.cpp
-        src/widget/friendwidget.h 
+        src/widget/friendwidget.h
         src/widget/genericchatitemlayout.cpp
         src/widget/genericchatitemlayout.h
         src/widget/genericchatitemwidget.cpp
@@ -341,8 +337,6 @@ set(${PROJECT_NAME}_SOURCES
         src/widget/qrwidget.h
         src/widget/splitterrestorer.cpp
         src/widget/splitterrestorer.h
-    ../../lib/settings/style.cpp
-    ../../lib/settings/style.h
         src/widget/tool/activatedialog.cpp
         src/widget/tool/activatedialog.h
         src/widget/tool/adjustingscrollarea.cpp
@@ -434,19 +428,26 @@ if (PLATFORM_EXTENSIONS)
     endif ()
 endif ()
 
+set(TS_FILES
+		translations/de.xml
+		translations/es.xml
+		translations/fr.xml
+		translations/it.xml
+		translations/ja.xml
+		translations/ko.xml
+		translations/pt.xml
+		translations/ru.xml
+		translations/ar.xml
+		translations/zh_CN.xml
+		translations/zh_TW.xml
+)
+
+qt5_create_translation(${PROJECT_NAME}_QM_FILES ${CMAKE_CURRENT_SOURCE_DIR} ${TS_FILES} OPTIONS -no-obsolete)
+
 qt5_add_translation(
-        ${PROJECT_NAME}_QM_FILES
-    translations/de.xml
-    translations/es.xml
-    translations/fr.xml
-    translations/it.xml
-    translations/ja.xml
-    translations/ko.xml
-    translations/pt.xml
-    translations/ru.xml
-    translations/ar.xml
-    translations/zh_CN.xml
-    translations/zh_TW.xml)
+		${PROJECT_NAME}_QM_FILES
+		${TS_FILES}
+)
 
 set(RESOURCE_NAME "${PROJECT_BINARY_DIR}/${PROJECT_NAME}.qrc.in")
 
@@ -496,7 +497,8 @@ qt5_add_resources(
 )
 
 
-add_library(${PROJECT_NAME} SHARED
+
+add_library(${PROJECT_NAME} STATIC
         ${${PROJECT_NAME}_FORMS}
         ${${PROJECT_NAME}_SOURCES}
         ${${PROJECT_NAME}_QM_FILES}
@@ -506,9 +508,16 @@ if (WIN32)
     set(PLATFORM_LIBS d3d11 dxgi dxva2 gdi32
                         wmcodecdspuuid Winmm Mf Mfplat Mfreadwrite mfuuid evr 
                         amstrmid msdmo strmiids strmbase
-                        winspool comdlg32 uuid shlwapi iphlpapi 
+                        winspool comdlg32 uuid shlwapi iphlpapi
                         kernel32 user32 Vfw32 shell32 oleaut32 ole32 advapi32
     )
+
+    if(CMAKE_BUILD_TYPE MATCHES "Debug")
+        set(PLATFORM_LIBS ${PLATFORM_LIBS} MSVCRTD)
+    else()
+        set(PLATFORM_LIBS ${PLATFORM_LIBS} MSVCRT)
+    endif()
+
 elseif (APPLE)
 
     find_library(APPLICATION_SERVICES ApplicationServices)
@@ -550,7 +559,8 @@ target_link_libraries(${PROJECT_NAME}
     PUBLIC ${PLATFORM_LIBS}
 )
 
-#if (MSVC)
-#    set_property(TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-#endif (MSVC)
+if (WIN32)
+    set_property(TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
+endif ()
 

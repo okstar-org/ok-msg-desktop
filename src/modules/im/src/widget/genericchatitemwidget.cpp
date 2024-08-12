@@ -53,6 +53,7 @@ GenericChatItemWidget::GenericChatItemWidget(ChatType type, const ContactId& cid
     //  lastMessageLabel->setForegroundRole(QPalette::WindowText);
 
     statusPic = new QLabel(this);
+    statusPic->setContentsMargins(1, 1, 1, 1);
     if (type == ChatType::Chat) {
         updateStatusLight(Status::Status::Offline, false);
     } else {

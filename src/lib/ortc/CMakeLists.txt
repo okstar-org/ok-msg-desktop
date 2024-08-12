@@ -10,6 +10,7 @@ if (ok-rtc_FOUND)
 	elseif (UNIX)
 		add_definitions(-DWEBRTC_POSIX=1 -DWEBRTC_LINUX=1 -DABSL_USES_STD_STRING_VIEW=1)
 	endif ()
+
 	set(webrtc_LIB ok-rtc::ok-rtc)
 endif ()
 
@@ -17,6 +18,7 @@ endif ()
 find_package(ok-gloox REQUIRED)
 message(STATUS "Found ok-gloox=${ok-gloox_FOUND}")
 if (ok-gloox_FOUND)
+message(STATUS "ok-gloox_INCLUDE_DIRS=${ok-gloox_INCLUDE_DIRS}")
 	set(gloox_LIB ok-gloox::ok-gloox)
 endif ()
 
@@ -78,6 +80,6 @@ target_link_libraries(${PROJECT_NAME}
 		${gloox_LIB}
 )
 
-if (MSVC)
+if (WIN32)
 	set_property(TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-endif (MSVC)
+endif ()
