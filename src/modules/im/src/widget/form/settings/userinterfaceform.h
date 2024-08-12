@@ -29,7 +29,7 @@ public:
     ~UserInterfaceForm();
     virtual QString getFormName() final override
     {
-        return tr("Save Setting");
+        return tr("Storage Settings");
     }
 
 private slots:

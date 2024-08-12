@@ -39,8 +39,8 @@ private slots:
     void on_closeToTray_stateChanged();
     void on_minimizeToTray_stateChanged();
     void on_checkUpdates_stateChanged();
-    //void on_timestamp_editTextChanged(const QString& format);
-    //void on_dateFormats_editTextChanged(const QString& format);
+    void on_timestamp_editTextChanged(const QString& format);
+    void on_dateFormats_editTextChanged(const QString& format);
 
 private:
     Ui::GeneralForm* bodyUI;
