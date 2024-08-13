@@ -17,7 +17,9 @@
 #include <capabilities.h>
 #include <extdisco.h>
 #include <jinglecontent.h>
+#include <jinglefiletransfer.h>
 #include <jinglegroup.h>
+#include <jingleibb.h>
 #include <jingleiceudp.h>
 #include <jinglertp.h>
 #include <jinglesession.h>

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 ???? chuanshaninfo.com
+ * Copyright (c) 2022 船山信息 chuanshaninfo.com
  * The project is licensed under Mulan PubL v2.
  * You can use this software according to the terms and conditions of the Mulan
  * PubL v2. You may obtain a copy of Mulan PubL v2 at:
@@ -148,7 +148,7 @@ bool WebRTC::call(const std::string& peerId, const std::string& sId, bool video)
     return createConductor(peerId, sId, video);
 }
 
-bool WebRTC::quit(const string& peerId) { return false; }
+bool WebRTC::quit(const std::string& peerId) { return false; }
 
 void WebRTC::setIceOptions(std::list<IceServer>& ices) {
     for (auto ice : ices) {
@@ -233,7 +233,7 @@ std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertToSdp(
         sessionDescription->AddTransportInfo(ti);
 
         switch (rtp.media) {
-            case gloox::Jingle::audio: {
+            case Media::audio: {
                 auto acd = std::make_unique<::cricket::AudioContentDescription>();
                 for (auto& pt : rtp.payloadTypes) {
                     ::cricket::AudioCodec ac(pt.id, pt.name, pt.clockrate, pt.bitrate, pt.channels);
@@ -285,7 +285,7 @@ std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertToSdp(
                                                std::move(acd));
                 break;
             }
-            case gloox::Jingle::video: {
+            case Media::video: {
                 auto vcd = std::make_unique<::cricket::VideoContentDescription>();
                 for (auto& pt : rtp.payloadTypes) {
                     auto vc = ::cricket::VideoCodec(pt.id, pt.name);
@@ -388,7 +388,7 @@ OJingleContentAv WebRTC::convertFromSdp(webrtc::SessionDescriptionInterface* des
         auto hdrs = mediaDescription->rtp_header_extensions();
 
         for (auto& hdr : hdrs) {
-            gloox::Jingle::RTP::HdrExt hdrExt = {hdr.id, hdr.uri};
+            HdrExt hdrExt = {hdr.id, hdr.uri};
             oContent.rtp.hdrExts.push_back(hdrExt);
         }
 
@@ -409,19 +409,19 @@ OJingleContentAv WebRTC::convertFromSdp(webrtc::SessionDescriptionInterface* des
                 RTC_LOG(LS_INFO) << "stream_id:" << first_stream_id << " label:" << stream.id
                                  << " ssrc:" << ssrc;
 
-                gloox::Jingle::RTP::Parameter cname = {"cname", stream.cname};
-                gloox::Jingle::RTP::Parameter label = {"label", stream.id};
-                gloox::Jingle::RTP::Parameter mslabel = {"mslabel", first_stream_id};
-                gloox::Jingle::RTP::Parameter msid = {"msid", first_stream_id + " " + stream.id};
+                Parameter cname = {"cname", stream.cname};
+                Parameter label = {"label", stream.id};
+                Parameter mslabel = {"mslabel", first_stream_id};
+                Parameter msid = {"msid", first_stream_id + " " + stream.id};
 
                 // msid = mslabel+ label(stream.id)
-                RTP::Parameters parameters;
+                Parameters parameters;
                 parameters.emplace_back(cname);
                 parameters.emplace_back(msid);
                 parameters.emplace_back(mslabel);
                 parameters.emplace_back(label);
 
-                gloox::Jingle::RTP::Source source = {std::to_string(ssrc), parameters};
+                Source source = {std::to_string(ssrc), parameters};
                 oContent.rtp.sources.emplace_back(source);
             }
         }
@@ -437,12 +437,12 @@ OJingleContentAv WebRTC::convertFromSdp(webrtc::SessionDescriptionInterface* des
         // codecs
         switch (mt) {
             case ::cricket::MediaType::MEDIA_TYPE_AUDIO: {
-                oContent.rtp.media = gloox::Jingle::audio;
+                oContent.rtp.media = Media::audio;
                 auto audio_desc = mediaDescription->as_audio();
                 auto codecs = audio_desc->codecs();
 
                 for (auto& codec : codecs) {
-                    gloox::Jingle::RTP::PayloadType type;
+                    PayloadType type;
                     type.id = codec.id;
                     type.name = codec.name;
                     type.channels = codec.channels;
@@ -451,7 +451,7 @@ OJingleContentAv WebRTC::convertFromSdp(webrtc::SessionDescriptionInterface* des
 
                     auto cps = codec.ToCodecParameters();
                     for (auto& it : cps.parameters) {
-                        gloox::Jingle::RTP::Parameter parameter;
+                        Parameter parameter;
                         if (parameter.name.empty()) continue;
                         parameter.name = it.first;
                         parameter.value = it.second;
@@ -460,7 +460,7 @@ OJingleContentAv WebRTC::convertFromSdp(webrtc::SessionDescriptionInterface* des
 
                     // rtcp-fb
                     for (auto& it : codec.feedback_params.params()) {
-                        gloox::Jingle::RTP::Feedback fb = {it.id(), it.param()};
+                        Feedback fb = {it.id(), it.param()};
                         type.feedbacks.push_back(fb);
                     }
 
@@ -470,11 +470,11 @@ OJingleContentAv WebRTC::convertFromSdp(webrtc::SessionDescriptionInterface* des
                 break;
             }
             case ::cricket::MediaType::MEDIA_TYPE_VIDEO: {
-                oContent.rtp.media = (gloox::Jingle::video);
+                oContent.rtp.media = Media::video;
                 auto video_desc = mediaDescription->as_video();
                 for (auto& codec : video_desc->codecs()) {
                     // PayloadType
-                    gloox::Jingle::RTP::PayloadType type;
+                    PayloadType type;
                     type.id = codec.id;
                     type.name = codec.name;
                     type.clockrate = codec.clockrate;
@@ -482,7 +482,7 @@ OJingleContentAv WebRTC::convertFromSdp(webrtc::SessionDescriptionInterface* des
                     // PayloadType parameter
                     auto cps = codec.ToCodecParameters();
                     for (auto& it : cps.parameters) {
-                        gloox::Jingle::RTP::Parameter parameter;
+                        Parameter parameter;
                         parameter.name = it.first;
                         parameter.value = it.second;
                         type.parameters.emplace_back(parameter);
@@ -490,7 +490,7 @@ OJingleContentAv WebRTC::convertFromSdp(webrtc::SessionDescriptionInterface* des
 
                     // rtcp-fb
                     for (auto& it : codec.feedback_params.params()) {
-                        gloox::Jingle::RTP::Feedback fb = {it.id(), it.param()};
+                        Feedback fb = {it.id(), it.param()};
                         type.feedbacks.push_back(fb);
                     }
 
@@ -627,16 +627,16 @@ void WebRTC::setTransportInfo(const std::string& peerId,
          */
 
         switch (_candidate.type) {
-            case gloox::Jingle::ICEUDP::Type::Host:
+            case Type::Host:
                 candidate.set_type(::cricket::LOCAL_PORT_TYPE);
                 break;
-            case gloox::Jingle::ICEUDP::Type::PeerReflexive:
+            case Type::PeerReflexive:
                 candidate.set_type(::cricket::PRFLX_PORT_TYPE);
                 break;
-            case gloox::Jingle::ICEUDP::Type::Relayed:
+            case Type::Relayed:
                 candidate.set_type(::cricket::RELAY_PORT_TYPE);
                 break;
-            case gloox::Jingle::ICEUDP::Type::ServerReflexive:
+            case Type::ServerReflexive:
                 candidate.set_type(::cricket::STUN_PORT_TYPE);
                 break;
         }
@@ -651,16 +651,6 @@ void WebRTC::setTransportInfo(const std::string& peerId,
         conductor->setTransportInfo(std::move(jsep_candidate));
         i++;
     }
-}
-
-void WebRTC::ContentAdd(std::map<std::string, gloox::Jingle::Session> sdMap,
-                        OkRTCHandler* handler) {
-    //  _c->OnContentAdd(sdMap, handler);
-}
-
-void WebRTC::ContentRemove(std::map<std::string, gloox::Jingle::Session> sdMap,
-                           OkRTCHandler* handler) {
-    //  _c->OnContentRemove(sdMap, handler);
 }
 
 void WebRTC::setMute(bool mute) {

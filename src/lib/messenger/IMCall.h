@@ -46,6 +46,9 @@ class IMCall : public IMJingle, public lib::ortc::OkRTCHandler {
 public:
     IMCall(IM* im, QObject* parent = nullptr);
 
+    void toPlugins(const ortc::OJingleContentAv& oContext, PluginList& plugins);
+    void parse(const PluginList& plugins, ortc::OJingleContentAv& oContext);
+
     void onCreatePeerConnection(const std::string& sId, const std::string& peerId,
                                 bool ok) override;
 

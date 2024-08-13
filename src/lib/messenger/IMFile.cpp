@@ -13,8 +13,8 @@
 #include "IMFile.h"
 #include <bytestream.h>
 #include <inbandbytestream.h>
-#include <QEventLoop>
-#include <utility>
+#include <jinglefiletransfer.h>
+#include <jingleibb.h>
 #include "IM.h"
 #include "IMFile.h"
 #include "IMFileTask.h"

@@ -12,53 +12,127 @@
 
 #pragma once
 
+#include <list>
 #include <map>
 #include <string>
 #include <vector>
-
-#include <jinglecontent.h>
-#include <jinglefiletransfer.h>
-#include <jinglegroup.h>
-#include <jingleibb.h>
-#include <jingleiceudp.h>
-#include <jinglertp.h>
-#include <jinglesession.h>
 
 namespace lib {
 namespace ortc {
 
 #define SESSION_VERSION "3"
 
-using namespace std;
-using namespace gloox;
-using namespace gloox::Jingle;
+enum class Media { invalid = -1, audio = 0, video = 1, application = 2 };
+typedef std::list<Media> Medias;
+
+enum class Type {
+    Host,           /**< A host candidate. */
+    PeerReflexive,  /**< A peer reflexive candidate. */
+    Relayed,        /**< A relayed candidate. */
+    ServerReflexive /**< A server reflexive candidate. */
+};
+
+struct Dtls {
+    std::string hash;
+    std::string setup;
+    std::string fingerprint;
+};
+typedef std::list<Dtls> DtlsList;
+
+/**
+ * Describes a single transport candidate.
+ */
+struct Candidate {
+    std::string component;  /**< A Component ID as defined in ICE-CORE. */
+    std::string foundation; /**< A Foundation as defined in ICE-CORE.*/
+    std::string generation; /**< An index, starting at 0, that enables the parties to keep track of
+                               updates to the candidate throughout the life of the session. */
+    std::string id;         /**< A unique identifier for the candidate. */
+    std::string ip;         /**< The IP address for the candidate transport mechanism. */
+    std::string network;  /**< An index, starting at 0, referencing which network this candidate is
+                             on for a given peer. */
+    int port;             /**< The port at the candidate IP address. */
+    int priority;         /**< A Priority as defined in ICE-CORE. */
+    std::string protocol; /**< The protocol to be used. Should be @b udp. */
+    std::string tcptype;
+    std::string rel_addr; /**< A related address as defined in ICE-CORE. */
+    int rel_port;         /**< A related port as defined in ICE-CORE. */
+    Type type;            /**< A Candidate Type as defined in ICE-CORE. */
+};
+
+/** A list of transport candidates. */
+typedef std::list<Candidate> CandidateList;
 
 struct OIceUdp {
     std::string mid;
     int mline;
     std::string ufrag;
     std::string pwd;
-    ICEUDP::Dtls dtls;
-    ICEUDP::CandidateList candidates;
+    Dtls dtls;
+    CandidateList candidates;
 };
 
+struct Feedback {
+    std::string type;
+    std::string subtype;
+};
+typedef std::list<Feedback> Feedbacks;
+
+struct Parameter {
+    std::string name;
+    std::string value;
+};
+
+typedef std::list<Parameter> Parameters;
+
+/**
+ * A struct holding information about a PayloadType.
+ */
+struct PayloadType {
+    int id;           /**< The type's id */
+    std::string name; /**< The type's name. */
+    int clockrate;    /**< The clockrate. */
+    int bitrate;
+    int channels;
+    Parameters parameters;
+    Feedbacks feedbacks;
+};
+
+/** A list of file information structs. */
+typedef std::list<PayloadType> PayloadTypes;
+struct HdrExt {
+    int id;          /**< The type's id */
+    std::string uri; /**< The type's name. */
+};
+typedef std::list<HdrExt> HdrExts;
+
+struct Source {
+    std::string ssrc;
+    Parameters parameters;
+};
+typedef std::list<Source> Sources;
+
+struct SsrcGroup {
+    std::string semantics;
+    std::vector<std::string> ssrcs;
+};
 struct ORTP {
     Media media;
-    RTP::PayloadTypes payloadTypes;
-    RTP::HdrExts hdrExts;
-    RTP::Sources sources;
-    RTP::SsrcGroup ssrcGroup;
+    PayloadTypes payloadTypes;
+    HdrExts hdrExts;
+    Sources sources;
+    SsrcGroup ssrcGroup;
     bool rtcpMux;
 };
 
-struct OFile {
-    Jingle::FileTransfer::FileList files;
-    Jingle::IBB ibb;
-};
+// struct OFile {
+//     Jingle::FileTransfer::FileList files;
+//     Jingle::IBB ibb;
+// };
 
 struct OContent {
     std::string name;
-    OFile file;
+    //    OFile file;
 };
 
 struct OSdp {
@@ -93,25 +167,23 @@ public:
 
     JingleCallType callType;
 
-    virtual void toPlugins(PluginList& plugins) const;
-    virtual void parse(const Jingle::Session::Jingle* jingle);
 };
 
 struct OJingleContentFile : public OJingleContent {
-    void toPlugins(PluginList& plugins) const override;
-    void parse(const Jingle::Session::Jingle* jingle) override;
+    //    void toPlugins(PluginList& plugins) const override;
+    //    void parse(const Jingle::Session::Jingle* jingle) override;
     std::vector<OContent> contents;
 };
 
 struct OJingleContentAv : public OJingleContent {
 public:
-    void toPlugins(PluginList& plugins) const override;
-    void parse(const Jingle::Session::Jingle* jingle) override;
+    //    void toPlugins(PluginList& plugins) const override;
+    //    void parse(const Jingle::Session::Jingle* jingle) override;
     std::vector<OSdp> contents;
 
     inline bool isVideo() const {
         for (auto s : contents) {
-            if (s.rtp.media == Jingle::Media::video) {
+            if (s.rtp.media == Media::video) {
                 return true;
             }
         }

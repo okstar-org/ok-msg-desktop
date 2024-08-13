@@ -235,7 +235,7 @@ void Conductor::OnIceCandidate(const webrtc::IceCandidateInterface* ice) {
         }
     }
     // candidate
-    gloox::Jingle::ICEUDP::Candidate oc;
+    Candidate oc;
     oc.id = cand.id();
     oc.foundation = cand.foundation();
     oc.priority = cand.priority();
@@ -251,16 +251,16 @@ void Conductor::OnIceCandidate(const webrtc::IceCandidateInterface* ice) {
 
     // “host” / “srflx” / “prflx” / “relay” / token
     if (cand.type() == ::cricket::LOCAL_PORT_TYPE) {
-        oc.type = gloox::Jingle::ICEUDP::Host;
+        oc.type = Type::Host;
     } else if (cand.type() == ::cricket::STUN_PORT_TYPE) {
-        oc.type = gloox::Jingle::ICEUDP::ServerReflexive;
+        oc.type = Type::ServerReflexive;
     } else if (cand.type() == ::cricket::PRFLX_PORT_TYPE) {
-        oc.type = gloox::Jingle::ICEUDP::PeerReflexive;
+        oc.type = Type::PeerReflexive;
     } else if (cand.type() == ::cricket::RELAY_PORT_TYPE) {
-        oc.type = gloox::Jingle::ICEUDP::Relayed;
+        oc.type = Type::Relayed;
     }
 
-    if (oc.type != gloox::Jingle::ICEUDP::Host && 0 < cand.related_address().port()) {
+    if (oc.type != Type::Host && 0 < cand.related_address().port()) {
         oc.rel_addr = cand.related_address().ipaddr().ToString();
         oc.rel_port = cand.related_address().port();
     }
@@ -364,118 +364,7 @@ void Conductor::setTransportInfo(std::unique_ptr<webrtc::IceCandidateInterface> 
 
 void Conductor::sessionTerminate() { peer_connection_->Close(); }
 
-void Conductor::OnContentAdd(std::map<std::string, gloox::Jingle::Session> sdMap,
-                             OkRTCHandler* handler) {
-    std::lock_guard<std::mutex> lock(_session_mutex);
-    const webrtc::SessionDescriptionInterface* remoteSDI = peer_connection_->remote_description();
-
-    std::string sdp;
-    remoteSDI->ToString(&sdp);
-    RTC_LOG(LS_INFO) << "OnContentAdd remote sdp:" << sdp;
-
-    std::unique_ptr<webrtc::SessionDescriptionInterface> jsd =
-            webrtc::CreateSessionDescription(webrtc::SdpType::kOffer, sdp);
-
-    ::cricket::ContentGroup group(::cricket::GROUP_TYPE_BUNDLE);
-    for (auto it = sdMap.begin(); it != sdMap.end(); ++it) {
-        std::string name = it->first;
-        gloox::Jingle::Session sdp = it->second;
-        ::cricket::ContentInfo* info = jsd->description()->GetContentByName(name);
-        if (!info) {
-            continue;
-        }
-    }
-
-    std::string new_sdp;
-    jsd->ToString(&new_sdp);
-    // qDebug(("remote new sdp:\n%1\n").arg(qstring(new_sdp)));
-    peer_connection_->SetRemoteDescription(this, jsd.release());
-
-    // qDebug(("end"));
-}
-
-void Conductor::OnContentRemove(std::map<std::string, gloox::Jingle::Session> sdMap,
-                                OkRTCHandler* handler) {
-#if 0
-//  qDebug(LS_INFO);
-  std::lock_guard<std::mutex> lock(_session_mutex);
-
-  //    auto find = _VideoSinkMap.find(peer);
-  //    if(find != _VideoSinkMap.end()){
-  //        auto vs = _VideoSinkMap.at(peer);
-  //        if(vs->disabled()){
-  //            vs->setDisabled();
-  //        }
-  //    }
-
-  webrtc::scoped_refptr<webrtc::PeerConnectionInterface> peer_connection_ =
-      InitGetConnection();
-  const webrtc::SessionDescriptionInterface *remoteSDI =
-      peer_connection_->remote_description();
-
-  std::string sdp;
-  remoteSDI->ToString(&sdp);
-  //qDebug(("remote orignal sdp:\n").arg(sdp;
-
-  for (auto it = sdMap.begin(); it != sdMap.end(); ++it) {
-    std::string name = it->first;
-    gloox::Jingle::Session sdp = it->second;
-
-    //qDebug(("sdp mid: ").arg(name;
-
-    const cricket::SessionDescription *mcd = remoteSDI->description();
-    const cricket::ContentInfo *info = mcd->GetContentByName(name);
-    if (!info) {
-      continue;
-    }
-    gloox::Jingle::Session::SSMAList list = sdp.rtp().ssmas;
-    for (auto ssma : list) {
-      const uint32_t ssrc = ssma.ssrc();
-      const cricket::MediaContentDescription *mcd = info->media_description();
-      cricket::StreamParamsVec &spv =
-          const_cast<cricket::MediaContentDescription *>(mcd)
-              ->mutable_streams();
-
-      spv.erase(std::remove_if(spv.begin(), spv.end(),
-                               [&](auto i) {
-                                 bool y = i.has_ssrc(ssrc);
-                                 if (y) {
-                                   std::string cname = i.cname;
-                                   std::string track_id = i.id;
-                                   std::string stream_id = i.first_stream_id();
-
-                                   //qDebug(LS_INFO)
-                                      ).arg("Remove StreamParamsVec: ssrc: "
-                                      ).arg(ssrc).arg(" cname: ").arg(cname
-                                      ).arg(" track_id: ").arg(track_id
-                                      ).arg(" stream_id: ").arg(stream_id;
-                                 }
-                                 return y;
-                               }),
-                spv.end());
-    }
-
-
-
-    std::string new_sdp;
-    remoteSDI->ToString(&new_sdp);
-    //qDebug(("remote new sdp: \n").arg(new_sdp;
-
-    std::unique_ptr<webrtc::SessionDescriptionInterface> jsd =
-        webrtc::CreateSessionDescription(webrtc::SdpType::kOffer, new_sdp);
-
-    peer_connection_->SetRemoteDescription(this, jsd.release());
-
-    //qDebug(("end peer:"));
-#endif
-}
-
-void Conductor::OnSessionTerminate(const std::string& sid, OkRTCHandler* handler) {
-    // qDebug(("begin sid:").arg(qstring(sid)));
-    std::lock_guard<std::mutex> lock(_session_mutex);
-    //  Shutdown();
-    // qDebug(("end"));
-}
+void Conductor::OnSessionTerminate(const std::string& sid, OkRTCHandler* handler) {}
 
 OJingleContentAv Conductor::toJingleSdp(const webrtc::SessionDescriptionInterface* desc) {
     OJingleContentAv osdp;
@@ -523,7 +412,7 @@ OJingleContentAv Conductor::toJingleSdp(const webrtc::SessionDescriptionInterfac
         // hdrext
         const ::cricket::RtpHeaderExtensions hdrs = mediaDescription->rtp_header_extensions();
         for (auto& hdr : hdrs) {
-            gloox::Jingle::RTP::HdrExt hdrExt = {hdr.id, hdr.uri};
+            HdrExt hdrExt = {hdr.id, hdr.uri};
             oContent.rtp.hdrExts.push_back(hdrExt);
         }
 
@@ -544,19 +433,19 @@ OJingleContentAv Conductor::toJingleSdp(const webrtc::SessionDescriptionInterfac
                 RTC_LOG(LS_INFO) << " label:" << first_stream_id << " id:" << stream.id << " ssrc"
                                  << ssrc1;
 
-                gloox::Jingle::RTP::Parameter cname = {"cname", stream.cname};
-                gloox::Jingle::RTP::Parameter label = {"label", stream.id};
-                gloox::Jingle::RTP::Parameter mslabel = {"mslabel", first_stream_id};
-                gloox::Jingle::RTP::Parameter msid = {"msid", first_stream_id + " " + stream.id};
+                Parameter cname = {"cname", stream.cname};
+                Parameter label = {"label", stream.id};
+                Parameter mslabel = {"mslabel", first_stream_id};
+                Parameter msid = {"msid", first_stream_id + " " + stream.id};
 
                 // msid = mslabel+ label(stream.id)
-                RTP::Parameters parameters;
+                Parameters parameters;
                 parameters.emplace_back(cname);
                 parameters.emplace_back(msid);
                 parameters.emplace_back(mslabel);
                 parameters.emplace_back(label);
 
-                gloox::Jingle::RTP::Source source = {std::to_string(ssrc1), parameters};
+                Source source = {std::to_string(ssrc1), parameters};
                 oContent.rtp.sources.emplace_back(source);
             }
         }
@@ -572,12 +461,12 @@ OJingleContentAv Conductor::toJingleSdp(const webrtc::SessionDescriptionInterfac
         // codecs
         switch (mt) {
             case ::cricket::MediaType::MEDIA_TYPE_AUDIO: {
-                oContent.rtp.media = gloox::Jingle::audio;
+                oContent.rtp.media = Media::audio;
                 auto audio_desc = mediaDescription->as_audio();
                 auto codecs = audio_desc->codecs();
 
                 for (auto& codec : codecs) {
-                    gloox::Jingle::RTP::PayloadType type;
+                    PayloadType type;
                     type.id = codec.id;
                     type.name = codec.name;
                     type.channels = codec.channels;
@@ -586,7 +475,7 @@ OJingleContentAv Conductor::toJingleSdp(const webrtc::SessionDescriptionInterfac
 
                     auto cps = codec.ToCodecParameters();
                     for (auto& it : cps.parameters) {
-                        gloox::Jingle::RTP::Parameter parameter;
+                        Parameter parameter;
                         if (parameter.name.empty()) continue;
                         parameter.name = it.first;
                         parameter.value = it.second;
@@ -595,7 +484,7 @@ OJingleContentAv Conductor::toJingleSdp(const webrtc::SessionDescriptionInterfac
 
                     // rtcp-fb
                     for (auto& it : codec.feedback_params.params()) {
-                        gloox::Jingle::RTP::Feedback fb = {it.id(), it.param()};
+                        Feedback fb = {it.id(), it.param()};
                         type.feedbacks.push_back(fb);
                     }
 
@@ -605,11 +494,11 @@ OJingleContentAv Conductor::toJingleSdp(const webrtc::SessionDescriptionInterfac
                 break;
             }
             case ::cricket::MediaType::MEDIA_TYPE_VIDEO: {
-                oContent.rtp.media = (gloox::Jingle::video);
+                oContent.rtp.media = Media::video;
                 auto video_desc = mediaDescription->as_video();
                 for (auto& codec : video_desc->codecs()) {
                     // PayloadType
-                    gloox::Jingle::RTP::PayloadType type;
+                    PayloadType type;
                     type.id = codec.id;
                     type.name = codec.name;
                     type.clockrate = codec.clockrate;
@@ -617,7 +506,7 @@ OJingleContentAv Conductor::toJingleSdp(const webrtc::SessionDescriptionInterfac
                     // PayloadType parameter
                     auto cps = codec.ToCodecParameters();
                     for (auto& it : cps.parameters) {
-                        gloox::Jingle::RTP::Parameter parameter;
+                        Parameter parameter;
                         parameter.name = it.first;
                         parameter.value = it.second;
                         type.parameters.emplace_back(parameter);
@@ -625,7 +514,7 @@ OJingleContentAv Conductor::toJingleSdp(const webrtc::SessionDescriptionInterfac
 
                     // rtcp-fb
                     for (auto& it : codec.feedback_params.params()) {
-                        gloox::Jingle::RTP::Feedback fb = {it.id(), it.param()};
+                        Feedback fb = {it.id(), it.param()};
                         type.feedbacks.push_back(fb);
                     }
 

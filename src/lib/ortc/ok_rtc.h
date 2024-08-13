@@ -102,12 +102,6 @@ public:
     virtual void setRemoteDescription(const std::string& peerId,
                                       const OJingleContentAv& jingleContext) = 0;
 
-    virtual void ContentAdd(std::map<std::string, gloox::Jingle::Session> sdMap,
-                            OkRTCHandler* handler) = 0;
-
-    virtual void ContentRemove(std::map<std::string, gloox::Jingle::Session> sdMap,
-                               OkRTCHandler* handler) = 0;
-
     virtual void SessionTerminate(const std::string& peerId) = 0;
 
     virtual void setTransportInfo(const std::string& peerId,

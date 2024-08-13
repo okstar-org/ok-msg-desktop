@@ -65,16 +65,6 @@ void OkRTCManager::addIceServer(const IceServer& ice) { _iceOptions.push_back(ic
 
 void OkRTCManager::CreateOffer(const std::string& peerId) { rtc->CreateOffer(peerId); }
 
-void OkRTCManager::ContentAdd(std::map<std::string, gloox::Jingle::Session>& sdMap,
-                              ortc::OkRTCHandler* handler) {
-    rtc->ContentAdd(sdMap, handler);
-}
-
-void OkRTCManager::ContentRemove(std::map<std::string, gloox::Jingle::Session>& sdMap,
-                                 ortc::OkRTCHandler* handler) {
-    rtc->ContentRemove(sdMap, handler);
-}
-
 void OkRTCManager::SessionTerminate(const std::string& sid) { rtc->SessionTerminate(sid); }
 
 void OkRTCManager::setMute(bool mute) { rtc->setMute(mute); }
