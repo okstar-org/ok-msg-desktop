@@ -13,66 +13,64 @@
 #ifndef FRIEND_H
 #define FRIEND_H
 
+#include <QObject>
+#include <QString>
 #include "contact.h"
 #include "src/core/contactid.h"
 #include "src/core/core.h"
 #include "src/core/toxid.h"
 #include "src/model/status.h"
-#include <QObject>
-#include <QString>
 
-namespace lib::messenger{
+namespace lib::messenger {
 class IMFriend;
 }
 
 class Friend : public Contact {
-  Q_OBJECT
+    Q_OBJECT
 public:
+    Friend(const FriendId& friendPk,
+           bool isFriend,
+           const QString& userAlias = {},
+           const QString& userName = {});
 
-  Friend(const FriendId &friendPk,
-         bool isFriend,
-         const QString &userAlias = {},
-         const QString &userName = {});
+    ~Friend();
 
-  ~Friend();
+    const FriendId& getId() const { return id; };
 
-  const FriendId& getId() const {return id; };
+    QString toString() const;
 
-  QString toString() const;
+    bool hasAlias() const;
 
-  bool hasAlias() const;
+    void setStatusMessage(const QString& message);
+    QString getStatusMessage() const;
 
-  void setStatusMessage(const QString &message);
-  QString getStatusMessage() const;
+    void setEventFlag(bool f) override;
+    bool getEventFlag() const override;
 
-  void setEventFlag(bool f) override;
-  bool getEventFlag() const override;
+    const FriendId getPublicKey() const { return FriendId{Contact::getId()}; };
 
-  const FriendId getPublicKey() const{return FriendId{ Contact::getId()};};
+    void setStatus(Status::Status s);
+    Status::Status getStatus() const;
 
-
-  void setStatus(Status::Status s);
-  Status::Status getStatus() const;
-
-  bool isFriend()const {return  isFriend_;}
-  void addEnd(const QString& end){ends.append(end);}
+    bool isFriend() const { return isFriend_; }
+    void addEnd(const QString& end) { ends.append(end); }
 signals:
-//  void nameChanged(const QString &name);
-//  void aliasChanged(const ToxPk &receiver, QString alias);
-  void statusChanged(Status::Status status, bool event);
-  void onlineOfflineChanged( bool isOnline);
-  void statusMessageChanged( const QString &message);
-  void loadChatHistory();
+    //  void nameChanged(const QString &name);
+    //  void aliasChanged(const ToxPk &receiver, QString alias);
+    void statusChanged(Status::Status status, bool event);
+    void onlineOfflineChanged(bool isOnline);
+    void statusMessageChanged(const QString& message);
+    void loadChatHistory();
 
 public slots:
 
 private:
-  FriendId id;
-  bool hasNewEvents{};
-  bool isFriend_;
-  QString statusMessage;
-  Status::Status friendStatus;
-  QList<QString> ends;//终端列表
+    FriendId id;
+    bool hasNewEvents{};
+    bool isFriend_;
+    QString statusMessage;
+    Status::Status friendStatus;
+    QList<QString> ends;  // 终端列表
 };
 
-#endif // FRIEND_H
+#endif  // FRIEND_H

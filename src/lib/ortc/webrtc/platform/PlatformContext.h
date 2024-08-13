@@ -4,12 +4,10 @@
 namespace lib::ortc {
 
 class PlatformContext {
-
 public:
     virtual ~PlatformContext() = default;
-
 };
 
-} // namespace lib::ortc
+}  // namespace lib::ortc
 
 #endif

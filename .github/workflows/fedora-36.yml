@@ -8,11 +8,11 @@ permissions:
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: [ develop, develop-linux, develop-fedora ]
     tags:
       - "v*.*.*"
   pull_request:
-    branches: [ "develop" ]
+    branches: [ develop, develop-linux, develop-fedora ]
 
 jobs:
   build:
@@ -46,7 +46,7 @@ jobs:
       run: |
         sudo dnf update -y
         sudo dnf install -y gcc g++
-        sudo dnf install -y qt5-qtbase-devel qt6-qtbase-gui  qt5-qtmultimedia-devel  qt5-qtsvg-devel qt5-qttools-devel qt5-qttools-static \
+        sudo dnf install -y qt5-qtbase-devel qt6-qtbase-gui  qt5-qtmultimedia-devel  qt5-qtsvg-devel qt5-qttools-devel qt5-qttools-static qt5-qtwebengine-devel qt5-qtwebengine-devtools \
                     libavcodec-free-devel libavdevice-free-devel libexif-devel qrencode-devel \
                     libvpx-devel openal-soft-devel openssl-devel
 

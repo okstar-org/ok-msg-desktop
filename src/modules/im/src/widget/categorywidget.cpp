@@ -11,19 +11,18 @@
  */
 
 #include "categorywidget.h"
+#include <QBoxLayout>
+#include <QMouseEvent>
 #include "friendlistlayout.h"
 #include "friendlistwidget.h"
 #include "friendwidget.h"
+#include "src/lib/settings/style.h"
 #include "src/model/status.h"
-#include "src/widget/style.h"
 #include "tool/croppinglabel.h"
-#include <QBoxLayout>
-#include <QMouseEvent>
 
 #include <QApplication>
 
-void CategoryWidget::emitChatroomWidget(QLayout* layout, int index)
-{
+void CategoryWidget::emitChatroomWidget(QLayout* layout, int index) {
     QWidget* widget = layout->itemAt(index)->widget();
     GenericChatroomWidget* chatWidget = qobject_cast<GenericChatroomWidget*>(widget);
     if (chatWidget != nullptr) {
@@ -32,8 +31,7 @@ void CategoryWidget::emitChatroomWidget(QLayout* layout, int index)
 }
 
 CategoryWidget::CategoryWidget(bool compact, QWidget* parent)
-    : GenericChatItemWidget(compact, parent)
-{
+        : GenericChatItemWidget(compact, parent) {
     container = new QWidget(this);
     container->setObjectName("circleWidgetContainer");
     container->setLayoutDirection(Qt::LeftToRight);
@@ -68,13 +66,9 @@ CategoryWidget::CategoryWidget(bool compact, QWidget* parent)
     updateStatus();
 }
 
-bool CategoryWidget::isExpanded() const
-{
-    return expanded;
-}
+bool CategoryWidget::isExpanded() const { return expanded; }
 
-void CategoryWidget::setExpanded(bool isExpanded, bool save)
-{
+void CategoryWidget::setExpanded(bool isExpanded, bool save) {
     if (expanded == isExpanded) {
         return;
     }
@@ -94,62 +88,47 @@ void CategoryWidget::setExpanded(bool isExpanded, bool save)
     container->hide();
     container->show();
 
-    if (save)
-        onExpand();
+    if (save) onExpand();
 }
 
-void CategoryWidget::leaveEvent(QEvent* event)
-{
-    event->ignore();
-}
+void CategoryWidget::leaveEvent(QEvent* event) { event->ignore(); }
 
-void CategoryWidget::setName(const QString& name, bool save)
-{
+void CategoryWidget::setName(const QString& name, bool save) {
     nameLabel->setText(name);
 
-    if (isCompact())
-        nameLabel->minimizeMaximumWidth();
+    if (isCompact()) nameLabel->minimizeMaximumWidth();
 
-    if (save)
-        onSetName();
+    if (save) onSetName();
 }
 
-void CategoryWidget::editName()
-{
+void CategoryWidget::editName() {
     nameLabel->editBegin();
     nameLabel->setMaximumWidth(QWIDGETSIZE_MAX);
 }
 
-void CategoryWidget::addFriendWidget(FriendWidget* w, Status::Status s)
-{
+void CategoryWidget::addFriendWidget(FriendWidget* w, Status::Status s) {
     listLayout->addFriendWidget(w, s);
     updateStatus();
     onAddFriendWidget(w);
-    w->reloadTheme(); // Otherwise theme will change when moving to another circle.
+    w->reloadTheme();  // Otherwise theme will change when moving to another circle.
 }
 
-void CategoryWidget::removeFriendWidget(FriendWidget* w, Status::Status s)
-{
+void CategoryWidget::removeFriendWidget(FriendWidget* w, Status::Status s) {
     listLayout->removeFriendWidget(w, s);
     updateStatus();
 }
 
-void CategoryWidget::updateStatus()
-{
+void CategoryWidget::updateStatus() {
     QString online = QString::number(listLayout->friendOnlineCount());
     QString offline = QString::number(listLayout->friendTotalCount());
     QString text = online + QStringLiteral(" / ") + offline;
     statusLabel->setText(text);
 }
 
-bool CategoryWidget::hasChatrooms() const
-{
-    return listLayout->hasChatrooms();
-}
+bool CategoryWidget::hasChatrooms() const { return listLayout->hasChatrooms(); }
 
 void CategoryWidget::search(const QString& searchString, bool updateAll, bool hideOnline,
-                            bool hideOffline)
-{
+                            bool hideOffline) {
     if (updateAll) {
         listLayout->searchChatrooms(searchString, hideOnline, hideOffline);
     }
@@ -157,8 +136,7 @@ void CategoryWidget::search(const QString& searchString, bool updateAll, bool hi
     setVisible(inCategory || listLayout->hasChatrooms());
 }
 
-bool CategoryWidget::cycleContacts(bool forward)
-{
+bool CategoryWidget::cycleContacts(bool forward) {
     if (listLayout->friendTotalCount() == 0) {
         return false;
     }
@@ -188,14 +166,12 @@ bool CategoryWidget::cycleContacts(bool forward)
     return false;
 }
 
-bool CategoryWidget::cycleContacts(FriendWidget* activeChatroomWidget, bool forward)
-{
+bool CategoryWidget::cycleContacts(FriendWidget* activeChatroomWidget, bool forward) {
     int index = -1;
     QLayout* currentLayout = nullptr;
 
     FriendWidget* friendWidget = qobject_cast<FriendWidget*>(activeChatroomWidget);
-    if (friendWidget == nullptr)
-        return false;
+    if (friendWidget == nullptr) return false;
 
     currentLayout = listLayout->getLayoutOnline();
     index = listLayout->indexOfFriendWidget(friendWidget, true);
@@ -226,17 +202,15 @@ bool CategoryWidget::cycleContacts(FriendWidget* activeChatroomWidget, bool forw
         }
 
         GenericChatroomWidget* chatWidget =
-            qobject_cast<GenericChatroomWidget*>(currentLayout->itemAt(index)->widget());
-        if (chatWidget != nullptr)
-            emit chatWidget->chatroomWidgetClicked(chatWidget);
+                qobject_cast<GenericChatroomWidget*>(currentLayout->itemAt(index)->widget());
+        if (chatWidget != nullptr) emit chatWidget->chatroomWidgetClicked(chatWidget);
         return true;
     }
 
     return false;
 }
 
-void CategoryWidget::onCompactChanged(bool _compact)
-{
+void CategoryWidget::onCompactChanged(bool _compact) {
     delete topLayout;
     delete mainLayout;
 
@@ -267,29 +241,19 @@ void CategoryWidget::onCompactChanged(bool _compact)
     Style::repolish(this);
 }
 
-void CategoryWidget::mouseReleaseEvent(QMouseEvent* event)
-{
-    if (event->button() == Qt::LeftButton)
-        setExpanded(!expanded);
+void CategoryWidget::mouseReleaseEvent(QMouseEvent* event) {
+    if (event->button() == Qt::LeftButton) setExpanded(!expanded);
 }
 
-void CategoryWidget::setContainerAttribute(Qt::WidgetAttribute attribute, bool enabled)
-{
+void CategoryWidget::setContainerAttribute(Qt::WidgetAttribute attribute, bool enabled) {
     container->setAttribute(attribute, enabled);
     Style::repolish(container);
 }
 
-QLayout* CategoryWidget::friendOfflineLayout() const
-{
-    return listLayout->getLayoutOffline();
-}
+QLayout* CategoryWidget::friendOfflineLayout() const { return listLayout->getLayoutOffline(); }
 
-QLayout* CategoryWidget::friendOnlineLayout() const
-{
-    return listLayout->getLayoutOnline();
-}
+QLayout* CategoryWidget::friendOnlineLayout() const { return listLayout->getLayoutOnline(); }
 
-void CategoryWidget::moveFriendWidgets(FriendListWidget* friendList)
-{
+void CategoryWidget::moveFriendWidgets(FriendListWidget* friendList) {
     listLayout->moveFriendWidgets(friendList);
 }

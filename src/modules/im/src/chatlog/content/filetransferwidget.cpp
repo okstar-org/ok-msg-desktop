@@ -15,9 +15,9 @@
 
 #include "src/core/core.h"
 #include "src/core/corefile.h"
+#include "src/lib/settings/style.h"
 #include "src/persistence/settings.h"
 #include "src/widget/gui.h"
-#include "src/widget/style.h"
 #include "src/widget/widget.h"
 
 #include <libexif/exif-loader.h>
@@ -33,9 +33,8 @@
 #include <QPainter>
 #include <QVariantAnimation>
 
-#include <cassert>
 #include <math.h>
-
+#include <cassert>
 
 // The leftButton is used to accept, pause, or resume a file transfer, as well as to open a
 // received file.
@@ -43,14 +42,13 @@
 // downloaded to.
 
 FileTransferWidget::FileTransferWidget(QWidget* parent, ToxFile file)
-    : QWidget(parent)
-    , ui(new Ui::FileTransferWidget)
-    , fileInfo(file)
-    , backgroundColor(Style::getColor(Style::TransferMiddle))
-    , buttonColor(Style::getColor(Style::TransferWait))
-    , buttonBackgroundColor(Style::getColor(Style::GroundBase))
-    , active(true)
-{
+        : QWidget(parent)
+        , ui(new Ui::FileTransferWidget)
+        , fileInfo(file)
+        , backgroundColor(Style::getColor(Style::TransferMiddle))
+        , buttonColor(Style::getColor(Style::TransferWait))
+        , buttonBackgroundColor(Style::getColor(Style::GroundBase))
+        , active(true) {
     ui->setupUi(this);
 
     // hide the QWidget background (background-color: transparent doesn't seem to work)
@@ -74,34 +72,34 @@ FileTransferWidget::FileTransferWidget(QWidget* parent, ToxFile file)
     buttonColorAnimation = new QVariantAnimation(this);
     buttonColorAnimation->setDuration(500);
     buttonColorAnimation->setEasingCurve(QEasingCurve::OutCubic);
-    connect(buttonColorAnimation, &QVariantAnimation::valueChanged, this, [this](const QVariant& val) {
-        buttonColor = val.value<QColor>();
-        update();
-    });
+    connect(buttonColorAnimation, &QVariantAnimation::valueChanged, this,
+            [this](const QVariant& val) {
+                buttonColor = val.value<QColor>();
+                update();
+            });
 
     CoreFile* coreFile = Core::getInstance()->getCoreFile();
 
     connect(ui->leftButton, &QPushButton::clicked, this, &FileTransferWidget::onLeftButtonClicked);
-    connect(ui->rightButton, &QPushButton::clicked, this, &FileTransferWidget::onRightButtonClicked);
+    connect(ui->rightButton, &QPushButton::clicked, this,
+            &FileTransferWidget::onRightButtonClicked);
     connect(ui->previewButton, &QPushButton::clicked, this,
             &FileTransferWidget::onPreviewButtonClicked);
 
     // Set lastStatus to anything but the file's current value, this forces an update
-    lastStatus = file.status == FileStatus::FINISHED ? FileStatus::INITIALIZING : FileStatus::FINISHED;
+    lastStatus =
+            file.status == FileStatus::FINISHED ? FileStatus::INITIALIZING : FileStatus::FINISHED;
     updateWidget(file);
 
     setFixedHeight(64);
 
     connect(&GUI::getInstance(), &GUI::themeApplyRequest, this, [this]() {
         backgroundColorAnimation->stop();
-        setBackgroundColor(lastStatus, true);    
+        setBackgroundColor(lastStatus, true);
     });
 }
 
-FileTransferWidget::~FileTransferWidget()
-{
-    delete ui;
-}
+FileTransferWidget::~FileTransferWidget() { delete ui; }
 
 // TODO(sudden6): remove file IO from the UI
 /**
@@ -109,26 +107,18 @@ FileTransferWidget::~FileTransferWidget()
  * @param filepath Path to file which should be deleted.
  * @return True, if file writeable, false otherwise.
  */
-bool FileTransferWidget::tryRemoveFile(const QString& filepath)
-{
+bool FileTransferWidget::tryRemoveFile(const QString& filepath) {
     QFile tmp(filepath);
     bool writable = tmp.open(QIODevice::WriteOnly);
     tmp.remove();
     return writable;
 }
 
-void FileTransferWidget::onFileTransferUpdate(ToxFile file)
-{
-    updateWidget(file);
-}
+void FileTransferWidget::onFileTransferUpdate(ToxFile file) { updateWidget(file); }
 
-bool FileTransferWidget::isActive() const
-{
-    return active;
-}
+bool FileTransferWidget::isActive() const { return active; }
 
-void FileTransferWidget::acceptTransfer(const QString& filepath)
-{
+void FileTransferWidget::acceptTransfer(const QString& filepath) {
     if (filepath.isEmpty()) {
         return;
     }
@@ -148,39 +138,35 @@ void FileTransferWidget::acceptTransfer(const QString& filepath)
 }
 
 void FileTransferWidget::setBackgroundColor(FileStatus status, bool useAnima) {
-
     QColor color;
     bool whiteFont;
     switch (status) {
-    case FileStatus::INITIALIZING:
-    case FileStatus::PAUSED:
-    case FileStatus::TRANSMITTING:
-        color = Style::getColor(Style::TransferMiddle);
-        whiteFont = false;
-        break;
-    case FileStatus::BROKEN:
-    case FileStatus::CANCELED:
-        color = Style::getColor(Style::TransferBad);
-        whiteFont = true;
-        break;
-    case FileStatus::FINISHED:
-        color = Style::getColor(Style::TransferGood);
-        whiteFont = true;
-        break;
-    default:
-        return;
-        break;
+        case FileStatus::INITIALIZING:
+        case FileStatus::PAUSED:
+        case FileStatus::TRANSMITTING:
+            color = Style::getColor(Style::TransferMiddle);
+            whiteFont = false;
+            break;
+        case FileStatus::BROKEN:
+        case FileStatus::CANCELED:
+            color = Style::getColor(Style::TransferBad);
+            whiteFont = true;
+            break;
+        case FileStatus::FINISHED:
+            color = Style::getColor(Style::TransferGood);
+            whiteFont = true;
+            break;
+        default:
+            return;
+            break;
     }
 
-    if (color != backgroundColor)
-    {
+    if (color != backgroundColor) {
         if (useAnima) {
             backgroundColorAnimation->setStartValue(backgroundColor);
             backgroundColorAnimation->setEndValue(color);
             backgroundColorAnimation->start();
-        }
-        else
-        {
+        } else {
             backgroundColor = color;
         }
     }
@@ -190,8 +176,7 @@ void FileTransferWidget::setBackgroundColor(FileStatus status, bool useAnima) {
     setStyleSheet(Style::getStylesheet("fileTransferInstance/filetransferWidget.css"));
 }
 
-void FileTransferWidget::setButtonColor(const QColor& c)
-{
+void FileTransferWidget::setButtonColor(const QColor& c) {
     if (c != buttonColor) {
         buttonColorAnimation->setStartValue(buttonColor);
         buttonColorAnimation->setEndValue(c);
@@ -199,14 +184,12 @@ void FileTransferWidget::setButtonColor(const QColor& c)
     }
 }
 
-bool FileTransferWidget::drawButtonAreaNeeded() const
-{
-    return (ui->rightButton->isVisible() || ui->leftButton->isVisible())
-           && !(ui->leftButton->isVisible() && ui->leftButton->objectName() == "ok");
+bool FileTransferWidget::drawButtonAreaNeeded() const {
+    return (ui->rightButton->isVisible() || ui->leftButton->isVisible()) &&
+           !(ui->leftButton->isVisible() && ui->leftButton->objectName() == "ok");
 }
 
-void FileTransferWidget::paintEvent(QPaintEvent*)
-{
+void FileTransferWidget::paintEvent(QPaintEvent*) {
     // required by Hi-DPI support as border-image doesn't work.
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
@@ -226,8 +209,8 @@ void FileTransferWidget::paintEvent(QPaintEvent*)
         // Draw the button background:
         QPainterPath buttonBackground;
         buttonBackground.addRoundedRect(width() - 2 * buttonFieldWidth - lineWidth * 2, 0,
-                                      buttonFieldWidth, buttonFieldWidth + lineWidth, 50, 50,
-                                      Qt::RelativeSize);
+                                        buttonFieldWidth, buttonFieldWidth + lineWidth, 50, 50,
+                                        Qt::RelativeSize);
         buttonBackground.addRect(width() - 2 * buttonFieldWidth - lineWidth * 2, 0,
                                  buttonFieldWidth * 2, buttonFieldWidth / 2);
         buttonBackground.addRect(width() - 1.5 * buttonFieldWidth - lineWidth * 2, 0,
@@ -239,8 +222,8 @@ void FileTransferWidget::paintEvent(QPaintEvent*)
         // Draw the left button:
         QPainterPath leftButton;
         leftButton.addRoundedRect(QRect(width() - 2 * buttonFieldWidth - lineWidth, 0,
-                                      buttonFieldWidth, buttonFieldWidth),
-                                50, 50, Qt::RelativeSize);
+                                        buttonFieldWidth, buttonFieldWidth),
+                                  50, 50, Qt::RelativeSize);
         leftButton.addRect(QRect(width() - 2 * buttonFieldWidth - lineWidth, 0,
                                  buttonFieldWidth / 2, buttonFieldWidth / 2));
         leftButton.addRect(QRect(width() - 1.5 * buttonFieldWidth - lineWidth, 0,
@@ -251,13 +234,13 @@ void FileTransferWidget::paintEvent(QPaintEvent*)
 
         // Draw the right button:
         painter.setBrush(QBrush(buttonColor));
-        painter.setClipRect(QRect(width() - buttonFieldWidth, 0, buttonFieldWidth, buttonFieldWidth));
+        painter.setClipRect(
+                QRect(width() - buttonFieldWidth, 0, buttonFieldWidth, buttonFieldWidth));
         painter.drawRoundedRect(geometry(), r * ratio, r, Qt::RelativeSize);
     }
 }
 
-QString FileTransferWidget::getHumanReadableSize(qint64 size)
-{
+QString FileTransferWidget::getHumanReadableSize(qint64 size) {
     static const char* suffix[] = {"B", "kiB", "MiB", "GiB", "TiB"};
     int exp = 0;
 
@@ -268,237 +251,233 @@ QString FileTransferWidget::getHumanReadableSize(qint64 size)
     return QString().setNum(size / pow(1024, exp), 'f', exp > 1 ? 2 : 0).append(suffix[exp]);
 }
 
-void FileTransferWidget::updateWidgetColor(ToxFile const& file)
-{
+void FileTransferWidget::updateWidgetColor(ToxFile const& file) {
     if (lastStatus == file.status) {
         return;
     }
 
     switch (file.status) {
-    case FileStatus::INITIALIZING:
-    case FileStatus::PAUSED:
-    case FileStatus::TRANSMITTING:
-    case FileStatus::BROKEN:
-    case FileStatus::CANCELED:
-    case FileStatus::FINISHED:
-        setBackgroundColor(file.status);
-        break;
-    default:
-        qWarning() << "Invalid file status" << file.fileId;
-        break;
+        case FileStatus::INITIALIZING:
+        case FileStatus::PAUSED:
+        case FileStatus::TRANSMITTING:
+        case FileStatus::BROKEN:
+        case FileStatus::CANCELED:
+        case FileStatus::FINISHED:
+            setBackgroundColor(file.status);
+            break;
+        default:
+            qWarning() << "Invalid file status" << file.fileId;
+            break;
     }
 }
 
-void FileTransferWidget::updateWidgetText(ToxFile const& file)
-{
+void FileTransferWidget::updateWidgetText(ToxFile const& file) {
     if (lastStatus == file.status && file.status != FileStatus::PAUSED) {
         return;
     }
 
     switch (file.status) {
-    case FileStatus::INITIALIZING:
-        if (file.direction == FileDirection::SENDING) {
-            ui->progressLabel->setText(tr("Waiting to send...", "file transfer widget"));
-        } else {
-            ui->progressLabel->setText(tr("Accept to receive this file", "file transfer widget"));
-        }
-        break;
-    case FileStatus::PAUSED:
-//        ui->etaLabel->setText("");
-//        if (file.pauseStatus.localPaused()) {
-//            ui->progressLabel->setText(tr("Paused", "file transfer widget"));
-//        } else {
-//            ui->progressLabel->setText(tr("Remote Paused", "file transfer widget"));
-//        }
-        break;
-    case FileStatus::TRANSMITTING:
-        ui->etaLabel->setText("");
-        ui->progressLabel->setText(tr("Resuming...", "file transfer widget"));
-        break;
-    case FileStatus::BROKEN:
-    case FileStatus::CANCELED:
-        break;
-    case FileStatus::FINISHED:
-        break;
-    default:
-        qWarning() << "Invalid file status" << file.fileId;
-        break;
+        case FileStatus::INITIALIZING:
+            if (file.direction == FileDirection::SENDING) {
+                ui->progressLabel->setText(tr("Waiting to send...", "file transfer widget"));
+            } else {
+                ui->progressLabel->setText(
+                        tr("Accept to receive this file", "file transfer widget"));
+            }
+            break;
+        case FileStatus::PAUSED:
+            //        ui->etaLabel->setText("");
+            //        if (file.pauseStatus.localPaused()) {
+            //            ui->progressLabel->setText(tr("Paused", "file transfer widget"));
+            //        } else {
+            //            ui->progressLabel->setText(tr("Remote Paused", "file transfer widget"));
+            //        }
+            break;
+        case FileStatus::TRANSMITTING:
+            ui->etaLabel->setText("");
+            ui->progressLabel->setText(tr("Resuming...", "file transfer widget"));
+            break;
+        case FileStatus::BROKEN:
+        case FileStatus::CANCELED:
+            break;
+        case FileStatus::FINISHED:
+            break;
+        default:
+            qWarning() << "Invalid file status" << file.fileId;
+            break;
     }
 }
 
-void FileTransferWidget::updatePreview(ToxFile const& file)
-{
+void FileTransferWidget::updatePreview(ToxFile const& file) {
     if (lastStatus == file.status) {
         return;
     }
 
     switch (file.status) {
-    case FileStatus::INITIALIZING:
-    case FileStatus::PAUSED:
-    case FileStatus::TRANSMITTING:
-    case FileStatus::BROKEN:
-    case FileStatus::CANCELED:
-        if (file.direction == FileDirection::SENDING) {
+        case FileStatus::INITIALIZING:
+        case FileStatus::PAUSED:
+        case FileStatus::TRANSMITTING:
+        case FileStatus::BROKEN:
+        case FileStatus::CANCELED:
+            if (file.direction == FileDirection::SENDING) {
+                showPreview(file.filePath);
+            }
+            break;
+        case FileStatus::FINISHED:
             showPreview(file.filePath);
-        }
-        break;
-    case FileStatus::FINISHED:
-        showPreview(file.filePath);
-        break;
-    default:
-        qWarning() << "Invalid file status" << file.fileId;
-//        assert(false);
+            break;
+        default:
+            qWarning() << "Invalid file status" << file.fileId;
+            //        assert(false);
     }
 }
 
-void FileTransferWidget::updateFileProgress(ToxFile const& file)
-{
+void FileTransferWidget::updateFileProgress(ToxFile const& file) {
     switch (file.status) {
-    case FileStatus::INITIALIZING:
-        break;
-    case FileStatus::PAUSED:
-        fileProgress.resetSpeed();
-        break;
-    case FileStatus::TRANSMITTING: {
-        if (!fileProgress.needsUpdate()) {
+        case FileStatus::INITIALIZING:
+            break;
+        case FileStatus::PAUSED:
+            fileProgress.resetSpeed();
+            break;
+        case FileStatus::TRANSMITTING: {
+            if (!fileProgress.needsUpdate()) {
+                break;
+            }
+
+            fileProgress.addSample(file);
+            auto speed = fileProgress.getSpeed();
+            auto progress = fileProgress.getProgress();
+            auto remainingTime = fileProgress.getTimeLeftSeconds();
+
+            ui->progressBar->setValue(static_cast<int>(progress * 100.0));
+
+            // update UI
+            if (speed > 0) {
+                // ETA
+                QTime toGo = QTime(0, 0).addSecs(remainingTime);
+                QString format = toGo.hour() > 0 ? "hh:mm:ss" : "mm:ss";
+                ui->etaLabel->setText(toGo.toString(format));
+            } else {
+                ui->etaLabel->setText("");
+            }
+
+            ui->progressLabel->setText(getHumanReadableSize(speed) + "/s");
             break;
         }
-
-        fileProgress.addSample(file);
-        auto speed = fileProgress.getSpeed();
-        auto progress = fileProgress.getProgress();
-        auto remainingTime = fileProgress.getTimeLeftSeconds();
-
-        ui->progressBar->setValue(static_cast<int>(progress * 100.0));
-
-        // update UI
-        if (speed > 0) {
-            // ETA
-            QTime toGo = QTime(0, 0).addSecs(remainingTime);
-            QString format = toGo.hour() > 0 ? "hh:mm:ss" : "mm:ss";
-            ui->etaLabel->setText(toGo.toString(format));
-        } else {
-            ui->etaLabel->setText("");
+        case FileStatus::BROKEN:
+        case FileStatus::CANCELED:
+        case FileStatus::FINISHED: {
+            ui->progressBar->hide();
+            ui->progressLabel->hide();
+            ui->etaLabel->hide();
+            break;
         }
-
-        ui->progressLabel->setText(getHumanReadableSize(speed) + "/s");
-        break;
-    }
-    case FileStatus::BROKEN:
-    case FileStatus::CANCELED:
-    case FileStatus::FINISHED: {
-        ui->progressBar->hide();
-        ui->progressLabel->hide();
-        ui->etaLabel->hide();
-        break;
-    }
-    default:
-        qWarning() << "Invalid file status" << file.fileId;
-//        assert(false);
+        default:
+            qWarning() << "Invalid file status" << file.fileId;
+            //        assert(false);
     }
 }
 
-void FileTransferWidget::updateSignals(ToxFile const& file)
-{
+void FileTransferWidget::updateSignals(ToxFile const& file) {
     if (lastStatus == file.status) {
         return;
     }
 
     switch (file.status) {
-    case FileStatus::CANCELED:
-    case FileStatus::BROKEN:
-    case FileStatus::FINISHED:
-        active = false;
-        disconnect(Core::getInstance()->getCoreFile(), nullptr, this, nullptr);
-        break;
-    case FileStatus::INITIALIZING:
-    case FileStatus::PAUSED:
-    case FileStatus::TRANSMITTING:
-        break;
-    default:
-        qWarning() << "Invalid file status" << file.fileId;
-        break;
+        case FileStatus::CANCELED:
+        case FileStatus::BROKEN:
+        case FileStatus::FINISHED:
+            active = false;
+            disconnect(Core::getInstance()->getCoreFile(), nullptr, this, nullptr);
+            break;
+        case FileStatus::INITIALIZING:
+        case FileStatus::PAUSED:
+        case FileStatus::TRANSMITTING:
+            break;
+        default:
+            qWarning() << "Invalid file status" << file.fileId;
+            break;
     }
 }
 
-void FileTransferWidget::setupButtons(ToxFile const& file)
-{
+void FileTransferWidget::setupButtons(ToxFile const& file) {
     if (lastStatus == file.status && file.status != FileStatus::PAUSED) {
         return;
     }
 
     switch (file.status) {
-    case FileStatus::TRANSMITTING:
-        ui->leftButton->setIcon(QIcon(Style::getImagePath("fileTransferInstance/pause.svg")));
-        ui->leftButton->setObjectName("pause");
-        ui->leftButton->setToolTip(tr("Pause transfer"));
-
-        ui->rightButton->setIcon(QIcon(Style::getImagePath("fileTransferInstance/no.svg")));
-        ui->rightButton->setObjectName("cancel");
-        ui->rightButton->setToolTip(tr("Cancel transfer"));
-
-        setButtonColor(Style::getColor(Style::TransferGood));
-        break;
-
-    case FileStatus::PAUSED:
-//        if (file.pauseStatus.localPaused()) {
-//            ui->leftButton->setIcon(QIcon(Style::getImagePath("fileTransferInstance/arrow_white.svg")));
-//            ui->leftButton->setObjectName("resume");
-//            ui->leftButton->setToolTip(tr("Resume transfer"));
-//        } else {
-//            ui->leftButton->setIcon(QIcon(Style::getImagePath("fileTransferInstance/pause.svg")));
-//            ui->leftButton->setObjectName("pause");
-//            ui->leftButton->setToolTip(tr("Pause transfer"));
-//        }
-
-        ui->rightButton->setIcon(QIcon(Style::getImagePath("fileTransferInstance/no.svg")));
-        ui->rightButton->setObjectName("cancel");
-        ui->rightButton->setToolTip(tr("Cancel transfer"));
-
-        setButtonColor(Style::getColor(Style::TransferMiddle));
-        break;
-
-    case FileStatus::INITIALIZING:
-        ui->rightButton->setIcon(QIcon(Style::getImagePath("fileTransferInstance/no.svg")));
-        ui->rightButton->setObjectName("cancel");
-        ui->rightButton->setToolTip(tr("Cancel transfer"));
-
-        if (file.direction == FileDirection::SENDING) {
+        case FileStatus::TRANSMITTING:
             ui->leftButton->setIcon(QIcon(Style::getImagePath("fileTransferInstance/pause.svg")));
             ui->leftButton->setObjectName("pause");
             ui->leftButton->setToolTip(tr("Pause transfer"));
-        } else {
+
+            ui->rightButton->setIcon(QIcon(Style::getImagePath("fileTransferInstance/no.svg")));
+            ui->rightButton->setObjectName("cancel");
+            ui->rightButton->setToolTip(tr("Cancel transfer"));
+
+            setButtonColor(Style::getColor(Style::TransferGood));
+            break;
+
+        case FileStatus::PAUSED:
+            //        if (file.pauseStatus.localPaused()) {
+            //            ui->leftButton->setIcon(QIcon(Style::getImagePath("fileTransferInstance/arrow_white.svg")));
+            //            ui->leftButton->setObjectName("resume");
+            //            ui->leftButton->setToolTip(tr("Resume transfer"));
+            //        } else {
+            //            ui->leftButton->setIcon(QIcon(Style::getImagePath("fileTransferInstance/pause.svg")));
+            //            ui->leftButton->setObjectName("pause");
+            //            ui->leftButton->setToolTip(tr("Pause transfer"));
+            //        }
+
+            ui->rightButton->setIcon(QIcon(Style::getImagePath("fileTransferInstance/no.svg")));
+            ui->rightButton->setObjectName("cancel");
+            ui->rightButton->setToolTip(tr("Cancel transfer"));
+
+            setButtonColor(Style::getColor(Style::TransferMiddle));
+            break;
+
+        case FileStatus::INITIALIZING:
+            ui->rightButton->setIcon(QIcon(Style::getImagePath("fileTransferInstance/no.svg")));
+            ui->rightButton->setObjectName("cancel");
+            ui->rightButton->setToolTip(tr("Cancel transfer"));
+
+            if (file.direction == FileDirection::SENDING) {
+                ui->leftButton->setIcon(
+                        QIcon(Style::getImagePath("fileTransferInstance/pause.svg")));
+                ui->leftButton->setObjectName("pause");
+                ui->leftButton->setToolTip(tr("Pause transfer"));
+            } else {
+                ui->leftButton->setIcon(QIcon(Style::getImagePath("fileTransferInstance/yes.svg")));
+                ui->leftButton->setObjectName("accept");
+                ui->leftButton->setToolTip(tr("Accept transfer"));
+            }
+            break;
+        case FileStatus::CANCELED:
+        case FileStatus::BROKEN:
+            ui->leftButton->hide();
+            ui->rightButton->hide();
+            break;
+        case FileStatus::FINISHED:
             ui->leftButton->setIcon(QIcon(Style::getImagePath("fileTransferInstance/yes.svg")));
-            ui->leftButton->setObjectName("accept");
-            ui->leftButton->setToolTip(tr("Accept transfer"));
-        }
-        break;
-    case FileStatus::CANCELED:
-    case FileStatus::BROKEN:
-        ui->leftButton->hide();
-        ui->rightButton->hide();
-        break;
-    case FileStatus::FINISHED:
-        ui->leftButton->setIcon(QIcon(Style::getImagePath("fileTransferInstance/yes.svg")));
-        ui->leftButton->setObjectName("ok");
-        ui->leftButton->setToolTip(tr("Open file"));
-        ui->leftButton->show();
+            ui->leftButton->setObjectName("ok");
+            ui->leftButton->setToolTip(tr("Open file"));
+            ui->leftButton->show();
 
-        ui->rightButton->setIcon(QIcon(Style::getImagePath("fileTransferInstance/dir.svg")));
-        ui->rightButton->setObjectName("dir");
-        ui->rightButton->setToolTip(tr("Open file directory"));
-        ui->rightButton->show();
+            ui->rightButton->setIcon(QIcon(Style::getImagePath("fileTransferInstance/dir.svg")));
+            ui->rightButton->setObjectName("dir");
+            ui->rightButton->setToolTip(tr("Open file directory"));
+            ui->rightButton->show();
 
-        break;
-    default:
-        qWarning() << "Invalid file status" << file.fileId;
-        break;
+            break;
+        default:
+            qWarning() << "Invalid file status" << file.fileId;
+            break;
     }
 }
 
-void FileTransferWidget::handleButton(QPushButton* btn)
-{
+void FileTransferWidget::handleButton(QPushButton* btn) {
     CoreFile* coreFile = Core::getInstance()->getCoreFile();
+    qDebug() << "handle button for file:" << fileInfo.fileName;
     if (fileInfo.direction == FileDirection::SENDING) {
         if (btn->objectName() == "cancel") {
             coreFile->cancelFileSend(fileInfo.receiver, fileInfo.fileId);
@@ -507,7 +486,7 @@ void FileTransferWidget::handleButton(QPushButton* btn)
         } else if (btn->objectName() == "resume") {
             coreFile->pauseResumeFile(fileInfo.receiver, fileInfo.fileId);
         }
-    } else // receiving or paused
+    } else  // receiving or paused
     {
         if (btn->objectName() == "cancel") {
             coreFile->cancelFileRecv(fileInfo.receiver, fileInfo.fileId);
@@ -517,10 +496,10 @@ void FileTransferWidget::handleButton(QPushButton* btn)
             coreFile->pauseResumeFile(fileInfo.receiver, fileInfo.fileId);
         } else if (btn->objectName() == "accept") {
             QString path =
-                QFileDialog::getSaveFileName(Q_NULLPTR,
-                                             tr("Save a file", "Title of the file saving dialog"),
-                                             Settings::getInstance().getGlobalAutoAcceptDir() + "/"
-                                                 + fileInfo.fileName);
+                    Settings::getInstance().getGlobalAutoAcceptDir() + "/" + fileInfo.fileName;
+            if (path.isEmpty()) return;
+
+            qDebug() << "accept file save to path:" << path;
             acceptTransfer(path);
         }
     }
@@ -533,8 +512,7 @@ void FileTransferWidget::handleButton(QPushButton* btn)
     }
 }
 
-void FileTransferWidget::showPreview(const QString& filename)
-{
+void FileTransferWidget::showPreview(const QString& filename) {
     qDebug() << __func__ << filename;
 
     static const QStringList previewExtensions = {"png", "jpeg", "jpg", "gif", "svg",
@@ -551,12 +529,13 @@ void FileTransferWidget::showPreview(const QString& filename)
 
         auto imageFileData = imageFile.readAll();
         auto image = QImage::fromData(imageFileData);
-        if(image.isNull()){
-            qWarning() <<"Unable to read the image data!";
+        if (image.isNull()) {
+            qWarning() << "Unable to read the image data!";
             return;
         }
 
-        const int exifOrientation = getExifOrientation(imageFileData.constData(), imageFileData.size());
+        const int exifOrientation =
+                getExifOrientation(imageFileData.constData(), imageFileData.size());
         if (exifOrientation) {
             applyTransformation(exifOrientation, image);
         }
@@ -586,27 +565,18 @@ void FileTransferWidget::showPreview(const QString& filename)
         buffer.open(QIODevice::WriteOnly);
         previewImage.save(&buffer, "PNG");
         buffer.close();
-        ui->previewButton->setToolTip("<img src=data:image/png;base64," + imageData.toBase64() + "/>");
+        ui->previewButton->setToolTip("<img src=data:image/png;base64," + imageData.toBase64() +
+                                      "/>");
     }
 }
 
-void FileTransferWidget::onLeftButtonClicked()
-{
-    handleButton(ui->leftButton);
-}
+void FileTransferWidget::onLeftButtonClicked() { handleButton(ui->leftButton); }
 
-void FileTransferWidget::onRightButtonClicked()
-{
-    handleButton(ui->rightButton);
-}
+void FileTransferWidget::onRightButtonClicked() { handleButton(ui->rightButton); }
 
-void FileTransferWidget::onPreviewButtonClicked()
-{
-    handleButton(ui->previewButton);
-}
+void FileTransferWidget::onPreviewButtonClicked() { handleButton(ui->previewButton); }
 
-QPixmap FileTransferWidget::scaleCropIntoSquare(const QPixmap& source, const int targetSize)
-{
+QPixmap FileTransferWidget::scaleCropIntoSquare(const QPixmap& source, const int targetSize) {
     QPixmap result;
 
     // Make sure smaller-than-icon images (at least one dimension is smaller) will not be
@@ -630,9 +600,9 @@ QPixmap FileTransferWidget::scaleCropIntoSquare(const QPixmap& source, const int
     return result;
 }
 
-int FileTransferWidget::getExifOrientation(const char* data, const int size)
-{
-    ExifData* exifData = exif_data_new_from_data(reinterpret_cast<const unsigned char*>(data), size);
+int FileTransferWidget::getExifOrientation(const char* data, const int size) {
+    ExifData* exifData =
+            exif_data_new_from_data(reinterpret_cast<const unsigned char*>(data), size);
 
     if (!exifData) {
         return 0;
@@ -648,43 +618,41 @@ int FileTransferWidget::getExifOrientation(const char* data, const int size)
     return orientation;
 }
 
-void FileTransferWidget::applyTransformation(const int orientation, QImage& image)
-{
+void FileTransferWidget::applyTransformation(const int orientation, QImage& image) {
     QTransform exifTransform;
     switch (static_cast<ExifOrientation>(orientation)) {
-    case ExifOrientation::TopLeft:
-        break;
-    case ExifOrientation::TopRight:
-        image = image.mirrored(1, 0);
-        break;
-    case ExifOrientation::BottomRight:
-        exifTransform.rotate(180);
-        break;
-    case ExifOrientation::BottomLeft:
-        image = image.mirrored(0, 1);
-        break;
-    case ExifOrientation::LeftTop:
-        exifTransform.rotate(90);
-        image = image.mirrored(0, 1);
-        break;
-    case ExifOrientation::RightTop:
-        exifTransform.rotate(-90);
-        break;
-    case ExifOrientation::RightBottom:
-        exifTransform.rotate(-90);
-        image = image.mirrored(0, 1);
-        break;
-    case ExifOrientation::LeftBottom:
-        exifTransform.rotate(90);
-        break;
-    default:
-        qWarning() << "Invalid exif orientation passed to applyTransformation!";
+        case ExifOrientation::TopLeft:
+            break;
+        case ExifOrientation::TopRight:
+            image = image.mirrored(1, 0);
+            break;
+        case ExifOrientation::BottomRight:
+            exifTransform.rotate(180);
+            break;
+        case ExifOrientation::BottomLeft:
+            image = image.mirrored(0, 1);
+            break;
+        case ExifOrientation::LeftTop:
+            exifTransform.rotate(90);
+            image = image.mirrored(0, 1);
+            break;
+        case ExifOrientation::RightTop:
+            exifTransform.rotate(-90);
+            break;
+        case ExifOrientation::RightBottom:
+            exifTransform.rotate(-90);
+            image = image.mirrored(0, 1);
+            break;
+        case ExifOrientation::LeftBottom:
+            exifTransform.rotate(90);
+            break;
+        default:
+            qWarning() << "Invalid exif orientation passed to applyTransformation!";
     }
     image = image.transformed(exifTransform);
 }
 
-void FileTransferWidget::updateWidget(ToxFile const& file)
-{
+void FileTransferWidget::updateWidget(ToxFile const& file) {
     assert(file == fileInfo);
 
     fileInfo = file;
@@ -703,13 +671,12 @@ void FileTransferWidget::updateWidget(ToxFile const& file)
 
     // trigger repaint
     switch (file.status) {
-    case FileStatus::TRANSMITTING:
-        if (!bTransmitNeedsUpdate) {
-            break;
-        }
-    // fallthrough
-    default:
-        update();
+        case FileStatus::TRANSMITTING:
+            if (!bTransmitNeedsUpdate) {
+                break;
+            }
+        // fallthrough
+        default:
+            update();
     }
 }
-

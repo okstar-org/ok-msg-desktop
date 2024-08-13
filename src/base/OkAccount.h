@@ -16,39 +16,32 @@
 
 #pragma once
 
-#include "jid.h"
 #include <QObject>
-
-namespace ok {
-namespace base {
+#include "jid.h"
+namespace ok::base {
 
 class OkAccount : public QObject {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  explicit OkAccount(const QString &username);
+    explicit OkAccount(const QString& username);
 
-  [[nodiscard]] inline const QString& name() const {
-    return username;
-  }
+    [[nodiscard]] inline const QString& name() const { return username; }
 
-  [[nodiscard]] inline const QString& getUsername() const {
-    return username;
-  }
+    [[nodiscard]] inline const QString& getUsername() const { return username; }
 
-  [[maybe_unused]] inline const ::base::Jid& jid() const {
-    return m_jid;
-  }
+    [[maybe_unused]] inline const base::Jid& jid() const { return m_jid; }
 
-  void setJid(const ::base::Jid& jid);
+    void setJid(const base::Jid& jid);
 
-  [[maybe_unused]] ::base::Jid realJid(::base::Jid jid);
-  [[maybe_unused]] QString id() const {
-    return username;
-  }
+    [[maybe_unused]] base::Jid realJid(base::Jid jid);
+    [[maybe_unused]] QString id() const { return username; }
+
 private:
-  QString username;
-  ::base::Jid m_jid;
+    QString username;
+
+    base::Jid m_jid;
 };
 
-} // namespace base
-} // namespace ok
+
+}  // namespace ok::base
+

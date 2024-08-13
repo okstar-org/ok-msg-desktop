@@ -15,13 +15,13 @@
 
 #include <QString>
 
-using SentMessageId = QString;
-class ICoreGroupMessageSender
-{
+#include "../model/MsgId.h"
+
+class ICoreGroupMessageSender {
 public:
     virtual ~ICoreGroupMessageSender() = default;
-    virtual SentMessageId sendGroupAction(QString groupId, const QString& message) = 0;
-    virtual SentMessageId sendGroupMessage(QString groupId, const QString& message) = 0;
+    virtual bool sendGroupAction(QString groupId, const QString& message, const MsgId& id) = 0;
+    virtual bool sendGroupMessage(QString groupId, const QString& message, const MsgId& id) = 0;
 };
 
 #endif /*ICORE_GROUP_MESSAGE_SENDER_H*/

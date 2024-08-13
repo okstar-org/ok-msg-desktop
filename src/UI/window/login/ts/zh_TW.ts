@@ -108,15 +108,15 @@
         <translation>請選擇</translation>
     </message>
     <message>
-        <source>Sign Up</source>
+        <source>Sign up</source>
         <translation>註冊帳號</translation>
     </message>
     <message>
-        <source>Retrieve Password</source>
+        <source>Forgot password</source>
         <translation>找回密碼</translation>
     </message>
 	<message>
-        <source>Remember</source>
+        <source>Remember me</source>
         <translation>記住密碼</translation>
     </message>
 </context>

@@ -10,26 +10,19 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#include "src/model/interface.h"
+#include "src/base/interface.h"
 
 #include <QObject>
 
 class ToxId;
 
-class IProfileInfo
-{
+class IProfileInfo {
 public:
-    enum class RenameResult {
-        OK, EmptyName, ProfileAlreadyExists, Error
-    };
+    enum class RenameResult { OK, EmptyName, ProfileAlreadyExists, Error };
 
-    enum class SaveResult {
-        OK, EmptyPath, NoWritePermission, Error
-    };
+    enum class SaveResult { OK, EmptyPath, NoWritePermission, Error };
 
-    enum class SetAvatarResult {
-        OK, EmptyPath, CanNotOpen, CanNotRead, TooLarge
-    };
+    enum class SetAvatarResult { OK, EmptyPath, CanNotOpen, CanNotRead, TooLarge };
     virtual ~IProfileInfo() = default;
 
     virtual bool setPassword(const QString& password) = 0;
@@ -40,7 +33,7 @@ public:
 
     virtual void setUsername(const QString& name) = 0;
     virtual QString getUsername() const = 0;
-    virtual const QString &getDisplayName() const = 0;
+    virtual const QString& getDisplayName() const = 0;
 
     virtual void setAvatar(const QPixmap& avatar) = 0;
     virtual const QPixmap& getAvatar() = 0;

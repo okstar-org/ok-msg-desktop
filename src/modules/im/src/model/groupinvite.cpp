@@ -18,15 +18,17 @@
  * @brief This class contains information needed to create a group invite
  */
 
-GroupInvite::GroupInvite(QString groupId, QString friendId,
-                         ConferenceType inviteType,
-                         const QByteArray &data)
-    : groupId{groupId}, friendId{friendId}, type{inviteType}, invite{data},
-      date{QDateTime::currentDateTime()} {}
+GroupInvite::GroupInvite(QString groupId, QString friendId, ConferenceType inviteType,
+                         const QByteArray& data)
+        : groupId{groupId}
+        , friendId{friendId}
+        , type{inviteType}
+        , invite{data}
+        , date{QDateTime::currentDateTime()} {}
 
-bool GroupInvite::operator==(const GroupInvite &other) const {
-  return friendId == other.friendId && type == other.type &&
-         invite == other.invite && date == other.date;
+bool GroupInvite::operator==(const GroupInvite& other) const {
+    return friendId == other.friendId && type == other.type && invite == other.invite &&
+           date == other.date;
 }
 
 const QString& GroupInvite::getGroupId() const { return groupId; }

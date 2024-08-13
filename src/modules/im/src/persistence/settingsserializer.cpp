@@ -13,13 +13,13 @@
 #include "settingsserializer.h"
 #include "serialize.h"
 
-#include "src/core/toxencrypt.h"
-#include "src/persistence/profile.h"
 #include <QDebug>
 #include <QFile>
 #include <QSaveFile>
 #include <cassert>
 #include <memory>
+#include "src/core/toxencrypt.h"
+#include "src/persistence/profile.h"
 
 /**
  * @class SettingsSerializer
@@ -42,8 +42,7 @@
  * @var ArrayEnd
  * Not followed by any data
  */
-enum class RecordTag : uint8_t
-{
+enum class RecordTag : uint8_t {
 
 };
 /**
@@ -52,32 +51,26 @@ enum class RecordTag : uint8_t
  */
 const char SettingsSerializer::magic[] = {0x51, 0x54, 0x4F, 0x58};
 
-QDataStream& writeStream(QDataStream& dataStream, const SettingsSerializer::RecordTag& tag)
-{
+QDataStream& writeStream(QDataStream& dataStream, const SettingsSerializer::RecordTag& tag) {
     return dataStream << static_cast<uint8_t>(tag);
 }
 
-QDataStream& writeStream(QDataStream& dataStream, const QByteArray& data)
-{
+QDataStream& writeStream(QDataStream& dataStream, const QByteArray& data) {
     QByteArray size = vintToData(data.size());
     dataStream.writeRawData(size.data(), size.size());
     dataStream.writeRawData(data.data(), data.size());
     return dataStream;
 }
 
-QDataStream& writeStream(QDataStream& dataStream, const QString& str)
-{
+QDataStream& writeStream(QDataStream& dataStream, const QString& str) {
     return writeStream(dataStream, str.toUtf8());
 }
 
-QDataStream& readStream(QDataStream& dataStream, SettingsSerializer::RecordTag& tag)
-{
+QDataStream& readStream(QDataStream& dataStream, SettingsSerializer::RecordTag& tag) {
     return dataStream >> reinterpret_cast<quint8&>(tag);
 }
 
-
-QDataStream& readStream(QDataStream& dataStream, QByteArray& data)
-{
+QDataStream& readStream(QDataStream& dataStream, QByteArray& data) {
     char num3;
     int num = 0;
     int num2 = 0;
@@ -92,18 +85,10 @@ QDataStream& readStream(QDataStream& dataStream, QByteArray& data)
 }
 
 SettingsSerializer::SettingsSerializer(QString filePath, const ToxEncrypt* passKey)
-    : path{filePath}
-    , passKey{passKey}
-    , group{-1}
-    , array{-1}
-    , arrayIndex{-1}
-{
-}
+        : path{filePath}, passKey{passKey}, group{-1}, array{-1}, arrayIndex{-1} {}
 
-void SettingsSerializer::beginGroup(const QString& prefix)
-{
-    if (prefix.isEmpty())
-        endGroup();
+void SettingsSerializer::beginGroup(const QString& prefix) {
+    if (prefix.isEmpty()) endGroup();
     int index = groups.indexOf(prefix);
     if (index >= 0) {
         group = index;
@@ -113,13 +98,9 @@ void SettingsSerializer::beginGroup(const QString& prefix)
     }
 }
 
-void SettingsSerializer::endGroup()
-{
-    group = -1;
-}
+void SettingsSerializer::endGroup() { group = -1; }
 
-int SettingsSerializer::beginReadArray(const QString& prefix)
-{
+int SettingsSerializer::beginReadArray(const QString& prefix) {
     auto index = std::find_if(std::begin(arrays), std::end(arrays),
                               [&](const Array& a) { return a.name == prefix; });
 
@@ -135,50 +116,38 @@ int SettingsSerializer::beginReadArray(const QString& prefix)
     }
 }
 
-void SettingsSerializer::beginWriteArray(const QString& prefix, int size)
-{
+void SettingsSerializer::beginWriteArray(const QString& prefix, int size) {
     auto index = std::find_if(std::begin(arrays), std::end(arrays),
                               [&](const Array& a) { return a.name == prefix; });
 
     if (index != std::end(arrays)) {
         array = static_cast<int>(index - std::begin(arrays));
         arrayIndex = -1;
-        if (size > 0)
-            index->size = std::max(index->size, size);
+        if (size > 0) index->size = std::max(index->size, size);
     } else {
-        if (size < 0)
-            size = 0;
+        if (size < 0) size = 0;
         array = arrays.size();
         arrays.push_back({group, size, prefix, {}});
         arrayIndex = -1;
     }
 }
 
-void SettingsSerializer::endArray()
-{
-    array = -1;
-}
+void SettingsSerializer::endArray() { array = -1; }
 
-void SettingsSerializer::setArrayIndex(int i)
-{
-    arrayIndex = i;
-}
+void SettingsSerializer::setArrayIndex(int i) { arrayIndex = i; }
 
-void SettingsSerializer::setValue(const QString& key, const QVariant& value)
-{
+void SettingsSerializer::setValue(const QString& key, const QVariant& value) {
     Value* v = findValue(key);
     if (v) {
         v->value = value;
     } else {
         Value nv{group, array, arrayIndex, key, value};
-        if (array >= 0)
-            arrays[array].values.append(values.size());
+        if (array >= 0) arrays[array].values.append(values.size());
         values.append(nv);
     }
 }
 
-QVariant SettingsSerializer::value(const QString& key, const QVariant& defaultValue) const
-{
+QVariant SettingsSerializer::value(const QString& key, const QVariant& defaultValue) const {
     const Value* v = findValue(key);
     if (v)
         return v->value;
@@ -186,29 +155,24 @@ QVariant SettingsSerializer::value(const QString& key, const QVariant& defaultVa
         return defaultValue;
 }
 
-const SettingsSerializer::Value* SettingsSerializer::findValue(const QString& key) const
-{
+const SettingsSerializer::Value* SettingsSerializer::findValue(const QString& key) const {
     if (array != -1) {
         for (const Array& a : arrays) {
-            if (a.group != group)
-                continue;
+            if (a.group != group) continue;
 
             for (int vi : a.values) {
                 const Value& v = values[vi];
-                if (v.arrayIndex == arrayIndex && v.key == key)
-                    return &v;
+                if (v.arrayIndex == arrayIndex && v.key == key) return &v;
             }
         }
     } else {
         for (const Value& v : values)
-            if (v.group == group && v.array == -1 && v.key == key)
-                return &v;
+            if (v.group == group && v.array == -1 && v.key == key) return &v;
     }
     return nullptr;
 }
 
-SettingsSerializer::Value* SettingsSerializer::findValue(const QString& key)
-{
+SettingsSerializer::Value* SettingsSerializer::findValue(const QString& key) {
     return const_cast<Value*>(const_cast<const SettingsSerializer*>(this)->findValue(key));
 }
 
@@ -217,22 +181,19 @@ SettingsSerializer::Value* SettingsSerializer::findValue(const QString& key)
  * @param filePath Path to file to check.
  * @return False on error, true otherwise.
  */
-bool SettingsSerializer::isSerializedFormat(QString filePath)
-{
+bool SettingsSerializer::isSerializedFormat(QString filePath) {
     QFile f(filePath);
-    if (!f.open(QIODevice::ReadOnly))
-        return false;
+    if (!f.open(QIODevice::ReadOnly)) return false;
     char fmagic[8];
-    if (f.read(fmagic, sizeof(fmagic)) != sizeof(fmagic))
-        return false;
-    return !memcmp(fmagic, magic, 4)/* || tox_is_data_encrypted(reinterpret_cast<uint8_t*>(fmagic))*/;
+    if (f.read(fmagic, sizeof(fmagic)) != sizeof(fmagic)) return false;
+    return !memcmp(fmagic, magic,
+                   4) /* || tox_is_data_encrypted(reinterpret_cast<uint8_t*>(fmagic))*/;
 }
 
 /**
  * @brief Loads the settings from file.
  */
-void SettingsSerializer::load()
-{
+void SettingsSerializer::load() {
     if (isSerializedFormat(path))
         readSerialized();
     else
@@ -242,8 +203,7 @@ void SettingsSerializer::load()
 /**
  * @brief Saves the current settings back to file
  */
-void SettingsSerializer::save()
-{
+void SettingsSerializer::save() {
     QSaveFile f(path);
     if (!f.open(QIODevice::Truncate | QIODevice::WriteOnly)) {
         qWarning() << "Couldn't open file";
@@ -265,10 +225,8 @@ void SettingsSerializer::save()
 
         // Save all the arrays of this group
         for (const Array& a : arrays) {
-            if (a.group != g)
-                continue;
-            if (a.size <= 0)
-                continue;
+            if (a.group != g) continue;
+            if (a.size <= 0) continue;
             writeStream(stream, RecordTag::ArrayStart);
             writeStream(stream, a.name.toUtf8());
             writeStream(stream, vintToData(a.size));
@@ -285,8 +243,7 @@ void SettingsSerializer::save()
 
         // Save all the values of this group that aren't in an array
         for (const Value& v : values) {
-            if (v.group != g || v.array != -1)
-                continue;
+            if (v.group != g || v.array != -1) continue;
             writeStream(stream, RecordTag::Value);
             writeStream(stream, v.key.toUtf8());
             writePackedVariant(stream, v.value);
@@ -309,8 +266,7 @@ void SettingsSerializer::save()
     }
 }
 
-void SettingsSerializer::readSerialized()
-{
+void SettingsSerializer::readSerialized() {
     QFile f(path);
     if (!f.open(QIODevice::ReadOnly)) {
         qWarning() << "Couldn't open file";
@@ -332,8 +288,7 @@ void SettingsSerializer::readSerialized()
             return;
         }
     } else {
-        if (passKey)
-            qWarning() << "We have a password, but the settings file is not encrypted";
+        if (passKey) qWarning() << "We have a password, but the settings file is not encrypted";
     }
 
     if (memcmp(data.data(), magic, 4)) {
@@ -391,16 +346,14 @@ void SettingsSerializer::readSerialized()
     group = array = -1;
 }
 
-void SettingsSerializer::readIni()
-{
+void SettingsSerializer::readIni() {
     QSettings s(path, QSettings::IniFormat);
 
     // Read all keys of all groups, reading arrays as raw keys
     QList<QString> gstack;
     do {
         // Add all keys
-        if (!s.group().isEmpty())
-            beginGroup(s.group());
+        if (!s.group().isEmpty()) beginGroup(s.group());
 
         for (QString k : s.childKeys()) {
             setValue(k, s.value(k));
@@ -408,8 +361,7 @@ void SettingsSerializer::readIni()
 
         // Add all groups
         gstack.push_back(QString());
-        for (QString g : s.childGroups())
-            gstack.push_back(g);
+        for (QString g : s.childGroups()) gstack.push_back(g);
 
         // Visit the next group, if any
         while (!gstack.isEmpty()) {
@@ -434,8 +386,7 @@ void SettingsSerializer::readIni()
     std::unique_ptr<int[]> groupSizes{new int[groups.size()]};
     memset(groupSizes.get(), 0, static_cast<size_t>(groups.size()) * sizeof(int));
     for (const Value& v : values) {
-        if (v.group < 0 || v.group > groups.size())
-            continue;
+        if (v.group < 0 || v.group > groups.size()) continue;
         groupSizes[static_cast<size_t>(v.group)]++;
     }
 
@@ -443,14 +394,10 @@ void SettingsSerializer::readIni()
     QVector<int> groupsToKill;
     for (int i = values.size() - 1; i >= 0; i--) {
         const Value& v = values[i];
-        if (v.group < 0 || v.group > groups.size())
-            continue;
-        if (groupSizes[static_cast<size_t>(v.group)] != 1)
-            continue;
-        if (v.key != "size")
-            continue;
-        if (!v.value.canConvert(QVariant::Int))
-            continue;
+        if (v.group < 0 || v.group > groups.size()) continue;
+        if (groupSizes[static_cast<size_t>(v.group)] != 1) continue;
+        if (v.key != "size") continue;
+        if (!v.value.canConvert(QVariant::Int)) continue;
 
         Array a;
         a.size = v.value.toInt();
@@ -462,8 +409,7 @@ void SettingsSerializer::readIni()
         } else {
             a.group = -1;
             for (int i = 0; i < groups.size(); ++i)
-                if (groups[i] == groups[static_cast<int>(v.group)].left(slashIndex))
-                    a.group = i;
+                if (groups[i] == groups[static_cast<int>(v.group)].left(slashIndex)) a.group = i;
             a.name = groups[static_cast<int>(v.group)].mid(slashIndex + 1);
         }
         groupSizes[static_cast<size_t>(v.group)]--;
@@ -476,28 +422,23 @@ void SettingsSerializer::readIni()
     for (int ai = 0; ai < arrays.size(); ++ai) {
         Array& a = arrays[ai];
         QString arrayPrefix;
-        if (a.group != -1)
-            arrayPrefix += groups[static_cast<int>(a.group)] + '/';
+        if (a.group != -1) arrayPrefix += groups[static_cast<int>(a.group)] + '/';
         arrayPrefix += a.name + '/';
 
         // Find groups which represent each array index
         for (int g = 0; g < groups.size(); ++g) {
-            if (!groups[g].startsWith(arrayPrefix))
-                continue;
+            if (!groups[g].startsWith(arrayPrefix)) continue;
             bool ok;
             int groupArrayIndex = groups[g].mid(arrayPrefix.size()).toInt(&ok);
-            if (!ok)
-                continue;
+            if (!ok) continue;
             groupsToKill.append(g);
 
-            if (groupArrayIndex > a.size)
-                a.size = groupArrayIndex;
+            if (groupArrayIndex > a.size) a.size = groupArrayIndex;
 
             // Associate the values for this array index
             for (int vi = values.size() - 1; vi >= 0; vi--) {
                 Value& v = values[vi];
-                if (v.group != g)
-                    continue;
+                if (v.group != g) continue;
                 groupSizes[static_cast<size_t>(g)]--;
                 v.group = a.group;
                 v.array = ai;
@@ -511,8 +452,7 @@ void SettingsSerializer::readIni()
     std::sort(std::begin(groupsToKill), std::end(groupsToKill), std::greater_equal<int>());
 
     for (int g : groupsToKill) {
-        if (groupSizes[static_cast<size_t>(g)])
-            continue;
+        if (groupSizes[static_cast<size_t>(g)]) continue;
 
         removeGroup(g);
     }
@@ -525,24 +465,20 @@ void SettingsSerializer::readIni()
  * @note The group must be empty.
  * @param group ID of group to remove.
  */
-void SettingsSerializer::removeGroup(int group)
-{
+void SettingsSerializer::removeGroup(int group) {
     assert(group < groups.size());
     for (Array& a : arrays) {
         assert(a.group != group);
-        if (a.group > group)
-            a.group--;
+        if (a.group > group) a.group--;
     }
     for (Value& v : values) {
         assert(v.group != group);
-        if (v.group > group)
-            v.group--;
+        if (v.group > group) v.group--;
     }
     groups.removeAt(group);
 }
 
-void SettingsSerializer::writePackedVariant(QDataStream& stream, const QVariant& v)
-{
+void SettingsSerializer::writePackedVariant(QDataStream& stream, const QVariant& v) {
     assert(v.canConvert(QVariant::String));
     QString str = v.toString();
     if (str == "true")

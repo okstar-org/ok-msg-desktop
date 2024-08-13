@@ -13,25 +13,18 @@
 #ifndef I_FRIEND_SETTINGS_H
 #define I_FRIEND_SETTINGS_H
 
-#include "src/model/interface.h"
+#include "src/base/interface.h"
 
-#include <QObject>
 #include <QFlag>
+#include <QObject>
 
 #include <src/core/contactid.h>
 
 class FriendId;
 
-class IFriendSettings
-{
+class IFriendSettings {
 public:
-    enum class AutoAcceptCall
-    {
-        None = 0x00,
-        Audio = 0x01,
-        Video = 0x02,
-        AV = Audio | Video
-    };
+    enum class AutoAcceptCall { None = 0x00, Audio = 0x01, Video = 0x02, AV = Audio | Video };
     Q_DECLARE_FLAGS(AutoAcceptCallFlags, AutoAcceptCall)
 
     virtual ~IFriendSettings() = default;
@@ -68,4 +61,4 @@ signals:
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(IFriendSettings::AutoAcceptCallFlags)
-#endif // I_FRIEND_SETTINGS_H
+#endif  // I_FRIEND_SETTINGS_H

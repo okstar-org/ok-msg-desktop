@@ -11,16 +11,11 @@
  */
 
 #include "IMMessage.h"
-#include "base/basic_types.h"
-#include <QDebug>
-#include <QString>
 #include <gloox.h>
 #include <jid.h>
 #include <rosteritem.h>
+#include <QDebug>
+#include <QString>
+#include "base/basic_types.h"
 
-namespace lib::messenger {
-
-
-
-} // namespace lib::messenger
-
+namespace lib::messenger {}  // namespace lib::messenger

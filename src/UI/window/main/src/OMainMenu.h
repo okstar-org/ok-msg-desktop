@@ -16,8 +16,8 @@
 #include <memory>
 
 #include "base/Page.h"
-#include "base/timer.h"
 #include "base/resources.h"
+#include "base/timer.h"
 
 OK_RESOURCE_LOADER(UIWindowMain)
 
@@ -28,48 +28,39 @@ class OMainMenu;
 namespace UI {
 
 class OMainMenu : public QFrame {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  explicit OMainMenu(QWidget *parent = nullptr);
-  ~OMainMenu() override;
+    explicit OMainMenu(QWidget* parent = nullptr);
+    ~OMainMenu() override;
 
-
-  void onSetting();
+    void onSetting();
 
 protected:
-  virtual void showEvent(QShowEvent *e) override;
+    virtual void showEvent(QShowEvent* e) override;
 
 private:
-  OK_RESOURCE_PTR(UIWindowMain);
+    OK_RESOURCE_PTR(UIWindowMain);
 
-  Ui::OMainMenu *ui;
+    Ui::OMainMenu* ui;
 
-  int _showTimes;
-  // delayCaller
-  std::shared_ptr<base::DelayedCallTimer> delayCaller_;
+    int _showTimes;
+    // delayCaller
+    std::shared_ptr<base::DelayedCallTimer> delayCaller_;
 
-  void updateUI();
+    void updateUI();
 
 signals:
-  void onPage(PageMenu menu);
-
-  void toggleChat(bool);
-  void toggleBook(bool);
-
-  void menuReleased(PageMenu menu, bool checked);
-  void menuPushed(PageMenu menu, bool checked);
+    void menuPushed(ok::base::PageMenu menu, bool checked);
 
 private slots:
-  void on_personalBtn_clicked(bool checked);
-  void on_chatBtn_clicked(bool checked);
-  void on_settingBtn_clicked(bool checked);
-
+    void on_chatBtn_clicked(bool checked);
+    void on_settingBtn_clicked(bool checked);
+    void on_platformBtn_clicked(bool checked);
 public slots:
-  void setAvatar(const QPixmap &);
-
+    void setAvatar(const QPixmap&);
 };
 
-} // namespace UI
+}  // namespace UI
 
-#endif // OMAINMENU_H
+#endif  // OMAINMENU_H

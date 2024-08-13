@@ -65,31 +65,10 @@
         </widget>
        </item>
        <item>
-        <widget class="QWidget" name="module_box" native="true">
-         <layout class="QGridLayout" name="gridLayout">
-          <property name="leftMargin">
-           <number>10</number>
-          </property>
-          <property name="topMargin">
-           <number>10</number>
-          </property>
-          <property name="rightMargin">
-           <number>10</number>
-          </property>
-          <property name="bottomMargin">
-           <number>10</number>
-          </property>
-          <property name="spacing">
-           <number>0</number>
-          </property>
-          <item row="0" column="0">
-           <widget class="QStackedWidget" name="stacked_widget">
-            <property name="autoFillBackground">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
+        <widget class="QStackedWidget" name="stacked_widget">
+         <property name="autoFillBackground">
+          <bool>false</bool>
+         </property>
         </widget>
        </item>
       </layout>

@@ -11,47 +11,33 @@
  */
 #pragma once
 
+#include <QStringList>
+#include <functional>
 #include <string>
 #include <utility>
-#include <functional>
-#include <QStringList>
+namespace ok::base {
+template <typename Signature> using Fn = std::function<Signature>;
 
-template <typename Signature>
-using Fn = std::function<Signature>;
+template <typename Type> inline Type take(Type& value) { return std::exchange(value, Type{}); }
 
-namespace base {
-    template <typename Type>
-    inline Type take(Type &value) {
-        return std::exchange(value, Type {});
-    }
+template <typename Type> inline Type duplicate(const Type& value) { return value; }
 
-    template <typename Type>
-    inline Type duplicate(const Type &value) {
-        return value;
-    }
-
-    template <typename Type, size_t Size>
-    inline constexpr size_t array_size(const Type(&)[Size]) {
-        return Size;
-    }
+template <typename Type, size_t Size> inline constexpr size_t array_size(const Type (&)[Size]) {
+    return Size;
 }
-
-
 
 #define qsl(s) QStringLiteral(s)
 #define qstr(s) QLatin1String(s, sizeof(s) - 1)
 #define qstring(s) QString::fromStdString(s)
 #define stdstring(s) s.toStdString()
 
-inline QStringList qstringlist(std::list<std::string> sl){
-  QStringList qsl;
-  for(auto s:sl){
-    qsl.append(qstring(s));
-  }
-  return qsl;
+inline QStringList qstringlist(std::list<std::string> sl) {
+    QStringList qsl;
+    for (auto s : sl) {
+        qsl.append(qstring(s));
+    }
+    return qsl;
 }
 
-
 #define ARRAY_LENGTH_OF(array) (sizeof(array) / sizeof(array[0]))
-
-
+}

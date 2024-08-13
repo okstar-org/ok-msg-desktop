@@ -18,13 +18,12 @@
 
 namespace ok {
 namespace plugin {
-OkOptions *OkOptions::instance() {
-
-  static OkOptions *instance = nullptr;
-  if (!instance) {
-    instance = new OkOptions();
-  }
-  return instance;
+OkOptions* OkOptions::instance() {
+    static OkOptions* instance = nullptr;
+    if (!instance) {
+        instance = new OkOptions();
+    }
+    return instance;
 }
-} // namespace plugin
-} // namespace ok
+}  // namespace plugin
+}  // namespace ok

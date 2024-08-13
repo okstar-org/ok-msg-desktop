@@ -1,0 +1,109 @@
+name: Build on macOS-x64
+
+permissions:
+  contents: write
+  discussions: write
+
+on:
+  push:
+    paths-ignore:
+      - '**.md'
+      - 'changelog.txt'
+      - 'LEGAL'
+      - 'LICENSE'
+      - '.clang-*'
+      - '.gitignore'
+      - '.github/**'
+      - '!.github/workflows/mac-x64.yml'
+      - 'lib/xdg/**'
+      - 'snap/**'
+      - 'docs/**'
+      - 'flatpak/**'
+      - 'vcpkg.json'
+      - 'vcpkg-*.json'
+      - 'src/base/platform/win/**'
+      - 'src/base/platform/linux/**'
+    branches: [ develop, develop-macos ]
+    tags:
+      - "v*.*.*"
+  pull_request:
+    branches: [ develop, develop-macos ]
+
+jobs:
+
+  macos:
+    name: MacOS
+    runs-on: macos-12
+
+    strategy:
+      matrix:
+        build_type: [ Release ]
+
+    env:
+      UPLOAD_ARTIFACT: "false"
+      ONLY_CACHE: "false"
+      PREPARE_PATH: "build-script/prepare-mac.sh"
+
+    steps:
+      - name: Get repository name.
+        run: echo "REPO_NAME=${GITHUB_REPOSITORY##*/}" >> $GITHUB_ENV
+
+      - name: Clone.
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+          path: ${{ env.REPO_NAME }}
+
+      - name: First set up.
+        run: |
+          sudo chown -R `whoami`:admin /usr/local/share
+          brew install automake
+
+          # Disable spotlight.
+          sudo mdutil -a -i off
+
+          sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+
+      - name: Prepare
+        run: |
+          chmod a+x ./$REPO_NAME/$PREPARE_PATH
+          ./$REPO_NAME/$PREPARE_PATH
+
+      - name: Build ok-gloox
+        run: |
+          git clone https://github.com/okstar-org/ok-gloox.git
+          cd ok-gloox
+          cmake -B out -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          cmake --build out --config ${{ matrix.build_type }}
+          cmake --install out --config ${{ matrix.build_type }}
+
+      - name: Build ok-rtc
+        run: |
+          git clone https://github.com/okstar-org/ok-rtc.git
+          cd ok-rtc
+          git submodule update --init
+          export PKG_CONFIG_PATH="/usr/local/opt/openssl@1.1/lib/pkgconfig:/usr/local/opt/mozjpeg/lib/pkgconfig:/usr/local/opt/ffmpeg@5/lib/pkgconfig"
+          cmake -B out -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DJPEG_LIBRARY=/usr/local/opt/mozjpeg/lib -DJPEF_INCLUDE_DIR=/usr/local/opt/mozjpeg/include
+          cmake --build out --config=${{ matrix.build_type }}
+          cmake --install out --config ${{ matrix.build_type }}
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: '5.15.2'
+          modules: 'qtwebengine'
+
+      - name: Set reusable strings
+        id: strings
+        shell: bash
+        run: |
+          echo "build-output-dir=${{ env.REPO_NAME }}/${{ github.workspace }}/out" >> "$GITHUB_OUTPUT"
+
+      - name: CMake Configure
+        run: |
+          export PKG_CONFIG_PATH="/usr/local/opt/mozjpeg/lib/pkgconfig:/usr/local/opt/ffmpeg@5/lib/pkgconfig:/usr/local/opt/openal-soft/lib/pkgconfig"
+          cmake -B ${{ steps.strings.outputs.build-output-dir }} -S ${{ github.workspace }}/${{ env.REPO_NAME }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+
+      - name: CMake Build
+        run: |
+          cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}

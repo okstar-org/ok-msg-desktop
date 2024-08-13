@@ -22,25 +22,16 @@
 
 #include <cstdint>
 
-
-
 using DispatchedMessageId = NamedType<size_t, struct SentMessageIdTag, Orderable, Incrementable>;
 Q_DECLARE_METATYPE(DispatchedMessageId);
 
-class IMessageDispatcher : public QObject
-{
+class IMessageDispatcher : public QObject {
     Q_OBJECT
 public:
     virtual ~IMessageDispatcher() = default;
 
-    /**
-     * @brief Sends message to associated chat
-     * @param[in] isAction True if is action message
-     * @param[in] content Message content
-     * @return Pair of first and last dispatched message IDs
-     */
-    virtual std::pair<DispatchedMessageId, SentMessageId>
-    sendMessage(bool isAction, const QString& content, bool encrypt = false) = 0;
+    virtual std::pair<DispatchedMessageId, MsgId> sendMessage(bool isAction, const QString& content,
+                                                              bool encrypt = false) = 0;
 
     virtual void clearOutgoingMessages() = 0;
 
@@ -48,14 +39,14 @@ signals:
     /**
      * @brief Emitted when a message is received and processed
      */
-    void messageReceived(const FriendId& sender, const Message & message);
+    void messageReceived(const FriendId& sender, const Message& message);
 
     /**
      * @brief Emitted when a message is processed and sent
      * @param id message id for completion
      * @param message sent message
      */
-    void messageSent(DispatchedMessageId id, const Message & message);
+    void messageSent(DispatchedMessageId id, const Message& message);
 
     /**
      * @brief Emitted when a receiver report is received from the associated chat
@@ -63,10 +54,15 @@ signals:
      */
     void messageComplete(DispatchedMessageId id);
 
+    /**
+     * @brief 消息被对方接收或者被读
+     * @param id
+     */
+    void messageReceipt(DispatchedMessageId id);
 
-    void fileReceived(const FriendId& f, const ToxFile & file);
+    void fileReceived(const FriendId& f, const ToxFile& file);
 
-    void fileCancelled(const FriendId& f, const QString & fileId);
+    void fileCancelled(const FriendId& f, const QString& fileId);
 };
 
 #endif /* IMESSAGE_DISPATCHER_H */

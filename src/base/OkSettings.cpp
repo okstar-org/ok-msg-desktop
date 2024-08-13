@@ -15,283 +15,279 @@
 //
 
 #include "OkSettings.h"
-#include "base/autorun.h"
-#include "system/sys_info.h"
 #include <QDir>
 #include <QMutexLocker>
 #include <QObject>
 #include <QSettings>
 #include <QStandardPaths>
 #include <QtWidgets>
+#include "base/autorun.h"
+#include "system/sys_info.h"
 
 namespace ok::base {
 
 static QStringList locales = {
-    "zh_CN", // 中文简体 zh_CN, zh_TW, zh_HK
-    "zh_TW", // 中文繁体
-    "en",    // 英文   en_US, en_UK
-    "es",    // 西班牙语
-    "fr",    // 法语
-    "ar",    // 阿拉伯语
-    "ru",    // 俄语
-    "de",    // 德语
-    "pt",    // 葡萄牙语
-    "it",    // 意大利语
-    "ja",    // 日文
-    "ko",    // 韩文
+        "zh_CN",  // 中文简体 zh_CN
+        "zh_TW",  // 中文繁体（zh_TW, zh_HK）
+        "en",     // 英文   en_US, en_UK
+                  //    "es",    // 西班牙语
+                  //    "fr",    // 法语
+                  //    "ar",    // 阿拉伯语
+                  //    "ru",    // 俄语
+                  //    "de",    // 德语
+                  //    "pt",    // 葡萄牙语
+                  //    "it",    // 意大利语
+                  //    "ja",    // 日文
+                  //    "ko",    // 韩文
 };
 
-OkSettings::OkSettings(QObject *parent) //
-    : QObject(parent),                  //
-      settingsThread(nullptr),          //
-      currentProfileId(0) {
+OkSettings::OkSettings(QObject* parent)  //
+        : QObject(parent)
+        ,  //
+        settingsThread(nullptr)
+        ,  //
+        currentProfileId(0) {
+    settingsThread = new QThread();
+    settingsThread->setObjectName(objectName());
+    settingsThread->start(QThread::LowPriority);
+    moveToThread(settingsThread);
 
-  settingsThread = new QThread();
-  settingsThread->setObjectName(objectName());
-  settingsThread->start(QThread::LowPriority);
-  moveToThread(settingsThread);
-
-  loadGlobal();
+    loadGlobal();
 }
 
-
 void OkSettings::loadGlobal() {
+    QString filePath = getGlobalSettingsFile();
+    qDebug() << "Loading settings from " + filePath;
 
-  QString filePath =  getGlobalSettingsFile() ;
-  qDebug() << "Loading settings from " + filePath;
+    QSettings s(filePath, QSettings::IniFormat);
+    s.setIniCodec("UTF-8");
 
-  QSettings s(filePath, QSettings::IniFormat);
-  s.setIniCodec("UTF-8");
+    s.beginGroup("General");
+    {
+        if (currentProfile.isEmpty()) {
+            currentProfile = s.value("currentProfile", "").toString();
+            currentProfileId = makeProfileId(currentProfile);
+        }
 
-  s.beginGroup("General");
-  {
-    if (currentProfile.isEmpty()) {
-      currentProfile = s.value("currentProfile", "").toString();
-      currentProfileId = makeProfileId(currentProfile);
+        translation = s.value("translation", true).toString();
+        provider = s.value("provider", "").toString();
+        showSystemTray = s.value("showSystemTray", true).toBool();
+        closeToTray = s.value("closeToTray", false).toBool();
+        autostartInTray = s.value("autostartInTray", false).toBool();
+        autoSaveEnabled = s.value("autoSaveEnabled", false).toBool();
+        minimizeOnClose = s.value("minimizeOnClose", false).toBool();
+        minimizeToTray = s.value("minimizeToTray", false).toBool();
     }
-
-    translation = s.value("translation", true).toString();
-    showSystemTray = s.value("showSystemTray", true).toBool();
-    closeToTray = s.value("closeToTray", false).toBool();
-    autostartInTray = s.value("autostartInTray", false).toBool();
-    autoSaveEnabled = s.value("autoSaveEnabled", false).toBool();
-    minimizeOnClose = s.value("minimizeOnClose", false).toBool();
-    minimizeToTray = s.value("minimizeToTray", false).toBool();
-  }
-  s.endGroup();
+    s.endGroup();
 }
 
 void OkSettings::saveGlobal() {
-  if (QThread::currentThread() != settingsThread)
-    return (void)QMetaObject::invokeMethod(&getInstance(), "saveGlobal");
+    if (QThread::currentThread() != settingsThread)
+        return (void)QMetaObject::invokeMethod(&getInstance(), "saveGlobal");
 
-  QMutexLocker locker{&bigLock};
+    QMutexLocker locker{&bigLock};
 
-  QString path = ok::base::PlatformInfo::getGlobalSettingsFile();
-  qDebug() << "Saving global settings at " + path;
+    QString path = ok::base::PlatformInfo::getGlobalSettingsFile();
+    qDebug() << "Saving global settings at " + path;
 
-  QSettings s(path, QSettings::IniFormat);
-  s.setIniCodec("UTF-8");
+    QSettings s(path, QSettings::IniFormat);
+    s.setIniCodec("UTF-8");
 
-  s.clear();
-  s.beginGroup("General");
-  {
-    //
-    s.setValue("currentProfile", currentProfile);
-    s.setValue("translation", translation);
-    s.setValue("showSystemTray", showSystemTray);
-    s.setValue("closeToTray", closeToTray);
-    s.setValue("autostartInTray", autostartInTray);
-    s.setValue("autoSaveEnabled", autoSaveEnabled);
-    s.setValue("minimizeOnClose", minimizeOnClose);
-    s.setValue("minimizeToTray", minimizeToTray);
-  }
-  s.endGroup();
+    s.clear();
+    s.beginGroup("General");
+    {
+        //
+        s.setValue("currentProfile", currentProfile);
+        s.setValue("translation", translation);
+        s.setValue("provider", provider);
+        s.setValue("showSystemTray", showSystemTray);
+        s.setValue("closeToTray", closeToTray);
+        s.setValue("autostartInTray", autostartInTray);
+        s.setValue("autoSaveEnabled", autoSaveEnabled);
+        s.setValue("minimizeOnClose", minimizeOnClose);
+        s.setValue("minimizeToTray", minimizeToTray);
+    }
+    s.endGroup();
 }
 
-OkSettings &OkSettings::getInstance() {
-  static OkSettings *settings = nullptr;
-  if (!settings)
-    settings = new OkSettings();
-  return *settings;
+OkSettings& OkSettings::getInstance() {
+    static OkSettings* settings = nullptr;
+    if (!settings) settings = new OkSettings();
+    return *settings;
 }
 
 // 国际化下拉框
 QStringList OkSettings::getLocales() { return locales; }
 
 QString OkSettings::getTranslation() {
-  QMutexLocker locker{&bigLock};
-  return translation;
+    QMutexLocker locker{&bigLock};
+    return translation;
 }
 
-void OkSettings::setTranslation(const QString &newValue) {
-  QMutexLocker locker{&bigLock};
+void OkSettings::setTranslation(const QString& newValue) {
+    QMutexLocker locker{&bigLock};
 
-  if (newValue != translation) {
-    translation = newValue;
-    emit translationChanged(translation);
-  }
+    if (newValue != translation) {
+        translation = newValue;
+        emit translationChanged(translation);
+    }
 }
 
-QDir OkSettings::downloadDir() {
-  return ok::base::PlatformInfo::getAppDownloadDirPath();
-}
+QDir OkSettings::downloadDir() { return ok::base::PlatformInfo::getAppDownloadDirPath(); }
 
-QDir OkSettings::cacheDir() {
-  return ok::base::PlatformInfo::getAppCacheDirPath();
-}
+QDir OkSettings::cacheDir() { return ok::base::PlatformInfo::getAppCacheDirPath(); }
 
-QDir OkSettings::configDir() {
-  return ok::base::PlatformInfo::getAppConfigDirPath();
-}
+QDir OkSettings::configDir() { return ok::base::PlatformInfo::getAppConfigDirPath(); }
 
-QDir OkSettings::dataDir() {
-  return  ok::base::PlatformInfo::getAppDataDirPath();
-}
-
+QDir OkSettings::dataDir() { return ok::base::PlatformInfo::getAppDataDirPath(); }
 
 /**
  * @brief Get path to directory, where the application cache are stored.
  * @return Path to application cache, ends with a directory separator.
  */
-QDir OkSettings::getAppCacheDirPath() {
-  return PlatformInfo::getAppCacheDirPath();
-}
+QDir OkSettings::getAppCacheDirPath() { return PlatformInfo::getAppCacheDirPath(); }
 
-QDir OkSettings::getAppPluginPath()  {
-  return PlatformInfo::getAppPluginDirPath();
-}
+QDir OkSettings::getAppPluginPath() { return PlatformInfo::getAppPluginDirPath(); }
 
-QDir OkSettings::getAppLogPath() {
-  return PlatformInfo::getAppLogDirPath();
-}
+QDir OkSettings::getAppLogPath() { return PlatformInfo::getAppLogDirPath(); }
 
 bool OkSettings::getShowSystemTray() {
-  QMutexLocker locker{&bigLock};
-  return showSystemTray;
+    QMutexLocker locker{&bigLock};
+    return showSystemTray;
 }
 
 void OkSettings::setShowSystemTray(bool newValue) {
-  QMutexLocker locker{&bigLock};
-  if (newValue != showSystemTray) {
-    showSystemTray = newValue;
-    emit showSystemTrayChanged(newValue);
-  }
+    QMutexLocker locker{&bigLock};
+    if (newValue != showSystemTray) {
+        showSystemTray = newValue;
+        emit showSystemTrayChanged(newValue);
+    }
 }
 
 bool OkSettings::getCloseToTray() {
-  QMutexLocker locker{&bigLock};
-  return closeToTray;
+    QMutexLocker locker{&bigLock};
+    return closeToTray;
 }
 
 void OkSettings::setCloseToTray(bool newValue) {
-  QMutexLocker locker{&bigLock};
+    QMutexLocker locker{&bigLock};
 
-  if (newValue != closeToTray) {
-    closeToTray = newValue;
-    emit closeToTrayChanged(newValue);
-  }
+    if (newValue != closeToTray) {
+        closeToTray = newValue;
+        emit closeToTrayChanged(newValue);
+    }
 }
 
 bool OkSettings::getAutoSaveEnabled() {
-  QMutexLocker locker{&bigLock};
-  return autoSaveEnabled;
+    QMutexLocker locker{&bigLock};
+    return autoSaveEnabled;
 }
 
 void OkSettings::setAutoSaveEnabled(bool newValue) {
-  QMutexLocker locker{&bigLock};
+    QMutexLocker locker{&bigLock};
 
-  if (newValue != autoSaveEnabled) {
-    autoSaveEnabled = newValue;
-    emit autoSaveEnabledChanged(autoSaveEnabled);
-  }
+    if (newValue != autoSaveEnabled) {
+        autoSaveEnabled = newValue;
+        emit autoSaveEnabledChanged(autoSaveEnabled);
+    }
 }
 
 void OkSettings::setAutostartInTray(bool newValue) {
-  QMutexLocker locker{&bigLock};
-  if (newValue != autostartInTray) {
-    autostartInTray = newValue;
-    emit autostartInTrayChanged(autostartInTray);
-  }
+    QMutexLocker locker{&bigLock};
+    if (newValue != autostartInTray) {
+        autostartInTray = newValue;
+        emit autostartInTrayChanged(autostartInTray);
+    }
 }
 
 bool OkSettings::getMinimizeToTray() {
-  QMutexLocker locker{&bigLock};
-  return minimizeToTray;
+    QMutexLocker locker{&bigLock};
+    return minimizeToTray;
 }
 
 void OkSettings::setMinimizeToTray(bool newValue) {
-  QMutexLocker locker{&bigLock};
-  if (newValue != minimizeToTray) {
-    minimizeToTray = newValue;
-    emit minimizeToTrayChanged(minimizeToTray);
-  }
+    QMutexLocker locker{&bigLock};
+    if (newValue != minimizeToTray) {
+        minimizeToTray = newValue;
+        emit minimizeToTrayChanged(minimizeToTray);
+    }
 }
 
 bool OkSettings::getMinimizeOnClose() {
-  QMutexLocker locker{&bigLock};
-  return minimizeOnClose;
+    QMutexLocker locker{&bigLock};
+    return minimizeOnClose;
 }
 
 void OkSettings::setMinimizeOnClose(bool newValue) {
-  QMutexLocker locker{&bigLock};
+    QMutexLocker locker{&bigLock};
 
-  if (newValue != minimizeOnClose) {
-    minimizeOnClose = newValue;
-    emit minimizeOnCloseChanged(minimizeOnClose);
-  }
+    if (newValue != minimizeOnClose) {
+        minimizeOnClose = newValue;
+        emit minimizeOnCloseChanged(minimizeOnClose);
+    }
 }
 
 bool OkSettings::getAutorun() {
-  QMutexLocker locker{&bigLock};
-  return Platform::getAutorun();
+    QMutexLocker locker{&bigLock};
+    return Platform::getAutorun();
 }
 
 void OkSettings::setAutorun(bool newValue) {
-  QMutexLocker locker{&bigLock};
-  bool autorun = Platform::getAutorun();
-  if (newValue != autorun) {
-    Platform::setAutorun(newValue);
-    emit autorunChanged(autorun);
-  }
+    QMutexLocker locker{&bigLock};
+    bool autorun = Platform::getAutorun();
+    if (newValue != autorun) {
+        Platform::setAutorun(newValue);
+        emit autorunChanged(autorun);
+    }
 }
 
 bool OkSettings::getAutostartInTray() {
-  QMutexLocker locker{&bigLock};
-  return autostartInTray;
+    QMutexLocker locker{&bigLock};
+    return autostartInTray;
 }
 
 QString OkSettings::getCurrentProfile() {
-  QMutexLocker locker{&bigLock};
-  return currentProfile;
+    QMutexLocker locker{&bigLock};
+    return currentProfile;
 }
 
 uint32_t OkSettings::getCurrentProfileId() {
-  QMutexLocker locker{&bigLock};
-  return currentProfileId;
+    QMutexLocker locker{&bigLock};
+    return currentProfileId;
 }
 
-void OkSettings::setCurrentProfile(const QString &profile) {
-  QMutexLocker locker{&bigLock};
+void OkSettings::setCurrentProfile(const QString& profile) {
+    QMutexLocker locker{&bigLock};
 
-  if (profile != currentProfile) {
-    currentProfile = profile;
-    currentProfileId = makeProfileId(currentProfile);
+    if (profile != currentProfile) {
+        currentProfile = profile;
+        currentProfileId = makeProfileId(currentProfile);
 
-    emit currentProfileIdChanged(currentProfileId);
-  }
+        emit currentProfileIdChanged(currentProfileId);
+    }
 }
 
-uint32_t OkSettings::makeProfileId(const QString &profile) {
-  QByteArray data =
-      QCryptographicHash::hash(profile.toUtf8(), QCryptographicHash::Md5);
-  const uint32_t *dwords = reinterpret_cast<const uint32_t *>(data.constData());
-  return dwords[0] ^ dwords[1] ^ dwords[2] ^ dwords[3];
+uint32_t OkSettings::makeProfileId(const QString& profile) {
+    QByteArray data = QCryptographicHash::hash(profile.toUtf8(), QCryptographicHash::Md5);
+    const uint32_t* dwords = reinterpret_cast<const uint32_t*>(data.constData());
+    return dwords[0] ^ dwords[1] ^ dwords[2] ^ dwords[3];
 }
-
 
 QString OkSettings::getGlobalSettingsFile() {
-  return ok::base::PlatformInfo::getGlobalSettingsFile();
+    return ok::base::PlatformInfo::getGlobalSettingsFile();
 }
 
-} // namespace base
+QString OkSettings::getProvider() {
+    QMutexLocker locker{&bigLock};
+    return provider;
+}
+
+void OkSettings::setProvider(QString val) {
+    QMutexLocker locker{&bigLock};
+    if (val != provider) {
+        provider = val;
+        emit providerChanged(provider);
+    }
+}
+
+}  // namespace ok::base

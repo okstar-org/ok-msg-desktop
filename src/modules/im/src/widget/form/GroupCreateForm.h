@@ -7,21 +7,18 @@ namespace Ui {
 class GroupCreateForm;
 }
 
-class GroupCreateForm : public QWidget
-{
+class GroupCreateForm : public QWidget {
     Q_OBJECT
 
 public:
-    explicit GroupCreateForm(QWidget *parent = nullptr);
+    explicit GroupCreateForm(QWidget* parent = nullptr);
     ~GroupCreateForm();
 
 signals:
     void confirmed(const QString& groupName);
 
 private:
-    Ui::GroupCreateForm *ui;
-
-
+    Ui::GroupCreateForm* ui;
 };
 
-#endif // GROUPCREATEFORM_H
+#endif  // GROUPCREATEFORM_H

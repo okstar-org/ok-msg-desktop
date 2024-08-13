@@ -17,13 +17,12 @@
 
 #include <QThread>
 
-namespace ok {
-namespace lib {
+namespace ok::base {
 
 class Task : public QThread {
 public:
-  virtual void run() override = 0;
+    virtual void run() override = 0;
 };
 
-} // namespace lib
-} // namespace ok
+
+}// namespace ok::base

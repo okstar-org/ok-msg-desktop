@@ -36,48 +36,43 @@ class ContentLayout;
 class Widget;
 class FriendWidget;
 
-class MessageSessionWidget : public GenericChatroomWidget
-{
+class MessageSessionWidget : public GenericChatroomWidget {
     Q_OBJECT
 
-  public:
-    MessageSessionWidget(ContentLayout* layout,
-                         const ContactId &cid,
-                         ChatType);
+public:
+    MessageSessionWidget(ContentLayout* layout, const ContactId& cid, ChatType);
 
     ~MessageSessionWidget();
 
     void contextMenuEvent(QContextMenuEvent* event) override final;
     void setAsActiveChatroom() override final;
     void setAsInactiveChatroom() override final;
-
+    void setAvatar(const QPixmap& avatar) override final;
     void setStatus(Status::Status status, bool event);
-    void setStatusMsg(const QString& msg) ;
+    void setStatusMsg(const QString& msg);
     void setTyping(bool typing);
     void setName(const QString& name);
+
     void resetEventFlags() override final;
     QString getStatusString() const override final;
 
-
     void search(const QString& searchString, bool hide = false);
 
-    void setRecvMessage(const FriendMessage &message,
-                        bool isAction);
+    void setRecvMessage(const FriendMessage& message, bool isAction);
 
-    void setMessageReceipt(const ReceiptNum &receipt);
-
+    void setMessageReceipt(const MsgId& msgId);
 
     void setRecvGroupMessage(const GroupMessage& msg);
 
     void setFileReceived(const ToxFile& file);
-    void setFileCancelled(const QString &fileId);
+    void setFileCancelled(const QString& fileId);
 
     void clearHistory();
 
     void setFriend(const Friend* f);
     void removeFriend();
 
-    void setAvInvite(const ToxPeer &peerId, bool video);
+    void setAvInvite(const ToxPeer& peerId, bool video);
     void setAvStart(const FriendId& friendId, bool video);
     void setAvEnd(const FriendId& friendId, bool error);
 
@@ -95,15 +90,15 @@ signals:
     void widgetRenamed(MessageSessionWidget* widget);
     void searchCircle(CircleWidget& circleWidget);
     void updateFriendActivity(Friend& frnd);
-//    void setActive(bool active);
-    void deleteSession(const QString &contactId);
+    //    void setActive(bool active);
+    void deleteSession(const QString& contactId);
 
 public slots:
-  void onAvatarSet(const FriendId& friendPk, const QPixmap& pic);
-  void onAvatarRemoved(const FriendId& friendPk);
-  void onContextMenuCalled(QContextMenuEvent* event);
-  void do_widgetClicked( );
-  void showEvent(QShowEvent *) override;
+    void onAvatarSet(const FriendId& friendPk, const QPixmap& pic);
+    void onAvatarRemoved(const FriendId& friendPk);
+    void onContextMenuCalled(QContextMenuEvent* event);
+    void do_widgetClicked();
+    void showEvent(QShowEvent*) override;
 
 private slots:
     void removeChat();
@@ -112,7 +107,7 @@ private slots:
     void moveToCircle(int circleId);
     void changeAutoAccept(bool enable);
     void showDetails();
-    void onMessageSent(DispatchedMessageId id, const Message & message);
+    void onMessageSent(DispatchedMessageId id, const Message& message);
     void doAcceptCall(const ToxPeer& p, bool video);
     void doRejectCall(const ToxPeer& p);
     void doCall();
@@ -126,20 +121,18 @@ protected:
     virtual void mouseMoveEvent(QMouseEvent* ev) override;
     void setFriendAlias();
     void onActiveSet(bool active) override;
-    void paintEvent(QPaintEvent *e) override;
+    void paintEvent(QPaintEvent* e) override;
 
 private:
-
     ContentLayout* contentLayout;
 
     std::unique_ptr<ContentWidget> contentWidget;
     std::unique_ptr<SendWorker> sendWorker;
 
-    //联系人ID(朋友ID、群聊ID共享)
+    // 联系人ID(朋友ID、群聊ID共享)
     ContactId contactId;
     FriendId friendId;
     GroupId groupId;
-
 };
 
-#endif // FRIENDWIDGET_H
+#endif  // FRIENDWIDGET_H

@@ -15,39 +15,38 @@
 #include <QObject>
 #include <memory>
 
-#include "base/Page.h"
 #include "UI/window/main/src/MainWindow.h"
+#include "base/Page.h"
 #include "modules/module.h"
 
 namespace UI {
 
 class WindowManager : public QObject {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  WindowManager(QObject *parent = nullptr);
-  ~WindowManager();
+    WindowManager(QObject* parent = nullptr);
+    ~WindowManager();
 
-  static WindowManager *Instance();
+    static WindowManager* Instance();
 
-  void startMainUI();
-  void stopMainUI();
+    void startMainUI();
+    void stopMainUI();
 
-  void putPage(PageMenu menu, QFrame *p);
+    void putPage(ok::base::PageMenu menu, QFrame* p);
 
-  QFrame *getPage(PageMenu menu);
+    QFrame* getPage(ok::base::PageMenu menu);
 
-  inline UI::MainWindow *window() { return m_mainWindow.get(); }
+    inline UI::MainWindow* window() { return m_mainWindow.get(); }
 
-  QWidget *getContainer(PageMenu menu);
+    QWidget* getContainer(ok::base::PageMenu menu);
 
-  OMainMenu* getMainMenu();
+    OMainMenu* getMainMenu();
 
 private:
-
-  std::unique_ptr<UI::MainWindow> m_mainWindow;
+    std::unique_ptr<UI::MainWindow> m_mainWindow;
 
 signals:
-  void menuPushed(PageMenu menu, bool checked);
-  void mainClose(SavedInfo savedInfo);
+    void menuPushed(ok::base::PageMenu menu, bool checked);
+    void mainClose(SavedInfo savedInfo);
 };
-} // namespace UI
+}  // namespace ok::base::UI

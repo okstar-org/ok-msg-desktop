@@ -11,17 +11,15 @@
  */
 
 #include "filesform.h"
-#include "src/widget/contentlayout.h"
-#include "lib/settings/translator.h"
-#include "src/widget/style.h"
-#include "src/widget/widget.h"
 #include <QFileInfo>
 #include <QWindow>
+#include "lib/settings/translator.h"
+#include "src/lib/settings/style.h"
+#include "src/widget/contentlayout.h"
+#include "src/widget/widget.h"
 
 FilesForm::FilesForm()
-    : QObject()
-    , doneIcon(Style::getImagePath("fileTransferWidget/fileDone.svg"))
-{
+        : QObject(), doneIcon(Style::getImagePath("fileTransferWidget/fileDone.svg")) {
     head = new QWidget();
     QFont bold;
     bold.setBold(true);
@@ -42,16 +40,14 @@ FilesForm::FilesForm()
     settings::Translator::registerHandler(std::bind(&FilesForm::retranslateUi, this), this);
 }
 
-FilesForm::~FilesForm()
-{
+FilesForm::~FilesForm() {
     settings::Translator::unregister(this);
     delete recvd;
     delete sent;
     head->deleteLater();
 }
 
-bool FilesForm::isShown() const
-{
+bool FilesForm::isShown() const {
     if (main.isVisible()) {
         head->window()->windowHandle()->alert(0);
         return true;
@@ -60,23 +56,20 @@ bool FilesForm::isShown() const
     return false;
 }
 
-void FilesForm::show(ContentLayout* contentLayout)
-{
-//    contentLayout->mainContent->layout()->addWidget(&main);
-//    contentLayout->mainHead->layout()->addWidget(head);
+void FilesForm::show(ContentLayout* contentLayout) {
+    //    contentLayout->mainContent->layout()->addWidget(&main);
+    //    contentLayout->mainHead->layout()->addWidget(head);
     main.show();
     head->show();
 }
 
-void FilesForm::onFileDownloadComplete(const QString& path)
-{
+void FilesForm::onFileDownloadComplete(const QString& path) {
     QListWidgetItem* tmp = new QListWidgetItem(doneIcon, QFileInfo(path).fileName());
     tmp->setData(Qt::UserRole, path);
     recvd->addItem(tmp);
 }
 
-void FilesForm::onFileUploadComplete(const QString& path)
-{
+void FilesForm::onFileUploadComplete(const QString& path) {
     QListWidgetItem* tmp = new QListWidgetItem(doneIcon, QFileInfo(path).fileName());
     tmp->setData(Qt::UserRole, path);
     sent->addItem(tmp);
@@ -87,13 +80,11 @@ void FilesForm::onFileUploadComplete(const QString& path)
 // whenever they're not saved anywhere custom, thanks to the hack)
 // I could do some digging around, but for now I'm tired and others already
 // might know it without me needing to dig, so...
-void FilesForm::onFileActivated(QListWidgetItem* item)
-{
+void FilesForm::onFileActivated(QListWidgetItem* item) {
     Widget::confirmExecutableOpen(QFileInfo(item->data(Qt::UserRole).toString()));
 }
 
-void FilesForm::retranslateUi()
-{
+void FilesForm::retranslateUi() {
     headLabel.setText(tr("Transferred Files", "\"Headline\" of the window"));
     main.setTabText(0, tr("Downloads"));
     main.setTabText(1, tr("Uploads"));

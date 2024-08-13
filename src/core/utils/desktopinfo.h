@@ -14,18 +14,11 @@
 
 #include <QString>
 
-class DesktopInfo
-{
+class DesktopInfo {
 public:
     DesktopInfo();
 
-    enum WM
-    {
-        GNOME,
-        KDE,
-        OTHER,
-        SWAY
-    };
+    enum WM { GNOME, KDE, OTHER, SWAY };
 
     bool waylandDetected();
     WM windowManager();

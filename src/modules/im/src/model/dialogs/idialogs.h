@@ -17,8 +17,7 @@ class ContactId;
 class GroupId;
 class FriendId;
 
-class IDialogs
-{
+class IDialogs {
 public:
     virtual ~IDialogs() = default;
     virtual bool hasContact(const ContactId& contactId) const = 0;
@@ -30,4 +29,4 @@ public:
     virtual int chatroomCount() const = 0;
 };
 
-#endif // I_DIALOGS_H
+#endif  // I_DIALOGS_H

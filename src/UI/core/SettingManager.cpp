@@ -18,35 +18,30 @@
 #define LOGIN_ACCOUNT_KEY "LOGIN_account"
 #define LOGIN_PASSWORD_KEY "LOGIN_password"
 
-namespace core {
+namespace ok {
 
-SettingManager::SettingManager(QObject *parent) : QObject(parent),
-    settings{std::make_unique<QSettings>(ORGANIZATION_NAME, ORGANIZATION_DOMAIN)}
-{
-  qDebug() << __func__;
+SettingManager::SettingManager(QObject* parent)
+        : QObject(parent)
+        , settings{std::make_unique<QSettings>(ORGANIZATION_NAME, ORGANIZATION_DOMAIN)} {
+    qDebug() << __func__;
 }
 
-SettingManager::~SettingManager() {
-  qDebug() << __func__;
+SettingManager::~SettingManager() { qDebug() << __func__; }
+
+void SettingManager::saveAccount(QString& account, QString& password) {
+    settings->setValue(LOGIN_ACCOUNT_KEY, QVariant(account));
+    settings->setValue(LOGIN_PASSWORD_KEY, QVariant(password));
 }
 
+void SettingManager::getAccount(ok::base::Fn<void(QString account, QString password)> callback) {
+    QString a = settings->value(LOGIN_ACCOUNT_KEY, QVariant("")).toString();
+    QString p = settings->value(LOGIN_PASSWORD_KEY, QVariant("")).toString();
 
-void SettingManager::saveAccount(QString &account, QString &password) {
-  settings->setValue(LOGIN_ACCOUNT_KEY, QVariant(account));
-  settings->setValue(LOGIN_PASSWORD_KEY, QVariant(password));
-}
-
-void SettingManager::getAccount(
-    Fn<void(QString account, QString password)> callback) {
-
-  QString a = settings->value(LOGIN_ACCOUNT_KEY, QVariant("")).toString();
-  QString p = settings->value(LOGIN_PASSWORD_KEY, QVariant("")).toString();
-
-  callback(a, p);
+    callback(a, p);
 }
 
 void SettingManager::clearAccount() {
-  settings->setValue(LOGIN_ACCOUNT_KEY, QVariant(""));
-  settings->setValue(LOGIN_PASSWORD_KEY, QVariant(""));
+    settings->setValue(LOGIN_ACCOUNT_KEY, QVariant(""));
+    settings->setValue(LOGIN_PASSWORD_KEY, QVariant(""));
 }
-} // namespace core
+}  // namespace ok

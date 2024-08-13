@@ -25,18 +25,9 @@ enum class FilterSearch {
     RegisterAndRegular
 };
 
-enum class PeriodSearch {
-    None,
-    WithTheEnd,
-    WithTheFirst,
-    AfterDate,
-    BeforeDate
-};
+enum class PeriodSearch { None, WithTheEnd, WithTheFirst, AfterDate, BeforeDate };
 
-enum class SearchDirection {
-    Up,
-    Down
-};
+enum class SearchDirection { Up, Down };
 
 struct ParameterSearch {
     FilterSearch filter{FilterSearch::None};
@@ -44,26 +35,22 @@ struct ParameterSearch {
     QDate date;
     bool isUpdate{false};
 
-    bool operator ==(const ParameterSearch& other) {
-        return filter == other.filter &&
-            period == other.period &&
-            date == other.date;
+    bool operator==(const ParameterSearch& other) {
+        return filter == other.filter && period == other.period && date == other.date;
     }
 
-    bool operator !=(const ParameterSearch& other) {
-        return !(*this == other);
-    }
+    bool operator!=(const ParameterSearch& other) { return !(*this == other); }
 };
 
 class SearchExtraFunctions {
 public:
     /**
-     * @brief generateFilterWordsOnly generate string for filter "Whole words only" for correct search phrase
-     * containing symbols "\[]/^$.|?*+(){}"
+     * @brief generateFilterWordsOnly generate string for filter "Whole words only" for correct
+     * search phrase containing symbols "\[]/^$.|?*+(){}"
      * @param phrase for search
      * @return new phrase for search
      */
-    static QString generateFilterWordsOnly(const QString &phrase) {
+    static QString generateFilterWordsOnly(const QString& phrase) {
         QString filter = QRegularExpression::escape(phrase);
 
         const QString symbols = QStringLiteral("\\[]/^$.|?*+(){}");
@@ -87,4 +74,4 @@ public:
     }
 };
 
-#endif //SEARCHTYPES_H
+#endif  // SEARCHTYPES_H

@@ -25,16 +25,12 @@
 
 #include "screengrabberchooserrectitem.h"
 #include "screengrabberoverlayitem.h"
-#include "toolboxgraphicsitem.h"
 #include "src/widget/widget.h"
+#include "toolboxgraphicsitem.h"
 
 ScreenshotGrabber::ScreenshotGrabber()
-    : QObject()
-    , mKeysBlocked(false)
-    , scene(nullptr)
-    , mQToxVisible(true)
-{
-    window = new QGraphicsView(scene); // Top-level widget
+        : QObject(), mKeysBlocked(false), scene(nullptr), mQToxVisible(true) {
+    window = new QGraphicsView(scene);  // Top-level widget
     window->setWindowFlags(Qt::FramelessWindowHint | Qt::BypassWindowManagerHint);
     window->setContentsMargins(0, 0, 0, 0);
     window->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -46,30 +42,25 @@ ScreenshotGrabber::ScreenshotGrabber()
     setupScene();
 }
 
-void ScreenshotGrabber::reInit()
-{
+void ScreenshotGrabber::reInit() {
     window->resetCachedContent();
     setupScene();
     showGrabber();
     mKeysBlocked = false;
 }
 
-ScreenshotGrabber::~ScreenshotGrabber()
-{
+ScreenshotGrabber::~ScreenshotGrabber() {
     delete scene;
     delete window;
 }
 
-bool ScreenshotGrabber::eventFilter(QObject* object, QEvent* event)
-{
-    if (event->type() == QEvent::KeyPress)
-        return handleKeyPress(static_cast<QKeyEvent*>(event));
+bool ScreenshotGrabber::eventFilter(QObject* object, QEvent* event) {
+    if (event->type() == QEvent::KeyPress) return handleKeyPress(static_cast<QKeyEvent*>(event));
 
     return QObject::eventFilter(object, event);
 }
 
-void ScreenshotGrabber::showGrabber()
-{
+void ScreenshotGrabber::showGrabber() {
     this->screenGrab = grabScreen();
     this->screenGrabDisplay->setPixmap(this->screenGrab);
     this->window->show();
@@ -86,10 +77,8 @@ void ScreenshotGrabber::showGrabber()
     adjustTooltipPosition();
 }
 
-bool ScreenshotGrabber::handleKeyPress(QKeyEvent* event)
-{
-    if (mKeysBlocked)
-        return false;
+bool ScreenshotGrabber::handleKeyPress(QKeyEvent* event) {
+    if (mKeysBlocked) return false;
 
     if (event->key() == Qt::Key_Escape)
         reject();
@@ -111,11 +100,9 @@ bool ScreenshotGrabber::handleKeyPress(QKeyEvent* event)
     return true;
 }
 
-void ScreenshotGrabber::acceptRegion()
-{
+void ScreenshotGrabber::acceptRegion() {
     QRect rect = this->chooserRect->chosenRect();
-    if (rect.width() < 1 || rect.height() < 1)
-        return;
+    if (rect.width() < 1 || rect.height() < 1) return;
 
     // Scale the accepted region from DIPs to actual pixels
     rect.setRect(rect.x() * pixRatio, rect.y() * pixRatio, rect.width() * pixRatio,
@@ -130,8 +117,7 @@ void ScreenshotGrabber::acceptRegion()
     deleteLater();
 }
 
-void ScreenshotGrabber::setupScene()
-{
+void ScreenshotGrabber::setupScene() {
     delete scene;
     scene = new QGraphicsScene;
     window->setScene(scene);
@@ -158,31 +144,28 @@ void ScreenshotGrabber::setupScene()
             &ScreenGrabberOverlayItem::setChosenRect);
 }
 
-void ScreenshotGrabber::useNothingSelectedTooltip()
-{
+void ScreenshotGrabber::useNothingSelectedTooltip() {
     helperTooltip->setHtml(
-        tr("Click and drag to select a region. Press %1 to "
-           "hide/show qTox window, or %2 to cancel.",
-           "Help text shown when no region has been selected yet")
-            .arg(QString("<b>%1</b>").arg(tr("Space", "[Space] key on the keyboard")),
-                 QString("<b>%1</b>").arg(tr("Escape", "[Escape] key on the keyboard"))));
+            tr("Click and drag to select a region. Press %1 to "
+               "hide/show qTox window, or %2 to cancel.",
+               "Help text shown when no region has been selected yet")
+                    .arg(QString("<b>%1</b>").arg(tr("Space", "[Space] key on the keyboard")),
+                         QString("<b>%1</b>").arg(tr("Escape", "[Escape] key on the keyboard"))));
     adjustTooltipPosition();
 }
 
-void ScreenshotGrabber::useRegionSelectedTooltip()
-{
+void ScreenshotGrabber::useRegionSelectedTooltip() {
     helperTooltip->setHtml(
-        tr("Press %1 to send a screenshot of the selection, "
-           "%2 to hide/show qTox window, or %3 to cancel.",
-           "Help text shown when a region has been selected")
-            .arg(QString("<b>%1</b>").arg(tr("Enter", "[Enter] key on the keyboard")),
-                 QString("<b>%1</b>").arg(tr("Space", "[Space] key on the keyboard")),
-                 QString("<b>%1</b>").arg(tr("Escape", "[Escape] key on the keyboard"))));
+            tr("Press %1 to send a screenshot of the selection, "
+               "%2 to hide/show qTox window, or %3 to cancel.",
+               "Help text shown when a region has been selected")
+                    .arg(QString("<b>%1</b>").arg(tr("Enter", "[Enter] key on the keyboard")),
+                         QString("<b>%1</b>").arg(tr("Space", "[Space] key on the keyboard")),
+                         QString("<b>%1</b>").arg(tr("Escape", "[Escape] key on the keyboard"))));
     adjustTooltipPosition();
 }
 
-void ScreenshotGrabber::chooseHelperTooltipText(QRect rect)
-{
+void ScreenshotGrabber::chooseHelperTooltipText(QRect rect) {
     if (rect.size().isNull())
         useNothingSelectedTooltip();
     else
@@ -193,8 +176,7 @@ void ScreenshotGrabber::chooseHelperTooltipText(QRect rect)
  * @internal
  * @brief Align the tooltip centered at top of screen with the mouse cursor.
  */
-void ScreenshotGrabber::adjustTooltipPosition()
-{
+void ScreenshotGrabber::adjustTooltipPosition() {
     QRect recGL = QGuiApplication::primaryScreen()->virtualGeometry();
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
     const auto rec = QGuiApplication::screenAt(QCursor::pos())->geometry();
@@ -209,14 +191,12 @@ void ScreenshotGrabber::adjustTooltipPosition()
     helperToolbox->setY(y);
 }
 
-void ScreenshotGrabber::reject()
-{
+void ScreenshotGrabber::reject() {
     restoreHiddenWindows();
     deleteLater();
 }
 
-QPixmap ScreenshotGrabber::grabScreen()
-{
+QPixmap ScreenshotGrabber::grabScreen() {
     QScreen* screen = QGuiApplication::primaryScreen();
     QRect rec = screen->virtualGeometry();
 
@@ -225,8 +205,7 @@ QPixmap ScreenshotGrabber::grabScreen()
                               rec.y() * pixRatio, rec.width() * pixRatio, rec.height() * pixRatio);
 }
 
-void ScreenshotGrabber::hideVisibleWindows()
-{
+void ScreenshotGrabber::hideVisibleWindows() {
     foreach (QWidget* w, qApp->topLevelWidgets()) {
         if (w != window && w->isVisible()) {
             mHiddenWindows << w;
@@ -237,19 +216,16 @@ void ScreenshotGrabber::hideVisibleWindows()
     mQToxVisible = false;
 }
 
-void ScreenshotGrabber::restoreHiddenWindows()
-{
+void ScreenshotGrabber::restoreHiddenWindows() {
     foreach (QWidget* w, mHiddenWindows) {
-        if (w)
-            w->setVisible(true);
+        if (w) w->setVisible(true);
     }
 
     mHiddenWindows.clear();
     mQToxVisible = true;
 }
 
-void ScreenshotGrabber::beginRectChooser(QGraphicsSceneMouseEvent* event)
-{
+void ScreenshotGrabber::beginRectChooser(QGraphicsSceneMouseEvent* event) {
     QPointF pos = event->scenePos();
     this->chooserRect->setX(pos.x());
     this->chooserRect->setY(pos.y());

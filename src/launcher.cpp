@@ -11,54 +11,48 @@
  */
 #include "launcher.h"
 
-#include "application.h"
-#include <QTranslator>
-#include <base/logs.h>
 #include <memory>
 
-namespace core {
+#include "application.h"
+#include "ipc.h"
 
-std::unique_ptr<Launcher> Launcher::Create(int argc, char *argv[]) {
-  return std::make_unique<Launcher>(argc, argv);
+namespace ok {
+
+std::unique_ptr<Launcher> Launcher::Create(int argc, char* argv[]) {
+    return std::make_unique<Launcher>(argc, argv);
 }
 
-Launcher::Launcher(int argc, char *argv[])
-    : _argc(argc), //
-      _argv(argv)  //
-{
-  QThread::currentThread()->setObjectName("Launcher");
+Launcher::Launcher(int argc, char* argv[]) : _argc(argc), _argv(argv) {
+    QThread::currentThread()->setObjectName("Launcher");
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 0))
-  QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-  QGuiApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QGuiApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 #endif
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
-  qputenv("QT_ENABLE_HIGHDPI_SCALING", "1");
-  QGuiApplication::setHighDpiScaleFactorRoundingPolicy(
-      Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
+    qputenv("QT_ENABLE_HIGHDPI_SCALING", "1");
+    QGuiApplication::setHighDpiScaleFactorRoundingPolicy(
+            Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
 #endif
 }
 
 int Launcher::executeApplication() {
 
-  app = new Application(_argc, _argv);
+    app = new Application(_argc, _argv);
 
-  // Windows platform plugins DLL
-  app->addLibraryPath(QCoreApplication::applicationDirPath());
-  app->addLibraryPath("platforms");
-  app->start();
-  app->finish();
-
-  return app->exec();
+    // Windows platform plugins DLL
+    app->addLibraryPath(QCoreApplication::applicationDirPath());
+    app->addLibraryPath("platforms");
+    app->start();
+    app->finish();
+    return app->exec();
 }
 
-int Launcher::startup() {
-  return executeApplication();
-}
+int Launcher::startup() { return executeApplication(); }
 
 void Launcher::shutdown() {
-  app->closeAllWindows();
-  qApp->exit(0);
+    app->closeAllWindows();
+    qApp->exit(0);
 }
 
-} // namespace core
+}  // namespace ok

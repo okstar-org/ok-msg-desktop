@@ -8,27 +8,26 @@
 
 #include "DesktopCaptureSourceHelper.h"
 
-#include <iostream>
-#include <memory>
 #include <algorithm>
 #include <chrono>
-#include <iostream>
-#include <vector>
 #include <functional>
+#include <iostream>
+#include <memory>
+#include <vector>
 
 #include "DesktopCaptureSourceManager.h"
-#include "rtc_base/thread.h"
-#include "api/video/video_sink_interface.h"
+#include "api/video/i420_buffer.h"
 #include "api/video/video_frame.h"
+#include "api/video/video_sink_interface.h"
 #include "modules/desktop_capture/desktop_and_cursor_composer.h"
 #include "modules/desktop_capture/desktop_capturer.h"
+#include "rtc_base/thread.h"
 #include "system_wrappers/include/clock.h"
-#include "api/video/i420_buffer.h"
 #include "third_party/libyuv/include/libyuv.h"
 
 #ifdef WEBRTC_MAC
 #import <QuartzCore/QuartzCore.h>
-#endif // WEBRTC_MAC
+#endif  // WEBRTC_MAC
 
 namespace lib::ortc {
 namespace {
@@ -37,21 +36,20 @@ namespace {
 class CaptureScheduler {
 public:
     void runAsync(std::function<void()> method) {
-		dispatch_async(dispatch_get_main_queue(), ^{
-			method();
-		});
+        dispatch_async(dispatch_get_main_queue(), ^{
+          method();
+        });
     }
     void runDelayed(int delayMs, std::function<void()> method) {
-        const auto time = dispatch_time(
-            DISPATCH_TIME_NOW,
-            ((long long)delayMs * NSEC_PER_SEC) / 1000);
+        const auto time =
+                dispatch_time(DISPATCH_TIME_NOW, ((long long)delayMs * NSEC_PER_SEC) / 1000);
         dispatch_after(time, dispatch_get_main_queue(), ^{
-            method();
+          method();
         });
     }
 };
-#else // WEBRTC_MAC
-rtc::Thread *GlobalCapturerThread() {
+#else   // WEBRTC_MAC
+rtc::Thread* GlobalCapturerThread() {
     static auto result = [] {
         auto thread = rtc::Thread::Create();
         thread->SetName("WebRTC-DesktopCapturer", nullptr);
@@ -63,61 +61,55 @@ rtc::Thread *GlobalCapturerThread() {
 
 class CaptureScheduler {
 public:
-    CaptureScheduler() : _thread(GlobalCapturerThread()) {
-    }
+    CaptureScheduler() : _thread(GlobalCapturerThread()) {}
 
-    void runAsync(std::function<void()> method) {
-        _thread->PostTask(std::move(method));
-    }
+    void runAsync(std::function<void()> method) { _thread->PostTask(std::move(method)); }
     void runDelayed(int delayMs, std::function<void()> method) {
-//        _thread->PostDelayedTask(std::move(method), delayMs);
+        //        _thread->PostDelayedTask(std::move(method), delayMs);
     }
 
 private:
-    rtc::Thread *_thread;
-
+    rtc::Thread* _thread;
 };
-#endif // WEBRTC_MAC
+#endif  // WEBRTC_MAC
 
 class SourceFrameCallbackImpl : public webrtc::DesktopCapturer::Callback {
 public:
     SourceFrameCallbackImpl(DesktopSize size, int fps);
 
-    void OnCaptureResult(
-        webrtc::DesktopCapturer::Result result,
-        std::unique_ptr<webrtc::DesktopFrame> frame) override;
-	void setOutput(
-		std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> sink);
-	void setSecondaryOutput(
-		std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> sink);
-    void setOnFatalError(std::function<void ()>);
-    void setOnPause(std::function<void (bool)>);
+    void OnCaptureResult(webrtc::DesktopCapturer::Result result,
+                         std::unique_ptr<webrtc::DesktopFrame>
+                                 frame) override;
+    void setOutput(std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> sink);
+    void setSecondaryOutput(std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> sink);
+    void setOnFatalError(std::function<void()>);
+    void setOnPause(std::function<void(bool)>);
+
 private:
     rtc::scoped_refptr<webrtc::I420Buffer> i420_buffer_;
-	std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> _sink;
-	std::shared_ptr<
-        rtc::VideoSinkInterface<webrtc::VideoFrame>> _secondarySink;
+    std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> _sink;
+    std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> _secondarySink;
     DesktopSize size_;
-    std::function<void ()> _onFatalError;
-    std::function<void (bool)> _onPause;
+    std::function<void()> _onFatalError;
+    std::function<void(bool)> _onPause;
 };
 
 class DesktopSourceRenderer {
 public:
-    DesktopSourceRenderer(
-        CaptureScheduler &scheduler,
-        DesktopCaptureSource source,
-        DesktopCaptureSourceData data);
+    DesktopSourceRenderer(CaptureScheduler& scheduler,
+                          DesktopCaptureSource source,
+                          DesktopCaptureSourceData data);
 
     void start();
     void stop();
     void setOutput(std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> sink);
     void setSecondaryOutput(std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> sink);
     void loop();
-    void setOnFatalError(std::function<void ()>);
-    void setOnPause(std::function<void (bool)>);
+    void setOnFatalError(std::function<void()>);
+    void setOnPause(std::function<void(bool)>);
+
 private:
-    CaptureScheduler &_scheduler;
+    CaptureScheduler& _scheduler;
     std::unique_ptr<webrtc::DesktopCapturer> _capturer;
     SourceFrameCallbackImpl _callback;
     std::shared_ptr<bool> _timerGuard;
@@ -127,20 +119,14 @@ private:
     bool _fatalError = false;
     bool _currentlyOnPause = false;
     double _delayMs = 0.;
-
 };
 
-SourceFrameCallbackImpl::SourceFrameCallbackImpl(DesktopSize size, int fps)
-: size_(size) {
-}
+SourceFrameCallbackImpl::SourceFrameCallbackImpl(DesktopSize size, int fps) : size_(size) {}
 
-void SourceFrameCallbackImpl::OnCaptureResult(
-	    webrtc::DesktopCapturer::Result result,
-	    std::unique_ptr<webrtc::DesktopFrame> frame) {
-
-    const auto failed = (result != webrtc::DesktopCapturer::Result::SUCCESS)
-        || !frame
-        || frame->size().equals({ 1, 1 });
+void SourceFrameCallbackImpl::OnCaptureResult(webrtc::DesktopCapturer::Result result,
+                                              std::unique_ptr<webrtc::DesktopFrame> frame) {
+    const auto failed = (result != webrtc::DesktopCapturer::Result::SUCCESS) || !frame ||
+                        frame->size().equals({1, 1});
     if (failed) {
         if (result == webrtc::DesktopCapturer::Result::ERROR_PERMANENT) {
             if (_onFatalError) {
@@ -155,80 +141,60 @@ void SourceFrameCallbackImpl::OnCaptureResult(
     }
 
     const auto frameSize = frame->size();
-    auto fittedSize = (frameSize.width() >= size_.width * 2
-        || frameSize.height() >= size_.height * 2)
-        ? DesktopSize{ frameSize.width() / 2, frameSize.height() / 2 }
-        : DesktopSize{ frameSize.width(), frameSize.height() };
+    auto fittedSize =
+            (frameSize.width() >= size_.width * 2 || frameSize.height() >= size_.height * 2)
+                    ? DesktopSize{frameSize.width() / 2, frameSize.height() / 2}
+                    : DesktopSize{frameSize.width(), frameSize.height()};
 
     fittedSize.width -= (fittedSize.width % 4);
     fittedSize.height -= (fittedSize.height % 4);
 
-    const auto outputSize = webrtc::DesktopSize{
-        fittedSize.width,
-        fittedSize.height
-    };
+    const auto outputSize = webrtc::DesktopSize{fittedSize.width, fittedSize.height};
 
-    webrtc::BasicDesktopFrame outputFrame{ outputSize };
+    webrtc::BasicDesktopFrame outputFrame{outputSize};
 
-	const auto outputRect = webrtc::DesktopRect::MakeSize(outputSize);
+    const auto outputRect = webrtc::DesktopRect::MakeSize(outputSize);
 
-	const auto outputRectData = outputFrame.data() +
-        outputFrame.stride() * outputRect.top() +
-		webrtc::DesktopFrame::kBytesPerPixel * outputRect.left();
+    const auto outputRectData = outputFrame.data() + outputFrame.stride() * outputRect.top() +
+                                webrtc::DesktopFrame::kBytesPerPixel * outputRect.left();
 
+    libyuv::ARGBScale(frame->data(),
+                      frame->stride(),
+                      frame->size().width(),
+                      frame->size().height(),
+                      outputRectData,
+                      outputFrame.stride(),
+                      outputSize.width(),
+                      outputSize.height(),
+                      libyuv::kFilterBilinear);
 
-	libyuv::ARGBScale(
-		frame->data(),
-		frame->stride(),
-		frame->size().width(),
-		frame->size().height(),
-        outputRectData,
-        outputFrame.stride(),
-        outputSize.width(),
-        outputSize.height(),
-		libyuv::kFilterBilinear);
+    int width = outputFrame.size().width();
+    int height = outputFrame.size().height();
+    int stride_y = width;
+    int stride_uv = (width + 1) / 2;
 
-	int width = outputFrame.size().width();
-	int height = outputFrame.size().height();
-	int stride_y = width;
-	int stride_uv = (width + 1) / 2;
+    if (!i420_buffer_ || i420_buffer_->width() != width || i420_buffer_->height() != height) {
+        i420_buffer_ = webrtc::I420Buffer::Create(width, height, stride_y, stride_uv, stride_uv);
+    }
 
-	if (!i420_buffer_
-        || i420_buffer_->width() != width
-        || i420_buffer_->height() != height) {
-		i420_buffer_ = webrtc::I420Buffer::Create(
-            width,
-            height,
-            stride_y,
-            stride_uv,
-            stride_uv);
-	}
+    int i420Result = libyuv::ConvertToI420(
+            outputFrame.data(), width * height, i420_buffer_->MutableDataY(),
+            i420_buffer_->StrideY(), i420_buffer_->MutableDataU(), i420_buffer_->StrideU(),
+            i420_buffer_->MutableDataV(), i420_buffer_->StrideV(), 0, 0, width, height, width,
+            height, libyuv::kRotate0, libyuv::FOURCC_ARGB);
 
-	int i420Result = libyuv::ConvertToI420(
-        outputFrame.data(),
-		width * height,
-		i420_buffer_->MutableDataY(), i420_buffer_->StrideY(),
-		i420_buffer_->MutableDataU(), i420_buffer_->StrideU(),
-		i420_buffer_->MutableDataV(), i420_buffer_->StrideV(),
-		0, 0,
-		width, height,
-		width, height,
-		libyuv::kRotate0,
-		libyuv::FOURCC_ARGB);
-
-
-	assert(i420Result == 0);
-	(void)i420Result;
-	webrtc::VideoFrame nativeVideoFrame = webrtc::VideoFrame(
-		i420_buffer_,
-		webrtc::kVideoRotation_0,
-        webrtc::Clock::GetRealTimeClock()->CurrentTime().us());
-	if (const auto sink = _sink.get()) {
-		_sink->OnFrame(nativeVideoFrame);
-	}
-	if (const auto sink = _secondarySink.get()) {
-		sink->OnFrame(nativeVideoFrame);
-	}
+    assert(i420Result == 0);
+    (void)i420Result;
+    webrtc::VideoFrame nativeVideoFrame =
+            webrtc::VideoFrame(i420_buffer_,
+                               webrtc::kVideoRotation_0,
+                               webrtc::Clock::GetRealTimeClock()->CurrentTime().us());
+    if (const auto sink = _sink.get()) {
+        _sink->OnFrame(nativeVideoFrame);
+    }
+    if (const auto sink = _secondarySink.get()) {
+        sink->OnFrame(nativeVideoFrame);
+    }
 }
 
 void SourceFrameCallbackImpl::setOutput(
@@ -236,32 +202,27 @@ void SourceFrameCallbackImpl::setOutput(
     _sink = std::move(sink);
 }
 
-void SourceFrameCallbackImpl::setOnFatalError(std::function<void ()> error) {
+void SourceFrameCallbackImpl::setOnFatalError(std::function<void()> error) {
     _onFatalError = error;
 }
-void SourceFrameCallbackImpl::setOnPause(std::function<void (bool)> pause) {
-    _onPause = pause;
-}
+void SourceFrameCallbackImpl::setOnPause(std::function<void(bool)> pause) { _onPause = pause; }
 
 void SourceFrameCallbackImpl::setSecondaryOutput(
         std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> sink) {
     _secondarySink = std::move(sink);
 }
 
-DesktopSourceRenderer::DesktopSourceRenderer(
-    CaptureScheduler &scheduler,
-    DesktopCaptureSource source,
-    DesktopCaptureSourceData data)
-: _scheduler(scheduler)
-, _callback(data.aspectSize, data.fps)
-, _delayMs(1000. / data.fps) {
-	_callback.setOnFatalError([=] {
-		stop();
-		_fatalError = true;
-		if (_onFatalError) _onFatalError();
-	});
+DesktopSourceRenderer::DesktopSourceRenderer(CaptureScheduler& scheduler,
+                                             DesktopCaptureSource source,
+                                             DesktopCaptureSourceData data)
+        : _scheduler(scheduler), _callback(data.aspectSize, data.fps), _delayMs(1000. / data.fps) {
+    _callback.setOnFatalError([this] {
+        stop();
+        _fatalError = true;
+        if (_onFatalError) _onFatalError();
+    });
 
-    _callback.setOnPause([=] (bool pause) {
+    _callback.setOnPause([this](bool pause) {
         bool previousOnPause = _currentlyOnPause;
         _currentlyOnPause = pause;
         if (previousOnPause != _currentlyOnPause) {
@@ -280,7 +241,7 @@ DesktopSourceRenderer::DesktopSourceRenderer(
     options.set_allow_iosurface(true);
 #elif defined WEBRTC_USE_PIPEWIRE
     options.set_allow_pipewire(true);
-#endif // WEBRTC_WIN || WEBRTC_MAC
+#endif  // WEBRTC_WIN || WEBRTC_MAC
 
     if (source.isWindow()) {
         _capturer = webrtc::DesktopCapturer::CreateWindowCapturer(options);
@@ -292,9 +253,8 @@ DesktopSourceRenderer::DesktopSourceRenderer(
         return;
     }
     if (data.captureMouse) {
-        _capturer = std::make_unique<webrtc::DesktopAndCursorComposer>(
-            std::move(_capturer),
-            options);
+        _capturer =
+                std::make_unique<webrtc::DesktopAndCursorComposer>(std::move(_capturer), options);
     }
     _capturer->SelectSource(source.uniqueId());
     _capturer->Start(&_callback);
@@ -304,10 +264,10 @@ void DesktopSourceRenderer::start() {
     if (!_capturer || _isRunning) {
         return;
     }
-//    ++GlobalCount;
-//#ifdef WEBRTC_MAC
-//    NSLog(@"current capture count: %d", GlobalCount);
-//#endif // WEBRTC_MAC
+    //    ++GlobalCount;
+    // #ifdef WEBRTC_MAC
+    //    NSLog(@"current capture count: %d", GlobalCount);
+    // #endif // WEBRTC_MAC
 
     _isRunning = true;
     _timerGuard = std::make_shared<bool>(true);
@@ -315,13 +275,13 @@ void DesktopSourceRenderer::start() {
 }
 
 void DesktopSourceRenderer::stop() {
-//    if (_isRunning) {
-//        GlobalCount--;
-//
-//#ifdef WEBRTC_MAC
-//        NSLog(@"current capture count: %d", GlobalCount);
-//#endif // WEBRTC_MAC
-//    }
+    //    if (_isRunning) {
+    //        GlobalCount--;
+    //
+    // #ifdef WEBRTC_MAC
+    //        NSLog(@"current capture count: %d", GlobalCount);
+    // #endif // WEBRTC_MAC
+    //    }
     _isRunning = false;
     _timerGuard = nullptr;
 }
@@ -333,14 +293,14 @@ void DesktopSourceRenderer::loop() {
 
     _capturer->CaptureFrame();
     const auto guard = std::weak_ptr<bool>(_timerGuard);
-    _scheduler.runDelayed(_delayMs, [=] {
+    _scheduler.runDelayed(_delayMs, [this, guard] {
         if (guard.lock()) {
             loop();
         }
     });
 }
 
-void DesktopSourceRenderer::setOnFatalError(std::function<void ()> error) {
+void DesktopSourceRenderer::setOnFatalError(std::function<void()> error) {
     if (_fatalError) {
         error();
     } else {
@@ -348,7 +308,7 @@ void DesktopSourceRenderer::setOnFatalError(std::function<void ()> error) {
     }
 }
 
-void DesktopSourceRenderer::setOnPause(std::function<void (bool)> pause) {
+void DesktopSourceRenderer::setOnPause(std::function<void(bool)> pause) {
     if (_currentlyOnPause) {
         pause(true);
     }
@@ -365,31 +325,29 @@ void DesktopSourceRenderer::setSecondaryOutput(
     _callback.setSecondaryOutput(std::move(sink));
 }
 
-} // namespace
+}  // namespace
 
 struct DesktopCaptureSourceHelper::Renderer {
     CaptureScheduler scheduler;
     std::unique_ptr<DesktopSourceRenderer> renderer;
 };
 
-DesktopCaptureSource DesktopCaptureSourceForKey(
-	    const std::string &uniqueKey) {
+DesktopCaptureSource DesktopCaptureSourceForKey(const std::string& uniqueKey) {
     if (!ShouldBeDesktopCapture(uniqueKey)) {
-		return DesktopCaptureSource::Invalid();
+        return DesktopCaptureSource::Invalid();
     }
     if (uniqueKey == "desktop_capturer_pipewire") {
         return DesktopCaptureSource(0, "pipewire", false);
     }
     const auto windowPrefix = std::string("desktop_capturer_window_");
     const auto isWindow = (uniqueKey.find(windowPrefix) == 0);
-    DesktopCaptureSourceManager manager(isWindow
-        ? DesktopCaptureType::Window
-        : DesktopCaptureType::Screen);
-	const auto sources = manager.sources();
+    DesktopCaptureSourceManager manager(isWindow ? DesktopCaptureType::Window
+                                                 : DesktopCaptureType::Screen);
+    const auto sources = manager.sources();
 
     // "desktop_capturer_window_".size() == "desktop_capturer_screen_".size()
     const auto keyId = std::stoll(uniqueKey.substr(windowPrefix.size()));
-    for (const auto &source : sources) {
+    for (const auto& source : sources) {
         if (source.uniqueId() == keyId) {
             return source;
         }
@@ -397,63 +355,49 @@ DesktopCaptureSource DesktopCaptureSourceForKey(
     return DesktopCaptureSource::Invalid();
 }
 
-bool ShouldBeDesktopCapture(const std::string &uniqueKey) {
+bool ShouldBeDesktopCapture(const std::string& uniqueKey) {
     return (uniqueKey.find("desktop_capturer_") == 0);
 }
 
-DesktopCaptureSourceHelper::DesktopCaptureSourceHelper(
-	DesktopCaptureSource source,
-	DesktopCaptureSourceData data)
-: _renderer(std::make_shared<Renderer>()) {
+DesktopCaptureSourceHelper::DesktopCaptureSourceHelper(DesktopCaptureSource source,
+                                                       DesktopCaptureSourceData data)
+        : _renderer(std::make_shared<Renderer>()) {
     _renderer->scheduler.runAsync([renderer = _renderer, source, data] {
-        renderer->renderer = std::make_unique<DesktopSourceRenderer>(
-            renderer->scheduler,
-            source,
-            data);
+        renderer->renderer =
+                std::make_unique<DesktopSourceRenderer>(renderer->scheduler, source, data);
     });
 }
 
 DesktopCaptureSourceHelper::~DesktopCaptureSourceHelper() {
-    _renderer->scheduler.runAsync([renderer = _renderer] {
-    });
+    _renderer->scheduler.runAsync([renderer = _renderer] {});
 }
 
 void DesktopCaptureSourceHelper::setOutput(
-    std::shared_ptr<
-        rtc::VideoSinkInterface<webrtc::VideoFrame>> sink) const {
-    _renderer->scheduler.runAsync([renderer = _renderer, sink] {
-        renderer->renderer->setOutput(sink);
-    });
+        std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> sink) const {
+    _renderer->scheduler.runAsync(
+            [renderer = _renderer, sink] { renderer->renderer->setOutput(sink); });
 }
 
 void DesktopCaptureSourceHelper::setSecondaryOutput(
-    std::shared_ptr<
-        rtc::VideoSinkInterface<webrtc::VideoFrame>> sink) const {
-	_renderer->scheduler.runAsync([renderer = _renderer, sink] {
-		renderer->renderer->setSecondaryOutput(sink);
-	});
+        std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> sink) const {
+    _renderer->scheduler.runAsync(
+            [renderer = _renderer, sink] { renderer->renderer->setSecondaryOutput(sink); });
 }
 
 void DesktopCaptureSourceHelper::start() const {
-	_renderer->scheduler.runAsync([renderer = _renderer] {
-		renderer->renderer->start();
-	});
+    _renderer->scheduler.runAsync([renderer = _renderer] { renderer->renderer->start(); });
 }
-void DesktopCaptureSourceHelper::setOnFatalError(std::function<void ()> error) const {
-    _renderer->scheduler.runAsync([renderer = _renderer, error = error] {
-        renderer->renderer->setOnFatalError(error);
-    });
+void DesktopCaptureSourceHelper::setOnFatalError(std::function<void()> error) const {
+    _renderer->scheduler.runAsync(
+            [renderer = _renderer, error = error] { renderer->renderer->setOnFatalError(error); });
 }
-void DesktopCaptureSourceHelper::setOnPause(std::function<void (bool)> pause) const {
-    _renderer->scheduler.runAsync([renderer = _renderer, pause = pause] {
-        renderer->renderer->setOnPause(pause);
-    });
+void DesktopCaptureSourceHelper::setOnPause(std::function<void(bool)> pause) const {
+    _renderer->scheduler.runAsync(
+            [renderer = _renderer, pause = pause] { renderer->renderer->setOnPause(pause); });
 }
 
 void DesktopCaptureSourceHelper::stop() const {
-	_renderer->scheduler.runAsync([renderer = _renderer] {
-		renderer->renderer->stop();
-	});
+    _renderer->scheduler.runAsync([renderer = _renderer] { renderer->renderer->stop(); });
 }
 
-} // namespace lib::ortc
+}  // namespace lib::ortc

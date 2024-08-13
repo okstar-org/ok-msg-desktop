@@ -10,7 +10,6 @@
  * See the Mulan PubL v2 for more details.
  */
 
-
 #ifndef CALLCONFIRMWIDGET_H
 #define CALLCONFIRMWIDGET_H
 
@@ -22,8 +21,7 @@
 class QPaintEvent;
 class QShowEvent;
 
-class CallConfirmWidget final : public QWidget
-{
+class CallConfirmWidget final : public QWidget {
     Q_OBJECT
 public:
     explicit CallConfirmWidget(const QWidget* anchor);
@@ -54,4 +52,4 @@ private:
     const qreal rectRatio;
 };
 
-#endif // CALLCONFIRMWIDGET_H
+#endif  // CALLCONFIRMWIDGET_H

@@ -17,8 +17,7 @@ class QSize;
 class QSplitter;
 class QByteArray;
 
-class SplitterRestorer
-{
+class SplitterRestorer {
 public:
     explicit SplitterRestorer(QSplitter* splitter);
     void restore(const QByteArray& state, const QSize& windowSize);
@@ -27,4 +26,4 @@ private:
     QSplitter* splitter;
 };
 
-#endif // SPLITTERRESTORER_H
+#endif  // SPLITTERRESTORER_H

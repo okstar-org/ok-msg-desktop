@@ -13,23 +13,21 @@
 #ifndef MODEL_CHATROOM_H
 #define MODEL_CHATROOM_H
 
-
 #include "src/model/contact.h"
 
-class Chatroom : public QObject
-{
+class Chatroom : public QObject {
     Q_OBJECT
 public:
     virtual const ContactId& getContactId() = 0;
-     Chatroom();
-     ~Chatroom();
+    Chatroom();
+    ~Chatroom();
     void setActive(bool _active);
 
 signals:
     void activeChanged(bool activated);
 
 private:
-    bool  active;
+    bool active;
 };
 
 #endif /* MODEL_CHATROOM_H */

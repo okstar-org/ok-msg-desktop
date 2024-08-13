@@ -14,7 +14,7 @@
 #define ABOUT_FRIEND_H
 
 #include "iaboutfriend.h"
-#include "src/model/interface.h"
+#include "src/base/interface.h"
 #include "src/persistence/ifriendsettings.h"
 
 #include <QObject>
@@ -22,15 +22,14 @@
 class Friend;
 class IFriendSettings;
 
-class AboutFriend : public QObject, public IAboutFriend
-{
+class AboutFriend : public QObject, public IAboutFriend {
     Q_OBJECT
 
 public:
     AboutFriend(const Friend* f, IFriendSettings* const settings);
-    const Friend* getFriend()const override {return f;}
+    const Friend* getFriend() const override { return f; }
     QString getName() const override;
-    const QString & getAlias() const override;
+    const QString& getAlias() const override;
 
     QString getStatusMessage() const override;
     FriendId getPublicKey() const override;
@@ -68,4 +67,4 @@ private:
     IFriendSettings* const settings;
 };
 
-#endif // ABOUT_FRIEND_H
+#endif  // ABOUT_FRIEND_H

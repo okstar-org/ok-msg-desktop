@@ -10,15 +10,14 @@
  * See the Mulan PubL v2 for more details.
  */
 #pragma once
-
+#include <QCryptographicHash>
 #include <QString>
-
-namespace lib {
-namespace base {
+namespace ok::base {
 
 class Hashs {
 public:
-  static QString sha1(const QByteArray &buf);
+    static QString sha1String(const QByteArray& buf);
+    static QByteArray sha1(const QByteArray& buf);
+    static QByteArray hash(const QByteArray& buf, QCryptographicHash::Algorithm);
 };
-} // namespace base
-} // namespace lib
+}  // namespace ok::base

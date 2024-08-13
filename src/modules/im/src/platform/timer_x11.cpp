@@ -9,20 +9,19 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PubL v2 for more details.
  */
-
-#include <QtCore/qsystemdetection.h>
-#include "src/platform/timer.h"
-#include "src/platform/x11_display.h"
+// clang-format off
 #include <QDebug>
 #include <X11/extensions/scrnsaver.h>
+#include "src/platform/timer.h"
+#include "src/platform/x11_display.h"
+// clang-format on
 
-uint32_t Platform::getIdleTime()
-{
+uint32_t Platform::getIdleTime() {
     uint32_t idleTime = 0;
 
     Display* display = X11Display::lock();
     if (!display) {
-        qDebug() << "XOpenDisplay failed";
+        qWarning() << "XOpenDisplay failed";
         X11Display::unlock();
         return 0;
     }
@@ -36,7 +35,7 @@ uint32_t Platform::getIdleTime()
             idleTime = info->idle;
             XFree(info);
         } else
-            qDebug() << "XScreenSaverAllocInfo() failed";
+            qWarning() << "XScreenSaverAllocInfo() failed";
     }
     X11Display::unlock();
     return idleTime;

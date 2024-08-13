@@ -10,14 +10,13 @@
  * See the Mulan PubL v2 for more details.
  */
 
-
 #ifndef OPENAL_H
 #define OPENAL_H
 
-#include "src/audio/iaudiocontrol.h"
+#include "base/compatiblerecursivemutex.h"
 #include "src/audio/backend/alsink.h"
 #include "src/audio/backend/alsource.h"
-#include "base/compatiblerecursivemutex.h"
+#include "src/audio/iaudiocontrol.h"
 
 #include <memory>
 #include <unordered_set>
@@ -39,22 +38,15 @@
 #include <AL/alext.h>
 #endif
 
-class OpenAL : public IAudioControl
-{
+class OpenAL : public IAudioControl {
     Q_OBJECT
 
 public:
     OpenAL();
     virtual ~OpenAL();
 
-    qreal maxOutputVolume() const
-    {
-        return 1;
-    }
-    qreal minOutputVolume() const
-    {
-        return 0;
-    }
+    qreal maxOutputVolume() const { return 1; }
+    qreal minOutputVolume() const { return 0; }
     qreal outputVolume() const;
     void setOutputVolume(qreal volume);
 
@@ -159,4 +151,4 @@ protected:
     int16_t* inputBuffer = nullptr;
 };
 
-#endif // OPENAL_H
+#endif  // OPENAL_H

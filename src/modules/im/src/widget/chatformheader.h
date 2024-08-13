@@ -31,46 +31,38 @@ class ToxPeer;
 class Contact;
 class QLabel;
 
-
-class ChatFormHeader : public QWidget
-{
+class ChatFormHeader : public QWidget {
     Q_OBJECT
 public:
     enum class CallButtonState {
-        Disabled = 0,    // Grey
-        Avaliable = 1,   // Green
-        InCall = 2,      // Red
-        Outgoing = 3,    // Yellow
-        Incoming = 4,    // Yellow
+        Disabled = 0,   // Grey
+        Avaliable = 1,  // Green
+        InCall = 2,     // Red
+        Outgoing = 3,   // Yellow
+        Incoming = 4,   // Yellow
     };
     enum class ToolButtonState {
-        Disabled = 0,    // Grey
-        Off = 1,         // Green
-        On = 2,          // Red
+        Disabled = 0,  // Grey
+        Off = 1,       // Green
+        On = 2,        // Red
     };
-    enum Mode {
-        None = 0,
-        Audio = 1,
-        Video = 2,
-        AV = Audio | Video
-    };
+    enum Mode { None = 0, Audio = 1, Video = 2, AV = Audio | Video };
 
-    ChatFormHeader(const ContactId &contactId, QWidget* parent = nullptr);
+    ChatFormHeader(const ContactId& contactId, QWidget* parent = nullptr);
     ~ChatFormHeader();
 
     void setContact(const Contact* contact);
     void removeContact();
-    const Contact* getContact()const{return contact;}
+    const Contact* getContact() const;
 
     void setName(const QString& newName);
     void setMode(Mode mode);
 
     void showOutgoingCall(bool video);
 
-    void createCallConfirm(const ToxPeer& peer, bool video, QString &displayedName);
+    void createCallConfirm(const ToxPeer& peer, bool video, QString& displayedName);
     void showCallConfirm();
     void removeCallConfirm();
-
 
     void updateMuteMicButton(bool active, bool inputMuted);
     void updateMuteVolButton(bool active, bool outputMuted);
@@ -82,8 +74,7 @@ public:
     void updateMuteMicButton();
     void updateMuteVolButton();
 
-    void showCallConfirm(const ToxPeer &peerId, bool video, const QString &displayedName);
-
+    void showCallConfirm(const ToxPeer& peerId, bool video, const QString& displayedName);
 
     void setAvatar(const QPixmap& img);
     QSize getAvatarSize() const;
@@ -101,21 +92,22 @@ signals:
     void micMuteToggle();
     void volMuteToggle();
 
-    void nameChanged(const QString& name);
-
     void callAccepted(const ToxPeer& peerId, bool video);
     void callRejected(const ToxPeer& peerId);
 
 private slots:
     void retranslateUi();
     void updateButtonsView();
-    void onAvatarChanged(  const QPixmap &pic);
     void onDisplayedNameChanged(const QString& name);
 
 private:
+    void nameChanged(const QString& name);
     void updateContactStatus(Status::Status status);
 
 private:
+    // 初始情况下可能先有contactId
+    // 后 Friend 对象被构造，通过setContact接口创建出来
+    ContactId contactId;
     const Contact* contact = nullptr;
     bool isSelf = false;
 
@@ -123,8 +115,8 @@ private:
     MaskablePixmapWidget* avatar;
     QVBoxLayout* headTextLayout;
     CroppingLabel* nameLabel;
-    QLabel *statusLabel = nullptr;
-    QToolButton *statusIcon = nullptr;
+    QLabel* statusLabel = nullptr;
+    QToolButton* statusIcon = nullptr;
 
     QPushButton* callButton;
     QPushButton* videoButton;
@@ -133,6 +125,6 @@ private:
     CallButtonState videoState;
 
     std::unique_ptr<CallConfirmWidget> callConfirm;
-}; 
+};
 
-#endif // CHAT_FORM_HEADER
+#endif  // CHAT_FORM_HEADER

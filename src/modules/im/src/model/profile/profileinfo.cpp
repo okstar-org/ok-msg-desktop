@@ -12,10 +12,10 @@
 
 #include "profileinfo.h"
 #include "src/core/core.h"
+#include "src/model/toxclientstandards.h"
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
-#include "src/model/toxclientstandards.h"
 
 #include <QApplication>
 #include <QBuffer>
@@ -36,31 +36,24 @@
  * @param profile Pointer to Profile.
  * @note All pointers parameters shouldn't be null.
  */
-ProfileInfo::ProfileInfo(Core* core, Profile* profile)
-    : profile{profile}
-    , core{core}
-{
+ProfileInfo::ProfileInfo(Core* core, Profile* profile) : profile{profile}, core{core} {
     connect(core, &Core::idSet, this, &ProfileInfo::idChanged);
     connect(core, &Core::usernameSet, this, &ProfileInfo::usernameChanged);
     connect(core, &Core::avatarSet, this, &ProfileInfo::avatarChanged);
     connect(core, &Core::statusMessageSet, this, &ProfileInfo::statusMessageChanged);
 
-//    connectTo_usernameChanged(this,
-//                              [this](const QString& val) {
-//                                profile->rename(val);
-//                              });
-
-
+    //    connectTo_usernameChanged(this,
+    //                              [this](const QString& val) {
+    //                                profile->rename(val);
+    //                              });
 }
-
 
 /**
  * @brief Set a user password for profile.
  * @param password New password.
  * @return True on success, false otherwise.
  */
-bool ProfileInfo::setPassword(const QString& password)
-{
+bool ProfileInfo::setPassword(const QString& password) {
     QString errorMsg = profile->setPassword(password);
     return errorMsg.isEmpty();
 }
@@ -69,8 +62,7 @@ bool ProfileInfo::setPassword(const QString& password)
  * @brief Delete a user password for profile.
  * @return True on success, false otherwise.
  */
-bool ProfileInfo::deletePassword()
-{
+bool ProfileInfo::deletePassword() {
     QString errorMsg = profile->setPassword("");
     return errorMsg.isEmpty();
 }
@@ -79,16 +71,12 @@ bool ProfileInfo::deletePassword()
  * @brief Check if current profile is encrypted.
  * @return True if encrypted, false otherwise.
  */
-bool ProfileInfo::isEncrypted() const
-{
-    return profile->isEncrypted();
-}
+bool ProfileInfo::isEncrypted() const { return profile->isEncrypted(); }
 
 /**
  * @brief Copy self ToxId to clipboard.
  */
-void ProfileInfo::copyId() const
-{
+void ProfileInfo::copyId() const {
     ToxId selfId = core->getSelfPeerId();
     QString txt = selfId.toString();
     QClipboard* clip = QApplication::clipboard();
@@ -102,51 +90,32 @@ void ProfileInfo::copyId() const
  * @brief Set self user name.
  * @param name New name.
  */
-void ProfileInfo::setUsername(const QString& name)
-{
-    core->setUsername(name);
-}
+void ProfileInfo::setUsername(const QString& name) { profile->setNick(name, true); }
 
-void ProfileInfo::setAvatar(const QPixmap &avatar) {
-    // set avatar.
-    profile->setAvatarOnly(avatar);
-}
+void ProfileInfo::setAvatar(const QPixmap& avatar) { profile->setAvatarOnly(avatar); }
 
-const QPixmap &ProfileInfo::getAvatar()
-{
-    return profile->loadAvatar();
-}
+const QPixmap& ProfileInfo::getAvatar() { return profile->loadAvatar(); }
 
 /**
  * @brief Set self status message.
  * @param status New status message.
  */
-void ProfileInfo::setStatusMessage(const QString& status)
-{
-    core->setStatusMessage(status);
-}
+void ProfileInfo::setStatusMessage(const QString& status) { core->setStatusMessage(status); }
 
 /**
  * @brief Get name of tox profile file.
  * @return Profile name.
  */
-QString ProfileInfo::getUsername() const
-{
-    return profile->getName();
-}
+QString ProfileInfo::getUsername() const { return profile->getName(); }
 
-const QString &ProfileInfo::getDisplayName() const
-{
-    return profile->getDisplayName();
-}
+const QString& ProfileInfo::getDisplayName() const { return profile->getDisplayName(); }
 
 /**
  * @brief Remove characters not supported for profile name from string.
  * @param src Source string.
  * @return Sanitized string.
  */
-static QString sanitize(const QString& src)
-{
+static QString sanitize(const QString& src) {
     QString name = src;
     // these are pretty much Windows banned filename characters
     QList<QChar> banned{'/', '\\', ':', '<', '>', '"', '|', '?', '*'};
@@ -171,8 +140,7 @@ static QString sanitize(const QString& src)
  * @param name New profile name.
  * @return Result code of rename operation.
  */
-IProfileInfo::RenameResult ProfileInfo::renameProfile(const QString& name)
-{
+IProfileInfo::RenameResult ProfileInfo::renameProfile(const QString& name) {
     QString cur = profile->getName();
     if (name.isEmpty()) {
         return RenameResult::EmptyName;
@@ -197,8 +165,7 @@ IProfileInfo::RenameResult ProfileInfo::renameProfile(const QString& name)
  * @param filepath Path to file which should be deleted.
  * @return True, if file writeable, false otherwise.
  */
-static bool tryRemoveFile(const QString& filepath)
-{
+static bool tryRemoveFile(const QString& filepath) {
     QFile tmp(filepath);
     bool writable = tmp.open(QIODevice::WriteOnly);
     tmp.remove();
@@ -210,8 +177,7 @@ static bool tryRemoveFile(const QString& filepath)
  * @param path Path to save profile.
  * @return Result code of save operation.
  */
-IProfileInfo::SaveResult ProfileInfo::exportProfile(const QString& path) const
-{
+IProfileInfo::SaveResult ProfileInfo::exportProfile(const QString& path) const {
     QString current = profile->getName() + Core::TOX_EXT;
     if (path.isEmpty()) {
         return SaveResult::EmptyPath;
@@ -232,8 +198,7 @@ IProfileInfo::SaveResult ProfileInfo::exportProfile(const QString& path) const
  * @brief Remove profile.
  * @return List of files, which couldn't be removed automaticaly.
  */
-QStringList ProfileInfo::removeProfile()
-{
+QStringList ProfileInfo::removeProfile() {
     QStringList manualDeleteFiles = profile->remove();
     QMetaObject::invokeMethod(&Nexus::getInstance(), "showLogin");
     return manualDeleteFiles;
@@ -242,27 +207,23 @@ QStringList ProfileInfo::removeProfile()
 /**
  * @brief Log out from current profile.
  */
-void ProfileInfo::logout()
-{
-    qDebug()<<__func__;
-    emit Nexus::getInstance().destroyProfile(getUsername());
+void ProfileInfo::logout() {
+    auto username = getUsername();
+    qDebug() << __func__ << username;
+    emit Nexus::getInstance().destroyProfile(username);
 }
 
-void ProfileInfo::exit()
-{
-    qDebug()<<__func__;
-    emit Nexus::getInstance().exit(getUsername());
+void ProfileInfo::exit() {
+    auto username = getUsername();
+    qDebug() << __func__ << username;
+    emit Nexus::getInstance().exit(username);
 }
-
 
 /**
  * @brief Copy image to clipboard.
  * @param image Image to copy.
  */
-void ProfileInfo::copyQr(const QImage& image) const
-{
-    QApplication::clipboard()->setImage(image);
-}
+void ProfileInfo::copyQr(const QImage& image) const { QApplication::clipboard()->setImage(image); }
 
 /**
  * @brief Save image to file.
@@ -270,8 +231,7 @@ void ProfileInfo::copyQr(const QImage& image) const
  * @param path Path to save.
  * @return Result code of save operation.
  */
-IProfileInfo::SaveResult ProfileInfo::saveQr(const QImage& image, const QString& path) const
-{
+IProfileInfo::SaveResult ProfileInfo::saveQr(const QImage& image, const QString& path) const {
     QString current = profile->getName() + ".png";
     if (path.isEmpty()) {
         return SaveResult::EmptyPath;
@@ -295,8 +255,7 @@ IProfileInfo::SaveResult ProfileInfo::saveQr(const QImage& image, const QString&
  * @param pic Picture to convert.
  * @return Byte array with png image.
  */
-QByteArray picToPng(const QImage& pic)
-{
+QByteArray picToPng(const QImage& pic) {
     QByteArray bytes;
     QBuffer buffer(&bytes);
     buffer.open(QIODevice::WriteOnly);
@@ -310,8 +269,7 @@ QByteArray picToPng(const QImage& pic)
  * @param path Path to image, which should be the new avatar.
  * @return Code of set avatar operation.
  */
-IProfileInfo::SetAvatarResult ProfileInfo::setAvatar(const QString& path)
-{
+IProfileInfo::SetAvatarResult ProfileInfo::setAvatar(const QString& path) {
     if (path.isEmpty()) {
         return SetAvatarResult::EmptyPath;
     }
@@ -324,7 +282,7 @@ IProfileInfo::SetAvatarResult ProfileInfo::setAvatar(const QString& path)
     QByteArray avatar;
     const auto err = createAvatarFromFile(file, avatar);
     if (err == SetAvatarResult::OK) {
-        profile->setAvatar(avatar);
+        profile->setAvatar(avatar, true);
     }
     return err;
 }
@@ -335,8 +293,7 @@ IProfileInfo::SetAvatarResult ProfileInfo::setAvatar(const QString& path)
  * @param avatar Output avatar of correct file type and size.
  * @return SetAvatarResult
  */
-IProfileInfo::SetAvatarResult ProfileInfo::createAvatarFromFile(QFile& file, QByteArray& avatar)
-{
+IProfileInfo::SetAvatarResult ProfileInfo::createAvatarFromFile(QFile& file, QByteArray& avatar) {
     QByteArray fileContents{file.readAll()};
     auto err = byteArrayToPng(fileContents, avatar);
     if (err != SetAvatarResult::OK) {
@@ -353,8 +310,7 @@ IProfileInfo::SetAvatarResult ProfileInfo::createAvatarFromFile(QFile& file, QBy
  * @param outPng byte array which the png will be written to.
  * @return SetAvatarResult
  */
-IProfileInfo::SetAvatarResult ProfileInfo::byteArrayToPng(QByteArray inData, QByteArray& outPng)
-{
+IProfileInfo::SetAvatarResult ProfileInfo::byteArrayToPng(QByteArray inData, QByteArray& outPng) {
     QBuffer inBuffer{&inData};
     QImageReader reader{&inBuffer};
     QImage image;
@@ -379,14 +335,12 @@ IProfileInfo::SetAvatarResult ProfileInfo::byteArrayToPng(QByteArray inData, QBy
  * @param avatar byte array containing the avatar.
  * @return SetAvatarResult
  */
-IProfileInfo::SetAvatarResult ProfileInfo::scalePngToAvatar(QByteArray& avatar)
-{
+IProfileInfo::SetAvatarResult ProfileInfo::scalePngToAvatar(QByteArray& avatar) {
     // We do a first rescale to 256x256 in case the image was huge, then keep tryng from here
     constexpr int scaleSizes[] = {256, 128, 64, 32};
 
     for (auto scaleSize : scaleSizes) {
-        if (ToxClientStandards::IsValidAvatarSize(avatar.size()))
-            break;
+        if (ToxClientStandards::IsValidAvatarSize(avatar.size())) break;
         QImage image;
         image.loadFromData(avatar);
         image = image.scaled(scaleSize, scaleSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
@@ -399,11 +353,6 @@ IProfileInfo::SetAvatarResult ProfileInfo::scalePngToAvatar(QByteArray& avatar)
     }
     return SetAvatarResult::OK;
 }
-
-/**
- * @brief Remove self avatar.
- */
-void ProfileInfo::removeAvatar()
-{
-    profile->removeSelfAvatar();
+void ProfileInfo::removeAvatar() {
+    profile->removeAvatar(true);
 }

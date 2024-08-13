@@ -19,28 +19,21 @@
 #include <QKeyEvent>
 #include <QMimeData>
 
-ChatTextEdit::ChatTextEdit(QWidget* parent)
-    : QTextEdit(parent)
-{
-
+ChatTextEdit::ChatTextEdit(QWidget* parent) : QTextEdit(parent) {
     setAcceptRichText(false);
     setAcceptDrops(false);
-    setAttribute(Qt::WA_InputMethodEnabled,true);
-
+    setAttribute(Qt::WA_InputMethodEnabled, true);
 
     settings::Translator::registerHandler([this] { retranslateUi(); }, this);
     retranslateUi();
 }
 
-ChatTextEdit::~ChatTextEdit()
-{
-    settings::Translator::unregister(this);
-}
+ChatTextEdit::~ChatTextEdit() { settings::Translator::unregister(this); }
 
-void ChatTextEdit::keyPressEvent(QKeyEvent* event)
-{
+void ChatTextEdit::keyPressEvent(QKeyEvent* event) {
     int key = event->key();
-    if ((key == Qt::Key_Enter || key == Qt::Key_Return) && !(event->modifiers() & Qt::ShiftModifier)) {
+    if ((key == Qt::Key_Enter || key == Qt::Key_Return) &&
+        !(event->modifiers() & Qt::ShiftModifier)) {
         emit enterPressed();
         return;
     }
@@ -66,23 +59,13 @@ void ChatTextEdit::keyPressEvent(QKeyEvent* event)
     QTextEdit::keyPressEvent(event);
 }
 
-void ChatTextEdit::setLastMessage(QString lm)
-{
-    lastMessage = lm;
-}
+void ChatTextEdit::setLastMessage(QString lm) { lastMessage = lm; }
 
-void ChatTextEdit::retranslateUi()
-{
-    setPlaceholderText(tr("Type your message here..."));
-}
+void ChatTextEdit::retranslateUi() { setPlaceholderText(tr("Type your message here...")); }
 
-void ChatTextEdit::sendKeyEvent(QKeyEvent* event)
-{
-    emit keyPressEvent(event);
-}
+void ChatTextEdit::sendKeyEvent(QKeyEvent* event) { emit keyPressEvent(event); }
 
-bool ChatTextEdit::pasteIfImage(QKeyEvent* event)
-{
+bool ChatTextEdit::pasteIfImage(QKeyEvent* event) {
     const QClipboard* const clipboard = QApplication::clipboard();
     if (!clipboard) {
         return false;
@@ -101,4 +84,3 @@ bool ChatTextEdit::pasteIfImage(QKeyEvent* event)
     emit pasteImage(pixmap);
     return true;
 }
-

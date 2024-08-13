@@ -12,19 +12,19 @@
 #include "FontManager.h"
 #include <QObject>
 
-FontManager::FontManager(QObject *parent) : QObject(parent) {}
+FontManager::FontManager(QObject* parent) : QObject(parent) {}
 
 FontManager::~FontManager() {}
 
 void FontManager::loadFonts() {
-  // QFontDatabase::addApplicationFont(":/font/resources/fonts/PingFang/PingFang_SC_Regular.ttf");
-  // QFontDatabase::addApplicationFont(":/font/resources/fonts/PingFang/PingFang_SC_Light.ttf");
-  /*QFontDatabase::addApplicationFont(":/font/resources/fonts/PingFang/PingFang_SC_Medium.ttf");
-  QFontDatabase::addApplicationFont(":/font/resources/fonts/PingFang/PingFang_SC_Thin.ttf");
-  QFontDatabase::addApplicationFont(":/font/resources/fonts/PingFang/PingFang_SC_Semibold.ttf");
-  QFontDatabase::addApplicationFont(":/font/resources/fonts/PingFang/PingFang_SC_UltraLight.ttf");*/
+    // QFontDatabase::addApplicationFont(":/font/resources/fonts/PingFang/PingFang_SC_Regular.ttf");
+    // QFontDatabase::addApplicationFont(":/font/resources/fonts/PingFang/PingFang_SC_Light.ttf");
+    /*QFontDatabase::addApplicationFont(":/font/resources/fonts/PingFang/PingFang_SC_Medium.ttf");
+    QFontDatabase::addApplicationFont(":/font/resources/fonts/PingFang/PingFang_SC_Thin.ttf");
+    QFontDatabase::addApplicationFont(":/font/resources/fonts/PingFang/PingFang_SC_Semibold.ttf");
+    QFontDatabase::addApplicationFont(":/font/resources/fonts/PingFang/PingFang_SC_UltraLight.ttf");*/
 
-  //	QFont f("Microsoft Yahei", 10, QFont::Normal);
-  //
-  //    qApp->setFont(f);
+    //	QFont f("Microsoft Yahei", 10, QFont::Normal);
+    //
+    //    qApp->setFont(f);
 }

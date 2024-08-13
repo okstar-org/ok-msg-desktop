@@ -21,20 +21,19 @@
 
 class Settings;
 
-class ChatHistory : public IChatLog
-{
+class ChatHistory : public IChatLog {
     Q_OBJECT
 public:
     ChatHistory(const ContactId& f_,
-              History* history_,
-              const ICoreIdHandler& coreIdHandler,
-              const Settings& settings,
-              IMessageDispatcher& messageDispatcher);
+                History* history_,
+                const ICoreIdHandler& coreIdHandler,
+                const Settings& settings,
+                IMessageDispatcher& messageDispatcher);
 
     ~ChatHistory();
 
     const ChatLogItem* at(ChatLogIdx idx) const override;
-    //最后几条
+    // 最后几条
     QList<Message> getLastTextMessage(uint size);
 
     SearchResult searchForward(SearchPos startIdx, const QString& phrase,
@@ -43,18 +42,21 @@ public:
                                 const ParameterSearch& parameter) const override;
     ChatLogIdx getFirstIdx() const override;
     ChatLogIdx getNextIdx() const override;
-    std::vector<DateChatLogIdxPair> getDateIdxs(const QDate& startDate, size_t maxDates) const override;
+    std::vector<DateChatLogIdxPair> getDateIdxs(const QDate& startDate,
+                                                size_t maxDates) const override;
 
 public slots:
     void onFileUpdated(const FriendId& sender, const ToxFile& file);
     void onFileCanceled(const FriendId& sender, const QString& fileId);
-    void onFileTransferRemotePausedUnpaused(const FriendId& sender, const ToxFile& file, bool paused);
+    void onFileTransferRemotePausedUnpaused(const FriendId& sender, const ToxFile& file,
+                                            bool paused);
     void onFileTransferBrokenUnbroken(const FriendId& sender, const ToxFile& file, bool broken);
 
 private slots:
     void onMessageReceived(const FriendId& sender, const Message& message);
     void onMessageSent(DispatchedMessageId id, const Message& message);
     void onMessageComplete(DispatchedMessageId id);
+    void onMessageReceipt(DispatchedMessageId id);
 
 private:
     void ensureIdxInSessionChatLog(ChatLogIdx idx) const;
@@ -62,6 +64,7 @@ private:
     void dispatchUnsentMessages(IMessageDispatcher& messageDispatcher);
     void handleDispatchedMessage(DispatchedMessageId dispatchId, RowId historyId);
     void completeMessage(DispatchedMessageId id);
+    void receiptMessage(DispatchedMessageId id);
     bool canUseHistory() const;
     ChatLogIdx getInitialChatLogIdx() const;
 

@@ -193,6 +193,8 @@
         <file>themes/dark/contact/ContactList.css</file>
         <file>themes/default/contact/add.svg</file>
         <file>themes/dark/contact/add.svg</file>
+        <file>themes/default/window/aboutFriend.css</file>
+        <file>themes/dark/window/aboutFriend.css</file>
 
     </qresource>
 </RCC>

@@ -21,14 +21,8 @@
 class Widget;
 class Profile;
 class Settings;
-// class LoginScreen;
 class Core;
 class QCommandLineParser;
-//
-//#include "UI/window/login/src/LoginWindow.h"
-//#include "UI/window/main/MainWindow.h"
-
-//using LoginScreen = UI::LoginWindow;
 
 #ifdef Q_OS_MAC
 class QMenuBar;
@@ -40,101 +34,96 @@ class QSignalMapper;
 #endif
 
 class Nexus : public QObject, public Module {
-  Q_OBJECT
+    Q_OBJECT
 public:
-
     /**
      * Module
      */
     static QString Name();
-    static Module *Create();
+    static Module* Create();
 
+    void showMainGUI();
+    void setSettings(Settings* settings);
+    void setParser(QCommandLineParser* parser);
 
-  void showMainGUI();
-  void setSettings(Settings *settings);
-  void setParser(QCommandLineParser *parser);
+    static Nexus& getInstance();
+    static Core* getCore();
+    static Profile* getProfile();
+    static Widget* getDesktopGUI();
 
-  static Nexus &getInstance();
-  static Core *getCore();
-  static Profile *getProfile();
-  static Widget *getDesktopGUI();
+    virtual void destroy() override;
 
+    QString name() override;
+    QWidget* widget() override;
+    void init(Profile*) override;
+    void start(std::shared_ptr<ok::session::AuthSession> session) override;
+    bool isStarted() override { return stared; }
+    void hide() override;
+    void onSave(SavedInfo&) override;
+    void cleanup() override;
 
-  virtual void destroy() override;
-
-  QString name() override;
-  void init(Profile *) override;
-  void start(ok::session::SignInInfo &signInInfo,
-             QWidget *parent = nullptr) override;
-  bool isStarted() override { return stared; }
-  void hide() override;
-  void onSave(SavedInfo& ) override;
-  void cleanup() override;
-
-  IAudioControl* audio()const {
-      return audioControl.get();
-  }
+    IAudioControl* audio() const { return audioControl.get(); }
 
 #ifdef Q_OS_MAC
 public:
-  QMenuBar *globalMenuBar;
-  QMenu *viewMenu;
-  QMenu *windowMenu;
-  QAction *minimizeAction;
-  QAction *fullscreenAction;
-  QAction *frontAction;
-  QMenu *dockMenu;
+    QMenuBar* globalMenuBar;
+    QMenu* viewMenu;
+    QMenu* windowMenu;
+    QAction* minimizeAction;
+    QAction* fullscreenAction;
+    QAction* frontAction;
+    QMenu* dockMenu;
 
 public slots:
-  void retranslateUi();
-  void onWindowStateChanged(Qt::WindowStates state);
-  void updateWindows();
-  void updateWindowsClosed();
-  void updateWindowsStates();
-  void onOpenWindow(QObject *object);
-  void toggleFullscreen();
-  void bringAllToFront();
+    void retranslateUi();
+    void onWindowStateChanged(Qt::WindowStates state);
+    void updateWindows();
+    void updateWindowsClosed();
+    void updateWindowsStates();
+    void onOpenWindow(QObject* object);
+    void toggleFullscreen();
+    void bringAllToFront();
 
 private:
-  void updateWindowsArg(QWindow *closedWindow);
+    void updateWindowsArg(QWindow* closedWindow);
 
-  QActionGroup *windowActions = nullptr;
+    QActionGroup* windowActions = nullptr;
 #endif
 
 signals:
-  void currentProfileChanged(Profile *Profile);
-  void profileLoaded();
-  void profileLoadFailed();
-  void saveGlobal();
-  void updateAvatar(const QPixmap &pixmap);
-  void createProfileFailed(QString msg);
-  void destroyProfile(const QString &profile);
-  void exit(const QString &profile);
+    void currentProfileChanged(Profile* Profile);
+    void profileLoaded();
+    void profileLoadFailed();
+    void coreChanged(Core&);
+    void saveGlobal();
+    void updateAvatar(const QPixmap& pixmap);
+    void createProfileFailed(QString msg);
+    void destroyProfile(const QString& profile);
+    void exit(const QString& profile);
 
 public slots:
-  void onCreateNewProfile(const QString &name, const QString &pass);
-  void onLoadProfile(const QString &name, const QString &pass);
-  void bootstrapWithProfile(Profile *p);
-  void bootstrapWithProfileName(const QString &p);
-  int showLogin(const QString &profileName = QString());
-  void do_logout(const QString & profile);
+    void onCreateNewProfile(const QString& host, const QString& name, const QString& pass);
+    void onLoadProfile(const QString& host, const QString& name, const QString& pass);
+    void bootstrapWithProfile(Profile* p);
+    void bootstrapWithProfileName(const QString& host, const QString& p);
+    int showLogin(const QString& profileName = QString());
+    void do_logout(const QString& profile);
 
 private:
-  explicit Nexus(QObject *parent = nullptr);
-  ~Nexus();
-//  void connectLoginScreen(const LoginScreen &loginScreen);
-  void setProfile(Profile *p);
+    explicit Nexus(QObject* parent = nullptr);
+    ~Nexus();
+    //  void connectLoginScreen(const LoginScreen &loginScreen);
+    void setProfile(Profile* p);
 
 private:
-  bool stared;
+    bool stared;
 
-  Profile *profile;
+    Profile* profile;
 
-  Settings *settings;
-  QWidget *parent;
-  QPointer<Widget> widget;  //某些异常情况下widget会被提前释放
-  std::unique_ptr<IAudioControl> audioControl;
-  QCommandLineParser *parser = nullptr;
+    Settings* settings;
+    QPointer<Widget> m_widget;  // 某些异常情况下widget会被提前释放
+    std::unique_ptr<IAudioControl> audioControl;
+    QCommandLineParser* parser = nullptr;
 };
 
-#endif // NEXUS_H
+#endif  // NEXUS_H

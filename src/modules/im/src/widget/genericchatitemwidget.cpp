@@ -11,25 +11,28 @@
  */
 
 #include "genericchatitemwidget.h"
-#include "maskablepixmapwidget.h"
-#include "src/persistence/settings.h"
-#include "src/widget/style.h"
-#include "src/widget/tool/croppinglabel.h"
-#include <QVariant>
 #include <src/core/core.h>
 #include <src/friendlist.h>
 #include <src/nexus.h>
+#include <QIcon>
+#include <QSvgRenderer>
+#include <QVariant>
+#include "maskablepixmapwidget.h"
+#include "src/lib/settings/style.h"
 #include "src/model/friend.h"
 #include "src/model/group.h"
 #include "src/persistence/profile.h"
+#include "src/persistence/settings.h"
+#include "src/widget/tool/croppinglabel.h"
 
-GenericChatItemWidget::GenericChatItemWidget(ChatType type, const ContactId &cid, QWidget* parent)
-    : QFrame(parent)
-    , chatType(type), statusPic{nullptr},
-      contactId{cid}, contact{nullptr},
-      prevStatus{Status::Status::None},
-      active{false}
-{
+GenericChatItemWidget::GenericChatItemWidget(ChatType type, const ContactId& cid, QWidget* parent)
+        : QFrame(parent)
+        , chatType(type)
+        , statusPic{nullptr}
+        , contactId{cid}
+        , contact{nullptr}
+        , prevStatus{Status::Status::None}
+        , active{false} {
     nameLabel = new CroppingLabel(this);
     nameLabel->setObjectName("nameLabel");
     nameLabel->setTextFormat(Qt::PlainText);
@@ -39,159 +42,139 @@ GenericChatItemWidget::GenericChatItemWidget(ChatType type, const ContactId &cid
     lastMessageLabel->setObjectName("lastMessageLabel");
     lastMessageLabel->setTextFormat(Qt::PlainText);
     lastMessageLabel->setText("");
-  auto p = lastMessageLabel->palette();
-  p.setColor(QPalette::WindowText, Style::getColor(Style::GroundExtra));
+    auto p = lastMessageLabel->palette();
+    p.setColor(QPalette::WindowText, Style::getColor(Style::GroundExtra));
 
-  auto newFont= lastMessageLabel->font();
-  newFont.setPixelSize(newFont.pixelSize()*.7);
+    auto newFont = lastMessageLabel->font();
+    newFont.setPixelSize(newFont.pixelSize() * .7);
 
-  lastMessageLabel->setFont(newFont);
-  lastMessageLabel->setPalette(p);
-//  lastMessageLabel->setForegroundRole(QPalette::WindowText);
+    lastMessageLabel->setFont(newFont);
+    lastMessageLabel->setPalette(p);
+    //  lastMessageLabel->setForegroundRole(QPalette::WindowText);
 
-  statusPic = new QLabel(this);
-  if(type == ChatType::Chat){
-      updateStatusLight(Status::Status::Offline, false);
-  }else{
-      clearStatusLight();
-  }
+    statusPic = new QLabel(this);
+    statusPic->setContentsMargins(1, 1, 1, 1);
+    if (type == ChatType::Chat) {
+        updateStatusLight(Status::Status::Offline, false);
+    } else {
+        clearStatusLight();
+    }
 
-  avatar = new MaskablePixmapWidget(this, QSize(40, 40), ":/img/avatar_mask.svg");
-  auto profile = Nexus::getProfile();
-  auto avt = profile->loadAvatar(contactId);
-  if(!avt.isNull()){
-      avatar->setPixmap(avt);
-  }else{
-    setDefaultAvatar();
-  }
+    avatar = new MaskablePixmapWidget(this, QSize(40, 40), ":/img/avatar_mask.svg");
+    auto profile = Nexus::getProfile();
+    auto avt = profile->loadAvatar(contactId);
+    if (!avt.isNull()) {
+        avatar->setPixmap(avt);
+    } else {
+        setDefaultAvatar();
+    }
 }
 
+QString GenericChatItemWidget::getName() const { return nameLabel->fullText(); }
 
-QString GenericChatItemWidget::getName() const
-{
-    return nameLabel->fullText();
-}
+void GenericChatItemWidget::setName(const QString& name) { nameLabel->setText(name); }
 
-void GenericChatItemWidget::setName(const QString &name)
-{
-    nameLabel->setText(name);
-}
-
-void GenericChatItemWidget::searchName(const QString& searchString, bool hide)
-{
+void GenericChatItemWidget::searchName(const QString& searchString, bool hide) {
     setVisible(!hide && getName().contains(searchString, Qt::CaseInsensitive));
 }
 
-void GenericChatItemWidget::setLastMessage(const QString &msg)
-{
-    lastMessageLabel->setText(msg);
+void GenericChatItemWidget::setLastMessage(const QString& msg) {
+    if (msg.contains(QChar('\n')))
+        lastMessageLabel->setText(QString(msg).replace(QChar('\n'), QChar(' ')));
+    else
+        lastMessageLabel->setText(msg);
 }
 
-void GenericChatItemWidget::updateLastMessage(const Message &m)
-{
+void GenericChatItemWidget::updateLastMessage(const Message& m) {
     QString prefix;
     auto core = Core::getInstance();
-    if(m.isGroup){
-        //群聊显示前缀，单聊不显示
-        if(ContactId(m.from).username == core->getUsername()){
+    if (m.isGroup) {
+        // 群聊显示前缀，单聊不显示
+        if (ContactId(m.from).username == core->getUsername()) {
             prefix = tr("I:");
-        }else{
+        } else {
             auto f = FriendList::findFriend(ContactId(m.from));
-            if(f){
-                prefix=f->getDisplayedName()+tr(":");
-            }else{
-                prefix=m.displayName+tr(":");
+            if (f) {
+                prefix = f->getDisplayedName() + tr(":");
+            } else {
+                prefix = m.displayName + tr(":");
             }
         }
     }
-    setLastMessage(prefix+m.content);
+    setLastMessage(prefix + m.content);
 }
 
-void GenericChatItemWidget::updateStatusLight(Status::Status status, bool event)
-{
-    if(!statusPic)
-      return;
+void GenericChatItemWidget::updateStatusLight(Status::Status status, bool event) {
+    if (!statusPic) return;
 
     auto pix = Status::getIconPath(status, event);
-    if(pix.isEmpty())
-        return;
+    if (pix.isEmpty()) return;
 
-    statusPic->setPixmap(QPixmap(pix));
+    // 图片是svg格式，按照原有逻辑先获取默认尺寸
+    QSvgRenderer svgrender(pix);
+    QSize s = svgrender.defaultSize();
+    statusPic->setPixmap(QIcon(pix).pixmap(this->window()->windowHandle(), s));
 }
 
-void GenericChatItemWidget::clearStatusLight()
-{
-    statusPic->clear();
-}
+void GenericChatItemWidget::clearStatusLight() { statusPic->clear(); }
 
-bool GenericChatItemWidget::isActive()
-{
-    return active;
-}
+bool GenericChatItemWidget::isActive() { return active; }
 
-void GenericChatItemWidget::setActive(bool _active)
-{
+void GenericChatItemWidget::setActive(bool _active) {
     active = _active;
     if (active) {
         setBackgroundRole(QPalette::Highlight);
-//        statusMessageLabel->setForegroundRole(QPalette::HighlightedText);
+        //        statusMessageLabel->setForegroundRole(QPalette::HighlightedText);
         nameLabel->setForegroundRole(QPalette::HighlightedText);
     } else {
         setBackgroundRole(QPalette::Window);
-//        statusMessageLabel->setForegroundRole(QPalette::WindowText);
+        //        statusMessageLabel->setForegroundRole(QPalette::WindowText);
         nameLabel->setForegroundRole(QPalette::WindowText);
     }
 
-//    if(avatarSetStatus == Status::AvatarSet::DefaultSet){
-//        setDefaultAvatar();
-//    }
+    //    if(avatarSetStatus == Status::AvatarSet::DefaultSet){
+    //        setDefaultAvatar();
+    //    }
 
     onActiveSet(active);
 }
 
-void GenericChatItemWidget::setAvatar(const QPixmap &pic)
-{
-//    qDebug() << __func__ << "pic:" << pic;
-    if(pic.isNull()){
+void GenericChatItemWidget::setAvatar(const QPixmap& pic) {
+    qDebug() << __func__ << "pic:" << pic;
+    if (pic.isNull()) {
         return;
     }
     avatar->setPixmap(pic);
-
 }
 
-void GenericChatItemWidget::clearAvatar()
-{
+void GenericChatItemWidget::clearAvatar() {
     qDebug() << __func__;
     avatar->clear();
 }
 
-void GenericChatItemWidget::setDefaultAvatar()
-{
+void GenericChatItemWidget::setDefaultAvatar() {
     qDebug() << __func__;
     auto name = (chatType == ChatType::Chat) ? "contact" : "group";
     auto uri = QString(":img/%1_dark.svg").arg(name);
     avatar->setPixmap(QPixmap(uri));
 }
 
-void GenericChatItemWidget::setContact(const Contact &contact_)
-{
+void GenericChatItemWidget::setContact(const Contact& contact_) {
     contact = &contact_;
-    if(contact){
+    if (contact) {
         setName(contact->getDisplayedName());
         setAvatar(contact->getAvatar());
     }
 }
 
-void GenericChatItemWidget::removeContact()
-{
+void GenericChatItemWidget::removeContact() {
     qDebug() << __func__;
     contact = nullptr;
 }
 
-void GenericChatItemWidget::showEvent(QShowEvent *e)
-{
-   if(contact){
-       setName(contact->getDisplayedName());
-       setAvatar(contact->getAvatar());
-   }
+void GenericChatItemWidget::showEvent(QShowEvent* e) {
+    if (contact) {
+        setName(contact->getDisplayedName());
+        setAvatar(contact->getAvatar());
+    }
 }

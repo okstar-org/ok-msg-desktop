@@ -12,51 +12,43 @@
 
 #include "src/core/contactid.h"
 #include <QByteArray>
-#include <QHash>
-#include <QString>
-#include <QRegularExpression>
-#include <cstdint>
 #include <QDebug>
+#include <QHash>
+#include <QRegularExpression>
+#include <QString>
+#include <cstdint>
 #include "base/StringUtils.h"
 #include "lib/messenger/IMMessage.h"
-
 
 /**
  * @brief The default constructor. Creates an empty id.
  */
-ContactId::ContactId()  {}
+ContactId::ContactId() {}
 
+ContactId::ContactId(const QByteArray& rawId) : ContactId(QString::fromUtf8(rawId)) {}
 
-ContactId::ContactId(const QByteArray &rawId)
-    : ContactId(QString::fromUtf8(rawId)) {
+ContactId::ContactId(const QString& strId) {
+    // 检查是否匹配成功
+    auto match = JidMatch(strId);
+    if (!match.hasMatch()) {
+        qWarning() << "Unable to parse contactId:" << strId;
+        return;
+    }
+    // 提取各个部分
+    username = match.captured(1);
+    server = match.captured(2);
 }
 
-ContactId::ContactId(const QString &strId) {
-      // 检查是否匹配成功
-      auto match = JidMatch(strId);
-      if (!match.hasMatch()) {
-          qWarning() << "Unable to parse contactId:"<<strId;
-          return;
-      }
-      // 提取各个部分
-      username = match.captured(1);
-      server = match.captured(2);
-
-}
-
-ContactId::ContactId(const ContactId &contactId):
-    username{contactId.username}, server{contactId.server}
-{
-
-}
+ContactId::ContactId(const ContactId& contactId)
+        : username{contactId.username}, server{contactId.server} {}
 
 /**
  * @brief Compares the equality of the ContactId.
  * @param other ContactId to compare.
  * @return True if both ContactId are equal, false otherwise.
  */
-bool ContactId::operator==(const ContactId &other) const {
-  return username == other.username && server == other.server;
+bool ContactId::operator==(const ContactId& other) const {
+    return username == other.username && server == other.server;
 }
 
 /**
@@ -64,9 +56,7 @@ bool ContactId::operator==(const ContactId &other) const {
  * @param other ContactId to compare.
  * @return True if both ContactIds are not equal, false otherwise.
  */
-bool ContactId::operator!=(const ContactId &other) const {
-  return !(ContactId::operator==(other));
-}
+bool ContactId::operator!=(const ContactId& other) const { return !(ContactId::operator==(other)); }
 
 /**
  * @brief Compares two ContactIds
@@ -74,17 +64,15 @@ bool ContactId::operator!=(const ContactId &other) const {
  * @return True if this ContactIds is less than the other ContactId, false
  * otherwise.
  */
-bool ContactId::operator<(const ContactId &other) const {
-  return username < other.username && server < other.server;
+bool ContactId::operator<(const ContactId& other) const {
+    return username < other.username && server < other.server;
 }
 
 /**
  * @brief Get a copy of the id
  * @return Copied id bytes
  */
-QByteArray ContactId::getByteArray() const {
-  return toString().toUtf8();
-}
+QByteArray ContactId::getByteArray() const { return toString().toUtf8(); }
 
 /**
  * @brief Checks if the ContactId contains a id.
@@ -92,13 +80,12 @@ QByteArray ContactId::getByteArray() const {
  */
 bool ContactId::isValid() const { return !username.isEmpty() && !server.isEmpty(); }
 
-bool ContactId::isGroup() const
-{
-    return server.startsWith("conference.")||server.startsWith("room.");
+bool ContactId::isGroup() const {
+    return server.startsWith("conference.") || server.startsWith("room.");
 }
 
-QDebug &operator<<(QDebug &debug, const ContactId &f) {
-  QDebugStateSaver saver(debug);
-  debug.nospace() << f.toString();
-  return debug;
+QDebug& operator<<(QDebug& debug, const ContactId& f) {
+    QDebugStateSaver saver(debug);
+    debug.nospace() << f.toString();
+    return debug;
 }

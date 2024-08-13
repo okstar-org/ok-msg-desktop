@@ -124,15 +124,15 @@
 <translation>请选择</translation>
 </message>
 <message>
-<source>Sign Up</source>
+<source>Sign up</source>
 <translation>注册账号</translation>
 </message>
 <message>
-<source>Retrieve Password</source>
+<source>Forgot password</source>
 <translation>忘记密码</translation>
 </message>
 <message>
-<source>Remember</source>
+<source>Remember me</source>
 <translation>记住密码</translation>
 </message>
 </context>

@@ -2,7 +2,7 @@
 #define SIMPLETEXT_H
 
 #include "../chatlinecontent.h"
-#include "src/widget/style.h"
+#include "src/lib/settings/style.h"
 
 #include <QFont>
 
@@ -10,19 +10,17 @@ class SimpleText : public ChatLineContent {
     Q_OBJECT
 
 public:
-    SimpleText(const QString &txt = "", const QFont &font = QFont());
-    ~SimpleText() {
-    }
+    SimpleText(const QString& txt = "", const QFont& font = QFont());
+    ~SimpleText() {}
 
-    void setText(const QString &txt);
+    void setText(const QString& txt);
 
     QRectF boundingRect() const override;
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-               QWidget *widget) override;
+    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
     void setWidth(qreal width) override;
 
     void setColor(Style::ColorPalette role);
-    void setColor(const QColor &color);
+    void setColor(const QColor& color);
 
 private:
     void updateBoundingRect();
@@ -38,5 +36,4 @@ private:
     qreal forceWidth = -1;
 };
 
-#endif // !SIMPLETEXT_H
-
+#endif  // !SIMPLETEXT_H

@@ -35,6 +35,11 @@ set(${PROJECT_NAME}_SOURCES
     OkProcess.h
     utils.h
     SvgUtils.h
+    RecursiveSignalBlocker.h
+    RecursiveSignalBlocker.cpp
+		uuid.h
+    stylediconbutton.h
+    stylediconbutton.cpp
 )
 
 if(WIN32)
@@ -45,6 +50,10 @@ elseif(LINUX)
   set(${PROJECT_NAME}_SOURCES
       ${${PROJECT_NAME}_SOURCES} system/linux/sys_info.cpp
       system/linux/autorun_xdg.cpp)
+elseif(APPLE)
+  set(${PROJECT_NAME}_SOURCES
+      ${${PROJECT_NAME}_SOURCES} system/macos/sys_info.cpp
+      system/macos/autorun_osx.cpp)
 endif()
 
 add_library(${PROJECT_NAME} STATIC
@@ -57,8 +66,6 @@ target_link_libraries(
   PRIVATE ${Qt5Svg_LIBRARIES}
   PRIVATE ${Qt5Xml_LIBRARIES})
 
-if(MSVC)
-  set_property(
-    TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY
-                                    "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-endif(MSVC)
+if(WIN32)
+  set_property(TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()

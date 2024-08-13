@@ -15,94 +15,89 @@
 
 #include <QtCore>
 
-GroupMessageDispatcher::GroupMessageDispatcher(
-        const GroupId &g_,
-        MessageProcessor::SharedParams p,
-        ICoreIdHandler &idHandler_,
-        ICoreGroupMessageSender &messageSender_,
-        const IGroupSettings &groupSettings_)
-    : groupId(g_),
-      processor(MessageProcessor(idHandler_, g_, p)),
-      idHandler(idHandler_),
-      messageSender(messageSender_),
-      groupSettings(groupSettings_)
-{
-//    processor.enableMentions();
+GroupMessageDispatcher::GroupMessageDispatcher(const GroupId& g_, MessageProcessor::SharedParams p,
+                                               ICoreIdHandler& idHandler_,
+                                               ICoreGroupMessageSender& messageSender_,
+                                               const IGroupSettings& groupSettings_)
+        : groupId(g_)
+        , processor(MessageProcessor(idHandler_, g_, p))
+        , idHandler(idHandler_)
+        , messageSender(messageSender_)
+        , groupSettings(groupSettings_) {
+    //    processor.enableMentions();
 }
 
-GroupMessageDispatcher::~GroupMessageDispatcher()
-{
-    qDebug()<<__func__;
-}
+GroupMessageDispatcher::~GroupMessageDispatcher() { qDebug() << __func__; }
 
-std::pair<DispatchedMessageId, SentMessageId>
-GroupMessageDispatcher::sendMessage(bool isAction, QString const &content,
-                                    bool encrypt) {
+std::pair<DispatchedMessageId, MsgId> GroupMessageDispatcher::sendMessage(bool isAction,
+                                                                          QString const& content,
+                                                                          bool encrypt) {
     Q_UNUSED(encrypt);
 
-//  const auto firstMessageId = nextMessageId;
-//  auto lastMessageId = firstMessageId;
+    //  const auto firstMessageId = nextMessageId;
+    //  auto lastMessageId = firstMessageId;
 
-  for (auto &message : processor.processOutgoingMessage(isAction, content)) {
-    auto messageId = nextMessageId++;
-//    lastMessageId = messageId;
+    for (auto& message : processor.processOutgoingMessage(isAction, content)) {
+        qDebug() << "Preparing to send a message:" << message.id;
+        auto dispatchedId = nextMessageId++;
+        //    lastMessageId = dispatchedId;
 
-    SentMessageId msgId;
-    if (message.isAction) {
-      msgId = messageSender.sendGroupAction(groupId.getId(), message.content);
-    } else {
-      msgId = messageSender.sendGroupMessage(groupId.getId(), message.content);
+        emit messageSent(dispatchedId, message);
+        emit messageComplete(dispatchedId);
+
+        bool sent;
+        if (message.isAction) {
+            sent = messageSender.sendGroupAction(groupId.getId(), message.content, message.id);
+        } else {
+            sent = messageSender.sendGroupMessage(groupId.getId(), message.content, message.id);
+        }
+        qDebug() << "sendMessage=>" << sent
+                 << QString("{msgId:%1, dispatcherId:%2}").arg(message.id).arg(dispatchedId.get());
+
+        sentMsgIdMap.insert(message.id, dispatchedId);
+
+        return std::make_pair(dispatchedId, message.id);
     }
-    qDebug() <<"sent the msg success=> msgIdx:" << messageId.get() <<"msgId:" <<msgId;
-    message.id = msgId;
-    sentMsgIdMap.insert(msgId, messageId);
 
-    emit messageSent(messageId, message);
-    emit messageComplete(messageId);
-    return std::make_pair(messageId, msgId);
-  }
-
-  return {};
+    return {};
 }
 
 /**
- * @brief Processes and dispatches received message from toxcore
+ * @brief Processes and dispatches received message
  * @param[in] sender
  * @param[in] isAction True if is action
  * @param[in] content Message content
  */
-void GroupMessageDispatcher::onMessageReceived(GroupMessage &msg) {
+void GroupMessageDispatcher::onMessageReceived(GroupMessage& msg) {
+    qDebug() << __func__ << "id:" << msg.id << "nick:" << msg.nick << "msg:" << msg.content;
+    if (sentMsgIdMap.contains(msg.id)) {
+        qWarning() << "Is a sent message!";
+        return;
+    }
 
-  qDebug() <<__func__ << "id:" << msg.id << "nick:" <<msg.nick<< "msg:" <<msg.content;
-  if(sentMsgIdMap.contains(msg.id)){
-      qWarning() << "Is a sent message!";
-      return;
-  }
+    auto self = idHandler.getSelfPeerId().toString();
+    if (self == msg.from) {
+        qWarning() << "Is self message (from is mine).";
+        return;
+    }
 
-  auto self = idHandler.getSelfPeerId().toString();
-  if (self == msg.from) {
-    qWarning() << "Is self message (from is mine).";
-    return;
-  }
+    //  auto myNick= idHandler.getNick();
+    //  qDebug()<< "Self nick:"<<myNick;
 
-//  auto myNick= idHandler.getNick();
-//  qDebug()<< "Self nick:"<<myNick;
+    //  if(nick == idHandler.getNick()){
+    //    qWarning()<<"Is self message (nick is mine).";
+    //    return;
+    //  }
 
-//  if(nick == idHandler.getNick()){
-//    qWarning()<<"Is self message (nick is mine).";
-//    return;
-//  }
+    //  if (groupSettings.getBlackList().contains(sender.toString())) {
+    //    qDebug() << "the sender is in backlist" << sender.toString();
+    //    return;
+    //  }
 
-//  if (groupSettings.getBlackList().contains(sender.toString())) {
-//    qDebug() << "the sender is in backlist" << sender.toString();
-//    return;
-//  }
-
-  auto msg0 = processor.processIncomingMessage(msg);
-  emit messageReceived(FriendId(msg.from), msg0);
+    auto msg0 = processor.processIncomingMessage(msg);
+    emit messageReceived(FriendId(msg.from), msg0);
 }
 
-void GroupMessageDispatcher::clearOutgoingMessages()
-{
-    //noop
+void GroupMessageDispatcher::clearOutgoingMessages() {
+    // noop
 }

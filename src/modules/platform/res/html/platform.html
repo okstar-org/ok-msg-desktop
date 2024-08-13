@@ -1,0 +1,76 @@
+<!--
+  ~ Copyright (c) 2022 船山信息 chuanshaninfo.com
+  ~ The project is licensed under Mulan PubL v2.
+  ~ You can use this software according to the terms and conditions of the Mulan
+  ~ PubL v2. You may obtain a copy of Mulan PubL v2 at:
+  ~          http://license.coscl.org.cn/MulanPubL-2.0
+  ~ THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+  ~ EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+  ~ MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+  ~ See the Mulan PubL v2 for more details.
+  -->
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Work platform</title>
+<!--    <script type="text/javascript" src="qrc:///res/Platform/qwebchannel.js"></script>-->
+    <script src="https://okstar.org.cn/assets/js-libs/jquery-3.7.1.min.js"></script>
+     <script type="text/javascript"  src="qrc:///res/Platform/platform.js"></script>
+<!--    <script type="text/javascript" src="/media/gaojie/lvm1/code/QtWorkspace/ok-msg-desktop/src/modules/platform/res/html/platform.js"></script>-->
+    <style>
+        body, ul {
+            margin: 0;
+            padding: 0;
+        }
+
+        ul.app-list {
+
+        }
+
+        ul.app-list li {
+            list-style: none;
+            display: inline-block;
+        }
+
+        .app {
+            border-radius: 5px;
+    margin: 10px;
+    color: #203864;
+    text-align: left;
+    border: 1px solid #97a2b9;
+    cursor: pointer;
+    /* background: #edf3ff url(https://stack.okstar.org.cn/assets/images/matero.png) no-repeat 8px 9px; */
+    /* background-size: 36px; */
+    /* padding: 10px; */
+    /* box-sizing: border-box; */
+    vertical-align: middle;
+    display: flex;
+    align-content: center;
+    flex-wrap: nowrap;
+    align-items: center;
+    padding: 10px;
+    font-size: 18px;
+        }
+
+        .app:hover {
+            box-shadow: 1px 1px 6px 1px;
+        }
+        .app img{
+            width: 36px;
+        }
+        .app span{
+            margin-left: .5em;
+        }
+    </style>
+</head>
+<body>
+
+<!--  从加载后台数据到节点（#app-list） -->
+<ul class="app-list" id="app-list">
+    <!-- test <li><div class='app'> <img src="https://stack.okstar.org.cn/assets/images/matero.png"> <span>1111</span> </div></li> -->
+</ul>
+
+</body>
+</html>

@@ -13,7 +13,7 @@
 #ifndef I_AUDIO_SETTINGS_H
 #define I_AUDIO_SETTINGS_H
 
-#include "src/model/interface.h"
+#include "src/base/interface.h"
 
 #include <QString>
 
@@ -63,4 +63,4 @@ public:
     DECLARE_SIGNAL(enableTestSoundChanged, bool newValue);
 };
 
-#endif // I_AUDIO_SETTINGS_H
+#endif  // I_AUDIO_SETTINGS_H

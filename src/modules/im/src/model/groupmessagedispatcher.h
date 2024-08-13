@@ -27,31 +27,30 @@
 class IGroupSettings;
 
 class GroupMessageDispatcher : public IMessageDispatcher {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  GroupMessageDispatcher(const GroupId &groupId,
-                         MessageProcessor::SharedParams p,
-                         ICoreIdHandler &idHandler,
-                         ICoreGroupMessageSender &messageSender,
-                         const IGroupSettings &groupSettings);
-  ~GroupMessageDispatcher();
+    GroupMessageDispatcher(const GroupId& groupId,
+                           MessageProcessor::SharedParams p,
+                           ICoreIdHandler& idHandler,
+                           ICoreGroupMessageSender& messageSender,
+                           const IGroupSettings& groupSettings);
+    ~GroupMessageDispatcher();
 
-  std::pair<DispatchedMessageId, SentMessageId>
-  sendMessage(bool isAction, QString const &content,
-              bool encrypt = false) override;
+    std::pair<DispatchedMessageId, MsgId> sendMessage(bool isAction, QString const& content,
+                                                      bool encrypt = false) override;
 
-  void onMessageReceived(GroupMessage &msg);
+    void onMessageReceived(GroupMessage& msg);
 
-  void clearOutgoingMessages() override;
+    void clearOutgoingMessages() override;
 
 private:
-  const GroupId &groupId;
-  MessageProcessor processor;
-  ICoreIdHandler &idHandler;
-  ICoreGroupMessageSender &messageSender;
-  const IGroupSettings &groupSettings;
-  DispatchedMessageId nextMessageId{0};
-  QMap<QString, DispatchedMessageId> sentMsgIdMap;
+    const GroupId& groupId;
+    MessageProcessor processor;
+    ICoreIdHandler& idHandler;
+    ICoreGroupMessageSender& messageSender;
+    const IGroupSettings& groupSettings;
+    DispatchedMessageId nextMessageId{0};
+    QMap<QString, DispatchedMessageId> sentMsgIdMap;
 };
 
 #endif /* IMESSAGE_DISPATCHER_H */

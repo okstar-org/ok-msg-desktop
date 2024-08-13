@@ -13,18 +13,14 @@
 #ifndef TOXENCRYPT_H
 #define TOXENCRYPT_H
 
-//#include <tox/toxencryptsave.h>
-
 #include <QByteArray>
 #include <QString>
 
 #include <memory>
 
-
 struct Tox_Pass_Key;
 
-class ToxEncrypt
-{
+class ToxEncrypt {
 public:
     ~ToxEncrypt();
     ToxEncrypt() = delete;
@@ -48,4 +44,4 @@ private:
     Tox_Pass_Key* passKey = nullptr;
 };
 
-#endif // TOXENCRYPT_H
+#endif  // TOXENCRYPT_H

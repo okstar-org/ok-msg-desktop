@@ -30,41 +30,45 @@
 class Friend;
 class ICoreFriendMessageSender;
 
-class OfflineMsgEngine : public QObject
-{
+class OfflineMsgEngine : public QObject {
     Q_OBJECT
 public:
-    explicit OfflineMsgEngine(const FriendId* f, ICoreFriendMessageSender* messageSender);
-
     using CompletionFn = std::function<void()>;
+    using ReceiptFn = std::function<void()>;
+
+    explicit OfflineMsgEngine(const FriendId* f, ICoreFriendMessageSender* messageSender);
     void addUnsentMessage(Message const& message, CompletionFn completionCallback);
-    void addSentMessage(ReceiptNum receipt, Message const& message, CompletionFn completionCallback);
+    void addSentMessage(MsgId receipt, Message const& message, CompletionFn completionCallback,
+                        ReceiptFn receiptCallback);
     void deliverOfflineMsgs();
+
+    bool isFromThis(const Message& msg);
 
 public slots:
     void removeAllMessages();
-    void onReceiptReceived(ReceiptNum receipt);
+    void onReceiptReceived(MsgId receipt);
 
 private:
-    struct OfflineMessage
-    {
+    struct OfflineMessage {
         Message message;
         std::chrono::time_point<std::chrono::steady_clock> authorshipTime;
         CompletionFn completionFn;
+        ReceiptFn receiptFn;
     };
 
 private slots:
-    void completeMessage(QMap<ReceiptNum, OfflineMessage>::iterator msgIt);
+    void completeMessage(QMap<MsgId, OfflineMessage>::iterator msgIt);
+    void receiptMessage(QMap<MsgId, OfflineMessage>::iterator msgIt);
 
 private:
-    void checkForCompleteMessages(ReceiptNum receipt);
+    void checkForCompleteMessages(MsgId receipt);
 
     CompatibleRecursiveMutex mutex;
     const FriendId* f;
     ICoreFriendMessageSender* messageSender;
-    QVector<ReceiptNum> receivedReceipts;
-    QMap<ReceiptNum, OfflineMessage> sentMessages;
+    QVector<MsgId> receivedReceipts;
+    QMap<MsgId, OfflineMessage> sentMessages;
     QVector<OfflineMessage> unsentMessages;
 };
 
-#endif // OFFLINEMSGENGINE_H
+#endif  // OFFLINEMSGENGINE_H

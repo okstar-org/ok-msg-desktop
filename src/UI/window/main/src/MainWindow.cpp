@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (c) 2022 船山信息 chuanshaninfo.com
  * The project is licensed under Mulan PubL v2.
  * You can use this software according to the terms and conditions of the Mulan
@@ -12,13 +12,14 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
 
-#include "base/PageFactory.h"
 #include "UI/window/config/src/ConfigWindow.h"
-#include "base/logs.h"
-#include "base/r.h"
+#include "application.h"
 #include "base/OkSettings.h"
+#include "base/PageFactory.h"
+#include "base/logs.h"
 #include "modules/im/src/model/status.h"
-#include "modules/im/src/widget/style.h"
+#include "modules/platform/src/Platform.h"
+#include "src/lib/settings/style.h"
 
 #include <QLabel>
 #include <QMenu>
@@ -26,100 +27,100 @@
 #include <QSvgRenderer>
 #include <QTimer>
 #include <cstdlib>
+#include <memory>
 
 #include <modules/im/src/nexus.h>
+#include <modules/platform/src/Platform.h>
 
 namespace UI {
 
 static MainWindow* instance = nullptr;
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow) {
+MainWindow::MainWindow(std::shared_ptr<ok::session::AuthSession> session, QWidget* parent)
+        : QMainWindow(parent)
+        , ui(new Ui::MainWindow)
+        , delayCaller(std::make_unique<base::DelayedCallTimer>())
+        , session{session} {
+    qDebug() << __func__;
 
-  qDebug() << __func__;
+    ui->setupUi(this);
+    //  setStyleSheet("QMainWindow{background-color: white;}");
+    //  setAutoFillBackground(false);
 
-  ui->setupUi(this);
-//  setStyleSheet("QMainWindow{background-color: white;}");
-//  setAutoFillBackground(false);
+    setAutoFillBackground(true);
+    // 创建一个QPalette对象
+    QPalette palette = this->palette();
+    // 设置背景颜色为浅蓝色
+    palette.setColor(QPalette::Window, Qt::white);
+    // 应用新的调色板
+    this->setPalette(palette);
 
-  setAutoFillBackground(true);
-  // 创建一个QPalette对象
-  QPalette palette = this->palette();
-  // 设置背景颜色为浅蓝色
-  palette.setColor(QPalette::Window, Qt::white);
-  // 应用新的调色板
-  this->setPalette(palette);
+    setWindowTitle(APPLICATION_NAME);
+    setAttribute(Qt::WA_QuitOnClose, true);
+    // 黄金分割比例 874/520 = 1.618
+    setMinimumSize(QSize(874, 520));
 
-  setWindowTitle(APPLICATION_NAME);
-  setAttribute(Qt::WA_QuitOnClose, true);
-  //黄金分割比例 874/520 = 1.618
-  setMinimumSize(QSize(874, 520));
+    m_menu = ui->menu_widget;
 
-  m_menu = ui->menu_widget;
-  connect(m_menu, SIGNAL(toggleChat(bool)), this, SLOT(onToggleChat(bool)));
-  connect(m_menu, SIGNAL(onPage(PageMenu)), this, SLOT(onSwitchPage(PageMenu)));
+    timer = std::make_unique<QTimer>();
+    timer->start(1000);
+    connect(timer.get(), &QTimer::timeout, this, &MainWindow::onTryCreateTrayIcon);
 
-  timer = new QTimer(this);
-  timer->start(1000);
-  connect(timer, &QTimer::timeout, this, &MainWindow::onTryCreateTrayIcon);
+    int icon_size = 15;
 
-  int icon_size = 15;
-
-  actionQuit = new QAction(this);
+    actionQuit = new QAction(this);
 #ifndef Q_OS_OSX
-  actionQuit->setMenuRole(QAction::QuitRole);
+    actionQuit->setMenuRole(QAction::QuitRole);
 #endif
 
-  actionQuit->setIcon(prepareIcon(
-      Style::getImagePath("rejectCall/rejectCall.svg"), icon_size, icon_size));
-  actionQuit->setText(tr("Exit", "Tray action menu to exit tox"));
-  connect(actionQuit, &QAction::triggered, qApp, &QApplication::quit);
+    actionQuit->setIcon(
+            prepareIcon(Style::getImagePath("rejectCall/rejectCall.svg"), icon_size, icon_size));
+    actionQuit->setText(tr("Exit", "Tray action menu to exit tox"));
+    connect(actionQuit, &QAction::triggered, qApp, &QApplication::quit);
 
-  actionShow = new QAction(this);
-  actionShow->setText(tr("Show", "Tray action menu to show window"));
-  connect(actionShow, &QAction::triggered, this, &MainWindow::forceShow);
+    actionShow = new QAction(this);
+    actionShow->setText(tr("Show", "Tray action menu to show window"));
+    connect(actionShow, &QAction::triggered, this, &MainWindow::forceShow);
 
-  connect(menu(), &OMainMenu::menuPushed,this,&MainWindow::menuPushed);
-  
-  instance = this;
+    // connect to menu
+    connect(m_menu, &OMainMenu::menuPushed, this, &MainWindow::onSwitchPage);
+
+    instance = this;
 }
 
 MainWindow::~MainWindow() {
-  qDebug() << __func__;
-  disconnect(m_menu);
-  delete ui;
+    qDebug() << __func__;
+    disconnect(m_menu);
+    delete ui;
 }
 
-MainWindow *MainWindow::getInstance()
-{
-    return instance;
-}
+MainWindow* MainWindow::getInstance() { return instance; }
 
 // Preparing needed to set correct size of icons for GTK tray backend
 inline QIcon MainWindow::prepareIcon(QString path, int w, int h) {
 #ifdef Q_OS_LINUX
 
-  QString desktop = getenv("XDG_CURRENT_DESKTOP");
-  if (desktop.isEmpty()) {
-    desktop = getenv("DESKTOP_SESSION");
-  }
-
-  desktop = desktop.toLower();
-  if (desktop == "xfce" || desktop.contains("gnome") || desktop == "mate" ||
-      desktop == "x-cinnamon") {
-    if (w > 0 && h > 0) {
-      QSvgRenderer renderer(path);
-
-      QPixmap pm(w, h);
-      pm.fill(Qt::transparent);
-      QPainter painter(&pm);
-      renderer.render(&painter, pm.rect());
-
-      return QIcon(pm);
+    QString desktop = getenv("XDG_CURRENT_DESKTOP");
+    if (desktop.isEmpty()) {
+        desktop = getenv("DESKTOP_SESSION");
     }
-  }
+
+    desktop = desktop.toLower();
+    if (desktop == "xfce" || desktop.contains("gnome") || desktop == "mate" ||
+        desktop == "x-cinnamon") {
+        if (w > 0 && h > 0) {
+            QSvgRenderer renderer(path);
+
+            QPixmap pm(w, h);
+            pm.fill(Qt::transparent);
+            QPainter painter(&pm);
+            renderer.render(&painter, pm.rect());
+
+            return QIcon(pm);
+        }
+    }
 #endif
-  return QIcon(path);
+    return QIcon(path);
 }
 
 // void MainWindow::saveWindowGeometry() {
@@ -133,218 +134,196 @@ inline QIcon MainWindow::prepareIcon(QString path, int w, int h) {
 //   }
 // }
 
-void MainWindow::showEvent(QShowEvent *event) {}
+void MainWindow::showEvent(QShowEvent* event) {}
 
-void MainWindow::closeEvent(QCloseEvent *event) {
-  qDebug()<<__func__<<"closeEvent...";
-//  auto &settings = ok::base::OkSettings::getInstance();
+void MainWindow::closeEvent(QCloseEvent* event) {
+    qDebug() << __func__ << "closeEvent...";
+    //  auto &settings = ok::base::OkSettings::getInstance();
 
-//  if (settings.getShowSystemTray() && settings.getCloseToTray()) {
-//    QWidget::closeEvent(event);
-//    close();
-//    return;
-//  }
+    //  if (settings.getShowSystemTray() && settings.getCloseToTray()) {
+    //    QWidget::closeEvent(event);
+    //    close();
+    //    return;
+    //  }
 
-  //    if (autoAwayActive) {
-  //      emit statusSet(Status::Status::Online);
-  //      autoAwayActive = false;
-  //    }
-  //    saveWindowGeometry();
+    //    if (autoAwayActive) {
+    //      emit statusSet(Status::Status::Online);
+    //      autoAwayActive = false;
+    //    }
+    //    saveWindowGeometry();
 
-//      emit toClose();
+    //      emit toClose();
 
-  //    saveSplitterGeometry();
-  //    QWidget::closeEvent(event);
-  //    qApp->quit();
+    //    saveSplitterGeometry();
+    //    QWidget::closeEvent(event);
+    //    qApp->quit();
 
-  emit Nexus::getInstance().exit("");
+    //  emit Nexus::getInstance().exit("");
 }
 
 void MainWindow::init() {}
 
 void MainWindow::onTryCreateTrayIcon() {
-  auto &settings = ok::base::OkSettings::getInstance();
+    auto& settings = ok::base::OkSettings::getInstance();
 
-  static int32_t tries = 15;
-  if (!icon && tries--) {
-    if (QSystemTrayIcon::isSystemTrayAvailable()) {
-      icon = std::unique_ptr<QSystemTrayIcon>(new QSystemTrayIcon);
-      updateIcons();
-      trayMenu = new QMenu(this);
+    static int32_t tries = 15;
+    if (!icon && tries--) {
+        if (QSystemTrayIcon::isSystemTrayAvailable()) {
+            icon = std::make_unique<QSystemTrayIcon>();
+            updateIcons();
+            trayMenu = new QMenu(this);
 
-      // adding activate to the top, avoids accidentally clicking quit
-      trayMenu->addAction(actionShow);
-      //      trayMenu->addSeparator();
-      //      trayMenu->addAction(statusOnline);
-      //      trayMenu->addAction(statusAway);
-      //      trayMenu->addAction(statusBusy);
-      //      trayMenu->addSeparator();
-      //      trayMenu->addAction(actionLogout);
-      trayMenu->addAction(actionQuit);
-      icon->setContextMenu(trayMenu);
+            // adding activate to the top, avoids accidentally clicking quit
+            trayMenu->addAction(actionShow);
+            //      trayMenu->addSeparator();
+            //      trayMenu->addAction(statusOnline);
+            //      trayMenu->addAction(statusAway);
+            //      trayMenu->addAction(statusBusy);
+            //      trayMenu->addSeparator();
+            //      trayMenu->addAction(actionLogout);
+            trayMenu->addAction(actionQuit);
+            icon->setContextMenu(trayMenu);
 
-      connect(icon.get(), &QSystemTrayIcon::activated, this,
-              &MainWindow::onIconClick);
+            connect(icon.get(), &QSystemTrayIcon::activated, this, &MainWindow::onIconClick);
 
-      if (settings.getShowSystemTray()) {
-        icon->show();
-        setHidden(settings.getAutostartInTray());
-      } else {
-        show();
-      }
+            if (settings.getShowSystemTray()) {
+                icon->show();
+                setHidden(settings.getAutostartInTray());
+            } else {
+                show();
+            }
 
 #ifdef Q_OS_MAC
-      Nexus::getInstance().dockMenu->setAsDockMenu();
+            // Nexus::getInstance().dockMenu->setAsDockMenu();
 #endif
-    } else if (!isVisible()) {
-      show();
+        } else if (!isVisible()) {
+            show();
+        }
+    } else {
+        disconnect(timer.get(), &QTimer::timeout, this, &MainWindow::onTryCreateTrayIcon);
+        if (!icon) {
+            qWarning() << "No system tray detected!";
+            show();
+        }
     }
-  } else {
-    disconnect(timer, &QTimer::timeout, this, &MainWindow::onTryCreateTrayIcon);
-    if (!icon) {
-      qWarning() << "No system tray detected!";
-      show();
-    }
-  }
 }
 
 void MainWindow::onIconClick(QSystemTrayIcon::ActivationReason reason) {
-  if (reason == QSystemTrayIcon::Trigger) {
-    if (isHidden() || isMinimized()) {
-      if (wasMaximized) {
-        showMaximized();
-      } else {
-        showNormal();
-      }
+    if (reason == QSystemTrayIcon::Trigger) {
+        if (isHidden() || isMinimized()) {
+            if (wasMaximized) {
+                showMaximized();
+            } else {
+                showNormal();
+            }
 
-      activateWindow();
-    } else if (!isActiveWindow()) {
-      activateWindow();
-    } else {
-      wasMaximized = isMaximized();
-      hide();
+            activateWindow();
+        } else if (!isActiveWindow()) {
+            activateWindow();
+        } else {
+            wasMaximized = isMaximized();
+            hide();
+        }
+    } else if (reason == QSystemTrayIcon::Unknown) {
+        if (isHidden()) {
+            forceShow();
+        }
     }
-  } else if (reason == QSystemTrayIcon::Unknown) {
-    if (isHidden()) {
-      forceShow();
-    }
-  }
 }
 
 void MainWindow::forceShow() {
-  hide();
-  // Workaround to force minimized window to be restored
-  show();
-  activateWindow();
+    hide();
+    // Workaround to force minimized window to be restored
+    show();
+    activateWindow();
 }
 
 void MainWindow::updateIcons() {
-  if (!icon) {
-    return;
-  }
-
-  const QString assetSuffix = "online";
-  static bool checkedHasThemeIcon = false;
-  static bool hasThemeIconBug = false;
-
-  if (!checkedHasThemeIcon) {
-    hasThemeIconBug = QIcon::hasThemeIcon("qtox-asjkdfhawjkeghdfjgh");
-    checkedHasThemeIcon = true;
-
-    if (hasThemeIconBug) {
-      qDebug() << "Detected buggy QIcon::hasThemeIcon. Icon overrides from "
-                  "theme will be ignored.";
+    if (!icon) {
+        return;
     }
-  }
 
-  QIcon ico;
-  if (!hasThemeIconBug && QIcon::hasThemeIcon("qtox-" + assetSuffix)) {
-    ico = QIcon::fromTheme("qtox-" + assetSuffix);
-  } else {
-    //    QString color = Settings.getLightTrayIcon() ? "light" : "dark";
-    QString color = "light";
-    QString path =
-        ":/img/taskbar/" + color + "/taskbar_" + assetSuffix + ".svg";
+    const QString assetSuffix = "online";
+    static bool checkedHasThemeIcon = false;
+    static bool hasThemeIconBug = false;
 
-    QSvgRenderer renderer(path);
+    if (!checkedHasThemeIcon) {
+        hasThemeIconBug = QIcon::hasThemeIcon("qtox-asjkdfhawjkeghdfjgh");
+        checkedHasThemeIcon = true;
 
-    // Prepare a QImage with desired characteritisc
-    QImage image = QImage(250, 250, QImage::Format_ARGB32);
-    image.fill(Qt::transparent);
-    QPainter painter(&image);
-    renderer.render(&painter);
-    ico = QIcon(QPixmap::fromImage(image));
-  }
-
-  setWindowIcon(ico);
-  if (icon) {
-    icon->setIcon(ico);
-  }
-}
-
-QFrame *MainWindow::initPage(PageMenu menu) {
-
-  QFrame *w = Q_NULLPTR;
-
-  switch (menu) {
-  case PageMenu::welcome:
-    //              w = new page::Welcome(this);
-    break;
-
-  case PageMenu::chat:
-    // ignore
-    break;
-
-  case PageMenu::setting:
-    w = new ConfigWindow(this);
-    break;
-  }
-
-  qDebug(("initPage finished"));
-  if (w) {
-    ui->stacked_widget->addWidget(w);
-  }
-  return w;
-}
-
-QFrame *MainWindow::getPage(PageMenu menu) {
-  int idx = static_cast<int>(menu);
-  qDebug() << "menu:" << idx;
-  for (int i = 0; i < ui->stacked_widget->count(); i++) {
-    QFrame *p = static_cast<QFrame *>(ui->stacked_widget->widget(i));
-    if (p->objectName().compare(qsl("Page:%1").arg(static_cast<int>(menu))) ==
-        0) {
-      return qobject_cast<QFrame *>(p);
+        if (hasThemeIconBug) {
+            qDebug() << "Detected buggy QIcon::hasThemeIcon. Icon overrides from "
+                        "theme will be ignored.";
+        }
     }
-  }
-  return nullptr;
+
+    QIcon ico;
+    if (!hasThemeIconBug && QIcon::hasThemeIcon("qtox-" + assetSuffix)) {
+        ico = QIcon::fromTheme("qtox-" + assetSuffix);
+    } else {
+        //    QString color = Settings.getLightTrayIcon() ? "light" : "dark";
+        QString color = "light";
+        QString path = ":/img/taskbar/" + color + "/taskbar_" + assetSuffix + ".svg";
+
+        QSvgRenderer renderer(path);
+
+        // Prepare a QImage with desired characteritisc
+        QImage image = QImage(250, 250, QImage::Format_ARGB32);
+        image.fill(Qt::transparent);
+        QPainter painter(&image);
+        renderer.render(&painter);
+        ico = QIcon(QPixmap::fromImage(image));
+    }
+
+    setWindowIcon(ico);
+    if (icon) {
+        icon->setIcon(ico);
+    }
 }
 
-void MainWindow::onToggleChat(bool checked) {
+OMenuWidget* MainWindow::initMenuWindow(ok::base::PageMenu menu) {
+    OMenuWidget* w = nullptr;
+    switch (menu) {
+        case ok::base::PageMenu::chat:
+            w = createChatModule(this);
+            break;
+        case ok::base::PageMenu::platform:
+            w = createPlatformModule(this);
+            break;
+        case ok::base::PageMenu::setting:
+            w = new ConfigWindow(this);
+            break;
+    }
+    if (w) {
+        auto m = w->getModule();
+        if (m) {
+            delayCaller->call(1, [=, this]() {
+                assert(w);
+                assert(session);
+                qDebug() << "Start module:" << m->name();
+                m->start(session);
+            });
+        }
 
-  QStackedWidget *stackedWidget = ui->stacked_widget;
-  if (!stackedWidget)
-    return;
-
-  //  QFrame *classingPage = getPage(PageMenu::classing);
-  //  if (classingPage) {
-  //    page::PageClassing *c = qobject_cast<page::PageClassing
-  //    *>(classingPage);
-  //        c->toggleChat(checked);
-  //  }
+        menuWindow.insert(menu, w);
+        ui->stacked_widget->addWidget(w);
+    }
+    return w;
 }
 
-void MainWindow::onSwitchPage(PageMenu menu) {
-  QWidget *p = getPage(menu);
-  if (!p) {
-    p = initPage(menu);
-  }
+OMenuWidget* MainWindow::getMenuWindow(ok::base::PageMenu menu) { return menuWindow.value(menu); }
 
-  if (!p) {
-    return;
-  }
+void MainWindow::onSwitchPage(ok::base::PageMenu menu, bool checked) {
+    OMenuWidget* p = getMenuWindow(menu);
+    if (!p) {
+        p = initMenuWindow(menu);
+    }
 
-  ui->stacked_widget->setCurrentWidget(p);
+    if (!p) {
+        return;
+    }
+
+    ui->stacked_widget->setCurrentWidget(p);
 }
 //
 // void MainWindow::on_btnMin_clicked() { showMinimized(); }
@@ -387,6 +366,38 @@ void MainWindow::onSwitchPage(PageMenu menu) {
 //   messenger->initRoom();
 //}
 
-QWidget *MainWindow::getContainer(PageMenu menu) { return ui->stacked_widget; }
+QWidget* MainWindow::getContainer(ok::base::PageMenu menu) { return ui->stacked_widget; }
 
-} // namespace UI
+OMenuWidget* MainWindow::createChatModule(MainWindow* pWindow) {
+    qDebug() << "Creating m:" << Nexus::Name();
+    auto m = Nexus::Create();
+    auto nexus = static_cast<Nexus*>(m);
+
+    connect(nexus, &Nexus::updateAvatar,  //
+            ok::Application::Instance(), &ok::Application::onAvatar);
+    connect(nexus, &Nexus::destroyProfile,  //
+            ok::Application::Instance(), &ok::Application::on_logout);
+    connect(nexus, &Nexus::exit,  //
+            ok::Application::Instance(), &ok::Application::on_exit);
+
+    auto w = new OMenuWidget(this);
+    w->setModule(m);
+    w->setLayout(new QGridLayout());
+    w->layout()->setContentsMargins(0, 0, 0, 0);
+    w->layout()->addWidget(m->widget());
+    return w;
+}
+
+OMenuWidget* MainWindow::createPlatformModule(MainWindow* pWindow) {
+    auto m = new ok::platform::Platform();
+
+    auto w = new OMenuWidget(this);
+    w->setModule(m);
+    w->setLayout(new QGridLayout());
+    w->layout()->setContentsMargins(0, 0, 0, 0);
+    w->layout()->addWidget(m->widget());
+
+    return w;
+}
+
+}  // namespace UI

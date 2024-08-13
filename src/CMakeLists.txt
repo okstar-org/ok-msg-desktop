@@ -21,14 +21,20 @@ set(${PROJECT_NAME}_RESOURCES
 
 set(${PROJECT_NAME}_SOURCES
     main.cpp
+    application.h
     application.cpp
+    launcher.h
     launcher.cpp
+    ipc.h
+    ipc.cpp
+    Bus.h
+    Bus.cpp
 )
 
 list(APPEND OK_LIBS
     UI
+    Platform
     IM
-    OkIMCore
     OkSession
     OkLog
     OkSettings
@@ -57,9 +63,9 @@ target_link_libraries(
     PRIVATE ${OK_LIBS}
 )
 
-if (MSVC)
+if (WIN32)
     set_property(TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>") 
-endif (MSVC)
+endif ()
 
 set(PNG_NAME "ok-msg.png")
 

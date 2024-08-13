@@ -11,15 +11,13 @@
  */
 
 #include "searchsettingsform.h"
-#include "ui_searchsettingsform.h"
+#include "src/lib/settings/style.h"
 #include "src/persistence/settings.h"
-#include "src/widget/style.h"
 #include "src/widget/form/loadhistorydialog.h"
+#include "ui_searchsettingsform.h"
 
-SearchSettingsForm::SearchSettingsForm(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::SearchSettingsForm)
-{
+SearchSettingsForm::SearchSettingsForm(QWidget* parent)
+        : QWidget(parent), ui(new Ui::SearchSettingsForm) {
     ui->setupUi(this);
 
     ui->choiceDateButton->setEnabled(false);
@@ -33,22 +31,22 @@ SearchSettingsForm::SearchSettingsForm(QWidget *parent) :
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
     connect(ui->startSearchComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
 #else
-    connect(ui->startSearchComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+    connect(ui->startSearchComboBox,
+            static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
 #endif
             this, &SearchSettingsForm::onStartSearchSelected);
-    connect(ui->registerCheckBox, &QCheckBox::clicked, this, &SearchSettingsForm::onRegisterClicked);
-    connect(ui->wordsOnlyRadioButton, &QCheckBox::clicked, this, &SearchSettingsForm::onWordsOnlyClicked);
-    connect(ui->regularRadioButton, &QCheckBox::clicked, this, &SearchSettingsForm::onRegularClicked);
+    connect(ui->registerCheckBox, &QCheckBox::clicked, this,
+            &SearchSettingsForm::onRegisterClicked);
+    connect(ui->wordsOnlyRadioButton, &QCheckBox::clicked, this,
+            &SearchSettingsForm::onWordsOnlyClicked);
+    connect(ui->regularRadioButton, &QCheckBox::clicked, this,
+            &SearchSettingsForm::onRegularClicked);
     connect(ui->choiceDateButton, &QPushButton::clicked, this, &SearchSettingsForm::onChoiceDate);
 }
 
-SearchSettingsForm::~SearchSettingsForm()
-{
-    delete ui;
-}
+SearchSettingsForm::~SearchSettingsForm() { delete ui; }
 
-ParameterSearch SearchSettingsForm::getParameterSearch()
-{
+ParameterSearch SearchSettingsForm::getParameterSearch() {
     ParameterSearch ps;
 
     if (ui->regularRadioButton->isChecked()) {
@@ -66,21 +64,21 @@ ParameterSearch SearchSettingsForm::getParameterSearch()
     }
 
     switch (ui->startSearchComboBox->currentIndex()) {
-    case 0:
-        ps.period = PeriodSearch::WithTheEnd;
-        break;
-    case 1:
-        ps.period = PeriodSearch::WithTheFirst;
-        break;
-    case 2:
-        ps.period = PeriodSearch::AfterDate;
-        break;
-    case 3:
-        ps.period = PeriodSearch::BeforeDate;
-        break;
-    default:
-        ps.period = PeriodSearch::WithTheEnd;
-        break;
+        case 0:
+            ps.period = PeriodSearch::WithTheEnd;
+            break;
+        case 1:
+            ps.period = PeriodSearch::WithTheFirst;
+            break;
+        case 2:
+            ps.period = PeriodSearch::AfterDate;
+            break;
+        case 3:
+            ps.period = PeriodSearch::BeforeDate;
+            break;
+        default:
+            ps.period = PeriodSearch::WithTheEnd;
+            break;
     }
 
     ps.date = startDate;
@@ -90,31 +88,29 @@ ParameterSearch SearchSettingsForm::getParameterSearch()
     return ps;
 }
 
-void SearchSettingsForm::reloadTheme()
-{
-    ui->choiceDateButton->setStyleSheet(Style::getStylesheet(QStringLiteral("chatForm/buttons.css")));
+void SearchSettingsForm::reloadTheme() {
+    ui->choiceDateButton->setStyleSheet(
+            Style::getStylesheet(QStringLiteral("chatForm/buttons.css")));
     ui->startDateLabel->setStyleSheet(Style::getStylesheet(QStringLiteral("chatForm/labels.css")));
 }
 
-void SearchSettingsForm::updateStartDateLabel()
-{
+void SearchSettingsForm::updateStartDateLabel() {
     ui->startDateLabel->setText(startDate.toString(Settings::getInstance().getDateFormat()));
 }
 
-void SearchSettingsForm::setUpdate(const bool isUpdate)
-{
+void SearchSettingsForm::setUpdate(const bool isUpdate) {
     this->isUpdate = isUpdate;
     emit updateSettings(isUpdate);
 }
 
-void SearchSettingsForm::onStartSearchSelected(const int index)
-{
+void SearchSettingsForm::onStartSearchSelected(const int index) {
     if (index > 1) {
         ui->choiceDateButton->setEnabled(true);
         ui->startDateLabel->setEnabled(true);
 
         ui->choiceDateButton->setProperty("state", QStringLiteral("green"));
-        ui->choiceDateButton->setStyleSheet(Style::getStylesheet(QStringLiteral("chatForm/buttons.css")));
+        ui->choiceDateButton->setStyleSheet(
+                Style::getStylesheet(QStringLiteral("chatForm/buttons.css")));
 
         if (startDate.isNull()) {
             startDate = QDate::currentDate();
@@ -126,20 +122,19 @@ void SearchSettingsForm::onStartSearchSelected(const int index)
         ui->startDateLabel->setEnabled(false);
 
         ui->choiceDateButton->setProperty("state", QString());
-        ui->choiceDateButton->setStyleSheet(Style::getStylesheet(QStringLiteral("chatForm/buttons.css")));
+        ui->choiceDateButton->setStyleSheet(
+                Style::getStylesheet(QStringLiteral("chatForm/buttons.css")));
     }
 
     setUpdate(true);
 }
 
-void SearchSettingsForm::onRegisterClicked(const bool checked)
-{
+void SearchSettingsForm::onRegisterClicked(const bool checked) {
     Q_UNUSED(checked)
     setUpdate(true);
 }
 
-void SearchSettingsForm::onWordsOnlyClicked(const bool checked)
-{
+void SearchSettingsForm::onWordsOnlyClicked(const bool checked) {
     if (checked) {
         ui->regularRadioButton->setChecked(false);
     }
@@ -147,8 +142,7 @@ void SearchSettingsForm::onWordsOnlyClicked(const bool checked)
     setUpdate(true);
 }
 
-void SearchSettingsForm::onRegularClicked(const bool checked)
-{
+void SearchSettingsForm::onRegularClicked(const bool checked) {
     if (checked) {
         ui->wordsOnlyRadioButton->setChecked(false);
     }
@@ -156,8 +150,7 @@ void SearchSettingsForm::onRegularClicked(const bool checked)
     setUpdate(true);
 }
 
-void SearchSettingsForm::onChoiceDate()
-{
+void SearchSettingsForm::onChoiceDate() {
     LoadHistoryDialog dlg;
     dlg.setTitle(tr("Select Date Dialog"));
     dlg.setInfoLabel(tr("Select a date"));

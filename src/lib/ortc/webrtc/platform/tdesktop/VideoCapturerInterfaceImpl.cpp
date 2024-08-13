@@ -1,7 +1,7 @@
 #include "VideoCapturerInterfaceImpl.h"
 
-#include "VideoCapturerTrackSource.h"
 #include "VideoCameraCapturer.h"
+#include "VideoCapturerTrackSource.h"
 
 #include "pc/video_track_source_proxy.h"
 #include "webrtc/platform/desktop_capturer/DesktopCaptureSourceHelper.h"
@@ -10,120 +10,113 @@ namespace lib::ortc {
 namespace {
 
 std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> GetSink(
-	const rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> &nativeSource) {
+        const rtc::scoped_refptr<webrtc::VideoTrackSourceInterface>& nativeSource) {
     const auto proxy = static_cast<webrtc::VideoTrackSourceProxy*>(nativeSource.get());
     const auto internal = static_cast<VideoCapturerTrackSource*>(proxy->internal());
     return internal->sink();
 }
 
-} // namespace
+}  // namespace
 
 VideoCapturerInterfaceImpl::VideoCapturerInterfaceImpl(
-	rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> source,
-	std::string deviceId,
-	std::function<void(VideoState)> stateUpdated,
-	std::shared_ptr<PlatformContext> platformContext,
-	std::pair<int, int> &outResolution)
-: _source(source)
-, _sink(GetSink(source))
-, _stateUpdated(stateUpdated) {
+        rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> source,
+        std::string deviceId,
+        std::function<void(VideoState)>
+                stateUpdated,
+        std::shared_ptr<PlatformContext>
+                platformContext,
+        std::pair<int, int>& outResolution)
+        : _source(source), _sink(GetSink(source)), _stateUpdated(stateUpdated) {
+    if (const auto source = DesktopCaptureSourceForKey(deviceId)) {
+        const auto data = DesktopCaptureSourceData{
+                {1280, 720},                               /*.aspectSize = */
+                24.,                                       /*.fps = */
+                (deviceId != "desktop_capturer_pipewire"), /*.captureMouse = */
+        };
+        _desktopCapturer = std::make_unique<DesktopCaptureSourceHelper>(source, data);
+        _desktopCapturer->setOutput(_sink);
+        _desktopCapturer->start();
+        outResolution = {1280, 960};
+    } else if (!ShouldBeDesktopCapture(deviceId))
 
-	if (const auto source = DesktopCaptureSourceForKey(deviceId)) {
-		const auto data = DesktopCaptureSourceData{
-        { 1280, 720 },/*.aspectSize = */
-        24. ,/*.fps = */
-        (deviceId != "desktop_capturer_pipewire"),/*.captureMouse = */
-		};
-		_desktopCapturer = std::make_unique<DesktopCaptureSourceHelper>(
-			source,
-			data);
-		_desktopCapturer->setOutput(_sink);
-		_desktopCapturer->start();
-		outResolution = { 1280, 960 };
-	} else if (!ShouldBeDesktopCapture(deviceId))
-
-	{
-		_cameraCapturer = std::make_unique<VideoCameraCapturer>(_sink);
-		_cameraCapturer->setDeviceId(deviceId);
-		_cameraCapturer->setState(VideoState::Active);
-		outResolution = _cameraCapturer->resolution();
-	}
+    {
+        _cameraCapturer = std::make_unique<VideoCameraCapturer>(_sink);
+        _cameraCapturer->setDeviceId(deviceId);
+        _cameraCapturer->setState(VideoState::Active);
+        outResolution = _cameraCapturer->resolution();
+    }
 }
 
-VideoCapturerInterfaceImpl::~VideoCapturerInterfaceImpl() {
-}
+VideoCapturerInterfaceImpl::~VideoCapturerInterfaceImpl() {}
 
 void VideoCapturerInterfaceImpl::setState(VideoState state) {
 #ifdef TGCALLS_UWP_DESKTOP
-	if (_screenCapturer) {
-		_screenCapturer->setState(state);
-	} else
+    if (_screenCapturer) {
+        _screenCapturer->setState(state);
+    } else
 #else
-	if (_desktopCapturer) {
-		if (state == VideoState::Active) {
-			_desktopCapturer->start();
-		} else {
-			_desktopCapturer->stop();
-		}
-	} else
-#endif // TGCALLS_UWP_DESKTOP
-	if (_cameraCapturer) {
-		_cameraCapturer->setState(state);
-	}
-	if (_stateUpdated) {
-		_stateUpdated(state);
-	}
+    if (_desktopCapturer) {
+        if (state == VideoState::Active) {
+            _desktopCapturer->start();
+        } else {
+            _desktopCapturer->stop();
+        }
+    } else
+#endif  // TGCALLS_UWP_DESKTOP
+        if (_cameraCapturer) {
+            _cameraCapturer->setState(state);
+        }
+    if (_stateUpdated) {
+        _stateUpdated(state);
+    }
 }
 
-void VideoCapturerInterfaceImpl::setPreferredCaptureAspectRatio(
-		float aspectRatio) {
-	if (_cameraCapturer) {
-		_cameraCapturer->setPreferredCaptureAspectRatio(aspectRatio);
-	}
+void VideoCapturerInterfaceImpl::setPreferredCaptureAspectRatio(float aspectRatio) {
+    if (_cameraCapturer) {
+        _cameraCapturer->setPreferredCaptureAspectRatio(aspectRatio);
+    }
 }
 
 void VideoCapturerInterfaceImpl::setUncroppedOutput(
-		std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> sink) {
-	if (_uncroppedSink != nullptr) {
-		_source->RemoveSink(_uncroppedSink.get());
-	}
-	_uncroppedSink = sink;
-	if (_uncroppedSink != nullptr) {
-		_source->AddOrUpdateSink(
-			_uncroppedSink.get(),
-			rtc::VideoSinkWants());
-	}
+        std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> sink) {
+    if (_uncroppedSink != nullptr) {
+        _source->RemoveSink(_uncroppedSink.get());
+    }
+    _uncroppedSink = sink;
+    if (_uncroppedSink != nullptr) {
+        _source->AddOrUpdateSink(_uncroppedSink.get(), rtc::VideoSinkWants());
+    }
 }
 
 void VideoCapturerInterfaceImpl::setOnFatalError(std::function<void()> error) {
 #ifdef TGCALLS_UWP_DESKTOP
-	if (_screenCapturer) {
-		_screenCapturer->setOnFatalError(std::move(error));
-	} else if (!_screenCapturer && !_cameraCapturer && error) {
-		error();
-	}
-#else // TGCALLS_UWP_DESKTOP
-	if (_desktopCapturer) {
-		_desktopCapturer->setOnFatalError(std::move(error));
-	} else if (!_desktopCapturer && !_cameraCapturer && error) {
-		error();
-	}
-#endif // TGCALLS_UWP_DESKTOP
-	if (_cameraCapturer) {
-		_cameraCapturer->setOnFatalError(std::move(error));
-	}
+    if (_screenCapturer) {
+        _screenCapturer->setOnFatalError(std::move(error));
+    } else if (!_screenCapturer && !_cameraCapturer && error) {
+        error();
+    }
+#else   // TGCALLS_UWP_DESKTOP
+    if (_desktopCapturer) {
+        _desktopCapturer->setOnFatalError(std::move(error));
+    } else if (!_desktopCapturer && !_cameraCapturer && error) {
+        error();
+    }
+#endif  // TGCALLS_UWP_DESKTOP
+    if (_cameraCapturer) {
+        _cameraCapturer->setOnFatalError(std::move(error));
+    }
 }
 
 void VideoCapturerInterfaceImpl::setOnPause(std::function<void(bool)> pause) {
 #ifdef TGCALLS_UWP_DESKTOP
-	if (_screenCapturer) {
-		_screenCapturer->setOnPause(std::move(pause));
-	}
-#else // TGCALLS_UWP_DESKTOP
-	if (_desktopCapturer) {
-		_desktopCapturer->setOnPause(std::move(pause));
-	}
-#endif // TGCALLS_UWP_DESKTOP
+    if (_screenCapturer) {
+        _screenCapturer->setOnPause(std::move(pause));
+    }
+#else   // TGCALLS_UWP_DESKTOP
+    if (_desktopCapturer) {
+        _desktopCapturer->setOnPause(std::move(pause));
+    }
+#endif  // TGCALLS_UWP_DESKTOP
 }
 
-} // namespace lib::ortc
+}  // namespace lib::ortc

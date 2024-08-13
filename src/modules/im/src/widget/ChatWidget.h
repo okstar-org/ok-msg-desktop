@@ -17,12 +17,12 @@
 #ifndef CHATWIDGET_H
 #define CHATWIDGET_H
 
-#include "MainLayout.h"
-#include "contentlayout.h"
-#include "MessageSessionListWidget.h"
 #include <QActionGroup>
 #include <QPushButton>
 #include <QWidget>
+#include "MainLayout.h"
+#include "MessageSessionListWidget.h"
+#include "contentlayout.h"
 
 namespace Ui {
 class ChatWidget;
@@ -39,153 +39,146 @@ class ProfileInfo;
  * @brief The ChatWidget class
  */
 class ChatWidget : public MainLayout {
-  Q_OBJECT
+    Q_OBJECT
 public:
+    enum class FilterCriteria { All = 0, Online, Offline, Friends, Groups };
 
-  enum class FilterCriteria { All = 0, Online, Offline, Friends, Groups };
+    ChatWidget(QWidget* parent = nullptr);
+    ~ChatWidget();
 
-  ChatWidget(QWidget *parent = nullptr);
-  ~ChatWidget();
-
-  [[nodiscard]]  ContentLayout *getContentLayout() const override {
+    [[nodiscard]] ContentLayout* getContentLayout() const override {
         assert(contentLayout);
-      return contentLayout;
-  }
-//  void connectCircleWidget();
-//  void searchCircle(CircleWidget &circleWidget);
-  AddFriendForm *openFriendAddForm();
-  void reloadTheme();
-  void retranslateUi();
-  void showProfile();
-  void clearAllReceipts();
+        return contentLayout;
+    }
+    //  void connectCircleWidget();
+    //  void searchCircle(CircleWidget &circleWidget);
+    AddFriendForm* openFriendAddForm();
+    void reloadTheme();
+    void retranslateUi();
+    void showProfile();
+    void clearAllReceipts();
 
 protected:
-  void showEvent(QShowEvent*) override;
+    void showEvent(QShowEvent*) override;
+
 private:
-  Ui::ChatWidget *ui;
-  std::unique_ptr<QWidget> contentWidget;
-  ContentLayout* contentLayout;
-  std::unique_ptr<MessageSessionListWidget> sessionListWidget;
-  CircleWidget *circleWidget;
+    Ui::ChatWidget* ui;
+    std::unique_ptr<QWidget> contentWidget;
+    ContentLayout* contentLayout;
+    std::unique_ptr<MessageSessionListWidget> sessionListWidget;
+    CircleWidget* circleWidget;
 
-  Core *core;
-  CoreFile *coreFile;
+    Core* core;
+    CoreFile* coreFile;
 
-  QAction *statusOnline;
-  QAction *statusAway;
-  QAction *statusBusy;
-  QAction *actionLogout;
-  QAction *actionQuit;
-  QAction *actionShow;
-  void setStatusOnline();
-  void setStatusAway();
-  void setStatusBusy();
+    QAction* statusOnline;
+    QAction* statusAway;
+    QAction* statusBusy;
+    QAction* actionLogout;
+    QAction* actionQuit;
+    QAction* actionShow;
+    void setStatusOnline();
+    void setStatusAway();
+    void setStatusBusy();
 
-  GroupInviteForm *groupInviteForm;
-  uint32_t unreadGroupInvites;
-  QPushButton *friendRequestsButton;
-  QPushButton *groupInvitesButton;
+    GroupInviteForm* groupInviteForm;
+    uint32_t unreadGroupInvites;
+    QPushButton* friendRequestsButton;
+    QPushButton* groupInvitesButton;
 
-  std::unique_ptr< AddFriendForm > addFriendForm;
+    std::unique_ptr<AddFriendForm> addFriendForm;
 
-      QMenu *filterMenu;
+    QMenu* filterMenu;
 
-      QActionGroup *filterGroup;
-      QAction *filterAllAction;
-      QAction *filterOnlineAction;
-      QAction *filterOfflineAction;
-      QAction *filterFriendsAction;
-      QAction *filterGroupsAction;
+    QActionGroup* filterGroup;
+    QAction* filterAllAction;
+    QAction* filterOnlineAction;
+    QAction* filterOfflineAction;
+    QAction* filterFriendsAction;
+    QAction* filterGroupsAction;
 
-      QActionGroup *filterDisplayGroup;
-      QAction *filterDisplayName;
-      QAction *filterDisplayActivity;
+    QActionGroup* filterDisplayGroup;
+    QAction* filterDisplayName;
+    QAction* filterDisplayActivity;
 
-      ProfileInfo *profileInfo;
-      ProfileForm *profileForm;
+    ProfileInfo* profileInfo;
+    ProfileForm* profileForm;
 
-  void init();
-  void deinit();
-  void updateIcons();
-  void setupSearch();
-  void searchContacts();
+    void init();
+    void deinit();
+    void updateIcons();
+    void setupSearch();
+    void searchContacts();
 
-  void updateFilterText();
-  FilterCriteria getFilterCriteria() const;
-  static bool filterGroups(FilterCriteria index);
-  static bool filterOnline(FilterCriteria index);
-  static bool filterOffline(FilterCriteria index);
-  bool groupsVisible() const;
+    void updateFilterText();
+    FilterCriteria getFilterCriteria() const;
+    static bool filterGroups(FilterCriteria index);
+    static bool filterOnline(FilterCriteria index);
+    static bool filterOffline(FilterCriteria index);
+    bool groupsVisible() const;
 
-  void connectToCore(Core* core);
-  void connectToCoreFile(CoreFile* coreFile);
+    void connectToCore(Core* core_);
+    void connectToCoreFile(CoreFile* coreFile);
 
-  void groupInvitesUpdate();
-  void groupInvitesClear();
-
-
+    void groupInvitesUpdate();
+    void groupInvitesClear();
 
 public slots:
-  void on_nameClicked();
+    void on_nameClicked();
 
-  void onCoreChanged(Core &core);
+    void onCoreChanged(Core& core);
 
-  void onStatusSet(Status::Status status);
-  void onUsernameSet(const QString& username);
-  void onStatusMessageSet(const QString &statusMessage) ;
+    void onStatusSet(Status::Status status);
+    void onUsernameSet(const QString& username);
+    void onStatusMessageSet(const QString& statusMessage);
 
-  void onFriendAdded(const Friend* f);
-  void onFriendRemoved(const Friend* f);
-  void doSendMessage(const QString &to, bool isGroup);
+    void onFriendNickChanged(const FriendId& friendPk, const QString& nickname);
+    void onFriendAvatarChanged(const FriendId& friendPk, const QByteArray& avatar);
+    void onFriendAdded(const Friend* f);
+    void onFriendRemoved(const Friend* f);
+    void doSendMessage(const QString& to, bool isGroup);
 
-  void onFriendStatusChanged(const FriendId &friendPk, Status::Status status);
-  void onFriendStatusMessageChanged(const FriendId &friendPk,
-                                    const QString &message);
+    void onFriendStatusChanged(const FriendId& friendPk, Status::Status status);
+    void onFriendStatusMessageChanged(const FriendId& friendPk, const QString& message);
 
-  void onMessageSessionReceived(const ContactId &contactId, const QString &sid);
+    void onMessageSessionReceived(const ContactId& contactId, const QString& sid);
 
-  void onFriendMessageReceived(const FriendId &friendId,
-                               const FriendMessage &message,
-                               bool isAction);
+    void onFriendMessageReceived(const FriendId& friendId,
+                                 const FriendMessage& message,
+                                 bool isAction);
 
-  void onReceiptReceived(const FriendId &friendPk, ReceiptNum receipt);
+    void onReceiptReceived(const FriendId& friendPk, MsgId receipt);
 
-  void onFriendTypingChanged(const FriendId &friendnumber, bool isTyping);
+    void onFriendTypingChanged(const FriendId& friendnumber, bool isTyping);
 
-  void onGroupAdded(const Group* g);
-  void onGroupRemoved(const Group* g);
+    void onGroupAdded(const Group* g);
+    void onGroupRemoved(const Group* g);
 
     void onGroupMessageReceived(GroupId groupId, GroupMessage msg);
 
+    void onGroupInviteAccepted(const GroupInvite& inviteInfo);
 
+    void onGroupPeerListChanged(QString groupnumber);
 
-void onGroupInviteAccepted(const GroupInvite &inviteInfo);
+    void onGroupPeerSizeChanged(QString groupnumber, const uint size);
 
-void onGroupPeerListChanged(QString groupnumber);
+    void onGroupPeerNameChanged(QString groupnumber, const FriendId& peerPk,
+                                const QString& newName);
+    void onGroupTitleChanged(QString groupnumber, const QString& author, const QString& title);
 
-void onGroupPeerSizeChanged(QString groupnumber, const uint size);
+    void onGroupPeerStatusChanged(const QString&, const GroupOccupant&);
+    void onGroupClicked();
 
-void onGroupPeerNameChanged(QString groupnumber, const FriendId &peerPk,
-                            const QString &newName);
-void onGroupTitleChanged(QString groupnumber, const QString &author,
-                         const QString &title);
+    void changeDisplayMode();
+    void setupStatus();
+    void cancelFile(const QString& friendId, const QString& fileId);
+    void dispatchFile(ToxFile file);
+    void dispatchFileWithBool(ToxFile file, bool);
+    void dispatchFileSendFailed(QString friendId, const QString& fileName);
 
-void onGroupPeerStatusChanged(const QString&, const GroupOccupant&);
-void onGroupClicked();
-
-
-
-void changeDisplayMode();
-void setupStatus();
-void cancelFile(const QString &friendId, const QString &fileId);
-void dispatchFile(ToxFile file);
-void dispatchFileWithBool(ToxFile file, bool);
-void dispatchFileSendFailed(QString friendId, const QString &fileName);
-
-void onAvInvite(ToxPeer peerId, bool video);
-void onAvStart(const FriendId & friendId, bool video);
-void onAvEnd(const FriendId & friendId, bool error);
-
+    void onAvInvite(ToxPeer peerId, bool video);
+    void onAvStart(const FriendId& friendId, bool video);
+    void onAvEnd(const FriendId& friendId, bool error);
 };
 
-#endif // CHATWIDGET_H
+#endif  // CHATWIDGET_H

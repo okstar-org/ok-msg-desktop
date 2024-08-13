@@ -10,12 +10,11 @@
  * See the Mulan PubL v2 for more details.
  */
 
-
 #include "callconfirmwidget.h"
-#include "src/widget/style.h"
-#include "src/widget/widget.h"
+#include <assert.h>
 #include <QDialogButtonBox>
 #include <QFontMetrics>
+#include <QGuiApplication>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QPaintEvent>
@@ -24,8 +23,8 @@
 #include <QPushButton>
 #include <QRect>
 #include <QVBoxLayout>
-#include <QGuiApplication>
-#include <assert.h>
+#include "src/lib/settings/style.h"
+#include "src/widget/widget.h"
 
 /**
  * @class CallConfirmWidget
@@ -45,15 +44,14 @@
  */
 
 CallConfirmWidget::CallConfirmWidget(const QWidget* anchor)
-    : QWidget()
-    , anchor(anchor)
-    , rectW{120}
-    , rectH{85}
-    , spikeW{30}
-    , spikeH{15}
-    , roundedFactor{20}
-    , rectRatio(static_cast<qreal>(rectH) / static_cast<qreal>(rectW))
-{
+        : QWidget()
+        , anchor(anchor)
+        , rectW{120}
+        , rectH{85}
+        , spikeW{30}
+        , spikeH{15}
+        , roundedFactor{20}
+        , rectRatio(static_cast<qreal>(rectH) / static_cast<qreal>(rectW)) {
     setWindowFlags(Qt::SubWindow);
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -70,12 +68,13 @@ CallConfirmWidget::CallConfirmWidget(const QWidget* anchor)
     // Note: At the moment this may not work properly. For languages written
     // from right to left, there is no translation for the phrase "Incoming call...".
     // In this situation, the phrase "Incoming call..." looks as "...oming call..."
-    Qt::TextElideMode elideMode =
-        (QGuiApplication::layoutDirection() == Qt::LeftToRight) ? Qt::ElideRight : Qt::ElideLeft;
+    Qt::TextElideMode elideMode = (QGuiApplication::layoutDirection() == Qt::LeftToRight)
+                                          ? Qt::ElideRight
+                                          : Qt::ElideLeft;
     int marginSize = 12;
     QFontMetrics fontMetrics(callLabel->font());
     QString elidedText =
-        fontMetrics.elidedText(callLabel->text(), elideMode, rectW - marginSize * 2 - 4);
+            fontMetrics.elidedText(callLabel->text(), elideMode, rectW - marginSize * 2 - 4);
     callLabel->setText(elidedText);
 
     QDialogButtonBox* buttonBox = new QDialogButtonBox(Qt::Horizontal, this);
@@ -107,22 +106,19 @@ CallConfirmWidget::CallConfirmWidget(const QWidget* anchor)
 /**
  * @brief Recalculate our positions to track the anchor
  */
-void CallConfirmWidget::reposition()
-{
-    if (parentWidget())
-        parentWidget()->removeEventFilter(this);
+void CallConfirmWidget::reposition() {
+    if (parentWidget()) parentWidget()->removeEventFilter(this);
 
     setParent(anchor->window());
     parentWidget()->installEventFilter(this);
 
     QWidget* w = anchor->window();
-    QPoint pos = anchor->mapToGlobal({(anchor->width() - rectW) / 2, anchor->height()})
-                 - w->mapToGlobal({0, 0});
+    QPoint pos = anchor->mapToGlobal({(anchor->width() - rectW) / 2, anchor->height()}) -
+                 w->mapToGlobal({0, 0});
 
     // We don't want the widget to overflow past the right of the screen
     int xOverflow = 0;
-    if (pos.x() + rectW > w->width())
-        xOverflow = pos.x() + rectW - w->width();
+    if (pos.x() + rectW > w->width()) xOverflow = pos.x() + rectW - w->width();
     pos.rx() -= xOverflow;
 
     mainRect = {0, spikeH, rectW, rectH};
@@ -135,8 +131,7 @@ void CallConfirmWidget::reposition()
     update();
 }
 
-void CallConfirmWidget::paintEvent(QPaintEvent*)
-{
+void CallConfirmWidget::paintEvent(QPaintEvent*) {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
     painter.setBrush(brush);
@@ -146,8 +141,7 @@ void CallConfirmWidget::paintEvent(QPaintEvent*)
     painter.drawPolygon(spikePoly);
 }
 
-void CallConfirmWidget::showEvent(QShowEvent*)
-{
+void CallConfirmWidget::showEvent(QShowEvent*) {
     // Kriby: Legacy comment, is this still true?
     // If someone does show() from Widget or lower, the event will reach us
     // because it's our parent, and we could show up in the wrong form.
@@ -157,18 +151,14 @@ void CallConfirmWidget::showEvent(QShowEvent*)
     update();
 }
 
-void CallConfirmWidget::hideEvent(QHideEvent*)
-{
-    if (parentWidget())
-        parentWidget()->removeEventFilter(this);
+void CallConfirmWidget::hideEvent(QHideEvent*) {
+    if (parentWidget()) parentWidget()->removeEventFilter(this);
 
     setParent(nullptr);
 }
 
-bool CallConfirmWidget::eventFilter(QObject*, QEvent* event)
-{
-    if (event->type() == QEvent::Resize)
-        reposition();
+bool CallConfirmWidget::eventFilter(QObject*, QEvent* event) {
+    if (event->type() == QEvent::Resize) reposition();
 
     return false;
 }

@@ -12,15 +12,13 @@
 
 #include "notificationicon.h"
 #include "../pixmapcache.h"
-#include "src/widget/style.h"
+#include "src/lib/settings/style.h"
 
 #include <QGraphicsScene>
 #include <QPainter>
 #include <QTimer>
 
-NotificationIcon::NotificationIcon(QSize Size)
-    : size(Size)
-{
+NotificationIcon::NotificationIcon(QSize Size) : size(Size) {
     pmap = PixmapCache::getInstance().get(Style::getImagePath("chatArea/typing.svg"), size);
 
     updateTimer = new QTimer(this);
@@ -32,13 +30,12 @@ NotificationIcon::NotificationIcon(QSize Size)
     connect(updateTimer, &QTimer::timeout, this, &NotificationIcon::updateGradient);
 }
 
-QRectF NotificationIcon::boundingRect() const
-{
+QRectF NotificationIcon::boundingRect() const {
     return QRectF(QPointF(-size.width() / 2.0, -size.height() / 2.0), size);
 }
 
-void NotificationIcon::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
-{
+void NotificationIcon::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
+                             QWidget* widget) {
     painter->setClipRect(boundingRect());
 
     painter->setRenderHint(QPainter::SmoothPixmapTransform);
@@ -51,22 +48,14 @@ void NotificationIcon::paint(QPainter* painter, const QStyleOptionGraphicsItem* 
     Q_UNUSED(widget)
 }
 
-void NotificationIcon::setWidth(qreal width)
-{
-    Q_UNUSED(width)
-}
+void NotificationIcon::setWidth(qreal width) { Q_UNUSED(width) }
 
-qreal NotificationIcon::getAscent() const
-{
-    return 3.0;
-}
+qreal NotificationIcon::getAscent() const { return 3.0; }
 
-void NotificationIcon::updateGradient()
-{
+void NotificationIcon::updateGradient() {
     alpha += 0.01;
 
-    if (alpha + dotWidth >= 1.0)
-        alpha = 0.0;
+    if (alpha + dotWidth >= 1.0) alpha = 0.0;
 
     grad = QLinearGradient(QPointF(-0.5 * size.width(), 0), QPointF(3.0 / 2.0 * size.width(), 0));
     grad.setColorAt(0, Qt::lightGray);
@@ -75,6 +64,5 @@ void NotificationIcon::updateGradient()
     grad.setColorAt(qMin(1.0, alpha + dotWidth), Qt::lightGray);
     grad.setColorAt(1, Qt::lightGray);
 
-    if (scene() && isVisible())
-        scene()->invalidate(sceneBoundingRect());
+    if (scene() && isVisible()) scene()->invalidate(sceneBoundingRect());
 }

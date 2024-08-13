@@ -20,12 +20,11 @@
 class ICoreSettings;
 struct Tox_Options;
 
-class ToxOptions
-{
+class ToxOptions {
 public:
     ~ToxOptions();
     ToxOptions(ToxOptions&& from);
-    operator Tox_Options * ();
+    operator Tox_Options*();
     const char* getProxyAddrData() const;
     static std::unique_ptr<ToxOptions> makeToxOptions(const QByteArray& savedata,
                                                       const ICoreSettings* s);
@@ -40,4 +39,4 @@ private:
     QByteArray proxyAddrData;
 };
 
-#endif // TOXOPTIONS_H
+#endif  // TOXOPTIONS_H

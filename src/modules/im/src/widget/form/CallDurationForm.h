@@ -5,19 +5,18 @@
 #include <QLabel>
 #include <QWidget>
 
-#include "src/video/genericnetcamview.h"
 #include <src/model/contact.h>
+#include "src/video/genericnetcamview.h"
 
 namespace Ui {
 class CallDurationForm;
 }
 
-class CallDurationForm : public QWidget
-{
+class CallDurationForm : public QWidget {
     Q_OBJECT
 
 public:
-    explicit CallDurationForm(QWidget *parent = nullptr);
+    explicit CallDurationForm(QWidget* parent = nullptr);
     ~CallDurationForm();
     void setContact(const Contact* c);
     void reloadTheme();
@@ -27,17 +26,17 @@ public:
     void hideNetcam();
     void showAvatar();
 signals:
-     void endCall();
-     void muteMicrophone(bool);
-     void muteSpeaker(bool);
+    void endCall();
+    void muteMicrophone(bool);
+    void muteSpeaker(bool);
 
 protected:
-    void closeEvent(QCloseEvent*e ) override;
+    void closeEvent(QCloseEvent* e) override;
 
 private:
-    Ui::CallDurationForm *ui;
-    const Contact *contact;
-    QTimer *callDurationTimer;
+    Ui::CallDurationForm* ui;
+    const Contact* contact;
+    QTimer* callDurationTimer;
     QElapsedTimer timeElapsed;
 
     bool muteOut;
@@ -47,10 +46,10 @@ private:
 private slots:
     void onUpdateTime();
     void onCallEnd();
-    //禁止麦克风
+    // 禁止麦克风
     void onMuteOut();
-    //禁止扬声器
+    // 禁止扬声器
     void onMuteIn();
 };
 
-#endif // CALLDURATTIONFORM_H
+#endif  // CALLDURATTIONFORM_H

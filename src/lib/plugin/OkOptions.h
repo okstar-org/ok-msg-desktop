@@ -17,16 +17,14 @@
 #pragma once
 #include "optionstree.h"
 
-
 namespace ok {
 namespace plugin {
 
 class OkOptions : public OptionsTree {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  static OkOptions * instance();
-
+    static OkOptions* instance();
 };
 
-} // namespace plugin
-} // namespace ok
+}  // namespace plugin
+}  // namespace ok

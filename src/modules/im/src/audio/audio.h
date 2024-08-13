@@ -10,7 +10,6 @@
  * See the Mulan PubL v2 for more details.
  */
 
-
 #ifndef AUDIO_H
 #define AUDIO_H
 
@@ -18,10 +17,9 @@
 
 class IAudioControl;
 class IAudioSettings;
-class Audio
-{
+class Audio {
 public:
     static std::unique_ptr<IAudioControl> makeAudio(IAudioSettings& settings);
 };
 
-#endif // AUDIO_H
+#endif  // AUDIO_H

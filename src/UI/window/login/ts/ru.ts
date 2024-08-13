@@ -61,11 +61,11 @@
         <translation>Выберите</translation>
     </message>
     <message>
-        <source>Sign Up</source>
+        <source>Sign up</source>
         <translation>Регистрационный счет</translation>
     </message>
     <message>
-        <source>Retrieve Password</source>
+        <source>Forgot password</source>
         <translation>Вернуть пароль</translation>
     </message>
 	<message>

@@ -8,11 +8,26 @@ permissions:
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: [ develop, develop-fedora ]
     tags:
       - "v*.*.*"
+    paths-ignore:
+      - '**.md'
+      - 'changelog.txt'
+      - 'LEGAL'
+      - 'LICENSE'
+      - '.clang-*'
+      - '.gitignore'
+      - 'lib/xdg/**'
+      - 'snap/**'
+      - 'docs/**'
+      - 'flatpak/**'
+      - '.github/**'
+      - 'src/base/platform/windows/**'
+      - 'src/base/platform/macos/**'
+      - '!.github/workflows/win.yml'
   pull_request:
-    branches: [ "develop" ]
+    branches: [ develop, develop-fedora ]
 
 jobs:
   build:
@@ -47,7 +62,7 @@ jobs:
       run: |
         sudo dnf update -y
         sudo dnf install -y gcc g++ rpm-build
-        sudo dnf install -y qt5-qtbase-devel qt6-qtbase-gui  qt5-qtmultimedia-devel  qt5-qtsvg-devel qt5-qttools-devel qt5-qttools-static \
+        sudo dnf install -y qt5-qtbase-devel qt6-qtbase-gui  qt5-qtmultimedia-devel  qt5-qtsvg-devel qt5-qttools-devel qt5-qttools-static qt5-qtwebengine-devel qt5-qtwebengine-devtools \
                     libavcodec-free-devel libavdevice-free-devel libexif-devel qrencode-devel \
                     libvpx-devel openal-soft-devel openssl-devel
 

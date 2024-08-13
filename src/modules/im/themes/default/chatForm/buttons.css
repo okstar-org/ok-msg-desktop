@@ -12,35 +12,33 @@
 
 /* Message edit */
 
+QAbstractButton#emoteButton,
+QAbstractButton#fileButton,
+QAbstractButton#screenshotButton
+{
+    width: 24px;
+    height: 24px;
+    icon-size: 20px;
+    background-color: #F7F8FF;
+    border-radius: 5px;
+    padding: 2px;
+}
+
 QAbstractButton#emoteButton
 {
     qproperty-icon: url("@getImagePath(chatForm/emoteButton.svg)");
-    width: 24px;
-    height: 24px;
 }
 
 QAbstractButton#fileButton
 {
     qproperty-icon: url("@getImagePath(chatForm/fileButton.svg)");
-    width: 24px;
-    height: 24px;
 }
 
 QAbstractButton#screenshotButton
 {
     qproperty-icon: url("@getImagePath(chatForm/screenshotButton.svg)");
-    width: 24px;
-    height: 24px;
 }
 
-QAbstractButton#emoteButton,
-QAbstractButton#fileButton,
-QAbstractButton#screenshotButton
-{
-    icon-size: 20px;
-    background-color: #F7F8FF;
-    border-radius: 5px;
-}
 
 QAbstractButton#emoteButton:hover,
 QAbstractButton#fileButton:hover,
@@ -55,6 +53,7 @@ QAbstractButton#sendButton
     icon-size: 16px;
     border-radius: 5px;
     background-color: #2A67F6;
+    padding: 2px;
     width: 50px;
     height: 26px;
 }
@@ -97,34 +96,36 @@ QAbstractButton#micButton
     height: 18px;
 }
 
+QAbstractButton#videoButton,
+QAbstractButton#callButton
+{
+    icon-size: 18px;
+    width: 32px;
+    height: 32px;
+    border-radius: 16px;
+    padding: 0px;
+}
+
 QAbstractButton#videoButton
 {
     qproperty-icon: url("@getImagePath(chatForm/videoButton.svg)");
-    icon-size: 18px;
     background-color: #FC034D;
-    border-radius: 16px;
-    width: 32px;
-    height: 32px;
 }
 
 QAbstractButton#videoButton:disabled
 {
-    background-color: #c01146;
+    background-color: #ad1c48;
 }
 
 QAbstractButton#callButton
 {
     qproperty-icon: url("@getImagePath(chatForm/callButton.svg)");
-    icon-size: 18px;
-    background-color: #372D7A;
-    border-radius: 16px;
-    width: 32px;
-    height: 32px;
+    background-color: #4d3db1;
 }
 
 QAbstractButton#callButton:disabled
 {
-    background-color: #2d2560;
+    background-color: #48407a;
 }
 
 
@@ -136,6 +137,7 @@ QAbstractButton#searchSettingsButton
     border-radius: 5px;
     width: 35px;
     height: 35px;
+    padding: 0px;
 }
 
 QAbstractButton#searchHideButton
@@ -144,6 +146,7 @@ QAbstractButton#searchHideButton
     border-radius: 5px;
     width: 35px;
     height: 35px;
+    padding: 0px;
 }
 
 QAbstractButton#searchUpButton
@@ -152,6 +155,7 @@ QAbstractButton#searchUpButton
     border-radius: 5px;
     width: 35px;
     height: 35px;
+    padding: 0px;
 }
 
 QAbstractButton#searchDownButton
@@ -160,6 +164,7 @@ QAbstractButton#searchDownButton
     border-radius: 5px;
     width: 35px;
     height: 35px;
+    padding: 0px;
 }
 
 QAbstractButton#choiceDateButton
@@ -168,6 +173,7 @@ QAbstractButton#choiceDateButton
     border-radius: 5px;
     width: 45px;
     height: 35px;
+    padding: 0px;
 }
 
 QAbstractButton#startButton
@@ -175,7 +181,8 @@ QAbstractButton#startButton
     border-radius: 5px;
     width: 60px;
     height: 35px;
-    color: #fff
+    color: #fff;
+    padding: 0px;
 }
 
 /* Common */

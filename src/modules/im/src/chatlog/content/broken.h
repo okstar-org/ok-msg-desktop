@@ -18,14 +18,12 @@
 #include <QObject>
 #include <QPixmap>
 
-class Broken : public ChatLineContent
-{
+class Broken : public ChatLineContent {
     Q_OBJECT
 public:
     Broken(const QString& img, QSize size);
     QRectF boundingRect() const override;
-    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
-                       QWidget* widget) override;
+    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
     void setWidth(qreal width) override;
     void visibilityChanged(bool visible) override;
     qreal getAscent() const override;
@@ -35,4 +33,4 @@ private:
     QPixmap pmap;
 };
 
-#endif // BROKEN_H
+#endif  // BROKEN_H

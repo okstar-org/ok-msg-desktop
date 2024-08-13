@@ -15,8 +15,7 @@
 
 #include <QWidget>
 
-class MovableWidget : public QWidget
-{
+class MovableWidget : public QWidget {
 public:
     explicit MovableWidget(QWidget* parent);
     void resetBoundary(QRect newBoundary);
@@ -36,8 +35,7 @@ private:
 
     typedef uint8_t Modes;
 
-    enum Mode : Modes
-    {
+    enum Mode : Modes {
         Moving = 0x01,
         ResizeLeft = 0x02,
         ResizeRight = 0x04,
@@ -54,4 +52,4 @@ private:
     float ratio;
 };
 
-#endif // MOVABLEWIDGET_H
+#endif  // MOVABLEWIDGET_H

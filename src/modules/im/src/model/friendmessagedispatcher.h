@@ -24,30 +24,28 @@
 
 #include <cstdint>
 
-class FriendMessageDispatcher : public IMessageDispatcher
-{
+class FriendMessageDispatcher : public IMessageDispatcher {
     Q_OBJECT
 public:
     FriendMessageDispatcher(const FriendId& f,
-                            const MessageProcessor::SharedParams &sharedParams,
-                            ICoreIdHandler &idHandler_,
+                            const MessageProcessor::SharedParams& sharedParams,
+                            ICoreIdHandler& idHandler_,
                             ICoreFriendMessageSender& messageSender);
     ~FriendMessageDispatcher();
 
-    std::pair<DispatchedMessageId, SentMessageId> sendMessage(
-            bool isAction,
-            const QString& content,
-            bool encrypt = false) override;
+    std::pair<DispatchedMessageId, MsgId> sendMessage(bool isAction,
+                                                      const QString& content,
+                                                      bool encrypt = false) override;
 
-    void onMessageReceived(FriendMessage &msg);
-    void onReceiptReceived(ReceiptNum receipt);
+    void onMessageReceived(FriendMessage& msg);
+    void onReceiptReceived(MsgId receipt);
     void clearOutgoingMessages() override;
 
-    void onFileReceived(const ToxFile &file);
-    void onFileCancelled(const QString &fileId);
+    void onFileReceived(const ToxFile& file);
+    void onFileCancelled(const QString& fileId);
 
 private slots:
-    void onFriendOnlineOfflineChanged(  bool isOnline);
+    void onFriendOnlineOfflineChanged(bool isOnline);
 
 private:
     const FriendId& f;
@@ -57,6 +55,5 @@ private:
     OfflineMsgEngine offlineMsgEngine;
     MessageProcessor processor;
 };
-
 
 #endif /* IMESSAGE_DISPATCHER_H */

@@ -8,11 +8,26 @@ permissions:
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: [ develop, develop-windows ]
     tags:
       - "v*.*.*"
+    paths-ignore:
+      - '**.md'
+      - 'changelog.txt'
+      - 'LEGAL'
+      - 'LICENSE'
+      - '.clang-*'
+      - '.gitignore'
+      - 'lib/xdg/**'
+      - 'snap/**'
+      - 'docs/**'
+      - 'flatpak/**'
+      - '.github/**'
+      - 'src/base/platform/linux/**'
+      - 'src/base/platform/macos/**'
+      - '!.github/workflows/win.yml'
   pull_request:
-    branches: [ "develop" ]
+    branches: [ develop, develop-windows ]
 
 jobs:
   build:
@@ -20,6 +35,8 @@ jobs:
       ARTIFACT_PATH: "ok-msg-desktop"
       UPLOAD_ARTIFACT: "true"
       VCPKG_DEFAULT_TRIPLET: ${{ matrix.arch }}-windows
+      ARTIFACT_Setup_Path: "${{ github.workspace }}/deploy-setup"
+      ARTIFACT_Setup_FileName: "ok-msg-desktop_${{ matrix.os }}_${{ matrix.arch }}_setup"
       VCPKG_INSTALLED_DIR: /vcpkg_installed
 
     runs-on: ${{ matrix.os }}
@@ -83,7 +100,9 @@ jobs:
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
       with:
+        version: '5.15.2'
         arch: ${{ matrix.arch == 'x64' && 'win64_msvc2019_64' || 'win32_msvc2019' }}
+        modules: 'qtwebengine'
 
     - name: Set reusable strings
       id: strings
@@ -120,6 +139,24 @@ jobs:
         xcopy "$env:Qt5_Dir\bin\*.dll" ${{ env.ARTIFACT_PATH }}
         Copy-Item -Recurse $env:Qt5_Dir\plugins ${{ env.ARTIFACT_PATH }}
         xcopy LICENSE ${{ env.ARTIFACT_PATH }}
+
+    - name: Compile .ISS to .EXE Installer
+      uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
+      with:
+        path: inno-setup-script.iss
+
+    - name: Move setup binary.
+      if: env.UPLOAD_ARTIFACT == 'true'
+      run: |
+        mv ${{ env.ARTIFACT_Setup_Path}}\${{ env.ARTIFACT_Setup_FileName }}.exe ${{ env.ARTIFACT_PATH }}
+
+    - name: Upload setup binary to release.
+      uses: softprops/action-gh-release@v1
+      if: ${{ startsWith(github.ref, 'refs/tags/') }}
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        files: |
+          ${{ env.ARTIFACT_PATH }}/${{ env.ARTIFACT_Setup_FileName }}.exe
 
     - name: Archive Release
       uses: thedoctor0/zip-release@0.7.5

@@ -12,15 +12,15 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-
 #include <QBoxLayout>
 #include <QMainWindow>
+#include <QMap>
 #include <QStackedWidget>
 #include <QSystemTrayIcon>
-#include <QMap>
 
 #include "base/Page.h"
-#include "OMainMenu.h"
+#include "lib/session/AuthSession.h"
+#include "modules/module.h"
 
 namespace Ui {
 class MainWindow;
@@ -28,60 +28,66 @@ class MainWindow;
 
 namespace UI {
 
+class OMainMenu;
+class OMenuWidget;
+
 class MainWindow : public QMainWindow {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  explicit MainWindow(QWidget *parent = nullptr);
-  ~MainWindow();
+    explicit MainWindow(std::shared_ptr<ok::session::AuthSession> session,
+                        QWidget* parent = nullptr);
+    ~MainWindow();
 
-  static MainWindow* getInstance();
+    static MainWindow* getInstance();
 
-  void init();
-  QFrame *getPage(PageMenu menu);
-  QFrame *initPage(PageMenu menu);
-  inline OMainMenu *menu() { return m_menu; }
-  QWidget *getContainer(PageMenu menu);
+    void init();
+    OMenuWidget* getMenuWindow(ok::base::PageMenu menu);
+    OMenuWidget* initMenuWindow(ok::base::PageMenu menu);
+    inline OMainMenu* menu() { return m_menu; }
+    QWidget* getContainer(ok::base::PageMenu menu);
 
 protected:
-  void showEvent(QShowEvent *event) override;
-  void closeEvent(QCloseEvent *event) override;
-  void updateIcons();
+    void showEvent(QShowEvent* event) override;
+    void closeEvent(QCloseEvent* event) override;
+    void updateIcons();
 
 private:
-  Ui::MainWindow *ui;
+    std::shared_ptr<ok::session::AuthSession> session;
+    std::unique_ptr<QTimer> timer;
+    std::shared_ptr<::base::DelayedCallTimer> delayCaller;
 
-  OMainMenu *m_menu;
-  QMap<PageMenu, QWidget *> m_pageMap;
+    Ui::MainWindow* ui;
+    OMainMenu* m_menu;
+    QMap<ok::base::PageMenu, OMenuWidget*> menuWindow;
 
-  std::unique_ptr<QSystemTrayIcon> icon;
-  QMenu *trayMenu;
-  QTimer *timer;
-  QAction *actionQuit;
-  QAction *actionShow;
-  bool wasMaximized = false;
-  //  bool autoAwayActive = false;
+    std::unique_ptr<QSystemTrayIcon> icon;
+    QMenu* trayMenu;
+    QAction* actionQuit;
+    QAction* actionShow;
+    bool wasMaximized = false;
 
-  //  void saveWindowGeometry();
-  //  void saveSplitterGeometry();
-  static inline QIcon prepareIcon(QString path, int w = 0, int h = 0);
+    //  bool autoAwayActive = false;
+    //  void saveWindowGeometry();
+    //  void saveSplitterGeometry();
+
+    static inline QIcon prepareIcon(QString path, int w = 0, int h = 0);
 
 signals:
-  void toClose();
- void menuPushed(PageMenu menu, bool checked);
+    void toClose();
 
 private slots:
-  void onSwitchPage(PageMenu menu);
-  void onToggleChat(bool);
+    void onSwitchPage(ok::base::PageMenu menu, bool checked);
 
-  void onIconClick(QSystemTrayIcon::ActivationReason);
+    void onIconClick(QSystemTrayIcon::ActivationReason);
 
-  void onTryCreateTrayIcon();
+    void onTryCreateTrayIcon();
 
-  void forceShow();
+    void forceShow();
+    OMenuWidget* createChatModule(MainWindow* pWindow);
+    OMenuWidget* createPlatformModule(MainWindow* pWindow);
 };
 
+}  // namespace UI
 
-} // namespace UI
-
-#endif // MAINWINDOW_H
+#endif  // MAINWINDOW_H

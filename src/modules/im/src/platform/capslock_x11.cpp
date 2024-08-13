@@ -11,16 +11,15 @@
  */
 
 #include <QtCore/qsystemdetection.h>
+#include <X11/XKBlib.h>
 #include "src/platform/capslock.h"
 #include "src/platform/x11_display.h"
-#include <X11/XKBlib.h>
 #undef KeyPress
 #undef KeyRelease
 #undef FocusIn
 #undef FocusOut
 
-bool Platform::capsLockEnabled()
-{
+bool Platform::capsLockEnabled() {
     Display* d = X11Display::lock();
     bool caps_state = false;
     if (d) {

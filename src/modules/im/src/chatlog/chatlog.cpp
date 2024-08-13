@@ -16,7 +16,7 @@
 #include "chatmessage.h"
 #include "content/filetransferwidget.h"
 #include "lib/settings/translator.h"
-#include "src/widget/style.h"
+#include "src/lib/settings/style.h"
 
 #include <QAction>
 #include <QApplication>
@@ -35,48 +35,39 @@
  * @brief repetition interval sender name (sec)
  */
 
-template <class T>
-T clamp(T x, T min, T max)
-{
-    if (x > max)
-        return max;
-    if (x < min)
-        return min;
+template <class T> T clamp(T x, T min, T max) {
+    if (x > max) return max;
+    if (x < min) return min;
     return x;
 }
 
-static bool lessThanBSRectTop(const IChatItem::Ptr &lhs, const qreal &rhs) {
+static bool lessThanBSRectTop(const IChatItem::Ptr& lhs, const qreal& rhs) {
     return lhs->sceneBoundingRect().top() < rhs;
 }
 
-static bool lessThanBSRectBottom(const IChatItem::Ptr &lhs,
-                                    const qreal &rhs) {
+static bool lessThanBSRectBottom(const IChatItem::Ptr& lhs, const qreal& rhs) {
     return lhs->sceneBoundingRect().bottom() < rhs;
 }
-static bool lessThanRowIndex(const IChatItem::Ptr &lhs,
-                             const IChatItem::Ptr &rhs)
-{
+static bool lessThanRowIndex(const IChatItem::Ptr& lhs, const IChatItem::Ptr& rhs) {
     return lhs->getRow() < rhs->getRow();
 }
 
-ChatLog::ChatLog(QWidget* parent)
-    : QGraphicsView(parent), scrollBarValue{0}
-{
+ChatLog::ChatLog(QWidget* parent) : QGraphicsView(parent), scrollBarValue{0} {
     // Create the scene
     busyScene = new QGraphicsScene(this);
     scene = new QGraphicsScene(this);
     scene->setItemIndexMethod(QGraphicsScene::BspTreeIndex);
     setScene(scene);
     // 连接滚动条的 valueChanged 信号到槽函数
-    connect(verticalScrollBar(), &QScrollBar::valueChanged, this, &ChatLog::onVScrollBarValueChanged);
-
+    connect(verticalScrollBar(), &QScrollBar::valueChanged, this,
+            &ChatLog::onVScrollBarValueChanged);
 
     // Cfg.
     setInteractive(true);
     setAcceptDrops(false);
     setAlignment(Qt::AlignTop | Qt::AlignLeft);
-    //setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    //setDragMode(QGraphicsView::NoDrag);
+    // setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    // setDragMode(QGraphicsView::NoDrag);
     setViewportUpdateMode(MinimalViewportUpdate);
     setContextMenuPolicy(Qt::CustomContextMenu);
     setBackgroundBrush(QBrush(Style::getColor(Style::GroundBase), Qt::SolidPattern));
@@ -131,28 +122,21 @@ ChatLog::ChatLog(QWidget* parent)
     retranslateUi();
 }
 
-ChatLog::~ChatLog()
-{
+ChatLog::~ChatLog() {
     settings::Translator::unregister(this);
 
     // Remove chatlines from scene
-    for (const IChatItem::Ptr& l : lines)
-        l->removeFromScene();
+    for (const IChatItem::Ptr& l : lines) l->removeFromScene();
 
-    if (busyNotification)
-        busyNotification->removeFromScene();
+    if (busyNotification) busyNotification->removeFromScene();
 
-    if (typingNotification)
-        typingNotification->removeFromScene();
+    if (typingNotification) typingNotification->removeFromScene();
 }
 
-void ChatLog::clearSelection()
-{
-    if (selectionMode == SelectionMode::None)
-        return;
+void ChatLog::clearSelection() {
+    if (selectionMode == SelectionMode::None) return;
 
-    for (int i = selFirstRow; i <= selLastRow; ++i)
-        lines[i]->selectionCleared();
+    for (int i = selFirstRow; i <= selLastRow; ++i) lines[i]->selectionCleared();
 
     selFirstRow = -1;
     selLastRow = -1;
@@ -165,41 +149,33 @@ void ChatLog::clearSelection()
     updateMultiSelectionRect();
 }
 
-QRect ChatLog::getVisibleRect() const
-{
+QRect ChatLog::getVisibleRect() const {
     return mapToScene(viewport()->rect()).boundingRect().toRect();
 }
 
-void ChatLog::updateSceneRect()
-{
-    setSceneRect(calculateSceneRect());
-}
+void ChatLog::updateSceneRect() { setSceneRect(calculateSceneRect()); }
 
-void ChatLog::layout(int start, int end, qreal width)
-{
-    if (lines.empty())
-        return;
+void ChatLog::layout(int start, int end, qreal width) {
+    if (lines.empty()) return;
 
     qreal h = 0.0;
 
     // Line at start-1 is considered to have the correct position. All following lines are
     // positioned in respect to this line.
-    if (start - 1 >= 0)
-        h = lines[start - 1]->sceneBoundingRect().bottom() + lineSpacing;
+    if (start - 1 >= 0) h = lines[start - 1]->sceneBoundingRect().bottom() + lineSpacing;
 
     start = clamp<int>(start, 0, lines.size());
     end = clamp<int>(end + 1, 0, lines.size());
 
     for (int i = start; i < end; ++i) {
-        IChatItem * l = lines[i].get();
+        IChatItem* l = lines[i].get();
 
         l->layout(width, QPointF(0.0, h));
         h += l->sceneBoundingRect().height() + lineSpacing;
     }
 }
 
-void ChatLog::mousePressEvent(QMouseEvent* ev)
-{
+void ChatLog::mousePressEvent(QMouseEvent* ev) {
     QGraphicsView::mousePressEvent(ev);
 
     if (ev->button() == Qt::LeftButton) {
@@ -210,9 +186,8 @@ void ChatLog::mousePressEvent(QMouseEvent* ev)
     if (lastClickButton == ev->button()) {
         // Counts only single clicks and first click of doule click
         clickCount++;
-    }
-    else {
-        clickCount = 1; // restarting counter
+    } else {
+        clickCount = 1;  // restarting counter
         lastClickButton = ev->button();
     }
     lastClickPos = ev->pos();
@@ -221,8 +196,7 @@ void ChatLog::mousePressEvent(QMouseEvent* ev)
     handleMultiClickEvent();
 }
 
-void ChatLog::mouseReleaseEvent(QMouseEvent* ev)
-{
+void ChatLog::mouseReleaseEvent(QMouseEvent* ev) {
     QGraphicsView::mouseReleaseEvent(ev);
 
     selectionScrollDir = AutoScrollDirection::NoDirection;
@@ -230,8 +204,7 @@ void ChatLog::mouseReleaseEvent(QMouseEvent* ev)
     multiClickTimer->start();
 }
 
-void ChatLog::mouseMoveEvent(QMouseEvent* ev)
-{
+void ChatLog::mouseMoveEvent(QMouseEvent* ev) {
     QGraphicsView::mouseMoveEvent(ev);
 
     QPointF scenePos = mapToScene(ev->pos());
@@ -246,12 +219,12 @@ void ChatLog::mouseMoveEvent(QMouseEvent* ev)
             selectionScrollDir = AutoScrollDirection::NoDirection;
 
         // select
-        if (selectionMode == SelectionMode::None
-            && (clickPos - ev->pos()).manhattanLength() > QApplication::startDragDistance()) {
+        if (selectionMode == SelectionMode::None &&
+            (clickPos - ev->pos()).manhattanLength() > QApplication::startDragDistance()) {
             QPointF sceneClickPos = mapToScene(clickPos.toPoint());
             IChatItem::Ptr line = findLineByPosY(scenePos.y());
-            ChatLineContent *content = (line && 
-                line->selectable()) ? getContentFromPos(sceneClickPos) : nullptr;
+            ChatLineContent* content =
+                    (line && line->selectable()) ? getContentFromPos(sceneClickPos) : nullptr;
             if (content) {
                 selClickedRow = content->getRow();
                 selClickedCol = content->getColumn();
@@ -263,8 +236,7 @@ void ChatLog::mouseMoveEvent(QMouseEvent* ev)
                 selectionMode = SelectionMode::Precise;
 
                 // ungrab mouse grabber
-                if (scene->mouseGrabberItem())
-                    scene->mouseGrabberItem()->ungrabMouse();
+                if (scene->mouseGrabberItem()) scene->mouseGrabberItem()->ungrabMouse();
             } else if (line.get()) {
                 selClickedRow = line->getRow();
                 selFirstRow = selClickedRow;
@@ -275,7 +247,7 @@ void ChatLog::mouseMoveEvent(QMouseEvent* ev)
         }
 
         if (selectionMode != SelectionMode::None) {
-            ChatLineContent *content = getContentFromPos(scenePos);
+            ChatLineContent* content = getContentFromPos(scenePos);
             IChatItem::Ptr line = findLineByPosY(scenePos.y());
 
             int row;
@@ -311,8 +283,7 @@ void ChatLog::mouseMoveEvent(QMouseEvent* ev)
                 int start = std::min(row1, row2) + (down ? 1 : 0);
                 int end = std::max(row1, row2) + (down ? 1 : 0);
                 bool isMore = ((row2 > row1) && down) || ((row2 < row1) && !down);
-                for (int i = start; i < end; i++)
-                {
+                for (int i = start; i < end; i++) {
                     IChatItem::Ptr line = lines.at(i);
                     if (line) {
                         if (isMore)
@@ -322,16 +293,14 @@ void ChatLog::mouseMoveEvent(QMouseEvent* ev)
                     }
                 }
             };
-            
-            if (row >= selClickedRow)
-            {
+
+            if (row >= selClickedRow) {
                 if (selectionMode == SelectionMode::Multi)
                     selectionLineChange(selLastRow, row, true);
                 selLastRow = row;
             }
 
-            if (row <= selClickedRow)
-            {
+            if (row <= selClickedRow) {
                 if (selectionMode == SelectionMode::Multi)
                     selectionLineChange(selFirstRow, row, false);
                 selFirstRow = row;
@@ -345,13 +314,10 @@ void ChatLog::mouseMoveEvent(QMouseEvent* ev)
 }
 
 // Much faster than QGraphicsScene::itemAt()!
-ChatLineContent* ChatLog::getContentFromPos(QPointF scenePos) const
-{
-    if (lines.empty())
-        return nullptr;
+ChatLineContent* ChatLog::getContentFromPos(QPointF scenePos) const {
+    if (lines.empty()) return nullptr;
 
-    auto itr =
-        std::lower_bound(lines.cbegin(), lines.cend(), scenePos.y(), lessThanBSRectBottom);
+    auto itr = std::lower_bound(lines.cbegin(), lines.cend(), scenePos.y(), lessThanBSRectBottom);
 
     // find content
     if (itr != lines.cend() && (*itr)->sceneBoundingRect().contains(scenePos))
@@ -360,30 +326,24 @@ ChatLineContent* ChatLog::getContentFromPos(QPointF scenePos) const
     return nullptr;
 }
 
-bool ChatLog::isOverSelection(QPointF scenePos) const
-{
+bool ChatLog::isOverSelection(QPointF scenePos) const {
     if (selectionMode == SelectionMode::Precise) {
         ChatLineContent* content = getContentFromPos(scenePos);
 
-        if (content)
-            return content->isOverSelection(scenePos);
+        if (content) return content->isOverSelection(scenePos);
     } else if (selectionMode == SelectionMode::Multi) {
-        if (selectionBox.contains(scenePos))
-            return true;
+        if (selectionBox.contains(scenePos)) return true;
     }
 
     return false;
 }
 
-qreal ChatLog::useableWidth() const
-{
+qreal ChatLog::useableWidth() const {
     return width() - verticalScrollBar()->sizeHint().width() - margins.right() - margins.left();
 }
 
-void ChatLog::reposition(int start, int end, qreal deltaY)
-{
-    if (lines.isEmpty())
-        return;
+void ChatLog::reposition(int start, int end, qreal deltaY) {
+    if (lines.isEmpty()) return;
 
     start = clamp<int>(start, 0, lines.size() - 1);
     end = clamp<int>(end + 1, 0, lines.size());
@@ -395,9 +355,7 @@ void ChatLog::reposition(int start, int end, qreal deltaY)
 }
 
 void ChatLog::insertChatlineAtBottom(IChatItem::Ptr l) {
-    if (!l.get())
-        return;
-
+    if (!l.get()) return;
 
     bool stickToBtm = stickToBottom();
 
@@ -412,23 +370,20 @@ void ChatLog::insertChatlineAtBottom(IChatItem::Ptr l) {
     layout(from, lines.size(), useableWidth());
     updateSceneRect();
 
-    if (stickToBtm)
-        scrollToBottom();
+    if (stickToBtm) scrollToBottom();
 
     checkVisibility();
     updateTypingNotification();
 }
 
 void ChatLog::insertChatlineOnTop(IChatItem::Ptr l) {
-    if (!l.get())
-        return;
+    if (!l.get()) return;
 
     insertChatlinesOnTop(QList<IChatItem::Ptr>() << l);
 }
 
-void ChatLog::insertChatlinesOnTop(const QList<IChatItem::Ptr> &newLines) {
-    if (newLines.isEmpty())
-        return;
+void ChatLog::insertChatlinesOnTop(const QList<IChatItem::Ptr>& newLines) {
+    if (newLines.isEmpty()) return;
 
     QGraphicsScene::ItemIndexMethod oldIndexMeth = scene->itemIndexMethod();
     scene->setItemIndexMethod(QGraphicsScene::NoIndex);
@@ -462,42 +417,34 @@ void ChatLog::insertChatlinesOnTop(const QList<IChatItem::Ptr> &newLines) {
     startResizeWorker();
 }
 
-bool ChatLog::stickToBottom() const
-{
+bool ChatLog::stickToBottom() const {
     return verticalScrollBar()->value() == verticalScrollBar()->maximum();
 }
 
-void ChatLog::scrollToBottom()
-{
+void ChatLog::scrollToBottom() {
     updateSceneRect();
     verticalScrollBar()->setValue(verticalScrollBar()->maximum());
 }
 
-void ChatLog::startResizeWorker()
-{
-    if (lines.empty())
-        return;
+void ChatLog::startResizeWorker() {
+    if (lines.empty()) return;
 
     // (re)start the worker
     if (!workerTimer->isActive()) {
         // these values must not be reevaluated while the worker is running
         workerStb = stickToBottom();
 
-        if (!visibleLines.empty())
-            workerAnchorLine = visibleLines.first();
+        if (!visibleLines.empty()) workerAnchorLine = visibleLines.first();
     }
 
     // switch to busy scene displaying the busy notification if there is a lot
     // of text to be resized
     int txt = 0;
     for (IChatItem::Ptr line : lines) {
-        if (txt > 500000)
-            break;
-        for (ChatLineContent* content : line->contents())
-            txt += content->getText().size();
+        if (txt > 500000) break;
+        for (ChatLineContent* content : line->contents()) txt += content->getText().size();
     }
-    if (txt > 500000)
-        setScene(busyScene);
+    if (txt > 500000) setScene(busyScene);
 
     workerLastIndex = 0;
     workerTimer->start();
@@ -505,12 +452,13 @@ void ChatLog::startResizeWorker()
     verticalScrollBar()->hide();
 }
 
-void ChatLog::mouseDoubleClickEvent(QMouseEvent* ev)
-{
+void ChatLog::mouseDoubleClickEvent(QMouseEvent* ev) {
     QPointF scenePos = mapToScene(ev->pos());
     IChatItem::Ptr line = findLineByPosY(scenePos.y());
-    ChatLineContent *content =
-         line->selectable() ? getContentFromPos(scenePos) : nullptr;
+    if (!line) {
+        return;
+    }
+    ChatLineContent* content = line->selectable() ? getContentFromPos(scenePos) : nullptr;
 
     if (content) {
         content->selectionDoubleClick(scenePos);
@@ -526,9 +474,8 @@ void ChatLog::mouseDoubleClickEvent(QMouseEvent* ev)
     if (lastClickButton == ev->button()) {
         // Counts the second click of double click
         clickCount++;
-    }
-    else {
-        clickCount = 1; // restarting counter
+    } else {
+        clickCount = 1;  // restarting counter
         lastClickButton = ev->button();
     }
     lastClickPos = ev->pos();
@@ -537,29 +484,28 @@ void ChatLog::mouseDoubleClickEvent(QMouseEvent* ev)
     handleMultiClickEvent();
 }
 
-QString ChatLog::getSelectedText() const
-{
+QString ChatLog::getSelectedText() const {
     if (selectionMode == SelectionMode::Precise) {
         auto content = lines[selClickedRow]->centerContent();
-        if (content)
-            return content->getSelectedText();
+        if (content) return content->getSelectedText();
         return QString();
     } else if (selectionMode == SelectionMode::Multi) {
         // build a nicely formatted message
         QString out;
 
         for (int i = selFirstRow; i <= selLastRow; ++i) {
-            //if (lines[i]->content[1]->getText().isEmpty())
-            //    continue;
+            // if (lines[i]->content[1]->getText().isEmpty())
+            //     continue;
 
-            //QString timestamp = lines[i]->content[2]->getText().isEmpty()
-            //                        ? tr("pending")
-            //                        : lines[i]->content[2]->getText();
-            //QString author = lines[i]->content[0]->getText();
-            //QString msg = lines[i]->content[1]->getText();
+            // QString timestamp = lines[i]->content[2]->getText().isEmpty()
+            //                         ? tr("pending")
+            //                         : lines[i]->content[2]->getText();
+            // QString author = lines[i]->content[0]->getText();
+            // QString msg = lines[i]->content[1]->getText();
 
-            //out +=
-            //    QString(out.isEmpty() ? "[%2] %1: %3" : "\n[%2] %1: %3").arg(author, timestamp, msg);
+            // out +=
+            //     QString(out.isEmpty() ? "[%2] %1: %3" : "\n[%2] %1: %3").arg(author, timestamp,
+            //     msg);
         }
 
         return out;
@@ -568,36 +514,22 @@ QString ChatLog::getSelectedText() const
     return QString();
 }
 
-bool ChatLog::isEmpty() const
-{
-    return lines.isEmpty();
-}
+bool ChatLog::isEmpty() const { return lines.isEmpty(); }
 
-bool ChatLog::hasTextToBeCopied() const
-{
-    return selectionMode != SelectionMode::None;
-}
+bool ChatLog::hasTextToBeCopied() const { return selectionMode != SelectionMode::None; }
 
-IChatItem::Ptr ChatLog::getTypingNotification() const
-{
-    return typingNotification;
-}
+IChatItem::Ptr ChatLog::getTypingNotification() const { return typingNotification; }
 
-QVector<IChatItem::Ptr> ChatLog::getLines()
-{
-    return lines;
-}
+QVector<IChatItem::Ptr> ChatLog::getLines() { return lines; }
 
-IChatItem::Ptr ChatLog::getLatestLine() const
-{
+IChatItem::Ptr ChatLog::getLatestLine() const {
     if (!lines.empty()) {
         return lines.last();
     }
     return nullptr;
 }
 
-IChatItem::Ptr ChatLog::getFirstLine() const
-{
+IChatItem::Ptr ChatLog::getFirstLine() const {
     if (!lines.empty()) {
         return lines.first();
     }
@@ -609,13 +541,11 @@ IChatItem::Ptr ChatLog::getFirstLine() const
  * @param pos Position on screen in global coordinates
  * @sa getContentFromPos()
  */
-ChatLineContent* ChatLog::getContentFromGlobalPos(QPoint pos) const
-{
+ChatLineContent* ChatLog::getContentFromGlobalPos(QPoint pos) const {
     return getContentFromPos(mapToScene(mapFromGlobal(pos)));
 }
 
-void ChatLog::clear()
-{
+void ChatLog::clear() {
     clearSelection();
 
     QVector<IChatItem::Ptr> savedLines;
@@ -629,14 +559,12 @@ void ChatLog::clear()
 
     lines.clear();
     visibleLines.clear();
-    for (IChatItem::Ptr l : savedLines)
-        insertChatlineAtBottom(l);
+    for (IChatItem::Ptr l : savedLines) insertChatlineAtBottom(l);
 
     updateSceneRect();
 }
 
-void ChatLog::copySelectedText(bool toSelectionBuffer) const
-{
+void ChatLog::copySelectedText(bool toSelectionBuffer) const {
     QString text = getSelectedText();
     QClipboard* clipboard = QApplication::clipboard();
 
@@ -644,18 +572,15 @@ void ChatLog::copySelectedText(bool toSelectionBuffer) const
         clipboard->setText(text, toSelectionBuffer ? QClipboard::Selection : QClipboard::Clipboard);
 }
 
-void ChatLog::setBusyNotification(IChatItem::Ptr notification)
-{
-    if (!notification.get())
-        return;
+void ChatLog::setBusyNotification(IChatItem::Ptr notification) {
+    if (!notification.get()) return;
 
     busyNotification = notification;
     busyNotification->addToScene(busyScene);
     busyNotification->visibilityChanged(true);
 }
 
-void ChatLog::setTypingNotification(IChatItem::Ptr notification)
-{
+void ChatLog::setTypingNotification(IChatItem::Ptr notification) {
     typingNotification = notification;
     typingNotification->visibilityChanged(true);
     typingNotification->setVisible(false);
@@ -663,27 +588,22 @@ void ChatLog::setTypingNotification(IChatItem::Ptr notification)
     updateTypingNotification();
 }
 
-void ChatLog::setTypingNotificationVisible(bool visible)
-{
+void ChatLog::setTypingNotificationVisible(bool visible) {
     if (typingNotification.get()) {
         typingNotification->setVisible(visible);
         updateTypingNotification();
     }
 }
 
-void ChatLog::scrollToLine(IChatItem::Ptr line)
-{
-    if (!line.get())
-        return;
+void ChatLog::scrollToLine(IChatItem::Ptr line) {
+    if (!line.get()) return;
 
     updateSceneRect();
     verticalScrollBar()->setValue(line->sceneBoundingRect().top());
 }
 
-void ChatLog::selectAll()
-{
-    if (lines.empty())
-        return;
+void ChatLog::selectAll() {
+    if (lines.empty()) return;
 
     clearSelection();
 
@@ -695,15 +615,13 @@ void ChatLog::selectAll()
     updateMultiSelectionRect();
 }
 
-void ChatLog::fontChanged(const QFont& font)
-{
+void ChatLog::fontChanged(const QFont& font) {
     for (IChatItem::Ptr l : lines) {
         l->fontChanged(font);
     }
 }
 
-void ChatLog::reloadTheme()
-{
+void ChatLog::reloadTheme() {
     setBackgroundBrush(QBrush(Style::getColor(Style::GroundBase), Qt::SolidPattern));
     selectionRectColor = Style::getColor(Style::SelectText);
 
@@ -712,15 +630,10 @@ void ChatLog::reloadTheme()
     }
 }
 
-void ChatLog::forceRelayout()
-{
-    startResizeWorker();
-}
+void ChatLog::forceRelayout() { startResizeWorker(); }
 
-void ChatLog::checkVisibility(bool causedByScroll)
-{
-    if (lines.empty())
-        return;
+void ChatLog::checkVisibility(bool causedByScroll) {
+    if (lines.empty()) return;
 
     // find first visible line
     auto lowerBound = std::lower_bound(lines.cbegin(), lines.cend(), getVisibleRect().top(),
@@ -730,24 +643,21 @@ void ChatLog::checkVisibility(bool causedByScroll)
     auto upperBound = std::lower_bound(lowerBound, lines.cend(), getVisibleRect().bottom(),
                                        lessThanBSRectTop);
 
-    const IChatItem::Ptr lastLineBeforeVisible = lowerBound == lines.cbegin()
-        ? IChatItem::Ptr()
-        : *std::prev(lowerBound);
+    const IChatItem::Ptr lastLineBeforeVisible =
+            lowerBound == lines.cbegin() ? IChatItem::Ptr() : *std::prev(lowerBound);
 
     // set visibilty
     QList<IChatItem::Ptr> newVisibleLines;
     for (auto itr = lowerBound; itr != upperBound; ++itr) {
         newVisibleLines.append(*itr);
 
-        if (!visibleLines.contains(*itr))
-            (*itr)->visibilityChanged(true);
+        if (!visibleLines.contains(*itr)) (*itr)->visibilityChanged(true);
 
         visibleLines.removeOne(*itr);
     }
 
     // these lines are no longer visible
-    for (IChatItem::Ptr line : visibleLines)
-        line->visibilityChanged(false);
+    for (IChatItem::Ptr line : visibleLines) line->visibilityChanged(false);
 
     visibleLines = newVisibleLines;
 
@@ -762,37 +672,32 @@ void ChatLog::checkVisibility(bool causedByScroll)
         emit firstVisibleLineChanged(lastLineBeforeVisible, visibleLines.at(0));
     }
 
-    if (causedByScroll && lowerBound != lines.cend() &&
-        lowerBound->get()->getRow() == 0) {
+    if (causedByScroll && lowerBound != lines.cend() && lowerBound->get()->getRow() == 0) {
         emit loadHistoryLower();
     }
 }
 
-void ChatLog::scrollContentsBy(int dx, int dy)
-{
+void ChatLog::scrollContentsBy(int dx, int dy) {
     QGraphicsView::scrollContentsBy(dx, dy);
     checkVisibility(true);
 }
 
-void ChatLog::resizeEvent(QResizeEvent* ev)
-{
+void ChatLog::resizeEvent(QResizeEvent* ev) {
     bool stb = stickToBottom();
 
     if (ev->size().width() != ev->oldSize().width()) {
         startResizeWorker();
-        stb = false; // let the resize worker handle it
+        stb = false;  // let the resize worker handle it
     }
 
     QGraphicsView::resizeEvent(ev);
 
-    if (stb)
-        scrollToBottom();
+    if (stb) scrollToBottom();
 
     updateBusyNotification();
 }
 
-void ChatLog::updateMultiSelectionRect()
-{
+void ChatLog::updateMultiSelectionRect() {
     if (selectionMode == SelectionMode::Multi && selFirstRow >= 0 && selLastRow >= 0) {
         QRectF selBBox;
         selBBox = selBBox.united(lines[selFirstRow]->sceneBoundingRect());
@@ -803,41 +708,35 @@ void ChatLog::updateMultiSelectionRect()
     }
 }
 
-void ChatLog::updateTypingNotification()
-{
+void ChatLog::updateTypingNotification() {
     IChatItem* notification = typingNotification.get();
-    if (!notification)
-        return;
+    if (!notification) return;
 
     qreal posY = 0.0;
 
-    if (!lines.empty())
-        posY = lines.last()->sceneBoundingRect().bottom() + lineSpacing;
+    if (!lines.empty()) posY = lines.last()->sceneBoundingRect().bottom() + lineSpacing;
 
     notification->layout(useableWidth(), QPointF(0.0, posY));
 }
 
-void ChatLog::updateBusyNotification()
-{
+void ChatLog::updateBusyNotification() {
     if (busyNotification.get()) {
         // repoisition the busy notification (centered)
-        busyNotification->layout(useableWidth(), getVisibleRect().topLeft()
-                                                     + QPointF(0, getVisibleRect().height() / 2.0));
+        busyNotification->layout(
+                useableWidth(),
+                getVisibleRect().topLeft() + QPointF(0, getVisibleRect().height() / 2.0));
     }
 }
 
-IChatItem::Ptr ChatLog::findLineByPosY(qreal yPos) const
-{
+IChatItem::Ptr ChatLog::findLineByPosY(qreal yPos) const {
     auto itr = std::lower_bound(lines.cbegin(), lines.cend(), yPos, lessThanBSRectBottom);
 
-    if (itr != lines.cend())
-        return *itr;
+    if (itr != lines.cend()) return *itr;
 
     return IChatItem::Ptr();
 }
 
-QRectF ChatLog::calculateSceneRect() const
-{
+QRectF ChatLog::calculateSceneRect() const {
     qreal bottom = (lines.empty() ? 0.0 : lines.last()->sceneBoundingRect().bottom());
 
     if (typingNotification.get() != nullptr)
@@ -847,24 +746,22 @@ QRectF ChatLog::calculateSceneRect() const
                   bottom + margins.bottom() + margins.top());
 }
 
-void ChatLog::onSelectionTimerTimeout()
-{
+void ChatLog::onSelectionTimerTimeout() {
     const int scrollSpeed = 10;
 
     switch (selectionScrollDir) {
-    case AutoScrollDirection::Up:
-        verticalScrollBar()->setValue(verticalScrollBar()->value() - scrollSpeed);
-        break;
-    case AutoScrollDirection::Down:
-        verticalScrollBar()->setValue(verticalScrollBar()->value() + scrollSpeed);
-        break;
-    default:
-        break;
+        case AutoScrollDirection::Up:
+            verticalScrollBar()->setValue(verticalScrollBar()->value() - scrollSpeed);
+            break;
+        case AutoScrollDirection::Down:
+            verticalScrollBar()->setValue(verticalScrollBar()->value() + scrollSpeed);
+            break;
+        default:
+            break;
     }
 }
 
-void ChatLog::onWorkerTimeout()
-{
+void ChatLog::onWorkerTimeout() {
     // Fairly arbitrary but
     // large values will make the UI unresponsive
     const int stepSize = 50;
@@ -901,101 +798,84 @@ void ChatLog::onWorkerTimeout()
     }
 }
 
-void ChatLog::onMultiClickTimeout()
-{
-    clickCount = 0;
-}
+void ChatLog::onMultiClickTimeout() { clickCount = 0; }
 
-void ChatLog::onVScrollBarValueChanged(int value)
-{
-        scrollBarValue = value;
-//        qDebug() <<"height"<< sceneRect().height()<<" value"<<value
-//                << verticalScrollBar()->maximum();
-       if (scrollBarValue == verticalScrollBar()->maximum()) {
-           // 当垂直滚动条的值改变时触发
-//           qDebug() <<"readAll";
-           emit readAll();
-       }
-}
-
-void ChatLog::handleMultiClickEvent()
-{
-    // Ignore single or double clicks
-    if (clickCount < 2)
-        return;
-
-    switch (clickCount) {
-    case 3:
-        QPointF scenePos = mapToScene(lastClickPos);
-        ChatLineContent* content = getContentFromPos(scenePos);
-
-        if (content) {
-            content->selectionTripleClick(scenePos);
-            selClickedCol = content->getColumn();
-            selClickedRow = content->getRow();
-            selFirstRow = content->getRow();
-            selLastRow = content->getRow();
-            selectionMode = SelectionMode::Precise;
-
-            emit selectionChanged();
-        }
-        break;
+void ChatLog::onVScrollBarValueChanged(int value) {
+    scrollBarValue = value;
+    //        qDebug() <<"height"<< sceneRect().height()<<" value"<<value
+    //                << verticalScrollBar()->maximum();
+    if (scrollBarValue == verticalScrollBar()->maximum()) {
+        // 当垂直滚动条的值改变时触发
+        //           qDebug() <<"readAll";
+        emit readAll();
     }
 }
 
-void ChatLog::showEvent(QShowEvent*)
-{
-    if(verticalScrollBar()->maximum()==0){
-        //没有滚动条，发射“已读完”信号
+void ChatLog::handleMultiClickEvent() {
+    // Ignore single or double clicks
+    if (clickCount < 2) return;
+
+    switch (clickCount) {
+        case 3:
+            QPointF scenePos = mapToScene(lastClickPos);
+            ChatLineContent* content = getContentFromPos(scenePos);
+
+            if (content) {
+                content->selectionTripleClick(scenePos);
+                selClickedCol = content->getColumn();
+                selClickedRow = content->getRow();
+                selFirstRow = content->getRow();
+                selLastRow = content->getRow();
+                selectionMode = SelectionMode::Precise;
+
+                emit selectionChanged();
+            }
+            break;
+    }
+}
+
+void ChatLog::showEvent(QShowEvent*) {
+    if (verticalScrollBar()->maximum() == 0) {
+        // 没有滚动条，发射“已读完”信号
         emit readAll();
     }
 
-    if( verticalScrollBar()->maximum()==verticalScrollBar()->value()){
-        //有滚动条，但是已经卷动到底部，发射“以读完”信号
-         emit readAll();
+    if (verticalScrollBar()->maximum() == verticalScrollBar()->value()) {
+        // 有滚动条，但是已经卷动到底部，发射“以读完”信号
+        emit readAll();
     }
 }
 
-void ChatLog::focusInEvent(QFocusEvent* ev)
-{
+void ChatLog::focusInEvent(QFocusEvent* ev) {
     QGraphicsView::focusInEvent(ev);
 
     if (selectionMode != SelectionMode::None) {
-        for (int i = selFirstRow; i <= selLastRow; ++i)
-            lines[i]->selectionFocusChanged(true);
+        for (int i = selFirstRow; i <= selLastRow; ++i) lines[i]->selectionFocusChanged(true);
     }
 }
 
-void ChatLog::focusOutEvent(QFocusEvent* ev)
-{
+void ChatLog::focusOutEvent(QFocusEvent* ev) {
     QGraphicsView::focusOutEvent(ev);
 
     if (selectionMode != SelectionMode::None) {
-        if (selFirstRow >= 0)
-        {
-            for (int i = selFirstRow; i <= selLastRow; ++i)
-                lines[i]->selectionFocusChanged(false);
+        if (selFirstRow >= 0) {
+            for (int i = selFirstRow; i <= selLastRow; ++i) lines[i]->selectionFocusChanged(false);
         }
     }
 }
 
-void ChatLog::retranslateUi()
-{
+void ChatLog::retranslateUi() {
     copyAction->setText(tr("Copy"));
     selectAllAction->setText(tr("Select all"));
 }
 
-bool ChatLog::isActiveFileTransfer(IChatItem::Ptr l)
-{
-    ChatLineContent *content = l->centerContent();
-    ChatLineContentProxy *proxy = qobject_cast<ChatLineContentProxy *>(content);
+bool ChatLog::isActiveFileTransfer(IChatItem::Ptr l) {
+    ChatLineContent* content = l->centerContent();
+    ChatLineContentProxy* proxy = qobject_cast<ChatLineContentProxy*>(content);
     if (proxy) {
-
-        QWidget *widget = proxy->getWidget();
-        FileTransferWidget *transferWidget =
-            qobject_cast<FileTransferWidget *>(widget);
-        if (transferWidget && transferWidget->isActive())
-            return true;
+        QWidget* widget = proxy->getWidget();
+        FileTransferWidget* transferWidget = qobject_cast<FileTransferWidget*>(widget);
+        if (transferWidget && transferWidget->isActive()) return true;
     }
     return false;
 }
@@ -1003,12 +883,10 @@ bool ChatLog::isActiveFileTransfer(IChatItem::Ptr l)
 /**
  * @brief Adjusts the selection based on chatlog changing lines
  * @param offset Amount to shift selection rect up by. Must be non-negative.
-  */
-void ChatLog::moveSelectionRectUpIfSelected(int offset)
-{
+ */
+void ChatLog::moveSelectionRectUpIfSelected(int offset) {
     assert(offset >= 0);
-    switch (selectionMode)
-    {
+    switch (selectionMode) {
         case SelectionMode::None:
             return;
         case SelectionMode::Precise:
@@ -1023,12 +901,10 @@ void ChatLog::moveSelectionRectUpIfSelected(int offset)
 /**
  * @brief Adjusts the selections based on chatlog changing lines
  * @param offset removed from the lines indexes. Must be non-negative.
-  */
-void ChatLog::moveSelectionRectDownIfSelected(int offset)
-{
+ */
+void ChatLog::moveSelectionRectDownIfSelected(int offset) {
     assert(offset >= 0);
-    switch (selectionMode)
-    {
+    switch (selectionMode) {
         case SelectionMode::None:
             return;
         case SelectionMode::Precise:
@@ -1040,8 +916,7 @@ void ChatLog::moveSelectionRectDownIfSelected(int offset)
     }
 }
 
-void ChatLog::movePreciseSelectionDown(int offset)
-{
+void ChatLog::movePreciseSelectionDown(int offset) {
     assert(selFirstRow == selLastRow && selFirstRow == selClickedRow);
     const int lastLine = lines.size() - 1;
     if (selClickedRow + offset > lastLine) {
@@ -1055,8 +930,7 @@ void ChatLog::movePreciseSelectionDown(int offset)
     }
 }
 
-void ChatLog::movePreciseSelectionUp(int offset)
-{
+void ChatLog::movePreciseSelectionUp(int offset) {
     assert(selFirstRow == selLastRow && selFirstRow == selClickedRow);
     if (selClickedRow < offset) {
         clearSelection();
@@ -1069,9 +943,8 @@ void ChatLog::movePreciseSelectionUp(int offset)
     }
 }
 
-void ChatLog::moveMultiSelectionUp(int offset)
-{
-    if (selLastRow < offset) { // entire selection now out of bounds
+void ChatLog::moveMultiSelectionUp(int offset) {
+    if (selLastRow < offset) {  // entire selection now out of bounds
         clearSelection();
     } else {
         selLastRow -= offset;
@@ -1082,10 +955,9 @@ void ChatLog::moveMultiSelectionUp(int offset)
     }
 }
 
-void ChatLog::moveMultiSelectionDown(int offset)
-{
+void ChatLog::moveMultiSelectionDown(int offset) {
     const int lastLine = lines.size() - 1;
-    if (selFirstRow + offset > lastLine) { // entire selection now out of bounds
+    if (selFirstRow + offset > lastLine) {  // entire selection now out of bounds
         clearSelection();
     } else {
         selFirstRow += offset;
