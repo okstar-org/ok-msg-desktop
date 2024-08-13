@@ -12,7 +12,6 @@
 
 #include "messenger.h"
 
-#include <jid.h>
 #include <QThread>
 #include <memory>
 

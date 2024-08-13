@@ -1,11 +1,9 @@
-
 include(CMakeParseArguments)
 function(search_dependency pkg)
   set(options OPTIONAL STATIC_PACKAGE)
   set(oneValueArgs PACKAGE LIBRARY FRAMEWORK HEADER)
   set(multiValueArgs)
-  cmake_parse_arguments(arg "${options}" "${oneValueArgs}" "${multiValueArgs}"
-      ${ARGN})
+  cmake_parse_arguments(arg "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   # Try pkg-config first.
   if (NOT ${pkg}_FOUND AND arg_PACKAGE)
@@ -49,14 +47,11 @@ function(search_dependency pkg)
       set(maybe_static "")
     endif ()
 
-    message(STATUS ${pkg} " LIBRARY_DIRS: "
-        "${${pkg}${maybe_static}_LIBRARY_DIRS}")
-    message(STATUS ${pkg} " INCLUDE_DIRS: "
-        "${${pkg}${maybe_static}_INCLUDE_DIRS}")
-    message(STATUS ${pkg} " CFLAGS_OTHER: "
-        "${${pkg}${maybe_static}_CFLAGS_OTHER}")
-    message(STATUS ${pkg} " LIBRARIES:    "
-        "${${pkg}${maybe_static}_LIBRARIES}")
+
+    message(STATUS ${pkg} " LIBRARY_DIRS: ${${pkg}${maybe_static}_LIBRARY_DIRS}")
+    message(STATUS ${pkg} " INCLUDE_DIRS: ${${pkg}${maybe_static}_INCLUDE_DIRS}")
+    message(STATUS ${pkg} " CFLAGS_OTHER: ${${pkg}${maybe_static}_CFLAGS_OTHER}")
+    message(STATUS ${pkg} " LIBRARIES:    ${${pkg}${maybe_static}_LIBRARIES}")
 
     link_directories(${${pkg}${maybe_static}_LIBRARY_DIRS})
     include_directories(${${pkg}${maybe_static}_INCLUDE_DIRS})
@@ -65,15 +60,11 @@ function(search_dependency pkg)
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${flag}" PARENT_SCOPE)
     endforeach ()
 
-    set(ALL_LIBRARIES
-        ${ALL_LIBRARIES} ${${pkg}${maybe_static}_LIBRARIES}
-        PARENT_SCOPE)
+    set(ALL_LIBRARIES ${ALL_LIBRARIES} ${${pkg}${maybe_static}_LIBRARIES} PARENT_SCOPE)
     message(STATUS "${pkg} found")
   endif ()
 
-  set(${pkg}_FOUND
-      ${${pkg}_FOUND}
-      PARENT_SCOPE)
+  set(${pkg}_FOUND ${${pkg}_FOUND} PARENT_SCOPE)
 endfunction()
 
 

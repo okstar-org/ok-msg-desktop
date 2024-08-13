@@ -9,7 +9,7 @@ endif()
 
 find_package(ok-gloox REQUIRED)
 if(ok-gloox_FOUND)
-	search_dependency(ok-gloox)
+	search_dependency(ok-gloox PACKAGE ok-gloox)
 	set(gloox_LIB ok-gloox)
 endif ()
 
@@ -27,8 +27,9 @@ include_directories(${WebRTC_DIR}/include)
 
 file(GLOB ${PROJECT_NAME}_SOURCES *.cpp *.h)
 
-add_library(${PROJECT_NAME} STATIC
-		${${PROJECT_NAME}_SOURCES})
+add_library(${PROJECT_NAME} STATIC ${${PROJECT_NAME}_SOURCES})
+
+target_include_directories(${PROJECT_NAME} PRIVATE ${ok-gloox_INCLUDE_DIRS})
 
 target_link_libraries(${PROJECT_NAME}
 		PUBLIC Plugin
