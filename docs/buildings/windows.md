@@ -44,12 +44,26 @@ git clone https://github.com/okstar-org/ok-rtc.git
 cd ok-rtc
 # 拉取子模块
 git submodule update --init
-# CMake预处理
-cmake -B out -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE='$env{VCPKG_ROOT}\scripts\buildsystems\vcpkg.cmake' -DCMAKE_PREFIX_PATH='${PROJECT_ROOT}\vcpkg_installed\x64-windows'
-# 构建（Release也可以为Debug，后面相同）
-cmake --build out --config Release
-# 执行安装（用管理员身份打开命令行）
-cmake --install out --config Release
+
+# CMake 构建(Debug)
+cmake -B out-Debug -A x64 -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE='$env{VCPKG_ROOT}\scripts\buildsystems\vcpkg.cmake' -DCMAKE_PREFIX_PATH='${PROJECT_ROOT}\vcpkg_installed\x64-windows'
+cmake --build out-Debug --config Debug
+cmake --install out-Debug --config Debug # 管理员执行
+
+# CMake 构建(Release)
+cmake -B out-Release -A x64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE='$env{VCPKG_ROOT}\scripts\buildsystems\vcpkg.cmake' -DCMAKE_PREFIX_PATH='${PROJECT_ROOT}\vcpkg_installed\x64-windows'
+cmake --build out-Release --config Release
+cmake --install out-Release --config Release # 管理员执行
+
+# CMake 构建(RelWithDebInfo)
+cmake -B out-RelWithDebInfo -A x64 -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_TOOLCHAIN_FILE='$env{VCPKG_ROOT}\scripts\buildsystems\vcpkg.cmake' -DCMAKE_PREFIX_PATH='${PROJECT_ROOT}\vcpkg_installed\x64-windows'
+cmake --build .\out-RelWithDebInfo\ --config RelWithDebInfo
+cmake --install out-RelWithDebInfo --config RelWithDebInfo # 管理员执行
+
+# CMake 构建(MinSizeRel)
+cmake -B out-MinSizeRel -A x64 -DCMAKE_BUILD_TYPE=MinSizeRel
+cmake --build .\out-MinSizeRel\ --config MinSizeRel
+cmake --install out-MinSizeRel --config MinSizeRel # 管理员执行
 ```
 
 ## 构建OkGloox库
@@ -57,12 +71,26 @@ cmake --install out --config Release
 ```shell
 git clone https://github.com/okstar-org/ok-gloox.git
 cd ok-gloox
-# CMake预处理
-cmake -B out -DCMAKE_BUILD_TYPE=Release
-# 构建（Release也可以为Debug，后面相同）
-cmake --build out --config Release
-# 执行安装（用管理员身份打开命令行）
-cmake --install out --config Release
+
+# CMake 构建(Debug)
+cmake -B out-Debug -A x64 -DCMAKE_BUILD_TYPE=Debug
+cmake --build out-Debug --config Debug
+cmake --install out-Debug --config Debug # 管理员执行
+
+# CMake 构建(Release)
+cmake -B out-Release -A x64 -DCMAKE_BUILD_TYPE=Release
+cmake --build out-Release --config Release
+cmake --install out-Release --config Release # 管理员执行
+
+# CMake 构建(RelWithDebInfo)
+cmake -B out-RelWithDebInfo -A x64 -DCMAKE_BUILD_TYPE=RelWithDebInfo
+cmake --build .\out-RelWithDebInfo\ --config RelWithDebInfo
+cmake --install out-RelWithDebInfo --config RelWithDebInfo # 管理员执行
+
+# CMake 构建(MinSizeRel)
+cmake -B out-MinSizeRel -A x64 -DCMAKE_BUILD_TYPE=MinSizeRel
+cmake --build .\out-MinSizeRel\ --config MinSizeRel
+cmake --install out-MinSizeRel --config MinSizeRel # 管理员执行
 ```
 
 ## 构建OkMSG项目
