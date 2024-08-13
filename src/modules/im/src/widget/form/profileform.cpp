@@ -157,7 +157,8 @@ ProfileForm::ProfileForm(IProfileInfo* profileInfo, QWidget* parent)
         cb->installEventFilter(this);
         cb->setFocusPolicy(Qt::StrongFocus);
     }
-
+    connect(Nexus::getProfile(),&Profile::selfAvatarChanged,this,&ProfileForm::onSelfAvatarLoaded);
+    
     retranslateUi();
     settings::Translator::registerHandler(std::bind(&ProfileForm::retranslateUi, this), this);
 }
@@ -283,8 +284,9 @@ void ProfileForm::onAvatarClicked() {
     if (path.isEmpty()) {
         return;
     }
+    
     const IProfileInfo::SetAvatarResult result = profileInfo->setAvatar(path);
-    if (result == IProfileInfo::SetAvatarResult::OK) {
+    if (result == IProfileInfo::SetAvatarResult::OK) {   
         return;
     }
 
