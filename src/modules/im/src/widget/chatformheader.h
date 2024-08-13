@@ -105,7 +105,10 @@ private:
     void updateContactStatus(Status::Status status);
 
 private:
+    // 初始情况下可能先有contactId
+    // 后 Friend 对象被构造，通过setContact接口创建出来
     ContactId contactId;
+    const Contact* contact = nullptr;
     bool isSelf = false;
 
     Mode mode;
