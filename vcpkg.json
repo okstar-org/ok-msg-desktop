@@ -3,7 +3,10 @@
   "version": "2.0",
   "dependencies": [
     {
-      "name": "ffmpeg"
+      "name": "ffmpeg",
+      "features": [
+        "vpx"
+      ]
     },
     "libexif",
     "libqrencode",
