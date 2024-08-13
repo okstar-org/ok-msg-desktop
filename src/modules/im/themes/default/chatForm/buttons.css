@@ -114,18 +114,18 @@ QAbstractButton#videoButton
 
 QAbstractButton#videoButton:disabled
 {
-    background-color: #c01146;
+    background-color: #ad1c48;
 }
 
 QAbstractButton#callButton
 {
     qproperty-icon: url("@getImagePath(chatForm/callButton.svg)");
-    background-color: #372D7A;
+    background-color: #4d3db1;
 }
 
 QAbstractButton#callButton:disabled
 {
-    background-color: #2d2560;
+    background-color: #48407a;
 }
 
 

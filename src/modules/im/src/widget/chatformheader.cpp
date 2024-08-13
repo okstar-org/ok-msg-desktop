@@ -191,9 +191,13 @@ void ChatFormHeader::setContact(const Contact* contact_) {
             Core::getInstance()->disconnect(this);
         }
         contactId = ContactId();
+        this->contact = nullptr;
     }
-    if (!contact_ || contactId == contact_->getPersistentId()) return;
 
+    if (!contact_ || this->contact == contact_) {
+        return;
+    }
+    this->contact = contact_;
     contactId = contact_->getPersistentId();
     connect(contact_, &Contact::displayedNameChanged, this,
             &ChatFormHeader::onDisplayedNameChanged);
@@ -249,6 +253,7 @@ void ChatFormHeader::retranslateUi() {
 void ChatFormHeader::updateButtonsView() {
     callButton->setEnabled(callState != CallButtonState::Disabled);
     videoButton->setEnabled(videoState != CallButtonState::Disabled);
+    retranslateUi();
     Style::repolish(this);
 }
 
