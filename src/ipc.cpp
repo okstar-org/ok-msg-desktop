@@ -306,6 +306,8 @@ bool IPC::isAlive() {
         return false;
     }
 
+    qDebug() << "last" << mem->lastProcessed;
+
     if (difftime(time(nullptr), mem->lastProcessed) >= OWNERSHIP_TIMEOUT_S) {
         return false;
     }

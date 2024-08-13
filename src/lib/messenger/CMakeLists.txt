@@ -9,14 +9,17 @@ endif()
 
 find_package(ok-gloox REQUIRED)
 if(ok-gloox_FOUND)
-	set(gloox_LIB ok-gloox::ok-gloox)
+	search_dependency(ok-gloox)
+	set(gloox_LIB ok-gloox)
 endif ()
 
 add_definitions(
 		-DLOG_XMPP # xmpp logs
 		-DWANT_PING # xmpp ping
 		-DENABLE_SEND_RAW_XML # send raw xmls
-		-DLOG_TO_FILE)
+		-DLOG_TO_FILE
+		-DINBANDBYTESTREAM_TEST
+		-DCLIENTBASE_TEST)
 
 # ==== Gloox ====
 

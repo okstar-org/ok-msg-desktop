@@ -1,71 +1,79 @@
-# 配置工程信息
-set(ORGANIZATION_NAME "OkStar")
-set(ORGANIZATION_DOMAIN "okstar.org")
-set(ORGANIZATION_HOME "https://github.com/okstar-org")
-set(APPLICATION_ID "org.okstar.ok-msg-desktop")
-set(APPLICATION_NAME "OkMSG-Desktop")
-set(APPLICATION_ALIAS "OkMSG")
-set(APPLICATION_EXE_NAME "ok-msg-desktop")
-set(OK_SUPPORT_EMAIL "gaojie314@gmail.com")
-set(OK_MAINTAINER ${ORGANIZATION_NAME})
 
-add_definitions(
-        -DORGANIZATION_NAME="${ORGANIZATION_NAME}"
-        -DORGANIZATION_DOMAIN="${ORGANIZATION_DOMAIN}"
-        -DORGANIZATION_HOME="${ORGANIZATION_HOME}"
-        -DAPPLICATION_ID="${APPLICATION_ID}"
-        -DAPPLICATION_NAME="${APPLICATION_NAME}"
-        -DAPPLICATION_ALIAS="${APPLICATION_ALIAS}"
-        -DAPPLICATION_EXE_NAME="${APPLICATION_EXE_NAME}"
-)
+include(CMakeParseArguments)
+function(search_dependency pkg)
+  set(options OPTIONAL STATIC_PACKAGE)
+  set(oneValueArgs PACKAGE LIBRARY FRAMEWORK HEADER)
+  set(multiValueArgs)
+  cmake_parse_arguments(arg "${options}" "${oneValueArgs}" "${multiValueArgs}"
+      ${ARGN})
 
-# 设置Qt配置参数，默认从环境变量读取
-#if (WIN32)
-#    set(QT_DIR $ENV{QTDIR})
-#    if (NOT DEFINED QT_DIR)
-#        message(FATAL_ERROR "请在环境变量配置Qt路径【QTDIR】！")
-#    endif ()
-#    message(STATUS "QT_DIR=${QT_DIR}")
-#    set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${QT_DIR})
-#
-#    # 设置Qt模块包含头文件和库
-#    #include_directories(${CMAKE_PREFIX_PATH}/include)
-#    #link_directories(${CMAKE_PREFIX_PATH}/lib)
-#
-#    # 根据Qt类型，设置动态(安装默认)或者静态(下载的静态版)，默认从环境变量读取
-#    set(LINK_STATIC_QT $ENV{LINK_STATIC_QT})
-#    if (NOT DEFINED LINK_STATIC_QT)
-#        message(FATAL_ERROR "请在环境变量配置Qt类型【LINK_STATIC_QT】！")
-#    endif ()
-#    message(STATUS "LINK_STATIC_QT=${LINK_STATIC_QT}")
-#endif ()
-#
+  # Try pkg-config first.
+  if (NOT ${pkg}_FOUND AND arg_PACKAGE)
+    pkg_search_module(${pkg} ${arg_PACKAGE})
+  endif ()
 
-# Qt
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTORCC ON)
+  # Then, try OSX frameworks.
+  if (NOT ${pkg}_FOUND AND arg_FRAMEWORK)
+    find_library(
+        ${pkg}_LIBRARIES
+        NAMES ${arg_FRAMEWORK}
+        PATHS ${CMAKE_OSX_SYSROOT}/System/Library
+        PATH_SUFFIXES Frameworks
+        NO_DEFAULT_PATH)
+    if (${pkg}_LIBRARIES)
+      set(${pkg}_FOUND TRUE)
+    endif ()
+  endif ()
 
-find_package(Qt5 COMPONENTS Core
-        Concurrent
-        Widgets
-        Gui
-        Multimedia
-        MultimediaWidgets
-        Network
-        Xml
-        Sql
-        Svg
-        OpenGL
-        LinguistTools
-        UiTools
-        REQUIRED)
+  # Last, search for the library itself globally.
+  if (NOT ${pkg}_FOUND AND arg_LIBRARY)
+    find_library(${pkg}_LIBRARIES NAMES ${arg_LIBRARY})
+    if (arg_HEADER)
+      find_path(${pkg}_INCLUDE_DIRS NAMES ${arg_HEADER})
+    endif ()
+    if (${pkg}_LIBRARIES AND (${pkg}_INCLUDE_DIRS OR NOT arg_HEADER))
+      set(${pkg}_FOUND TRUE)
+    endif ()
+  endif ()
 
-if (UNIX)
-    include_directories(${Qt5LinuxAccessibilitySupport_INCLUDES})
-    set(Qt5LinuxAccessibilitySupport_INCLUDES
-            ${CMAKE_PREFIX_PATH}/include/QtLinuxAccessibilitySupport)
-endif ()
+  if (NOT ${pkg}_FOUND)
+    if (NOT arg_OPTIONAL)
+      message(FATAL_ERROR "${pkg} package, library or framework not found")
+    else ()
+      message(STATUS "${pkg} not found")
+    endif ()
+  else ()
+    if (arg_STATIC_PACKAGE)
+      set(maybe_static _STATIC)
+    else ()
+      set(maybe_static "")
+    endif ()
 
-# 开启插件（ON/OFF）
-option(ENABLE_PLUGINS "Enable plugins" ON)
+    message(STATUS ${pkg} " LIBRARY_DIRS: "
+        "${${pkg}${maybe_static}_LIBRARY_DIRS}")
+    message(STATUS ${pkg} " INCLUDE_DIRS: "
+        "${${pkg}${maybe_static}_INCLUDE_DIRS}")
+    message(STATUS ${pkg} " CFLAGS_OTHER: "
+        "${${pkg}${maybe_static}_CFLAGS_OTHER}")
+    message(STATUS ${pkg} " LIBRARIES:    "
+        "${${pkg}${maybe_static}_LIBRARIES}")
+
+    link_directories(${${pkg}${maybe_static}_LIBRARY_DIRS})
+    include_directories(${${pkg}${maybe_static}_INCLUDE_DIRS})
+
+    foreach (flag ${${pkg}${maybe_static}_CFLAGS_OTHER})
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${flag}" PARENT_SCOPE)
+    endforeach ()
+
+    set(ALL_LIBRARIES
+        ${ALL_LIBRARIES} ${${pkg}${maybe_static}_LIBRARIES}
+        PARENT_SCOPE)
+    message(STATUS "${pkg} found")
+  endif ()
+
+  set(${pkg}_FOUND
+      ${${pkg}_FOUND}
+      PARENT_SCOPE)
+endfunction()
+
+
