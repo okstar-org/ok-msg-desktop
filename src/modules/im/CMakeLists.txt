@@ -1,23 +1,25 @@
 project(IM)
 add_definitions(-DOK_${PROJECT_NAME}_MODULE="${PROJECT_NAME}")
 
+
+
 include_directories(${PROJECT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
     find_package(PkgConfig REQUIRED)
    
 
-    pkg_check_modules(AVDEVICE REQUIRED libavdevice)
-    pkg_check_modules(AVCODEC REQUIRED libavcodec)
-    pkg_check_modules(AVFORMAT REQUIRED libavformat)
-    pkg_check_modules(AVUTIL REQUIRED libavutil)
-    pkg_check_modules(SWSCALE REQUIRED libswscale)
-    pkg_check_modules(SWRESAMPLE REQUIRED libswresample)
-    pkg_check_modules(QRENCODE REQUIRED libqrencode )
-    pkg_check_modules(OpenAL REQUIRED openal)
-    pkg_check_modules(sqlite3 REQUIRED sqlite3)
-    pkg_check_modules(exif REQUIRED libexif)
-    pkg_check_modules(JPEG REQUIRED libjpeg)
-   
+    search_dependency(AVDEVICE PACKAGE libavdevice)
+    search_dependency(AVCODEC PACKAGE libavcodec)
+    search_dependency(AVFORMAT PACKAGE libavformat)
+    search_dependency(AVUTIL PACKAGE libavutil)
+    search_dependency(SWSCALE PACKAGE libswscale)
+    search_dependency(SWRESAMPLE PACKAGE libswresample)
+    search_dependency(QRENCODE PACKAGE libqrencode )
+    search_dependency(OpenAL PACKAGE openal)
+    search_dependency(sqlite3 PACKAGE sqlite3)
+    search_dependency(exif PACKAGE libexif)
+    search_dependency(JPEG PACKAGE libjpeg)
+
     list(APPEND ALL_LIBRARIES
             ${AVDEVICE_LINK_LIBRARIES}
             ${AVCODEC_LINK_LIBRARIES}
@@ -429,7 +431,7 @@ if (PLATFORM_EXTENSIONS)
 endif ()
 
 qt5_add_translation(
-        ${PROJECT_NAME}_QM_FILES
+    ${PROJECT_NAME}_QM_FILES
     translations/de.xml
     translations/es.xml
     translations/fr.xml
@@ -488,8 +490,6 @@ qt5_add_resources(
         ${SMILEY_RESOURCES}
         # DEPENDS ${${PROJECT_NAME}_QM_FILES} # OPTIONS ${RCC_OPTIONS}
 )
-
-
 
 add_library(${PROJECT_NAME} STATIC
         ${${PROJECT_NAME}_FORMS}

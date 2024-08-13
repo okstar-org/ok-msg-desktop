@@ -18,11 +18,11 @@ get_filename_component(third_party_loc "3rdparty" REALPATH)
 get_filename_component(submodules_loc "src" REALPATH)
 get_filename_component(cmake_helpers_loc "cmake" REALPATH)
 
+include(cmake/platform.cmake)
+include(cmake/dependencies.cmake)
 include(cmake/init_target.cmake)
 include(cmake/generate_target.cmake)
 include(cmake/generate_appdata_changelog.cmake)
-include(cmake/dependencies.cmake)
-include(cmake/platform.cmake)
 include(cmake/build.cmake)
 include(cmake/develop.cmake)
 
