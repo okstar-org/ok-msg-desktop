@@ -455,6 +455,9 @@ void ChatLog::startResizeWorker() {
 void ChatLog::mouseDoubleClickEvent(QMouseEvent* ev) {
     QPointF scenePos = mapToScene(ev->pos());
     IChatItem::Ptr line = findLineByPosY(scenePos.y());
+    if (!line) {
+        return;
+    }
     ChatLineContent* content = line->selectable() ? getContentFromPos(scenePos) : nullptr;
 
     if (content) {
