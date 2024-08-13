@@ -13,7 +13,7 @@
 #include "GeneralForm.h"
 #include <QFileDialog>
 #include <cmath>
-
+#include <QStyleFactory>
 #include "Bus.h"
 #include "application.h"
 #include "base/OkSettings.h"
@@ -37,13 +37,13 @@ GeneralForm::GeneralForm(SettingsWidget* myParent)
     // block all child signals during initialization
     const ok::base::RecursiveSignalBlocker signalBlocker(this);
 
-    //  Settings &s = Settings::getInstance();
+      Settings &s = Settings::getInstance();
 
     // 先获取当前语言
-    //  QString locale0 = ok::base::OkSettings::getInstance().getTranslation();
-    //  settings::Translator::translate(OK_UIWindowConfig_MODULE, locale0);
-    //  settings::Translator::registerHandler([this] { retranslateUi(); }, this);
-    //  retranslateUi();
+      QString locale0 = ok::base::OkSettings::getInstance().getTranslation();
+      settings::Translator::translate(OK_UIWindowConfig_MODULE, locale0);
+      settings::Translator::registerHandler([this] { retranslateUi(); }, this);
+      retranslateUi();
 
 #ifndef UPDATE_CHECK_ENABLED
     bodyUI->checkUpdates->setVisible(false);
@@ -81,7 +81,7 @@ GeneralForm::GeneralForm(SettingsWidget* myParent)
     bodyUI->cbAutorun->setChecked(okSettings.getAutorun());
 
   //主题
-  /*
+
   bodyUI->styleBrowser->addItem(tr("None"));
   bodyUI->styleBrowser->addItems(QStyleFactory::keys());
 
@@ -97,9 +97,9 @@ GeneralForm::GeneralForm(SettingsWidget* myParent)
       bodyUI->themeColorCBox->addItem(color);
 
   bodyUI->themeColorCBox->setCurrentIndex(s.getThemeColor());
-  bodyUI->emoticonSize->setValue(s.getEmojiFontPointSize());
-  */
-/*
+ // bodyUI->emoticonSize->setValue(s.getEmojiFontPointSize());
+
+
   QLocale ql;
   QStringList timeFormats;
   timeFormats << ql.timeFormat(QLocale::ShortFormat) << ql.timeFormat(QLocale::LongFormat)
@@ -111,7 +111,7 @@ GeneralForm::GeneralForm(SettingsWidget* myParent)
 
   QRegularExpression re(QString("^[^\\n]{0,%0}$").arg(MAX_FORMAT_LENGTH));
   QRegularExpressionValidator* validator = new QRegularExpressionValidator(re, this);
-    Settings& s = Settings::getInstance();
+
     QString timeFormat = s.getTimestampFormat();
 
     if (!re.match(timeFormat).hasMatch())
@@ -119,7 +119,7 @@ GeneralForm::GeneralForm(SettingsWidget* myParent)
 
     bodyUI->timestamp->setCurrentText(timeFormat);
     bodyUI->timestamp->setValidator(validator);
-   // on_timestamp_editTextChanged(timeFormat);
+    on_timestamp_editTextChanged(timeFormat);
 
     QStringList dateFormats;
     dateFormats << QStringLiteral("yyyy-MM-dd") // ISO 8601
@@ -139,8 +139,7 @@ GeneralForm::GeneralForm(SettingsWidget* myParent)
 
     bodyUI->dateFormats->setCurrentText(dateFormat);
     bodyUI->dateFormats->setValidator(validator);
-   // on_dateFormats_editTextChanged(dateFormat);*/
-
+    on_dateFormats_editTextChanged(dateFormat);
 }
 
 GeneralForm::~GeneralForm() {
@@ -186,7 +185,7 @@ void GeneralForm::on_minimizeToTray_stateChanged() {
 void GeneralForm::on_checkUpdates_stateChanged() {
     //  Settings::getInstance().setCheckUpdates(bodyUI->checkUpdates->isChecked());
 }
-/*
+
 void GeneralForm::on_timestamp_editTextChanged(const QString& format)
 {
     QString timeExample = QTime::currentTime().toString(format);
@@ -205,7 +204,7 @@ void GeneralForm::on_dateFormats_editTextChanged(const QString& format)
 //    Settings::getInstance().setDateFormat(format);
 //    QString locale = Settings::getInstance().getTranslation();
 //    settings::Translator::translate(OK_UIWindowConfig_MODULE, locale);
-}*/
+}
 
 /**
  * @brief Retranslate all elements in the form.

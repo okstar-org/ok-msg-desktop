@@ -50,6 +50,10 @@ elseif(LINUX)
   set(${PROJECT_NAME}_SOURCES
       ${${PROJECT_NAME}_SOURCES} system/linux/sys_info.cpp
       system/linux/autorun_xdg.cpp)
+elseif(APPLE)
+  set(${PROJECT_NAME}_SOURCES
+      ${${PROJECT_NAME}_SOURCES} system/macos/sys_info.cpp
+      system/macos/autorun_osx.cpp)
 endif()
 
 add_library(${PROJECT_NAME} STATIC
