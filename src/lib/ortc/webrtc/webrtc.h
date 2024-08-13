@@ -65,12 +65,6 @@ public:
                           const std::string& sId,
                           const ortc::OIceUdp& iceUdp) override;
 
-    void ContentAdd(std::map<std::string, gloox::Jingle::Session> sdMap,
-                    ortc::OkRTCHandler* handler) override;
-
-    void ContentRemove(std::map<std::string, gloox::Jingle::Session> sdMap,
-                       OkRTCHandler* handler) override;
-
     void SessionTerminate(const std::string& peerId) override;
 
     void setMute(bool mute) override;

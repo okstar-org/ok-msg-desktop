@@ -12,13 +12,12 @@
 
 #include "messenger.h"
 
-#include <jid.h>
 #include <QThread>
 #include <memory>
 
+#include "application.h"
 #include "base/logs.h"
 #include "base/xmls.h"
-#include "src/application.h"
 
 #include "lib/messenger/IM.h"
 #include "lib/messenger/IMConference.h"

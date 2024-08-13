@@ -3,7 +3,7 @@ add_definitions(-DOK_${PROJECT_NAME}_MODULE="${PROJECT_NAME}")
 
 include_directories(${PROJECT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
-    find_package(PkgConfig REQUIRED)
+find_package(PkgConfig REQUIRED)
 
 
 search_dependency(AVDEVICE PACKAGE libavdevice)
@@ -17,28 +17,6 @@ search_dependency(OpenAL PACKAGE openal)
 search_dependency(sqlite3 PACKAGE sqlite3)
 search_dependency(exif PACKAGE libexif)
 search_dependency(JPEG PACKAGE libjpeg)
-
-    list(APPEND ALL_LIBRARIES
-            ${AVDEVICE_LINK_LIBRARIES}
-            ${AVCODEC_LINK_LIBRARIES}
-            ${AVFORMAT_LINK_LIBRARIES}
-            ${AVUTIL_LINK_LIBRARIES}
-            ${SWSCALE_LINK_LIBRARIES}
-            ${QRENCODE_LINK_LIBRARIES}
-            ${JPEG_LINK_LIBRARIES}
-            ${exif_LINK_LIBRARIES}
-            ${sqlite3_LINK_LIBRARIES}
-            ${OpenAL_LINK_LIBRARIES}
-    )
-
-
-include_directories(${OpenAL_INCLUDE_DIRS})
-include_directories(${exif_INCLUDE_DIRS})
-include_directories(${AVCODEC_INCLUDE_DIRS})
-include_directories(${AVDEVICE_INCLUDE_DIRS})
-include_directories(${QRENCODE_INCLUDE_DIRS})
-
-#include(./cmake/Dependencies.cmake)
 
 set(CMAKE_AUTOUIC_SEARCH_PATHS ./src src/widget src/widget/form)
 
@@ -543,6 +521,7 @@ elseif (APPLE)
 elseif (LINUX)
     set(PLATFORM_LIBS z atomic X11)
 endif ()
+
 
 target_link_libraries(${PROJECT_NAME}
     PUBLIC ${ok-gloox_LIBRARIES}

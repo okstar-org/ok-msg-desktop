@@ -39,11 +39,6 @@ public:
 
     void CreateOffer(const std::string& peerId, const lib::ortc::OJingleContent& pContent);
 
-    void ContentAdd(std::map<std::string, gloox::Jingle::Session>& sdMap,
-                    ortc::OkRTCHandler* handler);
-
-    void ContentRemove(std::map<std::string, gloox::Jingle::Session>& sdMap,
-                       ortc::OkRTCHandler* handler);
 
     void SessionTerminate(const std::string& peerId);
 

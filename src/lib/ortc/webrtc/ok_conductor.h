@@ -55,12 +55,6 @@ public:
 
     void setTransportInfo(std::unique_ptr<webrtc::IceCandidateInterface> candidate);
 
-    virtual void OnContentAdd(std::map<std::string, gloox::Jingle::Session> sdMap,
-                              ortc::OkRTCHandler* handler);
-
-    virtual void OnContentRemove(std::map<std::string, gloox::Jingle::Session> sdMap,
-                                 ortc::OkRTCHandler* handler);
-
     virtual void OnSessionTerminate(const std::string& sid, ortc::OkRTCHandler* handler);
 
     void SetRemoteDescription(std::unique_ptr<webrtc::SessionDescriptionInterface> desc);

@@ -13,7 +13,9 @@
 //
 // Created by gaojie on 24-5-29.
 //
-#include <iostream>
+#include <jinglegroup.h>
+#include <jingleiceudp.h>
+#include <jinglertp.h>
 
 #include "IMCall.h"
 #include "lib/ortc/ok_rtc.h"
@@ -23,10 +25,30 @@
 
 namespace lib::messenger {
 
-IMCall::IMCall(IM* im, QObject* parent) : IMJingle(im, parent) {
-    //    jingle = nullptr //IMCall::getInstance();
-    //    connectJingle(jingle);
+inline void parseCandidates(gloox::Jingle::ICEUDP::CandidateList& src, ortc::CandidateList& to) {
+    for (auto& c : src) {
+        to.push_front({c.component, c.foundation, c.generation, c.id, c.ip, c.network, c.port,
+                       c.priority, c.protocol, c.tcptype, c.rel_addr, c.rel_port,
+                       static_cast<ortc::Type>(c.type)});
+    }
 }
+
+inline void packCandidates(const ortc::CandidateList& src,
+                           gloox::Jingle::ICEUDP::CandidateList& to) {
+    for (auto& c : src) {
+        to.push_front({c.component, c.foundation, c.generation, c.id, c.ip, c.network, c.port,
+                       c.priority, c.protocol, c.tcptype, c.rel_addr, c.rel_port,
+                       static_cast<gloox::Jingle::ICEUDP::Type>(c.type)});
+    }
+}
+
+inline void packDtls(const ortc::Dtls& src, gloox::Jingle::ICEUDP::Dtls& to) {
+    to.hash = src.hash;
+    to.setup = src.setup;
+    to.fingerprint = src.fingerprint;
+}
+
+IMCall::IMCall(IM* im, QObject* parent) : IMJingle(im, parent) {}
 
 void IMCall::addCallHandler(CallHandler* hdr) { callHandlers.push_back(hdr); }
 
@@ -246,12 +268,12 @@ void IMCall::onCreatePeerConnection(const std::string& sId, const std::string& p
 
 void IMCall::onRTP(const std::string& sid,     //
                    const std::string& peerId,  //
-                   const lib::ortc::OJingleContentAv& oContext) {
+                   const ortc::OJingleContentAv& oContext) {
     auto sId = qstring(sid);
     qDebug() << __func__ << "sId:" << sId << "peerId:" << qstring(peerId);
 
     PluginList plugins;
-    oContext.toPlugins(plugins);
+    toPlugins(oContext, plugins);
 
     auto pSession = findSession(sId);
     if (!pSession) {
@@ -280,11 +302,17 @@ void IMCall::onIce(const std::string& sId,     //
         return;
     }
 
-    auto* iceUdp = new ICEUDP(oIceUdp.pwd, oIceUdp.ufrag, oIceUdp.candidates);
-    iceUdp->setDtls(oIceUdp.dtls);
+    gloox::Jingle::ICEUDP::CandidateList cl;
+    packCandidates(oIceUdp.candidates, cl);
+
+    auto* iceUdp = new gloox::Jingle::ICEUDP(oIceUdp.pwd, oIceUdp.ufrag, cl);
+    gloox::Jingle::ICEUDP::Dtls dtls;
+    packDtls(oIceUdp.dtls, dtls);
+
+    iceUdp->setDtls(dtls);
 
     PluginList pluginList;
-    pluginList.emplace_back(iceUdp);
+    pluginList.push_back(iceUdp);
     auto c = new Jingle::Content(oIceUdp.mid, pluginList);
     session->getSession()->transportInfo(c);
 }
@@ -325,7 +353,7 @@ void IMCall::sessionOnAccept(const QString& sId,
 
     lib::ortc::OJingleContentAv cav;
     cav.sdpType = lib::ortc::JingleSdpType::Answer;
-    cav.parse(jingle);
+    parse(jingle->plugins(), cav);
 
     // RTC 接受会话
     lib::ortc::OkRTCManager::getInstance()
@@ -539,7 +567,7 @@ void IMCall::doTransportInfo(const Session::Jingle* jingle, const IMPeerId& peer
     }
 
     ortc::OJingleContentAv content;
-    content.parse(jingle);
+    parse(jingle->plugins(), content);
 
     for (auto& it : content.contents) {
         ortc::OkRTCManager::getInstance()
@@ -565,7 +593,7 @@ void IMCall::sessionOnInitiate(const QString& sId,
                                const Jingle::Session::Jingle* jingle,
                                const IMPeerId& peerId) {
     ortc::OJingleContentAv cav;
-    cav.parse(jingle);
+    parse(jingle->plugins(), cav);
     cav.sdpType = lib::ortc::JingleSdpType::Offer;
     ortc::OkRTCManager::getInstance()->getRtc()->CreateAnswer(stdstring(peerId.toString()), cav);
 }
@@ -576,6 +604,175 @@ void IMCall::sessionOnTerminate(const QString& sId, const IMPeerId& peerId) {
     auto s = findSession(sId);
     if (s) {
         s->doTerminate();
+    }
+}
+void IMCall::toPlugins(const ortc::OJingleContentAv& oContext, gloox::Jingle::PluginList& plugins) {
+    //<group>
+    auto contents = oContext.contents;
+    gloox::Jingle::Group::ContentList contentList;
+    for (auto& content : contents) {
+        auto name = content.name;
+        auto desc = content.rtp;
+
+        contentList.push_back(Jingle::Group::Content{name});
+
+        // description
+        Jingle::PluginList rtpPlugins;
+
+        // rtcp
+        gloox::Jingle::RTP::PayloadTypes pts;
+        for (auto x : desc.payloadTypes) {
+            gloox::Jingle::RTP::PayloadType t;
+            t.id = x.id;
+            t.name = x.name;
+            t.clockrate = x.clockrate;
+            t.bitrate = x.bitrate;
+            t.channels = x.channels;
+
+            for (auto p : x.parameters) {
+                gloox::Jingle::RTP::Parameter p0;
+                p0.name = p.name;
+                p0.value = p.value;
+                t.parameters.push_back(p0);
+            }
+
+            for (auto f : x.feedbacks) {
+                gloox::Jingle::RTP::Feedback f0;
+                f0.type = f.type;
+                f0.subtype = f.subtype;
+                t.feedbacks.push_back(f0);
+            }
+            pts.push_back(t);
+        }
+        auto rtp = new gloox::Jingle::RTP(static_cast<gloox::Jingle::Media>(desc.media), pts);
+        rtp->setRtcpMux(desc.rtcpMux);
+
+        // payload-type
+        rtp->setPayloadTypes(pts);
+
+        // rtp-hdrExt
+        gloox::Jingle::RTP::HdrExts exts;
+        for (auto e : desc.hdrExts) {
+            exts.push_back({e.id, e.uri});
+        }
+        rtp->setHdrExts(exts);
+
+        // source
+        if (!desc.sources.empty()) {
+            gloox::Jingle::RTP::Sources ss;
+            for (auto s : desc.sources) {
+                gloox::Jingle::RTP::Parameters ps;
+                for (auto p : s.parameters) {
+                    ps.push_back({p.name, p.value});
+                }
+                ss.push_back({s.ssrc, ps});
+            }
+
+            rtp->setSources(ss);
+        }
+
+        // ssrc-group
+        if (!desc.ssrcGroup.ssrcs.empty()) {
+            gloox::Jingle::RTP::SsrcGroup sg;
+            sg.semantics = desc.ssrcGroup.semantics;
+            for (auto s : desc.ssrcGroup.ssrcs) {
+                sg.ssrcs.push_back(s);
+            }
+            rtp->setSsrcGroup(sg);
+        }
+
+        // rtp
+        rtpPlugins.emplace_back(rtp);
+
+        // transport
+        lib::ortc::OIceUdp oIceUdp = content.iceUdp;
+
+        gloox::Jingle::ICEUDP::CandidateList cl;
+        for (auto c : oIceUdp.candidates) {
+            cl.push_front({c.component, c.foundation, c.generation, c.id, c.ip, c.network, c.port,
+                           c.priority, c.protocol, c.tcptype, c.rel_addr, c.rel_port,
+                           static_cast<gloox::Jingle::ICEUDP::Type>(c.type)});
+        }
+        auto ice = new gloox::Jingle::ICEUDP(oIceUdp.pwd, oIceUdp.ufrag, cl);
+        ice->setDtls({.hash = oIceUdp.dtls.hash,
+                      .setup = oIceUdp.dtls.setup,
+                      .fingerprint = oIceUdp.dtls.fingerprint});
+        rtpPlugins.emplace_back(ice);
+
+        auto* pContent = new Jingle::Content(name, rtpPlugins, Jingle::Content::CInitiator);
+        plugins.emplace_back(pContent);
+    }
+
+    auto group = new Jingle::Group("BUNDLE", contentList);
+    plugins.push_back(group);
+}
+
+void IMCall::parse(const PluginList& plugins, ortc::OJingleContentAv& oContextAv) {
+    oContextAv.callType = ortc::JingleCallType::av;
+    int mid = 0;
+    for (const auto p : plugins) {
+        Jingle::JinglePluginType pt = p->pluginType();
+        switch (pt) {
+            case JinglePluginType::PluginContent: {
+                ortc::OSdp oContent;
+
+                const auto* content = static_cast<const Content*>(p);
+                oContent.name = content->name();
+
+                const auto* rtp = content->findPlugin<RTP>(PluginRTP);
+                if (rtp) {
+                    ortc::SsrcGroup ssrcGroup = {.semantics = rtp->ssrcGroup().semantics,
+                                                 .ssrcs = rtp->ssrcGroup().ssrcs};
+                    ortc::ORTP description = {
+                            static_cast<ortc::Media>(rtp->media()),                         //
+                            (const std::list<lib::ortc::PayloadType>&)rtp->payloadTypes(),  //
+                            (const std::list<lib::ortc::HdrExt>&)rtp->hdrExts(),            //
+                            (const std::list<lib::ortc::Source>&)rtp->sources(),            //
+                            ssrcGroup,                                                      //
+                            rtp->rtcpMux()                                                  //
+                    };
+                    oContent.rtp = description;
+                }
+
+                const auto* udp = content->findPlugin<ICEUDP>(PluginICEUDP);
+                if (udp) {
+                    ortc::OIceUdp iceUdp = {
+                            .mid = std::to_string(mid),         //
+                            .mline = mid,                       //
+                            .ufrag = udp->ufrag(),              //
+                            .pwd = udp->pwd(),                  //
+                            .dtls = {.hash = udp->dtls().hash,  //
+                                     .setup = udp->dtls().setup,
+                                     .fingerprint = udp->dtls().fingerprint},
+                            .candidates =
+                                    (const std::list<lib::ortc::Candidate>&)udp->candidates()  //
+                    };
+                    oContent.iceUdp = iceUdp;
+                }
+
+                oContextAv.contents.push_back(oContent);
+                break;
+            }
+            default:
+                break;
+            case PluginNone:
+                break;
+            case PluginFileTransfer:
+                break;
+            case PluginICEUDP:
+                break;
+            case PluginReason:
+                break;
+            case PluginUser:
+                break;
+            case PluginGroup:
+                break;
+            case PluginRTP:
+                break;
+            case PluginIBB:
+                break;
+        }
+        mid++;
     }
 }
 
