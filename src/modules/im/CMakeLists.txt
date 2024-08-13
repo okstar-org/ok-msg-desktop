@@ -5,18 +5,38 @@ include_directories(${PROJECT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
 find_package(PkgConfig REQUIRED)
 
+pkg_check_modules(AVDEVICE REQUIRED libavdevice)
+pkg_check_modules(AVCODEC REQUIRED libavcodec)
+pkg_check_modules(AVFORMAT REQUIRED libavformat)
+pkg_check_modules(AVUTIL REQUIRED libavutil)
+pkg_check_modules(SWSCALE REQUIRED libswscale)
+pkg_check_modules(SWRESAMPLE REQUIRED libswresample)
+pkg_check_modules(QRENCODE REQUIRED libqrencode )
+pkg_check_modules(OpenAL REQUIRED openal)
+pkg_check_modules(sqlite3 REQUIRED sqlite3)
+pkg_check_modules(exif REQUIRED libexif)
+pkg_check_modules(JPEG REQUIRED libjpeg)
 
-search_dependency(AVDEVICE PACKAGE libavdevice)
-search_dependency(AVCODEC PACKAGE libavcodec)
-search_dependency(AVFORMAT PACKAGE libavformat)
-search_dependency(AVUTIL PACKAGE libavutil)
-search_dependency(SWSCALE PACKAGE libswscale)
-search_dependency(SWRESAMPLE PACKAGE libswresample)
-search_dependency(QRENCODE PACKAGE libqrencode)
-search_dependency(OpenAL PACKAGE openal)
-search_dependency(sqlite3 PACKAGE sqlite3)
-search_dependency(exif PACKAGE libexif)
-search_dependency(JPEG PACKAGE libjpeg)
+include_directories(${AVCODEC_INCLUDE_DIRS})
+include_directories(${AVDEVICE_INCLUDE_DIRS})
+include_directories(${QRENCODE_INCLUDE_DIRS})
+include_directories(${sqlite3_INCLUDE_DIRS})
+include_directories(${exif_INCLUDE_DIRS})
+include_directories(${JPEG_INCLUDE_DIRS})
+include_directories(${OpenAL_INCLUDE_DIRS})
+
+list(APPEND ALL_LIBRARIES
+          ${AVDEVICE_LINK_LIBRARIES}
+          ${AVCODEC_LINK_LIBRARIES}
+          ${AVFORMAT_LINK_LIBRARIES}
+          ${AVUTIL_LINK_LIBRARIES}
+          ${SWSCALE_LINK_LIBRARIES}
+          ${QRENCODE_LINK_LIBRARIES}
+          ${JPEG_LINK_LIBRARIES}
+          ${exif_LINK_LIBRARIES}
+          ${sqlite3_LINK_LIBRARIES}
+          ${OpenAL_LINK_LIBRARIES}
+  )
 
 set(CMAKE_AUTOUIC_SEARCH_PATHS ./src src/widget src/widget/form)
 
@@ -522,8 +542,8 @@ elseif (LINUX)
     set(PLATFORM_LIBS z atomic X11)
 endif ()
 
-
 target_link_libraries(${PROJECT_NAME}
+    PUBLIC OkIMCore
     PUBLIC ${ok-gloox_LIBRARIES}
     PUBLIC ${Qt5Core_LIBRARIES}
     PUBLIC ${Qt5Gui_LIBRARIES}
@@ -538,6 +558,5 @@ target_link_libraries(${PROJECT_NAME}
 
 if (WIN32)
     set_property(TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-
 endif ()
 

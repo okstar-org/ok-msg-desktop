@@ -57,10 +57,9 @@ else ()
         ${${PROJECT_NAME}_RESOURCES})
 endif ()
 
-
 target_link_libraries(
     ${PROJECT_NAME}
-    PRIVATE ${OK_LIBS}
+    PUBLIC ${OK_LIBS}
 )
 
 if (WIN32)

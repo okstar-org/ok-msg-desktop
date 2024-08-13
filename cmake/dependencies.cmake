@@ -12,7 +12,8 @@ function(search_dependency pkg)
 
   # Then, try OSX frameworks.
   if (NOT ${pkg}_FOUND AND arg_FRAMEWORK)
-    find_library(
+
+      find_library(
         ${pkg}_LIBRARIES
         NAMES ${arg_FRAMEWORK}
         PATHS ${CMAKE_OSX_SYSROOT}/System/Library
@@ -41,11 +42,11 @@ function(search_dependency pkg)
       message(STATUS "${pkg} not found")
     endif ()
   else ()
-    if (arg_STATIC_PACKAGE)
-      set(maybe_static _STATIC)
-    else ()
-      set(maybe_static "")
-    endif ()
+#    if (arg_STATIC_PACKAGE)
+#      set(maybe_static _STATIC)
+#    else ()
+#      set(maybe_static "")
+#    endif ()
 
 
     message(STATUS ${pkg} " LIBRARY_DIRS: ${${pkg}${maybe_static}_LIBRARY_DIRS}")
@@ -53,13 +54,14 @@ function(search_dependency pkg)
     message(STATUS ${pkg} " CFLAGS_OTHER: ${${pkg}${maybe_static}_CFLAGS_OTHER}")
     message(STATUS ${pkg} " LIBRARIES:    ${${pkg}${maybe_static}_LIBRARIES}")
 
-    link_directories(${${pkg}${maybe_static}_LIBRARY_DIRS})
-    include_directories(${${pkg}${maybe_static}_INCLUDE_DIRS})
+    link_directories(${${pkg}${maybe_static}_LIBRARY_DIRS} )
+    include_directories(${${pkg}${maybe_static}_INCLUDE_DIRS} )
 
     foreach (flag ${${pkg}${maybe_static}_CFLAGS_OTHER})
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${flag}" PARENT_SCOPE)
     endforeach ()
 
+    set(ALL_LINK_DIRS ${ALL_LINK_DIRS} ${${pkg}${maybe_static}_LIBRARY_DIRS} PARENT_SCOPE)
     set(ALL_LIBRARIES ${ALL_LIBRARIES} ${${pkg}${maybe_static}_LIBRARIES} PARENT_SCOPE)
     message(STATUS "${pkg} found")
   endif ()
