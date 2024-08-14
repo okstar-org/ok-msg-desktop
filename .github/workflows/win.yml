@@ -137,8 +137,12 @@ jobs:
         cp ${{ steps.strings.outputs.build-output-dir }}\src\${{ matrix.build_type }}\ok-msg-desktop.exe ${{ env.ARTIFACT_PATH }}
         xcopy build\vcpkg_installed\${{ env.VCPKG_DEFAULT_TRIPLET }}\bin\*.dll ${{ env.ARTIFACT_PATH }}
         xcopy "$env:Qt5_Dir\bin\*.dll" ${{ env.ARTIFACT_PATH }}
+        xcopy "C:\Program Files\OpenSSL\bin\libcrypto-1_1-x64.dll" ${{ env.ARTIFACT_PATH }}
+        xcopy "C:\Program Files\OpenSSL\bin\libssl-1_1-x64.dll" ${{ env.ARTIFACT_PATH }}
         Copy-Item -Recurse $env:Qt5_Dir\plugins ${{ env.ARTIFACT_PATH }}
         xcopy LICENSE ${{ env.ARTIFACT_PATH }}
+        rm ${{ env.ARTIFACT_PATH }}\*d.dll
+        xcopy ChineseSimplified.isl "C:\Program Files (x86)\Inno Setup 6\Languages\"
 
     - name: Compile .ISS to .EXE Installer
       uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
@@ -157,6 +161,11 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         files: |
           ${{ env.ARTIFACT_PATH }}/${{ env.ARTIFACT_Setup_FileName }}.exe
+
+    - name: Delete setup binary in the origin package release.
+      if: env.UPLOAD_ARTIFACT == 'true'
+      run: |
+        rm ${{ env.ARTIFACT_PATH }}\${{ env.ARTIFACT_Setup_FileName }}.exe 
 
     - name: Archive Release
       uses: thedoctor0/zip-release@0.7.5
