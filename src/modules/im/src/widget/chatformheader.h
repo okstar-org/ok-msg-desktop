@@ -30,6 +30,7 @@ class CallConfirmWidget;
 class ToxPeer;
 class Contact;
 class QLabel;
+class Profile;
 
 class ChatFormHeader : public QWidget {
     Q_OBJECT
@@ -125,6 +126,7 @@ private:
     CallButtonState videoState;
 
     std::unique_ptr<CallConfirmWidget> callConfirm;
+    Profile* mProfile;
 };
 
 #endif  // CHAT_FORM_HEADER

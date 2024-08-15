@@ -33,6 +33,9 @@
 
 #include <src/friendlist.h>
 #include <src/widget/tool/callconfirmwidget.h>
+
+#include "Bus.h"
+#include "application.h"
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
 
@@ -104,7 +107,8 @@ ChatFormHeader::ChatFormHeader(const ContactId& contactId, QWidget* parent)
         , contactId(contactId)
         , mode{Mode::AV}
         , callState{CallButtonState::Disabled}
-        , videoState{CallButtonState::Disabled} {
+        , videoState{CallButtonState::Disabled}
+        , mProfile{nullptr} {
     QHBoxLayout* headLayout = new QHBoxLayout(this);
     headLayout->setContentsMargins(0, 0, 0, 0);
     // 头像
@@ -156,17 +160,23 @@ ChatFormHeader::ChatFormHeader(const ContactId& contactId, QWidget* parent)
 
     statusLabel->setVisible(false);
     statusIcon->setVisible(false);
-    // todo: 当时是自己时，FriendList::findFriend会返回空，更新状态、按钮等逻辑不会触发
+
+    mProfile = Nexus::getProfile();
+    connect(ok::Application::Instance()->bus(), &ok::Bus::profileChanged, this,
+            [&](Profile* profile) { mProfile = profile; });
+
     FriendId self = Core::getInstance()->getSelfId();
     isSelf = self.toString() == contactId.toString();
-    if (!isSelf) {
-        setContact(FriendList::findFriend(contactId));
+    if (isSelf) {
+        // self
+        if (mProfile) {
+            setName(mProfile->getDisplayName());
+        }
+        setAvatar(mProfile->loadAvatar(contactId));
+        connect(mProfile, &Profile::selfAvatarChanged, this, &ChatFormHeader::setAvatar);
     } else {
-        // todo: 接口不统一
-        setName(Core::getInstance()->getNick());
-        setAvatar(Nexus::getProfile()->loadAvatar(contactId));
-        connect(Nexus::getProfile(), &Profile::selfAvatarChanged, this, &ChatFormHeader::setAvatar);
-        connect(Core::getInstance(), &Core::usernameSet, this, &ChatFormHeader::setName);
+        // friend
+        setContact(Nexus::getCore()->getFriendList().findFriend(contactId));
     }
 
     settings::Translator::registerHandler([this] { retranslateUi(); }, this);
@@ -176,29 +186,15 @@ ChatFormHeader::ChatFormHeader(const ContactId& contactId, QWidget* parent)
 ChatFormHeader::~ChatFormHeader() { settings::Translator::unregister(this); }
 
 void ChatFormHeader::setContact(const Contact* contact_) {
-    if (!contact_ || contactId != contact_->getPersistentId()) {
-        if (Friend* old = FriendList::findFriend(contactId)) {
-            old->disconnect(this);
-            // 是否有必要？
-            if (!old->isGroup()) {
-                auto f = static_cast<const Friend*>(old);
-                f->disconnect(this);
-            }
-        }
-        // 如果是自己，则通过profile连接更新
-        if (contactId.getId() == Core::getInstance()->getSelfId().getId()) {
-            Nexus::getProfile()->disconnect(this);
-            Core::getInstance()->disconnect(this);
-        }
-        contactId = ContactId();
-        this->contact = nullptr;
-    }
+    auto profile = Nexus::getProfile();
+    if (!profile) return;
 
-    if (!contact_ || this->contact == contact_) {
+    contact = contact_;
+    if (!contact) {
+        qDebug() << "Remove contact";
         return;
     }
-    this->contact = contact_;
-    contactId = contact_->getPersistentId();
+
     connect(contact_, &Contact::displayedNameChanged, this,
             &ChatFormHeader::onDisplayedNameChanged);
     connect(contact_, &Contact::avatarChanged, this, &ChatFormHeader::setAvatar);
@@ -229,7 +225,7 @@ void ChatFormHeader::removeContact() {
     contactId = ContactId();
 }
 
-const Contact* ChatFormHeader::getContact() const { return FriendList::findFriend(contactId); }
+const Contact* ChatFormHeader::getContact() const { return contact; }
 
 void ChatFormHeader::setName(const QString& newName) {
     nameLabel->setText(newName);
@@ -266,7 +262,7 @@ void ChatFormHeader::nameChanged(const QString& name) {
         return;
     }
 
-    if (auto f = FriendList::findFriend(contactId)) {
+    if (auto f = Nexus::getCore()->getFriendList().findFriend(contactId)) {
         f->setAlias(name);
         Core::getInstance()->setFriendAlias(contactId.getId(), name);
     }

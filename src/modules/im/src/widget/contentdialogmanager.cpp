@@ -12,14 +12,16 @@
 
 #include "contentdialogmanager.h"
 
+#include <tuple>
+
 #include "src/friendlist.h"
 #include "src/grouplist.h"
 #include "src/model/friend.h"
 #include "src/model/group.h"
+#include "src/nexus.h"
+#include "src/persistence/profile.h"
 #include "src/widget/friendwidget.h"
 #include "src/widget/groupwidget.h"
-
-#include <tuple>
 
 namespace {
 void removeDialog(ContentDialog* dialog, QHash<const ContactId&, ContentDialog*>& dialogs) {
@@ -116,8 +118,11 @@ void ContentDialogManager::updateFriendStatus(const FriendId& friendPk) {
         dialog->updateTitleAndStatusIcon();
     }
 
-    Friend* f = FriendList::findFriend(friendPk);
-    dialog->updateFriendStatus(friendPk, f->getStatus());
+    auto profile = Nexus::getProfile();
+    if (profile) {
+        Friend* f = Nexus::getCore()->getFriendList().findFriend(friendPk);
+        dialog->updateFriendStatus(friendPk, f->getStatus());
+    }
 }
 
 void ContentDialogManager::updateGroupStatus(const GroupId& groupId) {

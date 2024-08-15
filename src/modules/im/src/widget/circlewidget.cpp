@@ -125,7 +125,7 @@ void CircleWidget::dragEnterEvent(QDragEnterEvent* event) {
         return;
     }
     ToxPk toxPk(event->mimeData()->data("toxPk"));
-    Friend* f = FriendList::findFriend(toxPk);
+    Friend* f = Nexus::getCore()->getFriendList().findFriend(toxPk);
     if (f != nullptr) event->acceptProposedAction();
 
     setContainerAttribute(Qt::WA_UnderMouse, true);  // Simulate hover.
@@ -148,7 +148,7 @@ void CircleWidget::dropEvent(QDropEvent* event) {
     }
     // Check, that the user has a friend with the same ToxId
     ToxPk toxPk{event->mimeData()->data("toxPk")};
-    Friend* f = FriendList::findFriend(toxPk);
+    Friend* f = Nexus::getCore()->getFriendList().findFriend(toxPk);
     if (!f) return;
 
     // Save CircleWidget before changing the Id

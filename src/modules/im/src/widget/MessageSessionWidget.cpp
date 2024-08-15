@@ -4,10 +4,10 @@
  * You can use this software according to the terms and conditions of the Mulan
  * PubL v2. You may obtain a copy of Mulan PubL v2 at:
  *          http://license.coscl.org.cn/MulanPubL-2.0
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY
- * KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
- * NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE. See the
- * Mulan PubL v2 for more details.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PubL v2 for more details.
  */
 
 #include "MessageSessionWidget.h"
@@ -205,7 +205,7 @@ void MessageSessionWidget::showEvent(QShowEvent* e) {
             sendWorker->getChatForm()->setContact(contact);
         }
     } else {
-        auto f = FriendList::findFriend(contactId);
+        auto f = Nexus::getCore()->getFriendList().findFriend(contactId);
         if (f) {
             setContact(*f);
             sendWorker->getHeader()->setContact(contact);
@@ -491,7 +491,7 @@ void MessageSessionWidget::setAvInvite(const ToxPeer& peerId, bool video) {
     qDebug() << __func__ << peerId.toString();
 
     QString friendId0 = peerId.toFriendId().toString();
-    auto f = FriendList::findFriend(peerId);
+    auto f = Nexus::getCore()->getFriendList().findFriend(peerId);
 
     QString displayedName = f ? f->getDisplayedName() : peerId.username;
     qDebug() << "show displayedName:" << displayedName;
@@ -512,7 +512,7 @@ void MessageSessionWidget::setAvStart(const FriendId& friendId, bool video) {
     auto chatForm = (ChatForm*)sendWorker->getChatForm();
     sendWorker->startCounter(video);
 
-    auto frd = FriendList::findFriend(friendId);
+    auto frd = Nexus::getCore()->getFriendList().findFriend(friendId);
     if (frd) {
         auto header = sendWorker->getHeader();
         header->updateCallButtons(frd->getStatus());
@@ -530,7 +530,7 @@ void MessageSessionWidget::setAvEnd(const FriendId& friendId, bool error) {
     header->removeCallConfirm();
     header->updateCallButtons();
 
-    auto f = FriendList::findFriend(friendId);
+    auto f = Nexus::getCore()->getFriendList().findFriend(friendId);
     if (f) {
         header->updateCallButtons(f->getStatus() == Status::Status::Online, false, false);
     }
@@ -668,7 +668,7 @@ void MessageSessionWidget::paintEvent(QPaintEvent* e) {
 QString MessageSessionWidget::getStatusString() const {
     qDebug() << __func__;
     //  auto contactId = sendWorker->getChatroom()->getContactId();
-    //  auto frnd = FriendList::findFriend(ToxPk(contact));
+    //  auto frnd = Nexus::getCore()->getFriendList().findFriend(ToxPk(contact));
 
     //  const int status = static_cast<int>(frnd->getStatus());
     //  const bool event = frnd->getEventFlag();
@@ -689,7 +689,7 @@ QString MessageSessionWidget::getStatusString() const {
 //     auto contact = sendWorker->getChatroom()->getContact();
 //     auto cid = contact->getId();
 
-//    auto frnd = FriendList::findFriend(ToxPk(cid));
+//    auto frnd = Nexus::getCore()->getFriendList().findFriend(ToxPk(cid));
 //    return frnd;
 //}
 
@@ -764,7 +764,7 @@ void MessageSessionWidget::setRecvMessage(const FriendMessage& msg, bool isActio
     FriendMessage m = msg;
     m.from = ContactId(m.from).toString();
 
-    auto frd = FriendList::findFriend(contactId);
+    auto frd = Nexus::getCore()->getFriendList().findFriend(contactId);
     if (frd) {
         m.displayName = frd->getDisplayedName();
     }
@@ -794,7 +794,7 @@ void MessageSessionWidget::setRecvGroupMessage(const GroupMessage& msg) {
     GroupMessage m = msg;
     m.from = ContactId(m.from).toString();
 
-    auto frd = FriendList::findFriend(contactId);
+    auto frd = Nexus::getCore()->getFriendList().findFriend(contactId);
     if (frd) {
         m.displayName = frd->getDisplayedName();
     } else {
@@ -833,7 +833,7 @@ void MessageSessionWidget::clearHistory() { sendWorker->clearHistory(); }
 
 void MessageSessionWidget::setStatus(Status::Status status, bool event) {
     updateStatusLight(status, event);
-    auto f = FriendList::findFriend(contactId);
+    auto f = Nexus::getCore()->getFriendList().findFriend(contactId);
     if (!f) {
         qWarning() << "friend is no existing.";
         return;

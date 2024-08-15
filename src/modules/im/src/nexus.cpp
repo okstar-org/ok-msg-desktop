@@ -176,6 +176,8 @@ void Nexus::start(std::shared_ptr<ok::session::AuthSession> session) {
 
     profile->startCore();
 
+    emit ok::Application::Instance() -> bus()->profileChanged(profile);
+
 #ifdef Q_OS_MAC
     // TODO: still needed?
     globalMenuBar = new QMenuBar(0);
@@ -212,35 +214,6 @@ void Nexus::start(std::shared_ptr<ok::session::AuthSession> session) {
 void Nexus::hide() { m_widget->hide(); }
 
 QString Nexus::name() { return Nexus::Name(); }
-
-/**
- * @brief Hides the main GUI, delete the profile, and shows the login screen
- */
-int Nexus::showLogin(const QString& profileName) {
-    //      delete widget;
-    //      widget = nullptr;
-
-    //      delete profile;
-    //      profile = nullptr;
-
-    //      LoginScreen loginScreen{profileName};
-    //      connectLoginScreen(loginScreen);
-    //
-    //    // TODO(kriby): Move core out of profile
-    //    // This is awkward because the core is in the profile
-    //    // The connection order ensures profile will be ready for bootstrap
-    //    for now connect(this, &Nexus::currentProfileChanged, this,
-    //    &Nexus::bootstrapWithProfile); int returnval = loginScreen.exec(); if
-    //    (returnval == QDialog::Rejected) {
-    //        // Kriby: This will terminate the main application loop, necessary
-    //        until we refactor
-    //        // away the split startup/return to login behavior.
-    //        qApp->quit();
-    //    }
-    //    disconnect(this, &Nexus::currentProfileChanged, this,
-    //    &Nexus::bootstrapWithProfile); return returnval;
-    return -1;
-}
 
 void Nexus::do_logout(const QString& profileName) {
     Settings::getInstance().saveGlobal();

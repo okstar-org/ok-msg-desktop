@@ -26,6 +26,7 @@
 #include "base/compatiblerecursivemutex.h"
 #include "lib/messenger/messenger.h"
 
+#include "src/friendlist.h"
 #include "src/model/status.h"
 #include "src/util/strongtype.h"
 
@@ -82,7 +83,7 @@ public:
     static QStringList splitMessage(const QString& message);
     QString getPeerName(const FriendId& id) const;
     void loadFriendList(std::list<FriendInfo>&) const;
-
+    FriendList& getFriendList() { return friendList; }
     void loadGroupList() const;
     GroupId getGroupPersistentId(QString groupId) const override;
     uint32_t getGroupNumberPeers(QString groupId) const override;
@@ -326,6 +327,7 @@ private:
     //      }
     //    }
     //  };
+    FriendList friendList;
 
     std::unique_ptr<lib::messenger::Messenger> tox;
     std::unique_ptr<CoreFile> file;

@@ -30,6 +30,7 @@
 #include "src/model/friend.h"
 #include "src/model/group.h"
 #include "src/model/status.h"
+#include "src/nexus.h"
 #include "src/persistence/settings.h"
 #include "src/widget/contentlayout.h"
 #include "src/widget/form/chatform.h"
@@ -353,7 +354,7 @@ void ContentDialog::dragEnterEvent(QDragEnterEvent* event) {
     if (frnd) {
         assert(event->mimeData()->hasFormat("toxPk"));
         FriendId toxPk{event->mimeData()->data("toxPk")};
-        Friend* contact = FriendList::findFriend(toxPk);
+        Friend* contact = Nexus::getCore()->getFriendList().findFriend(toxPk);
         if (!contact) {
             return;
         }
@@ -385,7 +386,7 @@ void ContentDialog::dropEvent(QDropEvent* event) {
     if (frnd) {
         assert(event->mimeData()->hasFormat("toxPk"));
         const FriendId toxId(event->mimeData()->data("toxPk"));
-        Friend* contact = FriendList::findFriend(toxId);
+        Friend* contact = Nexus::getCore()->getFriendList().findFriend(toxId);
         if (!contact) {
             return;
         }
@@ -506,7 +507,7 @@ void ContentDialog::setStatusMessage(const FriendId& friendPk, const QString& me
  * @param alias Alias to display on widget.
  */
 void ContentDialog::updateFriendWidget(const FriendId& friendPk, QString alias) {
-    Friend* f = FriendList::findFriend(friendPk);
+    Friend* f = Nexus::getCore()->getFriendList().findFriend(friendPk);
     FriendWidget* friendWidget = qobject_cast<FriendWidget*>(contactWidget);
 
     Status::Status status = f->getStatus();

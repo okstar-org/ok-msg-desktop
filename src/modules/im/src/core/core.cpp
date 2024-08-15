@@ -335,7 +335,11 @@ void Core::bootstrapDht() {
 
 void Core::onFriend(const lib::messenger::IMFriend& frnd) {
     qDebug() << __func__ << frnd.toString();
-    emit friendAdded(FriendInfo{frnd});
+
+    FriendInfo fi{frnd};
+    friendList.addFriend(fi);
+
+    emit friendAdded(fi);
 }
 
 void Core::onFriendRequest(const QString friendId, QString msg) {

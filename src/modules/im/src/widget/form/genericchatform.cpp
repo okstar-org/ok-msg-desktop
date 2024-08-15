@@ -102,7 +102,7 @@ static QString fontToCss(const QFont& font, const QString& name) {
  * representation if no one was found
  */
 QString GenericChatForm::resolveToxPk(const FriendId& pk) {
-    Friend* f = FriendList::findFriend(pk);
+    Friend* f = Nexus::getCore()->getFriendList().findFriend(pk);
     if (f) {
         return f->getDisplayedName();
     }
@@ -502,7 +502,7 @@ void GenericChatForm::showEvent(QShowEvent*) {
     msgEdit->setFocus();
     if (contact) {
         if (!contact->isGroup()) {
-            auto f = FriendList::findFriend(*contactId);
+            auto f = Nexus::getCore()->getFriendList().findFriend(*contactId);
             if (f) {
                 setContact(f);
             }

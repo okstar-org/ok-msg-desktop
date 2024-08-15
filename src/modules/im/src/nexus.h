@@ -106,13 +106,11 @@ public slots:
     void onLoadProfile(const QString& host, const QString& name, const QString& pass);
     void bootstrapWithProfile(Profile* p);
     void bootstrapWithProfileName(const QString& host, const QString& p);
-    int showLogin(const QString& profileName = QString());
     void do_logout(const QString& profile);
 
 private:
     explicit Nexus(QObject* parent = nullptr);
     ~Nexus();
-    //  void connectLoginScreen(const LoginScreen &loginScreen);
     void setProfile(Profile* p);
 
 private:
