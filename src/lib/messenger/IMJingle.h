@@ -159,7 +159,7 @@ signals:
                                  int32_t ustride,          //
                                  int32_t vstride);
 
-public slots:
+protected slots:
     virtual void onImStarted();
 };
 

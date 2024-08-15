@@ -187,6 +187,7 @@ private:
 
 public slots:
     void onCallAccepted(IMPeerId peerId, QString callId, bool video);
+    void onImStartedCall();
 };
 
 }  // namespace lib::messenger

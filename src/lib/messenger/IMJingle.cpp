@@ -16,14 +16,7 @@
 
 #include <capabilities.h>
 #include <extdisco.h>
-#include <jinglecontent.h>
-#include <jinglefiletransfer.h>
-#include <jinglegroup.h>
-#include <jingleibb.h>
-#include <jingleiceudp.h>
-#include <jinglertp.h>
 #include <jinglesession.h>
-#include <jinglesessionmanager.h>
 
 #include "IM.h"
 #include "base/logs.h"
@@ -56,68 +49,11 @@ void IMJingle::onImStarted() {
     client->registerMessageHandler(this);
     client->registerStanzaExtension(new Jingle::JingleMessage());
 
-    // jingle session
-    _sessionManager = std::make_unique<SessionManager>(client, this);
-    _sessionManager->registerPlugin(new Content());
-
     auto disco = client->disco();
     // jingle
     disco->addFeature(XMLNS_JINGLE);
     disco->addFeature(XMLNS_JINGLE_MESSAGE);
     disco->addFeature(XMLNS_JINGLE_ERRORS);
-
-    // jingle file
-    disco->addFeature(XMLNS_JINGLE_FILE_TRANSFER);
-    disco->addFeature(XMLNS_JINGLE_FILE_TRANSFER4);
-    disco->addFeature(XMLNS_JINGLE_FILE_TRANSFER5);
-    disco->addFeature(XMLNS_JINGLE_FILE_TRANSFER_MULTI);
-    disco->addFeature(XMLNS_JINGLE_IBB);
-    _sessionManager->registerPlugin(new FileTransfer());
-    _sessionManager->registerPlugin(new IBB());
-
-    // jingle av
-    disco->addFeature(XMLNS_JINGLE_ICE_UDP);
-    disco->addFeature(XMLNS_JINGLE_APPS_DTLS);
-    disco->addFeature(XMLNS_JINGLE_APPS_RTP);
-    disco->addFeature(XMLNS_JINGLE_FEATURE_AUDIO);
-    disco->addFeature(XMLNS_JINGLE_FEATURE_VIDEO);
-    disco->addFeature(XMLNS_JINGLE_APPS_RTP_SSMA);
-    disco->addFeature(XMLNS_JINGLE_APPS_RTP_FB);
-    disco->addFeature(XMLNS_JINGLE_APPS_RTP_SSMA);
-    disco->addFeature(XMLNS_JINGLE_APPS_RTP_HDREXT);
-    disco->addFeature(XMLNS_JINGLE_APPS_GROUP);
-    _sessionManager->registerPlugin(new ICEUDP());
-    _sessionManager->registerPlugin(new Group());
-    _sessionManager->registerPlugin(new RTP());
-
-    auto rtcManager = OkRTCManager::getInstance();
-
-    std::list<ExtDisco::Service> discos;
-
-    ExtDisco::Service disco0;
-    disco0.type = "turn";
-    disco0.host = "chuanshaninfo.com";
-    disco0.port = 34780;
-    disco0.username = "gaojie";
-    disco0.password = "hncs";
-    discos.push_back(disco0);
-
-    ExtDisco::Service disco1;
-    disco1.type = "stun";
-    disco1.host = "stun.l.google.com";
-    disco1.port = 19302;
-
-    discos.push_back(disco1);
-
-    for (const auto& item : discos) {
-        ortc::IceServer ice;
-        ice.uri = item.type + ":" + item.host + ":" + std::to_string(item.port);
-        //              "?transport=" + item.transport;
-        ice.username = item.username;
-        ice.password = item.password;
-        qDebug() << "Add ice:" << ice.uri.c_str();
-        rtcManager->addIceServer(ice);
-    }
 
 }
 
@@ -160,6 +96,7 @@ void IMJingle::handleSessionActionError(Action action, Session* session,
 void IMJingle::handleIncomingSession(Session* session) {
     auto sid = qstring(session->sid());
     qDebug() << __func__ << "sId" << sid;
+    // 判断jingle类型，file or av？
 }
 
 // Session

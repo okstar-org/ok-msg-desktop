@@ -50,7 +50,62 @@ inline void packDtls(const ortc::Dtls& src, gloox::Jingle::ICEUDP::Dtls& to) {
 
 IMCall::IMCall(IM* im, QObject* parent) : IMJingle(im, parent) {
     qDebug() << __func__ << "...";
+    connect(im, &IM::started, this, &IMCall::onImStartedCall);
     connectCall(this);
+}
+
+void IMCall::onImStartedCall() {
+    auto client = _im->getClient();
+    assert(client);
+
+    auto disco = client->disco();
+    // jingle av
+    disco->addFeature(XMLNS_JINGLE_ICE_UDP);
+    disco->addFeature(XMLNS_JINGLE_APPS_DTLS);
+    disco->addFeature(XMLNS_JINGLE_APPS_RTP);
+    disco->addFeature(XMLNS_JINGLE_FEATURE_AUDIO);
+    disco->addFeature(XMLNS_JINGLE_FEATURE_VIDEO);
+    disco->addFeature(XMLNS_JINGLE_APPS_RTP_SSMA);
+    disco->addFeature(XMLNS_JINGLE_APPS_RTP_FB);
+    disco->addFeature(XMLNS_JINGLE_APPS_RTP_SSMA);
+    disco->addFeature(XMLNS_JINGLE_APPS_RTP_HDREXT);
+    disco->addFeature(XMLNS_JINGLE_APPS_GROUP);
+
+    // session manager
+    _sessionManager = std::make_unique<SessionManager>(client, this);
+    _sessionManager->registerPlugin(new Content());
+    _sessionManager->registerPlugin(new ICEUDP());
+    _sessionManager->registerPlugin(new Group());
+    _sessionManager->registerPlugin(new RTP());
+
+    auto rtcManager = ortc::OkRTCManager::getInstance();
+
+    std::list<ExtDisco::Service> discos;
+
+    ExtDisco::Service disco0;
+    disco0.type = "turn";
+    disco0.host = "chuanshaninfo.com";
+    disco0.port = 34780;
+    disco0.username = "gaojie";
+    disco0.password = "hncs";
+    discos.push_back(disco0);
+
+    ExtDisco::Service disco1;
+    disco1.type = "stun";
+    disco1.host = "stun.l.google.com";
+    disco1.port = 19302;
+
+    discos.push_back(disco1);
+
+    for (const auto& item : discos) {
+        ortc::IceServer ice;
+        ice.uri = item.type + ":" + item.host + ":" + std::to_string(item.port);
+        //              "?transport=" + item.transport;
+        ice.username = item.username;
+        ice.password = item.password;
+        qDebug() << "Add ice:" << ice.uri.c_str();
+        rtcManager->addIceServer(ice);
+    }
 }
 
 void IMCall::addCallHandler(CallHandler* hdr) {
@@ -597,8 +652,16 @@ void IMCall::sessionOnInitiate(const QString& sId,
                                Jingle::Session* session,
                                const Jingle::Session::Jingle* jingle,
                                const IMPeerId& peerId) {
+    qDebug() << __func__ << "receive session:" << sId;
+
+    auto ps = jingle->plugins();
     ortc::OJingleContentAv cav;
-    parse(jingle->plugins(), cav);
+    parse(ps, cav);
+    if (!cav.isValid()) {
+        qDebug() << "Is not av session!";
+        return;
+    }
+
     cav.sdpType = lib::ortc::JingleSdpType::Offer;
     ortc::OkRTCManager::getInstance()->getRtc()->CreateAnswer(stdstring(peerId.toString()), cav);
 }
@@ -713,12 +776,11 @@ void IMCall::toPlugins(const ortc::OJingleContentAv& oContext, gloox::Jingle::Pl
 }
 
 void IMCall::parse(const PluginList& plugins, ortc::OJingleContentAv& oContextAv) {
-    oContextAv.callType = ortc::JingleCallType::av;
     int mid = 0;
     for (const auto p : plugins) {
         Jingle::JinglePluginType pt = p->pluginType();
         switch (pt) {
-            case JinglePluginType::PluginContent: {
+            case PluginContent: {
                 ortc::OSdp oContent;
 
                 const auto* content = static_cast<const Content*>(p);
@@ -726,6 +788,9 @@ void IMCall::parse(const PluginList& plugins, ortc::OJingleContentAv& oContextAv
 
                 const auto* rtp = content->findPlugin<RTP>(PluginRTP);
                 if (rtp) {
+                    // 存在rtp则设置类型
+                    oContextAv.callType = ortc::JingleCallType::av;
+
                     ortc::SsrcGroup ssrcGroup = {.semantics = rtp->ssrcGroup().semantics,
                                                  .ssrcs = rtp->ssrcGroup().ssrcs};
                     ortc::ORTP description = {

@@ -163,7 +163,7 @@ signals:
     void receiveFileFinished(const IMContactId friendId, QString sId);
 
 public slots:
-    void onImStarted();
+    void onImStartedFile();
 };
 
 }  // namespace lib::messenger

@@ -181,6 +181,8 @@ public:
     //    void parse(const Jingle::Session::Jingle* jingle) override;
     std::vector<OSdp> contents;
 
+    inline bool isValid() { return contents.size() > 0; }
+
     inline bool isVideo() const {
         for (auto s : contents) {
             if (s.rtp.media == Media::video) {

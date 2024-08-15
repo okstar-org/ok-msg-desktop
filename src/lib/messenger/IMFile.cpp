@@ -90,15 +90,29 @@ IMFileSession::~IMFileSession() { qDebug() << __func__ << "sId" << sId; }
 IMFile::IMFile(IM* im, QObject* parent) : IMJingle(im, parent) {
     qRegisterMetaType<File>("File");
 
-    connect(im, &IM::started, this, &IMFile::onImStarted);
+    connect(im, &IM::started, this, &IMFile::onImStartedFile);
 }
 
 IMFile::~IMFile() { qDebug() << __func__; }
 
-void IMFile::onImStarted() {
+void IMFile::onImStartedFile() {
     auto client = _im->getClient();
     assert(client);
     client->registerIqHandler(this, ExtIBB);
+
+    // session manager
+    _sessionManager = std::make_unique<SessionManager>(client, this);
+    _sessionManager->registerPlugin(new Content());
+
+    // jingle file
+    auto disco = client->disco();
+    disco->addFeature(XMLNS_JINGLE_FILE_TRANSFER);
+    disco->addFeature(XMLNS_JINGLE_FILE_TRANSFER4);
+    disco->addFeature(XMLNS_JINGLE_FILE_TRANSFER5);
+    disco->addFeature(XMLNS_JINGLE_FILE_TRANSFER_MULTI);
+    disco->addFeature(XMLNS_JINGLE_IBB);
+    _sessionManager->registerPlugin(new FileTransfer());
+    _sessionManager->registerPlugin(new IBB());
 }
 
 void IMFile::addFileHandler(FileHandler* handler) { fileHandlers.push_back(handler); }
@@ -278,7 +292,6 @@ bool IMFile::sendFileToResource(const JID& jid, const File& file) {
         qDebug() << "Can not create session!";
         return false;
     }
-
 
     PluginList pl;
 
