@@ -37,9 +37,11 @@ using CoreFilePtr = std::unique_ptr<CoreFile>;
 
 class CoreFile : public QObject, public lib::messenger::FileHandler {
     Q_OBJECT
-
 public:
-    static CoreFilePtr makeCoreFile(Core* core, CompatibleRecursiveMutex& coreLoopLock);
+    static CoreFilePtr makeCoreFile(Core* core);
+    static CoreFile* getInstance();
+    void start();
+    void process();
 
     void handleAvatarOffer(QString friendId, QString fileId, bool accept);
 
@@ -105,9 +107,10 @@ private:
     static void onFileReceiveCallback(lib::messenger::Messenger* tox, QString friendId,
                                       QString fileId, uint32_t kind, uint64_t filesize,
                                       const uint8_t* fname, size_t fnameLen, void* vCore);
-    static void onFileControlCallback(lib::messenger::Messenger* tox, QString friendId,
-                                      QString fileId, lib::messenger::FileControl control,
-                                      void* vCore);
+    void onFileControlCallback(lib::messenger::Messenger* tox,
+                               QString friendId,
+                               QString fileId,
+                               lib::messenger::FileControl control);
     static void onFileDataCallback(lib::messenger::Messenger* tox, QString friendId, QString fileId,
                                    uint64_t pos, size_t length, void* vCore);
     static void onFileRecvChunkCallback(lib::messenger::Messenger* tox, QString friendId,
@@ -116,14 +119,15 @@ private:
 
     static QString getCleanFileName(QString filename);
 
-private slots:
-    void onConnectionStatusChanged(QString friendId, Status::Status state);
-
-private:
+    Core* core;
+    std::unique_ptr<QThread> thread;
     QHash<QString, ToxFile> fileMap;
     lib::messenger::Messenger* messenger;
     lib::messenger::MessengerFile* messengerFile;
     CompatibleRecursiveMutex* coreLoopLock = nullptr;
+
+private slots:
+    void onConnectionStatusChanged(QString friendId, Status::Status state);
 };
 
 #endif  // COREFILE_H

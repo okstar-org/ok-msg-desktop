@@ -160,7 +160,7 @@ signals:
                                  int32_t vstride);
 
 private:
-    void connectJingle(IMJingle* jingle);
+    void connectCall(IMCall* imCall);
 
     /**
      * 发起呼叫

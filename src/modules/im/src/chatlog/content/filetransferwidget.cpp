@@ -78,7 +78,7 @@ FileTransferWidget::FileTransferWidget(QWidget* parent, ToxFile file)
                 update();
             });
 
-    CoreFile* coreFile = Core::getInstance()->getCoreFile();
+    CoreFile* coreFile = CoreFile::getInstance();
 
     connect(ui->leftButton, &QPushButton::clicked, this, &FileTransferWidget::onLeftButtonClicked);
     connect(ui->rightButton, &QPushButton::clicked, this,
@@ -133,7 +133,7 @@ void FileTransferWidget::acceptTransfer(const QString& filepath) {
     }
 
     // everything ok!
-    CoreFile* coreFile = Core::getInstance()->getCoreFile();
+    CoreFile* coreFile = CoreFile::getInstance();
     coreFile->acceptFileRecvRequest(fileInfo.receiver, fileInfo.fileId, filepath);
 }
 
@@ -388,7 +388,7 @@ void FileTransferWidget::updateSignals(ToxFile const& file) {
         case FileStatus::BROKEN:
         case FileStatus::FINISHED:
             active = false;
-            disconnect(Core::getInstance()->getCoreFile(), nullptr, this, nullptr);
+            disconnect(CoreFile::getInstance(), nullptr, this, nullptr);
             break;
         case FileStatus::INITIALIZING:
         case FileStatus::PAUSED:
@@ -476,8 +476,8 @@ void FileTransferWidget::setupButtons(ToxFile const& file) {
 }
 
 void FileTransferWidget::handleButton(QPushButton* btn) {
-    CoreFile* coreFile = Core::getInstance()->getCoreFile();
     qDebug() << "handle button for file:" << fileInfo.fileName;
+    CoreFile* coreFile = CoreFile::getInstance();
     if (fileInfo.direction == FileDirection::SENDING) {
         if (btn->objectName() == "cancel") {
             coreFile->cancelFileSend(fileInfo.receiver, fileInfo.fileId);

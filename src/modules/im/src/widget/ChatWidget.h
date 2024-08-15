@@ -4,10 +4,10 @@
  * You can use this software according to the terms and conditions of the Mulan
  * PubL v2. You may obtain a copy of Mulan PubL v2 at:
  *          http://license.coscl.org.cn/MulanPubL-2.0
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY
- * KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
- * NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE. See the
- * Mulan PubL v2 for more details.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PubL v2 for more details.
  */
 
 //
@@ -34,6 +34,9 @@ class AddFriendForm;
 class MessageSessionListWidget;
 class ProfileForm;
 class ProfileInfo;
+class CoreAV;
+class CoreFile;
+
 /**
  * 消息界面
  * @brief The ChatWidget class
@@ -70,6 +73,7 @@ private:
 
     Core* core;
     CoreFile* coreFile;
+    CoreAV* coreAv;
 
     QAction* statusOnline;
     QAction* statusAway;
@@ -119,6 +123,7 @@ private:
 
     void connectToCore(Core* core_);
     void connectToCoreFile(CoreFile* coreFile);
+    void connectToCoreAv(CoreAV* core_);
 
     void groupInvitesUpdate();
     void groupInvitesClear();
@@ -126,7 +131,6 @@ private:
 public slots:
     void on_nameClicked();
 
-    void onCoreChanged(Core& core);
 
     void onStatusSet(Status::Status status);
     void onUsernameSet(const QString& username);

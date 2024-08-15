@@ -80,8 +80,16 @@ void Profile::initCore(const QByteArray& toxsave, ICoreSettings& s, bool isNewPr
     // react to avatar changes
     connect(core.get(), &Core::friendAvatarRemoved, this, &Profile::removeFriendAvatar);
     connect(core.get(), &Core::friendAvatarChanged, this, &Profile::setFriendAvatar);
-//    connect(core.get(), &Core::fileAvatarOfferReceived, this, &Profile::onAvatarOfferReceived,
-//            Qt::ConnectionType::QueuedConnection);
+    //    connect(core.get(), &Core::fileAvatarOfferReceived, this, &Profile::onAvatarOfferReceived,
+    //            Qt::ConnectionType::QueuedConnection);
+
+    // CoreAV
+    coreAv = CoreAV::makeCoreAV(core.get());
+    coreAv->start();
+
+    // CoreFile
+    coreFile = CoreFile::makeCoreFile(core.get());
+    coreFile->start();
 }
 
 Profile::Profile(const QString& host,
@@ -228,10 +236,10 @@ Profile* Profile::createProfile(QString host,
         return nullptr;
     }
 
-//    if (!ProfileLocker::lock(name)) {
-//        qWarning() << "Failed to lock profile " << name;
-//        return nullptr;
-//    }
+    //    if (!ProfileLocker::lock(name)) {
+    //        qWarning() << "Failed to lock profile " << name;
+    //        return nullptr;
+    //    }
 
     Settings::getInstance().createPersonal(name);
     Profile* p = new Profile(host, name, password, true);
@@ -511,7 +519,7 @@ void Profile::setAvatar(QByteArray pic, bool saveToCore) {
     saveFriendAvatar(selfPk, avatarData);
 
     emit selfAvatarChanged(pixmap);
-    if(saveToCore) core->setAvatar(avatarData);
+    if (saveToCore) core->setAvatar(avatarData);
 }
 
 void Profile::setAvatarOnly(const QPixmap& pixmap_) {
@@ -613,7 +621,7 @@ QByteArray Profile::getFriendAvatarHash(const FriendId& owner) {
  */
 void Profile::removeAvatar(bool saveToCore) {
     removeFriendAvatar(core->getSelfPeerId().getPublicKey());
-    if(saveToCore){
+    if (saveToCore) {
         core->setAvatar({});
     }
 }
@@ -621,9 +629,7 @@ void Profile::removeAvatar(bool saveToCore) {
 /**
  * @brief Removes friend avatar.
  */
-void Profile::removeFriendAvatar(const FriendId& owner) {
-    QFile::remove(avatarPath(owner));
-}
+void Profile::removeFriendAvatar(const FriendId& owner) { QFile::remove(avatarPath(owner)); }
 
 /**
  * @brief Checks that the history is enabled in the settings, and loaded

@@ -89,11 +89,17 @@ IMFileSession::~IMFileSession() { qDebug() << __func__ << "sId" << sId; }
 
 IMFile::IMFile(IM* im, QObject* parent) : IMJingle(im, parent) {
     qRegisterMetaType<File>("File");
-    auto client = im->getClient();
-    client->registerIqHandler(this, ExtIBB);
+
+    connect(im, &IM::started, this, &IMFile::onImStarted);
 }
 
 IMFile::~IMFile() { qDebug() << __func__; }
+
+void IMFile::onImStarted() {
+    auto client = _im->getClient();
+    assert(client);
+    client->registerIqHandler(this, ExtIBB);
+}
 
 void IMFile::addFileHandler(FileHandler* handler) { fileHandlers.push_back(handler); }
 

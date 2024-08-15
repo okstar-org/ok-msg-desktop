@@ -161,6 +161,9 @@ signals:
                           const std::string chunk);
 
     void receiveFileFinished(const IMContactId friendId, QString sId);
+
+public slots:
+    void onImStarted();
 };
 
 }  // namespace lib::messenger

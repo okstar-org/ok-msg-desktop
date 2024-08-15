@@ -80,7 +80,7 @@ void acceptFileTransfer(ToxFile& file, const QString& path) {
     // Do not automatically accept the file-transfer if the path is not writable.
     // The user can still accept it manually.
     if (tryRemoveFile(filepath)) {
-        CoreFile* coreFile = Core::getInstance()->getCoreFile();
+        CoreFile* coreFile = CoreFile::getInstance();
         coreFile->acceptFileRecvRequest(file.receiver, file.fileId, filepath);
     } else {
         qWarning() << "Cannot write to " << filepath;
@@ -152,8 +152,11 @@ void ChatWidget::init() {
     connect(ok::Application::Instance()->bus(), &ok::Bus::coreChanged, this,
             [&](Core* core) { connectToCore(core); });
 
+    connect(ok::Application::Instance()->bus(), &ok::Bus::coreAvChanged, this,
+            [&](CoreAV* av) { connectToCoreAv(av); });
+
     connect(ok::Application::Instance()->bus(), &ok::Bus::coreFileChanged, this,
-            [&](CoreFile* coreFile) { connectToCoreFile(coreFile); });
+            [&](CoreFile* file) { connectToCoreFile(file); });
 
     settings::Translator::registerHandler([this] { retranslateUi(); }, this);
 }
@@ -222,19 +225,11 @@ void ChatWidget::connectToCoreFile(CoreFile* coreFile) {
     connect(coreFile, &CoreFile::fileSendFailed, this, &ChatWidget::dispatchFileSendFailed);
 }
 
-void ChatWidget::onCoreChanged(Core& core_) {
-    core = &core_;
-    connectToCore(core);
-    connectToCoreFile(core->getCoreFile());
-
-    auto username = core->getUsername();
-    qDebug() << "username" << username;
-    ui->nameLabel->setText(username);
-
-    const CoreAV* av = CoreAV::getInstance();
-    connect(av, &CoreAV::avInvite, this, &ChatWidget::onAvInvite);
-    connect(av, &CoreAV::avStart, this, &ChatWidget::onAvStart);
-    connect(av, &CoreAV::avEnd, this, &ChatWidget::onAvEnd);
+void ChatWidget::connectToCoreAv(CoreAV* core_) {
+    coreAv = core_;
+    connect(coreAv, &CoreAV::avInvite, this, &ChatWidget::onAvInvite);
+    connect(coreAv, &CoreAV::avStart, this, &ChatWidget::onAvStart);
+    connect(coreAv, &CoreAV::avEnd, this, &ChatWidget::onAvEnd);
 }
 
 void ChatWidget::onMessageSessionReceived(const ContactId& contactId, const QString& sid) {
@@ -872,20 +867,6 @@ void ChatWidget::onAvStart(const FriendId& friendId, bool video) {
 void ChatWidget::onAvEnd(const FriendId& friendId, bool error) {
     qDebug() << __func__ << "friendId" << friendId << "error" << error;
     sessionListWidget->setFriendAvEnd(friendId, error);
-
-    //  headWidget->removeCallConfirm();
-    //  // Fixes an OS X bug with ending a call while in full screen
-    //  if (netcam && netcam->isFullScreen()) {
-    //    netcam->showNormal();
-    //  }
-
-    //  emit stopNotification();
-    //  emit endCallNotification();
-
-    //  auto status = Core::getInstance()->getStatus();
-    //  updateCallButtons(status);
-    //    stopCounter(error);
-    //  hideNetcam();
 }
 
 void ChatWidget::onFriendNickChanged(const FriendId& friendPk, const QString& nickname) {

@@ -40,8 +40,6 @@
 
 #include <src/model/message.h>
 
-class CoreAV;
-class CoreFile;
 class IAudioControl;
 class ICoreSettings;
 class GroupInvite;
@@ -76,8 +74,9 @@ public:
     static Core* getInstance();
     //  const CoreAV *getAv() const;
     //  CoreAV *getAv();
-    CoreFile* getCoreFile() const;
-    ~Core();
+    //    CoreFile* getCoreFile() const;
+    ~Core() override;
+
     lib::messenger::Messenger* getMessenger() { return tox.get(); }
     static const QString TOX_EXT;
     static QStringList splitMessage(const QString& message);
@@ -330,8 +329,8 @@ private:
     FriendList friendList;
 
     std::unique_ptr<lib::messenger::Messenger> tox;
-    std::unique_ptr<CoreFile> file;
-    std::unique_ptr<CoreAV> av;
+    //    std::unique_ptr<CoreFile> file;
+    //    std::unique_ptr<CoreAV> av;
 
     MsgId m_receipt;
     QTimer* toxTimer = nullptr;

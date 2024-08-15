@@ -11,12 +11,14 @@
  */
 
 #include "coreav.h"
+#include <src/nexus.h>
 #include <QCoreApplication>
 #include <QDebug>
 #include <QThread>
 #include <QTimer>
-#include <src/nexus.h>
 #include <cassert>
+#include "Bus.h"
+#include "application.h"
 #include "base/compatiblerecursivemutex.h"
 #include "core.h"
 #include "src/audio/audio.h"
@@ -131,6 +133,8 @@ void CoreAV::process() {
             &CoreAV::onFriendVideoFrame);
     connect(imCall, &lib::messenger::MessengerCall::receiveSelfVideoFrame, this,
             &CoreAV::onSelfVideoFrame);
+
+    emit ok::Application::Instance() -> bus()->coreAvChanged(this);
 }
 
 bool CoreAV::isCallStarted(const ContactId* f) const {

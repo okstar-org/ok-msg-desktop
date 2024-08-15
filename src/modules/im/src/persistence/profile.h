@@ -13,10 +13,13 @@
 #ifndef PROFILE_H
 #define PROFILE_H
 
-#include "src/core/core.h"
 #include "src/core/toxencrypt.h"
 #include "src/core/toxid.h"
 
+#include "src/core/core.h"
+#include "src/core/coreav.h"
+#include "src/core/corefile.h"
+#include "src/core/icoresettings.h"
 #include "src/friendlist.h"
 #include "src/persistence/history.h"
 
@@ -56,7 +59,18 @@ public:
 
     void startCore();
     void stopCore();
+
     Core* getCore();
+
+    CoreAV* getCoreAv() {
+        assert(coreAv.get());
+        return coreAv.get();
+    }
+
+    CoreFile* getCoreFile() {
+        assert(coreFile.get());
+        return coreFile.get();
+    }
 
     bool isEncrypted() const;
     QString setPassword(const QString& newPassword);
@@ -108,7 +122,10 @@ private:
     void initCore(const QByteArray& toxsave, ICoreSettings& s, bool isNewProfile);
 
 private:
-    std::unique_ptr<Core> core = nullptr;
+    std::unique_ptr<Core> core;
+    std::unique_ptr<CoreAV> coreAv;
+    std::unique_ptr<CoreFile> coreFile;
+
     QString host;
     // akka username
     QString name;

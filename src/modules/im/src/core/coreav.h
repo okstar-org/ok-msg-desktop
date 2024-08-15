@@ -45,6 +45,7 @@ public:
     IAudioControl* getAudio();
 
     ~CoreAV();
+    void start();
 
     bool isCallStarted(const ContactId* f) const;
     bool isCallActive(const ContactId* f) const;
@@ -82,7 +83,6 @@ public slots:
     bool cancelCall(QString friendId);
     void rejectCall(const ToxPeer& peerId);
     void timeoutCall(QString friendId);
-    void start();
 
 signals:
     void avInvite(ToxPeer peerId, bool video);
