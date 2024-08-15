@@ -35,12 +35,6 @@ class IM;
 class IMJingle;
 enum class CallDirection;
 
-struct IMCall0 {
-    QString id;
-    QString sId;
-    CallDirection direction;
-};
-
 class IMCall : public IMJingle, public lib::ortc::OkRTCHandler {
     Q_OBJECT
 public:

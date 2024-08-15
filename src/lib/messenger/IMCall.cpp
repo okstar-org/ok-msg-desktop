@@ -48,60 +48,65 @@ inline void packDtls(const ortc::Dtls& src, gloox::Jingle::ICEUDP::Dtls& to) {
     to.fingerprint = src.fingerprint;
 }
 
-IMCall::IMCall(IM* im, QObject* parent) : IMJingle(im, parent) { qDebug() << __func__ << "..."; }
+IMCall::IMCall(IM* im, QObject* parent) : IMJingle(im, parent) {
+    qDebug() << __func__ << "...";
+    connectCall(this);
+}
 
-void IMCall::addCallHandler(CallHandler* hdr) { callHandlers.push_back(hdr); }
-
-bool IMCall::callToGroup(const QString& g) { return false; }
-
-void IMCall::connectJingle(IMJingle* _jingle) {
-    qDebug() << __func__ << _jingle;
-
+void IMCall::addCallHandler(CallHandler* hdr) {
     /**
      * callHandlers
      */
-    connect(_jingle, &IMCall ::receiveCallRequest, this,
+    callHandlers.push_back(hdr);
+}
+
+bool IMCall::callToGroup(const QString& g) { return false; }
+
+void IMCall::connectCall(IMCall* imCall) {
+    qDebug() << __func__ << imCall;
+
+    connect(imCall, &IMCall ::receiveCallRequest, this,
             [&](IMPeerId peerId, QString callId, bool audio, bool video) {
                 for (auto handler : callHandlers) {
                     handler->onCall(peerId, callId, audio, video);
                 }
             });
 
-    connect(_jingle, &IMCall::receiveCallRetract, this, [&](QString friendId, int state) {
+    connect(imCall, &IMCall::receiveCallRetract, this, [&](QString friendId, int state) {
         for (auto handler : callHandlers) {
             handler->onCallRetract(friendId, state);
         }
     });
 
-    connect(_jingle, &IMCall::receiveCallAcceptByOther, this,
+    connect(imCall, &IMCall::receiveCallAcceptByOther, this,
             [&](const QString& callId, const IMPeerId& peerId) {
                 for (auto handler : callHandlers) {
                     handler->onCallAcceptByOther(callId, peerId);
                 }
             });
 
-    connect(_jingle, &IMCall::receiveCallStateAccepted, this, &IMCall::onCallAccepted);
+    connect(imCall, &IMCall::receiveCallStateAccepted, this, &IMCall::onCallAccepted);
 
-    connect(_jingle, &IMCall::receiveCallStateRejected, this,
+    connect(imCall, &IMCall::receiveCallStateRejected, this,
             [&](IMPeerId friendId, QString callId, bool video) {
                 for (auto handler : callHandlers) {
                     handler->receiveCallStateRejected(friendId, callId, video);
                 }
             });
 
-    connect(_jingle, &IMCall::receiveFriendHangup, this, [&](QString friendId, int state) {
+    connect(imCall, &IMCall::receiveFriendHangup, this, [&](QString friendId, int state) {
         for (auto handler : callHandlers) {
             handler->onHangup(friendId, (CallState)state);
         }
     });
 
-    connect(_jingle, &IMCall::receiveFriendHangup, this, [&](QString friendId, int state) {
+    connect(imCall, &IMCall::receiveFriendHangup, this, [&](QString friendId, int state) {
         for (auto handler : callHandlers) {
             handler->onHangup(friendId, (CallState)state);
         }
     });
 
-    //  connect(_jingle, &IMCall::receiveFriendVideoFrame,
+    //  connect(imCall, &IMCall::receiveFriendVideoFrame,
     //          this,
     //          [&](const QString &friendId, //
     //              uint16_t w, uint16_t h,  //
@@ -113,7 +118,7 @@ void IMCall::connectJingle(IMJingle* _jingle) {
     //                                         ystride, ustride, vstride);
     //          });
     //
-    //  connect(_jingle, &IMCall::receiveSelfVideoFrame, this,
+    //  connect(imCall, &IMCall::receiveSelfVideoFrame, this,
     //          [&](uint16_t w, uint16_t h, //
     //              const uint8_t *y, const uint8_t *u, const uint8_t *v,
     //              int32_t ystride, int32_t ustride, int32_t vstride) {
@@ -376,7 +381,7 @@ void IMCall::doJingleMessage(const IMPeerId& peerId, const gloox::Jingle::Jingle
              * 对方拒绝
              */
             //      mPeerRequestMedias.clear();
-            auto ms = jm->medias();
+            const auto& ms = jm->medias();
             emit receiveCallStateRejected(peerId, sId, ms.size() > 1);
             //      emit receiveFriendHangup(friendId, 0);
             break;
@@ -753,8 +758,6 @@ void IMCall::parse(const PluginList& plugins, ortc::OJingleContentAv& oContextAv
                 oContextAv.contents.push_back(oContent);
                 break;
             }
-            default:
-                break;
             case PluginNone:
                 break;
             case PluginFileTransfer:
@@ -770,6 +773,8 @@ void IMCall::parse(const PluginList& plugins, ortc::OJingleContentAv& oContextAv
             case PluginRTP:
                 break;
             case PluginIBB:
+                break;
+            default:
                 break;
         }
         mid++;
