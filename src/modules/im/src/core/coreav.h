@@ -157,7 +157,7 @@ private:
     // atomic because potentially accessed by different threads
     Core* core;
     std::atomic<IAudioControl*> audioCtrl;
-    std::unique_ptr<lib::messenger::MessengerCall> imCall;
+    lib::messenger::MessengerCall* imCall;
     std::unique_ptr<QThread> coreavThread;
     QTimer* iterateTimer = nullptr;
 

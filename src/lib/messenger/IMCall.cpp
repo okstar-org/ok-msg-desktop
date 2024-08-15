@@ -48,7 +48,7 @@ inline void packDtls(const ortc::Dtls& src, gloox::Jingle::ICEUDP::Dtls& to) {
     to.fingerprint = src.fingerprint;
 }
 
-IMCall::IMCall(IM* im, QObject* parent) : IMJingle(im, parent) {}
+IMCall::IMCall(IM* im, QObject* parent) : IMJingle(im, parent) { qDebug() << __func__ << "..."; }
 
 void IMCall::addCallHandler(CallHandler* hdr) { callHandlers.push_back(hdr); }
 
@@ -136,7 +136,7 @@ bool IMCall::callToFriend(const QString& friendId, const QString& sId, bool vide
 
     proposeJingleMessage(friendId, sId, video);
 
-    auto resources = im->getOnlineResources(stdstring(friendId));
+    auto resources = _im->getOnlineResources(stdstring(friendId));
     if (resources.empty()) {
         qWarning() << "Can not find online friends" << friendId;
         return false;
@@ -166,7 +166,7 @@ void IMCall::callReject(const IMPeerId& f, const QString& sId) { rejectCall(f, s
 bool IMCall::startCall(const QString& friendId, const QString& sId, bool video) {
     qDebug() << __func__ << "friendId:" << friendId << "video:" << video;
 
-    auto resources = im->getOnlineResources(stdstring(friendId));
+    auto resources = _im->getOnlineResources(stdstring(friendId));
     if (resources.empty()) {
         qWarning() << "目标用户不在线！";
         return false;
@@ -184,7 +184,7 @@ bool IMCall::sendCallToResource(const QString& friendId, const QString& sId, boo
 bool IMCall::createCall(const IMPeerId& to, const QString& sId, bool video) {
     qDebug() << __func__ << "to:" << to.toString() << "sId:" << sId;
 
-    auto ws = createSession(im->getSelfId(), to, sId, lib::ortc::JingleCallType::av);
+    auto ws = createSession(_im->getSelfId(), to, sId, lib::ortc::JingleCallType::av);
 
     auto rtc = lib::ortc::OkRTCManager::getInstance()->getRtc();
     rtc->addRTCHandler(this);
@@ -343,7 +343,7 @@ void IMCall::sessionOnAccept(const QString& sId,
         return;
     }
     // self id
-    auto selfId = im->getSelfId();
+    auto selfId = _im->getSelfId();
 
     // 创建session
     for (auto& file : m_sessionMap) {

@@ -183,9 +183,6 @@ private:
 
     void join(const JID& room);
 
-    IM* im;
-    IMJingle* jingle;
-    //    ok::session::AuthSession* session;
     std::vector<CallHandler*> callHandlers;
 
     // sid -> session

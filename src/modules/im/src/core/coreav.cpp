@@ -84,6 +84,7 @@ CoreAV::~CoreAV() {
 CoreAV::CoreAVPtr CoreAV::makeCoreAV(Core* core) {
     if (!instance) {
         instance = new CoreAV(core);
+        instance->start();
     }
     return CoreAVPtr{instance};
 }
@@ -123,12 +124,12 @@ void CoreAV::process() {
 
     assert(QThread::currentThread() == coreavThread.get());
 
-    imCall = std::make_unique<lib::messenger::MessengerCall>(core->getMessenger());
+    imCall = new lib::messenger::MessengerCall(core->getMessenger(), this);
     imCall->addCallHandler(this);
 
-    connect(imCall.get(), &lib::messenger::MessengerCall::receiveFriendVideoFrame, this,
+    connect(imCall, &lib::messenger::MessengerCall::receiveFriendVideoFrame, this,
             &CoreAV::onFriendVideoFrame);
-    connect(imCall.get(), &lib::messenger::MessengerCall::receiveSelfVideoFrame, this,
+    connect(imCall, &lib::messenger::MessengerCall::receiveSelfVideoFrame, this,
             &CoreAV::onSelfVideoFrame);
 }
 
@@ -171,14 +172,11 @@ bool CoreAV::answerCall(ToxPeer peerId, bool video) {
     locker.unlock();
 
     if (answer) {
-        //
         emit avStart(friendId, isCallVideoEnabled(&friendId));
         it->second->setActive(true);
         return true;
     } else {
         qWarning() << "Failed to answer call with error";
-        //    toxav_call_control(toxav.get(), friendNum, TOXAV_CALL_CONTROL_CANCEL,
-        //                               nullptr);
         calls.erase(it);
         return false;
     }

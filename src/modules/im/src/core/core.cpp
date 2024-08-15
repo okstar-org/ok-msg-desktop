@@ -336,9 +336,11 @@ void Core::bootstrapDht() {
 void Core::onFriend(const lib::messenger::IMFriend& frnd) {
     qDebug() << __func__ << frnd.toString();
 
+    // 加入到朋友列表
     FriendInfo fi{frnd};
     friendList.addFriend(fi);
 
+    // 发射朋友添加事件
     emit friendAdded(fi);
 }
 
