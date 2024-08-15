@@ -21,7 +21,9 @@
 
 class IDialogsManager;
 class Group;
+class Friend;
 class FriendId;
+class Profile;
 
 class GroupChatroom : public Chatroom {
     Q_OBJECT
@@ -34,12 +36,13 @@ public:
     bool hasNewMessage() const;
     void resetEventFlags();
 
+    Friend* findFriend(const FriendId& pk);
     bool friendExists(const FriendId& pk);
     void inviteFriend(const FriendId& pk);
 
 private:
     const GroupId* groupId{nullptr};
-
+    Profile* mProfile;
     IDialogsManager* dialogsManager{nullptr};
 };
 

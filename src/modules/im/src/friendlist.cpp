@@ -17,7 +17,9 @@
 #include "src/model/friend.h"
 #include "src/persistence/settings.h"
 
-FriendMap FriendList::friendMap;
+FriendList::FriendList(QObject* parent) : QObject(parent) {}
+
+FriendList::~FriendList() { clear(); }
 
 Friend* FriendList::addFriend(const FriendInfo& friendInfo) {
     qDebug() << __func__ << "friendInfo:" << friendInfo.toString();
@@ -28,8 +30,10 @@ Friend* FriendList::addFriend(const FriendInfo& friendInfo) {
         return frnd;
     }
 
-    Friend* newfriend = new Friend(friendInfo.id, friendInfo.isFriend(), friendInfo.getAlias(), {});
+    auto* newfriend = new Friend(friendInfo.id, friendInfo.isFriend(), friendInfo.getAlias(), {});
     friendMap[((ContactId&)friendInfo).toString()] = newfriend;
+
+    emit friendAdded(newfriend);
 
     //  if(friendInfo.resource.isEmpty()){
     //      newfriend->addEnd(friendInfo.resource);
@@ -37,7 +41,14 @@ Friend* FriendList::addFriend(const FriendInfo& friendInfo) {
     return newfriend;
 }
 
-Friend* FriendList::findFriend(const ContactId& cId) { return friendMap.value(cId.toString()); }
+Friend* FriendList::findFriend(const ContactId& cId) {
+    auto f = friendMap.value(cId.toString());
+    if (!f) {
+        f = new Friend(FriendId(cId));
+        friendMap.insert(cId.toString(), f);
+    }
+    return f;
+}
 
 void FriendList::removeFriend(const FriendId& friendPk, bool fake) {
     auto f = findFriend(friendPk);

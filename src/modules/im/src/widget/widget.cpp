@@ -798,7 +798,7 @@ bool Widget::newFriendMessageAlert(const FriendId& friendId, const QString& text
     bool hasActive;
     QWidget* currentWindow;
     ContentDialog* contentDialog = ContentDialogManager::getInstance()->getFriendDialog(friendId);
-    Friend* f = FriendList::findFriend(friendId);
+    Friend* f = Nexus::getCore()->getFriendList().findFriend(friendId);
 
     if (contentDialog != nullptr) {
         currentWindow = contentDialog->window();
@@ -866,7 +866,7 @@ bool Widget::newGroupMessageAlert(const GroupId& groupId, const FriendId& author
     if (settings.getNotifyHide()) {
         notifier.notifyMessageSimple(DesktopNotify::MessageType::GROUP);
     } else {
-        IMFriend* f = FriendList::findFriend(authorPk);
+        IMFriend* f = Nexus::getCore()->getFriendList().findFriend(authorPk);
         QString title = g->getPeerList().value(authorPk) + " (" + g->getDisplayedName() + ")";
         if (!f) {
             notifier.notifyMessage(title, message);
@@ -947,7 +947,7 @@ bool Widget::newMessageAlert(QWidget* currentWindow, bool isActive, bool sound, 
 void Widget::friendRequestedTo(const ToxId& friendAddress, const QString& nick,
                                const QString& message) {
     qDebug() << "friendRequestedTo" << friendAddress.getPublicKey().toString() << nick << message;
-    auto frd = FriendList::findFriend(friendAddress.getPublicKey());
+    auto frd = Nexus::getCore()->getFriendList().findFriend(friendAddress.getPublicKey());
     if (frd) {
         return;
     }
@@ -1082,7 +1082,7 @@ ContentLayout* Widget::createContentDialog(DialogType type) const {
 }
 
 void Widget::copyFriendIdToClipboard(const FriendId& friendId) {
-    Friend* f = FriendList::findFriend(friendId);
+    Friend* f = Nexus::getCore()->getFriendList().findFriend(friendId);
     if (f != nullptr) {
         QClipboard* clipboard = QApplication::clipboard();
         clipboard->setText(friendId.toString(), QClipboard::Clipboard);

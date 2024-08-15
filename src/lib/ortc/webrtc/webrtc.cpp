@@ -678,10 +678,6 @@ void WebRTC::CreateAnswer(const std::string& peerId, const OJingleContentAv& ca)
     RTC_LOG_F(LS_INFO) << "peerId:" << peerId;
 
     Conductor* conductor = createConductor(peerId, ca.sessionId, ca.isVideo());
-    if (!conductor) {
-        RTC_LOG_F(LS_WARNING) << "conductor is null!";
-        return;
-    }
     // webrtc::SdpType::kOffer,
     auto sdp = convertToSdp(ca);
     conductor->SetRemoteDescription(std::move(sdp));

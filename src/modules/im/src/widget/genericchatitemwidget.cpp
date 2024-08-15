@@ -93,7 +93,7 @@ void GenericChatItemWidget::updateLastMessage(const Message& m) {
         if (ContactId(m.from).username == core->getUsername()) {
             prefix = tr("I:");
         } else {
-            auto f = FriendList::findFriend(ContactId(m.from));
+            auto f = Nexus::getCore()->getFriendList().findFriend(ContactId(m.from));
             if (f) {
                 prefix = f->getDisplayedName() + tr(":");
             } else {

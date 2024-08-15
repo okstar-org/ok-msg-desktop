@@ -85,6 +85,8 @@ private:
      * in order to find our existing transfers
      */
     std::vector<CurrentFileTransfer> currentFileTransfers;
+
+    Profile* mProfile;
 };
 
 #endif /*SESSION_CHAT_LOG_H*/

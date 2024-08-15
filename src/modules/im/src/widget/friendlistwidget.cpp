@@ -4,10 +4,10 @@
  * You can use this software according to the terms and conditions of the Mulan
  * PubL v2. You may obtain a copy of Mulan PubL v2 at:
  *          http://license.coscl.org.cn/MulanPubL-2.0
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY
- * KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
- * NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE. See the
- * Mulan PubL v2 for more details.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PubL v2 for more details.
  */
 
 #include "friendlistwidget.h"
@@ -105,10 +105,8 @@ FriendWidget* FriendListWidget::addFriend(const FriendInfo& friendInfo) {
     connectFriendWidget(*fw);
     friendWidgets.insert(friendInfo.getId().toString(), fw);
 
-    {
-        auto frid = FriendList::findFriend(friendInfo.getId());
-        emit Widget::getInstance()->friendAdded(frid);
-    }
+    auto frid = Nexus::getCore()->getFriendList().findFriend(friendInfo.getId());
+    emit Widget::getInstance() -> friendAdded(frid);
 
     //  CircleWidget *circleWidget = CircleWidget::getFromID(circleIndex);
     //  if (circleWidget == nullptr)
@@ -118,7 +116,6 @@ FriendWidget* FriendListWidget::addFriend(const FriendInfo& friendInfo) {
     auto status = core->getFriendStatus(friendInfo.toString());
     listLayout->addFriendWidget(fw, status);
     setFriendStatus(friendInfo.getId(), status);
-
     return fw;
 }
 
@@ -327,7 +324,7 @@ void FriendListWidget::dragEnterEvent(QDragEnterEvent* event) {
         return;
     }
     FriendId toxPk(event->mimeData()->data("toxPk"));
-    Friend* frnd = FriendList::findFriend(toxPk);
+    Friend* frnd = Nexus::getCore()->getFriendList().findFriend(toxPk);
     if (frnd) event->acceptProposedAction();
 }
 
@@ -340,7 +337,7 @@ void FriendListWidget::dropEvent(QDropEvent* event) {
     // Check, that the user has a friend with the same ToxPk
     assert(event->mimeData()->hasFormat("toxPk"));
     const FriendId toxPk{event->mimeData()->data("toxPk")};
-    Friend* f = FriendList::findFriend(toxPk);
+    Friend* f = Nexus::getCore()->getFriendList().findFriend(toxPk);
     if (!f) return;
 
     // Save CircleWidget before changing the Id
@@ -475,8 +472,8 @@ void FriendListWidget::removeFriend(const FriendId& friendPk) {
 
     emit deleteFriendWidget(friendPk);
 
-    auto frid = FriendList::findFriend(friendPk);
-    emit Widget::getInstance()->friendRemoved(frid);
+    auto frid = Nexus::getCore()->getFriendList().findFriend(friendPk);
+    emit Widget::getInstance() -> friendRemoved(frid);
     delete fw;
 }
 
@@ -541,7 +538,7 @@ void FriendListWidget::setFriendStatusMsg(const FriendId& friendPk, const QStrin
 
 void FriendListWidget::setFriendName(const FriendId& friendPk, const QString& name) {
     qDebug() << __func__ << friendPk.toString() << name;
-    auto f = FriendList::findFriend(friendPk);
+    auto f = Nexus::getCore()->getFriendList().findFriend(friendPk);
     if (!f) {
         qWarning() << "friend is no existing.";
         return;
@@ -551,7 +548,7 @@ void FriendListWidget::setFriendName(const FriendId& friendPk, const QString& na
 
 void FriendListWidget::setFriendAlias(const FriendId& friendPk, const QString& alias) {
     qDebug() << __func__ << friendPk.toString() << alias;
-    auto f = FriendList::findFriend(friendPk);
+    auto f = Nexus::getCore()->getFriendList().findFriend(friendPk);
     if (!f) {
         qWarning() << "friend is no existing.";
         return;

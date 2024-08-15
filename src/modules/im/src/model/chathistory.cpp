@@ -379,7 +379,8 @@ void ChatHistory::loadHistoryIntoSessionChatLog(ChatLogIdx start) const {
         auto currentIdx = nextIdx++;
 
         auto sender = ToxId(message.sender).getPublicKey();
-        //        auto frnd = FriendList::findFriend(ContactId{message.sender});
+        //        auto frnd =
+        //        Nexus::getCore()->getFriendList().findFriend(ContactId{message.sender});
         auto dispName = sender.username;
         const auto date = message.timestamp;
 

@@ -29,17 +29,24 @@ class FriendId;
 
 using FriendMap = QMap<QString, Friend*>;
 
-class FriendList {
+class FriendList : public QObject {
+    Q_OBJECT
 public:
-    static Friend* addFriend(const FriendInfo& friendInfo);
-    static Friend* findFriend(const ContactId& cId);
-    static QList<Friend*> getAllFriends();
-    static void removeFriend(const FriendId& friendPk, bool fake = false);
-    static void clear();
-    static QString decideNickname(const FriendId& friendPk, const QString& origName);
+    explicit FriendList(QObject* parent = nullptr);
+    ~FriendList() override;
+
+    Friend* addFriend(const FriendInfo& friendInfo);
+    Friend* findFriend(const ContactId& cId);
+    QList<Friend*> getAllFriends();
+    void removeFriend(const FriendId& friendPk, bool fake = false);
+    void clear();
+    QString decideNickname(const FriendId& friendPk, const QString& origName);
 
 private:
-    static FriendMap friendMap;
+    FriendMap friendMap;
+
+signals:
+    void friendAdded(Friend* f);
 };
 
 #endif  // FRIENDLIST_H

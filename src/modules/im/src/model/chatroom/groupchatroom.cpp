@@ -12,6 +12,8 @@
 
 #include "groupchatroom.h"
 
+#include "Bus.h"
+#include "application.h"
 #include "src/core/FriendId.h"
 #include "src/core/core.h"
 #include "src/friendlist.h"
@@ -19,10 +21,15 @@
 #include "src/model/friend.h"
 #include "src/model/group.h"
 #include "src/model/status.h"
+#include "src/nexus.h"
+#include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
 
 GroupChatroom::GroupChatroom(const GroupId* groupId_, IDialogsManager* dialogsManager)
-        : groupId{groupId_}, dialogsManager{dialogsManager} {}
+        : groupId{groupId_}, dialogsManager{dialogsManager}, mProfile{nullptr} {
+    connect(ok::Application::Instance()->bus(), &ok::Bus::profileChanged, this,
+            [&](Profile* profile) { mProfile = profile; });
+}
 
 GroupChatroom::~GroupChatroom() { qDebug() << __func__; }
 
@@ -36,16 +43,23 @@ void GroupChatroom::resetEventFlags() {
 }
 
 bool GroupChatroom::friendExists(const FriendId& pk) {
-    return FriendList::findFriend(pk) != nullptr;
+    return Nexus::getCore()->getFriendList().findFriend(pk) != nullptr;
+}
+
+Friend* GroupChatroom::findFriend(const FriendId& pk) {
+    return Nexus::getCore()->getFriendList().findFriend(pk);
 }
 
 void GroupChatroom::inviteFriend(const FriendId& pk) {
-    const Friend* frnd = FriendList::findFriend(pk);
-    const auto friendId = frnd->getId();
-
-    const auto canInvite = Status::isOnline(frnd->getStatus());
-
-    if (canInvite) {
-        //        Core::getInstance()->groupInviteFriend(friendId.toString(), groupId->getId());
+    const Friend* frnd = Nexus::getCore()->getFriendList().findFriend(pk);
+    if (!frnd) {
+        qWarning() << "Unable to find friend:" << pk.toString();
+        return;
     }
+
+    //    const auto friendId = frnd->getId();
+    //    const auto canInvite = Status::isOnline(frnd->getStatus());
+    //    if (canInvite) {
+    //        Core::getInstance()->groupInviteFriend(friendId.toString(), groupId->getId());
+    //    }
 }

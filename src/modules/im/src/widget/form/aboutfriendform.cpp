@@ -165,7 +165,7 @@ void AboutFriendForm::reloadTheme() {
 void AboutFriendForm::onAliasChanged(const QString& text) {
     auto fid = ui->id->text();
 
-    auto f = FriendList::findFriend(ContactId(fid));
+    auto f = Nexus::getCore()->getFriendList().findFriend(ContactId(fid));
     f->setAlias(text);
 
     Core::getInstance()->setFriendAlias(fid, text);

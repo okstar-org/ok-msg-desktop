@@ -28,8 +28,16 @@ class IMFriend;
 class Friend : public Contact {
     Q_OBJECT
 public:
+    // 朋友关系
+    enum class RelationStatus {
+        none,  // 无
+        to,    // 他是你的朋友
+        from,  // 你是他的朋友
+        both   // 互为朋友
+    };
+
     Friend(const FriendId& friendPk,
-           bool isFriend,
+           bool isFriend = false,
            const QString& userAlias = {},
            const QString& userName = {});
 
@@ -52,7 +60,6 @@ public:
     void setStatus(Status::Status s);
     Status::Status getStatus() const;
 
-    bool isFriend() const { return isFriend_; }
     void addEnd(const QString& end) { ends.append(end); }
 signals:
     //  void nameChanged(const QString &name);
@@ -62,14 +69,20 @@ signals:
     void statusMessageChanged(const QString& message);
     void loadChatHistory();
 
+    void relationStatusChanged(RelationStatus rs);
+
 public slots:
 
 private:
     FriendId id;
     bool hasNewEvents{};
-    bool isFriend_;
     QString statusMessage;
     Status::Status friendStatus;
+    /**
+     * 朋友关系
+     * @see RelationStatus
+     */
+    RelationStatus mRelationStatus;
     QList<QString> ends;  // 终端列表
 };
 

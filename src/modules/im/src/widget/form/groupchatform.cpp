@@ -23,6 +23,7 @@
 #include "src/model/friend.h"
 #include "src/model/group.h"
 #include "src/persistence/igroupsettings.h"
+#include "src/persistence/profile.h"
 #include "src/video/groupnetcamview.h"
 #include "src/widget/chatformheader.h"
 #include "src/widget/flowlayout.h"
@@ -37,6 +38,8 @@
 #include <QRegularExpression>
 #include <QTimer>
 #include <QToolButton>
+
+#include <src/nexus.h>
 
 namespace {
 const auto LABEL_PEER_TYPE_OUR = QVariant(QStringLiteral("our"));
@@ -271,8 +274,12 @@ void GroupChatForm::dragEnterEvent(QDragEnterEvent* ev) {
         return;
     }
     FriendId toxPk{ev->mimeData()->data("toxPk")};
-    Friend* frnd = FriendList::findFriend(toxPk);
-    if (frnd) ev->acceptProposedAction();
+
+    auto profile = Nexus::getProfile();
+    if (profile) {
+        Friend* frnd = Nexus::getCore()->getFriendList().findFriend(toxPk);
+        if (frnd) ev->acceptProposedAction();
+    }
 }
 
 void GroupChatForm::dropEvent(QDropEvent* ev) {
@@ -280,7 +287,12 @@ void GroupChatForm::dropEvent(QDropEvent* ev) {
         return;
     }
     FriendId toxPk{ev->mimeData()->data("toxPk")};
-    Friend* frnd = FriendList::findFriend(toxPk);
+    auto profile = Nexus::getProfile();
+    if (!profile) {
+        return;
+    }
+
+    Friend* frnd = Nexus::getCore()->getFriendList().findFriend(toxPk);
     if (!frnd) return;
 
     QString friendId = frnd->getId().toString();

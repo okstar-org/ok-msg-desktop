@@ -11,11 +11,18 @@
  */
 
 #include "sessionchatlog.h"
-#include "src/friendlist.h"
 
 #include <QDebug>
 #include <QtGlobal>
 #include <mutex>
+
+#include "Bus.h"
+#include "application.h"
+#include "src/friendlist.h"
+#include "src/nexus.h"
+#include "src/persistence/profile.h"
+
+#include <lib/ortc/webrtc/Instance.h>
 
 namespace {
 
@@ -102,7 +109,10 @@ SessionChatLog::SessionChatLog(const ICoreIdHandler& coreIdHandler)
  * @brief Alternate constructor that allows for an initial index to be set
  */
 SessionChatLog::SessionChatLog(ChatLogIdx initialIdx, const ICoreIdHandler& coreIdHandler)
-        : coreIdHandler(coreIdHandler), nextIdx(initialIdx) {}
+        : coreIdHandler(coreIdHandler), nextIdx(initialIdx), mProfile{nullptr} {
+    connect(ok::Application::Instance()->bus(), &ok::Bus::profileChanged, this,
+            [&](Profile* profile) { mProfile = profile; });
+}
 
 SessionChatLog::~SessionChatLog() { qDebug() << __func__; }
 
@@ -419,12 +429,12 @@ void SessionChatLog::onFileUpdated(const FriendId& friendId, const ToxFile& file
         currentFileTransfers.push_back(currentTransfer);
 
         const auto chatLogFile = ChatLogFile{QDateTime::currentDateTime(), file};
-        FriendId senderId{file.sender};
+
         QString senderName;
-        if (coreIdHandler.getSelfId().getId() == file.sender) {
-            senderName = coreIdHandler.getNick();
-        } else {
-            senderName = FriendList::decideNickname(senderId, senderId.username);
+        FriendId senderId{file.sender};
+        auto frnd = Nexus::getCore()->getFriendList().findFriend(senderId);
+        if (frnd) {
+            senderName = frnd->getDisplayedName();
         }
         items.emplace(currentTransfer.idx, ChatLogItem(senderId, senderName, chatLogFile));
         messageIdx = currentTransfer.idx;

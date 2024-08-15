@@ -1,3 +1,15 @@
+/*
+ * Copyright (c) 2022 船山信息 chuanshaninfo.com
+ * The project is licensed under Mulan PubL v2.
+ * You can use this software according to the terms and conditions of the Mulan
+ * PubL v2. You may obtain a copy of Mulan PubL v2 at:
+ *          http://license.coscl.org.cn/MulanPubL-2.0
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PubL v2 for more details.
+ */
+
 #include "ContactWidget.h"
 #include "Bus.h"
 #include "application.h"
@@ -187,7 +199,7 @@ void ContactWidget::onFriendStatusChanged(const FriendId& friendPk, Status::Stat
     qDebug() << __func__ << friendPk.toString() << "status:" << (int)status;
     //  const auto &friendPk = FriendList::id2Key(friendPk);
     contactListWidget->setFriendStatus(friendPk, status);
-    //  IMFriend *f = FriendList::findFriend(friendPk);
+    //  IMFriend *f = Nexus::getCore()->getFriendList().findFriend(friendPk);
     //  if (!f) {
     //    qWarning() << "Unable to find friend" << friendPk;
     //    return;
@@ -217,7 +229,7 @@ void ContactWidget::onFriendStatusChanged(const FriendId& friendPk, Status::Stat
 void ContactWidget::onFriendStatusMessageChanged(const FriendId& friendPk, const QString& message) {
     contactListWidget->setFriendStatusMsg(friendPk, message);
 
-    //  IMFriend *f = FriendList::findFriend(friendPk);
+    //  IMFriend *f = Nexus::getCore()->getFriendList().findFriend(friendPk);
     //  if (!f) {
     //    return;
     //  }

@@ -4,10 +4,10 @@
  * You can use this software according to the terms and conditions of the Mulan
  * PubL v2. You may obtain a copy of Mulan PubL v2 at:
  *          http://license.coscl.org.cn/MulanPubL-2.0
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY
- * KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
- * NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE. See the
- * Mulan PubL v2 for more details.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PubL v2 for more details.
  */
 
 #include "friendwidget.h"
@@ -72,7 +72,7 @@ FriendWidget::FriendWidget(ContentLayout* layout, const FriendInfo& f, QWidget* 
     auto history = profile->getHistory();
     auto dialogManager = ContentDialogManager::getInstance();
 
-    m_friend = FriendList::addFriend(f);
+    m_friend = core->getFriendList().findFriend(f.getId());
     nameLabel->setText(m_friend->getDisplayedName());
 
     // update alias when edited
@@ -142,7 +142,6 @@ FriendWidget::~FriendWidget() {
     qDebug() << __func__;
     removeDetails();
     deinit();
-    FriendList::removeFriend(FriendId{contactId});
 }
 
 void FriendWidget::init() {}

@@ -258,7 +258,7 @@ void ChatWidget::onFriendStatusChanged(const FriendId& friendPk, Status::Status 
     qDebug() << __func__ << friendPk.toString() << "status:" << (int)status;
     //  const auto &friendPk = FriendList::id2Key(friendPk);
     //    contactListWidget->setFriendStatus(friendPk, status);
-    Friend* f = FriendList::findFriend(friendPk);
+    Friend* f = Nexus::getCore()->getFriendList().findFriend(friendPk);
     if (!f) {
         qWarning() << "Unable to find friend" << friendPk.toString();
         return;
@@ -288,7 +288,7 @@ void ChatWidget::onFriendStatusChanged(const FriendId& friendPk, Status::Status 
 void ChatWidget::onFriendStatusMessageChanged(const FriendId& friendPk, const QString& message) {
     sessionListWidget->setFriendStatusMsg(friendPk, message);
 
-    //  IMFriend *f = FriendList::findFriend(friendPk);
+    //  IMFriend *f = Nexus::getCore()->getFriendList().findFriend(friendPk);
     //  if (!f) {
     //    return;
     //  }
@@ -770,7 +770,7 @@ void ChatWidget::cancelFile(const QString& friendId, const QString& fileId) {
     qDebug() << __func__ << "file:" << fileId;
     auto frndId = FriendId{friendId};
 
-    //    Friend *f = FriendList::findFriend(frndId);
+    //    Friend *f = Nexus::getCore()->getFriendList().findFriend(frndId);
     //    if (!f) {
     //        qWarning() <<"IMFriend is no existing!" << friendId;
     //        return;

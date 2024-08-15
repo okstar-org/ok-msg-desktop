@@ -20,14 +20,10 @@ Friend::Friend(const FriendId& friendPk,  //
                const QString& userAlias,  //
                const QString& userName)   //
         : Contact(friendPk, userName, userAlias, false)
-        ,  //
-        id{friendPk}
-        ,  //
-        hasNewEvents{false}
-        ,  //
-        friendStatus{Status::Status::Offline}
-        ,  //
-        isFriend_{isFriend} {
+        , id{friendPk}
+        , hasNewEvents{false}
+        , friendStatus{Status::Status::None}
+        , mRelationStatus{RelationStatus::none} {
     auto core = Core::getInstance();
     friendStatus = core->getFriendStatus(friendPk.toString());
 }
