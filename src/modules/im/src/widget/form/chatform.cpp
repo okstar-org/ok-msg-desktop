@@ -208,7 +208,7 @@ void ChatForm::onAttachClicked() {
 
         qint64 filesize = file.size();
         qDebug() << "sending" << file << "size" << filesize;
-        core->getCoreFile()->sendFile(f->getId(), fileName, path, filesize);
+        Nexus::getProfile()->getCoreFile()->sendFile(f->getId(), fileName, path, filesize);
     }
 }
 
@@ -300,8 +300,8 @@ void ChatForm::dropEvent(QDropEvent* ev) {
         }
 
         if (info.exists()) {
-            core->getCoreFile()->sendFile(f->getId(), fileName, info.absoluteFilePath(),
-                                          info.size());
+            CoreFile::getInstance()->sendFile(f->getId(), fileName, info.absoluteFilePath(),
+                                              info.size());
         }
     }
 }
@@ -342,7 +342,7 @@ void ChatForm::sendImage(const QPixmap& pixmap) {
         qint64 filesize = file.size();
         file.close();
         QFileInfo fi(file);
-        CoreFile* coreFile = Core::getInstance()->getCoreFile();
+        CoreFile* coreFile = CoreFile::getInstance();
         coreFile->sendFile(f->getId(), fi.fileName(), fi.filePath(), filesize);
     } else {
         QMessageBox::warning(this,

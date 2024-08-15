@@ -37,26 +37,47 @@
  * @class CoreFile
  * @brief Manages the file transfer service of toxcore
  */
-
-CoreFilePtr CoreFile::makeCoreFile(Core* core, CompatibleRecursiveMutex& coreLoopLock) {
+static CoreFile* instance = nullptr;
+CoreFilePtr CoreFile::makeCoreFile(Core* core) {
     assert(core != nullptr);
-
     CoreFilePtr result = CoreFilePtr{new CoreFile{core}};
-
     //  connect(core, &Core::friendStatusChanged, result.get(),
     //          &CoreFile::onConnectionStatusChanged);
-
+    instance = result.get();
     return result;
 }
 
-CoreFile::CoreFile(Core* core) : messenger{nullptr}, messengerFile{nullptr} {
+CoreFile::CoreFile(Core* core)
+        : core{core}, messenger{nullptr}, messengerFile{nullptr}, thread{new QThread{this}} {
     qDebug() << __func__;
-    messenger = core->getMessenger();
-    messengerFile = new lib::messenger::MessengerFile(core->getMessenger());
-    messengerFile->addFileHandler(this);
+
+    thread->setObjectName("CoreAV");
+    connect(thread.get(), &QThread::started, this, &CoreFile::process);
+    moveToThread(thread.get());
+
     emit ok::Application::Instance() -> bus()->coreFileChanged(this);
 }
 
+CoreFile* CoreFile::getInstance() {
+    assert(instance);
+    return instance;
+}
+void CoreFile::start() {
+    qDebug() << __func__;
+    thread->start();
+}
+
+void CoreFile::process() {
+    qDebug() << __func__;
+
+    assert(QThread::currentThread() == thread.get());
+
+    messenger = core->getMessenger();
+    messengerFile = new lib::messenger::MessengerFile(core->getMessenger());
+    messengerFile->addFileHandler(this);
+
+    emit ok::Application::Instance() -> bus()->coreFileChanged(this);
+}
 /**
  * @brief Get corefile iteration interval.
  *
@@ -366,12 +387,11 @@ void CoreFile::onFileRequest(const QString& from, const lib::messenger::File& fi
     emit fileReceiveRequested(toxFile);
 }
 
-void CoreFile::onFileControlCallback(lib::messenger::Messenger* tox, QString friendId,
-                                     QString fileId, lib::messenger::FileControl control,
-                                     void* vCore) {
-    Core* core = static_cast<Core*>(vCore);
-    CoreFile* coreFile = core->getCoreFile();
-    ToxFile* file = coreFile->findFile(fileId);
+void CoreFile::onFileControlCallback(lib::messenger::Messenger* tox,
+                                     QString friendId,
+                                     QString fileId,
+                                     lib::messenger::FileControl control) {
+    ToxFile* file = findFile(fileId);
     if (!file) {
         qWarning("onFileControlCallback: No such file in queue");
         return;
@@ -379,15 +399,15 @@ void CoreFile::onFileControlCallback(lib::messenger::Messenger* tox, QString fri
 
     if (control == lib::messenger::FileControl::CANCEL) {
         file->status = FileStatus::CANCELED;
-        emit coreFile->fileTransferCancelled(*file);
-        coreFile->removeFile(fileId);
+        emit fileTransferCancelled(*file);
+        removeFile(fileId);
     } else if (control == lib::messenger::FileControl::PAUSE) {
         file->status = FileStatus::PAUSED;
-        emit coreFile->fileTransferRemotePausedUnpaused(*file, true);
+        emit fileTransferRemotePausedUnpaused(*file, true);
     } else if (control == lib::messenger::FileControl::RESUME) {
         if (file->direction == FileDirection::SENDING) {
             file->status = FileStatus::TRANSMITTING;
-            emit coreFile->fileTransferRemotePausedUnpaused(*file, false);
+            emit fileTransferRemotePausedUnpaused(*file, false);
         }
     } else {
         qWarning() << "Unhandled file control " << (int)control << " for file " << friendId << ':'

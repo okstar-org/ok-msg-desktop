@@ -160,7 +160,7 @@ signals:
                                  int32_t vstride);
 
 private:
-    void connectJingle(IMJingle* jingle);
+    void connectCall(IMCall* imCall);
 
     /**
      * 发起呼叫
@@ -183,9 +183,6 @@ private:
 
     void join(const JID& room);
 
-    IM* im;
-    IMJingle* jingle;
-    //    ok::session::AuthSession* session;
     std::vector<CallHandler*> callHandlers;
 
     // sid -> session

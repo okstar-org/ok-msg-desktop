@@ -158,6 +158,9 @@ signals:
                                  int32_t ystride,          //
                                  int32_t ustride,          //
                                  int32_t vstride);
+
+public slots:
+    virtual void onImStarted();
 };
 
 }  // namespace lib::messenger

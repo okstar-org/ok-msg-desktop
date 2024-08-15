@@ -45,6 +45,7 @@ public:
     IAudioControl* getAudio();
 
     ~CoreAV();
+    void start();
 
     bool isCallStarted(const ContactId* f) const;
     bool isCallActive(const ContactId* f) const;
@@ -82,7 +83,6 @@ public slots:
     bool cancelCall(QString friendId);
     void rejectCall(const ToxPeer& peerId);
     void timeoutCall(QString friendId);
-    void start();
 
 signals:
     void avInvite(ToxPeer peerId, bool video);
@@ -157,7 +157,7 @@ private:
     // atomic because potentially accessed by different threads
     Core* core;
     std::atomic<IAudioControl*> audioCtrl;
-    std::unique_ptr<lib::messenger::MessengerCall> imCall;
+    lib::messenger::MessengerCall* imCall;
     std::unique_ptr<QThread> coreavThread;
     QTimer* iterateTimer = nullptr;
 

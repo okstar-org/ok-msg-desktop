@@ -137,11 +137,6 @@ public:
         return _im;
     }
 
-    IMCall* imCall()const{
-        assert(_imCall);
-        return _imCall;
-    }
-
     IMPeerId getSelfId() const;
     QString getSelfUsername() const;
     QString getSelfNick() const;
@@ -215,7 +210,6 @@ private:
 
     IM* _im;
     IMJingle* jingle;
-    IMCall* _imCall;
 
     // key: sId value:Jingle
     //  QMap<QString, lib::messenger::IMJingle*> jingleMap;
