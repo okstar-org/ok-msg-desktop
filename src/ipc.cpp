@@ -61,7 +61,7 @@ IPC::IPC(uint32_t profileId, QObject* parent)
             IPCMemory* mem = global();
             memset(mem, 0, sizeof(IPCMemory));
             mem->globalId = globalId;
-            mem->lastProcessed = time(nullptr);
+            mem->lastProcessed = 0;  // time(nullptr);
             globalMemory.unlock();
         } else {
             qWarning() << "Couldn't lock to take ownership";
@@ -282,7 +282,6 @@ void IPC::processIpcEvents() {
     }
 
     globalMemory.unlock();
-    //    timer.start();
 }
 
 /**
@@ -306,7 +305,18 @@ bool IPC::isAlive() {
         return false;
     }
 
-    qDebug() << "last" << mem->lastProcessed;
+    {
+        time_t eventTime = mem->lastProcessed;
+        struct tm* timeinfo = localtime(&eventTime);
+        char buffer[80];
+        strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeinfo);
+        qDebug() << "lastProcessedTime:" << buffer;
+
+        eventTime = time(nullptr);
+        timeinfo = localtime(&eventTime);
+        strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeinfo);
+        qDebug() << "currentTime:" << buffer;
+    }
 
     if (difftime(time(nullptr), mem->lastProcessed) >= OWNERSHIP_TIMEOUT_S) {
         return false;
