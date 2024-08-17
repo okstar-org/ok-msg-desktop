@@ -17,9 +17,11 @@
 #pragma once
 
 #include "UI/widget/OWidget.h"
+#include "platformpage.h"
+#include "platformpagecontainer.h"
 
-#include <QPointer>
 #include <QJsonArray>
+#include <QPointer>
 
 class QWebEngineView;
 class QWebChannel;
@@ -31,6 +33,9 @@ class WebSocketTransport;
 namespace ok::platform {
 class AppCenterWidget : public UI::OWidget {
     Q_OBJECT
+signals:
+    void appPageRequest(const QUrl& url, const QString& title);
+
 public:
     AppCenterWidget(QWidget* parent = nullptr);
     void start();
@@ -38,10 +43,10 @@ public:
 private:
     std::unique_ptr<QThread> thread;
 
-    QWebEngineView* webView;
-    QWebChannel* webChannel;
-    QWebSocketServer* wss;
-    WebSocketClientWrapper* clientWrapper;
+    QWebEngineView* webView = nullptr;
+    QWebChannel* webChannel = nullptr;
+    QWebSocketServer* wss = nullptr;
+    WebSocketClientWrapper* clientWrapper = nullptr;
 
     void startWsServer();
     void startWebEngine();
@@ -58,5 +63,25 @@ private:
     QPointer<WebSocketTransport> wsTransport;
     QJsonArray cachedAppList;
     bool hasRequested = false;
+};
+
+// 应用中心Page页
+class AppCenterPage : public PlatformPage {
+public:
+    using PlatformPage::PlatformPage;
+    ~AppCenterPage();
+    QString getTitle() override;
+    void createContent(QWidget* parent) override;
+    QWidget* getWidget() override;
+    QUrl getUrl() override;
+    void start() override;
+    void doClose() override;
+    bool pageClosable() override;
+
+private:
+    void openAppPage(const QUrl& url, const QString& title);
+
+private:
+    QPointer<AppCenterWidget> widget = nullptr;
 };
 }  // namespace ok::platform

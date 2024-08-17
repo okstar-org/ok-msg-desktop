@@ -29,6 +29,8 @@ class WorkPlatform;
 namespace ok::platform {
 
 class AppCenterWidget;
+class PlatformPage;
+class PlatformPageContainer;
 
 class Widget : public UI::OMenuWidget {
     Q_OBJECT
@@ -38,16 +40,25 @@ public:
     void start();
 
 protected:
+    // 工作平台页的相关操作
+    PlatformPage* findPage(const QUrl& url);
+    void addPage(PlatformPage* page, bool active = true);
+    bool removePage(PlatformPage* page);
+    void activePage(PlatformPage* page);
     void retranslateUi();
+
+private:
+    void requestCloseTab();
+    void doClose(int index, PlatformPage* page);
 
 private:
     OK_RESOURCE_PTR(Platform);
     Ui::WorkPlatform* ui;
 
-    // tab
-    AppCenterWidget* centerWidget;
-
 public slots:
     void doStart();
+
+    friend class PlatformPageContainer;
 };
+
 }  // namespace ok::platform

@@ -15,12 +15,31 @@
 //
 
 #include "Platform.h"
+#include "AppCenterWidget.h"
+#include "platformpagecontainer.h"
 
 namespace ok::platform {
 
-Platform::Platform() : m_widget{nullptr} { m_widget = std::make_unique<Widget>(); }
+Platform::Platform() : m_widget{nullptr} {
+    m_widget = std::make_unique<Widget>();
 
-Platform::~Platform() {}
+    // todo: 如果后期需要支持页签弹出，看如何重构了
+    pageContainter = new PlatformPageContainer(this, m_widget.get());
+
+    AppCenterPage* page = new AppCenterPage(pageContainter);
+    page->createContent(m_widget.get());
+    pageContainter->addPage(page);
+}
+
+Platform::~Platform() {
+    // 目前PlatformPage指针绑定到了Widget内部的tab页上
+    // 当Widget释放时，会自动释放PlatformPage
+    // todo: 是否考虑要调整PlatformPage的所有权
+    if (pageContainter) {
+        delete pageContainter;
+        pageContainter = nullptr;
+    }
+}
 
 void Platform::init(Profile* p) {}
 QString Platform::name() { return {"Platform"}; }
@@ -31,5 +50,6 @@ bool Platform::isStarted() { return false; }
 void Platform::onSave(SavedInfo&) {}
 void Platform::cleanup() {}
 void Platform::destroy() {}
+PlatformPageContainer* Platform::getPageContainer() { return pageContainter; }
 void Platform::hide() {}
 }  // namespace ok::platform

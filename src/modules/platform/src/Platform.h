@@ -20,6 +20,9 @@
 #include "modules/module.h"
 
 namespace ok::platform {
+
+class PlatformPageContainer;
+
 class Platform : public QObject, public Module {
     Q_OBJECT
 public:
@@ -33,11 +36,14 @@ public:
     void cleanup() override;
     void destroy() override;
 
-    QWidget* widget() override{ return m_widget.get(); }
+    PlatformPageContainer* getPageContainer();
+
+    QWidget* widget() override { return m_widget.get(); }
     void hide() override;
 
 private:
     std::unique_ptr<Widget> m_widget;
+    PlatformPageContainer* pageContainter = nullptr;
 };
 
 }  // namespace ok::platform
