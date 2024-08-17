@@ -20,7 +20,7 @@
 #include <QTabBar>
 #include "AppCenterWidget.h"
 #include "Bus.h"
-#include "PlatformPage.h"
+#include "platformpage.h"
 #include "application.h"
 #include "base/OkSettings.h"
 #include "lib/settings/translator.h"
