@@ -23,6 +23,7 @@
 
 #include <QPushButton>
 #include "Backend.h"
+#include "Platform.h"
 #include "application.h"
 #include "websocketclientwrapper.h"
 #include "websockettransport.h"
@@ -31,6 +32,7 @@ namespace ok::platform {
 
 AppCenterWidget::AppCenterWidget(QWidget* parent) : UI::OWidget(parent) {
     setLayout(new QGridLayout);
+    layout()->setContentsMargins(0, 0, 0, 0);
 }
 
 void AppCenterWidget::startWebEngine() {
@@ -119,6 +121,42 @@ void AppCenterWidget::start() {
     startWsServer();
     requestAppList();
     startWebEngine();
+}
+
+void AppCenterPage::createContent(QWidget* parent) {
+    if (!widget) {
+        widget = new AppCenterWidget(parent);
+        connect(widget, &AppCenterWidget::appPageRequest, this, &AppCenterPage::openAppPage);
+    }
+}
+
+QWidget* AppCenterPage::getWidget() { return widget.data(); }
+
+// 指定一个唯一URL
+QUrl AppCenterPage::getUrl() { return QUrl("app-center://main-page"); }
+
+void AppCenterPage::start() {
+    if (widget) {
+        widget->start();
+    }
+}
+
+AppCenterPage::~AppCenterPage() {
+    if (widget) {
+        widget->deleteLater();
+        widget = nullptr;
+    }
+}
+
+QString AppCenterPage::getTitle() { return AppCenterWidget::tr("App center"); }
+
+void AppCenterPage::doClose() {}
+
+bool AppCenterPage::pageClosable() { return false; }
+
+// 通过PlatformContainer接口打开web链接
+void AppCenterPage::openAppPage(const QUrl& url, const QString& title) {
+    pageContainer->openWebPage(url, title);
 }
 
 }  // namespace ok::platform
