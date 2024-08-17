@@ -28,15 +28,7 @@
 class QDomElement;
 class QDomDocument;
 
-namespace lib {
-namespace messenger {
 
-class IMJingle;
-class IMConference;
-enum class IMStatus;
-
-}  // namespace messenger
-}  // namespace lib
 
 namespace ok {
 namespace session {
@@ -48,6 +40,7 @@ namespace lib {
 namespace messenger {
 
 class IM;
+class IMJingle;
 class IMFile;
 class IMCall;
 
@@ -211,10 +204,6 @@ private:
     IM* _im;
     IMJingle* jingle;
 
-    // key: sId value:Jingle
-    //  QMap<QString, lib::messenger::IMJingle*> jingleMap;
-    std::unique_ptr<lib::messenger::IMConference> _conference;
-
     std::vector<FriendHandler*> friendHandlers;
     std::vector<SelfHandler*> selfHandlers;
     std::vector<GroupHandler*> groupHandlers;
@@ -293,7 +282,7 @@ public:
                         bool audio, bool video) = 0;
 
     virtual void onCallRetract(const QString& friendId,  //
-                               int state) = 0;
+                               CallState state) = 0;
 
     virtual void onCallAcceptByOther(const QString& callId, const IMPeerId& peerId) = 0;
 

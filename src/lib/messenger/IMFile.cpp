@@ -101,8 +101,8 @@ void IMFile::onImStartedFile() {
     client->registerIqHandler(this, ExtIBB);
 
     // session manager
-    _sessionManager = std::make_unique<SessionManager>(client, this);
-    _sessionManager->registerPlugin(new Content());
+    _sessionManager = std::make_unique<gloox::Jingle::SessionManager>(client, this);
+    _sessionManager->registerPlugin(new gloox::Jingle::Content());
 
     // jingle file
     auto disco = client->disco();
@@ -111,8 +111,8 @@ void IMFile::onImStartedFile() {
     disco->addFeature(XMLNS_JINGLE_FILE_TRANSFER5);
     disco->addFeature(XMLNS_JINGLE_FILE_TRANSFER_MULTI);
     disco->addFeature(XMLNS_JINGLE_IBB);
-    _sessionManager->registerPlugin(new FileTransfer());
-    _sessionManager->registerPlugin(new IBB());
+    _sessionManager->registerPlugin(new gloox::Jingle::FileTransfer());
+    _sessionManager->registerPlugin(new gloox::Jingle::IBB());
 }
 
 void IMFile::addFileHandler(FileHandler* handler) { fileHandlers.push_back(handler); }
@@ -163,13 +163,13 @@ bool IMFile::fileSendToFriend(const QString& f, const File& file) {
 
 void IMFile::addFile(const File& f) { m_waitSendFiles.append(f); }
 
-void IMFile::doStartFileSendTask(const Session* session, const File& file) {
+void IMFile::doStartFileSendTask(const gloox::Jingle::Session* session, const File& file) {
     //    qDebug() << __func__ << file.sId;
     //    m_fileSenderMap.insert(file.id, task);
     //    qDebug() << __func__ << ("Send file task has been stared.") << ((file.id));
 }
 
-void IMFile::doStopFileSendTask(const Session* session, const File& file) {
+void IMFile::doStopFileSendTask(const gloox::Jingle::Session* session, const File& file) {
     Q_UNUSED(session)
     qDebug() << __func__ << file.sId;
     //    auto* task = m_fileSenderMap.value(file.sId);
@@ -189,32 +189,30 @@ void IMFile::doStopFileSendTask(const Session* session, const File& file) {
     //    qDebug() << "Send file task has been clean." << file.id;
 }
 
+void IMFile::clearSessionInfo(const QString& sId) {
+    IMFileSession* sess = m_fileSessionMap.value(sId);
+    if (!sess) {
+        qWarning() << __func__ << "Session is no existing, sId:" << sId;
+        return;
+    }
+    m_fileSessionMap.remove(sId);
+    delete sess;
+}
+
 /**
  * 文件传输
  * @param friendId
  * @param file
  */
 void IMFile::rejectFileRequest(const QString& friendId, const QString& sId) {
-    //  cancelCall(IMContactId{friendId}, sId);
-
-    //  void IMJingle::cancelCall(const IMContactId &friendId, const QString &sId) {
     qDebug() << __func__ << friendId << sId;
-    //
-    //    IMJingleSession* s = findSession(sId);
-    //    if (s) {
-    //        s->doTerminate();
-    //        s->setCallStage(CallStage::StageNone);
-    //        clearSessionInfo(s->getSession());
-    //    }
-    //    retractJingleMessage(friendId, sId);
-    //  else {
-    // jingle-message
-    //    if (s->direction() == CallDirection:: CallOut) {
-    //    } else if (s->direction() == CallDirection:: CallIn) {
-    //      rejectJingleMessage(friendId.toString(), sId);
-    //    }
-    //  }
-    //  }
+    IMFileSession* fs = findSession(sId);
+    if (fs) {
+        auto s = fs->getJingleSession();
+        s->sessionTerminate(
+                new gloox::Jingle::Session::Reason(gloox::Jingle::Session::Reason::Decline));
+        clearSessionInfo(sId);
+    }
 }
 
 void IMFile::acceptFileRequest(const QString& friendId, const File& file) {
@@ -229,13 +227,13 @@ void IMFile::acceptFileRequest(const QString& friendId, const File& file) {
     }
 
     // 协议：https://xmpp.org/extensions/xep-0234.html#requesting
-    PluginList pluginList;
+    gloox::Jingle::PluginList pluginList;
 
     Jingle::FileTransfer::FileList files;
     files.push_back(
             Jingle::FileTransfer::File{.name = stdstring(file.name), .size = (long)file.size});
 
-    auto ftf = new Jingle::FileTransfer(FileTransfer::Request, files);
+    auto ftf = new Jingle::FileTransfer(gloox::Jingle::FileTransfer::Request, files);
 
     auto ibb = new Jingle::IBB(stdstring(file.txIbb.sid), file.txIbb.blockSize);
 
@@ -254,7 +252,8 @@ void IMFile::finishFileRequest(const QString& friendId, const QString& sId) {
         qWarning() << "Can not find file session" << sId;
         return;
     }
-    s->getJingleSession()->sessionTerminate(new Session::Reason(Session::Reason::Success));
+    s->getJingleSession()->sessionTerminate(
+            new gloox::Jingle::Session::Reason(gloox::Jingle::Session::Reason::Success));
 }
 
 void IMFile::finishFileTransfer(const QString& friendId, const QString& sId) {
@@ -293,15 +292,15 @@ bool IMFile::sendFileToResource(const JID& jid, const File& file) {
         return false;
     }
 
-    PluginList pl;
+    gloox::Jingle::PluginList pl;
 
     // offer-file
-    FileTransfer::FileList files;
-    FileTransfer::File f;
+    gloox::Jingle::FileTransfer::FileList files;
+    gloox::Jingle::FileTransfer::File f;
     f.name = stdstring(file.name);
     f.size = file.size;
     files.emplace_back(f);
-    auto ft = new FileTransfer(FileTransfer::Offer, files);
+    auto ft = new gloox::Jingle::FileTransfer(gloox::Jingle::FileTransfer::Offer, files);
     pl.emplace_back(ft);
 
     // ibb
@@ -325,6 +324,8 @@ void IMFile::sessionOnAccept(const QString& sId,
                              Jingle::Session* session,
                              const IMPeerId& peerId,
                              const Jingle::Session::Jingle* jingle) {
+    if (isInvalidSid(sId)) return;
+
     IMFileSession* sess = m_fileSessionMap.value(sId);
     if (sess) {
         qWarning() << "File session is existing, the sId is" << sId;
@@ -340,13 +341,9 @@ void IMFile::sessionOnAccept(const QString& sId,
 }
 
 void IMFile::sessionOnTerminate(const QString& sId, const IMPeerId& peerId) {
-    IMFileSession* sess = m_fileSessionMap.value(sId);
-    if (!sess) {
-        qWarning() << "File session is no existing, the sId is" << sId;
-        return;
-    }
-    m_fileSessionMap.remove(sId);
-    delete sess;
+    if (isInvalidSid(sId)) return;
+
+    clearSessionInfo(sId);
 }
 
 void IMFile::sessionOnInitiate(const QString& sId,
@@ -354,18 +351,19 @@ void IMFile::sessionOnInitiate(const QString& sId,
                                const Jingle::Session::Jingle* jingle,
                                const IMPeerId& peerId) {
     qDebug() << __func__ << "receive file:" << sId;
-
+    bool isFile = false;
     for (auto p : jingle->plugins()) {
         auto pt = p->pluginType();
         switch (pt) {
-            case JinglePluginType::PluginContent: {
-                auto file = p->findPlugin<FileTransfer>(PluginFileTransfer);
-                auto ibb = p->findPlugin<IBB>(PluginIBB);
+            case gloox::Jingle::JinglePluginType::PluginContent: {
+                auto file = p->findPlugin<gloox::Jingle::FileTransfer>(
+                        gloox::Jingle::PluginFileTransfer);
+                auto ibb = p->findPlugin<gloox::Jingle::IBB>(gloox::Jingle::PluginIBB);
                 if (file && ibb) {
                     for (auto f : file->files()) {
-                        auto id = qstring(ibb->sid());
-                        //                        auto sId = qstring(session->sid());
+                        isFile = true;
 
+                        auto id = qstring(ibb->sid());
                         qDebug() << "receive file:" << id << sId;
                         File* file0 = new File{.id = id,
                                                .sId = sId,
@@ -389,6 +387,10 @@ void IMFile::sessionOnInitiate(const QString& sId,
             default: {
             }
         }
+    }
+
+    if (!isFile) {
+        addInvalidSid(sId);
     }
 }
 
@@ -423,8 +425,8 @@ bool IMFile::handleIq(const IQ& iq) {
                 auto ss = m_fileSessionMap.value(k);
                 auto file = ss->getFile();
                 if (file->id == fileId) {
-                    ss->getJingleSession()->sessionTerminate(
-                            new Session::Reason(Session::Reason::Success));
+                    ss->getJingleSession()->sessionTerminate(new gloox::Jingle::Session::Reason(
+                            gloox::Jingle::Session::Reason::Success));
                     m_fileSessionMap.remove(k);
                     delete ss;
                     break;

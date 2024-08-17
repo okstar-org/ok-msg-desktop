@@ -33,15 +33,85 @@ namespace lib::messenger {
 
 class IM;
 class IMJingle;
-enum class CallDirection;
+
+enum class CallDirection { CallIn, CallOut };
+
+enum CallStage {
+    StageNone,
+    StageMessage,  // XEP-0353: Jingle Message Initiation
+    StageSession   // XEP-0166: Jingle https://xmpp.org/extensions/xep-0166.html
+};
+
+class IMCallSession : public QObject, public IMJingleSession {
+    Q_OBJECT
+public:
+    explicit IMCallSession(const QString& sId,
+                           gloox::Jingle::Session* session,
+                           const IMContactId& selfId,
+                           const IMPeerId& peerId,
+                           lib::ortc::JingleCallType callType);
+
+    ~IMCallSession() override;
+
+    void start() override;
+    void stop() override;
+
+    [[nodiscard]] gloox::Jingle::Session* getSession() const;
+    [[nodiscard]] inline const ortc::OJingleContent& getContext() const { return context; }
+
+    void onAccept();
+    // 被动结束
+    void onTerminate();
+    // 主动结束
+    void doTerminate();
+
+    void createOffer(const std::string& peerId);
+
+    void setContext(const ortc::OJingleContent&);
+
+    const gloox::Jingle::Session::Jingle* getJingle() const;
+    void setJingle(const gloox::Jingle::Session::Jingle* jingle);
+
+    [[nodiscard]] CallDirection direction() const;
+
+    void setCallStage(CallStage state);
+
+    void setAccepted(bool y) { accepted = y; }
+
+    [[nodiscard]] bool isAccepted() const { return accepted; }
+
+    const QString& getId() const { return sId; }
+
+    void appendIce(const ortc::OIceUdp& ice) { pendingIceCandidates.emplace_back(ice); }
+
+    void pollIce(ok::base::Fn<void(const ortc::OIceUdp&)> fn) {
+        while (!pendingIceCandidates.empty()) {
+            fn(pendingIceCandidates.back());
+            pendingIceCandidates.pop_back();
+        }
+    }
+
+private:
+    QString sId;
+    gloox::Jingle::Session* session;
+    IMContactId selfId;
+    const gloox::Jingle::Session::Jingle* jingle;
+    ortc::OJingleContent context;
+
+    lib::ortc::JingleCallType m_callType;
+    CallStage m_callStage;
+    bool accepted;
+
+    std::list<ortc::OIceUdp> pendingIceCandidates;
+};
 
 class IMCall : public IMJingle, public lib::ortc::OkRTCHandler {
     Q_OBJECT
 public:
-    IMCall(IM* im, QObject* parent = nullptr);
-
-    void toPlugins(const ortc::OJingleContentAv& oContext, PluginList& plugins);
-    void parse(const PluginList& plugins, ortc::OJingleContentAv& oContext);
+    explicit IMCall(IM* im, QObject* parent = nullptr);
+    ~IMCall() override;
+    void toPlugins(const ortc::OJingleContentAv& oContext, gloox::Jingle::PluginList& plugins);
+    void parse(const gloox::Jingle::Session::Jingle* jingle, ortc::OJingleContentAv& oContext);
 
     void onCreatePeerConnection(const std::string& sId, const std::string& peerId,
                                 bool ok) override;
@@ -93,48 +163,64 @@ public:
     void retractJingleMessage(const QString& friendId, const QString& callId);
 
 protected:
-    void handleJingleMessage(const IMPeerId& peerId, const Jingle::JingleMessage* jm) override;
+    void handleJingleMessage(const IMPeerId& peerId,
+                             const gloox::Jingle::JingleMessage* jm) override;
 
-    virtual void doSessionInfo(const Jingle::Session::Jingle*, const IMPeerId&) override;
-    virtual void doContentAdd(const Jingle::Session::Jingle*, const IMPeerId&) override;
-    virtual void doContentRemove(const Jingle::Session::Jingle*, const IMPeerId&) override;
-    virtual void doContentModify(const Jingle::Session::Jingle*, const IMPeerId&) override;
-    virtual void doContentAccept(const Jingle::Session::Jingle*, const IMPeerId&) override;
-    virtual void doContentReject(const Jingle::Session::Jingle*, const IMPeerId&) override;
-    virtual void doTransportInfo(const Jingle::Session::Jingle*, const IMPeerId&) override;
-    virtual void doTransportAccept(const Jingle::Session::Jingle*, const IMPeerId&) override;
-    virtual void doTransportReject(const Jingle::Session::Jingle*, const IMPeerId&) override;
-    virtual void doTransportReplace(const Jingle::Session::Jingle*, const IMPeerId&) override;
-    virtual void doSecurityInfo(const Jingle::Session::Jingle*, const IMPeerId&) override;
-    virtual void doDescriptionInfo(const Jingle::Session::Jingle*, const IMPeerId&) override;
-    virtual void doInvalidAction(const Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual void doSessionInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual void doContentAdd(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual void doContentRemove(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual void doContentModify(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual void doContentAccept(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual void doContentReject(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual void doTransportInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual void doTransportAccept(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual void doTransportReject(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual void doTransportReplace(const gloox::Jingle::Session::Jingle*,
+                                    const IMPeerId&) override;
+    virtual void doSecurityInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual void doDescriptionInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual void doInvalidAction(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
 
-    IMJingleSession* cacheSessionInfo(const IMContactId& from,
-                                      const IMPeerId& to,
-                                      const QString& sId,
-                                      lib::ortc::JingleCallType callType);
+    IMCallSession* cacheSessionInfo(const IMContactId& from,
+                                    const IMPeerId& to,
+                                    const QString& sId,
+                                    lib::ortc::JingleCallType callType);
 
-    void clearSessionInfo(Jingle::Session* session);
+    void clearSessionInfo(const QString& sId) override;
 
-    IMJingleSession* createSession(const IMContactId& from,
-                                   const IMPeerId& to,
-                                   const QString& sId,
-                                   lib::ortc::JingleCallType ct);
+    IMCallSession* createSession(const IMContactId& from,
+                                 const IMPeerId& to,
+                                 const QString& sId,
+                                 lib::ortc::JingleCallType ct);
 
-    IMJingleSession* findSession(const QString& sId) { return m_sessionMap.value(sId); }
+    IMCallSession* findSession(const QString& sId) { return m_sessionMap.value(sId); }
 
     void sessionOnAccept(const QString& sId,
-                         Jingle::Session* session,
+                         gloox::Jingle::Session* session,
                          const IMPeerId& peerId,
-                         const Jingle::Session::Jingle* jingle) override;
+                         const gloox::Jingle::Session::Jingle* jingle) override;
     void sessionOnTerminate(const QString& sId, const IMPeerId& peerId) override;
     void sessionOnInitiate(const QString& sId,
-                           Jingle::Session* session,
-                           const Jingle::Session::Jingle* jingle,
+                           gloox::Jingle::Session* session,
+                           const gloox::Jingle::Session::Jingle* jingle,
                            const IMPeerId& peerId) override;
 
 signals:
     void sig_createPeerConnection(const QString sId, const QString peerId, bool ok);
+
+    // 呼叫请求
+    void receiveCallRequest(IMPeerId peerId, QString callId, bool audio, bool video);
+
+    void receiveFriendCall(QString friendId, QString callId, bool audio, bool video);
+
+    // 呼叫撤回
+    void receiveCallRetract(QString friendId, CallState state);
+    void receiveCallAcceptByOther(QString callId, IMPeerId peerId);
+    void receiveFriendHangup(QString friendId, CallState state);
+
+    // 对方状态变化
+    void receiveCallStateAccepted(IMPeerId peerId, QString callId, bool video);
+    void receiveCallStateRejected(IMPeerId peerId, QString callId, bool video);
 
     void receiveSelfVideoFrame(uint16_t w, uint16_t h,  //
                                const uint8_t* y,        //
@@ -175,12 +261,12 @@ private:
     void cancelCall(const IMContactId& friendId, const QString& sId);
     void rejectCall(const IMPeerId& friendId, const QString& sId);
 
-    void join(const JID& room);
+    void join(const gloox::JID& room);
 
     std::vector<CallHandler*> callHandlers;
 
     // sid -> session
-    QMap<QString, IMJingleSession*> m_sessionMap;
+    QMap<QString, IMCallSession*> m_sessionMap;
 
     // sid -> isVideo,在jingle-message阶段暂时保留呼叫的类型是视频（音频无需保存）。
     QMap<QString, bool> m_sidVideo;

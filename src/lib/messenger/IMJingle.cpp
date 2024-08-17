@@ -96,7 +96,6 @@ void IMJingle::handleSessionActionError(Action action, Session* session,
 void IMJingle::handleIncomingSession(Session* session) {
     auto sid = qstring(session->sid());
     qDebug() << __func__ << "sId" << sid;
-    // 判断jingle类型，file or av？
 }
 
 // Session
@@ -188,55 +187,7 @@ void IMJingle::doSessionTerminate(Jingle::Session* session,
                                   const IMPeerId& peerId) {
     auto sid = qstring(jingle->sid());
     qDebug() << __func__ << "sId:" << sid << "peerId" << peerId.toString();
-    //
-    //    auto ws = findSession(sid);
-    //    if (!ws) {
-    //        qWarning() << "session is no existing.";
-    //        return;
-    //    }
-    //
     sessionOnTerminate(sid, peerId);
-
-    //    ws->onTerminate();
-
-    //  int ri = 0;
-    //  for (auto &file : m_waitSendFiles) {
-    //    if (qstring(session->sid()) == file.sId) {
-    //      // TODO 需要处理没有terminate的信令的清理
-    //      // 清理待发文件
-    //      qDebug()<<"session is terminate."<<file.id;
-    ////      doStopFileSendTask(session, file);
-    //      m_waitSendFiles.removeAt(ri);
-    //      return;
-    //    }
-    //    ri++;
-    //  }
-
-    /*
-     *<jingle action='session-terminate'
-     sid='8cfd5b65c45b16822da6b2448f8debb7afa5e0e300000005'
-     xmlns='urn:xmpp:jingle:1'> <reason><busy/></reason>
-        </jingle>
-        reason busy:正忙 decline：拒绝
-     */
-    //  auto state = FINISHED;
-    //  auto reason = jingle->tag()->findChild("reason");
-    //  if (reason) {
-    //    if (reason->findChild("busy")) {
-    //      state = SENDING_A;
-    //    }
-    //  }
-    // rtc
-    //  auto s = findSession(sid);
-    //  if (s) {
-    //    auto rtcManager = OkRTCManager::getInstance();
-    //    if (rtcManager) {
-    //      rtcManager->quit(stdstring(peerId.toString()));
-    //    }
-    //  }
-
-    //    clearSessionInfo(session);
-    //  emit receiveFriendHangup(peerId.toFriendId(), (int)state);
 }
 
 void IMJingle::doSessionAccept(Jingle::Session* session,
@@ -247,31 +198,8 @@ void IMJingle::doSessionAccept(Jingle::Session* session,
     sessionOnAccept(sid, session, peerId, jingle);
 }
 
-// void IMJingle::doSessionInfo(const Session::Jingle* jingle, const IMPeerId& friendId) {
-//     qDebug() << "jingle:%1 peerId:%2"   //
-//              << qstring(jingle->sid())  //
-//              << friendId.toString();
-// }
-
 void IMJingle::doContentRemove(const Session::Jingle* jingle, const IMPeerId& peerId) {
     qDebug() << ("jingle:%1 peerId:%2") << (qstring(jingle->sid())) << ((peerId.toString()));
-
-    //  JID peerJID;
-    //  std::map<std::string, Session> sdMap;
-    //  const PluginList &plugins = jingle->plugins();
-    //  for (const auto p : plugins) {
-    //    qDebug()<<("Plugin:%1")<<((QString::fromStdString(p->filterString())));
-    //    JinglePluginType pt = p->pluginType();
-    //    switch (pt) {
-    //    case JinglePluginType::PluginContent: {
-    //      break;
-    //    }
-    //    default:
-    //      break;
-    //    }
-    //  }
-    //
-    //  _rtcManager->ContentRemove(sdMap, this);
 }
 
 void IMJingle::doContentModify(const Session::Jingle* jingle, const IMPeerId& peerId) {
@@ -309,7 +237,6 @@ bool IMJingle::handleIq(const IQ& iq) {
 
 void IMJingle::handleIqID(const IQ& iq, int context) {}
 
-// IMJingleSession* IMJingle::findSession(const QString& sId) { return m_sessionMap.value(sId); }
 
 }  // namespace messenger
 }  // namespace lib

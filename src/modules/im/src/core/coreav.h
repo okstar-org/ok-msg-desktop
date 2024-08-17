@@ -136,7 +136,7 @@ private:
     void onCall(const lib::messenger::IMPeerId& peerId, const QString& callId, bool audio,
                 bool video) override;
 
-    void onCallRetract(const QString& friendId, int state) override;
+    void onCallRetract(const QString& friendId, lib::messenger::CallState state) override;
 
     void onCallAcceptByOther(const QString& callId,
                              const lib::messenger::IMPeerId& peerId) override;

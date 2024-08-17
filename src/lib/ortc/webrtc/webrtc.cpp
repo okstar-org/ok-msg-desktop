@@ -144,7 +144,7 @@ bool WebRTC::ensureStart() {
 void WebRTC::addRTCHandler(OkRTCHandler* hand) { _rtcHandler = hand; }
 
 bool WebRTC::call(const std::string& peerId, const std::string& sId, bool video) {
-    RTC_LOG(LS_INFO) << "peerId:" << peerId;
+    RTC_LOG(LS_INFO) << "sId:" << sId << "peerId:" << peerId;
     return createConductor(peerId, sId, video);
 }
 

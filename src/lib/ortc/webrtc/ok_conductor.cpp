@@ -30,20 +30,16 @@
 namespace lib {
 namespace ortc {
 
-Conductor::Conductor(WebRTC* webrtc,
-                     const std::string& peerId_,  //
-                     const std::string& sId_      //
-                     )
+Conductor::Conductor(WebRTC* webrtc, const std::string& peerId_, const std::string& sId_)
         : peerId(peerId_)
-        ,  //
-        sId(sId_)
-        ,  //
-
-        webRtc{webrtc}
+        , sId(sId_)
+        , webRtc{webrtc}
         , _remote_audio_track(nullptr)
         , _remote_video_track(nullptr) {
-    RTC_LOG(LS_INFO) << "...";
+    RTC_LOG(LS_INFO) << "sId:" << sId << "peerId:" << peerId;
 
+    assert(!peerId.empty());
+    assert(!sId.empty());
     assert(webRtc);
     assert(webRtc->ensureStart());
 

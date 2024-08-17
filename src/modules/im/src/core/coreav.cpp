@@ -726,7 +726,7 @@ void CoreAV::onCall(const lib::messenger::IMPeerId& peerId, const QString& callI
     emit avInvite(ToxPeer(peerId), video);
 }
 
-void CoreAV::onCallRetract(const QString& friendNum, int state) {
+void CoreAV::onCallRetract(const QString& friendNum, lib::messenger::CallState state) {
     qDebug() << __func__ << QString("Canceling call with %1").arg(friendNum);
 
     auto it = calls.find(friendNum);

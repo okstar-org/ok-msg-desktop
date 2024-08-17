@@ -12,6 +12,7 @@
 #ifndef IMFILE_H
 #define IMFILE_H
 
+#include <jinglesession.h>
 #include <QFile>
 #include <QThread>
 #include "IMJingle.h"
@@ -29,20 +30,20 @@ class IM;
 /**
  * 传输文件会话，一次会话代表一次文件传输请求
  */
-class IMFileSession : public QObject, IMJingSession {
+class IMFileSession : public QObject, public IMJingleSession {
     Q_OBJECT
 public:
     IMFileSession(const QString& sId,
-                  Jingle::Session* session_,
+                  gloox::Jingle::Session* session_,
                   const IMPeerId& peerId,
                   IMFile* sender,
                   File* file);
-    ~IMFileSession();
-    void start();
-    void stop();
+    ~IMFileSession() override;
+    void start() override;
+    void stop() override;
 
     File* getFile() { return file; }
-    Session* getJingleSession() { return session; }
+    gloox::Jingle::Session* getJingleSession() { return session; }
 
 protected:
 private:
@@ -57,7 +58,7 @@ private:
     QString self;
 
     // session
-    Session* session;
+    gloox::Jingle::Session* session;
 
     std::unique_ptr<IMFileTask> task;
 };
@@ -65,7 +66,7 @@ private:
 class IMFile : public IMJingle {
     Q_OBJECT
 public:
-    IMFile(IM* im, QObject* parent = nullptr);
+    explicit IMFile(IM* im, QObject* parent = nullptr);
     ~IMFile();
 
     void addFile(const File& f);
@@ -83,53 +84,58 @@ public:
 
     // 收到对方发起
     void sessionOnInitiate(const QString& sId,
-                           Jingle::Session* session,
-                           const Jingle::Session::Jingle* jingle,
+                           gloox::Jingle::Session* session,
+                           const gloox::Jingle::Session::Jingle* jingle,
                            const IMPeerId& peerId);
     // 对方接受
     void sessionOnAccept(const QString& sId,
-                         Jingle::Session* session,
+                         gloox::Jingle::Session* session,
                          const IMPeerId& peerId,
-                         const Jingle::Session::Jingle* jingle) override;
+                         const gloox::Jingle::Session::Jingle* jingle) override;
     // 对方终止
     void sessionOnTerminate(const QString& sId, const IMPeerId& peerId) override;
 
-    bool handleIq(const IQ& iq) override;
+    bool handleIq(const gloox::IQ& iq) override;
 
     /**
      * 启动文件发送任务
      * @param session
      * @param file
      */
-    void doStartFileSendTask(const Jingle::Session* session, const File& file);
+    void doStartFileSendTask(const gloox::Jingle::Session* session, const File& file);
 
     /**
      * 停止文件发送任务
      * @param session
      * @param file
      */
-    void doStopFileSendTask(const Jingle::Session* session, const File& file);
+    void doStopFileSendTask(const gloox::Jingle::Session* session, const File& file);
 
     std::vector<FileHandler*> getHandlers() { return fileHandlers; }
 
     IMFileSession* findSession(const QString& sId) { return m_fileSessionMap.value(sId); }
 
-protected:
-    void handleJingleMessage(const IMPeerId& peerId, const Jingle::JingleMessage* jm) override {}
+    void clearSessionInfo(const QString& sId) override;
 
-    void doSessionInfo(const Jingle::Session::Jingle*, const IMPeerId&) override {};
-    void doContentAdd(const Jingle::Session::Jingle*, const IMPeerId&) override {};
-    void doContentRemove(const Jingle::Session::Jingle*, const IMPeerId&) override {};
-    void doContentModify(const Jingle::Session::Jingle*, const IMPeerId&) override {};
-    void doContentAccept(const Jingle::Session::Jingle*, const IMPeerId&) override {};
-    void doContentReject(const Jingle::Session::Jingle*, const IMPeerId&) override {};
-    void doTransportInfo(const Jingle::Session::Jingle*, const IMPeerId&) override {};
-    void doTransportAccept(const Jingle::Session::Jingle*, const IMPeerId&) override {};
-    void doTransportReject(const Jingle::Session::Jingle*, const IMPeerId&) override {};
-    void doTransportReplace(const Jingle::Session::Jingle*, const IMPeerId&) override {};
-    void doSecurityInfo(const Jingle::Session::Jingle*, const IMPeerId&) override {};
-    void doDescriptionInfo(const Jingle::Session::Jingle*, const IMPeerId&) override {};
-    void doInvalidAction(const Jingle::Session::Jingle*, const IMPeerId&) override {};
+protected:
+    void handleJingleMessage(const IMPeerId& peerId,
+                             const gloox::Jingle::JingleMessage* jm) override {
+        qWarning() << "Unable to handle messages from:" << peerId.toString();
+    }
+
+    void doSessionInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {};
+    void doContentAdd(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {};
+    void doContentRemove(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {};
+    void doContentModify(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {};
+    void doContentAccept(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {};
+    void doContentReject(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {};
+    void doTransportInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {};
+    void doTransportAccept(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {};
+    void doTransportReject(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {};
+    void doTransportReplace(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {};
+    void doSecurityInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {};
+    void doDescriptionInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {};
+    void doInvalidAction(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {};
 
 private:
     void rejectFileRequest(const QString& friendId, const QString& sId);
@@ -138,7 +144,7 @@ private:
     void finishFileTransfer(const QString& friendId, const QString& sId);
 
     bool sendFile(const QString& friendId, const File& file);
-    bool sendFileToResource(const JID& friendId, const File& file);
+    bool sendFileToResource(const gloox::JID& friendId, const File& file);
 
     std::vector<FileHandler*> fileHandlers;
 

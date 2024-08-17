@@ -11,6 +11,7 @@
  */
 
 #include "messenger.h"
+#include "IMFile.h"
 
 #include <QThread>
 #include <memory>
@@ -20,7 +21,6 @@
 #include "base/xmls.h"
 
 #include "lib/messenger/IM.h"
-#include "lib/messenger/IMConference.h"
 #include "lib/messenger/IMFile.h"
 #include "lib/messenger/IMCall.h"
 #include "lib/plugin/pluginmanager.h"
@@ -482,7 +482,6 @@ void MessengerCall::setRemoteMute(bool mute) {
 }
 
 //File
-
 MessengerFile::MessengerFile(Messenger* messenger, QObject* parent) : QObject(parent) {
     fileSender = new IMFile(messenger->im(), this);
 }

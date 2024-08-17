@@ -83,7 +83,6 @@ namespace messenger {
 
 using namespace gloox;
 using namespace gloox::PubSub;
-enum class CallDirection { CallIn, CallOut };
 
 struct IMRoomInfo {
     MUCRoom* room;

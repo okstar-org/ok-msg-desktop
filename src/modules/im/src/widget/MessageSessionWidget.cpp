@@ -445,14 +445,6 @@ void MessageSessionWidget::changeAutoAccept(bool enable) {
 }
 
 void MessageSessionWidget::showDetails() {
-    //  const auto frnd = chatRoom->getFriend();
-    //  const auto iabout = new AboutFriend(frnd, &Settings::getInstance());
-    //  std::unique_ptr<IAboutFriend> about = std::unique_ptr<IAboutFriend>(iabout);
-    //  const auto aboutUser = new AboutFriendForm(std::move(about), this);
-    //  connect(aboutUser, &AboutFriendForm::histroyRemoved, this,
-    //          &MessageSessionWidget::friendHistoryRemoved);
-    //  aboutUser->show();
-
     auto w = Widget::getInstance();
     if (w) {
         emit w->toShowDetails(getContactId());
