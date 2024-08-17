@@ -17,7 +17,7 @@
 #include "Widget.h"
 #include "ui_Widget.h"
 
-#include <QTabbar>
+#include <QTabBar>
 #include "AppCenterWidget.h"
 #include "Bus.h"
 #include "PlatformPage.h"
