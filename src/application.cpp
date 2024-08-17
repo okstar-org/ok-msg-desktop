@@ -210,11 +210,9 @@ void Application::onAvatar(const QPixmap& pixmap) {
     menu->setAvatar(pixmap);
 }
 
-
-void Application::on_logout(const QString &profile)
-{
-    qDebug() << __func__<<profile;
-     doLogout();
+void Application::on_logout(const QString& profile) {
+    qDebug() << __func__ << profile;
+    doLogout();
     QThread::currentThread()->msleep(100);
     createLoginUI(false);
 }
