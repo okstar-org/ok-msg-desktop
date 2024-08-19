@@ -364,7 +364,7 @@ void Style::setThemeColor(const QColor& color) {
  * @brief Reloads some CCS
  */
 void Style::applyTheme() {
-    //        GUI::reloadTheme();
+    //    GUI::reloadTheme();
 }
 
 void Style::initPalette() {
