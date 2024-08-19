@@ -1063,28 +1063,8 @@ nella barra di sistema invece che nella barra delle applicazioni.</translation>
         <translation>Cartella predefinita per salvare i file:</translation>
     </message>
     <message>
-        <source>Start qTox on operating system startup (current profile).</source>
-        <translation>Apri qTox all&apos;avvio del sistema operativo (profilo corrente).</translation>
-    </message>
-    <message>
-        <source>Start in tray</source>
-        <translation>Avvia nella barra di sistema</translation>
-    </message>
-    <message>
-        <source>Close to tray</source>
-        <translation>Chiudi nella barra di sistema</translation>
-    </message>
-    <message>
-        <source>Minimize to tray</source>
-        <translation>Minimizza nella barra di sistema</translation>
-    </message>
-    <message>
         <source>Show contacts&apos; status changes</source>
         <translation>Mostra quando i contatti cambiano stato</translation>
-    </message>
-    <message>
-        <source>Autostart</source>
-        <translation>Avvia automaticamente</translation>
     </message>
     <message>
         <source>You can set this on a per-friend basis by right clicking them.</source>

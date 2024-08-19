@@ -1051,29 +1051,6 @@ so you can save the file on windows.</source>
         <translation>Включить светлую иконку в трее.</translation>
     </message>
     <message>
-        <source>qTox will start minimized in tray.</source>
-        <comment>toolTip for Start in tray setting</comment>
-        <translation>qTox будет запускаться свернутым в трей.</translation>
-    </message>
-    <message>
-        <source>After pressing close (X) qTox will minimize to tray,
-instead of closing itself.</source>
-        <comment>toolTip for close to tray setting</comment>
-        <translation>После закрытия окна (Х) qTox свернется в трей,
-вместо закрытия.</translation>
-    </message>
-    <message>
-        <source>After pressing minimize (_) qTox will minimize itself to tray,
-instead of system taskbar.</source>
-        <comment>toolTip for minimize to tray setting</comment>
-        <translation>После сворачивания окна (_) qTox свернется в трей,
-а не в панель задач.</translation>
-    </message>
-    <message>
-        <source>Autostart</source>
-        <translation>Автозапуск</translation>
-    </message>
-    <message>
         <source>Set where files will be saved.</source>
         <translation>Укажите, где файлы будут сохраняться.</translation>
     </message>
@@ -1084,10 +1061,6 @@ instead of system taskbar.</source>
     <message>
         <source>Auto away after (0 to disable):</source>
         <translation>Статус «Отошел» после (0 - выключено):</translation>
-    </message>
-    <message>
-        <source>Start qTox on operating system startup (current profile).</source>
-        <translation>Запускать qTox при загрузке операционной системы (текущий профиль).</translation>
     </message>
     <message>
         <source>Autoaccept files</source>

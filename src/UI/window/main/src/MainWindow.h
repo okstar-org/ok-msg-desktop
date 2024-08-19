@@ -81,6 +81,7 @@ private slots:
 
     void onIconClick(QSystemTrayIcon::ActivationReason);
 
+    void onSetShowSystemTray(bool newValue);
     void onTryCreateTrayIcon();
 
     void forceShow();

@@ -62,6 +62,12 @@ MainWindow::MainWindow(std::shared_ptr<ok::session::AuthSession> session, QWidge
 
     m_menu = ui->menu_widget;
 
+    // settings
+    auto& okSettings = ok::base::OkSettings::getInstance();
+    connect(&okSettings, &ok::base::OkSettings::showSystemTrayChanged, this,
+            &MainWindow::onSetShowSystemTray);
+
+    // 启动桌面图标
     timer = std::make_unique<QTimer>();
     timer->start(1000);
     connect(timer.get(), &QTimer::timeout, this, &MainWindow::onTryCreateTrayIcon);
@@ -163,11 +169,16 @@ void MainWindow::closeEvent(QCloseEvent* event) {
 
 void MainWindow::init() {}
 
+void MainWindow::onSetShowSystemTray(bool newValue) {
+    if (icon) {
+        icon->setVisible(newValue);
+    }
+}
+
 void MainWindow::onTryCreateTrayIcon() {
     auto& settings = ok::base::OkSettings::getInstance();
-
-    static int32_t tries = 15;
-    if (!icon && tries--) {
+    if (!settings.getShowSystemTray()) return;
+    if (!icon) {
         if (QSystemTrayIcon::isSystemTrayAvailable()) {
             icon = std::make_unique<QSystemTrayIcon>();
             updateIcons();
@@ -193,9 +204,9 @@ void MainWindow::onTryCreateTrayIcon() {
                 show();
             }
 
-#ifdef Q_OS_MAC
+            // #ifdef Q_OS_MAC
             // Nexus::getInstance().dockMenu->setAsDockMenu();
-#endif
+            // #endif
         } else if (!isVisible()) {
             show();
         }

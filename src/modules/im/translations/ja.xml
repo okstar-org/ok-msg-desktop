@@ -1009,14 +1009,6 @@ so you can save the file on windows.</source>
         <translation>言語:</translation>
     </message>
     <message>
-        <source>Start qTox on operating system startup (current profile).</source>
-        <translation>オペレーティングシステムの起動時に qTox を起動します (現在のプロファイルで)。</translation>
-    </message>
-    <message>
-        <source>Autostart</source>
-        <translation>自動起動</translation>
-    </message>
-    <message>
         <source>Enable light tray icon.</source>
         <comment>toolTip for light icon setting</comment>
         <translation>明るいトレイアイコンを有効にします。</translation>

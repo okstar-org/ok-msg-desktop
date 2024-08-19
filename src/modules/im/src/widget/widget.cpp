@@ -99,8 +99,6 @@ Widget* Widget::getInstance() {
 
 Widget::Widget(IAudioControl& audio, QWidget* parent)  //
         : QFrame(parent)
-        , icon{nullptr}
-        , trayMenu{nullptr}
         , ui(new Ui::IMMainWindow)
         , eventFlag(false)
         , eventIcon(false)
@@ -138,10 +136,9 @@ Widget::Widget(IAudioControl& audio, QWidget* parent)  //
         setWindowIcon(themeIcon);
     }
 
-    timer = new QTimer();
+    timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &Widget::onUserAwayCheck);
     connect(timer, &QTimer::timeout, this, &Widget::onEventIconTick);
-    connect(timer, &QTimer::timeout, this, &Widget::onTryCreateTrayIcon);
     timer->start(1000);
 
     icon_size = 15;
@@ -253,16 +250,6 @@ Widget::Widget(IAudioControl& audio, QWidget* parent)  //
     retranslateUi();
     settings::Translator::registerHandler(std::bind(&Widget::retranslateUi, this), this);
 
-    // settings
-    auto& okSettings = ok::base::OkSettings::getInstance();
-    connect(&okSettings, &ok::base::OkSettings::showSystemTrayChanged, this,
-            &Widget::onSetShowSystemTray);
-    if (!okSettings.getShowSystemTray()) {
-        show();
-    }
-
-    connect(&settings, &Settings::separateWindowChanged, this, &Widget::onSeparateWindowClicked);
-
 #ifdef Q_OS_MAC
     // Nexus::getInstance().updateWindows();
 #endif
@@ -313,9 +300,6 @@ bool Widget::eventFilter(QObject* obj, QEvent* event) {
 }
 
 void Widget::updateIcons() {
-    if (!icon) {
-        return;
-    }
 
     // Some builds of Qt appear to have a bug in icon loading:
     // QIcon::hasThemeIcon is sometimes unaware that the icon returned
@@ -368,14 +352,8 @@ void Widget::updateIcons() {
 
 Widget::~Widget() {
     qDebug() << __func__;
-
     settings::Translator::unregister(this);
-    if (icon) {
-        icon->hide();
-    }
-
     delete timer;
-    delete trayMenu;
     delete ui;
 }
 
@@ -397,27 +375,10 @@ void Widget::moveEvent(QMoveEvent* event) {
 }
 
 void Widget::closeEvent(QCloseEvent* event) {
-    //  if (settings.getShowSystemTray() && settings.getCloseToTray()) {
     QWidget::closeEvent(event);
-    //  } else {
-    //    if (autoAwayActive) {
-    //      emit statusSet(Status::Status::Online);
-    //      autoAwayActive = false;
-    //    }
-    //    saveWindowGeometry();
-    //    saveSplitterGeometry();
-    //    QWidget::closeEvent(event);
-    //    qApp->quit();
-    //  }
 }
 
 void Widget::changeEvent(QEvent* event) {
-    //  if (event->type() == QEvent::WindowStateChange) {
-    //    if (isMinimized() && settings.getShowSystemTray() &&
-    //        settings.getMinimizeToTray()) {
-    //      this->hide();
-    //    }
-    //  }
 }
 
 void Widget::resizeEvent(QResizeEvent* event) {
@@ -1325,46 +1286,7 @@ void Widget::onEventIconTick() {
     }
 }
 
-void Widget::onTryCreateTrayIcon() {
-    static int32_t tries = 15;
-    if (!icon && tries--) {
-        if (QSystemTrayIcon::isSystemTrayAvailable()) {
-            icon = std::unique_ptr<QSystemTrayIcon>(new QSystemTrayIcon);
-            updateIcons();
-            trayMenu = new QMenu(this);
 
-            // adding activate to the top, avoids accidentally clicking quit
-            trayMenu->addAction(actionShow);
-            trayMenu->addSeparator();
-            trayMenu->addAction(statusOnline);
-            trayMenu->addAction(statusAway);
-            trayMenu->addAction(statusBusy);
-            trayMenu->addSeparator();
-            trayMenu->addAction(actionLogout);
-            trayMenu->addAction(actionQuit);
-            icon->setContextMenu(trayMenu);
-
-            connect(icon.get(), &QSystemTrayIcon::activated, this, &Widget::onIconClick);
-
-            auto& okSettings = ok::base::OkSettings::getInstance();
-            if (okSettings.getShowSystemTray()) {
-                icon->show();
-                setHidden(okSettings.getAutostartInTray());
-            } else {
-                show();
-            }
-
-        } else if (!isVisible()) {
-            show();
-        }
-    } else {
-        disconnect(timer, &QTimer::timeout, this, &Widget::onTryCreateTrayIcon);
-        if (!icon) {
-            qWarning() << "No system tray detected!";
-            show();
-        }
-    }
-}
 
 void Widget::setStatusOnline() {
     //  if (!ui->statusButton->isEnabled()) {
@@ -1388,12 +1310,6 @@ void Widget::setStatusBusy() {
     //  }
 
     core->setStatus(Status::Status::Busy);
-}
-
-void Widget::onSetShowSystemTray(bool newValue) {
-    if (icon) {
-        icon->setVisible(newValue);
-    }
 }
 
 void Widget::saveWindowGeometry() {

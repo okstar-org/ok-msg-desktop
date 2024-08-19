@@ -208,8 +208,7 @@ private slots:
     void onIconClick(QSystemTrayIcon::ActivationReason);
     void onUserAwayCheck();
     void onEventIconTick();
-    void onTryCreateTrayIcon();
-    void onSetShowSystemTray(bool newValue);
+
     void onSplitterMoved(int pos, int index);
 
     void onDialogShown(GenericChatroomWidget* widget);
@@ -243,8 +242,6 @@ private:
     void connectToCore(Core& core);
 
 private:
-    std::unique_ptr<QSystemTrayIcon> icon;
-    QMenu* trayMenu;
     QAction* statusOnline;
     QAction* statusAway;
     QAction* statusBusy;

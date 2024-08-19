@@ -1087,14 +1087,6 @@ em vez da barra de tarefas do sistema.</translation>
         <translation>Aceitar ficheiros automaticamente</translation>
     </message>
     <message>
-        <source>Autostart</source>
-        <translation>Iniciar automaticamente</translation>
-    </message>
-    <message>
-        <source>Start qTox on operating system startup (current profile).</source>
-        <translation>Iniciar o qTox ao iniciar o sistema operativo (perfil de utilizador atual).</translation>
-    </message>
-    <message>
         <source>Default directory to save files:</source>
         <translation>Pasta padrão para onde guardar ficheiros:</translation>
     </message>

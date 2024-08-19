@@ -1,4 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Copyright (c) 2022 船山信息 chuanshaninfo.com
+  - The project is licensed under Mulan PubL v2.
+  - You can use this software according to the terms and conditions of the Mulan
+  - PubL v2. You may obtain a copy of Mulan PubL v2 at:
+  -          http://license.coscl.org.cn/MulanPubL-2.0
+  - THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+  - EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+  - MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+  - See the Mulan PubL v2 for more details.
+  -->
+
 <ui version="4.0">
  <class>GeneralForm</class>
  <widget class="QWidget" name="GeneralForm">
@@ -26,9 +38,6 @@
          <layout class="QHBoxLayout" name="generalLayout">
           <item>
            <widget class="QLabel" name="transLabel">
-            <property name="toolTip">
-             <string>The translation may not load until qTox restarts.</string>
-            </property>
             <property name="text">
              <string>Language:</string>
             </property>
@@ -41,9 +50,6 @@
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
-            </property>
-            <property name="toolTip">
-             <string>The translation may not load until qTox restarts.</string>
             </property>
            </widget>
           </item>
@@ -66,9 +72,6 @@
          <layout class="QVBoxLayout" name="startupLayout">
           <item>
            <widget class="QCheckBox" name="cbAutorun">
-            <property name="toolTip">
-             <string>Start qTox on operating system startup (current profile).</string>
-            </property>
             <property name="text">
              <string>Autostart</string>
             </property>
@@ -121,11 +124,6 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="toolTip">
-               <string comment="toolTip for Start in tray setting">qTox will start minimized
-                                               in tray.
-                                           </string>
-              </property>
               <property name="text">
                <string>Start in tray</string>
               </property>
@@ -139,11 +137,6 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="toolTip">
-               <string comment="toolTip for minimize to tray setting">After pressing
-                                               minimize (_) qTox will minimize itself to tray,
-instead of system taskbar.</string>
-              </property>
               <property name="text">
                <string>Minimize to tray</string>
               </property>
@@ -156,11 +149,6 @@ instead of system taskbar.</string>
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
-              </property>
-              <property name="toolTip">
-               <string comment="toolTip for close to tray setting">After pressing close (X)
-                                               qTox will minimize to tray,
-instead of closing itself.</string>
               </property>
               <property name="text">
                <string>Close to tray</string>

@@ -85,15 +85,6 @@ void Nexus::init(Profile* p) {
 }
 
 void Nexus::onSave(SavedInfo& savedInfo) {
-    //  if (settings->getShowSystemTray() && settings->getCloseToTray()) {
-    //    widget->close();
-    //    return;
-    //  }
-    //    if (autoAwayActive) {
-    //      emit statusSet(Status::Status::Online);
-    //      autoAwayActive = false;
-    //    }
-
     settings->setWindowGeometry(savedInfo.windowGeometry);
     settings->saveGlobal();
     m_widget->close();

@@ -21,8 +21,7 @@
 #include "base/logs.h"
 #include "lib/session/AuthSession.h"
 
-namespace lib {
-namespace messenger {
+namespace lib::messenger {
 
 QString File::toString() const {
     return QString("{id:%1, sId:%2, name:%3, path:%4, size:%5, status:%6, direction:%7}")
@@ -448,5 +447,4 @@ bool IMFile::handleIq(const IQ& iq) {
     return true;
 }
 
-}  // namespace messenger
-}  // namespace lib
+}  // namespace lib::messenger

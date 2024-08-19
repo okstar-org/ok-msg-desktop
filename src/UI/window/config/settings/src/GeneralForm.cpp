@@ -12,8 +12,8 @@
 
 #include "GeneralForm.h"
 #include <QFileDialog>
-#include <cmath>
 #include <QStyleFactory>
+#include <cmath>
 #include "Bus.h"
 #include "application.h"
 #include "base/OkSettings.h"
@@ -37,13 +37,13 @@ GeneralForm::GeneralForm(SettingsWidget* myParent)
     // block all child signals during initialization
     const ok::base::RecursiveSignalBlocker signalBlocker(this);
 
-      Settings &s = Settings::getInstance();
+    Settings& s = Settings::getInstance();
 
     // 先获取当前语言
-      QString locale0 = ok::base::OkSettings::getInstance().getTranslation();
-      settings::Translator::translate(OK_UIWindowConfig_MODULE, locale0);
-      settings::Translator::registerHandler([this] { retranslateUi(); }, this);
-      retranslateUi();
+    QString locale0 = ok::base::OkSettings::getInstance().getTranslation();
+    settings::Translator::translate(OK_UIWindowConfig_MODULE, locale0);
+    settings::Translator::registerHandler([this] { retranslateUi(); }, this);
+    retranslateUi();
 
 #ifndef UPDATE_CHECK_ENABLED
     bodyUI->checkUpdates->setVisible(false);
@@ -79,51 +79,49 @@ GeneralForm::GeneralForm(SettingsWidget* myParent)
 
     // autorun
     bodyUI->cbAutorun->setChecked(okSettings.getAutorun());
+    // 系统图标
+    bodyUI->showSystemTray->setChecked(okSettings.getShowSystemTray());
 
-  //主题
+    // 主题
+    bodyUI->styleBrowser->addItem(tr("None"));
+    bodyUI->styleBrowser->addItems(QStyleFactory::keys());
 
-  bodyUI->styleBrowser->addItem(tr("None"));
-  bodyUI->styleBrowser->addItems(QStyleFactory::keys());
+    QString style;
+    if (QStyleFactory::keys().contains(s.getStyle()))
+        style = s.getStyle();
+    else
+        style = tr("None");
 
-  QString style;
-  if (QStyleFactory::keys().contains(s.getStyle()))
-      style = s.getStyle();
-  else
-      style = tr("None");
+    bodyUI->styleBrowser->setCurrentText(style);
 
-  bodyUI->styleBrowser->setCurrentText(style);
+    for (QString color : Style::getThemeColorNames()) bodyUI->themeColorCBox->addItem(color);
 
-  for (QString color : Style::getThemeColorNames())
-      bodyUI->themeColorCBox->addItem(color);
+    bodyUI->themeColorCBox->setCurrentIndex(s.getThemeColor());
+    // bodyUI->emoticonSize->setValue(s.getEmojiFontPointSize());
 
-  bodyUI->themeColorCBox->setCurrentIndex(s.getThemeColor());
- // bodyUI->emoticonSize->setValue(s.getEmojiFontPointSize());
+    QLocale ql;
+    QStringList timeFormats;
+    timeFormats << ql.timeFormat(QLocale::ShortFormat) << ql.timeFormat(QLocale::LongFormat)
+                << "hh:mm AP"
+                << "hh:mm:ss AP"
+                << "hh:mm:ss";
+    timeFormats.removeDuplicates();
+    bodyUI->timestamp->addItems(timeFormats);
 
-
-  QLocale ql;
-  QStringList timeFormats;
-  timeFormats << ql.timeFormat(QLocale::ShortFormat) << ql.timeFormat(QLocale::LongFormat)
-              << "hh:mm AP"
-              << "hh:mm:ss AP"
-              << "hh:mm:ss";
-  timeFormats.removeDuplicates();
-  bodyUI->timestamp->addItems(timeFormats);
-
-  QRegularExpression re(QString("^[^\\n]{0,%0}$").arg(MAX_FORMAT_LENGTH));
-  QRegularExpressionValidator* validator = new QRegularExpressionValidator(re, this);
+    QRegularExpression re(QString("^[^\\n]{0,%0}$").arg(MAX_FORMAT_LENGTH));
+    QRegularExpressionValidator* validator = new QRegularExpressionValidator(re, this);
 
     QString timeFormat = s.getTimestampFormat();
 
-    if (!re.match(timeFormat).hasMatch())
-       timeFormat = timeFormats[0];
+    if (!re.match(timeFormat).hasMatch()) timeFormat = timeFormats[0];
 
     bodyUI->timestamp->setCurrentText(timeFormat);
     bodyUI->timestamp->setValidator(validator);
     on_timestamp_editTextChanged(timeFormat);
 
     QStringList dateFormats;
-    dateFormats << QStringLiteral("yyyy-MM-dd") // ISO 8601
-                                                // format strings from system locale
+    dateFormats << QStringLiteral("yyyy-MM-dd")  // ISO 8601
+                                                 // format strings from system locale
                 << ql.dateFormat(QLocale::LongFormat) << ql.dateFormat(QLocale::ShortFormat)
                 << ql.dateFormat(QLocale::NarrowFormat) << "dd-MM-yyyy"
                 << "d-MM-yyyy"
@@ -134,8 +132,7 @@ GeneralForm::GeneralForm(SettingsWidget* myParent)
     bodyUI->dateFormats->addItems(dateFormats);
 
     QString dateFormat = s.getDateFormat();
-    if (!re.match(dateFormat).hasMatch())
-        dateFormat = dateFormats[0];
+    if (!re.match(dateFormat).hasMatch()) dateFormat = dateFormats[0];
 
     bodyUI->dateFormats->setCurrentText(dateFormat);
     bodyUI->dateFormats->setValidator(validator);
@@ -143,7 +140,7 @@ GeneralForm::GeneralForm(SettingsWidget* myParent)
 }
 
 GeneralForm::~GeneralForm() {
-    //  settings::Translator::unregister(this);
+    settings::Translator::unregister(this);
     delete bodyUI;
 }
 
@@ -158,7 +155,9 @@ void GeneralForm::on_transComboBox_currentIndexChanged(int index) {
 }
 
 void GeneralForm::on_cbAutorun_stateChanged() {
-    ok::base::OkSettings::getInstance().setAutorun(bodyUI->cbAutorun->isChecked());
+    auto& s = ok::base::OkSettings::getInstance();
+    s.setAutorun(bodyUI->cbAutorun->isChecked());
+    s.saveGlobal();
 }
 
 void GeneralForm::on_cbSpellChecking_stateChanged() {
@@ -166,44 +165,49 @@ void GeneralForm::on_cbSpellChecking_stateChanged() {
 }
 
 void GeneralForm::on_showSystemTray_stateChanged() {
-    ok::base::OkSettings::getInstance().setShowSystemTray(bodyUI->showSystemTray->isChecked());
-    //  Settings::getInstance().saveGlobal();
+    auto& s = ok::base::OkSettings::getInstance();
+    s.setShowSystemTray(bodyUI->showSystemTray->isChecked());
+    s.saveGlobal();
 }
 
 void GeneralForm::on_startInTray_stateChanged() {
-    ok::base::OkSettings::getInstance().setAutostartInTray(bodyUI->startInTray->isChecked());
+    auto& s = ok::base::OkSettings::getInstance();
+    s.setAutostartInTray(bodyUI->startInTray->isChecked());
+    s.saveGlobal();
 }
 
 void GeneralForm::on_closeToTray_stateChanged() {
-    ok::base::OkSettings::getInstance().setCloseToTray(bodyUI->closeToTray->isChecked());
+    auto& s = ok::base::OkSettings::getInstance();
+    s.setCloseToTray(bodyUI->closeToTray->isChecked());
+    s.saveGlobal();
 }
 
 void GeneralForm::on_minimizeToTray_stateChanged() {
-    ok::base::OkSettings::getInstance().setMinimizeToTray(bodyUI->minimizeToTray->isChecked());
+    auto& s = ok::base::OkSettings::getInstance();
+    s.setMinimizeToTray(bodyUI->minimizeToTray->isChecked());
+    s.saveGlobal();
 }
 
 void GeneralForm::on_checkUpdates_stateChanged() {
-    //  Settings::getInstance().setCheckUpdates(bodyUI->checkUpdates->isChecked());
+    //      Settings::getInstance().setCheckUpdates(bodyUI->checkUpdates->isChecked());
 }
 
-void GeneralForm::on_timestamp_editTextChanged(const QString& format)
-{
+void GeneralForm::on_timestamp_editTextChanged(const QString& format) {
     QString timeExample = QTime::currentTime().toString(format);
     bodyUI->timeExample->setText(timeExample);
 
-//    Settings::getInstance().setTimestampFormat(format);
-//    QString locale = Settings::getInstance().getTranslation();
-//    settings::Translator::translate(OK_UIWindowConfig_MODULE, locale);
+    //        Settings::getInstance().setTimestampFormat(format);
+    //    QString locale = Settings::getInstance().getTranslation();
+    //    settings::Translator::translate(OK_UIWindowConfig_MODULE, locale);
 }
 
-void GeneralForm::on_dateFormats_editTextChanged(const QString& format)
-{
+void GeneralForm::on_dateFormats_editTextChanged(const QString& format) {
     QString dateExample = QDate::currentDate().toString(format);
     bodyUI->dateExample->setText(dateExample);
 
-//    Settings::getInstance().setDateFormat(format);
-//    QString locale = Settings::getInstance().getTranslation();
-//    settings::Translator::translate(OK_UIWindowConfig_MODULE, locale);
+    //    Settings::getInstance().setDateFormat(format);
+    //    QString locale = Settings::getInstance().getTranslation();
+    //    settings::Translator::translate(OK_UIWindowConfig_MODULE, locale);
 }
 
 /**

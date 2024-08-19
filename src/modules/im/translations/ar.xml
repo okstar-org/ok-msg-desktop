@@ -1033,14 +1033,6 @@
             <translation>اللغة:</translation>
         </message>
         <message>
-            <source>Start qTox on operating system startup (current profile).</source>
-            <translation>تشغيل البرنامج بشكل تلقائي عند تشغيل النظام(بالحساب الحالي).</translation>
-        </message>
-        <message>
-            <source>Autostart</source>
-            <translation>تشغيل تلقائي</translation>
-        </message>
-        <message>
             <source>Enable light tray icon.</source>
             <comment>toolTip for light icon setting</comment>
             <translation>تفعيل الأيقونة المضيئة.</translation>

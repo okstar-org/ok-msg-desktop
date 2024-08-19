@@ -1032,15 +1032,6 @@ so you can save the file on windows.</source>
         <translation>通用设置</translation>
     </message>
     <message>
-        <source>The translation may not load until qTox restarts.</source>
-        <translation>翻译将在qTox重启后生效。</translation>
-    </message>
-
-    <message>
-        <source>Start qTox on operating system startup (current profile).</source>
-        <translation>开机自动启动 qTox（当前账户）。</translation>
-    </message>
-    <message>
         <source>Show contacts&apos; status changes</source>
         <translation>显示联系人状态变化</translation>
     </message>

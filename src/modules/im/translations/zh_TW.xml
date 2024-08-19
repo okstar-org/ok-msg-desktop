@@ -984,24 +984,6 @@ instead of closing itself.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Close to tray</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>After pressing minimize (_) qTox will minimize itself to tray,
-instead of system taskbar.</source>
-        <comment>toolTip for minimize to tray setting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Minimize to tray</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Autostart</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Set where files will be saved.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1028,10 +1010,6 @@ instead of system taskbar.</source>
     </message>
     <message>
         <source>Show contacts&apos; status changes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Start qTox on operating system startup (current profile).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

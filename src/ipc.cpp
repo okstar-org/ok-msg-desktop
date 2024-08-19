@@ -305,20 +305,19 @@ bool IPC::isAlive() {
         return false;
     }
 
-    {
-        time_t eventTime = mem->lastProcessed;
-        struct tm* timeinfo = localtime(&eventTime);
-        char buffer[80];
-        strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeinfo);
-        qDebug() << "lastProcessedTime:" << buffer;
+    time_t last = mem->lastProcessed;
+    struct tm* timeinfo = localtime(&last);
+    char buffer[80] = {0};
+    strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeinfo);
+    qDebug() << "lastProcessedTime:" << buffer;
 
-        eventTime = time(nullptr);
-        timeinfo = localtime(&eventTime);
-        strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeinfo);
-        qDebug() << "currentTime:" << buffer;
-    }
+    time_t current = time(nullptr);
+    timeinfo = localtime(&current);
+    strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeinfo);
+    qDebug() << "currentTime:" << buffer;
 
-    if (difftime(time(nullptr), mem->lastProcessed) >= OWNERSHIP_TIMEOUT_S) {
+    int diff = difftime(current, last);
+    if (diff >= OWNERSHIP_TIMEOUT_S) {
         return false;
     }
 

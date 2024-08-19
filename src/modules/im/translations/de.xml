@@ -1030,39 +1030,6 @@ um sie in Windows speichern zu können.</translation>
         <translation>Helles Icon</translation>
     </message>
     <message>
-        <source>qTox will start minimized in tray.</source>
-        <comment>toolTip for Start in tray setting</comment>
-        <translation>qTox wird in der Systemleiste minimiert starten.</translation>
-    </message>
-    <message>
-        <source>Start in tray</source>
-        <translation>Im Hintergrund starten</translation>
-    </message>
-    <message>
-        <source>After pressing close (X) qTox will minimize to tray,
-instead of closing itself.</source>
-        <comment>toolTip for close to tray setting</comment>
-        <translation>Durch das Klicken auf „Schließen“ (X) wird qTox nicht beendet, sondern in die Systemleiste minimiert.</translation>
-    </message>
-    <message>
-        <source>Close to tray</source>
-        <translation>In Systemleiste minimieren</translation>
-    </message>
-    <message>
-        <source>After pressing minimize (_) qTox will minimize itself to tray,
-instead of system taskbar.</source>
-        <comment>toolTip for minimize to tray setting</comment>
-        <translation>Durch Klicken auf „Minimieren“ (_) wird qTox in den Systemabschnitt minimiert und verschwindet von der Startleiste.</translation>
-    </message>
-    <message>
-        <source>Minimize to tray</source>
-        <translation>In Systemleiste minimieren</translation>
-    </message>
-    <message>
-        <source>Autostart</source>
-        <translation>Autostart</translation>
-    </message>
-    <message>
         <source>Set where files will be saved.</source>
         <translation>Datei-Speicherort festlegen.</translation>
     </message>

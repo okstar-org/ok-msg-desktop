@@ -18,6 +18,7 @@
 #include <QCoreApplication>
 #include <QString>
 
+#include <QMenu>
 #include "Bus.h"
 #include "UI/core/FontManager.h"
 #include "UI/window/login/src/LoginWidget.h"
@@ -110,7 +111,6 @@ Application::Application(int& argc, char* argv[])
 
     // 设置
     _settingManager = std::make_unique<SettingManager>(this);
-
     qDebug() << "Application has be created";
 }
 

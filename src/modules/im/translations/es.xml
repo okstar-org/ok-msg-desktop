@@ -1044,29 +1044,6 @@ para que puedas guardar el archivo en windows.</translation>
         <translation>Ícono claro</translation>
     </message>
     <message>
-        <source>qTox will start minimized in tray.</source>
-        <comment>toolTip for Start in tray setting</comment>
-        <translation>qTox se iniciará minimizado en la bandeja.</translation>
-    </message>
-    <message>
-        <source>After pressing close (X) qTox will minimize to tray,
-instead of closing itself.</source>
-        <comment>toolTip for close to tray setting</comment>
-        <translation>Después de presionar cerrar (X) qTox minimizará a la bandeja,
-en lugar de cerrarse.</translation>
-    </message>
-    <message>
-        <source>After pressing minimize (_) qTox will minimize itself to tray,
-instead of system taskbar.</source>
-        <comment>toolTip for minimize to tray setting</comment>
-        <translation>Después de presionar a minimizar (_) qTox minimizará a la bandeja,
-en lugar de la barra de tareas del sistema.</translation>
-    </message>
-    <message>
-        <source>Autostart</source>
-        <translation>Iniciar automáticamente</translation>
-    </message>
-    <message>
         <source>Set where files will be saved.</source>
         <translation>Establece dónde se guardarán los archivos.</translation>
     </message>
