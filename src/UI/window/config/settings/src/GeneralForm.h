@@ -41,6 +41,7 @@ private slots:
     void on_checkUpdates_stateChanged();
     void on_timestamp_editTextChanged(const QString& format);
     void on_dateFormats_editTextChanged(const QString& format);
+    void on_themeColorCBox_currentIndexChanged(int);
 
 private:
     Ui::GeneralForm* bodyUI;

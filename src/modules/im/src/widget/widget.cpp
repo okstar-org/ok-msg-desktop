@@ -246,7 +246,11 @@ Widget::Widget(IAudioControl& audio, QWidget* parent)  //
     //            &Widget::onGroupInviteAccepted);
 
     reloadTheme();
+    connect(ok::Application::Instance()->bus(), &ok::Bus::themeColorChanged, this,
+            [&]() { reloadTheme(); });
+
     updateIcons();
+
     retranslateUi();
     settings::Translator::registerHandler(std::bind(&Widget::retranslateUi, this), this);
 

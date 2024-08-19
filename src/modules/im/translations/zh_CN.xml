@@ -2846,26 +2846,6 @@ This ID includes the NoSpam code (in blue), and the checksum (in gray).</source>
         <translation> px</translation>
     </message>
     <message>
-        <source>Theme</source>
-        <translation>主题</translation>
-    </message>
-    <message>
-        <source>Style:</source>
-        <translation>风格:</translation>
-    </message>
-    <message>
-        <source>Theme color:</source>
-        <translation>主题颜色：</translation>
-    </message>
-    <message>
-        <source>Timestamp format:</source>
-        <translation>时间戳格式：</translation>
-    </message>
-    <message>
-        <source>Date format:</source>
-        <translation>日期格式：</translation>
-    </message>
-    <message>
         <source>If enabled every contact without an avatar set will have a generated avatar based on their Tox ID instead of a default picture. Requires restart to apply.</source>
         <comment>toolTip for show identicons</comment>
         <translation>如果启用，每个没有头像集的联系人将基于他们的 Tox ID 生成头像而不使用默认的图片。需要重新启动才能生效。</translation>

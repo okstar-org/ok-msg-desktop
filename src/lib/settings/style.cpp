@@ -85,7 +85,7 @@ static QMap<QString, QString> dictTheme;
 static QMap<QString, QString> dictExtColor;
 
 QList<Style::ThemeNameColor> Style::themeNameColors = {
-        {Style::Light, QObject::tr("Default"), QColor()},
+        {Style::Light, QObject::tr("Light"), QColor()},
         {Style::Dark, QObject::tr("Dark"), QColor()},
 };
 
@@ -100,9 +100,9 @@ QStringList Style::getThemeColorNames() {
 }
 
 QString Style::getThemeName() {
-    // TODO: return name of the current theme
-    const QString themeName = "default";
-    return QStringLiteral("default");
+    int i = Settings::getInstance().getThemeColor();
+    if (i < themeNameColors.length()) return themeNameColors[i].name;
+    return themeNameColors[0].name;
 }
 
 QString Style::getThemeFolder() {
@@ -145,6 +145,7 @@ std::map<std::pair<const QString, const QFont>, const QString> Style::stylesheet
 
 const QString Style::getStylesheet(const QString& filename, const QFont& baseFont) {
     const QString fullPath = getThemeFolder() + filename;
+    qDebug() << "theme:" << fullPath;
     const std::pair<const QString, const QFont> cacheKey(fullPath, baseFont);
     auto it = stylesheetsCache.find(cacheKey);
     if (it != stylesheetsCache.end()) {
@@ -363,7 +364,7 @@ void Style::setThemeColor(const QColor& color) {
  * @brief Reloads some CCS
  */
 void Style::applyTheme() {
-    //    GUI::reloadTheme();
+    //        GUI::reloadTheme();
 }
 
 void Style::initPalette() {
@@ -405,9 +406,9 @@ void Style::initDictColor() {
 }
 
 QString Style::getThemePath() {
-    //    const int num = Settings::getInstance().getThemeColor();
-    //    if (themeNameColors[num].type == Dark) {
-    //        return BuiltinThemeDarkPath;
-    //    }
+    const int num = Settings::getInstance().getThemeColor();
+    if (themeNameColors[num].type == Dark) {
+        return BuiltinThemeDarkPath;
+    }
     return BuiltinThemeDefaultPath;
 }

@@ -61,6 +61,26 @@
             <source>Minimize to tray</source>
             <translation>最小化到托盘</translation>
         </message>
+        <message>
+            <source>Theme</source>
+            <translation>主题</translation>
+        </message>
+        <message>
+            <source>Style:</source>
+            <translation>风格:</translation>
+        </message>
+        <message>
+            <source>Theme color:</source>
+            <translation>主题颜色：</translation>
+        </message>
+        <message>
+            <source>Timestamp format:</source>
+            <translation>时间戳格式：</translation>
+        </message>
+        <message>
+            <source>Date format:</source>
+            <translation>日期格式：</translation>
+        </message>
     </context>
     <context>
         <name>ok::plugin::PluginInfoForm</name>
