@@ -83,21 +83,17 @@ GeneralForm::GeneralForm(SettingsWidget* myParent)
     bodyUI->showSystemTray->setChecked(okSettings.getShowSystemTray());
 
     // 主题
-    bodyUI->styleBrowser->addItem(tr("None"));
-    bodyUI->styleBrowser->addItems(QStyleFactory::keys());
+    //    bodyUI->styleBrowser->addItem(tr("None"));
+    //    bodyUI->styleBrowser->addItems(QStyleFactory::keys());
+    //    QString style;
+    //    if (QStyleFactory::keys().contains(s.getStyle()))
+    //        style = s.getStyle();
+    //    else
+    //        style = tr("None");
+    //    bodyUI->styleBrowser->setCurrentText(style);
 
-    QString style;
-    if (QStyleFactory::keys().contains(s.getStyle()))
-        style = s.getStyle();
-    else
-        style = tr("None");
-
-    bodyUI->styleBrowser->setCurrentText(style);
-
-    for (QString color : Style::getThemeColorNames()) bodyUI->themeColorCBox->addItem(color);
-
+    for (const QString& color : Style::getThemeColorNames()) bodyUI->themeColorCBox->addItem(color);
     bodyUI->themeColorCBox->setCurrentIndex(s.getThemeColor());
-    // bodyUI->emoticonSize->setValue(s.getEmojiFontPointSize());
 
     QLocale ql;
     QStringList timeFormats;
@@ -208,6 +204,13 @@ void GeneralForm::on_dateFormats_editTextChanged(const QString& format) {
     //    Settings::getInstance().setDateFormat(format);
     //    QString locale = Settings::getInstance().getTranslation();
     //    settings::Translator::translate(OK_UIWindowConfig_MODULE, locale);
+}
+
+void GeneralForm::on_themeColorCBox_currentIndexChanged(int) {
+    int index = bodyUI->themeColorCBox->currentIndex();
+    auto color = bodyUI->themeColorCBox->currentText();
+    Settings::getInstance().setThemeColor(index);
+    emit ok::Application::Instance() -> bus()->themeColorChanged(index, color);
 }
 
 /**

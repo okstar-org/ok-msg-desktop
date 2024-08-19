@@ -50,7 +50,6 @@ private slots:
 
 
 
-    //void on_themeColorCBox_currentIndexChanged(int);
 
     //void on_txtChatFont_currentFontChanged(const QFont& f);
    // void on_txtChatFontSize_valueChanged(int arg1);
