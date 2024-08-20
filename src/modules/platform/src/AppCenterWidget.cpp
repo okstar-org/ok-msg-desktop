@@ -30,7 +30,8 @@
 
 namespace ok::platform {
 
-AppCenterWidget::AppCenterWidget(QWidget* parent) : UI::OWidget(parent) {
+AppCenterWidget::AppCenterWidget(AppCenterPage* page, QWidget* parent)
+        : UI::OWidget(parent), platformPage(page) {
     setLayout(new QGridLayout);
     layout()->setContentsMargins(0, 0, 0, 0);
 }
@@ -116,6 +117,10 @@ void AppCenterWidget::clientConnected(WebSocketTransport* transport) {
         // 第二次加载，是否应该通过某种方式，并发处理
         requestAppList();
     }
+    connect(transport,
+            &WebSocketTransport::messageReceived,
+            platformPage,
+            &AppCenterPage::onWebMessageReceived);
 }
 void AppCenterWidget::start() {
     startWsServer();
@@ -125,7 +130,7 @@ void AppCenterWidget::start() {
 
 void AppCenterPage::createContent(QWidget* parent) {
     if (!widget) {
-        widget = new AppCenterWidget(parent);
+        widget = new AppCenterWidget(this, parent);
         connect(widget, &AppCenterWidget::appPageRequest, this, &AppCenterPage::openAppPage);
     }
 }
@@ -157,6 +162,18 @@ bool AppCenterPage::pageClosable() { return false; }
 // 通过PlatformContainer接口打开web链接
 void AppCenterPage::openAppPage(const QUrl& url, const QString& title) {
     pageContainer->openWebPage(url, title);
+}
+
+void AppCenterPage::onWebMessageReceived(const QJsonValue& value) {
+    QJsonObject object = value.toObject();
+    QString command = object.value("command").toString();
+    if (command == "app-center.openApp") {
+        QUrl url = QUrl::fromEncoded(object.value("homePage").toString().toUtf8());
+        QString name = object.value("name").toString();
+        if (!name.isEmpty()) {
+            pageContainer->openWebPage(url, name);
+        }
+    }
 }
 
 }  // namespace ok::platform
