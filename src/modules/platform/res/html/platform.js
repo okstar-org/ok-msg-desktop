@@ -18,10 +18,10 @@
     var socket = new WebSocket(wsUri);
     function appItemClicked(event) {
         let app = event.data;
-        let mainPage = (app.mainPage instanceof String) ? encodeURI(app.mainPage) : "";
+        let homePage = (app.homePage instanceof String) ? encodeURI(app.homePage) : "";
         let data = {
             command: "app-center.openApp",
-            mainPage,
+            homePage,
             name: app.name
         }
         socket.send(JSON.stringify(data));
