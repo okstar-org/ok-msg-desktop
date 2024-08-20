@@ -16,9 +16,37 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
   - 支持文字、音视频、文件传输等基本功能；
   - 消息端到端加密。
 
-# 🏢 软件架构
+# 🖥️ Support platform（支持平台）
 
-<img src="docs/assets/ok-msg-architecture-diagram.png" width="1000" alt="Architecture diagram"/>
+| Platform       | Lastest Build Status                                                                                                                                                                                       |
+|----------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 🪟 Windows-x64 | [![Build on Windows](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/win.yml/badge.svg)](https://github.com/CefView/QCefView/actions/workflows/build-windows-x86_64.yml)                    |
+| 🐧 Linux-x64   | [![Build on Ubuntu](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/ubuntu-22.04.yml/badge.svg)](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/ubuntu-22.04.yml/badge.svg) |
+| 🍎 macOS-x64   | [![Build on macOS-x64](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/mac-x64.yml/badge.svg)](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/mac-x64.yml/badge.svg)        |
+| 🍎 macOS-arm   | [![Build on macOS-arm](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/mac-arm.yml/badge.svg)](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/mac-arm.yml/badge.svg)        |
+
+# ⚙️ Buildings
+
+本项目目前支持Windows、Linux、macOS环境开发
+
+- C++版本：C++20
+- Qt版本：Qt5.15.x
+
+| Platform       | Build Document                                          |
+|----------------|---------------------------------------------------------|
+| 🪟 Windows-x64 | [Build on Windows](docs%2Fbuildings%2Fwindows.md)       |
+| 🐧 Ubuntu-x64  | [Build on Ubuntu](docs%2Fbuildings%2Fubuntu.md)         |
+| 🐧 Fedora-x64  | [Build on Fedora](docs%2Fbuildings%2Ffedora.md)         |
+| 🍎 macOS-x64   | [Build on macOS(x64) ](docs%2Fbuildings%2Fmacos.md)     |
+| 🍎 macOS-arm64 | [Build on macOS(arm64) ](docs/buildings/macos-arm64.md) |
+
+# Downloads
+
+- Support：Windows(x64), macOS(x64/m1), Ubuntu (x64), Fedora (x64)
+- Download: https://github.com/okstar-org/ok-msg-desktop/releases
+-
+Snap: <a href="https://snapcraft.io/ok-msg"><img decoding="async" class="aligncenter" src="https://snapcraft.io/static/images/badges/en/snap-store-black.svg" alt="Get it from the Snap Store"><br></a>
+- Flatpak: https://flathub.org/apps/org.okstar.ok-msg
 
 # 🖼️ 界面展示
 
@@ -29,6 +57,10 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
 - Main window
 
 <img src="docs/assets/design.png" width="1100" />
+
+# 🏢 系统架构
+
+<img src="docs/assets/ok-msg-architecture-diagram.png" width="1000" alt="Architecture diagram"/>
 
 # ⛽ Thirty party（第三方库）
 
@@ -44,63 +76,6 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
 - libqrencode([GPL v2+](https://github.com/fukuchi/libqrencode))
 - qTox([GPL v3](https://github.com/qTox/qTox/LICENSE))
 - gloox ([GPL v3](https://gitee.com/chuanshantech/ok-edu-gloox))
-
-# 🖥️ Support platform（支持平台）
-
-| Platform      | Lastest Build Status                                                                                                                                                                                       |
-| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 🪟 Windows-x64 | [![Build on Windows](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/win.yml/badge.svg)](https://github.com/CefView/QCefView/actions/workflows/build-windows-x86_64.yml)                    |
-| 🐧 Linux-x64   | [![Build on Ubuntu](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/ubuntu-22.04.yml/badge.svg)](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/ubuntu-22.04.yml/badge.svg) |
-| 🍎 macOS-x64   | [![Build on macOS-x64](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/mac-x64.yml/badge.svg)](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/mac-x64.yml/badge.svg)        |
-| 🍎 macOS-arm   | [![Build on macOS-arm](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/mac-arm.yml/badge.svg)](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/mac-arm.yml/badge.svg)        |
-
-# ⚙️ Buildings
-
-本项目目前支持Windows、Linux、macOS环境开发
-- C++版本：C++20
-- Qt版本：Qt5.15.x
-
-| Platform      | Build Document                                          |
-| ------------- | ------------------------------------------------------- |
-| 🪟 Windows-x64 | [Build on Windows](docs%2Fbuildings%2Fwindows.md)       |
-| 🐧 Ubuntu-x64  | [Build on Ubuntu](docs%2Fbuildings%2Fubuntu.md)         |
-| 🐧 Fedora-x64  | [Build on Fedora](docs%2Fbuildings%2Ffedora.md)         |
-| 🍎 macOS-x64   | [Build on macOS(x64) ](docs%2Fbuildings%2Fmacos.md)     |
-| 🍎 macOS-arm64 | [Build on macOS(arm64) ](docs/buildings/macos-arm64.md) |
-
-
-# Downloads
-
-- Link: https://github.com/okstar-org/ok-msg-desktop/releases
-<table>
-    <tr>
-        <th></th>
-        <th>Windows</th>
-        <th>Ubuntu (64-bit)</th>
-        <th>Fedora (64-bit)</th>
-        <th>Android</th>
-        <th>macOS</th>
-        <th>iOS</th>
-    </tr>
-    <tr>
-        <th>v24.03.0</th>
-        <td>
-          <a href="https://github.com/okstar-org/ok-msg-desktop/releases/download/v24.03.0/ok-msg-desktop_windows-latest_x64.zip">Windows 10+</a>
-        </td>
-        <td>
-            <a href="https://github.com/okstar-org/ok-msg-desktop/releases/download/v24.03.0/ok-msg-desktop_ubuntu-22.04_x86_64.deb">Ubuntu 22.04 (deb)</a><br>
-            <a href="https://snapcraft.io/ok-msg"><img decoding="async" class="aligncenter" src="https://snapcraft.io/static/images/badges/en/snap-store-black.svg" alt="Get it from the Snap Store"><br></a>
-        </td>
-        <td>
-            <a href="https://github.com/okstar-org/ok-msg-desktop/releases/download/v24.03.0/ok-msg-desktop_fedora-36_x86_64.deb">Fedora</a><br>
-        </td>
-        <td><a href="https://www.pgyer.com/0UruoU">Android</a></td>
-        <td>
-          规划中 
-        </td>
-        <td>规划中</td>
-    </tr>
-</table>
 
 
 # 🙏 感谢支持
