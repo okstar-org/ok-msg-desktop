@@ -168,7 +168,7 @@ void AppCenterPage::onWebMessageReceived(const QJsonValue& value) {
     QJsonObject object = value.toObject();
     QString command = object.value("command").toString();
     if (command == "app-center.openApp") {
-        QUrl url = QUrl::fromEncoded(object.value("mainPage").toString().toUtf8());
+        QUrl url = QUrl::fromEncoded(object.value("homePage").toString().toUtf8());
         QString name = object.value("name").toString();
         if (!name.isEmpty()) {
             pageContainer->openWebPage(url, name);
