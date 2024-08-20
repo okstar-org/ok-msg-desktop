@@ -20,10 +20,10 @@
 #include <QTabBar>
 #include "AppCenterWidget.h"
 #include "Bus.h"
-#include "platformpage.h"
 #include "application.h"
 #include "base/OkSettings.h"
 #include "lib/settings/translator.h"
+#include "platformpage.h"
 
 #include <QAbstractButton>
 #include <QPainter>
@@ -104,14 +104,17 @@ void Widget::addPage(PlatformPage* page, bool active) {
     QString title = page->getTitle();
     QWidget* w = page->getWidget();
     if (w) {
-        int index = ui->tabWidget->addTab(w, title);
-        ui->tabWidget->tabBar()->setTabData(index, QVariant::fromValue<PlatformPage*>(page));
-        if (page->pageClosable()) {
-            TabCloseButton* button = new TabCloseButton();
-            ui->tabWidget->tabBar()->setTabButton(index, QTabBar::RightSide, button);
-            connect(button, &TabCloseButton::clicked, this, &Widget::requestCloseTab);
+        int index = ui->tabWidget->indexOf(w);
+        if (index < 0) {
+            index = ui->tabWidget->addTab(w, title);
+            ui->tabWidget->tabBar()->setTabData(index, QVariant::fromValue<PlatformPage*>(page));
+            if (page->pageClosable()) {
+                TabCloseButton* button = new TabCloseButton();
+                ui->tabWidget->tabBar()->setTabButton(index, QTabBar::RightSide, button);
+                connect(button, &TabCloseButton::clicked, this, &Widget::requestCloseTab);
+            }
         }
-        if (active) {
+        if (active && index >= 0) {
             ui->tabWidget->setCurrentIndex(index);
         }
     }

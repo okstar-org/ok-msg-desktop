@@ -9,11 +9,23 @@
  *   ~ MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  *   ~ See the Mulan PubL v2 for more details.
  */
-var wsUri = "ws://localhost:65500";
-window.loggedin = false;
-window.onload = function () {
+(function () {
+    
+    window.loggedin = false;
+
+    var wsUri = "ws://localhost:65500";
     var appList = $("#app-list");
     var socket = new WebSocket(wsUri);
+    function appItemClicked(event) {
+        let app = event.data;
+        let mainPage = (app.mainPage instanceof String) ? encodeURI(app.mainPage) : "";
+        let data = {
+            command: "app-center.openApp",
+            mainPage,
+            name: app.name
+        }
+        socket.send(JSON.stringify(data));
+    }
 
     socket.onclose = function () {
         console.error("web channel closed");
@@ -26,10 +38,16 @@ window.onload = function () {
     socket.onmessage = function (event) {
         console.log('Message from server', event.data);
         const app = JSON.parse(event.data);
-        appList.append("<li><div class='app'> <img src='" + app.avatar + "' /> <span>" + app.name + "</span></div></li>");
+        let appItem = $("<li><div class='app'> <img src='" + app.avatar + "' /> <span>" + app.name + "</span></div></li>")
+        appList.append(appItem);
+        appItem.on('click', null, app, appItemClicked)
     };
 
     socket.onopen = function () {
 
     }
-}
+
+})();
+
+
+
