@@ -10,13 +10,7 @@ PlatformPageContainer::PlatformPageContainer(Platform* platform, Widget* widget)
         : platform(platform), container(widget) {}
 
 PlatformPage* PlatformPageContainer::openWebPage(const QUrl& webUrl, const QString& pageName) {
-    PlatformPage* page = container->findPage(webUrl);
-    if (page) {
-        // 查找到直接切换
-        container->activePage(page);
-        return page;
-    }
-    page = new WebviewPage(webUrl, pageName, this);
+    PlatformPage * page = new WebviewPage(webUrl, pageName, this);
     page->createContent(container.data());
     container->addPage(page, true);
     page->start();

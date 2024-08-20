@@ -31,13 +31,16 @@ class WebSocketClientWrapper;
 class WebSocketTransport;
 
 namespace ok::platform {
+
+class AppCenterPage;
+
 class AppCenterWidget : public UI::OWidget {
     Q_OBJECT
 signals:
     void appPageRequest(const QUrl& url, const QString& title);
 
 public:
-    AppCenterWidget(QWidget* parent = nullptr);
+    AppCenterWidget(AppCenterPage * page, QWidget* parent = nullptr);
     void start();
 
 private:
@@ -63,6 +66,7 @@ private:
     QPointer<WebSocketTransport> wsTransport;
     QJsonArray cachedAppList;
     bool hasRequested = false;
+    AppCenterPage* platformPage;
 };
 
 // 应用中心Page页
@@ -80,8 +84,10 @@ public:
 
 private:
     void openAppPage(const QUrl& url, const QString& title);
+    void onWebMessageReceived(const QJsonValue & value);
 
 private:
     QPointer<AppCenterWidget> widget = nullptr;
+    friend class AppCenterWidget;
 };
 }  // namespace ok::platform
