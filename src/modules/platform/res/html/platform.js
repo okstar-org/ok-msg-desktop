@@ -10,14 +10,13 @@
  * See the Mulan PubL v2 for more details.
  */
 (function () {
-    
+
     window.loggedin = false;
 
     var wsUri = "ws://localhost:65500";
-    var appList = $("#app-list");
+    var appList = document.querySelector("#app-list");
     var socket = new WebSocket(wsUri);
-    function appItemClicked(event) {
-        let app = event.data;
+    function appItemClicked(app) {
         let {name, homePage} = app;
         let data = {
             command: "app-center.openApp",
@@ -38,9 +37,14 @@
     socket.onmessage = function (event) {
         console.log('Message from server', event.data);
         const app = JSON.parse(event.data);
-        let appItem = $("<li><div class='app'> <img src='" + app.avatar + "' /> <span>" + app.name + "</span></div></li>")
-        appList.append(appItem);
-        appItem.on('click', null, app, appItemClicked)
+
+        let appItem = document.createElement("li");
+        appItem.innerHTML = "<div class='app'> <img src='" + app.avatar + "' /> <span>" + app.name + "</span></div>";
+        appList.appendChild(appItem);
+
+        appItem.addEventListener("click", (event) => {
+            appItemClicked(app);
+        });
     };
 
     socket.onopen = function () {
