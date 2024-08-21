@@ -23,8 +23,10 @@
 
 #include <QPushButton>
 #include "Backend.h"
+#include "LoadingWidget.h"
 #include "Platform.h"
 #include "application.h"
+#include "lib/settings/style.h"
 #include "websocketclientwrapper.h"
 #include "websockettransport.h"
 
@@ -53,6 +55,15 @@ void AppCenterWidget::startWebEngine() {
     //    page->setWebChannel(webChannel);
 
     layout()->addWidget(webView);
+
+    loadingWidget = new LoadingWidget(this);
+
+    QColor color = Style::getExtColor("view.loadingAnima.color");
+    if (color.isValid()) {
+        QPalette pal = loadingWidget->palette();
+        pal.setColor(QPalette::Normal, QPalette::WindowText, color);
+        loadingWidget->setPalette(pal);
+    }
 }
 
 void AppCenterWidget::requestAppList() {
@@ -76,6 +87,9 @@ void AppCenterWidget::requestAppList() {
 
 void AppCenterWidget::sendAppListToView(const QJsonArray& appList) {
     if (this->wsTransport) {
+        loadingWidget->hide();
+        loadingWidget->deleteLater();
+        loadingWidget = nullptr;
         for (auto app : appList) {
             auto a = app.toObject();
             wsTransport->sendMessage(a);
@@ -126,6 +140,12 @@ void AppCenterWidget::start() {
     startWsServer();
     requestAppList();
     startWebEngine();
+
+    QTimer::singleShot(200, this, [this]() {
+        if (loadingWidget) {
+            loadingWidget->setVisible(true);
+        }
+    });
 }
 
 void AppCenterPage::createContent(QWidget* parent) {
