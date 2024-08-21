@@ -29,6 +29,7 @@ class QThread;
 class QWebSocketServer;
 class WebSocketClientWrapper;
 class WebSocketTransport;
+class LoadingWidget;
 
 namespace ok::platform {
 
@@ -66,6 +67,7 @@ private:
     QPointer<WebSocketTransport> wsTransport;
     QJsonArray cachedAppList;
     bool hasRequested = false;
+    LoadingWidget* loadingWidget = nullptr;
     AppCenterPage* platformPage;
 };
 
