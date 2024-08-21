@@ -275,7 +275,7 @@ which may lead to problems with video calls.</source>
     </message>
     <message>
         <source>Account:</source>
-        <translation type="unfinished"></translation>
+        <translation>銀行口座:</translation>
     </message>
     <message>
         <source>Confirmation</source>
@@ -283,11 +283,11 @@ which may lead to problems with video calls.</source>
     </message>
     <message>
         <source>Are you sure to remove %1 chat history?</source>
-        <translation type="unfinished"></translation>
+        <translation>%1チャットの履歴を削除してもよろしいですか?</translation>
     </message>
     <message>
         <source>Failed to remove chat history with %1!</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 のチャット履歴を削除できませんでした。</translation>
     </message>
 </context>
 <context>
@@ -310,15 +310,15 @@ which may lead to problems with video calls.</source>
     </message>
     <message>
         <source>Open update download link</source>
-        <translation type="unfinished"></translation>
+        <translation>アップデートのダウンロードリンクを開く</translation>
     </message>
     <message>
         <source>Update available</source>
-        <translation type="unfinished"></translation>
+        <translation>利用可能な更新</translation>
     </message>
     <message utf8="true">
         <source>qTox is up to date ✓</source>
-        <translation type="unfinished"></translation>
+        <translation>qtoxは最新の✓</translation>
     </message>
 </context>
 <context>
@@ -455,15 +455,15 @@ which may lead to problems with video calls.</source>
     </message>
     <message>
         <source>Unless you %1 know what you are doing, please do %2 change anything here. Changes made here may lead to problems with qTox, and even to loss of your data, e.g. history.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 が何をしているのかわからない場合は、ここで %2 何かを変更してください。ここで行われた変更は、qToxに問題を引き起こしたり、履歴などのデータの損失につながる可能性があります。</translation>
     </message>
     <message>
         <source>really</source>
-        <translation type="unfinished"></translation>
+        <translation>本当に</translation>
     </message>
     <message>
         <source>not</source>
-        <translation type="unfinished"></translation>
+        <translation>ない</translation>
     </message>
     <message>
         <source>IMPORTANT NOTE</source>
@@ -557,7 +557,7 @@ which may lead to problems with video calls.</source>
     </message>
     <message>
         <source>You&apos;re trying to send a sequential file, which is not going to work!</source>
-        <translation type="unfinished"></translation>
+        <translation>シーケンシャルファイルを送信しようとしているが、うまくいかない。</translation>
     </message>
     <message>
         <source>%1 is now %2</source>
@@ -570,12 +570,13 @@ which may lead to problems with video calls.</source>
     </message>
     <message>
         <source>Filename contained illegal characters</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル名に不正な文字が含まれています</translation>
     </message>
     <message>
         <source>Illegal characters have been changed to _ 
 so you can save the file on windows.</source>
-        <translation type="unfinished"></translation>
+        <translation>「不正な文字は_に変更されました」
+そのため、Windowsでファイルを保存できます。」</translation>
     </message>
 </context>
 <context>
@@ -688,7 +689,7 @@ so you can save the file on windows.</source>
     <name>Core</name>
     <message>
         <source>/me offers friendship, &quot;%1&quot;</source>
-        <translation type="unfinished">/me 友達にならないか、&quot;%1&quot;</translation>
+        <translation>/me 友達にならないか、&quot;%1&quot;</translation>
     </message>
     <message>
         <source>Invalid Tox ID</source>
@@ -712,30 +713,30 @@ so you can save the file on windows.</source>
     </message>
     <message>
         <source>Groupchat %1</source>
-        <translation type="unfinished"></translation>
+        <translation>グループチャット %1</translation>
     </message>
 </context>
 <context>
     <name>DesktopNotify</name>
     <message>
         <source>New message</source>
-        <translation type="unfinished">新しいメッセージ</translation>
+        <translation>新しいメッセージがあり</translation>
     </message>
     <message>
         <source>Incoming file transfer</source>
-        <translation type="unfinished"></translation>
+        <translation>受信ファイル転送</translation>
     </message>
     <message>
         <source>Friend request received</source>
-        <translation type="unfinished"></translation>
+        <translation>フレンドリクエストを受け取りました</translation>
     </message>
     <message>
         <source>New group message</source>
-        <translation type="unfinished"></translation>
+        <translation>新しいグループメッセージ</translation>
     </message>
     <message>
         <source>Group invite received</source>
-        <translation type="unfinished"></translation>
+        <translation>グループ招待の受信</translation>
     </message>
 </context>
 <context>
@@ -822,7 +823,7 @@ so you can save the file on windows.</source>
     <message>
         <source>Remote Paused</source>
         <comment>file transfer widget</comment>
-        <translation type="unfinished"></translation>
+        <translation>遠隔言い淀む</translation>
     </message>
 </context>
 <context>
@@ -1085,19 +1086,19 @@ instead of closing itself.</source>
     </message>
     <message>
         <source>Check for updates</source>
-        <translation type="unfinished"></translation>
+        <translation>最新情報を調べる</translation>
     </message>
     <message>
         <source>Spell checking</source>
-        <translation type="unfinished"></translation>
+        <translation>聞いて</translation>
     </message>
     <message>
         <source>Max autoaccept file size (0 to disable):</source>
-        <translation type="unfinished"></translation>
+        <translation>最大自動承認ファイルサイズ(無効にするには0):</translation>
     </message>
     <message>
         <source> MB</source>
-        <translation type="unfinished"></translation>
+        <translation> MB</translation>
     </message>
 </context>
 <context>
@@ -1144,23 +1145,23 @@ instead of closing itself.</source>
     </message>
     <message>
         <source>You are sure that you want to clear all displayed messages?</source>
-        <translation type="unfinished"></translation>
+        <translation>表示されているすべてのメッセージをクリアしてもよろしいですか?</translation>
     </message>
     <message>
         <source>Search in text</source>
-        <translation type="unfinished"></translation>
+        <translation>メールで検索</translation>
     </message>
     <message>
         <source>Go to current date</source>
-        <translation type="unfinished"></translation>
+        <translation>現在の日付に戻る</translation>
     </message>
     <message>
         <source>Load chat history...</source>
-        <translation type="unfinished">チャット履歴を読み込む…</translation>
+        <translation>チャット履歴を読み込む…</translation>
     </message>
     <message>
         <source>Export to file</source>
-        <translation type="unfinished">ファイルにエクスポート</translation>
+        <translation>ファイルにエクスポート</translation>
     </message>
 </context>
 <context>
@@ -1179,15 +1180,15 @@ instead of closing itself.</source>
     </message>
     <message>
         <source>Full Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>全画面</translation>
     </message>
     <message>
         <source>Toggle video preview</source>
-        <translation type="unfinished"></translation>
+        <translation>切替ビデオプレビュー</translation>
     </message>
     <message>
         <source>Mute audio</source>
-        <translation type="unfinished"></translation>
+        <translation>唖オーディオ</translation>
     </message>
     <message>
         <source>Mute microphone</source>
@@ -1199,7 +1200,7 @@ instead of closing itself.</source>
     </message>
     <message>
         <source>Exit full screen</source>
-        <translation type="unfinished"></translation>
+        <translation>出口全画面</translation>
     </message>
 </context>
 <context>
@@ -1210,30 +1211,29 @@ instead of closing itself.</source>
     </message>
     <message>
         <source>%1 has joined the group</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 がグループに参加しました</translation>
     </message>
     <message>
         <source>%1 is now known as %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 は %2 として知られるようになりました</translation>
     </message>
     <message>
         <source>%1 has left the group</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 がグループから退出しました</translation>
     </message>
     <message numerus="yes">
         <source>%n user(s) in chat</source>
         <comment>Number of users in chat</comment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-        </translation>
+        <translation>
+            <numerusform/>%nチャットのユーザー(s)</translation>
     </message>
     <message>
         <source>mute</source>
-        <translation type="unfinished"></translation>
+        <translation>唖</translation>
     </message>
     <message>
         <source>unmute</source>
-        <translation type="unfinished"></translation>
+        <translation>ミュート解除</translation>
     </message>
 </context>
 <context>
@@ -1288,13 +1288,12 @@ instead of closing itself.</source>
     <message numerus="yes">
         <source>%n user(s) in chat</source>
         <comment>Number of users in chat</comment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-        </translation>
+        <translation>
+            <numerusform/>%nチャットのユーザー(s)</translation>
     </message>
     <message>
         <source>New Message</source>
-        <translation type="unfinished"></translation>
+        <translation>新しいメッセージがあり</translation>
     </message>
     <message>
         <source>Online</source>
@@ -1541,27 +1540,27 @@ Profile does not contain your history.</source>
     </message>
     <message>
         <source>Load history</source>
-        <translation type="unfinished"></translation>
+        <translation>負荷歴史</translation>
     </message>
     <message>
         <source>from</source>
-        <translation type="unfinished"></translation>
+        <translation>から</translation>
     </message>
     <message>
         <source>to</source>
-        <translation type="unfinished"></translation>
+        <translation>に</translation>
     </message>
     <message>
         <source>(about 100 messages are loaded)</source>
-        <translation type="unfinished"></translation>
+        <translation>(約100通のメッセージが読み込まれます)</translation>
     </message>
     <message>
         <source>Select Date Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>選択伊達ダイアログ</translation>
     </message>
     <message>
         <source>Select a date</source>
-        <translation type="unfinished"></translation>
+        <translation>デート選択</translation>
     </message>
 </context>
 <context>
@@ -2103,7 +2102,10 @@ Please use another image.</source>
 Share it with your friends to communicate.
 
 This ID includes the NoSpam code (in blue), and the checksum (in gray).</source>
-        <translation type="unfinished"></translation>
+        <translation>「このキャラクターの束は、他のToxクライアントにどのように連絡するかを伝えます。
+友達と共有してコミュニケーションを取りましょう。
+
+このIDには、NoSpamコード(青色)とチェックサム(灰色)が含まれています。</translation>
     </message>
     <message>
         <source>Empty path is unavaliable</source>
@@ -2375,52 +2377,52 @@ This ID includes the NoSpam code (in blue), and the checksum (in gray).</source>
     </message>
     <message>
         <source>Dark</source>
-        <translation type="unfinished"></translation>
+        <translation>暗い</translation>
     </message>
     <message>
         <source>Dark blue</source>
-        <translation type="unfinished"></translation>
+        <translation>紺色</translation>
     </message>
     <message>
         <source>Dark olive</source>
-        <translation type="unfinished"></translation>
+        <translation>暗いオリーブ</translation>
     </message>
     <message>
         <source>Dark red</source>
-        <translation type="unfinished"></translation>
+        <translation>暗赤色</translation>
     </message>
     <message>
         <source>Dark violet</source>
-        <translation type="unfinished"></translation>
+        <translation>暗いヴァイオレット</translation>
     </message>
     <message>
         <source>Failed to load profile automatically.</source>
-        <translation type="unfinished"></translation>
+        <translation>プロファイルを自動的にロードできませんでした。</translation>
     </message>
     <message>
         <source>online</source>
         <comment>contact status</comment>
-        <translation type="unfinished">オンライン</translation>
+        <translation>オンライン</translation>
     </message>
     <message>
         <source>away</source>
         <comment>contact status</comment>
-        <translation type="unfinished">退席中</translation>
+        <translation>退席中</translation>
     </message>
     <message>
         <source>busy</source>
         <comment>contact status</comment>
-        <translation type="unfinished">多忙</translation>
+        <translation>多忙</translation>
     </message>
     <message>
         <source>offline</source>
         <comment>contact status</comment>
-        <translation type="unfinished">オフライン</translation>
+        <translation>オフライン</translation>
     </message>
     <message>
         <source>blocked</source>
         <comment>contact status</comment>
-        <translation type="unfinished"></translation>
+        <translation>封鎖</translation>
     </message>
 </context>
 <context>
@@ -2478,11 +2480,11 @@ This ID includes the NoSpam code (in blue), and the checksum (in gray).</source>
     <name>SearchForm</name>
     <message>
         <source>The text could not be found.</source>
-        <translation type="unfinished"></translation>
+        <translation>テキストが見つかりませんでした。</translation>
     </message>
     <message>
         <source>Start</source>
-        <translation type="unfinished"></translation>
+        <translation>開始</translation>
     </message>
 </context>
 <context>
@@ -2493,39 +2495,39 @@ This ID includes the NoSpam code (in blue), and the checksum (in gray).</source>
     </message>
     <message>
         <source>Start search:</source>
-        <translation type="unfinished"></translation>
+        <translation>検索から着手しましょう</translation>
     </message>
     <message>
         <source>from the end</source>
-        <translation type="unfinished"></translation>
+        <translation>末期から</translation>
     </message>
     <message>
         <source>from the beginning</source>
-        <translation type="unfinished"></translation>
+        <translation>最初から</translation>
     </message>
     <message>
         <source>after date</source>
-        <translation type="unfinished"></translation>
+        <translation>デート後</translation>
     </message>
     <message>
         <source>before date</source>
-        <translation type="unfinished"></translation>
+        <translation>前</translation>
     </message>
     <message>
         <source>00.00.0000</source>
-        <translation type="unfinished"></translation>
+        <translation>00.00.0000</translation>
     </message>
     <message>
         <source>Case sensitive</source>
-        <translation type="unfinished"></translation>
+        <translation>敏感な場合</translation>
     </message>
     <message>
         <source>Whole words only</source>
-        <translation type="unfinished"></translation>
+        <translation>全しかない言葉</translation>
     </message>
     <message>
         <source>Use regular expressions</source>
-        <translation type="unfinished"></translation>
+        <translation>正規表現を使用する</translation>
     </message>
 </context>
 <context>
@@ -2756,25 +2758,25 @@ This ID includes the NoSpam code (in blue), and the checksum (in gray).</source>
     </message>
     <message>
         <source>Use colored nicknames in chats</source>
-        <translation type="unfinished"></translation>
+        <translation>チャットで色付きのニックネームを使用する</translation>
     </message>
     <message>
         <source>Show a notification when you receive a new message and the window is not selected.</source>
         <comment>tooltip for Notify setting</comment>
-        <translation type="unfinished"></translation>
+        <translation>新しいメッセージを受信し、ウィンドウが選択されていない場合に通知を表示します。</translation>
     </message>
     <message>
         <source>Notify</source>
-        <translation type="unfinished"></translation>
+        <translation>知らせる</translation>
     </message>
     <message>
         <source>Onlys notify about new messages in groupchats when mentioned.</source>
         <comment>toolTip for Group chats only notify when mentioned</comment>
-        <translation type="unfinished"></translation>
+        <translation>グループチャットで新着メッセージがメンションされたときだけ通知します。</translation>
     </message>
     <message>
         <source>Group chats only notify when mentioned</source>
-        <translation type="unfinished"></translation>
+        <translation>グループチャットはメンションされた場合にのみ通知されます</translation>
     </message>
     <message>
         <source>Play sound</source>
@@ -2786,11 +2788,11 @@ This ID includes the NoSpam code (in blue), and the checksum (in gray).</source>
     </message>
     <message>
         <source>Notify via desktop notifications</source>
-        <translation type="unfinished"></translation>
+        <translation>デスクトップ通知で通知する</translation>
     </message>
     <message>
         <source>Hide message sender and contents</source>
-        <translation type="unfinished"></translation>
+        <translation>メッセージの送信者と内容を非表示にする</translation>
     </message>
 </context>
 <context>
@@ -2983,19 +2985,19 @@ This ID includes the NoSpam code (in blue), and the checksum (in gray).</source>
     </message>
     <message>
         <source>Failed to send file &quot;%1&quot;</source>
-        <translation type="unfinished">ファイル &quot;%1&quot; の送信に失敗しました</translation>
+        <translation>ファイル &quot;%1&quot; の送信に失敗しました</translation>
     </message>
     <message>
         <source>File sent</source>
-        <translation type="unfinished"></translation>
+        <translation>送信されたファイル</translation>
     </message>
     <message>
         <source> sent you a friend request.</source>
-        <translation type="unfinished"></translation>
+        <translation>フレンドリクエストを送信しました。</translation>
     </message>
     <message>
         <source> invites you to join a group.</source>
-        <translation type="unfinished"></translation>
+        <translation>グループに参加するように招待します。</translation>
     </message>
 </context>
 </TS>
