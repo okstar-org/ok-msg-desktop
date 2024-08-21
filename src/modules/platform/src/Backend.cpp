@@ -21,7 +21,7 @@ Backend::Backend(const QString& baseUrl, QObject* parent)
         : ok::backend::BaseService(baseUrl, parent) {}
 
 bool Backend::getAppList(const network::HttpBodyFn& fn, int pageIndex, int pageSize) {
-    QString url = _baseUrl + "/api/sys/work/app/page";
+    QString url = _baseUrl + "/api/work/app/page";
 
     QJsonDocument doc;
     QJsonObject obj;
