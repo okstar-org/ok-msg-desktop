@@ -62,6 +62,10 @@ parts:
       - adwaita-icon-theme
       - gnome-themes-standard
       - shared-mime-info
+      - libqt5webengine5
+      - libqt5webenginewidgets5
+      - libqt5webenginecore5
+      - libqt5websockets5
       - libqt5core5a
       - libqt5gui5
       - libqt5multimedia5
