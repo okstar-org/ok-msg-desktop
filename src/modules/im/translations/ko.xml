@@ -146,15 +146,13 @@ which may lead to problems with video calls.</source>
         <translation>Commit hash: %1</translation>
     </message>
     <message>
-        <source>toxcore version: %1</source>
-        <translation>toxcore version: %1</translation>
-    </message>
-    <message>
         <source>Qt version: %1</source>
         <translation>Qt version: %1</translation>
     </message>
     <message>
-        <source>A list of all known issues may be found at our %1 at Github. If you discover a bug or security vulnerability within qTox, please report it according to the guidelines in our %2 wiki article.</source>
+        <source>A list of all known issues may be found at our %1 at Github. If you discover a bug or security
+            vulnerability, please report it according to the guidelines in our %2 wiki article.
+        </source>
         <comment>`%1` is replaced by translation of `bug tracker`
 `%2` is replaced by translation of `Writing Useful Bug Reports`</comment>
         <translation>%1 에서 qTox의 알려진 문제들을 확인할 수 있습니다. 버그나 보안 취약점을 발견하면 %2 위키 가이드라인에 따라 %3.</translation>
@@ -1011,10 +1009,6 @@ so you can save the file on windows.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Language:</source>
-        <translation>현시언어:</translation>
-    </message>
-    <message>
         <source>Show system tray icon</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1201,13 +1195,6 @@ so you can save the file on windows.</source>
         <source>%1 has left the group</source>
         <translation type="unfinished"></translation>
     </message>
-    <message numerus="yes">
-        <source>%n user(s) in chat</source>
-        <comment>Number of users in chat</comment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-        </translation>
-    </message>
     <message>
         <source>mute</source>
         <translation type="unfinished"></translation>
@@ -1265,13 +1252,6 @@ so you can save the file on windows.</source>
         <source>Quit group</source>
         <comment>Menu to quit a groupchat</comment>
         <translation type="unfinished"></translation>
-    </message>
-    <message numerus="yes">
-        <source>%n user(s) in chat</source>
-        <comment>Number of users in chat</comment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-        </translation>
     </message>
     <message>
         <source>New Message</source>
@@ -2582,7 +2562,7 @@ This ID includes the NoSpam code (in blue), and the checksum (in gray).</source>
     </message>
 </context>
 <context>
-    <name>UserInterfaceForm</name>
+    <name>StorageSettingsForm</name>
     <message>
         <source>None</source>
         <translation type="unfinished">없음</translation>

@@ -147,18 +147,19 @@ se pueden producir problemas con las videollamadas.</translation>
         <translation>Confirmación de hash: %1</translation>
     </message>
     <message>
-        <source>toxcore version: %1</source>
-        <translation>Versión de toxcore: %1</translation>
-    </message>
-    <message>
         <source>Qt version: %1</source>
         <translation>Versión de Qt: %1</translation>
     </message>
     <message>
-        <source>A list of all known issues may be found at our %1 at Github. If you discover a bug or security vulnerability within qTox, please report it according to the guidelines in our %2 wiki article.</source>
+        <source>A list of all known issues may be found at our %1 at Github. If you discover a bug or security
+            vulnerability, please report it according to the guidelines in our %2 wiki article.
+        </source>
         <comment>`%1` is replaced by translation of `bug tracker`
 `%2` is replaced by translation of `Writing Useful Bug Reports`</comment>
-        <translation>Puedes encontrar una lista de los problemas conocidos en nuestro %1 en GitHub. Si encuentras un error o una vulnerabilidad de seguridad en qTox, por favor repórtalo de acuerdo a las directrices en nuestro artículo de la wiki %2.</translation>
+        <translation>Puedes encontrar una lista de los problemas conocidos en nuestro %1 en GitHub. Si encuentras un
+            error o una vulnerabilidad de seguridad, por favor repórtalo de acuerdo a las directrices en nuestro
+            artículo de la wiki %2.
+        </translation>
     </message>
     <message>
         <source>Click here to report a bug.</source>
@@ -1031,10 +1032,6 @@ para que puedas guardar el archivo en windows.</translation>
         <translation>0 para desactivar</translation>
     </message>
     <message>
-        <source>Language:</source>
-        <translation>Idioma:</translation>
-    </message>
-    <message>
         <source>Enable light tray icon.</source>
         <comment>toolTip for light icon setting</comment>
         <translation>Habilitará un ícono claro en la bandeja.</translation>
@@ -1209,14 +1206,6 @@ para que puedas guardar el archivo en windows.</translation>
         <source>%1 has left the group</source>
         <translation>%1 ha dejado el grupo</translation>
     </message>
-    <message numerus="yes">
-        <source>%n user(s) in chat</source>
-        <comment>Number of users in chat</comment>
-        <translation>
-            <numerusform>%n usuario en el chat</numerusform>
-            <numerusform>%n usuarios en el chat</numerusform>
-        </translation>
-    </message>
     <message>
         <source>mute</source>
         <translation>mudo</translation>
@@ -1274,14 +1263,6 @@ para que puedas guardar el archivo en windows.</translation>
         <source>Quit group</source>
         <comment>Menu to quit a groupchat</comment>
         <translation>Dejar el grupo</translation>
-    </message>
-    <message numerus="yes">
-        <source>%n user(s) in chat</source>
-        <comment>Number of users in chat</comment>
-        <translation>
-            <numerusform>%n usuario en el chat</numerusform>
-            <numerusform>%n usuarios en el chat</numerusform>
-        </translation>
     </message>
     <message>
         <source>New Message</source>
@@ -2605,7 +2586,7 @@ Este ID incluye el código NoSpam (en azul) y la suma de comprobación (en gris)
     </message>
 </context>
 <context>
-    <name>UserInterfaceForm</name>
+    <name>StorageSettingsForm</name>
     <message>
         <source>None</source>
         <translation>Ninguno</translation>

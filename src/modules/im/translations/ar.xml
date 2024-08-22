@@ -152,22 +152,18 @@
             <translation>إيداع رمز التهشير: %1</translation>
         </message>
         <message>
-            <source>toxcore version: %1</source>
-            <translation>إصدار toxcore: %1</translation>
-        </message>
-        <message>
             <source>Qt version: %1</source>
             <translation>Qt نسخة: %1</translation>
         </message>
         <message>
             <source>A list of all known issues may be found at our %1 at Github. If you discover a bug or security
-                vulnerability within qTox, please report it according to the guidelines in our %2 wiki article.
+                vulnerability, please report it according to the guidelines in our %2 wiki article.
             </source>
             <comment>`%1` is replaced by translation of `bug tracker`
                 `%2` is replaced by translation of `Writing Useful Bug Reports`
             </comment>
-            <translation>لائحة بجميع المشاكل المعروفة موجودة في %1 على GitHub. اذا وجدت خطأ ما أو ضعف أمني في qTox,
-                الرجاء التبليغ عنها فيما يتوافق في التعليمات الموجود على %2 مقالة الويكي.
+            <translation>لائحة بجميع المشاكل المعروفة موجودة في %1 على GitHub. اذا وجدت خطأ ما أو ضعف أمني في الرجاء
+                التبليغ عنها فيما يتوافق في التعليمات الموجود على %2 مقالة الويكي.
             </translation>
         </message>
         <message>
@@ -1029,10 +1025,6 @@
             <translation>قد لا يتم تحميل الترجمة حتى تعيد تشغيل qTox .</translation>
         </message>
         <message>
-            <source>Language:</source>
-            <translation>اللغة:</translation>
-        </message>
-        <message>
             <source>Enable light tray icon.</source>
             <comment>toolTip for light icon setting</comment>
             <translation>تفعيل الأيقونة المضيئة.</translation>
@@ -1248,18 +1240,6 @@
             <source>%1 has left the group</source>
             <translation type="unfinished"></translation>
         </message>
-        <message numerus="yes">
-            <source>%n user(s) in chat</source>
-            <comment>Number of users in chat</comment>
-            <translation type="unfinished">
-                <numerusform></numerusform>
-                <numerusform></numerusform>
-                <numerusform></numerusform>
-                <numerusform></numerusform>
-                <numerusform></numerusform>
-                <numerusform></numerusform>
-            </translation>
-        </message>
         <message>
             <source>mute</source>
             <translation type="unfinished"></translation>
@@ -1317,18 +1297,6 @@
             <source>Quit group</source>
             <comment>Menu to quit a groupchat</comment>
             <translation>الخروج من المجموعة</translation>
-        </message>
-        <message numerus="yes">
-            <source>%n user(s) in chat</source>
-            <comment>Number of users in chat</comment>
-            <translation type="unfinished">
-                <numerusform></numerusform>
-                <numerusform></numerusform>
-                <numerusform></numerusform>
-                <numerusform></numerusform>
-                <numerusform></numerusform>
-                <numerusform></numerusform>
-            </translation>
         </message>
         <message>
             <source>New Message</source>
@@ -2678,7 +2646,7 @@
         </message>
     </context>
     <context>
-        <name>UserInterfaceForm</name>
+        <name>StorageSettingsForm</name>
         <message>
             <source>None</source>
             <translation>لا شيئ</translation>

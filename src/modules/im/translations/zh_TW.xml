@@ -933,7 +933,11 @@ so you can save the file on windows.</source>
     <name>GeneralForm</name>
     <message>
         <source>General</source>
-        <translation>一般</translation>
+        <translation>一般设置</translation>
+    </message>
+    <message>
+        <source>Storage Settings</source>
+        <translation>存儲设置</translation>
     </message>
     <message>
         <source>Choose an auto accept directory</source>
@@ -941,19 +945,23 @@ so you can save the file on windows.</source>
         <translation type="unfinished">選擇自動接受目錄</translation>
     </message>
 </context>
-<context>
+    <context>
+        <name>StorageSettingsForm</name>
+        <message>
+            <source>Storage Settings</source>
+            <translation>存儲设置</translation>
+        </message>
+    </context>
+
+    <context>
     <name>GeneralSettings</name>
     <message>
         <source>General Settings</source>
         <translation>一般設定</translation>
     </message>
     <message>
-        <source>The translation may not load until qTox restarts.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Language:</source>
-        <translation>語言：</translation>
+        <source>Storage Settings</source>
+        <translation>存儲設定</translation>
     </message>
     <message>
         <source>Show system tray icon</source>
@@ -1153,13 +1161,7 @@ instead of closing itself.</source>
         <source>%1 has left the group</source>
         <translation type="unfinished"></translation>
     </message>
-    <message numerus="yes">
-        <source>%n user(s) in chat</source>
-        <comment>Number of users in chat</comment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-        </translation>
-    </message>
+
     <message>
         <source>mute</source>
         <translation type="unfinished"></translation>
@@ -1218,13 +1220,7 @@ instead of closing itself.</source>
         <comment>Menu to quit a groupchat</comment>
         <translation type="unfinished"></translation>
     </message>
-    <message numerus="yes">
-        <source>%n user(s) in chat</source>
-        <comment>Number of users in chat</comment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-        </translation>
-    </message>
+
     <message>
         <source>New Message</source>
         <translation type="unfinished"></translation>
@@ -2534,7 +2530,7 @@ This ID includes the NoSpam code (in blue), and the checksum (in gray).</source>
     </message>
 </context>
 <context>
-    <name>UserInterfaceForm</name>
+    <name>StorageSettingsForm</name>
     <message>
         <source>None</source>
         <translation type="unfinished"></translation>
@@ -2882,8 +2878,8 @@ This ID includes the NoSpam code (in blue), and the checksum (in gray).</source>
         <translation>聊天</translation>
     </message>
     <message>
-        <source>Contact</source>
-        <translation>通訊錄</translation>
+        <source>Contacts</source>
+        <translation>聯系人</translation>
     </message>
     <message>
         <source>Settings</source>

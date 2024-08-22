@@ -36,7 +36,7 @@ SettingsWidget::SettingsWidget(QWidget* parent)
     //  std::unique_ptr<GeneralForm> gfrm(new GeneralForm(this));
     //    connect(gfrm.get(), &GeneralForm::updateIcons, parent, &Widget::updateIcons);
 
-    //std::unique_ptr<UserInterfaceForm> uifrm(new UserInterfaceForm(this));
+    // std::unique_ptr<StorageSettingsForm> uifrm(new StorageSettingsForm(this));
     //  std::unique_ptr<PrivacyForm> pfrm(new PrivacyForm());
     //    connect(pfrm.get(), &PrivacyForm::clearAllReceipts, parent, &Widget::clearAllReceipts);
 

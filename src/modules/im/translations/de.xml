@@ -145,15 +145,13 @@ Zu hohe Auflösungen können daher zu Problemen in Videoanrufen führen, wenn di
         <translation>Commit-Hash: %1</translation>
     </message>
     <message>
-        <source>toxcore version: %1</source>
-        <translation>Toxcore-Version: %1</translation>
-    </message>
-    <message>
         <source>Qt version: %1</source>
         <translation>Qt-Version: %1</translation>
     </message>
     <message>
-        <source>A list of all known issues may be found at our %1 at Github. If you discover a bug or security vulnerability within qTox, please report it according to the guidelines in our %2 wiki article.</source>
+        <source>A list of all known issues may be found at our %1 at Github. If you discover a bug or security
+            vulnerability, please report it according to the guidelines in our %2 wiki article.
+        </source>
         <comment>`%1` is replaced by translation of `bug tracker`
 `%2` is replaced by translation of `Writing Useful Bug Reports`</comment>
         <translation>Eine Liste von bekannten Problemen kann in unserem %1 angesehen werden. Wenn Du einen Bug oder eine Sicherheitslücke findest, melde ihn bitte entsprechend unseren Richtlinien, die Du in unserem Wiki-Artikel %2 findest.</translation>
@@ -1013,10 +1011,6 @@ um sie in Windows speichern zu können.</translation>
         <translation>Die Änerung wird erst nach Neustart von qtox aktiv.</translation>
     </message>
     <message>
-        <source>Language:</source>
-        <translation>Sprache:</translation>
-    </message>
-    <message>
         <source>Show system tray icon</source>
         <translation>Icon in Systemleiste anzeigen</translation>
     </message>
@@ -1203,14 +1197,6 @@ um sie in Windows speichern zu können.</translation>
         <source>%1 has left the group</source>
         <translation>%1 hat die Gruppe verlassen</translation>
     </message>
-    <message numerus="yes">
-        <source>%n user(s) in chat</source>
-        <comment>Number of users in chat</comment>
-        <translation>
-            <numerusform>%n Benutzer im Chat</numerusform>
-            <numerusform>%n Benutzer im Chat</numerusform>
-        </translation>
-    </message>
     <message>
         <source>mute</source>
         <translation>stumm</translation>
@@ -1268,14 +1254,6 @@ um sie in Windows speichern zu können.</translation>
         <source>Quit group</source>
         <comment>Menu to quit a groupchat</comment>
         <translation>Gruppe verlassen</translation>
-    </message>
-    <message numerus="yes">
-        <source>%n user(s) in chat</source>
-        <comment>Number of users in chat</comment>
-        <translation>
-            <numerusform>%n Benutzer im Chat</numerusform>
-            <numerusform>%n Benutzer im Chat</numerusform>
-        </translation>
     </message>
     <message>
         <source>New Message</source>
@@ -2602,7 +2580,7 @@ Diese ID beinhaltet den NoSpam-Code (in blau), und die Prüfsumme (in grau).</tr
     </message>
 </context>
 <context>
-    <name>UserInterfaceForm</name>
+    <name>StorageSettingsForm</name>
     <message>
         <source>None</source>
         <translation>Ohne</translation>

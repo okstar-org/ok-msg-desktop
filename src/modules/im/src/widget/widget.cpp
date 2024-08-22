@@ -117,7 +117,7 @@ Widget::Widget(IAudioControl& audio, QWidget* parent)  //
     ui->tabWidget->addTab(chatWidget, tr("Chat"));
 
     contactWidget = new ContactWidget(this);
-    ui->tabWidget->addTab(contactWidget, tr("Contact"));
+    ui->tabWidget->addTab(contactWidget, tr("Contacts"));
 
     settingsWidget = new SettingsWidget(this);
     ui->tabWidget->addTab(settingsWidget, tr("Settings"));
@@ -1349,7 +1349,7 @@ void Widget::reloadTheme() {
 void Widget::retranslateUi() {
     ui->retranslateUi(this);
     ui->tabWidget->setTabText(0, tr("Chat"));
-    ui->tabWidget->setTabText(1, tr("Contact"));
+    ui->tabWidget->setTabText(1, tr("Contacts"));
     ui->tabWidget->setTabText(2, tr("Settings"));
 
     // #ifdef Q_OS_MAC

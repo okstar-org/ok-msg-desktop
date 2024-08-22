@@ -19,14 +19,14 @@
 #include <memory>
 
 namespace Ui {
-class UserInterfaceSettings;
+class StorageSettingsForm;
 }
 
-class UserInterfaceForm : public GenericForm {
+class StorageSettingsForm : public GenericForm {
     Q_OBJECT
 public:
-    explicit UserInterfaceForm(SettingsWidget* myParent);
-    ~UserInterfaceForm();
+    explicit StorageSettingsForm(SettingsWidget* myParent);
+    ~StorageSettingsForm();
     virtual QString getFormName() final override
     {
         return tr("Storage Settings");
@@ -45,8 +45,7 @@ private:
 
 private:
     SettingsWidget* parent;
-    Ui::UserInterfaceSettings* bodyUI;
-
+    Ui::StorageSettingsForm* bodyUI;
 };
 
 #endif

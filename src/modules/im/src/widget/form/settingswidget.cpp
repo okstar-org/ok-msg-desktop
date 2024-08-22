@@ -19,10 +19,10 @@
 #include "src/persistence/settings.h"
 #include "src/video/camerasource.h"
 #include "src/widget/contentlayout.h"
+#include "src/widget/form/settings/StorageSettingsForm.h"
 #include "src/widget/form/settings/avform.h"
 #include "src/widget/form/settings/generalform.h"
 #include "src/widget/form/settings/privacyform.h"
-#include "src/widget/form/settings/userinterfaceform.h"
 #include "src/widget/widget.h"
 
 #include <QLabel>
@@ -47,7 +47,7 @@ SettingsWidget::SettingsWidget(Widget* parent) : QWidget(parent, Qt::Window) {
     std::unique_ptr<GeneralForm> gfrm(new GeneralForm(this));
     connect(gfrm.get(), &GeneralForm::updateIcons, parent, &Widget::updateIcons);
 
-    std::unique_ptr<UserInterfaceForm> uifrm(new UserInterfaceForm(this));
+    std::unique_ptr<StorageSettingsForm> uifrm(new StorageSettingsForm(this));
     std::unique_ptr<PrivacyForm> pfrm(new PrivacyForm());
     connect(pfrm.get(), &PrivacyForm::clearAllReceipts, parent, &Widget::clearAllReceipts);
 

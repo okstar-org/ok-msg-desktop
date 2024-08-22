@@ -10,95 +10,94 @@
   ~ MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
   ~ See the Mulan PubL v2 for more details.
   -->
-
 <!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<TS version="2.1" language="ja_JP">
     <context>
         <name>UI::ConfigWindow</name>
         <message>
             <source>Plugin form</source>
-            <translation>插件管理</translation>
+            <translation>プラグイン管理</translation>
         </message>
         <message>
             <source>Settings form</source>
-            <translation>系統設置</translation>
+            <translation>システム設定</translation>
         </message>
         <message>
             <source>About form</source>
-            <translation>關於</translation>
+            <translation>について</translation>
         </message>
     </context>
     <context>
         <name>UI::GeneralForm</name>
         <message>
             <source>General</source>
-            <translation>通用</translation>
+            <translation>一般</translation>
         </message>
     </context>
     <context>
         <name>GeneralForm</name>
         <message>
             <source>Language:</source>
-            <translation>語言：</translation>
+            <translation>言語：</translation>
         </message>
         <message>
             <source>Autostart</source>
-            <translation>開機自動啓動</translation>
+            <translation>自動起動</translation>
         </message>
         <message>
             <source>Show system tray icon</source>
-            <translation>顯示系統託盤圖標</translation>
+            <translation>システムトレイアイコンを表示</translation>
         </message>
         <message>
             <source>Start in tray</source>
-            <translation>啓動到託盤</translation>
+            <translation>トレイで起動</translation>
         </message>
         <message>
             <source>Close to tray</source>
-            <translation>關閉到託盤</translation>
+            <translation>トレイに閉じる</translation>
         </message>
         <message>
             <source>Minimize to tray</source>
-            <translation>最小化到託盤</translation>
+            <translation>トレイに最小化</translation>
         </message>
         <message>
             <source>Theme</source>
-            <translation type="unfinished">主題：</translation>
+            <translation>テーマ</translation>
         </message>
         <message>
             <source>Style:</source>
-            <translation type="unfinished">風格：</translation>
+            <translation>スタイル：</translation>
         </message>
         <message>
             <source>Theme color:</source>
-            <translation type="unfinished">主題顏色：</translation>
+            <translation>テーマカラー：</translation>
         </message>
         <message>
             <source>Timestamp format:</source>
-            <translation type="unfinished">時間戳格式：</translation>
+            <translation>タイムスタンプ形式：</translation>
         </message>
         <message>
             <source>Date format:</source>
-            <translation>日期格式：</translation>
+            <translation>日付形式：</translation>
         </message>
     </context>
     <context>
         <name>ok::plugin::PluginInfoForm</name>
         <message>
             <source>Install</source>
-            <translation>安裝</translation>
+            <translation>インストール</translation>
         </message>
         <message>
             <source>Installing</source>
-            <translation>安裝中</translation>
+            <translation>インストール中</translation>
         </message>
         <message>
             <source>Uninstall</source>
-            <translation>卸載</translation>
+            <translation>アンインストール</translation>
         </message>
         <message>
             <source>Uninstalling</source>
-            <translation>卸載中</translation>
+            <translation>アンインストール中</translation>
         </message>
     </context>
 
@@ -106,23 +105,23 @@
         <name>UI::AboutForm</name>
         <message>
             <source>About</source>
-            <translation>關於</translation>
+            <translation>情報</translation>
         </message>
         <message>
             <source>Original author: %1</source>
-            <translation>原始作者：%1</translation>
+            <translation>原作者：%1</translation>
         </message>
         <message>
             <source>You are using qTox version %1.</source>
-            <translation type="unfinished">你正在使用的版本是 %1 。</translation>
+            <translation>使用中のバージョンは %1 です。</translation>
         </message>
         <message>
             <source>Commit hash: %1</source>
-            <translation>認可雜湊：%1</translation>
+            <translation>コミットハッシュ：%1</translation>
         </message>
         <message>
             <source>Qt version: %1</source>
-            <translation>Qt 版本：%1</translation>
+            <translation>Qt バージョン：%1</translation>
         </message>
         <message>
             <source>A list of all known issues may be found at our %1 at Github. If you discover a bug or security
@@ -131,33 +130,30 @@
             <comment>`%1` is replaced by translation of `bug tracker`
                 `%2` is replaced by translation of `Writing Useful Bug Reports`
             </comment>
-            <translation>所有已知问题的列表可以在 GitHub 上我们的 %1 里找到。如果您发现有错误或者安全漏洞，请根据我们的维基文章
-                %2 提交报告。
+            <translation>すべての既知の問題のリストは、Github の私たちの %1 で見つけることができます。でバグやセキュリティの脆弱性を見つけた場合は、私たちの
+                %2 Wiki記事のガイドラインに従って報告してください。
             </translation>
         </message>
         <message>
             <source>Click here to report a bug.</source>
-            <translation>點選此處報告錯誤。</translation>
+            <translation>ここをクリックしてバグを報告してください。</translation>
         </message>
         <message>
             <source>See a full list of %1 at Github</source>
             <comment>`%1` is replaced with translation of word `contributors`</comment>
-            <translation type="unfinished"></translation>
+            <translation>Github で %1 の完全なリストを確認してください</translation>
         </message>
         <message>
             <source>bug-tracker</source>
-            <comment>Replaces `%1` in the `A list of all knownâ¦`</comment>
-            <translation type="unfinished">Bug 追蹤器</translation>
+            <translation>バグトラッカー</translation>
         </message>
         <message>
             <source>Writing Useful Bug Reports</source>
-            <comment>Replaces `%2` in the `A list of all knownâ¦`</comment>
-            <translation type="unfinished"></translation>
+            <translation>有用なバグ報告の書き方</translation>
         </message>
         <message>
             <source>contributors</source>
-            <comment>Replaces `%1` in `See a full list ofâ¦`</comment>
-            <translation type="unfinished">參與者</translation>
+            <translation>貢献者</translation>
         </message>
     </context>
 
@@ -165,30 +161,31 @@
         <name>UI::ConnectForm</name>
         <message>
             <source>Connection</source>
-            <translation>連接</translation>
+            <translation>接続</translation>
         </message>
     </context>
+
     <context>
         <name>ConnectForm</name>
         <message>
             <source>Connection Settings</source>
-            <translation>連接設置</translation>
+            <translation>接続設定</translation>
         </message>
         <message>
             <source>Proxy type:</source>
-            <translation>代理類型：</translation>
+            <translation>プロキシタイプ：</translation>
         </message>
         <message>
             <source>Address:</source>
-            <translation>代理地址：</translation>
+            <translation>アドレス：</translation>
         </message>
         <message>
             <source>Port:</source>
-            <translation>代理端口</translation>
+            <translation>ポート：</translation>
         </message>
         <message>
             <source>None</source>
-            <translation>無</translation>
+            <translation>なし</translation>
         </message>
         <message>
             <source>SOCKS5</source>

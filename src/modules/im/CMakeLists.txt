@@ -59,7 +59,7 @@ qt5_wrap_ui(
         src/widget/form/settings/avform.ui
         src/widget/form/settings/generalsettings.ui
         src/widget/form/settings/privacysettings.ui
-        src/widget/form/settings/userinterfacesettings.ui
+		src/widget/form/settings/StorageSettingsForm.ui
     src/widget/form/CallDurationForm.ui
 )
 
@@ -296,8 +296,8 @@ set(${PROJECT_NAME}_SOURCES
         src/widget/form/settings/genericsettings.h
         src/widget/form/settings/privacyform.cpp
         src/widget/form/settings/privacyform.h
-        src/widget/form/settings/userinterfaceform.h
-        src/widget/form/settings/userinterfaceform.cpp
+		src/widget/form/settings/StorageSettingsForm.h
+		src/widget/form/settings/StorageSettingsForm.cpp
         src/widget/form/settings/verticalonlyscroller.cpp
         src/widget/form/settings/verticalonlyscroller.h
         src/widget/form/settingswidget.cpp

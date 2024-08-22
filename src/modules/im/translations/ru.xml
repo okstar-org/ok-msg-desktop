@@ -148,18 +148,18 @@ which may lead to problems with video calls.</source>
         <translation>Хэш коммита: %1</translation>
     </message>
     <message>
-        <source>toxcore version: %1</source>
-        <translation>Версия toxcore: %1</translation>
-    </message>
-    <message>
         <source>Qt version: %1</source>
         <translation>Версия Qt: %1</translation>
     </message>
     <message>
-        <source>A list of all known issues may be found at our %1 at Github. If you discover a bug or security vulnerability within qTox, please report it according to the guidelines in our %2 wiki article.</source>
+        <source>A list of all known issues may be found at our %1 at Github. If you discover a bug or security
+            vulnerability, please report it according to the guidelines in our %2 wiki article.
+        </source>
         <comment>`%1` is replaced by translation of `bug tracker`
 `%2` is replaced by translation of `Writing Useful Bug Reports`</comment>
-        <translation>Список всех известных проблем вы можете найти на нашем %1 на Github. Если вы обнаружите ошибку или уязвимость в безопасности qTox, пожалуйста сообщите о них согласно указаниям в нашей статье %2 вики.</translation>
+        <translation>Список всех известных проблем вы можете найти на нашем %1 на Github. Если вы обнаружите ошибку или
+            уязвимость, пожалуйста сообщите о них согласно указаниям в нашей статье %2 вики.
+        </translation>
     </message>
     <message>
         <source>Click here to report a bug.</source>
@@ -1042,10 +1042,6 @@ so you can save the file on windows.</source>
         <translation>Можно настроить отдельно для каждого друга (щелкнув правой кнопкой мыши по другу и выбрав соответствующий пункт меню).</translation>
     </message>
     <message>
-        <source>Language:</source>
-        <translation>Язык:</translation>
-    </message>
-    <message>
         <source>Enable light tray icon.</source>
         <comment>toolTip for light icon setting</comment>
         <translation>Включить светлую иконку в трее.</translation>
@@ -1211,15 +1207,6 @@ so you can save the file on windows.</source>
         <source>%1 has left the group</source>
         <translation>%1 покинул группу</translation>
     </message>
-    <message numerus="yes">
-        <source>%n user(s) in chat</source>
-        <comment>Number of users in chat</comment>
-        <translation>
-            <numerusform>%n пользователь в чате</numerusform>
-            <numerusform>%n пользователя в чате</numerusform>
-            <numerusform>%n пользователей в чате</numerusform>
-        </translation>
-    </message>
     <message>
         <source>mute</source>
         <translation>заглушить</translation>
@@ -1277,15 +1264,6 @@ so you can save the file on windows.</source>
     <message>
         <source>Set title...</source>
         <translation>Установить заголовок...</translation>
-    </message>
-    <message numerus="yes">
-        <source>%n user(s) in chat</source>
-        <comment>Number of users in chat</comment>
-        <translation>
-            <numerusform>%n пользователь в чате</numerusform>
-            <numerusform>%n пользователя в чате</numerusform>
-            <numerusform>%n пользователей в чате</numerusform>
-        </translation>
     </message>
     <message>
         <source>New Message</source>
@@ -2613,7 +2591,7 @@ This ID includes the NoSpam code (in blue), and the checksum (in gray).</source>
     </message>
 </context>
 <context>
-    <name>UserInterfaceForm</name>
+    <name>StorageSettingsForm</name>
     <message>
         <source>None</source>
         <translation>Отсутствует</translation>

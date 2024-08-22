@@ -148,18 +148,18 @@ o que pode levar a problemas nas chamadas de vídeo.</translation>
         <translation>Confirmação de hash: %1</translation>
     </message>
     <message>
-        <source>toxcore version: %1</source>
-        <translation>Versão do toxcore: %1</translation>
-    </message>
-    <message>
         <source>Qt version: %1</source>
         <translation>Versão do Qt: %1</translation>
     </message>
     <message>
-        <source>A list of all known issues may be found at our %1 at Github. If you discover a bug or security vulnerability within qTox, please report it according to the guidelines in our %2 wiki article.</source>
+        <source>A list of all known issues may be found at our %1 at Github. If you discover a bug or security
+            vulnerability, please report it according to the guidelines in our %2 wiki article.
+        </source>
         <comment>`%1` is replaced by translation of `bug tracker`
 `%2` is replaced by translation of `Writing Useful Bug Reports`</comment>
-        <translation>Pode encontrar uma lista de todos os problemas conhecidos no nosso % 1 no Github. Se descobrir um erro ou vulnerabilidade de segurança no qTox, informe-nos de acordo com as diretrizes da nossa página wiki % 2.</translation>
+        <translation>Pode encontrar uma lista de todos os problemas conhecidos no nosso % 1 no Github. Se descobrir um
+            erro ou vulnerabilidade de segurança, informe-nos de acordo com as diretrizes da nossa página wiki % 2.
+        </translation>
     </message>
     <message>
         <source>Click here to report a bug.</source>
@@ -1054,10 +1054,6 @@ em vez da barra de tarefas do sistema.</translation>
         <translation>Ícone claro</translation>
     </message>
     <message>
-        <source>Language:</source>
-        <translation>Idioma:</translation>
-    </message>
-    <message>
         <source>Set where files will be saved.</source>
         <translation>Definir onde os ficheiros serão guardados.</translation>
     </message>
@@ -1227,14 +1223,6 @@ em vez da barra de tarefas do sistema.</translation>
         <source>%1 has left the group</source>
         <translation>%1 saiu do grupo</translation>
     </message>
-    <message numerus="yes">
-        <source>%n user(s) in chat</source>
-        <comment>Number of users in chat</comment>
-        <translation>
-            <numerusform>%n utilizador na conversa</numerusform>
-            <numerusform>%n utilizadores na conversa</numerusform>
-        </translation>
-    </message>
     <message>
         <source>mute</source>
         <translation>sem som</translation>
@@ -1292,14 +1280,6 @@ em vez da barra de tarefas do sistema.</translation>
     <message>
         <source>Remove chat from this window</source>
         <translation>Remover conversa desta janela</translation>
-    </message>
-    <message numerus="yes">
-        <source>%n user(s) in chat</source>
-        <comment>Number of users in chat</comment>
-        <translation>
-            <numerusform>%n utilizador na conversa</numerusform>
-            <numerusform>%n utilizadores na conversa</numerusform>
-        </translation>
     </message>
     <message>
         <source>New Message</source>
@@ -2623,7 +2603,7 @@ Esta referência inclui o código NoSpam (a azul) e a soma de verificação/chec
     </message>
 </context>
 <context>
-    <name>UserInterfaceForm</name>
+    <name>StorageSettingsForm</name>
     <message>
         <source>None</source>
         <translation>Nenhum</translation>
