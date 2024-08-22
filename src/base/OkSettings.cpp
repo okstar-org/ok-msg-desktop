@@ -30,15 +30,15 @@ static QStringList locales = {
         "zh_CN",  // 中文简体 zh_CN
         "zh_TW",  // 中文繁体（zh_TW, zh_HK）
         "en",     // 英文   en_US, en_UK
-                  //    "es",    // 西班牙语
-                  //    "fr",    // 法语
-                  //    "ar",    // 阿拉伯语
-                  //    "ru",    // 俄语
-                  //    "de",    // 德语
-                  //    "pt",    // 葡萄牙语
-                  //    "it",    // 意大利语
         "ja",     // 日文
-                  //    "ko",    // 韩文
+        "ko",     // 韩文
+        "de",     // 德语
+        "fr",     // 法语
+        "es",     // 西班牙语
+        "ar",     // 阿拉伯语
+        "pt",     // 葡萄牙语
+        "it",     // 意大利语
+        "ru",     // 俄语
 };
 
 OkSettings::OkSettings(QObject* parent)  //

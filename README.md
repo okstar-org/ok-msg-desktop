@@ -62,6 +62,22 @@ Snap: <a href="https://snapcraft.io/ok-msg"><img decoding="async" class="alignce
 
 <img src="docs/assets/ok-msg-architecture-diagram.png" width="1000" alt="Architecture diagram"/>
 
+# 🌏 Multi-Language Support
+
+| Language         | Progress   |
+|------------------|------------|
+| 🇺🇸 English     | Supported  |
+| 🇨🇳 简体中文        | Supported  |
+| 🇹🇼 繁体(TW)      | Supported  |
+| 🇯🇵 Japanese    | #########- |
+| 🇰🇷 South Korea | #####----- |
+| 🇩🇪 Germany     | #####----- |
+| 🇫🇷 France      | #####----- |
+| 🇵🇹 Portugal    | #####----- |
+| 🇪🇸 Spain       | #####----- |
+| 🇮🇹 Italy       | #####----- |
+| 🇷🇺 Russia      | #####----- |
+
 # ⛽ Thirty party（第三方库）
 
 - CMake ([New BSD License](https://github.com/Kitware/CMake/blob/master/Copyright.txt))
