@@ -49,14 +49,13 @@ parts:
       - qtwebengine5-dev
       - qtwebengine5-dev-tools
       - libqt5websockets5-dev
-      - libqt5xml5
       - libqt5svg5-dev
+      - libqt5xml5
       - libqt5xmlpatterns5-dev
       - libqt5opengl5-dev
       - libqt5x11extras5-dev
     stage-packages:
       - libxkbcommon0
-      #      - ttf-ubuntu-font-family
       - dmz-cursor-theme
       - light-themes
       - adwaita-icon-theme
@@ -73,7 +72,6 @@ parts:
       - libqt5xml5
       - libqt5xmlpatterns5
       - libqt5svg5 # for loading icon themes which are svg
-      - libgdk-pixbuf2.0-0
       - locales-all
       - xdg-user-dirs
       - fcitx-frontend-qt5
@@ -376,6 +374,7 @@ apps:
       - unity7
       - wayland
       - x11
+      - shared-memory
     slots:
       - ok-msg-desktop-mpris
 
