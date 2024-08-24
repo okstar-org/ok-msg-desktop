@@ -109,7 +109,7 @@ public:
     explicit Backend(const QString& baseUrl, const QString& authorization = "",
                      QObject* parent = nullptr);
 
-    ~Backend();
+    ~Backend() override;
     bool getAppList(const network::HttpBodyFn& fn, int res = 0, int pageSize = 50);
 
     bool getInstance(const base::Fn<void(QJsonDocument)> fn, const QString& appUuid,

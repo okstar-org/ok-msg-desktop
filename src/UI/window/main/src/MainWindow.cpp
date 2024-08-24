@@ -336,46 +336,6 @@ void MainWindow::onSwitchPage(ok::base::PageMenu menu, bool checked) {
 
     ui->stacked_widget->setCurrentWidget(p);
 }
-//
-// void MainWindow::on_btnMin_clicked() { showMinimized(); }
-// void MainWindow::on_btnMax_clicked() {
-//  if (isMaximized())
-//    showNormal();
-//  else
-//    showMaximized();
-//}
-//
-// void MainWindow::on_btnClose_clicked() {
-//  close();
-//  exit(0);
-//}
-//
-// void MainWindow::on_bthFull_clicked() {
-//  if (isFullScreen())
-//    showNormal();
-//  else
-//    showFullScreen();
-//}
-
-// void MainWindow::onReceiveRooms(std::list<ok::backendRoomInfo> &roomInfos) {
-//   RoomSelectDialog *dialog = new RoomSelectDialog(this);
-//   dialog->setRooms(roomInfos);
-//  TODO
-//    auto _im = lib::IM::Messenger::getInstance()->im();
-//    connect(dialog, SIGNAL(confirm()), this, SLOT(onRoomSelected()));
-
-//  int retval = dialog->exec();
-//  DEBUG_LOG_S(L_INFO) << "dialog=>" << retval;
-// disconnect(dialog, SIGNAL(confirm()), this, SLOT(onRoomSelected()));
-//}
-
-// void MainWindow::onRoomSelected() {
-//   auto messenger = lib::IM::Messenger::getInstance();
-//   TODO
-//   auto _im = messenger->im();
-//   _im->doJoinRoom();
-//   messenger->initRoom();
-//}
 
 QWidget* MainWindow::getContainer(ok::base::PageMenu menu) { return ui->stacked_widget; }
 
