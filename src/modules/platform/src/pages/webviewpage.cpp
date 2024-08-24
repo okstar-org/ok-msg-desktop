@@ -32,11 +32,13 @@ void ok::platform::WebviewPage::createContent(QWidget* parent) {
     auto session = ok::Application::Instance()->getSession();
     auto backend = new Backend(session->getStackUrl(), session->getToken().getAuthorization());
     backend->getInstance(
-            [this, backend](QJsonDocument body) {
+            [this, backend, session](QJsonDocument body) {
                 auto obj = body.object();
-                auto url = obj.value("data").toObject().value("urls").toArray()[0].toString();
-                if (url.isEmpty()) return;
-                qDebug() << url;
+                auto port = obj.value("data").toObject().value("ports").toArray()[0].toString();
+                if (port.isEmpty()) return;
+                QUrl baseUrl(session->getStackUrl());
+                QString url = "http://" + baseUrl.host() + ":" + port;
+                qDebug() << "Instance service port:" << url;
                 webView->load(url);
                 backend->deleteLater();
             },
