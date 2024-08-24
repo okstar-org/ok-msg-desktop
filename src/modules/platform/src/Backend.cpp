@@ -22,6 +22,7 @@ namespace ok::platform {
 Backend::Backend(const QString& baseUrl, const QString& authorization, QObject* parent)
         : ok::backend::BaseService(baseUrl, parent) {
     setHeader("Authorization", authorization);
+    setHeader("Origin", baseUrl);
 }
 
 Backend::~Backend() { qWarning() << __func__; }
@@ -33,7 +34,7 @@ bool Backend::getAppList(const network::HttpBodyFn& fn, int pageIndex, int pageS
     obj.insert("pageIndex", pageIndex);
     obj.insert("pageSize", pageSize);
     doc.setObject(obj);
-    setHeader("Origin", _baseUrl);
+
     return http->postJson(QUrl(url), doc, fn, nullptr, nullptr, nullptr);
 }
 
