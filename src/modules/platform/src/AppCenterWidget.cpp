@@ -55,15 +55,6 @@ void AppCenterWidget::startWebEngine() {
     //    page->setWebChannel(webChannel);
 
     layout()->addWidget(webView);
-
-    loadingWidget = new LoadingWidget(this);
-
-    QColor color = Style::getExtColor("view.loadingAnima.color");
-    if (color.isValid()) {
-        QPalette pal = loadingWidget->palette();
-        pal.setColor(QPalette::Normal, QPalette::WindowText, color);
-        loadingWidget->setPalette(pal);
-    }
 }
 
 void AppCenterWidget::requestAppList() {
@@ -85,17 +76,32 @@ void AppCenterWidget::requestAppList() {
 
 void AppCenterWidget::sendAppListToView(const QJsonArray& appList) {
     if (this->wsTransport) {
-        if (loadingWidget) {
-            loadingWidget->hide();
-            loadingWidget->deleteLater();
-            loadingWidget = nullptr;
-        }
+        hideLoading();
         for (auto app : appList) {
             auto a = app.toObject();
             wsTransport->sendMessage(a);
         }
     } else {
         cachedAppList = appList;
+    }
+}
+
+void AppCenterWidget::showLoading() {
+    loadingWidget = new LoadingWidget(this);
+    QColor color = Style::getExtColor("view.loadingAnima.color");
+    if (color.isValid()) {
+        QPalette pal = loadingWidget->palette();
+        pal.setColor(QPalette::Normal, QPalette::WindowText, color);
+        loadingWidget->setPalette(pal);
+    }
+    loadingWidget->setVisible(true);
+}
+
+void AppCenterWidget::hideLoading() {
+    if (loadingWidget) {
+        loadingWidget->setVisible(false);
+        loadingWidget->deleteLater();
+        loadingWidget = nullptr;
     }
 }
 
@@ -128,6 +134,7 @@ void AppCenterWidget::clientConnected(WebSocketTransport* transport) {
         sendAppListToView(cachedAppList);
         cachedAppList = QJsonArray();
     } else if (!hasRequested) {
+        showLoading();
         // 第二次加载，是否应该通过某种方式，并发处理
         requestAppList();
     }
@@ -141,17 +148,12 @@ void AppCenterWidget::start() {
     requestAppList();
     startWebEngine();
 
-    QTimer::singleShot(200, this, [this]() {
-        if (loadingWidget) {
-            loadingWidget->setVisible(true);
-        }
-    });
+    QTimer::singleShot(200, this, &AppCenterWidget::showLoading);
 }
 
 void AppCenterPage::createContent(QWidget* parent) {
     if (!widget) {
         widget = new AppCenterWidget(this, parent);
-        connect(widget, &AppCenterWidget::appPageRequest, this, &AppCenterPage::openAppPage);
     }
 }
 
@@ -180,10 +182,6 @@ void AppCenterPage::doClose() {}
 bool AppCenterPage::pageClosable() { return false; }
 
 // 通过PlatformContainer接口打开web链接
-void AppCenterPage::openAppPage(const QUrl& url, const QString& uuid, const QString& title) {
-    pageContainer->openWebPage(url, uuid, title);
-}
-
 void AppCenterPage::onWebMessageReceived(const QJsonValue& value) {
     QJsonObject object = value.toObject();
     QString command = object.value("command").toString();
