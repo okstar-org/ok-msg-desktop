@@ -175,7 +175,11 @@ public:
     ~BaseService();
 
     [[maybe_unused]] inline const QString& baseUrl() const { return _baseUrl; }
-    void setHeader(QString k, QString v);
+
+    inline void setHeader(QString k, QString v) { http->setHeader(k, v); }
+
+    inline void setLanguage(const QString& lang) { http->setLanguage(lang); }
+
 protected:
     QString _baseUrl;
     std::unique_ptr<network::NetworkHttp> http;

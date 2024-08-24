@@ -22,7 +22,10 @@ class PlatformPageContainer;
 
 class WebviewPage : public PlatformPage {
 public:
-    WebviewPage(const QUrl& url, const QString& uuid, const QString& title,
+    WebviewPage(const QUrl& url,
+                const QString& type,
+                const QString& uuid,
+                const QString& title,
                 PlatformPageContainer* container);
     ~WebviewPage();
     QString getTitle() override { return pageTitle; }
@@ -35,6 +38,7 @@ public:
 
 private:
     QUrl pageUrl;
+    QString appType;
     // App uuid
     QString appUuid;
     QString pageTitle;

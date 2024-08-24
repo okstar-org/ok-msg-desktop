@@ -21,9 +21,11 @@ using namespace ok::platform;
 PlatformPageContainer::PlatformPageContainer(Platform* platform, Widget* widget)
         : platform(platform), container(widget) {}
 
-PlatformPage* PlatformPageContainer::openWebPage(const QUrl& webUrl, const QString& uuid,
+PlatformPage* PlatformPageContainer::openWebPage(const QUrl& webUrl,
+                                                 const QString& type,
+                                                 const QString& uuid,
                                                  const QString& pageName) {
-    PlatformPage* page = new WebviewPage(webUrl, uuid, pageName, this);
+    PlatformPage* page = new WebviewPage(webUrl, type, uuid, pageName, this);
     page->createContent(container.data());
     container->addPage(page, true);
     page->start();

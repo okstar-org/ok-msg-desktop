@@ -43,13 +43,13 @@ public:
     explicit NetworkHttp(QObject* parent = nullptr);
     ~NetworkHttp() override;
 
-    void setHeader(QString k, QString v){
-        headers.insert(k, v);
+    inline void setHeader(QString k, QString v) { headers.insert(k, v);
     };
 
-    void setHeaders(const QMap<QString, QString> map){
-        headers.insert(map);
+    inline void setHeaders(const QMap<QString, QString> map) { headers.insert(map);
     }
+
+    inline void setLanguage(const QString& lang) { headers.insert("Accept-Language", lang); }
 
     void httpFinished();
 

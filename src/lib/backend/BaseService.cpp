@@ -29,6 +29,4 @@ BaseService::BaseService(const QString& baseUrl, QObject* parent)  //
 
 BaseService::~BaseService() {}
 
-void BaseService::setHeader(QString k, QString v) { http->setHeader(k, v); }
-
 }  // namespace ok::backend

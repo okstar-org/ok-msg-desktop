@@ -17,10 +17,11 @@
 #include "src/Backend.h"
 
 ok::platform::WebviewPage::WebviewPage(const QUrl& url,
+                                       const QString& type,
                                        const QString& uuid,
                                        const QString& title,
                                        PlatformPageContainer* container)
-        : PlatformPage(container), pageUrl(url), appUuid(uuid), pageTitle(title) {
+        : PlatformPage(container), pageUrl(url), appType(type), appUuid(uuid), pageTitle(title) {
     webView = std::make_unique<QWebEngineView>();
 }
 
@@ -29,6 +30,13 @@ ok::platform::WebviewPage::~WebviewPage() {}
 QWidget* ok::platform::WebviewPage::getWidget() { return webView.get(); }
 
 void ok::platform::WebviewPage::createContent(QWidget* parent) {
+    if (appType == "Open") {
+        // 如果是开放App，直接打开链接。
+        qDebug() << "Open:" << pageUrl;
+        webView->load(QUrl(pageUrl));
+        return;
+    }
+
     auto session = ok::Application::Instance()->getSession();
     auto backend = new Backend(session->getStackUrl(), session->getToken().getAuthorization());
     backend->getInstance(

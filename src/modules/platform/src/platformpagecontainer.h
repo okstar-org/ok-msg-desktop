@@ -29,7 +29,9 @@ class PlatformPageContainer : public QObject {
 public:
     PlatformPageContainer(Platform* platform, Widget* widget);
     // 打开指定url页签
-    PlatformPage* openWebPage(const QUrl& webUrl, const QString& uuid,
+    PlatformPage* openWebPage(const QUrl& webUrl,
+                              const QString& type,
+                              const QString& uuid,
                               const QString& pageName = QString());
     // 添加页签
     bool addPage(PlatformPage* page, bool active = false);

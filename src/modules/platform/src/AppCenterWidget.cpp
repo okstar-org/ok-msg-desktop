@@ -191,8 +191,9 @@ void AppCenterPage::onWebMessageReceived(const QJsonValue& value) {
         QUrl url = QUrl::fromEncoded(object.value("homePage").toString().toUtf8());
         QString name = object.value("name").toString();
         QString uuid = object.value("uuid").toString();
+        QString type = object.value("type").toString();
         if (!name.isEmpty()) {
-            pageContainer->openWebPage(url, uuid, name);
+            pageContainer->openWebPage(url, type, uuid, name);
         }
     }
 }
