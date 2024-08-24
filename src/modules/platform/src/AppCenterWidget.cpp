@@ -69,9 +69,7 @@ void AppCenterWidget::startWebEngine() {
 void AppCenterWidget::requestAppList() {
     hasRequested = true;
     auto session = ok::Application::Instance()->getSession();
-    auto token = session->getToken();
-    auto backend = new Backend(session->getSignInInfo().stackUrl);
-    backend->setHeader("Authorization", token.tokenType + " " + token.accessToken);
+    auto backend = new Backend(session->getStackUrl(), session->getToken().getAuthorization());
     backend->getAppList([this, backend](QByteArray body, QString name) {
         auto arr = ok::base::Jsons::toJSON(body)
                            .object()
@@ -181,7 +179,7 @@ bool AppCenterPage::pageClosable() { return false; }
 
 // 通过PlatformContainer接口打开web链接
 void AppCenterPage::openAppPage(const QUrl& url, const QString& title) {
-    pageContainer->openWebPage(url, title);
+    pageContainer->openWebPage(url, "d8e4dc6b-5f05-11ef-b07d-0242ac1a0004", title);
 }
 
 void AppCenterPage::onWebMessageReceived(const QJsonValue& value) {
@@ -190,8 +188,9 @@ void AppCenterPage::onWebMessageReceived(const QJsonValue& value) {
     if (command == "app-center.openApp") {
         QUrl url = QUrl::fromEncoded(object.value("homePage").toString().toUtf8());
         QString name = object.value("name").toString();
+        QString uuid = object.value("uuid").toString();
         if (!name.isEmpty()) {
-            pageContainer->openWebPage(url, name);
+            pageContainer->openWebPage(url, uuid, name);
         }
     }
 }

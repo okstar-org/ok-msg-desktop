@@ -25,12 +25,10 @@
 namespace ok::backend {
 
 BaseService::BaseService(const QString& baseUrl, QObject* parent)  //
-        : QObject(parent), http(std::make_unique<network::NetworkHttp>(this)), _baseUrl(baseUrl) {
-    if (!headers.isEmpty()) http->setHeaders(headers);
-}
+        : QObject(parent), http(std::make_unique<network::NetworkHttp>(this)), _baseUrl(baseUrl) {}
 
 BaseService::~BaseService() {}
 
-void BaseService::setHeader(QString k, QString v) { headers.insert(k, v); }
+void BaseService::setHeader(QString k, QString v) { http->setHeader(k, v); }
 
 }  // namespace ok::backend

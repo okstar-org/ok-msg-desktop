@@ -17,11 +17,12 @@
     var appList = document.querySelector("#app-list");
     var socket = new WebSocket(wsUri);
     function appItemClicked(app) {
-        let {name, homePage} = app;
+        let {name, homePage, uuid} = app;
         let data = {
             command: "app-center.openApp",
             homePage,
-            name
+            name,
+            uuid
         }
         socket.send(JSON.stringify(data));
     }

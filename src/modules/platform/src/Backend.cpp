@@ -15,22 +15,33 @@
 //
 
 #include "Backend.h"
+#include "lib/network/NetworkHttp.h"
+
 namespace ok::platform {
 
-Backend::Backend(const QString& baseUrl, QObject* parent)
-        : ok::backend::BaseService(baseUrl, parent) {}
+Backend::Backend(const QString& baseUrl, const QString& authorization, QObject* parent)
+        : ok::backend::BaseService(baseUrl, parent) {
+    setHeader("Authorization", authorization);
+}
+
+Backend::~Backend() { qWarning() << __func__; }
 
 bool Backend::getAppList(const network::HttpBodyFn& fn, int pageIndex, int pageSize) {
     QString url = _baseUrl + "/api/work/app/page";
-
     QJsonDocument doc;
     QJsonObject obj;
     obj.insert("pageIndex", pageIndex);
     obj.insert("pageSize", pageSize);
     doc.setObject(obj);
-    headers.insert("Origin", _baseUrl);
-    http->setHeaders(headers);
+    setHeader("Origin", _baseUrl);
     return http->postJson(QUrl(url), doc, fn, nullptr, nullptr, nullptr);
+}
+
+bool Backend::getInstance(const base::Fn<void(QJsonDocument)> fn,
+                          const QString& appUuid,
+                          const network::HttpErrorFn& err) {
+    QString url = _baseUrl + "/api/tenant/user/" + appUuid + "/instance";
+    return http->getJson(QUrl(url), fn, err);
 }
 
 }  // namespace ok::platform

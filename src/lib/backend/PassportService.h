@@ -53,7 +53,7 @@ struct SysToken : public SysRefreshToken {
     QString tokenType;
     QString session_state;
     SysToken() : SysRefreshToken() {}
-    SysToken(const QJsonObject& data) {
+    explicit SysToken(const QJsonObject& data) {
         expiresIn = data.value("expiresIn").toVariant().toULongLong();                //
         refreshExpiresIn = data.value("refreshExpiresIn").toVariant().toULongLong();  //
         username = data.value("username").toString();
@@ -62,6 +62,8 @@ struct SysToken : public SysRefreshToken {
         session_state = data.value("session_state").toString();  //
         accessToken = data.value("accessToken").toString();      //
     }
+
+    inline QString getAuthorization() const { return tokenType + " " + accessToken; }
 };
 
 struct SysAccount {

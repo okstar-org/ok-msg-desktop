@@ -21,23 +21,12 @@
 
 namespace ok::platform {
 
+/**
+ * 应用实体
+ */
 struct App {
-    /**
-     *   {"id":51,
-     *   "key":"企业IM",
-     *   "name":"OkMSG商业套装",
-     *   "avatar":"https://s3.okstar.org.cn/okcloud/fdc636f5-955c-47a8-bca1-253cfbeb35c6.png",
-     *   "descr":"OkMSG
-是由OkStar社区维护的跨平台的企业通讯协同工具，支持独立私有化部署的集即时消息、语音和视频通话、发送文件、会议等多种功能于一身的开源项目。同时非常注重数据安全与保护，
-  让您的企业更加有效开启协作、有效沟通，控制成本，开拓新业务，并帮助您加速发展业务。",
-"author":null,
-"mail":null,
-"homePage":null,
-"providerId":1,
-"introduceId":null},
-  */
-
-    int64 id;
+    // 应用UUID
+    QString uuid;
     QString key;
     QString name;
     QString avatar;
@@ -48,7 +37,7 @@ struct App {
     QString type;
 
     App(const QJsonObject& data) {
-        id = data.value("id").toInt();                 //
+        uuid = data.value("uuid").toString();          //
         mail = data.value("mail").toString();          //
         name = data.value("name").toString();          //
         descr = data.value("descr").toString();        //
@@ -59,22 +48,72 @@ struct App {
 
     QJsonObject toJson() {
         QJsonObject jo;
-        jo.insert("id", id);
+        jo.insert("uuid", uuid);
         jo.insert("key", key);
         jo.insert("name", name);
         jo.insert("author", author);
         return jo;
     }
 
-    QString toJsonString() { return QString(QJsonDocument(toJson()).toJson()); }
+    QString toJsonString() { return QJsonDocument(toJson()).toJson(); }
+};
+
+/**
+ * 应用实例实体
+ */
+struct InstanceDTO {
+    QString uuid;
+
+    /**
+     * 创建时间
+     */
+    QDate createAt;
+
+    /**
+     * 更新时间
+     */
+    QDate updateAt;
+
+    /**
+     * 编号
+     */
+    QString no;
+    /**
+     * 应用ID
+     */
+    QString appUuid;
+
+    /**
+     * 实例名称=租户名称+应用名称+订单名词
+     */
+    QString name;
+
+    /**
+     * 实例描述
+     */
+    QString description;
+
+    /**
+     * 状态
+     */
+    QString status;
+
+    QList<QString> urls;
+
+    QList<QString> volumes;
 };
 
 class Backend : public ok::backend::BaseService {
     Q_OBJECT
 public:
-    Backend(const QString& baseUrl, QObject* parent = nullptr);
+    explicit Backend(const QString& baseUrl, const QString& authorization = "",
+                     QObject* parent = nullptr);
 
+    ~Backend();
     bool getAppList(const network::HttpBodyFn& fn, int res = 0, int pageSize = 50);
+
+    bool getInstance(const base::Fn<void(QJsonDocument)> fn, const QString& appUuid,
+                     const network::HttpErrorFn& err);
 };
 
 }  // namespace ok::platform

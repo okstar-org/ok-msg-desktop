@@ -77,6 +77,8 @@ public:
 
     [[nodiscard]] ok::base::OkAccount* account() const { return okAccount.get(); }
 
+    const QString& getStackUrl() const { return m_signInInfo.stackUrl; }
+
 protected:
     // 执行登录
     void doSignIn();
