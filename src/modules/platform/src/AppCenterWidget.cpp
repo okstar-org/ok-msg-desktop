@@ -85,9 +85,11 @@ void AppCenterWidget::requestAppList() {
 
 void AppCenterWidget::sendAppListToView(const QJsonArray& appList) {
     if (this->wsTransport) {
-        loadingWidget->hide();
-        loadingWidget->deleteLater();
-        loadingWidget = nullptr;
+        if (loadingWidget) {
+            loadingWidget->hide();
+            loadingWidget->deleteLater();
+            loadingWidget = nullptr;
+        }
         for (auto app : appList) {
             auto a = app.toObject();
             wsTransport->sendMessage(a);
@@ -178,8 +180,8 @@ void AppCenterPage::doClose() {}
 bool AppCenterPage::pageClosable() { return false; }
 
 // 通过PlatformContainer接口打开web链接
-void AppCenterPage::openAppPage(const QUrl& url, const QString& title) {
-    pageContainer->openWebPage(url, "d8e4dc6b-5f05-11ef-b07d-0242ac1a0004", title);
+void AppCenterPage::openAppPage(const QUrl& url, const QString& uuid, const QString& title) {
+    pageContainer->openWebPage(url, uuid, title);
 }
 
 void AppCenterPage::onWebMessageReceived(const QJsonValue& value) {

@@ -17,12 +17,13 @@
     var appList = document.querySelector("#app-list");
     var socket = new WebSocket(wsUri);
     function appItemClicked(app) {
-        let {name, homePage, uuid} = app;
+        let {name, homePage, uuid, author} = app;
         let data = {
             command: "app-center.openApp",
             homePage,
             name,
-            uuid
+            uuid,
+            author
         }
         socket.send(JSON.stringify(data));
     }
@@ -40,7 +41,20 @@
         const app = JSON.parse(event.data);
 
         let appItem = document.createElement("li");
-        appItem.innerHTML = "<div class='app'> <img src='" + app.avatar + "' /> <span>" + app.name + "</span></div>";
+        // appItem.innerHTML = `<div class="app">
+        // <img src="${app.avatar}" /> <span>" + app.name + "</span></div>`;
+
+        appItem.innerHTML = `
+        <li>
+            <div class='app'>
+                <div class="image">
+                    <img src="${app.avatar}">
+                </div>
+                <div class="name">${app.name}</div>
+                <a class="author" title="由 ${app.author} 提供">${app.author}</a>
+             </div>
+        </li>`;
+
         appList.appendChild(appItem);
 
         appItem.addEventListener("click", (event) => {
