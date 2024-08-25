@@ -15,6 +15,7 @@
 //
 
 #include "Backend.h"
+#include "base/OkSettings.h"
 #include "lib/network/NetworkHttp.h"
 
 namespace ok::platform {
@@ -23,6 +24,10 @@ Backend::Backend(const QString& baseUrl, const QString& authorization, QObject* 
         : ok::backend::BaseService(baseUrl, parent) {
     setHeader("Authorization", authorization);
     setHeader("Origin", baseUrl);
+
+    auto& s = ok::base::OkSettings::getInstance();
+    QString trans = s.getTranslation();
+    setHeader("Accept-Language", trans);
 }
 
 Backend::~Backend() { qWarning() << __func__; }

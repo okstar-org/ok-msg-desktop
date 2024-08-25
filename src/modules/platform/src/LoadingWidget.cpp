@@ -37,6 +37,9 @@ LoadingWidget::LoadingWidget(QWidget* target) : QWidget(target), anchorWidget(ta
 
     timeLine = new QTimeLine(progressAnima->duration(), this);
     timeLine->setEasingCurve(QEasingCurve::InOutQuart);
+    if (target->size().isValid()) {
+        updateWidgetGeo();
+    }
 }
 
 QSize LoadingWidget::sizeHint() const { return minimumSizeHint(); }
@@ -80,7 +83,7 @@ void LoadingWidget::paintEvent(QPaintEvent* e) {
     paint_rect.moveCenter(r.center());
 
     int slow = std::max(progress - anima_delay, 0.0) * timeLine->duration();
-    int quick =  std::min(progress, 1.0) * timeLine->duration();
+    int quick = std::min(progress, 1.0) * timeLine->duration();
     qreal start_angle = -360 * timeLine->valueForTime(slow) + 90;
     qreal end_angle = -360 * timeLine->valueForTime(quick) + 90;
     QPainterPath path;

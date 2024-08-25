@@ -37,8 +37,6 @@ class AppCenterPage;
 
 class AppCenterWidget : public UI::OWidget {
     Q_OBJECT
-signals:
-    void appPageRequest(const QUrl& url, const QString& uuid, const QString& title);
 
 public:
     AppCenterWidget(AppCenterPage* page, QWidget* parent = nullptr);
@@ -62,6 +60,8 @@ public slots:
 
 private:
     void sendAppListToView(const QJsonArray& appList);
+    void showLoading();
+    void hideLoading();
 
 private:
     QPointer<WebSocketTransport> wsTransport;
@@ -85,7 +85,6 @@ public:
     bool pageClosable() override;
 
 private:
-    void openAppPage(const QUrl& url, const QString& uuid, const QString& title);
     void onWebMessageReceived(const QJsonValue& value);
 
 private:
