@@ -82,6 +82,7 @@ void Profile::initCore(const QByteArray& toxsave, ICoreSettings& s, bool isNewPr
     connect(core.get(), &Core::friendAvatarChanged, this, &Profile::setFriendAvatar);
     //    connect(core.get(), &Core::fileAvatarOfferReceived, this, &Profile::onAvatarOfferReceived,
     //            Qt::ConnectionType::QueuedConnection);
+    connect(core.get(), &Core::started, this, [this]() { emit selfAvatarChanged(loadAvatar()); });
 
     // CoreAV
     coreAv = CoreAV::makeCoreAV(core.get());
@@ -519,7 +520,12 @@ void Profile::setAvatar(QByteArray pic, bool saveToCore) {
     saveFriendAvatar(selfPk, avatarData);
 
     emit selfAvatarChanged(pixmap);
-    if (saveToCore) core->setAvatar(avatarData);
+    if (auto friendSelf = core->getFriendList().findFriend(selfPk)) {
+        friendSelf->reloadAvatar();
+    }
+    if (saveToCore) {
+        core->setAvatar(avatarData);
+    }
 }
 
 void Profile::setAvatarOnly(const QPixmap& pixmap_) {

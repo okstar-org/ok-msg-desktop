@@ -165,19 +165,7 @@ ChatFormHeader::ChatFormHeader(const ContactId& contactId, QWidget* parent)
     connect(ok::Application::Instance()->bus(), &ok::Bus::profileChanged, this,
             [&](Profile* profile) { mProfile = profile; });
 
-    FriendId self = Core::getInstance()->getSelfId();
-    isSelf = self.toString() == contactId.toString();
-    if (isSelf) {
-        // self
-        if (mProfile) {
-            setName(mProfile->getDisplayName());
-        }
-        setAvatar(mProfile->loadAvatar(contactId));
-        connect(mProfile, &Profile::selfAvatarChanged, this, &ChatFormHeader::setAvatar);
-    } else {
-        // friend
-        setContact(Nexus::getCore()->getFriendList().findFriend(contactId));
-    }
+    setContact(Nexus::getCore()->getFriendList().findFriend(contactId));
 
     settings::Translator::registerHandler([this] { retranslateUi(); }, this);
     retranslateUi();
@@ -186,8 +174,12 @@ ChatFormHeader::ChatFormHeader(const ContactId& contactId, QWidget* parent)
 ChatFormHeader::~ChatFormHeader() { settings::Translator::unregister(this); }
 
 void ChatFormHeader::setContact(const Contact* contact_) {
-    auto profile = Nexus::getProfile();
-    if (!profile) return;
+    if (!Nexus::getProfile() || contact == contact_) {
+        return;
+    }
+    if (contact) {
+        contact->disconnect(this);
+    }
 
     contact = contact_;
     if (!contact) {
