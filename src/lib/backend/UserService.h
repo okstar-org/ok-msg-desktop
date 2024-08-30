@@ -62,9 +62,7 @@ public:
     UserService(const QString& base, QObject* parent = nullptr);
     ~UserService();
 
-    void search(const QString& query,
-                ok::base::Fn<void(const QList<OrgStaff*>&)>
-                        callback,
+    void search(const QString& query, base::Fn<void(const QList<OrgStaff*>&)> callback,
                 network::HttpErrorFn errFn = nullptr);
 };
 
