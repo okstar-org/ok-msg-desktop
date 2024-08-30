@@ -53,7 +53,7 @@ public:
         painter.setRenderHints(QPainter::SmoothPixmapTransform, true);
         // 将图片裁剪为圆角
         QPainterPath path;
-        QRect rect(0, 0, imageWidth, imageHeight);
+        QRectF rect(0, 0, imageWidth - 0.5 , imageHeight - 0.5);
         path.addRoundedRect(rect, radius, radius);
         painter.setClipPath(path);
         painter.drawPixmap(0, 0, imageWidth, imageHeight, newPixMap);

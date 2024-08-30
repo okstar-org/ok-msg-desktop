@@ -33,13 +33,8 @@ Contact::Contact(const ContactId& id_, const QString& name_, const QString& alia
     //        alias = alias0;
     //    }
 
-    auto avt = profile->loadAvatarData(FriendId{id});
-    if (!avt.isNull()) {
-        avatar.loadFromData(avt);
-        avatarSetStatus = Status::AvatarSet::UserSet;
-    } else {
-        setDefaultAvatar();
-    }
+    // 此时构造函数还未走完，信号触发应该也不存在连接
+    reloadAvatar();
 }
 
 Contact::~Contact() = default;
@@ -76,6 +71,18 @@ void Contact::setAvatar(const QPixmap& pix) {
     avatar.save(buf);
     profile->saveFriendAvatar(FriendId{id}, buf);
 
+    emit avatarChanged(avatar);
+}
+
+void Contact::reloadAvatar() {
+    auto profile = Nexus::getProfile();
+    auto avt = profile->loadAvatarData(FriendId{id});
+    if (!avt.isNull()) {
+        avatar.loadFromData(avt);
+        avatarSetStatus = Status::AvatarSet::UserSet;
+    } else {
+        setDefaultAvatar();
+    }
     emit avatarChanged(avatar);
 }
 

@@ -46,6 +46,7 @@ public:
 
     const QPixmap& setDefaultAvatar();
     void setAvatar(const QPixmap& pix);
+    void reloadAvatar();
     void clearAvatar();
     const QPixmap& getAvatar() const;
 
