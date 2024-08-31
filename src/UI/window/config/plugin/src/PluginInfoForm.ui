@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>486</width>
+    <height>293</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -65,32 +65,14 @@
            </layout>
           </widget>
          </item>
-         <item alignment="Qt::AlignLeft">
+         <item>
           <widget class="QWidget" name="operation" native="true">
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>40</height>
-            </size>
-           </property>
            <property name="layoutDirection">
             <enum>Qt::LeftToRight</enum>
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout">
             <item>
              <widget class="QPushButton" name="installBtn">
-              <property name="minimumSize">
-               <size>
-                <width>100</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>60</width>
-                <height>16777215</height>
-               </size>
-              </property>
               <property name="text">
                <string>install</string>
               </property>
@@ -100,6 +82,9 @@
              <spacer name="horizontalSpacer">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Maximum</enum>
               </property>
               <property name="sizeHint" stdset="0">
                <size>
@@ -111,10 +96,29 @@
             </item>
             <item>
              <widget class="QProgressBar" name="progressBar">
+              <property name="minimumSize">
+               <size>
+                <width>150</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="value">
                <number>24</number>
               </property>
              </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
             </item>
            </layout>
           </widget>

@@ -4,6 +4,7 @@ add_definitions(-DOK_${PROJECT_NAME}_MODULE="${PROJECT_NAME}")
 
 file( GLOB ${PROJECT_NAME}_SOURCES
     src/*.cpp
+    plugin/src/*.h
     plugin/src/*.cpp
     settings/src/*.cpp
     about/src/*.cpp
@@ -58,7 +59,7 @@ file(APPEND "${RESOURCE_NAME}"
 # qss
 file(APPEND "${RESOURCE_NAME}"
 "
-<qresource prefix=\"/qss\">
+<qresource prefix=\"/qss/${PROJECT_NAME}\">
 ")
 foreach (file ${${PROJECT_NAME}_QSS})
     get_filename_component(file_name ${file} NAME)
@@ -106,10 +107,11 @@ add_library(${PROJECT_NAME} STATIC
 target_link_libraries(${PROJECT_NAME}
     PRIVATE OkNetwork
     PRIVATE Plugin
+    PRIVATE OkBase
         PRIVATE ${Qt5Widgets_LIBRARIES}
         PRIVATE ${Qt5Xml_LIBRARIES}
 )
 
 if (WIN32)
-    set_property(TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    set_property(TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 endif ()

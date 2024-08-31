@@ -40,6 +40,8 @@ set(${PROJECT_NAME}_SOURCES
 		uuid.h
     stylediconbutton.h
     stylediconbutton.cpp
+    roundedmaskcontainer.h
+    roundedmaskcontainer.cpp
 )
 
 if(WIN32)

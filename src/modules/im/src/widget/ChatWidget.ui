@@ -889,7 +889,7 @@
   <customwidget>
    <class>RoundedMaskContainer</class>
    <extends>QFrame</extends>
-   <header location="global">src/widget/tool/roundedmaskcontainer.h</header>
+   <header location="global">base/roundedmaskcontainer.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

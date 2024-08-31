@@ -49,6 +49,7 @@ PluginInfoForm::PluginInfoForm(ok::backend::PluginInfo& info, QWidget* parent)
     ui->installBtn->setCursor(Qt::PointingHandCursor);
     ui->progressBar->hide();
 
+    setAttribute(Qt::WA_StyledBackground);
     qDebug() << "Display plugin" << info.shortName;
 
     if (pluginManager->isAvailable(info.shortName)) {
@@ -67,6 +68,10 @@ PluginInfoForm::PluginInfoForm(ok::backend::PluginInfo& info, QWidget* parent)
         auto installed = pluginManager->installPlugin(path, mPluginInfo.fileName);
         if (installed) setInstalled();
     });
+
+    QSizePolicy policy = ui->progressBar->sizePolicy();
+    policy.setRetainSizeWhenHidden(true);
+    ui->progressBar->setSizePolicy(policy);
 }
 
 PluginInfoForm::~PluginInfoForm() { delete ui; }

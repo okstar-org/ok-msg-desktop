@@ -144,7 +144,8 @@ QMap<Style::ColorPalette, QString> Style::aliasColors = {{TransferGood, "transfe
 std::map<std::pair<const QString, const QFont>, const QString> Style::stylesheetsCache;
 
 const QString Style::getStylesheet(const QString& filename, const QFont& baseFont) {
-    const QString fullPath = getThemeFolder() + filename;
+    QString folder = QDir::isAbsolutePath(filename) ? QString() : getThemeFolder();
+    const QString fullPath = folder + filename;
     qDebug() << "theme:" << fullPath;
     const std::pair<const QString, const QFont> cacheKey(fullPath, baseFont);
     auto it = stylesheetsCache.find(cacheKey);
@@ -208,7 +209,7 @@ QFont Style::getFont(Style::Font font) {
 }
 
 const QString Style::resolve(const QString& filename, const QFont& baseFont) {
-    QString themePath = getThemeFolder();
+    QString themePath = QDir::isAbsolutePath(filename) ? QString() : getThemeFolder();
     QString fullPath = themePath + filename;
     QString qss;
 

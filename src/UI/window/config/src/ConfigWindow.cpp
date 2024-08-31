@@ -17,7 +17,6 @@
 #include <QWidget>
 
 #include "base/OkSettings.h"
-#include "base/files.h"
 #include "lib/settings/translator.h"
 #include "src/base/basic_types.h"
 #include "src/base/widgets.h"
@@ -36,9 +35,6 @@ ConfigWindow::ConfigWindow(QWidget* parent) : OMenuWidget(parent), ui(new Ui::Co
     OK_RESOURCE_INIT(UIWindowConfig);
 
     ui->setupUi(this);
-
-    auto qss = ok::base::Files::readStringAll(":/qss/plugin.qss");
-    setStyleSheet(qss);
 
     QString locale = ok::base::OkSettings::getInstance().getTranslation();
     settings::Translator::translate(OK_UIWindowConfig_MODULE, locale);
