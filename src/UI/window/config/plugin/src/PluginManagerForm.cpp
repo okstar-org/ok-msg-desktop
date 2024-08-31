@@ -20,6 +20,7 @@
 #include "base/OkSettings.h"
 #include "lib/network/NetworkHttp.h"
 #include "lib/settings/translator.h"
+#include "lib/settings/style.h"
 #include "src/UI/widget/GenericForm.h"
 #include "ui_PluginManagerForm.h"
 
@@ -30,6 +31,9 @@ PluginManagerForm::PluginManagerForm(QWidget* parent)
         : UI::GenericForm(QPixmap(":/img/settings/general.png"), parent)
         , ui(new Ui::PluginManagerForm) {
     ui->setupUi(this);
+
+    auto qss = Style::getStylesheet(":/qss/UIWindowConfig/plugin.qss");
+    setStyleSheet(qss);
 
     if (parent) {
         setGeometry(parent->contentsRect());
@@ -57,6 +61,12 @@ PluginManagerForm::PluginManagerForm(QWidget* parent)
                 },
                 [](int code, const QString& err) { qWarning() << "GetPluginPage" << err; });
     });
+
+    ui->splitter->setHandleWidth(8);
+    ui->splitter->setChildrenCollapsible(false);
+    ui->splitter->setSizes(QList<int>({220, 200}));
+    ui->splitter->setStretchFactor(0, 0);
+    ui->splitter->setStretchFactor(1, 1);
 }
 
 PluginManagerForm::~PluginManagerForm() { delete ui; }
@@ -77,7 +87,7 @@ void PluginManagerForm::add(ok::backend::PluginInfo& info, int i) {
 void PluginManagerForm::createPlugin(ok::backend::PluginInfo& info, int i) {
     auto pitem = new PluginItemForm(0, info, this);
     auto aitem = new QListWidgetItem(ui->listWidget);
-    aitem->setSizeHint(QSize(ui->listWidget->width(), 70));
+    aitem->setSizeHint(QSize(200, 70));
 
     ui->listWidget->addItem(aitem);
     ui->listWidget->setItemWidget(aitem, pitem);
