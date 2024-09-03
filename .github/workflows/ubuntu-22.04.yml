@@ -11,6 +11,7 @@ on:
     branches: [ develop, develop-linux, develop-ubuntu ]
     tags:
       - "v*.*.*"
+      - "v*.*.*-*"
     paths-ignore:
       - '**.md'
       - 'changelog.txt'

@@ -3,9 +3,11 @@
 ## 安装必备依赖
 
 - 安装`visual studio 17 2022`
-  选择 `Windows SdK 10 20348`
-
+  - 选择 `Windows SdK 10 20348`
 - 安装`strawberry-perl`
+- 安装`OpenSSL 1.1.1`且版本的一致
+
+> 可以使用Qt自带的OpenSSL的也可以自行安装，配置bin目录到环境变量到PATH！
 
 ### 配置vcpkg
 
