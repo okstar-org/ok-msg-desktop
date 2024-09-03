@@ -79,7 +79,7 @@ MainWindow::MainWindow(std::shared_ptr<ok::session::AuthSession> session, QWidge
     actionQuit->setMenuRole(QAction::QuitRole);
 #endif
 
-    actionQuit->setIcon(
+    actionQuit->setIcon( 
             prepareIcon(Style::getImagePath("rejectCall/rejectCall.svg"), icon_size, icon_size));
     actionQuit->setText(tr("Exit", "Tray action menu to exit tox"));
     connect(actionQuit, &QAction::triggered, qApp, &QApplication::quit);

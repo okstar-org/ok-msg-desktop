@@ -41,8 +41,9 @@ Conductor::Conductor(WebRTC* webrtc, const std::string& peerId_, const std::stri
     assert(!peerId.empty());
     assert(!sId.empty());
     assert(webRtc);
-    assert(webRtc->ensureStart());
 
+    webRtc->ensureStart();
+    assert(webRtc->isStarted());
     assert(!peerId_.empty());
 
     CreatePeerConnection();
