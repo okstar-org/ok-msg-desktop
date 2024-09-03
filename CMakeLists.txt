@@ -14,6 +14,10 @@ include(ExternalProject)
 
 project(OkMSG-Project)
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin CACHE PATH "Single Directory for all Executables.") # in windows , it is also for dll.
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib CACHE PATH "Single Directory for all shared Libraries")
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib CACHE PATH "Single Directory for all static archive")
+  
 get_filename_component(third_party_loc "3rdparty" REALPATH)
 get_filename_component(submodules_loc "src" REALPATH)
 get_filename_component(cmake_helpers_loc "cmake" REALPATH)

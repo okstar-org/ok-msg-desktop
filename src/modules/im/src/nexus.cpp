@@ -48,7 +48,6 @@
  * and forwarding signals appropriately to the right objects,
  * it is in charge of starting the GUI and the Core.
  */
-static Nexus* nexus{nullptr};
 
 Nexus::Nexus(QObject* parent) : stared(false), profile{nullptr}, m_widget{nullptr} {
     qDebug() << __func__;
@@ -316,13 +315,12 @@ Module* Nexus::Create() {
  * @brief Returns the singleton instance.
  */
 Nexus& Nexus::getInstance() {
-    if (!nexus) nexus = new Nexus;
-    return *nexus;
+    static Nexus instance;
+    return instance;
 }
 
 void Nexus::destroy() {
-    delete nexus;
-    nexus = nullptr;
+ 
 }
 
 void Nexus::cleanup() {

@@ -760,7 +760,7 @@ void Widget::openDialog(GenericChatroomWidget* widget, bool newWindow) {
 
 bool Widget::newFriendMessageAlert(const FriendId& friendId, const QString& text, bool sound,
                                    bool file) {
-    bool hasActive;
+    bool hasActive = false;
     QWidget* currentWindow;
     ContentDialog* contentDialog = ContentDialogManager::getInstance()->getFriendDialog(friendId);
     Friend* f = Nexus::getCore()->getFriendList().findFriend(friendId);
