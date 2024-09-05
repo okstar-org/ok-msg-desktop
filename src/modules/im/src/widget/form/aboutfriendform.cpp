@@ -69,6 +69,10 @@ AboutFriendForm::AboutFriendForm(std::unique_ptr<IAboutFriend> _about, QWidget* 
     ui->statusMessage->setText(about->getStatusMessage());
     ui->avatar->setPixmap(about->getAvatar());
 
+    auto f = about->getFriend();
+    connect(f, &Friend::avatarChanged,
+            [&](const QPixmap& pixmap) { ui->avatar->setPixmap(pixmap); });
+
     ui->userName->setText(about->getName());
     connect(about->getFriend(), &Friend::nameChanged, [&](auto name) {
         ui->userName->setText(name);

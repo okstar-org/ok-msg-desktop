@@ -75,6 +75,8 @@ FriendWidget::FriendWidget(ContentLayout* layout, const FriendInfo& f, QWidget* 
     m_friend = core->getFriendList().findFriend(f.getId());
     nameLabel->setText(m_friend->getDisplayedName());
 
+    connect(m_friend, &Friend::avatarChanged, [&](const QPixmap& pixmap) { setAvatar(pixmap); });
+
     // update alias when edited
     connect(nameLabel, &CroppingLabel::editFinished,  //
             m_friend, &Friend::setAlias);
@@ -198,9 +200,18 @@ ContentDialog* FriendWidget::addFriendDialog(const Friend* frnd) {
     //  connect(profile, &Profile::friendAvatarRemoved, this,
     //          &FriendWidget::onAvatarRemoved);
 
-    QPixmap avatar = Nexus::getProfile()->loadAvatar(frnd->getPublicKey());
-    if (!avatar.isNull()) {
-        setAvatar(avatar);
+    auto profile = Nexus::getProfile();
+    if (profile) {
+        QPixmap avatar = profile->loadAvatar(frnd->getPublicKey());
+        if (!avatar.isNull()) {
+            setAvatar(avatar);
+        }
+
+        //        connect(profile, &Profile::friendAvatarChanged,
+        //                [&](const FriendId& friendPk, const QPixmap& pixmap){
+        //
+        //                    setAvatar(pixmap);
+        //        });
     }
 
     return dialog;
