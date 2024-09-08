@@ -130,7 +130,6 @@ public:
     void onRender(const std::string& peerId, lib::ortc::RendererImage image) override;
 
     void addCallHandler(CallHandler*);
-    bool callToGroup(const QString& g);
 
     // 发起呼叫邀请
     bool callToFriend(const QString& f, const QString& sId, bool video);
@@ -221,23 +220,6 @@ signals:
     // 对方状态变化
     void receiveCallStateAccepted(IMPeerId peerId, QString callId, bool video);
     void receiveCallStateRejected(IMPeerId peerId, QString callId, bool video);
-
-    void receiveSelfVideoFrame(uint16_t w, uint16_t h,  //
-                               const uint8_t* y,        //
-                               const uint8_t* u,        //
-                               const uint8_t* v,        //
-                               int32_t ystride,         //
-                               int32_t ustride,         //
-                               int32_t vstride);
-
-    void receiveFriendVideoFrame(const QString& friendId,  //
-                                 uint16_t w, uint16_t h,   //
-                                 const uint8_t* y,         //
-                                 const uint8_t* u,         //
-                                 const uint8_t* v,         //
-                                 int32_t ystride,          //
-                                 int32_t ustride,          //
-                                 int32_t vstride);
 
 private:
     void connectCall(IMCall* imCall);

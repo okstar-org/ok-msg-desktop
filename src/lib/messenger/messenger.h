@@ -28,8 +28,6 @@
 class QDomElement;
 class QDomDocument;
 
-
-
 namespace ok {
 namespace session {
 class AuthSession;
@@ -106,7 +104,6 @@ public:
     virtual void onGroupOccupantStatus(const QString groupId,  //
                                        IMGroupOccupant) = 0;
 };
-
 
 /**
  * OkIM模块对外接口
@@ -315,10 +312,10 @@ public:
                                     int32_t vstride) = 0;
 };
 
-class MessengerCall : public QObject{
+class MessengerCall : public QObject {
     Q_OBJECT
 public:
-    MessengerCall(Messenger *messenger, QObject* parent = nullptr);
+    MessengerCall(Messenger* messenger, QObject* parent = nullptr);
     void addCallHandler(CallHandler*);
 
     // 发起呼叫邀请
@@ -339,23 +336,23 @@ public:
 private:
     IMCall* call;
 
-    signals:
-        void receiveSelfVideoFrame(uint16_t w, uint16_t h,  //
-                                   const uint8_t* y,        //
-                                   const uint8_t* u,        //
-                                   const uint8_t* v,        //
-                                   int32_t ystride,         //
-                                   int32_t ustride,         //
-                                   int32_t vstride);
-
-        void receiveFriendVideoFrame(const QString& friendId,  //
-                                     uint16_t w, uint16_t h,   //
-                                     const uint8_t* y,         //
-                                     const uint8_t* u,         //
-                                     const uint8_t* v,         //
-                                     int32_t ystride,          //
-                                     int32_t ustride,          //
-                                     int32_t vstride);
+    // signals:
+    //     void receiveSelfVideoFrame(uint16_t w, uint16_t h,  //
+    //                                const uint8_t* y,        //
+    //                                const uint8_t* u,        //
+    //                                const uint8_t* v,        //
+    //                                int32_t ystride,         //
+    //                                int32_t ustride,         //
+    //                                int32_t vstride);
+    //
+    //     void receiveFriendVideoFrame(const QString& friendId,  //
+    //                                  uint16_t w, uint16_t h,   //
+    //                                  const uint8_t* y,         //
+    //                                  const uint8_t* u,         //
+    //                                  const uint8_t* v,         //
+    //                                  int32_t ystride,          //
+    //                                  int32_t ustride,          //
+    //                                  int32_t vstride);
 };
 
 // 不要修改顺序和值
@@ -408,10 +405,10 @@ public:
     virtual void onFileSendError(const QString& friendId, const File& file, int m_sentBytes) = 0;
 };
 
-class MessengerFile : public QObject{
+class MessengerFile : public QObject {
     Q_OBJECT
 public:
-    MessengerFile(Messenger *messenger, QObject* parent = nullptr);
+    MessengerFile(Messenger* messenger, QObject* parent = nullptr);
 
     void addFileHandler(FileHandler*);
 
@@ -425,25 +422,23 @@ public:
     void fileCancel(QString fileId);
     bool fileSendToFriend(const QString& f, const File& file);
 
-//    /**
-//     * 启动文件发送任务
-//     * @param session
-//     * @param file
-//     */
-//    void doStartFileSendTask(const Jingle::Session* session, const File& file);
-//
-//    /**
-//     * 停止文件发送任务
-//     * @param session
-//     * @param file
-//     */
-//    void doStopFileSendTask(const Jingle::Session* session, const File& file);
+    //    /**
+    //     * 启动文件发送任务
+    //     * @param session
+    //     * @param file
+    //     */
+    //    void doStartFileSendTask(const Jingle::Session* session, const File& file);
+    //
+    //    /**
+    //     * 停止文件发送任务
+    //     * @param session
+    //     * @param file
+    //     */
+    //    void doStopFileSendTask(const Jingle::Session* session, const File& file);
 
 private:
-    IMFile *fileSender;
-
+    IMFile* fileSender;
 };
-
 
 }  // namespace messenger
 }  // namespace lib

@@ -676,7 +676,6 @@ void WebRTC::SessionTerminate(const std::string& peerId) {
 
 void WebRTC::CreateAnswer(const std::string& peerId, const OJingleContentAv& ca) {
     RTC_LOG_F(LS_INFO) << "peerId:" << peerId;
-
     Conductor* conductor = createConductor(peerId, ca.sessionId, ca.isVideo());
     // webrtc::SdpType::kOffer,
     auto sdp = convertToSdp(ca);

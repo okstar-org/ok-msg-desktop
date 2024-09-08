@@ -183,8 +183,6 @@ void IMCall::addCallHandler(CallHandler* hdr) {
     callHandlers.push_back(hdr);
 }
 
-bool IMCall::callToGroup(const QString& g) { return false; }
-
 void IMCall::connectCall(IMCall* imCall) {
     qDebug() << __func__ << imCall;
 
@@ -222,27 +220,6 @@ void IMCall::connectCall(IMCall* imCall) {
             handler->onHangup(friendId, state);
         }
     });
-
-    //  connect(imCall, &IMCall::receiveFriendVideoFrame,
-    //          this,
-    //          [&](const QString &friendId, //
-    //              uint16_t w, uint16_t h,  //
-    //              const uint8_t *y, const uint8_t *u, const uint8_t *v,
-    //              int32_t ystride, int32_t ustride, int32_t vstride) {
-    //            emit receiveFriendVideoFrame(friendId, //
-    //                                         w, h,     //
-    //                                         y, u, v,  //
-    //                                         ystride, ustride, vstride);
-    //          });
-    //
-    //  connect(imCall, &IMCall::receiveSelfVideoFrame, this,
-    //          [&](uint16_t w, uint16_t h, //
-    //              const uint8_t *y, const uint8_t *u, const uint8_t *v,
-    //              int32_t ystride, int32_t ustride, int32_t vstride) {
-    //            emit receiveSelfVideoFrame(w, h,    //
-    //                                       y, u, v, //
-    //                                       ystride, ustride, vstride);
-    //          });
 }
 
 // 对方接受呼叫
@@ -375,10 +352,7 @@ void IMCall::setRemoteMute(bool mute) {
 void IMCall::onCreatePeerConnection(const std::string& sId, const std::string& peerId, bool ok) {
     auto p = qstring(peerId);
     auto s = qstring(sId);
-
     qDebug() << __func__ << "sId:" << s << "peerId:" << p << "isOk=>" << ok;
-
-    //  emit call->sig_createPeerConnection(s, p, ok);
 }
 
 void IMCall::onRTP(const std::string& sid,     //
@@ -443,12 +417,16 @@ void IMCall::onIce(const std::string& sId,     //
  */
 void IMCall::onRender(const std::string& peerId, lib::ortc::RendererImage image) {
     if (peerId.empty()) {
-        emit receiveSelfVideoFrame(image.width_, image.height_, image.y, image.u, image.v,
+        for (const auto& item : callHandlers) {
+            item->onSelfVideoFrame(image.width_, image.height_, image.y, image.u, image.v,
                                    image.ystride, image.ustride, image.vstride);
+        }
     } else {
-        emit receiveFriendVideoFrame(IMPeerId(peerId).toFriendId(), image.width_, image.height_,
+        for (const auto& item : callHandlers) {
+            item->onFriendVideoFrame(IMPeerId(peerId).toFriendId(), image.width_, image.height_,
                                      image.y, image.u, image.v, image.ystride, image.ustride,
                                      image.vstride);
+        }
     }
 }
 
@@ -677,7 +655,12 @@ void IMCall::doContentReject(const gloox::Jingle::Session::Jingle*, const IMPeer
 
 void IMCall::doTransportInfo(const gloox::Jingle::Session::Jingle* jingle, const IMPeerId& peerId) {
     auto sid = qstring(jingle->sid());
-    if (isInvalidSid(sid)) return;
+    qDebug() << __func__ << "sid" << sid;
+
+    if (isInvalidSid(sid)) {
+        qWarning() << "Unable to handle the session!";
+        return;
+    }
 
     qDebug() << __func__ << "sId:" << sid << "peerId:" << peerId.toString();
 
@@ -713,7 +696,7 @@ void IMCall::sessionOnInitiate(const QString& sId,
                                Jingle::Session* session,
                                const Jingle::Session::Jingle* jingle,
                                const IMPeerId& peerId) {
-    qDebug() << __func__ << "receive session:" << sId;
+    qDebug() << __func__ << "sid:" << sId;
 
     ortc::OJingleContentAv cav;
     parse(jingle, cav);

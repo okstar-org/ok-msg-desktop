@@ -129,11 +129,6 @@ void CoreAV::process() {
     imCall = new lib::messenger::MessengerCall(core->getMessenger(), this);
     imCall->addCallHandler(this);
 
-    connect(imCall, &lib::messenger::MessengerCall::receiveFriendVideoFrame, this,
-            &CoreAV::onFriendVideoFrame);
-    connect(imCall, &lib::messenger::MessengerCall::receiveSelfVideoFrame, this,
-            &CoreAV::onSelfVideoFrame);
-
     emit ok::Application::Instance() -> bus()->coreAvChanged(this);
 }
 

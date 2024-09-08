@@ -104,7 +104,7 @@ void IMJingle::handleSessionAction(Action action, Session* session, const Sessio
     auto friendId = IMPeerId(from);
     auto sid = qstring(jingle->sid());
 
-    qDebug() << __func__ << static_cast<int>(action) << qstring(from.full()) << sid;
+    qDebug() << __func__ << static_cast<int>(action) << qstring(from.full()) << "sid:" << sid;
 
     switch (action) {
         case Action::SessionInitiate: {

@@ -21,8 +21,8 @@
 #include "base/xmls.h"
 
 #include "lib/messenger/IM.h"
-#include "lib/messenger/IMFile.h"
 #include "lib/messenger/IMCall.h"
+#include "lib/messenger/IMFile.h"
 #include "lib/plugin/pluginmanager.h"
 
 namespace lib {
@@ -53,8 +53,6 @@ Messenger::Messenger(const QString& host,
     _im = new ::lib::messenger::IM(host, name, password, features);
     qDebug() << "Create im =>" << _im;
     connectIM();
-
-
 }
 
 Messenger::~Messenger() { qDebug() << __func__; }
@@ -69,9 +67,7 @@ Messenger::~Messenger() { qDebug() << __func__; }
 void Messenger::start() {
     qDebug() << __func__;
     _im->start();
-    connect(_im, &IM::started, [&]() {
-        emit started();
-    });
+    connect(_im, &IM::started, [&]() { emit started(); });
 }
 
 void Messenger::sendChatState(const QString& friendId, int state) {
@@ -434,9 +430,7 @@ void Messenger::joinGroup(const QString& group) {
     _im->joinRoom(group);
 }
 
-void Messenger::setSelfAvatar(const QByteArray& avatar) {
-    _im->setAvatar(avatar);
-}
+void Messenger::setSelfAvatar(const QByteArray& avatar) { _im->setAvatar(avatar); }
 
 void Messenger::requestBookmarks() {
     _im->requestVCards();
@@ -450,7 +444,7 @@ void Messenger::onGroupReceived(QString groupId, QString name) {
     }
 }
 
-//Call
+// Call
 MessengerCall::MessengerCall(Messenger* messenger, QObject* parent) {
     call = new ::lib::messenger::IMCall(messenger->im(), this);
     qDebug() << "Create imCall =>" << call;
@@ -463,7 +457,7 @@ bool MessengerCall::callToFriend(const QString& f, const QString& sId, bool vide
     return call->callToFriend(f, sId, video);
 }
 bool MessengerCall::callToPeerId(const IMPeerId& to, const QString& sId, bool video) {
-    return call->callToPeerId(to, sId,video);
+    return call->callToPeerId(to, sId, video);
 }
 bool MessengerCall::callAnswerToFriend(const IMPeerId& peer, const QString& callId, bool video) {
     return call->callAnswerToFriend(peer, callId, video);
@@ -471,17 +465,11 @@ bool MessengerCall::callAnswerToFriend(const IMPeerId& peer, const QString& call
 void MessengerCall::callRetract(const IMContactId& f, const QString& sId) {
     call->callRetract(f, sId);
 }
-void MessengerCall::callReject(const IMPeerId& f, const QString& sId) {
-    call->callReject(f, sId);
-}
-void MessengerCall::setMute(bool mute) {
-    call->setMute(mute);
-}
-void MessengerCall::setRemoteMute(bool mute) {
-    call->setRemoteMute(mute);
-}
+void MessengerCall::callReject(const IMPeerId& f, const QString& sId) { call->callReject(f, sId); }
+void MessengerCall::setMute(bool mute) { call->setMute(mute); }
+void MessengerCall::setRemoteMute(bool mute) { call->setRemoteMute(mute); }
 
-//File
+// File
 MessengerFile::MessengerFile(Messenger* messenger, QObject* parent) : QObject(parent) {
     fileSender = new IMFile(messenger->im(), this);
 }
@@ -498,9 +486,7 @@ void MessengerFile::fileFinishRequest(QString friendId, const QString& sId) {
 void MessengerFile::fileFinishTransfer(QString friendId, const QString& sId) {
     fileSender->fileFinishTransfer(friendId, sId);
 }
-void MessengerFile::fileCancel(QString fileId) {
-    fileSender->fileCancel(fileId);
-}
+void MessengerFile::fileCancel(QString fileId) { fileSender->fileCancel(fileId); }
 bool MessengerFile::fileSendToFriend(const QString& f, const File& file) {
     return fileSender->fileSendToFriend(f, file);
 }
