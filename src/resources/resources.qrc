@@ -35,6 +35,7 @@
         <file>icon/btn_maximum_active.png</file>
 
         <file>logo/main.svg</file>
+        <file>logo/app.icns</file>
 
         <file>images/avatar.png</file>
     </qresource>
