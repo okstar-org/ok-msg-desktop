@@ -114,6 +114,8 @@ Profile::Profile(const QString& host,
     initCore(toxsave, s, isNewProfile);
 
     loadDatabase(password);
+
+    ProfileLocker::lock(name);
 }
 
 /**
@@ -255,6 +257,7 @@ Profile::~Profile() {
     onSaveToxSave();
     Settings::getInstance().savePersonal(this);
     Settings::getInstance().sync();
+
     ProfileLocker::assertLock();
     assert(ProfileLocker::getCurLockName() == name);
     ProfileLocker::unlock();

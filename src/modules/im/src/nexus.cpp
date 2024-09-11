@@ -49,6 +49,8 @@
  * it is in charge of starting the GUI and the Core.
  */
 
+static Nexus* m_self;
+
 Nexus::Nexus(QObject* parent) : stared(false), profile{nullptr}, m_widget{nullptr} {
     qDebug() << __func__;
 
@@ -307,7 +309,7 @@ void Nexus::showMainGUI() {
 }
 
 Module* Nexus::Create() {
-    Nexus& inst = getInstance();
+    Nexus& inst = createInstance();
     return (Module*)(&inst);
 }
 
@@ -315,12 +317,17 @@ Module* Nexus::Create() {
  * @brief Returns the singleton instance.
  */
 Nexus& Nexus::getInstance() {
-    static Nexus instance;
-    return instance;
+    assert(m_self);
+    return *m_self;
 }
 
-void Nexus::destroy() {
- 
+Nexus& Nexus::createInstance() {
+    if (m_self) {
+        delete m_self;
+        m_self = nullptr;
+    }
+    m_self = new Nexus();
+    return *m_self;
 }
 
 void Nexus::cleanup() {
@@ -335,7 +342,6 @@ void Nexus::cleanup() {
     s.savePersonal();
     s.sync();
 
-    Nexus::destroy();
     CameraSource::destroyInstance();
     Settings::destroyInstance();
 

@@ -47,11 +47,11 @@ public:
     void setParser(QCommandLineParser* parser);
 
     static Nexus& getInstance();
+    static Nexus& createInstance();
     static Core* getCore();
     static Profile* getProfile();
     static Widget* getDesktopGUI();
 
-    virtual void destroy() override;
 
     QString name() override;
     QWidget* widget() override;

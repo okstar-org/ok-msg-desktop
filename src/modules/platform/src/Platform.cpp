@@ -49,7 +49,6 @@ void Platform::start(std::shared_ptr<ok::session::AuthSession> session) { m_widg
 bool Platform::isStarted() { return false; }
 void Platform::onSave(SavedInfo&) {}
 void Platform::cleanup() {}
-void Platform::destroy() {}
 PlatformPageContainer* Platform::getPageContainer() { return pageContainter; }
 void Platform::hide() {}
 }  // namespace ok::platform

@@ -63,6 +63,7 @@ CoreAV::CoreAV(Core* core)
 }
 
 CoreAV::~CoreAV() {
+    qDebug() << __func__;
     /* Gracefully leave calls and group calls to avoid deadlocks in destructor */
     for (const auto& call : calls) {
         cancelCall(call.first);
@@ -74,8 +75,9 @@ CoreAV::~CoreAV() {
     assert(calls.empty());
     assert(groupCalls.empty());
 
-    coreavThread->exit(0);
+    coreavThread->quit();
     coreavThread->wait();
+    coreavThread->deleteLater();
 }
 
 /**
@@ -84,10 +86,7 @@ CoreAV::~CoreAV() {
  * @return CoreAV instance on success, {} on failure
  */
 CoreAV::CoreAVPtr CoreAV::makeCoreAV(Core* core) {
-    if (!instance) {
-        instance = new CoreAV(core);
-        instance->start();
-    }
+    instance = new CoreAV(core);
     return CoreAVPtr{instance};
 }
 

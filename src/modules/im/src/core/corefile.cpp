@@ -58,6 +58,13 @@ CoreFile::CoreFile(Core* core)
     emit ok::Application::Instance() -> bus()->coreFileChanged(this);
 }
 
+CoreFile::~CoreFile() {
+    qDebug() << __func__;
+    thread->quit();
+    thread->wait();
+    thread->deleteLater();
+}
+
 CoreFile* CoreFile::getInstance() {
     assert(instance);
     return instance;

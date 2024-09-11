@@ -38,6 +38,8 @@ using CoreFilePtr = std::unique_ptr<CoreFile>;
 class CoreFile : public QObject, public lib::messenger::FileHandler {
     Q_OBJECT
 public:
+    ~CoreFile();
+
     static CoreFilePtr makeCoreFile(Core* core);
     static CoreFile* getInstance();
     void start();

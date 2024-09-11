@@ -86,3 +86,5 @@ vcpkg_installed
 CMakePresets.json
 
 .DS_Store
+
+*.snap
