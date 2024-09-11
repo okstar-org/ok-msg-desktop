@@ -94,8 +94,8 @@ void AboutForm::replaceVersions() {
 #else
     qDebug() << "AboutForm not showing updates, qTox built without UPDATE_CHECK";
 #endif
-    QString projectLink = ORGANIZATION_HOME "/" APPLICATION_ALIAS;
-    QString commitLink = projectLink + "/commit/" + QString(GIT_VERSION);
+    QString projectLink = QString("%1/%2").arg(ORGANIZATION_HOME).arg(APPLICATION_EXE_NAME);
+    QString commitLink = QString("%1/commit/%2").arg(projectLink).arg(GIT_VERSION);
     bodyUI->gitVersion->setText(
             tr("Commit hash: %1").arg(createLink(commitLink, QString(GIT_VERSION))));
     bodyUI->qtVersion->setText(tr("Qt version: %1").arg(QT_VERSION_STR));
