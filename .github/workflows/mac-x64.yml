@@ -134,7 +134,7 @@ jobs:
           create-dmg --version
           security find-identity -v -p codesigning
       
-      - name: macdepylotqt
+      - name: macdeployqt
         if: ${{ startsWith(github.ref, 'refs/tags/') }}
         run: | 
           ${{env.Qt5_DIR}}/bin/macdeployqt   ${{ steps.strings.outputs.build-output-dir }}/bin/ok-msg-desktop.app
