@@ -47,10 +47,38 @@ if(ENABLE_PLUGINS)
     list(APPEND OK_LIBS Plugin)
 endif()
 
+#for macos
+if(MACOS)
+  set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13" CACHE STRING "Minimum OS X deployment version")
+  #info.list
+  set(MACOSX_BUNDLE_BUNDLE_NAME ${PROJECT_NAME})
+ if(ARM64)
+     set(MACOSX_BUNDLE_BUNDLE_VERSION "macOS-arm64") #"${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}"
+     set(MACOSX_BUNDLE_SHORT_VERSION_STRING "macOS-arm64")#TODO
+ else()
+     set(MACOSX_BUNDLE_BUNDLE_VERSION "macOS-x64")
+     set(MACOSX_BUNDLE_SHORT_VERSION_STRING "macOS-x64")
+ endif()
+
+  set(MACOSX_BUNDLE_BUNDLE_IDENTIFIER  ${APPLICATION_ID})
+  set(MACOSX_BUNDLE_GUI_IDENTIFIER ${APPLICATION_ID})
+  set(MACOSX_BUNDLE_ICON_FILE app.icns) #TODO
+
+  set(AppIcon ${CMAKE_CURRENT_SOURCE_DIR}/resources/logo/app.icns)
+  set_source_files_properties(${AppIcon} PROPERTIES
+       MACOSX_PACKAGE_LOCATION "Resources")
+endif()
+
+
 if (WIN32 AND CMAKE_BUILD_TYPE STREQUAL Release)
     add_executable(${PROJECT_NAME} WIN32
         ${${PROJECT_NAME}_SOURCES}
         ${${PROJECT_NAME}_RESOURCES})
+elseif(MACOS)
+    add_executable(${PROJECT_NAME} MACOSX_BUNDLE
+        ${${PROJECT_NAME}_SOURCES}
+        ${${PROJECT_NAME}_RESOURCES}
+        ${AppIcon} )
 else ()
     add_executable(${PROJECT_NAME}
         ${${PROJECT_NAME}_SOURCES}
