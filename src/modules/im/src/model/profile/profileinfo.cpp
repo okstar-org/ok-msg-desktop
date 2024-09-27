@@ -270,6 +270,8 @@ QByteArray picToPng(const QImage& pic) {
  * @return Code of set avatar operation.
  */
 IProfileInfo::SetAvatarResult ProfileInfo::setAvatar(const QString& path) {
+    qDebug() << __func__ << "Set avatar from:" << path;
+
     if (path.isEmpty()) {
         return SetAvatarResult::EmptyPath;
     }

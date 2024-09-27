@@ -77,7 +77,7 @@ public:
     const ToxEncrypt* getPasskey() const;
 
     const QPixmap& loadAvatar();
-    void setAvatar(QByteArray pic, bool saveToCore);
+    void setAvatar(QByteArray& pic, bool saveToCore);
     void setAvatarOnly(const QPixmap& pic);
 
     QPixmap loadAvatar(const ContactId& owner);

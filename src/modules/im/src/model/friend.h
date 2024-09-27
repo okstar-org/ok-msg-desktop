@@ -78,6 +78,7 @@ private:
     bool hasNewEvents{};
     QString statusMessage;
     Status::Status friendStatus;
+
     /**
      * 朋友关系
      * @see RelationStatus

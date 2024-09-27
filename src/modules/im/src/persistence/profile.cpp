@@ -498,7 +498,7 @@ void Profile::loadDatabase(QString password) {
  * @param pic Picture to use as avatar, if empty an Identicon will be used
  * depending on settings
  */
-void Profile::setAvatar(QByteArray pic, bool saveToCore) {
+void Profile::setAvatar(QByteArray& pic, bool saveToCore) {
     bool loaded = false;
 
     QByteArray avatarData;
@@ -514,8 +514,9 @@ void Profile::setAvatar(QByteArray pic, bool saveToCore) {
             loaded = pixmap.load(":/img/contact_dark.svg");
         }
     }
-    qDebug() << "image loaded=>" << loaded;
+
     if (!loaded) {
+        qDebug() << "Load image failed!";
         return;
     }
 

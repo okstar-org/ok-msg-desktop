@@ -13,6 +13,7 @@
 #include "contact.h"
 #include <src/nexus.h>
 #include <QVariant>
+#include "base/images.h"
 #include "src/persistence/profile.h"
 
 Contact::Contact() {}
@@ -57,6 +58,12 @@ const QPixmap& Contact::setDefaultAvatar() {
     return avatar;
 }
 
+void Contact::setAvatar(const QByteArray& avatar) {
+    QPixmap pix;
+    ok::base::Images::putToPixmap(avatar, pix);
+    setAvatar(pix);
+}
+
 void Contact::setAvatar(const QPixmap& pix) {
     if (pix.isNull()) {
         return;
@@ -66,10 +73,10 @@ void Contact::setAvatar(const QPixmap& pix) {
     avatarSetStatus = Status::AvatarSet::UserSet;
 
     // save to profile
-    auto profile = Nexus::getProfile();
-    QByteArray buf;
-    avatar.save(buf);
-    profile->saveFriendAvatar(FriendId{id}, buf);
+    //    auto profile = Nexus::getProfile();
+    //    QByteArray buf;
+    //    avatar.save(buf);
+    //    profile->saveFriendAvatar(FriendId{id}, buf);
 
     emit avatarChanged(avatar);
 }

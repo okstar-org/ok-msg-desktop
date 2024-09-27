@@ -109,16 +109,10 @@ MessageSessionWidget::MessageSessionWidget(ContentLayout* layout, const ContactI
 
         connect(sendWorker->dispacher(), &IMessageDispatcher::messageSent, this,
                 &MessageSessionWidget::onMessageSent);
-
-        //      connect(g, &Group::displayedNameChanged, this,
-        //              [this](const QString &newName) {
-        //                setName(newName);
-        //              });
     }
 
     contentWidget = std::make_unique<ContentWidget>(sendWorker.get(), this);
 
-    //  contentWidget->hide();
     contentLayout->addWidget(contentWidget.get());
 
     auto chatForm = sendWorker->getChatForm();
@@ -129,52 +123,6 @@ MessageSessionWidget::MessageSessionWidget(ContentLayout* layout, const ContactI
         }
     });
 
-    //  const auto compact = settings.getCompactLayout();
-
-    //  const auto activityTime = settings.getFriendActivity(toxPk);
-    //  const auto chatTime = sendWorker->getChatForm()->getLatestTime();
-    //  if (chatTime > activityTime && chatTime.isValid()) {
-    //    settings.setFriendActivity(toxPk, chatTime);
-    //  }
-
-    //  chatRoom = std::make_unique<FriendChatroom>(m_friend, dialogManager);
-    //  auto frnd = chatRoom->getFriend();
-
-    //  nameLabel->setText(getContact()->getDisplayedName());;
-
-    // update alias when edited
-    //  connect(nameLabel, &CroppingLabel::editFinished, //
-    //          m_friend, &IMFriend::setAlias);
-
-    //  connect(m_friend, &IMFriend::displayedNameChanged, //
-    //          nameLabel, &CroppingLabel::setText);
-
-    //  connect(m_friend, &IMFriend::displayedNameChanged, this,
-    //          [this](const QString &newName) {
-    //            Q_UNUSED(newName);
-    //            emit widgetRenamed(this);
-    //          });
-
-    //  connect(sendWorker->getChatroom(),
-    //          &Chatroom::activeChanged,
-    //          this,
-    //          &MessageSessionWidget::setActive);
-    //  statusMessageLabel->setTextFormat(Qt::PlainText);
-
-    //  connect(this, &MessageSessionWidget::middleMouseClicked, dialog,
-    //          [this]() { dialog->removeFriend(friendPk); });
-    //  connect(MessageSessionWidget, &MessageSessionWidget::copyFriendIdToClipboard, this,
-    //          &Widget::copyFriendIdToClipboard);
-    //  connect(MessageSessionWidget, &MessageSessionWidget::newWindowOpened, this,
-    //          &Widget::openNewDialog);
-
-    // Signal transmission from the created `MessageSessionWidget` (which shown in
-    // ContentDialog) to the `widget` (which shown in main widget)
-    // FIXME: emit should be removed
-    //  connect(
-    //      this, &MessageSessionWidget::contextMenuCalled, this,
-    //      [this](QContextMenuEvent *event) { emit contextMenuCalled(event); });
-    //
     connect(this, &MessageSessionWidget::chatroomWidgetClicked,
             [=, this](GenericChatroomWidget* w) {
                 Q_UNUSED(w);
@@ -182,10 +130,10 @@ MessageSessionWidget::MessageSessionWidget(ContentLayout* layout, const ContactI
                 emit widgetClicked(this);
             });
 
-    //    connect(getContact(), &Contact::avatarChanged,
-    //            [&](auto& pic) {
-    //              setAvatar(pic);
-    //            });
+    if (getContactId() == core->getSelfId()) {
+        // 自己
+        connect(profile, &Profile::selfAvatarChanged, this, &MessageSessionWidget::setAvatar);
+    }
 }
 
 MessageSessionWidget::~MessageSessionWidget() { qDebug() << __func__ << contactId; }
@@ -456,15 +404,16 @@ void MessageSessionWidget::onMessageSent(DispatchedMessageId id, const Message& 
 }
 
 void MessageSessionWidget::setFriend(const Friend* f) {
-    qDebug() << __func__ << f;
     if (!f) {
         return;
     }
 
+    qDebug() << __func__ << f->toString();
+
     connect(f, &Friend::displayedNameChanged, this, [&](const QString& name) { setName(name); });
+    connect(f, &Friend::avatarChanged, this, [this](const QPixmap& avatar) { setAvatar(avatar); });
     connect(f, &Friend::statusChanged, this,
             [this](Status::Status status, bool event) { setStatus(status, event); });
-    connect(f, &Friend::avatarChanged, this, [this](const QPixmap& avatar) { setAvatar(avatar); });
 
     setContact(*f);
 
@@ -545,7 +494,6 @@ void MessageSessionWidget::setGroup(const Group* g) {
     }
 
     connect(g, &Friend::displayedNameChanged, this, [&](const QString& name) { setName(name); });
-
     connect(g, &Friend::avatarChanged, this, [this](const QPixmap& avatar) { setAvatar(avatar); });
 
     setContact(*g);

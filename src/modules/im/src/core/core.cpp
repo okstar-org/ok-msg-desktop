@@ -860,7 +860,15 @@ void Core::setStatus(Status::Status status_) {
     emit statusSet(status_);
 }
 
-void Core::setAvatar(const QByteArray& avatar) { tox->setSelfAvatar(avatar); }
+void Core::setAvatar(const QByteArray& avatar) {
+    // 从朋友列表寻找到自己
+    auto self = friendList.findFriend(getSelfId());
+    if (self) {
+        self->setAvatar(avatar);
+    }
+
+    tox->setSelfAvatar(avatar);
+}
 
 /**
  * @brief Returns the unencrypted tox save data

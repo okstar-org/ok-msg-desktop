@@ -45,7 +45,8 @@ public:
     QString getId() const { return id.toString(); };
 
     const QPixmap& setDefaultAvatar();
-    void setAvatar(const QPixmap& pix);
+    void setAvatar(const QPixmap& avatar);
+    void setAvatar(const QByteArray& avatar);
     void reloadAvatar();
     void clearAvatar();
     const QPixmap& getAvatar() const;
