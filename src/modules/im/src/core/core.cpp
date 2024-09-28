@@ -351,14 +351,17 @@ void Core::onFriendMessage(QString friendId,
 
     sendReceiptReceived(friendId, message.id);
 
+    auto peerId = ToxPeer(message.from);
+
     FriendMessage msg;
     msg.isAction = false;
     msg.id = message.id;
-    msg.from = message.from;
+    msg.from = peerId.getId();
+    msg.from_resource = peerId.resource;
     msg.to = message.to;
     msg.content = message.body;
     msg.timestamp = message.timestamp;
-    msg.displayName = ContactId(message.from).username;
+    msg.displayName = peerId.username;
     emit friendMessageReceived(FriendId(friendId), msg, false);
 }
 
@@ -475,7 +478,8 @@ void Core::onGroupMessage(const QString groupId,
     GroupMessage msg;
     msg.isAction = isAction;
     msg.id = message.id;
-    msg.from = message.from;
+    msg.from = peerId.toFriendId();
+    msg.from_resource = peerId.resource;
     msg.to = message.to;
     msg.content = message.body;
     msg.timestamp = message.timestamp;

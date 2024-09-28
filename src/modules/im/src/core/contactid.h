@@ -25,7 +25,7 @@
 
 inline QRegularExpressionMatch JidMatch(const QString& strId) {
     // 正则表达式模式，这里假设username不包含@，server不包含/
-    QRegularExpression re("([^@]+)@([^/]+)(/[^/]+)?");
+    QRegularExpression re("([^@]+)@([^/]+)(/([^/]+))?");
     // 匹配输入字符串
     return re.match(strId);
 }
@@ -54,9 +54,9 @@ public:
     virtual bool isValid() const;
     bool isGroup() const;
 
-    virtual QString toString() const { return username + "@" + server; };
+    virtual QString toString() const { return getId(); };
 
-    inline QString getId() const { return toString(); }
+    inline QString getId() const { return username + "@" + server; }
 
     // 用户名
     QString username;

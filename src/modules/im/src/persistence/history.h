@@ -84,6 +84,7 @@ public:
                     MessageState state,
                     QDateTime timestamp,
                     QString sender,
+                    QString sender_resource,
                     QString receiver,
                     QString message,
                     QString dataId)
@@ -92,21 +93,16 @@ public:
                 , state(state)
                 , timestamp{std::move(timestamp)}
                 , sender{std::move(sender)}
+                , sender_resource(sender_resource)
                 , receiver{std::move(receiver)}
                 , message(std::move(message))
                 , dataId{dataId} {
-            //            if(type==HistMessageContentType::message){
-            //                 data = std::make_shared<QString>(std::move(message));
-            //            }else if(type==HistMessageContentType::file){
-            //                FileDbInsertionData dbFile;
-            //                dbFile.parse(message);
-            //                data= std::make_shared<FileDbInsertionData>(std::move(dbFile));
-            //            }
         }
 
         RowId id;
         QDateTime timestamp;
         QString sender;
+        QString sender_resource;
         QString receiver;
         MessageState state;
         HistMessageContentType type;

@@ -130,7 +130,7 @@ private:
 
 public slots:
     void on_nameClicked();
-
+    void onProfileChanged(Profile* profile);
 
     void onStatusSet(Status::Status status);
     void onUsernameSet(const QString& username);

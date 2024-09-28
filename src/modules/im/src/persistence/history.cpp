@@ -20,7 +20,7 @@
 
 namespace {
 
-static constexpr int SCHEMA_VERSION = 1;
+static constexpr int SCHEMA_VERSION = 2;
 
 bool createCurrentSchema(RawDatabase& db) {
     QVector<RawDatabase::Query> queries;
@@ -103,6 +103,15 @@ bool dbSchema0to1(RawDatabase& db) {
     return db.execNow(queries);
 }
 
+bool dbSchema1to2(RawDatabase& db) {
+    qDebug() << __func__;
+    QVector<RawDatabase::Query> queries;
+    queries += RawDatabase::Query(
+            QStringLiteral("ALTER TABLE history ADD COLUMN sender_resource text;"));
+    queries += RawDatabase::Query(QStringLiteral("PRAGMA user_version = 2;"));
+    return db.execNow(queries);
+}
+
 /**
  * @brief Upgrade the db schema
  * @return True if the schema upgrade succeded, false otherwise
@@ -126,8 +135,11 @@ bool dbSchemaUpgrade(std::shared_ptr<RawDatabase>& db) {
         qWarning().nospace() << "Database version (" << databaseSchemaVersion
                              << ") is newer than we currently support (" << SCHEMA_VERSION
                              << "). Please upgrade the program!";
-        db->remove();
         return false;
+    }
+
+    if (databaseSchemaVersion == SCHEMA_VERSION) {
+        return true;
     }
 
     switch (databaseSchemaVersion) {
@@ -149,7 +161,7 @@ bool dbSchemaUpgrade(std::shared_ptr<RawDatabase>& db) {
             }
         }
         case 1: {
-            dbSchema0to1(*db.get());
+            dbSchema1to2(*db.get());
             break;
         }
         // etc.
@@ -320,16 +332,18 @@ QVector<RawDatabase::Query> History::generateNewMessageQueries(const Message& me
 
     queries += RawDatabase::Query(
             QString("INSERT INTO history "
-                    "(timestamp, receiver, sender, message, type, data_id, is_receipt) "
-                    "values (%1, '%2', '%3', '%4', %5, '%6', %7)")
-                    .arg(message.timestamp.toMSecsSinceEpoch())  // 1
+                                          "(timestamp, receiver, sender, message, type, data_id, "
+                                          "is_receipt, sender_resource) "
+                                          "values (%1, '%2', '%3', '%4', %5, '%6', %7, '%8')")
+                                          .arg(message.timestamp.toMSecsSinceEpoch())  // 1
                     .arg(message.to)                             // 2
                     .arg(message.from)                           // 3
                     .arg(message.content)                        // 4
                     .arg((int)type)                              // 5
                     .arg(message.dataId)                         // 6
-                    .arg(false),                                 // 7
-            insertIdCallback);
+                                          .arg(false)                                  // 7
+                                          .arg(message.from_resource),
+                                  insertIdCallback);
 
     if (!isDelivered) {
         queries += RawDatabase::Query{
@@ -540,7 +554,8 @@ QString History::makeSqlForFriend(const FriendId& me, const FriendId& friendPk) 
                     "broken_messages.id bro_id, "       // 6
                     "faux_offline_pending.id off_id, "  // 7
                     "data_id, "                         // 8
-                    "is_receipt "                       // 9
+                    "is_receipt, "                      // 9
+                    "sender_resource "                  // 10
                     "FROM history "
                     "LEFT JOIN faux_offline_pending ON history.id = faux_offline_pending.id "
                     "LEFT JOIN broken_messages ON history.id = broken_messages.id "
@@ -554,23 +569,26 @@ History::HistMessage History::rowToMessage(const QVector<QVariant>& row) {
     auto id = RowId{row[0].toLongLong()};
     auto timestamp = QDateTime::fromMSecsSinceEpoch(row[1].toLongLong());
     auto receiver = row[2].toString();
-    auto sender_key = row[3].toString();
+    auto sender = row[3].toString();
     auto message = row[4].toString();
     auto type = row[5].toInt(0);
     auto isBroken = row[6].toInt(0);
     auto isPending = row[7].toInt(0);
     auto dataId = row[8].toString();
     auto isReceipt = row[9].toBool();
+    auto sender_resource = row[10].toString();
 
     auto ctype = static_cast<HistMessageContentType>(type);
     auto state = getMessageState(isPending, isBroken, isReceipt);
-    return History::HistMessage{id, ctype, state, timestamp, sender_key, receiver, message, dataId};
+    return History::HistMessage{id,       ctype,   state, timestamp, sender, sender_resource,
+                                receiver, message, dataId};
 }
 
 QList<History::HistMessage> History::getMessagesForFriend(const FriendId& me,
                                                           const FriendId& friendPk,
                                                           size_t firstIdx,
                                                           size_t lastIdx) {
+    qDebug() << __func__ << "me:" << me.toString() << " friend:" << friendPk.toString();
     if (historyAccessBlocked()) {
         return {};
     }

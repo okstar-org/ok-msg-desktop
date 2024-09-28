@@ -91,7 +91,7 @@ ToxPeer::ToxPeer(const QString& rawId) : FriendId(rawId) {
         qWarning() << "Unable to parse id:" << rawId;
         return;
     }
-    resource = match.captured(3);
+    resource = match.captured(4);
 }
 
 bool ToxPeer::isValid() const { return FriendId::isValid() && !resource.isEmpty(); }

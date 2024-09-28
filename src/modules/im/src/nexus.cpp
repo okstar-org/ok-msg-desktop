@@ -362,6 +362,7 @@ Core* Nexus::getCore() {
 /**
  * @brief Get current user profile.
  * @return nullptr if not started, profile otherwise.
+ * @deprecated
  */
 Profile* Nexus::getProfile() { return getInstance().profile; }
 

@@ -285,7 +285,7 @@ void SessionChatLog::insertCompleteMessageAtIdx(ChatLogIdx idx,
                                                 const QString& senderName,
                                                 const ChatLogMessage& message) {
     auto item = ChatLogItem(sender, senderName, message);
-    assert(message.state == MessageState::complete);
+    assert(message.state == MessageState::complete || message.state == MessageState::receipt);
     items.emplace(idx, std::move(item));
 }
 

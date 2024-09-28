@@ -47,6 +47,9 @@ std::vector<Message> MessageProcessor::processOutgoingMessage(bool isAction,
 
     QStringList splitMsgs(content);
 
+    auto toxId = idHandler.getSelfPeerId();
+    ToxPeer peerId(toxId.toString());
+
     QDateTime timestamp = QDateTime::currentDateTime();
     std::transform(splitMsgs.begin(), splitMsgs.end(), std::back_inserter(ret),
                    [&](const QString& part) {
@@ -54,7 +57,8 @@ std::vector<Message> MessageProcessor::processOutgoingMessage(bool isAction,
                        message.id = ok::base::UUID::make();
                        message.isAction = isAction;
                        message.to = f.getId();
-                       message.from = idHandler.getSelfPeerId().toString();
+                       message.from = peerId.getId();
+                       message.from_resource = peerId.resource;
                        message.content = part;
                        message.timestamp = timestamp;
                        qDebug() << "Generated a new message:" << message.id;

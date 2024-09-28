@@ -50,6 +50,7 @@ public:
     bool isAction;
     MsgId id;
     QString from;
+    QString from_resource;
     QString to;
     QString displayName;
     QString content;

@@ -90,10 +90,8 @@ void acceptFileTransfer(ToxFile& file, const QString& path) {
 
 ChatWidget::ChatWidget(QWidget* parent)
         : MainLayout(parent)
-        ,  //
-        ui(new Ui::ChatWidget)
-        ,  //
-        unreadGroupInvites{0}
+        , ui(new Ui::ChatWidget)
+        , unreadGroupInvites{0}
         , core{nullptr}
         , coreFile{nullptr}
         , profileInfo{nullptr}
@@ -149,14 +147,14 @@ void ChatWidget::init() {
     connect(widget, &Widget::groupAdded, this, &ChatWidget::onGroupAdded);
     connect(widget, &Widget::groupRemoved, this, &ChatWidget::onGroupRemoved);
 
-    connect(ok::Application::Instance()->bus(), &ok::Bus::coreChanged, this,
-            [&](Core* core) { connectToCore(core); });
+    ok::Bus* bus = ok::Application::Instance()->bus();
+    connect(bus, &ok::Bus::coreChanged, this, [&](Core* core) { connectToCore(core); });
 
-    connect(ok::Application::Instance()->bus(), &ok::Bus::coreAvChanged, this,
-            [&](CoreAV* av) { connectToCoreAv(av); });
+    connect(bus, &ok::Bus::coreAvChanged, this, &ChatWidget::connectToCoreAv);
 
-    connect(ok::Application::Instance()->bus(), &ok::Bus::coreFileChanged, this,
-            [&](CoreFile* file) { connectToCoreFile(file); });
+    connect(bus, &ok::Bus::coreFileChanged, this, &ChatWidget::connectToCoreFile);
+
+    connect(bus, &ok::Bus::profileChanged, this, &ChatWidget::onProfileChanged);
 
     settings::Translator::registerHandler([this] { retranslateUi(); }, this);
 }
@@ -181,8 +179,8 @@ void ChatWidget::deinit() {
 void ChatWidget::connectToCore(Core* core_) {
     qDebug() << __func__ << "core:" << core_;
     core = core_;  // TODO: 待优化
-    connect(Nexus::getProfile(), &Profile::nickChanged, this, &ChatWidget::onUsernameSet);
 
+    connect(core_, &Core::usernameSet, this, &ChatWidget::onUsernameSet);
     connect(core_, &Core::statusSet, this, &ChatWidget::onStatusSet);
     connect(core_, &Core::statusMessageSet, this, &ChatWidget::onStatusMessageSet);
     connect(core_, &Core::messageSessionReceived, this, &ChatWidget::onMessageSessionReceived);
@@ -525,6 +523,10 @@ void ChatWidget::clearAllReceipts() { sessionListWidget->clearAllReceipts(); }
 void ChatWidget::on_nameClicked() {
     qDebug() << __func__;
     showProfile();
+}
+
+void ChatWidget::onProfileChanged(Profile* profile) {
+    connect(profile, &Profile::nickChanged, this, &ChatWidget::onUsernameSet);
 }
 
 void ChatWidget::onGroupClicked() {

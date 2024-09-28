@@ -71,6 +71,8 @@ ChatHistory::ChatHistory(const ContactId& f_,                  //
         , settings(settings_)
         , coreIdHandler(coreIdHandler)
         , sessionChatLog(getInitialChatLogIdx(), coreIdHandler) {
+    qDebug() << __func__ << "Creating...";
+
     // 消息发送成功
     connect(&messageDispatcher, &IMessageDispatcher::messageComplete, this,
             &ChatHistory::onMessageComplete);
@@ -101,14 +103,12 @@ ChatHistory::ChatHistory(const ContactId& f_,                  //
     connect(&messageDispatcher, &IMessageDispatcher::fileCancelled, &sessionChatLog,
             &SessionChatLog::onFileCanceled);
 
-    // NOTE: this has to be done _after_ sending all sent messages since initial
-    // state of the message has to be marked according to our dispatch state
-    constexpr auto defaultNumMessagesToLoad = 100;
-    auto firstChatLogIdx = sessionChatLog.getFirstIdx().get() < defaultNumMessagesToLoad
-                                   ? ChatLogIdx(0)
-                                   : sessionChatLog.getFirstIdx() - defaultNumMessagesToLoad;
-
     if (canUseHistory()) {
+        constexpr auto defaultNumMessagesToLoad = 100;
+        auto firstChatLogIdx = sessionChatLog.getFirstIdx().get() < defaultNumMessagesToLoad
+                                       ? ChatLogIdx(0)
+                                       : sessionChatLog.getFirstIdx() - defaultNumMessagesToLoad;
+
         loadHistoryIntoSessionChatLog(firstChatLogIdx);
     }
 
@@ -368,7 +368,7 @@ void ChatHistory::loadHistoryIntoSessionChatLog(ChatLogIdx start) const {
 
     auto messages =
             history->getMessagesForFriend(core->getSelfId(), FriendId(f), start.get(), end.get());
-    qDebug() << "load message for:" << f.toString() << "messages:" << messages.size();
+    qDebug() << "load friend:" << f.toString() << "messages:" << messages.size();
 
     //  assert(messages.size() == end.get() - start.get());
     ChatLogIdx nextIdx = start;
@@ -401,6 +401,7 @@ void ChatHistory::loadHistoryIntoSessionChatLog(ChatLogIdx start) const {
 
                 auto processedMessage = Message{.isAction = isAction,
                                                 .from = message.sender,
+                                                .from_resource = message.sender_resource,
                                                 .to = message.receiver,
                                                 .content = messageContent,
                                                 .timestamp = message.timestamp};
@@ -416,6 +417,7 @@ void ChatHistory::loadHistoryIntoSessionChatLog(ChatLogIdx start) const {
 
                 auto chatLogMessage = ChatLogMessage{message.state, processedMessage};
                 switch (message.state) {
+                    case MessageState::receipt:
                     case MessageState::complete:
                         sessionChatLog.insertCompleteMessageAtIdx(currentIdx, sender, dispName,
                                                                   chatLogMessage);
