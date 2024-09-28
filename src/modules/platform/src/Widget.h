@@ -21,6 +21,7 @@
 #include "base/resources.h"
 
 OK_RESOURCE_LOADER(Platform)
+OK_RESOURCE_LOADER(PlatformRes)
 
 namespace Ui {
 class WorkPlatform;
@@ -38,6 +39,7 @@ public:
     Widget(QWidget* parent = nullptr);
     ~Widget() override;
     void start();
+    void reloadTheme();
 
 protected:
     // 工作平台页的相关操作
@@ -53,6 +55,8 @@ private:
 
 private:
     OK_RESOURCE_PTR(Platform);
+    OK_RESOURCE_PTR(PlatformRes);
+
     Ui::WorkPlatform* ui;
 
 public slots:

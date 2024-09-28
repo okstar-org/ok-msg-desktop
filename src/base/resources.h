@@ -11,23 +11,21 @@
  */
 
 #pragma once
-
-#include <QDebug>
 #include <memory>
 
+// OK_RESOURCE_LOADER 设置在头文件非命名空间位置
 #define OK_RESOURCE_LOADER(name)                      \
     class name##Loader {                              \
     public:                                           \
         name##Loader() {                              \
-            qDebug() << "loading resource:" << #name; \
             Q_INIT_RESOURCE(name);                    \
         };                                            \
         ~name##Loader() {                             \
-            qDebug() << "cleanup resource:" << #name; \
             Q_CLEANUP_RESOURCE(name);                 \
         }                                             \
     };
 
+// OK_RESOURCE_PTR 设置在类成员位置
 #define OK_RESOURCE_PTR(name) std::unique_ptr<name##Loader> _ok##name##_ptr
-
+// OK_RESOURCE_INIT 设置在类初始化位置
 #define OK_RESOURCE_INIT(name) _ok##name##_ptr = std::make_unique<name##Loader>()

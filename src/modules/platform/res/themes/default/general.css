@@ -1,0 +1,59 @@
+/*
+ * Copyright (c) 2022 船山信息 chuanshaninfo.com
+ * The project is licensed under Mulan PubL v2.
+ * You can use this software according to the terms and conditions of the Mulan
+ * PubL v2. You may obtain a copy of Mulan PubL v2 at:
+ *          http://license.coscl.org.cn/MulanPubL-2.0
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PubL v2 for more details.
+ */
+
+QTabWidget {
+    background-color: white;
+}
+
+QTabWidget#mainTab,
+QTabWidget#mainTab::pane,
+QTabWidget#mainTab > QTabBar {
+    border: 0 solid;
+}
+
+QTabWidget#mainTab > QTabBar {
+    font: @bigBold;
+}
+
+QTabWidget#mainTab > QTabBar::tab {
+    border: 0px solid;
+    padding: 10px 10px 10px 10px;
+    background: white;
+    color: #959595;
+}
+
+QTabWidget#mainTab > QTabBar::tab:hover {
+    color: #5d5d5d;
+}
+
+QTabWidget#mainTab > QTabBar::tab:selected {
+    color: #19171b;
+}
+
+QTabBar {
+    background-color: white;
+}
+
+QTabBar::tab:selected {
+    background: #2d3136;
+    color: #f1f1f1;
+}
+
+QTabBar::tab:! selected {
+    background: #d0d1d1;
+    color: #5e5e5e;
+}
+
+/* using last is a bit of a hack, but QTabBar otherwise doesn't allow selecting single tabs */
+QTabBar::tab:last:! selected[update-available=true] {
+    background-color: #80c580;
+}
