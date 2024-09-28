@@ -36,16 +36,12 @@ using namespace ok::base;
 LoginWidget::LoginWidget(std::shared_ptr<ok::session::AuthSession> session, bool bootstrap,
                          QWidget* parent)
         : QWidget(parent)
-        ,  //
-        ui(new Ui::LoginWidget)
+        , ui(new Ui::LoginWidget)
         , session(session)
-        ,  //
-        bootstrap{bootstrap}
+        , bootstrap{bootstrap}
         , m_loginKey(nullptr)
-        ,  //
-        m_settingManager(new SettingManager(this))
-        ,  //
-        m_loaded(0) {
+        , m_settingManager(new SettingManager(this))
+        , m_loaded(0) {
     qDebug() << __func__;
     ui->setupUi(this);
 

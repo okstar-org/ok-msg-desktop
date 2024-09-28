@@ -57,7 +57,7 @@ QTabWidget#mainTab::pane,
 QTabWidget#mainTab>QTabBar
 {
     border: 0px solid;
-    background: white;
+    /*    background: white;*/
 }
 
 QTabWidget#mainTab>QTabBar

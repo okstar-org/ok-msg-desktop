@@ -121,6 +121,7 @@ Widget::Widget(IAudioControl& audio, QWidget* parent)  //
 
     settingsWidget = new SettingsWidget(this);
     ui->tabWidget->addTab(settingsWidget, tr("Settings"));
+    ui->tabWidget->tabBar()->setCursor(Qt::PointingHandCursor);
 
     installEventFilter(this);
 
