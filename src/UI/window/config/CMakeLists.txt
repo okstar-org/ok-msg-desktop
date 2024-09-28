@@ -85,9 +85,6 @@ file(APPEND "${RESOURCE_NAME}"
 # </RCC>
 file(APPEND "${RESOURCE_NAME}" "</RCC>")
 
-
-
-
 # 生成 xxx.qr
 execute_process(COMMAND ${CMAKE_COMMAND} -E copy_if_different
     ${RESOURCE_NAME}
@@ -95,7 +92,8 @@ execute_process(COMMAND ${CMAKE_COMMAND} -E copy_if_different
 
 qt5_add_resources(
     ${PROJECT_NAME}_RESOURCES
-        ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.qrc
+    ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.qrc
+    res/UIWindowConfigRes.qrc
 )
 
 add_library(${PROJECT_NAME} STATIC

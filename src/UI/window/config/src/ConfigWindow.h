@@ -24,6 +24,7 @@
 #include "src/UI/widget/OMenuWidget.h"
 
 OK_RESOURCE_LOADER(UIWindowConfig)
+OK_RESOURCE_LOADER(UIWindowConfigRes)
 
 namespace Ui {
 class ConfigWindow;
@@ -36,12 +37,14 @@ class ConfigWindow : public OMenuWidget {
 public:
     ConfigWindow(QWidget* parent = nullptr);
     ~ConfigWindow();
+    void reloadTheme();
 
 protected:
     void retranslateUi();
 
 private:
     OK_RESOURCE_PTR(UIWindowConfig);
+    OK_RESOURCE_PTR(UIWindowConfigRes);
 
     Ui::ConfigWindow* ui;
     bool inited = false;

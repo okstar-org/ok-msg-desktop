@@ -23,6 +23,7 @@
 
 #if OK_PLUGIN
 #include "about/src/aboutform.h"
+#include "lib/settings/style.h"
 #include "plugin/src/PluginManagerForm.h"
 #include "settings/src/SettingsForm.h"
 
@@ -33,30 +34,37 @@ namespace UI {
 
 ConfigWindow::ConfigWindow(QWidget* parent) : OMenuWidget(parent), ui(new Ui::ConfigWindow) {
     OK_RESOURCE_INIT(UIWindowConfig);
+    OK_RESOURCE_INIT(UIWindowConfigRes);
 
     ui->setupUi(this);
-
-    QString locale = ok::base::OkSettings::getInstance().getTranslation();
-    settings::Translator::translate(OK_UIWindowConfig_MODULE, locale);
-    settings::Translator::registerHandler([this] { retranslateUi(); }, this);
-    retranslateUi();
-
-#if OK_PLUGIN
-    ui->tabWidget->addTab(new ok::plugin::PluginManagerForm(this), tr("Plugin form"));
-#endif
 
     auto sw = new SettingsWidget(this);
     connect(sw->general(), &GeneralForm::onLanguageChanged, [](QString locale) {
         settings::Translator::translate(OK_UIWindowConfig_MODULE, locale);
     });
-
+    ui->tabWidget->setObjectName("mainTab");
+#if OK_PLUGIN
+    ui->tabWidget->addTab(new ok::plugin::PluginManagerForm(this), tr("Plugin form"));
+#endif
     ui->tabWidget->addTab(sw, tr("Settings form"));
     ui->tabWidget->addTab(new AboutForm(this), tr("About form"));
+    ui->tabWidget->tabBar()->setCursor(Qt::PointingHandCursor);
+    reloadTheme();
+
+    QString locale = ok::base::OkSettings::getInstance().getTranslation();
+    settings::Translator::translate(OK_UIWindowConfig_MODULE, locale);
+    settings::Translator::registerHandler([this] { retranslateUi(); }, this);
+    retranslateUi();
 }
 
 ConfigWindow::~ConfigWindow() {
     settings::Translator::unregister(this);
     delete ui;
+}
+
+void ConfigWindow::reloadTheme() {
+    auto& style = Style::getStylesheet("general.css");
+    setStyleSheet(style);
 }
 
 void ConfigWindow::retranslateUi() {
