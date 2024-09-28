@@ -19,13 +19,13 @@ QTabBar::tab:selected {
     color: #f1f1f1;
 }
 
-QTabBar::tab:! selected {
+QTabBar::tab:!selected {
     background: #d0d1d1;
     color: #5e5e5e;
 }
 
 /* using last is a bit of a hack, but QTabBar otherwise doesn't allow selecting single tabs */
-QTabBar::tab:last:! selected[update-available=true] {
+QTabBar[update-available=true]::tab:last:!selected {
     background-color: #80c580;
 }
 
@@ -45,6 +45,10 @@ QTabWidget#mainTab > QTabBar::tab {
     padding: 10px 10px 10px 10px;
     background: white;
     color: #959595;
+}
+
+QTabWidget#mainTab > QTabBar::tab:first {
+    padding-left: 2px;
 }
 
 QTabWidget#mainTab > QTabBar::tab:hover {
