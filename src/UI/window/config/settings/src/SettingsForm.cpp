@@ -29,7 +29,7 @@ SettingsWidget::SettingsWidget(QWidget* parent)
     settingsWidgets->setTabPosition(QTabWidget::North);
 
     bodyLayout = std::unique_ptr<QVBoxLayout>(new QVBoxLayout(this));
-    //    bodyLayout->setContentsMargins(0, 0, 0, 0);
+    bodyLayout->setContentsMargins(0, 0, 0, 0);
     bodyLayout->addWidget(settingsWidgets.get());
     setLayout(bodyLayout.get());
 
