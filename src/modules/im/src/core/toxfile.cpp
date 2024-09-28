@@ -74,14 +74,16 @@ ToxFile::ToxFile(const QString& sender,
         : FileInfo(sId_, fileId_, filename_, filePath_, fileSize_, bytesSent, status, direction)
         , file(new QFile(filePath_))
         , sender{sender}
-        , receiver{friendId} {}
+        , receiver{friendId}
+        , timestamp(QDateTime::currentDateTime()) {}
 
 ToxFile::ToxFile(const QString& sender, const QString& friendId, const lib::messenger::File& file)
         : FileInfo(file.sId, file.id, file.name, file.path, file.size, 0, (FileStatus)file.status,
                    (FileDirection)file.direction)
         , file(new QFile(file.path))
         , sender{sender}
-        , receiver{friendId} {}
+        , receiver{friendId}
+        , timestamp(QDateTime::currentDateTime()) {}
 
 ToxFile::ToxFile(const FileInfo& fi) : FileInfo(fi) {}
 

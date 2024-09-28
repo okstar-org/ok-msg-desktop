@@ -16,6 +16,7 @@
 #include "src/core/toxfilepause.h"
 
 #include <QCryptographicHash>
+#include <QDateTime>
 #include <QFile>
 #include <QMetaType>
 #include <QString>
@@ -82,8 +83,8 @@ Q_DECLARE_METATYPE(FileInfo);
 struct ToxFile : public FileInfo {
     explicit ToxFile() = default;
     explicit ToxFile(const QString& sender,
-            const QString& friendId,
-            QString sId,
+                     const QString& receiver,
+                     QString sId,
             QString FileId,
             QString FileName,
             QString filePath,
@@ -117,7 +118,7 @@ struct ToxFile : public FileInfo {
 
     QString sender;
     QString receiver;
-
+    QDateTime timestamp;
     std::shared_ptr<QFile> file;
     //  std::shared_ptr<QCryptographicHash> hashGenerator =
     //  std::make_shared<QCryptographicHash>(QCryptographicHash::Sha256);

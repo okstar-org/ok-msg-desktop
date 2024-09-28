@@ -147,11 +147,7 @@ public:
                        bool isDelivered,
                        const std::function<void(RowId)>& insertIdCallback = {});
 
-    void addNewFileMessage(const QString& friendPk,
-                           const ToxFile& file,
-                           const QString& sender,
-                           const QDateTime& time,
-                           QString const& dispName);
+    void addNewFileMessage(const ToxFile& file, QString const& dispName);
 
     void setFileMessage(const ToxFile& file);
 

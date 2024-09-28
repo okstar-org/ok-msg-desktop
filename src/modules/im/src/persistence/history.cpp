@@ -386,11 +386,7 @@ void History::onFileInserted(RowId dbId, QString fileId) {
 //     }
 // }
 
-void History::addNewFileMessage(const QString& friendPk,
-                                const ToxFile& file,
-                                const QString& sender,
-                                const QDateTime& time,
-                                QString const& dispName) {
+void History::addNewFileMessage(const ToxFile& file, QString const& dispName) {
     if (historyAccessBlocked()) {
         return;
     }
@@ -425,11 +421,11 @@ void History::addNewFileMessage(const QString& friendPk,
     };
 
     Message msg = {.isAction = false,
-                   .from = sender,
-                   .to = friendPk,
+                   .from = file.sender,
+                   .to = file.receiver,
                    .content = insertionData.json(),
                    .dataId = file.fileId,
-                   .timestamp = time
+                   .timestamp = file.timestamp
 
     };
 
