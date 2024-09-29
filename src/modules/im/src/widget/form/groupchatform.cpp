@@ -86,8 +86,6 @@ GroupChatForm::GroupChatForm(const GroupId* chatGroup, IChatLog& chatLog,
 
     //    tabber = new TabCompleter(msgEdit, group);
 
-    fileButton->setEnabled(false);
-    fileButton->setProperty("state", "");
     ChatFormHeader::Mode mode = ChatFormHeader::Mode::None;
     //    if (group->isAvGroupchat()) {
     //        mode = ChatFormHeader::Mode::Audio;
@@ -103,8 +101,6 @@ GroupChatForm::GroupChatForm(const GroupId* chatGroup, IChatLog& chatLog,
     //    const QSize& size = headWidget->getAvatarSize();
     //    headWidget->setAvatar(Style::scaleSvgImage(":/img/group_dark.svg", size.width(),
     //    size.height()));
-
-    msgEdit->setObjectName("group");
 
     //    namesListLayout = new FlowLayout(0, 5, 0);
     //    headWidget->addWidget(nusersLabel);
@@ -146,14 +142,6 @@ void GroupChatForm::onTitleChanged(const QString& author, const QString& title) 
     const QString message = tr("%1 has set the title to %2").arg(author, title);
     const QDateTime curTime = QDateTime::currentDateTime();
     addSystemInfoMessage(message, ChatMessage::INFO, curTime);
-}
-
-void GroupChatForm::onScreenshotClicked() {
-    // Unsupported
-}
-
-void GroupChatForm::onAttachClicked() {
-    // Unsupported
 }
 
 /**
@@ -344,8 +332,6 @@ void GroupChatForm::keyPressEvent(QKeyEvent* ev) {
     if (ev->key() == Qt::Key_P && (ev->modifiers() & Qt::ControlModifier) && inCall) {
         onMicMuteToggle();
     }
-
-    if (msgEdit->hasFocus()) return;
 }
 
 void GroupChatForm::keyReleaseEvent(QKeyEvent* ev) {
@@ -353,8 +339,6 @@ void GroupChatForm::keyReleaseEvent(QKeyEvent* ev) {
     if (ev->key() == Qt::Key_P && (ev->modifiers() & Qt::ControlModifier) && inCall) {
         onMicMuteToggle();
     }
-
-    if (msgEdit->hasFocus()) return;
 }
 
 /**

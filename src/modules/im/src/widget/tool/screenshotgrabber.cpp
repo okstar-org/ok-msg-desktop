@@ -30,6 +30,7 @@
 
 ScreenshotGrabber::ScreenshotGrabber()
         : QObject(), mKeysBlocked(false), scene(nullptr), mQToxVisible(true) {
+    qDebug() << __func__ << "...";
     window = new QGraphicsView(scene);  // Top-level widget
     window->setWindowFlags(Qt::FramelessWindowHint | Qt::BypassWindowManagerHint);
     window->setContentsMargins(0, 0, 0, 0);
@@ -50,6 +51,7 @@ void ScreenshotGrabber::reInit() {
 }
 
 ScreenshotGrabber::~ScreenshotGrabber() {
+    qDebug() << __func__ << "...";
     delete scene;
     delete window;
 }

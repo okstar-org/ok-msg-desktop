@@ -73,10 +73,9 @@ public slots:
 
 private slots:
     void updateFriendActivityForFile(const ToxFile& file);
-    void onAttachClicked() override;
-    void onScreenshotClicked() override;
+    //    void onAttachClicked() override;
+    //    void onScreenshotClicked() override;
 
-    void onTextEditChanged();
     //  void onCallTriggered();
     //  void onVideoCallTriggered();
     //  void onAcceptCallTriggered(const ToxPeer &peer, bool video);
@@ -89,7 +88,7 @@ private slots:
     void onStatusMessage(const QString& message);
 
     void sendImage(const QPixmap& pixmap);
-    void doScreenshot();
+
     void onCopyStatusMessage();
     void callUpdateFriendActivity();
 
@@ -107,9 +106,7 @@ private:
     CroppingLabel* statusMessageLabel;
     QMenu statusMessageMenu;
 
-    QTimer typingTimer;
     QAction* copyStatusAction;
-    bool isTyping;
 };
 
 #endif  // CHATFORM_H

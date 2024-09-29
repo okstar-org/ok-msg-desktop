@@ -9,13 +9,12 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PubL v2 for more details.
  */
-
 QTextEdit
 {
     border: 1px solid #D7D4D1;
     border-radius: 5px;
     background: white;
-    padding: 3px;
+    padding: 3px 0;
 }
 
 QTextEdit#group

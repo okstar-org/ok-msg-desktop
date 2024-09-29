@@ -30,6 +30,8 @@
 #include <algorithm>
 #include <cassert>
 
+#include <lib/settings/settings.h>
+
 /**
  * @var ChatLog::repNameAfter
  * @brief repetition interval sender name (sec)
@@ -120,6 +122,9 @@ ChatLog::ChatLog(QWidget* parent) : QGraphicsView(parent), scrollBarValue{0} {
 
     settings::Translator::registerHandler([this] { retranslateUi(); }, this);
     retranslateUi();
+
+    auto& s = Settings::getInstance();
+    connect(&s, &Settings::emojiFontPointSizeChanged, this, &ChatLog::forceRelayout);
 }
 
 ChatLog::~ChatLog() {

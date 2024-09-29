@@ -47,11 +47,7 @@ public:
 
     void handleAvatarOffer(QString friendId, QString fileId, bool accept);
 
-    void sendFile(QString friendId,
-                  QString filename,
-                  QString filePath,
-                  quint64 filesize,
-                  quint64 sent = 0);
+    void sendFile(QString friendId, const QFile& file);
 
     void pauseResumeFile(QString friendId, QString fileId);
     void cancelFileSend(QString friendId, QString fileId);

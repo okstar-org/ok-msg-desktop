@@ -47,6 +47,7 @@ class QVBoxLayout;
 class QHBoxLayout;
 class IMessageDispatcher;
 class EmoticonsWidget;
+class ChatInputForm;
 struct Message;
 
 namespace Ui {
@@ -95,22 +96,23 @@ public slots:
     void onDisplayedNameChanged(const QString& name);
 
 protected slots:
+    void onTextEditChanged(const QString& msg);
+    void onTextSend(const QString& msg);
+    void onFileSend(const QFile& file);
+    void onImageSend(const QPixmap& pix);
 
+    void quoteSelectedText();
+    void forwardSelectedText();
     void onChatContextMenuRequested(QPoint pos);
-    virtual void onScreenshotClicked() = 0;
-    void onSendTriggered();
-    virtual void onAttachClicked() = 0;
-    void onEmoteButtonClicked();
-    void onEmoteInsertRequested(QString str);
+
     void onCopyLogClicked();
-    void onEncryptButtonClicked();
+
     void clearChatArea();
     void clearChatArea(bool confirm, bool inform);
     void onSelectAllClicked();
     void onShowMessagesClicked();
     void onSplitterMoved(int pos, int index);
-    void quoteSelectedText();
-    void forwardSelectedText();
+
     void copyLink();
     void onLoadHistory();
     void onExportChat();
@@ -128,10 +130,6 @@ protected slots:
 
     void loadHistoryLower();
 
-#ifdef OK_PLUGIN
-    void onPluginEnabled(const QString& shortName);
-    void onPluginDisabled(const QString& shortName);
-#endif
 
 private:
     void retranslateUi();
@@ -164,7 +162,7 @@ protected:
     bool audioInputFlag;
     bool audioOutputFlag;
     int curRow;
-
+    QSplitter* bodySplitter;
     QAction* clearAction;
     QAction* quoteAction;
     QAction* copyLinkAction;
@@ -173,22 +171,13 @@ protected:
     // QAction* exportChatAction;
 
     QMenu menu;
-    QHBoxLayout* mainFootLayout;
-    bool isEncrypt;
-    QPushButton* encryptButton;
 
-    QPushButton* emoteButton;
-    QPushButton* fileButton;
-    QPushButton* screenshotButton;
-    QPushButton* sendButton;
-
-    QSplitter* bodySplitter;
 
     //    SearchForm *searchForm;
 
     //    QLabel *dateInfo;
     ChatLog* chatLog;
-    ChatTextEdit* msgEdit;
+
 #ifdef SPELL_CHECKING
     Sonnet::SpellCheckDecorator* decorator{nullptr};
 #endif
@@ -200,7 +189,10 @@ protected:
     SearchPos searchPos;
     std::map<ChatLogIdx, IChatItem::Ptr> messages;
     bool colorizeNames = false;
-    EmoticonsWidget* emoticonsWidget;
+
+    ChatInputForm* inputForm;
+    bool isTyping;
+    QTimer typingTimer;
 };
 
 #endif  // GENERICCHATFORM_H

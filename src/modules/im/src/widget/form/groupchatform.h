@@ -41,8 +41,7 @@ public:
     void peerAudioPlaying(QString peerPk);
 
 private slots:
-    void onScreenshotClicked() override;
-    void onAttachClicked() override;
+
     void onMicMuteToggle();
     void onVolMuteToggle();
     void onCallClicked();

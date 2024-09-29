@@ -15,13 +15,24 @@
 //
 #pragma once
 
+#include "uuid.h"
+
+#include <QBuffer>
+#include <QDir>
 #include <QImage>
+#include <QImageWriter>
 #include <QPainter>
 #include <QPainterPath>
 #include <QPixmap>
+#include <QTemporaryFile>
+
 namespace ok::base {
 class Images {
 public:
+    inline static bool SaveToFile(const QPixmap& pixmap, QFile& file, const char* format = "PNG") {
+        return pixmap.save(&file, format);
+    }
+
     inline static bool putToImage(const QByteArray& data, QImage& image) {
         return image.loadFromData(data);
     }

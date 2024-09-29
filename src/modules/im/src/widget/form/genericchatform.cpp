@@ -12,6 +12,19 @@
 
 #include "genericchatform.h"
 
+#include <base/uuid.h>
+#include <src/chatlog/chatmessageitem.h>
+#include <QClipboard>
+#include <QFileDialog>
+#include <QKeyEvent>
+#include <QMessageBox>
+#include <QSplitter>
+#include <QStringBuilder>
+#include <QTemporaryFile>
+#include <QtGlobal>
+#include "ChatInputForm.h"
+#include "base/files.h"
+#include "base/images.h"
 #include "lib/settings/translator.h"
 #include "src/chatlog/chatlinecontentproxy.h"
 #include "src/chatlog/chatlog.h"
@@ -22,48 +35,21 @@
 #include "src/friendlist.h"
 #include "src/grouplist.h"
 #include "src/model/friend.h"
-#include "src/model/group.h"
+#include "src/nexus.h"
 #include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
 #include "src/persistence/smileypack.h"
 #include "src/video/genericnetcamview.h"
-#include "src/widget/chatformheader.h"
 #include "src/widget/contentdialog.h"
-#include "src/widget/contentdialogmanager.h"
 #include "src/widget/contentlayout.h"
 #include "src/widget/emoticonswidget.h"
 #include "src/widget/form/chatform.h"
 #include "src/widget/form/loadhistorydialog.h"
-#include "src/widget/maskablepixmapwidget.h"
-// #include "src/widget/searchform.h"
-#include "src/lib/settings/style.h"
 #include "src/widget/gui.h"
+#include "src/widget/maskablepixmapwidget.h"
 #include "src/widget/tool/chattextedit.h"
 #include "src/widget/tool/flyoutoverlaywidget.h"
 #include "src/widget/widget.h"
-
-#include <QClipboard>
-#include <QFileDialog>
-#include <QKeyEvent>
-#include <QMessageBox>
-#include <QRegularExpression>
-#include <QSplitter>
-#include <QStringBuilder>
-#include <QtGlobal>
-
-#ifdef SPELL_CHECKING
-#include <KF5/SonnetUi/sonnet/spellcheckdecorator.h>
-#endif
-
-#ifdef OK_PLUGIN
-#include "lib/plugin/pluginmanager.h"
-
-#include <src/chatlog/chatmessageitem.h>
-
-#include <src/nexus.h>
-
-#include <src/core/coreav.h>
-#endif
 
 /**
  * @class GenericChatForm
@@ -72,27 +58,9 @@
  */
 
 static const QSize FILE_FLYOUT_SIZE{24, 24};
-static const short FOOT_BUTTONS_SPACING = 2;
-static const short MESSAGE_EDIT_HEIGHT = 50;
 static const short MAIN_FOOT_MARGIN = 8;
 static const short EDIT_SEND_SPACING = 5;
-static const QString FONT_STYLE[]{"normal", "italic", "oblique"};
-
-/**
- * @brief Creates CSS style string for needed class with specified font
- * @param font Font that needs to be represented for a class
- * @param name Class name
- * @return Style string
- */
-static QString fontToCss(const QFont& font, const QString& name) {
-    QString result{
-            "%1{"
-            "font-family: \"%2\"; "
-            "font-size: %3px; "
-            "font-style: \"%4\"; "
-            "font-weight: normal;}"};
-    return result.arg(name).arg(font.family()).arg(font.pixelSize()).arg(FONT_STYLE[font.style()]);
-}
+static constexpr int TYPING_NOTIFICATION_DURATION = 3000;
 
 /**
  * @brief Searches for name (possibly alias) of someone with specified public
@@ -122,21 +90,6 @@ const QString STYLE_PATH = QStringLiteral("chatForm/buttons.css");
 }
 
 namespace {
-
-template <class T, class Fun>
-QPushButton* createButton(const QString& name, T* self, Fun onClickSlot) {
-    QPushButton* btn = new QPushButton();
-    // Fix for incorrect layouts on OS X as per
-    // https://bugreports.qt-project.org/browse/QTBUG-14591
-    btn->setAttribute(Qt::WA_LayoutUsesWidgetRect);
-    btn->setCursor(Qt::PointingHandCursor);
-    btn->setObjectName(name);
-    // btn->setProperty("state", "green");
-    btn->setStyleSheet(Style::getStylesheet(STYLE_PATH));
-    btn->setCheckable(true);
-    QObject::connect(btn, &QPushButton::clicked, self, onClickSlot);
-    return btn;
-}
 
 IChatItem::Ptr getChatMessageForIdx(ChatLogIdx idx,
                                     const std::map<ChatLogIdx, IChatItem::Ptr>& messages) {
@@ -258,113 +211,48 @@ GenericChatForm::GenericChatForm(const ContactId* contact_,
         , contact(nullptr)
         , audioInputFlag(false)
         , audioOutputFlag(false)
-        , isEncrypt(false)
         , iChatLog(iChatLog_)
-        , emoticonsWidget{nullptr}
-        , messageDispatcher(messageDispatcher) {
-    setContentsMargins(0, 0, 0, 0);
-
+        , messageDispatcher(messageDispatcher)
+        , isTyping{false}
+        , curRow{0} {
     qDebug() << __func__ << "contact:" << contact_;
 
-    curRow = 0;
+    setContentsMargins(0, 0, 0, 0);
+
+    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    mainLayout->setMargin(0);
+
+    bodySplitter = new QSplitter(Qt::Vertical, this);
+
+    mainLayout->addWidget(bodySplitter);
+
     // searchForm = new SearchForm();
     // searchForm->hide();
-
+    // 聊天框
     chatLog = new ChatLog(this);
     chatLog->setBusyNotification(ChatMessage::createBusyNotification());
+    bodySplitter->addWidget(chatLog);
 
+    // 输入框
+    inputForm = new ChatInputForm(this);
+    connect(inputForm, &ChatInputForm::inputText, this, &GenericChatForm::onTextSend);
+    connect(inputForm, &ChatInputForm::inputTextChanged, this, &GenericChatForm::onTextEditChanged);
+    connect(inputForm, &ChatInputForm::inputFile, this, &GenericChatForm::onFileSend);
+    connect(inputForm, &ChatInputForm::inputScreenCapture, this, &GenericChatForm::onImageSend);
+
+    bodySplitter->addWidget(inputForm);
+
+    // settings
+    auto& s = Settings::getInstance();
+
+    connect(&s, &Settings::chatMessageFontChanged, this,
+            &GenericChatForm::onChatMessageFontChanged);
     //  dateInfo = new QLabel(this);
     //  dateInfo->setAlignment(Qt::AlignHCenter);
     //  dateInfo->setVisible(false);
 
-    // settings
-    const Settings& s = Settings::getInstance();
-    connect(&s, &Settings::emojiFontPointSizeChanged, chatLog, &ChatLog::forceRelayout);
-    connect(&s, &Settings::chatMessageFontChanged, this,
-            &GenericChatForm::onChatMessageFontChanged);
-
-    msgEdit = new ChatTextEdit();
-#ifdef SPELL_CHECKING
-    if (s.getSpellCheckingEnabled()) {
-        decorator = new Sonnet::SpellCheckDecorator(msgEdit);
-    }
-#endif
-    encryptButton = createButton("encryptButton", this, &GenericChatForm::onEncryptButtonClicked);
-
-    sendButton = createButton("sendButton", this, &GenericChatForm::onSendTriggered);
-
-    emoteButton = createButton("emoteButton", this, &GenericChatForm::onEmoteButtonClicked);
-
-    fileButton = createButton("fileButton", this, &GenericChatForm::onAttachClicked);
-    screenshotButton =
-            createButton("screenshotButton", this, &GenericChatForm::onScreenshotClicked);
-
-    // TODO: Make updateCallButtons (see ChatForm) abstract
-    //       and call here to set tooltips.
-
-    msgEdit->setFixedHeight(MESSAGE_EDIT_HEIGHT);
-    msgEdit->setFrameStyle(QFrame::NoFrame);
-
-    bodySplitter = new QSplitter(Qt::Vertical, this);
-    connect(bodySplitter, &QSplitter::splitterMoved, this, &GenericChatForm::onSplitterMoved);
-    QWidget* contentWidget = new QWidget(this);
-    contentWidget->setObjectName("ChatContentContainer");
-    bodySplitter->addWidget(contentWidget);
-
-    QVBoxLayout* mainLayout = new QVBoxLayout();
-    mainLayout->addWidget(bodySplitter);
-    mainLayout->setMargin(0);
-
-    setLayout(mainLayout);
-
-    QWidget* footContainer = new QFrame(contentWidget);
-    footContainer->setAttribute(Qt::WA_StyledBackground);
-    footContainer->setAutoFillBackground(true);
-    footContainer->setObjectName("ChatFootContainer");
-    QHBoxLayout* footButtonsSmall = new QHBoxLayout();
-    footButtonsSmall->setSpacing(FOOT_BUTTONS_SPACING);
-    footButtonsSmall->addWidget(emoteButton);
-    footButtonsSmall->addWidget(fileButton);
-    footButtonsSmall->addWidget(screenshotButton);
-#ifdef OK_PLUGIN
-    auto pm = ok::plugin::PluginManager::instance();
-    connect(pm, &ok::plugin::PluginManager::pluginEnabled,  //
-            this, &::GenericChatForm::onPluginEnabled);
-    connect(pm, &ok::plugin::PluginManager::pluginDisabled,  //
-            this, &::GenericChatForm::onPluginDisabled);
-    auto omemo = pm->plugin("omemo");
-    if (omemo) {
-        footButtonsSmall->addWidget(encryptButton);
-    }
-#endif
-    footButtonsSmall->addStretch(1);
-
-    QVBoxLayout* sendButtonLyt = new QVBoxLayout();
-    sendButtonLyt->addStretch(1);
-    sendButtonLyt->addWidget(sendButton);
-
-    QVBoxLayout* inputLayout = new QVBoxLayout();
-    inputLayout->addLayout(footButtonsSmall);
-    inputLayout->setSpacing(FOOT_BUTTONS_SPACING);
-    inputLayout->addWidget(msgEdit);
-
-    mainFootLayout = new QHBoxLayout(footContainer);
-    mainFootLayout->setContentsMargins(MAIN_FOOT_MARGIN, MAIN_FOOT_MARGIN, MAIN_FOOT_MARGIN,
-                                       MAIN_FOOT_MARGIN);
-    mainFootLayout->setSpacing(EDIT_SEND_SPACING);
-    mainFootLayout->addLayout(inputLayout);
-    mainFootLayout->addLayout(sendButtonLyt);
-
-    QVBoxLayout* contentLayout = new QVBoxLayout(contentWidget);
-    contentLayout->setContentsMargins(0, 0, 0, 0);
-    // contentLayout->addWidget(searchForm);
-    //  contentLayout->addWidget(dateInfo);
-    contentLayout->addWidget(chatLog, 1);
-    contentLayout->addWidget(footContainer, 0);
-
     // 引用
-    quoteAction = menu.addAction(QIcon(), QString(), this, SLOT(quoteSelectedText()),
-                                 QKeySequence(Qt::ALT, Qt::Key_Q));
+    quoteAction = menu.addAction(QIcon(), QString(), this, SLOT(quoteSelectedText()));
     addAction(quoteAction);
 
     // 转发
@@ -391,11 +279,6 @@ GenericChatForm::GenericChatForm(const ContactId* contact_,
     copyLinkAction = menu.addAction(QIcon(), QString(), this, SLOT(copyLink()));
     menu.addSeparator();
 
-    // loadHistoryAction =
-    //     menu.addAction(QIcon(), QString(), this, SLOT(onLoadHistory()));
-    // exportChatAction = menu.addAction(QIcon::fromTheme("document-save"),
-    //                                   QString(), this, SLOT(onExportChat()));
-
     connect(chatLog, &ChatLog::customContextMenuRequested, this,
             &GenericChatForm::onChatContextMenuRequested);
     connect(chatLog, &ChatLog::firstVisibleLineChanged, this, &GenericChatForm::updateShowDateInfo);
@@ -414,19 +297,21 @@ GenericChatForm::GenericChatForm(const ContactId* contact_,
     // connect(this, &GenericChatForm::messageNotFoundShow, searchForm,
     //         &SearchForm::showMessageNotFound);
 
-    connect(msgEdit, &ChatTextEdit::enterPressed, this, &GenericChatForm::onSendTriggered);
-
     connect(&GUI::getInstance(), &GUI::themeApplyRequest, this, &GenericChatForm::reloadTheme);
-    reloadTheme();
-
-    settings::Translator::registerHandler([this] { retranslateUi(); }, this);
-    retranslateUi();
 
     auto chatLogIdxRange = iChatLog.getNextIdx() - iChatLog.getFirstIdx();
     auto firstChatLogIdx =
             chatLogIdxRange < 100 ? iChatLog.getFirstIdx() : iChatLog.getNextIdx() - 100;
 
     renderMessages(firstChatLogIdx, iChatLog.getNextIdx());
+
+    typingTimer.setSingleShot(true);
+
+    setLayout(mainLayout);
+
+    reloadTheme();
+    settings::Translator::registerHandler([this] { retranslateUi(); }, this);
+    retranslateUi();
 }
 
 GenericChatForm::~GenericChatForm() {
@@ -435,26 +320,6 @@ GenericChatForm::~GenericChatForm() {
     //  delete searchForm;
 }
 
-#ifdef OK_PLUGIN
-void GenericChatForm::onPluginEnabled(const QString& shortName) {
-    //  qDebug() << "Plugin is enabled" << shortName <<"for"<<contact->getDisplayedName();
-    if (shortName == "omemo") {
-        auto encryptButton_ = mainFootLayout->findChild<QPushButton*>("encryptButton");
-        if (!encryptButton_) {
-            mainFootLayout->insertWidget(0, encryptButton);
-        }
-        encryptButton->show();
-    }
-}
-
-void GenericChatForm::onPluginDisabled(const QString& shortName) {
-    qDebug() << "Plugin is disabled." << shortName;
-    if (shortName == "omemo") {
-        encryptButton->hide();
-        //    mainFootLayout->removeWidget(encryptButton);
-    }
-}
-#endif
 
 QDateTime GenericChatForm::getLatestTime() const { return getTime(chatLog->getLatestLine()); }
 
@@ -464,9 +329,6 @@ void GenericChatForm::reloadTheme() {
     const Settings& s = Settings::getInstance();
     setStyleSheet(Style::getStylesheet("genericChatForm/genericChatForm.css"));
 
-    msgEdit->setStyleSheet(Style::getStylesheet("msgEdit/msgEdit.css") +
-                           fontToCss(s.getChatMessageFont(), "QTextEdit"));
-
     //  searchForm->reloadTheme();
 
     //  headWidget->setStyleSheet(Style::getStylesheet("chatArea/chatHead.css"));
@@ -474,11 +336,6 @@ void GenericChatForm::reloadTheme() {
 
     chatLog->setStyleSheet(Style::getStylesheet("chatArea/chatArea.css"));
     chatLog->reloadTheme();
-
-    fileButton->setStyleSheet(Style::getStylesheet(STYLE_PATH));
-    emoteButton->setStyleSheet(Style::getStylesheet(STYLE_PATH));
-    screenshotButton->setStyleSheet(Style::getStylesheet(STYLE_PATH));
-    sendButton->setStyleSheet(Style::getStylesheet(STYLE_PATH));
 }
 
 void GenericChatForm::setContact(const Contact* contact_) {
@@ -505,7 +362,7 @@ void GenericChatForm::removeContact() {
 void GenericChatForm::show(ContentLayout* contentLayout) {}
 
 void GenericChatForm::showEvent(QShowEvent*) {
-    msgEdit->setFocus();
+    inputForm->setFocus();
     if (contact) {
         if (!contact->isGroup()) {
             auto f = Nexus::getCore()->getFriendList().findFriend(*contactId);
@@ -566,25 +423,6 @@ void GenericChatForm::onChatContextMenuRequested(QPoint pos) {
     menu.exec(pos);
 }
 
-void GenericChatForm::onSendTriggered() {
-    auto msg = msgEdit->toPlainText();
-
-    bool isAction = msg.startsWith(ChatForm::ACTION_PREFIX, Qt::CaseInsensitive);
-    if (isAction) {
-        msg.remove(0, ChatForm::ACTION_PREFIX.length());
-    }
-
-    if (msg.isEmpty()) {
-        return;
-    }
-
-    msgEdit->setLastMessage(msg);
-    msgEdit->clear();
-
-    qDebug() << "Input text:" << msg;
-    auto sent = messageDispatcher.sendMessage(isAction, msg, isEncrypt);
-    qDebug() << &messageDispatcher << "sendMessage=>" << sent.first.get() << sent.second;
-}
 
 /**
  * @brief Show, is it needed to hide message author name or not
@@ -615,14 +453,14 @@ bool GenericChatForm::needsToHideName(ChatLogIdx idx) const {
            messagesTimeDiff < chatLog->repNameAfter;
 }
 
-void GenericChatForm::onEncryptButtonClicked() {
+void ChatInputForm::onEncryptButtonClicked() {
     auto btn = dynamic_cast<QPushButton*>(sender());
     btn->setChecked(!isEncrypt);
     isEncrypt = btn->isChecked();
     qDebug() << "isEncrypt changed=>" << isEncrypt;
 }
 
-void GenericChatForm::onEmoteButtonClicked() {
+void ChatInputForm::onEmoteButtonClicked() {
     // don't show the smiley selection widget if there are no smileys available
     if (SmileyPack::getInstance().getEmoticons().empty()) return;
 
@@ -642,7 +480,7 @@ void GenericChatForm::onEmoteButtonClicked() {
     }
 }
 
-void GenericChatForm::onEmoteInsertRequested(QString str) {
+void ChatInputForm::onEmoteInsertRequested(QString str) {
     // insert the emoticon
     QWidget* sender = qobject_cast<QWidget*>(QObject::sender());
     if (sender) msgEdit->insertPlainText(str);
@@ -658,15 +496,12 @@ void GenericChatForm::onEmoteInsertRequested(QString str) {
 
 void GenericChatForm::onCopyLogClicked() { chatLog->copySelectedText(); }
 
-void GenericChatForm::focusInput() { msgEdit->setFocus(); }
+void GenericChatForm::focusInput() { inputForm->setFocus(); }
 
 void GenericChatForm::onChatMessageFontChanged(const QFont& font) {
     // chat log
     chatLog->fontChanged(font);
     chatLog->forceRelayout();
-    // message editor
-    msgEdit->setStyleSheet(Style::getStylesheet("msgEdit/msgEdit.css") +
-                           fontToCss(font, "QTextEdit"));
 }
 
 void GenericChatForm::setColorizedNames(bool enable) { colorizeNames = enable; }
@@ -728,13 +563,13 @@ void GenericChatForm::insertChatMessage(IChatItem::Ptr msg) {
 }
 
 bool GenericChatForm::eventFilter(QObject* object, QEvent* event) {
-    EmoticonsWidget* ev = qobject_cast<EmoticonsWidget*>(object);
-    if (ev && event->type() == QEvent::KeyPress) {
-        QKeyEvent* key = static_cast<QKeyEvent*>(event);
-        msgEdit->sendKeyEvent(key);
-        msgEdit->setFocus();
-        return false;
-    }
+    // EmoticonsWidget* ev = qobject_cast<EmoticonsWidget*>(object);
+    // if (ev && event->type() == QEvent::KeyPress) {
+    //     QKeyEvent* key = static_cast<QKeyEvent*>(event);
+    //     msgEdit->sendKeyEvent(key);
+    //     msgEdit->setFocus();
+    //     return false;
+    // }
     return false;
 }
 
@@ -764,11 +599,11 @@ void GenericChatForm::quoteSelectedText() {
     // 3. append new line to the end of quote.
     QString quote = selectedText;
 
-    quote.insert(0, "> ");
-    quote.replace(QRegExp(QString("\r\n|[\r\n\u2028\u2029]")), QString("\n> "));
-    quote.append("\n");
+    // quote.insert(0, "> ");
+    // quote.replace(QRegExp(QString("\r\n|[\r\n\u2028\u2029]")), QString("\n> "));
+    // quote.append("\n");
 
-    msgEdit->append(quote);
+    // inputForm->setQuote(quote);
 }
 
 void GenericChatForm::forwardSelectedText() {
@@ -998,10 +833,6 @@ void GenericChatForm::updateShowDateInfo(const IChatItem::Ptr& prevLine,
 }
 
 void GenericChatForm::retranslateUi() {
-    sendButton->setToolTip(tr("Send message"));
-    emoteButton->setToolTip(tr("Smileys"));
-    fileButton->setToolTip(tr("Send file(s)"));
-    screenshotButton->setToolTip(tr("Send a screenshot"));
     clearAction->setText(tr("Clear displayed messages"));
     quoteAction->setText(tr("Quote"));
     forwardAction->setText(tr("Forward"));
@@ -1009,4 +840,63 @@ void GenericChatForm::retranslateUi() {
     // searchAction->setText(tr("Search in text"));
     // loadHistoryAction->setText(tr("Load chat history..."));selected text
     // exportChatAction->setText(tr("Export to file"));
+}
+
+void GenericChatForm::onTextEditChanged(const QString& text) {
+    if (!Settings::getInstance().getTypingNotification()) {
+        if (isTyping) {
+            isTyping = false;
+            Core::getInstance()->sendTyping(contactId->getId(), false);
+        }
+        return;
+    }
+
+    bool isTypingNow = !text.isEmpty();
+    if (isTyping != isTypingNow) {
+        Core::getInstance()->sendTyping(contactId->getId(), isTypingNow);
+        if (isTypingNow) {
+            typingTimer.start(TYPING_NOTIFICATION_DURATION);
+        }
+
+        isTyping = isTypingNow;
+    }
+}
+
+void GenericChatForm::onTextSend(const QString& msg) {
+    if (msg.isEmpty()) return;
+    if (msg.trimmed().isEmpty()) {
+        return;
+    }
+    auto sent = messageDispatcher.sendMessage(false, msg, false);
+    qDebug() << &messageDispatcher << "sendMessage=>" << sent.first.get() << sent.second;
+}
+
+void GenericChatForm::onFileSend(const QFile& file) {
+    if (!file.exists()) {
+        qWarning() << "File is no existing!";
+        return;
+    }
+    qDebug() << "Sending file:" << file.fileName();
+    Nexus::getProfile()->getCoreFile()->sendFile(contact->getId(), file);
+}
+
+void GenericChatForm::onImageSend(const QPixmap& pix) {
+    qDebug() << __func__ << pix;
+
+    if (pix.isNull()) {
+        qWarning() << "Empty image!";
+        return;
+    }
+
+    QFile file("./" + ok::base::UUID::make() + ".png");
+    // file.setAutoRemove(false);
+
+    bool saved = ok::base::Images::SaveToFile(pix, file, "png");
+    if (!saved) {
+        qWarning() << "Unable to save to temp file" << file.fileName();
+        return;
+    }
+
+    qDebug() << "Sending image:" << file.fileName();
+    Nexus::getProfile()->getCoreFile()->sendFile(contact->getId(), file);
 }

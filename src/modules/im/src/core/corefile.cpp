@@ -109,14 +109,14 @@ unsigned CoreFile::corefileIterationInterval() {
     return idleInterval;
 }
 
-void CoreFile::sendFile(QString friendId, QString filename, QString filePath, quint64 filesize,
-                        quint64 sent) {
-    qDebug() << __func__ << friendId << filename;
+void CoreFile::sendFile(QString friendId, const QFile& file_) {
+    qDebug() << __func__ << friendId << file_.fileName();
 
     QMutexLocker{coreLoopLock};
 
     auto sender = messenger->getSelfId().toFriendId();
 
+    auto fileInfo = QFileInfo(file_);
     auto fileId = ok::base::UUID::make();
     auto sId = ok::base::UUID::make();
 
@@ -124,10 +124,10 @@ void CoreFile::sendFile(QString friendId, QString filename, QString filePath, qu
                         friendId,
                         fileId,
                         sId,
-                        filename,
-                        filePath,
-                        filesize,
-                        sent,
+                        fileInfo.fileName(),
+                        fileInfo.filePath(),
+                        (quint64)file_.size(),
+                        (quint64)file_.size(),
                         FileStatus::INITIALIZING,
                         FileDirection::SENDING};
 
@@ -136,7 +136,7 @@ void CoreFile::sendFile(QString friendId, QString filename, QString filePath, qu
     bool y = messengerFile->fileSendToFriend(friendId, file.toIMFile());
     if (!y) {
         qWarning() << "sendFile: Sending file is failed.";
-        emit fileSendFailed(friendId, filename);
+        emit fileSendFailed(friendId, fileInfo.fileName());
         return;
     }
 

@@ -267,6 +267,8 @@ set(${PROJECT_NAME}_SOURCES
         src/widget/form/friendform.ui
         src/widget/form/chatform.cpp
         src/widget/form/chatform.h
+		src/widget/form/ChatInputForm.h
+		src/widget/form/ChatInputForm.cpp
         src/widget/form/filesform.cpp
         src/widget/form/filesform.h
         src/widget/form/genericchatform.cpp

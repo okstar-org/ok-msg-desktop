@@ -16,9 +16,13 @@
 #include <QBuffer>
 #include <QDataStream>
 #include <QDebug>
+#include <QDir>
 #include <QFileInfo>
 #include <QMimeDatabase>
+#include <QTemporaryFile>
+
 #include "basic_types.h"
+#include "uuid.h"
 
 namespace ok::base {
 
@@ -151,6 +155,15 @@ public:
             }
         }
         file.close();
+        return true;
+    }
+
+    inline static bool SaveToTempFile(const QByteArray& buf, QTemporaryFile& tempFile) {
+        if (!tempFile.open()) {
+            return false;
+        }
+        tempFile.write(buf);
+        tempFile.close();
         return true;
     }
 };

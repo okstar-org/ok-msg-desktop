@@ -436,6 +436,15 @@ void IMCall::sessionOnAccept(const QString& sId,
                              const Jingle::Session::Jingle* jingle) {
     if (isInvalidSid(sId)) return;
 
+    lib::ortc::OJingleContentAv cav;
+    cav.sdpType = lib::ortc::JingleSdpType::Answer;
+    parse(jingle, cav);
+
+    if (!cav.isValid()) {
+        qWarning() << "No call session";
+        return;
+    }
+
     auto sess = m_sessionMap.value(sId);
     if (!sess) {
         // 创建session
@@ -444,10 +453,6 @@ void IMCall::sessionOnAccept(const QString& sId,
         sess = new IMCallSession(sId, session, selfId, peerId, ortc::JingleCallType::av);
         m_sessionMap.insert(sId, sess);
     }
-
-    lib::ortc::OJingleContentAv cav;
-    cav.sdpType = lib::ortc::JingleSdpType::Answer;
-    parse(jingle, cav);
 
     // RTC 接受会话
     lib::ortc::OkRTCManager::getInstance()

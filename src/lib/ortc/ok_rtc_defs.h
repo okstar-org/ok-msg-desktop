@@ -13,12 +13,10 @@
 #pragma once
 
 #include <list>
-#include <map>
 #include <string>
 #include <vector>
 
-namespace lib {
-namespace ortc {
+namespace lib::ortc {
 
 #define SESSION_VERSION "3"
 
@@ -65,7 +63,7 @@ typedef std::list<Candidate> CandidateList;
 
 struct OIceUdp {
     std::string mid;
-    int mline;
+    int mline = 0;
     std::string ufrag;
     std::string pwd;
     Dtls dtls;
@@ -117,7 +115,7 @@ struct SsrcGroup {
     std::vector<std::string> ssrcs;
 };
 struct ORTP {
-    Media media;
+    Media media = Media::invalid;
     PayloadTypes payloadTypes;
     HdrExts hdrExts;
     Sources sources;
@@ -158,7 +156,7 @@ struct OJingleContent {
 public:
     [[nodiscard]] inline JingleCallType getCallType() const { return callType; }
 
-    [[nodiscard]] inline JingleSdpType getSdpType() { return sdpType; }
+    [[nodiscard]] inline JingleSdpType getSdpType() const { return sdpType; }
 
     JingleSdpType sdpType;
 
@@ -170,28 +168,16 @@ public:
 };
 
 struct OJingleContentFile : public OJingleContent {
-    //    void toPlugins(PluginList& plugins) const override;
-    //    void parse(const Jingle::Session::Jingle* jingle) override;
     std::vector<OContent> contents;
 };
 
 struct OJingleContentAv : public OJingleContent {
 public:
-    //    void toPlugins(PluginList& plugins) const override;
-    //    void parse(const Jingle::Session::Jingle* jingle) override;
     std::vector<OSdp> contents;
 
-    inline bool isValid() { return contents.size() > 0; }
+    bool isValid();
 
-    inline bool isVideo() const {
-        for (auto s : contents) {
-            if (s.rtp.media == Media::video) {
-                return true;
-            }
-        }
-        return false;
-    }
+    [[nodiscard]] bool isVideo() const;
 };
 
-}  // namespace ortc
-}  // namespace lib
+}  // namespace lib::ortc

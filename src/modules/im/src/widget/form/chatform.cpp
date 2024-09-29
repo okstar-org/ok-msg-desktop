@@ -63,14 +63,13 @@
 
 static constexpr int CHAT_WIDGET_MIN_HEIGHT = 50;
 static constexpr int SCREENSHOT_GRABBER_OPENING_DELAY = 500;
-static constexpr int TYPING_NOTIFICATION_DURATION = 3000;
 
 const QString ChatForm::ACTION_PREFIX = QStringLiteral("/me ");
 
 ChatForm::ChatForm(const FriendId* chatFriend,
                    IChatLog& chatLog_,
                    IMessageDispatcher& messageDispatcher)
-        : GenericChatForm(chatFriend, chatLog_, messageDispatcher), f(chatFriend), isTyping{false} {
+        : GenericChatForm(chatFriend, chatLog_, messageDispatcher), f(chatFriend) {
     //  headWidget->setAvatar(QPixmap(":/img/contact_dark.svg"));
 
     statusMessageLabel = new CroppingLabel();
@@ -79,8 +78,6 @@ ChatForm::ChatForm(const FriendId* chatFriend,
     statusMessageLabel->setMinimumHeight(Style::getFont(Style::Medium).pixelSize());
     statusMessageLabel->setTextFormat(Qt::PlainText);
     statusMessageLabel->setContextMenuPolicy(Qt::CustomContextMenu);
-
-    typingTimer.setSingleShot(true);
 
     chatLog->setTypingNotification(ChatMessage::createTypingNotification());
     chatLog->setMinimumHeight(CHAT_WIDGET_MIN_HEIGHT);
@@ -109,10 +106,10 @@ ChatForm::ChatForm(const FriendId* chatFriend,
     //  connect(headWidget, &ChatFormHeader::volMuteToggle, this,
     //          &ChatForm::onVolMuteToggle);
 
-    connect(sendButton, &QPushButton::pressed, this, &ChatForm::callUpdateFriendActivity);
-    connect(msgEdit, &ChatTextEdit::enterPressed, this, &ChatForm::callUpdateFriendActivity);
-    connect(msgEdit, &ChatTextEdit::textChanged, this, &ChatForm::onTextEditChanged);
-    connect(msgEdit, &ChatTextEdit::pasteImage, this, &ChatForm::sendImage);
+    //    connect(sendButton, &QPushButton::pressed, this, &ChatForm::callUpdateFriendActivity);
+    //    connect(msgEdit, &ChatTextEdit::enterPressed, this, &ChatForm::callUpdateFriendActivity);
+
+    //    connect(msgEdit, &ChatTextEdit::pasteImage, this, &ChatForm::sendImage);
     connect(statusMessageLabel, &CroppingLabel::customContextMenuRequested, this,
             [&](const QPoint& pos) {
                 if (!statusMessageLabel->text().isEmpty()) {
@@ -127,8 +124,9 @@ ChatForm::ChatForm(const FriendId* chatFriend,
     });
 
     setAcceptDrops(true);
-    retranslateUi();
+
     settings::Translator::registerHandler(std::bind(&ChatForm::retranslateUi, this), this);
+    retranslateUi();
 }
 
 ChatForm::~ChatForm() { settings::Translator::unregister(this); }
@@ -156,60 +154,6 @@ void ChatForm::onFileNameChanged(const FriendId& friendPk) {
     QMessageBox::warning(this, tr("Filename contained illegal characters"),
                          tr("Illegal characters have been changed to _ \n"
                             "so you can save the file on windows."));
-}
-
-void ChatForm::onTextEditChanged() {
-    if (!Settings::getInstance().getTypingNotification()) {
-        if (isTyping) {
-            isTyping = false;
-            Core::getInstance()->sendTyping(f->getId(), false);
-        }
-
-        return;
-    }
-    bool isTypingNow = !msgEdit->toPlainText().isEmpty();
-    if (isTyping != isTypingNow) {
-        Core::getInstance()->sendTyping(f->getId(), isTypingNow);
-        if (isTypingNow) {
-            typingTimer.start(TYPING_NOTIFICATION_DURATION);
-        }
-
-        isTyping = isTypingNow;
-    }
-}
-
-void ChatForm::onAttachClicked() {
-    qDebug() << __func__;
-
-    QStringList paths = QFileDialog::getOpenFileNames(Q_NULLPTR, tr("Send a file"),
-                                                      QDir::homePath(), nullptr, nullptr);
-
-    if (paths.isEmpty()) {
-        return;
-    }
-
-    Core* core = Core::getInstance();
-    for (QString path : paths) {
-        QFile file(path);
-        QString fileName = QFileInfo(path).fileName();
-        if (!file.exists() || !file.open(QIODevice::ReadOnly)) {
-            QMessageBox::warning(this, tr("Unable to open"),
-                                 tr("Wasn't able to open %1").arg(fileName));
-            continue;
-        }
-
-        file.close();
-        if (file.isSequential()) {
-            QMessageBox::critical(this, tr("Bad idea"),
-                                  tr("You're trying to send a sequential file, "
-                                     "which is not going to work!"));
-            continue;
-        }
-
-        qint64 filesize = file.size();
-        qDebug() << "sending" << file << "size" << filesize;
-        Nexus::getProfile()->getCoreFile()->sendFile(f->getId(), fileName, path, filesize);
-    }
 }
 
 void ChatForm::showOutgoingCall(bool video) {
@@ -300,8 +244,7 @@ void ChatForm::dropEvent(QDropEvent* ev) {
         }
 
         if (info.exists()) {
-            CoreFile::getInstance()->sendFile(f->getId(), fileName, info.absoluteFilePath(),
-                                              info.size());
+            CoreFile::getInstance()->sendFile(f->getId(), file);
         }
     }
 }
@@ -310,18 +253,7 @@ void ChatForm::clearChatArea() {
     GenericChatForm::clearChatArea(/* confirm = */ false, /* inform = */ true);
 }
 
-void ChatForm::onScreenshotClicked() {
-    doScreenshot();
-    // Give the window manager a moment to open the fullscreen grabber window
-    QTimer::singleShot(SCREENSHOT_GRABBER_OPENING_DELAY, this, SLOT(hideFileMenu()));
-}
 
-void ChatForm::doScreenshot() {
-    // note: grabber is self-managed and will destroy itself when done
-    ScreenshotGrabber* grabber = new ScreenshotGrabber;
-    connect(grabber, &ScreenshotGrabber::screenshotTaken, this, &ChatForm::sendImage);
-    grabber->showGrabber();
-}
 
 void ChatForm::sendImage(const QPixmap& pixmap) {
     QDir(Settings::getInstance().getAppDataDirPath()).mkpath("images");
@@ -341,9 +273,9 @@ void ChatForm::sendImage(const QPixmap& pixmap) {
         pixmap.save(&file, "PNG");
         qint64 filesize = file.size();
         file.close();
-        QFileInfo fi(file);
+
         CoreFile* coreFile = CoreFile::getInstance();
-        coreFile->sendFile(f->getId(), fi.fileName(), fi.filePath(), filesize);
+        coreFile->sendFile(f->getId(), file);
     } else {
         QMessageBox::warning(this,
                              tr("Failed to open temporary file", "Temporary file for screenshot"),

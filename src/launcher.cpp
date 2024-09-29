@@ -14,7 +14,6 @@
 #include <memory>
 
 #include "application.h"
-#include "ipc.h"
 
 namespace ok {
 
