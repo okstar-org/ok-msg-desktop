@@ -110,6 +110,7 @@ protected slots:
     void onShowMessagesClicked();
     void onSplitterMoved(int pos, int index);
     void quoteSelectedText();
+    void forwardSelectedText();
     void copyLink();
     void onLoadHistory();
     void onExportChat();
@@ -167,7 +168,7 @@ protected:
     QAction* clearAction;
     QAction* quoteAction;
     QAction* copyLinkAction;
-    // QAction* searchAction;
+    QAction* forwardAction;
     // QAction* loadHistoryAction;
     // QAction* exportChatAction;
 

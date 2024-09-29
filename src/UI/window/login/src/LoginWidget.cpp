@@ -201,7 +201,7 @@ void LoginWidget::doLogin() {
 }
 
 void LoginWidget::onLoginResult(ok::session::SignInInfo info, ok::session::LoginResult result) {
-    qDebug() << __func__ << info.account << info.password << result.msg;
+    qDebug() << __func__ << "result=> " << result.msg;
 
     switch (result.status) {
         case ok::session::Status::NONE:

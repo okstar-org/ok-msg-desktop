@@ -1076,6 +1076,10 @@ instead of closing itself.</source>
         <translation>引用</translation>
     </message>
     <message>
+        <source>Forward</source>
+        <translation>轉發</translation>
+    </message>
+    <message>
         <source>Copy link address</source>
         <translation>複製連結位址</translation>
     </message>

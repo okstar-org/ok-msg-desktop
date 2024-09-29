@@ -1144,6 +1144,10 @@
             <translation>引用</translation>
         </message>
         <message>
+            <source>Forward</source>
+            <translation>转发</translation>
+        </message>
+        <message>
             <source>Copy link address</source>
             <translation>复制链接地址</translation>
         </message>

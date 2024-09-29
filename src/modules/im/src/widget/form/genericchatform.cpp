@@ -362,9 +362,15 @@ GenericChatForm::GenericChatForm(const ContactId* contact_,
     contentLayout->addWidget(chatLog, 1);
     contentLayout->addWidget(footContainer, 0);
 
+    // 引用
     quoteAction = menu.addAction(QIcon(), QString(), this, SLOT(quoteSelectedText()),
                                  QKeySequence(Qt::ALT, Qt::Key_Q));
     addAction(quoteAction);
+
+    // 转发
+    forwardAction = menu.addAction(QIcon(), QString(), this, SLOT(forwardSelectedText()));
+    addAction(forwardAction);
+
     menu.addSeparator();
 
     // searchAction =
@@ -750,7 +756,6 @@ void GenericChatForm::onShowMessagesClicked() {
 
 void GenericChatForm::quoteSelectedText() {
     QString selectedText = chatLog->getSelectedText();
-
     if (selectedText.isEmpty()) return;
 
     // forming pretty quote text
@@ -764,6 +769,11 @@ void GenericChatForm::quoteSelectedText() {
     quote.append("\n");
 
     msgEdit->append(quote);
+}
+
+void GenericChatForm::forwardSelectedText() {
+    QString selectedText = chatLog->getSelectedText();
+    if (selectedText.isEmpty()) return;
 }
 
 /**
@@ -994,6 +1004,7 @@ void GenericChatForm::retranslateUi() {
     screenshotButton->setToolTip(tr("Send a screenshot"));
     clearAction->setText(tr("Clear displayed messages"));
     quoteAction->setText(tr("Quote"));
+    forwardAction->setText(tr("Forward"));
     copyLinkAction->setText(tr("Copy link address"));
     // searchAction->setText(tr("Search in text"));
     // loadHistoryAction->setText(tr("Load chat history..."));selected text
