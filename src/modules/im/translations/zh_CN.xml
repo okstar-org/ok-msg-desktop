@@ -613,10 +613,6 @@
             <translation>%1 正在输入</translation>
         </message>
         <message>
-            <source>Copy</source>
-            <translation>复制</translation>
-        </message>
-        <message>
             <source>Failed to open temporary file</source>
             <comment>Temporary file for screenshot</comment>
             <translation>无法打开临时文件</translation>
@@ -1110,6 +1106,21 @@
         </message>
     </context>
     <context>
+        <name>ChatLineContent</name>
+        <message>
+            <source>Reply</source>
+            <translation>引用</translation>
+        </message>
+        <message>
+            <source>Forward</source>
+            <translation>转发</translation>
+        </message>
+        <message>
+            <source>Copy</source>
+            <translation>复制</translation>
+        </message>
+    </context>
+    <context>
         <name>GenericChatForm</name>
         <message>
             <source>Send message</source>
@@ -1139,14 +1150,7 @@
             <source>Cleared</source>
             <translation>已清除</translation>
         </message>
-        <message>
-            <source>Quote</source>
-            <translation>引用</translation>
-        </message>
-        <message>
-            <source>Forward</source>
-            <translation>转发</translation>
-        </message>
+
         <message>
             <source>Copy link address</source>
             <translation>复制链接地址</translation>

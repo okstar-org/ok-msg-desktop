@@ -71,7 +71,7 @@ ChatLog::ChatLog(QWidget* parent) : QGraphicsView(parent), scrollBarValue{0} {
     // setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     // setDragMode(QGraphicsView::NoDrag);
     setViewportUpdateMode(MinimalViewportUpdate);
-    setContextMenuPolicy(Qt::CustomContextMenu);
+    // setContextMenuPolicy(Qt::CustomContextMenu);
     setBackgroundBrush(QBrush(Style::getColor(Style::GroundBase), Qt::SolidPattern));
 
     // copy action (ie. Ctrl+C)

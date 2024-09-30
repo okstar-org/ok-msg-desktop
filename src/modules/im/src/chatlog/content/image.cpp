@@ -13,9 +13,12 @@
 #include "image.h"
 #include "../pixmapcache.h"
 
+#include <QApplication>
+#include <QClipboard>
 #include <QPainter>
 
-Image::Image(QSize Size, const QString& filename) : size(Size) {
+Image::Image(QSize Size, const QString& filename)
+        : ChatLineContent(ContentType::CHAT_IMAGE), size(Size) {
     pmap = PixmapCache::getInstance().get(filename, size);
 }
 
@@ -24,6 +27,15 @@ QRectF Image::boundingRect() const {
 }
 
 qreal Image::getAscent() const { return 0.0; }
+
+void Image::onCopyEvent() {
+    if (pmap.isNull()) {
+        return;
+    }
+
+    QClipboard* clipboard = QApplication::clipboard();
+    if (clipboard) clipboard->setPixmap(pmap);
+}
 
 void Image::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) {
     painter->setClipRect(boundingRect());

@@ -18,7 +18,8 @@
 #include <QPainter>
 #include <QTimer>
 
-NotificationIcon::NotificationIcon(QSize Size) : size(Size) {
+NotificationIcon::NotificationIcon(QSize Size)
+        : ChatLineContent(ChatLineContent::ContentType::CHAT_Nofity), size(Size) {
     pmap = PixmapCache::getInstance().get(Style::getImagePath("chatArea/typing.svg"), size);
 
     updateTimer = new QTimer(this);
@@ -51,6 +52,8 @@ void NotificationIcon::paint(QPainter* painter, const QStyleOptionGraphicsItem* 
 void NotificationIcon::setWidth(qreal width) { Q_UNUSED(width) }
 
 qreal NotificationIcon::getAscent() const { return 3.0; }
+
+void NotificationIcon::onCopyEvent() {}
 
 void NotificationIcon::updateGradient() {
     alpha += 0.01;

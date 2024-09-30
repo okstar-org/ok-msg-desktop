@@ -17,7 +17,6 @@
 #include <QRegularExpression>
 #include "FriendId.h"
 
-
 FileInfo::FileInfo(const QString& sId,
                    const QString& id,
                    const QString& fileName,
@@ -85,7 +84,7 @@ ToxFile::ToxFile(const QString& sender, const QString& friendId, const lib::mess
         , receiver{friendId}
         , timestamp(QDateTime::currentDateTime()) {}
 
-ToxFile::ToxFile(const FileInfo& fi) : FileInfo(fi) {}
+ToxFile::ToxFile(const FileInfo& fi) : FileInfo(fi), file(new QFile(fi.filePath)) {}
 
 ToxFile::~ToxFile() {}
 

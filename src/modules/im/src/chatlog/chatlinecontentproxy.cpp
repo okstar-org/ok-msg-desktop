@@ -27,7 +27,10 @@
 
 ChatLineContentProxy::ChatLineContentProxy(QWidget* widget, ChatLineContentProxyType type,
                                            int minWidth, float widthInPercent)
-        : widthPercent(widthInPercent), widthMin(minWidth), widgetType{type} {
+        : ChatLineContent(ContentType::CHAT_PROXY)
+        , widthPercent(widthInPercent)
+        , widthMin(minWidth)
+        , widgetType{type} {
     proxy = new QGraphicsProxyWidget(this);
     proxy->setWidget(widget);
 }
@@ -35,9 +38,18 @@ ChatLineContentProxy::ChatLineContentProxy(QWidget* widget, ChatLineContentProxy
 ChatLineContentProxy::ChatLineContentProxy(QWidget* widget, int minWidth, float widthInPercent)
         : ChatLineContentProxy(widget, GenericType, minWidth, widthInPercent) {}
 
-ChatLineContentProxy::ChatLineContentProxy(FileTransferWidget* widget, int minWidth,
+ChatLineContentProxy::ChatLineContentProxy(FileTransferWidget* widget,
+                                           int minWidth,
                                            float widthInPercent)
         : ChatLineContentProxy(widget, FileTransferWidgetType, minWidth, widthInPercent) {}
+
+void ChatLineContentProxy::onCopyEvent() {
+    qDebug() << __func__;
+    auto ftw = dynamic_cast<FileTransferWidget*>(getWidget());
+    if (ftw) {
+        ftw->onCopy();
+    }
+}
 
 QRectF ChatLineContentProxy::boundingRect() const {
     QRectF result = proxy->boundingRect();

@@ -14,15 +14,29 @@
 #define CHATLINECONTENT_H
 
 #include <QGraphicsItem>
+#include <QMenu>
+class QAction;
 
 class ChatLineContent : public QObject, public QGraphicsItem {
     Q_OBJECT
     Q_INTERFACES(QGraphicsItem)
-
 public:
     enum GraphicsItemType {
         ChatLineContentType = QGraphicsItem::UserType + 1,
     };
+
+    enum class ContentType {
+        CHAT_TEXT,
+        CHAT_FILE,
+        CHAT_AVATA,
+        CHAT_Nofity,
+        CHAT_BROKEN,
+        CHAT_IMAGE,
+        CHAT_SPINNER,
+        CHAT_PROXY
+    };
+
+    ChatLineContent(ContentType type, QObject* parent = nullptr);
 
     int getColumn() const;
     int getRow() const;
@@ -38,9 +52,9 @@ public:
     virtual void selectionFocusChanged(bool focusIn);
     virtual void selectAll();
     virtual bool isOverSelection(QPointF scenePos) const;
-    virtual QString getSelectedText() const;
     virtual void fontChanged(const QFont& font);
 
+    virtual QString getSelectedText() const;
     virtual QString getText() const;
 
     virtual qreal getAscent() const;
@@ -52,13 +66,25 @@ public:
     virtual void visibilityChanged(bool visible);
     virtual void reloadTheme();
 
+protected:
+    virtual void onCopyEvent() = 0;
+
+    void contextMenuEvent(QGraphicsSceneContextMenuEvent* event) override;
+    // void mousePressEvent(QGraphicsSceneMouseEvent *e) override;
+    ContentType contentType;
+
 private:
     friend class IChatItem;
     void setIndex(int row, int col);
+    void initMenu();
 
-private:
     int row = -1;
     int col = -1;
+
+private slots:
+    void doReplySelectedText();
+    void doCopySelectedText();
+    void doForwardSelectedText();
 };
 
 #endif  // CHATLINECONTENT_H

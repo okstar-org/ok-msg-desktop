@@ -27,10 +27,11 @@ public:
     virtual void setWidth(qreal width) override;
     virtual qreal getAscent() const override;
 
-private:
-    static QIcon invalidAvatar();
+protected:
+    void onCopyEvent() override;
 
 private:
+    static QIcon invalidAvatar();
     QPixmap avatar;
 };
 

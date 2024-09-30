@@ -33,8 +33,8 @@ public:
     virtual void visibilityChanged(bool visible) override;
     virtual qreal getAscent() const override;
 
-private slots:
-    void timeout();
+protected:
+    virtual void onCopyEvent() override;
 
 private:
     QSize size;
@@ -43,6 +43,9 @@ private:
     QTimer timer;
     qreal alpha = 0.0;
     QVariantAnimation* blendAnimation;
+
+private slots:
+    void timeout();
 };
 
 #endif  // SPINNER_H

@@ -34,9 +34,12 @@ public:
     explicit FileTransferWidget(QWidget* parent, ToxFile file);
     virtual ~FileTransferWidget();
     bool isActive() const;
+    bool previewable();
     static QString getHumanReadableSize(qint64 size);
 
     void onFileTransferUpdate(ToxFile file);
+    void onCopy();
+    QImage getImage();
 
 protected:
     void updateWidgetColor(ToxFile const& file);

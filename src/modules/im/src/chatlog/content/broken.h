@@ -28,6 +28,9 @@ public:
     void visibilityChanged(bool visible) override;
     qreal getAscent() const override;
 
+protected:
+    virtual void onCopyEvent() override;
+
 private:
     QSize size;
     QPixmap pmap;

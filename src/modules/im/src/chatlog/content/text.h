@@ -22,7 +22,6 @@ class QTextDocument;
 
 class Text : public ChatLineContent {
     Q_OBJECT
-
 public:
     Text(const QString& txt = "", const QFont& font = QFont(), bool enableElide = false,
          const QString& rawText = QString());
@@ -70,6 +69,7 @@ public:
     void setColor(const QColor& color);
 
 protected:
+    void onCopyEvent() override;
     // dynamic resource management
     void regenerate();
     void freeResources();
@@ -110,7 +110,7 @@ private:
 
     qreal boundRadius = 0.0;
     QMarginsF margins;
-    bool selectable = true;
+    bool selectable;
 };
 
 #endif  // TEXT_H

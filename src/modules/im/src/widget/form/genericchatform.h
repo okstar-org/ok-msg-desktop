@@ -164,9 +164,9 @@ protected:
     int curRow;
     QSplitter* bodySplitter;
     QAction* clearAction;
-    QAction* quoteAction;
     QAction* copyLinkAction;
-    QAction* forwardAction;
+    // QAction* quoteAction;
+    // QAction* forwardAction;
     // QAction* loadHistoryAction;
     // QAction* exportChatAction;
 

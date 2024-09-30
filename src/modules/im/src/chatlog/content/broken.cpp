@@ -17,7 +17,9 @@
 class QStyleOptionGraphicsItem;
 
 Broken::Broken(const QString& img, QSize size)
-        : pmap{PixmapCache::getInstance().get(img, size)}, size{size} {}
+        : ChatLineContent(ContentType::CHAT_BROKEN)
+        , pmap{PixmapCache::getInstance().get(img, size)}
+        , size{size} {}
 
 QRectF Broken::boundingRect() const {
     return QRectF(QPointF(-size.width() / 2.0, -size.height() / 2.0), size);
@@ -37,3 +39,5 @@ void Broken::setWidth(qreal width) { Q_UNUSED(width); }
 void Broken::visibilityChanged(bool visible) { Q_UNUSED(visible); }
 
 qreal Broken::getAscent() const { return 0.0; }
+
+void Broken::onCopyEvent() {}

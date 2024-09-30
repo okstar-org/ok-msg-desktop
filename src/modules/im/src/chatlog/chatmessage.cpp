@@ -1,3 +1,4 @@
+
 /*
  * Copyright (c) 2022 船山信息 chuanshaninfo.com
  * The project is licensed under Mulan PubL v2.
@@ -84,9 +85,7 @@ IChatItem::Ptr ChatMessage::createFileTransferMessage(const ChatLogItem& item, T
 
     auto ftw = new FileTransferWidget(nullptr, file);
     ChatLineContent* fileContent = new ChatLineContentProxy(ftw, 320, 0.6f);
-
     ChatMessageBox* msg = new ChatMessageBox(avatar, item.getDisplayName(), fileContent, isMe);
-
     msg->setTime(date);
     return IChatItem::Ptr(msg);
 }

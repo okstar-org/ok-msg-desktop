@@ -19,7 +19,8 @@
 #include <QTime>
 #include <QVariantAnimation>
 
-Spinner::Spinner(const QString& img, QSize Size, qreal speed) : size(Size), rotSpeed(speed) {
+Spinner::Spinner(const QString& img, QSize Size, qreal speed)
+        : ChatLineContent(ContentType::CHAT_SPINNER), size(Size), rotSpeed(speed) {
     pmap = PixmapCache::getInstance().get(img, size);
 
     timer.setInterval(1000 / 30);  // 30Hz
@@ -67,6 +68,8 @@ void Spinner::visibilityChanged(bool visible) {
 }
 
 qreal Spinner::getAscent() const { return 0.0; }
+
+void Spinner::onCopyEvent() {}
 
 void Spinner::timeout() {
     if (scene()) scene()->invalidate(sceneBoundingRect());

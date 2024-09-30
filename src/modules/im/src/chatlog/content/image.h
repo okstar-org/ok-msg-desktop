@@ -27,6 +27,9 @@ public:
     virtual void setWidth(qreal width) override;
     virtual qreal getAscent() const override;
 
+protected:
+    virtual void onCopyEvent() override;
+
 private:
     QSize size;
     QPixmap pmap;

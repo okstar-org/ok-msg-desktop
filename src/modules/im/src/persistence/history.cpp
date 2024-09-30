@@ -486,12 +486,13 @@ QList<History::HistMessage> History::getMessageByDataId(const QString& dataId) {
                                 "type, "       // 5
                                 "0, "          // 6
                                 "0, "          // 7
-                                "data_id,"
-                                "is_receipt "  // 8
+                                "data_id,"         // 8
+                                "is_receipt, "     // 9
+                                "sender_resource"  // 10
                                 "from history where data_id = '%1'")
                                 .arg(dataId);
 
-    qDebug() << queryText;
+    // qDebug() << queryText;
 
     QList<HistMessage> messages;
 

@@ -16,11 +16,14 @@
 #include <QPainter>
 
 static constexpr float avatar_size = 40;
-ContactAvatar::ContactAvatar(const QPixmap& avatar) : avatar(avatar) {}
+ContactAvatar::ContactAvatar(const QPixmap& avatar)
+        : ChatLineContent(ChatLineContent::ContentType::CHAT_AVATA), avatar(avatar) {}
 
 QRectF ContactAvatar::boundingRect() const { return QRectF(0, 0, avatar_size, avatar_size); }
 
 qreal ContactAvatar::getAscent() const { return 0.0; }
+
+void ContactAvatar::onCopyEvent() {}
 
 QIcon ContactAvatar::invalidAvatar() {
     static QIcon icon;

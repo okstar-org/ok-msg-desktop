@@ -252,14 +252,14 @@ GenericChatForm::GenericChatForm(const ContactId* contact_,
     //  dateInfo->setVisible(false);
 
     // 引用
-    quoteAction = menu.addAction(QIcon(), QString(), this, SLOT(quoteSelectedText()));
-    addAction(quoteAction);
+    // quoteAction = menu.addAction(QIcon(), QString(), this, SLOT(quoteSelectedText()));
+    // addAction(quoteAction);
 
-    // 转发
-    forwardAction = menu.addAction(QIcon(), QString(), this, SLOT(forwardSelectedText()));
-    addAction(forwardAction);
+    // // 转发
+    // forwardAction = menu.addAction(QIcon(), QString(), this, SLOT(forwardSelectedText()));
+    // addAction(forwardAction);
 
-    menu.addSeparator();
+    // menu.addSeparator();
 
     // searchAction =
     //     menu.addAction(QIcon(), QString(), this, SLOT(searchFormShow()),
@@ -279,8 +279,8 @@ GenericChatForm::GenericChatForm(const ContactId* contact_,
     copyLinkAction = menu.addAction(QIcon(), QString(), this, SLOT(copyLink()));
     menu.addSeparator();
 
-    connect(chatLog, &ChatLog::customContextMenuRequested, this,
-            &GenericChatForm::onChatContextMenuRequested);
+    // connect(chatLog, &ChatLog::customContextMenuRequested, this,
+    // &GenericChatForm::onChatContextMenuRequested);
     connect(chatLog, &ChatLog::firstVisibleLineChanged, this, &GenericChatForm::updateShowDateInfo);
     connect(chatLog, &ChatLog::loadHistoryLower, this, &GenericChatForm::loadHistoryLower);
 
@@ -834,8 +834,8 @@ void GenericChatForm::updateShowDateInfo(const IChatItem::Ptr& prevLine,
 
 void GenericChatForm::retranslateUi() {
     clearAction->setText(tr("Clear displayed messages"));
-    quoteAction->setText(tr("Quote"));
-    forwardAction->setText(tr("Forward"));
+    // quoteAction->setText(tr("Quote"));
+    // forwardAction->setText(tr("Forward"));
     copyLinkAction->setText(tr("Copy link address"));
     // searchAction->setText(tr("Search in text"));
     // loadHistoryAction->setText(tr("Load chat history..."));selected text

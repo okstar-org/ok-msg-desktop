@@ -24,7 +24,7 @@ class ChatLineContentProxy : public ChatLineContent {
 public:
     enum ChatLineContentProxyType {
         GenericType,
-        FileTransferWidgetType = 0,
+        FileTransferWidgetType = 1,
     };
 
 public:
@@ -42,6 +42,8 @@ public:
 protected:
     ChatLineContentProxy(QWidget* widget, ChatLineContentProxyType type, int minWidth,
                          float widthInPercent);
+
+    void onCopyEvent() override;
 
 private:
     QGraphicsProxyWidget* proxy;

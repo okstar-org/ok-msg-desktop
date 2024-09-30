@@ -15,6 +15,7 @@
 
 #include <QAbstractTextDocumentLayout>
 #include <QApplication>
+#include <QClipboard>
 #include <QDebug>
 #include <QDesktopServices>
 #include <QFontMetrics>
@@ -25,7 +26,9 @@
 #include <QTextFragment>
 
 Text::Text(const QString& txt, const QFont& font, bool enableElide, const QString& rwText)
-        : rawText(rwText)
+        : ChatLineContent(ContentType::CHAT_TEXT)
+        , rawText(rwText)
+        , selectable(true)
         , elide(enableElide)
         , defFont(font)
         , defStyleSheet(Style::getStylesheet(QStringLiteral("chatArea/innerStyle.css"), font)) {
@@ -319,6 +322,17 @@ void Text::setColor(const QColor& color) {
         this->color = color;
         update();
     }
+}
+
+void Text::onCopyEvent() {
+    QString text = getSelectedText();
+    if (text.isEmpty()) {
+        text = getText();
+    }
+    if (text.isEmpty()) return;
+
+    QClipboard* clipboard = QApplication::clipboard();
+    if (clipboard) clipboard->setText(text);
 }
 
 void Text::regenerate() {

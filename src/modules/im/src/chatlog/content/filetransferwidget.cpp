@@ -23,6 +23,7 @@
 #include <libexif/exif-loader.h>
 
 #include <QBuffer>
+#include <QClipboard>
 #include <QDebug>
 #include <QDesktopServices>
 #include <QDesktopWidget>
@@ -116,7 +117,55 @@ bool FileTransferWidget::tryRemoveFile(const QString& filepath) {
 
 void FileTransferWidget::onFileTransferUpdate(ToxFile file) { updateWidget(file); }
 
+void FileTransferWidget::onCopy() {
+    auto img = getImage();
+    QClipboard* clipboard = QApplication::clipboard();
+    if (clipboard) clipboard->setImage(img);
+}
+
+QImage FileTransferWidget::getImage() {
+    if (!previewable()) {
+        return {};
+    }
+
+    auto f = fileInfo.file;
+    if (!f->exists()) {
+        qWarning() << "File is no existing";
+        return {};
+    }
+
+    if (!f->open(QIODevice::ReadOnly)) {
+        qWarning() << "Can not to read";
+        return {};
+    }
+
+    auto imageFileData = f->readAll();
+    if (imageFileData.isEmpty()) {
+        qWarning() << "Empty image data";
+        return {};
+    }
+
+    auto image = QImage::fromData(imageFileData);
+    if (image.isNull()) {
+        qWarning() << "Unable to read the image data";
+        return {};
+    }
+
+    return image;
+}
+
 bool FileTransferWidget::isActive() const { return active; }
+
+bool FileTransferWidget::previewable() {
+    auto f = fileInfo.file;
+
+    if (f && !f->exists()) {
+        return false;
+    }
+    static const QStringList previewExtensions = {"bmp", "png", "jpeg", "jpg", "gif", "svg"};
+    return previewExtensions.contains(QFileInfo(f->fileName()).suffix(),
+                                      Qt::CaseSensitivity::CaseInsensitive);
+}
 
 void FileTransferWidget::acceptTransfer(const QString& filepath) {
     if (filepath.isEmpty()) {
@@ -515,59 +564,60 @@ void FileTransferWidget::handleButton(QPushButton* btn) {
 void FileTransferWidget::showPreview(const QString& filename) {
     qDebug() << __func__ << filename;
 
-    static const QStringList previewExtensions = {"png", "jpeg", "jpg", "gif", "svg",
-                                                  "PNG", "JPEG", "JPG", "GIF", "SVG"};
-
-    if (previewExtensions.contains(QFileInfo(filename).suffix())) {
-        // Subtract to make border visible
-        const int size = qMax(ui->previewButton->width(), ui->previewButton->height()) - 4;
-
-        QFile imageFile(filename);
-        if (!imageFile.open(QIODevice::ReadOnly)) {
-            return;
-        }
-
-        auto imageFileData = imageFile.readAll();
-        auto image = QImage::fromData(imageFileData);
-        if (image.isNull()) {
-            qWarning() << "Unable to read the image data!";
-            return;
-        }
-
-        const int exifOrientation =
-                getExifOrientation(imageFileData.constData(), imageFileData.size());
-        if (exifOrientation) {
-            applyTransformation(exifOrientation, image);
-        }
-
-        const QPixmap iconPixmap = scaleCropIntoSquare(QPixmap::fromImage(image), size);
-
-        ui->previewButton->setIcon(QIcon(iconPixmap));
-        ui->previewButton->setIconSize(iconPixmap.size());
-        ui->previewButton->show();
-
-        // Show mouseover preview, but make sure it's not larger than 50% of the screen
-        // width/height
-        const QRect desktopSize = QApplication::desktop()->geometry();
-        const int maxPreviewWidth{desktopSize.width() / 2};
-        const int maxPreviewHeight{desktopSize.height() / 2};
-        const QImage previewImage = [&image, maxPreviewWidth, maxPreviewHeight]() {
-            if (image.width() > maxPreviewWidth || image.height() > maxPreviewHeight) {
-                return image.scaled(maxPreviewWidth, maxPreviewHeight, Qt::KeepAspectRatio,
-                                    Qt::SmoothTransformation);
-            } else {
-                return image;
-            }
-        }();
-
-        QByteArray imageData;
-        QBuffer buffer(&imageData);
-        buffer.open(QIODevice::WriteOnly);
-        previewImage.save(&buffer, "PNG");
-        buffer.close();
-        ui->previewButton->setToolTip("<img src=data:image/png;base64," + imageData.toBase64() +
-                                      "/>");
+    if (!previewable()) {
+        return;
     }
+
+    QFile imageFile(filename);
+    if (!imageFile.open(QIODevice::ReadOnly)) {
+        return;
+    }
+
+    auto imageFileData = imageFile.readAll();
+    if (imageFileData.isEmpty()) {
+        qWarning() << "Empty image data!";
+        return;
+    }
+
+    auto image = QImage::fromData(imageFileData);
+    if (image.isNull()) {
+        qWarning() << "Unable to read the image data!";
+        return;
+    }
+
+    const int exifOrientation = getExifOrientation(imageFileData.constData(), imageFileData.size());
+    if (exifOrientation) {
+        applyTransformation(exifOrientation, image);
+    }
+
+    const int size = qMax(ui->previewButton->width(), ui->previewButton->height()) - 4;
+    const QPixmap iconPixmap = scaleCropIntoSquare(QPixmap::fromImage(image), size);
+
+    ui->previewButton->setIcon(QIcon(iconPixmap));
+    ui->previewButton->setIconSize(iconPixmap.size());
+    ui->previewButton->show();
+
+    // Show mouseover preview, but make sure it's not larger than 50% of the screen
+    // width/height
+    const QRect desktopSize = QApplication::desktop()->geometry();
+    const int maxPreviewWidth{desktopSize.width() / 2};
+    const int maxPreviewHeight{desktopSize.height() / 2};
+    const QImage previewImage = [&image, maxPreviewWidth, maxPreviewHeight]() {
+        if (image.width() > maxPreviewWidth || image.height() > maxPreviewHeight) {
+            return image.scaled(maxPreviewWidth, maxPreviewHeight, Qt::KeepAspectRatio,
+                                Qt::SmoothTransformation);
+        } else {
+            return image;
+        }
+    }();
+
+    QByteArray imageData;
+    QBuffer buffer(&imageData);
+    buffer.open(QIODevice::WriteOnly);
+    previewImage.save(&buffer, "PNG");
+    buffer.close();
+
+    ui->previewButton->setToolTip("<img src=data:image/png;base64," + imageData.toBase64() + "/>");
 }
 
 void FileTransferWidget::onLeftButtonClicked() { handleButton(ui->leftButton); }
