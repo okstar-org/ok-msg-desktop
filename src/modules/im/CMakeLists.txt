@@ -300,8 +300,6 @@ set(${PROJECT_NAME}_SOURCES
         src/widget/form/settings/privacyform.h
 		src/widget/form/settings/StorageSettingsForm.h
 		src/widget/form/settings/StorageSettingsForm.cpp
-        src/widget/form/settings/verticalonlyscroller.cpp
-        src/widget/form/settings/verticalonlyscroller.h
         src/widget/form/settingswidget.cpp
         src/widget/form/settingswidget.h
         src/widget/form/tabcompleter.cpp

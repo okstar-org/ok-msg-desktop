@@ -42,6 +42,8 @@ set(${PROJECT_NAME}_SOURCES
     stylediconbutton.cpp
     roundedmaskcontainer.h
     roundedmaskcontainer.cpp
+		verticalonlyscroller.h
+		verticalonlyscroller.cpp
 )
 
 if(WIN32)

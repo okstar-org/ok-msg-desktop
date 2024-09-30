@@ -10,20 +10,25 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#ifndef ADJUSTINGSCROLLAREA_H
-#define ADJUSTINGSCROLLAREA_H
+#ifndef VERTICALONLYSCROLLER_H
+#define VERTICALONLYSCROLLER_H
 
 #include <QScrollArea>
 
-class AdjustingScrollArea : public QScrollArea {
+class QResizeEvent;
+class QShowEvent;
+
+namespace ok::base {
+
+class VerticalOnlyScroller : public QScrollArea {
     Q_OBJECT
 public:
-    explicit AdjustingScrollArea(QWidget* parent = nullptr);
-    virtual ~AdjustingScrollArea() = default;
+    explicit VerticalOnlyScroller(QWidget* parent = nullptr);
 
 protected:
-    virtual void resizeEvent(QResizeEvent* ev) override;
-    virtual QSize sizeHint() const final override;
+    virtual void resizeEvent(QResizeEvent* event) final override;
+    virtual void showEvent(QShowEvent* event) final override;
 };
+}  // namespace ok::base
 
-#endif  // ADJUSTINGSCROLLAREA_H
+#endif  // VERTICALONLYSCROLLER_H

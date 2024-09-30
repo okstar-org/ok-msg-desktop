@@ -10,23 +10,21 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#ifndef ACTIVATEDIALOG_H
-#define ACTIVATEDIALOG_H
+#include <QResizeEvent>
 
-#include <QDialog>
+#include "verticalonlyscroller.h"
 
-class ActivateDialog : public QDialog {
-    Q_OBJECT
-public:
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
-    ActivateDialog(QWidget* parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
-#else
-    ActivateDialog(QWidget* parent = nullptr, Qt::WindowFlags f = nullptr);
-#endif
-    bool event(QEvent* event) override;
+namespace ok::base {
 
-signals:
-    void windowStateChanged(Qt::WindowStates state);
-};
+VerticalOnlyScroller::VerticalOnlyScroller(QWidget* parent) : QScrollArea(parent) {}
 
-#endif  // ACTIVATEDIALOG_H
+void VerticalOnlyScroller::resizeEvent(QResizeEvent* event) {
+    QScrollArea::resizeEvent(event);
+    if (widget()) widget()->setMaximumWidth(event->size().width());
+}
+
+void VerticalOnlyScroller::showEvent(QShowEvent* event) {
+    QScrollArea::showEvent(event);
+    if (widget()) widget()->setMaximumWidth(size().width());
+}
+}  // namespace ok::base

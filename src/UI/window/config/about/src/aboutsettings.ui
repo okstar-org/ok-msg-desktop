@@ -45,7 +45,7 @@
     <number>1</number>
    </property>
    <item>
-    <widget class="VerticalOnlyScroller" name="scrollArea">
+    <widget class="ok::base::VerticalOnlyScroller" name="scrollArea">
      <property name="widgetResizable">
       <bool>true</bool>
      </property>
@@ -54,8 +54,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>526</width>
-        <height>549</height>
+        <width>524</width>
+        <height>547</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,1,0,0">
@@ -416,9 +416,9 @@ p, li { white-space: pre-wrap; }
  </widget>
  <customwidgets>
   <customwidget>
-   <class>VerticalOnlyScroller</class>
+   <class>ok::base::VerticalOnlyScroller</class>
    <extends>QScrollArea</extends>
-   <header>src/UI/tool/verticalonlyscroller.h</header>
+   <header>src/base/verticalonlyscroller.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
