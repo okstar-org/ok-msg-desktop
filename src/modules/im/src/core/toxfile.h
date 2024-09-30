@@ -84,11 +84,11 @@ struct ToxFile : public FileInfo {
     explicit ToxFile() = default;
     explicit ToxFile(const QString& sender,
                      const QString& receiver,
-                     QString sId,
-            QString FileId,
-            QString FileName,
-            QString filePath,
-            quint64 fileSize_,
+                     const QString& sId,
+                     const QString& FileId,
+                     const QString& FileName,
+                     const QString& filePath,
+                     quint64 fileSize_,
             quint64 bytesSent,
             FileStatus status,
             FileDirection Direction);

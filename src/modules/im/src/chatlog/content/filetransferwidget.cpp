@@ -118,9 +118,20 @@ bool FileTransferWidget::tryRemoveFile(const QString& filepath) {
 void FileTransferWidget::onFileTransferUpdate(ToxFile file) { updateWidget(file); }
 
 void FileTransferWidget::onCopy() {
-    auto img = getImage();
     QClipboard* clipboard = QApplication::clipboard();
-    if (clipboard) clipboard->setImage(img);
+    if (!clipboard) return;
+
+    auto img = getImage();
+    if (!img.isNull()) {
+        // is image
+        clipboard->setImage(img);
+        return;
+    }
+
+    auto fp = fileInfo.filePath;
+    if (!fp.isEmpty()) {
+        clipboard->setText(fp);
+    }
 }
 
 QImage FileTransferWidget::getImage() {
