@@ -165,8 +165,7 @@ protected:
     QSplitter* bodySplitter;
     QAction* clearAction;
     QAction* copyLinkAction;
-    // QAction* quoteAction;
-    // QAction* forwardAction;
+
     // QAction* loadHistoryAction;
     // QAction* exportChatAction;
 
@@ -174,7 +173,6 @@ protected:
 
 
     //    SearchForm *searchForm;
-
     //    QLabel *dateInfo;
     ChatLog* chatLog;
 

@@ -61,21 +61,28 @@ void ChatLineContent::reloadTheme() {}
 
 void ChatLineContent::initMenu() {}
 
-void ChatLineContent::doReplySelectedText() {}
+void ChatLineContent::doReplySelected() {
+    qDebug() << __func__;
+    emit reply();
+}
 
 void ChatLineContent::doCopySelectedText() {
     qDebug() << __func__;
     onCopyEvent();
+    emit copy();
 }
 
-void ChatLineContent::doForwardSelectedText() {}
+void ChatLineContent::doForwardSelectedText() {
+    qDebug() << __func__;
+    emit forward();
+}
 
 void ChatLineContent::contextMenuEvent(QGraphicsSceneContextMenuEvent* event) {
     QMenu menu;
     auto copyAction =
             menu.addAction(QIcon(), tr("Copy"), this, &ChatLineContent::doCopySelectedText);
     auto replyAction =
-            menu.addAction(QIcon(), tr("Reply"), this, &ChatLineContent::doReplySelectedText);
+            menu.addAction(QIcon(), tr("Reply"), this, &ChatLineContent::doReplySelected);
     auto forwardAction =
             menu.addAction(QIcon(), tr("Forward"), this, &ChatLineContent::doForwardSelectedText);
 

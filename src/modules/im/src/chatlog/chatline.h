@@ -27,10 +27,14 @@ class QGraphicsScene;
 class QStyleOptionGraphicsItem;
 class QFont;
 
-class IChatItem {
+class IChatItem : public QObject {
+    Q_OBJECT
 public:
     using Ptr = std::shared_ptr<IChatItem>;
+
+    IChatItem(const QString& id = "");
     virtual ~IChatItem() {}
+
     virtual int itemType() = 0;
     virtual void layout(qreal width, QPointF scenePos) = 0;
     virtual QRectF sceneBoundingRect() const = 0;
@@ -59,12 +63,14 @@ public:
 
     void setRow(int row);
     int getRow() { return row; }
+    bool isValid() { return row < 0; }
 
 protected:
     friend class ChatLog;
     virtual QList<ChatLineContent*> contents() { return QList<ChatLineContent*>{}; };
     QDateTime datetime;
     int row = -1;
+    MsgId id;
 };
 
 #endif  // CHATLINE_H

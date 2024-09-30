@@ -40,8 +40,11 @@ public:
         fileTransfer,
     };
 
-    ChatLogItem(FriendId sender, QString displayName, ChatLogFile file);
-    ChatLogItem(FriendId sender, QString displayName, ChatLogMessage message);
+    ChatLogItem(FriendId sender, QString id, QString displayName, ChatLogFile file);
+    ChatLogItem(FriendId sender, QString id, QString displayName, ChatLogMessage message);
+    ChatLogItem(FriendId sender, QString id, QString displayName, ContentType contentType,
+                ContentPtr content);
+
     const FriendId& getSender() const;
     ContentType getContentType() const;
     ChatLogFile& getContentAsFile();
@@ -51,14 +54,15 @@ public:
     QDateTime getTimestamp() const;
     void setDisplayName(QString name);
     const QString& getDisplayName() const;
+    const QString& getId() const { return id; };
 
 private:
-    ChatLogItem(FriendId sender, QString displayName, ContentType contentType, ContentPtr content);
 
     FriendId sender;
     QString displayName;
     ContentType contentType;
     ContentPtr content;
+    QString id;
 };
 
 #endif /*CHAT_LOG_ITEM_H*/

@@ -445,11 +445,11 @@ void ChatLog::startResizeWorker() {
     // switch to busy scene displaying the busy notification if there is a lot
     // of text to be resized
     int txt = 0;
-    for (IChatItem::Ptr line : lines) {
-        if (txt > 500000) break;
-        for (ChatLineContent* content : line->contents()) txt += content->getText().size();
+    for (const IChatItem::Ptr& line : lines) {
+        for (ChatLineContent* content : line->contents()) {
+            if (content) txt += content->getText().size();
+        }
     }
-    if (txt > 500000) setScene(busyScene);
 
     workerLastIndex = 0;
     workerTimer->start();
@@ -564,8 +564,9 @@ void ChatLog::clear() {
 
     lines.clear();
     visibleLines.clear();
-    for (IChatItem::Ptr l : savedLines) insertChatlineAtBottom(l);
-
+    for (IChatItem::Ptr l : savedLines) {
+        insertChatlineAtBottom(l);
+    }
     updateSceneRect();
 }
 

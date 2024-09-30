@@ -284,7 +284,7 @@ void SessionChatLog::insertCompleteMessageAtIdx(ChatLogIdx idx,
                                                 const FriendId& sender,
                                                 const QString& senderName,
                                                 const ChatLogMessage& message) {
-    auto item = ChatLogItem(sender, senderName, message);
+    auto item = ChatLogItem(sender, message.message.id, senderName, message);
     assert(message.state == MessageState::complete || message.state == MessageState::receipt);
     items.emplace(idx, std::move(item));
 }
@@ -293,7 +293,7 @@ void SessionChatLog::insertIncompleteMessageAtIdx(ChatLogIdx idx, const FriendId
                                                   const QString& senderName,
                                                   const ChatLogMessage& message,
                                                   DispatchedMessageId dispatchId) {
-    auto item = ChatLogItem(sender, senderName, message);
+    auto item = ChatLogItem(sender, message.message.id, senderName, message);
     assert(message.state == MessageState::pending);
 
     items.emplace(idx, std::move(item));
@@ -304,15 +304,15 @@ void SessionChatLog::insertBrokenMessageAtIdx(ChatLogIdx idx,
                                               const FriendId& sender,
                                               const QString& senderName,
                                               const ChatLogMessage& message) {
-    auto item = ChatLogItem(sender, senderName, message);
+    auto item = ChatLogItem(sender, message.message.id, senderName, message);
     assert(message.state == MessageState::broken);
 
     items.emplace(idx, std::move(item));
 }
 
-void SessionChatLog::insertFileAtIdx(ChatLogIdx idx, const FriendId& sender,
+void SessionChatLog::insertFileAtIdx(ChatLogIdx idx, const FriendId& sender, const MsgId& id,
                                      const QString& senderName, const ChatLogFile& file) {
-    auto item = ChatLogItem(sender, senderName, file);
+    auto item = ChatLogItem(sender, id, senderName, file);
     items.emplace(idx, std::move(item));
 }
 
@@ -335,7 +335,7 @@ void SessionChatLog::onMessageReceived(const FriendId& sender, const Message& me
     chatLogMessage.message = message;
 
     FriendId pk(message.from);
-    items.emplace(messageIdx, ChatLogItem(pk, message.displayName, chatLogMessage));
+    items.emplace(messageIdx, ChatLogItem(pk, message.id, message.displayName, chatLogMessage));
 
     emit itemUpdated(messageIdx);
 }
@@ -355,7 +355,7 @@ void SessionChatLog::onMessageSent(DispatchedMessageId dispatchedId, const Messa
     chatLogMessage.message = message;
 
     items.emplace(msgLogIdx, ChatLogItem(coreIdHandler.getSelfId(),
-                                         // 发送人名称就算自己的昵称
+                                         message.id,
                                          coreIdHandler.getNick(),
                                          chatLogMessage));
 
@@ -428,7 +428,6 @@ void SessionChatLog::onFileUpdated(const FriendId& friendId, const ToxFile& file
         currentTransfer.idx = nextIdx++;
         currentFileTransfers.push_back(currentTransfer);
 
-        const auto chatLogFile = ChatLogFile{QDateTime::currentDateTime(), file};
 
         QString senderName;
         FriendId senderId{file.sender};
@@ -436,7 +435,11 @@ void SessionChatLog::onFileUpdated(const FriendId& friendId, const ToxFile& file
         if (frnd) {
             senderName = frnd->getDisplayedName();
         }
-        items.emplace(currentTransfer.idx, ChatLogItem(senderId, senderName, chatLogFile));
+
+        const auto chatLogFile = ChatLogFile{QDateTime::currentDateTime(), file};
+
+        items.emplace(currentTransfer.idx, ChatLogItem(senderId, "", senderName, chatLogFile));
+
         messageIdx = currentTransfer.idx;
     } else if (fileIt != currentFileTransfers.end()) {
         messageIdx = fileIt->idx;

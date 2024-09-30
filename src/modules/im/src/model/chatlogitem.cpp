@@ -30,22 +30,23 @@ template <typename T> struct ChatLogItemDeleter {
 };
 }  // namespace
 
-ChatLogItem::ChatLogItem(FriendId sender_, QString displayName, ChatLogFile file_)
-        : ChatLogItem(sender_, displayName, ContentType::fileTransfer,
+ChatLogItem::ChatLogItem(FriendId sender_, QString id, QString displayName, ChatLogFile file_)
+        : ChatLogItem(sender_, id, displayName, ContentType::fileTransfer,
                       ContentPtr(new ChatLogFile(std::move(file_)),
                                  ChatLogItemDeleter<ChatLogFile>::doDelete)) {}
 
-ChatLogItem::ChatLogItem(FriendId sender_, QString displayName, ChatLogMessage message_)
-        : ChatLogItem(sender_, displayName, ContentType::message,
+ChatLogItem::ChatLogItem(FriendId sender_, QString id, QString displayName, ChatLogMessage message_)
+        : ChatLogItem(sender_, id, displayName, ContentType::message,
                       ContentPtr(new ChatLogMessage(std::move(message_)),
                                  ChatLogItemDeleter<ChatLogMessage>::doDelete)) {}
 
-ChatLogItem::ChatLogItem(FriendId sender_, QString displayName, ContentType contentType_,
-                         ContentPtr content_)
-        : sender(std::move(sender_))
-        , displayName(displayName)
+ChatLogItem::ChatLogItem(FriendId sender_, QString id, QString displayName,
+                         ContentType contentType_, ContentPtr content_)
+        : sender(sender_)
+        , displayName(std::move(displayName))
         , contentType(contentType_)
-        , content(std::move(content_)) {}
+        , content(std::move(content_))
+        , id(id) {}
 
 const FriendId& ChatLogItem::getSender() const { return sender; }
 

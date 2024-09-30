@@ -23,6 +23,7 @@
 
 #include "lib/settings/style.h"
 #include "src/persistence/profile.h"
+#include "src/widget/emoticonswidget.h"
 #include "src/widget/tool/screenshotgrabber.h"
 
 #ifdef OK_PLUGIN
@@ -35,6 +36,8 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include "lib/plugin/pluginmanager.h"
+
+#include <src/persistence/smileypack.h>
 #endif
 
 const QString STYLE_PATH = QStringLiteral("chatForm/buttons.css");
@@ -261,4 +264,45 @@ void ChatInputForm::doScreenshot() {
     ScreenshotGrabber* grabber = new ScreenshotGrabber;
     connect(grabber, &ScreenshotGrabber::screenshotTaken, this, &ChatInputForm::onScreenCaptured);
     grabber->showGrabber();
+}
+
+void ChatInputForm::onEncryptButtonClicked() {
+    auto btn = dynamic_cast<QPushButton*>(sender());
+    btn->setChecked(!isEncrypt);
+    isEncrypt = btn->isChecked();
+    qDebug() << "isEncrypt changed=>" << isEncrypt;
+}
+
+void ChatInputForm::onEmoteButtonClicked() {
+    // don't show the smiley selection widget if there are no smileys available
+    if (SmileyPack::getInstance().getEmoticons().empty()) return;
+
+    if (!emoticonsWidget) {
+        emoticonsWidget = new EmoticonsWidget(this);
+        emoticonsWidget->installEventFilter(this);
+        connect(emoticonsWidget, &EmoticonsWidget::insertEmoticon, this,
+                &ChatInputForm::onEmoteInsertRequested);
+    }
+
+    QWidget* sender = qobject_cast<QWidget*>(QObject::sender());
+    if (sender) {
+        QPoint pos = -QPoint(emoticonsWidget->sizeHint().width() / 2,
+                             emoticonsWidget->sizeHint().height()) -
+                     QPoint(0, 10);
+        emoticonsWidget->exec(sender->mapToGlobal(pos));
+    }
+}
+
+void ChatInputForm::onEmoteInsertRequested(QString str) {
+    // insert the emoticon
+    QWidget* sender = qobject_cast<QWidget*>(QObject::sender());
+    if (sender) msgEdit->insertPlainText(str);
+
+    // refocus so that we can continue typing
+    msgEdit->setFocus();
+
+    if (emoticonsWidget) {
+        // close
+        emoticonsWidget->close();
+    }
 }

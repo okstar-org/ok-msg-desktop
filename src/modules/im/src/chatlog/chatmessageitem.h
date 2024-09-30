@@ -24,10 +24,16 @@ class NotificationIcon;
 
 class ChatMessageBox : public IChatItem {
 public:
-    ChatMessageBox(const QPixmap& avatar, const QString& contactName, const QString& message,
+    ChatMessageBox(const QPixmap& avatar,
+                   const QString& contactName,
+                   const QString& message,
+                   const QString& id,
                    bool isSelf = false);
 
-    ChatMessageBox(const QPixmap& avatar, const QString& contactName, ChatLineContent* messageItem,
+    ChatMessageBox(const QPixmap& avatar,
+                   const QString& contactName,
+                   ChatLineContent* messageItem,
+                   const QString& id,
                    bool isSelf = false);
 
     void setMessageState(MessageState state);
@@ -54,6 +60,9 @@ protected:
     void reloadTheme() override;
 
 private:
+    void init(const QPixmap& avatar, const QString& contactName,
+
+              ChatLineContent* messageItem_);
     inline QPointF mapToLayout(const QPointF& pos, qreal width, qreal offset) {
         if (layoutDirection == Qt::RightToLeft) {
             return QPointF(width - pos.x() - offset, pos.y());
@@ -64,7 +73,6 @@ private:
     void updateTextTheme();
     int itemType() override;
 
-private:
     ContactAvatar* avatarItem = nullptr;
     SimpleText* nicknameItem = nullptr;
     ChatLineContent* messageItem = nullptr;
@@ -75,6 +83,11 @@ private:
     bool showNickname = true;
     bool customMsg = false;
     bool _IsSelf = false;
+
+private slots:
+    void doReply();
+    void doCopy();
+    void doForward();
 };
 
 class ChatNotificationBox : public IChatItem {

@@ -80,11 +80,14 @@ private:
 
     int row = -1;
     int col = -1;
-
-private slots:
-    void doReplySelectedText();
+public slots:
+    void doReplySelected();
     void doCopySelectedText();
     void doForwardSelectedText();
+signals:
+    void reply();
+    void copy();
+    void forward();
 };
 
 #endif  // CHATLINECONTENT_H

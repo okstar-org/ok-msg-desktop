@@ -331,6 +331,7 @@ void Text::onCopyEvent() {
     }
     if (text.isEmpty()) return;
 
+    qDebug() << __func__ << text;
     QClipboard* clipboard = QApplication::clipboard();
     if (clipboard) clipboard->setText(text);
 }

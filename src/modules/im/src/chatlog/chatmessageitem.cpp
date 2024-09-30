@@ -1,3 +1,15 @@
+/*
+ * Copyright (c) 2022 船山信息 chuanshaninfo.com
+ * The project is licensed under Mulan PubL v2.
+ * You can use this software according to the terms and conditions of the Mulan
+ * PubL v2. You may obtain a copy of Mulan PubL v2 at:
+ *          http://license.coscl.org.cn/MulanPubL-2.0
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PubL v2 for more details.
+ */
+
 #include "chatmessageitem.h"
 #include "content/broken.h"
 #include "content/contactavatar.h"
@@ -8,44 +20,52 @@
 
 #include <QGraphicsProxyWidget>
 #include <QGraphicsScene>
-#include <QWidget>
 
 ChatMessageBox::ChatMessageBox(const QPixmap& avatar,
                                const QString& contactName,
                                const QString& message,
-                               bool isSelf) {
-    _IsSelf = isSelf;
-    avatarItem = new ContactAvatar(avatar);
+                               const QString& id,
+                               bool isSelf)
+        : IChatItem{id}, _IsSelf{isSelf} {
     QFont baseFont = Settings::getInstance().getChatMessageFont();
-    QFont nameFont = nicknameFont(baseFont);
-    nicknameItem = new SimpleText(contactName, nameFont);
-    nicknameItem->setColor(Style::NameActive);
-
-    Text* text = new Text(message, baseFont, false, message);
+    auto text = new Text(message, baseFont, false, message);
     text->setBoundingRadius(4.0);
     text->setContentsMargins(QMarginsF(3, 3, 3, 3));
-    messageItem = text;
-    if (isSelf) {
-        setLayoutDirection(Qt::RightToLeft);
-        setShowNickname(false);
-    }
-    updateTextTheme();
+    init(avatar, contactName, text);
 }
 
 ChatMessageBox::ChatMessageBox(const QPixmap& avatar, const QString& contactName,
-                               ChatLineContent* messageItem, bool isSelf) {
-    avatarItem = new ContactAvatar(avatar);
+                               ChatLineContent* messageItem_, const QString& id, bool isSelf)
+        : IChatItem{id}, _IsSelf{isSelf} {
+    init(avatar, contactName, messageItem_);
+}
+
+void ChatMessageBox::init(const QPixmap& avatar, const QString& contactName,
+                          ChatLineContent* messageItem_) {
+    messageItem = messageItem_;
+    connect(messageItem, &ChatLineContent::reply, this, &ChatMessageBox::doReply);
+    connect(messageItem, &ChatLineContent::forward, this, &ChatMessageBox::doForward);
+
     QFont baseFont = Settings::getInstance().getChatMessageFont();
     QFont nameFont = nicknameFont(baseFont);
+    avatarItem = new ContactAvatar(avatar);
+    connect(avatarItem, &ChatLineContent::reply, this, &ChatMessageBox::doReply);
+    connect(avatarItem, &ChatLineContent::copy, this, &ChatMessageBox::doCopy);
+    connect(avatarItem, &ChatLineContent::forward, this, &ChatMessageBox::doForward);
+
     nicknameItem = new SimpleText(contactName, nameFont);
     nicknameItem->setColor(Style::NameActive);
-    this->messageItem = messageItem;
+    connect(nicknameItem, &ChatLineContent::reply, this, &ChatMessageBox::doReply);
+    connect(nicknameItem, &ChatLineContent::copy, this, &ChatMessageBox::doCopy);
+    connect(nicknameItem, &ChatLineContent::forward, this, &ChatMessageBox::doForward);
+
     customMsg = true;
-    _IsSelf = isSelf;
-    if (isSelf) {
+
+    if (_IsSelf) {
         setLayoutDirection(Qt::RightToLeft);
         setShowNickname(false);
     }
+    reloadTheme();
 }
 
 void ChatMessageBox::setMessageState(MessageState state) {
@@ -70,38 +90,42 @@ void ChatMessageBox::setMessageState(MessageState state) {
 }
 
 void ChatMessageBox::layout(qreal width, QPointF scenePos) {
+    qDebug() << __func__ << id << this;
+
     auto mirrorPos = [width, scenePos, this](QPointF& pos, qreal offset) {
         if (this->layoutDirection == Qt::RightToLeft)
             pos.rx() = width + scenePos.x() - pos.x() + scenePos.x() - offset;
     };
+    qreal avatar_width = 0;
+    qreal message_offset = 0;
+    QSizeF msg_size;
+    if (avatarItem && messageItem) {
+        avatar_width = avatarItem->boundingRect().width();
 
-    const qreal avatar_width = avatarItem->boundingRect().width();
-    {
         QPointF avat_pos(scenePos);
         mirrorPos(avat_pos, avatar_width);
         avatarItem->setPos(avat_pos - avatarItem->boundingRect().topLeft());
-    }
 
-    qreal message_offset = 0;
-    if (showNickname) {
-        QPointF name_pos = scenePos + QPointF(avatar_width + 6.0, -3.0);
-        mirrorPos(name_pos, nicknameItem->boundingRect().width());
-        nicknameItem->setPos(name_pos - nicknameItem->boundingRect().topLeft());
-        message_offset = nicknameItem->boundingRect().height() - 3.0 + 6.0;
-    }
+        if (showNickname && nicknameItem) {
+            QPointF name_pos = scenePos + QPointF(avatar_width + 6.0, -3.0);
+            mirrorPos(name_pos, nicknameItem->boundingRect().width());
+            nicknameItem->setPos(name_pos - nicknameItem->boundingRect().topLeft());
+            message_offset = nicknameItem->boundingRect().height() - 3.0 + 6.0;
+        }
 
-    qreal width_limit = width * 0.667;
-    messageItem->setWidth(-1);
-    if (messageItem->boundingRect().width() > width_limit) messageItem->setWidth(width_limit);
-
-    {
+        qreal width_limit = width * 0.667;
+        messageItem->setWidth(-1);
+        if (messageItem->boundingRect().width() > width_limit) {
+            messageItem->setWidth(width_limit);
+        }
         QPointF msg_pos = scenePos + QPointF(avatar_width + 6.0, message_offset);
         mirrorPos(msg_pos, messageItem->boundingRect().width());
         messageItem->setPos(msg_pos - messageItem->boundingRect().topLeft());
+
+        msg_size = messageItem->boundingRect().size();
     }
 
     if (stateItem) {
-        QSizeF msg_size = messageItem->boundingRect().size();
         QRectF state_rect = stateItem->boundingRect();
         QPointF state_pos = scenePos + QPointF(avatar_width + 6.0, message_offset);
         state_pos.rx() += msg_size.width() + 6.0;
@@ -113,6 +137,9 @@ void ChatMessageBox::layout(qreal width, QPointF scenePos) {
 }
 
 QRectF ChatMessageBox::sceneBoundingRect() const {
+    if (!avatarItem) {
+        return QRectF(10, 10, 10, 10);
+    }
     QRectF itemRect = avatarItem->sceneBoundingRect();
     if (showNickname)
         itemRect = itemRect.united(messageItem->sceneBoundingRect())
@@ -175,7 +202,7 @@ QFont ChatMessageBox::nicknameFont(const QFont& baseFont) {
 }
 
 void ChatMessageBox::updateTextTheme() {
-    if (customMsg) return;
+    //    if (customMsg) return;
     if (Text* text_item = dynamic_cast<Text*>(messageItem)) {
         if (_IsSelf) {
             text_item->setBackgroundColor(Style::getExtColor("chat.message.self.background"));
@@ -188,6 +215,12 @@ void ChatMessageBox::updateTextTheme() {
 }
 
 int ChatMessageBox::itemType() { return 0; }
+
+void ChatMessageBox::doReply() { qDebug() << __func__ << id << messageItem->getText(); }
+
+void ChatMessageBox::doCopy() { messageItem->doCopySelectedText(); }
+
+void ChatMessageBox::doForward() { qDebug() << __func__ << id << messageItem->getText(); }
 
 ChatNotificationBox::ChatNotificationBox(const QString& message, const QFont& font) {
     textItem = new Text(message, font);

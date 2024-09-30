@@ -97,7 +97,6 @@ IChatItem::Ptr getChatMessageForIdx(ChatLogIdx idx,
     if (existingMessageIt == messages.end()) {
         return IChatItem::Ptr();
     }
-
     return existingMessageIt->second;
 }
 
@@ -251,13 +250,6 @@ GenericChatForm::GenericChatForm(const ContactId* contact_,
     //  dateInfo->setAlignment(Qt::AlignHCenter);
     //  dateInfo->setVisible(false);
 
-    // 引用
-    // quoteAction = menu.addAction(QIcon(), QString(), this, SLOT(quoteSelectedText()));
-    // addAction(quoteAction);
-
-    // // 转发
-    // forwardAction = menu.addAction(QIcon(), QString(), this, SLOT(forwardSelectedText()));
-    // addAction(forwardAction);
 
     // menu.addSeparator();
 
@@ -349,7 +341,7 @@ void GenericChatForm::setContact(const Contact* contact_) {
         const Friend* f = static_cast<const Friend*>(contact);
         for (auto msg : messages) {
             auto p = (ChatMessageBox*)msg.second.get();
-            p->nickname()->setText(f->getDisplayedName());
+            if (p->nickname()) p->nickname()->setText(f->getDisplayedName());
         }
     }
 }
@@ -453,46 +445,6 @@ bool GenericChatForm::needsToHideName(ChatLogIdx idx) const {
            messagesTimeDiff < chatLog->repNameAfter;
 }
 
-void ChatInputForm::onEncryptButtonClicked() {
-    auto btn = dynamic_cast<QPushButton*>(sender());
-    btn->setChecked(!isEncrypt);
-    isEncrypt = btn->isChecked();
-    qDebug() << "isEncrypt changed=>" << isEncrypt;
-}
-
-void ChatInputForm::onEmoteButtonClicked() {
-    // don't show the smiley selection widget if there are no smileys available
-    if (SmileyPack::getInstance().getEmoticons().empty()) return;
-
-    if (!emoticonsWidget) {
-        emoticonsWidget = new EmoticonsWidget(this);
-        emoticonsWidget->installEventFilter(this);
-        connect(emoticonsWidget, SIGNAL(insertEmoticon(QString)), this,
-                SLOT(onEmoteInsertRequested(QString)));
-    }
-
-    QWidget* sender = qobject_cast<QWidget*>(QObject::sender());
-    if (sender) {
-        QPoint pos = -QPoint(emoticonsWidget->sizeHint().width() / 2,
-                             emoticonsWidget->sizeHint().height()) -
-                     QPoint(0, 10);
-        emoticonsWidget->exec(sender->mapToGlobal(pos));
-    }
-}
-
-void ChatInputForm::onEmoteInsertRequested(QString str) {
-    // insert the emoticon
-    QWidget* sender = qobject_cast<QWidget*>(QObject::sender());
-    if (sender) msgEdit->insertPlainText(str);
-
-    // refocus so that we can continue typing
-    msgEdit->setFocus();
-
-    if (emoticonsWidget) {
-        // close
-        emoticonsWidget->close();
-    }
-}
 
 void GenericChatForm::onCopyLogClicked() { chatLog->copySelectedText(); }
 
@@ -761,6 +713,9 @@ void GenericChatForm::renderMessages(ChatLogIdx begin, ChatLogIdx end,
         }
 
         auto chatMessage = getChatMessageForIdx(i, messages);
+        //        if(!chatMessage || !chatMessage->isValid()){
+        //            continue;
+        //        }
         renderItem(*item, needsToHideName(i), colorizeNames, chatMessage);
 
         if (messages.find(i) == messages.end()) {
@@ -802,13 +757,11 @@ void GenericChatForm::renderMessages(ChatLogIdx begin, ChatLogIdx end,
 
 void GenericChatForm::loadHistoryLower() {
     auto begin = messages.begin()->first;
-
     if (begin.get() > 100) {
         begin = ChatLogIdx(begin.get() - 100);
     } else {
         begin = ChatLogIdx(0);
     }
-
     renderMessages(begin, iChatLog.getNextIdx());
 }
 

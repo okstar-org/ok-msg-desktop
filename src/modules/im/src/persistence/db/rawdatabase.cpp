@@ -418,7 +418,7 @@ void RawDatabase::process() {
                                      static_cast<int>(compileTail - query.query.data()),
                              &stmt, &compileTail)) != SQLITE_OK) {
                     qWarning() << "Failed to prepare statement:" << anonymizeQuery(query.query);
-                    qWarning("The error code is %d errmsg is %s", sqlite3_errcode(sqlite),
+                    qWarning("The error code is %d error message is: %s", sqlite3_errcode(sqlite),
                              sqlite3_errmsg(sqlite));
                     goto cleanupStatements;
                 }

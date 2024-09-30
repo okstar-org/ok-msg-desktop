@@ -12,7 +12,6 @@
 
 #include "chatline.h"
 #include "chatlinecontent.h"
-#include "content/notificationicon.h"
 
 #include <QDebug>
 #include <QGraphicsScene>
@@ -45,7 +44,7 @@ ChatLineContent* IChatItem::centerContent() const { return nullptr; }
 
 void IChatItem::visibilityChanged(bool visible) {
     for (ChatLineContent* content : contents()) {
-        content->visibilityChanged(visible);
+        if (content) content->visibilityChanged(visible);
     }
 }
 
@@ -81,6 +80,8 @@ void IChatItem::fontChanged(const QFont& font) {
 
 void IChatItem::reloadTheme() {
     for (ChatLineContent* content : contents()) {
-        content->reloadTheme();
+        if (content) content->reloadTheme();
     }
 }
+
+IChatItem::IChatItem(const QString& id) : id(id) {}

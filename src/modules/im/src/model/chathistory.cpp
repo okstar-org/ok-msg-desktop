@@ -372,50 +372,52 @@ void ChatHistory::loadHistoryIntoSessionChatLog(ChatLogIdx start) const {
     //  assert(messages.size() == end.get() - start.get());
     ChatLogIdx nextIdx = start;
 
-    for (const auto& message : messages) {
+    for (const auto& hisMsg : messages) {
         // Note that message.id is _not_ a valid conversion here since it is a
         // global id not a per-chat id like the ChatLogIdx
         auto currentIdx = nextIdx++;
 
-        auto sender = ToxId(message.sender).getPublicKey();
+        auto sender = ToxId(hisMsg.sender).getPublicKey();
         //        auto frnd =
         //        Nexus::getCore()->getFriendList().findFriend(ContactId{message.sender});
         auto dispName = sender.username;
-        const auto date = message.timestamp;
+        const auto date = hisMsg.timestamp;
 
-        switch (message.type) {
+        switch (hisMsg.type) {
             case HistMessageContentType::file: {
-                auto file = message.asFile();
+                auto file = hisMsg.asFile();
                 auto tfile = ToxFile{file};
-                tfile.receiver = message.receiver;
-                tfile.sender = message.sender;
+                tfile.receiver = hisMsg.receiver;
+                tfile.sender = hisMsg.sender;
                 auto chatLogFile = ChatLogFile{date, tfile};
-                sessionChatLog.insertFileAtIdx(currentIdx, sender, dispName, chatLogFile);
+                sessionChatLog.insertFileAtIdx(currentIdx, sender, hisMsg.msgId, dispName,
+                                               chatLogFile);
                 break;
             }
             case HistMessageContentType::message: {
-                QString messageContent = message.asMessage();
+                QString messageContent = hisMsg.asMessage();
 
                 auto isAction = handleActionPrefix(messageContent);
 
                 auto processedMessage = Message{.isAction = isAction,
-                                                .from = message.sender,
-                                                .from_resource = message.sender_resource,
-                                                .to = message.receiver,
+                                                .id = hisMsg.msgId,
+                                                .from = hisMsg.sender,
+                                                .from_resource = hisMsg.sender_resource,
+                                                .to = hisMsg.receiver,
                                                 .content = messageContent,
-                                                .timestamp = message.timestamp};
+                                                .timestamp = hisMsg.timestamp};
 
                 auto dispatchedMessageIt = std::find_if(
                         dispatchedMessageRowIdMap.begin(), dispatchedMessageRowIdMap.end(),
-                        [&](RowId dispatchedId) { return dispatchedId == message.id; });
+                        [&](RowId dispatchedId) { return dispatchedId == hisMsg.id; });
 
                 //            assert((message.state != MessageState::pending && dispatchedMessageIt
                 //            == dispatchedMessageRowIdMap.end()) ||
                 //                   (message.state == MessageState::pending && dispatchedMessageIt
                 //                   != dispatchedMessageRowIdMap.end()));
 
-                auto chatLogMessage = ChatLogMessage{message.state, processedMessage};
-                switch (message.state) {
+                auto chatLogMessage = ChatLogMessage{hisMsg.state, processedMessage};
+                switch (hisMsg.state) {
                     case MessageState::receipt:
                     case MessageState::complete:
                         sessionChatLog.insertCompleteMessageAtIdx(currentIdx, sender, dispName,
@@ -436,7 +438,7 @@ void ChatHistory::loadHistoryIntoSessionChatLog(ChatLogIdx start) const {
         }
     }
 
-    //    assert(nextIdx == end);
+    assert(nextIdx == end);
 }
 
 /**

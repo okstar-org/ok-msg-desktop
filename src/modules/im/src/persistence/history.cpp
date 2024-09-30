@@ -20,7 +20,7 @@
 
 namespace {
 
-static constexpr int SCHEMA_VERSION = 2;
+static constexpr int SCHEMA_VERSION = 3;
 
 bool createCurrentSchema(RawDatabase& db) {
     QVector<RawDatabase::Query> queries;
@@ -45,7 +45,10 @@ bool createCurrentSchema(RawDatabase& db) {
             "   sender TEXT NOT NULL,                             "
             "   message BLOB NOT NULL,                             "
             "   data_id TEXT, "
-            "   type INTEGER "
+            "   type INTEGER,"
+            "   is_receipt BLOB,"
+            "   sender_resource,"
+            "   msg_id "
             "   );  "
 
             // file_transfers
@@ -88,27 +91,20 @@ bool isNewDb(std::shared_ptr<RawDatabase>& db, bool& success) {
     return newDb;
 }
 
-/**
- * Upgrade db schema from 0 to 1
- * @brief dbSchema0to1
- * @param db
- * @return
- */
-bool dbSchema0to1(RawDatabase& db) {
-    qDebug() << __func__;
-    QVector<RawDatabase::Query> queries;
-    queries +=
-            RawDatabase::Query(QStringLiteral("ALTER TABLE history ADD COLUMN is_receipt blob;"));
-    queries += RawDatabase::Query(QStringLiteral("PRAGMA user_version = 1;"));
-    return db.execNow(queries);
-}
-
 bool dbSchema1to2(RawDatabase& db) {
     qDebug() << __func__;
     QVector<RawDatabase::Query> queries;
     queries += RawDatabase::Query(
             QStringLiteral("ALTER TABLE history ADD COLUMN sender_resource text;"));
     queries += RawDatabase::Query(QStringLiteral("PRAGMA user_version = 2;"));
+    return db.execNow(queries);
+}
+
+bool dbSchema2to3(RawDatabase& db) {
+    qDebug() << __func__;
+    QVector<RawDatabase::Query> queries;
+    queries += RawDatabase::Query(QStringLiteral("ALTER TABLE history ADD COLUMN msg_id text;"));
+    queries += RawDatabase::Query(QStringLiteral("PRAGMA user_version = 3;"));
     return db.execNow(queries);
 }
 
@@ -129,7 +125,7 @@ bool dbSchemaUpgrade(std::shared_ptr<RawDatabase>& db) {
         qCritical() << "History failed to read user_version";
         return false;
     }
-    qDebug() << "Current db schame version is" << databaseSchemaVersion;
+    qDebug() << "Current db schema version is" << databaseSchemaVersion;
 
     if (databaseSchemaVersion > SCHEMA_VERSION) {
         qWarning().nospace() << "Database version (" << databaseSchemaVersion
@@ -164,6 +160,10 @@ bool dbSchemaUpgrade(std::shared_ptr<RawDatabase>& db) {
             dbSchema1to2(*db.get());
             break;
         }
+        case 2: {
+            dbSchema2to3(*db.get());
+            break;
+        }
         // etc.
         default:
             qInfo() << "Database upgrade finished (databaseSchemaVersion" << databaseSchemaVersion
@@ -187,24 +187,6 @@ MessageState getMessageState(bool isPending, bool isBroken, bool isReceipt) {
     return messageState;
 }
 }  // namespace
-
-/**
- * @class History
- * @brief Interacts with the profile database to save the chat history.
- *
- * @var QHash<QString, int64_t> History::peers
- * @brief Maps friend public keys to unique IDs by index.
- * Caches mappings to speed up message saving.
- */
-
-static constexpr int NUM_MESSAGES_DEFAULT =
-        100;  // arbitrary number of messages loaded when not loading by date
-
-// FileDbInsertionData::FileDbInsertionData()
-//{
-//     static int id = qRegisterMetaType<FileDbInsertionData>();
-//     (void)id;
-// }
 
 /**
  * @brief Prepares the database to work with the history.
@@ -333,16 +315,17 @@ QVector<RawDatabase::Query> History::generateNewMessageQueries(const Message& me
     queries += RawDatabase::Query(
             QString("INSERT INTO history "
                                           "(timestamp, receiver, sender, message, type, data_id, "
-                                          "is_receipt, sender_resource) "
-                                          "values (%1, '%2', '%3', '%4', %5, '%6', %7, '%8')")
+                                          "is_receipt, sender_resource, msg_id) "
+                                          "values (%1, '%2', '%3', '%4', %5, '%6', %7, '%8', '%9')")
                                           .arg(message.timestamp.toMSecsSinceEpoch())  // 1
-                    .arg(message.to)                             // 2
+                                          .arg(message.to)                             // 2
                     .arg(message.from)                           // 3
                     .arg(message.content)                        // 4
                     .arg((int)type)                              // 5
                     .arg(message.dataId)                         // 6
                                           .arg(false)                                  // 7
-                                          .arg(message.from_resource),
+                                          .arg(message.from_resource)                  // 8
+                                          .arg(message.id),                            // 9
                                   insertIdCallback);
 
     if (!isDelivered) {
@@ -355,61 +338,11 @@ QVector<RawDatabase::Query> History::generateNewMessageQueries(const Message& me
     return queries;
 }
 
-void History::onFileInserted(RowId dbId, QString fileId) {
-    //    auto& fileInfo = fileCached[fileId];
-    //    if (fileInfo.finished) {
-    //        db->execLater(generateFileFinished(dbId, fileInfo.success, fileInfo.filePath,
-    //        fileInfo.fileHash)); fileInfos.remove(fileId);
-    //    } else {
-    //        fileInfo.finished = false;
-    //        fileInfo.fileId = dbId;
-    //    }
-}
-
-// RawDatabase::Query History::generateFileFinished(RowId id, bool success, const QString& filePath,
-//                                                  const QByteArray& fileHash)
-//{
-//     auto file_state = success ? FileStatus::FINISHED : FileStatus::CANCELED;
-//     if (filePath.length()) {
-//         return RawDatabase::Query(QStringLiteral("UPDATE file_transfers "
-//                                                  "SET file_state = %1, file_path = ?, file_hash =
-//                                                  ?" "WHERE id = %2")
-//                                       .arg(file_state)
-//                                       .arg(id.get()),
-//                                   {filePath.toUtf8(), fileHash});
-//     } else {
-//         return RawDatabase::Query(QStringLiteral("UPDATE file_transfers "
-//                                                  "SET finished = %1 "
-//                                                  "WHERE id = %2")
-//                                       .arg(file_state)
-//                                       .arg(id.get()));
-//     }
-// }
 
 void History::addNewFileMessage(const ToxFile& file, QString const& dispName) {
     if (historyAccessBlocked()) {
         return;
     }
-
-    // This is an incredibly far from an optimal way of implementing this,
-    // but given the frequency that people are going to be initiating a file
-    // transfer we can probably live with it.
-
-    // Since both inserting an alias for a user and inserting a file transfer
-    // will generate new ids, there is no good way to inject both new ids into the
-    // history query without refactoring our RawDatabase::Query and processor loops.
-
-    // What we will do instead is chain callbacks to try to get reasonable behavior.
-    // We can call the generateNewMessageQueries() fn to insert a message with an empty
-    // message in it, and get the id with the callbck. Once we have the id we can ammend
-    // the data to have our newly inserted file_id as well
-
-    //    FileStatus::FileDirection direction;
-    //    if (sender == friendPk) {
-    //        direction = FileStatus::RECEIVING;
-    //    } else {
-    //        direction = FileStatus::SENDING;
-    //    }
 
     qDebug() << "add new file:" << file.fileName;
 
@@ -488,7 +421,8 @@ QList<History::HistMessage> History::getMessageByDataId(const QString& dataId) {
                                 "0, "          // 7
                                 "data_id,"         // 8
                                 "is_receipt, "     // 9
-                                "sender_resource"  // 10
+                                "sender_resource, "  // 10
+                                "msg_id "            // 11
                                 "from history where data_id = '%1'")
                                 .arg(dataId);
 
@@ -552,13 +486,36 @@ QString History::makeSqlForFriend(const FriendId& me, const FriendId& friendPk) 
                     "faux_offline_pending.id off_id, "  // 7
                     "data_id, "                         // 8
                     "is_receipt, "                      // 9
-                    "sender_resource "                  // 10
+                    "sender_resource, "                 // 10
+                    "msg_id "                           // 11
                     "FROM history "
                     "LEFT JOIN faux_offline_pending ON history.id = faux_offline_pending.id "
                     "LEFT JOIN broken_messages ON history.id = broken_messages.id "
                     "WHERE (history.sender='%1' %2 history.receiver='%1') ")
                     .arg(friendPk.toString())
                     .arg(link);
+    return queryText;
+}
+
+QString History::makeSqlForId(qlonglong id) {
+    QString queryText =
+            QString("SELECT history.id, "               // 0
+                    "timestamp, "                       // 1
+                    "receiver, "                        // 2
+                    "sender, "                          // 3
+                    "message, "                         // 4
+                    "type, "                            // 5
+                    "broken_messages.id bro_id, "       // 6
+                    "faux_offline_pending.id off_id, "  // 7
+                    "data_id, "                         // 8
+                    "is_receipt, "                      // 9
+                    "sender_resource, "                 // 10
+                    "msg_id "                           // 11
+                    "FROM history "
+                    "LEFT JOIN faux_offline_pending ON history.id = faux_offline_pending.id "
+                    "LEFT JOIN broken_messages ON history.id = broken_messages.id "
+                    "WHERE history.sender=%1 ")
+                    .arg(id);
     return queryText;
 }
 
@@ -574,11 +531,11 @@ History::HistMessage History::rowToMessage(const QVector<QVariant>& row) {
     auto dataId = row[8].toString();
     auto isReceipt = row[9].toBool();
     auto sender_resource = row[10].toString();
-
+    auto msgId = row[11].toString();
     auto ctype = static_cast<HistMessageContentType>(type);
     auto state = getMessageState(isPending, isBroken, isReceipt);
-    return History::HistMessage{id,       ctype,   state, timestamp, sender, sender_resource,
-                                receiver, message, dataId};
+    return History::HistMessage{id,       ctype,   state,  timestamp, sender, sender_resource,
+                                receiver, message, dataId, msgId};
 }
 
 QList<History::HistMessage> History::getMessagesForFriend(const FriendId& me,
@@ -591,7 +548,6 @@ QList<History::HistMessage> History::getMessagesForFriend(const FriendId& me,
     }
 
     auto sqlPrefix = makeSqlForFriend(me, friendPk);
-
     QString queryText = QString("%1 "
                                 "ORDER by history.timestamp "
                                 "LIMIT %2 OFFSET %3; ")
@@ -605,6 +561,14 @@ QList<History::HistMessage> History::getMessagesForFriend(const FriendId& me,
     db->execNow(
             {queryText, [&](const QVector<QVariant>& row) { messages.append(rowToMessage(row)); }});
 
+    return messages;
+}
+
+QList<History::HistMessage> History::getMessageById(qlonglong id) {
+    QString queryText = makeSqlForId(id);
+    QList<HistMessage> messages;
+    db->execNow(
+            {queryText, [&](const QVector<QVariant>& row) { messages.append(rowToMessage(row)); }});
     return messages;
 }
 
@@ -637,21 +601,27 @@ QList<History::HistMessage> History::getUndeliveredMessagesForFriend(const Frien
     }
 
     auto sqlPrefix = makeSqlForFriend(me, friendPk);
-    auto queryText =
-            QString("SELECT history.id, faux_offline_pending.id, timestamp, chat.public_key, "
-                    "chat.public_key, message, broken_messages.id "
-                    "FROM history "
+    auto queryText = QString("SELECT "
+                             "history.id "
+                             "FROM history "
                     "JOIN faux_offline_pending ON history.id = faux_offline_pending.id "
                     "JOIN peers chat on history.sender = chat.public_key "
                     "LEFT JOIN broken_messages ON history.id = broken_messages.id "
                     "WHERE chat.public_key='%1';")
                     .arg(friendPk.toString());
 
-    QList<History::HistMessage> ret;
-    auto rowCallback = [&](const QVector<QVariant>& row) { ret += rowToMessage(row); };
-
+    QList<qlonglong> ret;
+    auto rowCallback = [&](const QVector<QVariant>& row) { ret += row[0].toLongLong(); };
     db->execNow({queryText, rowCallback});
-    return ret;
+
+    if (ret.isEmpty()) return {};
+
+    QList<History::HistMessage> list;
+    for (auto id : ret) {
+        list += getMessageById(id);
+    }
+
+    return list;
 }
 
 /**

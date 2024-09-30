@@ -87,7 +87,8 @@ public:
                     QString sender_resource,
                     QString receiver,
                     QString message,
-                    QString dataId)
+                    QString dataId,
+                    MsgId msgId)
                 : id{id}
                 , type{type}
                 , state(state)
@@ -96,8 +97,8 @@ public:
                 , sender_resource(sender_resource)
                 , receiver{std::move(receiver)}
                 , message(std::move(message))
-                , dataId{dataId} {
-        }
+                , dataId{dataId}
+                , msgId(msgId) {}
 
         RowId id;
         QDateTime timestamp;
@@ -108,6 +109,7 @@ public:
         HistMessageContentType type;
         QString message;
         QString dataId;
+        MsgId msgId;
 
         [[nodiscard]] QString asMessage() const {
             if (type == HistMessageContentType::message) {
@@ -164,6 +166,9 @@ public:
 
     QList<HistMessage> getUndeliveredMessagesForFriend(const FriendId& me,
                                                        const FriendId& friendPk);
+
+    QList<HistMessage> getMessageById(qlonglong id);
+
     QDateTime getDateWhereFindPhrase(const QString& friendPk,
                                      const QDateTime& from,
                                      QString phrase,
@@ -183,14 +188,6 @@ protected:
             HistMessageContentType type,
             bool isDelivered,
             std::function<void(RowId)> insertIdCallback = {});
-
-signals:
-
-    //    void fileInserted(RowId dbId, QString fileId);
-
-private slots:
-
-    void onFileInserted(RowId dbId, QString fileId);
 
 private:
     bool historyAccessBlocked();
@@ -214,6 +211,8 @@ private:
     // This needs to be a shared pointer to avoid callback lifetime issues
     //    QHash<QString, RowId> fileCached;
     QString makeSqlForFriend(const FriendId& me, const FriendId& friendPk);
+    QString makeSqlForId(qlonglong id);
+
     History::HistMessage rowToMessage(const QVector<QVariant>& row);
 };
 

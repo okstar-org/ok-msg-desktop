@@ -41,7 +41,8 @@ IChatItem::Ptr ChatMessage::createChatMessage(const ChatLogItem& item, const QSt
                                               MessageType type, bool isMe, MessageState state,
                                               const QDateTime& date, bool colorizeName) {
     auto avatar = Nexus::getProfile()->loadAvatar(item.getSender());
-    auto* msg = new ChatMessageBox(avatar, item.getDisplayName(), rawMessage.toHtmlEscaped(), isMe);
+    auto* msg = new ChatMessageBox(avatar, item.getDisplayName(), rawMessage.toHtmlEscaped(),
+                                   item.getId(), isMe);
     msg->setMessageState(state);
     msg->setTime(date);
     return IChatItem::Ptr(msg);
@@ -85,7 +86,8 @@ IChatItem::Ptr ChatMessage::createFileTransferMessage(const ChatLogItem& item, T
 
     auto ftw = new FileTransferWidget(nullptr, file);
     ChatLineContent* fileContent = new ChatLineContentProxy(ftw, 320, 0.6f);
-    ChatMessageBox* msg = new ChatMessageBox(avatar, item.getDisplayName(), fileContent, isMe);
+    ChatMessageBox* msg =
+            new ChatMessageBox(avatar, item.getDisplayName(), fileContent, item.getId(), isMe);
     msg->setTime(date);
     return IChatItem::Ptr(msg);
 }
