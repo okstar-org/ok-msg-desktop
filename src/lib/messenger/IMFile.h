@@ -69,6 +69,8 @@ public:
     explicit IMFile(IM* im, QObject* parent = nullptr);
     ~IMFile();
 
+    void parse(const gloox::Jingle::Session::Jingle* jingle, ortc::OJingleContentFile& content);
+
     void addFile(const File& f);
     void addFileHandler(FileHandler*);
 

@@ -130,11 +130,22 @@ struct ORTP {
 
 struct OContent {
     std::string name;
-    //    OFile file;
 };
 
-struct OSdp {
-    std::string name;
+struct OFile : public OContent {
+    std::string id;
+    std::string sId;
+
+    std::string date;
+    std::string desc;
+    std::string hash;
+    std::string hash_algo;
+    long int size = 0;
+    bool range = false;
+    long int offset = 0;
+};
+
+struct OSdp : public OContent {
     ORTP rtp;
     OIceUdp iceUdp;
 };
@@ -168,7 +179,8 @@ public:
 };
 
 struct OJingleContentFile : public OJingleContent {
-    std::vector<OContent> contents;
+    std::vector<OFile> contents;
+    bool isValid();
 };
 
 struct OJingleContentAv : public OJingleContent {

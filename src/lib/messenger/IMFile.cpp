@@ -18,8 +18,6 @@
 #include "IM.h"
 #include "IMFile.h"
 #include "IMFileTask.h"
-#include "base/logs.h"
-#include "lib/session/AuthSession.h"
 
 namespace lib::messenger {
 
@@ -93,6 +91,55 @@ IMFile::IMFile(IM* im, QObject* parent) : IMJingle(im, parent) {
 }
 
 IMFile::~IMFile() { qDebug() << __func__; }
+
+void IMFile::parse(const gloox::Jingle::Session::Jingle* jingle,
+                   ortc::OJingleContentFile& content) {
+    auto sId = (jingle->sid());
+
+    for (auto p : jingle->plugins()) {
+        auto pt = p->pluginType();
+        switch (pt) {
+            case gloox::Jingle::JinglePluginType::PluginContent: {
+                auto file = p->findPlugin<gloox::Jingle::FileTransfer>(
+                        gloox::Jingle::PluginFileTransfer);
+                auto ibb = p->findPlugin<gloox::Jingle::IBB>(gloox::Jingle::PluginIBB);
+                if (file && ibb) {
+                    for (auto& f : file->files()) {
+                        auto id = (ibb->sid());
+                        qDebug() << "receive file:" << qstring(id) << qstring(sId);
+                        ortc::OFile file0 = {.id = id,
+                                             .sId = sId,
+                                             .date = f.date,
+                                             .hash = f.hash,
+                                             .hash_algo = f.hash_algo,
+                                             .size = f.size,
+                                             .range = f.range,
+                                             .offset = f.offset};
+
+                        file0.name = f.name;
+
+                        content.contents.push_back(file0);
+
+                        // file0.status = FileStatus::INITIALIZING,
+                        // file0.direction = FileDirection::RECEIVING
+
+                        // qDebug() << "receive file:" << file0->sId;
+                        // for (auto h : fileHandlers) {
+                        //     h->onFileRequest(peerId.toFriendId(), *file0);
+                        // }
+
+                        //         // 创建session
+                        // auto s = new IMFileSession(sId, session, peerId, this, file0);
+                        // m_fileSessionMap.insert(sId, s);
+                    }
+                }
+                break;
+            }
+            default: {
+            }
+        }
+    }
+}
 
 void IMFile::onImStartedFile() {
     auto client = _im->getClient();
@@ -324,6 +371,27 @@ void IMFile::sessionOnAccept(const QString& sId,
                              const IMPeerId& peerId,
                              const Jingle::Session::Jingle* jingle) {
     if (isInvalidSid(sId)) return;
+
+    ortc::OJingleContentFile cfile;
+    cfile.sdpType = ortc::JingleSdpType::Answer;
+    parse(jingle, cfile);
+
+    if (!cfile.isValid()) {
+        qWarning() << "Is no file session";
+        return;
+    }
+
+    for (auto h : fileHandlers) {
+        auto& f = cfile.contents.at(0);
+        qDebug() << "receive file:" << qstring(f.id) << qstring(f.name);
+        File file{.id = qstring(f.id),
+                  .sId = sId,
+                  .name = qstring(f.name),
+                  .status = FileStatus::INITIALIZING,
+                  .direction = FileDirection::RECEIVING};
+
+        h->onFileRequest(peerId.toFriendId(), file);
+    }
 
     IMFileSession* sess = m_fileSessionMap.value(sId);
     if (sess) {

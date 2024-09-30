@@ -441,7 +441,7 @@ void IMCall::sessionOnAccept(const QString& sId,
     parse(jingle, cav);
 
     if (!cav.isValid()) {
-        qWarning() << "No call session";
+        qWarning() << "Is no call session";
         return;
     }
 

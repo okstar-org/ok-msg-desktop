@@ -24,4 +24,10 @@ bool OJingleContentAv::isVideo() const {
     return false;
 }
 
+bool OJingleContentFile::isValid() {
+    for (auto& c : contents)
+        if (!c.name.empty() && c.size > 0) return true;
+    return false;
+}
+
 }  // namespace lib::ortc
