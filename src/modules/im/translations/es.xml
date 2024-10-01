@@ -2426,9 +2426,11 @@ Este ID incluye el código NoSpam (en azul) y la suma de comprobación (en gris)
 <context>
     <name>ScreenshotGrabber</name>
     <message>
-        <source>Click and drag to select a region. Press %1 to hide/show qTox window, or %2 to cancel.</source>
+        <source>Click and drag to select a region. Press %1 to hide/show window, or %2 to cancel.</source>
         <comment>Help text shown when no region has been selected yet</comment>
-        <translation>Cliquea y arrastra para seleccionar una región. Presiona %1 para mostar/ocultar la ventana de qTox, o %2 para cancelar.</translation>
+        <translation>Cliquea y arrastra para seleccionar una región. Presiona %1 para mostar/ocultar la ventana, o %2
+            para cancelar.
+        </translation>
     </message>
     <message>
         <source>Space</source>
@@ -2441,9 +2443,11 @@ Este ID incluye el código NoSpam (en azul) y la suma de comprobación (en gris)
         <translation>Escape</translation>
     </message>
     <message>
-        <source>Press %1 to send a screenshot of the selection, %2 to hide/show qTox window, or %3 to cancel.</source>
+        <source>Press %1 to send a screenshot of the selection, %2 to hide/show window, or %3 to cancel.</source>
         <comment>Help text shown when a region has been selected</comment>
-        <translation>Presiona %1 para enviar una captura de pantalla de la selección, %2 para mostar/ocultar la ventana de qTox, o %3 para cancelar.</translation>
+        <translation>Presiona %1 para enviar una captura de pantalla de la selección, %2 para mostar/ocultar la ventana,
+            o %3 para cancelar.
+        </translation>
     </message>
     <message>
         <source>Enter</source>
@@ -2932,7 +2936,7 @@ Este ID incluye el código NoSpam (en azul) y la suma de comprobación (en gris)
     </message>
     <message>
         <source>Show</source>
-        <comment>Tray action menu to show qTox window</comment>
+        <comment>Tray action menu to show window</comment>
         <translation>Mostrar</translation>
     </message>
     <message>

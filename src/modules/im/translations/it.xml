@@ -2430,9 +2430,11 @@ Questo ID include il codice NoSpam (in blu), e il checksum (in grigio).</transla
 <context>
     <name>ScreenshotGrabber</name>
     <message>
-        <source>Click and drag to select a region. Press %1 to hide/show qTox window, or %2 to cancel.</source>
+        <source>Click and drag to select a region. Press %1 to hide/show window, or %2 to cancel.</source>
         <comment>Help text shown when no region has been selected yet</comment>
-        <translation>Fare clic e trascinare per selezionare una regione. Premere %1 per nascondere/mostrare la finestra qTox, o %2 per annullare.</translation>
+        <translation>Fare clic e trascinare per selezionare una regione. Premere %1 per nascondere/mostrare la finestra,
+            o %2 per annullare.
+        </translation>
     </message>
     <message>
         <source>Space</source>
@@ -2445,7 +2447,7 @@ Questo ID include il codice NoSpam (in blu), e il checksum (in grigio).</transla
         <translation>Escape</translation>
     </message>
     <message>
-        <source>Press %1 to send a screenshot of the selection, %2 to hide/show qTox window, or %3 to cancel.</source>
+        <source>Press %1 to send a screenshot of the selection, %2 to hide/show window, or %3 to cancel.</source>
         <comment>Help text shown when a region has been selected</comment>
         <translation>Premi %1 per inviare uno screenshot della selezione, %2 per nascondere/mostrare la finestra qTox, o %3 per annullare.</translation>
     </message>
@@ -2936,7 +2938,7 @@ Questo ID include il codice NoSpam (in blu), e il checksum (in grigio).</transla
     </message>
     <message>
         <source>Show</source>
-        <comment>Tray action menu to show qTox window</comment>
+        <comment>Tray action menu to show window</comment>
         <translation>Mostra</translation>
     </message>
     <message>

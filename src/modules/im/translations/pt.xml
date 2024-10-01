@@ -2443,9 +2443,11 @@ Esta referência inclui o código NoSpam (a azul) e a soma de verificação/chec
 <context>
     <name>ScreenshotGrabber</name>
     <message>
-        <source>Click and drag to select a region. Press %1 to hide/show qTox window, or %2 to cancel.</source>
+        <source>Click and drag to select a region. Press %1 to hide/show window, or %2 to cancel.</source>
         <comment>Help text shown when no region has been selected yet</comment>
-        <translation>Clique e arraste para selecionar uma região. Pressione %1 para ocultar/mostrar a janela do qTox, ou %2 para cancelar.</translation>
+        <translation>Clique e arraste para selecionar uma região. Pressione %1 para ocultar/mostrar a janela, ou %2 para
+            cancelar.
+        </translation>
     </message>
     <message>
         <source>Space</source>
@@ -2458,9 +2460,11 @@ Esta referência inclui o código NoSpam (a azul) e a soma de verificação/chec
         <translation>Esc</translation>
     </message>
     <message>
-        <source>Press %1 to send a screenshot of the selection, %2 to hide/show qTox window, or %3 to cancel.</source>
+        <source>Press %1 to send a screenshot of the selection, %2 to hide/show window, or %3 to cancel.</source>
         <comment>Help text shown when a region has been selected</comment>
-        <translation>Pressione %1 para enviar uma captura de ecrã da seleção, %2 para ocultar/mostrar a janela do qTox ou %3 para cancelar.</translation>
+        <translation>Pressione %1 para enviar uma captura de ecrã da seleção, %2 para ocultar/mostrar a janela ou %3
+            para cancelar.
+        </translation>
     </message>
     <message>
         <source>Enter</source>
@@ -2949,7 +2953,7 @@ Esta referência inclui o código NoSpam (a azul) e a soma de verificação/chec
     </message>
     <message>
         <source>Show</source>
-        <comment>Tray action menu to show qTox window</comment>
+        <comment>Tray action menu to show window</comment>
         <translation>Mostrar</translation>
     </message>
     <message>

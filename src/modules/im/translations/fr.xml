@@ -2428,9 +2428,11 @@ Cet identifiant inclue le code anti-spam (en bleu) et la somme de contrôle (en 
 <context>
     <name>ScreenshotGrabber</name>
     <message>
-        <source>Click and drag to select a region. Press %1 to hide/show qTox window, or %2 to cancel.</source>
+        <source>Click and drag to select a region. Press %1 to hide/show window, or %2 to cancel.</source>
         <comment>Help text shown when no region has been selected yet</comment>
-        <translation>Cliquez et faites glisser pour sélectionner une région. Appuyez sur %1 pour masquer / afficher la fenêtre qTox ou bien %2 pour annuler.</translation>
+        <translation>Cliquez et faites glisser pour sélectionner une région. Appuyez sur %1 pour masquer / afficher la
+            fenêtre ou bien %2 pour annuler.
+        </translation>
     </message>
     <message>
         <source>Space</source>
@@ -2443,9 +2445,11 @@ Cet identifiant inclue le code anti-spam (en bleu) et la somme de contrôle (en 
         <translation>Échap</translation>
     </message>
     <message>
-        <source>Press %1 to send a screenshot of the selection, %2 to hide/show qTox window, or %3 to cancel.</source>
+        <source>Press %1 to send a screenshot of the selection, %2 to hide/show window, or %3 to cancel.</source>
         <comment>Help text shown when a region has been selected</comment>
-        <translation>Appuyer sur %1 pour envoyer une capture d&apos;écran de la sélection, %2 pour masquer / afficher la fenêtre qTox ou bien %3 pour annuler.</translation>
+        <translation>Appuyer sur %1 pour envoyer une capture d&apos;écran de la sélection, %2 pour masquer / afficher la
+            fenêtre ou bien %3 pour annuler.
+        </translation>
     </message>
     <message>
         <source>Enter</source>
@@ -2934,7 +2938,7 @@ Cet identifiant inclue le code anti-spam (en bleu) et la somme de contrôle (en 
     </message>
     <message>
         <source>Show</source>
-        <comment>Tray action menu to show qTox window</comment>
+        <comment>Tray action menu to show window</comment>
         <translation>Afficher</translation>
     </message>
     <message>

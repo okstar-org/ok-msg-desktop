@@ -2582,9 +2582,9 @@
     <context>
         <name>ScreenshotGrabber</name>
         <message>
-            <source>Click and drag to select a region. Press %1 to hide/show qTox window, or %2 to cancel.</source>
+            <source>Click and drag to select a region. Press %1 to hide/show window, or %2 to cancel.</source>
             <comment>Help text shown when no region has been selected yet</comment>
-            <translation>单击并拖动以选择一个区域。按 %1 以隐藏/显示 qTox 窗口，或 %2 来取消。</translation>
+            <translation>单击并拖动以选择一个区域。按 %1 以隐藏/显示窗口，或 %2 来取消。</translation>
         </message>
         <message>
             <source>Space</source>
@@ -2597,10 +2597,9 @@
             <translation>ESC</translation>
         </message>
         <message>
-            <source>Press %1 to send a screenshot of the selection, %2 to hide/show qTox window, or %3 to cancel.
-            </source>
+            <source>Press %1 to send a screenshot of the selection, %2 to hide/show window, or %3 to cancel.</source>
             <comment>Help text shown when a region has been selected</comment>
-            <translation>按 %1 键发送所选区域的屏幕截图，%2 键以隐藏/显示 qTox 窗口，或 %3 键取消屏幕截图。</translation>
+            <translation>按 %1 键发送所选区域的屏幕截图，%2 键以隐藏/显示窗口，或 %3 键取消屏幕截图。</translation>
         </message>
         <message>
             <source>Enter</source>
@@ -3054,7 +3053,7 @@
         </message>
         <message>
             <source>Show</source>
-            <comment>Tray action menu to show qTox window</comment>
+            <comment>Tray action menu to show window</comment>
             <translation>显示</translation>
         </message>
         <message>

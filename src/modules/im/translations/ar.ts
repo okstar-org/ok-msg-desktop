@@ -2028,9 +2028,27 @@ This ID includes the NoSpam code (in blue), and the checksum (in gray).</source>
 <context>
     <name>ScreenshotGrabber</name>
     <message>
-        <source>Click and drag to select a region. Press %1 to hide/show qTox window, or %2 to cancel.</source>
+<source>Click
+and
+drag
+to
+select
+a
+region.Press % 1
+to
+hide / show
+window, or % 2
+to
+cancel. < /source>
         <comment>Help text shown when no region has been selected yet</comment>
-        <translation>اضغط واسحب للتحديد. اضغط %1 لـ اخفاء/إظهار نافذة qTox او %2  للالغاء.</translation>
+< translation > اضغط
+واسحب
+للتحديد.اضغط % 1
+لـ
+اخفاء / إظهار
+نافذة
+او % 2
+للالغاء. < /translation>
     </message>
     <message>
         <source>Space</source>
@@ -2043,9 +2061,32 @@ This ID includes the NoSpam code (in blue), and the checksum (in gray).</source>
         <translation>خروج</translation>
     </message>
     <message>
-        <source>Press %1 to send a screenshot of the selection, %2 to hide/show qTox window, or %3 to cancel.</source>
+<source>Press % 1
+to
+send
+a
+screenshot
+of
+the
+selection,
+%
+2
+to
+hide / show
+window, or % 3
+to
+cancel. < /source>
         <comment>Help text shown when a region has been selected</comment>
-        <translation>اضغط %1 لارسال لقطة الشاشة المحددة، اضغط %2 لـ اخفاء/إظهار نافذة qTox او %3 للالغاء.</translation>
+< translation > اضغط % 1
+لارسال
+لقطة
+الشاشة
+المحددة، اضغط % 2
+لـ
+اخفاء / إظهار
+نافذة
+او % 3
+للالغاء. < /translation>
     </message>
     <message>
         <source>Enter</source>

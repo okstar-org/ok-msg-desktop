@@ -2490,9 +2490,9 @@
     <context>
         <name>ScreenshotGrabber</name>
         <message>
-            <source>Click and drag to select a region. Press %1 to hide/show qTox window, or %2 to cancel.</source>
+            <source>Click and drag to select a region. Press %1 to hide/show window, or %2 to cancel.</source>
             <comment>Help text shown when no region has been selected yet</comment>
-            <translation>クリックとドラッグで範囲を選択します。%1 で qTox ウィンドウの表示・非表示を切り替えます。%2
+            <translation>クリックとドラッグで範囲を選択します。%1 で ウィンドウの表示・非表示を切り替えます。%2
                 でキャンセルします。
             </translation>
         </message>
@@ -2507,10 +2507,10 @@
             <translation>Escape</translation>
         </message>
         <message>
-            <source>Press %1 to send a screenshot of the selection, %2 to hide/show qTox window, or %3 to cancel.
+            <source>Press %1 to send a screenshot of the selection, %2 to hide/show window, or %3 to cancel.
             </source>
             <comment>Help text shown when a region has been selected</comment>
-            <translation>%1 キーを押して、範囲のスクリーンショットを送信します。%2 で qTox ウィンドウの表示・非表示を切り替えます。%3
+            <translation>%1 キーを押して、範囲のスクリーンショットを送信します。%2 で ウィンドウの表示・非表示を切り替えます。%3
                 でキャンセルします。
             </translation>
         </message>
@@ -3012,7 +3012,7 @@
         </message>
         <message>
             <source>Show</source>
-            <comment>Tray action menu to show qTox window</comment>
+            <comment>Tray action menu to show window</comment>
             <translation>表示</translation>
         </message>
         <message>

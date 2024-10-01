@@ -2420,9 +2420,11 @@ Diese ID beinhaltet den NoSpam-Code (in blau), und die Prüfsumme (in grau).</tr
 <context>
     <name>ScreenshotGrabber</name>
     <message>
-        <source>Click and drag to select a region. Press %1 to hide/show qTox window, or %2 to cancel.</source>
+        <source>Click and drag to select a region. Press %1 to hide/show window, or %2 to cancel.</source>
         <comment>Help text shown when no region has been selected yet</comment>
-        <translation>Klicke und ziehe, um einen Ausschnitt auszuwählen. Drücke %1, um das qTox-Fenster auszublenden/anzuzeigen oder drücke %2, um abzubrechen.</translation>
+        <translation>Klicke und ziehe, um einen Ausschnitt auszuwählen. Drücke %1, um das Fenster
+            auszublenden/anzuzeigen oder drücke %2, um abzubrechen.
+        </translation>
     </message>
     <message>
         <source>Space</source>
@@ -2435,9 +2437,11 @@ Diese ID beinhaltet den NoSpam-Code (in blau), und die Prüfsumme (in grau).</tr
         <translation>Escape</translation>
     </message>
     <message>
-        <source>Press %1 to send a screenshot of the selection, %2 to hide/show qTox window, or %3 to cancel.</source>
+        <source>Press %1 to send a screenshot of the selection, %2 to hide/show window, or %3 to cancel.</source>
         <comment>Help text shown when a region has been selected</comment>
-        <translation>Drücke %1, um einen Screenshot des ausgewählten Ausschnitts zu senden, %2, um das qTox-Fenster auszublenden/einzublenden oder %3, um abzubrechen.</translation>
+        <translation>Drücke %1, um einen Screenshot des ausgewählten Ausschnitts zu senden, %2, um das Fenster
+            auszublenden/einzublenden oder %3, um abzubrechen.
+        </translation>
     </message>
     <message>
         <source>Enter</source>
@@ -2928,7 +2932,7 @@ Leider führen deine Proxy-Einstellungen zu Problemen. Bitte ändere deine Einst
     </message>
     <message>
         <source>Show</source>
-        <comment>Tray action menu to show qTox window</comment>
+        <comment>Tray action menu to show window</comment>
         <translation>Öffnen</translation>
     </message>
     <message>

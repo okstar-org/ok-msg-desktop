@@ -2408,30 +2408,28 @@
     <context>
         <name>ScreenshotGrabber</name>
         <message>
-            <source>Click and drag to select a region. Press %1 to hide/show qTox window, or %2 to cancel.</source>
+            <source>Click and drag to select a region. Press %1 to hide/show window, or %2 to cancel.</source>
             <comment>Help text shown when no region has been selected yet</comment>
-            <translation type="unfinished"></translation>
+            <translation>按一下並拖動以選擇一個區域。 按%1以隱藏/顯示視窗，或%2來取消。</translation>
         </message>
         <message>
             <source>Space</source>
             <comment>[Space] key on the keyboard</comment>
-            <translation type="unfinished"></translation>
+            <translation>空格</translation>
         </message>
         <message>
             <source>Escape</source>
             <comment>[Escape] key on the keyboard</comment>
-            <translation type="unfinished"></translation>
+            <translation>ESC</translation>
         </message>
         <message>
-            <source>Press %1 to send a screenshot of the selection, %2 to hide/show qTox window, or %3 to cancel.
-            </source>
-            <comment>Help text shown when a region has been selected</comment>
-            <translation type="unfinished"></translation>
+            <source>Press %1 to send a screenshot of the selection, %2 to hide/show window, or %3 to cancel.</source>
+            <translation>按%1鍵發送所選區域的螢幕截圖，%2鍵以隱藏/顯示視窗，或%3鍵取消螢幕截圖。</translation>
         </message>
         <message>
             <source>Enter</source>
             <comment>[Enter] key on the keyboard</comment>
-            <translation type="unfinished"></translation>
+            <translation>回車</translation>
         </message>
     </context>
     <context>
@@ -2902,7 +2900,7 @@
         </message>
         <message>
             <source>Show</source>
-            <comment>Tray action menu to show qTox window</comment>
+            <comment>Tray action menu to show window</comment>
             <translation>顯示</translation>
         </message>
         <message>
