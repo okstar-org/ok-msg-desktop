@@ -2794,7 +2794,9 @@ Questo ID include il codice NoSpam (in blu), e il checksum (in grigio).</transla
         <translation>Occupato</translation>
     </message>
     <message>
-        <source>toxcore failed to start with your proxy settings. qTox cannot run; please modify your settings and restart.</source>
+        <source>The core failed to start with your proxy settings. So cannot to run; please modify your settings and
+            restart.
+        </source>
         <comment>popup text</comment>
         <translation>Impossibile avviare Toxcore con le tue impostazione proxy. qTox non può funzionare correttamente, per favore modifica le impostazioni e riavvia il programma.</translation>
     </message>
@@ -2857,7 +2859,7 @@ Questo ID include il codice NoSpam (in blu), e il checksum (in grigio).</transla
         <translation>Stato</translation>
     </message>
     <message>
-        <source>toxcore failed to start, the application will terminate after you close this message.</source>
+        <source>The core failed to start, the application will terminate after you close this message.</source>
         <translation>toxcore non è stato in grado di avviarsi, l&apos;applicazione si chiuderà dopo aver chiuso questo messaggio.</translation>
     </message>
     <message>

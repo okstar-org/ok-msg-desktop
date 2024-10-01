@@ -2359,11 +2359,38 @@ cancel. < /source>
         <translation>الحالة</translation>
     </message>
     <message>
-        <source>toxcore failed to start, the application will terminate after you close this message.</source>
+    <source>The
+core
+failed
+to
+start, the
+application
+will
+terminate
+after
+you
+close
+this
+message. < /source>
         <translation>toxcore فشل في البدء , البرنامج سيغلق بعد الخروج من هذه الرسالة.</translation>
     </message>
     <message>
-        <source>toxcore failed to start with your proxy settings. qTox cannot run; please modify your settings and restart.</source>
+<source>The
+core
+failed
+to
+start
+with your proxy
+settings.So
+cannot
+to
+run;
+please
+modify
+your
+settings
+and
+restart. < /source>
         <comment>popup text</comment>
         <translation>toxcore فشل في البدء مع اعدادات الوكيل&quot;البروكسي&quot; الخاصة بك .لا يمكن بدء الكيوتوكس &quot;qTox&quot; ، يرجى تغيير الاعدادات واعادة المحاولة.</translation>
     </message>

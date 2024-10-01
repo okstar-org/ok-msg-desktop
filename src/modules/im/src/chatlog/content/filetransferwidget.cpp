@@ -29,7 +29,7 @@
 #include <QDesktopWidget>
 #include <QFile>
 #include <QFileDialog>
-#include <QMessageBox>
+
 #include <QMouseEvent>
 #include <QPainter>
 #include <QVariantAnimation>

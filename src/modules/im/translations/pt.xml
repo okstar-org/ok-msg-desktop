@@ -2845,7 +2845,9 @@ Esta referência inclui o código NoSpam (a azul) e a soma de verificação/chec
         <translation>Ocupado</translation>
     </message>
     <message>
-        <source>toxcore failed to start with your proxy settings. qTox cannot run; please modify your settings and restart.</source>
+        <source>The core failed to start with your proxy settings. So cannot to run; please modify your settings and
+            restart.
+        </source>
         <comment>popup text</comment>
         <translation>O Toxcore falhou ao inicializar as suas configurações de proxy. O qTox não pode ser executado, por favor altere as suas configurações e reinicie o programa.</translation>
     </message>
@@ -2912,7 +2914,7 @@ Esta referência inclui o código NoSpam (a azul) e a soma de verificação/chec
         <translation>O envio da mensagem falhou</translation>
     </message>
     <message>
-        <source>toxcore failed to start, the application will terminate after you close this message.</source>
+        <source>The core failed to start, the application will terminate after you close this message.</source>
         <translation>O toxcore falhou ao iniciar, o programa será encerrado após fechar esta mensagem.</translation>
     </message>
     <message>

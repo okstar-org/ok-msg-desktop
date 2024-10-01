@@ -24,7 +24,7 @@
 #include <QLineEdit>
 #include <QMap>
 #include <QMenu>
-#include <QMessageBox>
+
 #include <QMouseEvent>
 #include <QWindow>
 #include "lib/settings/translator.h"

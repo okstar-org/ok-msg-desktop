@@ -1127,6 +1127,10 @@
             <source>Export to file</source>
             <translation type="unfinished"></translation>
         </message>
+        <message>
+            <source>The community version cannot send files to offline contacts!</source>
+            <translation>社區版無法給離線連絡人發送檔案！</translation>
+        </message>
     </context>
     <context>
         <name>GenericNetCamView</name>
@@ -2753,11 +2757,11 @@
             <translation>忙碌</translation>
         </message>
         <message>
-            <source>toxcore failed to start, the application will terminate after you close this message.</source>
+            <source>The core failed to start, the application will terminate after you close this message.</source>
             <translation type="unfinished"></translation>
         </message>
         <message>
-            <source>toxcore failed to start with your proxy settings. qTox cannot run; please modify your settings and
+            <source>The core failed to start with your proxy settings. So cannot to run; please modify your settings and
                 restart.
             </source>
             <comment>popup text</comment>

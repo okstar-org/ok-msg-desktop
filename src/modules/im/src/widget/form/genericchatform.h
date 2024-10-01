@@ -130,11 +130,11 @@ protected slots:
 
     void loadHistoryLower();
 
-
 private:
     void retranslateUi();
     void addSystemDateMessage(const QDate& date);
     QDateTime getTime(const IChatItem::Ptr& chatLine) const;
+    void sendFile(const QFile& file);
 
 protected:
     // ChatMessage::Ptr createMessage(const ToxPk& author, const QString& message,
@@ -155,7 +155,6 @@ protected:
     virtual bool event(QEvent*) final override;
     virtual bool eventFilter(QObject* object, QEvent* event) final override;
 
-protected:
     const ContactId* contactId;
     const Contact* contact = nullptr;
 
@@ -170,7 +169,6 @@ protected:
     // QAction* exportChatAction;
 
     QMenu menu;
-
 
     //    SearchForm *searchForm;
     //    QLabel *dateInfo;

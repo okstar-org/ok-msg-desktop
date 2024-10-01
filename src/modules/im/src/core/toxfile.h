@@ -29,6 +29,7 @@ class FriendId;
 
 // 不要修改顺序和值
 enum class FileStatus {
+    WAIT = -1,
     INITIALIZING = 0,
     PAUSED = 1,
     TRANSMITTING = 2,

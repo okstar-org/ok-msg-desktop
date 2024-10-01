@@ -17,12 +17,13 @@
 #include <QClipboard>
 #include <QFileDialog>
 #include <QKeyEvent>
-#include <QMessageBox>
+
 #include <QSplitter>
 #include <QStringBuilder>
 #include <QTemporaryFile>
 #include <QtGlobal>
 #include "ChatInputForm.h"
+#include "base/MessageBox.h"
 #include "base/files.h"
 #include "base/images.h"
 #include "lib/settings/translator.h"
@@ -250,7 +251,6 @@ GenericChatForm::GenericChatForm(const ContactId* contact_,
     //  dateInfo->setAlignment(Qt::AlignHCenter);
     //  dateInfo->setVisible(false);
 
-
     // menu.addSeparator();
 
     // searchAction =
@@ -311,7 +311,6 @@ GenericChatForm::~GenericChatForm() {
     settings::Translator::unregister(this);
     //  delete searchForm;
 }
-
 
 QDateTime GenericChatForm::getLatestTime() const { return getTime(chatLog->getLatestLine()); }
 
@@ -415,7 +414,6 @@ void GenericChatForm::onChatContextMenuRequested(QPoint pos) {
     menu.exec(pos);
 }
 
-
 /**
  * @brief Show, is it needed to hide message author name or not
  * @param idx ChatLogIdx of the message
@@ -444,7 +442,6 @@ bool GenericChatForm::needsToHideName(ChatLogIdx idx) const {
     return currentItem->getSender() == prevItem->getSender() &&
            messagesTimeDiff < chatLog->repNameAfter;
 }
-
 
 void GenericChatForm::onCopyLogClicked() { chatLog->copySelectedText(); }
 
@@ -829,8 +826,7 @@ void GenericChatForm::onFileSend(const QFile& file) {
         qWarning() << "File is no existing!";
         return;
     }
-    qDebug() << "Sending file:" << file.fileName();
-    Nexus::getProfile()->getCoreFile()->sendFile(contact->getId(), file);
+    sendFile(file);
 }
 
 void GenericChatForm::onImageSend(const QPixmap& pix) {
@@ -842,14 +838,20 @@ void GenericChatForm::onImageSend(const QPixmap& pix) {
     }
 
     QFile file("./" + ok::base::UUID::make() + ".png");
-    // file.setAutoRemove(false);
-
     bool saved = ok::base::Images::SaveToFile(pix, file, "png");
     if (!saved) {
         qWarning() << "Unable to save to temp file" << file.fileName();
         return;
     }
+    file.remove();
+    sendFile(file);
+}
 
+void GenericChatForm::sendFile(const QFile& file) {
     qDebug() << "Sending image:" << file.fileName();
-    Nexus::getProfile()->getCoreFile()->sendFile(contact->getId(), file);
+    auto sent = Nexus::getProfile()->getCoreFile()->sendFile(contact->getId(), file);
+    if (!sent) {
+        ok::base::MessageBox::warning(
+                this, "", tr("The community version cannot send files to offline contacts!"));
+    }
 }

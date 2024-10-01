@@ -2802,7 +2802,9 @@ This ID includes the NoSpam code (in blue), and the checksum (in gray).</source>
         <translation>Занят</translation>
     </message>
     <message>
-        <source>toxcore failed to start with your proxy settings. qTox cannot run; please modify your settings and restart.</source>
+        <source>The core failed to start with your proxy settings. So cannot to run; please modify your settings and
+            restart.
+        </source>
         <comment>popup text</comment>
         <translation>Не удалось запустить toxcore с вашими настройками прокси, qTox не может работать; измените ваши настройки и перезапустите его.</translation>
     </message>
@@ -2913,7 +2915,7 @@ This ID includes the NoSpam code (in blue), and the checksum (in gray).</source>
         <translation>Предыдущая беседа</translation>
     </message>
     <message>
-        <source>toxcore failed to start, the application will terminate after you close this message.</source>
+        <source>The core failed to start, the application will terminate after you close this message.</source>
         <translation>Не удалось запустить toxcore, приложение будет завершено после того как вы закроете это сообщение.</translation>
     </message>
     <message>

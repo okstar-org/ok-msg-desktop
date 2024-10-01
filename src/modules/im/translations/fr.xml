@@ -2798,7 +2798,9 @@ Cet identifiant inclue le code anti-spam (en bleu) et la somme de contrôle (en 
         <translation>Occupé(e)</translation>
     </message>
     <message>
-        <source>toxcore failed to start with your proxy settings. qTox cannot run; please modify your settings and restart.</source>
+        <source>The core failed to start with your proxy settings. So cannot to run; please modify your settings and
+            restart.
+        </source>
         <comment>popup text</comment>
         <translation>ToxCore n&apos;a pas pu démarrer avec vos paramètres de proxy. qTox ne peut donc pas démarrer. Merci de modifier vos paramètres et de redémarrer l&apos;application.</translation>
     </message>
@@ -2857,7 +2859,7 @@ Cet identifiant inclue le code anti-spam (en bleu) et la somme de contrôle (en 
         <translation>Impossible de demander l&apos;ajout du contact</translation>
     </message>
     <message>
-        <source>toxcore failed to start, the application will terminate after you close this message.</source>
+        <source>The core failed to start, the application will terminate after you close this message.</source>
         <translation>toxcore n&apos;a pas réussi à démarrer. L&apos;application s&apos;arrêtera quand vous fermerez ce message.</translation>
     </message>
     <message>

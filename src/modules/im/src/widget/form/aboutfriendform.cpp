@@ -20,7 +20,7 @@
 #include "ui_aboutfriendform.h"
 
 #include <QFileDialog>
-#include <QMessageBox>
+
 #include <QPainter>
 #include <QStyledItemDelegate>
 #include <QSvgRenderer>

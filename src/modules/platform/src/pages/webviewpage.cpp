@@ -11,10 +11,11 @@
  */
 
 #include "webviewpage.h"
-#include <QMessageBox>
+
 #include <QWebEngineView>
 #include "application.h"
 #include "src/Backend.h"
+#include "src/base/MessageBox.h"
 
 ok::platform::WebviewPage::WebviewPage(const QUrl& url,
                                        const QString& type,
@@ -54,7 +55,7 @@ void ok::platform::WebviewPage::createContent(QWidget* parent) {
             [this, backend](int statusCode, const QByteArray& body) {
                 auto json = base::Jsons::toJSON(body);
                 auto msg = json.object().value("msg").toString();
-                QMessageBox::warning(nullptr, "Warning", msg);
+                ok::base::MessageBox::warning(nullptr, "Warning", msg);
                 backend->deleteLater();
                 webView->load(pageUrl);
             });

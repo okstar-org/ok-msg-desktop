@@ -19,7 +19,7 @@
 #include <QDesktopWidget>
 #include <QFileDialog>
 #include <QFont>
-#include <QMessageBox>
+
 #include <QRegularExpressionValidator>
 #include <QStyleFactory>
 #include <QTime>

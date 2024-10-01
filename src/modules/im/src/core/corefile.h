@@ -47,7 +47,7 @@ public:
 
     void handleAvatarOffer(QString friendId, QString fileId, bool accept);
 
-    void sendFile(QString friendId, const QFile& file);
+    bool sendFile(QString friendId, const QFile& file);
 
     void pauseResumeFile(QString friendId, QString fileId);
     void cancelFileSend(QString friendId, QString fileId);
@@ -75,19 +75,23 @@ public:
                          int m_sentBytes) override;
 signals:
     void fileSendStarted(ToxFile file);
+    void fileSendWait(ToxFile file);
+    void fileSendFailed(QString friendId, const QString& fname);
+
     void fileReceiveRequested(ToxFile file);
     void fileTransferAccepted(ToxFile file);
     void fileTransferCancelled(ToxFile file);
     void fileTransferFinished(ToxFile file);
     void fileTransferNoExisting(const QString& friendId, const QString& fileId);
-    void fileUploadFinished(const QString& path);
-    void fileDownloadFinished(const QString& path);
+
     void fileTransferPaused(ToxFile file);
     void fileTransferInfo(ToxFile file);
     void fileTransferRemotePausedUnpaused(ToxFile file, bool paused);
     void fileTransferBrokenUnbroken(ToxFile file, bool broken);
     void fileNameChanged(const FriendId& friendPk);
-    void fileSendFailed(QString friendId, const QString& fname);
+
+    void fileUploadFinished(const QString& path);
+    void fileDownloadFinished(const QString& path);
 
 private:
     CoreFile(Core*);

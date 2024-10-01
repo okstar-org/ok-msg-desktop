@@ -14,9 +14,10 @@
 
 #include <QApplication>
 #include <QFileDialog>
-#include <QMessageBox>
+
 #include <QPushButton>
 
+#include "src/base/MessageBox.h"
 #include "src/core/core.h"
 #include "src/persistence/settings.h"
 
@@ -75,16 +76,16 @@ bool ProfileImporter::importProfile(const QString& path) {
 
     QFileInfo info(path);
     if (!info.exists()) {
-        QMessageBox::warning(this, tr("File doesn't exist"), tr("Profile doesn't exist"),
-                             QMessageBox::Ok);
+        ok::base::MessageBox::warning(this, tr("File doesn't exist"), tr("Profile doesn't exist"),
+                                      QMessageBox::Ok);
         return false;
     }
 
     QString profile = info.completeBaseName();
 
     if (info.suffix() != "tox") {
-        QMessageBox::warning(this, tr("Ignoring non-Tox file", "popup title"),
-                             tr("Warning: You have chosen a file that is not a "
+        ok::base::MessageBox::warning(this, tr("Ignoring non-Tox file", "popup title"),
+                                      tr("Warning: You have chosen a file that is not a "
                                 "Tox save file; ignoring.",
                                 "popup text"),
                              QMessageBox::Ok);

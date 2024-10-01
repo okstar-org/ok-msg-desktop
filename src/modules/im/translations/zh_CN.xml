@@ -1179,6 +1179,10 @@
             <source>Export to file</source>
             <translation>导出到文件</translation>
         </message>
+        <message>
+            <source>The community version cannot send files to offline contacts!</source>
+            <translation>社区版无法给离线联系人发送文件！</translation>
+        </message>
     </context>
     <context>
         <name>ChatWidget</name>
@@ -2934,7 +2938,7 @@
             <translation>忙碌</translation>
         </message>
         <message>
-            <source>toxcore failed to start with your proxy settings. qTox cannot run; please modify your settings and
+            <source>The core failed to start with your proxy settings. So cannot to run; please modify your settings and
                 restart.
             </source>
             <comment>popup text</comment>
@@ -2987,7 +2991,7 @@
             <translation>状态</translation>
         </message>
         <message>
-            <source>toxcore failed to start, the application will terminate after you close this message.</source>
+            <source>The core failed to start, the application will terminate after you close this message.</source>
             <translation>toxcore 启动失败，应用程序将在您关闭此消息后终止。</translation>
         </message>
         <message>

@@ -18,7 +18,7 @@ extern "C" {
 #include <libswscale/swscale.h>
 }
 #include <QDebug>
-#include <QMessageBox>
+
 #include <QReadLocker>
 #include <QWriteLocker>
 #include <QtConcurrent/QtConcurrentRun>

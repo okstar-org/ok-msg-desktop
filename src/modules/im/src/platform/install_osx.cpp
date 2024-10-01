@@ -15,7 +15,7 @@
 #include <QDebug>
 #include <QDir>
 #include <QFileInfo>
-#include <QMessageBox>
+
 #include <QProcess>
 #include <QStandardPaths>
 

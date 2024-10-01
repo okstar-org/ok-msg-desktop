@@ -13,7 +13,7 @@
 #include "loginscreen.h"
 #include <QDebug>
 #include <QDialog>
-#include <QMessageBox>
+
 #include <QToolButton>
 #include "lib/settings/translator.h"
 #include "src/lib/settings/style.h"

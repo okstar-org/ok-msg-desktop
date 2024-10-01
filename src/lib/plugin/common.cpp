@@ -23,11 +23,11 @@
 #include <QApplication>
 #include <QBoxLayout>
 #include <QDesktopWidget>
+#include <QDialog>
 #include <QDir>
 #include <QFile>
 #include <QLibrary>
 #include <QMenu>
-#include <QMessageBox>
 #include <QObject>
 #include <QPaintDevice>
 #include <QProcess>

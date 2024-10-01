@@ -2855,11 +2855,11 @@
             <translation>ステータス</translation>
         </message>
         <message>
-            <source>toxcore failed to start, the application will terminate after you close this message.</source>
+            <source>The core failed to start, the application will terminate after you close this message.</source>
             <translation>toxcore の開始に失敗しました。このウィンドウを閉じるとプログラムは強制終了します。</translation>
         </message>
         <message>
-            <source>toxcore failed to start with your proxy settings. qTox cannot run; please modify your settings and
+            <source>The core failed to start with your proxy settings. So cannot to run; please modify your settings and
                 restart.
             </source>
             <comment>popup text</comment>

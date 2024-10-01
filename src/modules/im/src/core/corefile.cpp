@@ -109,7 +109,7 @@ unsigned CoreFile::corefileIterationInterval() {
     return idleInterval;
 }
 
-void CoreFile::sendFile(QString friendId, const QFile& file_) {
+bool CoreFile::sendFile(QString friendId, const QFile& file_) {
     qDebug() << __func__ << friendId << file_.fileName();
 
     QMutexLocker{coreLoopLock};
@@ -134,13 +134,10 @@ void CoreFile::sendFile(QString friendId, const QFile& file_) {
     addFile(file);
     qDebug() << "The file info is:" << file.toString();
     bool y = messengerFile->fileSendToFriend(friendId, file.toIMFile());
-    if (!y) {
-        qWarning() << "sendFile: Sending file is failed.";
-        emit fileSendFailed(friendId, fileInfo.fileName());
-        return;
+    if (y) {
+        emit fileSendStarted(file);
     }
-
-    emit fileSendStarted(file);
+    return y;
 }
 
 void CoreFile::pauseResumeFile(QString friendId, QString fileId) {

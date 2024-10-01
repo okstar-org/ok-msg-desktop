@@ -2796,7 +2796,9 @@ Este ID incluye el código NoSpam (en azul) y la suma de comprobación (en gris)
         <translation>Ocupado</translation>
     </message>
     <message>
-        <source>toxcore failed to start with your proxy settings. qTox cannot run; please modify your settings and restart.</source>
+        <source>The core failed to start with your proxy settings. So cannot to run; please modify your settings and
+            restart.
+        </source>
         <comment>popup text</comment>
         <translation>Se produjo un error al iniciar toxcore con la configuración actual de proxy. Por favor modifica la configuración y reinicia qTox.</translation>
     </message>
@@ -2905,7 +2907,7 @@ Este ID incluye el código NoSpam (en azul) y la suma de comprobación (en gris)
         <translation>No se pudo solicitar amistad</translation>
     </message>
     <message>
-        <source>toxcore failed to start, the application will terminate after you close this message.</source>
+        <source>The core failed to start, the application will terminate after you close this message.</source>
         <translation>Se produjo un error al iniciar toxcore; el programa terminará al cerrar este mensaje.</translation>
     </message>
     <message>

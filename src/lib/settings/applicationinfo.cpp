@@ -25,7 +25,7 @@
 #include <QFile>
 #include <QLatin1String>
 #include <QLocale>
-#include <QMessageBox>
+
 #include <QSettings>
 #include <QStandardPaths>
 #include <QString>

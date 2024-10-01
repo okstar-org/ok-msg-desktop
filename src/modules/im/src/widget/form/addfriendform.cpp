@@ -16,7 +16,7 @@
 #include <QErrorMessage>
 #include <QFileDialog>
 #include <QFont>
-#include <QMessageBox>
+
 #include <QRegularExpression>
 #include <QScrollArea>
 #include <QSignalMapper>

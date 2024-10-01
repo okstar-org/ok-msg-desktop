@@ -44,6 +44,8 @@ set(${PROJECT_NAME}_SOURCES
     roundedmaskcontainer.cpp
 		verticalonlyscroller.h
 		verticalonlyscroller.cpp
+		MessageBox.h
+		MessageBox.cpp
 )
 
 if(WIN32)

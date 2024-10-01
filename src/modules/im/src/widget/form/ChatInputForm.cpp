@@ -22,6 +22,7 @@
 #include <QVBoxLayout>
 
 #include "lib/settings/style.h"
+#include "src/base/MessageBox.h"
 #include "src/persistence/profile.h"
 #include "src/widget/emoticonswidget.h"
 #include "src/widget/tool/screenshotgrabber.h"
@@ -34,7 +35,7 @@
 #include <src/nexus.h>
 #include <src/widget/tool/chattextedit.h>
 #include <QFileDialog>
-#include <QMessageBox>
+
 #include "lib/plugin/pluginmanager.h"
 
 #include <src/persistence/smileypack.h>
@@ -225,15 +226,15 @@ void ChatInputForm::onAttachClicked() {
         QFile file(path);
 
         if (!file.exists() || !file.open(QIODevice::ReadOnly)) {
-            QMessageBox::warning(this, tr("Unable to open"),
-                                 tr("Wasn't able to open %1").arg(path));
+            ok::base::MessageBox::warning(this, tr("Unable to open"),
+                                          tr("Wasn't able to open %1").arg(path));
             continue;
         }
 
         file.close();
         if (file.isSequential()) {
-            QMessageBox::critical(this, tr("Bad idea"),
-                                  tr("You're trying to send a sequential file, "
+            ok::base::MessageBox::critical(this, tr("Bad idea"),
+                                           tr("You're trying to send a sequential file, "
                                      "which is not going to work!"));
             continue;
         }

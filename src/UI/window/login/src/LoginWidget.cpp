@@ -12,7 +12,6 @@
 
 #include "LoginWidget.h"
 
-#include <QMessageBox>
 #include <QPaintEvent>
 #include <QShortcut>
 #include <QTranslator>

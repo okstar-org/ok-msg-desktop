@@ -312,6 +312,22 @@ void IM::onConnect() {
     //  fetchVCard(qstring(self().bare()));
     //  emit selfIdChanged(qstring(_client->username()));
 
+    //   enable carbons（多终端支持）
+    IQ iq(IQ::IqType::Set, JID(), "server");
+    iq.addExtension(new Carbons(gloox::Carbons::Enable));
+    _client->send(iq);
+
+    // request ext server disco
+    IQ iq2(gloox::IQ::Get, JID(_host.toStdString()));
+    auto t = iq2.tag();
+    t->addChild(gloox::ExtDisco::newRequest());
+    _client->send(t);
+
+    auto rosterManager = _client->rosterManager();
+    if (!rosterManager) {
+        rosterManager = enableRosterManager();
+    }
+
     emit connectResult(IMConnectStatus::CONNECTED);
     emit started();
 
@@ -460,16 +476,7 @@ gloox::RosterManager* IM::enableRosterManager() {
     auto pRosterManager = _client->enableRoster();
     pRosterManager->registerRosterListener(this);
     return pRosterManager;
-    //   enable carbons（多终端支持）
-    IQ iq(IQ::IqType::Set, JID(), "server");
-    iq.addExtension(new Carbons(gloox::Carbons::Enable));
-    _client->send(iq);
 
-    // request ext server disco
-    IQ iq2(gloox::IQ::Get, JID(_host.toStdString()));
-    auto t = iq2.tag();
-    t->addChild(gloox::ExtDisco::newRequest());
-    _client->send(t);
     //
     //  /**
     //   * Registration

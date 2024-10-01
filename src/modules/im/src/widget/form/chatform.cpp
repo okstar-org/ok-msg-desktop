@@ -11,6 +11,12 @@
  */
 
 #include "chatform.h"
+#include <QApplication>
+#include <QClipboard>
+#include <QFileDialog>
+#include <QFileInfo>
+#include "lib/settings/translator.h"
+#include "src/base/MessageBox.h"
 #include "src/chatlog/chatlinecontentproxy.h"
 #include "src/chatlog/chatlog.h"
 #include "src/chatlog/chatmessage.h"
@@ -19,6 +25,7 @@
 #include "src/core/core.h"
 #include "src/core/coreav.h"
 #include "src/core/corefile.h"
+#include "src/lib/settings/style.h"
 #include "src/model/friend.h"
 #include "src/model/status.h"
 #include "src/nexus.h"
@@ -30,20 +37,12 @@
 #include "src/widget/chatformheader.h"
 #include "src/widget/form/loadhistorydialog.h"
 #include "src/widget/maskablepixmapwidget.h"
-// #include "src/widget/searchform.h"
-#include "lib/settings/translator.h"
-#include "src/lib/settings/style.h"
 #include "src/widget/tool/callconfirmwidget.h"
 #include "src/widget/tool/chattextedit.h"
 #include "src/widget/tool/croppinglabel.h"
 #include "src/widget/tool/screenshotgrabber.h"
 #include "src/widget/widget.h"
 
-#include <QApplication>
-#include <QClipboard>
-#include <QFileDialog>
-#include <QFileInfo>
-#include <QMessageBox>
 #include <QMimeData>
 #include <QPushButton>
 #include <QScrollBar>
@@ -151,8 +150,8 @@ void ChatForm::onFileNameChanged(const FriendId& friendPk) {
         return;
     }
 
-    QMessageBox::warning(this, tr("Filename contained illegal characters"),
-                         tr("Illegal characters have been changed to _ \n"
+    ok::base::MessageBox::warning(this, tr("Filename contained illegal characters"),
+                                  tr("Illegal characters have been changed to _ \n"
                             "so you can save the file on windows."));
 }
 
@@ -229,16 +228,16 @@ void ChatForm::dropEvent(QDropEvent* ev) {
             info.setFile(url.toLocalFile());
             file.setFileName(info.absoluteFilePath());
             if (!file.exists() || !file.open(QIODevice::ReadOnly)) {
-                QMessageBox::warning(this, tr("Unable to open"),
-                                     tr("qTox wasn't able to open %1").arg(fileName));
+                ok::base::MessageBox::warning(this, tr("Unable to open"),
+                                              tr("qTox wasn't able to open %1").arg(fileName));
                 continue;
             }
         }
 
         file.close();
         if (file.isSequential()) {
-            QMessageBox::critical(nullptr, tr("Bad idea"),
-                                  tr("You're trying to send a sequential file, "
+            ok::base::MessageBox::critical(nullptr, tr("Bad idea"),
+                                           tr("You're trying to send a sequential file, "
                                      "which is not going to work!"));
             continue;
         }
@@ -277,8 +276,9 @@ void ChatForm::sendImage(const QPixmap& pixmap) {
         CoreFile* coreFile = CoreFile::getInstance();
         coreFile->sendFile(f->getId(), file);
     } else {
-        QMessageBox::warning(this,
-                             tr("Failed to open temporary file", "Temporary file for screenshot"),
+        ok::base::MessageBox::warning(
+                this,
+                tr("Failed to open temporary file", "Temporary file for screenshot"),
                              tr("qTox wasn't able to save the screenshot"));
     }
 }

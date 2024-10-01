@@ -18,9 +18,10 @@
 #include <QDialogButtonBox>
 #include <QInputDialog>
 #include <QLabel>
-#include <QMessageBox>
+
 #include <QPushButton>
 #include <QThread>
+#include "base/MessageBox.h"
 #include "src/nexus.h"
 #include "widget.h"
 
@@ -129,7 +130,7 @@ void GUI::showError(const QString& title, const QString& msg) {
         // If the GUI hasn't started yet and we're on the main thread,
         // we still want to be able to show error messages
         if (!Nexus::getDesktopGUI())
-            QMessageBox::critical(nullptr, title, msg);
+            ok::base::MessageBox::critical(nullptr, title, msg);
         else
             getInstance()._showError(title, msg);
     } else {

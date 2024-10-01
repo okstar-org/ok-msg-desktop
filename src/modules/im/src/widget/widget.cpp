@@ -18,7 +18,7 @@
 #include <QDebug>
 #include <QDesktopServices>
 #include <QDesktopWidget>
-#include <QMessageBox>
+
 #include <QMouseEvent>
 #include <QPainter>
 #include <QShortcut>
@@ -36,6 +36,7 @@
 #include "Bus.h"
 #include "ChatWidget.h"
 #include "application.h"
+#include "base/MessageBox.h"
 #include "base/OkSettings.h"
 #include "base/Page.h"
 #include "base/SvgUtils.h"
@@ -429,25 +430,21 @@ void Widget::onDisconnected() {
 }
 
 void Widget::onFailedToStartCore() {
-    QMessageBox critical(this);
-    critical.setText(
-            tr("toxcore failed to start, the application will terminate "
-               "after you close this message."));
-    critical.setIcon(QMessageBox::Critical);
-    critical.exec();
+    ok::base::MessageBox::critical(this, "",
+                                   tr("The core failed to start, the application will terminate "
+                                      "after you close this message."));
     qApp->exit(EXIT_FAILURE);
 }
 
 void Widget::onBadProxyCore() {
     settings.setProxyType(Settings::ProxyType::ptNone);
-    QMessageBox critical(this);
-    critical.setText(
-            tr("toxcore failed to start with your proxy settings. "
-               "qTox cannot run; please modify your "
-               "settings and restart.",
-               "popup text"));
-    critical.setIcon(QMessageBox::Critical);
-    critical.exec();
+
+    ok::base::MessageBox::critical(this, "",
+                                   tr("The core failed to start with your proxy settings. "
+                                      "So cannot to run; please modify your "
+                                      "settings and restart.",
+                                      "popup text"));
+
     onShowSettings();
 }
 
