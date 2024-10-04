@@ -20,6 +20,7 @@
 #include <QStandardPaths>
 
 #include <unistd.h>
+#include <QMessageBox>
 
 void osx::moveToAppFolder() {
     if (qApp->applicationDirPath() != "/Applications/qtox.app/Contents/MacOS") {
