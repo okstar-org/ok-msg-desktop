@@ -131,8 +131,6 @@ Widget::Widget(IAudioControl& audio, QWidget* parent)  //
     connect(ok::Application::Instance()->bus(), &ok::Bus::languageChanged,
             [](QString locale0) { settings::Translator::translate(OK_IM_MODULE, locale0); });
 
-    qRegisterMetaType<ToxFile>("ToxFile");
-
     QIcon themeIcon = QIcon::fromTheme("qtox");
     if (!themeIcon.isNull()) {
         setWindowIcon(themeIcon);

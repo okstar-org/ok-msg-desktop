@@ -454,8 +454,7 @@ void SessionChatLog::onFileUpdated(const FriendId& friendId, const ToxFile& file
     if (toxFileIsComplete(file.status)) {
         currentFileTransfers.erase(fileIt);
     }
-
-    qDebug() << "file messageIdx" << messageIdx.get();
+    //    qDebug() << "file messageIdx" << messageIdx.get();
     emit this->itemUpdated(messageIdx);
 }
 

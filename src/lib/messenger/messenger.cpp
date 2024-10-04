@@ -71,7 +71,7 @@ void Messenger::start() {
 }
 
 void Messenger::sendChatState(const QString& friendId, int state) {
-    _im->sendChatState(friendId, static_cast<ChatStateType>(state));
+    _im->sendChatState(friendId, static_cast<gloox::ChatStateType>(state));
 }
 
 void Messenger::onConnectResult(lib::messenger::IMConnectStatus status) {
@@ -190,7 +190,7 @@ bool Messenger::connectIM() {
     });
 
     connect(_im, &IM::receiveFriendAliasChanged, this,
-            [&](const JID& friendId, const std::string& alias) {
+            [&](const gloox::JID& friendId, const std::string& alias) {
                 for (auto handler : friendHandlers) {
                     handler->onFriendAliasChanged(IMContactId(friendId.bareJID()), qstring(alias));
                 }
@@ -205,7 +205,7 @@ bool Messenger::connectIM() {
             });
 
     connect(_im, &IM::groupSubjectChanged, this,
-            [&](const JID& group, const std::string& subject) -> void {
+            [&](const gloox::JID& group, const std::string& subject) -> void {
                 for (auto handler : groupHandlers) {
                     handler->onGroupSubjectChanged(qstring(group.bare()), qstring(subject));
                 }
@@ -298,7 +298,7 @@ void Messenger::receiptReceived(const QString& f, QString receipt) {
 
 void Messenger::sendFriendRequest(const QString& f, const QString& nick, const QString& message) {
     qDebug() << __func__ << f << nick << message;
-    _im->addFriend(JID(stdstring(f)), nick, message);
+    _im->addFriend(gloox::JID(stdstring(f)), nick, message);
 }
 
 void Messenger::acceptFriendRequest(const QString& f) { _im->acceptFriendRequest(f); }
@@ -307,14 +307,16 @@ void Messenger::rejectFriendRequest(const QString& f) { _im->rejectFriendRequest
 
 void Messenger::getFriendVCard(const QString& f) { _im->fetchFriendVCard(f); }
 
-bool Messenger::removeFriend(const QString& f) { return _im->removeFriend(JID(f.toStdString())); }
+bool Messenger::removeFriend(const QString& f) {
+    return _im->removeFriend(gloox::JID(f.toStdString()));
+}
 
 size_t Messenger::getFriendCount() { return _im->getRosterCount(); }
 
 void Messenger::getFriendList(std::list<IMFriend>& list) { _im->getRosterList(list); }
 
 void Messenger::setFriendAlias(const QString& f, const QString& alias) {
-    _im->setFriendAlias(JID(stdstring(f)), stdstring(alias));
+    _im->setFriendAlias(gloox::JID(stdstring(f)), stdstring(alias));
 }
 
 IMStatus Messenger::getFriendStatus(const QString& f) { return _im->getFriendStatus(f); }
@@ -384,7 +386,7 @@ void Messenger::onEncryptedMessage(QString xml) {
     auto msg = IMMessage{MsgType::Chat, id, from, to, body, QDateTime::currentDateTime()};
 
     for (auto handler : friendHandlers) {
-        handler->onFriendMessage(qstring(JID(stdstring(from)).bareJID().bare()), msg);
+        handler->onFriendMessage(qstring(gloox::JID(stdstring(from)).bareJID().bare()), msg);
     }
 #endif
 }
@@ -392,7 +394,7 @@ void Messenger::onEncryptedMessage(QString xml) {
 void Messenger::loadGroupList() { _im->loadGroupList(); }
 
 QString Messenger::createGroup(const QString& groupId, const QString& groupName) {
-    JID self = _im->self();
+    gloox::JID self = _im->self();
     self.setUsername(stdstring(groupId));
     self.setResource(stdstring(groupName));
     self.setServer("conference." + self.server());
@@ -402,7 +404,8 @@ QString Messenger::createGroup(const QString& groupId, const QString& groupName)
 }
 
 bool Messenger::inviteGroup(const IMContactId& group, const IMContactId& f) {
-    return _im->inviteToRoom(JID(stdstring(group.toString())), JID(stdstring(f.toString())));
+    return _im->inviteToRoom(gloox::JID(stdstring(group.toString())),
+                             gloox::JID(stdstring(f.toString())));
 }
 
 bool Messenger::leaveGroup(const QString& group) { return _im->leaveGroup(group); }
@@ -446,7 +449,7 @@ void Messenger::onGroupReceived(QString groupId, QString name) {
 
 // Call
 MessengerCall::MessengerCall(Messenger* messenger, QObject* parent) {
-    call = new ::lib::messenger::IMCall(messenger->im(), this);
+    call = new IMCall(messenger->im(), this);
     qDebug() << "Create imCall =>" << call;
 }
 

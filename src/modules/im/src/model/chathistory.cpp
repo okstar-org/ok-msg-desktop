@@ -232,7 +232,7 @@ void ChatHistory::onFileUpdated(const FriendId& sender, const ToxFile& file) {
     if (canUseHistory()) {
         switch (file.status) {
             case FileStatus::INITIALIZING: {
-                history->addNewFileMessage(file, {});
+                history->addNewFileMessage(file);
                 break;
             }
             case FileStatus::CANCELED:

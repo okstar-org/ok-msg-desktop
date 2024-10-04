@@ -143,7 +143,7 @@ void Nexus::start(std::shared_ptr<ok::session::AuthSession> session) {
     qRegisterMetaType<size_t>("size_t");
     qRegisterMetaType<QPixmap>("QPixmap");
     qRegisterMetaType<Profile*>("Profile*");
-    qRegisterMetaType<ToxFile>("ToxFile");
+
     qRegisterMetaType<FileDirection>("FileDirection");
     qRegisterMetaType<FileStatus>("FileStatus");
     qRegisterMetaType<std::shared_ptr<VideoFrame>>("std::shared_ptr<VideoFrame>");

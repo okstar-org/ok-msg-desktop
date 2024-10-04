@@ -12,6 +12,7 @@
 
 #include "IMFile.h"
 #include <bytestream.h>
+#include <gloox.h>
 #include <inbandbytestream.h>
 #include <jinglefiletransfer.h>
 #include <jingleibb.h>
@@ -39,7 +40,7 @@ QDebug& operator<<(QDebug& debug, const File& f) {
 }
 
 IMFileSession::IMFileSession(const QString& sId,
-                             Jingle::Session* session_,
+                             gloox::Jingle::Session* session_,
                              const IMPeerId& peerId,
                              IMFile* sender_,
                              File* file)
@@ -94,49 +95,42 @@ IMFile::~IMFile() { qDebug() << __func__; }
 
 void IMFile::parse(const gloox::Jingle::Session::Jingle* jingle,
                    ortc::OJingleContentFile& content) {
-    auto sId = (jingle->sid());
+    const auto& sId = (jingle->sid());
+    qDebug() << "parse jingle:" << qstring(sId);
 
+    const gloox::Jingle::Plugin* c = nullptr;
     for (auto p : jingle->plugins()) {
         auto pt = p->pluginType();
         switch (pt) {
             case gloox::Jingle::JinglePluginType::PluginContent: {
-                auto file = p->findPlugin<gloox::Jingle::FileTransfer>(
-                        gloox::Jingle::PluginFileTransfer);
-                auto ibb = p->findPlugin<gloox::Jingle::IBB>(gloox::Jingle::PluginIBB);
-                if (file && ibb) {
-                    for (auto& f : file->files()) {
-                        auto id = (ibb->sid());
-                        qDebug() << "receive file:" << qstring(id) << qstring(sId);
-                        ortc::OFile file0 = {.id = id,
-                                             .sId = sId,
-                                             .date = f.date,
-                                             .hash = f.hash,
-                                             .hash_algo = f.hash_algo,
-                                             .size = f.size,
-                                             .range = f.range,
-                                             .offset = f.offset};
-
-                        file0.name = f.name;
-
-                        content.contents.push_back(file0);
-
-                        // file0.status = FileStatus::INITIALIZING,
-                        // file0.direction = FileDirection::RECEIVING
-
-                        // qDebug() << "receive file:" << file0->sId;
-                        // for (auto h : fileHandlers) {
-                        //     h->onFileRequest(peerId.toFriendId(), *file0);
-                        // }
-
-                        //         // 创建session
-                        // auto s = new IMFileSession(sId, session, peerId, this, file0);
-                        // m_fileSessionMap.insert(sId, s);
-                    }
-                }
+                c = p;
                 break;
             }
-            default: {
-            }
+            default:
+                break;
+        }
+    }
+
+    if (!c) {
+        return;
+    }
+
+    auto file = c->findPlugin<gloox::Jingle::FileTransfer>(gloox::Jingle::PluginFileTransfer);
+    auto ibb = c->findPlugin<gloox::Jingle::IBB>(gloox::Jingle::PluginIBB);
+    if (file && ibb) {
+        for (auto& f : file->files()) {
+            auto id = (ibb->sid());
+            qDebug() << "file:" << qstring(id) << "sId:" << qstring(sId);
+            ortc::OFile file0 = {.id = id,
+                                 .sId = sId,
+                                 .date = f.date,
+                                 .hash = f.hash,
+                                 .hash_algo = f.hash_algo,
+                                 .size = f.size,
+                                 .range = f.range,
+                                 .offset = f.offset};
+            file0.name = f.name;
+            content.contents.push_back(file0);
         }
     }
 }
@@ -144,32 +138,32 @@ void IMFile::parse(const gloox::Jingle::Session::Jingle* jingle,
 void IMFile::onImStartedFile() {
     auto client = _im->getClient();
     assert(client);
-    client->registerIqHandler(this, ExtIBB);
-
-    // session manager
-    _sessionManager = std::make_unique<gloox::Jingle::SessionManager>(client, this);
-    _sessionManager->registerPlugin(new gloox::Jingle::Content());
+    client->registerIqHandler(this, gloox::ExtIBB);
 
     // jingle file
     auto disco = client->disco();
-    disco->addFeature(XMLNS_JINGLE_FILE_TRANSFER);
-    disco->addFeature(XMLNS_JINGLE_FILE_TRANSFER4);
-    disco->addFeature(XMLNS_JINGLE_FILE_TRANSFER5);
-    disco->addFeature(XMLNS_JINGLE_FILE_TRANSFER_MULTI);
-    disco->addFeature(XMLNS_JINGLE_IBB);
-    _sessionManager->registerPlugin(new gloox::Jingle::FileTransfer());
-    _sessionManager->registerPlugin(new gloox::Jingle::IBB());
+    disco->addFeature(gloox::XMLNS_JINGLE_FILE_TRANSFER);
+    disco->addFeature(gloox::XMLNS_JINGLE_FILE_TRANSFER4);
+    disco->addFeature(gloox::XMLNS_JINGLE_FILE_TRANSFER5);
+    disco->addFeature(gloox::XMLNS_JINGLE_FILE_TRANSFER_MULTI);
+    disco->addFeature(gloox::XMLNS_JINGLE_IBB);
+
+    // session manager
+    _im->sessionManager()->registerPlugin(new gloox::Jingle::Content());
+    _im->sessionManager()->registerPlugin(new gloox::Jingle::FileTransfer());
+    _im->sessionManager()->registerPlugin(new gloox::Jingle::IBB());
+    _im->addSessionHandler(this);
 }
 
 void IMFile::addFileHandler(FileHandler* handler) { fileHandlers.push_back(handler); }
 
-void IMFile::fileRejectRequest(QString friendId, const File& file) {
+void IMFile::fileRejectRequest(const QString& friendId, const File& file) {
     auto sId = file.sId;
     qDebug() << __func__ << sId;
     rejectFileRequest(friendId, sId);
 }
 
-void IMFile::fileAcceptRequest(QString friendId, const File& file) {
+void IMFile::fileAcceptRequest(const QString& friendId, const File& file) {
     auto sId = file.sId;
     qDebug() << __func__ << "sId:" << sId;
     acceptFileRequest(friendId, file);
@@ -198,7 +192,7 @@ bool IMFile::fileSendToFriend(const QString& f, const File& file) {
         return false;
     }
 
-    JID jid(bare);
+    gloox::JID jid(bare);
     for (auto& r : resources) {
         jid.setResource(r);
         sendFileToResource(jid, file);
@@ -242,7 +236,6 @@ void IMFile::clearSessionInfo(const QString& sId) {
         return;
     }
     m_fileSessionMap.remove(sId);
-    delete sess;
 }
 
 /**
@@ -262,10 +255,7 @@ void IMFile::rejectFileRequest(const QString& friendId, const QString& sId) {
 }
 
 void IMFile::acceptFileRequest(const QString& friendId, const File& file) {
-    qDebug() << __func__ << "file:" << file.name;
-    qDebug() << __func__ << "sId:" << file.sId;
-    qDebug() << __func__ << "fileId:" << file.id;
-
+    qDebug() << __func__ << "file:" << file.name << "sId:" << file.sId;
     auto session = m_fileSessionMap.value(file.sId);
     if (!session) {
         qWarning() << "Unable to find session sId:" << file.sId;
@@ -275,20 +265,20 @@ void IMFile::acceptFileRequest(const QString& friendId, const File& file) {
     // 协议：https://xmpp.org/extensions/xep-0234.html#requesting
     gloox::Jingle::PluginList pluginList;
 
-    Jingle::FileTransfer::FileList files;
-    files.push_back(
-            Jingle::FileTransfer::File{.name = stdstring(file.name), .size = (long)file.size});
+    gloox::Jingle::FileTransfer::FileList files;
+    files.push_back(gloox::Jingle::FileTransfer::File{.name = stdstring(file.name),
+                                                      .size = (long)file.size});
 
-    auto ftf = new Jingle::FileTransfer(gloox::Jingle::FileTransfer::Request, files);
+    auto ftf = new gloox::Jingle::FileTransfer(gloox::Jingle::FileTransfer::Request, files);
 
-    auto ibb = new Jingle::IBB(stdstring(file.txIbb.sid), file.txIbb.blockSize);
+    auto ibb = new gloox::Jingle::IBB(stdstring(file.txIbb.sid), file.txIbb.blockSize);
 
     pluginList.emplace_back(ftf);
     pluginList.emplace_back(ibb);
 
-    auto c = new Jingle::Content("file", pluginList);
-    auto js = session->getJingleSession();
-    if (js) js->sessionAccept(c);
+    auto c = new gloox::Jingle::Content("file", pluginList);
+    auto pSession = session->getJingleSession();
+    if (pSession) pSession->sessionAccept(c);
 }
 
 void IMFile::finishFileRequest(const QString& friendId, const QString& sId) {
@@ -321,7 +311,7 @@ bool IMFile::sendFile(const QString& friendId, const File& file) {
         return false;
     }
 
-    JID jid(bare);
+    gloox::JID jid(bare);
     for (auto& r : resources) {
         jid.setResource(r);
         sendFileToResource(jid, file);
@@ -330,9 +320,9 @@ bool IMFile::sendFile(const QString& friendId, const File& file) {
     return true;
 }
 
-bool IMFile::sendFileToResource(const JID& jid, const File& file) {
+bool IMFile::sendFileToResource(const gloox::JID& jid, const File& file) {
     qDebug() << __func__ << qstring(jid.full()) << "sId:" << file.sId;
-    auto session = _sessionManager->createSession(jid, this, stdstring(file.sId));
+    auto session = getIM()->createSession(jid, stdstring(file.sId), this);
     if (!session) {
         qDebug() << "Can not create session!";
         return false;
@@ -350,11 +340,11 @@ bool IMFile::sendFileToResource(const JID& jid, const File& file) {
     pl.emplace_back(ft);
 
     // ibb
-    auto ibb = new Jingle::IBB(stdstring(file.id), 4096);
+    auto ibb = new gloox::Jingle::IBB(stdstring(file.id), 4096);
     pl.emplace_back(ibb);
 
     // content
-    auto jc = new Jingle::Content("offer-a-file", pl);
+    auto jc = new gloox::Jingle::Content("offer-a-file", pl);
     session->sessionInitiate(jc);
 
     // 缓存文件
@@ -365,12 +355,15 @@ bool IMFile::sendFileToResource(const JID& jid, const File& file) {
     return true;
 }
 
-// 对方接收文件
-void IMFile::sessionOnAccept(const QString& sId,
-                             Jingle::Session* session,
-                             const IMPeerId& peerId,
-                             const Jingle::Session::Jingle* jingle) {
-    if (isInvalidSid(sId)) return;
+void IMFile::doSessionAccept(gloox::Jingle::Session* session,
+                             const gloox::Jingle::Session::Jingle* jingle,
+                             const lib::messenger::IMPeerId& peerId) {
+    auto sId = qstring(session->sid());
+    qDebug() << __func__ << "sId:" << sId;
+    if (isInvalidSid(sId)) {
+        qWarning() << "No file session";
+        return;
+    }
 
     ortc::OJingleContentFile cfile;
     cfile.sdpType = ortc::JingleSdpType::Answer;
@@ -383,13 +376,12 @@ void IMFile::sessionOnAccept(const QString& sId,
 
     for (auto h : fileHandlers) {
         auto& f = cfile.contents.at(0);
-        qDebug() << "receive file:" << qstring(f.id) << qstring(f.name);
+        qDebug() << "file id:" << qstring(f.id) << "name:" << qstring(f.name);
         File file{.id = qstring(f.id),
                   .sId = sId,
                   .name = qstring(f.name),
-                  .status = FileStatus::INITIALIZING,
+                  .status = FileStatus::TRANSMITTING,
                   .direction = FileDirection::RECEIVING};
-
         h->onFileRequest(peerId.toFriendId(), file);
     }
 
@@ -407,62 +399,35 @@ void IMFile::sessionOnAccept(const QString& sId,
     }
 }
 
-void IMFile::sessionOnTerminate(const QString& sId, const IMPeerId& peerId) {
-    if (isInvalidSid(sId)) return;
-
-    clearSessionInfo(sId);
-}
-
-void IMFile::sessionOnInitiate(const QString& sId,
-                               Jingle::Session* session,
-                               const Jingle::Session::Jingle* jingle,
+void IMFile::doSessionInitiate(gloox::Jingle::Session* session,
+                               const gloox::Jingle::Session::Jingle* jingle,
                                const IMPeerId& peerId) {
-    qDebug() << __func__ << "receive file:" << sId;
-    bool isFile = false;
-    for (auto p : jingle->plugins()) {
-        auto pt = p->pluginType();
-        switch (pt) {
-            case gloox::Jingle::JinglePluginType::PluginContent: {
-                auto file = p->findPlugin<gloox::Jingle::FileTransfer>(
-                        gloox::Jingle::PluginFileTransfer);
-                auto ibb = p->findPlugin<gloox::Jingle::IBB>(gloox::Jingle::PluginIBB);
-                if (file && ibb) {
-                    for (auto f : file->files()) {
-                        isFile = true;
+    auto sId = qstring(session->sid());
+    qDebug() << __func__ << "sId:" << sId;
 
-                        auto id = qstring(ibb->sid());
-                        qDebug() << "receive file:" << id << sId;
-                        File* file0 = new File{.id = id,
-                                               .sId = sId,
-                                               .name = qstring(f.name),
-                                               .path = {},
-                                               .size = (quint64)f.size,
-                                               .status = FileStatus::INITIALIZING,
-                                               .direction = FileDirection::RECEIVING};
-                        qDebug() << "receive file:" << file0->sId;
-                        for (auto h : fileHandlers) {
-                            h->onFileRequest(peerId.toFriendId(), *file0);
-                        }
+    ortc::OJingleContentFile cfile;
+    cfile.sdpType = ortc::JingleSdpType::Offer;
+    parse(jingle, cfile);
 
-                        // 创建session
-                        auto s = new IMFileSession(sId, session, peerId, this, file0);
-                        m_fileSessionMap.insert(sId, s);
-                    }
-                }
-                break;
-            }
-            default: {
-            }
+    for (auto& f : cfile.contents) {
+        File* file0 = new File{.id = qstring(f.id),
+                               .sId = qstring(f.sId),
+                               .name = qstring(f.name),
+                               .path = {},
+                               .size = (quint64)f.size,
+                               .status = FileStatus::INITIALIZING,
+                               .direction = FileDirection::RECEIVING};
+        for (auto h : fileHandlers) {
+            h->onFileRequest(peerId.toFriendId(), *file0);
         }
-    }
-
-    if (!isFile) {
-        addInvalidSid(sId);
+        // 创建session
+        auto s = new IMFileSession(sId, session, peerId, this, file0);
+        m_fileSessionMap.insert(sId, s);
     }
 }
 
-bool IMFile::handleIq(const IQ& iq) {
-    const auto* ibb = iq.findExtension<InBandBytestream::IBB>(ExtIBB);
+bool IMFile::handleIq(const gloox::IQ& iq) {
+    const auto* ibb = iq.findExtension<gloox::InBandBytestream::IBB>(gloox::ExtIBB);
     if (!ibb) {
         return false;
     }
@@ -471,11 +436,11 @@ bool IMFile::handleIq(const IQ& iq) {
     qDebug() << __func__ << QString("IBB stream id:%1").arg(qstring(ibb->sid()));
 
     switch (ibb->type()) {
-        case InBandBytestream::IBBOpen: {
+        case gloox::InBandBytestream::IBBOpen: {
             qDebug() << __func__ << QString("Open");
             break;
         }
-        case InBandBytestream::IBBData: {
+        case gloox::InBandBytestream::IBBData: {
             auto sId = qstring(ibb->sid());
 
             qDebug() << __func__ << QString("Data seq:%1").arg(ibb->seq());
@@ -485,7 +450,7 @@ bool IMFile::handleIq(const IQ& iq) {
 
             break;
         }
-        case InBandBytestream::IBBClose: {
+        case gloox::InBandBytestream::IBBClose: {
             qDebug() << __func__ << QString("Close");
             auto fileId = qstring(ibb->sid());
             for (auto& k : m_fileSessionMap.keys()) {
@@ -510,9 +475,17 @@ bool IMFile::handleIq(const IQ& iq) {
         }
     }
 
-    IQ riq(IQ::IqType::Result, iq.from(), iq.id());
+    gloox::IQ riq(gloox::IQ::IqType::Result, iq.from(), iq.id());
     _im->getClient()->send(riq);
     return true;
+}
+
+void IMFile::doSessionTerminate(gloox::Jingle::Session* session,
+                                const gloox::Jingle::Session::Jingle*,
+                                const IMPeerId&) {
+    auto sId = qstring(session->sid());
+    if (isInvalidSid(sId)) return;
+    clearSessionInfo(sId);
 }
 
 }  // namespace lib::messenger

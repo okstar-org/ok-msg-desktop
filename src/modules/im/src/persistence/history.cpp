@@ -338,8 +338,7 @@ QVector<RawDatabase::Query> History::generateNewMessageQueries(const Message& me
     return queries;
 }
 
-
-void History::addNewFileMessage(const ToxFile& file, QString const& dispName) {
+void History::addNewFileMessage(const ToxFile& file) {
     if (historyAccessBlocked()) {
         return;
     }
@@ -354,12 +353,12 @@ void History::addNewFileMessage(const ToxFile& file, QString const& dispName) {
     };
 
     Message msg = {.isAction = false,
+                   .id = file.fileId,
                    .from = file.sender,
                    .to = file.receiver,
                    .content = insertionData.json(),
                    .dataId = file.fileId,
                    .timestamp = file.timestamp
-
     };
 
     addNewMessage(msg, HistMessageContentType::file, true, insertFileTransferFn);

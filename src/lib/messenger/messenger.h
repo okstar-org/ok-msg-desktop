@@ -15,15 +15,12 @@
 #include "IMFriend.h"
 #include "IMGroup.h"
 #include "IMMessage.h"
-#include "base/task.h"
 #include "base/timer.h"
 
 #include <QDateTime>
 #include <QString>
-#include <array>
 #include <cstddef>
 #include <memory>
-#include <utility>
 
 class QDomElement;
 class QDomDocument;
@@ -34,8 +31,7 @@ class AuthSession;
 }
 }  // namespace ok
 
-namespace lib {
-namespace messenger {
+namespace lib::messenger {
 
 class IM;
 class IMJingle;
@@ -380,8 +376,9 @@ struct FileTxIBB {
 
 struct File {
 public:
-    // id(file id = ibb id) 和 sId(session id)
+    // id = fileId & ibbId & msgId
     QString id;
+    // sId: session id)
     QString sId;
     QString name;
     QString path;
@@ -422,23 +419,8 @@ public:
     void fileCancel(QString fileId);
     bool fileSendToFriend(const QString& f, const File& file);
 
-    //    /**
-    //     * 启动文件发送任务
-    //     * @param session
-    //     * @param file
-    //     */
-    //    void doStartFileSendTask(const Jingle::Session* session, const File& file);
-    //
-    //    /**
-    //     * 停止文件发送任务
-    //     * @param session
-    //     * @param file
-    //     */
-    //    void doStopFileSendTask(const Jingle::Session* session, const File& file);
-
 private:
     IMFile* fileSender;
 };
 
-}  // namespace messenger
-}  // namespace lib
+}  // namespace lib::messenger

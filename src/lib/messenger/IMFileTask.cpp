@@ -40,7 +40,6 @@ IMFileTask::IMFileTask(const QString& friendId, const File* file, IMFile* im)
 IMFileTask::~IMFileTask() { qDebug() << __func__ << "Destroy file sender:" << m_file->id; }
 
 void IMFileTask::run() {
-
     qDebug() << "Start file" << m_file->id;
 
     /**
@@ -54,11 +53,11 @@ void IMFileTask::run() {
 
     auto iqId = client->getID();
 
-    m_ibb = std::make_unique<InBandBytestream>(client,                      //
-                                               client->logInstance(),       //
-                                               im->self(),                  //
-                                               JID(stdstring(m_friendId)),  //
-                                               stdstring(m_file->id));
+    m_ibb = std::make_unique<gloox::InBandBytestream>(client,                             //
+                                                      client->logInstance(),              //
+                                                      im->self(),                         //
+                                                      gloox::JID(stdstring(m_friendId)),  //
+                                                      stdstring(m_file->id));
 
     m_ibb->registerBytestreamDataHandler(this);
     m_ibb->setBlockSize(m_buf);

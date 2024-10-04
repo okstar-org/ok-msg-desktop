@@ -212,10 +212,11 @@ void ChatWidget::connectToCoreFile(CoreFile* coreFile) {
     connect(coreFile, &CoreFile::fileReceiveRequested, this, &ChatWidget::dispatchFile);
     connect(coreFile, &CoreFile::fileTransferAccepted, this, &ChatWidget::dispatchFile);
     connect(coreFile, &CoreFile::fileTransferCancelled, this, &ChatWidget::dispatchFile);
-    connect(coreFile, &CoreFile::fileTransferNoExisting, this, &ChatWidget::cancelFile);
     connect(coreFile, &CoreFile::fileTransferFinished, this, &ChatWidget::dispatchFile);
     connect(coreFile, &CoreFile::fileTransferPaused, this, &ChatWidget::dispatchFile);
     connect(coreFile, &CoreFile::fileTransferInfo, this, &ChatWidget::dispatchFile);
+    connect(coreFile, &CoreFile::fileTransferNoExisting, this, &ChatWidget::cancelFile);
+
     connect(coreFile, &CoreFile::fileTransferRemotePausedUnpaused, this,
             &ChatWidget::dispatchFileWithBool);
     connect(coreFile, &CoreFile::fileTransferBrokenUnbroken, this,
@@ -795,9 +796,7 @@ void ChatWidget::dispatchFile(ToxFile file) {
 
         //    if (!autoAcceptDir.isEmpty() && autoAcceptSizeCheckPassed) {
         acceptFileTransfer(file, autoAcceptDir);
-        //    }
     }
-
     sessionListWidget->setFriendFileReceived(cId, file);
 }
 

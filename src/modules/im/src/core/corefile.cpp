@@ -51,11 +51,12 @@ CoreFile::CoreFile(Core* core)
         : core{core}, messenger{nullptr}, messengerFile{nullptr}, thread{new QThread{this}} {
     qDebug() << __func__;
 
+    qRegisterMetaType<ToxFile>("ToxFile");
+    qRegisterMetaType<ToxFile>("ToxFile&");
+
     thread->setObjectName("CoreAV");
     connect(thread.get(), &QThread::started, this, &CoreFile::process);
     moveToThread(thread.get());
-
-    emit ok::Application::Instance() -> bus()->coreFileChanged(this);
 }
 
 CoreFile::~CoreFile() {
@@ -122,8 +123,8 @@ bool CoreFile::sendFile(QString friendId, const QFile& file_) {
 
     auto file = ToxFile{sender,
                         friendId,
-                        fileId,
                         sId,
+                        fileId,
                         fileInfo.fileName(),
                         fileInfo.filePath(),
                         (quint64)file_.size(),
@@ -385,7 +386,7 @@ void CoreFile::onFileRequest(const QString& from, const lib::messenger::File& fi
     qDebug() << __func__ << file.name << "from" << from;
 
     auto receiver = messenger->getSelfId().toFriendId();
-    ToxFile toxFile(from, receiver, file);
+    ToxFile toxFile(from, receiver, file.sId, file);
     addFile(toxFile);
     qDebug() << "file:" << toxFile.toString();
     emit fileReceiveRequested(toxFile);
@@ -589,6 +590,7 @@ void CoreFile::onFileRecvChunk(const QString& friendId, const QString& fileId, i
         qWarning() << ("No such file in queue");
         return;
     }
+
     if (file->bytesSent > file->fileSize) {
         qWarning() << ("Received a chunk out-of-order, aborting transfer");
 
@@ -605,6 +607,7 @@ void CoreFile::onFileRecvChunk(const QString& friendId, const QString& fileId, i
     file->file->write(buf);
     //    file->hashGenerator->addData(buf);
     file->bytesSent += buf.size();
+    file->status = FileStatus::TRANSMITTING;
     qDebug() << "Received bytes" << buf.size() << "/" << file->fileSize;
     emit fileTransferInfo(*file);
 }

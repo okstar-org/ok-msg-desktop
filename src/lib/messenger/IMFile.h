@@ -12,9 +12,9 @@
 #ifndef IMFILE_H
 #define IMFILE_H
 
-#include <jinglesession.h>
 #include <QFile>
 #include <QThread>
+#include "IM.h"
 #include "IMJingle.h"
 
 namespace gloox {
@@ -63,7 +63,7 @@ private:
     std::unique_ptr<IMFileTask> task;
 };
 
-class IMFile : public IMJingle {
+class IMFile : public IMJingle, public IMSessionHandler {
     Q_OBJECT
 public:
     explicit IMFile(IM* im, QObject* parent = nullptr);
@@ -77,25 +77,12 @@ public:
     /**
      * File
      */
-    void fileRejectRequest(QString friendId, const File& file);
-    void fileAcceptRequest(QString friendId, const File& file);
+    void fileRejectRequest(const QString& friendId, const File& file);
+    void fileAcceptRequest(const QString& friendId, const File& file);
     void fileFinishRequest(QString friendId, const QString& sId);
     void fileFinishTransfer(QString friendId, const QString& sId);
     void fileCancel(QString fileId);
     bool fileSendToFriend(const QString& f, const File& file);
-
-    // 收到对方发起
-    void sessionOnInitiate(const QString& sId,
-                           gloox::Jingle::Session* session,
-                           const gloox::Jingle::Session::Jingle* jingle,
-                           const IMPeerId& peerId);
-    // 对方接受
-    void sessionOnAccept(const QString& sId,
-                         gloox::Jingle::Session* session,
-                         const IMPeerId& peerId,
-                         const gloox::Jingle::Session::Jingle* jingle) override;
-    // 对方终止
-    void sessionOnTerminate(const QString& sId, const IMPeerId& peerId) override;
 
     bool handleIq(const gloox::IQ& iq) override;
 
@@ -124,6 +111,18 @@ protected:
                              const gloox::Jingle::JingleMessage* jm) override {
         qWarning() << "Unable to handle messages from:" << peerId.toString();
     }
+
+    void doSessionInitiate(gloox::Jingle::Session* session,        //
+                           const gloox::Jingle::Session::Jingle*,  //
+                           const IMPeerId&) override;
+
+    void doSessionTerminate(gloox::Jingle::Session* session,        //
+                            const gloox::Jingle::Session::Jingle*,  //
+                            const IMPeerId&) override;
+
+    void doSessionAccept(gloox::Jingle::Session* session,        //
+                         const gloox::Jingle::Session::Jingle*,  //
+                         const IMPeerId&) override;
 
     void doSessionInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {};
     void doContentAdd(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {};

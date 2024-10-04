@@ -149,7 +149,7 @@ public:
                        bool isDelivered,
                        const std::function<void(RowId)>& insertIdCallback = {});
 
-    void addNewFileMessage(const ToxFile& file, QString const& dispName);
+    void addNewFileMessage(const ToxFile& file);
 
     void setFileMessage(const ToxFile& file);
 

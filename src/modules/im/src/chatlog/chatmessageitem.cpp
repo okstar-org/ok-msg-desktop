@@ -90,7 +90,7 @@ void ChatMessageBox::setMessageState(MessageState state) {
 }
 
 void ChatMessageBox::layout(qreal width, QPointF scenePos) {
-    qDebug() << __func__ << id << this;
+    //    qDebug() << __func__ << id << this;
 
     auto mirrorPos = [width, scenePos, this](QPointF& pos, qreal offset) {
         if (this->layoutDirection == Qt::RightToLeft)

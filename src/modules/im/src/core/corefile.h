@@ -74,20 +74,20 @@ public:
     void onFileSendError(const QString& friendId, const lib::messenger::File& file,
                          int m_sentBytes) override;
 signals:
-    void fileSendStarted(ToxFile file);
-    void fileSendWait(ToxFile file);
+    void fileSendStarted(ToxFile& file);
+    void fileSendWait(ToxFile& file);
     void fileSendFailed(QString friendId, const QString& fname);
 
-    void fileReceiveRequested(ToxFile file);
-    void fileTransferAccepted(ToxFile file);
-    void fileTransferCancelled(ToxFile file);
-    void fileTransferFinished(ToxFile file);
+    void fileReceiveRequested(ToxFile& file);
+    void fileTransferAccepted(ToxFile& file);
+    void fileTransferCancelled(ToxFile& file);
+    void fileTransferFinished(ToxFile& file);
     void fileTransferNoExisting(const QString& friendId, const QString& fileId);
 
-    void fileTransferPaused(ToxFile file);
-    void fileTransferInfo(ToxFile file);
-    void fileTransferRemotePausedUnpaused(ToxFile file, bool paused);
-    void fileTransferBrokenUnbroken(ToxFile file, bool broken);
+    void fileTransferPaused(ToxFile& file);
+    void fileTransferInfo(ToxFile& file);
+    void fileTransferRemotePausedUnpaused(ToxFile& file, bool paused);
+    void fileTransferBrokenUnbroken(ToxFile& file, bool broken);
     void fileNameChanged(const FriendId& friendPk);
 
     void fileUploadFinished(const QString& path);

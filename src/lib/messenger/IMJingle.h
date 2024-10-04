@@ -48,10 +48,8 @@ public:
 class IMJingle : public QObject,
                  public gloox::MessageHandler,
                  public gloox::IqHandler,
-                 public gloox::MessageSessionHandler,
-                 public gloox::Jingle::SessionHandler {
+                 public gloox::MessageSessionHandler {
     Q_OBJECT
-
 public:
     explicit IMJingle(IM* im, QObject* parent = nullptr);
     ~IMJingle() override;
@@ -70,30 +68,11 @@ protected:
 
     void handleIqID(const gloox::IQ& iq, int context) override;
 
-    void handleSessionAction(gloox::Jingle::Action action, gloox::Jingle::Session* session,
-                             const gloox::Jingle::Session::Jingle* jingle) override;
 
-    void handleSessionActionError(gloox::Jingle::Action action, gloox::Jingle::Session* session,
-                                  const gloox::Error* error) override;
-
-    void handleIncomingSession(gloox::Jingle::Session* session) override;
 
     // receiver -> sid
     QMap<IMPeerId, QString> m_friendSessionMap;
 
-    std::unique_ptr<gloox::Jingle::SessionManager> _sessionManager;
-
-    virtual void sessionOnAccept(const QString& sId,
-                                 gloox::Jingle::Session* session,
-                                 const IMPeerId& peerId,
-                                 const gloox::Jingle::Session::Jingle* jingle) = 0;
-
-    virtual void sessionOnTerminate(const QString& sId, const IMPeerId& peerId) = 0;
-
-    virtual void sessionOnInitiate(const QString& sId,
-                                   gloox::Jingle::Session* session,
-                                   const gloox::Jingle::Session::Jingle* jingle,
-                                   const IMPeerId& peerId) = 0;
 
     virtual void clearSessionInfo(const QString& sId) = 0;
 
@@ -109,31 +88,7 @@ protected:
 private:
     QString getSessionByFriendId(const QString& friendId);
 
-    void doSessionInitiate(gloox::Jingle::Session* session,        //
-                           const gloox::Jingle::Session::Jingle*,  //
-                           const IMPeerId&);
 
-    void doSessionTerminate(gloox::Jingle::Session* session,        //
-                            const gloox::Jingle::Session::Jingle*,  //
-                            const IMPeerId&);
-
-    void doSessionAccept(gloox::Jingle::Session* session,        //
-                         const gloox::Jingle::Session::Jingle*,  //
-                         const IMPeerId&);
-
-    virtual void doSessionInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
-    virtual void doContentAdd(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
-    virtual void doContentRemove(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
-    virtual void doContentModify(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
-    virtual void doContentAccept(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
-    virtual void doContentReject(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
-    virtual void doTransportInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
-    virtual void doTransportAccept(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
-    virtual void doTransportReject(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
-    virtual void doTransportReplace(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
-    virtual void doSecurityInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
-    virtual void doDescriptionInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
-    virtual void doInvalidAction(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
 
     QList<gloox::Jingle::Content*> m_ices;
 

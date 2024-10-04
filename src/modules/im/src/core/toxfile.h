@@ -29,7 +29,6 @@ class FriendId;
 
 // 不要修改顺序和值
 enum class FileStatus {
-    WAIT = -1,
     INITIALIZING = 0,
     PAUSED = 1,
     TRANSMITTING = 2,
@@ -54,7 +53,7 @@ struct FileInfo {
 public:
     FileInfo() = default;
     FileInfo(const QString& sId,
-             const QString& id,
+             const QString& fileId,
              const QString& fileName,
              const QString& filePath,
              quint64 fileSize,
@@ -86,15 +85,18 @@ struct ToxFile : public FileInfo {
     explicit ToxFile(const QString& sender,
                      const QString& receiver,
                      const QString& sId,
-                     const QString& FileId,
-                     const QString& FileName,
+                     const QString& fileId,
+                     const QString& fileName,
                      const QString& filePath,
                      quint64 fileSize_,
             quint64 bytesSent,
             FileStatus status,
             FileDirection Direction);
 
-    explicit ToxFile(const QString& sender, const QString& friendId, const lib::messenger::File& file);
+    explicit ToxFile(const QString& sender,
+                     const QString& friendId,
+                     const QString& sId,
+                     const lib::messenger::File& file);
     explicit ToxFile(const FileInfo& fi);
     ~ToxFile();
 

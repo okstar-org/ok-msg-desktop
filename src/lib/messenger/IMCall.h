@@ -105,7 +105,7 @@ private:
     std::list<ortc::OIceUdp> pendingIceCandidates;
 };
 
-class IMCall : public IMJingle, public lib::ortc::OkRTCHandler {
+class IMCall : public IMJingle, public IMSessionHandler, public lib::ortc::OkRTCHandler {
     Q_OBJECT
 public:
     explicit IMCall(IM* im, QObject* parent = nullptr);
@@ -164,8 +164,17 @@ public:
 protected:
     void handleJingleMessage(const IMPeerId& peerId,
                              const gloox::Jingle::JingleMessage* jm) override;
-
+    virtual void doSessionInitiate(gloox::Jingle::Session* session,        //
+                                   const gloox::Jingle::Session::Jingle*,  //
+                                   const IMPeerId&) override;
     virtual void doSessionInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual void doSessionTerminate(gloox::Jingle::Session* session,        //
+                                    const gloox::Jingle::Session::Jingle*,  //
+                                    const IMPeerId&) override;
+
+    virtual void doSessionAccept(gloox::Jingle::Session* session,        //
+                                 const gloox::Jingle::Session::Jingle*,  //
+                                 const IMPeerId&) override;
     virtual void doContentAdd(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
     virtual void doContentRemove(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
     virtual void doContentModify(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
@@ -193,16 +202,6 @@ protected:
                                  lib::ortc::JingleCallType ct);
 
     IMCallSession* findSession(const QString& sId) { return m_sessionMap.value(sId); }
-
-    void sessionOnAccept(const QString& sId,
-                         gloox::Jingle::Session* session,
-                         const IMPeerId& peerId,
-                         const gloox::Jingle::Session::Jingle* jingle) override;
-    void sessionOnTerminate(const QString& sId, const IMPeerId& peerId) override;
-    void sessionOnInitiate(const QString& sId,
-                           gloox::Jingle::Session* session,
-                           const gloox::Jingle::Session::Jingle* jingle,
-                           const IMPeerId& peerId) override;
 
 signals:
     void sig_createPeerConnection(const QString sId, const QString peerId, bool ok);
