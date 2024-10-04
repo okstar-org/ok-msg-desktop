@@ -478,3 +478,4 @@ void Text::selectText(QTextCursor& cursor, const std::pair<int, int>& point) {
 }
 
 QColor Text::textColor() const { return isCustomColor ? color : Style::getColor(colorRole); }
+const void* Text::getContent() { return (void*)(&text); }

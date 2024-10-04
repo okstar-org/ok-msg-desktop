@@ -29,6 +29,7 @@ public:
 
     void setTextSelectable(bool selectable);
     void setText(const QString& txt);
+    const void* getContent() override;
     void selectText(const QString& txt, const std::pair<int, int>& point);
     void selectText(const QRegularExpression& exp, const std::pair<int, int>& point);
     void deselectText();

@@ -26,6 +26,7 @@ public:
                        QWidget* widget) override;
     virtual void setWidth(qreal width) override;
     virtual qreal getAscent() const override;
+    const void* getContent() override;
 
 protected:
     void onCopyEvent() override;

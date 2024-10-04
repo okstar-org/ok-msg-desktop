@@ -269,6 +269,9 @@ set(${PROJECT_NAME}_SOURCES
         src/widget/form/chatform.h
 		src/widget/form/ChatInputForm.h
 		src/widget/form/ChatInputForm.cpp
+		src/widget/form/ChatReplyForm.ui
+		src/widget/form/ChatReplyForm.h
+		src/widget/form/ChatReplyForm.cpp
         src/widget/form/filesform.cpp
         src/widget/form/filesform.h
         src/widget/form/genericchatform.cpp
@@ -496,7 +499,8 @@ add_library(${PROJECT_NAME} STATIC
         ${${PROJECT_NAME}_FORMS}
         ${${PROJECT_NAME}_SOURCES}
         ${${PROJECT_NAME}_QM_FILES}
-        ${${PROJECT_NAME}_RESOURCES})
+		${${PROJECT_NAME}_RESOURCES}
+)
 
 if (WIN32)
     set(PLATFORM_LIBS d3d11 dxgi dxva2 gdi32

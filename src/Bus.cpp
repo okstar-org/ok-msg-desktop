@@ -19,6 +19,4 @@
 namespace ok {
 Bus::Bus(QObject* parent) : QObject(parent) {}
 
-Bus::~Bus() {}
-
 }  // namespace ok

@@ -214,13 +214,20 @@ void ChatMessageBox::updateTextTheme() {
     }
 }
 
-int ChatMessageBox::itemType() { return 0; }
+IChatItemType ChatMessageBox::itemType() { return IChatItemType::TEXT; }
 
-void ChatMessageBox::doReply() { qDebug() << __func__ << id << messageItem->getText(); }
+void ChatMessageBox::doReply() {
+    qDebug() << __func__ << id;
+    emit replyEvent(this);
+}
 
 void ChatMessageBox::doCopy() { messageItem->doCopySelectedText(); }
 
-void ChatMessageBox::doForward() { qDebug() << __func__ << id << messageItem->getText(); }
+void ChatMessageBox::doForward() { qDebug() << __func__ << id; }
+
+const QString& ChatMessageBox::getNickname() { return *(QString*)nicknameItem->getContent(); }
+
+QString ChatMessageBox::getContent() { return *(QString*)centerContent()->getContent(); }
 
 ChatNotificationBox::ChatNotificationBox(const QString& message, const QFont& font) {
     textItem = new Text(message, font);
@@ -271,7 +278,7 @@ ChatLineContent* ChatNotificationBox::contentAtPos(QPointF scenePos) const {
 
 ChatLineContent* ChatNotificationBox::centerContent() const { return textItem; }
 
-int ChatNotificationBox::itemType() { return 0; }
+IChatItemType ChatNotificationBox::itemType() { return IChatItemType::TEXT; }
 
 QList<ChatLineContent*> ChatNotificationBox::contents() {
     if (iconItem) return QList<ChatLineContent*>({iconItem, textItem});

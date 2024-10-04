@@ -68,6 +68,22 @@ public:
                     IMessageDispatcher& messageDispatcher,
                     QWidget* parent = nullptr);
     ~GenericChatForm() override;
+    IChatItem::Ptr createMessage(const ChatLogItem& item, bool isSelf, bool colorizeNames,
+                                 const ChatLogMessage& chatLogMessage);
+    void renderItem(const ChatLogItem& item,
+                    bool hideName,
+                    bool colorizeNames,
+                    IChatItem::Ptr& chatMessage);
+    ChatLogIdx firstItemAfterDate(QDate date, const IChatLog& chatLog);
+
+    void renderMessage(const ChatLogItem& item, bool isSelf, bool colorizeNames,
+                       const ChatLogMessage& chatLogMessage, IChatItem::Ptr& chatMessage);
+
+    IChatItem::Ptr dateMessageForItem(const ChatLogItem& item);
+
+    IChatItem::Ptr getChatMessageForIdx(ChatLogIdx idx,
+                                        const std::map<ChatLogIdx, IChatItem::Ptr>& messages);
+    bool shouldRenderDate(ChatLogIdx idxToRender, const IChatLog& chatLog);
 
     void setContact(const Contact* contact);
     void removeContact();
@@ -87,13 +103,14 @@ public:
 signals:
     void messageInserted();
     void messageNotFoundShow(SearchDirection direction);
+    void replyEvent(IChatItem* item);
 
 public slots:
     void focusInput();
     void onChatMessageFontChanged(const QFont& font);
     void setColorizedNames(bool enable);
-
     void onDisplayedNameChanged(const QString& name);
+    void onReplyEvent(IChatItem* item);
 
 protected slots:
     void onTextEditChanged(const QString& msg);
@@ -124,22 +141,14 @@ protected slots:
     void onSearchUp(const QString& phrase, const ParameterSearch& parameter);
     void onSearchDown(const QString& phrase, const ParameterSearch& parameter);
     void handleSearchResult(SearchResult result, SearchDirection direction);
-    void renderMessage(ChatLogIdx idx);
+    void renderMessage0(ChatLogIdx idx);
     void renderMessages(ChatLogIdx begin, ChatLogIdx end,
                         std::function<void(void)> onCompletion = std::function<void(void)>());
-
+    void renderFile(const ChatLogItem& item, ToxFile file, bool isSelf, QDateTime timestamp,
+                    IChatItem::Ptr& chatMessage);
     void loadHistoryLower();
 
-private:
-    void retranslateUi();
-    void addSystemDateMessage(const QDate& date);
-    QDateTime getTime(const IChatItem::Ptr& chatLine) const;
-    void sendFile(const QFile& file);
-
 protected:
-    // ChatMessage::Ptr createMessage(const ToxPk& author, const QString& message,
-    //                                const QDateTime& datetime, bool isAction, bool isSent, bool
-    //                                colorizeName = false);
     bool needsToHideName(ChatLogIdx idx) const;
 
     void disableSearchText();
@@ -154,6 +163,11 @@ protected:
     virtual void showEvent(QShowEvent*) override;
     virtual bool event(QEvent*) final override;
     virtual bool eventFilter(QObject* object, QEvent* event) final override;
+
+    void retranslateUi();
+    void addSystemDateMessage(const QDate& date);
+    QDateTime getTime(const IChatItem::Ptr& chatLine) const;
+    void sendFile(const QFile& file);
 
     const ContactId* contactId;
     const Contact* contact = nullptr;

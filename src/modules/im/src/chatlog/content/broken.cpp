@@ -41,3 +41,4 @@ void Broken::visibilityChanged(bool visible) { Q_UNUSED(visible); }
 qreal Broken::getAscent() const { return 0.0; }
 
 void Broken::onCopyEvent() {}
+const void* Broken::getContent() { return &pmap; }

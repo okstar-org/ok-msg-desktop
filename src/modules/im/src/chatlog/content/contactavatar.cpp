@@ -63,3 +63,4 @@ void ContactAvatar::paint(QPainter* painter,
 }
 
 void ContactAvatar::setWidth(qreal width) { Q_UNUSED(width) }
+const void* ContactAvatar::getContent() { return &avatar; }

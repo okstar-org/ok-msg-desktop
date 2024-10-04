@@ -446,8 +446,12 @@ void ChatLog::startResizeWorker() {
     // of text to be resized
     int txt = 0;
     for (const IChatItem::Ptr& line : lines) {
-        for (ChatLineContent* content : line->contents()) {
-            if (content) txt += content->getText().size();
+        if (line->itemType() == IChatItemType::TEXT) {
+            for (ChatLineContent* content : line->contents()) {
+                if (content) {
+                    txt += content->getContentAsText().size();
+                };
+            }
         }
     }
 

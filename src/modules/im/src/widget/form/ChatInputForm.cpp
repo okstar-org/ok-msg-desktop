@@ -21,13 +21,14 @@
 #include <QSpacerItem>
 #include <QVBoxLayout>
 
+#include "ChatReplyForm.h"
 #include "lib/settings/style.h"
 #include "src/base/MessageBox.h"
+#include "src/chatlog/chatlinecontent.h"
 #include "src/persistence/profile.h"
 #include "src/widget/emoticonswidget.h"
 #include "src/widget/tool/screenshotgrabber.h"
 
-#ifdef OK_PLUGIN
 #include <lib/settings/settings.h>
 #include <src/chatlog/chatmessageitem.h>
 #include <src/core/core.h>
@@ -36,10 +37,10 @@
 #include <src/widget/tool/chattextedit.h>
 #include <QFileDialog>
 
+#include "genericchatform.h"
 #include "lib/plugin/pluginmanager.h"
 
 #include <src/persistence/smileypack.h>
-#endif
 
 const QString STYLE_PATH = QStringLiteral("chatForm/buttons.css");
 static const short FOOT_BUTTONS_SPACING = 2;
@@ -72,9 +73,15 @@ QPushButton* createButton(const QString& name, T* self, Fun onClickSlot) {
     return btn;
 }
 
-ChatInputForm::ChatInputForm(QWidget* parent, bool isGroup) : QWidget(parent), isGroup{isGroup} {
+ChatInputForm::ChatInputForm(QWidget* parent, bool isGroup)
+        : QWidget(parent), isGroup{isGroup}, reply(nullptr) {
     setContentsMargins(0, 0, 0, 0);
     setObjectName("ChatInputForm");
+
+    GenericChatForm* form = dynamic_cast<GenericChatForm*>(parent);
+    if (form) {
+        connect(form, &GenericChatForm::replyEvent, this, &ChatInputForm::onReplyEvent);
+    }
 
     if (isGroup) {
         fileButton->setEnabled(false);
@@ -95,10 +102,11 @@ ChatInputForm::ChatInputForm(QWidget* parent, bool isGroup) : QWidget(parent), i
 
     // connect(bodySplitter, &QSplitter::splitterMoved, this, &ChatInputForm::onSplitterMoved);
 
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    mainLayout = new QVBoxLayout(this);
+
     mainLayout->setSpacing(FOOT_BUTTONS_SPACING);
 
-    QHBoxLayout* ctrlLayout = new QHBoxLayout();
+    QHBoxLayout* ctrlLayout = new QHBoxLayout(this);
     ctrlLayout->setSpacing(FOOT_BUTTONS_SPACING);
     ctrlLayout->addWidget(emoteButton);
     ctrlLayout->addWidget(fileButton);
@@ -120,7 +128,7 @@ ChatInputForm::ChatInputForm(QWidget* parent, bool isGroup) : QWidget(parent), i
     ctrlLayout->addWidget(sendButton);
     mainLayout->addLayout(ctrlLayout);
 
-    auto sendLayout = new QHBoxLayout();
+    sendLayout = new QHBoxLayout(this);
 
     msgEdit = new ChatTextEdit();
     msgEdit->setFrameStyle(QFrame::NoFrame);
@@ -131,7 +139,6 @@ ChatInputForm::ChatInputForm(QWidget* parent, bool isGroup) : QWidget(parent), i
     sendLayout->addWidget(msgEdit);
 
     mainLayout->addLayout(sendLayout);
-
     setLayout(mainLayout);
 
     reloadTheme();
@@ -142,10 +149,9 @@ void ChatInputForm::reloadTheme() {
     const Settings& s = Settings::getInstance();
     msgEdit->setStyleSheet(Style::getStylesheet("msgEdit/msgEdit.css") +
                            fontToCss(s.getChatMessageFont(), "QTextEdit"));
-    fileButton->setStyleSheet(Style::getStylesheet(STYLE_PATH));
-    emoteButton->setStyleSheet(Style::getStylesheet(STYLE_PATH));
-    screenshotButton->setStyleSheet(Style::getStylesheet(STYLE_PATH));
-    sendButton->setStyleSheet(Style::getStylesheet(STYLE_PATH));
+
+    auto btnCss = Style::getStylesheet(STYLE_PATH);
+    setStyleSheet(btnCss);
 }
 
 void ChatInputForm::retranslateUi() {
@@ -209,6 +215,7 @@ void ChatInputForm::onSendTriggered() {
 
     qDebug() << "Input text:" << msg;
     emit inputText(msg);
+    onReplyRemove();
 }
 
 void ChatInputForm::onAttachClicked() {
@@ -235,7 +242,7 @@ void ChatInputForm::onAttachClicked() {
         if (file.isSequential()) {
             ok::base::MessageBox::critical(this, tr("Bad idea"),
                                            tr("You're trying to send a sequential file, "
-                                     "which is not going to work!"));
+                                              "which is not going to work!"));
             continue;
         }
 
@@ -248,6 +255,39 @@ void ChatInputForm::onAttachClicked() {
 void ChatInputForm::onTextEditChanged() {
     auto text = msgEdit->toPlainText();
     emit inputTextChanged(text);
+}
+
+void ChatInputForm::onReplyEvent(IChatItem* item) {
+    auto* box = dynamic_cast<ChatMessageBox*>(item);
+    if (box) {
+        QString nick = box->getNickname();
+        QString content = box->getContent();
+        qDebug() << "insert reply" << nick << content;
+        insertReplyText(item->getId(), nick, content);
+    }
+}
+
+void ChatInputForm::insertReplyText(const QString& id, QString nickname, QString text) {
+    onReplyRemove();
+
+    ChatReplyItem item{id, nickname, text};
+    reply = new ChatReplyForm(item);
+    connect(reply, &ChatReplyForm::removeEvent, this, &ChatInputForm::onReplyRemove);
+    mainLayout->insertWidget(0, reply);
+
+    auto btnCss = Style::getStylesheet(STYLE_PATH);
+    reply->setStyleSheet(btnCss);
+}
+
+void ChatInputForm::onReplyRemove() {
+    if (!reply) {
+        return;
+    }
+
+    mainLayout->removeWidget(reply);
+    reply->deleteLater();
+    delete reply;
+    reply = nullptr;
 }
 
 void ChatInputForm::onScreenshotClicked() { doScreenshot(); }

@@ -72,3 +72,4 @@ void SimpleText::updateBoundingRect() {
 void SimpleText::reloadTheme() {
     if (!customColor) color = Style::getColor(colorRole);
 }
+const void* SimpleText::getContent() { return &text; }

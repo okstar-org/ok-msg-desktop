@@ -13,16 +13,19 @@
 //
 // Created by gaojie on 24-9-29.
 //
+#include <QLabel>
 #include <QPushButton>
 #include <QSplitter>
 #include <QWidget>
 
 class QHBoxLayout;
+class QVBoxLayout;
 class QFile;
 
 class EmoticonsWidget;
 class ChatTextEdit;
-
+class IChatItem;
+class ChatReplyForm;
 /**
  * 聊天输入框
  */
@@ -36,6 +39,8 @@ public:
     void updateFont(const QFont& font);
     QString getInputText();
 
+    void insertReplyText(const QString& id, QString nickname, QString content);
+
 protected:
     virtual void keyPressEvent(QKeyEvent* ev) final override;
     virtual void keyReleaseEvent(QKeyEvent* ev) final override;
@@ -47,7 +52,9 @@ private:
     bool isEncrypt;
     bool isGroup;
 
+    QVBoxLayout* mainLayout;
     QHBoxLayout* mainFootLayout;
+    QHBoxLayout* sendLayout;
 
     QPushButton* encryptButton;
     QPushButton* emoteButton;
@@ -55,6 +62,8 @@ private:
     QPushButton* screenshotButton;
     QPushButton* sendButton;
     ChatTextEdit* msgEdit;
+
+    ChatReplyForm* reply;
 
     EmoticonsWidget* emoticonsWidget;
 
@@ -74,6 +83,8 @@ protected slots:
     void onScreenshotClicked();
     void onScreenCaptured(const QPixmap& pixmap);
     void onTextEditChanged();
+    void onReplyEvent(IChatItem* item);
+    void onReplyRemove();
 
 signals:
     void inputText(const QString& text);

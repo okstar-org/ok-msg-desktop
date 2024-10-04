@@ -90,10 +90,8 @@ namespace {
 const QString STYLE_PATH = QStringLiteral("chatForm/buttons.css");
 }
 
-namespace {
-
-IChatItem::Ptr getChatMessageForIdx(ChatLogIdx idx,
-                                    const std::map<ChatLogIdx, IChatItem::Ptr>& messages) {
+IChatItem::Ptr GenericChatForm::getChatMessageForIdx(
+        ChatLogIdx idx, const std::map<ChatLogIdx, IChatItem::Ptr>& messages) {
     auto existingMessageIt = messages.find(idx);
     if (existingMessageIt == messages.end()) {
         return IChatItem::Ptr();
@@ -101,7 +99,7 @@ IChatItem::Ptr getChatMessageForIdx(ChatLogIdx idx,
     return existingMessageIt->second;
 }
 
-bool shouldRenderDate(ChatLogIdx idxToRender, const IChatLog& chatLog) {
+bool GenericChatForm::shouldRenderDate(ChatLogIdx idxToRender, const IChatLog& chatLog) {
     if (idxToRender.get() == chatLog.getFirstIdx().get()) return true;
 
     auto prev = chatLog.at(idxToRender - 1);
@@ -111,37 +109,16 @@ bool shouldRenderDate(ChatLogIdx idxToRender, const IChatLog& chatLog) {
     return prev->getTimestamp().date() != cur->getTimestamp().date();
 }
 
-IChatItem::Ptr dateMessageForItem(const ChatLogItem& item) {
+IChatItem::Ptr GenericChatForm::dateMessageForItem(const ChatLogItem& item) {
     const auto& s = Settings::getInstance();
     const auto date = item.getTimestamp().date();
     auto dateText = date.toString(s.getDateFormat());
     return ChatMessage::createChatInfoMessage(dateText, ChatMessage::INFO, QDateTime());
 }
 
-IChatItem::Ptr createMessage(const ChatLogItem& item, bool isSelf, bool colorizeNames,
-                             const ChatLogMessage& chatLogMessage) {
-    //  qDebug() << "createMessage displayName:" << displayName;
-    auto messageType = chatLogMessage.message.isAction ? ChatMessage::MessageType::ACTION
-                                                       : ChatMessage::MessageType::NORMAL;
-
-    const bool bSelfMentioned =
-            std::any_of(chatLogMessage.message.metadata.begin(),
-                        chatLogMessage.message.metadata.end(),
-                        [](const MessageMetadata& metadata) {
-                            return metadata.type == MessageMetadataType::selfMention;
-                        });
-
-    if (bSelfMentioned) {
-        messageType = ChatMessage::MessageType::ALERT;
-    }
-
-    return ChatMessage::createChatMessage(item, chatLogMessage.message.content, messageType, isSelf,
-                                          chatLogMessage.state, chatLogMessage.message.timestamp,
-                                          colorizeNames);
-}
-
-void renderMessage(const ChatLogItem& item, bool isSelf, bool colorizeNames,
-                   const ChatLogMessage& chatLogMessage, IChatItem::Ptr& chatMessage) {
+void GenericChatForm::renderMessage(const ChatLogItem& item, bool isSelf, bool colorizeNames,
+                                    const ChatLogMessage& chatLogMessage,
+                                    IChatItem::Ptr& chatMessage) {
     if (chatMessage) {
         if (chatLogMessage.state == MessageState::complete) {
             chatMessage->markAsDelivered(chatLogMessage.message.timestamp);
@@ -151,8 +128,8 @@ void renderMessage(const ChatLogItem& item, bool isSelf, bool colorizeNames,
     }
 }
 
-void renderFile(const ChatLogItem& item, ToxFile file, bool isSelf, QDateTime timestamp,
-                IChatItem::Ptr& chatMessage) {
+void GenericChatForm::renderFile(const ChatLogItem& item, ToxFile file, bool isSelf,
+                                 QDateTime timestamp, IChatItem::Ptr& chatMessage) {
     qDebug() << __func__ << "file" << file.fileName;
 
     if (!chatMessage) {
@@ -167,10 +144,10 @@ void renderFile(const ChatLogItem& item, ToxFile file, bool isSelf, QDateTime ti
     }
 }
 
-void renderItem(const ChatLogItem& item,
-                bool hideName,
-                bool colorizeNames,
-                IChatItem::Ptr& chatMessage) {
+void GenericChatForm::renderItem(const ChatLogItem& item,
+                                 bool hideName,
+                                 bool colorizeNames,
+                                 IChatItem::Ptr& chatMessage) {
     const Core* core = Core::getInstance();
 
     const auto& sender = item.getSender();
@@ -192,7 +169,7 @@ void renderItem(const ChatLogItem& item,
     }
 }
 
-ChatLogIdx firstItemAfterDate(QDate date, const IChatLog& chatLog) {
+ChatLogIdx GenericChatForm::firstItemAfterDate(QDate date, const IChatLog& chatLog) {
     auto idxs = chatLog.getDateIdxs(date, 1);
     if (idxs.size()) {
         return idxs[0].idx;
@@ -200,7 +177,6 @@ ChatLogIdx firstItemAfterDate(QDate date, const IChatLog& chatLog) {
         return chatLog.getNextIdx();
     }
 }
-}  // namespace
 
 GenericChatForm::GenericChatForm(const ContactId* contact_,
                                  IChatLog& iChatLog_,
@@ -276,7 +252,7 @@ GenericChatForm::GenericChatForm(const ContactId* contact_,
     connect(chatLog, &ChatLog::firstVisibleLineChanged, this, &GenericChatForm::updateShowDateInfo);
     connect(chatLog, &ChatLog::loadHistoryLower, this, &GenericChatForm::loadHistoryLower);
 
-    connect(&iChatLog, &IChatLog::itemUpdated, this, &GenericChatForm::renderMessage);
+    connect(&iChatLog, &IChatLog::itemUpdated, this, &GenericChatForm::renderMessage0);
 
     // connect(searchForm, &SearchForm::searchInBegin, this,
     //         &GenericChatForm::searchInBegin);
@@ -310,6 +286,33 @@ GenericChatForm::~GenericChatForm() {
     qDebug() << __func__;
     settings::Translator::unregister(this);
     //  delete searchForm;
+}
+
+IChatItem::Ptr GenericChatForm::createMessage(const ChatLogItem& item,
+                                              bool isSelf,
+                                              bool colorizeNames,
+                                              const ChatLogMessage& chatLogMessage) {
+    qDebug() << "createMessage id:" << item.getId();
+    auto messageType = chatLogMessage.message.isAction ? ChatMessage::MessageType::ACTION
+                                                       : ChatMessage::MessageType::NORMAL;
+
+    const bool bSelfMentioned =
+            std::any_of(chatLogMessage.message.metadata.begin(),
+                        chatLogMessage.message.metadata.end(),
+                        [](const MessageMetadata& metadata) {
+                            return metadata.type == MessageMetadataType::selfMention;
+                        });
+
+    if (bSelfMentioned) {
+        messageType = ChatMessage::MessageType::ALERT;
+    }
+
+    auto chatItem = ChatMessage::createChatMessage(item, chatLogMessage.message.content,
+                                                   messageType, isSelf, chatLogMessage.state,
+                                                   chatLogMessage.message.timestamp, colorizeNames);
+
+    connect(chatItem.get(), &IChatItem::replyEvent, this, &GenericChatForm::onReplyEvent);
+    return chatItem;
 }
 
 QDateTime GenericChatForm::getLatestTime() const { return getTime(chatLog->getLatestLine()); }
@@ -393,6 +396,8 @@ void GenericChatForm::onDisplayedNameChanged(const QString& name) {
         p->nickname()->setText(name);
     }
 }
+
+void GenericChatForm::onReplyEvent(IChatItem* item) { emit replyEvent(item); }
 
 void GenericChatForm::onChatContextMenuRequested(QPoint pos) {
     QWidget* sender = static_cast<QWidget*>(QObject::sender());
@@ -691,7 +696,7 @@ void GenericChatForm::handleSearchResult(SearchResult result, SearchDirection di
     });
 }
 
-void GenericChatForm::renderMessage(ChatLogIdx idx) {
+void GenericChatForm::renderMessage0(ChatLogIdx idx) {
     qDebug() << __func__ << "for contact:" << contactId->toString()
              << "message log index:" << idx.get();
     renderMessages(idx, idx + 1);

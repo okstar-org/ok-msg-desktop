@@ -55,7 +55,8 @@ public:
     virtual void fontChanged(const QFont& font);
 
     virtual QString getSelectedText() const;
-    virtual QString getText() const;
+    virtual const void* getContent() = 0;
+    const QString& getContentAsText();
 
     virtual qreal getAscent() const;
 

@@ -39,6 +39,8 @@ public:
     QWidget* getWidget() const;
     ChatLineContentProxyType getWidgetType() const;
 
+    const void* getContent() override;
+
 protected:
     ChatLineContentProxy(QWidget* widget, ChatLineContentProxyType type, int minWidth,
                          float widthInPercent);

@@ -69,3 +69,4 @@ void NotificationIcon::updateGradient() {
 
     if (scene() && isVisible()) scene()->invalidate(sceneBoundingRect());
 }
+const void* NotificationIcon::getContent() { return &pmap; }

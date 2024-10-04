@@ -75,3 +75,5 @@ void ChatLineContentProxy::setWidth(qreal width) {
 ChatLineContentProxy::ChatLineContentProxyType ChatLineContentProxy::getWidgetType() const {
     return widgetType;
 }
+
+const void* ChatLineContentProxy::getContent() { return proxy; }

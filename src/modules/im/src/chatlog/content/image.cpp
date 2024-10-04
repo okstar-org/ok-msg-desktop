@@ -49,3 +49,4 @@ void Image::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWi
 }
 
 void Image::setWidth(qreal width) { Q_UNUSED(width) }
+const void* Image::getContent() { return &pmap; }

@@ -39,10 +39,18 @@ QAbstractButton#screenshotButton
     qproperty-icon: url("@getImagePath(chatForm/screenshotButton.svg)");
 }
 
+QAbstractButton#removeReplyButton {
+    qproperty-icon: url("@getImagePath(chatForm/searchHideButton.svg)");
+}
+
+QAbstractButton#replyIcon {
+    qproperty-icon: url("@getImagePath(chatForm/reply.svg)");
+}
 
 QAbstractButton#emoteButton:hover,
 QAbstractButton#fileButton:hover,
-QAbstractButton#screenshotButton:hover
+QAbstractButton#screenshotButton:hover，
+QAbstractButton#removeReplyButton:hover
 {
     background-color: #e7e8f4;
 }
@@ -176,6 +184,7 @@ QAbstractButton#choiceDateButton
     padding: 0px;
 }
 
+
 QAbstractButton#startButton
 {
     border-radius: 5px;
@@ -203,4 +212,10 @@ QAbstractButton:disabled
 QAbstractButton:focus
 {
     outline: none;
+}
+
+QWidget#ChatReplyForm {
+    background-color: #F7F8FF;
+    border-radius: 5px;
+    padding: 2px;
 }

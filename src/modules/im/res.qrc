@@ -3,10 +3,8 @@
         <file alias="DejaVuSans.ttf">res/font/DejaVuSans.ttf</file>
     </qresource>
     <qresource prefix="/">
-
         <file>themes/dark/palette.ini</file>
         <file>themes/default/palette.ini</file>
-
         <file>themes/default/chatArea/chatArea.css</file>
         <file>themes/default/chatArea/chatHead.css</file>
         <file>themes/default/chatArea/innerStyle.css</file>
@@ -49,7 +47,6 @@
         <file>themes/default/contentDialog/contentDialog.css</file>
         <file>themes/default/tooliconsZone/tooliconsZone.css</file>
         <file>themes/default/CallDurationForm/CallDurationForm.css</file>
-
         <file>audio/notification.s16le.pcm</file>
         <file>audio/ToxIncomingCall.s16le.pcm</file>
         <file>audio/ToxOutgoingCall.s16le.pcm</file>
@@ -93,12 +90,10 @@
         <file>img/transfer.svg</file>
         <file>themes/dark/fileTransferWidget/fileDone.svg</file>
         <file>themes/default/fileTransferWidget/fileDone.svg</file>
-
         <file>themes/dark/chatArea/scrollBarUpArrow.svg</file>
         <file>themes/dark/chatArea/scrollBarDownArrow.svg</file>
         <file>themes/dark/chatArea/scrollBarLeftArrow.svg</file>
         <file>themes/dark/chatArea/scrollBarRightArrow.svg</file>
-
         <file>themes/dark/chatForm/callButton.svg</file>
         <file>themes/dark/chatForm/micButton.svg</file>
         <file>themes/dark/chatForm/micButtonRed.svg</file>
@@ -123,11 +118,9 @@
         <file>themes/dark/emoticonWidget/dot_page.svg</file>
         <file>themes/dark/emoticonWidget/dot_page_current.svg</file>
         <file>themes/dark/emoticonWidget/dot_page_hover.svg</file>
-
         <file>themes/dark/settings/checkboxChecked.svg</file>
         <file>themes/dark/settings/checkboxCheckedDisabled.svg</file>
         <file>themes/dark/statusButton/menu_indicator.svg</file>
-
         <file>themes/dark/chatArea/info.svg</file>
         <file>themes/dark/chatArea/spinner.svg</file>
         <file>themes/dark/chatArea/typing.svg</file>
@@ -140,12 +133,10 @@
         <file>themes/dark/fileTransferInstance/browse.svg</file>
         <file>themes/dark/acceptCall/acceptCall.svg</file>
         <file>themes/dark/rejectCall/rejectCall.svg</file>
-
         <file>themes/default/chatArea/scrollBarUpArrow.svg</file>
         <file>themes/default/chatArea/scrollBarDownArrow.svg</file>
         <file>themes/default/chatArea/scrollBarLeftArrow.svg</file>
         <file>themes/default/chatArea/scrollBarRightArrow.svg</file>
-
         <file>themes/default/chatForm/callButton.svg</file>
         <file>themes/default/chatForm/micButton.svg</file>
         <file>themes/default/chatForm/micButtonRed.svg</file>
@@ -171,7 +162,6 @@
         <file>themes/default/emoticonWidget/dot_page_current.svg</file>
         <file>themes/default/emoticonWidget/dot_page_hover.svg</file>
         <file>themes/default/statusButton/menu_indicator.svg</file>
-
         <file>themes/default/chatArea/info.svg</file>
         <file>themes/default/chatArea/spinner.svg</file>
         <file>themes/default/chatArea/typing.svg</file>
@@ -184,7 +174,6 @@
         <file>themes/default/fileTransferInstance/browse.svg</file>
         <file>themes/default/rejectCall/rejectCall.svg</file>
         <file>themes/default/acceptCall/acceptCall.svg</file>
-
         <file>img/others/logout-icon.svg</file>
         <file>img/caps_lock.svg</file>
         <file>themes/default/contact/ContactWidget.css</file>
@@ -195,6 +184,6 @@
         <file>themes/dark/contact/add.svg</file>
         <file>themes/default/window/aboutFriend.css</file>
         <file>themes/dark/window/aboutFriend.css</file>
-
+        <file>themes/default/chatForm/reply.svg</file>
     </qresource>
 </RCC>

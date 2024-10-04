@@ -101,6 +101,8 @@ void ChatLineContent::contextMenuEvent(QGraphicsSceneContextMenuEvent* event) {
     //     }
 }
 
+const QString& ChatLineContent::getContentAsText() { return *(QString*)getContent(); }
+
 // void ChatLineContent::mousePressEvent(QGraphicsSceneMouseEvent *event)
 // {
 // if (event->button() == Qt::RightButton) {
@@ -116,4 +118,3 @@ void ChatLineContent::contextMenuEvent(QGraphicsSceneContextMenuEvent* event) {
 
 // }
 
-QString ChatLineContent::getText() const { return QString(); }

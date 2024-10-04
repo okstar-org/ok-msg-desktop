@@ -74,3 +74,4 @@ void Spinner::onCopyEvent() {}
 void Spinner::timeout() {
     if (scene()) scene()->invalidate(sceneBoundingRect());
 }
+const void* Spinner::getContent() { return &pmap; }

@@ -33,6 +33,8 @@ public:
     virtual void visibilityChanged(bool visible) override;
     virtual qreal getAscent() const override;
 
+    const void* getContent() override;
+
 protected:
     virtual void onCopyEvent() override;
 

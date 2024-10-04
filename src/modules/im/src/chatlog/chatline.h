@@ -27,15 +27,19 @@ class QGraphicsScene;
 class QStyleOptionGraphicsItem;
 class QFont;
 
+enum class IChatItemType { TEXT, IMAGE };
+
 class IChatItem : public QObject {
     Q_OBJECT
 public:
     using Ptr = std::shared_ptr<IChatItem>;
 
-    IChatItem(const QString& id = "");
+    IChatItem(const MsgId& id = "");
     virtual ~IChatItem() {}
 
-    virtual int itemType() = 0;
+    const MsgId& getId() { return id; }
+
+    virtual IChatItemType itemType() = 0;
     virtual void layout(qreal width, QPointF scenePos) = 0;
     virtual QRectF sceneBoundingRect() const = 0;
     virtual void moveBy(qreal dx, qreal dy);
@@ -71,6 +75,10 @@ protected:
     QDateTime datetime;
     int row = -1;
     MsgId id;
+
+signals:
+    // 引用事件
+    void replyEvent(IChatItem*);
 };
 
 #endif  // CHATLINE_H

@@ -22,10 +22,12 @@ public:
     Image(QSize size, const QString& filename);
 
     virtual QRectF boundingRect() const override;
-    virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
+    virtual void paint(QPainter* painter,
+                       const QStyleOptionGraphicsItem* option,
                        QWidget* widget) override;
     virtual void setWidth(qreal width) override;
     virtual qreal getAscent() const override;
+    const void* getContent() override;
 
 protected:
     virtual void onCopyEvent() override;

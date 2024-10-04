@@ -54,15 +54,17 @@ public:
     ContactAvatar* getAvatarItem() { return avatarItem; }
 
     SimpleText* nickname() { return nicknameItem; }
+    const QString& getNickname();
+
+    QString getContent();
 
 protected:
     QList<ChatLineContent*> contents() override;
     void reloadTheme() override;
 
 private:
-    void init(const QPixmap& avatar, const QString& contactName,
+    void init(const QPixmap& avatar, const QString& contactName, ChatLineContent* messageItem_);
 
-              ChatLineContent* messageItem_);
     inline QPointF mapToLayout(const QPointF& pos, qreal width, qreal offset) {
         if (layoutDirection == Qt::RightToLeft) {
             return QPointF(width - pos.x() - offset, pos.y());
@@ -71,7 +73,7 @@ private:
     }
     QFont nicknameFont(const QFont& baseFont);
     void updateTextTheme();
-    int itemType() override;
+    IChatItemType itemType() override;
 
     ContactAvatar* avatarItem = nullptr;
     SimpleText* nicknameItem = nullptr;
@@ -101,7 +103,7 @@ public:
 
     ChatLineContent* contentAtPos(QPointF scenePos) const override;
     ChatLineContent* centerContent() const override;
-    int itemType() override;
+    IChatItemType itemType() override;
 
     bool selectable() const override { return false; }
 

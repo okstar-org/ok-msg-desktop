@@ -27,6 +27,7 @@ public:
     void setWidth(qreal width) override;
     void visibilityChanged(bool visible) override;
     qreal getAscent() const override;
+    const void* getContent() override;
 
 protected:
     virtual void onCopyEvent() override;

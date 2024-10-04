@@ -25,6 +25,7 @@ public:
     SimpleText(const QString& txt = "", const QFont& font = QFont());
     ~SimpleText() {}
 
+    const void* getContent() override;
     void setText(const QString& txt);
 
     QRectF boundingRect() const override;

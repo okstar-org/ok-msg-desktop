@@ -27,13 +27,13 @@ class CoreAV;
 namespace ok {
 
 /**
- * 全局系统总线，负责多模块直接交互事件
+ * 全局系统总线，负责多模块之间事件交互
  */
 class Bus : public QObject {
     Q_OBJECT
 public:
     Bus(QObject* parent = nullptr);
-    ~Bus();
+    ~Bus() {}
 signals:
     void languageChanged(QString locale);
     void moduleCreated(Module* module);
