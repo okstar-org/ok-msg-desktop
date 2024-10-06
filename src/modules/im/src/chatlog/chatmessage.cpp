@@ -41,8 +41,7 @@ IChatItem::Ptr ChatMessage::createChatMessage(const ChatLogItem& item, const QSt
                                               MessageType type, bool isMe, MessageState state,
                                               const QDateTime& date, bool colorizeName) {
     auto avatar = Nexus::getProfile()->loadAvatar(item.getSender());
-    auto* msg = new ChatMessageBox(avatar, item.getDisplayName(), rawMessage.toHtmlEscaped(),
-                                   item.getId(), isMe);
+    auto* msg = new ChatMessageBox(avatar, item.getDisplayName(), rawMessage, item.getId(), isMe);
     msg->setMessageState(state);
     msg->setTime(date);
     return IChatItem::Ptr(msg);
@@ -51,7 +50,7 @@ IChatItem::Ptr ChatMessage::createChatMessage(const ChatLogItem& item, const QSt
 IChatItem::Ptr ChatMessage::createChatInfoMessage(const QString& rawMessage,
                                                   SystemMessageType type,
                                                   const QDateTime& date) {
-    QString text = rawMessage.toHtmlEscaped();
+    QString text = rawMessage;
     QString img;
     switch (type) {
         case INFO:

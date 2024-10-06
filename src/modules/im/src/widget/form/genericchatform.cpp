@@ -292,7 +292,7 @@ IChatItem::Ptr GenericChatForm::createMessage(const ChatLogItem& item,
                                               bool isSelf,
                                               bool colorizeNames,
                                               const ChatLogMessage& chatLogMessage) {
-    qDebug() << "createMessage id:" << item.getId();
+    qDebug() << "createMessage id:" << item.getId() << chatLogMessage.message.content;
     auto messageType = chatLogMessage.message.isAction ? ChatMessage::MessageType::ACTION
                                                        : ChatMessage::MessageType::NORMAL;
 

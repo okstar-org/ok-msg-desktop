@@ -45,3 +45,15 @@ p {
 a {
     color: @link;
 }
+
+.chat-msg-block .chat-msg-line {
+    height: 1.5em;
+		line-height: 1.5em;
+}
+.chat-msg-block .marker{
+    display: inline-block;
+		width: .2em;
+		height: 1.5em;
+		background: RGB(70,130,180);
+		margin: 0 4px 0 2px;
+}

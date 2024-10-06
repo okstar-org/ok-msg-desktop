@@ -212,10 +212,13 @@ void ChatInputForm::onSendTriggered() {
 
     msgEdit->setLastMessage(msg);
     msgEdit->clear();
-
     qDebug() << "Input text:" << msg;
+
+    if (reply) {
+        msg = marshal(msg, reply->getText());
+        onReplyRemove();
+    }
     emit inputText(msg);
-    onReplyRemove();
 }
 
 void ChatInputForm::onAttachClicked() {
@@ -277,6 +280,36 @@ void ChatInputForm::insertReplyText(const QString& id, QString nickname, QString
 
     auto btnCss = Style::getStylesheet(STYLE_PATH);
     reply->setStyleSheet(btnCss);
+}
+namespace {
+QRegularExpression QuoteLine("^(>+) (.+)$");
+}
+QString ChatInputForm::marshal(const QString& text, const QString& orig) {
+    // 搜索匹配
+    QString html;
+    auto lines = orig.split("\n");
+    for (auto& line : lines) {
+        auto match = QuoteLine.match(line);
+        if (match.hasMatch()) {
+            QString sign = match.captured(1);
+            auto s = sign.size() + 1;
+            for (int i = 0; i < s; i++) {
+                html += ">";
+            }
+            html += " ";
+            html += match.captured(2);
+        } else {
+            html += ">";
+            html += " ";
+            html += line;
+        }
+        html += "\n";
+    }
+
+    // html+="> ";
+    html += text;
+
+    return html;
 }
 
 void ChatInputForm::onReplyRemove() {

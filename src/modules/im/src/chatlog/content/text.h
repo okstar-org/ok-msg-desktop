@@ -68,6 +68,7 @@ public:
     void setBackgroundColor(const QColor& color);
     void setColor(Style::ColorPalette role);
     void setColor(const QColor& color);
+    QString toDisplay(const QString& text);
 
 protected:
     void onCopyEvent() override;

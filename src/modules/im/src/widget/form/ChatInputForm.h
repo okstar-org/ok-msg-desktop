@@ -40,6 +40,7 @@ public:
     QString getInputText();
 
     void insertReplyText(const QString& id, QString nickname, QString content);
+    QString marshal(const QString& text, const QString& orig);
 
 protected:
     virtual void keyPressEvent(QKeyEvent* ev) final override;

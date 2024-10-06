@@ -22,6 +22,7 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
 #include <QPalette>
+#include <QRegularExpression>
 #include <QTextBlock>
 #include <QTextFragment>
 
@@ -324,6 +325,33 @@ void Text::setColor(const QColor& color) {
     }
 }
 
+namespace {
+QRegularExpression QuoteLine("^(>+) (.+)$");
+}
+
+QString Text::toDisplay(const QString& text) {
+    // 搜索匹配
+    QString html = "<div class=\"chat-msg-block\">";
+    auto lines = text.split("\n");
+    for (auto& line : lines) {
+        html += "<div class=\"chat-msg-line\">";
+        auto match = QuoteLine.match(line);
+        if (match.hasMatch()) {
+            QString sign = match.captured(1);
+            auto s = sign.size();
+            for (int i = 0; i < s; i++) {
+                html += "<span class=\"marker\">|</span>";
+            }
+            html += match.captured(2);
+        } else {
+            html += line;
+        }
+        html += "</div>";
+    }
+    html += "</div>";
+    return html;
+}
+
 void Text::onCopyEvent() {
     QString text = getSelectedText();
     if (text.isEmpty()) {
@@ -348,11 +376,10 @@ void Text::regenerate() {
         if (elide) {
             QFontMetrics metrics = QFontMetrics(defFont);
             QString elidedText = metrics.elidedText(text, Qt::ElideRight, qRound(width));
-
             doc->setPlainText(elidedText);
         } else {
             doc->setDefaultStyleSheet(defStyleSheet);
-            doc->setHtml(text);
+            doc->setHtml(toDisplay(text));
         }
 
         // wrap mode
