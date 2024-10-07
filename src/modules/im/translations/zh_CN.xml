@@ -1109,7 +1109,7 @@
         <name>ChatLineContent</name>
         <message>
             <source>Reply</source>
-            <translation>引用</translation>
+            <translation>回复</translation>
         </message>
         <message>
             <source>Forward</source>

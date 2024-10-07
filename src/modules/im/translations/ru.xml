@@ -1087,6 +1087,21 @@ so you can save the file on windows.</source>
         <translation> МБ</translation>
     </message>
 </context>
+    <context>
+        <name>ChatLineContent</name>
+        <message>
+            <source>Reply</source>
+            <translation>Ответить</translation>
+        </message>
+        <message>
+            <source>Forward</source>
+            <translation>Переслать</translation>
+        </message>
+        <message>
+            <source>Copy</source>
+            <translation>Копировать</translation>
+        </message>
+    </context>
 <context>
     <name>GenericChatForm</name>
     <message>

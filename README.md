@@ -2,15 +2,22 @@
 
 # 🎁 项目介绍
 
-OkMSG是由OkStar(okstar.org)社区开发和维护的注重数据安全与保护的企业通讯协同工具，支持独立私有化部署的集即时消息、语音、视频通话、发送文件、会议等多种功能于一身的开源项目，同时让您的企业更加有效开启协作、有效沟通，控制成本，开拓新业务，并帮助您加速发展业务。
+OkMSG是由OkStar(okstar.org)
+社区开发和维护的注重数据安全与保护的企业通讯协同工具，支持独立私有化部署的集即时消息、语音、视频通话、发送文件、会议等多种功能于一身的开源项目，同时让您的企业更加有效开启协作、有效沟通，控制成本，开拓新业务，并帮助您加速发展业务。
 
-OkMSG is an enterprise communication collaboration tool developed and maintained by the OkStar (okstar. org) community that focuses on data security and protection. It supports independent private deployment and is an open-source project that integrates multiple functions such as instant messaging, voice, video calling, file sending, and meetings. It enables your enterprise to more effectively initiate collaboration, communicate effectively, control costs, explore new businesses, and help you accelerate business development.
+OkMSG is an enterprise communication collaboration tool developed and maintained by the OkStar (okstar. org) community
+that focuses on data security and protection. It supports independent private deployment and is an open-source project
+that integrates multiple functions such as instant messaging, voice, video calling, file sending, and meetings. It
+enables your enterprise to more effectively initiate collaboration, communicate effectively, control costs, explore new
+businesses, and help you accelerate business development.
 
 OkMSG的诞生主要解决企业信息化过程中面对的问题：
+
 - 远程协同工具提高工作效率同时,如何保障企业数据安全和隐私、自主可控将成为企业最核心的问题。
 - 市面上现有产品同质化严重，市场需要一款有本质化差异的产品。
 
 # 🧭 功能介绍
+
 - 聊天模块
   - 具备单聊、群聊；
   - 支持文字、音视频、文件传输等基本功能；
@@ -45,7 +52,9 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
 - Support：Windows(x64), macOS(x64/m1), Ubuntu (x64), Fedora (x64)
 - Download: https://github.com/okstar-org/ok-msg-desktop/releases
 -
+
 Snap: <a href="https://snapcraft.io/ok-msg"><img decoding="async" class="aligncenter" src="https://snapcraft.io/static/images/badges/en/snap-store-black.svg" alt="Get it from the Snap Store"><br></a>
+
 - Flatpak: https://flathub.org/apps/org.okstar.ok-msg
 
 # 🖼️ 界面展示
@@ -64,19 +73,19 @@ Snap: <a href="https://snapcraft.io/ok-msg"><img decoding="async" class="alignce
 
 # 🌏 Multi-Language Support
 
-| Language         | Progress   |
-|------------------|------------|
-| 🇺🇸 English     | Supported  |
-| 🇨🇳 简体中文        | Supported  |
-| 🇹🇼 繁体(TW)      | Supported  |
-| 🇯🇵 Japanese    | #########- |
-| 🇰🇷 South Korea | #####----- |
-| 🇩🇪 Germany     | #####----- |
-| 🇫🇷 France      | #####----- |
-| 🇵🇹 Portugal    | #####----- |
-| 🇪🇸 Spain       | #####----- |
-| 🇮🇹 Italy       | #####----- |
-| 🇷🇺 Russia      | #####----- |
+| Language         | Progress   | Percent |
+|------------------|------------|---------|
+| 🇺🇸 English     | Supported  | 100%    |
+| 🇨🇳 简体中文        | Supported  | 100%    |
+| 🇹🇼 繁体(TW)      | Supported  | 100%    |
+| 🇯🇵 Japanese    | #########- | 90%     |
+| 🇰🇷 South Korea | ######---- | 60%     |
+| 🇩🇪 Germany     | ######---- | 60%     |
+| 🇫🇷 France      | ######---- | 60%     |
+| 🇵🇹 Portugal    | ######---- | 60%     |
+| 🇪🇸 Spain       | ######---- | 60%     |
+| 🇮🇹 Italy       | ######---- | 60%     |
+| 🇷🇺 Russia      | ######---- | 60%     |
 
 # ⛽ Thirty party（第三方库）
 
@@ -93,8 +102,8 @@ Snap: <a href="https://snapcraft.io/ok-msg"><img decoding="async" class="alignce
 - qTox([GPL v3](https://github.com/qTox/qTox/LICENSE))
 - gloox ([GPL v3](https://gitee.com/chuanshantech/ok-edu-gloox))
 
-
 # 🙏 感谢支持
+
 - 感谢社区成员的鼎力支持等
 - [感谢 JetBrains 对本项目的支持（Drive by JetBrains）](https://jb.gg/OpenSourceSupport) <img width="64" src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg?_ga=2.83044246.1221182059.1672752920-1856866598.1665301971&_gl=1*3fzoi7*_ga*MTg1Njg2NjU5OC4xNjY1MzAxOTcx*_ga_9J976DJZ68*MTY3Mjc1MjkyMC40LjEuMTY3Mjc1NDM0Ni4wLjAuMA">
 
@@ -110,11 +119,13 @@ Snap: <a href="https://snapcraft.io/ok-msg"><img decoding="async" class="alignce
 - 支持、推广、投资、项目管理
 
 > 社区模式：敬请期待。。。
+
 - 欢迎加入 [OkStar 社区](http://okstar.org)
 
-
 # 🧑‍🤝‍🧑 贡献者
+
 > 欢迎加入参与社区建设
+
 - [更多](https://github.com/okstar-org/ok-msg-desktop/contributors?ref=master)
 
 # 💰 赞助商
@@ -124,6 +135,7 @@ Snap: <a href="https://snapcraft.io/ok-msg"><img decoding="async" class="alignce
 - 社区支持者们
 
 # 📦 欢迎体验
+
 - 下载地址：https://www.chuanshaninfo.com/download/OkMSG/
 
 # ☎️ 联系我们
@@ -136,16 +148,17 @@ Snap: <a href="https://snapcraft.io/ok-msg"><img decoding="async" class="alignce
 
 ![OkStar公众号](./docs/assets/gzh-OkEDU.jpg "OkStar")
 
-
 # ©️ 版权信息
 
 > 本软件已经申请软件著作权和商标。
 > 本项目采用双重授权，请按合规正确使用本项目！
 
 1.遵循软件分发协议
-  - 国际：**[GPL-2.0](https://opensource.org/license/gpl-2-0/)**
-  - 中国：**[木兰公共许可证, 第2版](https://opensource.org/license/mulanpsl-2-0/)**
+
+- 国际：**[GPL-2.0](https://opensource.org/license/gpl-2-0/)**
+- 中国：**[木兰公共许可证, 第2版](https://opensource.org/license/mulanpsl-2-0/)**
 
 2.付费得到商业授权（试行）
-  - [OkMSG软件合作伙伴合同-个人版](https://www.kdocs.cn/l/cgdtyImooeol)
-  - [企业版软件授权，请移步👉 chuanshaninfo.com](https://www.chuanshaninfo.com/)
+
+- [OkMSG软件合作伙伴合同-个人版](https://www.kdocs.cn/l/cgdtyImooeol)
+- [企业版软件授权，请移步👉 chuanshaninfo.com](https://www.chuanshaninfo.com/)

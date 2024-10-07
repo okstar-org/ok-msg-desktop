@@ -1119,6 +1119,21 @@
         </message>
     </context>
     <context>
+        <name>ChatLineContent</name>
+        <message>
+            <source>Reply</source>
+            <translation>返信</translation>
+        </message>
+        <message>
+            <source>Forward</source>
+            <translation>転送</translation>
+        </message>
+        <message>
+            <source>Copy</source>
+            <translation>コピー</translation>
+        </message>
+    </context>
+    <context>
         <name>GenericChatForm</name>
         <message>
             <source>Save chat log</source>

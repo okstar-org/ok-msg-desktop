@@ -1121,6 +1121,21 @@
         </message>
     </context>
     <context>
+        <name>ChatLineContent</name>
+        <message>
+            <source>Reply</source>
+            <translation>الرد</translation>
+        </message>
+        <message>
+            <source>Forward</source>
+            <translation>إعادة توجيه</translation>
+        </message>
+        <message>
+            <source>Copy</source>
+            <translation>نسخ</translation>
+        </message>
+    </context>
+    <context>
         <name>GenericChatForm</name>
         <message>
             <source>Save chat log</source>
