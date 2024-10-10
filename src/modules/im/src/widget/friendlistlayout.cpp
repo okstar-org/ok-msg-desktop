@@ -28,35 +28,20 @@ void FriendListLayout::init() {
 
     friendOnlineLayout.getLayout()->setSpacing(0);
     friendOnlineLayout.getLayout()->setMargin(0);
-
-    friendOfflineLayout.getLayout()->setSpacing(0);
-    friendOfflineLayout.getLayout()->setMargin(0);
-
     addLayout(friendOnlineLayout.getLayout());
-    addLayout(friendOfflineLayout.getLayout());
 }
 
 void FriendListLayout::addFriendWidget(FriendWidget* w, Status::Status s) {
-    friendOfflineLayout.removeSortedWidget(w);
     friendOnlineLayout.removeSortedWidget(w);
-
-    if (s == Status::Status::Offline) {
-        friendOfflineLayout.addSortedWidget(w);
-        return;
-    }
-
     friendOnlineLayout.addSortedWidget(w);
 }
 
 void FriendListLayout::removeFriendWidget(FriendWidget* widget) {
-    friendOfflineLayout.removeSortedWidget(widget);
-
     friendOnlineLayout.removeSortedWidget(widget);
 }
 
 int FriendListLayout::indexOfFriendWidget(GenericChatItemWidget* widget, bool online) const {
-    if (online) return friendOnlineLayout.indexOfSortedWidget(widget);
-    return friendOfflineLayout.indexOfSortedWidget(widget);
+    return friendOnlineLayout.indexOfSortedWidget(widget);
 }
 
 void FriendListLayout::moveFriendWidgets(FriendListWidget* listWidget) {
@@ -67,37 +52,20 @@ void FriendListLayout::moveFriendWidgets(FriendListWidget* listWidget) {
         const Friend* f = friendWidget->getFriend();
         listWidget->moveWidget(friendWidget, f->getStatus(), true);
     }
-    while (!friendOfflineLayout.getLayout()->isEmpty()) {
-        QWidget* getWidget = friendOfflineLayout.getLayout()->takeAt(0)->widget();
-
-        FriendWidget* friendWidget = qobject_cast<FriendWidget*>(getWidget);
-        const Friend* f = friendWidget->getFriend();
-        listWidget->moveWidget(friendWidget, f->getStatus(), true);
-    }
 }
 
 int FriendListLayout::friendOnlineCount() const { return friendOnlineLayout.getLayout()->count(); }
 
-int FriendListLayout::friendTotalCount() const {
-    return friendOfflineLayout.getLayout()->count() + friendOnlineCount();
-}
+int FriendListLayout::friendTotalCount() const { return friendOnlineCount(); }
 
-bool FriendListLayout::hasChatrooms() const {
-    return !(friendOfflineLayout.getLayout()->isEmpty() &&
-             friendOnlineLayout.getLayout()->isEmpty());
-}
+bool FriendListLayout::hasChatrooms() const { return !friendOnlineLayout.getLayout()->isEmpty(); }
 
-void FriendListLayout::searchChatrooms(const QString& searchString, bool hideOnline,
-                                       bool hideOffline) {
-    friendOnlineLayout.search(searchString, hideOnline);
-    friendOfflineLayout.search(searchString, hideOffline);
+void FriendListLayout::search(const QString& searchString) {
+    friendOnlineLayout.search(searchString);
 }
 
 QLayout* FriendListLayout::getLayoutOnline() const { return friendOnlineLayout.getLayout(); }
 
-QLayout* FriendListLayout::getLayoutOffline() const { return friendOfflineLayout.getLayout(); }
-
 QLayout* FriendListLayout::getFriendLayout(Status::Status s) const {
-    return s == Status::Status::Offline ? friendOfflineLayout.getLayout()
-                                        : friendOnlineLayout.getLayout();
+    return friendOnlineLayout.getLayout();
 }

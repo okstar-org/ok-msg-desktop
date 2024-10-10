@@ -25,10 +25,12 @@ GenericChatItemLayout::GenericChatItemLayout() : layout(new QVBoxLayout()) {}
 
 GenericChatItemLayout::~GenericChatItemLayout() { delete layout; }
 
-void GenericChatItemLayout::addSortedWidget(GenericChatItemWidget* widget, int stretch,
+void GenericChatItemLayout::addSortedWidget(GenericChatItemWidget* widget,
+                                            int stretch,
                                             Qt::Alignment alignment) {
     int closest = indexOfClosestSortedWidget(widget);
     layout->insertWidget(closest, widget, stretch, alignment);
+    qDebug() << __func__ << layout->count();
 }
 
 int GenericChatItemLayout::indexOfSortedWidget(GenericChatItemWidget* widget) const {

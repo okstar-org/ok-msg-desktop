@@ -44,7 +44,6 @@ class CoreFile;
 class ChatWidget : public MainLayout {
     Q_OBJECT
 public:
-    enum class FilterCriteria { All = 0, Online, Offline, Friends, Groups };
 
     ChatWidget(QWidget* parent = nullptr);
     ~ChatWidget();
@@ -53,8 +52,7 @@ public:
         assert(contentLayout);
         return contentLayout;
     }
-    //  void connectCircleWidget();
-    //  void searchCircle(CircleWidget &circleWidget);
+
     AddFriendForm* openFriendAddForm();
     void reloadTheme();
     void retranslateUi();
@@ -92,19 +90,6 @@ private:
 
     std::unique_ptr<AddFriendForm> addFriendForm;
 
-    QMenu* filterMenu;
-
-    QActionGroup* filterGroup;
-    QAction* filterAllAction;
-    QAction* filterOnlineAction;
-    QAction* filterOfflineAction;
-    QAction* filterFriendsAction;
-    QAction* filterGroupsAction;
-
-    QActionGroup* filterDisplayGroup;
-    QAction* filterDisplayName;
-    QAction* filterDisplayActivity;
-
     ProfileInfo* profileInfo;
     ProfileForm* profileForm;
 
@@ -114,11 +99,6 @@ private:
     void setupSearch();
     void searchContacts();
 
-    void updateFilterText();
-    FilterCriteria getFilterCriteria() const;
-    static bool filterGroups(FilterCriteria index);
-    static bool filterOnline(FilterCriteria index);
-    static bool filterOffline(FilterCriteria index);
     bool groupsVisible() const;
 
     void connectToCore(Core* core_);
@@ -173,7 +153,6 @@ public slots:
     void onGroupPeerStatusChanged(const QString&, const GroupOccupant&);
     void onGroupClicked();
 
-    void changeDisplayMode();
     void setupStatus();
     void cancelFile(const QString& friendId, const QString& fileId);
 
