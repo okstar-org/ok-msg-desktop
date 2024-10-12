@@ -126,9 +126,6 @@ ChatWidget::ChatWidget(QWidget* parent)
     init();
 
     retranslateUi();
-
-    // todo: delete from ui
-    ui->searchContactFilterBox->setVisible(false);
 }
 
 ChatWidget::~ChatWidget() {
@@ -459,7 +456,7 @@ void ChatWidget::onGroupTitleChanged(QString groupnumber, const QString& author,
     //  contactListWidget->setGroupTitle(groupId, author, title);
 
     //  FilterCriteria filter = getFilterCriteria();
-    //  widget->searchName(ui->searchContactText->text(), filterGroups(filter));
+    //  widget->searchName(ui->searchContact->text(), filterGroups(filter));
 }
 
 void ChatWidget::groupInvitesUpdate() {
@@ -546,24 +543,20 @@ void ChatWidget::reloadTheme() {
     ui->friendList->setAutoFillBackground(false);
     ui->friendList->viewport()->setAutoFillBackground(false);
 }
+
 void ChatWidget::setupSearch() {
-
-    ui->searchContactText->setPlaceholderText(tr("Search Contacts"));
-    connect(ui->searchContactText, &QLineEdit::textChanged, this, &ChatWidget::searchContacts);
-
+    ui->searchContact->setPlaceholderText(tr("Search Contacts"));
+    connect(ui->searchContact, &QLineEdit::textChanged, this, &ChatWidget::searchContacts);
 }
 
 void ChatWidget::searchContacts() {
-    QString searchString = ui->searchContactText->text();
-    qDebug() << __func__ << searchString;
-
-    sessionListWidget->search(searchString);
+    QString text = ui->searchContact->text();
+    sessionListWidget->search(text);
     sessionListWidget->reDraw();
-
 }
 
 void ChatWidget::retranslateUi() {
-    ui->searchContactText->setPlaceholderText(tr("Search Contacts"));
+    ui->searchContact->setPlaceholderText(tr("Search Contacts"));
     ui->retranslateUi(this);
 
     //    filterDisplayName->setText(tr("By Name"));

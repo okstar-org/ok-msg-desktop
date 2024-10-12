@@ -1231,8 +1231,14 @@
             <source>Filter...</source>
             <translation>筛选...</translation>
         </message>
+    </context>
 
-
+    <context>
+        <name>ContactWidget</name>
+        <message>
+            <source>Search Contacts</source>
+            <translation>搜索联系人</translation>
+        </message>
     </context>
 
     <context>

@@ -4,10 +4,10 @@
  * You can use this software according to the terms and conditions of the Mulan
  * PubL v2. You may obtain a copy of Mulan PubL v2 at:
  *          http://license.coscl.org.cn/MulanPubL-2.0
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY
- * KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
- * NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE. See the
- * Mulan PubL v2 for more details.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PubL v2 for more details.
  */
 
 #ifndef FRIENDLISTWIDGET_H
@@ -65,8 +65,7 @@ public:
     //  void addCircleWidget(int id);
     //  void addCircleWidget(FriendWidget *widget = nullptr);
     //  void removeCircleWidget(CircleWidget *widget);
-    void searchChatrooms(const QString& searchString, bool hideOnline = false,
-                         bool hideOffline = false, bool hideGroups = false);
+    void search(const QString& searchString, bool hideOnline = false, bool hideOffline = false, bool hideGroups = false);
 
     void cycleContacts(GenericChatroomWidget* activeChatroomWidget, bool forward);
 
@@ -96,33 +95,24 @@ protected:
     void dropEvent(QDropEvent* event) override;
     void showEvent(QShowEvent* event) override;
 
-private slots:
-    void onCoreChanged(Core& core);
-    void dayTimeout();
 
 private:
-    QLayout* nextLayout(QLayout* layout, bool forward) const;
+    //    QLayout* nextLayout(QLayout* layout, bool forward) const;
 
     void sortByMode(SortingMode mode);
     void connectFriendWidget(FriendWidget& friendWidget);
     void updateFriendActivity(const Friend& frnd);
 
-    void connectToCore(Core* core);
-    Core* core;
-
     SortingMode mode;
 
     bool groupsOnTop;
     FriendListLayout* listLayout;
-    //  GenericChatItemLayout *circleLayout = nullptr;
-    QVBoxLayout* activityLayout = nullptr;
-    QTimer* dayTimer;
+    //    GenericChatItemLayout *groupLayout;
 
     ContentLayout* m_contentLayout;
 
     QMap<QString, FriendWidget*> friendWidgets;
     QMap<QString, GroupWidget*> groupWidgets;
-    GenericChatItemLayout groupLayout;
 };
 
 #endif  // FRIENDLISTWIDGET_H

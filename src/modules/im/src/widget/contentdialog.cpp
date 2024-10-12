@@ -503,11 +503,11 @@ void ContentDialog::setStatusMessage(const FriendId& friendPk, const QString& me
  * @param alias Alias to display on widget.
  */
 void ContentDialog::updateFriendWidget(const FriendId& friendPk, QString alias) {
-    Friend* f = Nexus::getCore()->getFriendList().findFriend(friendPk);
-    FriendWidget* friendWidget = qobject_cast<FriendWidget*>(contactWidget);
+    //    Friend* f = Nexus::getCore()->getFriendList().findFriend(friendPk);
+    //    FriendWidget* friendWidget = qobject_cast<FriendWidget*>(contactWidget);
 
-    Status::Status status = f->getStatus();
-    friendLayout->addFriendWidget(friendWidget, status);
+    //    Status::Status status = f->getStatus();
+    //    friendLayout->addFriendWidget(friendWidget, status);
 }
 
 /**
@@ -562,7 +562,7 @@ QLayout* ContentDialog::nextLayout(QLayout* layout, bool forward) const {
 }
 
 void ContentDialog::addFriendWidget(FriendWidget* widget, Status::Status status) {
-    friendLayout->addFriendWidget(widget, status);
+    //    friendLayout->addFriendWidget(widget, status);
 }
 
 bool ContentDialog::isActiveWidget(GenericChatroomWidget* widget) {

@@ -1,4 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Copyright (c) 2022 船山信息 chuanshaninfo.com
+  - The project is licensed under Mulan PubL v2.
+  - You can use this software according to the terms and conditions of the Mulan
+  - PubL v2. You may obtain a copy of Mulan PubL v2 at:
+  -          http://license.coscl.org.cn/MulanPubL-2.0
+  - THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+  - EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+  - MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+  - See the Mulan PubL v2 for more details.
+  -->
+
 <ui version="4.0">
  <class>ChatWidget</class>
  <widget class="QWidget" name="ChatWidget">
@@ -619,7 +631,6 @@
                   <property name="font">
                    <font>
                     <pointsize>11</pointsize>
-                    <weight>75</weight>
                     <bold>true</bold>
                    </font>
                   </property>
@@ -760,7 +771,7 @@
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout">
               <item>
-               <widget class="QLineEdit" name="searchContactText">
+                  <widget class="QLineEdit" name="searchContact">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
                   <horstretch>0</horstretch>
@@ -775,34 +786,6 @@
                 </property>
                 <property name="clearButtonEnabled">
                  <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QToolButton" name="searchContactFilterBox">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="accessibleName">
-                 <string>Sorting and visibility</string>
-                </property>
-                <property name="accessibleDescription">
-                 <string>Set friends sorting and visibility</string>
-                </property>
-                <property name="text">
-                 <string>...</string>
-                </property>
-                <property name="popupMode">
-                 <enum>QToolButton::InstantPopup</enum>
-                </property>
-                <property name="toolButtonStyle">
-                 <enum>Qt::ToolButtonTextBesideIcon</enum>
-                </property>
-                <property name="arrowType">
-                 <enum>Qt::NoArrow</enum>
                 </property>
                </widget>
               </item>
@@ -846,7 +829,7 @@
               <x>0</x>
               <y>0</y>
               <width>300</width>
-              <height>373</height>
+                 <height>383</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_5">

@@ -35,10 +35,10 @@ void FriendListLayout::init() {
     addLayout(friendOnlineLayout->getLayout());
 }
 
-void FriendListLayout::addFriendWidget(FriendWidget* w, Status::Status s) {
-    friendOnlineLayout->removeSortedWidget(w);
-    friendOnlineLayout->addSortedWidget(w);
-}
+// void FriendListLayout::addFriendWidget(FriendWidget* w, Status::Status s) {
+//     friendOnlineLayout->removeSortedWidget(w);
+//     friendOnlineLayout->addSortedWidget(w);
+// }
 
 void FriendListLayout::removeFriendWidget(FriendWidget* widget) {
     friendOnlineLayout->removeSortedWidget(widget);

@@ -14,6 +14,7 @@
 #include "Bus.h"
 #include "application.h"
 #include "friendlistwidget.h"
+#include "lib/settings/translator.h"
 #include "src/lib/settings/style.h"
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
@@ -32,6 +33,7 @@
 ContactWidget::ContactWidget(QWidget* parent)
         : MainLayout(parent), ui(new Ui::ContactWidget), addForm{nullptr} {
     ui->setupUi(this);
+
     layout()->setMargin(0);
     layout()->setSpacing(0);
 
@@ -57,8 +59,18 @@ ContactWidget::ContactWidget(QWidget* parent)
     ui->mainSplitter->addWidget(contentWidget.get());
     ui->mainSplitter->setSizes(QList<int>() << 200 << 500);
 
-    init();
+    ui->searchContact->setPlaceholderText(tr("Search Contacts"));
+    connect(ui->searchContact, &QLineEdit::textChanged, this, &ContactWidget::searchContacts);
 
+    connect(ui->addBtn, &QPushButton::released, this, &ContactWidget::do_openAddForm);
+
+    connect(ok::Application::Instance()->bus(),
+            &ok::Bus::coreChanged,
+            this,
+            &ContactWidget::onCoreChanged);
+
+    settings::Translator::registerHandler([this] { retranslateUi(); }, this);
+    retranslateUi();
     reloadTheme();
 }
 
@@ -71,11 +83,11 @@ void ContactWidget::reloadTheme() {
     setStyleSheet(Style::getStylesheet("contact/ContactWidget.css"));
     // I don't know why
     QTimer::singleShot(0, this, [this]() {
-        style()->unpolish(ui->searchText);
+        style()->unpolish(ui->searchContact);
         style()->unpolish(ui->addBtn);
-        style()->polish(ui->searchText);
+        style()->polish(ui->searchContact);
         style()->polish(ui->addBtn);
-        ui->searchText->updateGeometry();
+        ui->searchContact->updateGeometry();
     });
 
     ui->friendList->setStyleSheet(Style::getStylesheet("contact/ContactList.css"));
@@ -108,13 +120,6 @@ AddFriendForm* ContactWidget::makeAddForm() {
 
 void ContactWidget::do_openAddForm() { makeAddForm()->showTo(getContentLayout()); }
 
-void ContactWidget::init() {
-    connect(ok::Application::Instance()->bus(),
-            &ok::Bus::coreChanged,
-            this,
-            &ContactWidget::onCoreChanged);
-    connect(ui->addBtn, &QPushButton::released, this, &ContactWidget::do_openAddForm);
-}
 
 void ContactWidget::deinit() {
     disconnect(ok::Application::Instance()->bus(),
@@ -173,6 +178,7 @@ void ContactWidget::connectToCore(Core* core) {
 void ContactWidget::onFriendAdded(const FriendInfo& frnd) {
     qDebug() << __func__ << "friend:" << frnd.getId().toString();
     if (!frnd.getId().isValid()) {
+        qWarning() << "Invalid friend id:" << frnd.getId();
         return;
     }
     contactListWidget->addFriend(frnd);
@@ -449,4 +455,13 @@ void ContactWidget::friendRequestsUpdate() {
     //  if (friendRequestsButton) {
     //    friendRequestsButton->setText(tr("%n New IMFriend Request(s)", "", unreadFriendRequests));
     //  }
+}
+void ContactWidget::retranslateUi() {
+    ui->searchContact->setPlaceholderText(tr("Search Contacts"));
+    ui->retranslateUi(this);
+}
+
+void ContactWidget::searchContacts() {
+    QString text = ui->searchContact->text();
+    contactListWidget->search(text);
 }

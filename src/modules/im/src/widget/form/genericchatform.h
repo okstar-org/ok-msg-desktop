@@ -174,7 +174,7 @@ protected:
 
     bool audioInputFlag;
     bool audioOutputFlag;
-    int curRow;
+
     QSplitter* bodySplitter;
     QAction* clearAction;
     QAction* copyLinkAction;

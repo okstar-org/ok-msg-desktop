@@ -136,8 +136,6 @@ MessageSessionWidget* MessageSessionListWidget::createMessageSession(const Conta
 }
 
 void MessageSessionListWidget::connectSessionWidget(MessageSessionWidget& sw) {
-    //  connect(&sw, &MessageSessionWidget::searchCircle, this,
-    //          &MessageSessionListWidget::searchCircle);
     connect(&sw, &MessageSessionWidget::updateFriendActivity, this,
             &MessageSessionListWidget::updateFriendActivity);
     connect(&sw, &MessageSessionWidget::widgetClicked, this,
@@ -286,24 +284,10 @@ void MessageSessionListWidget::search(const QString& searchString) {
 }
 
 void MessageSessionListWidget::onFriendWidgetRenamed(FriendWidget* friendWidget) {
-    const Friend* contact = friendWidget->getFriend();
-    auto status = contact->getStatus();
-    //  if (mode == SortingMode::Activity) {
-    //    auto *categoryWidget = getTimeCategoryWidget(contact);
-    //    categoryWidget->removeFriendWidget(friendWidget, status);
-    //    categoryWidget->addFriendWidget(friendWidget, status);
-    //  } else {
-    //    int id = Settings::getInstance().getFriendCircleID(contact->getPublicKey());
-    //    CircleWidget *circleWidget = CircleWidget::getFromID(id);
-    //    if (circleWidget != nullptr) {
-    //      circleWidget->removeFriendWidget(friendWidget, status);
-    //      circleWidget->addFriendWidget(friendWidget, status);
-    //      emit searchCircle(*circleWidget);
-    //    } else {
-    listLayout->removeFriendWidget(friendWidget);
-    listLayout->addFriendWidget(friendWidget, status);
-    //    }
-    //  }
+    //    const Friend* contact = friendWidget->getFriend();
+    //    auto status = contact->getStatus();
+    //    listLayout->removeFriendWidget(friendWidget);
+    //    listLayout->addFriendWidget(friendWidget, status);
 }
 
 void MessageSessionListWidget::cycleContacts(GenericChatroomWidget* activeChatroomWidget,

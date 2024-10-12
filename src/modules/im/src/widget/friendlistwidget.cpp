@@ -46,21 +46,15 @@ FriendListWidget::FriendListWidget(MainLayout* parent, ContentLayout* contentLay
         : QWidget(parent), m_contentLayout{contentLayout}, groupsOnTop(groupsOnTop) {
     setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 
-    groupLayout.getLayout()->setSpacing(0);
-    groupLayout.getLayout()->setMargin(0);
+    //    groupLayout.getLayout()->setSpacing(0);
+    //    groupLayout.getLayout()->setMargin(0);
 
     // Prevent QLayout's add child warning before setting the mode.
     listLayout = new FriendListLayout(this);
     setLayout(listLayout);
 
-    mode = Settings::getInstance().getFriendSortingMode();
-    sortByMode(mode);
 
     onGroupchatPositionChanged(groupsOnTop);
-    dayTimer = new QTimer(this);
-    dayTimer->setTimerType(Qt::VeryCoarseTimer);
-    connect(dayTimer, &QTimer::timeout, this, &FriendListWidget::dayTimeout);
-    dayTimer->start(ok::base::Times::timeUntilTomorrow());
 
     setAcceptDrops(true);
 
@@ -77,14 +71,14 @@ FriendListWidget::FriendListWidget(MainLayout* parent, ContentLayout* contentLay
 }
 
 FriendListWidget::~FriendListWidget() {
-    if (activityLayout != nullptr) {
-        QLayoutItem* item;
-        while ((item = activityLayout->takeAt(0)) != nullptr) {
-            delete item->widget();
-            delete item;
-        }
-        delete activityLayout;
-    }
+    //    if (activityLayout != nullptr) {
+    //        QLayoutItem* item;
+    //        while ((item = activityLayout->takeAt(0)) != nullptr) {
+    //            delete item->widget();
+    //            delete item;
+    //        }
+    //        delete activityLayout;
+    //    }
 }
 
 FriendWidget* FriendListWidget::addFriend(const FriendInfo& friendInfo) {
@@ -95,26 +89,17 @@ FriendWidget* FriendListWidget::addFriend(const FriendInfo& friendInfo) {
         return exist;
     }
 
-    auto core = Core::getInstance();
-    auto profile = Nexus::getProfile();
-
-    auto& settings = Settings::getInstance();
-    const auto compact = settings.getCompactLayout();
-
     auto fw = new FriendWidget(m_contentLayout, friendInfo, this);
     connectFriendWidget(*fw);
     friendWidgets.insert(friendInfo.getId().toString(), fw);
 
-    auto frid = Nexus::getCore()->getFriendList().findFriend(friendInfo.getId());
+    Core* core = Nexus::getCore();
+    auto frid = core->getFriendList().findFriend(friendInfo.getId());
     emit Widget::getInstance() -> friendAdded(frid);
 
-    //  CircleWidget *circleWidget = CircleWidget::getFromID(circleIndex);
-    //  if (circleWidget == nullptr)
-    //    moveWidget(fw, s, true);
-    //  else
-    //    circleWidget->addFriendWidget(fw, s);
+    listLayout->addWidget(fw);
+
     auto status = core->getFriendStatus(friendInfo.toString());
-    listLayout->addFriendWidget(fw, status);
     setFriendStatus(friendInfo.getId(), status);
     return fw;
 }
@@ -143,64 +128,14 @@ void FriendListWidget::updateFriendActivity(const Friend& frnd) {
     updateActivityTime(oldTime);  // update old category widget
 }
 
-void FriendListWidget::connectToCore(Core* core) {}
 
 void FriendListWidget::setMode(SortingMode mode) {
     if (this->mode == mode) return;
 
     this->mode = mode;
-    Settings::getInstance().setFriendSortingMode(mode);
+    //    Settings::getInstance().setFriendSortingMode(mode);
 
-    sortByMode(mode);
-}
-
-void FriendListWidget::sortByMode(SortingMode mode) {
-    if (mode == SortingMode::Name) {
-        int count = activityLayout ? activityLayout->count() : 0;
-
-        listLayout->addLayout(listLayout->getLayoutOnline());
-        onGroupchatPositionChanged(groupsOnTop);
-
-        if (activityLayout != nullptr) {
-            QLayoutItem* item;
-            while ((item = activityLayout->takeAt(0)) != nullptr) {
-                delete item->widget();
-                delete item;
-            }
-            delete activityLayout;
-            activityLayout = nullptr;
-        }
-
-        reDraw();
-    } else if (mode == SortingMode::Activity) {
-        QLocale ql(Settings::getInstance().getTranslation());
-        QDate today = QDate::currentDate();
-#define COMMENT "Category for sorting friends by activity"
-        // clang-format off
-        const QMap<ok::base::ReadableTime, QString> names {
-            { ok::base::ReadableTime::Today,     tr("Today",                      COMMENT) },
-            { ok::base::ReadableTime::Yesterday, tr("Yesterday",                  COMMENT) },
-            { ok::base::ReadableTime::ThisWeek,  tr("Last 7 days",                COMMENT) },
-            { ok::base::ReadableTime::ThisMonth, tr("This month",                 COMMENT) },
-            { ok::base::ReadableTime::LongAgo,   tr("Older than 6 Months",        COMMENT) },
-            { ok::base::ReadableTime::Never,     tr("Never",                      COMMENT) },
-            { ok::base::ReadableTime::Month1Ago, ql.monthName(today.addMonths(-1).month()) },
-            { ok::base::ReadableTime::Month2Ago, ql.monthName(today.addMonths(-2).month()) },
-            { ok::base::ReadableTime::Month3Ago, ql.monthName(today.addMonths(-3).month()) },
-            { ok::base::ReadableTime::Month4Ago, ql.monthName(today.addMonths(-4).month()) },
-            { ok::base::ReadableTime::Month5Ago, ql.monthName(today.addMonths(-5).month()) },
-        };
-// clang-format on
-#undef COMMENT
-
-        activityLayout = new QVBoxLayout();
-
-        listLayout->removeItem(listLayout->getLayoutOnline());
-
-        listLayout->insertLayout(1, activityLayout);
-
-        reDraw();
-    }
+    //    sortByMode(mode);
 }
 
 FriendListWidget::SortingMode FriendListWidget::getMode() const { return mode; }
@@ -222,7 +157,8 @@ GroupWidget* FriendListWidget::addGroup(const GroupId& groupId, const QString& g
     const auto compact = settings.getCompactLayout();
     auto gw = new GroupWidget(m_contentLayout, groupId.toString(), groupId, groupName, compact);
     groupWidgets[groupId.toString()] = gw;
-    groupLayout.addSortedWidget(gw);
+    //    groupLayout.addSortedWidget(gw);
+    listLayout->addWidget(gw);
 
     connect(g, &Group::subjectChanged, [=, this](const QString& author, const QString& name) {
         Q_UNUSED(author);
@@ -245,7 +181,7 @@ void FriendListWidget::removeGroup(const GroupId& cid) {
     auto gw = groupWidgets.value(cid.toString());
     gw->deleteLater();
     groupWidgets.remove(cid.getId());
-    groupLayout.removeSortedWidget(gw);
+    //    groupLayout.removeSortedWidget(gw);
 }
 
 void FriendListWidget::setGroupTitle(const GroupId& groupId,
@@ -272,9 +208,8 @@ void FriendListWidget::setGroupInfo(const GroupId& groupId, const GroupInfo& inf
     g->setPeerCount(info.occupants);
 }
 
-void FriendListWidget::searchChatrooms(const QString& searchString, bool hideOnline,
-                                       bool hideOffline, bool hideGroups) {
-    groupLayout.search(searchString, hideGroups);
+void FriendListWidget::search(const QString& searchString, bool hideOnline, bool hideOffline, bool hideGroups) {
+    listLayout->search(searchString);
 
     //
     //  if (circleLayout != nullptr) {
@@ -302,18 +237,18 @@ void FriendListWidget::renameGroupWidget(GroupWidget* groupWidget, const QString
 }
 
 void FriendListWidget::onGroupchatPositionChanged(bool top) {
-    groupsOnTop = top;
+    //    groupsOnTop = top;
+    //
+    //    if (mode != SortingMode::Name) return;
+    //
+    ////    listLayout->removeItem(groupLayout.getLayout());
+    //
+    //    if (top)
+    //        listLayout->insertLayout(0, groupLayout.getLayout());
+    //    else
+    //        listLayout->insertLayout(1, groupLayout.getLayout());
 
-    if (mode != SortingMode::Name) return;
-
-    listLayout->removeItem(groupLayout.getLayout());
-
-    if (top)
-        listLayout->insertLayout(0, groupLayout.getLayout());
-    else
-        listLayout->insertLayout(1, groupLayout.getLayout());
-
-    reDraw();
+    //    reDraw();
 }
 
 void FriendListWidget::dragEnterEvent(QDragEnterEvent* event) {
@@ -337,37 +272,14 @@ void FriendListWidget::dropEvent(QDropEvent* event) {
     Friend* f = Nexus::getCore()->getFriendList().findFriend(toxPk);
     if (!f) return;
 
-    // Save CircleWidget before changing the Id
-    //  int circleId = Settings::getInstance().getFriendCircleID(f->getPublicKey());
-    //  CircleWidget *circleWidget = CircleWidget::getFromID(circleId);
-
     moveWidget(widget, f->getStatus(), true);
-
-    //  if (circleWidget)
-    //    circleWidget->updateStatus();
 }
 
 void FriendListWidget::showEvent(QShowEvent* event) {
-    //  auto core = Core::getInstance();
-    //  connect(core, &Core::friendAdded, this, &FriendListWidget::addFriend);
-    //  for (auto &receiver : core->loadFriendList()) {
-    //    qDebug() << "receiver:" << receiver;
-    //  };
+
 }
 
-void FriendListWidget::onCoreChanged(Core& core_) {
-    core = &core_;
-    connectToCore(core);
-}
 
-void FriendListWidget::dayTimeout() {
-    if (mode == SortingMode::Activity) {
-        setMode(SortingMode::Name);
-        setMode(SortingMode::Activity);  // Refresh all.
-    }
-
-    dayTimer->start(ok::base::Times::timeUntilTomorrow());
-}
 
 void FriendListWidget::moveWidget(FriendWidget* widget, Status::Status s, bool add) {
     if (mode == SortingMode::Name) {
@@ -410,44 +322,44 @@ void FriendListWidget::reDraw() {
     resize(QSize());  // lifehack
 }
 
-QLayout* FriendListWidget::nextLayout(QLayout* layout, bool forward) const {
-    if (layout == groupLayout.getLayout()) {
-        if (forward) {
-            if (groupsOnTop) return listLayout->getLayoutOnline();
-
-        } else {
-            if (groupsOnTop)
-                //        return circleLayout->getLayout();
-
-                return listLayout->getLayoutOnline();
-        }
-    } else if (layout == listLayout->getLayoutOnline()) {
-        if (forward) {
-            return groupLayout.getLayout();
-        } else {
-            if (groupsOnTop) return groupLayout.getLayout();
-
-            //      return circleLayout->getLayout();
-        }
-    } else {
-        //    if (forward)
-        //      return circleLayout->getLayout();
-        //    else if (groupsOnTop)
-        //      return listLayout->getLayoutOnline();
-
-        return groupLayout.getLayout();
-    }
-    //  else if (layout == circleLayout->getLayout()) {
-    //    if (forward) {
-    //      if (groupsOnTop)
-    //        return groupLayout.getLayout();
-    //
-    //      return listLayout->getLayoutOnline();
-    //    } else
-    //      return listLayout->getLayoutOffline();
-    //  }
-    return nullptr;
-}
+// QLayout* FriendListWidget::nextLayout(QLayout* layout, bool forward) const {
+//     if (layout == groupLayout.getLayout()) {
+//         if (forward) {
+//             if (groupsOnTop) return listLayout->getLayoutOnline();
+//
+//         } else {
+//             if (groupsOnTop)
+//                 //        return circleLayout->getLayout();
+//
+//                 return listLayout->getLayoutOnline();
+//         }
+//     } else if (layout == listLayout->getLayoutOnline()) {
+//         if (forward) {
+//             return groupLayout.getLayout();
+//         } else {
+//             if (groupsOnTop) return groupLayout.getLayout();
+//
+//             //      return circleLayout->getLayout();
+//         }
+//     } else {
+//         //    if (forward)
+//         //      return circleLayout->getLayout();
+//         //    else if (groupsOnTop)
+//         //      return listLayout->getLayoutOnline();
+//
+//         return groupLayout.getLayout();
+//     }
+//     //  else if (layout == circleLayout->getLayout()) {
+//     //    if (forward) {
+//     //      if (groupsOnTop)
+//     //        return groupLayout.getLayout();
+//     //
+//     //      return listLayout->getLayoutOnline();
+//     //    } else
+//     //      return listLayout->getLayoutOffline();
+//     //  }
+//     return nullptr;
+// }
 
 FriendWidget* FriendListWidget::getFriend(const ContactId& friendPk) {
     return friendWidgets.value(friendPk.toString());
@@ -566,6 +478,7 @@ void FriendListWidget::setFriendTyping(const FriendId& friendId, bool isTyping) 
     auto fw = getFriend(friendId);
     if (fw) fw->setTyping(isTyping);
 }
+
 void FriendListWidget::reloadTheme() {
     for (auto gw : groupWidgets) {
         gw->reloadTheme();

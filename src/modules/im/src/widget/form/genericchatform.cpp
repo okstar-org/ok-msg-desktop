@@ -189,8 +189,7 @@ GenericChatForm::GenericChatForm(const ContactId* contact_,
         , audioOutputFlag(false)
         , iChatLog(iChatLog_)
         , messageDispatcher(messageDispatcher)
-        , isTyping{false}
-        , curRow{0} {
+        , isTyping{false} {
     qDebug() << __func__ << "contact:" << contact_;
 
     setContentsMargins(0, 0, 0, 0);
@@ -215,7 +214,6 @@ GenericChatForm::GenericChatForm(const ContactId* contact_,
     connect(inputForm, &ChatInputForm::inputTextChanged, this, &GenericChatForm::onTextEditChanged);
     connect(inputForm, &ChatInputForm::inputFile, this, &GenericChatForm::onFileSend);
     connect(inputForm, &ChatInputForm::inputScreenCapture, this, &GenericChatForm::onImageSend);
-
     bodySplitter->addWidget(inputForm);
 
     // settings
@@ -565,9 +563,6 @@ void GenericChatForm::forwardSelectedText() {
     if (selectedText.isEmpty()) return;
 }
 
-/**
- * @brief Callback of GenericChatForm::copyLinkAction
- */
 void GenericChatForm::copyLink() {
     QString linkText = copyLinkAction->data().toString();
     QApplication::clipboard()->setText(linkText);
