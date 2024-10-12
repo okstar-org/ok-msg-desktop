@@ -1203,14 +1203,6 @@
             <translation>离线</translation>
         </message>
         <message>
-            <source>By Name</source>
-            <translation>按名称</translation>
-        </message>
-        <message>
-            <source>By Activity</source>
-            <translation>按活动日期</translation>
-        </message>
-        <message>
             <source>All</source>
             <translation>全部</translation>
         </message>
@@ -1225,11 +1217,6 @@
         <message>
             <source>Search Contacts</source>
             <translation>搜索联系人</translation>
-        </message>
-
-        <message>
-            <source>Filter...</source>
-            <translation>筛选...</translation>
         </message>
     </context>
 
@@ -3091,14 +3078,6 @@
             <translation>消息</translation>
         </message>
         <message>
-            <source>By Name</source>
-            <translation>按名称</translation>
-        </message>
-        <message>
-            <source>By Activity</source>
-            <translation>按活动日期</translation>
-        </message>
-        <message>
             <source>All</source>
             <translation>全部</translation>
         </message>
@@ -3109,10 +3088,6 @@
         <message>
             <source>Search Contacts</source>
             <translation>搜索联系人</translation>
-        </message>
-        <message>
-            <source>Filter...</source>
-            <translation>筛选...</translation>
         </message>
         <message>
             <source>My profile</source>

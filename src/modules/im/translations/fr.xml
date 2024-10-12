@@ -2934,10 +2934,6 @@
             <translation>Éditer</translation>
         </message>
         <message>
-            <source>Filter...</source>
-            <translation>Filtrer…</translation>
-        </message>
-        <message>
             <source>Contacts</source>
             <translation>Contacts</translation>
         </message>
@@ -2992,14 +2988,6 @@
         <message>
             <source>Add new circle...</source>
             <translation>Ajouter un nouveau cercle…</translation>
-        </message>
-        <message>
-            <source>By Name</source>
-            <translation>Par nom</translation>
-        </message>
-        <message>
-            <source>By Activity</source>
-            <translation>Par activité</translation>
         </message>
         <message>
             <source>All</source>

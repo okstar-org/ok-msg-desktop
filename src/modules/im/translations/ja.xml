@@ -1235,6 +1235,15 @@
             <translation>出口全画面</translation>
         </message>
     </context>
+
+    <context>
+        <name>ContactWidget</name>
+        <message>
+            <source>Search Contacts</source>
+            <translation>連絡先を検索</translation>
+        </message>
+    </context>
+
     <context>
         <name>GroupChatForm</name>
         <message>
@@ -2933,14 +2942,6 @@
             </translation>
         </message>
         <message>
-            <source>By Name</source>
-            <translation>名前</translation>
-        </message>
-        <message>
-            <source>By Activity</source>
-            <translation>アクティビティー</translation>
-        </message>
-        <message>
             <source>All</source>
             <translation>すべて</translation>
         </message>
@@ -2988,10 +2989,6 @@
             <source>Exit</source>
             <comment>Tray action menu to exit tox</comment>
             <translation>終了</translation>
-        </message>
-        <message>
-            <source>Filter...</source>
-            <translation>フィルター…</translation>
         </message>
         <message>
             <source>File</source>

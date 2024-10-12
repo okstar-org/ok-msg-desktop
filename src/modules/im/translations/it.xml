@@ -2909,14 +2909,6 @@
             <translation>Aggiungi un nuovo circolo...</translation>
         </message>
         <message>
-            <source>By Name</source>
-            <translation>Per Nome</translation>
-        </message>
-        <message>
-            <source>By Activity</source>
-            <translation>Per Attività</translation>
-        </message>
-        <message>
             <source>All</source>
             <translation>Tutti</translation>
         </message>
@@ -3007,10 +2999,6 @@
             <source>Exit</source>
             <comment>Tray action menu to exit tox</comment>
             <translation>Esci</translation>
-        </message>
-        <message>
-            <source>Filter...</source>
-            <translation>Filtro...</translation>
         </message>
         <message>
             <source>File</source>

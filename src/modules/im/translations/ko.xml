@@ -1167,6 +1167,42 @@
         </message>
     </context>
     <context>
+        <name>ChatWidget</name>
+        <message>
+            <source>Online</source>
+            <translation>온라인</translation>
+        </message>
+        <message>
+            <source>Away</source>
+            <translation>AWAY</translation>
+        </message>
+        <message>
+            <source>Busy</source>
+            <translation>ビジー</translation>
+        </message>
+        <message>
+            <source>Offline</source>
+            <translation>오프라인</translation>
+        </message>
+        <message>
+            <source>All</source>
+            <translation>전체</translation>
+        </message>
+        <message>
+            <source>Friends</source>
+            <translation>친구</translation>
+        </message>
+        <message>
+            <source>Groups</source>
+            <translation>그룹</translation>
+        </message>
+        <message>
+            <source>Search Contacts</source>
+            <translation>연락처 검색</translation>
+        </message>
+    </context>
+
+    <context>
         <name>GenericNetCamView</name>
         <message>
             <source>Tox video</source>
@@ -1232,6 +1268,15 @@
             <translation type="unfinished"></translation>
         </message>
     </context>
+
+    <context>
+        <name>ContactWidget</name>
+        <message>
+            <source>Search Contacts</source>
+            <translation>연락처검색</translation>
+        </message>
+    </context>
+
     <context>
         <name>GroupInviteForm</name>
         <message>
@@ -2919,14 +2964,6 @@
             </translation>
         </message>
         <message>
-            <source>By Name</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <source>By Activity</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
             <source>All</source>
             <translation>전체</translation>
         </message>
@@ -2947,10 +2984,7 @@
             <source>Groups</source>
             <translation>그룹</translation>
         </message>
-        <message>
-            <source>Search Contacts</source>
-            <translation type="unfinished"></translation>
-        </message>
+
         <message>
             <source>Groupchat #%1</source>
             <translation>그룹채팅 #%1</translation>

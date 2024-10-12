@@ -2935,10 +2935,6 @@
             <translation>Beenden</translation>
         </message>
         <message>
-            <source>Filter...</source>
-            <translation>Filter ...</translation>
-        </message>
-        <message>
             <source>Contacts</source>
             <translation>Kontakte</translation>
         </message>
@@ -3005,14 +3001,6 @@
                 <numerusform>%n neue Gruppeneinladung</numerusform>
                 <numerusform>%n neue Gruppeneinladungen</numerusform>
             </translation>
-        </message>
-        <message>
-            <source>By Name</source>
-            <translation>Nach Namen</translation>
-        </message>
-        <message>
-            <source>By Activity</source>
-            <translation>Nach Aktivität</translation>
         </message>
         <message>
             <source>All</source>

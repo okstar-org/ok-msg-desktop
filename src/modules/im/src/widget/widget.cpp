@@ -1347,22 +1347,6 @@ void Widget::retranslateUi() {
     ui->tabWidget->setTabText(0, tr("Chat"));
     ui->tabWidget->setTabText(1, tr("Contacts"));
     ui->tabWidget->setTabText(2, tr("Settings"));
-
-    // #ifdef Q_OS_MAC
-    //   Nexus::getInstance().retranslateUi();
-
-    //   filterMenu->menuAction()->setText(tr("Filter..."));
-
-    //   fileMenu->setText(tr("File"));
-    //   editMenu->setText(tr("Edit"));
-    //   contactMenu->setText(tr("Contacts"));
-    //   changeStatusMenu->menuAction()->setText(tr("Change Status"));
-    //   editProfileAction->setText(tr("Edit Profile"));
-    //   logoutAction->setText(tr("Log out"));
-    //   addContactAction->setText(tr("Add Contact..."));
-    //   nextConversationAction->setText(tr("Next Conversation"));
-    //   previousConversationAction->setText(tr("Previous Conversation"));
-    // #endif
 }
 
 void Widget::showEvent(QShowEvent* e) { QWidget::showEvent(e); }

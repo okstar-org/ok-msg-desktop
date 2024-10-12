@@ -559,14 +559,6 @@ void ChatWidget::retranslateUi() {
     ui->searchContact->setPlaceholderText(tr("Search Contacts"));
     ui->retranslateUi(this);
 
-    //    filterDisplayName->setText(tr("By Name"));
-    //    filterDisplayActivity->setText(tr("By Activity"));
-    //    filterAllAction->setText(tr("All"));
-    //    filterOnlineAction->setText(tr("Online"));
-    //    filterOfflineAction->setText(tr("Offline"));
-    //    filterFriendsAction->setText(tr("Friends"));
-    //    filterGroupsAction->setText(tr("Groups"));
-
     statusOnline->setText(tr("Online", "Button to set your status to 'Online'"));
     statusAway->setText(tr("Away", "Button to set your status to 'Away'"));
     statusBusy->setText(tr("Busy", "Button to set your status to 'Busy'"));
@@ -600,21 +592,11 @@ void ChatWidget::setupStatus() {
     statusOnline->setText(tr("Online", "Button to set your status to 'Online'"));
     statusAway->setText(tr("Away", "Button to set your status to 'Away'"));
     statusBusy->setText(tr("Busy", "Button to set your status to 'Busy'"));
-    //  actionLogout->setText(tr("Logout", "Tray action menu to logout user"));
-    //  actionQuit->setText(tr("Exit", "Tray action menu to exit tox"));
-    //  actionShow->setText(tr("Show", "Tray action menu to show window"));
 }
 
 void ChatWidget::cancelFile(const QString& friendId, const QString& fileId) {
     qDebug() << __func__ << "file:" << fileId;
     auto frndId = FriendId{friendId};
-
-    //    Friend *f = Nexus::getCore()->getFriendList().findFriend(frndId);
-    //    if (!f) {
-    //        qWarning() <<"IMFriend is no existing!" << friendId;
-    //        return;
-    //    }
-
     sessionListWidget->setFriendFileCancelled(frndId, fileId);
 }
 
@@ -656,7 +638,6 @@ void ChatWidget::setStatusOnline() {
     //  if (!ui->statusButton->isEnabled()) {
     //    return;
     //  }
-
     core->setStatus(Status::Status::Online);
 }
 

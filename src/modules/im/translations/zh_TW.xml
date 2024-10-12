@@ -1133,6 +1133,50 @@
         </message>
     </context>
     <context>
+        <name>ChatWidget</name>
+        <message>
+            <source>Online</source>
+            <translation>在線</translation>
+        </message>
+        <message>
+            <source>Away</source>
+            <translation>離開</translation>
+        </message>
+        <message>
+            <source>Busy</source>
+            <translation>忙碌</translation>
+        </message>
+        <message>
+            <source>Offline</source>
+            <translation>離線</translation>
+        </message>
+        <message>
+            <source>All</source>
+            <translation>全部</translation>
+        </message>
+        <message>
+            <source>Friends</source>
+            <translation>好友</translation>
+        </message>
+        <message>
+            <source>Groups</source>
+            <translation>羣組</translation>
+        </message>
+        <message>
+            <source>Search Contacts</source>
+            <translation>搜索聯系人</translation>
+        </message>
+    </context>
+
+    <context>
+        <name>ContactWidget</name>
+        <message>
+            <source>Search Contacts</source>
+            <translation>搜索聯系人</translation>
+        </message>
+    </context>
+
+    <context>
         <name>GenericNetCamView</name>
         <message>
             <source>Tox video</source>
@@ -1229,6 +1273,7 @@
             <translation type="unfinished"></translation>
         </message>
     </context>
+
     <context>
         <name>GroupWidget</name>
         <message>
@@ -2864,14 +2909,6 @@
             <translation>
                 <numerusform>%n 個新群組邀請</numerusform>
             </translation>
-        </message>
-        <message>
-            <source>By Name</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <source>By Activity</source>
-            <translation type="unfinished"></translation>
         </message>
         <message>
             <source>All</source>

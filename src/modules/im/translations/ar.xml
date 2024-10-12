@@ -2899,14 +2899,6 @@
             <translation>اضافة قائمة جديدة...</translation>
         </message>
         <message>
-            <source>By Name</source>
-            <translation>بالاسم</translation>
-        </message>
-        <message>
-            <source>By Activity</source>
-            <translation>بالنشاط</translation>
-        </message>
-        <message>
             <source>All</source>
             <translation>الجميع</translation>
         </message>
@@ -2954,10 +2946,6 @@
             <source>Exit</source>
             <comment>Tray action menu to exit tox</comment>
             <translation>خروج</translation>
-        </message>
-        <message>
-            <source>Filter...</source>
-            <translation>فلتر...</translation>
         </message>
         <message>
             <source>File</source>

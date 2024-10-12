@@ -2914,14 +2914,6 @@
             </translation>
         </message>
         <message>
-            <source>By Name</source>
-            <translation>Por nombre</translation>
-        </message>
-        <message>
-            <source>By Activity</source>
-            <translation>Por actividad</translation>
-        </message>
-        <message>
             <source>All</source>
             <translation>Todos</translation>
         </message>
@@ -2960,10 +2952,6 @@
         <message>
             <source>Edit</source>
             <translation>Editar</translation>
-        </message>
-        <message>
-            <source>Filter...</source>
-            <translation>Filtrar...</translation>
         </message>
         <message>
             <source>Contacts</source>
