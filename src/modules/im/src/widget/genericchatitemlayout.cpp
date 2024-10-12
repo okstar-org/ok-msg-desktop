@@ -21,7 +21,7 @@
 // Inserting widgets other ways would cause this layout to be unable to sort.
 // As such, they are protected using asserts.
 
-GenericChatItemLayout::GenericChatItemLayout() : layout(new QVBoxLayout()) {}
+GenericChatItemLayout::GenericChatItemLayout(QWidget* parent) : layout(new QVBoxLayout(parent)) {}
 
 GenericChatItemLayout::~GenericChatItemLayout() { delete layout; }
 

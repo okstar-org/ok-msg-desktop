@@ -64,8 +64,7 @@ MessageSessionListWidget::MessageSessionListWidget(MainLayout* parent,
 
     // Prevent QLayout's add child warning before setting the mode.
     listLayout = new FriendListLayout(this);
-    listLayout->removeItem(listLayout->getLayoutOnline());
-    listLayout->removeItem(listLayout->getLayoutOffline());
+    // listLayout->removeItem(listLayout->getLayoutOnline());
     setLayout(listLayout);
 
     mode = Settings::getInstance().getFriendSortingMode();
@@ -194,11 +193,6 @@ void MessageSessionListWidget::sortByMode(SortingMode mode) {
             //      }
         }
 
-        //    listLayout->addLayout(listLayout->getLayout());
-        listLayout->addLayout(listLayout->getLayoutOffline());
-        //    listLayout->addLayout(circleLayout->getLayout());
-        //    onGroupchatPositionChanged(groupsOnTop);
-
         if (activityLayout != nullptr) {
             QLayoutItem* item;
             while ((item = activityLayout->takeAt(0)) != nullptr) {
@@ -239,7 +233,6 @@ void MessageSessionListWidget::sortByMode(SortingMode mode) {
         //      activityLayout->addWidget(category);
         //    }
 
-        moveFriends(listLayout->getLayoutOffline());
         moveFriends(listLayout->getLayoutOnline());
         //    if (circleLayout != nullptr) {
         //      moveFriends(circleLayout->getLayout());
@@ -252,7 +245,6 @@ void MessageSessionListWidget::sortByMode(SortingMode mode) {
         }
 
         listLayout->removeItem(listLayout->getLayoutOnline());
-        listLayout->removeItem(listLayout->getLayoutOffline());
 
         //    if (circleLayout != nullptr) {
         //      listLayout->removeItem(circleLayout->getLayout());
@@ -289,9 +281,8 @@ void MessageSessionListWidget::moveFriends(QLayout* layout) {
 
 MessageSessionListWidget::SortingMode MessageSessionListWidget::getMode() const { return mode; }
 
-void MessageSessionListWidget::searchChatrooms(const QString& searchString, bool hideOnline,
-                                               bool hideOffline, bool hideGroups) {
-    listLayout->searchChatrooms(searchString, hideOnline, hideOffline);
+void MessageSessionListWidget::search(const QString& searchString) {
+    listLayout->search(searchString);
 }
 
 void MessageSessionListWidget::onFriendWidgetRenamed(FriendWidget* friendWidget) {
@@ -385,7 +376,6 @@ void MessageSessionListWidget::cycleContacts(GenericChatroomWidget* activeChatro
         currentLayout = listLayout->getLayoutOnline();
         index = listLayout->indexOfFriendWidget(friendWidget, true);
         if (index == -1) {
-            currentLayout = listLayout->getLayoutOffline();
             index = listLayout->indexOfFriendWidget(friendWidget, false);
         }
     }
@@ -406,8 +396,7 @@ void MessageSessionListWidget::cycleContacts(GenericChatroomWidget* activeChatro
         }
 
         // Go to the actual next index.
-        if (currentLayout == listLayout->getLayoutOnline() ||
-            currentLayout == listLayout->getLayoutOffline()) {
+        if (currentLayout == listLayout->getLayoutOnline()) {
             GenericChatroomWidget* chatWidget =
                     qobject_cast<GenericChatroomWidget*>(currentLayout->itemAt(index)->widget());
 
@@ -598,10 +587,8 @@ QLayout* MessageSessionListWidget::nextLayout(QLayout* layout, bool forward) con
     if (forward) {
         if (groupsOnTop) return listLayout->getLayoutOnline();
 
-        return listLayout->getLayoutOffline();
     } else {
         if (groupsOnTop)
-            //        return circleLayout->getLayout();
 
             return listLayout->getLayoutOnline();
     }

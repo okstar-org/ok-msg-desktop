@@ -159,8 +159,6 @@ void FriendListWidget::sortByMode(SortingMode mode) {
         int count = activityLayout ? activityLayout->count() : 0;
 
         listLayout->addLayout(listLayout->getLayoutOnline());
-        listLayout->addLayout(listLayout->getLayoutOffline());
-        //    listLayout->addLayout(circleLayout->getLayout());
         onGroupchatPositionChanged(groupsOnTop);
 
         if (activityLayout != nullptr) {
@@ -198,7 +196,6 @@ void FriendListWidget::sortByMode(SortingMode mode) {
         activityLayout = new QVBoxLayout();
 
         listLayout->removeItem(listLayout->getLayoutOnline());
-        listLayout->removeItem(listLayout->getLayoutOffline());
 
         listLayout->insertLayout(1, activityLayout);
 
@@ -278,7 +275,7 @@ void FriendListWidget::setGroupInfo(const GroupId& groupId, const GroupInfo& inf
 void FriendListWidget::searchChatrooms(const QString& searchString, bool hideOnline,
                                        bool hideOffline, bool hideGroups) {
     groupLayout.search(searchString, hideGroups);
-    listLayout->searchChatrooms(searchString, hideOnline, hideOffline);
+
     //
     //  if (circleLayout != nullptr) {
     //    for (int i = 0; i != circleLayout->getLayout()->count(); ++i) {
@@ -418,7 +415,6 @@ QLayout* FriendListWidget::nextLayout(QLayout* layout, bool forward) const {
         if (forward) {
             if (groupsOnTop) return listLayout->getLayoutOnline();
 
-            return listLayout->getLayoutOffline();
         } else {
             if (groupsOnTop)
                 //        return circleLayout->getLayout();
@@ -427,15 +423,13 @@ QLayout* FriendListWidget::nextLayout(QLayout* layout, bool forward) const {
         }
     } else if (layout == listLayout->getLayoutOnline()) {
         if (forward) {
-            if (groupsOnTop) return listLayout->getLayoutOffline();
-
             return groupLayout.getLayout();
         } else {
             if (groupsOnTop) return groupLayout.getLayout();
 
             //      return circleLayout->getLayout();
         }
-    } else if (layout == listLayout->getLayoutOffline()) {
+    } else {
         //    if (forward)
         //      return circleLayout->getLayout();
         //    else if (groupsOnTop)

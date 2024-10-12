@@ -58,8 +58,7 @@ ContentDialog::ContentDialog(QWidget* parent)
     friendLayout->setMargin(0);
     friendLayout->setSpacing(0);
 
-    layouts = {friendLayout->getLayoutOnline(), groupLayout.getLayout(),
-               friendLayout->getLayoutOffline()};
+    layouts = {friendLayout->getLayoutOnline(), groupLayout.getLayout()};
 
     if (s.getGroupchatPosition()) {
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 13, 0))
@@ -179,7 +178,6 @@ int ContentDialog::getCurrentLayout(QLayout*& layout) {
         return index;
     }
 
-    layout = friendLayout->getLayoutOffline();
     index = friendLayout->indexOfFriendWidget(activeChatroomWidget, false);
     if (index != -1) {
         return index;
@@ -209,15 +207,13 @@ void ContentDialog::cycleContacts(bool forward, bool inverse) {
 
     if (!inverse && index == currentLayout->count() - 1) {
         bool groupsOnTop = Settings::getInstance().getGroupchatPosition();
-        bool offlineEmpty = friendLayout->getLayoutOffline()->isEmpty();
         bool onlineEmpty = friendLayout->getLayoutOnline()->isEmpty();
         bool groupsEmpty = groupLayout.getLayout()->isEmpty();
-        bool isCurOffline = currentLayout == friendLayout->getLayoutOffline();
+
         bool isCurOnline = currentLayout == friendLayout->getLayoutOnline();
         bool isCurGroup = currentLayout == groupLayout.getLayout();
-        bool nextIsEmpty = (isCurOnline && offlineEmpty && (groupsEmpty || groupsOnTop)) ||
-                           (isCurGroup && offlineEmpty && (onlineEmpty || !groupsOnTop)) ||
-                           (isCurOffline);
+        bool nextIsEmpty = (isCurOnline && (groupsEmpty || groupsOnTop)) ||
+                           (isCurGroup && (onlineEmpty || !groupsOnTop));
 
         if (nextIsEmpty) {
             forward = !forward;

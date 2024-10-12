@@ -70,8 +70,10 @@ MessageSessionWidget::MessageSessionWidget(ContentLayout* layout, const ContactI
         , contentLayout(layout)
         , sendWorker{nullptr}
         , contactId(cId) {
-    setAutoFillBackground(false);
     qDebug() << __func__ << "contactId:" << cId.toString();
+
+    setCursor(Qt::PointingHandCursor);
+    setAutoFillBackground(false);
 
     auto profile = Nexus::getProfile();
     auto core = Core::getInstance();

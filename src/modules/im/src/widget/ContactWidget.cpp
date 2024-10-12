@@ -57,8 +57,6 @@ ContactWidget::ContactWidget(QWidget* parent)
     ui->mainSplitter->addWidget(contentWidget.get());
     ui->mainSplitter->setSizes(QList<int>() << 200 << 500);
 
-    // ui->searchText->setPlaceholderText(tr("Search Contacts"));
-
     init();
 
     reloadTheme();

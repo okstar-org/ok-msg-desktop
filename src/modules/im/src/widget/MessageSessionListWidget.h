@@ -4,10 +4,10 @@
  * You can use this software according to the terms and conditions of the Mulan
  * PubL v2. You may obtain a copy of Mulan PubL v2 at:
  *          http://license.coscl.org.cn/MulanPubL-2.0
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY
- * KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
- * NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE. See the
- * Mulan PubL v2 for more details.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PubL v2 for more details.
  */
 
 #ifndef MESSAGE_SESSION_LIST_WIDGET_H
@@ -67,8 +67,7 @@ public:
     void setFriendFileReceived(const ContactId& cId, const ToxFile& file);
     void setFriendFileCancelled(const ContactId& cId, const QString& fileId);
 
-    void searchChatrooms(const QString& searchString, bool hideOnline = false,
-                         bool hideOffline = false, bool hideGroups = false);
+    void search(const QString& searchString);
 
     void cycleContacts(GenericChatroomWidget* activeChatroomWidget, bool forward);
 

@@ -35,18 +35,18 @@ public:
     int friendTotalCount() const;
 
     bool hasChatrooms() const;
-    void searchChatrooms(const QString& searchString, bool hideOnline = false,
-                         bool hideOffline = false);
+    void search(const QString& searchString);
 
     QLayout* getLayoutOnline() const;
-    QLayout* getLayoutOffline() const;
+
+    void addWidget(GenericChatItemWidget* w);
 
 private:
     void init();
     QLayout* getFriendLayout(Status::Status s) const;
 
-    GenericChatItemLayout friendOnlineLayout;
-    GenericChatItemLayout friendOfflineLayout;
+    GenericChatItemLayout* friendOnlineLayout;
+    //    GenericChatItemLayout friendOfflineLayout;
 };
 
 #endif  // FRIENDLISTLAYOUT_H
