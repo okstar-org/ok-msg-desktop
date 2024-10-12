@@ -35,25 +35,21 @@ void Translator::translate(const QString& moduleName, const QString& localeName)
     qDebug() << "translate module:" << moduleName << "locale:" << localeName;
     QMutexLocker locker{&lock};
 
-    qDebug() << "m_translatorMap" << m_translatorMap.size();
     auto* translator = m_translatorMap.value(moduleName);
     if (translator) {
-        qDebug() << "remove translator:" << translator;
         QCoreApplication::removeTranslator(translator);
         m_translatorMap.remove(moduleName);
         delete translator;
     }
 
-    qDebug() << "New translator=>" << moduleName;
     translator = new QTranslator();
 
     // Load translations
     QString locale =
             localeName.isEmpty() ? QLocale::system().name().section('_', 0, 0) : localeName;
-    qDebug() << "Loaded locale" << locale << "=>" << moduleName;
+    //    qDebug() << "Loaded locale" << locale << "=>" << moduleName;
     if (locale != "en") {
         if (!m_loadedQtTranslations) {
-            // system menu translation (Qt国际化配置)
             QTranslator* qtTranslator = new QTranslator();
             QString s_locale = "qt_" + locale;
             QString location = QLibraryInfo::location(QLibraryInfo::TranslationsPath);

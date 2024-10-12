@@ -452,8 +452,6 @@ QByteArray Profile::loadAvatarData(const ContactId& owner) {
     qDebug() << __func__ << owner.toString();
 
     QString path = avatarPath(owner);
-    qDebug() << "read:" << path;
-
     QFile file(path);
     if (!file.open(QIODevice::ReadOnly)) {
         qWarning() << "Unable to open file" << path;
@@ -520,7 +518,6 @@ void Profile::setAvatar(QByteArray& pic, bool saveToCore) {
         return;
     }
 
-    qDebug() << "pixmap" << pixmap.size();
     saveFriendAvatar(selfPk, avatarData);
 
     emit selfAvatarChanged(pixmap);
