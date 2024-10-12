@@ -1237,6 +1237,42 @@
     </context>
 
     <context>
+        <name>ChatWidget</name>
+        <message>
+            <source>Online</source>
+            <translation>オンライン</translation>
+        </message>
+        <message>
+            <source>Away</source>
+            <translation>離席中</translation>
+        </message>
+        <message>
+            <source>Busy</source>
+            <translation>忙しい</translation>
+        </message>
+        <message>
+            <source>Offline</source>
+            <translation>オフライン</translation>
+        </message>
+        <message>
+            <source>All</source>
+            <translation>すべて</translation>
+        </message>
+        <message>
+            <source>Friends</source>
+            <translation>フレンド</translation>
+        </message>
+        <message>
+            <source>Groups</source>
+            <translation>グループ</translation>
+        </message>
+        <message>
+            <source>Search Contacts</source>
+            <translation>連絡先を検索</translation>
+        </message>
+    </context>
+
+    <context>
         <name>ContactWidget</name>
         <message>
             <source>Search Contacts</source>

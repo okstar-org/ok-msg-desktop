@@ -1211,6 +1211,50 @@
             <translation type="unfinished">Exportar para ficheiro</translation>
         </message>
     </context>
+
+    <context>
+        <name>ChatWidget</name>
+        <message>
+            <source>Online</source>
+            <translation>Online</translation>
+        </message>
+        <message>
+            <source>Away</source>
+            <translation>Ausente</translation>
+        </message>
+        <message>
+            <source>Busy</source>
+            <translation>Ocupado</translation>
+        </message>
+        <message>
+            <source>Offline</source>
+            <translation>Offline</translation>
+        </message>
+        <message>
+            <source>All</source>
+            <translation>Todos</translation>
+        </message>
+        <message>
+            <source>Friends</source>
+            <translation>Amigos</translation>
+        </message>
+        <message>
+            <source>Groups</source>
+            <translation>Grupos</translation>
+        </message>
+        <message>
+            <source>Search Contacts</source>
+            <translation>Pesquisar Contatos</translation>
+        </message>
+    </context>
+    <context>
+        <name>ContactWidget</name>
+        <message>
+            <source>Search Contacts</source>
+            <translation>Pesquisar Contatos</translation>
+        </message>
+    </context>
+
     <context>
         <name>GenericNetCamView</name>
         <message>
