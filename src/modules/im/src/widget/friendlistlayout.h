@@ -39,11 +39,13 @@ public:
 
     QLayout* getLayoutOnline() const;
 
+    void addWidget(GenericChatItemWidget* w);
+
 private:
     void init();
     QLayout* getFriendLayout(Status::Status s) const;
 
-    GenericChatItemLayout friendOnlineLayout;
+    GenericChatItemLayout* friendOnlineLayout;
     //    GenericChatItemLayout friendOfflineLayout;
 };
 

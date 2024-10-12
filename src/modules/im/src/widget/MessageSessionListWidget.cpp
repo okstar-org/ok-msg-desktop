@@ -64,7 +64,7 @@ MessageSessionListWidget::MessageSessionListWidget(MainLayout* parent,
 
     // Prevent QLayout's add child warning before setting the mode.
     listLayout = new FriendListLayout(this);
-    listLayout->removeItem(listLayout->getLayoutOnline());
+    // listLayout->removeItem(listLayout->getLayoutOnline());
     setLayout(listLayout);
 
     mode = Settings::getInstance().getFriendSortingMode();

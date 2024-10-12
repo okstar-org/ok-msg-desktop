@@ -13,6 +13,7 @@
 #ifndef GENERICCHATITEMLAYOUT_H
 #define GENERICCHATITEMLAYOUT_H
 
+#include <QWidget>
 #include <Qt>
 
 class QLayout;
@@ -21,7 +22,7 @@ class GenericChatItemWidget;
 
 class GenericChatItemLayout {
 public:
-    GenericChatItemLayout();
+    GenericChatItemLayout(QWidget* parent = nullptr);
     GenericChatItemLayout(const GenericChatItemLayout& layout) = delete;
     ~GenericChatItemLayout();
 

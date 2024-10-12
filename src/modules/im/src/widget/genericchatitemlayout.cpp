@@ -21,16 +21,14 @@
 // Inserting widgets other ways would cause this layout to be unable to sort.
 // As such, they are protected using asserts.
 
-GenericChatItemLayout::GenericChatItemLayout() : layout(new QVBoxLayout()) {}
+GenericChatItemLayout::GenericChatItemLayout(QWidget* parent) : layout(new QVBoxLayout(parent)) {}
 
 GenericChatItemLayout::~GenericChatItemLayout() { delete layout; }
 
-void GenericChatItemLayout::addSortedWidget(GenericChatItemWidget* widget,
-                                            int stretch,
+void GenericChatItemLayout::addSortedWidget(GenericChatItemWidget* widget, int stretch,
                                             Qt::Alignment alignment) {
     int closest = indexOfClosestSortedWidget(widget);
     layout->insertWidget(closest, widget, stretch, alignment);
-    qDebug() << __func__ << layout->count();
 }
 
 int GenericChatItemLayout::indexOfSortedWidget(GenericChatItemWidget* widget) const {
