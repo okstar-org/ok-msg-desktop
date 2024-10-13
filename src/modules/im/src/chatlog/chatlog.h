@@ -128,6 +128,7 @@ private:
 
     QAction* copyAction = nullptr;
     QAction* selectAllAction = nullptr;
+    QAction* selectMultipleAction = nullptr;
     QGraphicsScene* scene = nullptr;
     QGraphicsScene* busyScene = nullptr;
     QVector<IChatItem::Ptr> lines;
@@ -174,6 +175,7 @@ signals:
 public slots:
     void forceRelayout();
     void selectAll();
+    void selectMultiple();
 
 private slots:
     void onSelectionTimerTimeout();

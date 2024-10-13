@@ -691,6 +691,10 @@
             <translation>Выбрать все</translation>
         </message>
         <message>
+            <source>Select multiple</source>
+            <translation>Много выбора</translation>
+        </message>
+        <message>
             <source>pending</source>
             <translation>в ожидании</translation>
         </message>

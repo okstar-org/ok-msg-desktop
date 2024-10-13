@@ -686,6 +686,10 @@
             <translation>Seleccionar todo</translation>
         </message>
         <message>
+            <source>Select multiple</source>
+            <translation>Múltiple selección</translation>
+        </message>
+        <message>
             <source>pending</source>
             <translation>pendiente</translation>
         </message>

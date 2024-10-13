@@ -689,6 +689,10 @@
             <translation>Tout sélectionner</translation>
         </message>
         <message>
+            <source>Select multiple</source>
+            <translation>Multiple sélection</translation>
+        </message>
+        <message>
             <source>pending</source>
             <translation>en cours</translation>
         </message>

@@ -686,6 +686,10 @@
             <source>Select all</source>
             <translation>すべて選択</translation>
         </message>
+        <message>
+            <source>Select multiple</source>
+            <translation>複数選択</translation>
+        </message>
     </context>
     <context>
         <name>ChatTextEdit</name>

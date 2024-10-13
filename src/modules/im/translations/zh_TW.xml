@@ -599,12 +599,20 @@
     <context>
         <name>ChatLog</name>
         <message>
+            <source>Clear displayed messages</source>
+            <translation>清屏</translation>
+        </message>
+        <message>
             <source>Copy</source>
             <translation>複製</translation>
         </message>
         <message>
             <source>Select all</source>
             <translation>全選</translation>
+        </message>
+        <message>
+            <source>Select multiple</source>
+            <translation>多選</translation>
         </message>
         <message>
             <source>pending</source>

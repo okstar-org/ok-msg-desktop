@@ -682,6 +682,10 @@
             <source>Select all</source>
             <translation>تحديد الكل</translation>
         </message>
+        <message>
+            <source>Select multiple</source>
+            <translation>اختيار متعددة</translation>
+        </message>
     </context>
     <context>
         <name>ChatTextEdit</name>
