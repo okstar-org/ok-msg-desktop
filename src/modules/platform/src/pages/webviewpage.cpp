@@ -43,14 +43,19 @@ void ok::platform::WebviewPage::createContent(QWidget* parent) {
     backend->getInstance(
             [this, backend, session](const QJsonDocument& body) {
                 auto obj = body.object();
-                auto port = obj.value("data").toObject().value("ports").toArray()[0].toString();
+                const QJsonObject& instance = obj.value("data").toObject();
+
+                // first port as main service port.
+                auto port = instance.value("ports").toArray()[0].toString();
                 if (port.isEmpty()) return;
+
                 QUrl baseUrl(session->getStackUrl());
-                QString url = "http://" + baseUrl.host() + ":" + port;
+                QString url = "https://" + baseUrl.host() + ":" + port;
                 qDebug() << "Instance service url:" << url;
                 webView->load(url);
                 backend->deleteLater();
             },
+
             appUuid,
             [this, backend](int statusCode, const QByteArray& body) {
                 auto json = base::Jsons::toJSON(body);

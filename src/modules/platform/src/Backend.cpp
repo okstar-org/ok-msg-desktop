@@ -43,10 +43,10 @@ bool Backend::getAppList(const network::HttpBodyFn& fn, int pageIndex, int pageS
     return http->postJson(QUrl(url), doc, fn, nullptr, nullptr, nullptr);
 }
 
-bool Backend::getInstance(const base::Fn<void(QJsonDocument)> fn,
+bool Backend::getInstance(const base::Fn<void(QJsonDocument)>& fn,
                           const QString& appUuid,
                           const network::HttpErrorFn& err) {
-    QString url = _baseUrl + "/api/tenant/user/" + appUuid + "/instance";
+    QString url = _baseUrl + "/api/tenant/instance/" + appUuid;
     return http->getJson(QUrl(url), fn, err);
 }
 

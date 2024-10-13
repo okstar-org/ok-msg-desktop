@@ -112,7 +112,7 @@ public:
     ~Backend() override;
     bool getAppList(const network::HttpBodyFn& fn, int res = 0, int pageSize = 50);
 
-    bool getInstance(const base::Fn<void(QJsonDocument)> fn, const QString& appUuid,
+    bool getInstance(const base::Fn<void(QJsonDocument)>& fn, const QString& appUuid,
                      const network::HttpErrorFn& err);
 };
 
