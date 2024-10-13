@@ -33,7 +33,7 @@ class ChatLog : public QGraphicsView {
     Q_OBJECT
 public:
     explicit ChatLog(QWidget* parent = nullptr);
-    virtual ~ChatLog();
+    ~ChatLog() override;
 
     void insertChatlineAtBottom(IChatItem::Ptr l);
     void insertChatlineOnTop(IChatItem::Ptr l);
@@ -171,6 +171,7 @@ signals:
     void firstVisibleLineChanged(const IChatItem::Ptr& prevLine, const IChatItem::Ptr& firstLine);
     void loadHistoryLower();
     void readAll();
+    void itemContextMenuRequested(QGraphicsItem* item, QPoint pos);
 
 public slots:
     void forceRelayout();

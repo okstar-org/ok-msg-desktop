@@ -160,8 +160,17 @@ ChatLog::~ChatLog() {
 }
 
 void ChatLog::onChatContextMenuRequested(QPoint pos) {
-    QWidget* sender = static_cast<QWidget*>(QObject::sender());
+    auto sender = dynamic_cast<QWidget*>(QObject::sender());
+
+    // 获取右键时位于该坐标的item
+    auto item = itemAt(pos);
+
     pos = sender->mapToGlobal(pos);
+    if (!item) {
+        menu->exec(pos);
+        return;
+    }
+    emit itemContextMenuRequested(item, pos);
 
     //    // If we right-clicked on a link, give the option to copy it
     //    bool clickedOnLink = false;
@@ -175,8 +184,6 @@ void ChatLog::onChatContextMenuRequested(QPoint pos) {
     //        }
     //    }
     //    copyLinkAction->setVisible(clickedOnLink);
-
-    menu->exec(pos);
 }
 
 void ChatLog::clearSelection() {

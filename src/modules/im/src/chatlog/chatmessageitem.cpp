@@ -11,15 +11,15 @@
  */
 
 #include "chatmessageitem.h"
+#include <QGraphicsProxyWidget>
+#include <QGraphicsScene>
+#include "chatlog.h"
 #include "content/broken.h"
 #include "content/contactavatar.h"
 #include "content/simpletext.h"
 #include "content/spinner.h"
 #include "content/text.h"
 #include "src/persistence/settings.h"
-
-#include <QGraphicsProxyWidget>
-#include <QGraphicsScene>
 
 ChatMessageBox::ChatMessageBox(const QPixmap& avatar,
                                const QString& contactName,

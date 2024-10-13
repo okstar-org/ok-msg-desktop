@@ -297,6 +297,9 @@ IChatItem::Ptr GenericChatForm::createMessage(const ChatLogItem& item,
                                                    chatLogMessage.message.timestamp, colorizeNames);
 
     connect(chatItem.get(), &IChatItem::replyEvent, this, &GenericChatForm::onReplyEvent);
+    connect(chatLog, &ChatLog::itemContextMenuRequested,
+            (ChatLineContent*)chatItem.get()->centerContent(), &ChatLineContent::onContextMenu);
+
     return chatItem;
 }
 
