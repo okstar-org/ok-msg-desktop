@@ -194,22 +194,25 @@ GenericChatForm::GenericChatForm(const ContactId* contact_,
 
     setContentsMargins(0, 0, 0, 0);
 
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    mainLayout = new QVBoxLayout(this);
     mainLayout->setMargin(0);
 
     bodySplitter = new QSplitter(Qt::Vertical, this);
-
     mainLayout->addWidget(bodySplitter);
 
-    // searchForm = new SearchForm();
-    // searchForm->hide();
     // 聊天框
     chatLog = new ChatLog(this);
+    chatLog->setMinimumHeight(200);
     chatLog->setBusyNotification(ChatMessage::createBusyNotification());
+
+    connect(chatLog, &ChatLog::firstVisibleLineChanged, this, &GenericChatForm::updateShowDateInfo);
+    connect(chatLog, &ChatLog::loadHistoryLower, this, &GenericChatForm::loadHistoryLower);
+
     bodySplitter->addWidget(chatLog);
 
     // 输入框
     inputForm = new ChatInputForm(this);
+    inputForm->setMinimumHeight(200);
     connect(inputForm, &ChatInputForm::inputText, this, &GenericChatForm::onTextSend);
     connect(inputForm, &ChatInputForm::inputTextChanged, this, &GenericChatForm::onTextEditChanged);
     connect(inputForm, &ChatInputForm::inputFile, this, &GenericChatForm::onFileSend);
@@ -232,23 +235,7 @@ GenericChatForm::GenericChatForm(const ContactId* contact_,
     //                    QKeySequence(Qt::CTRL + Qt::Key_F));
     // addAction(searchAction);
 
-    menu.addSeparator();
 
-    menu.addActions(chatLog->actions());
-    menu.addSeparator();
-
-    clearAction =
-            menu.addAction(QIcon::fromTheme("edit-clear"), QString(), this, SLOT(clearChatArea()),
-                           QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_L));
-    addAction(clearAction);
-
-    copyLinkAction = menu.addAction(QIcon(), QString(), this, SLOT(copyLink()));
-    menu.addSeparator();
-
-    // connect(chatLog, &ChatLog::customContextMenuRequested, this,
-    // &GenericChatForm::onChatContextMenuRequested);
-    connect(chatLog, &ChatLog::firstVisibleLineChanged, this, &GenericChatForm::updateShowDateInfo);
-    connect(chatLog, &ChatLog::loadHistoryLower, this, &GenericChatForm::loadHistoryLower);
 
     connect(&iChatLog, &IChatLog::itemUpdated, this, &GenericChatForm::renderMessage0);
 
@@ -398,23 +385,7 @@ void GenericChatForm::onDisplayedNameChanged(const QString& name) {
 void GenericChatForm::onReplyEvent(IChatItem* item) { emit replyEvent(item); }
 
 void GenericChatForm::onChatContextMenuRequested(QPoint pos) {
-    QWidget* sender = static_cast<QWidget*>(QObject::sender());
-    pos = sender->mapToGlobal(pos);
 
-    // If we right-clicked on a link, give the option to copy it
-    bool clickedOnLink = false;
-    Text* clickedText = qobject_cast<Text*>(chatLog->getContentFromGlobalPos(pos));
-    if (clickedText) {
-        QPointF scenePos = chatLog->mapToScene(chatLog->mapFromGlobal(pos));
-        QString linkTarget = clickedText->getLinkAt(scenePos);
-        if (!linkTarget.isEmpty()) {
-            clickedOnLink = true;
-            copyLinkAction->setData(linkTarget);
-        }
-    }
-    copyLinkAction->setVisible(clickedOnLink);
-
-    menu.exec(pos);
 }
 
 /**
@@ -564,8 +535,8 @@ void GenericChatForm::forwardSelectedText() {
 }
 
 void GenericChatForm::copyLink() {
-    QString linkText = copyLinkAction->data().toString();
-    QApplication::clipboard()->setText(linkText);
+    //    QString linkText = copyLinkAction->data().toString();
+    //    QApplication::clipboard()->setText(linkText);
 }
 
 void GenericChatForm::searchFormShow() {
@@ -783,10 +754,7 @@ void GenericChatForm::updateShowDateInfo(const IChatItem::Ptr& prevLine,
 }
 
 void GenericChatForm::retranslateUi() {
-    clearAction->setText(tr("Clear displayed messages"));
-    // quoteAction->setText(tr("Quote"));
-    // forwardAction->setText(tr("Forward"));
-    copyLinkAction->setText(tr("Copy link address"));
+    //    copyLinkAction->setText(tr("Copy link address"));
     // searchAction->setText(tr("Search in text"));
     // loadHistoryAction->setText(tr("Load chat history..."));selected text
     // exportChatAction->setText(tr("Export to file"));

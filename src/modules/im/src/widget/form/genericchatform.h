@@ -175,18 +175,13 @@ protected:
     bool audioInputFlag;
     bool audioOutputFlag;
 
+    QVBoxLayout* mainLayout;
+    // 分割条
     QSplitter* bodySplitter;
-    QAction* clearAction;
-    QAction* copyLinkAction;
-
-    // QAction* loadHistoryAction;
-    // QAction* exportChatAction;
-
-    QMenu menu;
-
-    //    SearchForm *searchForm;
-    //    QLabel *dateInfo;
+    // 聊天框
     ChatLog* chatLog;
+    // 输入框
+    ChatInputForm* inputForm;
 
 #ifdef SPELL_CHECKING
     Sonnet::SpellCheckDecorator* decorator{nullptr};
@@ -200,7 +195,6 @@ protected:
     std::map<ChatLogIdx, IChatItem::Ptr> messages;
     bool colorizeNames = false;
 
-    ChatInputForm* inputForm;
     bool isTyping;
     QTimer typingTimer;
 };

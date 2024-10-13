@@ -671,6 +671,10 @@
     <context>
         <name>ChatLog</name>
         <message>
+            <source>Clear displayed messages</source>
+            <translation>表示されたメッセージを消去</translation>
+        </message>
+        <message>
             <source>pending</source>
             <translation>保留中</translation>
         </message>
@@ -1159,10 +1163,7 @@
             <source>Send a screenshot</source>
             <translation>スクリーンショットを送信</translation>
         </message>
-        <message>
-            <source>Clear displayed messages</source>
-            <translation>表示されたメッセージを消去</translation>
-        </message>
+
         <message>
             <source>Reply</source>
             <translation>選択されたテキストを引用</translation>

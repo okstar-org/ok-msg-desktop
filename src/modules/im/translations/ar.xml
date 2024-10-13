@@ -667,6 +667,10 @@
     <context>
         <name>ChatLog</name>
         <message>
+            <source>Clear displayed messages</source>
+            <translation>تنظيف الرسائل المعروضة(حذفها)</translation>
+        </message>
+        <message>
             <source>pending</source>
             <translation>قيد الانتظار</translation>
         </message>
@@ -1160,10 +1164,6 @@
         <message>
             <source>Send a screenshot</source>
             <translation>ارسال لقطة شاشة</translation>
-        </message>
-        <message>
-            <source>Clear displayed messages</source>
-            <translation>تنظيف الرسائل المعروضة(حذفها)</translation>
         </message>
         <message>
             <source>Reply</source>

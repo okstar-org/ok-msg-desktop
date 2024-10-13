@@ -733,6 +733,10 @@
     <context>
         <name>ChatLog</name>
         <message>
+            <source>Clear displayed messages</source>
+            <translation>清屏</translation>
+        </message>
+        <message>
             <source>Copy</source>
             <translation>复制</translation>
         </message>
@@ -1142,10 +1146,7 @@
             <source>Save chat log</source>
             <translation>保存聊天记录</translation>
         </message>
-        <message>
-            <source>Clear displayed messages</source>
-            <translation>清屏</translation>
-        </message>
+
         <message>
             <source>Cleared</source>
             <translation>已清除</translation>

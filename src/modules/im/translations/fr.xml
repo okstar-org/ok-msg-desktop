@@ -677,6 +677,10 @@
     <context>
         <name>ChatLog</name>
         <message>
+            <source>Clear displayed messages</source>
+            <translation>Effacer les messages affichés</translation>
+        </message>
+        <message>
             <source>Copy</source>
             <translation>Copier</translation>
         </message>
@@ -1155,10 +1159,7 @@
             <source>Send a screenshot</source>
             <translation>Envoyer une capture d&apos;écran</translation>
         </message>
-        <message>
-            <source>Clear displayed messages</source>
-            <translation>Effacer les messages affichés</translation>
-        </message>
+
         <message>
             <source>Cleared</source>
             <translation>Effacé</translation>

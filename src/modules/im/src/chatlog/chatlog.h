@@ -25,6 +25,7 @@ class QGraphicsScene;
 class QGraphicsRectItem;
 class QMouseEvent;
 class QTimer;
+class QMenu;
 class ChatLineContent;
 struct ToxFile;
 
@@ -44,7 +45,6 @@ public:
     void setTypingNotification(IChatItem::Ptr notification);
     void setTypingNotificationVisible(bool visible);
     void scrollToLine(IChatItem::Ptr line);
-    void selectAll();
     void fontChanged(const QFont& font);
     void reloadTheme();
 
@@ -61,20 +61,6 @@ public:
     const uint repNameAfter = 5 * 60;
 
     constexpr inline int getVScrollBarValue() const { return scrollBarValue; }
-signals:
-    void selectionChanged();
-    void workerTimeoutFinished();
-    void firstVisibleLineChanged(const IChatItem::Ptr& prevLine, const IChatItem::Ptr& firstLine);
-    void loadHistoryLower();
-    void readAll();
-
-public slots:
-    void forceRelayout();
-private slots:
-    void onSelectionTimerTimeout();
-    void onWorkerTimeout();
-    void onMultiClickTimeout();
-    void onVScrollBarValueChanged(int value);
 
 protected:
     QRectF calculateSceneRect() const;
@@ -109,6 +95,8 @@ protected:
 
     IChatItem::Ptr findLineByPosY(qreal yPos) const;
 
+    void onChatContextMenuRequested(QPoint pos);
+
 private:
     void retranslateUi();
     bool isActiveFileTransfer(IChatItem::Ptr l);
@@ -132,6 +120,11 @@ private:
         Up,
         Down,
     };
+
+    QAction* clearAction;
+    QAction* copyLinkAction;
+
+    QMenu* menu;
 
     QAction* copyAction = nullptr;
     QAction* selectAllAction = nullptr;
@@ -170,6 +163,24 @@ private:
     qreal lineSpacing = 20.0f;
 
     int scrollBarValue = 0;
+
+signals:
+    void selectionChanged();
+    void workerTimeoutFinished();
+    void firstVisibleLineChanged(const IChatItem::Ptr& prevLine, const IChatItem::Ptr& firstLine);
+    void loadHistoryLower();
+    void readAll();
+
+public slots:
+    void forceRelayout();
+    void selectAll();
+
+private slots:
+    void onSelectionTimerTimeout();
+    void onWorkerTimeout();
+    void onMultiClickTimeout();
+    void onVScrollBarValueChanged(int value);
+    void clearChat();
 };
 
 #endif  // CHATLOG_H

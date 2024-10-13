@@ -679,6 +679,10 @@
     <context>
         <name>ChatLog</name>
         <message>
+            <source>Clear displayed messages</source>
+            <translation>Очистить показываемые сообщения</translation>
+        </message>
+        <message>
             <source>Copy</source>
             <translation>Копировать</translation>
         </message>
@@ -1161,10 +1165,7 @@
             <source>Save chat log</source>
             <translation>Сохранить журнал чата</translation>
         </message>
-        <message>
-            <source>Clear displayed messages</source>
-            <translation>Очистить показываемые сообщения</translation>
-        </message>
+
         <message>
             <source>Reply</source>
             <translation>Цитировать выделенное</translation>

@@ -677,6 +677,10 @@
     <context>
         <name>ChatLog</name>
         <message>
+            <source>Clear displayed messages</source>
+            <translation>Angezeigte Nachrichten entfernen</translation>
+        </message>
+        <message>
             <source>Copy</source>
             <translation>Kopieren</translation>
         </message>
@@ -1148,10 +1152,6 @@
         <message>
             <source>Save chat log</source>
             <translation>Gesprächsverlauf speichern</translation>
-        </message>
-        <message>
-            <source>Clear displayed messages</source>
-            <translation>Angezeigte Nachrichten entfernen</translation>
         </message>
         <message>
             <source>Cleared</source>

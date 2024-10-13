@@ -658,6 +658,10 @@
     <context>
         <name>ChatLog</name>
         <message>
+            <source>Clear displayed messages</source>
+            <translation>비우기</translation>
+        </message>
+        <message>
             <source>Copy</source>
             <translation>복사</translation>
         </message>
@@ -1125,10 +1129,7 @@
             <source>Save chat log</source>
             <translation type="unfinished">채팅 기록을 저장</translation>
         </message>
-        <message>
-            <source>Clear displayed messages</source>
-            <translation type="unfinished"></translation>
-        </message>
+
         <message>
             <source>Cleared</source>
             <translation type="unfinished"></translation>

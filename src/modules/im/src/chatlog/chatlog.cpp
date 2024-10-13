@@ -74,6 +74,29 @@ ChatLog::ChatLog(QWidget* parent) : QGraphicsView(parent), scrollBarValue{0} {
     // setContextMenuPolicy(Qt::CustomContextMenu);
     setBackgroundBrush(QBrush(Style::getColor(Style::GroundBase), Qt::SolidPattern));
 
+    setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(this, &ChatLog::customContextMenuRequested, this, &ChatLog::onChatContextMenuRequested);
+
+    menu = new QMenu(this);
+    menu->addActions(actions());
+    menu->addSeparator();
+
+    clearAction = menu->addAction(QIcon::fromTheme("edit-clear"), QString(), this,
+                                  &ChatLog::clearChat, QKeySequence(Qt::CTRL, Qt::Key_L));
+    addAction(clearAction);
+
+    // select all action (ie. Ctrl+A)
+    selectAllAction = menu->addAction(QIcon::fromTheme("edit-select-all"), QString(), this,
+                                      &ChatLog::selectAll, QKeySequence::SelectAll);
+
+    //    selectAllAction->setIcon(QIcon::fromTheme("edit-select-all"));
+    //    selectAllAction->setShortcut(QKeySequence::SelectAll);
+    //    connect(selectAllAction, &QAction::triggered, this, [this]() { selectAll(); });
+    addAction(selectAllAction);
+
+    //    copyLinkAction = menu.addAction(QIcon(), QString(), this, SLOT(copyLink()));
+    //    menu.addSeparator();
+
     // copy action (ie. Ctrl+C)
     copyAction = new QAction(this);
     copyAction->setIcon(QIcon::fromTheme("edit-copy"));
@@ -85,13 +108,6 @@ ChatLog::ChatLog(QWidget* parent) : QGraphicsView(parent), scrollBarValue{0} {
     // Ctrl+Insert shortcut
     QShortcut* copyCtrlInsShortcut = new QShortcut(QKeySequence(Qt::CTRL, Qt::Key_Insert), this);
     connect(copyCtrlInsShortcut, &QShortcut::activated, this, [this]() { copySelectedText(); });
-
-    // select all action (ie. Ctrl+A)
-    selectAllAction = new QAction(this);
-    selectAllAction->setIcon(QIcon::fromTheme("edit-select-all"));
-    selectAllAction->setShortcut(QKeySequence::SelectAll);
-    connect(selectAllAction, &QAction::triggered, this, [this]() { selectAll(); });
-    addAction(selectAllAction);
 
     // This timer is used to scroll the view while the user is
     // moving the mouse past the top/bottom edge of the widget while selecting.
@@ -136,6 +152,26 @@ ChatLog::~ChatLog() {
     if (busyNotification) busyNotification->removeFromScene();
 
     if (typingNotification) typingNotification->removeFromScene();
+}
+
+void ChatLog::onChatContextMenuRequested(QPoint pos) {
+    QWidget* sender = static_cast<QWidget*>(QObject::sender());
+    pos = sender->mapToGlobal(pos);
+
+    //    // If we right-clicked on a link, give the option to copy it
+    //    bool clickedOnLink = false;
+    //    Text* clickedText = qobject_cast<Text*>(chatLog->getContentFromGlobalPos(pos));
+    //    if (clickedText) {
+    //        QPointF scenePos = chatLog->mapToScene(chatLog->mapFromGlobal(pos));
+    //        QString linkTarget = clickedText->getLinkAt(scenePos);
+    //        if (!linkTarget.isEmpty()) {
+    //            clickedOnLink = true;
+    //            copyLinkAction->setData(linkTarget);
+    //        }
+    //    }
+    //    copyLinkAction->setVisible(clickedOnLink);
+
+    menu->exec(pos);
 }
 
 void ChatLog::clearSelection() {
@@ -554,26 +590,6 @@ ChatLineContent* ChatLog::getContentFromGlobalPos(QPoint pos) const {
     return getContentFromPos(mapToScene(mapFromGlobal(pos)));
 }
 
-void ChatLog::clear() {
-    clearSelection();
-
-    QVector<IChatItem::Ptr> savedLines;
-
-    for (IChatItem::Ptr l : lines) {
-        if (isActiveFileTransfer(l))
-            savedLines.push_back(l);
-        else
-            l->removeFromScene();
-    }
-
-    lines.clear();
-    visibleLines.clear();
-    for (IChatItem::Ptr l : savedLines) {
-        insertChatlineAtBottom(l);
-    }
-    updateSceneRect();
-}
-
 void ChatLog::copySelectedText(bool toSelectionBuffer) const {
     QString text = getSelectedText();
     QClipboard* clipboard = QApplication::clipboard();
@@ -615,14 +631,14 @@ void ChatLog::scrollToLine(IChatItem::Ptr line) {
 void ChatLog::selectAll() {
     if (lines.empty()) return;
 
-    clearSelection();
+    //    clearSelection();
 
     selectionMode = SelectionMode::Multi;
     selFirstRow = 0;
     selLastRow = lines.size() - 1;
 
-    emit selectionChanged();
     updateMultiSelectionRect();
+    emit selectionChanged();
 }
 
 void ChatLog::fontChanged(const QFont& font) {
@@ -875,6 +891,7 @@ void ChatLog::focusOutEvent(QFocusEvent* ev) {
 }
 
 void ChatLog::retranslateUi() {
+    clearAction->setText(tr("Clear displayed messages"));
     copyAction->setText(tr("Copy"));
     selectAllAction->setText(tr("Select all"));
 }
@@ -976,4 +993,26 @@ void ChatLog::moveMultiSelectionDown(int offset) {
         updateMultiSelectionRect();
         emit selectionChanged();
     }
+}
+
+void ChatLog::clearChat() { clear(); }
+
+void ChatLog::clear() {
+    clearSelection();
+
+    QVector<IChatItem::Ptr> savedLines;
+
+    for (IChatItem::Ptr l : lines) {
+        if (isActiveFileTransfer(l))
+            savedLines.push_back(l);
+        else
+            l->removeFromScene();
+    }
+
+    lines.clear();
+    visibleLines.clear();
+    for (IChatItem::Ptr l : savedLines) {
+        insertChatlineAtBottom(l);
+    }
+    updateSceneRect();
 }
