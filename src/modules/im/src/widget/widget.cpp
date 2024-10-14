@@ -70,6 +70,7 @@
 #include "src/platform/timer.h"
 #include "src/widget/ContactWidget.h"
 #include "src/widget/contentdialogmanager.h"
+#include "src/widget/form/ChatForwardDialog.h"
 #include "src/widget/form/addfriendform.h"
 #include "src/widget/form/filesform.h"
 #include "src/widget/form/groupinviteform.h"
@@ -261,19 +262,25 @@ Widget::Widget(IAudioControl& audio, QWidget* parent)  //
     init();
 }
 
+Widget::~Widget() {
+    qDebug() << __func__;
+    settings::Translator::unregister(this);
+    delete timer;
+    delete ui;
+}
+
 void Widget::init() {
-    //  profile = Nexus::getProfile();
 
     connect(this, &Widget::toSendMessage, [&]() { ui->tabWidget->setCurrentIndex(0); });
-
     connect(this, &Widget::toShowDetails, [&]() { ui->tabWidget->setCurrentIndex(1); });
+    connect(this, &Widget::toForwardMessage, [&]() {
+        modalDialog = std::make_unique<ChatForwardDialog>(this);
+        modalDialog->exec();
+    });
 
 #if UPDATE_CHECK_ENABLED
     updateCheck = std::unique_ptr<UpdateCheck>(new UpdateCheck(settings));
     connect(updateCheck.get(), &UpdateCheck::updateAvailable, this, &Widget::onUpdateAvailable);
-#endif
-
-#if UPDATE_CHECK_ENABLED
     updateCheck->checkForUpdate();
 #endif
 }
@@ -354,12 +361,6 @@ void Widget::updateIcons() {
     //  }
 }
 
-Widget::~Widget() {
-    qDebug() << __func__;
-    settings::Translator::unregister(this);
-    delete timer;
-    delete ui;
-}
 
 /**
  * @brief Switches to the About settings page.

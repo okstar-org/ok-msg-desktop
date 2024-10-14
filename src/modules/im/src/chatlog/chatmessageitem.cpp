@@ -20,6 +20,7 @@
 #include "content/spinner.h"
 #include "content/text.h"
 #include "src/persistence/settings.h"
+#include "src/widget/widget.h"
 
 ChatMessageBox::ChatMessageBox(const QPixmap& avatar,
                                const QString& contactName,
@@ -223,7 +224,11 @@ void ChatMessageBox::doReply() {
 
 void ChatMessageBox::doCopy() { messageItem->doCopySelectedText(); }
 
-void ChatMessageBox::doForward() { qDebug() << __func__ << id; }
+void ChatMessageBox::doForward() {
+    qDebug() << __func__ << id;
+    auto w = Widget::getInstance();
+    emit w->toForwardMessage(id);
+}
 
 const QString& ChatMessageBox::getNickname() { return *(QString*)nicknameItem->getContent(); }
 

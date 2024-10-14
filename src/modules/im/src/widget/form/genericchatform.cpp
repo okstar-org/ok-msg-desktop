@@ -202,7 +202,7 @@ GenericChatForm::GenericChatForm(const ContactId* contact_,
 
     // 聊天框
     chatLog = new ChatLog(this);
-    chatLog->setMinimumHeight(200);
+    //    chatLog->setMinimumHeight(200);
     chatLog->setBusyNotification(ChatMessage::createBusyNotification());
 
     connect(chatLog, &ChatLog::firstVisibleLineChanged, this, &GenericChatForm::updateShowDateInfo);

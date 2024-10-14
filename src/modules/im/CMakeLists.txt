@@ -54,13 +54,11 @@ qt5_wrap_ui(
         src/widget/tool/removefrienddialog.ui
         src/widget/form/searchsettingsform.ui
         src/widget/form/setpassworddialog.ui
-    ../../UI/window/config/about/src/aboutsettings.ui
-
         src/widget/form/settings/avform.ui
         src/widget/form/settings/generalsettings.ui
         src/widget/form/settings/privacysettings.ui
 		src/widget/form/settings/StorageSettingsForm.ui
-    src/widget/form/CallDurationForm.ui
+		src/widget/form/CallDurationForm.ui
 )
 
 set(${PROJECT_NAME}_SOURCES
@@ -139,7 +137,7 @@ set(${PROJECT_NAME}_SOURCES
         src/core/toxoptions.cpp
         src/core/toxoptions.h
         src/core/FriendId.cpp
-	src/core/FriendId.h
+		src/core/FriendId.h
         src/core/contactid.cpp
         src/core/contactid.h
         src/friendlist.cpp
@@ -176,7 +174,6 @@ set(${PROJECT_NAME}_SOURCES
         src/model/group.h
         src/model/status.cpp
         src/model/status.h
-		../../base/interface.h
         src/model/profile/iprofileinfo.h
         src/model/profile/profileinfo.cpp
         src/model/profile/profileinfo.h
@@ -272,6 +269,9 @@ set(${PROJECT_NAME}_SOURCES
 		src/widget/form/ChatReplyForm.ui
 		src/widget/form/ChatReplyForm.h
 		src/widget/form/ChatReplyForm.cpp
+		src/widget/form/ChatForwardDialog.h
+		src/widget/form/ChatForwardDialog.cpp
+		src/widget/form/ChatForwardDialog.ui
         src/widget/form/filesform.cpp
         src/widget/form/filesform.h
         src/widget/form/genericchatform.cpp
