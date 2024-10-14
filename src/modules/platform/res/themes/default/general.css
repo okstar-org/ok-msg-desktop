@@ -10,14 +10,10 @@
  * See the Mulan PubL v2 for more details.
  */
 
-QTabWidget {
-    background-color: white;
-}
-
 QTabWidget#mainTab,
 QTabWidget#mainTab::pane,
 QTabWidget#mainTab > QTabBar {
-    border: 0 solid;
+    border: 0;
 }
 
 QTabWidget#mainTab > QTabBar {
@@ -25,7 +21,7 @@ QTabWidget#mainTab > QTabBar {
 }
 
 QTabWidget#mainTab > QTabBar::tab {
-    border: 0px solid;
+    border: 0;
     padding: 10px 10px 10px 10px;
     background: white;
     color: #959595;
@@ -39,10 +35,6 @@ QTabWidget#mainTab > QTabBar::tab:selected {
     color: #19171b;
 }
 
-QTabBar {
-    background-color: white;
-}
-
 QTabBar::tab:selected {
     background: #2d3136;
     color: #f1f1f1;
@@ -53,7 +45,6 @@ QTabBar::tab:! selected {
     color: #5e5e5e;
 }
 
-/* using last is a bit of a hack, but QTabBar otherwise doesn't allow selecting single tabs */
 QTabBar::tab:last:! selected[update-available=true] {
     background-color: #80c580;
 }

@@ -46,7 +46,6 @@ QTabBar::tab:!selected
     color: #8e8e8e;
 }
 
-/* using last is a bit of a hack, but QTabBar otherwise doesn't allow selecting single tabs */
 QTabBar[update-available=true]::tab:last:!selected
 {
     background-color: #115508;
