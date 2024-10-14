@@ -64,6 +64,7 @@ FriendWidget::FriendWidget(ContentLayout* layout, const FriendInfo& f, QWidget* 
         , menu{nullptr}
         , about{nullptr} {
     qDebug() << __func__ << "friend:" << f.toString();
+    setCursor(Qt::PointingHandCursor);
 
     auto profile = Nexus::getProfile();
 

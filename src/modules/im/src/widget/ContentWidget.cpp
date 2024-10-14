@@ -39,34 +39,24 @@ ContentWidget::ContentWidget(SendWorker* sendWorker, QWidget* parent) : QWidget(
     mainHead->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
     mainHead->layout()->setContentsMargins(HEADER_MARIGN, HEADER_MARIGN, HEADER_MARIGN,
                                            HEADER_MARIGN);
-    //  mainHead->layout()->setSpacing(0);
-    //  mainHead->setMouseTracking(true);
+    mainHead->layout()->addWidget(sendWorker->getHeader());
+    // 头部信息
+    layout()->addWidget(mainHead);
 
-    //  mainHLine = new QFrame(this);
-    //  mainHLine->setFrameShape(QFrame::HLine);
-    //  mainHLine->setFrameShadow(QFrame::Plain);
+    // 分割条
+    seperator = new QWidget(this);
+    seperator->setObjectName("ContentSeperator");
+    seperator->setFixedHeight(SEPERATOR_WIDTH);
+    layout()->addWidget(seperator);
 
-    //  mainHLineLayout=new QHBoxLayout(this);
-    //  mainHLineLayout->addWidget(mainHLine);
-    //  mainHLineLayout->addSpacing(4);
-    //  mainHLineLayout->addSpacing(5);
-    //  layout()->addItem(mainHLineLayout);
-
+    // 主体内容区
     mainContent = new QWidget(this);
     mainContent->setLayout(new QVBoxLayout);
     mainContent->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
     mainContent->layout()->setContentsMargins(CONTENT_MARIGN, 0, CONTENT_MARIGN, CONTENT_MARIGN);
-
-    seperator = new QWidget(this);
-    seperator->setObjectName("ContentSeperator");
-    seperator->setFixedHeight(SEPERATOR_WIDTH);
-
-    layout()->addWidget(mainHead);
-    layout()->addWidget(seperator);
+    mainContent->layout()->addWidget(sendWorker->getChatForm());
     layout()->addWidget(mainContent);
 
-    mainHead->layout()->addWidget(sendWorker->getHeader());
-    mainContent->layout()->addWidget(sendWorker->getChatForm());
 }
 
 ContentWidget::~ContentWidget() { qDebug() << __func__; }

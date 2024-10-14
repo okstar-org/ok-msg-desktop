@@ -69,7 +69,7 @@ ChatForm::ChatForm(const FriendId* chatFriend,
                    IChatLog& chatLog_,
                    IMessageDispatcher& messageDispatcher)
         : GenericChatForm(chatFriend, chatLog_, messageDispatcher), f(chatFriend) {
-    //  headWidget->setAvatar(QPixmap(":/img/contact_dark.svg"));
+    //      headWidget->setAvatar(QPixmap(":/img/contact_dark.svg"));
 
     statusMessageLabel = new CroppingLabel();
     statusMessageLabel->setObjectName("statusLabel");
