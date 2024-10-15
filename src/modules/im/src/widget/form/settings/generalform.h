@@ -48,12 +48,10 @@ private slots:
     void on_showWindow_stateChanged();
     void on_groupOnlyNotfiyWhenMentioned_stateChanged();
 
+    void on_txtChatFont_currentFontChanged(const QFont& f);
+    void on_txtChatFontSize_valueChanged(int size);
 
-
-
-    //void on_txtChatFont_currentFontChanged(const QFont& f);
-   // void on_txtChatFontSize_valueChanged(int arg1);
-   // void on_useNameColors_stateChanged(int value);
+    // void on_useNameColors_stateChanged(int value);
 
 private:
     //void retranslateUi();

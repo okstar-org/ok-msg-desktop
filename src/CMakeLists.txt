@@ -13,7 +13,7 @@ set(${PROJECT_NAME}_RC_FILES
 
 # Add QRC files.
 set(${PROJECT_NAME}_QRC_FILES
-    resources/resources.qrc)
+    resources/application.qrc)
 
 set(${PROJECT_NAME}_RESOURCES
     ${${PROJECT_NAME}_RC_FILES}
@@ -29,6 +29,8 @@ set(${PROJECT_NAME}_SOURCES
     ipc.cpp
     Bus.h
     Bus.cpp
+    FontManager.h
+    FontManager.cpp
 )
 
 list(APPEND OK_LIBS

@@ -20,7 +20,7 @@
 
 #include <QMenu>
 #include "Bus.h"
-#include "UI/core/FontManager.h"
+#include "FontManager.h"
 #include "UI/window/login/src/LoginWidget.h"
 #include "UI/window/login/src/LoginWindow.h"
 #include "UI/window/main/src/OMainMenu.h"
@@ -102,15 +102,17 @@ Application::Application(int& argc, char* argv[])
     ipc = new IPC(0, this);
     _bus = std::make_unique<Bus>();
 
-    QString qss = ok::base::Files::readStringAll("application.qss");
-    qApp->setStyleSheet(qss);
+    // 设置
+    _settingManager = std::make_unique<SettingManager>();
+
+    // 样式
+    setStyleSheet(ok::base::Files::readStringAll(":/resources/style/application.css"));
 
     // 字体
-    FontManager fm;
-    fm.loadFonts();
+    _fontManager = std::make_unique<FontManager>();
+    connect(_bus.get(), &Bus::fontChanged, [&](const QFont& f) { _fontManager->useFont(f); });
+    connect(_bus.get(), &Bus::fontSizeChanged, [&](int size) { _fontManager->useFontSize(size); });
 
-    // 设置
-    _settingManager = std::make_unique<SettingManager>(this);
     qDebug() << "Application has be created";
 }
 

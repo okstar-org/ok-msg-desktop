@@ -1,0 +1,30 @@
+<!--
+  - Copyright (c) 2022 船山信息 chuanshaninfo.com
+  - The project is licensed under Mulan PubL v2.
+  - You can use this software according to the terms and conditions of the Mulan
+  - PubL v2. You may obtain a copy of Mulan PubL v2 at:
+  -          http://license.coscl.org.cn/MulanPubL-2.0
+  - THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+  - EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+  - MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+  - See the Mulan PubL v2 for more details.
+  -->
+
+<RCC>
+    <qresource prefix="/resources">
+        <file>style/application.css</file>
+
+        <file>logo/main.svg</file>
+        <file>logo/app.icns</file>
+
+        <file>images/avatar.png</file>
+
+        <file>fonts/PingFangSC-Light.ttf</file>
+        <file>fonts/PingFangSC-Medium.ttf</file>
+        <file>fonts/PingFangSC-Regular.ttf</file>
+        <file>fonts/PingFangSC-Semibold.ttf</file>
+        <file>fonts/PingFangSC-Thin.ttf</file>
+        <file>fonts/PingFangSC-Ultralight.ttf</file>
+    </qresource>
+
+</RCC>

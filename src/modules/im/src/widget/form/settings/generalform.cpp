@@ -13,8 +13,8 @@
 #include "generalform.h"
 #include "ui_generalsettings.h"
 
-#include <QFileDialog>
 #include <QDesktopWidget>
+#include <QFileDialog>
 
 #include "base/OkSettings.h"
 #include "lib/settings/translator.h"
@@ -27,6 +27,8 @@
 #include "src/persistence/smileypack.h"
 #include "src/widget/form/settingswidget.h"
 
+#include "src/Bus.h"
+#include "src/application.h"
 #include "src/widget/widget.h"
 
 /**
@@ -44,8 +46,8 @@ GeneralForm::GeneralForm(SettingsWidget* myParent)
     const ok::base::RecursiveSignalBlocker signalBlocker(this);
 
     Settings& s = Settings::getInstance();
-    //先获取当前语言
-    auto & okSettings = ok::base::OkSettings::getInstance();
+    // 先获取当前语言
+    auto& okSettings = ok::base::OkSettings::getInstance();
     const QFont chatBaseFont = s.getChatMessageFont();
     bodyUI->txtChatFontSize->setValue(QFontInfo(chatBaseFont).pixelSize());
     bodyUI->txtChatFont->setCurrentFont(chatBaseFont);
@@ -71,12 +73,12 @@ GeneralForm::GeneralForm(SettingsWidget* myParent)
 
     bodyUI->showWindow->setChecked(s.getShowWindow());
 
-//    bodyUI->cbGroupchatPosition->setChecked(s.getGroupchatPosition());
-//    bodyUI->cbCompactLayout->setChecked(s.getCompactLayout());
-//    bodyUI->cbSeparateWindow->setChecked(s.getSeparateWindow());
-//    bodyUI->cbDontGroupWindows->setChecked(s.getDontGroupWindows());
-//    bodyUI->cbDontGroupWindows->setEnabled(s.getSeparateWindow());
-//    bodyUI->cbShowIdenticons->setChecked(s.getShowIdenticons());
+    //    bodyUI->cbGroupchatPosition->setChecked(s.getGroupchatPosition());
+    //    bodyUI->cbCompactLayout->setChecked(s.getCompactLayout());
+    //    bodyUI->cbSeparateWindow->setChecked(s.getSeparateWindow());
+    //    bodyUI->cbDontGroupWindows->setChecked(s.getDontGroupWindows());
+    //    bodyUI->cbDontGroupWindows->setEnabled(s.getSeparateWindow());
+    //    bodyUI->cbShowIdenticons->setChecked(s.getShowIdenticons());
 
     bodyUI->useEmoticons->setChecked(s.getUseEmoticons());
     for (auto entry : SmileyPack::listSmileyPacks())
@@ -89,30 +91,29 @@ GeneralForm::GeneralForm(SettingsWidget* myParent)
     reloadSmileys();
     bodyUI->smileyPackBrowser->setEnabled(bodyUI->useEmoticons->isChecked());
 
-  /*
-    bodyUI->styleBrowser->addItem(tr("None"));
-    bodyUI->styleBrowser->addItems(QStyleFactory::keys());
+    /*
+      bodyUI->styleBrowser->addItem(tr("None"));
+      bodyUI->styleBrowser->addItems(QStyleFactory::keys());
 
-    QString style;
-    if (QStyleFactory::keys().contains(s.getStyle()))
-        style = s.getStyle();
-    else
-        style = tr("None");
+      QString style;
+      if (QStyleFactory::keys().contains(s.getStyle()))
+          style = s.getStyle();
+      else
+          style = tr("None");
 
-    bodyUI->styleBrowser->setCurrentText(style);
+      bodyUI->styleBrowser->setCurrentText(style);
 
-    for (QString color : Style::getThemeColorNames())
-        bodyUI->themeColorCBox->addItem(color);
+      for (QString color : Style::getThemeColorNames())
+          bodyUI->themeColorCBox->addItem(color);
 
-    bodyUI->themeColorCBox->setCurrentIndex(s.getThemeColor());
-    */
+      bodyUI->themeColorCBox->setCurrentIndex(s.getThemeColor());
+      */
     bodyUI->emoticonSize->setValue(s.getEmojiFontPointSize());
 
-
 #ifndef QTOX_PLATFORM_EXT
-   // bodyUI->autoAwayLabel->setEnabled(
+    // bodyUI->autoAwayLabel->setEnabled(
     //        false);  // these don't seem to change the appearance of the widgets,
-   // bodyUI->autoAwaySpinBox->setEnabled(false);  // though they are unusable
+    // bodyUI->autoAwaySpinBox->setEnabled(false);  // though they are unusable
 #endif
 
     eventsInit();
@@ -145,21 +146,18 @@ void GeneralForm::on_emoticonSize_editingFinished()
 }
 */
 
-void GeneralForm::on_useEmoticons_stateChanged()
-{
+void GeneralForm::on_useEmoticons_stateChanged() {
     Settings::getInstance().setUseEmoticons(bodyUI->useEmoticons->isChecked());
     bodyUI->smileyPackBrowser->setEnabled(bodyUI->useEmoticons->isChecked());
 }
 
-void GeneralForm::on_textStyleComboBox_currentTextChanged()
-{
+void GeneralForm::on_textStyleComboBox_currentTextChanged() {
     Settings::StyleType styleType =
-        static_cast<Settings::StyleType>(bodyUI->textStyleComboBox->currentIndex());
+            static_cast<Settings::StyleType>(bodyUI->textStyleComboBox->currentIndex());
     Settings::getInstance().setStylePreference(styleType);
 }
 
-void GeneralForm::on_smileyPackBrowser_currentIndexChanged(int index)
-{
+void GeneralForm::on_smileyPackBrowser_currentIndexChanged(int index) {
     QString filename = bodyUI->smileyPackBrowser->itemData(index).toString();
     Settings::getInstance().setSmileyPack(filename);
     reloadSmileys();
@@ -168,8 +166,7 @@ void GeneralForm::on_smileyPackBrowser_currentIndexChanged(int index)
 /**
  * @brief Reload smileys and size information.
  */
-void GeneralForm::reloadSmileys()
-{
+void GeneralForm::reloadSmileys() {
     QList<QStringList> emoticons = SmileyPack::getInstance().getEmoticons();
 
     // sometimes there are no emoticons available, don't crash in this case
@@ -179,8 +176,7 @@ void GeneralForm::reloadSmileys()
     }
 
     QStringList smileys;
-    for (int i = 0; i < emoticons.size(); ++i)
-        smileys.push_front(emoticons.at(i).first());
+    for (int i = 0; i < emoticons.size(); ++i) smileys.push_front(emoticons.at(i).first());
 
     emoticonsIcons.clear();
     const QSize size(18, 18);
@@ -195,15 +191,15 @@ void GeneralForm::reloadSmileys()
     QDesktopWidget desktop;
     // 8 is the count of row and column in emoji's in widget
     const int sideSize = 8;
-    int maxSide = qMin(desktop.geometry().height() / sideSize, desktop.geometry().width() / sideSize);
+    int maxSide =
+            qMin(desktop.geometry().height() / sideSize, desktop.geometry().width() / sideSize);
     QSize maxSize(maxSide, maxSide);
 
     QSize actualSize = emoticonsIcons.first()->actualSize(maxSize);
     bodyUI->emoticonSize->setMaximum(actualSize.width());
 }
 
-void GeneralForm::on_notify_stateChanged()
-{
+void GeneralForm::on_notify_stateChanged() {
     const bool notify = bodyUI->notify->isChecked();
     Settings::getInstance().setNotify(notify);
     bodyUI->groupOnlyNotfiyWhenMentioned->setEnabled(notify);
@@ -219,26 +215,23 @@ void GeneralForm::on_notifySound_stateChanged()
     bodyUI->busySound->setEnabled(notify);
 }
 */
-void GeneralForm::on_desktopNotify_stateChanged()
-{
+void GeneralForm::on_desktopNotify_stateChanged() {
     const bool notify = bodyUI->desktopNotify->isChecked();
     Settings::getInstance().setDesktopNotify(notify);
 }
 
-void GeneralForm::on_busySound_stateChanged()
-{
+void GeneralForm::on_busySound_stateChanged() {
     Settings::getInstance().setBusySound(bodyUI->busySound->isChecked());
 }
 
-void GeneralForm::on_showWindow_stateChanged()
-{
+void GeneralForm::on_showWindow_stateChanged() {
     Settings::getInstance().setShowWindow(bodyUI->showWindow->isChecked());
 }
 
-void GeneralForm::on_groupOnlyNotfiyWhenMentioned_stateChanged()
-{
+void GeneralForm::on_groupOnlyNotfiyWhenMentioned_stateChanged() {
     // Note: UI is boolean inversed from settings to maintain setting file backwards compatibility
-    Settings::getInstance().setGroupAlwaysNotify(!bodyUI->groupOnlyNotfiyWhenMentioned->isChecked());
+    Settings::getInstance().setGroupAlwaysNotify(
+            !bodyUI->groupOnlyNotfiyWhenMentioned->isChecked());
 }
 
 /*
@@ -256,3 +249,12 @@ void GeneralForm::on_themeColorCBox_currentIndexChanged(int)
 
 void GeneralForm::retranslateUi() { bodyUI->retranslateUi(this); }
 
+void GeneralForm::on_txtChatFont_currentFontChanged(const QFont& f) {
+    qDebug() << __func__;
+    emit ok::Application::Instance() -> bus()->fontChanged(f);
+}
+
+void GeneralForm::on_txtChatFontSize_valueChanged(int size) {
+    qDebug() << __func__;
+    emit ok::Application::Instance() -> bus()->fontSizeChanged(size);
+}
