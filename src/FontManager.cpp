@@ -34,6 +34,7 @@ void FontManager::useFont(const QString& font, const QString& style) {
 }
 
 void FontManager::useFont(const QFont& f) { qApp->setFont(f); }
+
 void FontManager::useFontSize(int size) {
     auto f = qApp->font();
     f.setWeight(size);

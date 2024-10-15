@@ -250,11 +250,11 @@ void GeneralForm::on_themeColorCBox_currentIndexChanged(int)
 void GeneralForm::retranslateUi() { bodyUI->retranslateUi(this); }
 
 void GeneralForm::on_txtChatFont_currentFontChanged(const QFont& f) {
-    qDebug() << __func__;
+    qDebug() << __func__ << f;
     emit ok::Application::Instance() -> bus()->fontChanged(f);
 }
 
 void GeneralForm::on_txtChatFontSize_valueChanged(int size) {
-    qDebug() << __func__;
+    qDebug() << __func__ << size;
     emit ok::Application::Instance() -> bus()->fontSizeChanged(size);
 }
