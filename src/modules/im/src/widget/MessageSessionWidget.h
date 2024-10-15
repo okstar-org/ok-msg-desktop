@@ -81,6 +81,8 @@ public:
 
     void clearReceipts();
 
+    void doForwardMessage(const ContactId& cid, const MsgId& msgId);
+
 signals:
     void removeFriend(const FriendId& friendPk);
     void copyFriendIdToClipboard(const FriendId& friendPk);

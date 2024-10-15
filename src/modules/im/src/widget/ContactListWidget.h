@@ -34,20 +34,19 @@ class Friend;
 class ContentLayout;
 class MainLayout;
 
-class FriendListWidget : public QWidget {
+class ContactListWidget : public QWidget {
     Q_OBJECT
 public:
     using SortingMode = Settings::FriendListSortingMode;
-    explicit FriendListWidget(MainLayout* parent, ContentLayout* contentLayout,
-                              bool groupsOnTop = true);
-    ~FriendListWidget();
+    explicit ContactListWidget(QWidget* parent, bool groupsOnTop = true);
+    ~ContactListWidget();
     void setMode(SortingMode mode);
     SortingMode getMode() const;
     void reloadTheme();
 
-    FriendWidget* addFriend(const FriendInfo& friendInfo);
+    FriendWidget* addFriend(const FriendId& friendId);
     FriendWidget* getFriend(const ContactId& friendPk);
-    void removeFriend(const FriendId& cid);
+    void removeFriend(const Friend* f);
 
     void setFriendStatus(const ContactId& friendPk, Status::Status status);
     void setFriendStatusMsg(const FriendId& friendPk, const QString& statusMsg);
@@ -65,7 +64,10 @@ public:
     //  void addCircleWidget(int id);
     //  void addCircleWidget(FriendWidget *widget = nullptr);
     //  void removeCircleWidget(CircleWidget *widget);
-    void search(const QString& searchString, bool hideOnline = false, bool hideOffline = false, bool hideGroups = false);
+    void search(const QString& searchString,
+                bool hideOnline = false,
+                bool hideOffline = false,
+                bool hideGroups = false);
 
     void cycleContacts(GenericChatroomWidget* activeChatroomWidget, bool forward);
 
@@ -74,9 +76,26 @@ public:
 
     void setRecvGroupMessage(const GroupMessage& msg);
 
+protected:
+    void dragEnterEvent(QDragEnterEvent* event) override;
+    void dropEvent(QDropEvent* event) override;
+    void showEvent(QShowEvent* event) override;
+
+private:
+    void updateFriendActivity(const Friend& frnd);
+
+    SortingMode mode;
+
+    bool groupsOnTop;
+    FriendListLayout* listLayout;
+
+    QMap<QString, FriendWidget*> friendWidgets;
+    QMap<QString, GroupWidget*> groupWidgets;
+
 signals:
-    void deleteFriendWidget(const FriendId& friendPk);
     void deleteGroupWidget(const FriendId& friendPk);
+    void friendClicked(FriendWidget* w);
+    void groupClicked(const GroupWidget* w);
 
 public slots:
     void renameGroupWidget(GroupWidget* groupWidget, const QString& newName);
@@ -89,30 +108,6 @@ public slots:
     void slot_groupClicked(GenericChatroomWidget*);
     void do_toShowDetails(const ContactId& cid);
     void do_groupDeleted(const ContactId& cid);
-
-protected:
-    void dragEnterEvent(QDragEnterEvent* event) override;
-    void dropEvent(QDropEvent* event) override;
-    void showEvent(QShowEvent* event) override;
-
-
-private:
-    //    QLayout* nextLayout(QLayout* layout, bool forward) const;
-
-    void sortByMode(SortingMode mode);
-    void connectFriendWidget(FriendWidget& friendWidget);
-    void updateFriendActivity(const Friend& frnd);
-
-    SortingMode mode;
-
-    bool groupsOnTop;
-    FriendListLayout* listLayout;
-    //    GenericChatItemLayout *groupLayout;
-
-    ContentLayout* m_contentLayout;
-
-    QMap<QString, FriendWidget*> friendWidgets;
-    QMap<QString, GroupWidget*> groupWidgets;
 };
 
 #endif  // FRIENDLISTWIDGET_H

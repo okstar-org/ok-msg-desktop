@@ -14,6 +14,13 @@
 <!DOCTYPE TS>
 <TS version="2.0" language="de_DE" sourcelanguage="en_US">
     <context>
+        <name>ChatForwardDialog</name>
+        <message>
+            <source>Forward message to</source>
+            <translation>Nachricht weiterleiten an</translation>
+        </message>
+    </context>
+    <context>
         <name>AVForm</name>
         <message>
             <source>Audio/Video</source>
@@ -890,7 +897,7 @@
         </message>
     </context>
     <context>
-        <name>FriendListWidget</name>
+        <name>ContactListWidget</name>
         <message>
             <source>Today</source>
             <translation>Heute</translation>

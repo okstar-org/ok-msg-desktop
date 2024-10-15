@@ -13,8 +13,8 @@
 #include "categorywidget.h"
 #include <QBoxLayout>
 #include <QMouseEvent>
+#include "ContactListWidget.h"
 #include "friendlistlayout.h"
-#include "friendlistwidget.h"
 #include "friendwidget.h"
 #include "src/lib/settings/style.h"
 #include "src/model/status.h"

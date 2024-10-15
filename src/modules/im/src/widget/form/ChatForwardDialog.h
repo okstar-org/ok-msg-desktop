@@ -14,6 +14,11 @@
 #define CHATFORWARDIALOG_H
 
 #include <QDialog>
+#include "src/model/MsgId.h"
+
+class Friend;
+class FriendWidget;
+class ContactListWidget;
 
 namespace Ui {
 class ChatForwardDialog;
@@ -23,11 +28,20 @@ class ChatForwardDialog : public QDialog {
     Q_OBJECT
 
 public:
-    explicit ChatForwardDialog(QWidget* parent = nullptr);
-    ~ChatForwardDialog();
+    explicit ChatForwardDialog(const MsgId& msgId, QWidget* parent = nullptr);
+    ~ChatForwardDialog() override;
+
+protected:
+    void showEvent(QShowEvent* e) override;
 
 private:
     Ui::ChatForwardDialog* ui;
+    const MsgId& msgId;
+    ContactListWidget* contactListWidget;
+
+public slots:
+    void onFriendClicked(FriendWidget* widget);
+    void onFriendDeleted(const Friend* f);
 };
 
 #endif  // CHATFORWARDIALOG_H

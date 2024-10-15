@@ -18,7 +18,7 @@
 #include "src/model/status.h"
 
 class FriendListLayout;
-class FriendListWidget;
+class ContactListWidget;
 class FriendWidget;
 class QVBoxLayout;
 class QHBoxLayout;
@@ -44,7 +44,7 @@ public:
 
 public slots:
     void onCompactChanged(bool compact);
-    void moveFriendWidgets(FriendListWidget* friendList);
+    void moveFriendWidgets(ContactListWidget* friendList);
 
 protected:
     virtual void leaveEvent(QEvent* event) final override;

@@ -20,6 +20,7 @@
 #include <QMenu>
 #include <QPainter>
 #include <QSvgRenderer>
+#include "ContactListWidget.h"
 #include "MessageSessionListWidget.h"
 #include "application.h"
 #include "base/OkSettings.h"
@@ -28,7 +29,6 @@
 #include "circlewidget.h"
 #include "contentdialogmanager.h"
 #include "contentlayout.h"
-#include "friendlistwidget.h"
 #include "lib/settings/translator.h"
 #include "src/core/corefile.h"
 #include "src/friendlist.h"
@@ -138,6 +138,7 @@ void ChatWidget::init() {
 
     auto widget = Widget::getInstance();
 
+    connect(widget, &Widget::forwardMessage, this, &ChatWidget::doForwardMessage);
     connect(widget, &Widget::toSendMessage, this, &ChatWidget::doSendMessage);
     connect(widget, &Widget::friendAdded, this, &ChatWidget::onFriendAdded);
     connect(widget, &Widget::friendRemoved, this, &ChatWidget::onFriendRemoved);
@@ -353,6 +354,10 @@ void ChatWidget::onFriendRemoved(const Friend* f) { sessionListWidget->removeFri
 
 void ChatWidget::doSendMessage(const QString& to, bool isGroup) {
     sessionListWidget->toSendMessage(FriendId(to), isGroup);
+}
+
+void ChatWidget::doForwardMessage(const ContactId& cid, const MsgId& msgId) {
+    sessionListWidget->toForwardMessage(cid, msgId);
 }
 
 // void ChatWidget::onGroupInviteReceived(const GroupInvite &inviteInfo) {

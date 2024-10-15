@@ -123,7 +123,7 @@ public:
 
     void acceptFriendRequest(const FriendId& friendPk);
     void rejectFriendRequest(const FriendId& friendPk);
-    void removeFriend(QString friendId);
+    bool removeFriend(QString friendId);
     void requestFriendship(const FriendId& friendAddress, const QString& nick,
                            const QString& message);
     // FriendSender

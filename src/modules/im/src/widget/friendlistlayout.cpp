@@ -12,7 +12,7 @@
 
 #include "friendlistlayout.h"
 #include <cassert>
-#include "friendlistwidget.h"
+#include "ContactListWidget.h"
 #include "friendwidget.h"
 #include "genericchatitemlayout.h"
 #include "src/friendlist.h"
@@ -48,7 +48,7 @@ int FriendListLayout::indexOfFriendWidget(GenericChatItemWidget* widget, bool on
     return friendOnlineLayout->indexOfSortedWidget(widget);
 }
 
-void FriendListLayout::moveFriendWidgets(FriendListWidget* listWidget) {
+void FriendListLayout::moveFriendWidgets(ContactListWidget* listWidget) {
     while (!friendOnlineLayout->getLayout()->isEmpty()) {
         QWidget* getWidget = friendOnlineLayout->getLayout()->takeAt(0)->widget();
 

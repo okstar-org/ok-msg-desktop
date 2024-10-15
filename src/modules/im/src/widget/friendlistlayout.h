@@ -19,7 +19,7 @@
 #include "src/model/status.h"
 
 class FriendWidget;
-class FriendListWidget;
+class ContactListWidget;
 
 class FriendListLayout : public QVBoxLayout {
     Q_OBJECT
@@ -30,7 +30,7 @@ public:
     //    void addFriendWidget(FriendWidget* widget, Status::Status s);
     void removeFriendWidget(FriendWidget* widget);
     int indexOfFriendWidget(GenericChatItemWidget* widget, bool online) const;
-    void moveFriendWidgets(FriendListWidget* listWidget);
+    void moveFriendWidgets(ContactListWidget* listWidget);
     int friendOnlineCount() const;
     int friendTotalCount() const;
 

@@ -10,8 +10,8 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#include "friendlistwidget.h"
 #include "ChatWidget.h"
+#include "ContactListWidget.h"
 #include "base/OkSettings.h"
 #include "base/times.h"
 #include "circlewidget.h"
@@ -28,22 +28,21 @@
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
-// #include "src/widget/categorywidget.h"
+
 #include <QDragEnterEvent>
 #include <QDragLeaveEvent>
 #include <QGridLayout>
 #include <QMimeData>
 #include <QTimer>
-#include <cassert>
+
 #include "widget.h"
 
 inline QDateTime getActiveTimeFriend(const Friend* contact) {
     return Settings::getInstance().getFriendActivity(contact->getPublicKey());
 }
 
-FriendListWidget::FriendListWidget(MainLayout* parent, ContentLayout* contentLayout,
-                                   bool groupsOnTop)
-        : QWidget(parent), m_contentLayout{contentLayout}, groupsOnTop(groupsOnTop) {
+ContactListWidget::ContactListWidget(QWidget* parent, bool groupsOnTop)
+        : QWidget(parent), groupsOnTop(groupsOnTop) {
     setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 
     //    groupLayout.getLayout()->setSpacing(0);
@@ -53,7 +52,6 @@ FriendListWidget::FriendListWidget(MainLayout* parent, ContentLayout* contentLay
     listLayout = new FriendListLayout(this);
     setLayout(listLayout);
 
-
     onGroupchatPositionChanged(groupsOnTop);
 
     setAcceptDrops(true);
@@ -61,16 +59,18 @@ FriendListWidget::FriendListWidget(MainLayout* parent, ContentLayout* contentLay
     auto& settings = Settings::getInstance();
 
     connect(&settings, &Settings::groupchatPositionChanged, this,
-            &FriendListWidget::onGroupchatPositionChanged);
+            &ContactListWidget::onGroupchatPositionChanged);
 
     auto widget = Widget::getInstance();
-    connect(widget, &Widget::toShowDetails, this, &FriendListWidget::do_toShowDetails);
+    connect(widget, &Widget::toShowDetails, this, &ContactListWidget::do_toShowDetails);
+
+    connect(widget, &Widget::friendRemoved, this, [&](const Friend* f) { removeFriend(f); });
 
     //  connect(Nexus::getProfile(), &Profile::coreChanged,
     //          this, &FriendListWidget::onCoreChanged);
 }
 
-FriendListWidget::~FriendListWidget() {
+ContactListWidget::~ContactListWidget() {
     //    if (activityLayout != nullptr) {
     //        QLayoutItem* item;
     //        while ((item = activityLayout->takeAt(0)) != nullptr) {
@@ -81,43 +81,53 @@ FriendListWidget::~FriendListWidget() {
     //    }
 }
 
-FriendWidget* FriendListWidget::addFriend(const FriendInfo& friendInfo) {
-    qDebug() << __func__ << friendInfo;
-    auto exist = getFriend(friendInfo.id);
+FriendWidget* ContactListWidget::addFriend(const FriendId& friendId) {
+    qDebug() << __func__ << friendId;
+    auto exist = getFriend(friendId);
     if (exist) {
-        qWarning() << "Exist friend" << friendInfo.id;
+        qWarning() << "Exist friend" << friendId;
         return exist;
     }
 
-    auto fw = new FriendWidget(m_contentLayout, friendInfo, this);
-    connectFriendWidget(*fw);
-    friendWidgets.insert(friendInfo.getId().toString(), fw);
+    auto m_friend = Core::getInstance()->getFriendList().findFriend(friendId);
+    auto fw = new FriendWidget(m_friend, this);
+
+    connect(fw, &FriendWidget::updateFriendActivity, this,
+            &ContactListWidget::updateFriendActivity);
+    connect(fw, &FriendWidget::friendClicked, this, &ContactListWidget::slot_friendClicked);
+
+    friendWidgets.insert(friendId.toString(), fw);
 
     Core* core = Nexus::getCore();
-    auto frid = core->getFriendList().findFriend(friendInfo.getId());
+    auto frid = core->getFriendList().findFriend(friendId);
     emit Widget::getInstance() -> friendAdded(frid);
 
     listLayout->addWidget(fw);
 
-    auto status = core->getFriendStatus(friendInfo.toString());
-    setFriendStatus(friendInfo.getId(), status);
+    auto status = core->getFriendStatus(friendId.toString());
+    setFriendStatus(friendId, status);
     return fw;
 }
 
-void FriendListWidget::connectFriendWidget(FriendWidget& fw) {
-    //  connect(&friendWidget, &FriendWidget::searchCircle, this,
-    //          &FriendListWidget::searchCircle);
-    connect(&fw, &FriendWidget::updateFriendActivity, this,
-            &FriendListWidget::updateFriendActivity);
+void ContactListWidget::removeFriend(const Friend* f) {
+    qDebug() << __func__ << f;
+    auto fw = friendWidgets.value(f->getId().toString());
+    if (!fw) {
+        qWarning() << "Unable to find friendWidget";
+        return;
+    }
 
-    connect(&fw, &FriendWidget::removeFriend, this, &FriendListWidget::removeFriend);
-
-    //  connect(fw, &FriendWidget::friendWidgetRenamed, this,
-    //          &FriendListWidget::onFriendWidgetRenamed);
-    connect(&fw, &FriendWidget::friendWidgetClicked, this, &FriendListWidget::slot_friendClicked);
+    listLayout->removeFriendWidget(fw);
+    friendWidgets.remove(f->getId().toString());
+    disconnect(fw);
+    fw->deleteLater();
 }
 
-void FriendListWidget::updateFriendActivity(const Friend& frnd) {
+FriendWidget* ContactListWidget::getFriend(const ContactId& friendPk) {
+    return friendWidgets.value(friendPk.toString());
+}
+
+void ContactListWidget::updateFriendActivity(const Friend& frnd) {
     const FriendId& pk = frnd.getPublicKey();
     auto& settings = Settings::getInstance();
     const auto oldTime = settings.getFriendActivity(pk);
@@ -128,8 +138,7 @@ void FriendListWidget::updateFriendActivity(const Friend& frnd) {
     updateActivityTime(oldTime);  // update old category widget
 }
 
-
-void FriendListWidget::setMode(SortingMode mode) {
+void ContactListWidget::setMode(SortingMode mode) {
     if (this->mode == mode) return;
 
     this->mode = mode;
@@ -138,9 +147,9 @@ void FriendListWidget::setMode(SortingMode mode) {
     //    sortByMode(mode);
 }
 
-FriendListWidget::SortingMode FriendListWidget::getMode() const { return mode; }
+ContactListWidget::SortingMode ContactListWidget::getMode() const { return mode; }
 
-GroupWidget* FriendListWidget::addGroup(const GroupId& groupId, const QString& groupName) {
+GroupWidget* ContactListWidget::addGroup(const GroupId& groupId, const QString& groupName) {
     qDebug() << __func__ << groupId.toString();
 
     Group* g = GroupList::findGroup(groupId);
@@ -155,7 +164,7 @@ GroupWidget* FriendListWidget::addGroup(const GroupId& groupId, const QString& g
     //  const bool enabled = core->getGroupAvEnabled(groupId.toString());
 
     const auto compact = settings.getCompactLayout();
-    auto gw = new GroupWidget(m_contentLayout, groupId.toString(), groupId, groupName, compact);
+    auto gw = new GroupWidget(groupId.toString(), groupId, groupName, compact);
     groupWidgets[groupId.toString()] = gw;
     //    groupLayout.addSortedWidget(gw);
     listLayout->addWidget(gw);
@@ -165,18 +174,18 @@ GroupWidget* FriendListWidget::addGroup(const GroupId& groupId, const QString& g
         renameGroupWidget(gw, name);
     });
 
-    connect(gw, &GroupWidget::chatroomWidgetClicked, this, &FriendListWidget::slot_groupClicked);
-    connect(gw, &GroupWidget::removeGroup, this, &FriendListWidget::do_groupDeleted);
+    connect(gw, &GroupWidget::chatroomWidgetClicked, this, &ContactListWidget::slot_groupClicked);
+    connect(gw, &GroupWidget::removeGroup, this, &ContactListWidget::do_groupDeleted);
 
     return gw;
 }
 
-void FriendListWidget::do_groupDeleted(const ContactId& cid) {
+void ContactListWidget::do_groupDeleted(const ContactId& cid) {
     qDebug() << __func__ << cid.toString();
     removeGroup(GroupId(cid));
 }
 
-void FriendListWidget::removeGroup(const GroupId& cid) {
+void ContactListWidget::removeGroup(const GroupId& cid) {
     qDebug() << __func__ << cid.toString();
     auto gw = groupWidgets.value(cid.toString());
     gw->deleteLater();
@@ -184,9 +193,9 @@ void FriendListWidget::removeGroup(const GroupId& cid) {
     //    groupLayout.removeSortedWidget(gw);
 }
 
-void FriendListWidget::setGroupTitle(const GroupId& groupId,
-                                     const QString& author,
-                                     const QString& title) {
+void ContactListWidget::setGroupTitle(const GroupId& groupId,
+                                      const QString& author,
+                                      const QString& title) {
     auto g = GroupList::findGroup(groupId);
     if (!g) {
         qWarning() << "group is no existing." << groupId.toString();
@@ -195,7 +204,7 @@ void FriendListWidget::setGroupTitle(const GroupId& groupId,
     g->setSubject(author, title);
 }
 
-void FriendListWidget::setGroupInfo(const GroupId& groupId, const GroupInfo& info) {
+void ContactListWidget::setGroupInfo(const GroupId& groupId, const GroupInfo& info) {
     auto g = GroupList::findGroup(groupId);
     if (!g) {
         qWarning() << "group is no existing." << groupId.toString();
@@ -208,7 +217,8 @@ void FriendListWidget::setGroupInfo(const GroupId& groupId, const GroupInfo& inf
     g->setPeerCount(info.occupants);
 }
 
-void FriendListWidget::search(const QString& searchString, bool hideOnline, bool hideOffline, bool hideGroups) {
+void ContactListWidget::search(const QString& searchString, bool hideOnline, bool hideOffline,
+                               bool hideGroups) {
     listLayout->search(searchString);
 
     //
@@ -229,14 +239,14 @@ void FriendListWidget::search(const QString& searchString, bool hideOnline, bool
     //  }
 }
 
-void FriendListWidget::renameGroupWidget(GroupWidget* groupWidget, const QString& newName) {
+void ContactListWidget::renameGroupWidget(GroupWidget* groupWidget, const QString& newName) {
     //  groupLayout.removeSortedWidget(groupWidget);
     //  groupLayout.addSortedWidget(groupWidget);
 
     groupWidget->setName(newName);
 }
 
-void FriendListWidget::onGroupchatPositionChanged(bool top) {
+void ContactListWidget::onGroupchatPositionChanged(bool top) {
     //    groupsOnTop = top;
     //
     //    if (mode != SortingMode::Name) return;
@@ -251,7 +261,7 @@ void FriendListWidget::onGroupchatPositionChanged(bool top) {
     //    reDraw();
 }
 
-void FriendListWidget::dragEnterEvent(QDragEnterEvent* event) {
+void ContactListWidget::dragEnterEvent(QDragEnterEvent* event) {
     if (!event->mimeData()->hasFormat("toxPk")) {
         return;
     }
@@ -260,7 +270,7 @@ void FriendListWidget::dragEnterEvent(QDragEnterEvent* event) {
     if (frnd) event->acceptProposedAction();
 }
 
-void FriendListWidget::dropEvent(QDropEvent* event) {
+void ContactListWidget::dropEvent(QDropEvent* event) {
     // Check, that the element is dropped from qTox
     QObject* o = event->source();
     FriendWidget* widget = qobject_cast<FriendWidget*>(o);
@@ -275,13 +285,9 @@ void FriendListWidget::dropEvent(QDropEvent* event) {
     moveWidget(widget, f->getStatus(), true);
 }
 
-void FriendListWidget::showEvent(QShowEvent* event) {
+void ContactListWidget::showEvent(QShowEvent* event) {}
 
-}
-
-
-
-void FriendListWidget::moveWidget(FriendWidget* widget, Status::Status s, bool add) {
+void ContactListWidget::moveWidget(FriendWidget* widget, Status::Status s, bool add) {
     if (mode == SortingMode::Name) {
         const Friend* f = widget->getFriend();
         //    int circleId = Settings::getInstance().getFriendCircleID(f->getPublicKey());
@@ -304,7 +310,7 @@ void FriendListWidget::moveWidget(FriendWidget* widget, Status::Status s, bool a
     }
 }
 
-void FriendListWidget::updateActivityTime(const QDateTime& time) {
+void ContactListWidget::updateActivityTime(const QDateTime& time) {
     if (mode != SortingMode::Activity) return;
 
     int timeIndex = static_cast<int>(ok::base::getTimeBucket(time));
@@ -316,78 +322,17 @@ void FriendListWidget::updateActivityTime(const QDateTime& time) {
 }
 
 // update widget after add/delete/hide/show
-void FriendListWidget::reDraw() {
+void ContactListWidget::reDraw() {
     hide();
     show();
     resize(QSize());  // lifehack
 }
 
-// QLayout* FriendListWidget::nextLayout(QLayout* layout, bool forward) const {
-//     if (layout == groupLayout.getLayout()) {
-//         if (forward) {
-//             if (groupsOnTop) return listLayout->getLayoutOnline();
-//
-//         } else {
-//             if (groupsOnTop)
-//                 //        return circleLayout->getLayout();
-//
-//                 return listLayout->getLayoutOnline();
-//         }
-//     } else if (layout == listLayout->getLayoutOnline()) {
-//         if (forward) {
-//             return groupLayout.getLayout();
-//         } else {
-//             if (groupsOnTop) return groupLayout.getLayout();
-//
-//             //      return circleLayout->getLayout();
-//         }
-//     } else {
-//         //    if (forward)
-//         //      return circleLayout->getLayout();
-//         //    else if (groupsOnTop)
-//         //      return listLayout->getLayoutOnline();
-//
-//         return groupLayout.getLayout();
-//     }
-//     //  else if (layout == circleLayout->getLayout()) {
-//     //    if (forward) {
-//     //      if (groupsOnTop)
-//     //        return groupLayout.getLayout();
-//     //
-//     //      return listLayout->getLayoutOnline();
-//     //    } else
-//     //      return listLayout->getLayoutOffline();
-//     //  }
-//     return nullptr;
-// }
-
-FriendWidget* FriendListWidget::getFriend(const ContactId& friendPk) {
-    return friendWidgets.value(friendPk.toString());
-}
-
-void FriendListWidget::removeFriend(const FriendId& friendPk) {
-    qDebug() << __func__ << friendPk.toString();
-
-    auto fw = friendWidgets.value(friendPk.toString());
-    if (!fw) {
-        qWarning() << "Unable to find friendWidget";
-        return;
-    }
-    listLayout->removeFriendWidget(fw);
-    friendWidgets.remove(friendPk.toString());
-
-    emit deleteFriendWidget(friendPk);
-
-    auto frid = Nexus::getCore()->getFriendList().findFriend(friendPk);
-    emit Widget::getInstance() -> friendRemoved(frid);
-    delete fw;
-}
-
-GroupWidget* FriendListWidget::getGroup(const GroupId& id) {
+GroupWidget* ContactListWidget::getGroup(const GroupId& id) {
     return groupWidgets.value(id.toString());
 }
 
-void FriendListWidget::slot_groupClicked(GenericChatroomWidget* actived) {
+void ContactListWidget::slot_groupClicked(GenericChatroomWidget* actived) {
     for (auto fw : friendWidgets) {
         fw->setActive(false);
     }
@@ -395,12 +340,13 @@ void FriendListWidget::slot_groupClicked(GenericChatroomWidget* actived) {
         if (gw != actived) {
             gw->setActive(false);
         } else {
-            actived->setActive(true);
+            gw->setActive(true);
+            emit groupClicked(gw);
         }
     }
 }
 
-void FriendListWidget::slot_friendClicked(GenericChatroomWidget* actived) {
+void ContactListWidget::slot_friendClicked(GenericChatroomWidget* actived) {
     for (auto gw : groupWidgets) {
         gw->setActive(false);
     }
@@ -410,10 +356,11 @@ void FriendListWidget::slot_friendClicked(GenericChatroomWidget* actived) {
             fw->setActive(false);
         } else {
             fw->setActive(true);
+            emit friendClicked(fw);
         }
     }
 }
-void FriendListWidget::setRecvGroupMessage(const GroupMessage& msg) {
+void ContactListWidget::setRecvGroupMessage(const GroupMessage& msg) {
     //  const GroupId &groupId = msg.groupId;
     //  auto gw = getGroup(groupId);
     //  if (!gw) {
@@ -423,7 +370,7 @@ void FriendListWidget::setRecvGroupMessage(const GroupMessage& msg) {
     //    gw->setRecvMessage(msg);
 }
 
-void FriendListWidget::setFriendStatus(const ContactId& friendPk, Status::Status status) {
+void ContactListWidget::setFriendStatus(const ContactId& friendPk, Status::Status status) {
     auto fw = getFriend(friendPk);
     if (!fw) {
         qWarning() << "friend" << friendPk.toString() << "widget is no existing.";
@@ -432,7 +379,7 @@ void FriendListWidget::setFriendStatus(const ContactId& friendPk, Status::Status
     fw->setStatus(status, false);
 }
 
-void FriendListWidget::setFriendStatusMsg(const FriendId& friendPk, const QString& statusMsg) {
+void ContactListWidget::setFriendStatusMsg(const FriendId& friendPk, const QString& statusMsg) {
     auto fw = getFriend(friendPk);
     if (!fw) {
         qWarning() << "friend widget no exist.";
@@ -442,7 +389,7 @@ void FriendListWidget::setFriendStatusMsg(const FriendId& friendPk, const QStrin
     fw->setStatusMsg(statusMsg);
 }
 
-void FriendListWidget::setFriendName(const FriendId& friendPk, const QString& name) {
+void ContactListWidget::setFriendName(const FriendId& friendPk, const QString& name) {
     qDebug() << __func__ << friendPk.toString() << name;
     auto f = Nexus::getCore()->getFriendList().findFriend(friendPk);
     if (!f) {
@@ -452,7 +399,7 @@ void FriendListWidget::setFriendName(const FriendId& friendPk, const QString& na
     f->setName(name);
 }
 
-void FriendListWidget::setFriendAlias(const FriendId& friendPk, const QString& alias) {
+void ContactListWidget::setFriendAlias(const FriendId& friendPk, const QString& alias) {
     qDebug() << __func__ << friendPk.toString() << alias;
     auto f = Nexus::getCore()->getFriendList().findFriend(friendPk);
     if (!f) {
@@ -462,7 +409,7 @@ void FriendListWidget::setFriendAlias(const FriendId& friendPk, const QString& a
     f->setAlias(alias);
 }
 
-void FriendListWidget::setFriendAvatar(const FriendId& friendPk, const QByteArray& avatar) {
+void ContactListWidget::setFriendAvatar(const FriendId& friendPk, const QByteArray& avatar) {
     auto fw = getFriend(friendPk);
     if (!fw) {
         qWarning() << "friend is no exist.";
@@ -474,12 +421,12 @@ void FriendListWidget::setFriendAvatar(const FriendId& friendPk, const QByteArra
     fw->setAvatar(p);
 }
 
-void FriendListWidget::setFriendTyping(const FriendId& friendId, bool isTyping) {
+void ContactListWidget::setFriendTyping(const FriendId& friendId, bool isTyping) {
     auto fw = getFriend(friendId);
     if (fw) fw->setTyping(isTyping);
 }
 
-void FriendListWidget::reloadTheme() {
+void ContactListWidget::reloadTheme() {
     for (auto gw : groupWidgets) {
         gw->reloadTheme();
     }
@@ -489,7 +436,7 @@ void FriendListWidget::reloadTheme() {
     }
 }
 
-void FriendListWidget::do_toShowDetails(const ContactId& cid) {
+void ContactListWidget::do_toShowDetails(const ContactId& cid) {
     qDebug() << __func__ << cid.toString();
     for (auto fw : friendWidgets) {
         if (fw->getContactId() == cid) {

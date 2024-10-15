@@ -36,9 +36,8 @@ class FriendWidget : public GenericChatroomWidget {
     Q_OBJECT
 
 public:
-    FriendWidget(ContentLayout* layout, const FriendInfo& f, QWidget* parent = nullptr);
-    ~FriendWidget();
-    void contextMenuEvent(QContextMenuEvent* event) override final;
+    explicit FriendWidget(Friend* f, QWidget* parent = nullptr);
+    ~FriendWidget() override;
     void setAsActiveChatroom() override final;
     void setAsInactiveChatroom() override final;
 
@@ -57,17 +56,13 @@ public:
     void setRecvMessage(const FriendMessage& message, bool isAction);
 
 protected:
-    virtual void mousePressEvent(QMouseEvent* ev) override;
-    virtual void mouseMoveEvent(QMouseEvent* ev) override;
+    void contextMenuEvent(QContextMenuEvent* event) override final;
+    void mousePressEvent(QMouseEvent* ev) override;
+    void mouseMoveEvent(QMouseEvent* ev) override;
     void paintEvent(QPaintEvent* e) override;
-
     void onActiveSet(bool active) override;
 
 private:
-    void init();
-    void deinit();
-
-    ContentLayout* contentLayout;
 
     AboutFriendForm* about;
 
@@ -76,23 +71,16 @@ private:
     ContentDialog* createContentDialog() const;
     ContentDialog* addFriendDialog(const Friend* frnd);
 
-    // 右键菜单
-    QMenu* menu;
-    QAction* inviteToGrp;
-    QAction* removeAct;
-    QAction* newGroupAction;
-
 public slots:
     void onContextMenuCalled(QContextMenuEvent* event);
     void do_widgetClicked(GenericChatroomWidget* w);
-    void showDetails();
-    void removeDetails();
+
     void changeAutoAccept(bool enable);
     void inviteToNewGroup();
 
 signals:
-    void friendWidgetClicked(FriendWidget* widget);
-    void removeFriend(const FriendId& friendPk);
+    void friendClicked(FriendWidget* widget);
+
     void addFriend(const FriendId& friendPk);
     void copyFriendIdToClipboard(const FriendId& friendPk);
     void contextMenuCalled(QContextMenuEvent* event);

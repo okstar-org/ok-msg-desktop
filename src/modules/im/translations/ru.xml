@@ -15,6 +15,13 @@
 
 <TS version="2.0" language="ru_RU">
     <context>
+        <name>ChatForwardDialog</name>
+        <message>
+            <source>Forward message to</source>
+            <translation>Переслать сообщение на</translation>
+        </message>
+    </context>
+    <context>
         <name>AVForm</name>
         <message>
             <source>Default resolution</source>
@@ -883,7 +890,7 @@
         </message>
     </context>
     <context>
-        <name>FriendListWidget</name>
+        <name>ContactListWidget</name>
         <message>
             <source>Today</source>
             <translation>Сегодня</translation>

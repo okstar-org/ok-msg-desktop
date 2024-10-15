@@ -312,7 +312,7 @@ set(${PROJECT_NAME}_SOURCES
         src/widget/friendlistlayout.cpp
         src/widget/friendlistlayout.h
         src/widget/friendlistwidget.cpp
-        src/widget/friendlistwidget.h
+		src/widget/ContactListWidget.h
         src/widget/friendwidget.cpp
         src/widget/friendwidget.h
         src/widget/genericchatitemlayout.cpp

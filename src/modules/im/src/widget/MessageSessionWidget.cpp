@@ -12,8 +12,8 @@
 
 #include "MessageSessionWidget.h"
 
+#include "ContactListWidget.h"
 #include "circlewidget.h"
-#include "friendlistwidget.h"
 #include "groupwidget.h"
 #include "maskablepixmapwidget.h"
 
@@ -508,6 +508,20 @@ void MessageSessionWidget::removeGroup() {
 }
 
 void MessageSessionWidget::clearReceipts() { sendWorker->dispacher()->clearOutgoingMessages(); }
+
+void MessageSessionWidget::doForwardMessage(const ContactId& cid, const MsgId& msgId) {
+    auto profile = Nexus::getProfile();
+    auto history = profile->getHistory();
+    auto msgs = history->getMessageById(msgId);
+
+    if (msgs.empty()) {
+        return;
+    }
+
+    auto msg = msgs.at(0);
+
+    sendWorker->dispacher()->sendMessage(false, msg.asMessage(), false);
+}
 
 void MessageSessionWidget::doAcceptCall(const ToxPeer& p, bool video) {
     qDebug() << __func__ << p.toString();

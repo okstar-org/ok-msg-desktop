@@ -13,10 +13,10 @@
 #include "friendwidget.h"
 #include "gui.h"
 
+#include "ContactListWidget.h"
 #include "circlewidget.h"
 #include "contentdialogmanager.h"
 #include "contentlayout.h"
-#include "friendlistwidget.h"
 #include "groupwidget.h"
 #include "maskablepixmapwidget.h"
 #include "src/core/core.h"
@@ -46,6 +46,7 @@
 #include <QPainter>
 #include <QStyleOption>
 
+#include "base/MessageBox.h"
 #include "form/chatform.h"
 #include "src/model/chathistory.h"
 #include "src/persistence/profile.h"
@@ -58,22 +59,17 @@
  * For example, used on friend list.
  * When you click should open the chat with friend. Widget has a context menu.
  */
-FriendWidget::FriendWidget(ContentLayout* layout, const FriendInfo& f, QWidget* parent)
-        : GenericChatroomWidget(ChatType::Chat, f.id, parent)
-        , contentLayout(layout)
-        , menu{nullptr}
-        , about{nullptr} {
-    qDebug() << __func__ << "friend:" << f.toString();
+FriendWidget::FriendWidget(Friend* f, QWidget* parent)
+        : GenericChatroomWidget(ChatType::Chat, f->getId(), parent), about{nullptr}, m_friend{f} {
+    qDebug() << __func__ << "friend:" << f->getId();
     setCursor(Qt::PointingHandCursor);
 
     auto profile = Nexus::getProfile();
 
-    auto core = Core::getInstance();
     auto& settings = Settings::getInstance();
     auto history = profile->getHistory();
     auto dialogManager = ContentDialogManager::getInstance();
 
-    m_friend = core->getFriendList().findFriend(f.getId());
     nameLabel->setText(m_friend->getDisplayedName());
 
     connect(m_friend, &Friend::avatarChanged, [&](const QPixmap& pixmap) { setAvatar(pixmap); });
@@ -110,7 +106,7 @@ FriendWidget::FriendWidget(ContentLayout* layout, const FriendInfo& f, QWidget* 
     connect(this, &FriendWidget::chatroomWidgetClicked, [=, this](GenericChatroomWidget* w) {
         Q_UNUSED(w);
         do_widgetClicked(this);
-        emit friendWidgetClicked(this);
+        emit friendClicked(this);
     });
     //  connect(friendWidget, &FriendWidget::newWindowOpened,
     //          [this](GenericChatroomWidget *w) {
@@ -127,33 +123,15 @@ FriendWidget::FriendWidget(ContentLayout* layout, const FriendInfo& f, QWidget* 
     //    setAvatar(avatar);
     //  }
 
-    menu = new QMenu(this);
-    inviteToGrp = menu->addAction(tr("Invite to group"));
-    newGroupAction = menu->addAction(tr("To new group"));
 
-    connect(newGroupAction, &QAction::triggered, this, &FriendWidget::inviteToNewGroup);
-
-    //  inviteMenu->addSeparator();
-
-    menu->addSeparator();
-    removeAct = menu->addAction(tr("Remove friend"));
-
-    init();
 }
 
 FriendWidget::~FriendWidget() {
     qDebug() << __func__;
-    removeDetails();
-    deinit();
 }
 
-void FriendWidget::init() {}
-
-void FriendWidget::deinit() {}
-
 void FriendWidget::do_widgetClicked(GenericChatroomWidget* w) {
-    qDebug() << __func__ << "show friend:" << m_friend->getId().toString();
-    showDetails();
+    qDebug() << __func__ << m_friend->getId().toString();
 }
 
 ContentDialog* FriendWidget::addFriendDialog(const Friend* frnd) {
@@ -169,7 +147,7 @@ ContentDialog* FriendWidget::addFriendDialog(const Friend* frnd) {
         dialog = createContentDialog();
     }
 
-    auto& settings = Settings::getInstance();
+    //    auto& settings = Settings::getInstance();
 
     //  FriendWidget *widget = friendWidgets[friendPk];
     //  bool isCurrent = activeChatroomWidget == widget;
@@ -237,6 +215,10 @@ void FriendWidget::contextMenuEvent(QContextMenuEvent* event) {
  * Context menu handler. Always should be called to FriendWidget from FriendList
  */
 void FriendWidget::onContextMenuCalled(QContextMenuEvent* event) {
+    if (!showContextMenu) {
+        return;
+    }
+
     if (!active) {
         setBackgroundRole(QPalette::Highlight);
     }
@@ -321,7 +303,19 @@ void FriendWidget::onContextMenuCalled(QContextMenuEvent* event) {
     //  &FriendWidget::showDetails);
 
     const auto pos = event->globalPos();
-    auto selected = menu->exec(pos);
+
+    QMenu menu(this);
+    auto inviteToGrp = menu.addAction(tr("Invite to group"));
+    auto newGroupAction = menu.addAction(tr("To new group"));
+
+    connect(newGroupAction, &QAction::triggered, this, &FriendWidget::inviteToNewGroup);
+
+    //  inviteMenu->addSeparator();
+
+    menu.addSeparator();
+    auto removeAct = menu.addAction(tr("Remove friend"));
+
+    auto selected = menu.exec(pos);
     qDebug() << "selected" << selected;
 
     removeEventFilter(this);
@@ -331,16 +325,24 @@ void FriendWidget::onContextMenuCalled(QContextMenuEvent* event) {
     }
 
     if (selected == removeAct) {
-        const bool retYes = GUI::askQuestion(tr("Confirmation"),
-                                             tr("Are you sure to remove %1 ?").arg(getName()),
+        const bool yes = GUI::askQuestion(tr("Confirmation"),
+                                          tr("Are you sure to remove %1 ?").arg(getName()),
                                              false,
                                              true,
                                              true);
-        if (!retYes) {
+        if (!yes) {
             return;
         }
 
-        emit removeFriend(FriendId(contactId));
+        auto removed = Core::getInstance()->removeFriend(m_friend->getId().toString());
+        if (!removed) {
+            ok::base::MessageBox::warning(this, tr("Warning"), tr("Can not remove the friend!"));
+            return;
+        }
+
+        auto w = Widget::getInstance();
+        emit w->friendRemoved(m_friend);
+
     } else if (selected == inviteToGrp) {
     }
 }
@@ -369,27 +371,6 @@ void FriendWidget::inviteToNewGroup() {
         }
     });
     groupCreate->show();
-}
-
-void FriendWidget::showDetails() {
-    qDebug() << __func__;
-    if (!about) {
-        qDebug() << "create about for:" << m_friend->getId().toString();
-        const auto af = new AboutFriend(m_friend, &Settings::getInstance());
-        std::unique_ptr<IAboutFriend> iabout = std::unique_ptr<IAboutFriend>(af);
-        about = new AboutFriendForm(std::move(iabout), this);
-        connect(about, &AboutFriendForm::histroyRemoved, this, &FriendWidget::friendHistoryRemoved);
-        contentLayout->addWidget(about);
-    }
-
-    contentLayout->setCurrentWidget(about);
-}
-
-void FriendWidget::removeDetails() {
-    //    if(about){
-    //        contentLayout->removeWidget(about);
-    //        about = nullptr;
-    //    }
 }
 
 void FriendWidget::setAsActiveChatroom() { setActive(true); }
@@ -490,18 +471,16 @@ ContentDialog* FriendWidget::createContentDialog() const {
     //  connect(&contentDialog, &ContentDialog::connectFriendWidget, this,
     //          &Widget::connectFriendWidget);
 
-
-// #ifdef Q_OS_MAC
-//   Nexus &n = Nexus::getInstance();
-//   connect(&contentDialog, &ContentDialog::destroyed, &n,
-//           &Nexus::updateWindowsClosed);
-//   connect(&contentDialog, &ContentDialog::windowStateChanged, &n,
-//           &Nexus::onWindowStateChanged);
-//   connect(contentDialog.windowHandle(), &QWindow::windowTitleChanged, &n,
-//           &Nexus::updateWindows);
-//   n.updateWindows();
-// #endif
-
+    // #ifdef Q_OS_MAC
+    //   Nexus &n = Nexus::getInstance();
+    //   connect(&contentDialog, &ContentDialog::destroyed, &n,
+    //           &Nexus::updateWindowsClosed);
+    //   connect(&contentDialog, &ContentDialog::windowStateChanged, &n,
+    //           &Nexus::onWindowStateChanged);
+    //   connect(contentDialog.windowHandle(), &QWindow::windowTitleChanged, &n,
+    //           &Nexus::updateWindows);
+    //   n.updateWindows();
+    // #endif
 
     ContentDialogManager::getInstance()->addContentDialog(*contentDialog);
     return contentDialog;

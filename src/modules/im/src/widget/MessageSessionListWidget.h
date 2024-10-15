@@ -84,7 +84,8 @@ public:
 
     //  CircleWidget *createCircleWidget(int id = -1);
 
-    void toSendMessage(const FriendId& pk, bool isGroup);
+    void toSendMessage(const ContactId& cid, bool isGroup);
+    void toForwardMessage(const ContactId& cid, const MsgId& id);
 
     // av
     void setFriendAvInvite(const ToxPeer& peer, bool video);

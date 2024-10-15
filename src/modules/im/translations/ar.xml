@@ -13,6 +13,13 @@
 <!DOCTYPE TS>
 <TS version="2.0" language="ar">
     <context>
+        <name>ChatForwardDialog</name>
+        <message>
+            <source>Forward message to</source>
+            <translation>إعادة توجيه الرسالة إلى</translation>
+        </message>
+    </context>
+    <context>
         <name>AVForm</name>
         <message>
             <source>Default resolution</source>
@@ -870,7 +877,7 @@
         </message>
     </context>
     <context>
-        <name>FriendListWidget</name>
+        <name>ContactListWidget</name>
         <message>
             <source>Today</source>
             <translation type="unfinished">اليوم</translation>

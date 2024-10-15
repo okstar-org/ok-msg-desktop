@@ -29,6 +29,8 @@ GenericChatroomWidget::GenericChatroomWidget(ChatType type, const ContactId& cid
     compactChange(false);
 }
 
+GenericChatroomWidget::~GenericChatroomWidget() { qDebug() << __func__; }
+
 bool GenericChatroomWidget::eventFilter(QObject*, QEvent*) {
     return true;  // Disable all events.
 }
