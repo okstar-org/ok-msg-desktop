@@ -15,8 +15,8 @@
 #include <QtWidgets/QtWidgets>
 
 FontManager::FontManager(QObject* parent) : QObject(parent) {
-    loadFonts("PingFangSC",
-              QStringList{"Light", "Medium", "Regular", "Semibold", "Thin", "Ultralight"});
+    //    loadFonts("PingFangSC", QStringList{"Light", "Medium", "Regular", "Semibold", "Thin",
+    //    "Ultralight"});
 }
 
 FontManager::~FontManager() {}
