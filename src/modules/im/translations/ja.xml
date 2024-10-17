@@ -12,8 +12,26 @@
   -->
 
 <!DOCTYPE TS>
-
 <TS version="2.0" language="ja_JP">
+    <context>
+        <name>StorageSettingsForm</name>
+        <message>
+            <source>Default directory to save files:</source>
+            <translation>ファイルを保存するデフォルトの場所:</translation>
+        </message>
+        <message>
+            <source>Autoaccept files</source>
+            <translation>ファイルを自動承認</translation>
+        </message>
+        <message>
+            <source>Max autoaccept file size (0 to disable):</source>
+            <translation>最大自動承認ファイルサイズ(無効にするには0):</translation>
+        </message>
+        <message>
+            <source>MB</source>
+            <translation>MB</translation>
+        </message>
+    </context>
     <context>
         <name>ChatForwardDialog</name>
         <message>
@@ -233,10 +251,6 @@
         <message>
             <source>Auto accept files</source>
             <translation>ファイルを自動承認</translation>
-        </message>
-        <message>
-            <source>Default directory to save files:</source>
-            <translation>ファイルを保存するデフォルトの場所:</translation>
         </message>
         <message>
             <source>Auto accept for this contact is disabled</source>
@@ -1100,17 +1114,9 @@
             <translation>ファイルを保存する場所を選択します。</translation>
         </message>
         <message>
-            <source>Default directory to save files:</source>
-            <translation>ファイルを保存するデフォルトの場所:</translation>
-        </message>
-        <message>
             <source>You can set this on a per-friend basis by right clicking them.</source>
             <comment>autoaccept cb tooltip</comment>
             <translation>友達ごとに、右クリックすることで設定できます。</translation>
-        </message>
-        <message>
-            <source>Autoaccept files</source>
-            <translation>ファイルを自動承認</translation>
         </message>
         <message>
             <source>Show contacts&apos; status changes</source>
@@ -1123,14 +1129,6 @@
         <message>
             <source>Spell checking</source>
             <translation>聞いて</translation>
-        </message>
-        <message>
-            <source>Max autoaccept file size (0 to disable):</source>
-            <translation>最大自動承認ファイルサイズ(無効にするには0):</translation>
-        </message>
-        <message>
-            <source>MB</source>
-            <translation>MB</translation>
         </message>
     </context>
     <context>
@@ -2738,7 +2736,7 @@
         </message>
     </context>
     <context>
-        <name>UserInterfaceSettings</name>
+        <name>GeneralSettings</name>
         <message>
             <source>Chat</source>
             <translation>チャット</translation>
@@ -2876,10 +2874,6 @@
             <translation>有効な場合、アバターが設定されていない連絡先には、デフォルトの画像の代わりに、Tox ID
                 から生成されたアバターが設定されます。適用するには再起動が必要です。
             </translation>
-        </message>
-        <message>
-            <source>Use identicons instead of empty avatars</source>
-            <translation>空のアバターの代わりに自動的に生成されたアバターを使う</translation>
         </message>
         <message>
             <source>Use colored nicknames in chats</source>

@@ -2689,7 +2689,7 @@
         </message>
     </context>
     <context>
-        <name>UserInterfaceSettings</name>
+        <name>GeneralSettings</name>
         <message>
             <source>Chat</source>
             <translation>Chat</translation>
@@ -2827,10 +2827,6 @@
             <translation>Si está activado, cada contacto sin un avatar tendrá un avatar generado según su ID de Tox en
                 lugar de una imagen predeterminada. Requiere reiniciar para aplicar.
             </translation>
-        </message>
-        <message>
-            <source>Use identicons instead of empty avatars</source>
-            <translation>Utilice identicones en lugar de avatares vacíos</translation>
         </message>
         <message>
             <source>Use colored nicknames in chats</source>

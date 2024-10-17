@@ -33,12 +33,12 @@ public:
     }
 
 private slots:
-    void on_statusChanges_stateChanged();
-    void on_groupJoinLeaveMessages_stateChanged();
+    //    void on_statusChanges_stateChanged();
+    //    void on_groupJoinLeaveMessages_stateChanged();
+    //    void on_autoAwaySpinBox_editingFinished();
+    void on_autoSaveFilesDir_clicked();
     void on_autoacceptFiles_stateChanged();
     void on_maxAutoAcceptSizeMB_editingFinished();
-    void on_autoSaveFilesDir_clicked();
-    void on_autoAwaySpinBox_editingFinished();
 
 private:
     void retranslateUi();

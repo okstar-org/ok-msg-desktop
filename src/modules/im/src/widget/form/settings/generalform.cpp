@@ -71,15 +71,6 @@ GeneralForm::GeneralForm(SettingsWidget* myParent)
     bodyUI->desktopNotify->hide();
 #endif
 
-    bodyUI->showWindow->setChecked(s.getShowWindow());
-
-    //    bodyUI->cbGroupchatPosition->setChecked(s.getGroupchatPosition());
-    //    bodyUI->cbCompactLayout->setChecked(s.getCompactLayout());
-    //    bodyUI->cbSeparateWindow->setChecked(s.getSeparateWindow());
-    //    bodyUI->cbDontGroupWindows->setChecked(s.getDontGroupWindows());
-    //    bodyUI->cbDontGroupWindows->setEnabled(s.getSeparateWindow());
-    //    bodyUI->cbShowIdenticons->setChecked(s.getShowIdenticons());
-
     bodyUI->useEmoticons->setChecked(s.getUseEmoticons());
     for (auto entry : SmileyPack::listSmileyPacks())
         bodyUI->smileyPackBrowser->addItem(entry.first, entry.second);
@@ -222,10 +213,6 @@ void GeneralForm::on_desktopNotify_stateChanged() {
 
 void GeneralForm::on_busySound_stateChanged() {
     Settings::getInstance().setBusySound(bodyUI->busySound->isChecked());
-}
-
-void GeneralForm::on_showWindow_stateChanged() {
-    Settings::getInstance().setShowWindow(bodyUI->showWindow->isChecked());
 }
 
 void GeneralForm::on_groupOnlyNotfiyWhenMentioned_stateChanged() {

@@ -14,6 +14,29 @@
 <!DOCTYPE TS>
 <TS version="2.0" language="de_DE" sourcelanguage="en_US">
     <context>
+        <name>StorageSettingsForm</name>
+        <message>
+            <source>Auto accept files</source>
+            <translation>Dateien automatisch annehmen</translation>
+        </message>
+        <message>
+            <source>Default directory to save files:</source>
+            <translation>Standartordner für das Speichern von Dateien:</translation>
+        </message>
+        <message>
+            <source>Auto accept for this contact is disabled</source>
+            <translation>Automatische Annahme von Dateien ist für diesem Kontakt deaktiviert</translation>
+        </message>
+        <message>
+            <source>Max autoaccept file size (0 to disable):</source>
+            <translation>Max. automatisch akzeptierte Dateigröße (0 zum Deaktivieren):</translation>
+        </message>
+        <message>
+            <source>MB</source>
+            <translation>MB</translation>
+        </message>
+    </context>
+    <context>
         <name>ChatForwardDialog</name>
         <message>
             <source>Forward message to</source>
@@ -231,18 +254,7 @@
             <source>Automatically accept files from contact if set</source>
             <translation>Nimmt Dateien dieses Kontaktes automatisch an, wenn aktiviert</translation>
         </message>
-        <message>
-            <source>Auto accept files</source>
-            <translation>Dateien automatisch annehmen</translation>
-        </message>
-        <message>
-            <source>Default directory to save files:</source>
-            <translation>Standartordner für das Speichern von Dateien:</translation>
-        </message>
-        <message>
-            <source>Auto accept for this contact is disabled</source>
-            <translation>Automatische Annahme von Dateien ist für diesem Kontakt deaktiviert</translation>
-        </message>
+
         <message>
             <source>Auto accept call:</source>
             <translation>Anruf automatisch annehmen:</translation>
@@ -1117,14 +1129,6 @@
         <message>
             <source>Spell checking</source>
             <translation>Rechtschreibprüfung</translation>
-        </message>
-        <message>
-            <source>Max autoaccept file size (0 to disable):</source>
-            <translation>Max. automatisch akzeptierte Dateigröße (0 zum Deaktivieren):</translation>
-        </message>
-        <message>
-            <source>MB</source>
-            <translation>MB</translation>
         </message>
     </context>
     <context>
@@ -2696,7 +2700,7 @@
         </message>
     </context>
     <context>
-        <name>UserInterfaceSettings</name>
+        <name>GeneralSettings</name>
         <message>
             <source>Chat</source>
             <translation>Chat</translation>
@@ -2835,10 +2839,6 @@
             <translation>Wenn diese Option aktiviert ist, erhält jeder Kontakt ohne festgelegtem Avatar einen
                 generierten Avatar basierend auf seiner Tox-ID anstelle eines Standardbildes. Neustart erforderlich.
             </translation>
-        </message>
-        <message>
-            <source>Use identicons instead of empty avatars</source>
-            <translation>Identitätssymbol statt leerer Avatare verwenden</translation>
         </message>
         <message>
             <source>Use colored nicknames in chats</source>

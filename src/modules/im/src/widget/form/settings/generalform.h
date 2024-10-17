@@ -46,7 +46,7 @@ private slots:
    // void on_notifySound_stateChanged();
    // void on_notifyHide_stateChanged(int);
     void on_busySound_stateChanged();
-    void on_showWindow_stateChanged();
+
     void on_groupOnlyNotfiyWhenMentioned_stateChanged();
 
     void on_txtChatFont_currentFontChanged(const QFont& f);

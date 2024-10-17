@@ -14,6 +14,33 @@
 <!DOCTYPE TS>
 <TS version="2.0" language="it_IT">
     <context>
+        <name>StorageSettingsForm</name>
+        <message>
+            <source>Automatically accept files from contact if set</source>
+            <translation>Accetta automaticamente files dal contatto se selezionato</translation>
+        </message>
+        <message>
+            <source>Auto accept files</source>
+            <translation>Accetta automaticamente i file ricevuti</translation>
+        </message>
+        <message>
+            <source>Default directory to save files:</source>
+            <translation>Cartella predefinita per salvare i files:</translation>
+        </message>
+        <message>
+            <source>Auto accept for this contact is disabled</source>
+            <translation>Non scaricare automaticamente i file per questo contatto</translation>
+        </message>
+        <message>
+            <source>Max autoaccept file size (0 to disable):</source>
+            <translation>Dimensione massima del file per autoaccettare (0 per disabilitare):</translation>
+        </message>
+        <message>
+            <source>MB</source>
+            <translation>MB</translation>
+        </message>
+    </context>
+    <context>
         <name>ChatForwardDialog</name>
         <message>
             <source>Forward message to</source>
@@ -228,22 +255,6 @@
         <message>
             <source>HISTORY OF ALIASES</source>
             <translation>Cronologia dei soprannomi</translation>
-        </message>
-        <message>
-            <source>Automatically accept files from contact if set</source>
-            <translation>Accetta automaticamente files dal contatto se selezionato</translation>
-        </message>
-        <message>
-            <source>Auto accept files</source>
-            <translation>Accetta automaticamente i file ricevuti</translation>
-        </message>
-        <message>
-            <source>Default directory to save files:</source>
-            <translation>Cartella predefinita per salvare i files:</translation>
-        </message>
-        <message>
-            <source>Auto accept for this contact is disabled</source>
-            <translation>Non scaricare automaticamente i file per questo contatto</translation>
         </message>
         <message>
             <source>Auto accept call:</source>
@@ -1129,14 +1140,6 @@
         <message>
             <source>Spell checking</source>
             <translation>Controllo ortografico</translation>
-        </message>
-        <message>
-            <source>Max autoaccept file size (0 to disable):</source>
-            <translation>Dimensione massima del file per autoaccettare (0 per disabilitare):</translation>
-        </message>
-        <message>
-            <source>MB</source>
-            <translation>MB</translation>
         </message>
     </context>
     <context>
@@ -2706,7 +2709,7 @@
         </message>
     </context>
     <context>
-        <name>UserInterfaceSettings</name>
+        <name>GeneralSettings</name>
         <message>
             <source>Chat</source>
             <translation>Chat</translation>
@@ -2845,10 +2848,6 @@
             <translation>Se attivato, ad ogni contatto senza foto profilo verrà generata una foto profilo basata sull&apos;ID
                 Tox invece della foto predefinita. Richiede il riavvio di qTox.
             </translation>
-        </message>
-        <message>
-            <source>Use identicons instead of empty avatars</source>
-            <translation>Usa icone identificative al posto delle foto profilo vuote</translation>
         </message>
         <message>
             <source>Use colored nicknames in chats</source>

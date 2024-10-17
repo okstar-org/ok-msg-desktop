@@ -56,10 +56,10 @@ StorageSettingsForm::StorageSettingsForm(SettingsWidget* myParent)
 
     //先获取当前语言
     auto & okSettings = ok::base::OkSettings::getInstance();
-    bodyUI->statusChanges->setChecked(s.getStatusChangeNotificationEnabled());
-    bodyUI->groupJoinLeaveMessages->setChecked(s.getShowGroupJoinLeaveMessages());
+    //    bodyUI->statusChanges->setChecked(s.getStatusChangeNotificationEnabled());
+    //    bodyUI->groupJoinLeaveMessages->setChecked(s.getShowGroupJoinLeaveMessages());
 
-    bodyUI->autoAwaySpinBox->setValue(s.getAutoAwayTime());
+    //    bodyUI->autoAwaySpinBox->setValue(s.getAutoAwayTime());
     bodyUI->autoSaveFilesDir->setText(s.getGlobalAutoAcceptDir());
     bodyUI->maxAutoAcceptSizeMB->setValue(static_cast<double>(s.getMaxAutoAcceptSize()) / 1024 / 1024);
     bodyUI->autoacceptFiles->setChecked(okSettings.getAutoSaveEnabled());
@@ -74,19 +74,18 @@ StorageSettingsForm::~StorageSettingsForm() {
     delete bodyUI;
 }
 
+// void StorageSettingsForm::on_statusChanges_stateChanged() {
+//     Settings::getInstance().setStatusChangeNotificationEnabled(bodyUI->statusChanges->isChecked());
+// }
 //
-void StorageSettingsForm::on_statusChanges_stateChanged() {
-    Settings::getInstance().setStatusChangeNotificationEnabled(bodyUI->statusChanges->isChecked());
-}
-
-void StorageSettingsForm::on_groupJoinLeaveMessages_stateChanged() {
-    Settings::getInstance().setShowGroupJoinLeaveMessages(bodyUI->groupJoinLeaveMessages->isChecked());
-}
-
-void StorageSettingsForm::on_autoAwaySpinBox_editingFinished() {
-    int minutes = bodyUI->autoAwaySpinBox->value();
-    Settings::getInstance().setAutoAwayTime(minutes);
-}
+// void StorageSettingsForm::on_groupJoinLeaveMessages_stateChanged() {
+//     Settings::getInstance().setShowGroupJoinLeaveMessages(bodyUI->groupJoinLeaveMessages->isChecked());
+// }
+//
+// void StorageSettingsForm::on_autoAwaySpinBox_editingFinished() {
+//     int minutes = bodyUI->autoAwaySpinBox->value();
+//     Settings::getInstance().setAutoAwayTime(minutes);
+// }
 
 void StorageSettingsForm::on_autoacceptFiles_stateChanged() {
     ok::base::OkSettings::getInstance().setAutoSaveEnabled(bodyUI->autoacceptFiles->isChecked());

@@ -2683,7 +2683,7 @@
         </message>
     </context>
     <context>
-        <name>UserInterfaceSettings</name>
+        <name>GeneralSettings</name>
         <message>
             <source>Chat</source>
             <translation>المحادثة</translation>
@@ -2817,10 +2817,6 @@
                 instead of a default picture. Requires restart to apply.
             </source>
             <comment>toolTip for show identicons</comment>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <source>Use identicons instead of empty avatars</source>
             <translation type="unfinished"></translation>
         </message>
         <message>

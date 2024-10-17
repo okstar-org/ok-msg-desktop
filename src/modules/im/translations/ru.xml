@@ -12,8 +12,26 @@
   -->
 
 <!DOCTYPE TS>
-
 <TS version="2.0" language="ru_RU">
+    <context>
+        <name>StorageSettingsForm</name>
+        <message>
+            <source>Default directory to save files:</source>
+            <translation>Стандартная папка сохранения файлов:</translation>
+        </message>
+        <message>
+            <source>Autoaccept files</source>
+            <translation>Принимать файлы автоматически</translation>
+        </message>
+        <message>
+            <source>Max autoaccept file size (0 to disable):</source>
+            <translation>Максимальный размер файла автоприема (0 для отключения):</translation>
+        </message>
+        <message>
+            <source>MB</source>
+            <translation>МБ</translation>
+        </message>
+    </context>
     <context>
         <name>ChatForwardDialog</name>
         <message>
@@ -234,10 +252,6 @@
         <message>
             <source>Auto accept files</source>
             <translation>Автоматически принимать файлы</translation>
-        </message>
-        <message>
-            <source>Default directory to save files:</source>
-            <translation>Стандартная папка сохранения файлов:</translation>
         </message>
         <message>
             <source>Auto accept for this contact is disabled</source>
@@ -1071,10 +1085,6 @@
             <translation>Светлая иконка</translation>
         </message>
         <message>
-            <source>Default directory to save files:</source>
-            <translation>Стандартная папка сохранения файлов:</translation>
-        </message>
-        <message>
             <source>Set to 0 to disable</source>
             <translation>Укажите 0, чтобы отключить</translation>
         </message>
@@ -1103,10 +1113,6 @@
             <translation>Статус «Отошел» после (0 - выключено):</translation>
         </message>
         <message>
-            <source>Autoaccept files</source>
-            <translation>Принимать файлы автоматически</translation>
-        </message>
-        <message>
             <source>Start in tray</source>
             <translation>Запускать свернутым в трей</translation>
         </message>
@@ -1121,14 +1127,6 @@
         <message>
             <source>Spell checking</source>
             <translation>Проверка орфографии</translation>
-        </message>
-        <message>
-            <source>Max autoaccept file size (0 to disable):</source>
-            <translation>Максимальный размер файла автоприема (0 для отключения):</translation>
-        </message>
-        <message>
-            <source>MB</source>
-            <translation>МБ</translation>
         </message>
     </context>
     <context>
@@ -2703,7 +2701,7 @@
         </message>
     </context>
     <context>
-        <name>UserInterfaceSettings</name>
+        <name>GeneralSettings</name>
         <message>
             <source>Chat</source>
             <translation>Чат</translation>
@@ -2841,10 +2839,6 @@
             <translation>Если включено, каждый контакт без аватара будет иметь сгенерированный аватар, основываясь на
                 своем Tox ID, вместо картинки по умолчанию. Требуется перезагрузка для применения.
             </translation>
-        </message>
-        <message>
-            <source>Use identicons instead of empty avatars</source>
-            <translation>Использовать картинки вместо пустых аватаров</translation>
         </message>
         <message>
             <source>Use colored nicknames in chats</source>
