@@ -503,11 +503,26 @@ add_library(${PROJECT_NAME} STATIC
 )
 
 if (WIN32)
-    set(PLATFORM_LIBS d3d11 dxgi dxva2 gdi32
-                        wmcodecdspuuid Winmm Mf Mfplat Mfreadwrite mfuuid evr 
+    set(PLATFORM_LIBS   # 3D
+                        d3d11
+                        # GDI图形API
+                        gdi32
+                        # DirectX
+                        dxgi dxva2
+                        # Windows Media
+                        Winmm dmoGuids WMCodecDspUuid avrt
+                        # Media Foundation API
+                        Mf Mfplat Mfreadwrite mfuuid evr #Enhanced Video Renderer 视频渲染器
+                        # DirectShow
                         amstrmid msdmo strmiids strmbase
-                        winspool comdlg32 uuid shlwapi iphlpapi
-                        kernel32 user32 Vfw32 shell32 oleaut32 ole32 advapi32
+                        # COM
+                        Ole32 OleAut32 uuid OLDNAMES comsuppd
+                        # Shell Light-Weight Utility API
+                        shlwapi
+                        # IP Helper API
+                        iphlpapi
+                        # 核心API
+                        kernel32 user32 Vfw32 shell32 advapi32
     )
 
     if(CMAKE_BUILD_TYPE MATCHES "Debug")
