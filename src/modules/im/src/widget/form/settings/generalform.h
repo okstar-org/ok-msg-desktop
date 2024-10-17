@@ -28,6 +28,7 @@ public:
     explicit GeneralForm(SettingsWidget* parent);
     ~GeneralForm();
     virtual QString getFormName() final override { return tr("General"); }
+
 signals:
     void updateIcons();
 
@@ -49,21 +50,17 @@ private slots:
     void on_groupOnlyNotfiyWhenMentioned_stateChanged();
 
     void on_txtChatFont_currentFontChanged(const QFont& f);
-    void on_txtChatFontSize_valueChanged(int size);
+    void on_txtChatFontSize_valueChanged(int px);
 
     // void on_useNameColors_stateChanged(int value);
 
 private:
-    //void retranslateUi();
-
-    //
     void retranslateUi();
     void reloadSmileys();
 
 private:
     Ui::GeneralSettings* bodyUI;
     SettingsWidget* parent;
-
     QList<QLabel*> smileLabels;
     QList<std::shared_ptr<QIcon>> emoticonsIcons;
     const int MAX_FORMAT_LENGTH = 128;

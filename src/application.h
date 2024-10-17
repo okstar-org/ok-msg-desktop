@@ -23,7 +23,6 @@
 #include "UI/window/WindowManager.h"
 #include "UI/window/login/src/LoginWindow.h"
 
-#include "FontManager.h"
 #include "modules/module.h"
 
 namespace UI {
@@ -69,12 +68,10 @@ private:
     std::unique_ptr<Bus> _bus;
     std::unique_ptr<SettingManager> _settingManager;
     std::unique_ptr<ControllerManager> _controllerManager;
-    std::unique_ptr<FontManager> _fontManager;
 
     UI::LoginWindow* m_loginWindow;
     std::unique_ptr<UI::MainWindow> m_mainWindow;
 
-    void loadService();
     void doLogout();
     /**
      * bootstrap: 打开程序首次启动为true，登出启动为false

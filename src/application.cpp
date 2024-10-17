@@ -20,7 +20,6 @@
 
 #include <QMenu>
 #include "Bus.h"
-#include "FontManager.h"
 #include "UI/window/login/src/LoginWidget.h"
 #include "UI/window/login/src/LoginWindow.h"
 #include "UI/window/main/src/OMainMenu.h"
@@ -107,11 +106,6 @@ Application::Application(int& argc, char* argv[])
 
     // 样式
     setStyleSheet(ok::base::Files::readStringAll(":/resources/style/application.css"));
-
-    // 字体
-    _fontManager = std::make_unique<FontManager>();
-    connect(_bus.get(), &Bus::fontChanged, [&](const QFont& f) { _fontManager->useFont(f); });
-    connect(_bus.get(), &Bus::fontSizeChanged, [&](int size) { _fontManager->useFontSize(size); });
 
     qDebug() << "Application has be created";
 }

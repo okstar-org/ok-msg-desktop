@@ -251,10 +251,23 @@ void GeneralForm::retranslateUi() { bodyUI->retranslateUi(this); }
 
 void GeneralForm::on_txtChatFont_currentFontChanged(const QFont& f) {
     qDebug() << __func__ << f;
-    emit ok::Application::Instance() -> bus()->fontChanged(f);
+    QFont tmpFont = f;
+    const int px = bodyUI->txtChatFontSize->value();
+
+    if (QFontInfo(tmpFont).pixelSize() != px) tmpFont.setPixelSize(px);
+
+    Settings::getInstance().setChatMessageFont(tmpFont);
 }
 
-void GeneralForm::on_txtChatFontSize_valueChanged(int size) {
-    qDebug() << __func__ << size;
-    emit ok::Application::Instance() -> bus()->fontSizeChanged(size);
+void GeneralForm::on_txtChatFontSize_valueChanged(int px) {
+    qDebug() << __func__ << px;
+
+    Settings& s = Settings::getInstance();
+    QFont tmpFont = s.getChatMessageFont();
+    const int fontSize = QFontInfo(tmpFont).pixelSize();
+
+    if (px != fontSize) {
+        tmpFont.setPixelSize(px);
+        s.setChatMessageFont(tmpFont);
+    }
 }

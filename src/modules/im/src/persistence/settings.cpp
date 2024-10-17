@@ -11,20 +11,6 @@
  */
 
 #include "settings.h"
-#include "base/autorun.h"
-#include "src/core/core.h"
-#include "src/core/corefile.h"
-#include "src/ipc.h"
-#include "src/lib/settings/style.h"
-#include "src/nexus.h"
-#include "src/persistence/profile.h"
-#include "src/persistence/profilelocker.h"
-#include "src/persistence/settingsserializer.h"
-#include "src/persistence/smileypack.h"
-#include "src/widget/gui.h"
-
-#include "base/OkSettings.h"
-#include "base/compatiblerecursivemutex.h"
 
 #include <QApplication>
 #include <QCryptographicHash>
@@ -39,6 +25,19 @@
 #include <QStyleFactory>
 #include <QThread>
 #include <QtCore/QCommandLineParser>
+
+#include "base/autorun.h"
+#include "src/core/core.h"
+#include "src/core/corefile.h"
+#include "src/ipc.h"
+#include "src/lib/settings/style.h"
+#include "src/nexus.h"
+#include "src/persistence/profile.h"
+#include "src/persistence/profilelocker.h"
+#include "src/persistence/settingsserializer.h"
+#include "src/persistence/smileypack.h"
+#include "base/OkSettings.h"
+#include "base/compatiblerecursivemutex.h"
 
 /**
  * @var QHash<QString, QByteArray> Settings::widgetSettings

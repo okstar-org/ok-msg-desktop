@@ -29,8 +29,6 @@ set(${PROJECT_NAME}_SOURCES
     ipc.cpp
     Bus.h
     Bus.cpp
-    FontManager.h
-    FontManager.cpp
 )
 
 list(APPEND OK_LIBS

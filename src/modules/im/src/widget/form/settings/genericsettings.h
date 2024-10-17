@@ -27,6 +27,8 @@ public:
 protected:
     bool eventFilter(QObject* o, QEvent* e) final override;
     void eventsInit();
+    void showEvent(QShowEvent* e) override;
+    void hideEvent(QHideEvent* e) override;
 
 protected:
     QPixmap formIcon;

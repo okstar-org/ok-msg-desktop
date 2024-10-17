@@ -37,6 +37,7 @@
 
 class Profile;
 class QCommandLineParser;
+class FontManager;
 
 namespace Db {
 enum class syncType;
@@ -654,6 +655,7 @@ private:
     static CompatibleRecursiveMutex bigLock;
     static const QString globalSettingsFile;
     static QThread* settingsThread;
+    FontManager* fontManager;
 };
 
 #endif  // SETTINGS_HPP

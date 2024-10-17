@@ -11,6 +11,7 @@
  */
 
 #include "genericsettings.h"
+#include "src/persistence/settings.h"
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -67,4 +68,11 @@ bool GenericForm::eventFilter(QObject* o, QEvent* e) {
     }
 
     return QWidget::eventFilter(o, e);
+}
+
+void GenericForm::showEvent(QShowEvent* e) { QWidget::showEvent(e); }
+
+void GenericForm::hideEvent(QHideEvent* e) {
+    QWidget::hideEvent(e);
+    Settings::getInstance().saveGlobal();
 }
