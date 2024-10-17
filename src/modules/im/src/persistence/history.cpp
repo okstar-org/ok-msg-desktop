@@ -496,7 +496,7 @@ QString History::makeSqlForFriend(const FriendId& me, const FriendId& friendPk) 
     return queryText;
 }
 
-QString History::makeSqlForId(qlonglong id) {
+QString History::makeSqlForId(const MsgId& id) {
     QString queryText =
             QString("SELECT history.id, "               // 0
                     "timestamp, "                       // 1
@@ -513,7 +513,7 @@ QString History::makeSqlForId(qlonglong id) {
                     "FROM history "
                     "LEFT JOIN faux_offline_pending ON history.id = faux_offline_pending.id "
                     "LEFT JOIN broken_messages ON history.id = broken_messages.id "
-                    "WHERE history.sender=%1 ")
+                    "WHERE history.msg_id = '%1';")
                     .arg(id);
     return queryText;
 }
@@ -563,7 +563,7 @@ QList<History::HistMessage> History::getMessagesForFriend(const FriendId& me,
     return messages;
 }
 
-QList<History::HistMessage> History::getMessageById(qlonglong id) {
+QList<History::HistMessage> History::getMessageById(const MsgId& id) {
     QString queryText = makeSqlForId(id);
     QList<HistMessage> messages;
     db->execNow(
@@ -599,26 +599,26 @@ QList<History::HistMessage> History::getUndeliveredMessagesForFriend(const Frien
         return {};
     }
 
-    auto sqlPrefix = makeSqlForFriend(me, friendPk);
-    auto queryText = QString("SELECT "
-                             "history.id "
-                             "FROM history "
-                    "JOIN faux_offline_pending ON history.id = faux_offline_pending.id "
-                    "JOIN peers chat on history.sender = chat.public_key "
-                    "LEFT JOIN broken_messages ON history.id = broken_messages.id "
-                    "WHERE chat.public_key='%1';")
-                    .arg(friendPk.toString());
+    // auto sqlPrefix = makeSqlForFriend(me, friendPk);
+    // auto queryText = QString("SELECT "
+    //                          "history.id "
+    //                          "FROM history "
+    //                 "JOIN faux_offline_pending ON history.id = faux_offline_pending.id "
+    //                 "JOIN peers chat on history.sender = chat.public_key "
+    //                 "LEFT JOIN broken_messages ON history.id = broken_messages.id "
+    //                 "WHERE chat.public_key='%1';")
+    //                 .arg(friendPk.toString());
 
-    QList<qlonglong> ret;
-    auto rowCallback = [&](const QVector<QVariant>& row) { ret += row[0].toLongLong(); };
-    db->execNow({queryText, rowCallback});
+    // QList<qlonglong> ret;
+    // auto rowCallback = [&](const QVector<QVariant>& row) { ret += row[0].toLongLong(); };
+    // db->execNow({queryText, rowCallback});
 
-    if (ret.isEmpty()) return {};
+    // if (ret.isEmpty()) return {};
 
     QList<History::HistMessage> list;
-    for (auto id : ret) {
-        list += getMessageById(id);
-    }
+    // for (auto id : ret) {
+    // list += getMessageById(id);
+    // }
 
     return list;
 }

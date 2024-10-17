@@ -4,10 +4,10 @@
  * You can use this software according to the terms and conditions of the Mulan
  * PubL v2. You may obtain a copy of Mulan PubL v2 at:
  *          http://license.coscl.org.cn/MulanPubL-2.0
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY
- * KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
- * NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE. See the
- * Mulan PubL v2 for more details.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PubL v2 for more details.
  */
 
 #include "groupwidget.h"
@@ -33,10 +33,8 @@
 #include "src/widget/widget.h"
 #include "tool/croppinglabel.h"
 
-GroupWidget::GroupWidget(ContentLayout* layout, QString groupnumber, const GroupId& groupId,
-                         const QString& groupName, bool compact)
+GroupWidget::GroupWidget(QString groupnumber, const GroupId& groupId, const QString& groupName, bool compact)
         : GenericChatroomWidget(ChatType::GroupChat, groupId)
-        , contentLayout{layout}
         , quitGroup{nullptr}
         , destroyGrpAct{nullptr}
         , about{nullptr} {
@@ -298,11 +296,11 @@ void GroupWidget::do_privilegesChanged(const Group::Role& role, const Group::Aff
 }
 
 void GroupWidget::showDetails() {
-    if (!about) {
-        about = new AboutGroupForm(group->getPersistentId(), this);
-        contentLayout->addWidget(about);
-    }
-    contentLayout->setCurrentWidget(about);
+    //    if (!about) {
+    //        about = new AboutGroupForm(group->getPersistentId(), this);
+    //        contentLayout->addWidget(about);
+    //    }
+    //    contentLayout->setCurrentWidget(about);
 }
 
 void GroupWidget::updateUserCount(int numPeers) {

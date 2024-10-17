@@ -43,6 +43,7 @@ public:
 private:
     int indexOfClosestSortedWidget(GenericChatItemWidget* widget) const;
     QVBoxLayout* layout;
+    // 右键菜单
 };
 
 #endif  // GENERICCHATITEMLAYOUT_H

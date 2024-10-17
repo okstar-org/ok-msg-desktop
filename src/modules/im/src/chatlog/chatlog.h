@@ -33,7 +33,7 @@ class ChatLog : public QGraphicsView {
     Q_OBJECT
 public:
     explicit ChatLog(QWidget* parent = nullptr);
-    virtual ~ChatLog();
+    ~ChatLog() override;
 
     void insertChatlineAtBottom(IChatItem::Ptr l);
     void insertChatlineOnTop(IChatItem::Ptr l);
@@ -128,6 +128,7 @@ private:
 
     QAction* copyAction = nullptr;
     QAction* selectAllAction = nullptr;
+    QAction* selectMultipleAction = nullptr;
     QGraphicsScene* scene = nullptr;
     QGraphicsScene* busyScene = nullptr;
     QVector<IChatItem::Ptr> lines;
@@ -170,10 +171,12 @@ signals:
     void firstVisibleLineChanged(const IChatItem::Ptr& prevLine, const IChatItem::Ptr& firstLine);
     void loadHistoryLower();
     void readAll();
+    void itemContextMenuRequested(QGraphicsItem* item, QPoint pos);
 
 public slots:
     void forceRelayout();
     void selectAll();
+    void selectMultiple();
 
 private slots:
     void onSelectionTimerTimeout();

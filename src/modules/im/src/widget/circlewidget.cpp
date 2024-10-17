@@ -19,9 +19,9 @@
 
 #include <cassert>
 
+#include "ContactListWidget.h"
 #include "circlewidget.h"
 #include "contentdialog.h"
-#include "friendlistwidget.h"
 #include "friendwidget.h"
 #include "tool/croppinglabel.h"
 #include "widget.h"

@@ -42,6 +42,8 @@ signals:
     void coreAvChanged(CoreAV* coreAv);
     void coreFileChanged(CoreFile* coreFile);
     void themeColorChanged(int idx, const QString& color);
+    void fontChanged(const QFont& font);
+    void fontSizeChanged(int size);
 };
 
 }  // namespace ok

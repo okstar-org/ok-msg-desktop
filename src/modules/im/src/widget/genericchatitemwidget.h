@@ -34,6 +34,8 @@ public:
     explicit GenericChatItemWidget(ChatType chatType, const ContactId& cid,
                                    QWidget* parent = nullptr);
 
+    ~GenericChatItemWidget() override;
+
     bool isCompact() const { return compact; };
     void setCompact(bool compact_) { compact = compact_; };
     Q_PROPERTY(bool compact READ isCompact WRITE setCompact)
@@ -66,9 +68,12 @@ public:
 
     void setContact(const Contact& contact);
     void removeContact();
+    void setShowContextMenu(bool show) { this->showContextMenu = show; };
 
 protected:
     virtual void showEvent(QShowEvent* e) override;
+
+    bool showContextMenu;
 
     // 名称
     CroppingLabel* nameLabel;

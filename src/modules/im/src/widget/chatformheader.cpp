@@ -38,6 +38,7 @@
 #include "application.h"
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
+#include "widget.h"
 
 static const QSize AVATAR_SIZE{40, 40};
 static const short HEAD_LAYOUT_SPACING = 5;
@@ -120,10 +121,17 @@ ChatFormHeader::ChatFormHeader(const ContactId& contactId, QWidget* parent)
     nameLabel = new CroppingLabel(this);
     nameLabel->setObjectName("nameLabel");
     nameLabel->setMinimumHeight(Style::getFont(Style::Medium).pixelSize());
-    nameLabel->setEditable(true);
+    nameLabel->setCursor(Qt::PointingHandCursor);
     nameLabel->setTextFormat(Qt::PlainText);
     nameLabel->setText(contactId.username);
-    connect(nameLabel, &CroppingLabel::editFinished, this, &ChatFormHeader::nameChanged);
+
+    connect(nameLabel, &CroppingLabel::clicked, [&]() {
+        auto w = Widget::getInstance();
+        w->toShowDetails(contactId);
+    });
+
+    //    nameLabel->setEditable(true);
+    //    connect(nameLabel, &CroppingLabel::editFinished, this, &ChatFormHeader::nameChanged);
 
     // 状态
     statusLabel = new QLabel(this);

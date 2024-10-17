@@ -26,22 +26,26 @@ class AboutFriendForm;
 
 class Widget;
 class Profile;
+class Friend;
 
 class AboutFriendForm : public QWidget {
     Q_OBJECT
 
 public:
-    AboutFriendForm(std::unique_ptr<IAboutFriend> about, QWidget* parent = nullptr);
-    ~AboutFriendForm();
+    AboutFriendForm(const Friend* f, QWidget* parent = nullptr);
+    ~AboutFriendForm() override;
 
     void setName(const QString& name);
+    const Friend* getFriend() const { return m_friend; }
 
 private:
     void reloadTheme();
     Ui::AboutFriendForm* ui;
-    const std::unique_ptr<IAboutFriend> about;
+    std::unique_ptr<IAboutFriend> about;
     Widget* widget;
     Profile* profile;
+    const Friend* m_friend;
+
 signals:
     void histroyRemoved();
 

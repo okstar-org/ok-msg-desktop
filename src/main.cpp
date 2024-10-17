@@ -14,7 +14,7 @@
 #include "lib/log/LogManager.h"
 
 int main(int argc, char* argv[]) {
-    Q_INIT_RESOURCE(resources);
+    Q_INIT_RESOURCE(application);
     const auto launcher = ok::Launcher::Create(argc, argv);
     return launcher ? launcher->startup() : 1;
 }

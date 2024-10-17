@@ -15,6 +15,13 @@
 
 <TS version="2.0" language="pt_BR">
     <context>
+        <name>ChatForwardDialog</name>
+        <message>
+            <source>Forward message to</source>
+            <translation>Reencaminhar mensagem para</translation>
+        </message>
+    </context>
+    <context>
         <name>AVForm</name>
         <message>
             <source>Audio/Video</source>
@@ -688,6 +695,10 @@
             <translation>Selecionar tudo</translation>
         </message>
         <message>
+            <source>Select multiple</source>
+            <translation>Selecionar vários</translation>
+        </message>
+        <message>
             <source>pending</source>
             <translatorcomment>Plural? Singular?</translatorcomment>
             <translation>pendente</translation>
@@ -876,7 +887,7 @@
         </message>
     </context>
     <context>
-        <name>FriendListWidget</name>
+        <name>ContactListWidget</name>
         <message>
             <source>Today</source>
             <translation>Hoje</translation>
@@ -1255,7 +1266,6 @@
             <translation>Pesquisar Contatos</translation>
         </message>
     </context>
-
     <context>
         <name>GenericNetCamView</name>
         <message>

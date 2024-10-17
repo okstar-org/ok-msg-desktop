@@ -31,7 +31,7 @@ class GenericChatroomWidget : public GenericChatItemWidget {
 public:
     explicit GenericChatroomWidget(ChatType chatType, const ContactId& cid,
                                    QWidget* parent = nullptr);
-
+    ~GenericChatroomWidget() override;
 public slots:
     virtual void setAsActiveChatroom() = 0;
     virtual void setAsInactiveChatroom() = 0;

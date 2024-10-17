@@ -11,15 +11,16 @@
  */
 
 #include "chatmessageitem.h"
+#include <QGraphicsProxyWidget>
+#include <QGraphicsScene>
+#include "chatlog.h"
 #include "content/broken.h"
 #include "content/contactavatar.h"
 #include "content/simpletext.h"
 #include "content/spinner.h"
 #include "content/text.h"
 #include "src/persistence/settings.h"
-
-#include <QGraphicsProxyWidget>
-#include <QGraphicsScene>
+#include "src/widget/widget.h"
 
 ChatMessageBox::ChatMessageBox(const QPixmap& avatar,
                                const QString& contactName,
@@ -223,7 +224,11 @@ void ChatMessageBox::doReply() {
 
 void ChatMessageBox::doCopy() { messageItem->doCopySelectedText(); }
 
-void ChatMessageBox::doForward() { qDebug() << __func__ << id; }
+void ChatMessageBox::doForward() {
+    qDebug() << __func__ << id;
+    auto w = Widget::getInstance();
+    emit w->toForwardMessage(id);
+}
 
 const QString& ChatMessageBox::getNickname() { return *(QString*)nicknameItem->getContent(); }
 

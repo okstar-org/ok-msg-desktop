@@ -34,8 +34,8 @@ class IChatItem : public QObject {
 public:
     using Ptr = std::shared_ptr<IChatItem>;
 
-    IChatItem(const MsgId& id = "");
-    virtual ~IChatItem() {}
+    explicit IChatItem(const MsgId& id = "");
+    virtual ~IChatItem() = default;
 
     const MsgId& getId() { return id; }
 
@@ -75,6 +75,7 @@ protected:
     QDateTime datetime;
     int row = -1;
     MsgId id;
+    ChatLog* chatLog;
 
 signals:
     // 引用事件

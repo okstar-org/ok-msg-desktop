@@ -693,15 +693,15 @@ void Core::setGroupAlias(const QString& groupId, const QString& alias) {
     tox->setRoomAlias(groupId, alias);
 }
 
-void Core::removeFriend(QString friendId) {
-    qDebug() << "removeFriend" << friendId;
+bool Core::removeFriend(QString friendId) {
+    qDebug() << __func__ << friendId;
     QMutexLocker ml{&coreLoopLock};
     bool success = tox->removeFriend(friendId);
     if (success) {
         emit saveRequest();
         emit friendRemoved(friendId);
-        return;
     }
+    return success;
 }
 
 void Core::leaveGroup(QString groupId) {

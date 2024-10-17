@@ -36,7 +36,7 @@ public:
         CHAT_PROXY
     };
 
-    ChatLineContent(ContentType type, QObject* parent = nullptr);
+    explicit ChatLineContent(ContentType type, QObject* parent = nullptr);
 
     int getColumn() const;
     int getRow() const;
@@ -71,13 +71,12 @@ protected:
     virtual void onCopyEvent() = 0;
 
     void contextMenuEvent(QGraphicsSceneContextMenuEvent* event) override;
-    // void mousePressEvent(QGraphicsSceneMouseEvent *e) override;
+    void showContextMenu(const QPoint& pos) const;
     ContentType contentType;
 
 private:
     friend class IChatItem;
     void setIndex(int row, int col);
-    void initMenu();
 
     int row = -1;
     int col = -1;
@@ -85,6 +84,8 @@ public slots:
     void doReplySelected();
     void doCopySelectedText();
     void doForwardSelectedText();
+    void onContextMenu(QGraphicsItem* item, QPoint pos);
+
 signals:
     void reply();
     void copy();

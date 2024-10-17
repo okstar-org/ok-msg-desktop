@@ -12,8 +12,8 @@
 
 #include "MessageSessionWidget.h"
 
+#include "ContactListWidget.h"
 #include "circlewidget.h"
-#include "friendlistwidget.h"
 #include "groupwidget.h"
 #include "maskablepixmapwidget.h"
 
@@ -452,7 +452,6 @@ void MessageSessionWidget::setAvInvite(const ToxPeer& peerId, bool video) {
 void MessageSessionWidget::setAvStart(const FriendId& friendId, bool video) {
     qDebug() << __func__ << friendId.toString();
     // 显示呼叫请求框
-    auto chatForm = (ChatForm*)sendWorker->getChatForm();
     sendWorker->startCounter(video);
 
     auto frd = Nexus::getCore()->getFriendList().findFriend(friendId);
@@ -480,7 +479,6 @@ void MessageSessionWidget::setAvEnd(const FriendId& friendId, bool error) {
 
     auto chatForm = (ChatForm*)sendWorker->getChatForm();
     // 关闭呼叫请求框
-
     chatForm->stopNotification();
     // 关计时器
     sendWorker->stopCounter(error);
@@ -510,6 +508,20 @@ void MessageSessionWidget::removeGroup() {
 }
 
 void MessageSessionWidget::clearReceipts() { sendWorker->dispacher()->clearOutgoingMessages(); }
+
+void MessageSessionWidget::doForwardMessage(const ContactId& cid, const MsgId& msgId) {
+    auto profile = Nexus::getProfile();
+    auto history = profile->getHistory();
+    auto msgs = history->getMessageById(msgId);
+
+    if (msgs.empty()) {
+        return;
+    }
+
+    auto msg = msgs.at(0);
+
+    sendWorker->dispacher()->sendMessage(false, msg.asMessage(), false);
+}
 
 void MessageSessionWidget::doAcceptCall(const ToxPeer& p, bool video) {
     qDebug() << __func__ << p.toString();

@@ -20,7 +20,7 @@ class ContentDialog;
 class CircleWidget : public CategoryWidget {
     Q_OBJECT
 public:
-    explicit CircleWidget(FriendListWidget* parent, int id);
+    explicit CircleWidget(ContactListWidget* parent, int id);
     ~CircleWidget();
 
     void editName();

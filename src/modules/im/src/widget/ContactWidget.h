@@ -17,12 +17,13 @@
 #include <QWidget>
 #include <memory>
 
-#include "friendlistwidget.h"
+#include "ContactListWidget.h"
 #include "src/model/group.h"
 #include "src/model/groupinvite.h"
 #include "src/model/status.h"
+#include "src/widget/ContactListWidget.h"
 #include "src/widget/MainLayout.h"
-#include "src/widget/friendlistwidget.h"
+#include "src/widget/form/aboutfriendform.h"
 
 namespace Ui {
 class ContactWidget;
@@ -53,6 +54,9 @@ public:
     void reloadTheme();
     void retranslateUi();
 
+    void showFriendDetails(const Friend* f);
+    void removeFriendDetails(const Friend* f);
+
 public slots:
     void searchContacts();
 
@@ -64,6 +68,7 @@ public slots:
 
     void onCoreChanged(Core* core);
     void onFriendAdded(const FriendInfo& frnd);
+    void onFriendRemoved(const Friend* f);
     void onFriendNickChanged(const FriendId& friendPk, const QString& nick);
 
     void onFriendStatusChanged(const FriendId& friendPk, Status::Status status);
@@ -72,14 +77,15 @@ public slots:
     void onFriendAvatarChanged(const FriendId& friendPk, const QByteArray& avatar);
     void onFriendAliasChanged(const FriendId& friendPk, const QString& alias);
 
-    void onFriendRequest(const FriendId& friendPk, const QString& message);
+    void onFriendRequest(const FriendId& friendId, const QString& message);
 
-    void do_friendDelete(const FriendId& friendPk);
     // 朋友请求
-    void do_friendRequest(const FriendId& friendAddress, const QString& nick,
+    void do_friendRequest(const FriendId& friendAddress,
+                          const QString& nick,
                           const QString& message);
     // 朋友请求接受
     void do_friendRequestAccept(const FriendId& friendPk);
+
     // 朋友请求拒绝
     void do_friendRequestReject(const FriendId& friendPk);
 
@@ -108,7 +114,8 @@ private:
 
     Ui::ContactWidget* ui;
     Core* core;
-    FriendListWidget* contactListWidget;
+    ContactListWidget* contactListWidget;
+    std::unique_ptr<AboutFriendForm> about;
 
     std::unique_ptr<QWidget> contentWidget;
     std::unique_ptr<ContentLayout> contentLayout;

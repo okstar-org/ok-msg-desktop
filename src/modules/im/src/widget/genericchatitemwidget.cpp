@@ -32,7 +32,8 @@ GenericChatItemWidget::GenericChatItemWidget(ChatType type, const ContactId& cid
         , contactId{cid}
         , contact{nullptr}
         , prevStatus{Status::Status::None}
-        , active{false} {
+        , active{false}
+        , showContextMenu{true} {
     nameLabel = new CroppingLabel(this);
     nameLabel->setObjectName("nameLabel");
     nameLabel->setTextFormat(Qt::PlainText);
@@ -69,6 +70,8 @@ GenericChatItemWidget::GenericChatItemWidget(ChatType type, const ContactId& cid
         setDefaultAvatar();
     }
 }
+
+GenericChatItemWidget::~GenericChatItemWidget() { qDebug() << __func__; }
 
 QString GenericChatItemWidget::getName() const { return nameLabel->fullText(); }
 

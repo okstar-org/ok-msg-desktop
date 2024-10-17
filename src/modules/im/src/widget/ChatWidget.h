@@ -121,6 +121,7 @@ public slots:
     void onFriendAdded(const Friend* f);
     void onFriendRemoved(const Friend* f);
     void doSendMessage(const QString& to, bool isGroup);
+    void doForwardMessage(const ContactId& cid, const MsgId& msgId);
 
     void onFriendStatusChanged(const FriendId& friendPk, Status::Status status);
     void onFriendStatusMessageChanged(const FriendId& friendPk, const QString& message);

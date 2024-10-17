@@ -11,21 +11,25 @@
  */
 
 #include "ContactWidget.h"
+#include "ui_ContactWidget.h"
+
 #include "Bus.h"
+#include "ContactListWidget.h"
 #include "application.h"
-#include "friendlistwidget.h"
 #include "lib/settings/translator.h"
 #include "src/lib/settings/style.h"
+#include "src/model/aboutfriend.h"
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
-#include "ui_ContactWidget.h"
+#include "src/widget/form/aboutfriendform.h"
 #include "widget.h"
 
-#include <src/friendlist.h>
-#include <src/grouplist.h>
-
-#include <src/widget/form/addfriendform.h>
-#include <src/widget/form/groupinviteform.h>
+#include "src/friendlist.h"
+#include "src/grouplist.h"
+#include "src/model/friend.h"
+#include "src/widget/form/addfriendform.h"
+#include "src/widget/form/groupinviteform.h"
+#include "src/widget/friendwidget.h"
 
 #include <QLabel>
 #include <QStyle>
@@ -44,13 +48,14 @@ ContactWidget::ContactWidget(QWidget* parent)
     contentLayout = std::make_unique<ContentLayout>(contentWidget.get());
 
     // 左侧朋友列表
-    contactListWidget = new FriendListWidget(this, contentLayout.get(), false);
+    contactListWidget = new ContactListWidget(this, false);
     contactListWidget->setGeometry(0, 0, 400, 400);
     contactListWidget->layout()->setAlignment(Qt::AlignTop | Qt::AlignVCenter);
-    connect(contactListWidget,
-            &FriendListWidget::deleteFriendWidget,
-            this,
-            &ContactWidget::do_friendDelete);
+
+    // 点击事件 - 打开联系人详情
+    connect(contactListWidget, &ContactListWidget::friendClicked, [&](const FriendWidget* w) {
+        showFriendDetails(w->getFriend());
+    });
 
     ui->scrollAreaWidgetContents->setGeometry(0, 0, 200, 500);
     ui->scrollAreaWidgetContents->layout()->setAlignment(Qt::AlignTop | Qt::AlignVCenter);
@@ -61,7 +66,6 @@ ContactWidget::ContactWidget(QWidget* parent)
 
     ui->searchContact->setPlaceholderText(tr("Search Contacts"));
     connect(ui->searchContact, &QLineEdit::textChanged, this, &ContactWidget::searchContacts);
-
     connect(ui->addBtn, &QPushButton::released, this, &ContactWidget::do_openAddForm);
 
     connect(ok::Application::Instance()->bus(),
@@ -69,9 +73,11 @@ ContactWidget::ContactWidget(QWidget* parent)
             this,
             &ContactWidget::onCoreChanged);
 
+    connect(Widget::getInstance(), &Widget::friendRemoved, this, &ContactWidget::onFriendRemoved);
+
+    reloadTheme();
     settings::Translator::registerHandler([this] { retranslateUi(); }, this);
     retranslateUi();
-    reloadTheme();
 }
 
 ContactWidget::~ContactWidget() {
@@ -141,8 +147,8 @@ void ContactWidget::connectToCore(Core* core) {
     connect(core, &Core::started, [core, this]() {
         std::list<FriendInfo> fl;
         core->loadFriendList(fl);
-        for (auto& fk : fl) {
-            contactListWidget->addFriend(fk);
+        for (auto& friendInfo : fl) {
+            contactListWidget->addFriend(friendInfo.getId());
         }
         core->loadGroupList();
     });
@@ -181,8 +187,10 @@ void ContactWidget::onFriendAdded(const FriendInfo& frnd) {
         qWarning() << "Invalid friend id:" << frnd.getId();
         return;
     }
-    contactListWidget->addFriend(frnd);
+    contactListWidget->addFriend(frnd.getId());
 }
+
+void ContactWidget::onFriendRemoved(const Friend* f) { removeFriendDetails(f); }
 
 void ContactWidget::onFriendAvatarChanged(const FriendId& friendnumber, const QByteArray& avatar) {
     qDebug() << __func__ << "friend:" << friendnumber.toString() << avatar.size();
@@ -250,8 +258,8 @@ void ContactWidget::onFriendStatusMessageChanged(const FriendId& friendPk, const
     //  }
 }
 
-void ContactWidget::onFriendRequest(const FriendId& friendPk, const QString& message) {
-    qDebug() << __func__ << friendPk.toString() << message;
+void ContactWidget::onFriendRequest(const FriendId& friendId, const QString& message) {
+    qDebug() << __func__ << friendId.toString() << message;
     do_openAddForm();
     Widget::getInstance()->newMessageAlert(window(), isActiveWindow(), true, true);
 
@@ -270,11 +278,6 @@ void ContactWidget::do_friendRequest(const FriendId& friendPk,
                                      const QString& message) {
     qDebug() << __func__ << friendPk.toString();
     core->requestFriendship(friendPk, nick, message);
-}
-
-void ContactWidget::do_friendDelete(const FriendId& friendPk) {
-    qDebug() << __func__ << friendPk.toString();
-    core->removeFriend(friendPk.toString());
 }
 
 void ContactWidget::do_friendRequestAccept(const FriendId& friendPk) {
@@ -464,4 +467,24 @@ void ContactWidget::retranslateUi() {
 void ContactWidget::searchContacts() {
     QString text = ui->searchContact->text();
     contactListWidget->search(text);
+}
+
+void ContactWidget::showFriendDetails(const Friend* m_friend) {
+    qDebug() << __func__ << m_friend->getId().toString();
+    if (about) {
+        contentLayout->removeWidget(about.get());
+    }
+
+    about = std::make_unique<AboutFriendForm>(m_friend, this);
+    //    connect(about.get(), &AboutFriendForm::histroyRemoved, this,
+    //    &FriendWidget::friendHistoryRemoved);
+    contentLayout->addWidget(about.get());
+    contentLayout->setCurrentWidget(about.get());
+}
+
+void ContactWidget::removeFriendDetails(const Friend* f) {
+    if (about) {
+        contentLayout->removeWidget(about.get());
+        about.reset();
+    }
 }

@@ -14,6 +14,13 @@
 <!DOCTYPE TS>
 <TS version="2.0" language="zh_TW" sourcelanguage="en_US">
     <context>
+        <name>ChatForwardDialog</name>
+        <message>
+            <source>Forward message to</source>
+            <translation>轉發消息給</translation>
+        </message>
+    </context>
+    <context>
         <name>AVForm</name>
         <message>
             <source>Audio/Video</source>
@@ -599,12 +606,20 @@
     <context>
         <name>ChatLog</name>
         <message>
+            <source>Clear displayed messages</source>
+            <translation>清屏</translation>
+        </message>
+        <message>
             <source>Copy</source>
             <translation>複製</translation>
         </message>
         <message>
             <source>Select all</source>
             <translation>全選</translation>
+        </message>
+        <message>
+            <source>Select multiple</source>
+            <translation>多選</translation>
         </message>
         <message>
             <source>pending</source>
@@ -799,7 +814,7 @@
         </message>
     </context>
     <context>
-        <name>FriendListWidget</name>
+        <name>ContactListWidget</name>
         <message>
             <source>Today</source>
             <translation type="unfinished">今日</translation>

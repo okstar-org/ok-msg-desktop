@@ -15,6 +15,13 @@
 
 <TS version="2.0" language="ja_JP">
     <context>
+        <name>ChatForwardDialog</name>
+        <message>
+            <source>Forward message to</source>
+            <translation>メッセージを転送する</translation>
+        </message>
+    </context>
+    <context>
         <name>AVForm</name>
         <message>
             <source>Default resolution</source>
@@ -686,6 +693,10 @@
             <source>Select all</source>
             <translation>すべて選択</translation>
         </message>
+        <message>
+            <source>Select multiple</source>
+            <translation>複数選択</translation>
+        </message>
     </context>
     <context>
         <name>ChatTextEdit</name>
@@ -870,7 +881,7 @@
         </message>
     </context>
     <context>
-        <name>FriendListWidget</name>
+        <name>ContactListWidget</name>
         <message>
             <source>Today</source>
             <translation>今日</translation>

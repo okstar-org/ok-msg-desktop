@@ -82,7 +82,7 @@ ChatLog::ChatLog(QWidget* parent) : QGraphicsView(parent), scrollBarValue{0} {
     menu->addSeparator();
 
     clearAction = menu->addAction(QIcon::fromTheme("edit-clear"), QString(), this,
-                                  &ChatLog::clearChat, QKeySequence(Qt::CTRL, Qt::Key_L));
+                                  &ChatLog::clearChat, QKeySequence(Qt::CTRL + Qt::Key_L));
     addAction(clearAction);
 
     // select all action (ie. Ctrl+A)
@@ -92,6 +92,11 @@ ChatLog::ChatLog(QWidget* parent) : QGraphicsView(parent), scrollBarValue{0} {
     //    selectAllAction->setIcon(QIcon::fromTheme("edit-select-all"));
     //    selectAllAction->setShortcut(QKeySequence::SelectAll);
     //    connect(selectAllAction, &QAction::triggered, this, [this]() { selectAll(); });
+    addAction(selectAllAction);
+
+    selectMultipleAction =
+            menu->addAction(QIcon::fromTheme("edit-select-multiple"), QString(), this,
+                            &ChatLog::selectMultiple, QKeySequence(Qt::CTRL + Qt::Key_M));
     addAction(selectAllAction);
 
     //    copyLinkAction = menu.addAction(QIcon(), QString(), this, SLOT(copyLink()));
@@ -155,8 +160,17 @@ ChatLog::~ChatLog() {
 }
 
 void ChatLog::onChatContextMenuRequested(QPoint pos) {
-    QWidget* sender = static_cast<QWidget*>(QObject::sender());
+    auto sender = dynamic_cast<QWidget*>(QObject::sender());
+
+    // 获取右键时位于该坐标的item
+    auto item = itemAt(pos);
+
     pos = sender->mapToGlobal(pos);
+    if (!item) {
+        menu->exec(pos);
+        return;
+    }
+    emit itemContextMenuRequested(item, pos);
 
     //    // If we right-clicked on a link, give the option to copy it
     //    bool clickedOnLink = false;
@@ -170,8 +184,6 @@ void ChatLog::onChatContextMenuRequested(QPoint pos) {
     //        }
     //    }
     //    copyLinkAction->setVisible(clickedOnLink);
-
-    menu->exec(pos);
 }
 
 void ChatLog::clearSelection() {
@@ -631,7 +643,7 @@ void ChatLog::scrollToLine(IChatItem::Ptr line) {
 void ChatLog::selectAll() {
     if (lines.empty()) return;
 
-    //    clearSelection();
+    clearSelection();
 
     selectionMode = SelectionMode::Multi;
     selFirstRow = 0;
@@ -639,6 +651,10 @@ void ChatLog::selectAll() {
 
     updateMultiSelectionRect();
     emit selectionChanged();
+}
+
+void ChatLog::selectMultiple() {
+    if (lines.empty()) return;
 }
 
 void ChatLog::fontChanged(const QFont& font) {
@@ -894,6 +910,7 @@ void ChatLog::retranslateUi() {
     clearAction->setText(tr("Clear displayed messages"));
     copyAction->setText(tr("Copy"));
     selectAllAction->setText(tr("Select all"));
+    selectMultipleAction->setText(tr("Select multiple"));
 }
 
 bool ChatLog::isActiveFileTransfer(IChatItem::Ptr l) {

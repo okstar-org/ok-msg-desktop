@@ -16,6 +16,7 @@
 
 #include <QApplication>
 #include <QClipboard>
+#include <QDebug>
 #include <QKeyEvent>
 #include <QMimeData>
 
@@ -23,6 +24,8 @@ ChatTextEdit::ChatTextEdit(QWidget* parent) : QTextEdit(parent) {
     setAcceptRichText(false);
     setAcceptDrops(false);
     setAttribute(Qt::WA_InputMethodEnabled, true);
+
+    connect(this, &ChatTextEdit::textChanged, this, &ChatTextEdit::onTextChanged);
 
     settings::Translator::registerHandler([this] { retranslateUi(); }, this);
     retranslateUi();
@@ -33,10 +36,11 @@ ChatTextEdit::~ChatTextEdit() { settings::Translator::unregister(this); }
 void ChatTextEdit::keyPressEvent(QKeyEvent* event) {
     int key = event->key();
     if ((key == Qt::Key_Enter || key == Qt::Key_Return) &&
-        !(event->modifiers() & Qt::ShiftModifier)) {
+        (event->modifiers() != Qt::ShiftModifier)) {
         emit enterPressed();
         return;
     }
+
     if (key == Qt::Key_Tab) {
         if (event->modifiers())
             event->ignore();
@@ -84,3 +88,5 @@ bool ChatTextEdit::pasteIfImage(QKeyEvent* event) {
     emit pasteImage(pixmap);
     return true;
 }
+
+void ChatTextEdit::onTextChanged() { qDebug() << __func__ << toPlainText(); }

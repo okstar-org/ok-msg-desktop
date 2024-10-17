@@ -53,7 +53,7 @@ class Core;
 class FilesForm;
 class Friend;
 class FriendChatroom;
-class FriendListWidget;
+class ContactListWidget;
 // class FriendWidget;
 class GenericChatroomWidget;
 class Group;
@@ -94,7 +94,6 @@ enum class ActiveToolMenuButton {
 class Widget final : public QFrame {
     Q_OBJECT
 
-private:
 public:
     explicit Widget(IAudioControl& audio, QWidget* parent = nullptr);
     ~Widget() override;
@@ -129,9 +128,7 @@ public:
 
     void resetIcon();
 
-    //  [[nodiscard]] ContentLayout *getContentLayout() const {
-    //    return contentLayout;
-    //  }
+    ContactWidget* getContactWidget() const { return contactWidget; }
 
 public slots:
     void onShowSettings();
@@ -165,6 +162,8 @@ public slots:
     void incomingNotification(QString friendId);
     void onStopNotification();
     void outgoingNotification();
+    void showForwardMessageDialog(const MsgId& msgId);
+    void removeForwardMessageDialog();
 
 signals:
     void friendAdded(const Friend* f);
@@ -189,6 +188,8 @@ signals:
     void toShowDetails(const ContactId& to);
     void toDeleteChat(const QString& to);
     void toClearHistory(const QString& to);
+    void toForwardMessage(const MsgId& msgId);
+    void forwardMessage(const ContactId& id, const MsgId& msgId);
 
 protected:
     void showEvent(QShowEvent* e) override;
@@ -254,7 +255,9 @@ private:
 
     Ui::IMMainWindow* ui;
     QSplitter* centralLayout;
-    QPoint dragPosition;
+    //    QPoint dragPosition;
+
+    std::unique_ptr<QDialog> modalDialog;
 
     ChatWidget* chatWidget;
     ContactWidget* contactWidget;

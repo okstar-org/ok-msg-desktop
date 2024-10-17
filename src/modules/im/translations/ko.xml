@@ -15,6 +15,13 @@
 
 <TS version="2.0" language="ko" sourcelanguage="en_US">
     <context>
+        <name>ChatForwardDialog</name>
+        <message>
+            <source>Forward message to</source>
+            <translation>메시지를 전달</translation>
+        </message>
+    </context>
+    <context>
         <name>AVForm</name>
         <message>
             <source>Audio/Video</source>
@@ -670,6 +677,10 @@
             <translation>전체 선택</translation>
         </message>
         <message>
+            <source>Select multiple</source>
+            <translation>다중선택</translation>
+        </message>
+        <message>
             <source>pending</source>
             <translation type="unfinished"></translation>
         </message>
@@ -862,7 +873,7 @@
         </message>
     </context>
     <context>
-        <name>FriendListWidget</name>
+        <name>ContactListWidget</name>
         <message>
             <source>Today</source>
             <translation>오늘</translation>

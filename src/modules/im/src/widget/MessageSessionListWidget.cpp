@@ -504,7 +504,7 @@ void MessageSessionListWidget::setRecvGroupMessage(const GroupId& groupId,
     ms->setRecvGroupMessage(msg);
 }
 
-void MessageSessionListWidget::toSendMessage(const FriendId& pk, bool isGroup) {
+void MessageSessionListWidget::toSendMessage(const ContactId& pk, bool isGroup) {
     qDebug() << __func__ << pk.toString();
     auto w = sessionWidgets.value(pk.toString());
     if (!w) {
@@ -512,6 +512,17 @@ void MessageSessionListWidget::toSendMessage(const FriendId& pk, bool isGroup) {
         w = createMessageSession(pk, "", isGroup ? ChatType::GroupChat : ChatType::Chat);
     }
     emit w->chatroomWidgetClicked(w);
+}
+
+void MessageSessionListWidget::toForwardMessage(const ContactId& pk, const MsgId& id) {
+    qDebug() << __func__ << pk.toString();
+    auto w = sessionWidgets.value(pk.toString());
+    if (!w) {
+        qDebug() << "Create session for" << pk.toString();
+        w = createMessageSession(pk, "", pk.isGroup() ? ChatType::GroupChat : ChatType::Chat);
+    }
+
+    w->doForwardMessage(pk, id);
 }
 
 void MessageSessionListWidget::setFriendAvInvite(const ToxPeer& peerId, bool video) {

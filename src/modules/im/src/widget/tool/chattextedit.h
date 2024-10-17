@@ -23,12 +23,6 @@ public:
     void setLastMessage(QString lm);
     void sendKeyEvent(QKeyEvent* event);
 
-signals:
-    void enterPressed();
-    void tabPressed();
-    void keyPressed();
-    void pasteImage(const QPixmap& pixmap);
-
 protected:
     virtual void keyPressEvent(QKeyEvent* event) final override;
 
@@ -36,8 +30,15 @@ private:
     void retranslateUi();
     bool pasteIfImage(QKeyEvent* event);
 
-private:
     QString lastMessage;
+
+signals:
+    void enterPressed();
+    void tabPressed();
+    void keyPressed();
+    void pasteImage(const QPixmap& pixmap);
+public slots:
+    void onTextChanged();
 };
 
 #endif  // CHATTEXTEDIT_H

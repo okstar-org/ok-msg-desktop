@@ -11,32 +11,39 @@
  */
 
 #include "aboutfriendform.h"
+#include "ui_aboutfriendform.h"
+
+#include "base/SvgUtils.h"
 #include "src/core/core.h"
 #include "src/lib/settings/style.h"
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
+#include "src/persistence/settings.h"
 #include "src/widget/gui.h"
 #include "src/widget/widget.h"
-#include "ui_aboutfriendform.h"
 
 #include <QFileDialog>
 
+#include <QAbstractButton>
+#include <QCheckBox>
 #include <QPainter>
+#include <QPushButton>
 #include <QStyledItemDelegate>
 #include <QSvgRenderer>
 
-#include <base/SvgUtils.h>
-
-AboutFriendForm::AboutFriendForm(std::unique_ptr<IAboutFriend> _about, QWidget* parent)
+AboutFriendForm::AboutFriendForm(const Friend* fw, QWidget* parent)
         : QWidget(parent)
         , ui(new Ui::AboutFriendForm)
-        , about{std::move(_about)}
+        , m_friend{fw}
         , widget{Widget::getInstance()}
         , profile{Nexus::getInstance().getProfile()} {
     ui->setupUi(this);
 
     setAttribute(Qt::WA_StyledBackground);
     ui->autoacceptcall->setItemDelegate(new QStyledItemDelegate(ui->autoacceptcall));
+
+    const auto af = new AboutFriend(m_friend, &Settings::getInstance());
+    about = std::unique_ptr<IAboutFriend>(af);
 
     reloadTheme();
 

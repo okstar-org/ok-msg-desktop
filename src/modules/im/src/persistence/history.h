@@ -167,7 +167,7 @@ public:
     QList<HistMessage> getUndeliveredMessagesForFriend(const FriendId& me,
                                                        const FriendId& friendPk);
 
-    QList<HistMessage> getMessageById(qlonglong id);
+    QList<HistMessage> getMessageById(const MsgId& id);
 
     QDateTime getDateWhereFindPhrase(const QString& friendPk,
                                      const QDateTime& from,
@@ -211,7 +211,7 @@ private:
     // This needs to be a shared pointer to avoid callback lifetime issues
     //    QHash<QString, RowId> fileCached;
     QString makeSqlForFriend(const FriendId& me, const FriendId& friendPk);
-    QString makeSqlForId(qlonglong id);
+    QString makeSqlForId(const MsgId& id);
 
     History::HistMessage rowToMessage(const QVector<QVariant>& row);
 };
