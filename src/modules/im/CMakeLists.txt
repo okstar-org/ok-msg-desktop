@@ -473,19 +473,9 @@ execute_process(
         ${RESOURCE_NAME}
         ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.qrc)
 
-if (NOT SMILEYS)
-    set(SMILEYS "")
-endif ()
-
-set(SMILEY_RESOURCES "")
-if (NOT "${SMILEYS}" STREQUAL "DISABLED")
-    set(SMILEY_RESOURCES ${PROJECT_SOURCE_DIR}/smileys/emojione.qrc)
-
-    if (NOT "${SMILEYS}" STREQUAL "MIN")
-        set(SMILEY_RESOURCES ${SMILEY_RESOURCES}
-                ${PROJECT_SOURCE_DIR}/smileys/smileys.qrc)
-    endif ()
-endif ()
+set(SMILEY_RESOURCES
+		${PROJECT_SOURCE_DIR}/smileys/emojione.qrc
+		${PROJECT_SOURCE_DIR}/smileys/smileys.qrc)
 
 qt5_add_resources(
         ${PROJECT_NAME}_RESOURCES
