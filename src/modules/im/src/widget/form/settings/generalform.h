@@ -33,14 +33,7 @@ signals:
     void updateIcons();
 
 private slots:
-    //
-    void on_smileyPackBrowser_currentIndexChanged(int index);
-    //void on_emoticonSize_editingFinished();
-    //void on_styleBrowser_currentIndexChanged(QString style);
-   // void on_timestamp_editTextChanged(const QString& format);
-    //void on_dateFormats_editTextChanged(const QString& format);
-    void on_textStyleComboBox_currentTextChanged();
-    void on_useEmoticons_stateChanged();
+
     void on_notify_stateChanged();
     void on_desktopNotify_stateChanged();
    // void on_notifySound_stateChanged();

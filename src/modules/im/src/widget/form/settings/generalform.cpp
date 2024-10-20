@@ -46,7 +46,7 @@ GeneralForm::GeneralForm(SettingsWidget* myParent)
     const ok::base::RecursiveSignalBlocker signalBlocker(this);
 
     Settings& s = Settings::getInstance();
-    // 先获取当前语言
+
     auto& okSettings = ok::base::OkSettings::getInstance();
     const QFont chatBaseFont = s.getChatMessageFont();
     bodyUI->txtChatFontSize->setValue(QFontInfo(chatBaseFont).pixelSize());
@@ -71,42 +71,6 @@ GeneralForm::GeneralForm(SettingsWidget* myParent)
     bodyUI->desktopNotify->hide();
 #endif
 
-    bodyUI->useEmoticons->setChecked(s.getUseEmoticons());
-    for (auto entry : SmileyPack::listSmileyPacks())
-        bodyUI->smileyPackBrowser->addItem(entry.first, entry.second);
-
-    smileLabels = {bodyUI->smile1, bodyUI->smile2, bodyUI->smile3, bodyUI->smile4, bodyUI->smile5};
-
-    int currentPack = bodyUI->smileyPackBrowser->findData(s.getSmileyPack());
-    bodyUI->smileyPackBrowser->setCurrentIndex(currentPack);
-    reloadSmileys();
-    bodyUI->smileyPackBrowser->setEnabled(bodyUI->useEmoticons->isChecked());
-
-    /*
-      bodyUI->styleBrowser->addItem(tr("None"));
-      bodyUI->styleBrowser->addItems(QStyleFactory::keys());
-
-      QString style;
-      if (QStyleFactory::keys().contains(s.getStyle()))
-          style = s.getStyle();
-      else
-          style = tr("None");
-
-      bodyUI->styleBrowser->setCurrentText(style);
-
-      for (QString color : Style::getThemeColorNames())
-          bodyUI->themeColorCBox->addItem(color);
-
-      bodyUI->themeColorCBox->setCurrentIndex(s.getThemeColor());
-      */
-    bodyUI->emoticonSize->setValue(s.getEmojiFontPointSize());
-
-#ifndef QTOX_PLATFORM_EXT
-    // bodyUI->autoAwayLabel->setEnabled(
-    //        false);  // these don't seem to change the appearance of the widgets,
-    // bodyUI->autoAwaySpinBox->setEnabled(false);  // though they are unusable
-#endif
-
     eventsInit();
     settings::Translator::registerHandler(std::bind(&GeneralForm::retranslateUi, this), this);
 }
@@ -114,80 +78,6 @@ GeneralForm::GeneralForm(SettingsWidget* myParent)
 GeneralForm::~GeneralForm() {
     settings::Translator::unregister(this);
     delete bodyUI;
-}
-
-//
-/*
-void GeneralForm::on_styleBrowser_currentIndexChanged(QString style)
-{
-    if (bodyUI->styleBrowser->currentIndex() == 0)
-        Settings::getInstance().setStyle("None");
-    else
-        Settings::getInstance().setStyle(style);
-
-    this->setStyle(QStyleFactory::create(style));
-    parent->setBodyHeadStyle(style);
-}
-*/
-
-/*
-void GeneralForm::on_emoticonSize_editingFinished()
-{
-    Settings::getInstance().setEmojiFontPointSize(bodyUI->emoticonSize->value());
-}
-*/
-
-void GeneralForm::on_useEmoticons_stateChanged() {
-    Settings::getInstance().setUseEmoticons(bodyUI->useEmoticons->isChecked());
-    bodyUI->smileyPackBrowser->setEnabled(bodyUI->useEmoticons->isChecked());
-}
-
-void GeneralForm::on_textStyleComboBox_currentTextChanged() {
-    Settings::StyleType styleType =
-            static_cast<Settings::StyleType>(bodyUI->textStyleComboBox->currentIndex());
-    Settings::getInstance().setStylePreference(styleType);
-}
-
-void GeneralForm::on_smileyPackBrowser_currentIndexChanged(int index) {
-    QString filename = bodyUI->smileyPackBrowser->itemData(index).toString();
-    Settings::getInstance().setSmileyPack(filename);
-    reloadSmileys();
-}
-
-/**
- * @brief Reload smileys and size information.
- */
-void GeneralForm::reloadSmileys() {
-    QList<QStringList> emoticons = SmileyPack::getInstance().getEmoticons();
-
-    // sometimes there are no emoticons available, don't crash in this case
-    if (emoticons.isEmpty()) {
-        qDebug() << "reloadSmilies: No emoticons found";
-        return;
-    }
-
-    QStringList smileys;
-    for (int i = 0; i < emoticons.size(); ++i) smileys.push_front(emoticons.at(i).first());
-
-    emoticonsIcons.clear();
-    const QSize size(18, 18);
-    for (int i = 0; i < smileLabels.size(); ++i) {
-        std::shared_ptr<QIcon> icon = SmileyPack::getInstance().getAsIcon(smileys[i]);
-        emoticonsIcons.append(icon);
-        smileLabels[i]->setPixmap(icon->pixmap(size));
-        smileLabels[i]->setToolTip(smileys[i]);
-    }
-
-    // set maximum size of emoji
-    QDesktopWidget desktop;
-    // 8 is the count of row and column in emoji's in widget
-    const int sideSize = 8;
-    int maxSide =
-            qMin(desktop.geometry().height() / sideSize, desktop.geometry().width() / sideSize);
-    QSize maxSize(maxSide, maxSide);
-
-    QSize actualSize = emoticonsIcons.first()->actualSize(maxSize);
-    bodyUI->emoticonSize->setMaximum(actualSize.width());
 }
 
 void GeneralForm::on_notify_stateChanged() {
@@ -221,14 +111,6 @@ void GeneralForm::on_groupOnlyNotfiyWhenMentioned_stateChanged() {
             !bodyUI->groupOnlyNotfiyWhenMentioned->isChecked());
 }
 
-/*
-void GeneralForm::on_themeColorCBox_currentIndexChanged(int)
-{
-    int index = bodyUI->themeColorCBox->currentIndex();
-    Settings::getInstance().setThemeColor(index);
-    Style::setThemeColor(index);
-    Style::applyTheme();
-}*/
 
 /**
  * @brief Retranslate all elements in the form.
