@@ -212,12 +212,16 @@ GenericChatForm::GenericChatForm(const ContactId* contact_,
 
     // 输入框
     inputForm = new ChatInputForm(this);
-    inputForm->setMinimumHeight(200);
     connect(inputForm, &ChatInputForm::inputText, this, &GenericChatForm::onTextSend);
     connect(inputForm, &ChatInputForm::inputTextChanged, this, &GenericChatForm::onTextEditChanged);
     connect(inputForm, &ChatInputForm::inputFile, this, &GenericChatForm::onFileSend);
     connect(inputForm, &ChatInputForm::inputScreenCapture, this, &GenericChatForm::onImageSend);
     bodySplitter->addWidget(inputForm);
+
+    bodySplitter->setSizes({120, 120});
+    bodySplitter->setStretchFactor(0, 1);
+    bodySplitter->setStretchFactor(1, 0);
+    bodySplitter->setChildrenCollapsible(false);
 
     // settings
     auto& s = Settings::getInstance();
