@@ -140,13 +140,8 @@ Snap: <a href="https://snapcraft.io/ok-msg"><img decoding="async" class="alignce
 
 # ☎️ 联系我们
 
-> 技术交流群，添加微信
-
-![OkStar公众号](./docs/assets/assistant-OkEDU.jpg "OkStar")
-
-> 微信公众号，关注账号
-
-![OkStar公众号](./docs/assets/gzh-OkEDU.jpg "OkStar")
+- 技术交流群，添加微信: `okstar-org`
+- 微信公众号，关注账号: `TheOkStar`
 
 # ©️ 版权信息
 
