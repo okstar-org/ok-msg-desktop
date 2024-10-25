@@ -874,6 +874,8 @@ signals:
 
     void receiveFriendChatState(QString friendId, int state);
 
+    void receiveFriendVCard(IMPeerId peerId, IMVCard imvCard);
+
     void exportEncryptedMessage(QString em);
 
     void receiveMessageReceipt(QString friendId, QString receipt);

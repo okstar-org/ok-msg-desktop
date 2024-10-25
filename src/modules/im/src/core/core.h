@@ -27,6 +27,7 @@
 #include "lib/messenger/messenger.h"
 
 #include "src/friendlist.h"
+#include "src/model/VCard.h"
 #include "src/model/status.h"
 #include "src/util/strongtype.h"
 
@@ -173,6 +174,7 @@ signals:
     void statusMessageSet(const QString& message);
     void statusSet(Status::Status status);
     void idSet(const ToxId& id);
+    void vCardSet(const VCard& imvCard);
 
     void failedToSetUsername(const QString& username);
     void failedToSetStatusMessage(const QString& message);
@@ -291,6 +293,10 @@ private:
 
     virtual void onFriendAliasChanged(const lib::messenger::IMContactId& fId,
                                       const QString& alias) override;
+
+    virtual void onFriendVCard(const lib::messenger::IMContactId& fId,
+                               const lib::messenger::IMVCard& imvCard) override;
+
     virtual void onMessageReceipt(QString friendId, MsgId receipt) override;
 
     /**

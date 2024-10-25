@@ -13,6 +13,7 @@
 #include "src/base/interface.h"
 
 #include <QObject>
+#include "../VCard.h"
 
 class ToxId;
 
@@ -39,6 +40,8 @@ public:
     virtual const QPixmap& getAvatar() = 0;
     virtual void setStatusMessage(const QString& status) = 0;
 
+    virtual const VCard& getVCard() const = 0;
+
     virtual RenameResult renameProfile(const QString& name) = 0;
     virtual SaveResult exportProfile(const QString& path) const = 0;
     virtual QStringList removeProfile() = 0;
@@ -55,4 +58,5 @@ public:
     DECLARE_SIGNAL(usernameChanged, const QString&);
     DECLARE_SIGNAL(avatarChanged, const QString&);
     DECLARE_SIGNAL(statusMessageChanged, const QString&);
+    DECLARE_SIGNAL(vCardChanged, const VCard&);
 };

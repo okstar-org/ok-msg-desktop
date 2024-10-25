@@ -116,5 +116,14 @@ public:
     }
 };
 
+struct IMVCard {
+    // Formatted or display name property
+    QString displayName;
+    QString nickname;
+    QString title;
+    QStringList emails;
+    QStringList tels;
+};
+
 }  // namespace lib::messenger
 #endif  // OKMSG_PROJECT_IMFRIEND_H

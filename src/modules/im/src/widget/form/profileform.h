@@ -62,7 +62,7 @@ private slots:
     void setToxId(const ToxId& id);
     void copyIdClicked();
     void onUserNameEdited();
-    void onStatusMessageEdited();
+
     void onRenameClicked();
     void onExportClicked();
     void onDeleteClicked();

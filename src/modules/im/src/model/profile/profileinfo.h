@@ -37,6 +37,8 @@ public:
     const QPixmap& getAvatar() override;
     void setStatusMessage(const QString& status) override;
 
+    virtual const VCard& getVCard() const override;
+
     QString getUsername() const override;
     virtual const QString& getDisplayName() const override;
 
@@ -56,6 +58,7 @@ public:
     SIGNAL_IMPL(ProfileInfo, usernameChanged, const QString& username)
     SIGNAL_IMPL(ProfileInfo, avatarChanged, const QString& avatar)
     SIGNAL_IMPL(ProfileInfo, statusMessageChanged, const QString& message)
+    SIGNAL_IMPL(ProfileInfo, vCardChanged, const VCard& vCard)
 
 private:
     IProfileInfo::SetAvatarResult createAvatarFromFile(QFile& file, QByteArray& avatar);

@@ -1,4 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Copyright (c) 2022 船山信息 chuanshaninfo.com
+  - The project is licensed under Mulan PubL v2.
+  - You can use this software according to the terms and conditions of the Mulan
+  - PubL v2. You may obtain a copy of Mulan PubL v2 at:
+  -          http://license.coscl.org.cn/MulanPubL-2.0
+  - THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+  - EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+  - MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+  - See the Mulan PubL v2 for more details.
+  -->
+
 <ui version="4.0">
  <class>IdentitySettings</class>
  <widget class="QWidget" name="IdentitySettings">
@@ -6,8 +18,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>361</width>
-    <height>597</height>
+       <width>522</width>
+       <height>662</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -30,8 +42,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>337</width>
-        <height>573</height>
+           <width>506</width>
+           <height>646</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,0,0,0,0,1,0">
@@ -93,6 +105,7 @@
            </property>
            <property name="font">
             <font>
+                <weight>75</weight>
              <bold>true</bold>
             </font>
            </property>
@@ -154,129 +167,47 @@
              </widget>
             </item>
             <item row="1" column="0">
-             <widget class="QLabel" name="statusMessageLabel">
+                <widget class="QLabel" name="nicknameLabel">
               <property name="text">
-               <string>My status:</string>
+                  <string>Nick name:</string>
               </property>
              </widget>
             </item>
             <item row="1" column="1">
-             <widget class="QLineEdit" name="statusMessage">
-              <property name="accessibleName">
-               <string>Status message input</string>
-              </property>
-              <property name="accessibleDescription">
-               <string>Status message visible to contacts</string>
-              </property>
-             </widget>
+                <widget class="QLineEdit" name="nickname"/>
             </item>
            </layout>
           </item>
          </layout>
         </widget>
        </item>
-       <item alignment="Qt::AlignTop">
-        <widget class="QGroupBox" name="toxGroup">
-         <property name="title">
-          <string>Ok ID</string>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout_3">
           <item>
-           <widget class="CroppingLabel" name="toxIdLabel">
-            <property name="toolTip">
-             <string comment="Ok ID tooltip">This bunch of characters tells other Tox clients how to contact you.
-Share it with your friends to communicate.</string>
-            </property>
-            <property name="text">
-             <string>Your Ok ID (click to copy)</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="toxId">
-            <property name="accessibleDescription">
-             <string>Your Ok ID</string>
-            </property>
-            <property name="textFormat">
-             <enum>Qt::RichText</enum>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QFrame" name="verticalFrame">
-            <layout class="QVBoxLayout" name="verticalLayout_2"/>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="qrCode">
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QFrame" name="horizontalFrame">
-            <layout class="QHBoxLayout" name="horizontalLayout_4">
-             <item>
-              <spacer name="horizontalSpacer">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="QPushButton" name="saveQr">
-               <property name="maximumSize">
-                <size>
-                 <width>80</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="accessibleDescription">
-                <string>Save QR image as file</string>
-               </property>
-               <property name="text">
-                <string>Save image</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="copyQr">
-               <property name="maximumSize">
-                <size>
-                 <width>80</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="accessibleDescription">
-                <string>Copy QR image to clipboard</string>
-               </property>
-               <property name="text">
-                <string>Copy image</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_2">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </widget>
+              <widget class="QGroupBox" name="verticalGroupBox">
+                  <property name="title">
+                      <string>Personal Information</string>
+                  </property>
+                  <layout class="QFormLayout" name="profileGroup">
+                      <property name="leftMargin">
+                          <number>6</number>
+                      </property>
+                      <property name="topMargin">
+                          <number>6</number>
+                      </property>
+                      <property name="rightMargin">
+                          <number>6</number>
+                      </property>
+                      <property name="bottomMargin">
+                          <number>6</number>
+                      </property>
+                      <item row="0" column="0">
+                          <widget class="QLabel" name="email_label">
+                              <property name="text">
+                                  <string>E-Mail:</string>
+                              </property>
+                          </widget>
+                      </item>
+                      <item row="0" column="1">
+                          <widget class="QLineEdit" name="email"/>
           </item>
          </layout>
         </widget>
@@ -342,9 +273,6 @@ Profile does not contain your history.</string>
              </widget>
             </item>
            </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_2"/>
           </item>
          </layout>
         </widget>
@@ -436,19 +364,9 @@ Profile does not contain your history.</string>
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>CroppingLabel</class>
-   <extends>QLabel</extends>
-   <header location="global">src/widget/tool/croppinglabel.h</header>
-  </customwidget>
- </customwidgets>
  <tabstops>
   <tabstop>scrollArea</tabstop>
   <tabstop>userName</tabstop>
-  <tabstop>statusMessage</tabstop>
-  <tabstop>toxId</tabstop>
-  <tabstop>saveQr</tabstop>
   <tabstop>exportButton</tabstop>
  </tabstops>
  <resources>

@@ -114,6 +114,10 @@ public:
      */
     void setNick(const QString& nick, bool saveToCore);
 
+    void setVCard(const VCard& v);
+
+    const VCard& getVCard() const { return vCard; }
+
 private:
     Profile(const QString& host, const QString& name, const QString& password, bool newProfile);
     static QStringList getFilesByExt(QString extension);
@@ -130,8 +134,9 @@ private:
     // akka username
     QString name;
     QString password;
-    QString nick;
     QByteArray toxsave;
+
+    VCard vCard;
 
     std::unique_ptr<ToxEncrypt> passkey = nullptr;
     std::shared_ptr<RawDatabase> database;

@@ -74,6 +74,7 @@ public:
     virtual void onFriendAvatarChanged(const QString friendId, const std::string avatar) = 0;
 
     virtual void onFriendAliasChanged(const IMContactId& fId, const QString& alias) = 0;
+    virtual void onFriendVCard(const IMContactId& fId, const IMVCard& imvCard) = 0;
 
     virtual void onFriendChatState(QString friendId, int state) = 0;
     virtual void onMessageReceipt(QString friendId, QString receipt) = 0;

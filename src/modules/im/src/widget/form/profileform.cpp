@@ -95,11 +95,6 @@ ProfileForm::ProfileForm(IProfileInfo* profileInfo, QWidget* parent)
     // tox
     toxId = new ClickableTE();
     toxId->setFont(Style::getFont(Style::Small));
-    toxId->setToolTip(bodyUI->toxId->toolTip());
-
-    QVBoxLayout* toxIdGroup = qobject_cast<QVBoxLayout*>(bodyUI->toxGroup->layout());
-    delete toxIdGroup->replaceWidget(bodyUI->toxId, toxId);  // Original toxId is in heap, delete it
-    bodyUI->toxId->hide();
 
     profilePicture = new MaskablePixmapWidget(this, QSize(64, 64), ":/img/avatar_mask.svg");
     profilePicture->setPixmap(QPixmap(":/img/contact_dark.svg"));
@@ -127,12 +122,17 @@ ProfileForm::ProfileForm(IProfileInfo* profileInfo, QWidget* parent)
         hasCheck = false;
     });
 
-    connect(bodyUI->toxIdLabel, &CroppingLabel::clicked, this, &ProfileForm::copyIdClicked);
-    connect(toxId, &ClickableTE::clicked, this, &ProfileForm::copyIdClicked);
-    profileInfo->connectTo_idChanged(this, [this](const ToxId& id) { setToxId(id); });
     connect(bodyUI->userName, &QLineEdit::editingFinished, this, &ProfileForm::onUserNameEdited);
-    connect(bodyUI->statusMessage, &QLineEdit::editingFinished, this,
-            &ProfileForm::onStatusMessageEdited);
+    profileInfo->connectTo_usernameChanged(this, [this](const QString& val) {  //
+        bodyUI->userName->setText(val);
+    });
+
+    profileInfo->connectTo_vCardChanged(this, [this](const VCard& vCard) {
+        bodyUI->nickname->setText(vCard.nickname);
+        if (!vCard.emails.isEmpty())
+            bodyUI->email->setText(vCard.emails.at(vCard.emails.size() - 1));
+    });
+
     connect(bodyUI->exportButton, &QPushButton::clicked, this, &ProfileForm::onExportClicked);
     connect(bodyUI->logoutButton, &QPushButton::clicked, this, &ProfileForm::onLogoutClicked);
     connect(bodyUI->exitButton, &QPushButton::clicked, this, &ProfileForm::onExitClicked);
@@ -145,20 +145,14 @@ ProfileForm::ProfileForm(IProfileInfo* profileInfo, QWidget* parent)
     //            this, &ProfileForm::onChangePassClicked);
     //    connect(bodyUI->changePassButton, &QPushButton::clicked,
     //            this, &ProfileForm::setPasswordButtonsText);
-    connect(bodyUI->saveQr, &QPushButton::clicked, this, &ProfileForm::onSaveQrClicked);
-    connect(bodyUI->copyQr, &QPushButton::clicked, this, &ProfileForm::onCopyQrClicked);
-
-    profileInfo->connectTo_usernameChanged(
-            this, [this](const QString& val) { bodyUI->userName->setText(val); });
-    profileInfo->connectTo_statusMessageChanged(
-            this, [this](const QString& val) { bodyUI->statusMessage->setText(val); });
 
     for (QComboBox* cb : findChildren<QComboBox*>()) {
         cb->installEventFilter(this);
         cb->setFocusPolicy(Qt::StrongFocus);
     }
-    connect(Nexus::getProfile(),&Profile::selfAvatarChanged,this,&ProfileForm::onSelfAvatarLoaded);
-    
+    connect(Nexus::getProfile(), &Profile::selfAvatarChanged, this,
+            &ProfileForm::onSelfAvatarLoaded);
+
     retranslateUi();
     settings::Translator::registerHandler(std::bind(&ProfileForm::retranslateUi, this), this);
 }
@@ -221,6 +215,13 @@ void ProfileForm::showEvent(QShowEvent* e) {
     onSelfAvatarLoaded(avt);
 
     bodyUI->userName->setText(profileInfo->getDisplayName());
+    if (!profileInfo->getVCard().emails.isEmpty()) {
+        bodyUI->email->setText(
+                profileInfo->getVCard().emails.at(profileInfo->getVCard().emails.size() - 1));
+    }
+    if (!profileInfo->getVCard().nickname.isEmpty()) {
+        bodyUI->nickname->setText(profileInfo->getVCard().nickname);
+    }
 }
 
 void ProfileForm::showProfilePictureContextMenu(const QPoint& point) {
@@ -237,20 +238,10 @@ void ProfileForm::showProfilePictureContextMenu(const QPoint& point) {
 }
 
 void ProfileForm::copyIdClicked() {
-    profileInfo->copyId();
-    if (!hasCheck) {
-        bodyUI->toxIdLabel->setText(bodyUI->toxIdLabel->text());  // TODO: + " ✔"
-        hasCheck = true;
-    }
-
-    timer.start();
 }
 
 void ProfileForm::onUserNameEdited() { profileInfo->setUsername(bodyUI->userName->text()); }
 
-void ProfileForm::onStatusMessageEdited() {
-    profileInfo->setStatusMessage(bodyUI->statusMessage->text());
-}
 
 void ProfileForm::onSelfAvatarLoaded(const QPixmap& pic) { profilePicture->setPixmap(pic); }
 
@@ -264,7 +255,7 @@ void ProfileForm::setToxId(const ToxId& id) {
 void ProfileForm::setQrCode(const QString& id) {
     qr = std::make_unique<QRWidget>();
     qr->setQRData(id);
-    bodyUI->qrCode->setPixmap(QPixmap::fromImage(qr->getImage()->scaledToWidth(150)));
+    // bodyUI->qrCode->setPixmap(QPixmap::fromImage(qr->getImage()->scaledToWidth(150)));
 }
 
 QString ProfileForm::getSupportedImageFilter() {
@@ -284,9 +275,9 @@ void ProfileForm::onAvatarClicked() {
     if (path.isEmpty()) {
         return;
     }
-    
+
     const IProfileInfo::SetAvatarResult result = profileInfo->setAvatar(path);
-    if (result == IProfileInfo::SetAvatarResult::OK) {   
+    if (result == IProfileInfo::SetAvatarResult::OK) {
         return;
     }
 

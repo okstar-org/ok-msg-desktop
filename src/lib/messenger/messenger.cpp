@@ -189,6 +189,12 @@ bool Messenger::connectIM() {
         }
     });
 
+    connect(_im, &IM::receiveFriendVCard, this, [&](IMPeerId peerId, IMVCard imvCard) {
+        for (auto handler : friendHandlers) {
+            handler->onFriendVCard(peerId, imvCard);
+        }
+    });
+
     connect(_im, &IM::receiveFriendAliasChanged, this,
             [&](const gloox::JID& friendId, const std::string& alias) {
                 for (auto handler : friendHandlers) {

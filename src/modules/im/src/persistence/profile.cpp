@@ -84,6 +84,8 @@ void Profile::initCore(const QByteArray& toxsave, ICoreSettings& s, bool isNewPr
     //            Qt::ConnectionType::QueuedConnection);
     connect(core.get(), &Core::started, this, [this]() { emit selfAvatarChanged(loadAvatar()); });
 
+    connect(core.get(), &Core::vCardSet, [&](const VCard& vCard) { setVCard(vCard); });
+
     // CoreAV
     coreAv = CoreAV::makeCoreAV(core.get());
     coreAv->start();
@@ -304,7 +306,7 @@ Core* Profile::getCore() { return core.get(); }
 const QString& Profile::getName() const { return name; }
 
 const QString& Profile::getDisplayName() {
-    nick = core->getNick();
+    auto& nick = vCard.nickname;
     if (!nick.isEmpty()) {
         return nick;
     }
@@ -815,10 +817,11 @@ QString Profile::getDbPath(const QString& profileName) {
 }
 
 void Profile::setNick(const QString& nick_, bool saveToCore) {
-    if (nick == nick_) return;
+    if (vCard.nickname == nick_) return;
 
-    nick = nick_;
-    emit nickChanged(nick);
-
-    if (saveToCore) core->setNick(nick);
+    vCard.nickname = nick_;
+    emit nickChanged(nick_);
+    if (saveToCore) core->setNick(nick_);
 }
+
+void Profile::setVCard(const VCard& v) { vCard = v; }

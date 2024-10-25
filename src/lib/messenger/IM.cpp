@@ -93,6 +93,8 @@ IM::IM(QString host,
     qRegisterMetaType<IMPeerId>("IMPeerId");
     qRegisterMetaType<IMMessage>("IMMessage");
     qRegisterMetaType<IMGroupOccupant>("IMGroupOccupant");
+    qRegisterMetaType<IMVCard>("IMVCard");
+
     qDebug() << "Create messenger instance is successfully";
 }
 
@@ -1238,18 +1240,31 @@ void IM::handlePing(const gloox::PingHandler::PingType type, const std::string& 
  */
 void IM::handleVCard(const JID& jid, const VCard* vcard) {
     qDebug() << __func__ << QString("jid：%1").arg(qstring(jid.full()));
+    /**
+     * <FN>Peter Saint-Andre</FN>
+    <N>
+      <FAMILY>Saint-Andre</FAMILY>
+      <GIVEN>Peter</GIVEN>
+      <MIDDLE/>
+    </N>
+    **/
 
-    auto& photo = vcard->photo();
-    if (!photo.binval.empty()) {
-        qDebug() << QString("photo binval size:%1").arg(photo.binval.size());
-        emit receiveFriendAvatarChanged(qstring(jid.bare()), photo.binval);
+    IMVCard imvCard = {
+            .displayName = qstring(vcard->formattedname()),
+            .nickname = qstring(vcard->nickname()),
+            .title = qstring(vcard->title()),
+    };
+
+    auto& emails = vcard->emailAddresses();
+    for (auto& email : emails) {
+        if (!email.userid.empty()) imvCard.emails.push_back(qstring(email.userid));
     }
 
-    //  auto &nickname = vcard->nickname();
-    //  if (!nickname.empty()) {
-    //    qDebug()<<QString("nickname:%1").arg(qstring(nickname));
-    //    emit receiveNicknameChange(qstring(jid.bare()), qstring(nickname));
-    //  }
+    for (auto& tel : vcard->telephone()) {
+        if (!tel.number.empty()) imvCard.tels.push_back(qstring(tel.number));
+    }
+
+    emit receiveFriendVCard(IMPeerId(jid), imvCard);
 }
 
 void IM::handleVCardResult(VCardContext context, const JID& jid, StanzaError error) {

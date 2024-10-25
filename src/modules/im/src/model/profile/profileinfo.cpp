@@ -38,14 +38,10 @@
  */
 ProfileInfo::ProfileInfo(Core* core, Profile* profile) : profile{profile}, core{core} {
     connect(core, &Core::idSet, this, &ProfileInfo::idChanged);
+    connect(core, &Core::vCardSet, this, &ProfileInfo::vCardChanged);
     connect(core, &Core::usernameSet, this, &ProfileInfo::usernameChanged);
     connect(core, &Core::avatarSet, this, &ProfileInfo::avatarChanged);
     connect(core, &Core::statusMessageSet, this, &ProfileInfo::statusMessageChanged);
-
-    //    connectTo_usernameChanged(this,
-    //                              [this](const QString& val) {
-    //                                profile->rename(val);
-    //                              });
 }
 
 /**
@@ -101,6 +97,8 @@ const QPixmap& ProfileInfo::getAvatar() { return profile->loadAvatar(); }
  * @param status New status message.
  */
 void ProfileInfo::setStatusMessage(const QString& status) { core->setStatusMessage(status); }
+
+const VCard& ProfileInfo::getVCard() const { return profile->getVCard(); }
 
 /**
  * @brief Get name of tox profile file.
