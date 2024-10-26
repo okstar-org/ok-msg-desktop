@@ -115,7 +115,6 @@ ProfileForm::ProfileForm(IProfileInfo* profileInfo, QWidget* parent)
             bodyUI->email->setText(vCard.emails.at(vCard.emails.size() - 1).number);
     });
 
-    connect(bodyUI->exportButton, &QPushButton::clicked, this, &ProfileForm::onExportClicked);
     connect(bodyUI->logoutButton, &QPushButton::clicked, this, &ProfileForm::onLogoutClicked);
     connect(bodyUI->exitButton, &QPushButton::clicked, this, &ProfileForm::onExitClicked);
 
@@ -229,8 +228,6 @@ void ProfileForm::onNicknameEdited() { profileInfo->setNickname(bodyUI->nickname
 
 void ProfileForm::onSelfAvatarLoaded(const QPixmap& pic) { profilePicture->setPixmap(pic); }
 
-void ProfileForm::setQrCode(const QString& id) {}
-
 QString ProfileForm::getSupportedImageFilter() {
     QString res;
     for (auto type : QImageReader::supportedImageFormats()) {
@@ -258,9 +255,10 @@ void ProfileForm::onAvatarClicked() {
 }
 
 void ProfileForm::onExportClicked() {
-    const QString current = profileInfo->getNickname() + Core::TOX_EXT;
-    //: save dialog title
-    const QString path = QFileDialog::getSaveFileName(Q_NULLPTR, tr("Export profile"), current,
+    // save dialog title
+    const QString path = QFileDialog::getSaveFileName(Q_NULLPTR,
+                                                      tr("Export profile"),
+                                                      profileInfo->getUsername() + Core::TOX_EXT,
                                                       //: save dialog filter
                                                       tr("Tox save file (*.tox)"));
     if (path.isEmpty()) {
@@ -274,31 +272,6 @@ void ProfileForm::onExportClicked() {
 
     const QPair<QString, QString> error = SAVE_ERROR[result];
     GUI::showWarning(error.first, error.second);
-}
-
-void ProfileForm::onDeleteClicked() {
-    const QString title = tr("Really delete profile?", "deletion confirmation title");
-    const QString question =
-            tr("Are you sure you want to delete this profile?", "deletion confirmation text");
-    if (!GUI::askQuestion(title, question)) {
-        return;
-    }
-
-    const QStringList manualDeleteFiles = profileInfo->removeProfile();
-    if (manualDeleteFiles.empty()) {
-        return;
-    }
-
-    //: deletion failed text part 1
-    QString message = tr("The following files could not be deleted:") + "\n\n";
-    for (const QString& file : manualDeleteFiles) {
-        message += file + "\n";
-    }
-
-    //: deletion failed text part 2
-    message += "\n" + tr("Please manually remove them.");
-
-    GUI::showError(tr("Files could not be deleted!", "deletion failed title"), message);
 }
 
 void ProfileForm::onLogoutClicked() { profileInfo->logout(); }

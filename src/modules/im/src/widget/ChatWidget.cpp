@@ -194,14 +194,6 @@ void ChatWidget::connectToCore(Core* core_) {
     connect(core_, &Core::groupPeerSizeChanged, this, &ChatWidget::onGroupPeerSizeChanged);
     connect(core_, &Core::groupPeerNameChanged, this, &ChatWidget::onGroupPeerNameChanged);
     connect(core_, &Core::groupPeerStatusChanged, this, &ChatWidget::onGroupPeerStatusChanged);
-
-    //    connect(core_, &Core::groupPeerAudioPlaying, this,
-    //            &ChatWidget::onGroupPeerAudioPlaying);
-    //    connect(core_, &Core::emptyGroupCreated, this,
-    //           &ChatWidget::onEmptyGroupCreated);
-
-    //    connect(&core_, &Core::groupSentFailed, this,
-    //            &ChatWidget::onGroupSendFailed);
 }
 
 void ChatWidget::connectToCoreFile(CoreFile* coreFile) {
@@ -487,7 +479,6 @@ void ChatWidget::groupInvitesClear() {
 void ChatWidget::showProfile() {
     auto profile = Nexus::getProfile();
     if (!profileForm) {
-        auto core = Core::getInstance();
         profileInfo = new ProfileInfo(core, profile);
         profileForm = new ProfileForm(profileInfo);
     }

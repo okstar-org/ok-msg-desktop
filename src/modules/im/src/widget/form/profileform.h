@@ -46,7 +46,6 @@ public:
 
     void showTo(ContentLayout* contentLayout);
     bool isShown() const;
-    void setQrCode(const QString& id);
 
 public slots:
     void onSelfAvatarLoaded(const QPixmap& pic);
@@ -63,7 +62,7 @@ private slots:
     void copyIdClicked();
     void onNicknameEdited();
     void onExportClicked();
-    void onDeleteClicked();
+
     void onCopyQrClicked();
     void onSaveQrClicked();
     void onDeletePassClicked();

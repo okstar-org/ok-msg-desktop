@@ -18,8 +18,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>535</width>
-    <height>463</height>
+       <width>729</width>
+       <height>596</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -41,9 +41,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>0</y>
-        <width>521</width>
-        <height>449</height>
+           <y>-5</y>
+           <width>692</width>
+           <height>585</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,0,0,0,1,0,0">
@@ -105,6 +105,7 @@
            </property>
            <property name="font">
             <font>
+                <weight>75</weight>
              <bold>true</bold>
             </font>
            </property>
@@ -399,30 +400,6 @@
             </property>
            </widget>
           </item>
-          <item>
-           <layout class="QHBoxLayout" name="profilesButtonsLayout">
-            <item>
-             <widget class="QPushButton" name="exportButton">
-              <property name="maximumSize">
-               <size>
-                <width>80</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="toolTip">
-               <string comment="tooltip for profile exporting button">Allows you to export your Tox profile to a file.
-Profile does not contain your history.</string>
-              </property>
-              <property name="accessibleDescription">
-               <string>Export profile</string>
-              </property>
-              <property name="text">
-               <string comment="export profile button">Export</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
          </layout>
         </widget>
        </item>
@@ -516,7 +493,6 @@ Profile does not contain your history.</string>
  <tabstops>
   <tabstop>scrollArea</tabstop>
   <tabstop>nickname</tabstop>
-  <tabstop>exportButton</tabstop>
  </tabstops>
  <resources>
   <include location="../../../res.qrc"/>
