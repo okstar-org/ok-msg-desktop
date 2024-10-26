@@ -487,7 +487,6 @@ void ChatWidget::groupInvitesClear() {
 void ChatWidget::showProfile() {
     auto profile = Nexus::getProfile();
     if (!profileForm) {
-        auto core = Core::getInstance();
         profileInfo = new ProfileInfo(core, profile);
         profileForm = new ProfileForm(profileInfo);
     }
