@@ -178,11 +178,10 @@ void ChatWidget::connectToCore(Core* core_) {
     qDebug() << __func__ << "core:" << core_;
     core = core_;  // TODO: 待优化
 
-    connect(core_, &Core::usernameSet, this, &ChatWidget::onUsernameSet);
     connect(core_, &Core::statusSet, this, &ChatWidget::onStatusSet);
     connect(core_, &Core::statusMessageSet, this, &ChatWidget::onStatusMessageSet);
     connect(core_, &Core::messageSessionReceived, this, &ChatWidget::onMessageSessionReceived);
-    connect(core_, &Core::friendUsernameChanged, this, &ChatWidget::onFriendNickChanged);
+    connect(core_, &Core::friendNicknameChanged, this, &ChatWidget::onFriendNickChanged);
     connect(core_, &Core::friendAvatarChanged, this, &ChatWidget::onFriendAvatarChanged);
     connect(core_, &Core::friendMessageReceived, this, &ChatWidget::onFriendMessageReceived);
     connect(core_, &Core::friendStatusChanged, this, &ChatWidget::onFriendStatusChanged);
@@ -307,12 +306,11 @@ void ChatWidget::onGroupRemoved(const Group* g) { sessionListWidget->removeGroup
 
 void ChatWidget::showEvent(QShowEvent* e) {}
 
-
-void ChatWidget::onUsernameSet(const QString& username) {
-    qDebug() << __func__ << username;
-    ui->nameLabel->setText(username);
-    ui->nameLabel->setToolTip(Qt::convertFromPlainText(username, Qt::WhiteSpaceNormal));
-    sessionListWidget->setFriendName(core->getSelfId(), username);
+void ChatWidget::onNicknameSet(const QString& nickname) {
+    qDebug() << __func__ << nickname;
+    ui->nameLabel->setText(nickname);
+    ui->nameLabel->setToolTip(Qt::convertFromPlainText(nickname, Qt::WhiteSpaceNormal));
+    sessionListWidget->setFriendName(core->getSelfId(), nickname);
 }
 
 void ChatWidget::onStatusSet(Status::Status status) {
@@ -507,7 +505,7 @@ void ChatWidget::on_nameClicked() {
 }
 
 void ChatWidget::onProfileChanged(Profile* profile) {
-    connect(profile, &Profile::nickChanged, this, &ChatWidget::onUsernameSet);
+    connect(profile, &Profile::nickChanged, this, &ChatWidget::onNicknameSet);
 }
 
 void ChatWidget::onGroupClicked() {
@@ -700,6 +698,7 @@ void ChatWidget::onAvEnd(const FriendId& friendId, bool error) {
 void ChatWidget::onFriendNickChanged(const FriendId& friendPk, const QString& nickname) {
     sessionListWidget->setFriendName(friendPk, nickname);
 }
+
 void ChatWidget::onFriendAvatarChanged(const FriendId& friendPk, const QByteArray& avatar) {
     sessionListWidget->setFriendAvatar(friendPk, avatar);
 }

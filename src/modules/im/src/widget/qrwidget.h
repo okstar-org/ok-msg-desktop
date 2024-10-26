@@ -15,21 +15,27 @@
 
 #include <QWidget>
 
+class QLabel;
+
 class QRWidget : public QWidget {
     Q_OBJECT
 
 public:
-    explicit QRWidget(QWidget* parent = nullptr);
+    explicit QRWidget(QSize& size, QWidget* parent = nullptr);
     ~QRWidget();
     void setQRData(const QString& data);
     QImage* getImage();
     bool saveImage(QString path);
+
+protected:
+    void paintEvent(QPaintEvent* e) override;
 
 private:
     QString data;
     void paintImage();
     QImage* image;
     QSize size;
+    QLabel* label;
 };
 
 #endif  // QRWIDGET_H

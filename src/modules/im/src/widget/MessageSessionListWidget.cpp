@@ -70,10 +70,10 @@ MessageSessionListWidget::MessageSessionListWidget(MainLayout* parent,
     mode = Settings::getInstance().getFriendSortingMode();
     sortByMode(mode);
 
-    dayTimer = new QTimer(this);
-    dayTimer->setTimerType(Qt::VeryCoarseTimer);
-    connect(dayTimer, &QTimer::timeout, this, &MessageSessionListWidget::dayTimeout);
-    dayTimer->start(ok::base::Times::timeUntilTomorrow());
+    // dayTimer = new QTimer(this);
+    // dayTimer->setTimerType(Qt::VeryCoarseTimer);
+    // connect(dayTimer, &QTimer::timeout, this, &MessageSessionListWidget::dayTimeout);
+    // dayTimer->start(ok::base::Times::timeUntilTomorrow());
 
     setAcceptDrops(true);
 
@@ -451,7 +451,7 @@ void MessageSessionListWidget::dayTimeout() {
         setMode(SortingMode::Activity);  // Refresh all.
     }
 
-    dayTimer->start(ok::base::Times::timeUntilTomorrow());
+    // dayTimer->start(ok::base::Times::timeUntilTomorrow());
 }
 
 void MessageSessionListWidget::moveWidget(MessageSessionWidget* widget, Status::Status s,
