@@ -61,8 +61,8 @@ StorageSettingsForm::StorageSettingsForm(SettingsWidget* myParent)
 
     //    bodyUI->autoAwaySpinBox->setValue(s.getAutoAwayTime());
     bodyUI->autoSaveFilesDir->setText(s.getGlobalAutoAcceptDir());
-    bodyUI->maxAutoAcceptSizeMB->setValue(static_cast<double>(s.getMaxAutoAcceptSize()) / 1024 / 1024);
-    bodyUI->autoacceptFiles->setChecked(okSettings.getAutoSaveEnabled());
+   // bodyUI->maxAutoAcceptSizeMB->setValue(static_cast<double>(s.getMaxAutoAcceptSize()) / 1024 / 1024);
+   // bodyUI->autoacceptFiles->setChecked(okSettings.getAutoSaveEnabled());
 
     eventsInit();
     settings::Translator::registerHandler(std::bind(&StorageSettingsForm::retranslateUi, this),
@@ -88,7 +88,7 @@ StorageSettingsForm::~StorageSettingsForm() {
 // }
 
 void StorageSettingsForm::on_autoacceptFiles_stateChanged() {
-    ok::base::OkSettings::getInstance().setAutoSaveEnabled(bodyUI->autoacceptFiles->isChecked());
+   // ok::base::OkSettings::getInstance().setAutoSaveEnabled(bodyUI->autoacceptFiles->isChecked());
 }
 
 void StorageSettingsForm::on_autoSaveFilesDir_clicked() {
@@ -105,10 +105,10 @@ void StorageSettingsForm::on_autoSaveFilesDir_clicked() {
 }
 
 void StorageSettingsForm::on_maxAutoAcceptSizeMB_editingFinished() {
-    auto newMaxSizeMB = bodyUI->maxAutoAcceptSizeMB->value();
-    auto newMaxSizeB = std::lround(newMaxSizeMB * 1024 * 1024);
+   // auto newMaxSizeMB = bodyUI->maxAutoAcceptSizeMB->value();
+   // auto newMaxSizeB = std::lround(newMaxSizeMB * 1024 * 1024);
 
-    Settings::getInstance().setMaxAutoAcceptSize(newMaxSizeB);
+   // Settings::getInstance().setMaxAutoAcceptSize(newMaxSizeB);
 
 }
 
