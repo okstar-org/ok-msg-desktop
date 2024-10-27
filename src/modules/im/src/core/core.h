@@ -78,7 +78,7 @@ public:
     //    CoreFile* getCoreFile() const;
     ~Core() override;
 
-    lib::messenger::Messenger* getMessenger() { return tox.get(); }
+    lib::messenger::Messenger* getMessenger() { return messenger.get(); }
     static const QString TOX_EXT;
     static QStringList splitMessage(const QString& message);
     QString getPeerName(const FriendId& id) const;
@@ -200,6 +200,7 @@ signals:
     void friendStatusChanged(const FriendId& friendId, Status::Status status);
     void friendStatusMessageChanged(const FriendId& friendId, const QString& message);
     void friendUsernameChanged(const FriendId& friendPk, const QString& username);
+    void friendNicknameChanged(const FriendId& friendPk, const QString& nickname);
     void friendTypingChanged(const FriendId& friendId, bool isTyping);
 
     void friendRemoved(QString friendId);
@@ -334,10 +335,7 @@ private:
     //  };
     FriendList friendList;
 
-    std::unique_ptr<lib::messenger::Messenger> tox;
-    //    std::unique_ptr<CoreFile> file;
-    //    std::unique_ptr<CoreAV> av;
-
+    std::unique_ptr<lib::messenger::Messenger> messenger;
     MsgId m_receipt;
     QTimer* toxTimer = nullptr;
 

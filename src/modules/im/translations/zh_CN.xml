@@ -1626,12 +1626,36 @@
             <translation>更改个人资料密码</translation>
         </message>
         <message>
-            <source>My name:</source>
-            <translation>我的名字：</translation>
+            <source>Account:</source>
+            <translation>帐号：</translation>
         </message>
         <message>
-            <source>My status:</source>
-            <translation>我的状态：</translation>
+            <source>Nickname:</source>
+            <translation>昵称：</translation>
+        </message>
+        <message>
+            <source>Location:</source>
+            <translation>位置：</translation>
+        </message>
+        <message>
+            <source>Personal Information</source>
+            <translation>个人信息</translation>
+        </message>
+        <message>
+            <source>My name:</source>
+            <translation>姓名：</translation>
+        </message>
+        <message>
+            <source>My E-Mail:</source>
+            <translation>邮箱：</translation>
+        </message>
+        <message>
+            <source>My phone:</source>
+            <translation>手机：</translation>
+        </message>
+        <message>
+            <source>My telephone:</source>
+            <translation>电话：</translation>
         </message>
         <message>
             <source>My username</source>
@@ -2767,10 +2791,6 @@
         <message>
             <source>Base font:</source>
             <translation>基础字体：</translation>
-        </message>
-        <message>
-            <source>px</source>
-            <translation>px</translation>
         </message>
         <message>
             <source>Size:</source>

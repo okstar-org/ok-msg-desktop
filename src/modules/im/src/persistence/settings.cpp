@@ -254,12 +254,12 @@ void Settings::updateProfileData(Profile* profile, const QCommandLineParser* par
         return;
     }
     auto& ok = ok::base::OkSettings::getInstance();
-    ok.setCurrentProfile(profile->getName());
+    ok.setCurrentProfile(profile->getUsername());
     ok.saveGlobal();
 
     saveGlobal();
 
-    loadPersonal(profile->getName(), profile->getPasskey());
+    loadPersonal(profile->getUsername(), profile->getPasskey());
     if (parser) {
         applyCommandLineOptions(*parser);
     }
@@ -457,7 +457,7 @@ void Settings::resetToDefault() {
     // Remove file with profile settings
     QDir dir(getSettingsDirPath());
     Profile* profile = Nexus::getProfile();
-    QString localPath = dir.filePath(profile->getName() + ".ini");
+    QString localPath = dir.filePath(profile->getUsername() + ".ini");
     QFile local(localPath);
     if (local.exists()) local.remove();
 }
@@ -726,7 +726,7 @@ void Settings::savePersonal(Profile* profile) {
     if (QThread::currentThread() != settingsThread)
         return (void)QMetaObject::invokeMethod(&getInstance(), "savePersonal",
                                                Q_ARG(Profile*, profile));
-    savePersonal(profile->getName(), profile->getPasskey());
+    savePersonal(profile->getUsername(), profile->getPasskey());
 }
 
 void Settings::savePersonal(QString profileName, const ToxEncrypt* passkey) {

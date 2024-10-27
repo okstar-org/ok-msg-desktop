@@ -15,36 +15,36 @@
 #include <QBuffer>
 #include <QDebug>
 #include <QImage>
+#include <QLabel>
 #include <QPainter>
-
-#ifdef Q_OS_WIN32
-#include <errno.h>
-#else
-#include <sys/errno.h>
-#endif
+#include <QPixmap>
+#include <QVBoxLayout>
 
 /**
  * @file qrwidget.cpp
  * @link https://stackoverflow.com/questions/21400254/how-to-draw-a-qr-code-with-qt-in-native-c-c
  */
 
-QRWidget::QRWidget(QWidget* parent)
+QRWidget::QRWidget(QSize& size_, QWidget* parent)
         : QWidget(parent)
         , data("0")
-// Note: The encoding fails with empty string so I just default to something else.
-// Use the setQRData() call to change this.
+        , size{size_}
+
 {
-    // size of the qimage might be problematic in the future, but it works for me
-    size.setWidth(480);
-    size.setHeight(480);
+    setFixedSize(size);
+
     image = new QImage(size, QImage::Format_RGB32);
+    auto layout = new QVBoxLayout(this);
+    label = new QLabel(this);
+    layout->addWidget(label);
+    setLayout(layout);
 }
 
 QRWidget::~QRWidget() { delete image; }
 
 void QRWidget::setQRData(const QString& data) {
     this->data = data;
-    paintImage();
+    update();
 }
 
 QImage* QRWidget::getImage() { return image; }
@@ -57,6 +57,11 @@ QImage* QRWidget::getImage() { return image; }
 bool QRWidget::saveImage(QString path) {
     // 0 - image format same as file extension, 75-quality, png file is ~6.3kb
     return image->save(path, nullptr, 75);
+}
+
+void QRWidget::paintEvent(QPaintEvent* e) {
+    paintImage();
+    label->setPixmap(QPixmap::fromImage(*image));
 }
 
 // http://stackoverflow.com/questions/21400254/how-to-draw-a-qr-code-with-qt-in-native-c-c

@@ -18,8 +18,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-       <width>522</width>
-       <height>662</height>
+       <width>729</width>
+       <height>596</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -41,12 +41,12 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>0</y>
-           <width>506</width>
-           <height>646</height>
+           <y>-5</y>
+           <width>692</width>
+           <height>585</height>
        </rect>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,0,0,0,0,1,0">
+      <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,0,0,0,1,0,0">
        <property name="spacing">
         <number>9</number>
        </property>
@@ -142,22 +142,49 @@
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
-           <layout class="QFormLayout" name="publicFieldsLayout">
+           <layout class="QFormLayout" name="formLayout">
             <property name="verticalSpacing">
              <number>6</number>
             </property>
             <property name="topMargin">
              <number>4</number>
             </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>4</number>
+            </property>
             <item row="0" column="0">
-             <widget class="QLabel" name="userNameLabel">
+             <widget class="QLabel" name="nicknameLabel">
+              <property name="minimumSize">
+               <size>
+                <width>68</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="text">
-               <string>My name:</string>
+               <string>Nickname:</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="QLineEdit" name="userName">
+             <widget class="QLineEdit" name="nickname">
+              <property name="minimumSize">
+               <size>
+                <width>120</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>200</width>
+                <height>16777215</height>
+               </size>
+              </property>
               <property name="accessibleName">
                <string>Name input</string>
               </property>
@@ -167,47 +194,177 @@
              </widget>
             </item>
             <item row="1" column="0">
-                <widget class="QLabel" name="nicknameLabel">
+             <widget class="QLabel" name="username_label">
+              <property name="minimumSize">
+               <size>
+                <width>68</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="text">
-                  <string>Nick name:</string>
+               <string>Account:</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
             <item row="1" column="1">
-                <widget class="QLineEdit" name="nickname"/>
+             <widget class="QLabel" name="username">
+              <property name="maximumSize">
+               <size>
+                <width>200</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="locationLabel">
+              <property name="minimumSize">
+               <size>
+                <width>68</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Location:</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QLabel" name="location">
+              <property name="maximumSize">
+               <size>
+                <width>200</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
          </layout>
         </widget>
        </item>
-          <item>
-              <widget class="QGroupBox" name="verticalGroupBox">
-                  <property name="title">
-                      <string>Personal Information</string>
-                  </property>
-                  <layout class="QFormLayout" name="profileGroup">
-                      <property name="leftMargin">
-                          <number>6</number>
-                      </property>
-                      <property name="topMargin">
-                          <number>6</number>
-                      </property>
-                      <property name="rightMargin">
-                          <number>6</number>
-                      </property>
-                      <property name="bottomMargin">
-                          <number>6</number>
-                      </property>
-                      <item row="0" column="0">
-                          <widget class="QLabel" name="email_label">
-                              <property name="text">
-                                  <string>E-Mail:</string>
-                              </property>
-                          </widget>
-                      </item>
-                      <item row="0" column="1">
-                          <widget class="QLineEdit" name="email"/>
+       <item>
+        <widget class="QGroupBox" name="verticalGroupBox">
+         <property name="title">
+          <string>Personal Information</string>
+         </property>
+         <layout class="QFormLayout" name="profileGroup">
+          <property name="leftMargin">
+           <number>6</number>
+          </property>
+          <property name="topMargin">
+           <number>6</number>
+          </property>
+          <property name="rightMargin">
+           <number>6</number>
+          </property>
+          <property name="bottomMargin">
+           <number>6</number>
+          </property>
+          <item row="1" column="0">
+           <widget class="QLabel" name="name_label">
+            <property name="minimumSize">
+             <size>
+              <width>68</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>My name:</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="phone_label">
+            <property name="minimumSize">
+             <size>
+              <width>68</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>My phone:</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLabel" name="name">
+            <property name="text">
+             <string notr="true"/>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLabel" name="email">
+            <property name="text">
+             <string notr="true"/>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QLabel" name="phone">
+            <property name="text">
+             <string notr="true"/>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="email_label">
+            <property name="minimumSize">
+             <size>
+              <width>68</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>My E-Mail:</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="telephone_label">
+            <property name="minimumSize">
+             <size>
+              <width>68</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>My telephone:</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QLabel" name="telephone">
+            <property name="text">
+             <string notr="true"/>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -218,13 +375,6 @@
           <string>Profile</string>
          </property>
          <layout class="QVBoxLayout" name="profilesVLayout">
-          <item>
-           <widget class="QLabel" name="prFileLabel">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
           <item>
            <widget class="QLabel" name="dirPrLink">
             <property name="cursor">
@@ -249,30 +399,6 @@
              <set>Qt::TextSelectableByMouse</set>
             </property>
            </widget>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="profilesButtonsLayout">
-            <item>
-             <widget class="QPushButton" name="exportButton">
-              <property name="maximumSize">
-               <size>
-                <width>80</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="toolTip">
-               <string comment="tooltip for profile exporting button">Allows you to export your Tox profile to a file.
-Profile does not contain your history.</string>
-              </property>
-              <property name="accessibleDescription">
-               <string>Export profile</string>
-              </property>
-              <property name="text">
-               <string comment="export profile button">Export</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
           </item>
          </layout>
         </widget>
@@ -366,8 +492,7 @@ Profile does not contain your history.</string>
  </widget>
  <tabstops>
   <tabstop>scrollArea</tabstop>
-  <tabstop>userName</tabstop>
-  <tabstop>exportButton</tabstop>
+  <tabstop>nickname</tabstop>
  </tabstops>
  <resources>
   <include location="../../../res.qrc"/>

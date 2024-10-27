@@ -87,64 +87,36 @@ ProfileForm::ProfileForm(IProfileInfo* profileInfo, QWidget* parent)
     bodyUI = new Ui::IdentitySettings;
     bodyUI->setupUi(this);
 
-    const uint32_t maxNameLength = 1024;  // TODO tox_max_name_length();
-    const QString toolTip = tr("Tox user names cannot exceed %1 characters.").arg(maxNameLength);
-    bodyUI->userNameLabel->setToolTip(toolTip);
-    bodyUI->userName->setMaxLength(static_cast<int>(maxNameLength));
+    bodyUI->nickname->setText(profileInfo->getNickname());
+    bodyUI->name->setText(profileInfo->getFullName());
 
-    // tox
-    toxId = new ClickableTE();
-    toxId->setFont(Style::getFont(Style::Small));
+    auto& c = profileInfo->getVCard();
+    if (!c.emails.isEmpty()) {
+        bodyUI->email->setText(c.emails.at(c.emails.size() - 1).number);
+    }
 
-    profilePicture = new MaskablePixmapWidget(this, QSize(64, 64), ":/img/avatar_mask.svg");
-    profilePicture->setPixmap(QPixmap(":/img/contact_dark.svg"));
-    profilePicture->setContextMenuPolicy(Qt::CustomContextMenu);
-    profilePicture->setClickable(true);
-    profilePicture->setObjectName("selfAvatar");
-    profilePicture->installEventFilter(this);
-    profilePicture->setAccessibleName("Profile avatar");
-    profilePicture->setAccessibleDescription("Set a profile avatar shown to all contacts");
+    if (!c.tels.isEmpty()) {
+        for (auto& t : c.tels) {
+            if (t.mobile) {
+                bodyUI->phone->setText(t.number);
+            } else {
+                bodyUI->telephone->setText(t.number);
+            }
+        }
+    }
 
-    setStyleSheet(Style::getStylesheet("window/profile.css"));
-
-    connect(profilePicture, &MaskablePixmapWidget::clicked, this, &ProfileForm::onAvatarClicked);
-    connect(profilePicture, &MaskablePixmapWidget::customContextMenuRequested, this,
-            &ProfileForm::showProfilePictureContextMenu);
-    QHBoxLayout* publicGrouplayout = qobject_cast<QHBoxLayout*>(bodyUI->publicGroup->layout());
-    publicGrouplayout->insertWidget(0, profilePicture);
-    publicGrouplayout->insertSpacing(1, 7);
-
-    timer.setInterval(750);
-    timer.setSingleShot(true);
-    connect(&timer, &QTimer::timeout, this, [this]() {
-        // QString x = bodyUI->toxIdLabel->text().replace(" ✔");
-        // bodyUI->toxIdLabel->setText(x);
-        hasCheck = false;
-    });
-
-    connect(bodyUI->userName, &QLineEdit::editingFinished, this, &ProfileForm::onUserNameEdited);
     profileInfo->connectTo_usernameChanged(this, [this](const QString& val) {  //
-        bodyUI->userName->setText(val);
+        bodyUI->name->setText(val);
     });
-
+    connect(bodyUI->nickname, &QLineEdit::editingFinished, this, &ProfileForm::onNicknameEdited);
     profileInfo->connectTo_vCardChanged(this, [this](const VCard& vCard) {
         bodyUI->nickname->setText(vCard.nickname);
         if (!vCard.emails.isEmpty())
-            bodyUI->email->setText(vCard.emails.at(vCard.emails.size() - 1));
+            bodyUI->email->setText(vCard.emails.at(vCard.emails.size() - 1).number);
     });
 
-    connect(bodyUI->exportButton, &QPushButton::clicked, this, &ProfileForm::onExportClicked);
     connect(bodyUI->logoutButton, &QPushButton::clicked, this, &ProfileForm::onLogoutClicked);
     connect(bodyUI->exitButton, &QPushButton::clicked, this, &ProfileForm::onExitClicked);
-    //    connect(bodyUI->deleteButton, &QPushButton::clicked, this, &ProfileForm::onDeleteClicked);
-    //    connect(bodyUI->deletePassButton, &QPushButton::clicked,
-    //            this, &ProfileForm::onDeletePassClicked);
-    //    connect(bodyUI->deletePassButton, &QPushButton::clicked,
-    //            this, &ProfileForm::setPasswordButtonsText);
-    //    connect(bodyUI->changePassButton, &QPushButton::clicked,
-    //            this, &ProfileForm::onChangePassClicked);
-    //    connect(bodyUI->changePassButton, &QPushButton::clicked,
-    //            this, &ProfileForm::setPasswordButtonsText);
 
     for (QComboBox* cb : findChildren<QComboBox*>()) {
         cb->installEventFilter(this);
@@ -153,14 +125,34 @@ ProfileForm::ProfileForm(IProfileInfo* profileInfo, QWidget* parent)
     connect(Nexus::getProfile(), &Profile::selfAvatarChanged, this,
             &ProfileForm::onSelfAvatarLoaded);
 
+    // avatar
+    QSize size(186, 186);
+    profilePicture = new MaskablePixmapWidget(this, size, ":/img/avatar_mask.svg");
+    profilePicture->setPixmap(QPixmap(":/img/contact_dark.svg"));
+    profilePicture->setContextMenuPolicy(Qt::CustomContextMenu);
+    profilePicture->setClickable(true);
+    profilePicture->setObjectName("selfAvatar");
+    profilePicture->installEventFilter(this);
+    profilePicture->setAccessibleName("Profile avatar");
+    profilePicture->setAccessibleDescription("Set a profile avatar shown to all contacts");
+    connect(profilePicture, &MaskablePixmapWidget::clicked, this, &ProfileForm::onAvatarClicked);
+    connect(profilePicture, &MaskablePixmapWidget::customContextMenuRequested, this,
+            &ProfileForm::showProfilePictureContextMenu);
+
+    bodyUI->publicGroup->layout()->addWidget(profilePicture);
+    onSelfAvatarLoaded(profileInfo->getAvatar());
+
+    // QrCode
+    qr = new QRWidget(size, this);
+    qr->setQRData(profileInfo->getUsername());
+    bodyUI->publicGroup->layout()->addWidget(qr);
+
+    setStyleSheet(Style::getStylesheet("window/profile.css"));
+
     retranslateUi();
     settings::Translator::registerHandler(std::bind(&ProfileForm::retranslateUi, this), this);
 }
 
-void ProfileForm::prFileLabelUpdate() {
-    const QString name = profileInfo->getUsername();
-    bodyUI->prFileLabel->setText(tr("Current profile: ") + name + ".tox");
-}
 
 ProfileForm::~ProfileForm() {
     settings::Translator::unregister(this);
@@ -183,7 +175,6 @@ void ProfileForm::showTo(ContentLayout* contentLayout) {
     }
     contentLayout->setCurrentWidget(this);
 
-    prFileLabelUpdate();
     bool portable = Settings::getInstance().getMakeToxPortable();
     QString defaultPath = QDir(Settings::getInstance().getSettingsDirPath()).path().trimmed();
     QString appPath = QApplication::applicationDirPath();
@@ -197,8 +188,6 @@ void ProfileForm::showTo(ContentLayout* contentLayout) {
     bodyUI->dirPrLink->setTextInteractionFlags(Qt::LinksAccessibleByMouse |
                                                Qt::TextSelectableByMouse);
     bodyUI->dirPrLink->setMaximumSize(bodyUI->dirPrLink->sizeHint());
-    bodyUI->userName->setFocus();
-    bodyUI->userName->selectAll();
 }
 
 bool ProfileForm::eventFilter(QObject* object, QEvent* event) {
@@ -211,16 +200,11 @@ bool ProfileForm::eventFilter(QObject* object, QEvent* event) {
 }
 
 void ProfileForm::showEvent(QShowEvent* e) {
-    auto avt = profileInfo->getAvatar();
-    onSelfAvatarLoaded(avt);
+    bodyUI->username->setText(profileInfo->getUsername());
 
-    bodyUI->userName->setText(profileInfo->getDisplayName());
-    if (!profileInfo->getVCard().emails.isEmpty()) {
-        bodyUI->email->setText(
-                profileInfo->getVCard().emails.at(profileInfo->getVCard().emails.size() - 1));
-    }
-    if (!profileInfo->getVCard().nickname.isEmpty()) {
-        bodyUI->nickname->setText(profileInfo->getVCard().nickname);
+    auto& c = profileInfo->getVCard();
+    if (!c.adrs.isEmpty()) {
+        bodyUI->location->setText(c.adrs.at(c.adrs.size() - 1).location());
     }
 }
 
@@ -240,23 +224,9 @@ void ProfileForm::showProfilePictureContextMenu(const QPoint& point) {
 void ProfileForm::copyIdClicked() {
 }
 
-void ProfileForm::onUserNameEdited() { profileInfo->setUsername(bodyUI->userName->text()); }
-
+void ProfileForm::onNicknameEdited() { profileInfo->setNickname(bodyUI->nickname->text()); }
 
 void ProfileForm::onSelfAvatarLoaded(const QPixmap& pic) { profilePicture->setPixmap(pic); }
-
-void ProfileForm::setToxId(const ToxId& id) {
-    QString idString = id.toString();
-    qDebug() << "setToxId id:" << idString;
-    toxId->setText(idString);
-    setQrCode(idString);
-}
-
-void ProfileForm::setQrCode(const QString& id) {
-    qr = std::make_unique<QRWidget>();
-    qr->setQRData(id);
-    // bodyUI->qrCode->setPixmap(QPixmap::fromImage(qr->getImage()->scaledToWidth(150)));
-}
 
 QString ProfileForm::getSupportedImageFilter() {
     QString res;
@@ -284,27 +254,11 @@ void ProfileForm::onAvatarClicked() {
     GUI::showError(tr("Error"), SET_AVATAR_ERROR[result]);
 }
 
-void ProfileForm::onRenameClicked() {
-    const QString cur = profileInfo->getUsername();
-    const QString title = tr("Rename \"%1\"", "renaming a profile").arg(cur);
-    const QString name = QInputDialog::getText(this, title, title + ":");
-    if (name.isEmpty()) {
-        return;
-    }
-
-    const IProfileInfo::RenameResult result = profileInfo->renameProfile(name);
-    if (result == IProfileInfo::RenameResult::OK) {
-        return;
-    }
-    const QPair<QString, QString> error = RENAME_ERROR[result];
-    GUI::showError(error.first, error.second.arg(name));
-    prFileLabelUpdate();
-}
-
 void ProfileForm::onExportClicked() {
-    const QString current = profileInfo->getUsername() + Core::TOX_EXT;
-    //: save dialog title
-    const QString path = QFileDialog::getSaveFileName(Q_NULLPTR, tr("Export profile"), current,
+    // save dialog title
+    const QString path = QFileDialog::getSaveFileName(Q_NULLPTR,
+                                                      tr("Export profile"),
+                                                      profileInfo->getUsername() + Core::TOX_EXT,
                                                       //: save dialog filter
                                                       tr("Tox save file (*.tox)"));
     if (path.isEmpty()) {
@@ -318,31 +272,6 @@ void ProfileForm::onExportClicked() {
 
     const QPair<QString, QString> error = SAVE_ERROR[result];
     GUI::showWarning(error.first, error.second);
-}
-
-void ProfileForm::onDeleteClicked() {
-    const QString title = tr("Really delete profile?", "deletion confirmation title");
-    const QString question =
-            tr("Are you sure you want to delete this profile?", "deletion confirmation text");
-    if (!GUI::askQuestion(title, question)) {
-        return;
-    }
-
-    const QStringList manualDeleteFiles = profileInfo->removeProfile();
-    if (manualDeleteFiles.empty()) {
-        return;
-    }
-
-    //: deletion failed text part 1
-    QString message = tr("The following files could not be deleted:") + "\n\n";
-    for (const QString& file : manualDeleteFiles) {
-        message += file + "\n";
-    }
-
-    //: deletion failed text part 2
-    message += "\n" + tr("Please manually remove them.");
-
-    GUI::showError(tr("Files could not be deleted!", "deletion failed title"), message);
 }
 
 void ProfileForm::onLogoutClicked() { profileInfo->logout(); }
@@ -365,7 +294,7 @@ void ProfileForm::onCopyQrClicked() {
 }
 
 void ProfileForm::onSaveQrClicked() {
-    const QString current = profileInfo->getUsername() + ".png";
+    const QString current = profileInfo->getNickname() + ".png";
 
     const QString path =
             QFileDialog::getSaveFileName(Q_NULLPTR, tr("Save", "save qr image"), current,
@@ -417,10 +346,4 @@ void ProfileForm::onChangePassClicked() {
 void ProfileForm::retranslateUi() {
     bodyUI->retranslateUi(this);
     setPasswordButtonsText();
-    // We have to add the toxId tooltip here and not in the .ui or Qt won't know how to translate it
-    // dynamically
-    toxId->setToolTip(
-            tr("This bunch of characters tells other Tox clients how to contact "
-               "you.\nShare it with your friends to communicate.\n\n"
-               "This ID includes the NoSpam code (in blue), and the checksum (in gray)."));
 }

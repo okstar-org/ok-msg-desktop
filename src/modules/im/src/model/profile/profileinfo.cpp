@@ -86,7 +86,7 @@ void ProfileInfo::copyId() const {
  * @brief Set self user name.
  * @param name New name.
  */
-void ProfileInfo::setUsername(const QString& name) { profile->setNick(name, true); }
+void ProfileInfo::setNickname(const QString& name) { profile->setNick(name, true); }
 
 void ProfileInfo::setAvatar(const QPixmap& avatar) { profile->setAvatarOnly(avatar); }
 
@@ -100,13 +100,15 @@ void ProfileInfo::setStatusMessage(const QString& status) { core->setStatusMessa
 
 const VCard& ProfileInfo::getVCard() const { return profile->getVCard(); }
 
+const QString& ProfileInfo::getUsername() const { return profile->getUsername(); }
+
 /**
  * @brief Get name of tox profile file.
  * @return Profile name.
  */
-QString ProfileInfo::getUsername() const { return profile->getName(); }
+const QString& ProfileInfo::getNickname() const { return profile->getVCard().nickname; }
 
-const QString& ProfileInfo::getDisplayName() const { return profile->getDisplayName(); }
+const QString& ProfileInfo::getFullName() const { return profile->getFullName(); }
 
 /**
  * @brief Remove characters not supported for profile name from string.
@@ -139,7 +141,7 @@ static QString sanitize(const QString& src) {
  * @return Result code of rename operation.
  */
 IProfileInfo::RenameResult ProfileInfo::renameProfile(const QString& name) {
-    QString cur = profile->getName();
+    QString cur = profile->getUsername();
     if (name.isEmpty()) {
         return RenameResult::EmptyName;
     }
@@ -176,7 +178,7 @@ static bool tryRemoveFile(const QString& filepath) {
  * @return Result code of save operation.
  */
 IProfileInfo::SaveResult ProfileInfo::exportProfile(const QString& path) const {
-    QString current = profile->getName() + Core::TOX_EXT;
+    QString current = profile->getUsername() + Core::TOX_EXT;
     if (path.isEmpty()) {
         return SaveResult::EmptyPath;
     }
@@ -206,13 +208,13 @@ QStringList ProfileInfo::removeProfile() {
  * @brief Log out from current profile.
  */
 void ProfileInfo::logout() {
-    auto username = getUsername();
+    auto username = getNickname();
     qDebug() << __func__ << username;
     emit Nexus::getInstance().destroyProfile(username);
 }
 
 void ProfileInfo::exit() {
-    auto username = getUsername();
+    auto username = getNickname();
     qDebug() << __func__ << username;
     emit Nexus::getInstance().exit(username);
 }
@@ -230,7 +232,7 @@ void ProfileInfo::copyQr(const QImage& image) const { QApplication::clipboard()-
  * @return Result code of save operation.
  */
 IProfileInfo::SaveResult ProfileInfo::saveQr(const QImage& image, const QString& path) const {
-    QString current = profile->getName() + ".png";
+    QString current = profile->getUsername() + ".png";
     if (path.isEmpty()) {
         return SaveResult::EmptyPath;
     }

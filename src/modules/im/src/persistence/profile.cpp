@@ -58,7 +58,7 @@ void Profile::initCore(const QByteArray& toxsave, ICoreSettings& s, bool isNewPr
     }
 
     Core::ToxCoreErrors err;
-    core = Core::makeToxCore(host, name, password, toxsave, &s, &err);
+    core = Core::makeToxCore(host, username, password, toxsave, &s, &err);
     if (!core) {
         switch (err) {
             case Core::ToxCoreErrors::BAD_PROXY:
@@ -100,7 +100,7 @@ Profile::Profile(const QString& host,
                  const QString& password,
                  bool isNewProfile)
         : host{host}
-        , name{name}
+        , username{name}
         , password{password}
         , isRemoved{false}
         , encrypted{this->passkey != nullptr} {
@@ -261,7 +261,7 @@ Profile::~Profile() {
     Settings::getInstance().sync();
 
     ProfileLocker::assertLock();
-    assert(ProfileLocker::getCurLockName() == name);
+    assert(ProfileLocker::getCurLockName() == username);
     ProfileLocker::unlock();
 }
 
@@ -303,14 +303,13 @@ const QStringList Profile::getAllProfileNames() {
 
 Core* Profile::getCore() { return core.get(); }
 
-const QString& Profile::getName() const { return name; }
+const QString& Profile::getUsername() const { return username; }
 
-const QString& Profile::getDisplayName() {
-    auto& nick = vCard.nickname;
-    if (!nick.isEmpty()) {
-        return nick;
+const QString& Profile::getFullName() {
+    if (!vCard.fullName.isEmpty()) {
+        return vCard.fullName;
     }
-    return name;
+    return username;
 }
 
 /**
@@ -367,9 +366,9 @@ void Profile::onSaveToxSave() {
 bool Profile::saveToxSave(QByteArray data) {
     assert(!isRemoved);
     ProfileLocker::assertLock();
-    assert(ProfileLocker::getCurLockName() == name);
+    assert(ProfileLocker::getCurLockName() == username);
 
-    QString path = Settings::getInstance().getSettingsDirPath() + name + ".tox";
+    QString path = Settings::getInstance().getSettingsDirPath() + username + ".tox";
     qDebug() << "Saving tox save to " << path;
     QSaveFile saveFile(path);
     if (!saveFile.open(QIODevice::WriteOnly)) {
@@ -477,16 +476,16 @@ void Profile::loadDatabase(QString password) {
     }
 
     QByteArray salt = password.toUtf8();
-    qDebug() << "Create database for" << name;
+    qDebug() << "Create database for" << username;
 
     bool ok = false;
-    database = std::make_shared<RawDatabase>(getDbPath(name), password, salt);
+    database = std::make_shared<RawDatabase>(getDbPath(username), password, salt);
     if (database && database->isOpen()) {
         history.reset(new History(database));
         ok = history->isValid();
     }
     if (!ok) {
-        qWarning() << "Failed to load database for profile" << name;
+        qWarning() << "Failed to load database for profile" << username;
         GUI::showError(QObject::tr("Error"),
                        QObject::tr("Couldn't open your chat logs, they will be exit."));
         qApp->exit(1);
@@ -695,19 +694,19 @@ bool Profile::isEncrypted(QString name) {
  */
 QStringList Profile::remove() {
     if (isRemoved) {
-        qWarning() << "Profile " << name << " is already removed!";
+        qWarning() << "Profile " << username << " is already removed!";
         return {};
     }
     isRemoved = true;
 
-    qDebug() << "Removing profile" << name;
+    qDebug() << "Removing profile" << username;
     for (int i = 0; i < profiles.size(); ++i) {
-        if (profiles[i] == name) {
+        if (profiles[i] == username) {
             profiles.removeAt(i);
             i--;
         }
     }
-    QString path = Settings::getInstance().getSettingsDirPath() + name;
+    QString path = Settings::getInstance().getSettingsDirPath() + username;
     ProfileLocker::unlock();
 
     QFile profileMain{path + ".tox"};
@@ -724,7 +723,7 @@ QStringList Profile::remove() {
         qWarning() << "Could not remove file " << profileConfig.fileName();
     }
 
-    QString dbPath = getDbPath(name);
+    QString dbPath = getDbPath(username);
     if (database && database->isOpen() && !database->remove() && QFile::exists(dbPath)) {
         ret.push_back(dbPath);
         qWarning() << "Could not remove file " << dbPath;
@@ -742,7 +741,7 @@ QStringList Profile::remove() {
  * @return False on error, true otherwise.
  */
 bool Profile::rename(QString newName) {
-    QString path = Settings::getInstance().getSettingsDirPath() + name,
+    QString path = Settings::getInstance().getSettingsDirPath() + username,
             newPath = Settings::getInstance().getSettingsDirPath() + newName;
 
     if (!ProfileLocker::lock(newName)) {
@@ -763,7 +762,7 @@ bool Profile::rename(QString newName) {
         qs.setAutorun(true);  // fixes -p flag in autostart command line
     }
 
-    name = newName;
+    username = newName;
     return true;
 }
 
@@ -824,4 +823,7 @@ void Profile::setNick(const QString& nick_, bool saveToCore) {
     if (saveToCore) core->setNick(nick_);
 }
 
-void Profile::setVCard(const VCard& v) { vCard = v; }
+void Profile::setVCard(const VCard& v) {
+    vCard = v;
+    emit nickChanged(vCard.nickname);
+}

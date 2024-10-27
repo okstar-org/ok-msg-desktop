@@ -20,8 +20,37 @@
 #include <QStringList>
 
 struct VCard {
+    struct Adr {
+        QString street;
+        QString locality;
+        QString region;
+        QString country;
+
+        QString location() const { return region + locality; }
+    };
+
+    struct Tel {
+        int type;  // 0:home,1:work
+        bool mobile;
+        QString number;
+    };
+
+    struct Email {
+        int type;  // 0:home,1:work
+        QString number;
+    };
+
+    struct Photo {
+        QString type;
+        std::string bin;
+        QString url;
+    };
+
+    QString fullName;
     QString nickname;
     QString title;
-    QStringList emails;
-    QStringList tels;
+    QList<Adr> adrs;
+    QList<Email> emails;
+    QList<Tel> tels;
+    Photo photo;
 };

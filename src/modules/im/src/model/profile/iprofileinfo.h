@@ -32,9 +32,10 @@ public:
 
     virtual void copyId() const = 0;
 
-    virtual void setUsername(const QString& name) = 0;
-    virtual QString getUsername() const = 0;
-    virtual const QString& getDisplayName() const = 0;
+    virtual const QString& getUsername() const = 0;
+    virtual void setNickname(const QString& name) = 0;
+    virtual const QString& getNickname() const = 0;
+    virtual const QString& getFullName() const = 0;
 
     virtual void setAvatar(const QPixmap& avatar) = 0;
     virtual const QPixmap& getAvatar() = 0;

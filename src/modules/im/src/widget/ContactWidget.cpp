@@ -126,7 +126,6 @@ AddFriendForm* ContactWidget::makeAddForm() {
 
 void ContactWidget::do_openAddForm() { makeAddForm()->showTo(getContentLayout()); }
 
-
 void ContactWidget::deinit() {
     disconnect(ok::Application::Instance()->bus(),
                &ok::Bus::coreChanged,
@@ -155,11 +154,8 @@ void ContactWidget::connectToCore(Core* core) {
 
     // 好友请求
     connect(core, &Core::friendRequestReceived, this, &ContactWidget::onFriendRequest);
-
     connect(core, &Core::friendAdded, this, &ContactWidget::onFriendAdded);
-
-    connect(core, &Core::friendUsernameChanged, this, &ContactWidget::onFriendNickChanged);
-
+    connect(core, &Core::friendNicknameChanged, this, &ContactWidget::onFriendNickChanged);
     connect(core, &Core::friendAvatarChanged, this, &ContactWidget::onFriendAvatarChanged);
     connect(core, &Core::friendAliasChanged, this, &ContactWidget::onFriendAliasChanged);
     connect(core, &Core::friendStatusChanged, this, &ContactWidget::onFriendStatusChanged);

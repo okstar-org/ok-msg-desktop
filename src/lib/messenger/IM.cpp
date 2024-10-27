@@ -675,12 +675,13 @@ void IM::doPubSubEvent(const gloox::PubSub::Event* pse,  //
             Nickname nickname(nickTag);
             auto newNick = qstring(nickname.nick());
             qDebug() << "nick:" << newNick;
-            emit receiveNicknameChange(friendId, newNick);
             if (isSelf) {
                 if (_nick != newNick) {
                     _nick = newNick;
                     emit selfNicknameChanged(newNick);
                 }
+            } else {
+                emit receiveNicknameChange(friendId, newNick);
             }
         }
         auto avatarData = item->payload->findChild("data", XMLNS, XMLNS_AVATAR);
@@ -1240,28 +1241,46 @@ void IM::handlePing(const gloox::PingHandler::PingType type, const std::string& 
  */
 void IM::handleVCard(const JID& jid, const VCard* vcard) {
     qDebug() << __func__ << QString("jid：%1").arg(qstring(jid.full()));
-    /**
-     * <FN>Peter Saint-Andre</FN>
-    <N>
-      <FAMILY>Saint-Andre</FAMILY>
-      <GIVEN>Peter</GIVEN>
-      <MIDDLE/>
-    </N>
-    **/
 
     IMVCard imvCard = {
-            .displayName = qstring(vcard->formattedname()),
+            .fullName = qstring(vcard->formattedname()),  // vCard:FN
             .nickname = qstring(vcard->nickname()),
             .title = qstring(vcard->title()),
     };
 
-    auto& emails = vcard->emailAddresses();
-    for (auto& email : emails) {
-        if (!email.userid.empty()) imvCard.emails.push_back(qstring(email.userid));
+    for (const auto& item : vcard->addresses()) {
+        if (item.work) {
+            IMVCard::Adr adr = {.street = qstring(item.street),
+                                .locality = qstring(item.locality),
+                                .region = qstring(item.region),
+                                .country = qstring(item.ctry)};
+            imvCard.adrs.push_back(adr);
+            break;
+        }
     }
 
-    for (auto& tel : vcard->telephone()) {
-        if (!tel.number.empty()) imvCard.tels.push_back(qstring(tel.number));
+    auto& emails = vcard->emailAddresses();
+    for (auto& item : emails) {
+        if (!item.userid.empty()) {
+            IMVCard::Email email = {.type = 0, .number = qstring(item.userid)};
+            email.type = 1;
+            imvCard.emails.push_back(email);
+            break;
+        };
+    }
+
+    for (auto& item : vcard->telephone()) {
+        if (!item.number.empty() && item.work) {
+            IMVCard::Tel tel = {.type = 0, .mobile = item.cell, .number = qstring(item.number)};
+            imvCard.tels.push_back(tel);
+        };
+    }
+
+    auto& photo = vcard->photo();
+    if (!photo.binval.empty() || !photo.extval.empty()) {
+        imvCard.photo = {.type = qstring(photo.type),  //
+                         .bin = photo.binval,          //
+                         .url = qstring(photo.extval)};
     }
 
     emit receiveFriendVCard(IMPeerId(jid), imvCard);

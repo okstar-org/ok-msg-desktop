@@ -113,7 +113,7 @@ public slots:
     void onProfileChanged(Profile* profile);
 
     void onStatusSet(Status::Status status);
-    void onUsernameSet(const QString& username);
+    void onNicknameSet(const QString& nickname);
     void onStatusMessageSet(const QString& statusMessage);
 
     void onFriendNickChanged(const FriendId& friendPk, const QString& nickname);

@@ -53,9 +53,9 @@ public:
     ~Profile();
 
     // 获取用户名
-    const QString& getName() const;
+    const QString& getUsername() const;
     // 获取显示名（优先nick，再用户名）
-    const QString& getDisplayName();
+    const QString& getFullName();
 
     void startCore();
     void stopCore();
@@ -131,8 +131,7 @@ private:
     std::unique_ptr<CoreFile> coreFile;
 
     QString host;
-    // akka username
-    QString name;
+    QString username;
     QString password;
     QByteArray toxsave;
 

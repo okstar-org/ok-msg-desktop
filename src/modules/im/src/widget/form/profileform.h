@@ -46,7 +46,6 @@ public:
 
     void showTo(ContentLayout* contentLayout);
     bool isShown() const;
-    void setQrCode(const QString& id);
 
 public slots:
     void onSelfAvatarLoaded(const QPixmap& pic);
@@ -59,13 +58,11 @@ protected:
 
 private slots:
     void setPasswordButtonsText();
-    void setToxId(const ToxId& id);
-    void copyIdClicked();
-    void onUserNameEdited();
 
-    void onRenameClicked();
+    void copyIdClicked();
+    void onNicknameEdited();
     void onExportClicked();
-    void onDeleteClicked();
+
     void onCopyQrClicked();
     void onSaveQrClicked();
     void onDeletePassClicked();
@@ -75,17 +72,14 @@ private slots:
 
 private:
     void retranslateUi();
-    void prFileLabelUpdate();
+
     void refreshProfiles();
     static QString getSupportedImageFilter();
 
 private:
     Ui::IdentitySettings* bodyUI;
     MaskablePixmapWidget* profilePicture;
-    QTimer timer;
-    bool hasCheck = false;
-    std::unique_ptr<QRWidget> qr;
-    ClickableTE* toxId;
+    QRWidget* qr;
     IProfileInfo* profileInfo;
 };
 
