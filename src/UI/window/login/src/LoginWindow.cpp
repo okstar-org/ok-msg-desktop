@@ -26,15 +26,14 @@ using namespace ok::session;
 LoginWindow::LoginWindow(std::shared_ptr<ok::session::AuthSession> session, bool bootstrap,
                          QWidget* parent)
         : QMainWindow(parent), ui(new Ui::LoginWindow) {
-    // 初始化资源
+    ui->setupUi(this);
+
     OK_RESOURCE_INIT(UIWindowLogin);
 
     setAttribute(Qt::WA_DeleteOnClose, true);
     setWindowTitle(APPLICATION_NAME);
     // 黄金分割比例 874/520 = 1.618
     setFixedSize(QSize(874, 520));
-
-    ui->setupUi(this);
 
     bannerWidget = new BannerWidget(this);
     bannerWidget->setFixedWidth(width() / 2);

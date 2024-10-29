@@ -1910,110 +1910,7 @@
         </message>
     </context>
     <context>
-        <name>PrivacyForm</name>
-        <message>
-            <source>Privacy</source>
-            <translation>Vie privée</translation>
-        </message>
-        <message>
-            <source>Confirmation</source>
-            <translation>Confirmation</translation>
-        </message>
-        <message>
-            <source>Do you want to permanently delete all chat history?</source>
-            <translation>Êtes-vous certain(e) de vouloir supprimer définitivement l&apos;intégralité de l&apos;historique
-                de discussions ?
-            </translation>
-        </message>
-    </context>
-    <context>
-        <name>PrivacySettings</name>
-        <message>
-            <source>Your friends will be able to see when you are typing.</source>
-            <comment>tooltip for typing notifications setting</comment>
-            <translation>Vos contacts pourront voir lorsque vous êtes en train d&apos;écrire.</translation>
-        </message>
-        <message>
-            <source>Send typing notifications</source>
-            <translation>Envoyer les notifications de frappe</translation>
-        </message>
-        <message>
-            <source>Keep chat history</source>
-            <translation>Conserver l&apos;historique des discussions</translation>
-        </message>
-        <message>
-            <source>NoSpam is part of your Tox ID.
-                If you are being spammed with friend requests, you should change your NoSpam.
-                People will be unable to add you with your old ID, but you will keep your current friends.
-            </source>
-            <comment>toolTip for nospam</comment>
-            <translation>Le code anti-spam fait partie de votre identifiant Tox.
-                Si vous êtes embêté(e) par des demandes de contacts non sollicitées, vous devriez changer votre code
-                anti-spam.
-                Les personnes ne seront plus en mesure de vous ajouter avec votre ancien identifiant, mais vous
-                conserverez vos contacts actuels.
-            </translation>
-        </message>
-        <message>
-            <source>NoSpam</source>
-            <translation>Code anti-spam</translation>
-        </message>
-        <message>
-            <source>NoSpam is a part of your ID that can be changed at will.
-                If you are getting spammed with friend requests, change the NoSpam.
-            </source>
-            <translation>Le code anti-spam fait partie de votre identifiant et peut être remplacé à souhait.
-                Si vous êtes embêté(e) par des demandes de contacts non sollicitées, changez votre code anti-spam.
-            </translation>
-        </message>
-        <message>
-            <source>Generate random NoSpam</source>
-            <translation>Générer un code anti-spam aléatoire</translation>
-        </message>
-        <message>
-            <source>Chat history keeping is still in development.
-                Save format changes are possible, which may result in data loss.
-            </source>
-            <comment>toolTip for Keep History setting</comment>
-            <translation>La conservation de l&apos;historique de discussions est toujours en phase développement
-                informatique.
-                Les changements de format de sauvegarde sont possibles, ce qui pourrait entrainer des pertes de données.
-            </translation>
-        </message>
-        <message>
-            <source>Privacy</source>
-            <translation>Vie privée</translation>
-        </message>
-        <message>
-            <source>BlackList</source>
-            <translation>Liste noire</translation>
-        </message>
-        <message>
-            <source>Filter group message by group member&apos;s public key. Put public key here, one per line.</source>
-            <translation>Filtrer le message de groupe par clé publique du membre du groupe. Mettre la clé publique ici,
-                une par ligne.
-            </translation>
-        </message>
-    </context>
-    <context>
         <name>Profile</name>
-        <message>
-            <source>Failed to derive key from password, the profile won&apos;t use the new password.</source>
-            <translation>Impossible de dériver la clé du mot de passe, le profil n&apos;utilisera pas le nouveau mot de
-                passe.
-            </translation>
-        </message>
-        <message>
-            <source>Couldn&apos;t change password on the database, it might be corrupted or use the old password.
-            </source>
-            <translation>Impossible de modifier le mot de passe dans la base de données, il peut être endommagé ou
-                utiliser l&apos;ancien mot de passe.
-            </translation>
-        </message>
-        <message>
-            <source>Toxing on qTox</source>
-            <translation>Je toxe sur qTox</translation>
-        </message>
     </context>
     <context>
         <name>ProfileForm</name>
@@ -2819,10 +2716,6 @@
             <translation>Taille de l&apos;émoticône :</translation>
         </message>
         <message>
-            <source>px</source>
-            <translation>pixels</translation>
-        </message>
-        <message>
             <source>Theme</source>
             <translation>Thème</translation>
         </message>
@@ -2892,6 +2785,14 @@
         <message>
             <source>Hide message sender and contents</source>
             <translation>Masquer l&apos;expéditeur et le contenu du message</translation>
+        </message>
+        <message>
+            <source>Privacy</source>
+            <translation>Vie privée</translation>
+        </message>
+        <message>
+            <source>Send typing notifications</source>
+            <translation>Envoyer les notifications de frappe</translation>
         </message>
     </context>
     <context>

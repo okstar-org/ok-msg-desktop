@@ -18,8 +18,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>956</width>
-    <height>697</height>
+       <width>899</width>
+       <height>911</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -51,8 +51,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>940</width>
-        <height>681</height>
+           <width>883</width>
+           <height>895</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,0,0,0">
@@ -291,156 +291,33 @@
          </layout>
         </widget>
        </item>
-       <!--       <item>-->
-       <!--        <widget class="QGroupBox" name="emoticonsGroupBox">-->
-       <!--         <property name="title">-->
-       <!--          <string>Emoticons</string>-->
-       <!--         </property>-->
-       <!--         <layout class="QFormLayout" name="formLayout_4">-->
-       <!--          <item row="0" column="0">-->
-       <!--           <widget class="QCheckBox" name="useEmoticons">-->
-       <!--            <property name="text">-->
-       <!--             <string>Use emoticons</string>-->
-       <!--            </property>-->
-       <!--           </widget>-->
-       <!--          </item>-->
-       <!--          <item row="1" column="0">-->
-       <!--           <widget class="QLabel" name="smileyPackLabel">-->
-       <!--            <property name="text">-->
-       <!--             <string extracomment="Text on smiley pack label">Smiley Pack:</string>-->
-       <!--            </property>-->
-       <!--           </widget>-->
-       <!--          </item>-->
-       <!--          <item row="1" column="1">-->
-       <!--           <widget class="QComboBox" name="smileyPackBrowser">-->
-       <!--            <property name="sizePolicy">-->
-       <!--             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">-->
-       <!--              <horstretch>0</horstretch>-->
-       <!--              <verstretch>0</verstretch>-->
-       <!--             </sizepolicy>-->
-       <!--            </property>-->
-       <!--           </widget>-->
-       <!--          </item>-->
-       <!--          <item row="2" column="0">-->
-       <!--           <spacer name="horizontalSpacer_2">-->
-       <!--            <property name="orientation">-->
-       <!--             <enum>Qt::Horizontal</enum>-->
-       <!--            </property>-->
-       <!--            <property name="sizeHint" stdset="0">-->
-       <!--             <size>-->
-       <!--              <width>80</width>-->
-       <!--              <height>20</height>-->
-       <!--             </size>-->
-       <!--            </property>-->
-       <!--           </spacer>-->
-       <!--          </item>-->
-       <!--          <item row="2" column="1">-->
-       <!--           <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0,0">-->
-       <!--            <property name="sizeConstraint">-->
-       <!--             <enum>QLayout::SetDefaultConstraint</enum>-->
-       <!--            </property>-->
-       <!--            <item>-->
-       <!--             <widget class="QLabel" name="smile1">-->
-       <!--              <property name="toolTip">-->
-       <!--               <string notr="true">:)</string>-->
-       <!--              </property>-->
-       <!--              <property name="text">-->
-       <!--               <string/>-->
-       <!--              </property>-->
-       <!--              <property name="alignment">-->
-       <!--               <set>Qt::AlignCenter</set>-->
-       <!--              </property>-->
-       <!--             </widget>-->
-       <!--            </item>-->
-       <!--            <item>-->
-       <!--             <widget class="QLabel" name="smile2">-->
-       <!--              <property name="toolTip">-->
-       <!--               <string notr="true">;)</string>-->
-       <!--              </property>-->
-       <!--              <property name="text">-->
-       <!--               <string/>-->
-       <!--              </property>-->
-       <!--              <property name="alignment">-->
-       <!--               <set>Qt::AlignCenter</set>-->
-       <!--              </property>-->
-       <!--             </widget>-->
-       <!--            </item>-->
-       <!--            <item>-->
-       <!--             <widget class="QLabel" name="smile3">-->
-       <!--              <property name="toolTip">-->
-       <!--               <string notr="true">:p</string>-->
-       <!--              </property>-->
-       <!--              <property name="text">-->
-       <!--               <string/>-->
-       <!--              </property>-->
-       <!--              <property name="alignment">-->
-       <!--               <set>Qt::AlignCenter</set>-->
-       <!--              </property>-->
-       <!--             </widget>-->
-       <!--            </item>-->
-       <!--            <item>-->
-       <!--             <widget class="QLabel" name="smile4">-->
-       <!--              <property name="toolTip">-->
-       <!--               <string notr="true">:O</string>-->
-       <!--              </property>-->
-       <!--              <property name="text">-->
-       <!--               <string/>-->
-       <!--              </property>-->
-       <!--              <property name="alignment">-->
-       <!--               <set>Qt::AlignCenter</set>-->
-       <!--              </property>-->
-       <!--             </widget>-->
-       <!--            </item>-->
-       <!--            <item alignment="Qt::AlignTop">-->
-       <!--             <widget class="QLabel" name="smile5">-->
-       <!--              <property name="toolTip">-->
-       <!--               <string notr="true">:'(</string>-->
-       <!--              </property>-->
-       <!--              <property name="text">-->
-       <!--               <string/>-->
-       <!--              </property>-->
-       <!--              <property name="alignment">-->
-       <!--               <set>Qt::AlignCenter</set>-->
-       <!--              </property>-->
-       <!--             </widget>-->
-       <!--            </item>-->
-       <!--           </layout>-->
-       <!--          </item>-->
-       <!--          <item row="3" column="0">-->
-       <!--           <widget class="QLabel" name="emoticonSizeLabel">-->
-       <!--            <property name="text">-->
-       <!--             <string>Emoticon size:</string>-->
-       <!--            </property>-->
-       <!--           </widget>-->
-       <!--          </item>-->
-       <!--          <item row="3" column="1">-->
-       <!--           <widget class="QSpinBox" name="emoticonSize">-->
-       <!--            <property name="sizePolicy">-->
-       <!--             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">-->
-       <!--              <horstretch>0</horstretch>-->
-       <!--              <verstretch>0</verstretch>-->
-       <!--             </sizepolicy>-->
-       <!--            </property>-->
-       <!--            <property name="specialValueText">-->
-       <!--             <string/>-->
-       <!--            </property>-->
-       <!--            <property name="suffix">-->
-       <!--             <string>px</string>-->
-       <!--            </property>-->
-       <!--            <property name="minimum">-->
-       <!--             <number>1</number>-->
-       <!--            </property>-->
-       <!--            <property name="maximum">-->
-       <!--             <number>2147483647</number>-->
-       <!--            </property>-->
-       <!--            <property name="value">-->
-       <!--             <number>25</number>-->
-       <!--            </property>-->
-       <!--           </widget>-->
-       <!--          </item>-->
-       <!--         </layout>-->
-       <!--        </widget>-->
-       <!--       </item>-->
+          <item>
+              <widget class="QGroupBox" name="verticalGroupBox">
+                  <property name="title">
+                      <string>Privacy</string>
+                  </property>
+                  <layout class="QVBoxLayout" name="verticalLayout_2">
+                      <item>
+                          <widget class="QCheckBox" name="cbTypingNotification">
+                              <property name="sizePolicy">
+                                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                                      <horstretch>0</horstretch>
+                                      <verstretch>0</verstretch>
+                                  </sizepolicy>
+                              </property>
+                              <property name="toolTip">
+                                  <string comment="tooltip for typing notifications setting">Your friends will be able
+                                      to see when you are typing.
+                                  </string>
+                              </property>
+                              <property name="text">
+                                  <string>Send typing notifications</string>
+                              </property>
+                          </widget>
+                      </item>
+                  </layout>
+              </widget>
+          </item>
        <item>
         <spacer name="verticalSpacer_3">
          <property name="orientation">

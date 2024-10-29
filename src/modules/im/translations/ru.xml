@@ -1907,103 +1907,7 @@
         </message>
     </context>
     <context>
-        <name>PrivacyForm</name>
-        <message>
-            <source>Privacy</source>
-            <translation>Конфиденциальность</translation>
-        </message>
-        <message>
-            <source>Confirmation</source>
-            <translation>Подтверждение</translation>
-        </message>
-        <message>
-            <source>Do you want to permanently delete all chat history?</source>
-            <translation>Вы хотите навсегда удалить всю историю переписки?</translation>
-        </message>
-    </context>
-    <context>
-        <name>PrivacySettings</name>
-        <message>
-            <source>Your friends will be able to see when you are typing.</source>
-            <comment>tooltip for typing notifications setting</comment>
-            <translation>Ваши друзья будут видеть, что вы набираете сообщение.</translation>
-        </message>
-        <message>
-            <source>Send typing notifications</source>
-            <translation>Отправлять информацию о наборе сообщения</translation>
-        </message>
-        <message>
-            <source>Keep chat history</source>
-            <translation>Хранить историю чата</translation>
-        </message>
-        <message>
-            <source>NoSpam is part of your Tox ID.
-                If you are being spammed with friend requests, you should change your NoSpam.
-                People will be unable to add you with your old ID, but you will keep your current friends.
-            </source>
-            <comment>toolTip for nospam</comment>
-            <translation>АнтиСпам это часть вашего Tox ID.
-                Если вы часто получаете ошибочные запросы в друзья, вам достаточно изменить АнтиСпам.
-                Пользователи не смогут добавлять вас с вашим старым ID, но вы сохраните ваших текущих друзей.
-            </translation>
-        </message>
-        <message>
-            <source>NoSpam</source>
-            <translation>АнтиСпам</translation>
-        </message>
-        <message>
-            <source>NoSpam is a part of your ID that can be changed at will.
-                If you are getting spammed with friend requests, change the NoSpam.
-            </source>
-            <translation>АнтиСпам это изменяемая часть вашего Tox ID.
-                Если к вам стали приходить частые и ненужные запросы в друзья, вам достаточно изменить это значение.
-            </translation>
-        </message>
-        <message>
-            <source>Generate random NoSpam</source>
-            <translation>Сгенерировать случайное значение АнтиСпам</translation>
-        </message>
-        <message>
-            <source>Chat history keeping is still in development.
-                Save format changes are possible, which may result in data loss.
-            </source>
-            <comment>toolTip for Keep History setting</comment>
-            <translation>Хранение истории чата находится в разработке.
-                Возможно изменение формата сохранения данных, что может привести к потере данных.
-            </translation>
-        </message>
-        <message>
-            <source>Privacy</source>
-            <translation>Конфиденциальность</translation>
-        </message>
-        <message>
-            <source>BlackList</source>
-            <translation>Черный список</translation>
-        </message>
-        <message>
-            <source>Filter group message by group member&apos;s public key. Put public key here, one per line.</source>
-            <translation>Фильтровать групповые сообщения по открытому ключу. Укажите публичные ключи, по одному на
-                каждой строке.
-            </translation>
-        </message>
-    </context>
-    <context>
         <name>Profile</name>
-        <message>
-            <source>Failed to derive key from password, the profile won&apos;t use the new password.</source>
-            <translation>Ошибка извлечения ключа из пароля, новый пароль на профиль не установлен.</translation>
-        </message>
-        <message>
-            <source>Couldn&apos;t change password on the database, it might be corrupted or use the old password.
-            </source>
-            <translation>Невозможно изменить пароль в базе данных, должно быть база повреждена или вы используете старый
-                пароль.
-            </translation>
-        </message>
-        <message>
-            <source>Toxing on qTox</source>
-            <translation>Общайтесь в qTox</translation>
-        </message>
     </context>
     <context>
         <name>ProfileForm</name>
@@ -2877,6 +2781,14 @@
         <message>
             <source>Hide message sender and contents</source>
             <translation>Скрыть отправителя сообщения и его содержимое</translation>
+        </message>
+        <message>
+            <source>Privacy</source>
+            <translation>Конфиденциальность</translation>
+        </message>
+        <message>
+            <source>Send typing notifications</source>
+            <translation>Отправлять информацию о наборе сообщения</translation>
         </message>
     </context>
     <context>

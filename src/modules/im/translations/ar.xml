@@ -1906,100 +1906,7 @@
         </message>
     </context>
     <context>
-        <name>PrivacyForm</name>
-        <message>
-            <source>Confirmation</source>
-            <translation>تأكيد</translation>
-        </message>
-        <message>
-            <source>Do you want to permanently delete all chat history?</source>
-            <translation>هل تريد حذف سجل المحادثات بشكل دائم ؟</translation>
-        </message>
-        <message>
-            <source>Privacy</source>
-            <translation>خصوصية</translation>
-        </message>
-    </context>
-    <context>
-        <name>PrivacySettings</name>
-        <message>
-            <source>Your friends will be able to see when you are typing.</source>
-            <comment>tooltip for typing notifications setting</comment>
-            <translation>اصدقائك سيرون اشعاراً عندما تكتب.</translation>
-        </message>
-        <message>
-            <source>Send typing notifications</source>
-            <translation>ارسال اشعار كتابة</translation>
-        </message>
-        <message>
-            <source>Chat history keeping is still in development.
-                Save format changes are possible, which may result in data loss.
-            </source>
-            <comment>toolTip for Keep History setting</comment>
-            <translation>سجل المحادثات لا يزال قيد التطوير.
-                تغييرات الصيغة المعروفة ممكنة، هذا قد يؤدي الى فقدان البيانات.
-            </translation>
-        </message>
-        <message>
-            <source>Keep chat history</source>
-            <translation>حفظ سجل المحادثة</translation>
-        </message>
-        <message>
-            <source>NoSpam is part of your Tox ID.
-                If you are being spammed with friend requests, you should change your NoSpam.
-                People will be unable to add you with your old ID, but you will keep your current friends.
-            </source>
-            <comment>toolTip for nospam</comment>
-            <translation>NoSpam هو جزء من حساب التوكس.
-                إذا كنت تتلقى رسائل غير مرغوب فيها مع طلبات الأصدقاء، يجب عليك تغيير NoSpam الخاص بك.
-                الأشخاص سيكون غير قادرين على إضافتك عبر الحساب القديم الخاص بك، ولكن سوف يتم الحفاظ على قائمة الأصدقاء
-                الحالية.
-            </translation>
-        </message>
-        <message>
-            <source>NoSpam</source>
-            <translation>منع الرسائل المزعجة &quot;NoSpam&quot;</translation>
-        </message>
-        <message>
-            <source>NoSpam is a part of your ID that can be changed at will.
-                If you are getting spammed with friend requests, change the NoSpam.
-            </source>
-            <translation>منع الرسائل المزعجة &quot;NoSpam&quot; هي جزء من الهوية الخاصة بك التي يمكن تغييرها كما تشاء.
-                إذا كنت تتلقى رسائل غير مرغوب فيها لدى طلبات الأصدقاء، تغيير منع الرسائل المزعجة &quot;NoSpam&quot;.
-            </translation>
-        </message>
-        <message>
-            <source>Generate random NoSpam</source>
-            <translation>إنشاء منع الرسائل المزعجة &quot;NoSpam&quot; بشكل عشوائي</translation>
-        </message>
-        <message>
-            <source>Privacy</source>
-            <translation>خصوصية</translation>
-        </message>
-        <message>
-            <source>BlackList</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <source>Filter group message by group member&apos;s public key. Put public key here, one per line.</source>
-            <translation type="unfinished"></translation>
-        </message>
-    </context>
-    <context>
         <name>Profile</name>
-        <message>
-            <source>Failed to derive key from password, the profile won&apos;t use the new password.</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <source>Couldn&apos;t change password on the database, it might be corrupted or use the old password.
-            </source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <source>Toxing on qTox</source>
-            <translation type="unfinished">استخدم التوكس على كيوتوكس</translation>
-        </message>
     </context>
     <context>
         <name>ProfileForm</name>
@@ -2856,6 +2763,14 @@
         <message>
             <source>Hide message sender and contents</source>
             <translation type="unfinished"></translation>
+        </message>
+        <message>
+            <source>Privacy</source>
+            <translation>خصوصية</translation>
+        </message>
+        <message>
+            <source>Send typing notifications</source>
+            <translation>ارسال اشعار كتابة</translation>
         </message>
     </context>
     <context>

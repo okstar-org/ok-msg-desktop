@@ -56,7 +56,6 @@ qt5_wrap_ui(
         src/widget/form/setpassworddialog.ui
         src/widget/form/settings/avform.ui
         src/widget/form/settings/generalsettings.ui
-        src/widget/form/settings/privacysettings.ui
 		src/widget/form/settings/StorageSettingsForm.ui
 		src/widget/form/CallDurationForm.ui
 )
@@ -299,16 +298,14 @@ set(${PROJECT_NAME}_SOURCES
         src/widget/form/settings/generalform.h
         src/widget/form/settings/genericsettings.cpp
         src/widget/form/settings/genericsettings.h
-        src/widget/form/settings/privacyform.cpp
-        src/widget/form/settings/privacyform.h
 		src/widget/form/settings/StorageSettingsForm.h
 		src/widget/form/settings/StorageSettingsForm.cpp
         src/widget/form/settingswidget.cpp
         src/widget/form/settingswidget.h
         src/widget/form/tabcompleter.cpp
         src/widget/form/tabcompleter.h
-    src/widget/form/CallDurationForm.h
-    src/widget/form/CallDurationForm.cpp
+		src/widget/form/CallDurationForm.h
+		src/widget/form/CallDurationForm.cpp
         src/widget/friendlistlayout.cpp
         src/widget/friendlistlayout.h
         src/widget/friendlistwidget.cpp
@@ -325,7 +322,6 @@ set(${PROJECT_NAME}_SOURCES
         src/widget/groupwidget.h
         src/widget/gui.cpp
         src/widget/gui.h
-        # src/widget/loginscreen.cpp src/widget/loginscreen.h
         src/widget/maskablepixmapwidget.cpp
         src/widget/maskablepixmapwidget.h
         src/widget/notificationedgewidget.cpp
@@ -358,7 +354,7 @@ set(${PROJECT_NAME}_SOURCES
         src/widget/tool/movablewidget.h
         src/widget/tool/profileimporter.cpp
         src/widget/tool/profileimporter.h
-    src/widget/tool/removefrienddialog.cpp
+		src/widget/tool/removefrienddialog.cpp
         src/widget/tool/removefrienddialog.h
         src/widget/tool/screengrabberchooserrectitem.cpp
         src/widget/tool/screengrabberchooserrectitem.h
@@ -368,14 +364,12 @@ set(${PROJECT_NAME}_SOURCES
         src/widget/tool/screenshotgrabber.h
         src/widget/tool/toolboxgraphicsitem.cpp
         src/widget/tool/toolboxgraphicsitem.h
-
         src/widget/ChatWidget.h
         src/widget/ChatWidget.cpp
         src/widget/ContentWidget.cpp
         src/widget/ContentWidget.h
         src/widget/FriendAddWidget.cpp
         src/widget/FriendAddWidget.h
-        # src/widget/translator.cpp src/widget/translator.h
         src/widget/widget.cpp
         src/widget/widget.h
         src/worker/SendWorker.h

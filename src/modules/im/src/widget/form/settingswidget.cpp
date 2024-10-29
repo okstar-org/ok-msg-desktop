@@ -48,8 +48,8 @@ SettingsWidget::SettingsWidget(Widget* parent) : QWidget(parent, Qt::Window) {
     connect(gfrm.get(), &GeneralForm::updateIcons, parent, &Widget::updateIcons);
 
     std::unique_ptr<StorageSettingsForm> uifrm(new StorageSettingsForm(this));
-    std::unique_ptr<PrivacyForm> pfrm(new PrivacyForm());
-    connect(pfrm.get(), &PrivacyForm::clearAllReceipts, parent, &Widget::clearAllReceipts);
+    //    std::unique_ptr<PrivacyForm> pfrm(new PrivacyForm());
+    //    connect(pfrm.get(), &PrivacyForm::clearAllReceipts, parent, &Widget::clearAllReceipts);
 
     AVForm* rawAvfrm = new AVForm(camera, audioSettings, videoSettings);
     std::unique_ptr<AVForm> avfrm(rawAvfrm);
@@ -65,7 +65,7 @@ SettingsWidget::SettingsWidget(Widget* parent) : QWidget(parent, Qt::Window) {
 
     cfgForms.push_back(std::move(gfrm));   //
     cfgForms.push_back(std::move(uifrm));  //
-    cfgForms.push_back(std::move(pfrm));   //
+                                           //    cfgForms.push_back(std::move(pfrm));   //
     cfgForms.push_back(std::move(avfrm));  //
 
     for (auto& cfgForm : cfgForms)

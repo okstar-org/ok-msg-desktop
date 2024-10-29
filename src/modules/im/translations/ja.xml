@@ -1945,104 +1945,7 @@
         </message>
     </context>
     <context>
-        <name>PrivacyForm</name>
-        <message>
-            <source>Confirmation</source>
-            <translation>確認</translation>
-        </message>
-        <message>
-            <source>Do you want to permanently delete all chat history?</source>
-            <translation>すべてのチャット履歴を完全に消去してもよろしいですか？</translation>
-        </message>
-        <message>
-            <source>Privacy</source>
-            <translation>プライバシー</translation>
-        </message>
-    </context>
-    <context>
-        <name>PrivacySettings</name>
-        <message>
-            <source>Your friends will be able to see when you are typing.</source>
-            <comment>tooltip for typing notifications setting</comment>
-            <translation>自分が入力している場合に、そのことを友達が分かるようになります。</translation>
-        </message>
-        <message>
-            <source>Send typing notifications</source>
-            <translation>入力通知を送信</translation>
-        </message>
-        <message>
-            <source>Chat history keeping is still in development.
-                Save format changes are possible, which may result in data loss.
-            </source>
-            <comment>toolTip for Keep History setting</comment>
-            <translation>チャット履歴の保持は、まだ開発中です。
-                保存形式が変わる可能性があるため、データが失われるかもしれません。
-            </translation>
-        </message>
-        <message>
-            <source>Keep chat history</source>
-            <translation>チャット履歴を保持</translation>
-        </message>
-        <message>
-            <source>NoSpam is part of your Tox ID.
-                If you are being spammed with friend requests, you should change your NoSpam.
-                People will be unable to add you with your old ID, but you will keep your current friends.
-            </source>
-            <comment>toolTip for nospam</comment>
-            <translation>NoSpam は、自分の Tox ID の一部です。
-                もし、あなたが不特定多数から友達リクエストを受け取るというスパム攻撃を受けたら、NoSpam を変更すべきです。
-                他の人が古い Tox ID であなたを友達として追加できなくなりますが、現在の友達には影響しません。
-            </translation>
-        </message>
-        <message>
-            <source>NoSpam</source>
-            <translation>NoSpam</translation>
-        </message>
-        <message>
-            <source>NoSpam is a part of your ID that can be changed at will.
-                If you are getting spammed with friend requests, change the NoSpam.
-            </source>
-            <translation>NoSpam は、自由に変更可能な、自分の Tox ID の一部です。
-                もし、あなたが不特定多数から友達リクエストを受け取るというスパム攻撃を受けたら、NoSpam を変更してください。
-            </translation>
-        </message>
-        <message>
-            <source>Generate random NoSpam</source>
-            <translation>ランダムな NoSpam を生成</translation>
-        </message>
-        <message>
-            <source>Privacy</source>
-            <translation>プライバシー</translation>
-        </message>
-        <message>
-            <source>BlackList</source>
-            <translation>ブラックリスト</translation>
-        </message>
-        <message>
-            <source>Filter group message by group member&apos;s public key. Put public key here, one per line.</source>
-            <translation>グループメンバーの公開鍵でグループメッセージをフィルターします。公開鍵を一行ごとに 1
-                つづつ、ここに入力してください。
-            </translation>
-        </message>
-    </context>
-    <context>
         <name>Profile</name>
-        <message>
-            <source>Failed to derive key from password, the profile won&apos;t use the new password.</source>
-            <translation>パスワードからキーを作成できませんでした。プロファイルは新しいパスワードを使用しません。
-            </translation>
-        </message>
-        <message>
-            <source>Couldn&apos;t change password on the database, it might be corrupted or use the old password.
-            </source>
-            <translation>
-                データベースでパスワードを変更できませんでした。パスワードの形式が間違っているか、古いものを使用しています。
-            </translation>
-        </message>
-        <message>
-            <source>Toxing on qTox</source>
-            <translation>qTox で tox しています</translation>
-        </message>
     </context>
     <context>
         <name>ProfileForm</name>
@@ -2912,6 +2815,14 @@
         <message>
             <source>Hide message sender and contents</source>
             <translation>メッセージの送信者と内容を非表示にする</translation>
+        </message>
+        <message>
+            <source>Send typing notifications</source>
+            <translation>入力通知を送信</translation>
+        </message>
+        <message>
+            <source>Privacy</source>
+            <translation>プライバシー</translation>
         </message>
     </context>
     <context>

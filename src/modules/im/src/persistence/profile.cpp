@@ -780,18 +780,6 @@ QString Profile::setPassword(const QString& newPassword) {
     if (newPassword.isEmpty()) {
         return {};
     }
-    //    std::unique_ptr<ToxEncrypt> newpasskey =
-    //    ToxEncrypt::makeToxEncrypt(newPassword); if (!newpasskey) {
-    //      qCritical() << "Failed to derive key from password, the profile won't
-    //      "
-    //                     "use the new password";
-    //      return tr("Failed to derive key from password, the profile won't use
-    //      the "
-    //                "new password.");
-    //    }
-    //    // apply change
-    //    passkey = std::move(newpasskey);
-    //    encrypted = true;
 
     core->setPassword(newPassword);
 

@@ -2004,85 +2004,7 @@
             <translation>大写锁定已启用</translation>
         </message>
     </context>
-    <context>
-        <name>PrivacyForm</name>
-        <message>
-            <source>Privacy</source>
-            <translation>隐私</translation>
-        </message>
-        <message>
-            <source>Confirmation</source>
-            <translation>确认</translation>
-        </message>
-        <message>
-            <source>Do you want to permanently delete all chat history?</source>
-            <translation>您想要永久删除所有的聊天记录吗？</translation>
-        </message>
-    </context>
-    <context>
-        <name>PrivacySettings</name>
-        <message>
-            <source>Your friends will be able to see when you are typing.</source>
-            <comment>tooltip for typing notifications setting</comment>
-            <translation>您正在输入消息时好友会看到提示。</translation>
-        </message>
-        <message>
-            <source>Chat history keeping is still in development.
-                Save format changes are possible, which may result in data loss.
-            </source>
-            <comment>toolTip for Keep History setting</comment>
-            <translation>聊天记录的保存仍然在开发中。
-                保存格式未来可能更改，因此可能发生数据丢失。
-            </translation>
-        </message>
-        <message>
-            <source>Send typing notifications</source>
-            <translation>发送正在输入通知</translation>
-        </message>
-        <message>
-            <source>Keep chat history</source>
-            <translation>保存聊天历史记录</translation>
-        </message>
-        <message>
-            <source>NoSpam is part of your Tox ID.
-                If you are being spammed with friend requests, you should change your NoSpam.
-                People will be unable to add you with your old ID, but you will keep your current friends.
-            </source>
-            <comment>toolTip for nospam</comment>
-            <translation>NoSpam 是您的 Tox ID 一部分。
-                如果您被垃圾好友请求骚扰，您应该改变您的 NoSpam。
-                他人将无法使用旧 ID 添加您，但会保留您当前已添加的好友。
-            </translation>
-        </message>
-        <message>
-            <source>NoSpam</source>
-            <translation>NoSpam 混淆码</translation>
-        </message>
-        <message>
-            <source>NoSpam is a part of your ID that can be changed at will.
-                If you are getting spammed with friend requests, change the NoSpam.
-            </source>
-            <translation>NoSpam 混淆码是您的 Tox ID 中可以随意改变的一部分。
-                如果您收到骚扰的好友请求，那就改变您的 NoSpam 混淆码。
-            </translation>
-        </message>
-        <message>
-            <source>Generate random NoSpam</source>
-            <translation>生成随机 NoSpam 混淆码</translation>
-        </message>
-        <message>
-            <source>Privacy</source>
-            <translation>隐私</translation>
-        </message>
-        <message>
-            <source>BlackList</source>
-            <translation>黑名单</translation>
-        </message>
-        <message>
-            <source>Filter group message by group member&apos;s public key. Put public key here, one per line.</source>
-            <translation>使用群成员的公钥过滤群聊信息。将公钥放在这里，每行一个。</translation>
-        </message>
-    </context>
+
     <context>
         <name>Profile</name>
         <message>
@@ -2932,6 +2854,14 @@
         <message>
             <source>Hide message sender and contents</source>
             <translation>隐藏消息发件人和内容</translation>
+        </message>
+        <message>
+            <source>Privacy</source>
+            <translation>隐私</translation>
+        </message>
+        <message>
+            <source>Send typing notifications</source>
+            <translation>发送正在输入通知</translation>
         </message>
     </context>
     <context>

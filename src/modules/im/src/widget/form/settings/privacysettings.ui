@@ -18,8 +18,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-       <width>391</width>
-       <height>189</height>
+    <width>391</width>
+    <height>189</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -48,53 +48,11 @@
        <rect>
         <x>0</x>
         <y>0</y>
-           <width>375</width>
-           <height>173</height>
+        <width>375</width>
+        <height>173</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
-       <item>
-        <widget class="QGroupBox" name="verticalGroupBox">
-         <property name="title">
-          <string>Privacy</string>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout_2">
-          <item>
-           <widget class="QCheckBox" name="cbTypingNotification">
-               <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                   </sizepolicy>
-               </property>
-            <property name="toolTip">
-             <string comment="tooltip for typing notifications setting">Your friends will be able to see when you are typing.</string>
-            </property>
-            <property name="text">
-             <string>Send typing notifications</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="cbKeepHistory">
-               <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                   </sizepolicy>
-               </property>
-            <property name="toolTip">
-             <string comment="toolTip for Keep History setting">Chat history keeping is still in development.
-Save format changes are possible, which may result in data loss.</string>
-            </property>
-            <property name="text">
-             <string>Keep chat history</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
        <item>
         <spacer name="verticalSpacer">
          <property name="orientation">
