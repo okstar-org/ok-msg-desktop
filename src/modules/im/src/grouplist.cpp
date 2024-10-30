@@ -15,6 +15,8 @@
 #include <QHash>
 #include "src/core/core.h"
 #include "src/model/group.h"
+#include "src/nexus.h"
+#include "src/persistence/profile.h"
 
 GroupMap GroupList::groupMap;
 
@@ -30,10 +32,10 @@ Group* GroupList::addGroup(const GroupId& groupId,
         return checker;
     }
 
-    auto core = Core::getInstance();
-    Group* newGroup = new Group(groupId, name, isAvGroupchat, selfName, *core, *core);
+    auto profile = Nexus::getProfile();
+    auto core = profile->getCore();
+    Group* newGroup = new Group(groupId, name, isAvGroupchat, selfName, *core, *core, profile);
     groupMap[groupId.toString()] = newGroup;
-
     return newGroup;
 }
 

@@ -36,30 +36,23 @@
 GroupWidget::GroupWidget(QString groupnumber, const GroupId& groupId, const QString& groupName, bool compact)
         : GenericChatroomWidget(ChatType::GroupChat, groupId)
         , quitGroup{nullptr}
-        , destroyGrpAct{nullptr}
-        , about{nullptr} {
+        , destroyGrpAct{nullptr} {
     setCursor(Qt::PointingHandCursor);
 
     connect(this, &GroupWidget::removeGroup, this, &GroupWidget::do_removeGroup);
     connect(this, &GroupWidget::destroyGroup, this, &GroupWidget::do_destroyGroup);
 
     auto core = Core::getInstance();
-    auto& settings = Settings::getInstance();
-
     group = GroupList::addGroup(groupId, groupName, true, core->getUsername());
-
-    auto dialogManager = ContentDialogManager::getInstance();
-
-    nameLabel->setText(group->getDisplayedName());
 
     updateUserCount(group->getPeersCount());
     connect(group, &Group::subjectChanged, this, &GroupWidget::updateTitle);
     connect(group, &Group::peerCountChanged, this, &GroupWidget::updateUserCount);
     connect(group, &Group::descChanged, this, &GroupWidget::updateDesc);
     connect(group, &Group::privilegesChanged, this, &GroupWidget::do_privilegesChanged);
-
-    //  connect(nameLabel, &CroppingLabel::editFinished, group, &Group::setName);
     connect(group, &Group::displayedNameChanged, [&](auto& newName) { setName(newName); });
+
+    nameLabel->setText(group->getDisplayedName());
 
     connect(this, &GroupWidget::chatroomWidgetClicked, [this]() {
         this->do_widgetClicked(this);
@@ -236,20 +229,12 @@ void GroupWidget::contextMenuEvent(QContextMenuEvent* event) {
     } else if (selectedItem == destroyGrpAct) {
         emit destroyGroup(group->getId());
     }
-    /*else if (selectedItem == openChatWindow) {
-      emit newWindowOpened(this);
-    } else if (selectedItem == removeChatWindow) {
-      chatroom->removeGroupFromDialogs();
-    } else if (selectedItem == setSubject) {
-      editName();
-    }*/
 }
 
 void GroupWidget::mousePressEvent(QMouseEvent* ev) {
     if (ev->button() == Qt::LeftButton) {
         dragStartPos = ev->pos();
     }
-
     GenericChatroomWidget::mousePressEvent(ev);
 }
 
@@ -271,7 +256,7 @@ void GroupWidget::mouseMoveEvent(QMouseEvent* ev) {
     }
 }
 
-void GroupWidget::do_widgetClicked(GenericChatroomWidget* w) { showDetails(); }
+void GroupWidget::do_widgetClicked(GenericChatroomWidget* w) {}
 
 void GroupWidget::updateDesc(const QString&) {}
 
@@ -293,14 +278,6 @@ void GroupWidget::do_privilegesChanged(const Group::Role& role, const Group::Aff
         menu->removeAction(destroyGrpAct);
         destroyGrpAct = nullptr;
     }
-}
-
-void GroupWidget::showDetails() {
-    //    if (!about) {
-    //        about = new AboutGroupForm(group->getPersistentId(), this);
-    //        contentLayout->addWidget(about);
-    //    }
-    //    contentLayout->setCurrentWidget(about);
 }
 
 void GroupWidget::updateUserCount(int numPeers) {
@@ -382,7 +359,4 @@ void GroupWidget::dropEvent(QDropEvent* ev) {
 void GroupWidget::retranslateUi() { updateUserCount(group->getPeersCount()); }
 
 void GroupWidget::reloadTheme() {
-    if (about) {
-        // TODO about->reloadTheme();
-    }
 }

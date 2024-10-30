@@ -54,8 +54,10 @@ Group::Affiliation parseAffiliation(const QString& affiliation) {
 }  // namespace
 
 Group::Group(const GroupId groupId_, const QString& name, bool isAvGroupchat,
-             const QString& selfName, ICoreGroupQuery& groupQuery, ICoreIdHandler& idHandler)
+             const QString& selfName, ICoreGroupQuery& groupQuery, ICoreIdHandler& idHandler,
+             Profile* profile_)
         : Contact(groupId_, name, name, true)
+        , profile{profile_}
         , groupId{groupId_}
         , avGroupchat{isAvGroupchat}
         , groupQuery(groupQuery)
@@ -67,6 +69,11 @@ Group::Group(const GroupId groupId_, const QString& name, bool isAvGroupchat,
     // notification on naming is appropriate
     hasNewMessages = 0;
     userWasMentioned = 0;
+    connect(profile, &Profile::contactAliasChanged, [this](QString cId, QString alias) {
+        if (cId == getIdAsString()) {
+            setAlias(alias);
+        }
+    });
 }
 
 void Group::setSubject(const QString& author, const QString& newTitle) {
@@ -144,11 +151,4 @@ const QString& Group::getDesc() const { return desc; }
 void Group::setName(const QString& name) {
     qDebug() << __func__ << name;
     Contact::setName(name);
-}
-
-void Group::stopAudioOfDepartedPeers(const FriendId& peerPk) {
-    if (avGroupchat) {
-        //    Core::getInstance()->getAv()->invalidateGroupCallPeerSource(peerPk.toString(),
-        //    peerPk);
-    }
 }

@@ -803,12 +803,12 @@ void History::markAsReceipt(RowId messageId) {
     db->execLater(QString("UPDATE history SET is_receipt = 1 WHERE id=%1;").arg(messageId.get()));
 }
 
-void History::setFriendAlias(const QString& friendPk, const QString& alias) {
+void History::setPeerAlias(const QString& peer, const QString& alias) {
     int owner = -1;
-    db->execNow({QString("SELECT id FROM peers where public_key = '%1'").arg(friendPk),
+    db->execNow({QString("SELECT id FROM peers where public_key = '%1'").arg(peer),
                  [&owner](const QVector<QVariant>& row) { owner = row[0].toLongLong(); }});
     if (owner < 0) {
-        qWarning() << "contactId" << friendPk << " is no existing";
+        qWarning() << "Peer:" << peer << " is no existing";
         return;
     }
 
@@ -818,10 +818,10 @@ void History::setFriendAlias(const QString& friendPk, const QString& alias) {
                        "DO UPDATE SET display_name = excluded.display_name;")
                        .arg(owner)
                        .arg(alias);
-    db->execNow((sql));
+    db->execNow(sql);
 }
 
-QString History::getFriendAlias(const QString& friendPk) {
+QString History::getPeerAlias(const QString& friendPk) {
     QString name;
     db->execNow({QString("select display_name "
                          "from aliases a join peers p on a.owner = p.id "

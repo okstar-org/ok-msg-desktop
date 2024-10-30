@@ -561,12 +561,14 @@ void Profile::setFriendAvatar(const FriendId& owner, const QByteArray& avatarDat
     saveFriendAvatar(owner, avatarData);
 }
 
-void Profile::saveFriendAlias(const QString& friendPk, const QString& alias) {
-    history->setFriendAlias(friendPk, alias);
+void Profile::saveContactAlias(const QString& contactId, const QString& alias) {
+    history->setPeerAlias(contactId, alias);
+    core->setGroupAlias(contactId, alias);
+    emit contactAliasChanged(contactId, alias);
 }
 
-QString Profile::getFriendAlias(const QString& friendPk) {
-    return history->getFriendAlias(friendPk);
+QString Profile::getContactAlias(const QString& contactId) {
+    return history->getPeerAlias(contactId);
 }
 
 uint Profile::addContact(const ContactId& cid) {

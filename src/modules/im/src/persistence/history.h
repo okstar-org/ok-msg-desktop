@@ -179,8 +179,8 @@ public:
     void markAsDelivered(RowId messageId);
     void markAsReceipt(RowId messageId);
 
-    void setFriendAlias(const QString& friendPk, const QString& alias);
-    QString getFriendAlias(const QString& friendPk);
+    void setPeerAlias(const QString& peer, const QString& alias);
+    QString getPeerAlias(const QString& friendPk);
 
 protected:
     QVector<RawDatabase::Query> generateNewMessageQueries(

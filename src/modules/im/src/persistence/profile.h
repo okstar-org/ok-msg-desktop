@@ -87,8 +87,8 @@ public:
     QByteArray getFriendAvatarHash(const FriendId& owner);
 
     void saveFriendAvatar(const FriendId& owner, const QByteArray& avatar);
-    void saveFriendAlias(const QString& friendPk, const QString& alias);
-    QString getFriendAlias(const QString& friendPk);
+    void saveContactAlias(const QString& contactId, const QString& alias);
+    QString getContactAlias(const QString& contactId);
 
     bool isHistoryEnabled();
     History* getHistory();
@@ -125,7 +125,6 @@ private:
     bool saveToxSave(QByteArray data);
     void initCore(const QByteArray& toxsave, ICoreSettings& s, bool isNewProfile);
 
-private:
     std::unique_ptr<Core> core;
     std::unique_ptr<CoreAV> coreAv;
     std::unique_ptr<CoreFile> coreFile;
@@ -160,6 +159,7 @@ signals:
     void badProxy();
     void coreChanged(Core& core);
     void nickChanged(const QString& nick);
+    void contactAliasChanged(QString cId, QString alias);
 
 public slots:
     void onRequestSent(const FriendId& friendPk, const QString& message);

@@ -24,6 +24,7 @@
 #include "src/core/icoregroupquery.h"
 #include "src/core/icoreidhandler.h"
 #include "src/model/message.h"
+#include "src/persistence/profile.h"
 
 class Group : public Contact {
     Q_OBJECT
@@ -51,7 +52,8 @@ public:
           bool isAvGroupchat,
           const QString& selfName,
           ICoreGroupQuery& groupQuery,
-          ICoreIdHandler& idHandler);
+          ICoreIdHandler& idHandler,
+          Profile* profile);
 
     bool isAvGroupchat() const;
 
@@ -74,9 +76,6 @@ public:
     void setSubject(const QString& author, const QString& subject);
     const QString& getSubject() const { return subject; };
 
-    void setSelfName(const QString& name);
-    QString getSelfName() const;
-
     void setDesc(const QString& desc_);
     const QString& getDesc() const;
 
@@ -89,6 +88,7 @@ public:
     void setName(const QString& name);
 
 signals:
+
     void titleChangedByUser(const QString& title);
     void subjectChanged(const QString& author, const QString& title);
     void userJoined(const FriendId& user, const QString& name);
@@ -98,10 +98,9 @@ signals:
     void descChanged(const QString&);
     void privilegesChanged(const Role& role, const Affiliation& aff, const QList<int> codes);
 
-private:
-    void stopAudioOfDepartedPeers(const FriendId& peerPk);
 
 private:
+    Profile* profile;
     ICoreGroupQuery& groupQuery;
     ICoreIdHandler& idHandler;
     QString subject;

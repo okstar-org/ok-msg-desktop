@@ -21,8 +21,7 @@
 #include "ui_aboutgroupform.h"
 
 AboutGroupForm::AboutGroupForm(const Group* group_, QWidget* parent)
-        : QWidget(parent)
-        , ui(new Ui::AboutGroupForm), group{group_} {
+        : QWidget(parent), ui(new Ui::AboutGroupForm), group{group_} {
     ui->setupUi(this);
 
     ui->id->setText(group->getIdAsString());
@@ -115,15 +114,13 @@ void AboutGroupForm::onSendMessageClicked() {
 void AboutGroupForm::doNameChanged(const QString& text) {
     qDebug() << __func__ << text;
     // group->setName(text);
-    // Core::getInstance()->setGroupName(groupId.toString(), text);
+    //     Core::getInstance()->setGroupName(groupId.toString(), text);
 }
 
 void AboutGroupForm::doAliasChanged(const QString& text) {
     qDebug() << __func__ << text;
-    //    auto profile = Nexus::getInstance().getProfile();
-    //    profile->saveFriendAlias(groupId.toString(), text);
-    // group->setAlias(text);
-    // Core::getInstance()->setGroupAlias(groupId.toString(), text);
+    auto profile = Nexus::getInstance().getProfile();
+    profile->saveContactAlias(getId().toString(), text);
 }
 
 void AboutGroupForm::doSubjectChanged(const QString& text) {

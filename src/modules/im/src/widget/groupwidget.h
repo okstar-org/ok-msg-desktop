@@ -50,7 +50,6 @@ public:
     ContentDialog* addGroupDialog(Group* group);
     ContentDialog* createContentDialog() const;
 
-    void showDetails();
     void reloadTheme();
 
 signals:
@@ -80,9 +79,6 @@ private slots:
 
 private:
     Group* group;
-
-    AboutGroupForm* about;
-
     QMenu* menu;
     QAction* destroyGrpAct;
     QAction* quitGroup;
