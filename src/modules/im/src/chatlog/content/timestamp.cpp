@@ -11,7 +11,7 @@
  */
 
 #include "timestamp.h"
-
+namespace module::im {
 Timestamp::Timestamp(const QDateTime& time, const QString& format, const QFont& font)
         : Text(time.toString(format), font, false, time.toString(format)) {
     this->time = time;
@@ -25,3 +25,4 @@ QSizeF Timestamp::idealSize() {
     }
     return size;
 }
+}  // namespace module::im

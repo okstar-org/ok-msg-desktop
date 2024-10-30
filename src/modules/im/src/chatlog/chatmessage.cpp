@@ -33,7 +33,7 @@
 #include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
 #include "src/persistence/smileypack.h"
-
+namespace module::im {
 #define NAME_COL_WIDTH 140.0
 #define TIME_COL_WIDTH 90.0
 
@@ -153,3 +153,4 @@ QString ChatMessage::detectQuotes(const QString& str, MessageType type) {
 QString ChatMessage::wrapDiv(const QString& str, const QString& div) {
     return QString("<p class=%1>%2</p>").arg(div, /*QChar(0x200E) + */ QString(str));
 }
+}  // namespace module::im

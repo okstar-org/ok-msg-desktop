@@ -36,7 +36,7 @@
  * @var ChatLog::repNameAfter
  * @brief repetition interval sender name (sec)
  */
-
+namespace module::im {
 template <class T> T clamp(T x, T min, T max) {
     if (x > max) return max;
     if (x < min) return min;
@@ -1033,3 +1033,4 @@ void ChatLog::clear() {
     }
     updateSceneRect();
 }
+}  // namespace module::im

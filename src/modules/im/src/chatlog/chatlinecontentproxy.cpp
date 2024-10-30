@@ -16,7 +16,7 @@
 #include <QPainter>
 #include <QWidget>
 #include "src/chatlog/content/filetransferwidget.h"
-
+namespace module::im {
 /**
  * @enum ChatLineContentProxy::ChatLineContentProxyType
  * @brief Type tag to avoid dynamic_cast of contained QWidget*
@@ -74,3 +74,4 @@ ChatLineContentProxy::ChatLineContentProxyType ChatLineContentProxy::getWidgetTy
 }
 
 const void* ChatLineContentProxy::getContent() { return proxy; }
+}  // namespace module::im

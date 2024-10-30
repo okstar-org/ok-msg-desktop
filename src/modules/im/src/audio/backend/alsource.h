@@ -17,7 +17,7 @@
 #include <QObject>
 #include "base/compatiblerecursivemutex.h"
 #include "src/audio/iaudiosource.h"
-
+namespace module::im {
 class OpenAL;
 class AlSource : public IAudioSource {
     Q_OBJECT
@@ -38,5 +38,5 @@ private:
     bool killed = false;
     mutable CompatibleRecursiveMutex killLock;
 };
-
+}  // namespace module::im
 #endif  // ALSOURCE_H

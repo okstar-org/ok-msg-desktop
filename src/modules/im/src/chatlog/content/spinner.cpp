@@ -18,7 +18,7 @@
 #include <QPainter>
 #include <QTime>
 #include <QVariantAnimation>
-
+namespace module::im {
 Spinner::Spinner(const QString& img, QSize Size, qreal speed)
         : ChatLineContent(ContentType::CHAT_SPINNER), size(Size), rotSpeed(speed) {
     pmap = PixmapCache::getInstance().get(img, size);
@@ -75,3 +75,4 @@ void Spinner::timeout() {
     if (scene()) scene()->invalidate(sceneBoundingRect());
 }
 const void* Spinner::getContent() { return &pmap; }
+}  // namespace module::im

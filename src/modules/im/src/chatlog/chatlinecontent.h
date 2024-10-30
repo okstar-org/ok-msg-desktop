@@ -15,6 +15,7 @@
 
 #include <QGraphicsItem>
 #include <QMenu>
+namespace module::im {
 class QAction;
 
 class ChatLineContent : public QObject, public QGraphicsItem {
@@ -91,5 +92,5 @@ signals:
     void copy();
     void forward();
 };
-
+}  // namespace module::im
 #endif  // CHATLINECONTENT_H

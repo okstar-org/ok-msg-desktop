@@ -16,7 +16,7 @@
 #include <QHash>
 #include <QIcon>
 #include <QPixmap>
-
+namespace module::im {
 class PixmapCache {
 public:
     QPixmap get(const QString& filename, QSize size);
@@ -30,5 +30,5 @@ protected:
 private:
     QHash<QString, QIcon> cache;
 };
-
+}  // namespace module::im
 #endif  // ICONCACHE_H

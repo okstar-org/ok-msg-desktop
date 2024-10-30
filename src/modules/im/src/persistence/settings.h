@@ -34,7 +34,7 @@
 #include <QPixmap>
 
 #include <src/core/contactid.h>
-
+namespace module::im {
 class Profile;
 class QCommandLineParser;
 class FontManager;
@@ -657,5 +657,5 @@ private:
     static QThread* settingsThread;
     FontManager* fontManager;
 };
-
+}  // namespace module::im
 #endif  // SETTINGS_HPP

@@ -14,7 +14,7 @@
 #define TOXFILEPROGRESS_H
 
 #include <QTime>
-
+namespace module::im {
 struct ToxFile;
 
 class ToxFileProgress {
@@ -40,5 +40,5 @@ private:
     double timeLeftSeconds;
     double progress;
 };
-
+}  // namespace module::im
 #endif  // TOXFILEPROGRESS_H

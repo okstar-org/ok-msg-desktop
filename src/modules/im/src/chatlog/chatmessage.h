@@ -18,7 +18,7 @@
 #include "src/core/toxfile.h"
 #include "src/model/chatlogitem.h"
 #include "src/persistence/history.h"
-
+namespace module::im {
 class QGraphicsScene;
 
 class ChatMessage {
@@ -56,5 +56,6 @@ protected:
 private:
     bool action = false;
 };
+}  // namespace module::im
 
 #endif  // CHATMESSAGE_H

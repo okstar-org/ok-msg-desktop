@@ -17,6 +17,8 @@
 #include <QClipboard>
 #include <QPainter>
 
+namespace module::im {
+
 Image::Image(QSize Size, const QString& filename)
         : ChatLineContent(ContentType::CHAT_IMAGE), size(Size) {
     pmap = PixmapCache::getInstance().get(filename, size);
@@ -50,3 +52,4 @@ void Image::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWi
 
 void Image::setWidth(qreal width) { Q_UNUSED(width) }
 const void* Image::getContent() { return &pmap; }
+}  // namespace module::im

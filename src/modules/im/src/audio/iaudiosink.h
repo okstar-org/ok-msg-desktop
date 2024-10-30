@@ -18,7 +18,7 @@
 #include <QObject>
 
 #include "src/base/interface.h"
-
+namespace module::im {
 /**
  * @brief The IAudioSink class represents an interface to devices that can play audio.
  *
@@ -98,5 +98,5 @@ signals:
     DECLARE_SIGNAL(finishedPlaying);
     DECLARE_SIGNAL(invalidated);
 };
-
+}  // namespace module::im
 #endif  // IAUDIOSINK_H

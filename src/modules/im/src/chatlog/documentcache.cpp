@@ -12,7 +12,7 @@
 
 #include "documentcache.h"
 #include "customtextdocument.h"
-
+namespace module::im {
 DocumentCache::~DocumentCache() {
     while (!documents.isEmpty()) delete documents.pop();
 }
@@ -37,3 +37,4 @@ DocumentCache& DocumentCache::getInstance() {
     static DocumentCache instance;
     return instance;
 }
+}  // namespace module::im

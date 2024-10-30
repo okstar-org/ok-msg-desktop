@@ -18,7 +18,7 @@
 #include <QDebug>
 #include <QIcon>
 #include <QUrl>
-
+namespace module::im {
 CustomTextDocument::CustomTextDocument(QObject* parent) : QTextDocument(parent) {
     setUndoRedoEnabled(false);
     setUseDesignMetrics(false);
@@ -37,3 +37,4 @@ QVariant CustomTextDocument::loadResource(int type, const QUrl& name) {
 
     return QTextDocument::loadResource(type, name);
 }
+}  // namespace module::im

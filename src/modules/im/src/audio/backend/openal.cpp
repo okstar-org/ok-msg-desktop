@@ -44,7 +44,7 @@ void applyGain(int16_t* buffer, uint32_t bufferSize, qreal gainFactor) {
  * @var AUDIO_CHANNELS
  * @brief Ideally, we'd auto-detect, but that's a sane default
  */
-
+namespace module::im {
 static const unsigned int BUFFER_COUNT = 16;
 static const uint32_t AUDIO_CHANNELS = 2;
 
@@ -745,3 +745,4 @@ void OpenAL::setInputGain(qreal dB) {
 }
 
 void OpenAL::setInputThreshold(qreal normalizedThreshold) { inputThreshold = normalizedThreshold; }
+}  // namespace module::im
