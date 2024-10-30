@@ -164,7 +164,7 @@ GroupWidget* ContactListWidget::addGroup(const GroupId& groupId, const QString& 
     //  const bool enabled = core->getGroupAvEnabled(groupId.toString());
 
     const auto compact = settings.getCompactLayout();
-    auto gw = new GroupWidget(groupId.toString(), groupId, groupName, compact);
+    auto gw = new GroupWidget(groupId, groupName, compact);
     groupWidgets[groupId.toString()] = gw;
     //    groupLayout.addSortedWidget(gw);
     listLayout->addWidget(gw);

@@ -37,6 +37,7 @@ private:
 
 private slots:
     void onSendMessageClicked();
+    void onAddMemberClicked();
     void doNameChanged(const QString& text);
     void doAliasChanged(const QString& text);
     void doSubjectChanged(const QString& text);

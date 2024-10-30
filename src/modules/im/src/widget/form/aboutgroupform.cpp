@@ -68,7 +68,7 @@ AboutGroupForm::AboutGroupForm(const Group* group_, QWidget* parent)
             });
 
     connect(ui->sendMessage, &QPushButton::clicked, this, &AboutGroupForm::onSendMessageClicked);
-
+    connect(ui->addMember, &QPushButton::clicked, this, &AboutGroupForm::onAddMemberClicked);
     auto map = group->getPeerList();
     for (auto peer : map) {
         auto f = new QLabel(peer);
@@ -106,8 +106,14 @@ void AboutGroupForm::updateUI() {
 void AboutGroupForm::onSendMessageClicked() {
     auto widget = Widget::getInstance();
     if (widget) {
-        qDebug() << "toSendMessage:" << ui->id->text();
         emit widget->toSendMessage(ui->id->text(), true);
+    }
+}
+
+void AboutGroupForm::onAddMemberClicked() {
+    auto widget = Widget::getInstance();
+    if (widget) {
+        emit widget->toAddMember(getId());
     }
 }
 

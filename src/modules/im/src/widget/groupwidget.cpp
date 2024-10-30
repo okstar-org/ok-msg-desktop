@@ -33,7 +33,7 @@
 #include "src/widget/widget.h"
 #include "tool/croppinglabel.h"
 
-GroupWidget::GroupWidget(QString groupnumber, const GroupId& groupId, const QString& groupName, bool compact)
+GroupWidget::GroupWidget(const GroupId& groupId, const QString& groupName, bool compact)
         : GenericChatroomWidget(ChatType::GroupChat, groupId)
         , quitGroup{nullptr}
         , destroyGrpAct{nullptr} {

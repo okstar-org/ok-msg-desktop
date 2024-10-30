@@ -168,6 +168,10 @@
             <translation>发送消息</translation>
         </message>
         <message>
+            <source>Add member</source>
+            <translation>添加成员</translation>
+        </message>
+        <message>
             <source>Name:</source>
             <translation>名称：</translation>
         </message>

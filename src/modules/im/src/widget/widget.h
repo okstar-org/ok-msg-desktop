@@ -185,6 +185,7 @@ signals:
     void resized();
     void windowStateChanged(Qt::WindowStates states);
     void toSendMessage(const QString& to, bool isGroup = false);
+    void toAddMember(const ContactId& to);
     void toShowDetails(const ContactId& to);
     void toDeleteChat(const QString& to);
     void toClearHistory(const QString& to);
