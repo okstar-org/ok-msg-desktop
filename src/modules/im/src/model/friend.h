@@ -55,7 +55,7 @@ public:
     void setEventFlag(bool f) override;
     bool getEventFlag() const override;
 
-    const FriendId getPublicKey() const { return FriendId{Contact::getId()}; };
+    const FriendId getPublicKey() const { return FriendId{Contact::getIdAsString()}; };
 
     void setStatus(Status::Status s);
     Status::Status getStatus() const;

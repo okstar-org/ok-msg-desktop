@@ -17,6 +17,8 @@
 #include <QWidget>
 #include <memory>
 
+#include <src/widget/form/aboutgroupform.h>
+
 #include "ContactListWidget.h"
 #include "src/model/group.h"
 #include "src/model/groupinvite.h"
@@ -56,6 +58,10 @@ public:
 
     void showFriendDetails(const Friend* f);
     void removeFriendDetails(const Friend* f);
+
+    void showGroupDetails(const Group* g);
+    void removeGroupDetails(const Group* g);
+    void removeAllDetails();
 
 public slots:
     void searchContacts();
@@ -115,7 +121,9 @@ private:
     Ui::ContactWidget* ui;
     Core* core;
     ContactListWidget* contactListWidget;
-    std::unique_ptr<AboutFriendForm> about;
+
+    std::unique_ptr<AboutFriendForm> friendAbout;
+    std::unique_ptr<AboutGroupForm> groupAbout;
 
     std::unique_ptr<QWidget> contentWidget;
     std::unique_ptr<ContentLayout> contentLayout;

@@ -176,8 +176,8 @@
             <translation>备注名：</translation>
         </message>
         <message>
-            <source>Id:</source>
-            <translation>Id：</translation>
+            <source>Account:</source>
+            <translation>帐号：</translation>
         </message>
         <message>
             <source>Title:</source>
@@ -258,8 +258,8 @@
             <translation>发送消息</translation>
         </message>
         <message>
-            <source>username</source>
-            <translation>用户名</translation>
+            <source>Account:</source>
+            <translation>帐号：</translation>
         </message>
         <message>
             <source>status message</source>

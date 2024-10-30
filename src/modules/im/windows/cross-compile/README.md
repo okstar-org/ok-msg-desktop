@@ -73,9 +73,9 @@ will skip recompiling them, going straight to compiling qTox, which is a lot
 faster.
 
 > Note:
->     On a certain Intel Core i7 processor, a fresh build takes about 125
->     minutes on a single core, and about 30 minutes using all 8 hyperthreads.
->     Once built, however, it takes about 8 minutes on a single core and 2
+> On a certain Intel Core i7 processor, a fresh build takes friendAbout 125
+> minutes on a single core, and friendAbout 30 minutes using all 8 hyperthreads.
+> Once built, however, it takes friendAbout 8 minutes on a single core and 2
 >     minutes using 8 hyperthreads to rebuild using the cached dependencies.
 
 After cross-compiling has finished, you should find the comiled qTox in a

@@ -41,8 +41,8 @@ public:
 
     QString getDisplayedName() const;
 
-    const ContactId& getPersistentId() const { return id; };
-    QString getId() const { return id.toString(); };
+    const ContactId& getId() const { return id; };
+    QString getIdAsString() const { return id.toString(); };
 
     const QPixmap& setDefaultAvatar();
     void setAvatar(const QPixmap& avatar);

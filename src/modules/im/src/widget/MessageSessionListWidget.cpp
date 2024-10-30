@@ -554,18 +554,18 @@ void MessageSessionListWidget::setFriendAvEnd(const FriendId& friendId, bool err
 }
 
 void MessageSessionListWidget::addGroup(const Group* g) {
-    auto ms = getMessageSession(g->getId());
+    auto ms = getMessageSession(g->getIdAsString());
     if (!ms) {
-        qWarning() << "Unable to find message session" << g->getId();
+        qWarning() << "Unable to find message session" << g->getIdAsString();
         return;
     }
     ms->setGroup(g);
 }
 
 void MessageSessionListWidget::removeGroup(const Group* g) {
-    auto ms = getMessageSession(g->getId());
+    auto ms = getMessageSession(g->getIdAsString());
     if (!ms) {
-        qWarning() << "Unable to find message session" << g->getId();
+        qWarning() << "Unable to find message session" << g->getIdAsString();
         return;
     }
     ms->removeGroup();

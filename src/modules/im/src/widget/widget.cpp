@@ -710,7 +710,7 @@ void Widget::openDialog(GenericChatroomWidget* widget, bool newWindow) {
     ////  if (frnd) {
     ////    form = chatForms[frnd->getPublicKey()];
     ////  } else if (group) {
-    ////    id = group->getPersistentId();
+    ////    id = group->getId();
     ////    form = groupChatForms[id].data();
     ////  }
     //  bool chatFormIsSet;
@@ -748,7 +748,7 @@ void Widget::openDialog(GenericChatroomWidget* widget, bool newWindow) {
     //    if (frnd) {
     ////      chatForms[frnd->getPublicKey()]->show(contentLayout);
     ////    } else {
-    ////      groupChatForms[group->getPersistentId()]->show(contentLayout);
+    ////      groupChatForms[group->getId()]->show(contentLayout);
     //    }
     //    widget->setAsActiveChatroom();
     //    setWindowTitle(widget->getSubject());
@@ -937,7 +937,7 @@ void Widget::onFriendDialogShown(const Friend* f) {
 }
 
 void Widget::onGroupDialogShown(const Group* g) {
-    const GroupId& groupId = g->getPersistentId();
+    const GroupId& groupId = g->getId();
     //  onDialogShown(groupWidgets[groupId]);
 }
 
@@ -1054,7 +1054,7 @@ void Widget::copyFriendIdToClipboard(const FriendId& friendId) {
 void Widget::titleChangedByUser(const QString& title) {
     const auto* group = qobject_cast<Group*>(sender());
     assert(group != nullptr);
-    emit changeGroupTitle(group->getId(), title);
+    emit changeGroupTitle(group->getIdAsString(), title);
 }
 
 void Widget::onGroupPeerAudioPlaying(QString groupnumber, FriendId peerPk) {

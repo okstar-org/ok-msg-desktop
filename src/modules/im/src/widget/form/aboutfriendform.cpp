@@ -181,3 +181,5 @@ void AboutFriendForm::onAliasChanged(const QString& text) {
 
     Core::getInstance()->setFriendAlias(fid, text);
 }
+
+const ContactId& AboutFriendForm::getId() { return m_friend->getId(); }

@@ -348,7 +348,12 @@ void ContactListWidget::slot_groupClicked(GenericChatroomWidget* actived) {
 
 void ContactListWidget::slot_friendClicked(GenericChatroomWidget* actived) {
     for (auto gw : groupWidgets) {
-        gw->setActive(false);
+        if (gw != actived) {
+            gw->setActive(false);
+        } else {
+            gw->setActive(true);
+            emit groupClicked(gw);
+        }
     }
 
     for (auto fw : friendWidgets) {

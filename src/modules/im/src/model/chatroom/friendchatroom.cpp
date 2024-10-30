@@ -71,7 +71,7 @@ bool FriendChatroom::autoAcceptEnabled() const { return getAutoAcceptDir().isEmp
 
 void FriendChatroom::inviteFriend(const Group* group) {
     const auto friendId = frnd->getId();
-    const auto groupId = group->getId();
+    const auto groupId = group->getIdAsString();
     //    Core::getInstance()->groupInviteFriend(friendId, groupId);
 }
 

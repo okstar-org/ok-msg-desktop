@@ -166,7 +166,8 @@ ToxGroupCall::ToxGroupCall(const Group& group, CoreAV& av, IAudioControl& audio)
                 if (this->group.getPeersCount() <= 1) {
                     return;
                 }
-                this->av->sendGroupCallAudio(this->group.getId(), pcm, samples, chans, rate);
+                this->av->sendGroupCallAudio(this->group.getIdAsString(), pcm, samples, chans,
+                                             rate);
             });
 
     connect(audioSource.get(),           //
@@ -188,7 +189,8 @@ void ToxGroupCall::onAudioSourceInvalidated() {
                     return;
                 }
 
-                this->av->sendGroupCallAudio(this->group.getId(), pcm, samples, chans, rate);
+                this->av->sendGroupCallAudio(this->group.getIdAsString(), pcm, samples, chans,
+                                             rate);
             });
 
     audioSource = std::move(newSrc);

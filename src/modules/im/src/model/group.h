@@ -84,7 +84,7 @@ public:
 
     const Affiliation& getAffiliation() const { return affiliation; }
 
-    const GroupId& getPersistentId() const { return groupId; };
+    const GroupId& getId() const { return groupId; };
 
     void setName(const QString& name);
 

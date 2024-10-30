@@ -38,7 +38,7 @@ GroupWidget::GroupWidget(QString groupnumber, const GroupId& groupId, const QStr
         , quitGroup{nullptr}
         , destroyGrpAct{nullptr}
         , about{nullptr} {
-    setAcceptDrops(true);
+    setCursor(Qt::PointingHandCursor);
 
     connect(this, &GroupWidget::removeGroup, this, &GroupWidget::do_removeGroup);
     connect(this, &GroupWidget::destroyGroup, this, &GroupWidget::do_destroyGroup);
@@ -104,7 +104,7 @@ void GroupWidget::init() {
 ContentDialog* GroupWidget::addGroupDialog(Group* group) {
     auto& settings = Settings::getInstance();
 
-    auto& groupId = group->getPersistentId();
+    auto& groupId = group->getId();
 
     ContentDialog* dialog = ContentDialogManager::getInstance()->getGroupDialog(GroupId(groupId));
     //  bool separated = settings.getSeparateWindow();
@@ -232,9 +232,9 @@ void GroupWidget::contextMenuEvent(QContextMenuEvent* event) {
         if (!retYes) {
             return;
         }
-        emit removeGroup(group->getPersistentId());
+        emit removeGroup(group->getId());
     } else if (selectedItem == destroyGrpAct) {
-        emit destroyGroup(group->getPersistentId());
+        emit destroyGroup(group->getId());
     }
     /*else if (selectedItem == openChatWindow) {
       emit newWindowOpened(this);
@@ -262,7 +262,7 @@ void GroupWidget::mouseMoveEvent(QMouseEvent* ev) {
         QMimeData* mdata = new QMimeData;
         const Group* group = getGroup();
         mdata->setText(group->getName());
-        mdata->setData("groupId", group->getPersistentId().getByteArray());
+        mdata->setData("groupId", group->getId().getByteArray());
 
         QDrag* drag = new QDrag(this);
         drag->setMimeData(mdata);

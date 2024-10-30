@@ -824,7 +824,7 @@ void GenericChatForm::onImageSend(const QPixmap& pix) {
 
 void GenericChatForm::sendFile(const QFile& file) {
     qDebug() << "Sending image:" << file.fileName();
-    auto sent = Nexus::getProfile()->getCoreFile()->sendFile(contact->getId(), file);
+    auto sent = Nexus::getProfile()->getCoreFile()->sendFile(contact->getIdAsString(), file);
     if (!sent) {
         ok::base::MessageBox::warning(
                 this, "", tr("The community version cannot send files to offline contacts!"));

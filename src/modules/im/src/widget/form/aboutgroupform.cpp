@@ -1,3 +1,15 @@
+/*
+ * Copyright (c) 2022 船山信息 chuanshaninfo.com
+ * The project is licensed under Mulan PubL v2.
+ * You can use this software according to the terms and conditions of the Mulan
+ * PubL v2. You may obtain a copy of Mulan PubL v2 at:
+ *          http://license.coscl.org.cn/MulanPubL-2.0
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PubL v2 for more details.
+ */
+
 #include "aboutgroupform.h"
 
 #include <src/nexus.h>
@@ -8,14 +20,12 @@
 #include "src/widget/widget.h"
 #include "ui_aboutgroupform.h"
 
-AboutGroupForm::AboutGroupForm(const GroupId& groupId_, QWidget* parent)
+AboutGroupForm::AboutGroupForm(const Group* group_, QWidget* parent)
         : QWidget(parent)
-        , ui(new Ui::AboutGroupForm)
-        , groupId{groupId_}
-        , group{GroupList::findGroup(groupId_)} {
+        , ui(new Ui::AboutGroupForm), group{group_} {
     ui->setupUi(this);
 
-    ui->id->setText(group->getId());
+    ui->id->setText(group->getIdAsString());
     ui->occupants->setText(QString::number(group->getPeersCount()));
     ui->avatar->setPixmap(group->getAvatar());
 
@@ -104,26 +114,27 @@ void AboutGroupForm::onSendMessageClicked() {
 
 void AboutGroupForm::doNameChanged(const QString& text) {
     qDebug() << __func__ << text;
-    group->setName(text);
-    Core::getInstance()->setGroupName(groupId.toString(), text);
+    // group->setName(text);
+    // Core::getInstance()->setGroupName(groupId.toString(), text);
 }
 
 void AboutGroupForm::doAliasChanged(const QString& text) {
     qDebug() << __func__ << text;
     //    auto profile = Nexus::getInstance().getProfile();
     //    profile->saveFriendAlias(groupId.toString(), text);
-    group->setAlias(text);
-    Core::getInstance()->setGroupAlias(groupId.toString(), text);
+    // group->setAlias(text);
+    // Core::getInstance()->setGroupAlias(groupId.toString(), text);
 }
 
 void AboutGroupForm::doSubjectChanged(const QString& text) {
     qDebug() << __func__ << text;
-    group->setSubject({}, text);
-    Core::getInstance()->setGroupSubject(groupId.toString(), text);
+    // group->setSubject({}, text);
+    // Core::getInstance()->setGroupSubject(groupId.toString(), text);
 }
 
 void AboutGroupForm::doDescChanged(const QString& text) {
     qDebug() << __func__ << text;
-    group->setDesc(text);
-    Core::getInstance()->setGroupDesc(groupId.toString(), text);
+    // group->setDesc(text);
+    // Core::getInstance()->setGroupDesc(groupId.toString(), text);
 }
+const ContactId& AboutGroupForm::getId() { return group->getId(); }

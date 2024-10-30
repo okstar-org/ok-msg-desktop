@@ -37,6 +37,7 @@ public:
 
     void setName(const QString& name);
     const Friend* getFriend() const { return m_friend; }
+    const ContactId& getId();
 
 private:
     void reloadTheme();

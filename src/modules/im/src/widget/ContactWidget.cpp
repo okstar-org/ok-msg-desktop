@@ -27,9 +27,11 @@
 #include "src/friendlist.h"
 #include "src/grouplist.h"
 #include "src/model/friend.h"
+#include "src/model/group.h"
 #include "src/widget/form/addfriendform.h"
 #include "src/widget/form/groupinviteform.h"
 #include "src/widget/friendwidget.h"
+#include "src/widget/groupwidget.h"
 
 #include <QLabel>
 #include <QStyle>
@@ -55,6 +57,10 @@ ContactWidget::ContactWidget(QWidget* parent)
     // 点击事件 - 打开联系人详情
     connect(contactListWidget, &ContactListWidget::friendClicked, [&](const FriendWidget* w) {
         showFriendDetails(w->getFriend());
+    });
+
+    connect(contactListWidget, &ContactListWidget::groupClicked, [&](const GroupWidget* w) {
+        showGroupDetails(w->getGroup());
     });
 
     ui->scrollAreaWidgetContents->setGeometry(0, 0, 200, 500);
@@ -465,22 +471,49 @@ void ContactWidget::searchContacts() {
     contactListWidget->search(text);
 }
 
-void ContactWidget::showFriendDetails(const Friend* m_friend) {
-    qDebug() << __func__ << m_friend->getId().toString();
-    if (about) {
-        contentLayout->removeWidget(about.get());
-    }
+void ContactWidget::showFriendDetails(const Friend* f) {
+    qDebug() << __func__ << f->getIdAsString();
+    removeAllDetails();
 
-    about = std::make_unique<AboutFriendForm>(m_friend, this);
+    friendAbout = std::make_unique<AboutFriendForm>(f, this);
     //    connect(about.get(), &AboutFriendForm::histroyRemoved, this,
     //    &FriendWidget::friendHistoryRemoved);
-    contentLayout->addWidget(about.get());
-    contentLayout->setCurrentWidget(about.get());
+    contentLayout->addWidget(friendAbout.get());
+    contentLayout->setCurrentWidget(friendAbout.get());
 }
 
 void ContactWidget::removeFriendDetails(const Friend* f) {
-    if (about) {
-        contentLayout->removeWidget(about.get());
-        about.reset();
+    if (friendAbout && friendAbout->getId() == f->getId()) {
+        contentLayout->removeWidget(friendAbout.get());
+        friendAbout.reset();
+    }
+}
+
+void ContactWidget::showGroupDetails(const Group* g) {
+    qDebug() << __func__ << g->getIdAsString();
+
+    removeAllDetails();
+
+    groupAbout = std::make_unique<AboutGroupForm>(g, this);
+    contentLayout->addWidget(groupAbout.get());
+    contentLayout->setCurrentWidget(groupAbout.get());
+}
+
+void ContactWidget::removeGroupDetails(const Group* g) {
+    if (groupAbout && groupAbout->getId() == g->getId()) {
+        contentLayout->removeWidget(groupAbout.get());
+        groupAbout.reset();
+    }
+}
+
+void ContactWidget::removeAllDetails() {
+    if (groupAbout) {
+        contentLayout->removeWidget(groupAbout.get());
+        groupAbout.reset();
+    }
+
+    if (friendAbout) {
+        contentLayout->removeWidget(friendAbout.get());
+        friendAbout.reset();
     }
 }

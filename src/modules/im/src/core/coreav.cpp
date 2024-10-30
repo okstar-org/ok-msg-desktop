@@ -508,7 +508,7 @@ VideoSource* CoreAV::getVideoSourceFromCall(QString friendNum) const {
 void CoreAV::joinGroupCall(const Group& group) {
     QWriteLocker locker{&callsLock};
 
-    qDebug() << QString("Joining group call %1").arg(group.getId());
+    qDebug() << QString("Joining group call %1").arg(group.getIdAsString());
 
     // Audio backend must be set before starting a call
     assert(audioCtrl != nullptr);
@@ -518,7 +518,7 @@ void CoreAV::joinGroupCall(const Group& group) {
     // Audio
     groupcall->moveToThread(this->thread());
 
-    auto ret = groupCalls.emplace(group.getId(), std::move(groupcall));
+    auto ret = groupCalls.emplace(group.getIdAsString(), std::move(groupcall));
     if (!ret.second) {
         qWarning() << "This group call already exists, not joining!";
         return;
@@ -605,7 +605,7 @@ bool CoreAV::isGroupCallInputMuted(const Group* g) const {
         return false;
     }
 
-    const QString groupId = g->getId();
+    const QString groupId = g->getIdAsString();
     auto it = groupCalls.find(groupId);
     return (it != groupCalls.end()) && it->second->getMuteMic();
 }
@@ -622,7 +622,7 @@ bool CoreAV::isGroupCallOutputMuted(const Group* g) const {
         return false;
     }
 
-    const QString groupId = g->getId();
+    const QString groupId = g->getIdAsString();
     auto it = groupCalls.find(groupId);
     return (it != groupCalls.end()) && it->second->getMuteVol();
 }

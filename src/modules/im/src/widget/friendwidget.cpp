@@ -61,7 +61,6 @@
  */
 FriendWidget::FriendWidget(Friend* f, QWidget* parent)
         : GenericChatroomWidget(ChatType::Chat, f->getId(), parent), about{nullptr}, m_friend{f} {
-    qDebug() << __func__ << "friend:" << f->getId();
     setCursor(Qt::PointingHandCursor);
 
     auto profile = Nexus::getProfile();
