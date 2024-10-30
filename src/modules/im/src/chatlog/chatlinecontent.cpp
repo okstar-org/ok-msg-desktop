@@ -16,7 +16,7 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QMenu>
 #include "src/chatlog/content/text.h"
-
+namespace module::im {
 void ChatLineContent::setIndex(int r, int c) {
     row = r;
     col = c;
@@ -91,3 +91,4 @@ void ChatLineContent::showContextMenu(const QPoint& pos) const {
     QAction* selectedAction = menu.exec(pos);
     qDebug() << "Selected action:" << selectedAction;
 }
+}  // namespace module::im

@@ -17,7 +17,7 @@
 
 #include <QLinearGradient>
 #include <QPixmap>
-
+namespace module::im {
 class QTimer;
 
 class NotificationIcon : public ChatLineContent {
@@ -37,6 +37,7 @@ protected:
 
 private slots:
     void updateGradient();
+
 private:
     QSize size;
     QPixmap pmap;
@@ -46,5 +47,5 @@ private:
     qreal dotWidth = 0.2;
     qreal alpha = 0.0;
 };
-
+}  // namespace module::im
 #endif  // NOTIFICATIONICON_H

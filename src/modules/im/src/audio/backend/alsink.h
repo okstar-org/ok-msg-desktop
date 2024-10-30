@@ -19,7 +19,7 @@
 #include "base/compatiblerecursivemutex.h"
 #include "src/audio/iaudiosink.h"
 #include "src/base/interface.h"
-
+namespace module::im {
 class OpenAL;
 class QMutex;
 class AlSink : public QObject, public IAudioSink {
@@ -52,5 +52,5 @@ private:
     bool killed = false;
     mutable CompatibleRecursiveMutex killLock;
 };
-
+}  // namespace module::im
 #endif  // ALSINK_H

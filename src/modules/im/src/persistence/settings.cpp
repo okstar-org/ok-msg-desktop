@@ -46,7 +46,7 @@
  * for some general purpose widgets, such as MainWindows or Splitters,
  * which have widget->saveX() and widget->loadX() methods.
  */
-
+namespace module::im {
 const QString Settings::globalSettingsFile = APPLICATION_ALIAS "-" OK_IM_MODULE ".ini";
 
 CompatibleRecursiveMutex Settings::bigLock;
@@ -111,7 +111,9 @@ void Settings::loadGlobal() {
 
     // 自动登录
     s.beginGroup("Login");
-    { autoLogin = s.value("autoLogin", false).toBool(); }
+    {
+        autoLogin = s.value("autoLogin", false).toBool();
+    }
     s.endGroup();
     // 语言
     s.beginGroup("General");
@@ -192,7 +194,9 @@ void Settings::loadGlobal() {
     s.endGroup();
 
     s.beginGroup("Chat");
-    { chatMessageFont = s.value("chatMessageFont", Style::getFont(Style::Big)).value<QFont>(); }
+    {
+        chatMessageFont = s.value("chatMessageFont", Style::getFont(Style::Big)).value<QFont>();
+    }
     s.endGroup();
     // 隐私
     s.beginGroup("State");
@@ -481,7 +485,9 @@ void Settings::saveGlobal() {
     s.clear();
 
     s.beginGroup("Login");
-    { s.setValue("autoLogin", autoLogin); }
+    {
+        s.setValue("autoLogin", autoLogin);
+    }
     s.endGroup();
 
     s.beginGroup("General");
@@ -543,7 +549,9 @@ void Settings::saveGlobal() {
     s.endGroup();
 
     s.beginGroup("Chat");
-    { s.setValue("chatMessageFont", chatMessageFont); }
+    {
+        s.setValue("chatMessageFont", chatMessageFont);
+    }
     s.endGroup();
 
     s.beginGroup("State");
@@ -2092,3 +2100,4 @@ ICoreSettings::ProxyType Settings::fixInvalidProxyType(ICoreSettings::ProxyType 
             return ICoreSettings::ProxyType::ptNone;
     }
 }
+}  // namespace module::im

@@ -16,7 +16,7 @@
 #include "../chatlinecontent.h"
 
 #include <QPixmap>
-
+namespace module::im {
 class Image : public ChatLineContent {
 public:
     Image(QSize size, const QString& filename);
@@ -36,5 +36,6 @@ private:
     QSize size;
     QPixmap pmap;
 };
+}  // namespace module::im
 
 #endif  // IMAGE_H

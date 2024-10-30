@@ -15,7 +15,7 @@
 #include "src/audio/audio.h"
 #include "src/audio/backend/openal.h"
 #include "src/audio/iaudiosettings.h"
-
+namespace module::im {
 /**
  * @brief Select the audio backend
  * @param settings Audio settings to use
@@ -24,3 +24,4 @@
 std::unique_ptr<IAudioControl> Audio::makeAudio(IAudioSettings& settings) {
     return std::unique_ptr<IAudioControl>(new OpenAL());
 }
+}  // namespace module::im

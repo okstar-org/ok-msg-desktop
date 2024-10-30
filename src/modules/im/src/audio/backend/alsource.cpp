@@ -12,7 +12,7 @@
 
 #include "src/audio/backend/alsource.h"
 #include "src/audio/backend/openal.h"
-
+namespace module::im {
 /**
  * @brief Emits audio frames captured by an input device or other audio source.
  */
@@ -45,3 +45,4 @@ void AlSource::kill() {
     killLock.unlock();
     emit invalidated();
 }
+}  // namespace module::im

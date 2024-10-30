@@ -17,7 +17,7 @@
 #include <QTextDocument>
 
 #include <memory>
-
+namespace module::im {
 class QIcon;
 
 class CustomTextDocument : public QTextDocument {
@@ -31,5 +31,5 @@ protected:
 private:
     QList<std::shared_ptr<QIcon>> emoticonIcons;
 };
-
+}  // namespace module::im
 #endif  // CUSTOMTEXTDOCUMENT_H

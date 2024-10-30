@@ -20,7 +20,7 @@
 #include <QVector>
 #include <memory>
 #include "src/persistence/history.h"
-
+namespace module::im {
 class ChatLog;
 class ChatLineContent;
 class QGraphicsScene;
@@ -81,5 +81,5 @@ signals:
     // 引用事件
     void replyEvent(IChatItem*);
 };
-
+}  // namespace module::im
 #endif  // CHATLINE_H

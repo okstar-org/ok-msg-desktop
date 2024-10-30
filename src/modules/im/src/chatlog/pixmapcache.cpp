@@ -11,7 +11,7 @@
  */
 
 #include "pixmapcache.h"
-
+namespace module::im {
 QPixmap PixmapCache::get(const QString& filename, QSize size) {
     auto itr = cache.find(filename);
 
@@ -33,3 +33,4 @@ PixmapCache& PixmapCache::getInstance() {
     static PixmapCache instance;
     return instance;
 }
+}  // namespace module::im

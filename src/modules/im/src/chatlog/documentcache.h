@@ -14,7 +14,7 @@
 #define DOCUMENTCACHE_H
 
 #include <QStack>
-
+namespace module::im {
 class QTextDocument;
 
 class DocumentCache {
@@ -33,5 +33,5 @@ private:
 private:
     QStack<QTextDocument*> documents;
 };
-
+}  // namespace module::im
 #endif  // DOCUMENTCACHE_H

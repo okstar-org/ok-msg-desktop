@@ -20,7 +20,7 @@
  * @brief Can play audio via the speakers or some other audio device. Allocates
  *        and frees the audio ressources internally.
  */
-
+namespace module::im {
 AlSink::~AlSink() {
     QMutexLocker{&killLock};
 
@@ -92,3 +92,4 @@ AlSink::operator bool() const {
 
     return !killed;
 }
+}  // namespace module::im

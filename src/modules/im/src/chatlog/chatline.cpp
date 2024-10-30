@@ -15,7 +15,7 @@
 
 #include <QDebug>
 #include <QGraphicsScene>
-
+namespace module::im {
 void IChatItem::moveBy(qreal dx, qreal dy) {
     for (ChatLineContent* content : contents()) {
         content->moveBy(dx, dy);
@@ -85,3 +85,4 @@ void IChatItem::reloadTheme() {
 }
 
 IChatItem::IChatItem(const QString& id) : id(id) {}
+}  // namespace module::im

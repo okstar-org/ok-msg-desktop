@@ -32,7 +32,7 @@
 
 #include <AL/al.h>
 #include <AL/alc.h>
-
+namespace module::im {
 #ifndef ALC_ALL_DEVICES_SPECIFIER
 // compatibility with older versions of OpenAL
 #include <AL/alext.h>
@@ -150,5 +150,5 @@ protected:
     const qreal maxInThreshold = 0.4;
     int16_t* inputBuffer = nullptr;
 };
-
+}  // namespace module::im
 #endif  // OPENAL_H

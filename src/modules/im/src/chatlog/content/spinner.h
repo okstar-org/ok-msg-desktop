@@ -18,7 +18,7 @@
 #include <QObject>
 #include <QPixmap>
 #include <QTimer>
-
+namespace module::im {
 class QVariantAnimation;
 
 class Spinner : public ChatLineContent {
@@ -49,5 +49,5 @@ private:
 private slots:
     void timeout();
 };
-
+}  // namespace module::im
 #endif  // SPINNER_H

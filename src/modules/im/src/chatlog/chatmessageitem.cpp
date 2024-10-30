@@ -12,7 +12,7 @@
 
 #include "chatmessageitem.h"
 #include <QGraphicsProxyWidget>
-#include <QGraphicsScene>
+
 #include "chatlog.h"
 #include "content/broken.h"
 #include "content/contactavatar.h"
@@ -22,6 +22,7 @@
 #include "src/persistence/settings.h"
 #include "src/widget/widget.h"
 
+namespace module::im {
 ChatMessageBox::ChatMessageBox(const QPixmap& avatar,
                                const QString& contactName,
                                const QString& message,
@@ -289,3 +290,4 @@ QList<ChatLineContent*> ChatNotificationBox::contents() {
     if (iconItem) return QList<ChatLineContent*>({iconItem, textItem});
     return QList<ChatLineContent*>({textItem});
 }
+}  // namespace module::im

@@ -13,6 +13,8 @@
 #include "simpletext.h"
 #include <QPainter>
 
+namespace module::im {
+
 SimpleText::SimpleText(const QString& txt, const QFont& font)
         : ChatLineContent(ContentType::CHAT_TEXT), text(txt), defFont(font) {
     color = Style::getColor(colorRole);
@@ -73,3 +75,4 @@ void SimpleText::reloadTheme() {
     if (!customColor) color = Style::getColor(colorRole);
 }
 const void* SimpleText::getContent() { return &text; }
+}  // namespace module::im

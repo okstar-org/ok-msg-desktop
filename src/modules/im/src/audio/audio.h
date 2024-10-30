@@ -13,6 +13,8 @@
 #ifndef AUDIO_H
 #define AUDIO_H
 
+namespace module::im {
+
 #include <memory>
 
 class IAudioControl;
@@ -21,5 +23,7 @@ class Audio {
 public:
     static std::unique_ptr<IAudioControl> makeAudio(IAudioSettings& settings);
 };
+
+}  // namespace module::im
 
 #endif  // AUDIO_H

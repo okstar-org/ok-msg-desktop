@@ -16,7 +16,7 @@
 #include <QDateTime>
 #include <QTextDocument>
 #include "text.h"
-
+namespace module::im {
 class QTextDocument;
 
 class Timestamp : public Text {
@@ -31,5 +31,5 @@ protected:
 private:
     QDateTime time;
 };
-
+}  // namespace module::im
 #endif  // TIMESTAMP_H

@@ -20,7 +20,7 @@
 #include "chatline.h"
 #include "chatmessage.h"
 #include "src/lib/settings/style.h"
-
+namespace module::im {
 class QGraphicsScene;
 class QGraphicsRectItem;
 class QMouseEvent;
@@ -185,5 +185,5 @@ private slots:
     void onVScrollBarValueChanged(int value);
     void clearChat();
 };
-
+}  // namespace module::im
 #endif  // CHATLOG_H
