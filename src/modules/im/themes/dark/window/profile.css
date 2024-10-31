@@ -10,14 +10,73 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#selfAvatar:hover
-{
+#selfAvatar:hover {
     border-radius: 6px;
     background-color: #ccc;
 }
 
-ProfileForm QScrollArea
-{
-   border: 0px solid; 
+ProfileForm QScrollArea {
+    background: @groundBase;
+    border: 0px solid;
 }
 
+#scrollAreaWidgetContents {
+    border: 0px solid;
+}
+
+QFrame#line{
+    background: white;
+    border:0px solid;
+}
+
+QGroupBox {
+    background: @groundBase;
+    margin-top: 1.8em;
+    border-style: solid;
+    border-radius: 5px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    left: 5px;
+    top: 2px;
+}
+
+QToolButton#qrcodeButton{
+    border: 0px solid;
+    border-radius: 5px;
+    background-color: transparent;
+    padding: 2px;
+}
+
+QToolButton#qrcodeButton:hover{
+    background-color: #e7e8f4;
+}
+
+
+.QPushButton
+{
+    color: #e8e8e8;
+    background: #262626;
+    border:0px solid;
+    border-radius: 3px;
+    padding: 6px 10px;
+}
+
+.QPushButton:hover
+{
+    background: #303030;
+}
+
+.QPushButton:pressed
+{
+    background: #202020;
+}
+
+QLineEdit{
+    color: #e8e8e8;
+    border: 1px solid #131313;
+    background-color: #262626;
+    border-radius: 3px;
+}

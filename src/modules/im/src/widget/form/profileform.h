@@ -55,6 +55,7 @@ public slots:
 protected:
     virtual bool eventFilter(QObject* object, QEvent* event) override;
     virtual void showEvent(QShowEvent* e) override;
+    void contextMenuEvent(QContextMenuEvent* e);
 
 private slots:
     void setPasswordButtonsText();
@@ -69,6 +70,7 @@ private slots:
     void onChangePassClicked();
     void onAvatarClicked();
     void showProfilePictureContextMenu(const QPoint& point);
+    void showQRCode();
 
 private:
     void retranslateUi();

@@ -31,23 +31,24 @@ QRWidget::QRWidget(QSize& size_, QWidget* parent)
         , size{size_}
 
 {
-    setFixedSize(size);
-
     image = new QImage(size, QImage::Format_RGB32);
-    auto layout = new QVBoxLayout(this);
-    label = new QLabel(this);
-    layout->addWidget(label);
-    setLayout(layout);
+    image->fill(QColor(0, 0, 0, 0));
+    setFixedSize(size);
 }
 
 QRWidget::~QRWidget() { delete image; }
 
+QSize QRWidget::sizeHint() const { return minimumSizeHint(); }
+
+QSize QRWidget::minimumSizeHint() const { return size.grownBy(this->contentsMargins()); }
+
 void QRWidget::setQRData(const QString& data) {
     this->data = data;
+    paintImage();
     update();
 }
 
-QImage* QRWidget::getImage() { return image; }
+const QImage* QRWidget::getImage() { return image; }
 
 /**
  * @brief QRWidget::saveImage
@@ -60,8 +61,10 @@ bool QRWidget::saveImage(QString path) {
 }
 
 void QRWidget::paintEvent(QPaintEvent* e) {
-    paintImage();
-    label->setPixmap(QPixmap::fromImage(*image));
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::SmoothPixmapTransform, false);
+    QRect rect = this->contentsRect();
+    painter.drawImage(rect, *image);
 }
 
 // http://stackoverflow.com/questions/21400254/how-to-draw-a-qr-code-with-qt-in-native-c-c

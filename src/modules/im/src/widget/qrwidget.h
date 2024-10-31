@@ -23,8 +23,10 @@ class QRWidget : public QWidget {
 public:
     explicit QRWidget(QSize& size, QWidget* parent = nullptr);
     ~QRWidget();
+    QSize sizeHint() const;
+    QSize minimumSizeHint() const;
     void setQRData(const QString& data);
-    QImage* getImage();
+    const QImage* getImage();
     bool saveImage(QString path);
 
 protected:
@@ -33,9 +35,8 @@ protected:
 private:
     QString data;
     void paintImage();
-    QImage* image;
+    QImage* image = nullptr;
     QSize size;
-    QLabel* label;
 };
 
 #endif  // QRWIDGET_H
