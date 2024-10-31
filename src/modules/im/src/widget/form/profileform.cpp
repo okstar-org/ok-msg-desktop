@@ -86,6 +86,8 @@ ProfileForm::ProfileForm(IProfileInfo* profileInfo, QWidget* parent)
         : QWidget{parent}, qr{nullptr}, profileInfo{profileInfo} {
     bodyUI = new Ui::IdentitySettings;
     bodyUI->setupUi(this);
+    this->layout()->setContentsMargins(16, 5, 16, 11);
+    bodyUI->formLayout->setVerticalSpacing(2);
 
     bodyUI->nickname->setText(profileInfo->getNickname());
     bodyUI->name->setText(profileInfo->getFullName());
@@ -126,7 +128,7 @@ ProfileForm::ProfileForm(IProfileInfo* profileInfo, QWidget* parent)
             &ProfileForm::onSelfAvatarLoaded);
 
     // avatar
-    QSize size(186, 186);
+    QSize size(100, 100);
     profilePicture = new MaskablePixmapWidget(this, size, ":/img/avatar_mask.svg");
     profilePicture->setPixmap(QPixmap(":/img/contact_dark.svg"));
     profilePicture->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -139,18 +141,24 @@ ProfileForm::ProfileForm(IProfileInfo* profileInfo, QWidget* parent)
     connect(profilePicture, &MaskablePixmapWidget::customContextMenuRequested, this,
             &ProfileForm::showProfilePictureContextMenu);
 
-    bodyUI->publicGroup->layout()->addWidget(profilePicture);
+    bodyUI->avatarLayout->addWidget(profilePicture);
+    bodyUI->avatarLayout->setAlignment(profilePicture, Qt::AlignLeft);
     onSelfAvatarLoaded(profileInfo->getAvatar());
 
     // QrCode
+    bodyUI->qrcodeButton->setIcon(QIcon(Style::getImagePath("window/qrcode.svg")));
+    bodyUI->qrcodeButton->setCursor(Qt::PointingHandCursor);
+    //bodyUI->qrcodeButton->hide();
     qr = new QRWidget(size, this);
+    qr->setWindowFlags(Qt::Popup);
     qr->setQRData(profileInfo->getUsername());
-    bodyUI->publicGroup->layout()->addWidget(qr);
+    //bodyUI->publicGroup->layout()->addWidget(qr);
 
     setStyleSheet(Style::getStylesheet("window/profile.css"));
 
     retranslateUi();
     settings::Translator::registerHandler(std::bind(&ProfileForm::retranslateUi, this), this);
+    connect(bodyUI->qrcodeButton, &QToolButton::clicked, this, &ProfileForm::showQRCode);
 }
 
 
@@ -179,9 +187,10 @@ void ProfileForm::showTo(ContentLayout* contentLayout) {
     QString defaultPath = QDir(Settings::getInstance().getSettingsDirPath()).path().trimmed();
     QString appPath = QApplication::applicationDirPath();
     QString dirPath = portable ? appPath : defaultPath;
+    QString url = QUrl::fromLocalFile(dirPath).toString();
 
     QString dirPrLink = tr("Current profile location: %1")
-                                .arg(QString("<a href=\"file://%1\">%1</a>").arg(dirPath));
+                                .arg(QString("<a href=\"%1\">%2</a>").arg(url).arg(dirPath));
 
     bodyUI->dirPrLink->setText(dirPrLink);
     bodyUI->dirPrLink->setOpenExternalLinks(true);
@@ -208,6 +217,15 @@ void ProfileForm::showEvent(QShowEvent* e) {
     }
 }
 
+void ProfileForm::contextMenuEvent(QContextMenuEvent* e) {
+
+    QMenu menu(this);
+    menu.addAction("Refresh", [this]() {
+        setStyleSheet(Style::getStylesheet(R"(E:\Code\ok-msg-desktop\src\modules\im\themes\default\window\profile.css)"));   
+    });
+    menu.exec(e->globalPos());
+}
+
 void ProfileForm::showProfilePictureContextMenu(const QPoint& point) {
     const QPoint pos = profilePicture->mapToGlobal(point);
 
@@ -219,6 +237,12 @@ void ProfileForm::showProfilePictureContextMenu(const QPoint& point) {
     if (selectedItem == removeAction) {
         profileInfo->removeAvatar();
     }
+}
+
+void ProfileForm::showQRCode() {
+    QPoint pos = bodyUI->qrcodeButton->mapToGlobal(QPoint(0, bodyUI->qrcodeButton->height() + 2));
+    qr->move(pos);
+    qr->show();
 }
 
 void ProfileForm::copyIdClicked() {

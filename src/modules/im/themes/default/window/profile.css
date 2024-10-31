@@ -18,5 +18,72 @@
 
 ProfileForm QScrollArea
 {
-   border: 0px solid; 
+    background: @groundBase;
+    border: 0px solid; 
+}
+
+#scrollAreaWidgetContents
+{
+    border: 0px solid;
+}
+
+QFrame#line{
+    background: white;
+    border:0px solid;
+}
+
+QGroupBox {
+    background: white;
+    margin-top: 1.8em;
+    border-style: solid;
+    border-radius: 5px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    left: 5px;
+    top: 2px;
+}
+
+QToolButton#qrcodeButton{
+    border: 0px solid;
+    border-radius: 5px;
+    background-color: transparent;
+    padding: 2px;
+}
+
+QToolButton#qrcodeButton:hover{
+    background-color: #e7e8f4;
+}
+
+QLabel{
+    color: #19171b;
+}
+
+.QPushButton
+{
+    color: #19171b;
+    background: white;
+    border:0px solid;
+    border-radius: 3px;
+    padding: 6px 10px;
+}
+
+.QPushButton:hover
+{
+    background: #f3f5f7;
+}
+
+.QPushButton:pressed
+{
+    background: #e9ebed;
+}
+
+QLineEdit
+{
+    color: #19171b;
+    border: 1px solid #E0DEDC;
+    background-color: white;
+    border-radius: 3px;
 }
