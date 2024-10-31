@@ -49,10 +49,10 @@
         </message>
     </context>
     <context>
-        <name>ChatForwardDialog</name>
+        <name>ContactSelectDialog</name>
         <message>
-            <source>Forward message to</source>
-            <translation>메시지를 전달</translation>
+            <source>Please select contact</source>
+            <translation>연락처를선택해주세요</translation>
         </message>
     </context>
     <context>

@@ -14,10 +14,10 @@
 <!DOCTYPE TS>
 <TS version="2.0" language="es_MX">
     <context>
-        <name>ChatForwardDialog</name>
+        <name>ContactSelectDialog</name>
         <message>
-            <source>Forward message to</source>
-            <translation>Reenviar mensaje a</translation>
+            <source>Please select contact</source>
+            <translation>Por favor, seleccione un contacto</translation>
         </message>
     </context>
     <context>

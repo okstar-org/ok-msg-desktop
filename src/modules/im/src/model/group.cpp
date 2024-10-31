@@ -63,7 +63,8 @@ Group::Group(const GroupId groupId_, const QString& name, bool isAvGroupchat,
         , groupQuery(groupQuery)
         , idHandler(idHandler)
         , role{Role::None}
-        , affiliation{Affiliation::None} {
+        , affiliation{Affiliation::None}
+        , peerCount{0} {
     // in groupchats, we only notify on messages containing your name <-- dumb
     // sound notifications should be on all messages, but system popup
     // notification on naming is appropriate
@@ -142,6 +143,9 @@ void Group::setMentionedFlag(bool f) { userWasMentioned = f; }
 bool Group::getMentionedFlag() const { return userWasMentioned; }
 
 void Group::setDesc(const QString& desc_) {
+    if (desc == desc_) {
+        return;
+    }
     desc = desc_;
     emit descChanged(desc);
 }

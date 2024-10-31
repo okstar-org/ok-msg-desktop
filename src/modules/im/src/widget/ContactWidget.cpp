@@ -80,7 +80,7 @@ ContactWidget::ContactWidget(QWidget* parent)
             &ContactWidget::onCoreChanged);
 
     connect(Widget::getInstance(), &Widget::friendRemoved, this, &ContactWidget::onFriendRemoved);
-
+    connect(Widget::getInstance(), &Widget::addMember, this, &ContactWidget::do_addContactToGroup);
     reloadTheme();
     settings::Translator::registerHandler([this] { retranslateUi(); }, this);
     retranslateUi();
@@ -516,4 +516,8 @@ void ContactWidget::removeAllDetails() {
         contentLayout->removeWidget(friendAbout.get());
         friendAbout.reset();
     }
+}
+
+void ContactWidget::do_addContactToGroup(const ContactId& id, const ContactId& gId) {
+    core->inviteToGroup(id, GroupId(gId));
 }

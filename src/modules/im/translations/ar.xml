@@ -13,10 +13,10 @@
 <!DOCTYPE TS>
 <TS version="2.0" language="ar">
     <context>
-        <name>ChatForwardDialog</name>
+        <name>ContactSelectDialog</name>
         <message>
-            <source>Forward message to</source>
-            <translation>إعادة توجيه الرسالة إلى</translation>
+            <source>Please select contact</source>
+            <translation>الرجاء اختيار جهة اتصال</translation>
         </message>
     </context>
     <context>

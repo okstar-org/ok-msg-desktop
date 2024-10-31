@@ -37,10 +37,10 @@
         </message>
     </context>
     <context>
-        <name>ChatForwardDialog</name>
+        <name>ContactSelectDialog</name>
         <message>
-            <source>Forward message to</source>
-            <translation>Nachricht weiterleiten an</translation>
+            <source>Please select contact</source>
+            <translation>Bitte einen Kontakt auswählen</translation>
         </message>
     </context>
     <context>

@@ -105,7 +105,7 @@ private:
     ICoreIdHandler& idHandler;
     QString subject;
     QString desc;
-    uint32_t peerCount;
+    quint64 peerCount;
     QMap<QString, QString> peerDisplayNames;
     bool hasNewMessages;
     bool userWasMentioned;

@@ -79,6 +79,7 @@ class IChatLog;
 class ChatHistory;
 class ChatWidget;
 class ContactWidget;
+class ContactSelectDialog;
 
 enum class DialogType { AddDialog, TransferDialog, SettingDialog, ProfileDialog, GroupDialog };
 
@@ -163,7 +164,7 @@ public slots:
     void onStopNotification();
     void outgoingNotification();
     void showForwardMessageDialog(const MsgId& msgId);
-    void removeForwardMessageDialog();
+    void showAddMemberDialog(const ContactId& groupId);
 
 signals:
     void friendAdded(const Friend* f);
@@ -189,8 +190,10 @@ signals:
     void toShowDetails(const ContactId& to);
     void toDeleteChat(const QString& to);
     void toClearHistory(const QString& to);
+
     void toForwardMessage(const MsgId& msgId);
     void forwardMessage(const ContactId& id, const MsgId& msgId);
+    void addMember(const ContactId& id, const ContactId& gId);
 
 protected:
     void showEvent(QShowEvent* e) override;
@@ -256,9 +259,6 @@ private:
 
     Ui::IMMainWindow* ui;
     QSplitter* centralLayout;
-    //    QPoint dragPosition;
-
-    std::unique_ptr<QDialog> modalDialog;
 
     ChatWidget* chatWidget;
     ContactWidget* contactWidget;

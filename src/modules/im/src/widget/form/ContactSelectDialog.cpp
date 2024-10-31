@@ -10,9 +10,9 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#include "ChatForwardDialog.h"
+#include "ContactSelectDialog.h"
 
-#include "ui_ChatForwardDialog.h"
+#include "ui_ContactSelectDialog.h"
 
 #include "src/friendlist.h"
 #include "src/widget/ContactListWidget.h"
@@ -22,11 +22,15 @@
 
 #include <src/nexus.h>
 
-ChatForwardDialog::ChatForwardDialog(const MsgId& msgId, QWidget* parent)
-        : QDialog(parent), ui(new Ui::ChatForwardDialog), msgId{msgId} {
+ContactSelectDialog::ContactSelectDialog(QWidget* parent, const QString& title)
+        : QDialog(parent), ui(new Ui::ContactSelectDialog) {
     ui->setupUi(this);
     setWindowModality(Qt::WindowModality::ApplicationModal);
-    setWindowTitle(tr("Forward message to"));
+    if (title.isEmpty())
+        setWindowTitle(tr("Please select contact"));
+    else
+        setWindowTitle(title);
+
     setAttribute(Qt::WA_QuitOnClose);
     setFixedWidth(260);
 
@@ -36,18 +40,18 @@ ChatForwardDialog::ChatForwardDialog(const MsgId& msgId, QWidget* parent)
     contactListWidget->layout()->setAlignment(Qt::AlignTop | Qt::AlignVCenter);
 
     connect(contactListWidget, &ContactListWidget::friendClicked, this,
-            &ChatForwardDialog::onFriendClicked);
+            &ContactSelectDialog::onFriendClicked);
 
     auto w = Widget::getInstance();
 
-    connect(w, &Widget::friendRemoved, this, &ChatForwardDialog::onFriendDeleted);
+    connect(w, &Widget::friendRemoved, this, &ContactSelectDialog::onFriendDeleted);
 
     ui->scrollAreaWidgetContents->layout()->addWidget(contactListWidget);
 }
 
-ChatForwardDialog::~ChatForwardDialog() { delete ui; }
+ContactSelectDialog::~ContactSelectDialog() { delete ui; }
 
-void ChatForwardDialog::showEvent(QShowEvent* e) {
+void ContactSelectDialog::showEvent(QShowEvent* e) {
     auto& fl = Core::getInstance()->getFriendList();
     for (auto f : fl.getAllFriends()) {
         auto fw = contactListWidget->addFriend(f->getId());
@@ -56,12 +60,13 @@ void ChatForwardDialog::showEvent(QShowEvent* e) {
     QDialog::showEvent(e);
 }
 
-void ChatForwardDialog::onFriendClicked(FriendWidget* widget) {
+void ContactSelectDialog::onFriendClicked(FriendWidget* widget) {
     qDebug() << __func__ << widget;
-    emit Widget::getInstance() -> forwardMessage(widget->getContactId(), msgId);
+    emit contactClicked(widget->getContactId());
+    close();
 }
 
-void ChatForwardDialog::onFriendDeleted(const Friend* widget) {
+void ContactSelectDialog::onFriendDeleted(const Friend* widget) {
     qDebug() << __func__ << widget;
     contactListWidget->removeFriend(widget);
 }

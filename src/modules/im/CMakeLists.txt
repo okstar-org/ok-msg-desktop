@@ -268,9 +268,9 @@ set(${PROJECT_NAME}_SOURCES
 		src/widget/form/ChatReplyForm.ui
 		src/widget/form/ChatReplyForm.h
 		src/widget/form/ChatReplyForm.cpp
-		src/widget/form/ChatForwardDialog.h
-		src/widget/form/ChatForwardDialog.cpp
-		src/widget/form/ChatForwardDialog.ui
+		src/widget/form/ContactSelectDialog.h
+		src/widget/form/ContactSelectDialog.cpp
+		src/widget/form/ContactSelectDialog.ui
         src/widget/form/filesform.cpp
         src/widget/form/filesform.h
         src/widget/form/genericchatform.cpp

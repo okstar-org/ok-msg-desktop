@@ -33,10 +33,10 @@
         </message>
     </context>
     <context>
-        <name>ChatForwardDialog</name>
+        <name>ContactSelectDialog</name>
         <message>
-            <source>Forward message to</source>
-            <translation>Переслать сообщение на</translation>
+            <source>Please select contact</source>
+            <translation>Пожалуйста, выберите контакт</translation>
         </message>
     </context>
     <context>

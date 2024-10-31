@@ -70,7 +70,7 @@
 #include "src/platform/timer.h"
 #include "src/widget/ContactWidget.h"
 #include "src/widget/contentdialogmanager.h"
-#include "src/widget/form/ChatForwardDialog.h"
+#include "src/widget/form/ContactSelectDialog.h"
 #include "src/widget/form/addfriendform.h"
 #include "src/widget/form/filesform.h"
 #include "src/widget/form/groupinviteform.h"
@@ -149,18 +149,18 @@ Widget::Widget(IAudioControl& audio, QWidget* parent)  //
 
     // Preparing icons and set their size
     statusOnline = new QAction(this);
-    statusOnline->setIcon(ok::base::SvgUtils::prepareIcon(Status::getIconPath(Status::Status::Online),
-                                                icon_size, icon_size));
+    statusOnline->setIcon(ok::base::SvgUtils::prepareIcon(
+            Status::getIconPath(Status::Status::Online), icon_size, icon_size));
     connect(statusOnline, &QAction::triggered, this, &Widget::setStatusOnline);
 
     statusAway = new QAction(this);
-    statusAway->setIcon(
-            ok::base::SvgUtils::prepareIcon(Status::getIconPath(Status::Status::Away), icon_size, icon_size));
+    statusAway->setIcon(ok::base::SvgUtils::prepareIcon(Status::getIconPath(Status::Status::Away),
+                                                        icon_size, icon_size));
     connect(statusAway, &QAction::triggered, this, &Widget::setStatusAway);
 
     statusBusy = new QAction(this);
-    statusBusy->setIcon(
-            ok::base::SvgUtils::prepareIcon(Status::getIconPath(Status::Status::Busy), icon_size, icon_size));
+    statusBusy->setIcon(ok::base::SvgUtils::prepareIcon(Status::getIconPath(Status::Status::Busy),
+                                                        icon_size, icon_size));
     connect(statusBusy, &QAction::triggered, this, &Widget::setStatusBusy);
 
     actionLogout = new QAction(this);
@@ -172,8 +172,8 @@ Widget::Widget(IAudioControl& audio, QWidget* parent)  //
     actionQuit->setMenuRole(QAction::QuitRole);
 #endif
 
-    actionQuit->setIcon(ok::base::SvgUtils::prepareIcon(Style::getImagePath("rejectCall/rejectCall.svg"),
-                                              icon_size, icon_size));
+    actionQuit->setIcon(ok::base::SvgUtils::prepareIcon(
+            Style::getImagePath("rejectCall/rejectCall.svg"), icon_size, icon_size));
     connect(actionQuit, &QAction::triggered, qApp, &QApplication::quit);
 
     //  layout()->setContentsMargins(0, 0, 0, 0);
@@ -270,13 +270,13 @@ Widget::~Widget() {
 }
 
 void Widget::init() {
-
     connect(this, &Widget::toSendMessage, [&]() { ui->tabWidget->setCurrentIndex(0); });
     connect(this, &Widget::toShowDetails, [&]() { ui->tabWidget->setCurrentIndex(1); });
     // 显示转发消息对话框
     connect(this, &Widget::toForwardMessage, this, &Widget::showForwardMessageDialog);
-    // 关闭转发消息对话框
-    connect(this, &Widget::forwardMessage, this, &Widget::removeForwardMessageDialog);
+
+    // 添加好友到群聊
+    connect(this, &Widget::toAddMember, this, &Widget::showAddMemberDialog);
 
 #if UPDATE_CHECK_ENABLED
     updateCheck = std::unique_ptr<UpdateCheck>(new UpdateCheck(settings));
@@ -311,7 +311,6 @@ bool Widget::eventFilter(QObject* obj, QEvent* event) {
 }
 
 void Widget::updateIcons() {
-
     // Some builds of Qt appear to have a bug in icon loading:
     // QIcon::hasThemeIcon is sometimes unaware that the icon returned
     // from QIcon::fromTheme was a fallback icon, causing hasThemeIcon to
@@ -361,7 +360,6 @@ void Widget::updateIcons() {
     //  }
 }
 
-
 /**
  * @brief Switches to the About settings page.
  */
@@ -379,12 +377,9 @@ void Widget::moveEvent(QMoveEvent* event) {
     QWidget::moveEvent(event);
 }
 
-void Widget::closeEvent(QCloseEvent* event) {
-    QWidget::closeEvent(event);
-}
+void Widget::closeEvent(QCloseEvent* event) { QWidget::closeEvent(event); }
 
-void Widget::changeEvent(QEvent* event) {
-}
+void Widget::changeEvent(QEvent* event) {}
 
 void Widget::resizeEvent(QResizeEvent* event) {
     saveWindowGeometry();
@@ -1232,15 +1227,17 @@ void Widget::resetIcon() {
 }
 
 void Widget::showForwardMessageDialog(const MsgId& msgId) {
-    modalDialog = std::make_unique<ChatForwardDialog>(msgId, this);
-    int e = modalDialog->exec();
-    qDebug() << __func__ << "=>" << e;
+    ContactSelectDialog modalDialog(this);
+    connect(&modalDialog, &ContactSelectDialog::contactClicked,
+            [this, msgId](const ContactId& cId) { emit forwardMessage(cId, msgId); });
+    modalDialog.exec();
 }
 
-void Widget::removeForwardMessageDialog() {
-    if (modalDialog) {
-        modalDialog->close();
-    }
+void Widget::showAddMemberDialog(const ContactId& groupId) {
+    ContactSelectDialog modalDialog(this);
+    connect(&modalDialog, &ContactSelectDialog::contactClicked,
+            [this, groupId](const ContactId& cId) { emit addMember(cId, groupId); });
+    modalDialog.exec();
 }
 
 bool Widget::event(QEvent* e) {
@@ -1298,8 +1295,6 @@ void Widget::onEventIconTick() {
         updateIcons();
     }
 }
-
-
 
 void Widget::setStatusOnline() {
     //  if (!ui->statusButton->isEnabled()) {

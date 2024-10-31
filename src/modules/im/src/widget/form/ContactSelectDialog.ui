@@ -12,8 +12,8 @@
   -->
 
 <ui version="4.0">
-    <class>ChatForwardDialog</class>
-    <widget class="QDialog" name="ChatForwardDialog">
+    <class>ContactSelectDialog</class>
+    <widget class="QDialog" name="ContactSelectDialog">
         <property name="geometry">
             <rect>
                 <x>0</x>

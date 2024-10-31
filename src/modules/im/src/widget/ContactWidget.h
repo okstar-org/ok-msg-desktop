@@ -71,6 +71,7 @@ public slots:
      * on开头接受core事件，操作界面
      */
     void do_openAddForm();
+    void do_addContactToGroup(const ContactId& id, const ContactId& gId);
 
     void onCoreChanged(Core* core);
     void onFriendAdded(const FriendInfo& frnd);

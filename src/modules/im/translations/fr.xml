@@ -41,10 +41,10 @@
         </message>
     </context>
     <context>
-        <name>ChatForwardDialog</name>
+        <name>ContactSelectDialog</name>
         <message>
-            <source>Forward message to</source>
-            <translation>Transmettre le message à</translation>
+            <source>Please select contact</source>
+            <translation>Veuillez sélectionner un contact</translation>
         </message>
     </context>
     <context>
