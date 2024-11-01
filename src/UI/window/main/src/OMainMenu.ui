@@ -18,8 +18,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>228</width>
-    <height>725</height>
+    <width>102</width>
+    <height>468</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -99,7 +99,7 @@
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="../../../../resources/resources.qrc">:/resources/images/avatar.png</pixmap>
+         <pixmap>:/resources/images/avatar.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -126,7 +126,7 @@
        </spacer>
       </item>
       <item alignment="Qt::AlignHCenter">
-          <widget class="ok::base::StyledIconButton" name="chatBtn">
+       <widget class="ok::base::StyledIconButton" name="chatBtn">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -147,6 +147,12 @@
         </property>
         <property name="text">
          <string/>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>40</width>
+          <height>40</height>
+         </size>
         </property>
         <property name="checkable">
          <bool>true</bool>
@@ -154,7 +160,7 @@
        </widget>
       </item>
       <item alignment="Qt::AlignHCenter">
-          <widget class="ok::base::StyledIconButton" name="platformBtn">
+       <widget class="ok::base::StyledIconButton" name="meetBtn">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -175,6 +181,46 @@
         </property>
         <property name="text">
          <string/>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>40</width>
+          <height>40</height>
+         </size>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item alignment="Qt::AlignHCenter">
+       <widget class="ok::base::StyledIconButton" name="platformBtn">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>52</width>
+          <height>52</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>52</width>
+          <height>52</height>
+         </size>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>40</width>
+          <height>40</height>
+         </size>
         </property>
         <property name="checkable">
          <bool>true</bool>
@@ -195,7 +241,7 @@
        </spacer>
       </item>
       <item alignment="Qt::AlignHCenter">
-          <widget class="ok::base::StyledIconButton" name="settingBtn">
+       <widget class="ok::base::StyledIconButton" name="settingBtn">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -217,6 +263,12 @@
         <property name="text">
          <string/>
         </property>
+        <property name="iconSize">
+         <size>
+          <width>40</width>
+          <height>40</height>
+         </size>
+        </property>
         <property name="checkable">
          <bool>true</bool>
         </property>
@@ -234,13 +286,11 @@
    <header location="global">src/modules/im/src/widget/tool/croppinglabel.h</header>
   </customwidget>
   <customwidget>
-      <class>ok::base::StyledIconButton</class>
+   <class>ok::base::StyledIconButton</class>
    <extends>QPushButton</extends>
-      <header location="global">src/base/stylediconbutton.h</header>
+   <header location="global">src/base/stylediconbutton.h</header>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="../../../../resources/resources.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

@@ -34,11 +34,9 @@ OMainMenu::OMainMenu(QWidget* parent) : QFrame(parent), ui(new Ui::OMainMenu), _
     setStyleSheet(qss);
 
     ui->chatBtn->setCursor(Qt::PointingHandCursor);
-    ui->chatBtn->setIconSize(QSize(40, 40));
     ui->settingBtn->setCursor(Qt::PointingHandCursor);
-    ui->settingBtn->setIconSize(QSize(40, 40));
     ui->platformBtn->setCursor(Qt::PointingHandCursor);
-    ui->platformBtn->setIconSize(QSize(40, 40));
+    ui->meetBtn->setCursor(Qt::PointingHandCursor);
 
     delayCaller_ = std::make_unique<base::DelayedCallTimer>();
 }

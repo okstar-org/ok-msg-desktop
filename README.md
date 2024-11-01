@@ -25,7 +25,7 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
 
 # 🖥️ Support platform（支持平台）
 
-| Platform       | Latest Build Status                                                                                                                                                                                        |
+| Meet           | Latest Build Status                                                                                                                                                                                        |
 |----------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | 🪟 Windows-x64 | [![Build on Windows](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/win.yml/badge.svg)](https://github.com/CefView/QCefView/actions/workflows/build-windows-x86_64.yml)                    |
 | 🐧 Linux-x64   | [![Build on Ubuntu](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/ubuntu-22.04.yml/badge.svg)](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/ubuntu-22.04.yml/badge.svg) |
@@ -39,7 +39,7 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
 - C++版本：C++20
 - Qt版本：Qt5.15.x
 
-| Platform       | Build Document                                          |
+| Meet           | Build Document                                          |
 |----------------|---------------------------------------------------------|
 | 🪟 Windows-x64 | [Build on Windows](docs%2Fbuildings%2Fwindows.md)       |
 | 🐧 Ubuntu-x64  | [Build on Ubuntu](docs%2Fbuildings%2Fubuntu.md)         |
