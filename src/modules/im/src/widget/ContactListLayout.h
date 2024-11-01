@@ -21,20 +21,18 @@
 class FriendWidget;
 class ContactListWidget;
 
-class FriendListLayout : public QVBoxLayout {
+class ContactListLayout : public QVBoxLayout {
     Q_OBJECT
 public:
-    explicit FriendListLayout(QWidget* parent);
-    ~FriendListLayout();
+    explicit ContactListLayout(QWidget* parent);
+    ~ContactListLayout();
 
-    //    void addFriendWidget(FriendWidget* widget, Status::Status s);
     void removeFriendWidget(FriendWidget* widget);
     int indexOfFriendWidget(GenericChatItemWidget* widget, bool online) const;
-    void moveFriendWidgets(ContactListWidget* listWidget);
+
     int friendOnlineCount() const;
     int friendTotalCount() const;
 
-    bool hasChatrooms() const;
     void search(const QString& searchString);
 
     QLayout* getLayoutOnline() const;
@@ -42,11 +40,7 @@ public:
     void addWidget(GenericChatItemWidget* w);
 
 private:
-    void init();
-    QLayout* getFriendLayout(Status::Status s) const;
-
-    GenericChatItemLayout* friendOnlineLayout;
-    //    GenericChatItemLayout friendOfflineLayout;
+    GenericChatItemLayout* itemLayout;
 };
 
 #endif  // FRIENDLISTLAYOUT_H

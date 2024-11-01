@@ -78,9 +78,8 @@ private slots:
 
 private:
     Group* group;
-    QMenu* menu;
-    QAction* destroyGrpAct;
-    QAction* quitGroup;
+    Group::Affiliation aff;
+    QList<int> codes;
 };
 
 #endif  // GROUPWIDGET_H

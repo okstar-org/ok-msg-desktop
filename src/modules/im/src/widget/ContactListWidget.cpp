@@ -10,13 +10,13 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#include "ChatWidget.h"
 #include "ContactListWidget.h"
+#include "ChatWidget.h"
+#include "ContactListLayout.h"
 #include "base/OkSettings.h"
 #include "base/times.h"
 #include "circlewidget.h"
 #include "contentdialogmanager.h"
-#include "friendlistlayout.h"
 #include "friendwidget.h"
 #include "groupwidget.h"
 #include "src/friendlist.h"
@@ -49,7 +49,7 @@ ContactListWidget::ContactListWidget(QWidget* parent, bool groupsOnTop)
     //    groupLayout.getLayout()->setMargin(0);
 
     // Prevent QLayout's add child warning before setting the mode.
-    listLayout = new FriendListLayout(this);
+    listLayout = new ContactListLayout(this);
     setLayout(listLayout);
 
     onGroupchatPositionChanged(groupsOnTop);

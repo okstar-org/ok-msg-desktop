@@ -117,14 +117,14 @@ ChatWidget::ChatWidget(QWidget* parent)
 
     ui->mainSplitter->addWidget(contentWidget.get());
     ui->mainSplitter->setSizes(QList<int>() << 200 << 500);
+    ui->mainSplitter->setStretchFactor(1, 0);
+    ui->mainSplitter->setChildrenCollapsible(false);
 
     const Settings& s = Settings::getInstance();
 
-    reloadTheme();
     setupStatus();
     setupSearch();
     init();
-
     retranslateUi();
 }
 

@@ -28,7 +28,7 @@ class Widget;
 class FriendWidget;
 class GroupWidget;
 class Core;
-class FriendListLayout;
+class ContactListLayout;
 class GenericChatroomWidget;
 class Friend;
 class ContentLayout;
@@ -87,7 +87,7 @@ private:
     SortingMode mode;
 
     bool groupsOnTop;
-    FriendListLayout* listLayout;
+    ContactListLayout* listLayout;
 
     QMap<QString, FriendWidget*> friendWidgets;
     QMap<QString, GroupWidget*> groupWidgets;

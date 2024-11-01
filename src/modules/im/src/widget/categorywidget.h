@@ -17,7 +17,7 @@
 #include "src/core/core.h"
 #include "src/model/status.h"
 
-class FriendListLayout;
+class ContactListLayout;
 class ContactListWidget;
 class FriendWidget;
 class QVBoxLayout;
@@ -62,7 +62,7 @@ private:
     virtual void onAddFriendWidget(FriendWidget*) {}
 
     QWidget* listWidget;
-    FriendListLayout* listLayout;
+    ContactListLayout* listLayout;
     QVBoxLayout* fullLayout;
     QVBoxLayout* mainLayout = nullptr;
     QHBoxLayout* topLayout = nullptr;

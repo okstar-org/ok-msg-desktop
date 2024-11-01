@@ -306,10 +306,11 @@ set(${PROJECT_NAME}_SOURCES
         src/widget/form/tabcompleter.h
 		src/widget/form/CallDurationForm.h
 		src/widget/form/CallDurationForm.cpp
-        src/widget/friendlistlayout.cpp
-        src/widget/friendlistlayout.h
-        src/widget/friendlistwidget.cpp
+		src/widget/ContactListLayout.cpp
+		src/widget/ContactListLayout.h
+		src/widget/ContactListWidget.cpp
 		src/widget/ContactListWidget.h
+
         src/widget/friendwidget.cpp
         src/widget/friendwidget.h
         src/widget/genericchatitemlayout.cpp

@@ -30,7 +30,7 @@ class FriendWidget;
 class GroupWidget;
 // class CircleWidget;
 // class CategoryWidget;
-class FriendListLayout;
+class ContactListLayout;
 class GenericChatroomWidget;
 class Friend;
 class ContentLayout;
@@ -132,7 +132,7 @@ private:
     SortingMode mode;
 
     bool groupsOnTop;
-    FriendListLayout* listLayout;
+    ContactListLayout* listLayout;
     //  GenericChatItemLayout *circleLayout = nullptr;
     QVBoxLayout* activityLayout = nullptr;
     QTimer* dayTimer;

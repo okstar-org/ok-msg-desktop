@@ -31,11 +31,6 @@ RoundedMaskContainer#statusPanel
     border: 0px solid;
 }
 
-QSplitter::handle
-{
-    background: white;
-}
-
 #searchText{
     color: #19171b;
     border: 1px solid @themeMedium;

@@ -9,7 +9,7 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PubL v2 for more details.
  */
- 
+
 ContactWidget,
 AddFriendForm
 {
@@ -31,10 +31,6 @@ RoundedMaskContainer#statusPanel
     border: 0px solid;
 }
 
-QSplitter::handle
-{
-    background: black;
-}
 
 #searchText{
     color: #e8e8e8;
@@ -49,7 +45,7 @@ QPushButton#addBtn
     border: 1px solid transparent;
     padding: 5px 5px;
     border-radius: 5px;
-    background-color:#262626;
+    background-color: #262626;
     qproperty-icon: url("@getImagePath(contact/add.svg)");
 }
 

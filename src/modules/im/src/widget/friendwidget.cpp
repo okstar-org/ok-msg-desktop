@@ -62,25 +62,13 @@
 FriendWidget::FriendWidget(Friend* f, QWidget* parent)
         : GenericChatroomWidget(ChatType::Chat, f->getId(), parent), about{nullptr}, m_friend{f} {
     setCursor(Qt::PointingHandCursor);
-
-    auto profile = Nexus::getProfile();
-
-    auto& settings = Settings::getInstance();
-    auto history = profile->getHistory();
-    auto dialogManager = ContentDialogManager::getInstance();
-
     nameLabel->setText(m_friend->getDisplayedName());
 
     connect(m_friend, &Friend::avatarChanged, [&](const QPixmap& pixmap) { setAvatar(pixmap); });
-
     // update alias when edited
-    connect(nameLabel, &CroppingLabel::editFinished,  //
-            m_friend, &Friend::setAlias);
-
+    connect(nameLabel, &CroppingLabel::editFinished, m_friend, &Friend::setAlias);
     // update on changes of the displayed name
-    connect(m_friend, &Friend::displayedNameChanged,  //
-            nameLabel, &CroppingLabel::setText);
-
+    connect(m_friend, &Friend::displayedNameChanged, nameLabel, &CroppingLabel::setText);
     connect(m_friend, &Friend::displayedNameChanged, this, [this](const QString& newName) {
         Q_UNUSED(newName);
         emit friendWidgetRenamed(this);
@@ -121,13 +109,9 @@ FriendWidget::FriendWidget(Friend* f, QWidget* parent)
     //    sendWorker->onAvatarChanged(friendPk, avatar);
     //    setAvatar(avatar);
     //  }
-
-
 }
 
-FriendWidget::~FriendWidget() {
-    qDebug() << __func__;
-}
+FriendWidget::~FriendWidget() { qDebug() << __func__; }
 
 void FriendWidget::do_widgetClicked(GenericChatroomWidget* w) {
     qDebug() << __func__ << m_friend->getId().toString();
@@ -326,9 +310,9 @@ void FriendWidget::onContextMenuCalled(QContextMenuEvent* event) {
     if (selected == removeAct) {
         const bool yes = GUI::askQuestion(tr("Confirmation"),
                                           tr("Are you sure to remove %1 ?").arg(getName()),
-                                             false,
-                                             true,
-                                             true);
+                                          false,
+                                          true,
+                                          true);
         if (!yes) {
             return;
         }
@@ -376,7 +360,9 @@ void FriendWidget::setAsActiveChatroom() { setActive(true); }
 
 void FriendWidget::setAsInactiveChatroom() { setActive(false); }
 
-void FriendWidget::onActiveSet(bool active) { setBackgroundRole(QPalette::Window); }
+void FriendWidget::onActiveSet(bool active) {
+    //    setBackgroundRole(QPalette::Window);
+}
 
 QString FriendWidget::getStatusString() const {
     const int status = static_cast<int>(m_friend->getStatus());

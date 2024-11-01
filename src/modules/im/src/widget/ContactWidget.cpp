@@ -43,6 +43,8 @@ ContactWidget::ContactWidget(QWidget* parent)
     layout()->setMargin(0);
     layout()->setSpacing(0);
 
+    ui->searchContactsContainer->setAutoFillBackground(false);
+
     // 右侧内容容器
     contentWidget = std::make_unique<QWidget>(this);
     contentWidget->setObjectName("ContactContentWidget");
@@ -72,6 +74,7 @@ ContactWidget::ContactWidget(QWidget* parent)
 
     ui->searchContact->setPlaceholderText(tr("Search Contacts"));
     connect(ui->searchContact, &QLineEdit::textChanged, this, &ContactWidget::searchContacts);
+    ui->addBtn->setCursor(Qt::PointingHandCursor);
     connect(ui->addBtn, &QPushButton::released, this, &ContactWidget::do_openAddForm);
 
     connect(ok::Application::Instance()->bus(),
@@ -81,7 +84,7 @@ ContactWidget::ContactWidget(QWidget* parent)
 
     connect(Widget::getInstance(), &Widget::friendRemoved, this, &ContactWidget::onFriendRemoved);
     connect(Widget::getInstance(), &Widget::addMember, this, &ContactWidget::do_addContactToGroup);
-    reloadTheme();
+
     settings::Translator::registerHandler([this] { retranslateUi(); }, this);
     retranslateUi();
 }
@@ -93,21 +96,10 @@ ContactWidget::~ContactWidget() {
 
 void ContactWidget::reloadTheme() {
     setStyleSheet(Style::getStylesheet("contact/ContactWidget.css"));
-    // I don't know why
-    QTimer::singleShot(0, this, [this]() {
-        style()->unpolish(ui->searchContact);
-        style()->unpolish(ui->addBtn);
-        style()->polish(ui->searchContact);
-        style()->polish(ui->addBtn);
-        ui->searchContact->updateGeometry();
-    });
-
     ui->friendList->setStyleSheet(Style::getStylesheet("contact/ContactList.css"));
+
     contactListWidget->reloadTheme();
     contentLayout->reloadTheme();
-
-    ui->friendList->setAutoFillBackground(false);
-    ui->friendList->viewport()->setAutoFillBackground(false);
 }
 
 AddFriendForm* ContactWidget::makeAddForm() {

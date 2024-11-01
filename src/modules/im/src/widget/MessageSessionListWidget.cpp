@@ -18,11 +18,11 @@
 #include <QTimer>
 #include <cassert>
 #include "ChatWidget.h"
+#include "ContactListLayout.h"
 #include "base/OkSettings.h"
 #include "base/times.h"
 #include "circlewidget.h"
 #include "contentdialogmanager.h"
-#include "friendlistlayout.h"
 #include "friendwidget.h"
 #include "groupwidget.h"
 #include "src/friendlist.h"
@@ -61,21 +61,14 @@ MessageSessionListWidget::MessageSessionListWidget(MainLayout* parent,
                                                    bool groupsOnTop)
         : QWidget(parent), m_contentLayout(contentBox), groupsOnTop(groupsOnTop) {
     setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+    setAcceptDrops(true);
 
     // Prevent QLayout's add child warning before setting the mode.
-    listLayout = new FriendListLayout(this);
-    // listLayout->removeItem(listLayout->getLayoutOnline());
+    listLayout = new ContactListLayout(this);
     setLayout(listLayout);
 
     mode = Settings::getInstance().getFriendSortingMode();
     sortByMode(mode);
-
-    // dayTimer = new QTimer(this);
-    // dayTimer->setTimerType(Qt::VeryCoarseTimer);
-    // connect(dayTimer, &QTimer::timeout, this, &MessageSessionListWidget::dayTimeout);
-    // dayTimer->start(ok::base::Times::timeUntilTomorrow());
-
-    setAcceptDrops(true);
 
     auto& settings = Settings::getInstance();
     connect(&settings, &Settings::compactLayoutChanged, this,

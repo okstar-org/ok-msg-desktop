@@ -17,8 +17,7 @@ AdjustingScrollArea
 }
 
 /* it is necessary for the rounded effect*/
-FriendListWidget,
-#scrollAreaWidgetContents
+ContactListWidget, #scrollAreaWidgetContents
 {
     border: 0px solid;
     background: @groundBase;

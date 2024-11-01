@@ -32,9 +32,9 @@
 #include "src/model/status.h"
 #include "src/nexus.h"
 #include "src/persistence/settings.h"
+#include "src/widget/ContactListLayout.h"
 #include "src/widget/contentlayout.h"
 #include "src/widget/form/chatform.h"
-#include "src/widget/friendlistlayout.h"
 #include "src/widget/friendwidget.h"
 #include "src/widget/groupwidget.h"
 #include "src/widget/tool/adjustingscrollarea.h"
@@ -48,7 +48,7 @@ static const QSize defaultSize(720, 400);
 ContentDialog::ContentDialog(QWidget* parent)
         : ActivateDialog(parent, Qt::Window)
         , splitter{new QSplitter(this)}
-        , friendLayout{new FriendListLayout(this)}
+        , friendLayout{new ContactListLayout(this)}
         , activeChatroomWidget(nullptr)
         , videoSurfaceSize(QSize())
         , videoCount(0) {

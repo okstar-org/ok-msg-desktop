@@ -34,9 +34,7 @@
 #include "tool/croppinglabel.h"
 
 GroupWidget::GroupWidget(const GroupId& groupId, const QString& groupName, bool compact)
-        : GenericChatroomWidget(ChatType::GroupChat, groupId)
-        , quitGroup{nullptr}
-        , destroyGrpAct{nullptr} {
+        : GenericChatroomWidget(ChatType::GroupChat, groupId) {
     setCursor(Qt::PointingHandCursor);
 
     connect(this, &GroupWidget::removeGroup, this, &GroupWidget::do_removeGroup);
@@ -62,8 +60,6 @@ GroupWidget::GroupWidget(const GroupId& groupId, const QString& groupName, bool 
     settings::Translator::registerHandler([this] { retranslateUi(); }, this);
     retranslateUi();
 
-    init();
-
     emit Widget::getInstance() -> groupAdded(group);
 
     //    groupAlertConnections.insert(groupId, notifyReceivedConnection);
@@ -76,22 +72,7 @@ GroupWidget::~GroupWidget() {
 }
 
 void GroupWidget::init() {
-    menu = new QMenu(this);
 
-    //  QAction *openChatWindow = nullptr;
-    //  if (chatroom->possibleToOpenInNewWindow()) {
-    //    openChatWindow = menu.addAction(tr("Open chat in new window"));
-    //  }
-
-    //  QAction *removeChatWindow = nullptr;
-    //  if (chatroom->canBeRemovedFromWindow()) {
-    //    removeChatWindow = menu.addAction(tr("Remove chat from this window"));
-    //  }
-
-    //    menu.addSeparator();
-
-    //  QAction *setSubject = menu.addAction(tr("Set title..."));
-    quitGroup = menu->addAction(tr("Quit group", "Menu to quit a groupchat"));
 }
 
 ContentDialog* GroupWidget::addGroupDialog(Group* group) {
@@ -178,18 +159,16 @@ ContentDialog* GroupWidget::createContentDialog() const {
     //  connect(&contentDialog, &ContentDialog::connectFriendWidget, this,
     //          &Widget::connectFriendWidget);
 
-
-// #ifdef Q_OS_MAC
-//   Nexus &n = Nexus::getInstance();
-//   connect(&contentDialog, &ContentDialog::destroyed, &n,
-//           &Nexus::updateWindowsClosed);
-//   connect(&contentDialog, &ContentDialog::windowStateChanged, &n,
-//           &Nexus::onWindowStateChanged);
-//   connect(contentDialog.windowHandle(), &QWindow::windowTitleChanged, &n,
-//           &Nexus::updateWindows);
-//   n.updateWindows();
-// #endif
-
+    // #ifdef Q_OS_MAC
+    //   Nexus &n = Nexus::getInstance();
+    //   connect(&contentDialog, &ContentDialog::destroyed, &n,
+    //           &Nexus::updateWindowsClosed);
+    //   connect(&contentDialog, &ContentDialog::windowStateChanged, &n,
+    //           &Nexus::onWindowStateChanged);
+    //   connect(contentDialog.windowHandle(), &QWindow::windowTitleChanged, &n,
+    //           &Nexus::updateWindows);
+    //   n.updateWindows();
+    // #endif
 
     ContentDialogManager::getInstance()->addContentDialog(*contentDialog);
     return contentDialog;
@@ -204,7 +183,27 @@ void GroupWidget::contextMenuEvent(QContextMenuEvent* event) {
 
     // Disable leave event.
     installEventFilter(this);
-    QAction* selectedItem = menu->exec(event->globalPos());
+
+    QMenu menu(this);
+
+    //  QAction *openChatWindow = nullptr;
+    //  if (chatroom->possibleToOpenInNewWindow()) {
+    //    openChatWindow = menu.addAction(tr("Open chat in new window"));
+    //  }
+
+    //  QAction *removeChatWindow = nullptr;
+    //  if (chatroom->canBeRemovedFromWindow()) {
+    //    removeChatWindow = menu.addAction(tr("Remove chat from this window"));
+    //  }
+
+    //  QAction *setSubject = menu.addAction(tr("Set title..."));
+    auto quitGroup = menu.addAction(tr("Quit group", "Menu to quit a groupchat"));
+    QAction* destroyGrpAct;
+    if (aff == Group::Affiliation::Owner) {
+        destroyGrpAct = menu.addAction(tr("Destroy group", "Destroy the groupchat"));
+    }
+
+    QAction* selectedItem = menu.exec(event->globalPos());
     removeEventFilter(this);
 
     if (!active) {
@@ -268,16 +267,10 @@ void GroupWidget::do_removeGroup(const GroupId& groupId) {
 
 void GroupWidget::do_destroyGroup(const GroupId& groupId) {}
 
-void GroupWidget::do_privilegesChanged(const Group::Role& role, const Group::Affiliation& aff,
-                                       const QList<int> codes) {
-    if (aff == Group::Affiliation::Owner) {
-        if (!destroyGrpAct) {
-            destroyGrpAct = menu->addAction(tr("Destroy group", "Destroy the groupchat"));
-        }
-    } else {
-        menu->removeAction(destroyGrpAct);
-        destroyGrpAct = nullptr;
-    }
+void GroupWidget::do_privilegesChanged(
+        const Group::Role& role, const Group::Affiliation& aff_, const QList<int> codes_) {
+    aff = aff_;
+    codes = codes_;
 }
 
 void GroupWidget::updateUserCount(int numPeers) {
@@ -295,6 +288,7 @@ void GroupWidget::setAsActiveChatroom() { setActive(true); }
 void GroupWidget::setAsInactiveChatroom() { setActive(false); }
 
 void GroupWidget::onActiveSet(bool active) {
+    //    setBackgroundRole(QPalette::Window);
     //  const auto uri = active ? ":img/group_dark.svg" : ":img/group.svg";
     //  avatar->setPixmap(Style::scaleSvgImage(uri, avatar->width(), avatar->height()));
 }
@@ -358,5 +352,4 @@ void GroupWidget::dropEvent(QDropEvent* ev) {
 
 void GroupWidget::retranslateUi() { updateUserCount(group->getPeersCount()); }
 
-void GroupWidget::reloadTheme() {
-}
+void GroupWidget::reloadTheme() {}
