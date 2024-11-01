@@ -1,16 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  - Copyright (c) 2022 船山信息 chuanshaninfo.com
-  - The project is licensed under Mulan PubL v2.
-  - You can use this software according to the terms and conditions of the Mulan
-  - PubL v2. You may obtain a copy of Mulan PubL v2 at:
-  -          http://license.coscl.org.cn/MulanPubL-2.0
-  - THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
-  - EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
-  - MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
-  - See the Mulan PubL v2 for more details.
-  -->
-
 <ui version="4.0">
  <class>IdentitySettings</class>
  <widget class="QWidget" name="IdentitySettings">
@@ -18,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-       <width>729</width>
-       <height>596</height>
+    <width>667</width>
+    <height>611</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -41,15 +29,12 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-           <y>-5</y>
-           <width>692</width>
-           <height>585</height>
+        <y>0</y>
+        <width>643</width>
+        <height>587</height>
        </rect>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,0,0,0,1,0,0">
-       <property name="spacing">
-        <number>9</number>
-       </property>
+      <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,0,0,0,0,1,0">
        <property name="leftMargin">
         <number>0</number>
        </property>
@@ -88,7 +73,7 @@
             <string/>
            </property>
            <property name="pixmap">
-            <pixmap resource="../../../res.qrc">:/img/settings/identity.png</pixmap>
+            <pixmap>:/img/settings/identity.png</pixmap>
            </property>
            <property name="scaledContents">
             <bool>true</bool>
@@ -105,7 +90,6 @@
            </property>
            <property name="font">
             <font>
-                <weight>75</weight>
              <bold>true</bold>
             </font>
            </property>
@@ -127,7 +111,13 @@
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>5</height>
+           <height>2</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>2</height>
           </size>
          </property>
          <property name="orientation">
@@ -140,28 +130,38 @@
          <property name="title">
           <string>Public Information</string>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout">
+         <layout class="QVBoxLayout" name="verticalLayout_1">
+          <property name="spacing">
+           <number>9</number>
+          </property>
+          <property name="leftMargin">
+           <number>16</number>
+          </property>
+          <property name="rightMargin">
+           <number>16</number>
+          </property>
           <item>
-           <layout class="QFormLayout" name="formLayout">
-            <property name="verticalSpacing">
-             <number>6</number>
-            </property>
-            <property name="topMargin">
-             <number>4</number>
-            </property>
-            <property name="rightMargin">
+           <layout class="QVBoxLayout" name="avatarLayout">
+            <property name="spacing">
              <number>0</number>
             </property>
-            <property name="bottomMargin">
-             <number>4</number>
+           </layout>
+          </item>
+          <item>
+           <layout class="QFormLayout" name="formLayout">
+            <property name="labelAlignment">
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+            </property>
+            <property name="verticalSpacing">
+             <number>0</number>
             </property>
             <item row="0" column="0">
              <widget class="QLabel" name="nicknameLabel">
-              <property name="minimumSize">
-               <size>
-                <width>68</width>
-                <height>0</height>
-               </size>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
               </property>
               <property name="text">
                <string>Nickname:</string>
@@ -195,11 +195,11 @@
             </item>
             <item row="1" column="0">
              <widget class="QLabel" name="username_label">
-              <property name="minimumSize">
-               <size>
-                <width>68</width>
-                <height>0</height>
-               </size>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
               </property>
               <property name="text">
                <string>Account:</string>
@@ -209,27 +209,8 @@
               </property>
              </widget>
             </item>
-            <item row="1" column="1">
-             <widget class="QLabel" name="username">
-              <property name="maximumSize">
-               <size>
-                <width>200</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-             </widget>
-            </item>
             <item row="2" column="0">
              <widget class="QLabel" name="locationLabel">
-              <property name="minimumSize">
-               <size>
-                <width>68</width>
-                <height>0</height>
-               </size>
-              </property>
               <property name="text">
                <string>Location:</string>
               </property>
@@ -251,6 +232,65 @@
               </property>
              </widget>
             </item>
+            <item row="1" column="1">
+             <layout class="QHBoxLayout" name="accountDisplayLayout">
+              <item>
+               <widget class="QLabel" name="username">
+                <property name="minimumSize">
+                 <size>
+                  <width>20</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_2">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Fixed</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>1</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QToolButton" name="qrcodeButton">
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>12</width>
+                  <height>12</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>1</width>
+                  <height>1</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
            </layout>
           </item>
          </layout>
@@ -262,26 +302,17 @@
           <string>Personal Information</string>
          </property>
          <layout class="QFormLayout" name="profileGroup">
-          <property name="leftMargin">
-           <number>6</number>
+          <property name="verticalSpacing">
+           <number>9</number>
           </property>
-          <property name="topMargin">
-           <number>6</number>
+          <property name="leftMargin">
+           <number>16</number>
           </property>
           <property name="rightMargin">
-           <number>6</number>
-          </property>
-          <property name="bottomMargin">
-           <number>6</number>
+           <number>16</number>
           </property>
           <item row="1" column="0">
            <widget class="QLabel" name="name_label">
-            <property name="minimumSize">
-             <size>
-              <width>68</width>
-              <height>0</height>
-             </size>
-            </property>
             <property name="text">
              <string>My name:</string>
             </property>
@@ -292,12 +323,6 @@
           </item>
           <item row="3" column="0">
            <widget class="QLabel" name="phone_label">
-            <property name="minimumSize">
-             <size>
-              <width>68</width>
-              <height>0</height>
-             </size>
-            </property>
             <property name="text">
              <string>My phone:</string>
             </property>
@@ -329,12 +354,6 @@
           </item>
           <item row="2" column="0">
            <widget class="QLabel" name="email_label">
-            <property name="minimumSize">
-             <size>
-              <width>68</width>
-              <height>0</height>
-             </size>
-            </property>
             <property name="text">
              <string>My E-Mail:</string>
             </property>
@@ -345,12 +364,6 @@
           </item>
           <item row="4" column="0">
            <widget class="QLabel" name="telephone_label">
-            <property name="minimumSize">
-             <size>
-              <width>68</width>
-              <height>0</height>
-             </size>
-            </property>
             <property name="text">
              <string>My telephone:</string>
             </property>
@@ -369,12 +382,18 @@
          </layout>
         </widget>
        </item>
-       <item alignment="Qt::AlignTop">
+       <item>
         <widget class="QGroupBox" name="profilesGroup">
          <property name="title">
           <string>Profile</string>
          </property>
          <layout class="QVBoxLayout" name="profilesVLayout">
+          <property name="leftMargin">
+           <number>16</number>
+          </property>
+          <property name="rightMargin">
+           <number>16</number>
+          </property>
           <item>
            <widget class="QLabel" name="dirPrLink">
             <property name="cursor">

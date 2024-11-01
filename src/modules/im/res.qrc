@@ -185,5 +185,6 @@
         <file>themes/default/window/aboutFriend.css</file>
         <file>themes/dark/window/aboutFriend.css</file>
         <file>themes/default/chatForm/reply.svg</file>
+        <file>themes/default/window/qrcode.svg</file>
     </qresource>
 </RCC>
