@@ -708,10 +708,7 @@ void Core::setNick(const QString& nick) {
     if (nick == getNick()) {
         return;
     }
-
     messenger->setSelfNickname(nick);
-
-    emit usernameSet(nick);
     emit saveRequest();
 }
 

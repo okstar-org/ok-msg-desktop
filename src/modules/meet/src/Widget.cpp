@@ -60,7 +60,7 @@ void Widget::reloadTheme() {
     setStyleSheet(style);
 }
 
-PlatformPage* Widget::findPage(const QUrl& url) {}
+PlatformPage* Widget::findPage(const QUrl& url) { return nullptr; }
 
 void Widget::addPage(PlatformPage* page, bool active) {}
 

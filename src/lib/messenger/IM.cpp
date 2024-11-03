@@ -665,6 +665,7 @@ void IM::handleMessageEvent(const JID& from, const MessageEvent* et) {
 void IM::doPubSubEvent(const gloox::PubSub::Event* pse,  //
                        const Message& msg,               //
                        QString& friendId) {              //
+    qDebug() << __func__ << friendId;
 
     const QString& selfId = getSelfId().toString();
     auto isSelf = friendId == selfId;
@@ -1778,7 +1779,8 @@ IMPeerId IM::getSelfPeerId() {
 QString IM::getSelfUsername() { return qstring(self().username()); }
 
 void IM::setNickname(const QString& nickname) {
-    qDebug() << QString("nickname:%1").arg(nickname);
+    qDebug() << __func__ << nickname;
+
     if (_nick == nickname) {
         return;
     }
