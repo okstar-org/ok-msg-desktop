@@ -38,7 +38,7 @@ jobs:
       ARTIFACT_Setup_FileName: "ok-msg-desktop_${{ matrix.os }}_${{ matrix.arch }}_setup"
       VCPKG_DEFAULT_TRIPLET: ${{ matrix.arch }}-windows
       VCPKG_INSTALLED_DIR: /vcpkg_installed
-      VCPKG_BUILD_TYPE: release
+      VCPKG_BUILD_TYPE: ${{ matrix.build_type }}
 
     runs-on: ${{ matrix.os }}
 
