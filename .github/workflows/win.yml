@@ -8,7 +8,7 @@ permissions:
 
 on:
   push:
-    branches: [ develop, develop-windows ]
+    branches: [ main, develop, develop-windows ]
     tags:
       - "v*.*.*"
     paths-ignore:
@@ -27,17 +27,18 @@ on:
       - 'src/base/platform/macos/**'
       - '!.github/workflows/win.yml'
   pull_request:
-    branches: [ develop, develop-windows ]
+    branches: [ main, develop, develop-windows ]
 
 jobs:
   build:
     env:
-      ARTIFACT_PATH: "ok-msg-desktop"
       UPLOAD_ARTIFACT: "true"
-      VCPKG_DEFAULT_TRIPLET: ${{ matrix.arch }}-windows
+      ARTIFACT_PATH: "ok-msg-desktop"
       ARTIFACT_Setup_Path: "${{ github.workspace }}/deploy-setup"
       ARTIFACT_Setup_FileName: "ok-msg-desktop_${{ matrix.os }}_${{ matrix.arch }}_setup"
+      VCPKG_DEFAULT_TRIPLET: ${{ matrix.arch }}-windows
       VCPKG_INSTALLED_DIR: /vcpkg_installed
+      VCPKG_BUILD_TYPE: release
 
     runs-on: ${{ matrix.os }}
 
