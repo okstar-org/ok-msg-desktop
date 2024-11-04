@@ -61,6 +61,7 @@
  */
 FriendWidget::FriendWidget(Friend* f, QWidget* parent)
         : GenericChatroomWidget(ChatType::Chat, f->getId(), parent), about{nullptr}, m_friend{f} {
+    setHidden(true);
     setCursor(Qt::PointingHandCursor);
     nameLabel->setText(m_friend->getDisplayedName());
 

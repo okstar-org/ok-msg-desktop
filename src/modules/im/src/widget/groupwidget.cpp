@@ -35,6 +35,7 @@
 
 GroupWidget::GroupWidget(const GroupId& groupId, const QString& groupName, bool compact)
         : GenericChatroomWidget(ChatType::GroupChat, groupId) {
+    setHidden(true);
     setCursor(Qt::PointingHandCursor);
 
     connect(this, &GroupWidget::removeGroup, this, &GroupWidget::do_removeGroup);

@@ -48,6 +48,7 @@ void ContactListLayout::search(const QString& searchString) { itemLayout->search
 QLayout* ContactListLayout::getLayoutOnline() const { return itemLayout->getLayout(); }
 
 void ContactListLayout::addWidget(GenericChatItemWidget* w) {
-    w->setVisible(true);
     itemLayout->addSortedWidget(w);
+    w->setVisible(true);
+    w->show();
 }

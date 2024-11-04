@@ -71,8 +71,8 @@ MessageSessionWidget::MessageSessionWidget(ContentLayout* layout, const ContactI
         , sendWorker{nullptr}
         , contactId(cId) {
     qDebug() << __func__ << "contactId:" << cId.toString();
-
     setCursor(Qt::PointingHandCursor);
+    setHidden(true);
     setAutoFillBackground(false);
 
     auto profile = Nexus::getProfile();
