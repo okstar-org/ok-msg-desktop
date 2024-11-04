@@ -20,6 +20,8 @@
 #include "base/images.h"
 #include "base/resources.h"
 
+#include <QButtonGroup>
+
 namespace UI {
 
 OMainMenu::OMainMenu(QWidget* parent) : QFrame(parent), ui(new Ui::OMainMenu), _showTimes(0) {
@@ -39,6 +41,14 @@ OMainMenu::OMainMenu(QWidget* parent) : QFrame(parent), ui(new Ui::OMainMenu), _
     ui->meetBtn->setCursor(Qt::PointingHandCursor);
 
     delayCaller_ = std::make_unique<base::DelayedCallTimer>();
+
+    QButtonGroup* group = new QButtonGroup(this);
+    group->setExclusive(true);
+    group->addButton(ui->chatBtn, static_cast<int>(ok::base::PageMenu::chat));
+    group->addButton(ui->settingBtn, static_cast<int>(ok::base::PageMenu::setting));
+    group->addButton(ui->platformBtn, static_cast<int>(ok::base::PageMenu::platform));
+    group->addButton(ui->meetBtn, static_cast<int>(ok::base::PageMenu::metting));
+    connect(group, &QButtonGroup::idToggled, this, &OMainMenu::onButtonToggled);
 }
 
 OMainMenu::~OMainMenu() {
@@ -58,44 +68,26 @@ void OMainMenu::showEvent(QShowEvent* e) {
     Q_UNUSED(e);
     _showTimes++;
     if (_showTimes == 1) {
-        updateUI();
+        ui->chatBtn->setChecked(true);
     }
 }
 
-void OMainMenu::updateUI() { on_chatBtn_clicked(true); }
 
-/**
- * 聊天
- * @brief OMainMenu::on_chatBtn_clicked
- * @param checked
- */
-void OMainMenu::on_chatBtn_clicked(bool checked) {
-    ui->chatBtn->setChecked(true);
-    ui->settingBtn->setChecked(false);
-    ui->platformBtn->setChecked(false);
-    emit menuPushed(ok::base::PageMenu::chat, ui->chatBtn->isChecked());
-}
-
-/**
- * 设置按钮
- * @param checked
- */
-void OMainMenu::on_settingBtn_clicked(bool checked) {
-    ui->platformBtn->setChecked(false);
-    ui->chatBtn->setChecked(false);
-    ui->settingBtn->setChecked(true);
-    emit menuPushed(ok::base::PageMenu::setting, ui->settingBtn->isChecked());
-}
-
-/**
- * 工作平台
- * @param checked
- */
-void OMainMenu::on_platformBtn_clicked(bool checked) {
-    ui->chatBtn->setChecked(false);
-    ui->settingBtn->setChecked(false);
-    ui->platformBtn->setChecked(true);
-    emit menuPushed(ok::base::PageMenu::platform, ui->platformBtn->isChecked());
+void OMainMenu::onButtonToggled(int id, bool toggle) {
+    if (id < 0 || !toggle) {
+        return;
+    }
+    switch (static_cast<ok::base::PageMenu>(id))
+    {
+        case ok::base::PageMenu::chat:
+        case ok::base::PageMenu::setting:
+        case ok::base::PageMenu::platform:
+        case ok::base::PageMenu::metting:
+            emit menuPushed(static_cast<ok::base::PageMenu>(id), true);
+            break;
+        default:
+            break;
+    }
 }
 
 }  // namespace UI

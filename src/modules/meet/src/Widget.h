@@ -20,18 +20,13 @@
 #include "UI/widget/OMenuWidget.h"
 #include "base/resources.h"
 
-OK_RESOURCE_LOADER(Platform)
-OK_RESOURCE_LOADER(PlatformRes)
+OK_RESOURCE_LOADER(Meet)
 
 namespace Ui {
 class WorkPlatform;
 }
 
 namespace module::meet {
-
-class AppCenterWidget;
-class PlatformPage;
-class PlatformPageContainer;
 
 class Widget : public UI::OMenuWidget {
     Q_OBJECT
@@ -42,27 +37,17 @@ public:
     void reloadTheme();
 
 protected:
-    // 工作平台页的相关操作
-    PlatformPage* findPage(const QUrl& url);
-    void addPage(PlatformPage* page, bool active = true);
-    bool removePage(PlatformPage* page);
-    void activePage(PlatformPage* page);
+    void initTranslate();
     void retranslateUi();
 
 private:
-    void requestCloseTab();
-    void doClose(int index, PlatformPage* page);
-
-private:
-    OK_RESOURCE_PTR(Platform);
-    OK_RESOURCE_PTR(PlatformRes);
+    OK_RESOURCE_PTR(Meet);
 
     Ui::WorkPlatform* ui;
 
 public slots:
     void doStart();
 
-    friend class PlatformPageContainer;
 };
 
 }  // namespace module::meet

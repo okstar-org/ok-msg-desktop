@@ -21,8 +21,6 @@
 
 namespace module::meet {
 
-class PlatformPageContainer;
-
 class Meet : public QObject, public Module {
     Q_OBJECT
 public:
@@ -35,14 +33,11 @@ public:
     void onSave(SavedInfo&) override;
     void cleanup() override;
 
-    PlatformPageContainer* getPageContainer();
-
     QWidget* widget() override { return m_widget.get(); }
     void hide() override;
 
 private:
     std::unique_ptr<Widget> m_widget;
-    PlatformPageContainer* pageContainter = nullptr;
 };
 
 }  // namespace module::meet

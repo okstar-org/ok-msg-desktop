@@ -150,6 +150,7 @@ ProfileForm::ProfileForm(IProfileInfo* profileInfo, QWidget* parent)
     bodyUI->qrcodeButton->setCursor(Qt::PointingHandCursor);
     //bodyUI->qrcodeButton->hide();
     qr = new QRWidget(size, this);
+    qr->setVisible(false);
     qr->setWindowFlags(Qt::Popup);
     qr->setQRData(profileInfo->getUsername());
     //bodyUI->publicGroup->layout()->addWidget(qr);

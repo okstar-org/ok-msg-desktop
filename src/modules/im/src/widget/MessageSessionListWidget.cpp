@@ -133,7 +133,6 @@ void MessageSessionListWidget::connectSessionWidget(MessageSessionWidget& sw) {
             &MessageSessionListWidget::updateFriendActivity);
     connect(&sw, &MessageSessionWidget::widgetClicked, this,
             &MessageSessionListWidget::slot_sessionClicked);
-
     connect(&sw, &MessageSessionWidget::deleteSession, this,
             &MessageSessionListWidget::do_deleteSession);
 }

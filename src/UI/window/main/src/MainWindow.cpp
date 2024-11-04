@@ -31,6 +31,7 @@
 
 #include <modules/im/src/nexus.h>
 #include <modules/platform/src/Platform.h>
+#include <modules/meet/src/Meet.h>
 
 namespace UI {
 
@@ -301,6 +302,9 @@ OMenuWidget* MainWindow::initMenuWindow(ok::base::PageMenu menu) {
         case ok::base::PageMenu::platform:
             w = createPlatformModule(this);
             break;
+        case ok::base::PageMenu::metting:
+            w = createMeetingModule(this);
+            break;
         case ok::base::PageMenu::setting:
             w = new ConfigWindow(this);
             break;
@@ -368,6 +372,16 @@ OMenuWidget* MainWindow::createPlatformModule(MainWindow* pWindow) {
     w->layout()->setContentsMargins(0, 0, 0, 0);
     w->layout()->addWidget(m->widget());
 
+    return w;
+}
+
+OMenuWidget* MainWindow::createMeetingModule(MainWindow* pWindow) { 
+    auto m = new module::meet::Meet();
+    auto w = new OMenuWidget(this);
+    w->setModule(m);
+    w->setLayout(new QGridLayout());
+    w->layout()->setContentsMargins(0, 0, 0, 0);
+    w->layout()->addWidget(m->widget());
     return w;
 }
 

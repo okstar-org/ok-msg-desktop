@@ -48,15 +48,11 @@ private:
     // delayCaller
     std::shared_ptr<base::DelayedCallTimer> delayCaller_;
 
-    void updateUI();
-
 signals:
     void menuPushed(ok::base::PageMenu menu, bool checked);
 
 private slots:
-    void on_chatBtn_clicked(bool checked);
-    void on_settingBtn_clicked(bool checked);
-    void on_platformBtn_clicked(bool checked);
+    void onButtonToggled(int id, bool toggle);
 public slots:
     void setAvatar(const QPixmap&);
 };
