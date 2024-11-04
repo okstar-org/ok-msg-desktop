@@ -87,6 +87,7 @@ private slots:
     void forceShow();
     OMenuWidget* createChatModule(MainWindow* pWindow);
     OMenuWidget* createPlatformModule(MainWindow* pWindow);
+    OMenuWidget* createMeetingModule(MainWindow* pWindow);
 };
 
 }  // namespace UI

@@ -23,31 +23,39 @@
 #include "base/OkSettings.h"
 #include "lib/settings/style.h"
 #include "lib/settings/translator.h"
+#include "StartMeetingWidget.h"
+#include "JoinMeetingWidget.h"
+#include "BookMeetingWidget.h"
+#include "MeetingSettingWidget.h"
 
 #include <QAbstractButton>
 #include <QPainter>
 #include <QStyle>
 #include <QStyleOption>
 
-class TabCloseButton : public QAbstractButton {
-public:
-    explicit TabCloseButton(QWidget* parent = nullptr);
-    QSize sizeHint() const override;
-    QSize minimumSizeHint() const override { return sizeHint(); }
-    void enterEvent(QEvent* event) override;
-    void leaveEvent(QEvent* event) override;
-    void paintEvent(QPaintEvent* event) override;
-};
-
 namespace module::meet {
 
 Widget::Widget(QWidget* parent) : UI::OMenuWidget(parent), ui(new Ui::WorkPlatform) {
-    OK_RESOURCE_INIT(Platform);
-    OK_RESOURCE_INIT(PlatformRes);
+    OK_RESOURCE_INIT(Meet);
 
     ui->setupUi(this);
     ui->tabWidget->setObjectName("mainTab");
     ui->tabWidget->tabBar()->setCursor(Qt::PointingHandCursor);
+
+    initTranslate();
+
+    StartMeetingWidget* startMeet = new StartMeetingWidget(this);
+    ui->tabWidget->addTab(startMeet, tr("Start Metting"));
+
+    JoinMeetingWidget* joinMeet = new JoinMeetingWidget(this);
+    ui->tabWidget->addTab(joinMeet, tr("Join Metting"));
+
+    BookMeetingWidget* bookMeet = new BookMeetingWidget(this);
+    ui->tabWidget->addTab(bookMeet, tr("Book Metting"));
+
+    MeetingSettingWidget* setting = new MeetingSettingWidget(this);
+    ui->tabWidget->addTab(setting, tr("Setting"));
+
     reloadTheme();
 }
 
@@ -60,45 +68,17 @@ void Widget::reloadTheme() {
     setStyleSheet(style);
 }
 
-PlatformPage* Widget::findPage(const QUrl& url) { return nullptr; }
-
-void Widget::addPage(PlatformPage* page, bool active) {}
-
-bool Widget::removePage(PlatformPage* page) { return false; }
-
-void Widget::activePage(PlatformPage* page) {}
-
 void Widget::doStart() {}
+
+void Widget::initTranslate() {
+    QString locale = ok::base::OkSettings::getInstance().getTranslation();
+    settings::Translator::translate(OK_Meet_MODULE, locale);
+    settings::Translator::registerHandler([this] { retranslateUi(); }, this);
+    retranslateUi();
+    connect(ok::Application::Instance()->bus(), &ok::Bus::languageChanged,
+            [](QString locale0) { settings::Translator::translate(OK_Meet_MODULE, locale0); });
+}
 
 void Widget::retranslateUi() { ui->retranslateUi(this); }
 
-void Widget::requestCloseTab() {}
-
-void Widget::doClose(int index, PlatformPage* page) {}
-
 }  // namespace module::meet
-
-TabCloseButton::TabCloseButton(QWidget* parent) : QAbstractButton(parent) {}
-
-QSize TabCloseButton::sizeHint() const {
-    ensurePolished();
-    int width = style()->pixelMetric(QStyle::PM_TabCloseIndicatorWidth, nullptr, this);
-    int height = style()->pixelMetric(QStyle::PM_TabCloseIndicatorHeight, nullptr, this);
-    return QSize(width, height);
-}
-
-void TabCloseButton::enterEvent(QEvent* event) {
-    if (isEnabled()) {
-        update();
-    }
-    QAbstractButton::enterEvent(event);
-}
-
-void TabCloseButton::leaveEvent(QEvent* event) {
-    if (isEnabled()) {
-        update();
-    }
-    QAbstractButton::leaveEvent(event);
-}
-
-void TabCloseButton::paintEvent(QPaintEvent*) {}

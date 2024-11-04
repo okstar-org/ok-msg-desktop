@@ -94,6 +94,7 @@ target_link_libraries(${PROJECT_NAME}
 		PRIVATE OkSettings
 		PRIVATE Platform
 		PRIVATE IM
+        PRIVATE Meet
 		PRIVATE UIWidget
 		PRIVATE ${Qt5Core_LIBRARIES}
 		PRIVATE ${Qt5Widgets_LIBRARIES}

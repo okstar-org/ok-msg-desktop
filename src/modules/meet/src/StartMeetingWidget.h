@@ -1,3 +1,5 @@
+#pragma once
+
 /*
  * Copyright (c) 2022 船山信息 chuanshaninfo.com
  * The project is licensed under Mulan PubL v2.
@@ -10,26 +12,12 @@
  * See the Mulan PubL v2 for more details.
  */
 
-//
-// Created by gaojie on 24-7-31.
-//
+#include <QWidget>
 
-#include "Meet.h"
+class StartMeetingWidget: public QWidget{
 
-namespace module::meet {
+    Q_OBJECT
+public:
+    StartMeetingWidget(QWidget* parent = nullptr);
 
-Meet::Meet() : m_widget{nullptr} { m_widget = std::make_unique<Widget>(); }
-
-Meet::~Meet() {}
-
-void Meet::init(Profile* p) {}
-
-QString Meet::name() { return {"Meet"}; }
-
-void Meet::start(std::shared_ptr<ok::session::AuthSession> session) { m_widget->start(); }
-
-bool Meet::isStarted() { return false; }
-void Meet::onSave(SavedInfo&) {}
-void Meet::cleanup() {}
-void Meet::hide() {}
-}  // namespace module::meet
+};
