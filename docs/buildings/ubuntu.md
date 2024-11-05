@@ -51,12 +51,12 @@ git clone https://github.com/okstar-org/ok-gloox.git
 cd ok-gloox
 
 # CMake 构建(Debug)
-cmake -B out-Debug -A x64 -DCMAKE_BUILD_TYPE=Debug
+cmake -B out-Debug -DCMAKE_BUILD_TYPE=Debug
 cmake --build out-Debug --config Debug
 sudo cmake --install out-Debug --config Debug # 管理员执行
 
 # CMake 构建(Release)
-cmake -B out-Release -A x64 -DCMAKE_BUILD_TYPE=Release
+cmake -B out-Release -DCMAKE_BUILD_TYPE=Release
 cmake --build out-Release --config Release
 sudo cmake --install out-Release --config Release # 管理员执行
 ```
