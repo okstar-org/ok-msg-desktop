@@ -65,3 +65,18 @@ sudo cmake --install out-Release --config Release # 管理员执行
 
 - 选择最新的QtCreator版本(对CMake的支持更好)。
 - 以 ***CMake*** 方式打开项目，即可！
+
+
+## OkMSG项目编译失败解决方案
+
+# 编译提示错误:  /Qt/5.15.2/gcc_64/lib/libQt5WebEngineCore.so.5.15.2: .dynsym local symbol at index 3 (>= sh_info of 3)
+解决方案：
+在src/CMakeList.txt中添加命令：
+if (LINUX)
+    set(CMAKE_EXE_LINKER_FLAGS "-fuse-ld=gold")
+endif()
+
+详情可看: https://bugreports.qt.io/browse/QTBUG-80964
+
+
+
