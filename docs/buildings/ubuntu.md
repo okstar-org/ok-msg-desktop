@@ -24,22 +24,22 @@ cd ok-rtc
 git submodule update --init
 
 # CMake 构建(Debug)
-cmake -B out-Debug -A x64 -DCMAKE_BUILD_TYPE=Debug
+cmake -B out-Debug -DCMAKE_BUILD_TYPE=Debug
 cmake --build out-Debug --config Debug
 cmake --install out-Debug --config Debug # 管理员执行
 
 # CMake 构建(Release)
-cmake -B out-Release -A x64 -DCMAKE_BUILD_TYPE=Release
+cmake -B out-Release -DCMAKE_BUILD_TYPE=Release
 cmake --build out-Release --config Release
 cmake --install out-Release --config Release # 管理员执行
 
 # CMake 构建(RelWithDebInfo)
-cmake -B out-RelWithDebInfo -A x64 -DCMAKE_BUILD_TYPE=RelWithDebInfo
+cmake -B out-RelWithDebInfo -DCMAKE_BUILD_TYPE=RelWithDebInfo
 cmake --build .\out-RelWithDebInfo\ --config RelWithDebInfo
 cmake --install out-RelWithDebInfo --config RelWithDebInfo # 管理员执行
 
 # CMake 构建(MinSizeRel)
-cmake -B out-MinSizeRel -A x64 -DCMAKE_BUILD_TYPE=MinSizeRel
+cmake -B out-MinSizeRel -DCMAKE_BUILD_TYPE=MinSizeRel
 cmake --build .\out-MinSizeRel\ --config MinSizeRel
 cmake --install out-MinSizeRel --config MinSizeRel # 管理员执行
 ```
