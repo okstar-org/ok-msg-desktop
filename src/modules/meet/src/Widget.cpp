@@ -33,10 +33,14 @@
 #include <QStyle>
 #include <QStyleOption>
 
+#include <QMenu>
+#include <QContextMenuEvent>
+
 namespace module::meet {
 
 Widget::Widget(QWidget* parent) : UI::OMenuWidget(parent), ui(new Ui::WorkPlatform) {
     OK_RESOURCE_INIT(Meet);
+    OK_RESOURCE_INIT(MeetRes);
 
     ui->setupUi(this);
     ui->tabWidget->setObjectName("mainTab");
@@ -44,11 +48,11 @@ Widget::Widget(QWidget* parent) : UI::OMenuWidget(parent), ui(new Ui::WorkPlatfo
 
     initTranslate();
 
-    StartMeetingWidget* startMeet = new StartMeetingWidget(this);
-    ui->tabWidget->addTab(startMeet, tr("Start Metting"));
+    startMeetWidget = new StartMeetingWidget(this);
+    ui->tabWidget->addTab(startMeetWidget, tr("Start Metting"));
 
-    JoinMeetingWidget* joinMeet = new JoinMeetingWidget(this);
-    ui->tabWidget->addTab(joinMeet, tr("Join Metting"));
+    joinMeetWidget = new JoinMeetingWidget(this);
+    ui->tabWidget->addTab(joinMeetWidget, tr("Join Metting"));
 
     BookMeetingWidget* bookMeet = new BookMeetingWidget(this);
     ui->tabWidget->addTab(bookMeet, tr("Book Metting"));
@@ -64,8 +68,12 @@ Widget::~Widget() { delete ui; }
 void Widget::start() {}
 
 void Widget::reloadTheme() {
-    auto& style = Style::getStylesheet("general.css");
+    QString style = Style::getStylesheet("general.css");
     setStyleSheet(style);
+
+    style = Style::getStylesheet("MettingBase.css");
+    startMeetWidget->setStyleSheet(style);
+    joinMeetWidget->setStyleSheet(style);
 }
 
 void Widget::doStart() {}

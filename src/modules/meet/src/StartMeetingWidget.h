@@ -14,10 +14,15 @@
 
 #include <QWidget>
 
-class StartMeetingWidget: public QWidget{
+class MeetingOptionWidget;
+class QLineEdit;
+
+class StartMeetingWidget : public QWidget {
 
     Q_OBJECT
 public:
     StartMeetingWidget(QWidget* parent = nullptr);
-
+private:
+    MeetingOptionWidget* optionWidget = nullptr;
+    QLineEdit* meetingNameEdit = nullptr;
 };

@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>themes/default/MettingBase.css</file>
+        <file alias="meet/image/micphone.svg">image/micphone.svg</file>
+        <file alias="meet/image/videocam.svg">image/videocam.svg</file>
+        <file alias="meet/image/volumn_2.svg">image/volumn_2.svg</file>
+        <file alias="meet/image/up_arrow.svg">image/up_arrow.svg</file>
+    </qresource>
+</RCC>

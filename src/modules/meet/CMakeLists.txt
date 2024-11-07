@@ -57,7 +57,7 @@ execute_process(
 qt5_add_resources(
 		${PROJECT_NAME}_RESOURCES
 		${PROJECT_BINARY_DIR}/${PROJECT_NAME}.qrc
-		res/${PROJECT_NAME}.qrc
+		res/MeetRes.qrc
 )
 
 qt5_wrap_ui(${PROJECT_NAME}_FORMS
