@@ -46,6 +46,8 @@ set(${PROJECT_NAME}_SOURCES
 		verticalonlyscroller.cpp
 		MessageBox.h
 		MessageBox.cpp
+    shadowbackground.h
+    shadowbackground.cpp
 )
 
 if(WIN32)

@@ -160,8 +160,10 @@ void Nexus::start(std::shared_ptr<ok::session::AuthSession> session) {
     // Connections
     connect(profile, &Profile::selfAvatarChanged, m_widget, &Widget::onSelfAvatarLoaded);
 
-    connect(profile, &Profile::selfAvatarChanged,
-            [&](const QPixmap& pixmap) { emit updateAvatar(pixmap); });
+    connect(profile, &Profile::selfAvatarChanged, [&](const QPixmap& pixmap) {
+        emit updateAvatar(pixmap);
+        emit ok::Application::Instance()->bus()->avatarChanged(pixmap);
+    });
 
     connect(profile, &Profile::coreChanged,
             [&](Core& core) { emit ok::Application::Instance() -> bus()->coreChanged(&core); });

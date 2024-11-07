@@ -21,10 +21,14 @@
 #include "base/resources.h"
 
 OK_RESOURCE_LOADER(Meet)
+OK_RESOURCE_LOADER(MeetRes)
 
 namespace Ui {
 class WorkPlatform;
 }
+
+class StartMeetingWidget;
+class JoinMeetingWidget;
 
 namespace module::meet {
 
@@ -42,8 +46,11 @@ protected:
 
 private:
     OK_RESOURCE_PTR(Meet);
+    OK_RESOURCE_PTR(MeetRes);
 
     Ui::WorkPlatform* ui;
+    StartMeetingWidget* startMeetWidget = nullptr;
+    JoinMeetingWidget* joinMeetWidget = nullptr;
 
 public slots:
     void doStart();

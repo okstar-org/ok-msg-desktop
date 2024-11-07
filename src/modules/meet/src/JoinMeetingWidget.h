@@ -12,8 +12,16 @@
  */
 
 #include <QWidget>
+
+class MeetingOptionWidget;
+class QLineEdit;
+
 class JoinMeetingWidget : public QWidget {
     Q_OBJECT
 public:
     JoinMeetingWidget(QWidget * parent = nullptr);
+
+ private:
+    MeetingOptionWidget* optionWidget = nullptr;
+    QLineEdit* idEdit = nullptr;
 };
