@@ -23,6 +23,8 @@ class Profile;
 class Core;
 class CoreFile;
 class CoreAV;
+class Group;
+class Friend;
 
 namespace ok {
 
@@ -37,8 +39,14 @@ public:
 signals:
     void languageChanged(QString locale);
     void moduleCreated(Module* module);
+
     void profileChanged(Profile* profile);
+
+    void getAvatar();
     void avatarChanged(const QPixmap& pixmap);
+
+    void friendChanged(const Friend* f);
+    void groupChanged(const Group* g);
     void coreChanged(Core* core);
     void coreAvChanged(CoreAV* coreAv);
     void coreFileChanged(CoreFile* coreFile);

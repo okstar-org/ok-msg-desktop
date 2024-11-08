@@ -157,16 +157,19 @@ void Nexus::start(std::shared_ptr<ok::session::AuthSession> session) {
 
     qApp->setQuitOnLastWindowClosed(false);
 
+    auto bus = ok::Application::Instance()->bus();
+
     // Connections
     connect(profile, &Profile::selfAvatarChanged, m_widget, &Widget::onSelfAvatarLoaded);
 
-    connect(profile, &Profile::selfAvatarChanged, [&](const QPixmap& pixmap) {
+    connect(profile, &Profile::selfAvatarChanged, [&, bus](const QPixmap& pixmap) {
         emit updateAvatar(pixmap);
-        emit ok::Application::Instance()->bus()->avatarChanged(pixmap);
+        emit bus->avatarChanged(pixmap);
     });
 
-    connect(profile, &Profile::coreChanged,
-            [&](Core& core) { emit ok::Application::Instance() -> bus()->coreChanged(&core); });
+    connect(bus, &ok::Bus::getAvatar, [&, bus]() { bus->avatarChanged(profile->loadAvatar()); });
+
+    connect(profile, &Profile::coreChanged, [&, bus](Core& core) { emit bus->coreChanged(&core); });
 
     profile->startCore();
 
