@@ -331,13 +331,13 @@ void Conductor::CreateOffer() {
  * @param desc
  */
 void Conductor::CreateAnswer() {
-    RTC_LOG(LS_INFO) << __FUNCTION__ << "...";
+    RTC_LOG(LS_INFO) << __FUNCTION__ << " ...";
     peer_connection_->CreateAnswer(this, webrtc::PeerConnectionInterface::RTCOfferAnswerOptions());
-    RTC_LOG(LS_INFO) << __FUNCTION__ << "done.";
+    RTC_LOG(LS_INFO) << __FUNCTION__ << " done.";
 }
 
 void Conductor::SetRemoteDescription(std::unique_ptr<webrtc::SessionDescriptionInterface> desc) {
-    RTC_LOG(LS_INFO) << __FUNCTION__ << "desc type:" << desc->type();
+    RTC_LOG(LS_INFO) << __FUNCTION__ << " desc type:" << desc->type();
 
     std::string sdp;
     desc->ToString(&sdp);

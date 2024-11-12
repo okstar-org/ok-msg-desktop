@@ -143,35 +143,6 @@ void IMCall::onImStartedCall() {
     _im->sessionManager()->registerPlugin(new gloox::Jingle::Group());
     _im->sessionManager()->registerPlugin(new gloox::Jingle::RTP());
     _im->addSessionHandler(this);
-
-    auto rtcManager = ortc::OkRTCManager::getInstance();
-
-    std::list<gloox::ExtDisco::Service> discos;
-
-    gloox::ExtDisco::Service disco0;
-    disco0.type = "turn";
-    disco0.host = "chuanshaninfo.com";
-    disco0.port = 34780;
-    disco0.username = "gaojie";
-    disco0.password = "hncs";
-    discos.push_back(disco0);
-
-    gloox::ExtDisco::Service disco1;
-    disco1.type = "stun";
-    disco1.host = "stun.l.google.com";
-    disco1.port = 19302;
-
-    discos.push_back(disco1);
-
-    for (const auto& item : discos) {
-        ortc::IceServer ice;
-        ice.uri = item.type + ":" + item.host + ":" + std::to_string(item.port);
-        //              "?transport=" + item.transport;
-        ice.username = item.username;
-        ice.password = item.password;
-        qDebug() << "Add ice:" << ice.uri.c_str();
-        rtcManager->addIceServer(ice);
-    }
 }
 
 void IMCall::addCallHandler(CallHandler* hdr) {
@@ -283,8 +254,20 @@ bool IMCall::createCall(const IMPeerId& to, const QString& sId, bool video) {
 
     auto ws = createSession(_im->getSelfId(), to, sId, lib::ortc::JingleCallType::av);
 
-    auto rtc = lib::ortc::OkRTCManager::getInstance()->getRtc();
+    auto rtcManager = lib::ortc::OkRTCManager::getInstance();
+    auto rtc = rtcManager->getRtc();
     rtc->addRTCHandler(this);
+
+    const auto& discos = _im->getExternalServiceDiscovery();
+    for (const auto& item : discos) {
+        ortc::IceServer ice;
+        ice.uri = item.type + ":" + item.host + ":" + std::to_string(item.port);
+        //              "?transport=" + item.transport;
+        ice.username = item.username;
+        ice.password = item.password;
+        qDebug() << "Add ice:" << ice.uri.c_str();
+        rtcManager->addIceServer(ice);
+    }
 
     bool createdCall = rtc->call(stdstring(to.toString()), stdstring(sId), video);
     if (createdCall) {
@@ -333,8 +316,20 @@ bool IMCall::answer(const IMPeerId& peerId, const QString& callId, bool video) {
     qDebug() << __func__ << "peer:" << peerId.toString() << "callId:" << callId
              << "video:" << video;
 
-    auto rtc = lib::ortc::OkRTCManager::getInstance()->getRtc();
+    ortc::OkRTCManager* rtcManager = lib::ortc::OkRTCManager::getInstance();
+    auto rtc = rtcManager->getRtc();
     rtc->addRTCHandler(this);
+
+    const auto& discos = _im->getExternalServiceDiscovery();
+    for (const auto& item : discos) {
+        ortc::IceServer ice;
+        ice.uri = item.type + ":" + item.host + ":" + std::to_string(item.port);
+        //              "?transport=" + item.transport;
+        ice.username = item.username;
+        ice.password = item.password;
+        qDebug() << "Add ice:" << ice.uri.c_str();
+        rtcManager->addIceServer(ice);
+    }
 
     acceptJingleMessage(peerId, callId, video);
 

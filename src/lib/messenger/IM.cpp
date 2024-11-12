@@ -137,7 +137,11 @@ std::unique_ptr<Client> IM::makeClient() {
     client->registerStanzaExtension(new Carbons());
     client->registerStanzaExtension(new Attention());
     client->registerStanzaExtension(new DelayedDelivery());
+
+    // XEP-0215: External Service Discovery
     client->registerStanzaExtension(new ExtDisco());
+    client->registerIqHandler(this, ExtSrvDisco);
+
     client->registerStanzaExtension(new Addresses());
     client->registerStanzaExtension(new Nickname(nullptr));
 
@@ -201,7 +205,6 @@ std::unique_ptr<Client> IM::makeClient() {
     client->setTls(TLSPolicy::TLSDisabled);
     client->setCompression(false);
     client->registerIqHandler(this, ExtPubSub);
-    //  client->registerIncomingHandler(this);
 
     /**
      * listeners
@@ -1303,9 +1306,16 @@ void IM::fetchFriendVCard(const QString& friendId) {
     //  _client->rosterManager()->subscribe(jid.bareJID());
 }
 
-void IM::handleTag(Tag* tag) { qDebug() << QString("tag：%1").arg(qstring(tag->xml())); }
+void IM::handleTag(Tag* tag) { qDebug() << __func__ << qstring(tag->name()); }
 
 bool IM::handleIq(const IQ& iq) {
+    qDebug() << __func__ << qstring(iq.id());
+    const auto* ext = iq.findExtension<ExtDisco>(ExtSrvDisco);
+    if (ext) {
+        for (const auto& item : ext->services()) {
+            mExtSrvDiscos.push_back(item);
+        }
+    }
     emit incoming(qstring(iq.tag()->xml()));
     return true;
 }

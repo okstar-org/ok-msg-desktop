@@ -179,6 +179,11 @@ public:
     IMPeerId getSelfPeerId();
     QString getSelfUsername();
 
+    // External Service Discovery
+    const QList<gloox::ExtDisco::Service>& getExternalServiceDiscovery() const {
+        return mExtSrvDiscos;
+    }
+
     /**
      * fetchVCard
      */
@@ -843,10 +848,11 @@ private:
     QList<IMSessionHandler*> m_sessionHandlers;
     std::unique_ptr<gloox::Jingle::SessionManager> _sessionManager;
 
-    //
     //  ConferenceList mConferenceList;
     //  BookmarkList &mBookmarkList;
-    //  ExtDisco mExtDisco;
+
+    // External Service Discovery
+    QList<gloox::ExtDisco::Service> mExtSrvDiscos;
 
 signals:
     void connectResult(IMConnectStatus);
