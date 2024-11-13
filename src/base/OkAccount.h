@@ -33,8 +33,8 @@ public:
 
     void setJid(const base::Jid& jid);
 
-    [[maybe_unused]] base::Jid realJid(base::Jid jid);
-    [[maybe_unused]] QString id() const { return username; }
+    [[nodiscard]] base::Jid realJid(base::Jid jid);
+    [[nodiscard]] const QString& id() const { return username; }
 
 private:
     QString username;

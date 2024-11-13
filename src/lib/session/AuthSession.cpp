@@ -48,7 +48,8 @@ void AuthSession::doSignIn() {
     passportService->signIn(
             m_signInInfo.account, m_signInInfo.password,
             [&](Res<SysToken>& res) {
-                qDebug() << "username:" << res.data->username;
+                QString& username = res.data->username;
+                qDebug() << "username:" << username;
                 if (res.code != 0) {
                     _status = Status::FAILURE;
                     LoginResult result{_status, res.msg, 200};
@@ -65,6 +66,8 @@ void AuthSession::doSignIn() {
 
                 qDebug() << "Set token:" << res.data;
                 setToken(*res.data);
+
+                okAccount = std::make_unique<base::OkAccount>(username);
 
                 _status = Status::SUCCESS;
                 LoginResult result{Status::SUCCESS, ""};
@@ -93,6 +96,7 @@ void AuthSession::doLogin(const SignInInfo& signInInfo) {
 
     qDebug() << "account:" << signInInfo.account << "password:" << signInInfo.password;
     qDebug() << "stackUrl:" << signInInfo.stackUrl;
+
     doSignIn();
 }
 

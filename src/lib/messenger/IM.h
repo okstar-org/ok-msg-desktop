@@ -228,9 +228,9 @@ public:
     // gloox log
     void handleLog(gloox::LogLevel level, gloox::LogArea area, const std::string& message) override;
 
-    virtual const gloox::JID& self() const { return _client->jid(); }
+    inline const gloox::JID& self() const { return _client->jid(); }
 
-    gloox::Client* getClient() const { return _client.get(); }
+    inline gloox::Client* getClient() const { return _client.get(); }
 
     QDomDocument buildMessage(const QString& to, const QString& msg, const QString& id);
 

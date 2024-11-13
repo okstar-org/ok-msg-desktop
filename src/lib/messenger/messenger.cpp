@@ -371,7 +371,7 @@ void Messenger::onEncryptedMessage(QString xml) {
     auto _session = ok::Application::Instance()->getSession();
     auto info = _session->getSignInInfo();
 
-    _session->account()->setJid(qstring(_im->self().full()));
+    _session->account()->setJid(ok::base::Jid(qstring(_im->self().full())));
     auto pm = ok::plugin::PluginManager::instance();
     pm->addAccount(_session->account(), this);
 
