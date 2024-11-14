@@ -111,7 +111,8 @@ public:
     explicit IMCall(IM* im, QObject* parent = nullptr);
     ~IMCall() override;
     void toPlugins(const ortc::OJingleContentAv& oContext, gloox::Jingle::PluginList& plugins);
-    void parse(const gloox::Jingle::Session::Jingle* jingle, ortc::OJingleContentAv& oContext);
+    static void parse(const gloox::Jingle::Session::Jingle* jingle,
+                      ortc::OJingleContentAv& contentAv);
 
     void onCreatePeerConnection(const std::string& sId, const std::string& peerId,
                                 bool ok) override;

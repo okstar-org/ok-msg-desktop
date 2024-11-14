@@ -442,7 +442,6 @@ void IMCall::doSessionAccept(gloox::Jingle::Session* session,
     auto sess = m_sessionMap.value(sId);
     if (!sess) {
         // 创建session
-        // self id
         auto selfId = _im->getSelfId();
         sess = new IMCallSession(sId, session, selfId, peerId, ortc::JingleCallType::av);
         m_sessionMap.insert(sId, sess);
@@ -831,22 +830,23 @@ void IMCall::toPlugins(const ortc::OJingleContentAv& oContext, gloox::Jingle::Pl
 }
 
 void IMCall::parse(const gloox::Jingle::Session::Jingle* jingle,
-                   ortc::OJingleContentAv& oContextAv) {
-    oContextAv.sessionId = jingle->sid();
+                   ortc::OJingleContentAv& contentAv) {
+    contentAv.sessionId = jingle->sid();
     int mid = 0;
+
     for (const auto p : jingle->plugins()) {
         gloox::Jingle::JinglePluginType pt = p->pluginType();
         switch (pt) {
             case gloox::Jingle::PluginContent: {
                 ortc::OSdp oContent;
 
-                const auto* content = static_cast<const gloox::Jingle::Content*>(p);
+                auto content = static_cast<const gloox::Jingle::Content*>(p);
                 oContent.name = content->name();
 
-                const auto* rtp = content->findPlugin<gloox::Jingle::RTP>(gloox::Jingle::PluginRTP);
+                auto rtp = content->findPlugin<gloox::Jingle::RTP>(gloox::Jingle::PluginRTP);
                 if (rtp) {
                     // 存在rtp则设置类型
-                    oContextAv.callType = ortc::JingleCallType::av;
+                    contentAv.callType = ortc::JingleCallType::av;
 
                     ortc::SsrcGroup ssrcGroup = {.semantics = rtp->ssrcGroup().semantics,
                                                  .ssrcs = rtp->ssrcGroup().ssrcs};
@@ -861,16 +861,15 @@ void IMCall::parse(const gloox::Jingle::Session::Jingle* jingle,
                     oContent.rtp = description;
                 }
 
-                const auto* udp =
-                        content->findPlugin<gloox::Jingle::ICEUDP>(gloox::Jingle::PluginICEUDP);
+                auto udp = content->findPlugin<gloox::Jingle::ICEUDP>(gloox::Jingle::PluginICEUDP);
                 if (udp) {
                     ortc::OIceUdp iceUdp = {
-                            .mid = std::to_string(mid),         //
-                            .mline = mid,                       //
-                            .ufrag = udp->ufrag(),              //
-                            .pwd = udp->pwd(),                  //
-                            .dtls = {.hash = udp->dtls().hash,  //
-                                     .setup = udp->dtls().setup,
+                            .mid = (content->name()),             //
+                            .mline = std::stoi(content->name()),  //
+                            .ufrag = udp->ufrag(),                //
+                            .pwd = udp->pwd(),                    //
+                            .dtls = {.hash = udp->dtls().hash,    //
+                                     .setup = udp->dtls().setup,  //
                                      .fingerprint = udp->dtls().fingerprint},
                             .candidates =
                                     (const std::list<lib::ortc::Candidate>&)udp->candidates()  //
@@ -878,29 +877,13 @@ void IMCall::parse(const gloox::Jingle::Session::Jingle* jingle,
                     oContent.iceUdp = iceUdp;
                 }
 
-                oContextAv.contents.push_back(oContent);
+                contentAv.contents.push_back(oContent);
                 break;
             }
-            case gloox::Jingle::PluginNone:
-                break;
-            case gloox::Jingle::PluginFileTransfer:
-                break;
-            case gloox::Jingle::PluginICEUDP:
-                break;
-            case gloox::Jingle::PluginReason:
-                break;
-            case gloox::Jingle::PluginUser:
-                break;
-            case gloox::Jingle::PluginGroup:
-                break;
-            case gloox::Jingle::PluginRTP:
-                break;
-            case gloox::Jingle::PluginIBB:
-                break;
             default:
                 break;
         }
-        mid++;
+        break;
     }
 }
 

@@ -244,6 +244,7 @@ std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertToSdp(
                         ::cricket::FeedbackParam fb(e.type, e.subtype);
                         ac.AddFeedbackParam(fb);
                     }
+
                     acd->AddCodec(ac);
                 }
 
@@ -337,8 +338,39 @@ std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertToSdp(
     }
 
     sessionDescription->AddGroup(group);
-    return webrtc::CreateSessionDescription(sdpType, context.sessionId, context.sessionVersion,
-                                            std::move(sessionDescription));
+
+    std::unique_ptr<webrtc::SessionDescriptionInterface> ptr = webrtc::CreateSessionDescription(
+            sdpType, context.sessionId, context.sessionVersion, std::move(sessionDescription));
+
+    for (const auto& content : contents) {
+        auto& iceUdp = content.iceUdp;
+        for (const auto& item : content.iceUdp.candidates) {
+            // "host" / "srflx" / "prflx" / "relay" / token @
+            // http://tools.ietf.org/html/rfc5245#section-15.1
+            std::string type;
+            switch (item.type) {
+                case Type::Host:
+                    type = "host";
+                    break;
+                case Type::PeerReflexive:
+                    type = "prflx";
+                    break;
+                case Type::Relayed:
+                    type = "relay";
+                    break;
+                case Type::ServerReflexive:
+                    type = "srflx";
+                    break;
+            }
+            cricket::Candidate candidate(std::stoi(item.component), item.protocol,
+                                         rtc::SocketAddress{item.ip, item.port}, item.priority,
+                                         iceUdp.ufrag, iceUdp.pwd, type, std::stoi(item.generation),
+                                         item.foundation, std::stoi(item.network));
+            auto c = webrtc::CreateIceCandidate(iceUdp.mid, iceUdp.mline, candidate);
+            ptr->AddCandidate(c.release());
+        }
+    }
+    return ptr;
 }
 
 OJingleContentAv WebRTC::convertFromSdp(webrtc::SessionDescriptionInterface* desc) {
@@ -527,7 +559,7 @@ void WebRTC::addIceServer(const IceServer& ice) {
 Conductor* WebRTC::getConductor(const std::string& peerId) { return _pcMap[peerId]; }
 
 Conductor* WebRTC::createConductor(const std::string& peerId, const std::string& sId, bool video) {
-    RTC_LOG_F(LS_INFO) << "peer:" << peerId << " sid:" << sId << " video:" << video;
+    RTC_LOG(LS_INFO) << "peer:" << peerId << " sid:" << sId << " video:" << video;
 
     auto conductor = _pcMap[peerId];
     if (conductor) {
@@ -581,11 +613,11 @@ void WebRTC::setRemoteDescription(const std::string& peerId,
 void WebRTC::setTransportInfo(const std::string& peerId,
                               const std::string& sId,
                               const ortc::OIceUdp& iceUdp) {
-    RTC_LOG_F(LS_INFO) << "peerId:" << peerId;
+    RTC_LOG(LS_INFO) << "peerId:" << peerId;
 
     Conductor* conductor = createConductor(peerId, sId, false);
     if (!conductor) {
-        RTC_LOG_F(LS_WARNING) << "conductor is null!";
+        RTC_LOG(LS_WARNING) << "conductor is null!";
         return;
     }
 
@@ -675,7 +707,7 @@ void WebRTC::SessionTerminate(const std::string& peerId) {
 }
 
 void WebRTC::CreateAnswer(const std::string& peerId, const OJingleContentAv& ca) {
-    RTC_LOG_F(LS_INFO) << "peerId:" << peerId;
+    RTC_LOG(LS_INFO) << "peerId:" << peerId;
     Conductor* conductor = createConductor(peerId, ca.sessionId, ca.isVideo());
     // webrtc::SdpType::kOffer,
     auto sdp = convertToSdp(ca);

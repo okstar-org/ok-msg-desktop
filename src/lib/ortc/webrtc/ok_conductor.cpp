@@ -308,11 +308,10 @@ void Conductor::OnTrack(rtc::scoped_refptr<webrtc::RtpTransceiverInterface> tran
 void Conductor::OnRemoveTrack(rtc::scoped_refptr<webrtc::RtpReceiverInterface> receiver) {
     RTC_LOG(LS_INFO) << "TrackId:" << receiver->id();
 
-    rtc::scoped_refptr<webrtc::MediaStreamTrackInterface> track = receiver->track();
-
-    if (track->kind() == webrtc::MediaStreamTrackInterface::kVideoKind) {
-        auto remote_video_track = static_cast<webrtc::VideoTrackInterface*>(track.get());
-    }
+    //    rtc::scoped_refptr<webrtc::MediaStreamTrackInterface> track = receiver->track();
+    //    if (track->kind() == webrtc::MediaStreamTrackInterface::kVideoKind) {
+    //        auto remote_video_track = static_cast<webrtc::VideoTrackInterface*>(track.get());
+    //    }
 }
 
 /**
@@ -341,7 +340,7 @@ void Conductor::SetRemoteDescription(std::unique_ptr<webrtc::SessionDescriptionI
 
     std::string sdp;
     desc->ToString(&sdp);
-    RTC_LOG(LS_INFO) << "sdp:\n" << sdp;
+    RTC_LOG(LS_INFO) << "set remote sdp:\n" << sdp;
 
     peer_connection_->SetRemoteDescription(this, desc.release());
 }
@@ -540,7 +539,7 @@ void Conductor::OnSuccess(webrtc::SessionDescriptionInterface* desc) {
     std::string sdp;
     desc->ToString(&sdp);
 
-    RTC_LOG(LS_INFO) << "sdp:" << sdp;
+    RTC_LOG(LS_INFO) << "Set local sdp:" << sdp;
     peer_connection_->SetLocalDescription(this, desc);
 
     if (webRtc->getHandler()) {
@@ -560,11 +559,6 @@ void Conductor::OnSetRemoteDescriptionComplete(webrtc::RTCError error) {
 void Conductor::OnConnectionChange(webrtc::PeerConnectionInterface::PeerConnectionState new_state) {
     RTC_LOG(LS_INFO) << __FUNCTION__ << " : "
                      << webrtc::PeerConnectionInterface::AsString(new_state).data();
-}
-
-void Conductor::OnSessionAccept(std::unique_ptr<webrtc::SessionDescriptionInterface> desc) {
-    // qDebug(("type:%1").arg(qstring(desc->type())));
-    SetRemoteDescription(std::move(desc));
 }
 
 }  // namespace ortc

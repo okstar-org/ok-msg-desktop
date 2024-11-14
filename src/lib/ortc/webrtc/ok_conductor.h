@@ -73,8 +73,6 @@ public:
         return rtc::RefCountReleaseStatus::kDroppedLastRef;
     };
 
-    void OnSessionAccept(std::unique_ptr<webrtc::SessionDescriptionInterface> desc);
-
     bool AddAudioTrack(webrtc::AudioSourceInterface* _audioSource);
     bool RemoveAudioTrack();
 
