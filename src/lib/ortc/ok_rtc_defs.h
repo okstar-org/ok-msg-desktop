@@ -13,6 +13,7 @@
 #pragma once
 
 #include <list>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -95,9 +96,8 @@ struct PayloadType {
     Parameters parameters;
     Feedbacks feedbacks;
 };
-
-/** A list of file information structs. */
 typedef std::list<PayloadType> PayloadTypes;
+
 struct HdrExt {
     int id;          /**< The type's id */
     std::string uri; /**< The type's name. */
@@ -114,6 +114,7 @@ struct SsrcGroup {
     std::string semantics;
     std::vector<std::string> ssrcs;
 };
+
 struct ORTP {
     Media media = Media::invalid;
     PayloadTypes payloadTypes;
@@ -145,10 +146,6 @@ struct OFile : public OContent {
     long int offset = 0;
 };
 
-struct OSdp : public OContent {
-    ORTP rtp;
-    OIceUdp iceUdp;
-};
 
 enum class JingleSdpType {
     Offer,
@@ -183,9 +180,14 @@ struct OJingleContentFile : public OJingleContent {
     bool isValid();
 };
 
+struct OSdp : public OContent {
+    ORTP rtp;
+    OIceUdp iceUdp;
+};
+
 struct OJingleContentAv : public OJingleContent {
 public:
-    std::vector<OSdp> contents;
+    std::map<std::string, OSdp> contents;
 
     bool isValid();
 

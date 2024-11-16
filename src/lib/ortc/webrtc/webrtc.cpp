@@ -202,7 +202,8 @@ std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertToSdp(
 
     cricket::ContentGroup group(cricket::GROUP_TYPE_BUNDLE);
 
-    for (const auto& content : contents) {
+    for (const auto& kv : contents) {
+        auto& content = kv.second;
         group.AddContentName(content.name);
 
         auto& rtp = content.rtp;
@@ -342,7 +343,8 @@ std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertToSdp(
     std::unique_ptr<webrtc::SessionDescriptionInterface> ptr = webrtc::CreateSessionDescription(
             sdpType, context.sessionId, context.sessionVersion, std::move(sessionDescription));
 
-    for (const auto& content : contents) {
+    for (const auto& kv : contents) {
+        auto& content = kv.second;
         auto& iceUdp = content.iceUdp;
         for (const auto& item : content.iceUdp.candidates) {
             // "host" / "srflx" / "prflx" / "relay" / token @
@@ -537,7 +539,7 @@ OJingleContentAv WebRTC::convertFromSdp(webrtc::SessionDescriptionInterface* des
                 break;
         }
 
-        osdp.contents.push_back(oContent);
+        osdp.contents.insert(std::pair(oContent.name, oContent));
     }
 
     return osdp;

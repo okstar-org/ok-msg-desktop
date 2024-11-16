@@ -12,7 +12,7 @@ sudo apt install -y libcrypto++-dev  libssl-dev
 sudo apt install -y libpipewire-0.3-dev libxss-dev libgbm-dev libdrm-dev libxdamage-dev libxrender-dev libxrandr-dev libxtst-dev \
   libasound2-dev libpulse-dev libavcodec-dev libavformat-dev libswscale-dev libavdevice-dev libvpx-dev \
   libopus-dev libjpeg-dev libopenal-dev libopenh264-dev \
-  libexif-dev libqrencode-dev libsqlite3-dev
+  libexif-dev libqrencode-dev libsqlite3-dev librange-v3-dev
 ```
 
 ## 构建OkRtc库

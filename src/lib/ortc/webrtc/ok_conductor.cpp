@@ -525,7 +525,7 @@ OJingleContentAv Conductor::toJingleSdp(const webrtc::SessionDescriptionInterfac
                 break;
         }
 
-        osdp.contents.push_back(oContent);
+        osdp.contents.insert(std::pair(oContent.name, oContent));
     }
 
     return osdp;

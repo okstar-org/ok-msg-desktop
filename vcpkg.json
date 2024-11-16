@@ -14,7 +14,8 @@
     "sqlite3",
     "openal-soft",
     "opus",
-    "openh264"
+    "openh264",
+    "range-v3"
   ],
   "overrides": [
     {
