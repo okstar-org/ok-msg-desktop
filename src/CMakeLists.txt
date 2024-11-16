@@ -157,23 +157,21 @@ if(LINUX AND OK_CPACK)
             libbs2b0,libcaca0,libcdio19,libcdio-cdda2,libcdio-paranoia2,libchromaprint1,\
             libcodec2-1.0,libdav1d5,libdecor-0-0,libexif12,libflite1,\
             libgfortran5,libgme0,libgomp1,libgsm1,libiec61883-0,libjack-jackd2-0,\
-            liblapack3,liblilv-0-0,libmp3lame0,libmpg123-0,\
+            liblapack3,liblilv-0-0,libmp3lame0,libmpg123-0\
             libnorm1,libnuma1,libogg0,libopenal1,libopenjp2-7,libopenmpt0,libopus0,\
             libpocketsphinx3,libpostproc55,libpulse0,libqrencode4,libquadmath0,\
             libwebpmux3,libswscale5,libswresample3,\
-            libsqlcipher0,libvorbis0a,libvorbisenc2,libvorbisfile3,libspeex1")
+            libsqlcipher0,libvorbis0a,libvorbisenc2,libvorbisfile3,libspeex1,librange-v3-dev")
 
     elseif (${DISTRO_ID} MATCHES "debian")
-        set(OK_CPACK_DEPENDS "libvpx5,libx264-155,libx265-165,libpgm-5.2-0,libdc1394-22,libaom0,libdavix0v5,libdouble-conversion1")
+        set(OK_CPACK_DEPENDS "librange-v3-dev,libvpx5,libx264-155,libx265-165,libpgm-5.2-0,libdc1394-22,libaom0,libdavix0v5,libdouble-conversion1")
     elseif (${DISTRO_ID} MATCHES "fedora")
         # RPM for fedora 36
         set(CPACK_GENERATOR "RPM")
         set(CPACK_RPM_PACKAGE_GROUP ${CPACK_DESKTOP_GROUP})
         set(CPACK_RPM_PACKAGE_AUTOREQ ${OK_MAINTAINER})
         set(CPACK_RPM_PACKAGE_REQUIRES "qt5-qtbase,qt5-qtbase-gui,qt5-qtsvg,qt5-qtmultimedia,qt5-linguist,qt5-qttools,qt5-qtscxml,qt5-qttools-static,\
-            libvpx,ffmpeg-free, libavcodec-free-devel, libavdevice-free,libexif,\
-						qrencode-libs, \
-            openal-soft,openssl-libs")
+            libvpx,ffmpeg-free, libavcodec-free-devel, libavdevice-free,libexif,librange-v3-devel,qrencode-libs,openal-soft,openssl-libs")
     endif ()
 
     # 指定需要安装的文件

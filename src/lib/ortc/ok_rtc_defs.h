@@ -69,6 +69,19 @@ struct OIceUdp {
     std::string pwd;
     Dtls dtls;
     CandidateList candidates;
+    OIceUdp() = default;
+    OIceUdp(std::string mid_,
+            int mline_,
+            std::string ufrag_,
+            std::string pwd_,
+            Dtls dtls_,
+            CandidateList candidates_)
+            : mid{mid_}
+            , mline{mline_}
+            , ufrag(ufrag_)
+            , pwd(pwd_)
+            , dtls(dtls_)
+            , candidates(candidates_) {}
 };
 
 struct Feedback {
@@ -122,6 +135,21 @@ struct ORTP {
     Sources sources;
     SsrcGroup ssrcGroup;
     bool rtcpMux;
+
+    ORTP() = default;
+
+    ORTP(Media media,
+         PayloadTypes payloadTypes,
+         HdrExts hdrExts,
+         Sources sources,
+         SsrcGroup ssrcGroup,
+         bool rtcpMux)
+            : media{media}
+            , payloadTypes(payloadTypes)
+            , hdrExts(hdrExts)
+            , sources(sources)
+            , ssrcGroup(ssrcGroup)
+            , rtcpMux{rtcpMux} {}
 };
 
 // struct OFile {
