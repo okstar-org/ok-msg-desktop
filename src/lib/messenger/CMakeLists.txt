@@ -1,8 +1,5 @@
 project(OkIMCore)
 
-
-set(CMAKE_CXX_STANDARD 20)
-
 if (WIN32)
 	add_definitions(-D_WIN32 -DWIN32 -D_WINDOWS -D_UNICODE)
 endif()
@@ -37,7 +34,9 @@ target_link_libraries(${PROJECT_NAME}
 		PRIVATE ${gloox_LIB}
 		PRIVATE ${Qt5Core_LIBRARIES}
 		PRIVATE ${Qt5Xml_LIBRARIES}
-		PRIVATE ${Qt5Widgets_LIBRARIES})
+        PRIVATE ${Qt5Widgets_LIBRARIES}
+        PRIVATE range-v3::meta range-v3::concepts range-v3::range-v3
+)
 
 
 if (WIN32)

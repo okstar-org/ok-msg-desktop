@@ -1,5 +1,8 @@
 project(ok-msg-desktop)
 
+find_package(PkgConfig REQUIRED)
+find_package(range-v3 REQUIRED)
+
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 find_package(range-v3 REQUIRED)
