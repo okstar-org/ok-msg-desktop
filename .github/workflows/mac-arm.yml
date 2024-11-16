@@ -28,7 +28,7 @@ on:
 jobs:
 
   macos:
-    name: MacOS
+    name: MacOS-ARM
     runs-on: macos-latest
 
     strategy:
