@@ -3,8 +3,6 @@ add_definitions(-DOK_${PROJECT_NAME}_MODULE="${PROJECT_NAME}")
 
 include_directories(${PROJECT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
-find_package(PkgConfig REQUIRED)
-
 pkg_check_modules(AVDEVICE REQUIRED libavdevice)
 pkg_check_modules(AVCODEC REQUIRED libavcodec)
 pkg_check_modules(AVFORMAT REQUIRED libavformat)
@@ -56,8 +54,8 @@ qt5_wrap_ui(
         src/widget/form/setpassworddialog.ui
         src/widget/form/settings/avform.ui
         src/widget/form/settings/generalsettings.ui
-		src/widget/form/settings/StorageSettingsForm.ui
-		src/widget/form/CallDurationForm.ui
+        src/widget/form/settings/StorageSettingsForm.ui
+        src/widget/form/CallDurationForm.ui
 )
 
 set(${PROJECT_NAME}_SOURCES
@@ -136,7 +134,7 @@ set(${PROJECT_NAME}_SOURCES
         src/core/toxoptions.cpp
         src/core/toxoptions.h
         src/core/FriendId.cpp
-		src/core/FriendId.h
+        src/core/FriendId.h
         src/core/contactid.cpp
         src/core/contactid.h
         src/friendlist.cpp
@@ -484,7 +482,7 @@ add_library(${PROJECT_NAME} STATIC
         ${${PROJECT_NAME}_FORMS}
         ${${PROJECT_NAME}_SOURCES}
         ${${PROJECT_NAME}_QM_FILES}
-		${${PROJECT_NAME}_RESOURCES}
+        ${${PROJECT_NAME}_RESOURCES}
 )
 
 if (WIN32)
@@ -556,6 +554,7 @@ target_link_libraries(${PROJECT_NAME}
     PUBLIC ${CMAKE_REQUIRED_LIBRARIES}
     PUBLIC ${ALL_LIBRARIES}
     PUBLIC ${PLATFORM_LIBS}
+    PRIVATE range-v3::meta range-v3::concepts range-v3::range-v3
 )
 
 if (WIN32)
