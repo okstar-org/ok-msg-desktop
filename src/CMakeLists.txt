@@ -2,6 +2,8 @@ project(ok-msg-desktop)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
+find_package(range-v3 REQUIRED)
+
 add_subdirectory(base)
 add_subdirectory(lib)
 add_subdirectory(modules)
@@ -88,6 +90,7 @@ endif ()
 target_link_libraries(
     ${PROJECT_NAME}
     PUBLIC ${OK_LIBS}
+    PRIVATE range-v3::meta range-v3::concepts range-v3::range-v3
 )
 
 if (WIN32)
