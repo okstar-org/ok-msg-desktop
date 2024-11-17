@@ -842,7 +842,7 @@ void IM::handleMUCMessage(MUCRoom* room, const gloox::Message& msg, bool priv) {
     IMPeerId peerId(msg.from());
     for (const auto& id : sendIds) {
         if (id == msg.id()) {
-            qDebug() << "自己发出消息，忽略！";
+            qWarning() << "Ignore messages from oneself";
             sendIds.erase(id);
             return;
         }

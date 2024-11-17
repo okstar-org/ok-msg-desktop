@@ -32,7 +32,7 @@ on:
 jobs:
 
   macos:
-    name: MacOS
+    name: MacOS-X64
     runs-on: macos-12
 
     strategy:
