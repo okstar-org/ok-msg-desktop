@@ -1,24 +1,24 @@
-#include "RoundedAvatarLabel.h"
+#include "RoundedPixmapLabel.h"
 
 #include <QPainter>
 #include <QStyle>
 
-RoundedAvatarLabel::RoundedAvatarLabel(QWidget* parent)
+RoundedPixmapLabel::RoundedPixmapLabel(QWidget* parent)
     :QWidget(parent)
 {
 }
 
-QSize RoundedAvatarLabel::sizeHint() const
+QSize RoundedPixmapLabel::sizeHint() const
 {
     return _contentsSize;
 }
 
-QSize RoundedAvatarLabel::minimumSizeHint() const
+QSize RoundedPixmapLabel::minimumSizeHint() const
 {
     return _contentsSize;
 }
 
-void RoundedAvatarLabel::setContentsSize(const QSize &size)
+void RoundedPixmapLabel::setContentsSize(const QSize &size)
 {
     if(_contentsSize != size)
     {
@@ -27,14 +27,14 @@ void RoundedAvatarLabel::setContentsSize(const QSize &size)
     }
 }
 
-void RoundedAvatarLabel::setPixmap(const QPixmap &pixmap)
+void RoundedPixmapLabel::setPixmap(const QPixmap &pixmap)
 {
     _pixmap = pixmap;
     _cachePixmap = QPixmap();
     updateGeometry();
 }
 
-void RoundedAvatarLabel::setMaskOnPixmap(bool pixmap)
+void RoundedPixmapLabel::setMaskOnPixmap(bool pixmap)
 {
     if(maskPixmap != pixmap)
     {
@@ -43,7 +43,7 @@ void RoundedAvatarLabel::setMaskOnPixmap(bool pixmap)
     }
 }
 
-void RoundedAvatarLabel::setPixmapAlign(Qt::Alignment alignment)
+void RoundedPixmapLabel::setPixmapAlign(Qt::Alignment alignment)
 {
     if(_align != alignment)
     {
@@ -52,7 +52,7 @@ void RoundedAvatarLabel::setPixmapAlign(Qt::Alignment alignment)
     }
 }
 
-void RoundedAvatarLabel::setScaleMode(PixmapScaleMode mode)
+void RoundedPixmapLabel::setScaleMode(PixmapScaleMode mode)
 {
     if(_scaleMode != mode)
     {
@@ -62,7 +62,7 @@ void RoundedAvatarLabel::setScaleMode(PixmapScaleMode mode)
     }
 }
 
-void RoundedAvatarLabel::setRoundedType(RoundedType type)
+void RoundedPixmapLabel::setRoundedType(RoundedType type)
 {
     if(_roundType != type)
     {
@@ -71,14 +71,14 @@ void RoundedAvatarLabel::setRoundedType(RoundedType type)
     }
 }
 
-void RoundedAvatarLabel::setRoundRadius(int xRadius, int yRadius)
+void RoundedPixmapLabel::setRoundRadius(int xRadius, int yRadius)
 {
     roundRadius.rx() = xRadius;
     roundRadius.ry() = yRadius;
     update();
 }
 
-void RoundedAvatarLabel::paintEvent(QPaintEvent *)
+void RoundedPixmapLabel::paintEvent(QPaintEvent *)
 {
     if(_pixmap.isNull())
         return;
@@ -105,7 +105,7 @@ void RoundedAvatarLabel::paintEvent(QPaintEvent *)
     painter.drawPixmap(rect.topLeft(), _cachePixmap);
 }
 
-QRect RoundedAvatarLabel::paintRect()
+QRect RoundedPixmapLabel::paintRect()
 {
     QSize wgt_size = _contentsSize;
     if(_contentsSize.isEmpty())
@@ -127,7 +127,7 @@ QRect RoundedAvatarLabel::paintRect()
     return QStyle::alignedRect(Qt::LeftToRight, _align, pix_size, this->rect());
 }
 
-QPainterPath RoundedAvatarLabel::roundMaskPath(const QRect &rect)
+QPainterPath RoundedPixmapLabel::roundMaskPath(const QRect &rect)
 {
     QPainterPath path;
 
