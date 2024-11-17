@@ -18,6 +18,9 @@ class QLineEdit;
 
 class JoinMeetingWidget : public QWidget {
     Q_OBJECT
+signals:
+    void requstJoinMeeting();
+
 public:
     JoinMeetingWidget(QWidget * parent = nullptr);
 

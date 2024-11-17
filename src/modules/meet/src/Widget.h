@@ -29,6 +29,7 @@ class WorkPlatform;
 
 class StartMeetingWidget;
 class JoinMeetingWidget;
+class MeetingVideoFrame;
 
 namespace module::meet {
 
@@ -43,6 +44,11 @@ public:
 protected:
     void initTranslate();
     void retranslateUi();
+
+
+ private:
+    void joinMeeting();
+    void createMeeting();
 
 private:
     OK_RESOURCE_PTR(Meet);

@@ -6,6 +6,7 @@
 #include <QHBoxLayout>
 #include <QPainter>
 #include <QLabel>
+#include <QMenu>
 
 class ToolButtonRemoveSpace : public QToolButton {
 public:
@@ -66,6 +67,8 @@ PopupMenuComboBox::PopupMenuComboBox(QWidget* parent) : QFrame(parent) {
     mainLayout->addWidget(_iconButton);
     mainLayout->addWidget(new LayoutBarSeparator(Qt::Vertical, this));
     mainLayout->addWidget(menuButton);
+
+    connect(menuButton, &QToolButton::clicked, this, &PopupMenuComboBox::onMenuButtonClicked);
 }
 
 void PopupMenuComboBox::setLabel(const QString& text) { setWidget(new QLabel(text, this)); }
@@ -86,3 +89,29 @@ void PopupMenuComboBox::setWidget(QWidget* widget) {
 }
 
 QToolButton* PopupMenuComboBox::iconButton() { return _iconButton; }
+
+void PopupMenuComboBox::setMenu(QMenu* menu) {
+    popMenu = menu;
+}
+
+void PopupMenuComboBox::showMenuOnce(QMenu* menu)
+{
+    QSize size = menu->sizeHint();
+    QPoint pos = this->mapToGlobal(QPoint(0, -5));
+    pos.ry() -= size.height();
+    menu->exec(pos);
+
+    if (!rect().contains(mapFromGlobal(QCursor::pos())))
+    {
+        menuButton->setAttribute(Qt::WA_UnderMouse, false);
+        menuButton->update();
+    }
+}
+
+void PopupMenuComboBox::onMenuButtonClicked() {
+    if (popMenu){
+        showMenuOnce(popMenu.data());
+        return;
+    }
+    emit menuRequest();
+}
