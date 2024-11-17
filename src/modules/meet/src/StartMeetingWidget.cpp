@@ -4,7 +4,6 @@
 
 #include <QLineEdit>
 #include <QVBoxLayout>
-#include <lib/settings/style.h>
 
 StartMeetingWidget::StartMeetingWidget(QWidget* parent) :QWidget(parent){
 
