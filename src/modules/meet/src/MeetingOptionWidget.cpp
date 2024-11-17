@@ -11,30 +11,30 @@
  */
 
 #include "MeetingOptionWidget.h"
-#include "RoundedAvatarLabel.h"
+#include "base/RoundedPixmapLabel.h"
 #include "src/Bus.h"
 #include "src/application.h"
+#include "tools/PopupMenuComboBox.h"
 
 #include <QLabel>
 #include <QPushButton>
 #include <QSlider>
-#include <QStyle>
 #include <QToolButton>
 #include <QVBoxLayout>
 
 MeetingOptionWidget::MeetingOptionWidget(QWidget* parent) : QWidget(parent) {
-    avatarLabel = new RoundedAvatarLabel(this);
+    avatarLabel = new RoundedPixmapLabel(this);
     avatarLabel->setObjectName("avatarLabel");
     avatarLabel->setAttribute(Qt::WA_StyledBackground);
     avatarLabel->setContentsSize(QSize(120, 120));
 
-    micSpeakSetting = new VideoDeviceSettingWidget(this);
+    micSpeakSetting = new PopupMenuComboBox(this);
     micSpeakSetting->iconButton()->setIcon(QIcon(":/meet/image/micphone.svg"));
     micSpeakSetting->setLabel(tr("Micphone"));
-    cameraSetting = new VideoDeviceSettingWidget(this);
+    cameraSetting = new PopupMenuComboBox(this);
     cameraSetting->iconButton()->setIcon(QIcon(":/meet/image/videocam.svg"));
     cameraSetting->setLabel(tr("Camera"));
-    volumnSetting = new VideoDeviceSettingWidget(this);
+    volumnSetting = new PopupMenuComboBox(this);
     volumnSetting->iconButton()->setIcon(QIcon(":/meet/image/volumn_2.svg"));
     volumnSlider = new QSlider(Qt::Horizontal, volumnSetting);
     volumnSlider->setRange(0, 100);
@@ -58,45 +58,17 @@ MeetingOptionWidget::MeetingOptionWidget(QWidget* parent) : QWidget(parent) {
     mainLayout->addLayout(footerLayout);
 
     ok::Bus* bus = ok::Application::Instance()->bus();
-    connect(bus, &ok::Bus::avatarChanged, avatarLabel, &RoundedAvatarLabel::setPixmap);
+    connect(bus, &ok::Bus::avatarChanged, avatarLabel, &RoundedPixmapLabel::setPixmap);
+
+    connect(confirmButton, &QPushButton::clicked, this, &MeetingOptionWidget::confirmed);
 }
 
 void MeetingOptionWidget::setConfirmButtonText(const QString& text) {
     confirmButton->setText(text);
 }
 
-VideoDeviceSettingWidget::VideoDeviceSettingWidget(QWidget* parent) : QWidget(parent) {
-    setAttribute(Qt::WA_StyledBackground);
-    mainLayout = new QHBoxLayout(this);
-    mainLayout->setContentsMargins(5, 5, 5, 5);
-
-    _iconButton = new QToolButton(this);
-    menuButton = new QToolButton(this);
-    menuButton->setIcon(QIcon(":/meet/image/up_arrow.svg"));
-    mainLayout->addWidget(_iconButton);
-    mainLayout->addWidget(menuButton);
-}
-
-void VideoDeviceSettingWidget::setLabel(const QString& text) { setWidget(new QLabel(text, this)); }
-
-void VideoDeviceSettingWidget::setWidget(QWidget* widget) {
-    if (content.isNull()) {
-        if (widget) {
-            mainLayout->insertWidget(1, widget, 1);
-        }
-    } else {
-        if (widget) {
-            mainLayout->replaceWidget(content, widget);
-        } else {
-            content->deleteLater();
-        }
-    }
-    content = widget;
-}
-
-QAbstractButton* VideoDeviceSettingWidget::iconButton() { return _iconButton; }
-
-void VideoDeviceSettingWidget::showEvent(QShowEvent* e) {
+void MeetingOptionWidget::showEvent(QShowEvent* event) {
     ok::Bus* bus = ok::Application::Instance()->bus();
     emit bus->getAvatar();
 }
+

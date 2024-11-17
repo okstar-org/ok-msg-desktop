@@ -48,6 +48,9 @@ set(${PROJECT_NAME}_SOURCES
 		MessageBox.cpp
     shadowbackground.h
     shadowbackground.cpp
+    RoundedPixmapLabel.h
+    RoundedPixmapLabel.cpp
+
 )
 
 if(WIN32)

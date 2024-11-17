@@ -14,7 +14,7 @@
 
 #include <QPainterPath>
 #include <QWidget>
-class RoundedAvatarLabel : public QWidget {
+class RoundedPixmapLabel : public QWidget {
     Q_OBJECT
 
 public:
@@ -35,7 +35,7 @@ public:
     };
 
 public:
-    RoundedAvatarLabel(QWidget* parent = nullptr);    
+    RoundedPixmapLabel(QWidget* parent = nullptr);    
     QSize sizeHint() const;
     QSize minimumSizeHint() const;
     void setContentsSize(const QSize & size);
