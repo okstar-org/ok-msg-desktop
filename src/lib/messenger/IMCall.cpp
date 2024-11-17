@@ -264,10 +264,11 @@ bool IMCall::createCall(const IMPeerId& to, const QString& sId, bool video) {
     for (const auto& item : discos) {
         ortc::IceServer ice;
         ice.uri = item.type + ":" + item.host + ":" + std::to_string(item.port);
-        //              "?transport=" + item.transport;
+        //                  "?transport=" + item.transport;
         ice.username = item.username;
         ice.password = item.password;
-        qDebug() << "Add ice:" << ice.uri.c_str();
+        qDebug() << "Add ice:" << ice.uri.c_str() << "user:" << qstring(ice.username)
+                 << "password:" << qstring(ice.password);
         rtcManager->addIceServer(ice);
     }
 
@@ -325,8 +326,8 @@ bool IMCall::answer(const IMPeerId& peerId, const QString& callId, bool video) {
     const auto& discos = _im->getExternalServiceDiscovery();
     for (const auto& item : discos) {
         ortc::IceServer ice;
-        ice.uri = item.type + ":" + item.host + ":" + std::to_string(item.port);
-        //              "?transport=" + item.transport;
+        ice.uri = item.type + ":" + item.host + ":" + std::to_string(item.port) +
+                  "?transport=" + item.transport;
         ice.username = item.username;
         ice.password = item.password;
         qDebug() << "Add ice:" << ice.uri.c_str();

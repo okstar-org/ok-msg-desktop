@@ -151,7 +151,7 @@ bool WebRTC::call(const std::string& peerId, const std::string& sId, bool video)
 bool WebRTC::quit(const std::string& peerId) { return false; }
 
 void WebRTC::setIceOptions(std::list<IceServer>& ices) {
-    for (auto ice : ices) {
+    for (const auto& ice : ices) {
         addIceServer(ice);
     }
 }
@@ -551,10 +551,9 @@ void WebRTC::addIceServer(const IceServer& ice) {
 
     ss.urls.push_back(ice.uri);
     ss.tls_cert_policy = webrtc::PeerConnectionInterface::kTlsCertPolicyInsecureNoCheck;
-    if (!ice.username.empty()) {
-        ss.username = ice.username;
-        ss.password = ice.password;
-    }
+    ss.username = ice.username;
+    ss.password = ice.password;
+
     _rtcConfig.servers.push_back(ss);
 }
 
