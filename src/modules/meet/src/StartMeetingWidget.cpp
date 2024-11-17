@@ -21,5 +21,8 @@ StartMeetingWidget::StartMeetingWidget(QWidget* parent) :QWidget(parent){
     mainLayout->addWidget(meetingNameEdit);
     mainLayout->addWidget(optionWidget, 1);
     mainLayout->setAlignment(meetingNameEdit, Qt::AlignHCenter);
+
+    connect(optionWidget, &MeetingOptionWidget::confirmed, this,
+            &StartMeetingWidget::requstStartMeeting);
 }
 

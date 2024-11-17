@@ -21,4 +21,7 @@ JoinMeetingWidget::JoinMeetingWidget(QWidget* parent) : QWidget(parent) {
     mainLayout->addWidget(idEdit);
     mainLayout->addWidget(optionWidget, 1);
     mainLayout->setAlignment(idEdit, Qt::AlignHCenter);
+
+    connect(optionWidget, &MeetingOptionWidget::confirmed, this,
+            &JoinMeetingWidget::requstJoinMeeting);
 }

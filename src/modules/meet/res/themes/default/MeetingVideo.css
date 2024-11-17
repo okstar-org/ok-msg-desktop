@@ -1,0 +1,60 @@
+MeetingVideoFrame{
+    background: white;
+}
+
+#videoLayout{
+    background: #E3E7EA;
+}
+
+QToolBar{
+    background: #E3E7EA;
+    padding: 2px;
+    spacing: 4px;
+}
+
+QToolBar QToolButton{
+    border: 0px solid;
+    border-radius: 5px;
+    background: transparent;
+    padding: 3px 2px 2px 3px;
+    margin: 0px;
+}
+
+QToolBar QToolButton:hover{
+    background-color: #f2f2f2;
+}
+
+QToolBar QToolButton:pressed{
+    padding: 3px 2px 2px 3px;
+}
+
+QToolButton{
+    background: #e1e1e1;
+    border: 0px solid;
+    border-radius: 5px;
+    padding: 4px;
+}
+
+QToolButton:hover{
+    background-color: #eeeeee;
+}
+
+#bottomBar{
+    padding: 10px;
+}
+
+VideoLayoutPicker QPushButton{
+    background: transparent;
+    border: 2px solid transparent;
+    border-radius: 5px;
+    padding: 2px;
+}
+
+VideoLayoutPicker QPushButton:hover{
+    border-color: #9ebbff;
+}
+
+VideoLayoutPicker QPushButton:pressed,
+VideoLayoutPicker QPushButton:checked{
+    border-color: #0D51F0;
+}
