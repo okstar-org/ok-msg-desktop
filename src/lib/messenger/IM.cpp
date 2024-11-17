@@ -1196,7 +1196,7 @@ void IM::setRoomAlias(const QString& groupId, const std::string& alias) {
     // 存储书签列表
     if (update) {
         bookmarkStorage->storeBookmarks(mBookmarkList, mConferenceList);
-        qDebug() << "Store the bookmarks：" << groupId;
+        qDebug() << "Store the bookmarks:" << groupId;
     }
 }
 
@@ -1230,7 +1230,7 @@ void IM::handlePing(const gloox::PingHandler::PingType type, const std::string& 
  * @param vcard
  */
 void IM::handleVCard(const JID& jid, const VCard* vcard) {
-    qDebug() << __func__ << QString("jid：%1").arg(qstring(jid.full()));
+    qDebug() << __func__ << "jid:" << qstring(jid.full());
 
     IMVCard imvCard = {
             .fullName = qstring(vcard->formattedname()),  // vCard:FN
