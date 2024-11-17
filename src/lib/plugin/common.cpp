@@ -407,13 +407,11 @@ ToolbarPrefs::ToolbarPrefs()
 }
 
 bool ToolbarPrefs::operator==(const ToolbarPrefs& other) {
-    return id == other.id && name == other.name && keys == other.keys && dock == other.dock &&
-           // dirty == other.dirty &&
-           on == other.on && locked == other.locked &&
-           // stretchable == other.stretchable &&
-           // index == other.index &&
-           nl == other.nl;
-    // extraOffset == other.extraOffset;
+    return id == other.id
+            && name == other.name
+            && on == other.on
+            && locked == other.locked
+            && nl == other.nl;
 }
 
 int versionStringToInt(const char* version) {

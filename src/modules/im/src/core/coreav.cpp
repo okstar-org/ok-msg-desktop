@@ -443,12 +443,6 @@ void CoreAV::groupCallCallback(void* tox, QString group, QString peer, const int
     //  QReadLocker locker{&cav->callsLock};
 
     const FriendId peerPk = c->getGroupPeerPk(group, peer);
-    const Settings& s = Settings::getInstance();
-    // don't play the audio if it comes from a muted peer
-    if (s.getBlackList().contains(peerPk.toString())) {
-        return;
-    }
-
     emit c->groupPeerAudioPlaying(group, peerPk);
 
     //  auto it = cav->groupCalls.find(group);

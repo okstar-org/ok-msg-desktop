@@ -89,11 +89,6 @@ void GroupMessageDispatcher::onMessageReceived(GroupMessage& msg) {
     //    return;
     //  }
 
-    //  if (groupSettings.getBlackList().contains(sender.toString())) {
-    //    qDebug() << "the sender is in backlist" << sender.toString();
-    //    return;
-    //  }
-
     auto msg0 = processor.processIncomingMessage(msg);
     emit messageReceived(FriendId(msg.from), msg0);
 }

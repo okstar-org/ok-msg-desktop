@@ -135,7 +135,7 @@ void ScreenGrabberChooserRectItem::mouseRelease(QGraphicsSceneMouseEvent* event)
         setCursor(QCursor(Qt::OpenHandCursor));
 
         QPointF delta = (event->scenePos() - startPos);
-        if (qAbs(delta.x()) < MinRectSize || qAbs(delta.y()) < MinRectSize) {
+        if (qAbs<int>(delta.x()) < MinRectSize || qAbs<int>(delta.y()) < MinRectSize) {
             rectWidth = rectHeight = 0;
             mainRect->setRect(QRect());
         } else {

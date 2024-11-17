@@ -124,10 +124,7 @@ GroupChatForm::GroupChatForm(const GroupId* chatGroup, IChatLog& chatLog,
     //    connect(group, &Group::userLeft, this, &GroupChatForm::onUserLeft);
     //    connect(group, &Group::peerNameChanged, this, &GroupChatForm::onPeerNameChanged);
     //    connect(group, &Group::peerCountChanged, this, &GroupChatForm::updateUserCount);
-    settings.connectTo_blackListChanged(this,
-                                        [this](QStringList const&) { this->updateUserNames(); });
 
-    //    updateUserNames();
     setAcceptDrops(true);
     settings::Translator::registerHandler(std::bind(&GroupChatForm::retranslateUi, this), this);
 }
@@ -363,7 +360,7 @@ void GroupChatForm::onLabelContextMenuRequested(const QPoint& localPos) {
     const QPoint pos = label->mapToGlobal(localPos);
     const QString muteString = tr("mute");
     const QString unmuteString = tr("unmute");
-    QStringList blackList = settings.getBlackList();
+
     QMenu* const contextMenu = new QMenu(this);
     const FriendId selfPk = Core::getInstance()->getSelfId();
 
@@ -376,7 +373,7 @@ void GroupChatForm::onLabelContextMenuRequested(const QPoint& localPos) {
         return;
     }
 
-    const bool isPeerBlocked = blackList.contains(peerPk);
+
     QString menuTitle = label->text();
     if (menuTitle.endsWith(QLatin1String(", "))) {
         menuTitle.chop(2);
@@ -385,27 +382,8 @@ void GroupChatForm::onLabelContextMenuRequested(const QPoint& localPos) {
     menuTitleAction->setEnabled(false);  // make sure the title is not clickable
     contextMenu->addSeparator();
 
-    const QAction* toggleMuteAction;
-    if (isPeerBlocked) {
-        toggleMuteAction = contextMenu->addAction(unmuteString);
-    } else {
-        toggleMuteAction = contextMenu->addAction(muteString);
-    }
+    const QAction* toggleMuteAction = contextMenu->addAction(muteString);
     contextMenu->setStyleSheet(Style::getStylesheet(PEER_LABEL_STYLE_SHEET_PATH));
-
-    const QAction* selectedItem = contextMenu->exec(pos);
-    if (selectedItem == toggleMuteAction) {
-        if (isPeerBlocked) {
-            const int index = blackList.indexOf(peerPk);
-            if (index != -1) {
-                blackList.removeAt(index);
-            }
-        } else {
-            blackList << peerPk;
-        }
-
-        settings.setBlackList(blackList);
-    }
 }
 
 void GroupChatForm::joinGroupCall() {
