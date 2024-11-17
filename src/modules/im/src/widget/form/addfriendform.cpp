@@ -130,14 +130,12 @@ void AddFriendForm::onFriendReceipts(const QList<ok::backend::OrgStaff*>& qList)
 
     for (auto item : qList) {
         if (item->username.isEmpty()) {
-            qWarning() << item->name << " have not username!";
+            qWarning() << item->accountId << " have not username!";
             continue;
         }
-
-        item->host = signIn->host;
         auto form = new FriendForm(*item);
         friendLayout->addWidget(form);
-        connect(form, &FriendForm::add, [&](const QString& username, QString& nick) {
+        connect(form, &FriendForm::add, [&](const QString& username, const QString& nick) {
             qDebug() << "Send request to" << username;
             addFriend(username, nick);
         });

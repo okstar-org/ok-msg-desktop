@@ -1,4 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Copyright (c) 2022 船山信息 chuanshaninfo.com
+  - The project is licensed under Mulan PubL v2.
+  - You can use this software according to the terms and conditions of the Mulan
+  - PubL v2. You may obtain a copy of Mulan PubL v2 at:
+  -          http://license.coscl.org.cn/MulanPubL-2.0
+  - THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+  - EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+  - MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+  - See the Mulan PubL v2 for more details.
+  -->
+
 <ui version="4.0">
  <class>FriendForm</class>
  <widget class="QFrame" name="FriendForm">
@@ -6,8 +18,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>48</height>
+       <width>641</width>
+       <height>107</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,16 +27,9 @@
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_2">
    <item>
-    <widget class="QLabel" name="posts">
+       <widget class="QLabel" name="nickname">
      <property name="text">
-      <string notr="true">posts</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QLabel" name="no">
-     <property name="text">
-      <string notr="true">no</string>
+         <string notr="true">nickname</string>
      </property>
     </widget>
    </item>
@@ -46,6 +51,20 @@
     <widget class="QLabel" name="email">
      <property name="text">
       <string notr="true">email</string>
+     </property>
+    </widget>
+   </item>
+      <item>
+          <widget class="QLabel" name="posts">
+              <property name="text">
+                  <string notr="true">postNames</string>
+              </property>
+          </widget>
+      </item>
+      <item>
+          <widget class="QLabel" name="accountId">
+              <property name="text">
+                  <string>id</string>
      </property>
     </widget>
    </item>

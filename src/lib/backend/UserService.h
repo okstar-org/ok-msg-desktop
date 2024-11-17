@@ -24,36 +24,75 @@
 
 namespace ok::backend {
 
-struct OrgStaff {
-    QString no;
-    QString name;
-    QString phone;
+struct SysProfile {
+    /**
+     * "accountId": 1,
+    "firstName": "高（真）",
+    "lastName": "杰（真）",
+    "gender": "male",
+    "identify": "430421198903140000",
+    "birthday": "2024-08-29T09:04:31.035+00:00",
+    "email": "okstar@gmail.com",
+    "phone": "18910221510",
+    "telephone": "18510248810",
+    "country": "China",
+    "province": null,
+    "city": "Beijing",
+    "address": "ChaoYang",
+    "website": "okstar.org",
+    "language": null,
+    "description": null
+     */
+    QString firstName;
+    QString lastName;
+    QString gender;
     QString email;
+    QString phone;
+    QString telephone;
+
+    inline QString getName() const { return firstName + lastName; }
+};
+
+struct OrgStaff {
+    /**
+     * "createAt": "2024-08-28T07:47:55.986+00:00",
+        "updateAt": null,
+        "accountId": 1,
+        "username": "SJdVr4Swzf2f",
+        "no": null,
+        "joinedDate": "2024-08-28T07:47:55.986+00:00",
+        "leftDate": null,
+        "postStatus": "pending",
+        "posts": [],
+        "postNames": ""
+     */
+    quint64 accountId;
+    QString no;
     QString username;
-    QString host;
-    QString posts;
+    QString nickname;
+    QString postNames;
+    QDate createAt;
+    QDate updateAt;
+    SysProfile profile;
 
     OrgStaff(const QJsonObject& data) {
-        no = data.value("no").toString();              //
-        email = data.value("email").toString();        //
-        name = data.value("name").toString();          //
-        username = data.value("username").toString();  //
-        phone = data.value("phone").toString();        //
-        host = data.value("host").toString();          //
-        posts = data.value("posts").toString();        //
+        no = data.value("no").toString();                               //
+        accountId = data.value("accountId").toVariant().toULongLong();  //
+        username = data.value("username").toString();                   //
+        nickname = data.value("nickname").toString();                   //
+        postNames = data.value("postNames").toString();                 //
+        createAt = data.value("createAt").toVariant().toDate();         //
+        updateAt = data.value("updateAt").toVariant().toDate();         //
+
+        const QJsonObject& profile_ = data.value("profile").toObject();
+        profile.email = profile_.value("email").toString();          //
+        profile.firstName = profile_.value("firstName").toString();  //
+        profile.lastName = profile_.value("lastName").toString();    //
+        profile.phone = profile_.value("phone").toString();          //
+        profile.telephone = profile_.value("telephone").toString();  //
     }
 
-    QString toString() {
-        return QString("{no:%1, username:%2, name:%3, phone:%4, email:%5, host:%6, posts: %7}")  //
-                .arg(no)
-                .arg(username)
-                .arg(name)
-                .arg(phone)
-                .arg(host)
-                .arg(posts);
-    }
-
-    QString toContactId() { return QString("%1@%2").arg(username).arg(host); }
+    QString toContactId(const QString& host) { return QString("%1@%2").arg(username).arg(host); }
 };
 
 class UserService : public BaseService {

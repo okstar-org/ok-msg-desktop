@@ -57,6 +57,8 @@ public:
     // 获取显示名（优先nick，再用户名）
     const QString& getFullName();
 
+    const QString& getHost() const { return host; };
+
     void startCore();
     void stopCore();
 

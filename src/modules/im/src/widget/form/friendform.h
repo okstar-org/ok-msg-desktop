@@ -39,7 +39,7 @@ private:
     ok::backend::OrgStaff staff;
 
 signals:
-    void add(const QString& cId, QString& nick);
+    void add(const QString& cId, const QString& nick);
 };
 
 #endif  // FRIENDFORM_H
