@@ -31,6 +31,6 @@ private:
     QHBoxLayout* mainLayout = nullptr;
     QToolButton* _iconButton = nullptr;
     QToolButton* menuButton = nullptr;
-    QPointer<QWidget> content = nullptr;
-    QPointer<QMenu> popMenu = nullptr;
+    QPointer<QWidget> content;
+    QPointer<QMenu> popMenu;
 };
