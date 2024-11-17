@@ -1025,24 +1025,10 @@ void IM::handleMUCConfigForm(MUCRoom* room, const DataForm& form) {
 void IM::handleMUCConfigResult(MUCRoom* room, bool success, MUCOperation operation) {
     qDebug() << __func__ << "room" << qstring(room->jid().full()) << "operation:" << operation
              << "success:" << success;
-    if (success) {
-        // 成功则忽略
-        return;
-    }
-
-    switch (operation) {
-        case RequestRoomConfig: {
-            qWarning() << "无操作群配置权限";
-            break;
-        }
-        default:
-            // other
-            break;
-    }
 };
 
 void IM::handleMUCRequest(MUCRoom* room, const DataForm& form) {
-    qDebug() << "handleMUCRequest room" << qstring(room->jid().full());
+    qDebug() << __func__ << "room" << qstring(room->jid().full());
     for (const auto& item : form.items()) {
         qDebug() << "item" << item;
         for (const auto& item_j : item->fields()) {
