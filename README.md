@@ -138,10 +138,12 @@ Snap: <a href="https://snapcraft.io/ok-msg"><img decoding="async" class="alignce
 
 - 下载地址：https://www.chuanshaninfo.com/download/OkMSG/
 
-# ☎️ 联系我们
+# ☎️ 讨论组
 
-- 技术交流群，添加微信: `okstar-org`
+- 技术交流群，添加微信: `gaojiex1314`
 - 微信公众号，关注账号: `TheOkStar`
+- [Discord](https://discord.gg/nDceKgxnkV)
+- [Telegram](https://t.me/okstarorg)
 
 # ©️ 版权信息
 
