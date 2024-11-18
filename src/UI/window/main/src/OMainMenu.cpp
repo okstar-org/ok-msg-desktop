@@ -45,9 +45,9 @@ OMainMenu::OMainMenu(QWidget* parent) : QFrame(parent), ui(new Ui::OMainMenu), _
     ui->meetBtn->setCursor(Qt::PointingHandCursor);
 
     ui->chatBtn->setToolTip(tr("Message"));
-    ui->settingBtn->setToolTip(tr("Meeting"));
+    ui->settingBtn->setToolTip(tr("Setting"));
     ui->platformBtn->setToolTip(tr("Work platform"));
-    ui->meetBtn->setToolTip(tr("Setting"));
+    ui->meetBtn->setToolTip(tr("Meeting"));
 
     delayCaller_ = std::make_unique<base::DelayedCallTimer>();
 
@@ -72,6 +72,7 @@ OMainMenu::OMainMenu(QWidget* parent) : QFrame(parent), ui(new Ui::OMainMenu), _
 
 OMainMenu::~OMainMenu() {
     qDebug() << __func__;
+    settings::Translator::unregister(this);
     delete ui;
 }
 
@@ -94,9 +95,9 @@ void OMainMenu::showEvent(QShowEvent* e) {
 void OMainMenu::retranslateUi()
 {
     ui->chatBtn->setToolTip(tr("Message"));
-    ui->settingBtn->setToolTip(tr("Meeting"));
+    ui->settingBtn->setToolTip(tr("Setting"));
     ui->platformBtn->setToolTip(tr("Work platform"));
-    ui->meetBtn->setToolTip(tr("Setting"));
+    ui->meetBtn->setToolTip(tr("Meeting"));
     ui->retranslateUi(this);
 }
 
