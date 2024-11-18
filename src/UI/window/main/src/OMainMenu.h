@@ -39,6 +39,8 @@ public:
 protected:
     virtual void showEvent(QShowEvent* e) override;
 
+    void retranslateUi();
+
 private:
     OK_RESOURCE_PTR(UIWindowMain);
 

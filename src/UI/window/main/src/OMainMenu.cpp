@@ -13,12 +13,16 @@
 #include <QUrl>
 #include <memory>
 
+#include "application.h"
+#include "Bus.h"
 #include "OMainMenu.h"
 #include "ui_OMainMenu.h"
 
 #include "base/files.h"
 #include "base/images.h"
 #include "base/resources.h"
+#include "base/OkSettings.h"
+#include "lib/settings/translator.h"
 
 #include <QButtonGroup>
 
@@ -40,6 +44,11 @@ OMainMenu::OMainMenu(QWidget* parent) : QFrame(parent), ui(new Ui::OMainMenu), _
     ui->platformBtn->setCursor(Qt::PointingHandCursor);
     ui->meetBtn->setCursor(Qt::PointingHandCursor);
 
+    ui->chatBtn->setToolTip(tr("Message"));
+    ui->settingBtn->setToolTip(tr("Meeting"));
+    ui->platformBtn->setToolTip(tr("Work platform"));
+    ui->meetBtn->setToolTip(tr("Setting"));
+
     delayCaller_ = std::make_unique<base::DelayedCallTimer>();
 
     QButtonGroup* group = new QButtonGroup(this);
@@ -49,6 +58,16 @@ OMainMenu::OMainMenu(QWidget* parent) : QFrame(parent), ui(new Ui::OMainMenu), _
     group->addButton(ui->platformBtn, static_cast<int>(ok::base::PageMenu::platform));
     group->addButton(ui->meetBtn, static_cast<int>(ok::base::PageMenu::metting));
     connect(group, &QButtonGroup::idToggled, this, &OMainMenu::onButtonToggled);
+
+    QString locale = ok::base::OkSettings::getInstance().getTranslation();
+    settings::Translator::translate(OK_UIWindowMain_MODULE, locale);
+    settings::Translator::registerHandler([this] { retranslateUi(); }, this);
+
+    retranslateUi();
+
+    connect(ok::Application::Instance()->bus(), &ok::Bus::languageChanged,
+            [](QString locale0) { settings::Translator::translate(OK_UIWindowMain_MODULE, locale0); });
+
 }
 
 OMainMenu::~OMainMenu() {
@@ -70,6 +89,15 @@ void OMainMenu::showEvent(QShowEvent* e) {
     if (_showTimes == 1) {
         ui->chatBtn->setChecked(true);
     }
+}
+
+void OMainMenu::retranslateUi()
+{
+    ui->chatBtn->setToolTip(tr("Message"));
+    ui->settingBtn->setToolTip(tr("Meeting"));
+    ui->platformBtn->setToolTip(tr("Work platform"));
+    ui->meetBtn->setToolTip(tr("Setting"));
+    ui->retranslateUi(this);
 }
 
 

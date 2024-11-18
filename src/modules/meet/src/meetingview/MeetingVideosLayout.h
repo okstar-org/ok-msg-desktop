@@ -1,5 +1,3 @@
-#pragma once
-
 /*
  * Copyright (c) 2022 船山信息 chuanshaninfo.com
  * The project is licensed under Mulan PubL v2.
@@ -12,20 +10,23 @@
  * See the Mulan PubL v2 for more details.
  */
 
+#ifndef MEETINGVIDEOSLAYOUT_H
+#define MEETINGVIDEOSLAYOUT_H
+
 #include <QWidget>
 
-class MeetingOptionWidget;
-class QLineEdit;
+#include "MeetingVideoDefines.h"
 
-class StartMeetingWidget : public QWidget {
-
-    Q_OBJECT
-signals:
-    void requstStartMeeting();
-
+class MeetingVideosLayout : public QWidget {
 public:
-    StartMeetingWidget(QWidget* parent = nullptr);
+    MeetingVideosLayout(QWidget* parent);
+    void resetLayout(module::meet::VideoLayoutType type);
+    module::meet::VideoLayoutType currentLayoutType() const;
+    QSize sizeHint() const;
+    QSize minimumSizeHint() const;
+
 private:
-    MeetingOptionWidget* optionWidget = nullptr;
-    QLineEdit* meetingNameEdit = nullptr;
+    module::meet::VideoLayoutType layoutType = module::meet::GridView;
 };
+
+#endif  // !MEETINGVIDEOSLAYOUT_H

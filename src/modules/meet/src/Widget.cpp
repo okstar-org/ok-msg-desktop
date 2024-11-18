@@ -61,6 +61,9 @@ Widget::Widget(QWidget* parent) : UI::OMenuWidget(parent), ui(new Ui::WorkPlatfo
     ui->tabWidget->addTab(setting, tr("Setting"));
 
     reloadTheme();
+
+    connect(startMeetWidget, &StartMeetingWidget::requstStartMeeting, this, &Widget::createMeeting);
+    connect(joinMeetWidget, &JoinMeetingWidget::requstJoinMeeting, this, &Widget::joinMeeting);
 }
 
 Widget::~Widget() { delete ui; }
@@ -89,4 +92,8 @@ void Widget::initTranslate() {
 
 void Widget::retranslateUi() { ui->retranslateUi(this); }
 
+void Widget::joinMeeting() {}
+
+void Widget::createMeeting() {
+}
 }  // namespace module::meet
