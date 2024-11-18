@@ -90,7 +90,6 @@ ContactWidget::ContactWidget(QWidget* parent)
 
 ContactWidget::~ContactWidget() {
     deinit();
-
     settings::Translator::unregister(this);
     delete ui;
 }

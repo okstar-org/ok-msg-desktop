@@ -45,6 +45,8 @@ public:
     void setMute(bool mute);
     void setRemoteMute(bool mute);
 
+    std::map<std::string, OIceUdp> getCandidates(const std::string& peerId);
+
 private:
     OkRTCManager();
 

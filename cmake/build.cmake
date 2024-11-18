@@ -1,3 +1,14 @@
+
+message(STATUS "CMAKE_C_COMPILER_ID=" ${CMAKE_C_COMPILER_ID})
+message(STATUS "CMAKE_C_COMPILER=" ${CMAKE_C_COMPILER})
+message(STATUS "CMAKE_C_FLAGS=" ${CMAKE_C_FLAGS})
+
+message(STATUS "CMAKE_CXX_COMPILER_ID=" ${CMAKE_CXX_COMPILER_ID})
+message(STATUS "CMAKE_CXX_COMPILER=" ${CMAKE_CXX_COMPILER})
+message(STATUS "CMAKE_CXX_FLAGS=" ${CMAKE_CXX_FLAGS})
+message(STATUS "CMAKE_CXX_FLAGS_DEBUG=" ${CMAKE_CXX_FLAGS_DEBUG})
+message(STATUS "CMAKE_CXX_FLAGS_RELEASE=" ${CMAKE_CXX_FLAGS_RELEASE})
+
 # Compile Standard
 set(CMAKE_C_STANDARD 11)
 message(STATUS "CMAKE_C_STANDARD=${CMAKE_C_STANDARD}")
@@ -13,7 +24,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 message(STATUS "CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}")
 
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
-    add_definitions(-DLOG_TO_FILE=1)
+	add_definitions(-DLOG_TO_FILE=1)
 endif ()
 
 # Support for pthread
@@ -26,47 +37,51 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)
 set(BUILD_SHARED_LIBS OFF)
 
 if (WIN32)
-    add_definitions(-DWIN32_LEAN_AND_MEAN=1)
-    if(CMAKE_BUILD_TYPE MATCHES Release)
-        add_definitions(-D_ITERATOR_DEBUG_LEVEL=0)
-    elseif(CMAKE_BUILD_TYPE MATCHES Debug)
-        add_definitions(-D_ITERATOR_DEBUG_LEVEL=2)        
-    endif()
+	add_definitions(-DWIN32_LEAN_AND_MEAN=1)
+	if (CMAKE_BUILD_TYPE MATCHES Release)
+		add_definitions(-D_ITERATOR_DEBUG_LEVEL=0)
+	elseif (CMAKE_BUILD_TYPE MATCHES Debug)
+		add_definitions(-D_ITERATOR_DEBUG_LEVEL=2)
+	endif ()
 endif ()
 
 
-if(LINUX)
-    find_package(PkgConfig REQUIRED)
-    # -Wunused-parameter -pedantic -fsanitize=address,undefined,leak,integer -Wextra
-    # -Wall -Wmacro-redefined -Wbuiltin-macro-redefined
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fstack-protector-all -Wunused-function -Wstrict-overflow -Wstrict-aliasing -Wstack-protector")
-endif(LINUX)
+if (LINUX)
+	find_package(PkgConfig REQUIRED)
+	# -Wunused-parameter -pedantic -fsanitize=address,undefined,leak,integer -Wextra
+	# -Wall -Wmacro-redefined -Wbuiltin-macro-redefined
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fstack-protector-all -Wunused-function -Wstrict-overflow -Wstrict-aliasing -Wstack-protector")
+endif (LINUX)
 
-if(MSVC)
-    option(USE_MP "use multiple" ON)
-    option(ProjectConfig_Global_COMPILE_FLAGS_WITH_MP "Set The Global Option COMPILE_FLAGS /MP to target." ON)
-    
-    if(ProjectConfig_Global_COMPILE_FLAGS_WITH_MP OR USE_MP)
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /MP")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
-    endif()
+if (MSVC)
+	option(USE_MP "use multiple" ON)
+	option(ProjectConfig_Global_COMPILE_FLAGS_WITH_MP "Set The Global Option COMPILE_FLAGS /MP to target." ON)
 
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT /DNDEBUG")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /permissive- /EHsc /Zi /WX")
-endif()
+	if (ProjectConfig_Global_COMPILE_FLAGS_WITH_MP OR USE_MP)
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /MP")
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
+	endif ()
 
+	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
+	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT /DNDEBUG")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /permissive- /EHsc /Zi /WX")
+endif ()
 
-message(STATUS "CMAKE_C_COMPILER_ID=" ${CMAKE_C_COMPILER_ID})
-message(STATUS "CMAKE_C_COMPILER=" ${CMAKE_C_COMPILER})
-message(STATUS "CMAKE_C_FLAGS=" ${CMAKE_C_FLAGS})
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+	execute_process(COMMAND ${CMAKE_CXX_COMPILER} --version OUTPUT_VARIABLE GCC_VERSION_FULL)
+	string(REGEX REPLACE "^.* ([0-9]+)\\.([0-9]+).*$" "\\1\\2" GCC_VERSION ${GCC_VERSION_FULL})
+	message(STATUS "GCC_VERSION=${GCC_VERSION}")
 
-message(STATUS "CMAKE_CXX_COMPILER_ID=" ${CMAKE_CXX_COMPILER_ID})
-message(STATUS "CMAKE_CXX_COMPILER=" ${CMAKE_CXX_COMPILER})
-message(STATUS "CMAKE_CXX_FLAGS=" ${CMAKE_CXX_FLAGS})
-message(STATUS "CMAKE_CXX_FLAGS_DEBUG=" ${CMAKE_CXX_FLAGS_DEBUG})
-message(STATUS "CMAKE_CXX_FLAGS_RELEASE=" ${CMAKE_CXX_FLAGS_RELEASE})
+	# 检查 GCC 版本是否满足要求（例如，大于等于 7.0）
+	if (GCC_VERSION VERSION_GREATER_EQUAL "70")
+		# 为 GCC 7.0 及以上版本添加编译选项
+		add_compile_options(-Werror=return-type)
+	endif ()
 
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+	# 为 Clang 添加编译选项
+	add_compile_options(-Werror=return-type)
+endif ()
 
 # 配置工程信息
 set(ORGANIZATION_NAME "OkStar")
@@ -80,13 +95,13 @@ set(OK_SUPPORT_EMAIL "gaojie314@gmail.com")
 set(OK_MAINTAINER ${ORGANIZATION_NAME})
 
 add_definitions(
-    -DORGANIZATION_NAME="${ORGANIZATION_NAME}"
-    -DORGANIZATION_DOMAIN="${ORGANIZATION_DOMAIN}"
-    -DORGANIZATION_HOME="${ORGANIZATION_HOME}"
-    -DAPPLICATION_ID="${APPLICATION_ID}"
-    -DAPPLICATION_NAME="${APPLICATION_NAME}"
-    -DAPPLICATION_ALIAS="${APPLICATION_ALIAS}"
-    -DAPPLICATION_EXE_NAME="${APPLICATION_EXE_NAME}"
+		-DORGANIZATION_NAME="${ORGANIZATION_NAME}"
+		-DORGANIZATION_DOMAIN="${ORGANIZATION_DOMAIN}"
+		-DORGANIZATION_HOME="${ORGANIZATION_HOME}"
+		-DAPPLICATION_ID="${APPLICATION_ID}"
+		-DAPPLICATION_NAME="${APPLICATION_NAME}"
+		-DAPPLICATION_ALIAS="${APPLICATION_ALIAS}"
+		-DAPPLICATION_EXE_NAME="${APPLICATION_EXE_NAME}"
 )
 
 # 设置Qt配置参数，默认从环境变量读取
@@ -117,24 +132,24 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
 find_package(Qt5 COMPONENTS Core
-    Concurrent
-    Widgets
-    Gui
-    Multimedia
-    MultimediaWidgets
-    Network
-    Xml
-    Sql
-    Svg
-    OpenGL
-    LinguistTools
-    UiTools
-    REQUIRED)
+		Concurrent
+		Widgets
+		Gui
+		Multimedia
+		MultimediaWidgets
+		Network
+		Xml
+		Sql
+		Svg
+		OpenGL
+		LinguistTools
+		UiTools
+		REQUIRED)
 
 if (UNIX)
-    include_directories(${Qt5LinuxAccessibilitySupport_INCLUDES})
-    set(Qt5LinuxAccessibilitySupport_INCLUDES
-        ${CMAKE_PREFIX_PATH}/include/QtLinuxAccessibilitySupport)
+	include_directories(${Qt5LinuxAccessibilitySupport_INCLUDES})
+	set(Qt5LinuxAccessibilitySupport_INCLUDES
+			${CMAKE_PREFIX_PATH}/include/QtLinuxAccessibilitySupport)
 endif ()
 
 # 开启插件（ON/OFF）

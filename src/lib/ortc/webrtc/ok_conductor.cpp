@@ -170,7 +170,9 @@ void Conductor::OnDataChannel(rtc::scoped_refptr<webrtc::DataChannelInterface> c
     RTC_LOG(LS_INFO) << __FUNCTION__ << "OnDataChannel channel id:" << channel->id();
 }
 
-void Conductor::OnRenegotiationNeeded() { RTC_LOG(LS_INFO) << __FUNCTION__; }
+void Conductor::OnRenegotiationNeeded() {
+    RTC_LOG(LS_INFO) << __FUNCTION__;
+}
 
 /**
  * ICE 连接状态
@@ -190,81 +192,81 @@ void Conductor::OnIceCandidate(const webrtc::IceCandidateInterface* ice) {
     std::string str;
     ice->ToString(&str);
 
-    RTC_LOG(LS_INFO) << __FUNCTION__ << "=> mid:" << ice->sdp_mid() << " " << str;
+    RTC_LOG(LS_INFO) << __FUNCTION__ << "mid:" << ice->sdp_mid() << " ptr: " << ice << " " << str;
+    _candidates.push_back(ice);
 
-    auto& cand = ice->candidate();
-
-    /**
-     * 发送 IceCandidate
-     */
-    OIceUdp iceUdp;
-    iceUdp.mid = ice->sdp_mid();            //
-    iceUdp.mline = ice->sdp_mline_index();  //
-    iceUdp.ufrag = cand.username();
-    iceUdp.pwd = cand.password();
-
-    auto sdp = peer_connection_->local_description();
-    auto transportInfos = sdp->description()->transport_infos();
-    for (auto info : transportInfos) {
-        if (info.content_name == ice->sdp_mid()) {
-            if (info.description.identity_fingerprint) {
-                iceUdp.dtls.hash = info.description.identity_fingerprint->algorithm;
-                iceUdp.dtls.fingerprint =
-                        info.description.identity_fingerprint->GetRfc4572Fingerprint();
-            }
-
-            switch (info.description.connection_role) {
-                case ::cricket::CONNECTIONROLE_ACTIVE:
-                    iceUdp.dtls.setup = ::cricket::CONNECTIONROLE_ACTIVE_STR;
-                    break;
-                case ::cricket::CONNECTIONROLE_ACTPASS:
-                    iceUdp.dtls.setup = ::cricket::CONNECTIONROLE_ACTPASS_STR;
-                    break;
-                case ::cricket::CONNECTIONROLE_HOLDCONN:
-                    iceUdp.dtls.setup = ::cricket::CONNECTIONROLE_HOLDCONN_STR;
-                    break;
-                case ::cricket::CONNECTIONROLE_PASSIVE:
-                    iceUdp.dtls.setup = ::cricket::CONNECTIONROLE_PASSIVE_STR;
-                    break;
-                case ::cricket::CONNECTIONROLE_NONE:
-                    break;
-            }
-        }
-    }
-    // candidate
-    Candidate oc;
-    oc.id = cand.id();
-    oc.foundation = cand.foundation();
-    oc.priority = cand.priority();
-    oc.protocol = cand.protocol();
-    oc.tcptype = cand.tcptype();
-    oc.generation = std::to_string(cand.generation());
-    oc.component = std::to_string(cand.component());
-    oc.network = std::to_string(cand.network_id());
-
-    // addr
-    oc.ip = cand.address().ipaddr().ToString();
-    oc.port = cand.address().port();
-
-    // “host” / “srflx” / “prflx” / “relay” / token
-    if (cand.type() == ::cricket::LOCAL_PORT_TYPE) {
-        oc.type = Type::Host;
-    } else if (cand.type() == ::cricket::STUN_PORT_TYPE) {
-        oc.type = Type::ServerReflexive;
-    } else if (cand.type() == ::cricket::PRFLX_PORT_TYPE) {
-        oc.type = Type::PeerReflexive;
-    } else if (cand.type() == ::cricket::RELAY_PORT_TYPE) {
-        oc.type = Type::Relayed;
-    }
-
-    if (oc.type != Type::Host && 0 < cand.related_address().port()) {
-        oc.rel_addr = cand.related_address().ipaddr().ToString();
-        oc.rel_port = cand.related_address().port();
-    }
-
-    iceUdp.candidates.push_back(oc);
-
-    webRtc->getHandler()->onIce(sId, peerId, iceUdp);
+    //
+    //    /**
+    //     * 发送 IceCandidate
+    //     */
+    //    OIceUdp iceUdp;
+    //    iceUdp.mid = ice->sdp_mid();            //
+    //    iceUdp.mline = ice->sdp_mline_index();  //
+    //    iceUdp.ufrag = cand.username();
+    //    iceUdp.pwd = cand.password();
+    //
+    //    auto sdp = peer_connection_->local_description();
+    //    auto transportInfos = sdp->description()->transport_infos();
+    //    for (auto info : transportInfos) {
+    //        if (info.content_name == ice->sdp_mid()) {
+    //            if (info.description.identity_fingerprint) {
+    //                iceUdp.dtls.hash = info.description.identity_fingerprint->algorithm;
+    //                iceUdp.dtls.fingerprint =
+    //                        info.description.identity_fingerprint->GetRfc4572Fingerprint();
+    //            }
+    //
+    //            switch (info.description.connection_role) {
+    //                case ::cricket::CONNECTIONROLE_ACTIVE:
+    //                    iceUdp.dtls.setup = ::cricket::CONNECTIONROLE_ACTIVE_STR;
+    //                    break;
+    //                case ::cricket::CONNECTIONROLE_ACTPASS:
+    //                    iceUdp.dtls.setup = ::cricket::CONNECTIONROLE_ACTPASS_STR;
+    //                    break;
+    //                case ::cricket::CONNECTIONROLE_HOLDCONN:
+    //                    iceUdp.dtls.setup = ::cricket::CONNECTIONROLE_HOLDCONN_STR;
+    //                    break;
+    //                case ::cricket::CONNECTIONROLE_PASSIVE:
+    //                    iceUdp.dtls.setup = ::cricket::CONNECTIONROLE_PASSIVE_STR;
+    //                    break;
+    //                case ::cricket::CONNECTIONROLE_NONE:
+    //                    break;
+    //            }
+    //        }
+    //    }
+    //    // candidate
+    //    Candidate oc;
+    //    oc.id = cand.id();
+    //    oc.foundation = cand.foundation();
+    //    oc.priority = cand.priority();
+    //    oc.protocol = cand.protocol();
+    //    oc.tcptype = cand.tcptype();
+    //    oc.generation = std::to_string(cand.generation());
+    //    oc.component = std::to_string(cand.component());
+    //    oc.network = std::to_string(cand.network_id());
+    //
+    //    // addr
+    //    oc.ip = cand.address().ipaddr().ToString();
+    //    oc.port = cand.address().port();
+    //
+    //    // “host” / “srflx” / “prflx” / “relay” / token
+    //    if (cand.type() == ::cricket::LOCAL_PORT_TYPE) {
+    //        oc.type = Type::Host;
+    //    } else if (cand.type() == ::cricket::STUN_PORT_TYPE) {
+    //        oc.type = Type::ServerReflexive;
+    //    } else if (cand.type() == ::cricket::PRFLX_PORT_TYPE) {
+    //        oc.type = Type::PeerReflexive;
+    //    } else if (cand.type() == ::cricket::RELAY_PORT_TYPE) {
+    //        oc.type = Type::Relayed;
+    //    }
+    //
+    //    if (oc.type != Type::Host && 0 < cand.related_address().port()) {
+    //        oc.rel_addr = cand.related_address().ipaddr().ToString();
+    //        oc.rel_port = cand.related_address().port();
+    //    }
+    //
+    //    iceUdp.candidates.push_back(oc);
+    //
+    //    webRtc->getHandler()->onIce(sId, peerId, iceUdp);
 }
 
 void Conductor::OnIceConnectionReceivingChange(bool receiving) {
@@ -358,7 +360,9 @@ void Conductor::setTransportInfo(std::unique_ptr<webrtc::IceCandidateInterface> 
     RTC_LOG(LS_INFO) << __FUNCTION__ << " => " << added;
 }
 
-void Conductor::sessionTerminate() { peer_connection_->Close(); }
+void Conductor::sessionTerminate() {
+    peer_connection_->Close();
+}
 
 void Conductor::OnSessionTerminate(const std::string& sid, OkRTCHandler* handler) {}
 
@@ -531,7 +535,9 @@ OJingleContentAv Conductor::toJingleSdp(const webrtc::SessionDescriptionInterfac
     return osdp;
 }
 
-void Conductor::OnSuccess() { RTC_LOG(LS_INFO) << __FUNCTION__; }
+void Conductor::OnSuccess() {
+    RTC_LOG(LS_INFO) << __FUNCTION__;
+}
 
 void Conductor::OnSuccess(webrtc::SessionDescriptionInterface* desc) {
     RTC_LOG(LS_INFO) << __FUNCTION__;
@@ -559,6 +565,10 @@ void Conductor::OnSetRemoteDescriptionComplete(webrtc::RTCError error) {
 void Conductor::OnConnectionChange(webrtc::PeerConnectionInterface::PeerConnectionState new_state) {
     RTC_LOG(LS_INFO) << __FUNCTION__ << " : "
                      << webrtc::PeerConnectionInterface::AsString(new_state).data();
+}
+
+const webrtc::SessionDescriptionInterface* Conductor::getLocalSdp() const {
+    return peer_connection_->local_description();
 }
 
 }  // namespace ortc

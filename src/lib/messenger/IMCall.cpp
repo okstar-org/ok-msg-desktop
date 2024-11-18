@@ -32,17 +32,28 @@ namespace lib::messenger {
 inline void parseCandidates(gloox::Jingle::ICEUDP::CandidateList& src, ortc::CandidateList& to) {
     for (auto& c : src) {
         to.push_front({c.component, c.foundation, c.generation, c.id, c.ip, c.network, c.port,
-                       c.priority, c.protocol, c.tcptype, c.rel_addr, c.rel_port,
-                       static_cast<ortc::Type>(c.type)});
+                       static_cast<uint32_t>(c.priority), c.protocol, c.tcptype, c.rel_addr,
+                       c.rel_port, static_cast<ortc::Type>(c.type)});
     }
 }
 
 inline void packCandidates(const ortc::CandidateList& src,
                            gloox::Jingle::ICEUDP::CandidateList& to) {
     for (auto& c : src) {
-        to.push_front({c.component, c.foundation, c.generation, c.id, c.ip, c.network, c.port,
-                       c.priority, c.protocol, c.tcptype, c.rel_addr, c.rel_port,
-                       static_cast<gloox::Jingle::ICEUDP::Type>(c.type)});
+        to.push_front(gloox::Jingle::ICEUDP::Candidate{
+                .component = c.component,
+                .foundation = c.foundation,
+                .generation = c.generation,
+                .id = c.id,
+                .ip = c.ip,
+                .network = c.network,
+                .port = c.port,
+                .priority = static_cast<int>(c.priority),
+                .protocol = c.protocol,
+                .tcptype = c.tcptype,
+                .rel_addr = c.rel_addr,
+                .rel_port = c.rel_port,
+                .type = static_cast<gloox::Jingle::ICEUDP::Type>(c.type)});
     }
 }
 
@@ -63,9 +74,13 @@ IMCallSession::IMCallSession(const QString& sId_,
     qDebug() << __func__ << "be created.";
 }
 
-IMCallSession::~IMCallSession() { qDebug() << __func__ << sId; }
+IMCallSession::~IMCallSession() {
+    qDebug() << __func__ << sId;
+}
 
-gloox::Jingle::Session* IMCallSession::getSession() const { return session; }
+gloox::Jingle::Session* IMCallSession::getSession() const {
+    return session;
+}
 
 void IMCallSession::onAccept() {
     // 对方接收
@@ -93,9 +108,13 @@ void IMCallSession::createOffer(const std::string& peerId) {
     r->CreateOffer(peerId);
 }
 
-const gloox::Jingle::Session::Jingle* IMCallSession::getJingle() const { return jingle; }
+const gloox::Jingle::Session::Jingle* IMCallSession::getJingle() const {
+    return jingle;
+}
 
-void IMCallSession::setJingle(const gloox::Jingle::Session::Jingle* jingle_) { jingle = jingle_; }
+void IMCallSession::setJingle(const gloox::Jingle::Session::Jingle* jingle_) {
+    jingle = jingle_;
+}
 
 CallDirection IMCallSession::direction() const {
     auto sender = session->initiator().bareJID();
@@ -103,9 +122,13 @@ CallDirection IMCallSession::direction() const {
     return (sender == self) ? CallDirection::CallOut : CallDirection::CallIn;
 }
 
-void IMCallSession::setCallStage(CallStage state) { m_callStage = state; }
+void IMCallSession::setCallStage(CallStage state) {
+    m_callStage = state;
+}
 
-void IMCallSession::setContext(const ortc::OJingleContent& jc) { context = jc; }
+void IMCallSession::setContext(const ortc::OJingleContent& jc) {
+    context = jc;
+}
 
 void IMCallSession::start() {}
 
@@ -228,9 +251,13 @@ bool IMCall::callAnswerToFriend(const IMPeerId& f, const QString& callId, bool v
     return answer(f, callId, video);
 }
 
-void IMCall::callRetract(const IMContactId& f, const QString& sId) { cancelCall(f, sId); }
+void IMCall::callRetract(const IMContactId& f, const QString& sId) {
+    cancelCall(f, sId);
+}
 
-void IMCall::callReject(const IMPeerId& f, const QString& sId) { rejectCall(f, sId); }
+void IMCall::callReject(const IMPeerId& f, const QString& sId) {
+    rejectCall(f, sId);
+}
 
 // startCall
 bool IMCall::startCall(const QString& friendId, const QString& sId, bool video) {
@@ -330,7 +357,7 @@ bool IMCall::answer(const IMPeerId& peerId, const QString& callId, bool video) {
                   "?transport=" + item.transport;
         ice.username = item.username;
         ice.password = item.password;
-        qDebug() << "Add ice:" << ice.uri.c_str();
+        qDebug() << "Add iceServer:" << ice.uri.c_str();
         rtcManager->addIceServer(ice);
     }
 
@@ -339,7 +366,9 @@ bool IMCall::answer(const IMPeerId& peerId, const QString& callId, bool video) {
     return true;
 }
 
-void IMCall::setMute(bool mute) { lib::ortc::OkRTCManager::getInstance()->getRtc()->setMute(mute); }
+void IMCall::setMute(bool mute) {
+    lib::ortc::OkRTCManager::getInstance()->getRtc()->setMute(mute);
+}
 
 void IMCall::setRemoteMute(bool mute) {
     lib::ortc::OkRTCManager::getInstance()->getRtc()->setRemoteMute(mute);
@@ -395,6 +424,7 @@ void IMCall::onIce(const std::string& sId,     //
     packCandidates(oIceUdp.candidates, cl);
 
     auto* iceUdp = new gloox::Jingle::ICEUDP(oIceUdp.pwd, oIceUdp.ufrag, cl);
+
     gloox::Jingle::ICEUDP::Dtls dtls;
     packDtls(oIceUdp.dtls, dtls);
 
@@ -451,9 +481,28 @@ void IMCall::doSessionAccept(gloox::Jingle::Session* session,
     }
 
     // RTC 接受会话
-    lib::ortc::OkRTCManager::getInstance()
-            ->getRtc()  //
-            ->setRemoteDescription(stdstring(peerId.toString()), cav);
+    ortc::OkRTC* rtc = lib::ortc::OkRTCManager::getInstance()->getRtc();
+    const std::string& peerId1 = stdstring(peerId.toString());
+    rtc->setRemoteDescription(peerId1, cav);
+
+    auto udps = rtc->getCandidates(peerId1);
+    for (auto kv : udps) {
+        auto& oIceUdp = kv.second;
+
+        gloox::Jingle::ICEUDP::CandidateList cl;
+        packCandidates(oIceUdp.candidates, cl);
+
+        auto iceUdp = new gloox::Jingle::ICEUDP(oIceUdp.pwd, oIceUdp.ufrag, cl);
+        gloox::Jingle::ICEUDP::Dtls dtls;
+        packDtls(oIceUdp.dtls, dtls);
+
+        iceUdp->setDtls(dtls);
+
+        gloox::Jingle::PluginList pluginList;
+        pluginList.push_back(iceUdp);
+        auto c = new gloox::Jingle::Content(oIceUdp.mid, pluginList);
+        session->transportInfo(c);
+    }
 }
 
 void IMCall::doJingleMessage(const IMPeerId& peerId, const gloox::Jingle::JingleMessage* jm) {
@@ -816,8 +865,8 @@ void IMCall::toPlugins(const ortc::OJingleContentAv& oContext, gloox::Jingle::Pl
         gloox::Jingle::ICEUDP::CandidateList cl;
         for (auto c : oIceUdp.candidates) {
             cl.push_front({c.component, c.foundation, c.generation, c.id, c.ip, c.network, c.port,
-                           c.priority, c.protocol, c.tcptype, c.rel_addr, c.rel_port,
-                           static_cast<gloox::Jingle::ICEUDP::Type>(c.type)});
+                           static_cast<int>(c.priority), c.protocol, c.tcptype, c.rel_addr,
+                           c.rel_port, static_cast<gloox::Jingle::ICEUDP::Type>(c.type)});
         }
         auto ice = new gloox::Jingle::ICEUDP(oIceUdp.pwd, oIceUdp.ufrag, cl);
         ice->setDtls({.hash = oIceUdp.dtls.hash,
@@ -935,7 +984,8 @@ void IMCall::parse(const gloox::Jingle::Session::Jingle* jingle,
                                                         .ip = c.ip,
                                                         .network = c.network,
                                                         .port = c.port,
-                                                        .priority = c.priority,
+                                                        .priority =
+                                                                static_cast<uint32_t>(c.priority),
                                                         .tcptype = c.tcptype,
                                                         .rel_addr = c.rel_addr,
                                                         .rel_port = c.rel_port,

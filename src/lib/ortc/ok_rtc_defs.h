@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include <cstdint>
 #include <list>
 #include <map>
 #include <string>
@@ -51,7 +52,7 @@ struct Candidate {
     std::string network;  /**< An index, starting at 0, referencing which network this candidate is
                              on for a given peer. */
     int port;             /**< The port at the candidate IP address. */
-    int priority;         /**< A Priority as defined in ICE-CORE. */
+    uint32_t priority;    /**< A Priority as defined in ICE-CORE. */
     std::string protocol; /**< The protocol to be used. Should be @b udp. */
     std::string tcptype;
     std::string rel_addr; /**< A related address as defined in ICE-CORE. */
@@ -69,19 +70,19 @@ struct OIceUdp {
     std::string pwd;
     Dtls dtls;
     CandidateList candidates;
-    OIceUdp() = default;
-    OIceUdp(std::string mid_,
-            int mline_,
-            std::string ufrag_,
-            std::string pwd_,
-            Dtls dtls_,
-            CandidateList candidates_)
-            : mid{mid_}
-            , mline{mline_}
-            , ufrag(ufrag_)
-            , pwd(pwd_)
-            , dtls(dtls_)
-            , candidates(candidates_) {}
+    //    OIceUdp() = default;
+    //    OIceUdp(std::string mid_,
+    //            int mline_,
+    //            std::string ufrag_,
+    //            std::string pwd_,
+    //            Dtls dtls_,
+    //            CandidateList candidates_)
+    //            : mid{mid_}
+    //            , mline{mline_}
+    //            , ufrag(ufrag_)
+    //            , pwd(pwd_)
+    //            , dtls(dtls_)
+    //            , candidates(candidates_) {}
 };
 
 struct Feedback {

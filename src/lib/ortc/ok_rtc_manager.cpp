@@ -65,6 +65,10 @@ void OkRTCManager::addIceServer(const IceServer& ice) { _iceOptions.push_back(ic
 
 void OkRTCManager::CreateOffer(const std::string& peerId) { rtc->CreateOffer(peerId); }
 
+std::map<std::string, OIceUdp> OkRTCManager::getCandidates(const std::string& peerId) {
+    return rtc->getCandidates(peerId);
+}
+
 void OkRTCManager::SessionTerminate(const std::string& sid) { rtc->SessionTerminate(sid); }
 
 void OkRTCManager::setMute(bool mute) { rtc->setMute(mute); }

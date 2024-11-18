@@ -92,7 +92,11 @@ public:
 
     OJingleContentAv convertFromSdp(webrtc::SessionDescriptionInterface* sdp);
 
-    OkRTCHandler* getHandler() const { return _rtcHandler; }
+    std::map<std::string, OIceUdp> getCandidates(const std::string& peerId) override;
+
+    OkRTCHandler* getHandler() const {
+        return _rtcHandler;
+    }
 
     const webrtc::PeerConnectionInterface::RTCConfiguration& getConfig() const {
         return _rtcConfig;
@@ -103,6 +107,10 @@ public:
     }
 
 private:
+    std::map<std::string, ortc::OIceUdp> fromIce(
+            const webrtc::SessionDescriptionInterface* sdp,
+            const std::list<const webrtc::IceCandidateInterface*>& iceList);
+
     //    std::unique_ptr<LogSinkImpl> _logSink;
     void addIceServer(const IceServer& ice);
 

@@ -118,6 +118,8 @@ public:
 
     // 获取视频设备数量
     virtual size_t getVideoSize() = 0;
+
+    virtual std::map<std::string, OIceUdp> getCandidates(const std::string& peerId) = 0;
 };
 
 }  // namespace ortc
