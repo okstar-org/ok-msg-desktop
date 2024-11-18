@@ -27,7 +27,9 @@ static std::mutex mtx;
 
 OkRTCManager::OkRTCManager() {}
 
-OkRTCManager::~OkRTCManager() { rtc.reset(); }
+OkRTCManager::~OkRTCManager() {
+    rtc.reset();
+}
 
 OkRTCManager* OkRTCManager::getInstance() {
     std::lock_guard<std::mutex> lock(mtx);
@@ -59,23 +61,31 @@ OkRTC* OkRTCManager::getRtc() {
     return rtc.get();
 }
 
-void OkRTCManager::destroyRtc() { rtc.reset(); }
+void OkRTCManager::destroyRtc() {
+    rtc.reset();
+}
 
-void OkRTCManager::addIceServer(const IceServer& ice) { _iceOptions.push_back(ice); }
-
-void OkRTCManager::CreateOffer(const std::string& peerId) { rtc->CreateOffer(peerId); }
+void OkRTCManager::addIceServer(const IceServer& ice) {
+    _iceOptions.push_back(ice);
+}
 
 std::map<std::string, OIceUdp> OkRTCManager::getCandidates(const std::string& peerId) {
     return rtc->getCandidates(peerId);
 }
 
-void OkRTCManager::SessionTerminate(const std::string& sid) { rtc->SessionTerminate(sid); }
+void OkRTCManager::SessionTerminate(const std::string& sid) {
+    rtc->SessionTerminate(sid);
+}
 
-void OkRTCManager::setMute(bool mute) { rtc->setMute(mute); }
+void OkRTCManager::setMute(bool mute) {
+    rtc->setMute(mute);
+}
 
 void OkRTCManager::setRemoteMute(bool mute) {}
 
-size_t OkRTCManager::getVideoSize() { return rtc->getVideoSize(); }
+size_t OkRTCManager::getVideoSize() {
+    return rtc->getVideoSize();
+}
 
 }  // namespace ortc
 }  // namespace lib

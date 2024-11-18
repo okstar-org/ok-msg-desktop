@@ -35,6 +35,71 @@
 namespace lib {
 namespace ortc {
 
+ortc::Candidate fromCandidate(const cricket::Candidate& cand) {
+    auto c = Candidate{
+            .component = std::to_string(cand.component()),
+            .foundation = cand.foundation(),
+            .generation = std::to_string(cand.generation()),
+            .id = cand.id(),
+            .ip = cand.address().ipaddr().ToString(),
+            .network = std::to_string(cand.network_id()),
+            .port = cand.address().port(),
+            .priority = cand.priority(),
+            .protocol = cand.protocol(),
+            .tcptype = cand.tcptype(),
+    };
+    if (cand.type() == ::cricket::LOCAL_PORT_TYPE) {
+        c.type = Type::Host;
+    } else if (cand.type() == ::cricket::STUN_PORT_TYPE) {
+        c.type = Type::ServerReflexive;
+    } else if (cand.type() == ::cricket::PRFLX_PORT_TYPE) {
+        c.type = Type::PeerReflexive;
+    } else if (cand.type() == ::cricket::RELAY_PORT_TYPE) {
+        c.type = Type::Relayed;
+    };
+    if (c.type != Type::Host && 0 < cand.related_address().port()) {
+        c.rel_addr = cand.related_address().ipaddr().ToString();
+        c.rel_port = cand.related_address().port();
+    }
+    return c;
+}
+
+Dtls getDtls(const cricket::TransportInfo& info);
+Dtls fromDtls(const webrtc::SessionDescriptionInterface* sdp, const std::string& mid) {
+    auto transportInfos = sdp->description()->transport_infos();
+    auto s = ranges::view::all(transportInfos) |
+             ranges::view::filter(
+                     [=](cricket::TransportInfo& info) { return info.content_name == mid; }) |
+             ranges::view::transform([=](cricket::TransportInfo& info) { return getDtls(info); }) |
+             ranges::to_vector;
+    return s.front();
+}
+Dtls getDtls(const cricket::TransportInfo& info) {
+    Dtls dtls;
+    if (info.description.identity_fingerprint) {
+        dtls.hash = info.description.identity_fingerprint->algorithm;
+        dtls.fingerprint = info.description.identity_fingerprint->GetRfc4572Fingerprint();
+    }
+
+    switch (info.description.connection_role) {
+        case cricket::CONNECTIONROLE_ACTIVE:
+            dtls.setup = cricket::CONNECTIONROLE_ACTIVE_STR;
+            break;
+        case cricket::CONNECTIONROLE_ACTPASS:
+            dtls.setup = cricket::CONNECTIONROLE_ACTPASS_STR;
+            break;
+        case cricket::CONNECTIONROLE_HOLDCONN:
+            dtls.setup = cricket::CONNECTIONROLE_HOLDCONN_STR;
+            break;
+        case cricket::CONNECTIONROLE_PASSIVE:
+            dtls.setup = cricket::CONNECTIONROLE_PASSIVE_STR;
+            break;
+        case cricket::CONNECTIONROLE_NONE:
+            break;
+    }
+    return dtls;
+}
+
 WebRTC::WebRTC() : peer_connection_factory{nullptr}, _rtcHandler{nullptr} {
     _rtcConfig.sdp_semantics = webrtc::SdpSemantics::kUnifiedPlan;
     _rtcConfig.enable_implicit_rollback = false;
@@ -147,11 +212,6 @@ bool WebRTC::ensureStart() {
 
 void WebRTC::addRTCHandler(OkRTCHandler* hand) {
     _rtcHandler = hand;
-}
-
-bool WebRTC::call(const std::string& peerId, const std::string& sId, bool video) {
-    RTC_LOG(LS_INFO) << "sId:" << sId << "peerId:" << peerId;
-    return createConductor(peerId, sId, video);
 }
 
 bool WebRTC::quit(const std::string& peerId) {
@@ -383,22 +443,58 @@ std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertToSdp(
     return ptr;
 }
 
-OJingleContentAv WebRTC::convertFromSdp(webrtc::SessionDescriptionInterface* desc) {
-    OJingleContentAv osdp;
+std::map<std::string, ortc::OIceUdp> fromIce(
+        const webrtc::SessionDescriptionInterface* sdp,
+        const std::list<const webrtc::IceCandidateInterface*>& iceList) {
+    std::map<std::string, ortc::OIceUdp> iceUdps;
+    for (auto item : iceList) {
+        auto mid = item->sdp_mid();
+        const std::map<std::string, OIceUdp>::iterator& find = iceUdps.find(mid);
+        if (find == iceUdps.end()) {
+            auto u = OIceUdp{
+                    .mid = item->sdp_mid(),
+                    .mline = item->sdp_mline_index(),
+                    .ufrag = item->candidate().username(),
+                    .pwd = item->candidate().password(),
+                    .dtls = fromDtls(sdp, mid),
+            };
+            u.candidates.push_back(fromCandidate(item->candidate()));
+            iceUdps.emplace(mid, u);
+        } else {
+            auto& u = find->second;
+            u.candidates.push_back(fromCandidate(item->candidate()));
+        }
+    }
+    return iceUdps;
+}
+
+void fromSdp(const webrtc::SessionDescriptionInterface* desc,
+             const std::list<const webrtc::IceCandidateInterface*>& cs,
+             OJingleContentAv& osdp) {
     osdp.sessionId = desc->session_id();
     osdp.sessionVersion = desc->session_version();
 
     // ContentGroup
     ::cricket::ContentGroup group(::cricket::GROUP_TYPE_BUNDLE);
 
+    int i = 0;
     auto sd = desc->description();
     for (auto rtcContent : sd->contents()) {
-        OSdp oContent;
-
+        i++;
         const std::string& name = rtcContent.mid();
-        // qDebug(("Content name: %1").arg(qstring(name)));
 
+        OSdp oContent;
         oContent.name = name;
+
+        //        auto col = desc->candidates(i);
+        //        std::list<const webrtc::IceCandidateInterface*> cs;
+        //        for (int j = 0; j < col->count(); j++) {
+        //            cs.push_back(col->at(j));
+        //        }
+
+        auto map = fromIce(desc, cs);
+        auto find = map.find(name);
+        if (find != map.end()) oContent.iceUdp = find->second;
 
         auto mediaDescription = rtcContent.media_description();
         // media type
@@ -407,10 +503,8 @@ OJingleContentAv WebRTC::convertFromSdp(webrtc::SessionDescriptionInterface* des
         // rtcp_mux
         oContent.rtp.rtcpMux = mediaDescription->rtcp_mux();
 
-        // Transport
         auto ti = sd->GetTransportInfoByName(name);
 
-        // pwd ufrag
         oContent.iceUdp.pwd = ti->description.ice_pwd;
         oContent.iceUdp.ufrag = ti->description.ice_ufrag;
 
@@ -549,8 +643,6 @@ OJingleContentAv WebRTC::convertFromSdp(webrtc::SessionDescriptionInterface* des
 
         osdp.contents.insert(std::pair(oContent.name, oContent));
     }
-
-    return osdp;
 }
 
 void WebRTC::addIceServer(const IceServer& ice) {
@@ -627,10 +719,7 @@ void WebRTC::setTransportInfo(const std::string& peerId,
     RTC_LOG(LS_INFO) << "peerId:" << peerId;
 
     Conductor* conductor = createConductor(peerId, sId, false);
-    if (!conductor) {
-        RTC_LOG(LS_WARNING) << "conductor is null!";
-        return;
-    }
+    assert(conductor);
 
     int i = 0;
     for (auto& _candidate : iceUdp.candidates) {
@@ -708,8 +797,9 @@ void WebRTC::setRemoteMute(bool mute) {
     }
 }
 
-void WebRTC::CreateOffer(const std::string& peerId) {
-    Conductor* conductor = getConductor(peerId);
+void WebRTC::CreateOffer(const std::string& peerId, const std::string& sId, bool video) {
+    Conductor* conductor = createConductor(peerId, sId, video);
+    assert(conductor);
     conductor->CreateOffer();
 }
 
@@ -726,100 +816,19 @@ void WebRTC::CreateAnswer(const std::string& peerId, const OJingleContentAv& ca)
     conductor->CreateAnswer();
 }
 
-ortc::Candidate fromCandidate(const cricket::Candidate& cand) {
-    auto c = Candidate{
-            .component = std::to_string(cand.component()),
-            .foundation = cand.foundation(),
-            .generation = std::to_string(cand.generation()),
-            .id = cand.id(),
-            .ip = cand.address().ipaddr().ToString(),
-            .network = std::to_string(cand.network_id()),
-            .port = cand.address().port(),
-            .priority = cand.priority(),
-            .protocol = cand.protocol(),
-            .tcptype = cand.tcptype(),
-    };
-    if (cand.type() == ::cricket::LOCAL_PORT_TYPE) {
-        c.type = Type::Host;
-    } else if (cand.type() == ::cricket::STUN_PORT_TYPE) {
-        c.type = Type::ServerReflexive;
-    } else if (cand.type() == ::cricket::PRFLX_PORT_TYPE) {
-        c.type = Type::PeerReflexive;
-    } else if (cand.type() == ::cricket::RELAY_PORT_TYPE) {
-        c.type = Type::Relayed;
-    };
-    if (c.type != Type::Host && 0 < cand.related_address().port()) {
-        c.rel_addr = cand.related_address().ipaddr().ToString();
-        c.rel_port = cand.related_address().port();
-    }
-    return c;
-}
-
-Dtls fromDtls(const webrtc::SessionDescriptionInterface* sdp, std::string mid) {
-    auto transportInfos = sdp->description()->transport_infos();
-    auto s = ranges::view::all(transportInfos) |
-             ranges::view::filter(
-                     [=](cricket::TransportInfo& info) { return info.content_name == mid; }) |
-             ranges::view::transform([=](cricket::TransportInfo& info) {
-                 Dtls dtls;
-                 if (info.description.identity_fingerprint) {
-                     dtls.hash = info.description.identity_fingerprint->algorithm;
-                     dtls.fingerprint =
-                             info.description.identity_fingerprint->GetRfc4572Fingerprint();
-                 }
-
-                 switch (info.description.connection_role) {
-                     case ::cricket::CONNECTIONROLE_ACTIVE:
-                         dtls.setup = ::cricket::CONNECTIONROLE_ACTIVE_STR;
-                         break;
-                     case ::cricket::CONNECTIONROLE_ACTPASS:
-                         dtls.setup = ::cricket::CONNECTIONROLE_ACTPASS_STR;
-                         break;
-                     case ::cricket::CONNECTIONROLE_HOLDCONN:
-                         dtls.setup = ::cricket::CONNECTIONROLE_HOLDCONN_STR;
-                         break;
-                     case ::cricket::CONNECTIONROLE_PASSIVE:
-                         dtls.setup = ::cricket::CONNECTIONROLE_PASSIVE_STR;
-                         break;
-                     case ::cricket::CONNECTIONROLE_NONE:
-                         break;
-                 }
-                 return dtls;
-             }) |
-             ranges::to_vector;
-    return s.front();
-}
-
-std::map<std::string, ortc::OIceUdp> WebRTC::fromIce(
-        const webrtc::SessionDescriptionInterface* sdp,
-        const std::list<const webrtc::IceCandidateInterface*>& iceList) {
-    std::map<std::string, ortc::OIceUdp> iceUdps;
-    for (auto item : iceList) {
-        auto mid = item->sdp_mid();
-        const std::map<std::string, OIceUdp>::iterator& find = iceUdps.find(mid);
-        if (find == iceUdps.end()) {
-            auto u = OIceUdp{
-                    .mid = item->sdp_mid(),
-                    .mline = item->sdp_mline_index(),
-                    .ufrag = item->candidate().username(),
-                    .pwd = item->candidate().password(),
-                    .dtls = fromDtls(sdp, mid),
-            };
-            u.candidates.push_back(fromCandidate(item->candidate()));
-            iceUdps.emplace(mid, u);
-        } else {
-            auto& u = find->second;
-            u.candidates.push_back(fromCandidate(item->candidate()));
-        }
-    }
-    return iceUdps;
-}
-
 std::map<std::string, OIceUdp> WebRTC::getCandidates(const std::string& peerId) {
     auto conductor = getConductor(peerId);
     if (!conductor) return {};
 
     return fromIce(conductor->getLocalSdp(), conductor->getCandidates());
+}
+
+void WebRTC::getLocalSdp(const std::string& peerId, OJingleContentAv& av) {
+    auto conductor = getConductor(peerId);
+    assert(conductor);
+
+    auto cs = conductor->getCandidates();
+    fromSdp(conductor->getLocalSdp(), cs, av);
 }
 
 size_t WebRTC::getVideoSize() {

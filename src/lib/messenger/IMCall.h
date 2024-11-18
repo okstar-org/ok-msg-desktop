@@ -57,15 +57,15 @@ public:
     void stop() override;
 
     [[nodiscard]] gloox::Jingle::Session* getSession() const;
-    [[nodiscard]] inline const ortc::OJingleContent& getContext() const { return context; }
+    [[nodiscard]] inline const ortc::OJingleContent& getContext() const {
+        return context;
+    }
 
     void onAccept();
     // 被动结束
     void onTerminate();
     // 主动结束
     void doTerminate();
-
-    void createOffer(const std::string& peerId);
 
     void setContext(const ortc::OJingleContent&);
 
@@ -76,13 +76,21 @@ public:
 
     void setCallStage(CallStage state);
 
-    void setAccepted(bool y) { accepted = y; }
+    void setAccepted(bool y) {
+        accepted = y;
+    }
 
-    [[nodiscard]] bool isAccepted() const { return accepted; }
+    [[nodiscard]] bool isAccepted() const {
+        return accepted;
+    }
 
-    const QString& getId() const { return sId; }
+    const QString& getId() const {
+        return sId;
+    }
 
-    void appendIce(const ortc::OIceUdp& ice) { pendingIceCandidates.emplace_back(ice); }
+    void appendIce(const ortc::OIceUdp& ice) {
+        pendingIceCandidates.emplace_back(ice);
+    }
 
     void pollIce(ok::base::Fn<void(const ortc::OIceUdp&)> fn) {
         while (!pendingIceCandidates.empty()) {
@@ -116,6 +124,10 @@ public:
 
     void onCreatePeerConnection(const std::string& sId, const std::string& peerId,
                                 bool ok) override;
+
+    void onIceGatheringChange(const std::string& sId,
+                              const std::string& peerId,
+                              ortc::IceGatheringState state) override;
 
     // onRTP
     void onRTP(const std::string& sId,       //
@@ -202,7 +214,9 @@ protected:
                                  const QString& sId,
                                  lib::ortc::JingleCallType ct);
 
-    IMCallSession* findSession(const QString& sId) { return m_sessionMap.value(sId); }
+    IMCallSession* findSession(const QString& sId) {
+        return m_sessionMap.value(sId);
+    }
 
 signals:
     void sig_createPeerConnection(const QString sId, const QString peerId, bool ok);

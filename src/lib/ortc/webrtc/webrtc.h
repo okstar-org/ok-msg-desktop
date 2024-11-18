@@ -57,7 +57,7 @@ public:
 
     void setRemoteDescription(const std::string& peerId, const OJingleContentAv& context) override;
 
-    void CreateOffer(const std::string& peerId) override;
+    void CreateOffer(const std::string& peerId, const std::string& sId, bool video) override;
 
     void CreateAnswer(const std::string& peerId, const OJingleContentAv& content) override;
 
@@ -77,8 +77,6 @@ public:
                                           bool isScreenCapture = false)
             -> std::shared_ptr<VideoCaptureInterface>;
 
-    bool call(const std::string& peerId, const std::string& sId, bool video) override;
-
     bool quit(const std::string& peerId) override;
 
     void setIceOptions(std::list<IceServer>& ices) override;
@@ -90,9 +88,9 @@ public:
     std::unique_ptr<webrtc::SessionDescriptionInterface> convertToSdp(
             const OJingleContentAv& context);
 
-    OJingleContentAv convertFromSdp(webrtc::SessionDescriptionInterface* sdp);
-
     std::map<std::string, OIceUdp> getCandidates(const std::string& peerId) override;
+
+    void getLocalSdp(const std::string& peerId, ortc::OJingleContentAv& oContext) override;
 
     OkRTCHandler* getHandler() const {
         return _rtcHandler;
@@ -107,10 +105,6 @@ public:
     }
 
 private:
-    std::map<std::string, ortc::OIceUdp> fromIce(
-            const webrtc::SessionDescriptionInterface* sdp,
-            const std::list<const webrtc::IceCandidateInterface*>& iceList);
-
     //    std::unique_ptr<LogSinkImpl> _logSink;
     void addIceServer(const IceServer& ice);
 

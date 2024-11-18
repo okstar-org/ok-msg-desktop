@@ -35,8 +35,6 @@ public:
 
     size_t getVideoSize();
 
-    void CreateOffer(const std::string& peerId);
-
     void CreateOffer(const std::string& peerId, const lib::ortc::OJingleContent& pContent);
 
 

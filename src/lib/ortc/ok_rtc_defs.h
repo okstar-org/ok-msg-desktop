@@ -223,4 +223,6 @@ public:
     [[nodiscard]] bool isVideo() const;
 };
 
+enum class IceGatheringState { New, Gathering, Complete };
+
 }  // namespace lib::ortc

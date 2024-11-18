@@ -184,16 +184,24 @@ void Conductor::OnIceConnectionChange(webrtc::PeerConnectionInterface::IceConnec
 }
 
 void Conductor::OnIceGatheringChange(webrtc::PeerConnectionInterface::IceGatheringState state) {
+    // ICE 收集状态
     RTC_LOG(LS_INFO) << __FUNCTION__ << "=>"
                      << webrtc::PeerConnectionInterface::AsString(state).data();
+
+    if (webRtc->getHandler()) {
+        webRtc->getHandler()->onIceGatheringChange(
+                sId, peerId, static_cast<ortc::IceGatheringState>(state));
+    }
 }
 
 void Conductor::OnIceCandidate(const webrtc::IceCandidateInterface* ice) {
     std::string str;
     ice->ToString(&str);
+    RTC_LOG(LS_INFO) << __FUNCTION__ << " Candidate:" << str;
 
-    RTC_LOG(LS_INFO) << __FUNCTION__ << "mid:" << ice->sdp_mid() << " ptr: " << ice << " " << str;
-    _candidates.push_back(ice);
+    webrtc::SdpParseError err;
+    auto ice0 = webrtc::CreateIceCandidate(ice->sdp_mid(), ice->sdp_mline_index(), str, &err);
+    _candidates.push_back(ice0);
 
     //
     //    /**
@@ -540,18 +548,17 @@ void Conductor::OnSuccess() {
 }
 
 void Conductor::OnSuccess(webrtc::SessionDescriptionInterface* desc) {
-    RTC_LOG(LS_INFO) << __FUNCTION__;
-
     std::string sdp;
     desc->ToString(&sdp);
 
-    RTC_LOG(LS_INFO) << "Set local sdp:" << sdp;
+    RTC_LOG(LS_INFO) << __FUNCTION__ << "sdp:" << sdp;
+    RTC_LOG(LS_INFO) << __FUNCTION__ << "Set local sdp";
     peer_connection_->SetLocalDescription(this, desc);
 
-    if (webRtc->getHandler()) {
-        auto osdp = webRtc->convertFromSdp(desc);
-        webRtc->getHandler()->onRTP(sId, peerId, osdp);
-    }
+    //    if (webRtc->getHandler()) {
+    //        auto osdp = webRtc->convertFromSdp(desc);
+    //        webRtc->getHandler()->onRTP(sId, peerId, osdp);
+    //    }
 }
 
 void Conductor::OnFailure(webrtc::RTCError error) {
