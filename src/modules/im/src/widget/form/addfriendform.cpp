@@ -67,7 +67,7 @@ AddFriendForm::AddFriendForm(QWidget* parent) : QWidget(parent), addUi{new Ui::A
 
     addUi->scrollArea->widget()->setLayout(friendLayout);
 
-    tabWidget->addTab(main, "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+    tabWidget->addTab(main, "main");
 
     // accessibility stuff
     addUi->input->setPlaceholderText(tr("Account/E-Mail/Phone Number"));
