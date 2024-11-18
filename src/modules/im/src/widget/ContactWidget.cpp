@@ -86,11 +86,12 @@ ContactWidget::ContactWidget(QWidget* parent)
     connect(Widget::getInstance(), &Widget::addMember, this, &ContactWidget::do_addContactToGroup);
 
     settings::Translator::registerHandler([this] { retranslateUi(); }, this);
-    retranslateUi();
 }
 
 ContactWidget::~ContactWidget() {
     deinit();
+
+    settings::Translator::unregister(this);
     delete ui;
 }
 
