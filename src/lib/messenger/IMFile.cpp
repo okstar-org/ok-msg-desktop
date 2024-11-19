@@ -355,14 +355,14 @@ bool IMFile::sendFileToResource(const gloox::JID& jid, const File& file) {
     return true;
 }
 
-void IMFile::doSessionAccept(gloox::Jingle::Session* session,
+bool IMFile::doSessionAccept(gloox::Jingle::Session* session,
                              const gloox::Jingle::Session::Jingle* jingle,
                              const lib::messenger::IMPeerId& peerId) {
     auto sId = qstring(session->sid());
     qDebug() << __func__ << "sId:" << sId;
     if (isInvalidSid(sId)) {
         qWarning() << "No file session";
-        return;
+        return false;
     }
 
     ortc::OJingleContentFile cfile;
@@ -371,7 +371,7 @@ void IMFile::doSessionAccept(gloox::Jingle::Session* session,
 
     if (!cfile.isValid()) {
         qWarning() << "Is no file session";
-        return;
+        return false;
     }
 
     for (auto h : fileHandlers) {
@@ -388,7 +388,7 @@ void IMFile::doSessionAccept(gloox::Jingle::Session* session,
     IMFileSession* sess = m_fileSessionMap.value(sId);
     if (sess) {
         qWarning() << "File session is existing, the sId is" << sId;
-        return;
+        return false;
     }
 
     // 创建session
@@ -397,6 +397,8 @@ void IMFile::doSessionAccept(gloox::Jingle::Session* session,
         s->start();
         m_fileSessionMap.insert(sId, s);
     }
+
+    return true;
 }
 
 void IMFile::doSessionInitiate(gloox::Jingle::Session* session,

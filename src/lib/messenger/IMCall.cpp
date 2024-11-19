@@ -376,6 +376,7 @@ void IMCall::onCreatePeerConnection(const std::string& sId, const std::string& p
 void IMCall::onIceGatheringChange(const std::string& sId, const std::string& peerId,
                                   ortc::IceGatheringState state) {
     if (state == ortc::IceGatheringState::Complete) {
+        sleep(3);
         auto pSession = findSession(qstring(sId));
         if (!pSession) {
             qWarning() << "Unable to find jingle session" << &sId;
@@ -472,12 +473,12 @@ void IMCall::onRender(const std::string& peerId, lib::ortc::RendererImage image)
     }
 }
 
-void IMCall::doSessionAccept(gloox::Jingle::Session* session,
+bool IMCall::doSessionAccept(gloox::Jingle::Session* session,
                              const gloox::Jingle::Session::Jingle* jingle,
                              const lib::messenger::IMPeerId& peerId) {
     auto sId = qstring(session->sid());
 
-    if (isInvalidSid(sId)) return;
+    if (isInvalidSid(sId)) return false;
 
     ortc::OJingleContentAv av;
     av.sdpType = ortc::JingleSdpType::Answer;
@@ -485,7 +486,7 @@ void IMCall::doSessionAccept(gloox::Jingle::Session* session,
 
     if (!av.isValid()) {
         qWarning() << "Is no call session";
-        return;
+        return false;
     }
 
     auto sess = m_sessionMap.value(sId);
@@ -500,6 +501,8 @@ void IMCall::doSessionAccept(gloox::Jingle::Session* session,
     auto rtc = ortc::OkRTCManager::getInstance()->getRtc();
     const std::string& id = stdstring(peerId.toString());
     rtc->setRemoteDescription(id, av);
+
+    return true;
 }
 
 void IMCall::doJingleMessage(const IMPeerId& peerId, const gloox::Jingle::JingleMessage* jm) {

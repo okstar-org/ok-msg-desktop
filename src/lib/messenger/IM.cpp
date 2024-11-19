@@ -98,7 +98,9 @@ IM::IM(QString host,
     qDebug() << "Create messenger instance is successfully";
 }
 
-IM::~IM() { qDebug() << __func__; }
+IM::~IM() {
+    qDebug() << __func__;
+}
 
 void IM::run() {
     qDebug() << __func__;
@@ -1292,7 +1294,9 @@ void IM::fetchFriendVCard(const QString& friendId) {
     //  _client->rosterManager()->subscribe(jid.bareJID());
 }
 
-void IM::handleTag(Tag* tag) { qDebug() << __func__ << qstring(tag->name()); }
+void IM::handleTag(Tag* tag) {
+    qDebug() << __func__ << qstring(tag->name());
+}
 
 bool IM::handleIq(const IQ& iq) {
     qDebug() << __func__ << qstring(iq.id());
@@ -1480,13 +1484,17 @@ void IM::handleItemUpdated(const JID& jid) {
  * 订阅好友
  * @param jid
  */
-void IM::handleItemSubscribed(const JID& jid) { qDebug() << __func__ << qstring(jid.full()); }
+void IM::handleItemSubscribed(const JID& jid) {
+    qDebug() << __func__ << qstring(jid.full());
+}
 
 /**
  * 取消订阅好友
  * @param jid
  */
-void IM::handleItemUnsubscribed(const JID& jid) { qDebug() << __func__ << qstring(jid.full()); }
+void IM::handleItemUnsubscribed(const JID& jid) {
+    qDebug() << __func__ << qstring(jid.full());
+}
 
 bool IM::removeFriend(const JID& jid) {
     qDebug() << __func__ << jid.full().c_str();
@@ -1536,7 +1544,9 @@ void IM::rejectFriendRequest(const QString& friendId) {
     _client->rosterManager()->ackSubscriptionRequest(JID(stdstring(friendId)).bareJID(), false);
 }
 
-size_t IM::getRosterCount() { return _client->rosterManager()->roster()->size(); }
+size_t IM::getRosterCount() {
+    return _client->rosterManager()->roster()->size();
+}
 
 void IM::getRosterList(std::list<IMFriend>& list) {
     auto rosterManager = _client->rosterManager();
@@ -1771,7 +1781,9 @@ IMPeerId IM::getSelfPeerId() {
     ;
 }
 
-QString IM::getSelfUsername() { return qstring(self().username()); }
+QString IM::getSelfUsername() {
+    return qstring(self().username());
+}
 
 void IM::setNickname(const QString& nickname) {
     qDebug() << __func__ << nickname;
@@ -2102,7 +2114,9 @@ void IM::updateOnlineStatus(const std::string& bare, const std::string& resource
     emit receiveFriendStatus(friendId, status);
 }
 
-void IM::retry() { doConnect(); }
+void IM::retry() {
+    doConnect();
+}
 
 bool IM::leaveGroup(const QString& groupId) {
     qDebug() << "leaveGroup" << groupId;
@@ -2275,7 +2289,8 @@ void IM::handleSessionAction(gloox::Jingle::Action action, gloox::Jingle::Sessio
         }
         case gloox::Jingle::Action::SessionAccept: {
             for (auto h : m_sessionHandlers) {
-                h->doSessionAccept(session, jingle, friendId);
+                auto yes = h->doSessionAccept(session, jingle, friendId);
+                if (yes) break;
             }
             break;
         }

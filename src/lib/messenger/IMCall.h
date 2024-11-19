@@ -185,7 +185,7 @@ protected:
                                     const gloox::Jingle::Session::Jingle*,  //
                                     const IMPeerId&) override;
 
-    virtual void doSessionAccept(gloox::Jingle::Session* session,        //
+    virtual bool doSessionAccept(gloox::Jingle::Session* session,        //
                                  const gloox::Jingle::Session::Jingle*,  //
                                  const IMPeerId&) override;
     virtual void doContentAdd(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;

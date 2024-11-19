@@ -90,7 +90,7 @@ public:
                                     const gloox::Jingle::Session::Jingle*,  //
                                     const IMPeerId&) = 0;
 
-    virtual void doSessionAccept(gloox::Jingle::Session* session,               //
+    virtual bool doSessionAccept(gloox::Jingle::Session* session,               //
                                  const gloox::Jingle::Session::Jingle* jingle,  //
                                  const IMPeerId& peerId) = 0;
 

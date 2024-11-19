@@ -120,7 +120,7 @@ protected:
                             const gloox::Jingle::Session::Jingle*,  //
                             const IMPeerId&) override;
 
-    void doSessionAccept(gloox::Jingle::Session* session,        //
+    bool doSessionAccept(gloox::Jingle::Session* session,        //
                          const gloox::Jingle::Session::Jingle*,  //
                          const IMPeerId&) override;
 
