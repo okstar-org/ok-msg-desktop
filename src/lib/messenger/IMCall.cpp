@@ -397,7 +397,7 @@ void IMCall::onIceGatheringChange(const std::string& sId, const std::string& pee
             pSession->getSession()->sessionInitiate(plugins);
         }
 
-        std::this_thread::sleep_for(std::chrono::seconds(3));
+        std::this_thread::sleep_for(std::chrono::seconds(1));
 
         gloox::Jingle::ICEUDP::CandidateList cl;
 
@@ -406,19 +406,19 @@ void IMCall::onIceGatheringChange(const std::string& sId, const std::string& pee
             auto& oIceUdp = kv.second;
 
             packCandidates(oIceUdp.candidates, cl);
-
-            auto* iceUdp = new gloox::Jingle::ICEUDP(oIceUdp.pwd, oIceUdp.ufrag, cl);
-
-            gloox::Jingle::ICEUDP::Dtls dtls;
-            packDtls(oIceUdp.dtls, dtls);
-
-            iceUdp->setDtls(dtls);
-
-            gloox::Jingle::PluginList pluginList;
-            pluginList.push_back(iceUdp);
-            auto c = new gloox::Jingle::Content(oIceUdp.mid, pluginList);
-            pSession->getSession()->transportInfo(c);
         }
+
+        auto* iceUdp = new gloox::Jingle::ICEUDP(oIceUdp.pwd, oIceUdp.ufrag, cl);
+
+        gloox::Jingle::ICEUDP::Dtls dtls;
+        packDtls(oIceUdp.dtls, dtls);
+
+        iceUdp->setDtls(dtls);
+
+        gloox::Jingle::PluginList pluginList;
+        pluginList.push_back(iceUdp);
+        auto c = new gloox::Jingle::Content(oIceUdp.mid, pluginList);
+        pSession->getSession()->transportInfo(c);
     }
 }
 
