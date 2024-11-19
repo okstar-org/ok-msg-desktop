@@ -104,7 +104,9 @@ std::map<std::string, ortc::OIceUdp> fromIce(const webrtc::SessionDescriptionInt
     for (int i = 0; i < sdp->number_of_mediasections(); i++) {
         auto col = sdp->candidates(i);
         if (col) {
-            iceList.push_back(col->at(i));
+            for (int j = 0; j < col->count(); ++j) {
+                iceList.push_back(col->at(j));
+            }
         }
     }
 

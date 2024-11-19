@@ -397,7 +397,7 @@ void IMCall::onIceGatheringChange(const std::string& sId, const std::string& pee
             pSession->getSession()->sessionInitiate(plugins);
         }
 
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        //        std::this_thread::sleep_for(std::chrono::seconds(3));
 
         auto map = rtc->getCandidates(peerId);
         for (const auto& kv : map) {
