@@ -13,8 +13,10 @@
 //
 // Created by gaojie on 24-5-29.
 //
+
 #include <range/v3/range.hpp>
 #include <range/v3/view.hpp>
+#include <thread>
 
 #include <extdisco.h>
 #include <jinglegroup.h>
@@ -376,7 +378,8 @@ void IMCall::onCreatePeerConnection(const std::string& sId, const std::string& p
 void IMCall::onIceGatheringChange(const std::string& sId, const std::string& peerId,
                                   ortc::IceGatheringState state) {
     if (state == ortc::IceGatheringState::Complete) {
-        sleep(3);
+        std::this_thread::sleep_for(std::chrono::seconds(3));
+
         auto pSession = findSession(qstring(sId));
         if (!pSession) {
             qWarning() << "Unable to find jingle session" << &sId;
