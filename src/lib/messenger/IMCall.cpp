@@ -378,8 +378,6 @@ void IMCall::onCreatePeerConnection(const std::string& sId, const std::string& p
 void IMCall::onIceGatheringChange(const std::string& sId, const std::string& peerId,
                                   ortc::IceGatheringState state) {
     if (state == ortc::IceGatheringState::Complete) {
-        std::this_thread::sleep_for(std::chrono::seconds(3));
-
         auto pSession = findSession(qstring(sId));
         if (!pSession) {
             qWarning() << "Unable to find jingle session" << &sId;
@@ -387,7 +385,8 @@ void IMCall::onIceGatheringChange(const std::string& sId, const std::string& pee
         }
 
         ortc::OJingleContentAv av;
-        ortc::OkRTCManager::getInstance()->getRtc()->getLocalSdp(peerId, av);
+        ortc::OkRTC* rtc = ortc::OkRTCManager::getInstance()->getRtc();
+        rtc->getLocalSdp(peerId, av);
 
         gloox::Jingle::PluginList plugins;
         toPlugins(av, plugins);
@@ -396,6 +395,29 @@ void IMCall::onIceGatheringChange(const std::string& sId, const std::string& pee
             pSession->getSession()->sessionAccept(plugins);
         } else if (pSession->direction() == CallDirection::CallOut) {
             pSession->getSession()->sessionInitiate(plugins);
+        }
+
+        std::this_thread::sleep_for(std::chrono::seconds(3));
+
+        gloox::Jingle::ICEUDP::CandidateList cl;
+
+        auto map = rtc->getCandidates(peerId);
+        for (const auto& kv : map) {
+            auto& oIceUdp = kv.second;
+
+            packCandidates(oIceUdp.candidates, cl);
+
+            auto* iceUdp = new gloox::Jingle::ICEUDP(oIceUdp.pwd, oIceUdp.ufrag, cl);
+
+            gloox::Jingle::ICEUDP::Dtls dtls;
+            packDtls(oIceUdp.dtls, dtls);
+
+            iceUdp->setDtls(dtls);
+
+            gloox::Jingle::PluginList pluginList;
+            pluginList.push_back(iceUdp);
+            auto c = new gloox::Jingle::Content(oIceUdp.mid, pluginList);
+            pSession->getSession()->transportInfo(c);
         }
     }
 }

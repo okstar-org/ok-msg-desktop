@@ -198,8 +198,7 @@ void Conductor::OnIceCandidate(const webrtc::IceCandidateInterface* ice) {
     std::string str;
     ice->ToString(&str);
     RTC_LOG(LS_INFO) << __FUNCTION__ << " Candidate:" << str;
-
-    //    _candidates.push_back(str);
+    _candidates.push_back(str);
 
     //
     //    /**
