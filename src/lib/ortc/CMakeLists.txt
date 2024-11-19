@@ -75,8 +75,9 @@ add_library(${PROJECT_NAME} STATIC
 		${${PROJECT_NAME}_SOURCES})
 
 target_link_libraries(${PROJECT_NAME}
-		${webrtc_LIB}
-		${gloox_LIB}
+		PRIVATE ${webrtc_LIB}
+		PRIVATE ${gloox_LIB}
+		PRIVATE range-v3::meta range-v3::concepts range-v3::range-v3
 )
 
 if (WIN32)

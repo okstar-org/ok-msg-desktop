@@ -2373,6 +2373,9 @@ void IM::removeSession(gloox::Jingle::Session* s) {
     _sessionManager->discardSession(s);
 }
 
-void IM::addSessionHandler(IMSessionHandler* h) { m_sessionHandlers.push_back(h); }
+void IM::addSessionHandler(IMSessionHandler* h) {
+    assert(h);
+    m_sessionHandlers.push_back(h);
+}
 
 }  // namespace lib::messenger

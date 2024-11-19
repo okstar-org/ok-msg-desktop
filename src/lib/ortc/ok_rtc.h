@@ -101,10 +101,9 @@ public:
 
     virtual void CreateOffer(const std::string& peerId, const std::string& sId, bool video) = 0;
 
-    virtual void CreateAnswer(const std::string& peerId, const OJingleContentAv& pContent) = 0;
+    virtual void CreateAnswer(const std::string& peerId, const OJingleContentAv& av) = 0;
 
-    virtual void setRemoteDescription(const std::string& peerId,
-                                      const OJingleContentAv& jingleContext) = 0;
+    virtual void setRemoteDescription(const std::string& peerId, const OJingleContentAv& av) = 0;
 
     virtual void SessionTerminate(const std::string& peerId) = 0;
 

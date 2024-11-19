@@ -62,17 +62,13 @@ public:
     void setMute(bool mute);
     void setRemoteMute(bool mute);
 
-    const std::list<const webrtc::IceCandidateInterface*>& getCandidates() const {
-        return _candidates;
-    }
-
     const webrtc::SessionDescriptionInterface* getLocalSdp() const;
 
     inline ortc::JoinOptions joinOptions() { return _joinOptions; }
 
     size_t getVideoCaptureSize();
 
-    OJingleContentAv toJingleSdp(const webrtc::SessionDescriptionInterface* desc);
+    //    OJingleContentAv toJingleSdp(const webrtc::SessionDescriptionInterface* desc);
 
     virtual void AddRef() const override {};
     virtual rtc::RefCountReleaseStatus Release() const override {
@@ -143,7 +139,6 @@ private:
     ortc::JoinOptions _joinOptions;
 
     rtc::scoped_refptr<webrtc::PeerConnectionInterface> peer_connection_;
-    std::list<const webrtc::IceCandidateInterface*> _candidates;
     std::unique_ptr<VideoSink> _videoSink;
 
     rtc::scoped_refptr<webrtc::AudioTrackInterface> _audioTrack;

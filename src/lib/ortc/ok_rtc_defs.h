@@ -175,7 +175,6 @@ struct OFile : public OContent {
     long int offset = 0;
 };
 
-
 enum class JingleSdpType {
     Offer,
     Answer,
@@ -191,9 +190,13 @@ enum class JingleCallType {
 
 struct OJingleContent {
 public:
-    [[nodiscard]] inline JingleCallType getCallType() const { return callType; }
+    [[nodiscard]] inline JingleCallType getCallType() const {
+        return callType;
+    }
 
-    [[nodiscard]] inline JingleSdpType getSdpType() const { return sdpType; }
+    [[nodiscard]] inline JingleSdpType getSdpType() const {
+        return sdpType;
+    }
 
     JingleSdpType sdpType;
 
@@ -201,7 +204,6 @@ public:
     std::string sessionVersion;
 
     JingleCallType callType;
-
 };
 
 struct OJingleContentFile : public OJingleContent {
@@ -216,11 +218,32 @@ struct OSdp : public OContent {
 
 struct OJingleContentAv : public OJingleContent {
 public:
-    std::map<std::string, OSdp> contents;
-
     bool isValid();
 
     [[nodiscard]] bool isVideo() const;
+
+    [[nodiscard]] const std::map<std::string, OSdp>& getContents() const {
+        return contents;
+    };
+
+    void put(const std::string& name, const OSdp& sdp) {
+        contents[name] = sdp;
+    }
+
+    OSdp& load(const std::string& name) {
+        auto find = contents.find(name);
+        if (find != contents.end()) {
+            return find->second;
+        } else {
+            OSdp oSdp;
+            oSdp.name = name;
+            contents[name] = oSdp;
+        }
+        return contents[name];
+    }
+
+private:
+    std::map<std::string, OSdp> contents;
 };
 
 enum class IceGatheringState { New, Gathering, Complete };

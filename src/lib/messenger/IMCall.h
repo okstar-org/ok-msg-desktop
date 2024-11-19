@@ -118,7 +118,7 @@ class IMCall : public IMJingle, public IMSessionHandler, public lib::ortc::OkRTC
 public:
     explicit IMCall(IM* im, QObject* parent = nullptr);
     ~IMCall() override;
-    void toPlugins(const ortc::OJingleContentAv& oContext, gloox::Jingle::PluginList& plugins);
+    void toPlugins(const ortc::OJingleContentAv& av, gloox::Jingle::PluginList& plugins);
     static void parse(const gloox::Jingle::Session::Jingle* jingle,
                       ortc::OJingleContentAv& contentAv);
 

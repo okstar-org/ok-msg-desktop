@@ -28,14 +28,11 @@ namespace webrtc {
 class PeerConnectionFactoryInterface;
 class SessionDescriptionInterface;
 class AudioSourceInterface;
-class AudioEncoderFactory;
-class AudioDecoderFactory;
 class VideoEncoderFactory;
 class VideoDecoderFactory;
 }  // namespace webrtc
 
-namespace lib {
-namespace ortc {
+namespace lib::ortc {
 
 class Conductor;
 
@@ -55,7 +52,7 @@ public:
 
     void addRTCHandler(OkRTCHandler* hand) override;
 
-    void setRemoteDescription(const std::string& peerId, const OJingleContentAv& context) override;
+    void setRemoteDescription(const std::string& peerId, const OJingleContentAv& av) override;
 
     void CreateOffer(const std::string& peerId, const std::string& sId, bool video) override;
 
@@ -85,8 +82,7 @@ public:
 
     JingleSdpType convertFromSdpType(webrtc::SdpType sdpType);
 
-    std::unique_ptr<webrtc::SessionDescriptionInterface> convertToSdp(
-            const OJingleContentAv& context);
+    std::unique_ptr<webrtc::SessionDescriptionInterface> convertToSdp(const OJingleContentAv& av);
 
     std::map<std::string, OIceUdp> getCandidates(const std::string& peerId) override;
 
@@ -135,5 +131,4 @@ private:
 
     rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> peer_connection_factory;
 };
-}  // namespace ortc
-}  // namespace lib
+}  // namespace lib::ortc

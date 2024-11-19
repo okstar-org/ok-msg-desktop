@@ -199,9 +199,7 @@ void Conductor::OnIceCandidate(const webrtc::IceCandidateInterface* ice) {
     ice->ToString(&str);
     RTC_LOG(LS_INFO) << __FUNCTION__ << " Candidate:" << str;
 
-    webrtc::SdpParseError err;
-    auto ice0 = webrtc::CreateIceCandidate(ice->sdp_mid(), ice->sdp_mline_index(), str, &err);
-    _candidates.push_back(ice0);
+    //    _candidates.push_back(str);
 
     //
     //    /**
@@ -356,15 +354,12 @@ void Conductor::SetRemoteDescription(std::unique_ptr<webrtc::SessionDescriptionI
 }
 
 void Conductor::setTransportInfo(std::unique_ptr<webrtc::IceCandidateInterface> candidate) {
-    // candidate:2956132637 2 udp 41623294 122.9.45.183 58616 typ relay raddr 116.162.2.202 rport
-    // 33010 generation 0
     std::string str;
     candidate->ToString(&str);
-    RTC_LOG(LS_INFO) << __FUNCTION__ << " mid:" << candidate->sdp_mid() << " " << str;
-
-    auto c = candidate.release();
-    auto added = peer_connection_->AddIceCandidate(c);
-
+    RTC_LOG(LS_INFO) << __FUNCTION__ << " set remote candidate: "
+                     << " mid:" << candidate->sdp_mid()
+                     << " mline: " << candidate->sdp_mline_index() << " sdp: " << str;
+    auto added = peer_connection_->AddIceCandidate(candidate.release());
     RTC_LOG(LS_INFO) << __FUNCTION__ << " => " << added;
 }
 
@@ -374,174 +369,175 @@ void Conductor::sessionTerminate() {
 
 void Conductor::OnSessionTerminate(const std::string& sid, OkRTCHandler* handler) {}
 
-OJingleContentAv Conductor::toJingleSdp(const webrtc::SessionDescriptionInterface* desc) {
-    OJingleContentAv osdp;
-    osdp.sessionId = desc->session_id();
-    osdp.sessionVersion = desc->session_version();
-
-    // ContentGroup
-    ::cricket::ContentGroup group(::cricket::GROUP_TYPE_BUNDLE);
-
-    auto sd = desc->description();
-    for (auto rtcContent : sd->contents()) {
-        OSdp oContent;
-
-        const std::string& name = rtcContent.mid();
-        // qDebug(("Content name: %1").arg(qstring(name)));
-
-        oContent.name = name;
-
-        auto mediaDescription = rtcContent.media_description();
-        // media type
-        auto mt = mediaDescription->type();
-
-        // rtcp_mux
-        oContent.rtp.rtcpMux = mediaDescription->rtcp_mux();
-
-        // Transport
-        auto ti = sd->GetTransportInfoByName(name);
-
-        // pwd ufrag
-        oContent.iceUdp.pwd = ti->description.ice_pwd;
-        oContent.iceUdp.ufrag = ti->description.ice_ufrag;
-
-        // fingerprint
-        if (ti->description.identity_fingerprint) {
-            oContent.iceUdp.dtls.fingerprint =
-                    ti->description.identity_fingerprint->GetRfc4572Fingerprint();
-            oContent.iceUdp.dtls.hash = ti->description.identity_fingerprint->algorithm;
-
-            // connection_role
-            std::string setup;
-            ::cricket::ConnectionRoleToString(ti->description.connection_role, &setup);
-            oContent.iceUdp.dtls.setup = setup;
-        }
-
-        // hdrext
-        const ::cricket::RtpHeaderExtensions hdrs = mediaDescription->rtp_header_extensions();
-        for (auto& hdr : hdrs) {
-            HdrExt hdrExt = {hdr.id, hdr.uri};
-            oContent.rtp.hdrExts.push_back(hdrExt);
-        }
-
-        // ssrc
-        for (auto& stream : mediaDescription->streams()) {
-            //      "{id:5e9a64d8-b9d3-4fc7-a8eb-0ee6dec72138;  //track id
-            //      ssrcs:[1679428189,751024037];
-            //      ssrc_groups:{semantics:FID; ssrcs:[1679428189,751024037]};
-            //      cname:dBhnE4FRSAUq1FZp;
-            //      stream_ids:okedu-video-id;
-            // }"
-            RTC_LOG(LS_INFO) << "stream: " << (stream.ToString());
-
-            // label
-            const std::string& first_stream_id = stream.first_stream_id();
-
-            for (auto& ssrc1 : stream.ssrcs) {
-                RTC_LOG(LS_INFO) << " label:" << first_stream_id << " id:" << stream.id << " ssrc"
-                                 << ssrc1;
-
-                Parameter cname = {"cname", stream.cname};
-                Parameter label = {"label", stream.id};
-                Parameter mslabel = {"mslabel", first_stream_id};
-                Parameter msid = {"msid", first_stream_id + " " + stream.id};
-
-                // msid = mslabel+ label(stream.id)
-                Parameters parameters;
-                parameters.emplace_back(cname);
-                parameters.emplace_back(msid);
-                parameters.emplace_back(mslabel);
-                parameters.emplace_back(label);
-
-                Source source = {std::to_string(ssrc1), parameters};
-                oContent.rtp.sources.emplace_back(source);
-            }
-        }
-
-        // ssrc-group
-        if (oContent.rtp.sources.size() >= 2) {
-            oContent.rtp.ssrcGroup.semantics = "FID";
-            for (auto& ssrc : oContent.rtp.sources) {
-                oContent.rtp.ssrcGroup.ssrcs.emplace_back(ssrc.ssrc);
-            }
-        }
-
-        // codecs
-        switch (mt) {
-            case ::cricket::MediaType::MEDIA_TYPE_AUDIO: {
-                oContent.rtp.media = Media::audio;
-                auto audio_desc = mediaDescription->as_audio();
-                auto codecs = audio_desc->codecs();
-
-                for (auto& codec : codecs) {
-                    PayloadType type;
-                    type.id = codec.id;
-                    type.name = codec.name;
-                    type.channels = codec.channels;
-                    type.clockrate = codec.clockrate;
-                    type.bitrate = codec.bitrate;
-
-                    auto cps = codec.ToCodecParameters();
-                    for (auto& it : cps.parameters) {
-                        Parameter parameter;
-                        if (parameter.name.empty()) continue;
-                        parameter.name = it.first;
-                        parameter.value = it.second;
-                        type.parameters.emplace_back(parameter);
-                    }
-
-                    // rtcp-fb
-                    for (auto& it : codec.feedback_params.params()) {
-                        Feedback fb = {it.id(), it.param()};
-                        type.feedbacks.push_back(fb);
-                    }
-
-                    oContent.rtp.payloadTypes.emplace_back(type);
-                }
-
-                break;
-            }
-            case ::cricket::MediaType::MEDIA_TYPE_VIDEO: {
-                oContent.rtp.media = Media::video;
-                auto video_desc = mediaDescription->as_video();
-                for (auto& codec : video_desc->codecs()) {
-                    // PayloadType
-                    PayloadType type;
-                    type.id = codec.id;
-                    type.name = codec.name;
-                    type.clockrate = codec.clockrate;
-
-                    // PayloadType parameter
-                    auto cps = codec.ToCodecParameters();
-                    for (auto& it : cps.parameters) {
-                        Parameter parameter;
-                        parameter.name = it.first;
-                        parameter.value = it.second;
-                        type.parameters.emplace_back(parameter);
-                    }
-
-                    // rtcp-fb
-                    for (auto& it : codec.feedback_params.params()) {
-                        Feedback fb = {it.id(), it.param()};
-                        type.feedbacks.push_back(fb);
-                    }
-
-                    oContent.rtp.payloadTypes.emplace_back(type);
-                }
-                break;
-            }
-            case ::cricket::MediaType::MEDIA_TYPE_DATA: {
-                break;
-            }
-            case cricket::MEDIA_TYPE_UNSUPPORTED:
-                break;
-        }
-
-        osdp.contents.insert(std::pair(oContent.name, oContent));
-    }
-
-    return osdp;
-}
+// OJingleContentAv Conductor::toJingleSdp(const webrtc::SessionDescriptionInterface* desc) {
+//     OJingleContentAv osdp;
+//     osdp.sessionId = desc->session_id();
+//     osdp.sessionVersion = desc->session_version();
+//
+//     // ContentGroup
+//     ::cricket::ContentGroup group(::cricket::GROUP_TYPE_BUNDLE);
+//
+//     auto sd = desc->description();
+//     for (auto rtcContent : sd->contents()) {
+//         OSdp oContent;
+//
+//         const std::string& name = rtcContent.mid();
+//         // qDebug(("Content name: %1").arg(qstring(name)));
+//
+//         oContent.name = name;
+//
+//         auto mediaDescription = rtcContent.media_description();
+//         // media type
+//         auto mt = mediaDescription->type();
+//
+//         // rtcp_mux
+//         oContent.rtp.rtcpMux = mediaDescription->rtcp_mux();
+//
+//         // Transport
+//         auto ti = sd->GetTransportInfoByName(name);
+//
+//         // pwd ufrag
+//         oContent.iceUdp.pwd = ti->description.ice_pwd;
+//         oContent.iceUdp.ufrag = ti->description.ice_ufrag;
+//
+//         // fingerprint
+//         if (ti->description.identity_fingerprint) {
+//             oContent.iceUdp.dtls.fingerprint =
+//                     ti->description.identity_fingerprint->GetRfc4572Fingerprint();
+//             oContent.iceUdp.dtls.hash = ti->description.identity_fingerprint->algorithm;
+//
+//             // connection_role
+//             std::string setup;
+//             ::cricket::ConnectionRoleToString(ti->description.connection_role, &setup);
+//             oContent.iceUdp.dtls.setup = setup;
+//         }
+//
+//         // hdrext
+//         const ::cricket::RtpHeaderExtensions hdrs = mediaDescription->rtp_header_extensions();
+//         for (auto& hdr : hdrs) {
+//             HdrExt hdrExt = {hdr.id, hdr.uri};
+//             oContent.rtp.hdrExts.push_back(hdrExt);
+//         }
+//
+//         // ssrc
+//         for (auto& stream : mediaDescription->streams()) {
+//             //      "{id:5e9a64d8-b9d3-4fc7-a8eb-0ee6dec72138;  //track id
+//             //      ssrcs:[1679428189,751024037];
+//             //      ssrc_groups:{semantics:FID; ssrcs:[1679428189,751024037]};
+//             //      cname:dBhnE4FRSAUq1FZp;
+//             //      stream_ids:okedu-video-id;
+//             // }"
+//             RTC_LOG(LS_INFO) << "stream: " << (stream.ToString());
+//
+//             // label
+//             const std::string& first_stream_id = stream.first_stream_id();
+//
+//             for (auto& ssrc1 : stream.ssrcs) {
+//                 RTC_LOG(LS_INFO) << " label:" << first_stream_id << " id:" << stream.id << "
+//                 ssrc"
+//                                  << ssrc1;
+//
+//                 Parameter cname = {"cname", stream.cname};
+//                 Parameter label = {"label", stream.id};
+//                 Parameter mslabel = {"mslabel", first_stream_id};
+//                 Parameter msid = {"msid", first_stream_id + " " + stream.id};
+//
+//                 // msid = mslabel+ label(stream.id)
+//                 Parameters parameters;
+//                 parameters.emplace_back(cname);
+//                 parameters.emplace_back(msid);
+//                 parameters.emplace_back(mslabel);
+//                 parameters.emplace_back(label);
+//
+//                 Source source = {std::to_string(ssrc1), parameters};
+//                 oContent.rtp.sources.emplace_back(source);
+//             }
+//         }
+//
+//         // ssrc-group
+//         if (oContent.rtp.sources.size() >= 2) {
+//             oContent.rtp.ssrcGroup.semantics = "FID";
+//             for (auto& ssrc : oContent.rtp.sources) {
+//                 oContent.rtp.ssrcGroup.ssrcs.emplace_back(ssrc.ssrc);
+//             }
+//         }
+//
+//         // codecs
+//         switch (mt) {
+//             case ::cricket::MediaType::MEDIA_TYPE_AUDIO: {
+//                 oContent.rtp.media = Media::audio;
+//                 auto audio_desc = mediaDescription->as_audio();
+//                 auto codecs = audio_desc->codecs();
+//
+//                 for (auto& codec : codecs) {
+//                     PayloadType type;
+//                     type.id = codec.id;
+//                     type.name = codec.name;
+//                     type.channels = codec.channels;
+//                     type.clockrate = codec.clockrate;
+//                     type.bitrate = codec.bitrate;
+//
+//                     auto cps = codec.ToCodecParameters();
+//                     for (auto& it : cps.parameters) {
+//                         Parameter parameter;
+//                         if (parameter.name.empty()) continue;
+//                         parameter.name = it.first;
+//                         parameter.value = it.second;
+//                         type.parameters.emplace_back(parameter);
+//                     }
+//
+//                     // rtcp-fb
+//                     for (auto& it : codec.feedback_params.params()) {
+//                         Feedback fb = {it.id(), it.param()};
+//                         type.feedbacks.push_back(fb);
+//                     }
+//
+//                     oContent.rtp.payloadTypes.emplace_back(type);
+//                 }
+//
+//                 break;
+//             }
+//             case ::cricket::MediaType::MEDIA_TYPE_VIDEO: {
+//                 oContent.rtp.media = Media::video;
+//                 auto video_desc = mediaDescription->as_video();
+//                 for (auto& codec : video_desc->codecs()) {
+//                     // PayloadType
+//                     PayloadType type;
+//                     type.id = codec.id;
+//                     type.name = codec.name;
+//                     type.clockrate = codec.clockrate;
+//
+//                     // PayloadType parameter
+//                     auto cps = codec.ToCodecParameters();
+//                     for (auto& it : cps.parameters) {
+//                         Parameter parameter;
+//                         parameter.name = it.first;
+//                         parameter.value = it.second;
+//                         type.parameters.emplace_back(parameter);
+//                     }
+//
+//                     // rtcp-fb
+//                     for (auto& it : codec.feedback_params.params()) {
+//                         Feedback fb = {it.id(), it.param()};
+//                         type.feedbacks.push_back(fb);
+//                     }
+//
+//                     oContent.rtp.payloadTypes.emplace_back(type);
+//                 }
+//                 break;
+//             }
+//             case ::cricket::MediaType::MEDIA_TYPE_DATA: {
+//                 break;
+//             }
+//             case cricket::MEDIA_TYPE_UNSUPPORTED:
+//                 break;
+//         }
+//
+//         osdp.contents.insert(std::pair(oContent.name, oContent));
+//     }
+//
+//     return osdp;
+// }
 
 void Conductor::OnSuccess() {
     RTC_LOG(LS_INFO) << __FUNCTION__;
