@@ -629,14 +629,14 @@ std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertToSdp(
         for (const auto& item : oSdp.iceUdp.candidates) {
             // "host" / "srflx" / "prflx" / "relay" / token @
             // http://tools.ietf.org/html/rfc5245#section-15.1
-            if (item.type == Type::Host) {
-                continue;
-            }
+            //            if (item.type == Type::Host) {
+            //                continue;
+            //            }
             std::string type;
             switch (item.type) {
-              /*  case Type::Host:
+                case Type::Host:
                     type = "host";
-                    break;*/
+                    break;
                 case Type::PeerReflexive:
                     type = "prflx";
                     break;

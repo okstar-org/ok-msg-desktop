@@ -396,28 +396,6 @@ void IMCall::onIceGatheringChange(const std::string& sId, const std::string& pee
         } else if (pSession->direction() == CallDirection::CallOut) {
             pSession->getSession()->sessionInitiate(plugins);
         }
-
-        //        std::this_thread::sleep_for(std::chrono::seconds(3));
-
-        auto map = rtc->getCandidates(peerId);
-        for (const auto& kv : map) {
-            auto& oIceUdp = kv.second;
-
-            gloox::Jingle::ICEUDP::CandidateList cl;
-            packCandidates(oIceUdp.candidates, cl);
-
-            auto* iceUdp = new gloox::Jingle::ICEUDP(oIceUdp.pwd, oIceUdp.ufrag, cl);
-
-            gloox::Jingle::ICEUDP::Dtls dtls;
-            packDtls(oIceUdp.dtls, dtls);
-
-            iceUdp->setDtls(dtls);
-
-            gloox::Jingle::PluginList pluginList;
-            pluginList.push_back(iceUdp);
-            auto c = new gloox::Jingle::Content(oIceUdp.mid, pluginList);
-            pSession->getSession()->transportInfo(c);
-        }
     }
 }
 
@@ -513,18 +491,40 @@ bool IMCall::doSessionAccept(gloox::Jingle::Session* session,
         return false;
     }
 
-    auto sess = m_sessionMap.value(sId);
-    if (!sess) {
+    auto pSession = m_sessionMap.value(sId);
+    if (!pSession) {
         // 创建session
         auto selfId = _im->getSelfId();
-        sess = new IMCallSession(sId, session, selfId, peerId, ortc::JingleCallType::av);
-        m_sessionMap.insert(sId, sess);
+        pSession = new IMCallSession(sId, session, selfId, peerId, ortc::JingleCallType::av);
+        m_sessionMap.insert(sId, pSession);
     }
 
     // RTC 接受会话
     auto rtc = ortc::OkRTCManager::getInstance()->getRtc();
     const std::string& id = stdstring(peerId.toString());
     rtc->setRemoteDescription(id, av);
+
+    //        std::this_thread::sleep_for(std::chrono::seconds(3));
+
+    auto map = rtc->getCandidates(id);
+    for (const auto& kv : map) {
+        auto& oIceUdp = kv.second;
+
+        gloox::Jingle::ICEUDP::CandidateList cl;
+        packCandidates(oIceUdp.candidates, cl);
+
+        auto* iceUdp = new gloox::Jingle::ICEUDP(oIceUdp.pwd, oIceUdp.ufrag, cl);
+
+        gloox::Jingle::ICEUDP::Dtls dtls;
+        packDtls(oIceUdp.dtls, dtls);
+
+        iceUdp->setDtls(dtls);
+
+        gloox::Jingle::PluginList pluginList;
+        pluginList.push_back(iceUdp);
+        auto c = new gloox::Jingle::Content(oIceUdp.mid, pluginList);
+        pSession->getSession()->transportInfo(c);
+    }
 
     return true;
 }
@@ -994,6 +994,7 @@ ortc::OIceUdp parseIce(const std::string& mid, int idx, const gloox::Jingle::ICE
                                                      .network = c.network,
                                                      .port = c.port,
                                                      .priority = static_cast<uint32_t>(c.priority),
+                                                     .protocol = c.protocol,
                                                      .tcptype = c.tcptype,
                                                      .rel_addr = c.rel_addr,
                                                      .rel_port = c.rel_port,

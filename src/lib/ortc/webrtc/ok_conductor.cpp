@@ -358,6 +358,7 @@ void Conductor::setTransportInfo(std::unique_ptr<webrtc::IceCandidateInterface> 
     RTC_LOG(LS_INFO) << __FUNCTION__ << " set remote candidate:"
                      << " mid:" << candidate->sdp_mid()
                      << " mline: " << candidate->sdp_mline_index() << " | " << str;
+
     auto added = peer_connection_->AddIceCandidate(candidate.release());
     RTC_LOG(LS_INFO) << __FUNCTION__ << " => " << added;
 }
