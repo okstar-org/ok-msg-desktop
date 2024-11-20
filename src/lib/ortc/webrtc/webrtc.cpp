@@ -82,6 +82,7 @@ ortc::Candidate fromCandidate(const cricket::Candidate& cand) {
             .priority = cand.priority(),
             .protocol = cand.protocol(),
             .tcptype = cand.tcptype(),
+             
     };
     if (cand.type() == ::cricket::LOCAL_PORT_TYPE) {
         c.type = Type::Host;
@@ -635,22 +636,33 @@ std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertToSdp(
             std::string type;
             switch (item.type) {
                 case Type::Host:
-                    type = "host";
+                    type = cricket::LOCAL_PORT_TYPE;
                     break;
                 case Type::PeerReflexive:
-                    type = "prflx";
+                    type = cricket::PRFLX_PORT_TYPE;
                     break;
                 case Type::Relayed:
-                    type = "relay";
+                    type = cricket::RELAY_PORT_TYPE;
                     break;
                 case Type::ServerReflexive:
-                    type = "srflx";
+                    type = cricket::STUN_PORT_TYPE;
                     break;
             }
-            cricket::Candidate candidate(std::stoi(item.component), item.protocol,
-                                         rtc::SocketAddress{item.ip, item.port}, item.priority,
-                                         iceUdp.ufrag, iceUdp.pwd, type, std::stoi(item.generation),
-                                         item.foundation, std::stoi(item.network));
+
+            assert(!type.empty());
+            
+            cricket::Candidate candidate(std::stoi(item.component),
+                                        item.protocol,
+                                        rtc::SocketAddress{item.ip, item.port},
+                                        item.priority,
+                                        iceUdp.ufrag, 
+                                        iceUdp.pwd, 
+                                        type, 
+                                        std::stoi(item.generation),
+                                        item.foundation, 
+                                        std::stoi(item.network));
+          
+
             auto c = webrtc::CreateIceCandidate(iceUdp.mid, iceUdp.mline, candidate);
             ptr->AddCandidate(c.release());
         }
