@@ -21,8 +21,7 @@
 #include "IM.h"
 #include "base/logs.h"
 
-namespace lib {
-namespace messenger {
+namespace lib::messenger {
 
 using namespace gloox;
 using namespace Jingle;
@@ -43,6 +42,7 @@ IMJingle::~IMJingle() {
 }
 
 void IMJingle::onImStarted() {
+    qDebug() << __func__ << "..." << this;
     auto client = _im->getClient();
     assert(client);
 
@@ -54,7 +54,6 @@ void IMJingle::onImStarted() {
     disco->addFeature(XMLNS_JINGLE);
     disco->addFeature(XMLNS_JINGLE_MESSAGE);
     disco->addFeature(XMLNS_JINGLE_ERRORS);
-
 }
 
 void IMJingle::handleMessageSession(MessageSession* session) {
@@ -85,6 +84,4 @@ bool IMJingle::handleIq(const IQ& iq) {
 
 void IMJingle::handleIqID(const IQ& iq, int context) {}
 
-
-}  // namespace messenger
-}  // namespace lib
+}  // namespace lib::messenger

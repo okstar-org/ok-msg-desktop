@@ -56,9 +56,8 @@ public:
 
     IM* getIM() { return _im; }
 
-    virtual void handleMessageSession(gloox::MessageSession* session) override;
-    virtual void handleMessage(const gloox::Message& msg,
-                               gloox::MessageSession* session = 0) override;
+    void handleMessageSession(gloox::MessageSession* session) override;
+    void handleMessage(const gloox::Message& msg, gloox::MessageSession* session) override;
 
 protected:
     virtual void handleJingleMessage(const IMPeerId& peerId,
@@ -87,8 +86,6 @@ protected:
 
 private:
     QString getSessionByFriendId(const QString& friendId);
-
-
 
     QList<gloox::Jingle::Content*> m_ices;
 

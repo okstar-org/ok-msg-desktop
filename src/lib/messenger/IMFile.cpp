@@ -120,7 +120,11 @@ void IMFile::parse(const gloox::Jingle::Session::Jingle* jingle,
     if (file && ibb) {
         for (auto& f : file->files()) {
             auto id = (ibb->sid());
-            qDebug() << "file:" << qstring(id) << "sId:" << qstring(sId);
+            qDebug() << "file id:" << qstring(id) << "sId:" << qstring(sId);
+            if (id.empty()) {
+                qWarning() << "empty fileId!";
+                continue;
+            }
             ortc::OFile file0 = {.id = id,
                                  .sId = sId,
                                  .date = f.date,
