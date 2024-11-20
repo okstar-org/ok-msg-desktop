@@ -77,7 +77,7 @@ void IMFileTask::run() {
             sleep(1);
 
             if (waitingSecs++ >= 60) {
-                qWarning() << "Timeout to wait stream open. wait secs:" << waitingSecs;
+                qWarning() << "Timeout to wait stream open." << waitingSecs;
                 break;
             }
             continue;

@@ -56,8 +56,9 @@ public:
 
     IM* getIM() { return _im; }
 
-    void handleMessageSession(gloox::MessageSession* session) override;
-    void handleMessage(const gloox::Message& msg, gloox::MessageSession* session) override;
+    virtual void handleMessageSession(gloox::MessageSession* session) override;
+    virtual void handleMessage(const gloox::Message& msg,
+                               gloox::MessageSession* session = 0) override;
 
 protected:
     virtual void handleJingleMessage(const IMPeerId& peerId,

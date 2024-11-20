@@ -21,7 +21,8 @@
 #include "IM.h"
 #include "base/logs.h"
 
-namespace lib::messenger {
+namespace lib {
+namespace messenger {
 
 using namespace gloox;
 using namespace Jingle;
@@ -42,7 +43,6 @@ IMJingle::~IMJingle() {
 }
 
 void IMJingle::onImStarted() {
-    qDebug() << __func__ << "..." << this;
     auto client = _im->getClient();
     assert(client);
 
@@ -84,4 +84,5 @@ bool IMJingle::handleIq(const IQ& iq) {
 
 void IMJingle::handleIqID(const IQ& iq, int context) {}
 
-}  // namespace lib::messenger
+}  // namespace messenger
+}  // namespace lib

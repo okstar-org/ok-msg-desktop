@@ -15,9 +15,7 @@
 namespace lib::ortc {
 
 bool OJingleContentAv::isValid() {
-    for (auto& c : contents)
-        if (c.second.rtp.media == Media::audio || c.second.rtp.media == Media::video) return true;
-    return false;
+    return !contents.empty();
 }
 
 bool OJingleContentAv::isVideo() const {
