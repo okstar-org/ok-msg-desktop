@@ -82,7 +82,7 @@ ortc::Candidate fromCandidate(const cricket::Candidate& cand) {
             .priority = cand.priority(),
             .protocol = cand.protocol(),
             .tcptype = cand.tcptype(),
-             
+
     };
     if (cand.type() == ::cricket::LOCAL_PORT_TYPE) {
         c.type = Type::Host;
@@ -650,18 +650,17 @@ std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertToSdp(
             }
 
             assert(!type.empty());
-            
+
             cricket::Candidate candidate(std::stoi(item.component),
-                                        item.protocol,
-                                        rtc::SocketAddress{item.ip, item.port},
-                                        item.priority,
-                                        iceUdp.ufrag, 
-                                        iceUdp.pwd, 
-                                        type, 
-                                        std::stoi(item.generation),
-                                        item.foundation, 
-                                        std::stoi(item.network));
-          
+                                         item.protocol,
+                                         rtc::SocketAddress{item.ip, item.port},
+                                         item.priority,
+                                         iceUdp.ufrag,
+                                         iceUdp.pwd,
+                                         type,
+                                         std::stoi(item.generation),
+                                         item.foundation,
+                                         std::stoi(item.network));
 
             auto c = webrtc::CreateIceCandidate(iceUdp.mid, iceUdp.mline, candidate);
             ptr->AddCandidate(c.release());
@@ -689,13 +688,7 @@ Conductor* WebRTC::getConductor(const std::string& peerId) {
 Conductor* WebRTC::createConductor(const std::string& peerId, const std::string& sId, bool video) {
     RTC_LOG(LS_INFO) << __FUNCTION__ << "peer:" << peerId << " sid:" << sId << " video:" << video;
 
-    auto conductor = _pcMap[peerId];
-    if (conductor) {
-        return conductor;
-    }
-
-    conductor = new Conductor(this, peerId, sId);
-    _pcMap[peerId] = conductor;
+    auto conductor = new Conductor(this, peerId, sId);
 
     if (!video) {
         // audio
@@ -824,10 +817,17 @@ void WebRTC::setRemoteMute(bool mute) {
     }
 }
 
-void WebRTC::CreateOffer(const std::string& peerId, const std::string& sId, bool video) {
-    Conductor* conductor = createConductor(peerId, sId, video);
-    assert(conductor);
+bool WebRTC::CreateOffer(const std::string& peerId, const std::string& sId, bool video) {
+    auto conductor = _pcMap[peerId];
+    if (conductor) {
+        RTC_LOG(LS_WARNING) << "Exist conductor.";
+        return false;
+    }
+
+    conductor = createConductor(peerId, sId, video);
     conductor->CreateOffer();
+    _pcMap[peerId] = conductor;
+    return true;
 }
 
 void WebRTC::SessionTerminate(const std::string& peerId) {

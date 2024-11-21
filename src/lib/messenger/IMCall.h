@@ -113,7 +113,7 @@ private:
     std::list<ortc::OIceUdp> pendingIceCandidates;
 };
 
-class IMCall : public IMJingle, public IMSessionHandler, public lib::ortc::OkRTCHandler {
+class IMCall : public IMJingle, public IMSessionHandler, public ortc::OkRTCHandler {
     Q_OBJECT
 public:
     explicit IMCall(IM* im, QObject* parent = nullptr);
@@ -125,9 +125,24 @@ public:
     void onCreatePeerConnection(const std::string& sId, const std::string& peerId,
                                 bool ok) override;
 
+    void onFailure(const std::string& sId,
+                   const std::string& peerId,
+                   const std::string& error) override;
+
     void onIceGatheringChange(const std::string& sId,
                               const std::string& peerId,
                               ortc::IceGatheringState state) override;
+
+    void onIceConnectionChange(const std::string& sId,
+                               const std::string& peerId,
+                               ortc::IceConnectionState state) override;
+
+    void onPeerConnectionChange(const std::string& sId,
+                                const std::string& peerId,
+                                ortc::PeerConnectionState state) override;
+
+    void onSignalingChange(const std::string& sId, const std::string& peerId,
+                           lib::ortc::SignalingState state) override;
 
     // onRTP
     void onRTP(const std::string& sId,       //
@@ -219,7 +234,11 @@ protected:
     }
 
 signals:
-    void sig_createPeerConnection(const QString sId, const QString peerId, bool ok);
+    void callCreated(const IMPeerId& to, const QString& sId, bool ok);
+
+    // ice
+    void iceGatheringStateChanged(IMPeerId to, const QString sId, ortc::IceGatheringState);
+    void iceConnectionStateChanged(IMPeerId to, const QString sId, ortc::IceConnectionState);
 
     // 呼叫请求
     void receiveCallRequest(IMPeerId peerId, QString callId, bool audio, bool video);
@@ -270,6 +289,7 @@ private:
 public slots:
     void onCallAccepted(IMPeerId peerId, QString callId, bool video);
     void onImStartedCall();
+    void doForIceCompleted(const std::string& sId, const std::string& peerId, const QString& qsId);
 };
 
 }  // namespace lib::messenger

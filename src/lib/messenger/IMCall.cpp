@@ -274,7 +274,7 @@ bool IMCall::sendCallToResource(const QString& friendId, const QString& sId, boo
 }
 
 bool IMCall::createCall(const IMPeerId& to, const QString& sId, bool video) {
-    qDebug() << __func__ << "to:" << to.toString() << "sId:" << sId;
+    qDebug() << __func__ << "to:" << to.toString() << "sId:" << sId << "video:" << video;
 
     auto ws = createSession(_im->getSelfId(), to, sId, lib::ortc::JingleCallType::av);
 
@@ -294,12 +294,11 @@ bool IMCall::createCall(const IMPeerId& to, const QString& sId, bool video) {
         rtcManager->addIceServer(ice);
     }
 
-    //    bool createdCall = rtc->call(stdstring(to.toString()), stdstring(sId), video);
-    //    if (createdCall) {
-    rtc->CreateOffer(stdstring(to.toString()), stdstring(sId), video);
-    //    }
+    auto created = rtc->CreateOffer(stdstring(to.toString()), stdstring(sId), video);
+    qDebug() << __func__ << "CreateOffer=>" << created;
 
-    return true;
+    emit callCreated(to, sId, created);
+    return created;
 }
 
 void IMCall::cancel(const QString& friendId) {
@@ -375,27 +374,87 @@ void IMCall::onCreatePeerConnection(const std::string& sId, const std::string& p
     qDebug() << __func__ << "sId:" << s << "peerId:" << p << "isOk=>" << ok;
 }
 
+void IMCall::onFailure(const std::string& sId,
+                       const std::string& peerId,
+                       const std::string& error) {
+    const QString& qsId = qstring(sId);
+    const QString& qPeerId = qstring(peerId);
+    qDebug() << __func__ << "sId:" << qsId << "peerId:" << qPeerId;
+    qDebug() << "error:" << qstring(error);
+
+    // TODO 通知前台处理错误情况
+}
+
 void IMCall::onIceGatheringChange(const std::string& sId, const std::string& peerId,
                                   ortc::IceGatheringState state) {
+    const QString& qsId = qstring(sId);
+    const QString& qPeerId = qstring(peerId);
+    qDebug() << __func__ << "sId:" << qsId << "peerId:" << qPeerId;
+    qDebug() << "state:" << static_cast<int>(state);
+
+    emit iceGatheringStateChanged(IMPeerId(qPeerId), qsId, state);
+
     if (state == ortc::IceGatheringState::Complete) {
-        auto pSession = findSession(qstring(sId));
-        if (!pSession) {
-            qWarning() << "Unable to find jingle session" << &sId;
-            return;
-        }
+        doForIceCompleted(sId, peerId, qsId);
+    }
+}
 
-        ortc::OJingleContentAv av;
-        ortc::OkRTC* rtc = ortc::OkRTCManager::getInstance()->getRtc();
-        rtc->getLocalSdp(peerId, av);
+void IMCall::onIceConnectionChange(const std::string& sId,
+                                   const std::string& peerId,
+                                   ortc::IceConnectionState state) {
+    /**
+     *
+    OnIceConnectionChange=>checking
+    OnIceConnectionChange=>connected
+    OnIceConnectionChange=>completed
+    OnIceConnectionChange=>disconnected
+    OnIceConnectionChange=>closed
+     */
+}
 
-        gloox::Jingle::PluginList plugins;
-        toPlugins(av, plugins);
+void IMCall::onPeerConnectionChange(const std::string& sId, const std::string& peerId,
+                                    ortc::PeerConnectionState state) {
+    /**
+     * OnConnectionChange : connecting
+     * OnConnectionChange : connected
+     * OnConnectionChange : closed
+     */
+}
 
-        if (pSession->direction() == CallDirection::CallIn) {
-            pSession->getSession()->sessionAccept(plugins);
-        } else if (pSession->direction() == CallDirection::CallOut) {
-            pSession->getSession()->sessionInitiate(plugins);
-        }
+void IMCall::onSignalingChange(const std::string& sId, const std::string& peerId,
+                               lib::ortc::SignalingState state) {
+    /**
+     * OnSignalingChange=>have-local-offer
+     * OnSignalingChange=>stable
+     * OnSignalingChange=>closed
+     */
+}
+
+/**
+ * Ice交互完成，处理事项
+ * @param sId
+ * @param peerId
+ * @param qsId
+ */
+void IMCall::doForIceCompleted(const std::string& sId, const std::string& peerId,
+                               const QString& qsId) {
+    auto pSession = findSession(qsId);
+    if (!pSession) {
+        qWarning() << "Unable to find jingle session" << &sId;
+        return;
+    }
+
+    ortc::OJingleContentAv av;
+    ortc::OkRTC* rtc = ortc::OkRTCManager::getInstance()->getRtc();
+    rtc->getLocalSdp(peerId, av);
+
+    gloox::Jingle::PluginList plugins;
+    toPlugins(av, plugins);
+
+    if (pSession->direction() == CallDirection::CallIn) {
+        pSession->getSession()->sessionAccept(plugins);
+    } else if (pSession->direction() == CallDirection::CallOut) {
+        pSession->getSession()->sessionInitiate(plugins);
     }
 }
 

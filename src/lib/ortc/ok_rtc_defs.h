@@ -248,4 +248,33 @@ private:
 
 enum class IceGatheringState { New, Gathering, Complete };
 
+enum class IceConnectionState {
+    New,
+    Checking,
+    Connected,
+    Completed,
+    Failed,
+    Disconnected,
+    Closed,
+    Max,
+};
+
+enum class PeerConnectionState {
+    New,
+    Connecting,
+    Connected,
+    Disconnected,
+    Failed,
+    Closed,
+};
+
+enum SignalingState {
+    Stable,
+    HaveLocalOffer,
+    HaveLocalPrAnswer,
+    HaveRemoteOffer,
+    HaveRemotePrAnswer,
+    Closed,
+};
+
 }  // namespace lib::ortc

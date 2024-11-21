@@ -175,16 +175,10 @@ void Conductor::OnRenegotiationNeeded() {
 }
 
 /**
- * ICE 连接状态
+ * ICE 收集状态
  * @param state
  */
-void Conductor::OnIceConnectionChange(webrtc::PeerConnectionInterface::IceConnectionState state) {
-    RTC_LOG(LS_INFO) << __FUNCTION__ << "=>"
-                     << webrtc::PeerConnectionInterface::AsString(state).data();
-}
-
 void Conductor::OnIceGatheringChange(webrtc::PeerConnectionInterface::IceGatheringState state) {
-    // ICE 收集状态
     RTC_LOG(LS_INFO) << __FUNCTION__ << "=>"
                      << webrtc::PeerConnectionInterface::AsString(state).data();
 
@@ -194,84 +188,24 @@ void Conductor::OnIceGatheringChange(webrtc::PeerConnectionInterface::IceGatheri
     }
 }
 
+/**
+ * ICE 连接状态
+ * @param state
+ */
+void Conductor::OnIceConnectionChange(webrtc::PeerConnectionInterface::IceConnectionState state) {
+    RTC_LOG(LS_INFO) << __FUNCTION__ << "=>"
+                     << webrtc::PeerConnectionInterface::AsString(state).data();
+    if (webRtc->getHandler()) {
+        webRtc->getHandler()->onIceConnectionChange(
+                sId, peerId, static_cast<ortc::IceConnectionState>(state));
+    }
+}
+
 void Conductor::OnIceCandidate(const webrtc::IceCandidateInterface* ice) {
     std::string str;
     ice->ToString(&str);
     RTC_LOG(LS_INFO) << __FUNCTION__ << " Candidate:" << str;
     _candidates.push_back(str);
-
-    //
-    //    /**
-    //     * 发送 IceCandidate
-    //     */
-    //    OIceUdp iceUdp;
-    //    iceUdp.mid = ice->sdp_mid();            //
-    //    iceUdp.mline = ice->sdp_mline_index();  //
-    //    iceUdp.ufrag = cand.username();
-    //    iceUdp.pwd = cand.password();
-    //
-    //    auto sdp = peer_connection_->local_description();
-    //    auto transportInfos = sdp->description()->transport_infos();
-    //    for (auto info : transportInfos) {
-    //        if (info.content_name == ice->sdp_mid()) {
-    //            if (info.description.identity_fingerprint) {
-    //                iceUdp.dtls.hash = info.description.identity_fingerprint->algorithm;
-    //                iceUdp.dtls.fingerprint =
-    //                        info.description.identity_fingerprint->GetRfc4572Fingerprint();
-    //            }
-    //
-    //            switch (info.description.connection_role) {
-    //                case ::cricket::CONNECTIONROLE_ACTIVE:
-    //                    iceUdp.dtls.setup = ::cricket::CONNECTIONROLE_ACTIVE_STR;
-    //                    break;
-    //                case ::cricket::CONNECTIONROLE_ACTPASS:
-    //                    iceUdp.dtls.setup = ::cricket::CONNECTIONROLE_ACTPASS_STR;
-    //                    break;
-    //                case ::cricket::CONNECTIONROLE_HOLDCONN:
-    //                    iceUdp.dtls.setup = ::cricket::CONNECTIONROLE_HOLDCONN_STR;
-    //                    break;
-    //                case ::cricket::CONNECTIONROLE_PASSIVE:
-    //                    iceUdp.dtls.setup = ::cricket::CONNECTIONROLE_PASSIVE_STR;
-    //                    break;
-    //                case ::cricket::CONNECTIONROLE_NONE:
-    //                    break;
-    //            }
-    //        }
-    //    }
-    //    // candidate
-    //    Candidate oc;
-    //    oc.id = cand.id();
-    //    oc.foundation = cand.foundation();
-    //    oc.priority = cand.priority();
-    //    oc.protocol = cand.protocol();
-    //    oc.tcptype = cand.tcptype();
-    //    oc.generation = std::to_string(cand.generation());
-    //    oc.component = std::to_string(cand.component());
-    //    oc.network = std::to_string(cand.network_id());
-    //
-    //    // addr
-    //    oc.ip = cand.address().ipaddr().ToString();
-    //    oc.port = cand.address().port();
-    //
-    //    // “host” / “srflx” / “prflx” / “relay” / token
-    //    if (cand.type() == ::cricket::LOCAL_PORT_TYPE) {
-    //        oc.type = Type::Host;
-    //    } else if (cand.type() == ::cricket::STUN_PORT_TYPE) {
-    //        oc.type = Type::ServerReflexive;
-    //    } else if (cand.type() == ::cricket::PRFLX_PORT_TYPE) {
-    //        oc.type = Type::PeerReflexive;
-    //    } else if (cand.type() == ::cricket::RELAY_PORT_TYPE) {
-    //        oc.type = Type::Relayed;
-    //    }
-    //
-    //    if (oc.type != Type::Host && 0 < cand.related_address().port()) {
-    //        oc.rel_addr = cand.related_address().ipaddr().ToString();
-    //        oc.rel_port = cand.related_address().port();
-    //    }
-    //
-    //    iceUdp.candidates.push_back(oc);
-    //
-    //    webRtc->getHandler()->onIce(sId, peerId, iceUdp);
 }
 
 void Conductor::OnIceConnectionReceivingChange(bool receiving) {
@@ -281,6 +215,20 @@ void Conductor::OnIceConnectionReceivingChange(bool receiving) {
 void Conductor::OnSignalingChange(webrtc::PeerConnectionInterface::SignalingState state) {
     RTC_LOG(LS_INFO) << __FUNCTION__ << "=>"
                      << webrtc::PeerConnectionInterface::AsString(state).data();
+    if (webRtc->getHandler()) {
+        webRtc->getHandler()->onSignalingChange(
+                sId, peerId, static_cast<ortc::SignalingState>(state));
+    }
+}
+
+void Conductor::OnConnectionChange(webrtc::PeerConnectionInterface::PeerConnectionState state) {
+    RTC_LOG(LS_INFO) << __FUNCTION__ << "=>"
+                     << webrtc::PeerConnectionInterface::AsString(state).data();
+
+    if (webRtc->getHandler()) {
+        webRtc->getHandler()->onPeerConnectionChange(
+                sId, peerId, static_cast<ortc::PeerConnectionState>(state));
+    }
 }
 
 void Conductor::OnAddTrack(
@@ -352,7 +300,7 @@ void Conductor::SetRemoteDescription(std::unique_ptr<webrtc::SessionDescriptionI
     peer_connection_->SetRemoteDescription(this, desc.release());
 }
 
-void Conductor::setTransportInfo(std::unique_ptr<webrtc::IceCandidateInterface> candidate) {
+bool Conductor::setTransportInfo(std::unique_ptr<webrtc::IceCandidateInterface> candidate) {
     std::string str;
     candidate->ToString(&str);
     RTC_LOG(LS_INFO) << __FUNCTION__ << " set remote candidate:"
@@ -361,6 +309,7 @@ void Conductor::setTransportInfo(std::unique_ptr<webrtc::IceCandidateInterface> 
 
     auto added = peer_connection_->AddIceCandidate(candidate.release());
     RTC_LOG(LS_INFO) << __FUNCTION__ << " => " << added;
+    return added;
 }
 
 void Conductor::sessionTerminate() {
@@ -368,176 +317,6 @@ void Conductor::sessionTerminate() {
 }
 
 void Conductor::OnSessionTerminate(const std::string& sid, OkRTCHandler* handler) {}
-
-// OJingleContentAv Conductor::toJingleSdp(const webrtc::SessionDescriptionInterface* desc) {
-//     OJingleContentAv osdp;
-//     osdp.sessionId = desc->session_id();
-//     osdp.sessionVersion = desc->session_version();
-//
-//     // ContentGroup
-//     ::cricket::ContentGroup group(::cricket::GROUP_TYPE_BUNDLE);
-//
-//     auto sd = desc->description();
-//     for (auto rtcContent : sd->contents()) {
-//         OSdp oContent;
-//
-//         const std::string& name = rtcContent.mid();
-//         // qDebug(("Content name: %1").arg(qstring(name)));
-//
-//         oContent.name = name;
-//
-//         auto mediaDescription = rtcContent.media_description();
-//         // media type
-//         auto mt = mediaDescription->type();
-//
-//         // rtcp_mux
-//         oContent.rtp.rtcpMux = mediaDescription->rtcp_mux();
-//
-//         // Transport
-//         auto ti = sd->GetTransportInfoByName(name);
-//
-//         // pwd ufrag
-//         oContent.iceUdp.pwd = ti->description.ice_pwd;
-//         oContent.iceUdp.ufrag = ti->description.ice_ufrag;
-//
-//         // fingerprint
-//         if (ti->description.identity_fingerprint) {
-//             oContent.iceUdp.dtls.fingerprint =
-//                     ti->description.identity_fingerprint->GetRfc4572Fingerprint();
-//             oContent.iceUdp.dtls.hash = ti->description.identity_fingerprint->algorithm;
-//
-//             // connection_role
-//             std::string setup;
-//             ::cricket::ConnectionRoleToString(ti->description.connection_role, &setup);
-//             oContent.iceUdp.dtls.setup = setup;
-//         }
-//
-//         // hdrext
-//         const ::cricket::RtpHeaderExtensions hdrs = mediaDescription->rtp_header_extensions();
-//         for (auto& hdr : hdrs) {
-//             HdrExt hdrExt = {hdr.id, hdr.uri};
-//             oContent.rtp.hdrExts.push_back(hdrExt);
-//         }
-//
-//         // ssrc
-//         for (auto& stream : mediaDescription->streams()) {
-//             //      "{id:5e9a64d8-b9d3-4fc7-a8eb-0ee6dec72138;  //track id
-//             //      ssrcs:[1679428189,751024037];
-//             //      ssrc_groups:{semantics:FID; ssrcs:[1679428189,751024037]};
-//             //      cname:dBhnE4FRSAUq1FZp;
-//             //      stream_ids:okedu-video-id;
-//             // }"
-//             RTC_LOG(LS_INFO) << "stream: " << (stream.ToString());
-//
-//             // label
-//             const std::string& first_stream_id = stream.first_stream_id();
-//
-//             for (auto& ssrc1 : stream.ssrcs) {
-//                 RTC_LOG(LS_INFO) << " label:" << first_stream_id << " id:" << stream.id << "
-//                 ssrc"
-//                                  << ssrc1;
-//
-//                 Parameter cname = {"cname", stream.cname};
-//                 Parameter label = {"label", stream.id};
-//                 Parameter mslabel = {"mslabel", first_stream_id};
-//                 Parameter msid = {"msid", first_stream_id + " " + stream.id};
-//
-//                 // msid = mslabel+ label(stream.id)
-//                 Parameters parameters;
-//                 parameters.emplace_back(cname);
-//                 parameters.emplace_back(msid);
-//                 parameters.emplace_back(mslabel);
-//                 parameters.emplace_back(label);
-//
-//                 Source source = {std::to_string(ssrc1), parameters};
-//                 oContent.rtp.sources.emplace_back(source);
-//             }
-//         }
-//
-//         // ssrc-group
-//         if (oContent.rtp.sources.size() >= 2) {
-//             oContent.rtp.ssrcGroup.semantics = "FID";
-//             for (auto& ssrc : oContent.rtp.sources) {
-//                 oContent.rtp.ssrcGroup.ssrcs.emplace_back(ssrc.ssrc);
-//             }
-//         }
-//
-//         // codecs
-//         switch (mt) {
-//             case ::cricket::MediaType::MEDIA_TYPE_AUDIO: {
-//                 oContent.rtp.media = Media::audio;
-//                 auto audio_desc = mediaDescription->as_audio();
-//                 auto codecs = audio_desc->codecs();
-//
-//                 for (auto& codec : codecs) {
-//                     PayloadType type;
-//                     type.id = codec.id;
-//                     type.name = codec.name;
-//                     type.channels = codec.channels;
-//                     type.clockrate = codec.clockrate;
-//                     type.bitrate = codec.bitrate;
-//
-//                     auto cps = codec.ToCodecParameters();
-//                     for (auto& it : cps.parameters) {
-//                         Parameter parameter;
-//                         if (parameter.name.empty()) continue;
-//                         parameter.name = it.first;
-//                         parameter.value = it.second;
-//                         type.parameters.emplace_back(parameter);
-//                     }
-//
-//                     // rtcp-fb
-//                     for (auto& it : codec.feedback_params.params()) {
-//                         Feedback fb = {it.id(), it.param()};
-//                         type.feedbacks.push_back(fb);
-//                     }
-//
-//                     oContent.rtp.payloadTypes.emplace_back(type);
-//                 }
-//
-//                 break;
-//             }
-//             case ::cricket::MediaType::MEDIA_TYPE_VIDEO: {
-//                 oContent.rtp.media = Media::video;
-//                 auto video_desc = mediaDescription->as_video();
-//                 for (auto& codec : video_desc->codecs()) {
-//                     // PayloadType
-//                     PayloadType type;
-//                     type.id = codec.id;
-//                     type.name = codec.name;
-//                     type.clockrate = codec.clockrate;
-//
-//                     // PayloadType parameter
-//                     auto cps = codec.ToCodecParameters();
-//                     for (auto& it : cps.parameters) {
-//                         Parameter parameter;
-//                         parameter.name = it.first;
-//                         parameter.value = it.second;
-//                         type.parameters.emplace_back(parameter);
-//                     }
-//
-//                     // rtcp-fb
-//                     for (auto& it : codec.feedback_params.params()) {
-//                         Feedback fb = {it.id(), it.param()};
-//                         type.feedbacks.push_back(fb);
-//                     }
-//
-//                     oContent.rtp.payloadTypes.emplace_back(type);
-//                 }
-//                 break;
-//             }
-//             case ::cricket::MediaType::MEDIA_TYPE_DATA: {
-//                 break;
-//             }
-//             case cricket::MEDIA_TYPE_UNSUPPORTED:
-//                 break;
-//         }
-//
-//         osdp.contents.insert(std::pair(oContent.name, oContent));
-//     }
-//
-//     return osdp;
-// }
 
 void Conductor::OnSuccess() {
     RTC_LOG(LS_INFO) << __FUNCTION__;
@@ -548,26 +327,19 @@ void Conductor::OnSuccess(webrtc::SessionDescriptionInterface* desc) {
     desc->ToString(&sdp);
 
     RTC_LOG(LS_INFO) << __FUNCTION__ << "sdp:" << sdp;
-    RTC_LOG(LS_INFO) << __FUNCTION__ << "Set local sdp";
-    peer_connection_->SetLocalDescription(this, desc);
-
-    //    if (webRtc->getHandler()) {
-    //        auto osdp = webRtc->convertFromSdp(desc);
-    //        webRtc->getHandler()->onRTP(sId, peerId, osdp);
-    //    }
+    //    peer_connection_->SetLocalDescription(this, desc);
 }
 
 void Conductor::OnFailure(webrtc::RTCError error) {
     RTC_LOG(LS_INFO) << __FUNCTION__ << error.message();
+
+    if (webRtc->getHandler()) {
+        webRtc->getHandler()->onFailure(sId, peerId, error.message());
+    }
 }
 
 void Conductor::OnSetRemoteDescriptionComplete(webrtc::RTCError error) {
     RTC_LOG(LS_INFO) << __FUNCTION__ << " : " << error.message();
-}
-
-void Conductor::OnConnectionChange(webrtc::PeerConnectionInterface::PeerConnectionState new_state) {
-    RTC_LOG(LS_INFO) << __FUNCTION__ << " : "
-                     << webrtc::PeerConnectionInterface::AsString(new_state).data();
 }
 
 const webrtc::SessionDescriptionInterface* Conductor::getLocalSdp() const {

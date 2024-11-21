@@ -18,8 +18,7 @@
 #include "ok_rtc_defs.h"
 #include "ok_rtc_renderer.h"
 
-namespace lib {
-namespace ortc {
+namespace lib::ortc {
 
 struct RendererImage {
     size_t width_;
@@ -68,9 +67,25 @@ public:
                        const std::string& peerId,
                        const OJingleContentAv& osd) = 0;
 
+    virtual void onFailure(const std::string& sId,
+                           const std::string& peerId,
+                           const std::string& error) = 0;
+
     virtual void onIceGatheringChange(const std::string& sId,
                                       const std::string& peerId,
                                       IceGatheringState state) = 0;
+
+    virtual void onIceConnectionChange(const std::string& sId,
+                                       const std::string& peerId,
+                                       IceConnectionState state) = 0;
+
+    virtual void onPeerConnectionChange(const std::string& sId,
+                                        const std::string& peerId,
+                                        PeerConnectionState state) = 0;
+
+    virtual void onSignalingChange(const std::string& sId,
+                                   const std::string& peerId,
+                                   SignalingState state) = 0;
 
     virtual void onIce(const std::string& sId,
                        const std::string& peerId,
@@ -99,7 +114,7 @@ public:
 
     virtual void addRTCHandler(OkRTCHandler* hand) = 0;
 
-    virtual void CreateOffer(const std::string& peerId, const std::string& sId, bool video) = 0;
+    virtual bool CreateOffer(const std::string& peerId, const std::string& sId, bool video) = 0;
 
     virtual void CreateAnswer(const std::string& peerId, const OJingleContentAv& av) = 0;
 
@@ -125,5 +140,4 @@ public:
     virtual void getLocalSdp(const std::string& peerId, ortc::OJingleContentAv& oContext) = 0;
 };
 
-}  // namespace ortc
-}  // namespace lib
+}  // namespace lib::ortc

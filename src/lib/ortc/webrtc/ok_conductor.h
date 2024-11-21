@@ -53,7 +53,7 @@ public:
 
     void sessionTerminate();
 
-    void setTransportInfo(std::unique_ptr<webrtc::IceCandidateInterface> candidate);
+    bool setTransportInfo(std::unique_ptr<webrtc::IceCandidateInterface> candidate);
 
     virtual void OnSessionTerminate(const std::string& sid, ortc::OkRTCHandler* handler);
 
@@ -92,8 +92,7 @@ protected:
     //
     void OnSignalingChange(webrtc::PeerConnectionInterface::SignalingState state) override;
 
-    void OnConnectionChange(
-            webrtc::PeerConnectionInterface::PeerConnectionState new_state) override;
+    void OnConnectionChange(webrtc::PeerConnectionInterface::PeerConnectionState state) override;
 
     void OnAddTrack(
             rtc::scoped_refptr<webrtc::RtpReceiverInterface> receiver,

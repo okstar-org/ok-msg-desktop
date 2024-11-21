@@ -54,7 +54,7 @@ public:
 
     void setRemoteDescription(const std::string& peerId, const OJingleContentAv& av) override;
 
-    void CreateOffer(const std::string& peerId, const std::string& sId, bool video) override;
+    bool CreateOffer(const std::string& peerId, const std::string& sId, bool video) override;
 
     void CreateAnswer(const std::string& peerId, const OJingleContentAv& content) override;
 
