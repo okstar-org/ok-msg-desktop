@@ -4,10 +4,14 @@
 #include <QWidget>
 
 class RoundedPixmapLabel;
+class MeetingParticipant;
 
 class MeetingVideoOutput : public QWidget {
 public:
     MeetingVideoOutput(QWidget* parent);
+                                                       
+    // 绑定与会者
+    void bindParticipant(MeetingParticipant* participant);
                                                        
 private:
     void showVideo();

@@ -14,19 +14,75 @@
 #define MEETINGVIDEOSLAYOUT_H
 
 #include <QWidget>
-
+#include <QScrollArea>
 #include "MeetingVideoDefines.h"
 
-class MeetingVideosLayout : public QWidget {
+class MeetingVideosLayout;
+class MeetingParticipant;
+class MeetingVideoOutput;
+class QSplitter;
+
+class MeetingVideosContainer : public QWidget {
 public:
-    MeetingVideosLayout(QWidget* parent);
+    MeetingVideosContainer(QWidget* parent);
     void resetLayout(module::meet::VideoLayoutType type);
     module::meet::VideoLayoutType currentLayoutType() const;
     QSize sizeHint() const;
     QSize minimumSizeHint() const;
 
+    void addParticipant(MeetingParticipant * participant);
+
+private:
+    void doResetLayout();
+    MeetingVideoOutput * getCenterVideo();
+
 private:
     module::meet::VideoLayoutType layoutType = module::meet::GridView;
+
+    MeetingVideosLayout* participantLayout = nullptr;
+    MeetingVideoOutput* centerVideo = nullptr;
+    QSplitter* splitter = nullptr;
+};
+
+class QPushButton;
+class MeetingVideosLayout : public QWidget {
+public:
+    enum class LayoutType {Grid, Horizontal, Vertical };
+
+public:
+    MeetingVideosLayout(LayoutType type, QWidget* parent);
+    void setLayoutType(MeetingVideosLayout::LayoutType type, int pageCellCount);
+    void setPageCellCount(int count);
+    void addParticipant(MeetingParticipant* participant);
+    void removeParticipant(MeetingParticipant* participant);
+    
+private:
+    void doLayout();
+    void doGridLayout(int cols);
+    void nextPage();
+    void previousPage();
+
+    void rebindVideos();
+    void updateButtonState();
+    void updateButtonGeo();
+    int recalcPageCount();
+
+    bool event(QEvent* e);
+
+private:
+    int cellCount = 1;
+    QList<MeetingParticipant*> allParticipant;
+    QList<MeetingVideoOutput*> cellVideos;
+    QSize cellSize;
+    LayoutType _type = LayoutType::Grid;
+
+    int pageIndex = 0;
+    int pageCount = 1;
+
+    QPushButton* nextPageButton = nullptr;
+    QPushButton* prevPageButton = nullptr;
+
+    friend class MeetingVideosContainer;
 };
 
 #endif  // !MEETINGVIDEOSLAYOUT_H
