@@ -2,10 +2,11 @@
 #include <lib/settings/style.h>
 #include "../tools/PopupMenuComboBox.h"
 #include "MeetingVideosLayout.h"
-#include "base/RoundedPixmapLabel.h"
 #include "VideoLayoutPicker.h"
+#include "base/RoundedPixmapLabel.h"
 
 #include <QAction>
+#include <QApplication>
 #include <QEvent>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -14,13 +15,12 @@
 #include <QToolBar>
 #include <QToolButton>
 #include <QWindowStateChangeEvent>
-#include <QApplication>
 
 MeetingVideoFrame::MeetingVideoFrame(QWidget* parent) : QWidget(parent) {
     setAttribute(Qt::WA_StyledBackground);
     creatTopToolBar();
     creatBottomBar();
-    videosLayout = new MeetingVideosLayout(this);
+    videosLayout = new MeetingVideosContainer(this);
     videosLayout->setObjectName("videoLayout");
 
     retranslateUi();
@@ -140,8 +140,7 @@ void MeetingVideoFrame::showLayoutPicker() {
     basePos.rx() -= (size.width() - rect.width()) / 2;
     picker.exec(basePos);
 
-    if (currType != picker.selectedType())
-    {
+    if (currType != picker.selectedType()) {
         videosLayout->resetLayout(picker.selectedType());
     }
 }
