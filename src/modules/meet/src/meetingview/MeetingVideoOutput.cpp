@@ -6,6 +6,10 @@ MeetingVideoOutput::MeetingVideoOutput(QWidget* parent) : QWidget(parent)
     
 }
 
+void MeetingVideoOutput::bindParticipant(MeetingParticipant* participant)
+{
+}
+
 void MeetingVideoOutput::showVideo() { 
     if (avatarLabel)
     {

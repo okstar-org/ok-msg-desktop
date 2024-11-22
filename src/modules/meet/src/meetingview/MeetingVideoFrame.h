@@ -21,7 +21,7 @@ class QToolButton;
 class PopupMenuComboBox;
 class QLabel;
 
-class MeetingVideosLayout;
+class MeetingVideosContainer;
 
 class MeetingVideoFrame : public QWidget
 {
@@ -71,7 +71,7 @@ private:
     QToolButton* moreOptionButon = nullptr;
 
     // 会议视频布局区域
-    MeetingVideosLayout* videosLayout = nullptr;
+    MeetingVideosContainer* videosLayout = nullptr;
 };
 
 
