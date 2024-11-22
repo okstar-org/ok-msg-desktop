@@ -22,7 +22,7 @@ namespace Ui {
 class FriendForm;
 }
 
-namespace ok::backend {
+namespace lib::backend {
 struct OrgStaff;
 }
 
@@ -30,13 +30,13 @@ class FriendForm : public QFrame {
     Q_OBJECT
 
 public:
-    explicit FriendForm(const ok::backend::OrgStaff& staff, QWidget* parent = nullptr);
+    explicit FriendForm(const lib::backend::OrgStaff& staff, QWidget* parent = nullptr);
     ~FriendForm();
 
 private:
     Ui::FriendForm* ui;
 
-    ok::backend::OrgStaff staff;
+    lib::backend::OrgStaff staff;
 
 signals:
     void add(const QString& cId, const QString& nick);

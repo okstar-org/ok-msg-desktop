@@ -97,7 +97,7 @@ void Nexus::onSave(SavedInfo& savedInfo) {
  * Hides the login screen and shows the GUI for the given profile.
  * Will delete the current GUI, if it exists.
  */
-void Nexus::start(std::shared_ptr<ok::session::AuthSession> session) {
+void Nexus::start(std::shared_ptr<lib::session::AuthSession> session) {
     auto& signInInfo = session->getSignInInfo();
     qDebug() << __func__ << "for user:" << signInInfo.username;
 

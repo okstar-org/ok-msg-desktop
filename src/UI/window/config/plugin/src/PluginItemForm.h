@@ -26,7 +26,7 @@ class PluginItemForm;
 class PluginItemForm : public QWidget {
     Q_OBJECT
 public:
-    explicit PluginItemForm(int row, ok::backend::PluginInfo& pluginInfo,
+    explicit PluginItemForm(int row, lib::backend::PluginInfo& pluginInfo,
                             QWidget* parent = nullptr);
     ~PluginItemForm();
     void downLogo();
@@ -38,9 +38,9 @@ protected:
 
 private:
     Ui::PluginItemForm* ui;
-    ok::backend::PluginInfo info;
+    lib::backend::PluginInfo info;
     int row;
-    std::unique_ptr<network::NetworkHttp> http;
+    std::unique_ptr<lib::network::NetworkHttp> http;
 
 signals:
     void loadLogo();

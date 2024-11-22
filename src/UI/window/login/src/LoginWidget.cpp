@@ -29,10 +29,10 @@
 namespace UI {
 
 using namespace ok;
-using namespace ok::session;
+using namespace lib::session;
 using namespace ok::base;
 
-LoginWidget::LoginWidget(std::shared_ptr<ok::session::AuthSession> session, bool bootstrap,
+LoginWidget::LoginWidget(std::shared_ptr<lib::session::AuthSession> session, bool bootstrap,
                          QWidget* parent)
         : QWidget(parent)
         , ui(new Ui::LoginWidget)
@@ -61,7 +61,7 @@ LoginWidget::LoginWidget(std::shared_ptr<ok::session::AuthSession> session, bool
 
     // session
     connect(session.get(),              //
-            &AuthSession::loginResult,  //
+            &lib::session::AuthSession::loginResult,  //
             this, &LoginWidget::onLoginResult);
     init();
 }
@@ -96,9 +96,9 @@ void LoginWidget::init() {
     retranslateUi();
 
     // 3.provider
-    okCloudService = new ok::backend::OkCloudService(this);
+    okCloudService = new lib::backend::OkCloudService(this);
     okCloudService->GetFederalInfo(
-            [&](ok::backend::Res<ok::backend::FederalInfo>& res) {
+            [&](lib::backend::Res<lib::backend::FederalInfo>& res) {
                 for (const auto& item : res.data->states) {
                     if (!item.xmppHost.isEmpty()) {
                         ui->providers->addItem(item.name);
@@ -162,11 +162,11 @@ void LoginWidget::doLogin() {
     // 对登录时状态判断
     auto status = session->status();
     switch (status) {
-        case ok::session::Status::SUCCESS: {
+        case lib::session::Status::SUCCESS: {
             qDebug(("SUCCESS ..."));
             return;
         }
-        case ok::session::Status::CONNECTING: {
+        case lib::session::Status::CONNECTING: {
             qDebug(("CONNECTING ..."));
             //    sess->interrupt();
             return;
@@ -199,13 +199,13 @@ void LoginWidget::doLogin() {
     }
 }
 
-void LoginWidget::onLoginResult(ok::session::SignInInfo info, ok::session::LoginResult result) {
+void LoginWidget::onLoginResult(lib::session::SignInInfo info, lib::session::LoginResult result) {
     qDebug() << __func__ << "result=> " << result.msg;
 
     switch (result.status) {
-        case ok::session::Status::NONE:
+        case lib::session::Status::NONE:
             break;
-        case ok::session::Status::CONNECTING: {
+        case lib::session::Status::CONNECTING: {
             ui->loginMessage->setText(tr("..."));
             ui->loginBtn->setText(tr("Logging in"));
             QString account(ui->accountInput->text());
@@ -213,14 +213,14 @@ void LoginWidget::onLoginResult(ok::session::SignInInfo info, ok::session::Login
             emit loginFailed(account, password);
             break;
         }
-        case ok::session::Status::SUCCESS: {
+        case lib::session::Status::SUCCESS: {
             ui->loginMessage->setText(tr("login success"));
             QString account(ui->accountInput->text());
             QString password(ui->passwordInput->text());
             emit loginSuccess(account, password);
             break;
         }
-        case ok::session::Status::FAILURE:
+        case lib::session::Status::FAILURE:
             ui->loginBtn->setText(tr("Login"));
             onError(result.statusCode, result.msg);
             break;

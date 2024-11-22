@@ -22,8 +22,7 @@
 #include <QMutex>
 #include <memory>
 
-namespace ok {
-namespace lib {
+namespace ok::lib {
 
 class LogManager {
 public:
@@ -44,7 +43,6 @@ private:
     std::unique_ptr<QFile> file;
 };
 
-}  // namespace lib
-}  // namespace ok
+}  // namespace ok::lib
 
 #endif  // OKMSG_PROJECT_LOGMANAGER_H

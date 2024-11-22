@@ -25,11 +25,9 @@
 class QDomElement;
 class QDomDocument;
 
-namespace ok {
-namespace session {
+namespace lib::session {
 class AuthSession;
 }
-}  // namespace ok
 
 namespace lib::messenger {
 

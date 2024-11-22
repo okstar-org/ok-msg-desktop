@@ -56,7 +56,7 @@ public:
     QString name() override;
     QWidget* widget() override;
     void init(Profile*) override;
-    void start(std::shared_ptr<ok::session::AuthSession> session) override;
+    void start(std::shared_ptr<lib::session::AuthSession> session) override;
     bool isStarted() override { return stared; }
     void hide() override;
     void onSave(SavedInfo&) override;

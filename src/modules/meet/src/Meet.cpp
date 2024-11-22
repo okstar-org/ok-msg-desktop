@@ -26,7 +26,9 @@ void Meet::init(Profile* p) {}
 
 QString Meet::name() { return {"Meet"}; }
 
-void Meet::start(std::shared_ptr<ok::session::AuthSession> session) { m_widget->start(); }
+void Meet::start(std::shared_ptr<lib::session::AuthSession> session) {
+    m_widget->start();
+}
 
 bool Meet::isStarted() { return false; }
 void Meet::onSave(SavedInfo&) {}

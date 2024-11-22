@@ -33,7 +33,7 @@ class BannerWidget;
 class LoginWindow : public QMainWindow {
     Q_OBJECT
 public:
-    explicit LoginWindow(std::shared_ptr<ok::session::AuthSession> session, bool bootstrap,
+    explicit LoginWindow(std::shared_ptr<lib::session::AuthSession> session, bool bootstrap,
                          QWidget* parent = nullptr);
     ~LoginWindow();
 

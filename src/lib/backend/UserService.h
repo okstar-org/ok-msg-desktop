@@ -19,10 +19,9 @@
 #include <base/basic_types.h>
 
 #include <lib/backend/BaseService.h>
-#include <lib/backend/domain/AuthInfo.h>
 #include <lib/session/AuthSession.h>
 
-namespace ok::backend {
+namespace lib::backend {
 
 struct SysProfile {
     /**
@@ -101,8 +100,8 @@ public:
     UserService(const QString& base, QObject* parent = nullptr);
     ~UserService();
 
-    void search(const QString& query, base::Fn<void(const QList<OrgStaff*>&)> callback,
+    void search(const QString& query, ok::base::Fn<void(const QList<OrgStaff*>&)> callback,
                 network::HttpErrorFn errFn = nullptr);
 };
 
-}  // namespace ok::backend
+}  // namespace lib::backend

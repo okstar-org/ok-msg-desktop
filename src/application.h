@@ -34,8 +34,6 @@ namespace ok {
 class IPC;
 class Bus;
 
-using namespace network;
-
 class Application : public QApplication {
     Q_OBJECT
 public:
@@ -52,7 +50,9 @@ public:
 
     inline Bus* bus() const { return _bus.get(); }
 
-    inline ok::session::AuthSession* getSession() { return session.get(); }
+    inline lib::session::AuthSession* getSession() {
+        return session.get();
+    }
 
 private:
     QMap<QString, Module*> m_moduleMap;
@@ -62,7 +62,7 @@ private:
     int _argc;
     char** _argv;
 
-    std::shared_ptr<ok::session::AuthSession> session;
+    std::shared_ptr<lib::session::AuthSession> session;
 
     IPC* ipc;
     std::unique_ptr<Bus> _bus;
@@ -79,7 +79,7 @@ private:
     void createLoginUI(bool bootstrap);
     void closeLoginUI();
 
-    void startMainUI(std::shared_ptr<ok::session::AuthSession> session);
+    void startMainUI(std::shared_ptr<lib::session::AuthSession> session);
     void stopMainUI();
 
 #ifdef OK_MODULE_PAINTER

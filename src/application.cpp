@@ -127,8 +127,8 @@ void Application::start() {
 
 void Application::createLoginUI(bool bootstrap) {
     qDebug() << __func__;
-    session = std::make_shared<ok::session::AuthSession>();
-    connect(session.get(), &ok::session::AuthSession::tokenSet,  //
+    session = std::make_shared<::lib::session::AuthSession>();
+    connect(session.get(), &::lib::session::AuthSession::tokenSet,  //
             [&]() {                                              //
                 startMainUI(session);
             });
@@ -150,7 +150,7 @@ void Application::closeLoginUI() {
     m_loginWindow = nullptr;
 }
 
-void Application::startMainUI(std::shared_ptr<ok::session::AuthSession> session) {
+void Application::startMainUI(std::shared_ptr<::lib::session::AuthSession> session) {
     qDebug() << __func__;
 
     // Check the access token.

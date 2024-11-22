@@ -22,7 +22,7 @@
 
 #include <lib/backend/BaseService.h>
 
-namespace ok::backend {
+namespace lib::backend {
 
 struct SysRefreshToken {
     QString accessToken;

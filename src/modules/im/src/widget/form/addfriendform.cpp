@@ -77,7 +77,7 @@ AddFriendForm::AddFriendForm(QWidget* parent) : QWidget(parent), addUi{new Ui::A
 
     auto _session = ok::Application::Instance()->getSession();
     signIn = &_session->getSignInInfo();
-    userService = std::make_unique<ok::backend::UserService>(signIn->stackUrl);
+    userService = std::make_unique<lib::backend::UserService>(signIn->stackUrl);
 }
 
 AddFriendForm::~AddFriendForm() {
@@ -117,7 +117,7 @@ void AddFriendForm::showEvent(QShowEvent* e) {
     //    onSearchTriggered();
 }
 
-void AddFriendForm::onFriendReceipts(const QList<ok::backend::OrgStaff*>& qList) {
+void AddFriendForm::onFriendReceipts(const QList<lib::backend::OrgStaff*>& qList) {
     //    auto friendLayout = addUi->scrollAreaWidgetContents;
     qDebug() << "Exist friends:" << friendLayout->count();
 
@@ -147,7 +147,7 @@ void AddFriendForm::searchFriend(const QString& idText) {
     // 查询账号信息
     userService->search(
             idText,
-            [this](const QList<ok::backend::OrgStaff*>& qList) { emit friendReceipts(qList); },
+            [this](const QList<lib::backend::OrgStaff*>& qList) { emit friendReceipts(qList); },
             [](int code, QByteArray body) { GUI::showWarning("Warning", QString(body)); });
 }
 

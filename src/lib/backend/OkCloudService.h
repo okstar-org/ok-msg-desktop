@@ -17,7 +17,7 @@
 #include <lib/backend/BaseService.h>
 #include "base/jsons.h"
 
-namespace ok::backend {
+namespace lib::backend {
 
 class State {
 public:
@@ -101,4 +101,4 @@ public:
     bool GetFederalInfo(ok::base::Fn<void(Res<FederalInfo>&)> fn, network::HttpErrorFn err = nullptr);
     bool GetPluginPage(ok::base::Fn<void(ResPage<PluginInfo>&)> fn, network::HttpErrorFn err = nullptr);
 };
-}  // namespace ok::backend
+}  // namespace lib::backend

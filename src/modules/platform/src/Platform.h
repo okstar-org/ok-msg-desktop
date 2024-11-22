@@ -30,7 +30,7 @@ public:
     virtual ~Platform();
     void init(Profile* p) override;
     QString name() override;
-    void start(std::shared_ptr<ok::session::AuthSession> session) override;
+    void start(std::shared_ptr<lib::session::AuthSession> session) override;
     bool isStarted() override;
     void onSave(SavedInfo&) override;
     void cleanup() override;

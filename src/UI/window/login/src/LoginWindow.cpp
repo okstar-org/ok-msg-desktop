@@ -20,10 +20,10 @@
 
 namespace UI {
 
-using namespace ok::session;
+using namespace lib::session;
 
 /* 登录主窗口 */
-LoginWindow::LoginWindow(std::shared_ptr<ok::session::AuthSession> session, bool bootstrap,
+LoginWindow::LoginWindow(std::shared_ptr<lib::session::AuthSession> session, bool bootstrap,
                          QWidget* parent)
         : QMainWindow(parent), ui(new Ui::LoginWindow) {
     ui->setupUi(this);
@@ -48,8 +48,8 @@ LoginWindow::LoginWindow(std::shared_ptr<ok::session::AuthSession> session, bool
     setStyleSheet(qss);
 
     //  connect(loginWidget, &UI::LoginWidget::loginResult,
-    //          [&](ok::session::SignInInfo &info,  //
-    //              ok::session::LoginResult &result) {
+    //          [&](lib::session::SignInInfo &info,  //
+    //              lib::session::LoginResult &result) {
     //            emit loginResult(info, result);
     //          });
 }

@@ -37,7 +37,7 @@ namespace UI {
 
 static MainWindow* instance = nullptr;
 
-MainWindow::MainWindow(std::shared_ptr<ok::session::AuthSession> session, QWidget* parent)
+MainWindow::MainWindow(std::shared_ptr<lib::session::AuthSession> session, QWidget* parent)
         : QMainWindow(parent)
         , ui(new Ui::MainWindow)
         , delayCaller(std::make_unique<base::DelayedCallTimer>())

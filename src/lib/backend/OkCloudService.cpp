@@ -15,7 +15,7 @@
 #include <QObject>
 #include "base/system/sys_info.h"
 
-namespace ok::backend {
+namespace lib::backend {
 
 PluginInfo PluginInfo::fromJson(const QJsonObject& data) { return PluginInfo(data); }
 
@@ -35,7 +35,7 @@ bool OkCloudService::GetFederalInfo(ok::base::Fn<void(Res<FederalInfo>&)> fn, ne
             err);
 }
 
-bool OkCloudService::GetPluginPage(ok::base::Fn<void(ResPage<ok::backend::PluginInfo>&)> fn,
+bool OkCloudService::GetPluginPage(ok::base::Fn<void(ResPage<lib::backend::PluginInfo>&)> fn,
                                    network::HttpErrorFn err) {
     auto cpuInfo = ok::base::SystemInfo::instance()->cpuInfo();
     if (cpuInfo.arch.isEmpty()) {
@@ -61,4 +61,4 @@ bool OkCloudService::GetPluginPage(ok::base::Fn<void(ResPage<ok::backend::Plugin
             err);
 }
 
-}  // namespace ok::backend
+}  // namespace lib::backend

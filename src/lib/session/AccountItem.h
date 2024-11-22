@@ -14,8 +14,7 @@
 
 #include <QObject>
 
-namespace ok {
-namespace session {
+namespace lib::session {
 
 class AccountItem {
 public:
@@ -26,6 +25,4 @@ public:
     // 密码
     const QString& password;
 };
-}  // namespace session
-
-}  // namespace ok
+}  // namespace lib::session

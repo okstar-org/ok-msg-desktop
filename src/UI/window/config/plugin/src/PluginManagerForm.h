@@ -41,18 +41,18 @@ public:
 
     virtual QString getFormName() final override { return tr("Plugin manager"); }
 
-    void add(ok::backend::PluginInfo& info, int i);
+    void add(lib::backend::PluginInfo& info, int i);
 
     void retranslateUi() override;
 
 private:
     Ui::PluginManagerForm* ui;
-    QList<ok::backend::PluginInfo> mPluginInfos;
+    QList<lib::backend::PluginInfo> mPluginInfos;
     std::unique_ptr<::base::DelayedCallTimer> delayCaller_;
-    std::unique_ptr<ok::backend::OkCloudService> http;
+    std::unique_ptr<lib::backend::OkCloudService> http;
 
-    void createPlugin(ok::backend::PluginInfo&, int i);
-    void setPluginInfo(ok::backend::PluginInfo&);
+    void createPlugin(lib::backend::PluginInfo&, int i);
+    void setPluginInfo(lib::backend::PluginInfo&);
 
 protected slots:
     void pluginClicked(QListWidgetItem*);

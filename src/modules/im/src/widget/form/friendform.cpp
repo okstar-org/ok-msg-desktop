@@ -16,7 +16,7 @@
 #include "src/persistence/profile.h"
 #include "ui_friendform.h"
 
-FriendForm::FriendForm(const ok::backend::OrgStaff& staff_, QWidget* parent)
+FriendForm::FriendForm(const lib::backend::OrgStaff& staff_, QWidget* parent)
         : QFrame(parent), ui(new Ui::FriendForm), staff(staff_) {
     ui->setupUi(this);
     ui->nickname->setText(staff.nickname);

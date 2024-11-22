@@ -30,7 +30,7 @@ inline QString makePluginPath(const QString& name) {
     return QString("%1/%2").arg(ok::base::OkSettings().getAppPluginPath().path(), name);
 }
 
-PluginInfoForm::PluginInfoForm(ok::backend::PluginInfo& info, QWidget* parent)
+PluginInfoForm::PluginInfoForm(lib::backend::PluginInfo& info, QWidget* parent)
         : QWidget(parent)
         , ui(new Ui::PluginInfoForm)
         , pluginManager(PluginManager::instance())
@@ -107,7 +107,7 @@ void PluginInfoForm::toInstall() {
 
     qDebug() << "download=>" << downUrl;
     isDownloading = true;
-    http = std::make_unique<network::NetworkHttp>();
+    http = std::make_unique<lib::network::NetworkHttp>();
     http->get(
             downUrl,
             [&](QByteArray buf, const QString& fileName) {

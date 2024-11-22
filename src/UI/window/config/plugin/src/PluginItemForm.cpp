@@ -17,13 +17,13 @@
 #include "lib/network/NetworkHttp.h"
 #include "ui_PluginItemForm.h"
 
-PluginItemForm::PluginItemForm(int row_, ok::backend::PluginInfo& pluginInfo, QWidget* parent)
+PluginItemForm::PluginItemForm(int row_, lib::backend::PluginInfo& pluginInfo, QWidget* parent)
         : QWidget(parent), ui(new Ui::PluginItemForm), info(pluginInfo), row(row_) {
     ui->setupUi(this);
     ui->name->setText(pluginInfo.name);
     ui->version->setText(pluginInfo.version);
 
-    http = std::make_unique<network::NetworkHttp>();
+    http = std::make_unique<lib::network::NetworkHttp>();
     connect(this, &PluginItemForm::logoDownloaded, this, &PluginItemForm::onLogoDownloaded);
 }
 

@@ -44,7 +44,9 @@ Platform::~Platform() {
 void Platform::init(Profile* p) {}
 QString Platform::name() { return {"Platform"}; }
 
-void Platform::start(std::shared_ptr<ok::session::AuthSession> session) { m_widget->start(); }
+void Platform::start(std::shared_ptr<lib::session::AuthSession> session) {
+    m_widget->start();
+}
 
 bool Platform::isStarted() { return false; }
 void Platform::onSave(SavedInfo&) {}

@@ -21,7 +21,7 @@
 #include "IMJingle.h"
 #include "tox/toxav.h"
 
-namespace ok::session {
+namespace lib::session {
 class AuthSession;
 }
 
