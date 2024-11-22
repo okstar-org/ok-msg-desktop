@@ -73,8 +73,9 @@ public:
     void removeFriend();
 
     void setAvInvite(const ToxPeer& peerId, bool video);
-    void setAvStart(const FriendId& friendId, bool video);
-    void setAvEnd(const FriendId& friendId, bool error);
+    void setAvStart(bool video);
+    void setAvPeerConnectedState(lib::ortc::PeerConnectionState state);
+    void setAvEnd(bool error);
 
     void setGroup(const Group* g);
     void removeGroup();

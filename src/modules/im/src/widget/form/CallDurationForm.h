@@ -1,3 +1,15 @@
+/*
+ * Copyright (c) 2022 船山信息 chuanshaninfo.com
+ * The project is licensed under Mulan PubL v2.
+ * You can use this software according to the terms and conditions of the Mulan
+ * PubL v2. You may obtain a copy of Mulan PubL v2 at:
+ *          http://license.coscl.org.cn/MulanPubL-2.0
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PubL v2 for more details.
+ */
+
 #ifndef CALLDURATTIONFORM_H
 #define CALLDURATTIONFORM_H
 
@@ -12,6 +24,9 @@ namespace Ui {
 class CallDurationForm;
 }
 
+/**
+ * 音视频聊天对话框
+ */
 class CallDurationForm : public QWidget {
     Q_OBJECT
 
@@ -25,6 +40,17 @@ public:
     void showNetcam();
     void hideNetcam();
     void showAvatar();
+
+    /**
+     * 启动计时
+     */
+    void startCounter();
+
+    /**
+     * 停止计时
+     */
+    void stopCounter();
+
 signals:
     void endCall();
     void muteMicrophone(bool);
@@ -37,7 +63,7 @@ private:
     Ui::CallDurationForm* ui;
     const Contact* contact;
     QTimer* callDurationTimer;
-    QElapsedTimer timeElapsed;
+    QElapsedTimer* timeElapsed;
 
     bool muteOut;
     bool muteIn;

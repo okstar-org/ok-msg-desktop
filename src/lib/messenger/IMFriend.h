@@ -57,8 +57,12 @@ struct IMContactId {
     explicit IMContactId(const QString& jid);
     explicit IMContactId(const gloox::JID& jid);
 
-    [[nodiscard]] QString getUsername() const { return username; }
-    [[nodiscard]] QString getServer() const { return server; }
+    [[nodiscard]] QString getUsername() const {
+        return username;
+    }
+    [[nodiscard]] QString getServer() const {
+        return server;
+    }
 
     [[nodiscard]] QString toString() const {
         if (username.isEmpty()) {
@@ -84,7 +88,9 @@ struct IMPeerId : public IMContactId {
     explicit IMPeerId(const gloox::JID& jid);
     bool operator==(const IMPeerId& peerId) const;
 
-    [[nodiscard]] inline QString toFriendId() const { return username + "@" + server; }
+    [[nodiscard]] inline QString toFriendId() const {
+        return username + "@" + server;
+    }
 
     [[nodiscard]] inline QString toString() const {
         if (resource.isEmpty()) return toFriendId();

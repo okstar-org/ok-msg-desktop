@@ -269,7 +269,9 @@ void MessageSessionListWidget::moveFriends(QLayout* layout) {
     }
 }
 
-MessageSessionListWidget::SortingMode MessageSessionListWidget::getMode() const { return mode; }
+MessageSessionListWidget::SortingMode MessageSessionListWidget::getMode() const {
+    return mode;
+}
 
 void MessageSessionListWidget::search(const QString& searchString) {
     listLayout->search(searchString);
@@ -533,7 +535,18 @@ void MessageSessionListWidget::setFriendAvStart(const FriendId& friendId, bool v
         qWarning() << "The message session is no existing!";
         return;
     }
-    w->setAvStart(friendId, video);
+    w->setAvStart(video);
+}
+
+void MessageSessionListWidget::setFriendAvPeerConnectedState(const FriendId& friendId,
+                                                             lib::ortc::PeerConnectionState state) {
+    auto w = sessionWidgets.value(friendId.toString());
+    if (!w) {
+        qWarning() << "The message session is no existing!";
+        return;
+    }
+
+    w->setAvPeerConnectedState(state);
 }
 
 void MessageSessionListWidget::setFriendAvEnd(const FriendId& friendId, bool error) {
@@ -542,7 +555,7 @@ void MessageSessionListWidget::setFriendAvEnd(const FriendId& friendId, bool err
         qWarning() << "The message session is no existing!";
         return;
     }
-    w->setAvEnd(friendId, error);
+    w->setAvEnd(error);
 }
 
 void MessageSessionListWidget::addGroup(const Group* g) {
@@ -575,9 +588,7 @@ QLayout* MessageSessionListWidget::nextLayout(QLayout* layout, bool forward) con
         if (groupsOnTop) return listLayout->getLayoutOnline();
 
     } else {
-        if (groupsOnTop)
-
-            return listLayout->getLayoutOnline();
+        if (groupsOnTop) return listLayout->getLayoutOnline();
     }
 
     return nullptr;

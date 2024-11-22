@@ -48,6 +48,7 @@ CoreAV::CoreAV(Core* core)
 
     qRegisterMetaType<FriendId>("FriendId");
     qRegisterMetaType<vpx_image>("vpx_image");
+    qRegisterMetaType<lib::ortc::PeerConnectionState>("lib::ortc::PeerConnectionState");
 
     connect(this, &CoreAV::createCallToPeerId, this, &CoreAV::doCreateCallToPeerId);
 
@@ -101,7 +102,9 @@ CoreAV* CoreAV::getInstance() {
  * @note This must be called before starting CoreAV and audio must outlive
  * CoreAV
  */
-void CoreAV::setAudio(IAudioControl& newAudio) { audioCtrl.exchange(&newAudio); }
+void CoreAV::setAudio(IAudioControl& newAudio) {
+    audioCtrl.exchange(&newAudio);
+}
 
 /**
  * @brief Get the audio backend used
@@ -110,7 +113,9 @@ void CoreAV::setAudio(IAudioControl& newAudio) { audioCtrl.exchange(&newAudio); 
  * restarting class doesn't have access to the audio backend and wants to keep
  * it the same.
  */
-IAudioControl* CoreAV::getAudio() { return audioCtrl; }
+IAudioControl* CoreAV::getAudio() {
+    return audioCtrl;
+}
 
 /**
  * @brief Starts the CoreAV main loop that calls toxav's main loop
@@ -195,7 +200,7 @@ bool CoreAV::answerCall(ToxPeer peerId, bool video) {
     //    return false;
     ////  }
 }
-//
+
 bool CoreAV::startCall(QString friendNum, bool video) {
     qDebug() << __func__ << "=>" << friendNum << "video?" << video;
 
@@ -251,8 +256,15 @@ bool CoreAV::cancelCall(QString friendNum) {
     return true;
 }
 
+void CoreAV::onPeerConnectionChange(lib::messenger::IMPeerId peerId,
+                                    QString callId,
+                                    lib::ortc::PeerConnectionState state) {
+    qDebug() << __func__ << "peer:" << peerId.toString() << "state:" << static_cast<int>(state);
+    emit avPeerConnectionState(FriendId{peerId.toFriendId()}, state);
+}
+
 void CoreAV::rejectCall(const ToxPeer& peerId) {
-    qDebug() << "peer:" << peerId;
+    qDebug() << __func__ << "peer:" << peerId;
 
     auto fId = peerId.toFriendId().toString();
 
@@ -298,7 +310,8 @@ bool CoreAV::sendCallAudio(QString callId, const int16_t* pcm, size_t samples, u
 
     ToxFriendCall const& call = *it->second;
 
-    if (call.getMuteMic() || !call.isActive() || !(call.getState() == lib::messenger::CallState::ACCEPTING_A)) {
+    if (call.getMuteMic() || !call.isActive() ||
+        !(call.getState() == lib::messenger::CallState::ACCEPTING_A)) {
         return true;
     }
 
@@ -520,7 +533,7 @@ void CoreAV::joinGroupCall(const Group& group) {
     ret.first->second->setActive(true);
 
     // TODO 发起群视频
-//    imCall->callToGroup(group.getId());
+    //    imCall->callToGroup(group.getId());
 }
 
 /**
@@ -700,13 +713,15 @@ void CoreAV::onCall(const lib::messenger::IMPeerId& peerId, const QString& callI
 
     // We don't get a state callback when answering, so fill the state ourselves
     // in advance
-//    int state = 0;
-//    if (audioCtrl){
-//        state |= lib::messenger::CallState::SENDING_A | lib::messenger::CallState::ACCEPTING_A;
-//    }
-//    if (video)
-//        state == lib::messenger::CallState::SENDING_V | lib::messenger::CallState::ACCEPTING_V;
-//    it.first->second->setState(static_cast<lib::messenger::CallState>(state));
+    //    int state = 0;
+    //    if (audioCtrl){
+    //        state |= lib::messenger::CallState::SENDING_A |
+    //        lib::messenger::CallState::ACCEPTING_A;
+    //    }
+    //    if (video)
+    //        state == lib::messenger::CallState::SENDING_V |
+    //        lib::messenger::CallState::ACCEPTING_V;
+    //    it.first->second->setState(static_cast<lib::messenger::CallState>(state));
 
     // Must explicitly unlock, because a deadlock can happen via ChatForm/Audio
     //  locker.unlock();
@@ -921,3 +936,4 @@ void CoreAV::videoFramePush(CoreVideoSource* videoSource,  //
 
     videoSource->pushFrame(&frame);
 }
+

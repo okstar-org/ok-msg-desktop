@@ -217,6 +217,7 @@ void ChatWidget::connectToCoreAv(CoreAV* core_) {
     coreAv = core_;
     connect(coreAv, &CoreAV::avInvite, this, &ChatWidget::onAvInvite);
     connect(coreAv, &CoreAV::avStart, this, &ChatWidget::onAvStart);
+    connect(coreAv, &CoreAV::avPeerConnectionState, this, &ChatWidget::onAvPeerConnectionState);
     connect(coreAv, &CoreAV::avEnd, this, &ChatWidget::onAvEnd);
 }
 
@@ -292,9 +293,13 @@ void ChatWidget::onFriendTypingChanged(const FriendId& friendId, bool isTyping) 
     sessionListWidget->setFriendTyping(friendId, isTyping);
 }
 
-void ChatWidget::onGroupAdded(const Group* g) { sessionListWidget->addGroup(g); }
+void ChatWidget::onGroupAdded(const Group* g) {
+    sessionListWidget->addGroup(g);
+}
 
-void ChatWidget::onGroupRemoved(const Group* g) { sessionListWidget->removeGroup(g); }
+void ChatWidget::onGroupRemoved(const Group* g) {
+    sessionListWidget->removeGroup(g);
+}
 
 void ChatWidget::showEvent(QShowEvent* e) {}
 
@@ -308,7 +313,8 @@ void ChatWidget::onNicknameSet(const QString& nickname) {
 void ChatWidget::onStatusSet(Status::Status status) {
     int icon_size = 15;
     ui->statusButton->setProperty("status", static_cast<int>(status));
-    ui->statusButton->setIcon(ok::base::SvgUtils::prepareIcon(getIconPath(status), icon_size, icon_size));
+    ui->statusButton->setIcon(
+            ok::base::SvgUtils::prepareIcon(getIconPath(status), icon_size, icon_size));
 
     updateIcons();
 }
@@ -338,9 +344,13 @@ void ChatWidget::onStatusMessageSet(const QString& statusMessage) {
     ui->statusLabel->setText(statusMessage);
 }
 
-void ChatWidget::onFriendAdded(const Friend* f) { sessionListWidget->addFriend(f); }
+void ChatWidget::onFriendAdded(const Friend* f) {
+    sessionListWidget->addFriend(f);
+}
 
-void ChatWidget::onFriendRemoved(const Friend* f) { sessionListWidget->removeFriend(f); }
+void ChatWidget::onFriendRemoved(const Friend* f) {
+    sessionListWidget->removeFriend(f);
+}
 
 void ChatWidget::doSendMessage(const QString& to, bool isGroup) {
     sessionListWidget->toSendMessage(FriendId(to), isGroup);
@@ -488,7 +498,9 @@ void ChatWidget::showProfile() {
     }
 }
 
-void ChatWidget::clearAllReceipts() { sessionListWidget->clearAllReceipts(); }
+void ChatWidget::clearAllReceipts() {
+    sessionListWidget->clearAllReceipts();
+}
 
 void ChatWidget::on_nameClicked() {
     qDebug() << __func__;
@@ -563,18 +575,18 @@ void ChatWidget::setupStatus() {
 
     // Preparing icons and set their size
     statusOnline = new QAction(this);
-    statusOnline->setIcon(ok::base::SvgUtils::prepareIcon(Status::getIconPath(Status::Status::Online),
-                                                icon_size, icon_size));
+    statusOnline->setIcon(ok::base::SvgUtils::prepareIcon(
+            Status::getIconPath(Status::Status::Online), icon_size, icon_size));
     connect(statusOnline, &QAction::triggered, this, &ChatWidget::setStatusOnline);
 
     statusAway = new QAction(this);
-    statusAway->setIcon(
-            ok::base::SvgUtils::prepareIcon(Status::getIconPath(Status::Status::Away), icon_size, icon_size));
+    statusAway->setIcon(ok::base::SvgUtils::prepareIcon(Status::getIconPath(Status::Status::Away),
+                                                        icon_size, icon_size));
     connect(statusAway, &QAction::triggered, this, &ChatWidget::setStatusAway);
 
     statusBusy = new QAction(this);
-    statusBusy->setIcon(
-            ok::base::SvgUtils::prepareIcon(Status::getIconPath(Status::Status::Busy), icon_size, icon_size));
+    statusBusy->setIcon(ok::base::SvgUtils::prepareIcon(Status::getIconPath(Status::Status::Busy),
+                                                        icon_size, icon_size));
     connect(statusBusy, &QAction::triggered, this, &ChatWidget::setStatusBusy);
 
     QMenu* statusButtonMenu = new QMenu(ui->statusButton);
@@ -617,7 +629,9 @@ void ChatWidget::dispatchFile(ToxFile file) {
     sessionListWidget->setFriendFileReceived(cId, file);
 }
 
-void ChatWidget::dispatchFileWithBool(ToxFile file, bool) { dispatchFile(file); }
+void ChatWidget::dispatchFileWithBool(ToxFile file, bool) {
+    dispatchFile(file);
+}
 
 void ChatWidget::dispatchFileSendFailed(
         QString friendId, const QString& fileName) {  //  const auto &friendPk = ToxPk(receiver);
@@ -677,12 +691,18 @@ void ChatWidget::onAvInvite(ToxPeer peerId, bool video) {
 }
 
 void ChatWidget::onAvStart(const FriendId& friendId, bool video) {
-    qDebug() << __func__ << "friendId" << friendId;
+    qDebug() << __func__ << "friendId:" << friendId;
     sessionListWidget->setFriendAvStart(friendId, video);
 }
 
+void ChatWidget::onAvPeerConnectionState(const FriendId& friendId,
+                                         lib::ortc::PeerConnectionState state) {
+    qDebug() << __func__ << "friendId:" << friendId << "state:" << static_cast<int>(state);
+    sessionListWidget->setFriendAvPeerConnectedState(friendId, state);
+}
+
 void ChatWidget::onAvEnd(const FriendId& friendId, bool error) {
-    qDebug() << __func__ << "friendId" << friendId << "error" << error;
+    qDebug() << __func__ << "friendId:" << friendId << "error:" << error;
     sessionListWidget->setFriendAvEnd(friendId, error);
 }
 

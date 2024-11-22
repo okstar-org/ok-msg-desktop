@@ -163,6 +163,7 @@ public slots:
 
     void onAvInvite(ToxPeer peerId, bool video);
     void onAvStart(const FriendId& friendId, bool video);
+    void onAvPeerConnectionState(const FriendId& friendId, lib::ortc::PeerConnectionState state);
     void onAvEnd(const FriendId& friendId, bool error);
 };
 

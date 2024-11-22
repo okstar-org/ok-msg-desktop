@@ -56,7 +56,9 @@ public:
     bool sendGroupCallAudio(QString groupNum, const int16_t* pcm, size_t samples, uint8_t chans,
                             uint32_t rate) const;
 
-    CoreVideoSource* getSelfVideoSource() { return selfVideoSource.get(); }
+    CoreVideoSource* getSelfVideoSource() {
+        return selfVideoSource.get();
+    }
 
     VideoSource* getVideoSourceFromCall(QString callNumber) const;
     void sendNoVideo();
@@ -87,6 +89,7 @@ public slots:
 signals:
     void avInvite(ToxPeer peerId, bool video);
     void avStart(FriendId friendId, bool video);
+    void avPeerConnectionState(FriendId friendId, lib::ortc::PeerConnectionState state);
     void avEnd(FriendId friendId, bool error = false);
     void createCallToPeerId(lib::messenger::IMPeerId friendId, QString callId, bool video);
 
@@ -140,6 +143,10 @@ private:
 
     void onCallAcceptByOther(const QString& callId,
                              const lib::messenger::IMPeerId& peerId) override;
+
+    void onPeerConnectionChange(lib::messenger::IMPeerId peerId,
+                                QString callId,
+                                lib::ortc::PeerConnectionState state) override;
 
     void receiveCallStateAccepted(lib::messenger::IMPeerId friendId, QString callId,
                                   bool video) override;

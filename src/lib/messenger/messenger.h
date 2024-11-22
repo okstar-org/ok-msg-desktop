@@ -12,15 +12,15 @@
 
 #pragma once
 
-#include "IMFriend.h"
-#include "IMGroup.h"
-#include "IMMessage.h"
-#include "base/timer.h"
-
 #include <QDateTime>
 #include <QString>
 #include <cstddef>
 #include <memory>
+#include "IMFriend.h"
+#include "IMGroup.h"
+#include "IMMessage.h"
+#include "base/timer.h"
+#include "lib/ortc/ok_rtc_defs.h"
 
 class QDomElement;
 class QDomDocument;
@@ -279,6 +279,10 @@ public:
                                CallState state) = 0;
 
     virtual void onCallAcceptByOther(const QString& callId, const IMPeerId& peerId) = 0;
+
+    virtual void onPeerConnectionChange(IMPeerId friendId,  //
+                                        QString callId,     //
+                                        ortc::PeerConnectionState state) = 0;
 
     virtual void receiveCallStateAccepted(IMPeerId friendId,  //
                                           QString callId,     //

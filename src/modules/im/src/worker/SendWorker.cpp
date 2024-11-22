@@ -45,6 +45,8 @@ SendWorker::SendWorker(const FriendId& friendId) : contactId{friendId} {
     chatForm = std::make_unique<ChatForm>(&friendId, *chatHistory.get(), *messageDispatcher.get());
 
     chatRoom = std::make_unique<FriendChatroom>(&friendId, ContentDialogManager::getInstance());
+
+    // createCallDuration(true);
 }
 
 SendWorker::SendWorker(const GroupId& groupId) : contactId{groupId} {
@@ -105,7 +107,7 @@ void SendWorker::initChatHeader(const ContactId& contactId) {
             &SendWorker::onVideoCallTriggered);
 }
 
-void SendWorker::startCounter(bool video) {
+CallDurationForm* SendWorker::createCallDuration(bool video) {
     qDebug() << __func__;
 
     if (!callDuration) {
@@ -125,9 +127,11 @@ void SendWorker::startCounter(bool video) {
     } else {
         callDuration->showAvatar();
     }
+
+    return callDuration.get();
 }
 
-void SendWorker::stopCounter(bool error) {
+void SendWorker::destroyCallDuration(bool error) {
     qDebug() << __func__;
     if (!callDuration) {
         return;

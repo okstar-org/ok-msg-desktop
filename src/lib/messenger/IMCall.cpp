@@ -419,6 +419,11 @@ void IMCall::onPeerConnectionChange(const std::string& sId, const std::string& p
      * OnConnectionChange : connected
      * OnConnectionChange : closed
      */
+
+    for (const auto& item : callHandlers) {
+        assert(item);
+        item->onPeerConnectionChange(IMPeerId{peerId}, qstring(sId), state);
+    }
 }
 
 void IMCall::onSignalingChange(const std::string& sId, const std::string& peerId,

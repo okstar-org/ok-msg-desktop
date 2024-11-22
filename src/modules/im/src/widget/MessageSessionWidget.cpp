@@ -138,7 +138,9 @@ MessageSessionWidget::MessageSessionWidget(ContentLayout* layout, const ContactI
     }
 }
 
-MessageSessionWidget::~MessageSessionWidget() { qDebug() << __func__ << contactId; }
+MessageSessionWidget::~MessageSessionWidget() {
+    qDebug() << __func__ << contactId;
+}
 
 void MessageSessionWidget::do_widgetClicked() {
     //    qDebug() << __func__ << "contactId:" << contactId.toString();
@@ -301,7 +303,9 @@ void MessageSessionWidget::onContextMenuCalled(QContextMenuEvent* event) {
     }
 }
 
-void MessageSessionWidget::removeChat() { emit deleteSession(contactId.toString()); }
+void MessageSessionWidget::removeChat() {
+    emit deleteSession(contactId.toString());
+}
 
 // namespace {
 
@@ -449,10 +453,10 @@ void MessageSessionWidget::setAvInvite(const ToxPeer& peerId, bool video) {
     w->incomingNotification(friendId0);
 }
 
-void MessageSessionWidget::setAvStart(const FriendId& friendId, bool video) {
+void MessageSessionWidget::setAvStart(bool video) {
     qDebug() << __func__ << friendId.toString();
     // 显示呼叫请求框
-    sendWorker->startCounter(video);
+    sendWorker->createCallDuration(video);
 
     auto frd = Nexus::getCore()->getFriendList().findFriend(friendId);
     if (frd) {
@@ -465,8 +469,23 @@ void MessageSessionWidget::setAvStart(const FriendId& friendId, bool video) {
     w->onStopNotification();
 }
 
-void MessageSessionWidget::setAvEnd(const FriendId& friendId, bool error) {
-    qDebug() << __func__ << friendId.toString();
+void MessageSessionWidget::setAvPeerConnectedState(lib::ortc::PeerConnectionState state) {
+    auto dur = sendWorker->getCallDuration();
+    if (dur) {
+        switch (state) {
+            case lib::ortc::PeerConnectionState::Connected: {
+                dur->startCounter();
+                break;
+            }
+            case lib::ortc::PeerConnectionState::Disconnected:
+                dur->stopCounter();
+                break;
+        }
+    };
+}
+
+void MessageSessionWidget::setAvEnd(bool error) {
+    qDebug() << __func__;
 
     auto header = sendWorker->getHeader();
     header->removeCallConfirm();
@@ -481,7 +500,7 @@ void MessageSessionWidget::setAvEnd(const FriendId& friendId, bool error) {
     // 关闭呼叫请求框
     chatForm->stopNotification();
     // 关计时器
-    sendWorker->stopCounter(error);
+    sendWorker->destroyCallDuration(error);
 
     auto w = Widget::getInstance();
     w->onStopNotification();
@@ -507,7 +526,9 @@ void MessageSessionWidget::removeGroup() {
     sendWorker->getHeader()->removeContact();
 }
 
-void MessageSessionWidget::clearReceipts() { sendWorker->dispacher()->clearOutgoingMessages(); }
+void MessageSessionWidget::clearReceipts() {
+    sendWorker->dispacher()->clearOutgoingMessages();
+}
 
 void MessageSessionWidget::doForwardMessage(const ContactId& cid, const MsgId& msgId) {
     auto profile = Nexus::getProfile();
@@ -603,11 +624,17 @@ void MessageSessionWidget::doSilenceSpeaker(bool mute) {
     }
 }
 
-void MessageSessionWidget::setAsActiveChatroom() { setActive(true); }
+void MessageSessionWidget::setAsActiveChatroom() {
+    setActive(true);
+}
 
-void MessageSessionWidget::setAsInactiveChatroom() { setActive(false); }
+void MessageSessionWidget::setAsInactiveChatroom() {
+    setActive(false);
+}
 
-void MessageSessionWidget::onActiveSet(bool active) { setBackgroundRole(QPalette::Window); }
+void MessageSessionWidget::onActiveSet(bool active) {
+    setBackgroundRole(QPalette::Window);
+}
 
 void MessageSessionWidget::paintEvent(QPaintEvent* e) {
     QPainter painter(this);
@@ -783,7 +810,9 @@ void MessageSessionWidget::setFileCancelled(const QString& fileId) {
     if (md) md->onFileCancelled(fileId);
 }
 
-void MessageSessionWidget::clearHistory() { sendWorker->clearHistory(); }
+void MessageSessionWidget::clearHistory() {
+    sendWorker->clearHistory();
+}
 
 void MessageSessionWidget::setStatus(Status::Status status, bool event) {
     updateStatusLight(status, event);

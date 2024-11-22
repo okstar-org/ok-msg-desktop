@@ -224,7 +224,6 @@ void Conductor::OnSignalingChange(webrtc::PeerConnectionInterface::SignalingStat
 void Conductor::OnConnectionChange(webrtc::PeerConnectionInterface::PeerConnectionState state) {
     RTC_LOG(LS_INFO) << __FUNCTION__ << "=>"
                      << webrtc::PeerConnectionInterface::AsString(state).data();
-
     if (webRtc->getHandler()) {
         webRtc->getHandler()->onPeerConnectionChange(
                 sId, peerId, static_cast<ortc::PeerConnectionState>(state));
