@@ -1,3 +1,15 @@
+/*
+ * Copyright (c) 2022 船山信息 chuanshaninfo.com
+ * The project is licensed under Mulan PubL v2.
+ * You can use this software according to the terms and conditions of the Mulan
+ * PubL v2. You may obtain a copy of Mulan PubL v2 at:
+ *          http://license.coscl.org.cn/MulanPubL-2.0
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PubL v2 for more details.
+ */
+
 #include "MeetingVideoFrame.h"
 #include <lib/settings/style.h>
 #include "../tools/PopupMenuComboBox.h"
@@ -40,7 +52,7 @@ MeetingVideoFrame::MeetingVideoFrame(QWidget* parent) : QWidget(parent) {
 
 void MeetingVideoFrame::reloadTheme() {
     // 手动拼接一下
-    QString style = Style::getStylesheet("MettingBase.css");
+    QString style = Style::getStylesheet("MeetingBase.css");
     QString style2 = Style::getStylesheet("MeetingVideo.css");
     this->setStyleSheet(style + "\n" + style2);
     QCoreApplication::postEvent(this->topToolBar, new QEvent(QEvent::StyleChange));
