@@ -18,7 +18,7 @@
 #include <QWidget>
 #include <memory>
 
-#include "UI/core/SettingManager.h"
+#include "SettingManager.h"
 #include "base/OkSettings.h"
 #include "base/logs.h"
 #include "base/widgets.h"
@@ -48,8 +48,10 @@ LoginWidget::LoginWidget(std::shared_ptr<lib::session::AuthSession> session, boo
     m_loginKey = new QShortcut(QKeySequence(Qt::Key_Return), this);
     connect(m_loginKey, SIGNAL(activated()), this, SLOT(on_loginBtn_released()));
 
-    // translator
-    settings::Translator::registerHandler([&] { retranslateUi(); }, this);
+    // settings
+    //  ui->settings->hide();
+    ui->settings->setCursor(Qt::PointingHandCursor);
+    ui->settings->installEventFilter(this);
 
     // timer for login #TODO need to refactor
     if (bootstrap) {
@@ -60,10 +62,14 @@ LoginWidget::LoginWidget(std::shared_ptr<lib::session::AuthSession> session, boo
     }
 
     // session
-    connect(session.get(),              //
+    connect(session.get(),                            //
             &lib::session::AuthSession::loginResult,  //
             this, &LoginWidget::onLoginResult);
     init();
+
+    // translator
+    settings::Translator::registerHandler([&] { retranslateUi(); }, this);
+    retranslateUi();
 }
 
 LoginWidget::~LoginWidget() {
@@ -92,8 +98,6 @@ void LoginWidget::init() {
     // set default
     auto i = setting.getLocales().indexOf(setting.getTranslation());
     if (i >= 0 && i < ui->language->count()) ui->language->setCurrentIndex(i + 1);
-
-    retranslateUi();
 
     // 3.provider
     okCloudService = new lib::backend::OkCloudService(this);
@@ -128,16 +132,15 @@ void LoginWidget::init() {
             "QLabel { color: blue; text-decoration: underline; } "
             "QLabel:hover { color: red; }");
     ui->signUp->setCursor(Qt::PointingHandCursor);
+    ui->signUp->installEventFilter(this);
 
     ui->findPwd->setStyleSheet(
             "QLabel { color: blue; text-decoration: underline; } "
             "QLabel:hover { color: red; }");
     ui->findPwd->setCursor(Qt::PointingHandCursor);
+    ui->findPwd->installEventFilter(this);
 
     ui->loginBtn->setCursor(Qt::PointingHandCursor);
-
-    ui->signUp->installEventFilter(this);
-    ui->findPwd->installEventFilter(this);
 }
 
 void LoginWidget::deinit() {}
@@ -227,7 +230,9 @@ void LoginWidget::onLoginResult(lib::session::SignInInfo info, lib::session::Log
     }
 }
 
-void LoginWidget::on_loginBtn_released() { doLogin(); }
+void LoginWidget::on_loginBtn_released() {
+    doLogin();
+}
 
 /**
  * 语言选择事件
@@ -298,11 +303,18 @@ void LoginWidget::onError(int statusCode, const QString& msg) {
     m_timer.reset();
 }
 
-void LoginWidget::setMsg(const QString& msg) { ui->loginMessage->setText(msg); }
+void LoginWidget::setMsg(const QString& msg) {
+    ui->loginMessage->setText(msg);
+}
 
 bool LoginWidget::eventFilter(QObject* obj, QEvent* event) {
     switch (event->type()) {
         case QEvent::MouseButtonPress: {
+            if (obj == ui->settings) {
+                showSettingDialog();
+                break;
+            }
+
             auto providerIdx = ui->providers->currentIndex();
             // validate
             if (providerIdx <= 0 || m_stacks.size() <= 0) {
@@ -317,6 +329,7 @@ bool LoginWidget::eventFilter(QObject* obj, QEvent* event) {
             } else if (obj == ui->findPwd) {
                 QDesktopServices::openUrl(QUrl(host + "/auth/forgot"));
             }
+
             break;
         }
         default:
@@ -326,6 +339,10 @@ bool LoginWidget::eventFilter(QObject* obj, QEvent* event) {
 }
 
 void LoginWidget::showEvent(QShowEvent* e) {}
+
+void LoginWidget::showSettingDialog() {
+    qDebug() << __func__;
+}
 
 void LoginWidget::onTimeout() {
     if (ui->rember->isChecked() && ui->providers->count() > 0) {

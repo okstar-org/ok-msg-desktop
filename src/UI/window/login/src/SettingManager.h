@@ -16,7 +16,7 @@
 #include <QString>
 #include <memory>
 
-#include <base/basic_types.h>
+#include "src/base/basic_types.h"
 
 namespace ok {
 

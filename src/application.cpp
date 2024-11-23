@@ -101,9 +101,6 @@ Application::Application(int& argc, char* argv[])
     ipc = new IPC(0, this);
     _bus = std::make_unique<Bus>();
 
-    // 设置
-    _settingManager = std::make_unique<SettingManager>();
-
     // 样式
     setStyleSheet(ok::base::Files::readStringAll(":/resources/style/application.css"));
 

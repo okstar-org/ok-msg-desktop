@@ -1,7 +1,7 @@
 project(UICore)
 set(UICore_SOURCES
     ControllerManager.cpp
-    SettingManager.cpp
+		../window/login/src/SettingManager.cpp
     ui.h
 )
 

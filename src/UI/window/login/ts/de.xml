@@ -16,6 +16,10 @@
 <context>
     <name>LoginWidget</name>
     <message>
+        <source>Settings</source>
+        <translation>Einstellungen</translation>
+    </message>
+    <message>
         <source>Welcome Login</source>
         <translation>Willkommen zum Login</translation>
     </message>

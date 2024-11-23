@@ -16,6 +16,10 @@
 <context>
     <name>LoginWidget</name>
     <message>
+        <source>Settings</source>
+        <translation type="unfinished">설정</translation>
+    </message>
+    <message>
         <source>Welcome Login</source>
         <translation>로그인 시작</translation>
     </message>

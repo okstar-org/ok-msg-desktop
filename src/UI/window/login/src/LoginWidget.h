@@ -17,6 +17,7 @@
 
 class QShortcut;
 class QPaintEvent;
+class QLabel;
 
 namespace ok {
 class SettingManager;
@@ -58,7 +59,7 @@ private:
     bool bootstrap;
 
     QShortcut* m_loginKey;
-
+    QLabel* m_setting;
     ok::SettingManager* m_settingManager;
     lib::backend::OkCloudService* okCloudService;
 
@@ -71,6 +72,8 @@ private:
     QStringList m_stacks;
     std::unique_ptr<QTimer> m_timer;
     QString m_currentOriginalMsg{""};
+
+    void showSettingDialog();
 
 signals:
     void loginSuccess(QString name, QString password);

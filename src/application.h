@@ -19,9 +19,9 @@
 #include "base/timer.h"
 
 #include "UI/core/ControllerManager.h"
-#include "UI/core/SettingManager.h"
 #include "UI/window/WindowManager.h"
 #include "UI/window/login/src/LoginWindow.h"
+#include "src/UI/window/login/src/SettingManager.h"
 
 #include "modules/module.h"
 
@@ -44,9 +44,6 @@ public:
     void start();
     void finish();
 
-    inline SettingManager* settingManager() { return _settingManager.get(); }
-
-    inline ControllerManager* controllerManager() { return _controllerManager.get(); }
 
     inline Bus* bus() const { return _bus.get(); }
 
@@ -66,8 +63,6 @@ private:
 
     IPC* ipc;
     std::unique_ptr<Bus> _bus;
-    std::unique_ptr<SettingManager> _settingManager;
-    std::unique_ptr<ControllerManager> _controllerManager;
 
     UI::LoginWindow* m_loginWindow;
     std::unique_ptr<UI::MainWindow> m_mainWindow;
