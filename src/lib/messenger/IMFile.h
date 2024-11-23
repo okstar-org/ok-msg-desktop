@@ -45,7 +45,6 @@ public:
     File* getFile() { return file; }
     gloox::Jingle::Session* getJingleSession() { return session; }
 
-protected:
 private:
     QString sId;
     IMFile* sender;
@@ -67,7 +66,7 @@ class IMFile : public IMJingle, public IMSessionHandler {
     Q_OBJECT
 public:
     explicit IMFile(IM* im, QObject* parent = nullptr);
-    ~IMFile();
+    ~IMFile() override;
 
     void parse(const gloox::Jingle::Session::Jingle* jingle, ortc::OJingleContentFile& content);
 

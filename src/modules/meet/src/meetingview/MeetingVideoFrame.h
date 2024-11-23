@@ -27,7 +27,7 @@ class MeetingVideoFrame : public QWidget
 {
     Q_OBJECT
 public:
-    MeetingVideoFrame(QWidget* parent);
+    MeetingVideoFrame(QWidget* parent = nullptr);
     void reloadTheme();
 
 private:

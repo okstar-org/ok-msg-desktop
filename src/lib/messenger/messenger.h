@@ -30,11 +30,26 @@ class AuthSession;
 }
 
 namespace lib::messenger {
-
+/**
+ * 聊天
+ */
 class IM;
+/**
+ * 会话
+ */
 class IMJingle;
+/**
+ * 文件传输
+ */
 class IMFile;
+/**
+ * 音视频
+ */
 class IMCall;
+/**
+ *  会议
+ */
+class IMConference;
 
 /**
  * 连接状态
@@ -334,24 +349,6 @@ public:
 
 private:
     IMCall* call;
-
-    // signals:
-    //     void receiveSelfVideoFrame(uint16_t w, uint16_t h,  //
-    //                                const uint8_t* y,        //
-    //                                const uint8_t* u,        //
-    //                                const uint8_t* v,        //
-    //                                int32_t ystride,         //
-    //                                int32_t ustride,         //
-    //                                int32_t vstride);
-    //
-    //     void receiveFriendVideoFrame(const QString& friendId,  //
-    //                                  uint16_t w, uint16_t h,   //
-    //                                  const uint8_t* y,         //
-    //                                  const uint8_t* u,         //
-    //                                  const uint8_t* v,         //
-    //                                  int32_t ystride,          //
-    //                                  int32_t ustride,          //
-    //                                  int32_t vstride);
 };
 
 // 不要修改顺序和值

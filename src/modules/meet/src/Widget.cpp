@@ -18,27 +18,28 @@
 #include "ui_Widget.h"
 
 #include <QTabBar>
+#include "BookMeetingWidget.h"
 #include "Bus.h"
+#include "JoinMeetingWidget.h"
+#include "MeetingSettingWidget.h"
+#include "StartMeetingWidget.h"
 #include "application.h"
 #include "base/OkSettings.h"
 #include "lib/settings/style.h"
 #include "lib/settings/translator.h"
-#include "StartMeetingWidget.h"
-#include "JoinMeetingWidget.h"
-#include "BookMeetingWidget.h"
-#include "MeetingSettingWidget.h"
+#include "meetingview/MeetingVideoFrame.h"
 
 #include <QAbstractButton>
 #include <QPainter>
 #include <QStyle>
 #include <QStyleOption>
 
-#include <QMenu>
 #include <QContextMenuEvent>
+#include <QMenu>
 
 namespace module::meet {
 
-Widget::Widget(QWidget* parent) : UI::OMenuWidget(parent), ui(new Ui::WorkPlatform) {
+Widget::Widget(QWidget* parent) : UI::OMenuWidget(parent), ui(new Ui::WorkPlatform), view{nullptr} {
     OK_RESOURCE_INIT(Meet);
     OK_RESOURCE_INIT(MeetRes);
 
@@ -66,7 +67,9 @@ Widget::Widget(QWidget* parent) : UI::OMenuWidget(parent), ui(new Ui::WorkPlatfo
     connect(joinMeetWidget, &JoinMeetingWidget::requstJoinMeeting, this, &Widget::joinMeeting);
 }
 
-Widget::~Widget() { delete ui; }
+Widget::~Widget() {
+    delete ui;
+}
 
 void Widget::start() {}
 
@@ -90,10 +93,15 @@ void Widget::initTranslate() {
             [](QString locale0) { settings::Translator::translate(OK_Meet_MODULE, locale0); });
 }
 
-void Widget::retranslateUi() { ui->retranslateUi(this); }
+void Widget::retranslateUi() {
+    ui->retranslateUi(this);
+}
 
 void Widget::joinMeeting() {}
 
 void Widget::createMeeting() {
+    qDebug() << __func__;
+    view = new MeetingVideoFrame();
+    view->show();
 }
 }  // namespace module::meet

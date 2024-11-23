@@ -44,7 +44,7 @@ LoginWindow::LoginWindow(std::shared_ptr<lib::session::AuthSession> session, boo
     ui->hBoxLayout->addWidget(loginWidget);
 
     // 设置样式
-    QString qss = ok::base::Files::readStringAll(":/qss/login.qss");
+    QString qss = ok::base::Files::readStringAll(":/qss/login.css");
     setStyleSheet(qss);
 
     //  connect(loginWidget, &UI::LoginWidget::loginResult,

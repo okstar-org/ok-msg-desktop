@@ -45,8 +45,7 @@ protected:
     void initTranslate();
     void retranslateUi();
 
-
- private:
+private:
     void joinMeeting();
     void createMeeting();
 
@@ -57,10 +56,9 @@ private:
     Ui::WorkPlatform* ui;
     StartMeetingWidget* startMeetWidget = nullptr;
     JoinMeetingWidget* joinMeetWidget = nullptr;
-
+    MeetingVideoFrame* view;
 public slots:
     void doStart();
-
 };
 
 }  // namespace module::meet
