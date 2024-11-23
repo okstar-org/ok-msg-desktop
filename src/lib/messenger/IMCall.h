@@ -19,7 +19,6 @@
 
 #include "IMFriend.h"
 #include "IMJingle.h"
-#include "tox/toxav.h"
 
 namespace lib::session {
 class AuthSession;
