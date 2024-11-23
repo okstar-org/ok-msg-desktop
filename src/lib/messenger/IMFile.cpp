@@ -136,7 +136,7 @@ void IMFile::parse(const gloox::Jingle::Session::Jingle* jingle,
 }
 
 void IMFile::onImStartedFile() {
-    auto client = _im->getClient();
+    auto client = im->getClient();
     assert(client);
     client->registerIqHandler(this, gloox::ExtIBB);
 
@@ -149,10 +149,10 @@ void IMFile::onImStartedFile() {
     disco->addFeature(gloox::XMLNS_JINGLE_IBB);
 
     // session manager
-    _im->sessionManager()->registerPlugin(new gloox::Jingle::Content());
-    _im->sessionManager()->registerPlugin(new gloox::Jingle::FileTransfer());
-    _im->sessionManager()->registerPlugin(new gloox::Jingle::IBB());
-    _im->addSessionHandler(this);
+    im->sessionManager()->registerPlugin(new gloox::Jingle::Content());
+    im->sessionManager()->registerPlugin(new gloox::Jingle::FileTransfer());
+    im->sessionManager()->registerPlugin(new gloox::Jingle::IBB());
+    im->addSessionHandler(this);
 }
 
 void IMFile::addFileHandler(FileHandler* handler) { fileHandlers.push_back(handler); }
@@ -186,7 +186,7 @@ bool IMFile::fileSendToFriend(const QString& f, const File& file) {
 
     auto bare = stdstring(f);
 
-    auto resources = _im->getOnlineResources(bare);
+    auto resources = im->getOnlineResources(bare);
     if (resources.empty()) {
         qWarning() << "Can not find online friends:" << f;
         return false;
@@ -305,7 +305,7 @@ bool IMFile::sendFile(const QString& friendId, const File& file) {
     }
 
     auto bare = stdstring(friendId);
-    auto resources = _im->getOnlineResources(bare);
+    auto resources = im->getOnlineResources(bare);
     if (resources.empty()) {
         qWarning() << "目标用户不在线！";
         return false;
@@ -478,7 +478,7 @@ bool IMFile::handleIq(const gloox::IQ& iq) {
     }
 
     gloox::IQ riq(gloox::IQ::IqType::Result, iq.from(), iq.id());
-    _im->getClient()->send(riq);
+    im->getClient()->send(riq);
     return true;
 }
 

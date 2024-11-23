@@ -19,7 +19,7 @@
 #include <QDebug>
 namespace lib::messenger {
 
-IMConference::IMConference(const IM& im, QObject* parent) : QObject(parent), im{im} {}
+IMConference::IMConference(IM* im, QObject* parent) : QObject(parent), im{im} {}
 
 const Conference& IMConference::create(const QString& name) {
     qDebug() << __func__ << name;

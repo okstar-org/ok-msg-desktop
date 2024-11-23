@@ -21,6 +21,7 @@
 #include "base/jid.h"
 
 namespace lib::messenger {
+
 class IM;
 
 class Conference {
@@ -34,11 +35,11 @@ class Conference {
 class IMConference : public QObject {
     Q_OBJECT
 public:
-    explicit IMConference(const IM& im, QObject* parent = nullptr);
+    explicit IMConference(IM* im, QObject* parent = nullptr);
     const Conference& create(const QString& name);
 
 private:
-    const IM& im;
+    IM* im;
     std::unique_ptr<Conference> conference;
 };
 }  // namespace lib::messenger

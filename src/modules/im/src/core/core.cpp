@@ -104,7 +104,6 @@ void Core::registerCallbacks(lib::messenger::Messenger* messenger) {
 
     connect(messenger, &lib::messenger::Messenger::started, [this, messenger]() {
         messenger->requestBookmarks();
-
         emit started();
     });
 }

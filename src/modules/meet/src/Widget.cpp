@@ -77,7 +77,7 @@ void Widget::reloadTheme() {
     QString style = Style::getStylesheet("general.css");
     setStyleSheet(style);
 
-    style = Style::getStylesheet("MettingBase.css");
+    style = Style::getStylesheet("MeetingBase.css");
     startMeetWidget->setStyleSheet(style);
     joinMeetWidget->setStyleSheet(style);
 }

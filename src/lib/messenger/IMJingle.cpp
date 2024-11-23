@@ -28,7 +28,7 @@ using namespace gloox;
 using namespace Jingle;
 using namespace lib::ortc;
 
-IMJingle::IMJingle(IM* im, QObject* parent) : QObject(parent), _im(im) {
+IMJingle::IMJingle(IM* im, QObject* parent) : QObject(parent), im(im) {
     qDebug() << __func__ << "Creating";
 
     qRegisterMetaType<std::string>("std::string");
@@ -37,13 +37,13 @@ IMJingle::IMJingle(IM* im, QObject* parent) : QObject(parent), _im(im) {
 }
 
 IMJingle::~IMJingle() {
-    auto client = _im->getClient();
+    auto client = im->getClient();
     client->removeMessageHandler(this);
     qDebug() << __func__ << "Destroyed";
 }
 
 void IMJingle::onImStarted() {
-    auto client = _im->getClient();
+    auto client = im->getClient();
     assert(client);
 
     client->registerMessageHandler(this);

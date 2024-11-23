@@ -16,10 +16,17 @@
 #include <QWidget>
 #include "MeetingVideoDefines.h"
 
+
 class QToolBar;
 class QToolButton;
 class PopupMenuComboBox;
 class QLabel;
+
+namespace lib::messenger{
+class IMConference;
+}
+
+
 
 class MeetingVideosContainer;
 
@@ -29,6 +36,8 @@ class MeetingVideoFrame : public QWidget
 public:
     MeetingVideoFrame(QWidget* parent = nullptr);
     void reloadTheme();
+
+    void createConference(const QString& name);
 
 private:
     void creatTopToolBar();
@@ -72,6 +81,8 @@ private:
 
     // 会议视频布局区域
     MeetingVideosContainer* videosLayout = nullptr;
+
+    lib::messenger::IMConference* conference;
 };
 
 

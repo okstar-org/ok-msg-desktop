@@ -11,11 +11,14 @@
  */
 
 #include "MeetingVideoFrame.h"
-#include <lib/settings/style.h>
 #include "../tools/PopupMenuComboBox.h"
 #include "MeetingVideosLayout.h"
 #include "VideoLayoutPicker.h"
 #include "base/RoundedPixmapLabel.h"
+#include "lib/messenger/IMConference.h"
+#include "lib/settings/style.h"
+#include "modules/im/src/core/core.h"
+#include "modules/im/src/nexus.h"
 
 #include <QAction>
 #include <QApplication>
@@ -27,6 +30,7 @@
 #include <QToolBar>
 #include <QToolButton>
 #include <QWindowStateChangeEvent>
+#include <memory>
 
 MeetingVideoFrame::MeetingVideoFrame(QWidget* parent) : QWidget(parent) {
     setAttribute(Qt::WA_StyledBackground);
@@ -34,8 +38,6 @@ MeetingVideoFrame::MeetingVideoFrame(QWidget* parent) : QWidget(parent) {
     creatBottomBar();
     videosLayout = new MeetingVideosContainer(this);
     videosLayout->setObjectName("videoLayout");
-
-    retranslateUi();
 
     QVBoxLayout* mainLayout = new QVBoxLayout(this);
     mainLayout->setSpacing(10);
@@ -46,8 +48,14 @@ MeetingVideoFrame::MeetingVideoFrame(QWidget* parent) : QWidget(parent) {
 
     updateDuration();
     initConnection();
-
     reloadTheme();
+    retranslateUi();
+
+    auto& nexus = Nexus::getInstance();
+    auto* im0 = nexus.getCore()->getMessenger()->im();
+
+    conference = new lib::messenger::IMConference(im0);
+    qDebug() << __func__ << "conference:" << conference;
 }
 
 void MeetingVideoFrame::reloadTheme() {
@@ -172,9 +180,9 @@ void MeetingVideoFrame::updateDuration() {
 
 void MeetingVideoFrame::showAudioPopMenu() {
     // create menu everytime or create once and set menu
-    //QMenu menu(this);
-    //menu.addAction("data");
-    //audioSettingButton->showMenuOnce(&menu);
+    // QMenu menu(this);
+    // menu.addAction("data");
+    // audioSettingButton->showMenuOnce(&menu);
 }
 
 void MeetingVideoFrame::changeEvent(QEvent* event) {
@@ -195,3 +203,9 @@ void MeetingVideoFrame::retranslateUi() {
     securityButton->setText(tr("Security"));
     sharedDeskButton->iconButton()->setText(tr("Share"));
 }
+
+/**
+ * 创建会议
+ * @param name
+ */
+void MeetingVideoFrame::createConference(const QString& name) {}

@@ -63,10 +63,10 @@ struct SignInInfo {
 class AuthSession : public QObject {
     Q_OBJECT
 public:
-    AuthSession(QObject* parent = nullptr);
+    explicit AuthSession(QObject* parent = nullptr);
     ~AuthSession() override;
 
-    Status status() const;
+    [[nodiscard]] Status status() const;
 
     void doLogin(const SignInInfo& signInInfo);
 
@@ -78,7 +78,7 @@ public:
 
     [[nodiscard]] ok::base::OkAccount* account() const { return okAccount.get(); }
 
-    const QString& getStackUrl() const { return m_signInInfo.stackUrl; }
+    [[nodiscard]] const QString& getStackUrl() const { return m_signInInfo.stackUrl; }
 
 protected:
     // 执行登录

@@ -54,7 +54,7 @@ public:
     explicit IMJingle(IM* im, QObject* parent = nullptr);
     ~IMJingle() override;
 
-    IM* getIM() { return _im; }
+    IM* getIM() const { return im; }
 
     virtual void handleMessageSession(gloox::MessageSession* session) override;
     virtual void handleMessage(const gloox::Message& msg,
@@ -76,7 +76,7 @@ protected:
 
     virtual void clearSessionInfo(const QString& sId) = 0;
 
-    IM* _im;
+    IM* im;
 
     // 传输文件、传输视频会话的区分
     QList<QString> m_invalid_sId;

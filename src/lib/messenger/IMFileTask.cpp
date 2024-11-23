@@ -47,7 +47,7 @@ void IMFileTask::run() {
      * https://xmpp.org/extensions/xep-0047.html#create
      *
      */
-    IM* im = m_im->getIM();
+    auto* im = m_im->getIM();
     auto client = im->getClient();
     //  client->registerStanzaExtension(new InBandBytestream::IBB);
 

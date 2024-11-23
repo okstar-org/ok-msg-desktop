@@ -305,7 +305,7 @@ public:
 
     //  ExtDisco &extDisco() { return mExtDisco; }
 
-    inline gloox::Jingle::SessionManager* sessionManager() { return _sessionManager.get(); }
+    inline gloox::Jingle::SessionManager* sessionManager() const { return _sessionManager.get(); }
 
     gloox::Jingle::Session* createSession(const gloox::JID& jid, const std::string& sId,
                                           IMSessionHandler* h);
