@@ -28,6 +28,7 @@
 
 class MeetingOptionWidget;
 class QLineEdit;
+class QPushButton;
 
 class StartMeetingWidget : public QWidget {
     Q_OBJECT
@@ -35,11 +36,30 @@ signals:
     void requstStartMeeting(const QString& name);
 
 public:
-    StartMeetingWidget(QWidget* parent = nullptr);
+    enum MeetingState {
+        NoMeeting,
+        CreatingMeeing,
+        OnMeeting
+    };
 
+public:
+    StartMeetingWidget(QWidget* parent = nullptr);
     QString getName();
+    void setMeetingState(MeetingState state);
+
+public:
+    void retranslateUi();
+
+private:
+    void updateUi();
 
 private:
     MeetingOptionWidget* optionWidget = nullptr;
     QLineEdit* meetingNameEdit = nullptr;
+
+    QPushButton* confirmButton = nullptr;
+    QPushButton* disbandButton = nullptr;
+    QPushButton* shareButton = nullptr;
+
+    MeetingState meetingState = NoMeeting;
 };
