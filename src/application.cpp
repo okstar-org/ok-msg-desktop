@@ -220,8 +220,8 @@ void Application::doLogout() {
     qDebug() << __func__ << profile;
     QVector<QString> remove;
     for (auto mod : m_moduleMap) {
-        qDebug() << "delete module:" << mod->name();
-        remove.push_back(mod->name());
+        qDebug() << "delete module:" << mod->getName();
+        remove.push_back(mod->getName());
         mod->cleanup();
     }
     for (auto& name : remove) {

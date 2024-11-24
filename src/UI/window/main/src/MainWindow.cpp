@@ -315,7 +315,7 @@ OMenuWidget* MainWindow::initMenuWindow(ok::base::PageMenu menu) {
             delayCaller->call(1, [=, this]() {
                 assert(w);
                 assert(session);
-                qDebug() << "Start module:" << m->name();
+                qDebug() << "Start module:" << m->getName();
                 m->start(session);
             });
         }
@@ -344,7 +344,7 @@ void MainWindow::onSwitchPage(ok::base::PageMenu menu, bool checked) {
 QWidget* MainWindow::getContainer(ok::base::PageMenu menu) { return ui->stacked_widget; }
 
 OMenuWidget* MainWindow::createChatModule(MainWindow* pWindow) {
-    qDebug() << "Creating m:" << Nexus::Name();
+    qDebug() << "Creating chat module...";
     auto m = Nexus::Create();
     auto nexus = static_cast<Nexus*>(m);
 

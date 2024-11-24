@@ -16,28 +16,29 @@
 #include <QWidget>
 #include "MeetingVideoDefines.h"
 
-
 class QToolBar;
 class QToolButton;
 class PopupMenuComboBox;
 class QLabel;
 
-namespace lib::messenger{
+namespace lib::messenger {
 class IMConference;
 }
 
-
-
 class MeetingVideosContainer;
 
-class MeetingVideoFrame : public QWidget
-{
+enum class MeetingFrom {
+    Create,  // 创建会议
+    Join     // 加入会议
+};
+
+class MeetingVideoFrame : public QWidget {
     Q_OBJECT
 public:
-    MeetingVideoFrame(QWidget* parent = nullptr);
+    explicit MeetingVideoFrame(const QString& username, QWidget* parent = nullptr);
+    ~MeetingVideoFrame();
     void reloadTheme();
-
-    void createConference(const QString& name);
+    void createConference(const QString& username);
 
 private:
     void creatTopToolBar();
@@ -50,17 +51,18 @@ private:
     void showAudioPopMenu();
 
     void changeEvent(QEvent* event);
+
 public:
     void retranslateUi();
-private:
 
+private:
     // 顶部工具
     QToolBar* topToolBar = nullptr;
-    QAction * infoAction = nullptr;
-    QAction * sharedAction = nullptr;
+    QAction* infoAction = nullptr;
+    QAction* sharedAction = nullptr;
     QLabel* duraionLabel = nullptr;
     QAction* netInfoAction = nullptr;
-    
+
     QAction* layoutAction = nullptr;
     QAction* fullScreenAction = nullptr;
 
@@ -83,7 +85,9 @@ private:
     MeetingVideosContainer* videosLayout = nullptr;
 
     lib::messenger::IMConference* conference;
-};
 
+    // 会议唯一名称
+    QString username;
+};
 
 #endif  // !MEETINGVIDEOFRAME_H

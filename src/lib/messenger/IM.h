@@ -170,6 +170,8 @@ public:
 
     std::unique_ptr<gloox::Client> makeClient();
 
+    QString createMsgId();
+
     void setNickname(const QString& nickname);
     QString getNickname();
 

@@ -39,7 +39,7 @@ public:
     /**
      * Module
      */
-    static QString Name();
+
     static Module* Create();
 
     void showMainGUI();
@@ -51,18 +51,35 @@ public:
     static Core* getCore();
     static Profile* getProfile();
     static Widget* getDesktopGUI();
+    IAudioControl* audio() const {
+        return audioControl.get();
+    }
 
-
-    QString name() override;
+protected:
+    const QString& getName() const override;
     QWidget* widget() override;
     void init(Profile*) override;
     void start(std::shared_ptr<lib::session::AuthSession> session) override;
+    void stop() override;
     bool isStarted() override { return stared; }
     void hide() override;
     void onSave(SavedInfo&) override;
     void cleanup() override;
 
-    IAudioControl* audio() const { return audioControl.get(); }
+private:
+    explicit Nexus(QObject* parent = nullptr);
+    ~Nexus();
+    void setProfile(Profile* p);
+
+private:
+    QString name;
+    bool stared;
+    Profile* profile;
+
+    Settings* settings;
+    QPointer<Widget> m_widget;  // 某些异常情况下widget会被提前释放
+    std::unique_ptr<IAudioControl> audioControl;
+    QCommandLineParser* parser = nullptr;
 
 #ifdef Q_OS_MAC
 public:
@@ -108,20 +125,6 @@ public slots:
     void bootstrapWithProfileName(const QString& host, const QString& p);
     void do_logout(const QString& profile);
 
-private:
-    explicit Nexus(QObject* parent = nullptr);
-    ~Nexus();
-    void setProfile(Profile* p);
-
-private:
-    bool stared;
-
-    Profile* profile;
-
-    Settings* settings;
-    QPointer<Widget> m_widget;  // 某些异常情况下widget会被提前释放
-    std::unique_ptr<IAudioControl> audioControl;
-    QCommandLineParser* parser = nullptr;
 };
 
 #endif  // NEXUS_H

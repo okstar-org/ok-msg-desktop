@@ -97,11 +97,50 @@ void Widget::retranslateUi() {
     ui->retranslateUi(this);
 }
 
-void Widget::joinMeeting() {}
+void Widget::joinMeeting(const QString& no) {
+    //    TODO 加入会议
+}
 
-void Widget::createMeeting() {
+/**
+ * 创建会议
+ * @param name
+ */
+void Widget::createMeeting(const QString& name) {
     qDebug() << __func__;
-    view = new MeetingVideoFrame();
+
+    QMutexLocker locker(&mutex);
+    if (!currentMeetingName.isEmpty()) {
+        qWarning() << "Existing meeting:" << this->currentMeetingName;
+        return;
+    }
+    this->currentMeetingName = name;
+    if (!view) {
+        view = new MeetingVideoFrame(this->currentMeetingName);
+    }
     view->show();
 }
+
+/**
+ * 解散会议（销毁）
+ */
+void Widget::destroyMeeting() {
+    QMutexLocker locker(&mutex);
+    currentMeetingName.clear();
+    if (view) {
+        view->deleteLater();
+        view = nullptr;
+    }
+}
+/**
+ * 分享会议
+ */
+void Widget::shareMeeting() {
+    // TODO 生成加入会议链接
+}
+
+Share Widget::makeShare() {
+    // TODO 生成加入会议分享信息
+    return Share();
+}
+
 }  // namespace module::meet

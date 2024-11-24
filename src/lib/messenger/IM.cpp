@@ -227,6 +227,10 @@ std::unique_ptr<Client> IM::makeClient() {
     return std::move(client);
 }
 
+QString IM::createMsgId() {
+    return qstring(getClient()->getID());
+}
+
 void IM::stop() {
     qDebug() << __func__;
     doDisconnect();

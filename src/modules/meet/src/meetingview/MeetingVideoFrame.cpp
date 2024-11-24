@@ -32,7 +32,8 @@
 #include <QWindowStateChangeEvent>
 #include <memory>
 
-MeetingVideoFrame::MeetingVideoFrame(QWidget* parent) : QWidget(parent) {
+MeetingVideoFrame::MeetingVideoFrame(const QString& username, QWidget* parent)
+        : QWidget(parent), username(username) {
     setAttribute(Qt::WA_StyledBackground);
     creatTopToolBar();
     creatBottomBar();
@@ -51,11 +52,15 @@ MeetingVideoFrame::MeetingVideoFrame(QWidget* parent) : QWidget(parent) {
     reloadTheme();
     retranslateUi();
 
-    auto& nexus = Nexus::getInstance();
-    auto* im0 = nexus.getCore()->getMessenger()->im();
+    auto* im = Nexus::getInstance().getCore()->getMessenger()->im();
+    conference = new lib::messenger::IMConference(im, this);
 
-    conference = new lib::messenger::IMConference(im0);
     qDebug() << __func__ << "conference:" << conference;
+    conference->create(username);
+}
+
+MeetingVideoFrame::~MeetingVideoFrame() {
+    conference->deleteLater();
 }
 
 void MeetingVideoFrame::reloadTheme() {

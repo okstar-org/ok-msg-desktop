@@ -43,6 +43,7 @@ MeetingOptionWidget::MeetingOptionWidget(QWidget* parent) : QWidget(parent) {
     confirmButton = new QPushButton(this);
     confirmButton->setObjectName("confirm");
     confirmButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+    confirmButton->setCursor(Qt::PointingHandCursor);
 
     QHBoxLayout* footerLayout = new QHBoxLayout();
     footerLayout->setContentsMargins(0, 0, 0, 0);

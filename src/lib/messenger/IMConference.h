@@ -24,7 +24,7 @@ namespace lib::messenger {
 
 class IM;
 
-class Conference {
+struct Conference {
     ok::base::Jid jid;
     QString uid;
     uint32_t startAudioMuted;
@@ -36,6 +36,7 @@ class IMConference : public QObject {
     Q_OBJECT
 public:
     explicit IMConference(IM* im, QObject* parent = nullptr);
+    ~IMConference();
     const Conference& create(const QString& name);
 
 private:

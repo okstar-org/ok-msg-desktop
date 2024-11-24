@@ -20,7 +20,7 @@
 
 namespace ok::platform {
 
-Platform::Platform() : m_widget{nullptr} {
+Platform::Platform() : name{OK_Platform_MODULE}, m_widget{nullptr} {
     m_widget = std::make_unique<Widget>();
 
     // todo: 如果后期需要支持页签弹出，看如何重构了
@@ -42,15 +42,26 @@ Platform::~Platform() {
 }
 
 void Platform::init(Profile* p) {}
-QString Platform::name() { return {"Platform"}; }
+
+const QString& Platform::getName() const {
+    return name;
+}
 
 void Platform::start(std::shared_ptr<lib::session::AuthSession> session) {
     m_widget->start();
 }
 
-bool Platform::isStarted() { return false; }
+void Platform::stop() {
+    // TODO 一些停止操作
+};
+
+bool Platform::isStarted() {
+    return false;
+}
 void Platform::onSave(SavedInfo&) {}
 void Platform::cleanup() {}
-PlatformPageContainer* Platform::getPageContainer() { return pageContainter; }
+PlatformPageContainer* Platform::getPageContainer() {
+    return pageContainter;
+}
 void Platform::hide() {}
 }  // namespace ok::platform
