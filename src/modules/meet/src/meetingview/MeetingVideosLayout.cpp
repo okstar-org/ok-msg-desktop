@@ -104,13 +104,13 @@ constexpr int grid_max_videos = grid_max_cols * grid_max_cols;
 
 MeetingVideosLayout::MeetingVideosLayout(LayoutType type, QWidget* parent)
         : QWidget(parent), _type(type) {
-    cellSize = QSize(16, 10);
+
     setAttribute(Qt::WA_Hover);
 
-    nextPageButton = new QPushButton("next", this);
+    nextPageButton = new QPushButton(this);
     nextPageButton->setObjectName("nextPage");
     nextPageButton->setVisible(false);
-    prevPageButton = new QPushButton("prev", this);
+    prevPageButton = new QPushButton(this);
     prevPageButton->setObjectName("prevPage");
     prevPageButton->setVisible(false);
     connect(nextPageButton, &QPushButton::clicked, this, &MeetingVideosLayout::nextPage);

@@ -92,6 +92,7 @@ void AppCenterWidget::showLoading() {
     if (color.isValid()) {
         QPalette pal = loadingWidget->palette();
         pal.setColor(QPalette::Normal, QPalette::WindowText, color);
+        pal.setColor(QPalette::Inactive, QPalette::WindowText, color);
         loadingWidget->setPalette(pal);
     }
     loadingWidget->setVisible(true);

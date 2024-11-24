@@ -22,6 +22,8 @@
 #include "UI/widget/OMenuWidget.h"
 #include "base/resources.h"
 
+#include <QPointer>
+
 OK_RESOURCE_LOADER(Meet)
 OK_RESOURCE_LOADER(MeetRes)
 
@@ -92,7 +94,7 @@ private:
     Ui::WorkPlatform* ui;
     StartMeetingWidget* startMeetWidget = nullptr;
     JoinMeetingWidget* joinMeetWidget = nullptr;
-    MeetingVideoFrame* view;
+    QPointer<MeetingVideoFrame> view;
 
     /**
      * 当前正在进行中的会议名称

@@ -113,11 +113,19 @@ void Widget::createMeeting(const QString& name) {
         qWarning() << "Existing meeting:" << this->currentMeetingName;
         return;
     }
+    startMeetWidget->setMeetingState(StartMeetingWidget::CreatingMeeing);
     this->currentMeetingName = name;
     if (!view) {
         view = new MeetingVideoFrame(this->currentMeetingName);
+        // for test
+        //view->setAttribute(Qt::WA_DeleteOnClose);
+        //connect(view.data(), &MeetingVideoFrame::destroyed, this,
+        //        [this]() { 
+        //        currentMeetingName.clear();
+        //        startMeetWidget->setMeetingState(StartMeetingWidget::NoMeeting); });
     }
     view->show();
+    startMeetWidget->setMeetingState(StartMeetingWidget::OnMeeting);
 }
 
 /**
@@ -130,6 +138,7 @@ void Widget::destroyMeeting() {
         view->deleteLater();
         view = nullptr;
     }
+    startMeetWidget->setMeetingState(StartMeetingWidget::NoMeeting);
 }
 /**
  * 分享会议
