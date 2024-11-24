@@ -16,6 +16,7 @@
 
 #include <QLineEdit>
 #include <QVBoxLayout>
+#include <QPushButton>
 
 JoinMeetingWidget::JoinMeetingWidget(QWidget* parent) : QWidget(parent) {
 
@@ -27,13 +28,18 @@ JoinMeetingWidget::JoinMeetingWidget(QWidget* parent) : QWidget(parent) {
     idEdit->setAlignment(Qt::AlignCenter);
     idEdit->setPlaceholderText(tr("Meeting ID"));
     optionWidget = new MeetingOptionWidget(this);
-    optionWidget->setConfirmButtonText(tr("Join Meeting"));
+
+    QPushButton* confirmButton = new QPushButton(tr("Join Meeting"), this);
+    confirmButton->setObjectName("confirm");
+    confirmButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+    confirmButton->setCursor(Qt::PointingHandCursor);
+    optionWidget->addFooterButton(confirmButton);
 
     QVBoxLayout* mainLayout = new QVBoxLayout(this);
     mainLayout->addWidget(idEdit);
     mainLayout->addWidget(optionWidget, 1);
     mainLayout->setAlignment(idEdit, Qt::AlignHCenter);
 
-    connect(optionWidget, &MeetingOptionWidget::confirmed,
+    connect(confirmButton, &QPushButton::clicked,
             [this]() { emit requstJoinMeeting(idEdit->text()); });
 }

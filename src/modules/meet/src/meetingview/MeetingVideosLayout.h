@@ -73,7 +73,6 @@ private:
     int cellCount = 1;
     QList<MeetingParticipant*> allParticipant;
     QList<MeetingVideoOutput*> cellVideos;
-    QSize cellSize;
     LayoutType _type = LayoutType::Grid;
 
     int pageIndex = 0;

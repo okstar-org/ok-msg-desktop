@@ -40,10 +40,9 @@ MeetingOptionWidget::MeetingOptionWidget(QWidget* parent) : QWidget(parent) {
     volumnSlider->setRange(0, 100);
     volumnSetting->setWidget(volumnSlider);
 
-    confirmButton = new QPushButton(this);
-    confirmButton->setObjectName("confirm");
-    confirmButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
-    confirmButton->setCursor(Qt::PointingHandCursor);
+    buttonLayout = new QHBoxLayout();
+    buttonLayout->setContentsMargins(0, 0, 0, 0);
+    buttonLayout->setSpacing(10);
 
     QHBoxLayout* footerLayout = new QHBoxLayout();
     footerLayout->setContentsMargins(0, 0, 0, 0);
@@ -52,7 +51,7 @@ MeetingOptionWidget::MeetingOptionWidget(QWidget* parent) : QWidget(parent) {
     footerLayout->addWidget(cameraSetting);
     footerLayout->addWidget(volumnSetting);
     footerLayout->addStretch(1);
-    footerLayout->addWidget(confirmButton);
+    footerLayout->addLayout(buttonLayout);
 
     QVBoxLayout* mainLayout = new QVBoxLayout(this);
     mainLayout->addWidget(avatarLabel, 1);
@@ -60,12 +59,11 @@ MeetingOptionWidget::MeetingOptionWidget(QWidget* parent) : QWidget(parent) {
 
     ok::Bus* bus = ok::Application::Instance()->bus();
     connect(bus, &ok::Bus::avatarChanged, avatarLabel, &RoundedPixmapLabel::setPixmap);
-
-    connect(confirmButton, &QPushButton::clicked, this, &MeetingOptionWidget::confirmed);
 }
 
-void MeetingOptionWidget::setConfirmButtonText(const QString& text) {
-    confirmButton->setText(text);
+void MeetingOptionWidget::addFooterButton(QPushButton* button)
+{
+    buttonLayout->addWidget(button);
 }
 
 void MeetingOptionWidget::showEvent(QShowEvent* event) {
