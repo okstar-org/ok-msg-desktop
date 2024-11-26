@@ -56,7 +56,12 @@ const Meet& IMMeet::create(const QString& name) {
     return *conference;
 }
 void IMMeet::handleCreation(const gloox::JID& jid, bool ready,
-                            std::map<std::string, std::string> props) {}
+                            std::map<std::string, std::string> props) {
+    qDebug() << __func__ << qstring(jid.full()) << "ready:" << ready;
+    for (const auto& kv : props) {
+        qDebug() << __func__ << "property:" << qstring(kv.first) << "=>" << qstring(kv.second);
+    }
+}
 void IMMeet::handleParticipant(const gloox::Meet::Participant& participant) {
     qDebug() << __func__ << qstring(participant.nick);
 }

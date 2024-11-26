@@ -39,7 +39,11 @@
 
 namespace module::meet {
 
-Widget::Widget(QWidget* parent) : UI::OMenuWidget(parent), ui(new Ui::WorkPlatform), view{nullptr} {
+Widget::Widget(QWidget* parent)
+        : UI::OMenuWidget(parent)
+        , ui(new Ui::WorkPlatform)
+        , view{nullptr}
+        , state{MeetingState::NoMeeting} {
     OK_RESOURCE_INIT(Meet);
     OK_RESOURCE_INIT(MeetRes);
 
@@ -64,6 +68,9 @@ Widget::Widget(QWidget* parent) : UI::OMenuWidget(parent), ui(new Ui::WorkPlatfo
     reloadTheme();
 
     connect(startMeetWidget, &StartMeetingWidget::requstStartMeeting, this, &Widget::createMeeting);
+    connect(startMeetWidget, &StartMeetingWidget::requstDisbandMeeting, this,
+            &Widget::destroyMeeting);
+    connect(startMeetWidget, &StartMeetingWidget::requstShareMeeting, this, &Widget::shareMeeting);
     connect(joinMeetWidget, &JoinMeetingWidget::requstJoinMeeting, this, &Widget::joinMeeting);
 }
 
@@ -113,19 +120,19 @@ void Widget::createMeeting(const QString& name) {
         qWarning() << "Existing meeting:" << this->currentMeetingName;
         return;
     }
-    startMeetWidget->setMeetingState(StartMeetingWidget::CreatingMeeing);
-    this->currentMeetingName = name;
     if (!view) {
+        setState(MeetingState::CreatingMeeting);
         view = new MeetingVideoFrame(this->currentMeetingName);
-        // for test
-        //view->setAttribute(Qt::WA_DeleteOnClose);
-        //connect(view.data(), &MeetingVideoFrame::destroyed, this,
-        //        [this]() { 
-        //        currentMeetingName.clear();
-        //        startMeetWidget->setMeetingState(StartMeetingWidget::NoMeeting); });
+        // TODO 暂时关闭即退出
+        connect(view.data(), &MeetingVideoFrame::destroyed, this, [this]() {
+            currentMeetingName.clear();
+            setState(MeetingState::NoMeeting);
+        });
     }
+
+    currentMeetingName = name;
+    setState(MeetingState::OnMeeting);
     view->show();
-    startMeetWidget->setMeetingState(StartMeetingWidget::OnMeeting);
 }
 
 /**
@@ -138,17 +145,25 @@ void Widget::destroyMeeting() {
         view->deleteLater();
         view = nullptr;
     }
-    startMeetWidget->setMeetingState(StartMeetingWidget::NoMeeting);
+
+    setState(MeetingState::NoMeeting);
 }
+
+void Widget::setState(const MeetingState& state_) {
+    state = state_;
+    startMeetWidget->setMeetingState(state);
+}
+
 /**
  * 分享会议
  */
 void Widget::shareMeeting() {
-    // TODO 生成加入会议链接
+    makeShare();
 }
 
 Share Widget::makeShare() {
     // TODO 生成加入会议分享信息
+    qDebug() << tr("make share link...");
     return Share();
 }
 

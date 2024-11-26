@@ -25,25 +25,25 @@
  */
 
 #include <QWidget>
+#include "Defines.h"
 
-class MeetingOptionWidget;
 class QLineEdit;
 class QPushButton;
+
+namespace module::meet {
+
+class Widget;
+class MeetingOptionWidget;
 
 class StartMeetingWidget : public QWidget {
     Q_OBJECT
 signals:
     void requstStartMeeting(const QString& name);
+    void requstDisbandMeeting();
+    void requstShareMeeting();
 
 public:
-    enum MeetingState {
-        NoMeeting,
-        CreatingMeeing,
-        OnMeeting
-    };
-
-public:
-    StartMeetingWidget(QWidget* parent = nullptr);
+    explicit StartMeetingWidget(QWidget* parent = nullptr);
     QString getName();
     void setMeetingState(MeetingState state);
 
@@ -61,5 +61,10 @@ private:
     QPushButton* disbandButton = nullptr;
     QPushButton* shareButton = nullptr;
 
-    MeetingState meetingState = NoMeeting;
+    /**
+     * 主框架
+     */
+    Widget* widget;
+    //    MeetingState meetingState = MeetingState::NoMeeting;
 };
+}  // namespace module::meet

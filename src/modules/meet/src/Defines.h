@@ -10,33 +10,31 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#ifndef MEETINGVIDEOOUTPUT_H
-#define MEETINGVIDEOOUTPUT_H
-
-#include <QWidget>
-
-class RoundedPixmapLabel;
+//
+// Created by gaojie on 24-11-26.
+//
+#pragma once
 
 namespace module::meet {
 
-class MeetingParticipant;
+/**
+ * 会议状态
+ */
+enum class MeetingState { NoMeeting, CreatingMeeting, OnMeeting };
 
-class MeetingVideoOutput : public QWidget {
-public:
-    MeetingVideoOutput(QWidget* parent);
-
-    // 绑定与会者
-    void bindParticipant(MeetingParticipant* participant);
-
-private:
-    void showVideo();
-    void showAvatar();
-
-protected:
-    void resizeEvent(QResizeEvent* event) override;
-
-private:
-    RoundedPixmapLabel* avatarLabel = nullptr;
+enum class MeetingFrom {
+    Create,  // 创建会议
+    Join     // 加入会议
 };
+
+/**
+ * 分享信息
+ */
+struct Share {
+    // 会议编号
+    QString no;
+    // 会议名称
+    QString name;
+};
+
 }  // namespace module::meet
-#endif  // !MEETINGVIDEOOUTPUT_H

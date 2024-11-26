@@ -21,6 +21,7 @@
 #include <QSlider>
 #include <QToolButton>
 #include <QVBoxLayout>
+namespace module::meet {
 
 MeetingOptionWidget::MeetingOptionWidget(QWidget* parent) : QWidget(parent) {
     avatarLabel = new RoundedPixmapLabel(this);
@@ -61,8 +62,7 @@ MeetingOptionWidget::MeetingOptionWidget(QWidget* parent) : QWidget(parent) {
     connect(bus, &ok::Bus::avatarChanged, avatarLabel, &RoundedPixmapLabel::setPixmap);
 }
 
-void MeetingOptionWidget::addFooterButton(QPushButton* button)
-{
+void MeetingOptionWidget::addFooterButton(QPushButton* button) {
     buttonLayout->addWidget(button);
 }
 
@@ -70,4 +70,4 @@ void MeetingOptionWidget::showEvent(QShowEvent* event) {
     ok::Bus* bus = ok::Application::Instance()->bus();
     emit bus->getAvatar();
 }
-
+}  // namespace module::meet

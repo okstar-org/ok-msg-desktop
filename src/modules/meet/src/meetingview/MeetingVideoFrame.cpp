@@ -31,10 +31,13 @@
 #include <QToolButton>
 #include <QWindowStateChangeEvent>
 #include <memory>
+namespace module::meet {
 
 MeetingVideoFrame::MeetingVideoFrame(const QString& username, QWidget* parent)
         : QWidget(parent), username(username) {
     setAttribute(Qt::WA_StyledBackground);
+    setAttribute(Qt::WA_DeleteOnClose);
+
     creatTopToolBar();
     creatBottomBar();
     videosLayout = new MeetingVideosContainer(this);
@@ -214,3 +217,4 @@ void MeetingVideoFrame::retranslateUi() {
  * @param name
  */
 void MeetingVideoFrame::createConference(const QString& name) {}
+}  // namespace module::meet

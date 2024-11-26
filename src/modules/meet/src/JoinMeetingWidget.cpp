@@ -17,9 +17,9 @@
 #include <QLineEdit>
 #include <QVBoxLayout>
 #include <QPushButton>
+namespace module::meet {
 
 JoinMeetingWidget::JoinMeetingWidget(QWidget* parent) : QWidget(parent) {
-
     setContentsMargins(10, 10, 10, 10);
     ShadowBackground* shadowBack = new ShadowBackground(this);
     shadowBack->setShadowRadius(10);
@@ -43,3 +43,4 @@ JoinMeetingWidget::JoinMeetingWidget(QWidget* parent) : QWidget(parent) {
     connect(confirmButton, &QPushButton::clicked,
             [this]() { emit requstJoinMeeting(idEdit->text()); });
 }
+}  // namespace module::meet

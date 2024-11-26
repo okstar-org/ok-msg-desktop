@@ -19,6 +19,7 @@
 #include <QMutex>
 #include <QWidget>
 
+#include "Defines.h"
 #include "UI/widget/OMenuWidget.h"
 #include "base/resources.h"
 
@@ -31,21 +32,11 @@ namespace Ui {
 class WorkPlatform;
 }
 
+namespace module::meet {
+
 class StartMeetingWidget;
 class JoinMeetingWidget;
 class MeetingVideoFrame;
-
-namespace module::meet {
-
-/**
- * 分享信息
- */
-struct Share {
-    // 会议编号
-    QString no;
-    // 会议名称
-    QString name;
-};
 
 class Widget : public UI::OMenuWidget {
     Q_OBJECT
@@ -54,6 +45,12 @@ public:
     ~Widget() override;
     void start();
     void reloadTheme();
+
+    [[nodiscard]] const MeetingState& getState() const {
+        return state;
+    }
+
+    void setState(const MeetingState& state_);
 
 protected:
     void initTranslate();
@@ -103,6 +100,8 @@ private:
      */
     QString currentMeetingName;
     QMutex mutex;
+
+    MeetingState state;
 
 public slots:
     void doStart();

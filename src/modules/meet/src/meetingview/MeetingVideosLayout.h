@@ -17,10 +17,14 @@
 #include <QScrollArea>
 #include "MeetingVideoDefines.h"
 
+class QSplitter;
+class QPushButton;
+
+namespace module::meet {
+
 class MeetingVideosLayout;
 class MeetingParticipant;
 class MeetingVideoOutput;
-class QSplitter;
 
 class MeetingVideosContainer : public QWidget {
 public:
@@ -30,11 +34,11 @@ public:
     QSize sizeHint() const;
     QSize minimumSizeHint() const;
 
-    void addParticipant(MeetingParticipant * participant);
+    void addParticipant(MeetingParticipant* participant);
 
 private:
     void doResetLayout();
-    MeetingVideoOutput * getCenterVideo();
+    MeetingVideoOutput* getCenterVideo();
 
 private:
     module::meet::VideoLayoutType layoutType = module::meet::GridView;
@@ -44,10 +48,9 @@ private:
     QSplitter* splitter = nullptr;
 };
 
-class QPushButton;
 class MeetingVideosLayout : public QWidget {
 public:
-    enum class LayoutType {Grid, Horizontal, Vertical };
+    enum class LayoutType { Grid, Horizontal, Vertical };
 
 public:
     MeetingVideosLayout(LayoutType type, QWidget* parent);
@@ -55,7 +58,7 @@ public:
     void setPageCellCount(int count);
     void addParticipant(MeetingParticipant* participant);
     void removeParticipant(MeetingParticipant* participant);
-    
+
 private:
     void doLayout();
     void doGridLayout(int cols);
@@ -83,5 +86,5 @@ private:
 
     friend class MeetingVideosContainer;
 };
-
+}  // namespace module::meet
 #endif  // !MEETINGVIDEOSLAYOUT_H

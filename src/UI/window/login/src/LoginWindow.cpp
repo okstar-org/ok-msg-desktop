@@ -30,7 +30,7 @@ LoginWindow::LoginWindow(std::shared_ptr<lib::session::AuthSession> session, boo
 
     OK_RESOURCE_INIT(UIWindowLogin);
 
-    setAttribute(Qt::WA_DeleteOnClose, true);
+    setAttribute(Qt::WA_DeleteOnClose);
     setWindowTitle(APPLICATION_NAME);
     // 黄金分割比例 874/520 = 1.618
     setFixedSize(QSize(874, 520));

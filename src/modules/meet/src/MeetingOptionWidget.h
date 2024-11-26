@@ -20,13 +20,14 @@ class RoundedPixmapLabel;
 class PopupMenuComboBox;
 class QSlider;
 class QHBoxLayout;
+namespace module::meet {
 
 class MeetingOptionWidget : public QWidget {
     Q_OBJECT
 
 public:
     MeetingOptionWidget(QWidget* parent = nullptr);
-    void addFooterButton(QPushButton * button);
+    void addFooterButton(QPushButton* button);
 
 protected:
     void showEvent(QShowEvent* event) override;
@@ -41,3 +42,4 @@ private:
 
     QHBoxLayout* buttonLayout = nullptr;
 };
+}  // namespace module::meet

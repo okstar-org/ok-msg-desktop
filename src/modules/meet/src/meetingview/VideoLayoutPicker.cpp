@@ -1,3 +1,15 @@
+/*
+ * Copyright (c) 2022 船山信息 chuanshaninfo.com
+ * The project is licensed under Mulan PubL v2.
+ * You can use this software according to the terms and conditions of the Mulan
+ * PubL v2. You may obtain a copy of Mulan PubL v2 at:
+ *          http://license.coscl.org.cn/MulanPubL-2.0
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PubL v2 for more details.
+ */
+
 #include "VideoLayoutPicker.h"
 #include "base/shadowbackground.h"
 
@@ -10,12 +22,15 @@
 #include <QStyleOptionButton>
 #include <QStylePainter>
 #include <QTimer>
+namespace module::meet {
 
 class LayoutItemButton : public QPushButton {
 public:
     using QPushButton::QPushButton;
     QSize sizeHint() const;
-    QSize minimumSizeHint() const { return sizeHint(); }
+    QSize minimumSizeHint() const {
+        return sizeHint();
+    }
 
 protected:
     void paintEvent(QPaintEvent* event);
@@ -58,8 +73,8 @@ void VideoLayoutPicker::setCurrentType(module::meet::VideoLayoutType type) {
     typeGroup->blockSignals(false);
 }
 
-module::meet::VideoLayoutType VideoLayoutPicker::selectedType() const { 
-    // id is type 
+module::meet::VideoLayoutType VideoLayoutPicker::selectedType() const {
+    // id is type
     return static_cast<module::meet::VideoLayoutType>(typeGroup->checkedId());
 }
 
@@ -132,3 +147,4 @@ void LayoutItemButton::paintEvent(QPaintEvent* event) {
         p.drawPixmap(cr.topLeft(), px);
     }
 }
+}  // namespace module::meet

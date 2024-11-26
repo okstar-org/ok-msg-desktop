@@ -25,8 +25,11 @@
 
 #include <QWidget>
 
-class MeetingOptionWidget;
 class QLineEdit;
+
+namespace module::meet {
+
+class MeetingOptionWidget;
 
 class JoinMeetingWidget : public QWidget {
     Q_OBJECT
@@ -40,3 +43,4 @@ private:
     MeetingOptionWidget* optionWidget = nullptr;
     QLineEdit* idEdit = nullptr;
 };
+}  // namespace module::meet

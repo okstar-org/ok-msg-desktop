@@ -11,12 +11,16 @@
  */
 
 #include "StartMeetingWidget.h"
-#include <base/shadowbackground.h>
-#include "MeetingOptionWidget.h"
-
 #include <QLineEdit>
 #include <QPushButton>
 #include <QVBoxLayout>
+#include "Defines.h"
+#include "Meet.h"
+#include "MeetingOptionWidget.h"
+#include "Widget.h"
+#include "base/shadowbackground.h"
+
+namespace module::meet {
 
 static QPushButton* createButton(const QString& text, QWidget* parent, const QString& id) {
     QPushButton* button = new QPushButton(text, parent);
@@ -27,7 +31,10 @@ static QPushButton* createButton(const QString& text, QWidget* parent, const QSt
 }
 
 StartMeetingWidget::StartMeetingWidget(QWidget* parent) : QWidget(parent) {
+    widget = dynamic_cast<Widget*>(parent);
+
     setContentsMargins(10, 10, 10, 10);
+
     ShadowBackground* shadowBack = new ShadowBackground(this);
     shadowBack->setShadowRadius(10);
 
@@ -37,8 +44,19 @@ StartMeetingWidget::StartMeetingWidget(QWidget* parent) : QWidget(parent) {
     optionWidget = new MeetingOptionWidget(this);
 
     confirmButton = createButton(tr("Start Meeting"), optionWidget, "confirm");
+    connect(confirmButton, &QPushButton::clicked, [this]() {
+        auto n = getName();
+        if (n.isEmpty()) {
+            return;
+        }
+        emit requstStartMeeting(n);
+    });
+
     shareButton = createButton(tr("Share"), optionWidget, "share");
+    connect(shareButton, &QPushButton::clicked, this, &StartMeetingWidget::requstShareMeeting);
     disbandButton = createButton(tr("Disband"), optionWidget, "disband");
+    connect(disbandButton, &QPushButton::clicked, this, &StartMeetingWidget::requstDisbandMeeting);
+
     optionWidget->addFooterButton(disbandButton);
     optionWidget->addFooterButton(shareButton);
     optionWidget->addFooterButton(confirmButton);
@@ -48,14 +66,6 @@ StartMeetingWidget::StartMeetingWidget(QWidget* parent) : QWidget(parent) {
     mainLayout->addWidget(optionWidget, 1);
     mainLayout->setAlignment(meetingNameEdit, Qt::AlignHCenter);
 
-    connect(confirmButton, &QPushButton::clicked, [this]() {
-        auto n = getName();
-        if (n.isEmpty()) {
-            return;
-        }
-        emit requstStartMeeting(n);
-    });
-
     updateUi();
 }
 QString StartMeetingWidget::getName() {
@@ -63,10 +73,6 @@ QString StartMeetingWidget::getName() {
 }
 
 void StartMeetingWidget::setMeetingState(MeetingState state) {
-    if (meetingState == state) {
-        return;
-    }
-    meetingState = state;
     updateUi();
 }
 
@@ -78,22 +84,23 @@ void StartMeetingWidget::retranslateUi() {
 }
 
 void StartMeetingWidget::updateUi() {
+    auto meetingState = widget->getState();
     switch (meetingState) {
-        case StartMeetingWidget::NoMeeting:
+        case MeetingState::NoMeeting:
             shareButton->setVisible(false);
             disbandButton->setVisible(false);
             confirmButton->setVisible(true);
             confirmButton->setEnabled(true);
             meetingNameEdit->setReadOnly(false);
             break;
-        case StartMeetingWidget::CreatingMeeing:
+        case MeetingState::CreatingMeeting:
             shareButton->setVisible(false);
             disbandButton->setVisible(false);
             confirmButton->setVisible(true);
             confirmButton->setEnabled(false);
             meetingNameEdit->setReadOnly(true);
             break;
-        case StartMeetingWidget::OnMeeting:
+        case MeetingState::OnMeeting:
             shareButton->setVisible(true);
             disbandButton->setVisible(true);
             confirmButton->setVisible(false);
@@ -103,3 +110,4 @@ void StartMeetingWidget::updateUi() {
             break;
     }
 }
+}  // namespace module::meet

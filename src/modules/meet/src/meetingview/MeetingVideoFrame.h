@@ -22,22 +22,16 @@ class QToolButton;
 class PopupMenuComboBox;
 class QLabel;
 
-namespace lib::messenger {
-class IMMeet;
-}
+namespace module::meet {
 
 class MeetingVideosContainer;
 
-enum class MeetingFrom {
-    Create,  // 创建会议
-    Join     // 加入会议
-};
 
 class MeetingVideoFrame : public QWidget {
     Q_OBJECT
 public:
     explicit MeetingVideoFrame(const QString& username, QWidget* parent = nullptr);
-    ~MeetingVideoFrame();
+    ~MeetingVideoFrame() override;
     void reloadTheme();
     void createConference(const QString& username);
 
@@ -90,5 +84,5 @@ private:
     // 会议唯一名称
     QString username;
 };
-
+}  // namespace module::meet
 #endif  // !MEETINGVIDEOFRAME_H
