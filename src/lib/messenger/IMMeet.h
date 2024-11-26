@@ -38,11 +38,26 @@ class IMMeet : public QObject, public gloox::MeetHandler {
 public:
     explicit IMMeet(IM* im, QObject* parent = nullptr);
     ~IMMeet();
+    /**
+     * 创建会议
+     * @param name
+     * @return
+     */
     const Meet& create(const QString& name);
+
+    /**
+     * 解散会议
+     */
+    void disband();
+
+    /**
+     * 退出会议
+     */
+    void exit();
 
 protected:
     void handleCreation(const gloox::JID& jid, bool ready,
-                        std::map<std::string, std::string> props) override;
+                        const std::map<std::string, std::string>& props) override;
 
     void handleParticipant(const gloox::Meet::Participant& participant) override;
 

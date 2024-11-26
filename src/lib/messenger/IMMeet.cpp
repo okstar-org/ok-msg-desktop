@@ -24,10 +24,13 @@ namespace lib::messenger {
 
 IMMeet::IMMeet(IM* im, QObject* parent) : QObject(parent), im{im}, manager{nullptr} {
     manager = new gloox::MeetManager(im->getClient());
+    manager->registerHandler(this);
 }
 
 IMMeet::~IMMeet() {
     qDebug() << __func__;
+    delete manager;
+    manager = nullptr;
 }
 
 const Meet& IMMeet::create(const QString& name) {
@@ -55,11 +58,18 @@ const Meet& IMMeet::create(const QString& name) {
 
     return *conference;
 }
+
+void IMMeet::disband() {}
+
+void IMMeet::exit() {
+    //    manager->exitMeet();
+}
+
 void IMMeet::handleCreation(const gloox::JID& jid, bool ready,
-                            std::map<std::string, std::string> props) {
+                            const std::map<std::string, std::string>& props) {
     qDebug() << __func__ << qstring(jid.full()) << "ready:" << ready;
     for (const auto& kv : props) {
-        qDebug() << __func__ << "property:" << qstring(kv.first) << "=>" << qstring(kv.second);
+        qDebug() << "property:" << qstring(kv.first) << "=>" << qstring(kv.second);
     }
 }
 void IMMeet::handleParticipant(const gloox::Meet::Participant& participant) {
