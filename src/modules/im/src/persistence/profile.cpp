@@ -417,6 +417,7 @@ QString Profile::avatarPath(const ContactId& owner, bool forceUnencrypted) {
  * @return Avatar as QPixmap.
  */
 const QPixmap& Profile::loadAvatar() {
+    assert(core);
     if (pixmap.isNull()) {
         // 加载本地
         pixmap = loadAvatar(core->getSelfPeerId().getPublicKey());

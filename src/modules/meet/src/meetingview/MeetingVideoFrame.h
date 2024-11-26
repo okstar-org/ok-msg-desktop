@@ -15,6 +15,7 @@
 
 #include <QWidget>
 #include "MeetingVideoDefines.h"
+#include "lib/messenger/messenger.h"
 
 class QToolBar;
 class QToolButton;
@@ -22,7 +23,7 @@ class PopupMenuComboBox;
 class QLabel;
 
 namespace lib::messenger {
-class IMConference;
+class IMMeet;
 }
 
 class MeetingVideosContainer;
@@ -84,7 +85,7 @@ private:
     // 会议视频布局区域
     MeetingVideosContainer* videosLayout = nullptr;
 
-    lib::messenger::IMConference* conference;
+    lib::messenger::MessengerMeet* meet;
 
     // 会议唯一名称
     QString username;

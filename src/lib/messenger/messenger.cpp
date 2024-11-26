@@ -20,6 +20,7 @@
 #include "base/logs.h"
 #include "base/xmls.h"
 
+#include "IMMeet.h"
 #include "lib/messenger/IM.h"
 #include "lib/messenger/IMCall.h"
 #include "lib/messenger/IMFile.h"
@@ -55,7 +56,9 @@ Messenger::Messenger(const QString& host,
     connectIM();
 }
 
-Messenger::~Messenger() { qDebug() << __func__; }
+Messenger::~Messenger() {
+    qDebug() << __func__;
+}
 
 // Messenger *Messenger::getInstance() {
 //   static Messenger *self = nullptr;
@@ -100,7 +103,9 @@ void Messenger::onStarted() {
     qDebug() << "connected completed";
 }
 
-void Messenger::onStopped() { qDebug() << "onStopped..."; }
+void Messenger::onStopped() {
+    qDebug() << "onStopped...";
+}
 
 bool Messenger::connectIM() {
     connect(_im, &IM::started, this, &Messenger::onStarted);
@@ -254,9 +259,13 @@ bool Messenger::initRoom() {
     return true;
 }
 
-void Messenger::onReceiveGroupMessage(IMMessage msg) { emit receivedGroupMessage(msg); }
+void Messenger::onReceiveGroupMessage(IMMessage msg) {
+    emit receivedGroupMessage(msg);
+}
 
-QString Messenger::genUniqueId() { return qstring(_im->getClient()->getID()); }
+QString Messenger::genUniqueId() {
+    return qstring(_im->getClient()->getID());
+}
 
 bool Messenger::sendToGroup(const QString& g, const QString& msg, const QString& id) {
     qDebug() << QString("sendToGroup=>%1 id:%2 msg:%2").arg(g).arg(id).arg(msg);
@@ -307,50 +316,82 @@ void Messenger::sendFriendRequest(const QString& f, const QString& nick, const Q
     _im->addFriend(gloox::JID(stdstring(f)), nick, message);
 }
 
-void Messenger::acceptFriendRequest(const QString& f) { _im->acceptFriendRequest(f); }
+void Messenger::acceptFriendRequest(const QString& f) {
+    _im->acceptFriendRequest(f);
+}
 
-void Messenger::rejectFriendRequest(const QString& f) { _im->rejectFriendRequest(f); }
+void Messenger::rejectFriendRequest(const QString& f) {
+    _im->rejectFriendRequest(f);
+}
 
-void Messenger::getFriendVCard(const QString& f) { _im->fetchFriendVCard(f); }
+void Messenger::getFriendVCard(const QString& f) {
+    _im->fetchFriendVCard(f);
+}
 
 bool Messenger::removeFriend(const QString& f) {
     return _im->removeFriend(gloox::JID(f.toStdString()));
 }
 
-size_t Messenger::getFriendCount() { return _im->getRosterCount(); }
+size_t Messenger::getFriendCount() {
+    return _im->getRosterCount();
+}
 
-void Messenger::getFriendList(std::list<IMFriend>& list) { _im->getRosterList(list); }
+void Messenger::getFriendList(std::list<IMFriend>& list) {
+    _im->getRosterList(list);
+}
 
 void Messenger::setFriendAlias(const QString& f, const QString& alias) {
     _im->setFriendAlias(gloox::JID(stdstring(f)), stdstring(alias));
 }
 
-IMStatus Messenger::getFriendStatus(const QString& f) { return _im->getFriendStatus(f); }
+IMStatus Messenger::getFriendStatus(const QString& f) {
+    return _im->getFriendStatus(f);
+}
 
-void Messenger::addSelfHandler(SelfHandler* handler) { selfHandlers.push_back(handler); }
+void Messenger::addSelfHandler(SelfHandler* handler) {
+    selfHandlers.push_back(handler);
+}
 
-void Messenger::addFriendHandler(FriendHandler* handler) { friendHandlers.push_back(handler); }
+void Messenger::addFriendHandler(FriendHandler* handler) {
+    friendHandlers.push_back(handler);
+}
 
-void Messenger::addGroupHandler(GroupHandler* handler) { groupHandlers.push_back(handler); }
+void Messenger::addGroupHandler(GroupHandler* handler) {
+    groupHandlers.push_back(handler);
+}
 
-void Messenger::stop() { _im->stop(); }
+void Messenger::stop() {
+    _im->stop();
+}
 
-void Messenger::send(const QString& xml) { _im->send(xml); }
+void Messenger::send(const QString& xml) {
+    _im->send(xml);
+}
 
-IMPeerId Messenger::getSelfId() const { return _im->getSelfPeerId(); }
+IMPeerId Messenger::getSelfId() const {
+    return _im->getSelfPeerId();
+}
 
 IMStatus Messenger::getSelfStatus() const {
     auto pt = gloox::Presence::PresenceType::Available;
     return static_cast<IMStatus>(pt);
 }
 
-void Messenger::setSelfNickname(const QString& nickname) { _im->setNickname(nickname); }
+void Messenger::setSelfNickname(const QString& nickname) {
+    _im->setNickname(nickname);
+}
 
-QString Messenger::getSelfUsername() const { return _im->getSelfUsername(); }
+QString Messenger::getSelfUsername() const {
+    return _im->getSelfUsername();
+}
 
-QString Messenger::getSelfNick() const { return _im->getNickname(); }
+QString Messenger::getSelfNick() const {
+    return _im->getNickname();
+}
 
-void Messenger::changePassword(const QString& password) { _im->changePassword(password); }
+void Messenger::changePassword(const QString& password) {
+    _im->changePassword(password);
+}
 
 void Messenger::onDisconnect() {
     _delayer->call(1000 * 5, [&]() {
@@ -397,7 +438,9 @@ void Messenger::onEncryptedMessage(QString xml) {
 #endif
 }
 
-void Messenger::loadGroupList() { _im->loadGroupList(); }
+void Messenger::loadGroupList() {
+    _im->loadGroupList();
+}
 
 QString Messenger::createGroup(const QString& groupId, const QString& groupName) {
     gloox::JID self = _im->self();
@@ -414,9 +457,13 @@ bool Messenger::inviteGroup(const IMContactId& group, const IMContactId& f) {
                              gloox::JID(stdstring(f.toString())));
 }
 
-bool Messenger::leaveGroup(const QString& group) { return _im->leaveGroup(group); }
+bool Messenger::leaveGroup(const QString& group) {
+    return _im->leaveGroup(group);
+}
 
-bool Messenger::destroyGroup(const QString& group) { return _im->destroyGroup(group); }
+bool Messenger::destroyGroup(const QString& group) {
+    return _im->destroyGroup(group);
+}
 
 void Messenger::setRoomName(const QString& group, const QString& nick) {
     _im->setRoomName(group, stdstring(nick));
@@ -439,7 +486,9 @@ void Messenger::joinGroup(const QString& group) {
     _im->joinRoom(group);
 }
 
-void Messenger::setSelfAvatar(const QByteArray& avatar) { _im->setAvatar(avatar); }
+void Messenger::setSelfAvatar(const QByteArray& avatar) {
+    _im->setAvatar(avatar);
+}
 
 void Messenger::requestBookmarks() {
     _im->requestVCards();
@@ -454,9 +503,13 @@ void Messenger::onGroupReceived(QString groupId, QString name) {
 }
 
 // Call
-MessengerCall::MessengerCall(Messenger* messenger, QObject* parent) {
+MessengerCall::MessengerCall(Messenger* messenger, QObject* parent)
+        : QObject(parent), call{nullptr} {
     call = new IMCall(messenger->im(), this);
-    qDebug() << "Create imCall =>" << call;
+}
+
+MessengerCall::~MessengerCall() {
+    call->deleteLater();
 }
 
 void MessengerCall::addCallHandler(CallHandler* h) {
@@ -474,13 +527,24 @@ bool MessengerCall::callAnswerToFriend(const IMPeerId& peer, const QString& call
 void MessengerCall::callRetract(const IMContactId& f, const QString& sId) {
     call->callRetract(f, sId);
 }
-void MessengerCall::callReject(const IMPeerId& f, const QString& sId) { call->callReject(f, sId); }
-void MessengerCall::setMute(bool mute) { call->setMute(mute); }
-void MessengerCall::setRemoteMute(bool mute) { call->setRemoteMute(mute); }
+void MessengerCall::callReject(const IMPeerId& f, const QString& sId) {
+    call->callReject(f, sId);
+}
+void MessengerCall::setMute(bool mute) {
+    call->setMute(mute);
+}
+void MessengerCall::setRemoteMute(bool mute) {
+    call->setRemoteMute(mute);
+}
 
 // File
-MessengerFile::MessengerFile(Messenger* messenger, QObject* parent) : QObject(parent) {
+MessengerFile::MessengerFile(Messenger* messenger, QObject* parent)
+        : QObject(parent), fileSender{nullptr} {
     fileSender = new IMFile(messenger->im(), this);
+}
+
+MessengerFile::~MessengerFile() {
+    fileSender->deleteLater();
 }
 
 void MessengerFile::fileRejectRequest(QString friendId, const File& file) {
@@ -495,11 +559,31 @@ void MessengerFile::fileFinishRequest(QString friendId, const QString& sId) {
 void MessengerFile::fileFinishTransfer(QString friendId, const QString& sId) {
     fileSender->fileFinishTransfer(friendId, sId);
 }
-void MessengerFile::fileCancel(QString fileId) { fileSender->fileCancel(fileId); }
+
+void MessengerFile::fileCancel(QString fileId) {
+    fileSender->fileCancel(fileId);
+}
+
 bool MessengerFile::fileSendToFriend(const QString& f, const File& file) {
     return fileSender->fileSendToFriend(f, file);
 }
-void MessengerFile::addFileHandler(FileHandler* h) { fileSender->addFileHandler(h); }
+
+void MessengerFile::addFileHandler(FileHandler* h) {
+    fileSender->addFileHandler(h);
+}
+
+MessengerMeet::MessengerMeet(lib::messenger::Messenger* messenger, QObject* parent)
+        : QObject(parent), meet{nullptr} {
+    meet = new IMMeet(messenger->im());
+}
+
+MessengerMeet::~MessengerMeet() {
+    meet->deleteLater();
+}
+
+void MessengerMeet::create(const QString& room) {
+    meet->create(room);
+}
 
 }  // namespace messenger
 }  // namespace lib

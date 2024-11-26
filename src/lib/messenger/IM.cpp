@@ -151,7 +151,7 @@ std::unique_ptr<Client> IM::makeClient() {
      *
      */
     disco->addFeature(XMLNS_X_CONFERENCE);
-    client->registerStanzaExtension(new Conference);
+    client->registerStanzaExtension(new gloox::Conference);
 
     /**
      * XEP-0402: PEP Native Bookmarks
@@ -570,7 +570,7 @@ void IM::handleMessage(const gloox::Message& msg, MessageSession* session) {
         }
     }
 
-    auto conf = msg.findExtension<Conference>(ExtConference);
+    auto conf = msg.findExtension<gloox::Conference>(ExtConference);
     if (conf) {
         auto jid = conf->jid();
         qDebug() << "Received Room" << qstring(jid.full());
@@ -659,16 +659,16 @@ void IM::doMessageChat(const Message& msg, QString& friendId, const QString& bod
  * @param friendId
  */
 void IM::doMessageNormal(const Message& msg, QString& friendId) {
-    auto conf = msg.findExtension<Conference>(ExtConference);
+    auto conf = msg.findExtension<gloox::Conference>(ExtConference);
     if (conf) {
-        auto jid = conf->jid().bare();
+        auto jid = conf->jid().full();
         qDebug() << "New conference is arrival" << qstring(jid);
         cacheJoinRoom(jid);
     }
 }
 
 void IM::handleMessageEvent(const JID& from, const MessageEvent* et) {
-    qDebug() << ("JID:") << qstring(from.full()) << " MessageEvent:%2" << et;
+    qDebug() << __func__ << "from:" << qstring(from.full()) << "MessageEvent:" << et;
 }
 
 void IM::doPubSubEvent(const gloox::PubSub::Event* pse,  //

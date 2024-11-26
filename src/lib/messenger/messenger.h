@@ -49,7 +49,7 @@ class IMCall;
 /**
  *  会议
  */
-class IMConference;
+class IMMeet;
 
 /**
  * 连接状态
@@ -329,7 +329,9 @@ public:
 class MessengerCall : public QObject {
     Q_OBJECT
 public:
-    MessengerCall(Messenger* messenger, QObject* parent = nullptr);
+    explicit MessengerCall(Messenger* messenger, QObject* parent = nullptr);
+    ~MessengerCall() override;
+
     void addCallHandler(CallHandler*);
 
     // 发起呼叫邀请
@@ -402,10 +404,14 @@ public:
     virtual void onFileSendError(const QString& friendId, const File& file, int m_sentBytes) = 0;
 };
 
+/**
+ * 文件传输
+ */
 class MessengerFile : public QObject {
     Q_OBJECT
 public:
-    MessengerFile(Messenger* messenger, QObject* parent = nullptr);
+    explicit MessengerFile(Messenger* messenger, QObject* parent = nullptr);
+    ~MessengerFile() override;
 
     void addFileHandler(FileHandler*);
 
@@ -421,6 +427,29 @@ public:
 
 private:
     IMFile* fileSender;
+};
+
+/**
+ * 会议
+ */
+
+struct Meet {
+    QString jid;
+    QString uid;
+    uint32_t startAudioMuted;
+    uint32_t startVideoMuted;
+    bool rtcstatsEnabled;
+};
+
+class MessengerMeet : public QObject {
+    Q_OBJECT
+public:
+    explicit MessengerMeet(Messenger* messenger, QObject* parent = nullptr);
+    ~MessengerMeet() override;
+    void create(const QString& room);
+
+private:
+    IMMeet* meet;
 };
 
 }  // namespace lib::messenger

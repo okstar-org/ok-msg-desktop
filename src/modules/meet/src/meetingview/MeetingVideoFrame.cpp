@@ -15,7 +15,7 @@
 #include "MeetingVideosLayout.h"
 #include "VideoLayoutPicker.h"
 #include "base/RoundedPixmapLabel.h"
-#include "lib/messenger/IMConference.h"
+#include "lib/messenger/messenger.h"
 #include "lib/settings/style.h"
 #include "modules/im/src/core/core.h"
 #include "modules/im/src/nexus.h"
@@ -52,15 +52,15 @@ MeetingVideoFrame::MeetingVideoFrame(const QString& username, QWidget* parent)
     reloadTheme();
     retranslateUi();
 
-    auto* im = Nexus::getInstance().getCore()->getMessenger()->im();
-    conference = new lib::messenger::IMConference(im, this);
+    Core* core = Nexus::getInstance().getCore();
+    meet = new lib::messenger::MessengerMeet(core->getMessenger(), this);
 
-    qDebug() << __func__ << "conference:" << conference;
-    conference->create(username);
+    qDebug() << __func__ << "meet:" << meet;
+    meet->create(username);
 }
 
 MeetingVideoFrame::~MeetingVideoFrame() {
-    conference->deleteLater();
+    meet->deleteLater();
 }
 
 void MeetingVideoFrame::reloadTheme() {

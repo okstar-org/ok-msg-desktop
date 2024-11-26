@@ -18,29 +18,39 @@
 
 #include <QObject>
 #include <memory>
+
+#include <meethandler.h>
+#include <meetmanager.h>
+
 #include "base/jid.h"
+#include "messenger.h"
+
+namespace gloox {
+class ConferenceManager;
+}
 
 namespace lib::messenger {
 
 class IM;
 
-struct Conference {
-    ok::base::Jid jid;
-    QString uid;
-    uint32_t startAudioMuted;
-    uint32_t startVideoMuted;
-    bool rtcstatsEnabled;
-};
-
-class IMConference : public QObject {
+class IMMeet : public QObject, public gloox::MeetHandler {
     Q_OBJECT
 public:
-    explicit IMConference(IM* im, QObject* parent = nullptr);
-    ~IMConference();
-    const Conference& create(const QString& name);
+    explicit IMMeet(IM* im, QObject* parent = nullptr);
+    ~IMMeet();
+    const Meet& create(const QString& name);
+
+protected:
+    void handleCreation(const gloox::JID& jid, bool ready,
+                        std::map<std::string, std::string> props) override;
+
+    void handleParticipant(const gloox::Meet::Participant& participant) override;
+
+    void handleStatsId(const std::string& statsId) override;
 
 private:
     IM* im;
-    std::unique_ptr<Conference> conference;
+    std::unique_ptr<Meet> conference;
+    gloox::MeetManager* manager;
 };
 }  // namespace lib::messenger

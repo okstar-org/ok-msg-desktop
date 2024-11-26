@@ -6,7 +6,6 @@ endif()
 
 find_package(ok-gloox REQUIRED)
 if(ok-gloox_FOUND)
-	search_dependency(ok-gloox PACKAGE ok-gloox)
 	set(gloox_LIB ok-gloox)
 endif ()
 
