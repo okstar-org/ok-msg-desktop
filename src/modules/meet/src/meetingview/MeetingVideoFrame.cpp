@@ -33,8 +33,8 @@
 #include <memory>
 namespace module::meet {
 
-MeetingVideoFrame::MeetingVideoFrame(const QString& username, QWidget* parent)
-        : QWidget(parent), username(username) {
+MeetingVideoFrame::MeetingVideoFrame(const QString& name, QWidget* parent)
+        : QWidget(parent), username(name) {
     setAttribute(Qt::WA_StyledBackground);
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -57,9 +57,8 @@ MeetingVideoFrame::MeetingVideoFrame(const QString& username, QWidget* parent)
 
     Core* core = Nexus::getInstance().getCore();
     meet = new lib::messenger::MessengerMeet(core->getMessenger(), this);
-
-    qDebug() << __func__ << "meet:" << meet;
-    meet->create(username);
+    meet->addHandler(this);
+    createMeet(name);
 }
 
 MeetingVideoFrame::~MeetingVideoFrame() {
@@ -216,5 +215,15 @@ void MeetingVideoFrame::retranslateUi() {
  * 创建会议
  * @param name
  */
-void MeetingVideoFrame::createConference(const QString& name) {}
+void MeetingVideoFrame::createMeet(const QString& name) {
+    qDebug() << __func__ << name;
+    meet->create(name);
+}
+
+void MeetingVideoFrame::onMeetCreated(const ok::base::Jid& jid,
+                                      bool ready,
+                                      const std::map<std::string, std::string>& props) {
+    emit meetCreated(jid.node());
+}
+
 }  // namespace module::meet

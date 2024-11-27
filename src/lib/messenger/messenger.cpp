@@ -13,7 +13,6 @@
 #include "messenger.h"
 #include "IMFile.h"
 
-#include <QThread>
 #include <memory>
 
 #include "application.h"
@@ -23,11 +22,9 @@
 #include "IMMeet.h"
 #include "lib/messenger/IM.h"
 #include "lib/messenger/IMCall.h"
-#include "lib/messenger/IMFile.h"
 #include "lib/plugin/pluginmanager.h"
 
-namespace lib {
-namespace messenger {
+namespace lib::messenger {
 
 Messenger::Messenger(const QString& host,
                      const QString& name,
@@ -585,5 +582,8 @@ void MessengerMeet::create(const QString& room) {
     meet->create(room);
 }
 
-}  // namespace messenger
-}  // namespace lib
+void MessengerMeet::addHandler(MessengerMeetHandler* hdr) {
+    meet->addMeetHandler(hdr);
+}
+
+}  // namespace lib::messenger

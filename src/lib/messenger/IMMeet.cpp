@@ -71,10 +71,19 @@ void IMMeet::handleCreation(const gloox::JID& jid, bool ready,
     for (const auto& kv : props) {
         qDebug() << "property:" << qstring(kv.first) << "=>" << qstring(kv.second);
     }
+
+    for (auto* h : handlers) {
+        h->onMeetCreated(ok::base::Jid(jid.full()), ready, props);
+    }
 }
 void IMMeet::handleParticipant(const gloox::Meet::Participant& participant) {
     qDebug() << __func__ << qstring(participant.nick);
 }
 void IMMeet::handleStatsId(const std::string& statsId) {}
+
+void IMMeet::addMeetHandler(MessengerMeetHandler* hdr) {
+    if (!hdr) return;
+    handlers.push_back(hdr);
+}
 
 }  // namespace lib::messenger

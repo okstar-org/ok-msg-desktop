@@ -25,10 +25,6 @@
 #include "base/jid.h"
 #include "messenger.h"
 
-namespace gloox {
-class ConferenceManager;
-}
-
 namespace lib::messenger {
 
 class IM;
@@ -37,7 +33,7 @@ class IMMeet : public QObject, public gloox::MeetHandler {
     Q_OBJECT
 public:
     explicit IMMeet(IM* im, QObject* parent = nullptr);
-    ~IMMeet();
+    ~IMMeet() override;
     /**
      * 创建会议
      * @param name
@@ -55,6 +51,8 @@ public:
      */
     void exit();
 
+    void addMeetHandler(MessengerMeetHandler* hdr);
+
 protected:
     void handleCreation(const gloox::JID& jid, bool ready,
                         const std::map<std::string, std::string>& props) override;
@@ -67,5 +65,6 @@ private:
     IM* im;
     std::unique_ptr<Meet> conference;
     gloox::MeetManager* manager;
+    std::vector<MessengerMeetHandler*> handlers;
 };
 }  // namespace lib::messenger

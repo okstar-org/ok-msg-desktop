@@ -15,6 +15,7 @@
 
 #include <QWidget>
 #include "MeetingVideoDefines.h"
+#include "base/jid.h"
 #include "lib/messenger/messenger.h"
 
 class QToolBar;
@@ -26,14 +27,14 @@ namespace module::meet {
 
 class MeetingVideosContainer;
 
-
-class MeetingVideoFrame : public QWidget {
+class MeetingVideoFrame : public QWidget, public lib::messenger::MessengerMeetHandler {
     Q_OBJECT
 public:
-    explicit MeetingVideoFrame(const QString& username, QWidget* parent = nullptr);
+    explicit MeetingVideoFrame(const QString& name, QWidget* parent = nullptr);
     ~MeetingVideoFrame() override;
     void reloadTheme();
-    void createConference(const QString& username);
+    void createMeet(const QString& name);
+    void retranslateUi();
 
 private:
     void creatTopToolBar();
@@ -47,8 +48,15 @@ private:
 
     void changeEvent(QEvent* event);
 
-public:
-    void retranslateUi();
+    /**
+     * MessengerMeetHandler
+     * @param jid
+     * @param ready
+     * @param props
+     */
+    void onMeetCreated(const ok::base::Jid& jid,
+                       bool ready,
+                       const std::map<std::string, std::string>& props) override;
 
 private:
     // 顶部工具
@@ -83,6 +91,10 @@ private:
 
     // 会议唯一名称
     QString username;
+
+signals:
+    void meetCreated(const QString& name);
+    void participantJoined();
 };
 }  // namespace module::meet
 #endif  // !MEETINGVIDEOFRAME_H

@@ -44,6 +44,7 @@ public:
     Jid();
     ~Jid();
 
+    Jid(const std::string& s);
     Jid(const QString& s);
     Jid(const QString& node, const QString& domain, const QString& resource = "");
     Jid(const char* s);

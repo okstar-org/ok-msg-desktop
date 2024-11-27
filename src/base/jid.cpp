@@ -154,7 +154,11 @@ Jid::Jid() {
     null = true;
 }
 
-Jid::~Jid() {}
+Jid::~Jid() = default;
+
+Jid::Jid(const std::string& s) {
+    set(QString(s.c_str()));
+}
 
 Jid::Jid(const QString& s) { set(s); }
 

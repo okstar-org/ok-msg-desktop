@@ -20,11 +20,22 @@ namespace module::meet {
 /**
  * 会议状态
  */
-enum class MeetingState { NoMeeting, CreatingMeeting, OnMeeting };
+enum class MeetingState {
+    NoMeeting,
+    CreatingMeeting,  // 创建中
+    Created,          // 已创建
+    OnMeeting         // 会议中（自己已经加入）
+};
 
 enum class MeetingFrom {
     Create,  // 创建会议
     Join     // 加入会议
+};
+
+enum class ParticipantState {
+    None,
+    Joining,  // 加入中
+    Joined    // 已加入
 };
 
 /**

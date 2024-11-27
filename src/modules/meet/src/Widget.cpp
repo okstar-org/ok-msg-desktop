@@ -128,10 +128,16 @@ void Widget::createMeeting(const QString& name) {
             currentMeetingName.clear();
             setState(MeetingState::NoMeeting);
         });
+
+        connect(view.data(), &MeetingVideoFrame::meetCreated,
+                [this](const QString& name) { setState(MeetingState::Created); });
+
+        connect(view.data(), &MeetingVideoFrame::participantJoined, [this]() {
+            setState(MeetingState::OnMeeting);
+        });
     }
 
     currentMeetingName = name;
-    setState(MeetingState::OnMeeting);
     view->show();
 }
 
