@@ -464,13 +464,6 @@ void IM::enableDiscoManager() {
     disco->registerNodeHandler(this, EmptyString);
 }
 
-void IM::requestVCards() {
-    /**
-     * VCard
-     */
-    qDebug() << "requestVCards";
-    vCardManager->fetchVCard(self().bareJID(), this);
-}
 
 gloox::RosterManager* IM::enableRosterManager() {
     qDebug() << __func__;
@@ -1279,7 +1272,11 @@ void IM::handleVCard(const JID& jid, const VCard* vcard) {
                          .url = qstring(photo.extval)};
     }
 
-    emit receiveFriendVCard(IMPeerId(jid), imvCard);
+    if (jid == getClient()->jid()) {
+        emit selfVCard(imvCard);
+    } else {
+        emit receiveFriendVCard(IMPeerId(jid), imvCard);
+    }
 }
 
 void IM::handleVCardResult(VCardContext context, const JID& jid, StanzaError error) {
@@ -1296,6 +1293,11 @@ void IM::fetchFriendVCard(const QString& friendId) {
     vCardManager->fetchVCard(jid, this);
     //  pubSubManager->subscribe(jid, "", this);
     //  _client->rosterManager()->subscribe(jid.bareJID());
+}
+
+void IM::requestVCards() {
+    qDebug() << "requestVCards";
+    vCardManager->fetchVCard(self().bareJID(), this);
 }
 
 void IM::handleTag(Tag* tag) {

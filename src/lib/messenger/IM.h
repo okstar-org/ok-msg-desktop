@@ -882,7 +882,7 @@ signals:
 
     void receiveFriendChatState(QString friendId, int state);
 
-    void receiveFriendVCard(IMPeerId peerId, IMVCard imvCard);
+    void receiveFriendVCard(IMPeerId peerId, IMVCard vCard);
 
     void exportEncryptedMessage(QString em);
 
@@ -895,6 +895,7 @@ signals:
     void selfNicknameChanged(QString nickname);
     void selfAvatarChanged(std::string avatar);
     void selfStatusChanged(int type, const std::string status);
+    void selfVCard(IMVCard vCard);
 
     void started();
     void stopped();

@@ -25,6 +25,11 @@ namespace lib::messenger {
 IMMeet::IMMeet(IM* im, QObject* parent) : QObject(parent), im{im}, manager{nullptr} {
     manager = new gloox::MeetManager(im->getClient());
     manager->registerHandler(this);
+
+    connect(im, &IM::selfVCard, [this](IMVCard vCard_) { vCard = vCard_; });
+
+    // request self vcard.
+    im->requestVCards();
 }
 
 IMMeet::~IMMeet() {
@@ -65,6 +70,8 @@ void IMMeet::exit() {
     //    manager->exitMeet();
 }
 
+void IMMeet::join() {}
+
 void IMMeet::handleCreation(const gloox::JID& jid, bool ready,
                             const std::map<std::string, std::string>& props) {
     qDebug() << __func__ << qstring(jid.full()) << "ready:" << ready;
@@ -75,7 +82,21 @@ void IMMeet::handleCreation(const gloox::JID& jid, bool ready,
     for (auto* h : handlers) {
         h->onMeetCreated(ok::base::Jid(jid.full()), ready, props);
     }
+
+    // 加入到会议
+    auto self = im->self();
+    gloox::Meet meet(jid, "", {});
+    gloox::Meet::Participant participant = {
+            .region = "region1",
+            .codecType = "vp8",
+            .avatarUrl = stdstring(vCard.photo.url),
+            .email = vCard.emails.isEmpty() ? "" : stdstring(vCard.emails.last().number),
+            .nick = stdstring(vCard.nickname),
+            .resource = self.resource(),
+    };
+    manager->join(meet, participant);
 }
+
 void IMMeet::handleParticipant(const gloox::Meet::Participant& participant) {
     qDebug() << __func__ << qstring(participant.nick);
 }

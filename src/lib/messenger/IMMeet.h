@@ -51,6 +51,15 @@ public:
      */
     void exit();
 
+    /**
+     * 加入会议
+     */
+    void join();
+
+    /**
+     * 添加处理器
+     * @param hdr
+     */
     void addMeetHandler(MessengerMeetHandler* hdr);
 
 protected:
@@ -66,5 +75,6 @@ private:
     std::unique_ptr<Meet> conference;
     gloox::MeetManager* manager;
     std::vector<MessengerMeetHandler*> handlers;
+    IMVCard vCard;
 };
 }  // namespace lib::messenger
