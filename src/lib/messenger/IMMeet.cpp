@@ -15,6 +15,8 @@
 //
 
 #include "IMMeet.h"
+
+#include <utility>
 #include "IM.h"
 #include "application.h"
 #include "meetmanager.h"
@@ -26,7 +28,7 @@ IMMeet::IMMeet(IM* im, QObject* parent) : QObject(parent), im{im}, manager{nullp
     manager = new gloox::MeetManager(im->getClient());
     manager->registerHandler(this);
 
-    connect(im, &IM::selfVCard, [this](IMVCard vCard_) { vCard = vCard_; });
+    connect(im, &IM::selfVCard, [this](IMVCard vCard_) { vCard = std::move(vCard_); });
 
     // request self vcard.
     im->requestVCards();

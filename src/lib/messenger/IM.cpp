@@ -1272,7 +1272,7 @@ void IM::handleVCard(const JID& jid, const VCard* vcard) {
                          .url = qstring(photo.extval)};
     }
 
-    if (jid == getClient()->jid()) {
+    if (jid.bare() == getClient()->jid().bare()) {
         emit selfVCard(imvCard);
     } else {
         emit receiveFriendVCard(IMPeerId(jid), imvCard);
