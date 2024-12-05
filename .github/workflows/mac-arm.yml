@@ -82,10 +82,11 @@ jobs:
           cmake --build out --config=${{ matrix.build_type }}
           sudo cmake --install out --config ${{ matrix.build_type }}
 
-      - name: Install Qt        
-        run: |
-            brew install qt@5
-            echo "QT_PATH=$(brew --prefix qt@5)" >> $GITHUB_ENV
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: '5.15.2'
+          modules: 'qtwebengine'
 
       - name: Set reusable strings
         id: strings
@@ -101,7 +102,6 @@ jobs:
       - name: CMake Build
         run: |
           cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
-      
       
       - name: Decode and import certificate
         if: ${{ startsWith(github.ref, 'refs/tags/') }}
