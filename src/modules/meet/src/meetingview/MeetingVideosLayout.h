@@ -29,8 +29,8 @@ class MeetingVideoOutput;
 class MeetingVideosContainer : public QWidget {
 public:
     MeetingVideosContainer(QWidget* parent);
-    void resetLayout(module::meet::VideoLayoutType type);
-    module::meet::VideoLayoutType currentLayoutType() const;
+    void resetLayout(VideoLayoutType type);
+    VideoLayoutType currentLayoutType() const;
     QSize sizeHint() const;
     QSize minimumSizeHint() const;
 
@@ -41,7 +41,7 @@ private:
     MeetingVideoOutput* getCenterVideo();
 
 private:
-    module::meet::VideoLayoutType layoutType = module::meet::GridView;
+    VideoLayoutType layoutType = GridView;
 
     MeetingVideosLayout* participantLayout = nullptr;
     MeetingVideoOutput* centerVideo = nullptr;
