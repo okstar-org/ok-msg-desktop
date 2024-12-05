@@ -26,7 +26,7 @@ MeetingVideosContainer::MeetingVideosContainer(QWidget* parent) : QWidget(parent
 
     splitter = new QSplitter(Qt::Vertical, this);
     participantLayout = new MeetingVideosLayout(MeetingVideosLayout::LayoutType::Grid, this);
-    participantLayout->setPageCellCount(9);
+    participantLayout->setPageCellCount(2);
     splitter->addWidget(participantLayout);
     doResetLayout();
 
@@ -36,7 +36,7 @@ MeetingVideosContainer::MeetingVideosContainer(QWidget* parent) : QWidget(parent
     layout->addWidget(splitter);
 }
 
-void MeetingVideosContainer::resetLayout(module::meet::VideoLayoutType type) {
+void MeetingVideosContainer::resetLayout(VideoLayoutType type) {
     if (layoutType == type) {
         return;
     }
