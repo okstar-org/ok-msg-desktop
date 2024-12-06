@@ -104,6 +104,10 @@ void IMMeet::handleParticipant(const gloox::Meet::Participant& participant) {
 }
 void IMMeet::handleStatsId(const std::string& statsId) {}
 
+void IMMeet::handleJsonMessage(const gloox::JsonMessage* json) {
+    qDebug() << __func__ << qstring(json->getJson());
+}
+
 void IMMeet::addMeetHandler(MessengerMeetHandler* hdr) {
     if (!hdr) return;
     handlers.push_back(hdr);

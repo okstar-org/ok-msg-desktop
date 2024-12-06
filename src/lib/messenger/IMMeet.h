@@ -70,6 +70,8 @@ protected:
 
     void handleStatsId(const std::string& statsId) override;
 
+    void handleJsonMessage(const gloox::JsonMessage* json) override;
+
 private:
     IM* im;
     std::unique_ptr<Meet> conference;
