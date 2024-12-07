@@ -22,6 +22,7 @@
 #include <meethandler.h>
 #include <meetmanager.h>
 
+#include "IMFromHostHandler.h"
 #include "base/jid.h"
 #include "messenger.h"
 
@@ -29,7 +30,7 @@ namespace lib::messenger {
 
 class IM;
 
-class IMMeet : public QObject, public gloox::MeetHandler {
+class IMMeet : public QObject, public IMFromHostHandler, public gloox::MeetHandler {
     Q_OBJECT
 public:
     explicit IMMeet(IM* im, QObject* parent = nullptr);
@@ -39,7 +40,7 @@ public:
      * @param name
      * @return
      */
-    const Meet& create(const QString& name);
+    const std::string& create(const QString& name);
 
     /**
      * 解散会议
@@ -63,18 +64,21 @@ public:
     void addMeetHandler(MessengerMeetHandler* hdr);
 
 protected:
+    void handleHostPresence(const gloox::JID& from, const gloox::Presence& presence) override;
+
     void handleCreation(const gloox::JID& jid, bool ready,
                         const std::map<std::string, std::string>& props) override;
 
-    void handleParticipant(const gloox::Meet::Participant& participant) override;
+    void handleParticipant(const gloox::JID& jid,
+                           const gloox::Meet::Participant& participant) override;
 
-    void handleStatsId(const std::string& statsId) override;
+    void handleStatsId(const gloox::JID& jid, const std::string& statsId) override;
 
-    void handleJsonMessage(const gloox::JsonMessage* json) override;
+    void handleJsonMessage(const gloox::JID& jid, const gloox::JsonMessage* json) override;
 
 private:
     IM* im;
-    std::unique_ptr<Meet> conference;
+    std::unique_ptr<gloox::Meet> meet;
     gloox::MeetManager* manager;
     std::vector<MessengerMeetHandler*> handlers;
     IMVCard vCard;

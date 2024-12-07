@@ -16,6 +16,7 @@
 // TODO resolve conflict DrawText in WinUser.h
 #undef DrawText
 
+#include "IMFromHostHandler.h"
 #include "base/hashs.h"
 #include "base/logs.h"
 #include "base/times.h"
@@ -463,7 +464,6 @@ void IM::enableDiscoManager() {
     disco->registerDiscoHandler(this);
     disco->registerNodeHandler(this, EmptyString);
 }
-
 
 gloox::RosterManager* IM::enableRosterManager() {
     qDebug() << __func__;
@@ -1430,10 +1430,14 @@ void IM::handleDiscoError(const JID& from,            //
 
 // Presence Handler
 void IM::handlePresence(const Presence& presence) {
-    qDebug() << __func__ << "from" << qstring(presence.from().full()) << "presence"
-             << presence.presence();
+    auto& from = presence.from();
+    qDebug() << __func__ << "from" << qstring(from.full()) << "presence" << presence.presence();
 
-    updateOnlineStatus(presence.from().bare(), presence.from().resource(), presence.presence());
+    auto iterator = fromHostHandlers.find(from.server());
+    if (iterator != fromHostHandlers.end()) {
+        iterator.value()->handleHostPresence(from, presence);
+    }
+    updateOnlineStatus(from.bare(), from.resource(), presence.presence());
 }
 
 /**
@@ -2383,20 +2387,23 @@ gloox::Jingle::Session* IM::createSession(const gloox::JID& jid, const std::stri
     if (!h) {
         return nullptr;
     }
-
     return _sessionManager->createSession(jid, this, (sId));
 }
 
 void IM::removeSession(gloox::Jingle::Session* s) {
-    if (!_sessionManager) {
-        return;
-    }
+    if (!_sessionManager) return;
+    if (!s) return;
     _sessionManager->discardSession(s);
 }
 
 void IM::addSessionHandler(IMSessionHandler* h) {
     assert(h);
     m_sessionHandlers.push_back(h);
+}
+
+void IM::addFromHostHandler(const std::string& from, IMFromHostHandler* h) {
+    assert(h);
+    fromHostHandlers[from] = h;
 }
 
 }  // namespace lib::messenger

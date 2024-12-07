@@ -16,7 +16,9 @@
 
 #include "IMMeet.h"
 
+#include <capabilities.h>
 #include <utility>
+
 #include "IM.h"
 #include "application.h"
 #include "meetmanager.h"
@@ -32,6 +34,12 @@ IMMeet::IMMeet(IM* im, QObject* parent) : QObject(parent), im{im}, manager{nullp
 
     // request self vcard.
     im->requestVCards();
+
+    auto session = ok::Application::Instance()->getSession();
+    qDebug() << "Username:" << session->getToken().username;
+
+    auto host = stdstring("conference." + session->getSignInInfo().host);
+    im->addFromHostHandler(host, this);
 }
 
 IMMeet::~IMMeet() {
@@ -40,30 +48,21 @@ IMMeet::~IMMeet() {
     manager = nullptr;
 }
 
-const Meet& IMMeet::create(const QString& name) {
+const std::string& IMMeet::create(const QString& name) {
     qDebug() << __func__ << name;
 
     auto session = ok::Application::Instance()->getSession();
     qDebug() << "Username:" << session->getToken().username;
 
-    conference = std::make_unique<Meet>();
-    conference->jid = name + "@conference." + session->getSignInInfo().host;
-    conference->uid = ok::base::UUID::make();
-    conference->startAudioMuted = 9;
-    conference->startVideoMuted = 9;
-    conference->rtcstatsEnabled = false;
-
-    gloox::JID jid = stdstring((name + "@conference." + session->getSignInInfo().host));
-
     std::map<std::string, std::string> props;
     props.insert(std::pair("startAudioMuted", "9"));
     props.insert(std::pair("startVideoMuted", "9"));
     props.insert(std::pair("rtcstatsEnabled", "false"));
-    // focus.meet.chuanshaninfo.com
-    gloox::Meet c(jid, stdstring(conference->uid), props);
-    manager->createMeet(c);
 
-    return *conference;
+    gloox::JID jid(stdstring(name) + "@conference." + stdstring(session->getSignInInfo().host));
+    meet = std::make_unique<gloox::Meet>(jid, stdstring(ok::base::UUID::make()), props);
+    manager->createMeet(*meet);
+    return meet->getUid();
 }
 
 void IMMeet::disband() {}
@@ -73,6 +72,74 @@ void IMMeet::exit() {
 }
 
 void IMMeet::join() {}
+
+void IMMeet::handleHostPresence(const gloox::JID& from, const gloox::Presence& presence) {
+    qDebug() << __func__ << qstring(from.full()) << "presence:" << presence.presence();
+    auto caps = presence.capabilities();
+    if (caps->node() != gloox::XMLNS_JITSI_MEET) {
+        qWarning() << "Is not support meet.";
+        return;
+    }
+
+    /**
+     * <presence
+to='sjdvr4swzf2f@meet.chuanshaninfo.com/OkMSG.root-host.[v25.03.00-3-15-g23458c4].OTE5Y2'
+from='test@conference.meet.chuanshaninfo.com/46a04cab'> <stats-id>Chloe-ZsC</stats-id>
+     <c xmlns='http://jabber.org/protocol/caps' hash='sha-1' node='https://jitsi.org/jitsi-meet'
+        ver='p1SSmeQ82gSAjXEw+FlBmWtBv2k='/>
+     <features>
+        <feature var='https://jitsi.org/meet/e2ee'/>
+     </features>
+    <SourceInfo>{}</SourceInfo>
+    <jitsi_participant_region>region1</jitsi_participant_region>
+    <jitsi_participant_codecType>vp9</jitsi_participant_codecType>
+    <avatar-url>data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL...</avatar-url>
+    <email>eiilpux17@163.com</email>
+    <nick xmlns='http://jabber.org/protocol/nick'>李佩旭</nick>
+    <jitsi_participant_e2ee.idKey.curve25519>BLE6EaRXYhRdZH5mV2MRWjQmH8tlASmHUlHwNXc7cT8</jitsi_participant_e2ee.idKey.curve25519>
+    <jitsi_participant_e2ee.idKey.ed25519>+ARDqdxd9wo41zBXzIIsVuZWdg5c7JHyaDG2THFeSMk</jitsi_participant_e2ee.idKey.ed25519>
+    <x xmlns='http://jabber.org/protocol/muc#user'>
+        <item jid='px0hzgu9bwzb@meet.chuanshaninfo.com/9f31d7f1-0644-4cfb-82e9-da69305ce32a'
+        affiliation='none' role='participant'/>
+    </x>
+</presence>
+*/
+    auto t = presence.tag();
+
+    auto email = t->findChild("email");
+    if (email) {
+        gloox::Meet::Participant participant = {
+                .region = t->findChild("jitsi_participant_region")->cdata(),
+                .codecType = t->findChild("jitsi_participant_codecType")->cdata(),
+                .avatarUrl = t->findChild("avatar-url")->cdata(),
+                .email = email->cdata(),
+                .nick = t->findChild("nick")->cdata(),
+                .resource = from.resource(),
+                .e2ee = false};
+
+        auto fts = t->findChild("features");
+        auto e2ee = fts->findChild("feature", "var", "https://jitsi.org/meet/e2ee");
+        if (e2ee) {
+            participant.e2ee = true;
+            auto ed25519 = t->findChild("jitsi_participant_e2ee.idKey.ed25519");
+            if (ed25519) {
+                participant.idKeys.insert(std::make_pair("ed25519", ed25519->cdata()));
+            }
+            auto curve25519 = t->findChild("jitsi_participant_e2ee.idKey.curve25519");
+            if (curve25519) {
+                participant.idKeys.insert(std::make_pair("curve25519", curve25519->cdata()));
+            }
+        }
+
+        // 获取群组用户jid
+        auto mucUser = t->findChild("x", "xmlns", "http://jabber.org/protocol/muc#user");
+        if (mucUser) {
+            participant.mucUser = gloox::MUCRoom::MUCUser(mucUser);
+        }
+        meet->addParticipant(participant);
+    }
+
+}  // namespace lib::messenger
 
 void IMMeet::handleCreation(const gloox::JID& jid, bool ready,
                             const std::map<std::string, std::string>& props) {
@@ -99,12 +166,12 @@ void IMMeet::handleCreation(const gloox::JID& jid, bool ready,
     manager->join(meet, participant);
 }
 
-void IMMeet::handleParticipant(const gloox::Meet::Participant& participant) {
+void IMMeet::handleParticipant(const gloox::JID& jid, const gloox::Meet::Participant& participant) {
     qDebug() << __func__ << qstring(participant.nick);
 }
-void IMMeet::handleStatsId(const std::string& statsId) {}
+void IMMeet::handleStatsId(const gloox::JID& jid, const std::string& statsId) {}
 
-void IMMeet::handleJsonMessage(const gloox::JsonMessage* json) {
+void IMMeet::handleJsonMessage(const gloox::JID& jid, const gloox::JsonMessage* json) {
     qDebug() << __func__ << qstring(json->getJson());
 }
 

@@ -134,7 +134,7 @@ struct IMRoomInfo {
     std::map<std::string, std::string> changes;
 };
 
-class IMJingle;
+class IMFromHostHandler;
 
 class IM : public ok::base::Task,
            public gloox::ConnectionListener,
@@ -164,7 +164,7 @@ class IM : public ok::base::Task,
     Q_OBJECT
 public:
     explicit IM(QString host, QString user, QString pwd, QStringList features);
-    ~IM();
+    ~IM() override;
 
     inline static IMMessage fromXMsg(MsgType type, const gloox::Message& msg);
 
@@ -315,6 +315,8 @@ public:
     void removeSession(gloox::Jingle::Session* s);
 
     void addSessionHandler(IMSessionHandler* h);
+
+    void addFromHostHandler(const std::string& from, IMFromHostHandler* h);
 
 protected:
     void run() override;
@@ -855,6 +857,8 @@ private:
 
     // External Service Discovery
     QList<gloox::ExtDisco::Service> mExtSrvDiscos;
+
+    QMap<std::string, IMFromHostHandler*> fromHostHandlers;
 
 signals:
     void connectResult(IMConnectStatus);
