@@ -83,10 +83,9 @@ jobs:
           sudo cmake --install out --config ${{ matrix.build_type }}
 
       - name: Install Qt
-        uses: jurplel/install-qt-action@v3
-        with:
-          version: '5.15.2'
-          modules: 'qtwebengine'
+        run: |
+          brew install qt@5
+          echo "QT_PATH=$(brew --prefix qt@5)" >> $GITHUB_ENV
 
       - name: Set reusable strings
         id: strings
