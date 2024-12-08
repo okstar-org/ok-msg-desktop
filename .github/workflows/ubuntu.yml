@@ -22,9 +22,9 @@ on:
       - 'snap/**'
       - 'docs/**'
       - 'flatpak/**'
-      - '.github/**'
       - 'src/base/platform/windows/**'
       - 'src/base/platform/macos/**'
+      - '.github/**'
       - '!.github/workflows/ubuntu.yml'
   pull_request:
     branches: [ develop, develop-linux, develop-ubuntu ]
@@ -44,9 +44,7 @@ jobs:
         build_type: [Release]
         c_compiler: [clang]
         cpp_compiler: [clang++]
-        include:
-            c_compiler: clang
-            cpp_compiler: clang++
+
     steps:
     - name: Checkout repository and submodules
       uses: actions/checkout@v3
