@@ -40,12 +40,11 @@ jobs:
       matrix:
 #        https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
         arch: [x86_64]
-        os: [ubuntu-22.04]
+        os: [ ubuntu-latest ]
         build_type: [Release]
         c_compiler: [clang]
         cpp_compiler: [clang++]
         include:
-          - os: ubuntu-22.04
             c_compiler: clang
             cpp_compiler: clang++
     steps:
