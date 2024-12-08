@@ -33,9 +33,10 @@ namespace lib::messenger {
 
 inline void parseCandidates(gloox::Jingle::ICEUDP::CandidateList& src, ortc::CandidateList& to) {
     for (auto& c : src) {
-        to.push_front({c.component, c.foundation, c.generation, c.id, c.ip, c.network, c.port,
-                       static_cast<uint32_t>(c.priority), c.protocol, c.tcptype, c.rel_addr,
-                       c.rel_port, static_cast<ortc::Type>(c.type)});
+        to.push_front(ortc::Candidate{c.component, c.foundation, c.generation, c.id, c.ip,
+                                      c.network, c.port, static_cast<uint32_t>(c.priority),
+                                      c.protocol, c.tcptype, c.rel_addr, c.rel_port,
+                                      static_cast<ortc::Type>(c.type)});
     }
 }
 
@@ -50,7 +51,7 @@ inline void packCandidates(const ortc::CandidateList& src,
                 .ip = c.ip,
                 .network = c.network,
                 .port = c.port,
-                .priority = static_cast<int>(c.priority),
+                .priority = c.priority,
                 .protocol = c.protocol,
                 .tcptype = c.tcptype,
                 .rel_addr = c.rel_addr,
@@ -958,9 +959,10 @@ void IMCall::toPlugins(const ortc::OJingleContentAv& av, gloox::Jingle::PluginLi
 
         gloox::Jingle::ICEUDP::CandidateList cl;
         for (auto c : oIceUdp.candidates) {
-            cl.push_front({c.component, c.foundation, c.generation, c.id, c.ip, c.network, c.port,
-                           static_cast<int>(c.priority), c.protocol, c.tcptype, c.rel_addr,
-                           c.rel_port, static_cast<gloox::Jingle::ICEUDP::Type>(c.type)});
+            cl.push_front(gloox::Jingle::ICEUDP::Candidate{
+                    c.component, c.foundation, c.generation, c.id, c.ip, c.network, c.port,
+                    c.priority, c.protocol, c.tcptype, c.rel_addr, c.rel_port,
+                    static_cast<gloox::Jingle::ICEUDP::Type>(c.type)});
         }
         auto ice = new gloox::Jingle::ICEUDP(oIceUdp.pwd, oIceUdp.ufrag, cl);
         ice->setDtls({.hash = oIceUdp.dtls.hash,
@@ -995,7 +997,7 @@ bool parseRTP(const gloox::Jingle::RTP* rtp, ortc::ORTP& ortp) {
                         .name = p.name,
                         .clockrate = p.clockrate,
                         .bitrate = p.bitrate,
-                        .channels = p.channels,
+                        .channels = static_cast<size_t>(p.channels),
                         .parameters = ranges::views::all(p.parameters) | txParameter |
                                       ranges::to<ortc::Parameters>,
                         .feedbacks = ranges::views::all(p.feedbacks) |

@@ -43,20 +43,20 @@ typedef std::list<Dtls> DtlsList;
  * Describes a single transport candidate.
  */
 struct Candidate {
-    std::string component;  /**< A Component ID as defined in ICE-CORE. */
+    int component;          /**< A Component ID as defined in ICE-CORE. */
     std::string foundation; /**< A Foundation as defined in ICE-CORE.*/
-    std::string generation; /**< An index, starting at 0, that enables the parties to keep track of
-                               updates to the candidate throughout the life of the session. */
+    uint32_t generation;    /**< An index, starting at 0, that enables the parties to keep track of
+                                  updates to the candidate throughout the life of the session. */
     std::string id;         /**< A unique identifier for the candidate. */
     std::string ip;         /**< The IP address for the candidate transport mechanism. */
-    std::string network;  /**< An index, starting at 0, referencing which network this candidate is
-                             on for a given peer. */
-    int port;             /**< The port at the candidate IP address. */
+    uint32_t network; /**< An index, starting at 0, referencing which network this candidate is
+                            on for a given peer. */
+    uint32_t port;        /**< The port at the candidate IP address. */
     uint32_t priority;    /**< A Priority as defined in ICE-CORE. */
     std::string protocol; /**< The protocol to be used. Should be @b udp. */
     std::string tcptype;
     std::string rel_addr; /**< A related address as defined in ICE-CORE. */
-    int rel_port;         /**< A related port as defined in ICE-CORE. */
+    uint32_t rel_port;    /**< A related port as defined in ICE-CORE. */
     Type type;            /**< A Candidate Type as defined in ICE-CORE. */
 };
 

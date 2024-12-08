@@ -72,12 +72,12 @@ Dtls fromDtls(const webrtc::SessionDescriptionInterface* sdp, const std::string&
 
 ortc::Candidate fromCandidate(const cricket::Candidate& cand) {
     auto c = Candidate{
-            .component = std::to_string(cand.component()),
+            .component = cand.component(),
             .foundation = cand.foundation(),
-            .generation = std::to_string(cand.generation()),
+            .generation = cand.generation(),
             .id = cand.id(),
             .ip = cand.address().ipaddr().ToString(),
-            .network = std::to_string(cand.network_id()),
+            .network = cand.network_id(),
             .port = cand.address().port(),
             .priority = cand.priority(),
             .protocol = cand.protocol(),
@@ -652,16 +652,16 @@ std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertToSdp(
 
             assert(!type.empty());
 
-            cricket::Candidate candidate(std::stoi(item.component),
+            cricket::Candidate candidate(item.component,
                                          item.protocol,
-                                         rtc::SocketAddress{item.ip, item.port},
+                                         rtc::SocketAddress{item.ip, (int)item.port},
                                          item.priority,
                                          iceUdp.ufrag,
                                          iceUdp.pwd,
                                          type,
-                                         std::stoi(item.generation),
+                                         item.generation,
                                          item.foundation,
-                                         std::stoi(item.network));
+                                         item.network);
 
             auto c = webrtc::CreateIceCandidate(iceUdp.mid, iceUdp.mline, candidate);
             ptr->AddCandidate(c.release());
@@ -742,61 +742,37 @@ void WebRTC::setTransportInfo(const std::string& peerId,
 
     int i = 0;
     for (auto& _candidate : iceUdp.candidates) {
-        ::cricket::Candidate candidate;
-
-        if (!_candidate.id.empty()) {
-            candidate.set_id(_candidate.id);
-        } else {
-            candidate.set_id(std::to_string(i));
-        }
-
-        //<candidate rel-port='44083' port='64710' foundation='842163049'
-        // component='1' priority='1686052607' type='srflx'
-        // generation='0' protocol='udp' ip='124.228.12.67' rel-addr='192.168.2.5'/>
-        candidate.set_foundation(_candidate.foundation);
-        candidate.set_tcptype(_candidate.tcptype);    // passive
-        candidate.set_protocol(_candidate.protocol);  // udp,ssltcp
-        candidate.set_priority(_candidate.priority);
-
-        if (_candidate.component.empty()) continue;
-        candidate.set_component(std::stoi(_candidate.component));
-
-        if (_candidate.generation.empty()) continue;
-        candidate.set_generation(std::stoi(_candidate.generation));
-
-        if (!_candidate.network.empty()) {
-            candidate.set_network_id(std::stoi(_candidate.network));
-        } else {
-            candidate.set_network_id(i);
-        }
         if (_candidate.ip.empty() || _candidate.port <= 0) continue;
-        candidate.set_address(::rtc::SocketAddress(_candidate.ip, _candidate.port));
 
-        /**
-         *  const auto& host = LOCAL_PORT_TYPE;
-            const auto& srflx = STUN_PORT_TYPE;
-            const auto& relay = RELAY_PORT_TYPE;
-            const auto& prflx = PRFLX_PORT_TYPE;
-         */
-
+        std::string type;
         switch (_candidate.type) {
             case Type::Host:
-                candidate.set_type(::cricket::LOCAL_PORT_TYPE);
+                type = ::cricket::LOCAL_PORT_TYPE;
                 break;
             case Type::PeerReflexive:
-                candidate.set_type(::cricket::PRFLX_PORT_TYPE);
+                type = ::cricket::PRFLX_PORT_TYPE;
                 break;
             case Type::Relayed:
-                candidate.set_type(::cricket::RELAY_PORT_TYPE);
+                type = ::cricket::RELAY_PORT_TYPE;
                 break;
             case Type::ServerReflexive:
-                candidate.set_type(::cricket::STUN_PORT_TYPE);
+                type = ::cricket::STUN_PORT_TYPE;
                 break;
         }
+
+        ::cricket::Candidate candidate((_candidate.component),
+                                       _candidate.protocol,
+                                       ::rtc::SocketAddress(_candidate.ip, _candidate.port),
+                                       _candidate.priority,
+                                       iceUdp.ufrag,
+                                       iceUdp.pwd,
+                                       type,
+                                       _candidate.generation,
+                                       _candidate.foundation,
+                                       _candidate.network);
+
         if (!_candidate.rel_addr.empty()) {
-            rtc::SocketAddress raddr;
-            raddr.SetIP(_candidate.rel_addr);
-            raddr.SetPort(_candidate.rel_port);
+            ::rtc::SocketAddress raddr(_candidate.rel_addr, _candidate.rel_port);
             candidate.set_related_address(raddr);
         }
 
