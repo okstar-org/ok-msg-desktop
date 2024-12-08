@@ -28,14 +28,14 @@ public:
     // 绑定与会者
     void bindParticipant(MeetingParticipant* participant);
 
+protected:
+    void resizeEvent(QResizeEvent* event) override;
+    void paintEvent(QPaintEvent* e) override;
+
 private:
     void showVideo();
     void showAvatar();
 
-protected:
-    void resizeEvent(QResizeEvent* event) override;
-
-private:
     RoundedPixmapLabel* avatarLabel = nullptr;
 };
 }  // namespace module::meet

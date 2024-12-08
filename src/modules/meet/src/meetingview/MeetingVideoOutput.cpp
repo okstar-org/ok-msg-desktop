@@ -12,6 +12,9 @@
 
 #include "MeetingVideoOutput.h"
 #include "base/RoundedPixmapLabel.h"
+
+#include <QPainter>
+
 namespace module::meet {
 
 MeetingVideoOutput::MeetingVideoOutput(QWidget* parent) : QWidget(parent) {}
@@ -40,4 +43,20 @@ void MeetingVideoOutput::resizeEvent(QResizeEvent* event) {
         avatarLabel->raise();
     }
 }
+
+void MeetingVideoOutput::paintEvent(QPaintEvent* e) {
+    QPainter painter(this);
+
+    // 设置画笔（QPen）的颜色和宽度
+    QPen pen(Qt::black, 5);  // 黑色，宽度为5
+    painter.setPen(pen);
+
+    // 设置画刷（QBrush）的颜色和样式
+    QBrush brush(Qt::green, Qt::SolidPattern);  // 绿色，实心填充
+    painter.setBrush(brush);
+
+    // 绘制一个矩形，参数为矩形的左上角和右下角坐标
+    painter.drawRect(5, 5, 200, 150);
+}
+
 }  // namespace module::meet
