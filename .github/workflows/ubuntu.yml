@@ -25,7 +25,7 @@ on:
       - '.github/**'
       - 'src/base/platform/windows/**'
       - 'src/base/platform/macos/**'
-      - '!.github/workflows/ubuntu-22.04.yml'
+      - '!.github/workflows/ubuntu.yml'
   pull_request:
     branches: [ develop, develop-linux, develop-ubuntu ]
 
