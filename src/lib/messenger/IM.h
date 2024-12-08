@@ -317,6 +317,7 @@ public:
     void addSessionHandler(IMSessionHandler* h);
 
     void addFromHostHandler(const std::string& from, IMFromHostHandler* h);
+    void clearFromHostHandler();
 
 protected:
     void run() override;
@@ -899,7 +900,7 @@ signals:
     void selfNicknameChanged(QString nickname);
     void selfAvatarChanged(std::string avatar);
     void selfStatusChanged(int type, const std::string status);
-    void selfVCard(IMVCard vCard);
+    void selfVCard(const IMVCard& vCard);
 
     void started();
     void stopped();

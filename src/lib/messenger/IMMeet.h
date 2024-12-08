@@ -82,5 +82,8 @@ private:
     gloox::MeetManager* manager;
     std::vector<MessengerMeetHandler*> handlers;
     IMVCard vCard;
+
+public slots:
+    void onSelfVCard(const IMVCard& vCard);
 };
 }  // namespace lib::messenger

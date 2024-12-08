@@ -58,6 +58,8 @@ private:
                        bool ready,
                        const std::map<std::string, std::string>& props) override;
 
+    void onParticipantJoined(const ok::base::Jid& jid, const ok::base::Participant& parti) override;
+
 private:
     // 顶部工具
     QToolBar* topToolBar = nullptr;

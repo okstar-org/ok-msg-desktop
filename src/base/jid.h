@@ -10,14 +10,15 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#ifndef XMPP_JID_H
-#define XMPP_JID_H
+#pragma once
 
 #include <QByteArray>
 #include <QHash>
 #include <QScopedPointer>
 #include <QString>
+
 namespace ok::base {
+
 class StringPrepCache {
 public:
     static bool nameprep(const QString& in, int maxbytes, QString& out);
@@ -90,4 +91,3 @@ Q_DECL_PURE_FUNCTION inline uint qHash(const Jid& key, uint seed = 0) Q_DECL_NOT
 }
 }
 
-#endif  // XMPP_JID_H

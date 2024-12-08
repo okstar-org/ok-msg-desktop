@@ -2406,4 +2406,8 @@ void IM::addFromHostHandler(const std::string& from, IMFromHostHandler* h) {
     fromHostHandlers[from] = h;
 }
 
+void IM::clearFromHostHandler() {
+    fromHostHandlers.clear();
+}
+
 }  // namespace lib::messenger

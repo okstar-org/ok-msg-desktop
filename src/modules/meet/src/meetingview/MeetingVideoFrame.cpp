@@ -226,4 +226,9 @@ void MeetingVideoFrame::onMeetCreated(const ok::base::Jid& jid,
     emit meetCreated(jid.node());
 }
 
+void MeetingVideoFrame::onParticipantJoined(const ok::base::Jid& jid,
+                                            const ok::base::Participant& parti) {
+    emit participantJoined();
+}
+
 }  // namespace module::meet

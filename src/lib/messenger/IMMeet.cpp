@@ -30,7 +30,7 @@ IMMeet::IMMeet(IM* im, QObject* parent) : QObject(parent), im{im}, manager{nullp
     manager = new gloox::MeetManager(im->getClient());
     manager->registerHandler(this);
 
-    connect(im, &IM::selfVCard, [this](IMVCard vCard_) { vCard = std::move(vCard_); });
+    connect(im, &IM::selfVCard, this, &IMMeet::onSelfVCard);
 
     // request self vcard.
     im->requestVCards();
@@ -44,6 +44,10 @@ IMMeet::IMMeet(IM* im, QObject* parent) : QObject(parent), im{im}, manager{nullp
 
 IMMeet::~IMMeet() {
     qDebug() << __func__;
+
+    im->clearFromHostHandler();
+    disconnect(im, &IM::selfVCard, this, &IMMeet::onSelfVCard);
+
     delete manager;
     manager = nullptr;
 }
@@ -164,10 +168,26 @@ void IMMeet::handleCreation(const gloox::JID& jid, bool ready,
             .resource = self.resource(),
     };
     manager->join(meet, participant);
+
+    for (auto* h : handlers) {
+        ok::base::Participant part = {.email = qstring(participant.email),
+                                      .nick = qstring(participant.nick),
+                                      .resource = qstring(participant.resource),
+                                      .avatarUrl = participant.avatarUrl};
+        h->onParticipantJoined(ok::base::Jid(jid.full()), part);
+    }
 }
 
 void IMMeet::handleParticipant(const gloox::JID& jid, const gloox::Meet::Participant& participant) {
     qDebug() << __func__ << qstring(participant.nick);
+
+    for (auto* h : handlers) {
+        ok::base::Participant part = {.email = qstring(participant.email),
+                                      .nick = qstring(participant.nick),
+                                      .resource = qstring(participant.resource),
+                                      .avatarUrl = participant.avatarUrl};
+        h->onParticipantJoined(ok::base::Jid(jid.full()), part);
+    }
 }
 void IMMeet::handleStatsId(const gloox::JID& jid, const std::string& statsId) {}
 
@@ -178,6 +198,10 @@ void IMMeet::handleJsonMessage(const gloox::JID& jid, const gloox::JsonMessage* 
 void IMMeet::addMeetHandler(MessengerMeetHandler* hdr) {
     if (!hdr) return;
     handlers.push_back(hdr);
+}
+
+void IMMeet::onSelfVCard(const IMVCard& vCard_) {
+    vCard = vCard_;
 }
 
 }  // namespace lib::messenger
