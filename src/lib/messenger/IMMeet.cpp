@@ -108,39 +108,52 @@ from='test@conference.meet.chuanshaninfo.com/46a04cab'> <stats-id>Chloe-ZsC</sta
     </x>
 </presence>
 */
+    auto pt = presence.subtype();
     auto t = presence.tag();
 
-    auto email = t->findChild("email");
-    if (email) {
-        gloox::Meet::Participant participant = {
-                .region = t->findChild("jitsi_participant_region")->cdata(),
-                .codecType = t->findChild("jitsi_participant_codecType")->cdata(),
-                .avatarUrl = t->findChild("avatar-url")->cdata(),
-                .email = email->cdata(),
-                .nick = t->findChild("nick")->cdata(),
-                .resource = from.resource(),
-                .e2ee = false};
+    switch (pt) {
+        case gloox::Presence::PresenceType::Available: {
+            // 成员上线
+            auto email = t->findChild("email");
+            if (email) {
+                gloox::Meet::Participant participant = {
+                        .region = t->findChild("jitsi_participant_region")->cdata(),
+                        .codecType = t->findChild("jitsi_participant_codecType")->cdata(),
+                        .avatarUrl = t->findChild("avatar-url")->cdata(),
+                        .email = email->cdata(),
+                        .nick = t->findChild("nick")->cdata(),
+                        .resource = from.resource(),
+                        .e2ee = false};
 
-        auto fts = t->findChild("features");
-        auto e2ee = fts->findChild("feature", "var", "https://jitsi.org/meet/e2ee");
-        if (e2ee) {
-            participant.e2ee = true;
-            auto ed25519 = t->findChild("jitsi_participant_e2ee.idKey.ed25519");
-            if (ed25519) {
-                participant.idKeys.insert(std::make_pair("ed25519", ed25519->cdata()));
-            }
-            auto curve25519 = t->findChild("jitsi_participant_e2ee.idKey.curve25519");
-            if (curve25519) {
-                participant.idKeys.insert(std::make_pair("curve25519", curve25519->cdata()));
+                auto fts = t->findChild("features");
+                auto e2ee = fts->findChild("feature", "var", "https://jitsi.org/meet/e2ee");
+                if (e2ee) {
+                    participant.e2ee = true;
+                    auto ed25519 = t->findChild("jitsi_participant_e2ee.idKey.ed25519");
+                    if (ed25519) {
+                        participant.idKeys.insert(std::make_pair("ed25519", ed25519->cdata()));
+                    }
+                    auto curve25519 = t->findChild("jitsi_participant_e2ee.idKey.curve25519");
+                    if (curve25519) {
+                        participant.idKeys.insert(
+                                std::make_pair("curve25519", curve25519->cdata()));
+                    }
+                }
+
+                // 获取群组用户jid
+                auto mucUser = t->findChild("x", "xmlns", "http://jabber.org/protocol/muc#user");
+                if (mucUser) {
+                    participant.mucUser = gloox::MUCRoom::MUCUser(mucUser);
+                }
+                meet->addParticipant(participant);
             }
         }
-
-        // 获取群组用户jid
-        auto mucUser = t->findChild("x", "xmlns", "http://jabber.org/protocol/muc#user");
-        if (mucUser) {
-            participant.mucUser = gloox::MUCRoom::MUCUser(mucUser);
+        case gloox::Presence::PresenceType::Unavailable: {
+            // 成员下线
         }
-        meet->addParticipant(participant);
+        default: {
+            qWarning() << "Unable to handle PresenceType:" << pt;
+        }
     }
 
 }  // namespace lib::messenger
@@ -179,8 +192,7 @@ void IMMeet::handleCreation(const gloox::JID& jid, bool ready,
 }
 
 void IMMeet::handleParticipant(const gloox::JID& jid, const gloox::Meet::Participant& participant) {
-    qDebug() << __func__ << qstring(participant.nick);
-
+    qDebug() << __func__ << qstring(participant.email);
     for (auto* h : handlers) {
         ok::base::Participant part = {.email = qstring(participant.email),
                                       .nick = qstring(participant.nick),

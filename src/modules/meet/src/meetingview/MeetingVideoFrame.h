@@ -60,6 +60,9 @@ private:
 
     void onParticipantJoined(const ok::base::Jid& jid, const ok::base::Participant& parti) override;
 
+    void onParticipantLeft(const ok::base::Jid& jid,
+                           const ok::base::Participant& participant) override;
+
 private:
     // 顶部工具
     QToolBar* topToolBar = nullptr;
@@ -97,6 +100,7 @@ private:
 signals:
     void meetCreated(const QString& name);
     void participantJoined(const QString& name, const ok::base::Participant& part);
+    void participantLeft(const QString& name, const ok::base::Participant& part);
 };
 }  // namespace module::meet
 #endif  // !MEETINGVIDEOFRAME_H

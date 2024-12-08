@@ -74,6 +74,10 @@ void MeetingVideosContainer::addParticipant(MeetingParticipant* participant) {
     participantLayout->addParticipant(participant);
 }
 
+void MeetingVideosContainer::removeParticipant(const QString& email) {
+    // TODO 移除成员
+}
+
 void MeetingVideosContainer::doResetLayout() {
     if (layoutType == module::meet::VideoLayoutType::GridView) {
         if (splitter->indexOf(centerVideo) >= 0) {

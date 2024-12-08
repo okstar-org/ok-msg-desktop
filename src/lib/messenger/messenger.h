@@ -451,6 +451,9 @@ public:
 
     virtual void onParticipantJoined(const ok::base::Jid& jid,
                                      const ok::base::Participant& participant) = 0;
+
+    virtual void onParticipantLeft(const ok::base::Jid& jid,
+                                   const ok::base::Participant& participant) = 0;
 };
 
 class MessengerMeet : public QObject {

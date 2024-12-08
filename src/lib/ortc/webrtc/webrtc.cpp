@@ -518,7 +518,8 @@ std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertToSdp(
                 auto acd = std::make_unique<::cricket::AudioContentDescription>();
 
                 for (auto& pt : rtp.payloadTypes) {
-                    ::cricket::AudioCodec ac(pt.id, pt.name, pt.clockrate, pt.bitrate, pt.channels);
+                    ::cricket::AudioCodec ac =
+                            ::cricket::CreateAudioCodec(pt.id, pt.name, pt.clockrate, pt.channels);
                     for (auto& e : pt.parameters) {
                         ac.SetParam(e.name, e.value);
                     }
@@ -571,7 +572,7 @@ std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertToSdp(
             case Media::video: {
                 auto vcd = std::make_unique<::cricket::VideoContentDescription>();
                 for (auto& pt : rtp.payloadTypes) {
-                    auto vc = ::cricket::VideoCodec(pt.id, pt.name);
+                    auto vc = ::cricket::CreateVideoCodec(pt.id, pt.name);
                     for (auto& e : pt.parameters) {
                         vc.SetParam(e.name, e.value);
                     }

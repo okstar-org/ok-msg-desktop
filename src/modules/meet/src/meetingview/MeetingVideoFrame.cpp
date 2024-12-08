@@ -47,9 +47,14 @@ MeetingVideoFrame::MeetingVideoFrame(const QString& name, QWidget* parent)
 
     connect(this, &MeetingVideoFrame::participantJoined,
             [this](const QString& name, const ok::base::Participant& part) {
-                MeetingParticipant* p = new MeetingParticipant(part.email, part.nick, part.resource,
-                                                               part.avatarUrl);
+                auto p = new MeetingParticipant(part.email, part.nick, part.resource,
+                                                part.avatarUrl);
                 videosLayout->addParticipant(p);
+            });
+
+    connect(this, &MeetingVideoFrame::participantLeft,
+            [this](const QString& name, const ok::base::Participant& part) {
+                videosLayout->removeParticipant(part.email);
             });
 
     QVBoxLayout* mainLayout = new QVBoxLayout(this);
@@ -239,6 +244,11 @@ void MeetingVideoFrame::onMeetCreated(const ok::base::Jid& jid,
 void MeetingVideoFrame::onParticipantJoined(const ok::base::Jid& jid,
                                             const ok::base::Participant& part) {
     emit participantJoined(jid.node(), part);
+}
+
+void MeetingVideoFrame::onParticipantLeft(const ok::base::Jid& jid,
+                                          const ok::base::Participant& part) {
+    emit participantLeft(jid.node(), part);
 }
 
 }  // namespace module::meet

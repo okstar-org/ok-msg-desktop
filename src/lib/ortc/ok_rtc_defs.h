@@ -106,7 +106,7 @@ struct PayloadType {
     std::string name; /**< The type's name. */
     int clockrate;    /**< The clockrate. */
     int bitrate;
-    int channels;
+    size_t channels;
     Parameters parameters;
     Feedbacks feedbacks;
 };

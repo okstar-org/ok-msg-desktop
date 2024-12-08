@@ -36,6 +36,8 @@ public:
 
     void addParticipant(MeetingParticipant* participant);
 
+    void removeParticipant(const QString& email);
+
 private:
     void doResetLayout();
     MeetingVideoOutput* getCenterVideo();

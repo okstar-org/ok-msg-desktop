@@ -35,6 +35,7 @@ class IMMeet : public QObject, public IMFromHostHandler, public gloox::MeetHandl
 public:
     explicit IMMeet(IM* im, QObject* parent = nullptr);
     ~IMMeet() override;
+
     /**
      * 创建会议
      * @param name
@@ -82,8 +83,8 @@ private:
     gloox::MeetManager* manager;
     std::vector<MessengerMeetHandler*> handlers;
     IMVCard vCard;
-
 public slots:
     void onSelfVCard(const IMVCard& vCard);
 };
+
 }  // namespace lib::messenger
