@@ -12,5 +12,9 @@
 
 #include "MeetingParticipant.h"
 namespace module::meet {
-MeetingParticipant::MeetingParticipant() {}
+MeetingParticipant::MeetingParticipant(const QString& email,
+                                       const QString& nick,
+                                       const QString& resource,
+                                       const std::string& avatarUrl)
+        : email(email), nick(nick), resource(resource), avatarUrl(avatarUrl) {}
 }  // namespace module::meet

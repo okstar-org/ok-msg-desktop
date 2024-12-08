@@ -11,11 +11,34 @@
  */
 
 #pragma once
+
+#include <QString>
+
 namespace module::meet {
 
 // 会议参会者，获取一些基本信息、视频、音频等
 class MeetingParticipant {
 public:
-    MeetingParticipant();
+    explicit MeetingParticipant(const QString& email,
+                                const QString& nick,
+                                const QString& resource,
+                                const std::string& avatarUrl = "");
+
+    [[nodiscard]] const QString& getEmail() const {
+        return email;
+    }
+
+    [[nodiscard]] const QString& getNick() const {
+        return nick;
+    }
+
+private:
+    // 一个帐号一个邮箱
+    QString email;
+    QString nick;
+    // 同一个帐号，存在不同资源（设备或终端）
+    QString resource;
+    std::string avatarUrl;
 };
+
 }  // namespace module::meet

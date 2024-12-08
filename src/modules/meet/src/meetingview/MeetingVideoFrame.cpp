@@ -11,6 +11,7 @@
  */
 
 #include "MeetingVideoFrame.h"
+#include "../MeetingParticipant.h"
 #include "../tools/PopupMenuComboBox.h"
 #include "MeetingVideosLayout.h"
 #include "VideoLayoutPicker.h"
@@ -40,8 +41,16 @@ MeetingVideoFrame::MeetingVideoFrame(const QString& name, QWidget* parent)
 
     creatTopToolBar();
     creatBottomBar();
+
     videosLayout = new MeetingVideosContainer(this);
     videosLayout->setObjectName("videoLayout");
+
+    connect(this, &MeetingVideoFrame::participantJoined,
+            [this](const QString& name, const ok::base::Participant& part) {
+                MeetingParticipant* p = new MeetingParticipant(part.email, part.nick, part.resource,
+                                                               part.avatarUrl);
+                videosLayout->addParticipant(p);
+            });
 
     QVBoxLayout* mainLayout = new QVBoxLayout(this);
     mainLayout->setSpacing(10);
@@ -62,6 +71,7 @@ MeetingVideoFrame::MeetingVideoFrame(const QString& name, QWidget* parent)
 }
 
 MeetingVideoFrame::~MeetingVideoFrame() {
+    disconnect(this);
     meet->deleteLater();
 }
 
@@ -227,8 +237,8 @@ void MeetingVideoFrame::onMeetCreated(const ok::base::Jid& jid,
 }
 
 void MeetingVideoFrame::onParticipantJoined(const ok::base::Jid& jid,
-                                            const ok::base::Participant& parti) {
-    emit participantJoined();
+                                            const ok::base::Participant& part) {
+    emit participantJoined(jid.node(), part);
 }
 
 }  // namespace module::meet

@@ -96,7 +96,7 @@ private:
 
 signals:
     void meetCreated(const QString& name);
-    void participantJoined();
+    void participantJoined(const QString& name, const ok::base::Participant& part);
 };
 }  // namespace module::meet
 #endif  // !MEETINGVIDEOFRAME_H
