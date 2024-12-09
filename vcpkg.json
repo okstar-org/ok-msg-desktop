@@ -11,6 +11,7 @@
     "libexif",
     "libqrencode",
     "mozjpeg",
+    "jpeg",
     "sqlite3",
     "openal-soft",
     "opus",

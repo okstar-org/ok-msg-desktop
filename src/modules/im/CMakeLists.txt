@@ -500,6 +500,8 @@ if (WIN32)
                         amstrmid msdmo strmiids strmbase
                         # COM
                         Ole32 OleAut32 uuid OLDNAMES comsuppd
+                        # Windows DWM API
+                        dwmapi Shcore
                         # Shell Light-Weight Utility API
                         shlwapi
                         # IP Helper API
