@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <!--
   ~ Copyright (c) 2022 船山信息 chuanshaninfo.com
   ~ The project is licensed under Mulan PubL v2.
@@ -12,24 +12,51 @@
   -->
 
 <!DOCTYPE TS>
-<TS version="2.1" language="zh_TW">
-<context>
-    <name>UI::OMainMenu</name>
-    <message>
-        <source>Message</source>
-        <translation>訊息</translation>
-    </message>
-    <message>
-        <source>Meeting</source>
-        <translation>會議</translation>
-    </message>
-    <message>
-        <source>Work platform</source>
-        <translation>工作平台</translation>
-    </message>
-    <message>
-        <source>Setting</source>
-        <translation>設定</translation>
-    </message>
-</context>
+<TS language="zh_TW" version="2.1">
+    <context>
+        <name>MainWindow</name>
+        <message>
+            <source>MainWindow</source>
+            <translation>主視窗</translation>
+        </message>
+    </context>
+    <context>
+        <name>OMainMenu</name>
+        <message>
+            <source>Frame</source>
+            <translation>框架</translation>
+        </message>
+    </context>
+    <context>
+        <name>UI::MainWindow</name>
+        <message>
+            <source>Exit</source>
+            <comment>Tray action menu to exit tox</comment>
+            <translation>退出</translation>
+        </message>
+        <message>
+            <source>Show</source>
+            <comment>Tray action menu to show window</comment>
+            <translation>顯示</translation>
+        </message>
+    </context>
+    <context>
+        <name>UI::OMainMenu</name>
+        <message>
+            <source>Message</source>
+            <translation>消息</translation>
+        </message>
+        <message>
+            <source>Setting</source>
+            <translation>設置</translation>
+        </message>
+        <message>
+            <source>Work platform</source>
+            <translation>工作平臺</translation>
+        </message>
+        <message>
+            <source>Meeting</source>
+            <translation>會議</translation>
+        </message>
+    </context>
 </TS>
