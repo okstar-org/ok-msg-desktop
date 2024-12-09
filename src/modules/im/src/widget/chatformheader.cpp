@@ -244,6 +244,11 @@ void ChatFormHeader::setMode(ChatFormHeader::Mode mode) {
 void ChatFormHeader::retranslateUi() {
     setStateToolTip(callButton, callState, CALL_TOOL_TIP);
     setStateToolTip(videoButton, videoState, VIDEO_TOOL_TIP);
+
+    if (contact && !contact->isGroup()) {
+        auto f = static_cast<const Friend*>(contact);
+        statusLabel->setText(Status::getTitle(f->getStatus()));
+    }
 }
 
 void ChatFormHeader::updateButtonsView() {
