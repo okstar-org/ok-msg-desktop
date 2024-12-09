@@ -20,6 +20,7 @@
 #include "lib/settings/style.h"
 #include "modules/im/src/core/core.h"
 #include "modules/im/src/nexus.h"
+#include "../MeetingParticipant.h"
 
 #include <QAction>
 #include <QApplication>
@@ -45,17 +46,8 @@ MeetingVideoFrame::MeetingVideoFrame(const QString& name, QWidget* parent)
     videosLayout = new MeetingVideosContainer(this);
     videosLayout->setObjectName("videoLayout");
 
-    connect(this, &MeetingVideoFrame::participantJoined, this,
-            [this](const QString& name, const ok::base::Participant& part) {
-                auto p = new MeetingParticipant(part.email, part.nick, part.resource,
-                                                part.avatarUrl);
-                videosLayout->addParticipant(p);
-            });
-
-    connect(this, &MeetingVideoFrame::participantLeft, this,
-            [this](const QString& name, const ok::base::Participant& part) {
-                videosLayout->removeParticipant(part.email);
-            });
+    connect(this, &MeetingVideoFrame::participantJoined, this, &MeetingVideoFrame::addParticipant);
+    connect(this, &MeetingVideoFrame::participantLeft, this, &MeetingVideoFrame::removeParticipant);
 
     QVBoxLayout* mainLayout = new QVBoxLayout(this);
     mainLayout->setSpacing(10);
@@ -78,6 +70,12 @@ MeetingVideoFrame::MeetingVideoFrame(const QString& name, QWidget* parent)
 MeetingVideoFrame::~MeetingVideoFrame() {
     disconnect(this);
     meet->deleteLater();
+
+    if (!participantMap.isEmpty()){
+        videosLayout->clearParticipant();
+        qDeleteAll(participantMap);
+        participantMap.clear();
+    }
 }
 
 void MeetingVideoFrame::reloadTheme() {
@@ -249,6 +247,32 @@ void MeetingVideoFrame::onParticipantJoined(const ok::base::Jid& jid,
 void MeetingVideoFrame::onParticipantLeft(const ok::base::Jid& jid,
                                           const ok::base::Participant& part) {
     emit participantLeft(jid.node(), part);
+}
+
+void MeetingVideoFrame::addParticipant(const QString& name, const ok::base::Participant& parti) {
+    
+    if (!participantMap.contains(parti.email))
+    {
+        auto p = new MeetingParticipant(parti.email, parti.nick, parti.resource, parti.avatarUrl);
+        videosLayout->addParticipant(p);
+        participantMap.insert(parti.email, p);
+    }
+}
+
+void MeetingVideoFrame::removeParticipant(const QString&, const ok::base::Participant& parti) {
+    auto itor = participantMap.find(parti.email);
+    if (itor != participantMap.end()) {
+        auto participant = itor.value();
+        Q_ASSERT(participant);
+        videosLayout->removeParticipant(participant);
+        delete participant;
+        participantMap.erase(itor);
+    }
+
+    if (participantMap.isEmpty()) {
+        this->close();
+        this->deleteLater();
+    }
 }
 
 }  // namespace module::meet
