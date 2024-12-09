@@ -45,14 +45,14 @@ MeetingVideoFrame::MeetingVideoFrame(const QString& name, QWidget* parent)
     videosLayout = new MeetingVideosContainer(this);
     videosLayout->setObjectName("videoLayout");
 
-    connect(this, &MeetingVideoFrame::participantJoined,
+    connect(this, &MeetingVideoFrame::participantJoined, this,
             [this](const QString& name, const ok::base::Participant& part) {
                 auto p = new MeetingParticipant(part.email, part.nick, part.resource,
                                                 part.avatarUrl);
                 videosLayout->addParticipant(p);
             });
 
-    connect(this, &MeetingVideoFrame::participantLeft,
+    connect(this, &MeetingVideoFrame::participantLeft, this,
             [this](const QString& name, const ok::base::Participant& part) {
                 videosLayout->removeParticipant(part.email);
             });

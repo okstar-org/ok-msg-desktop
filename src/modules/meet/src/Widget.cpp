@@ -47,6 +47,8 @@ Widget::Widget(QWidget* parent)
     OK_RESOURCE_INIT(Meet);
     OK_RESOURCE_INIT(MeetRes);
 
+    qRegisterMetaType<ok::base::Participant>("ok::base::Participant");
+
     ui->setupUi(this);
     ui->tabWidget->setObjectName("mainTab");
     ui->tabWidget->tabBar()->setCursor(Qt::PointingHandCursor);
@@ -129,10 +131,10 @@ void Widget::createMeeting(const QString& name) {
             setState(MeetingState::NoMeeting);
         });
 
-        connect(view.data(), &MeetingVideoFrame::meetCreated,
+        connect(view.data(), &MeetingVideoFrame::meetCreated, this,
                 [this](const QString& name) { setState(MeetingState::Created); });
 
-        connect(view.data(), &MeetingVideoFrame::participantJoined,
+        connect(view.data(), &MeetingVideoFrame::participantJoined, this,
                 [this](const QString& name, const ok::base::Participant& part) {
                     setState(MeetingState::OnMeeting);
         });
