@@ -64,7 +64,7 @@ const std::string& IMMeet::create(const QString& name) {
     props.insert(std::pair("rtcstatsEnabled", "false"));
 
     gloox::JID jid(stdstring(name) + "@conference." + stdstring(session->getSignInInfo().host));
-    meet = std::make_unique<gloox::Meet>(jid, stdstring(ok::base::UUID::make()), props);
+    meet = new gloox::Meet(jid, stdstring(ok::base::UUID::make()), props);
     manager->createMeet(*meet);
     return meet->getUid();
 }
@@ -109,8 +109,7 @@ from='test@conference.meet.chuanshaninfo.com/46a04cab'> <stats-id>Chloe-ZsC</sta
 </presence>
 */
     auto pt = presence.subtype();
-    auto t = presence.tag();
-
+    auto t = presence.getOriginTag();
     switch (pt) {
         case gloox::Presence::PresenceType::Available: {
             // 成员上线
@@ -126,24 +125,26 @@ from='test@conference.meet.chuanshaninfo.com/46a04cab'> <stats-id>Chloe-ZsC</sta
                         .e2ee = false};
 
                 auto fts = t->findChild("features");
-                auto e2ee = fts->findChild("feature", "var", "https://jitsi.org/meet/e2ee");
-                if (e2ee) {
-                    participant.e2ee = true;
-                    auto ed25519 = t->findChild("jitsi_participant_e2ee.idKey.ed25519");
-                    if (ed25519) {
-                        participant.idKeys.insert(std::make_pair("ed25519", ed25519->cdata()));
-                    }
-                    auto curve25519 = t->findChild("jitsi_participant_e2ee.idKey.curve25519");
-                    if (curve25519) {
-                        participant.idKeys.insert(
-                                std::make_pair("curve25519", curve25519->cdata()));
+                if (fts) {
+                    auto e2ee = fts->findChild("feature", "var", "https://jitsi.org/meet/e2ee");
+                    if (e2ee) {
+                        participant.e2ee = true;
+                        auto ed25519 = t->findChild("jitsi_participant_e2ee.idKey.ed25519");
+                        if (ed25519) {
+                            participant.idKeys.insert(std::make_pair("ed25519", ed25519->cdata()));
+                        }
+                        auto curve25519 = t->findChild("jitsi_participant_e2ee.idKey.curve25519");
+                        if (curve25519) {
+                            participant.idKeys.insert(
+                                    std::make_pair("curve25519", curve25519->cdata()));
+                        }
                     }
                 }
 
                 // 获取群组用户jid
                 auto mucUser = t->findChild("x", "xmlns", "http://jabber.org/protocol/muc#user");
                 if (mucUser) {
-                    participant.mucUser = gloox::MUCRoom::MUCUser(mucUser);
+                    // participant.mucUser = *(mucUser);
                 }
                 meet->addParticipant(participant);
             }

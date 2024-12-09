@@ -79,7 +79,7 @@ protected:
 
 private:
     IM* im;
-    std::unique_ptr<gloox::Meet> meet;
+    gloox::Meet* meet;
     gloox::MeetManager* manager;
     std::vector<MessengerMeetHandler*> handlers;
     IMVCard vCard;
