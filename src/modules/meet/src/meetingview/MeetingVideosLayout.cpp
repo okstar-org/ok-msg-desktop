@@ -11,14 +11,16 @@
  */
 
 #include "MeetingVideosLayout.h"
-#include "MeetingVideoOutput.h"
-
+#include <QDebug>
 #include <QEvent>
 #include <QPushButton>
 #include <QSplitter>
 #include <QStyle>
 #include <QVBoxLayout>
 #include <QVariant>
+#include "../MeetingParticipant.h"
+#include "MeetingVideoOutput.h"
+
 namespace module::meet {
 
 MeetingVideosContainer::MeetingVideosContainer(QWidget* parent) : QWidget(parent) {
@@ -174,6 +176,8 @@ void MeetingVideosLayout::setPageCellCount(int count) {
 }
 
 void MeetingVideosLayout::addParticipant(MeetingParticipant* participant) {
+    qDebug() << __func__ << "email" << participant->getEmail();
+
     if (allParticipant.indexOf(participant) >= 0) {
         return;
     }

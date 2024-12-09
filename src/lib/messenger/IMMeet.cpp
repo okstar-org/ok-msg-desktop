@@ -79,11 +79,11 @@ void IMMeet::join() {}
 
 void IMMeet::handleHostPresence(const gloox::JID& from, const gloox::Presence& presence) {
     qDebug() << __func__ << qstring(from.full()) << "presence:" << presence.presence();
-    auto caps = presence.capabilities();
-    if (caps->node() != gloox::XMLNS_JITSI_MEET) {
-        qWarning() << "Is not support meet.";
-        return;
-    }
+    //    auto caps = presence.capabilities();
+    //    if (caps->node() != gloox::XMLNS_JITSI_MEET) {
+    //        qWarning() << "Is not support meet.";
+    //        return;
+    //    }
 
     /**
      * <presence
@@ -118,9 +118,11 @@ from='test@conference.meet.chuanshaninfo.com/46a04cab'> <stats-id>Chloe-ZsC</sta
                 gloox::Meet::Participant participant = {
                         .region = t->findChild("jitsi_participant_region")->cdata(),
                         .codecType = t->findChild("jitsi_participant_codecType")->cdata(),
-                        .avatarUrl = t->findChild("avatar-url")->cdata(),
+                        .avatarUrl = t->findChild("avatar-url")
+                                             ? t->findChild("avatar-url")->cdata()
+                                             : "",
                         .email = email->cdata(),
-                        .nick = t->findChild("nick")->cdata(),
+                        .nick = t->findChild("nick") ? t->findChild("nick")->cdata() : "",
                         .resource = from.resource(),
                         .e2ee = false};
 
@@ -147,10 +149,20 @@ from='test@conference.meet.chuanshaninfo.com/46a04cab'> <stats-id>Chloe-ZsC</sta
                     // participant.mucUser = *(mucUser);
                 }
                 meet->addParticipant(participant);
+
+                for (auto* h : handlers) {
+                    ok::base::Participant part = {.email = qstring(participant.email),
+                                                  .nick = qstring(participant.nick),
+                                                  .resource = qstring(participant.resource),
+                                                  .avatarUrl = participant.avatarUrl};
+                    h->onParticipantJoined(ok::base::Jid(from.full()), part);
+                }
             }
         }
         case gloox::Presence::PresenceType::Unavailable: {
-            // 成员下线
+            // 成员离开 "<presence type='unavailable'
+            // from='ykmfkvsa3t0f@meet.chuanshaninfo.com/19a59e74-0a10-4615-9f32-529969fcd59b'
+            // to='sjdvr4swzf2f@meet.chuanshaninfo.com'/>"
         }
         default: {
             qWarning() << "Unable to handle PresenceType:" << pt;
