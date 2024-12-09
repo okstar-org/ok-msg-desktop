@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <!--
   ~ Copyright (c) 2022 船山信息 chuanshaninfo.com
   ~ The project is licensed under Mulan PubL v2.
@@ -12,24 +12,51 @@
   -->
 
 <!DOCTYPE TS>
-<TS version="2.1" language="ko">
-<context>
-    <name>UI::OMainMenu</name>
-    <message>
-        <source>Message</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Meeting</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Work platform</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Setting</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
+<TS language="ko" version="2.1">
+    <context>
+        <name>MainWindow</name>
+        <message>
+            <source>MainWindow</source>
+            <translation>메인윈도우</translation>
+        </message>
+    </context>
+    <context>
+        <name>OMainMenu</name>
+        <message>
+            <source>Frame</source>
+            <translation>프레임</translation>
+        </message>
+    </context>
+    <context>
+        <name>UI::MainWindow</name>
+        <message>
+            <source>Exit</source>
+            <comment>Tray action menu to exit tox</comment>
+            <translation>출구</translation>
+        </message>
+        <message>
+            <source>Show</source>
+            <comment>Tray action menu to show window</comment>
+            <translation>보이다</translation>
+        </message>
+    </context>
+    <context>
+        <name>UI::OMainMenu</name>
+        <message>
+            <source>Message</source>
+            <translation>메시지</translation>
+        </message>
+        <message>
+            <source>Setting</source>
+            <translation>설정</translation>
+        </message>
+        <message>
+            <source>Work platform</source>
+            <translation>작업 플랫폼</translation>
+        </message>
+        <message>
+            <source>Meeting</source>
+            <translation>회의</translation>
+        </message>
+    </context>
 </TS>

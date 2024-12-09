@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <!--
   ~ Copyright (c) 2022 船山信息 chuanshaninfo.com
   ~ The project is licensed under Mulan PubL v2.
@@ -10,28 +10,70 @@
   ~ MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
   ~ See the Mulan PubL v2 for more details.
   -->
+
 <!DOCTYPE TS>
-<TS version="2.1" language="ja_JP">
+<TS version="2.1" language="ja">
     <context>
-        <name>UI::ConfigWindow</name>
+        <name>AboutSettings</name>
         <message>
-            <source>Plugin form</source>
-            <translation>プラグイン管理</translation>
+            <source>Version</source>
+            <translation>バージョン</translation>
         </message>
         <message>
-            <source>Settings form</source>
-            <translation>システム設定</translation>
+            <source>Open update download link</source>
+            <translation>アップデートのダウンロードリンクを開く</translation>
         </message>
         <message>
-            <source>About form</source>
-            <translation>について</translation>
+            <source>Update available</source>
+            <translation>アップデートが利用可能</translation>
+        </message>
+        <message>
+            <source>qTox is up to date ✓</source>
+            <translation>qToxは最新です✓</translation>
+        </message>
+        <message>
+            <source>License</source>
+            <translation>ライセンス</translation>
+        </message>
+        <message>
+            <source>Authors</source>
+            <translation>著者</translation>
+        </message>
+        <message>
+            <source>Known Issues</source>
+            <translation>既知の問題</translation>
         </message>
     </context>
     <context>
-        <name>UI::GeneralForm</name>
+        <name>ConfigWindow</name>
         <message>
-            <source>General</source>
-            <translation>一般</translation>
+            <source>MainWindow</source>
+            <translation>メインウィンドウ</translation>
+        </message>
+    </context>
+    <context>
+        <name>ConnectForm</name>
+        <message>
+            <source>Form</source>
+            <translation>形</translation>
+        </message>
+        <message>
+            <source>Proxy type:</source>
+            <translation>プロキシの種類:</translation>
+        </message>
+        <message>
+            <source>None</source>
+            <translation>何一つ</translation>
+        </message>
+        <message>
+            <source>Address:</source>
+            <extracomment>Text on proxy addr label</extracomment>
+            <translation>住所：</translation>
+        </message>
+        <message>
+            <source>Port:</source>
+            <extracomment>Text on proxy port label</extracomment>
+            <translation>港：</translation>
         </message>
     </context>
     <context>
@@ -42,121 +84,120 @@
         </message>
         <message>
             <source>Autostart</source>
-            <translation>自動起動</translation>
+            <translation>自動開始</translation>
+        </message>
+        <message>
+            <source>Check for updates</source>
+            <translation>アップデートの確認</translation>
+        </message>
+        <message>
+            <source>Spell checking</source>
+            <translation>スペルチェック</translation>
         </message>
         <message>
             <source>Show system tray icon</source>
-            <translation>システムトレイアイコンを表示</translation>
+            <translation>システムトレイアイコンを表示する</translation>
         </message>
         <message>
             <source>Start in tray</source>
-            <translation>トレイで起動</translation>
-        </message>
-        <message>
-            <source>Close to tray</source>
-            <translation>トレイに閉じる</translation>
+            <translation>トレイで開始</translation>
         </message>
         <message>
             <source>Minimize to tray</source>
             <translation>トレイに最小化</translation>
         </message>
         <message>
+            <source>Close to tray</source>
+            <translation>トレイに近い</translation>
+        </message>
+        <message>
             <source>Theme</source>
             <translation>テーマ</translation>
         </message>
         <message>
-            <source>Style:</source>
-            <translation>スタイル：</translation>
-        </message>
-        <message>
             <source>Theme color:</source>
-            <translation>テーマカラー：</translation>
+            <translation>テーマカラー:</translation>
         </message>
         <message>
             <source>Timestamp format:</source>
-            <translation>タイムスタンプ形式：</translation>
+            <translation>タイムスタンプの形式:</translation>
         </message>
         <message>
             <source>Date format:</source>
-            <translation>日付形式：</translation>
+            <translation>日付形式:</translation>
         </message>
     </context>
     <context>
-        <name>ok::plugin::PluginInfoForm</name>
+        <name>PluginInfoForm</name>
         <message>
-            <source>Install</source>
-            <translation>インストール</translation>
+            <source>Form</source>
+            <translation>形</translation>
         </message>
         <message>
-            <source>Installing</source>
-            <translation>インストール中</translation>
+            <source>name</source>
+            <translation>名前</translation>
         </message>
         <message>
-            <source>Uninstall</source>
-            <translation>アンインストール</translation>
+            <source>version</source>
+            <translation>バージョン</translation>
         </message>
         <message>
-            <source>Uninstalling</source>
-            <translation>アンインストール中</translation>
+            <source>home</source>
+            <translation>家</translation>
+        </message>
+        <message>
+            <source>install</source>
+            <translation>取り付ける</translation>
         </message>
     </context>
-
+    <context>
+        <name>PluginItemForm</name>
+        <message>
+            <source>Form</source>
+            <translation>形</translation>
+        </message>
+    </context>
+    <context>
+        <name>PluginManagerForm</name>
+        <message>
+            <source>Form</source>
+            <translation>形</translation>
+        </message>
+    </context>
     <context>
         <name>UI::AboutForm</name>
         <message>
-            <source>About</source>
-            <translation>情報</translation>
-        </message>
-        <message>
-            <source>Original author: %1</source>
-            <translation>原作者：%1</translation>
-        </message>
-        <message>
             <source>You are using qTox version %1.</source>
-            <translation>使用中のバージョンは %1 です。</translation>
+            <translation>qTox バージョン %1 を使用しています。</translation>
         </message>
         <message>
             <source>Commit hash: %1</source>
-            <translation>コミットハッシュ：%1</translation>
+            <translation>コミット ハッシュ : %1</translation>
         </message>
         <message>
             <source>Qt version: %1</source>
-            <translation>Qt バージョン：%1</translation>
+            <translation>Qtバージョン:%1</translation>
         </message>
         <message>
-            <source>A list of all known issues may be found at our %1 at Github. If you discover a bug or security
-                vulnerability, please report it according to the guidelines in our %2 wiki article.
-            </source>
-            <comment>`%1` is replaced by translation of `bug tracker`
-                `%2` is replaced by translation of `Writing Useful Bug Reports`
-            </comment>
-            <translation>すべての既知の問題のリストは、Github の私たちの %1 で見つけることができます。でバグやセキュリティの脆弱性を見つけた場合は、私たちの
-                %2 Wiki記事のガイドラインに従って報告してください。
-            </translation>
-        </message>
-        <message>
-            <source>Click here to report a bug.</source>
-            <translation>ここをクリックしてバグを報告してください。</translation>
-        </message>
-        <message>
-            <source>See a full list of %1 at Github</source>
-            <comment>`%1` is replaced with translation of word `contributors`</comment>
-            <translation>Github で %1 の完全なリストを確認してください</translation>
-        </message>
-        <message>
-            <source>bug-tracker</source>
-            <translation>バグトラッカー</translation>
-        </message>
-        <message>
-            <source>Writing Useful Bug Reports</source>
-            <translation>有用なバグ報告の書き方</translation>
-        </message>
-        <message>
-            <source>contributors</source>
-            <translation>貢献者</translation>
+            <source>About form</source>
+            <translation>フォームについて</translation>
         </message>
     </context>
-
+    <context>
+        <name>UI::ConfigWindow</name>
+        <message>
+            <source>Plugin form</source>
+            <translation>プラグインフォーム</translation>
+        </message>
+        <message>
+            <source>Settings form</source>
+            <translation>設定フォーム</translation>
+        </message>
+        <message>
+            <source>About form</source>
+            <translation>フォームについて</translation>
+        </message>
+    </context>
     <context>
         <name>UI::ConnectForm</name>
         <message>
@@ -164,40 +205,44 @@
             <translation>接続</translation>
         </message>
     </context>
-
     <context>
-        <name>ConnectForm</name>
+        <name>UI::GeneralForm</name>
         <message>
-            <source>Connection Settings</source>
-            <translation>接続設定</translation>
+            <source>General</source>
+            <translation>全般</translation>
+        </message>
+    </context>
+    <context>
+        <name>UI::SettingsWidget</name>
+        <message>
+            <source>Settings</source>
+            <translation>設定</translation>
+        </message>
+    </context>
+    <context>
+        <name>ok::plugin::PluginInfoForm</name>
+        <message>
+            <source>Install</source>
+            <translation>取り付ける</translation>
         </message>
         <message>
-            <source>Proxy type:</source>
-            <translation>プロキシタイプ：</translation>
+            <source>Uninstall</source>
+            <translation>アンインストール</translation>
         </message>
         <message>
-            <source>Address:</source>
-            <translation>アドレス：</translation>
+            <source>Installing</source>
+            <translation>装着</translation>
         </message>
         <message>
-            <source>Port:</source>
-            <translation>ポート：</translation>
+            <source>Uninstalling</source>
+            <translation>アンインストール</translation>
         </message>
+    </context>
+    <context>
+        <name>ok::plugin::PluginManagerForm</name>
         <message>
-            <source>None</source>
-            <translation>なし</translation>
-        </message>
-        <message>
-            <source>SOCKS5</source>
-            <translation>SOCKS5</translation>
-        </message>
-        <message>
-            <source>HTTP</source>
-            <translation>HTTP</translation>
-        </message>
-        <message>
-            <source>HTTPS</source>
-            <translation>HTTPS</translation>
+            <source>Plugin manager</source>
+            <translation>プラグインマネージャー</translation>
         </message>
     </context>
 </TS>

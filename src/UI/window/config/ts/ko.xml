@@ -12,237 +12,237 @@
   -->
 
 <!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<TS version="2.1" language="ko">
     <context>
         <name>AboutSettings</name>
         <message>
             <source>Version</source>
-            <translation>版本</translation>
+            <translation>버전</translation>
         </message>
         <message>
             <source>Open update download link</source>
-            <translation>打开更新下载链接</translation>
+            <translation>업데이트 다운로드 링크 열기</translation>
         </message>
         <message>
             <source>Update available</source>
-            <translation>可用更新</translation>
+            <translation>업데이트 사용 가능</translation>
         </message>
         <message>
             <source>qTox is up to date ✓</source>
-            <translation>qTox 是最新的 ✓</translation>
+            <translation>qTox가 최신 상태입니다 ✓</translation>
         </message>
         <message>
             <source>License</source>
-            <translation>许可证</translation>
+            <translation>면허</translation>
         </message>
         <message>
             <source>Authors</source>
-            <translation>作者</translation>
+            <translation>저자</translation>
         </message>
         <message>
             <source>Known Issues</source>
-            <translation>已知问题</translation>
+            <translation>알려진 문제</translation>
         </message>
     </context>
     <context>
         <name>ConfigWindow</name>
         <message>
             <source>MainWindow</source>
-            <translation>主窗口</translation>
+            <translation>메인윈도우</translation>
         </message>
     </context>
     <context>
         <name>ConnectForm</name>
         <message>
             <source>Form</source>
-            <translation>形式</translation>
+            <translation>형</translation>
         </message>
         <message>
             <source>Proxy type:</source>
-            <translation>代理类型：</translation>
+            <translation>프록시 유형:</translation>
         </message>
         <message>
             <source>None</source>
-            <translation>没有</translation>
+            <translation>없음</translation>
         </message>
         <message>
             <source>Address:</source>
             <extracomment>Text on proxy addr label</extracomment>
-            <translation>地址：</translation>
+            <translation>주소:</translation>
         </message>
         <message>
             <source>Port:</source>
             <extracomment>Text on proxy port label</extracomment>
-            <translation>港口：</translation>
+            <translation>항구:</translation>
         </message>
     </context>
     <context>
         <name>GeneralForm</name>
         <message>
             <source>Language:</source>
-            <translation>语言：</translation>
+            <translation>언어:</translation>
         </message>
         <message>
             <source>Autostart</source>
-            <translation>自动启动</translation>
+            <translation>자동 시작</translation>
         </message>
         <message>
             <source>Check for updates</source>
-            <translation>检查更新</translation>
+            <translation>업데이트 확인</translation>
         </message>
         <message>
             <source>Spell checking</source>
-            <translation>拼写检查</translation>
+            <translation>맞춤법 검사</translation>
         </message>
         <message>
             <source>Show system tray icon</source>
-            <translation>显示系统托盘图标</translation>
+            <translation>시스템 트레이 아이콘 표시</translation>
         </message>
         <message>
             <source>Start in tray</source>
-            <translation>从托盘开始</translation>
+            <translation>트레이에서 시작</translation>
         </message>
         <message>
             <source>Minimize to tray</source>
-            <translation>最小化到托盘</translation>
+            <translation>트레이로 최소화</translation>
         </message>
         <message>
             <source>Close to tray</source>
-            <translation>靠近托盘</translation>
+            <translation>트레이에 닫기</translation>
         </message>
         <message>
             <source>Theme</source>
-            <translation>主题</translation>
+            <translation>주제</translation>
         </message>
         <message>
             <source>Theme color:</source>
-            <translation>主题颜色：</translation>
+            <translation>테마 색상:</translation>
         </message>
         <message>
             <source>Timestamp format:</source>
-            <translation>时间戳格式：</translation>
+            <translation>타임스탬프 형식:</translation>
         </message>
         <message>
             <source>Date format:</source>
-            <translation>日期格式：</translation>
+            <translation>날짜 형식:</translation>
         </message>
     </context>
     <context>
         <name>PluginInfoForm</name>
         <message>
             <source>Form</source>
-            <translation>形式</translation>
+            <translation>형</translation>
         </message>
         <message>
             <source>name</source>
-            <translation>名字</translation>
+            <translation>이름</translation>
         </message>
         <message>
             <source>version</source>
-            <translation>版本</translation>
+            <translation>버전</translation>
         </message>
         <message>
             <source>home</source>
-            <translation>家</translation>
+            <translation>집</translation>
         </message>
         <message>
             <source>install</source>
-            <translation>安装</translation>
+            <translation>설치하다</translation>
         </message>
     </context>
     <context>
         <name>PluginItemForm</name>
         <message>
             <source>Form</source>
-            <translation>形式</translation>
+            <translation>형</translation>
         </message>
     </context>
     <context>
         <name>PluginManagerForm</name>
         <message>
             <source>Form</source>
-            <translation>形式</translation>
+            <translation>형</translation>
         </message>
     </context>
     <context>
         <name>UI::AboutForm</name>
         <message>
             <source>You are using qTox version %1.</source>
-            <translation>您使用的是 qTox 版本 %1。</translation>
+            <translation>qTox 버전 %1을(를) 사용하고 있습니다.</translation>
         </message>
         <message>
             <source>Commit hash: %1</source>
-            <translation>提交哈希： %1</translation>
+            <translation>커밋 해시: %1</translation>
         </message>
         <message>
             <source>Qt version: %1</source>
-            <translation>Qt 版本： %1</translation>
+            <translation>Qt 버전 : % 1</translation>
         </message>
         <message>
             <source>About form</source>
-            <translation>关于表单</translation>
+            <translation>형태에 대해서</translation>
         </message>
     </context>
     <context>
         <name>UI::ConfigWindow</name>
         <message>
             <source>Plugin form</source>
-            <translation>插件形式</translation>
+            <translation>플러그인 양식</translation>
         </message>
         <message>
             <source>Settings form</source>
-            <translation>设置表单</translation>
+            <translation>설정 양식</translation>
         </message>
         <message>
             <source>About form</source>
-            <translation>关于表单</translation>
+            <translation>형태에 대해서</translation>
         </message>
     </context>
     <context>
         <name>UI::ConnectForm</name>
         <message>
             <source>Connection</source>
-            <translation>连接</translation>
+            <translation>연결</translation>
         </message>
     </context>
     <context>
         <name>UI::GeneralForm</name>
         <message>
             <source>General</source>
-            <translation>常规</translation>
+            <translation>일반</translation>
         </message>
     </context>
     <context>
         <name>UI::SettingsWidget</name>
         <message>
             <source>Settings</source>
-            <translation>设置</translation>
+            <translation>설정</translation>
         </message>
     </context>
     <context>
         <name>ok::plugin::PluginInfoForm</name>
         <message>
             <source>Install</source>
-            <translation>安装</translation>
+            <translation>설치하다</translation>
         </message>
         <message>
             <source>Uninstall</source>
-            <translation>卸载</translation>
+            <translation>프로그램 제거</translation>
         </message>
         <message>
             <source>Installing</source>
-            <translation>安装</translation>
+            <translation>설치</translation>
         </message>
         <message>
             <source>Uninstalling</source>
-            <translation>卸载</translation>
+            <translation>설치 중</translation>
         </message>
     </context>
     <context>
         <name>ok::plugin::PluginManagerForm</name>
         <message>
             <source>Plugin manager</source>
-            <translation>插件管理器</translation>
+            <translation>플러그인 관리자</translation>
         </message>
     </context>
 </TS>
