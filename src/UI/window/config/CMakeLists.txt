@@ -26,7 +26,6 @@ file( GLOB ${PROJECT_NAME}_ICONS
     plugin/icon/*.png )
 
 file( GLOB ${PROJECT_NAME}_TSS
-    ts/*.ts
     ts/*.xml
 )
 
