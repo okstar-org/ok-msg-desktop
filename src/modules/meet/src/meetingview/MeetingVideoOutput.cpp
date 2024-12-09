@@ -12,14 +12,21 @@
 
 #include "MeetingVideoOutput.h"
 #include "base/RoundedPixmapLabel.h"
+#include "src/MeetingParticipant.h"
 
 #include <QPainter>
+#include <QStyleOption>
 
 namespace module::meet {
 
-MeetingVideoOutput::MeetingVideoOutput(QWidget* parent) : QWidget(parent) {}
+MeetingVideoOutput::MeetingVideoOutput(QWidget* parent) : QWidget(parent) {
+    setAttribute(Qt::WA_StyledBackground);
+}
 
-void MeetingVideoOutput::bindParticipant(MeetingParticipant* participant) {}
+void MeetingVideoOutput::bindParticipant(MeetingParticipant* participant) {
+    this->participant = participant;
+    update();
+}
 
 void MeetingVideoOutput::showVideo() {
     if (avatarLabel) {
@@ -46,17 +53,41 @@ void MeetingVideoOutput::resizeEvent(QResizeEvent* event) {
 
 void MeetingVideoOutput::paintEvent(QPaintEvent* e) {
     QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing);
+    QStyleOption opt;
+    opt.init(this);
+    style()->drawPrimitive(QStyle::PE_Widget, &opt, &painter, this);
 
-    // 设置画笔（QPen）的颜色和宽度
-    QPen pen(Qt::black, 5);  // 黑色，宽度为5
-    painter.setPen(pen);
+    if (!this->participant) {
+        return;
+    }
 
-    // 设置画刷（QBrush）的颜色和样式
-    QBrush brush(Qt::green, Qt::SolidPattern);  // 绿色，实心填充
-    painter.setBrush(brush);
+    bool isVideo = false;
+    if (!isVideo) {
+        QString text = this->participant->getNick().right(2);
+        if (!text.isEmpty()) {
+            QRect rect = this->rect();
+            int d = std::min(rect.width(), rect.height()) * 0.5;
+            d = std::min(d, 150);
+            QRect circle(0, 0, d, d);
+            circle.moveCenter(rect.center());
 
-    // 绘制一个矩形，参数为矩形的左上角和右下角坐标
-    painter.drawRect(5, 5, 200, 150);
+            QLinearGradient gradient(rect.topLeft(), rect.bottomLeft());
+            gradient.setColorAt(0, QColor(0xFF9F2E));
+            gradient.setColorAt(1, QColor(0xF08101));
+
+            painter.setPen(Qt::NoPen);
+            painter.setBrush(gradient);
+            painter.drawEllipse(circle);
+
+            QFont font = this->font();
+            font.setPixelSize(d * 0.33);
+            painter.setFont(font);
+            painter.setPen(QPen(Qt::white));
+            painter.drawText(circle, Qt::AlignCenter, text);
+        }
+    } else {
+    }
 }
 
 }  // namespace module::meet

@@ -27,6 +27,7 @@ class MeetingParticipant;
 class MeetingVideoOutput;
 
 class MeetingVideosContainer : public QWidget {
+    Q_OBJECT
 public:
     MeetingVideosContainer(QWidget* parent);
     void resetLayout(VideoLayoutType type);
@@ -35,8 +36,8 @@ public:
     QSize minimumSizeHint() const;
 
     void addParticipant(MeetingParticipant* participant);
-
-    void removeParticipant(const QString& email);
+    void removeParticipant(MeetingParticipant* participant);
+    void clearParticipant();
 
 private:
     void doResetLayout();
@@ -51,6 +52,7 @@ private:
 };
 
 class MeetingVideosLayout : public QWidget {
+    Q_OBJECT
 public:
     enum class LayoutType { Grid, Horizontal, Vertical };
 
@@ -60,6 +62,7 @@ public:
     void setPageCellCount(int count);
     void addParticipant(MeetingParticipant* participant);
     void removeParticipant(MeetingParticipant* participant);
+    void clearParticipant();
 
 private:
     void doLayout();

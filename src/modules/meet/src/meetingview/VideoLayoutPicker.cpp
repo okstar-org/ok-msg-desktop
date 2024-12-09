@@ -107,6 +107,7 @@ QPushButton* VideoLayoutPicker::appendItem(const QString& text, const QString& s
     QVBoxLayout* layout = new QVBoxLayout();
     layout->setContentsMargins(0, 0, 0, 0);
     LayoutItemButton* itemButton = new LayoutItemButton(this);
+    itemButton->setObjectName("layoutTypeIcon");
     itemButton->layoutIcon = QIcon(svgPath);
     itemButton->setCheckable(true);
     QLabel* label = new QLabel(text, this);
