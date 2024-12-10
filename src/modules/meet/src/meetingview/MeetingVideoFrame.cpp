@@ -20,7 +20,6 @@
 #include "lib/settings/style.h"
 #include "modules/im/src/core/core.h"
 #include "modules/im/src/nexus.h"
-#include "../MeetingParticipant.h"
 
 #include <QAction>
 #include <QApplication>
@@ -71,7 +70,7 @@ MeetingVideoFrame::~MeetingVideoFrame() {
     disconnect(this);
     meet->deleteLater();
 
-    if (!participantMap.isEmpty()){
+    if (!participantMap.isEmpty()) {
         videosLayout->clearParticipant();
         qDeleteAll(participantMap);
         participantMap.clear();
@@ -240,32 +239,55 @@ void MeetingVideoFrame::onMeetCreated(const ok::base::Jid& jid,
 }
 
 void MeetingVideoFrame::onParticipantJoined(const ok::base::Jid& jid,
-                                            const ok::base::Participant& part) {
+                                            const lib::messenger::Participant& part) {
     emit participantJoined(jid.node(), part);
 }
 
-void MeetingVideoFrame::onParticipantLeft(const ok::base::Jid& jid,
-                                          const ok::base::Participant& part) {
+void MeetingVideoFrame::onParticipantLeft(const ok::base::Jid& jid, const ok::base::Jid& part) {
     emit participantLeft(jid.node(), part);
 }
 
-void MeetingVideoFrame::addParticipant(const QString& name, const ok::base::Participant& parti) {
-    
-    if (!participantMap.contains(parti.email))
-    {
-        auto p = new MeetingParticipant(parti.email, parti.nick, parti.resource, parti.avatarUrl);
-        videosLayout->addParticipant(p);
-        participantMap.insert(parti.email, p);
+void MeetingVideoFrame::addParticipant(const QString& name,
+                                       const lib::messenger::Participant& parti) {
+    auto find = participantMap.find(parti.email);
+    if (find == participantMap.end()) {
+        // 添加用户
+        MeetingParticipant p(parti.email, parti.nick, parti.avatarUrl, parti.jid);
+        auto user = new MeetingUser(p);
+
+        videosLayout->addParticipant(user);
+        participantMap.insert(parti.email, user);
+    } else {
+        // 更新信息
+        auto user = find.value();
+        user->setNick(parti.nick);
+        user->setAvatarUrl(parti.avatarUrl);
     }
 }
 
-void MeetingVideoFrame::removeParticipant(const QString&, const ok::base::Participant& parti) {
-    auto itor = participantMap.find(parti.email);
+void MeetingVideoFrame::removeParticipant(const QString&, const ok::base::Jid& jid) {
+    QString email;
+    for (auto user : participantMap) {
+        /**
+         * 移除用户的resource
+         */
+        auto resCount = user->removeResource(jid.resource());
+        if (resCount > 0) {
+            // 存在resource（则代表存在其他终端）则不处理
+            return;
+        }
+        // 需要移除的用户
+        email = user->getEmail();
+    }
+    if (email.isEmpty()) return;
+
+    // 执行移除用户操作
+    auto itor = participantMap.find(email);
     if (itor != participantMap.end()) {
-        auto participant = itor.value();
-        Q_ASSERT(participant);
-        videosLayout->removeParticipant(participant);
-        delete participant;
+        auto user = itor.value();
+        Q_ASSERT(user);
+        videosLayout->removeParticipant(user);
+        delete user;
         participantMap.erase(itor);
     }
 

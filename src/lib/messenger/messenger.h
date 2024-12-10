@@ -19,7 +19,6 @@
 #include "IMFriend.h"
 #include "IMGroup.h"
 #include "IMMessage.h"
-#include "base/Participant.h"
 #include "base/jid.h"
 #include "base/timer.h"
 #include "lib/ortc/ok_rtc_defs.h"
@@ -443,17 +442,29 @@ struct Meet {
     bool rtcstatsEnabled;
 };
 
+/**
+ * 会议成员
+ */
+struct Participant {
+    QString email;
+    QString nick;
+    QString resource;
+    std::string avatarUrl;
+    // IM终端标识(可定位到用户和终端)
+    ok::base::Jid jid;
+    QString affiliation;
+    QString role;
+};
+
 class MessengerMeetHandler {
 public:
     virtual void onMeetCreated(const ok::base::Jid& jid,
                                bool ready,
                                const std::map<std::string, std::string>& props) = 0;
 
-    virtual void onParticipantJoined(const ok::base::Jid& jid,
-                                     const ok::base::Participant& participant) = 0;
+    virtual void onParticipantJoined(const ok::base::Jid& jid, const Participant& participant) = 0;
 
-    virtual void onParticipantLeft(const ok::base::Jid& jid,
-                                   const ok::base::Participant& participant) = 0;
+    virtual void onParticipantLeft(const ok::base::Jid& jid, const ok::base::Jid& partJid) = 0;
 };
 
 class MessengerMeet : public QObject {

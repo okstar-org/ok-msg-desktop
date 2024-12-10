@@ -27,6 +27,7 @@ namespace module::meet {
 
 class MeetingVideosContainer;
 class MeetingParticipant;
+class MeetingUser;
 
 class MeetingVideoFrame : public QWidget, public lib::messenger::MessengerMeetHandler {
     Q_OBJECT
@@ -59,15 +60,15 @@ private:
                        bool ready,
                        const std::map<std::string, std::string>& props) override;
 
-    void onParticipantJoined(const ok::base::Jid& jid, const ok::base::Participant& parti) override;
+    void onParticipantJoined(const ok::base::Jid& jid,
+                             const lib::messenger::Participant& parti) override;
 
-    void onParticipantLeft(const ok::base::Jid& jid,
-                           const ok::base::Participant& participant) override;
+    void onParticipantLeft(const ok::base::Jid& jid, const ok::base::Jid& partJid) override;
 
 private:
     // for run in UI thread
-    void addParticipant(const QString& name, const ok::base::Participant& parti);
-    void removeParticipant(const QString& name, const ok::base::Participant& parti);
+    void addParticipant(const QString& name, const lib::messenger::Participant& parti);
+    void removeParticipant(const QString& name, const ok::base::Jid& jid);
 
 private:
     // 顶部工具
@@ -101,15 +102,15 @@ private:
     lib::messenger::MessengerMeet* meet = nullptr;
 
     // 所有会议人员
-    QMap<QString, MeetingParticipant*> participantMap;
+    QMap<QString, MeetingUser*> participantMap;
 
     // 会议唯一名称
     QString username;
 
 signals:
     void meetCreated(const QString& name);
-    void participantJoined(const QString& name, const ok::base::Participant& part);
-    void participantLeft(const QString& name, const ok::base::Participant& part);
+    void participantJoined(const QString& name, const lib::messenger::Participant& part);
+    void participantLeft(const QString& name, const ok::base::Jid& partJid);
 };
 }  // namespace module::meet
 #endif  // !MEETINGVIDEOFRAME_H

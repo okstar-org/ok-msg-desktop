@@ -26,6 +26,16 @@
 
 namespace lib::messenger {
 
+Participant IMMeet::toParticipant(const gloox::Meet::Participant& participant) const {
+    return Participant{.email = qstring(participant.email),
+                       .nick = qstring(participant.nick),
+                       .resource = qstring(participant.resource),
+                       .avatarUrl = participant.avatarUrl,
+                       .jid = ok::base::Jid(participant.jid.full()),
+                       .affiliation = qstring(participant.affiliation),
+                       .role = qstring(participant.role)};
+}
+
 IMMeet::IMMeet(IM* im, QObject* parent) : QObject(parent), im{im}, manager{nullptr} {
     manager = new gloox::MeetManager(im->getClient());
     manager->registerHandler(this);
@@ -144,32 +154,36 @@ from='test@conference.meet.chuanshaninfo.com/46a04cab'> <stats-id>Chloe-ZsC</sta
                 }
 
                 // 获取群组用户jid
-                auto mucUser = t->findChild("x", "xmlns", "http://jabber.org/protocol/muc#user");
-                if (mucUser) {
-                    // participant.mucUser = *(mucUser);
+                auto userTag = t->findChild("x", "xmlns", "http://jabber.org/protocol/muc#user");
+                if (userTag) {
+                    // <item
+                    // jid='px0hzgu9bwzb@meet.chuanshaninfo.com/9f31d7f1-0644-4cfb-82e9-da69305ce32a'
+                    // affiliation='none' role='participant'/>
+                    gloox::MUCRoom::MUCUser mucUser(userTag);
                 }
                 meet->addParticipant(participant);
 
                 for (auto* h : handlers) {
-                    ok::base::Participant part = {.email = qstring(participant.email),
-                                                  .nick = qstring(participant.nick),
-                                                  .resource = qstring(participant.resource),
-                                                  .avatarUrl = participant.avatarUrl};
-                    h->onParticipantJoined(ok::base::Jid(from.full()), part);
+                    h->onParticipantJoined(ok::base::Jid(from.full()), toParticipant(participant));
                 }
             }
+            break;
         }
         case gloox::Presence::PresenceType::Unavailable: {
             // 成员离开 "<presence type='unavailable'
             // from='ykmfkvsa3t0f@meet.chuanshaninfo.com/19a59e74-0a10-4615-9f32-529969fcd59b'
             // to='sjdvr4swzf2f@meet.chuanshaninfo.com'/>"
+
+            for (auto* h : handlers) {
+                h->onParticipantLeft(ok::base::Jid(from.full()), ok::base::Jid(from.full()));
+            }
+            break;
         }
         default: {
             qWarning() << "Unable to handle PresenceType:" << pt;
         }
     }
-
-}  // namespace lib::messenger
+}
 
 void IMMeet::handleCreation(const gloox::JID& jid, bool ready,
                             const std::map<std::string, std::string>& props) {
@@ -196,22 +210,14 @@ void IMMeet::handleCreation(const gloox::JID& jid, bool ready,
     manager->join(meet, participant);
 
     for (auto* h : handlers) {
-        ok::base::Participant part = {.email = qstring(participant.email),
-                                      .nick = qstring(participant.nick),
-                                      .resource = qstring(participant.resource),
-                                      .avatarUrl = participant.avatarUrl};
-        h->onParticipantJoined(ok::base::Jid(jid.full()), part);
+        h->onParticipantJoined(ok::base::Jid(jid.full()), toParticipant(participant));
     }
 }
 
 void IMMeet::handleParticipant(const gloox::JID& jid, const gloox::Meet::Participant& participant) {
     qDebug() << __func__ << qstring(participant.email);
     for (auto* h : handlers) {
-        ok::base::Participant part = {.email = qstring(participant.email),
-                                      .nick = qstring(participant.nick),
-                                      .resource = qstring(participant.resource),
-                                      .avatarUrl = participant.avatarUrl};
-        h->onParticipantJoined(ok::base::Jid(jid.full()), part);
+        h->onParticipantJoined(ok::base::Jid(jid.full()), toParticipant(participant));
     }
 }
 void IMMeet::handleStatsId(const gloox::JID& jid, const std::string& statsId) {}

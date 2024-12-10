@@ -14,7 +14,15 @@
 namespace module::meet {
 MeetingParticipant::MeetingParticipant(const QString& email,
                                        const QString& nick,
-                                       const QString& resource,
-                                       const std::string& avatarUrl)
-        : email(email), nick(nick), resource(resource), avatarUrl(avatarUrl) {}
+                                       const std::string& avatarUrl,
+                                       const ok::base::Jid& jid)
+        : email(email), nick(nick), avatarUrl(avatarUrl), jid(jid) {}
+
+MeetingUser::MeetingUser(MeetingParticipant& part)
+        : MeetingParticipant(part.getEmail(), part.getNick(), part.getAvatarUrl(), part.getJid()) {}
+uint32_t MeetingUser::removeResource(const QString& res) {
+    resources.remove(res);
+    return resources.size();
+}
+
 }  // namespace module::meet

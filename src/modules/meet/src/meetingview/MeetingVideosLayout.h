@@ -13,8 +13,9 @@
 #ifndef MEETINGVIDEOSLAYOUT_H
 #define MEETINGVIDEOSLAYOUT_H
 
-#include <QWidget>
+#include <QMap>
 #include <QScrollArea>
+#include <QWidget>
 #include "MeetingVideoDefines.h"
 
 class QSplitter;
@@ -23,7 +24,7 @@ class QPushButton;
 namespace module::meet {
 
 class MeetingVideosLayout;
-class MeetingParticipant;
+class MeetingUser;
 class MeetingVideoOutput;
 
 class MeetingVideosContainer : public QWidget {
@@ -35,8 +36,8 @@ public:
     QSize sizeHint() const;
     QSize minimumSizeHint() const;
 
-    void addParticipant(MeetingParticipant* participant);
-    void removeParticipant(MeetingParticipant* participant);
+    void addParticipant(MeetingUser* user);
+    void removeParticipant(MeetingUser* user);
     void clearParticipant();
 
 private:
@@ -60,8 +61,8 @@ public:
     MeetingVideosLayout(LayoutType type, QWidget* parent);
     void setLayoutType(MeetingVideosLayout::LayoutType type, int pageCellCount);
     void setPageCellCount(int count);
-    void addParticipant(MeetingParticipant* participant);
-    void removeParticipant(MeetingParticipant* participant);
+    void addParticipant(MeetingUser* participant);
+    void removeParticipant(MeetingUser* participant);
     void clearParticipant();
 
 private:
@@ -79,7 +80,8 @@ private:
 
 private:
     int cellCount = 1;
-    QList<MeetingParticipant*> allParticipant;
+
+    QMap<QString, MeetingUser*> allParticipant;
     QList<MeetingVideoOutput*> cellVideos;
     LayoutType _type = LayoutType::Grid;
 

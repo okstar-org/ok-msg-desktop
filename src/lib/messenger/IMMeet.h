@@ -85,6 +85,7 @@ private:
     IMVCard vCard;
 public slots:
     void onSelfVCard(const IMVCard& vCard);
+    Participant toParticipant(const gloox::Meet::Participant& participant) const;
 };
 
 }  // namespace lib::messenger

@@ -12,7 +12,9 @@
 
 #pragma once
 
+#include <QSet>
 #include <QString>
+#include "base/jid.h"
 
 namespace module::meet {
 
@@ -21,8 +23,8 @@ class MeetingParticipant {
 public:
     explicit MeetingParticipant(const QString& email,
                                 const QString& nick,
-                                const QString& resource,
-                                const std::string& avatarUrl = "");
+                                const std::string& avatarUrl,
+                                const ok::base::Jid& jid);
 
     [[nodiscard]] const QString& getEmail() const {
         return email;
@@ -32,13 +34,47 @@ public:
         return nick;
     }
 
+    void setNick(const QString& nick_) {
+        nick = nick_;
+    }
+
+    [[nodiscard]] const std::string& getAvatarUrl() const {
+        return avatarUrl;
+    }
+
+    void setAvatarUrl(const std::string& a) {
+        avatarUrl = a;
+    }
+
+    [[nodiscard]] const ok::base::Jid& getJid() const {
+        return jid;
+    }
+
 private:
-    // 一个帐号一个邮箱
+    // 一个帐号（用户）一个邮箱
     QString email;
     QString nick;
-    // 同一个帐号，存在不同资源（设备或终端）
-    QString resource;
     std::string avatarUrl;
+
+    // 同一个用户，不同终端(jid.resource)
+    ok::base::Jid jid;
+};
+
+/**
+ * 会议用户
+ */
+class MeetingUser : public MeetingParticipant {
+public:
+    explicit MeetingUser(MeetingParticipant& part);
+    /***
+     *
+     * @param res
+     * @return 剩余的resource数量
+     */
+    uint32_t removeResource(const QString& res);
+
+private:
+    QSet<QString> resources;
 };
 
 }  // namespace module::meet

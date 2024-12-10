@@ -73,11 +73,11 @@ QSize MeetingVideosContainer::minimumSizeHint() const {
     return QSize(300, 200);
 }
 
-void MeetingVideosContainer::addParticipant(MeetingParticipant* participant) {
+void MeetingVideosContainer::addParticipant(MeetingUser* participant) {
     participantLayout->addParticipant(participant);
 }
 
-void MeetingVideosContainer::removeParticipant(MeetingParticipant* participant) {
+void MeetingVideosContainer::removeParticipant(MeetingUser* participant) {
     participantLayout->removeParticipant(participant);
 }
 
@@ -185,13 +185,14 @@ void MeetingVideosLayout::setPageCellCount(int count) {
     updateButtonState();
 }
 
-void MeetingVideosLayout::addParticipant(MeetingParticipant* participant) {
+void MeetingVideosLayout::addParticipant(MeetingUser* participant) {
     qDebug() << __func__ << "email" << participant->getEmail();
 
-    if (allParticipant.contains(participant)) {
+    if (allParticipant.contains(participant->getEmail())) {
         return;
     }
-    allParticipant.append(participant);
+
+    allParticipant.insert(participant->getEmail(), participant);
     pageCount = recalcPageCount();
     if (pageIndex == pageCount - 1) {
         rebindVideos();
@@ -199,11 +200,12 @@ void MeetingVideosLayout::addParticipant(MeetingParticipant* participant) {
     updateButtonState();
 }
 
-void MeetingVideosLayout::removeParticipant(MeetingParticipant* participant) {
-    if (!allParticipant.contains(participant)) {
+void MeetingVideosLayout::removeParticipant(MeetingUser* participant) {
+    if (!allParticipant.contains(participant->getEmail())) {
         return;
     }
-    allParticipant.removeAll(participant);
+
+    allParticipant.remove(participant->getEmail());
     pageCount = recalcPageCount();
 
     if (pageIndex >= pageCount - 1) {
@@ -285,7 +287,7 @@ void MeetingVideosLayout::rebindVideos() {
     int offset = pageIndex * cellCount;
     for (int index = 0; index < cellVideos.count(); index++) {
         auto output = cellVideos.at(index);
-        MeetingParticipant* partivipant = allParticipant.value(index + offset);
+        MeetingParticipant* partivipant = allParticipant.values().value(index + offset);
         output->bindParticipant(partivipant);
         if (partivipant) {
             if (!output->isVisibleTo(this)) {
