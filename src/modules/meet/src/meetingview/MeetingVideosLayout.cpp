@@ -137,18 +137,22 @@ MeetingVideosLayout::MeetingVideosLayout(LayoutType type, QWidget* parent)
     nextPageButton = new QPushButton(this);
     nextPageButton->setObjectName("nextPage");
     nextPageButton->setVisible(false);
+    nextPageButton->setCursor(Qt::PointingHandCursor);
     prevPageButton = new QPushButton(this);
     prevPageButton->setObjectName("prevPage");
     prevPageButton->setVisible(false);
+    prevPageButton->setCursor(Qt::PointingHandCursor);
     connect(nextPageButton, &QPushButton::clicked, this, &MeetingVideosLayout::nextPage);
     connect(prevPageButton, &QPushButton::clicked, this, &MeetingVideosLayout::previousPage);
+
+    updateButtonIcon();
 }
 
 void MeetingVideosLayout::setLayoutType(MeetingVideosLayout::LayoutType type, int pageCellCount) {
     if (pageCellCount != this->cellCount) {
         if (_type != type) {
             _type = type;
-            updateButtonGeo();
+            updateButtonIcon();
         }
         setPageCellCount(pageCellCount);
     } else if (_type != type) {
@@ -156,7 +160,7 @@ void MeetingVideosLayout::setLayoutType(MeetingVideosLayout::LayoutType type, in
         _type = type;
         doLayout();
         rebindVideos();
-        updateButtonGeo();
+        updateButtonIcon();
     }
 }
 
@@ -185,12 +189,11 @@ void MeetingVideosLayout::setPageCellCount(int count) {
 }
 
 void MeetingVideosLayout::addParticipant(MeetingParticipant* participant) {
-    auto& key = participant->getResource();
-    if (allParticipant.contains(key)) {
+    if (allParticipant.contains(participant)) {
         return;
     }
 
-    allParticipant.insert(key, participant);
+    allParticipant.append(participant);
     pageCount = recalcPageCount();
     if (pageIndex == pageCount - 1) {
         rebindVideos();
@@ -199,12 +202,11 @@ void MeetingVideosLayout::addParticipant(MeetingParticipant* participant) {
 }
 
 void MeetingVideosLayout::removeParticipant(MeetingParticipant* participant) {
-    auto& key = participant->getResource();
-    if (!allParticipant.contains(key)) {
+    if (!allParticipant.contains(participant)) {
         return;
     }
 
-    allParticipant.remove(key);
+    allParticipant.removeAll(participant);
     pageCount = recalcPageCount();
 
     if (pageIndex >= pageCount - 1) {
@@ -250,8 +252,8 @@ void MeetingVideosLayout::doGridLayout(int cols) {
 
     const int spacing = 3;
 
-    int grid_w = (this->width() - spacing * (cols - 1)) / cols;
-    int grid_h = (this->height() - spacing * (row_count - 1)) / row_count;
+    qreal grid_w = (width() - spacing * (cols - 1)) / static_cast<qreal>(cols);
+    qreal grid_h = (height() - spacing * (row_count - 1)) / static_cast<qreal>(row_count);
 
     int index = 0;
     for (MeetingVideoOutput* output : cellVideos) {
@@ -286,7 +288,7 @@ void MeetingVideosLayout::rebindVideos() {
     int offset = pageIndex * cellCount;
     for (int index = 0; index < cellVideos.count(); index++) {
         auto output = cellVideos.at(index);
-        MeetingParticipant* participant = allParticipant.values().value(index + offset);
+        MeetingParticipant* participant = allParticipant.value(index + offset);
         output->bindParticipant(participant);
         if (participant) {
             if (!output->isVisibleTo(this)) {
@@ -297,16 +299,12 @@ void MeetingVideosLayout::rebindVideos() {
                 output->setVisible(false);
             }
         }
-        output->setProperty("outOrder", index + offset + 1);
     }
 }
 
 void MeetingVideosLayout::updateButtonState() {
-    nextPageButton->setVisible(pageCount > 1);
-    prevPageButton->setVisible(pageCount > 1);
-
-    nextPageButton->setEnabled(pageIndex < pageCount - 1);
-    prevPageButton->setEnabled(pageIndex > 0);
+    nextPageButton->setVisible(pageCount > 1 && pageIndex < pageCount - 1);
+    prevPageButton->setVisible(pageCount > 1 && pageIndex > 0);
 }
 
 void MeetingVideosLayout::updateButtonGeo() {
@@ -317,6 +315,9 @@ void MeetingVideosLayout::updateButtonGeo() {
     QRect rect = this->rect();
 
     QSize btn_size = nextPageButton->sizeHint();
+    if (this->_type == LayoutType::Vertical) {
+        btn_size.transpose(); //交换
+    }
     if (_type == LayoutType::Grid || _type == LayoutType::Horizontal) {
         QRect prev_rect = QStyle::alignedRect(Qt::LeftToRight, Qt::AlignLeft | Qt::AlignVCenter,
                                               btn_size, rect);
@@ -334,6 +335,17 @@ void MeetingVideosLayout::updateButtonGeo() {
     }
     prevPageButton->raise();
     nextPageButton->raise();
+}
+
+void MeetingVideosLayout::updateButtonIcon() {
+    if (_type == MeetingVideosLayout::LayoutType::Vertical) {
+        nextPageButton->setIcon(QIcon(":/meet/image/arrow_down.svg"));
+        prevPageButton->setIcon(QIcon(":/meet/image/arrow_up.svg"));
+    } else {
+        nextPageButton->setIcon(QIcon(":/meet/image/arrow_right.svg"));
+        prevPageButton->setIcon(QIcon(":/meet/image/arrow_left.svg"));
+    }
+    updateButtonGeo();
 }
 
 int MeetingVideosLayout::recalcPageCount() {
