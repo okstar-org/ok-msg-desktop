@@ -56,7 +56,7 @@ public:
     }
 
 private:
-    // 会议室资源
+    // 会议室资源(成员唯一标识)
     QString resource;
     // 一个帐号（用户）一个邮箱
     QString email;
