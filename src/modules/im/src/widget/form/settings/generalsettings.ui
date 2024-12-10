@@ -225,9 +225,7 @@
           <item>
            <widget class="QCheckBox" name="notify">
             <property name="toolTip">
-             <string comment="tooltip for Notify setting">Show a notification when you receive a new message and the
-              window is not selected.
-             </string>
+             <string comment="tooltip for Notify setting">Show a notification when you receive a new message and the window is not selected.</string>
             </property>
             <property name="text">
              <string>Notify</string>
@@ -242,9 +240,7 @@
             <item>
              <widget class="QCheckBox" name="groupOnlyNotfiyWhenMentioned">
               <property name="toolTip">
-               <string comment="toolTip for Group chats only notify when mentioned">Onlys notify about new messages in
-                groupchats when mentioned.
-               </string>
+               <string comment="toolTip for Group chats only notify when mentioned">Onlys notify about new messages in groupchats when mentioned.</string>
               </property>
               <property name="text">
                <string>Group chats only notify when mentioned</string>
@@ -306,9 +302,7 @@
                                   </sizepolicy>
                               </property>
                               <property name="toolTip">
-                                  <string comment="tooltip for typing notifications setting">Your friends will be able
-                                      to see when you are typing.
-                                  </string>
+                                  <string comment="tooltip for typing notifications setting">Your friends will be able to see when you are typing.</string>
                               </property>
                               <property name="text">
                                   <string>Send typing notifications</string>

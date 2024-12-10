@@ -19,6 +19,8 @@ on:
       - 'LICENSE'
       - '.clang-*'
       - '.gitignore'
+      - 'vcpkg.json'
+      - 'vcpkg-*.json'
       - 'snap/**'
       - 'docs/**'
       - 'flatpak/**'

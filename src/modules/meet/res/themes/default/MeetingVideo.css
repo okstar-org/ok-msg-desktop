@@ -1,4 +1,4 @@
-MeetingVideoFrame{
+module--meet--MeetingVideoFrame{
     background: white;
 }
 
@@ -36,25 +36,37 @@ QToolButton{
 }
 
 QToolButton:hover{
-    background-color: #eeeeee;
+    background-color: #e7e7e7;
 }
 
 #bottomBar{
     padding: 10px;
 }
 
-VideoLayoutPicker QPushButton{
+QPushButton#layoutTypeIcon{
     background: transparent;
     border: 2px solid transparent;
     border-radius: 5px;
     padding: 2px;
 }
 
-VideoLayoutPicker QPushButton:hover{
+QPushButton#layoutTypeIcon:hover{
     border-color: #9ebbff;
 }
 
-VideoLayoutPicker QPushButton:pressed,
-VideoLayoutPicker QPushButton:checked{
+QPushButton#layoutTypeIcon:pressed,
+QPushButton#layoutTypeIcon:checked{
     border-color: #0D51F0;
+}
+
+module--meet--MeetingVideosLayout{
+    background: #f3f3f3;
+}
+
+module--meet--MeetingVideoOutput{
+    background: #e3e3e3;
+}
+
+module--meet--MeetingVideoOutput#centerVideo{
+    background: #e3e3e3;
 }

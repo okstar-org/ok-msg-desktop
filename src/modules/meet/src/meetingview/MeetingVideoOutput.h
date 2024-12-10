@@ -22,6 +22,7 @@ namespace module::meet {
 class MeetingParticipant;
 
 class MeetingVideoOutput : public QWidget {
+    Q_OBJECT
 public:
     MeetingVideoOutput(QWidget* parent);
 
@@ -37,6 +38,7 @@ private:
     void showAvatar();
 
     RoundedPixmapLabel* avatarLabel = nullptr;
+    MeetingParticipant* participant = nullptr;
 };
 }  // namespace module::meet
 #endif  // !MEETINGVIDEOOUTPUT_H

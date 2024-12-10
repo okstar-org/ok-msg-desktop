@@ -26,6 +26,7 @@ class QLabel;
 namespace module::meet {
 
 class MeetingVideosContainer;
+class MeetingParticipant;
 
 class MeetingVideoFrame : public QWidget, public lib::messenger::MessengerMeetHandler {
     Q_OBJECT
@@ -64,6 +65,11 @@ private:
                            const ok::base::Participant& participant) override;
 
 private:
+    // for run in UI thread
+    void addParticipant(const QString& name, const ok::base::Participant& parti);
+    void removeParticipant(const QString& name, const ok::base::Participant& parti);
+
+private:
     // 顶部工具
     QToolBar* topToolBar = nullptr;
     QAction* infoAction = nullptr;
@@ -92,7 +98,10 @@ private:
     // 会议视频布局区域
     MeetingVideosContainer* videosLayout = nullptr;
 
-    lib::messenger::MessengerMeet* meet;
+    lib::messenger::MessengerMeet* meet = nullptr;
+
+    // 所有会议人员
+    QMap<QString, MeetingParticipant*> participantMap;
 
     // 会议唯一名称
     QString username;

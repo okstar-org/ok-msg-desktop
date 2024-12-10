@@ -12,19 +12,19 @@
   -->
 
 <!DOCTYPE TS>
-<TS language="zh_TW" version="2.1">
+<TS language="ko" version="2.1">
     <context>
         <name>ok::platform::AppCenterWidget</name>
         <message>
             <source>App center</source>
-            <translation>應用中心</translation>
+            <translation>앱 센터</translation>
         </message>
     </context>
     <context>
         <name>ok::platform::Widget</name>
         <message>
             <source>Close Tab</source>
-            <translation>關閉選項卡</translation>
+            <translation>탭 닫기</translation>
         </message>
     </context>
 </TS>

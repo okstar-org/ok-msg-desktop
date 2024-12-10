@@ -11,14 +11,16 @@
  */
 
 #include "MeetingVideosLayout.h"
-#include "MeetingVideoOutput.h"
-
+#include <QDebug>
 #include <QEvent>
 #include <QPushButton>
 #include <QSplitter>
 #include <QStyle>
 #include <QVBoxLayout>
 #include <QVariant>
+#include "../MeetingParticipant.h"
+#include "MeetingVideoOutput.h"
+
 namespace module::meet {
 
 MeetingVideosContainer::MeetingVideosContainer(QWidget* parent) : QWidget(parent) {
@@ -26,6 +28,7 @@ MeetingVideosContainer::MeetingVideosContainer(QWidget* parent) : QWidget(parent
 
     splitter = new QSplitter(Qt::Vertical, this);
     participantLayout = new MeetingVideosLayout(MeetingVideosLayout::LayoutType::Grid, this);
+    participantLayout->setObjectName("videoList");
     participantLayout->setPageCellCount(2);
     splitter->addWidget(participantLayout);
     doResetLayout();
@@ -74,8 +77,12 @@ void MeetingVideosContainer::addParticipant(MeetingParticipant* participant) {
     participantLayout->addParticipant(participant);
 }
 
-void MeetingVideosContainer::removeParticipant(const QString& email) {
-    // TODO 移除成员
+void MeetingVideosContainer::removeParticipant(MeetingParticipant* participant) {
+    participantLayout->removeParticipant(participant);
+}
+
+void MeetingVideosContainer::clearParticipant() {
+    participantLayout->clearParticipant();
 }
 
 void MeetingVideosContainer::doResetLayout() {
@@ -112,7 +119,10 @@ void MeetingVideosContainer::doResetLayout() {
 }
 
 MeetingVideoOutput* MeetingVideosContainer::getCenterVideo() {
-    if (!centerVideo) centerVideo = new MeetingVideoOutput(this);
+    if (!centerVideo) {
+        centerVideo = new MeetingVideoOutput(this);
+        centerVideo->setObjectName("centerVideo");
+    }
     return centerVideo;
 }
 
@@ -121,6 +131,8 @@ constexpr int grid_max_videos = grid_max_cols * grid_max_cols;
 
 MeetingVideosLayout::MeetingVideosLayout(LayoutType type, QWidget* parent)
         : QWidget(parent), _type(type) {
+
+    setAttribute(Qt::WA_StyledBackground);
     setAttribute(Qt::WA_Hover);
 
     nextPageButton = new QPushButton(this);
@@ -174,7 +186,9 @@ void MeetingVideosLayout::setPageCellCount(int count) {
 }
 
 void MeetingVideosLayout::addParticipant(MeetingParticipant* participant) {
-    if (allParticipant.indexOf(participant) >= 0) {
+    qDebug() << __func__ << "email" << participant->getEmail();
+
+    if (allParticipant.contains(participant)) {
         return;
     }
     allParticipant.append(participant);
@@ -186,7 +200,7 @@ void MeetingVideosLayout::addParticipant(MeetingParticipant* participant) {
 }
 
 void MeetingVideosLayout::removeParticipant(MeetingParticipant* participant) {
-    if (allParticipant.indexOf(participant) >= 0) {
+    if (!allParticipant.contains(participant)) {
         return;
     }
     allParticipant.removeAll(participant);
@@ -197,6 +211,14 @@ void MeetingVideosLayout::removeParticipant(MeetingParticipant* participant) {
         rebindVideos();
     }
     updateButtonState();
+}
+
+void MeetingVideosLayout::clearParticipant() {
+    for (int index = 0; index < cellVideos.count(); index++) {
+        auto output = cellVideos.at(index);
+        output->bindParticipant(nullptr);
+    }
+    allParticipant.clear();
 }
 
 void MeetingVideosLayout::doLayout() {
@@ -225,14 +247,16 @@ void MeetingVideosLayout::doGridLayout(int cols) {
     int row_count = (cellCount + cols - 1) / cols;
     Q_ASSERT(row_count >= 1);
 
-    int grid_w = this->width() / cols;
-    int grid_h = this->height() / row_count;
+    const int spacing = 3;
+
+    int grid_w = (this->width() - spacing * (cols - 1)) / cols;
+    int grid_h = (this->height() - spacing * (row_count - 1)) / row_count;
 
     int index = 0;
     for (MeetingVideoOutput* output : cellVideos) {
         int r = index / cols;
         int c = index % cols;
-        output->setGeometry(QRect(c * grid_w, r * grid_h, grid_w, grid_h));
+        output->setGeometry(QRect(c * (grid_w + spacing), r * (grid_h + spacing), grid_w, grid_h));
         index++;
     }
 }
@@ -272,6 +296,7 @@ void MeetingVideosLayout::rebindVideos() {
                 output->setVisible(false);
             }
         }
+        output->setProperty("outOrder", index + offset + 1);
     }
 }
 
