@@ -21,7 +21,8 @@ namespace module::meet {
 // 会议参会者，获取一些基本信息、视频、音频等
 class MeetingParticipant {
 public:
-    explicit MeetingParticipant(const QString& email,
+    explicit MeetingParticipant(const QString& resource,
+                                const QString& email,
                                 const QString& nick,
                                 const std::string& avatarUrl,
                                 const ok::base::Jid& jid);
@@ -50,12 +51,17 @@ public:
         return jid;
     }
 
+    const QString& getResource() {
+        return resource;
+    }
+
 private:
+    // 会议室资源
+    QString resource;
     // 一个帐号（用户）一个邮箱
     QString email;
     QString nick;
     std::string avatarUrl;
-
     // 同一个用户，不同终端(jid.resource)
     ok::base::Jid jid;
 };
@@ -63,18 +69,18 @@ private:
 /**
  * 会议用户
  */
-class MeetingUser : public MeetingParticipant {
-public:
-    explicit MeetingUser(MeetingParticipant& part);
-    /***
-     *
-     * @param res
-     * @return 剩余的resource数量
-     */
-    uint32_t removeResource(const QString& res);
-
-private:
-    QSet<QString> resources;
-};
+// class MeetingUser : public MeetingParticipant {
+// public:
+//     explicit MeetingUser(MeetingParticipant& part);
+//     /***
+//      *
+//      * @param res
+//      * @return 剩余的resource数量
+//      */
+//     uint32_t removeResource(const QString& res);
+//
+// private:
+//     QSet<QString> resources;
+// };
 
 }  // namespace module::meet

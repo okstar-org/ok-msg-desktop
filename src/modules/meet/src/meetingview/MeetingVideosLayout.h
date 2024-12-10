@@ -24,7 +24,7 @@ class QPushButton;
 namespace module::meet {
 
 class MeetingVideosLayout;
-class MeetingUser;
+class MeetingParticipant;
 class MeetingVideoOutput;
 
 class MeetingVideosContainer : public QWidget {
@@ -36,8 +36,8 @@ public:
     QSize sizeHint() const;
     QSize minimumSizeHint() const;
 
-    void addParticipant(MeetingUser* user);
-    void removeParticipant(MeetingUser* user);
+    void addParticipant(MeetingParticipant* user);
+    void removeParticipant(MeetingParticipant* user);
     void clearParticipant();
 
 private:
@@ -61,8 +61,8 @@ public:
     MeetingVideosLayout(LayoutType type, QWidget* parent);
     void setLayoutType(MeetingVideosLayout::LayoutType type, int pageCellCount);
     void setPageCellCount(int count);
-    void addParticipant(MeetingUser* participant);
-    void removeParticipant(MeetingUser* participant);
+    void addParticipant(MeetingParticipant* participant);
+    void removeParticipant(MeetingParticipant* participant);
     void clearParticipant();
 
 private:
@@ -81,7 +81,7 @@ private:
 private:
     int cellCount = 1;
 
-    QMap<QString, MeetingUser*> allParticipant;
+    QMap<QString, MeetingParticipant*> allParticipant;
     QList<MeetingVideoOutput*> cellVideos;
     LayoutType _type = LayoutType::Grid;
 

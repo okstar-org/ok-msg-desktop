@@ -102,7 +102,7 @@ private:
     lib::messenger::MessengerMeet* meet = nullptr;
 
     // 所有会议人员
-    QMap<QString, MeetingUser*> participantMap;
+    QMap<QString, MeetingParticipant*> participantMap;
 
     // 会议唯一名称
     QString username;

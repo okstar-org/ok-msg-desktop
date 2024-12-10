@@ -12,17 +12,20 @@
 
 #include "MeetingParticipant.h"
 namespace module::meet {
-MeetingParticipant::MeetingParticipant(const QString& email,
-                                       const QString& nick,
-                                       const std::string& avatarUrl,
-                                       const ok::base::Jid& jid)
-        : email(email), nick(nick), avatarUrl(avatarUrl), jid(jid) {}
+MeetingParticipant::MeetingParticipant(  // 会议室资源
+        const QString& resource,
+        const QString& email,
+        const QString& nick,
+        const std::string& avatarUrl,
+        const ok::base::Jid& jid)
+        : resource(resource), email(email), nick(nick), avatarUrl(avatarUrl), jid(jid) {}
 
-MeetingUser::MeetingUser(MeetingParticipant& part)
-        : MeetingParticipant(part.getEmail(), part.getNick(), part.getAvatarUrl(), part.getJid()) {}
-uint32_t MeetingUser::removeResource(const QString& res) {
-    resources.remove(res);
-    return resources.size();
-}
+// MeetingUser::MeetingUser(MeetingParticipant& part)
+//         : MeetingParticipant(part.getEmail(), part.getNick(), part.getAvatarUrl(), part.getJid())
+//         {}
+// uint32_t MeetingUser::removeResource(const QString& res) {
+//     resources.remove(res);
+//     return resources.size();
+// }
 
 }  // namespace module::meet

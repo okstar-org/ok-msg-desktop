@@ -249,14 +249,16 @@ void MeetingVideoFrame::onParticipantLeft(const ok::base::Jid& jid, const ok::ba
 
 void MeetingVideoFrame::addParticipant(const QString& name,
                                        const lib::messenger::Participant& parti) {
-    auto find = participantMap.find(parti.email);
+    qDebug() << __func__ << "room:" << name << "email:" << parti.email
+             << "resource:" << parti.resource;
+    auto& k = parti.resource;
+    auto find = participantMap.find(k);
     if (find == participantMap.end()) {
         // 添加用户
-        MeetingParticipant p(parti.email, parti.nick, parti.avatarUrl, parti.jid);
-        auto user = new MeetingUser(p);
-
-        videosLayout->addParticipant(user);
-        participantMap.insert(parti.email, user);
+        auto p = new MeetingParticipant(parti.resource, parti.email, parti.nick, parti.avatarUrl,
+                                        parti.jid);
+        videosLayout->addParticipant(p);
+        participantMap.insert(k, p);
     } else {
         // 更新信息
         auto user = find.value();
@@ -265,24 +267,10 @@ void MeetingVideoFrame::addParticipant(const QString& name,
     }
 }
 
-void MeetingVideoFrame::removeParticipant(const QString&, const ok::base::Jid& jid) {
-    QString email;
-    for (auto user : participantMap) {
-        /**
-         * 移除用户的resource
-         */
-        auto resCount = user->removeResource(jid.resource());
-        if (resCount > 0) {
-            // 存在resource（则代表存在其他终端）则不处理
-            return;
-        }
-        // 需要移除的用户
-        email = user->getEmail();
-    }
-    if (email.isEmpty()) return;
-
+void MeetingVideoFrame::removeParticipant(const QString& name, const ok::base::Jid& jid) {
+    qDebug() << __func__ << "room:" << name << "jid:" << jid.full();
     // 执行移除用户操作
-    auto itor = participantMap.find(email);
+    auto itor = participantMap.find(jid.resource());
     if (itor != participantMap.end()) {
         auto user = itor.value();
         Q_ASSERT(user);

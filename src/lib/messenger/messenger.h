@@ -446,8 +446,11 @@ struct Meet {
  * 会议成员
  */
 struct Participant {
+    // 用户邮箱
     QString email;
+    // 用户昵称
     QString nick;
+    // 会议成员唯一标识
     QString resource;
     std::string avatarUrl;
     // IM终端标识(可定位到用户和终端)

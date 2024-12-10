@@ -73,11 +73,11 @@ QSize MeetingVideosContainer::minimumSizeHint() const {
     return QSize(300, 200);
 }
 
-void MeetingVideosContainer::addParticipant(MeetingUser* participant) {
+void MeetingVideosContainer::addParticipant(MeetingParticipant* participant) {
     participantLayout->addParticipant(participant);
 }
 
-void MeetingVideosContainer::removeParticipant(MeetingUser* participant) {
+void MeetingVideosContainer::removeParticipant(MeetingParticipant* participant) {
     participantLayout->removeParticipant(participant);
 }
 
@@ -131,7 +131,6 @@ constexpr int grid_max_videos = grid_max_cols * grid_max_cols;
 
 MeetingVideosLayout::MeetingVideosLayout(LayoutType type, QWidget* parent)
         : QWidget(parent), _type(type) {
-
     setAttribute(Qt::WA_StyledBackground);
     setAttribute(Qt::WA_Hover);
 
@@ -185,14 +184,13 @@ void MeetingVideosLayout::setPageCellCount(int count) {
     updateButtonState();
 }
 
-void MeetingVideosLayout::addParticipant(MeetingUser* participant) {
-    qDebug() << __func__ << "email" << participant->getEmail();
-
-    if (allParticipant.contains(participant->getEmail())) {
+void MeetingVideosLayout::addParticipant(MeetingParticipant* participant) {
+    auto& key = participant->getResource();
+    if (allParticipant.contains(key)) {
         return;
     }
 
-    allParticipant.insert(participant->getEmail(), participant);
+    allParticipant.insert(key, participant);
     pageCount = recalcPageCount();
     if (pageIndex == pageCount - 1) {
         rebindVideos();
@@ -200,12 +198,13 @@ void MeetingVideosLayout::addParticipant(MeetingUser* participant) {
     updateButtonState();
 }
 
-void MeetingVideosLayout::removeParticipant(MeetingUser* participant) {
-    if (!allParticipant.contains(participant->getEmail())) {
+void MeetingVideosLayout::removeParticipant(MeetingParticipant* participant) {
+    auto& key = participant->getResource();
+    if (!allParticipant.contains(key)) {
         return;
     }
 
-    allParticipant.remove(participant->getEmail());
+    allParticipant.remove(key);
     pageCount = recalcPageCount();
 
     if (pageIndex >= pageCount - 1) {
@@ -287,9 +286,9 @@ void MeetingVideosLayout::rebindVideos() {
     int offset = pageIndex * cellCount;
     for (int index = 0; index < cellVideos.count(); index++) {
         auto output = cellVideos.at(index);
-        MeetingParticipant* partivipant = allParticipant.values().value(index + offset);
-        output->bindParticipant(partivipant);
-        if (partivipant) {
+        MeetingParticipant* participant = allParticipant.values().value(index + offset);
+        output->bindParticipant(participant);
+        if (participant) {
             if (!output->isVisibleTo(this)) {
                 output->setVisible(true);
             }
