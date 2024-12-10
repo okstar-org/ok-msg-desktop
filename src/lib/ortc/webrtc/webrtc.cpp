@@ -31,6 +31,7 @@
 #include <rtc_base/ssl_adapter.h>
 #include <rtc_base/string_encode.h>
 #include <rtc_base/thread.h>
+#include <media/base/codec.h>
 
 namespace lib::ortc {
 
