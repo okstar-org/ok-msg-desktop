@@ -107,10 +107,15 @@ private:
     // 会议唯一名称
     QString username;
 
+public slots:
+    void doLeaveMeet();
+
 signals:
     void meetCreated(const QString& name);
+    void meetLeft();
     void participantJoined(const QString& name, const lib::messenger::Participant& part);
     void participantLeft(const QString& name, const ok::base::Jid& partJid);
 };
+
 }  // namespace module::meet
 #endif  // !MEETINGVIDEOFRAME_H

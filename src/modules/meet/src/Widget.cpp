@@ -132,6 +132,13 @@ void Widget::createMeeting(const QString& name) {
             setState(MeetingState::NoMeeting);
         });
 
+        // 退出会议
+        connect(view.data(), &MeetingVideoFrame::meetLeft, this, [this]() {
+            currentMeetingName.clear();
+            setState(MeetingState::NoMeeting);
+            view->close();
+        });
+
         connect(view.data(), &MeetingVideoFrame::meetCreated, this,
                 [this](const QString& name) { setState(MeetingState::Created); });
 

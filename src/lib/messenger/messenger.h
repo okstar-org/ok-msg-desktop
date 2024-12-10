@@ -477,6 +477,7 @@ public:
     ~MessengerMeet() override;
     void create(const QString& room);
     void addHandler(MessengerMeetHandler* hdr);
+    void leave();
 
 private:
     IMMeet* meet;

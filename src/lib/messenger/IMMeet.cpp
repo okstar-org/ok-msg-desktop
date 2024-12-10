@@ -73,16 +73,15 @@ const std::string& IMMeet::create(const QString& name) {
     props.insert(std::pair("startVideoMuted", "9"));
     props.insert(std::pair("rtcstatsEnabled", "false"));
 
-    gloox::JID jid(stdstring(name) + "@conference." + stdstring(session->getSignInInfo().host));
-    meet = new gloox::Meet(jid, stdstring(ok::base::UUID::make()), props);
-    manager->createMeet(*meet);
+    gloox::JID room(stdstring(name) + "@conference." + stdstring(session->getSignInInfo().host));
+    meet = manager->createMeet(room, props);
     return meet->getUid();
 }
 
 void IMMeet::disband() {}
 
-void IMMeet::exit() {
-    //    manager->exitMeet();
+void IMMeet::leave() {
+    manager->exitMeet();
 }
 
 void IMMeet::join() {}

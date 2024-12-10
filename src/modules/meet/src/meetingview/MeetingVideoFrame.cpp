@@ -135,9 +135,11 @@ void MeetingVideoFrame::creatBottomBar() {
     recoardButton->iconButton()->setIcon(QIcon(":/meet/image/record.svg"));
     inviteButton = new PopupMenuComboBox(bottomBar);
     inviteButton->iconButton()->setIcon(QIcon(":/meet/image/invite_user.svg"));
+
     leaveButton = new QToolButton(bottomBar);
     leaveButton->setObjectName("leaveMeeting");
     leaveButton->setIcon(QIcon(":/meet/image/phone"));
+    connect(leaveButton, &QToolButton::clicked, this, &MeetingVideoFrame::doLeaveMeet);
 
     middleLayout->addWidget(audioSettingButton);
     middleLayout->addWidget(videoSettingButton);
@@ -283,6 +285,11 @@ void MeetingVideoFrame::removeParticipant(const QString& name, const ok::base::J
         this->close();
         this->deleteLater();
     }
+}
+
+void MeetingVideoFrame::doLeaveMeet() {
+    meet->leave();
+    emit meetLeft();
 }
 
 }  // namespace module::meet

@@ -586,4 +586,8 @@ void MessengerMeet::addHandler(MessengerMeetHandler* hdr) {
     meet->addMeetHandler(hdr);
 }
 
+void MessengerMeet::leave() {
+    meet->leave();
+}
+
 }  // namespace lib::messenger

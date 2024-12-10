@@ -51,7 +51,7 @@ public:
     /**
      * 退出会议
      */
-    void exit();
+    void leave();
 
     /**
      * 加入会议
