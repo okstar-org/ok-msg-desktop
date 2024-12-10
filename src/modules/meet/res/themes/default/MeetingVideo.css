@@ -70,3 +70,16 @@ module--meet--MeetingVideoOutput{
 module--meet--MeetingVideoOutput#centerVideo{
     background: #e3e3e3;
 }
+
+
+module--meet--MeetingVideosLayout QPushButton#nextPage,
+module--meet--MeetingVideosLayout QPushButton#prevPage
+{
+    border: 0px solid;
+    background: white;
+    width: 18px;
+    height: 36px;
+    padding: 0px;
+    margin: 0px;
+    border-radius: 0px;
+}

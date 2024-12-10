@@ -62,7 +62,7 @@ PopupMenuComboBox::PopupMenuComboBox(QWidget* parent) : QFrame(parent) {
     menuButton = new QToolButton(this);
     menuButton->setObjectName("menuButton");
     menuButton->setIconSize(QSize(12, 12));
-    menuButton->setIcon(QIcon(":/meet/image/up_arrow.svg"));
+    menuButton->setIcon(QIcon(":/meet/image/arrow_up.svg"));
 
     mainLayout->addWidget(_iconButton);
     mainLayout->addWidget(new LayoutBarSeparator(Qt::Vertical, this));
