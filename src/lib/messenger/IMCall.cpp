@@ -845,7 +845,7 @@ void IMCall::doSessionInitiate(gloox::Jingle::Session* session,
                                const lib::messenger::IMPeerId& peerId) {
     auto sId = qstring(jingle->sid());
     qDebug() << __func__ << "sid:" << sId;
-
+    return;
     ortc::OJingleContentAv cav;
     parse(jingle, cav);
     if (!cav.isValid()) {
