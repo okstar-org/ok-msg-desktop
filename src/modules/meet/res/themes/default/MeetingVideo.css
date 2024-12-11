@@ -83,3 +83,18 @@ module--meet--MeetingVideosLayout QPushButton#prevPage
     margin: 0px;
     border-radius: 0px;
 }
+
+QToolButton#leaveMeeting
+{
+    background-color: #D7262E;
+}
+
+QToolButton#leaveMeeting:hover
+{
+    background-color: #e53e46
+}
+
+QToolButton#leaveMeeting:pressed
+{
+    background-color: #c72029
+}

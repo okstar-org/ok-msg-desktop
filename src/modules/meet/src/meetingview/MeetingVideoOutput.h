@@ -36,6 +36,9 @@ protected:
 private:
     void showVideo();
     void showAvatar();
+    // 是否视频输出
+    bool hasVideoOutput();
+    QRectF calcAvatarRect();
 
     RoundedPixmapLabel* avatarLabel = nullptr;
     MeetingParticipant* participant = nullptr;
