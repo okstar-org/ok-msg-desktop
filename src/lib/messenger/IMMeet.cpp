@@ -250,7 +250,6 @@ bool lib::messenger::IMMeet::doSessionInitiate(gloox::Jingle::Session* session,
     ortc::OJingleContentAv cav;
     ParseAV(jingle, cav);
     if (!cav.isValid()) {
-        addInvalidSid(sId);
         qDebug() << "Is no av session!";
         return false;
     }
@@ -258,11 +257,13 @@ bool lib::messenger::IMMeet::doSessionInitiate(gloox::Jingle::Session* session,
     cav.sdpType = lib::ortc::JingleSdpType::Offer;
     ortc::OkRTCManager::getInstance()->getRtc()->CreateAnswer(stdstring(peerId.toString()), cav);
 
+    currentSid = sId;
     return true;
 }
 
 bool IMMeet::doSessionTerminate(gloox::Jingle::Session* session,
                                 const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
+    currentSid.clear();
     return true;
 }
 

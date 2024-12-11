@@ -31,7 +31,6 @@
 
 namespace lib::messenger {
 
-
 inline void packCandidates(const ortc::CandidateList& src,
                            gloox::Jingle::ICEUDP::CandidateList& to) {
     for (auto& c : src) {
@@ -302,6 +301,8 @@ void IMCall::cancel(const QString& friendId) {
         cancelCall(IMContactId{friendId}, qstring(session->getSession()->sid()));
         clearSessionInfo(sId);
     }
+
+    currentSid.clear();
 }
 
 void IMCall::cancelCall(const IMContactId& friendId, const QString& sId) {
@@ -314,6 +315,8 @@ void IMCall::cancelCall(const IMContactId& friendId, const QString& sId) {
         clearSessionInfo(sId);
     }
     retractJingleMessage(friendId.toString(), sId);
+
+    currentSid.clear();
 }
 
 void IMCall::rejectCall(const IMPeerId& peerId, const QString& sId) {
@@ -533,10 +536,11 @@ void IMCall::onRender(const std::string& peerId, lib::ortc::RendererImage image)
 bool IMCall::doSessionAccept(gloox::Jingle::Session* session,
                              const gloox::Jingle::Session::Jingle* jingle,
                              const lib::messenger::IMPeerId& peerId) {
+    if (currentSid.isEmpty()) {
+        return false;
+    }
+
     auto sId = qstring(session->sid());
-
-    if (isInvalidSid(sId)) return false;
-
     ortc::OJingleContentAv av;
     av.sdpType = ortc::JingleSdpType::Answer;
     ParseAV(jingle, av);
@@ -807,8 +811,7 @@ bool IMCall::doTransportInfo(const gloox::Jingle::Session::Jingle* jingle, const
     auto sid = qstring(jingle->sid());
     qDebug() << __func__ << "sId:" << sid << "peerId:" << peerId.toString();
 
-    if (isInvalidSid(sid)) {
-        qWarning() << "Unable to handle the session!";
+    if (currentSid.isEmpty()) {
         return false;
     }
 
@@ -869,32 +872,34 @@ bool IMCall::doSessionInitiate(gloox::Jingle::Session* session,
     ortc::OJingleContentAv cav;
     ParseAV(jingle, cav);
     if (!cav.isValid()) {
-        addInvalidSid(sId);
         qDebug() << "Is no av session!";
         return false;
     }
 
     cav.sdpType = lib::ortc::JingleSdpType::Offer;
     ortc::OkRTCManager::getInstance()->getRtc()->CreateAnswer(stdstring(peerId.toString()), cav);
-
+    currentSid = sId;
     return true;
 }
 
 bool IMCall::doSessionTerminate(gloox::Jingle::Session* session,
                                 const gloox::Jingle::Session::Jingle*,
                                 const lib::messenger::IMPeerId& peerId) {
-    auto sId = qstring(session->sid());
-    qDebug() << __func__ << "sId:" << sId;
-    if (isInvalidSid(sId)) {
+    if (currentSid.isEmpty()) {
         return false;
     }
 
+    auto sId = qstring(session->sid());
+    qDebug() << __func__ << "sId:" << sId;
     auto s = findSession(sId);
     if (s) {
         s->doTerminate();
     }
+
     clearSessionInfo(sId);
     emit receiveFriendHangup(peerId.toFriendId(), CallState::FINISHED);
+
+    currentSid.clear();
     return true;
 }
 
@@ -1001,9 +1006,5 @@ void IMCall::toPlugins(const ortc::OJingleContentAv& av, gloox::Jingle::PluginLi
     auto group = new gloox::Jingle::Group("BUNDLE", contentList);
     plugins.push_back(group);
 }
-
-
-
-
 
 }  // namespace lib::messenger

@@ -797,7 +797,7 @@ void WebRTC::setTransportInfo(const std::string& peerId,
                 break;
         }
 
-        cricket::Candidate candidate((_candidate.component),
+        cricket::Candidate candidate(_candidate.component,
                                      _candidate.protocol,
                                      ::rtc::SocketAddress(_candidate.ip, _candidate.port),
                                      _candidate.priority,

@@ -175,6 +175,7 @@ void IMFile::fileAcceptRequest(const QString& friendId, const File& file) {
 
 void IMFile::fileCancel(QString fileId) {
     qDebug() << __func__ << "file" << fileId;
+    currentSid.clear();
 }
 
 void IMFile::fileFinishRequest(QString friendId, const QString& sId) {
@@ -366,12 +367,12 @@ bool IMFile::sendFileToResource(const gloox::JID& jid, const File& file) {
 bool IMFile::doSessionAccept(gloox::Jingle::Session* session,
                              const gloox::Jingle::Session::Jingle* jingle,
                              const lib::messenger::IMPeerId& peerId) {
-    auto sId = qstring(session->sid());
-    qDebug() << __func__ << "sId:" << sId;
-    if (isInvalidSid(sId)) {
-        qWarning() << "No file session";
+    if (currentSid.isEmpty()) {
         return false;
     }
+
+    auto sId = qstring(session->sid());
+    qDebug() << __func__ << "sId:" << sId;
 
     ortc::OJingleContentFile cfile;
     cfile.sdpType = ortc::JingleSdpType::Answer;
@@ -412,6 +413,10 @@ bool IMFile::doSessionAccept(gloox::Jingle::Session* session,
 bool IMFile::doSessionInitiate(gloox::Jingle::Session* session,
                                const gloox::Jingle::Session::Jingle* jingle,
                                const IMPeerId& peerId) {
+    if (currentSid.isEmpty()) {
+        return false;
+    }
+
     auto& from = session->remote();
     if (from.server().starts_with("conference.")) {
         return false;
@@ -501,8 +506,12 @@ bool IMFile::doSessionTerminate(gloox::Jingle::Session* session,
                                 const gloox::Jingle::Session::Jingle*,
                                 const IMPeerId&) {
     auto sId = qstring(session->sid());
-    if (isInvalidSid(sId)) return false;
+
+    if (currentSid.isEmpty()) {
+        return false;
+    }
     clearSessionInfo(sId);
+    currentSid.clear();
     return true;
 }
 

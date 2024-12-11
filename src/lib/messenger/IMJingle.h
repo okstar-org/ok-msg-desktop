@@ -95,21 +95,18 @@ protected:
 
     IM* im;
 
-    // 传输文件、传输视频会话的区分
-    QList<QString> m_invalid_sId;
+    QString currentSid;
 
-    void addInvalidSid(const QString& sid) {
-        m_invalid_sId.append(sid);
-    }
-
-    bool isInvalidSid(const QString& sid) {
-        return m_invalid_sId.contains(sid);
-    }
-
-private:
-    QString getSessionByFriendId(const QString& friendId);
-
-    QList<gloox::Jingle::Content*> m_ices;
+    //    // 传输文件、传输视频会话的区分
+    //    QList<QString> m_invalid_sId;
+    //
+    //    void addInvalidSid(const QString& sid) {
+    //        m_invalid_sId.append(sid);
+    //    }
+    //
+    //    bool isInvalidSid(const QString& sid) {
+    //        return m_invalid_sId.contains(sid);
+    //    }
 
 protected slots:
     virtual void onImStarted();

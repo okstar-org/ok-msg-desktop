@@ -23,8 +23,7 @@
 #include "IM.h"
 #include "base/logs.h"
 
-namespace lib {
-namespace messenger {
+namespace lib::messenger {
 
 using namespace gloox;
 using namespace Jingle;
@@ -73,11 +72,6 @@ void IMJingle::handleMessage(const Message& msg, MessageSession* session) {
     if (jm) {
         handleJingleMessage(IMPeerId(msg.from().full()), jm);
     }
-}
-
-QString IMJingle::getSessionByFriendId(const QString& friendId) {
-    qDebug() << ("getSessionId:%1") << friendId;
-    return m_friendSessionMap.value(IMPeerId{friendId}, {});
 }
 
 bool IMJingle::handleIq(const IQ& iq) {
@@ -228,5 +222,4 @@ void IMJingle::ParseAV(const gloox::Jingle::Session::Jingle* jingle, OJingleCont
     }
 }
 
-}  // namespace messenger
-}  // namespace lib
+}  // namespace lib::messenger
