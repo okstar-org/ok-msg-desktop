@@ -17,6 +17,7 @@
 #include <string>
 
 #include <api/peer_connection_interface.h>
+#include <pc/session_description.h>
 #include <rtc_base/thread.h>
 #include <optional>
 
@@ -107,6 +108,10 @@ private:
     Conductor* createConductor(const std::string& peerId, const std::string& sId, bool video);
 
     Conductor* getConductor(const std::string& peerId);
+
+    std::unique_ptr<cricket::AudioContentDescription> createAudioDescription(const ORTP& rtp);
+    std::unique_ptr<cricket::VideoContentDescription> createVideoDescription(const ORTP& rtp);
+    std::unique_ptr<cricket::SctpDataContentDescription> createDataDescription(const OSdp& sdp);
 
     std::recursive_mutex start_mtx;
 

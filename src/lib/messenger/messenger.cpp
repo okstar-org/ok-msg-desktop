@@ -586,6 +586,29 @@ void MessengerMeet::addHandler(MessengerMeetHandler* hdr) {
     meet->addMeetHandler(hdr);
 }
 
+void MessengerMeet::onCall(const IMPeerId& peerId, const QString& callId, bool audio, bool video) {}
+
+void MessengerMeet::onCallRetract(const QString& friendId, CallState state) {}
+
+void MessengerMeet::onCallAcceptByOther(const QString& callId, const IMPeerId& peerId) {}
+
+void MessengerMeet::onPeerConnectionChange(IMPeerId friendId, QString callId,
+                                           ortc::PeerConnectionState state) {}
+
+void MessengerMeet::receiveCallStateAccepted(IMPeerId friendId, QString callId, bool video) {}
+
+void MessengerMeet::receiveCallStateRejected(IMPeerId friendId, QString callId, bool video) {}
+
+void MessengerMeet::onHangup(const QString& friendId, CallState state) {}
+
+void MessengerMeet::onSelfVideoFrame(uint16_t w, uint16_t h, const uint8_t* y, const uint8_t* u,
+                                     const uint8_t* v, int32_t ystride, int32_t ustride,
+                                     int32_t vstride) {}
+
+void MessengerMeet::onFriendVideoFrame(const QString& friendId, uint16_t w, uint16_t h,
+                                       const uint8_t* y, const uint8_t* u, const uint8_t* v,
+                                       int32_t ystride, int32_t ustride, int32_t vstride) {}
+
 void MessengerMeet::leave() {
     meet->leave();
 }

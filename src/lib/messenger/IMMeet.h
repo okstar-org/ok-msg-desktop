@@ -22,15 +22,22 @@
 #include <meethandler.h>
 #include <meetmanager.h>
 
+#include "IM.h"
 #include "IMFromHostHandler.h"
+#include "IMJingle.h"
 #include "base/jid.h"
+#include "lib/ortc/ok_rtc_defs.h"
 #include "messenger.h"
 
 namespace lib::messenger {
 
 class IM;
 
-class IMMeet : public QObject, public IMFromHostHandler, public gloox::MeetHandler {
+class IMMeet : public IMJingle,
+               public IMSessionHandler,
+               public IMFromHostHandler,
+               public ortc::OkRTCHandler,
+               public gloox::MeetHandler {
     Q_OBJECT
 public:
     explicit IMMeet(IM* im, QObject* parent = nullptr);
@@ -77,8 +84,77 @@ protected:
 
     void handleJsonMessage(const gloox::JID& jid, const gloox::JsonMessage* json) override;
 
+    /**
+     * IMSessionHandler
+     */
+    bool doSessionInitiate(gloox::Jingle::Session* session,        //
+                           const gloox::Jingle::Session::Jingle*,  //
+                           const IMPeerId&) override;
+
+    bool doSessionTerminate(gloox::Jingle::Session* session,        //
+                            const gloox::Jingle::Session::Jingle*,  //
+                            const IMPeerId&) override;
+
+    bool doSessionAccept(gloox::Jingle::Session* session,               //
+                         const gloox::Jingle::Session::Jingle* jingle,  //
+                         const IMPeerId& peerId) override;
+
+    bool doSessionInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    bool doContentAdd(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    bool doContentRemove(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    bool doContentModify(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    bool doContentAccept(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    bool doContentReject(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    bool doTransportInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    bool doTransportAccept(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    bool doTransportReject(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    bool doTransportReplace(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    bool doSecurityInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    bool doDescriptionInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    bool doInvalidAction(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+
+    // IMJingle
+    void handleJingleMessage(const IMPeerId& peerId,
+                             const gloox::Jingle::JingleMessage* jm) override;
+
+    void clearSessionInfo(const QString& sId) override;
+
+    // OkRTCHandler
+    void onCreatePeerConnection(const std::string& sId,
+                                const std::string& peerId,
+                                bool ok) override;
+
+    void onRTP(const std::string& sId,
+               const std::string& peerId,
+               const ortc::OJingleContentAv& osd) override;
+
+    void onFailure(const std::string& sId,
+                   const std::string& peerId,
+                   const std::string& error) override;
+
+    void onIceGatheringChange(const std::string& sId,
+                              const std::string& peerId,
+                              ortc::IceGatheringState state) override;
+
+    void onIceConnectionChange(const std::string& sId,
+                               const std::string& peerId,
+                               ortc::IceConnectionState state) override;
+
+    void onPeerConnectionChange(const std::string& sId,
+                                const std::string& peerId,
+                                ortc::PeerConnectionState state) override;
+
+    void onSignalingChange(const std::string& sId,
+                           const std::string& peerId,
+                           ortc::SignalingState state) override;
+
+    void onIce(const std::string& sId,
+               const std::string& peerId,
+               const ortc::OIceUdp& iceUdp) override;
+
+    void onRender(const std::string& friendId, ortc::RendererImage image) override;
+
 private:
-    IM* im;
     gloox::Meet* meet;
     gloox::MeetManager* manager;
     std::vector<MessengerMeetHandler*> handlers;

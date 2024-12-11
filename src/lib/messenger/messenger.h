@@ -12,7 +12,6 @@
 
 #pragma once
 
-#include <QDateTime>
 #include <QString>
 #include <cstddef>
 #include <memory>
@@ -470,17 +469,67 @@ public:
     virtual void onParticipantLeft(const ok::base::Jid& jid, const ok::base::Jid& partJid) = 0;
 };
 
-class MessengerMeet : public QObject {
+class MessengerMeet : public QObject, public CallHandler {
     Q_OBJECT
 public:
     explicit MessengerMeet(Messenger* messenger, QObject* parent = nullptr);
     ~MessengerMeet() override;
+    /**
+     * 创建会议
+     * @param room
+     */
     void create(const QString& room);
-    void addHandler(MessengerMeetHandler* hdr);
+    /**
+     * 离开会议
+     */
     void leave();
+    void addHandler(MessengerMeetHandler* hdr);
+
+protected:
+    void onCall(const IMPeerId& peerId,  //
+                const QString& callId,   //
+                bool audio, bool video) override;
+
+    void onCallRetract(const QString& friendId,  //
+                       CallState state) override;
+
+    void onCallAcceptByOther(const QString& callId, const IMPeerId& peerId) override;
+
+    void onPeerConnectionChange(IMPeerId friendId,  //
+                                QString callId,     //
+                                ortc::PeerConnectionState state) override;
+
+    void receiveCallStateAccepted(IMPeerId friendId,  //
+                                  QString callId,     //
+                                  bool video) override;
+
+    void receiveCallStateRejected(IMPeerId friendId,  //
+                                  QString callId,     //
+                                  bool video) override;
+
+    void onHangup(const QString& friendId,  //
+                  CallState state) override;
+
+    void onSelfVideoFrame(uint16_t w, uint16_t h,  //
+                          const uint8_t* y,        //
+                          const uint8_t* u,        //
+                          const uint8_t* v,        //
+                          int32_t ystride,         //
+                          int32_t ustride,         //
+                          int32_t vstride) override;
+
+    void onFriendVideoFrame(const QString& friendId,  //
+                            uint16_t w, uint16_t h,   //
+                            const uint8_t* y,         //
+                            const uint8_t* u,         //
+                            const uint8_t* v,         //
+                            int32_t ystride,          //
+                            int32_t ustride,          //
+                            int32_t vstride) override;
 
 private:
     IMMeet* meet;
+    MessengerCall* call;
 };
 
 }  // namespace lib::messenger

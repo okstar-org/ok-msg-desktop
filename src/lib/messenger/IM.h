@@ -82,11 +82,11 @@ namespace lib::messenger {
 
 class IMSessionHandler {
 public:
-    virtual void doSessionInitiate(gloox::Jingle::Session* session,        //
+    virtual bool doSessionInitiate(gloox::Jingle::Session* session,        //
                                    const gloox::Jingle::Session::Jingle*,  //
                                    const IMPeerId&) = 0;
 
-    virtual void doSessionTerminate(gloox::Jingle::Session* session,        //
+    virtual bool doSessionTerminate(gloox::Jingle::Session* session,        //
                                     const gloox::Jingle::Session::Jingle*,  //
                                     const IMPeerId&) = 0;
 
@@ -94,19 +94,19 @@ public:
                                  const gloox::Jingle::Session::Jingle* jingle,  //
                                  const IMPeerId& peerId) = 0;
 
-    virtual void doSessionInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
-    virtual void doContentAdd(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
-    virtual void doContentRemove(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
-    virtual void doContentModify(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
-    virtual void doContentAccept(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
-    virtual void doContentReject(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
-    virtual void doTransportInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
-    virtual void doTransportAccept(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
-    virtual void doTransportReject(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
-    virtual void doTransportReplace(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
-    virtual void doSecurityInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
-    virtual void doDescriptionInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
-    virtual void doInvalidAction(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
+    virtual bool doSessionInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
+    virtual bool doContentAdd(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
+    virtual bool doContentRemove(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
+    virtual bool doContentModify(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
+    virtual bool doContentAccept(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
+    virtual bool doContentReject(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
+    virtual bool doTransportInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
+    virtual bool doTransportAccept(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
+    virtual bool doTransportReject(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
+    virtual bool doTransportReplace(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
+    virtual bool doSecurityInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
+    virtual bool doDescriptionInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
+    virtual bool doInvalidAction(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
 };
 
 struct IMRoomInfo {

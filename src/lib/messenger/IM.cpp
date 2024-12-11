@@ -2269,7 +2269,8 @@ void IM::handleIncomingSession(gloox::Jingle::Session* session) {
 }
 
 // Session
-void IM::handleSessionAction(gloox::Jingle::Action action, gloox::Jingle::Session* session,
+void IM::handleSessionAction(gloox::Jingle::Action action,     //
+                             gloox::Jingle::Session* session,  //
                              const gloox::Jingle::Session::Jingle* jingle) {
     auto from = session->remote();
     auto friendId = IMPeerId(from);
@@ -2280,7 +2281,7 @@ void IM::handleSessionAction(gloox::Jingle::Action action, gloox::Jingle::Sessio
     switch (action) {
         case gloox::Jingle::Action::SessionInitiate: {
             for (auto h : m_sessionHandlers) {
-                h->doSessionInitiate(session, jingle, friendId);
+                if (h->doSessionInitiate(session, jingle, friendId)) break;
             }
             break;
         }

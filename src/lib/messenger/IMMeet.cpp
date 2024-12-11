@@ -36,7 +36,7 @@ Participant IMMeet::toParticipant(const gloox::Meet::Participant& participant) c
                        .role = qstring(participant.role)};
 }
 
-IMMeet::IMMeet(IM* im, QObject* parent) : QObject(parent), im{im}, manager{nullptr} {
+IMMeet::IMMeet(IM* im, QObject* parent) : IMJingle(im, parent), manager{nullptr} {
     manager = new gloox::MeetManager(im->getClient());
     manager->registerHandler(this);
 
@@ -50,6 +50,7 @@ IMMeet::IMMeet(IM* im, QObject* parent) : QObject(parent), im{im}, manager{nullp
 
     auto host = stdstring("conference." + session->getSignInInfo().host);
     im->addFromHostHandler(host, this);
+    im->addSessionHandler(this);
 }
 
 IMMeet::~IMMeet() {
@@ -233,5 +234,123 @@ void IMMeet::addMeetHandler(MessengerMeetHandler* hdr) {
 void IMMeet::onSelfVCard(const IMVCard& vCard_) {
     vCard = vCard_;
 }
+
+bool lib::messenger::IMMeet::doSessionInitiate(gloox::Jingle::Session* session,
+                                               const gloox::Jingle::Session::Jingle* jingle,
+                                               const IMPeerId& peerId) {
+    auto& from = session->remote();
+    if (!from.server().starts_with("conference.")) {
+        // 非会议
+        return false;
+    }
+
+    auto sId = qstring(jingle->sid());
+    qDebug() << __func__ << "sid:" << sId;
+
+    ortc::OJingleContentAv cav;
+    ParseAV(jingle, cav);
+    if (!cav.isValid()) {
+        addInvalidSid(sId);
+        qDebug() << "Is no av session!";
+        return false;
+    }
+
+    cav.sdpType = lib::ortc::JingleSdpType::Offer;
+    ortc::OkRTCManager::getInstance()->getRtc()->CreateAnswer(stdstring(peerId.toString()), cav);
+
+    return true;
+}
+
+bool IMMeet::doSessionTerminate(gloox::Jingle::Session* session,
+                                const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
+    return true;
+}
+
+bool IMMeet::doSessionAccept(gloox::Jingle::Session* session,
+                             const gloox::Jingle::Session::Jingle* jingle, const IMPeerId& peerId) {
+    return true;
+}
+
+bool IMMeet::doSessionInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
+    return true;
+}
+
+bool IMMeet::doContentAdd(const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
+    return true;
+}
+
+bool IMMeet::doContentRemove(const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
+    return true;
+}
+
+bool IMMeet::doContentModify(const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
+    return true;
+}
+
+bool IMMeet::doContentAccept(const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
+    return true;
+}
+
+bool IMMeet::doContentReject(const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
+    return true;
+}
+
+bool IMMeet::doTransportInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
+    return true;
+}
+
+bool IMMeet::doTransportAccept(const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
+    return true;
+}
+
+bool IMMeet::doTransportReject(const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
+    return true;
+}
+
+bool IMMeet::doTransportReplace(const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
+    return true;
+}
+
+bool IMMeet::doSecurityInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
+    return true;
+}
+
+bool IMMeet::doDescriptionInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
+    return true;
+}
+
+bool IMMeet::doInvalidAction(const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
+    return true;
+}
+
+void IMMeet::handleJingleMessage(const IMPeerId& peerId, const gloox::Jingle::JingleMessage* jm) {}
+
+void IMMeet::clearSessionInfo(const QString& sId) {}
+
+void IMMeet::onCreatePeerConnection(const std::string& sId, const std::string& peerId, bool ok) {}
+
+void IMMeet::onRTP(const std::string& sId, const std::string& peerId,
+                   const ortc::OJingleContentAv& osd) {}
+
+void IMMeet::onFailure(const std::string& sId, const std::string& peerId,
+                       const std::string& error) {}
+
+void IMMeet::onIceGatheringChange(const std::string& sId, const std::string& peerId,
+                                  ortc::IceGatheringState state) {}
+
+void IMMeet::onIceConnectionChange(const std::string& sId, const std::string& peerId,
+                                   ortc::IceConnectionState state) {}
+
+void IMMeet::onPeerConnectionChange(const std::string& sId, const std::string& peerId,
+                                    ortc::PeerConnectionState state) {}
+
+void IMMeet::onSignalingChange(const std::string& sId, const std::string& peerId,
+                               ortc::SignalingState state) {}
+
+void IMMeet::onIce(const std::string& sId, const std::string& peerId, const ortc::OIceUdp& iceUdp) {
+
+}
+
+void IMMeet::onRender(const std::string& friendId, ortc::RendererImage image) {}
 
 }  // namespace lib::messenger

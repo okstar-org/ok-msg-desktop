@@ -65,7 +65,7 @@ typedef std::list<Candidate> CandidateList;
 
 struct OIceUdp {
     std::string mid;
-    int mline = 0;
+    //    int mline = 0;
     std::string ufrag;
     std::string pwd;
     Dtls dtls;

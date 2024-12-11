@@ -42,8 +42,12 @@ public:
     void start() override;
     void stop() override;
 
-    File* getFile() { return file; }
-    gloox::Jingle::Session* getJingleSession() { return session; }
+    File* getFile() {
+        return file;
+    }
+    gloox::Jingle::Session* getJingleSession() {
+        return session;
+    }
 
 private:
     QString sId;
@@ -99,9 +103,13 @@ public:
      */
     void doStopFileSendTask(const gloox::Jingle::Session* session, const File& file);
 
-    std::vector<FileHandler*> getHandlers() { return fileHandlers; }
+    std::vector<FileHandler*> getHandlers() {
+        return fileHandlers;
+    }
 
-    IMFileSession* findSession(const QString& sId) { return m_fileSessionMap.value(sId); }
+    IMFileSession* findSession(const QString& sId) {
+        return m_fileSessionMap.value(sId);
+    }
 
     void clearSessionInfo(const QString& sId) override;
 
@@ -111,11 +119,11 @@ protected:
         qWarning() << "Unable to handle messages from:" << peerId.toString();
     }
 
-    void doSessionInitiate(gloox::Jingle::Session* session,        //
+    bool doSessionInitiate(gloox::Jingle::Session* session,        //
                            const gloox::Jingle::Session::Jingle*,  //
                            const IMPeerId&) override;
 
-    void doSessionTerminate(gloox::Jingle::Session* session,        //
+    bool doSessionTerminate(gloox::Jingle::Session* session,        //
                             const gloox::Jingle::Session::Jingle*,  //
                             const IMPeerId&) override;
 
@@ -123,19 +131,45 @@ protected:
                          const gloox::Jingle::Session::Jingle*,  //
                          const IMPeerId&) override;
 
-    void doSessionInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {};
-    void doContentAdd(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {};
-    void doContentRemove(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {};
-    void doContentModify(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {};
-    void doContentAccept(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {};
-    void doContentReject(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {};
-    void doTransportInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {};
-    void doTransportAccept(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {};
-    void doTransportReject(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {};
-    void doTransportReplace(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {};
-    void doSecurityInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {};
-    void doDescriptionInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {};
-    void doInvalidAction(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {};
+    bool doSessionInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {
+        return false;
+    };
+    bool doContentAdd(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {
+        return false;
+    };
+    bool doContentRemove(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {
+        return false;
+    };
+    bool doContentModify(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {
+        return false;
+    };
+    bool doContentAccept(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {
+        return false;
+    };
+    bool doContentReject(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {
+        return false;
+    };
+    bool doTransportInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {
+        return false;
+    };
+    bool doTransportAccept(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {
+        return false;
+    };
+    bool doTransportReject(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {
+        return false;
+    };
+    bool doTransportReplace(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {
+        return false;
+    };
+    bool doSecurityInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {
+        return false;
+    };
+    bool doDescriptionInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {
+        return false;
+    };
+    bool doInvalidAction(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {
+        return false;
+    };
 
 private:
     void rejectFileRequest(const QString& friendId, const QString& sId);

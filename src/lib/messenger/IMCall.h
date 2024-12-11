@@ -118,8 +118,6 @@ public:
     explicit IMCall(IM* im, QObject* parent = nullptr);
     ~IMCall() override;
     void toPlugins(const ortc::OJingleContentAv& av, gloox::Jingle::PluginList& plugins);
-    static void parse(const gloox::Jingle::Session::Jingle* jingle,
-                      ortc::OJingleContentAv& contentAv);
 
     void onCreatePeerConnection(const std::string& sId, const std::string& peerId,
                                 bool ok) override;
@@ -191,30 +189,30 @@ public:
 protected:
     void handleJingleMessage(const IMPeerId& peerId,
                              const gloox::Jingle::JingleMessage* jm) override;
-    virtual void doSessionInitiate(gloox::Jingle::Session* session,        //
+    virtual bool doSessionInitiate(gloox::Jingle::Session* session,        //
                                    const gloox::Jingle::Session::Jingle*,  //
                                    const IMPeerId&) override;
-    virtual void doSessionInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
-    virtual void doSessionTerminate(gloox::Jingle::Session* session,        //
+    virtual bool doSessionInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual bool doSessionTerminate(gloox::Jingle::Session* session,        //
                                     const gloox::Jingle::Session::Jingle*,  //
                                     const IMPeerId&) override;
 
     virtual bool doSessionAccept(gloox::Jingle::Session* session,        //
                                  const gloox::Jingle::Session::Jingle*,  //
                                  const IMPeerId&) override;
-    virtual void doContentAdd(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
-    virtual void doContentRemove(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
-    virtual void doContentModify(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
-    virtual void doContentAccept(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
-    virtual void doContentReject(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
-    virtual void doTransportInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
-    virtual void doTransportAccept(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
-    virtual void doTransportReject(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
-    virtual void doTransportReplace(const gloox::Jingle::Session::Jingle*,
+    virtual bool doContentAdd(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual bool doContentRemove(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual bool doContentModify(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual bool doContentAccept(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual bool doContentReject(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual bool doTransportInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual bool doTransportAccept(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual bool doTransportReject(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual bool doTransportReplace(const gloox::Jingle::Session::Jingle*,
                                     const IMPeerId&) override;
-    virtual void doSecurityInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
-    virtual void doDescriptionInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
-    virtual void doInvalidAction(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual bool doSecurityInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual bool doDescriptionInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual bool doInvalidAction(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
 
     IMCallSession* cacheSessionInfo(const IMContactId& from,
                                     const IMPeerId& to,
