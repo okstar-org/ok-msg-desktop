@@ -141,6 +141,7 @@ void IMCall::onImStartedCall() {
     // jingle av
     disco->addFeature(gloox::XMLNS_JINGLE_ICE_UDP);
     disco->addFeature(gloox::XMLNS_JINGLE_APPS_DTLS);
+    disco->addFeature(gloox::XMLNS_JINGLE_APPS_DTLS_SCTP);
     disco->addFeature(gloox::XMLNS_JINGLE_APPS_RTP);
     disco->addFeature(gloox::XMLNS_JINGLE_FEATURE_AUDIO);
     disco->addFeature(gloox::XMLNS_JINGLE_FEATURE_VIDEO);

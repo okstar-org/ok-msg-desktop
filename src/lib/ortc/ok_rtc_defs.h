@@ -37,7 +37,12 @@ struct Dtls {
     std::string setup;
     std::string fingerprint;
 };
-typedef std::list<Dtls> DtlsList;
+
+struct Sctp {
+    std::string protocol;
+    uint32_t port;
+    uint32_t streams;
+};
 
 /**
  * Describes a single transport candidate.
@@ -69,7 +74,9 @@ struct OIceUdp {
     std::string ufrag;
     std::string pwd;
     Dtls dtls;
+    Sctp sctp;
     CandidateList candidates;
+
     //    OIceUdp() = default;
     //    OIceUdp(std::string mid_,
     //            int mline_,

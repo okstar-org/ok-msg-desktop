@@ -429,6 +429,7 @@ void IM::enableDiscoManager() {
     disco->addFeature(XMLNS_JINGLE_ERRORS);
     disco->addFeature(XMLNS_JINGLE_ICE_UDP);
     disco->addFeature(XMLNS_JINGLE_APPS_DTLS);
+    disco->addFeature(XMLNS_JINGLE_APPS_DTLS_SCTP);
     disco->addFeature(XMLNS_JINGLE_APPS_RTP);
     disco->addFeature(XMLNS_JINGLE_FEATURE_AUDIO);
     disco->addFeature(XMLNS_JINGLE_FEATURE_VIDEO);

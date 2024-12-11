@@ -476,11 +476,11 @@ JingleSdpType WebRTC::convertFromSdpType(webrtc::SdpType sdpType) {
 
 std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertToSdp(
         const OJingleContentAv& av) {
-    auto sdpType = convertToSdpType(av.sdpType);
     auto sessionDescription = std::make_unique<cricket::SessionDescription>();
-
-    auto contents = av.getContents();
     cricket::ContentGroup group(cricket::GROUP_TYPE_BUNDLE);
+
+    auto sdpType = convertToSdpType(av.sdpType);
+    auto& contents = av.getContents();
 
     for (const auto& kv : contents) {
         auto& oSdp = kv.second;
@@ -629,7 +629,7 @@ std::unique_ptr<cricket::AudioContentDescription> WebRTC::createAudioDescription
     auto g = rtp.ssrcGroup;
     std::vector<uint32_t> ssrcs;
     std::transform(g.ssrcs.begin(), g.ssrcs.end(), std::back_inserter(ssrcs),
-                   [](auto s) -> uint32_t { return std::stoul(s); });
+                   [](auto& s) -> uint32_t { return std::stoul(s); });
     cricket::SsrcGroup ssrcGroup(g.semantics, ssrcs);
 
     // ssrc-groups
@@ -641,7 +641,7 @@ std::unique_ptr<cricket::AudioContentDescription> WebRTC::createAudioDescription
     // rtcp-mux
     ptr->set_rtcp_mux(rtp.rtcpMux);
 
-    return ptr;
+    return std::move(ptr);
 }
 
 std::unique_ptr<cricket::VideoContentDescription> WebRTC::createVideoDescription(const ORTP& rtp) {
@@ -681,11 +681,12 @@ std::unique_ptr<cricket::VideoContentDescription> WebRTC::createVideoDescription
     auto g = rtp.ssrcGroup;
     std::vector<uint32_t> ssrcs;
     std::transform(g.ssrcs.begin(), g.ssrcs.end(), std::back_inserter(ssrcs),
-                   [](auto s) -> uint32_t { return std::stoul(s); });
+                   [](auto& s) -> uint32_t { return std::stoul(s); });
     cricket::SsrcGroup ssrcGroup(g.semantics, ssrcs);
     streamParams.ssrc_groups.emplace_back(ssrcGroup);
     ptr->AddStream(streamParams);
-    return ptr;
+
+    return std::move(ptr);
 }
 
 std::unique_ptr<cricket::SctpDataContentDescription> WebRTC::createDataDescription(
@@ -694,7 +695,13 @@ std::unique_ptr<cricket::SctpDataContentDescription> WebRTC::createDataDescripti
     // rtcp-mux
     ptr->set_rtcp_mux(sdp.rtp.rtcpMux);
 
-    return ptr;
+    if (!sdp.iceUdp.sctp.protocol.empty()) {
+        ptr->set_port(sdp.iceUdp.sctp.port);
+        ptr->set_protocol(cricket::kMediaProtocolDtlsSctp);
+        //        ptr->set_max_message_size(sdp.iceUdp.sctp.streams);
+        ptr->set_use_sctpmap(true);
+    }
+    return std::move(ptr);
 }
 
 void WebRTC::addIceServer(const IceServer& ice) {
@@ -765,7 +772,10 @@ void WebRTC::setTransportInfo(const std::string& peerId,
     RTC_LOG(LS_INFO) << __FUNCTION__ << " peerId:" << peerId << " sId:" << sId;
 
     Conductor* conductor = getConductor(peerId);
-    assert(conductor);
+    if (!conductor) {
+        RTC_LOG(LS_WARNING) << "Unable to find conductor.";
+        return;
+    }
 
     int mline = 0;
     for (auto& _candidate : iceUdp.candidates) {
@@ -845,6 +855,7 @@ void WebRTC::CreateAnswer(const std::string& peerId, const OJingleContentAv& ca)
     auto sdp = convertToSdp(ca);
     conductor->SetRemoteDescription(std::move(sdp));
     conductor->CreateAnswer();
+    _pcMap[peerId] = conductor;
 }
 
 void WebRTC::getLocalSdp(const std::string& peerId, OJingleContentAv& av) {

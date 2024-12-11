@@ -156,6 +156,12 @@ ortc::OIceUdp IMJingle::ParseIce(const std::string& mid, const gloox::Jingle::IC
             .dtls = ortc::Dtls{.hash = udp->dtls().hash,    //
                                .setup = udp->dtls().setup,  //
                                .fingerprint = udp->dtls().fingerprint},
+            .sctp =
+                    ortc::Sctp{
+                            .protocol = udp->sctp().protocol,
+                            .port = udp->sctp().port,
+                            .streams = udp->sctp().streams,
+                    },
             .candidates = ranges::views::all(cs) |
                           ranges::views::transform([=](gloox::Jingle::ICEUDP::Candidate& c) {
                               return ortc::Candidate{.component = c.component,

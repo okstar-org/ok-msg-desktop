@@ -24,10 +24,10 @@ CallDurationForm::CallDurationForm(QWidget* parent)
         : QWidget(parent)
         , ui(new Ui::CallDurationForm)
         , contact{nullptr}
-
         , muteOut{false}
         , muteIn{false}
-        , netcam{nullptr} {
+        , netcam{nullptr}
+        , timeElapsed{nullptr} {
     ui->setupUi(this);
 
     setWindowFlags(Qt::FramelessWindowHint);
@@ -57,7 +57,7 @@ CallDurationForm::~CallDurationForm() {
     // delete callDurationTimer;
     // callDurationTimer = nullptr;
 
-    if (timeElapsed) {
+    if (timeElapsed != nullptr) {
         delete timeElapsed;
         timeElapsed = nullptr;
     }
