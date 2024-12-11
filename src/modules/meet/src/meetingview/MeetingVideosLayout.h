@@ -74,6 +74,7 @@ private:
     void rebindVideos();
     void updateButtonState();
     void updateButtonGeo();
+    void updateButtonIcon();
     int recalcPageCount();
 
     bool event(QEvent* e);
@@ -81,7 +82,7 @@ private:
 private:
     int cellCount = 1;
 
-    QMap<QString, MeetingParticipant*> allParticipant;
+    QList<MeetingParticipant*> allParticipant;
     QList<MeetingVideoOutput*> cellVideos;
     LayoutType _type = LayoutType::Grid;
 
