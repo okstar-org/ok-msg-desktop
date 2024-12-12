@@ -138,7 +138,7 @@ void MeetingVideoFrame::creatBottomBar() {
 
     leaveButton = new QToolButton(bottomBar);
     leaveButton->setObjectName("leaveMeeting");
-    leaveButton->setIcon(QIcon(":/meet/image/phone"));
+    leaveButton->setIcon(QIcon(":/meet/image/phone.svg"));
     connect(leaveButton, &QToolButton::clicked, this, &MeetingVideoFrame::doLeaveMeet);
 
     middleLayout->addWidget(audioSettingButton);

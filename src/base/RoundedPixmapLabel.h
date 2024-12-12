@@ -28,21 +28,28 @@ public:
     enum RoundedType
     {
         NoRound,
-        MinEdgeCircle,
-        MaxEdgeCircle,
-        PercentRadius,
-        AbsoluteRadius
+        MinEdgeCircle,  // 以短边圆形遮罩
+        MaxEdgeCircle,  // 以长边圆形遮罩
+        PercentRadius,  // 百分比圆角 0-100
+        AbsoluteRadius  // 像素绝对值
     };
 
 public:
     RoundedPixmapLabel(QWidget* parent = nullptr);    
     QSize sizeHint() const;
     QSize minimumSizeHint() const;
+
+    // 头像图片显示区域尺寸
     void setContentsSize(const QSize & size);
     void setPixmap(const QPixmap & pixmap);
+
+    // 在图片上进行圆角遮罩还是QWidget
     void setMaskOnPixmap(bool pixmap);
+    // 对齐方式
     void setPixmapAlign(Qt::Alignment alignment);
+    // 缩放模式
     void setScaleMode(PixmapScaleMode mode);
+    // 圆角类型
     void setRoundedType(RoundedType type);
     void setRoundRadius(int xRadius, int yRadius);
 

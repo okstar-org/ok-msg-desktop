@@ -25,6 +25,7 @@ MeetingVideoOutput::MeetingVideoOutput(QWidget* parent) : QWidget(parent) {
 
 void MeetingVideoOutput::bindParticipant(MeetingParticipant* participant) {
     this->participant = participant;
+    // showAvatar();
     update();
 }
 
@@ -33,20 +34,34 @@ void MeetingVideoOutput::showVideo() {
         avatarLabel->deleteLater();
         avatarLabel = nullptr;
     }
+    update();
 }
 
 void MeetingVideoOutput::showAvatar() {
+    // todo for lipeixu: 应检查图片是否存在，并构造控件，设置图片
     if (!avatarLabel) {
         avatarLabel = new RoundedPixmapLabel(this);
-        avatarLabel->setContentsSize(QSize(120, 120));
     }
-    avatarLabel->setGeometry(this->rect());
+    avatarLabel->setGeometry(calcAvatarRect().toRect());
     avatarLabel->raise();
+}
+
+bool MeetingVideoOutput::hasVideoOutput() {
+    return false;
+}
+
+QRectF MeetingVideoOutput::calcAvatarRect() {
+    QRectF rect = this->rect();
+    int d = std::min(rect.width(), rect.height()) * 0.5;
+    d = std::min(d, 150);
+    QRectF circle(0, 0, d, d);
+    circle.moveCenter(rect.center());
+    return circle;
 }
 
 void MeetingVideoOutput::resizeEvent(QResizeEvent* event) {
     if (avatarLabel) {
-        avatarLabel->setGeometry(this->rect());
+        avatarLabel->setGeometry(calcAvatarRect().toRect());
         avatarLabel->raise();
     }
 }
@@ -62,17 +77,11 @@ void MeetingVideoOutput::paintEvent(QPaintEvent* e) {
         return;
     }
 
-    bool isVideo = false;
-    if (!isVideo) {
+    if (!hasVideoOutput() && !avatarLabel) {
         QString text = this->participant->getNick().right(2);
         if (!text.isEmpty()) {
-            QRect rect = this->rect();
-            int d = std::min(rect.width(), rect.height()) * 0.5;
-            d = std::min(d, 150);
-            QRect circle(0, 0, d, d);
-            circle.moveCenter(rect.center());
-
-            QLinearGradient gradient(rect.topLeft(), rect.bottomLeft());
+            QRectF circle = calcAvatarRect();
+            QLinearGradient gradient(circle.topLeft(), circle.bottomLeft());
             gradient.setColorAt(0, QColor(0xFF9F2E));
             gradient.setColorAt(1, QColor(0xF08101));
 
@@ -81,7 +90,7 @@ void MeetingVideoOutput::paintEvent(QPaintEvent* e) {
             painter.drawEllipse(circle);
 
             QFont font = this->font();
-            font.setPixelSize(d * 0.33);
+            font.setPixelSize(circle.height() * 0.33);
             painter.setFont(font);
             painter.setPen(QPen(Qt::white));
             painter.drawText(circle, Qt::AlignCenter, text);
