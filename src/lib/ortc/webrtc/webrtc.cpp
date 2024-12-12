@@ -591,19 +591,17 @@ std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertToSdp(
 
 std::unique_ptr<cricket::AudioContentDescription> createAudioDescription(const ORTP& rtp) {
     auto ptr = std::make_unique<cricket::AudioContentDescription>();
-
     for (auto& pt : rtp.payloadTypes) {
-        cricket::AudioCodec ac =
-                cricket::CreateAudioCodec(pt.id, pt.name, pt.clockrate, pt.channels);
+        auto codec = cricket::CreateAudioCodec(pt.id, pt.name, pt.clockrate, pt.channels);
         for (auto& e : pt.parameters) {
-            ac.SetParam(e.name, e.value);
+            codec.SetParam(e.name, e.value);
         }
         for (auto& e : pt.feedbacks) {
             cricket::FeedbackParam fb(e.type, e.subtype);
-            ac.AddFeedbackParam(fb);
+            codec.AddFeedbackParam(fb);
         }
 
-        ptr->AddCodec(ac);
+        ptr->AddCodec(codec);
     }
 
     for (auto& hdrext : rtp.hdrExts) {
@@ -646,15 +644,15 @@ std::unique_ptr<cricket::AudioContentDescription> createAudioDescription(const O
 std::unique_ptr<cricket::VideoContentDescription> createVideoDescription(const ORTP& rtp) {
     auto ptr = std::make_unique<cricket::VideoContentDescription>();
     for (auto& pt : rtp.payloadTypes) {
-        auto vc = cricket::CreateVideoCodec(pt.id, pt.name);
+        auto codec = cricket::CreateVideoCodec(pt.id, pt.name);
         for (auto& e : pt.parameters) {
-            vc.SetParam(e.name, e.value);
+            codec.SetParam(e.name, e.value);
         }
         for (auto& e : pt.feedbacks) {
             cricket::FeedbackParam fb(e.type, e.subtype);
-            vc.AddFeedbackParam(fb);
+            codec.AddFeedbackParam(fb);
         }
-        ptr->AddCodec(vc);
+        ptr->AddCodec(codec);
     }
     for (auto& hdrExt : rtp.hdrExts) {
         webrtc::RtpExtension ext(hdrExt.uri, hdrExt.id);
