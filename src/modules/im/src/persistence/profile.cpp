@@ -543,7 +543,6 @@ void Profile::setAvatarOnly(const QPixmap& pixmap_) {
  * @param owner pk of friend
  */
 void Profile::setFriendAvatar(const FriendId& owner, const QByteArray& avatarData) {
-    qDebug() << __func__ << owner.toString() << "size:" << avatarData.size();
     QPixmap pixmap;
     if (!avatarData.isEmpty()) {
         bool loaded = ok::base::Images::putToPixmap(avatarData, pixmap);

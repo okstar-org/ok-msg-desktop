@@ -346,7 +346,9 @@ void IMMeet::onPeerConnectionChange(const std::string& sId, const std::string& p
                                     ortc::PeerConnectionState state) {}
 
 void IMMeet::onSignalingChange(const std::string& sId, const std::string& peerId,
-                               ortc::SignalingState state) {}
+                               ortc::SignalingState state) {
+    return;
+}
 
 void IMMeet::onIce(const std::string& sId, const std::string& peerId, const ortc::OIceUdp& iceUdp) {
 

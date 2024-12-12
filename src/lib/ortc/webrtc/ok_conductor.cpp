@@ -324,8 +324,8 @@ void Conductor::OnSuccess(webrtc::SessionDescriptionInterface* desc) {
     std::string sdp;
     desc->ToString(&sdp);
 
-    RTC_LOG(LS_INFO) << __FUNCTION__ << "sdp:" << sdp;
-    //    peer_connection_->SetLocalDescription(this, desc);
+    RTC_LOG(LS_INFO) << __FUNCTION__ << " sdp:\n" << sdp;
+    peer_connection_->SetLocalDescription(this, desc);
 }
 
 void Conductor::OnFailure(webrtc::RTCError error) {

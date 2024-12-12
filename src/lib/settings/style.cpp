@@ -146,7 +146,7 @@ std::map<std::pair<const QString, const QFont>, const QString> Style::stylesheet
 const QString Style::getStylesheet(const QString& filename, const QFont& baseFont) {
     QString folder = QDir::isAbsolutePath(filename) ? QString() : getThemeFolder();
     const QString fullPath = folder + filename;
-    qDebug() << "theme:" << fullPath;
+    //    qDebug() << "theme:" << fullPath;
     const std::pair<const QString, const QFont> cacheKey(fullPath, baseFont);
     auto it = stylesheetsCache.find(cacheKey);
     if (it != stylesheetsCache.end()) {

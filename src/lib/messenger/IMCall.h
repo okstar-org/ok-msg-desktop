@@ -286,7 +286,7 @@ private:
 public slots:
     void onCallAccepted(IMPeerId peerId, QString callId, bool video);
     void onImStartedCall();
-    void doForIceCompleted(const std::string& sId, const std::string& peerId, const QString& qsId);
+    void doForIceCompleted(const QString& sId, const QString& peerId);
 };
 
 }  // namespace lib::messenger

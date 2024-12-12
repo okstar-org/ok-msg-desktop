@@ -222,19 +222,16 @@ void ChatWidget::connectToCoreAv(CoreAV* core_) {
 }
 
 void ChatWidget::onMessageSessionReceived(const ContactId& contactId, const QString& sid) {
-    qDebug() << __func__ << "contactId:" << contactId.toString() << "sid:" << sid;
     sessionListWidget->createMessageSession(
             contactId, sid, contactId.isGroup() ? ChatType::GroupChat : ChatType::Chat);
 }
 
 void ChatWidget::onFriendMessageReceived(const FriendId& friendId, const FriendMessage& message,
                                          bool isAction) {
-    qDebug() << __func__ << "content:" << message.content << "from" << message.from;
     sessionListWidget->setRecvFriendMessage(friendId, message, isAction);
 }
 
 void ChatWidget::onReceiptReceived(const FriendId& friendId, MsgId receipt) {
-    qDebug() << __func__ << "receiver:" << friendId.toString() << receipt;
     sessionListWidget->setFriendMessageReceipt(friendId, receipt);
 }
 

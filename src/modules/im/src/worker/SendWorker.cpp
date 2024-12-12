@@ -76,7 +76,9 @@ SendWorker::SendWorker(const GroupId& groupId) : contactId{groupId} {
     chatRoom = std::make_unique<GroupChatroom>(&groupId, ContentDialogManager::getInstance());
 }
 
-SendWorker::~SendWorker() { qDebug() << __func__; }
+SendWorker::~SendWorker() {
+    qDebug() << __func__;
+}
 
 void SendWorker::clearHistory() {
     auto profile = Nexus::getProfile();
@@ -108,7 +110,7 @@ void SendWorker::initChatHeader(const ContactId& contactId) {
 }
 
 CallDurationForm* SendWorker::createCallDuration(bool video) {
-    qDebug() << __func__;
+    qDebug() << __func__ << "video:" << video;
 
     if (!callDuration) {
         callDuration = std::make_unique<CallDurationForm>();

@@ -287,8 +287,11 @@ bool IMCall::createCall(const IMPeerId& to, const QString& sId, bool video) {
 
     auto created = rtc->CreateOffer(stdstring(to.toString()), stdstring(sId), video);
     qDebug() << __func__ << "CreateOffer=>" << created;
-
-    emit callCreated(to, sId, created);
+    if (created) {
+        createSession(im->getSelfId(), to, sId, ortc::JingleCallType::av);
+        currentSid = sId;
+        emit callCreated(to, sId, created);
+    }
     return created;
 }
 
@@ -389,7 +392,7 @@ void IMCall::onIceGatheringChange(const std::string& sId, const std::string& pee
     emit iceGatheringStateChanged(IMPeerId(qPeerId), qsId, state);
 
     if (state == ortc::IceGatheringState::Complete) {
-        doForIceCompleted(sId, peerId, qsId);
+        doForIceCompleted(qsId, qPeerId);
     }
 }
 
@@ -427,6 +430,7 @@ void IMCall::onSignalingChange(const std::string& sId, const std::string& peerId
      * OnSignalingChange=>stable
      * OnSignalingChange=>closed
      */
+    qDebug() << __func__ << "sId:" << state;
 }
 
 /**
@@ -435,17 +439,16 @@ void IMCall::onSignalingChange(const std::string& sId, const std::string& peerId
  * @param peerId
  * @param qsId
  */
-void IMCall::doForIceCompleted(const std::string& sId, const std::string& peerId,
-                               const QString& qsId) {
-    auto pSession = findSession(qsId);
+void IMCall::doForIceCompleted(const QString& sId, const QString& peerId) {
+    auto pSession = findSession(sId);
     if (!pSession) {
-        qWarning() << "Unable to find jingle session" << &sId;
+        qWarning() << "Unable to find jingle session:" << sId;
         return;
     }
 
     ortc::OJingleContentAv av;
     ortc::OkRTC* rtc = ortc::OkRTCManager::getInstance()->getRtc();
-    rtc->getLocalSdp(peerId, av);
+    rtc->getLocalSdp(stdstring(peerId), av);
 
     gloox::Jingle::PluginList plugins;
     toPlugins(av, plugins);
@@ -647,13 +650,6 @@ void IMCall::doJingleMessage(const IMPeerId& peerId, const gloox::Jingle::Jingle
         case gloox::Jingle::JingleMessage::proceed: {
             // 对方接受
             auto removed = m_sidVideo.remove(sId);
-            // 确定发起的是否是视频？
-
-            // 发起会话
-
-            //            auto rtc = ortc::OkRTCManager::getInstance()->getRtc();
-            //            rtc->CreateOffer(stdstring(peerId.toString()), stdstring(sId), removed ==
-            //            1);
             createCall(peerId, sId, removed == 1);
             emit receiveCallStateAccepted(peerId, sId, removed == 1);
             break;
