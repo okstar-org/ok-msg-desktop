@@ -10,7 +10,6 @@
  * See the Mulan PubL v2 for more details.
  */
 #include "webrtc.h"
-#include "StaticThreads.h"
 #include "ok_conductor.h"
 
 #include <memory>
@@ -590,7 +589,7 @@ std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertToSdp(
     return ptr;
 }
 
-std::unique_ptr<cricket::AudioContentDescription> WebRTC::createAudioDescription(const ORTP& rtp) {
+std::unique_ptr<cricket::AudioContentDescription> createAudioDescription(const ORTP& rtp) {
     auto ptr = std::make_unique<cricket::AudioContentDescription>();
 
     for (auto& pt : rtp.payloadTypes) {
@@ -644,7 +643,7 @@ std::unique_ptr<cricket::AudioContentDescription> WebRTC::createAudioDescription
     return std::move(ptr);
 }
 
-std::unique_ptr<cricket::VideoContentDescription> WebRTC::createVideoDescription(const ORTP& rtp) {
+std::unique_ptr<cricket::VideoContentDescription> createVideoDescription(const ORTP& rtp) {
     auto ptr = std::make_unique<cricket::VideoContentDescription>();
     for (auto& pt : rtp.payloadTypes) {
         auto vc = cricket::CreateVideoCodec(pt.id, pt.name);
@@ -689,8 +688,7 @@ std::unique_ptr<cricket::VideoContentDescription> WebRTC::createVideoDescription
     return std::move(ptr);
 }
 
-std::unique_ptr<cricket::SctpDataContentDescription> WebRTC::createDataDescription(
-        const OSdp& sdp) {
+std::unique_ptr<cricket::SctpDataContentDescription> createDataDescription(const OSdp& sdp) {
     auto ptr = std::make_unique<cricket::SctpDataContentDescription>();
     // rtcp-mux
     ptr->set_rtcp_mux(sdp.rtp.rtcpMux);
@@ -698,7 +696,6 @@ std::unique_ptr<cricket::SctpDataContentDescription> WebRTC::createDataDescripti
     if (!sdp.iceUdp.sctp.protocol.empty()) {
         ptr->set_port(sdp.iceUdp.sctp.port);
         ptr->set_protocol(cricket::kMediaProtocolDtlsSctp);
-        //        ptr->set_max_message_size(sdp.iceUdp.sctp.streams);
         ptr->set_use_sctpmap(true);
     }
     return std::move(ptr);

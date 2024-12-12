@@ -37,6 +37,10 @@ namespace lib::ortc {
 
 class Conductor;
 
+std::unique_ptr<cricket::AudioContentDescription> createAudioDescription(const ORTP& rtp);
+std::unique_ptr<cricket::VideoContentDescription> createVideoDescription(const ORTP& rtp);
+std::unique_ptr<cricket::SctpDataContentDescription> createDataDescription(const OSdp& sdp);
+
 class WebRTC : public OkRTC {
 public:
     WebRTC();
@@ -109,9 +113,6 @@ private:
 
     Conductor* getConductor(const std::string& peerId);
 
-    std::unique_ptr<cricket::AudioContentDescription> createAudioDescription(const ORTP& rtp);
-    std::unique_ptr<cricket::VideoContentDescription> createVideoDescription(const ORTP& rtp);
-    std::unique_ptr<cricket::SctpDataContentDescription> createDataDescription(const OSdp& sdp);
 
     std::recursive_mutex start_mtx;
 

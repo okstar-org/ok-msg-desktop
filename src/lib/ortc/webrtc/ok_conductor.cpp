@@ -27,8 +27,7 @@
 #include <pc/video_track_source.h>
 #include "StaticThreads.h"
 
-namespace lib {
-namespace ortc {
+namespace lib::ortc {
 
 Conductor::Conductor(WebRTC* webrtc, const std::string& peerId_, const std::string& sId_)
         : peerId(peerId_)
@@ -345,5 +344,4 @@ const webrtc::SessionDescriptionInterface* Conductor::getLocalSdp() const {
     return peer_connection_->local_description();
 }
 
-}  // namespace ortc
-}  // namespace lib
+}  // namespace lib::ortc
