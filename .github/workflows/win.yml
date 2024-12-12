@@ -47,7 +47,7 @@ jobs:
       matrix:
         arch: [x64]
         os: [windows-latest]
-        build_type: [Release]
+        build_type: [ Debug ]
         c_compiler: [cl]
         cpp_compiler: [cl]
 
