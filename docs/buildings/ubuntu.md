@@ -18,7 +18,7 @@ sudo apt install -y libpipewire-0.3-dev libxss-dev libgbm-dev libdrm-dev libxdam
 ## 构建OkRtc库
 
 ```shell
-git clone https://github.com/okstar-org/ok-rtc.git
+git clone -b master https://github.com/okstar-org/ok-rtc.git
 cd ok-rtc
 # 拉取子模块
 git submodule update --init

@@ -74,7 +74,7 @@ jobs:
 
       - name: Build ok-rtc
         run: |
-          git clone https://github.com/okstar-org/ok-rtc.git
+          git clone -b master https://github.com/okstar-org/ok-rtc.git
           cd ok-rtc
           git submodule update --init
           export PKG_CONFIG_PATH="/usr/local/opt/openssl@1.1/lib/pkgconfig:/opt/homebrew/opt/mozjpeg/lib/pkgconfig:/opt/homebrew/opt/ffmpeg@5/lib/pkgconfig"

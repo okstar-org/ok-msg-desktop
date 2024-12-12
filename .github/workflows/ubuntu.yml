@@ -95,7 +95,7 @@ jobs:
     - name: Install ok-rtc
       run: |
         sudo apt install yasm libopenh264-dev libopus-dev libvpx-dev libpipewire-0.3-dev libspa-0.2-dev
-        git clone https://github.com/okstar-org/ok-rtc.git
+        git clone -b master https://github.com/okstar-org/ok-rtc.git
         cd ok-rtc
         git submodule update --init
         cmake -B out   \
