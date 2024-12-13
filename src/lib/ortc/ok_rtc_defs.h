@@ -286,8 +286,9 @@ std::string PeerConnectionStateAsStr(PeerConnectionState state) {
         case PeerConnectionState::Failed:
             return "Failed";
         case PeerConnectionState::Closed:
-            return "Closed"
+            return "Closed";
     }
+    return {};
 }
 
 enum SignalingState {
