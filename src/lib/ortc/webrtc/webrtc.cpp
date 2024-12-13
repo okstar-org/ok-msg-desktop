@@ -739,7 +739,7 @@ void WebRTC::addIceServer(const IceServer& ice) {
 Conductor* WebRTC::getConductor(const std::string& peerId) {
     return _pcMap[peerId];
 }
-
+constexpr int LEN = 255;
 Conductor* WebRTC::createConductor(const std::string& peerId, const std::string& sId, bool video) {
     RTC_LOG(LS_INFO) << __FUNCTION__ << "peer:" << peerId << " sid:" << sId << " video:" << video;
 
@@ -761,13 +761,12 @@ Conductor* WebRTC::createConductor(const std::string& peerId, const std::string&
         if (0 < num_devices) {
             // 获取第一个视频设备
             int selected = 0;
+            char name[LEN] = {0};
+            char uid[LEN] = {0};
+            char puid[LEN] = {0};
+            vdi->GetDeviceName(selected, name, LEN, uid, LEN, puid, LEN);
 
-            char name[50] = {0};
-            char uid[50] = {0};
-            char puid[50] = {0};
-            vdi->GetDeviceName(selected, name, 50, uid, 50, puid, 50);
-            RTC_LOG(LS_INFO) << "Video device:" << name;
-            RTC_LOG(LS_INFO) << "Video device uid:" << uid;
+            RTC_LOG(LS_INFO) << "Video device name:" << name << " uid:" << uid;
 
             videoCapture = createVideoCapture(uid);
             conductor->AddVideoTrack(videoCapture->source().get());
