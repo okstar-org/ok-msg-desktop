@@ -57,13 +57,13 @@ Widget::Widget(QWidget* parent)
     initTranslate();
 
     startMeetWidget = new StartMeetingWidget(this);
-    ui->tabWidget->addTab(startMeetWidget, tr("Start Metting"));
+    ui->tabWidget->addTab(startMeetWidget, tr("Start Meeting"));
 
     joinMeetWidget = new JoinMeetingWidget(this);
-    ui->tabWidget->addTab(joinMeetWidget, tr("Join Metting"));
+    ui->tabWidget->addTab(joinMeetWidget, tr("Join Meeting"));
 
     BookMeetingWidget* bookMeet = new BookMeetingWidget(this);
-    ui->tabWidget->addTab(bookMeet, tr("Book Metting"));
+    ui->tabWidget->addTab(bookMeet, tr("Book Meeting"));
 
     MeetingSettingWidget* setting = new MeetingSettingWidget(this);
     ui->tabWidget->addTab(setting, tr("Setting"));
