@@ -214,9 +214,9 @@ Widget::Widget(IAudioControl& audio, QWidget* parent)  //
 
     // keyboard shortcuts
     new QShortcut(QKeySequence(Qt::CTRL, Qt::Key_Q), this, SLOT(close()));
+    new QShortcut(QKeySequence(Qt::CTRL, Qt::Key_PageUp), this, SLOT(previousContact()));
     new QShortcut(QKeySequence(Qt::CTRL, Qt::SHIFT, Qt::Key_Tab), this, SLOT(previousContact()));
     new QShortcut(QKeySequence(Qt::CTRL, Qt::Key_Tab), this, SLOT(nextContact()));
-    new QShortcut(QKeySequence(Qt::CTRL, Qt::Key_PageUp), this, SLOT(previousContact()));
     new QShortcut(QKeySequence(Qt::CTRL, Qt::Key_PageDown), this, SLOT(nextContact()));
     new QShortcut(Qt::Key_F11, this, SLOT(toggleFullscreen()));
 

@@ -30,4 +30,22 @@ bool OJingleContentFile::isValid() {
     return false;
 }
 
+std::string PeerConnectionStateAsStr(PeerConnectionState state) {
+    switch (state) {
+        case PeerConnectionState::New:
+            return "New";
+        case PeerConnectionState::Connecting:
+            return "Connecting";
+        case PeerConnectionState::Connected:
+            return "Connected";
+        case PeerConnectionState::Disconnected:
+            return "Disconnected";
+        case PeerConnectionState::Failed:
+            return "Failed";
+        case PeerConnectionState::Closed:
+            return "Closed";
+    }
+    return {};
+}
+
 }  // namespace lib::ortc

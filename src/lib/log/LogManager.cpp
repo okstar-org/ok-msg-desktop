@@ -81,7 +81,7 @@ static LogManager* log = nullptr;
 LogManager::LogManager() {
     qDebug() << "Initialize LogManager";
     logFileDir = base::OkSettings::getAppLogPath();
-    qDebug() << "Log file dir is:" << logFileDir;
+    qDebug() << "Log file dir is:" << logFileDir.absolutePath();
 
     logName = APPLICATION_NAME "-" +
               ::ok::base::Times::formatTime(::ok::base::Times::now(), "yyyyMMddHHmmss") + "-" +
