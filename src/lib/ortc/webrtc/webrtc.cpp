@@ -361,15 +361,40 @@ bool WebRTC::start() {
 
     //    signaling_thread  = std::unique_ptr<rtc::Thread>( threads->getMediaThread() );
 
+    auto audioEncoderFactory = webrtc::CreateBuiltinAudioEncoderFactory();
+    auto audioEncoderCodecs = audioEncoderFactory->GetSupportedEncoders();
+    RTC_LOG(LS_INFO) << "WebRTC BuiltIn audio supported encoders:";
+    for (auto& c : audioEncoderCodecs) {
+        RTC_LOG(LS_INFO) << "codec:" << c.format.name;
+    }
+    auto audioDecoderFactory = webrtc::CreateBuiltinAudioDecoderFactory();
+    auto audioDecoderCodecs = audioDecoderFactory->GetSupportedDecoders();
+    RTC_LOG(LS_INFO) << "WebRTC BuiltIn audio supported decoders:";
+    for (auto& c : audioDecoderCodecs) {
+        RTC_LOG(LS_INFO) << "codec:" << c.format.name;
+    }
+
+    auto videoEncoderFactory = webrtc::CreateBuiltinVideoEncoderFactory();
+    RTC_LOG(LS_INFO) << "WebRTC BuiltIn video supported encoders:";
+    for (auto& c : videoEncoderFactory->GetSupportedFormats()) {
+        RTC_LOG(LS_INFO) << "codec:" << c.name;
+    }
+
+    auto videoDecoderFactory = webrtc::CreateBuiltinVideoDecoderFactory();
+    RTC_LOG(LS_INFO) << "WebRTC BuiltIn video supported decoders:";
+    for (auto& c : videoEncoderFactory->GetSupportedFormats()) {
+        RTC_LOG(LS_INFO) << "codec:" << c.name;
+    }
+
     peer_connection_factory =
             webrtc::CreatePeerConnectionFactory(network_thread.get(),   /* network_thread */
                                                 worker_thread.get(),    /* worker_thread */
                                                 signaling_thread.get(), /* signaling_thread */
                                                 nullptr,                /* default_adm */
-                                                webrtc::CreateBuiltinAudioEncoderFactory(),  //
-                                                webrtc::CreateBuiltinAudioDecoderFactory(),  //
-                                                webrtc::CreateBuiltinVideoEncoderFactory(),  //
-                                                webrtc::CreateBuiltinVideoDecoderFactory(),  //
+                                                audioEncoderFactory,    //
+                                                audioDecoderFactory,    //
+                                                std::move(videoEncoderFactory),  //
+                                                std::move(videoDecoderFactory),  //
                                                 nullptr /* audio_mixer */,                   //
                                                 nullptr /* audio_processing */);
 

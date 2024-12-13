@@ -54,8 +54,8 @@ struct Candidate {
                                   updates to the candidate throughout the life of the session. */
     std::string id;         /**< A unique identifier for the candidate. */
     std::string ip;         /**< The IP address for the candidate transport mechanism. */
-    uint32_t network; /**< An index, starting at 0, referencing which network this candidate is
-                            on for a given peer. */
+    uint32_t network;     /**< An index, starting at 0, referencing which network this candidate is
+                                on for a given peer. */
     uint32_t port;        /**< The port at the candidate IP address. */
     uint32_t priority;    /**< A Priority as defined in ICE-CORE. */
     std::string protocol; /**< The protocol to be used. Should be @b udp. */
@@ -271,9 +271,24 @@ enum class PeerConnectionState {
     Connecting,
     Connected,
     Disconnected,
-    Failed,
-    Closed,
-};
+    Failed, Closed };
+
+std::string PeerConnectionStateAsStr(PeerConnectionState state) {
+    switch (state) {
+        case PeerConnectionState::New:
+            return "New";
+        case PeerConnectionState::Connecting:
+            return "Connecting";
+        case PeerConnectionState::Connected:
+            return "Connected";
+        case PeerConnectionState::Disconnected:
+            return "Disconnected";
+        case PeerConnectionState::Failed:
+            return "Failed";
+        case PeerConnectionState::Closed:
+            return "Closed"
+    }
+}
 
 enum SignalingState {
     Stable,

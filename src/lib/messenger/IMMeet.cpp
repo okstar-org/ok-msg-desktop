@@ -202,7 +202,7 @@ void IMMeet::handleCreation(const gloox::JID& jid, bool ready,
     gloox::Meet meet(jid, "", {});
     gloox::Meet::Participant participant = {
             .region = "region1",
-            .codecType = "vp8",
+            .codecType = "VP9",
             .avatarUrl = stdstring(vCard.photo.url),
             .email = vCard.emails.isEmpty() ? "" : stdstring(vCard.emails.last().number),
             .nick = stdstring(vCard.nickname),
@@ -343,8 +343,8 @@ void IMMeet::onFailure(const std::string& sId, const std::string& peerId,
 
 void IMMeet::onIceGatheringChange(const std::string& sId, const std::string& peerId,
                                   ortc::IceGatheringState state) {
-    const QString& qsId = qstring(sId);
-    const QString& qPeerId = qstring(peerId);
+    QString qsId = qstring(sId);
+    QString qPeerId = qstring(peerId);
 
     qDebug() << __func__ << "sId:" << qsId << "peerId:" << qPeerId;
     qDebug() << "state:" << static_cast<int>(state);
@@ -381,10 +381,20 @@ void IMMeet::doForIceCompleted(const QString& sId, const QString& peerId) {
 }
 
 void IMMeet::onIceConnectionChange(const std::string& sId, const std::string& peerId,
-                                   ortc::IceConnectionState state) {}
+                                   ortc::IceConnectionState state) {
+    QString qsId = qstring(sId);
+    QString qPeerId = qstring(peerId);
+    qDebug() << __func__ << "sId:" << qsId << "peerId:" << qPeerId;
+    qDebug() << "state:" << static_cast<int>(state);
+}
 
 void IMMeet::onPeerConnectionChange(const std::string& sId, const std::string& peerId,
-                                    ortc::PeerConnectionState state) {}
+                                    ortc::PeerConnectionState state) {
+    QString qsId = qstring(sId);
+    QString qPeerId = qstring(peerId);
+    qDebug() << __func__ << "sId:" << qsId << "peerId:" << qPeerId;
+    qDebug() << "state:" << qstring(ortc::PeerConnectionStateAsStr(state));
+}
 
 void IMMeet::onSignalingChange(const std::string& sId, const std::string& peerId,
                                ortc::SignalingState state) {
