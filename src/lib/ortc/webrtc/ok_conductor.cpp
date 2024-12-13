@@ -181,10 +181,12 @@ void Conductor::OnIceGatheringChange(webrtc::PeerConnectionInterface::IceGatheri
     RTC_LOG(LS_INFO) << __FUNCTION__ << "=>"
                      << webrtc::PeerConnectionInterface::AsString(state).data();
 
-    if (webRtc->getHandler()) {
-        webRtc->getHandler()->onIceGatheringChange(
-                sId, peerId, static_cast<ortc::IceGatheringState>(state));
+    if (!webRtc->getHandler()) {
+        RTC_LOG(LS_WARNING) << "No RtcHandler!";
+        return;
     }
+    webRtc->getHandler()->onIceGatheringChange(sId, peerId,
+                                               static_cast<ortc::IceGatheringState>(state));
 }
 
 /**
@@ -233,11 +235,15 @@ void Conductor::OnAddTrack(
         rtc::scoped_refptr<webrtc::RtpReceiverInterface> receiver,
         const std::vector<rtc::scoped_refptr<webrtc::MediaStreamInterface>>& streams) {
     std::string receiverId = receiver->id();
-    RTC_LOG(LS_INFO) << __FUNCTION__ << "receiver id:" << receiverId;
+    RTC_LOG(LS_INFO) << __FUNCTION__ << " receiverId:" << receiverId;
+    if (receiverId.empty()) {
+        RTC_LOG(LS_WARNING) << __FUNCTION__ << " receiver id is empty.";
+        return;
+    }
 
     // track
     auto track = receiver->track();
-    RTC_LOG(LS_INFO) << __FUNCTION__ << "track id:" << track->id() << " kind:" << track->kind();
+    RTC_LOG(LS_INFO) << __FUNCTION__ << " kind:" << track->kind() << " trackId:" << track->id();
 
     if (track->kind() == webrtc::MediaStreamTrackInterface::kAudioKind) {
         _remote_audio_track = static_cast<webrtc::AudioTrackInterface*>(track.get());
@@ -249,8 +255,7 @@ void Conductor::OnAddTrack(
 }
 
 void Conductor::OnTrack(rtc::scoped_refptr<webrtc::RtpTransceiverInterface> transceiver) {
-    RTC_LOG(LS_INFO) << __FUNCTION__ << " mid:" << transceiver->mid()->data()
-                     << " type:" << transceiver->media_type();
+    RTC_LOG(LS_INFO) << __FUNCTION__ << " mid:" << transceiver->mid()->data();
 }
 
 /**

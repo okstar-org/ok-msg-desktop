@@ -76,6 +76,7 @@ const std::string& IMMeet::create(const QString& name) {
 
     gloox::JID room(stdstring(name) + "@conference." + stdstring(session->getSignInInfo().host));
     meet = manager->createMeet(room, props);
+
     return meet->getUid();
 }
 
@@ -255,15 +256,12 @@ bool lib::messenger::IMMeet::doSessionInitiate(gloox::Jingle::Session* session,
     }
 
     cav.sdpType = lib::ortc::JingleSdpType::Offer;
-    ortc::OkRTCManager::getInstance()->getRtc()->CreateAnswer(stdstring(peerId.toString()), cav);
+    auto rtc = ortc::OkRTCManager::getInstance()->getRtc();
+    rtc->addRTCHandler(this);
+    rtc->CreateAnswer(stdstring(peerId.toString()), cav);
 
     currentSid = sId;
-    return true;
-}
-
-bool IMMeet::doSessionTerminate(gloox::Jingle::Session* session,
-                                const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
-    currentSid.clear();
+    currentSession = session;
     return true;
 }
 
@@ -324,6 +322,13 @@ bool IMMeet::doInvalidAction(const gloox::Jingle::Session::Jingle*, const IMPeer
     return true;
 }
 
+bool IMMeet::doSessionTerminate(gloox::Jingle::Session* session,
+                                const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
+    currentSid.clear();
+    currentSession = nullptr;
+    return true;
+}
+
 void IMMeet::handleJingleMessage(const IMPeerId& peerId, const gloox::Jingle::JingleMessage* jm) {}
 
 void IMMeet::clearSessionInfo(const QString& sId) {}
@@ -337,7 +342,43 @@ void IMMeet::onFailure(const std::string& sId, const std::string& peerId,
                        const std::string& error) {}
 
 void IMMeet::onIceGatheringChange(const std::string& sId, const std::string& peerId,
-                                  ortc::IceGatheringState state) {}
+                                  ortc::IceGatheringState state) {
+    const QString& qsId = qstring(sId);
+    const QString& qPeerId = qstring(peerId);
+
+    qDebug() << __func__ << "sId:" << qsId << "peerId:" << qPeerId;
+    qDebug() << "state:" << static_cast<int>(state);
+
+    emit iceGatheringStateChanged(IMPeerId(qPeerId), qsId, state);
+
+    if (state == ortc::IceGatheringState::Complete) {
+        doForIceCompleted(qsId, qPeerId);
+    }
+}
+
+void IMMeet::onIce(const std::string& sId, const std::string& peerId, const ortc::OIceUdp& iceUdp) {
+
+}
+
+void IMMeet::doForIceCompleted(const QString& sId, const QString& peerId) {
+    if (currentSession == nullptr) {
+        qWarning() << "Unable to find jingle session:" << sId;
+        return;
+    }
+
+    ortc::OJingleContentAv av;
+    ortc::OkRTC* rtc = ortc::OkRTCManager::getInstance()->getRtc();
+    rtc->getLocalSdp(stdstring(peerId), av);
+
+    gloox::Jingle::PluginList plugins;
+    ToPlugins(av, plugins);
+
+    //    if (pSession->direction() == CallDirection::CallIn) {
+    currentSession->sessionAccept(plugins);
+    //    } else if (pSession->direction() == CallDirection::CallOut) {
+    //        pSession->getSession()->sessionInitiate(plugins);
+    //    }
+}
 
 void IMMeet::onIceConnectionChange(const std::string& sId, const std::string& peerId,
                                    ortc::IceConnectionState state) {}
@@ -348,10 +389,6 @@ void IMMeet::onPeerConnectionChange(const std::string& sId, const std::string& p
 void IMMeet::onSignalingChange(const std::string& sId, const std::string& peerId,
                                ortc::SignalingState state) {
     return;
-}
-
-void IMMeet::onIce(const std::string& sId, const std::string& peerId, const ortc::OIceUdp& iceUdp) {
-
 }
 
 void IMMeet::onRender(const std::string& friendId, ortc::RendererImage image) {}

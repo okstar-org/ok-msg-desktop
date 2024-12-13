@@ -117,7 +117,6 @@ class IMCall : public IMJingle, public IMSessionHandler, public ortc::OkRTCHandl
 public:
     explicit IMCall(IM* im, QObject* parent = nullptr);
     ~IMCall() override;
-    void toPlugins(const ortc::OJingleContentAv& av, gloox::Jingle::PluginList& plugins);
 
     void onCreatePeerConnection(const std::string& sId, const std::string& peerId,
                                 bool ok) override;
@@ -230,27 +229,6 @@ protected:
         return m_sessionMap.value(sId);
     }
 
-signals:
-    void callCreated(const IMPeerId& to, const QString& sId, bool ok);
-
-    // ice
-    void iceGatheringStateChanged(IMPeerId to, const QString sId, ortc::IceGatheringState);
-    void iceConnectionStateChanged(IMPeerId to, const QString sId, ortc::IceConnectionState);
-
-    // 呼叫请求
-    void receiveCallRequest(IMPeerId peerId, QString callId, bool audio, bool video);
-
-    void receiveFriendCall(QString friendId, QString callId, bool audio, bool video);
-
-    // 呼叫撤回
-    void receiveCallRetract(QString friendId, CallState state);
-    void receiveCallAcceptByOther(QString callId, IMPeerId peerId);
-    void receiveFriendHangup(QString friendId, CallState state);
-
-    // 对方状态变化
-    void receiveCallStateAccepted(IMPeerId peerId, QString callId, bool video);
-    void receiveCallStateRejected(IMPeerId peerId, QString callId, bool video);
-
 private:
     void connectCall(IMCall* imCall);
 
@@ -275,6 +253,8 @@ private:
 
     void join(const gloox::JID& room);
 
+    void doForIceCompleted(const QString& sId, const QString& peerId);
+
     std::vector<CallHandler*> callHandlers;
 
     // sid -> session
@@ -283,10 +263,30 @@ private:
     // sid -> isVideo,在jingle-message阶段暂时保留呼叫的类型是视频（音频无需保存）。
     QMap<QString, bool> m_sidVideo;
 
+signals:
+    void callCreated(const IMPeerId& to, const QString& sId, bool ok);
+
+    // ice
+    void iceGatheringStateChanged(IMPeerId to, const QString sId, ortc::IceGatheringState);
+    void iceConnectionStateChanged(IMPeerId to, const QString sId, ortc::IceConnectionState);
+
+    // 呼叫请求
+    void receiveCallRequest(IMPeerId peerId, QString callId, bool audio, bool video);
+
+    void receiveFriendCall(QString friendId, QString callId, bool audio, bool video);
+
+    // 呼叫撤回
+    void receiveCallRetract(QString friendId, CallState state);
+    void receiveCallAcceptByOther(QString callId, IMPeerId peerId);
+    void receiveFriendHangup(QString friendId, CallState state);
+
+    // 对方状态变化
+    void receiveCallStateAccepted(IMPeerId peerId, QString callId, bool video);
+    void receiveCallStateRejected(IMPeerId peerId, QString callId, bool video);
+
 public slots:
     void onCallAccepted(IMPeerId peerId, QString callId, bool video);
     void onImStartedCall();
-    void doForIceCompleted(const QString& sId, const QString& peerId);
 };
 
 }  // namespace lib::messenger

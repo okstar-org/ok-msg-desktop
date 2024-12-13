@@ -72,6 +72,8 @@ public:
         }
     }
 
+    void ToPlugins(const ortc::OJingleContentAv& av, gloox::Jingle::PluginList& plugins);
+
     IM* getIM() const {
         return im;
     }
@@ -96,6 +98,7 @@ protected:
     IM* im;
 
     QString currentSid;
+    gloox::Jingle::Session* currentSession;
 
     //    // 传输文件、传输视频会话的区分
     //    QList<QString> m_invalid_sId;

@@ -396,6 +396,33 @@ void IMCall::onIceGatheringChange(const std::string& sId, const std::string& pee
     }
 }
 
+/**
+ * Ice交互完成，处理事项
+ * @param sId
+ * @param peerId
+ * @param qsId
+ */
+void IMCall::doForIceCompleted(const QString& sId, const QString& peerId) {
+    auto pSession = findSession(sId);
+    if (!pSession) {
+        qWarning() << "Unable to find jingle session:" << sId;
+        return;
+    }
+
+    ortc::OJingleContentAv av;
+    ortc::OkRTC* rtc = ortc::OkRTCManager::getInstance()->getRtc();
+    rtc->getLocalSdp(stdstring(peerId), av);
+
+    gloox::Jingle::PluginList plugins;
+    ToPlugins(av, plugins);
+
+    if (pSession->direction() == CallDirection::CallIn) {
+        pSession->getSession()->sessionAccept(plugins);
+    } else if (pSession->direction() == CallDirection::CallOut) {
+        pSession->getSession()->sessionInitiate(plugins);
+    }
+}
+
 void IMCall::onIceConnectionChange(const std::string& sId,
                                    const std::string& peerId,
                                    ortc::IceConnectionState state) {
@@ -433,33 +460,6 @@ void IMCall::onSignalingChange(const std::string& sId, const std::string& peerId
     qDebug() << __func__ << "sId:" << state;
 }
 
-/**
- * Ice交互完成，处理事项
- * @param sId
- * @param peerId
- * @param qsId
- */
-void IMCall::doForIceCompleted(const QString& sId, const QString& peerId) {
-    auto pSession = findSession(sId);
-    if (!pSession) {
-        qWarning() << "Unable to find jingle session:" << sId;
-        return;
-    }
-
-    ortc::OJingleContentAv av;
-    ortc::OkRTC* rtc = ortc::OkRTCManager::getInstance()->getRtc();
-    rtc->getLocalSdp(stdstring(peerId), av);
-
-    gloox::Jingle::PluginList plugins;
-    toPlugins(av, plugins);
-
-    if (pSession->direction() == CallDirection::CallIn) {
-        pSession->getSession()->sessionAccept(plugins);
-    } else if (pSession->direction() == CallDirection::CallOut) {
-        pSession->getSession()->sessionInitiate(plugins);
-    }
-}
-
 void IMCall::onRTP(const std::string& sid,     //
                    const std::string& peerId,  //
                    const ortc::OJingleContentAv& oContext) {
@@ -467,7 +467,7 @@ void IMCall::onRTP(const std::string& sid,     //
     qDebug() << __func__ << "sId:" << sId << "peerId:" << qstring(peerId);
 
     gloox::Jingle::PluginList plugins;
-    toPlugins(oContext, plugins);
+    ToPlugins(oContext, plugins);
 
     auto pSession = findSession(sId);
     if (!pSession) {
@@ -899,108 +899,5 @@ bool IMCall::doSessionTerminate(gloox::Jingle::Session* session,
     return true;
 }
 
-void IMCall::toPlugins(const ortc::OJingleContentAv& av, gloox::Jingle::PluginList& plugins) {
-    //<group>
-    auto& contents = av.getContents();
-    gloox::Jingle::Group::ContentList contentList;
-    for (auto& kv : contents) {
-        auto& content = kv.second;
-        auto name = content.name;
-        auto desc = content.rtp;
-
-        contentList.push_back(gloox::Jingle::Group::Content{name});
-
-        // description
-        gloox::Jingle::PluginList rtpPlugins;
-
-        // rtcp
-        gloox::Jingle::RTP::PayloadTypes pts;
-        for (auto x : desc.payloadTypes) {
-            gloox::Jingle::RTP::PayloadType t;
-            t.id = x.id;
-            t.name = x.name;
-            t.clockrate = x.clockrate;
-            t.bitrate = x.bitrate;
-            t.channels = x.channels;
-
-            for (auto p : x.parameters) {
-                gloox::Jingle::RTP::Parameter p0;
-                p0.name = p.name;
-                p0.value = p.value;
-                t.parameters.push_back(p0);
-            }
-
-            for (auto f : x.feedbacks) {
-                gloox::Jingle::RTP::Feedback f0;
-                f0.type = f.type;
-                f0.subtype = f.subtype;
-                t.feedbacks.push_back(f0);
-            }
-            pts.push_back(t);
-        }
-        auto rtp = new gloox::Jingle::RTP(static_cast<gloox::Jingle::Media>(desc.media), pts);
-        rtp->setRtcpMux(desc.rtcpMux);
-
-        // payload-type
-        rtp->setPayloadTypes(pts);
-
-        // rtp-hdrExt
-        gloox::Jingle::RTP::HdrExts exts;
-        for (auto e : desc.hdrExts) {
-            exts.push_back({e.id, e.uri});
-        }
-        rtp->setHdrExts(exts);
-
-        // source
-        if (!desc.sources.empty()) {
-            gloox::Jingle::RTP::Sources ss;
-            for (auto s : desc.sources) {
-                gloox::Jingle::RTP::Parameters ps;
-                for (auto p : s.parameters) {
-                    ps.push_back({p.name, p.value});
-                }
-                ss.push_back({s.ssrc, ps});
-            }
-
-            rtp->setSources(ss);
-        }
-
-        // ssrc-group
-        if (!desc.ssrcGroup.ssrcs.empty()) {
-            gloox::Jingle::RTP::SsrcGroup sg;
-            sg.semantics = desc.ssrcGroup.semantics;
-            for (auto s : desc.ssrcGroup.ssrcs) {
-                sg.ssrcs.push_back(s);
-            }
-            rtp->setSsrcGroup(sg);
-        }
-
-        // rtp
-        rtpPlugins.emplace_back(rtp);
-
-        // transport
-        lib::ortc::OIceUdp oIceUdp = content.iceUdp;
-
-        gloox::Jingle::ICEUDP::CandidateList cl;
-        for (auto c : oIceUdp.candidates) {
-            cl.push_front(gloox::Jingle::ICEUDP::Candidate{
-                    c.component, c.foundation, c.generation, c.id, c.ip, c.network, c.port,
-                    c.priority, c.protocol, c.tcptype, c.rel_addr, c.rel_port,
-                    static_cast<gloox::Jingle::ICEUDP::Type>(c.type)});
-        }
-        auto ice = new gloox::Jingle::ICEUDP(oIceUdp.pwd, oIceUdp.ufrag, cl);
-        ice->setDtls({.hash = oIceUdp.dtls.hash,
-                      .setup = oIceUdp.dtls.setup,
-                      .fingerprint = oIceUdp.dtls.fingerprint});
-        rtpPlugins.emplace_back(ice);
-
-        auto* pContent =
-                new gloox::Jingle::Content(name, rtpPlugins, gloox::Jingle::Content::CInitiator);
-        plugins.emplace_back(pContent);
-    }
-
-    auto group = new gloox::Jingle::Group("BUNDLE", contentList);
-    plugins.push_back(group);
-}
 
 }  // namespace lib::messenger

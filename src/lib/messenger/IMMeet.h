@@ -16,11 +16,10 @@
 
 #pragma once
 
-#include <QObject>
-#include <memory>
-
 #include <meethandler.h>
 #include <meetmanager.h>
+#include <QObject>
+#include <memory>
 
 #include "IM.h"
 #include "IMFromHostHandler.h"
@@ -155,10 +154,19 @@ protected:
     void onRender(const std::string& friendId, ortc::RendererImage image) override;
 
 private:
+    void doForIceCompleted(const QString& sId, const QString& peerId);
+
     gloox::Meet* meet;
     gloox::MeetManager* manager;
+
     std::vector<MessengerMeetHandler*> handlers;
     IMVCard vCard;
+
+signals:
+    // ice
+    void iceGatheringStateChanged(IMPeerId to, const QString sId, ortc::IceGatheringState);
+    void iceConnectionStateChanged(IMPeerId to, const QString sId, ortc::IceConnectionState);
+
 public slots:
     void onSelfVCard(const IMVCard& vCard);
     Participant toParticipant(const gloox::Meet::Participant& participant) const;
