@@ -11,12 +11,12 @@
  */
 
 #include "JoinMeetingWidget.h"
-#include "MeetingOptionWidget.h"
 #include <base/shadowbackground.h>
+#include "MeetingOptionWidget.h"
 
 #include <QLineEdit>
-#include <QVBoxLayout>
 #include <QPushButton>
+#include <QVBoxLayout>
 namespace module::meet {
 
 JoinMeetingWidget::JoinMeetingWidget(QWidget* parent) : QWidget(parent) {
@@ -42,5 +42,8 @@ JoinMeetingWidget::JoinMeetingWidget(QWidget* parent) : QWidget(parent) {
 
     connect(confirmButton, &QPushButton::clicked,
             [this]() { emit requstJoinMeeting(idEdit->text()); });
+
+    connect(idEdit, &QLineEdit::returnPressed, confirmButton,
+            [confirmButton]() { emit confirmButton->clicked(); });
 }
 }  // namespace module::meet

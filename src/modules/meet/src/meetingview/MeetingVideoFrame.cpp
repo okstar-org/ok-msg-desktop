@@ -223,6 +223,15 @@ void MeetingVideoFrame::retranslateUi() {
     sharedAction->setToolTip(tr("Share Meeting"));
     securityButton->setText(tr("Security"));
     sharedDeskButton->iconButton()->setText(tr("Share"));
+
+    if (this->windowState() == Qt::WindowFullScreen) {
+        fullScreenAction->setToolTip(tr("Exit fullscreen"));
+    } else {
+        fullScreenAction->setToolTip(tr("Show fullscreen"));
+    }
+    leaveButton->setToolTip(tr("Leave meeting"));
+
+    recoardButton->setToolTip(tr("Record"));
 }
 
 /**
