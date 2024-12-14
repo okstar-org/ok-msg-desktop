@@ -20,10 +20,8 @@
 namespace lib {
 namespace ortc {
 
-VideoSink::VideoSink(OkRTCHandler* handler, std::string peerId)
-        : handler(handler), _peer_id(std::move(peerId)) {
-    RTC_DCHECK(handler);
-}
+VideoSink::VideoSink(const std::vector<OkRTCHandler*>& handlers, std::string peerId)
+        : handlers(handlers), _peer_id(std::move(peerId)) {}
 
 VideoSink::~VideoSink() {}
 
@@ -76,7 +74,9 @@ void VideoSink::OnFrame(const webrtc::VideoFrame& frame) {
         return;
     }
 
-    handler->onRender(_peer_id, _image);
+    for (auto handler : handlers) {
+        handler->onRender(_peer_id, _image);
+    }
 
     // 渲染次数计数
     _renderCount++;

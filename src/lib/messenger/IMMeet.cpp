@@ -21,8 +21,10 @@
 
 #include "IM.h"
 #include "application.h"
-#include "meetmanager.h"
 #include "src/base/uuid.h"
+
+#include <jinglejsonmessage.h>
+#include <meetmanager.h>
 
 namespace lib::messenger {
 
@@ -51,6 +53,12 @@ IMMeet::IMMeet(IM* im, QObject* parent) : IMJingle(im, parent), manager{nullptr}
     auto host = stdstring("conference." + session->getSignInInfo().host);
     im->addFromHostHandler(host, this);
     im->addSessionHandler(this);
+
+    // jingle json-message
+    im->sessionManager()->registerPlugin(new gloox::Jingle::JsonMessage());
+
+    auto rtc = ortc::OkRTCManager::getInstance()->createRtc();
+    rtc->addRTCHandler(this);
 }
 
 IMMeet::~IMMeet() {
@@ -61,6 +69,11 @@ IMMeet::~IMMeet() {
 
     delete manager;
     manager = nullptr;
+
+    ortc::OkRTCManager* pRtcManager = ortc::OkRTCManager::getInstance();
+    auto rtc = pRtcManager->getRtc();
+    if (rtc) rtc->removeRTCHandler(this);
+    pRtcManager->destroyRtc();
 }
 
 const std::string& IMMeet::create(const QString& name) {
@@ -202,7 +215,7 @@ void IMMeet::handleCreation(const gloox::JID& jid, bool ready,
     gloox::Meet meet(jid, "", {});
     gloox::Meet::Participant participant = {
             .region = "region1",
-            .codecType = "VP9",
+            .codecType = "vp9",
             .avatarUrl = stdstring(vCard.photo.url),
             .email = vCard.emails.isEmpty() ? "" : stdstring(vCard.emails.last().number),
             .nick = stdstring(vCard.nickname),
@@ -257,7 +270,6 @@ bool lib::messenger::IMMeet::doSessionInitiate(gloox::Jingle::Session* session,
 
     cav.sdpType = lib::ortc::JingleSdpType::Offer;
     auto rtc = ortc::OkRTCManager::getInstance()->getRtc();
-    rtc->addRTCHandler(this);
     rtc->CreateAnswer(stdstring(peerId.toString()), cav);
 
     currentSid = sId;

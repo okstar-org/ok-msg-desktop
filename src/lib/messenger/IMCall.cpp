@@ -124,13 +124,19 @@ void IMCallSession::stop() {}
 IMCall::IMCall(IM* im, QObject* parent) : IMJingle(im, parent) {
     qDebug() << __func__ << "...";
 
+    //    ortc::OkRTCManager* rtcManager = lib::ortc::OkRTCManager::getInstance();
+    //    rtcManager->getRtc()->addRTCHandler(this);
+
     qRegisterMetaType<CallState>("CallState");
 
     connect(im, &IM::started, this, &IMCall::onImStartedCall);
     connectCall(this);
 }
 
-IMCall::~IMCall() {}
+IMCall::~IMCall() {
+    //    ortc::OkRTCManager* rtcManager = lib::ortc::OkRTCManager::getInstance();
+    //    rtcManager->getRtc()->removeRTCHandler(this);
+}
 
 void IMCall::onImStartedCall() {
     auto client = im->getClient();
@@ -270,7 +276,7 @@ bool IMCall::createCall(const IMPeerId& to, const QString& sId, bool video) {
     qDebug() << __func__ << "to:" << to.toString() << "sId:" << sId << "video:" << video;
 
     auto rtcManager = lib::ortc::OkRTCManager::getInstance();
-    auto rtc = rtcManager->getRtc();
+    auto rtc = rtcManager->createRtc();
     rtc->addRTCHandler(this);
 
     const auto& discos = im->getExternalServiceDiscovery();
@@ -320,6 +326,9 @@ void IMCall::cancelCall(const IMContactId& friendId, const QString& sId) {
     retractJingleMessage(friendId.toString(), sId);
 
     currentSid.clear();
+    auto rtcManager = ortc::OkRTCManager::getInstance();
+    auto rtc = rtcManager->getRtc();
+    rtc->removeRTCHandler(this);
 }
 
 void IMCall::rejectCall(const IMPeerId& peerId, const QString& sId) {
@@ -896,8 +905,12 @@ bool IMCall::doSessionTerminate(gloox::Jingle::Session* session,
     emit receiveFriendHangup(peerId.toFriendId(), CallState::FINISHED);
 
     currentSid.clear();
+
+    auto rtcManager = ortc::OkRTCManager::getInstance();
+    auto rtc = rtcManager->getRtc();
+    if (rtc) rtc->removeRTCHandler(this);
+
     return true;
 }
-
 
 }  // namespace lib::messenger

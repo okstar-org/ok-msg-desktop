@@ -55,8 +55,6 @@ public:
 
     bool ensureStart() override;
 
-    void addRTCHandler(OkRTCHandler* hand) override;
-
     void setRemoteDescription(const std::string& peerId, const OJingleContentAv& av) override;
 
     bool CreateOffer(const std::string& peerId, const std::string& sId, bool video) override;
@@ -93,9 +91,10 @@ public:
 
     void getLocalSdp(const std::string& peerId, ortc::OJingleContentAv& oContext) override;
 
-    OkRTCHandler* getHandler() const {
-        return _rtcHandler;
-    }
+    std::vector<OkRTCHandler*> getHandlers();
+
+    void addRTCHandler(OkRTCHandler* hand) override;
+    void removeRTCHandler(OkRTCHandler* hand) override;
 
     const webrtc::PeerConnectionInterface::RTCConfiguration& getConfig() const {
         return _rtcConfig;
@@ -113,8 +112,7 @@ private:
 
     Conductor* getConductor(const std::string& peerId);
 
-
-    std::recursive_mutex start_mtx;
+    std::recursive_mutex mutex;
 
     webrtc::PeerConnectionInterface::RTCConfiguration _rtcConfig;
 
@@ -124,7 +122,7 @@ private:
 
     std::map<std::string, Conductor*> _pcMap;
 
-    OkRTCHandler* _rtcHandler;
+    std::vector<OkRTCHandler*> _handlers;
 
     // 音频源
     rtc::scoped_refptr<webrtc::AudioSourceInterface> audioSource;

@@ -19,6 +19,7 @@
 #include <capabilities.h>
 #include <extdisco.h>
 #include <jinglegroup.h>
+#include <jinglejsonmessage.h>
 #include <jinglesession.h>
 
 #include "IM.h"
@@ -56,6 +57,7 @@ void IMJingle::onImStarted() {
     disco->addFeature(XMLNS_JINGLE);
     disco->addFeature(XMLNS_JINGLE_MESSAGE);
     disco->addFeature(XMLNS_JINGLE_ERRORS);
+    disco->addFeature(XMLNS_JIT_MEET);
 }
 
 void IMJingle::handleMessageSession(MessageSession* session) {
@@ -179,7 +181,7 @@ ortc::OIceUdp IMJingle::ParseIce(const std::string& mid, const gloox::Jingle::IC
 void IMJingle::ParseAV(const gloox::Jingle::Session::Jingle* jingle, OJingleContentAv& contentAv) {
     contentAv.sessionId = jingle->sid();
     for (const auto p : jingle->plugins()) {
-        gloox::Jingle::JinglePluginType pt = p->pluginType();
+        auto pt = p->pluginType();
         switch (pt) {
             case gloox::Jingle::PluginContent: {
                 auto content = static_cast<const gloox::Jingle::Content*>(p);
@@ -200,7 +202,6 @@ void IMJingle::ParseAV(const gloox::Jingle::Session::Jingle* jingle, OJingleCont
                 }
                 break;
             }
-
             case gloox::Jingle::PluginNone:
                 break;
             case gloox::Jingle::PluginFileTransfer:
@@ -217,6 +218,17 @@ void IMJingle::ParseAV(const gloox::Jingle::Session::Jingle* jingle, OJingleCont
                 break;
             case gloox::Jingle::PluginIBB:
                 break;
+            case gloox::Jingle::PluginJsonMessage: {
+                auto jm = static_cast<const gloox::Jingle::JsonMessage*>(p);
+                if (jm) {
+                    auto json = jm->json();
+                    /**
+                     *
+                     */
+                    qDebug() << json.c_str();
+                }
+                break;
+            }
             default:
                 break;
         }

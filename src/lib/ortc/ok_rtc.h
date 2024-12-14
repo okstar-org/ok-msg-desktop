@@ -113,6 +113,7 @@ public:
     virtual void setIceOptions(std::list<IceServer>& ices) = 0;
 
     virtual void addRTCHandler(OkRTCHandler* hand) = 0;
+    virtual void removeRTCHandler(OkRTCHandler* hand) = 0;
 
     virtual bool CreateOffer(const std::string& peerId, const std::string& sId, bool video) = 0;
 

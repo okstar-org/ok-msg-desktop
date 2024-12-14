@@ -25,7 +25,6 @@
 #include <modules/video_capture/video_capture.h>
 #include <modules/video_capture/video_capture_factory.h>
 #include <pc/video_track_source.h>
-#include "StaticThreads.h"
 
 namespace lib::ortc {
 
@@ -35,7 +34,7 @@ Conductor::Conductor(WebRTC* webrtc, const std::string& peerId_, const std::stri
         , webRtc{webrtc}
         , _remote_audio_track(nullptr)
         , _remote_video_track(nullptr) {
-    RTC_LOG(LS_INFO) << "sId:" << sId << "peerId:" << peerId;
+    RTC_LOG(LS_INFO) << __FUNCTION__ << " sId:" << sId << " peerId:" << peerId;
 
     assert(!peerId.empty());
     assert(!sId.empty());
@@ -63,8 +62,8 @@ void Conductor::CreatePeerConnection() {
 
     auto maybe = webRtc->getFactory()->CreatePeerConnectionOrError(webRtc->getConfig(),
                                                                    std::move(pc_dependencies));
-    if (webRtc->getHandler()) {
-        webRtc->getHandler()->onCreatePeerConnection(sId, peerId, maybe.ok());
+    for (auto h : webRtc->getHandlers()) {
+        h->onCreatePeerConnection(sId, peerId, maybe.ok());
     }
 
     if (!maybe.ok()) {
@@ -181,12 +180,9 @@ void Conductor::OnIceGatheringChange(webrtc::PeerConnectionInterface::IceGatheri
     RTC_LOG(LS_INFO) << __FUNCTION__ << "=>"
                      << webrtc::PeerConnectionInterface::AsString(state).data();
 
-    if (!webRtc->getHandler()) {
-        RTC_LOG(LS_WARNING) << "No RtcHandler!";
-        return;
+    for (auto h : webRtc->getHandlers()) {
+        h->onIceGatheringChange(sId, peerId, static_cast<ortc::IceGatheringState>(state));
     }
-    webRtc->getHandler()->onIceGatheringChange(sId, peerId,
-                                               static_cast<ortc::IceGatheringState>(state));
 }
 
 /**
@@ -196,9 +192,8 @@ void Conductor::OnIceGatheringChange(webrtc::PeerConnectionInterface::IceGatheri
 void Conductor::OnIceConnectionChange(webrtc::PeerConnectionInterface::IceConnectionState state) {
     RTC_LOG(LS_INFO) << __FUNCTION__ << "=>"
                      << webrtc::PeerConnectionInterface::AsString(state).data();
-    if (webRtc->getHandler()) {
-        webRtc->getHandler()->onIceConnectionChange(
-                sId, peerId, static_cast<ortc::IceConnectionState>(state));
+    for (auto h : webRtc->getHandlers()) {
+        h->onIceConnectionChange(sId, peerId, static_cast<ortc::IceConnectionState>(state));
     }
 }
 
@@ -216,19 +211,21 @@ void Conductor::OnIceConnectionReceivingChange(bool receiving) {
 void Conductor::OnSignalingChange(webrtc::PeerConnectionInterface::SignalingState state) {
     RTC_LOG(LS_INFO) << __FUNCTION__ << "=>"
                      << webrtc::PeerConnectionInterface::AsString(state).data();
-    if (webRtc->getHandler()) {
-        webRtc->getHandler()->onSignalingChange(
-                sId, peerId, static_cast<ortc::SignalingState>(state));
+    for (auto h : webRtc->getHandlers()) {
+        h->onSignalingChange(sId, peerId, static_cast<ortc::SignalingState>(state));
     }
 }
 
 void Conductor::OnConnectionChange(webrtc::PeerConnectionInterface::PeerConnectionState state) {
     RTC_LOG(LS_INFO) << __FUNCTION__ << "=>"
                      << webrtc::PeerConnectionInterface::AsString(state).data();
-    if (webRtc->getHandler()) {
-        webRtc->getHandler()->onPeerConnectionChange(
-                sId, peerId, static_cast<ortc::PeerConnectionState>(state));
+    for (auto h : webRtc->getHandlers()) {
+        h->onPeerConnectionChange(sId, peerId, static_cast<ortc::PeerConnectionState>(state));
     }
+}
+
+void Conductor::OnTrack(rtc::scoped_refptr<webrtc::RtpTransceiverInterface> transceiver) {
+    RTC_LOG(LS_INFO) << __FUNCTION__ << " mid:" << transceiver->mid()->data();
 }
 
 void Conductor::OnAddTrack(
@@ -248,15 +245,12 @@ void Conductor::OnAddTrack(
     if (track->kind() == webrtc::MediaStreamTrackInterface::kAudioKind) {
         _remote_audio_track = static_cast<webrtc::AudioTrackInterface*>(track.get());
     } else if (track->kind() == webrtc::MediaStreamTrackInterface::kVideoKind) {
-        _videoSink = std::make_unique<VideoSink>(webRtc->getHandler(), peerId);
+        _videoSink = std::make_unique<VideoSink>(webRtc->getHandlers(), peerId);
         _remote_video_track = static_cast<webrtc::VideoTrackInterface*>(track.get());
         _remote_video_track->AddOrUpdateSink(_videoSink.get(), rtc::VideoSinkWants());
     }
 }
 
-void Conductor::OnTrack(rtc::scoped_refptr<webrtc::RtpTransceiverInterface> transceiver) {
-    RTC_LOG(LS_INFO) << __FUNCTION__ << " mid:" << transceiver->mid()->data();
-}
 
 /**
  * track删除事件
@@ -336,8 +330,8 @@ void Conductor::OnSuccess(webrtc::SessionDescriptionInterface* desc) {
 void Conductor::OnFailure(webrtc::RTCError error) {
     RTC_LOG(LS_INFO) << __FUNCTION__ << error.message();
 
-    if (webRtc->getHandler()) {
-        webRtc->getHandler()->onFailure(sId, peerId, error.message());
+    for (auto h : webRtc->getHandlers()) {
+        h->onFailure(sId, peerId, error.message());
     }
 }
 

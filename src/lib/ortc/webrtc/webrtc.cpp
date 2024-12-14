@@ -305,7 +305,7 @@ void fromSdp(const webrtc::SessionDescriptionInterface* desc, OJingleContentAv& 
     }
 }
 
-WebRTC::WebRTC() : peer_connection_factory{nullptr}, _rtcHandler{nullptr} {
+WebRTC::WebRTC() : peer_connection_factory(nullptr) {
     _rtcConfig.sdp_semantics = webrtc::SdpSemantics::kUnifiedPlan;
     _rtcConfig.enable_implicit_rollback = false;
     _rtcConfig.enable_ice_renomination = true;
@@ -324,8 +324,9 @@ WebRTC::~WebRTC() {
 
 bool WebRTC::start() {
     RTC_LOG(LS_INFO) << "Starting the WebRTC...";
+
     // lock
-    start_mtx.lock();
+    std::lock_guard<std::recursive_mutex> lock(mutex);
 
     //  _logSink(std::make_unique<LogSinkImpl>())
     //    rtc::LogMessage::AddLogToStream(_logSink.get(), rtc::LS_INFO);
@@ -395,7 +396,7 @@ bool WebRTC::start() {
                                                 audioDecoderFactory,    //
                                                 std::move(videoEncoderFactory),  //
                                                 std::move(videoDecoderFactory),  //
-                                                nullptr /* audio_mixer */,                   //
+                                                nullptr /* audio_mixer */,       //
                                                 nullptr /* audio_processing */);
 
     RTC_LOG(LS_INFO) << "peer_connection_factory:" << peer_connection_factory.get();
@@ -412,21 +413,22 @@ bool WebRTC::start() {
     auto vdi = webrtc::VideoCaptureFactory::CreateDeviceInfo();
     RTC_LOG(LS_INFO) << "Video capture numbers:" << vdi->NumberOfDevices();
 
-    start_mtx.unlock();
-
     RTC_LOG(LS_INFO) << "WebRTC has be started.";
     return true;
 }
 
 bool WebRTC::stop() {
     RTC_LOG(LS_INFO) << "WebRTC will be destroy...";
-    std::lock_guard<std::recursive_mutex> lock(start_mtx);
+    std::lock_guard<std::recursive_mutex> lock(mutex);
 
     // 销毁factory
     peer_connection_factory = nullptr;
 
     // 清除ssl
     rtc::CleanupSSL();
+
+    _handlers.erase(_handlers.begin(), _handlers.end());
+
     RTC_LOG(LS_INFO) << "WebRTC has be destroyed.";
     return true;
 }
@@ -436,12 +438,26 @@ bool WebRTC::isStarted() {
 }
 
 bool WebRTC::ensureStart() {
-    std::lock_guard<std::recursive_mutex> lock(start_mtx);
+    std::lock_guard<std::recursive_mutex> lock(mutex);
     return isStarted() ? true : start();
 }
 
 void WebRTC::addRTCHandler(OkRTCHandler* hand) {
-    _rtcHandler = hand;
+    assert(hand);
+    std::lock_guard<std::recursive_mutex> lock(mutex);
+    _handlers.push_back(hand);
+}
+
+void WebRTC::removeRTCHandler(OkRTCHandler* hand) {
+    std::lock_guard<std::recursive_mutex> lock(mutex);
+    _handlers.erase(std::remove_if(_handlers.begin(), _handlers.end(),
+                                   [&](OkRTCHandler* h) { return h == hand; }),
+                    _handlers.end());
+}
+
+std::vector<OkRTCHandler*> WebRTC::getHandlers() {
+    std::lock_guard<std::recursive_mutex> lock(mutex);
+    return _handlers;
 }
 
 bool WebRTC::quit(const std::string& peerId) {
@@ -737,14 +753,18 @@ void WebRTC::addIceServer(const IceServer& ice) {
 }
 
 Conductor* WebRTC::getConductor(const std::string& peerId) {
+    std::lock_guard<std::recursive_mutex> lock(mutex);
     return _pcMap[peerId];
 }
+
 constexpr int LEN = 255;
+
 Conductor* WebRTC::createConductor(const std::string& peerId, const std::string& sId, bool video) {
+    std::lock_guard<std::recursive_mutex> lock(mutex);
+
     RTC_LOG(LS_INFO) << __FUNCTION__ << "peer:" << peerId << " sid:" << sId << " video:" << video;
 
     auto conductor = new Conductor(this, peerId, sId);
-
     if (!video) {
         // audio
         RTC_DLOG_V(rtc::LS_INFO) << "AddTrack audio..." << audioSource.get();
@@ -771,7 +791,7 @@ Conductor* WebRTC::createConductor(const std::string& peerId, const std::string&
             videoCapture = createVideoCapture(uid);
             conductor->AddVideoTrack(videoCapture->source().get());
 
-            sink = std::make_shared<VideoSink>(_rtcHandler);
+            sink = std::make_shared<VideoSink>(_handlers);
             videoCapture->setOutput(sink);
         }
     }

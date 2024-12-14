@@ -53,7 +53,8 @@ void OkRTCManager::destroyInstance() {
     RTC_DLOG_F(LS_WARNING) << "Destroy the instance successfully.";
 }
 
-OkRTC* OkRTCManager::getRtc() {
+OkRTC* OkRTCManager::createRtc() {
+    std::lock_guard<std::mutex> lock(mtx);
     if (!rtc) {
         rtc = std::make_unique<WebRTC>();
         rtc->setIceOptions(_iceOptions);
@@ -62,7 +63,13 @@ OkRTC* OkRTCManager::getRtc() {
 }
 
 void OkRTCManager::destroyRtc() {
+    std::lock_guard<std::mutex> lock(mtx);
     rtc.reset();
+}
+
+OkRTC* OkRTCManager::getRtc() {
+    std::lock_guard<std::mutex> lock(mtx);
+    return rtc.get();
 }
 
 void OkRTCManager::addIceServer(const IceServer& ice) {

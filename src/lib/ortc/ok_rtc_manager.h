@@ -28,8 +28,21 @@ public:
 
     ~OkRTCManager();
 
-    OkRTC* getRtc();
+    /**
+     * 创建RTC实例， 不存在则初始化，存在则返回当前实例
+     * @return
+     */
+    OkRTC* createRtc();
+    /**
+     * 销毁RTC实例
+     */
     void destroyRtc();
+
+    /**
+     * 获取当前RTC实例
+     * @return
+     */
+    OkRTC* getRtc();
 
     void addIceServer(const IceServer& ice);
 

@@ -439,6 +439,8 @@ void IM::enableDiscoManager() {
     disco->addFeature(XMLNS_JINGLE_APPS_RTP_HDREXT);
     disco->addFeature(XMLNS_JINGLE_APPS_GROUP);
     disco->addFeature(XMLNS_JINGLE_MESSAGE);
+    // JIT_MEET
+    disco->addFeature(XMLNS_JIT_MEET);
 
     /**
      * 昵称 NICK
