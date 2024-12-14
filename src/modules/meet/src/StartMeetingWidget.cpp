@@ -66,6 +66,9 @@ StartMeetingWidget::StartMeetingWidget(QWidget* parent) : QWidget(parent) {
     mainLayout->addWidget(optionWidget, 1);
     mainLayout->setAlignment(meetingNameEdit, Qt::AlignHCenter);
 
+    connect(meetingNameEdit, &QLineEdit::returnPressed, this,
+            [this]() { emit confirmButton->clicked(); });
+
     updateUi();
 }
 QString StartMeetingWidget::getName() {
