@@ -366,25 +366,27 @@ bool WebRTC::start() {
     auto audioEncoderCodecs = audioEncoderFactory->GetSupportedEncoders();
     RTC_LOG(LS_INFO) << "WebRTC BuiltIn audio supported encoders:";
     for (auto& c : audioEncoderCodecs) {
-        RTC_LOG(LS_INFO) << "codec:" << c.format.name;
+        RTC_LOG(LS_INFO) << "codec:" << c.format.name << "/" << c.format.clockrate_hz << "/"
+                         << c.format.num_channels;
     }
     auto audioDecoderFactory = webrtc::CreateBuiltinAudioDecoderFactory();
     auto audioDecoderCodecs = audioDecoderFactory->GetSupportedDecoders();
     RTC_LOG(LS_INFO) << "WebRTC BuiltIn audio supported decoders:";
     for (auto& c : audioDecoderCodecs) {
-        RTC_LOG(LS_INFO) << "codec:" << c.format.name;
+        RTC_LOG(LS_INFO) << "codec:" << c.format.name << "/" << c.format.clockrate_hz << "/"
+                         << c.format.num_channels;
     }
 
     auto videoEncoderFactory = webrtc::CreateBuiltinVideoEncoderFactory();
     RTC_LOG(LS_INFO) << "WebRTC BuiltIn video supported encoders:";
     for (auto& c : videoEncoderFactory->GetSupportedFormats()) {
-        RTC_LOG(LS_INFO) << "codec:" << c.name;
+        RTC_LOG(LS_INFO) << "codec:" << c.ToString();
     }
 
     auto videoDecoderFactory = webrtc::CreateBuiltinVideoDecoderFactory();
     RTC_LOG(LS_INFO) << "WebRTC BuiltIn video supported decoders:";
     for (auto& c : videoEncoderFactory->GetSupportedFormats()) {
-        RTC_LOG(LS_INFO) << "codec:" << c.name;
+        RTC_LOG(LS_INFO) << "codec:" << c.ToString();
     }
 
     peer_connection_factory =
