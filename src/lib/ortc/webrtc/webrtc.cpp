@@ -554,13 +554,13 @@ std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertToSdp(
 
         switch (rtp.media) {
             case Media::audio: {
-                auto description = createAudioDescription(rtp);
+                auto description = createAudioDescription(rtp, av.getSsrcBundle());
                 sessionDescription->AddContent(oSdp.name, cricket::MediaProtocolType::kRtp,
                                                std::move(description));
                 break;
             }
             case Media::video: {
-                auto description = createVideoDescription(rtp);
+                auto description = createVideoDescription(rtp, av.getSsrcBundle());
                 sessionDescription->AddContent(oSdp.name, cricket::MediaProtocolType::kRtp,
                                                std::move(description));
                 break;
@@ -627,10 +627,13 @@ std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertToSdp(
             mline++;
         }
     }
+
     return ptr;
 }
 
-std::unique_ptr<cricket::AudioContentDescription> createAudioDescription(const ORTP& rtp) {
+std::unique_ptr<cricket::AudioContentDescription> createAudioDescription(  //
+        const ORTP& rtp,
+        const std::map<std::string, OMeetSSRCBundle>& ssrcBundleMap) {
     auto ptr = std::make_unique<cricket::AudioContentDescription>();
     for (auto& pt : rtp.payloadTypes) {
         auto codec = cricket::CreateAudioCodec(pt.id, pt.name, pt.clockrate, pt.channels);
@@ -650,31 +653,56 @@ std::unique_ptr<cricket::AudioContentDescription> createAudioDescription(const O
         ptr->AddRtpHeaderExtension(ext);
     }
 
-    cricket::StreamParams streamParams;
-    for (auto& src : rtp.sources) {
-        streamParams.ssrcs.push_back(std::stoul(src.ssrc));
-        for (auto& p : src.parameters) {
-            if (p.name == "cname") {
-                streamParams.cname = p.value;
-            } else if (p.name == "label") {
-                streamParams.id = p.value;
-            } else if (p.name == "mslabel") {
-                streamParams.set_stream_ids({p.value});
+    if (!rtp.sources.empty()) {
+        cricket::StreamParams streamParams;
+        for (auto& src : rtp.sources) {
+            streamParams.ssrcs.push_back(std::stoul(src.ssrc));
+            for (auto& p : src.parameters) {
+                if (p.name == "cname") {
+                    streamParams.cname = p.value;
+                } else if (p.name == "label") {
+                    streamParams.id = p.value;
+                } else if (p.name == "mslabel") {
+                    streamParams.set_stream_ids({p.value});
+                }
+            };
+        }
+
+        if (!rtp.ssrcGroup.ssrcs.empty()) {
+            auto g = rtp.ssrcGroup;
+            std::vector<uint32_t> ssrcs;
+            std::transform(g.ssrcs.begin(), g.ssrcs.end(), std::back_inserter(ssrcs),
+                           [](auto& s) -> uint32_t { return std::stoul(s); });
+            cricket::SsrcGroup ssrcGroup(g.semantics, ssrcs);
+
+            // ssrc-groups
+            streamParams.ssrc_groups.emplace_back(ssrcGroup);
+        }
+
+        // ssrc
+        ptr->AddStream(streamParams);
+    } else {
+        for (const auto& item : ssrcBundleMap) {
+            cricket::StreamParams streamParams;
+            for (auto& src : item.second.audioSources) {
+                streamParams.ssrcs.push_back(std::stoul(src.ssrc));
+                streamParams.cname = src.name;
+                streamParams.set_stream_ids({src.msid});
+            };
+
+            if (!item.second.audioSsrcGroups.ssrcs.empty()) {
+                auto ssrcs = ranges::views::all(item.second.audioSsrcGroups.ssrcs) |
+                             ranges::views::transform([](const std::string& s) {
+                                 return static_cast<uint32_t>(std::stoul(s));
+                             }) |
+                             ranges::to_vector;
+                // ssrc-groups
+                streamParams.ssrc_groups.emplace_back(
+                        cricket::SsrcGroup(item.second.audioSsrcGroups.semantics, ssrcs));
             }
-        };
+            if (streamParams.has_ssrcs()) ptr->AddStream(streamParams);
+        }
     }
-
-    auto g = rtp.ssrcGroup;
-    std::vector<uint32_t> ssrcs;
-    std::transform(g.ssrcs.begin(), g.ssrcs.end(), std::back_inserter(ssrcs),
-                   [](auto& s) -> uint32_t { return std::stoul(s); });
-    cricket::SsrcGroup ssrcGroup(g.semantics, ssrcs);
-
-    // ssrc-groups
-    streamParams.ssrc_groups.emplace_back(ssrcGroup);
-
-    // ssrc
-    ptr->AddStream(streamParams);
 
     // rtcp-mux
     ptr->set_rtcp_mux(rtp.rtcpMux);
@@ -682,7 +710,9 @@ std::unique_ptr<cricket::AudioContentDescription> createAudioDescription(const O
     return std::move(ptr);
 }
 
-std::unique_ptr<cricket::VideoContentDescription> createVideoDescription(const ORTP& rtp) {
+std::unique_ptr<cricket::VideoContentDescription> createVideoDescription(  //
+        const ORTP& rtp,                                                   //
+        const std::map<std::string, OMeetSSRCBundle>& ssrcBundleMap) {
     auto ptr = std::make_unique<cricket::VideoContentDescription>();
     for (auto& pt : rtp.payloadTypes) {
         auto codec = cricket::CreateVideoCodec(pt.id, pt.name);
@@ -701,28 +731,53 @@ std::unique_ptr<cricket::VideoContentDescription> createVideoDescription(const O
     }
     ptr->set_rtcp_mux(rtp.rtcpMux);
 
-    cricket::StreamParams streamParams;
-    for (auto& src : rtp.sources) {
-        streamParams.ssrcs.push_back(std::stoul(src.ssrc));
-        for (auto& p : src.parameters) {
-            if (p.name == "cname") {
-                streamParams.cname = p.value;
-            } else if (p.name == "label") {
-                streamParams.id = p.value;
-            } else if (p.name == "mslabel") {
-                streamParams.set_stream_ids({p.value});
-            }
-        };
-    }
+    if (!rtp.sources.empty()) {
+        cricket::StreamParams streamParams;
+        for (auto& src : rtp.sources) {
+            streamParams.ssrcs.push_back(std::stoul(src.ssrc));
+            for (auto& p : src.parameters) {
+                if (p.name == "cname") {
+                    streamParams.cname = p.value;
+                } else if (p.name == "label") {
+                    streamParams.id = p.value;
+                } else if (p.name == "mslabel") {
+                    streamParams.set_stream_ids({p.value});
+                }
+            };
+        }
 
-    // ssrc-group
-    auto g = rtp.ssrcGroup;
-    std::vector<uint32_t> ssrcs;
-    std::transform(g.ssrcs.begin(), g.ssrcs.end(), std::back_inserter(ssrcs),
-                   [](auto& s) -> uint32_t { return std::stoul(s); });
-    cricket::SsrcGroup ssrcGroup(g.semantics, ssrcs);
-    streamParams.ssrc_groups.emplace_back(ssrcGroup);
-    ptr->AddStream(streamParams);
+        // ssrc-group
+        if (!rtp.ssrcGroup.ssrcs.empty()) {
+            auto g = rtp.ssrcGroup;
+            std::vector<uint32_t> ssrcs;
+            std::transform(g.ssrcs.begin(), g.ssrcs.end(), std::back_inserter(ssrcs),
+                           [](auto& s) -> uint32_t { return std::stoul(s); });
+            cricket::SsrcGroup ssrcGroup(g.semantics, ssrcs);
+            streamParams.ssrc_groups.emplace_back(ssrcGroup);
+        }
+        ptr->AddStream(streamParams);
+    } else {
+        for (const auto& item : ssrcBundleMap) {
+            cricket::StreamParams streamParams;
+            for (auto& src : item.second.videoSources) {
+                streamParams.ssrcs.push_back(std::stoul(src.ssrc));
+                streamParams.cname = src.name;
+                streamParams.set_stream_ids({src.msid});
+            };
+
+            if (!item.second.videoSsrcGroups.ssrcs.empty()) {
+                // ssrc-groups
+                auto ssrcs = ranges::views::all(item.second.videoSsrcGroups.ssrcs) |
+                             ranges::views::transform([](const std::string& s) {
+                                 return static_cast<uint32_t>(std::stoul(s));
+                             }) |
+                             ranges::to_vector;
+                streamParams.ssrc_groups.emplace_back(
+                        cricket::SsrcGroup(item.second.videoSsrcGroups.semantics, ssrcs));
+            }
+            if (streamParams.has_ssrcs()) ptr->AddStream(streamParams);
+        }
+    }
 
     return std::move(ptr);
 }
@@ -887,11 +942,14 @@ void WebRTC::SessionTerminate(const std::string& peerId) {
     //    quit(peerId);
 }
 
-void WebRTC::CreateAnswer(const std::string& peerId, const OJingleContentAv& ca) {
+void WebRTC::CreateAnswer(const std::string& peerId, const OJingleContentAv& av) {
     RTC_LOG(LS_INFO) << "peerId:" << peerId;
-    Conductor* conductor = createConductor(peerId, ca.sessionId, ca.isVideo());
+    Conductor* conductor = createConductor(peerId, av.sessionId, av.isVideo());
     // webrtc::SdpType::kOffer,
-    auto sdp = convertToSdp(ca);
+    auto sdp = convertToSdp(av);
+
+    auto d = sdp->description()->GetContentDescriptionByName("audio");
+
     conductor->SetRemoteDescription(std::move(sdp));
     conductor->CreateAnswer();
     _pcMap[peerId] = conductor;

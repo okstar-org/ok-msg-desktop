@@ -259,7 +259,7 @@ bool lib::messenger::IMMeet::doSessionInitiate(gloox::Jingle::Session* session,
     }
 
     auto sId = qstring(jingle->sid());
-    qDebug() << __func__ << "sid:" << sId;
+    qDebug() << __func__ << "sid:" << sId << "peer:" << peerId.toString();
 
     ortc::OJingleContentAv cav;
     ParseAV(jingle, cav);
@@ -278,7 +278,8 @@ bool lib::messenger::IMMeet::doSessionInitiate(gloox::Jingle::Session* session,
 }
 
 bool IMMeet::doSessionAccept(gloox::Jingle::Session* session,
-                             const gloox::Jingle::Session::Jingle* jingle, const IMPeerId& peerId) {
+                             const gloox::Jingle::Session::Jingle* jingle,
+                             const IMPeerId& peerId) {
     return true;
 }
 

@@ -55,25 +55,6 @@ public:
     explicit IMJingle(IM* im, QObject* parent = nullptr);
     ~IMJingle() override;
 
-    static bool ParseRTP(const gloox::Jingle::RTP* rtp, ortc::ORTP& ortp);
-
-    static ortc::OIceUdp ParseIce(const std::string& mid, const gloox::Jingle::ICEUDP* udp);
-
-    static void ParseAV(const gloox::Jingle::Session::Jingle* jingle,
-                        ortc::OJingleContentAv& contentAv);
-
-    static void ParseCandidates(gloox::Jingle::ICEUDP::CandidateList& src,
-                                ortc::CandidateList& to) {
-        for (auto& c : src) {
-            to.push_front(ortc::Candidate{c.component, c.foundation, c.generation, c.id, c.ip,
-                                          c.network, c.port, static_cast<uint32_t>(c.priority),
-                                          c.protocol, c.tcptype, c.rel_addr, c.rel_port,
-                                          static_cast<ortc::Type>(c.type)});
-        }
-    }
-
-    void ToPlugins(const ortc::OJingleContentAv& av, gloox::Jingle::PluginList& plugins);
-
     IM* getIM() const {
         return im;
     }
@@ -95,21 +76,25 @@ protected:
 
     virtual void clearSessionInfo(const QString& sId) = 0;
 
+    ortc::Candidate ParseCandidate(gloox::Jingle::ICEUDP::Candidate& src);
+
+    void ParseCandidates(gloox::Jingle::ICEUDP::CandidateList& src, ortc::CandidateList& to);
+
+    bool ParseRTP(const gloox::Jingle::RTP* rtp, ortc::ORTP& ortp);
+
+    ortc::OIceUdp ParseIce(const std::string& mid, const gloox::Jingle::ICEUDP* udp);
+
+    void ParseAV(const gloox::Jingle::Session::Jingle* jingle, ortc::OJingleContentAv& contentAv);
+
+    void ParseOMeetSSRCBundle(const std::string& json,
+                              std::map<std::string, ortc::OMeetSSRCBundle>& ssrcBundle);
+
+    void ToPlugins(const ortc::OJingleContentAv& av, gloox::Jingle::PluginList& plugins);
+
     IM* im;
 
     QString currentSid;
     gloox::Jingle::Session* currentSession;
-
-    //    // 传输文件、传输视频会话的区分
-    //    QList<QString> m_invalid_sId;
-    //
-    //    void addInvalidSid(const QString& sid) {
-    //        m_invalid_sId.append(sid);
-    //    }
-    //
-    //    bool isInvalidSid(const QString& sid) {
-    //        return m_invalid_sId.contains(sid);
-    //    }
 
 protected slots:
     virtual void onImStarted();

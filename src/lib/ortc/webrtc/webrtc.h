@@ -37,8 +37,12 @@ namespace lib::ortc {
 
 class Conductor;
 
-std::unique_ptr<cricket::AudioContentDescription> createAudioDescription(const ORTP& rtp);
-std::unique_ptr<cricket::VideoContentDescription> createVideoDescription(const ORTP& rtp);
+std::unique_ptr<cricket::AudioContentDescription> createAudioDescription(
+        const ORTP& rtp,  //
+        const std::map<std::string, OMeetSSRCBundle>&);
+std::unique_ptr<cricket::VideoContentDescription> createVideoDescription(
+        const ORTP& rtp,  //
+        const std::map<std::string, OMeetSSRCBundle>& ssrcBundleMap);
 std::unique_ptr<cricket::SctpDataContentDescription> createDataDescription(const OSdp& sdp);
 
 class WebRTC : public OkRTC {
@@ -59,7 +63,7 @@ public:
 
     bool CreateOffer(const std::string& peerId, const std::string& sId, bool video) override;
 
-    void CreateAnswer(const std::string& peerId, const OJingleContentAv& content) override;
+    void CreateAnswer(const std::string& peerId, const OJingleContentAv& av) override;
 
     void setTransportInfo(const std::string& peerId,
                           const std::string& sId,

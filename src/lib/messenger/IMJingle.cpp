@@ -15,6 +15,7 @@
 #include <QUuid>
 #include <range/v3/range.hpp>
 #include <range/v3/view.hpp>
+#include <vector>
 
 #include <capabilities.h>
 #include <extdisco.h>
@@ -23,13 +24,35 @@
 #include <jinglesession.h>
 
 #include "IM.h"
-#include "base/logs.h"
 
 namespace lib::messenger {
 
 using namespace gloox;
 using namespace Jingle;
 using namespace lib::ortc;
+
+void setSsrcGroup(SsrcGroup& group, const QJsonValueRef& item) {
+    int i = 0;
+    for (const auto& ssrc : item.toArray()) {
+        auto x = ssrc.toVariant().toString();
+        if (i == 0) {
+            // 第一个为ssrc group类型
+            if (x == "f")
+                group.semantics = "FID";
+            else if (x == "s") {
+                group.semantics = "SIM";
+            } else
+                group.semantics = "FEC";
+        } else {
+            group.ssrcs.emplace_back(x.toStdString());
+        }
+        i++;
+    }
+}
+
+auto txParameter = ranges::views::transform([](const gloox::Jingle::RTP::Parameter& op) {
+    return ortc::Parameter{.name = op.name, .value = op.value};
+});
 
 IMJingle::IMJingle(IM* im, QObject* parent) : QObject(parent), im(im), currentSession(nullptr) {
     qDebug() << __func__ << "Creating";
@@ -83,9 +106,21 @@ bool IMJingle::handleIq(const IQ& iq) {
 
 void IMJingle::handleIqID(const IQ& iq, int context) {}
 
-auto txParameter = ranges::views::transform([](const gloox::Jingle::RTP::Parameter& op) {
-    return ortc::Parameter{.name = op.name, .value = op.value};
-});
+ortc::Candidate IMJingle::ParseCandidate(gloox::Jingle::ICEUDP::Candidate& c) {
+    return ortc::Candidate{.component = c.component,
+                           .foundation = c.foundation,
+                           .generation = c.generation,
+                           .id = c.id,
+                           .ip = c.ip,
+                           .network = c.network,
+                           .port = c.port,
+                           .priority = static_cast<uint32_t>(c.priority),
+                           .protocol = c.protocol,
+                           .tcptype = c.tcptype,
+                           .rel_addr = c.rel_addr,
+                           .rel_port = c.rel_port,
+                           .type = static_cast<ortc::Type>(c.type)};
+}
 
 bool IMJingle::ParseRTP(const gloox::Jingle::RTP* rtp, ortc::ORTP& ortp) {
     if (!rtp) {
@@ -160,20 +195,8 @@ ortc::OIceUdp IMJingle::ParseIce(const std::string& mid, const gloox::Jingle::IC
                             .streams = udp->sctp().streams,
                     },
             .candidates = ranges::views::all(cs) |
-                          ranges::views::transform([=](gloox::Jingle::ICEUDP::Candidate& c) {
-                              return ortc::Candidate{.component = c.component,
-                                                     .foundation = c.foundation,
-                                                     .generation = c.generation,
-                                                     .id = c.id,
-                                                     .ip = c.ip,
-                                                     .network = c.network,
-                                                     .port = c.port,
-                                                     .priority = static_cast<uint32_t>(c.priority),
-                                                     .protocol = c.protocol,
-                                                     .tcptype = c.tcptype,
-                                                     .rel_addr = c.rel_addr,
-                                                     .rel_port = c.rel_port,
-                                                     .type = static_cast<ortc::Type>(c.type)};
+                          ranges::views::transform([this](gloox::Jingle::ICEUDP::Candidate& c) {
+                              return ParseCandidate(c);
                           }) |
                           ranges::to<ortc::CandidateList>};
 }
@@ -221,17 +244,88 @@ void IMJingle::ParseAV(const gloox::Jingle::Session::Jingle* jingle, OJingleCont
             case gloox::Jingle::PluginJsonMessage: {
                 auto jm = static_cast<const gloox::Jingle::JsonMessage*>(p);
                 if (jm) {
-                    auto json = jm->json();
-                    /**
-                     *
-                     */
-                    qDebug() << json.c_str();
+                    qDebug() << "json-message:" << jm->json().c_str();
+                    ParseOMeetSSRCBundle(jm->json(), contentAv.getSsrcBundle());
                 }
                 break;
             }
             default:
                 break;
         }
+    }
+}
+
+void IMJingle::ParseOMeetSSRCBundle(const std::string& json,
+                                    std::map<std::string, ortc::OMeetSSRCBundle>& map) {
+    /**
+     * {"sources":{"d11a153b":[[],[],[{"s":3444359346,"n":"d11a153b-a0","m":"d11a153b-audio-0-1
+     * 3f32f7da-2665-4321-8335-868bf394797c-1"}]],"91db8c6a":[[{"s":4281442190,"n":"91db8c6a-v0","m":"91db8c6a-video-0-1
+     * 61861387-7097-4f8b-ad79-c3417c62703b-1"},{"s":2878411684,"n":"91db8c6a-v0","m":"91db8c6a-video-0-1
+     * 61861387-7097-4f8b-ad79-c3417c62703b-1"}],[["f",4281442190,2878411684]],[{"s":1399762730,"n":"91db8c6a-a0","m":"91db8c6a-audio-0-1
+     * 7b7e8445-3b75-4c47-ba76-07bb6ce84e73-1"}]],"jvb":[[{"s":2196891483,"n":"jvb-v0","m":"mixedmslabel
+     * mixedlabelvideo0"}],[],[{"s":2127533679,"n":"jvb-a0","m":"mixedmslabel mixedlabelaudio0"}]]}}
+     */
+    if (json.empty()) {
+        qWarning() << "empty!";
+        return;
+    }
+
+    QJsonDocument doc = ok::base::Jsons::toJSON(QByteArray::fromStdString(json));
+    if (!doc.isObject()) {
+        qWarning() << "JSON is not an object";
+        return;
+    }
+
+    QJsonObject jsonObj = doc.object();
+    if (!jsonObj.contains("sources")) {
+        qWarning() << "JSON object does not contain 'sources' key";
+        return;
+    }
+
+    QJsonObject sourcesObj = jsonObj["sources"].toObject();
+    for (auto it = sourcesObj.begin(); it != sourcesObj.end(); ++it) {
+        QString sourceKey = it.key();
+        QJsonArray sourceArray = it.value().toArray();
+        qDebug() << "Participant:" << sourceKey;
+
+        OMeetSSRCBundle bundle;
+        if (!sourceArray.empty()) {
+            // index 0 as video source
+            for (const auto& item : sourceArray.at(0).toArray()) {
+                auto o = item.toObject();
+                OMeetSource source = {
+                        .ssrc = o.value("s").toVariant().toString().toStdString(),
+                        .name = o.value("n").toVariant().toString().toStdString(),
+                        .msid = o.value("m").toVariant().toString().toStdString(),
+                };
+                bundle.videoSources.emplace_back(source);
+            }
+        }
+        if (sourceArray.size() > 1) {
+            // index 1 as video source group
+
+            for (const auto& item : sourceArray.at(1).toArray()) {
+                setSsrcGroup(bundle.videoSsrcGroups, item);
+            }
+        }
+        if (sourceArray.size() > 2) {
+            // index 2 as audio source
+            for (const auto& item : sourceArray.at(2).toArray()) {
+                auto o = item.toObject();
+                OMeetSource source = {
+                        .ssrc = o.value("s").toVariant().toString().toStdString(),
+                        .name = o.value("n").toVariant().toString().toStdString(),
+                        .msid = o.value("m").toVariant().toString().toStdString(),
+                };
+                bundle.audioSources.emplace_back(source);
+            }
+        }
+        if (sourceArray.size() > 3) {
+            for (const auto& item : sourceArray.at(3).toArray()) {
+                setSsrcGroup(bundle.audioSsrcGroups, item);
+            }
+        }
+        map.emplace(stdstring(sourceKey), bundle);
     }
 }
 
@@ -337,6 +431,12 @@ void IMJingle::ToPlugins(const OJingleContentAv& av, PluginList& plugins) {
 
     auto group = new gloox::Jingle::Group("BUNDLE", contentList);
     plugins.push_back(group);
+}
+
+void IMJingle::ParseCandidates(gloox::Jingle::ICEUDP::CandidateList& src, ortc::CandidateList& to) {
+    for (auto& c : src) {
+        to.push_front(ParseCandidate(c));
+    }
 }
 
 }  // namespace lib::messenger

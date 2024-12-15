@@ -132,6 +132,13 @@ struct Source {
 typedef std::list<Source> Sources;
 
 struct SsrcGroup {
+    // FID（Flow Identification，流识别）：用于表示同一媒体流的不同部分或变体，如原始流和重传流。
+    //      在这种关系中，一个FID组内的SSRC共享相同的媒体源，但可能具有不同的编码参数或传输特性。
+    // FEC（Forward Error Correction，前向纠错）：用于表示与特定媒体流相关联的前向纠错流。
+    //      在这种关系中，FEC流用于为原始媒体流提供错误恢复能力。
+    // SIM（Simulcast，联播）：用于表示同一媒体源的不同质量或分辨率的流。
+    //      在这种关系中，SIM组内的SSRC代表同一摄像头或麦克风捕获的媒体的不同编码版本，如高清和低分辨率版本。
+    //      这些流可以同时传输，并根据接收方的带宽和性能进行动态选择。
     std::string semantics;
     std::vector<std::string> ssrcs;
 };
@@ -160,10 +167,20 @@ struct ORTP {
             , rtcpMux{rtcpMux} {}
 };
 
-// struct OFile {
-//     Jingle::FileTransfer::FileList files;
-//     Jingle::IBB ibb;
-// };
+struct OMeetSource {
+    std::string ssrc;
+    // resource of meet participant
+    std::string name;
+    // 格式： "d11a153b-audio-0-1 3f32f7da-2665-4321-8335-868bf394797c-1"
+    std::string msid;
+};
+
+struct OMeetSSRCBundle {
+    std::vector<OMeetSource> videoSources;
+    SsrcGroup videoSsrcGroups;
+    std::vector<OMeetSource> audioSources;
+    SsrcGroup audioSsrcGroups;
+};
 
 struct OContent {
     std::string name;
@@ -229,6 +246,14 @@ public:
 
     [[nodiscard]] bool isVideo() const;
 
+    [[nodiscard]] const std::map<std::string, OMeetSSRCBundle>& getSsrcBundle() const {
+        return ssrcBundle;
+    }
+
+    [[nodiscard]] std::map<std::string, OMeetSSRCBundle>& getSsrcBundle() {
+        return ssrcBundle;
+    }
+
     [[nodiscard]] const std::map<std::string, OSdp>& getContents() const {
         return contents;
     };
@@ -251,6 +276,7 @@ public:
 
 private:
     std::map<std::string, OSdp> contents;
+    std::map<std::string, OMeetSSRCBundle> ssrcBundle;
 };
 
 enum class IceGatheringState { New, Gathering, Complete };
