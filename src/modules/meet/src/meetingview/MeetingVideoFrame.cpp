@@ -49,7 +49,7 @@ MeetingVideoFrame::MeetingVideoFrame(const QString& name, QWidget* parent)
     connect(this, &MeetingVideoFrame::participantLeft, this, &MeetingVideoFrame::removeParticipant);
 
     QVBoxLayout* mainLayout = new QVBoxLayout(this);
-    mainLayout->setSpacing(10);
+    mainLayout->setSpacing(0);
     mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->addWidget(topToolBar, 0);
     mainLayout->addWidget(videosLayout, 1);

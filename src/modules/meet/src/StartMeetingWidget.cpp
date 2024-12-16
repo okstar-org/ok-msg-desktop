@@ -79,6 +79,10 @@ void StartMeetingWidget::setMeetingState(MeetingState state) {
     updateUi();
 }
 
+void StartMeetingWidget::focusInput() {
+    meetingNameEdit->setFocus();
+}
+
 void StartMeetingWidget::retranslateUi() {
     confirmButton->setText(tr("Start Meeting"));
     shareButton->setText(tr("Share"));

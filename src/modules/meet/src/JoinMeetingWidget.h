@@ -39,6 +39,7 @@ signals:
 
 public:
     JoinMeetingWidget(QWidget* parent = nullptr);
+    void focusInput();
     void retranslateUi();
 
 private:
