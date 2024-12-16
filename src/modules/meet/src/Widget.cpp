@@ -78,6 +78,7 @@ Widget::Widget(QWidget* parent)
 }
 
 Widget::~Widget() {
+    settings::Translator::unregister(this);
     delete ui;
 }
 
@@ -105,6 +106,29 @@ void Widget::initTranslate() {
 
 void Widget::retranslateUi() {
     ui->retranslateUi(this);
+
+    if(ui->tabWidget->count() >= 4)
+    {
+        ui->tabWidget->setTabText(0, tr("Start Meeting"));
+        if(StartMeetingWidget* widget = qobject_cast<StartMeetingWidget*>(ui->tabWidget->widget(0)))
+        {
+            widget->retranslateUi();
+        }
+
+        ui->tabWidget->setTabText(1, tr("Join Meeting"));
+        if(JoinMeetingWidget* widget = qobject_cast<JoinMeetingWidget*>(ui->tabWidget->widget(1)))
+        {
+            widget->retranslateUi();
+        }
+
+        ui->tabWidget->setTabText(2, tr("Book Meeting"));
+
+        ui->tabWidget->setTabText(3, tr("Setting"));
+        if(MeetingSettingWidget* widget = qobject_cast<MeetingSettingWidget*>(ui->tabWidget->widget(3)))
+        {
+            widget->retranslateUi();
+        }
+    }
 }
 
 void Widget::joinMeeting(const QString& no) {

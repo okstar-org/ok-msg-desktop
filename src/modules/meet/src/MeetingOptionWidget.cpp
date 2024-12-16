@@ -66,6 +66,12 @@ void MeetingOptionWidget::addFooterButton(QPushButton* button) {
     buttonLayout->addWidget(button);
 }
 
+void MeetingOptionWidget::retranslateUi()
+{
+    micSpeakSetting->setLabel(tr("Micphone"));
+    cameraSetting->setLabel(tr("Camera"));
+}
+
 void MeetingOptionWidget::showEvent(QShowEvent* event) {
     ok::Bus* bus = ok::Application::Instance()->bus();
     emit bus->getAvatar();

@@ -17,3 +17,8 @@ MeetingSettingWidget::~MeetingSettingWidget()
 {
     delete ui;
 }
+
+void MeetingSettingWidget::retranslateUi()
+{
+    ui->retranslateUi(this);
+}
