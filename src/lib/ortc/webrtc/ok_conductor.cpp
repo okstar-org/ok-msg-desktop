@@ -174,22 +174,31 @@ void Conductor::OnRenegotiationNeeded() {
 }
 
 /**
+ * ICE 收集状态
+ * @param state
+ */
+void Conductor::OnIceGatheringChange(webrtc::PeerConnectionInterface::IceGatheringState state) {
+    RTC_LOG(LS_INFO) << __FUNCTION__ << "=>"
+                     << webrtc::PeerConnectionInterface::AsString(state).data();
+
+    if (!webRtc->getHandler()) {
+        RTC_LOG(LS_WARNING) << "No RtcHandler!";
+        return;
+    }
+    webRtc->getHandler()->onIceGatheringChange(sId, peerId,
+                                               static_cast<ortc::IceGatheringState>(state));
+}
+
+/**
  * ICE 连接状态
  * @param state
  */
 void Conductor::OnIceConnectionChange(webrtc::PeerConnectionInterface::IceConnectionState state) {
     RTC_LOG(LS_INFO) << __FUNCTION__ << "=>"
                      << webrtc::PeerConnectionInterface::AsString(state).data();
-}
-
-void Conductor::OnIceGatheringChange(webrtc::PeerConnectionInterface::IceGatheringState state) {
-    // ICE 收集状态
-    RTC_LOG(LS_INFO) << __FUNCTION__ << "=>"
-                     << webrtc::PeerConnectionInterface::AsString(state).data();
-
     if (webRtc->getHandler()) {
-        webRtc->getHandler()->onIceGatheringChange(
-                sId, peerId, static_cast<ortc::IceGatheringState>(state));
+        webRtc->getHandler()->onIceConnectionChange(
+                sId, peerId, static_cast<ortc::IceConnectionState>(state));
     }
 }
 
@@ -198,79 +207,6 @@ void Conductor::OnIceCandidate(const webrtc::IceCandidateInterface* ice) {
     ice->ToString(&str);
     RTC_LOG(LS_INFO) << __FUNCTION__ << " Candidate:" << str;
     _candidates.push_back(str);
-
-    //
-    //    /**
-    //     * 发送 IceCandidate
-    //     */
-    //    OIceUdp iceUdp;
-    //    iceUdp.mid = ice->sdp_mid();            //
-    //    iceUdp.mline = ice->sdp_mline_index();  //
-    //    iceUdp.ufrag = cand.username();
-    //    iceUdp.pwd = cand.password();
-    //
-    //    auto sdp = peer_connection_->local_description();
-    //    auto transportInfos = sdp->description()->transport_infos();
-    //    for (auto info : transportInfos) {
-    //        if (info.content_name == ice->sdp_mid()) {
-    //            if (info.description.identity_fingerprint) {
-    //                iceUdp.dtls.hash = info.description.identity_fingerprint->algorithm;
-    //                iceUdp.dtls.fingerprint =
-    //                        info.description.identity_fingerprint->GetRfc4572Fingerprint();
-    //            }
-    //
-    //            switch (info.description.connection_role) {
-    //                case ::cricket::CONNECTIONROLE_ACTIVE:
-    //                    iceUdp.dtls.setup = ::cricket::CONNECTIONROLE_ACTIVE_STR;
-    //                    break;
-    //                case ::cricket::CONNECTIONROLE_ACTPASS:
-    //                    iceUdp.dtls.setup = ::cricket::CONNECTIONROLE_ACTPASS_STR;
-    //                    break;
-    //                case ::cricket::CONNECTIONROLE_HOLDCONN:
-    //                    iceUdp.dtls.setup = ::cricket::CONNECTIONROLE_HOLDCONN_STR;
-    //                    break;
-    //                case ::cricket::CONNECTIONROLE_PASSIVE:
-    //                    iceUdp.dtls.setup = ::cricket::CONNECTIONROLE_PASSIVE_STR;
-    //                    break;
-    //                case ::cricket::CONNECTIONROLE_NONE:
-    //                    break;
-    //            }
-    //        }
-    //    }
-    //    // candidate
-    //    Candidate oc;
-    //    oc.id = cand.id();
-    //    oc.foundation = cand.foundation();
-    //    oc.priority = cand.priority();
-    //    oc.protocol = cand.protocol();
-    //    oc.tcptype = cand.tcptype();
-    //    oc.generation = std::to_string(cand.generation());
-    //    oc.component = std::to_string(cand.component());
-    //    oc.network = std::to_string(cand.network_id());
-    //
-    //    // addr
-    //    oc.ip = cand.address().ipaddr().ToString();
-    //    oc.port = cand.address().port();
-    //
-    //    // “host” / “srflx” / “prflx” / “relay” / token
-    //    if (cand.type() == ::cricket::LOCAL_PORT_TYPE) {
-    //        oc.type = Type::Host;
-    //    } else if (cand.type() == ::cricket::STUN_PORT_TYPE) {
-    //        oc.type = Type::ServerReflexive;
-    //    } else if (cand.type() == ::cricket::PRFLX_PORT_TYPE) {
-    //        oc.type = Type::PeerReflexive;
-    //    } else if (cand.type() == ::cricket::RELAY_PORT_TYPE) {
-    //        oc.type = Type::Relayed;
-    //    }
-    //
-    //    if (oc.type != Type::Host && 0 < cand.related_address().port()) {
-    //        oc.rel_addr = cand.related_address().ipaddr().ToString();
-    //        oc.rel_port = cand.related_address().port();
-    //    }
-    //
-    //    iceUdp.candidates.push_back(oc);
-    //
-    //    webRtc->getHandler()->onIce(sId, peerId, iceUdp);
 }
 
 void Conductor::OnIceConnectionReceivingChange(bool receiving) {
@@ -280,17 +216,34 @@ void Conductor::OnIceConnectionReceivingChange(bool receiving) {
 void Conductor::OnSignalingChange(webrtc::PeerConnectionInterface::SignalingState state) {
     RTC_LOG(LS_INFO) << __FUNCTION__ << "=>"
                      << webrtc::PeerConnectionInterface::AsString(state).data();
+    if (webRtc->getHandler()) {
+        webRtc->getHandler()->onSignalingChange(
+                sId, peerId, static_cast<ortc::SignalingState>(state));
+    }
+}
+
+void Conductor::OnConnectionChange(webrtc::PeerConnectionInterface::PeerConnectionState state) {
+    RTC_LOG(LS_INFO) << __FUNCTION__ << "=>"
+                     << webrtc::PeerConnectionInterface::AsString(state).data();
+    if (webRtc->getHandler()) {
+        webRtc->getHandler()->onPeerConnectionChange(
+                sId, peerId, static_cast<ortc::PeerConnectionState>(state));
+    }
 }
 
 void Conductor::OnAddTrack(
         rtc::scoped_refptr<webrtc::RtpReceiverInterface> receiver,
         const std::vector<rtc::scoped_refptr<webrtc::MediaStreamInterface>>& streams) {
     std::string receiverId = receiver->id();
-    RTC_LOG(LS_INFO) << __FUNCTION__ << "receiver id:" << receiverId;
+    RTC_LOG(LS_INFO) << __FUNCTION__ << " receiverId:" << receiverId;
+    if (receiverId.empty()) {
+        RTC_LOG(LS_WARNING) << __FUNCTION__ << " receiver id is empty.";
+        return;
+    }
 
     // track
     auto track = receiver->track();
-    RTC_LOG(LS_INFO) << __FUNCTION__ << "track id:" << track->id() << " kind:" << track->kind();
+    RTC_LOG(LS_INFO) << __FUNCTION__ << " kind:" << track->kind() << " trackId:" << track->id();
 
     if (track->kind() == webrtc::MediaStreamTrackInterface::kAudioKind) {
         _remote_audio_track = static_cast<webrtc::AudioTrackInterface*>(track.get());
@@ -302,8 +255,7 @@ void Conductor::OnAddTrack(
 }
 
 void Conductor::OnTrack(rtc::scoped_refptr<webrtc::RtpTransceiverInterface> transceiver) {
-    RTC_LOG(LS_INFO) << __FUNCTION__ << " mid:" << transceiver->mid()->data()
-                     << " type:" << transceiver->media_type();
+    RTC_LOG(LS_INFO) << __FUNCTION__ << " mid:" << transceiver->mid()->data();
 }
 
 /**
@@ -351,14 +303,16 @@ void Conductor::SetRemoteDescription(std::unique_ptr<webrtc::SessionDescriptionI
     peer_connection_->SetRemoteDescription(this, desc.release());
 }
 
-void Conductor::setTransportInfo(std::unique_ptr<webrtc::IceCandidateInterface> candidate) {
+bool Conductor::setTransportInfo(std::unique_ptr<webrtc::IceCandidateInterface> candidate) {
     std::string str;
     candidate->ToString(&str);
     RTC_LOG(LS_INFO) << __FUNCTION__ << " set remote candidate:"
                      << " mid:" << candidate->sdp_mid()
                      << " mline: " << candidate->sdp_mline_index() << " | " << str;
+
     auto added = peer_connection_->AddIceCandidate(candidate.release());
     RTC_LOG(LS_INFO) << __FUNCTION__ << " => " << added;
+    return added;
 }
 
 void Conductor::sessionTerminate() {
@@ -375,27 +329,20 @@ void Conductor::OnSuccess(webrtc::SessionDescriptionInterface* desc) {
     std::string sdp;
     desc->ToString(&sdp);
 
-    RTC_LOG(LS_INFO) << __FUNCTION__ << "sdp:" << sdp;
-    RTC_LOG(LS_INFO) << __FUNCTION__ << "Set local sdp";
+    RTC_LOG(LS_INFO) << __FUNCTION__ << " sdp:\n" << sdp;
     peer_connection_->SetLocalDescription(this, desc);
-
-    //    if (webRtc->getHandler()) {
-    //        auto osdp = webRtc->convertFromSdp(desc);
-    //        webRtc->getHandler()->onRTP(sId, peerId, osdp);
-    //    }
 }
 
 void Conductor::OnFailure(webrtc::RTCError error) {
     RTC_LOG(LS_INFO) << __FUNCTION__ << error.message();
+
+    if (webRtc->getHandler()) {
+        webRtc->getHandler()->onFailure(sId, peerId, error.message());
+    }
 }
 
 void Conductor::OnSetRemoteDescriptionComplete(webrtc::RTCError error) {
     RTC_LOG(LS_INFO) << __FUNCTION__ << " : " << error.message();
-}
-
-void Conductor::OnConnectionChange(webrtc::PeerConnectionInterface::PeerConnectionState new_state) {
-    RTC_LOG(LS_INFO) << __FUNCTION__ << " : "
-                     << webrtc::PeerConnectionInterface::AsString(new_state).data();
 }
 
 const webrtc::SessionDescriptionInterface* Conductor::getLocalSdp() const {

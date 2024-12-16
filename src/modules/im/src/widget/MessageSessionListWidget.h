@@ -90,6 +90,9 @@ public:
     // av
     void setFriendAvInvite(const ToxPeer& peer, bool video);
     void setFriendAvStart(const FriendId& friendId, bool video);
+    void setFriendAvPeerConnectedState(const FriendId& friendId,
+                                       lib::ortc::PeerConnectionState state);
+
     void setFriendAvEnd(const FriendId& friendId, bool error);
 
     void addGroup(const Group* f);

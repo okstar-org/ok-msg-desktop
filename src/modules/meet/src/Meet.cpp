@@ -18,18 +18,28 @@
 
 namespace module::meet {
 
-Meet::Meet() : m_widget{nullptr} { m_widget = std::make_unique<Widget>(); }
+Meet::Meet() : name(OK_Meet_MODULE), m_widget{std::make_unique<Widget>()} {}
 
 Meet::~Meet() {}
 
 void Meet::init(Profile* p) {}
 
-QString Meet::name() { return {"Meet"}; }
+const QString& Meet::getName() const {
+    return name;
+}
 
-void Meet::start(std::shared_ptr<ok::session::AuthSession> session) { m_widget->start(); }
-
-bool Meet::isStarted() { return false; }
+void Meet::start(std::shared_ptr<lib::session::AuthSession> session) {
+    m_widget->start();
+}
+void Meet::stop() {
+    // TODO 一些停止操作
+}
+bool Meet::isStarted() {
+    return false;
+}
 void Meet::onSave(SavedInfo&) {}
+
 void Meet::cleanup() {}
+
 void Meet::hide() {}
 }  // namespace module::meet

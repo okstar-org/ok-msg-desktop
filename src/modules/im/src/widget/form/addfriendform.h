@@ -33,12 +33,12 @@ namespace Ui {
 class AddFriendForm;
 }
 
-namespace ok::backend {
+namespace lib::backend {
 class UserService;
 struct OrgStaff;
-}  // namespace ok::backend
+}  // namespace lib::backend
 
-namespace ok::session {
+namespace lib::session {
 class SignInInfo;
 }
 
@@ -59,7 +59,7 @@ signals:
     void friendRequestAccepted(const FriendId& friendAddress);
     void friendRequestRejected(const FriendId& friendAddress);
     void friendRequestsSeen();
-    void friendReceipts(const QList<ok::backend::OrgStaff*>& qList);
+    void friendReceipts(const QList<lib::backend::OrgStaff*>& qList);
 
 public slots:
     void onUsernameSet(const QString& userName);
@@ -70,7 +70,7 @@ protected:
 private slots:
     void onSearchTriggered();
     void onCurrentChanged(int index);
-    void onFriendReceipts(const QList<ok::backend::OrgStaff*>& qList);
+    void onFriendReceipts(const QList<lib::backend::OrgStaff*>& qList);
 
 private:
     void searchFriend(const QString& idText);
@@ -97,8 +97,8 @@ private:
     QList<QPushButton*> acceptButtons;
     QList<QPushButton*> rejectButtons;
 
-    const ok::session::SignInInfo* signIn;
-    std::unique_ptr<ok::backend::UserService> userService;
+    const lib::session::SignInInfo* signIn;
+    std::unique_ptr<lib::backend::UserService> userService;
 };
 
 #endif  // ADDFRIENDFORM_H

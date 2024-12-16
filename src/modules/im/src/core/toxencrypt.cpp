@@ -11,7 +11,6 @@
  */
 
 #include "toxencrypt.h"
-// #include <tox/toxencryptsave.h>
 
 #include <QByteArray>
 #include <QDebug>

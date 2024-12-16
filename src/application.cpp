@@ -101,9 +101,6 @@ Application::Application(int& argc, char* argv[])
     ipc = new IPC(0, this);
     _bus = std::make_unique<Bus>();
 
-    // 设置
-    _settingManager = std::make_unique<SettingManager>();
-
     // 样式
     setStyleSheet(ok::base::Files::readStringAll(":/resources/style/application.css"));
 
@@ -127,8 +124,8 @@ void Application::start() {
 
 void Application::createLoginUI(bool bootstrap) {
     qDebug() << __func__;
-    session = std::make_shared<ok::session::AuthSession>();
-    connect(session.get(), &ok::session::AuthSession::tokenSet,  //
+    session = std::make_shared<::lib::session::AuthSession>();
+    connect(session.get(), &::lib::session::AuthSession::tokenSet,  //
             [&]() {                                              //
                 startMainUI(session);
             });
@@ -150,7 +147,7 @@ void Application::closeLoginUI() {
     m_loginWindow = nullptr;
 }
 
-void Application::startMainUI(std::shared_ptr<ok::session::AuthSession> session) {
+void Application::startMainUI(std::shared_ptr<::lib::session::AuthSession> session) {
     qDebug() << __func__;
 
     // Check the access token.
@@ -223,8 +220,8 @@ void Application::doLogout() {
     qDebug() << __func__ << profile;
     QVector<QString> remove;
     for (auto mod : m_moduleMap) {
-        qDebug() << "delete module:" << mod->name();
-        remove.push_back(mod->name());
+        qDebug() << "delete module:" << mod->getName();
+        remove.push_back(mod->getName());
         mod->cleanup();
     }
     for (auto& name : remove) {

@@ -17,11 +17,7 @@
 
 #include "lib/backend/PassportService.h"
 
-namespace ok {
-namespace session {
-
-using namespace network;
-using namespace ok::backend;
+namespace lib::session {
 
 AuthSession::AuthSession(QObject* parent)
         : QObject(parent)
@@ -44,10 +40,10 @@ void AuthSession::doSignIn() {
     LoginResult result{_status, tr("...")};
     emit loginResult(m_signInInfo, result);
 
-    passportService = std::make_unique<ok::backend::PassportService>(m_signInInfo.stackUrl);
+    passportService = std::make_unique<lib::backend::PassportService>(m_signInInfo.stackUrl);
     passportService->signIn(
             m_signInInfo.account, m_signInInfo.password,
-            [&](Res<SysToken>& res) {
+            [&](lib::backend::Res<lib::backend::SysToken>& res) {
                 QString& username = res.data->username;
                 qDebug() << "username:" << username;
                 if (res.code != 0) {
@@ -67,7 +63,7 @@ void AuthSession::doSignIn() {
                 qDebug() << "Set token:" << res.data;
                 setToken(*res.data);
 
-                okAccount = std::make_unique<base::OkAccount>(username);
+                okAccount = std::make_unique<ok::base::OkAccount>(username);
 
                 _status = Status::SUCCESS;
                 LoginResult result{Status::SUCCESS, ""};
@@ -84,12 +80,12 @@ void AuthSession::doLogin(const SignInInfo& signInInfo) {
     qDebug() << __func__ << signInInfo.account;
     QMutexLocker locker(&_mutex);
     m_signInInfo = signInInfo;
-    if (_status == ok::session::Status::CONNECTING) {
+    if (_status == lib::session::Status::CONNECTING) {
         qDebug(("The connection is connecting."));
         return;
     }
 
-    if (_status == ok::session::Status::SUCCESS) {
+    if (_status == lib::session::Status::SUCCESS) {
         qDebug(("The connection is connected."));
         return;
     }
@@ -100,14 +96,14 @@ void AuthSession::doLogin(const SignInInfo& signInInfo) {
     doSignIn();
 }
 
-void AuthSession::setToken(const SysToken& token) {
+void AuthSession::setToken(const lib::backend::SysToken& token) {
     m_token = token;
     m_signInInfo.username = token.username.toLower();
     QTimer::singleShot((token.expiresIn - 10) * 1000, this, &AuthSession::doRefreshToken);
     emit tokenSet();
 }
 
-void AuthSession::setRefreshToken(const SysRefreshToken& token) {
+void AuthSession::setRefreshToken(const lib::backend::SysRefreshToken& token) {
     m_token.accessToken = token.accessToken;
     m_token.refreshToken = token.refreshToken;
     m_token.expiresIn = token.expiresIn;
@@ -118,8 +114,8 @@ void AuthSession::setRefreshToken(const SysRefreshToken& token) {
 
 void AuthSession::doRefreshToken() {
     qDebug() << __func__;
-    passportService = std::make_unique<ok::backend::PassportService>(m_signInInfo.stackUrl);
-    passportService->refresh(m_token, [&](Res<SysRefreshToken>& res) {
+    passportService = std::make_unique<lib::backend::PassportService>(m_signInInfo.stackUrl);
+    passportService->refresh(m_token, [&](lib::backend::Res<lib::backend::SysRefreshToken>& res) {
         if (res.code != 0) {
             qWarning() << "Refresh token error" << res.msg;
             return;
@@ -128,5 +124,4 @@ void AuthSession::doRefreshToken() {
     });
 }
 
-}  // namespace session
-}  // namespace ok
+}  // namespace lib::session

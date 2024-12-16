@@ -24,7 +24,7 @@
 #include <QJsonArray>
 #include <QList>
 
-namespace ok::backend {
+namespace lib::backend {
 
 typedef struct {
     bool success;

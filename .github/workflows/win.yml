@@ -47,7 +47,7 @@ jobs:
       matrix:
         arch: [x64]
         os: [windows-latest]
-        build_type: [Release]
+        build_type: [ Release ]
         c_compiler: [cl]
         cpp_compiler: [cl]
 
@@ -81,8 +81,8 @@ jobs:
 
     - name: Install ok-rtc
       shell: powershell
-      run: |   
-        git clone -b misc https://github.com/okstar-org/ok-rtc.git
+      run: |
+        git clone -b master https://github.com/okstar-org/ok-rtc.git
         cd ok-rtc
         git submodule update --init
         cmake -B out -DPKG_CONFIG_EXECUTABLE=C:\Strawberry\perl\bin\pkg-config.bat -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_ROOT"/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=${{ env.VCPKG_DEFAULT_TRIPLET }} -DCMAKE_PREFIX_PATH=${{ env.VCPKG_INSTALLED_DIR }}\${{ env.VCPKG_DEFAULT_TRIPLET }}

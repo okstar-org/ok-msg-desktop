@@ -22,11 +22,11 @@
 #include <lib/session/AuthSession.h>
 #include <algorithm>
 
-namespace ok::backend {
+namespace lib::backend {
 
 BaseService::BaseService(const QString& baseUrl, QObject* parent)  //
         : QObject(parent), http(std::make_unique<network::NetworkHttp>(this)), _baseUrl(baseUrl) {}
 
 BaseService::~BaseService() {}
 
-}  // namespace ok::backend
+}  // namespace lib::backend

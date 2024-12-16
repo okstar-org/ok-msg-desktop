@@ -10,10 +10,24 @@
  * See the Mulan PubL v2 for more details.
  */
 
+//
+// Created by gaojie on 24-12-7.
+//
+
 #pragma once
 
-#include <base/jsons.h>
-#include <QJsonObject>
-#include <QObject>
+#include "base/jid.h"
 
-namespace ok::backend {}  // namespace ok::backend
+namespace gloox {
+class JID;
+class Presence;
+}  // namespace gloox
+
+namespace lib::messenger {
+
+class IMFromHostHandler {
+public:
+    virtual void handleHostPresence(const gloox::JID& from, const gloox::Presence& presence) = 0;
+};
+
+}  // namespace lib::messenger

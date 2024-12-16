@@ -10,7 +10,6 @@
  * See the Mulan PubL v2 for more details.
  */
 #include "webrtc.h"
-#include "StaticThreads.h"
 #include "ok_conductor.h"
 
 #include <memory>
@@ -25,6 +24,7 @@
 #include <api/peer_connection_interface.h>
 #include <api/video_codecs/builtin_video_decoder_factory.h>
 #include <api/video_codecs/builtin_video_encoder_factory.h>
+#include <media/base/codec.h>
 #include <modules/video_capture/video_capture_factory.h>
 #include <pc/video_track_source.h>
 #include <rtc_base/logging.h>
@@ -72,25 +72,25 @@ Dtls fromDtls(const webrtc::SessionDescriptionInterface* sdp, const std::string&
 
 ortc::Candidate fromCandidate(const cricket::Candidate& cand) {
     auto c = Candidate{
-            .component = std::to_string(cand.component()),
+            .component = cand.component(),
             .foundation = cand.foundation(),
-            .generation = std::to_string(cand.generation()),
+            .generation = cand.generation(),
             .id = cand.id(),
             .ip = cand.address().ipaddr().ToString(),
-            .network = std::to_string(cand.network_id()),
+            .network = cand.network_id(),
             .port = cand.address().port(),
             .priority = cand.priority(),
             .protocol = cand.protocol(),
             .tcptype = cand.tcptype(),
-             
+
     };
-    if (cand.type() == ::cricket::LOCAL_PORT_TYPE) {
+    if (cand.type() == cricket::LOCAL_PORT_TYPE) {
         c.type = Type::Host;
-    } else if (cand.type() == ::cricket::STUN_PORT_TYPE) {
+    } else if (cand.type() == cricket::STUN_PORT_TYPE) {
         c.type = Type::ServerReflexive;
-    } else if (cand.type() == ::cricket::PRFLX_PORT_TYPE) {
+    } else if (cand.type() == cricket::PRFLX_PORT_TYPE) {
         c.type = Type::PeerReflexive;
-    } else if (cand.type() == ::cricket::RELAY_PORT_TYPE) {
+    } else if (cand.type() == cricket::RELAY_PORT_TYPE) {
         c.type = Type::Relayed;
     };
     if (c.type != Type::Host && 0 < cand.related_address().port()) {
@@ -120,7 +120,6 @@ std::map<std::string, ortc::OIceUdp> fromIce(const webrtc::SessionDescriptionInt
 
             auto u = OIceUdp{
                     .mid = item->sdp_mid(),
-                    .mline = item->sdp_mline_index(),
                     .ufrag = ti->description.ice_ufrag,
                     .pwd = ti->description.ice_pwd,
                     .dtls = fromDtls(sdp, mid),
@@ -142,7 +141,7 @@ void fromSdp(const webrtc::SessionDescriptionInterface* desc, OJingleContentAv& 
     av.sessionVersion = desc->session_version();
 
     // ContentGroup
-    ::cricket::ContentGroup group(::cricket::GROUP_TYPE_BUNDLE);
+    cricket::ContentGroup group(cricket::GROUP_TYPE_BUNDLE);
 
     int i = 0;
     auto sd = desc->description();
@@ -177,7 +176,7 @@ void fromSdp(const webrtc::SessionDescriptionInterface* desc, OJingleContentAv& 
         //
         //            // connection_role
         //            std::string setup;
-        //            ::cricket::ConnectionRoleToString(ti->description.connection_role, &setup);
+        //            cricket::ConnectionRoleToString(ti->description.connection_role, &setup);
         //            oContent.iceUdp.dtls.setup = setup;
         //        }
 
@@ -233,7 +232,7 @@ void fromSdp(const webrtc::SessionDescriptionInterface* desc, OJingleContentAv& 
 
         // codecs
         switch (mt) {
-            case ::cricket::MediaType::MEDIA_TYPE_AUDIO: {
+            case cricket::MediaType::MEDIA_TYPE_AUDIO: {
                 oSdp.rtp.media = Media::audio;
                 auto audio_desc = mediaDescription->as_audio();
                 auto codecs = audio_desc->codecs();
@@ -266,7 +265,7 @@ void fromSdp(const webrtc::SessionDescriptionInterface* desc, OJingleContentAv& 
 
                 break;
             }
-            case ::cricket::MediaType::MEDIA_TYPE_VIDEO: {
+            case cricket::MediaType::MEDIA_TYPE_VIDEO: {
                 oSdp.rtp.media = Media::video;
                 auto video_desc = mediaDescription->as_video();
                 for (auto& codec : video_desc->codecs()) {
@@ -295,7 +294,7 @@ void fromSdp(const webrtc::SessionDescriptionInterface* desc, OJingleContentAv& 
                 }
                 break;
             }
-            case ::cricket::MediaType::MEDIA_TYPE_DATA: {
+            case cricket::MediaType::MEDIA_TYPE_DATA: {
                 break;
             }
             case cricket::MEDIA_TYPE_UNSUPPORTED:
@@ -362,15 +361,40 @@ bool WebRTC::start() {
 
     //    signaling_thread  = std::unique_ptr<rtc::Thread>( threads->getMediaThread() );
 
+    auto audioEncoderFactory = webrtc::CreateBuiltinAudioEncoderFactory();
+    auto audioEncoderCodecs = audioEncoderFactory->GetSupportedEncoders();
+    RTC_LOG(LS_INFO) << "WebRTC BuiltIn audio supported encoders:";
+    for (auto& c : audioEncoderCodecs) {
+        RTC_LOG(LS_INFO) << "codec:" << c.format.name;
+    }
+    auto audioDecoderFactory = webrtc::CreateBuiltinAudioDecoderFactory();
+    auto audioDecoderCodecs = audioDecoderFactory->GetSupportedDecoders();
+    RTC_LOG(LS_INFO) << "WebRTC BuiltIn audio supported decoders:";
+    for (auto& c : audioDecoderCodecs) {
+        RTC_LOG(LS_INFO) << "codec:" << c.format.name;
+    }
+
+    auto videoEncoderFactory = webrtc::CreateBuiltinVideoEncoderFactory();
+    RTC_LOG(LS_INFO) << "WebRTC BuiltIn video supported encoders:";
+    for (auto& c : videoEncoderFactory->GetSupportedFormats()) {
+        RTC_LOG(LS_INFO) << "codec:" << c.name;
+    }
+
+    auto videoDecoderFactory = webrtc::CreateBuiltinVideoDecoderFactory();
+    RTC_LOG(LS_INFO) << "WebRTC BuiltIn video supported decoders:";
+    for (auto& c : videoEncoderFactory->GetSupportedFormats()) {
+        RTC_LOG(LS_INFO) << "codec:" << c.name;
+    }
+
     peer_connection_factory =
             webrtc::CreatePeerConnectionFactory(network_thread.get(),   /* network_thread */
                                                 worker_thread.get(),    /* worker_thread */
                                                 signaling_thread.get(), /* signaling_thread */
                                                 nullptr,                /* default_adm */
-                                                webrtc::CreateBuiltinAudioEncoderFactory(),  //
-                                                webrtc::CreateBuiltinAudioDecoderFactory(),  //
-                                                webrtc::CreateBuiltinVideoEncoderFactory(),  //
-                                                webrtc::CreateBuiltinVideoDecoderFactory(),  //
+                                                audioEncoderFactory,    //
+                                                audioDecoderFactory,    //
+                                                std::move(videoEncoderFactory),  //
+                                                std::move(videoDecoderFactory),  //
                                                 nullptr /* audio_mixer */,                   //
                                                 nullptr /* audio_processing */);
 
@@ -381,7 +405,7 @@ bool WebRTC::start() {
     peer_connection_factory->SetOptions(options);
 
     RTC_LOG(LS_INFO) << "Create audio source...";
-    audioSource = peer_connection_factory->CreateAudioSource(::cricket::AudioOptions());
+    audioSource = peer_connection_factory->CreateAudioSource(cricket::AudioOptions());
     RTC_LOG(LS_INFO) << "Audio source is:" << audioSource.get();
 
     RTC_LOG(LS_INFO) << "Create video device...";
@@ -476,11 +500,11 @@ JingleSdpType WebRTC::convertFromSdpType(webrtc::SdpType sdpType) {
 
 std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertToSdp(
         const OJingleContentAv& av) {
-    auto sdpType = convertToSdpType(av.sdpType);
-    auto sessionDescription = std::make_unique<::cricket::SessionDescription>();
-
-    auto contents = av.getContents();
+    auto sessionDescription = std::make_unique<cricket::SessionDescription>();
     cricket::ContentGroup group(cricket::GROUP_TYPE_BUNDLE);
+
+    auto sdpType = convertToSdpType(av.sdpType);
+    auto& contents = av.getContents();
 
     for (const auto& kv : contents) {
         auto& oSdp = kv.second;
@@ -490,128 +514,45 @@ std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertToSdp(
         auto& iceUdp = oSdp.iceUdp;
 
         // iceUdp
-        ::cricket::TransportInfo ti;
+        cricket::TransportInfo ti;
         ti.content_name = oSdp.name;
         ti.description.ice_ufrag = oSdp.iceUdp.ufrag;
         ti.description.ice_pwd = oSdp.iceUdp.pwd;
-
-        ti.description.identity_fingerprint.reset(::cricket::TransportDescription::CopyFingerprint(
+        ti.description.identity_fingerprint.reset(cricket::TransportDescription::CopyFingerprint(
                 rtc::SSLFingerprint::CreateFromRfc4572(oSdp.iceUdp.dtls.hash,
                                                        oSdp.iceUdp.dtls.fingerprint)));
 
         if (iceUdp.dtls.setup == "actpass") {
-            ti.description.connection_role = ::cricket::CONNECTIONROLE_ACTPASS;
+            ti.description.connection_role = cricket::CONNECTIONROLE_ACTPASS;
         } else if (iceUdp.dtls.setup == "active") {
-            ti.description.connection_role = ::cricket::CONNECTIONROLE_ACTIVE;
+            ti.description.connection_role = cricket::CONNECTIONROLE_ACTIVE;
         } else if (iceUdp.dtls.setup == "passive") {
-            ti.description.connection_role = ::cricket::CONNECTIONROLE_PASSIVE;
+            ti.description.connection_role = cricket::CONNECTIONROLE_PASSIVE;
         } else if (iceUdp.dtls.setup == "holdconn") {
-            ti.description.connection_role = ::cricket::CONNECTIONROLE_HOLDCONN;
+            ti.description.connection_role = cricket::CONNECTIONROLE_HOLDCONN;
         } else {
-            ti.description.connection_role = ::cricket::CONNECTIONROLE_NONE;
+            ti.description.connection_role = cricket::CONNECTIONROLE_NONE;
         }
 
         sessionDescription->AddTransportInfo(ti);
 
         switch (rtp.media) {
             case Media::audio: {
-                auto acd = std::make_unique<::cricket::AudioContentDescription>();
-
-                for (auto& pt : rtp.payloadTypes) {
-                    ::cricket::AudioCodec ac(pt.id, pt.name, pt.clockrate, pt.bitrate, pt.channels);
-                    for (auto& e : pt.parameters) {
-                        ac.SetParam(e.name, e.value);
-                    }
-                    for (auto& e : pt.feedbacks) {
-                        ::cricket::FeedbackParam fb(e.type, e.subtype);
-                        ac.AddFeedbackParam(fb);
-                    }
-
-                    acd->AddCodec(ac);
-                }
-
-                for (auto& hdrext : rtp.hdrExts) {
-                    webrtc::RtpExtension ext(hdrext.uri, hdrext.id);
-                    acd->AddRtpHeaderExtension(ext);
-                }
-
-                ::cricket::StreamParams streamParams;
-                for (auto& src : rtp.sources) {
-                    streamParams.ssrcs.push_back(std::stoul(src.ssrc));
-                    for (auto& p : src.parameters) {
-                        if (p.name == "cname") {
-                            streamParams.cname = p.value;
-                        } else if (p.name == "label") {
-                            streamParams.id = p.value;
-                        } else if (p.name == "mslabel") {
-                            streamParams.set_stream_ids({p.value});
-                        }
-                    };
-                }
-
-                auto g = rtp.ssrcGroup;
-                std::vector<uint32_t> ssrcs;
-                std::transform(g.ssrcs.begin(), g.ssrcs.end(), std::back_inserter(ssrcs),
-                               [](auto s) -> uint32_t { return std::stoul(s); });
-                ::cricket::SsrcGroup ssrcGroup(g.semantics, ssrcs);
-
-                // ssrc-groups
-                streamParams.ssrc_groups.emplace_back(ssrcGroup);
-
-                // ssrc
-                acd->AddStream(streamParams);
-
-                // rtcp-mux
-                acd->set_rtcp_mux(rtp.rtcpMux);
-
-                sessionDescription->AddContent(oSdp.name, ::cricket::MediaProtocolType::kRtp,
-                                               std::move(acd));
+                auto description = createAudioDescription(rtp);
+                sessionDescription->AddContent(oSdp.name, cricket::MediaProtocolType::kRtp,
+                                               std::move(description));
                 break;
             }
             case Media::video: {
-                auto vcd = std::make_unique<::cricket::VideoContentDescription>();
-                for (auto& pt : rtp.payloadTypes) {
-                    auto vc = ::cricket::VideoCodec(pt.id, pt.name);
-                    for (auto& e : pt.parameters) {
-                        vc.SetParam(e.name, e.value);
-                    }
-                    for (auto& e : pt.feedbacks) {
-                        ::cricket::FeedbackParam fb(e.type, e.subtype);
-                        vc.AddFeedbackParam(fb);
-                    }
-                    vcd->AddCodec(vc);
-                }
-                for (auto& hdrExt : rtp.hdrExts) {
-                    webrtc::RtpExtension ext(hdrExt.uri, hdrExt.id);
-                    vcd->AddRtpHeaderExtension(ext);
-                }
-                vcd->set_rtcp_mux(rtp.rtcpMux);
-
-                ::cricket::StreamParams streamParams;
-                for (auto& src : rtp.sources) {
-                    streamParams.ssrcs.push_back(std::stoul(src.ssrc));
-                    for (auto& p : src.parameters) {
-                        if (p.name == "cname") {
-                            streamParams.cname = p.value;
-                        } else if (p.name == "label") {
-                            streamParams.id = p.value;
-                        } else if (p.name == "mslabel") {
-                            streamParams.set_stream_ids({p.value});
-                        }
-                    };
-                }
-
-                // ssrc-group
-                auto g = rtp.ssrcGroup;
-                std::vector<uint32_t> ssrcs;
-                std::transform(g.ssrcs.begin(), g.ssrcs.end(), std::back_inserter(ssrcs),
-                               [](auto s) -> uint32_t { return std::stoul(s); });
-                ::cricket::SsrcGroup ssrcGroup(g.semantics, ssrcs);
-                streamParams.ssrc_groups.emplace_back(ssrcGroup);
-                vcd->AddStream(streamParams);
-
-                sessionDescription->AddContent(oSdp.name, ::cricket::MediaProtocolType::kRtp,
-                                               std::move(vcd));
+                auto description = createVideoDescription(rtp);
+                sessionDescription->AddContent(oSdp.name, cricket::MediaProtocolType::kRtp,
+                                               std::move(description));
+                break;
+            }
+            case Media::application: {
+                auto description = createDataDescription(oSdp);
+                sessionDescription->AddContent(oSdp.name, cricket::MediaProtocolType::kSctp,
+                                               std::move(description));
                 break;
             }
             default:
@@ -624,9 +565,11 @@ std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertToSdp(
     std::unique_ptr<webrtc::SessionDescriptionInterface> ptr = webrtc::CreateSessionDescription(
             sdpType, av.sessionId, av.sessionVersion, std::move(sessionDescription));
 
+    int mline = 0;
     for (const auto& kv : contents) {
         auto& oSdp = kv.second;
         auto& iceUdp = oSdp.iceUdp;
+
         for (const auto& item : oSdp.iceUdp.candidates) {
             // "host" / "srflx" / "prflx" / "relay" / token @
             // http://tools.ietf.org/html/rfc5245#section-15.1
@@ -650,24 +593,135 @@ std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertToSdp(
             }
 
             assert(!type.empty());
-            
-            cricket::Candidate candidate(std::stoi(item.component),
-                                        item.protocol,
-                                        rtc::SocketAddress{item.ip, item.port},
-                                        item.priority,
-                                        iceUdp.ufrag, 
-                                        iceUdp.pwd, 
-                                        type, 
-                                        std::stoi(item.generation),
-                                        item.foundation, 
-                                        std::stoi(item.network));
-          
 
-            auto c = webrtc::CreateIceCandidate(iceUdp.mid, iceUdp.mline, candidate);
+            cricket::Candidate candidate(item.component,
+                                         item.protocol,
+                                         rtc::SocketAddress{item.ip, (int)item.port},
+                                         item.priority,
+                                         iceUdp.ufrag,
+                                         iceUdp.pwd,
+                                         type,
+                                         item.generation,
+                                         item.foundation,
+                                         item.network);
+
+            auto c = webrtc::CreateIceCandidate(iceUdp.mid, mline, candidate);
             ptr->AddCandidate(c.release());
+
+            mline++;
         }
     }
     return ptr;
+}
+
+std::unique_ptr<cricket::AudioContentDescription> createAudioDescription(const ORTP& rtp) {
+    auto ptr = std::make_unique<cricket::AudioContentDescription>();
+    for (auto& pt : rtp.payloadTypes) {
+        auto codec = cricket::CreateAudioCodec(pt.id, pt.name, pt.clockrate, pt.channels);
+        for (auto& e : pt.parameters) {
+            codec.SetParam(e.name, e.value);
+        }
+        for (auto& e : pt.feedbacks) {
+            cricket::FeedbackParam fb(e.type, e.subtype);
+            codec.AddFeedbackParam(fb);
+        }
+
+        ptr->AddCodec(codec);
+    }
+
+    for (auto& hdrext : rtp.hdrExts) {
+        webrtc::RtpExtension ext(hdrext.uri, hdrext.id);
+        ptr->AddRtpHeaderExtension(ext);
+    }
+
+    cricket::StreamParams streamParams;
+    for (auto& src : rtp.sources) {
+        streamParams.ssrcs.push_back(std::stoul(src.ssrc));
+        for (auto& p : src.parameters) {
+            if (p.name == "cname") {
+                streamParams.cname = p.value;
+            } else if (p.name == "label") {
+                streamParams.id = p.value;
+            } else if (p.name == "mslabel") {
+                streamParams.set_stream_ids({p.value});
+            }
+        };
+    }
+
+    auto g = rtp.ssrcGroup;
+    std::vector<uint32_t> ssrcs;
+    std::transform(g.ssrcs.begin(), g.ssrcs.end(), std::back_inserter(ssrcs),
+                   [](auto& s) -> uint32_t { return std::stoul(s); });
+    cricket::SsrcGroup ssrcGroup(g.semantics, ssrcs);
+
+    // ssrc-groups
+    streamParams.ssrc_groups.emplace_back(ssrcGroup);
+
+    // ssrc
+    ptr->AddStream(streamParams);
+
+    // rtcp-mux
+    ptr->set_rtcp_mux(rtp.rtcpMux);
+
+    return std::move(ptr);
+}
+
+std::unique_ptr<cricket::VideoContentDescription> createVideoDescription(const ORTP& rtp) {
+    auto ptr = std::make_unique<cricket::VideoContentDescription>();
+    for (auto& pt : rtp.payloadTypes) {
+        auto codec = cricket::CreateVideoCodec(pt.id, pt.name);
+        for (auto& e : pt.parameters) {
+            codec.SetParam(e.name, e.value);
+        }
+        for (auto& e : pt.feedbacks) {
+            cricket::FeedbackParam fb(e.type, e.subtype);
+            codec.AddFeedbackParam(fb);
+        }
+        ptr->AddCodec(codec);
+    }
+    for (auto& hdrExt : rtp.hdrExts) {
+        webrtc::RtpExtension ext(hdrExt.uri, hdrExt.id);
+        ptr->AddRtpHeaderExtension(ext);
+    }
+    ptr->set_rtcp_mux(rtp.rtcpMux);
+
+    cricket::StreamParams streamParams;
+    for (auto& src : rtp.sources) {
+        streamParams.ssrcs.push_back(std::stoul(src.ssrc));
+        for (auto& p : src.parameters) {
+            if (p.name == "cname") {
+                streamParams.cname = p.value;
+            } else if (p.name == "label") {
+                streamParams.id = p.value;
+            } else if (p.name == "mslabel") {
+                streamParams.set_stream_ids({p.value});
+            }
+        };
+    }
+
+    // ssrc-group
+    auto g = rtp.ssrcGroup;
+    std::vector<uint32_t> ssrcs;
+    std::transform(g.ssrcs.begin(), g.ssrcs.end(), std::back_inserter(ssrcs),
+                   [](auto& s) -> uint32_t { return std::stoul(s); });
+    cricket::SsrcGroup ssrcGroup(g.semantics, ssrcs);
+    streamParams.ssrc_groups.emplace_back(ssrcGroup);
+    ptr->AddStream(streamParams);
+
+    return std::move(ptr);
+}
+
+std::unique_ptr<cricket::SctpDataContentDescription> createDataDescription(const OSdp& sdp) {
+    auto ptr = std::make_unique<cricket::SctpDataContentDescription>();
+    // rtcp-mux
+    ptr->set_rtcp_mux(sdp.rtp.rtcpMux);
+
+    if (!sdp.iceUdp.sctp.protocol.empty()) {
+        ptr->set_port(sdp.iceUdp.sctp.port);
+        ptr->set_protocol(cricket::kMediaProtocolDtlsSctp);
+        ptr->set_use_sctpmap(true);
+    }
+    return std::move(ptr);
 }
 
 void WebRTC::addIceServer(const IceServer& ice) {
@@ -685,17 +739,11 @@ void WebRTC::addIceServer(const IceServer& ice) {
 Conductor* WebRTC::getConductor(const std::string& peerId) {
     return _pcMap[peerId];
 }
-
+constexpr int LEN = 255;
 Conductor* WebRTC::createConductor(const std::string& peerId, const std::string& sId, bool video) {
     RTC_LOG(LS_INFO) << __FUNCTION__ << "peer:" << peerId << " sid:" << sId << " video:" << video;
 
-    auto conductor = _pcMap[peerId];
-    if (conductor) {
-        return conductor;
-    }
-
-    conductor = new Conductor(this, peerId, sId);
-    _pcMap[peerId] = conductor;
+    auto conductor = new Conductor(this, peerId, sId);
 
     if (!video) {
         // audio
@@ -713,13 +761,12 @@ Conductor* WebRTC::createConductor(const std::string& peerId, const std::string&
         if (0 < num_devices) {
             // 获取第一个视频设备
             int selected = 0;
+            char name[LEN] = {0};
+            char uid[LEN] = {0};
+            char puid[LEN] = {0};
+            vdi->GetDeviceName(selected, name, LEN, uid, LEN, puid, LEN);
 
-            char name[50] = {0};
-            char uid[50] = {0};
-            char puid[50] = {0};
-            vdi->GetDeviceName(selected, name, 50, uid, 50, puid, 50);
-            RTC_LOG(LS_INFO) << "Video device:" << name;
-            RTC_LOG(LS_INFO) << "Video device uid:" << uid;
+            RTC_LOG(LS_INFO) << "Video device name:" << name << " uid:" << uid;
 
             videoCapture = createVideoCapture(uid);
             conductor->AddVideoTrack(videoCapture->source().get());
@@ -744,71 +791,50 @@ void WebRTC::setTransportInfo(const std::string& peerId,
     RTC_LOG(LS_INFO) << __FUNCTION__ << " peerId:" << peerId << " sId:" << sId;
 
     Conductor* conductor = getConductor(peerId);
-    assert(conductor);
+    if (!conductor) {
+        RTC_LOG(LS_WARNING) << "Unable to find conductor.";
+        return;
+    }
 
-    int i = 0;
+    int mline = 0;
     for (auto& _candidate : iceUdp.candidates) {
-        ::cricket::Candidate candidate;
-
-        if (!_candidate.id.empty()) {
-            candidate.set_id(_candidate.id);
-        } else {
-            candidate.set_id(std::to_string(i));
-        }
-
-        //<candidate rel-port='44083' port='64710' foundation='842163049'
-        // component='1' priority='1686052607' type='srflx'
-        // generation='0' protocol='udp' ip='124.228.12.67' rel-addr='192.168.2.5'/>
-        candidate.set_foundation(_candidate.foundation);
-        candidate.set_tcptype(_candidate.tcptype);    // passive
-        candidate.set_protocol(_candidate.protocol);  // udp,ssltcp
-        candidate.set_priority(_candidate.priority);
-
-        if (_candidate.component.empty()) continue;
-        candidate.set_component(std::stoi(_candidate.component));
-
-        if (_candidate.generation.empty()) continue;
-        candidate.set_generation(std::stoi(_candidate.generation));
-
-        if (!_candidate.network.empty()) {
-            candidate.set_network_id(std::stoi(_candidate.network));
-        } else {
-            candidate.set_network_id(i);
-        }
         if (_candidate.ip.empty() || _candidate.port <= 0) continue;
-        candidate.set_address(::rtc::SocketAddress(_candidate.ip, _candidate.port));
 
-        /**
-         *  const auto& host = LOCAL_PORT_TYPE;
-            const auto& srflx = STUN_PORT_TYPE;
-            const auto& relay = RELAY_PORT_TYPE;
-            const auto& prflx = PRFLX_PORT_TYPE;
-         */
-
+        std::string type;
         switch (_candidate.type) {
             case Type::Host:
-                candidate.set_type(::cricket::LOCAL_PORT_TYPE);
+                type = cricket::LOCAL_PORT_TYPE;
                 break;
             case Type::PeerReflexive:
-                candidate.set_type(::cricket::PRFLX_PORT_TYPE);
+                type = cricket::PRFLX_PORT_TYPE;
                 break;
             case Type::Relayed:
-                candidate.set_type(::cricket::RELAY_PORT_TYPE);
+                type = cricket::RELAY_PORT_TYPE;
                 break;
             case Type::ServerReflexive:
-                candidate.set_type(::cricket::STUN_PORT_TYPE);
+                type = cricket::STUN_PORT_TYPE;
                 break;
         }
+
+        cricket::Candidate candidate(_candidate.component,
+                                     _candidate.protocol,
+                                     ::rtc::SocketAddress(_candidate.ip, _candidate.port),
+                                     _candidate.priority,
+                                     iceUdp.ufrag,
+                                     iceUdp.pwd,
+                                     type,
+                                     _candidate.generation,
+                                     _candidate.foundation,
+                                     _candidate.network);
+
         if (!_candidate.rel_addr.empty()) {
-            rtc::SocketAddress raddr;
-            raddr.SetIP(_candidate.rel_addr);
-            raddr.SetPort(_candidate.rel_port);
+            ::rtc::SocketAddress raddr(_candidate.rel_addr, _candidate.rel_port);
             candidate.set_related_address(raddr);
         }
 
-        auto jsep_candidate = webrtc::CreateIceCandidate(iceUdp.mid, iceUdp.mline, candidate);
+        auto jsep_candidate = webrtc::CreateIceCandidate(iceUdp.mid, mline, candidate);
         conductor->setTransportInfo(std::move(jsep_candidate));
-        i++;
+        mline++;
     }
 }
 
@@ -824,10 +850,17 @@ void WebRTC::setRemoteMute(bool mute) {
     }
 }
 
-void WebRTC::CreateOffer(const std::string& peerId, const std::string& sId, bool video) {
-    Conductor* conductor = createConductor(peerId, sId, video);
-    assert(conductor);
+bool WebRTC::CreateOffer(const std::string& peerId, const std::string& sId, bool video) {
+    auto conductor = _pcMap[peerId];
+    if (conductor) {
+        RTC_LOG(LS_WARNING) << "Exist conductor.";
+        return false;
+    }
+
+    conductor = createConductor(peerId, sId, video);
     conductor->CreateOffer();
+    _pcMap[peerId] = conductor;
+    return true;
 }
 
 void WebRTC::SessionTerminate(const std::string& peerId) {
@@ -841,6 +874,7 @@ void WebRTC::CreateAnswer(const std::string& peerId, const OJingleContentAv& ca)
     auto sdp = convertToSdp(ca);
     conductor->SetRemoteDescription(std::move(sdp));
     conductor->CreateAnswer();
+    _pcMap[peerId] = conductor;
 }
 
 void WebRTC::getLocalSdp(const std::string& peerId, OJingleContentAv& av) {

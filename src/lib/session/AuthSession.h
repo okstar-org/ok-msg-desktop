@@ -27,8 +27,7 @@
 #include "lib/backend/PassportService.h"
 #include "lib/messenger/messenger.h"
 
-namespace ok {
-namespace session {
+namespace lib::session {
 
 enum class Status {
     NONE = 0,
@@ -64,20 +63,22 @@ struct SignInInfo {
 class AuthSession : public QObject {
     Q_OBJECT
 public:
-    AuthSession(QObject* parent = nullptr);
+    explicit AuthSession(QObject* parent = nullptr);
     ~AuthSession() override;
 
-    Status status() const;
+    [[nodiscard]] Status status() const;
 
     void doLogin(const SignInInfo& signInInfo);
 
     [[nodiscard]] const SignInInfo& getSignInInfo() const { return m_signInInfo; };
 
-    [[nodiscard]] const ok::backend::SysToken& getToken() const { return m_token; };
+    [[nodiscard]] const lib::backend::SysToken& getToken() const {
+        return m_token;
+    };
 
     [[nodiscard]] ok::base::OkAccount* account() const { return okAccount.get(); }
 
-    const QString& getStackUrl() const { return m_signInInfo.stackUrl; }
+    [[nodiscard]] const QString& getStackUrl() const { return m_signInInfo.stackUrl; }
 
 protected:
     // 执行登录
@@ -90,20 +91,19 @@ protected slots:
 private:
     QMutex _mutex;
     SignInInfo m_signInInfo;
-    ok::backend::SysToken m_token;
+    lib::backend::SysToken m_token;
 
     std::unique_ptr<network::NetworkHttp> m_networkManager;
     std::unique_ptr<ok::base::OkAccount> okAccount;
-    std::unique_ptr<ok::backend::PassportService> passportService;
+    std::unique_ptr<lib::backend::PassportService> passportService;
 
     Status _status;
 
-    void setToken(const ok::backend::SysToken& token);
+    void setToken(const lib::backend::SysToken& token);
     void setRefreshToken(const backend::SysRefreshToken& token);
 signals:
     void loginResult(SignInInfo, LoginResult);
     void tokenSet();
-    void refreshTokenSet(const ok::backend::SysRefreshToken& token);
+    void refreshTokenSet(const lib::backend::SysRefreshToken& token);
 };
-}  // namespace session
-}  // namespace ok
+}  // namespace lib::session

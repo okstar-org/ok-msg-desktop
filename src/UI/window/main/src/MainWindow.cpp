@@ -37,7 +37,7 @@ namespace UI {
 
 static MainWindow* instance = nullptr;
 
-MainWindow::MainWindow(std::shared_ptr<ok::session::AuthSession> session, QWidget* parent)
+MainWindow::MainWindow(std::shared_ptr<lib::session::AuthSession> session, QWidget* parent)
         : QMainWindow(parent)
         , ui(new Ui::MainWindow)
         , delayCaller(std::make_unique<base::DelayedCallTimer>())
@@ -315,7 +315,7 @@ OMenuWidget* MainWindow::initMenuWindow(ok::base::PageMenu menu) {
             delayCaller->call(1, [=, this]() {
                 assert(w);
                 assert(session);
-                qDebug() << "Start module:" << m->name();
+                qDebug() << "Start module:" << m->getName();
                 m->start(session);
             });
         }
@@ -344,7 +344,7 @@ void MainWindow::onSwitchPage(ok::base::PageMenu menu, bool checked) {
 QWidget* MainWindow::getContainer(ok::base::PageMenu menu) { return ui->stacked_widget; }
 
 OMenuWidget* MainWindow::createChatModule(MainWindow* pWindow) {
-    qDebug() << "Creating m:" << Nexus::Name();
+    qDebug() << "Creating chat module...";
     auto m = Nexus::Create();
     auto nexus = static_cast<Nexus*>(m);
 

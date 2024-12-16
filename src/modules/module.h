@@ -36,15 +36,29 @@ typedef struct {
 
 class Module {
 public:
-    static QString Name();
     static Module* Create();
 
     virtual void init(Profile* p) = 0;
-    virtual QString name() = 0;
+    virtual const QString& getName() const = 0;
     virtual QWidget* widget() = 0;
-    virtual void start(std::shared_ptr<ok::session::AuthSession> session) = 0;
+
+    /**
+     * 启动模块
+     * @param session
+     */
+    virtual void start(std::shared_ptr<lib::session::AuthSession> session) = 0;
+
+    /**
+     * 停止模块（退出应用程序之前被调用）
+     */
+    virtual void stop() = 0;
+
     virtual bool isStarted() = 0;
     virtual void hide() = 0;
     virtual void onSave(SavedInfo&) = 0;
+
+    /**
+     * 用户登出时（但未退出应用），一些清理操作
+     */
     virtual void cleanup() = 0;
 };

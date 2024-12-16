@@ -19,16 +19,17 @@ class QPushButton;
 class RoundedPixmapLabel;
 class PopupMenuComboBox;
 class QSlider;
+class QHBoxLayout;
+namespace module::meet {
 
 class MeetingOptionWidget : public QWidget {
     Q_OBJECT
 
-signals:
-    void confirmed();
-
 public:
     MeetingOptionWidget(QWidget* parent = nullptr);
-    void setConfirmButtonText(const QString & text);
+    void addFooterButton(QPushButton* button);
+
+    void retranslateUi();
 
 protected:
     void showEvent(QShowEvent* event) override;
@@ -40,5 +41,7 @@ private:
     PopupMenuComboBox* cameraSetting = nullptr;
     PopupMenuComboBox* volumnSetting = nullptr;
     QSlider* volumnSlider = nullptr;
-    QPushButton* confirmButton = nullptr;
+
+    QHBoxLayout* buttonLayout = nullptr;
 };
+}  // namespace module::meet

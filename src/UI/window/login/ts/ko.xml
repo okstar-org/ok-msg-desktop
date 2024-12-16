@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <!--
   ~ Copyright (c) 2022 船山信息 chuanshaninfo.com
   ~ The project is licensed under Mulan PubL v2.
@@ -12,78 +12,113 @@
   -->
 
 <!DOCTYPE TS>
-<TS version="2.1" language="ko">
-<context>
-    <name>LoginWidget</name>
-    <message>
-        <source>Welcome Login</source>
-        <translation>로그인 시작</translation>
-    </message>
-    <message>
-        <source>Username</source>
-        <translation>계정</translation>
-    </message>
-    <message>
-        <source>Password</source>
-        <translation>암호</translation>
-    </message>
-    
-    <message>
-        <source>Language</source>
-        <translation>언어</translation>
-    </message>
-    <message>
-        <source>Login</source>
-        <translation>로그인</translation>
-    </message>
-    <message>
-        <source>login...</source>
-        <translation>登录中</translation>
-    </message>
-    <message>
-        <source>cancel</source>
-        <translation>취소</translation>
-    </message>
-    <message>
-        <source>login success</source>
-        <translation>로그인 성공</translation>
-    </message>
-    <message>
-        <source>waiting</source>
-        <translation>기다려 주세요</translation>
-    </message>
-    <message>
-        <source>login failure</source>
-        <translation>로그인 실패</translation>
-    </message>
-    <message>
-        <source>Please input phone number</source>
-        <translation>이메일 번호를 입력하십시오.</translation>
-    </message>
-    <message>
-        <source>Please input password</source>
-        <translation>암호를 입력하십시오.</translation>
-    </message>
-    <message>
-        <source>Provider</source>
-        <translation>서비스 제공자</translation>
-    </message>
-    <message>
-        <source>Select</source>
-        <translation>선택하십시오.</translation>
-    </message>
-    <message>
-        <source>Sign up</source>
-        <translation>계정 등록</translation>
-    </message>
-    <message>
-        <source>Forgot password</source>
-        <translation>비밀번호 찾기</translation>
-    </message>
-	<message>
-        <source>Remember me</source>
-        <translation>비밀번호 기억하기</translation>
-    </message>
-   
-</context>
+<TS language="ko" version="2.1">
+    <context>
+        <name>BannerWidget</name>
+        <message>
+            <source>Form</source>
+            <translation>형</translation>
+        </message>
+    </context>
+    <context>
+        <name>LoginWidget</name>
+        <message>
+            <source>Form</source>
+            <translation>형</translation>
+        </message>
+        <message>
+            <source>Welcome Login</source>
+            <translation>로그인에 오신 것을 환영합니다</translation>
+        </message>
+        <message>
+            <source>Username</source>
+            <translation>사용자 이름</translation>
+        </message>
+        <message>
+            <source>Please input phone number</source>
+            <translation>전화번호를 입력해 주세요</translation>
+        </message>
+        <message>
+            <source>Password</source>
+            <translation>암호</translation>
+        </message>
+        <message>
+            <source>Please input password</source>
+            <translation>비밀번호를 입력해 주세요</translation>
+        </message>
+        <message>
+            <source>Provider</source>
+            <translation>공급자</translation>
+        </message>
+        <message>
+            <source>Select</source>
+            <translation>고르다</translation>
+        </message>
+        <message>
+            <source>Language</source>
+            <translation>언어</translation>
+        </message>
+        <message>
+            <source>Remember me</source>
+            <translation>내 정보 기억</translation>
+        </message>
+        <message>
+            <source>Login</source>
+            <translation>로그인</translation>
+        </message>
+        <message>
+            <source>Sign up</source>
+            <translation>등록하세요</translation>
+        </message>
+        <message>
+            <source>Forgot password</source>
+            <translation>비밀번호를 잊어버렸습니다</translation>
+        </message>
+        <message>
+            <source>Settings</source>
+            <translation>설정</translation>
+        </message>
+    </context>
+    <context>
+        <name>LoginWindow</name>
+        <message>
+            <source>Form</source>
+            <translation>형</translation>
+        </message>
+    </context>
+    <context>
+        <name>UI::LoginWidget</name>
+        <message>
+            <source>Please waiting the page is loaded</source>
+            <translation>페이지가 로드될 때까지 기다려 주십시오.</translation>
+        </message>
+        <message>
+            <source>Please select service provider</source>
+            <translation>서비스 제공업체를 선택하십시오.</translation>
+        </message>
+        <message>
+            <source>...</source>
+            <translation>...</translation>
+        </message>
+        <message>
+            <source>Logging in</source>
+            <translation>로그인</translation>
+        </message>
+        <message>
+            <source>login success</source>
+            <translation>로그인 성공</translation>
+        </message>
+        <message>
+            <source>Login</source>
+            <translation>로그인</translation>
+        </message>
+        <message>
+            <source>Network is not available!</source>
+            <translation>네트워크를 사용할 수 없습니다!</translation>
+        </message>
+        <message>
+            <source>Server error, please try again later!</source>
+            <translation>서버 오류, 나중에 다시 시도하십시오!</translation>
+        </message>
+    </context>
 </TS>

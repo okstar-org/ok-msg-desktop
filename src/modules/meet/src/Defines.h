@@ -10,32 +10,42 @@
  * See the Mulan PubL v2 for more details.
  */
 
+//
+// Created by gaojie on 24-11-26.
+//
 #pragma once
 
-#include <base/jsons.h>
-#include <QJsonObject>
-#include <QObject>
+namespace module::meet {
 
-namespace ok::backend {
-
-class RoomInfo {
-public:
-    QString getJid() { return jid; }
-    QString getName() { return name; }
-    QString getPassword() { return password; }
-    QString getSn() { return sn; }
-
-    inline void setJid(QString& _jid) { jid = _jid; }
-
-    inline void setName(QString& _name) { name = _name; }
-
-    inline void setPassword(QString& _password) { password = _password; }
-
-private:
-    QString jid;
-    QString name;
-    QString password;
-    QString sn;
+/**
+ * 会议状态
+ */
+enum class MeetingState {
+    NoMeeting,
+    CreatingMeeting,  // 创建中
+    Created,          // 已创建
+    OnMeeting         // 会议中（自己已经加入）
 };
 
-}  // namespace ok::backend
+enum class MeetingFrom {
+    Create,  // 创建会议
+    Join     // 加入会议
+};
+
+enum class ParticipantState {
+    None,
+    Joining,  // 加入中
+    Joined    // 已加入
+};
+
+/**
+ * 分享信息
+ */
+struct Share {
+    // 会议编号
+    QString no;
+    // 会议名称
+    QString name;
+};
+
+}  // namespace module::meet

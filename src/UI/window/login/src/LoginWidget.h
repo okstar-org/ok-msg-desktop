@@ -17,6 +17,7 @@
 
 class QShortcut;
 class QPaintEvent;
+class QLabel;
 
 namespace ok {
 class SettingManager;
@@ -26,10 +27,11 @@ namespace Ui {
 class LoginWidget;
 }
 
-namespace ok::backend {
+namespace lib::backend {
 class OkCloudService;
 }
-namespace session {
+
+namespace lib::session {
 class AuthSession;
 }
 
@@ -38,7 +40,7 @@ namespace UI {
 class LoginWidget : public QWidget {
     Q_OBJECT
 public:
-    explicit LoginWidget(std::shared_ptr<ok::session::AuthSession> session, bool bootstrap,
+    explicit LoginWidget(std::shared_ptr<lib::session::AuthSession> session, bool bootstrap,
                          QWidget* parent = nullptr);
     ~LoginWidget() override;
     void onError(int code, const QString& msg);
@@ -53,13 +55,13 @@ protected:
 
 private:
     Ui::LoginWidget* ui;
-    std::shared_ptr<ok::session::AuthSession> session;
+    std::shared_ptr<lib::session::AuthSession> session;
     bool bootstrap;
 
     QShortcut* m_loginKey;
-
+    QLabel* m_setting;
     ok::SettingManager* m_settingManager;
-    ok::backend::OkCloudService* okCloudService;
+    lib::backend::OkCloudService* okCloudService;
 
     bool m_error = false;
 
@@ -71,6 +73,8 @@ private:
     std::unique_ptr<QTimer> m_timer;
     QString m_currentOriginalMsg{""};
 
+    void showSettingDialog();
+
 signals:
     void loginSuccess(QString name, QString password);
     void loginFailed(QString name, QString password);
@@ -79,7 +83,7 @@ signals:
 private slots:
     void onTimeout();
     void doLogin();
-    void onLoginResult(ok::session::SignInInfo info, ok::session::LoginResult result);
+    void onLoginResult(lib::session::SignInInfo info, lib::session::LoginResult result);
     void on_loginBtn_released();
     void on_language_currentIndexChanged(int index);
     void on_providers_currentIndexChanged(int index);

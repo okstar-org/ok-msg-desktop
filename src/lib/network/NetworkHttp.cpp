@@ -32,7 +32,7 @@
 #include "NetworkHttp.h"
 #include "base/jsons.h"
 
-namespace network {
+namespace lib::network {
 
 static QString CONTENT_TYPE_JSON = "application/json";
 
@@ -308,4 +308,4 @@ void NetworkHttp::PostFormData(const QUrl& url, QFile* file,
 
 void NetworkHttp::httpFinished() { qDebug() << "finished."; }
 
-}  // namespace network
+}  // namespace lib::network

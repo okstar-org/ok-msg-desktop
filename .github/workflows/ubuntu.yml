@@ -1,6 +1,6 @@
 # This starter workflow is for a CMake project running on multiple platforms. There is a different starter workflow if you just want a single platform.
 # See: https://github.com/actions/starter-workflows/blob/main/ci/cmake-single-platform.yml
-name: CMake on Ubuntu 22.04 platforms
+name: Build on Ubuntu
 
 permissions:
   contents: write
@@ -19,13 +19,15 @@ on:
       - 'LICENSE'
       - '.clang-*'
       - '.gitignore'
+      - 'vcpkg.json'
+      - 'vcpkg-*.json'
       - 'snap/**'
       - 'docs/**'
       - 'flatpak/**'
-      - '.github/**'
       - 'src/base/platform/windows/**'
       - 'src/base/platform/macos/**'
-      - '!.github/workflows/ubuntu-22.04.yml'
+      - '.github/**'
+      - '!.github/workflows/ubuntu.yml'
   pull_request:
     branches: [ develop, develop-linux, develop-ubuntu ]
 
@@ -40,14 +42,11 @@ jobs:
       matrix:
 #        https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
         arch: [x86_64]
-        os: [ubuntu-22.04]
+        os: [ ubuntu-24.04 ]
         build_type: [Release]
         c_compiler: [clang]
         cpp_compiler: [clang++]
-        include:
-          - os: ubuntu-22.04
-            c_compiler: clang
-            cpp_compiler: clang++
+
     steps:
     - name: Checkout repository and submodules
       uses: actions/checkout@v3
@@ -95,8 +94,8 @@ jobs:
 
     - name: Install ok-rtc
       run: |
-        sudo apt install yasm libopenh264-dev libopus-dev libvpx-dev libpipewire-0.3-dev
-        git clone https://github.com/okstar-org/ok-rtc.git
+        sudo apt install yasm libopenh264-dev libopus-dev libvpx-dev libpipewire-0.3-dev libspa-0.2-dev
+        git clone -b master https://github.com/okstar-org/ok-rtc.git
         cd ok-rtc
         git submodule update --init
         cmake -B out   \

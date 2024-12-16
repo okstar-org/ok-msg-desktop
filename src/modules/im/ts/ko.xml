@@ -1,0 +1,1964 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!--
+  ~ Copyright (c) 2022 船山信息 chuanshaninfo.com
+  ~ The project is licensed under Mulan PubL v2.
+  ~ You can use this software according to the terms and conditions of the Mulan
+  ~ PubL v2. You may obtain a copy of Mulan PubL v2 at:
+  ~          http://license.coscl.org.cn/MulanPubL-2.0
+  ~ THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+  ~ EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+  ~ MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+  ~ See the Mulan PubL v2 for more details.
+  -->
+
+<!DOCTYPE TS>
+<TS language="ko" version="2.1">
+    <context>
+        <name>AVForm</name>
+        <message>
+            <source>Audio Settings</source>
+            <translation>오디오설정</translation>
+        </message>
+        <message>
+            <source>Capture device</source>
+            <translation>캡쳐장치</translation>
+        </message>
+        <message>
+            <source>Test Sound</source>
+            <translation>사운드검사</translation>
+        </message>
+        <message>
+            <source>Use slider to set volume of your speakers.</source>
+            <translation>슬라이더를 사용해 스피커의 볼륨을 조절할 수 있습니다.</translation>
+        </message>
+        <message>
+            <source>Volume</source>
+            <translation>볼륨</translation>
+        </message>
+        <message>
+            <source>Gain</source>
+            <translation>증폭</translation>
+        </message>
+        <message>
+            <source>Threshold</source>
+            <translation>한계점</translation>
+        </message>
+        <message>
+            <source>Playback device</source>
+            <translation>재생 기기</translation>
+        </message>
+        <message>
+            <source>Audio quality</source>
+            <translation>오디오 음질</translation>
+        </message>
+        <message>
+            <source>Transmitted audio quality. Lower this setting if your bandwidth is not high enough or if you want to lower the internet usage.</source>
+            <translation>전송된 오디오 품질. 대역폭이 충분히 높지 않거나 인터넷 사용량을 줄이려면 이 설정을 낮추십시오.</translation>
+        </message>
+        <message>
+            <source>Video Settings</source>
+            <translation>비디오설정</translation>
+        </message>
+        <message>
+            <source>Video device</source>
+            <translation>비디오장치</translation>
+        </message>
+        <message>
+            <source>Set resolution of your camera.
+The higher values, the better video quality your friends may get.
+Note though that with better video quality there is needed better internet connection.
+Sometimes your connection may not be good enough to handle higher video quality,
+which may lead to problems with video calls.</source>
+            <translation>카메라의 해상도를 설정합니다.
+값이 높을수록 친구가 더 나은 비디오 품질을 얻을 수 있습니다.
+그러나 더 나은 비디오 품질을 위해서는 더 나은 인터넷 연결이 필요합니다.
+때로는 연결 상태가 더 높은 비디오 품질을 처리할 만큼 충분히 좋지 않을 수 있습니다.
+화상 통화에 문제가 발생할 수 있습니다.</translation>
+        </message>
+        <message>
+            <source>Resolution</source>
+            <translation>해상도</translation>
+        </message>
+        <message>
+            <source>Rescan devices</source>
+            <translation>장치 검색</translation>
+        </message>
+        <message>
+            <source>Play a test sound while changing the output volume.</source>
+            <translation>출력 볼륨을 변경하는 동안 테스트 사운드를 재생합니다.</translation>
+        </message>
+        <message>
+            <source>Use slider to set the gain of your input device ranging from %1dB to %2dB.</source>
+            <translation>슬라이더를 사용하여 입력 장치의 게인을 %1dB에서 %2dB 사이로 설정합니다.</translation>
+        </message>
+        <message>
+            <source>Use slider to set the activation volume for your input device.</source>
+            <translation>슬라이더를 사용하여 입력 장치의 활성화 볼륨을 설정합니다.</translation>
+        </message>
+        <message>
+            <source>Default resolution</source>
+            <translation>표준 해상도</translation>
+        </message>
+        <message>
+            <source>Screen %1</source>
+            <translation>화면 %1</translation>
+        </message>
+        <message>
+            <source>Select region</source>
+            <translation>지역선택</translation>
+        </message>
+        <message>
+            <source>High (64 kbps)</source>
+            <translation>높음(64kbps)</translation>
+        </message>
+        <message>
+            <source>Medium (32 kbps)</source>
+            <translation>중간(32kbps)</translation>
+        </message>
+        <message>
+            <source>Low (16 kbps)</source>
+            <translation>낮음 (16kbps)</translation>
+        </message>
+        <message>
+            <source>Very low (8 kbps)</source>
+            <translation>아주 낮음 (8kbps)</translation>
+        </message>
+        <message>
+            <source>Disabled</source>
+            <translation>사용안함</translation>
+        </message>
+        <message>
+            <source>Audio/Video</source>
+            <translation>오디오/비디오</translation>
+        </message>
+    </context>
+    <context>
+        <name>AboutFriendForm</name>
+        <message>
+            <source>Dialog</source>
+            <translation>대화</translation>
+        </message>
+        <message>
+            <source>username</source>
+            <translation>사용자 이름</translation>
+        </message>
+        <message>
+            <source>status message</source>
+            <translation>상태 메시지</translation>
+        </message>
+        <message>
+            <source>Send message</source>
+            <translation>메시지 보내기</translation>
+        </message>
+        <message>
+            <source>Default directory to save files:</source>
+            <translation>파일 저장 폴더:</translation>
+        </message>
+        <message>
+            <source>Account:</source>
+            <translation>계좌:</translation>
+        </message>
+        <message>
+            <source>Automatically accept files from contact if set</source>
+            <translation>설정된 경우 연락처에서 자동으로 파일을 승인합니다</translation>
+        </message>
+        <message>
+            <source>Auto accept files</source>
+            <translation>파일 자동 수락</translation>
+        </message>
+        <message>
+            <source>Manual</source>
+            <translation>설명서</translation>
+        </message>
+        <message>
+            <source>Audio</source>
+            <translation>오디오</translation>
+        </message>
+        <message>
+            <source>Audio + Video</source>
+            <translation>오디오 + 비디오</translation>
+        </message>
+        <message>
+            <source>Alias:</source>
+            <translation>별명:</translation>
+        </message>
+        <message>
+            <source>Clear</source>
+            <translation>맑다</translation>
+        </message>
+        <message>
+            <source>Clear history:</source>
+            <translation>기록 지우기:</translation>
+        </message>
+        <message>
+            <source>Auto accept call:</source>
+            <translation>호출 자동 수락:</translation>
+        </message>
+        <message>
+            <source>Auto accept for this contact is disabled</source>
+            <translation>이 연락처에 대한 자동 수락을 사용할 수 없습니다.</translation>
+        </message>
+        <message>
+            <source>Choose an auto accept directory</source>
+            <extracomment>popup title</extracomment>
+            <translation>자동받기 폴더 선택</translation>
+        </message>
+        <message>
+            <source>Confirmation</source>
+            <translation>확인</translation>
+        </message>
+        <message>
+            <source>Are you sure to remove %1 chat history?</source>
+            <translation>%1 채팅 기록을 제거하시겠습니까?</translation>
+        </message>
+    </context>
+    <context>
+        <name>AboutGroupForm</name>
+        <message>
+            <source>Form</source>
+            <translation>폼</translation>
+        </message>
+        <message>
+            <source>Automatically accept files from contact if set</source>
+            <translation>설정된 경우 연락처에서 자동으로 파일을 승인합니다</translation>
+        </message>
+        <message>
+            <source>Auto accept files</source>
+            <translation>파일 자동 수락</translation>
+        </message>
+        <message>
+            <source>Auto accept call:</source>
+            <translation>호출 자동 수락:</translation>
+        </message>
+        <message>
+            <source>Name:</source>
+            <translation>이름:</translation>
+        </message>
+        <message>
+            <source>Clear history:</source>
+            <translation>기록 지우기:</translation>
+        </message>
+        <message>
+            <source>Manual</source>
+            <translation>설명서</translation>
+        </message>
+        <message>
+            <source>Audio</source>
+            <translation>오디오</translation>
+        </message>
+        <message>
+            <source>Audio + Video</source>
+            <translation>오디오 + 비디오</translation>
+        </message>
+        <message>
+            <source>Description:</source>
+            <translation>묘사:</translation>
+        </message>
+        <message>
+            <source>Clear</source>
+            <translation>맑다</translation>
+        </message>
+        <message>
+            <source>Alias:</source>
+            <translation>별명:</translation>
+        </message>
+        <message>
+            <source>Send notice:</source>
+            <translation>통지 보내기:</translation>
+        </message>
+        <message>
+            <source>Automatically accept group chat invitations from this contact if set.</source>
+            <translation>설정된 경우 이 연락처의 그룹 채팅 초대를 자동으로 수락합니다.</translation>
+        </message>
+        <message>
+            <source>Auto accept group invites</source>
+            <translation>그룹 초대를 받아드립니다.</translation>
+        </message>
+        <message>
+            <source>Account:</source>
+            <translation>계좌:</translation>
+        </message>
+        <message>
+            <source>Occupants:</source>
+            <translation>회원 수:</translation>
+        </message>
+        <message>
+            <source>Add member</source>
+            <translation>구성원 추가</translation>
+        </message>
+        <message>
+            <source>Send message</source>
+            <translation>메시지 보내기</translation>
+        </message>
+        <message>
+            <source>groupname</source>
+            <translation>그룹 이름</translation>
+        </message>
+    </context>
+    <context>
+        <name>AddFriendForm</name>
+        <message>
+            <source>Form</source>
+            <translation>폼</translation>
+        </message>
+        <message>
+            <source>Search</source>
+            <translation>검색</translation>
+        </message>
+        <message>
+            <source>Account/E-Mail/Phone Number</source>
+            <translation>계좌번호/이메일주소/휴대전화번호</translation>
+        </message>
+        <message>
+            <source>hello,I'm </source>
+            <translation>안녕하세요, 저입니다 </translation>
+        </message>
+        <message>
+            <source>Couldn't add friend</source>
+            <translation>친구를 추가할 수 없습니다</translation>
+        </message>
+        <message>
+            <source>%1 Ok ID is invalid</source>
+            <comment>Tox address error</comment>
+            <translation>%1 확인 ID가 잘못되었습니다.</translation>
+        </message>
+        <message>
+            <source>You can't add yourself as a friend!</source>
+            <translation>자신을 친구로 추가할 수 없습니다!</translation>
+        </message>
+        <message>
+            <source>Search users</source>
+            <translation>친구 검색</translation>
+        </message>
+        <message>
+            <source>Add a friend</source>
+            <translation>친구 추가</translation>
+        </message>
+    </context>
+    <context>
+        <name>CallDurationForm</name>
+        <message>
+            <source>Form</source>
+            <translation>폼</translation>
+        </message>
+        <message>
+            <source>00:00:00</source>
+            <translation>00:00:00.000</translation>
+        </message>
+        <message>
+            <source>Call duration: </source>
+            <translation>통화 시간: </translation>
+        </message>
+    </context>
+    <context>
+        <name>ChatForm</name>
+        <message>
+            <source>Filename contained illegal characters</source>
+            <translation>파일 이름에 잘못된 문자가 포함되어 있습니다.</translation>
+        </message>
+        <message>
+            <source>Illegal characters have been changed to _ 
+so you can save the file on windows.</source>
+            <translation>잘못된 문자가 _로 변경되었습니다. 
+따라서 Windows에 파일을 저장할 수 있습니다.</translation>
+        </message>
+        <message>
+            <source>Calling %1</source>
+            <translation>%1 호출</translation>
+        </message>
+        <message>
+            <source>Unable to open</source>
+            <translation>열 수 없습니다</translation>
+        </message>
+        <message>
+            <source>qTox wasn't able to open %1</source>
+            <translation>%1을 열 수 없습니다</translation>
+        </message>
+        <message>
+            <source>Bad idea</source>
+            <translation>좋지않은 의견</translation>
+        </message>
+        <message>
+            <source>You're trying to send a sequential file, which is not going to work!</source>
+            <translation>작동하지 않는 순차 파일을 보내려고 합니다!</translation>
+        </message>
+        <message>
+            <source>Failed to open temporary file</source>
+            <comment>Temporary file for screenshot</comment>
+            <translation>필요한 임시 파일을 만들 수 없습니다</translation>
+        </message>
+        <message>
+            <source>qTox wasn't able to save the screenshot</source>
+            <translation>스크린샷을 저장할 수 없었습니다.</translation>
+        </message>
+        <message>
+            <source>Copy</source>
+            <translation>복사</translation>
+        </message>
+    </context>
+    <context>
+        <name>ChatFormHeader</name>
+        <message>
+            <source>Can't start audio call</source>
+            <translation>음성 통화를 시작할 수 없습니다.</translation>
+        </message>
+        <message>
+            <source>Start audio call</source>
+            <translation>음성통화 시작</translation>
+        </message>
+        <message>
+            <source>End audio call</source>
+            <translation>음성 통화 종료</translation>
+        </message>
+        <message>
+            <source>Cancel audio call</source>
+            <translation>음성 통화 취소</translation>
+        </message>
+        <message>
+            <source>Accept audio call</source>
+            <translation>음성 통화 수락</translation>
+        </message>
+        <message>
+            <source>Can't start video call</source>
+            <translation>화상 통화를 시작할 수 없습니다.</translation>
+        </message>
+        <message>
+            <source>Start video call</source>
+            <translation>영상통화 시작</translation>
+        </message>
+        <message>
+            <source>End video call</source>
+            <translation>비디오 통화 종료</translation>
+        </message>
+        <message>
+            <source>Cancel video call</source>
+            <translation>비디오 통화 취소</translation>
+        </message>
+        <message>
+            <source>Accept video call</source>
+            <translation>비디오 통화 수락</translation>
+        </message>
+        <message>
+            <source>Sound can be disabled only during a call</source>
+            <translation>소리는 통화 중에만 비활성화할 수 있습니다.</translation>
+        </message>
+        <message>
+            <source>Mute call</source>
+            <translation>음소거 전화</translation>
+        </message>
+        <message>
+            <source>Unmute call</source>
+            <translation>통화 음소거 해제</translation>
+        </message>
+        <message>
+            <source>Microphone can be muted only during a call</source>
+            <translation>마이크는 통화 중에만 음소거할 수 있습니다.</translation>
+        </message>
+        <message>
+            <source>Mute microphone</source>
+            <translation>마이크 음소거</translation>
+        </message>
+        <message>
+            <source>Unmute microphone</source>
+            <translation>마이크 음소거 해제</translation>
+        </message>
+    </context>
+    <context>
+        <name>ChatInputForm</name>
+        <message>
+            <source>Send message</source>
+            <translation>메시지 보내기</translation>
+        </message>
+        <message>
+            <source>Smileys</source>
+            <translation>스마일리</translation>
+        </message>
+        <message>
+            <source>Send file(s)</source>
+            <translation>파일 보내기</translation>
+        </message>
+        <message>
+            <source>Send a screenshot</source>
+            <translation>스크린샷 보내기</translation>
+        </message>
+        <message>
+            <source>Send a file</source>
+            <translation>파일 보내기</translation>
+        </message>
+        <message>
+            <source>Unable to open</source>
+            <translation>열 수 없습니다</translation>
+        </message>
+        <message>
+            <source>Wasn't able to open %1</source>
+            <translation>%1을(를) 열 수 없습니다.</translation>
+        </message>
+        <message>
+            <source>Bad idea</source>
+            <translation>좋지않은 의견</translation>
+        </message>
+        <message>
+            <source>You're trying to send a sequential file, which is not going to work!</source>
+            <translation>작동하지 않는 순차 파일을 보내려고 합니다!</translation>
+        </message>
+    </context>
+    <context>
+        <name>ChatLineContent</name>
+        <message>
+            <source>Copy</source>
+            <translation>복사</translation>
+        </message>
+        <message>
+            <source>Reply</source>
+            <translation>답변</translation>
+        </message>
+        <message>
+            <source>Forward</source>
+            <translation>전달</translation>
+        </message>
+    </context>
+    <context>
+        <name>ChatLog</name>
+        <message>
+            <source>Clear displayed messages</source>
+            <translation>비우기</translation>
+        </message>
+        <message>
+            <source>Copy</source>
+            <translation>복사</translation>
+        </message>
+        <message>
+            <source>Select all</source>
+            <translation>전체 선택</translation>
+        </message>
+        <message>
+            <source>Select multiple</source>
+            <translation>다중선택</translation>
+        </message>
+    </context>
+    <context>
+        <name>ChatReplyForm</name>
+        <message>
+            <source>Form</source>
+            <translation>폼</translation>
+        </message>
+    </context>
+    <context>
+        <name>ChatTextEdit</name>
+        <message>
+            <source>Type your message here...</source>
+            <translation>여기에 메시지를 입력하세요...</translation>
+        </message>
+    </context>
+    <context>
+        <name>ChatWidget</name>
+        <message>
+            <source>Form</source>
+            <translation>폼</translation>
+        </message>
+        <message>
+            <source>Open profile</source>
+            <translation>프로필 열기</translation>
+        </message>
+        <message>
+            <source>Open profile page when clicked</source>
+            <translation>클릭하면 프로필 페이지 열기</translation>
+        </message>
+        <message>
+            <source>Your name</source>
+            <translation>이름</translation>
+        </message>
+        <message>
+            <source>Status message input</source>
+            <translation>상태 메시지 입력</translation>
+        </message>
+        <message>
+            <source>Set your status message that will be shown to others</source>
+            <translation>다른 사람에게 표시할 상태 메시지를 설정합니다.</translation>
+        </message>
+        <message>
+            <source>Your status</source>
+            <translation>상태</translation>
+        </message>
+        <message>
+            <source>Status</source>
+            <translation>상태</translation>
+        </message>
+        <message>
+            <source>Set availability status</source>
+            <translation>가용성 상태 설정</translation>
+        </message>
+        <message>
+            <source>Contact search</source>
+            <translation>연락처 검색</translation>
+        </message>
+        <message>
+            <source>Contact search input for known friends</source>
+            <translation>알려진 친구에 대한 연락처 검색 입력</translation>
+        </message>
+        <message numerus="yes">
+            <source>%n New Group Invite(s)</source>
+            <translation>
+                <numerusform>%n개의 새 그룹 초대</numerusform>
+            </translation>
+        </message>
+        <message>
+            <source>Search Contacts</source>
+            <translation>연락처 검색</translation>
+        </message>
+        <message>
+            <source>Online</source>
+            <comment>Button to set your status to 'Online'</comment>
+            <translation>온라인</translation>
+        </message>
+        <message>
+            <source>Away</source>
+            <comment>Button to set your status to 'Away'</comment>
+            <translation>떨어 져</translation>
+        </message>
+        <message>
+            <source>Busy</source>
+            <comment>Button to set your status to 'Busy'</comment>
+            <translation>바 쁜</translation>
+        </message>
+    </context>
+    <context>
+        <name>CircleWidget</name>
+        <message>
+            <source>Rename circle</source>
+            <comment>Menu for renaming a circle</comment>
+            <translation>서클 이름 바꾸기</translation>
+        </message>
+        <message>
+            <source>Remove circle</source>
+            <comment>Menu for removing a circle</comment>
+            <translation>서클 제거</translation>
+        </message>
+        <message>
+            <source>Open all in new window</source>
+            <translation>새 창에서 모두 열기</translation>
+        </message>
+    </context>
+    <context>
+        <name>ContactSelectDialog</name>
+        <message>
+            <source>Dialog</source>
+            <translation>대화</translation>
+        </message>
+        <message>
+            <source>Please select contact</source>
+            <translation>연락처를선택해주세요</translation>
+        </message>
+    </context>
+    <context>
+        <name>ContactWidget</name>
+        <message>
+            <source>Form</source>
+            <translation>폼</translation>
+        </message>
+        <message>
+            <source>Contact search</source>
+            <translation>연락처 검색</translation>
+        </message>
+        <message>
+            <source>Contact search input for known friends</source>
+            <translation>알려진 친구에 대한 연락처 검색 입력</translation>
+        </message>
+        <message>
+            <source>Search Contacts</source>
+            <translation>연락처 검색</translation>
+        </message>
+        <message>
+            <source> sent you a friend request.</source>
+            <translation> 친구 요청을 보냈습니다.</translation>
+        </message>
+        <message>
+            <source> invites you to join a group.</source>
+            <translation> 그룹에 가입하도록 초대합니다.</translation>
+        </message>
+    </context>
+    <context>
+        <name>Core</name>
+        <message>
+            <source>Invalid Ok ID</source>
+            <comment>Error while sending friendship request</comment>
+            <translation>유효하지 않은 확인 ID</translation>
+        </message>
+        <message>
+            <source>You need to write a message with your request</source>
+            <comment>Error while sending friendship request</comment>
+            <translation>요청과 함께 메시지를 작성해야 합니다.</translation>
+        </message>
+        <message>
+            <source>IMFriend is already added</source>
+            <comment>Error while sending friendship request</comment>
+            <translation>IMFriend가 이미 추가되었습니다.</translation>
+        </message>
+        <message>
+            <source>/me offers friendship, "%1"</source>
+            <translation>/me는 우정을 제공합니다, "%1"</translation>
+        </message>
+    </context>
+    <context>
+        <name>DesktopNotify</name>
+        <message>
+            <source>New message</source>
+            <translation>새 메시지</translation>
+        </message>
+        <message>
+            <source>Incoming file transfer</source>
+            <translation>수신 파일 전송</translation>
+        </message>
+        <message>
+            <source>Friend request received</source>
+            <translation>친구 요청 수신됨</translation>
+        </message>
+        <message>
+            <source>New group message</source>
+            <translation>새로운 그룹 메시지</translation>
+        </message>
+        <message>
+            <source>Group invite received</source>
+            <translation>그룹 초대 수신됨</translation>
+        </message>
+    </context>
+    <context>
+        <name>FileTransferWidget</name>
+        <message>
+            <source>Form</source>
+            <translation>폼</translation>
+        </message>
+        <message>
+            <source>Filename</source>
+            <translation>파일이름</translation>
+        </message>
+        <message>
+            <source>10Mb</source>
+            <translation>10Mb</translation>
+        </message>
+        <message>
+            <source>0kb/s</source>
+            <translation>0kb/s</translation>
+        </message>
+        <message>
+            <source>ETA:10:10</source>
+            <translation>ETA:10:10</translation>
+        </message>
+        <message>
+            <source>Location not writable</source>
+            <comment>Title of permissions popup</comment>
+            <translation>위치 작성 불가능</translation>
+        </message>
+        <message>
+            <source>You do not have permission to write that location. Choose another, or cancel the save dialog.</source>
+            <comment>text of permissions popup</comment>
+            <translation>해당 위치를 쓸 수 있는 권한이 없습니다. 다른 항목을 선택하거나 저장 대화 상자를 취소합니다.</translation>
+        </message>
+        <message>
+            <source>Waiting to send...</source>
+            <comment>file transfer widget</comment>
+            <translation>전송 대기...</translation>
+        </message>
+        <message>
+            <source>Accept to receive this file</source>
+            <comment>file transfer widget</comment>
+            <translation>수신수락</translation>
+        </message>
+        <message>
+            <source>Resuming...</source>
+            <comment>file transfer widget</comment>
+            <translation>재개 …</translation>
+        </message>
+        <message>
+            <source>Pause transfer</source>
+            <translation>일시 중지 전송</translation>
+        </message>
+        <message>
+            <source>Cancel transfer</source>
+            <translation>전송취소</translation>
+        </message>
+        <message>
+            <source>Accept transfer</source>
+            <translation>전송수락</translation>
+        </message>
+        <message>
+            <source>Open file</source>
+            <translation>파일열기</translation>
+        </message>
+        <message>
+            <source>Open file directory</source>
+            <translation>파일 디렉토리 열기</translation>
+        </message>
+    </context>
+    <context>
+        <name>FilesForm</name>
+        <message>
+            <source>Transferred Files</source>
+            <comment>"Headline" of the window</comment>
+            <translation>전송 된 파일</translation>
+        </message>
+        <message>
+            <source>Downloads</source>
+            <translation>다운로드</translation>
+        </message>
+        <message>
+            <source>Uploads</source>
+            <translation>업로드</translation>
+        </message>
+    </context>
+    <context>
+        <name>FriendForm</name>
+        <message>
+            <source>Frame</source>
+            <translation>프레임</translation>
+        </message>
+        <message>
+            <source>id</source>
+            <translation>아이디</translation>
+        </message>
+        <message>
+            <source>+</source>
+            <translation>+</translation>
+        </message>
+    </context>
+    <context>
+        <name>FriendRequestDialog</name>
+        <message>
+            <source>IMFriend request</source>
+            <comment>Title of the window to aceept/deny a friend request</comment>
+            <translation>IMFriend 요청</translation>
+        </message>
+        <message>
+            <source>Someone wants to make friends with you</source>
+            <translation>누군가 당신과 친구가 되고 싶어 합니다.</translation>
+        </message>
+        <message>
+            <source>User ID:</source>
+            <translation>사용자 아이디:</translation>
+        </message>
+        <message>
+            <source>IMFriend request message:</source>
+            <translation>IMFriend 요청 메시지:</translation>
+        </message>
+        <message>
+            <source>Accept</source>
+            <comment>Accept a friend request</comment>
+            <translation>수락</translation>
+        </message>
+        <message>
+            <source>Reject</source>
+            <comment>Reject a friend request</comment>
+            <translation>거부</translation>
+        </message>
+    </context>
+    <context>
+        <name>FriendWidget</name>
+        <message>
+            <source>Invite to group</source>
+            <translation>그룹 초대</translation>
+        </message>
+        <message>
+            <source>To new group</source>
+            <translation>새 그룹으로</translation>
+        </message>
+        <message>
+            <source>Remove friend</source>
+            <translation>친구 삭제</translation>
+        </message>
+        <message>
+            <source>Confirmation</source>
+            <translation>확인</translation>
+        </message>
+        <message>
+            <source>Are you sure to remove %1 ?</source>
+            <translation>정말로 친구 '%1'을(를) 삭제하시겠습니까?</translation>
+        </message>
+        <message>
+            <source>Warning</source>
+            <translation>경고</translation>
+        </message>
+        <message>
+            <source>Can not remove the friend!</source>
+            <translation>친구를 삭제할 수 없습니다!</translation>
+        </message>
+        <message>
+            <source>Online</source>
+            <translation>온라인</translation>
+        </message>
+        <message>
+            <source>Away</source>
+            <translation>떨어 져</translation>
+        </message>
+        <message>
+            <source>Busy</source>
+            <translation>바 쁜</translation>
+        </message>
+        <message>
+            <source>Offline</source>
+            <translation>오프라인</translation>
+        </message>
+        <message>
+            <source>New message</source>
+            <translation>새 메시지</translation>
+        </message>
+    </context>
+    <context>
+        <name>GeneralForm</name>
+        <message>
+            <source>General</source>
+            <translation>일반</translation>
+        </message>
+    </context>
+    <context>
+        <name>GeneralSettings</name>
+        <message>
+            <source>Chat</source>
+            <translation>잡담</translation>
+        </message>
+        <message>
+            <source>Base font:</source>
+            <translation>기본폰트:</translation>
+        </message>
+        <message>
+            <source>px</source>
+            <translation>px</translation>
+        </message>
+        <message>
+            <source>Size:</source>
+            <translation>크기:</translation>
+        </message>
+        <message>
+            <source>New text styling preference may not load until qTox restarts.</source>
+            <translation>qTox가 다시 시작될 때까지 새 텍스트 스타일 기본 설정이 로드되지 않을 수 있습니다.</translation>
+        </message>
+        <message>
+            <source>Text Style format:</source>
+            <translation>텍스트 스타일 형식:</translation>
+        </message>
+        <message>
+            <source>Select text styling preference.</source>
+            <translation>텍스트 스타일 기본 설정을 선택합니다.</translation>
+        </message>
+        <message>
+            <source>Plaintext</source>
+            <translation>평문</translation>
+        </message>
+        <message>
+            <source>Show formatting characters</source>
+            <translation>서식 문자 표시</translation>
+        </message>
+        <message>
+            <source>Don't show formatting characters</source>
+            <translation>서식 문자 숨기기</translation>
+        </message>
+        <message>
+            <source>Use colored nicknames in chats</source>
+            <translation>채팅에서 색깔 있는 닉네임 사용</translation>
+        </message>
+        <message>
+            <source>New message</source>
+            <translation>새 메시지</translation>
+        </message>
+        <message>
+            <source>Your status is changed to Away after set period of inactivity.</source>
+            <translation>일정 시간 동안 활동이 없으면 상태가 자리 비움으로 변경됩니다.</translation>
+        </message>
+        <message>
+            <source>Auto away after (0 to disable):</source>
+            <translation>이 시간이 지나면 자동으로 종료됩니다(0은 비활성화됨).</translation>
+        </message>
+        <message>
+            <source>Set to 0 to disable</source>
+            <translation>비활성화하려면 0으로 설정합니다.</translation>
+        </message>
+        <message>
+            <source>Show a notification when you receive a new message and the window is not selected.</source>
+            <comment>tooltip for Notify setting</comment>
+            <translation>새 메시지를 받고 창이 선택되지 않은 경우 알림을 표시합니다.</translation>
+        </message>
+        <message>
+            <source>Notify</source>
+            <translation>통보하다</translation>
+        </message>
+        <message>
+            <source>Onlys notify about new messages in groupchats when mentioned.</source>
+            <comment>toolTip for Group chats only notify when mentioned</comment>
+            <translation>그룹 채팅에서 새 메시지가 언급될 때만 알림을 보냅니다.</translation>
+        </message>
+        <message>
+            <source>Group chats only notify when mentioned</source>
+            <translation>그룹 채팅은 멘션될 때만 알립니다.</translation>
+        </message>
+        <message>
+            <source>Play sound</source>
+            <translation>소리재생</translation>
+        </message>
+        <message>
+            <source>Play sound while Busy</source>
+            <translation>바쁜 동안 소리 재생</translation>
+        </message>
+        <message>
+            <source>Notify via desktop notifications</source>
+            <translation>데스크톱 알림을 통해 알림</translation>
+        </message>
+        <message>
+            <source>Hide message sender and contents</source>
+            <translation>메시지 보낸 사람 및 내용 숨기기</translation>
+        </message>
+        <message>
+            <source>Privacy</source>
+            <translation>사생활</translation>
+        </message>
+        <message>
+            <source>Your friends will be able to see when you are typing.</source>
+            <comment>tooltip for typing notifications setting</comment>
+            <translation>당신이 타이핑할 때 친구들이 볼 수 있습니다.</translation>
+        </message>
+        <message>
+            <source>Send typing notifications</source>
+            <translation>입력 알림 보내기</translation>
+        </message>
+    </context>
+    <context>
+        <name>GenericChatForm</name>
+        <message>
+            <source>Confirmation</source>
+            <translation>확인</translation>
+        </message>
+        <message>
+            <source>You are sure that you want to clear all displayed messages?</source>
+            <translation>표시된 모든 메시지를 지우시겠습니까?</translation>
+        </message>
+        <message>
+            <source>Cleared</source>
+            <translation>선택을 취소</translation>
+        </message>
+        <message>
+            <source>Save chat log</source>
+            <translation>채팅 기록을 저장</translation>
+        </message>
+        <message>
+            <source>The community version cannot send files to offline contacts!</source>
+            <translation>커뮤니티 버전은 오프라인 연락처로 파일을 보낼 수 없습니다!</translation>
+        </message>
+    </context>
+    <context>
+        <name>GenericChatItemWidget</name>
+        <message>
+            <source>I:</source>
+            <translation>나는:</translation>
+        </message>
+        <message>
+            <source>:</source>
+            <translation>:</translation>
+        </message>
+    </context>
+    <context>
+        <name>GenericNetCamView</name>
+        <message>
+            <source>Tox video</source>
+            <translation>Tox 동영상</translation>
+        </message>
+        <message>
+            <source>Full Screen</source>
+            <translation>전체 화면</translation>
+        </message>
+        <message>
+            <source>Toggle video preview</source>
+            <translation>비디오 미리보기 전환</translation>
+        </message>
+        <message>
+            <source>Mute audio</source>
+            <translation>오디오 음소거</translation>
+        </message>
+        <message>
+            <source>Mute microphone</source>
+            <translation>마이크 음소거</translation>
+        </message>
+        <message>
+            <source>End video call</source>
+            <translation>비디오 통화 종료</translation>
+        </message>
+        <message>
+            <source>Exit full screen</source>
+            <translation>전체 화면 종료</translation>
+        </message>
+        <message>
+            <source>Hide Messages</source>
+            <translation>메시지 숨기기</translation>
+        </message>
+        <message>
+            <source>Show Messages</source>
+            <translation>메시지 표시</translation>
+        </message>
+    </context>
+    <context>
+        <name>GroupChatForm</name>
+        <message>
+            <source>%1 has set the title to %2</source>
+            <translation>%1이(가) 제목을 %2(으)로 설정했습니다.</translation>
+        </message>
+        <message>
+            <source>%1 has joined the group</source>
+            <translation>%1이(가) 그룹에 가입했습니다.</translation>
+        </message>
+        <message>
+            <source>%1 has left the group</source>
+            <translation>%1이(가) 그룹을 떠났습니다.</translation>
+        </message>
+        <message>
+            <source>%1 is now known as %2</source>
+            <translation>%1은(는) 이제 %2로 알려져 있습니다.</translation>
+        </message>
+        <message numerus="yes">
+            <source>%n user(s) in chat</source>
+            <comment>Number of users in chat</comment>
+            <translation>
+                <numerusform>채팅 내 %n명의 사용자</numerusform>
+            </translation>
+        </message>
+        <message>
+            <source>mute</source>
+            <translation>음소거</translation>
+        </message>
+        <message>
+            <source>unmute</source>
+            <translation>음소거 해제</translation>
+        </message>
+    </context>
+    <context>
+        <name>GroupCreateForm</name>
+        <message>
+            <source>Form</source>
+            <translation>폼</translation>
+        </message>
+        <message>
+            <source>Group name</source>
+            <translation>그룹의 이름입니다</translation>
+        </message>
+        <message>
+            <source>Confirm</source>
+            <translation>확실한가요</translation>
+        </message>
+        <message>
+            <source>Create new group</source>
+            <translation>새 그룹 만들기</translation>
+        </message>
+    </context>
+    <context>
+        <name>GroupInviteForm</name>
+        <message>
+            <source>Groups</source>
+            <translation>그룹</translation>
+        </message>
+        <message>
+            <source>Create new group</source>
+            <translation>새 그룹 만들기</translation>
+        </message>
+        <message>
+            <source>Group invites</source>
+            <translation>그룹 초대</translation>
+        </message>
+    </context>
+    <context>
+        <name>GroupInviteWidget</name>
+        <message>
+            <source>Invited by %1 on %2 at %3.</source>
+            <translation>%3의 %2에 %1이(가) 초대했습니다.</translation>
+        </message>
+        <message>
+            <source>Join</source>
+            <translation>잇다</translation>
+        </message>
+        <message>
+            <source>Decline</source>
+            <translation>거절하다</translation>
+        </message>
+    </context>
+    <context>
+        <name>GroupWidget</name>
+        <message>
+            <source>Quit group</source>
+            <comment>Menu to quit a groupchat</comment>
+            <translation>그룹 종료</translation>
+        </message>
+        <message>
+            <source>Destroy group</source>
+            <comment>Destroy the groupchat</comment>
+            <translation>그룹 해체</translation>
+        </message>
+        <message>
+            <source>Confirmation</source>
+            <translation>확인</translation>
+        </message>
+        <message>
+            <source>Are you sure to quit %1 chat group?</source>
+            <translation>그룹 채팅 %1에서 나가시겠습니까?</translation>
+        </message>
+    </context>
+    <context>
+        <name>IMMainWindow</name>
+        <message>
+            <source>Close</source>
+            <translation>닫다</translation>
+        </message>
+    </context>
+    <context>
+        <name>IdentitySettings</name>
+        <message>
+            <source>My profile</source>
+            <translation>내 프로필</translation>
+        </message>
+        <message>
+            <source>Public Information</source>
+            <translation>공개 정보</translation>
+        </message>
+        <message>
+            <source>Nickname:</source>
+            <translation>별명:</translation>
+        </message>
+        <message>
+            <source>Name input</source>
+            <translation>이름 입력</translation>
+        </message>
+        <message>
+            <source>Name visible to contacts</source>
+            <translation>연락처에 표시되는 이름</translation>
+        </message>
+        <message>
+            <source>Account:</source>
+            <translation>계좌:</translation>
+        </message>
+        <message>
+            <source>Location:</source>
+            <translation>위치:</translation>
+        </message>
+        <message>
+            <source>Personal Information</source>
+            <translation>개인 정보</translation>
+        </message>
+        <message>
+            <source>My name:</source>
+            <translation>내 이름:</translation>
+        </message>
+        <message>
+            <source>My phone:</source>
+            <translation>내 전화 :</translation>
+        </message>
+        <message>
+            <source>My E-Mail:</source>
+            <translation>내 이메일:</translation>
+        </message>
+        <message>
+            <source>My telephone:</source>
+            <translation>내 전화 :</translation>
+        </message>
+        <message>
+            <source>Profile</source>
+            <translation>프로필</translation>
+        </message>
+        <message>
+            <source>Go back to the login screen</source>
+            <comment>tooltip for logout button</comment>
+            <translation>로그인 화면으로 돌아가기</translation>
+        </message>
+        <message>
+            <source>Exit</source>
+            <comment>import profile button</comment>
+            <translation>출구</translation>
+        </message>
+        <message>
+            <source>Logout</source>
+            <comment>import profile button</comment>
+            <translation>로그아웃</translation>
+        </message>
+    </context>
+    <context>
+        <name>LoadHistoryDialog</name>
+        <message>
+            <source>Load History Dialog</source>
+            <translation>로드 히스토리 대화 상자</translation>
+        </message>
+        <message>
+            <source>Load history from:</source>
+            <translation>다음에서 기록 로드:</translation>
+        </message>
+    </context>
+    <context>
+        <name>MessageSessionListWidget</name>
+        <message>
+            <source>Today</source>
+            <translation>오늘</translation>
+        </message>
+        <message>
+            <source>Yesterday</source>
+            <translation>어제</translation>
+        </message>
+        <message>
+            <source>Last 7 days</source>
+            <translation>지난 7일</translation>
+        </message>
+        <message>
+            <source>This month</source>
+            <translation>이 달</translation>
+        </message>
+        <message>
+            <source>Older than 6 Months</source>
+            <translation>6개월 이전</translation>
+        </message>
+        <message>
+            <source>Never</source>
+            <translation>절대</translation>
+        </message>
+    </context>
+    <context>
+        <name>MessageSessionWidget</name>
+        <message>
+            <source>Delete the session</source>
+            <translation>세션 삭제</translation>
+        </message>
+        <message>
+            <source>Show details</source>
+            <translation>상세 정보 표시</translation>
+        </message>
+    </context>
+    <context>
+        <name>Nexus</name>
+        <message>
+            <source>Can not create profile!</source>
+            <translation>프로필을 만들 수 없습니다!</translation>
+        </message>
+        <message>
+            <source>View</source>
+            <comment>OS X Menu bar</comment>
+            <translation>보기</translation>
+        </message>
+        <message>
+            <source>Window</source>
+            <comment>OS X Menu bar</comment>
+            <translation>창</translation>
+        </message>
+        <message>
+            <source>Minimize</source>
+            <comment>OS X Menu bar</comment>
+            <translation>최소화</translation>
+        </message>
+        <message>
+            <source>Bring All to Front</source>
+            <comment>OS X Menu bar</comment>
+            <translation>모든 것을 맨 앞으로 가져오기</translation>
+        </message>
+        <message>
+            <source>Exit Fullscreen</source>
+            <translation>전체 화면 종료</translation>
+        </message>
+        <message>
+            <source>Enter Fullscreen</source>
+            <translation>전체 화면 입력</translation>
+        </message>
+    </context>
+    <context>
+        <name>NotificationEdgeWidget</name>
+        <message numerus="yes">
+            <source>Unread message(s)</source>
+            <translation>
+                <numerusform>읽지 않은 메시지</numerusform>
+            </translation>
+        </message>
+    </context>
+    <context>
+        <name>PasswordEdit</name>
+        <message>
+            <source>CAPS-LOCK ENABLED</source>
+            <translation>CAPS-LOCK 활성화</translation>
+        </message>
+    </context>
+    <context>
+        <name>PrivacyForm</name>
+        <message>
+            <source>Privacy</source>
+            <translation>사생활</translation>
+        </message>
+    </context>
+    <context>
+        <name>ProfileForm</name>
+        <message>
+            <source>Unable to open this file.</source>
+            <translation>이 파일을 열 수 없습니다.</translation>
+        </message>
+        <message>
+            <source>Unable to read this image.</source>
+            <translation>이 이미지를 읽을 수 없습니다.</translation>
+        </message>
+        <message>
+            <source>The supplied image is too large.
+Please use another image.</source>
+            <translation>제공된 이미지가 너무 큽니다.
+다른 이미지를 사용하십시오.</translation>
+        </message>
+        <message>
+            <source>Empty path is unavaliable</source>
+            <translation>빈 경로를 사용할 수 없습니다.</translation>
+        </message>
+        <message>
+            <source>Failed to rename</source>
+            <translation>이름을 바꾸지 못했습니다.</translation>
+        </message>
+        <message>
+            <source>Couldn't rename the profile to "%1"</source>
+            <translation>프로필의 이름을 "%1"(으)로 바꿀 수 없습니다.</translation>
+        </message>
+        <message>
+            <source>Profile already exists</source>
+            <translation>프로필이 이미 존재합니다.</translation>
+        </message>
+        <message>
+            <source>A profile named "%1" already exists.</source>
+            <translation>이름이 "%1"인 프로필이 이미 있습니다.</translation>
+        </message>
+        <message>
+            <source>Empty name</source>
+            <translation>빈 이름</translation>
+        </message>
+        <message>
+            <source>Empty name is unavaliable</source>
+            <translation>빈 이름은 사용할 수 없습니다.</translation>
+        </message>
+        <message>
+            <source>Location not writable</source>
+            <comment>Title of permissions popup</comment>
+            <translation>위치 작성 불가능</translation>
+        </message>
+        <message>
+            <source>You do not have permission to write that location. Choose another, or cancel the save dialog.</source>
+            <comment>text of permissions popup</comment>
+            <translation>해당 위치를 쓸 수 있는 권한이 없습니다. 다른 항목을 선택하거나 저장 대화 상자를 취소합니다.</translation>
+        </message>
+        <message>
+            <source>Failed to copy file</source>
+            <translation>파일을 복사하지 못했습니다.</translation>
+        </message>
+        <message>
+            <source>The file you chose could not be written to.</source>
+            <translation>선택한 파일에 쓸 수 없습니다.</translation>
+        </message>
+        <message>
+            <source>Empty path</source>
+            <translation>빈 경로</translation>
+        </message>
+        <message>
+            <source>Couldn't change password</source>
+            <translation>비밀번호를 변경할 수 없습니다.</translation>
+        </message>
+        <message>
+            <source>Couldn't change password on the database, it might be corrupted or use the old password.</source>
+            <translation>데이터베이스에서 암호를 변경할 수 없습니다. 데이터베이스가 손상되었거나 이전 암호를 사용했을 수 있습니다.</translation>
+        </message>
+        <message>
+            <source>Current profile location: %1</source>
+            <translation>현재 프로필 위치: %1</translation>
+        </message>
+        <message>
+            <source>Remove</source>
+            <translation>제거하다</translation>
+        </message>
+        <message>
+            <source>Images (%1)</source>
+            <comment>filetype filter</comment>
+            <translation>이미지(%1)</translation>
+        </message>
+        <message>
+            <source>Choose a profile picture</source>
+            <translation>프로필 사진 선택</translation>
+        </message>
+        <message>
+            <source>Error</source>
+            <translation>오류</translation>
+        </message>
+        <message>
+            <source>Export profile</source>
+            <translation>프로필 내보내기</translation>
+        </message>
+        <message>
+            <source>Tox save file (*.tox)</source>
+            <extracomment>save dialog filter</extracomment>
+            <translation>Tox 저장 파일(*.tox)</translation>
+        </message>
+        <message>
+            <source>Save</source>
+            <comment>save qr image</comment>
+            <translation>구해내다</translation>
+        </message>
+        <message>
+            <source>Save QrCode (*.png)</source>
+            <comment>save dialog filter</comment>
+            <translation>QrCode 저장 (*.png)</translation>
+        </message>
+        <message>
+            <source>Nothing to remove</source>
+            <translation>제거할 항목이 없습니다.</translation>
+        </message>
+        <message>
+            <source>Your profile does not have a password!</source>
+            <translation>프로필에 비밀번호가 없습니다!</translation>
+        </message>
+        <message>
+            <source>Really delete password?</source>
+            <comment>deletion confirmation title</comment>
+            <translation>정말 비밀번호를 삭제하시겠습니까?</translation>
+        </message>
+        <message>
+            <source>Are you sure you want to delete your password?</source>
+            <extracomment>deletion confirmation text</extracomment>
+            <translation>비밀번호를 삭제하시겠습니까?</translation>
+        </message>
+        <message>
+            <source>Please enter a new password.</source>
+            <translation>새 비밀번호를 입력하십시오.</translation>
+        </message>
+    </context>
+    <context>
+        <name>ProfileImporter</name>
+        <message>
+            <source>Import profile</source>
+            <comment>import dialog title</comment>
+            <translation>프로파일 가져오기</translation>
+        </message>
+        <message>
+            <source>Tox save file (*.tox)</source>
+            <comment>import dialog filter</comment>
+            <translation>Tox 저장 파일(*.tox)</translation>
+        </message>
+        <message>
+            <source>File doesn't exist</source>
+            <translation>파일이 존재하지 않습니다.</translation>
+        </message>
+        <message>
+            <source>Profile doesn't exist</source>
+            <translation>프로필이 존재하지 않습니다.</translation>
+        </message>
+        <message>
+            <source>Ignoring non-Tox file</source>
+            <comment>popup title</comment>
+            <translation>non-Tox 파일 무시</translation>
+        </message>
+        <message>
+            <source>Warning: You have chosen a file that is not a Tox save file; ignoring.</source>
+            <comment>popup text</comment>
+            <translation>경고: Tox 저장 파일이 아닌 파일을 선택했습니다. 무시.</translation>
+        </message>
+        <message>
+            <source>Profile already exists</source>
+            <comment>import confirm title</comment>
+            <translation>프로필이 이미 존재합니다.</translation>
+        </message>
+        <message>
+            <source>A profile named "%1" already exists. Do you want to erase it?</source>
+            <comment>import confirm text</comment>
+            <translation>이름이 "%1"인 프로필이 이미 있습니다. 지우시겠습니까?</translation>
+        </message>
+        <message>
+            <source>Profile imported</source>
+            <translation>프로필을 가져왔습니다.</translation>
+        </message>
+        <message>
+            <source>%1.tox was successfully imported</source>
+            <translation>%1.tox를 성공적으로 가져왔습니다.</translation>
+        </message>
+    </context>
+    <context>
+        <name>QApplication</name>
+        <message>
+            <source>Ok</source>
+            <translation>그래</translation>
+        </message>
+        <message>
+            <source>Cancel</source>
+            <translation>취소</translation>
+        </message>
+        <message>
+            <source>Yes</source>
+            <translation>예</translation>
+        </message>
+        <message>
+            <source>No</source>
+            <translation>아니오</translation>
+        </message>
+    </context>
+    <context>
+        <name>QObject</name>
+        <message>
+            <source>Reformatting text in progress..</source>
+            <translation>텍스트 서식 다시 지정이 진행 중입니다..</translation>
+        </message>
+        <message>
+            <source>online</source>
+            <comment>contact status</comment>
+            <translation>온라인</translation>
+        </message>
+        <message>
+            <source>away</source>
+            <comment>contact status</comment>
+            <translation>자리 비움</translation>
+        </message>
+        <message>
+            <source>busy</source>
+            <comment>contact status</comment>
+            <translation>바쁜</translation>
+        </message>
+        <message>
+            <source>offline</source>
+            <comment>contact status</comment>
+            <translation>오프라인</translation>
+        </message>
+        <message>
+            <source>blocked</source>
+            <comment>contact status</comment>
+            <translation>막힌</translation>
+        </message>
+        <message>
+            <source>Error</source>
+            <translation>오류</translation>
+        </message>
+        <message>
+            <source>Couldn't open your chat logs, they will be exit.</source>
+            <translation>채팅 로그를 열 수 없으며 종료됩니다.</translation>
+        </message>
+        <message>
+            <source>None</source>
+            <comment>No camera device set</comment>
+            <translation>없음</translation>
+        </message>
+        <message>
+            <source>Desktop</source>
+            <comment>Desktop as a camera input for screen sharing</comment>
+            <translation>바탕 화면</translation>
+        </message>
+        <message>
+            <source>Incoming call...</source>
+            <translation>전화가 오는 중...</translation>
+        </message>
+    </context>
+    <context>
+        <name>RemoveFriendDialog</name>
+        <message>
+            <source>Remove friend</source>
+            <translation>친구 삭제</translation>
+        </message>
+        <message>
+            <source>Remove all chat history with the friend if set</source>
+            <translation>설정된 경우 친구와의 모든 채팅 기록을 제거합니다.</translation>
+        </message>
+        <message>
+            <source>Also remove chat history</source>
+            <translation>채팅 기록도 제거</translation>
+        </message>
+        <message>
+            <source>Are you sure you want to remove %1 from your contacts list?</source>
+            <translation>연락처 목록에서 %1을(를) 제거하시겠습니까?</translation>
+        </message>
+        <message>
+            <source>Remove</source>
+            <translation>제거하다</translation>
+        </message>
+    </context>
+    <context>
+        <name>ScreenshotGrabber</name>
+        <message>
+            <source>Click and drag to select a region. Press %1 to hide/show window, or %2 to cancel.</source>
+            <comment>Help text shown when no region has been selected yet</comment>
+            <translation>클릭하고 드래그하여 영역을 선택합니다. %1을 눌러 창을 숨기거나 표시하고, %2를 눌러 취소합니다.</translation>
+        </message>
+        <message>
+            <source>Space</source>
+            <comment>[Space] key on the keyboard</comment>
+            <translation>Space</translation>
+        </message>
+        <message>
+            <source>Escape</source>
+            <comment>[Escape] key on the keyboard</comment>
+            <translation>Escape</translation>
+        </message>
+        <message>
+            <source>Press %1 to send a screenshot of the selection, %2 to hide/show window, or %3 to cancel.</source>
+            <comment>Help text shown when a region has been selected</comment>
+            <translation>%1을 눌러 선택 항목의 스크린샷을 보내거나, %2를 눌러 창을 숨기거나 표시하거나, %3을 눌러 취소합니다.</translation>
+        </message>
+        <message>
+            <source>Enter</source>
+            <comment>[Enter] key on the keyboard</comment>
+            <translation>Enter</translation>
+        </message>
+    </context>
+    <context>
+        <name>SearchForm</name>
+        <message>
+            <source>The text could not be found.</source>
+            <translation>텍스트를 찾을 수 없습니다.</translation>
+        </message>
+        <message>
+            <source>Start</source>
+            <translation>시작하다</translation>
+        </message>
+    </context>
+    <context>
+        <name>SearchSettingsForm</name>
+        <message>
+            <source>Form</source>
+            <translation>폼</translation>
+        </message>
+        <message>
+            <source>Start search:</source>
+            <translation>검색 시작:</translation>
+        </message>
+        <message>
+            <source>from the end</source>
+            <translation>끝에서부터</translation>
+        </message>
+        <message>
+            <source>from the beginning</source>
+            <translation>처음부터</translation>
+        </message>
+        <message>
+            <source>after date</source>
+            <translation>후 날짜</translation>
+        </message>
+        <message>
+            <source>before date</source>
+            <translation>날짜 하기 전에</translation>
+        </message>
+        <message>
+            <source>00.00.0000</source>
+            <translation>00.00.0000</translation>
+        </message>
+        <message>
+            <source>Case sensitive</source>
+            <translation>대소문자 구분</translation>
+        </message>
+        <message>
+            <source>Whole words only</source>
+            <translation>전체 단어만</translation>
+        </message>
+        <message>
+            <source>Use regular expressions</source>
+            <translation>정규 표현식 사용</translation>
+        </message>
+        <message>
+            <source>Select Date Dialog</source>
+            <translation>날짜 선택 대화 상자</translation>
+        </message>
+        <message>
+            <source>Select a date</source>
+            <translation>날짜를 선택하세요</translation>
+        </message>
+    </context>
+    <context>
+        <name>SetPasswordDialog</name>
+        <message>
+            <source>Set your password</source>
+            <translation>비밀번호 설정</translation>
+        </message>
+        <message>
+            <source>Confirm:</source>
+            <translation>확인:</translation>
+        </message>
+        <message>
+            <source>Password:</source>
+            <translation>암호:</translation>
+        </message>
+        <message>
+            <source>Confirm password</source>
+            <translation>암호 확인</translation>
+        </message>
+        <message>
+            <source>Confirm password input</source>
+            <translation>비밀번호 입력 확인</translation>
+        </message>
+        <message>
+            <source>Password input</source>
+            <translation>암호 입력</translation>
+        </message>
+        <message>
+            <source>Password input field, minimum 6 characters long</source>
+            <translation>비밀번호 입력 필드, 최소 6자 이상</translation>
+        </message>
+        <message>
+            <source>Password strength: %p%</source>
+            <translation>비밀번호 안전성: %p%</translation>
+        </message>
+        <message>
+            <source>The password is too short</source>
+            <translation>비밀번호가 너무 짧습니다.</translation>
+        </message>
+        <message>
+            <source>The password doesn't match.</source>
+            <translation>비밀번호가 일치하지 않습니다.</translation>
+        </message>
+    </context>
+    <context>
+        <name>Settings</name>
+        <message>
+            <source>Circle #%1</source>
+            <translation>서클 #%1</translation>
+        </message>
+    </context>
+    <context>
+        <name>StorageSettingsForm</name>
+        <message>
+            <source>Local Storage</source>
+            <translation>로컬 스토리지</translation>
+        </message>
+        <message>
+            <source>Summary:</source>
+            <translation>요약:</translation>
+        </message>
+        <message>
+            <source>400MB</source>
+            <translation>400메가바이트</translation>
+        </message>
+        <message>
+            <source>Set where files will be saved.</source>
+            <translation>파일을 저장할 위치를 설정합니다.</translation>
+        </message>
+        <message>
+            <source>clear all</source>
+            <translation>모두 지우기</translation>
+        </message>
+        <message>
+            <source>Total size limit:</source>
+            <translation>총 크기 제한:</translation>
+        </message>
+        <message>
+            <source>3GB</source>
+            <translation>3기가바이트</translation>
+        </message>
+        <message>
+            <source>Media cache limit:</source>
+            <translation>미디어 캐시 제한:</translation>
+        </message>
+        <message>
+            <source>2GB</source>
+            <translation>2기가바이트</translation>
+        </message>
+        <message>
+            <source>Clear files older than:</source>
+            <translation>다음보다 오래된 파일 지우기:</translation>
+        </message>
+        <message>
+            <source>1 month</source>
+            <translation>1개월</translation>
+        </message>
+        <message>
+            <source>1866 images</source>
+            <translation>1866 이미지</translation>
+        </message>
+        <message>
+            <source>44.4MB</source>
+            <translation>44.4메가바이트</translation>
+        </message>
+        <message>
+            <source>clear</source>
+            <translation>맑다</translation>
+        </message>
+        <message>
+            <source>511 stickers</source>
+            <translation>스티커 511개</translation>
+        </message>
+        <message>
+            <source>11.0MB</source>
+            <translation>11.0메가바이트</translation>
+        </message>
+        <message>
+            <source>13 GIF animations</source>
+            <translation>13 GIF 애니메이션</translation>
+        </message>
+        <message>
+            <source>2.5MB</source>
+            <translation>2.5메가바이트</translation>
+        </message>
+        <message>
+            <source>Media cache</source>
+            <translation>미디어 캐시</translation>
+        </message>
+        <message>
+            <source>405.7MB</source>
+            <translation>405.7메가바이트</translation>
+        </message>
+        <message>
+            <source>Choose an auto accept directory</source>
+            <comment>popup title</comment>
+            <translation>자동받기 폴더 선택</translation>
+        </message>
+        <message>
+            <source>Storage Settings</source>
+            <translation>스토리지 설정</translation>
+        </message>
+    </context>
+    <context>
+        <name>Widget</name>
+        <message>
+            <source>Chat</source>
+            <translation>잡담</translation>
+        </message>
+        <message>
+            <source>Contacts</source>
+            <translation>연락처</translation>
+        </message>
+        <message>
+            <source>Settings</source>
+            <translation>설정</translation>
+        </message>
+        <message>
+            <source>The core failed to start, the application will terminate after you close this message.</source>
+            <translation>코어를 시작하지 못했습니다. 이 메시지를 닫으면 응용 프로그램이 종료됩니다.</translation>
+        </message>
+        <message>
+            <source>The core failed to start with your proxy settings. So cannot to run; please modify your settings and restart.</source>
+            <comment>popup text</comment>
+            <translation>코어가 프록시 설정으로 시작하지 못했습니다. 그래서 달릴 수 없습니다. 설정을 수정하고 다시 시작하십시오.</translation>
+        </message>
+        <message>
+            <source>Executable file</source>
+            <comment>popup title</comment>
+            <translation>실행파일</translation>
+        </message>
+        <message>
+            <source>You have asked qTox to open an executable file. Executable files can potentially damage your computer. Are you sure want to open this file?</source>
+            <comment>popup text</comment>
+            <translation>qTox에 실행 파일을 열도록 요청했습니다. 실행 파일은 잠재적으로 컴퓨터를 손상시킬 수 있습니다. 이 파일을 열시겠습니까?</translation>
+        </message>
+        <message>
+            <source>Couldn't request friendship</source>
+            <translation>친구요청을 할 수 없습니다</translation>
+        </message>
+        <message>
+            <source>File sent</source>
+            <translation>파일 전송</translation>
+        </message>
+        <message>
+            <source>Add friend</source>
+            <comment>title of the window</comment>
+            <translation>친구 추가</translation>
+        </message>
+        <message>
+            <source>Group invites</source>
+            <comment>title of the window</comment>
+            <translation>그룹 초대</translation>
+        </message>
+        <message>
+            <source>File transfers</source>
+            <comment>title of the window</comment>
+            <translation>파일 이동</translation>
+        </message>
+        <message>
+            <source>Settings</source>
+            <comment>title of the window</comment>
+            <translation>설정</translation>
+        </message>
+        <message>
+            <source>My profile</source>
+            <comment>title of the window</comment>
+            <translation>내 프로필</translation>
+        </message>
+    </context>
+</TS>

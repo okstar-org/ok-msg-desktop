@@ -11,9 +11,8 @@
  */
 
 #include "jid.h"
-#include <QDebug>
-namespace ok{
-namespace base {
+
+namespace ok::base {
 
 //----------------------------------------------------------------------------
 // StringPrepCache
@@ -154,7 +153,11 @@ Jid::Jid() {
     null = true;
 }
 
-Jid::~Jid() {}
+Jid::~Jid() = default;
+
+Jid::Jid(const std::string& s) {
+    set(QString(s.c_str()));
+}
 
 Jid::Jid(const QString& s) { set(s); }
 
@@ -323,5 +326,4 @@ bool Jid::compare(const Jid& a, bool compareRes) const {
 
     return !(compareRes ? (f != a.f) : (b != a.b));
 }
-}  // namespace base
-}
+}  // namespace ok::base

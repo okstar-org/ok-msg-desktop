@@ -35,7 +35,7 @@ class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
-    explicit MainWindow(std::shared_ptr<ok::session::AuthSession> session,
+    explicit MainWindow(std::shared_ptr<lib::session::AuthSession> session,
                         QWidget* parent = nullptr);
     ~MainWindow();
 
@@ -53,7 +53,7 @@ protected:
     void updateIcons();
 
 private:
-    std::shared_ptr<ok::session::AuthSession> session;
+    std::shared_ptr<lib::session::AuthSession> session;
     std::unique_ptr<QTimer> timer;
     std::shared_ptr<::base::DelayedCallTimer> delayCaller;
 

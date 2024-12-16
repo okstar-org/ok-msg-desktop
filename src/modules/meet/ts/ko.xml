@@ -1,0 +1,141 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!--
+  ~ Copyright (c) 2022 船山信息 chuanshaninfo.com
+  ~ The project is licensed under Mulan PubL v2.
+  ~ You can use this software according to the terms and conditions of the Mulan
+  ~ PubL v2. You may obtain a copy of Mulan PubL v2 at:
+  ~          http://license.coscl.org.cn/MulanPubL-2.0
+  ~ THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+  ~ EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+  ~ MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+  ~ See the Mulan PubL v2 for more details.
+  -->
+
+<!DOCTYPE TS>
+<TS language="ko" version="2.1">
+    <context>
+        <name>MeetingSettingWidget</name>
+        <message>
+            <source>Form</source>
+            <translation>형</translation>
+        </message>
+        <message>
+            <source>Microphone enabled by default</source>
+            <translation>마이크는 기본적으로 켜져 있습니다.</translation>
+        </message>
+        <message>
+            <source>Camera enabled by default</source>
+            <translation>카메라는 기본적으로 켜져 있습니다</translation>
+        </message>
+        <message>
+            <source>Audible prompts for participants to enter and exit</source>
+            <translation>참가자가 입장 및 퇴장할 수 있는 음성 안내</translation>
+        </message>
+        <message>
+            <source>Automatic cloud recording</source>
+            <translation>자동 클라우드 녹화</translation>
+        </message>
+    </context>
+    <context>
+        <name>module::meet::JoinMeetingWidget</name>
+        <message>
+            <source>Meeting ID</source>
+            <translation>미팅 ID</translation>
+        </message>
+        <message>
+            <source>Join Meeting</source>
+            <translation>회의에 참여하기</translation>
+        </message>
+    </context>
+    <context>
+        <name>module::meet::MeetingOptionWidget</name>
+        <message>
+            <source>Micphone</source>
+            <translation>마이크</translation>
+        </message>
+        <message>
+            <source>Camera</source>
+            <translation>사진기</translation>
+        </message>
+    </context>
+    <context>
+        <name>module::meet::MeetingVideoFrame</name>
+        <message>
+            <source>Meeting Info</source>
+            <translation>회의 정보</translation>
+        </message>
+        <message>
+            <source>Layout</source>
+            <translation>레이아웃</translation>
+        </message>
+        <message>
+            <source>Share Meeting</source>
+            <translation>회의 공유하기</translation>
+        </message>
+        <message>
+            <source>Security</source>
+            <translation>금고</translation>
+        </message>
+        <message>
+            <source>Share</source>
+            <translation>공유</translation>
+        </message>
+    </context>
+    <context>
+        <name>module::meet::StartMeetingWidget</name>
+        <message>
+            <source>Meeting Name</source>
+            <translation>모임의 이름</translation>
+        </message>
+        <message>
+            <source>Start Meeting</source>
+            <translation>미팅 시작</translation>
+        </message>
+        <message>
+            <source>Share</source>
+            <translation>공유</translation>
+        </message>
+        <message>
+            <source>Disband</source>
+            <translation>해산</translation>
+        </message>
+    </context>
+    <context>
+        <name>module::meet::VideoLayoutPicker</name>
+        <message>
+            <source>Grid View</source>
+            <translation>그리드 보기</translation>
+        </message>
+        <message>
+            <source>List on Top</source>
+            <translation>상단에 나열됨</translation>
+        </message>
+        <message>
+            <source>List on Right</source>
+            <translation>오른쪽 목록</translation>
+        </message>
+    </context>
+    <context>
+        <name>module::meet::Widget</name>
+        <message>
+            <source>Start Meeting</source>
+            <translation>미팅 시작</translation>
+        </message>
+        <message>
+            <source>Join Meeting</source>
+            <translation>회의에 참여하기</translation>
+        </message>
+        <message>
+            <source>Book Meeting</source>
+            <translation>상담 예약하기</translation>
+        </message>
+        <message>
+            <source>Setting</source>
+            <translation>설립하다</translation>
+        </message>
+        <message>
+            <source>make share link...</source>
+            <translation>공유 링크 만들기...</translation>
+        </message>
+    </context>
+</TS>

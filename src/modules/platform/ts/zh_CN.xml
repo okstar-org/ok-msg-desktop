@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <!--
   ~ Copyright (c) 2022 船山信息 chuanshaninfo.com
   ~ The project is licensed under Mulan PubL v2.
@@ -12,12 +12,19 @@
   -->
 
 <!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<TS language="zh_CN" version="2.1">
     <context>
         <name>ok::platform::AppCenterWidget</name>
         <message>
             <source>App center</source>
             <translation>应用中心</translation>
+        </message>
+    </context>
+    <context>
+        <name>ok::platform::Widget</name>
+        <message>
+            <source>Close Tab</source>
+            <translation>关闭选项卡</translation>
         </message>
     </context>
 </TS>

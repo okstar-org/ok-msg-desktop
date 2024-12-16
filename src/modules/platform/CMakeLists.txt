@@ -6,7 +6,6 @@ file(GLOB_RECURSE ${PROJECT_NAME}_RESOURCES res/*.html res/*.js)
 file(GLOB_RECURSE ${PROJECT_NAME}_UIS src/*.ui)
 
 file(GLOB ${PROJECT_NAME}_TSS
-		ts/*.ts
 		ts/*.xml
 )
 qt5_add_translation(

@@ -1,4 +1,3 @@
-#pragma once
 /*
  * Copyright (c) 2022 船山信息 chuanshaninfo.com
  * The project is licensed under Mulan PubL v2.
@@ -10,9 +9,15 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PubL v2 for more details.
  */
+
+#pragma once
 #include <QWidget>
+
+namespace module::meet {
+
 class BookMeetingWidget : public QWidget {
     Q_OBJECT
 public:
     BookMeetingWidget(QWidget* parent = nullptr);
 };
+}  // namespace module::meet

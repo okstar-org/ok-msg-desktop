@@ -1,13 +1,13 @@
 # Ubuntu 构建指南
 
-Version：22.04
+Version：Ubuntu 24.04+
 
 ## 安装依赖
 
 ```shell
 sudo apt install -y cmake ninja-build 
 sudo apt install -y gcc g++ clang yasm libstdc++-12-dev libc++1
-sudo apt install -y qtcreator qtbase5-dev  qtmultimedia5-dev libqt5svg5-dev qttools5-dev qtwebengine5-dev qtwebengine5-dev-tools libqt5websockets5-dev\
+sudo apt install -y qtcreator qtbase5-dev  qtmultimedia5-dev libqt5svg5-dev qttools5-dev qtwebengine5-dev qtwebengine5-dev-tools libqt5websockets5-dev
 sudo apt install -y libcrypto++-dev  libssl-dev
 sudo apt install -y libpipewire-0.3-dev libxss-dev libgbm-dev libdrm-dev libxdamage-dev libxrender-dev libxrandr-dev libxtst-dev \
   libasound2-dev libpulse-dev libavcodec-dev libavformat-dev libswscale-dev libavdevice-dev libvpx-dev \
@@ -18,7 +18,7 @@ sudo apt install -y libpipewire-0.3-dev libxss-dev libgbm-dev libdrm-dev libxdam
 ## 构建OkRtc库
 
 ```shell
-git clone https://github.com/okstar-org/ok-rtc.git
+git clone -b master https://github.com/okstar-org/ok-rtc.git
 cd ok-rtc
 # 拉取子模块
 git submodule update --init

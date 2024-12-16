@@ -45,6 +45,8 @@ SendWorker::SendWorker(const FriendId& friendId) : contactId{friendId} {
     chatForm = std::make_unique<ChatForm>(&friendId, *chatHistory.get(), *messageDispatcher.get());
 
     chatRoom = std::make_unique<FriendChatroom>(&friendId, ContentDialogManager::getInstance());
+
+    // createCallDuration(true);
 }
 
 SendWorker::SendWorker(const GroupId& groupId) : contactId{groupId} {
@@ -74,7 +76,9 @@ SendWorker::SendWorker(const GroupId& groupId) : contactId{groupId} {
     chatRoom = std::make_unique<GroupChatroom>(&groupId, ContentDialogManager::getInstance());
 }
 
-SendWorker::~SendWorker() { qDebug() << __func__; }
+SendWorker::~SendWorker() {
+    qDebug() << __func__;
+}
 
 void SendWorker::clearHistory() {
     auto profile = Nexus::getProfile();
@@ -105,8 +109,8 @@ void SendWorker::initChatHeader(const ContactId& contactId) {
             &SendWorker::onVideoCallTriggered);
 }
 
-void SendWorker::startCounter(bool video) {
-    qDebug() << __func__;
+CallDurationForm* SendWorker::createCallDuration(bool video) {
+    qDebug() << __func__ << "video:" << video;
 
     if (!callDuration) {
         callDuration = std::make_unique<CallDurationForm>();
@@ -125,9 +129,11 @@ void SendWorker::startCounter(bool video) {
     } else {
         callDuration->showAvatar();
     }
+
+    return callDuration.get();
 }
 
-void SendWorker::stopCounter(bool error) {
+void SendWorker::destroyCallDuration(bool error) {
     qDebug() << __func__;
     if (!callDuration) {
         return;

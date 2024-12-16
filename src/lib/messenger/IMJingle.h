@@ -24,6 +24,7 @@
 
 #include <error.h>
 #include <inbandbytestream.h>
+#include <jingleiceudp.h>
 #include <jinglemessage.h>
 #include <messagesessionhandler.h>
 #include <presencehandler.h>
@@ -54,10 +55,32 @@ public:
     explicit IMJingle(IM* im, QObject* parent = nullptr);
     ~IMJingle() override;
 
-    IM* getIM() { return _im; }
+    static bool ParseRTP(const gloox::Jingle::RTP* rtp, ortc::ORTP& ortp);
 
-    void handleMessageSession(gloox::MessageSession* session) override;
-    void handleMessage(const gloox::Message& msg, gloox::MessageSession* session) override;
+    static ortc::OIceUdp ParseIce(const std::string& mid, const gloox::Jingle::ICEUDP* udp);
+
+    static void ParseAV(const gloox::Jingle::Session::Jingle* jingle,
+                        ortc::OJingleContentAv& contentAv);
+
+    static void ParseCandidates(gloox::Jingle::ICEUDP::CandidateList& src,
+                                ortc::CandidateList& to) {
+        for (auto& c : src) {
+            to.push_front(ortc::Candidate{c.component, c.foundation, c.generation, c.id, c.ip,
+                                          c.network, c.port, static_cast<uint32_t>(c.priority),
+                                          c.protocol, c.tcptype, c.rel_addr, c.rel_port,
+                                          static_cast<ortc::Type>(c.type)});
+        }
+    }
+
+    void ToPlugins(const ortc::OJingleContentAv& av, gloox::Jingle::PluginList& plugins);
+
+    IM* getIM() const {
+        return im;
+    }
+
+    virtual void handleMessageSession(gloox::MessageSession* session) override;
+    virtual void handleMessage(const gloox::Message& msg,
+                               gloox::MessageSession* session = 0) override;
 
 protected:
     virtual void handleJingleMessage(const IMPeerId& peerId,
@@ -67,27 +90,26 @@ protected:
 
     void handleIqID(const gloox::IQ& iq, int context) override;
 
-
-
     // receiver -> sid
     QMap<IMPeerId, QString> m_friendSessionMap;
 
-
     virtual void clearSessionInfo(const QString& sId) = 0;
 
-    IM* _im;
+    IM* im;
 
-    // 传输文件、传输视频会话的区分
-    QList<QString> m_invalid_sId;
+    QString currentSid;
+    gloox::Jingle::Session* currentSession;
 
-    void addInvalidSid(const QString& sid) { m_invalid_sId.append(sid); }
-
-    bool isInvalidSid(const QString& sid) { return m_invalid_sId.contains(sid); }
-
-private:
-    QString getSessionByFriendId(const QString& friendId);
-
-    QList<gloox::Jingle::Content*> m_ices;
+    //    // 传输文件、传输视频会话的区分
+    //    QList<QString> m_invalid_sId;
+    //
+    //    void addInvalidSid(const QString& sid) {
+    //        m_invalid_sId.append(sid);
+    //    }
+    //
+    //    bool isInvalidSid(const QString& sid) {
+    //        return m_invalid_sId.contains(sid);
+    //    }
 
 protected slots:
     virtual void onImStarted();

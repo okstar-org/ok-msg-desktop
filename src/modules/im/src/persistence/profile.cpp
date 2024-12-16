@@ -417,6 +417,7 @@ QString Profile::avatarPath(const ContactId& owner, bool forceUnencrypted) {
  * @return Avatar as QPixmap.
  */
 const QPixmap& Profile::loadAvatar() {
+    assert(core);
     if (pixmap.isNull()) {
         // 加载本地
         pixmap = loadAvatar(core->getSelfPeerId().getPublicKey());
@@ -542,7 +543,6 @@ void Profile::setAvatarOnly(const QPixmap& pixmap_) {
  * @param owner pk of friend
  */
 void Profile::setFriendAvatar(const FriendId& owner, const QByteArray& avatarData) {
-    qDebug() << __func__ << owner.toString() << "size:" << avatarData.size();
     QPixmap pixmap;
     if (!avatarData.isEmpty()) {
         bool loaded = ok::base::Images::putToPixmap(avatarData, pixmap);

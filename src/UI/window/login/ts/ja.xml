@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <!--
   ~ Copyright (c) 2022 船山信息 chuanshaninfo.com
   ~ The project is licensed under Mulan PubL v2.
@@ -12,53 +12,35 @@
   -->
 
 <!DOCTYPE TS>
-<TS version="2.1" language="ja">
+<TS language="ja" version="2.1">
+    <context>
+        <name>BannerWidget</name>
+        <message>
+            <source>Form</source>
+            <translation>形</translation>
+        </message>
+    </context>
     <context>
         <name>LoginWidget</name>
         <message>
+            <source>Form</source>
+            <translation>形</translation>
+        </message>
+        <message>
             <source>Welcome Login</source>
-            <translation>ログインへようこそ</translation>
+            <translation>ようこそログイン</translation>
         </message>
         <message>
             <source>Username</source>
-            <translation>アカウント</translation>
+            <translation>ユーザー名</translation>
+        </message>
+        <message>
+            <source>Please input phone number</source>
+            <translation>電話番号を入力してください</translation>
         </message>
         <message>
             <source>Password</source>
             <translation>パスワード</translation>
-        </message>
-
-        <message>
-            <source>Language</source>
-            <translation>言語</translation>
-        </message>
-        <message>
-            <source>Login</source>
-            <translation>ログイン＃ログイン＃</translation>
-        </message>
-        <message>
-            <source>login...</source>
-            <translation>ログイン中</translation>
-        </message>
-        <message>
-            <source>cancel</source>
-            <translation>キャンセル</translation>
-        </message>
-        <message>
-            <source>login success</source>
-            <translation>ログイン成功</translation>
-        </message>
-        <message>
-            <source>waiting</source>
-            <translation>お待ちください</translation>
-        </message>
-        <message>
-            <source>login failure</source>
-            <translation>ログインに失敗しました</translation>
-        </message>
-        <message>
-            <source>Please input phone number</source>
-            <translation>メールアドレスを入力してください</translation>
         </message>
         <message>
             <source>Please input password</source>
@@ -66,23 +48,77 @@
         </message>
         <message>
             <source>Provider</source>
-            <translation>サービスプロバイダ</translation>
+            <translation>供給者</translation>
         </message>
         <message>
             <source>Select</source>
-            <translation>選択してください</translation>
+            <translation>選ぶ</translation>
         </message>
         <message>
-            <source>Sign up</source>
-            <translation>アカウントの登録</translation>
-        </message>
-        <message>
-            <source>Forgot password</source>
-            <translation>パスワードを取り戻す</translation>
+            <source>Language</source>
+            <translation>言語</translation>
         </message>
         <message>
             <source>Remember me</source>
-            <translation>思い出す</translation>
+            <translation>私を覚えておいて</translation>
+        </message>
+        <message>
+            <source>Login</source>
+            <translation>ログイン</translation>
+        </message>
+        <message>
+            <source>Sign up</source>
+            <translation>サインアップ</translation>
+        </message>
+        <message>
+            <source>Forgot password</source>
+            <translation>パスワードを忘れた</translation>
+        </message>
+        <message>
+            <source>Settings</source>
+            <translation>設定</translation>
+        </message>
+    </context>
+    <context>
+        <name>LoginWindow</name>
+        <message>
+            <source>Form</source>
+            <translation>形</translation>
+        </message>
+    </context>
+    <context>
+        <name>UI::LoginWidget</name>
+        <message>
+            <source>Please waiting the page is loaded</source>
+            <translation>ページが読み込まれるのをお待ちください</translation>
+        </message>
+        <message>
+            <source>Please select service provider</source>
+            <translation>サービスプロバイダーを選択してください</translation>
+        </message>
+        <message>
+            <source>...</source>
+            <translation>...</translation>
+        </message>
+        <message>
+            <source>Logging in</source>
+            <translation>ログイン</translation>
+        </message>
+        <message>
+            <source>login success</source>
+            <translation>ログイン成功</translation>
+        </message>
+        <message>
+            <source>Login</source>
+            <translation>ログイン</translation>
+        </message>
+        <message>
+            <source>Network is not available!</source>
+            <translation>ネットワークが利用できません!</translation>
+        </message>
+        <message>
+            <source>Server error, please try again later!</source>
+            <translation>サーバーエラー、後でもう一度やり直してください!</translation>
         </message>
     </context>
 </TS>

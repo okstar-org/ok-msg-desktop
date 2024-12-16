@@ -9,12 +9,29 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PubL v2 for more details.
  */
+#pragma once
 
-#ifndef NETWORK_H
-#define NETWORK_H
-
+#include <QObject>
+#include <QSettings>
 #include <QString>
+#include <memory>
 
-namespace network {}
+#include "src/base/basic_types.h"
 
-#endif  // NETWORK_H
+namespace ok {
+
+class SettingManager : public QObject {
+    Q_OBJECT
+
+public:
+    SettingManager(QObject* parent = nullptr);
+    ~SettingManager();
+
+    void saveAccount(QString& account, QString& password);
+    void getAccount(ok::base::Fn<void(QString account, QString password)> callback);
+    void clearAccount();
+
+private:
+    std::unique_ptr<QSettings> settings;
+};
+}  // namespace ok

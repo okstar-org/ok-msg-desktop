@@ -402,7 +402,7 @@ void RawDatabase::process() {
         for (Query& query : trans.queries) {
             assert(query.statements.isEmpty());
 
-            qDebug() << "execute sql:" << query.query;
+            //            qDebug() << "execute sql:" << query.query;
 
             // sqlite3_prepare_v2 only compiles one statement at a time in the query,
             // we need to loop over them all

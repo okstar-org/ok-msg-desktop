@@ -23,7 +23,7 @@ namespace Ui {
 class PluginInfoForm;
 }
 
-namespace network {
+namespace lib::network {
 class NetworkHttp;
 }
 
@@ -34,7 +34,7 @@ class PluginInfoForm : public QWidget {
     Q_OBJECT
 
 public:
-    explicit PluginInfoForm(ok::backend::PluginInfo& info, QWidget* parent = nullptr);
+    explicit PluginInfoForm(lib::backend::PluginInfo& info, QWidget* parent = nullptr);
     ~PluginInfoForm();
 
     const qint64 pluginId() const { return id; }
@@ -52,8 +52,8 @@ private:
     PluginManager* pluginManager;
     quint64 id;
     QString downUrl;
-    ok::backend::PluginInfo mPluginInfo;
-    std::unique_ptr<network::NetworkHttp> http;
+    lib::backend::PluginInfo mPluginInfo;
+    std::unique_ptr<lib::network::NetworkHttp> http;
     QRecursiveMutex mMutex;
 
     bool mDownloaded;

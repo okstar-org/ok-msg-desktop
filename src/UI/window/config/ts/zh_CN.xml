@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <!--
   ~ Copyright (c) 2022 船山信息 chuanshaninfo.com
   ~ The project is licensed under Mulan PubL v2.
@@ -12,27 +12,68 @@
   -->
 
 <!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<TS language="zh_CN" version="2.1">
     <context>
-        <name>UI::ConfigWindow</name>
+        <name>AboutSettings</name>
         <message>
-            <source>Plugin form</source>
-            <translation>插件管理</translation>
+            <source>Version</source>
+            <translation>版本</translation>
         </message>
         <message>
-            <source>Settings form</source>
-            <translation>系统设置</translation>
+            <source>Open update download link</source>
+            <translation>打开更新下载链接</translation>
         </message>
         <message>
-            <source>About form</source>
-            <translation>关于</translation>
+            <source>Update available</source>
+            <translation>可用更新</translation>
+        </message>
+        <message>
+            <source>qTox is up to date ✓</source>
+            <translation>qTox 是最新的 ✓</translation>
+        </message>
+        <message>
+            <source>License</source>
+            <translation>许可证</translation>
+        </message>
+        <message>
+            <source>Authors</source>
+            <translation>作者</translation>
+        </message>
+        <message>
+            <source>Known Issues</source>
+            <translation>已知问题</translation>
         </message>
     </context>
     <context>
-        <name>UI::GeneralForm</name>
+        <name>ConfigWindow</name>
         <message>
-            <source>General</source>
-            <translation>通用</translation>
+            <source>MainWindow</source>
+            <translation>主窗口</translation>
+        </message>
+    </context>
+    <context>
+        <name>ConnectForm</name>
+        <message>
+            <source>Form</source>
+            <translation>形式</translation>
+        </message>
+        <message>
+            <source>Proxy type:</source>
+            <translation>代理类型：</translation>
+        </message>
+        <message>
+            <source>None</source>
+            <translation>没有</translation>
+        </message>
+        <message>
+            <source>Address:</source>
+            <extracomment>Text on proxy addr label</extracomment>
+            <translation>地址：</translation>
+        </message>
+        <message>
+            <source>Port:</source>
+            <extracomment>Text on proxy port label</extracomment>
+            <translation>港口：</translation>
         </message>
     </context>
     <context>
@@ -43,7 +84,15 @@
         </message>
         <message>
             <source>Autostart</source>
-            <translation>开机自动启动</translation>
+            <translation>自动启动</translation>
+        </message>
+        <message>
+            <source>Check for updates</source>
+            <translation>检查更新</translation>
+        </message>
+        <message>
+            <source>Spell checking</source>
+            <translation>拼写检查</translation>
         </message>
         <message>
             <source>Show system tray icon</source>
@@ -51,23 +100,19 @@
         </message>
         <message>
             <source>Start in tray</source>
-            <translation>启动到托盘</translation>
-        </message>
-        <message>
-            <source>Close to tray</source>
-            <translation>关闭到托盘</translation>
+            <translation>从托盘开始</translation>
         </message>
         <message>
             <source>Minimize to tray</source>
             <translation>最小化到托盘</translation>
         </message>
         <message>
-            <source>Theme</source>
-            <translation>主题</translation>
+            <source>Close to tray</source>
+            <translation>靠近托盘</translation>
         </message>
         <message>
-            <source>Style:</source>
-            <translation>风格:</translation>
+            <source>Theme</source>
+            <translation>主题</translation>
         </message>
         <message>
             <source>Theme color:</source>
@@ -83,81 +128,74 @@
         </message>
     </context>
     <context>
-        <name>ok::plugin::PluginInfoForm</name>
+        <name>PluginInfoForm</name>
         <message>
-            <source>Install</source>
+            <source>Form</source>
+            <translation>形式</translation>
+        </message>
+        <message>
+            <source>name</source>
+            <translation>名字</translation>
+        </message>
+        <message>
+            <source>version</source>
+            <translation>版本</translation>
+        </message>
+        <message>
+            <source>home</source>
+            <translation>家</translation>
+        </message>
+        <message>
+            <source>install</source>
             <translation>安装</translation>
         </message>
+    </context>
+    <context>
+        <name>PluginItemForm</name>
         <message>
-            <source>Installing</source>
-            <translation>安装中</translation>
-        </message>
-        <message>
-            <source>Uninstall</source>
-            <translation>卸载</translation>
-        </message>
-        <message>
-            <source>Uninstalling</source>
-            <translation>卸载中</translation>
+            <source>Form</source>
+            <translation>形式</translation>
         </message>
     </context>
-
+    <context>
+        <name>PluginManagerForm</name>
+        <message>
+            <source>Form</source>
+            <translation>形式</translation>
+        </message>
+    </context>
     <context>
         <name>UI::AboutForm</name>
         <message>
-            <source>About</source>
-            <translation>关于</translation>
-        </message>
-        <message>
-            <source>Original author: %1</source>
-            <translation>原作者：%1</translation>
-        </message>
-        <message>
             <source>You are using qTox version %1.</source>
-            <translation>正在使用的版本是 %1。</translation>
+            <translation>您使用的是 qTox 版本 %1。</translation>
         </message>
         <message>
             <source>Commit hash: %1</source>
-            <translation>此版本哈希值： %1</translation>
+            <translation>提交哈希： %1</translation>
         </message>
         <message>
             <source>Qt version: %1</source>
-            <translation>Qt 版本：%1</translation>
+            <translation>Qt 版本： %1</translation>
         </message>
         <message>
-            <source>A list of all known issues may be found at our %1 at Github. If you discover a bug or security
-                vulnerability, please report it according to the guidelines in our %2 wiki article.
-            </source>
-            <comment>`%1` is replaced by translation of `bug tracker`
-                `%2` is replaced by translation of `Writing Useful Bug Reports`
-            </comment>
-            <translation>所有已知问题的列表可以在 GitHub 上我们的 %1 里找到。如果您发现有错误或者安全漏洞，请根据我们的维基文章
-                %2 提交报告。
-            </translation>
+            <source>About form</source>
+            <translation>关于表单</translation>
+        </message>
+    </context>
+    <context>
+        <name>UI::ConfigWindow</name>
+        <message>
+            <source>Plugin form</source>
+            <translation>插件形式</translation>
         </message>
         <message>
-            <source>Click here to report a bug.</source>
-            <translation>单击这里提交错误。</translation>
+            <source>Settings form</source>
+            <translation>设置表单</translation>
         </message>
         <message>
-            <source>See a full list of %1 at Github</source>
-            <comment>`%1` is replaced with translation of word `contributors`</comment>
-            <translation>在 Github 上查看 %1 完整列表</translation>
-        </message>
-        <message>
-            <source>bug-tracker</source>
-            <comment>Replaces `%1` in the `A list of all knownâ¦`</comment>
-            <translation>漏洞追踪器</translation>
-        </message>
-        <message>
-            <source>Writing Useful Bug Reports</source>
-            <comment>Replaces `%2` in the `A list of all knownâ¦`</comment>
-            <translation>编写有用的错误报告</translation>
-        </message>
-        <message>
-            <source>contributors</source>
-            <comment>Replaces `%1` in `See a full list ofâ¦`</comment>
-            <translation>贡献者</translation>
+            <source>About form</source>
+            <translation>关于表单</translation>
         </message>
     </context>
     <context>
@@ -168,38 +206,43 @@
         </message>
     </context>
     <context>
-        <name>ConnectForm</name>
+        <name>UI::GeneralForm</name>
         <message>
-            <source>Connection Settings</source>
-            <translation>连接设置</translation>
+            <source>General</source>
+            <translation>常规</translation>
+        </message>
+    </context>
+    <context>
+        <name>UI::SettingsWidget</name>
+        <message>
+            <source>Settings</source>
+            <translation>设置</translation>
+        </message>
+    </context>
+    <context>
+        <name>ok::plugin::PluginInfoForm</name>
+        <message>
+            <source>Install</source>
+            <translation>安装</translation>
         </message>
         <message>
-            <source>Proxy type:</source>
-            <translation>代理类型：</translation>
+            <source>Uninstall</source>
+            <translation>卸载</translation>
         </message>
         <message>
-            <source>Address:</source>
-            <translation>代理地址：</translation>
+            <source>Installing</source>
+            <translation>安装</translation>
         </message>
         <message>
-            <source>Port:</source>
-            <translation>端口：</translation>
+            <source>Uninstalling</source>
+            <translation>卸载</translation>
         </message>
+    </context>
+    <context>
+        <name>ok::plugin::PluginManagerForm</name>
         <message>
-            <source>None</source>
-            <translation>无</translation>
-        </message>
-        <message>
-            <source>SOCKS5</source>
-            <translation>SOCKS5</translation>
-        </message>
-        <message>
-            <source>HTTP</source>
-            <translation>HTTP</translation>
-        </message>
-        <message>
-            <source>HTTPS</source>
-            <translation>HTTPS</translation>
+            <source>Plugin manager</source>
+            <translation>插件管理器</translation>
         </message>
     </context>
 </TS>

@@ -28,7 +28,7 @@ class QNetworkAccessManager;
 class QNetworkRequest;
 class QNetworkReply;
 
-namespace network {
+namespace lib::network {
 
 using HttpErrorFn = ok::base::Fn<void(int statusCode, const QByteArray body)>;
 using HttpDownloadProgressFn = ok::base::Fn<void(qint64 bytesReceived, qint64 bytesTotal)>;
@@ -107,4 +107,4 @@ protected:
     QNetworkAccessManager* _manager;
     QMap<QString, QString> headers;
 };
-}  // namespace network
+}  // namespace lib::network

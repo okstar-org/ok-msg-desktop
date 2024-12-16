@@ -12,31 +12,44 @@
 
 #pragma once
 
-#include "IMFriend.h"
-#include "IMGroup.h"
-#include "IMMessage.h"
-#include "base/timer.h"
-
-#include <QDateTime>
 #include <QString>
 #include <cstddef>
 #include <memory>
+#include "IMFriend.h"
+#include "IMGroup.h"
+#include "IMMessage.h"
+#include "base/jid.h"
+#include "base/timer.h"
+#include "lib/ortc/ok_rtc_defs.h"
 
 class QDomElement;
 class QDomDocument;
 
-namespace ok {
-namespace session {
+namespace lib::session {
 class AuthSession;
 }
-}  // namespace ok
 
 namespace lib::messenger {
-
+/**
+ * 聊天
+ */
 class IM;
+/**
+ * 会话
+ */
 class IMJingle;
+/**
+ * 文件传输
+ */
 class IMFile;
+/**
+ * 音视频
+ */
 class IMCall;
+/**
+ *  会议
+ */
+class IMMeet;
 
 /**
  * 连接状态
@@ -280,6 +293,10 @@ public:
 
     virtual void onCallAcceptByOther(const QString& callId, const IMPeerId& peerId) = 0;
 
+    virtual void onPeerConnectionChange(IMPeerId friendId,  //
+                                        QString callId,     //
+                                        ortc::PeerConnectionState state) = 0;
+
     virtual void receiveCallStateAccepted(IMPeerId friendId,  //
                                           QString callId,     //
                                           bool video) = 0;
@@ -312,7 +329,9 @@ public:
 class MessengerCall : public QObject {
     Q_OBJECT
 public:
-    MessengerCall(Messenger* messenger, QObject* parent = nullptr);
+    explicit MessengerCall(Messenger* messenger, QObject* parent = nullptr);
+    ~MessengerCall() override;
+
     void addCallHandler(CallHandler*);
 
     // 发起呼叫邀请
@@ -332,24 +351,6 @@ public:
 
 private:
     IMCall* call;
-
-    // signals:
-    //     void receiveSelfVideoFrame(uint16_t w, uint16_t h,  //
-    //                                const uint8_t* y,        //
-    //                                const uint8_t* u,        //
-    //                                const uint8_t* v,        //
-    //                                int32_t ystride,         //
-    //                                int32_t ustride,         //
-    //                                int32_t vstride);
-    //
-    //     void receiveFriendVideoFrame(const QString& friendId,  //
-    //                                  uint16_t w, uint16_t h,   //
-    //                                  const uint8_t* y,         //
-    //                                  const uint8_t* u,         //
-    //                                  const uint8_t* v,         //
-    //                                  int32_t ystride,          //
-    //                                  int32_t ustride,          //
-    //                                  int32_t vstride);
 };
 
 // 不要修改顺序和值
@@ -403,10 +404,14 @@ public:
     virtual void onFileSendError(const QString& friendId, const File& file, int m_sentBytes) = 0;
 };
 
+/**
+ * 文件传输
+ */
 class MessengerFile : public QObject {
     Q_OBJECT
 public:
-    MessengerFile(Messenger* messenger, QObject* parent = nullptr);
+    explicit MessengerFile(Messenger* messenger, QObject* parent = nullptr);
+    ~MessengerFile() override;
 
     void addFileHandler(FileHandler*);
 
@@ -422,6 +427,109 @@ public:
 
 private:
     IMFile* fileSender;
+};
+
+/**
+ * 会议
+ */
+
+struct Meet {
+    QString jid;
+    QString uid;
+    uint32_t startAudioMuted;
+    uint32_t startVideoMuted;
+    bool rtcstatsEnabled;
+};
+
+/**
+ * 会议成员
+ */
+struct Participant {
+    // 用户邮箱
+    QString email;
+    // 用户昵称
+    QString nick;
+    // 会议成员唯一标识
+    QString resource;
+    std::string avatarUrl;
+    // IM终端标识(可定位到用户和终端)
+    ok::base::Jid jid;
+    QString affiliation;
+    QString role;
+};
+
+class MessengerMeetHandler {
+public:
+    virtual void onMeetCreated(const ok::base::Jid& jid,
+                               bool ready,
+                               const std::map<std::string, std::string>& props) = 0;
+
+    virtual void onParticipantJoined(const ok::base::Jid& jid, const Participant& participant) = 0;
+
+    virtual void onParticipantLeft(const ok::base::Jid& jid, const ok::base::Jid& partJid) = 0;
+};
+
+class MessengerMeet : public QObject, public CallHandler {
+    Q_OBJECT
+public:
+    explicit MessengerMeet(Messenger* messenger, QObject* parent = nullptr);
+    ~MessengerMeet() override;
+    /**
+     * 创建会议
+     * @param room
+     */
+    void create(const QString& room);
+    /**
+     * 离开会议
+     */
+    void leave();
+    void addHandler(MessengerMeetHandler* hdr);
+
+protected:
+    void onCall(const IMPeerId& peerId,  //
+                const QString& callId,   //
+                bool audio, bool video) override;
+
+    void onCallRetract(const QString& friendId,  //
+                       CallState state) override;
+
+    void onCallAcceptByOther(const QString& callId, const IMPeerId& peerId) override;
+
+    void onPeerConnectionChange(IMPeerId friendId,  //
+                                QString callId,     //
+                                ortc::PeerConnectionState state) override;
+
+    void receiveCallStateAccepted(IMPeerId friendId,  //
+                                  QString callId,     //
+                                  bool video) override;
+
+    void receiveCallStateRejected(IMPeerId friendId,  //
+                                  QString callId,     //
+                                  bool video) override;
+
+    void onHangup(const QString& friendId,  //
+                  CallState state) override;
+
+    void onSelfVideoFrame(uint16_t w, uint16_t h,  //
+                          const uint8_t* y,        //
+                          const uint8_t* u,        //
+                          const uint8_t* v,        //
+                          int32_t ystride,         //
+                          int32_t ustride,         //
+                          int32_t vstride) override;
+
+    void onFriendVideoFrame(const QString& friendId,  //
+                            uint16_t w, uint16_t h,   //
+                            const uint8_t* y,         //
+                            const uint8_t* u,         //
+                            const uint8_t* v,         //
+                            int32_t ystride,          //
+                            int32_t ustride,          //
+                            int32_t vstride) override;
+
+private:
+    IMMeet* meet;
+    MessengerCall* call;
 };
 
 }  // namespace lib::messenger

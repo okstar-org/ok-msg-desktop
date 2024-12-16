@@ -22,15 +22,12 @@
 
 CallDurationForm::CallDurationForm(QWidget* parent)
         : QWidget(parent)
-        ,  //
-        ui(new Ui::CallDurationForm)
+        , ui(new Ui::CallDurationForm)
         , contact{nullptr}
-        ,  //
-        callDurationTimer{new QTimer()}
-        ,  //
-        muteOut{false}
+        , muteOut{false}
         , muteIn{false}
-        , netcam{nullptr} {
+        , netcam{nullptr}
+        , timeElapsed{nullptr} {
     ui->setupUi(this);
 
     setWindowFlags(Qt::FramelessWindowHint);
@@ -43,14 +40,13 @@ CallDurationForm::CallDurationForm(QWidget* parent)
     connect(ui->volButton, &QPushButton::clicked, this, &CallDurationForm::onMuteIn);
 
     reloadTheme();
+
+    callDurationTimer = new QTimer(this);
     connect(callDurationTimer, &QTimer::timeout, this, &CallDurationForm::onUpdateTime);
-    callDurationTimer->start(1000);
-    timeElapsed.start();
 }
 
 CallDurationForm::~CallDurationForm() {
-    QString dhms = ok::base::secondsToDHMS(timeElapsed.elapsed() / 1000);
-
+    //    QString dhms = ok::base::secondsToDHMS(timeElapsed.elapsed() / 1000);
     //    QString mess = error ? tr("Call with %1 ended unexpectedly. %2")
     //                         : tr("Call with %1 ended. %2");
 
@@ -58,8 +54,13 @@ CallDurationForm::~CallDurationForm() {
     //                       QDateTime::currentDateTime());
     callDurationTimer->stop();
 
-    delete callDurationTimer;
-    callDurationTimer = nullptr;
+    // delete callDurationTimer;
+    // callDurationTimer = nullptr;
+
+    if (timeElapsed != nullptr) {
+        delete timeElapsed;
+        timeElapsed = nullptr;
+    }
 
     delete ui;
 }
@@ -76,11 +77,41 @@ void CallDurationForm::reloadTheme() {
 void CallDurationForm::closeEvent(QCloseEvent* e) {}
 
 void CallDurationForm::onUpdateTime() {
-    auto time = tr("Call duration: ") + ok::base::secondsToDHMS(timeElapsed.elapsed() / 1000);
+    if (!timeElapsed) {
+        return;
+    }
+    auto time = tr("Call duration: ") + ok::base::secondsToDHMS(timeElapsed->elapsed() / 1000);
     ui->duration->setText(time);
 }
 
-void CallDurationForm::onCallEnd() { emit endCall(); }
+void CallDurationForm::startCounter() {
+    // 启动计时
+    timeElapsed = new QElapsedTimer();
+    if (timeElapsed->isValid()) {
+        qWarning() << "Unsupported QElapsedTimer!";
+        return;
+    }
+    timeElapsed->start();
+
+    // 启动计时器
+    callDurationTimer->start(1000);
+}
+
+void CallDurationForm::stopCounter() {
+    if (timeElapsed->isValid()) {
+        return;
+    }
+    timeElapsed->invalidate();
+
+    delete timeElapsed;
+    timeElapsed = nullptr;
+
+    callDurationTimer->stop();
+}
+
+void CallDurationForm::onCallEnd() {
+    emit endCall();
+}
 
 void CallDurationForm::onMuteOut() {
     muteOut = !muteOut;

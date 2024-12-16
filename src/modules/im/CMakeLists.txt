@@ -420,25 +420,13 @@ if (PLATFORM_EXTENSIONS)
     endif ()
 endif ()
 
-set(TS_FILES
-		translations/de.xml
-		translations/es.xml
-		translations/fr.xml
-		translations/it.xml
-		translations/ja.xml
-		translations/ko.xml
-		translations/pt.xml
-		translations/ru.xml
-		translations/ar.xml
-		translations/zh_CN.xml
-		translations/zh_TW.xml
+file(GLOB ${PROJECT_NAME}_TSS
+                ts/*.xml
 )
-
-qt5_create_translation(${PROJECT_NAME}_QM_FILES ${CMAKE_CURRENT_SOURCE_DIR} ${TS_FILES} OPTIONS -no-obsolete)
 
 qt5_add_translation(
 		${PROJECT_NAME}_QM_FILES
-		${TS_FILES}
+                ${${PROJECT_NAME}_TSS}
 )
 
 set(RESOURCE_NAME "${PROJECT_BINARY_DIR}/${PROJECT_NAME}.qrc.in")
@@ -500,6 +488,8 @@ if (WIN32)
                         amstrmid msdmo strmiids strmbase
                         # COM
                         Ole32 OleAut32 uuid OLDNAMES comsuppd
+                        # Windows DWM API
+                        dwmapi Shcore
                         # Shell Light-Weight Utility API
                         shlwapi
                         # IP Helper API

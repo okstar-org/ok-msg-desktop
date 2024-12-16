@@ -17,7 +17,7 @@
 #include <QString>
 #include "base/times.h"
 
-namespace ok::backend {
+namespace lib::backend {
 
 PassportService::PassportService(const QString& base, QObject* parent)
         : BaseService(base, parent) {}
@@ -25,8 +25,8 @@ PassportService::PassportService(const QString& base, QObject* parent)
 PassportService::~PassportService() {}
 
 bool PassportService::signIn(const QString& account, const QString& password,
-                             ok::base::Fn<void(Res<SysToken>&)> fn, const network::HttpErrorFn& err,
-                             bool rememberMe, const QString& grantType) {
+                             ok::base::Fn<void(Res<lib::backend::SysToken>&)> fn,
+                             const network::HttpErrorFn& err, bool rememberMe, const QString& grantType) {
     QString url = _baseUrl + "/api/auth/passport/signIn";
     QJsonObject data;
     /**
@@ -46,17 +46,18 @@ bool PassportService::signIn(const QString& account, const QString& password,
     return http->postJson(
             QUrl(url), QJsonDocument(data),
             [=](QByteArray doc, QString name) {
-                Res<SysToken> res(ok::base::Jsons::toJSON(doc));
+                Res<lib::backend::SysToken> res(ok::base::Jsons::toJSON(doc));
                 fn(res);
             },
             nullptr, nullptr,
             [=](int statusCode, QByteArray body) {
-                Res<SysToken> res(ok::base::Jsons::toJSON(body));
+                Res<lib::backend::SysToken> res(ok::base::Jsons::toJSON(body));
                 err(statusCode, res.msg.toUtf8());
             });
 }
 
-bool PassportService::refresh(const SysToken& token, ok::base::Fn<void(Res<SysRefreshToken>&)> fn,
+bool PassportService::refresh(const lib::backend::SysToken& token,
+                              ok::base::Fn<void(Res<SysRefreshToken>&)> fn,
                               network::HttpErrorFn err) {
     QJsonObject data;
     data.insert("ts", ok::base::Times::now().toMSecsSinceEpoch());
@@ -73,4 +74,4 @@ bool PassportService::refresh(const SysToken& token, ok::base::Fn<void(Res<SysRe
             nullptr, nullptr, err);
 }
 
-}  // namespace ok::backend
+}  // namespace lib::backend

@@ -13,20 +13,86 @@
 #ifndef MEETINGVIDEOSLAYOUT_H
 #define MEETINGVIDEOSLAYOUT_H
 
+#include <QMap>
+#include <QScrollArea>
 #include <QWidget>
-
 #include "MeetingVideoDefines.h"
 
-class MeetingVideosLayout : public QWidget {
+class QSplitter;
+class QPushButton;
+
+namespace module::meet {
+
+class MeetingVideosLayout;
+class MeetingParticipant;
+class MeetingVideoOutput;
+
+class MeetingVideosContainer : public QWidget {
+    Q_OBJECT
 public:
-    MeetingVideosLayout(QWidget* parent);
-    void resetLayout(module::meet::VideoLayoutType type);
-    module::meet::VideoLayoutType currentLayoutType() const;
+    MeetingVideosContainer(QWidget* parent);
+    void resetLayout(VideoLayoutType type);
+    VideoLayoutType currentLayoutType() const;
     QSize sizeHint() const;
     QSize minimumSizeHint() const;
 
+    void addParticipant(MeetingParticipant* user);
+    void removeParticipant(MeetingParticipant* user);
+    void clearParticipant();
+
 private:
-    module::meet::VideoLayoutType layoutType = module::meet::GridView;
+    void doResetLayout();
+    MeetingVideoOutput* getCenterVideo();
+
+private:
+    VideoLayoutType layoutType = GridView;
+
+    MeetingVideosLayout* participantLayout = nullptr;
+    MeetingVideoOutput* centerVideo = nullptr;
+    QSplitter* splitter = nullptr;
 };
 
+class MeetingVideosLayout : public QWidget {
+    Q_OBJECT
+public:
+    enum class LayoutType { Grid, Horizontal, Vertical };
+
+public:
+    MeetingVideosLayout(LayoutType type, QWidget* parent);
+    void setLayoutType(MeetingVideosLayout::LayoutType type, int pageCellCount);
+    void setPageCellCount(int count);
+    void addParticipant(MeetingParticipant* participant);
+    void removeParticipant(MeetingParticipant* participant);
+    void clearParticipant();
+
+private:
+    void doLayout();
+    void doGridLayout(int cols);
+    void nextPage();
+    void previousPage();
+
+    void rebindVideos();
+    void updateButtonState();
+    void updateButtonGeo();
+    void updateButtonIcon();
+    int recalcPageCount();
+
+    bool event(QEvent* e);
+
+private:
+    int cellCount = 1;
+
+    QList<MeetingParticipant*> allParticipant;
+    QList<MeetingVideoOutput*> cellVideos;
+    LayoutType _type = LayoutType::Grid;
+
+    int pageIndex = 0;
+    int pageCount = 1;
+
+    QPushButton* nextPageButton = nullptr;
+    QPushButton* prevPageButton = nullptr;
+
+    friend class MeetingVideosContainer;
+};
+}  // namespace module::meet
 #endif  // !MEETINGVIDEOSLAYOUT_H

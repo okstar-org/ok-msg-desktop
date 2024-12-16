@@ -51,7 +51,8 @@
 
 static Nexus* m_self;
 
-Nexus::Nexus(QObject* parent) : stared(false), profile{nullptr}, m_widget{nullptr} {
+Nexus::Nexus(QObject* parent)
+        : name{OK_IM_MODULE}, stared(false), profile{nullptr}, m_widget{nullptr} {
     qDebug() << __func__;
 
     Q_INIT_RESOURCE(res);
@@ -97,7 +98,7 @@ void Nexus::onSave(SavedInfo& savedInfo) {
  * Hides the login screen and shows the GUI for the given profile.
  * Will delete the current GUI, if it exists.
  */
-void Nexus::start(std::shared_ptr<ok::session::AuthSession> session) {
+void Nexus::start(std::shared_ptr<lib::session::AuthSession> session) {
     auto& signInInfo = session->getSignInInfo();
     qDebug() << __func__ << "for user:" << signInInfo.username;
 
@@ -208,9 +209,17 @@ void Nexus::start(std::shared_ptr<ok::session::AuthSession> session) {
 #endif
 }
 
-void Nexus::hide() { m_widget->hide(); }
+void Nexus::stop() {
+    // TODO 断开IM连接
+}
 
-QString Nexus::name() { return Nexus::Name(); }
+void Nexus::hide() {
+    m_widget->hide();
+}
+
+const QString& Nexus::getName() const {
+    return name;
+}
 
 void Nexus::do_logout(const QString& profileName) {
     Settings::getInstance().saveGlobal();
@@ -369,7 +378,9 @@ Core* Nexus::getCore() {
  * @return nullptr if not started, profile otherwise.
  * @deprecated
  */
-Profile* Nexus::getProfile() { return getInstance().profile; }
+Profile* Nexus::getProfile() {
+    return getInstance().profile;
+}
 
 /**
  * @brief Creates a new profile and replaces the current one.
@@ -404,13 +415,17 @@ void Nexus::setProfile(Profile* p) {
     emit currentProfileChanged(p);
 }
 
-void Nexus::setParser(QCommandLineParser* parser) { this->parser = parser; }
+void Nexus::setParser(QCommandLineParser* parser) {
+    this->parser = parser;
+}
 
 /**
  * @brief Get desktop GUI widget.
  * @return nullptr if not started, desktop widget otherwise.
  */
-Widget* Nexus::getDesktopGUI() { return dynamic_cast<Widget*>(getInstance().widget()); }
+Widget* Nexus::getDesktopGUI() {
+    return dynamic_cast<Widget*>(getInstance().widget());
+}
 
 void Nexus::bootstrapWithProfileName(const QString& host, const QString& profileName) {
     qDebug() << "bootstrapWithProfileName" << profileName;
@@ -432,8 +447,9 @@ void Nexus::bootstrapWithProfileName(const QString& host, const QString& profile
     }
 }
 
-QString Nexus::Name() { return OK_IM_MODULE; }
-QWidget* Nexus::widget() { return m_widget->getInstance(); }
+QWidget* Nexus::widget() {
+    return m_widget->getInstance();
+}
 
 #ifdef Q_OS_MAC
 void Nexus::retranslateUi() {
@@ -460,7 +476,9 @@ void Nexus::onWindowStateChanged(Qt::WindowStates state) {
     updateWindowsStates();
 }
 
-void Nexus::updateWindows() { updateWindowsArg(nullptr); }
+void Nexus::updateWindows() {
+    updateWindowsArg(nullptr);
+}
 
 void Nexus::updateWindowsArg(QWindow* closedWindow) {
     QWindowList windowList = QApplication::topLevelWindows();

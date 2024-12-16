@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <!--
   ~ Copyright (c) 2022 船山信息 chuanshaninfo.com
   ~ The project is licensed under Mulan PubL v2.
@@ -12,24 +12,130 @@
   -->
 
 <!DOCTYPE TS>
-<TS version="2.1" language="ja_JP">
+<TS language="ja" version="2.1">
+    <context>
+        <name>MeetingSettingWidget</name>
+        <message>
+            <source>Form</source>
+            <translation>形</translation>
+        </message>
+        <message>
+            <source>Microphone enabled by default</source>
+            <translation>マイクはデフォルトでオンになっています</translation>
+        </message>
+        <message>
+            <source>Camera enabled by default</source>
+            <translation>カメラはデフォルトでオンになっています</translation>
+        </message>
+        <message>
+            <source>Audible prompts for participants to enter and exit</source>
+            <translation>参加者の入退室を促す音声</translation>
+        </message>
+        <message>
+            <source>Automatic cloud recording</source>
+            <translation>自動クラウド録画</translation>
+        </message>
+    </context>
+    <context>
+        <name>module::meet::JoinMeetingWidget</name>
+        <message>
+            <source>Meeting ID</source>
+            <translation>ミーティング ID</translation>
+        </message>
+        <message>
+            <source>Join Meeting</source>
+            <translation>ミーティングに参加する</translation>
+        </message>
+    </context>
+    <context>
+        <name>module::meet::MeetingOptionWidget</name>
+        <message>
+            <source>Micphone</source>
+            <translation>マイク</translation>
+        </message>
+        <message>
+            <source>Camera</source>
+            <translation>カメラ</translation>
+        </message>
+    </context>
+    <context>
+        <name>module::meet::MeetingVideoFrame</name>
+        <message>
+            <source>Meeting Info</source>
+            <translation>ミーティング情報</translation>
+        </message>
+        <message>
+            <source>Layout</source>
+            <translation>レイアウト</translation>
+        </message>
+        <message>
+            <source>Share Meeting</source>
+            <translation>会議を共有する</translation>
+        </message>
+        <message>
+            <source>Security</source>
+            <translation>金庫</translation>
+        </message>
+        <message>
+            <source>Share</source>
+            <translation>共有</translation>
+        </message>
+    </context>
+    <context>
+        <name>module::meet::StartMeetingWidget</name>
+        <message>
+            <source>Meeting Name</source>
+            <translation>会議の名前</translation>
+        </message>
+        <message>
+            <source>Start Meeting</source>
+            <translation>会議を開始する</translation>
+        </message>
+        <message>
+            <source>Share</source>
+            <translation>共有</translation>
+        </message>
+        <message>
+            <source>Disband</source>
+            <translation>解散する</translation>
+        </message>
+    </context>
+    <context>
+        <name>module::meet::VideoLayoutPicker</name>
+        <message>
+            <source>Grid View</source>
+            <translation>グリッドビュー</translation>
+        </message>
+        <message>
+            <source>List on Top</source>
+            <translation>上部にリストされています</translation>
+        </message>
+        <message>
+            <source>List on Right</source>
+            <translation>右側にリスト</translation>
+        </message>
+    </context>
     <context>
         <name>module::meet::Widget</name>
         <message>
-            <source>Start Metting</source>
-            <translation>Start Metting</translation>
+            <source>Start Meeting</source>
+            <translation>会議を開始する</translation>
         </message>
         <message>
-            <source>Join Metting</source>
-            <translation>Join Metting</translation>
+            <source>Join Meeting</source>
+            <translation>ミーティングに参加する</translation>
         </message>
         <message>
-            <source>Book Metting</source>
-            <translation>Book Metting</translation>
+            <source>Book Meeting</source>
+            <translation>ミーティングを予約する</translation>
         </message>
         <message>
             <source>Setting</source>
-            <translation>Setting</translation>
+            <translation>並べる</translation>
+        </message>
+        <message>
+            <source>make share link...</source>
+            <translation>共有リンクを作成...</translation>
         </message>
     </context>
 </TS>

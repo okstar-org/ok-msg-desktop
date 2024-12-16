@@ -15,9 +15,7 @@
 #include <base/logs.h>
 #include <QUrl>
 
-namespace ok::backend {
-
-using namespace network;
+namespace lib::backend {
 
 UserService::UserService(const QString& base, QObject* parent) : BaseService(base, parent) {}
 
@@ -43,4 +41,4 @@ void UserService::search(const QString& query, ok::base::Fn<void(const QList<Org
             errFn);
 }
 
-}  // namespace ok::backend
+}  // namespace lib::backend

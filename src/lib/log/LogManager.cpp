@@ -4,10 +4,10 @@
  * You can use this software according to the terms and conditions of the Mulan
  * PubL v2. You may obtain a copy of Mulan PubL v2 at:
  *          http://license.coscl.org.cn/MulanPubL-2.0
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY
- * KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
- * NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE. See the
- * Mulan PubL v2 for more details.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PubL v2 for more details.
  */
 
 //
@@ -25,8 +25,7 @@
 #include <QMutexLocker>
 #include <QThread>
 
-namespace ok {
-namespace lib {
+namespace ok::lib {
 
 static QAtomicPointer<QFile> logFilePointer;
 static QMutex logMutex;
@@ -82,7 +81,7 @@ static LogManager* log = nullptr;
 LogManager::LogManager() {
     qDebug() << "Initialize LogManager";
     logFileDir = base::OkSettings::getAppLogPath();
-    qDebug() << "Log file dir is:" << logFileDir;
+    qDebug() << "Log file dir is:" << logFileDir.absolutePath();
 
     logName = APPLICATION_NAME "-" +
               ::ok::base::Times::formatTime(::ok::base::Times::now(), "yyyyMMddHHmmss") + "-" +
@@ -110,5 +109,4 @@ void LogManager::Destroy() {
     log = nullptr;
 }
 
-}  // namespace lib
-}  // namespace ok
+}  // namespace ok::lib

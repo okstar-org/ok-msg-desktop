@@ -17,7 +17,7 @@ dnf install -y qt5-qtbase-devel qt6-qtbase-gui  qt5-qtmultimedia-devel \
 ### 构建OkRtc模块
 
 ```shell
-git clone https://github.com/okstar-org/ok-rtc.git
+git clone -b master https://github.com/okstar-org/ok-rtc.git
 cd ok-rtc
 # 拉取子模块
 git submodule update --init

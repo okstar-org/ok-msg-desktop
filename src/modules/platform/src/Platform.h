@@ -29,8 +29,9 @@ public:
     Platform();
     virtual ~Platform();
     void init(Profile* p) override;
-    QString name() override;
-    void start(std::shared_ptr<ok::session::AuthSession> session) override;
+    const QString& getName() const override;
+    void start(std::shared_ptr<lib::session::AuthSession> session) override;
+    void stop() override;
     bool isStarted() override;
     void onSave(SavedInfo&) override;
     void cleanup() override;
@@ -43,6 +44,7 @@ public:
 private:
     std::unique_ptr<Widget> m_widget;
     PlatformPageContainer* pageContainter = nullptr;
+    QString name;
 };
 
 }  // namespace ok::platform

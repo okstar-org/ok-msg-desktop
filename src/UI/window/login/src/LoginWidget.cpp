@@ -18,7 +18,7 @@
 #include <QWidget>
 #include <memory>
 
-#include "UI/core/SettingManager.h"
+#include "SettingManager.h"
 #include "base/OkSettings.h"
 #include "base/logs.h"
 #include "base/widgets.h"
@@ -29,10 +29,10 @@
 namespace UI {
 
 using namespace ok;
-using namespace ok::session;
+using namespace lib::session;
 using namespace ok::base;
 
-LoginWidget::LoginWidget(std::shared_ptr<ok::session::AuthSession> session, bool bootstrap,
+LoginWidget::LoginWidget(std::shared_ptr<lib::session::AuthSession> session, bool bootstrap,
                          QWidget* parent)
         : QWidget(parent)
         , ui(new Ui::LoginWidget)
@@ -48,8 +48,10 @@ LoginWidget::LoginWidget(std::shared_ptr<ok::session::AuthSession> session, bool
     m_loginKey = new QShortcut(QKeySequence(Qt::Key_Return), this);
     connect(m_loginKey, SIGNAL(activated()), this, SLOT(on_loginBtn_released()));
 
-    // translator
-    settings::Translator::registerHandler([&] { retranslateUi(); }, this);
+    // settings
+    //  ui->settings->hide();
+    ui->settings->setCursor(Qt::PointingHandCursor);
+    ui->settings->installEventFilter(this);
 
     // timer for login #TODO need to refactor
     if (bootstrap) {
@@ -60,10 +62,14 @@ LoginWidget::LoginWidget(std::shared_ptr<ok::session::AuthSession> session, bool
     }
 
     // session
-    connect(session.get(),              //
-            &AuthSession::loginResult,  //
+    connect(session.get(),                            //
+            &lib::session::AuthSession::loginResult,  //
             this, &LoginWidget::onLoginResult);
     init();
+
+    // translator
+    settings::Translator::registerHandler([&] { retranslateUi(); }, this);
+    retranslateUi();
 }
 
 LoginWidget::~LoginWidget() {
@@ -93,12 +99,10 @@ void LoginWidget::init() {
     auto i = setting.getLocales().indexOf(setting.getTranslation());
     if (i >= 0 && i < ui->language->count()) ui->language->setCurrentIndex(i + 1);
 
-    retranslateUi();
-
     // 3.provider
-    okCloudService = new ok::backend::OkCloudService(this);
+    okCloudService = new lib::backend::OkCloudService(this);
     okCloudService->GetFederalInfo(
-            [&](ok::backend::Res<ok::backend::FederalInfo>& res) {
+            [&](lib::backend::Res<lib::backend::FederalInfo>& res) {
                 for (const auto& item : res.data->states) {
                     if (!item.xmppHost.isEmpty()) {
                         ui->providers->addItem(item.name);
@@ -128,16 +132,15 @@ void LoginWidget::init() {
             "QLabel { color: blue; text-decoration: underline; } "
             "QLabel:hover { color: red; }");
     ui->signUp->setCursor(Qt::PointingHandCursor);
+    ui->signUp->installEventFilter(this);
 
     ui->findPwd->setStyleSheet(
             "QLabel { color: blue; text-decoration: underline; } "
             "QLabel:hover { color: red; }");
     ui->findPwd->setCursor(Qt::PointingHandCursor);
+    ui->findPwd->installEventFilter(this);
 
     ui->loginBtn->setCursor(Qt::PointingHandCursor);
-
-    ui->signUp->installEventFilter(this);
-    ui->findPwd->installEventFilter(this);
 }
 
 void LoginWidget::deinit() {}
@@ -162,11 +165,11 @@ void LoginWidget::doLogin() {
     // 对登录时状态判断
     auto status = session->status();
     switch (status) {
-        case ok::session::Status::SUCCESS: {
+        case lib::session::Status::SUCCESS: {
             qDebug(("SUCCESS ..."));
             return;
         }
-        case ok::session::Status::CONNECTING: {
+        case lib::session::Status::CONNECTING: {
             qDebug(("CONNECTING ..."));
             //    sess->interrupt();
             return;
@@ -199,13 +202,13 @@ void LoginWidget::doLogin() {
     }
 }
 
-void LoginWidget::onLoginResult(ok::session::SignInInfo info, ok::session::LoginResult result) {
+void LoginWidget::onLoginResult(lib::session::SignInInfo info, lib::session::LoginResult result) {
     qDebug() << __func__ << "result=> " << result.msg;
 
     switch (result.status) {
-        case ok::session::Status::NONE:
+        case lib::session::Status::NONE:
             break;
-        case ok::session::Status::CONNECTING: {
+        case lib::session::Status::CONNECTING: {
             ui->loginMessage->setText(tr("..."));
             ui->loginBtn->setText(tr("Logging in"));
             QString account(ui->accountInput->text());
@@ -213,21 +216,23 @@ void LoginWidget::onLoginResult(ok::session::SignInInfo info, ok::session::Login
             emit loginFailed(account, password);
             break;
         }
-        case ok::session::Status::SUCCESS: {
+        case lib::session::Status::SUCCESS: {
             ui->loginMessage->setText(tr("login success"));
             QString account(ui->accountInput->text());
             QString password(ui->passwordInput->text());
             emit loginSuccess(account, password);
             break;
         }
-        case ok::session::Status::FAILURE:
+        case lib::session::Status::FAILURE:
             ui->loginBtn->setText(tr("Login"));
             onError(result.statusCode, result.msg);
             break;
     }
 }
 
-void LoginWidget::on_loginBtn_released() { doLogin(); }
+void LoginWidget::on_loginBtn_released() {
+    doLogin();
+}
 
 /**
  * 语言选择事件
@@ -298,11 +303,18 @@ void LoginWidget::onError(int statusCode, const QString& msg) {
     m_timer.reset();
 }
 
-void LoginWidget::setMsg(const QString& msg) { ui->loginMessage->setText(msg); }
+void LoginWidget::setMsg(const QString& msg) {
+    ui->loginMessage->setText(msg);
+}
 
 bool LoginWidget::eventFilter(QObject* obj, QEvent* event) {
     switch (event->type()) {
         case QEvent::MouseButtonPress: {
+            if (obj == ui->settings) {
+                showSettingDialog();
+                break;
+            }
+
             auto providerIdx = ui->providers->currentIndex();
             // validate
             if (providerIdx <= 0 || m_stacks.size() <= 0) {
@@ -317,6 +329,7 @@ bool LoginWidget::eventFilter(QObject* obj, QEvent* event) {
             } else if (obj == ui->findPwd) {
                 QDesktopServices::openUrl(QUrl(host + "/auth/forgot"));
             }
+
             break;
         }
         default:
@@ -326,6 +339,10 @@ bool LoginWidget::eventFilter(QObject* obj, QEvent* event) {
 }
 
 void LoginWidget::showEvent(QShowEvent* e) {}
+
+void LoginWidget::showSettingDialog() {
+    qDebug() << __func__;
+}
 
 void LoginWidget::onTimeout() {
     if (ui->rember->isChecked() && ui->providers->count() > 0) {

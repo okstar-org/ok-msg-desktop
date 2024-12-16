@@ -1,0 +1,1966 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!--
+  ~ Copyright (c) 2022 船山信息 chuanshaninfo.com
+  ~ The project is licensed under Mulan PubL v2.
+  ~ You can use this software according to the terms and conditions of the Mulan
+  ~ PubL v2. You may obtain a copy of Mulan PubL v2 at:
+  ~          http://license.coscl.org.cn/MulanPubL-2.0
+  ~ THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+  ~ EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+  ~ MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+  ~ See the Mulan PubL v2 for more details.
+  -->
+
+<!DOCTYPE TS>
+<TS language="ja" version="2.1">
+    <context>
+        <name>AVForm</name>
+        <message>
+            <source>Audio Settings</source>
+            <translation>音声の設定</translation>
+        </message>
+        <message>
+            <source>Capture device</source>
+            <translation>入力デバイス</translation>
+        </message>
+        <message>
+            <source>Test Sound</source>
+            <translation>サウンドをテスト</translation>
+        </message>
+        <message>
+            <source>Use slider to set volume of your speakers.</source>
+            <translation>スライダーを使用して、スピーカーの音量を調節してください。</translation>
+        </message>
+        <message>
+            <source>Volume</source>
+            <translation>ボリューム</translation>
+        </message>
+        <message>
+            <source>Gain</source>
+            <translation>ゲイン</translation>
+        </message>
+        <message>
+            <source>Threshold</source>
+            <translation>しきい値</translation>
+        </message>
+        <message>
+            <source>Playback device</source>
+            <translation>出力デバイス</translation>
+        </message>
+        <message>
+            <source>Audio quality</source>
+            <translation>音質</translation>
+        </message>
+        <message>
+            <source>Transmitted audio quality. Lower this setting if your bandwidth is not high enough or if you want to lower the internet usage.</source>
+            <translation>伝送されたオーディオ品質。帯域幅が十分に高くない場合、またはインターネットの使用量を減らしたい場合は、この設定を下げます。</translation>
+        </message>
+        <message>
+            <source>Video Settings</source>
+            <translation>ビデオ設定</translation>
+        </message>
+        <message>
+            <source>Video device</source>
+            <translation>ビデオデバイス</translation>
+        </message>
+        <message>
+            <source>Set resolution of your camera.
+The higher values, the better video quality your friends may get.
+Note though that with better video quality there is needed better internet connection.
+Sometimes your connection may not be good enough to handle higher video quality,
+which may lead to problems with video calls.</source>
+            <translation>カメラの解像度を設定します。
+値が高いほど、友達のビデオ品質が向上する可能性があります。
+ただし、ビデオ品質が向上すると、インターネット接続が改善される必要があることに注意してください。
+接続が高画質のビデオを処理するのに十分でない場合もあります。
+これにより、ビデオ通話で問題が発生する可能性があります。</translation>
+        </message>
+        <message>
+            <source>Resolution</source>
+            <translation>解像度</translation>
+        </message>
+        <message>
+            <source>Rescan devices</source>
+            <translation>デバイスを再検索</translation>
+        </message>
+        <message>
+            <source>Play a test sound while changing the output volume.</source>
+            <translation>出力音量を変更しながらテストサウンドを再生します。</translation>
+        </message>
+        <message>
+            <source>Use slider to set the gain of your input device ranging from %1dB to %2dB.</source>
+            <translation>スライダーを使用して、入力デバイスのゲインを%1dBから%2dBの範囲で設定します。</translation>
+        </message>
+        <message>
+            <source>Use slider to set the activation volume for your input device.</source>
+            <translation>スライダーを使用して、入力デバイスのアクティベーション音量を設定します。</translation>
+        </message>
+        <message>
+            <source>Default resolution</source>
+            <translation>デフォルトの解像度</translation>
+        </message>
+        <message>
+            <source>Screen %1</source>
+            <translation>スクリーン %1</translation>
+        </message>
+        <message>
+            <source>Select region</source>
+            <translation>範囲を選択</translation>
+        </message>
+        <message>
+            <source>High (64 kbps)</source>
+            <translation>高 (64 kbps)</translation>
+        </message>
+        <message>
+            <source>Medium (32 kbps)</source>
+            <translation>中 (32 kbps)</translation>
+        </message>
+        <message>
+            <source>Low (16 kbps)</source>
+            <translation>低 (16 kbps)</translation>
+        </message>
+        <message>
+            <source>Very low (8 kbps)</source>
+            <translation>非常に低い (8 kbps)</translation>
+        </message>
+        <message>
+            <source>Disabled</source>
+            <translation>無効</translation>
+        </message>
+        <message>
+            <source>Audio/Video</source>
+            <translation>音声/ビデオ</translation>
+        </message>
+    </context>
+    <context>
+        <name>AboutFriendForm</name>
+        <message>
+            <source>Dialog</source>
+            <translation>] ダイアログ</translation>
+        </message>
+        <message>
+            <source>username</source>
+            <translation>ユーザー名</translation>
+        </message>
+        <message>
+            <source>status message</source>
+            <translation>ステータスメッセージ</translation>
+        </message>
+        <message>
+            <source>Send message</source>
+            <translation>メッセージを送信</translation>
+        </message>
+        <message>
+            <source>Default directory to save files:</source>
+            <translation>ファイルを保存するデフォルトの場所:</translation>
+        </message>
+        <message>
+            <source>Account:</source>
+            <translation>銀行口座:</translation>
+        </message>
+        <message>
+            <source>Automatically accept files from contact if set</source>
+            <translation>設定した場合、連絡先からのファイルを自動的に承認します</translation>
+        </message>
+        <message>
+            <source>Auto accept files</source>
+            <translation>ファイルを自動承認</translation>
+        </message>
+        <message>
+            <source>Manual</source>
+            <translation>手動</translation>
+        </message>
+        <message>
+            <source>Audio</source>
+            <translation>音声</translation>
+        </message>
+        <message>
+            <source>Audio + Video</source>
+            <translation>音声とビデオ</translation>
+        </message>
+        <message>
+            <source>Alias:</source>
+            <translation>別名：</translation>
+        </message>
+        <message>
+            <source>Clear</source>
+            <translation>クリア</translation>
+        </message>
+        <message>
+            <source>Clear history:</source>
+            <translation>履歴のクリア:</translation>
+        </message>
+        <message>
+            <source>Auto accept call:</source>
+            <translation>自動承認通話:</translation>
+        </message>
+        <message>
+            <source>Auto accept for this contact is disabled</source>
+            <translation>この連絡先からの自動承認は無効になっています</translation>
+        </message>
+        <message>
+            <source>Choose an auto accept directory</source>
+            <extracomment>popup title</extracomment>
+            <translation>自動承認したファイルの保存場所を選択</translation>
+        </message>
+        <message>
+            <source>Confirmation</source>
+            <translation>確認</translation>
+        </message>
+        <message>
+            <source>Are you sure to remove %1 chat history?</source>
+            <translation>%1チャットの履歴を削除してもよろしいですか?</translation>
+        </message>
+    </context>
+    <context>
+        <name>AboutGroupForm</name>
+        <message>
+            <source>Form</source>
+            <translation>フォーム</translation>
+        </message>
+        <message>
+            <source>Automatically accept files from contact if set</source>
+            <translation>設定した場合、連絡先からのファイルを自動的に承認します</translation>
+        </message>
+        <message>
+            <source>Auto accept files</source>
+            <translation>ファイルを自動承認</translation>
+        </message>
+        <message>
+            <source>Auto accept call:</source>
+            <translation>自動承認通話:</translation>
+        </message>
+        <message>
+            <source>Name:</source>
+            <translation>名前：</translation>
+        </message>
+        <message>
+            <source>Clear history:</source>
+            <translation>履歴のクリア:</translation>
+        </message>
+        <message>
+            <source>Manual</source>
+            <translation>手動</translation>
+        </message>
+        <message>
+            <source>Audio</source>
+            <translation>音声</translation>
+        </message>
+        <message>
+            <source>Audio + Video</source>
+            <translation>音声とビデオ</translation>
+        </message>
+        <message>
+            <source>Description:</source>
+            <translation>形容：</translation>
+        </message>
+        <message>
+            <source>Clear</source>
+            <translation>クリア</translation>
+        </message>
+        <message>
+            <source>Alias:</source>
+            <translation>別名：</translation>
+        </message>
+        <message>
+            <source>Send notice:</source>
+            <translation>通知を送信する:</translation>
+        </message>
+        <message>
+            <source>Automatically accept group chat invitations from this contact if set.</source>
+            <translation>設定した場合、この連絡先からのグループチャットの招待を自動的に承認します。</translation>
+        </message>
+        <message>
+            <source>Auto accept group invites</source>
+            <translation>グループ招待を自動承認</translation>
+        </message>
+        <message>
+            <source>Account:</source>
+            <translation>銀行口座:</translation>
+        </message>
+        <message>
+            <source>Occupants:</source>
+            <translation>会員数:</translation>
+        </message>
+        <message>
+            <source>Add member</source>
+            <translation>メンバーを追加する</translation>
+        </message>
+        <message>
+            <source>Send message</source>
+            <translation>メッセージを送信</translation>
+        </message>
+        <message>
+            <source>groupname</source>
+            <translation>グループ名</translation>
+        </message>
+    </context>
+    <context>
+        <name>AddFriendForm</name>
+        <message>
+            <source>Form</source>
+            <translation>フォーム</translation>
+        </message>
+        <message>
+            <source>Search</source>
+            <translation>捜索</translation>
+        </message>
+        <message>
+            <source>Account/E-Mail/Phone Number</source>
+            <translation>口座番号/メールアドレス/携帯電話番号</translation>
+        </message>
+        <message>
+            <source>hello,I'm </source>
+            <translation>こんにちは、です</translation>
+        </message>
+        <message>
+            <source>Couldn't add friend</source>
+            <translation>友達を登録できない</translation>
+        </message>
+        <message>
+            <source>%1 Ok ID is invalid</source>
+            <comment>Tox address error</comment>
+            <translation>%1 OK ID が無効です</translation>
+        </message>
+        <message>
+            <source>You can't add yourself as a friend!</source>
+            <translation>自分自身を友達として登録することはできません！</translation>
+        </message>
+        <message>
+            <source>Search users</source>
+            <translation>友達を検索する</translation>
+        </message>
+        <message>
+            <source>Add a friend</source>
+            <translation>友達を追加する</translation>
+        </message>
+    </context>
+    <context>
+        <name>CallDurationForm</name>
+        <message>
+            <source>Form</source>
+            <translation>フォーム</translation>
+        </message>
+        <message>
+            <source>00:00:00</source>
+            <translation>00:00:00.000</translation>
+        </message>
+        <message>
+            <source>Call duration: </source>
+            <translation>通話時間:</translation>
+        </message>
+    </context>
+    <context>
+        <name>ChatForm</name>
+        <message>
+            <source>Filename contained illegal characters</source>
+            <translation>ファイル名に不正な文字が含まれています</translation>
+        </message>
+        <message>
+            <source>Illegal characters have been changed to _ 
+so you can save the file on windows.</source>
+            <translation>不正な文字は _ に変更されました
+そのため、Windowsでファイルを保存できます。</translation>
+        </message>
+        <message>
+            <source>Calling %1</source>
+            <translation>%1 を呼び出しています</translation>
+        </message>
+        <message>
+            <source>Unable to open</source>
+            <translation>開けません</translation>
+        </message>
+        <message>
+            <source>qTox wasn't able to open %1</source>
+            <translation>qTox は %1 を開けませんでした</translation>
+        </message>
+        <message>
+            <source>Bad idea</source>
+            <translation>不正な操作</translation>
+        </message>
+        <message>
+            <source>You're trying to send a sequential file, which is not going to work!</source>
+            <translation>シーケンシャルファイルを送信しようとしているが、うまくいかない。</translation>
+        </message>
+        <message>
+            <source>Failed to open temporary file</source>
+            <comment>Temporary file for screenshot</comment>
+            <translation>一時ファイルを開けませんでした</translation>
+        </message>
+        <message>
+            <source>qTox wasn't able to save the screenshot</source>
+            <translation>qTox はスクリーンショットを保存できませんでした</translation>
+        </message>
+        <message>
+            <source>Copy</source>
+            <translation>コピー</translation>
+        </message>
+    </context>
+    <context>
+        <name>ChatFormHeader</name>
+        <message>
+            <source>Can't start audio call</source>
+            <translation>音声通話を開始できません</translation>
+        </message>
+        <message>
+            <source>Start audio call</source>
+            <translation>音声通話を開始</translation>
+        </message>
+        <message>
+            <source>End audio call</source>
+            <translation>音声通話を終了</translation>
+        </message>
+        <message>
+            <source>Cancel audio call</source>
+            <translation>音声通話をキャンセル</translation>
+        </message>
+        <message>
+            <source>Accept audio call</source>
+            <translation>音声通話を承認</translation>
+        </message>
+        <message>
+            <source>Can't start video call</source>
+            <translation>ビデオ通話を開始できません</translation>
+        </message>
+        <message>
+            <source>Start video call</source>
+            <translation>ビデオ通話を開始</translation>
+        </message>
+        <message>
+            <source>End video call</source>
+            <translation>ビデオ通話を終了</translation>
+        </message>
+        <message>
+            <source>Cancel video call</source>
+            <translation>ビデオ通話をキャンセル</translation>
+        </message>
+        <message>
+            <source>Accept video call</source>
+            <translation>ビデオ通話を承認</translation>
+        </message>
+        <message>
+            <source>Sound can be disabled only during a call</source>
+            <translation>通話中のみ、音声を無効にできます</translation>
+        </message>
+        <message>
+            <source>Mute call</source>
+            <translation>通話をミュート</translation>
+        </message>
+        <message>
+            <source>Unmute call</source>
+            <translation>通話をミュート解除</translation>
+        </message>
+        <message>
+            <source>Microphone can be muted only during a call</source>
+            <translation>通話中のみ、マイクをミュートできます</translation>
+        </message>
+        <message>
+            <source>Mute microphone</source>
+            <translation>マイクをミュート</translation>
+        </message>
+        <message>
+            <source>Unmute microphone</source>
+            <translation>マイクをミュート解除</translation>
+        </message>
+    </context>
+    <context>
+        <name>ChatInputForm</name>
+        <message>
+            <source>Send message</source>
+            <translation>メッセージを送信</translation>
+        </message>
+        <message>
+            <source>Smileys</source>
+            <translation>スマイリー</translation>
+        </message>
+        <message>
+            <source>Send file(s)</source>
+            <translation>ファイルを送信</translation>
+        </message>
+        <message>
+            <source>Send a screenshot</source>
+            <translation>スクリーンショットを送信</translation>
+        </message>
+        <message>
+            <source>Send a file</source>
+            <translation>ファイルを送信</translation>
+        </message>
+        <message>
+            <source>Unable to open</source>
+            <translation>開けません</translation>
+        </message>
+        <message>
+            <source>Wasn't able to open %1</source>
+            <translation>%1 を開くことができませんでした</translation>
+        </message>
+        <message>
+            <source>Bad idea</source>
+            <translation>不正な操作</translation>
+        </message>
+        <message>
+            <source>You're trying to send a sequential file, which is not going to work!</source>
+            <translation>シーケンシャルファイルを送信しようとしているが、うまくいかない。</translation>
+        </message>
+    </context>
+    <context>
+        <name>ChatLineContent</name>
+        <message>
+            <source>Copy</source>
+            <translation>コピー</translation>
+        </message>
+        <message>
+            <source>Reply</source>
+            <translation>返信</translation>
+        </message>
+        <message>
+            <source>Forward</source>
+            <translation>転送</translation>
+        </message>
+    </context>
+    <context>
+        <name>ChatLog</name>
+        <message>
+            <source>Clear displayed messages</source>
+            <translation>表示されたメッセージを消去</translation>
+        </message>
+        <message>
+            <source>Copy</source>
+            <translation>コピー</translation>
+        </message>
+        <message>
+            <source>Select all</source>
+            <translation>すべて選択</translation>
+        </message>
+        <message>
+            <source>Select multiple</source>
+            <translation>複数選択</translation>
+        </message>
+    </context>
+    <context>
+        <name>ChatReplyForm</name>
+        <message>
+            <source>Form</source>
+            <translation>フォーム</translation>
+        </message>
+    </context>
+    <context>
+        <name>ChatTextEdit</name>
+        <message>
+            <source>Type your message here...</source>
+            <translation>ここにメッセージを入力してください…</translation>
+        </message>
+    </context>
+    <context>
+        <name>ChatWidget</name>
+        <message>
+            <source>Form</source>
+            <translation>フォーム</translation>
+        </message>
+        <message>
+            <source>Open profile</source>
+            <translation>プロファイルを開く</translation>
+        </message>
+        <message>
+            <source>Open profile page when clicked</source>
+            <translation>クリックされたらプロファイルページを開く</translation>
+        </message>
+        <message>
+            <source>Your name</source>
+            <translation>名前</translation>
+        </message>
+        <message>
+            <source>Status message input</source>
+            <translation>ステータスメッセージ入力</translation>
+        </message>
+        <message>
+            <source>Set your status message that will be shown to others</source>
+            <translation>他の人に表示されるステータスメッセージを設定してください</translation>
+        </message>
+        <message>
+            <source>Your status</source>
+            <translation>ステータス</translation>
+        </message>
+        <message>
+            <source>Status</source>
+            <translation>ステータス</translation>
+        </message>
+        <message>
+            <source>Set availability status</source>
+            <translation>利用可能なステータスを設定</translation>
+        </message>
+        <message>
+            <source>Contact search</source>
+            <translation>連絡先の検索</translation>
+        </message>
+        <message>
+            <source>Contact search input for known friends</source>
+            <translation>既存の友達に対する連絡先検索入力</translation>
+        </message>
+        <message numerus="yes">
+            <source>%n New Group Invite(s)</source>
+            <translation>
+                <numerusform>%n 件の新しいグループチャット招待</numerusform>
+            </translation>
+        </message>
+        <message>
+            <source>Search Contacts</source>
+            <translation>連絡先を検索</translation>
+        </message>
+        <message>
+            <source>Online</source>
+            <comment>Button to set your status to 'Online'</comment>
+            <translation>オンライン</translation>
+        </message>
+        <message>
+            <source>Away</source>
+            <comment>Button to set your status to 'Away'</comment>
+            <translation>退席中</translation>
+        </message>
+        <message>
+            <source>Busy</source>
+            <comment>Button to set your status to 'Busy'</comment>
+            <translation>多忙</translation>
+        </message>
+    </context>
+    <context>
+        <name>CircleWidget</name>
+        <message>
+            <source>Rename circle</source>
+            <comment>Menu for renaming a circle</comment>
+            <translation>サークル名を変更</translation>
+        </message>
+        <message>
+            <source>Remove circle</source>
+            <comment>Menu for removing a circle</comment>
+            <translation>サークルを削除</translation>
+        </message>
+        <message>
+            <source>Open all in new window</source>
+            <translation>すべてを新しいウィンドウで開く</translation>
+        </message>
+    </context>
+    <context>
+        <name>ContactSelectDialog</name>
+        <message>
+            <source>Dialog</source>
+            <translation>] ダイアログ</translation>
+        </message>
+        <message>
+            <source>Please select contact</source>
+            <translation>連絡先を選択してください</translation>
+        </message>
+    </context>
+    <context>
+        <name>ContactWidget</name>
+        <message>
+            <source>Form</source>
+            <translation>フォーム</translation>
+        </message>
+        <message>
+            <source>Contact search</source>
+            <translation>連絡先の検索</translation>
+        </message>
+        <message>
+            <source>Contact search input for known friends</source>
+            <translation>既存の友達に対する連絡先検索入力</translation>
+        </message>
+        <message>
+            <source>Search Contacts</source>
+            <translation>連絡先を検索</translation>
+        </message>
+        <message>
+            <source> sent you a friend request.</source>
+            <translation> フレンドリクエストを送信しました。</translation>
+        </message>
+        <message>
+            <source> invites you to join a group.</source>
+            <translation> グループに参加するように招待します。</translation>
+        </message>
+    </context>
+    <context>
+        <name>Core</name>
+        <message>
+            <source>Invalid Ok ID</source>
+            <comment>Error while sending friendship request</comment>
+            <translation>無効な OK ID</translation>
+        </message>
+        <message>
+            <source>You need to write a message with your request</source>
+            <comment>Error while sending friendship request</comment>
+            <translation>リクエストにメッセージを書く必要があります</translation>
+        </message>
+        <message>
+            <source>IMFriend is already added</source>
+            <comment>Error while sending friendship request</comment>
+            <translation>IMFriendはすでに追加されています</translation>
+        </message>
+        <message>
+            <source>/me offers friendship, "%1"</source>
+            <translation>/me 友達にならないか、"%1"</translation>
+        </message>
+    </context>
+    <context>
+        <name>DesktopNotify</name>
+        <message>
+            <source>New message</source>
+            <translation>新しいメッセージがあり</translation>
+        </message>
+        <message>
+            <source>Incoming file transfer</source>
+            <translation>受信ファイル転送</translation>
+        </message>
+        <message>
+            <source>Friend request received</source>
+            <translation>フレンドリクエストを受け取りました</translation>
+        </message>
+        <message>
+            <source>New group message</source>
+            <translation>新しいグループメッセージ</translation>
+        </message>
+        <message>
+            <source>Group invite received</source>
+            <translation>グループ招待の受信</translation>
+        </message>
+    </context>
+    <context>
+        <name>FileTransferWidget</name>
+        <message>
+            <source>Form</source>
+            <translation>フォーム</translation>
+        </message>
+        <message>
+            <source>Filename</source>
+            <translation>ファイル名</translation>
+        </message>
+        <message>
+            <source>10Mb</source>
+            <translation>10Mb</translation>
+        </message>
+        <message>
+            <source>0kb/s</source>
+            <translation>0kb/s</translation>
+        </message>
+        <message>
+            <source>ETA:10:10</source>
+            <translation>完了までの時間: 10:10</translation>
+        </message>
+        <message>
+            <source>Location not writable</source>
+            <comment>Title of permissions popup</comment>
+            <translation>保存先に書き込めません</translation>
+        </message>
+        <message>
+            <source>You do not have permission to write that location. Choose another, or cancel the save dialog.</source>
+            <comment>text of permissions popup</comment>
+            <translation>その場所を書き込む権限がありません。別のものを選択するか、保存ダイアログをキャンセルします。</translation>
+        </message>
+        <message>
+            <source>Waiting to send...</source>
+            <comment>file transfer widget</comment>
+            <translation>送信を待機しています…</translation>
+        </message>
+        <message>
+            <source>Accept to receive this file</source>
+            <comment>file transfer widget</comment>
+            <translation>承認してファイルを受け取る</translation>
+        </message>
+        <message>
+            <source>Resuming...</source>
+            <comment>file transfer widget</comment>
+            <translation>再開しています…</translation>
+        </message>
+        <message>
+            <source>Pause transfer</source>
+            <translation>転送を一時停止</translation>
+        </message>
+        <message>
+            <source>Cancel transfer</source>
+            <translation>転送をキャンセル</translation>
+        </message>
+        <message>
+            <source>Accept transfer</source>
+            <translation>転送を承認</translation>
+        </message>
+        <message>
+            <source>Open file</source>
+            <translation>ファイルを開く</translation>
+        </message>
+        <message>
+            <source>Open file directory</source>
+            <translation>ファイルの場所を開く</translation>
+        </message>
+    </context>
+    <context>
+        <name>FilesForm</name>
+        <message>
+            <source>Transferred Files</source>
+            <comment>"Headline" of the window</comment>
+            <translation>転送したファイル</translation>
+        </message>
+        <message>
+            <source>Downloads</source>
+            <translation>ダウンロード</translation>
+        </message>
+        <message>
+            <source>Uploads</source>
+            <translation>アップロード</translation>
+        </message>
+    </context>
+    <context>
+        <name>FriendForm</name>
+        <message>
+            <source>Frame</source>
+            <translation>フレーム</translation>
+        </message>
+        <message>
+            <source>id</source>
+            <translation>身分証明書</translation>
+        </message>
+        <message>
+            <source>+</source>
+            <translation>+</translation>
+        </message>
+    </context>
+    <context>
+        <name>FriendRequestDialog</name>
+        <message>
+            <source>IMFriend request</source>
+            <comment>Title of the window to aceept/deny a friend request</comment>
+            <translation>IMFriendリクエスト</translation>
+        </message>
+        <message>
+            <source>Someone wants to make friends with you</source>
+            <translation>誰かがあなたと友達になりたいと思っています</translation>
+        </message>
+        <message>
+            <source>User ID:</source>
+            <translation>ユーザー ID:</translation>
+        </message>
+        <message>
+            <source>IMFriend request message:</source>
+            <translation>IMFriend リクエスト メッセージ:</translation>
+        </message>
+        <message>
+            <source>Accept</source>
+            <comment>Accept a friend request</comment>
+            <translation>承認</translation>
+        </message>
+        <message>
+            <source>Reject</source>
+            <comment>Reject a friend request</comment>
+            <translation>拒否</translation>
+        </message>
+    </context>
+    <context>
+        <name>FriendWidget</name>
+        <message>
+            <source>Invite to group</source>
+            <translation>グループに招待</translation>
+        </message>
+        <message>
+            <source>To new group</source>
+            <translation>新しいグループへ</translation>
+        </message>
+        <message>
+            <source>Remove friend</source>
+            <translation>友達を削除</translation>
+        </message>
+        <message>
+            <source>Confirmation</source>
+            <translation>確認</translation>
+        </message>
+        <message>
+            <source>Are you sure to remove %1 ?</source>
+            <translation>フレンド '%1' を削除してもよろしいですか?</translation>
+        </message>
+        <message>
+            <source>Warning</source>
+            <translation>警告</translation>
+        </message>
+        <message>
+            <source>Can not remove the friend!</source>
+            <translation>友達を削除できません!</translation>
+        </message>
+        <message>
+            <source>Online</source>
+            <translation>オンライン</translation>
+        </message>
+        <message>
+            <source>Away</source>
+            <translation>退席中</translation>
+        </message>
+        <message>
+            <source>Busy</source>
+            <translation>多忙</translation>
+        </message>
+        <message>
+            <source>Offline</source>
+            <translation>オフライン</translation>
+        </message>
+        <message>
+            <source>New message</source>
+            <translation>新しいメッセージがあり</translation>
+        </message>
+    </context>
+    <context>
+        <name>GeneralForm</name>
+        <message>
+            <source>General</source>
+            <translation>共通設定</translation>
+        </message>
+    </context>
+    <context>
+        <name>GeneralSettings</name>
+        <message>
+            <source>Chat</source>
+            <translation>チャット</translation>
+        </message>
+        <message>
+            <source>Base font:</source>
+            <translation>基本のフォント:</translation>
+        </message>
+        <message>
+            <source>px</source>
+            <translation>px</translation>
+        </message>
+        <message>
+            <source>Size:</source>
+            <translation>サイズ:</translation>
+        </message>
+        <message>
+            <source>New text styling preference may not load until qTox restarts.</source>
+            <translation>qTox が再起動するまで、新しいテキストスタイル設定は読み込まれない可能性があります。</translation>
+        </message>
+        <message>
+            <source>Text Style format:</source>
+            <translation>テキストスタイルの書式:</translation>
+        </message>
+        <message>
+            <source>Select text styling preference.</source>
+            <translation>テキストスタイル設定を選択します。</translation>
+        </message>
+        <message>
+            <source>Plaintext</source>
+            <translation>プレーンテキスト</translation>
+        </message>
+        <message>
+            <source>Show formatting characters</source>
+            <translation>書式付きの文字を表示</translation>
+        </message>
+        <message>
+            <source>Don't show formatting characters</source>
+            <translation>書式付きの文字を表示しない</translation>
+        </message>
+        <message>
+            <source>Use colored nicknames in chats</source>
+            <translation>チャットで色付きのニックネームを使用する</translation>
+        </message>
+        <message>
+            <source>New message</source>
+            <translation>新しいメッセージがあり</translation>
+        </message>
+        <message>
+            <source>Your status is changed to Away after set period of inactivity.</source>
+            <translation>この時間退席すると、ステータスを退席中に変更します。</translation>
+        </message>
+        <message>
+            <source>Auto away after (0 to disable):</source>
+            <translation>この時間が経過すると自動的に退出します (0 は無効):</translation>
+        </message>
+        <message>
+            <source>Set to 0 to disable</source>
+            <translation>0 を指定すると無効になります</translation>
+        </message>
+        <message>
+            <source>Show a notification when you receive a new message and the window is not selected.</source>
+            <comment>tooltip for Notify setting</comment>
+            <translation>新しいメッセージを受信し、ウィンドウが選択されていない場合に通知を表示します。</translation>
+        </message>
+        <message>
+            <source>Notify</source>
+            <translation>知らせる</translation>
+        </message>
+        <message>
+            <source>Onlys notify about new messages in groupchats when mentioned.</source>
+            <comment>toolTip for Group chats only notify when mentioned</comment>
+            <translation>グループチャットで新着メッセージがメンションされたときだけ通知します。</translation>
+        </message>
+        <message>
+            <source>Group chats only notify when mentioned</source>
+            <translation>グループチャットはメンションされた場合にのみ通知されます</translation>
+        </message>
+        <message>
+            <source>Play sound</source>
+            <translation>音を再生</translation>
+        </message>
+        <message>
+            <source>Play sound while Busy</source>
+            <translation>多忙の際に音声を再生</translation>
+        </message>
+        <message>
+            <source>Notify via desktop notifications</source>
+            <translation>デスクトップ通知で通知する</translation>
+        </message>
+        <message>
+            <source>Hide message sender and contents</source>
+            <translation>メッセージの送信者と内容を非表示にする</translation>
+        </message>
+        <message>
+            <source>Privacy</source>
+            <translation>プライバシー</translation>
+        </message>
+        <message>
+            <source>Your friends will be able to see when you are typing.</source>
+            <comment>tooltip for typing notifications setting</comment>
+            <translation>あなたが入力しているときに、友達が見ることができます。</translation>
+        </message>
+        <message>
+            <source>Send typing notifications</source>
+            <translation>入力通知を送信</translation>
+        </message>
+    </context>
+    <context>
+        <name>GenericChatForm</name>
+        <message>
+            <source>Confirmation</source>
+            <translation>確認</translation>
+        </message>
+        <message>
+            <source>You are sure that you want to clear all displayed messages?</source>
+            <translation>表示されているすべてのメッセージをクリアしてもよろしいですか?</translation>
+        </message>
+        <message>
+            <source>Cleared</source>
+            <translation>消去済み</translation>
+        </message>
+        <message>
+            <source>Save chat log</source>
+            <translation>チャットログを保存</translation>
+        </message>
+        <message>
+            <source>The community version cannot send files to offline contacts!</source>
+            <translation>コミュニティ版では、オフラインの連絡先にファイルを送信することはできません。</translation>
+        </message>
+    </context>
+    <context>
+        <name>GenericChatItemWidget</name>
+        <message>
+            <source>I:</source>
+            <translation>私：</translation>
+        </message>
+        <message>
+            <source>:</source>
+            <translation>:</translation>
+        </message>
+    </context>
+    <context>
+        <name>GenericNetCamView</name>
+        <message>
+            <source>Tox video</source>
+            <translation>Tox ビデオ</translation>
+        </message>
+        <message>
+            <source>Full Screen</source>
+            <translation>全画面</translation>
+        </message>
+        <message>
+            <source>Toggle video preview</source>
+            <translation>切替ビデオプレビュー</translation>
+        </message>
+        <message>
+            <source>Mute audio</source>
+            <translation>唖オーディオ</translation>
+        </message>
+        <message>
+            <source>Mute microphone</source>
+            <translation>マイクをミュート</translation>
+        </message>
+        <message>
+            <source>End video call</source>
+            <translation>ビデオ通話を終了</translation>
+        </message>
+        <message>
+            <source>Exit full screen</source>
+            <translation>出口全画面</translation>
+        </message>
+        <message>
+            <source>Hide Messages</source>
+            <translation>メッセージを非表示</translation>
+        </message>
+        <message>
+            <source>Show Messages</source>
+            <translation>メッセージを表示</translation>
+        </message>
+    </context>
+    <context>
+        <name>GroupChatForm</name>
+        <message>
+            <source>%1 has set the title to %2</source>
+            <translation>%1 さんがタイトルを %2 に設定しました</translation>
+        </message>
+        <message>
+            <source>%1 has joined the group</source>
+            <translation>%1 がグループに参加しました</translation>
+        </message>
+        <message>
+            <source>%1 has left the group</source>
+            <translation>%1 がグループから退出しました</translation>
+        </message>
+        <message>
+            <source>%1 is now known as %2</source>
+            <translation>%1 は %2 として知られるようになりました</translation>
+        </message>
+        <message numerus="yes">
+            <source>%n user(s) in chat</source>
+            <comment>Number of users in chat</comment>
+            <translation>
+                <numerusform>チャット内の %n ユーザー</numerusform>
+            </translation>
+        </message>
+        <message>
+            <source>mute</source>
+            <translation>唖</translation>
+        </message>
+        <message>
+            <source>unmute</source>
+            <translation>ミュート解除</translation>
+        </message>
+    </context>
+    <context>
+        <name>GroupCreateForm</name>
+        <message>
+            <source>Form</source>
+            <translation>フォーム</translation>
+        </message>
+        <message>
+            <source>Group name</source>
+            <translation>グループの名前</translation>
+        </message>
+        <message>
+            <source>Confirm</source>
+            <translation>確かですか</translation>
+        </message>
+        <message>
+            <source>Create new group</source>
+            <translation>新しいグループを作成</translation>
+        </message>
+    </context>
+    <context>
+        <name>GroupInviteForm</name>
+        <message>
+            <source>Groups</source>
+            <translation>グループ</translation>
+        </message>
+        <message>
+            <source>Create new group</source>
+            <translation>新しいグループを作成</translation>
+        </message>
+        <message>
+            <source>Group invites</source>
+            <translation>グループ招待</translation>
+        </message>
+    </context>
+    <context>
+        <name>GroupInviteWidget</name>
+        <message>
+            <source>Invited by %1 on %2 at %3.</source>
+            <translation>%2 %3 に %1 さんに招待されました。</translation>
+        </message>
+        <message>
+            <source>Join</source>
+            <translation>参加</translation>
+        </message>
+        <message>
+            <source>Decline</source>
+            <translation>辞退</translation>
+        </message>
+    </context>
+    <context>
+        <name>GroupWidget</name>
+        <message>
+            <source>Quit group</source>
+            <comment>Menu to quit a groupchat</comment>
+            <translation>グループを終了</translation>
+        </message>
+        <message>
+            <source>Destroy group</source>
+            <comment>Destroy the groupchat</comment>
+            <translation>グループを解散する</translation>
+        </message>
+        <message>
+            <source>Confirmation</source>
+            <translation>確認</translation>
+        </message>
+        <message>
+            <source>Are you sure to quit %1 chat group?</source>
+            <translation>グループチャットから退出してもよろしいですか %1?</translation>
+        </message>
+    </context>
+    <context>
+        <name>IMMainWindow</name>
+        <message>
+            <source>Close</source>
+            <translation>閉める</translation>
+        </message>
+    </context>
+    <context>
+        <name>IdentitySettings</name>
+        <message>
+            <source>My profile</source>
+            <translation>プロファイル</translation>
+        </message>
+        <message>
+            <source>Public Information</source>
+            <translation>公開情報</translation>
+        </message>
+        <message>
+            <source>Nickname:</source>
+            <translation>ニックネーム：</translation>
+        </message>
+        <message>
+            <source>Name input</source>
+            <translation>名前入力</translation>
+        </message>
+        <message>
+            <source>Name visible to contacts</source>
+            <translation>連絡先に表示される名前</translation>
+        </message>
+        <message>
+            <source>Account:</source>
+            <translation>銀行口座:</translation>
+        </message>
+        <message>
+            <source>Location:</source>
+            <translation>場所：</translation>
+        </message>
+        <message>
+            <source>Personal Information</source>
+            <translation>個人情報</translation>
+        </message>
+        <message>
+            <source>My name:</source>
+            <translation>名前:</translation>
+        </message>
+        <message>
+            <source>My phone:</source>
+            <translation>私の電話:</translation>
+        </message>
+        <message>
+            <source>My E-Mail:</source>
+            <translation>私のEメール:</translation>
+        </message>
+        <message>
+            <source>My telephone:</source>
+            <translation>私の電話番号:</translation>
+        </message>
+        <message>
+            <source>Profile</source>
+            <translation>プロファイル</translation>
+        </message>
+        <message>
+            <source>Go back to the login screen</source>
+            <comment>tooltip for logout button</comment>
+            <translation>ログイン画面に戻る</translation>
+        </message>
+        <message>
+            <source>Exit</source>
+            <comment>import profile button</comment>
+            <translation>終了</translation>
+        </message>
+        <message>
+            <source>Logout</source>
+            <comment>import profile button</comment>
+            <translation>ログアウト</translation>
+        </message>
+    </context>
+    <context>
+        <name>LoadHistoryDialog</name>
+        <message>
+            <source>Load History Dialog</source>
+            <translation>履歴の読み込みダイアログ</translation>
+        </message>
+        <message>
+            <source>Load history from:</source>
+            <translation>ロード履歴:</translation>
+        </message>
+    </context>
+    <context>
+        <name>MessageSessionListWidget</name>
+        <message>
+            <source>Today</source>
+            <translation>今日</translation>
+        </message>
+        <message>
+            <source>Yesterday</source>
+            <translation>昨日</translation>
+        </message>
+        <message>
+            <source>Last 7 days</source>
+            <translation>1 週間以内</translation>
+        </message>
+        <message>
+            <source>This month</source>
+            <translation>今月</translation>
+        </message>
+        <message>
+            <source>Older than 6 Months</source>
+            <translation>半年以上前</translation>
+        </message>
+        <message>
+            <source>Never</source>
+            <translation>しない</translation>
+        </message>
+    </context>
+    <context>
+        <name>MessageSessionWidget</name>
+        <message>
+            <source>Delete the session</source>
+            <translation>セッションの削除</translation>
+        </message>
+        <message>
+            <source>Show details</source>
+            <translation>詳細を表示</translation>
+        </message>
+    </context>
+    <context>
+        <name>Nexus</name>
+        <message>
+            <source>Can not create profile!</source>
+            <translation>プロフィールを作成できません!</translation>
+        </message>
+        <message>
+            <source>View</source>
+            <comment>OS X Menu bar</comment>
+            <translation>表示</translation>
+        </message>
+        <message>
+            <source>Window</source>
+            <comment>OS X Menu bar</comment>
+            <translation>ウィンドウ</translation>
+        </message>
+        <message>
+            <source>Minimize</source>
+            <comment>OS X Menu bar</comment>
+            <translation>最小化</translation>
+        </message>
+        <message>
+            <source>Bring All to Front</source>
+            <comment>OS X Menu bar</comment>
+            <translation>すべて最前面に表示</translation>
+        </message>
+        <message>
+            <source>Exit Fullscreen</source>
+            <translation>全画面表示を終了</translation>
+        </message>
+        <message>
+            <source>Enter Fullscreen</source>
+            <translation>全画面表示を開始</translation>
+        </message>
+    </context>
+    <context>
+        <name>NotificationEdgeWidget</name>
+        <message numerus="yes">
+            <source>Unread message(s)</source>
+            <translation>
+                <numerusform>未読メッセージ</numerusform>
+            </translation>
+        </message>
+    </context>
+    <context>
+        <name>PasswordEdit</name>
+        <message>
+            <source>CAPS-LOCK ENABLED</source>
+            <translation>Caps Lock が有効になっています</translation>
+        </message>
+    </context>
+    <context>
+        <name>PrivacyForm</name>
+        <message>
+            <source>Privacy</source>
+            <translation>プライバシー</translation>
+        </message>
+    </context>
+    <context>
+        <name>ProfileForm</name>
+        <message>
+            <source>Unable to open this file.</source>
+            <translation>このファイルを開けません。</translation>
+        </message>
+        <message>
+            <source>Unable to read this image.</source>
+            <translation>この画像を読み込めません。</translation>
+        </message>
+        <message>
+            <source>The supplied image is too large.
+Please use another image.</source>
+            <translation>提供された画像が大きすぎます。
+別の画像をご利用ください。</translation>
+        </message>
+        <message>
+            <source>Empty path is unavaliable</source>
+            <translation>空のパスは利用できません</translation>
+        </message>
+        <message>
+            <source>Failed to rename</source>
+            <translation>名前を変更できませんでした</translation>
+        </message>
+        <message>
+            <source>Couldn't rename the profile to "%1"</source>
+            <translation>プロファイル名を "%1" に変更できませんでした</translation>
+        </message>
+        <message>
+            <source>Profile already exists</source>
+            <translation>プロファイルがすでに存在しています</translation>
+        </message>
+        <message>
+            <source>A profile named "%1" already exists.</source>
+            <translation>"%1" という名前のプロファイルはすでに存在しています。</translation>
+        </message>
+        <message>
+            <source>Empty name</source>
+            <translation>空の名前</translation>
+        </message>
+        <message>
+            <source>Empty name is unavaliable</source>
+            <translation>空の名前は利用できません</translation>
+        </message>
+        <message>
+            <source>Location not writable</source>
+            <comment>Title of permissions popup</comment>
+            <translation>保存先に書き込めません</translation>
+        </message>
+        <message>
+            <source>You do not have permission to write that location. Choose another, or cancel the save dialog.</source>
+            <comment>text of permissions popup</comment>
+            <translation>その場所を書き込む権限がありません。別のものを選択するか、保存ダイアログをキャンセルします。</translation>
+        </message>
+        <message>
+            <source>Failed to copy file</source>
+            <translation>ファイルのコピーに失敗</translation>
+        </message>
+        <message>
+            <source>The file you chose could not be written to.</source>
+            <translation>選択されたファイルに書き込めませんでした。</translation>
+        </message>
+        <message>
+            <source>Empty path</source>
+            <translation>空のパス</translation>
+        </message>
+        <message>
+            <source>Couldn't change password</source>
+            <translation>パスワードを変更できませんでした</translation>
+        </message>
+        <message>
+            <source>Couldn't change password on the database, it might be corrupted or use the old password.</source>
+            <translation>データベースのパスワードを変更できませんでした。データベースが破損しているか、古いパスワードを使用している可能性があります。</translation>
+        </message>
+        <message>
+            <source>Current profile location: %1</source>
+            <translation>現在のプロファイル保存先: %1</translation>
+        </message>
+        <message>
+            <source>Remove</source>
+            <translation>削除</translation>
+        </message>
+        <message>
+            <source>Images (%1)</source>
+            <comment>filetype filter</comment>
+            <translation>画像 (%1)</translation>
+        </message>
+        <message>
+            <source>Choose a profile picture</source>
+            <translation>プロファイルの写真を選択</translation>
+        </message>
+        <message>
+            <source>Error</source>
+            <translation>エラー</translation>
+        </message>
+        <message>
+            <source>Export profile</source>
+            <translation>プロファイルをエクスポート</translation>
+        </message>
+        <message>
+            <source>Tox save file (*.tox)</source>
+            <extracomment>save dialog filter</extracomment>
+            <translation>Tox 保存ファイル (*.tox)</translation>
+        </message>
+        <message>
+            <source>Save</source>
+            <comment>save qr image</comment>
+            <translation>保存</translation>
+        </message>
+        <message>
+            <source>Save QrCode (*.png)</source>
+            <comment>save dialog filter</comment>
+            <translation>QR コードを保存 (*.png)</translation>
+        </message>
+        <message>
+            <source>Nothing to remove</source>
+            <translation>削除するものがありません</translation>
+        </message>
+        <message>
+            <source>Your profile does not have a password!</source>
+            <translation>プロファイルにパスワードがありません！</translation>
+        </message>
+        <message>
+            <source>Really delete password?</source>
+            <comment>deletion confirmation title</comment>
+            <translation>本当にパスワードを削除しますか？</translation>
+        </message>
+        <message>
+            <source>Are you sure you want to delete your password?</source>
+            <extracomment>deletion confirmation text</extracomment>
+            <translation>パスワードを削除してもよろしいですか？</translation>
+        </message>
+        <message>
+            <source>Please enter a new password.</source>
+            <translation>新しいパスワードを入力してください。</translation>
+        </message>
+    </context>
+    <context>
+        <name>ProfileImporter</name>
+        <message>
+            <source>Import profile</source>
+            <comment>import dialog title</comment>
+            <translation>プロファイルをインポート</translation>
+        </message>
+        <message>
+            <source>Tox save file (*.tox)</source>
+            <comment>import dialog filter</comment>
+            <translation>Tox 保存ファイル (*.tox)</translation>
+        </message>
+        <message>
+            <source>File doesn't exist</source>
+            <translation>ファイルが存在しません</translation>
+        </message>
+        <message>
+            <source>Profile doesn't exist</source>
+            <translation>プロファイルが存在しません</translation>
+        </message>
+        <message>
+            <source>Ignoring non-Tox file</source>
+            <comment>popup title</comment>
+            <translation>Tox のファイルではないものを無視します</translation>
+        </message>
+        <message>
+            <source>Warning: You have chosen a file that is not a Tox save file; ignoring.</source>
+            <comment>popup text</comment>
+            <translation>警告: Tox の保存ファイルではないものが選択されました。無視します。</translation>
+        </message>
+        <message>
+            <source>Profile already exists</source>
+            <comment>import confirm title</comment>
+            <translation>プロファイルがすでに存在しています</translation>
+        </message>
+        <message>
+            <source>A profile named "%1" already exists. Do you want to erase it?</source>
+            <comment>import confirm text</comment>
+            <translation>"%1" という名前のプロファイルはすでに存在します。消去しますか？</translation>
+        </message>
+        <message>
+            <source>Profile imported</source>
+            <translation>プロファイルがインポートされました</translation>
+        </message>
+        <message>
+            <source>%1.tox was successfully imported</source>
+            <translation>%1.tox を正しくインポートしました</translation>
+        </message>
+    </context>
+    <context>
+        <name>QApplication</name>
+        <message>
+            <source>Ok</source>
+            <translation>OK</translation>
+        </message>
+        <message>
+            <source>Cancel</source>
+            <translation>キャンセル</translation>
+        </message>
+        <message>
+            <source>Yes</source>
+            <translation>はい</translation>
+        </message>
+        <message>
+            <source>No</source>
+            <translation>いいえ</translation>
+        </message>
+    </context>
+    <context>
+        <name>QObject</name>
+        <message>
+            <source>Reformatting text in progress..</source>
+            <translation>テキストの再書式設定が進行中です。</translation>
+        </message>
+        <message>
+            <source>online</source>
+            <comment>contact status</comment>
+            <translation>オンライン</translation>
+        </message>
+        <message>
+            <source>away</source>
+            <comment>contact status</comment>
+            <translation>退席中</translation>
+        </message>
+        <message>
+            <source>busy</source>
+            <comment>contact status</comment>
+            <translation>多忙</translation>
+        </message>
+        <message>
+            <source>offline</source>
+            <comment>contact status</comment>
+            <translation>オフライン</translation>
+        </message>
+        <message>
+            <source>blocked</source>
+            <comment>contact status</comment>
+            <translation>封鎖</translation>
+        </message>
+        <message>
+            <source>Error</source>
+            <translation>エラー</translation>
+        </message>
+        <message>
+            <source>Couldn't open your chat logs, they will be exit.</source>
+            <translation>チャットログを開くことができませんでした、彼らは終了します。</translation>
+        </message>
+        <message>
+            <source>None</source>
+            <comment>No camera device set</comment>
+            <translation>なし</translation>
+        </message>
+        <message>
+            <source>Desktop</source>
+            <comment>Desktop as a camera input for screen sharing</comment>
+            <translation>デスクトップ</translation>
+        </message>
+        <message>
+            <source>Incoming call...</source>
+            <translation>お電話です…</translation>
+        </message>
+    </context>
+    <context>
+        <name>RemoveFriendDialog</name>
+        <message>
+            <source>Remove friend</source>
+            <translation>友達を削除</translation>
+        </message>
+        <message>
+            <source>Remove all chat history with the friend if set</source>
+            <translation>設定した場合、友達とのチャット履歴をすべて削除します</translation>
+        </message>
+        <message>
+            <source>Also remove chat history</source>
+            <translation>チャット履歴も消去</translation>
+        </message>
+        <message>
+            <source>Are you sure you want to remove %1 from your contacts list?</source>
+            <translation>%1 を連絡先リストから削除してもよろしいですか?</translation>
+        </message>
+        <message>
+            <source>Remove</source>
+            <translation>削除</translation>
+        </message>
+    </context>
+    <context>
+        <name>ScreenshotGrabber</name>
+        <message>
+            <source>Click and drag to select a region. Press %1 to hide/show window, or %2 to cancel.</source>
+            <comment>Help text shown when no region has been selected yet</comment>
+            <translation>クリックとドラッグで範囲を選択します。%1 で ウィンドウの表示・非表示を切り替えます。%2
+                でキャンセルします。
+            </translation>
+        </message>
+        <message>
+            <source>Space</source>
+            <comment>[Space] key on the keyboard</comment>
+            <translation>スペース</translation>
+        </message>
+        <message>
+            <source>Escape</source>
+            <comment>[Escape] key on the keyboard</comment>
+            <translation>Escape</translation>
+        </message>
+        <message>
+            <source>Press %1 to send a screenshot of the selection, %2 to hide/show window, or %3 to cancel.</source>
+            <comment>Help text shown when a region has been selected</comment>
+            <translation>%1 を押して選択のスクリーンショットを送信し、%2 を押してウィンドウを非表示/表示し、%3 を押してキャンセルします。</translation>
+        </message>
+        <message>
+            <source>Enter</source>
+            <comment>[Enter] key on the keyboard</comment>
+            <translation>Enter</translation>
+        </message>
+    </context>
+    <context>
+        <name>SearchForm</name>
+        <message>
+            <source>The text could not be found.</source>
+            <translation>テキストが見つかりませんでした。</translation>
+        </message>
+        <message>
+            <source>Start</source>
+            <translation>開始</translation>
+        </message>
+    </context>
+    <context>
+        <name>SearchSettingsForm</name>
+        <message>
+            <source>Form</source>
+            <translation>フォーム</translation>
+        </message>
+        <message>
+            <source>Start search:</source>
+            <translation>検索から着手しましょう</translation>
+        </message>
+        <message>
+            <source>from the end</source>
+            <translation>末期から</translation>
+        </message>
+        <message>
+            <source>from the beginning</source>
+            <translation>最初から</translation>
+        </message>
+        <message>
+            <source>after date</source>
+            <translation>デート後</translation>
+        </message>
+        <message>
+            <source>before date</source>
+            <translation>前</translation>
+        </message>
+        <message>
+            <source>00.00.0000</source>
+            <translation>00.00.0000</translation>
+        </message>
+        <message>
+            <source>Case sensitive</source>
+            <translation>敏感な場合</translation>
+        </message>
+        <message>
+            <source>Whole words only</source>
+            <translation>全しかない言葉</translation>
+        </message>
+        <message>
+            <source>Use regular expressions</source>
+            <translation>正規表現を使用する</translation>
+        </message>
+        <message>
+            <source>Select Date Dialog</source>
+            <translation>選択伊達ダイアログ</translation>
+        </message>
+        <message>
+            <source>Select a date</source>
+            <translation>デート選択</translation>
+        </message>
+    </context>
+    <context>
+        <name>SetPasswordDialog</name>
+        <message>
+            <source>Set your password</source>
+            <translation>パスワードを設定</translation>
+        </message>
+        <message>
+            <source>Confirm:</source>
+            <translation>確認:</translation>
+        </message>
+        <message>
+            <source>Password:</source>
+            <translation>パスワード:</translation>
+        </message>
+        <message>
+            <source>Confirm password</source>
+            <translation>パスワードを確認</translation>
+        </message>
+        <message>
+            <source>Confirm password input</source>
+            <translation>パスワードの確認入力</translation>
+        </message>
+        <message>
+            <source>Password input</source>
+            <translation>パスワード入力</translation>
+        </message>
+        <message>
+            <source>Password input field, minimum 6 characters long</source>
+            <translation>パスワードの入力欄、最低でも 6 文字</translation>
+        </message>
+        <message>
+            <source>Password strength: %p%</source>
+            <translation>パスワード強度: %p%</translation>
+        </message>
+        <message>
+            <source>The password is too short</source>
+            <translation>パスワードが短すぎます</translation>
+        </message>
+        <message>
+            <source>The password doesn't match.</source>
+            <translation>パスワードが一致しません。</translation>
+        </message>
+    </context>
+    <context>
+        <name>Settings</name>
+        <message>
+            <source>Circle #%1</source>
+            <translation>サークル #%1</translation>
+        </message>
+    </context>
+    <context>
+        <name>StorageSettingsForm</name>
+        <message>
+            <source>Local Storage</source>
+            <translation>ローカルストレージ</translation>
+        </message>
+        <message>
+            <source>Summary:</source>
+            <translation>概要：</translation>
+        </message>
+        <message>
+            <source>400MB</source>
+            <translation>400メガバイト</translation>
+        </message>
+        <message>
+            <source>Set where files will be saved.</source>
+            <translation>ファイルを保存する場所を選択します。</translation>
+        </message>
+        <message>
+            <source>clear all</source>
+            <translation>すべてクリア</translation>
+        </message>
+        <message>
+            <source>Total size limit:</source>
+            <translation>合計サイズ制限:</translation>
+        </message>
+        <message>
+            <source>3GB</source>
+            <translation>3GBの</translation>
+        </message>
+        <message>
+            <source>Media cache limit:</source>
+            <translation>メディアキャッシュの制限:</translation>
+        </message>
+        <message>
+            <source>2GB</source>
+            <translation>2GBの</translation>
+        </message>
+        <message>
+            <source>Clear files older than:</source>
+            <translation>次の日付より古いファイルをクリアします。</translation>
+        </message>
+        <message>
+            <source>1 month</source>
+            <translation>1ヶ月</translation>
+        </message>
+        <message>
+            <source>1866 images</source>
+            <translation>1866件のイメージ</translation>
+        </message>
+        <message>
+            <source>44.4MB</source>
+            <translation>44.4メガバイト</translation>
+        </message>
+        <message>
+            <source>clear</source>
+            <translation>クリア</translation>
+        </message>
+        <message>
+            <source>511 stickers</source>
+            <translation>511枚のステッカー</translation>
+        </message>
+        <message>
+            <source>11.0MB</source>
+            <translation>11.0メガバイト</translation>
+        </message>
+        <message>
+            <source>13 GIF animations</source>
+            <translation>13 GIFアニメーション</translation>
+        </message>
+        <message>
+            <source>2.5MB</source>
+            <translation>2.5メガバイト</translation>
+        </message>
+        <message>
+            <source>Media cache</source>
+            <translation>メディアキャッシュ</translation>
+        </message>
+        <message>
+            <source>405.7MB</source>
+            <translation>405.7メガバイト</translation>
+        </message>
+        <message>
+            <source>Choose an auto accept directory</source>
+            <comment>popup title</comment>
+            <translation>自動承認したファイルの保存場所を選択</translation>
+        </message>
+        <message>
+            <source>Storage Settings</source>
+            <translation>ストレージ設定</translation>
+        </message>
+    </context>
+    <context>
+        <name>Widget</name>
+        <message>
+            <source>Chat</source>
+            <translation>チャット</translation>
+        </message>
+        <message>
+            <source>Contacts</source>
+            <translation>連絡先</translation>
+        </message>
+        <message>
+            <source>Settings</source>
+            <translation>設定</translation>
+        </message>
+        <message>
+            <source>The core failed to start, the application will terminate after you close this message.</source>
+            <translation>toxcore の開始に失敗しました。このウィンドウを閉じるとプログラムは強制終了します。</translation>
+        </message>
+        <message>
+            <source>The core failed to start with your proxy settings. So cannot to run; please modify your settings and restart.</source>
+            <comment>popup text</comment>
+            <translation>プロキシ設定でコアを起動できませんでした。だから走ることはできません。設定を変更して再起動してください。</translation>
+        </message>
+        <message>
+            <source>Executable file</source>
+            <comment>popup title</comment>
+            <translation>実行可能なファイル</translation>
+        </message>
+        <message>
+            <source>You have asked qTox to open an executable file. Executable files can potentially damage your computer. Are you sure want to open this file?</source>
+            <comment>popup text</comment>
+            <translation>qToxに実行可能ファイルを開くように依頼しました。実行可能ファイルは、コンピューターに損傷を与える可能性があります。このファイルを開いてもよろしいですか?</translation>
+        </message>
+        <message>
+            <source>Couldn't request friendship</source>
+            <translation>友達をリクエストできません</translation>
+        </message>
+        <message>
+            <source>File sent</source>
+            <translation>送信されたファイル</translation>
+        </message>
+        <message>
+            <source>Add friend</source>
+            <comment>title of the window</comment>
+            <translation>友達を追加</translation>
+        </message>
+        <message>
+            <source>Group invites</source>
+            <comment>title of the window</comment>
+            <translation>グループ招待</translation>
+        </message>
+        <message>
+            <source>File transfers</source>
+            <comment>title of the window</comment>
+            <translation>ファイル転送</translation>
+        </message>
+        <message>
+            <source>Settings</source>
+            <comment>title of the window</comment>
+            <translation>設定</translation>
+        </message>
+        <message>
+            <source>My profile</source>
+            <comment>title of the window</comment>
+            <translation>プロファイル</translation>
+        </message>
+    </context>
+</TS>

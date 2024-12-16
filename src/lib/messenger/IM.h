@@ -82,11 +82,11 @@ namespace lib::messenger {
 
 class IMSessionHandler {
 public:
-    virtual void doSessionInitiate(gloox::Jingle::Session* session,        //
+    virtual bool doSessionInitiate(gloox::Jingle::Session* session,        //
                                    const gloox::Jingle::Session::Jingle*,  //
                                    const IMPeerId&) = 0;
 
-    virtual void doSessionTerminate(gloox::Jingle::Session* session,        //
+    virtual bool doSessionTerminate(gloox::Jingle::Session* session,        //
                                     const gloox::Jingle::Session::Jingle*,  //
                                     const IMPeerId&) = 0;
 
@@ -94,19 +94,19 @@ public:
                                  const gloox::Jingle::Session::Jingle* jingle,  //
                                  const IMPeerId& peerId) = 0;
 
-    virtual void doSessionInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
-    virtual void doContentAdd(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
-    virtual void doContentRemove(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
-    virtual void doContentModify(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
-    virtual void doContentAccept(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
-    virtual void doContentReject(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
-    virtual void doTransportInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
-    virtual void doTransportAccept(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
-    virtual void doTransportReject(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
-    virtual void doTransportReplace(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
-    virtual void doSecurityInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
-    virtual void doDescriptionInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
-    virtual void doInvalidAction(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
+    virtual bool doSessionInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
+    virtual bool doContentAdd(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
+    virtual bool doContentRemove(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
+    virtual bool doContentModify(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
+    virtual bool doContentAccept(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
+    virtual bool doContentReject(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
+    virtual bool doTransportInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
+    virtual bool doTransportAccept(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
+    virtual bool doTransportReject(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
+    virtual bool doTransportReplace(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
+    virtual bool doSecurityInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
+    virtual bool doDescriptionInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
+    virtual bool doInvalidAction(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
 };
 
 struct IMRoomInfo {
@@ -134,7 +134,7 @@ struct IMRoomInfo {
     std::map<std::string, std::string> changes;
 };
 
-class IMJingle;
+class IMFromHostHandler;
 
 class IM : public ok::base::Task,
            public gloox::ConnectionListener,
@@ -164,11 +164,13 @@ class IM : public ok::base::Task,
     Q_OBJECT
 public:
     explicit IM(QString host, QString user, QString pwd, QStringList features);
-    ~IM();
+    ~IM() override;
 
     inline static IMMessage fromXMsg(MsgType type, const gloox::Message& msg);
 
     std::unique_ptr<gloox::Client> makeClient();
+
+    QString createMsgId();
 
     void setNickname(const QString& nickname);
     QString getNickname();
@@ -305,7 +307,7 @@ public:
 
     //  ExtDisco &extDisco() { return mExtDisco; }
 
-    inline gloox::Jingle::SessionManager* sessionManager() { return _sessionManager.get(); }
+    inline gloox::Jingle::SessionManager* sessionManager() const { return _sessionManager.get(); }
 
     gloox::Jingle::Session* createSession(const gloox::JID& jid, const std::string& sId,
                                           IMSessionHandler* h);
@@ -313,6 +315,9 @@ public:
     void removeSession(gloox::Jingle::Session* s);
 
     void addSessionHandler(IMSessionHandler* h);
+
+    void addFromHostHandler(const std::string& from, IMFromHostHandler* h);
+    void clearFromHostHandler();
 
 protected:
     void run() override;
@@ -854,6 +859,8 @@ private:
     // External Service Discovery
     QList<gloox::ExtDisco::Service> mExtSrvDiscos;
 
+    QMap<std::string, IMFromHostHandler*> fromHostHandlers;
+
 signals:
     void connectResult(IMConnectStatus);
 
@@ -880,7 +887,7 @@ signals:
 
     void receiveFriendChatState(QString friendId, int state);
 
-    void receiveFriendVCard(IMPeerId peerId, IMVCard imvCard);
+    void receiveFriendVCard(IMPeerId peerId, IMVCard vCard);
 
     void exportEncryptedMessage(QString em);
 
@@ -893,6 +900,7 @@ signals:
     void selfNicknameChanged(QString nickname);
     void selfAvatarChanged(std::string avatar);
     void selfStatusChanged(int type, const std::string status);
+    void selfVCard(const IMVCard& vCard);
 
     void started();
     void stopped();

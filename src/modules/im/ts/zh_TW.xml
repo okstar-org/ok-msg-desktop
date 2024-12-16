@@ -1,0 +1,1964 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!--
+  ~ Copyright (c) 2022 船山信息 chuanshaninfo.com
+  ~ The project is licensed under Mulan PubL v2.
+  ~ You can use this software according to the terms and conditions of the Mulan
+  ~ PubL v2. You may obtain a copy of Mulan PubL v2 at:
+  ~          http://license.coscl.org.cn/MulanPubL-2.0
+  ~ THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+  ~ EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+  ~ MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+  ~ See the Mulan PubL v2 for more details.
+  -->
+
+<!DOCTYPE TS>
+<TS language="zh_TW" version="2.1">
+    <context>
+        <name>AVForm</name>
+        <message>
+            <source>Audio Settings</source>
+            <translation>音訊設定</translation>
+        </message>
+        <message>
+            <source>Capture device</source>
+            <translation>擷取裝置</translation>
+        </message>
+        <message>
+            <source>Test Sound</source>
+            <translation>測試音效</translation>
+        </message>
+        <message>
+            <source>Use slider to set volume of your speakers.</source>
+            <translation>使用滑塊設置揚聲器音量。</translation>
+        </message>
+        <message>
+            <source>Volume</source>
+            <translation>音量</translation>
+        </message>
+        <message>
+            <source>Gain</source>
+            <translation>增益</translation>
+        </message>
+        <message>
+            <source>Threshold</source>
+            <translation>閾值</translation>
+        </message>
+        <message>
+            <source>Playback device</source>
+            <translation>播放裝置</translation>
+        </message>
+        <message>
+            <source>Audio quality</source>
+            <translation>音訊品質</translation>
+        </message>
+        <message>
+            <source>Transmitted audio quality. Lower this setting if your bandwidth is not high enough or if you want to lower the internet usage.</source>
+            <translation>傳輸的音訊品質。如果您的頻寬不夠高，或者您想降低 Internet 使用率，請降低此設置。</translation>
+        </message>
+        <message>
+            <source>Video Settings</source>
+            <translation>視訊設定</translation>
+        </message>
+        <message>
+            <source>Video device</source>
+            <translation>視訊裝置</translation>
+        </message>
+        <message>
+            <source>Set resolution of your camera.
+The higher values, the better video quality your friends may get.
+Note though that with better video quality there is needed better internet connection.
+Sometimes your connection may not be good enough to handle higher video quality,
+which may lead to problems with video calls.</source>
+            <translation>設置相機的解析度。
+值越高，您的朋友可能獲得的視頻品質就越好。
+請注意，視頻品質越好，就需要更好的互聯網連接。
+有時，您的連接可能不夠好，無法處理更高的視頻品質。
+這可能會導致視頻通話出現問題。</translation>
+        </message>
+        <message>
+            <source>Resolution</source>
+            <translation>解析度</translation>
+        </message>
+        <message>
+            <source>Rescan devices</source>
+            <translation>重新掃描裝置</translation>
+        </message>
+        <message>
+            <source>Play a test sound while changing the output volume.</source>
+            <translation>在更改輸出音量的同時播放測試聲音。</translation>
+        </message>
+        <message>
+            <source>Use slider to set the gain of your input device ranging from %1dB to %2dB.</source>
+            <translation>使用滑塊設置輸入設備的增益，範圍從 %1dB 到 %2dB。</translation>
+        </message>
+        <message>
+            <source>Use slider to set the activation volume for your input device.</source>
+            <translation>使用滑塊設置輸入設備的啟動音量。</translation>
+        </message>
+        <message>
+            <source>Default resolution</source>
+            <translation>預設解析度</translation>
+        </message>
+        <message>
+            <source>Screen %1</source>
+            <translation>螢幕 %1</translation>
+        </message>
+        <message>
+            <source>Select region</source>
+            <translation>選擇區域</translation>
+        </message>
+        <message>
+            <source>High (64 kbps)</source>
+            <translation>高 （64 kbps）</translation>
+        </message>
+        <message>
+            <source>Medium (32 kbps)</source>
+            <translation>中 （32kbps）</translation>
+        </message>
+        <message>
+            <source>Low (16 kbps)</source>
+            <translation>低 （16 kbps）</translation>
+        </message>
+        <message>
+            <source>Very low (8 kbps)</source>
+            <translation>極低 （8 kbps）</translation>
+        </message>
+        <message>
+            <source>Disabled</source>
+            <translation>已停用</translation>
+        </message>
+        <message>
+            <source>Audio/Video</source>
+            <translation>音訊/視訊</translation>
+        </message>
+    </context>
+    <context>
+        <name>AboutFriendForm</name>
+        <message>
+            <source>Dialog</source>
+            <translation>對話</translation>
+        </message>
+        <message>
+            <source>username</source>
+            <translation>使用者名</translation>
+        </message>
+        <message>
+            <source>status message</source>
+            <translation>狀態訊息</translation>
+        </message>
+        <message>
+            <source>Send message</source>
+            <translation>發送消息</translation>
+        </message>
+        <message>
+            <source>Default directory to save files:</source>
+            <translation>預設檔案儲存目錄：</translation>
+        </message>
+        <message>
+            <source>Account:</source>
+            <translation>帳號：</translation>
+        </message>
+        <message>
+            <source>Automatically accept files from contact if set</source>
+            <translation>如果設置則自動接收來自聯繫人的檔</translation>
+        </message>
+        <message>
+            <source>Auto accept files</source>
+            <translation>自動接受檔案</translation>
+        </message>
+        <message>
+            <source>Manual</source>
+            <translation>手動</translation>
+        </message>
+        <message>
+            <source>Audio</source>
+            <translation>音訊</translation>
+        </message>
+        <message>
+            <source>Audio + Video</source>
+            <translation>音訊與視訊</translation>
+        </message>
+        <message>
+            <source>Alias:</source>
+            <translation>別名：</translation>
+        </message>
+        <message>
+            <source>Clear</source>
+            <translation>清楚</translation>
+        </message>
+        <message>
+            <source>Clear history:</source>
+            <translation>清除歷史記錄：</translation>
+        </message>
+        <message>
+            <source>Auto accept call:</source>
+            <translation>自動接受通話：</translation>
+        </message>
+        <message>
+            <source>Auto accept for this contact is disabled</source>
+            <translation>已針對這個聯繫人禁用了自動接收</translation>
+        </message>
+        <message>
+            <source>Choose an auto accept directory</source>
+            <extracomment>popup title</extracomment>
+            <translation>選擇自動接受目錄</translation>
+        </message>
+        <message>
+            <source>Confirmation</source>
+            <translation>確認</translation>
+        </message>
+        <message>
+            <source>Are you sure to remove %1 chat history?</source>
+            <translation>您確定要移除與 %1 的聊天記錄嗎？</translation>
+        </message>
+    </context>
+    <context>
+        <name>AboutGroupForm</name>
+        <message>
+            <source>Form</source>
+            <translation>表單</translation>
+        </message>
+        <message>
+            <source>Automatically accept files from contact if set</source>
+            <translation>如果設置則自動接收來自聯繫人的檔</translation>
+        </message>
+        <message>
+            <source>Auto accept files</source>
+            <translation>自動接受檔案</translation>
+        </message>
+        <message>
+            <source>Auto accept call:</source>
+            <translation>自動接受通話：</translation>
+        </message>
+        <message>
+            <source>Name:</source>
+            <translation>名稱：</translation>
+        </message>
+        <message>
+            <source>Clear history:</source>
+            <translation>清除歷史記錄：</translation>
+        </message>
+        <message>
+            <source>Manual</source>
+            <translation>手動</translation>
+        </message>
+        <message>
+            <source>Audio</source>
+            <translation>音訊</translation>
+        </message>
+        <message>
+            <source>Audio + Video</source>
+            <translation>音訊與視訊</translation>
+        </message>
+        <message>
+            <source>Description:</source>
+            <translation>描述：</translation>
+        </message>
+        <message>
+            <source>Clear</source>
+            <translation>清楚</translation>
+        </message>
+        <message>
+            <source>Alias:</source>
+            <translation>別名：</translation>
+        </message>
+        <message>
+            <source>Send notice:</source>
+            <translation>發送通知：</translation>
+        </message>
+        <message>
+            <source>Automatically accept group chat invitations from this contact if set.</source>
+            <translation>如果設置此項則自動接受來自該聯繫人的群聊邀請。</translation>
+        </message>
+        <message>
+            <source>Auto accept group invites</source>
+            <translation>自動接受群組邀請</translation>
+        </message>
+        <message>
+            <source>Account:</source>
+            <translation>帳號：</translation>
+        </message>
+        <message>
+            <source>Occupants:</source>
+            <translation>成員数：</translation>
+        </message>
+        <message>
+            <source>Add member</source>
+            <translation>添加成員</translation>
+        </message>
+        <message>
+            <source>Send message</source>
+            <translation>發送消息</translation>
+        </message>
+        <message>
+            <source>groupname</source>
+            <translation>組名</translation>
+        </message>
+    </context>
+    <context>
+        <name>AddFriendForm</name>
+        <message>
+            <source>Form</source>
+            <translation>表單</translation>
+        </message>
+        <message>
+            <source>Search</source>
+            <translation>搜索</translation>
+        </message>
+        <message>
+            <source>Account/E-Mail/Phone Number</source>
+            <translation>帳號/郵箱/手機號</translation>
+        </message>
+        <message>
+            <source>hello,I'm </source>
+            <translation>你好，我是</translation>
+        </message>
+        <message>
+            <source>Couldn't add friend</source>
+            <translation>無法新增朋友</translation>
+        </message>
+        <message>
+            <source>%1 Ok ID is invalid</source>
+            <comment>Tox address error</comment>
+            <translation>%1 正常 ID 無效</translation>
+        </message>
+        <message>
+            <source>You can't add yourself as a friend!</source>
+            <translation>您不能添加自己為好友！</translation>
+        </message>
+        <message>
+            <source>Search users</source>
+            <translation>搜索好友</translation>
+        </message>
+        <message>
+            <source>Add a friend</source>
+            <translation>添加好友</translation>
+        </message>
+    </context>
+    <context>
+        <name>CallDurationForm</name>
+        <message>
+            <source>Form</source>
+            <translation>表單</translation>
+        </message>
+        <message>
+            <source>00:00:00</source>
+            <translation>00:00:00.000</translation>
+        </message>
+        <message>
+            <source>Call duration: </source>
+            <translation>通話時長：</translation>
+        </message>
+    </context>
+    <context>
+        <name>ChatForm</name>
+        <message>
+            <source>Filename contained illegal characters</source>
+            <translation>檔名包含非法字元</translation>
+        </message>
+        <message>
+            <source>Illegal characters have been changed to _ 
+so you can save the file on windows.</source>
+            <translation>非法字元已變更為 _
+因此，您可以在 Windows 上保存檔。</translation>
+        </message>
+        <message>
+            <source>Calling %1</source>
+            <translation>正在呼叫 %1</translation>
+        </message>
+        <message>
+            <source>Unable to open</source>
+            <translation>無法打開</translation>
+        </message>
+        <message>
+            <source>qTox wasn't able to open %1</source>
+            <translation>qTox 無法開啟 %1</translation>
+        </message>
+        <message>
+            <source>Bad idea</source>
+            <translation>這不是個好主意</translation>
+        </message>
+        <message>
+            <source>You're trying to send a sequential file, which is not going to work!</source>
+            <translation>您正在嘗試發送順序檔，這不起作用！</translation>
+        </message>
+        <message>
+            <source>Failed to open temporary file</source>
+            <comment>Temporary file for screenshot</comment>
+            <translation>無法打開臨時檔</translation>
+        </message>
+        <message>
+            <source>qTox wasn't able to save the screenshot</source>
+            <translation>qTox 無法保存截圖</translation>
+        </message>
+        <message>
+            <source>Copy</source>
+            <translation>複製</translation>
+        </message>
+    </context>
+    <context>
+        <name>ChatFormHeader</name>
+        <message>
+            <source>Can't start audio call</source>
+            <translation>無法開始語音通話</translation>
+        </message>
+        <message>
+            <source>Start audio call</source>
+            <translation>開始音訊通話</translation>
+        </message>
+        <message>
+            <source>End audio call</source>
+            <translation>結束語音通話</translation>
+        </message>
+        <message>
+            <source>Cancel audio call</source>
+            <translation>取消語音通話</translation>
+        </message>
+        <message>
+            <source>Accept audio call</source>
+            <translation>接聽語音通話</translation>
+        </message>
+        <message>
+            <source>Can't start video call</source>
+            <translation>無法開始視頻通話</translation>
+        </message>
+        <message>
+            <source>Start video call</source>
+            <translation>開始視訊通話</translation>
+        </message>
+        <message>
+            <source>End video call</source>
+            <translation>結束視訊通話</translation>
+        </message>
+        <message>
+            <source>Cancel video call</source>
+            <translation>取消視頻通話</translation>
+        </message>
+        <message>
+            <source>Accept video call</source>
+            <translation>接聽視頻通話</translation>
+        </message>
+        <message>
+            <source>Sound can be disabled only during a call</source>
+            <translation>只有在通話過程中才能執行禁用聲音操作</translation>
+        </message>
+        <message>
+            <source>Mute call</source>
+            <translation>靜音通話</translation>
+        </message>
+        <message>
+            <source>Unmute call</source>
+            <translation>取消通話靜音</translation>
+        </message>
+        <message>
+            <source>Microphone can be muted only during a call</source>
+            <translation>只有在通話過程中才能執行麥克風靜音操作</translation>
+        </message>
+        <message>
+            <source>Mute microphone</source>
+            <translation>靜音麥克風</translation>
+        </message>
+        <message>
+            <source>Unmute microphone</source>
+            <translation>取消靜音麥克風</translation>
+        </message>
+    </context>
+    <context>
+        <name>ChatInputForm</name>
+        <message>
+            <source>Send message</source>
+            <translation>發送消息</translation>
+        </message>
+        <message>
+            <source>Smileys</source>
+            <translation>表情</translation>
+        </message>
+        <message>
+            <source>Send file(s)</source>
+            <translation>發送檔</translation>
+        </message>
+        <message>
+            <source>Send a screenshot</source>
+            <translation>發送螢幕截圖</translation>
+        </message>
+        <message>
+            <source>Send a file</source>
+            <translation>傳送檔案</translation>
+        </message>
+        <message>
+            <source>Unable to open</source>
+            <translation>無法打開</translation>
+        </message>
+        <message>
+            <source>Wasn't able to open %1</source>
+            <translation>無法開啟 %1</translation>
+        </message>
+        <message>
+            <source>Bad idea</source>
+            <translation>這不是個好主意</translation>
+        </message>
+        <message>
+            <source>You're trying to send a sequential file, which is not going to work!</source>
+            <translation>您正在嘗試發送順序檔，這不起作用！</translation>
+        </message>
+    </context>
+    <context>
+        <name>ChatLineContent</name>
+        <message>
+            <source>Copy</source>
+            <translation>複製</translation>
+        </message>
+        <message>
+            <source>Reply</source>
+            <translation>引用</translation>
+        </message>
+        <message>
+            <source>Forward</source>
+            <translation>轉發</translation>
+        </message>
+    </context>
+    <context>
+        <name>ChatLog</name>
+        <message>
+            <source>Clear displayed messages</source>
+            <translation>清屏</translation>
+        </message>
+        <message>
+            <source>Copy</source>
+            <translation>複製</translation>
+        </message>
+        <message>
+            <source>Select all</source>
+            <translation>全選</translation>
+        </message>
+        <message>
+            <source>Select multiple</source>
+            <translation>多選</translation>
+        </message>
+    </context>
+    <context>
+        <name>ChatReplyForm</name>
+        <message>
+            <source>Form</source>
+            <translation>表單</translation>
+        </message>
+    </context>
+    <context>
+        <name>ChatTextEdit</name>
+        <message>
+            <source>Type your message here...</source>
+            <translation>在這裡輸入將要發送的消息...</translation>
+        </message>
+    </context>
+    <context>
+        <name>ChatWidget</name>
+        <message>
+            <source>Form</source>
+            <translation>表單</translation>
+        </message>
+        <message>
+            <source>Open profile</source>
+            <translation>打開個人檔案</translation>
+        </message>
+        <message>
+            <source>Open profile page when clicked</source>
+            <translation>點擊后打開個人檔案頁面</translation>
+        </message>
+        <message>
+            <source>Your name</source>
+            <translation>你的名字</translation>
+        </message>
+        <message>
+            <source>Status message input</source>
+            <translation>輸入狀態消息</translation>
+        </message>
+        <message>
+            <source>Set your status message that will be shown to others</source>
+            <translation>設置您要展示給他人的個人狀態消息</translation>
+        </message>
+        <message>
+            <source>Your status</source>
+            <translation>你的狀態</translation>
+        </message>
+        <message>
+            <source>Status</source>
+            <translation>狀態</translation>
+        </message>
+        <message>
+            <source>Set availability status</source>
+            <translation>設置個人狀態</translation>
+        </message>
+        <message>
+            <source>Contact search</source>
+            <translation>搜索連絡人</translation>
+        </message>
+        <message>
+            <source>Contact search input for known friends</source>
+            <translation>搜索已知好友的聯繫人搜索輸入框</translation>
+        </message>
+        <message numerus="yes">
+            <source>%n New Group Invite(s)</source>
+            <translation>
+                <numerusform>%n 個新群組邀請</numerusform>
+            </translation>
+        </message>
+        <message>
+            <source>Search Contacts</source>
+            <translation>搜索聯系人</translation>
+        </message>
+        <message>
+            <source>Online</source>
+            <comment>Button to set your status to 'Online'</comment>
+            <translation>線上</translation>
+        </message>
+        <message>
+            <source>Away</source>
+            <comment>Button to set your status to 'Away'</comment>
+            <translation>離開</translation>
+        </message>
+        <message>
+            <source>Busy</source>
+            <comment>Button to set your status to 'Busy'</comment>
+            <translation>忙碌</translation>
+        </message>
+    </context>
+    <context>
+        <name>CircleWidget</name>
+        <message>
+            <source>Rename circle</source>
+            <comment>Menu for renaming a circle</comment>
+            <translation>重新命名圈子</translation>
+        </message>
+        <message>
+            <source>Remove circle</source>
+            <comment>Menu for removing a circle</comment>
+            <translation>刪除圈子</translation>
+        </message>
+        <message>
+            <source>Open all in new window</source>
+            <translation>全部在新視窗中打開</translation>
+        </message>
+    </context>
+    <context>
+        <name>ContactSelectDialog</name>
+        <message>
+            <source>Dialog</source>
+            <translation>對話</translation>
+        </message>
+        <message>
+            <source>Please select contact</source>
+            <translation>請選擇聯繫人</translation>
+        </message>
+    </context>
+    <context>
+        <name>ContactWidget</name>
+        <message>
+            <source>Form</source>
+            <translation>表單</translation>
+        </message>
+        <message>
+            <source>Contact search</source>
+            <translation>搜索連絡人</translation>
+        </message>
+        <message>
+            <source>Contact search input for known friends</source>
+            <translation>搜索已知好友的聯繫人搜索輸入框</translation>
+        </message>
+        <message>
+            <source>Search Contacts</source>
+            <translation>搜索聯系人</translation>
+        </message>
+        <message>
+            <source> sent you a friend request.</source>
+            <translation> 向您發送好友請求。</translation>
+        </message>
+        <message>
+            <source> invites you to join a group.</source>
+            <translation> 邀請您加入群組。</translation>
+        </message>
+    </context>
+    <context>
+        <name>Core</name>
+        <message>
+            <source>Invalid Ok ID</source>
+            <comment>Error while sending friendship request</comment>
+            <translation>無效的Ok ID</translation>
+        </message>
+        <message>
+            <source>You need to write a message with your request</source>
+            <comment>Error while sending friendship request</comment>
+            <translation>您需要隨請求發送一條消息</translation>
+        </message>
+        <message>
+            <source>IMFriend is already added</source>
+            <comment>Error while sending friendship request</comment>
+            <translation>已添加 IMFriend</translation>
+        </message>
+        <message>
+            <source>/me offers friendship, "%1"</source>
+            <translation>/me 提供了好友關係，“%1”</translation>
+        </message>
+    </context>
+    <context>
+        <name>DesktopNotify</name>
+        <message>
+            <source>New message</source>
+            <translation>新訊息</translation>
+        </message>
+        <message>
+            <source>Incoming file transfer</source>
+            <translation>傳入檔案傳輸</translation>
+        </message>
+        <message>
+            <source>Friend request received</source>
+            <translation>收到的好友請求</translation>
+        </message>
+        <message>
+            <source>New group message</source>
+            <translation>新群組消息</translation>
+        </message>
+        <message>
+            <source>Group invite received</source>
+            <translation>收到的群組邀請</translation>
+        </message>
+    </context>
+    <context>
+        <name>FileTransferWidget</name>
+        <message>
+            <source>Form</source>
+            <translation>表單</translation>
+        </message>
+        <message>
+            <source>Filename</source>
+            <translation>檔案名稱</translation>
+        </message>
+        <message>
+            <source>10Mb</source>
+            <translation>10Mb</translation>
+        </message>
+        <message>
+            <source>0kb/s</source>
+            <translation>0kb/s</translation>
+        </message>
+        <message>
+            <source>ETA:10:10</source>
+            <translation>ETA:10:10</translation>
+        </message>
+        <message>
+            <source>Location not writable</source>
+            <comment>Title of permissions popup</comment>
+            <translation>位置不可寫入</translation>
+        </message>
+        <message>
+            <source>You do not have permission to write that location. Choose another, or cancel the save dialog.</source>
+            <comment>text of permissions popup</comment>
+            <translation>您沒有寫入該位置的許可權。選擇另一個，或取消保存對話方塊。</translation>
+        </message>
+        <message>
+            <source>Waiting to send...</source>
+            <comment>file transfer widget</comment>
+            <translation>等待傳送…</translation>
+        </message>
+        <message>
+            <source>Accept to receive this file</source>
+            <comment>file transfer widget</comment>
+            <translation>接受接收此檔案</translation>
+        </message>
+        <message>
+            <source>Resuming...</source>
+            <comment>file transfer widget</comment>
+            <translation>恢復中…</translation>
+        </message>
+        <message>
+            <source>Pause transfer</source>
+            <translation>暫停傳輸</translation>
+        </message>
+        <message>
+            <source>Cancel transfer</source>
+            <translation>取消傳輸</translation>
+        </message>
+        <message>
+            <source>Accept transfer</source>
+            <translation>接受傳輸</translation>
+        </message>
+        <message>
+            <source>Open file</source>
+            <translation>開啟檔案</translation>
+        </message>
+        <message>
+            <source>Open file directory</source>
+            <translation>開啟檔案目錄</translation>
+        </message>
+    </context>
+    <context>
+        <name>FilesForm</name>
+        <message>
+            <source>Transferred Files</source>
+            <comment>"Headline" of the window</comment>
+            <translation>傳輸的檔案</translation>
+        </message>
+        <message>
+            <source>Downloads</source>
+            <translation>下載</translation>
+        </message>
+        <message>
+            <source>Uploads</source>
+            <translation>上傳</translation>
+        </message>
+    </context>
+    <context>
+        <name>FriendForm</name>
+        <message>
+            <source>Frame</source>
+            <translation>框架</translation>
+        </message>
+        <message>
+            <source>id</source>
+            <translation>身份證</translation>
+        </message>
+        <message>
+            <source>+</source>
+            <translation>+</translation>
+        </message>
+    </context>
+    <context>
+        <name>FriendRequestDialog</name>
+        <message>
+            <source>IMFriend request</source>
+            <comment>Title of the window to aceept/deny a friend request</comment>
+            <translation>IMFriend 請求</translation>
+        </message>
+        <message>
+            <source>Someone wants to make friends with you</source>
+            <translation>有人想和你交朋友</translation>
+        </message>
+        <message>
+            <source>User ID:</source>
+            <translation>使用者 ID：</translation>
+        </message>
+        <message>
+            <source>IMFriend request message:</source>
+            <translation>IMFriend 請求消息：</translation>
+        </message>
+        <message>
+            <source>Accept</source>
+            <comment>Accept a friend request</comment>
+            <translation>接受</translation>
+        </message>
+        <message>
+            <source>Reject</source>
+            <comment>Reject a friend request</comment>
+            <translation>拒絕</translation>
+        </message>
+    </context>
+    <context>
+        <name>FriendWidget</name>
+        <message>
+            <source>Invite to group</source>
+            <translation>邀請加入群組</translation>
+        </message>
+        <message>
+            <source>To new group</source>
+            <translation>邀請新建群組</translation>
+        </message>
+        <message>
+            <source>Remove friend</source>
+            <translation>刪除好友</translation>
+        </message>
+        <message>
+            <source>Confirmation</source>
+            <translation>確認</translation>
+        </message>
+        <message>
+            <source>Are you sure to remove %1 ?</source>
+            <translation>您確定刪除好友%1 ？</translation>
+        </message>
+        <message>
+            <source>Warning</source>
+            <translation>警告</translation>
+        </message>
+        <message>
+            <source>Can not remove the friend!</source>
+            <translation>無法刪除朋友！</translation>
+        </message>
+        <message>
+            <source>Online</source>
+            <translation>線上</translation>
+        </message>
+        <message>
+            <source>Away</source>
+            <translation>離開</translation>
+        </message>
+        <message>
+            <source>Busy</source>
+            <translation>忙碌</translation>
+        </message>
+        <message>
+            <source>Offline</source>
+            <translation>離線</translation>
+        </message>
+        <message>
+            <source>New message</source>
+            <translation>新訊息</translation>
+        </message>
+    </context>
+    <context>
+        <name>GeneralForm</name>
+        <message>
+            <source>General</source>
+            <translation>一般设置</translation>
+        </message>
+    </context>
+    <context>
+        <name>GeneralSettings</name>
+        <message>
+            <source>Chat</source>
+            <translation>聊天</translation>
+        </message>
+        <message>
+            <source>Base font:</source>
+            <translation>基礎字體</translation>
+        </message>
+        <message>
+            <source>px</source>
+            <translation>px</translation>
+        </message>
+        <message>
+            <source>Size:</source>
+            <translation>大小</translation>
+        </message>
+        <message>
+            <source>New text styling preference may not load until qTox restarts.</source>
+            <translation>qTox 重新啟動之前可能不會載入新的文字樣式設置。</translation>
+        </message>
+        <message>
+            <source>Text Style format:</source>
+            <translation>文本格式</translation>
+        </message>
+        <message>
+            <source>Select text styling preference.</source>
+            <translation>選擇文字樣式首選項。</translation>
+        </message>
+        <message>
+            <source>Plaintext</source>
+            <translation>純文本</translation>
+        </message>
+        <message>
+            <source>Show formatting characters</source>
+            <translation>顯示格式化字符</translation>
+        </message>
+        <message>
+            <source>Don't show formatting characters</source>
+            <translation>不顯示格式化字符</translation>
+        </message>
+        <message>
+            <source>Use colored nicknames in chats</source>
+            <translation>在交談中使用彩色名稱</translation>
+        </message>
+        <message>
+            <source>New message</source>
+            <translation>新訊息</translation>
+        </message>
+        <message>
+            <source>Your status is changed to Away after set period of inactivity.</source>
+            <translation>您的狀態將在給定的無活動分鐘數后被修改為離開。</translation>
+        </message>
+        <message>
+            <source>Auto away after (0 to disable):</source>
+            <translation>超過此時間自動離開（0 為禁用）：</translation>
+        </message>
+        <message>
+            <source>Set to 0 to disable</source>
+            <translation>設為 0 禁用</translation>
+        </message>
+        <message>
+            <source>Show a notification when you receive a new message and the window is not selected.</source>
+            <comment>tooltip for Notify setting</comment>
+            <translation>當您收到新消息且視窗未被選取時顯示通知。</translation>
+        </message>
+        <message>
+            <source>Notify</source>
+            <translation>通知</translation>
+        </message>
+        <message>
+            <source>Onlys notify about new messages in groupchats when mentioned.</source>
+            <comment>toolTip for Group chats only notify when mentioned</comment>
+            <translation>只有當被提及時，才會通知群聊中的新消息。</translation>
+        </message>
+        <message>
+            <source>Group chats only notify when mentioned</source>
+            <translation>群聊消息只有在被提到時才通知</translation>
+        </message>
+        <message>
+            <source>Play sound</source>
+            <translation>播放聲音</translation>
+        </message>
+        <message>
+            <source>Play sound while Busy</source>
+            <translation>忙碌狀態時仍播放提示音</translation>
+        </message>
+        <message>
+            <source>Notify via desktop notifications</source>
+            <translation>通過桌面提醒來通知</translation>
+        </message>
+        <message>
+            <source>Hide message sender and contents</source>
+            <translation>隱藏消息寄件人和內容</translation>
+        </message>
+        <message>
+            <source>Privacy</source>
+            <translation>隱私</translation>
+        </message>
+        <message>
+            <source>Your friends will be able to see when you are typing.</source>
+            <comment>tooltip for typing notifications setting</comment>
+            <translation>您的朋友將能夠看到您何時鍵入。</translation>
+        </message>
+        <message>
+            <source>Send typing notifications</source>
+            <translation>發送正在輸入通知</translation>
+        </message>
+    </context>
+    <context>
+        <name>GenericChatForm</name>
+        <message>
+            <source>Confirmation</source>
+            <translation>確認</translation>
+        </message>
+        <message>
+            <source>You are sure that you want to clear all displayed messages?</source>
+            <translation>您確定要清除所有顯示的消息嗎？</translation>
+        </message>
+        <message>
+            <source>Cleared</source>
+            <translation>已清除</translation>
+        </message>
+        <message>
+            <source>Save chat log</source>
+            <translation>保存聊天記錄</translation>
+        </message>
+        <message>
+            <source>The community version cannot send files to offline contacts!</source>
+            <translation>社區版無法給離線連絡人發送檔案！</translation>
+        </message>
+    </context>
+    <context>
+        <name>GenericChatItemWidget</name>
+        <message>
+            <source>I:</source>
+            <translation>我：</translation>
+        </message>
+        <message>
+            <source>:</source>
+            <translation>:</translation>
+        </message>
+    </context>
+    <context>
+        <name>GenericNetCamView</name>
+        <message>
+            <source>Tox video</source>
+            <translation>Tox 視訊</translation>
+        </message>
+        <message>
+            <source>Full Screen</source>
+            <translation>全屏</translation>
+        </message>
+        <message>
+            <source>Toggle video preview</source>
+            <translation>切換視頻預覽</translation>
+        </message>
+        <message>
+            <source>Mute audio</source>
+            <translation>靜音</translation>
+        </message>
+        <message>
+            <source>Mute microphone</source>
+            <translation>靜音麥克風</translation>
+        </message>
+        <message>
+            <source>End video call</source>
+            <translation>結束視訊通話</translation>
+        </message>
+        <message>
+            <source>Exit full screen</source>
+            <translation>退出全屏</translation>
+        </message>
+        <message>
+            <source>Hide Messages</source>
+            <translation>隱藏訊息</translation>
+        </message>
+        <message>
+            <source>Show Messages</source>
+            <translation>顯示訊息</translation>
+        </message>
+    </context>
+    <context>
+        <name>GroupChatForm</name>
+        <message>
+            <source>%1 has set the title to %2</source>
+            <translation>%1 已將標題設置為 %2</translation>
+        </message>
+        <message>
+            <source>%1 has joined the group</source>
+            <translation>%1 加入了群組</translation>
+        </message>
+        <message>
+            <source>%1 has left the group</source>
+            <translation>%1 離開了群</translation>
+        </message>
+        <message>
+            <source>%1 is now known as %2</source>
+            <translation>%1 更名為 %2</translation>
+        </message>
+        <message numerus="yes">
+            <source>%n user(s) in chat</source>
+            <comment>Number of users in chat</comment>
+            <translation>
+                <numerusform>聊天中的 %n 個使用者</numerusform>
+            </translation>
+        </message>
+        <message>
+            <source>mute</source>
+            <translation>靜音</translation>
+        </message>
+        <message>
+            <source>unmute</source>
+            <translation>取消靜音</translation>
+        </message>
+    </context>
+    <context>
+        <name>GroupCreateForm</name>
+        <message>
+            <source>Form</source>
+            <translation>表單</translation>
+        </message>
+        <message>
+            <source>Group name</source>
+            <translation>群組名稱</translation>
+        </message>
+        <message>
+            <source>Confirm</source>
+            <translation>確定</translation>
+        </message>
+        <message>
+            <source>Create new group</source>
+            <translation>創建聊天群組</translation>
+        </message>
+    </context>
+    <context>
+        <name>GroupInviteForm</name>
+        <message>
+            <source>Groups</source>
+            <translation>羣組</translation>
+        </message>
+        <message>
+            <source>Create new group</source>
+            <translation>創建聊天群組</translation>
+        </message>
+        <message>
+            <source>Group invites</source>
+            <translation>群組邀請</translation>
+        </message>
+    </context>
+    <context>
+        <name>GroupInviteWidget</name>
+        <message>
+            <source>Invited by %1 on %2 at %3.</source>
+            <translation>%1 於 %2 %3 邀請。</translation>
+        </message>
+        <message>
+            <source>Join</source>
+            <translation>加入</translation>
+        </message>
+        <message>
+            <source>Decline</source>
+            <translation>拒絕</translation>
+        </message>
+    </context>
+    <context>
+        <name>GroupWidget</name>
+        <message>
+            <source>Quit group</source>
+            <comment>Menu to quit a groupchat</comment>
+            <translation>退出群組</translation>
+        </message>
+        <message>
+            <source>Destroy group</source>
+            <comment>Destroy the groupchat</comment>
+            <translation>解散群組</translation>
+        </message>
+        <message>
+            <source>Confirmation</source>
+            <translation>確認</translation>
+        </message>
+        <message>
+            <source>Are you sure to quit %1 chat group?</source>
+            <translation>您確定離開群聊 %1 嗎？</translation>
+        </message>
+    </context>
+    <context>
+        <name>IMMainWindow</name>
+        <message>
+            <source>Close</source>
+            <translation>關閉</translation>
+        </message>
+    </context>
+    <context>
+        <name>IdentitySettings</name>
+        <message>
+            <source>My profile</source>
+            <translation>個人檔案</translation>
+        </message>
+        <message>
+            <source>Public Information</source>
+            <translation>公開資訊</translation>
+        </message>
+        <message>
+            <source>Nickname:</source>
+            <translation>昵稱：</translation>
+        </message>
+        <message>
+            <source>Name input</source>
+            <translation>輸入名字</translation>
+        </message>
+        <message>
+            <source>Name visible to contacts</source>
+            <translation>名字對聯繫人可見</translation>
+        </message>
+        <message>
+            <source>Account:</source>
+            <translation>帳號：</translation>
+        </message>
+        <message>
+            <source>Location:</source>
+            <translation>位置：</translation>
+        </message>
+        <message>
+            <source>Personal Information</source>
+            <translation>個人資訊</translation>
+        </message>
+        <message>
+            <source>My name:</source>
+            <translation>姓名：</translation>
+        </message>
+        <message>
+            <source>My phone:</source>
+            <translation>手機：</translation>
+        </message>
+        <message>
+            <source>My E-Mail:</source>
+            <translation>郵箱：</translation>
+        </message>
+        <message>
+            <source>My telephone:</source>
+            <translation>電話：</translation>
+        </message>
+        <message>
+            <source>Profile</source>
+            <translation>配置檔</translation>
+        </message>
+        <message>
+            <source>Go back to the login screen</source>
+            <comment>tooltip for logout button</comment>
+            <translation>返回到登錄螢幕</translation>
+        </message>
+        <message>
+            <source>Exit</source>
+            <comment>import profile button</comment>
+            <translation>結束</translation>
+        </message>
+        <message>
+            <source>Logout</source>
+            <comment>import profile button</comment>
+            <translation>登出</translation>
+        </message>
+    </context>
+    <context>
+        <name>LoadHistoryDialog</name>
+        <message>
+            <source>Load History Dialog</source>
+            <translation>載入歷史記錄對話框</translation>
+        </message>
+        <message>
+            <source>Load history from:</source>
+            <translation>載入歷史來自：</translation>
+        </message>
+    </context>
+    <context>
+        <name>MessageSessionListWidget</name>
+        <message>
+            <source>Today</source>
+            <translation>今日</translation>
+        </message>
+        <message>
+            <source>Yesterday</source>
+            <translation>昨日</translation>
+        </message>
+        <message>
+            <source>Last 7 days</source>
+            <translation>近七天</translation>
+        </message>
+        <message>
+            <source>This month</source>
+            <translation>本月</translation>
+        </message>
+        <message>
+            <source>Older than 6 Months</source>
+            <translation>6 個月前</translation>
+        </message>
+        <message>
+            <source>Never</source>
+            <translation>永不</translation>
+        </message>
+    </context>
+    <context>
+        <name>MessageSessionWidget</name>
+        <message>
+            <source>Delete the session</source>
+            <translation>刪除該會話</translation>
+        </message>
+        <message>
+            <source>Show details</source>
+            <translation>查看詳情</translation>
+        </message>
+    </context>
+    <context>
+        <name>Nexus</name>
+        <message>
+            <source>Can not create profile!</source>
+            <translation>無法建立設定檔！</translation>
+        </message>
+        <message>
+            <source>View</source>
+            <comment>OS X Menu bar</comment>
+            <translation>查看</translation>
+        </message>
+        <message>
+            <source>Window</source>
+            <comment>OS X Menu bar</comment>
+            <translation>日期</translation>
+        </message>
+        <message>
+            <source>Minimize</source>
+            <comment>OS X Menu bar</comment>
+            <translation>最小化</translation>
+        </message>
+        <message>
+            <source>Bring All to Front</source>
+            <comment>OS X Menu bar</comment>
+            <translation>移動全部到最上層</translation>
+        </message>
+        <message>
+            <source>Exit Fullscreen</source>
+            <translation>退出全屏</translation>
+        </message>
+        <message>
+            <source>Enter Fullscreen</source>
+            <translation>進入全屏模式</translation>
+        </message>
+    </context>
+    <context>
+        <name>NotificationEdgeWidget</name>
+        <message numerus="yes">
+            <source>Unread message(s)</source>
+            <translation>
+                <numerusform>未讀消息</numerusform>
+            </translation>
+        </message>
+    </context>
+    <context>
+        <name>PasswordEdit</name>
+        <message>
+            <source>CAPS-LOCK ENABLED</source>
+            <translation>大寫鎖定已啟用</translation>
+        </message>
+    </context>
+    <context>
+        <name>PrivacyForm</name>
+        <message>
+            <source>Privacy</source>
+            <translation>隱私</translation>
+        </message>
+    </context>
+    <context>
+        <name>ProfileForm</name>
+        <message>
+            <source>Unable to open this file.</source>
+            <translation>無法開啟此檔案。</translation>
+        </message>
+        <message>
+            <source>Unable to read this image.</source>
+            <translation>無法讀取此圖像。</translation>
+        </message>
+        <message>
+            <source>The supplied image is too large.
+Please use another image.</source>
+            <translation>提供的圖像太大。
+請使用其他圖片。</translation>
+        </message>
+        <message>
+            <source>Empty path is unavaliable</source>
+            <translation>空路徑不可用</translation>
+        </message>
+        <message>
+            <source>Failed to rename</source>
+            <translation>重新命名失敗</translation>
+        </message>
+        <message>
+            <source>Couldn't rename the profile to "%1"</source>
+            <translation>無法重新命名該帳戶為「%1」</translation>
+        </message>
+        <message>
+            <source>Profile already exists</source>
+            <translation>帳戶已存在</translation>
+        </message>
+        <message>
+            <source>A profile named "%1" already exists.</source>
+            <translation>名為「%1」的帳戶已存在。</translation>
+        </message>
+        <message>
+            <source>Empty name</source>
+            <translation>空名稱</translation>
+        </message>
+        <message>
+            <source>Empty name is unavaliable</source>
+            <translation>空名稱無效</translation>
+        </message>
+        <message>
+            <source>Location not writable</source>
+            <comment>Title of permissions popup</comment>
+            <translation>位置不可寫入</translation>
+        </message>
+        <message>
+            <source>You do not have permission to write that location. Choose another, or cancel the save dialog.</source>
+            <comment>text of permissions popup</comment>
+            <translation>您沒有寫入該位置的許可權。選擇另一個，或取消保存對話方塊。</translation>
+        </message>
+        <message>
+            <source>Failed to copy file</source>
+            <translation>複製檔案失敗</translation>
+        </message>
+        <message>
+            <source>The file you chose could not be written to.</source>
+            <translation>您選擇的檔案不可被寫入。</translation>
+        </message>
+        <message>
+            <source>Empty path</source>
+            <translation>空路徑</translation>
+        </message>
+        <message>
+            <source>Couldn't change password</source>
+            <translation>無法修改密碼</translation>
+        </message>
+        <message>
+            <source>Couldn't change password on the database, it might be corrupted or use the old password.</source>
+            <translation>無法更改資料庫的密碼，它可能已損壞或使用舊密碼。</translation>
+        </message>
+        <message>
+            <source>Current profile location: %1</source>
+            <translation>目前的帳戶的位置： %1</translation>
+        </message>
+        <message>
+            <source>Remove</source>
+            <translation>移除</translation>
+        </message>
+        <message>
+            <source>Images (%1)</source>
+            <comment>filetype filter</comment>
+            <translation>圖片 （%1）</translation>
+        </message>
+        <message>
+            <source>Choose a profile picture</source>
+            <translation>選擇頭像</translation>
+        </message>
+        <message>
+            <source>Error</source>
+            <translation>錯誤</translation>
+        </message>
+        <message>
+            <source>Export profile</source>
+            <translation>匯出帳戶</translation>
+        </message>
+        <message>
+            <source>Tox save file (*.tox)</source>
+            <extracomment>save dialog filter</extracomment>
+            <translation>Tox 存檔檔 （*.tox）</translation>
+        </message>
+        <message>
+            <source>Save</source>
+            <comment>save qr image</comment>
+            <translation>保存</translation>
+        </message>
+        <message>
+            <source>Save QrCode (*.png)</source>
+            <comment>save dialog filter</comment>
+            <translation>儲存二維碼圖片 （* .png）</translation>
+        </message>
+        <message>
+            <source>Nothing to remove</source>
+            <translation>沒有可以刪除的東西</translation>
+        </message>
+        <message>
+            <source>Your profile does not have a password!</source>
+            <translation>您的帳號沒有設定密碼 。</translation>
+        </message>
+        <message>
+            <source>Really delete password?</source>
+            <comment>deletion confirmation title</comment>
+            <translation>確定要刪除密碼嗎？</translation>
+        </message>
+        <message>
+            <source>Are you sure you want to delete your password?</source>
+            <extracomment>deletion confirmation text</extracomment>
+            <translation>您確定要刪除密碼嗎？</translation>
+        </message>
+        <message>
+            <source>Please enter a new password.</source>
+            <translation>請輸入新密碼。</translation>
+        </message>
+    </context>
+    <context>
+        <name>ProfileImporter</name>
+        <message>
+            <source>Import profile</source>
+            <comment>import dialog title</comment>
+            <translation>導入使用者檔案</translation>
+        </message>
+        <message>
+            <source>Tox save file (*.tox)</source>
+            <comment>import dialog filter</comment>
+            <translation>Tox 存檔檔 （*.tox）</translation>
+        </message>
+        <message>
+            <source>File doesn't exist</source>
+            <translation>檔不存在</translation>
+        </message>
+        <message>
+            <source>Profile doesn't exist</source>
+            <translation>帳戶不存在</translation>
+        </message>
+        <message>
+            <source>Ignoring non-Tox file</source>
+            <comment>popup title</comment>
+            <translation>忽略非 Tox 的檔</translation>
+        </message>
+        <message>
+            <source>Warning: You have chosen a file that is not a Tox save file; ignoring.</source>
+            <comment>popup text</comment>
+            <translation>警告：您選擇的檔不是 Tox 檔案檔; 忽略。</translation>
+        </message>
+        <message>
+            <source>Profile already exists</source>
+            <comment>import confirm title</comment>
+            <translation>帳戶已存在</translation>
+        </message>
+        <message>
+            <source>A profile named "%1" already exists. Do you want to erase it?</source>
+            <comment>import confirm text</comment>
+            <translation>一個叫「%1」的使用者配置檔已經存在，您想要擦除它嗎？</translation>
+        </message>
+        <message>
+            <source>Profile imported</source>
+            <translation>已匯入使用者配置檔</translation>
+        </message>
+        <message>
+            <source>%1.tox was successfully imported</source>
+            <translation>%1.tox 已成功導入</translation>
+        </message>
+    </context>
+    <context>
+        <name>QApplication</name>
+        <message>
+            <source>Ok</source>
+            <translation>Ok</translation>
+        </message>
+        <message>
+            <source>Cancel</source>
+            <translation>取消</translation>
+        </message>
+        <message>
+            <source>Yes</source>
+            <translation>是</translation>
+        </message>
+        <message>
+            <source>No</source>
+            <translation>否</translation>
+        </message>
+    </context>
+    <context>
+        <name>QObject</name>
+        <message>
+            <source>Reformatting text in progress..</source>
+            <translation>重新設定文字格式...</translation>
+        </message>
+        <message>
+            <source>online</source>
+            <comment>contact status</comment>
+            <translation>在線</translation>
+        </message>
+        <message>
+            <source>away</source>
+            <comment>contact status</comment>
+            <translation>離開</translation>
+        </message>
+        <message>
+            <source>busy</source>
+            <comment>contact status</comment>
+            <translation>忙碌</translation>
+        </message>
+        <message>
+            <source>offline</source>
+            <comment>contact status</comment>
+            <translation>離線</translation>
+        </message>
+        <message>
+            <source>blocked</source>
+            <comment>contact status</comment>
+            <translation>已遮罩</translation>
+        </message>
+        <message>
+            <source>Error</source>
+            <translation>錯誤</translation>
+        </message>
+        <message>
+            <source>Couldn't open your chat logs, they will be exit.</source>
+            <translation>無法打開聊天歷史，程式將退出。</translation>
+        </message>
+        <message>
+            <source>None</source>
+            <comment>No camera device set</comment>
+            <translation>無</translation>
+        </message>
+        <message>
+            <source>Desktop</source>
+            <comment>Desktop as a camera input for screen sharing</comment>
+            <translation>桌面</translation>
+        </message>
+        <message>
+            <source>Incoming call...</source>
+            <translation>來電...</translation>
+        </message>
+    </context>
+    <context>
+        <name>RemoveFriendDialog</name>
+        <message>
+            <source>Remove friend</source>
+            <translation>刪除好友</translation>
+        </message>
+        <message>
+            <source>Remove all chat history with the friend if set</source>
+            <translation>如果設置則刪除與該好友的所有聊天歷史記錄</translation>
+        </message>
+        <message>
+            <source>Also remove chat history</source>
+            <translation>同時刪除聊天歷史記錄</translation>
+        </message>
+        <message>
+            <source>Are you sure you want to remove %1 from your contacts list?</source>
+            <translation>您確定要從聯絡人名單中刪除 %1 嗎？</translation>
+        </message>
+        <message>
+            <source>Remove</source>
+            <translation>移除</translation>
+        </message>
+    </context>
+    <context>
+        <name>ScreenshotGrabber</name>
+        <message>
+            <source>Click and drag to select a region. Press %1 to hide/show window, or %2 to cancel.</source>
+            <comment>Help text shown when no region has been selected yet</comment>
+            <translation>按一下並拖動以選擇一個區域。 按%1以隱藏/顯示視窗，或%2來取消。</translation>
+        </message>
+        <message>
+            <source>Space</source>
+            <comment>[Space] key on the keyboard</comment>
+            <translation>空格</translation>
+        </message>
+        <message>
+            <source>Escape</source>
+            <comment>[Escape] key on the keyboard</comment>
+            <translation>ESC</translation>
+        </message>
+        <message>
+            <source>Press %1 to send a screenshot of the selection, %2 to hide/show window, or %3 to cancel.</source>
+            <comment>Help text shown when a region has been selected</comment>
+            <translation>按%1鍵發送所選區域的螢幕截圖，%2鍵以隱藏/顯示視窗，或%3鍵取消螢幕截圖。</translation>
+        </message>
+        <message>
+            <source>Enter</source>
+            <comment>[Enter] key on the keyboard</comment>
+            <translation>回車</translation>
+        </message>
+    </context>
+    <context>
+        <name>SearchForm</name>
+        <message>
+            <source>The text could not be found.</source>
+            <translation>無法找到文字。</translation>
+        </message>
+        <message>
+            <source>Start</source>
+            <translation>開始</translation>
+        </message>
+    </context>
+    <context>
+        <name>SearchSettingsForm</name>
+        <message>
+            <source>Form</source>
+            <translation>表單</translation>
+        </message>
+        <message>
+            <source>Start search:</source>
+            <translation>開始搜尋：</translation>
+        </message>
+        <message>
+            <source>from the end</source>
+            <translation>從結尾</translation>
+        </message>
+        <message>
+            <source>from the beginning</source>
+            <translation>從開頭</translation>
+        </message>
+        <message>
+            <source>after date</source>
+            <translation>日期之後</translation>
+        </message>
+        <message>
+            <source>before date</source>
+            <translation>日期之前</translation>
+        </message>
+        <message>
+            <source>00.00.0000</source>
+            <translation>00.00.0000</translation>
+        </message>
+        <message>
+            <source>Case sensitive</source>
+            <translation>區分大小寫</translation>
+        </message>
+        <message>
+            <source>Whole words only</source>
+            <translation>僅完整的詞</translation>
+        </message>
+        <message>
+            <source>Use regular expressions</source>
+            <translation>使用正則表達式</translation>
+        </message>
+        <message>
+            <source>Select Date Dialog</source>
+            <translation>選擇日期對話框</translation>
+        </message>
+        <message>
+            <source>Select a date</source>
+            <translation>選擇日期</translation>
+        </message>
+    </context>
+    <context>
+        <name>SetPasswordDialog</name>
+        <message>
+            <source>Set your password</source>
+            <translation>設置密碼</translation>
+        </message>
+        <message>
+            <source>Confirm:</source>
+            <translation>確認：</translation>
+        </message>
+        <message>
+            <source>Password:</source>
+            <translation>密碼：</translation>
+        </message>
+        <message>
+            <source>Confirm password</source>
+            <translation>確認密碼</translation>
+        </message>
+        <message>
+            <source>Confirm password input</source>
+            <translation>確認密碼輸入框</translation>
+        </message>
+        <message>
+            <source>Password input</source>
+            <translation>密碼輸入</translation>
+        </message>
+        <message>
+            <source>Password input field, minimum 6 characters long</source>
+            <translation>密碼輸入框，最小長度為6個字元</translation>
+        </message>
+        <message>
+            <source>Password strength: %p%</source>
+            <translation>密碼長度：%p%</translation>
+        </message>
+        <message>
+            <source>The password is too short</source>
+            <translation>密碼長度太短</translation>
+        </message>
+        <message>
+            <source>The password doesn't match.</source>
+            <translation>密碼不匹配。</translation>
+        </message>
+    </context>
+    <context>
+        <name>Settings</name>
+        <message>
+            <source>Circle #%1</source>
+            <translation>圓圈 #%1</translation>
+        </message>
+    </context>
+    <context>
+        <name>StorageSettingsForm</name>
+        <message>
+            <source>Local Storage</source>
+            <translation>本地存儲</translation>
+        </message>
+        <message>
+            <source>Summary:</source>
+            <translation>總結：</translation>
+        </message>
+        <message>
+            <source>400MB</source>
+            <translation>400兆位元組</translation>
+        </message>
+        <message>
+            <source>Set where files will be saved.</source>
+            <translation>設置檔保存位置。</translation>
+        </message>
+        <message>
+            <source>clear all</source>
+            <translation>全部清除</translation>
+        </message>
+        <message>
+            <source>Total size limit:</source>
+            <translation>總大小限制：</translation>
+        </message>
+        <message>
+            <source>3GB</source>
+            <translation>3GB</translation>
+        </message>
+        <message>
+            <source>Media cache limit:</source>
+            <translation>媒體快取限制：</translation>
+        </message>
+        <message>
+            <source>2GB</source>
+            <translation>2GB</translation>
+        </message>
+        <message>
+            <source>Clear files older than:</source>
+            <translation>清除早於以下時間的檔案：</translation>
+        </message>
+        <message>
+            <source>1 month</source>
+            <translation>1 個月</translation>
+        </message>
+        <message>
+            <source>1866 images</source>
+            <translation>1866 張圖片</translation>
+        </message>
+        <message>
+            <source>44.4MB</source>
+            <translation>44.4兆位元組（MB）</translation>
+        </message>
+        <message>
+            <source>clear</source>
+            <translation>清楚</translation>
+        </message>
+        <message>
+            <source>511 stickers</source>
+            <translation>511 張貼紙</translation>
+        </message>
+        <message>
+            <source>11.0MB</source>
+            <translation>11.0兆位元組（MB）</translation>
+        </message>
+        <message>
+            <source>13 GIF animations</source>
+            <translation>13 個 GIF 動畫</translation>
+        </message>
+        <message>
+            <source>2.5MB</source>
+            <translation>2.5兆位元組（MB）</translation>
+        </message>
+        <message>
+            <source>Media cache</source>
+            <translation>媒體快取</translation>
+        </message>
+        <message>
+            <source>405.7MB</source>
+            <translation>405.7兆位元組（MB）</translation>
+        </message>
+        <message>
+            <source>Choose an auto accept directory</source>
+            <comment>popup title</comment>
+            <translation>選擇自動接受目錄</translation>
+        </message>
+        <message>
+            <source>Storage Settings</source>
+            <translation>存儲设置</translation>
+        </message>
+    </context>
+    <context>
+        <name>Widget</name>
+        <message>
+            <source>Chat</source>
+            <translation>聊天</translation>
+        </message>
+        <message>
+            <source>Contacts</source>
+            <translation>聯絡人</translation>
+        </message>
+        <message>
+            <source>Settings</source>
+            <translation>設定</translation>
+        </message>
+        <message>
+            <source>The core failed to start, the application will terminate after you close this message.</source>
+            <translation>toxcore 啟動失敗，應用程式將在您關閉此消息后終止。</translation>
+        </message>
+        <message>
+            <source>The core failed to start with your proxy settings. So cannot to run; please modify your settings and restart.</source>
+            <comment>popup text</comment>
+            <translation>核心無法使用您的代理設置啟動。所以不能逃跑;請修改您的設置並重新啟動。</translation>
+        </message>
+        <message>
+            <source>Executable file</source>
+            <comment>popup title</comment>
+            <translation>可執行檔</translation>
+        </message>
+        <message>
+            <source>You have asked qTox to open an executable file. Executable files can potentially damage your computer. Are you sure want to open this file?</source>
+            <comment>popup text</comment>
+            <translation>您已要求 qTox 打開一個可執行檔。可執行檔可能會損壞您的電腦。是否確實要打開此檔？</translation>
+        </message>
+        <message>
+            <source>Couldn't request friendship</source>
+            <translation>無法添加為好友</translation>
+        </message>
+        <message>
+            <source>File sent</source>
+            <translation>檔案已傳送</translation>
+        </message>
+        <message>
+            <source>Add friend</source>
+            <comment>title of the window</comment>
+            <translation>新增朋友</translation>
+        </message>
+        <message>
+            <source>Group invites</source>
+            <comment>title of the window</comment>
+            <translation>群組邀請</translation>
+        </message>
+        <message>
+            <source>File transfers</source>
+            <comment>title of the window</comment>
+            <translation>檔案傳輸</translation>
+        </message>
+        <message>
+            <source>Settings</source>
+            <comment>title of the window</comment>
+            <translation>設定</translation>
+        </message>
+        <message>
+            <source>My profile</source>
+            <comment>title of the window</comment>
+            <translation>個人檔案</translation>
+        </message>
+    </context>
+</TS>

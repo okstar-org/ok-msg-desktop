@@ -48,11 +48,11 @@ PluginManagerForm::PluginManagerForm(QWidget* parent)
             Qt::UniqueConnection);
 
     delayCaller_ = std::make_unique<::base::DelayedCallTimer>();
-    http = std::make_unique<ok::backend::OkCloudService>(this);
+    http = std::make_unique<lib::backend::OkCloudService>(this);
 
     delayCaller_->call(400, [&]() {
         http->GetPluginPage(
-                [&](backend::ResPage<ok::backend::PluginInfo>& resList) {
+                [&](lib::backend::ResPage<lib::backend::PluginInfo>& resList) {
                     int i = 0;
                     for (auto& item : resList.data.list) {
                         qDebug() << "add plugin:" << item.name;
@@ -79,12 +79,12 @@ void PluginManagerForm::pluginClicked(QListWidgetItem* item) {
     setPluginInfo(info);
 }
 
-void PluginManagerForm::add(ok::backend::PluginInfo& info, int i) {
+void PluginManagerForm::add(lib::backend::PluginInfo& info, int i) {
     mPluginInfos.append(info);
     createPlugin(info, i);
 }
 
-void PluginManagerForm::createPlugin(ok::backend::PluginInfo& info, int i) {
+void PluginManagerForm::createPlugin(lib::backend::PluginInfo& info, int i) {
     auto pitem = new PluginItemForm(0, info, this);
     auto aitem = new QListWidgetItem(ui->listWidget);
     aitem->setSizeHint(QSize(200, 70));
@@ -95,7 +95,7 @@ void PluginManagerForm::createPlugin(ok::backend::PluginInfo& info, int i) {
     retranslateUi();
 }
 
-void PluginManagerForm::setPluginInfo(ok::backend::PluginInfo& info) {
+void PluginManagerForm::setPluginInfo(lib::backend::PluginInfo& info) {
     for (auto i = 0; i < ui->stackedWidget->count(); i++) {
         auto entry = static_cast<PluginInfoForm*>(ui->stackedWidget->widget(i));
         if (entry->pluginId() == info.id) {

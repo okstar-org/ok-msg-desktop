@@ -15,20 +15,28 @@
 
 #include <QWidget>
 #include "MeetingVideoDefines.h"
+#include "base/jid.h"
+#include "lib/messenger/messenger.h"
 
 class QToolBar;
 class QToolButton;
 class PopupMenuComboBox;
 class QLabel;
 
-class MeetingVideosLayout;
+namespace module::meet {
 
-class MeetingVideoFrame : public QWidget
-{
+class MeetingVideosContainer;
+class MeetingParticipant;
+class MeetingUser;
+
+class MeetingVideoFrame : public QWidget, public lib::messenger::MessengerMeetHandler {
     Q_OBJECT
 public:
-    MeetingVideoFrame(QWidget* parent);
+    explicit MeetingVideoFrame(const QString& name, QWidget* parent = nullptr);
+    ~MeetingVideoFrame() override;
     void reloadTheme();
+    void createMeet(const QString& name);
+    void retranslateUi();
 
 private:
     void creatTopToolBar();
@@ -41,17 +49,35 @@ private:
     void showAudioPopMenu();
 
     void changeEvent(QEvent* event);
-public:
-    void retranslateUi();
-private:
 
+    /**
+     * MessengerMeetHandler
+     * @param jid
+     * @param ready
+     * @param props
+     */
+    void onMeetCreated(const ok::base::Jid& jid,
+                       bool ready,
+                       const std::map<std::string, std::string>& props) override;
+
+    void onParticipantJoined(const ok::base::Jid& jid,
+                             const lib::messenger::Participant& parti) override;
+
+    void onParticipantLeft(const ok::base::Jid& jid, const ok::base::Jid& partJid) override;
+
+private:
+    // for run in UI thread
+    void addParticipant(const QString& name, const lib::messenger::Participant& parti);
+    void removeParticipant(const QString& name, const ok::base::Jid& jid);
+
+private:
     // 顶部工具
     QToolBar* topToolBar = nullptr;
-    QAction * infoAction = nullptr;
-    QAction * sharedAction = nullptr;
+    QAction* infoAction = nullptr;
+    QAction* sharedAction = nullptr;
     QLabel* duraionLabel = nullptr;
     QAction* netInfoAction = nullptr;
-    
+
     QAction* layoutAction = nullptr;
     QAction* fullScreenAction = nullptr;
 
@@ -71,8 +97,25 @@ private:
     QToolButton* moreOptionButon = nullptr;
 
     // 会议视频布局区域
-    MeetingVideosLayout* videosLayout = nullptr;
+    MeetingVideosContainer* videosLayout = nullptr;
+
+    lib::messenger::MessengerMeet* meet = nullptr;
+
+    // 所有会议人员
+    QMap<QString, MeetingParticipant*> participantMap;
+
+    // 会议唯一名称
+    QString username;
+
+public slots:
+    void doLeaveMeet();
+
+signals:
+    void meetCreated(const QString& name);
+    void meetLeft();
+    void participantJoined(const QString& name, const lib::messenger::Participant& part);
+    void participantLeft(const QString& name, const ok::base::Jid& partJid);
 };
 
-
+}  // namespace module::meet
 #endif  // !MEETINGVIDEOFRAME_H

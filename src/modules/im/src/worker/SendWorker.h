@@ -36,19 +36,35 @@ public:
     static std::unique_ptr<SendWorker> forFriend(const FriendId& m_friend);
     static std::unique_ptr<SendWorker> forGroup(const GroupId& m_group);
 
-    ChatFormHeader* getHeader() const { return headWidget.get(); }
+    ChatFormHeader* getHeader() const {
+        return headWidget.get();
+    }
 
-    GenericChatForm* getChatForm() const { return chatForm.get(); };
+    GenericChatForm* getChatForm() const {
+        return chatForm.get();
+    };
 
-    Chatroom* getChatroom() const { return chatRoom.get(); }
+    Chatroom* getChatroom() const {
+        return chatRoom.get();
+    }
 
-    IMessageDispatcher* dispacher() { return messageDispatcher.get(); }
+    IMessageDispatcher* dispacher() {
+        return messageDispatcher.get();
+    }
 
-    QList<Message> getLastTextMessage() { return chatHistory->getLastTextMessage(1); }
+    QList<Message> getLastTextMessage() {
+        return chatHistory->getLastTextMessage(1);
+    }
 
-    IChatLog* getChatLog() const { return chatHistory.get(); }
-    void startCounter(bool video = false);
-    void stopCounter(bool error = false);
+    IChatLog* getChatLog() const {
+        return chatHistory.get();
+    }
+
+    CallDurationForm* createCallDuration(bool video = false);
+    void destroyCallDuration(bool error = false);
+    [[nodiscard]] CallDurationForm* getCallDuration() const {
+        return callDuration.get();
+    }
 
 private:
     void initChatHeader(const ContactId& contactId);

@@ -20,17 +20,17 @@
 
 namespace UI {
 
-using namespace ok::session;
+using namespace lib::session;
 
 /* 登录主窗口 */
-LoginWindow::LoginWindow(std::shared_ptr<ok::session::AuthSession> session, bool bootstrap,
+LoginWindow::LoginWindow(std::shared_ptr<lib::session::AuthSession> session, bool bootstrap,
                          QWidget* parent)
         : QMainWindow(parent), ui(new Ui::LoginWindow) {
     ui->setupUi(this);
 
     OK_RESOURCE_INIT(UIWindowLogin);
 
-    setAttribute(Qt::WA_DeleteOnClose, true);
+    setAttribute(Qt::WA_DeleteOnClose);
     setWindowTitle(APPLICATION_NAME);
     // 黄金分割比例 874/520 = 1.618
     setFixedSize(QSize(874, 520));
@@ -44,12 +44,12 @@ LoginWindow::LoginWindow(std::shared_ptr<ok::session::AuthSession> session, bool
     ui->hBoxLayout->addWidget(loginWidget);
 
     // 设置样式
-    QString qss = ok::base::Files::readStringAll(":/qss/login.qss");
+    QString qss = ok::base::Files::readStringAll(":/qss/login.css");
     setStyleSheet(qss);
 
     //  connect(loginWidget, &UI::LoginWidget::loginResult,
-    //          [&](ok::session::SignInInfo &info,  //
-    //              ok::session::LoginResult &result) {
+    //          [&](lib::session::SignInInfo &info,  //
+    //              lib::session::LoginResult &result) {
     //            emit loginResult(info, result);
     //          });
 }

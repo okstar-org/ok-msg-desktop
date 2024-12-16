@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <!--
   ~ Copyright (c) 2022 船山信息 chuanshaninfo.com
   ~ The project is licensed under Mulan PubL v2.
@@ -12,24 +12,130 @@
   -->
 
 <!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<TS language="zh_CN" version="2.1">
+    <context>
+        <name>MeetingSettingWidget</name>
+        <message>
+            <source>Form</source>
+            <translation>表格</translation>
+        </message>
+        <message>
+            <source>Microphone enabled by default</source>
+            <translation>默认开启麦克风</translation>
+        </message>
+        <message>
+            <source>Camera enabled by default</source>
+            <translation>默认开启摄像头</translation>
+        </message>
+        <message>
+            <source>Audible prompts for participants to enter and exit</source>
+            <translation>参会者进出声音提示</translation>
+        </message>
+        <message>
+            <source>Automatic cloud recording</source>
+            <translation>自动云录制</translation>
+        </message>
+    </context>
+    <context>
+        <name>module::meet::JoinMeetingWidget</name>
+        <message>
+            <source>Meeting ID</source>
+            <translation>会议 ID</translation>
+        </message>
+        <message>
+            <source>Join Meeting</source>
+            <translation>加入会议</translation>
+        </message>
+    </context>
+    <context>
+        <name>module::meet::MeetingOptionWidget</name>
+        <message>
+            <source>Micphone</source>
+            <translation>麦克风</translation>
+        </message>
+        <message>
+            <source>Camera</source>
+            <translation>照相机</translation>
+        </message>
+    </context>
+    <context>
+        <name>module::meet::MeetingVideoFrame</name>
+        <message>
+            <source>Meeting Info</source>
+            <translation>会议信息</translation>
+        </message>
+        <message>
+            <source>Layout</source>
+            <translation>布局</translation>
+        </message>
+        <message>
+            <source>Share Meeting</source>
+            <translation>共享会议</translation>
+        </message>
+        <message>
+            <source>Security</source>
+            <translation>安全</translation>
+        </message>
+        <message>
+            <source>Share</source>
+            <translation>共享</translation>
+        </message>
+    </context>
+    <context>
+        <name>module::meet::StartMeetingWidget</name>
+        <message>
+            <source>Meeting Name</source>
+            <translation>会议名称</translation>
+        </message>
+        <message>
+            <source>Start Meeting</source>
+            <translation>开始会议</translation>
+        </message>
+        <message>
+            <source>Share</source>
+            <translation>共享</translation>
+        </message>
+        <message>
+            <source>Disband</source>
+            <translation>解散</translation>
+        </message>
+    </context>
+    <context>
+        <name>module::meet::VideoLayoutPicker</name>
+        <message>
+            <source>Grid View</source>
+            <translation>网格视图</translation>
+        </message>
+        <message>
+            <source>List on Top</source>
+            <translation>列在最前面</translation>
+        </message>
+        <message>
+            <source>List on Right</source>
+            <translation>右侧列表</translation>
+        </message>
+    </context>
     <context>
         <name>module::meet::Widget</name>
         <message>
-            <source>Start Metting</source>
-            <translation>发起会议</translation>
+            <source>Start Meeting</source>
+            <translation>开始会议</translation>
         </message>
         <message>
-            <source>Join Metting</source>
+            <source>Join Meeting</source>
             <translation>加入会议</translation>
         </message>
         <message>
-            <source>Book Metting</source>
-            <translation>预定会议</translation>
+            <source>Book Meeting</source>
+            <translation>预订会议</translation>
         </message>
         <message>
             <source>Setting</source>
             <translation>设置</translation>
+        </message>
+        <message>
+            <source>make share link...</source>
+            <translation>制作 分享 链接...</translation>
         </message>
     </context>
 </TS>

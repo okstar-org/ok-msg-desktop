@@ -16,9 +16,14 @@
 
 #pragma once
 
+#include <QMutex>
 #include <QWidget>
+
+#include "Defines.h"
 #include "UI/widget/OMenuWidget.h"
 #include "base/resources.h"
+
+#include <QPointer>
 
 OK_RESOURCE_LOADER(Meet)
 OK_RESOURCE_LOADER(MeetRes)
@@ -27,11 +32,11 @@ namespace Ui {
 class WorkPlatform;
 }
 
+namespace module::meet {
+
 class StartMeetingWidget;
 class JoinMeetingWidget;
 class MeetingVideoFrame;
-
-namespace module::meet {
 
 class Widget : public UI::OMenuWidget {
     Q_OBJECT
@@ -41,14 +46,43 @@ public:
     void start();
     void reloadTheme();
 
+    [[nodiscard]] const MeetingState& getState() const {
+        return state;
+    }
+
+    void setState(const MeetingState& state_);
+
 protected:
     void initTranslate();
     void retranslateUi();
 
+private:
+    /**
+     * 加入会议
+     * @param no 会议编号
+     */
+    void joinMeeting(const QString& no);
 
- private:
-    void joinMeeting();
-    void createMeeting();
+    /**
+     * 生成分享信息
+     * @return
+     */
+    Share makeShare();
+
+    /**
+     * 开始会议
+     * @param name 会议名称
+     */
+    void createMeeting(const QString& name);
+
+    /**
+     * 解散会议（销毁）
+     */
+    void destroyMeeting();
+    /**
+     * 分享会议
+     */
+    void shareMeeting();
 
 private:
     OK_RESOURCE_PTR(Meet);
@@ -57,10 +91,20 @@ private:
     Ui::WorkPlatform* ui;
     StartMeetingWidget* startMeetWidget = nullptr;
     JoinMeetingWidget* joinMeetWidget = nullptr;
+    QPointer<MeetingVideoFrame> view;
+
+    /**
+     * 当前正在进行中的会议名称
+     * - 会议开始，设置会议号
+     * - 会议结束，清空会议号。
+     */
+    QString currentMeetingName;
+    QMutex mutex;
+
+    MeetingState state;
 
 public slots:
     void doStart();
-
 };
 
 }  // namespace module::meet

@@ -1,11 +1,14 @@
 <RCC>
     <qresource prefix="/">
-        <file>themes/default/MettingBase.css</file>
+        <file>themes/default/MeetingBase.css</file>
         <file>themes/default/MeetingVideo.css</file>
         <file alias="meet/image/micphone.svg">image/micphone.svg</file>
         <file alias="meet/image/videocam.svg">image/videocam.svg</file>
         <file alias="meet/image/volumn_2.svg">image/volumn_2.svg</file>
-        <file alias="meet/image/up_arrow.svg">image/up_arrow.svg</file>
+        <file alias="meet/image/arrow_up.svg">image/arrow_up.svg</file>
+        <file alias="meet/image/arrow_down.svg">image/arrow_down.svg</file>
+        <file alias="meet/image/arrow_left.svg">image/arrow_left.svg</file>
+        <file alias="meet/image/arrow_right.svg">image/arrow_right.svg</file>
         <file alias="meet/image/share.svg">image/share.svg</file>
         <file alias="meet/image/network_s4.svg">image/network_s4.svg</file>
         <file alias="meet/image/layout_grid.svg">image/layout_grid.svg</file>

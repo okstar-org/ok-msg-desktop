@@ -42,7 +42,7 @@ PKG_CONFIG_PATH=<项目根目录>/vcpkg_installed/x64-windows/lib/pkgconfig
 ## 构建OkRTC库
 
 ```shell
-git clone https://github.com/okstar-org/ok-rtc.git
+git clone -b master https://github.com/okstar-org/ok-rtc.git
 cd ok-rtc
 # 拉取子模块
 git submodule update --init

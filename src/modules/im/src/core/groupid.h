@@ -13,7 +13,7 @@
 #ifndef GROUPID_H
 #define GROUPID_H
 
-#include "src/core/contactid.h"
+#include "contactid.h"
 
 class GroupId : public ContactId {
 public:

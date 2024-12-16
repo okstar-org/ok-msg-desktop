@@ -27,7 +27,7 @@ sudo cmake --install out
 ## 四. 编译安装ok-rtc
  
  ```bash
- git clone --recurse-submodules -j8 https://github.com/okstar-org/ok-rtc.git
+ git clone -b master --recurse-submodules -j8 https://github.com/okstar-org/ok-rtc.git
  cd ok-rtc
  git submodule update --recursive --init 
  #添加ffmpeg路径到PKG_CONFIG_PATH，以让pkg-config正确获取路径

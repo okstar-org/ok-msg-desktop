@@ -47,7 +47,7 @@ void IMFileTask::run() {
      * https://xmpp.org/extensions/xep-0047.html#create
      *
      */
-    IM* im = m_im->getIM();
+    auto* im = m_im->getIM();
     auto client = im->getClient();
     //  client->registerStanzaExtension(new InBandBytestream::IBB);
 
@@ -77,7 +77,7 @@ void IMFileTask::run() {
             sleep(1);
 
             if (waitingSecs++ >= 60) {
-                qWarning() << "Timeout to wait stream open. wait secs:" << waitingSecs;
+                qWarning() << "Timeout to wait stream open." << waitingSecs;
                 break;
             }
             continue;

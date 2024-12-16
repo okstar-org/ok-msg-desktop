@@ -30,7 +30,7 @@ brew install mozjpeg libqrencode libexif openh264 openal-soft ffmpeg@5
 ## Build ok-rtc library
 
 ```shell
-git clone https://github.com/okstar-org/ok-rtc.git
+git clone -b master https://github.com/okstar-org/ok-rtc.git
 cd ok-rtc
 
 # 拉取子模块

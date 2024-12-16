@@ -24,7 +24,7 @@
           <bool>true</bool>
          </property>
          <property name="text">
-          <string>默认开启麦克风</string>
+          <string>Microphone enabled by default</string>
          </property>
          <property name="checked">
           <bool>true</bool>
@@ -34,7 +34,7 @@
        <item>
         <widget class="QCheckBox" name="checkBox_2">
          <property name="text">
-          <string>默认开启摄像头</string>
+          <string>Camera enabled by default</string>
          </property>
          <property name="checked">
           <bool>true</bool>
@@ -44,7 +44,7 @@
        <item>
         <widget class="QCheckBox" name="checkBox_4">
          <property name="text">
-          <string>参会者进出声音提示</string>
+          <string>Audible prompts for participants to enter and exit</string>
          </property>
          <property name="checked">
           <bool>true</bool>
@@ -54,7 +54,7 @@
        <item>
         <widget class="QCheckBox" name="checkBox_3">
          <property name="text">
-          <string>自动云录制</string>
+          <string>Automatic cloud recording</string>
          </property>
          <property name="checked">
           <bool>true</bool>

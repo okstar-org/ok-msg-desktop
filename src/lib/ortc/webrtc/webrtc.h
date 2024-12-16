@@ -17,6 +17,7 @@
 #include <string>
 
 #include <api/peer_connection_interface.h>
+#include <pc/session_description.h>
 #include <rtc_base/thread.h>
 #include <optional>
 
@@ -36,6 +37,10 @@ namespace lib::ortc {
 
 class Conductor;
 
+std::unique_ptr<cricket::AudioContentDescription> createAudioDescription(const ORTP& rtp);
+std::unique_ptr<cricket::VideoContentDescription> createVideoDescription(const ORTP& rtp);
+std::unique_ptr<cricket::SctpDataContentDescription> createDataDescription(const OSdp& sdp);
+
 class WebRTC : public OkRTC {
 public:
     WebRTC();
@@ -54,7 +59,7 @@ public:
 
     void setRemoteDescription(const std::string& peerId, const OJingleContentAv& av) override;
 
-    void CreateOffer(const std::string& peerId, const std::string& sId, bool video) override;
+    bool CreateOffer(const std::string& peerId, const std::string& sId, bool video) override;
 
     void CreateAnswer(const std::string& peerId, const OJingleContentAv& content) override;
 
@@ -107,6 +112,7 @@ private:
     Conductor* createConductor(const std::string& peerId, const std::string& sId, bool video);
 
     Conductor* getConductor(const std::string& peerId);
+
 
     std::recursive_mutex start_mtx;
 

@@ -103,17 +103,17 @@ struct InstanceDTO {
     QList<QString> volumes;
 };
 
-class Backend : public ok::backend::BaseService {
+class Backend : public lib::backend::BaseService {
     Q_OBJECT
 public:
     explicit Backend(const QString& baseUrl, const QString& authorization = "",
                      QObject* parent = nullptr);
 
     ~Backend() override;
-    bool getAppList(const network::HttpBodyFn& fn, int res = 0, int pageSize = 50);
+    bool getAppList(const lib::network::HttpBodyFn& fn, int res = 0, int pageSize = 50);
 
     bool getInstance(const base::Fn<void(QJsonDocument)>& fn, const QString& appUuid,
-                     const network::HttpErrorFn& err);
+                     const lib::network::HttpErrorFn& err);
 };
 
 }  // namespace ok::platform

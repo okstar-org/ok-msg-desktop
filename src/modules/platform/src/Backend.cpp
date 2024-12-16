@@ -21,7 +21,7 @@
 namespace ok::platform {
 
 Backend::Backend(const QString& baseUrl, const QString& authorization, QObject* parent)
-        : ok::backend::BaseService(baseUrl, parent) {
+        : lib::backend::BaseService(baseUrl, parent) {
     setHeader("Authorization", authorization);
     setHeader("Origin", baseUrl);
 
@@ -32,7 +32,7 @@ Backend::Backend(const QString& baseUrl, const QString& authorization, QObject* 
 
 Backend::~Backend() { qWarning() << __func__; }
 
-bool Backend::getAppList(const network::HttpBodyFn& fn, int pageIndex, int pageSize) {
+bool Backend::getAppList(const lib::network::HttpBodyFn& fn, int pageIndex, int pageSize) {
     QString url = _baseUrl + "/api/work/app/page";
     QJsonDocument doc;
     QJsonObject obj;
@@ -45,7 +45,7 @@ bool Backend::getAppList(const network::HttpBodyFn& fn, int pageIndex, int pageS
 
 bool Backend::getInstance(const base::Fn<void(QJsonDocument)>& fn,
                           const QString& appUuid,
-                          const network::HttpErrorFn& err) {
+                          const lib::network::HttpErrorFn& err) {
     QString url = _baseUrl + "/api/tenant/instance/" + appUuid;
     return http->getJson(QUrl(url), fn, err);
 }

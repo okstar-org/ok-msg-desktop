@@ -1,12 +1,13 @@
 project(Meet)
 add_definitions(-DOK_${PROJECT_NAME}_MODULE="${PROJECT_NAME}")
 
+include_directories(../im)
+
 file(GLOB_RECURSE ${PROJECT_NAME}_SOURCES src/*.h src/*.cpp)
 file(GLOB_RECURSE ${PROJECT_NAME}_RESOURCES res/*.html res/*.js)
 file(GLOB_RECURSE ${PROJECT_NAME}_UIS src/*.ui)
 
 file(GLOB ${PROJECT_NAME}_TSS
-		ts/*.ts
 		ts/*.xml
 )
 qt5_add_translation(
@@ -75,6 +76,7 @@ find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
 
 target_link_libraries(${PROJECT_NAME}
 		PRIVATE OkBase
+		PRIVATE OkIMCore
 		PRIVATE ${Qt5WebChannel_LIBRARIES}
 		PRIVATE ${Qt5WebSockets_LIBRARIES}
 		PRIVATE ${Qt5WebEngineWidgets_LIBRARIES}

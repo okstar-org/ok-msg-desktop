@@ -26,12 +26,23 @@ QLineEdit:hover{
     border-bottom-color: #2A67F6;
 }
 
+QPushButton 
+{
+    color: @mainText;
+    border-radius: 6px;
+    background-color: #e1e1e1;
+    padding: 6px 15px;
+}
+
+QPushButton:hover
+{
+    background-color: #eaeaea;
+}
+
 QPushButton#confirm
 {
     color:white;
-    border-radius: 6px;
     background-color: #2A67F6;
-    padding: 6px 15px;
 }
 
 QPushButton#confirm:hover
@@ -42,6 +53,22 @@ QPushButton#confirm:hover
 QPushButton#confirm:pressed
 {
     background-color: #1D5DF2
+}
+
+QPushButton#disband
+{
+    color:white;
+    background-color: #D7262E;
+}
+
+QPushButton#disband:hover
+{
+    background-color: #e53e46
+}
+
+QPushButton#disband:pressed
+{
+    background-color: #c72029
 }
 
 PopupMenuComboBox{

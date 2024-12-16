@@ -19,9 +19,8 @@
 
 #include "IMFriend.h"
 #include "IMJingle.h"
-#include "tox/toxav.h"
 
-namespace ok::session {
+namespace lib::session {
 class AuthSession;
 }
 
@@ -113,21 +112,33 @@ private:
     std::list<ortc::OIceUdp> pendingIceCandidates;
 };
 
-class IMCall : public IMJingle, public IMSessionHandler, public lib::ortc::OkRTCHandler {
+class IMCall : public IMJingle, public IMSessionHandler, public ortc::OkRTCHandler {
     Q_OBJECT
 public:
     explicit IMCall(IM* im, QObject* parent = nullptr);
     ~IMCall() override;
-    void toPlugins(const ortc::OJingleContentAv& av, gloox::Jingle::PluginList& plugins);
-    static void parse(const gloox::Jingle::Session::Jingle* jingle,
-                      ortc::OJingleContentAv& contentAv);
 
     void onCreatePeerConnection(const std::string& sId, const std::string& peerId,
                                 bool ok) override;
 
+    void onFailure(const std::string& sId,
+                   const std::string& peerId,
+                   const std::string& error) override;
+
     void onIceGatheringChange(const std::string& sId,
                               const std::string& peerId,
                               ortc::IceGatheringState state) override;
+
+    void onIceConnectionChange(const std::string& sId,
+                               const std::string& peerId,
+                               ortc::IceConnectionState state) override;
+
+    void onPeerConnectionChange(const std::string& sId,
+                                const std::string& peerId,
+                                ortc::PeerConnectionState state) override;
+
+    void onSignalingChange(const std::string& sId, const std::string& peerId,
+                           lib::ortc::SignalingState state) override;
 
     // onRTP
     void onRTP(const std::string& sId,       //
@@ -177,30 +188,30 @@ public:
 protected:
     void handleJingleMessage(const IMPeerId& peerId,
                              const gloox::Jingle::JingleMessage* jm) override;
-    virtual void doSessionInitiate(gloox::Jingle::Session* session,        //
+    virtual bool doSessionInitiate(gloox::Jingle::Session* session,        //
                                    const gloox::Jingle::Session::Jingle*,  //
                                    const IMPeerId&) override;
-    virtual void doSessionInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
-    virtual void doSessionTerminate(gloox::Jingle::Session* session,        //
+    virtual bool doSessionInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual bool doSessionTerminate(gloox::Jingle::Session* session,        //
                                     const gloox::Jingle::Session::Jingle*,  //
                                     const IMPeerId&) override;
 
     virtual bool doSessionAccept(gloox::Jingle::Session* session,        //
                                  const gloox::Jingle::Session::Jingle*,  //
                                  const IMPeerId&) override;
-    virtual void doContentAdd(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
-    virtual void doContentRemove(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
-    virtual void doContentModify(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
-    virtual void doContentAccept(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
-    virtual void doContentReject(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
-    virtual void doTransportInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
-    virtual void doTransportAccept(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
-    virtual void doTransportReject(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
-    virtual void doTransportReplace(const gloox::Jingle::Session::Jingle*,
+    virtual bool doContentAdd(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual bool doContentRemove(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual bool doContentModify(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual bool doContentAccept(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual bool doContentReject(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual bool doTransportInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual bool doTransportAccept(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual bool doTransportReject(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual bool doTransportReplace(const gloox::Jingle::Session::Jingle*,
                                     const IMPeerId&) override;
-    virtual void doSecurityInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
-    virtual void doDescriptionInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
-    virtual void doInvalidAction(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual bool doSecurityInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual bool doDescriptionInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual bool doInvalidAction(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
 
     IMCallSession* cacheSessionInfo(const IMContactId& from,
                                     const IMPeerId& to,
@@ -217,23 +228,6 @@ protected:
     IMCallSession* findSession(const QString& sId) {
         return m_sessionMap.value(sId);
     }
-
-signals:
-    void sig_createPeerConnection(const QString sId, const QString peerId, bool ok);
-
-    // 呼叫请求
-    void receiveCallRequest(IMPeerId peerId, QString callId, bool audio, bool video);
-
-    void receiveFriendCall(QString friendId, QString callId, bool audio, bool video);
-
-    // 呼叫撤回
-    void receiveCallRetract(QString friendId, CallState state);
-    void receiveCallAcceptByOther(QString callId, IMPeerId peerId);
-    void receiveFriendHangup(QString friendId, CallState state);
-
-    // 对方状态变化
-    void receiveCallStateAccepted(IMPeerId peerId, QString callId, bool video);
-    void receiveCallStateRejected(IMPeerId peerId, QString callId, bool video);
 
 private:
     void connectCall(IMCall* imCall);
@@ -259,6 +253,8 @@ private:
 
     void join(const gloox::JID& room);
 
+    void doForIceCompleted(const QString& sId, const QString& peerId);
+
     std::vector<CallHandler*> callHandlers;
 
     // sid -> session
@@ -266,6 +262,27 @@ private:
 
     // sid -> isVideo,在jingle-message阶段暂时保留呼叫的类型是视频（音频无需保存）。
     QMap<QString, bool> m_sidVideo;
+
+signals:
+    void callCreated(const IMPeerId& to, const QString& sId, bool ok);
+
+    // ice
+    void iceGatheringStateChanged(IMPeerId to, const QString sId, ortc::IceGatheringState);
+    void iceConnectionStateChanged(IMPeerId to, const QString sId, ortc::IceConnectionState);
+
+    // 呼叫请求
+    void receiveCallRequest(IMPeerId peerId, QString callId, bool audio, bool video);
+
+    void receiveFriendCall(QString friendId, QString callId, bool audio, bool video);
+
+    // 呼叫撤回
+    void receiveCallRetract(QString friendId, CallState state);
+    void receiveCallAcceptByOther(QString callId, IMPeerId peerId);
+    void receiveFriendHangup(QString friendId, CallState state);
+
+    // 对方状态变化
+    void receiveCallStateAccepted(IMPeerId peerId, QString callId, bool video);
+    void receiveCallStateRejected(IMPeerId peerId, QString callId, bool video);
 
 public slots:
     void onCallAccepted(IMPeerId peerId, QString callId, bool video);

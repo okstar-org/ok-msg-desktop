@@ -1,11 +1,28 @@
+/*
+ * Copyright (c) 2022 船山信息 chuanshaninfo.com
+ * The project is licensed under Mulan PubL v2.
+ * You can use this software according to the terms and conditions of the Mulan
+ * PubL v2. You may obtain a copy of Mulan PubL v2 at:
+ *          http://license.coscl.org.cn/MulanPubL-2.0
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PubL v2 for more details.
+ */
+
 #include "MeetingVideoFrame.h"
-#include <lib/settings/style.h>
+#include "../MeetingParticipant.h"
 #include "../tools/PopupMenuComboBox.h"
 #include "MeetingVideosLayout.h"
-#include "base/RoundedPixmapLabel.h"
 #include "VideoLayoutPicker.h"
+#include "base/RoundedPixmapLabel.h"
+#include "lib/messenger/messenger.h"
+#include "lib/settings/style.h"
+#include "modules/im/src/core/core.h"
+#include "modules/im/src/nexus.h"
 
 #include <QAction>
+#include <QApplication>
 #include <QEvent>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -14,16 +31,22 @@
 #include <QToolBar>
 #include <QToolButton>
 #include <QWindowStateChangeEvent>
-#include <QApplication>
+#include <memory>
+namespace module::meet {
 
-MeetingVideoFrame::MeetingVideoFrame(QWidget* parent) : QWidget(parent) {
+MeetingVideoFrame::MeetingVideoFrame(const QString& name, QWidget* parent)
+        : QWidget(parent), username(name) {
     setAttribute(Qt::WA_StyledBackground);
+    setAttribute(Qt::WA_DeleteOnClose);
+
     creatTopToolBar();
     creatBottomBar();
-    videosLayout = new MeetingVideosLayout(this);
+
+    videosLayout = new MeetingVideosContainer(this);
     videosLayout->setObjectName("videoLayout");
 
-    retranslateUi();
+    connect(this, &MeetingVideoFrame::participantJoined, this, &MeetingVideoFrame::addParticipant);
+    connect(this, &MeetingVideoFrame::participantLeft, this, &MeetingVideoFrame::removeParticipant);
 
     QVBoxLayout* mainLayout = new QVBoxLayout(this);
     mainLayout->setSpacing(10);
@@ -34,13 +57,29 @@ MeetingVideoFrame::MeetingVideoFrame(QWidget* parent) : QWidget(parent) {
 
     updateDuration();
     initConnection();
-
     reloadTheme();
+    retranslateUi();
+
+    Core* core = Nexus::getInstance().getCore();
+    meet = new lib::messenger::MessengerMeet(core->getMessenger(), this);
+    meet->addHandler(this);
+    createMeet(name);
+}
+
+MeetingVideoFrame::~MeetingVideoFrame() {
+    disconnect(this);
+    meet->deleteLater();
+
+    if (!participantMap.isEmpty()) {
+        videosLayout->clearParticipant();
+        qDeleteAll(participantMap);
+        participantMap.clear();
+    }
 }
 
 void MeetingVideoFrame::reloadTheme() {
     // 手动拼接一下
-    QString style = Style::getStylesheet("MettingBase.css");
+    QString style = Style::getStylesheet("MeetingBase.css");
     QString style2 = Style::getStylesheet("MeetingVideo.css");
     this->setStyleSheet(style + "\n" + style2);
     QCoreApplication::postEvent(this->topToolBar, new QEvent(QEvent::StyleChange));
@@ -96,9 +135,11 @@ void MeetingVideoFrame::creatBottomBar() {
     recoardButton->iconButton()->setIcon(QIcon(":/meet/image/record.svg"));
     inviteButton = new PopupMenuComboBox(bottomBar);
     inviteButton->iconButton()->setIcon(QIcon(":/meet/image/invite_user.svg"));
+
     leaveButton = new QToolButton(bottomBar);
     leaveButton->setObjectName("leaveMeeting");
-    leaveButton->setIcon(QIcon(":/meet/image/phone"));
+    leaveButton->setIcon(QIcon(":/meet/image/phone.svg"));
+    connect(leaveButton, &QToolButton::clicked, this, &MeetingVideoFrame::doLeaveMeet);
 
     middleLayout->addWidget(audioSettingButton);
     middleLayout->addWidget(videoSettingButton);
@@ -140,8 +181,7 @@ void MeetingVideoFrame::showLayoutPicker() {
     basePos.rx() -= (size.width() - rect.width()) / 2;
     picker.exec(basePos);
 
-    if (currType != picker.selectedType())
-    {
+    if (currType != picker.selectedType()) {
         videosLayout->resetLayout(picker.selectedType());
     }
 }
@@ -161,9 +201,9 @@ void MeetingVideoFrame::updateDuration() {
 
 void MeetingVideoFrame::showAudioPopMenu() {
     // create menu everytime or create once and set menu
-    //QMenu menu(this);
-    //menu.addAction("data");
-    //audioSettingButton->showMenuOnce(&menu);
+    // QMenu menu(this);
+    // menu.addAction("data");
+    // audioSettingButton->showMenuOnce(&menu);
 }
 
 void MeetingVideoFrame::changeEvent(QEvent* event) {
@@ -184,3 +224,72 @@ void MeetingVideoFrame::retranslateUi() {
     securityButton->setText(tr("Security"));
     sharedDeskButton->iconButton()->setText(tr("Share"));
 }
+
+/**
+ * 创建会议
+ * @param name
+ */
+void MeetingVideoFrame::createMeet(const QString& name) {
+    qDebug() << __func__ << name;
+    meet->create(name);
+}
+
+void MeetingVideoFrame::onMeetCreated(const ok::base::Jid& jid,
+                                      bool ready,
+                                      const std::map<std::string, std::string>& props) {
+    emit meetCreated(jid.node());
+}
+
+void MeetingVideoFrame::onParticipantJoined(const ok::base::Jid& jid,
+                                            const lib::messenger::Participant& part) {
+    emit participantJoined(jid.node(), part);
+}
+
+void MeetingVideoFrame::onParticipantLeft(const ok::base::Jid& jid, const ok::base::Jid& part) {
+    emit participantLeft(jid.node(), part);
+}
+
+void MeetingVideoFrame::addParticipant(const QString& name,
+                                       const lib::messenger::Participant& parti) {
+    qDebug() << __func__ << "room:" << name << "email:" << parti.email
+             << "resource:" << parti.resource;
+    auto& k = parti.resource;
+    auto find = participantMap.find(k);
+    if (find == participantMap.end()) {
+        // 添加用户
+        auto p = new MeetingParticipant(parti.resource, parti.email, parti.nick, parti.avatarUrl,
+                                        parti.jid);
+        videosLayout->addParticipant(p);
+        participantMap.insert(k, p);
+    } else {
+        // 更新信息
+        auto user = find.value();
+        user->setNick(parti.nick);
+        user->setAvatarUrl(parti.avatarUrl);
+    }
+}
+
+void MeetingVideoFrame::removeParticipant(const QString& name, const ok::base::Jid& jid) {
+    qDebug() << __func__ << "room:" << name << "jid:" << jid.full();
+    // 执行移除用户操作
+    auto itor = participantMap.find(jid.resource());
+    if (itor != participantMap.end()) {
+        auto user = itor.value();
+        Q_ASSERT(user);
+        videosLayout->removeParticipant(user);
+        delete user;
+        participantMap.erase(itor);
+    }
+
+    if (participantMap.isEmpty()) {
+        this->close();
+        this->deleteLater();
+    }
+}
+
+void MeetingVideoFrame::doLeaveMeet() {
+    meet->leave();
+    emit meetLeft();
+}
+
+}  // namespace module::meet

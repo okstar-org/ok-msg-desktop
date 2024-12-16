@@ -1,0 +1,248 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!--
+  ~ Copyright (c) 2022 船山信息 chuanshaninfo.com
+  ~ The project is licensed under Mulan PubL v2.
+  ~ You can use this software according to the terms and conditions of the Mulan
+  ~ PubL v2. You may obtain a copy of Mulan PubL v2 at:
+  ~          http://license.coscl.org.cn/MulanPubL-2.0
+  ~ THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+  ~ EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+  ~ MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+  ~ See the Mulan PubL v2 for more details.
+  -->
+
+<!DOCTYPE TS>
+<TS language="ko" version="2.1">
+    <context>
+        <name>AboutSettings</name>
+        <message>
+            <source>Version</source>
+            <translation>버전</translation>
+        </message>
+        <message>
+            <source>Open update download link</source>
+            <translation>업데이트 다운로드 링크 열기</translation>
+        </message>
+        <message>
+            <source>Update available</source>
+            <translation>업데이트 사용 가능</translation>
+        </message>
+        <message>
+            <source>qTox is up to date ✓</source>
+            <translation>qTox가 최신 상태입니다 ✓</translation>
+        </message>
+        <message>
+            <source>License</source>
+            <translation>면허</translation>
+        </message>
+        <message>
+            <source>Authors</source>
+            <translation>저자</translation>
+        </message>
+        <message>
+            <source>Known Issues</source>
+            <translation>알려진 문제</translation>
+        </message>
+    </context>
+    <context>
+        <name>ConfigWindow</name>
+        <message>
+            <source>MainWindow</source>
+            <translation>메인윈도우</translation>
+        </message>
+    </context>
+    <context>
+        <name>ConnectForm</name>
+        <message>
+            <source>Form</source>
+            <translation>형</translation>
+        </message>
+        <message>
+            <source>Proxy type:</source>
+            <translation>프록시 유형:</translation>
+        </message>
+        <message>
+            <source>None</source>
+            <translation>없음</translation>
+        </message>
+        <message>
+            <source>Address:</source>
+            <extracomment>Text on proxy addr label</extracomment>
+            <translation>주소:</translation>
+        </message>
+        <message>
+            <source>Port:</source>
+            <extracomment>Text on proxy port label</extracomment>
+            <translation>항구:</translation>
+        </message>
+    </context>
+    <context>
+        <name>GeneralForm</name>
+        <message>
+            <source>Language:</source>
+            <translation>언어:</translation>
+        </message>
+        <message>
+            <source>Autostart</source>
+            <translation>자동 시작</translation>
+        </message>
+        <message>
+            <source>Check for updates</source>
+            <translation>업데이트 확인</translation>
+        </message>
+        <message>
+            <source>Spell checking</source>
+            <translation>맞춤법 검사</translation>
+        </message>
+        <message>
+            <source>Show system tray icon</source>
+            <translation>시스템 트레이 아이콘 표시</translation>
+        </message>
+        <message>
+            <source>Start in tray</source>
+            <translation>트레이에서 시작</translation>
+        </message>
+        <message>
+            <source>Minimize to tray</source>
+            <translation>트레이로 최소화</translation>
+        </message>
+        <message>
+            <source>Close to tray</source>
+            <translation>트레이에 닫기</translation>
+        </message>
+        <message>
+            <source>Theme</source>
+            <translation>주제</translation>
+        </message>
+        <message>
+            <source>Theme color:</source>
+            <translation>테마 색상:</translation>
+        </message>
+        <message>
+            <source>Timestamp format:</source>
+            <translation>타임스탬프 형식:</translation>
+        </message>
+        <message>
+            <source>Date format:</source>
+            <translation>날짜 형식:</translation>
+        </message>
+    </context>
+    <context>
+        <name>PluginInfoForm</name>
+        <message>
+            <source>Form</source>
+            <translation>형</translation>
+        </message>
+        <message>
+            <source>name</source>
+            <translation>이름</translation>
+        </message>
+        <message>
+            <source>version</source>
+            <translation>버전</translation>
+        </message>
+        <message>
+            <source>home</source>
+            <translation>집</translation>
+        </message>
+        <message>
+            <source>install</source>
+            <translation>설치하다</translation>
+        </message>
+    </context>
+    <context>
+        <name>PluginItemForm</name>
+        <message>
+            <source>Form</source>
+            <translation>형</translation>
+        </message>
+    </context>
+    <context>
+        <name>PluginManagerForm</name>
+        <message>
+            <source>Form</source>
+            <translation>형</translation>
+        </message>
+    </context>
+    <context>
+        <name>UI::AboutForm</name>
+        <message>
+            <source>You are using qTox version %1.</source>
+            <translation>qTox 버전 %1을(를) 사용하고 있습니다.</translation>
+        </message>
+        <message>
+            <source>Commit hash: %1</source>
+            <translation>커밋 해시: %1</translation>
+        </message>
+        <message>
+            <source>Qt version: %1</source>
+            <translation>Qt 버전 : % 1</translation>
+        </message>
+        <message>
+            <source>About form</source>
+            <translation>형태에 대해서</translation>
+        </message>
+    </context>
+    <context>
+        <name>UI::ConfigWindow</name>
+        <message>
+            <source>Plugin form</source>
+            <translation>플러그인 양식</translation>
+        </message>
+        <message>
+            <source>Settings form</source>
+            <translation>설정 양식</translation>
+        </message>
+        <message>
+            <source>About form</source>
+            <translation>형태에 대해서</translation>
+        </message>
+    </context>
+    <context>
+        <name>UI::ConnectForm</name>
+        <message>
+            <source>Connection</source>
+            <translation>연결</translation>
+        </message>
+    </context>
+    <context>
+        <name>UI::GeneralForm</name>
+        <message>
+            <source>General</source>
+            <translation>일반</translation>
+        </message>
+    </context>
+    <context>
+        <name>UI::SettingsWidget</name>
+        <message>
+            <source>Settings</source>
+            <translation>설정</translation>
+        </message>
+    </context>
+    <context>
+        <name>ok::plugin::PluginInfoForm</name>
+        <message>
+            <source>Install</source>
+            <translation>설치하다</translation>
+        </message>
+        <message>
+            <source>Uninstall</source>
+            <translation>프로그램 제거</translation>
+        </message>
+        <message>
+            <source>Installing</source>
+            <translation>설치</translation>
+        </message>
+        <message>
+            <source>Uninstalling</source>
+            <translation>설치 중</translation>
+        </message>
+    </context>
+    <context>
+        <name>ok::plugin::PluginManagerForm</name>
+        <message>
+            <source>Plugin manager</source>
+            <translation>플러그인 관리자</translation>
+        </message>
+    </context>
+</TS>

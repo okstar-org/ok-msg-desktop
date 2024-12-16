@@ -395,7 +395,6 @@ void ContactListWidget::setFriendStatusMsg(const FriendId& friendPk, const QStri
 }
 
 void ContactListWidget::setFriendName(const FriendId& friendPk, const QString& name) {
-    qDebug() << __func__ << friendPk.toString() << name;
     auto f = Nexus::getCore()->getFriendList().findFriend(friendPk);
     if (!f) {
         qWarning() << "friend is no existing.";
