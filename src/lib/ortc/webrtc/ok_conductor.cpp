@@ -32,8 +32,7 @@ Conductor::Conductor(WebRTC* webrtc, const std::string& peerId_, const std::stri
         : peerId(peerId_)
         , sId(sId_)
         , webRtc{webrtc}
-        , _remote_audio_track(nullptr)
-        , _remote_video_track(nullptr) {
+        , _remote_audio_track(nullptr) {
     RTC_LOG(LS_INFO) << __FUNCTION__ << " sId:" << sId << " peerId:" << peerId;
 
     assert(!peerId.empty());
@@ -139,10 +138,6 @@ bool Conductor::AddVideoTrack(webrtc::VideoTrackSourceInterface* _videoTrackSour
 
     _videoTrack = webRtc->getFactory()->CreateVideoTrack(label, _videoTrackSource);
     RTC_LOG(LS_INFO) << "Created video track:" << _videoTrack.get();
-
-    //  _videoTrack->AddOrUpdateSink(new VideoSink(_rtcRenderer),
-    //        // rtc::VideoSinkWants()); qDebug(("Added video track, The device num
-    //         // is:%1").arg(i));
 
     std::string streamId = "ok-video-stream";
     auto added = peer_connection_->AddTrack(_videoTrack, {streamId});
@@ -256,11 +251,10 @@ void Conductor::OnAddTrack(
         RTC_LOG(LS_INFO) << __FUNCTION__ << " Remote audio track: " << _remote_audio_track;
     } else if (track->kind() == webrtc::MediaStreamTrackInterface::kVideoKind) {
         _videoSink = std::make_unique<VideoSink>(webRtc->getHandlers(), peerId);
-        _remote_video_track = static_cast<webrtc::VideoTrackInterface*>(track.get());
+        auto _remote_video_track = static_cast<webrtc::VideoTrackInterface*>(track.get());
         _remote_video_track->AddOrUpdateSink(_videoSink.get(), rtc::VideoSinkWants());
     }
 }
-
 
 /**
  * track删除事件

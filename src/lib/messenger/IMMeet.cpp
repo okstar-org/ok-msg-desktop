@@ -63,7 +63,7 @@ IMMeet::IMMeet(IM* im, QObject* parent) : IMJingle(im, parent), manager{nullptr}
 
 IMMeet::~IMMeet() {
     qDebug() << __func__;
-
+    im->removeSessionHandler(this);
     im->clearFromHostHandler();
     disconnect(im, &IM::selfVCard, this, &IMMeet::onSelfVCard);
 
@@ -280,58 +280,94 @@ bool lib::messenger::IMMeet::doSessionInitiate(gloox::Jingle::Session* session,
 bool IMMeet::doSessionAccept(gloox::Jingle::Session* session,
                              const gloox::Jingle::Session::Jingle* jingle,
                              const IMPeerId& peerId) {
+    SESSION_CHECK(currentSid);
     return true;
 }
 
 bool IMMeet::doSessionInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
+    SESSION_CHECK(currentSid);
     return true;
 }
 
 bool IMMeet::doContentAdd(const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
+    SESSION_CHECK(currentSid);
     return true;
 }
 
 bool IMMeet::doContentRemove(const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
+    SESSION_CHECK(currentSid);
     return true;
 }
 
 bool IMMeet::doContentModify(const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
+    SESSION_CHECK(currentSid);
     return true;
 }
 
 bool IMMeet::doContentAccept(const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
+    SESSION_CHECK(currentSid);
     return true;
 }
 
 bool IMMeet::doContentReject(const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
+    SESSION_CHECK(currentSid);
     return true;
 }
 
 bool IMMeet::doTransportInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
+    SESSION_CHECK(currentSid);
     return true;
 }
 
 bool IMMeet::doTransportAccept(const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
+    SESSION_CHECK(currentSid);
     return true;
 }
 
 bool IMMeet::doTransportReject(const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
+    SESSION_CHECK(currentSid);
     return true;
 }
 
 bool IMMeet::doTransportReplace(const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
+    SESSION_CHECK(currentSid);
     return true;
 }
 
 bool IMMeet::doSecurityInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
+    SESSION_CHECK(currentSid);
     return true;
 }
 
 bool IMMeet::doDescriptionInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
+    SESSION_CHECK(currentSid);
     return true;
 }
 
-bool IMMeet::doInvalidAction(const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
+bool IMMeet::doSourceAdd(const gloox::Jingle::Session::Jingle* jingle, const IMPeerId&) {
+    SESSION_CHECK(currentSid);
+    for (const auto p : jingle->plugins()) {
+        if (p->pluginType() == gloox::Jingle::PluginJsonMessage) {
+            auto jm = static_cast<const gloox::Jingle::JsonMessage*>(p);
+            if (jm) {
+                qDebug() << "json-message:" << jm->json().c_str();
+                std::map<std::string, ortc::OMeetSSRCBundle> map;
+                ParseOMeetSSRCBundle(jm->json(), map);
+            }
+        }
+    }
+
+    return true;
+}
+
+bool IMMeet::doInvalidAction(const gloox::Jingle::Session::Jingle* jingle, const IMPeerId&) {
+    if (currentSid.toStdString() != jingle->sid()) {
+        qWarning() << __func__ << "Unable to handle session:" << currentSid;
+        return false;
+    }
+
+    qDebug() << __func__;
+
     return true;
 }
 

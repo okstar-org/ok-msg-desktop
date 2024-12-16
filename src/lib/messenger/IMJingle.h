@@ -40,6 +40,13 @@ namespace lib::messenger {
 
 enum class CallDirection;
 
+#define SESSION_CHECK(sid)   \
+    {                        \
+        if (sid.isEmpty()) { \
+            return false;    \
+        }                    \
+    }
+
 class IMJingleSession {
 public:
     virtual void start() = 0;

@@ -901,15 +901,20 @@ bool IMCall::doSessionTerminate(gloox::Jingle::Session* session,
         s->doTerminate();
     }
 
-    clearSessionInfo(sId);
     emit receiveFriendHangup(peerId.toFriendId(), CallState::FINISHED);
-
-    currentSid.clear();
 
     auto rtcManager = ortc::OkRTCManager::getInstance();
     auto rtc = rtcManager->getRtc();
     if (rtc) rtc->removeRTCHandler(this);
 
+    clearSessionInfo(sId);
+    currentSid.clear();
+
+    return true;
+}
+
+bool lib::messenger::IMCall::doSourceAdd(const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
+    SESSION_CHECK(currentSid);
     return true;
 }
 

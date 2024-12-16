@@ -110,6 +110,7 @@ protected:
     bool doTransportReplace(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
     bool doSecurityInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
     bool doDescriptionInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    bool doSourceAdd(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
     bool doInvalidAction(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
 
     // IMJingle

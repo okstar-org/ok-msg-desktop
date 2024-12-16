@@ -367,9 +367,7 @@ bool IMFile::sendFileToResource(const gloox::JID& jid, const File& file) {
 bool IMFile::doSessionAccept(gloox::Jingle::Session* session,
                              const gloox::Jingle::Session::Jingle* jingle,
                              const lib::messenger::IMPeerId& peerId) {
-    if (currentSid.isEmpty()) {
-        return false;
-    }
+    SESSION_CHECK(currentSid);
 
     auto sId = qstring(session->sid());
     qDebug() << __func__ << "sId:" << sId;
@@ -407,6 +405,78 @@ bool IMFile::doSessionAccept(gloox::Jingle::Session* session,
         m_fileSessionMap.insert(sId, s);
     }
 
+    return true;
+}
+
+bool IMFile::doSessionInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
+    SESSION_CHECK(currentSid);
+    return true;
+}
+
+bool IMFile::doContentAdd(const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
+    SESSION_CHECK(currentSid);
+    return true;
+}
+
+bool IMFile::doContentRemove(const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
+    SESSION_CHECK(currentSid);
+    return true;
+}
+
+bool IMFile::doContentModify(const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
+    SESSION_CHECK(currentSid);
+    return true;
+}
+
+bool IMFile::doContentAccept(const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
+    SESSION_CHECK(currentSid);
+    return true;
+}
+
+bool IMFile::doContentReject(const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
+    SESSION_CHECK(currentSid);
+    return true;
+}
+
+bool IMFile::doTransportInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
+    SESSION_CHECK(currentSid);
+    return true;
+}
+
+bool IMFile::doTransportAccept(const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
+    SESSION_CHECK(currentSid);
+    return true;
+}
+
+bool IMFile::doTransportReject(const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
+    SESSION_CHECK(currentSid);
+    return true;
+}
+
+bool IMFile::doTransportReplace(const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
+    SESSION_CHECK(currentSid);
+    return true;
+}
+
+bool IMFile::doSecurityInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
+    SESSION_CHECK(currentSid);
+    return true;
+}
+
+bool IMFile::doDescriptionInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
+    SESSION_CHECK(currentSid);
+    return true;
+}
+
+bool IMFile::doSourceAdd(const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
+    SESSION_CHECK(currentSid);
+    return true;
+}
+
+bool IMFile::doInvalidAction(const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
+    if (currentSid.isEmpty()) {
+        return false;
+    }
     return true;
 }
 

@@ -147,7 +147,6 @@ private:
     rtc::scoped_refptr<webrtc::VideoTrackInterface> _videoTrack;
 
     webrtc::AudioTrackInterface* _remote_audio_track;
-    webrtc::VideoTrackInterface* _remote_video_track;
 
     rtc::scoped_refptr<webrtc::RtpSenderInterface> _audioRtpSender;
     rtc::scoped_refptr<webrtc::RtpSenderInterface> _videoRtpSender;

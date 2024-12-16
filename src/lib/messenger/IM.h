@@ -106,6 +106,7 @@ public:
     virtual bool doTransportReplace(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
     virtual bool doSecurityInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
     virtual bool doDescriptionInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
+    virtual bool doSourceAdd(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
     virtual bool doInvalidAction(const gloox::Jingle::Session::Jingle*, const IMPeerId&) = 0;
 };
 
@@ -315,6 +316,7 @@ public:
     void removeSession(gloox::Jingle::Session* s);
 
     void addSessionHandler(IMSessionHandler* h);
+    void removeSessionHandler(IMSessionHandler* h);
 
     void addFromHostHandler(const std::string& from, IMFromHostHandler* h);
     void clearFromHostHandler();

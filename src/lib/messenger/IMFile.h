@@ -131,45 +131,33 @@ protected:
                          const gloox::Jingle::Session::Jingle*,  //
                          const IMPeerId&) override;
 
-    bool doSessionInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {
-        return false;
-    };
-    bool doContentAdd(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {
-        return false;
-    };
-    bool doContentRemove(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {
-        return false;
-    };
-    bool doContentModify(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {
-        return false;
-    };
-    bool doContentAccept(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {
-        return false;
-    };
-    bool doContentReject(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {
-        return false;
-    };
-    bool doTransportInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {
-        return false;
-    };
-    bool doTransportAccept(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {
-        return false;
-    };
-    bool doTransportReject(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {
-        return false;
-    };
-    bool doTransportReplace(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {
-        return false;
-    };
-    bool doSecurityInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {
-        return false;
-    };
-    bool doDescriptionInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {
-        return false;
-    };
-    bool doInvalidAction(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override {
-        return false;
-    };
+    bool doSessionInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+
+    bool doContentAdd(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+
+    bool doContentRemove(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+
+    bool doContentModify(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+
+    bool doContentAccept(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+
+    bool doContentReject(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+
+    bool doTransportInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+
+    bool doTransportAccept(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+
+    bool doTransportReject(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+
+    bool doTransportReplace(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+
+    bool doSecurityInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+
+    bool doDescriptionInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+
+    bool doSourceAdd(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+
+    bool doInvalidAction(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
 
 private:
     void rejectFileRequest(const QString& friendId, const QString& sId);

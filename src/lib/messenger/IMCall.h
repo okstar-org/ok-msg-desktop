@@ -211,6 +211,7 @@ protected:
                                     const IMPeerId&) override;
     virtual bool doSecurityInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
     virtual bool doDescriptionInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+    virtual bool doSourceAdd(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
     virtual bool doInvalidAction(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
 
     IMCallSession* cacheSessionInfo(const IMContactId& from,

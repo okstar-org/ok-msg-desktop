@@ -27,11 +27,7 @@
 
 namespace lib::messenger {
 
-using namespace gloox;
-using namespace Jingle;
-using namespace lib::ortc;
-
-void setSsrcGroup(SsrcGroup& group, const QJsonValueRef& item) {
+void setSsrcGroup(ortc::SsrcGroup& group, const QJsonValueRef& item) {
     int i = 0;
     for (const auto& ssrc : item.toArray()) {
         auto x = ssrc.toVariant().toString();
@@ -73,38 +69,38 @@ void IMJingle::onImStarted() {
     assert(client);
 
     client->registerMessageHandler(this);
-    client->registerStanzaExtension(new Jingle::JingleMessage());
+    client->registerStanzaExtension(new gloox::Jingle::JingleMessage());
 
     auto disco = client->disco();
     // jingle
-    disco->addFeature(XMLNS_JINGLE);
-    disco->addFeature(XMLNS_JINGLE_MESSAGE);
-    disco->addFeature(XMLNS_JINGLE_ERRORS);
-    disco->addFeature(XMLNS_JIT_MEET);
+    disco->addFeature(gloox::XMLNS_JINGLE);
+    disco->addFeature(gloox::XMLNS_JINGLE_MESSAGE);
+    disco->addFeature(gloox::XMLNS_JINGLE_ERRORS);
+    disco->addFeature(gloox::XMLNS_JIT_MEET);
 }
 
-void IMJingle::handleMessageSession(MessageSession* session) {
+void IMJingle::handleMessageSession(gloox::MessageSession* session) {
     //  session->registerMessageHandler(this);
 }
 
-void IMJingle::handleMessage(const Message& msg, MessageSession* session) {
+void IMJingle::handleMessage(const gloox::Message& msg, gloox::MessageSession* session) {
     qDebug() << __func__ << "...";
 
     /**
      * 处理jingle-message消息
      * https://xmpp.org/extensions/xep-0353.html
      */
-    auto jm = msg.findExtension<Jingle::JingleMessage>(ExtJingleMessage);
+    auto jm = msg.findExtension<gloox::Jingle::JingleMessage>(gloox::ExtJingleMessage);
     if (jm) {
         handleJingleMessage(IMPeerId(msg.from().full()), jm);
     }
 }
 
-bool IMJingle::handleIq(const IQ& iq) {
+bool IMJingle::handleIq(const gloox::IQ& iq) {
     return true;
 }
 
-void IMJingle::handleIqID(const IQ& iq, int context) {}
+void IMJingle::handleIqID(const gloox::IQ& iq, int context) {}
 
 ortc::Candidate IMJingle::ParseCandidate(gloox::Jingle::ICEUDP::Candidate& c) {
     return ortc::Candidate{.component = c.component,
@@ -201,7 +197,8 @@ ortc::OIceUdp IMJingle::ParseIce(const std::string& mid, const gloox::Jingle::IC
                           ranges::to<ortc::CandidateList>};
 }
 
-void IMJingle::ParseAV(const gloox::Jingle::Session::Jingle* jingle, OJingleContentAv& contentAv) {
+void IMJingle::ParseAV(const gloox::Jingle::Session::Jingle* jingle,
+                       ortc::OJingleContentAv& contentAv) {
     contentAv.sessionId = jingle->sid();
     for (const auto p : jingle->plugins()) {
         auto pt = p->pluginType();
@@ -288,12 +285,12 @@ void IMJingle::ParseOMeetSSRCBundle(const std::string& json,
         QJsonArray sourceArray = it.value().toArray();
         qDebug() << "Participant:" << sourceKey;
 
-        OMeetSSRCBundle bundle;
+        ortc::OMeetSSRCBundle bundle;
         if (!sourceArray.empty()) {
             // index 0 as video source
             for (const auto& item : sourceArray.at(0).toArray()) {
                 auto o = item.toObject();
-                OMeetSource source = {
+                ortc::OMeetSource source = {
                         .ssrc = o.value("s").toVariant().toString().toStdString(),
                         .name = o.value("n").toVariant().toString().toStdString(),
                         .msid = o.value("m").toVariant().toString().toStdString(),
@@ -312,7 +309,7 @@ void IMJingle::ParseOMeetSSRCBundle(const std::string& json,
             // index 2 as audio source
             for (const auto& item : sourceArray.at(2).toArray()) {
                 auto o = item.toObject();
-                OMeetSource source = {
+                ortc::OMeetSource source = {
                         .ssrc = o.value("s").toVariant().toString().toStdString(),
                         .name = o.value("n").toVariant().toString().toStdString(),
                         .msid = o.value("m").toVariant().toString().toStdString(),
@@ -329,7 +326,7 @@ void IMJingle::ParseOMeetSSRCBundle(const std::string& json,
     }
 }
 
-void IMJingle::ToPlugins(const OJingleContentAv& av, PluginList& plugins) {
+void IMJingle::ToPlugins(const ortc::OJingleContentAv& av, gloox::Jingle::PluginList& plugins) {
     //<group>
     auto& contents = av.getContents();
     gloox::Jingle::Group::ContentList contentList;

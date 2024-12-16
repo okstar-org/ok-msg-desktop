@@ -2276,7 +2276,7 @@ void IM::handleSessionAction(gloox::Jingle::Action action,     //
                              gloox::Jingle::Session* session,  //
                              const gloox::Jingle::Session::Jingle* jingle) {
     auto from = session->remote();
-    auto friendId = IMPeerId(from);
+    auto peerId = IMPeerId(from);
     auto sid = qstring(jingle->sid());
 
     qDebug() << __func__ << static_cast<int>(action) << qstring(from.full()) << "sid:" << sid;
@@ -2284,100 +2284,106 @@ void IM::handleSessionAction(gloox::Jingle::Action action,     //
     switch (action) {
         case gloox::Jingle::Action::SessionInitiate: {
             for (auto h : m_sessionHandlers) {
-                if (h->doSessionInitiate(session, jingle, friendId)) break;
+                if (h->doSessionInitiate(session, jingle, peerId)) break;
             }
             break;
         }
         case gloox::Jingle::Action::SessionInfo: {
             for (auto h : m_sessionHandlers) {
-                h->doSessionInfo(jingle, friendId);
+                h->doSessionInfo(jingle, peerId);
             }
             break;
         }
         case gloox::Jingle::Action::SessionTerminate: {
             for (auto h : m_sessionHandlers) {
-                h->doSessionTerminate(session, jingle, friendId);
+                h->doSessionTerminate(session, jingle, peerId);
             }
             removeSession(session);
             break;
         }
         case gloox::Jingle::Action::SessionAccept: {
             for (auto h : m_sessionHandlers) {
-                auto yes = h->doSessionAccept(session, jingle, friendId);
+                auto yes = h->doSessionAccept(session, jingle, peerId);
                 if (yes) break;
             }
             break;
         }
         case gloox::Jingle::Action::ContentAccept: {
             for (auto h : m_sessionHandlers) {
-                h->doContentAccept(jingle, friendId);
+                h->doContentAccept(jingle, peerId);
             }
             break;
         }
         case gloox::Jingle::Action::ContentAdd: {
             // source-add|content-add
             for (auto h : m_sessionHandlers) {
-                h->doContentAdd(jingle, friendId);
+                h->doContentAdd(jingle, peerId);
             }
             break;
         }
         case gloox::Jingle::Action::ContentRemove: {
             for (auto h : m_sessionHandlers) {
-                h->doContentRemove(jingle, friendId);
+                h->doContentRemove(jingle, peerId);
             }
             break;
         }
         case gloox::Jingle::Action::ContentModify: {
             for (auto h : m_sessionHandlers) {
-                h->doContentModify(jingle, friendId);
+                h->doContentModify(jingle, peerId);
             }
             break;
         }
         case gloox::Jingle::Action::ContentReject: {
             for (auto h : m_sessionHandlers) {
-                h->doContentReject(jingle, friendId);
+                h->doContentReject(jingle, peerId);
             }
             break;
         }
         case gloox::Jingle::Action::TransportAccept: {
             for (auto h : m_sessionHandlers) {
-                h->doTransportAccept(jingle, friendId);
+                h->doTransportAccept(jingle, peerId);
             }
             break;
         }
         case gloox::Jingle::Action::TransportInfo: {
             for (auto h : m_sessionHandlers) {
-                h->doTransportInfo(jingle, friendId);
+                h->doTransportInfo(jingle, peerId);
             }
             break;
         }
         case gloox::Jingle::Action::TransportReject: {
             for (auto h : m_sessionHandlers) {
-                h->doTransportReject(jingle, friendId);
+                h->doTransportReject(jingle, peerId);
             }
             break;
         }
         case gloox::Jingle::Action::TransportReplace: {
             for (auto h : m_sessionHandlers) {
-                h->doTransportReplace(jingle, friendId);
+                h->doTransportReplace(jingle, peerId);
             }
             break;
         }
         case gloox::Jingle::Action::SecurityInfo: {
             for (auto h : m_sessionHandlers) {
-                h->doSecurityInfo(jingle, friendId);
+                h->doSecurityInfo(jingle, peerId);
             }
             break;
         }
         case gloox::Jingle::Action::DescriptionInfo: {
             for (auto h : m_sessionHandlers) {
-                h->doDescriptionInfo(jingle, friendId);
+                h->doDescriptionInfo(jingle, peerId);
+            }
+            break;
+        }
+        case gloox::Jingle::Action::SourceAdd: {
+            for (auto h : m_sessionHandlers) {
+                h->doSourceAdd(jingle, peerId);
             }
             break;
         }
         case gloox::Jingle::Action::InvalidAction:
             for (auto h : m_sessionHandlers) {
-                h->doInvalidAction(jingle, friendId);
+                h->doInvalidAction(jingle, peerId);
             }
             break;
     }
@@ -2403,6 +2409,13 @@ void IM::removeSession(gloox::Jingle::Session* s) {
 void IM::addSessionHandler(IMSessionHandler* h) {
     assert(h);
     m_sessionHandlers.push_back(h);
+}
+
+void IM::removeSessionHandler(IMSessionHandler* h) {
+    m_sessionHandlers.erase(std::find_if(m_sessionHandlers.begin(),
+                                         m_sessionHandlers.end(),
+                                         [h](IMSessionHandler* e) { return e == h; }),
+                            m_sessionHandlers.end());
 }
 
 void IM::addFromHostHandler(const std::string& from, IMFromHostHandler* h) {

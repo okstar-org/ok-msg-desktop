@@ -18,22 +18,19 @@
 #include <mutex>
 #include "../ok_rtc_renderer.h"
 
-namespace lib {
-namespace ortc {
+namespace lib::ortc {
 
 class VideoSink : public rtc::VideoSinkInterface<webrtc::VideoFrame> {
 public:
     VideoSink(const std::vector<OkRTCHandler*>& handlers, std::string peerId = {});
 
-    virtual ~VideoSink() override;
+    ~VideoSink() override;
 
     virtual void OnFrame(const webrtc::VideoFrame& frame) override;
 
 private:
-    uint64_t _renderCount;
     std::string _peer_id;
     const std::vector<OkRTCHandler*>& handlers;
 };
 
-}  // namespace ortc
-}  // namespace lib
+}  // namespace lib::ortc
