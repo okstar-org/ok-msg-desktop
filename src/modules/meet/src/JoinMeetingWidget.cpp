@@ -44,7 +44,7 @@ JoinMeetingWidget::JoinMeetingWidget(QWidget* parent) : QWidget(parent) {
             [this]() { emit requstJoinMeeting(idEdit->text()); });
 
     connect(idEdit, &QLineEdit::returnPressed, confirmButton,
-            [confirmButton]() { emit confirmButton->clicked(); });
+            [this]() { emit confirmButton->clicked(); });
 }
 
 void JoinMeetingWidget::retranslateUi()
