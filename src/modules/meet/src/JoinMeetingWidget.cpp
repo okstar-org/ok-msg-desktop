@@ -29,7 +29,7 @@ JoinMeetingWidget::JoinMeetingWidget(QWidget* parent) : QWidget(parent) {
     idEdit->setPlaceholderText(tr("Meeting ID"));
     optionWidget = new MeetingOptionWidget(this);
 
-    QPushButton* confirmButton = new QPushButton(tr("Join Meeting"), this);
+    confirmButton = new QPushButton(tr("Join Meeting"), this);
     confirmButton->setObjectName("confirm");
     confirmButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     confirmButton->setCursor(Qt::PointingHandCursor);
@@ -43,4 +43,12 @@ JoinMeetingWidget::JoinMeetingWidget(QWidget* parent) : QWidget(parent) {
     connect(confirmButton, &QPushButton::clicked,
             [this]() { emit requstJoinMeeting(idEdit->text()); });
 }
+
+void JoinMeetingWidget::retranslateUi()
+{
+    idEdit->setPlaceholderText(tr("Meeting ID"));
+    confirmButton->setText(tr("Join Meeting"));
+    optionWidget->retranslateUi();
+}
+
 }  // namespace module::meet

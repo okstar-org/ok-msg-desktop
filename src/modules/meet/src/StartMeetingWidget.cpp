@@ -81,6 +81,7 @@ void StartMeetingWidget::retranslateUi() {
     shareButton->setText(tr("Share"));
     disbandButton->setText(tr("Disband"));
     meetingNameEdit->setPlaceholderText(tr("Meeting Name"));
+    optionWidget->retranslateUi();
 }
 
 void StartMeetingWidget::updateUi() {

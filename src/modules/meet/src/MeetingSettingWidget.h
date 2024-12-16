@@ -15,6 +15,8 @@ public:
     explicit MeetingSettingWidget(QWidget *parent = nullptr);
     ~MeetingSettingWidget();
 
+    void retranslateUi();
+
 private:
     Ui::MeetingSettingWidget *ui;
 };
