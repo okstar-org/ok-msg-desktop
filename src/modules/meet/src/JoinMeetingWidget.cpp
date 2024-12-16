@@ -47,6 +47,10 @@ JoinMeetingWidget::JoinMeetingWidget(QWidget* parent) : QWidget(parent) {
             [this]() { emit confirmButton->clicked(); });
 }
 
+void JoinMeetingWidget::focusInput() {
+    idEdit->setFocus();
+}
+
 void JoinMeetingWidget::retranslateUi()
 {
     idEdit->setPlaceholderText(tr("Meeting ID"));

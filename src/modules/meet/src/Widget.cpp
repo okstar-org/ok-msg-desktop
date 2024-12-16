@@ -107,25 +107,24 @@ void Widget::initTranslate() {
 void Widget::retranslateUi() {
     ui->retranslateUi(this);
 
-    if(ui->tabWidget->count() >= 4)
-    {
+    if (ui->tabWidget->count() >= 4) {
         ui->tabWidget->setTabText(0, tr("Start Meeting"));
-        if(StartMeetingWidget* widget = qobject_cast<StartMeetingWidget*>(ui->tabWidget->widget(0)))
-        {
+        if (StartMeetingWidget* widget =
+                    qobject_cast<StartMeetingWidget*>(ui->tabWidget->widget(0))) {
             widget->retranslateUi();
         }
 
         ui->tabWidget->setTabText(1, tr("Join Meeting"));
-        if(JoinMeetingWidget* widget = qobject_cast<JoinMeetingWidget*>(ui->tabWidget->widget(1)))
-        {
+        if (JoinMeetingWidget* widget =
+                    qobject_cast<JoinMeetingWidget*>(ui->tabWidget->widget(1))) {
             widget->retranslateUi();
         }
 
         ui->tabWidget->setTabText(2, tr("Book Meeting"));
 
         ui->tabWidget->setTabText(3, tr("Setting"));
-        if(MeetingSettingWidget* widget = qobject_cast<MeetingSettingWidget*>(ui->tabWidget->widget(3)))
-        {
+        if (MeetingSettingWidget* widget =
+                    qobject_cast<MeetingSettingWidget*>(ui->tabWidget->widget(3))) {
             widget->retranslateUi();
         }
     }
@@ -193,6 +192,18 @@ void Widget::destroyMeeting() {
 void Widget::setState(const MeetingState& state_) {
     state = state_;
     startMeetWidget->setMeetingState(state);
+}
+
+void Widget::activate() {
+
+    // 暂时先这么做吧
+    // 使用showevent事件感觉有些不合适
+    QWidget* curr = ui->tabWidget->currentWidget();
+    if (curr == startMeetWidget) {
+        startMeetWidget->focusInput();
+    } else if (curr == joinMeetWidget) {
+        joinMeetWidget->focusInput();
+    }
 }
 
 /**

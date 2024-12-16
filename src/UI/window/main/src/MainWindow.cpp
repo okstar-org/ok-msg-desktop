@@ -338,7 +338,11 @@ void MainWindow::onSwitchPage(ok::base::PageMenu menu, bool checked) {
         return;
     }
 
-    ui->stacked_widget->setCurrentWidget(p);
+    if (p != ui->stacked_widget->currentWidget())
+    {
+        ui->stacked_widget->setCurrentWidget(p);
+        p->getModule()->activate();
+    }
 }
 
 QWidget* MainWindow::getContainer(ok::base::PageMenu menu) { return ui->stacked_widget; }

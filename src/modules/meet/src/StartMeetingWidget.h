@@ -46,6 +46,7 @@ public:
     explicit StartMeetingWidget(QWidget* parent = nullptr);
     QString getName();
     void setMeetingState(MeetingState state);
+    void focusInput();
 
 public:
     void retranslateUi();

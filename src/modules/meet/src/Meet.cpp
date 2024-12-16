@@ -41,5 +41,9 @@ void Meet::onSave(SavedInfo&) {}
 
 void Meet::cleanup() {}
 
+void Meet::activate() {
+    m_widget->activate();
+}
+
 void Meet::hide() {}
 }  // namespace module::meet
