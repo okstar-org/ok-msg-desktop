@@ -269,13 +269,13 @@ void IMJingle::ParseOMeetSSRCBundle(const std::string& json,
 
     QJsonDocument doc = ok::base::Jsons::toJSON(QByteArray::fromStdString(json));
     if (!doc.isObject()) {
-        qWarning() << "JSON is not an object";
+        qWarning() << __func__ << "JSON is not an object";
         return;
     }
 
     QJsonObject jsonObj = doc.object();
     if (!jsonObj.contains("sources")) {
-        qWarning() << "JSON object does not contain 'sources' key";
+        qWarning() << __func__ << "JSON object does not contain 'sources' key";
         return;
     }
 
@@ -283,7 +283,7 @@ void IMJingle::ParseOMeetSSRCBundle(const std::string& json,
     for (auto it = sourcesObj.begin(); it != sourcesObj.end(); ++it) {
         QString sourceKey = it.key();
         QJsonArray sourceArray = it.value().toArray();
-        qDebug() << "Participant:" << sourceKey;
+        qDebug() << __func__ << "Parse participant:" << sourceKey;
 
         ortc::OMeetSSRCBundle bundle;
         if (!sourceArray.empty()) {

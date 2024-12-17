@@ -790,29 +790,18 @@ std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertToSdp(
         return ptr;
     } else {
         sessionDescription->AddGroup(group);
-
         std::vector<webrtc::IceCandidateInterface*> candidates;
-
-        // int mline = -1;
-
+        int mline = -1;
         for (auto& k : av.getSsrcBundle()) {
             auto participant = k.first;
             auto& ssrcBundle = k.second;
             group.AddContentName(ssrcBundle.audioSources[0].name);
             group.AddContentName(ssrcBundle.videoSources[0].name);
 
-            // iceUdp
-            // cricket::TransportInfo ti1 = toTransportInfo(ssrcBundle.audioSources[0].name,
-            // iceUdp); sessionDescription->AddTransportInfo(ti1); auto audioPtr =
-            // addAudioSsrcBundle(ssrcBundle, sessionDescription.get());
-
-            // cricket::TransportInfo ti2 = toTransportInfo(ssrcBundle.videoSources[0].name,
-            // iceUdp); sessionDescription->AddTransportInfo(ti2); auto videoPtr =
-            // addVideoSsrcBundle(ssrcBundle, sessionDescription.get());
-
             for (auto c : av.getContents()) {
-                auto& iceUdp = c.second.iceUdp;
-                auto& rtp = c.second.rtp;
+                OSdp& sdp = c.second;
+                auto& iceUdp = sdp.iceUdp;
+                auto& rtp = sdp.rtp;
 
                 if (rtp.media == Media::audio) {
                     auto& mid = ssrcBundle.audioSources[0].name;
@@ -834,7 +823,7 @@ std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertToSdp(
                     sessionDescription->AddContent(mid, cricket::MediaProtocolType::kRtp,
                                                    std::move(audioPtr));
 
-                    int mline = sessionDescription->contents().size() - 1;
+                    mline++;
                     for (const auto& item : iceUdp.candidates) {
                         auto candidate = toCandidate(item, iceUdp);
                         auto c = webrtc::CreateIceCandidate(mid, mline, candidate);
@@ -858,8 +847,18 @@ std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertToSdp(
                     sessionDescription->AddTransportInfo(ti);
                     sessionDescription->AddContent(mid, cricket::MediaProtocolType::kRtp,
                                                    std::move(videoPtr));
-
-                    int mline = sessionDescription->contents().size() - 1;
+                    mline++;
+                    for (const auto& item : iceUdp.candidates) {
+                        auto candidate = toCandidate(item, iceUdp);
+                        auto c = webrtc::CreateIceCandidate(mid, mline, candidate);
+                        candidates.push_back(c.release());
+                    }
+                } else if (rtp.media == Media::application) {
+                    auto& mid = "data";
+                    auto data = createDataDescription(sdp);
+                    sessionDescription->AddContent(mid, cricket::MediaProtocolType::kSctp,
+                                                   std::move(data));
+                    mline++;
                     for (const auto& item : iceUdp.candidates) {
                         auto candidate = toCandidate(item, iceUdp);
                         auto c = webrtc::CreateIceCandidate(mid, mline, candidate);
@@ -879,78 +878,6 @@ std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertToSdp(
         return ptr;
     }
 }
-
-// std::unique_ptr<cricket::VideoContentDescription> createVideoDescription(  //
-//         const ORTP& rtp,                                                   //
-//         const std::map<std::string, OMeetSSRCBundle>& ssrcBundleMap) {
-//     auto ptr = std::make_unique<cricket::VideoContentDescription>();
-//     for (auto& pt : rtp.payloadTypes) {
-//         auto codec = cricket::CreateVideoCodec(pt.id, pt.name);
-//         for (auto& e : pt.parameters) {
-//             codec.SetParam(e.name, e.value);
-//         }
-//         for (auto& e : pt.feedbacks) {
-//             cricket::FeedbackParam fb(e.type, e.subtype);
-//             codec.AddFeedbackParam(fb);
-//         }
-//         ptr->AddCodec(codec);
-//     }
-//     for (auto& hdrExt : rtp.hdrExts) {
-//         webrtc::RtpExtension ext(hdrExt.uri, hdrExt.id);
-//         ptr->AddRtpHeaderExtension(ext);
-//     }
-//     ptr->set_rtcp_mux(rtp.rtcpMux);
-//
-//     if (!rtp.sources.empty()) {
-//         cricket::StreamParams streamParams;
-//         for (auto& src : rtp.sources) {
-//             streamParams.ssrcs.push_back(std::stoul(src.ssrc));
-//             for (auto& p : src.parameters) {
-//                 if (p.name == "cname") {
-//                     streamParams.cname = p.value;
-//                 } else if (p.name == "label") {
-//                     streamParams.id = p.value;
-//                 } else if (p.name == "mslabel") {
-//                     streamParams.set_stream_ids({p.value});
-//                 }
-//             };
-//         }
-//
-//         // ssrc-group
-//         if (!rtp.ssrcGroup.ssrcs.empty()) {
-//             auto g = rtp.ssrcGroup;
-//             std::vector<uint32_t> ssrcs;
-//             std::transform(g.ssrcs.begin(), g.ssrcs.end(), std::back_inserter(ssrcs),
-//                            [](auto& s) -> uint32_t { return std::stoul(s); });
-//             cricket::SsrcGroup ssrcGroup(g.semantics, ssrcs);
-//             streamParams.ssrc_groups.emplace_back(ssrcGroup);
-//         }
-//         ptr->AddStream(streamParams);
-//     } else {
-//         for (const auto& item : ssrcBundleMap) {
-//             cricket::StreamParams streamParams;
-//             for (auto& src : item.second.videoSources) {
-//                 streamParams.ssrcs.push_back(std::stoul(src.ssrc));
-//                 streamParams.cname = src.name;
-//                 streamParams.set_stream_ids({src.msid});
-//             };
-//
-//             if (!item.second.videoSsrcGroups.ssrcs.empty()) {
-//                 // ssrc-groups
-//                 auto ssrcs = ranges::views::all(item.second.videoSsrcGroups.ssrcs) |
-//                              ranges::views::transform([](const std::string& s) {
-//                                  return static_cast<uint32_t>(std::stoul(s));
-//                              }) |
-//                              ranges::to_vector;
-//                 streamParams.ssrc_groups.emplace_back(
-//                         cricket::SsrcGroup(item.second.videoSsrcGroups.semantics, ssrcs));
-//             }
-//             if (streamParams.has_ssrcs()) ptr->AddStream(streamParams);
-//         }
-//     }
-//
-//     return std::move(ptr);
-// }
 
 std::unique_ptr<cricket::SctpDataContentDescription> createDataDescription(const OSdp& sdp) {
     auto ptr = std::make_unique<cricket::SctpDataContentDescription>();
@@ -992,11 +919,11 @@ Conductor* WebRTC::createConductor(const std::string& peerId, const std::string&
     auto conductor = new Conductor(this, peerId, sId);
     if (!video) {
         // audio
-        RTC_DLOG_V(rtc::LS_INFO) << "AddTrack audio..." << audioSource.get();
+        RTC_DLOG_V(rtc::LS_INFO) << "AddTrack audio source:" << audioSource.get();
         conductor->AddAudioTrack(audioSource.get());
     } else {
         // video
-        RTC_DLOG_V(rtc::LS_INFO) << "AddTrack audio..." << audioSource.get();
+        RTC_DLOG_V(rtc::LS_INFO) << "AddTrack audio source:" << audioSource.get();
         conductor->AddAudioTrack(audioSource.get());
 
         auto vdi = webrtc::VideoCaptureFactory::CreateDeviceInfo();
@@ -1106,34 +1033,46 @@ void WebRTC::addSource(const std::string& peerId,
     for (const auto& item : map) {
         auto& k = item.first;
         auto& ssrcBundle = item.second;
-        auto mida = ssrcBundle.audioSources[0].name;
-        auto midv = ssrcBundle.videoSources[0].name;
-        auto ci = d->candidates(0);
 
-        auto ti = d->description()->transport_infos().at(0);
-        ti.content_name = mida;
-        d->description()->AddTransportInfo(ti);
+        if (!ssrcBundle.audioSources.empty()) {
+            auto& mida = ssrcBundle.audioSources[0].name;
+            std::string jvb_a0 = "jvb-a0";
+            const cricket::ContentInfo* pContentInfo = d->description()->GetContentByName(jvb_a0);
+            if (pContentInfo) {
+                auto jvba = pContentInfo->media_description()->as_audio();
+                auto ti = d->description()->GetTransportInfoByName(jvb_a0);
+                ti->content_name = mida;
+                d->description()->AddTransportInfo(*ti);
 
-        auto ti2 = d->description()->transport_infos().at(1);
-        ti2.content_name = midv;
-        d->description()->AddTransportInfo(ti2);
+                auto audioPtr = addAudioSsrcBundle(ssrcBundle);
+                audioPtr->set_codecs(jvba->codecs());
+                audioPtr->set_rtcp_mux(jvba->rtcp_mux());
+                audioPtr->set_rtp_header_extensions(jvba->rtp_header_extensions());
 
-        auto audioPtr = addAudioSsrcBundle(ssrcBundle);
-        audioPtr->set_rtcp_mux(true);
-        auto jvba = d->description()->GetContentByName("jvb-a0")->media_description()->as_audio();
-        audioPtr->set_rtp_header_extensions(jvba->rtp_header_extensions());
+                d->description()->AddContent(mida, cricket::MediaProtocolType::kRtp,
+                                             std::move(audioPtr));
+            }
+        }
 
-        d->description()->AddContent(mida, cricket::MediaProtocolType::kRtp, std::move(audioPtr));
+        if (!ssrcBundle.videoSources.empty()) {
+            auto& midv = ssrcBundle.videoSources[0].name;
+            std::string jvb_v0 = "jvb-v0";
+            const cricket::ContentInfo* pContentInfo = d->description()->GetContentByName(jvb_v0);
+            if (pContentInfo) {
+                auto jvbv = pContentInfo->media_description()->as_audio();
+                auto ti = d->description()->GetTransportInfoByName(jvb_v0);
+                ti->content_name = midv;
+                d->description()->AddTransportInfo(*ti);
 
-        auto videoPtr = addVideoSsrcBundle(ssrcBundle);
-        videoPtr->set_rtcp_mux(true);
-        auto jvbv = d->description()->GetContentByName("jvb-v0")->media_description()->as_video();
+                auto videoPtr = addVideoSsrcBundle(ssrcBundle);
+                videoPtr->set_codecs(jvbv->codecs());
+                videoPtr->set_rtcp_mux(jvbv->rtcp_mux());
+                videoPtr->set_rtp_header_extensions(jvbv->rtp_header_extensions());
 
-        auto v_codecs = jvbv->codecs();
-        videoPtr->set_codecs(v_codecs);
-        videoPtr->set_rtp_header_extensions(jvbv->rtp_header_extensions());
-
-        d->description()->AddContent(midv, cricket::MediaProtocolType::kRtp, std::move(videoPtr));
+                d->description()->AddContent(midv, cricket::MediaProtocolType::kRtp,
+                                             std::move(videoPtr));
+            }
+        }
     }
 
     std::unique_ptr<cricket::SessionDescription> x(d->description());
@@ -1178,7 +1117,7 @@ void WebRTC::SessionTerminate(const std::string& peerId) {
 }
 
 void WebRTC::CreateAnswer(const std::string& peerId, const OJingleContentAv& av) {
-    RTC_LOG(LS_INFO) << "peerId:" << peerId;
+    RTC_LOG(LS_INFO) << __FUNCTION__ << " peerId:" << peerId;
     Conductor* conductor = createConductor(peerId, av.sessionId, av.isVideo());
     auto sdp = convertToSdp(av);
     conductor->setRemoteDescription(std::move(sdp));

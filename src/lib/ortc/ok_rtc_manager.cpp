@@ -23,7 +23,7 @@ namespace lib {
 namespace ortc {
 
 static OkRTCManager* instance = nullptr;
-static std::mutex mtx;
+static std::recursive_mutex mtx;
 
 OkRTCManager::OkRTCManager() {}
 
@@ -32,7 +32,7 @@ OkRTCManager::~OkRTCManager() {
 }
 
 OkRTCManager* OkRTCManager::getInstance() {
-    std::lock_guard<std::mutex> lock(mtx);
+    std::lock_guard<std::recursive_mutex> lock(mtx);
     if (!instance) {
         RTC_DLOG_F(LS_INFO) << "Creating instance.";
         instance = new OkRTCManager();
@@ -41,7 +41,7 @@ OkRTCManager* OkRTCManager::getInstance() {
 }
 
 void OkRTCManager::destroyInstance() {
-    std::lock_guard<std::mutex> lock(mtx);
+    std::lock_guard<std::recursive_mutex> lock(mtx);
     if (!instance) {
         RTC_DLOG_F(LS_WARNING) << "The instance has been destroyed!";
         return;
@@ -54,7 +54,7 @@ void OkRTCManager::destroyInstance() {
 }
 
 OkRTC* OkRTCManager::createRtc() {
-    std::lock_guard<std::mutex> lock(mtx);
+    std::lock_guard<std::recursive_mutex> lock(mtx);
     if (!rtc) {
         rtc = std::make_unique<WebRTC>();
         rtc->setIceOptions(_iceOptions);
@@ -63,12 +63,12 @@ OkRTC* OkRTCManager::createRtc() {
 }
 
 void OkRTCManager::destroyRtc() {
-    std::lock_guard<std::mutex> lock(mtx);
+    std::lock_guard<std::recursive_mutex> lock(mtx);
     rtc.reset();
 }
 
 OkRTC* OkRTCManager::getRtc() {
-    std::lock_guard<std::mutex> lock(mtx);
+    std::lock_guard<std::recursive_mutex> lock(mtx);
     return rtc.get();
 }
 

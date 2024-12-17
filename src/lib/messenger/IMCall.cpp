@@ -395,8 +395,8 @@ void IMCall::onIceGatheringChange(const std::string& sId, const std::string& pee
                                   ortc::IceGatheringState state) {
     const QString& qsId = qstring(sId);
     const QString& qPeerId = qstring(peerId);
-    qDebug() << __func__ << "sId:" << qsId << "peerId:" << qPeerId;
-    qDebug() << "state:" << static_cast<int>(state);
+    qDebug() << __func__ << "sId:" << qsId << "peerId:" << qPeerId
+             << "state:" << static_cast<int>(state);
 
     emit iceGatheringStateChanged(IMPeerId(qPeerId), qsId, state);
 

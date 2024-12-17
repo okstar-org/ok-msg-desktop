@@ -121,7 +121,7 @@ bool Conductor::AddAudioTrack(webrtc::AudioSourceInterface* _audioSource) {
     }
 
     _audioRtpSender = added.value();
-    RTC_LOG(LS_INFO) << "Audio rtp sender:" << _audioRtpSender.get();
+    RTC_LOG(LS_INFO) << "Added audioRtpSender ptr is:" << _audioRtpSender.get();
     return true;
 }
 
@@ -148,8 +148,7 @@ bool Conductor::AddVideoTrack(webrtc::VideoTrackSourceInterface* _videoTrackSour
     }
 
     _videoRtpSender = added.value();
-    RTC_LOG(LS_INFO) << "Video rtp sender:" << _videoRtpSender.get();
-
+    RTC_LOG(LS_INFO) << "Added videoRtpSender ptr is:" << _videoRtpSender.get();
     return true;
 }
 
