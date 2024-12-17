@@ -33,6 +33,7 @@ public:
     bool isStarted() override;
     void onSave(SavedInfo&) override;
     void cleanup() override;
+    void activate() override;
 
     QWidget* widget() override {
         return m_widget.get();

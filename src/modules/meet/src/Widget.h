@@ -52,6 +52,8 @@ public:
 
     void setState(const MeetingState& state_);
 
+    void activate();
+
 protected:
     void initTranslate();
     void retranslateUi();

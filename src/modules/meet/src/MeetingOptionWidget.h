@@ -29,6 +29,8 @@ public:
     MeetingOptionWidget(QWidget* parent = nullptr);
     void addFooterButton(QPushButton* button);
 
+    void retranslateUi();
+
 protected:
     void showEvent(QShowEvent* event) override;
 

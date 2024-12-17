@@ -26,6 +26,7 @@
 #include <QWidget>
 
 class QLineEdit;
+class QPushButton;
 
 namespace module::meet {
 
@@ -38,9 +39,13 @@ signals:
 
 public:
     JoinMeetingWidget(QWidget* parent = nullptr);
+    void focusInput();
+    void retranslateUi();
 
 private:
     MeetingOptionWidget* optionWidget = nullptr;
     QLineEdit* idEdit = nullptr;
+
+    QPushButton* confirmButton = nullptr;
 };
 }  // namespace module::meet

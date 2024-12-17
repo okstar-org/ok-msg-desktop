@@ -61,4 +61,9 @@ public:
      * 用户登出时（但未退出应用），一些清理操作
      */
     virtual void cleanup() = 0;
+
+    /**
+     * 模块切换
+     */
+    virtual void activate() {};
 };

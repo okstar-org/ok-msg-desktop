@@ -71,7 +71,14 @@ PopupMenuComboBox::PopupMenuComboBox(QWidget* parent) : QFrame(parent) {
     connect(menuButton, &QToolButton::clicked, this, &PopupMenuComboBox::onMenuButtonClicked);
 }
 
-void PopupMenuComboBox::setLabel(const QString& text) { setWidget(new QLabel(text, this)); }
+void PopupMenuComboBox::setLabel(const QString& text) {
+    if (QLabel* label = qobject_cast<QLabel*>(content.data())) {
+        label->setText(text);
+        return;
+    }
+
+    setWidget(new QLabel(text, this));
+}
 
 void PopupMenuComboBox::setWidget(QWidget* widget) {
     if (content.isNull()) {
@@ -81,9 +88,8 @@ void PopupMenuComboBox::setWidget(QWidget* widget) {
     } else {
         if (widget) {
             mainLayout->replaceWidget(content, widget);
-        } else {
-            content->deleteLater();
         }
+        content->deleteLater();
     }
     content = widget;
 }
