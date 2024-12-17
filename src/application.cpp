@@ -36,6 +36,11 @@
 
 namespace ok {
 
+/**
+ * 应用程序
+ * @param argc
+ * @param argv
+ */
 Application::Application(int& argc, char* argv[])
         : QApplication(argc, argv), _argc(argc), _argv(argv) {
     // Qt application settings.
@@ -56,8 +61,8 @@ Application::Application(int& argc, char* argv[])
 
     ok::base::CpuInfo cpuInfo;
     ok::base::SysInfo::GetCpuInfo(cpuInfo);
-
-    qDebug() << "CpuInfo  :"          //
+    // 打印CPU信息
+    qDebug() << __func__ << "CpuInfo: "  //
              << cpuInfo.arch          //
              << cpuInfo.manufacturer  //
              << cpuInfo.name          //

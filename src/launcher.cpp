@@ -17,11 +17,20 @@
 
 namespace ok {
 
+/**
+ * 创建启动器
+ * @param argc
+ * @param argv
+ * @return
+ */
 std::unique_ptr<Launcher> Launcher::Create(int argc, char* argv[]) {
     return std::make_unique<Launcher>(argc, argv);
 }
 
 Launcher::Launcher(int argc, char* argv[]) : _argc(argc), _argv(argv) {
+    /**
+     * 设置配置信息
+     */
     QThread::currentThread()->setObjectName("Launcher");
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 0))
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
@@ -36,7 +45,9 @@ Launcher::Launcher(int argc, char* argv[]) : _argc(argc), _argv(argv) {
 }
 
 int Launcher::executeApplication() {
-
+    /**
+     * 创建应用实例
+     */
     app = new Application(_argc, _argv);
 
     // Windows platform plugins DLL
