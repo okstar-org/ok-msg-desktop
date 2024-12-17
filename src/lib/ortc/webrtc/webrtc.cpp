@@ -926,19 +926,21 @@ Conductor* WebRTC::createConductor(const std::string& peerId, const std::string&
         RTC_DLOG_V(rtc::LS_INFO) << "AddTrack audio source:" << audioSource.get();
         conductor->AddAudioTrack(audioSource.get());
 
-        auto vdi = webrtc::VideoCaptureFactory::CreateDeviceInfo();
-        int num_devices = vdi->NumberOfDevices();
+        auto deviceInfo = webrtc::VideoCaptureFactory::CreateDeviceInfo();
+        int num_devices = deviceInfo->NumberOfDevices();
         RTC_LOG(LS_INFO) << "Get number of video devices:" << num_devices;
 
         if (0 < num_devices) {
-            // 获取第一个视频设备
+            //TODO 默认获取第一个视频设备
             int selected = 0;
-            char name[LEN] = {0};
-            char uid[LEN] = {0};
-            char puid[LEN] = {0};
-            vdi->GetDeviceName(selected, name, LEN, uid, LEN, puid, LEN);
 
-            RTC_LOG(LS_INFO) << "Video device name:" << name << " uid:" << uid;
+            char name[LEN] = {};
+            char uid[LEN] = {};
+            char puid[LEN] = {};
+            deviceInfo->GetDeviceName(selected, name, LEN, uid, LEN, puid, LEN);
+
+            RTC_LOG(LS_INFO) << "Get video device {name:" << name << ", uid:" << uid
+                            << ", productUid:" << puid << "}";
 
             videoCapture = createVideoCapture(uid);
             conductor->AddVideoTrack(videoCapture->source().get());
@@ -1139,11 +1141,11 @@ size_t WebRTC::getVideoSize() {
     return vdi->NumberOfDevices();
 }
 
-std::shared_ptr<VideoCaptureInterface> WebRTC::createVideoCapture(
-        std::optional<std::string> deviceId, bool isScreenCapture) {
-    RTC_LOG(LS_INFO) << __FUNCTION__ << " deviceId:" << *deviceId;
+std::shared_ptr<VideoCaptureInterface> WebRTC::createVideoCapture(const std::string& deviceId) {
+    RTC_LOG(LS_INFO) << __FUNCTION__ << " deviceId: " << deviceId;
 
-    if (deviceId->empty()) {
+    if (deviceId.empty()) {
+        RTC_LOG(LS_WARNING) << "Empty deviceId!";
         return {};
     }
 
@@ -1154,7 +1156,7 @@ std::shared_ptr<VideoCaptureInterface> WebRTC::createVideoCapture(
     //    return videoCapture;
     //  }
 
-    return VideoCaptureInterface::Create(signaling_thread.get(), worker_thread.get(), *deviceId);
+    return VideoCaptureInterface::Create(signaling_thread.get(), worker_thread.get(), deviceId);
 }
 
 }  // namespace lib::ortc

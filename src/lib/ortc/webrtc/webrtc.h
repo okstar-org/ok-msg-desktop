@@ -84,9 +84,7 @@ public:
 
     size_t getVideoSize() override;
 
-    [[nodiscard]] auto createVideoCapture(std::optional<std::string> deviceId = std::nullopt,
-                                          bool isScreenCapture = false)
-            -> std::shared_ptr<VideoCaptureInterface>;
+    std::shared_ptr<VideoCaptureInterface> createVideoCapture(const std::string& deviceId);
 
     bool quit(const std::string& peerId) override;
 
