@@ -795,16 +795,17 @@ std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertToSdp(
         for (auto& k : av.getSsrcBundle()) {
             auto participant = k.first;
             auto& ssrcBundle = k.second;
-            group.AddContentName(ssrcBundle.audioSources[0].name);
+
             group.AddContentName(ssrcBundle.videoSources[0].name);
 
-            for (auto c : av.getContents()) {
-                OSdp& sdp = c.second;
+            for (auto &c : av.getContents()) {
+                auto& sdp = c.second;
                 auto& iceUdp = sdp.iceUdp;
                 auto& rtp = sdp.rtp;
 
                 if (rtp.media == Media::audio) {
                     auto& mid = ssrcBundle.audioSources[0].name;
+                    group.AddContentName(mid);
 
                     auto audioPtr = std::make_unique<cricket::AudioContentDescription>();
                     setSsrc(ssrcBundle.audioSsrcGroups, ssrcBundle.audioSources, audioPtr.get());
@@ -818,7 +819,7 @@ std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertToSdp(
                         audioPtr->AddCodec(codec);
                     }
 
-                    cricket::TransportInfo ti = toTransportInfo(mid, iceUdp);
+                    auto ti = toTransportInfo(mid, iceUdp);
                     sessionDescription->AddTransportInfo(ti);
                     sessionDescription->AddContent(mid, cricket::MediaProtocolType::kRtp,
                                                    std::move(audioPtr));
@@ -832,6 +833,7 @@ std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertToSdp(
 
                 } else if (rtp.media == Media::video) {
                     auto& mid = ssrcBundle.videoSources[0].name;
+                    group.AddContentName(mid);
 
                     auto videoPtr = std::make_unique<cricket::VideoContentDescription>();
                     setSsrc(ssrcBundle.videoSsrcGroups, ssrcBundle.videoSources, videoPtr.get());
@@ -843,7 +845,7 @@ std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertToSdp(
                         setCodec(pt, codec);
                         videoPtr->AddCodec(codec);
                     }
-                    cricket::TransportInfo ti = toTransportInfo(mid, iceUdp);
+                    auto ti = toTransportInfo(mid, iceUdp);
                     sessionDescription->AddTransportInfo(ti);
                     sessionDescription->AddContent(mid, cricket::MediaProtocolType::kRtp,
                                                    std::move(videoPtr));
@@ -856,6 +858,8 @@ std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertToSdp(
                 } else if (rtp.media == Media::application) {
                     auto& mid = "data";
                     auto data = createDataDescription(sdp);
+                    auto ti = toTransportInfo(mid, iceUdp);
+                    sessionDescription->AddTransportInfo(ti);
                     sessionDescription->AddContent(mid, cricket::MediaProtocolType::kSctp,
                                                    std::move(data));
                     mline++;
@@ -871,9 +875,9 @@ std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertToSdp(
         auto ptr = webrtc::CreateSessionDescription(sdpType, av.sessionId, av.sessionVersion,
                                                     std::move(sessionDescription));
         for (auto c : candidates) {
-            auto y = ptr->AddCandidate(c);
-            RTC_LOG(LS_INFO) << "AddCandidate => " << y << c->sdp_mid() << " "
-                             << c->sdp_mline_index();
+            if(!ptr->AddCandidate(c)){
+                RTC_LOG(LS_WARNING) << " Can not add candidate: " << c->sdp_mid();
+            }
         }
         return ptr;
     }
@@ -1037,41 +1041,42 @@ void WebRTC::addSource(const std::string& peerId,
         auto& ssrcBundle = item.second;
 
         if (!ssrcBundle.audioSources.empty()) {
-            auto& mida = ssrcBundle.audioSources[0].name;
+            auto& mid = ssrcBundle.audioSources[0].name;
             std::string jvb_a0 = "jvb-a0";
             const cricket::ContentInfo* pContentInfo = d->description()->GetContentByName(jvb_a0);
             if (pContentInfo) {
                 auto jvba = pContentInfo->media_description()->as_audio();
-                auto ti = d->description()->GetTransportInfoByName(jvb_a0);
-                ti->content_name = mida;
-                d->description()->AddTransportInfo(*ti);
+                auto ti0 = d->description()->GetTransportInfoByName(jvb_a0);
+                cricket::TransportInfo ti(mid, ti0->description);
+                d->description()->AddTransportInfo(ti);
 
                 auto audioPtr = addAudioSsrcBundle(ssrcBundle);
                 audioPtr->set_codecs(jvba->codecs());
                 audioPtr->set_rtcp_mux(jvba->rtcp_mux());
                 audioPtr->set_rtp_header_extensions(jvba->rtp_header_extensions());
 
-                d->description()->AddContent(mida, cricket::MediaProtocolType::kRtp,
+                d->description()->AddContent(mid, cricket::MediaProtocolType::kRtp,
                                              std::move(audioPtr));
             }
         }
 
         if (!ssrcBundle.videoSources.empty()) {
-            auto& midv = ssrcBundle.videoSources[0].name;
+            auto& mid = ssrcBundle.videoSources[0].name;
             std::string jvb_v0 = "jvb-v0";
             const cricket::ContentInfo* pContentInfo = d->description()->GetContentByName(jvb_v0);
             if (pContentInfo) {
-                auto jvbv = pContentInfo->media_description()->as_audio();
-                auto ti = d->description()->GetTransportInfoByName(jvb_v0);
-                ti->content_name = midv;
-                d->description()->AddTransportInfo(*ti);
+                auto jvbv = pContentInfo->media_description()->as_video();
+                auto ti0 = d->description()->GetTransportInfoByName(jvb_v0);
+
+                cricket::TransportInfo ti(mid, ti0->description);
+                d->description()->AddTransportInfo(ti);
 
                 auto videoPtr = addVideoSsrcBundle(ssrcBundle);
                 videoPtr->set_codecs(jvbv->codecs());
                 videoPtr->set_rtcp_mux(jvbv->rtcp_mux());
                 videoPtr->set_rtp_header_extensions(jvbv->rtp_header_extensions());
 
-                d->description()->AddContent(midv, cricket::MediaProtocolType::kRtp,
+                d->description()->AddContent(mid, cricket::MediaProtocolType::kRtp,
                                              std::move(videoPtr));
             }
         }
@@ -1090,12 +1095,30 @@ void WebRTC::addSource(const std::string& peerId,
             ci->at(i)->ToString(&sdp);
 
             webrtc::SdpParseError error;
+            auto amid = ssrcBundle.audioSources[0].name;
 
-            auto c = webrtc::CreateIceCandidate(ssrcBundle.audioSources[0].name, 2, sdp, &error);
-            auto y = d1->AddCandidate(c);
 
-            auto c1 = webrtc::CreateIceCandidate(ssrcBundle.videoSources[0].name, 3, sdp, &error);
-            auto y1 = d1->AddCandidate(c1);
+            int mline = -1;
+            for(auto &content :d->description()->contents())
+            {
+                ++mline;
+                if(content.mid() == amid){
+                    auto c = webrtc::CreateIceCandidate(amid, mline, sdp, &error);
+                    if(!d1->AddCandidate(c)){
+                        RTC_LOG(LS_WARNING) << " Can not add candidate: "<< c->sdp_mid();
+                    }
+                }
+
+                if(!ssrcBundle.videoSources.empty()){
+                     auto vmid = ssrcBundle.videoSources[0].name;
+                    if(content.mid() == vmid){
+                        auto c1 = webrtc::CreateIceCandidate(vmid, mline, sdp, &error);
+                        if(!d1->AddCandidate(c1)){
+                            RTC_LOG(LS_WARNING) << " Can not add candidate: "<< c1->sdp_mid();
+                        }
+                    }
+                }
+            }
         }
     }
     c->setRemoteDescription(std::move(d1));
