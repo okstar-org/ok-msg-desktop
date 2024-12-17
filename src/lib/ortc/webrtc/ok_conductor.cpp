@@ -291,14 +291,17 @@ void Conductor::CreateAnswer() {
     RTC_LOG(LS_INFO) << __FUNCTION__ << " done.";
 }
 
-void Conductor::SetRemoteDescription(std::unique_ptr<webrtc::SessionDescriptionInterface> desc) {
+void Conductor::setRemoteDescription(std::unique_ptr<webrtc::SessionDescriptionInterface> desc) {
     RTC_LOG(LS_INFO) << __FUNCTION__ << " desc type:" << desc->type();
 
     std::string sdp;
     desc->ToString(&sdp);
     RTC_LOG(LS_INFO) << "set remote sdp:\n" << sdp;
-
     peer_connection_->SetRemoteDescription(this, desc.release());
+}
+
+const webrtc::SessionDescriptionInterface* Conductor::getRemoteDescription() {
+    return peer_connection_->remote_description();
 }
 
 bool Conductor::setTransportInfo(std::unique_ptr<webrtc::IceCandidateInterface> candidate) {

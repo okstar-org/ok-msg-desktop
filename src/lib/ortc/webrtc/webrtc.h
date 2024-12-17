@@ -37,9 +37,13 @@ namespace lib::ortc {
 
 class Conductor;
 
+// std::unique_ptr<cricket::AudioContentDescription> createAudioDescription(
+//         const Sources& sources, const SsrcGroup& g);
+
 std::unique_ptr<cricket::AudioContentDescription> createAudioDescription(
         const ORTP& rtp,  //
         const std::map<std::string, OMeetSSRCBundle>&);
+
 std::unique_ptr<cricket::VideoContentDescription> createVideoDescription(
         const ORTP& rtp,  //
         const std::map<std::string, OMeetSSRCBundle>& ssrcBundleMap);
@@ -74,6 +78,9 @@ public:
     void setMute(bool mute) override;
 
     void setRemoteMute(bool mute) override;
+
+    void addSource(const std::string& peerId,
+                   const std::map<std::string, ortc::OMeetSSRCBundle>& map) override;
 
     size_t getVideoSize() override;
 

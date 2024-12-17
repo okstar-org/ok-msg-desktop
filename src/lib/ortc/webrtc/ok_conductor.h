@@ -35,8 +35,7 @@
 #include "ok_video_sink.h"
 #include "webrtc.h"
 
-namespace lib {
-namespace ortc {
+namespace lib::ortc {
 
 class Conductor : public webrtc::PeerConnectionObserver,
                   public webrtc::CreateSessionDescriptionObserver,
@@ -57,7 +56,9 @@ public:
 
     virtual void OnSessionTerminate(const std::string& sid, ortc::OkRTCHandler* handler);
 
-    void SetRemoteDescription(std::unique_ptr<webrtc::SessionDescriptionInterface> desc);
+    void setRemoteDescription(std::unique_ptr<webrtc::SessionDescriptionInterface> desc);
+
+    const webrtc::SessionDescriptionInterface* getRemoteDescription();
 
     void setMute(bool mute);
     void setRemoteMute(bool mute);
@@ -153,5 +154,4 @@ private:
     //  rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> _videoTrackSource;
 };
 
-}  // namespace ortc
-}  // namespace lib
+}  // namespace lib::ortc

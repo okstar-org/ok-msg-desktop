@@ -139,6 +139,9 @@ public:
     virtual std::map<std::string, OIceUdp> getCandidates(const std::string& peerId) = 0;
 
     virtual void getLocalSdp(const std::string& peerId, ortc::OJingleContentAv& oContext) = 0;
+
+    virtual void addSource(const std::string& peerId,
+                           const std::map<std::string, ortc::OMeetSSRCBundle>& map) = 0;
 };
 
 }  // namespace lib::ortc

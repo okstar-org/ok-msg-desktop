@@ -344,7 +344,7 @@ bool IMMeet::doDescriptionInfo(const gloox::Jingle::Session::Jingle*, const IMPe
     return true;
 }
 
-bool IMMeet::doSourceAdd(const gloox::Jingle::Session::Jingle* jingle, const IMPeerId&) {
+bool IMMeet::doSourceAdd(const gloox::Jingle::Session::Jingle* jingle, const IMPeerId& peerId) {
     SESSION_CHECK(currentSid);
     for (const auto p : jingle->plugins()) {
         if (p->pluginType() == gloox::Jingle::PluginJsonMessage) {
@@ -353,6 +353,11 @@ bool IMMeet::doSourceAdd(const gloox::Jingle::Session::Jingle* jingle, const IMP
                 qDebug() << "json-message:" << jm->json().c_str();
                 std::map<std::string, ortc::OMeetSSRCBundle> map;
                 ParseOMeetSSRCBundle(jm->json(), map);
+
+                auto rtc = ortc::OkRTCManager::getInstance()->getRtc();
+                if (rtc) {
+                    rtc->addSource(stdstring(peerId.toString()), map);
+                }
             }
         }
     }

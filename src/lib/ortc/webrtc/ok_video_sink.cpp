@@ -17,8 +17,7 @@
 
 #include <utility>
 
-namespace lib {
-namespace ortc {
+namespace lib::ortc {
 
 VideoSink::VideoSink(const std::vector<OkRTCHandler*>& handlers, std::string peerId)
         : handlers(handlers), _peer_id(std::move(peerId)) {}
@@ -26,8 +25,9 @@ VideoSink::VideoSink(const std::vector<OkRTCHandler*>& handlers, std::string pee
 VideoSink::~VideoSink() {}
 
 void VideoSink::OnFrame(const webrtc::VideoFrame& frame) {
+    RTC_LOG(LS_INFO) << " frame:" << frame.timestamp();
+
     bool conv = false;
-    //    VideoReceiveStreamInterface not connected to a VideoSink
     RendererImage image{};
     auto v_buffer = frame.video_frame_buffer();
     switch (v_buffer->type()) {
@@ -71,5 +71,4 @@ void VideoSink::OnFrame(const webrtc::VideoFrame& frame) {
     }
 }
 
-}  // namespace ortc
-}  // namespace lib
+}  // namespace lib::ortc
