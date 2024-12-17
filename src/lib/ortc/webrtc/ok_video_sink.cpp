@@ -25,7 +25,7 @@ VideoSink::VideoSink(const std::vector<OkRTCHandler*>& handlers, std::string pee
 VideoSink::~VideoSink() {}
 
 void VideoSink::OnFrame(const webrtc::VideoFrame& frame) {
-    RTC_LOG(LS_INFO) << " frame:" << frame.timestamp();
+    //RTC_LOG(LS_INFO) << " frame:" << frame.timestamp();
 
     bool conv = false;
     RendererImage image{};

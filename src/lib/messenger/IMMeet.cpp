@@ -455,6 +455,8 @@ void IMMeet::onSignalingChange(const std::string& sId, const std::string& peerId
     return;
 }
 
-void IMMeet::onRender(const std::string& friendId, ortc::RendererImage image) {}
+void IMMeet::onRender(const std::string& friendId, ortc::RendererImage image) {
+    qDebug() << __func__ << "render image {w:" << image.width_ << ", h:" << image.height_ << "}";
+}
 
 }  // namespace lib::messenger
