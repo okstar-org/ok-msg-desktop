@@ -30,8 +30,8 @@
 #include <memory>
 
 #include <modules/im/src/nexus.h>
-#include <modules/platform/src/Platform.h>
 #include <modules/meet/src/Meet.h>
+#include <modules/platform/src/Platform.h>
 
 namespace UI {
 
@@ -61,7 +61,9 @@ MainWindow::MainWindow(std::shared_ptr<lib::session::AuthSession> session, QWidg
     // 黄金分割比例 874/520 = 1.618
     setMinimumSize(QSize(874, 520));
 
+    // menu
     m_menu = ui->menu_widget;
+    connect(m_menu, &OMainMenu::menuPushed, this, &MainWindow::onSwitchPage);
 
     // settings
     auto& okSettings = ok::base::OkSettings::getInstance();
@@ -80,7 +82,7 @@ MainWindow::MainWindow(std::shared_ptr<lib::session::AuthSession> session, QWidg
     actionQuit->setMenuRole(QAction::QuitRole);
 #endif
 
-    actionQuit->setIcon( 
+    actionQuit->setIcon(
             prepareIcon(Style::getImagePath("rejectCall/rejectCall.svg"), icon_size, icon_size));
     actionQuit->setText(tr("Exit", "Tray action menu to exit tox"));
     connect(actionQuit, &QAction::triggered, qApp, &QApplication::quit);
@@ -89,21 +91,21 @@ MainWindow::MainWindow(std::shared_ptr<lib::session::AuthSession> session, QWidg
     actionShow->setText(tr("Show", "Tray action menu to show window"));
     connect(actionShow, &QAction::triggered, this, &MainWindow::forceShow);
 
-    // connect to menu
-    connect(m_menu, &OMainMenu::menuPushed, this, &MainWindow::onSwitchPage);
-
     instance = this;
+
+    qDebug() << __func__ << " has be created.";
 }
 
 MainWindow::~MainWindow() {
     qDebug() << __func__;
-    disconnect(m_menu);
+    disconnect(m_menu, &OMainMenu::menuPushed, this, &MainWindow::onSwitchPage);
     delete ui;
 }
 
-MainWindow* MainWindow::getInstance() { return instance; }
+MainWindow* MainWindow::getInstance() {
+    return instance;
+}
 
-// Preparing needed to set correct size of icons for GTK tray backend
 inline QIcon MainWindow::prepareIcon(QString path, int w, int h) {
 #ifdef Q_OS_LINUX
 
@@ -205,9 +207,6 @@ void MainWindow::onTryCreateTrayIcon() {
                 show();
             }
 
-            // #ifdef Q_OS_MAC
-            // Nexus::getInstance().dockMenu->setAsDockMenu();
-            // #endif
         } else if (!isVisible()) {
             show();
         }
@@ -220,6 +219,10 @@ void MainWindow::onTryCreateTrayIcon() {
     }
 }
 
+/**
+ * 处理任务栏图标事件
+ * @param reason
+ */
 void MainWindow::onIconClick(QSystemTrayIcon::ActivationReason reason) {
     if (reason == QSystemTrayIcon::Trigger) {
         if (isHidden() || isMinimized()) {
@@ -245,7 +248,6 @@ void MainWindow::onIconClick(QSystemTrayIcon::ActivationReason reason) {
 
 void MainWindow::forceShow() {
     hide();
-    // Workaround to force minimized window to be restored
     show();
     activateWindow();
 }
@@ -259,33 +261,18 @@ void MainWindow::updateIcons() {
     static bool checkedHasThemeIcon = false;
     static bool hasThemeIconBug = false;
 
-    if (!checkedHasThemeIcon) {
-        hasThemeIconBug = QIcon::hasThemeIcon("qtox-asjkdfhawjkeghdfjgh");
-        checkedHasThemeIcon = true;
+    //    QString color = Settings.getLightTrayIcon() ? "light" : "dark";
+    QString color = "light";
+    QString path = ":/img/taskbar/" + color + "/taskbar_" + assetSuffix + ".svg";
 
-        if (hasThemeIconBug) {
-            qDebug() << "Detected buggy QIcon::hasThemeIcon. Icon overrides from "
-                        "theme will be ignored.";
-        }
-    }
+    QSvgRenderer renderer(path);
 
-    QIcon ico;
-    if (!hasThemeIconBug && QIcon::hasThemeIcon("qtox-" + assetSuffix)) {
-        ico = QIcon::fromTheme("qtox-" + assetSuffix);
-    } else {
-        //    QString color = Settings.getLightTrayIcon() ? "light" : "dark";
-        QString color = "light";
-        QString path = ":/img/taskbar/" + color + "/taskbar_" + assetSuffix + ".svg";
-
-        QSvgRenderer renderer(path);
-
-        // Prepare a QImage with desired characteritisc
-        QImage image = QImage(250, 250, QImage::Format_ARGB32);
-        image.fill(Qt::transparent);
-        QPainter painter(&image);
-        renderer.render(&painter);
-        ico = QIcon(QPixmap::fromImage(image));
-    }
+    // Prepare a QImage with desired characteritisc
+    QImage image = QImage(250, 250, QImage::Format_ARGB32);
+    image.fill(Qt::transparent);
+    QPainter painter(&image);
+    renderer.render(&painter);
+    QIcon ico = QIcon(QPixmap::fromImage(image));
 
     setWindowIcon(ico);
     if (icon) {
@@ -293,6 +280,11 @@ void MainWindow::updateIcons() {
     }
 }
 
+/**
+ * 初始化菜单
+ * @param menu
+ * @return
+ */
 OMenuWidget* MainWindow::initMenuWindow(ok::base::PageMenu menu) {
     OMenuWidget* w = nullptr;
     switch (menu) {
@@ -326,7 +318,9 @@ OMenuWidget* MainWindow::initMenuWindow(ok::base::PageMenu menu) {
     return w;
 }
 
-OMenuWidget* MainWindow::getMenuWindow(ok::base::PageMenu menu) { return menuWindow.value(menu); }
+OMenuWidget* MainWindow::getMenuWindow(ok::base::PageMenu menu) {
+    return menuWindow.value(menu);
+}
 
 void MainWindow::onSwitchPage(ok::base::PageMenu menu, bool checked) {
     OMenuWidget* p = getMenuWindow(menu);
@@ -338,15 +332,21 @@ void MainWindow::onSwitchPage(ok::base::PageMenu menu, bool checked) {
         return;
     }
 
-    if (p != ui->stacked_widget->currentWidget())
-    {
+    if (p != ui->stacked_widget->currentWidget()) {
         ui->stacked_widget->setCurrentWidget(p);
         p->getModule()->activate();
     }
 }
 
-QWidget* MainWindow::getContainer(ok::base::PageMenu menu) { return ui->stacked_widget; }
+QWidget* MainWindow::getContainer(ok::base::PageMenu menu) {
+    return ui->stacked_widget;
+}
 
+/**
+ * 创建聊天模块
+ * @param pWindow
+ * @return
+ */
 OMenuWidget* MainWindow::createChatModule(MainWindow* pWindow) {
     qDebug() << "Creating chat module...";
     auto m = Nexus::Create();
@@ -367,6 +367,11 @@ OMenuWidget* MainWindow::createChatModule(MainWindow* pWindow) {
     return w;
 }
 
+/**
+ * 创建工作平台模块
+ * @param pWindow
+ * @return
+ */
 OMenuWidget* MainWindow::createPlatformModule(MainWindow* pWindow) {
     auto m = new ok::platform::Platform();
 
@@ -379,7 +384,12 @@ OMenuWidget* MainWindow::createPlatformModule(MainWindow* pWindow) {
     return w;
 }
 
-OMenuWidget* MainWindow::createMeetingModule(MainWindow* pWindow) { 
+/**
+ * 创建会议模块
+ * @param pWindow
+ * @return
+ */
+OMenuWidget* MainWindow::createMeetingModule(MainWindow* pWindow) {
     auto m = new module::meet::Meet();
     auto w = new OMenuWidget(this);
     w->setModule(m);

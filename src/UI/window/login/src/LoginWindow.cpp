@@ -46,12 +46,6 @@ LoginWindow::LoginWindow(std::shared_ptr<lib::session::AuthSession> session, boo
     // 设置样式
     QString qss = ok::base::Files::readStringAll(":/qss/login.css");
     setStyleSheet(qss);
-
-    //  connect(loginWidget, &UI::LoginWidget::loginResult,
-    //          [&](lib::session::SignInInfo &info,  //
-    //              lib::session::LoginResult &result) {
-    //            emit loginResult(info, result);
-    //          });
 }
 
 LoginWindow::~LoginWindow() { qDebug() << __func__; }

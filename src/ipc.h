@@ -24,9 +24,12 @@ namespace ok {
 
 using IPCEventHandler = std::function<bool(const QByteArray&)>;
 
+/**
+ * IPC
+ * 通过共享内存，实现多实例交流，避免一机多登情况
+ */
 class IPC : public QObject {
     Q_OBJECT
-
 protected:
     static const int EVENT_TIMER_MS = 3 * 1000;
     static const int EVENT_GC_TIMEOUT = 5;

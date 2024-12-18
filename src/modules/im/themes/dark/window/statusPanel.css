@@ -61,15 +61,6 @@ QPushButton#green:pressed
     background-color: #51b244;
 }
 
-/**
-  Uncomment this after https://github.com/qTox/qTox/pull/1640
-  is merged!
-QComboBox:down-arrow
-{
-    image: url(ui/css/down_arrow.png);
-}
-**/
-
 QListView
 {
     background-color: @themeLight;

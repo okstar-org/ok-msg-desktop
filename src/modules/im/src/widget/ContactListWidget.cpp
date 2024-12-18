@@ -271,7 +271,7 @@ void ContactListWidget::dragEnterEvent(QDragEnterEvent* event) {
 }
 
 void ContactListWidget::dropEvent(QDropEvent* event) {
-    // Check, that the element is dropped from qTox
+    // Check, that the element is dropped from OkMsg
     QObject* o = event->source();
     FriendWidget* widget = qobject_cast<FriendWidget*>(o);
     if (!widget) return;

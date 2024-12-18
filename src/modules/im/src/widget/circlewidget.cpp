@@ -138,7 +138,7 @@ void CircleWidget::dragLeaveEvent(QDragLeaveEvent*) {
 void CircleWidget::dropEvent(QDropEvent* event) {
     setExpanded(true, false);
 
-    // Check, that the element is dropped from qTox
+    // Check, that the element is dropped from OkMsg
     QObject* o = event->source();
     FriendWidget* widget = qobject_cast<FriendWidget*>(o);
     if (!widget) return;

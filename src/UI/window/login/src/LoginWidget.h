@@ -37,6 +37,10 @@ class AuthSession;
 
 namespace UI {
 
+/**
+ * 登录控件
+ * @param parent
+ */
 class LoginWidget : public QWidget {
     Q_OBJECT
 public:

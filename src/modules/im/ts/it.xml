@@ -129,10 +129,10 @@
             <translation>Suono di prova</translation>
         </message>
         <message>
-            <source>Enables the experimental audio backend with echo cancelling support, needs qTox restart to take
+            <source>Enables the experimental audio backend with echo cancelling support, needs OkMsg restart to take
                 effect.
             </source>
-            <translation>Abilita il backend sonoro sperimentale con cancellazione dell&apos;eco, riavvio di qTox
+            <translation>Abilita il backend sonoro sperimentale con cancellazione dell&apos;eco, riavvio di OkMsg
                 neccessario.
             </translation>
         </message>
@@ -177,14 +177,14 @@
         <name>AboutForm</name>
         <message>
             <source>About</source>
-            <translation>Informazioni su qTox</translation>
+            <translation>Informazioni su OkMsg</translation>
         </message>
         <message>
             <source>Original author: %1</source>
             <translation>Autore originale: %1</translation>
         </message>
         <message>
-            <source>You are using qTox version %1.</source>
+            <source>You are using the app versiion %1.</source>
             <translation>Stai utilizzando la versione %1.</translation>
         </message>
         <message>
@@ -349,8 +349,8 @@
             <translation>Aggiornamento disponibile</translation>
         </message>
         <message utf8="true">
-            <source>qTox is up to date ✓</source>
-            <translation>qTox è aggiornato ✓</translation>
+            <source>OkMsg is up to date ✓</source>
+            <translation>OkMsg è aggiornato ✓</translation>
         </message>
     </context>
     <context>
@@ -492,10 +492,10 @@
         </message>
         <message>
             <source>Unless you %1 know what you are doing, please do %2 change anything here. Changes made here may lead
-                to problems with qTox, and even to loss of your data, e.g. history.
+                to problems with OkMsg, and even to loss of your data, e.g. history.
             </source>
             <translation>A meno che non sai %1 cosa stai facendo, si prega di %2 cambiare nulla qui. Le modifiche
-                apportate qui potrebbero portare a problemi con qTox, e anche per la perdita di dati, ad esempio la
+                apportate qui potrebbero portare a problemi con OkMsg, e anche per la perdita di dati, ad esempio la
                 cronologia.
             </translation>
         </message>
@@ -554,8 +554,8 @@
             <translation>Invia un file</translation>
         </message>
         <message>
-            <source>qTox wasn&apos;t able to open %1</source>
-            <translation>qTox non è riuscito ad aprire %1</translation>
+            <source>OkMsg wasn&apos;t able to open %1</source>
+            <translation>OkMsg non è riuscito ad aprire %1</translation>
         </message>
         <message>
             <source>%1 calling</source>
@@ -571,8 +571,8 @@
             <translation>Impossibile aprire il file temporaneo</translation>
         </message>
         <message>
-            <source>qTox wasn&apos;t able to save the screenshot</source>
-            <translation>qTox non è stato in grado di salvare lo screenshot</translation>
+            <source>OkMsg wasn&apos;t able to save the screenshot</source>
+            <translation>OkMsg non è stato in grado di salvare lo screenshot</translation>
         </message>
         <message>
             <source>Call with %1 ended. %2</source>
@@ -1058,8 +1058,8 @@
             <translation>Impostazioni Generali</translation>
         </message>
         <message>
-            <source>The translation may not load until qTox restarts.</source>
-            <translation>La traduzione potrebbe non essere caricata fino al prossimo riavvio di qTox.</translation>
+            <source>The translation may not load until OkMsg restarts.</source>
+            <translation>La traduzione potrebbe non essere caricata fino al prossimo riavvio di OkMsg.</translation>
         </message>
         <message>
             <source>Show system tray icon</source>
@@ -1075,25 +1075,25 @@
             <translation>Abilita icona brillante nella trybar.</translation>
         </message>
         <message>
-            <source>qTox will start minimized in tray.</source>
+            <source>OkMsg will start minimized in tray.</source>
             <comment>toolTip for Start in tray setting</comment>
-            <translation>qTox sarà avviato minimizzato nella barra di sistema.</translation>
+            <translation>OkMsg sarà avviato minimizzato nella barra di sistema.</translation>
         </message>
         <message>
-            <source>After pressing close (X) qTox will minimize to tray,
+            <source>After pressing close (X) OkMsg will minimize to tray,
                 instead of closing itself.
             </source>
             <comment>toolTip for close to tray setting</comment>
-            <translation>Premendo l&apos;icona &quot;chiudi&quot; (X) qTox sarà minimizzato
+            <translation>Premendo l&apos;icona &quot;chiudi&quot; (X) OkMsg sarà minimizzato
                 nella barra di sistema invece che essere chiuso.
             </translation>
         </message>
         <message>
-            <source>After pressing minimize (_) qTox will minimize itself to tray,
+            <source>After pressing minimize (_) OkMsg will minimize itself to tray,
                 instead of system taskbar.
             </source>
             <comment>toolTip for minimize to tray setting</comment>
-            <translation>Premendo l&apos;icona &quot;minimizza&quot; (_) qTox sarà minimizzato
+            <translation>Premendo l&apos;icona &quot;minimizza&quot; (_) OkMsg sarà minimizzato
                 nella barra di sistema invece che nella barra delle applicazioni.
             </translation>
         </message>
@@ -1642,8 +1642,8 @@
             <translation>Accedi al profilo</translation>
         </message>
         <message>
-            <source>If the profile does not have a password, qTox can skip the login screen</source>
-            <translation>Se il profilo non è protetto da una password, qTox può saltare questa schermata</translation>
+            <source>If the profile does not have a password, OkMsg can skip the login screen</source>
+            <translation>Se il profilo non è protetto da una password, OkMsg può saltare questa schermata</translation>
         </message>
         <message>
             <source>New Profile</source>

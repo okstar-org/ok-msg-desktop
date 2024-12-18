@@ -112,6 +112,9 @@ private:
     std::list<ortc::OIceUdp> pendingIceCandidates;
 };
 
+/**
+ * 音视频呼叫
+ */
 class IMCall : public IMJingle, public IMSessionHandler, public ortc::OkRTCHandler {
     Q_OBJECT
 public:

@@ -28,8 +28,8 @@
             <translation>可用更新</translation>
         </message>
         <message>
-            <source>qTox is up to date ✓</source>
-            <translation>qTox 是最新的 ✓</translation>
+            <source>OkMsg is up to date ✓</source>
+            <translation>OkMsg 是最新的 ✓</translation>
         </message>
         <message>
             <source>License</source>
@@ -167,8 +167,8 @@
     <context>
         <name>UI::AboutForm</name>
         <message>
-            <source>You are using qTox version %1.</source>
-            <translation>您使用的是 qTox 版本 %1。</translation>
+            <source>You are using the app versiion %1.</source>
+            <translation>您使用的是 OkMsg 版本 %1。</translation>
         </message>
         <message>
             <source>Commit hash: %1</source>

@@ -123,19 +123,13 @@ void IMCallSession::stop() {}
 
 IMCall::IMCall(IM* im, QObject* parent) : IMJingle(im, parent) {
     qDebug() << __func__ << "...";
-
-    //    ortc::OkRTCManager* rtcManager = lib::ortc::OkRTCManager::getInstance();
-    //    rtcManager->getRtc()->addRTCHandler(this);
-
     qRegisterMetaType<CallState>("CallState");
-
     connect(im, &IM::started, this, &IMCall::onImStartedCall);
     connectCall(this);
 }
 
 IMCall::~IMCall() {
-    //    ortc::OkRTCManager* rtcManager = lib::ortc::OkRTCManager::getInstance();
-    //    rtcManager->getRtc()->removeRTCHandler(this);
+    qDebug() << __func__ << "...";
 }
 
 void IMCall::onImStartedCall() {

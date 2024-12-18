@@ -125,11 +125,11 @@
             <translation>Testton</translation>
         </message>
         <message>
-            <source>Enables the experimental audio backend with echo cancelling support, needs qTox restart to take
+            <source>Enables the experimental audio backend with echo cancelling support, needs OkMsg restart to take
                 effect.
             </source>
             <translation>Aktiviert den experimentellen Audio Back-End mit Echo Dämpfung, benötigt jedoch einen Neustart
-                von qTox.
+                von OkMsg.
             </translation>
         </message>
         <message>
@@ -180,8 +180,8 @@
             <translation>Originalauthor: %1</translation>
         </message>
         <message>
-            <source>You are using qTox version %1.</source>
-            <translation>Du verwendest die qTox-Version %1.</translation>
+            <source>You are using the app versiion %1.</source>
+            <translation>Du verwendest die OkMsg-Version %1.</translation>
         </message>
         <message>
             <source>Commit hash: %1</source>
@@ -351,8 +351,8 @@
             <translation>Update verfügbar</translation>
         </message>
         <message utf8="true">
-            <source>qTox is up to date ✓</source>
-            <translation>qTox ist auf dem neusten Stand ✓</translation>
+            <source>OkMsg is up to date ✓</source>
+            <translation>OkMsg ist auf dem neusten Stand ✓</translation>
         </message>
     </context>
     <context>
@@ -495,10 +495,10 @@
         </message>
         <message>
             <source>Unless you %1 know what you are doing, please do %2 change anything here. Changes made here may lead
-                to problems with qTox, and even to loss of your data, e.g. history.
+                to problems with OkMsg, and even to loss of your data, e.g. history.
             </source>
             <translation>Wenn du nicht %1 weißt, was du tust, solltest du hier %2 ändern. Änderungen, die du hier
-                machst, könnten zu Problemen mit qTox und sogar dem Verlust deiner Daten, z.B. dem Verlauf, führen.
+                machst, könnten zu Problemen mit OkMsg und sogar dem Verlust deiner Daten, z.B. dem Verlauf, führen.
             </translation>
         </message>
         <message>
@@ -555,7 +555,7 @@
             <translation>Datei versenden</translation>
         </message>
         <message>
-            <source>qTox wasn&apos;t able to open %1</source>
+            <source>OkMsg wasn&apos;t able to open %1</source>
             <translation>%1 konnte nicht geöffnet werden</translation>
         </message>
         <message>
@@ -580,9 +580,9 @@
             <translation>Temporäre Datei konnte nicht geöffnet werden</translation>
         </message>
         <message>
-            <source>qTox wasn&apos;t able to save the screenshot</source>
+            <source>OkMsg wasn&apos;t able to save the screenshot</source>
             <translatorcomment>laut Duden ist Screenshot schon deutsch</translatorcomment>
-            <translation>qTox konnte den Screenshot nicht speichern</translation>
+            <translation>OkMsg konnte den Screenshot nicht speichern</translation>
         </message>
         <message>
             <source>Call with %1 ended. %2</source>
@@ -1069,7 +1069,7 @@
             <translation>Allgemeine Einstellungen</translation>
         </message>
         <message>
-            <source>The translation may not load until qTox restarts.</source>
+            <source>The translation may not load until OkMsg restarts.</source>
             <translation>Die Änerung wird erst nach Neustart von qtox aktiv.</translation>
         </message>
         <message>
@@ -1115,7 +1115,7 @@
             <translation>Statusänderungen deiner Freunde anzeigen</translation>
         </message>
         <message>
-            <source>Start qTox on operating system startup (current profile).</source>
+            <source>Start OkMsg on operating system startup (current profile).</source>
             <translation>Mit Betriebssystem starten (aktuelles Profil).</translation>
         </message>
         <message>
@@ -1621,7 +1621,7 @@
             <translation>Profil erstellen</translation>
         </message>
         <message>
-            <source>If the profile does not have a password, qTox can skip the login screen</source>
+            <source>If the profile does not have a password, OkMsg can skip the login screen</source>
             <translation>Für Profile ohne Passwort kann das Login-Fenster übersprungen werden</translation>
         </message>
         <message>
@@ -2326,7 +2326,7 @@
             <translation>Fehler</translation>
         </message>
         <message>
-            <source>qTox couldn&apos;t open your chat logs, they will be disabled.</source>
+            <source>OkMsg couldn&apos;t open your chat logs, they will be disabled.</source>
             <translation>qTox konnte Ihr Gesprächsprotokoll nicht öffnen. Das Speichern der Gespräche wird
                 deaktiviert!
             </translation>

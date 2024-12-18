@@ -63,11 +63,11 @@ Application::Application(int& argc, char* argv[])
     ok::base::SysInfo::GetCpuInfo(cpuInfo);
     // 打印CPU信息
     qDebug() << __func__ << "CpuInfo: "  //
-             << cpuInfo.arch          //
-             << cpuInfo.manufacturer  //
-             << cpuInfo.name          //
-             << cpuInfo.cores         //
-             << cpuInfo.processors;   //
+             << cpuInfo.arch             //
+             << cpuInfo.manufacturer     //
+             << cpuInfo.name             //
+             << cpuInfo.cores            //
+             << cpuInfo.processors;      //
 
     ok::base::OsInfo osInfo;
     ok::base::SysInfo::GetOsInfo(osInfo);
@@ -103,6 +103,7 @@ Application::Application(int& argc, char* argv[])
     QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath());
     addLibraryPath("platforms");
 
+    // 初始化IPC
     ipc = new IPC(0, this);
     _bus = std::make_unique<Bus>();
 
@@ -119,22 +120,28 @@ void Application::start() {
     }
 
     if (ipc->isAlive()) {
+        // 已存在活跃客户端，退出本次程序。
         qFatal("Another app instance is already running, you can not start multiple "
                "application on one device.");
-        return;
     }
 
+    // 启动登录界面
     this->createLoginUI(true);
 }
 
+/**
+ * 创建登录窗口
+ * @param bootstrap
+ */
 void Application::createLoginUI(bool bootstrap) {
-    qDebug() << __func__;
+    qDebug() << __func__ << "bootstrap:" << bootstrap;
     session = std::make_shared<::lib::session::AuthSession>();
     connect(session.get(), &::lib::session::AuthSession::tokenSet,  //
-            [&]() {                                              //
-                startMainUI(session);
+            [&]() {                                                 //
+                startMainUI();
             });
-    m_loginWindow = new UI::LoginWindow(session, bootstrap);
+
+    m_loginWindow = std::make_unique<UI::LoginWindow>(session, bootstrap);
     m_loginWindow->show();
 }
 
@@ -142,18 +149,20 @@ void Application::createLoginUI(bool bootstrap) {
  *  关闭login窗口
  */
 void Application::closeLoginUI() {
-    qDebug() << __func__;
+    qDebug() << __func__ << "...";
     if (!m_loginWindow) {
         return;
     }
-    disconnect(m_loginWindow);
     m_loginWindow->close();
-    // no need to delete
-    m_loginWindow = nullptr;
+    m_loginWindow.reset();
+    qDebug() << __func__ << "closed";
 }
 
-void Application::startMainUI(std::shared_ptr<::lib::session::AuthSession> session) {
-    qDebug() << __func__;
+/**
+ * 启动主窗口
+ */
+void Application::startMainUI() {
+    qDebug() << __func__ << "...";
 
     // Check the access token.
     assert(session);
@@ -167,6 +176,8 @@ void Application::startMainUI(std::shared_ptr<::lib::session::AuthSession> sessi
     // Create main window
     m_mainWindow = std::make_unique<UI::MainWindow>(session);
     m_mainWindow->show();
+
+    // 关闭登录窗口
     closeLoginUI();
 
 #ifdef OK_PLUGIN
@@ -180,7 +191,9 @@ void Application::startMainUI(std::shared_ptr<::lib::session::AuthSession> sessi
 #endif
 }
 
-void Application::stopMainUI() { m_mainWindow.reset(); }
+void Application::stopMainUI() {
+    m_mainWindow.reset();
+}
 
 void Application::cleanup() {
     qDebug(("Cleanup..."));

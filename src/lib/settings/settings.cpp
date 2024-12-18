@@ -2086,8 +2086,6 @@ void Settings::sync() {
 }
 
 ICoreSettings::ProxyType Settings::fixInvalidProxyType(ICoreSettings::ProxyType proxyType) {
-    // Repair uninitialized enum that was saved to settings due to bug
-    // (https://github.com/qTox/qTox/issues/5311)
     switch (proxyType) {
         case ICoreSettings::ProxyType::ptNone:
         case ICoreSettings::ProxyType::ptSOCKS5:

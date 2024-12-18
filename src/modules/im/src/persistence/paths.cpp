@@ -40,33 +40,6 @@ const QLatin1String TCSToxFileFolder{"~/.config/tox/"};
 }  // namespace
 
 /**
- * @class Profile
- * @brief Handles all qTox internal paths
- *
- * The qTox internal file layout starts at `<BASE_PATH>`. This directory is platform
- * specific and depends on if qTox runs in portable mode.
- *
- * Example file layout for non-portable mode:
- * @code
- *  <BASE_PATH>/themes/
- *             /profiles/
- *             /profiles/avatars/
- *             /...
- * @endcode
- *
- * Example file layout for portable mode:
- * @code
- *  /qTox.bin
- *  /themes/
- *  /profiles/
- *  /profiles/avatars/
- *  /qtox.ini
- * @endcode
- *
- * All qTox or Tox specific directories should be looked up through this module.
- */
-
-/**
  * @brief Paths::makePaths Factory method for the Paths object
  * @param mode
  * @return Pointer to Paths object on success, nullptr else
@@ -111,10 +84,6 @@ Paths* Paths::makePaths(Portable mode) {
 
 Paths::Paths(const QString& basePath, bool portable) : basePath{basePath}, portable{portable} {}
 
-/**
- * @brief Check if qTox is running in portable mode.
- * @return True if running in portable mode, false else.
- */
 bool Paths::isPortable() const { return portable; }
 
 /**
@@ -228,7 +197,6 @@ QStringList Paths::getThemeDirs() const {
                                                QStandardPaths::LocateDirectory);
     }
 
-    // look for themes beside the qTox binary with lowest priority
     const QString curPath = qApp->applicationDirPath();
     themeFolders += curPath % QDir::separator() % themeFolder % QDir::separator();
 

@@ -426,28 +426,9 @@ void CoreAV::toggleMuteCallOutput(const ContactId* f) {
     }
 }
 
-/**
- * @brief Called from Tox API when group call receives audio data.
- *
- * @param[in] tox          the Tox object
- * @param[in] group        the group number
- * @param[in] peer         the peer number
- * @param[in] data         the audio data to playback
- * @param[in] samples      the audio samples
- * @param[in] channels     the audio channels
- * @param[in] sample_rate  the audio sample rate
- * @param[in] core         the qTox Core class
- */
 void CoreAV::groupCallCallback(void* tox, QString group, QString peer, const int16_t* data,
                                unsigned samples, uint8_t channels, uint32_t sample_rate,
                                void* core) {
-    /*
-     * Currently group call audio decoding is handled in the Tox thread by
-     * c-toxcore, so we can be sure that this function is always called from the
-     * Core thread. To change this, an API change in c-toxcore is needed and this
-     * function probably must be changed. See
-     * https://github.com/TokTok/c-toxcore/issues/1364 for details.
-     */
 
     Q_UNUSED(tox);
     Core* c = static_cast<Core*>(core);

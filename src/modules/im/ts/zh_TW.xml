@@ -371,8 +371,8 @@ so you can save the file on windows.</source>
             <translation>無法打開</translation>
         </message>
         <message>
-            <source>qTox wasn't able to open %1</source>
-            <translation>qTox 無法開啟 %1</translation>
+            <source>OkMsg wasn't able to open %1</source>
+            <translation>OkMsg 無法開啟 %1</translation>
         </message>
         <message>
             <source>Bad idea</source>
@@ -388,8 +388,8 @@ so you can save the file on windows.</source>
             <translation>無法打開臨時檔</translation>
         </message>
         <message>
-            <source>qTox wasn't able to save the screenshot</source>
-            <translation>qTox 無法保存截圖</translation>
+            <source>OkMsg wasn't able to save the screenshot</source>
+            <translation>OkMsg 無法保存截圖</translation>
         </message>
         <message>
             <source>Copy</source>
@@ -928,8 +928,8 @@ so you can save the file on windows.</source>
             <translation>大小</translation>
         </message>
         <message>
-            <source>New text styling preference may not load until qTox restarts.</source>
-            <translation>qTox 重新啟動之前可能不會載入新的文字樣式設置。</translation>
+            <source>New text styling preference may not load until OkMsg restarts.</source>
+            <translation>OkMsg 重新啟動之前可能不會載入新的文字樣式設置。</translation>
         </message>
         <message>
             <source>Text Style format:</source>
@@ -1923,9 +1923,11 @@ Please use another image.</source>
             <translation>可執行檔</translation>
         </message>
         <message>
-            <source>You have asked qTox to open an executable file. Executable files can potentially damage your computer. Are you sure want to open this file?</source>
+            <source>You have asked OkMsg to open an executable file. Executable files can potentially damage your
+                computer. Are you sure want to open this file?
+            </source>
             <comment>popup text</comment>
-            <translation>您已要求 qTox 打開一個可執行檔。可執行檔可能會損壞您的電腦。是否確實要打開此檔？</translation>
+            <translation>您已要求 OkMsg 打開一個可執行檔。可執行檔可能會損壞您的電腦。是否確實要打開此檔？</translation>
         </message>
         <message>
             <source>Couldn't request friendship</source>

@@ -100,7 +100,7 @@
             <translation>اختبار الصوت</translation>
         </message>
         <message>
-            <source>Enables the experimental audio backend with echo cancelling support, needs qTox restart to take
+            <source>Enables the experimental audio backend with echo cancelling support, needs OkMsg restart to take
                 effect.
             </source>
             <translation type="unfinished"></translation>
@@ -151,7 +151,7 @@
             <translation>المؤلف الأصلي: %1</translation>
         </message>
         <message>
-            <source>You are using qTox version %1.</source>
+            <source>You are using the app versiion %1.</source>
             <translation>حالياً تستخدم كيوتوكس الإصدار %1.</translation>
         </message>
         <message>
@@ -329,7 +329,7 @@
             <translation type="unfinished"></translation>
         </message>
         <message utf8="true">
-            <source>qTox is up to date ✓</source>
+            <source>OkMsg is up to date ✓</source>
             <translation type="unfinished"></translation>
         </message>
     </context>
@@ -475,7 +475,7 @@
         </message>
         <message>
             <source>Unless you %1 know what you are doing, please do %2 change anything here. Changes made here may lead
-                to problems with qTox, and even to loss of your data, e.g. history.
+                to problems with OkMsg, and even to loss of your data, e.g. history.
             </source>
             <translation>إلا إذا كنت %1 تعرف ما تقومون به، يرجى %2 حتى تغيير أي شيء هنا. التغييرات التي تم إجراؤها هنا
                 قد تؤدي إلى مشاكل مع كيوتوكس، وحتى إلى فقدان البيانات الخاصة بك، على سبيل المثال، التاريخ.
@@ -540,8 +540,8 @@
             <translation>غير قادر على الفتح</translation>
         </message>
         <message>
-            <source>qTox wasn&apos;t able to open %1</source>
-            <translation>qTox غير قادر على فتح %1</translation>
+            <source>OkMsg wasn&apos;t able to open %1</source>
+            <translation>OkMsg غير قادر على فتح %1</translation>
         </message>
         <message>
             <source>Bad idea</source>
@@ -561,8 +561,8 @@
             <translation>فشل فتح الملف المؤقت</translation>
         </message>
         <message>
-            <source>qTox wasn&apos;t able to save the screenshot</source>
-            <translation>qTox غير قادر على حفظ لقطة الشاشة</translation>
+            <source>OkMsg wasn&apos;t able to save the screenshot</source>
+            <translation>OkMsg غير قادر على حفظ لقطة الشاشة</translation>
         </message>
         <message>
             <source>Call with %1 ended. %2</source>
@@ -1036,8 +1036,8 @@
             <translation>الإعدادات العامة</translation>
         </message>
         <message>
-            <source>The translation may not load until qTox restarts.</source>
-            <translation>قد لا يتم تحميل الترجمة حتى تعيد تشغيل qTox .</translation>
+            <source>The translation may not load until OkMsg restarts.</source>
+            <translation>قد لا يتم تحميل الترجمة حتى تعيد تشغيل OkMSG .</translation>
         </message>
         <message>
             <source>Enable light tray icon.</source>
@@ -1053,7 +1053,7 @@
             <translation>إظهار الايقونة المصغرة</translation>
         </message>
         <message>
-            <source>qTox will start minimized in tray.</source>
+            <source>OkMsg will start minimized in tray.</source>
             <comment>toolTip for Start in tray setting</comment>
             <translation>تشغيل البرنامج في أيقونة الشاشة.</translation>
         </message>
@@ -1062,7 +1062,7 @@
             <translation>التشغيل في الأيقونة</translation>
         </message>
         <message>
-            <source>After pressing minimize (_) qTox will minimize itself to tray,
+            <source>After pressing minimize (_) OkMsg will minimize itself to tray,
                 instead of system taskbar.
             </source>
             <comment>toolTip for minimize to tray setting</comment>
@@ -1074,7 +1074,7 @@
             <translation>التصغير للأيقونة</translation>
         </message>
         <message>
-            <source>After pressing close (X) qTox will minimize to tray,
+            <source>After pressing close (X) OkMsg will minimize to tray,
                 instead of closing itself.
             </source>
             <comment>toolTip for close to tray setting</comment>
@@ -1622,8 +1622,8 @@
             <translation>إنشاء حساب</translation>
         </message>
         <message>
-            <source>If the profile does not have a password, qTox can skip the login screen</source>
-            <translation>إذا كنت لا تملك كلمة المرور, qTox يستطيع تخطي شاشة الدخول</translation>
+            <source>If the profile does not have a password, OkMsg can skip the login screen</source>
+            <translation>إذا كنت لا تملك كلمة المرور, OkMsg يستطيع تخطي شاشة الدخول</translation>
         </message>
         <message>
             <source>Load automatically</source>
@@ -2288,7 +2288,7 @@
             <translation>خطأ</translation>
         </message>
         <message>
-            <source>qTox couldn&apos;t open your chat logs, they will be disabled.</source>
+            <source>OkMsg couldn&apos;t open your chat logs, they will be disabled.</source>
             <translation>غير قادر على فتح سجل المحادثات , قد يكون معطلاً.</translation>
         </message>
         <message>

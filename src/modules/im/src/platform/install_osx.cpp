@@ -51,7 +51,7 @@ void osx::moveToAppFolder() {
 
             if ((appdir_noqtox + "qtox.app") != appdir)  // quick safety check
             {
-                qDebug() << "OS X: Attmepted to delete non qTox directory!";
+                qDebug() << "OS X: Attmepted to delete non OkMsg directory!";
                 exit(EXIT_UPDATE_MACX_FAIL);
             }
 

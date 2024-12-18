@@ -229,7 +229,7 @@ void ChatForm::dropEvent(QDropEvent* ev) {
             file.setFileName(info.absoluteFilePath());
             if (!file.exists() || !file.open(QIODevice::ReadOnly)) {
                 ok::base::MessageBox::warning(this, tr("Unable to open"),
-                                              tr("qTox wasn't able to open %1").arg(fileName));
+                                              tr("OkMsg wasn't able to open %1").arg(fileName));
                 continue;
             }
         }
@@ -279,7 +279,7 @@ void ChatForm::sendImage(const QPixmap& pixmap) {
         ok::base::MessageBox::warning(
                 this,
                 tr("Failed to open temporary file", "Temporary file for screenshot"),
-                             tr("qTox wasn't able to save the screenshot"));
+                tr("OkMsg wasn't able to save the screenshot"));
     }
 }
 

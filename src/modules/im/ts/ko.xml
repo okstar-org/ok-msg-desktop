@@ -371,7 +371,7 @@ so you can save the file on windows.</source>
             <translation>열 수 없습니다</translation>
         </message>
         <message>
-            <source>qTox wasn't able to open %1</source>
+            <source>OkMsg wasn't able to open %1</source>
             <translation>%1을 열 수 없습니다</translation>
         </message>
         <message>
@@ -388,7 +388,7 @@ so you can save the file on windows.</source>
             <translation>필요한 임시 파일을 만들 수 없습니다</translation>
         </message>
         <message>
-            <source>qTox wasn't able to save the screenshot</source>
+            <source>OkMsg wasn't able to save the screenshot</source>
             <translation>스크린샷을 저장할 수 없었습니다.</translation>
         </message>
         <message>
@@ -928,7 +928,7 @@ so you can save the file on windows.</source>
             <translation>크기:</translation>
         </message>
         <message>
-            <source>New text styling preference may not load until qTox restarts.</source>
+            <source>New text styling preference may not load until OkMsg restarts.</source>
             <translation>qTox가 다시 시작될 때까지 새 텍스트 스타일 기본 설정이 로드되지 않을 수 있습니다.</translation>
         </message>
         <message>
@@ -1923,7 +1923,9 @@ Please use another image.</source>
             <translation>실행파일</translation>
         </message>
         <message>
-            <source>You have asked qTox to open an executable file. Executable files can potentially damage your computer. Are you sure want to open this file?</source>
+            <source>You have asked OkMsg to open an executable file. Executable files can potentially damage your
+                computer. Are you sure want to open this file?
+            </source>
             <comment>popup text</comment>
             <translation>qTox에 실행 파일을 열도록 요청했습니다. 실행 파일은 잠재적으로 컴퓨터를 손상시킬 수 있습니다. 이 파일을 열시겠습니까?</translation>
         </message>

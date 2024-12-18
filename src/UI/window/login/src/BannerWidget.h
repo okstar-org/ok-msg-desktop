@@ -21,6 +21,10 @@ class BannerWidget;
 
 namespace UI {
 
+/**
+ * Banner控件（广告版面）
+ * @param parent
+ */
 class BannerWidget : public QWidget {
     Q_OBJECT
 

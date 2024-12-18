@@ -224,7 +224,7 @@
                    </sizepolicy>
                   </property>
                   <property name="text">
-                   <string>qTox is up to date ✓</string>
+                   <string>OkMsg is up to date ✓</string>
                   </property>
                  </widget>
                 </item>

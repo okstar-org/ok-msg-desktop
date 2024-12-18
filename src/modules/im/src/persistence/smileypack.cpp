@@ -70,7 +70,6 @@ QStringList loadDefaultPaths() {
     QStringList paths{":/smileys", "~/.kde4/share/emoticons", "~/.kde/share/emoticons",
                       EMOTICONS_SUB_PATH};
 
-    // qTox exclusive emoticons
     QStandardPaths::StandardLocation location;
     location = QStandardPaths::AppDataLocation;
 

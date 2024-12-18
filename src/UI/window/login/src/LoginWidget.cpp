@@ -32,6 +32,12 @@ using namespace ok;
 using namespace lib::session;
 using namespace ok::base;
 
+/**
+ * 登录控件
+ * @param session
+ * @param bootstrap
+ * @param parent
+ */
 LoginWidget::LoginWidget(std::shared_ptr<lib::session::AuthSession> session, bool bootstrap,
                          QWidget* parent)
         : QWidget(parent)

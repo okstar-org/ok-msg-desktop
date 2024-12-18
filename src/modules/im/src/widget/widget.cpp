@@ -311,53 +311,7 @@ bool Widget::eventFilter(QObject* obj, QEvent* event) {
 }
 
 void Widget::updateIcons() {
-    // Some builds of Qt appear to have a bug in icon loading:
-    // QIcon::hasThemeIcon is sometimes unaware that the icon returned
-    // from QIcon::fromTheme was a fallback icon, causing hasThemeIcon to
-    // incorrectly return true.
-    //
-    // In qTox this leads to the tray and window icons using the static qTox logo
-    // icon instead of an icon based on the current presence status.
-    //
-    // This workaround checks for an icon that definitely does not exist to
-    // determine if hasThemeIcon can be trusted.
-    //
-    // On systems with the Qt bug, this workaround will always use our included
-    // icons but user themes will be unable to override them.
-    static bool checkedHasThemeIcon = false;
-    static bool hasThemeIconBug = false;
 
-    if (!checkedHasThemeIcon) {
-        hasThemeIconBug = QIcon::hasThemeIcon("qtox-asjkdfhawjkeghdfjgh");
-        checkedHasThemeIcon = true;
-
-        if (hasThemeIconBug) {
-            qDebug() << "Detected buggy QIcon::hasThemeIcon. Icon overrides from "
-                        "theme will be ignored.";
-        }
-    }
-
-    //  QIcon ico;
-    //  if (!hasThemeIconBug && QIcon::hasThemeIcon("qtox-" + assetSuffix)) {
-    //    ico = QIcon::fromTheme("qtox-" + assetSuffix);
-    //  } else {
-    //    QString color = settings.getLightTrayIcon() ? "light" : "dark";
-    //    QString path =
-    //        ":/img/taskbar/" + color + "/taskbar_" + assetSuffix + ".svg";
-    //    QSvgRenderer renderer(path);
-    //
-    //    // Prepare a QImage with desired characteritisc
-    //    QImage image = QImage(250, 250, QImage::Format_ARGB32);
-    //    image.fill(Qt::transparent);
-    //    QPainter painter(&image);
-    //    renderer.render(&painter);
-    //    ico = QIcon(QPixmap::fromImage(image));
-    //  }
-
-    //  setWindowIcon(ico);
-    //  if (icon) {
-    //    icon->setIcon(ico);
-    //  }
 }
 
 /**
@@ -546,7 +500,7 @@ void Widget::confirmExecutableOpen(const QFileInfo& file) {
 
     if (dangerousExtensions.contains(file.suffix())) {
         bool answer = GUI::askQuestion(tr("Executable file", "popup title"),
-                                       tr("You have asked qTox to open an executable file. "
+                                       tr("You have asked OkMsg to open an executable file. "
                                           "Executable files can potentially damage your computer. "
                                           "Are you sure want to open this file?",
                                           "popup text"),

@@ -30,7 +30,7 @@ enum class updateIndex { available = 0, upToDate = 1, failed = 2 };
 /**
  * @class AboutForm
  *
- * This form contains information about qTox and libraries versions, external
+ * This form contains information about OkMsg and libraries versions, external
  * links and licence text. Shows progress during an update.
  */
 
@@ -74,11 +74,12 @@ AboutForm::AboutForm(QWidget* parent)
  * @brief Update versions and links.
  *
  * Update commit hash if built with git, show author and known issues info
- * It also updates qTox, toxcore and Qt versions.
+ * It also updates OkMsg, toxcore and Qt versions.
  */
 void AboutForm::replaceVersions() {
     // TODO: When we finally have stable releases: build-in a way to tell
-    bodyUI->youAreUsing->setText(tr("You are using qTox version %1.").arg(QString(GIT_DESCRIBE)));
+    bodyUI->youAreUsing->setText(
+            tr("You are using the app versiion %1.").arg(QString(GIT_DESCRIBE)));
 
 #if UPDATE_CHECK_ENABLED
     if (updateCheck != nullptr) {
@@ -92,7 +93,7 @@ void AboutForm::replaceVersions() {
         qWarning() << "AboutForm passed null UpdateCheck!";
     }
 #else
-    qDebug() << "AboutForm not showing updates, qTox built without UPDATE_CHECK";
+    qDebug() << "AboutForm not showing updates, OkMsg built without UPDATE_CHECK";
 #endif
     QString projectLink = QString("%1/%2").arg(ORGANIZATION_HOME).arg(APPLICATION_EXE_NAME);
     QString commitLink = QString("%1/commit/%2").arg(projectLink).arg(GIT_VERSION);

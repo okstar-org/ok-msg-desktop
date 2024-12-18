@@ -120,11 +120,11 @@
             <translation>Проверка звука</translation>
         </message>
         <message>
-            <source>Enables the experimental audio backend with echo cancelling support, needs qTox restart to take
+            <source>Enables the experimental audio backend with echo cancelling support, needs OkMsg restart to take
                 effect.
             </source>
             <translation>Включает экспериментальную звуковую систему с поддержкой эхоподавления, требует перезагрузки
-                qTox.
+                OkMsg.
             </translation>
         </message>
         <message>
@@ -175,8 +175,8 @@
             <translation>Исходный автор: %1</translation>
         </message>
         <message>
-            <source>You are using qTox version %1.</source>
-            <translation>Вы используете qTox версии %1.</translation>
+            <source>You are using the app versiion %1.</source>
+            <translation>Вы используете OkMsg версии %1.</translation>
         </message>
         <message>
             <source>Commit hash: %1</source>
@@ -350,8 +350,8 @@
             <translation>Доступно обновление</translation>
         </message>
         <message utf8="true">
-            <source>qTox is up to date ✓</source>
-            <translation>qTox обновлен ✓</translation>
+            <source>OkMsg is up to date ✓</source>
+            <translation>OkMsg обновлен ✓</translation>
         </message>
     </context>
     <context>
@@ -498,10 +498,10 @@
         </message>
         <message>
             <source>Unless you %1 know what you are doing, please do %2 change anything here. Changes made here may lead
-                to problems with qTox, and even to loss of your data, e.g. history.
+                to problems with OkMsg, and even to loss of your data, e.g. history.
             </source>
             <translation>Если вы %1 в том, что вы делаете, пожалуйста ничего %2 меняйте. Изменения могут привести к
-                проблемам в работе qTox и даже потере данных (например, истории сообщений).
+                проблемам в работе OkMsg и даже потере данных (например, истории сообщений).
             </translation>
         </message>
         <message>
@@ -559,9 +559,9 @@
             <translation>Отправить файл</translation>
         </message>
         <message>
-            <source>qTox wasn&apos;t able to open %1</source>
+            <source>OkMsg wasn&apos;t able to open %1</source>
             <translatorcomment>Паравозик не смог. Не сможешь и ты!</translatorcomment>
-            <translation>qTox не смог открыть %1</translation>
+            <translation>OkMsg не смог открыть %1</translation>
         </message>
         <message>
             <source>Unable to open</source>
@@ -585,8 +585,8 @@
             <translation>Не удалось открыть временный файл</translation>
         </message>
         <message>
-            <source>qTox wasn&apos;t able to save the screenshot</source>
-            <translation>qTox не смог сохранить снимок экрана</translation>
+            <source>OkMsg wasn&apos;t able to save the screenshot</source>
+            <translation>OkMsg не смог сохранить снимок экрана</translation>
         </message>
         <message>
             <source>Call with %1 ended. %2</source>
@@ -1065,8 +1065,8 @@
             <translation>Общие настройки</translation>
         </message>
         <message>
-            <source>The translation may not load until qTox restarts.</source>
-            <translation>Перевод не изменится до перезапуска qTox.</translation>
+            <source>The translation may not load until OkMsg restarts.</source>
+            <translation>Перевод не изменится до перезапуска OkMsg.</translation>
         </message>
         <message>
             <source>Show system tray icon</source>
@@ -1627,8 +1627,8 @@
             <translation>Создать профиль</translation>
         </message>
         <message>
-            <source>If the profile does not have a password, qTox can skip the login screen</source>
-            <translation>Если профиль не защищен паролем, qTox может пропустить диалог выбора профиля</translation>
+            <source>If the profile does not have a password, OkMsg can skip the login screen</source>
+            <translation>Если профиль не защищен паролем, OkMsg может пропустить диалог выбора профиля</translation>
         </message>
         <message>
             <source>Load automatically</source>
@@ -2334,8 +2334,8 @@
             <translation>Ошибка</translation>
         </message>
         <message>
-            <source>qTox couldn&apos;t open your chat logs, they will be disabled.</source>
-            <translation>qTox не может загрузить историю переписки, она будет отключена.</translation>
+            <source>OkMsg couldn&apos;t open your chat logs, they will be disabled.</source>
+            <translation>OkMsg не может загрузить историю переписки, она будет отключена.</translation>
         </message>
         <message>
             <source>Problem with HTTPS connection</source>

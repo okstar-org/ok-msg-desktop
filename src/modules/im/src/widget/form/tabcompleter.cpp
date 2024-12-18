@@ -22,7 +22,7 @@
  * @file tabcompleter.h
  * @file tabcompleter.cpp
  * These files were taken from the Quassel IRC client source (src/uisupport), and
- * was greatly simplified for use in qTox.
+ * was greatly simplified for use in OkMsg.
  */
 
 const QString TabCompleter::nickSuffix = QString(": ");

@@ -410,7 +410,7 @@ void MessageSessionListWidget::dragEnterEvent(QDragEnterEvent* event) {
 }
 
 void MessageSessionListWidget::dropEvent(QDropEvent* event) {
-    // Check, that the element is dropped from qTox
+    // Check, that the element is dropped from OkMsg
     QObject* o = event->source();
     auto widget = qobject_cast<MessageSessionWidget*>(o);
     if (!widget) return;

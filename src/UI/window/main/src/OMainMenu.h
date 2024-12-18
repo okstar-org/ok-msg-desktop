@@ -27,14 +27,14 @@ class OMainMenu;
 
 namespace UI {
 
+/**
+ * 菜单
+ */
 class OMainMenu : public QFrame {
     Q_OBJECT
-
 public:
     explicit OMainMenu(QWidget* parent = nullptr);
     ~OMainMenu() override;
-
-    void onSetting();
 
 protected:
     virtual void showEvent(QShowEvent* e) override;

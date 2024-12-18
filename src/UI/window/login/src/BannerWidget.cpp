@@ -25,7 +25,6 @@ namespace UI {
 BannerWidget::BannerWidget(QWidget* parent)
         : QWidget(parent), ui(std::make_unique<Ui::BannerWidget>()) {
     ui->setupUi(this);
-
     ui->imgBox->setGeometry(rect());
     ui->imgBox->setFixedSize(256, 256);
     ui->imgBox->setStyleSheet("border-image: url(:/resources/logo/main.svg);");

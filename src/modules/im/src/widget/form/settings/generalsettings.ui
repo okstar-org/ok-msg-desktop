@@ -120,7 +120,7 @@
           <item row="1" column="0">
            <widget class="QLabel" name="textStyleLabel">
             <property name="toolTip">
-             <string>New text styling preference may not load until qTox restarts.</string>
+                <string>New text styling preference may not load until OkMsg restarts.</string>
             </property>
             <property name="text">
              <string>Text Style format:</string>

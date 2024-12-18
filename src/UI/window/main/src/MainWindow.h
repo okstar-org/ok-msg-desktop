@@ -31,6 +31,9 @@ namespace UI {
 class OMainMenu;
 class OMenuWidget;
 
+/**
+ * 主窗口
+ */
 class MainWindow : public QMainWindow {
     Q_OBJECT
 

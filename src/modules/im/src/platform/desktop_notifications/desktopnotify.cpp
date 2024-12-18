@@ -23,7 +23,7 @@ DesktopNotify::DesktopNotify()
     notifyCore.loadPlugins(Snore::SnorePlugin::Backend);
     qDebug() << "primary notification backend:" << notifyCore.primaryNotificationBackend();
 
-    snoreApp = Snore::Application("qTox", snoreIcon);
+    snoreApp = Snore::Application("OkMsg", snoreIcon);
 
     notifyCore.registerApplication(snoreApp);
 }

@@ -64,7 +64,7 @@ private:
     IPC* ipc;
     std::unique_ptr<Bus> _bus;
 
-    UI::LoginWindow* m_loginWindow;
+    std::unique_ptr<UI::LoginWindow> m_loginWindow;
     std::unique_ptr<UI::MainWindow> m_mainWindow;
 
     void doLogout();
@@ -74,7 +74,7 @@ private:
     void createLoginUI(bool bootstrap);
     void closeLoginUI();
 
-    void startMainUI(std::shared_ptr<lib::session::AuthSession> session);
+    void startMainUI();
     void stopMainUI();
 
 #ifdef OK_MODULE_PAINTER

@@ -80,12 +80,6 @@ void ProfileLocker::unlock() {
     curLockName.clear();
 }
 
-/**
- * @brief Check that we actually own the lock.
- * In case the file was deleted on disk, restore it.
- * If we can't get a lock, exit qTox immediately.
- * If we never had a lock in the first place, exit immediately.
- */
 void ProfileLocker::assertLock() {
     if (!lockfile) {
         qCritical() << "assertLock: We don't seem to own any lock!";

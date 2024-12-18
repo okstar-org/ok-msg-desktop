@@ -199,9 +199,9 @@ void GUI::_setWindowTitle(const QString& title) {
     QWidget* w = getMainWidget();
     if (!w) return;
     if (title.isEmpty())
-        w->setWindowTitle("qTox");
+        w->setWindowTitle("OkMsg");
     else
-        w->setWindowTitle("qTox - " + title);
+        w->setWindowTitle("OkMsg - " + title);
 }
 
 void GUI::_reloadTheme() {
