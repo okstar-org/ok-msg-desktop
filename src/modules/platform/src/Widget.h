@@ -27,7 +27,7 @@ namespace Ui {
 class WorkPlatform;
 }
 
-namespace ok::platform {
+namespace module::platform {
 
 class AppCenterWidget;
 class PlatformPage;
@@ -39,21 +39,34 @@ class PlatformPageContainer;
 class Widget : public UI::OMenuWidget {
     Q_OBJECT
 public:
-    Widget(QWidget* parent = nullptr);
+    explicit Widget(QWidget* parent = nullptr);
     ~Widget() override;
+
+    /**
+     * 启动
+     */
     void start();
+
+    /**
+     * 重载主题
+     */
     void reloadTheme();
 
 protected:
     // 工作平台页的相关操作
     PlatformPage* findPage(const QUrl& url);
+
+    // 增加界面
     void addPage(PlatformPage* page, bool active = true);
+    // 移除界面
     bool removePage(PlatformPage* page);
     void activePage(PlatformPage* page);
     void retranslateUi();
 
 private:
+    // 请求关闭tab
     void requestCloseTab();
+    // 执行关闭
     void doClose(int index, PlatformPage* page);
 
 private:
@@ -68,4 +81,4 @@ public slots:
     friend class PlatformPageContainer;
 };
 
-}  // namespace ok::platform
+}  // namespace module::platform

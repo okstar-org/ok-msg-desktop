@@ -13,7 +13,7 @@
 #include "platformpage.h"
 #include "platformpagecontainer.h"
 
-namespace ok::platform {
+namespace module::platform {
 
 PlatformPage::PlatformPage(PlatformPageContainer* pageContainer) {
     this->pageContainer = pageContainer;
@@ -36,4 +36,4 @@ void PlatformPage::start() {}
 QUrl PlatformPage::getUrl() {
     return QUrl();
 }
-}  // namespace ok::platform
+}  // namespace module::platform

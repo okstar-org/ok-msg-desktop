@@ -16,20 +16,24 @@
 
 class QWebEngineView;
 
-namespace ok::platform {
+namespace module::platform {
 
 class PlatformPageContainer;
 
 class WebviewPage : public PlatformPage {
 public:
-    WebviewPage(const QUrl& url,
-                const QString& type,
-                const QString& uuid,
-                const QString& title,
-                PlatformPageContainer* container);
-    ~WebviewPage();
-    QString getTitle() override { return pageTitle; }
-    QUrl getUrl() override { return pageUrl; }
+    explicit WebviewPage(const QUrl& url,
+                         const QString& type,
+                         const QString& uuid,
+                         const QString& title,
+                         PlatformPageContainer* container);
+    ~WebviewPage() override;
+    QString getTitle() override {
+        return pageTitle;
+    }
+    QUrl getUrl() override {
+        return pageUrl;
+    }
     QWidget* getWidget() override;
 
     void createContent(QWidget* parent) override;
@@ -44,4 +48,4 @@ private:
     QString pageTitle;
     std::unique_ptr<QWebEngineView> webView;
 };
-}  // namespace ok::platform
+}  // namespace module::platform

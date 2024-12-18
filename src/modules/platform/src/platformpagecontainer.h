@@ -15,7 +15,7 @@
 #include <QPointer>
 #include <QUrl>
 
-namespace ok::platform {
+namespace module::platform {
 
 class Platform;
 class PlatformPage;
@@ -43,4 +43,4 @@ private:
     QPointer<Widget> container;
     QPointer<Platform> platform;
 };
-}  // namespace ok::platform
+}  // namespace module::platform

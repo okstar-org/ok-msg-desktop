@@ -20,7 +20,7 @@
 
 class QWidget;
 
-namespace ok::platform {
+namespace module::platform {
 
 class PlatformPageContainer;
 
@@ -49,9 +49,10 @@ public:
     virtual bool pageClosable() { return true; }
 
 protected:
+    // 页面容器
     QPointer<PlatformPageContainer> pageContainer;
 };
 
-}  // namespace ok::platform
+}  // namespace module::platform
 
 #endif  // !PLATFORMPAGE_H

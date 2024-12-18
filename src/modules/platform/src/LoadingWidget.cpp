@@ -18,6 +18,8 @@
 #include <QTimeLine>
 #include <QVariantAnimation>
 
+namespace module::platform {
+
 static constexpr qreal anima_delay = 0.2;
 LoadingWidget::LoadingWidget(QWidget* target) : QWidget(target), anchorWidget(target) {
     Q_ASSERT(target);
@@ -42,9 +44,13 @@ LoadingWidget::LoadingWidget(QWidget* target) : QWidget(target), anchorWidget(ta
     }
 }
 
-QSize LoadingWidget::sizeHint() const { return minimumSizeHint(); }
+QSize LoadingWidget::sizeHint() const {
+    return minimumSizeHint();
+}
 
-QSize LoadingWidget::minimumSizeHint() const { return contentSizeHint.grownBy(layoutMargins); }
+QSize LoadingWidget::minimumSizeHint() const {
+    return contentSizeHint.grownBy(layoutMargins);
+}
 
 void LoadingWidget::setMarginInTarget(const QMargins& margins) {
     if (this->layoutMargins != margins) {
@@ -53,7 +59,9 @@ void LoadingWidget::setMarginInTarget(const QMargins& margins) {
     updateWidgetGeo();
 }
 
-void LoadingWidget::setSizeHint(const QSize& hint) { contentSizeHint = hint; }
+void LoadingWidget::setSizeHint(const QSize& hint) {
+    contentSizeHint = hint;
+}
 
 bool LoadingWidget::event(QEvent* e) {
     switch (e->type()) {
@@ -116,3 +124,4 @@ void LoadingWidget::updateWidgetGeo() {
         this->raise();
     }
 }
+}  // namespace module::platform

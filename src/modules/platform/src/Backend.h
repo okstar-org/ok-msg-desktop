@@ -19,7 +19,7 @@
 #include <QObject>
 #include "lib/backend/BaseService.h"
 
-namespace ok::platform {
+namespace module::platform {
 
 /**
  * 应用实体
@@ -55,7 +55,9 @@ struct App {
         return jo;
     }
 
-    QString toJsonString() { return QJsonDocument(toJson()).toJson(); }
+    QString toJsonString() {
+        return QJsonDocument(toJson()).toJson();
+    }
 };
 
 /**
@@ -115,8 +117,8 @@ public:
     ~Backend() override;
     bool getAppList(const lib::network::HttpBodyFn& fn, int res = 0, int pageSize = 50);
 
-    bool getInstance(const base::Fn<void(QJsonDocument)>& fn, const QString& appUuid,
+    bool getInstance(const ok::base::Fn<void(QJsonDocument)>& fn, const QString& appUuid,
                      const lib::network::HttpErrorFn& err);
 };
 
-}  // namespace ok::platform
+}  // namespace module::platform

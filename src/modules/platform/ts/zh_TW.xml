@@ -14,14 +14,14 @@
 <!DOCTYPE TS>
 <TS language="zh_TW" version="2.1">
     <context>
-        <name>ok::platform::AppCenterWidget</name>
+        <name>module::platform::AppCenterWidget</name>
         <message>
             <source>App center</source>
             <translation>應用中心</translation>
         </message>
     </context>
     <context>
-        <name>ok::platform::Widget</name>
+        <name>module::platform::Widget</name>
         <message>
             <source>Close Tab</source>
             <translation>關閉選項卡</translation>

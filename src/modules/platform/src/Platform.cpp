@@ -18,7 +18,7 @@
 #include "AppCenterWidget.h"
 #include "platformpagecontainer.h"
 
-namespace ok::platform {
+namespace module::platform {
 
 Platform::Platform() : name{OK_Platform_MODULE}, m_widget{nullptr} {
     m_widget = std::make_unique<Widget>();
@@ -26,7 +26,7 @@ Platform::Platform() : name{OK_Platform_MODULE}, m_widget{nullptr} {
     // todo: 如果后期需要支持页签弹出，看如何重构了
     pageContainer = new PlatformPageContainer(this, m_widget.get());
 
-    AppCenterPage* page = new AppCenterPage(pageContainer);
+    auto* page = new AppCenterPage(pageContainer);
     page->createContent(m_widget.get());
     pageContainer->addPage(page);
 }
@@ -64,4 +64,4 @@ PlatformPageContainer* Platform::getPageContainer() {
     return pageContainer;
 }
 void Platform::hide() {}
-}  // namespace ok::platform
+}  // namespace module::platform

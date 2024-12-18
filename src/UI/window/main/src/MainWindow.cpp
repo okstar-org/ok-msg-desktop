@@ -373,7 +373,7 @@ OMenuWidget* MainWindow::createChatModule(MainWindow* pWindow) {
  * @return
  */
 OMenuWidget* MainWindow::createPlatformModule(MainWindow* pWindow) {
-    auto m = new ok::platform::Platform();
+    auto m = new module::platform::Platform();
 
     auto w = new OMenuWidget(this);
     w->setModule(m);

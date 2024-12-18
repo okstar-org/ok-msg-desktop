@@ -41,7 +41,7 @@ public:
     void paintEvent(QPaintEvent* event) override;
 };
 
-namespace ok::platform {
+namespace module::platform {
 
 Widget::Widget(QWidget* parent) : UI::OMenuWidget(parent), ui(new Ui::WorkPlatform) {
     OK_RESOURCE_INIT(Platform);
@@ -168,7 +168,7 @@ void Widget::requestCloseTab() {
     for (int i = 0; i < count; i++) {
         QWidget* button = ui->tabWidget->tabBar()->tabButton(i, QTabBar::RightSide);
         if (button == sender) {
-            PlatformPage* page = ui->tabWidget->tabBar()->tabData(i).value<PlatformPage*>();
+            auto* page = ui->tabWidget->tabBar()->tabData(i).value<PlatformPage*>();
             doClose(i, page);
             break;
         }
@@ -187,12 +187,12 @@ void Widget::doClose(int index, PlatformPage* page) {
     delete page;
 }
 
-}  // namespace ok::platform
+}  // namespace module::platform
 
 TabCloseButton::TabCloseButton(QWidget* parent) : QAbstractButton(parent) {
     setFocusPolicy(Qt::NoFocus);
     setCursor(Qt::ArrowCursor);
-    setToolTip(ok::platform::Widget::tr("Close Tab"));
+    setToolTip(module::platform::Widget::tr("Close Tab"));
     resize(sizeHint());
 }
 

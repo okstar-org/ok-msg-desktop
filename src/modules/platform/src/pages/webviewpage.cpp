@@ -17,20 +17,24 @@
 #include "src/Backend.h"
 #include "src/base/MessageBox.h"
 
-ok::platform::WebviewPage::WebviewPage(const QUrl& url,
-                                       const QString& type,
-                                       const QString& uuid,
-                                       const QString& title,
-                                       PlatformPageContainer* container)
+namespace module::platform {
+
+WebviewPage::WebviewPage(const QUrl& url,
+                         const QString& type,
+                         const QString& uuid,
+                         const QString& title,
+                         PlatformPageContainer* container)
         : PlatformPage(container), pageUrl(url), appType(type), appUuid(uuid), pageTitle(title) {
     webView = std::make_unique<QWebEngineView>();
 }
 
-ok::platform::WebviewPage::~WebviewPage() {}
+WebviewPage::~WebviewPage() = default;
 
-QWidget* ok::platform::WebviewPage::getWidget() { return webView.get(); }
+QWidget* WebviewPage::getWidget() {
+    return webView.get();
+}
 
-void ok::platform::WebviewPage::createContent(QWidget* parent) {
+void WebviewPage::createContent(QWidget* parent) {
     if (appType == "Open") {
         // 如果是开放App，直接打开链接。
         qDebug() << "Open:" << pageUrl;
@@ -58,7 +62,7 @@ void ok::platform::WebviewPage::createContent(QWidget* parent) {
 
             appUuid,
             [this, backend](int statusCode, const QByteArray& body) {
-                auto json = base::Jsons::toJSON(body);
+                auto json = ok::base::Jsons::toJSON(body);
                 auto msg = json.object().value("msg").toString();
                 ok::base::MessageBox::warning(nullptr, "Warning", msg);
                 backend->deleteLater();
@@ -66,6 +70,8 @@ void ok::platform::WebviewPage::createContent(QWidget* parent) {
             });
 }
 
-void ok::platform::WebviewPage::start() {}
+void WebviewPage::start() {}
 
-void ok::platform::WebviewPage::doClose() {}
+void WebviewPage::doClose() {}
+
+}  // namespace module::platform

@@ -18,7 +18,7 @@
 #include "base/OkSettings.h"
 #include "lib/network/NetworkHttp.h"
 
-namespace ok::platform {
+namespace module::platform {
 
 Backend::Backend(const QString& baseUrl, const QString& authorization, QObject* parent)
         : lib::backend::BaseService(baseUrl, parent) {
@@ -43,11 +43,11 @@ bool Backend::getAppList(const lib::network::HttpBodyFn& fn, int pageIndex, int 
     return http->postJson(QUrl(url), doc, fn, nullptr, nullptr, nullptr);
 }
 
-bool Backend::getInstance(const base::Fn<void(QJsonDocument)>& fn,
+bool Backend::getInstance(const ok::base::Fn<void(QJsonDocument)>& fn,
                           const QString& appUuid,
                           const lib::network::HttpErrorFn& err) {
     QString url = _baseUrl + "/api/tenant/instance/" + appUuid;
     return http->getJson(QUrl(url), fn, err);
 }
 
-}  // namespace ok::platform
+}  // namespace module::platform

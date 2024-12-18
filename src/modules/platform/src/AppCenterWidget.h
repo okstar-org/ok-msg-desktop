@@ -29,10 +29,10 @@ class QThread;
 class QWebSocketServer;
 class WebSocketClientWrapper;
 class WebSocketTransport;
+
+namespace module::platform {
+
 class LoadingWidget;
-
-namespace ok::platform {
-
 class AppCenterPage;
 
 /**
@@ -94,4 +94,4 @@ private:
     QPointer<AppCenterWidget> widget = nullptr;
     friend class AppCenterWidget;
 };
-}  // namespace ok::platform
+}  // namespace module::platform

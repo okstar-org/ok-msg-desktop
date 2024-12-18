@@ -19,7 +19,7 @@
 #include "Widget.h"
 #include "modules/module.h"
 
-namespace ok::platform {
+namespace module::platform {
 
 class PlatformPageContainer;
 
@@ -29,10 +29,10 @@ class PlatformPageContainer;
 class Platform : public QObject, public Module {
     Q_OBJECT
 public:
-    Platform();
-    virtual ~Platform();
+    explicit Platform();
+    ~Platform() override;
     void init(Profile* p) override;
-    const QString& getName() const override;
+    [[nodiscard]] const QString& getName() const override;
     void start(std::shared_ptr<lib::session::AuthSession> session) override;
     void stop() override;
     bool isStarted() override;
@@ -41,7 +41,9 @@ public:
 
     PlatformPageContainer* getPageContainer();
 
-    QWidget* widget() override { return m_widget.get(); }
+    QWidget* widget() override {
+        return m_widget.get();
+    }
     void hide() override;
 
 private:
@@ -50,4 +52,4 @@ private:
     QString name;
 };
 
-}  // namespace ok::platform
+}  // namespace module::platform

@@ -14,7 +14,7 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="zh_CN">
     <context>
-        <name>ok::platform::AppCenterWidget</name>
+        <name>module::platform::AppCenterWidget</name>
         <message>
             <source>App center</source>
             <translation>App Center</translation>

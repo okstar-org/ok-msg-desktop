@@ -30,7 +30,7 @@
 #include "websocketclientwrapper.h"
 #include "websockettransport.h"
 
-namespace ok::platform {
+namespace module::platform {
 
 AppCenterWidget::AppCenterWidget(AppCenterPage* page, QWidget* parent)
         : UI::OWidget(parent), platformPage(page) {
@@ -197,4 +197,4 @@ void AppCenterPage::onWebMessageReceived(const QJsonValue& value) {
     }
 }
 
-}  // namespace ok::platform
+}  // namespace module::platform
