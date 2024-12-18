@@ -15,142 +15,12 @@
 namespace ok::base {
 
 //----------------------------------------------------------------------------
-// StringPrepCache
-//----------------------------------------------------------------------------
-QScopedPointer<StringPrepCache> StringPrepCache::_instance;
-
-bool StringPrepCache::nameprep(const QString& in, int maxbytes, QString& out) {
-    if (in.trimmed().isEmpty()) {
-        out = QString();
-        return false;  // empty names or just spaces are disallowed (rfc5892+rfc6122)
-    }
-
-    StringPrepCache* that = instance();
-
-    auto it = that->nameprep_table.constFind(in);
-    if (it != that->nameprep_table.constEnd()) {
-        if (it.value().isNull()) {
-            return false;
-        }
-        out = it.value();
-        return true;
-    }
-
-    out = in;
-    that->nameprep_table.insert(in, out);
-    return true;
-}
-
-bool StringPrepCache::nodeprep(const QString& in, int maxbytes, QString& out) {
-    if (in.isEmpty()) {
-        out = QString();
-        return true;
-    }
-
-    StringPrepCache* that = instance();
-
-    auto it = that->nodeprep_table.constFind(in);
-    if (it != that->nodeprep_table.constEnd()) {
-        if (it.value().isNull()) {
-            return false;
-        }
-        out = it.value();
-        return true;
-    }
-
-    out = in;
-#if 0
-  if (stringprep(out, (Stringprep_profile_flags)0, stringprep_xmpp_nodeprep) !=
-          0 ||
-      out.size() > maxbytes) {
-    that->nodeprep_table.insert(in, QString());
-    return false;
-  }
-#endif
-    that->nodeprep_table.insert(in, out);
-    return true;
-}
-
-bool StringPrepCache::resourceprep(const QString& in, int maxbytes, QString& out) {
-    if (in.isEmpty()) {
-        out = QString();
-        return true;
-    }
-
-    StringPrepCache* that = instance();
-
-    auto it = that->resourceprep_table.constFind(in);
-    if (it != that->resourceprep_table.constEnd()) {
-        if (it.value().isNull()) {
-            return false;
-        }
-        out = it.value();
-        return true;
-    }
-
-    that->resourceprep_table.insert(in, out);
-    return true;
-}
-
-bool StringPrepCache::saslprep(const QString& in, int maxbytes, QString& out) {
-    if (in.isEmpty()) {
-        out = QString();
-        return true;
-    }
-
-    StringPrepCache* that = instance();
-
-    auto it = that->saslprep_table.constFind(in);
-    if (it != that->saslprep_table.constEnd()) {
-        if (it.value().isNull()) {
-            return false;
-        }
-        out = it.value();
-        return true;
-    }
-
-    out = in;
-#if 0
-  if (stringprep(out, (Stringprep_profile_flags)0, stringprep_saslprep) != 0 ||
-      out.size() > maxbytes) {
-    that->saslprep_table.insert(in, QString());
-    return false;
-  }
-#endif
-    that->saslprep_table.insert(in, out);
-    return true;
-}
-
-void StringPrepCache::cleanup() { _instance.reset(nullptr); }
-
-StringPrepCache* StringPrepCache::instance() {
-    if (!_instance) {
-        _instance.reset(new StringPrepCache);
-    }
-    return _instance.data();
-}
-
-StringPrepCache::StringPrepCache() {}
-
-//----------------------------------------------------------------------------
 // Jid
 //----------------------------------------------------------------------------
 //
-static inline bool validDomain(const QString& s, QString& norm) {
-    return StringPrepCache::nameprep(s, 1024, norm);
-}
-
-static inline bool validNode(const QString& s, QString& norm) {
-    return StringPrepCache::nodeprep(s, 1024, norm);
-}
-
-static inline bool validResource(const QString& s, QString& norm) {
-    return StringPrepCache::resourceprep(s, 1024, norm);
-}
 
 Jid::Jid() {
     valid = false;
-    null = true;
 }
 
 Jid::~Jid() = default;
@@ -159,13 +29,17 @@ Jid::Jid(const std::string& s) {
     set(QString(s.c_str()));
 }
 
-Jid::Jid(const QString& s) { set(s); }
+Jid::Jid(const QString& s) {
+    set(s);
+}
 
 Jid::Jid(const QString& node, const QString& domain, const QString& resource) {
     set(domain, node, resource);
 }
 
-Jid::Jid(const char* s) { set(QString(s)); }
+Jid::Jid(const char* s) {
+    set(QString(s));
+}
 
 Jid& Jid::operator=(const QString& s) {
     set(s);
@@ -178,152 +52,82 @@ Jid& Jid::operator=(const char* s) {
 }
 
 Jid& Jid::operator=(const Jid& s) {
-    f = s.f;
-    b = s.b;
-    d = s.d;
-    n = s.n;
-    r = s.r;
+    m_domain = s.m_domain;
+    m_node = s.m_node;
+    m_resource = s.m_resource;
     return *this;
 }
 
 void Jid::reset() {
-    f = QString();
-    b = QString();
-    d = QString();
-    n = QString();
-    r = QString();
+    m_domain = QString();
+    m_node = QString();
+    m_resource = QString();
     valid = false;
-    null = true;
-}
-
-void Jid::update() {
-    // build 'bare' and 'full' jids
-    if (n.isEmpty())
-        b = d;
-    else
-        b = n + '@' + d;
-    if (r.isEmpty())
-        f = b;
-    else
-        f = b + '/' + r;
-    if (f.isEmpty()) valid = false;
-    null = f.isEmpty() && r.isEmpty();
 }
 
 void Jid::set(const QString& s) {
-    QString rest, domain, node, resource;
-    QString norm_domain, norm_node, norm_resource;
-    int x = s.indexOf('/');
+    QString rest;
+    int x = s.indexOf(SLASH);
     if (x != -1) {
         rest = s.mid(0, x);
-        resource = s.mid(x + 1);
+        m_resource = s.mid(x + 1);
     } else {
         rest = s;
-        resource = QString();
     }
-    //  if (!validResource(resource, norm_resource)) {
-    //    qDebug()<<"resource"<<resource;
-    //    reset();
-    //    return;
-    //  }
 
-    x = rest.indexOf('@');
+    x = rest.indexOf(AT);
     if (x != -1) {
-        node = rest.mid(0, x);
-        domain = rest.mid(x + 1);
+        m_node = rest.mid(0, x);
+        m_domain = rest.mid(x + 1);
     } else {
-        node = QString();
-        domain = rest;
-    }
-    if (!validDomain(domain, norm_domain) || !validNode(node, norm_node)) {
-        reset();
-        return;
+        m_domain = rest;
     }
 
     valid = true;
-    null = false;
-    d = norm_domain;
-    n = norm_node;
-    r = norm_resource;
-    update();
 }
 
 void Jid::set(const QString& domain, const QString& node, const QString& resource) {
-    QString norm_domain, norm_node, norm_resource;
-    if (!validDomain(domain, norm_domain) || !validNode(node, norm_node) ||
-        !validResource(resource, norm_resource)) {
-        reset();
+    m_node = node;
+    m_domain = domain;
+    m_resource = resource;
+}
+
+void Jid::setDomain(const QString& domain) {
+    if (domain.isEmpty() || domain.contains(AT)) {
         return;
     }
-    valid = true;
-    null = false;
-    d = norm_domain;
-    n = norm_node;
-    r = norm_resource;
-    update();
+    m_domain = domain;
 }
 
-void Jid::setDomain(const QString& s) {
-    if (!valid) return;
-    QString norm;
-    if (!validDomain(s, norm)) {
-        reset();
-        return;
-    }
-    d = norm;
-    update();
+void Jid::setNode(const QString& node) {
+    if (node.isEmpty() || node.contains(AT)) return;
+    m_node = node;
 }
 
-void Jid::setNode(const QString& s) {
-    if (!valid) return;
-    QString norm;
-    if (!validNode(s, norm)) {
-        reset();
-        return;
-    }
-    n = norm;
-    update();
+void Jid::setResource(const QString& resource) {
+    if (resource.isEmpty() || resource.contains(SLASH)) return;
+    m_resource = resource;
 }
 
-void Jid::setResource(const QString& s) {
-    if (!valid) return;
-    QString norm;
-    if (!validResource(s, norm)) {
-        reset();
-        return;
-    }
-    r = norm;
-    update();
+bool Jid::isValid() const {
+    return valid;
 }
 
-Jid Jid::withNode(const QString& s) const {
-    Jid j = *this;
-    j.setNode(s);
-    return j;
+bool Jid::isEmpty() const {
+    return full().isEmpty();
 }
 
-Jid Jid::withDomain(const QString& s) const {
-    Jid j = *this;
-    j.setDomain(s);
-    return j;
+QString Jid::bare() const {
+    return m_node + AT + m_domain;
 }
 
-Jid Jid::withResource(const QString& s) const {
-    Jid j = *this;
-    j.setResource(s);
-    return j;
+QString Jid::full() const {
+    if (m_resource.isEmpty()) return bare();
+    return bare() + SLASH + m_resource;
 }
 
-bool Jid::isValid() const { return valid; }
-
-bool Jid::isEmpty() const { return f.isEmpty(); }
-
-bool Jid::compare(const Jid& a, bool compareRes) const {
-    if (null && a.null) return true;
-
-    // only compare valid jids
-    if (!valid || !a.valid) return false;
-
-    return !(compareRes ? (f != a.f) : (b != a.b));
+bool Jid::compare(const Jid& a) const {
+    return full().compare(a.full());
 }
+
 }  // namespace ok::base

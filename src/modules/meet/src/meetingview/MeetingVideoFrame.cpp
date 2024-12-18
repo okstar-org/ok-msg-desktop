@@ -60,6 +60,7 @@ MeetingVideoFrame::MeetingVideoFrame(const QString& name, QWidget* parent)
     reloadTheme();
     retranslateUi();
 
+    // TODO 待优化
     Core* core = Nexus::getInstance().getCore();
     meet = new lib::messenger::MessengerMeet(core->getMessenger(), this);
     meet->addHandler(this);
@@ -254,8 +255,8 @@ void MeetingVideoFrame::onParticipantJoined(const ok::base::Jid& jid,
     emit participantJoined(jid.node(), part);
 }
 
-void MeetingVideoFrame::onParticipantLeft(const ok::base::Jid& jid, const ok::base::Jid& part) {
-    emit participantLeft(jid.node(), part);
+void MeetingVideoFrame::onParticipantLeft(const ok::base::Jid& jid, const QString& participant) {
+    emit participantLeft(jid.node(), participant);
 }
 
 void MeetingVideoFrame::addParticipant(const QString& name,
@@ -278,16 +279,16 @@ void MeetingVideoFrame::addParticipant(const QString& name,
     }
 }
 
-void MeetingVideoFrame::removeParticipant(const QString& name, const ok::base::Jid& jid) {
-    qDebug() << __func__ << "room:" << name << "jid:" << jid.full();
+void MeetingVideoFrame::removeParticipant(const QString& name, const QString& resource) {
+    qDebug() << __func__ << "participant:" << resource;
     // 执行移除用户操作
-    auto itor = participantMap.find(jid.resource());
-    if (itor != participantMap.end()) {
-        auto user = itor.value();
+    auto it = participantMap.find(resource);
+    if (it != participantMap.end()) {
+        auto user = it.value();
         Q_ASSERT(user);
         videosLayout->removeParticipant(user);
         delete user;
-        participantMap.erase(itor);
+        participantMap.erase(it);
     }
 
     if (participantMap.isEmpty()) {

@@ -21,11 +21,15 @@
 
 namespace module::meet {
 
+/**
+ * 会议模块
+ */
 class Meet : public QObject, public Module {
     Q_OBJECT
 public:
-    Meet();
-    virtual ~Meet();
+    explicit Meet();
+    ~Meet() override;
+    // 初始化
     void init(Profile* p) override;
     const QString& getName() const override;
     void start(std::shared_ptr<lib::session::AuthSession> session) override;

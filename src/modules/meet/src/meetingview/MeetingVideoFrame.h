@@ -63,12 +63,12 @@ private:
     void onParticipantJoined(const ok::base::Jid& jid,
                              const lib::messenger::Participant& parti) override;
 
-    void onParticipantLeft(const ok::base::Jid& jid, const ok::base::Jid& partJid) override;
+    void onParticipantLeft(const ok::base::Jid& jid, const QString& participant) override;
 
 private:
     // for run in UI thread
     void addParticipant(const QString& name, const lib::messenger::Participant& parti);
-    void removeParticipant(const QString& name, const ok::base::Jid& jid);
+    void removeParticipant(const QString& name, const QString& participant);
 
 private:
     // 顶部工具
@@ -114,7 +114,7 @@ signals:
     void meetCreated(const QString& name);
     void meetLeft();
     void participantJoined(const QString& name, const lib::messenger::Participant& part);
-    void participantLeft(const QString& name, const ok::base::Jid& partJid);
+    void participantLeft(const QString& name, const QString& participant);
 };
 
 }  // namespace module::meet

@@ -148,6 +148,7 @@ from='test@conference.meet.chuanshaninfo.com/46a04cab'> <stats-id>Chloe-ZsC</sta
                         .email = email->cdata(),
                         .nick = t->findChild("nick") ? t->findChild("nick")->cdata() : "",
                         .resource = from.resource(),
+                        .jid = from.full(),
                         .e2ee = false};
 
                 auto fts = t->findChild("features");
@@ -189,7 +190,7 @@ from='test@conference.meet.chuanshaninfo.com/46a04cab'> <stats-id>Chloe-ZsC</sta
             // to='sjdvr4swzf2f@meet.chuanshaninfo.com'/>"
 
             for (auto* h : handlers) {
-                h->onParticipantLeft(ok::base::Jid(from.full()), ok::base::Jid(from.full()));
+                h->onParticipantLeft(ok::base::Jid(from.full()), qstring(from.resource()));
             }
             break;
         }

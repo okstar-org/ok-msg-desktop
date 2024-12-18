@@ -35,7 +35,7 @@ StartMeetingWidget::StartMeetingWidget(QWidget* parent) : QWidget(parent) {
 
     setContentsMargins(10, 10, 10, 10);
 
-    ShadowBackground* shadowBack = new ShadowBackground(this);
+    auto shadowBack = new ok::base::ShadowBackground(this);
     shadowBack->setShadowRadius(10);
 
     meetingNameEdit = new QLineEdit(this);

@@ -11,14 +11,27 @@
  */
 
 #include "MeetingParticipant.h"
+
+#include <utility>
 namespace module::meet {
-MeetingParticipant::MeetingParticipant(  // 会议室资源
-        const QString& resource,
-        const QString& email,
-        const QString& nick,
-        const std::string& avatarUrl,
-        const ok::base::Jid& jid)
-        : resource(resource), email(email), nick(nick), avatarUrl(avatarUrl), jid(jid) {}
+/**
+ * 会议成员
+ * @param resource
+ * @param email
+ * @param nick
+ * @param avatarUrl
+ * @param jid
+ */
+MeetingParticipant::MeetingParticipant(QString resource,
+                                       QString email,
+                                       QString nick,
+                                       std::string avatarUrl,
+                                       const ok::base::Jid& jid)
+        : resource(std::move(resource))
+        , email(std::move(email))
+        , nick(std::move(nick))
+        , avatarUrl(std::move(avatarUrl))
+        , jid(jid) {}
 
 // MeetingUser::MeetingUser(MeetingParticipant& part)
 //         : MeetingParticipant(part.getEmail(), part.getNick(), part.getAvatarUrl(), part.getJid())

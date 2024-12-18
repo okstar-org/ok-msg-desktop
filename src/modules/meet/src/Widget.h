@@ -38,10 +38,13 @@ class StartMeetingWidget;
 class JoinMeetingWidget;
 class MeetingVideoFrame;
 
+/**
+ * 会议主界面
+ */
 class Widget : public UI::OMenuWidget {
     Q_OBJECT
 public:
-    Widget(QWidget* parent = nullptr);
+    explicit Widget(QWidget* parent = nullptr);
     ~Widget() override;
     void start();
     void reloadTheme();

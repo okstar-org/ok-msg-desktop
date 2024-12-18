@@ -23,7 +23,7 @@ namespace module::meet {
 class VideoLayoutPicker : public QFrame {
     Q_OBJECT
 public:
-    VideoLayoutPicker(QWidget* parent);
+    explicit VideoLayoutPicker(QWidget* parent);
     void setCurrentType(module::meet::VideoLayoutType type);
     module::meet::VideoLayoutType selectedType() const;
     void exec(const QPoint & pos);

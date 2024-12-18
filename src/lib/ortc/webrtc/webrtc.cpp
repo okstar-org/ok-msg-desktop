@@ -775,7 +775,6 @@ std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertToSdp(
 
         auto ptr = webrtc::CreateSessionDescription(sdpType, av.sessionId, av.sessionVersion,
                                                     std::move(sessionDescription));
-
         int mline = 0;
         for (const auto& kv : av.getContents()) {
             auto& oSdp = kv.second;
@@ -796,14 +795,12 @@ std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertToSdp(
             auto participant = k.first;
             auto& ssrcBundle = k.second;
 
-            group.AddContentName(ssrcBundle.videoSources[0].name);
-
-            for (auto &c : av.getContents()) {
+            for (auto& c : av.getContents()) {
                 auto& sdp = c.second;
                 auto& iceUdp = sdp.iceUdp;
                 auto& rtp = sdp.rtp;
 
-                if (rtp.media == Media::audio) {
+                if (rtp.media == Media::audio && !ssrcBundle.audioSources.empty()) {
                     auto& mid = ssrcBundle.audioSources[0].name;
                     group.AddContentName(mid);
 
@@ -831,7 +828,7 @@ std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertToSdp(
                         candidates.push_back(c.release());
                     }
 
-                } else if (rtp.media == Media::video) {
+                } else if (rtp.media == Media::video && !ssrcBundle.videoSources.empty()) {
                     auto& mid = ssrcBundle.videoSources[0].name;
                     group.AddContentName(mid);
 
@@ -875,7 +872,7 @@ std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertToSdp(
         auto ptr = webrtc::CreateSessionDescription(sdpType, av.sessionId, av.sessionVersion,
                                                     std::move(sessionDescription));
         for (auto c : candidates) {
-            if(!ptr->AddCandidate(c)){
+            if (!ptr->AddCandidate(c)) {
                 RTC_LOG(LS_WARNING) << " Can not add candidate: " << c->sdp_mid();
             }
         }
@@ -935,7 +932,7 @@ Conductor* WebRTC::createConductor(const std::string& peerId, const std::string&
         RTC_LOG(LS_INFO) << "Get number of video devices:" << num_devices;
 
         if (0 < num_devices) {
-            //TODO 默认获取第一个视频设备
+            // TODO 默认获取第一个视频设备
             int selected = 0;
 
             char name[LEN] = {};
@@ -944,7 +941,7 @@ Conductor* WebRTC::createConductor(const std::string& peerId, const std::string&
             deviceInfo->GetDeviceName(selected, name, LEN, uid, LEN, puid, LEN);
 
             RTC_LOG(LS_INFO) << "Get video device {name:" << name << ", uid:" << uid
-                            << ", productUid:" << puid << "}";
+                             << ", productUid:" << puid << "}";
 
             videoCapture = createVideoCapture(uid);
             conductor->AddVideoTrack(videoCapture->source().get());
@@ -1032,13 +1029,19 @@ void WebRTC::addSource(const std::string& peerId,
                        const std::map<std::string, ortc::OMeetSSRCBundle>& map) {
     auto c = getConductor(peerId);
     if (!c) {
-        RTC_LOG(LS_WARNING) << "No existing conductor.";
+        RTC_LOG(LS_WARNING) << "No existing conductor!";
         return;
     }
-    auto d = c->getRemoteDescription()->Clone();
+    auto remoteDescription = c->getRemoteDescription();
+    if (!remoteDescription) {
+        RTC_LOG(LS_WARNING) << "No remote description!";
+        return;
+    }
+    auto d = remoteDescription->Clone();
     for (const auto& item : map) {
-        auto& k = item.first;
+        auto k = item.first;
         auto& ssrcBundle = item.second;
+        RTC_LOG(LS_INFO) << " participant: " << k;
 
         if (!ssrcBundle.audioSources.empty()) {
             auto& mid = ssrcBundle.audioSources[0].name;
@@ -1097,24 +1100,22 @@ void WebRTC::addSource(const std::string& peerId,
             webrtc::SdpParseError error;
             auto amid = ssrcBundle.audioSources[0].name;
 
-
             int mline = -1;
-            for(auto &content :d->description()->contents())
-            {
+            for (auto& content : d->description()->contents()) {
                 ++mline;
-                if(content.mid() == amid){
+                if (content.mid() == amid) {
                     auto c = webrtc::CreateIceCandidate(amid, mline, sdp, &error);
-                    if(!d1->AddCandidate(c)){
-                        RTC_LOG(LS_WARNING) << " Can not add candidate: "<< c->sdp_mid();
+                    if (!d1->AddCandidate(c)) {
+                        RTC_LOG(LS_WARNING) << " Can not add candidate: " << c->sdp_mid();
                     }
                 }
 
-                if(!ssrcBundle.videoSources.empty()){
-                     auto vmid = ssrcBundle.videoSources[0].name;
-                    if(content.mid() == vmid){
+                if (!ssrcBundle.videoSources.empty()) {
+                    auto vmid = ssrcBundle.videoSources[0].name;
+                    if (content.mid() == vmid) {
                         auto c1 = webrtc::CreateIceCandidate(vmid, mline, sdp, &error);
-                        if(!d1->AddCandidate(c1)){
-                            RTC_LOG(LS_WARNING) << " Can not add candidate: "<< c1->sdp_mid();
+                        if (!d1->AddCandidate(c1)) {
+                            RTC_LOG(LS_WARNING) << " Can not add candidate: " << c1->sdp_mid();
                         }
                     }
                 }

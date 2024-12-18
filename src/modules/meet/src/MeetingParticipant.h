@@ -18,13 +18,15 @@
 
 namespace module::meet {
 
-// 会议参会者，获取一些基本信息、视频、音频等
+/**
+ * 会议参会者，获取一些基本信息、视频、音频等
+ */
 class MeetingParticipant {
 public:
-    explicit MeetingParticipant(const QString& resource,
-                                const QString& email,
-                                const QString& nick,
-                                const std::string& avatarUrl,
+    explicit MeetingParticipant(QString resource,
+                                QString email,
+                                QString nick,
+                                std::string avatarUrl,
                                 const ok::base::Jid& jid);
 
     [[nodiscard]] const QString& getEmail() const {
@@ -60,7 +62,9 @@ private:
     QString resource;
     // 一个帐号（用户）一个邮箱
     QString email;
+    // 昵称
     QString nick;
+    // 头像
     std::string avatarUrl;
     // 同一个用户，不同终端(jid.resource)
     ok::base::Jid jid;

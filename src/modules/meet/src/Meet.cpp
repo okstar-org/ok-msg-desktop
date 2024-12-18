@@ -20,7 +20,7 @@ namespace module::meet {
 
 Meet::Meet() : name(OK_Meet_MODULE), m_widget{std::make_unique<Widget>()} {}
 
-Meet::~Meet() {}
+Meet::~Meet() = default;
 
 void Meet::init(Profile* p) {}
 

@@ -49,9 +49,9 @@ VideoLayoutPicker::VideoLayoutPicker(QWidget* parent)
         : QFrame(parent, Qt::Popup | Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint) {
     setAttribute(Qt::WA_TranslucentBackground);
     setContentsMargins(10, 10, 10, 10);
-    (new ShadowBackground(this))->setShadowRadius(10);
+    (new ok::base::ShadowBackground(this))->setShadowRadius(10);
 
-    QHBoxLayout* mainLayout = new QHBoxLayout(this);
+    //    QHBoxLayout* mainLayout = new QHBoxLayout(this);
 
     typeGroup = new QButtonGroup(this);
     typeGroup->setExclusive(true);

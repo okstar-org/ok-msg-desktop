@@ -20,8 +20,12 @@ class RoundedPixmapLabel;
 class PopupMenuComboBox;
 class QSlider;
 class QHBoxLayout;
+
 namespace module::meet {
 
+/**
+ * 选项配置控件
+ */
 class MeetingOptionWidget : public QWidget {
     Q_OBJECT
 

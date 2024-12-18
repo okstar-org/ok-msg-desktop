@@ -21,6 +21,7 @@
 #include <QSlider>
 #include <QToolButton>
 #include <QVBoxLayout>
+
 namespace module::meet {
 
 MeetingOptionWidget::MeetingOptionWidget(QWidget* parent) : QWidget(parent) {
@@ -58,7 +59,7 @@ MeetingOptionWidget::MeetingOptionWidget(QWidget* parent) : QWidget(parent) {
     mainLayout->addWidget(avatarLabel, 1);
     mainLayout->addLayout(footerLayout);
 
-    ok::Bus* bus = ok::Application::Instance()->bus();
+    auto bus = ok::Application::Instance()->bus();
     connect(bus, &ok::Bus::avatarChanged, avatarLabel, &RoundedPixmapLabel::setPixmap);
 }
 
@@ -73,7 +74,7 @@ void MeetingOptionWidget::retranslateUi()
 }
 
 void MeetingOptionWidget::showEvent(QShowEvent* event) {
-    ok::Bus* bus = ok::Application::Instance()->bus();
+    auto bus = ok::Application::Instance()->bus();
     emit bus->getAvatar();
 }
 }  // namespace module::meet
