@@ -32,6 +32,9 @@ class ConfigWindow;
 
 namespace UI {
 
+/**
+ * 配置窗口
+ */
 class ConfigWindow : public OMenuWidget {
     Q_OBJECT
 public:
@@ -47,20 +50,10 @@ private:
     OK_RESOURCE_PTR(UIWindowConfigRes);
 
     Ui::ConfigWindow* ui;
-    bool inited = false;
 
     std::unique_ptr<QVBoxLayout> bodyLayout;
     std::unique_ptr<QTabWidget> settingsWidgets;
 
-    //  std::unique_ptr<QHBoxLayout> _hLayout;
-    //  QGridLayout *_gLayout;
-    //  std::unique_ptr<SettingView> _stack_view;
-
-signals:
-    //  void view(widget::SettingViewMenu menu);
-
-public slots:
-    //  void onMenu(int id);
 };
 
 }  // namespace UI

@@ -24,8 +24,7 @@
 #include "src/UI/widget/GenericForm.h"
 #include "ui_PluginManagerForm.h"
 
-namespace ok {
-namespace plugin {
+namespace ok::plugin {
 
 PluginManagerForm::PluginManagerForm(QWidget* parent)
         : UI::GenericForm(QPixmap(":/img/settings/general.png"), parent)
@@ -117,5 +116,4 @@ void PluginManagerForm::retranslateUi() {
     }
 }
 
-}  // namespace plugin
-}  // namespace ok
+}  // namespace ok::plugin

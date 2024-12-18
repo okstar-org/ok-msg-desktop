@@ -294,7 +294,7 @@ OMenuWidget* MainWindow::initMenuWindow(ok::base::PageMenu menu) {
         case ok::base::PageMenu::platform:
             w = createPlatformModule(this);
             break;
-        case ok::base::PageMenu::metting:
+        case ok::base::PageMenu::meeting:
             w = createMeetingModule(this);
             break;
         case ok::base::PageMenu::setting:
@@ -334,7 +334,7 @@ void MainWindow::onSwitchPage(ok::base::PageMenu menu, bool checked) {
 
     if (p != ui->stacked_widget->currentWidget()) {
         ui->stacked_widget->setCurrentWidget(p);
-        p->getModule()->activate();
+        if (p->getModule()) p->getModule()->activate();
     }
 }
 

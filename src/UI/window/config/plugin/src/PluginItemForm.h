@@ -23,6 +23,8 @@ namespace Ui {
 class PluginItemForm;
 }
 
+namespace ok::plugin {
+
 class PluginItemForm : public QWidget {
     Q_OBJECT
 public:
@@ -49,5 +51,5 @@ signals:
 public slots:
     void onLogoDownloaded(const QString& fileName, QByteArray& img);
 };
-
+}  // namespace ok::plugin
 #endif  // PLUGINITEMFORM_H

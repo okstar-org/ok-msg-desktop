@@ -27,9 +27,11 @@ namespace lib::network {
 class NetworkHttp;
 }
 
-namespace ok {
-namespace plugin {
+namespace ok::plugin {
 
+/**
+ * 插件信息
+ */
 class PluginInfoForm : public QWidget {
     Q_OBJECT
 
@@ -65,6 +67,6 @@ signals:
 private slots:
     void on_installBtn_released();
 };
-}  // namespace plugin
-}  // namespace ok
+}  // namespace ok::plugin
+
 #endif  // PLUGININFOFORM_H

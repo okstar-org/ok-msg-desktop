@@ -19,8 +19,7 @@
 #include "lib/plugin/pluginhost.h"
 #include "ui_PluginInfoForm.h"
 
-namespace ok {
-namespace plugin {
+namespace ok::plugin {
 
 inline QString makePath(const QString& id, const QString& name) {
     return QString("%1/%2_%3").arg(ok::base::OkSettings::downloadDir().path(), id, name);
@@ -162,5 +161,4 @@ void PluginInfoForm::retranslateUi() {
     ui->installBtn->setText(tr("Install"));
 }
 
-}  // namespace plugin
-}  // namespace ok
+}  // namespace ok::plugin

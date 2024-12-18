@@ -20,21 +20,16 @@
 #include "lib/backend/OkCloudService.h"
 #include "lib/plugin/PluginInfo.h"
 
-namespace Ui {
-class PluginManagerForm;
-class PluginInfoForm;
-}  // namespace Ui
-
 class QListWidgetItem;
 
-namespace ok {
-namespace plugin {
+namespace Ui {
+class PluginManagerForm;
+}  // namespace Ui
 
-class PluginInfoForm;
+namespace ok::plugin {
 
 class PluginManagerForm : public UI::GenericForm {
     Q_OBJECT
-
 public:
     explicit PluginManagerForm(QWidget* parent = nullptr);
     ~PluginManagerForm() override;
@@ -57,6 +52,6 @@ private:
 protected slots:
     void pluginClicked(QListWidgetItem*);
 };
-}  // namespace plugin
-}  // namespace ok
+}  // namespace ok::plugin
+
 #endif  // PLUGINFORM_H

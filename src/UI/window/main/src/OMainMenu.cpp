@@ -13,15 +13,15 @@
 #include <QUrl>
 #include <memory>
 
-#include "application.h"
 #include "Bus.h"
 #include "OMainMenu.h"
+#include "application.h"
 #include "ui_OMainMenu.h"
 
+#include "base/OkSettings.h"
 #include "base/files.h"
 #include "base/images.h"
 #include "base/resources.h"
-#include "base/OkSettings.h"
 #include "lib/settings/translator.h"
 
 #include <QButtonGroup>
@@ -56,7 +56,7 @@ OMainMenu::OMainMenu(QWidget* parent) : QFrame(parent), ui(new Ui::OMainMenu), _
     group->addButton(ui->chatBtn, static_cast<int>(ok::base::PageMenu::chat));
     group->addButton(ui->settingBtn, static_cast<int>(ok::base::PageMenu::setting));
     group->addButton(ui->platformBtn, static_cast<int>(ok::base::PageMenu::platform));
-    group->addButton(ui->meetBtn, static_cast<int>(ok::base::PageMenu::metting));
+    group->addButton(ui->meetBtn, static_cast<int>(ok::base::PageMenu::meeting));
     connect(group, &QButtonGroup::idToggled, this, &OMainMenu::onButtonToggled);
 
     QString locale = ok::base::OkSettings::getInstance().getTranslation();
@@ -65,9 +65,9 @@ OMainMenu::OMainMenu(QWidget* parent) : QFrame(parent), ui(new Ui::OMainMenu), _
 
     retranslateUi();
 
-    connect(ok::Application::Instance()->bus(), &ok::Bus::languageChanged,
-            [](QString locale0) { settings::Translator::translate(OK_UIWindowMain_MODULE, locale0); });
-
+    connect(ok::Application::Instance()->bus(), &ok::Bus::languageChanged, [](QString locale0) {
+        settings::Translator::translate(OK_UIWindowMain_MODULE, locale0);
+    });
 }
 
 OMainMenu::~OMainMenu() {
@@ -92,8 +92,7 @@ void OMainMenu::showEvent(QShowEvent* e) {
     }
 }
 
-void OMainMenu::retranslateUi()
-{
+void OMainMenu::retranslateUi() {
     ui->chatBtn->setToolTip(tr("Message"));
     ui->settingBtn->setToolTip(tr("Setting"));
     ui->platformBtn->setToolTip(tr("Work platform"));
@@ -101,22 +100,13 @@ void OMainMenu::retranslateUi()
     ui->retranslateUi(this);
 }
 
-
 void OMainMenu::onButtonToggled(int id, bool toggle) {
     if (id < 0 || !toggle) {
         return;
     }
-    switch (static_cast<ok::base::PageMenu>(id))
-    {
-        case ok::base::PageMenu::chat:
-        case ok::base::PageMenu::setting:
-        case ok::base::PageMenu::platform:
-        case ok::base::PageMenu::metting:
-            emit menuPushed(static_cast<ok::base::PageMenu>(id), true);
-            break;
-        default:
-            break;
-    }
+
+    auto menu = static_cast<ok::base::PageMenu>(id);
+    emit menuPushed(menu, true);
 }
 
 }  // namespace UI

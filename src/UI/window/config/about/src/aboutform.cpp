@@ -22,9 +22,13 @@
 #include "src/lib/settings/style.h"
 
 #include <memory>
+
 namespace UI {
 
-// index of UI in the QStackedWidget
+/**
+ * 关于我们表单
+ */
+
 enum class updateIndex { available = 0, upToDate = 1, failed = 2 };
 
 /**

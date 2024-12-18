@@ -17,6 +17,8 @@
 #include "lib/network/NetworkHttp.h"
 #include "ui_PluginItemForm.h"
 
+namespace ok::plugin {
+
 PluginItemForm::PluginItemForm(int row_, lib::backend::PluginInfo& pluginInfo, QWidget* parent)
         : QWidget(parent), ui(new Ui::PluginItemForm), info(pluginInfo), row(row_) {
     ui->setupUi(this);
@@ -52,7 +54,9 @@ bool PluginItemForm::isSetLogo() {
     return !p.isNull();
 }
 
-void PluginItemForm::showEvent(QShowEvent*) { downLogo(); }
+void PluginItemForm::showEvent(QShowEvent*) {
+    downLogo();
+}
 
 void PluginItemForm::onLogoDownloaded(const QString& fileName, QByteArray& img) {
     qDebug() << "logo downloaded" << fileName;
@@ -61,3 +65,4 @@ void PluginItemForm::onLogoDownloaded(const QString& fileName, QByteArray& img) 
         setLogo(pixmap);
     }
 }
+}  // namespace ok::plugin
