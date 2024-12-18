@@ -38,7 +38,7 @@ Participant IMMeet::toParticipant(const gloox::Meet::Participant& participant) c
                        .role = qstring(participant.role)};
 }
 
-IMMeet::IMMeet(IM* im, QObject* parent) : IMJingle(im, parent), manager{nullptr} {
+IMMeet::IMMeet(IM* im, QObject* parent) : IMJingle(im, parent), manager(nullptr), meet(nullptr) {
     manager = new gloox::MeetManager(im->getClient());
     manager->registerHandler(this);
 
