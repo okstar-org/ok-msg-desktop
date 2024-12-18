@@ -21,9 +21,8 @@
 
 #include <QPushButton>
 #include <QThread>
+#include "application.h"
 #include "base/MessageBox.h"
-#include "src/nexus.h"
-#include "widget.h"
 
 /**
  * @class GUI
@@ -38,7 +37,6 @@
 
 GUI::GUI(QObject* parent) : QObject(parent) {
     assert(QThread::currentThread() == qApp->thread());
-    assert(Nexus::getDesktopGUI());
 }
 
 /**
@@ -47,22 +45,6 @@ GUI::GUI(QObject* parent) : QObject(parent) {
 GUI& GUI::getInstance() {
     static GUI gui;
     return gui;
-}
-
-// Implementation of the public clean interface
-
-/**
- * @brief Will enable or disable the GUI.
- * @note A disabled GUI can't be interacted with by the user.
- * @param state Enable/disable GUI.
- */
-void GUI::setEnabled(bool state) {
-    if (QThread::currentThread() == qApp->thread()) {
-        getInstance()._setEnabled(state);
-    } else {
-        QMetaObject::invokeMethod(&getInstance(), "_setEnabled", Qt::BlockingQueuedConnection,
-                                  Q_ARG(bool, state));
-    }
 }
 
 /**
@@ -129,10 +111,7 @@ void GUI::showError(const QString& title, const QString& msg) {
     if (QThread::currentThread() == qApp->thread()) {
         // If the GUI hasn't started yet and we're on the main thread,
         // we still want to be able to show error messages
-        if (!Nexus::getDesktopGUI())
-            ok::base::MessageBox::critical(nullptr, title, msg);
-        else
-            getInstance()._showError(title, msg);
+        getInstance()._showError(title, msg);
     } else {
         QMetaObject::invokeMethod(&getInstance(), "_showError", Qt::BlockingQueuedConnection,
                                   Q_ARG(const QString&, title), Q_ARG(const QString&, msg));
@@ -188,13 +167,6 @@ bool GUI::askQuestion(const QString& title, const QString& msg, const QString& b
     }
 }
 
-// Private implementations
-
-void GUI::_setEnabled(bool state) {
-    Widget* w = Nexus::getDesktopGUI();
-    if (w) w->setEnabled(state);
-}
-
 void GUI::_setWindowTitle(const QString& title) {
     QWidget* w = getMainWidget();
     if (!w) return;
@@ -205,8 +177,7 @@ void GUI::_setWindowTitle(const QString& title) {
 }
 
 void GUI::_reloadTheme() {
-    Widget* w = Nexus::getDesktopGUI();
-    if (w) w->reloadTheme();
+    qDebug() << __func__;
 }
 
 void GUI::_showInfo(const QString& title, const QString& msg) {
@@ -248,14 +219,10 @@ bool GUI::_askQuestion(const QString& title, const QString& msg, const QString& 
     return box.clickedButton() == pushButton1;
 }
 
-// Other
-
 /**
  * @brief Get the main widget.
  * @return The main QWidget* of the application
  */
 QWidget* GUI::getMainWidget() {
-    QWidget* maingui{nullptr};
-    maingui = Nexus::getDesktopGUI();
-    return maingui;
+    return ok::Application::Instance()->getMainWidget();
 }

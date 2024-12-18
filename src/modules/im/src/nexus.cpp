@@ -23,6 +23,7 @@
 #include "Bus.h"
 #include "application.h"
 #include "base/OkSettings.h"
+#include "gui.h"
 #include "lib/settings/translator.h"
 #include "persistence/settings.h"
 #include "src/core/core.h"
@@ -32,7 +33,6 @@
 #include "src/persistence/profile.h"
 #include "src/widget/widget.h"
 #include "video/camerasource.h"
-#include "widget/gui.h"
 
 #ifdef Q_OS_MAC
 #include <QActionGroup>
@@ -287,19 +287,9 @@ void Nexus::setSettings(Settings* settings) {
 //  }
 
 void Nexus::showMainGUI() {
-    // TODO(kriby): Rewrite as view-model connect sequence only, add to a
-    // controller class object
     assert(profile);
 
-    // Start GUI
     m_widget->init();
-    //    GUI::getInstance();
-
-    // Zetok protection
-    // There are small instants on startup during which no
-    // profile is loaded but the GUI could still receive events,
-    // e.g. between two modal windows. Disable the GUI to prevent that.
-    //    GUI::setEnabled(false);
 
     // Connections
     connect(profile, &Profile::selfAvatarChanged, m_widget, &Widget::onSelfAvatarLoaded);
@@ -318,8 +308,6 @@ void Nexus::showMainGUI() {
             Qt::BlockingQueuedConnection);
 
     profile->startCore();
-
-    GUI::setEnabled(true);
 }
 
 Module* Nexus::Create() {

@@ -20,7 +20,6 @@
 #include "src/persistence/profilelocker.h"
 #include "src/persistence/settingsserializer.h"
 #include "src/persistence/smileypack.h"
-#include "src/widget/gui.h"
 #include "style.h"
 
 #include "base/OkSettings.h"

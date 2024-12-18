@@ -17,12 +17,15 @@
 
 class QWidget;
 
+/**
+ * 图形/界面工具类
+ */
 class GUI : public QObject {
     Q_OBJECT
 public:
     static GUI& getInstance();
     static QWidget* getMainWidget();
-    static void setEnabled(bool state);
+    //    static void setEnabled(bool state);
     static void setWindowTitle(const QString& title);
     static void reloadTheme();
     static void showInfo(const QString& title, const QString& msg);
@@ -42,7 +45,6 @@ private:
 
 private slots:
     // Private implementation, those must be called from the GUI thread
-    void _setEnabled(bool state);
     void _setWindowTitle(const QString& title);
     void _reloadTheme();
     void _showInfo(const QString& title, const QString& msg);

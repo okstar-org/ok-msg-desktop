@@ -12,7 +12,6 @@
 
 #include "style.h"
 #include "settings.h"
-// #include "src/widget/gui.h"
 
 #include <QDebug>
 #include <QDir>

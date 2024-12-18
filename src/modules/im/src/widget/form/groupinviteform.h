@@ -14,7 +14,6 @@
 #define GROUPINVITEFORM_H
 
 #include "src/model/message.h"
-#include "src/widget/gui.h"
 
 #include <QScrollArea>
 #include <QWidget>

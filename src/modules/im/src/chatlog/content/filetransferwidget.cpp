@@ -13,11 +13,11 @@
 #include "filetransferwidget.h"
 #include "ui_filetransferwidget.h"
 
+#include "gui.h"
 #include "src/core/core.h"
 #include "src/core/corefile.h"
 #include "src/lib/settings/style.h"
 #include "src/persistence/settings.h"
-#include "src/widget/gui.h"
 #include "src/widget/widget.h"
 
 #include <libexif/exif-loader.h>
@@ -93,11 +93,6 @@ FileTransferWidget::FileTransferWidget(QWidget* parent, ToxFile file)
     updateWidget(file);
 
     setFixedHeight(64);
-
-    connect(&GUI::getInstance(), &GUI::themeApplyRequest, this, [this]() {
-        backgroundColorAnimation->stop();
-        setBackgroundColor(lastStatus, true);
-    });
 }
 
 FileTransferWidget::~FileTransferWidget() { delete ui; }

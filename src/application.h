@@ -39,16 +39,26 @@ class Application : public QApplication {
 public:
     Application(int& argc, char** argv);
 
-    static Application* Instance() { return dynamic_cast<Application*>(qApp); }
+    static Application* Instance() {
+        return dynamic_cast<Application*>(qApp);
+    }
 
     void start();
     void finish();
 
-
-    inline Bus* bus() const { return _bus.get(); }
+    inline Bus* bus() const {
+        return _bus.get();
+    }
 
     inline lib::session::AuthSession* getSession() {
         return session.get();
+    }
+
+    inline QWidget* getMainWidget() const {
+        if (m_mainWindow) {
+            return m_mainWindow.get();
+        }
+        return m_loginWindow.get();
     }
 
 private:

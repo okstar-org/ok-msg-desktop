@@ -32,6 +32,8 @@ set(${PROJECT_NAME}_SOURCES
     ipc.cpp
     Bus.h
     Bus.cpp
+    gui.h
+    gui.cpp
 )
 
 list(APPEND OK_LIBS

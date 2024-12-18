@@ -24,6 +24,7 @@
 #include <QWindow>
 #include "application.h"
 #include "friendform.h"
+#include "gui.h"
 #include "lib/backend/UserService.h"
 #include "lib/session/AuthSession.h"
 #include "lib/settings/translator.h"
@@ -32,7 +33,6 @@
 #include "src/nexus.h"
 #include "src/persistence/settings.h"
 #include "src/widget/contentlayout.h"
-#include "src/widget/gui.h"
 #include "src/widget/tool/croppinglabel.h"
 #include "ui_addfriendform.h"
 

@@ -22,6 +22,7 @@
 #include "base/OkSettings.h"
 #include "base/hashs.h"
 #include "base/images.h"
+#include "gui.h"
 #include "profile.h"
 #include "profilelocker.h"
 #include "settings.h"
@@ -29,7 +30,6 @@
 #include "src/core/coreav.h"
 #include "src/core/corefile.h"
 #include "src/nexus.h"
-#include "src/widget/gui.h"
 #include "src/widget/tool/identicon.h"
 #include "src/widget/widget.h"
 

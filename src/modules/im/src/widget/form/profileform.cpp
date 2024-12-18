@@ -27,6 +27,7 @@
 
 #include <QMouseEvent>
 #include <QWindow>
+#include "gui.h"
 #include "lib/settings/translator.h"
 #include "src/core/core.h"
 #include "src/lib/settings/style.h"
@@ -37,7 +38,6 @@
 #include "src/widget/contentlayout.h"
 #include "src/widget/form/setpassworddialog.h"
 #include "src/widget/form/settingswidget.h"
-#include "src/widget/gui.h"
 #include "src/widget/maskablepixmapwidget.h"
 #include "src/widget/tool/croppinglabel.h"
 #include "src/widget/widget.h"

@@ -204,8 +204,6 @@ set(${PROJECT_NAME}_SOURCES
 		src/persistence/settingsserializer.h
 		src/persistence/smileypack.cpp
 		src/persistence/smileypack.h
-		src/persistence/toxsave.cpp
-		src/persistence/toxsave.h
 		src/video/cameradevice.cpp
 		src/video/cameradevice.h
 		src/video/camerasource.cpp
@@ -319,8 +317,6 @@ set(${PROJECT_NAME}_SOURCES
 		src/widget/genericchatroomwidget.h
 		src/widget/groupwidget.cpp
 		src/widget/groupwidget.h
-		src/widget/gui.cpp
-		src/widget/gui.h
 		src/widget/maskablepixmapwidget.cpp
 		src/widget/maskablepixmapwidget.h
 		src/widget/notificationedgewidget.cpp

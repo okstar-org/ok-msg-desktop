@@ -48,6 +48,7 @@
 #include "form/groupchatform.h"
 #include "friendwidget.h"
 #include "groupwidget.h"
+#include "gui.h"
 #include "lib/settings/translator.h"
 #include "maskablepixmapwidget.h"
 #include "splitterrestorer.h"
@@ -76,7 +77,6 @@
 #include "src/widget/form/groupinviteform.h"
 #include "src/widget/form/profileform.h"
 #include "src/widget/form/settingswidget.h"
-#include "src/widget/gui.h"
 #include "tool/removefrienddialog.h"
 #include "ui_mainwindow.h"
 
