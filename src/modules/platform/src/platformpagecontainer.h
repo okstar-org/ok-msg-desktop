@@ -21,9 +21,9 @@ class Platform;
 class PlatformPage;
 class Widget;
 
-// PlatformPageContainer
-// 对外部提供页签打开、删除等操作
-
+/**
+ * PlatformPageContainer 对外部提供页签打开、删除等操作
+ */
 class PlatformPageContainer : public QObject {
     Q_OBJECT
 public:

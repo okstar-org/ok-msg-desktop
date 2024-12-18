@@ -35,6 +35,9 @@ namespace ok::platform {
 
 class AppCenterPage;
 
+/**
+ * 应用中心界面
+ */
 class AppCenterWidget : public UI::OWidget {
     Q_OBJECT
 

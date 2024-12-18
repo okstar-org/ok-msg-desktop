@@ -18,6 +18,9 @@
 class QVariantAnimation;
 class QTimeLine;
 
+/**
+ * 加载中界面
+ */
 class LoadingWidget : public QWidget {
 public:
     LoadingWidget(QWidget* target);

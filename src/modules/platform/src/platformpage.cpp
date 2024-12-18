@@ -13,18 +13,27 @@
 #include "platformpage.h"
 #include "platformpagecontainer.h"
 
-using namespace ok::platform;
+namespace ok::platform {
 
-ok::platform::PlatformPage::PlatformPage(PlatformPageContainer* pageContainer) {
+PlatformPage::PlatformPage(PlatformPageContainer* pageContainer) {
     this->pageContainer = pageContainer;
 }
 
-QString PlatformPage::getTitle() { return QString(); }
+QString PlatformPage::getTitle() {
+    return QString();
+}
 
-QIcon PlatformPage::getIcon() { return QIcon(); }
+QIcon PlatformPage::getIcon() {
+    return QIcon();
+}
 
-QWidget* PlatformPage::getWidget() { return nullptr; }
+QWidget* PlatformPage::getWidget() {
+    return nullptr;
+}
 
-void ok::platform::PlatformPage::start() {}
+void PlatformPage::start() {}
 
-QUrl ok::platform::PlatformPage::getUrl() { return QUrl(); }
+QUrl PlatformPage::getUrl() {
+    return QUrl();
+}
+}  // namespace ok::platform

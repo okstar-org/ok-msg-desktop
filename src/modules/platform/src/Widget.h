@@ -33,6 +33,9 @@ class AppCenterWidget;
 class PlatformPage;
 class PlatformPageContainer;
 
+/**
+ * 工作平台主界面
+ */
 class Widget : public UI::OMenuWidget {
     Q_OBJECT
 public:

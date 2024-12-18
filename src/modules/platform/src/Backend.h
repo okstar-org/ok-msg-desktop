@@ -103,6 +103,9 @@ struct InstanceDTO {
     QList<QString> volumes;
 };
 
+/**
+ * 后端接口
+ */
 class Backend : public lib::backend::BaseService {
     Q_OBJECT
 public:

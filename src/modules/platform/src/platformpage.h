@@ -19,11 +19,14 @@
 #include <QUrl>
 
 class QWidget;
+
 namespace ok::platform {
 
 class PlatformPageContainer;
 
-// 工作平台的页签基本信息类
+/**
+ *  工作平台的页签基本信息类
+ */
 class PlatformPage : public QObject {
     Q_OBJECT
 public:

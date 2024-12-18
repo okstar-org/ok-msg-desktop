@@ -23,6 +23,9 @@ namespace ok::platform {
 
 class PlatformPageContainer;
 
+/**
+ * 平台模块
+ */
 class Platform : public QObject, public Module {
     Q_OBJECT
 public:
@@ -43,7 +46,7 @@ public:
 
 private:
     std::unique_ptr<Widget> m_widget;
-    PlatformPageContainer* pageContainter = nullptr;
+    PlatformPageContainer* pageContainer = nullptr;
     QString name;
 };
 
