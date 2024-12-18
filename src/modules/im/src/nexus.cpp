@@ -293,13 +293,13 @@ void Nexus::showMainGUI() {
 
     // Start GUI
     m_widget->init();
-    GUI::getInstance();
+    //    GUI::getInstance();
 
     // Zetok protection
     // There are small instants on startup during which no
     // profile is loaded but the GUI could still receive events,
     // e.g. between two modal windows. Disable the GUI to prevent that.
-    GUI::setEnabled(false);
+    //    GUI::setEnabled(false);
 
     // Connections
     connect(profile, &Profile::selfAvatarChanged, m_widget, &Widget::onSelfAvatarLoaded);

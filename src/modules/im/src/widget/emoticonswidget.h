@@ -27,6 +27,9 @@ class QIcon;
 class QToolButton;
 class QButtonGroup;
 
+/**
+ * 聊天表情控件
+ */
 class EmoticonsWidget : public QMenu {
     Q_OBJECT
 public:

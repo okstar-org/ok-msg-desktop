@@ -32,6 +32,9 @@ class Contact;
 class QLabel;
 class Profile;
 
+/**
+ * 聊天界面头部区域
+ */
 class ChatFormHeader : public QWidget {
     Q_OBJECT
 public:

@@ -27,6 +27,9 @@
 #include "src/model/groupmessagedispatcher.h"
 #include "src/model/sessionchatlog.h"
 
+/**
+ * 群组件
+ */
 class GroupWidget final : public GenericChatroomWidget {
     Q_OBJECT
 

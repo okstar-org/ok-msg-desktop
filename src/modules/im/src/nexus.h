@@ -23,6 +23,7 @@ class Profile;
 class Settings;
 class Core;
 class QCommandLineParser;
+class IAudioControl;
 
 #ifdef Q_OS_MAC
 class QMenuBar;
@@ -33,13 +34,12 @@ class QActionGroup;
 class QSignalMapper;
 #endif
 
+/**
+ * 聊天模块关系组织者，模块实现。
+ */
 class Nexus : public QObject, public Module {
     Q_OBJECT
 public:
-    /**
-     * Module
-     */
-
     static Module* Create();
 
     void showMainGUI();

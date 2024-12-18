@@ -11,9 +11,9 @@
  */
 
 #include "chatlogitem.h"
+#include "friendlist.h"
+#include "grouplist.h"
 #include "src/core/core.h"
-#include "src/friendlist.h"
-#include "src/grouplist.h"
 #include "src/model/friend.h"
 #include "src/model/group.h"
 

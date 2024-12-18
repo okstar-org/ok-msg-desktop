@@ -18,7 +18,7 @@
 
 #include "Bus.h"
 #include "application.h"
-#include "src/friendlist.h"
+#include "friendlist.h"
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
 

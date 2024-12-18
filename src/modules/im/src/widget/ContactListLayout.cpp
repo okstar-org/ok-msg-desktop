@@ -15,8 +15,8 @@
 #include "ContactListWidget.h"
 #include "friendwidget.h"
 #include "genericchatitemlayout.h"
-#include "src/friendlist.h"
 #include "src/model/friend.h"
+#include "src/model/friendlist.h"
 #include "src/model/status.h"
 
 ContactListLayout::ContactListLayout(QWidget* parent) : QVBoxLayout(parent) {

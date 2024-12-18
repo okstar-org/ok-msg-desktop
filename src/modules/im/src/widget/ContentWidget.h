@@ -26,6 +26,9 @@
 class ContentLayout;
 class ChatForm;
 
+/**
+ * 主业务面板（聊天区）
+ */
 class ContentWidget : public QWidget {
     Q_OBJECT
 public:
@@ -40,8 +43,7 @@ public:
 
 private:
     void init();
-    QFrame* mainHLine;
-    QHBoxLayout* mainHLineLayout;
+
     QWidget* mainHead;
     QWidget* seperator;
     QWidget* mainContent;

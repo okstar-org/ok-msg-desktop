@@ -14,8 +14,8 @@
 
 #include <src/nexus.h>
 #include <QDebug>
-#include "src/grouplist.h"
 #include "src/model/group.h"
+#include "src/model/grouplist.h"
 #include "src/persistence/profile.h"
 #include "src/widget/widget.h"
 #include "ui_aboutgroupform.h"

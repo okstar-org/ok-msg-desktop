@@ -18,22 +18,17 @@
 #include "lib/session/AuthSession.h"
 
 class Profile;
-class QWidget;
-class IAudioControl;
 
+/**
+ * 需要保存的信息
+ */
 typedef struct {
     QByteArray windowGeometry;
 } SavedInfo;
 
-typedef enum {
-    MM_Avatar  // 头像
-} PayloadType;
-
-typedef struct {
-    PayloadType type;
-    QByteArray payload;
-} ModuleMessage;
-
+/**
+ * 模块接口申明
+ */
 class Module {
 public:
     static Module* Create();
@@ -53,9 +48,16 @@ public:
      */
     virtual void stop() = 0;
 
+    /**
+     * 是否启动
+     * @return
+     */
     virtual bool isStarted() = 0;
+
+    /**
+     * 隐藏
+     */
     virtual void hide() = 0;
-    virtual void onSave(SavedInfo&) = 0;
 
     /**
      * 用户登出时（但未退出应用），一些清理操作
@@ -66,4 +68,10 @@ public:
      * 模块切换
      */
     virtual void activate() {};
+
+protected:
+    /**
+     * 保存事件
+     */
+    virtual void onSave(SavedInfo&) = 0;
 };

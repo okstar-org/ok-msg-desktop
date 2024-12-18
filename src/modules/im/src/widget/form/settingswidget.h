@@ -24,13 +24,15 @@ class Camera;
 class GenericForm;
 class GeneralForm;
 class IAudioControl;
-class PrivacyForm;
 class AVForm;
 class QLabel;
 class QTabWidget;
 class ContentLayout;
 class Widget;
 
+/**
+ * 设置界面
+ */
 class SettingsWidget : public QWidget {
     Q_OBJECT
 public:

@@ -11,10 +11,10 @@
  */
 
 #include "src/model/chatroom/friendchatroom.h"
-#include "src/grouplist.h"
 #include "src/model/dialogs/idialogsmanager.h"
 #include "src/model/friend.h"
 #include "src/model/group.h"
+#include "src/model/grouplist.h"
 #include "src/model/status.h"
 #include "src/persistence/settings.h"
 #include "src/widget/contentdialog.h"

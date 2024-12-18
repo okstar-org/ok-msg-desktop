@@ -12,7 +12,6 @@
 
 #include "genericchatitemwidget.h"
 #include <src/core/core.h>
-#include <src/friendlist.h>
 #include <src/nexus.h>
 #include <QIcon>
 #include <QSvgRenderer>
@@ -20,6 +19,7 @@
 #include "maskablepixmapwidget.h"
 #include "src/lib/settings/style.h"
 #include "src/model/friend.h"
+#include "src/model/friendlist.h"
 #include "src/model/group.h"
 #include "src/persistence/profile.h"
 #include "src/persistence/settings.h"

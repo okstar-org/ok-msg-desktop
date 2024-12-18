@@ -20,7 +20,7 @@
 #include "src/core/coreav.h"
 #include "src/core/corefile.h"
 #include "src/core/icoresettings.h"
-#include "src/friendlist.h"
+#include "src/model/friendlist.h"
 #include "src/persistence/history.h"
 
 #include <QByteArray>

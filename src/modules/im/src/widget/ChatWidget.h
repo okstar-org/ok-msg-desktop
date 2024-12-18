@@ -69,10 +69,6 @@ private:
     std::unique_ptr<MessageSessionListWidget> sessionListWidget;
     CircleWidget* circleWidget;
 
-    Core* core;
-    CoreFile* coreFile;
-    CoreAV* coreAv;
-
     QAction* statusOnline;
     QAction* statusAway;
     QAction* statusBusy;
@@ -101,9 +97,9 @@ private:
 
     bool groupsVisible() const;
 
-    void connectToCore(Core* core_);
+    void connectToCore(Core* core);
     void connectToCoreFile(CoreFile* coreFile);
-    void connectToCoreAv(CoreAV* core_);
+    void connectToCoreAv(CoreAV* coreAv);
 
     void groupInvitesUpdate();
     void groupInvitesClear();

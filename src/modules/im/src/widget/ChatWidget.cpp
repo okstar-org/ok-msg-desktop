@@ -31,11 +31,11 @@
 #include "contentlayout.h"
 #include "lib/settings/translator.h"
 #include "src/core/corefile.h"
-#include "src/friendlist.h"
 #include "src/lib/settings/style.h"
+#include "src/model/friendlist.h"
 #include "src/model/group.h"
 #include "src/model/groupinvite.h"
-#include "src/modules/im/src/grouplist.h"
+#include "src/model/grouplist.h"
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
 #include "src/widget/form/addfriendform.h"
@@ -92,8 +92,6 @@ ChatWidget::ChatWidget(QWidget* parent)
         : MainLayout(parent)
         , ui(new Ui::ChatWidget)
         , unreadGroupInvites{0}
-        , core{nullptr}
-        , coreFile{nullptr}
         , profileInfo{nullptr}
         , profileForm{nullptr} {
     ui->setupUi(this);
@@ -174,26 +172,25 @@ void ChatWidget::deinit() {
     delete profileInfo;
 }
 
-void ChatWidget::connectToCore(Core* core_) {
-    qDebug() << __func__ << "core:" << core_;
-    core = core_;  // TODO: 待优化
+void ChatWidget::connectToCore(Core* core) {
+    qDebug() << __func__ << "core:" << core;
 
-    connect(core_, &Core::statusSet, this, &ChatWidget::onStatusSet);
-    connect(core_, &Core::statusMessageSet, this, &ChatWidget::onStatusMessageSet);
-    connect(core_, &Core::messageSessionReceived, this, &ChatWidget::onMessageSessionReceived);
-    connect(core_, &Core::friendNicknameChanged, this, &ChatWidget::onFriendNickChanged);
-    connect(core_, &Core::friendAvatarChanged, this, &ChatWidget::onFriendAvatarChanged);
-    connect(core_, &Core::friendMessageReceived, this, &ChatWidget::onFriendMessageReceived);
-    connect(core_, &Core::friendStatusChanged, this, &ChatWidget::onFriendStatusChanged);
-    connect(core_, &Core::friendStatusMessageChanged, this,
+    connect(core, &Core::statusSet, this, &ChatWidget::onStatusSet);
+    connect(core, &Core::statusMessageSet, this, &ChatWidget::onStatusMessageSet);
+    connect(core, &Core::messageSessionReceived, this, &ChatWidget::onMessageSessionReceived);
+    connect(core, &Core::friendNicknameChanged, this, &ChatWidget::onFriendNickChanged);
+    connect(core, &Core::friendAvatarChanged, this, &ChatWidget::onFriendAvatarChanged);
+    connect(core, &Core::friendMessageReceived, this, &ChatWidget::onFriendMessageReceived);
+    connect(core, &Core::friendStatusChanged, this, &ChatWidget::onFriendStatusChanged);
+    connect(core, &Core::friendStatusMessageChanged, this,
             &ChatWidget::onFriendStatusMessageChanged);
-    connect(core_, &Core::friendTypingChanged, this, &ChatWidget::onFriendTypingChanged);
-    connect(core_, &Core::receiptRecieved, this, &ChatWidget::onReceiptReceived);
-    connect(core_, &Core::groupMessageReceived, this, &ChatWidget::onGroupMessageReceived);
-    connect(core_, &Core::groupPeerlistChanged, this, &ChatWidget::onGroupPeerListChanged);
-    connect(core_, &Core::groupPeerSizeChanged, this, &ChatWidget::onGroupPeerSizeChanged);
-    connect(core_, &Core::groupPeerNameChanged, this, &ChatWidget::onGroupPeerNameChanged);
-    connect(core_, &Core::groupPeerStatusChanged, this, &ChatWidget::onGroupPeerStatusChanged);
+    connect(core, &Core::friendTypingChanged, this, &ChatWidget::onFriendTypingChanged);
+    connect(core, &Core::receiptRecieved, this, &ChatWidget::onReceiptReceived);
+    connect(core, &Core::groupMessageReceived, this, &ChatWidget::onGroupMessageReceived);
+    connect(core, &Core::groupPeerlistChanged, this, &ChatWidget::onGroupPeerListChanged);
+    connect(core, &Core::groupPeerSizeChanged, this, &ChatWidget::onGroupPeerSizeChanged);
+    connect(core, &Core::groupPeerNameChanged, this, &ChatWidget::onGroupPeerNameChanged);
+    connect(core, &Core::groupPeerStatusChanged, this, &ChatWidget::onGroupPeerStatusChanged);
 }
 
 void ChatWidget::connectToCoreFile(CoreFile* coreFile) {
@@ -213,8 +210,7 @@ void ChatWidget::connectToCoreFile(CoreFile* coreFile) {
     connect(coreFile, &CoreFile::fileSendFailed, this, &ChatWidget::dispatchFileSendFailed);
 }
 
-void ChatWidget::connectToCoreAv(CoreAV* core_) {
-    coreAv = core_;
+void ChatWidget::connectToCoreAv(CoreAV* coreAv) {
     connect(coreAv, &CoreAV::avInvite, this, &ChatWidget::onAvInvite);
     connect(coreAv, &CoreAV::avStart, this, &ChatWidget::onAvStart);
     connect(coreAv, &CoreAV::avPeerConnectionState, this, &ChatWidget::onAvPeerConnectionState);
@@ -304,6 +300,9 @@ void ChatWidget::onNicknameSet(const QString& nickname) {
     qDebug() << __func__ << nickname;
     ui->nameLabel->setText(nickname);
     ui->nameLabel->setToolTip(Qt::convertFromPlainText(nickname, Qt::WhiteSpaceNormal));
+
+    // 修改消息列表自己的昵称
+    auto core = Nexus::getInstance().getProfile()->getCore();
     sessionListWidget->setFriendName(core->getSelfId(), nickname);
 }
 
@@ -390,7 +389,7 @@ void ChatWidget::doForwardMessage(const ContactId& cid, const MsgId& msgId) {
 // }
 
 void ChatWidget::onGroupInviteAccepted(const GroupInvite& inviteInfo) {
-    const QString groupId = core->joinGroupchat(inviteInfo);
+    const QString groupId = Nexus::getCore()->joinGroupchat(inviteInfo);
     qDebug() << "onGroupInviteAccepted groupId=>" << groupId;
 
     if (groupId == std::numeric_limits<uint32_t>::max()) {
@@ -486,7 +485,7 @@ void ChatWidget::groupInvitesClear() {
 void ChatWidget::showProfile() {
     auto profile = Nexus::getProfile();
     if (!profileForm) {
-        profileInfo = new ProfileInfo(core, profile);
+        profileInfo = new ProfileInfo(Nexus::getCore(), profile);
         profileForm = new ProfileForm(profileInfo);
     }
 
@@ -643,7 +642,7 @@ void ChatWidget::setStatusOnline() {
     //  if (!ui->statusButton->isEnabled()) {
     //    return;
     //  }
-    core->setStatus(Status::Status::Online);
+    Nexus::getCore()->setStatus(Status::Status::Online);
 }
 
 void ChatWidget::setStatusAway() {
@@ -651,7 +650,7 @@ void ChatWidget::setStatusAway() {
     //    return;
     //  }
 
-    core->setStatus(Status::Status::Away);
+    Nexus::getCore()->setStatus(Status::Status::Away);
 }
 
 void ChatWidget::setStatusBusy() {
@@ -659,7 +658,7 @@ void ChatWidget::setStatusBusy() {
     //    return;
     //  }
 
-    core->setStatus(Status::Status::Busy);
+    Nexus::getCore()->setStatus(Status::Status::Busy);
 }
 
 void ChatWidget::onAvInvite(ToxPeer peerId, bool video) {

@@ -16,8 +16,8 @@
 #include <QFrame>
 #include <QLabel>
 #include "src/core/core.h"
-#include "src/friendlist.h"
 #include "src/model/friend.h"
+#include "src/model/friendlist.h"
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
 #include "src/persistence/settings.h"

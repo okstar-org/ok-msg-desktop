@@ -26,8 +26,8 @@
 #include "base/compatiblerecursivemutex.h"
 #include "lib/messenger/messenger.h"
 
-#include "src/friendlist.h"
 #include "src/model/VCard.h"
+#include "src/model/friendlist.h"
 #include "src/model/status.h"
 #include "src/util/strongtype.h"
 

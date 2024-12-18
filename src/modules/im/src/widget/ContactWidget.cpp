@@ -24,10 +24,10 @@
 #include "src/widget/form/aboutfriendform.h"
 #include "widget.h"
 
-#include "src/friendlist.h"
-#include "src/grouplist.h"
 #include "src/model/friend.h"
+#include "src/model/friendlist.h"
 #include "src/model/group.h"
+#include "src/model/grouplist.h"
 #include "src/widget/form/addfriendform.h"
 #include "src/widget/form/groupinviteform.h"
 #include "src/widget/friendwidget.h"

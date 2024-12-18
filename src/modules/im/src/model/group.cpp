@@ -13,12 +13,12 @@
 #include "group.h"
 #include <QDebug>
 #include "friend.h"
+#include "friendlist.h"
 #include "src/core/FriendId.h"
 #include "src/core/contactid.h"
 #include "src/core/core.h"
 #include "src/core/coreav.h"
 #include "src/core/groupid.h"
-#include "src/friendlist.h"
 #include "src/persistence/settings.h"
 #include "src/widget/form/groupchatform.h"
 #include "src/widget/groupwidget.h"

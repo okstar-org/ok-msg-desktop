@@ -14,10 +14,10 @@
 
 #include <tuple>
 
-#include "src/friendlist.h"
-#include "src/grouplist.h"
 #include "src/model/friend.h"
+#include "src/model/friendlist.h"
 #include "src/model/group.h"
+#include "src/model/grouplist.h"
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
 #include "src/widget/friendwidget.h"

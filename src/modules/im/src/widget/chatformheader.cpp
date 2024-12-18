@@ -31,8 +31,8 @@
 #include <src/model/contact.h>
 #include <src/model/friend.h>
 
-#include <src/friendlist.h>
 #include <src/widget/tool/callconfirmwidget.h>
+#include "src/model/friendlist.h"
 
 #include "Bus.h"
 #include "application.h"

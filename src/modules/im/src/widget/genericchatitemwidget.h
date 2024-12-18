@@ -13,11 +13,11 @@
 #ifndef GENERICCHATITEMWIDGET_H
 #define GENERICCHATITEMWIDGET_H
 
-#include <src/friendlist.h>
-#include <src/grouplist.h>
 #include <src/model/contact.h>
 #include <QFrame>
 #include <QLabel>
+#include "src/model/friendlist.h"
+#include "src/model/grouplist.h"
 #include "src/model/message.h"
 
 class CroppingLabel;

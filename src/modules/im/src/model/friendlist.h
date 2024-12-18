@@ -16,8 +16,8 @@
 #include <QMap>
 #include <cstdint>
 
-#include <src/core/FriendId.h>
-#include <src/core/contactid.h>
+#include "src/core/FriendId.h"
+#include "src/core/contactid.h"
 #include "src/model/message.h"
 
 template <class T> class QList;

@@ -38,6 +38,9 @@ protected:
     virtual void mouseReleaseEvent(QMouseEvent*) final override { emit clicked(); }
 };
 
+/**
+ * 个人信息表单界面
+ */
 class ProfileForm : public QWidget {
     Q_OBJECT
 public:
