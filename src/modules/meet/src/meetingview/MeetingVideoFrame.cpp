@@ -32,10 +32,12 @@
 #include <QToolButton>
 #include <QWindowStateChangeEvent>
 #include <memory>
+
+
 namespace module::meet {
 
 MeetingVideoFrame::MeetingVideoFrame(const QString& name, QWidget* parent)
-        : QWidget(parent), username(name) {
+        : QWidget(parent), username(name), timeElapsed(nullptr) {
     setAttribute(Qt::WA_StyledBackground);
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -239,7 +241,7 @@ void MeetingVideoFrame::retranslateUi() {
 
 void MeetingVideoFrame::startCounter() {
     // 启动计时
-    if(timeElapsed == nullptr)
+    if(!timeElapsed)
     {
         timeElapsed = new QElapsedTimer();
     }
@@ -255,7 +257,7 @@ void MeetingVideoFrame::startCounter() {
 }
 
 void MeetingVideoFrame::stopCounter() {
-    if ((timeElapsed == nullptr) || !timeElapsed->isValid()) {
+    if (!timeElapsed || !timeElapsed->isValid()) {
         return;
     }
     timeElapsed->invalidate();
