@@ -1128,8 +1128,8 @@ void WebRTC::addSource(const std::string& peerId,
         }
     }
 
-    auto cc = c->getLocalDescription()->Clone();
-    c->setLocalDescription(cc.release());
+    //    auto cc = c->getLocalDescription()->Clone();
+    //    c->setLocalDescription(cc.release());
     c->setRemoteDescription(d1.release());
     //    c->CreateAnswer();
 }

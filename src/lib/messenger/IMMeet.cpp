@@ -269,8 +269,21 @@ bool lib::messenger::IMMeet::doSessionInitiate(gloox::Jingle::Session* session,
         return false;
     }
 
-    cav.sdpType = lib::ortc::JingleSdpType::Offer;
-    auto rtc = ortc::OkRTCManager::getInstance()->getRtc();
+    cav.sdpType = ortc::JingleSdpType::Offer;
+    ortc::OkRTCManager* rtcManager = ortc::OkRTCManager::getInstance();
+    const auto& discos = im->getExternalServiceDiscovery();
+    for (const auto& item : discos) {
+        ortc::IceServer ice;
+        ice.uri = item.type + ":" + item.host + ":" + std::to_string(item.port) +
+                  "?transport=" + item.transport;
+        ice.username = item.username;
+        ice.password = item.password;
+        qDebug() << "Add ice:" << ice.uri.c_str() << "user:" << qstring(ice.username)
+                 << "password:" << qstring(ice.password);
+        rtcManager->addIceServer(ice);
+    }
+
+    auto rtc = rtcManager->getRtc();
     rtc->CreateAnswer(stdstring(peerId.toString()), cav);
 
     currentSid = sId;
