@@ -34,6 +34,7 @@
 #include <QGridLayout>
 #include <QMimeData>
 #include <QTimer>
+#include <QShortcut>
 
 #include "widget.h"
 
@@ -68,6 +69,13 @@ ContactListWidget::ContactListWidget(QWidget* parent, bool groupsOnTop)
 
     //  connect(Nexus::getProfile(), &Profile::coreChanged,
     //          this, &FriendListWidget::onCoreChanged);
+
+    new QShortcut(QKeySequence(Qt::Key_Up), this, [this](){
+        cycleContacts(true);
+    });
+    new QShortcut(QKeySequence(Qt::Key_Down), this, [this](){
+        cycleContacts(false);
+    });
 }
 
 ContactListWidget::~ContactListWidget() {
@@ -183,6 +191,68 @@ GroupWidget* ContactListWidget::addGroup(const GroupId& groupId, const QString& 
 void ContactListWidget::do_groupDeleted(const ContactId& cid) {
     qDebug() << __func__ << cid.toString();
     removeGroup(GroupId(cid));
+}
+
+void ContactListWidget::cycleContacts(bool forward)
+{
+    if(friendWidgets.empty() && groupWidgets.empty())
+    {
+        return;
+    }
+
+    GenericChatroomWidget* activeWidget = nullptr;
+
+    for (auto fw : friendWidgets) {
+        if(fw->isActive())
+        {
+            activeWidget = fw;
+            break;
+        }
+    }
+
+    if(activeWidget == nullptr)
+    {
+        for (auto gw : groupWidgets) {
+            if(gw->isActive())
+            {
+                activeWidget = gw;
+                break;
+            }
+        }
+    }
+
+    int curActiveWidgetIdx = -1;
+    int nextActiveWidgetIdx = -1;
+
+    if(activeWidget != nullptr)
+    {
+        curActiveWidgetIdx = listLayout->indexOfFriendWidget(activeWidget, true);
+    }
+
+    if(curActiveWidgetIdx != -1)
+    {
+        if(forward && curActiveWidgetIdx != 0)
+        {
+            nextActiveWidgetIdx = curActiveWidgetIdx - 1;
+        }
+        else if(!forward && curActiveWidgetIdx < listLayout->friendTotalCount() - 1)
+        {
+            nextActiveWidgetIdx = curActiveWidgetIdx + 1;
+        }
+    }
+    else
+    {
+        nextActiveWidgetIdx = 0;
+    }
+
+    if(nextActiveWidgetIdx != -1)
+    {
+        QWidget* widget = listLayout->getLayoutOnline()->itemAt(nextActiveWidgetIdx)->widget();
+        GenericChatroomWidget* chatWidget = qobject_cast<GenericChatroomWidget*>(widget);
+        if (chatWidget) {
+            emit chatWidget->chatroomWidgetClicked(chatWidget);
+        }
+    }
 }
 
 void ContactListWidget::removeGroup(const GroupId& cid) {
