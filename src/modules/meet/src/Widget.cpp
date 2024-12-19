@@ -190,6 +190,30 @@ void Widget::destroyMeeting() {
 }
 
 void Widget::setState(const MeetingState& state_) {
+    if (view) {
+        switch(state_)
+        {
+            case MeetingState::NoMeeting:
+            {
+                if(state == MeetingState::OnMeeting)
+                {
+                    view.data()->stopCounter();
+                }
+            }
+            break;
+            case MeetingState::OnMeeting:
+            {
+                if(state != MeetingState::OnMeeting)
+                {
+                    view.data()->startCounter();
+                }
+            }
+            break;
+            default:
+                break;
+        }
+    }
+
     state = state_;
     startMeetWidget->setMeetingState(state);
 }
