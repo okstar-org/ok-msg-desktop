@@ -365,17 +365,17 @@ void fromSdp(const webrtc::SessionDescriptionInterface* desc, OJingleContentAv& 
 void setSsrc(const SsrcGroup& ssrcGroup,
              const std::vector<OMeetSource>& sources,
              cricket::RtpMediaContentDescription* content) {
-    bool y = false;
+    //    bool y = false;
     cricket::StreamParams streamParams;
     for (auto& src : sources) {
-        if (src.name.starts_with("jvb-")) continue;
+        //        if (src.name.starts_with("jvb-")) continue;
         streamParams.ssrcs.push_back(std::stoul(src.ssrc));
         streamParams.cname = src.name;
         streamParams.set_stream_ids({src.msid});
-        y = true;
+        //        y = true;
     };
 
-    if (!y) return;
+    //    if (!y) return;
 
     // ssrc-groups
     if (!ssrcGroup.ssrcs.empty()) {
@@ -802,7 +802,6 @@ std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertToSdp(
         }
         return ptr;
     } else {
-        sessionDescription->AddGroup(group);
         std::vector<webrtc::IceCandidateInterface*> candidates;
         int mline = -1;
         for (auto& k : av.getSsrcBundle()) {
@@ -868,20 +867,24 @@ std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertToSdp(
                     }
                 } else if (rtp.media == Media::application) {
                     auto& mid = "data";
-                    auto data = createDataDescription(sdp);
-                    auto ti = toTransportInfo(mid, iceUdp);
-                    sessionDescription->AddTransportInfo(ti);
-                    sessionDescription->AddContent(mid, cricket::MediaProtocolType::kSctp,
-                                                   std::move(data));
-                    mline++;
-                    for (const auto& item : iceUdp.candidates) {
-                        auto candidate = toCandidate(item, iceUdp);
-                        auto c = webrtc::CreateIceCandidate(mid, mline, candidate);
-                        candidates.push_back(c.release());
+                    if (group.HasContentName(mid)) {
+                        auto data = createDataDescription(sdp);
+                        auto ti = toTransportInfo(mid, iceUdp);
+                        sessionDescription->AddTransportInfo(ti);
+                        sessionDescription->AddContent(mid, cricket::MediaProtocolType::kSctp,
+                                                       std::move(data));
+                        mline++;
+                        for (const auto& item : iceUdp.candidates) {
+                            auto candidate = toCandidate(item, iceUdp);
+                            auto c = webrtc::CreateIceCandidate(mid, mline, candidate);
+                            candidates.push_back(c.release());
+                        }
+                        group.AddContentName(mid);
                     }
                 }
             }
         }
+        sessionDescription->AddGroup(group);
 
         auto ptr = webrtc::CreateSessionDescription(sdpType, av.sessionId, av.sessionVersion,
                                                     std::move(sessionDescription));
@@ -890,6 +893,7 @@ std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertToSdp(
                 RTC_LOG(LS_WARNING) << " Can not add candidate: " << c->sdp_mid();
             }
         }
+
         return ptr;
     }
 }

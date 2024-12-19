@@ -344,7 +344,7 @@ bool IMCall::answer(const IMPeerId& peerId, const QString& callId, bool video) {
              << "video:" << video;
 
     ortc::OkRTCManager* rtcManager = lib::ortc::OkRTCManager::getInstance();
-    auto rtc = rtcManager->getRtc();
+    auto rtc = rtcManager->createRtc();
     rtc->addRTCHandler(this);
 
     const auto& discos = im->getExternalServiceDiscovery();

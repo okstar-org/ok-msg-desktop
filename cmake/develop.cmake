@@ -49,7 +49,11 @@ message(STATUS "GIT_VER=${GIT_VER}")
 string(REPLACE "." ";" GIT_VER_SEQ ${GIT_VER})
 list(LENGTH GIT_VER_SEQ GIT_VER_LEN)
 if (NOT ${GIT_VER_LEN} EQUAL 3)
-  message(FATAL_ERROR "Invalid version:${GIT_VER}")
+  message(WARNING "Invalid tag:${GIT_VER}")
+  string(TIMESTAMP COMPILE_TIME %Y.%m.%d)#%Y.%m.%d_%H%M%S
+  set(BUILD_TIME ${COMPILE_TIME})
+  message(STATUS "BUILD_TIME:${BUILD_TIME}")
+  string(REPLACE "." ";" GIT_VER_SEQ ${BUILD_TIME})
 endif ()
 
 list(GET GIT_VER_SEQ 0 OK_VER_MAJOR)
