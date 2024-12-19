@@ -48,4 +48,55 @@ std::string PeerConnectionStateAsStr(PeerConnectionState state) {
     return {};
 }
 
+std::string IceGatheringStateAsStr(IceGatheringState state) {
+    switch (state) {
+        case IceGatheringState::New:
+            return "New";
+        case IceGatheringState::Gathering:
+            return "Gathering";
+        case IceGatheringState::Complete:
+            return "Complete";
+    }
+    return {};
+}
+
+std::string IceConnectionStateAsStr(IceConnectionState state) {
+    switch (state) {
+        case IceConnectionState::New:
+            return "New";
+        case IceConnectionState::Closed:
+            return "Closed";
+        case IceConnectionState::Failed:
+            return "Failed";
+        case IceConnectionState::Connected:
+            return "Connected";
+        case IceConnectionState::Disconnected:
+            return "Disconnected";
+        case IceConnectionState::Checking:
+            return "Checking";
+        case IceConnectionState::Completed:
+            return "Completed";
+        case IceConnectionState::Max:
+            return "Max";
+    }
+    return {};
+}
+
+std::string SignalingStateAsStr(SignalingState state) {
+    switch (state) {
+        case SignalingState::Stable:
+            return "Stable";
+        case SignalingState::HaveLocalOffer:
+            return "HaveLocalOffer";
+        case SignalingState::HaveLocalPrAnswer:
+            return "HaveLocalPrAnswer";
+        case SignalingState::HaveRemoteOffer:
+            return "HaveRemoteOffer";
+        case SignalingState::HaveRemotePrAnswer:
+            return "HaveRemotePrAnswer";
+        case SignalingState::Closed:
+            return "Closed";
+    }
+    return {};
+}
 }  // namespace lib::ortc

@@ -401,8 +401,8 @@ void IMMeet::onIceGatheringChange(const std::string& sId, const std::string& pee
     QString qsId = qstring(sId);
     QString qPeerId = qstring(peerId);
 
-    qDebug() << __func__ << "sId:" << qsId << "peerId:" << qPeerId;
-    qDebug() << "state:" << static_cast<int>(state);
+    qDebug() << __func__ << "sId:" << qsId << "peerId:" << qPeerId
+             << "state:" << qstring(IceGatheringStateAsStr(state));
 
     emit iceGatheringStateChanged(IMPeerId(qPeerId), qsId, state);
 
@@ -427,33 +427,31 @@ void IMMeet::doForIceCompleted(const QString& sId, const QString& peerId) {
 
     gloox::Jingle::PluginList plugins;
     ToPlugins(av, plugins);
-
-    //    if (pSession->direction() == CallDirection::CallIn) {
     currentSession->sessionAccept(plugins);
-    //    } else if (pSession->direction() == CallDirection::CallOut) {
-    //        pSession->getSession()->sessionInitiate(plugins);
-    //    }
 }
 
 void IMMeet::onIceConnectionChange(const std::string& sId, const std::string& peerId,
                                    ortc::IceConnectionState state) {
     QString qsId = qstring(sId);
     QString qPeerId = qstring(peerId);
-    qDebug() << __func__ << "sId:" << qsId << "peerId:" << qPeerId;
-    qDebug() << "state:" << static_cast<int>(state);
+    qDebug() << __func__ << "sId:" << qsId << "peerId:" << qPeerId
+             << "state:" << qstring(ortc::IceConnectionStateAsStr(state));
 }
 
 void IMMeet::onPeerConnectionChange(const std::string& sId, const std::string& peerId,
                                     ortc::PeerConnectionState state) {
     QString qsId = qstring(sId);
     QString qPeerId = qstring(peerId);
-    qDebug() << __func__ << "sId:" << qsId << "peerId:" << qPeerId;
-    qDebug() << "state:" << qstring(ortc::PeerConnectionStateAsStr(state));
+    qDebug() << __func__ << "sId:" << qsId << "peerId:" << qPeerId
+             << "state:" << qstring(ortc::PeerConnectionStateAsStr(state));
 }
 
 void IMMeet::onSignalingChange(const std::string& sId, const std::string& peerId,
                                ortc::SignalingState state) {
-    return;
+    QString qsId = qstring(sId);
+    QString qPeerId = qstring(peerId);
+    qDebug() << __func__ << "sId:" << qsId << "peerId:" << qPeerId
+             << "state:" << qstring(ortc::SignalingStateAsStr(state));
 }
 
 void IMMeet::onRender(const std::string& friendId, ortc::RendererImage image) {

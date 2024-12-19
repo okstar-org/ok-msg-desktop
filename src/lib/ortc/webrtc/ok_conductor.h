@@ -56,9 +56,11 @@ public:
 
     virtual void OnSessionTerminate(const std::string& sid, ortc::OkRTCHandler* handler);
 
-    void setRemoteDescription(std::unique_ptr<webrtc::SessionDescriptionInterface> desc);
-
+    void setRemoteDescription(webrtc::SessionDescriptionInterface* desc);
     const webrtc::SessionDescriptionInterface* getRemoteDescription();
+
+    const webrtc::SessionDescriptionInterface* getLocalDescription();
+    void setLocalDescription(webrtc::SessionDescriptionInterface* desc);
 
     void setMute(bool mute);
     void setRemoteMute(bool mute);
@@ -109,14 +111,14 @@ protected:
     void OnSetRemoteDescriptionComplete(webrtc::RTCError error) override;
 
     /**
-     * SetSessionDescriptionObserver
-     * implementation.
-     *
+     * SetSessionDescriptionObserver implementation.
+     * SetLocalDescription and SetRemoteDescription callback
      */
     void OnSuccess() override;
 
     /**
      * CreateSessionDescriptionObserver
+     * CreateOffer and CreateAnswer callback interface.
      * @param desc
      */
     virtual void OnSuccess(webrtc::SessionDescriptionInterface* desc) override;

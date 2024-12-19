@@ -220,27 +220,17 @@ void Conductor::OnConnectionChange(webrtc::PeerConnectionInterface::PeerConnecti
 
 void Conductor::OnTrack(rtc::scoped_refptr<webrtc::RtpTransceiverInterface> transceiver) {
     RTC_LOG(LS_INFO) << __FUNCTION__ << " mid: " << transceiver->mid()->data();
-}
 
-void Conductor::OnAddTrack(
-        rtc::scoped_refptr<webrtc::RtpReceiverInterface> receiver,
-        const std::vector<rtc::scoped_refptr<webrtc::MediaStreamInterface>>& streams) {
-    for (auto& stream : streams) {
-        RTC_LOG(LS_INFO) << __FUNCTION__ << " Stream id: " << stream->id();
-    }
+    // if(transceiver->mid()->starts_with("jvb-")){
+    //     RTC_LOG(LS_INFO) << "Ignore stream!";
+    //     return;
+    // }
+
+    auto receiver = transceiver->receiver();
 
     auto ps = receiver->GetParameters();
     RTC_LOG(LS_INFO) << __FUNCTION__ << " ssrc: " << ps.rtcp.ssrc.value_or(0)
                      << " cname: " << ps.rtcp.cname;
-
-    // std::string receiverId = receiver->id();
-    // RTC_LOG(LS_INFO) << __FUNCTION__ << " Receiver id:" << receiverId;
-
-    // if (receiverId.empty()) {
-    //     RTC_LOG(LS_WARNING) << __FUNCTION__ << " Receiver id is empty.";
-    //     return;
-    // }
-
     // track
     auto track = receiver->track();
     RTC_LOG(LS_INFO) << __FUNCTION__ << " kind:" << track->kind() << " trackId:" << track->id();
@@ -253,6 +243,22 @@ void Conductor::OnAddTrack(
         auto _remote_video_track = static_cast<webrtc::VideoTrackInterface*>(track.get());
         _remote_video_track->AddOrUpdateSink(_videoSink.get(), rtc::VideoSinkWants());
     }
+}
+
+void Conductor::OnAddTrack(
+        rtc::scoped_refptr<webrtc::RtpReceiverInterface> receiver,
+        const std::vector<rtc::scoped_refptr<webrtc::MediaStreamInterface>>& streams) {
+    // std::string receiverId = receiver->id();
+    // RTC_LOG(LS_INFO) << __FUNCTION__ << " Receiver id:" << receiverId;
+
+    // if (receiverId.empty()) {
+    //     RTC_LOG(LS_WARNING) << __FUNCTION__ << " Receiver id is empty.";
+    //     return;
+    // }
+
+    //    for (auto& stream : streams) {
+    //        RTC_LOG(LS_INFO) << __FUNCTION__ << " Stream id: " << stream->id();
+    //    }
 }
 
 /**
@@ -290,17 +296,30 @@ void Conductor::CreateAnswer() {
     RTC_LOG(LS_INFO) << __FUNCTION__ << " done.";
 }
 
-void Conductor::setRemoteDescription(std::unique_ptr<webrtc::SessionDescriptionInterface> desc) {
+void Conductor::setRemoteDescription(webrtc::SessionDescriptionInterface* desc) {
     RTC_LOG(LS_INFO) << __FUNCTION__ << " desc type:" << desc->type();
 
     std::string sdp;
     desc->ToString(&sdp);
     RTC_LOG(LS_INFO) << "set remote sdp:\n" << sdp;
-    peer_connection_->SetRemoteDescription(this, desc.release());
+    peer_connection_->SetRemoteDescription(this, desc);
 }
 
 const webrtc::SessionDescriptionInterface* Conductor::getRemoteDescription() {
     return peer_connection_->remote_description();
+}
+
+void Conductor::setLocalDescription(webrtc::SessionDescriptionInterface* desc) {
+    RTC_LOG(LS_INFO) << __FUNCTION__ << " desc type:" << desc->type();
+
+    std::string sdp;
+    desc->ToString(&sdp);
+    RTC_LOG(LS_INFO) << "set local sdp:\n" << sdp;
+    peer_connection_->SetLocalDescription(this, desc);
+}
+
+const webrtc::SessionDescriptionInterface* Conductor::getLocalDescription() {
+    return peer_connection_->local_description();
 }
 
 bool Conductor::setTransportInfo(std::unique_ptr<webrtc::IceCandidateInterface> candidate) {

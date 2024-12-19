@@ -279,35 +279,51 @@ private:
     std::map<std::string, OMeetSSRCBundle> ssrcBundle;
 };
 
+/**
+ * ICE 收集状态
+ * https://w3c.github.io/webrtc-pc/#dom-rtcicegatheringstate
+ */
 enum class IceGatheringState { New, Gathering, Complete };
+std::string IceGatheringStateAsStr(IceGatheringState state);
 
+/**
+ * onIceConnectionChange
+ */
 enum class IceConnectionState {
-    New,
-    Checking,
-    Connected,
-    Completed,
-    Failed,
-    Disconnected,
-    Closed,
-    Max,
+    New,           //
+    Checking,      //
+    Connected,     //
+    Completed,     //
+    Failed,        //
+    Disconnected,  //
+    Closed,        //
+    Max,           //
 };
+std::string IceConnectionStateAsStr(IceConnectionState state);
 
 enum class PeerConnectionState {
-    New,
-    Connecting,
-    Connected,
-    Disconnected,
-    Failed, Closed };
-
+    New,           //
+    Connecting,    //
+    Connected,     //
+    Disconnected,  //
+    Failed,        //
+    Closed         //
+};
 std::string PeerConnectionStateAsStr(PeerConnectionState state);
 
+/**
+ * WebRTC信号状态
+ * https://w3c.github.io/webrtc-pc/#dom-rtcsignalingstate
+ */
 enum SignalingState {
-    Stable,
-    HaveLocalOffer,
-    HaveLocalPrAnswer,
-    HaveRemoteOffer,
-    HaveRemotePrAnswer,
-    Closed,
+    Stable,             // 已经建立，或者初始状态
+    HaveLocalOffer,     // 本地发起，调用setLocalDescription之后
+    HaveLocalPrAnswer,  // 创建了本地应答，调用setLocalDescription()之后
+    HaveRemoteOffer,    // 对方发起，调用setRemoteDescription之后
+    HaveRemotePrAnswer,  // 对端的临时应答（pranswer），并成功地调用了setRemoteDescription()方法
+    Closed,  // 表示RTCPeerConnection已经关闭。
 };
+
+std::string SignalingStateAsStr(SignalingState state);
 
 }  // namespace lib::ortc
