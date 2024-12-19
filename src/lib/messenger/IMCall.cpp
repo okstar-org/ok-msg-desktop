@@ -322,7 +322,10 @@ void IMCall::cancelCall(const IMContactId& friendId, const QString& sId) {
     currentSid.clear();
     auto rtcManager = ortc::OkRTCManager::getInstance();
     auto rtc = rtcManager->getRtc();
-    rtc->removeRTCHandler(this);
+    if(rtc)
+    {
+        rtc->removeRTCHandler(this);
+    }
 }
 
 void IMCall::rejectCall(const IMPeerId& peerId, const QString& sId) {
