@@ -454,8 +454,16 @@ void IMMeet::onSignalingChange(const std::string& sId, const std::string& peerId
              << "state:" << qstring(ortc::SignalingStateAsStr(state));
 }
 
-void IMMeet::onRender(const std::string& friendId, ortc::RendererImage image) {
-    qDebug() << __func__ << "render image {w:" << image.width_ << ", h:" << image.height_ << "}";
+void IMMeet::onRender(const std::string& friendId, const ortc::RendererImage& image) {
+    //    qDebug() << __func__ << "render friendId:" << qstring(friendId) //
+    //             << " image {w:" << image.width_ << ", h:" << image.height_ << "}";
+    for (auto h : handlers) {
+        if (friendId.empty()) {
+            h->onSelfVideoFrame(image);
+        } else {
+            h->onParticipantVideoFrame({}, image);
+        }
+    }
 }
 
 }  // namespace lib::messenger

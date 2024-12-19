@@ -681,7 +681,7 @@ void WebRTC::setIceOptions(std::list<IceServer>& ices) {
 std::map<std::string, OIceUdp> WebRTC::getCandidates(const std::string& peerId) {
     auto conductor = getConductor(peerId);
     if (!conductor) return {};
-    return fromIce(conductor->getLocalSdp());
+    return fromIce(conductor->getLocalDescription());
 }
 
 webrtc::SdpType WebRTC::convertToSdpType(JingleSdpType sdpType_) {
@@ -1022,7 +1022,7 @@ void WebRTC::setTransportInfo(const std::string& peerId,
         }
 
         auto jsep_candidate = webrtc::CreateIceCandidate(iceUdp.mid, mline, candidate);
-        conductor->setTransportInfo(std::move(jsep_candidate));
+        conductor->addCandidate(std::move(jsep_candidate));
         mline++;
     }
 }
@@ -1164,7 +1164,7 @@ void WebRTC::getLocalSdp(const std::string& peerId, OJingleContentAv& av) {
     auto conductor = getConductor(peerId);
     assert(conductor);
 
-    fromSdp(conductor->getLocalSdp(), av);
+    fromSdp(conductor->getLocalDescription(), av);
 }
 
 size_t WebRTC::getVideoSize() {

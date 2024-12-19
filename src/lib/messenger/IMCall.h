@@ -154,7 +154,7 @@ public:
                const lib::ortc::OIceUdp&) override;
 
     // Renderer
-    void onRender(const std::string& peerId, lib::ortc::RendererImage image) override;
+    void onRender(const std::string& peerId, const lib::ortc::RendererImage& image) override;
 
     void addCallHandler(CallHandler*);
 

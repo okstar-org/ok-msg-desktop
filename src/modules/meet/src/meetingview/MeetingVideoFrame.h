@@ -68,6 +68,11 @@ private:
 
     void onParticipantLeft(const ok::base::Jid& jid, const QString& participant) override;
 
+    void onSelfVideoFrame(const lib::ortc::RendererImage& image) override;
+
+    void onParticipantVideoFrame(const QString& participant,
+                                 const lib::ortc::RendererImage& image) override;
+
 private:
     // for run in UI thread
     void addParticipant(const QString& name, const lib::messenger::Participant& parti);

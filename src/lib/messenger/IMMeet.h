@@ -152,7 +152,7 @@ protected:
                const std::string& peerId,
                const ortc::OIceUdp& iceUdp) override;
 
-    void onRender(const std::string& friendId, ortc::RendererImage image) override;
+    void onRender(const std::string& friendId, const ortc::RendererImage& image) override;
 
 private:
     void doForIceCompleted(const QString& sId, const QString& peerId);

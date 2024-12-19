@@ -20,33 +20,15 @@
 
 namespace lib::ortc {
 
-struct RendererImage {
-    size_t width_;
-    size_t height_;
-    uint8_t* y;       //
-    uint8_t* u;       //
-    uint8_t* v;       //
-    int32_t ystride;  //
-    int32_t ustride;  //
-    int32_t vstride;  //
-};
-
 struct IceServer {
     std::string uri;
     std::string username;
     std::string password;
 
-    std::string toString() const {
+    [[nodiscard]] std::string toString() const {
         std::stringstream ss;
-        ss << "{uri:" << uri
-           << ","
-              "  username:"
-           << username
-           << ", "
-              "  password:"
-           << password << "}";
+        ss << "{uri:" << uri << ",  username:" << username << ", password:" << password << "}";
         return ss.str();
-        ;
     }
 };
 
@@ -91,7 +73,7 @@ public:
                        const std::string& peerId,
                        const OIceUdp& iceUdp) = 0;
 
-    virtual void onRender(const std::string& friendId, RendererImage image) = 0;
+    virtual void onRender(const std::string& friendId, const RendererImage& image) = 0;
 };
 
 /**

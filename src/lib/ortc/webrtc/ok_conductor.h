@@ -52,7 +52,7 @@ public:
 
     void sessionTerminate();
 
-    bool setTransportInfo(std::unique_ptr<webrtc::IceCandidateInterface> candidate);
+    bool addCandidate(std::unique_ptr<webrtc::IceCandidateInterface> candidate);
 
     virtual void OnSessionTerminate(const std::string& sid, ortc::OkRTCHandler* handler);
 
@@ -69,8 +69,6 @@ public:
         return _candidates;
     }
 
-    const webrtc::SessionDescriptionInterface* getLocalSdp() const;
-
     inline ortc::JoinOptions joinOptions() { return _joinOptions; }
 
     size_t getVideoCaptureSize();
@@ -83,7 +81,7 @@ public:
     bool AddAudioTrack(webrtc::AudioSourceInterface* _audioSource);
     bool RemoveAudioTrack();
 
-    bool AddVideoTrack(webrtc::VideoTrackSourceInterface* _videoTrackSource);
+    bool AddVideoTrack(webrtc::VideoTrackSourceInterface* source);
     bool RemoveVideoTrack();
 
 protected:

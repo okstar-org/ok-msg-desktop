@@ -527,7 +527,7 @@ void IMCall::onIce(const std::string& sId,     //
  * @param peerId
  * @param image
  */
-void IMCall::onRender(const std::string& peerId, lib::ortc::RendererImage image) {
+void IMCall::onRender(const std::string& peerId, const lib::ortc::RendererImage& image) {
     if (peerId.empty()) {
         for (const auto& item : callHandlers) {
             item->onSelfVideoFrame(image.width_, image.height_, image.y, image.u, image.v,

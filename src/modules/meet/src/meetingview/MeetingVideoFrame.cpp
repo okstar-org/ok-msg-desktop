@@ -33,7 +33,6 @@
 #include <QWindowStateChangeEvent>
 #include <memory>
 
-
 namespace module::meet {
 
 MeetingVideoFrame::MeetingVideoFrame(const QString& name, QWidget* parent)
@@ -241,8 +240,7 @@ void MeetingVideoFrame::retranslateUi() {
 
 void MeetingVideoFrame::startCounter() {
     // 启动计时
-    if(!timeElapsed)
-    {
+    if (!timeElapsed) {
         timeElapsed = new QElapsedTimer();
     }
     timeElapsed->start();
@@ -343,11 +341,24 @@ void MeetingVideoFrame::updateDuration() {
     auto elapsedSeconds = timeElapsed->elapsed() / 1000;
 
     // 将秒转换为 HH:MM:SS 格式
-    QTime duration(0, 0, 0); // 初始化时间为 00:00:00
+    QTime duration(0, 0, 0);  // 初始化时间为 00:00:00
     duration = duration.addSecs(elapsedSeconds);
 
     // 更新标签文本
     duraionLabel->setText(duration.toString("hh:mm:ss"));
+}
+
+void MeetingVideoFrame::onSelfVideoFrame(const lib::ortc::RendererImage& image) {
+    /**
+     * TODO 自己的视频帧
+     */
+}
+
+void MeetingVideoFrame::onParticipantVideoFrame(const QString& participant,
+                                                const lib::ortc::RendererImage& image) {
+    /**
+     * TODO 成员的视频帧
+     */
 }
 
 }  // namespace module::meet

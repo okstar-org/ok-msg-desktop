@@ -131,12 +131,12 @@ bool Conductor::RemoveAudioTrack() {
     return result.ok();
 }
 
-bool Conductor::AddVideoTrack(webrtc::VideoTrackSourceInterface* _videoTrackSource) {
-    RTC_LOG(LS_INFO) << __FUNCTION__ << ":" << _videoTrackSource;
+bool Conductor::AddVideoTrack(webrtc::VideoTrackSourceInterface* source) {
+    RTC_LOG(LS_INFO) << __FUNCTION__ << " source:" << source;
 
     std::string label = "ok-video-track-label";
 
-    _videoTrack = webRtc->getFactory()->CreateVideoTrack(label, _videoTrackSource);
+    _videoTrack = webRtc->getFactory()->CreateVideoTrack(label, source);
     RTC_LOG(LS_INFO) << "Created video track:" << _videoTrack.get();
 
     std::string streamId = "ok-video-stream";
@@ -322,10 +322,10 @@ const webrtc::SessionDescriptionInterface* Conductor::getLocalDescription() {
     return peer_connection_->local_description();
 }
 
-bool Conductor::setTransportInfo(std::unique_ptr<webrtc::IceCandidateInterface> candidate) {
+bool Conductor::addCandidate(std::unique_ptr<webrtc::IceCandidateInterface> candidate) {
     std::string str;
     candidate->ToString(&str);
-    RTC_LOG(LS_INFO) << __FUNCTION__ << " set remote candidate:"
+    RTC_LOG(LS_INFO) << __FUNCTION__ << " add remote candidate:"
                      << " mid:" << candidate->sdp_mid()
                      << " mline: " << candidate->sdp_mline_index() << " | " << str;
 
@@ -362,10 +362,6 @@ void Conductor::OnFailure(webrtc::RTCError error) {
 
 void Conductor::OnSetRemoteDescriptionComplete(webrtc::RTCError error) {
     RTC_LOG(LS_INFO) << __FUNCTION__ << " : " << error.message();
-}
-
-const webrtc::SessionDescriptionInterface* Conductor::getLocalSdp() const {
-    return peer_connection_->local_description();
 }
 
 }  // namespace lib::ortc

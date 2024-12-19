@@ -326,4 +326,18 @@ enum SignalingState {
 
 std::string SignalingStateAsStr(SignalingState state);
 
+/**
+ * 视频帧
+ */
+struct RendererImage {
+    size_t width_;
+    size_t height_;
+    uint8_t* y;       //
+    uint8_t* u;       //
+    uint8_t* v;       //
+    int32_t ystride;  //
+    int32_t ustride;  //
+    int32_t vstride;  //
+};
+
 }  // namespace lib::ortc
