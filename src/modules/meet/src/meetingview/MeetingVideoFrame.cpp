@@ -55,7 +55,6 @@ MeetingVideoFrame::MeetingVideoFrame(const QString& name, QWidget* parent)
     mainLayout->addWidget(videosLayout, 1);
     mainLayout->addWidget(bottomBar, 0);
 
-    updateDuration();
     initConnection();
     reloadTheme();
     retranslateUi();
@@ -65,11 +64,19 @@ MeetingVideoFrame::MeetingVideoFrame(const QString& name, QWidget* parent)
     meet = new lib::messenger::MessengerMeet(core->getMessenger(), this);
     meet->addHandler(this);
     createMeet(name);
+
+    callDurationTimer = new QTimer(this);
+    connect(callDurationTimer, &QTimer::timeout, this, &MeetingVideoFrame::updateDuration);
 }
 
 MeetingVideoFrame::~MeetingVideoFrame() {
     disconnect(this);
     meet->deleteLater();
+
+    if (timeElapsed != nullptr) {
+        delete timeElapsed;
+        timeElapsed = nullptr;
+    }
 
     if (!participantMap.isEmpty()) {
         videosLayout->clearParticipant();
@@ -195,11 +202,6 @@ void MeetingVideoFrame::toggleFullScreen() {
     }
 }
 
-void MeetingVideoFrame::updateDuration() {
-    // duraionLabel->setText("00:00:00");
-    //
-}
-
 void MeetingVideoFrame::showAudioPopMenu() {
     // create menu everytime or create once and set menu
     // QMenu menu(this);
@@ -233,6 +235,35 @@ void MeetingVideoFrame::retranslateUi() {
     leaveButton->setToolTip(tr("Leave meeting"));
 
     recoardButton->setToolTip(tr("Record"));
+}
+
+void MeetingVideoFrame::startCounter() {
+    // 启动计时
+    if(timeElapsed == nullptr)
+    {
+        timeElapsed = new QElapsedTimer();
+    }
+    timeElapsed->start();
+
+    if (!timeElapsed->isValid()) {
+        qWarning() << "Unsupported QElapsedTimer!";
+        return;
+    }
+
+    // 启动计时器
+    callDurationTimer->start(1000);
+}
+
+void MeetingVideoFrame::stopCounter() {
+    if ((timeElapsed == nullptr) || !timeElapsed->isValid()) {
+        return;
+    }
+    timeElapsed->invalidate();
+
+    delete timeElapsed;
+    timeElapsed = nullptr;
+
+    callDurationTimer->stop();
 }
 
 /**
@@ -300,6 +331,21 @@ void MeetingVideoFrame::removeParticipant(const QString& name, const QString& re
 void MeetingVideoFrame::doLeaveMeet() {
     meet->leave();
     emit meetLeft();
+}
+
+void MeetingVideoFrame::updateDuration() {
+    if (!timeElapsed) {
+        return;
+    }
+    // 获取已经流逝的时间（以秒为单位）
+    auto elapsedSeconds = timeElapsed->elapsed() / 1000;
+
+    // 将秒转换为 HH:MM:SS 格式
+    QTime duration(0, 0, 0); // 初始化时间为 00:00:00
+    duration = duration.addSecs(elapsedSeconds);
+
+    // 更新标签文本
+    duraionLabel->setText(duration.toString("hh:mm:ss"));
 }
 
 }  // namespace module::meet

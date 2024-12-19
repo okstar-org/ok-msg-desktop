@@ -108,6 +108,10 @@ public slots:
     void slot_groupClicked(GenericChatroomWidget*);
     void do_toShowDetails(const ContactId& cid);
     void do_groupDeleted(const ContactId& cid);
+
+private slots:
+    void cycleContacts(bool forward);
+
 };
 
 #endif  // FRIENDLISTWIDGET_H

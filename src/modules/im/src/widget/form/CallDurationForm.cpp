@@ -86,19 +86,23 @@ void CallDurationForm::onUpdateTime() {
 
 void CallDurationForm::startCounter() {
     // 启动计时
-    timeElapsed = new QElapsedTimer();
-    if (timeElapsed->isValid()) {
+    if(timeElapsed == nullptr)
+    {
+        timeElapsed = new QElapsedTimer();
+    }
+    timeElapsed->start();
+
+    if (!timeElapsed->isValid()) {
         qWarning() << "Unsupported QElapsedTimer!";
         return;
     }
-    timeElapsed->start();
 
     // 启动计时器
     callDurationTimer->start(1000);
 }
 
 void CallDurationForm::stopCounter() {
-    if (timeElapsed->isValid()) {
+    if ((timeElapsed == nullptr) || !timeElapsed->isValid()) {
         return;
     }
     timeElapsed->invalidate();

@@ -38,6 +38,9 @@ public:
     void createMeet(const QString& name);
     void retranslateUi();
 
+    void startCounter();
+    void stopCounter();
+
 private:
     void creatTopToolBar();
     void creatBottomBar();
@@ -45,7 +48,7 @@ private:
 
     void showLayoutPicker();
     void toggleFullScreen();
-    void updateDuration();
+
     void showAudioPopMenu();
 
     void changeEvent(QEvent* event);
@@ -81,6 +84,9 @@ private:
     QAction* layoutAction = nullptr;
     QAction* fullScreenAction = nullptr;
 
+    QTimer* callDurationTimer;
+    QElapsedTimer* timeElapsed;
+
     // 底部按钮区域
     QWidget* bottomBar = nullptr;
     QToolButton* msgButton = nullptr;
@@ -109,6 +115,9 @@ private:
 
 public slots:
     void doLeaveMeet();
+
+private slots:
+    void updateDuration();
 
 signals:
     void meetCreated(const QString& name);
