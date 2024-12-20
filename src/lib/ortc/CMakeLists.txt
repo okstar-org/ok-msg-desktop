@@ -68,7 +68,10 @@ set(${PROJECT_NAME}_SOURCES
 		ok_rtc.h
 		ok_rtc_renderer.h
 		ok_rtc_defs.h
-		ok_rtc_defs.cpp)
+		ok_rtc_defs.cpp
+		utils/image_convert.h
+		utils/image_convert.cpp
+)
 
 
 add_library(${PROJECT_NAME} STATIC

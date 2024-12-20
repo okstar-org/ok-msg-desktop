@@ -248,6 +248,14 @@ void IMMeet::addMeetHandler(MessengerMeetHandler* hdr) {
     handlers.push_back(hdr);
 }
 
+void IMMeet::removeMeetHandler(MessengerMeetHandler* hdr) {
+    if (!hdr) return;
+    auto it = std::remove(handlers.begin(), handlers.end(), hdr);
+    if (it != handlers.end()) {
+        handlers.erase(it, handlers.end());
+    }
+}
+
 void IMMeet::onSelfVCard(const IMVCard& vCard_) {
     vCard = vCard_;
 }

@@ -489,6 +489,7 @@ public:
      */
     void leave();
     void addHandler(MessengerMeetHandler* hdr);
+    void removeHandler(MessengerMeetHandler* hdr);
 
 protected:
     void onCall(const IMPeerId& peerId,  //

@@ -12,9 +12,13 @@
 
 #pragma once
 
+#include <mutex>
 #include <QSet>
 #include <QString>
 #include "base/jid.h"
+
+
+class MeetingVideoRender;
 
 namespace module::meet {
 
@@ -57,6 +61,9 @@ public:
         return resource;
     }
 
+    void bindVideoRender(MeetingVideoRender* render);
+    MeetingVideoRender * videoRender();
+
 private:
     // 会议室资源(成员唯一标识)
     QString resource;
@@ -68,6 +75,9 @@ private:
     std::string avatarUrl;
     // 同一个用户，不同终端(jid.resource)
     ok::base::Jid jid;
+
+    std::mutex _mutex;
+    MeetingVideoRender* _videoRender = nullptr;
 };
 
 /**
