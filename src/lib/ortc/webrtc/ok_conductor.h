@@ -12,10 +12,8 @@
 
 #pragma once
 
-#include <deque>
 #include <map>
 #include <mutex>
-#include <set>
 #include <string>
 
 #include <api/media_stream_interface.h>
@@ -69,7 +67,9 @@ public:
         return _candidates;
     }
 
-    inline ortc::JoinOptions joinOptions() { return _joinOptions; }
+    inline ortc::JoinOptions joinOptions() {
+        return _joinOptions;
+    }
 
     size_t getVideoCaptureSize();
 
@@ -83,6 +83,8 @@ public:
 
     bool addLocalVideoTrack(webrtc::VideoTrackSourceInterface* source);
     bool removeLocalVideoTrack();
+
+    void addRemoteVideoTrack(const std::string& peerId, const std::string& mid, uint32_t ssrc);
 
 protected:
     void CreatePeerConnection();
@@ -100,6 +102,11 @@ protected:
             const std::vector<rtc::scoped_refptr<webrtc::MediaStreamInterface>>& streams) override;
     void OnTrack(rtc::scoped_refptr<webrtc::RtpTransceiverInterface> transceiver) override;
     void OnRemoveTrack(rtc::scoped_refptr<webrtc::RtpReceiverInterface> receiver) override;
+
+    void OnAddStream(rtc::scoped_refptr<webrtc::MediaStreamInterface> stream) override;
+
+    void OnRemoveStream(rtc::scoped_refptr<webrtc::MediaStreamInterface> stream) override;
+
     void OnDataChannel(rtc::scoped_refptr<webrtc::DataChannelInterface> channel) override;
     void OnRenegotiationNeeded() override;
     void OnIceConnectionChange(webrtc::PeerConnectionInterface::IceConnectionState state) override;
@@ -127,7 +134,9 @@ protected:
      */
     virtual void OnFailure(webrtc::RTCError error) override;
 
-    virtual bool started() const { return _started; }
+    virtual bool started() const {
+        return _started;
+    }
 
 private:
     bool _started = false;
@@ -152,7 +161,6 @@ private:
     rtc::scoped_refptr<webrtc::VideoTrackInterface> _videoTrack;
     rtc::scoped_refptr<webrtc::RtpSenderInterface> _videoRtpSender;
     webrtc::AudioTrackInterface* _remote_audio_track;
-
 };
 
 }  // namespace lib::ortc

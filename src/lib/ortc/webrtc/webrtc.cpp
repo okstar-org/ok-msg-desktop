@@ -1070,91 +1070,98 @@ void WebRTC::addSource(const std::string& peerId,
         RTC_LOG(LS_WARNING) << "No existing conductor!";
         return;
     }
-    auto remoteDescription = c->getRemoteDescription();
-    if (!remoteDescription) {
-        RTC_LOG(LS_WARNING) << "No remote description!";
-        return;
-    }
-    auto d = remoteDescription->Clone();
-
-    // cricket::ContentGroup group(cricket::GROUP_TYPE_BUNDLE);
-    // if(!d->description()->HasGroup(cricket::GROUP_TYPE_BUNDLE)) {
-    //    group = const_cast<cricket::ContentGroup*>(d->description()->GetGroupByName(groupName));
-    // }
-    // auto group = d->description()->GetGroupByName(cricket::GROUP_TYPE_BUNDLE);
 
     for (const auto& item : map) {
+        // 增加接收
         auto k = item.first;
         auto& ssrcBundle = item.second;
         RTC_LOG(LS_INFO) << " participant: " << k;
 
         if (!ssrcBundle.audioSources.empty()) {
-            auto& mid = ssrcBundle.audioSources[0].name;
-            std::string jvb_a0 = "jvb-a0";
-            const cricket::ContentInfo* pContentInfo = d->description()->GetContentByName(jvb_a0);
-            if (pContentInfo) {
-                auto jvba = pContentInfo->media_description()->as_audio();
-                auto ti0 = d->description()->GetTransportInfoByName(jvb_a0);
-                cricket::TransportInfo ti(mid, ti0->description);
-                d->description()->AddTransportInfo(ti);
-
-                auto audioPtr = addAudioSsrcBundle(ssrcBundle);
-                audioPtr->set_codecs(jvba->codecs());
-                audioPtr->set_rtcp_mux(jvba->rtcp_mux());
-                audioPtr->set_rtp_header_extensions(jvba->rtp_header_extensions());
-
-                d->description()->AddContent(mid, cricket::MediaProtocolType::kRtp,
-                                             std::move(audioPtr));
-
-                //                group.AddContentName(mid);
-            }
-        }
-
-        if (!ssrcBundle.videoSources.empty()) {
             auto& mid = ssrcBundle.videoSources[0].name;
-            std::string jvb_v0 = "jvb-v0";
-            const cricket::ContentInfo* pContentInfo = d->description()->GetContentByName(jvb_v0);
-            if (pContentInfo) {
-                auto jvbv = pContentInfo->media_description()->as_video();
-                auto tiv = d->description()->GetTransportInfoByName(jvb_v0);
-
-                cricket::TransportInfo ti(mid, tiv->description);
-                d->description()->AddTransportInfo(ti);
-                size_t mline = d->number_of_mediasections();
-
-                auto videoPtr = addVideoSsrcBundle(ssrcBundle);
-                videoPtr->set_codecs(jvbv->codecs());
-                videoPtr->set_rtcp_mux(jvbv->rtcp_mux());
-                videoPtr->set_rtp_header_extensions(jvbv->rtp_header_extensions());
-
-                d->description()->AddContent(mid, cricket::MediaProtocolType::kRtp,
-                                             std::move(videoPtr));
-                //                group.AddContentName(mid);
-            }
+            c->addRemoteVideoTrack(peerId, mid, std::stoul(ssrcBundle.videoSources[0].ssrc));
         }
     }
-    //    d->description()->AddGroup(group);
 
-    std::unique_ptr<cricket::SessionDescription> x(d->description());
-    auto d1 = webrtc::CreateSessionDescription(webrtc::SdpType::kOffer, d->session_id(),
-                                               d->session_version(), std::move(x));
+    //    auto remoteDescription = c->getRemoteDescription();
+    //    if (!remoteDescription) {
+    //        RTC_LOG(LS_WARNING) << "No remote description!";
+    //        return;
+    //    }
+    //    auto d = remoteDescription->Clone();
 
-    for (const auto& item : map) {
-        auto& ssrcBundle = item.second;
-        if (!ssrcBundle.audioSources.empty()) {
-            auto mid = ssrcBundle.audioSources[0].name;
-            copyCandidate(d.get(), d1.get(), "jvb-a0", mid);
-        }
-
-        if (!ssrcBundle.videoSources.empty()) {
-            auto mid = ssrcBundle.videoSources[0].name;
-            copyCandidate(d.get(), d1.get(), "jvb-v0", mid);
-        }
-    }
+    //
+    //    for (const auto& item : map) {
+    //        auto k = item.first;
+    //        auto& ssrcBundle = item.second;
+    //        RTC_LOG(LS_INFO) << " participant: " << k;
+    //
+    //        if (!ssrcBundle.audioSources.empty()) {
+    //            auto& mid = ssrcBundle.audioSources[0].name;
+    //            std::string jvb_a0 = "jvb-a0";
+    //            const cricket::ContentInfo* pContentInfo =
+    //            d->description()->GetContentByName(jvb_a0); if (pContentInfo) {
+    //                auto jvba = pContentInfo->media_description()->as_audio();
+    //                auto ti0 = d->description()->GetTransportInfoByName(jvb_a0);
+    //                cricket::TransportInfo ti(mid, ti0->description);
+    //                d->description()->AddTransportInfo(ti);
+    //
+    //                auto audioPtr = addAudioSsrcBundle(ssrcBundle);
+    //                audioPtr->set_codecs(jvba->codecs());
+    //                audioPtr->set_rtcp_mux(jvba->rtcp_mux());
+    //                audioPtr->set_rtp_header_extensions(jvba->rtp_header_extensions());
+    //
+    //                d->description()->AddContent(mid, cricket::MediaProtocolType::kRtp,
+    //                                             std::move(audioPtr));
+    //
+    //                //                group.AddContentName(mid);
+    //            }
+    //        }
+    //
+    //        if (!ssrcBundle.videoSources.empty()) {
+    //            auto& mid = ssrcBundle.videoSources[0].name;
+    //            std::string jvb_v0 = "jvb-v0";
+    //            const cricket::ContentInfo* pContentInfo =
+    //            d->description()->GetContentByName(jvb_v0); if (pContentInfo) {
+    //                auto jvbv = pContentInfo->media_description()->as_video();
+    //                auto tiv = d->description()->GetTransportInfoByName(jvb_v0);
+    //
+    //                cricket::TransportInfo ti(mid, tiv->description);
+    //                d->description()->AddTransportInfo(ti);
+    //                size_t mline = d->number_of_mediasections();
+    //
+    //                auto videoPtr = addVideoSsrcBundle(ssrcBundle);
+    //                videoPtr->set_codecs(jvbv->codecs());
+    //                videoPtr->set_rtcp_mux(jvbv->rtcp_mux());
+    //                videoPtr->set_rtp_header_extensions(jvbv->rtp_header_extensions());
+    //
+    //                d->description()->AddContent(mid, cricket::MediaProtocolType::kRtp,
+    //                                             std::move(videoPtr));
+    //                //                group.AddContentName(mid);
+    //            }
+    //        }
+    //    }
+    //
+    //    std::unique_ptr<cricket::SessionDescription> x(d->description());
+    //    auto d1 = webrtc::CreateSessionDescription(webrtc::SdpType::kOffer, d->session_id(),
+    //                                               d->session_version(), std::move(x));
+    //
+    //    for (const auto& item : map) {
+    //        auto& ssrcBundle = item.second;
+    //        if (!ssrcBundle.audioSources.empty()) {
+    //            auto mid = ssrcBundle.audioSources[0].name;
+    //            copyCandidate(d.get(), d1.get(), "jvb-a0", mid);
+    //        }
+    //
+    //        if (!ssrcBundle.videoSources.empty()) {
+    //            auto mid = ssrcBundle.videoSources[0].name;
+    //            copyCandidate(d.get(), d1.get(), "jvb-v0", mid);
+    //        }
+    //    }
 
     //    auto cc = c->getLocalDescription()->Clone();
     //    c->setLocalDescription(cc.release());
-    c->setRemoteDescription(d1.release());
+    //    c->setRemoteDescription(d1.release());
     //    c->CreateAnswer();
 }
 
@@ -1207,6 +1214,7 @@ std::shared_ptr<VideoCaptureInterface> WebRTC::createVideoCapture(const std::str
     }
 
     if (auto result = videoCapture.get()) {
+        RTC_LOG(LS_INFO) << " The videoCapture is existing so switch to: " << deviceId;
         result->switchToDevice(deviceId, false);
         return videoCapture;
     }

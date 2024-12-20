@@ -282,6 +282,8 @@ bool lib::messenger::IMMeet::doSessionInitiate(gloox::Jingle::Session* session,
 }
 
 void IMMeet::doStartRTC(const IMPeerId& peerId, const ortc::OJingleContentAv& cav) const {
+    qDebug() << __func__;
+
     ortc::OkRTCManager* rtcManager = ortc::OkRTCManager::getInstance();
     const auto& discos = im->getExternalServiceDiscovery();
     for (const auto& item : discos) {
@@ -376,10 +378,10 @@ bool IMMeet::doSourceAdd(const gloox::Jingle::Session::Jingle* jingle, const IMP
                 std::map<std::string, ortc::OMeetSSRCBundle> map;
                 ParseOMeetSSRCBundle(jm->json(), map);
 
-                //                auto rtc = ortc::OkRTCManager::getInstance()->getRtc();
-                //                if (rtc) {
-                //                    rtc->addSource(stdstring(peerId.toString()), map);
-                //                }
+                auto rtc = ortc::OkRTCManager::getInstance()->getRtc();
+                if (rtc) {
+                    rtc->addSource(stdstring(peerId.toString()), map);
+                }
             }
         }
     }
