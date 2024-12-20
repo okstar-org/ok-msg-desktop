@@ -89,7 +89,7 @@ private:
     QAction* layoutAction = nullptr;
     QAction* fullScreenAction = nullptr;
 
-    QTimer* callDurationTimer;
+    QTimer* callDurationTimer = nullptr;
     QElapsedTimer* timeElapsed;
 
     // 底部按钮区域
@@ -113,6 +113,7 @@ private:
     lib::messenger::MessengerMeet* meet = nullptr;
 
     // 所有会议人员
+    std::mutex prt_mutex;
     QMap<QString, MeetingParticipant*> participantMap;
 
     // 会议唯一名称

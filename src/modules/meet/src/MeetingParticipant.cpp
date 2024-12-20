@@ -11,6 +11,7 @@
  */
 
 #include "MeetingParticipant.h"
+#include "MeetingVideoRender.h"
 
 #include <utility>
 namespace module::meet {
@@ -32,6 +33,16 @@ MeetingParticipant::MeetingParticipant(QString resource,
         , nick(std::move(nick))
         , avatarUrl(std::move(avatarUrl))
         , jid(jid) {}
+
+void MeetingParticipant::bindVideoRender(MeetingVideoRender* render) {
+    std::lock_guard<std::mutex> guard(_mutex);
+    _videoRender = render;
+}
+
+MeetingVideoRender* MeetingParticipant::videoRender() {
+    std::lock_guard<std::mutex> guard(_mutex);
+    return _videoRender ? _videoRender : EmptyVideoRender::instance();
+}
 
 // MeetingUser::MeetingUser(MeetingParticipant& part)
 //         : MeetingParticipant(part.getEmail(), part.getNick(), part.getAvatarUrl(), part.getJid())

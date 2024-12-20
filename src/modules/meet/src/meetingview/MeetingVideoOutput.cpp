@@ -11,6 +11,7 @@
  */
 
 #include "MeetingVideoOutput.h"
+#include "../MeetingVideoRender.h"
 #include "base/RoundedPixmapLabel.h"
 #include "src/MeetingParticipant.h"
 
@@ -21,10 +22,30 @@ namespace module::meet {
 
 MeetingVideoOutput::MeetingVideoOutput(QWidget* parent) : QWidget(parent) {
     setAttribute(Qt::WA_StyledBackground);
+
+    videoRender = new MeetingVideoWidgetRender(this);
+}
+
+MeetingVideoOutput::~MeetingVideoOutput() {
+    if (this->participant) {
+        this->participant->bindVideoRender(nullptr);
+    }
+    delete videoRender;
+    videoRender = nullptr;
 }
 
 void MeetingVideoOutput::bindParticipant(MeetingParticipant* participant) {
-    this->participant = participant;
+    if (this->participant != participant) {
+        videoRender->setRenderEnable(false);
+        if (this->participant) {
+            this->participant->bindVideoRender(nullptr);
+        }
+        this->participant = participant;
+        if (this->participant) {
+            this->participant->bindVideoRender(videoRender);
+        }
+        videoRender->setRenderEnable(!!participant);
+    }
     // showAvatar();
     update();
 }
@@ -47,7 +68,7 @@ void MeetingVideoOutput::showAvatar() {
 }
 
 bool MeetingVideoOutput::hasVideoOutput() {
-    return false;
+    return videoRender && videoRender->renderEnable();
 }
 
 QRectF MeetingVideoOutput::calcAvatarRect() {
@@ -77,7 +98,23 @@ void MeetingVideoOutput::paintEvent(QPaintEvent* e) {
         return;
     }
 
-    if (!hasVideoOutput() && !avatarLabel) {
+    if (hasVideoOutput()) {
+        videoRender->begin();
+
+        const QImage& img = videoRender->image();
+        if (!img.isNull())
+        {
+            QImage temp = img.scaled(this->size() * this->devicePixelRatioF(), Qt::KeepAspectRatio,
+                                     Qt::SmoothTransformation);
+            temp.setDevicePixelRatio(this->devicePixelRatioF());
+            QSize s = temp.size() / this->devicePixelRatioF();
+            QRect paintRect =
+                    QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, s, this->rect());
+            painter.drawImage(paintRect.topLeft(), temp);
+        }
+        videoRender->end();
+
+    } else if (!avatarLabel) {
         QString text = this->participant->getNick().right(2);
         if (!text.isEmpty()) {
             QRectF circle = calcAvatarRect();
@@ -95,7 +132,6 @@ void MeetingVideoOutput::paintEvent(QPaintEvent* e) {
             painter.setPen(QPen(Qt::white));
             painter.drawText(circle, Qt::AlignCenter, text);
         }
-    } else {
     }
 }
 

@@ -12,6 +12,7 @@
 
 #include "MeetingVideoFrame.h"
 #include "../MeetingParticipant.h"
+#include "../MeetingVideoRender.h"
 #include "../tools/PopupMenuComboBox.h"
 #include "MeetingVideosLayout.h"
 #include "VideoLayoutPicker.h"
@@ -72,6 +73,7 @@ MeetingVideoFrame::MeetingVideoFrame(const QString& name, QWidget* parent)
 
 MeetingVideoFrame::~MeetingVideoFrame() {
     disconnect(this);
+    meet->removeHandler(this);
     meet->deleteLater();
 
     if (timeElapsed != nullptr) {
@@ -99,7 +101,9 @@ void MeetingVideoFrame::creatTopToolBar() {
     topToolBar->setObjectName("topBar");
     topToolBar->setIconSize(QSize(16, 16));
     infoAction = topToolBar->addAction(tr("Meeting Info"));
-    sharedAction = topToolBar->addAction(QIcon(":/meet/image/share.svg"), QString());
+
+    // 网络图标
+    netInfoAction = topToolBar->addAction(QIcon(":/meet/image/network_s4.svg"), QString());
     topToolBar->addSeparator();
 
     // 时长
@@ -107,12 +111,11 @@ void MeetingVideoFrame::creatTopToolBar() {
     topToolBar->addWidget(duraionLabel);
     topToolBar->addSeparator();
 
-    netInfoAction = topToolBar->addAction(QIcon(":/meet/image/network_s4.svg"), QString());
-
     QWidget* stretch = new QWidget(topToolBar);
     stretch->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     topToolBar->addWidget(stretch);
 
+    sharedAction = topToolBar->addAction(QIcon(":/meet/image/share.svg"), QString());
     layoutAction = topToolBar->addAction(QIcon(":/meet/image/layout_grid.svg"), QString());
     fullScreenAction = topToolBar->addAction(QIcon(":/meet/image/fullscreen.svg"), QString());
 
@@ -298,6 +301,8 @@ void MeetingVideoFrame::addParticipant(const QString& name,
     auto find = participantMap.find(k);
     if (find == participantMap.end()) {
         // 添加用户
+
+        std::lock_guard<std::mutex> g(prt_mutex);
         auto p = new MeetingParticipant(parti.resource, parti.email, parti.nick, parti.avatarUrl,
                                         parti.jid);
         videosLayout->addParticipant(p);
@@ -315,6 +320,7 @@ void MeetingVideoFrame::removeParticipant(const QString& name, const QString& re
     // 执行移除用户操作
     auto it = participantMap.find(resource);
     if (it != participantMap.end()) {
+        std::lock_guard<std::mutex> g(prt_mutex);
         auto user = it.value();
         Q_ASSERT(user);
         videosLayout->removeParticipant(user);
@@ -348,10 +354,21 @@ void MeetingVideoFrame::updateDuration() {
     duraionLabel->setText(duration.toString("hh:mm:ss"));
 }
 
+// 会在子线程回调，注意加锁
 void MeetingVideoFrame::onSelfVideoFrame(const lib::ortc::RendererImage& image) {
+
+    std::lock_guard<std::mutex> g(prt_mutex);
+    for (auto it = participantMap.begin(); it != participantMap.end(); it++) {
+        MeetingParticipant* p = *it;
     /**
-     * TODO 自己的视频帧
+         * TODO 如何判断是不是自己
      */
+        bool isSelf = true;
+        if (isSelf)
+        {
+            p->videoRender()->renderImage(image);
+        }
+    }
 }
 
 void MeetingVideoFrame::onParticipantVideoFrame(const QString& participant,
