@@ -16,11 +16,9 @@
 
 #include "ok_rtc.h"
 #include "ok_rtc_defs.h"
-#include "ok_rtc_renderer.h"
 #include "webrtc/webrtc.h"
 
-namespace lib {
-namespace ortc {
+namespace lib::ortc {
 
 static OkRTCManager* instance = nullptr;
 static std::recursive_mutex mtx;
@@ -94,5 +92,4 @@ size_t OkRTCManager::getVideoSize() {
     return rtc->getVideoSize();
 }
 
-}  // namespace ortc
-}  // namespace lib
+}  // namespace lib::ortc

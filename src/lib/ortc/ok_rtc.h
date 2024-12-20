@@ -124,6 +124,10 @@ public:
 
     virtual void addSource(const std::string& peerId,
                            const std::map<std::string, ortc::OMeetSSRCBundle>& map) = 0;
+
+    virtual void switchVideoDevice(const std::string& deviceId) = 0;
+
+    virtual void switchVideoDevice(int selected) = 0;
 };
 
 }  // namespace lib::ortc

@@ -109,6 +109,10 @@ public:
     void addRTCHandler(OkRTCHandler* hand) override;
     void removeRTCHandler(OkRTCHandler* hand) override;
 
+    void switchVideoDevice(const std::string& deviceId) override;
+
+    void switchVideoDevice(int selected) override;
+
     const webrtc::PeerConnectionInterface::RTCConfiguration& getConfig() const {
         return _rtcConfig;
     }

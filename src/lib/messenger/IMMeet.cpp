@@ -487,4 +487,22 @@ void IMMeet::onRender(const std::string& friendId, const ortc::RendererImage& im
     }
 }
 
+void IMMeet::switchVideoDevice(const QString& deviceId) {
+    auto pManager = ortc::OkRTCManager::getInstance();
+    auto rtc = pManager->getRtc();
+    if (!rtc) {
+        return;
+    }
+    rtc->switchVideoDevice(stdstring(deviceId));
+}
+
+void IMMeet::switchVideoDevice(int selected) {
+    auto pManager = ortc::OkRTCManager::getInstance();
+    auto rtc = pManager->getRtc();
+    if (!rtc) {
+        return;
+    }
+    rtc->switchVideoDevice(selected);
+}
+
 }  // namespace lib::messenger

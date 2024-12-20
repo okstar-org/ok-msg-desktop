@@ -1227,6 +1227,19 @@ void WebRTC::initAudioDevice() {
     RTC_LOG(LS_INFO) << "Audio source is:" << audioSource.get();
 }
 
+void WebRTC::switchVideoDevice(const std::string& deviceId) {
+    if (videoCapture) {
+        videoCapture->switchToDevice(deviceId, false);
+    }
+}
+
+void WebRTC::switchVideoDevice(int selected) {
+    auto deviceId = getVideoDeviceId(selected);
+    if (!deviceId.empty() && videoCapture) {
+        videoCapture->switchToDevice(deviceId, false);
+    }
+}
+
 // void WebRTC::initVideoDevice() {
 //     RTC_LOG(LS_INFO) << "Create video device...";
 //     deviceInfo = webrtc::VideoCaptureFactory::CreateDeviceInfo();

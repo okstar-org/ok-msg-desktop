@@ -70,6 +70,18 @@ public:
      */
     void addMeetHandler(MessengerMeetHandler* hdr);
 
+    /**
+     * 选择视频设备
+     * @param deviceId 设备id
+     */
+    void switchVideoDevice(const QString& deviceId);
+
+    /**
+     * 选择视频设备
+     * @param selected 设备索引
+     */
+    void switchVideoDevice(int selected);
+
 protected:
     void handleHostPresence(const gloox::JID& from, const gloox::Presence& presence) override;
 
