@@ -948,7 +948,7 @@ Conductor* WebRTC::createConductor(const std::string& peerId, const std::string&
 
 void WebRTC::linkAudioDevice(Conductor* c) {
     RTC_LOG(LS_INFO) << __FUNCTION__ << "AddTrack audio source:" << audioSource.get();
-    c->AddAudioTrack(audioSource.get());
+    c->addLocalAudioTrack(audioSource.get());
 }
 
 void WebRTC::linkVideoDevice(Conductor* c, int selected) {
@@ -962,7 +962,7 @@ void WebRTC::linkVideoDevice(Conductor* c, int selected) {
 
     createVideoCapture(devId);
 
-    c->AddVideoTrack(videoCapture->source().get());
+    c->addLocalVideoTrack(videoCapture->source().get());
 
     if (!videoSink) {
         videoSink = std::make_shared<VideoSink>(_handlers, "", "");

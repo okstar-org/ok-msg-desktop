@@ -78,11 +78,11 @@ public:
         return rtc::RefCountReleaseStatus::kDroppedLastRef;
     };
 
-    bool AddAudioTrack(webrtc::AudioSourceInterface* _audioSource);
-    bool RemoveAudioTrack();
+    bool addLocalAudioTrack(webrtc::AudioSourceInterface* _audioSource);
+    bool removeLocalAudioTrack();
 
-    bool AddVideoTrack(webrtc::VideoTrackSourceInterface* source);
-    bool RemoveVideoTrack();
+    bool addLocalVideoTrack(webrtc::VideoTrackSourceInterface* source);
+    bool removeLocalVideoTrack();
 
 protected:
     void CreatePeerConnection();
@@ -147,13 +147,12 @@ private:
     std::map<std::string, VideoSink*> _videoSink;
 
     rtc::scoped_refptr<webrtc::AudioTrackInterface> _audioTrack;
-    rtc::scoped_refptr<webrtc::VideoTrackInterface> _videoTrack;
+    rtc::scoped_refptr<webrtc::RtpSenderInterface> _audioRtpSender;
 
+    rtc::scoped_refptr<webrtc::VideoTrackInterface> _videoTrack;
+    rtc::scoped_refptr<webrtc::RtpSenderInterface> _videoRtpSender;
     webrtc::AudioTrackInterface* _remote_audio_track;
 
-    rtc::scoped_refptr<webrtc::RtpSenderInterface> _audioRtpSender;
-    rtc::scoped_refptr<webrtc::RtpSenderInterface> _videoRtpSender;
-    //  rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> _videoTrackSource;
 };
 
 }  // namespace lib::ortc

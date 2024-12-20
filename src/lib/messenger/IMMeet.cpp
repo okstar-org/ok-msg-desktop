@@ -376,10 +376,10 @@ bool IMMeet::doSourceAdd(const gloox::Jingle::Session::Jingle* jingle, const IMP
                 std::map<std::string, ortc::OMeetSSRCBundle> map;
                 ParseOMeetSSRCBundle(jm->json(), map);
 
-                auto rtc = ortc::OkRTCManager::getInstance()->getRtc();
-                if (rtc) {
-                    rtc->addSource(stdstring(peerId.toString()), map);
-                }
+                //                auto rtc = ortc::OkRTCManager::getInstance()->getRtc();
+                //                if (rtc) {
+                //                    rtc->addSource(stdstring(peerId.toString()), map);
+                //                }
             }
         }
     }
@@ -482,7 +482,7 @@ void IMMeet::onRender(const std::string& friendId, const ortc::RendererImage& im
         if (friendId.empty()) {
             h->onSelfVideoFrame(image);
         } else {
-            h->onParticipantVideoFrame({}, image);
+            h->onParticipantVideoFrame(qstring(friendId), image);
         }
     }
 }

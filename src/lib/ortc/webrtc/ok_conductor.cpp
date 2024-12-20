@@ -73,8 +73,8 @@ void Conductor::CreatePeerConnection() {
 
 void Conductor::DestroyPeerConnection() {
     RTC_LOG(LS_INFO) << __FUNCTION__ << "...";
-    RemoveAudioTrack();
-    RemoveVideoTrack();
+    removeLocalAudioTrack();
+    removeLocalVideoTrack();
     peer_connection_->Close();
     peer_connection_.release();
     RTC_LOG(LS_INFO) << __FUNCTION__ << " done.";
@@ -104,7 +104,7 @@ void Conductor::setRemoteMute(bool mute) {
     }
 }
 
-bool Conductor::AddAudioTrack(webrtc::AudioSourceInterface* _audioSource) {
+bool Conductor::addLocalAudioTrack(webrtc::AudioSourceInterface* _audioSource) {
     RTC_LOG(LS_INFO) << __FUNCTION__ << ":" << _audioSource;
 
     std::string label = "ok-audio-label";
@@ -123,13 +123,13 @@ bool Conductor::AddAudioTrack(webrtc::AudioSourceInterface* _audioSource) {
     return true;
 }
 
-bool Conductor::RemoveAudioTrack() {
+bool Conductor::removeLocalAudioTrack() {
     RTC_LOG(LS_INFO) << __FUNCTION__;
     auto result = peer_connection_->RemoveTrackOrError(_audioRtpSender);
     return result.ok();
 }
 
-bool Conductor::AddVideoTrack(webrtc::VideoTrackSourceInterface* source) {
+bool Conductor::addLocalVideoTrack(webrtc::VideoTrackSourceInterface* source) {
     RTC_LOG(LS_INFO) << __FUNCTION__ << " source:" << source;
 
     std::string label = "ok-video-track-label";
@@ -150,7 +150,7 @@ bool Conductor::AddVideoTrack(webrtc::VideoTrackSourceInterface* source) {
     return true;
 }
 
-bool Conductor::RemoveVideoTrack() {
+bool Conductor::removeLocalVideoTrack() {
     RTC_LOG(LS_INFO) << __FUNCTION__;
     auto result = peer_connection_->RemoveTrackOrError(_videoRtpSender);
     return result.ok();
@@ -240,7 +240,8 @@ void Conductor::OnTrack(rtc::scoped_refptr<webrtc::RtpTransceiverInterface> tran
 
     if (track->kind() == webrtc::MediaStreamTrackInterface::kAudioKind) {
         _remote_audio_track = static_cast<webrtc::AudioTrackInterface*>(track.get());
-        RTC_LOG(LS_INFO) << __FUNCTION__ << " Remote audio track: " << _remote_audio_track;
+        RTC_LOG(LS_INFO) << __FUNCTION__
+                         << "Added successful remote audio track: " << _remote_audio_track;
     } else if (track->kind() == webrtc::MediaStreamTrackInterface::kVideoKind) {
         auto* pVideoSink = new VideoSink(webRtc->getHandlers(), peerId, mid);
 
@@ -248,6 +249,7 @@ void Conductor::OnTrack(rtc::scoped_refptr<webrtc::RtpTransceiverInterface> tran
         videoTrack->AddOrUpdateSink(pVideoSink, rtc::VideoSinkWants());
 
         _videoSink.insert(std::make_pair(mid, pVideoSink));
+        RTC_LOG(LS_INFO) << __FUNCTION__ << "Added successful remote video track: " << videoTrack;
     }
 }
 
