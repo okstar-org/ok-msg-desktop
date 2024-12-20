@@ -1,3 +1,15 @@
+/*
+ * Copyright (c) 2022 船山信息 chuanshaninfo.com
+ * The project is licensed under Mulan PubL v2.
+ * You can use this software according to the terms and conditions of the Mulan
+ * PubL v2. You may obtain a copy of Mulan PubL v2 at:
+ *          http://license.coscl.org.cn/MulanPubL-2.0
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PubL v2 for more details.
+ */
+
 #include "DesktopInterface.h"
 
 #include "VideoCapturerInterfaceImpl.h"
@@ -34,6 +46,7 @@ rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> DesktopInterface::makeVide
         rtc::Thread* signalingThread, rtc::Thread* workerThread) {
     const auto videoTrackSource = rtc::scoped_refptr<VideoCapturerTrackSource>(
             new rtc::RefCountedObject<VideoCapturerTrackSource>());
+
     return videoTrackSource ? webrtc::VideoTrackSourceProxy::Create(
                                       signalingThread, workerThread, videoTrackSource)
                             : nullptr;
@@ -50,6 +63,7 @@ void DesktopInterface::adaptVideoSource(
         int fps) {}
 
 std::unique_ptr<VideoCapturerInterface> DesktopInterface::makeVideoCapturer(
+        rtc::Thread* signalingThread, rtc::Thread* workerThread,
         rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> source,
         std::string deviceId,
         std::function<void(VideoState)>
@@ -59,8 +73,7 @@ std::unique_ptr<VideoCapturerInterface> DesktopInterface::makeVideoCapturer(
         std::shared_ptr<PlatformContext>
                 platformContext,
         std::pair<int, int>& outResolution) {
-    return std::make_unique<VideoCapturerInterfaceImpl>(
-            source, deviceId, stateUpdated, platformContext, outResolution);
+    return std::make_unique<VideoCapturerInterfaceImpl>(signalingThread, workerThread, source, deviceId, stateUpdated, platformContext, outResolution);
 }
 
 std::unique_ptr<PlatformInterface> CreatePlatformInterface() {

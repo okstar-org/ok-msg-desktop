@@ -1,3 +1,15 @@
+/*
+ * Copyright (c) 2022 船山信息 chuanshaninfo.com
+ * The project is licensed under Mulan PubL v2.
+ * You can use this software according to the terms and conditions of the Mulan
+ * PubL v2. You may obtain a copy of Mulan PubL v2 at:
+ *          http://license.coscl.org.cn/MulanPubL-2.0
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PubL v2 for more details.
+ */
+
 #include "VideoCaptureInterfaceImpl.h"
 
 #include "StaticThreads.h"
@@ -13,7 +25,9 @@ VideoCaptureInterfaceObject::VideoCaptureInterfaceObject(rtc::Thread* signalingT
                                                          std::shared_ptr<PlatformContext>
                                                                  platformContext)
         : _videoSource(PlatformInterface::SharedInstance()->makeVideoSource(signalingThread,
-                                                                            workerThread)) {
+                                                                            workerThread))
+        , signalingThread(signalingThread)
+        , workerThread(workerThread) {
     _platformContext = platformContext;
     switchToDevice(deviceId, isScreenCapture);
 }
@@ -36,9 +50,12 @@ int VideoCaptureInterfaceObject::getRotation() {
     }
 }
 
-bool VideoCaptureInterfaceObject::isScreenCapture() { return _isScreenCapture; }
+bool VideoCaptureInterfaceObject::isScreenCapture() {
+    return _isScreenCapture;
+}
 
 void VideoCaptureInterfaceObject::switchToDevice(std::string deviceId, bool isScreenCapture) {
+    //    signalingThread->PostTask([&](){
     if (_videoCapturer) {
         _videoCapturer->setUncroppedOutput(nullptr);
     }
@@ -47,6 +64,8 @@ void VideoCaptureInterfaceObject::switchToDevice(std::string deviceId, bool isSc
         // this should outlive the capturer
         _videoCapturer = nullptr;
         _videoCapturer = PlatformInterface::SharedInstance()->makeVideoCapturer(
+                signalingThread,
+                workerThread,
                 _videoSource,
                 deviceId,
                 [this](VideoState state) {
@@ -95,6 +114,7 @@ void VideoCaptureInterfaceObject::switchToDevice(std::string deviceId, bool isSc
         }
         _videoCapturer->setState(_state);
     }
+    //    });
 }
 
 void VideoCaptureInterfaceObject::withNativeImplementation(std::function<void(void*)> completion) {
@@ -188,7 +208,8 @@ VideoCaptureInterfaceImpl::VideoCaptureInterfaceImpl(rtc::Thread* signalingThrea
                                                      bool isScreenCapture,
                                                      std::shared_ptr<PlatformContext>
                                                              platformContext)
-        : _impl(  // threads->getMediaThread(), [deviceId, isScreenCapture, platformContext,
+        : _impl(  // threads->getMediaThread(),
+                  // [deviceId, isScreenCapture, platformContext,
                   // threads]() {
                   //	return
                   new VideoCaptureInterfaceObject(
@@ -196,11 +217,15 @@ VideoCaptureInterfaceImpl::VideoCaptureInterfaceImpl(rtc::Thread* signalingThrea
                   //}
           ) {}
 
-VideoCaptureInterfaceImpl::~VideoCaptureInterfaceImpl() = default;
+VideoCaptureInterfaceImpl::~VideoCaptureInterfaceImpl() {
+    delete _impl;
+};
 
 void VideoCaptureInterfaceImpl::switchToDevice(std::string deviceId, bool isScreenCapture) {
-    //	_impl.perform(RTC_FROM_HERE, [deviceId, isScreenCapture](VideoCaptureInterfaceObject *impl)
+    //    	_impl.perform(RTC_FROM_HERE, [deviceId, isScreenCapture](VideoCaptureInterfaceObject
+    //    *impl)
     //{
+
     _impl->switchToDevice(deviceId, isScreenCapture);
     //	});
 }
@@ -246,7 +271,9 @@ void VideoCaptureInterfaceImpl::setOutput(
     //	});
 }
 
-VideoCaptureInterfaceObject* VideoCaptureInterfaceImpl::object() { return _impl; }
+VideoCaptureInterfaceObject* VideoCaptureInterfaceImpl::object() {
+    return _impl;
+}
 
 rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> VideoCaptureInterfaceImpl::source() {
     return _impl->source();

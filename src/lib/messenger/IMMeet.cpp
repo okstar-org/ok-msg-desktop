@@ -59,6 +59,8 @@ IMMeet::IMMeet(IM* im, QObject* parent) : IMJingle(im, parent), manager(nullptr)
 
     auto rtc = ortc::OkRTCManager::getInstance()->createRtc();
     rtc->addRTCHandler(this);
+
+    qRegisterMetaType<ortc::OJingleContentAv>("const ortc::OJingleContentAv&");
 }
 
 IMMeet::~IMMeet() {
@@ -268,14 +270,24 @@ bool lib::messenger::IMMeet::doSessionInitiate(gloox::Jingle::Session* session,
         qDebug() << "Is no av session!";
         return false;
     }
-
     cav.sdpType = ortc::JingleSdpType::Offer;
+
+    QMetaObject::invokeMethod(this, "doStartRTC", Qt::QueuedConnection,
+                              Q_ARG(const IMPeerId&, peerId),
+                              Q_ARG(const ortc::OJingleContentAv&, cav));
+
+    currentSid = sId;
+    currentSession = session;
+    return true;
+}
+
+void IMMeet::doStartRTC(const IMPeerId& peerId, const ortc::OJingleContentAv& cav) const {
     ortc::OkRTCManager* rtcManager = ortc::OkRTCManager::getInstance();
     const auto& discos = im->getExternalServiceDiscovery();
     for (const auto& item : discos) {
         ortc::IceServer ice;
-        ice.uri = item.type + ":" + item.host + ":" + std::to_string(item.port) +
-                  "?transport=" + item.transport;
+        ice.uri = item.type + ":" + item.host + ":" + std::to_string(item.port);
+        //        +"?transport=" + item.transport;
         ice.username = item.username;
         ice.password = item.password;
         qDebug() << "Add ice:" << ice.uri.c_str() << "user:" << qstring(ice.username)
@@ -285,10 +297,6 @@ bool lib::messenger::IMMeet::doSessionInitiate(gloox::Jingle::Session* session,
 
     auto rtc = rtcManager->getRtc();
     rtc->CreateAnswer(stdstring(peerId.toString()), cav);
-
-    currentSid = sId;
-    currentSession = session;
-    return true;
 }
 
 bool IMMeet::doSessionAccept(gloox::Jingle::Session* session,

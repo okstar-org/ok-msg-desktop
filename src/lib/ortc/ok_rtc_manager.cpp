@@ -34,7 +34,7 @@ OkRTCManager::~OkRTCManager() {
 OkRTCManager* OkRTCManager::getInstance() {
     std::lock_guard<std::recursive_mutex> lock(mtx);
     if (!instance) {
-        RTC_DLOG_F(LS_INFO) << "Creating instance.";
+        RTC_LOG(LS_INFO) << "Creating instance.";
         instance = new OkRTCManager();
     }
     return instance;
@@ -43,14 +43,14 @@ OkRTCManager* OkRTCManager::getInstance() {
 void OkRTCManager::destroyInstance() {
     std::lock_guard<std::recursive_mutex> lock(mtx);
     if (!instance) {
-        RTC_DLOG_F(LS_WARNING) << "The instance has been destroyed!";
+        RTC_LOG(LS_WARNING) << "The instance has been destroyed!";
         return;
     }
 
-    RTC_DLOG_F(LS_INFO) << "instance:" << instance;
+    RTC_LOG(LS_INFO) << "instance:" << instance;
     delete instance;
     instance = nullptr;
-    RTC_DLOG_F(LS_WARNING) << "Destroy the instance successfully.";
+    RTC_LOG(LS_WARNING) << "Destroy the instance successfully.";
 }
 
 OkRTC* OkRTCManager::createRtc() {

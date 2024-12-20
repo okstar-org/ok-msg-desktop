@@ -171,6 +171,7 @@ signals:
 public slots:
     void onSelfVCard(const IMVCard& vCard);
     Participant toParticipant(const gloox::Meet::Participant& participant) const;
+    void doStartRTC(const IMPeerId& peerId, const ortc::OJingleContentAv& cav) const;
 };
 
 }  // namespace lib::messenger

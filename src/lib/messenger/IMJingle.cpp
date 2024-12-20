@@ -61,7 +61,7 @@ IMJingle::IMJingle(IM* im, QObject* parent) : QObject(parent), im(im), currentSe
 IMJingle::~IMJingle() {
     auto client = im->getClient();
     client->removeMessageHandler(this);
-    qDebug() << __func__ << "Destroyed";
+    qDebug() << __func__;
 }
 
 void IMJingle::onImStarted() {

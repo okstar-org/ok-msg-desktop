@@ -12,6 +12,7 @@
 
 #include "ok_conductor.h"
 
+#include <map>
 #include <memory>
 #include <string>
 #include <thread>
@@ -29,10 +30,7 @@
 namespace lib::ortc {
 
 Conductor::Conductor(WebRTC* webrtc, const std::string& peerId_, const std::string& sId_)
-        : peerId(peerId_)
-        , sId(sId_)
-        , webRtc{webrtc}
-        , _remote_audio_track(nullptr) {
+        : peerId(peerId_), sId(sId_), webRtc{webrtc}, _remote_audio_track(nullptr) {
     RTC_LOG(LS_INFO) << __FUNCTION__ << " sId:" << sId << " peerId:" << peerId;
 
     assert(!peerId.empty());
@@ -219,7 +217,12 @@ void Conductor::OnConnectionChange(webrtc::PeerConnectionInterface::PeerConnecti
 }
 
 void Conductor::OnTrack(rtc::scoped_refptr<webrtc::RtpTransceiverInterface> transceiver) {
-    RTC_LOG(LS_INFO) << __FUNCTION__ << " mid: " << transceiver->mid()->data();
+    auto mid = transceiver->mid().value();
+    if (mid.empty()) {
+        RTC_LOG(LS_WARNING) << __FUNCTION__ << " mid is empty!";
+        return;
+    }
+    RTC_LOG(LS_INFO) << __FUNCTION__ << " mid: " << mid;
 
     // if(transceiver->mid()->starts_with("jvb-")){
     //     RTC_LOG(LS_INFO) << "Ignore stream!";
@@ -239,9 +242,12 @@ void Conductor::OnTrack(rtc::scoped_refptr<webrtc::RtpTransceiverInterface> tran
         _remote_audio_track = static_cast<webrtc::AudioTrackInterface*>(track.get());
         RTC_LOG(LS_INFO) << __FUNCTION__ << " Remote audio track: " << _remote_audio_track;
     } else if (track->kind() == webrtc::MediaStreamTrackInterface::kVideoKind) {
-        _videoSink = std::make_unique<VideoSink>(webRtc->getHandlers(), peerId);
-        auto _remote_video_track = static_cast<webrtc::VideoTrackInterface*>(track.get());
-        _remote_video_track->AddOrUpdateSink(_videoSink.get(), rtc::VideoSinkWants());
+        auto* pVideoSink = new VideoSink(webRtc->getHandlers(), peerId, mid);
+
+        auto videoTrack = dynamic_cast<webrtc::VideoTrackInterface*>(track.get());
+        videoTrack->AddOrUpdateSink(pVideoSink, rtc::VideoSinkWants());
+
+        _videoSink.insert(std::make_pair(mid, pVideoSink));
     }
 }
 

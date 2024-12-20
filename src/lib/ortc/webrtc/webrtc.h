@@ -14,12 +14,13 @@
 
 #include <map>
 #include <mutex>
+#include <optional>
 #include <string>
 
 #include <api/peer_connection_interface.h>
+#include <modules/video_capture/video_capture.h>
 #include <pc/session_description.h>
 #include <rtc_base/thread.h>
-#include <optional>
 
 #include "../ok_rtc.h"
 #include "../ok_rtc_defs.h"
@@ -31,6 +32,8 @@ class SessionDescriptionInterface;
 class AudioSourceInterface;
 class VideoEncoderFactory;
 class VideoDecoderFactory;
+// class VideoCaptureModule;
+
 }  // namespace webrtc
 
 namespace lib::ortc {
@@ -53,7 +56,7 @@ class WebRTC : public OkRTC {
 public:
     WebRTC();
 
-    ~WebRTC();
+    ~WebRTC() override;
 
     bool start() override;
 
@@ -85,6 +88,7 @@ public:
     size_t getVideoSize() override;
 
     std::shared_ptr<VideoCaptureInterface> createVideoCapture(const std::string& deviceId);
+    void destroyVideoCapture();
 
     bool quit(const std::string& peerId) override;
 
@@ -113,6 +117,8 @@ public:
         return peer_connection_factory;
     }
 
+    std::string getVideoDeviceId(int selected);
+
 private:
     //    std::unique_ptr<LogSinkImpl> _logSink;
     void addIceServer(const IceServer& ice);
@@ -121,7 +127,18 @@ private:
 
     Conductor* getConductor(const std::string& peerId);
 
+    void initAudioDevice();
+
+    void linkAudioDevice(Conductor* c);
+
+    //    void initVideoDevice();
+
+    void linkVideoDevice(Conductor* c, int selected);
+
     std::recursive_mutex mutex;
+
+    int selectedVideoDevice = -1;
+    webrtc::VideoCaptureModule::DeviceInfo* deviceInfo = nullptr;
 
     webrtc::PeerConnectionInterface::RTCConfiguration _rtcConfig;
 
@@ -140,7 +157,7 @@ private:
     std::shared_ptr<VideoCaptureInterface> videoCapture;
 
     // sink
-    std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> sink;
+    std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> videoSink;
 
     rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> peer_connection_factory;
 };

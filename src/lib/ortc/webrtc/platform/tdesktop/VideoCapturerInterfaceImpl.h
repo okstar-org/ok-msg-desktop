@@ -1,6 +1,19 @@
+/*
+ * Copyright (c) 2022 船山信息 chuanshaninfo.com
+ * The project is licensed under Mulan PubL v2.
+ * You can use this software according to the terms and conditions of the Mulan
+ * PubL v2. You may obtain a copy of Mulan PubL v2 at:
+ *          http://license.coscl.org.cn/MulanPubL-2.0
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PubL v2 for more details.
+ */
+
 #ifndef TGCALLS_VIDEO_CAPTURER_INTERFACE_IMPL_H
 #define TGCALLS_VIDEO_CAPTURER_INTERFACE_IMPL_H
 
+#include <rtc_base/thread.h>
 #include "../../VideoCapturerInterface.h"
 
 #ifdef TGCALLS_UWP_DESKTOP
@@ -18,7 +31,10 @@ class PlatformContext;
 
 class VideoCapturerInterfaceImpl final : public VideoCapturerInterface {
 public:
-    VideoCapturerInterfaceImpl(rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> source,
+    VideoCapturerInterfaceImpl(rtc::Thread* signalingThread,
+                               rtc::Thread* workerThread,
+                               rtc::scoped_refptr<webrtc::VideoTrackSourceInterface>
+                                       source,
                                std::string deviceId,
                                std::function<void(VideoState)>
                                        stateUpdated,
@@ -31,11 +47,15 @@ public:
     void setPreferredCaptureAspectRatio(float aspectRatio) override;
     void setUncroppedOutput(
             std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> sink) override;
-    int getRotation() override { return 0; }
+    int getRotation() override {
+        return 0;
+    }
     void setOnFatalError(std::function<void()> error) override;
     void setOnPause(std::function<void(bool)> pause) override;
 
 private:
+    rtc::Thread* signalingThread;
+    rtc::Thread* workerThread;
     rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> _source;
     std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> _sink;
 #ifdef TGCALLS_UWP_DESKTOP

@@ -25,6 +25,7 @@
 #include <api/video_codecs/builtin_video_decoder_factory.h>
 #include <api/video_codecs/builtin_video_encoder_factory.h>
 #include <media/base/codec.h>
+#include <modules/video_capture/video_capture.h>
 #include <modules/video_capture/video_capture_factory.h>
 #include <pc/video_track_source.h>
 #include <rtc_base/logging.h>
@@ -33,6 +34,8 @@
 #include <rtc_base/thread.h>
 
 namespace lib::ortc {
+
+constexpr int DEVICE_NAME_MAX_LEN = 255;
 
 cricket::TransportInfo toTransportInfo(const std::string& name, const OIceUdp& iceUdp) {
     cricket::TransportInfo ti;
@@ -511,14 +514,16 @@ void copyCandidate(webrtc::SessionDescriptionInterface* from,
     }
 }
 
-WebRTC::WebRTC() : peer_connection_factory(nullptr) {
+WebRTC::WebRTC() : peer_connection_factory(nullptr), deviceInfo(nullptr), selectedVideoDevice(-1) {
     _rtcConfig.sdp_semantics = webrtc::SdpSemantics::kUnifiedPlan;
     _rtcConfig.enable_implicit_rollback = false;
     _rtcConfig.enable_ice_renomination = true;
 }
 
 WebRTC::~WebRTC() {
-    for (auto it : _pcMap) {
+    RTC_LOG(LS_INFO) << __FUNCTION__ << " destroy...";
+
+    for (const auto& it : _pcMap) {
         auto c = it.second;
         delete c;
     }
@@ -526,10 +531,12 @@ WebRTC::~WebRTC() {
     if (isStarted()) {
         stop();
     }
+
+    RTC_LOG(LS_INFO) << __FUNCTION__ << " destroyed.";
 }
 
 bool WebRTC::start() {
-    RTC_LOG(LS_INFO) << "Starting the WebRTC...";
+    RTC_LOG(LS_INFO) << __FUNCTION__ << "Starting the WebRTC...";
 
     // lock
     std::lock_guard<std::recursive_mutex> lock(mutex);
@@ -540,9 +547,6 @@ bool WebRTC::start() {
     //    rtc::LogMessage::SetLogToStderr(false);
 
     RTC_LOG(LS_INFO) << "InitializeSSL=>" << rtc::InitializeSSL();
-    ;
-
-    //   threads = StaticThreads::getThreads();
 
     RTC_LOG(LS_INFO) << "Creating network thread";
     network_thread = rtc::Thread::CreateWithSocketServer();
@@ -562,7 +566,7 @@ bool WebRTC::start() {
     RTC_LOG(LS_INFO) << "Creating signaling thread";
     signaling_thread = rtc::Thread::Create();
     RTC_LOG(LS_INFO) << "Signaling thread=>" << signaling_thread;
-    ;
+
     signaling_thread->SetName("signaling_thread", this);
     RTC_LOG(LS_INFO) << "Signaling thread is started=>" << signaling_thread->Start();
 
@@ -613,13 +617,7 @@ bool WebRTC::start() {
     options.disable_encryption = false;
     peer_connection_factory->SetOptions(options);
 
-    RTC_LOG(LS_INFO) << "Create audio source...";
-    audioSource = peer_connection_factory->CreateAudioSource(cricket::AudioOptions());
-    RTC_LOG(LS_INFO) << "Audio source is:" << audioSource.get();
-
-    RTC_LOG(LS_INFO) << "Create video device...";
-    auto vdi = webrtc::VideoCaptureFactory::CreateDeviceInfo();
-    RTC_LOG(LS_INFO) << "Video capture numbers:" << vdi->NumberOfDevices();
+    initAudioDevice();
 
     RTC_LOG(LS_INFO) << "WebRTC has be started.";
     return true;
@@ -632,10 +630,11 @@ bool WebRTC::stop() {
     // 销毁factory
     peer_connection_factory = nullptr;
 
+    delete deviceInfo;
+    deviceInfo = nullptr;
+
     // 清除ssl
     rtc::CleanupSSL();
-
-    _handlers.erase(_handlers.begin(), _handlers.end());
 
     RTC_LOG(LS_INFO) << "WebRTC has be destroyed.";
     return true;
@@ -928,8 +927,6 @@ Conductor* WebRTC::getConductor(const std::string& peerId) {
     return _pcMap[peerId];
 }
 
-constexpr int LEN = 255;
-
 Conductor* WebRTC::createConductor(const std::string& peerId, const std::string& sId, bool video) {
     std::lock_guard<std::recursive_mutex> lock(mutex);
 
@@ -937,39 +934,62 @@ Conductor* WebRTC::createConductor(const std::string& peerId, const std::string&
 
     auto conductor = new Conductor(this, peerId, sId);
     if (!video) {
-        // audio
-        RTC_DLOG_V(rtc::LS_INFO) << "AddTrack audio source:" << audioSource.get();
-        conductor->AddAudioTrack(audioSource.get());
+        linkAudioDevice(conductor);
     } else {
-        // video
-        RTC_DLOG_V(rtc::LS_INFO) << "AddTrack audio source:" << audioSource.get();
-        conductor->AddAudioTrack(audioSource.get());
+        // audio
+        linkAudioDevice(conductor);
 
-        auto deviceInfo = webrtc::VideoCaptureFactory::CreateDeviceInfo();
-        int num_devices = deviceInfo->NumberOfDevices();
-        RTC_LOG(LS_INFO) << "Get number of video devices:" << num_devices;
-
-        if (0 < num_devices) {
-            // TODO 默认获取第一个视频设备
-            int selected = 0;
-
-            char name[LEN] = {};
-            char uid[LEN] = {};
-            char puid[LEN] = {};
-            deviceInfo->GetDeviceName(selected, name, LEN, uid, LEN, puid, LEN);
-
-            RTC_LOG(LS_INFO) << "Get video device {name:" << name << ", uid:" << uid
-                             << ", productUid:" << puid << "}";
-
-            videoCapture = createVideoCapture(uid);
-            conductor->AddVideoTrack(videoCapture->source().get());
-
-            sink = std::make_shared<VideoSink>(_handlers);
-            videoCapture->setOutput(sink);
-        }
+        // video default select first。
+        linkVideoDevice(conductor, 0);
     }
 
     return conductor;
+}
+
+void WebRTC::linkAudioDevice(Conductor* c) {
+    RTC_LOG(LS_INFO) << __FUNCTION__ << "AddTrack audio source:" << audioSource.get();
+    c->AddAudioTrack(audioSource.get());
+}
+
+void WebRTC::linkVideoDevice(Conductor* c, int selected) {
+    auto devId = getVideoDeviceId(selected);
+    if (devId.empty()) {
+        RTC_LOG(LS_WARNING) << "Unable to select device: " << selected;
+        return;
+    }
+
+    RTC_LOG(LS_INFO) << "Get video device:" << devId;
+
+    createVideoCapture(devId);
+
+    c->AddVideoTrack(videoCapture->source().get());
+
+    if (!videoSink) {
+        videoSink = std::make_shared<VideoSink>(_handlers, "", "");
+    }
+    videoCapture->setOutput(videoSink);
+}
+
+std::string WebRTC::getVideoDeviceId(int selected) {
+    std::unique_ptr<webrtc::VideoCaptureModule::DeviceInfo> pDeviceInfo(
+            webrtc::VideoCaptureFactory::CreateDeviceInfo());
+
+    int num_devices = pDeviceInfo->NumberOfDevices();
+    RTC_LOG(LS_INFO) << "Get number of video devices:" << num_devices;
+    if (selected >= num_devices) {
+        RTC_LOG(LS_INFO) << "Out of selected device index: " << selected;
+        return {};
+    }
+
+    char name[DEVICE_NAME_MAX_LEN] = {};
+    char uid[DEVICE_NAME_MAX_LEN] = {};
+    char puid[DEVICE_NAME_MAX_LEN] = {};
+    pDeviceInfo->GetDeviceName(selected,                   //
+                               name, DEVICE_NAME_MAX_LEN,  //
+                               uid, DEVICE_NAME_MAX_LEN,   //
+                               puid, DEVICE_NAME_MAX_LEN);
+
+    return std::string(uid);
 }
 
 void WebRTC::setRemoteDescription(const std::string& peerId, const OJingleContentAv& av) {
@@ -1186,14 +1206,31 @@ std::shared_ptr<VideoCaptureInterface> WebRTC::createVideoCapture(const std::str
         return {};
     }
 
-    //  if (auto result = videoCapture.get()) {
-    //    if (deviceId) {
-    //      result->switchToDevice(*deviceId,  isScreenCapture);
-    //    }
-    //    return videoCapture;
-    //  }
+    if (auto result = videoCapture.get()) {
+        result->switchToDevice(deviceId, false);
+        return videoCapture;
+    }
 
-    return VideoCaptureInterface::Create(signaling_thread.get(), worker_thread.get(), deviceId);
+    videoCapture = VideoCaptureInterface::Create(signaling_thread.get(),  //
+                                                 worker_thread.get(),     //
+                                                 deviceId);
+    return videoCapture;
 }
+
+void WebRTC::destroyVideoCapture() {
+    videoCapture.reset();
+}
+
+void WebRTC::initAudioDevice() {
+    RTC_LOG(LS_INFO) << "Create audio source...";
+    audioSource = peer_connection_factory->CreateAudioSource(cricket::AudioOptions());
+    RTC_LOG(LS_INFO) << "Audio source is:" << audioSource.get();
+}
+
+// void WebRTC::initVideoDevice() {
+//     RTC_LOG(LS_INFO) << "Create video device...";
+//     deviceInfo = webrtc::VideoCaptureFactory::CreateDeviceInfo();
+//     RTC_LOG(LS_INFO) << "Video capture numbers:" << deviceInfo->NumberOfDevices();
+// }
 
 }  // namespace lib::ortc

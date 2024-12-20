@@ -142,7 +142,9 @@ private:
 
     rtc::scoped_refptr<webrtc::PeerConnectionInterface> peer_connection_;
     std::list<std::string> _candidates;
-    std::unique_ptr<VideoSink> _videoSink;
+
+    // k: mid
+    std::map<std::string, VideoSink*> _videoSink;
 
     rtc::scoped_refptr<webrtc::AudioTrackInterface> _audioTrack;
     rtc::scoped_refptr<webrtc::VideoTrackInterface> _videoTrack;

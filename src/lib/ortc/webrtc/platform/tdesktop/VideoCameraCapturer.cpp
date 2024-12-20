@@ -33,10 +33,13 @@ constexpr auto kPreferredFps = 30;
 }  // namespace
 
 VideoCameraCapturer::VideoCameraCapturer(
+        rtc::Thread* signalingThread, rtc::Thread* workerThread,
         std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> sink)
-        : _sink(sink) {}
+        : _sink(sink), signalingThread(signalingThread), workerThread(workerThread) {}
 
-VideoCameraCapturer::~VideoCameraCapturer() { destroy(); }
+VideoCameraCapturer::~VideoCameraCapturer() {
+    destroy();
+}
 
 void VideoCameraCapturer::create() {
     _failed = false;
@@ -109,11 +112,12 @@ bool VideoCameraCapturer::create(webrtc::VideoCaptureModule::DeviceInfo* info,
 #ifndef WEBRTC_WIN
     _capability.videoType = webrtc::VideoType::kI420;
 #endif  // WEBRTC_WIN
+
     if (_module->StartCapture(_capability) != 0) {
         RTC_LOG(LS_ERROR) << "Failed to start VideoCameraCapturer '" << _requestedDeviceId << "'.";
         destroy();
-        return false;
     }
+
     _dimensions = std::make_pair(_capability.width, _capability.height);
     return true;
 }
@@ -152,7 +156,9 @@ void VideoCameraCapturer::setOnFatalError(std::function<void()> error) {
     }
 }
 
-std::pair<int, int> VideoCameraCapturer::resolution() const { return _dimensions; }
+std::pair<int, int> VideoCameraCapturer::resolution() const {
+    return _dimensions;
+}
 
 void VideoCameraCapturer::destroy() {
     _failed = false;
@@ -191,8 +197,8 @@ void VideoCameraCapturer::OnFrame(const webrtc::VideoFrame& frame) {
     const auto top = (originalHeight - height) / 2;
     rtc::scoped_refptr<webrtc::I420Buffer> croppedBuffer =
             webrtc::I420Buffer::Create(width, height);
-    croppedBuffer->CropAndScaleFrom(
-            *frame.video_frame_buffer()->ToI420(), left, top, width, height);
+    croppedBuffer->CropAndScaleFrom(*frame.video_frame_buffer()->ToI420(), left, top, width,
+                                    height);
     webrtc::VideoFrame::Builder croppedBuilder = webrtc::VideoFrame::Builder()
                                                          .set_video_frame_buffer(croppedBuffer)
                                                          .set_rotation(webrtc::kVideoRotation_0)

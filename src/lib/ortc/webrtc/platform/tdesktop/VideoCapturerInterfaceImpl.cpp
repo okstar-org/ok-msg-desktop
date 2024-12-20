@@ -1,3 +1,15 @@
+/*
+ * Copyright (c) 2022 船山信息 chuanshaninfo.com
+ * The project is licensed under Mulan PubL v2.
+ * You can use this software according to the terms and conditions of the Mulan
+ * PubL v2. You may obtain a copy of Mulan PubL v2 at:
+ *          http://license.coscl.org.cn/MulanPubL-2.0
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PubL v2 for more details.
+ */
+
 #include "VideoCapturerInterfaceImpl.h"
 
 #include "VideoCameraCapturer.h"
@@ -19,13 +31,11 @@ std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> GetSink(
 }  // namespace
 
 VideoCapturerInterfaceImpl::VideoCapturerInterfaceImpl(
+        rtc::Thread* signalingThread, rtc::Thread* workerThread,
         rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> source,
         std::string deviceId,
-        std::function<void(VideoState)>
-                stateUpdated,
-        std::shared_ptr<PlatformContext>
-                platformContext,
-        std::pair<int, int>& outResolution)
+        std::function<void(VideoState)> stateUpdated,
+        std::shared_ptr<PlatformContext> platformContext, std::pair<int, int>& outResolution)
         : _source(source), _sink(GetSink(source)), _stateUpdated(stateUpdated) {
     if (const auto source = DesktopCaptureSourceForKey(deviceId)) {
         const auto data = DesktopCaptureSourceData{
@@ -37,10 +47,9 @@ VideoCapturerInterfaceImpl::VideoCapturerInterfaceImpl(
         _desktopCapturer->setOutput(_sink);
         _desktopCapturer->start();
         outResolution = {1280, 960};
-    } else if (!ShouldBeDesktopCapture(deviceId))
-
-    {
-        _cameraCapturer = std::make_unique<VideoCameraCapturer>(_sink);
+    } else if (!ShouldBeDesktopCapture(deviceId)) {
+        _cameraCapturer =
+                std::make_unique<VideoCameraCapturer>(signalingThread, workerThread, _sink);
         _cameraCapturer->setDeviceId(deviceId);
         _cameraCapturer->setState(VideoState::Active);
         outResolution = _cameraCapturer->resolution();
