@@ -662,7 +662,7 @@ void WebRTC::removeRTCHandler(OkRTCHandler* hand) {
                     _handlers.end());
 }
 
-std::vector<OkRTCHandler*> WebRTC::getHandlers() {
+const std::vector<OkRTCHandler*>& WebRTC::getHandlers() {
     std::lock_guard<std::recursive_mutex> lock(mutex);
     return _handlers;
 }

@@ -104,7 +104,7 @@ public:
 
     void getLocalSdp(const std::string& peerId, ortc::OJingleContentAv& oContext) override;
 
-    std::vector<OkRTCHandler*> getHandlers();
+    const std::vector<OkRTCHandler*>& getHandlers() override;
 
     void addRTCHandler(OkRTCHandler* hand) override;
     void removeRTCHandler(OkRTCHandler* hand) override;

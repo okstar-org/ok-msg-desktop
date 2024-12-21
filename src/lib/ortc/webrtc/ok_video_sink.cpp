@@ -76,9 +76,9 @@ void VideoSink::OnFrame(const webrtc::VideoFrame& frame) {
         return;
     }
 
-    //    for (auto handler : handlers) {
-    //        handler->onRender(_peer_id, image);
-    //    }
+    for (auto handler : handlers) {
+        handler->onRender(_peer_id, image);
+    }
 }
 
 }  // namespace lib::ortc

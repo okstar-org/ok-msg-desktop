@@ -231,10 +231,10 @@ void Conductor::OnTrack(rtc::scoped_refptr<webrtc::RtpTransceiverInterface> tran
     if (track->kind() == webrtc::MediaStreamTrackInterface::kAudioKind) {
         _remote_audio_track = static_cast<webrtc::AudioTrackInterface*>(track.get());
         RTC_LOG(LS_INFO) << __FUNCTION__
-                         << "Added successful remote audio track: " << _remote_audio_track;
+                         << " Added successful remote audio track: " << _remote_audio_track;
     } else if (track->kind() == webrtc::MediaStreamTrackInterface::kVideoKind && !mid.empty()) {
         _videoSink = new VideoSink(webRtc->getHandlers(), peerId, mid);
-        RTC_LOG(LS_INFO) << __FUNCTION__ << "video sink:" << _videoSink;
+        RTC_LOG(LS_INFO) << __FUNCTION__ << " video sink:" << _videoSink;
 
         _remote_video_track = dynamic_cast<webrtc::VideoTrackInterface*>(track.get());
         _remote_video_track->AddOrUpdateSink(_videoSink, rtc::VideoSinkWants());
