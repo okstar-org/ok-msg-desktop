@@ -586,6 +586,10 @@ void MessengerMeet::addHandler(MessengerMeetHandler* hdr) {
     meet->addMeetHandler(hdr);
 }
 
+void MessengerMeet::removeHandler(MessengerMeetHandler* hdr) {
+    meet->removeMeetHandler(hdr);
+}
+
 void MessengerMeet::onCall(const IMPeerId& peerId, const QString& callId, bool audio, bool video) {}
 
 void MessengerMeet::onCallRetract(const QString& friendId, CallState state) {}

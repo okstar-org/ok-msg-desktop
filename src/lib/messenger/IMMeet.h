@@ -71,6 +71,12 @@ public:
     void addMeetHandler(MessengerMeetHandler* hdr);
 
     /**
+     * 移除处理器
+     * @param hdr
+     */
+    void removeMeetHandler(MessengerMeetHandler* hdr);
+
+    /**
      * 选择视频设备
      * @param deviceId 设备id
      */
@@ -81,7 +87,7 @@ public:
      * @param selected 设备索引
      */
     void switchVideoDevice(int selected);
-
+    
 protected:
     void handleHostPresence(const gloox::JID& from, const gloox::Presence& presence) override;
 
