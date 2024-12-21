@@ -22,7 +22,8 @@ namespace lib::ortc {
 
 class VideoSink : public rtc::VideoSinkInterface<webrtc::VideoFrame> {
 public:
-    VideoSink(const std::vector<OkRTCHandler*>& handlers, std::string peerId, std::string mid);
+    VideoSink(const std::vector<OkRTCHandler*>& handlers, std::string peerId,
+              std::string resource_);
 
     ~VideoSink() override;
 
@@ -30,7 +31,7 @@ public:
 
 private:
     std::string _peer_id;
-    std::string _mid;
+    std::string resource;
     const std::vector<OkRTCHandler*>& handlers;
 };
 

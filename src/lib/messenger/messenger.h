@@ -468,8 +468,6 @@ public:
 
     virtual void onParticipantLeft(const ok::base::Jid& jid, const QString& participant) = 0;
 
-    virtual void onSelfVideoFrame(const ortc::RendererImage& image) = 0;
-
     virtual void onParticipantVideoFrame(const QString& participant,
                                          const ortc::RendererImage& image) = 0;
 };

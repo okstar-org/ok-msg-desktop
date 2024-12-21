@@ -21,21 +21,16 @@ namespace lib::ortc {
 
 VideoSink::VideoSink(const std::vector<OkRTCHandler*>& handlers,  //
                      std::string peerId,                          //
-                     std::string mId)
-        : handlers(handlers)
-        , _peer_id(std::move(peerId))
-        , _mid(std::move(mId))  //
-{
-    RTC_LOG(LS_INFO) << __FUNCTION__ << " peerId:" << _peer_id << " mid:" << _mid;
+                     std::string resource_)
+        : handlers(handlers), _peer_id(std::move(peerId)), resource(std::move(resource_)) {
+    RTC_LOG(LS_INFO) << __FUNCTION__ << " peerId:" << _peer_id << " mid:" << resource;
 }
-
 VideoSink::~VideoSink() {
-    RTC_LOG(LS_INFO) << __FUNCTION__;
+    RTC_LOG(LS_INFO) << __FUNCTION__ << " peerId:" << _peer_id << " mid:" << resource;
 }
-
 void VideoSink::OnFrame(const webrtc::VideoFrame& frame) {
-    RTC_LOG(LS_INFO) << __FUNCTION__ << " peer:" << _peer_id << " mid:" << _mid
-                     << " frame:" << frame.size();
+    //    RTC_LOG(LS_INFO) << __FUNCTION__ << " peer:" << _peer_id << " mid:" << _mid
+    //                     << " frame:" << frame.size();
 
     bool conv = false;
     RendererImage image{};
@@ -77,7 +72,7 @@ void VideoSink::OnFrame(const webrtc::VideoFrame& frame) {
     }
 
     for (auto handler : handlers) {
-        handler->onRender(_peer_id, image);
+        handler->onRender(image, _peer_id, resource);
     }
 }
 

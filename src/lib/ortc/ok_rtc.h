@@ -73,7 +73,9 @@ public:
                        const std::string& peerId,
                        const OIceUdp& iceUdp) = 0;
 
-    virtual void onRender(const std::string& friendId, const RendererImage& image) = 0;
+    virtual void onRender(const RendererImage& image,
+                          const std::string& peerId,
+                          const std::string& resource) = 0;
 };
 
 /**

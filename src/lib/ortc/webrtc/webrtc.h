@@ -124,7 +124,6 @@ public:
     std::string getVideoDeviceId(int selected);
 
 private:
-    //    std::unique_ptr<LogSinkImpl> _logSink;
     void addIceServer(const IceServer& ice);
 
     Conductor* createConductor(const std::string& peerId, const std::string& sId, bool video);
@@ -134,8 +133,6 @@ private:
     void initAudioDevice();
 
     void linkAudioDevice(Conductor* c);
-
-    //    void initVideoDevice();
 
     void linkVideoDevice(Conductor* c, int selected);
 

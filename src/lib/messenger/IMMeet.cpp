@@ -485,14 +485,20 @@ void IMMeet::onSignalingChange(const std::string& sId, const std::string& peerId
              << "state:" << qstring(ortc::SignalingStateAsStr(state));
 }
 
-void IMMeet::onRender(const std::string& friendId, const ortc::RendererImage& image) {
+void IMMeet::onRender(const ortc::RendererImage& image,
+                      const std::string& friendId,
+                      const std::string& resource) {
     //    qDebug() << __func__ << "render friendId:" << qstring(friendId) //
     //             << " image {w:" << image.width_ << ", h:" << image.height_ << "}";
     for (auto h : handlers) {
         if (friendId.empty()) {
-            h->onSelfVideoFrame(image);
+            h->onParticipantVideoFrame(qstring(im->self().resource()), image);
         } else {
-            h->onParticipantVideoFrame(qstring(friendId), image);
+            // resource format is like: f1b4629b-video-0-13
+            auto s = qstring(resource).split("-");
+            if (!s.empty()) {
+                h->onParticipantVideoFrame(s[0], image);
+            }
         }
     }
 }

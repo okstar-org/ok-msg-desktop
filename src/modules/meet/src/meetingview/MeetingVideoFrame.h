@@ -68,8 +68,6 @@ private:
 
     void onParticipantLeft(const ok::base::Jid& jid, const QString& participant) override;
 
-    void onSelfVideoFrame(const lib::ortc::RendererImage& image) override;
-
     void onParticipantVideoFrame(const QString& participant,
                                  const lib::ortc::RendererImage& image) override;
 

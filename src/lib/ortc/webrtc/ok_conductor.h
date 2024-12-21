@@ -84,7 +84,6 @@ public:
     bool addLocalVideoTrack(webrtc::VideoTrackSourceInterface* source);
     bool removeLocalVideoTrack();
 
-    void addRemoteVideoTrack(const std::string& peerId, const std::string& mid, uint32_t ssrc);
 
 protected:
     void CreatePeerConnection();
@@ -154,7 +153,6 @@ private:
 
     // k: mid
     std::map<std::string, VideoSink*> _videoSinks;
-    VideoSink* _videoSink;
 
     rtc::scoped_refptr<webrtc::AudioTrackInterface> _audioTrack;
     rtc::scoped_refptr<webrtc::RtpSenderInterface> _audioRtpSender;

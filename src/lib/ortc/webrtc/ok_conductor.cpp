@@ -224,6 +224,7 @@ void Conductor::OnTrack(rtc::scoped_refptr<webrtc::RtpTransceiverInterface> tran
     }
     RTC_LOG(LS_INFO) << __FUNCTION__ << " mid: " << mid;
     auto receiver = transceiver->receiver();
+
     // track
     auto track = receiver->track();
     RTC_LOG(LS_INFO) << __FUNCTION__ << " kind:" << track->kind() << " trackId:" << track->id();
@@ -233,15 +234,16 @@ void Conductor::OnTrack(rtc::scoped_refptr<webrtc::RtpTransceiverInterface> tran
         RTC_LOG(LS_INFO) << __FUNCTION__
                          << " Added successful remote audio track: " << _remote_audio_track;
     } else if (track->kind() == webrtc::MediaStreamTrackInterface::kVideoKind && !mid.empty()) {
-        _videoSink = new VideoSink(webRtc->getHandlers(), peerId, mid);
-        RTC_LOG(LS_INFO) << __FUNCTION__ << " video sink:" << _videoSink;
+        //        _videoSink = new VideoSink(webRtc->getHandlers(), peerId, mid);
+        //        RTC_LOG(LS_INFO) << __FUNCTION__ << " video sink:" << _videoSink;
 
-        _remote_video_track = dynamic_cast<webrtc::VideoTrackInterface*>(track.get());
-        _remote_video_track->AddOrUpdateSink(_videoSink, rtc::VideoSinkWants());
+        //        _remote_video_track = dynamic_cast<webrtc::VideoTrackInterface*>(track.get());
+        //        _remote_video_track->AddOrUpdateSink(_videoSink, rtc::VideoSinkWants());
 
-        _videoSinks.insert(std::make_pair(mid, _videoSink));
-        RTC_LOG(LS_INFO) << __FUNCTION__
-                         << "Added successful remote video track: " << _remote_video_track;
+        //        _videoSinks.insert(std::make_pair(mid, _videoSink));
+        //        RTC_LOG(LS_INFO) << __FUNCTION__
+        //                         << "Added successful remote video track: " <<
+        //                         _remote_video_track;
     }
 }
 
@@ -250,38 +252,15 @@ void Conductor::OnAddTrack(
         const std::vector<rtc::scoped_refptr<webrtc::MediaStreamInterface>>& streams) {
     std::string receiverId = receiver->id();
     RTC_LOG(LS_INFO) << __FUNCTION__ << " Receiver id:" << receiverId;
-
-    if (receiverId.empty()) {
-        RTC_LOG(LS_WARNING) << __FUNCTION__ << " Receiver id is empty.";
-        return;
-    }
-
-    for (auto& stream : streams) {
-        RTC_LOG(LS_INFO) << __FUNCTION__ << " Stream id: " << stream->id();
-    }
-}
-
-void Conductor::addRemoteVideoTrack(const std::string& peerId,
-                                    const std::string& mid,
-                                    uint32_t ssrc) {
-    RTC_LOG(LS_INFO) << __FUNCTION__ << " mid:" << mid << " ssrc:" << ssrc;
-
-    auto ts = peer_connection_->GetReceivers();
-    for (auto t : ts) {
-        for (const auto& stream : t->streams()) {
-            RTC_LOG(LS_INFO) << __FUNCTION__ << " stream: " << stream->id();
-        }
-
-        if (t->track()->kind() == webrtc::VideoTrackInterface::kVideoKind) {
-            auto track = t->track();
-            auto videoTrack = dynamic_cast<webrtc::VideoTrackInterface*>(track.get());
-            if (_videoSink) {
-                videoTrack->RemoveSink(_videoSink);
-            }
-            _videoSink = new VideoSink(webRtc->getHandlers(), peerId, mid);
-            videoTrack->AddOrUpdateSink(_videoSink, rtc::VideoSinkWants());
-        }
-    }
+    //
+    //    if (receiverId.empty()) {
+    //        RTC_LOG(LS_WARNING) << __FUNCTION__ << " Receiver id is empty.";
+    //        return;
+    //    }
+    //
+    //    for (auto& stream : streams) {
+    //        RTC_LOG(LS_INFO) << __FUNCTION__ << " Stream id: " << stream->id();
+    //    }
 }
 
 /**
@@ -290,7 +269,7 @@ void Conductor::addRemoteVideoTrack(const std::string& peerId,
  * @param receiver
  */
 void Conductor::OnRemoveTrack(rtc::scoped_refptr<webrtc::RtpReceiverInterface> receiver) {
-    RTC_LOG(LS_INFO) << __FUNCTION__ << " recever id: " << receiver->id();
+    RTC_LOG(LS_INFO) << __FUNCTION__ << " receiver id: " << receiver->id();
 
     //    rtc::scoped_refptr<webrtc::MediaStreamTrackInterface> track = receiver->track();
     //    if (track->kind() == webrtc::MediaStreamTrackInterface::kVideoKind) {
@@ -299,14 +278,42 @@ void Conductor::OnRemoveTrack(rtc::scoped_refptr<webrtc::RtpReceiverInterface> r
 }
 
 void Conductor::OnAddStream(rtc::scoped_refptr<webrtc::MediaStreamInterface> stream) {
-    RTC_LOG(LS_INFO) << __FUNCTION__ << " New stream added: " << stream->id();
+    RTC_LOG(LS_INFO) << __FUNCTION__
+                     << " New stream added streamId"
+                        ": "
+                     << stream->id();
     for (auto& track : stream->GetVideoTracks()) {
-        RTC_LOG(LS_INFO) << __FUNCTION__ << " Video track added with id: " << track->id();
+        auto trackId = track->id();
+        RTC_LOG(LS_INFO) << __FUNCTION__ << " Video track id: " << trackId;
+
+        auto _videoSink = new VideoSink(webRtc->getHandlers(), peerId, stream->id());
+        _videoSinks.insert(std::make_pair(stream->id() + "_" + trackId, _videoSink));
+
+        track->AddOrUpdateSink(_videoSink, rtc::VideoSinkWants());
+    }
+
+    for (auto& track : stream->GetAudioTracks()) {
+        RTC_LOG(LS_INFO) << __FUNCTION__ << " Audio track id: " << track->id();
     }
 }
 
 void Conductor::OnRemoveStream(rtc::scoped_refptr<webrtc::MediaStreamInterface> stream) {
-    RTC_LOG(LS_INFO) << __FUNCTION__ << "New stream removed: " << stream->id();
+    RTC_LOG(LS_INFO) << __FUNCTION__ << " Stream removed: " << stream->id();
+    std::vector<std::string> removed;
+    for (auto& it : _videoSinks) {
+        auto key = it.first;
+        if (key.starts_with(stream->id() + "_")) {
+            removed.push_back(key);
+        }
+    }
+
+    //    for (auto& k : removed) {
+    //        auto it = _videoSinks.find(k);
+    //        if (it != _videoSinks.end()) {
+    //            delete it->second;
+    //            _videoSinks.erase(it);
+    //        }
+    //    }
 }
 
 /**

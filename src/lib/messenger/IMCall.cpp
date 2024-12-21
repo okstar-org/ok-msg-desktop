@@ -322,8 +322,7 @@ void IMCall::cancelCall(const IMContactId& friendId, const QString& sId) {
     currentSid.clear();
     auto rtcManager = ortc::OkRTCManager::getInstance();
     auto rtc = rtcManager->getRtc();
-    if(rtc)
-    {
+    if (rtc) {
         rtc->removeRTCHandler(this);
     }
 }
@@ -527,7 +526,9 @@ void IMCall::onIce(const std::string& sId,     //
  * @param peerId
  * @param image
  */
-void IMCall::onRender(const std::string& peerId, const lib::ortc::RendererImage& image) {
+void IMCall::onRender(const lib::ortc::RendererImage& image,
+                      const std::string& peerId,
+                      const std::string& resource) {
     if (peerId.empty()) {
         for (const auto& item : callHandlers) {
             item->onSelfVideoFrame(image.width_, image.height_, image.y, image.u, image.v,

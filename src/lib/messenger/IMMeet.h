@@ -87,7 +87,7 @@ public:
      * @param selected 设备索引
      */
     void switchVideoDevice(int selected);
-    
+
 protected:
     void handleHostPresence(const gloox::JID& from, const gloox::Presence& presence) override;
 
@@ -170,7 +170,9 @@ protected:
                const std::string& peerId,
                const ortc::OIceUdp& iceUdp) override;
 
-    void onRender(const std::string& friendId, const ortc::RendererImage& image) override;
+    void onRender(const ortc::RendererImage& image,
+                  const std::string& peerId,
+                  const std::string& resource) override;
 
 private:
     void doForIceCompleted(const QString& sId, const QString& peerId);

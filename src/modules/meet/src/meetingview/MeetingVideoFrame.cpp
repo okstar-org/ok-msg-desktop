@@ -354,28 +354,15 @@ void MeetingVideoFrame::updateDuration() {
     duraionLabel->setText(duration.toString("hh:mm:ss"));
 }
 
-// 会在子线程回调，注意加锁
-void MeetingVideoFrame::onSelfVideoFrame(const lib::ortc::RendererImage& image) {
-
+void MeetingVideoFrame::onParticipantVideoFrame(const QString& participant,
+                                                const lib::ortc::RendererImage& image) {
     std::lock_guard<std::mutex> g(prt_mutex);
     for (auto it = participantMap.begin(); it != participantMap.end(); it++) {
         MeetingParticipant* p = *it;
-    /**
-         * TODO 如何判断是不是自己
-     */
-        bool isSelf = true;
-        if (isSelf)
-        {
+        if (p->getResource() == participant) {
             p->videoRender()->renderImage(image);
         }
     }
-}
-
-void MeetingVideoFrame::onParticipantVideoFrame(const QString& participant,
-                                                const lib::ortc::RendererImage& image) {
-    /**
-     * TODO 成员的视频帧
-     */
 }
 
 }  // namespace module::meet
