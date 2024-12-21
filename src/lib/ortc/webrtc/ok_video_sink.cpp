@@ -34,8 +34,8 @@ VideoSink::~VideoSink() {
 }
 
 void VideoSink::OnFrame(const webrtc::VideoFrame& frame) {
-    //    RTC_LOG(LS_INFO) << __FUNCTION__ << " peer:" << _peer_id << " mid:" << _mid
-    //                     << " frame:" << frame.size();
+    RTC_LOG(LS_INFO) << __FUNCTION__ << " peer:" << _peer_id << " mid:" << _mid
+                     << " frame:" << frame.size();
 
     bool conv = false;
     RendererImage image{};
@@ -76,9 +76,9 @@ void VideoSink::OnFrame(const webrtc::VideoFrame& frame) {
         return;
     }
 
-    for (auto handler : handlers) {
-        handler->onRender(_peer_id, image);
-    }
+    //    for (auto handler : handlers) {
+    //        handler->onRender(_peer_id, image);
+    //    }
 }
 
 }  // namespace lib::ortc

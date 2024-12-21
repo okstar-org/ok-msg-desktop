@@ -474,7 +474,7 @@ std::unique_ptr<cricket::VideoContentDescription> addVideoSsrcBundle(
     return std::move(videoPtr);
 }
 
-void copyCandidate(webrtc::SessionDescriptionInterface* from,
+void copyCandidate(const webrtc::SessionDescriptionInterface* from,
                    webrtc::SessionDescriptionInterface* to,
                    const std::string& from_mid,
                    const std::string& to_mid) {
@@ -1071,98 +1071,110 @@ void WebRTC::addSource(const std::string& peerId,
         return;
     }
 
-    for (const auto& item : map) {
-        // 增加接收
-        auto k = item.first;
-        auto& ssrcBundle = item.second;
-        RTC_LOG(LS_INFO) << " participant: " << k;
-
-        if (!ssrcBundle.audioSources.empty()) {
-            auto& mid = ssrcBundle.videoSources[0].name;
-            c->addRemoteVideoTrack(peerId, mid, std::stoul(ssrcBundle.videoSources[0].ssrc));
-        }
-    }
-
-    //    auto remoteDescription = c->getRemoteDescription();
-    //    if (!remoteDescription) {
-    //        RTC_LOG(LS_WARNING) << "No remote description!";
-    //        return;
-    //    }
-    //    auto d = remoteDescription->Clone();
-
-    //
     //    for (const auto& item : map) {
+    //        // 增加接收
     //        auto k = item.first;
     //        auto& ssrcBundle = item.second;
     //        RTC_LOG(LS_INFO) << " participant: " << k;
     //
     //        if (!ssrcBundle.audioSources.empty()) {
-    //            auto& mid = ssrcBundle.audioSources[0].name;
-    //            std::string jvb_a0 = "jvb-a0";
-    //            const cricket::ContentInfo* pContentInfo =
-    //            d->description()->GetContentByName(jvb_a0); if (pContentInfo) {
-    //                auto jvba = pContentInfo->media_description()->as_audio();
-    //                auto ti0 = d->description()->GetTransportInfoByName(jvb_a0);
-    //                cricket::TransportInfo ti(mid, ti0->description);
-    //                d->description()->AddTransportInfo(ti);
-    //
-    //                auto audioPtr = addAudioSsrcBundle(ssrcBundle);
-    //                audioPtr->set_codecs(jvba->codecs());
-    //                audioPtr->set_rtcp_mux(jvba->rtcp_mux());
-    //                audioPtr->set_rtp_header_extensions(jvba->rtp_header_extensions());
-    //
-    //                d->description()->AddContent(mid, cricket::MediaProtocolType::kRtp,
-    //                                             std::move(audioPtr));
-    //
-    //                //                group.AddContentName(mid);
-    //            }
-    //        }
-    //
-    //        if (!ssrcBundle.videoSources.empty()) {
     //            auto& mid = ssrcBundle.videoSources[0].name;
-    //            std::string jvb_v0 = "jvb-v0";
-    //            const cricket::ContentInfo* pContentInfo =
-    //            d->description()->GetContentByName(jvb_v0); if (pContentInfo) {
-    //                auto jvbv = pContentInfo->media_description()->as_video();
-    //                auto tiv = d->description()->GetTransportInfoByName(jvb_v0);
-    //
-    //                cricket::TransportInfo ti(mid, tiv->description);
-    //                d->description()->AddTransportInfo(ti);
-    //                size_t mline = d->number_of_mediasections();
-    //
-    //                auto videoPtr = addVideoSsrcBundle(ssrcBundle);
-    //                videoPtr->set_codecs(jvbv->codecs());
-    //                videoPtr->set_rtcp_mux(jvbv->rtcp_mux());
-    //                videoPtr->set_rtp_header_extensions(jvbv->rtp_header_extensions());
-    //
-    //                d->description()->AddContent(mid, cricket::MediaProtocolType::kRtp,
-    //                                             std::move(videoPtr));
-    //                //                group.AddContentName(mid);
-    //            }
-    //        }
-    //    }
-    //
-    //    std::unique_ptr<cricket::SessionDescription> x(d->description());
-    //    auto d1 = webrtc::CreateSessionDescription(webrtc::SdpType::kOffer, d->session_id(),
-    //                                               d->session_version(), std::move(x));
-    //
-    //    for (const auto& item : map) {
-    //        auto& ssrcBundle = item.second;
-    //        if (!ssrcBundle.audioSources.empty()) {
-    //            auto mid = ssrcBundle.audioSources[0].name;
-    //            copyCandidate(d.get(), d1.get(), "jvb-a0", mid);
-    //        }
-    //
-    //        if (!ssrcBundle.videoSources.empty()) {
-    //            auto mid = ssrcBundle.videoSources[0].name;
-    //            copyCandidate(d.get(), d1.get(), "jvb-v0", mid);
+    //            c->addRemoteVideoTrack(peerId, mid, std::stoul(ssrcBundle.videoSources[0].ssrc));
     //        }
     //    }
 
-    //    auto cc = c->getLocalDescription()->Clone();
-    //    c->setLocalDescription(cc.release());
-    //    c->setRemoteDescription(d1.release());
-    //    c->CreateAnswer();
+    //    auto sdp = std::make_unique<cricket::SessionDescription>();
+    //    cricket::ContentGroup group(cricket::GROUP_TYPE_BUNDLE);
+
+    auto old = c->getRemoteDescription();
+    if (!old) {
+        RTC_LOG(LS_WARNING) << "No remote description!";
+        return;
+    }
+
+    auto clone = old->Clone();
+    auto sdp = clone->description();
+
+    for (const auto& item : map) {
+        auto k = item.first;
+        auto& ssrcBundle = item.second;
+        RTC_LOG(LS_INFO) << " participant: " << k;
+
+        if (!ssrcBundle.audioSources.empty()) {
+            auto& mid = ssrcBundle.audioSources[0].name;
+            std::string jvb_a0 = "jvb-a0";
+            const cricket::ContentInfo* pContentInfo = old->description()->GetContentByName(jvb_a0);
+            if (pContentInfo) {
+                auto jvba = pContentInfo->media_description()->as_audio();
+
+                //                setSsrc(ssrcBundle.audioSsrcGroups, ssrcBundle.audioSources,
+                //                jvba);
+
+                //                auto ti0 = old->description()->GetTransportInfoByName(jvb_a0);
+                //                cricket::TransportInfo ti(mid, ti0->description);
+                //                sdp->AddTransportInfo(ti);
+
+                auto audioPtr = addAudioSsrcBundle(ssrcBundle);
+                audioPtr->set_codecs(jvba->codecs());
+                audioPtr->set_rtcp_mux(jvba->rtcp_mux());
+                audioPtr->set_rtp_header_extensions(jvba->rtp_header_extensions());
+
+                //
+                sdp->RemoveContentByName(jvb_a0);
+                sdp->AddContent(jvb_a0, cricket::MediaProtocolType::kRtp, std::move(audioPtr));
+
+                //                    group.AddContentName(jvb_a0);
+                //                    group.AddContentName(mid);
+            }
+        }
+
+        if (!ssrcBundle.videoSources.empty()) {
+            auto& mid = ssrcBundle.videoSources[0].name;
+            std::string jvb_v0 = "jvb-v0";
+            const cricket::ContentInfo* pContentInfo = sdp->GetContentByName(jvb_v0);
+            if (pContentInfo) {
+                auto jvbv = pContentInfo->media_description()->as_video();
+                auto tiv = sdp->GetTransportInfoByName(jvb_v0);
+
+                //                cricket::TransportInfo ti(mid, tiv->description);
+                //                sdp->AddTransportInfo(ti);
+                //                    size_t mline = cloned->number_of_mediasections();
+
+                auto videoPtr = addVideoSsrcBundle(ssrcBundle);
+                videoPtr->set_codecs(jvbv->codecs());
+                videoPtr->set_rtcp_mux(jvbv->rtcp_mux());
+                videoPtr->set_rtp_header_extensions(jvbv->rtp_header_extensions());
+
+                sdp->RemoveContentByName(jvb_v0);
+                sdp->AddContent(jvb_v0, cricket::MediaProtocolType::kRtp, std::move(videoPtr));
+
+                //                    group.AddContentName(jvb_v0);
+                //                group.AddContentName(mid);
+            }
+        }
+    }
+
+    std::unique_ptr<cricket::SessionDescription> x(sdp);
+    auto d1 = webrtc::CreateSessionDescription(webrtc::SdpType::kOffer, old->session_id(),
+                                               old->session_version(), std::move(x));
+
+    // for (const auto& item : map) {
+    //     auto& ssrcBundle = item.second;
+
+    //     if (!ssrcBundle.videoSources.empty()) {
+    //         auto mid = ssrcBundle.videoSources[0].name;
+    //         copyCandidate(old, d1.get(), "jvb-v0", "jvb-v0");
+    //     }
+
+    //     if (!ssrcBundle.audioSources.empty()) {
+    //         auto mid = ssrcBundle.audioSources[0].name;
+    //         copyCandidate(old, d1.get(), "jvb-a0", "jvb-a0");
+    //     }
+    // }
+
+    //    d1->description()->AddGroup(group);
+    c->setRemoteDescription(d1.release());
+    c->CreateAnswer();
 }
 
 bool WebRTC::CreateOffer(const std::string& peerId, const std::string& sId, bool video) {

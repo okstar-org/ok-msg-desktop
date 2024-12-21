@@ -153,7 +153,8 @@ private:
     std::list<std::string> _candidates;
 
     // k: mid
-    std::map<std::string, VideoSink*> _videoSink;
+    std::map<std::string, VideoSink*> _videoSinks;
+    VideoSink* _videoSink;
 
     rtc::scoped_refptr<webrtc::AudioTrackInterface> _audioTrack;
     rtc::scoped_refptr<webrtc::RtpSenderInterface> _audioRtpSender;
@@ -161,6 +162,7 @@ private:
     rtc::scoped_refptr<webrtc::VideoTrackInterface> _videoTrack;
     rtc::scoped_refptr<webrtc::RtpSenderInterface> _videoRtpSender;
     webrtc::AudioTrackInterface* _remote_audio_track;
+    webrtc::VideoTrackInterface* _remote_video_track;
 };
 
 }  // namespace lib::ortc

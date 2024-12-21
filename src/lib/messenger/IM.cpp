@@ -2407,15 +2407,27 @@ void IM::removeSession(gloox::Jingle::Session* s) {
 }
 
 void IM::addSessionHandler(IMSessionHandler* h) {
-    assert(h);
+    qDebug() << __func__ << "handler:" << h;
+    if (!h) {
+        qWarning() << __func__ << "Handler unable to added due the pointer is nullptr!";
+        return;
+    }
+    int os = m_sessionHandlers.size();
     m_sessionHandlers.push_back(h);
+    qDebug() << __func__ << "The handler:" << h << " be added size from:" << os << "=>"
+             << m_sessionHandlers.size();
 }
 
 void IM::removeSessionHandler(IMSessionHandler* h) {
+    qDebug() << __func__ << "handler:" << h;
+
+    int os = m_sessionHandlers.size();
     m_sessionHandlers.erase(std::find_if(m_sessionHandlers.begin(),
                                          m_sessionHandlers.end(),
                                          [h](IMSessionHandler* e) { return e == h; }),
                             m_sessionHandlers.end());
+    qDebug() << __func__ << "The handler:" << h << " be removed size from:" << os << "=>"
+             << m_sessionHandlers.size();
 }
 
 void IM::addFromHostHandler(const std::string& from, IMFromHostHandler* h) {
