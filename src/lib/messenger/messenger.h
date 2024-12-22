@@ -441,6 +441,13 @@ struct Meet {
     bool rtcstatsEnabled;
 };
 
+struct SourceInfo {
+    // 音频禁止
+    bool audioMute = false;
+    // 视频禁止
+    bool videoMute = false;
+};
+
 /**
  * 会议成员
  */
@@ -456,6 +463,8 @@ struct Participant {
     ok::base::Jid jid;
     QString affiliation;
     QString role;
+    // 设备信息
+    SourceInfo sourceInfo;
 };
 
 class MessengerMeetHandler {

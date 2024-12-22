@@ -299,22 +299,27 @@ void MeetingVideoFrame::addParticipant(const QString& name,
                                        const lib::messenger::Participant& parti) {
     qDebug() << __func__ << "room:" << name << "email:" << parti.email
              << "resource:" << parti.resource;
+
+    MeetingParticipant* participant;
+
     auto& k = parti.resource;
     auto find = participantMap.find(k);
-    if (find == participantMap.end()) {
-        // 添加用户
-
-        std::lock_guard<std::mutex> g(prt_mutex);
-        auto p = new MeetingParticipant(parti.resource, parti.email, parti.nick, parti.avatarUrl,
-                                        parti.jid);
-        videosLayout->addParticipant(p);
-        participantMap.insert(k, p);
+    if (!(find == participantMap.end())) {
+        participant = find.value();
     } else {
-        // 更新信息
-        auto user = find.value();
-        user->setNick(parti.nick);
-        user->setAvatarUrl(parti.avatarUrl);
+        // 添加用户
+        std::lock_guard<std::mutex> g(prt_mutex);
+        participant = new MeetingParticipant(parti.resource, parti.email, parti.nick,
+                                             parti.avatarUrl, parti.jid);
+        videosLayout->addParticipant(participant);
+        participantMap.insert(k, participant);
     }
+
+    // 更新信息
+    participant->setNick(parti.nick);
+    participant->setAvatarUrl(parti.avatarUrl);
+
+    // TODO 音频视频禁止信 parti.sourceInfo;
 }
 
 void MeetingVideoFrame::removeParticipant(const QString& name, const QString& resource) {

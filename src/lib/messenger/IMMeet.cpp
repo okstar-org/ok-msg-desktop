@@ -29,13 +29,24 @@
 namespace lib::messenger {
 
 Participant IMMeet::toParticipant(const gloox::Meet::Participant& participant) const {
-    return Participant{.email = qstring(participant.email),
-                       .nick = qstring(participant.nick),
-                       .resource = qstring(participant.resource),
-                       .avatarUrl = participant.avatarUrl,
-                       .jid = ok::base::Jid(participant.jid.full()),
-                       .affiliation = qstring(participant.affiliation),
-                       .role = qstring(participant.role)};
+    Participant p{.email = qstring(participant.email),
+                  .nick = qstring(participant.nick),
+                  .resource = qstring(participant.resource),
+                  .avatarUrl = participant.avatarUrl,
+                  .jid = ok::base::Jid(participant.jid.full()),
+                  .affiliation = qstring(participant.affiliation),
+                  .role = qstring(participant.role)};
+
+    auto json = ok::base::Jsons::toJSON(QByteArray::fromStdString(participant.sourceInfo)).object();
+    for (const auto& k : json.keys()) {
+        const QJsonObject& object = json.value(k).toObject();
+        if (k.endsWith("-a0")) {
+            p.sourceInfo.audioMute = object.value("muted") == "true";
+        } else if (k.endsWith("-v0")) {
+            p.sourceInfo.videoMute = object.value("muted") == "true";
+        }
+    }
+    return p;
 }
 
 IMMeet::IMMeet(IM* im, QObject* parent) : IMJingle(im, parent), manager(nullptr), meet(nullptr) {
@@ -150,11 +161,14 @@ void IMMeet::handleHostPresence(const gloox::JID& from, const gloox::Presence& p
                 // 获取群组用户jid
                 auto userTag = t->findChild("x", "xmlns", "http://jabber.org/protocol/muc#user");
                 if (userTag) {
-                    // <item
-                    // jid='px0hzgu9bwzb@meet.chuanshaninfo.com/9f31d7f1-0644-4cfb-82e9-da69305ce32a'
-                    // affiliation='none' role='participant'/>
                     gloox::MUCRoom::MUCUser mucUser(userTag);
                 }
+
+                auto si = t->findChild("SourceInfo");
+                if (si) {
+                    participant.sourceInfo = si->cdata();
+                }
+
                 meet->addParticipant(participant);
 
                 for (auto* h : handlers) {
@@ -239,7 +253,7 @@ void IMMeet::onSelfVCard(const IMVCard& vCard_) {
 
 bool IMMeet::doSessionInitiate(gloox::Jingle::Session* session,
                                const gloox::Jingle::Session::Jingle* jingle,
-                                               const IMPeerId& peerId) {
+                               const IMPeerId& peerId) {
     auto& from = session->remote();
     if (!from.server().starts_with("conference.")) {
         // 非会议
