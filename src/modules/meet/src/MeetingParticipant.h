@@ -17,10 +17,9 @@
 #include <QString>
 #include "base/jid.h"
 
+namespace module::meet {
 
 class MeetingVideoRender;
-
-namespace module::meet {
 
 /**
  * 会议参会者，获取一些基本信息、视频、音频等

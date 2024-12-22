@@ -20,7 +20,7 @@
 #include "IMMessage.h"
 #include "base/jid.h"
 #include "base/timer.h"
-#include "lib/ortc/ok_rtc_defs.h"
+#include "lib/ortc/ok_rtc.h"
 
 class QDomElement;
 class QDomDocument;

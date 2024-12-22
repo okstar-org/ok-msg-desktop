@@ -30,7 +30,11 @@
 namespace lib::ortc {
 
 Conductor::Conductor(WebRTC* webrtc, const std::string& peerId_, const std::string& sId_)
-        : peerId(peerId_), sId(sId_), webRtc{webrtc}, _remote_audio_track(nullptr) {
+        : peerId(peerId_)
+        , sId(sId_)
+        , webRtc(webrtc)
+        , observer(nullptr)
+        , _remote_audio_track(nullptr) {
     RTC_LOG(LS_INFO) << __FUNCTION__ << " sId:" << sId << " peerId:" << peerId;
 
     assert(!peerId.empty());
@@ -287,8 +291,10 @@ void Conductor::OnAddStream(rtc::scoped_refptr<webrtc::MediaStreamInterface> str
         RTC_LOG(LS_INFO) << __FUNCTION__ << " Video track id: " << trackId;
 
         auto _videoSink = new VideoSink(webRtc->getHandlers(), peerId, stream->id());
-        _videoSinks.insert(std::make_pair(stream->id() + "_" + trackId, _videoSink));
-
+        const std::basic_string<char, std::char_traits<char>, std::allocator<char>>& sinkKey =
+                stream->id() + "_" + trackId;
+        _videoSinks.insert(std::make_pair(sinkKey, _videoSink));
+        RTC_LOG(LS_INFO) << "Inserted video sink:" << sinkKey;
         track->AddOrUpdateSink(_videoSink, rtc::VideoSinkWants());
     }
 
@@ -394,13 +400,27 @@ void Conductor::OnSessionTerminate(const std::string& sid, OkRTCHandler* handler
 
 void Conductor::OnSuccess() {
     RTC_LOG(LS_INFO) << __FUNCTION__;
+
+    auto* localDescription = getLocalDescription();
+    if (localDescription) {
+        if (observer) {
+            observer->onLocalDescriptionSet(localDescription);
+        }
+    }
+
+    auto* remoteDescription = getRemoteDescription();
+    if (remoteDescription) {
+        if (observer) {
+            observer->onRemoteDescriptionSet(localDescription);
+        }
+    }
 }
 
 void Conductor::OnSuccess(webrtc::SessionDescriptionInterface* desc) {
     std::string sdp;
     desc->ToString(&sdp);
 
-    RTC_LOG(LS_INFO) << __FUNCTION__ << " set local sdp:\n" << sdp;
+    RTC_LOG(LS_INFO) << __FUNCTION__ << " set local sdp:" << desc->type() << "\n" << sdp;
     peer_connection_->SetLocalDescription(this, desc);
 }
 

@@ -326,9 +326,9 @@ void IMJingle::ParseOMeetSSRCBundle(const std::string& json,
     }
 }
 
-void IMJingle::ToPlugins(const ortc::OJingleContentAv& av, gloox::Jingle::PluginList& plugins) {
+void IMJingle::ToPlugins(const ortc::OJingleContentAv* av, gloox::Jingle::PluginList& plugins) {
     //<group>
-    auto& contents = av.getContents();
+    auto& contents = av->getContents();
     gloox::Jingle::Group::ContentList contentList;
     for (auto& kv : contents) {
         auto& content = kv.second;

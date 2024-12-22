@@ -33,7 +33,6 @@
 #include "lib/session/AuthSession.h"
 
 #include "lib/ortc/ok_rtc.h"
-#include "lib/ortc/ok_rtc_defs.h"
 #include "lib/ortc/ok_rtc_manager.h"
 
 namespace lib::messenger {
@@ -96,7 +95,7 @@ protected:
     void ParseOMeetSSRCBundle(const std::string& json,
                               std::map<std::string, ortc::OMeetSSRCBundle>& ssrcBundle);
 
-    void ToPlugins(const ortc::OJingleContentAv& av, gloox::Jingle::PluginList& plugins);
+    void ToPlugins(const ortc::OJingleContentAv* av, gloox::Jingle::PluginList& plugins);
 
     IM* im;
 

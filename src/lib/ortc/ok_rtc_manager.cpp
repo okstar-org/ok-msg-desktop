@@ -15,7 +15,6 @@
 #include <memory>
 
 #include "ok_rtc.h"
-#include "ok_rtc_defs.h"
 #include "webrtc/webrtc.h"
 
 namespace lib::ortc {

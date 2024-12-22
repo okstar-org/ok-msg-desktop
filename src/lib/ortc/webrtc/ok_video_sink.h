@@ -16,7 +16,6 @@
 #include <api/video/video_sink_interface.h>
 #include <ok_rtc.h>
 #include <mutex>
-#include "../ok_rtc_renderer.h"
 
 namespace lib::ortc {
 

@@ -16,10 +16,8 @@
 #include <string>
 
 #include "ok_rtc.h"
-#include "ok_rtc_renderer.h"
 
-namespace lib {
-namespace ortc {
+namespace lib::ortc {
 
 class OkRTCManager {
 public:
@@ -65,5 +63,4 @@ private:
     std::unique_ptr<OkRTC> rtc;
 };
 
-}  // namespace ortc
-}  // namespace lib
+}  // namespace lib::ortc

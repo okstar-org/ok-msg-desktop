@@ -63,12 +63,10 @@ set(${PROJECT_NAME}_SOURCES
 		webrtc/ok_conductor.cpp
 		webrtc/LogSinkImpl.h
 		webrtc/LogSinkImpl.cpp
+		ok_rtc.h
+		ok_rtc.cpp
 		ok_rtc_manager.h
 		ok_rtc_manager.cpp
-		ok_rtc.h
-		ok_rtc_renderer.h
-		ok_rtc_defs.h
-		ok_rtc_defs.cpp
 		utils/image_convert.h
 		utils/image_convert.cpp
 )

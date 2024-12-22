@@ -72,6 +72,8 @@ MeetingVideoFrame::MeetingVideoFrame(const QString& name, QWidget* parent)
 }
 
 MeetingVideoFrame::~MeetingVideoFrame() {
+    std::lock_guard<std::mutex> g(prt_mutex);
+
     disconnect(this);
     meet->removeHandler(this);
     meet->deleteLater();

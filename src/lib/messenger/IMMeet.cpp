@@ -452,12 +452,11 @@ void IMMeet::doForIceCompleted(const QString& sId, const QString& peerId) {
         return;
     }
 
-    ortc::OJingleContentAv av;
-    ortc::OkRTC* rtc = ortc::OkRTCManager::getInstance()->getRtc();
-    rtc->getLocalSdp(stdstring(peerId), av);
+    auto rtc = ortc::OkRTCManager::getInstance()->getRtc();
+    auto av = rtc->getLocalSdp(stdstring(peerId));
 
     gloox::Jingle::PluginList plugins;
-    ToPlugins(av, plugins);
+    ToPlugins(av.get(), plugins);
     currentSession->sessionAccept(plugins);
 }
 

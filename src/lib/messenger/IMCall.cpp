@@ -26,7 +26,6 @@
 #include "IM.h"
 #include "IMCall.h"
 #include "lib/ortc/ok_rtc.h"
-#include "lib/ortc/ok_rtc_defs.h"
 #include "lib/ortc/ok_rtc_manager.h"
 
 namespace lib::messenger {
@@ -414,12 +413,11 @@ void IMCall::doForIceCompleted(const QString& sId, const QString& peerId) {
         return;
     }
 
-    ortc::OJingleContentAv av;
     ortc::OkRTC* rtc = ortc::OkRTCManager::getInstance()->getRtc();
-    rtc->getLocalSdp(stdstring(peerId), av);
+    auto av = rtc->getLocalSdp(stdstring(peerId));
 
     gloox::Jingle::PluginList plugins;
-    ToPlugins(av, plugins);
+    ToPlugins(av.get(), plugins);
 
     if (pSession->direction() == CallDirection::CallIn) {
         pSession->getSession()->sessionAccept(plugins);
@@ -472,7 +470,7 @@ void IMCall::onRTP(const std::string& sid,     //
     qDebug() << __func__ << "sId:" << sId << "peerId:" << qstring(peerId);
 
     gloox::Jingle::PluginList plugins;
-    ToPlugins(oContext, plugins);
+    ToPlugins(&oContext, plugins);
 
     auto pSession = findSession(sId);
     if (!pSession) {

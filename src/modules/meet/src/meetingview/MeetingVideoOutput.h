@@ -16,11 +16,11 @@
 #include <QWidget>
 
 class RoundedPixmapLabel;
-class MeetingVideoWidgetRender;
 
 namespace module::meet {
 
 class MeetingParticipant;
+class MeetingVideoWidgetRender;
 
 class MeetingVideoOutput : public QWidget {
     Q_OBJECT

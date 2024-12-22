@@ -10,39 +10,27 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#include "ok_rtc_defs.h"
+//
+// Created by gaojie on 24-12-22.
+//
+
+#include "ok_rtc.h"
 
 namespace lib::ortc {
 
-bool OJingleContentAv::isValid() {
-    return !contents.empty();
-}
-
-bool OJingleContentAv::isVideo() const {
-    for (auto& c : contents)
-        if (c.second.rtp.media == Media::video) return true;
-    return false;
-}
-
-bool OJingleContentFile::isValid() {
-    for (auto& c : contents)
-        if (!c.name.empty() && c.size > 0) return true;
-    return false;
-}
-
-std::string PeerConnectionStateAsStr(PeerConnectionState state) {
+std::string SignalingStateAsStr(SignalingState state) {
     switch (state) {
-        case PeerConnectionState::New:
-            return "New";
-        case PeerConnectionState::Connecting:
-            return "Connecting";
-        case PeerConnectionState::Connected:
-            return "Connected";
-        case PeerConnectionState::Disconnected:
-            return "Disconnected";
-        case PeerConnectionState::Failed:
-            return "Failed";
-        case PeerConnectionState::Closed:
+        case SignalingState::Stable:
+            return "Stable";
+        case SignalingState::HaveLocalOffer:
+            return "HaveLocalOffer";
+        case SignalingState::HaveLocalPrAnswer:
+            return "HaveLocalPrAnswer";
+        case SignalingState::HaveRemoteOffer:
+            return "HaveRemoteOffer";
+        case SignalingState::HaveRemotePrAnswer:
+            return "HaveRemotePrAnswer";
+        case SignalingState::Closed:
             return "Closed";
     }
     return {};
@@ -59,7 +47,6 @@ std::string IceGatheringStateAsStr(IceGatheringState state) {
     }
     return {};
 }
-
 std::string IceConnectionStateAsStr(IceConnectionState state) {
     switch (state) {
         case IceConnectionState::New:
@@ -82,21 +69,22 @@ std::string IceConnectionStateAsStr(IceConnectionState state) {
     return {};
 }
 
-std::string SignalingStateAsStr(SignalingState state) {
+std::string PeerConnectionStateAsStr(PeerConnectionState state) {
     switch (state) {
-        case SignalingState::Stable:
-            return "Stable";
-        case SignalingState::HaveLocalOffer:
-            return "HaveLocalOffer";
-        case SignalingState::HaveLocalPrAnswer:
-            return "HaveLocalPrAnswer";
-        case SignalingState::HaveRemoteOffer:
-            return "HaveRemoteOffer";
-        case SignalingState::HaveRemotePrAnswer:
-            return "HaveRemotePrAnswer";
-        case SignalingState::Closed:
+        case PeerConnectionState::New:
+            return "New";
+        case PeerConnectionState::Connecting:
+            return "Connecting";
+        case PeerConnectionState::Connected:
+            return "Connected";
+        case PeerConnectionState::Disconnected:
+            return "Disconnected";
+        case PeerConnectionState::Failed:
+            return "Failed";
+        case PeerConnectionState::Closed:
             return "Closed";
     }
     return {};
 }
+
 }  // namespace lib::ortc

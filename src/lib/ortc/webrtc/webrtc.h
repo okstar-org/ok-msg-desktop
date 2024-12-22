@@ -23,7 +23,6 @@
 #include <rtc_base/thread.h>
 
 #include "../ok_rtc.h"
-#include "../ok_rtc_defs.h"
 #include "VideoCaptureInterface.h"
 
 namespace webrtc {
@@ -40,9 +39,6 @@ namespace lib::ortc {
 
 class Conductor;
 
-// std::unique_ptr<cricket::AudioContentDescription> createAudioDescription(
-//         const Sources& sources, const SsrcGroup& g);
-
 std::unique_ptr<cricket::AudioContentDescription> createAudioDescription(
         const ORTP& rtp,  //
         const std::map<std::string, OMeetSSRCBundle>&);
@@ -52,7 +48,13 @@ std::unique_ptr<cricket::VideoContentDescription> createVideoDescription(
         const std::map<std::string, OMeetSSRCBundle>& ssrcBundleMap);
 std::unique_ptr<cricket::SctpDataContentDescription> createDataDescription(const OSdp& sdp);
 
-class WebRTC : public OkRTC {
+class WebRTCObserver {
+public:
+    virtual void onRemoteDescriptionSet(const webrtc::SessionDescriptionInterface* sdp) = 0;
+    virtual void onLocalDescriptionSet(const webrtc::SessionDescriptionInterface* sdp) = 0;
+};
+
+class WebRTC : public OkRTC, public WebRTCObserver {
 public:
     WebRTC();
 
@@ -96,13 +98,9 @@ public:
 
     webrtc::SdpType convertToSdpType(JingleSdpType sdpType);
 
-    JingleSdpType convertFromSdpType(webrtc::SdpType sdpType);
-
-    std::unique_ptr<webrtc::SessionDescriptionInterface> convertToSdp(const OJingleContentAv& av);
-
     std::map<std::string, OIceUdp> getCandidates(const std::string& peerId) override;
 
-    void getLocalSdp(const std::string& peerId, ortc::OJingleContentAv& oContext) override;
+    std::unique_ptr<OJingleContentAv> getLocalSdp(const std::string& peerId) override;
 
     const std::vector<OkRTCHandler*>& getHandlers() override;
 
@@ -123,12 +121,44 @@ public:
 
     std::string getVideoDeviceId(int selected);
 
+protected:
+    void onRemoteDescriptionSet(const webrtc::SessionDescriptionInterface* sdp) override;
+    void onLocalDescriptionSet(const webrtc::SessionDescriptionInterface* sdp) override;
+
 private:
     void addIceServer(const IceServer& ice);
 
     Conductor* createConductor(const std::string& peerId, const std::string& sId, bool video);
 
     Conductor* getConductor(const std::string& peerId);
+
+    // ============转换=============
+    /**
+     * 转换Sdp
+     * @param av
+     * @return webrtc::SessionDescriptionInterface
+     */
+    std::unique_ptr<webrtc::SessionDescriptionInterface> convertSdpToDown(
+            const OJingleContentAv& av);
+
+    std::unique_ptr<OJingleContentAv> convertSdpToUp(
+            const webrtc::SessionDescriptionInterface* sdp);
+
+    /**
+     * 转换成 webrtc::SdpType
+     * @param type
+     * @return
+     */
+    webrtc::SdpType convertSdpTypeDown(JingleSdpType type);
+
+    /**
+     * 转换成 JingleSdpType
+     * @param type
+     * @return
+     */
+    JingleSdpType convertSdpTypeUp(webrtc::SdpType type);
+
+    // ============转换=============
 
     void initAudioDevice();
 

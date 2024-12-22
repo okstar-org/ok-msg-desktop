@@ -42,7 +42,7 @@ class Conductor : public webrtc::PeerConnectionObserver,
 public:
     Conductor(WebRTC* webrtc, const std::string& peerId_, const std::string& sId);
 
-    ~Conductor();
+    ~Conductor() override;
 
     void CreateAnswer();
 
@@ -145,6 +145,7 @@ private:
     std::string sId;
 
     WebRTC* webRtc;
+    WebRTCObserver* observer;
 
     ortc::JoinOptions _joinOptions;
 

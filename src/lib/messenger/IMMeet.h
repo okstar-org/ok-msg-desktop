@@ -25,7 +25,6 @@
 #include "IMFromHostHandler.h"
 #include "IMJingle.h"
 #include "base/jid.h"
-#include "lib/ortc/ok_rtc_defs.h"
 #include "messenger.h"
 
 namespace lib::messenger {
