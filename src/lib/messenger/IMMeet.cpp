@@ -96,7 +96,11 @@ const std::string& IMMeet::create(const QString& name) {
     return meet->getUid();
 }
 
-void IMMeet::disband() {}
+void IMMeet::disband() {
+    leave();
+
+    // TODO 执行销毁会议
+}
 
 void IMMeet::leave() {
     manager->exitMeet();

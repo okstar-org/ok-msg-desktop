@@ -182,6 +182,7 @@ void Widget::destroyMeeting() {
     QMutexLocker locker(&mutex);
     currentMeetingName.clear();
     if (view) {
+        view->doLeaveMeet();
         view->deleteLater();
         view = nullptr;
     }
