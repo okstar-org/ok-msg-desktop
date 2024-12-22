@@ -319,7 +319,7 @@ void MeetingVideoFrame::addParticipant(const QString& name,
     participant->setNick(parti.nick);
     participant->setAvatarUrl(parti.avatarUrl);
 
-    // TODO 音频视频禁止信 parti.sourceInfo;
+    // TODO 音频视频禁止信息 parti.sourceInfo;
 }
 
 void MeetingVideoFrame::removeParticipant(const QString& name, const QString& resource) {
