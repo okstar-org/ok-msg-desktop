@@ -468,22 +468,6 @@ void IMCall::onLocalDescriptionSet(const std::string& sid,     //
                                    const ortc::OJingleContentAv* oContext) {
     auto sId = qstring(sid);
     qDebug() << __func__ << "sId:" << sId << "peerId:" << qstring(peerId);
-
-    gloox::Jingle::PluginList plugins;
-    ToPlugins(oContext, plugins);
-
-    auto pSession = findSession(sId);
-    if (!pSession) {
-        qWarning() << "Unable to find session" << &sId;
-        return;
-    }
-
-    //    if (pSession->direction() == CallDirection::CallIn) {
-    //        pSession->getSession()->sessionAccept(plugins);
-    //     } else
-    if (pSession->direction() == CallDirection::CallOut) {
-        pSession->getSession()->sessionInitiate(plugins);
-    }
 }
 
 void IMCall::onIce(const std::string& sId,     //
