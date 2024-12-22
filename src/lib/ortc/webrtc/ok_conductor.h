@@ -40,7 +40,7 @@ class Conductor : public webrtc::PeerConnectionObserver,
                   public webrtc::SetSessionDescriptionObserver,
                   public webrtc::SetRemoteDescriptionObserverInterface {
 public:
-    Conductor(WebRTC* webrtc, const std::string& peerId_, const std::string& sId);
+    Conductor(WebRTC* webrtc, std::string peerId_, std::string sId, WebRTCObserver* observer);
 
     ~Conductor() override;
 
@@ -78,12 +78,15 @@ public:
         return rtc::RefCountReleaseStatus::kDroppedLastRef;
     };
 
-    bool addLocalAudioTrack(webrtc::AudioSourceInterface* _audioSource);
+    bool addLocalAudioTrack(webrtc::AudioSourceInterface* _audioSource,
+                            const std::string& streamId,
+                            const std::string& trackId);
     bool removeLocalAudioTrack();
 
-    bool addLocalVideoTrack(webrtc::VideoTrackSourceInterface* source);
+    bool addLocalVideoTrack(webrtc::VideoTrackSourceInterface* source,
+                            const std::string& streamId,
+                            const std::string& trackId);
     bool removeLocalVideoTrack();
-
 
 protected:
     void CreatePeerConnection();
@@ -125,15 +128,15 @@ protected:
      * CreateOffer and CreateAnswer callback interface.
      * @param desc
      */
-    virtual void OnSuccess(webrtc::SessionDescriptionInterface* desc) override;
+    void OnSuccess(webrtc::SessionDescriptionInterface* desc) override;
 
     /**
      * CreateSessionDescriptionObserver and SetSessionDescriptionObserver
      * @param error
      */
-    virtual void OnFailure(webrtc::RTCError error) override;
+    void OnFailure(webrtc::RTCError error) override;
 
-    virtual bool started() const {
+    inline bool started() const {
         return _started;
     }
 
@@ -141,8 +144,8 @@ private:
     bool _started = false;
     std::mutex _session_mutex;
 
-    std::string peerId;
     std::string sId;
+    std::string peerId;
 
     WebRTC* webRtc;
     WebRTCObserver* observer;
@@ -161,7 +164,7 @@ private:
     rtc::scoped_refptr<webrtc::VideoTrackInterface> _videoTrack;
     rtc::scoped_refptr<webrtc::RtpSenderInterface> _videoRtpSender;
     webrtc::AudioTrackInterface* _remote_audio_track;
-    webrtc::VideoTrackInterface* _remote_video_track;
+    webrtc::VideoTrackInterface* _remote_video_track{};
 };
 
 }  // namespace lib::ortc

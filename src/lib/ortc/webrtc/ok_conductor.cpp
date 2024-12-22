@@ -29,21 +29,23 @@
 
 namespace lib::ortc {
 
-Conductor::Conductor(WebRTC* webrtc, const std::string& peerId_, const std::string& sId_)
-        : peerId(peerId_)
-        , sId(sId_)
+Conductor::Conductor(WebRTC* webrtc, std::string peerId_, std::string sId_,
+                     WebRTCObserver* observer)
+        : peerId(std::move(peerId_))
+        , sId(std::move(sId_))
         , webRtc(webrtc)
-        , observer(nullptr)
-        , _remote_audio_track(nullptr) {
+        , observer(observer)
+        , _remote_audio_track(nullptr)
+        , _remote_video_track(nullptr) {
     RTC_LOG(LS_INFO) << __FUNCTION__ << " sId:" << sId << " peerId:" << peerId;
 
-    assert(!peerId.empty());
-    assert(!sId.empty());
     assert(webRtc);
+    assert(observer);
+    assert(!sId.empty());
+    assert(!peerId.empty());
 
     webRtc->ensureStart();
     assert(webRtc->isStarted());
-    assert(!peerId_.empty());
 
     CreatePeerConnection();
 
@@ -108,14 +110,14 @@ void Conductor::setRemoteMute(bool mute) {
     }
 }
 
-bool Conductor::addLocalAudioTrack(webrtc::AudioSourceInterface* _audioSource) {
-    RTC_LOG(LS_INFO) << __FUNCTION__ << ":" << _audioSource;
+bool Conductor::addLocalAudioTrack(webrtc::AudioSourceInterface* _audioSource,
+                                   const std::string& streamId,
+                                   const std::string& trackId) {
+    RTC_LOG(LS_INFO) << __FUNCTION__ << " streamId: " << streamId << "trackId: " << trackId;
 
-    std::string label = "ok-audio-label";
-    _audioTrack = webRtc->getFactory()->CreateAudioTrack(label, _audioSource);
+    _audioTrack = webRtc->getFactory()->CreateAudioTrack(trackId, _audioSource);
     RTC_LOG(LS_INFO) << "Created audio track:" << _videoTrack.get();
 
-    std::string streamId = "ok-audio-stream";
     auto added = peer_connection_->AddTrack(_audioTrack, {streamId});
     if (!added.ok()) {
         RTC_LOG(LS_INFO) << "Failed to add track:%1" << added.error().message();
@@ -133,17 +135,15 @@ bool Conductor::removeLocalAudioTrack() {
     return result.ok();
 }
 
-bool Conductor::addLocalVideoTrack(webrtc::VideoTrackSourceInterface* source) {
-    RTC_LOG(LS_INFO) << __FUNCTION__ << " source:" << source;
+bool Conductor::addLocalVideoTrack(webrtc::VideoTrackSourceInterface* source,
+                                   const std::string& streamId,
+                                   const std::string& trackId) {
+    RTC_LOG(LS_INFO) << __FUNCTION__ << " streamId: " << streamId << "trackId: " << trackId;
 
-    std::string label = "ok-video-track-label";
-
-    _videoTrack = webRtc->getFactory()->CreateVideoTrack(label, source);
+    _videoTrack = webRtc->getFactory()->CreateVideoTrack(trackId, source);
     RTC_LOG(LS_INFO) << "Created video track:" << _videoTrack.get();
 
-    std::string streamId = "ok-video-stream";
     auto added = peer_connection_->AddTrack(_videoTrack, {streamId});
-
     if (!added.ok()) {
         RTC_LOG(LS_INFO) << "Failed to add track:" << added.error().message();
         return false;
@@ -404,14 +404,14 @@ void Conductor::OnSuccess() {
     auto* localDescription = getLocalDescription();
     if (localDescription) {
         if (observer) {
-            observer->onLocalDescriptionSet(localDescription);
+            observer->onLocalDescriptionSet(localDescription, sId, peerId);
         }
     }
 
     auto* remoteDescription = getRemoteDescription();
     if (remoteDescription) {
         if (observer) {
-            observer->onRemoteDescriptionSet(localDescription);
+            observer->onRemoteDescriptionSet(localDescription, sId, peerId);
         }
     }
 }

@@ -30,23 +30,6 @@ public:
 class FederalInfo {
 public:
     FederalInfo(const QJsonObject& data) {
-        /**
-         * {
-    "states": [
-      {
-        "no": "1001",
-        "name": "OkStar开源社区",
-        "xmppHost": "meet.okstar.org.cn"
-      },
-      {
-        "no": "1002",
-        "name": "船山信息",
-        "xmppHost": "meet.chuanshaninfo.com"
-      }
-    ]
-    }
-         */
-
         QJsonArray arr = data.value("states").toArray();
         for (auto&& item : arr) {
             const QJsonObject& object = item.toObject();

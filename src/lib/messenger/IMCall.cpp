@@ -269,14 +269,14 @@ bool IMCall::createCall(const IMPeerId& to, const QString& sId, bool video) {
     qDebug() << __func__ << "to:" << to.toString() << "sId:" << sId << "video:" << video;
 
     auto rtcManager = lib::ortc::OkRTCManager::getInstance();
-    auto rtc = rtcManager->createRtc();
+    auto rtc = rtcManager->createRtc(im->self().resource());
     rtc->addRTCHandler(this);
 
     const auto& discos = im->getExternalServiceDiscovery();
     for (const auto& item : discos) {
         ortc::IceServer ice;
-        ice.uri = item.type + ":" + item.host + ":" + std::to_string(item.port) +
-                  "?transport=" + item.transport;
+        ice.uri = item.type + ":" + item.host + ":" + std::to_string(item.port);
+        //+"?transport=" + item.transport;
         ice.username = item.username;
         ice.password = item.password;
         qDebug() << "Add ice:" << ice.uri.c_str() << "user:" << qstring(ice.username)
@@ -342,14 +342,14 @@ bool IMCall::answer(const IMPeerId& peerId, const QString& callId, bool video) {
              << "video:" << video;
 
     ortc::OkRTCManager* rtcManager = lib::ortc::OkRTCManager::getInstance();
-    auto rtc = rtcManager->createRtc();
+    auto rtc = rtcManager->createRtc(im->self().resource());
     rtc->addRTCHandler(this);
 
     const auto& discos = im->getExternalServiceDiscovery();
     for (const auto& item : discos) {
         ortc::IceServer ice;
-        ice.uri = item.type + ":" + item.host + ":" + std::to_string(item.port) +
-                  "?transport=" + item.transport;
+        ice.uri = item.type + ":" + item.host + ":" + std::to_string(item.port);
+        //                  + "?transport=" + item.transport;
         ice.username = item.username;
         ice.password = item.password;
         qDebug() << "Add iceServer:" << ice.uri.c_str();
@@ -463,14 +463,14 @@ void IMCall::onSignalingChange(const std::string& sId, const std::string& peerId
     qDebug() << __func__ << "sId:" << state;
 }
 
-void IMCall::onRTP(const std::string& sid,     //
-                   const std::string& peerId,  //
-                   const ortc::OJingleContentAv& oContext) {
+void IMCall::onLocalDescriptionSet(const std::string& sid,     //
+                                   const std::string& peerId,  //
+                                   const ortc::OJingleContentAv* oContext) {
     auto sId = qstring(sid);
     qDebug() << __func__ << "sId:" << sId << "peerId:" << qstring(peerId);
 
     gloox::Jingle::PluginList plugins;
-    ToPlugins(&oContext, plugins);
+    ToPlugins(oContext, plugins);
 
     auto pSession = findSession(sId);
     if (!pSession) {
@@ -478,9 +478,10 @@ void IMCall::onRTP(const std::string& sid,     //
         return;
     }
 
-    if (pSession->direction() == CallDirection::CallIn) {
-        pSession->getSession()->sessionAccept(plugins);
-    } else if (pSession->direction() == CallDirection::CallOut) {
+    //    if (pSession->direction() == CallDirection::CallIn) {
+    //        pSession->getSession()->sessionAccept(plugins);
+    //     } else
+    if (pSession->direction() == CallDirection::CallOut) {
         pSession->getSession()->sessionInitiate(plugins);
     }
 }

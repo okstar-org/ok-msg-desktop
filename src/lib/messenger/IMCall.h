@@ -140,13 +140,13 @@ public:
                                 const std::string& peerId,
                                 ortc::PeerConnectionState state) override;
 
-    void onSignalingChange(const std::string& sId, const std::string& peerId,
+    void onSignalingChange(const std::string& sId,
+                           const std::string& peerId,
                            lib::ortc::SignalingState state) override;
 
-    // onRTP
-    void onRTP(const std::string& sId,       //
-               const std::string& friendId,  //
-               const lib::ortc::OJingleContentAv& oContext) override;
+    void onLocalDescriptionSet(const std::string& sId,       //
+                               const std::string& friendId,  //
+                               const ortc::OJingleContentAv* av) override;
 
     // onIce
     void onIce(const std::string& sId,       //

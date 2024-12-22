@@ -152,23 +152,17 @@ bool IMJingle::ParseRTP(const gloox::Jingle::RTP* rtp, ortc::ORTP& ortp) {
               }) |
               ranges::to<ortc::HdrExts>;
 
-    auto oss = rtp->sources();
-    auto ss = ranges::views::all(oss) |
-              ranges::views::transform([=](gloox::Jingle::RTP::Source& h) {
-                  auto ps = h.parameters;
-                  return ortc::Source{.ssrc = h.ssrc,
-                                      .parameters = ranges::views::all(ps) | txParameter |
-                                                    ranges::to<ortc::Parameters>};
-              }) |
-              ranges::to<ortc::Sources>;
-    auto sg = ortc::SsrcGroup{.semantics = rtp->ssrcGroup().semantics,
-                              .ssrcs = rtp->ssrcGroup().ssrcs};
-
     ortp.media = static_cast<ortc::Media>(rtp->media());
     ortp.payloadTypes = payloadTypes;
     ortp.hdrExts = hs;
-    ortp.sources = ss;
-    ortp.ssrcGroup = sg;
+    ortp.sources = ranges::views::all(rtp->sources()) |
+                   ranges::views::transform([=](const gloox::Jingle::RTP::Source& h) {
+                       return ortc::Source{.ssrc = h.ssrc, .cname = h.cname, .msid = h.msid};
+                   }) |
+                   ranges::to<ortc::Sources>;
+    ;
+    ortp.ssrcGroup = ortc::SsrcGroup{.semantics = rtp->ssrcGroup().semantics,
+                                     .ssrcs = rtp->ssrcGroup().ssrcs};
     ortp.rtcpMux = rtp->rtcpMux();
     return true;
 }
@@ -290,9 +284,9 @@ void IMJingle::ParseOMeetSSRCBundle(const std::string& json,
             // index 0 as video source
             for (const auto& item : sourceArray.at(0).toArray()) {
                 auto o = item.toObject();
-                ortc::OMeetSource source = {
+                ortc::Source source = {
                         .ssrc = o.value("s").toVariant().toString().toStdString(),
-                        .name = o.value("n").toVariant().toString().toStdString(),
+                        .cname = o.value("n").toVariant().toString().toStdString(),
                         .msid = o.value("m").toVariant().toString().toStdString(),
                 };
                 bundle.videoSources.emplace_back(source);
@@ -309,9 +303,9 @@ void IMJingle::ParseOMeetSSRCBundle(const std::string& json,
             // index 2 as audio source
             for (const auto& item : sourceArray.at(2).toArray()) {
                 auto o = item.toObject();
-                ortc::OMeetSource source = {
+                ortc::Source source = {
                         .ssrc = o.value("s").toVariant().toString().toStdString(),
-                        .name = o.value("n").toVariant().toString().toStdString(),
+                        .cname = o.value("n").toVariant().toString().toStdString(),
                         .msid = o.value("m").toVariant().toString().toStdString(),
                 };
                 bundle.audioSources.emplace_back(source);
@@ -324,6 +318,70 @@ void IMJingle::ParseOMeetSSRCBundle(const std::string& json,
         }
         map.emplace(stdstring(sourceKey), bundle);
     }
+}
+
+void IMJingle::FormatOMeetSSRCBundle(const std::map<std::string, ortc::OMeetSSRCBundle>& ssrcBundle,
+                                     std::string& json) {
+    QJsonDocument doc;
+    QJsonObject root;
+    /**
+     * {"sources":
+        {"f1b4629b":[
+        [{"s":3524006440,"n":"f1b4629b-v0","m":"f1b4629b-video-0-2
+     c5858a0f-fae0-4241-8eea-20eb6f91f902-2"},
+        {"s":1068047221,"n":"f1b4629b-v0","m":"f1b4629b-video-0-2
+     c5858a0f-fae0-4241-8eea-20eb6f91f902-2"}],
+        [["f",3524006440,1068047221]],
+        [{"s":963522509,"n":"f1b4629b-a0","m":"f1b4629b-audio-0-2
+     ee4b97c4-d66a-46a8-ae88-a739a7b48f37-2"}]]}}
+     */
+    QJsonObject s;
+
+    for (const auto& item : ssrcBundle) {
+        QJsonArray array;
+
+        // 0 video ssrc list;
+        QJsonArray vs;
+        for (const auto& e : item.second.videoSources) {
+            QJsonObject jv;
+            jv.insert("s", QJsonValue(qstring(e.ssrc)));
+            jv.insert("n", QJsonValue(qstring(e.cname)));
+            jv.insert("m", QJsonValue(qstring(e.msid)));
+            vs.push_back(jv);
+        }
+        array.push_back(vs);
+
+        // 2 video ssrc group
+        QJsonArray vg;
+        auto& vgroup = item.second.videoSsrcGroups;
+        if (!vgroup.ssrcs.empty()) {
+            vg.push_back(qstring(vgroup.semantics));
+            std::for_each(vgroup.ssrcs.begin(), vgroup.ssrcs.end(), [&](auto& s) {
+                vg.push_back(QJsonValue(qstring(s)));
+            });
+        }
+        array.push_back(vg);
+
+        // 3 audio ssrc list
+        QJsonArray as;
+        for (const auto& e : item.second.audioSources) {
+            QJsonObject jv;
+            jv.insert("s", QJsonValue(qstring(e.ssrc)));
+            jv.insert("n", QJsonValue(qstring(e.cname)));
+            jv.insert("m", QJsonValue(qstring(e.msid)));
+            as.push_back(jv);
+        }
+        array.push_back(as);
+
+        // 4 audio ssrc group (ignore it)
+
+        s.insert(qstring(item.first), array);
+    }
+    root.insert("sources", s);
+    doc.setObject(root);
+    auto str = ok::base::Jsons::toString(doc);
+    qDebug() << __func__ << "json:" << str;
+    json.assign(str.toStdString());
 }
 
 void IMJingle::ToPlugins(const ortc::OJingleContentAv* av, gloox::Jingle::PluginList& plugins) {
@@ -373,22 +431,19 @@ void IMJingle::ToPlugins(const ortc::OJingleContentAv* av, gloox::Jingle::Plugin
 
         // rtp-hdrExt
         gloox::Jingle::RTP::HdrExts exts;
-        for (auto e : desc.hdrExts) {
+        for (auto& e : desc.hdrExts) {
             exts.push_back({e.id, e.uri});
         }
         rtp->setHdrExts(exts);
 
         // source
         if (!desc.sources.empty()) {
-            gloox::Jingle::RTP::Sources ss;
-            for (auto s : desc.sources) {
-                gloox::Jingle::RTP::Parameters ps;
-                for (auto p : s.parameters) {
-                    ps.push_back({p.name, p.value});
-                }
-                ss.push_back({s.ssrc, ps});
-            }
-
+            auto ss = ranges::views::all(desc.sources) |
+                      ranges::views::transform([&](const auto& s) {
+                          return gloox::Jingle::RTP::Source{
+                                  .ssrc = s.ssrc, .cname = s.cname, .msid = s.msid};
+                      }) |
+                      ranges::to_vector;
             rtp->setSources(ss);
         }
 
@@ -432,7 +487,7 @@ void IMJingle::ToPlugins(const ortc::OJingleContentAv* av, gloox::Jingle::Plugin
 
 void IMJingle::ParseCandidates(gloox::Jingle::ICEUDP::CandidateList& src, ortc::CandidateList& to) {
     for (auto& c : src) {
-        to.push_front(ParseCandidate(c));
+        to.push_back(ParseCandidate(c));
     }
 }
 

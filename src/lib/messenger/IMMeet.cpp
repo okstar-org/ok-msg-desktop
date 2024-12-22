@@ -57,7 +57,8 @@ IMMeet::IMMeet(IM* im, QObject* parent) : IMJingle(im, parent), manager(nullptr)
     // jingle json-message
     im->sessionManager()->registerPlugin(new gloox::Jingle::JsonMessage());
 
-    auto rtc = ortc::OkRTCManager::getInstance()->createRtc();
+    resource = qstring(im->self().resource());
+    auto rtc = ortc::OkRTCManager::getInstance()->createRtc(stdstring(resource));
     rtc->addRTCHandler(this);
 
     qRegisterMetaType<ortc::OJingleContentAv>("const ortc::OJingleContentAv&");
@@ -105,35 +106,7 @@ void IMMeet::join() {}
 
 void IMMeet::handleHostPresence(const gloox::JID& from, const gloox::Presence& presence) {
     qDebug() << __func__ << qstring(from.full()) << "presence:" << presence.presence();
-    //    auto caps = presence.capabilities();
-    //    if (caps->node() != gloox::XMLNS_JITSI_MEET) {
-    //        qWarning() << "Is not support meet.";
-    //        return;
-    //    }
 
-    /**
-     * <presence
-to='sjdvr4swzf2f@meet.chuanshaninfo.com/OkMSG.root-host.[v25.03.00-3-15-g23458c4].OTE5Y2'
-from='test@conference.meet.chuanshaninfo.com/46a04cab'> <stats-id>Chloe-ZsC</stats-id>
-     <c xmlns='http://jabber.org/protocol/caps' hash='sha-1' node='https://jitsi.org/jitsi-meet'
-        ver='p1SSmeQ82gSAjXEw+FlBmWtBv2k='/>
-     <features>
-        <feature var='https://jitsi.org/meet/e2ee'/>
-     </features>
-    <SourceInfo>{}</SourceInfo>
-    <jitsi_participant_region>region1</jitsi_participant_region>
-    <jitsi_participant_codecType>vp9</jitsi_participant_codecType>
-    <avatar-url>data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL...</avatar-url>
-    <email>eiilpux17@163.com</email>
-    <nick xmlns='http://jabber.org/protocol/nick'>李佩旭</nick>
-    <jitsi_participant_e2ee.idKey.curve25519>BLE6EaRXYhRdZH5mV2MRWjQmH8tlASmHUlHwNXc7cT8</jitsi_participant_e2ee.idKey.curve25519>
-    <jitsi_participant_e2ee.idKey.ed25519>+ARDqdxd9wo41zBXzIIsVuZWdg5c7JHyaDG2THFeSMk</jitsi_participant_e2ee.idKey.ed25519>
-    <x xmlns='http://jabber.org/protocol/muc#user'>
-        <item jid='px0hzgu9bwzb@meet.chuanshaninfo.com/9f31d7f1-0644-4cfb-82e9-da69305ce32a'
-        affiliation='none' role='participant'/>
-    </x>
-</presence>
-*/
     auto pt = presence.subtype();
     auto t = presence.getOriginTag();
     switch (pt) {
@@ -222,7 +195,7 @@ void IMMeet::handleCreation(const gloox::JID& jid, bool ready,
             .avatarUrl = stdstring(vCard.photo.url),
             .email = vCard.emails.isEmpty() ? "" : stdstring(vCard.emails.last().number),
             .nick = stdstring(vCard.nickname),
-            .resource = self.resource(),
+            .resource = stdstring(resource),
     };
     manager->join(meet, participant);
 
@@ -260,8 +233,8 @@ void IMMeet::onSelfVCard(const IMVCard& vCard_) {
     vCard = vCard_;
 }
 
-bool lib::messenger::IMMeet::doSessionInitiate(gloox::Jingle::Session* session,
-                                               const gloox::Jingle::Session::Jingle* jingle,
+bool IMMeet::doSessionInitiate(gloox::Jingle::Session* session,
+                               const gloox::Jingle::Session::Jingle* jingle,
                                                const IMPeerId& peerId) {
     auto& from = session->remote();
     if (!from.server().starts_with("conference.")) {
@@ -291,7 +264,6 @@ bool lib::messenger::IMMeet::doSessionInitiate(gloox::Jingle::Session* session,
 
 void IMMeet::doStartRTC(const IMPeerId& peerId, const ortc::OJingleContentAv& cav) const {
     qDebug() << __func__;
-
     ortc::OkRTCManager* rtcManager = ortc::OkRTCManager::getInstance();
     const auto& discos = im->getExternalServiceDiscovery();
     for (const auto& item : discos) {
@@ -307,6 +279,9 @@ void IMMeet::doStartRTC(const IMPeerId& peerId, const ortc::OJingleContentAv& ca
 
     auto rtc = rtcManager->getRtc();
     rtc->CreateAnswer(stdstring(peerId.toString()), cav);
+
+    // auto& map = cav.getSsrcBundle();
+    // rtc->addSource(stdstring(peerId.toString()), map);
 }
 
 bool IMMeet::doSessionAccept(gloox::Jingle::Session* session,
@@ -421,8 +396,18 @@ void IMMeet::clearSessionInfo(const QString& sId) {}
 
 void IMMeet::onCreatePeerConnection(const std::string& sId, const std::string& peerId, bool ok) {}
 
-void IMMeet::onRTP(const std::string& sId, const std::string& peerId,
-                   const ortc::OJingleContentAv& osd) {}
+void IMMeet::onLocalDescriptionSet(const std::string& sId, const std::string& peerId,
+                                   const ortc::OJingleContentAv* osd) {
+    auto& map = osd->getSsrcBundle();
+    if (map.empty()) {
+        return;
+    }
+
+    std::string str;
+    FormatOMeetSSRCBundle(map, str);
+
+    currentSession->sourceAdd(new gloox::Jingle::JsonMessage(str));
+}
 
 void IMMeet::onFailure(const std::string& sId, const std::string& peerId,
                        const std::string& error) {}
@@ -486,15 +471,15 @@ void IMMeet::onSignalingChange(const std::string& sId, const std::string& peerId
 
 void IMMeet::onRender(const ortc::RendererImage& image,
                       const std::string& friendId,
-                      const std::string& resource) {
+                      const std::string& resource_) {
     //    qDebug() << __func__ << "render friendId:" << qstring(friendId) //
     //             << " image {w:" << image.width_ << ", h:" << image.height_ << "}";
     for (auto h : handlers) {
         if (friendId.empty()) {
-            h->onParticipantVideoFrame(qstring(im->self().resource()), image);
+            h->onParticipantVideoFrame(resource, image);
         } else {
             // resource format is like: f1b4629b-video-0-13
-            auto s = qstring(resource).split("-");
+            auto s = qstring(resource_).split("-");
             if (!s.empty()) {
                 h->onParticipantVideoFrame(s[0], image);
             }

@@ -95,6 +95,9 @@ protected:
     void ParseOMeetSSRCBundle(const std::string& json,
                               std::map<std::string, ortc::OMeetSSRCBundle>& ssrcBundle);
 
+    void FormatOMeetSSRCBundle(const std::map<std::string, ortc::OMeetSSRCBundle>& ssrcBundle,
+                               std::string& json);
+
     void ToPlugins(const ortc::OJingleContentAv* av, gloox::Jingle::PluginList& plugins);
 
     IM* im;

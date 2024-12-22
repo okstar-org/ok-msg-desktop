@@ -28,9 +28,10 @@ public:
 
     /**
      * 创建RTC实例， 不存在则初始化，存在则返回当前实例
+     * @param res
      * @return
      */
-    OkRTC* createRtc();
+    OkRTC* createRtc(const std::string& res);
     /**
      * 销毁RTC实例
      */
@@ -59,7 +60,7 @@ public:
 private:
     OkRTCManager();
 
-    std::list<IceServer> _iceOptions;
+    std::vector<IceServer> _iceOptions;
     std::unique_ptr<OkRTC> rtc;
 };
 

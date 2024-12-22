@@ -50,13 +50,15 @@ std::unique_ptr<cricket::SctpDataContentDescription> createDataDescription(const
 
 class WebRTCObserver {
 public:
-    virtual void onRemoteDescriptionSet(const webrtc::SessionDescriptionInterface* sdp) = 0;
-    virtual void onLocalDescriptionSet(const webrtc::SessionDescriptionInterface* sdp) = 0;
+    virtual void onRemoteDescriptionSet(const webrtc::SessionDescriptionInterface* sdp,
+                                        const std::string& sId, const std::string& peerId) = 0;
+    virtual void onLocalDescriptionSet(const webrtc::SessionDescriptionInterface* sdp,
+                                       const std::string& sId, const std::string& peerId) = 0;
 };
 
 class WebRTC : public OkRTC, public WebRTCObserver {
 public:
-    WebRTC();
+    WebRTC(std::string res);
 
     ~WebRTC() override;
 
@@ -94,7 +96,7 @@ public:
 
     bool quit(const std::string& peerId) override;
 
-    void setIceOptions(std::list<IceServer>& ices) override;
+    void setIceOptions(std::vector<IceServer>& ices) override;
 
     webrtc::SdpType convertToSdpType(JingleSdpType sdpType);
 
@@ -122,8 +124,11 @@ public:
     std::string getVideoDeviceId(int selected);
 
 protected:
-    void onRemoteDescriptionSet(const webrtc::SessionDescriptionInterface* sdp) override;
-    void onLocalDescriptionSet(const webrtc::SessionDescriptionInterface* sdp) override;
+    void onRemoteDescriptionSet(const webrtc::SessionDescriptionInterface* sdp,
+                                const std::string& sId, const std::string& peerId) override;
+
+    void onLocalDescriptionSet(const webrtc::SessionDescriptionInterface* sdp,
+                               const std::string& sId, const std::string& peerId) override;
 
 private:
     void addIceServer(const IceServer& ice);
@@ -158,6 +163,41 @@ private:
      */
     JingleSdpType convertSdpTypeUp(webrtc::SdpType type);
 
+    /**
+     * 转成cricket::Candidate
+     * @param item
+     * @param iceUdp
+     * @return
+     */
+    cricket::Candidate convertCandidateToDown(const Candidate& item, const OIceUdp& iceUdp);
+
+    /**
+     * 转成Candidate
+     * @param cand
+     * @return
+     */
+    Candidate convertCandidateToUp(const cricket::Candidate& cand);
+
+    /**
+     * 转成 cricket::TransportInfo
+     * @param name
+     * @param iceUdp
+     * @return
+     */
+    cricket::TransportInfo convertTransportToDown(const std::string& name, const OIceUdp& iceUdp);
+
+    /**
+     * 从Sdp获取Ice
+     * @param sdp
+     * @return
+     */
+    std::map<std::string, ortc::OIceUdp> getIceFromDown(
+            const webrtc::SessionDescriptionInterface* sdp);
+
+    Dtls getDtls(const cricket::TransportInfo& info);
+
+    Dtls getDtls(const webrtc::SessionDescriptionInterface* sdp, const std::string& mid);
+
     // ============转换=============
 
     void initAudioDevice();
@@ -167,8 +207,11 @@ private:
     void linkVideoDevice(Conductor* c, int selected);
 
     std::recursive_mutex mutex;
-
     int selectedVideoDevice = -1;
+
+    // 资源ID
+    std::string resource;
+
     webrtc::VideoCaptureModule::DeviceInfo* deviceInfo = nullptr;
 
     webrtc::PeerConnectionInterface::RTCConfiguration _rtcConfig;

@@ -141,9 +141,9 @@ protected:
                                 const std::string& peerId,
                                 bool ok) override;
 
-    void onRTP(const std::string& sId,
-               const std::string& peerId,
-               const ortc::OJingleContentAv& osd) override;
+    void onLocalDescriptionSet(const std::string& sId,
+                               const std::string& peerId,
+                               const ortc::OJingleContentAv* osd) override;
 
     void onFailure(const std::string& sId,
                    const std::string& peerId,
@@ -181,6 +181,7 @@ private:
 
     std::vector<MessengerMeetHandler*> handlers;
     IMVCard vCard;
+    QString resource;
 
 signals:
     // ice

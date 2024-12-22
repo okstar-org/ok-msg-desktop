@@ -13,7 +13,6 @@
 #pragma once
 
 #include <cstdint>
-#include <list>
 #include <map>
 #include <memory>
 #include <sstream>
@@ -23,7 +22,7 @@
 namespace lib::ortc {
 
 enum class Media { invalid = -1, audio = 0, video = 1, application = 2 };
-typedef std::list<Media> Medias;
+typedef std::vector<Media> Medias;
 
 enum class Type {
     Host,           /**< A host candidate. */
@@ -66,7 +65,7 @@ struct Candidate {
 };
 
 /** A list of transport candidates. */
-typedef std::list<Candidate> CandidateList;
+typedef std::vector<Candidate> CandidateList;
 
 struct OIceUdp {
     std::string mid;
@@ -96,14 +95,14 @@ struct Feedback {
     std::string type;
     std::string subtype;
 };
-typedef std::list<Feedback> Feedbacks;
+typedef std::vector<Feedback> Feedbacks;
 
 struct Parameter {
     std::string name;
     std::string value;
 };
 
-typedef std::list<Parameter> Parameters;
+typedef std::vector<Parameter> Parameters;
 
 /**
  * A struct holding information about a PayloadType.
@@ -117,19 +116,22 @@ struct PayloadType {
     Parameters parameters;
     Feedbacks feedbacks;
 };
-typedef std::list<PayloadType> PayloadTypes;
+typedef std::vector<PayloadType> PayloadTypes;
 
 struct HdrExt {
     int id;          /**< The type's id */
     std::string uri; /**< The type's name. */
 };
-typedef std::list<HdrExt> HdrExts;
+typedef std::vector<HdrExt> HdrExts;
 
 struct Source {
     std::string ssrc;
-    Parameters parameters;
+    //    Parameters parameters;
+    std::string cname;
+    // 格式： "d11a153b-audio-0-1 3f32f7da-2665-4321-8335-868bf394797c-1"
+    std::string msid;
 };
-typedef std::list<Source> Sources;
+typedef std::vector<Source> Sources;
 
 struct SsrcGroup {
     // FID（Flow Identification，流识别）：用于表示同一媒体流的不同部分或变体，如原始流和重传流。
@@ -167,18 +169,18 @@ struct ORTP {
             , rtcpMux{rtcpMux} {}
 };
 
-struct OMeetSource {
-    std::string ssrc;
-    // resource of meet participant
-    std::string name;
-    // 格式： "d11a153b-audio-0-1 3f32f7da-2665-4321-8335-868bf394797c-1"
-    std::string msid;
-};
+// struct OMeetSource {
+//     std::string ssrc;
+//     // resource of meet participant
+//     std::string name;
+//     // 格式： "d11a153b-audio-0-1 3f32f7da-2665-4321-8335-868bf394797c-1"
+//     std::string msid;
+// };
 
 struct OMeetSSRCBundle {
-    std::vector<OMeetSource> videoSources;
+    std::vector<Source> videoSources;
     SsrcGroup videoSsrcGroups;
-    std::vector<OMeetSource> audioSources;
+    std::vector<Source> audioSources;
     SsrcGroup audioSsrcGroups;
 };
 
@@ -377,9 +379,9 @@ public:
                                         const std::string& peerId,
                                         bool ok) = 0;
 
-    virtual void onRTP(const std::string& sId,
-                       const std::string& peerId,
-                       const OJingleContentAv& osd) = 0;
+    virtual void onLocalDescriptionSet(const std::string& sId,
+                                       const std::string& peerId,
+                                       const OJingleContentAv* av) = 0;
 
     virtual void onFailure(const std::string& sId,
                            const std::string& peerId,
@@ -426,7 +428,7 @@ public:
 
     virtual bool ensureStart() = 0;
 
-    virtual void setIceOptions(std::list<IceServer>& ices) = 0;
+    virtual void setIceOptions(std::vector<IceServer>& ices) = 0;
 
     virtual void addRTCHandler(OkRTCHandler* hand) = 0;
     virtual void removeRTCHandler(OkRTCHandler* hand) = 0;
