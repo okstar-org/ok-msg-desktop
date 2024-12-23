@@ -10,25 +10,21 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#ifndef OK_RTC_UWP_PLATFORM_CONTEXT_H
-#define OK_RTC_UWP_PLATFORM_CONTEXT_H
-
-#include <winrt/Windows.Graphics.Capture.h>
-#include "../PlatformContext.h"
-
-using namespace winrt::Windows::Graphics::Capture;
+#include "VideoCapturerTrackSource.h"
 
 namespace lib::ortc {
 
-class UwpContext : public PlatformContext {
-public:
-    UwpContext(GraphicsCaptureItem item) : item(item) {}
+VideoCapturerTrackSource::VideoCapturerTrackSource()
+        : VideoTrackSource(/*remote=*/false)
+        , _broadcaster(std::make_shared<rtc::VideoBroadcaster>()) {}
 
-    virtual ~UwpContext() = default;
+auto VideoCapturerTrackSource::sink()
+        -> std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> {
+    return _broadcaster;
+}
 
-    GraphicsCaptureItem item;
-};
+rtc::VideoSourceInterface<webrtc::VideoFrame>* VideoCapturerTrackSource::source() {
+    return _broadcaster.get();
+}
 
 }  // namespace lib::ortc
-
-#endif

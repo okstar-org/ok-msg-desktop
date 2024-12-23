@@ -38,14 +38,14 @@ set(${PROJECT_NAME}_SOURCES
 		webrtc/platform/desktop_capturer/DesktopCaptureSourceManager.h
 		webrtc/platform/desktop_capturer/DesktopCaptureSourceManager.cpp
 
-		webrtc/platform/tdesktop/DesktopInterface.cpp
-		webrtc/platform/tdesktop/DesktopInterface.h
-		webrtc/platform/tdesktop/VideoCapturerInterfaceImpl.cpp
-		webrtc/platform/tdesktop/VideoCapturerInterfaceImpl.h
-		webrtc/platform/tdesktop/VideoCapturerTrackSource.cpp
-		webrtc/platform/tdesktop/VideoCapturerTrackSource.h
-		webrtc/platform/tdesktop/VideoCameraCapturer.cpp
-		webrtc/platform/tdesktop/VideoCameraCapturer.h
+		webrtc/platform/desktop/DesktopInterface.cpp
+		webrtc/platform/desktop/DesktopInterface.h
+		webrtc/platform/desktop/VideoCapturerInterfaceImpl.cpp
+		webrtc/platform/desktop/VideoCapturerInterfaceImpl.h
+		webrtc/platform/desktop/VideoCapturerTrackSource.cpp
+		webrtc/platform/desktop/VideoCapturerTrackSource.h
+		webrtc/platform/desktop/VideoCameraCapturer.cpp
+		webrtc/platform/desktop/VideoCameraCapturer.h
 
 		webrtc/Stats.h
 		webrtc/Instance.h

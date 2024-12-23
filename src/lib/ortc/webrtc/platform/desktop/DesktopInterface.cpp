@@ -19,7 +19,7 @@
 #include "api/video_codecs/builtin_video_encoder_factory.h"
 #include "pc/video_track_source_proxy.h"
 
-#if TGCALLS_UWP_DESKTOP
+#if OK_RTC_UWP_DESKTOP
 #include "modules/video_coding/codecs/h264/win/h264_mf_factory.h"
 #endif
 
@@ -27,7 +27,7 @@ namespace lib::ortc {
 
 std::unique_ptr<webrtc::VideoEncoderFactory> DesktopInterface::makeVideoEncoderFactory(
         bool preferHardwareEncoding, bool isScreencast) {
-#if TGCALLS_UWP_DESKTOP
+#if OK_RTC_UWP_DESKTOP
     return std::make_unique<webrtc::H264MFEncoderFactory>();
 #else
     return webrtc::CreateBuiltinVideoEncoderFactory();
@@ -35,7 +35,7 @@ std::unique_ptr<webrtc::VideoEncoderFactory> DesktopInterface::makeVideoEncoderF
 }
 
 std::unique_ptr<webrtc::VideoDecoderFactory> DesktopInterface::makeVideoDecoderFactory() {
-#if TGCALLS_UWP_DESKTOP
+#if OK_RTC_UWP_DESKTOP
     return std::make_unique<webrtc::H264MFDecoderFactory>();
 #else
     return webrtc::CreateBuiltinVideoDecoderFactory();

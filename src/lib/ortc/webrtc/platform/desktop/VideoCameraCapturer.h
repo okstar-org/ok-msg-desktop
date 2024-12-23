@@ -10,8 +10,8 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#ifndef TGCALLS_VIDEO_CAMERA_CAPTURER_H
-#define TGCALLS_VIDEO_CAMERA_CAPTURER_H
+#ifndef OK_RTC_VIDEO_CAMERA_CAPTURER_H
+#define OK_RTC_VIDEO_CAMERA_CAPTURER_H
 
 #include "api/scoped_refptr.h"
 #include "api/video/video_frame.h"

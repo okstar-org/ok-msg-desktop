@@ -28,6 +28,7 @@
 #include <modules/video_capture/video_capture.h>
 #include <modules/video_capture/video_capture_factory.h>
 #include <pc/video_track_source.h>
+#include <rtc_base/helpers.h>
 #include <rtc_base/logging.h>
 #include <rtc_base/ssl_adapter.h>
 #include <rtc_base/string_encode.h>
@@ -129,13 +130,12 @@ std::unique_ptr<cricket::VideoContentDescription> addVideoSsrcBundle(
 
 WebRTC::WebRTC(std::string res)
         : peer_connection_factory(nullptr)
-        , deviceInfo(nullptr)
         , selectedVideoDevice(-1)
         , resource(std::move(res)) {
     _rtcConfig.sdp_semantics = webrtc::SdpSemantics::kUnifiedPlan;
     _rtcConfig.enable_implicit_rollback = false;
     _rtcConfig.enable_ice_renomination = true;
-
+    deviceInfo.reset(webrtc::VideoCaptureFactory::CreateDeviceInfo());
     RTC_LOG(LS_INFO) << __FUNCTION__ << " be created, resource is: " << resource;
 }
 
@@ -248,9 +248,6 @@ bool WebRTC::stop() {
 
     // 销毁factory
     peer_connection_factory = nullptr;
-
-    delete deviceInfo;
-    deviceInfo = nullptr;
 
     // 清除ssl
     rtc::CleanupSSL();
@@ -731,9 +728,7 @@ void WebRTC::linkAudioDevice(Conductor* c) {
     // a=msid:<stream-id> <track-id> <mslabel>
     // f1b4629b-video-0-2 c5858a0f-fae0-4241-8eea-20eb6f91f902-2
     auto streamId = resource + "-audio-0-0";
-
-    rtc::UniqueStringGenerator id_generator;
-    auto trackId = id_generator.GenerateString();
+    auto trackId = rtc::CreateRandomString(10);
 
     c->addLocalAudioTrack(audioSource.get(), streamId, trackId);
 }
@@ -747,11 +742,10 @@ void WebRTC::linkVideoDevice(Conductor* c, int selected) {
 
     RTC_LOG(LS_INFO) << "Get video device:" << devId;
 
-    auto capture = createVideoCapture(devId);
+    auto capture = getVideoCapture(devId);
 
     auto streamId = resource + "-video-0-0";
-    rtc::UniqueStringGenerator id_generator;
-    auto trackId = id_generator.GenerateString();
+    auto trackId = rtc::CreateRandomString(10);
 
     c->addLocalVideoTrack(capture->source().get(), streamId, trackId);
 
@@ -762,10 +756,7 @@ void WebRTC::linkVideoDevice(Conductor* c, int selected) {
 }
 
 std::string WebRTC::getVideoDeviceId(int selected) {
-    std::unique_ptr<webrtc::VideoCaptureModule::DeviceInfo> pDeviceInfo(
-            webrtc::VideoCaptureFactory::CreateDeviceInfo());
-
-    int num_devices = pDeviceInfo->NumberOfDevices();
+    int num_devices = deviceInfo->NumberOfDevices();
     RTC_LOG(LS_INFO) << "Get number of video devices:" << num_devices;
     if (selected >= num_devices) {
         RTC_LOG(LS_INFO) << "Out of selected device index: " << selected;
@@ -775,12 +766,28 @@ std::string WebRTC::getVideoDeviceId(int selected) {
     char name[DEVICE_NAME_MAX_LEN] = {};
     char uid[DEVICE_NAME_MAX_LEN] = {};
     char puid[DEVICE_NAME_MAX_LEN] = {};
-    pDeviceInfo->GetDeviceName(selected,                   //
-                               name, DEVICE_NAME_MAX_LEN,  //
+    deviceInfo->GetDeviceName(selected,                   //
+                              name, DEVICE_NAME_MAX_LEN,  //
                                uid, DEVICE_NAME_MAX_LEN,   //
                                puid, DEVICE_NAME_MAX_LEN);
 
     return std::string(uid);
+}
+
+std::vector<std::string> WebRTC::getVideoDeviceList() {
+    std::vector<std::string> v;
+    int num_devices = deviceInfo->NumberOfDevices();
+    for (int i = 0; i < num_devices; i++) {
+        char name[DEVICE_NAME_MAX_LEN] = {};
+        char uid[DEVICE_NAME_MAX_LEN] = {};
+        char puid[DEVICE_NAME_MAX_LEN] = {};
+        deviceInfo->GetDeviceName(i,                          //
+                                  name, DEVICE_NAME_MAX_LEN,  //
+                                  uid, DEVICE_NAME_MAX_LEN,   //
+                                  puid, DEVICE_NAME_MAX_LEN);
+        v.push_back(name);
+    }
+    return v;
 }
 
 void WebRTC::setRemoteDescription(const std::string& peerId, const OJingleContentAv& av) {
@@ -957,7 +964,7 @@ size_t WebRTC::getVideoSize() {
     return vdi->NumberOfDevices();
 }
 
-std::shared_ptr<VideoCaptureInterface> WebRTC::createVideoCapture(const std::string& deviceId) {
+std::shared_ptr<VideoCaptureInterface> WebRTC::getVideoCapture(const std::string& deviceId) {
     RTC_LOG(LS_INFO) << __FUNCTION__ << " deviceId: " << deviceId;
 
     if (deviceId.empty()) {
@@ -1175,11 +1182,5 @@ std::map<std::string, ortc::OIceUdp> WebRTC::getIceFromDown(
 
     return iceUdps;
 }
-
-// void WebRTC::initVideoDevice() {
-//     RTC_LOG(LS_INFO) << "Create video device...";
-//     deviceInfo = webrtc::VideoCaptureFactory::CreateDeviceInfo();
-//     RTC_LOG(LS_INFO) << "Video capture numbers:" << deviceInfo->NumberOfDevices();
-// }
 
 }  // namespace lib::ortc

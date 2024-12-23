@@ -113,10 +113,10 @@ void Conductor::setRemoteMute(bool mute) {
 bool Conductor::addLocalAudioTrack(webrtc::AudioSourceInterface* _audioSource,
                                    const std::string& streamId,
                                    const std::string& trackId) {
-    RTC_LOG(LS_INFO) << __FUNCTION__ << " streamId: " << streamId << "trackId: " << trackId;
+    RTC_LOG(LS_INFO) << __FUNCTION__ << " streamId: " << streamId << " trackId: " << trackId;
 
     _audioTrack = webRtc->getFactory()->CreateAudioTrack(trackId, _audioSource);
-    RTC_LOG(LS_INFO) << "Created audio track:" << _videoTrack.get();
+    RTC_LOG(LS_INFO) << "Created audio track:" << _audioTrack.get();
 
     auto added = peer_connection_->AddTrack(_audioTrack, {streamId});
     if (!added.ok()) {
@@ -138,7 +138,7 @@ bool Conductor::removeLocalAudioTrack() {
 bool Conductor::addLocalVideoTrack(webrtc::VideoTrackSourceInterface* source,
                                    const std::string& streamId,
                                    const std::string& trackId) {
-    RTC_LOG(LS_INFO) << __FUNCTION__ << " streamId: " << streamId << "trackId: " << trackId;
+    RTC_LOG(LS_INFO) << __FUNCTION__ << " streamId: " << streamId << " trackId: " << trackId;
 
     _videoTrack = webRtc->getFactory()->CreateVideoTrack(trackId, source);
     RTC_LOG(LS_INFO) << "Created video track:" << _videoTrack.get();

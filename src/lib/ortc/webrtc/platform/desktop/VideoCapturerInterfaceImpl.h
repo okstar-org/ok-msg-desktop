@@ -10,16 +10,16 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#ifndef TGCALLS_VIDEO_CAPTURER_INTERFACE_IMPL_H
-#define TGCALLS_VIDEO_CAPTURER_INTERFACE_IMPL_H
+#ifndef OK_RTC_VIDEO_CAPTURER_INTERFACE_IMPL_H
+#define OK_RTC_VIDEO_CAPTURER_INTERFACE_IMPL_H
 
 #include <rtc_base/thread.h>
 #include "../../VideoCapturerInterface.h"
 
-#ifdef TGCALLS_UWP_DESKTOP
+#ifdef OK_RTC_UWP_DESKTOP
 #include "platform/uwp/UwpContext.h"
 #include "platform/uwp/UwpScreenCapturer.h"
-#endif  // TGCALLS_UWP_DESKTOP
+#endif  // OK_RTC_UWP_DESKTOP
 
 #include "api/media_stream_interface.h"
 
@@ -58,11 +58,11 @@ private:
     rtc::Thread* workerThread;
     rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> _source;
     std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> _sink;
-#ifdef TGCALLS_UWP_DESKTOP
+#ifdef OK_RTC_UWP_DESKTOP
     std::unique_ptr<UwpScreenCapturer> _screenCapturer;
-#else   // TGCALLS_UWP_DESKTOP
+#else   // OK_RTC_UWP_DESKTOP
     std::unique_ptr<DesktopCaptureSourceHelper> _desktopCapturer;
-#endif  // TGCALLS_UWP_DESKTOP
+#endif  // OK_RTC_UWP_DESKTOP
     std::unique_ptr<VideoCameraCapturer> _cameraCapturer;
     std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> _uncroppedSink;
     std::function<void(VideoState)> _stateUpdated;

@@ -465,6 +465,8 @@ public:
     virtual void switchVideoDevice(const std::string& deviceId) = 0;
 
     virtual void switchVideoDevice(int selected) = 0;
+
+    virtual std::vector<std::string> getVideoDeviceList() = 0;
 };
 
 }  // namespace lib::ortc

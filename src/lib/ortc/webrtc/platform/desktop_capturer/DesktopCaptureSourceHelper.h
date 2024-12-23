@@ -1,12 +1,16 @@
-//
-//  DesktopCaptureSourceHelper.h
-//  TgVoipWebrtc
-//
-//  Created by Mikhail Filimonov on 28.12.2020.
-//  Copyright © 2020 Mikhail Filimonov. All rights reserved.
-//
-#ifndef TGCALLS_DESKTOP_CAPTURE_SOURCE_HELPER_H__
-#define TGCALLS_DESKTOP_CAPTURE_SOURCE_HELPER_H__
+/*
+ * Copyright (c) 2022 船山信息 chuanshaninfo.com
+ * The project is licensed under Mulan PubL v2.
+ * You can use this software according to the terms and conditions of the Mulan
+ * PubL v2. You may obtain a copy of Mulan PubL v2 at:
+ *          http://license.coscl.org.cn/MulanPubL-2.0
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PubL v2 for more details.
+ */
+#ifndef OK_RTC_DESKTOP_CAPTURE_SOURCE_HELPER_H__
+#define OK_RTC_DESKTOP_CAPTURE_SOURCE_HELPER_H__
 
 #include "DesktopCaptureSource.h"
 
@@ -46,4 +50,4 @@ private:
 
 }  // namespace lib::ortc
 
-#endif  // TGCALLS_DESKTOP_CAPTURE_SOURCE_HELPER_H__
+#endif  // OK_RTC_DESKTOP_CAPTURE_SOURCE_HELPER_H__

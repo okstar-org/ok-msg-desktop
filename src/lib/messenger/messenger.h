@@ -498,6 +498,8 @@ public:
     void addHandler(MessengerMeetHandler* hdr);
     void removeHandler(MessengerMeetHandler* hdr);
 
+    std::vector<std::string> getVideoDeviceList();
+
 protected:
     void onCall(const IMPeerId& peerId,  //
                 const QString& callId,   //

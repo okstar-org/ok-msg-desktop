@@ -76,4 +76,4 @@ private:
 
 }  // namespace lib::ortc
 
-#endif  // TGCALLS_DESKTOP_CAPTURE_SOURCE_H__
+#endif  // OK_RTC_DESKTOP_CAPTURE_SOURCE_H__

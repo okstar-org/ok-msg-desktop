@@ -10,8 +10,8 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#ifndef TGCALLS_INSTANCE_H
-#define TGCALLS_INSTANCE_H
+#ifndef OK_RTC_INSTANCE_H
+#define OK_RTC_INSTANCE_H
 
 #include <functional>
 #include <map>

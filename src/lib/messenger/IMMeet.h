@@ -25,7 +25,6 @@
 #include "IMFromHostHandler.h"
 #include "IMJingle.h"
 #include "base/jid.h"
-#include "messenger.h"
 
 namespace lib::messenger {
 
@@ -83,9 +82,15 @@ public:
 
     /**
      * 选择视频设备
-     * @param selected 设备索引
+     * @param selected 设备索引 0~N
      */
     void switchVideoDevice(int selected);
+
+    /**
+     * 获取视频设备列表
+     * @return
+     */
+    std::vector<std::string> getVideoDeviceList();
 
 protected:
     void handleHostPresence(const gloox::JID& from, const gloox::Presence& presence) override;

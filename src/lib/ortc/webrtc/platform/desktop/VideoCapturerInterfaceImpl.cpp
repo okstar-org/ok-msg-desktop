@@ -59,7 +59,7 @@ VideoCapturerInterfaceImpl::VideoCapturerInterfaceImpl(
 VideoCapturerInterfaceImpl::~VideoCapturerInterfaceImpl() {}
 
 void VideoCapturerInterfaceImpl::setState(VideoState state) {
-#ifdef TGCALLS_UWP_DESKTOP
+#ifdef OK_RTC_UWP_DESKTOP
     if (_screenCapturer) {
         _screenCapturer->setState(state);
     } else
@@ -71,7 +71,7 @@ void VideoCapturerInterfaceImpl::setState(VideoState state) {
             _desktopCapturer->stop();
         }
     } else
-#endif  // TGCALLS_UWP_DESKTOP
+#endif  // OK_RTC_UWP_DESKTOP
         if (_cameraCapturer) {
             _cameraCapturer->setState(state);
         }
@@ -98,34 +98,34 @@ void VideoCapturerInterfaceImpl::setUncroppedOutput(
 }
 
 void VideoCapturerInterfaceImpl::setOnFatalError(std::function<void()> error) {
-#ifdef TGCALLS_UWP_DESKTOP
+#ifdef OK_RTC_UWP_DESKTOP
     if (_screenCapturer) {
         _screenCapturer->setOnFatalError(std::move(error));
     } else if (!_screenCapturer && !_cameraCapturer && error) {
         error();
     }
-#else   // TGCALLS_UWP_DESKTOP
+#else   // OK_RTC_UWP_DESKTOP
     if (_desktopCapturer) {
         _desktopCapturer->setOnFatalError(std::move(error));
     } else if (!_desktopCapturer && !_cameraCapturer && error) {
         error();
     }
-#endif  // TGCALLS_UWP_DESKTOP
+#endif  // OK_RTC_UWP_DESKTOP
     if (_cameraCapturer) {
         _cameraCapturer->setOnFatalError(std::move(error));
     }
 }
 
 void VideoCapturerInterfaceImpl::setOnPause(std::function<void(bool)> pause) {
-#ifdef TGCALLS_UWP_DESKTOP
+#ifdef OK_RTC_UWP_DESKTOP
     if (_screenCapturer) {
         _screenCapturer->setOnPause(std::move(pause));
     }
-#else   // TGCALLS_UWP_DESKTOP
+#else   // OK_RTC_UWP_DESKTOP
     if (_desktopCapturer) {
         _desktopCapturer->setOnPause(std::move(pause));
     }
-#endif  // TGCALLS_UWP_DESKTOP
+#endif  // OK_RTC_UWP_DESKTOP
 }
 
 }  // namespace lib::ortc

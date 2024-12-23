@@ -55,50 +55,49 @@ bool VideoCaptureInterfaceObject::isScreenCapture() {
 }
 
 void VideoCaptureInterfaceObject::switchToDevice(std::string deviceId, bool isScreenCapture) {
-    //    signalingThread->PostTask([&](){
-    if (_videoCapturer) {
-        _videoCapturer->setUncroppedOutput(nullptr);
-    }
+    if (!_videoSource) return;
+
     _isScreenCapture = isScreenCapture;
-    if (_videoSource) {
-        // this should outlive the capturer
-        _videoCapturer = nullptr;
-        _videoCapturer = PlatformInterface::SharedInstance()->makeVideoCapturer(
-                signalingThread,
-                workerThread,
-                _videoSource,
-                deviceId,
-                [this](VideoState state) {
-                    if (this->_stateUpdated) {
-                        this->_stateUpdated(state);
-                    }
-                    if (this->_onIsActiveUpdated) {
-                        switch (state) {
-                            case VideoState::Active: {
-                                this->_onIsActiveUpdated(true);
-                                break;
-                            }
-                            default: {
-                                this->_onIsActiveUpdated(false);
-                                break;
-                            }
+    _videoCapturer->setUncroppedOutput(nullptr);
+
+    // this should outlive the capturer
+    _videoCapturer = nullptr;
+    _videoCapturer = PlatformInterface::SharedInstance()->makeVideoCapturer(
+            signalingThread,
+            workerThread,
+            _videoSource,
+            deviceId,
+            [this](VideoState state) {
+                if (this->_stateUpdated) {
+                    this->_stateUpdated(state);
+                }
+                if (this->_onIsActiveUpdated) {
+                    switch (state) {
+                        case VideoState::Active: {
+                            this->_onIsActiveUpdated(true);
+                            break;
+                        }
+                        default: {
+                            this->_onIsActiveUpdated(false);
+                            break;
                         }
                     }
-                },
-                [this](PlatformCaptureInfo info) {
-                    if (this->_shouldBeAdaptedToReceiverAspectRate !=
-                        info.shouldBeAdaptedToReceiverAspectRate) {
-                        this->_shouldBeAdaptedToReceiverAspectRate =
-                                info.shouldBeAdaptedToReceiverAspectRate;
-                    }
-                    if (this->_rotationUpdated) {
-                        this->_rotationUpdated(info.rotation);
-                    }
-                    this->updateAspectRateAdaptation();
-                },
-                _platformContext,
-                _videoCapturerResolution);
-    }
+                }
+            },
+            [this](PlatformCaptureInfo info) {
+                if (this->_shouldBeAdaptedToReceiverAspectRate !=
+                    info.shouldBeAdaptedToReceiverAspectRate) {
+                    this->_shouldBeAdaptedToReceiverAspectRate =
+                            info.shouldBeAdaptedToReceiverAspectRate;
+                }
+                if (this->_rotationUpdated) {
+                    this->_rotationUpdated(info.rotation);
+                }
+                this->updateAspectRateAdaptation();
+            },
+            _platformContext,
+            _videoCapturerResolution);
+
     if (_videoCapturer) {
         if (_preferredAspectRatio > 0) {
             _videoCapturer->setPreferredCaptureAspectRatio(_preferredAspectRatio);
@@ -114,7 +113,6 @@ void VideoCaptureInterfaceObject::switchToDevice(std::string deviceId, bool isSc
         }
         _videoCapturer->setState(_state);
     }
-    //    });
 }
 
 void VideoCaptureInterfaceObject::withNativeImplementation(std::function<void(void*)> completion) {

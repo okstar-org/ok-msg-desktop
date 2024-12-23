@@ -10,8 +10,8 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#ifndef TGCALLS_DESKTOP_INTERFACE_H
-#define TGCALLS_DESKTOP_INTERFACE_H
+#ifndef OK_RTC_DESKTOP_INTERFACE_H
+#define OK_RTC_DESKTOP_INTERFACE_H
 
 #include <memory>
 #include "../../VideoCapturerInterface.h"
@@ -41,4 +41,4 @@ public:
 
 }  // namespace lib::ortc
 
-#endif  // TGCALLS_DESKTOP_INTERFACE_H
+#endif  // OK_RTC_DESKTOP_INTERFACE_H

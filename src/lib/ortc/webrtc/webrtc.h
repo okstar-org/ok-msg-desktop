@@ -58,7 +58,7 @@ public:
 
 class WebRTC : public OkRTC, public WebRTCObserver {
 public:
-    WebRTC(std::string res);
+    explicit WebRTC(std::string res);
 
     ~WebRTC() override;
 
@@ -91,7 +91,7 @@ public:
 
     size_t getVideoSize() override;
 
-    std::shared_ptr<VideoCaptureInterface> createVideoCapture(const std::string& deviceId);
+    std::shared_ptr<VideoCaptureInterface> getVideoCapture(const std::string& deviceId);
     void destroyVideoCapture();
 
     bool quit(const std::string& peerId) override;
@@ -122,6 +122,8 @@ public:
     }
 
     std::string getVideoDeviceId(int selected);
+
+    std::vector<std::string> getVideoDeviceList() override;
 
 protected:
     void onRemoteDescriptionSet(const webrtc::SessionDescriptionInterface* sdp,
@@ -207,12 +209,11 @@ private:
     void linkVideoDevice(Conductor* c, int selected);
 
     std::recursive_mutex mutex;
-    int selectedVideoDevice = -1;
 
     // 资源ID
     std::string resource;
 
-    webrtc::VideoCaptureModule::DeviceInfo* deviceInfo = nullptr;
+    std::unique_ptr<webrtc::VideoCaptureModule::DeviceInfo> deviceInfo = nullptr;
 
     webrtc::PeerConnectionInterface::RTCConfiguration _rtcConfig;
 

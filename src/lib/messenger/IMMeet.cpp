@@ -68,10 +68,9 @@ IMMeet::IMMeet(IM* im, QObject* parent) : IMJingle(im, parent), manager(nullptr)
     // jingle json-message
     im->sessionManager()->registerPlugin(new gloox::Jingle::JsonMessage());
 
-    resource = qstring(im->self().resource());
+    resource = "gaojie";  // qstring(im->self().resource());
     auto rtc = ortc::OkRTCManager::getInstance()->createRtc(stdstring(resource));
     rtc->addRTCHandler(this);
-
     qRegisterMetaType<ortc::OJingleContentAv>("const ortc::OJingleContentAv&");
 }
 
@@ -86,8 +85,10 @@ IMMeet::~IMMeet() {
 
     ortc::OkRTCManager* pRtcManager = ortc::OkRTCManager::getInstance();
     auto rtc = pRtcManager->getRtc();
-    if (rtc) rtc->removeRTCHandler(this);
-    pRtcManager->destroyRtc();
+    if (rtc) {
+        rtc->removeRTCHandler(this);
+        pRtcManager->destroyRtc();
+    }
 }
 
 const std::string& IMMeet::create(const QString& name) {
@@ -521,6 +522,13 @@ void IMMeet::switchVideoDevice(int selected) {
         return;
     }
     rtc->switchVideoDevice(selected);
+}
+
+std::vector<std::string> IMMeet::getVideoDeviceList() {
+    auto pManager = ortc::OkRTCManager::getInstance();
+    auto rtc = pManager->getRtc();
+    if (rtc) return rtc->getVideoDeviceList();
+    return {};
 }
 
 }  // namespace lib::messenger

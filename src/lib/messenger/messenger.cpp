@@ -14,6 +14,7 @@
 #include "IMFile.h"
 
 #include <memory>
+#include <range/v3/all.hpp>
 
 #include "application.h"
 #include "base/logs.h"
@@ -615,6 +616,10 @@ void MessengerMeet::onFriendVideoFrame(const QString& friendId, uint16_t w, uint
 
 void MessengerMeet::leave() {
     meet->leave();
+}
+
+std::vector<std::string> MessengerMeet::getVideoDeviceList() {
+    return meet->getVideoDeviceList();
 }
 
 }  // namespace lib::messenger

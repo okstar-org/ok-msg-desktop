@@ -20,8 +20,8 @@
 
 namespace lib::ortc {
 
-class VideoCapturerInterface;
 class Threads;
+class VideoCapturerInterface;
 
 class VideoCaptureInterfaceObject {
 public:
