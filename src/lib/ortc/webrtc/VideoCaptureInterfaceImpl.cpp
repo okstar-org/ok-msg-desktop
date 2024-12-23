@@ -58,7 +58,9 @@ void VideoCaptureInterfaceObject::switchToDevice(std::string deviceId, bool isSc
     if (!_videoSource) return;
 
     _isScreenCapture = isScreenCapture;
-    _videoCapturer->setUncroppedOutput(nullptr);
+    if (_videoCapturer) {
+        _videoCapturer->setUncroppedOutput(nullptr);
+    }
 
     // this should outlive the capturer
     _videoCapturer = nullptr;

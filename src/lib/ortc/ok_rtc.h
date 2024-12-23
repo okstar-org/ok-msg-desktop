@@ -124,8 +124,12 @@ struct HdrExt {
 };
 typedef std::vector<HdrExt> HdrExts;
 
+enum class VideoType { Camera, Desktop };
 struct Source {
     std::string ssrc;
+    std::string name;
+
+    std::string videoType;
     //    Parameters parameters;
     std::string cname;
     // 格式： "d11a153b-audio-0-1 3f32f7da-2665-4321-8335-868bf394797c-1"

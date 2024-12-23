@@ -82,6 +82,9 @@ protected:
 
     virtual void clearSessionInfo(const QString& sId) = 0;
 
+    ortc::Source ParseSource(const gloox::Jingle::RTP::Source& s);
+    gloox::Jingle::RTP::Source ToSource(const ortc::Source& s);
+
     ortc::Candidate ParseCandidate(gloox::Jingle::ICEUDP::Candidate& src);
 
     void ParseCandidates(gloox::Jingle::ICEUDP::CandidateList& src, ortc::CandidateList& to);

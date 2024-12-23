@@ -196,6 +196,11 @@ private:
     std::map<std::string, ortc::OIceUdp> getIceFromDown(
             const webrtc::SessionDescriptionInterface* sdp);
 
+    void convertSourceToUp(const cricket::StreamParamsVec& streamParams,
+                           Sources& sources,
+                           SsrcGroup& ssrcGroup,
+                           Media m);
+
     Dtls getDtls(const cricket::TransportInfo& info);
 
     Dtls getDtls(const webrtc::SessionDescriptionInterface* sdp, const std::string& mid);
