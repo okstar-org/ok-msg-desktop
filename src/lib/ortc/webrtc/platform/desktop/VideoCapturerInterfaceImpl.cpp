@@ -56,7 +56,9 @@ VideoCapturerInterfaceImpl::VideoCapturerInterfaceImpl(
     }
 }
 
-VideoCapturerInterfaceImpl::~VideoCapturerInterfaceImpl() {}
+VideoCapturerInterfaceImpl::~VideoCapturerInterfaceImpl() {
+    RTC_LOG(LS_INFO) << __FUNCTION__;
+}
 
 void VideoCapturerInterfaceImpl::setState(VideoState state) {
 #ifdef OK_RTC_UWP_DESKTOP

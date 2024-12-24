@@ -292,7 +292,6 @@ void WebRTC::setIceOptions(std::vector<IceServer>& ices) {
 
 std::map<std::string, OIceUdp> WebRTC::getCandidates(const std::string& peerId) {
     auto conductor = getConductor(peerId);
-    if (!conductor) return {};
     return getIceFromDown(conductor->getLocalDescription());
 }
 
@@ -675,17 +674,17 @@ void WebRTC::addIceServer(const IceServer& ice) {
     _rtcConfig.servers.push_back(ss);
 }
 
-Conductor* WebRTC::getConductor(const std::string& peerId) {
-    std::lock_guard<std::recursive_mutex> lock(mutex);
-    return _pcMap[peerId];
-}
-
 Conductor* WebRTC::createConductor(const std::string& peerId, const std::string& sId, bool video) {
-    std::lock_guard<std::recursive_mutex> lock(mutex);
+    auto conductor = _pcMap[peerId];
+    if (conductor) {
+        return conductor;
+    }
 
     RTC_LOG(LS_INFO) << __FUNCTION__ << "peer:" << peerId << " sid:" << sId << " video:" << video;
 
-    auto conductor = new Conductor(this, peerId, sId, this);
+    std::lock_guard<std::recursive_mutex> lock(mutex);
+
+    conductor = new Conductor(this, peerId, sId, this);
     if (!video) {
         linkAudioDevice(conductor);
     } else {
@@ -696,7 +695,15 @@ Conductor* WebRTC::createConductor(const std::string& peerId, const std::string&
         linkVideoDevice(conductor, 0);
     }
 
+    _pcMap[peerId] = conductor;
     return conductor;
+}
+
+Conductor* WebRTC::getConductor(const std::string& peerId) {
+    std::lock_guard<std::recursive_mutex> lock(mutex);
+    auto c = _pcMap[peerId];
+    assert(c);
+    return c;
 }
 
 void WebRTC::linkAudioDevice(Conductor* c) {
@@ -778,11 +785,7 @@ void WebRTC::setTransportInfo(const std::string& peerId,
                               const ortc::OIceUdp& iceUdp) {
     RTC_LOG(LS_INFO) << __FUNCTION__ << " peerId:" << peerId << " sId:" << sId;
 
-    Conductor* conductor = getConductor(peerId);
-    if (!conductor) {
-        RTC_LOG(LS_WARNING) << "Unable to find conductor.";
-        return;
-    }
+    auto conductor = getConductor(peerId);
 
     int mline = 0;
     for (auto& _candidate : iceUdp.candidates) {
@@ -841,10 +844,6 @@ void WebRTC::setRemoteMute(bool mute) {
 void WebRTC::addSource(const std::string& peerId,
                        const std::map<std::string, ortc::OMeetSSRCBundle>& map) {
     auto c = getConductor(peerId);
-    if (!c) {
-        RTC_LOG(LS_WARNING) << "No existing conductor!";
-        return;
-    }
 
     auto old = c->getRemoteDescription();
     if (!old) {
@@ -903,15 +902,8 @@ void WebRTC::addSource(const std::string& peerId,
 }
 
 bool WebRTC::CreateOffer(const std::string& peerId, const std::string& sId, bool video) {
-    auto conductor = _pcMap[peerId];
-    if (conductor) {
-        RTC_LOG(LS_WARNING) << "Exist conductor.";
-        return false;
-    }
-
-    conductor = createConductor(peerId, sId, video);
+    auto conductor = createConductor(peerId, sId, video);
     conductor->CreateOffer();
-    _pcMap[peerId] = conductor;
     return true;
 }
 
@@ -925,7 +917,6 @@ void WebRTC::CreateAnswer(const std::string& peerId, const OJingleContentAv& av)
     auto sdp = convertSdpToDown(av);
     conductor->setRemoteDescription(sdp.release());
     conductor->CreateAnswer();
-    _pcMap[peerId] = conductor;
 }
 
 std::unique_ptr<OJingleContentAv> WebRTC::getLocalSdp(const std::string& peerId) {

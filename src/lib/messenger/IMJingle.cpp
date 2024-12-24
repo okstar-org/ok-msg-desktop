@@ -249,11 +249,8 @@ void IMJingle::ParseAV(const gloox::Jingle::Session::Jingle* jingle,
             case gloox::Jingle::PluginIBB:
                 break;
             case gloox::Jingle::PluginJsonMessage: {
-                auto jm = static_cast<const gloox::Jingle::JsonMessage*>(p);
-                if (jm) {
-                    qDebug() << "json-message:" << jm->json().c_str();
-                    ParseOMeetSSRCBundle(jm->json(), contentAv.getSsrcBundle());
-                }
+                auto jm = dynamic_cast<const gloox::Jingle::JsonMessage*>(p);
+                ParseOMeetSSRCBundle(jm->json(), contentAv.getSsrcBundle());
                 break;
             }
             default:
@@ -284,14 +281,6 @@ QJsonObject toMeetSource(const ortc::Source& e) {
 
 void IMJingle::ParseOMeetSSRCBundle(const std::string& json,
                                     std::map<std::string, ortc::OMeetSSRCBundle>& map) {
-    /**
-     * {"sources":{"d11a153b":[[],[],[{"s":3444359346,"n":"d11a153b-a0","m":"d11a153b-audio-0-1
-     * 3f32f7da-2665-4321-8335-868bf394797c-1"}]],"91db8c6a":[[{"s":4281442190,"n":"91db8c6a-v0","m":"91db8c6a-video-0-1
-     * 61861387-7097-4f8b-ad79-c3417c62703b-1"},{"s":2878411684,"n":"91db8c6a-v0","m":"91db8c6a-video-0-1
-     * 61861387-7097-4f8b-ad79-c3417c62703b-1"}],[["f",4281442190,2878411684]],[{"s":1399762730,"n":"91db8c6a-a0","m":"91db8c6a-audio-0-1
-     * 7b7e8445-3b75-4c47-ba76-07bb6ce84e73-1"}]],"jvb":[[{"s":2196891483,"n":"jvb-v0","m":"mixedmslabel
-     * mixedlabelvideo0"}],[],[{"s":2127533679,"n":"jvb-a0","m":"mixedmslabel mixedlabelaudio0"}]]}}
-     */
     if (json.empty()) {
         qWarning() << "empty!";
         return;
@@ -377,13 +366,11 @@ void IMJingle::FormatOMeetSSRCBundle(const std::map<std::string, ortc::OMeetSSRC
         array.push_back(as);
 
         // 4 audio ssrc group (ignore it)
-
         s.insert(qstring(item.first), array);
     }
     root.insert("sources", s);
     doc.setObject(root);
     auto str = ok::base::Jsons::toString(doc);
-    qDebug() << __func__ << "json:" << str;
     json.assign(str.toStdString());
 }
 

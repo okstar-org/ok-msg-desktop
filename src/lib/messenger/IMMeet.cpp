@@ -68,10 +68,26 @@ IMMeet::IMMeet(IM* im, QObject* parent) : IMJingle(im, parent), manager(nullptr)
     // jingle json-message
     im->sessionManager()->registerPlugin(new gloox::Jingle::JsonMessage());
 
-    resource = "gaojie";  // qstring(im->self().resource());
-    auto rtc = ortc::OkRTCManager::getInstance()->createRtc(stdstring(resource));
-    rtc->addRTCHandler(this);
+    resource = qstring(im->self().resource());
+
+    // qRegisterMetaType
     qRegisterMetaType<ortc::OJingleContentAv>("const ortc::OJingleContentAv&");
+
+    ortc::OkRTCManager* rtcManager = ortc::OkRTCManager::getInstance();
+    const auto& discos = im->getExternalServiceDiscovery();
+    for (const auto& item : discos) {
+        ortc::IceServer ice;
+        ice.uri = item.type + ":" + item.host + ":" + std::to_string(item.port);
+        //        +"?transport=" + item.transport;
+        ice.username = item.username;
+        ice.password = item.password;
+        qDebug() << "Add ice:" << ice.uri.c_str() << "user:" << qstring(ice.username)
+                 << "password:" << qstring(ice.password);
+        rtcManager->addIceServer(ice);
+    }
+
+    auto rtc = rtcManager->createRtc(stdstring(resource));
+    rtc->addRTCHandler(this);
 }
 
 IMMeet::~IMMeet() {
@@ -283,19 +299,7 @@ bool IMMeet::doSessionInitiate(gloox::Jingle::Session* session,
 
 void IMMeet::doStartRTC(const IMPeerId& peerId, const ortc::OJingleContentAv& cav) const {
     qDebug() << __func__;
-    ortc::OkRTCManager* rtcManager = ortc::OkRTCManager::getInstance();
-    const auto& discos = im->getExternalServiceDiscovery();
-    for (const auto& item : discos) {
-        ortc::IceServer ice;
-        ice.uri = item.type + ":" + item.host + ":" + std::to_string(item.port);
-        //        +"?transport=" + item.transport;
-        ice.username = item.username;
-        ice.password = item.password;
-        qDebug() << "Add ice:" << ice.uri.c_str() << "user:" << qstring(ice.username)
-                 << "password:" << qstring(ice.password);
-        rtcManager->addIceServer(ice);
-    }
-
+    auto rtcManager = ortc::OkRTCManager::getInstance();
     auto rtc = rtcManager->getRtc();
     rtc->CreateAnswer(stdstring(peerId.toString()), cav);
 
