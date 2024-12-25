@@ -77,7 +77,8 @@ void AuthSession::doSignIn() {
 }
 
 void AuthSession::doLogin(const SignInInfo& signInInfo) {
-    qDebug() << __func__ << signInInfo.account;
+    qDebug() << __func__ << signInInfo.account << "stackUrl:" << signInInfo.stackUrl;
+
     QMutexLocker locker(&_mutex);
     m_signInInfo = signInInfo;
     if (_status == lib::session::Status::CONNECTING) {
@@ -89,9 +90,6 @@ void AuthSession::doLogin(const SignInInfo& signInInfo) {
         qDebug(("The connection is connected."));
         return;
     }
-
-    qDebug() << "account:" << signInInfo.account << "password:" << signInInfo.password;
-    qDebug() << "stackUrl:" << signInInfo.stackUrl;
 
     doSignIn();
 }

@@ -321,7 +321,6 @@ void Core::onFriendRemoved(QString friendId) {
 }
 
 void Core::onFriendStatus(QString friendId, lib::messenger::IMStatus status) {
-    qDebug() << __func__ << friendId << (int)status;
     Status::Status status0 = fromToxStatus(status);
     emit friendStatusChanged(getFriendPublicKey(friendId), status0);
 }
@@ -1328,12 +1327,7 @@ void Core::logout() { messenger->stop(); }
 
 void Core::onSelfNameChanged(QString name) {
     QMutexLocker ml{&coreLoopLock};
-    qDebug() << __func__ << name;
-
-    //    auto& nexus = Nexus::getInstance();
-    //    auto profile = nexus.getProfile();
-    // 避免死循环 set saveToCore to false
-    //    profile->setNick(name, false);
+    //    qDebug() << __func__ << name;
     emit usernameSet(name);
 }
 

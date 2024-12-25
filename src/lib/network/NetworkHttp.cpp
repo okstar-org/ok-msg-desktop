@@ -37,7 +37,6 @@ namespace lib::network {
 static QString CONTENT_TYPE_JSON = "application/json";
 
 NetworkHttp::NetworkHttp(QObject* parent) : QObject(parent), _manager{nullptr} {
-    qDebug() << __func__;
 #ifndef QT_NO_SSL
     QString buildVersion = QSslSocket::sslLibraryBuildVersionString();
     qDebug() << "The build-in ssl library version is:" << buildVersion;
@@ -55,7 +54,7 @@ NetworkHttp::NetworkHttp(QObject* parent) : QObject(parent), _manager{nullptr} {
     qDebug() << "supportedSchemes:" << schemes.join(" ");
 }
 
-NetworkHttp::~NetworkHttp() { qDebug() << __func__; }
+NetworkHttp::~NetworkHttp() = default;
 
 inline void NetworkHttp::forRequest(QNetworkRequest& req) {
     req.setAttribute(QNetworkRequest::RedirectPolicyAttribute, true);

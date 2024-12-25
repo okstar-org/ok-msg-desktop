@@ -232,9 +232,6 @@ void ChatWidget::onReceiptReceived(const FriendId& friendId, MsgId receipt) {
 }
 
 void ChatWidget::onFriendStatusChanged(const FriendId& friendPk, Status::Status status) {
-    qDebug() << __func__ << friendPk.toString() << "status:" << (int)status;
-    //  const auto &friendPk = FriendList::id2Key(friendPk);
-    //    contactListWidget->setFriendStatus(friendPk, status);
     Friend* f = Nexus::getCore()->getFriendList().findFriend(friendPk);
     if (!f) {
         qWarning() << "Unable to find friend" << friendPk.toString();

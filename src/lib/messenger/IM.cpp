@@ -225,6 +225,7 @@ std::unique_ptr<Client> IM::makeClient() {
     vCardManager = std::make_unique<VCardManager>(client.get());
     pubSubManager = std::make_unique<PubSub::Manager>(client.get());
     bookmarkStorage = std::make_unique<gloox::BookmarkStorage>(client.get());
+    _sessionManager = std::make_unique<gloox::Jingle::SessionManager>(client.get(), this);
     return std::move(client);
 }
 
@@ -331,7 +332,6 @@ void IM::onConnect() {
         rosterManager = enableRosterManager();
     }
 
-    _sessionManager = std::make_unique<gloox::Jingle::SessionManager>(_client.get(), this);
 
     emit connectResult(IMConnectStatus::CONNECTED);
     emit started();
@@ -1980,10 +1980,8 @@ void IM::handleItems(const std::string& id,                    //
                 while ((pos = base64.find('\r')) != std::string::npos) base64.erase(pos, 1);
                 auto avt = Base64::decode64(base64);
                 if (isSelf) {
-                    qDebug() << "Receive self avatar";
                     emit selfAvatarChanged(avt);
                 } else {
-                    qDebug() << "Receive friend avatar" << friendId;
                     emit receiveFriendAvatarChanged(friendId, avt);
                 }
             }

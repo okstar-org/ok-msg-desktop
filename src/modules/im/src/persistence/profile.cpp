@@ -451,7 +451,7 @@ QPixmap Profile::loadAvatar(const ContactId& owner) {
  * @return Avatar as QByteArray.
  */
 QByteArray Profile::loadAvatarData(const ContactId& owner) {
-    qDebug() << __func__ << owner.toString();
+    //    qDebug() << __func__ << owner.toString();
 
     QString path = avatarPath(owner);
     QFile file(path);

@@ -202,54 +202,11 @@ void ContactWidget::onFriendNickChanged(const FriendId& friendPk, const QString&
 }
 
 void ContactWidget::onFriendStatusChanged(const FriendId& friendPk, Status::Status status) {
-    qDebug() << __func__ << friendPk.toString() << "status:" << (int)status;
-    //  const auto &friendPk = FriendList::id2Key(friendPk);
     contactListWidget->setFriendStatus(friendPk, status);
-    //  IMFriend *f = Nexus::getCore()->getFriendList().findFriend(friendPk);
-    //  if (!f) {
-    //    qWarning() << "Unable to find friend" << friendPk;
-    //    return;
-    //  }
-    //
-    //  bool isActualChange = f->getStatus() != status;
-    //
-    //  FriendWidget *widget = // friendWidgets[f->getPublicKey()];
-    //  contactListWidget->getFriend(f->getPublicKey());
-    //  if (isActualChange) {
-    //    if (!Status::isOnline(f->getStatus())) {
-    //      contactListWidget->moveWidget(widget, Status::Status::Online);
-    //    } else if (status == Status::Status::Offline) {
-    //      contactListWidget->moveWidget(widget, Status::Status::Offline);
-    //    }
-    //  }
-    //
-    //  f->setStatus(status);
-
-    //  if (widget->isActive()) {
-    //    setWindowTitle(widget->getSubject());
-    //  }
-    //
-    //    ContentDialogManager::getInstance()->updateFriendStatus(friendPk);
 }
 
 void ContactWidget::onFriendStatusMessageChanged(const FriendId& friendPk, const QString& message) {
     contactListWidget->setFriendStatusMsg(friendPk, message);
-
-    //  IMFriend *f = Nexus::getCore()->getFriendList().findFriend(friendPk);
-    //  if (!f) {
-    //    return;
-    //  }
-    //
-    //  QString str = message;
-    //  str.replace('\n', ' ').remove('\r').remove(QChar('\0'));
-    //  f->setStatusMessage(str);
-    //
-    //  chatForms[friendPk]->setStatusMessage(str);
-    //
-    //  auto frd = contactListWidget->getFriend(friendPk);
-    //  if(frd){
-    //    frd->setStatusMsg(str);
-    //  }
 }
 
 void ContactWidget::onFriendRequest(const FriendId& friendId, const QString& message) {
