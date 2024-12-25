@@ -152,54 +152,17 @@ void IMMeet::handleHostPresence(const gloox::JID& from, const gloox::Presence& p
     switch (pt) {
         case gloox::Presence::PresenceType::Available: {
             // 成员上线
-            auto email = t->findChild("email");
-            if (email) {
-                gloox::Meet::Participant participant = {
-                        .region = t->findChild("jitsi_participant_region")->cdata(),
-                        .codecType = t->findChild("jitsi_participant_codecType")->cdata(),
-                        .avatarUrl = t->findChild("avatar-url")
-                                             ? t->findChild("avatar-url")->cdata()
-                                             : "",
-                        .email = email->cdata(),
-                        .nick = t->findChild("nick") ? t->findChild("nick")->cdata() : "",
-                        .resource = from.resource(),
-                        .jid = from.full(),
-                        .e2ee = false};
-
-                auto fts = t->findChild("features");
-                if (fts) {
-                    auto e2ee = fts->findChild("feature", "var", "https://jitsi.org/meet/e2ee");
-                    if (e2ee) {
-                        participant.e2ee = true;
-                        auto ed25519 = t->findChild("jitsi_participant_e2ee.idKey.ed25519");
-                        if (ed25519) {
-                            participant.idKeys.insert(std::make_pair("ed25519", ed25519->cdata()));
-                        }
-                        auto curve25519 = t->findChild("jitsi_participant_e2ee.idKey.curve25519");
-                        if (curve25519) {
-                            participant.idKeys.insert(
-                                    std::make_pair("curve25519", curve25519->cdata()));
-                        }
-                    }
-                }
-
-                // 获取群组用户jid
-                auto userTag = t->findChild("x", "xmlns", "http://jabber.org/protocol/muc#user");
-                if (userTag) {
-                    gloox::MUCRoom::MUCUser mucUser(userTag);
-                }
-
-                auto si = t->findChild("SourceInfo");
-                if (si) {
-                    participant.sourceInfo = si->cdata();
-                }
-
-                meet->addParticipant(participant);
-
-                for (auto* h : handlers) {
-                    h->onParticipantJoined(ok::base::Jid(from.full()), toParticipant(participant));
-                }
+            auto participant = meet->parseParticipant(from, presence);
+            if (participant.email.empty()) {
+                return;
             }
+
+            meet->addParticipant(participant);
+
+            for (auto* h : handlers) {
+                h->onParticipantJoined(ok::base::Jid(from.full()), toParticipant(participant));
+            }
+
             break;
         }
         case gloox::Presence::PresenceType::Unavailable: {
@@ -555,7 +518,17 @@ std::vector<std::string> IMMeet::getVideoDeviceList() {
 void IMMeet::setEnable(bool audio, bool video) {
     auto pManager = ortc::OkRTCManager::getInstance();
     auto rtc = pManager->getRtc();
-    if (rtc) rtc->setEnable(audio, video);
+    if (!rtc) {
+        return;
+    }
+    rtc->setEnable(audio, video);
+
+    auto self = meet->getSelf();
+    //{"f4921c8d-a0":{"muted":true}, "f4921c8d-a0":{"muted":true}}
+    self.sourceInfo = "{\"" + self.resource + "-a0\": {\"muted\":" + (audio ? "false" : "true") +
+                      "}, " + self.resource + "-v0\": {\"muted\":" + (audio ? "false" : "true") +
+                      " }}";
+    meet->sendPresence(self);
 }
 
 }  // namespace lib::messenger
