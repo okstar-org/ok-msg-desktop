@@ -113,18 +113,26 @@ void setRptExtensions(const HdrExts& hdrExts, cricket::RtpMediaContentDescriptio
 }
 
 std::unique_ptr<cricket::AudioContentDescription> addAudioSsrcBundle(
-        const OMeetSSRCBundle& ssrcBundle) {
+        const OMeetSSRCBundle& ssrcBundle, const cricket::AudioContentDescription* acd) {
     // audio
     auto audioPtr = std::make_unique<cricket::AudioContentDescription>();
     setSsrc(ssrcBundle.audioSsrcGroups, ssrcBundle.audioSources, audioPtr.get());
+
+    for (const auto& item : acd->streams()) {
+        audioPtr->AddStream(item);
+    }
+
     return std::move(audioPtr);
 }
 
 std::unique_ptr<cricket::VideoContentDescription> addVideoSsrcBundle(
-        const OMeetSSRCBundle& ssrcBundle) {
+        const OMeetSSRCBundle& ssrcBundle, const cricket::VideoContentDescription* vcd) {
     // video
     auto videoPtr = std::make_unique<cricket::VideoContentDescription>();
     setSsrc(ssrcBundle.videoSsrcGroups, ssrcBundle.videoSources, videoPtr.get());
+    for (const auto& item : vcd->streams()) {
+        videoPtr->AddStream(item);
+    }
     return std::move(videoPtr);
 }
 
@@ -134,6 +142,27 @@ WebRTC::WebRTC(std::string res) : peer_connection_factory(nullptr), resource(std
     _rtcConfig.enable_ice_renomination = true;
     deviceInfo.reset(webrtc::VideoCaptureFactory::CreateDeviceInfo());
     RTC_LOG(LS_INFO) << __FUNCTION__ << " be created, resource is: " << resource;
+
+    RTC_LOG(LS_INFO) << "Creating network thread";
+    network_thread = rtc::Thread::CreateWithSocketServer();
+    RTC_LOG(LS_INFO) << "Network thread=>" << network_thread;
+    network_thread->SetName("network_thread", this);
+    RTC_LOG(LS_INFO) << "Network thread is started=>" << network_thread->Start();
+
+    //    network_thread = std::unique_ptr<rtc::Thread>( threads->getNetworkThread());
+
+    RTC_LOG(LS_INFO) << "Creating worker thread";
+    worker_thread = rtc::Thread::Create();
+    RTC_LOG(LS_INFO) << "Worker thread=>" << worker_thread;
+    worker_thread->SetName("worker_thread", this);
+    RTC_LOG(LS_INFO) << "Worker thread is started=>" << worker_thread->Start();
+
+    RTC_LOG(LS_INFO) << "Creating signaling thread";
+    signaling_thread = rtc::Thread::Create();
+    RTC_LOG(LS_INFO) << "Signaling thread=>" << signaling_thread;
+
+    signaling_thread->SetName("signaling_thread", this);
+    RTC_LOG(LS_INFO) << "Signaling thread is started=>" << signaling_thread->Start();
 }
 
 WebRTC::~WebRTC() {
@@ -163,30 +192,6 @@ bool WebRTC::start() {
     //    rtc::LogMessage::SetLogToStderr(false);
 
     RTC_LOG(LS_INFO) << "InitializeSSL=>" << rtc::InitializeSSL();
-
-    RTC_LOG(LS_INFO) << "Creating network thread";
-    network_thread = rtc::Thread::CreateWithSocketServer();
-    RTC_LOG(LS_INFO) << "Network thread=>" << network_thread;
-    network_thread->SetName("network_thread", this);
-    RTC_LOG(LS_INFO) << "Network thread is started=>" << network_thread->Start();
-
-    //    network_thread = std::unique_ptr<rtc::Thread>( threads->getNetworkThread());
-
-    RTC_LOG(LS_INFO) << "Creating worker thread";
-    worker_thread = rtc::Thread::Create();
-    RTC_LOG(LS_INFO) << "Worker thread=>" << worker_thread;
-    worker_thread->SetName("worker_thread", this);
-    RTC_LOG(LS_INFO) << "Worker thread is started=>" << worker_thread->Start();
-    //    network_thread = std::unique_ptr<rtc::Thread>( threads->getWorkerThread());
-
-    RTC_LOG(LS_INFO) << "Creating signaling thread";
-    signaling_thread = rtc::Thread::Create();
-    RTC_LOG(LS_INFO) << "Signaling thread=>" << signaling_thread;
-
-    signaling_thread->SetName("signaling_thread", this);
-    RTC_LOG(LS_INFO) << "Signaling thread is started=>" << signaling_thread->Start();
-
-    //    signaling_thread  = std::unique_ptr<rtc::Thread>( threads->getMediaThread() );
 
     auto audioEncoderFactory = webrtc::CreateBuiltinAudioEncoderFactory();
     auto audioEncoderCodecs = audioEncoderFactory->GetSupportedEncoders();
@@ -291,8 +296,16 @@ void WebRTC::setIceOptions(std::vector<IceServer>& ices) {
 }
 
 std::map<std::string, OIceUdp> WebRTC::getCandidates(const std::string& peerId) {
+    std::map<std::string, OIceUdp> map;
+
     auto conductor = getConductor(peerId);
-    return getIceFromDown(conductor->getLocalDescription());
+    auto sdp = conductor->getLocalDescription();
+
+    for (const auto& item : sdp->description()->transport_infos()) {
+        map.insert(std::make_pair(item.content_name, getIceFromDown(sdp, item.content_name)));
+    }
+
+    return map;
 }
 
 webrtc::SdpType WebRTC::convertSdpTypeDown(JingleSdpType type) {
@@ -340,13 +353,14 @@ std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertSdpToDown(
     auto sdpType = convertSdpTypeDown(av.sdpType);
     if (av.getSsrcBundle().empty()) {
         for (const auto& kv : av.getContents()) {
-            auto& oSdp = kv.second;
+            auto oSdp = kv.second;
             group.AddContentName(oSdp.name);
 
             auto& rtp = oSdp.rtp;
             auto& iceUdp = oSdp.iceUdp;
 
             // iceUdp
+
             cricket::TransportInfo ti = convertTransportToDown(oSdp.name, iceUdp);
             sessionDescription->AddTransportInfo(ti);
 
@@ -439,16 +453,17 @@ std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertSdpToDown(
                         audioPtr->AddCodec(codec);
                     }
 
-                    auto ti = convertTransportToDown(mid, iceUdp);
-                    sessionDescription->AddTransportInfo(ti);
                     sessionDescription->AddContent(mid, cricket::MediaProtocolType::kRtp,
                                                    std::move(audioPtr));
+
+                    auto ti = convertTransportToDown(mid, iceUdp);
+                    sessionDescription->AddTransportInfo(ti);
 
                     mline++;
                     for (const auto& item : iceUdp.candidates) {
                         auto candidate = convertCandidateToDown(item, iceUdp);
-                        auto c = webrtc::CreateIceCandidate(mid, mline, candidate);
-                        candidates.push_back(c.release());
+                        auto iceCandidate = webrtc::CreateIceCandidate(mid, mline, candidate);
+                        candidates.push_back(iceCandidate.release());
                     }
 
                 } else if (rtp.media == Media::video && !ssrcBundle.videoSources.empty()) {
@@ -465,15 +480,18 @@ std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertSdpToDown(
                         setCodec(pt, codec);
                         videoPtr->AddCodec(codec);
                     }
-                    auto ti = convertTransportToDown(mid, iceUdp);
-                    sessionDescription->AddTransportInfo(ti);
+
                     sessionDescription->AddContent(mid, cricket::MediaProtocolType::kRtp,
                                                    std::move(videoPtr));
+
+                    auto ti = convertTransportToDown(mid, iceUdp);
+                    sessionDescription->AddTransportInfo(ti);
+
                     mline++;
                     for (const auto& item : iceUdp.candidates) {
                         auto candidate = convertCandidateToDown(item, iceUdp);
-                        auto c = webrtc::CreateIceCandidate(mid, mline, candidate);
-                        candidates.push_back(c.release());
+                        auto iceCandidate = webrtc::CreateIceCandidate(mid, mline, candidate);
+                        candidates.push_back(iceCandidate.release());
                     }
                 } else if (rtp.media == Media::application) {
                     auto& mid = "data";
@@ -524,11 +542,9 @@ std::unique_ptr<OJingleContentAv> WebRTC::convertSdpToUp(
         const std::string& mid = content.mid();
 
         OSdp oSdp;
-        oSdp.name = mid;
 
-        auto map = getIceFromDown(desc);
-        auto find = map.find(mid);
-        if (find != map.end()) oSdp.iceUdp = find->second;
+        oSdp.name = mid;
+        oSdp.iceUdp = getIceFromDown(desc, mid);
 
         auto mediaDescription = content.media_description();
         // media type
@@ -635,7 +651,6 @@ std::unique_ptr<OJingleContentAv> WebRTC::convertSdpToUp(
         auto& sdp = c.second;
         if (sdp.rtp.media == Media::video) {
             ssrcBundle.videoSources = sdp.rtp.sources;
-
             ssrcBundle.videoSsrcGroups = sdp.rtp.ssrcGroup;
         } else if (sdp.rtp.media == Media::audio) {
             ssrcBundle.audioSources = sdp.rtp.sources;
@@ -684,6 +699,8 @@ Conductor* WebRTC::createConductor(const std::string& peerId, const std::string&
 
     std::lock_guard<std::recursive_mutex> lock(mutex);
 
+    ensureStart();
+
     conductor = new Conductor(this, peerId, sId, this);
     if (!video) {
         linkAudioDevice(conductor);
@@ -726,6 +743,7 @@ void WebRTC::linkVideoDevice(Conductor* c, int selected) {
 
     RTC_LOG(LS_INFO) << "Get video device:" << devId;
 
+    //    worker_thread->PostTask([=, this](){
     auto capture = getVideoCapture(devId);
 
     auto streamId = resource + "-video-0-0";
@@ -737,6 +755,7 @@ void WebRTC::linkVideoDevice(Conductor* c, int selected) {
         videoSink = std::make_shared<VideoSink>(_handlers, "", "");
     }
     videoCapture->setOutput(videoSink);
+    //    });
 }
 
 std::string WebRTC::getVideoDeviceId(int selected) {
@@ -860,13 +879,14 @@ void WebRTC::addSource(const std::string& peerId,
         RTC_LOG(LS_INFO) << " participant: " << k;
 
         if (!ssrcBundle.audioSources.empty()) {
-            auto& mid = ssrcBundle.audioSources[0].cname;
+            //            auto& mid = ssrcBundle.audioSources[0].cname;
             std::string jvb_a0 = "jvb-a0";
             const cricket::ContentInfo* pContentInfo = old->description()->GetContentByName(jvb_a0);
             if (pContentInfo) {
                 auto jvba = pContentInfo->media_description()->as_audio();
 
-                auto audioPtr = addAudioSsrcBundle(ssrcBundle);
+                auto audioPtr = addAudioSsrcBundle(ssrcBundle, jvba);
+
                 audioPtr->set_codecs(jvba->codecs());
                 audioPtr->set_rtcp_mux(jvba->rtcp_mux());
                 audioPtr->set_rtp_header_extensions(jvba->rtp_header_extensions());
@@ -877,13 +897,13 @@ void WebRTC::addSource(const std::string& peerId,
         }
 
         if (!ssrcBundle.videoSources.empty()) {
-            auto& mid = ssrcBundle.videoSources[0].cname;
+            //            auto& mid = ssrcBundle.videoSources[0].cname;
             std::string jvb_v0 = "jvb-v0";
             const cricket::ContentInfo* pContentInfo = sdp->GetContentByName(jvb_v0);
             if (pContentInfo) {
                 auto jvbv = pContentInfo->media_description()->as_video();
 
-                auto videoPtr = addVideoSsrcBundle(ssrcBundle);
+                auto videoPtr = addVideoSsrcBundle(ssrcBundle, jvbv);
                 videoPtr->set_codecs(jvbv->codecs());
                 videoPtr->set_rtcp_mux(jvbv->rtcp_mux());
                 videoPtr->set_rtp_header_extensions(jvbv->rtp_header_extensions());
@@ -904,6 +924,7 @@ void WebRTC::addSource(const std::string& peerId,
 bool WebRTC::CreateOffer(const std::string& peerId, const std::string& sId, bool video) {
     auto conductor = createConductor(peerId, sId, video);
     conductor->CreateOffer();
+
     return true;
 }
 
@@ -913,7 +934,7 @@ void WebRTC::SessionTerminate(const std::string& peerId) {
 
 void WebRTC::CreateAnswer(const std::string& peerId, const OJingleContentAv& av) {
     RTC_LOG(LS_INFO) << __FUNCTION__ << " peerId:" << peerId;
-    Conductor* conductor = createConductor(peerId, av.sessionId, av.isVideo());
+    auto conductor = createConductor(peerId, av.sessionId, av.isVideo());
     auto sdp = convertSdpToDown(av);
     conductor->setRemoteDescription(sdp.release());
     conductor->CreateAnswer();
@@ -921,7 +942,6 @@ void WebRTC::CreateAnswer(const std::string& peerId, const OJingleContentAv& av)
 
 std::unique_ptr<OJingleContentAv> WebRTC::getLocalSdp(const std::string& peerId) {
     auto conductor = getConductor(peerId);
-    assert(conductor);
     return convertSdpToUp(conductor->getLocalDescription());
 }
 
@@ -983,6 +1003,7 @@ void WebRTC::onLocalDescriptionSet(const webrtc::SessionDescriptionInterface* sd
     RTC_LOG(LS_INFO) << __FUNCTION__ << " sdp:\n" << str;
 
     auto o_sdp = convertSdpToUp(sdp);
+    if (o_sdp->getContents().empty()) return;
 
     for (auto h : _handlers) {
         h->onLocalDescriptionSet(sId, peerId, o_sdp.get());
@@ -994,8 +1015,9 @@ void WebRTC::onRemoteDescriptionSet(const webrtc::SessionDescriptionInterface* s
 
 cricket::TransportInfo WebRTC::convertTransportToDown(const std::string& name,
                                                       const OIceUdp& iceUdp) {
+    RTC_LOG(LS_INFO) << __FUNCTION__ << " : " << name;
     cricket::TransportInfo ti;
-    ti.content_name = name.empty() ? iceUdp.mid : name;
+    ti.content_name = name;
     ti.description.ice_ufrag = iceUdp.ufrag;
     ti.description.ice_pwd = iceUdp.pwd;
     ti.description.identity_fingerprint.reset(cricket::TransportDescription::CopyFingerprint(
@@ -1116,39 +1138,30 @@ cricket::Candidate WebRTC::convertCandidateToDown(const Candidate& item, const O
                               item.network);
 }
 
-std::map<std::string, ortc::OIceUdp> WebRTC::getIceFromDown(
-        const webrtc::SessionDescriptionInterface* sdp) {
-    std::list<const webrtc::IceCandidateInterface*> iceList;
+ortc::OIceUdp WebRTC::getIceFromDown(const webrtc::SessionDescriptionInterface* sdp,
+                                     const std::string& mid) {
+    ortc::OIceUdp iceUdp;
+
+    auto ti = sdp->description()->GetTransportInfoByName(mid);
+    auto u = OIceUdp{
+            .mid = mid,
+            .ufrag = ti->description.ice_ufrag,
+            .pwd = ti->description.ice_pwd,
+            .dtls = getDtls(sdp, mid),
+    };
+
+    //        std::list<const webrtc::IceCandidateInterface*> iceList;
     for (int i = 0; i < sdp->number_of_mediasections(); i++) {
         auto col = sdp->candidates(i);
         if (col) {
             for (int j = 0; j < col->count(); ++j) {
-                iceList.push_back(col->at(j));
+                //                    iceList.push_back(col->at(j));
+
+                u.candidates.push_back(convertCandidateToUp(col->at(j)->candidate()));
             }
         }
     }
-
-    std::map<std::string, ortc::OIceUdp> iceUdps;
-    for (auto item : iceList) {
-        auto mid = item->sdp_mid();
-        const std::map<std::string, OIceUdp>::iterator& find = iceUdps.find(mid);
-        if (find == iceUdps.end()) {
-            auto ti = sdp->description()->GetTransportInfoByName(mid);
-            auto u = OIceUdp{
-                    .mid = item->sdp_mid(),
-                    .ufrag = ti->description.ice_ufrag,
-                    .pwd = ti->description.ice_pwd,
-                    .dtls = getDtls(sdp, mid),
-            };
-            u.candidates.push_back(convertCandidateToUp(item->candidate()));
-            iceUdps.emplace(mid, u);
-        } else {
-            auto& u = find->second;
-            u.candidates.push_back(convertCandidateToUp(item->candidate()));
-        }
-    }
-
-    return iceUdps;
+    return iceUdp;
 }
 
 void WebRTC::convertSourceToUp(const cricket::StreamParamsVec& streamParams,

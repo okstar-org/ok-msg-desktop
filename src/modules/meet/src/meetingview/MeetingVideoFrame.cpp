@@ -304,7 +304,7 @@ void MeetingVideoFrame::addParticipant(const QString& name,
 
     auto& k = parti.resource;
     auto find = participantMap.find(k);
-    if (!(find == participantMap.end())) {
+    if (find != participantMap.end()) {
         participant = find.value();
     } else {
         // 添加用户

@@ -193,8 +193,8 @@ private:
      * @param sdp
      * @return
      */
-    std::map<std::string, ortc::OIceUdp> getIceFromDown(
-            const webrtc::SessionDescriptionInterface* sdp);
+    ortc::OIceUdp getIceFromDown(const webrtc::SessionDescriptionInterface* sdp,
+                                 const std::string& mid);
 
     void convertSourceToUp(const cricket::StreamParamsVec& streamParams,
                            Sources& sources,

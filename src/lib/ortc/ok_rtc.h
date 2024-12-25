@@ -69,26 +69,11 @@ typedef std::vector<Candidate> CandidateList;
 
 struct OIceUdp {
     std::string mid;
-    //    int mline = 0;
     std::string ufrag;
     std::string pwd;
     Dtls dtls;
     Sctp sctp;
     CandidateList candidates;
-
-    //    OIceUdp() = default;
-    //    OIceUdp(std::string mid_,
-    //            int mline_,
-    //            std::string ufrag_,
-    //            std::string pwd_,
-    //            Dtls dtls_,
-    //            CandidateList candidates_)
-    //            : mid{mid_}
-    //            , mline{mline_}
-    //            , ufrag(ufrag_)
-    //            , pwd(pwd_)
-    //            , dtls(dtls_)
-    //            , candidates(candidates_) {}
 };
 
 struct Feedback {
