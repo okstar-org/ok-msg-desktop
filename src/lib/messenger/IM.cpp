@@ -597,6 +597,12 @@ void IM::handleMessage(const gloox::Message& msg, MessageSession* session) {
         }
     }
 
+    auto iterator = fromHostHandlers.find(from.server());
+    if (iterator != fromHostHandlers.end()) {
+        iterator.value()->handleHostMessage(from, msg);
+        return;
+    }
+
     auto xml = qstring(msg.tag()->xml());
     emit incoming(xml);
 }

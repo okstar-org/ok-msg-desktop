@@ -95,6 +95,8 @@ public:
 protected:
     void handleHostPresence(const gloox::JID& from, const gloox::Presence& presence) override;
 
+    void handleHostMessage(const gloox::JID& from, const gloox::Message& msg) override;
+
     void handleCreation(const gloox::JID& jid, bool ready,
                         const std::map<std::string, std::string>& props) override;
 

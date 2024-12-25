@@ -372,4 +372,9 @@ void MeetingVideoFrame::onParticipantVideoFrame(const QString& participant,
     }
 }
 
+void MeetingVideoFrame::onParticipantMessage(const QString& participant, const QString& msg) {
+    // TODO 处理成员消息
+    qDebug() << __func__ << "message coming: " << msg << " from: " << participant;
+}
+
 }  // namespace module::meet

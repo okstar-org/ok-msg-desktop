@@ -70,6 +70,7 @@ private:
 
     void onParticipantVideoFrame(const QString& participant,
                                  const lib::ortc::RendererImage& image) override;
+    void onParticipantMessage(const QString& participant, const QString& msg) override;
 
 private:
     // for run in UI thread

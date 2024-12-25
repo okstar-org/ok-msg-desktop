@@ -28,6 +28,7 @@ namespace lib::messenger {
 class IMFromHostHandler {
 public:
     virtual void handleHostPresence(const gloox::JID& from, const gloox::Presence& presence) = 0;
+    virtual void handleHostMessage(const gloox::JID& from, const gloox::Message& msg) = 0;
 };
 
 }  // namespace lib::messenger

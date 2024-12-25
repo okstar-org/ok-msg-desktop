@@ -210,6 +210,17 @@ void IMMeet::handleHostPresence(const gloox::JID& from, const gloox::Presence& p
     }
 }
 
+void IMMeet::handleHostMessage(const gloox::JID& from, const gloox::Message& msg) {
+    auto message = qstring(msg.body());
+    auto participant = qstring(from.resource());
+
+    qDebug() << __func__ << qstring(from.full()) << "msg:" << message;
+
+    for (const auto& item : handlers) {
+        item->onParticipantMessage(participant, message);
+    }
+}
+
 void IMMeet::handleCreation(const gloox::JID& jid, bool ready,
                             const std::map<std::string, std::string>& props) {
     qDebug() << __func__ << qstring(jid.full()) << "ready:" << ready;
