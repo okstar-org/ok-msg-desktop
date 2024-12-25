@@ -63,6 +63,12 @@ public:
     void join();
 
     /**
+     * 发送消息
+     * @param msg
+     */
+    void sendMessage(const QString& msg);
+
+    /**
      * 添加处理器
      * @param hdr
      */

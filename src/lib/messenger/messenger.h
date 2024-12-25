@@ -497,10 +497,21 @@ public:
      * 离开会议
      */
     void leave();
+
+    /**
+     * 获取视频设备列表
+     * @return
+     */
+    [[maybe_unused]] std::vector<std::string> getVideoDeviceList();
+
+    /**
+     * 发送消息
+     * @param msg
+     */
+    void sendMessage(const QString& msg);
+
     void addHandler(MessengerMeetHandler* hdr);
     void removeHandler(MessengerMeetHandler* hdr);
-
-    std::vector<std::string> getVideoDeviceList();
 
 protected:
     void onCall(const IMPeerId& peerId,  //

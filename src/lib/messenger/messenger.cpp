@@ -618,8 +618,12 @@ void MessengerMeet::leave() {
     meet->leave();
 }
 
-std::vector<std::string> MessengerMeet::getVideoDeviceList() {
+[[maybe_unused]] std::vector<std::string> MessengerMeet::getVideoDeviceList() {
     return meet->getVideoDeviceList();
+}
+
+void MessengerMeet::sendMessage(const QString& msg) {
+    return meet->sendMessage(msg);
 }
 
 }  // namespace lib::messenger

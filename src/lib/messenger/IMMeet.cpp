@@ -136,6 +136,14 @@ void IMMeet::leave() {
 
 void IMMeet::join() {}
 
+void IMMeet::sendMessage(const QString& msg) {
+    if (msg.isEmpty()) {
+        qWarning() << "Empty message!";
+        return;
+    }
+    meet->send(stdstring(msg));
+}
+
 void IMMeet::handleHostPresence(const gloox::JID& from, const gloox::Presence& presence) {
     qDebug() << __func__ << qstring(from.full()) << "presence:" << presence.presence();
 
@@ -233,8 +241,6 @@ void IMMeet::handleCreation(const gloox::JID& jid, bool ready,
     }
 
     // 加入到会议
-    auto self = im->self();
-    gloox::Meet meet(jid, "", {});
     gloox::Meet::Participant participant = {
             .region = "region1",
             .codecType = "vp9",
@@ -243,7 +249,7 @@ void IMMeet::handleCreation(const gloox::JID& jid, bool ready,
             .nick = stdstring(vCard.nickname),
             .resource = stdstring(resource),
     };
-    manager->join(meet, participant);
+    manager->join(*meet, participant);
 
     for (auto* h : handlers) {
         h->onParticipantJoined(ok::base::Jid(jid.full()), toParticipant(participant));
