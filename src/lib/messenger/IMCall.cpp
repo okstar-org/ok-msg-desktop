@@ -362,7 +362,7 @@ bool IMCall::answer(const IMPeerId& peerId, const QString& callId, bool video) {
 }
 
 void IMCall::setMute(bool mute) {
-    lib::ortc::OkRTCManager::getInstance()->getRtc()->setMute(mute);
+    lib::ortc::OkRTCManager::getInstance()->getRtc()->setEnable(mute, true);
 }
 
 void IMCall::setRemoteMute(bool mute) {

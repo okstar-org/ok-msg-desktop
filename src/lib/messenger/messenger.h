@@ -510,6 +510,13 @@ public:
      */
     void sendMessage(const QString& msg);
 
+    /**
+     * 音视频禁用和开启
+     * @param audio 音频打开/关闭
+     * @param video 视频打开/关闭
+     */
+    void setEnable(bool audio, bool video);
+
     void addHandler(MessengerMeetHandler* hdr);
     void removeHandler(MessengerMeetHandler* hdr);
 

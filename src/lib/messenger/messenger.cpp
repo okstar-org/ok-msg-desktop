@@ -623,7 +623,11 @@ void MessengerMeet::leave() {
 }
 
 void MessengerMeet::sendMessage(const QString& msg) {
-    return meet->sendMessage(msg);
+    meet->sendMessage(msg);
+}
+
+void MessengerMeet::setEnable(bool audio, bool video) {
+    meet->setEnable(audio, video);
 }
 
 }  // namespace lib::messenger

@@ -435,7 +435,7 @@ public:
                                   const std::string& sId,
                                   const OIceUdp& oIceUdp) = 0;
 
-    virtual void setMute(bool mute) = 0;
+    virtual void setEnable(bool audio, bool video) = 0;
 
     virtual void setRemoteMute(bool mute) = 0;
 

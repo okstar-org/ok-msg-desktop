@@ -93,10 +93,14 @@ size_t Conductor::getVideoCaptureSize() {
     return num_devices;
 }
 
-void Conductor::setMute(bool mute) {
+void Conductor::setEnable(bool audio, bool video) {
     RTC_LOG(LS_INFO) << __FUNCTION__;
     if (_audioTrack) {
-        _audioTrack->set_enabled(!mute);
+        _audioTrack->set_enabled(audio);
+    }
+
+    if (_videoTrack) {
+        _videoTrack->set_enabled(video);
     }
 }
 

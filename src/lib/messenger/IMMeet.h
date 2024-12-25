@@ -98,6 +98,8 @@ public:
      */
     std::vector<std::string> getVideoDeviceList();
 
+    void setEnable(bool audio, bool video);
+
 protected:
     void handleHostPresence(const gloox::JID& from, const gloox::Presence& presence) override;
 

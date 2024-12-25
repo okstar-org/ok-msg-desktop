@@ -52,7 +52,7 @@ public:
 
     void SessionTerminate(const std::string& peerId);
 
-    void setMute(bool mute);
+    void setEnable(bool audio, bool video);
     void setRemoteMute(bool mute);
 
     std::map<std::string, OIceUdp> getCandidates(const std::string& peerId);

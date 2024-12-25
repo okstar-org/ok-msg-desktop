@@ -60,7 +60,7 @@ public:
     const webrtc::SessionDescriptionInterface* getLocalDescription();
     void setLocalDescription(webrtc::SessionDescriptionInterface* desc);
 
-    void setMute(bool mute);
+    void setEnable(bool audio, bool video);
     void setRemoteMute(bool mute);
 
     const std::list<std::string>& getCandidates() const {

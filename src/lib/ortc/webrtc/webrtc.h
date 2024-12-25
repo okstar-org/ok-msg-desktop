@@ -82,7 +82,7 @@ public:
 
     void SessionTerminate(const std::string& peerId) override;
 
-    void setMute(bool mute) override;
+    void setEnable(bool audio, bool video) override;
 
     void setRemoteMute(bool mute) override;
 

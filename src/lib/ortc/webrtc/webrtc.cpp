@@ -848,9 +848,9 @@ void WebRTC::setTransportInfo(const std::string& peerId,
     }
 }
 
-void WebRTC::setMute(bool mute) {
+void WebRTC::setEnable(bool audio, bool video) {
     for (auto it : _pcMap) {
-        it.second->setMute(mute);
+        it.second->setEnable(audio, video);
     }
 }
 

@@ -552,4 +552,10 @@ std::vector<std::string> IMMeet::getVideoDeviceList() {
     return {};
 }
 
+void IMMeet::setEnable(bool audio, bool video) {
+    auto pManager = ortc::OkRTCManager::getInstance();
+    auto rtc = pManager->getRtc();
+    if (rtc) rtc->setEnable(audio, video);
+}
+
 }  // namespace lib::messenger
