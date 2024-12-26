@@ -62,7 +62,7 @@ void Conductor::CreatePeerConnection() {
 
     auto& config = webRtc->getConfig();
     for (const auto& item : config.servers) {
-        RTC_LOG(LS_INFO) << " Using ice server:" << item.uri;
+        RTC_LOG(LS_INFO) << " Using ice server: " << item.uri << " username:" << item.username;
     }
     auto maybe =
             webRtc->getFactory()->CreatePeerConnectionOrError(config, std::move(pc_dependencies));
@@ -244,13 +244,14 @@ void Conductor::OnTrack(rtc::scoped_refptr<webrtc::RtpTransceiverInterface> tran
                          << " Added successful remote audio track: " << _remote_audio_track;
     } else if (track->kind() == webrtc::MediaStreamTrackInterface::kVideoKind) {
         auto _videoSink = new VideoSink(webRtc->getHandlers(), peerId, mid);
-        RTC_LOG(LS_INFO) << __FUNCTION__ << " video sink:" << _videoSink;
+        RTC_LOG(LS_INFO) << __FUNCTION__ << " Created video sink:" << _videoSink
+                         << " for mid:" << mid;
 
         auto videoTrack = dynamic_cast<webrtc::VideoTrackInterface*>(track.get());
         videoTrack->AddOrUpdateSink(_videoSink, rtc::VideoSinkWants());
 
         _videoSinks.insert(std::make_pair(mid, _videoSink));
-        RTC_LOG(LS_INFO) << __FUNCTION__ << "Added successful remote video track: " << videoTrack;
+        RTC_LOG(LS_INFO) << __FUNCTION__ << " Added successful remote video track: " << videoTrack;
     }
 }
 
@@ -276,20 +277,22 @@ void Conductor::OnRemoveTrack(rtc::scoped_refptr<webrtc::RtpReceiverInterface> r
 }
 
 void Conductor::OnAddStream(rtc::scoped_refptr<webrtc::MediaStreamInterface> stream) {
-    RTC_LOG(LS_INFO) << __FUNCTION__
-                     << " New stream added streamId"
-                        ": "
-                     << stream->id();
-    for (auto& track : stream->GetVideoTracks()) {
-        auto trackId = track->id();
-        RTC_LOG(LS_INFO) << __FUNCTION__ << " Video track id: " << trackId;
-        auto _videoSink = new VideoSink(webRtc->getHandlers(), peerId, stream->id());
-        const std::basic_string<char, std::char_traits<char>, std::allocator<char>>& sinkKey =
-                stream->id() + "_" + trackId;
-        _videoSinks.insert(std::make_pair(sinkKey, _videoSink));
-        RTC_LOG(LS_INFO) << "Inserted video sink:" << sinkKey;
-        track->AddOrUpdateSink(_videoSink, rtc::VideoSinkWants());
-    }
+    RTC_LOG(LS_INFO) << __FUNCTION__ << " New stream added streamId: " << stream->id();
+
+    //    for (auto& track : stream->GetVideoTracks()) {
+    //        //        auto vt = webRtc->getFactory()->CreateVideoTrack(stream->id(),
+    //        //        track->GetSource()); stream->AddTrack(vt);
+    //        auto trackId = track->id();
+    //        auto _videoSink = new VideoSink(webRtc->getHandlers(), peerId, stream->id());
+    //        RTC_LOG(LS_INFO) << __FUNCTION__ << "Created video track id: " << trackId
+    //                         << " for resource:" << stream->id();
+    //
+    //        const std::basic_string<char, std::char_traits<char>, std::allocator<char>>& sinkKey =
+    //                stream->id() + "_" + trackId;
+    //        _videoSinks.insert(std::make_pair(sinkKey, _videoSink));
+    //        RTC_LOG(LS_INFO) << "Inserted video sink:" << sinkKey;
+    //        track->AddOrUpdateSink(_videoSink, rtc::VideoSinkWants());
+    //    }
 }
 
 void Conductor::OnRemoveStream(rtc::scoped_refptr<webrtc::MediaStreamInterface> stream) {

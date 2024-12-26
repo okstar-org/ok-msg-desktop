@@ -27,6 +27,7 @@
 #include "messenger.h"
 
 #include <memory>
+#include <range/v3/all.hpp>
 #include <set>
 
 #include <bookmarkhandler.h>
@@ -172,7 +173,6 @@ public:
 
     std::unique_ptr<gloox::Client> makeClient();
 
-
     void setNickname(const QString& nickname);
     QString getNickname();
 
@@ -183,7 +183,7 @@ public:
     QString getSelfUsername();
 
     // External Service Discovery
-    const QList<gloox::ExtDisco::Service>& getExternalServiceDiscovery() const {
+    const std::vector<ortc::IceServer>& getExternalServiceDiscovery() const {
         return mExtSrvDiscos;
     }
 
@@ -865,7 +865,7 @@ private:
     //  BookmarkList &mBookmarkList;
 
     // External Service Discovery
-    QList<gloox::ExtDisco::Service> mExtSrvDiscos;
+    std::vector<ortc::IceServer> mExtSrvDiscos;
 
     QMap<std::string, IMFromHostHandler*> fromHostHandlers;
 

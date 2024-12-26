@@ -96,8 +96,7 @@ public:
 
     bool quit(const std::string& peerId) override;
 
-    void setIceServers(std::vector<IceServer>& ices) override;
-    void addIceServer(const IceServer& ices) override;
+    void setIceServers(const std::vector<IceServer>& ices) override;
 
     webrtc::SdpType convertToSdpType(JingleSdpType sdpType);
 

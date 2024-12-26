@@ -43,7 +43,7 @@ public:
      */
     OkRTC* getRtc();
 
-    void addIceServer(const IceServer& ice);
+    void setIceServers(const std::vector<IceServer>& ices);
 
     size_t getVideoSize();
 

@@ -269,20 +269,10 @@ bool IMCall::createCall(const IMPeerId& to, const QString& sId, bool video) {
     qDebug() << __func__ << "to:" << to.toString() << "sId:" << sId << "video:" << video;
 
     auto rtcManager = lib::ortc::OkRTCManager::getInstance();
+    rtcManager->setIceServers(im->getExternalServiceDiscovery());
+
     auto rtc = rtcManager->createRtc(im->self().resource());
     rtc->addRTCHandler(this);
-
-    const auto& discos = im->getExternalServiceDiscovery();
-    for (const auto& item : discos) {
-        ortc::IceServer ice;
-        ice.uri = item.type + ":" + item.host + ":" + std::to_string(item.port);
-        //+"?transport=" + item.transport;
-        ice.username = item.username;
-        ice.password = item.password;
-        qDebug() << "Add ice:" << ice.uri.c_str() << "user:" << qstring(ice.username)
-                 << "password:" << qstring(ice.password);
-        rtcManager->addIceServer(ice);
-    }
 
     auto created = rtc->CreateOffer(stdstring(to.toString()), stdstring(sId), video);
     qDebug() << __func__ << "CreateOffer=>" << created;
@@ -342,19 +332,9 @@ bool IMCall::answer(const IMPeerId& peerId, const QString& callId, bool video) {
              << "video:" << video;
 
     ortc::OkRTCManager* rtcManager = lib::ortc::OkRTCManager::getInstance();
+    rtcManager->setIceServers(im->getExternalServiceDiscovery());
     auto rtc = rtcManager->createRtc(im->self().resource());
     rtc->addRTCHandler(this);
-
-    const auto& discos = im->getExternalServiceDiscovery();
-    for (const auto& item : discos) {
-        ortc::IceServer ice;
-        ice.uri = item.type + ":" + item.host + ":" + std::to_string(item.port);
-        //                  + "?transport=" + item.transport;
-        ice.username = item.username;
-        ice.password = item.password;
-        qDebug() << "Add iceServer:" << ice.uri.c_str();
-        rtcManager->addIceServer(ice);
-    }
 
     acceptJingleMessage(peerId, callId, video);
 
@@ -763,6 +743,7 @@ IMCallSession* IMCall::createSession(const IMContactId& self,
 }
 
 void IMCall::handleJingleMessage(const IMPeerId& peerId, const gloox::Jingle::JingleMessage* jm) {
+    qDebug() << __func__;
     doJingleMessage(peerId, jm);
 }
 

@@ -118,9 +118,9 @@ std::unique_ptr<cricket::AudioContentDescription> addAudioSsrcBundle(
     auto audioPtr = std::make_unique<cricket::AudioContentDescription>();
     setSsrc(ssrcBundle.audioSsrcGroups, ssrcBundle.audioSources, audioPtr.get());
 
-    for (const auto& item : acd->streams()) {
-        audioPtr->AddStream(item);
-    }
+    //    for (const auto& item : acd->streams()) {
+    //        audioPtr->AddStream(item);
+    //    }
 
     return std::move(audioPtr);
 }
@@ -130,9 +130,9 @@ std::unique_ptr<cricket::VideoContentDescription> addVideoSsrcBundle(
     // video
     auto videoPtr = std::make_unique<cricket::VideoContentDescription>();
     setSsrc(ssrcBundle.videoSsrcGroups, ssrcBundle.videoSources, videoPtr.get());
-    for (const auto& item : vcd->streams()) {
-        videoPtr->AddStream(item);
-    }
+    //    for (const auto& item : vcd->streams()) {
+    //        videoPtr->AddStream(item);
+    //    }
     return std::move(videoPtr);
 }
 
@@ -167,6 +167,8 @@ WebRTC::WebRTC(std::string res) : peer_connection_factory(nullptr), resource(std
 
 WebRTC::~WebRTC() {
     RTC_LOG(LS_INFO) << __FUNCTION__ << " destroy...";
+
+    worker_thread->BlockingCall([this]() { destroyVideoCapture(); });
 
     for (const auto& it : _pcMap) {
         auto c = it.second;
@@ -289,11 +291,6 @@ bool WebRTC::quit(const std::string& peerId) {
     return false;
 }
 
-void WebRTC::setIceServers(std::vector<IceServer>& ices) {
-    for (const auto& ice : ices) {
-        addIceServer(ice);
-    }
-}
 
 std::map<std::string, OIceUdp> WebRTC::getCandidates(const std::string& peerId) {
     std::map<std::string, OIceUdp> map;
@@ -677,16 +674,17 @@ std::unique_ptr<cricket::SctpDataContentDescription> createDataDescription(const
     return std::move(ptr);
 }
 
-void WebRTC::addIceServer(const IceServer& ice) {
-    // Add the ice server.
-    webrtc::PeerConnectionInterface::IceServer ss;
-
-    ss.uri = ice.uri;
-    ss.tls_cert_policy = webrtc::PeerConnectionInterface::kTlsCertPolicyInsecureNoCheck;
-    ss.username = ice.username;
-    ss.password = ice.password;
-
-    _rtcConfig.servers.push_back(ss);
+void WebRTC::setIceServers(const std::vector<IceServer>& ices) {
+    _rtcConfig.servers.clear();
+    for (const auto& ice : ices) {
+        // Add the ice server.
+        webrtc::PeerConnectionInterface::IceServer ss;
+        ss.uri = ice.uri;
+        ss.tls_cert_policy = webrtc::PeerConnectionInterface::kTlsCertPolicyInsecureNoCheck;
+        ss.username = ice.username;
+        ss.password = ice.password;
+        _rtcConfig.servers.push_back(ss);
+    }
 }
 
 Conductor* WebRTC::createConductor(const std::string& peerId, const std::string& sId, bool video) {
@@ -743,19 +741,19 @@ void WebRTC::linkVideoDevice(Conductor* c, int selected) {
 
     RTC_LOG(LS_INFO) << "Get video device:" << devId;
 
-    //    worker_thread->PostTask([=, this](){
-    auto capture = getVideoCapture(devId);
+    worker_thread->BlockingCall([=, this]() {
+        auto capture = getVideoCapture(devId);
 
-    auto streamId = resource + "-video-0-0";
-    auto trackId = rtc::CreateRandomString(10);
+        auto streamId = resource + "-video-0-0";
+        auto trackId = rtc::CreateRandomString(10);
 
-    c->addLocalVideoTrack(capture->source().get(), streamId, trackId);
+        c->addLocalVideoTrack(capture->source().get(), streamId, trackId);
 
-    if (!videoSink) {
-        videoSink = std::make_shared<VideoSink>(_handlers, "", "");
-    }
-    videoCapture->setOutput(videoSink);
-    //    });
+        if (!videoSink) {
+            videoSink = std::make_shared<VideoSink>(_handlers, "", "");
+        }
+        videoCapture->setOutput(videoSink);
+    });
 }
 
 std::string WebRTC::getVideoDeviceId(int selected) {
@@ -973,6 +971,7 @@ std::shared_ptr<VideoCaptureInterface> WebRTC::getVideoCapture(const std::string
 }
 
 void WebRTC::destroyVideoCapture() {
+    RTC_LOG(LS_INFO) << __FUNCTION__;
     videoCapture.reset();
 }
 
@@ -1140,8 +1139,6 @@ cricket::Candidate WebRTC::convertCandidateToDown(const Candidate& item, const O
 
 ortc::OIceUdp WebRTC::getIceFromDown(const webrtc::SessionDescriptionInterface* sdp,
                                      const std::string& mid) {
-    ortc::OIceUdp iceUdp;
-
     auto ti = sdp->description()->GetTransportInfoByName(mid);
     auto u = OIceUdp{
             .mid = mid,
@@ -1150,18 +1147,15 @@ ortc::OIceUdp WebRTC::getIceFromDown(const webrtc::SessionDescriptionInterface* 
             .dtls = getDtls(sdp, mid),
     };
 
-    //        std::list<const webrtc::IceCandidateInterface*> iceList;
     for (int i = 0; i < sdp->number_of_mediasections(); i++) {
         auto col = sdp->candidates(i);
         if (col) {
             for (int j = 0; j < col->count(); ++j) {
-                //                    iceList.push_back(col->at(j));
-
                 u.candidates.push_back(convertCandidateToUp(col->at(j)->candidate()));
             }
         }
     }
-    return iceUdp;
+    return u;
 }
 
 void WebRTC::convertSourceToUp(const cricket::StreamParamsVec& streamParams,

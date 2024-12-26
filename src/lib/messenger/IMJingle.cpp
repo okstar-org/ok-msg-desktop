@@ -84,6 +84,7 @@ void IMJingle::handleMessageSession(gloox::MessageSession* session) {
 }
 
 void IMJingle::handleMessage(const gloox::Message& msg, gloox::MessageSession* session) {
+    qDebug() << __func__;
     /**
      * 处理jingle-message消息
      * https://xmpp.org/extensions/xep-0353.html

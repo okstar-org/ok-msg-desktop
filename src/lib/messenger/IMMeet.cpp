@@ -15,16 +15,15 @@
 //
 
 #include "IMMeet.h"
-
 #include <capabilities.h>
+#include <jinglejsonmessage.h>
+#include <meetmanager.h>
+#include <range/v3/all.hpp>
 #include <utility>
 
 #include "IM.h"
 #include "application.h"
 #include "src/base/uuid.h"
-
-#include <jinglejsonmessage.h>
-#include <meetmanager.h>
 
 namespace lib::messenger {
 
@@ -68,23 +67,16 @@ IMMeet::IMMeet(IM* im, QObject* parent) : IMJingle(im, parent), manager(nullptr)
     // jingle json-message
     im->sessionManager()->registerPlugin(new gloox::Jingle::JsonMessage());
 
-    resource = qstring(im->self().resource());
+    // OkMSG.root-host.[meet-241219-51-g57a9b7d0].OTE5Y2 --> OTE5Y2
+    auto split = qstring(im->self().resource()).split(".");
+    resource = split[split.size() - 1];
+    qDebug() << "Resource is:" << resource;
 
     // qRegisterMetaType
     qRegisterMetaType<ortc::OJingleContentAv>("const ortc::OJingleContentAv&");
 
     ortc::OkRTCManager* rtcManager = ortc::OkRTCManager::getInstance();
-    const auto& discos = im->getExternalServiceDiscovery();
-    for (const auto& item : discos) {
-        ortc::IceServer ice;
-        ice.uri = item.type + ":" + item.host + ":" + std::to_string(item.port);
-        //        +"?transport=" + item.transport;
-        ice.username = item.username;
-        ice.password = item.password;
-        qDebug() << "Add ice:" << ice.uri.c_str() << "user:" << qstring(ice.username)
-                 << "password:" << qstring(ice.password);
-        rtcManager->addIceServer(ice);
-    }
+    rtcManager->setIceServers(im->getExternalServiceDiscovery());
 
     auto rtc = rtcManager->createRtc(stdstring(resource));
     rtc->addRTCHandler(this);
@@ -186,6 +178,9 @@ void IMMeet::handleHostMessage(const gloox::JID& from, const gloox::Message& msg
     auto participant = qstring(from.resource());
 
     qDebug() << __func__ << qstring(from.full()) << "msg:" << message;
+    if (participant.isEmpty()) {
+        return;
+    }
 
     for (const auto& item : handlers) {
         item->onParticipantMessage(participant, message);
@@ -395,7 +390,9 @@ bool IMMeet::doSessionTerminate(gloox::Jingle::Session* session,
     return true;
 }
 
-void IMMeet::handleJingleMessage(const IMPeerId& peerId, const gloox::Jingle::JingleMessage* jm) {}
+void IMMeet::handleJingleMessage(const IMPeerId& peerId, const gloox::Jingle::JingleMessage* jm) {
+    qDebug() << __func__;
+}
 
 void IMMeet::clearSessionInfo(const QString& sId) {}
 
@@ -428,6 +425,7 @@ void IMMeet::onIceGatheringChange(const std::string& sId, const std::string& pee
     emit iceGatheringStateChanged(IMPeerId(qPeerId), qsId, state);
 
     if (state == ortc::IceGatheringState::Complete) {
+        QThread::sleep(3);
         doForIceCompleted(qsId, qPeerId);
     }
 }

@@ -38,18 +38,19 @@ void VideoSink::OnFrame(const webrtc::VideoFrame& frame) {
     switch (v_buffer->type()) {
         case webrtc::VideoFrameBuffer::Type::kI420: {
             auto i420 = v_buffer->GetI420();
-            if (frame.rotation() != webrtc::kVideoRotation_0) {
-                // 翻转
-                webrtc::VideoFrame rotated_frame =
-                        webrtc::VideoFrame::Builder()
-                                .set_video_frame_buffer(
-                                        webrtc::I420Buffer::Rotate(*v_buffer, frame.rotation()))
-                                .set_rotation(webrtc::kVideoRotation_0)
-                                .set_timestamp_us(frame.timestamp_us())
-                                .set_id(frame.id())
-                                .build();
-                i420 = rotated_frame.video_frame_buffer()->GetI420();
-            }
+            //            if (frame.rotation() != webrtc::kVideoRotation_0) {
+            //                // 翻转
+            //                webrtc::VideoFrame rotated_frame =
+            //                        webrtc::VideoFrame::Builder()
+            //                                .set_video_frame_buffer(
+            //                                        webrtc::I420Buffer::Rotate(*v_buffer,
+            //                                        frame.rotation()))
+            //                                .set_rotation(webrtc::kVideoRotation_0)
+            //                                .set_timestamp_us(frame.timestamp_us())
+            //                                .set_id(frame.id())
+            //                                .build();
+            //                i420 = rotated_frame.video_frame_buffer()->GetI420();
+            //            }
             image.width_ = static_cast<size_t>(i420->width());
             image.height_ = static_cast<size_t>(i420->height());
             image.y = const_cast<uint8_t*>(i420->DataY());
@@ -58,9 +59,9 @@ void VideoSink::OnFrame(const webrtc::VideoFrame& frame) {
             image.ystride = i420->StrideY();
             image.ustride = i420->StrideU();
             image.vstride = i420->StrideV();
-        }
             conv = true;
             break;
+        }
         default:
             RTC_LOG(LS_WARNING) << "Not supported frame type: "
                                 << webrtc::VideoFrameBufferTypeToString(v_buffer->type());

@@ -45,6 +45,7 @@
 #include <rostermanager.h>
 #include <vcardupdate.h>
 #include <QStringList>
+#include <range/v3/all.hpp>
 
 namespace lib::messenger {
 
@@ -289,7 +290,6 @@ void IM::onConnect() {
 
     qDebug() << __func__ << "Resume.";
 }
-
 
 void IM::send(const QString& xml) {
     if (xml.isEmpty()) {
@@ -1272,9 +1272,23 @@ bool IM::handleIq(const IQ& iq) {
     qDebug() << __func__ << qstring(iq.id());
     const auto* ext = iq.findExtension<ExtDisco>(ExtSrvDisco);
     if (ext) {
+        std::vector<gloox::ExtDisco::Service> ss;
         for (const auto& item : ext->services()) {
-            mExtSrvDiscos.push_back(item);
+            ss.push_back(item);
         }
+        //
+        mExtSrvDiscos = ranges::views::all(ss) | ranges::views::transform([&](const auto& item) {
+                            ortc::IceServer ice;
+                            ice.uri = item.type + ":" + item.host + ":" + std::to_string(item.port);
+                            //        +"?transport=" + item.transport;
+                            ice.username = item.username;
+                            ice.password = item.password;
+                            qDebug() << "Add ice:" << ice.uri.c_str()
+                                     << "user:" << qstring(ice.username)
+                                     << "password:" << qstring(ice.password);
+                            return ice;
+                        }) |
+                        ranges::to_vector;
     }
     emit incoming(qstring(iq.tag()->xml()));
     return true;

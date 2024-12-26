@@ -71,9 +71,11 @@ OkRTC* OkRTCManager::getRtc() {
     return rtc.get();
 }
 
-void OkRTCManager::addIceServer(const IceServer& ice) {
-    _iceOptions.push_back(ice);
-    if (rtc) rtc->addIceServer(ice);
+void OkRTCManager::setIceServers(const std::vector<IceServer>& ices) {
+    _iceOptions = ices;
+    if (rtc) {
+        rtc->setIceServers(ices);
+    }
 }
 
 std::map<std::string, OIceUdp> OkRTCManager::getCandidates(const std::string& peerId) {
