@@ -16,7 +16,10 @@
 #include "base/task.h"
 #include "base/timer.h"
 
+#include "IMFromHostHandler.h"
 #include "IMGroup.h"
+
+#include "base/compatiblerecursivemutex.h"
 #include "lib/backend/OkCloudService.h"
 #include "lib/messenger/IMFriend.h"
 #include "lib/messenger/IMMessage.h"
@@ -135,8 +138,6 @@ struct IMRoomInfo {
     std::map<std::string, std::string> changes;
 };
 
-class IMFromHostHandler;
-
 class IM : public ok::base::Task,
            public gloox::ConnectionListener,
 #ifdef WANT_PING
@@ -171,7 +172,6 @@ public:
 
     std::unique_ptr<gloox::Client> makeClient();
 
-    QString createMsgId();
 
     void setNickname(const QString& nickname);
     QString getNickname();
@@ -226,14 +226,16 @@ public:
 
     void setFriendAlias(const gloox::JID& jid, const std::string& alias);
 
-    void retry();
-
     // gloox log
     void handleLog(gloox::LogLevel level, gloox::LogArea area, const std::string& message) override;
 
-    inline const gloox::JID& self() const { return _client->jid(); }
+    inline const gloox::JID& self() const {
+        return _client->jid();
+    }
 
-    inline gloox::Client* getClient() const { return _client.get(); }
+    inline gloox::Client* getClient() const {
+        return _client.get();
+    }
 
     QDomDocument buildMessage(const QString& to, const QString& msg, const QString& id);
 
@@ -266,9 +268,15 @@ public:
 
     const IMRoomInfo* findRoom(const QString& groupId) const;
 
+    void start();
+
     void doConnect();
 
     void doDisconnect();
+
+    void stop();
+
+    void interrupt();
 
     // 2-群组列表
     void loadGroupList();
@@ -278,10 +286,6 @@ public:
     void joinRooms();
 
     void send(const QString& xml);
-
-    void stop();
-
-    void interrupt();
 
     /**
      * 获取第一个在线终端resource
@@ -308,7 +312,9 @@ public:
 
     //  ExtDisco &extDisco() { return mExtDisco; }
 
-    inline gloox::Jingle::SessionManager* sessionManager() const { return _sessionManager.get(); }
+    inline gloox::Jingle::SessionManager* sessionManager() const {
+        return _sessionManager.get();
+    }
 
     gloox::Jingle::Session* createSession(const gloox::JID& jid, const std::string& sId,
                                           IMSessionHandler* h);
@@ -801,7 +807,7 @@ protected:
     void handleIncomingSession(gloox::Jingle::Session* session) override;
 
 private:
-    QMutex m_mutex;
+    CompatibleRecursiveMutex mutex;
 
     QStringList features;
 
@@ -864,7 +870,9 @@ private:
     QMap<std::string, IMFromHostHandler*> fromHostHandlers;
 
 signals:
-    void connectResult(IMConnectStatus);
+    void onConnecting();
+    void onConnected();
+    void disconnected(int error);
 
     void receiveRoomMessage(QString groupId, IMPeerId friendId, IMMessage);
 

@@ -50,7 +50,10 @@ const QString Core::TOX_EXT = ".tox";
 #define ASSERT_CORE_THREAD assert(QThread::currentThread() == coreThread.get())
 
 Core::Core(QThread* coreThread)
-        : messenger(nullptr), toxTimer{new QTimer{this}}, coreThread(coreThread) {
+        : messenger(nullptr)
+        , toxTimer{new QTimer{this}}
+        , coreThread(coreThread)
+        , _delayer(std::make_unique<::base::DelayedCallTimer>()) {
     assert(toxTimer);
 
     qRegisterMetaType<ToxPeer>("ToxPeer");
@@ -142,49 +145,35 @@ ToxCorePtr Core::makeToxCore(const QString& host, const QString& name, const QSt
     }
 
     core->messenger = std::make_unique<lib::messenger::Messenger>(host, name, password);
-
     core->registerCallbacks(core->messenger.get());
-
-    // connect the thread with the Core
+    connect(core->messenger.get(), &lib::messenger::Messenger::disconnected, core.get(),
+            &Core::onDisconnected);
     connect(thread, &QThread::started, core.get(), &Core::onStarted);
     core->moveToThread(thread);
 
-    // when leaving this function 'core' should be ready for it's start() action
-    // or a nullptr
     return core;
 }
 
 void Core::onStarted() {
     qDebug() << __func__;
 
-    // One time initialization stuff
-    //  QString name = getUsername();
-    //  qDebug() << "username:" << name;
-    //  if (!name.isEmpty()) {
-    //    emit usernameSet(name);
-    //  }
-    //
-    //  auto status = getStatus();
-    //  emit statusSet(status);
-    //
-    //  QString msg = getStatusMessage();
-    //  if (!msg.isEmpty()) {
-    //    emit statusMessageSet(msg);
-    //  }
-
-    //  ToxId id = getSelfId();
-    //  // Id comes from toxcore, must be valid
-    //  assert(id.isValid());
-    //  emit idSet(id);
-    //  std::this_thread::sleep_for(std::chrono::seconds(4)); // sleep 5秒
-
-    // loadFriends();
-    // loadGroups();
-    messenger->start();
-    //  av->start();
     process();  // starts its own timer
+
+    qDebug() << __func__ << "start...";
+    messenger->start();
+
+    while (true) {
+        // sleep 5s to retry
+        qDebug() << __func__ << "sleep 5s to retry";
+        QThread::sleep(5);
+        messenger->doConnect();
+    }
+
     //  emit avReady();
-    //  qDebug() << "connected completed.";
+}
+
+void Core::onDisconnected() {
+    qDebug() << __func__;
 }
 
 /**
@@ -203,7 +192,9 @@ void Core::stop() {
 /**
  * @brief Returns the global widget's Core instance
  */
-Core* Core::getInstance() { return Nexus::getCore(); }
+Core* Core::getInstance() {
+    return Nexus::getCore();
+}
 
 /**
  * @brief Processes toxcore events and ensure we stay connected, called by its
@@ -1168,7 +1159,9 @@ QString Core::joinGroupchat(const GroupInvite& inviteInfo) {
     return {};
 }
 
-void Core::joinRoom(const QString& groupId) { messenger->joinGroup(groupId); }
+void Core::joinRoom(const QString& groupId) {
+    messenger->joinGroup(groupId);
+}
 
 void Core::inviteToGroup(const ContactId& friendId, const GroupId& groupId) {
     QMutexLocker ml{&coreLoopLock};
@@ -1323,7 +1316,9 @@ QString Core::getPeerName(const FriendId& id) const {
     return name;
 }
 
-void Core::logout() { messenger->stop(); }
+void Core::logout() {
+    messenger->stop();
+}
 
 void Core::onSelfNameChanged(QString name) {
     QMutexLocker ml{&coreLoopLock};
@@ -1366,9 +1361,13 @@ void Core::sendReceiptReceived(const QString& friendId, QString receipt) {
     messenger->receiptReceived(friendId, receipt);
 }
 
-void Core::requestBookmarks() { messenger->requestBookmarks(); }
+void Core::requestBookmarks() {
+    messenger->requestBookmarks();
+}
 
-void Core::loadGroupList() const { messenger->loadGroupList(); }
+void Core::loadGroupList() const {
+    messenger->loadGroupList();
+}
 
 void Core::onFriendVCard(const lib::messenger::IMContactId& fId,
                          const lib::messenger::IMVCard& imvCard) {

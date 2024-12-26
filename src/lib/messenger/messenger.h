@@ -51,22 +51,6 @@ class IMCall;
  */
 class IMMeet;
 
-/**
- * 连接状态
- *
- */
-enum class IMConnectStatus {
-    CONNECTING,
-    AUTH_FAILED,
-    CONNECTED,
-    DISCONNECTED,
-    TIMEOUT,
-    CONN_ERROR,
-    TLS_ERROR,
-    OUT_OF_RESOURCE,
-    NO_SUPPORT
-};
-
 class SelfHandler {
 public:
     virtual void onSelfIdChanged(QString id) = 0;
@@ -129,6 +113,7 @@ public:
 
     void start();
     void stop();
+    void doConnect();
 
     void send(const QString& xml);
 
@@ -216,23 +201,21 @@ private:
     std::vector<GroupHandler*> groupHandlers;
 
     size_t sentCount = 0;
-    std::unique_ptr<base::DelayedCallTimer> _delayer;
 
 signals:
     void started();
     void stopped();
     void connected();
-    void disconnect();
+    void disconnected(int);
     void incoming(const QString dom);
     void receivedGroupMessage(lib::messenger::IMMessage imMsg);  //
     void messageSent(const IMMessage& message);                  //
 
 private slots:
-    void onConnectResult(lib::messenger::IMConnectStatus);
+    void onDisconnected(int);
     void onStarted();
     void onStopped();
     void onReceiveGroupMessage(lib::messenger::IMMessage imMsg);
-    void onDisconnect();
     void onEncryptedMessage(QString dom);
     void onGroupReceived(QString groupId, QString name);
 };

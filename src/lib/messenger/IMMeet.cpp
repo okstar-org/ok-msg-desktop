@@ -192,6 +192,8 @@ void IMMeet::handleHostMessage(const gloox::JID& from, const gloox::Message& msg
     }
 }
 
+void IMMeet::handleHostMessageSession(const gloox::JID& from, const std::string& sid) {}
+
 void IMMeet::handleCreation(const gloox::JID& jid, bool ready,
                             const std::map<std::string, std::string>& props) {
     qDebug() << __func__ << qstring(jid.full()) << "ready:" << ready;

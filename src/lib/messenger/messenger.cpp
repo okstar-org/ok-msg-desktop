@@ -31,13 +31,8 @@ Messenger::Messenger(const QString& host,
                      const QString& name,
                      const QString& password,
                      QObject* parent)
-        : QObject(parent)
-        , _im{nullptr}
-        , _delayer(std::make_unique<::base::DelayedCallTimer>())  //
-{
+        : QObject(parent), _im{nullptr} {
     qDebug() << __func__;
-
-    connect(this, &Messenger::disconnect, this, &Messenger::onDisconnect);
 
     auto _session = ok::Application::Instance()->getSession();
 
@@ -68,21 +63,15 @@ Messenger::~Messenger() {
 void Messenger::start() {
     qDebug() << __func__;
     _im->start();
-    connect(_im, &IM::started, [&]() { emit started(); });
+    //    connect(_im, &IM::started, [&]() { emit started(); });
 }
 
 void Messenger::sendChatState(const QString& friendId, int state) {
     _im->sendChatState(friendId, static_cast<gloox::ChatStateType>(state));
 }
 
-void Messenger::onConnectResult(lib::messenger::IMConnectStatus status) {
-    qDebug() << ("status:") << (int)status;
-    if (status == lib::messenger::IMConnectStatus::DISCONNECTED) {
-        _delayer->call(1000 * 5, [&]() {
-            qDebug(("Retry connect..."));
-            _im->doConnect();
-        });
-    }
+void Messenger::onDisconnected(int status) {
+    emit disconnected(status);
 }
 
 void Messenger::onStarted() {
@@ -107,6 +96,8 @@ void Messenger::onStopped() {
 
 bool Messenger::connectIM() {
     connect(_im, &IM::started, this, &Messenger::onStarted);
+    connect(_im, &IM::disconnected, this, &Messenger::onDisconnected);
+
     connect(
             _im, &IM::incoming, this, [=, this](QString xml) { emit incoming(xml); },
             Qt::QueuedConnection);
@@ -362,6 +353,10 @@ void Messenger::stop() {
     _im->stop();
 }
 
+void Messenger::doConnect() {
+    _im->doConnect();
+}
+
 void Messenger::send(const QString& xml) {
     _im->send(xml);
 }
@@ -389,13 +384,6 @@ QString Messenger::getSelfNick() const {
 
 void Messenger::changePassword(const QString& password) {
     _im->changePassword(password);
-}
-
-void Messenger::onDisconnect() {
-    _delayer->call(1000 * 5, [&]() {
-        qDebug(("retry connect..."));
-        _im->start();
-    });
 }
 
 void Messenger::onEncryptedMessage(QString xml) {

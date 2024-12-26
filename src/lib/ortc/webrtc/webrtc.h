@@ -96,7 +96,8 @@ public:
 
     bool quit(const std::string& peerId) override;
 
-    void setIceOptions(std::vector<IceServer>& ices) override;
+    void setIceServers(std::vector<IceServer>& ices) override;
+    void addIceServer(const IceServer& ices) override;
 
     webrtc::SdpType convertToSdpType(JingleSdpType sdpType);
 
@@ -133,7 +134,6 @@ protected:
                                const std::string& sId, const std::string& peerId) override;
 
 private:
-    void addIceServer(const IceServer& ice);
 
     Conductor* createConductor(const std::string& peerId, const std::string& sId, bool video);
 

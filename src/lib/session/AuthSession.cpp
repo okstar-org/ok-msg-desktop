@@ -26,7 +26,6 @@ AuthSession::AuthSession(QObject* parent)
 {
     qRegisterMetaType<SignInInfo>("SignInInfo");
     qRegisterMetaType<LoginResult>("LoginResult");
-    qRegisterMetaType<::lib::messenger::IMConnectStatus>("IMConnectStatus");
 }
 
 AuthSession::~AuthSession() { qDebug() << "~AuthSession"; }

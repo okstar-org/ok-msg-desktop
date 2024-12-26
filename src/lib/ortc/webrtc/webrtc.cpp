@@ -289,7 +289,7 @@ bool WebRTC::quit(const std::string& peerId) {
     return false;
 }
 
-void WebRTC::setIceOptions(std::vector<IceServer>& ices) {
+void WebRTC::setIceServers(std::vector<IceServer>& ices) {
     for (const auto& ice : ices) {
         addIceServer(ice);
     }
@@ -681,7 +681,7 @@ void WebRTC::addIceServer(const IceServer& ice) {
     // Add the ice server.
     webrtc::PeerConnectionInterface::IceServer ss;
 
-    ss.urls.push_back(ice.uri);
+    ss.uri = ice.uri;
     ss.tls_cert_policy = webrtc::PeerConnectionInterface::kTlsCertPolicyInsecureNoCheck;
     ss.username = ice.username;
     ss.password = ice.password;

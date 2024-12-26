@@ -54,7 +54,9 @@ OkRTC* OkRTCManager::createRtc(const std::string& res) {
     std::lock_guard<std::recursive_mutex> lock(mtx);
     if (!rtc) {
         rtc = std::make_unique<WebRTC>(res);
-        rtc->setIceOptions(_iceOptions);
+        if (!_iceOptions.empty()) {
+            rtc->setIceServers(_iceOptions);
+        }
     }
     return rtc.get();
 }
@@ -71,6 +73,7 @@ OkRTC* OkRTCManager::getRtc() {
 
 void OkRTCManager::addIceServer(const IceServer& ice) {
     _iceOptions.push_back(ice);
+    if (rtc) rtc->addIceServer(ice);
 }
 
 std::map<std::string, OIceUdp> OkRTCManager::getCandidates(const std::string& peerId) {

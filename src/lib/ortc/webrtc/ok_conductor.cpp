@@ -60,8 +60,12 @@ void Conductor::CreatePeerConnection() {
 
     webrtc::PeerConnectionDependencies pc_dependencies(this);
 
-    auto maybe = webRtc->getFactory()->CreatePeerConnectionOrError(webRtc->getConfig(),
-                                                                   std::move(pc_dependencies));
+    auto& config = webRtc->getConfig();
+    for (const auto& item : config.servers) {
+        RTC_LOG(LS_INFO) << " Using ice server:" << item.uri;
+    }
+    auto maybe =
+            webRtc->getFactory()->CreatePeerConnectionOrError(config, std::move(pc_dependencies));
     for (auto h : webRtc->getHandlers()) {
         h->onCreatePeerConnection(sId, peerId, maybe.ok());
     }

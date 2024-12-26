@@ -417,7 +417,8 @@ public:
 
     virtual bool ensureStart() = 0;
 
-    virtual void setIceOptions(std::vector<IceServer>& ices) = 0;
+    virtual void setIceServers(std::vector<IceServer>& ices) = 0;
+    virtual void addIceServer(const IceServer& ices) = 0;
 
     virtual void addRTCHandler(OkRTCHandler* hand) = 0;
     virtual void removeRTCHandler(OkRTCHandler* hand) = 0;

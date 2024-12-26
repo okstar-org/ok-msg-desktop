@@ -105,7 +105,7 @@ IM::~IM() {
 
 void IM::run() {
     qDebug() << __func__;
-    doConnect();
+    start();
 }
 
 std::unique_ptr<Client> IM::makeClient() {
@@ -229,77 +229,29 @@ std::unique_ptr<Client> IM::makeClient() {
     return std::move(client);
 }
 
-QString IM::createMsgId() {
-    return qstring(getClient()->getID());
+void IM::start() {
+    qDebug() << __func__;
+
+    QMutexLocker locker(&mutex);
+    _client = makeClient();
+    qDebug() << __func__ << "Create IM client is:" << _client.get();
+    emit onConnecting();
+
+    // block the current thread
+    _client->connect(true);
 }
 
 void IM::stop() {
     qDebug() << __func__;
+    QMutexLocker locker(&mutex);
     doDisconnect();
     emit stopped();
 }
 
 void IM::onDisconnect(ConnectionError e) {
     qDebug() << __func__ << "error:" << e;
-
-    if (!__started) {
-        return;
-    }
-
     __started = false;
-
-    IMConnectStatus _status;
-    switch (e) {
-        case ConnAuthenticationFailed:
-            _status = IMConnectStatus::AUTH_FAILED;
-            break;
-        case ConnNoError:
-            _status = IMConnectStatus::DISCONNECTED;
-            break;
-        case ConnStreamError:
-        case ConnStreamVersionError:
-            _status = IMConnectStatus::CONN_ERROR;
-            break;
-        case ConnStreamClosed:
-            _status = IMConnectStatus::DISCONNECTED;
-            break;
-        case ConnProxyGatewayTimeout:
-            _status = IMConnectStatus::TIMEOUT;
-            break;
-        case ConnProxyAuthRequired:
-        case ConnProxyAuthFailed:
-        case ConnProxyNoSupportedAuth:
-        case ConnIoError:
-        case ConnParseError:
-        case ConnConnectionRefused:
-        case ConnDnsError:
-            _status = IMConnectStatus::CONN_ERROR;
-            break;
-        case ConnOutOfMemory:
-            _status = IMConnectStatus::OUT_OF_RESOURCE;
-            break;
-        case ConnNoSupportedAuth:
-            _status = IMConnectStatus::NO_SUPPORT;
-            break;
-        case ConnTlsFailed:
-        case ConnTlsNotAvailable:
-            _status = IMConnectStatus::TLS_ERROR;
-            break;
-        case ConnCompressionFailed:
-        case ConnUserDisconnected:
-        case ConnNotConnected:
-            _status = IMConnectStatus::DISCONNECTED;
-            break;
-        case ConnAttemptTimeout:
-            _status = IMConnectStatus::TIMEOUT;
-            break;
-        default:
-            _status = IMConnectStatus::DISCONNECTED;
-            break;
-    }
-
-    emit connectResult(_status);
-    emit stopped();
+    emit disconnected((int)e);
 }
 
 void IM::onConnect() {
@@ -332,21 +284,12 @@ void IM::onConnect() {
         rosterManager = enableRosterManager();
     }
 
-
-    emit connectResult(IMConnectStatus::CONNECTED);
+    emit onConnected();
     emit started();
 
     qDebug() << __func__ << "Resume.";
 }
 
-void IM::doConnect() {
-    qDebug() << __func__ << "Create IM client...";
-    _client = makeClient();
-    qDebug() << __func__ << "Create IM client is:" << _client.get();
-    _client->connect(true);
-
-    emit connectResult(IMConnectStatus::CONNECTING);
-}
 
 void IM::send(const QString& xml) {
     if (xml.isEmpty()) {
@@ -354,6 +297,7 @@ void IM::send(const QString& xml) {
         return;
     }
     _client->send(stdstring(xml));
+    _client.reset();
 }
 
 void IM::interrupt() {}
@@ -485,6 +429,11 @@ gloox::RosterManager* IM::enableRosterManager() {
     //  mRegistration->registerRegistrationHandler(this);
 }
 
+void IM::doConnect() {
+    qDebug() << __func__;
+    _client->connect(true);
+}
+
 void IM::doDisconnect() {
     assert(_client.get());
     _client->disconnect();
@@ -517,13 +466,19 @@ bool IM::sendTo(const QString& friendId, const QString& msg, const QString& id) 
 
 // Handle Message session
 void IM::handleMessageSession(MessageSession* session) {
-    auto from = qstring(session->target().full());
-    auto sid = qstring(session->threadID());
-    qDebug() << __func__ << "from" << from << "sid:" << sid;
+    auto from = session->target();
+    auto sid = (session->threadID());
+    qDebug() << __func__ << "from" << qstring(from.full()) << "sid:" << qstring(sid);
 
     // 联系人ID（朋友和群聊）
+    auto iterator = fromHostHandlers.find(from.server());
+    if (iterator != fromHostHandlers.end()) {
+        iterator.value()->handleHostMessageSession(from, sid);
+        return;
+    }
+
     auto contactId = qstring(session->target().bare());
-    emit receiveMessageSession(contactId, sid);
+    emit receiveMessageSession(contactId, qstring(sid));
 
     // 聊天状态过滤器，获取：正在中等输入状态
     auto csf = m_chatStateFilters.value(contactId);
@@ -1570,7 +1525,7 @@ size_t IM::getRosterCount() {
 void IM::getRosterList(std::list<IMFriend>& list) {
     auto rosterManager = _client->rosterManager();
     if (!rosterManager) {
-        QMutexLocker locker(&m_mutex);
+        QMutexLocker locker(&mutex);
         rosterManager = enableRosterManager();
     }
 
@@ -2129,10 +2084,6 @@ void IM::updateOnlineStatus(const std::string& bare, const std::string& resource
         }
     }
     emit receiveFriendStatus(friendId, status);
-}
-
-void IM::retry() {
-    doConnect();
 }
 
 bool IM::leaveGroup(const QString& groupId) {

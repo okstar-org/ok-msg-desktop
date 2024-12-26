@@ -16,12 +16,9 @@
 
 #pragma once
 
+#include <message.h>
+#include <presence.h>
 #include "base/jid.h"
-
-namespace gloox {
-class JID;
-class Presence;
-}  // namespace gloox
 
 namespace lib::messenger {
 
@@ -29,6 +26,7 @@ class IMFromHostHandler {
 public:
     virtual void handleHostPresence(const gloox::JID& from, const gloox::Presence& presence) = 0;
     virtual void handleHostMessage(const gloox::JID& from, const gloox::Message& msg) = 0;
+    virtual void handleHostMessageSession(const gloox::JID& from, const std::string& sid) = 0;
 };
 
 }  // namespace lib::messenger
