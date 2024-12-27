@@ -50,10 +50,10 @@ void OkRTCManager::destroyInstance() {
     RTC_LOG(LS_WARNING) << "Destroy the instance successfully.";
 }
 
-OkRTC* OkRTCManager::createRtc(const std::string& res) {
+OkRTC* OkRTCManager::createRtc(Mode mode, const std::string& res) {
     std::lock_guard<std::recursive_mutex> lock(mtx);
     if (!rtc) {
-        rtc = std::make_unique<WebRTC>(res);
+        rtc = std::make_unique<WebRTC>(mode, res);
         if (!_iceOptions.empty()) {
             rtc->setIceServers(_iceOptions);
         }

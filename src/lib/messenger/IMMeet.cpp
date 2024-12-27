@@ -79,7 +79,7 @@ IMMeet::IMMeet(IM* im, QObject* parent) : IMJingle(im, parent), manager(nullptr)
     ortc::OkRTCManager* rtcManager = ortc::OkRTCManager::getInstance();
     //    rtcManager->setIceServerers(im->getExternalServiceDiscovery());
 
-    auto rtc = rtcManager->createRtc(stdstring(resource));
+    auto rtc = rtcManager->createRtc(ortc::Mode::meet, stdstring(resource));
     rtc->addRTCHandler(this);
 }
 

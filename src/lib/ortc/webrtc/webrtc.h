@@ -58,7 +58,7 @@ public:
 
 class WebRTC : public OkRTC, public WebRTCObserver {
 public:
-    explicit WebRTC(std::string res);
+    explicit WebRTC(Mode mode, std::string res);
 
     ~WebRTC() override;
 
@@ -212,6 +212,9 @@ private:
     void linkVideoDevice(Conductor* c, int selected);
 
     std::recursive_mutex mutex;
+
+    // 模式
+    Mode mode;
 
     // 资源ID
     std::string resource;

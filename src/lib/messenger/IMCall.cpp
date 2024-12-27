@@ -271,7 +271,7 @@ bool IMCall::createCall(const IMPeerId& to, const QString& sId, bool video) {
     auto rtcManager = lib::ortc::OkRTCManager::getInstance();
     rtcManager->setIceServers(im->getExternalServiceDiscovery());
 
-    auto rtc = rtcManager->createRtc(im->self().resource());
+    auto rtc = rtcManager->createRtc(ortc::Mode::p2p, im->self().resource());
     rtc->addRTCHandler(this);
 
     auto created = rtc->CreateOffer(stdstring(to.toString()), stdstring(sId), video);
@@ -333,7 +333,7 @@ bool IMCall::answer(const IMPeerId& peerId, const QString& callId, bool video) {
 
     ortc::OkRTCManager* rtcManager = lib::ortc::OkRTCManager::getInstance();
     rtcManager->setIceServers(im->getExternalServiceDiscovery());
-    auto rtc = rtcManager->createRtc(im->self().resource());
+    auto rtc = rtcManager->createRtc(ortc::Mode::p2p, im->self().resource());
     rtc->addRTCHandler(this);
 
     acceptJingleMessage(peerId, callId, video);

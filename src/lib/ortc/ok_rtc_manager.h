@@ -31,7 +31,7 @@ public:
      * @param res
      * @return
      */
-    OkRTC* createRtc(const std::string& res);
+    OkRTC* createRtc(Mode mode, const std::string& res);
     /**
      * 销毁RTC实例
      */

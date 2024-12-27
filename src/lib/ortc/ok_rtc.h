@@ -404,6 +404,11 @@ public:
 /**
  * RTC 接口
  */
+enum class Mode {
+    p2p,
+    meet,
+};
+
 class OkRTC {
 public:
     virtual ~OkRTC() = default;

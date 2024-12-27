@@ -130,7 +130,8 @@ std::unique_ptr<cricket::VideoContentDescription> addVideoSsrcBundle(
     return std::move(videoPtr);
 }
 
-WebRTC::WebRTC(std::string res) : peer_connection_factory(nullptr), resource(std::move(res)) {
+WebRTC::WebRTC(Mode mode, std::string res)
+        : mode(mode), peer_connection_factory(nullptr), resource(std::move(res)) {
     _rtcConfig.sdp_semantics = webrtc::SdpSemantics::kUnifiedPlan;
     _rtcConfig.enable_implicit_rollback = false;
     _rtcConfig.enable_ice_renomination = true;
