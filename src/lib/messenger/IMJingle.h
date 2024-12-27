@@ -18,6 +18,7 @@
 #include <map>
 
 #include <client.h>
+#include <jinglecontent.h>
 #include <jinglesession.h>
 #include <jinglesessionhandler.h>
 #include <jinglesessionmanager.h>
@@ -100,6 +101,23 @@ protected:
 
     void FormatOMeetSSRCBundle(const std::map<std::string, ortc::OMeetSSRCBundle>& ssrcBundle,
                                std::string& json);
+
+    gloox::Jingle::RTP::Feedback toFeedback(const ortc::Feedback& p);
+
+    gloox::Jingle::RTP::Parameter toParameter(const ortc::Parameter& p);
+
+    gloox::Jingle::RTP::PayloadType ToPayloadType(const ortc::PayloadType& pt);
+
+    std::unique_ptr<gloox::Jingle::RTP> ToRTP(const ortc::ORTP& rtp);
+
+    std::unique_ptr<gloox::Jingle::ICEUDP> ToICEUDP(const ortc::OIceUdp& ice,
+                                                    const gloox::Jingle::ICEUDP::CandidateList&);
+
+    gloox::Jingle::ICEUDP::Candidate ToCandidate(const ortc::Candidate& c);
+
+    std::unique_ptr<gloox::Jingle::Content> ToContent(const std::string& mid,
+                                                      const ortc::OSdp& sdp,
+                                                      gloox::Jingle::Content::Creator creator);
 
     void ToPlugins(const ortc::OJingleContentAv* av, gloox::Jingle::PluginList& plugins);
 

@@ -50,8 +50,8 @@ std::unique_ptr<cricket::SctpDataContentDescription> createDataDescription(const
 
 class WebRTCObserver {
 public:
-    virtual void onRemoteDescriptionSet(const webrtc::SessionDescriptionInterface* sdp,
-                                        const std::string& sId, const std::string& peerId) = 0;
+    virtual void onDescriptionSet(const webrtc::SessionDescriptionInterface* sdp,
+                                  const std::string& sId, const std::string& peerId) = 0;
     virtual void onLocalDescriptionSet(const webrtc::SessionDescriptionInterface* sdp,
                                        const std::string& sId, const std::string& peerId) = 0;
 };
@@ -126,8 +126,7 @@ public:
     std::vector<std::string> getVideoDeviceList() override;
 
 protected:
-    void onRemoteDescriptionSet(const webrtc::SessionDescriptionInterface* sdp,
-                                const std::string& sId, const std::string& peerId) override;
+    void onDescriptionSet(const webrtc::SessionDescriptionInterface* sdp, const std::string& sId, const std::string& peerId) override;
 
     void onLocalDescriptionSet(const webrtc::SessionDescriptionInterface* sdp,
                                const std::string& sId, const std::string& peerId) override;

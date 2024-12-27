@@ -2284,7 +2284,7 @@ void IM::handleSessionAction(gloox::Jingle::Action action,     //
             break;
         }
         case gloox::Jingle::Action::ContentAdd: {
-            // source-add|content-add
+            // content-add
             for (auto h : m_sessionHandlers) {
                 h->doContentAdd(jingle, peerId);
             }

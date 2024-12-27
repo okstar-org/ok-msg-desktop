@@ -351,9 +351,8 @@ void IMJingle::FormatOMeetSSRCBundle(const std::map<std::string, ortc::OMeetSSRC
         auto& vgroup = item.second.videoSsrcGroups;
         if (!vgroup.ssrcs.empty()) {
             vg.push_back(qstring(vgroup.semantics));
-            std::for_each(vgroup.ssrcs.begin(), vgroup.ssrcs.end(), [&](auto& s) {
-                vg.push_back(QJsonValue(qstring(s)));
-            });
+            std::for_each(vgroup.ssrcs.begin(), vgroup.ssrcs.end(),
+                          [&](auto& s) { vg.push_back(QJsonValue(qstring(s))); });
         }
         array.push_back(vg);
 
@@ -373,6 +372,112 @@ void IMJingle::FormatOMeetSSRCBundle(const std::map<std::string, ortc::OMeetSSRC
     json.assign(str.toStdString());
 }
 
+gloox::Jingle::RTP::Feedback IMJingle::toFeedback(const ortc::Feedback& p) {
+    return gloox::Jingle::RTP::Feedback{.type = p.type, .subtype = p.subtype};
+}
+
+gloox::Jingle::RTP::Parameter IMJingle::toParameter(const ortc::Parameter& p) {
+    return gloox::Jingle::RTP::Parameter{.name = p.name, .value = p.value};
+}
+
+gloox::Jingle::RTP::PayloadType IMJingle::ToPayloadType(const ortc::PayloadType& x) {
+    return gloox::Jingle::RTP::PayloadType{
+            .id = x.id,
+            .name = x.name,
+            .clockrate = x.clockrate,
+            .bitrate = x.bitrate,
+            .channels = static_cast<int>(x.channels),
+            .parameters = ranges::views::all(x.parameters) |
+                          ranges::views::transform([&](const auto& e) { return toParameter(e); }) |
+                          ranges::to<std::list<gloox::Jingle::RTP::Parameter>>(),
+            .feedbacks = ranges::views::all(x.feedbacks) |
+                         ranges::views::transform([&](const auto& e) { return toFeedback(e); }) |
+                         ranges::to<std::list<gloox::Jingle::RTP::Feedback>>()};
+}
+
+std::unique_ptr<gloox::Jingle::RTP> IMJingle::ToRTP(const ortc::ORTP& desc) {
+    // rtcp
+    auto pts = ranges::views::all(desc.payloadTypes) |
+               ranges::views::transform([&](auto& e) { return ToPayloadType(e); }) |
+               ranges::to<gloox::Jingle::RTP::PayloadTypes>();
+
+    auto rtp = new gloox::Jingle::RTP(static_cast<gloox::Jingle::Media>(desc.media), pts);
+    rtp->setRtcpMux(desc.rtcpMux);
+
+    // payload-type
+    rtp->setPayloadTypes(pts);
+
+    // rtp-hdrExt
+    gloox::Jingle::RTP::HdrExts exts;
+    for (auto& e : desc.hdrExts) {
+        exts.push_back({e.id, e.uri});
+    }
+    rtp->setHdrExts(exts);
+
+    // source
+    if (!desc.sources.empty()) {
+        auto ss = ranges::views::all(desc.sources) |
+                  ranges::views::transform([&](const auto& s) { return ToSource(s); }) |
+                  ranges::to_vector;
+        rtp->setSources(ss);
+    }
+
+    // ssrc-group
+    if (!desc.ssrcGroup.ssrcs.empty()) {
+        gloox::Jingle::RTP::SsrcGroup sg;
+        sg.semantics = desc.ssrcGroup.semantics;
+        for (auto& s : desc.ssrcGroup.ssrcs) {
+            sg.ssrcs.push_back(s);
+        }
+        rtp->setSsrcGroup(sg);
+    }
+
+    return std::unique_ptr<gloox::Jingle::RTP>(rtp);
+}
+
+std::unique_ptr<gloox::Jingle::ICEUDP> IMJingle::ToICEUDP(
+        const ortc::OIceUdp& oIceUdp, const gloox::Jingle::ICEUDP::CandidateList& cl) {
+    auto ice = new gloox::Jingle::ICEUDP(oIceUdp.pwd, oIceUdp.ufrag, cl);
+    ice->setDtls({.hash = oIceUdp.dtls.hash,
+                  .setup = oIceUdp.dtls.setup,
+                  .fingerprint = oIceUdp.dtls.fingerprint});
+    return std::unique_ptr<gloox::Jingle::ICEUDP>(ice);
+}
+
+gloox::Jingle::ICEUDP::Candidate IMJingle::ToCandidate(const ortc::Candidate& c) {
+    return gloox::Jingle::ICEUDP::Candidate{c.component,
+                                            c.foundation,
+                                            c.generation,
+                                            c.id,
+                                            c.ip,
+                                            c.network,
+                                            c.port,
+                                            c.priority,
+                                            c.protocol,
+                                            c.tcptype,
+                                            c.rel_addr,
+                                            c.rel_port,
+                                            static_cast<gloox::Jingle::ICEUDP::Type>(c.type)};
+}
+
+std::unique_ptr<gloox::Jingle::Content> IMJingle::ToContent(
+        const std::string& mid, const ortc::OSdp& sdp, gloox::Jingle::Content::Creator creator) {
+    // description
+    gloox::Jingle::PluginList rtpPlugins;
+    // rtp
+    auto rtp = ToRTP(sdp.rtp);
+    rtpPlugins.emplace_back(rtp.release());
+
+    // transport
+    auto cl = ranges::views::all(sdp.iceUdp.candidates) |
+              ranges::views::transform([&](const auto& e) { return ToCandidate(e); }) |
+              ranges::to<gloox::Jingle::ICEUDP::CandidateList>();
+    rtpPlugins.emplace_back(ToICEUDP(sdp.iceUdp, cl).release());
+
+    auto* pContent = new gloox::Jingle::Content(mid, rtpPlugins, creator);
+    return std::unique_ptr<gloox::Jingle::Content>(pContent);
+}
+
 void IMJingle::ToPlugins(const ortc::OJingleContentAv* av, gloox::Jingle::PluginList& plugins) {
     //<group>
     auto& contents = av->getContents();
@@ -389,7 +494,7 @@ void IMJingle::ToPlugins(const ortc::OJingleContentAv* av, gloox::Jingle::Plugin
 
         // rtcp
         gloox::Jingle::RTP::PayloadTypes pts;
-        for (auto x : desc.payloadTypes) {
+        for (auto& x : desc.payloadTypes) {
             gloox::Jingle::RTP::PayloadType t;
             t.id = x.id;
             t.name = x.name;
@@ -397,14 +502,14 @@ void IMJingle::ToPlugins(const ortc::OJingleContentAv* av, gloox::Jingle::Plugin
             t.bitrate = x.bitrate;
             t.channels = x.channels;
 
-            for (auto p : x.parameters) {
+            for (auto& p : x.parameters) {
                 gloox::Jingle::RTP::Parameter p0;
                 p0.name = p.name;
                 p0.value = p.value;
                 t.parameters.push_back(p0);
             }
 
-            for (auto f : x.feedbacks) {
+            for (auto& f : x.feedbacks) {
                 gloox::Jingle::RTP::Feedback f0;
                 f0.type = f.type;
                 f0.subtype = f.subtype;
@@ -437,7 +542,7 @@ void IMJingle::ToPlugins(const ortc::OJingleContentAv* av, gloox::Jingle::Plugin
         if (!desc.ssrcGroup.ssrcs.empty()) {
             gloox::Jingle::RTP::SsrcGroup sg;
             sg.semantics = desc.ssrcGroup.semantics;
-            for (auto s : desc.ssrcGroup.ssrcs) {
+            for (auto& s : desc.ssrcGroup.ssrcs) {
                 sg.ssrcs.push_back(s);
             }
             rtp->setSsrcGroup(sg);
@@ -450,7 +555,8 @@ void IMJingle::ToPlugins(const ortc::OJingleContentAv* av, gloox::Jingle::Plugin
         lib::ortc::OIceUdp oIceUdp = content.iceUdp;
 
         gloox::Jingle::ICEUDP::CandidateList cl;
-        for (auto c : oIceUdp.candidates) {
+
+        for (auto& c : oIceUdp.candidates) {
             cl.push_front(gloox::Jingle::ICEUDP::Candidate{
                     c.component, c.foundation, c.generation, c.id, c.ip, c.network, c.port,
                     c.priority, c.protocol, c.tcptype, c.rel_addr, c.rel_port,

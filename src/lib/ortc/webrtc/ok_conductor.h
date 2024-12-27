@@ -110,7 +110,10 @@ protected:
     void OnRemoveStream(rtc::scoped_refptr<webrtc::MediaStreamInterface> stream) override;
 
     void OnDataChannel(rtc::scoped_refptr<webrtc::DataChannelInterface> channel) override;
+
     void OnRenegotiationNeeded() override;
+
+    // ICE
     void OnIceConnectionChange(webrtc::PeerConnectionInterface::IceConnectionState state) override;
     void OnIceGatheringChange(webrtc::PeerConnectionInterface::IceGatheringState state) override;
     void OnIceCandidate(const webrtc::IceCandidateInterface* ice) override;

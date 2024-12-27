@@ -16,6 +16,7 @@
 
 #include "IMMeet.h"
 #include <capabilities.h>
+#include <jinglegroup.h>
 #include <jinglejsonmessage.h>
 #include <meetmanager.h>
 #include <range/v3/all.hpp>
@@ -76,7 +77,7 @@ IMMeet::IMMeet(IM* im, QObject* parent) : IMJingle(im, parent), manager(nullptr)
     qRegisterMetaType<ortc::OJingleContentAv>("const ortc::OJingleContentAv&");
 
     ortc::OkRTCManager* rtcManager = ortc::OkRTCManager::getInstance();
-    rtcManager->setIceServers(im->getExternalServiceDiscovery());
+    //    rtcManager->setIceServerers(im->getExternalServiceDiscovery());
 
     auto rtc = rtcManager->createRtc(stdstring(resource));
     rtc->addRTCHandler(this);
@@ -353,6 +354,7 @@ bool IMMeet::doDescriptionInfo(const gloox::Jingle::Session::Jingle*, const IMPe
 
 bool IMMeet::doSourceAdd(const gloox::Jingle::Session::Jingle* jingle, const IMPeerId& peerId) {
     SESSION_CHECK(currentSid);
+    qDebug() << __func__;
     for (const auto p : jingle->plugins()) {
         if (p->pluginType() == gloox::Jingle::PluginJsonMessage) {
             auto jm = static_cast<const gloox::Jingle::JsonMessage*>(p);
@@ -394,9 +396,56 @@ void IMMeet::handleJingleMessage(const IMPeerId& peerId, const gloox::Jingle::Ji
     qDebug() << __func__;
 }
 
-void IMMeet::clearSessionInfo(const QString& sId) {}
+void IMMeet::clearSessionInfo(const QString& sId) {
+    qDebug() << __func__ << sId;
+}
 
-void IMMeet::onCreatePeerConnection(const std::string& sId, const std::string& peerId, bool ok) {}
+void IMMeet::ToMeetSdp(const ortc::OJingleContentAv* av, gloox::Jingle::PluginList& plugins) {
+    gloox::Jingle::Group::ContentList contentList;
+
+    // audio
+    std::string amid = "audio";
+    contentList.push_back(gloox::Jingle::Group::Content(amid));
+    for (auto& it : av->getContents()) {
+        auto& sdp = it.second;
+        if (sdp.rtp.media == ortc::Media::audio && !sdp.rtp.sources.empty()) {
+            auto pContent = ToContent(amid, sdp, gloox::Jingle::Content::CResponder);
+            plugins.emplace_back(pContent.release());
+            break;
+        }
+    }
+
+    // video
+    std::string vmid = "video";
+    contentList.push_back(gloox::Jingle::Group::Content(vmid));
+    for (auto& it : av->getContents()) {
+        auto& sdp = it.second;
+        if (sdp.rtp.media == ortc::Media::video && !sdp.rtp.sources.empty()) {
+            auto pContent = ToContent(amid, sdp, gloox::Jingle::Content::CResponder);
+            plugins.emplace_back(pContent.release());
+            break;
+        }
+    }
+
+    // data
+    std::string dmid = "data";
+    contentList.push_back(gloox::Jingle::Group::Content(dmid));
+    for (auto& it : av->getContents()) {
+        auto& sdp = it.second;
+        if (sdp.rtp.media == ortc::Media::application && !sdp.rtp.sources.empty()) {
+            auto pContent = ToContent(amid, sdp, gloox::Jingle::Content::CResponder);
+            plugins.emplace_back(pContent.release());
+            break;
+        }
+    }
+
+    auto group = new gloox::Jingle::Group("BUNDLE", contentList);
+    plugins.push_back(group);
+}
+
+void IMMeet::onCreatePeerConnection(const std::string& sId, const std::string& peerId, bool ok) {
+    qDebug() << __func__;
+}
 
 void IMMeet::onLocalDescriptionSet(const std::string& sId, const std::string& peerId,
                                    const ortc::OJingleContentAv* osd) {
@@ -444,7 +493,7 @@ void IMMeet::doForIceCompleted(const QString& sId, const QString& peerId) {
     auto av = rtc->getLocalSdp(stdstring(peerId));
 
     gloox::Jingle::PluginList plugins;
-    ToPlugins(av.get(), plugins);
+    ToMeetSdp(av.get(), plugins);
     currentSession->sessionAccept(plugins);
 }
 

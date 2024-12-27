@@ -189,6 +189,8 @@ protected:
                   const std::string& peerId,
                   const std::string& resource) override;
 
+    void ToMeetSdp(const ortc::OJingleContentAv* av, gloox::Jingle::PluginList& plugins);
+
 private:
     void doForIceCompleted(const QString& sId, const QString& peerId);
 
