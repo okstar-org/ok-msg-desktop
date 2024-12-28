@@ -117,7 +117,8 @@ protected:
 
     std::unique_ptr<gloox::Jingle::Content> ToContent(const std::string& mid,
                                                       const ortc::OSdp& sdp,
-                                                      gloox::Jingle::Content::Creator creator);
+                                                      gloox::Jingle::Content::Creator creator,
+                                                      bool candidate);
 
     void ToPlugins(const ortc::OJingleContentAv* av, gloox::Jingle::PluginList& plugins);
 

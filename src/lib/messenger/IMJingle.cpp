@@ -460,8 +460,10 @@ gloox::Jingle::ICEUDP::Candidate IMJingle::ToCandidate(const ortc::Candidate& c)
                                             static_cast<gloox::Jingle::ICEUDP::Type>(c.type)};
 }
 
-std::unique_ptr<gloox::Jingle::Content> IMJingle::ToContent(
-        const std::string& mid, const ortc::OSdp& sdp, gloox::Jingle::Content::Creator creator) {
+std::unique_ptr<gloox::Jingle::Content> IMJingle::ToContent(const std::string& mid,
+                                                            const ortc::OSdp& sdp,
+                                                            gloox::Jingle::Content::Creator creator,
+                                                            bool candidate) {
     // description
     gloox::Jingle::PluginList rtpPlugins;
     // rtp
@@ -469,10 +471,14 @@ std::unique_ptr<gloox::Jingle::Content> IMJingle::ToContent(
     rtpPlugins.emplace_back(rtp.release());
 
     // transport
-    auto cl = ranges::views::all(sdp.iceUdp.candidates) |
-              ranges::views::transform([&](const auto& e) { return ToCandidate(e); }) |
-              ranges::to<gloox::Jingle::ICEUDP::CandidateList>();
-    rtpPlugins.emplace_back(ToICEUDP(sdp.iceUdp, cl).release());
+    if (candidate) {
+        auto cl = (ranges::views::all(sdp.iceUdp.candidates) |
+                   ranges::views::transform([&](const auto& e) { return ToCandidate(e); }) |
+                   ranges::to<gloox::Jingle::ICEUDP::CandidateList>());
+        rtpPlugins.emplace_back(ToICEUDP(sdp.iceUdp, cl).release());
+    } else {
+        rtpPlugins.emplace_back(ToICEUDP(sdp.iceUdp, {}).release());
+    }
 
     auto* pContent = new gloox::Jingle::Content(mid, rtpPlugins, creator);
     return std::unique_ptr<gloox::Jingle::Content>(pContent);

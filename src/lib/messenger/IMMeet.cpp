@@ -404,36 +404,37 @@ void IMMeet::ToMeetSdp(const ortc::OJingleContentAv* av, gloox::Jingle::PluginLi
     gloox::Jingle::Group::ContentList contentList;
 
     // audio
-    std::string amid = "audio";
-    contentList.push_back(gloox::Jingle::Group::Content({.name = amid}));
     for (auto& it : av->getContents()) {
         auto& sdp = it.second;
-        if (sdp.rtp.media == ortc::Media::audio && !sdp.rtp.sources.empty()) {
-            auto pContent = ToContent(amid, sdp, gloox::Jingle::Content::CResponder);
+        if (sdp.rtp.media == ortc::Media::audio) {
+            std::string mid = "audio";
+            contentList.push_back(gloox::Jingle::Group::Content({.name = mid}));
+
+            auto pContent = ToContent(mid, sdp, gloox::Jingle::Content::CResponder, false);
             plugins.emplace_back(pContent.release());
             break;
         }
     }
 
     // video
-    std::string vmid = "video";
-    contentList.push_back(gloox::Jingle::Group::Content({.name = vmid}));
     for (auto& it : av->getContents()) {
         auto& sdp = it.second;
-        if (sdp.rtp.media == ortc::Media::video && !sdp.rtp.sources.empty()) {
-            auto pContent = ToContent(amid, sdp, gloox::Jingle::Content::CResponder);
+        if (sdp.rtp.media == ortc::Media::video) {
+            std::string mid = "video";
+            contentList.push_back(gloox::Jingle::Group::Content({.name = mid}));
+            auto pContent = ToContent(mid, sdp, gloox::Jingle::Content::CResponder, false);
             plugins.emplace_back(pContent.release());
             break;
         }
     }
 
     // data
-    std::string dmid = "data";
-    contentList.push_back(gloox::Jingle::Group::Content{.name = dmid});
     for (auto& it : av->getContents()) {
         auto& sdp = it.second;
-        if (sdp.rtp.media == ortc::Media::application && !sdp.rtp.sources.empty()) {
-            auto pContent = ToContent(amid, sdp, gloox::Jingle::Content::CResponder);
+        if (sdp.rtp.media == ortc::Media::application) {
+            std::string mid = "data";
+            contentList.push_back(gloox::Jingle::Group::Content{.name = mid});
+            auto pContent = ToContent(mid, sdp, gloox::Jingle::Content::CResponder, false);
             plugins.emplace_back(pContent.release());
             break;
         }

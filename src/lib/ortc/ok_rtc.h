@@ -135,7 +135,7 @@ struct SsrcGroup {
 };
 
 struct ORTP {
-    Media media = Media::invalid;
+    Media media;
     PayloadTypes payloadTypes;
     HdrExts hdrExts;
     Sources sources;

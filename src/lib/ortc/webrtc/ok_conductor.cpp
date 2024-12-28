@@ -350,9 +350,11 @@ void Conductor::setRemoteDescription(webrtc::SessionDescriptionInterface* desc) 
 
     webrtc::SdpParseError err;
     auto x = webrtc::CreateSessionDescription(desc->type(), sdp, &err);
-    if (err.description.empty()) {
-        peer_connection_->SetRemoteDescription(this, x);
+    if (!err.description.empty()) {
+        RTC_LOG(LS_WARNING) << " CreateSessionDescription error:" << err.description;
+        return;
     }
+    peer_connection_->SetRemoteDescription(this, x);
 }
 
 const webrtc::SessionDescriptionInterface* Conductor::getRemoteDescription() {

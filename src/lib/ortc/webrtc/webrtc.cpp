@@ -340,6 +340,7 @@ JingleSdpType WebRTC::convertSdpTypeUp(webrtc::SdpType type) {
 void addSource1(const std::map<std::string, OMeetSSRCBundle>& map,
                 cricket::SessionDescription* sessionDescription,
                 std::vector<const webrtc::IceCandidateInterface*>& cis,
+                std::vector<const webrtc::IceCandidateInterface*>& cis2,
                 cricket::ContentGroup& group) {
     RTC_LOG(LS_INFO) << __func__;
     for (auto& k : map) {
@@ -373,22 +374,21 @@ void addSource1(const std::map<std::string, OMeetSSRCBundle>& map,
                 audioPtr->set_rtp_header_extensions(jvba->rtp_header_extensions());
                 sessionDescription->AddContent(mid, cricket::MediaProtocolType::kRtp,
                                                std::move(audioPtr));
-                auto s = ranges::views::all(cis) |
-                         ranges::views::filter([&](auto* c) { return c->sdp_mline_index() == 0; }) |
-                         ranges::to_vector;
 
-                for (auto c : s) {
+                for (auto c : cis) {
                     std::string str;
                     c->ToString(&str);
 
                     webrtc::SdpParseError error;
                     webrtc::IceCandidateInterface* iceCandidate =
                             webrtc::CreateIceCandidate(mid, m_size, str, &error);
+                    RTC_LOG(LS_INFO) << "Add IceCandidate => {mid:" << mid
+                                     << ", mline:" << m_size - 1 << "}";
                     if (!error.description.empty()) {
                         RTC_LOG(LS_WARNING) << "Unable to parse candidate: " << str;
                         continue;
                     }
-                    cis.push_back(iceCandidate);
+                    cis2.push_back(iceCandidate);
                 }
 
                 group.AddContentName(mid);
@@ -422,22 +422,20 @@ void addSource1(const std::map<std::string, OMeetSSRCBundle>& map,
                 sessionDescription->AddContent(mid, cricket::MediaProtocolType::kRtp,
                                                std::move(videoPtr));
 
-                auto s = ranges::views::all(cis) |
-                         ranges::views::filter([&](auto* c) { return c->sdp_mline_index() == 0; }) |
-                         ranges::to_vector;
-
-                for (auto c : s) {
+                for (auto c : cis) {
                     std::string str;
                     c->ToString(&str);
 
                     webrtc::SdpParseError error;
                     webrtc::IceCandidateInterface* iceCandidate =
                             webrtc::CreateIceCandidate(mid, m_size, str, &error);
+                    RTC_LOG(LS_INFO) << "Add IceCandidate => {mid:" << mid
+                                     << ", mline:" << m_size - 1 << "}";
                     if (!error.description.empty()) {
                         RTC_LOG(LS_WARNING) << "Unable to parse candidate: " << str;
                         continue;
                     }
-                    cis.push_back(iceCandidate);
+                    cis2.push_back(iceCandidate);
                 }
 
                 group.AddContentName(mid);
@@ -536,14 +534,27 @@ std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertSdpToDown(
         }
     }
 
+    std::vector<const webrtc::IceCandidateInterface*> cis2;
+
     if (!av.getSsrcBundle().empty()) {
-        addSource1(av.getSsrcBundle(), sessionDescription.get(), candidates, group);
+        std::vector<const webrtc::IceCandidateInterface*> cis =
+                ranges::views::all(candidates) |
+                ranges::views::filter([&](auto* c) { return c->sdp_mline_index() == 0; }) |
+                ranges::to_vector;
+        addSource1(av.getSsrcBundle(), sessionDescription.get(), candidates, cis2, group);
     }
 
     sessionDescription->AddGroup(group);
     auto ptr = webrtc::CreateSessionDescription(sdpType, av.sessionId, av.sessionVersion,
                                                 std::move(sessionDescription));
     for (auto c : candidates) {
+        if (!ptr->AddCandidate(c)) {
+            RTC_LOG(LS_WARNING) << " Can not add candidate mid: " << c->sdp_mid()
+                                << " mline_index: " << c->sdp_mline_index();
+        }
+    }
+
+    for (auto c : cis2) {
         if (!ptr->AddCandidate(c)) {
             RTC_LOG(LS_WARNING) << " Can not add candidate mid: " << c->sdp_mid()
                                 << " mline_index: " << c->sdp_mline_index();
@@ -664,9 +675,11 @@ std::unique_ptr<OJingleContentAv> WebRTC::convertSdpToUp(
                 break;
             }
             case cricket::MediaType::MEDIA_TYPE_DATA: {
+                oSdp.rtp.media = Media::application;
                 break;
             }
             case cricket::MEDIA_TYPE_UNSUPPORTED:
+                oSdp.rtp.media = Media::invalid;
                 break;
         }
 
@@ -903,6 +916,11 @@ void WebRTC::addSource(const std::string& peerId,
 
     webrtc::SdpParseError err;
     auto x = webrtc::CreateSessionDescription(desc->type(), sdp, &err);
+    if (!err.description.empty()) {
+        RTC_LOG(LS_WARNING) << "CreateSessionDescription error:" << err.description;
+        return;
+    }
+
     auto& group = const_cast<cricket::ContentGroup&>(x->description()->groups().front());
 
     std::vector<const webrtc::IceCandidateInterface*> cis;
@@ -911,9 +929,15 @@ void WebRTC::addSource(const std::string& peerId,
         cis.push_back(ci);
     }
 
-    addSource1(map, x->description(), cis, group);
-    x->description()->AddGroup(group);
+    std::vector<const webrtc::IceCandidateInterface*> cis2;
+    addSource1(map, x->description(), cis, cis2, group);
 
+    for (auto* c1 : cis2) {
+        if (!x->AddCandidate(c1)) {
+            RTC_LOG(LS_WARNING) << " Can not add candidate mid: " << c1->sdp_mid()
+                                << " mline_index: " << c1->sdp_mline_index();
+        }
+    }
     c->setRemoteDescription(x);
     c->CreateAnswer();
 }
