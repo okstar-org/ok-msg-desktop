@@ -14,6 +14,7 @@
 
 #include <QFrame>
 #include <QPointer>
+#include "Defines.h"
 
 class QPushButton;
 class RoundedPixmapLabel;
@@ -35,6 +36,10 @@ public:
 
     void retranslateUi();
 
+    inline const CtrlState& getCtrlState() const {
+        return ctrlState;
+    }
+
 protected:
     void showEvent(QShowEvent* event) override;
 
@@ -47,5 +52,10 @@ private:
     QSlider* volumnSlider = nullptr;
 
     QHBoxLayout* buttonLayout = nullptr;
+
+    CtrlState ctrlState;
+signals:
+    // 状态改变事件
+    void stateChanged();
 };
 }  // namespace module::meet

@@ -29,7 +29,7 @@ class MeetingOptionWidget;
 class StartMeetingWidget : public QWidget {
     Q_OBJECT
 signals:
-    void requstStartMeeting(const QString& name);
+    void requstStartMeeting(const QString& name, const CtrlState& ctrlState);
     void requstDisbandMeeting();
     void requstShareMeeting();
 

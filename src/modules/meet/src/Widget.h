@@ -78,7 +78,7 @@ private:
      * 开始会议
      * @param name 会议名称
      */
-    void createMeeting(const QString& name);
+    void createMeeting(const QString& name, const CtrlState& ctrlState);
 
     /**
      * 解散会议（销毁）

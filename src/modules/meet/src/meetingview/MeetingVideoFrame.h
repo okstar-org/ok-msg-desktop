@@ -17,6 +17,7 @@
 #include "MeetingVideoDefines.h"
 #include "base/jid.h"
 #include "lib/messenger/messenger.h"
+#include "src/Defines.h"
 
 class QToolBar;
 class QToolButton;
@@ -32,7 +33,7 @@ class MeetingUser;
 class MeetingVideoFrame : public QWidget, public lib::messenger::MessengerMeetHandler {
     Q_OBJECT
 public:
-    explicit MeetingVideoFrame(const QString& name, QWidget* parent = nullptr);
+    explicit MeetingVideoFrame(const QString& name, CtrlState ctrlState, QWidget* parent = nullptr);
     ~MeetingVideoFrame() override;
     void reloadTheme();
     void createMeet(const QString& name);
@@ -118,6 +119,9 @@ private:
     // 会议唯一名称
     QString username;
 
+    // 控制状态
+    CtrlState ctrlState;
+
 public slots:
     void doLeaveMeet();
 
@@ -129,6 +133,9 @@ signals:
     void meetLeft();
     void participantJoined(const QString& name, const lib::messenger::Participant& part);
     void participantLeft(const QString& name, const QString& participant);
+
+    // 状态改变事件
+    void stateChanged();
 };
 
 }  // namespace module::meet

@@ -49,7 +49,7 @@ StartMeetingWidget::StartMeetingWidget(QWidget* parent) : QWidget(parent) {
         if (n.isEmpty()) {
             return;
         }
-        emit requstStartMeeting(n);
+        emit requstStartMeeting(n, optionWidget->getCtrlState());
     });
 
     shareButton = createButton(tr("Share"), optionWidget, "share");

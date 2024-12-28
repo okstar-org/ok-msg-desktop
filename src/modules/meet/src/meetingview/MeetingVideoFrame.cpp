@@ -36,8 +36,8 @@
 
 namespace module::meet {
 
-MeetingVideoFrame::MeetingVideoFrame(const QString& name, QWidget* parent)
-        : QWidget(parent), username(name), timeElapsed(nullptr) {
+MeetingVideoFrame::MeetingVideoFrame(const QString& name, CtrlState ctrlState, QWidget* parent)
+        : QWidget(parent), username(name), timeElapsed(nullptr), ctrlState(ctrlState) {
     setAttribute(Qt::WA_StyledBackground);
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -140,8 +140,22 @@ void MeetingVideoFrame::creatBottomBar() {
     QHBoxLayout* middleLayout = new QHBoxLayout();
     audioSettingButton = new PopupMenuComboBox(bottomBar);
     audioSettingButton->iconButton()->setIcon(QIcon(":/meet/image/micphone.svg"));
+    audioSettingButton->setCursor(Qt::PointingHandCursor);
+
+    connect(audioSettingButton->iconButton(), &QToolButton::clicked, [&](bool checked) {
+        ctrlState.enableMic = checked;
+        emit stateChanged();
+    });
+
     videoSettingButton = new PopupMenuComboBox(bottomBar);
     videoSettingButton->iconButton()->setIcon(QIcon(":/meet/image/videocam.svg"));
+    videoSettingButton->setCursor(Qt::PointingHandCursor);
+
+    connect(videoSettingButton->iconButton(), &QToolButton::clicked, [&](bool checked) {
+        ctrlState.enableCam = checked;
+        emit stateChanged();
+    });
+
     sharedDeskButton = new PopupMenuComboBox(bottomBar);
     sharedDeskButton->iconButton()->setIcon(QIcon(":/meet/image/share_screen.svg"));
     sharedDeskButton->iconButton()->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
@@ -182,6 +196,13 @@ void MeetingVideoFrame::creatBottomBar() {
 void MeetingVideoFrame::initConnection() {
     connect(audioSettingButton, &PopupMenuComboBox::menuRequest, this,
             &MeetingVideoFrame::showAudioPopMenu);
+
+    connect(this, &MeetingVideoFrame::stateChanged, [&]() {
+        // TODO 设置禁用图标
+
+        // 设置会议音视频开启和关闭
+        meet->setEnable(ctrlState.enableMic, ctrlState.enableCam);
+    });
 }
 
 void MeetingVideoFrame::showLayoutPicker() {

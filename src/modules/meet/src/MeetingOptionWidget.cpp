@@ -33,9 +33,23 @@ MeetingOptionWidget::MeetingOptionWidget(QWidget* parent) : QWidget(parent) {
     micSpeakSetting = new PopupMenuComboBox(this);
     micSpeakSetting->iconButton()->setIcon(QIcon(":/meet/image/micphone.svg"));
     micSpeakSetting->setLabel(tr("Micphone"));
+    micSpeakSetting->setCursor(Qt::PointingHandCursor);
+    connect(micSpeakSetting->iconButton(), &QToolButton::clicked, [&](bool checked) {
+        ctrlState.enableMic = checked;
+        emit stateChanged();
+    });
+    ctrlState.enableMic = true;
+
     cameraSetting = new PopupMenuComboBox(this);
     cameraSetting->iconButton()->setIcon(QIcon(":/meet/image/videocam.svg"));
     cameraSetting->setLabel(tr("Camera"));
+    connect(cameraSetting->iconButton(), &QToolButton::clicked, [&](bool checked) {
+        ctrlState.enableCam = checked;
+        emit stateChanged();
+    });
+
+    ctrlState.enableCam = true;
+
     volumnSetting = new PopupMenuComboBox(this);
     volumnSetting->iconButton()->setIcon(QIcon(":/meet/image/volumn_2.svg"));
     volumnSlider = new QSlider(Qt::Horizontal, volumnSetting);

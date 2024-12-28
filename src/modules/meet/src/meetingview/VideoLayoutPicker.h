@@ -18,6 +18,7 @@
 class QPushButton;
 class QButtonGroup;
 class QEventLoop;
+
 namespace module::meet {
 
 class VideoLayoutPicker : public QFrame {

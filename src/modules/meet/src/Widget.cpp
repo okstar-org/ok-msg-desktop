@@ -138,7 +138,7 @@ void Widget::joinMeeting(const QString& no) {
  * 创建会议
  * @param name
  */
-void Widget::createMeeting(const QString& name) {
+void Widget::createMeeting(const QString& name, const CtrlState& ctrlState) {
     qDebug() << __func__;
 
     QMutexLocker locker(&mutex);
@@ -148,7 +148,8 @@ void Widget::createMeeting(const QString& name) {
     }
     if (!view) {
         setState(MeetingState::CreatingMeeting);
-        view = new MeetingVideoFrame(name);
+        view = new MeetingVideoFrame(name, ctrlState);
+
         // TODO 暂时关闭即退出
         connect(view.data(), &MeetingVideoFrame::destroyed, this, [this]() {
             currentMeetingName.clear();

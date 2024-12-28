@@ -117,7 +117,7 @@ public:
 
     void send(const QString& xml);
 
-    IM* im() const {
+    [[nodiscard]] IM* im() const {
         assert(_im);
         return _im;
     }
