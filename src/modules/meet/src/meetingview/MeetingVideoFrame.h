@@ -79,6 +79,9 @@ private:
     void removeParticipant(const QString& name, const QString& participant);
 
 private:
+    void syncAudioVideoState();
+
+private:
     // 顶部工具
     QToolBar* topToolBar = nullptr;
     QAction* infoAction = nullptr;
@@ -133,9 +136,6 @@ signals:
     void meetLeft();
     void participantJoined(const QString& name, const lib::messenger::Participant& part);
     void participantLeft(const QString& name, const QString& participant);
-
-    // 状态改变事件
-    void stateChanged();
 };
 
 }  // namespace module::meet

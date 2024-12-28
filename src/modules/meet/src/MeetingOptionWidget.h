@@ -44,6 +44,9 @@ protected:
     void showEvent(QShowEvent* event) override;
 
 private:
+    void updateAudioVideoIcon(bool audio, bool video);
+
+private:
     RoundedPixmapLabel* avatarLabel = nullptr;
 
     PopupMenuComboBox* micSpeakSetting = nullptr;

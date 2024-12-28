@@ -31,24 +31,24 @@ MeetingOptionWidget::MeetingOptionWidget(QWidget* parent) : QWidget(parent) {
     avatarLabel->setContentsSize(QSize(120, 120));
 
     micSpeakSetting = new PopupMenuComboBox(this);
-    micSpeakSetting->iconButton()->setIcon(QIcon(":/meet/image/micphone.svg"));
+    // micSpeakSetting->iconButton()->setIcon(QIcon(":/meet/image/micphone.svg"));
     micSpeakSetting->setLabel(tr("Micphone"));
     micSpeakSetting->setCursor(Qt::PointingHandCursor);
     connect(micSpeakSetting->iconButton(), &QToolButton::clicked, [&](bool checked) {
-        ctrlState.enableMic = checked;
-        emit stateChanged();
+        ctrlState.enableMic = !ctrlState.enableMic;
+        updateAudioVideoIcon(true, false);
     });
     ctrlState.enableMic = true;
 
     cameraSetting = new PopupMenuComboBox(this);
-    cameraSetting->iconButton()->setIcon(QIcon(":/meet/image/videocam.svg"));
+    // cameraSetting->iconButton()->setIcon(QIcon(":/meet/image/videocam.svg"));
     cameraSetting->setLabel(tr("Camera"));
     connect(cameraSetting->iconButton(), &QToolButton::clicked, [&](bool checked) {
-        ctrlState.enableCam = checked;
-        emit stateChanged();
+        ctrlState.enableCam = !ctrlState.enableCam;
+        updateAudioVideoIcon(false, true);
     });
-
     ctrlState.enableCam = true;
+    updateAudioVideoIcon(true, true);
 
     volumnSetting = new PopupMenuComboBox(this);
     volumnSetting->iconButton()->setIcon(QIcon(":/meet/image/volumn_2.svg"));
@@ -81,8 +81,7 @@ void MeetingOptionWidget::addFooterButton(QPushButton* button) {
     buttonLayout->addWidget(button);
 }
 
-void MeetingOptionWidget::retranslateUi()
-{
+void MeetingOptionWidget::retranslateUi() {
     micSpeakSetting->setLabel(tr("Micphone"));
     cameraSetting->setLabel(tr("Camera"));
 }
@@ -90,5 +89,21 @@ void MeetingOptionWidget::retranslateUi()
 void MeetingOptionWidget::showEvent(QShowEvent* event) {
     auto bus = ok::Application::Instance()->bus();
     emit bus->getAvatar();
+}
+void MeetingOptionWidget::updateAudioVideoIcon(bool audio, bool video) {
+    if (audio) {
+        if (ctrlState.enableMic) {
+            micSpeakSetting->iconButton()->setIcon(QIcon(":/meet/image/micphone.svg"));
+        } else {
+            micSpeakSetting->iconButton()->setIcon(QIcon(":/meet/image/micphone_mute.svg"));
+        }
+    }
+    if (video) {
+        if (ctrlState.enableCam) {
+            cameraSetting->iconButton()->setIcon(QIcon(":/meet/image/videocam.svg"));
+        } else {
+            cameraSetting->iconButton()->setIcon(QIcon(":/meet/image/videocam_stop.svg"));
+        }
+    }
 }
 }  // namespace module::meet
