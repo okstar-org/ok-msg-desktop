@@ -69,6 +69,8 @@ MeetingVideoFrame::MeetingVideoFrame(const QString& name, CtrlState ctrlState, Q
 
     callDurationTimer = new QTimer(this);
     connect(callDurationTimer, &QTimer::timeout, this, &MeetingVideoFrame::updateDuration);
+
+    syncAudioVideoState();
 }
 
 MeetingVideoFrame::~MeetingVideoFrame() {
@@ -139,21 +141,21 @@ void MeetingVideoFrame::creatBottomBar() {
     // 中间部分
     QHBoxLayout* middleLayout = new QHBoxLayout();
     audioSettingButton = new PopupMenuComboBox(bottomBar);
-    audioSettingButton->iconButton()->setIcon(QIcon(":/meet/image/micphone.svg"));
+    // audioSettingButton->iconButton()->setIcon(QIcon(":/meet/image/micphone.svg"));
     audioSettingButton->setCursor(Qt::PointingHandCursor);
 
     connect(audioSettingButton->iconButton(), &QToolButton::clicked, [&](bool checked) {
         ctrlState.enableMic = !ctrlState.enableMic;
-        emit stateChanged();
+        syncAudioVideoState();
     });
 
     videoSettingButton = new PopupMenuComboBox(bottomBar);
-    videoSettingButton->iconButton()->setIcon(QIcon(":/meet/image/videocam.svg"));
+    // videoSettingButton->iconButton()->setIcon(QIcon(":/meet/image/videocam.svg"));
     videoSettingButton->setCursor(Qt::PointingHandCursor);
 
     connect(videoSettingButton->iconButton(), &QToolButton::clicked, [&](bool checked) {
         ctrlState.enableCam = !ctrlState.enableCam;
-        emit stateChanged();
+        syncAudioVideoState();
     });
 
     sharedDeskButton = new PopupMenuComboBox(bottomBar);
@@ -196,13 +198,6 @@ void MeetingVideoFrame::creatBottomBar() {
 void MeetingVideoFrame::initConnection() {
     connect(audioSettingButton, &PopupMenuComboBox::menuRequest, this,
             &MeetingVideoFrame::showAudioPopMenu);
-
-    connect(this, &MeetingVideoFrame::stateChanged, [&]() {
-        // TODO 设置禁用图标
-
-        // 设置会议音视频开启和关闭
-        meet->setEnable(ctrlState.enableMic, ctrlState.enableCam);
-    });
 }
 
 void MeetingVideoFrame::showLayoutPicker() {
@@ -360,6 +355,22 @@ void MeetingVideoFrame::removeParticipant(const QString& name, const QString& re
         this->close();
         this->deleteLater();
     }
+}
+
+void MeetingVideoFrame::syncAudioVideoState() {
+    if (ctrlState.enableMic) {
+        audioSettingButton->iconButton()->setIcon(QIcon(":/meet/image/micphone.svg"));
+    } else {
+        audioSettingButton->iconButton()->setIcon(QIcon(":/meet/image/micphone_mute.svg"));
+    }
+
+    if (ctrlState.enableCam) {
+        videoSettingButton->iconButton()->setIcon(QIcon(":/meet/image/videocam.svg"));
+    } else {
+        videoSettingButton->iconButton()->setIcon(QIcon(":/meet/image/videocam_stop.svg"));
+    }
+    // 设置会议音视频开启和关闭
+    meet->setEnable(ctrlState.enableMic, ctrlState.enableCam);
 }
 
 void MeetingVideoFrame::doLeaveMeet() {
