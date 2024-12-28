@@ -98,7 +98,7 @@ size_t Conductor::getVideoCaptureSize() {
 }
 
 void Conductor::setEnable(bool audio, bool video) {
-    RTC_LOG(LS_INFO) << __FUNCTION__;
+    RTC_LOG(LS_INFO) << __FUNCTION__ << "audio:" << audio << " video:" << video;
     if (_audioTrack) {
         _audioTrack->set_enabled(audio);
     }

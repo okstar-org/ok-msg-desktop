@@ -143,7 +143,7 @@ void MeetingVideoFrame::creatBottomBar() {
     audioSettingButton->setCursor(Qt::PointingHandCursor);
 
     connect(audioSettingButton->iconButton(), &QToolButton::clicked, [&](bool checked) {
-        ctrlState.enableMic = checked;
+        ctrlState.enableMic = !ctrlState.enableMic;
         emit stateChanged();
     });
 
@@ -152,7 +152,7 @@ void MeetingVideoFrame::creatBottomBar() {
     videoSettingButton->setCursor(Qt::PointingHandCursor);
 
     connect(videoSettingButton->iconButton(), &QToolButton::clicked, [&](bool checked) {
-        ctrlState.enableCam = checked;
+        ctrlState.enableCam = !ctrlState.enableCam;
         emit stateChanged();
     });
 
