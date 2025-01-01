@@ -32,6 +32,7 @@ private:
     std::string _peer_id;
     std::string resource;
     const std::vector<OkRTCHandler*>& handlers;
+    size_t count = 0;
 };
 
 }  // namespace lib::ortc

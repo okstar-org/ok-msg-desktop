@@ -29,8 +29,10 @@ VideoSink::~VideoSink() {
     RTC_LOG(LS_INFO) << __FUNCTION__ << " peerId:" << _peer_id << " mid:" << resource;
 }
 void VideoSink::OnFrame(const webrtc::VideoFrame& frame) {
-    //        RTC_LOG(LS_INFO) << __FUNCTION__ << " peer:" << _peer_id << " mid:" << resource
-    //                     << " frame:" << frame.size();
+    if(count++ % 100 == 0){
+        RTC_LOG(LS_INFO) << __FUNCTION__ << " peer:" << _peer_id << " mid:" << resource
+                         << " received frame count:" << count;
+    }
 
     bool conv = false;
     RendererImage image{};

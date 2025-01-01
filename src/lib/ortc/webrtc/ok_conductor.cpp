@@ -234,27 +234,27 @@ void Conductor::OnTrack(rtc::scoped_refptr<webrtc::RtpTransceiverInterface> tran
     RTC_LOG(LS_INFO) << __FUNCTION__ << " mid: " << mid;
     auto receiver = transceiver->receiver();
 
-    //    // track
-    //    auto track = receiver->track();
-    //    RTC_LOG(LS_INFO) << __FUNCTION__ << " kind:" << track->kind() << " trackId:" <<
-    //    track->id();
-    //
-    //    if (track->kind() == webrtc::MediaStreamTrackInterface::kAudioKind) {
-    //        _remote_audio_track = static_cast<webrtc::AudioTrackInterface*>(track.get());
-    //        RTC_LOG(LS_INFO) << __FUNCTION__
-    //                         << " Added successful remote audio track: " << _remote_audio_track;
-    //    } else if (track->kind() == webrtc::MediaStreamTrackInterface::kVideoKind) {
-    //        auto _videoSink = new VideoSink(webRtc->getHandlers(), peerId, mid);
-    //        RTC_LOG(LS_INFO) << __FUNCTION__ << " Created video sink:" << _videoSink
-    //                         << " for mid:" << mid;
-    //
-    //        auto videoTrack = dynamic_cast<webrtc::VideoTrackInterface*>(track.get());
-    //        videoTrack->AddOrUpdateSink(_videoSink, rtc::VideoSinkWants());
-    //
-    //        _videoSinks.insert(std::make_pair(mid, _videoSink));
-    //        RTC_LOG(LS_INFO) << __FUNCTION__ << " Added successful remote video track: " <<
-    //        videoTrack;
-    //    }
+       // track
+       auto track = receiver->track();
+       RTC_LOG(LS_INFO) << __FUNCTION__ << " kind:" << track->kind() << " trackId:" <<
+       track->id();
+
+       if (track->kind() == webrtc::MediaStreamTrackInterface::kAudioKind) {
+           _remote_audio_track = static_cast<webrtc::AudioTrackInterface*>(track.get());
+           RTC_LOG(LS_INFO) << __FUNCTION__
+                            << " Added successful remote audio track: " << _remote_audio_track;
+       } else if (track->kind() == webrtc::MediaStreamTrackInterface::kVideoKind) {
+           auto _videoSink = new VideoSink(webRtc->getHandlers(), peerId, mid);
+           RTC_LOG(LS_INFO) << __FUNCTION__ << " Created video sink:" << _videoSink
+                            << " for mid:" << mid;
+
+           auto videoTrack = dynamic_cast<webrtc::VideoTrackInterface*>(track.get());
+           videoTrack->AddOrUpdateSink(_videoSink, rtc::VideoSinkWants());
+
+           _videoSinks.insert(std::make_pair(mid, _videoSink));
+           RTC_LOG(LS_INFO) << __FUNCTION__ << " Added successful remote video track: " <<
+           videoTrack;
+       }
 }
 
 void Conductor::OnAddTrack(
