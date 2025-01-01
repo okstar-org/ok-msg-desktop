@@ -43,6 +43,8 @@ MeetingOptionWidget::MeetingOptionWidget(QWidget* parent) : QWidget(parent) {
     cameraSetting = new PopupMenuComboBox(this);
     // cameraSetting->iconButton()->setIcon(QIcon(":/meet/image/videocam.svg"));
     cameraSetting->setLabel(tr("Camera"));
+    cameraSetting->setCursor(Qt::PointingHandCursor);
+
     connect(cameraSetting->iconButton(), &QToolButton::clicked, [&](bool checked) {
         ctrlState.enableCam = !ctrlState.enableCam;
         updateAudioVideoIcon(false, true);
