@@ -24,7 +24,7 @@ class QShowEvent;
 class CallConfirmWidget final : public QWidget {
     Q_OBJECT
 public:
-    explicit CallConfirmWidget(const QWidget* anchor);
+    explicit CallConfirmWidget(bool video = false);
 
 signals:
     void accepted();
@@ -45,7 +45,7 @@ private:
     QRect mainRect;
     QPolygon spikePoly;
     QBrush brush;
-
+    bool isVideo;
     const int rectW, rectH;
     const int spikeW, spikeH;
     const int roundedFactor;

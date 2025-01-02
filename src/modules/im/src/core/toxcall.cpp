@@ -49,6 +49,7 @@ ToxCall::ToxCall(bool VideoEnabled, CoreAV& av, IAudioControl& audio)
 }
 
 ToxCall::~ToxCall() {
+    qDebug() << __func__;
     if (videoEnabled) {
         QObject::disconnect(videoInConn);
         //    CameraSource::getInstance().unsubscribe();
@@ -117,7 +118,9 @@ ToxFriendCall::ToxFriendCall(QString peerId, bool VideoEnabled, CoreAV& av, IAud
     }
 }
 
-ToxFriendCall::~ToxFriendCall() { QObject::disconnect(audioSinkInvalid); }
+ToxFriendCall::~ToxFriendCall() {
+    qDebug() << __func__;
+}
 
 void ToxFriendCall::onAudioSourceInvalidated() {
     //  auto newSrc = audio.makeSource();

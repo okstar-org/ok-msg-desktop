@@ -266,8 +266,9 @@ void CoreAV::onPeerConnectionChange(lib::messenger::IMPeerId peerId,
 void CoreAV::rejectCall(const ToxPeer& peerId) {
     qDebug() << __func__ << "peer:" << peerId;
 
-    auto fId = peerId.toFriendId().toString();
+    QWriteLocker locker{&callsLock};
 
+    auto fId = peerId.toFriendId().toString();
     auto it = calls.find(fId);
     if (it == calls.end()) {
         qWarning() << QString("Can't reject call with %1, we're already not in this call!")
@@ -275,13 +276,14 @@ void CoreAV::rejectCall(const ToxPeer& peerId) {
         return;
     }
 
-    auto& call = it->second;
 
+    auto& call = it->second;
     imCall->callReject(lib::messenger::IMPeerId{peerId.toString()}, call->getCallId());
+    calls.erase(it);
 }
 
 void CoreAV::timeoutCall(QString friendNum) {
-    // QWriteLocker locker{&callsLock};
+    QWriteLocker locker{&callsLock};
 
     if (!cancelCall(friendNum)) {
         qWarning() << QString("Failed to timeout call with %1").arg(friendNum);

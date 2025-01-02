@@ -15,7 +15,7 @@
 #include <QColor>
 #include <QDesktopServices>
 #include <QPalette>
-
+#include <QGuiApplication>
 #include <QColor>
 #include <QGraphicsDropShadowEffect>
 #include <QLayout>
@@ -23,6 +23,7 @@
 #include <QPalette>
 #include <QTime>
 #include <QWidget>
+#include <QScreen>
 
 namespace ok::base {
 
@@ -79,7 +80,32 @@ public:
     }
 
     static void OpenExternUrl(const QUrl& url) { QDesktopServices::openUrl(url); }
+
+
+    /**移动窗口到屏幕居中
+     * @brief moveToScreenCenter
+     */
+    inline static void moveToScreenCenter(QWidget * w){
+        if(!w) return;
+
+        // 获取屏幕大小和窗口大小
+        QRect screenGeometry = QGuiApplication::primaryScreen()->geometry();
+
+        // 计算窗口应该放置的位置以使其居中
+        auto ws = w->sizeHint();
+        QPoint windowPosition = QPoint(
+                (screenGeometry.width() - ws.width()) / 2,
+                (screenGeometry.height() - ws.height()) / 2);
+
+        // 移动窗口到计算出的位置
+        w->move(windowPosition);
+    }
+
+
+
 };
+
+
 }  // namespace ok::base
 
 #endif  // WIDGETS_H

@@ -25,6 +25,7 @@
 #include <QVBoxLayout>
 #include "src/lib/settings/style.h"
 #include "src/widget/widget.h"
+#include "base/widgets.h"
 
 /**
  * @class CallConfirmWidget
@@ -43,25 +44,24 @@
  * @brief Used to correct the rounding factors on non-square rects
  */
 
-CallConfirmWidget::CallConfirmWidget(const QWidget* anchor)
+CallConfirmWidget::CallConfirmWidget(bool video)
         : QWidget()
-        , anchor(anchor)
-        , rectW{120}
-        , rectH{85}
+        , isVideo(video)
+        , rectW{320}
+        , rectH{182}
         , spikeW{30}
         , spikeH{15}
         , roundedFactor{20}
         , rectRatio(static_cast<qreal>(rectH) / static_cast<qreal>(rectW)) {
-    setWindowFlags(Qt::SubWindow);
+
+    // setWindowFlags(Qt::SubWindow);
+    setWindowFlags(Qt::FramelessWindowHint);
     setAttribute(Qt::WA_DeleteOnClose);
 
-    QPalette palette;
-    palette.setColor(QPalette::WindowText, Qt::white);
-    setPalette(palette);
 
     QVBoxLayout* layout = new QVBoxLayout(this);
     QLabel* callLabel = new QLabel(QObject::tr("Incoming call..."), this);
-    callLabel->setStyleSheet("QLabel{color: white;} QToolTip{color: black;}");
+    // callLabel->setStyleSheet("QLabel{color: white;} QToolTip{color: black;}");
     callLabel->setAlignment(Qt::AlignHCenter);
     callLabel->setToolTip(callLabel->text());
 
@@ -90,6 +90,8 @@ CallConfirmWidget::CallConfirmWidget(const QWidget* anchor)
 
     buttonBox->addButton(accept, QDialogButtonBox::AcceptRole);
     buttonBox->addButton(reject, QDialogButtonBox::RejectRole);
+    for(auto *b : buttonBox->buttons())
+        b->setCursor(Qt::PointingHandCursor);
 
     connect(buttonBox, &QDialogButtonBox::accepted, this, &CallConfirmWidget::accepted);
     connect(buttonBox, &QDialogButtonBox::rejected, this, &CallConfirmWidget::rejected);
@@ -97,37 +99,47 @@ CallConfirmWidget::CallConfirmWidget(const QWidget* anchor)
     layout->setMargin(marginSize);
     layout->addSpacing(spikeH);
     layout->addWidget(callLabel);
-    layout->addWidget(buttonBox);
 
-    setFixedSize(rectW, rectH + spikeH);
-    reposition();
+    auto ctrlLayout = new QHBoxLayout(this);
+    ctrlLayout->addStretch(1);
+    ctrlLayout->addWidget(buttonBox);
+    ctrlLayout->addStretch(1);
+
+    layout->addLayout(ctrlLayout);
+
+    // setFixedSize(rectW, rectH + spikeH);
+    // reposition();
+    show();
 }
 
 /**
  * @brief Recalculate our positions to track the anchor
  */
 void CallConfirmWidget::reposition() {
-    if (parentWidget()) parentWidget()->removeEventFilter(this);
+    // if (parentWidget()) parentWidget()->removeEventFilter(this);
 
-    setParent(anchor->window());
-    parentWidget()->installEventFilter(this);
+    // setParent(anchor->window());
+    // parentWidget()->installEventFilter(this);
 
-    QWidget* w = anchor->window();
-    QPoint pos = anchor->mapToGlobal({(anchor->width() - rectW) / 2, anchor->height()}) -
-                 w->mapToGlobal({0, 0});
+    // QWidget* w = anchor->window();
+    // QPoint pos = anchor->mapToGlobal({(anchor->width() - rectW) / 2, anchor->height()}) -
+                 // w->mapToGlobal({0, 0});
 
     // We don't want the widget to overflow past the right of the screen
-    int xOverflow = 0;
-    if (pos.x() + rectW > w->width()) xOverflow = pos.x() + rectW - w->width();
-    pos.rx() -= xOverflow;
+    // int xOverflow = 0;
+    // if (pos.x() + rectW > w->width()) xOverflow = pos.x() + rectW - w->width();
+    // pos.rx() -= xOverflow;
 
-    mainRect = {0, spikeH, rectW, rectH};
-    brush = QBrush(QColor(65, 65, 65));
-    spikePoly = QPolygon({{(rectW - spikeW) / 2 + xOverflow, spikeH},
-                          {rectW / 2 + xOverflow, 0},
-                          {(rectW + spikeW) / 2 + xOverflow, spikeH}});
+    // mainRect = {0, spikeH, rectW, rectH};
+    // brush = QBrush(QColor(65, 65, 65));
+    // spikePoly = QPolygon({{(rectW - spikeW) / 2 + xOverflow, spikeH},
+                          // {rectW / 2 + xOverflow, 0},
+                          // {(rectW + spikeW) / 2 + xOverflow, spikeH}});
 
-    move(pos);
+    // move(pos);
+
+    ok::base::Widgets::moveToScreenCenter(this);
+
     update();
 }
 
@@ -142,19 +154,13 @@ void CallConfirmWidget::paintEvent(QPaintEvent*) {
 }
 
 void CallConfirmWidget::showEvent(QShowEvent*) {
-    // Kriby: Legacy comment, is this still true?
-    // If someone does show() from Widget or lower, the event will reach us
-    // because it's our parent, and we could show up in the wrong form.
-    // So check here if our friend's form is actually the active one.
-
-    reposition();
     update();
 }
 
 void CallConfirmWidget::hideEvent(QHideEvent*) {
     if (parentWidget()) parentWidget()->removeEventFilter(this);
 
-    setParent(nullptr);
+    // setParent(nullptr);
 }
 
 bool CallConfirmWidget::eventFilter(QObject*, QEvent* event) {
