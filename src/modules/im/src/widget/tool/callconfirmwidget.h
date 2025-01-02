@@ -17,6 +17,7 @@
 #include <QPolygon>
 #include <QRect>
 #include <QWidget>
+#include "src/core/FriendId.h"
 
 class QPaintEvent;
 class QShowEvent;
@@ -24,7 +25,9 @@ class QShowEvent;
 class CallConfirmWidget final : public QWidget {
     Q_OBJECT
 public:
-    explicit CallConfirmWidget(bool video = false);
+    explicit CallConfirmWidget(const ToxPeer& from,
+                               bool video,
+                               QWidget* parent=nullptr);
 
 signals:
     void accepted();
@@ -40,8 +43,7 @@ protected:
     bool eventFilter(QObject*, QEvent* event) final;
 
 private:
-    const QWidget* anchor;
-
+    ToxPeer from;
     QRect mainRect;
     QPolygon spikePoly;
     QBrush brush;

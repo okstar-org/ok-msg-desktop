@@ -288,10 +288,7 @@ void ChatFormHeader::showOutgoingCall(bool video) {
 void ChatFormHeader::createCallConfirm(const ToxPeer& peer, bool video, QString& displayedName) {
     qDebug() << __func__ << "peer:" << peer << "video?" << video;
 
-
-    callConfirm = std::make_unique<CallConfirmWidget>(video);
-    //    callConfirm->move(btn->pos());
-
+    callConfirm = std::make_unique<CallConfirmWidget>(peer, video);
     connect(callConfirm.get(), &CallConfirmWidget::accepted, this, [=]() {
         removeCallConfirm();
         emit callAccepted(peer, video);
