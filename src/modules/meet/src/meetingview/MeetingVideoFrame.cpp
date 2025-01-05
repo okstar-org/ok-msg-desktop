@@ -36,8 +36,12 @@
 
 namespace module::meet {
 
-MeetingVideoFrame::MeetingVideoFrame(const QString& name, CtrlState ctrlState, QWidget* parent)
-        : QWidget(parent), username(name), timeElapsed(nullptr), ctrlState(ctrlState) {
+MeetingVideoFrame::MeetingVideoFrame(const QString& name, lib::ortc::CtrlState ctrlState, QWidget* parent)
+        : QWidget(parent), username(name),
+        duration(0,0,0), // 初始化时间为 00:00:00
+        callDurationTimer(nullptr),
+        timeElapsed(nullptr),
+        ctrlState(ctrlState) {
     setAttribute(Qt::WA_StyledBackground);
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -370,7 +374,7 @@ void MeetingVideoFrame::syncAudioVideoState() {
         videoSettingButton->iconButton()->setIcon(QIcon(":/meet/image/videocam_stop.svg"));
     }
     // 设置会议音视频开启和关闭
-    meet->setEnable(ctrlState.enableMic, ctrlState.enableCam);
+    meet->setCtrlState(ctrlState);
 }
 
 void MeetingVideoFrame::doLeaveMeet() {
@@ -386,7 +390,6 @@ void MeetingVideoFrame::updateDuration() {
     auto elapsedSeconds = timeElapsed->elapsed() / 1000;
 
     // 将秒转换为 HH:MM:SS 格式
-    QTime duration(0, 0, 0);  // 初始化时间为 00:00:00
     duration = duration.addSecs(elapsedSeconds);
 
     // 更新标签文本

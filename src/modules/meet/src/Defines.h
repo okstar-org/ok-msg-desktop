@@ -48,12 +48,6 @@ struct Share {
     QString name;
 };
 
-/**
- * 控制状态
- */
-struct CtrlState {
-    bool enableMic;
-    bool enableCam;
-};
+
 
 }  // namespace module::meet

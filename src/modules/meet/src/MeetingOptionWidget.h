@@ -15,6 +15,7 @@
 #include <QFrame>
 #include <QPointer>
 #include "Defines.h"
+#include "lib/ortc/ok_rtc.h"
 
 class QPushButton;
 class RoundedPixmapLabel;
@@ -36,7 +37,7 @@ public:
 
     void retranslateUi();
 
-    inline const CtrlState& getCtrlState() const {
+    inline const lib::ortc::CtrlState& getCtrlState() const {
         return ctrlState;
     }
 
@@ -44,7 +45,7 @@ protected:
     void showEvent(QShowEvent* event) override;
 
 private:
-    void updateAudioVideoIcon(bool audio, bool video);
+    void updateAudioVideoIcon(bool audio, bool video, bool spk);
 
 private:
     RoundedPixmapLabel* avatarLabel = nullptr;
@@ -56,7 +57,7 @@ private:
 
     QHBoxLayout* buttonLayout = nullptr;
 
-    CtrlState ctrlState;
+    lib::ortc::CtrlState ctrlState;
 signals:
     // 状态改变事件
     void stateChanged();

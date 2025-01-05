@@ -888,17 +888,13 @@ void WebRTC::setTransportInfo(const std::string& peerId, const std::string& sId,
     }
 }
 
-void WebRTC::setEnable(bool audio, bool video) {
+void WebRTC::setEnable(CtrlState state) {
     for (auto it : _pcMap) {
-        it.second->setEnable(audio, video);
+        it.second->setEnable(state.enableMic, state.enableCam);
+        it.second->setRemoteMute(state.enableSpk);
     }
 }
 
-void WebRTC::setRemoteMute(bool mute) {
-    for (auto it : _pcMap) {
-        it.second->setRemoteMute(mute);
-    }
-}
 
 void WebRTC::addSource(const std::string& peerId,
                        const std::map<std::string, ortc::OMeetSSRCBundle>& map) {

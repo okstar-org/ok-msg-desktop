@@ -82,20 +82,28 @@ public:
     QString getCallId() const;
     void setCallId(QString value);
 
+    inline const lib::ortc::CtrlState& getCtrlState() const {return ctrlState; }
+
 protected:
     bool active{false};
     CoreAV* av{nullptr};
     // audio
     IAudioControl& audio;
-    bool muteMic{false};
-    bool muteVol{false};
+
     // video
     CoreVideoSource* videoSource{nullptr};
     QMetaObject::Connection videoInConn;
-    bool videoEnabled{false};
+
+    // bool muteMic{false};
+    // bool muteVol{false};
+    // bool videoEnabled{false};
+
+
     bool nullVideoBitrate{false};
     std::unique_ptr<IAudioSource> audioSource = nullptr;
     QString callId;
+
+    lib::ortc::CtrlState ctrlState;
 };
 
 class ToxFriendCall : public ToxCall {

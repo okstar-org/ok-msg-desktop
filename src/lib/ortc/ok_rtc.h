@@ -409,6 +409,15 @@ enum class Mode {
     meet,
 };
 
+/**
+ * 控制状态
+ */
+struct CtrlState {
+    bool enableMic;
+    bool enableCam;
+    bool enableSpk;
+};
+
 class OkRTC {
 public:
     virtual ~OkRTC() = default;
@@ -440,9 +449,7 @@ public:
                                   const std::string& sId,
                                   const OIceUdp& oIceUdp) = 0;
 
-    virtual void setEnable(bool audio, bool video) = 0;
-
-    virtual void setRemoteMute(bool mute) = 0;
+    virtual void setEnable(CtrlState state) = 0;
 
     virtual bool quit(const std::string& peerId) = 0;
 

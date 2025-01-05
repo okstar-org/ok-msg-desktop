@@ -24,7 +24,9 @@
 
 namespace module::meet {
 
-MeetingOptionWidget::MeetingOptionWidget(QWidget* parent) : QWidget(parent) {
+MeetingOptionWidget::MeetingOptionWidget(QWidget* parent) : QWidget(parent)
+        , ctrlState{true, true, true}
+{
     avatarLabel = new RoundedPixmapLabel(this);
     avatarLabel->setObjectName("avatarLabel");
     avatarLabel->setAttribute(Qt::WA_StyledBackground);
@@ -36,9 +38,9 @@ MeetingOptionWidget::MeetingOptionWidget(QWidget* parent) : QWidget(parent) {
     micSpeakSetting->setCursor(Qt::PointingHandCursor);
     connect(micSpeakSetting->iconButton(), &QToolButton::clicked, [&](bool checked) {
         ctrlState.enableMic = !ctrlState.enableMic;
-        updateAudioVideoIcon(true, false);
+        updateAudioVideoIcon(true, false, false);
     });
-    ctrlState.enableMic = true;
+
 
     cameraSetting = new PopupMenuComboBox(this);
     // cameraSetting->iconButton()->setIcon(QIcon(":/meet/image/videocam.svg"));
@@ -47,13 +49,21 @@ MeetingOptionWidget::MeetingOptionWidget(QWidget* parent) : QWidget(parent) {
 
     connect(cameraSetting->iconButton(), &QToolButton::clicked, [&](bool checked) {
         ctrlState.enableCam = !ctrlState.enableCam;
-        updateAudioVideoIcon(false, true);
+        updateAudioVideoIcon(false, true, false);
     });
-    ctrlState.enableCam = true;
-    updateAudioVideoIcon(true, true);
+
+
 
     volumnSetting = new PopupMenuComboBox(this);
-    volumnSetting->iconButton()->setIcon(QIcon(":/meet/image/volumn_2.svg"));
+    // volumnSetting->iconButton()->setIcon(QIcon(":/meet/image/speaker.svg"));
+    volumnSetting->iconButton()->setCursor(Qt::PointingHandCursor);
+    connect(volumnSetting->iconButton(), &QToolButton::clicked, [&](bool checked) {
+        ctrlState.enableSpk = !ctrlState.enableSpk;
+        updateAudioVideoIcon(false, false, true);
+    });
+
+    updateAudioVideoIcon(true, true, true);
+
     volumnSlider = new QSlider(Qt::Horizontal, volumnSetting);
     volumnSlider->setRange(0, 100);
     volumnSetting->setWidget(volumnSlider);
@@ -92,7 +102,7 @@ void MeetingOptionWidget::showEvent(QShowEvent* event) {
     auto bus = ok::Application::Instance()->bus();
     emit bus->getAvatar();
 }
-void MeetingOptionWidget::updateAudioVideoIcon(bool audio, bool video) {
+void MeetingOptionWidget::updateAudioVideoIcon(bool audio, bool video, bool speaker) {
     if (audio) {
         if (ctrlState.enableMic) {
             micSpeakSetting->iconButton()->setIcon(QIcon(":/meet/image/micphone.svg"));
@@ -105,6 +115,14 @@ void MeetingOptionWidget::updateAudioVideoIcon(bool audio, bool video) {
             cameraSetting->iconButton()->setIcon(QIcon(":/meet/image/videocam.svg"));
         } else {
             cameraSetting->iconButton()->setIcon(QIcon(":/meet/image/videocam_stop.svg"));
+        }
+    }
+
+    if(speaker){
+        if (ctrlState.enableSpk) {
+            volumnSetting->iconButton()->setIcon(QIcon(":/meet/image/speaker.svg"));
+        } else {
+            volumnSetting->iconButton()->setIcon(QIcon(":/meet/image/speaker_stop.svg"));
         }
     }
 }

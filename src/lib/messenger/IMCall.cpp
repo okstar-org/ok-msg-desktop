@@ -341,13 +341,10 @@ bool IMCall::answer(const IMPeerId& peerId, const QString& callId, bool video) {
     return true;
 }
 
-void IMCall::setMute(bool mute) {
-    lib::ortc::OkRTCManager::getInstance()->getRtc()->setEnable(mute, true);
+void IMCall::setCtrlState(ortc::CtrlState state) {
+    lib::ortc::OkRTCManager::getInstance()->getRtc()->setEnable(state);
 }
 
-void IMCall::setRemoteMute(bool mute) {
-    lib::ortc::OkRTCManager::getInstance()->getRtc()->setRemoteMute(mute);
-}
 
 void IMCall::onCreatePeerConnection(const std::string& sId, const std::string& peerId, bool ok) {
     auto p = qstring(peerId);

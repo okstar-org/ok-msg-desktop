@@ -33,7 +33,7 @@ class MeetingUser;
 class MeetingVideoFrame : public QWidget, public lib::messenger::MessengerMeetHandler {
     Q_OBJECT
 public:
-    explicit MeetingVideoFrame(const QString& name, CtrlState ctrlState, QWidget* parent = nullptr);
+    explicit MeetingVideoFrame(const QString& name, lib::ortc::CtrlState ctrlState, QWidget* parent = nullptr);
     ~MeetingVideoFrame() override;
     void reloadTheme();
     void createMeet(const QString& name);
@@ -92,7 +92,8 @@ private:
     QAction* layoutAction = nullptr;
     QAction* fullScreenAction = nullptr;
 
-    QTimer* callDurationTimer = nullptr;
+    QTime duration;
+    QTimer* callDurationTimer;
     QElapsedTimer* timeElapsed;
 
     // 底部按钮区域
@@ -123,7 +124,7 @@ private:
     QString username;
 
     // 控制状态
-    CtrlState ctrlState;
+    lib::ortc::CtrlState ctrlState;
 
 public slots:
     void doLeaveMeet();

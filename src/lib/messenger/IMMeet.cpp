@@ -565,24 +565,24 @@ std::vector<std::string> IMMeet::getVideoDeviceList() {
     return {};
 }
 
-void IMMeet::setEnable(bool audio, bool video) {
-    qDebug() << __func__ << "audio:" << audio << " video:" << video;
+void IMMeet::setEnable(ortc::CtrlState state) {
+    qDebug() << __func__;
     auto pManager = ortc::OkRTCManager::getInstance();
     auto rtc = pManager->getRtc();
     if (!rtc) {
         return;
     }
-    rtc->setEnable(audio, video);
+    rtc->setEnable(state);
 
     auto self = meet->getSelf();
     auto res = self.resource;
     if (res.empty()) {
         return;
     }
-    //{"f4921c8d-a0":{"muted":true}, "f4921c8d-a0":{"muted":true}}
-    //    {"OTE5Y2-a0": {"muted":true}, "OTE5Y2-v0": {"muted":true }}
-    self.sourceInfo = "{\"" + res + "-a0\": {\"muted\":" + (audio ? "false" : "true") + "},\"" +
-                      res + "-v0\": {\"muted\":" + (audio ? "false" : "true") + " }}";
+
+    //{"OTE5Y2-a0": {"muted":true}, "OTE5Y2-v0": {"muted":true }}
+    self.sourceInfo = "{\"" + res + "-a0\": {\"muted\":" + (state.enableMic ? "false" : "true") + "},\"" +
+                      res + "-v0\": {\"muted\":" + (state.enableMic ? "false" : "true") + " }}";
     meet->sendPresence(self);
 }
 

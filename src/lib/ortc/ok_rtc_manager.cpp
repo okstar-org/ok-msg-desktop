@@ -86,11 +86,9 @@ void OkRTCManager::SessionTerminate(const std::string& sid) {
     rtc->SessionTerminate(sid);
 }
 
-void OkRTCManager::setEnable(bool mute, bool video) {
-    rtc->setEnable(mute, video);
+void OkRTCManager::setEnable(CtrlState state) {
+    rtc->setEnable(state);
 }
-
-void OkRTCManager::setRemoteMute(bool mute) {}
 
 size_t OkRTCManager::getVideoSize() {
     return rtc->getVideoSize();

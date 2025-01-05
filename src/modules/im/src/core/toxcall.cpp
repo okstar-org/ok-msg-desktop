@@ -44,13 +44,15 @@
  */
 
 ToxCall::ToxCall(bool VideoEnabled, CoreAV& av, IAudioControl& audio)
-        : av{&av}, audio(audio), videoEnabled{VideoEnabled} {
+        : av{&av}, audio(audio)
+        , ctrlState({true, VideoEnabled, true})
+{
     audioSource = audio.makeSource();
 }
 
 ToxCall::~ToxCall() {
     qDebug() << __func__;
-    if (videoEnabled) {
+    if (ctrlState.enableCam) {
         QObject::disconnect(videoInConn);
         //    CameraSource::getInstance().unsubscribe();
     }
@@ -60,17 +62,17 @@ bool ToxCall::isActive() const { return active; }
 
 void ToxCall::setActive(bool value) { active = value; }
 
-bool ToxCall::getMuteVol() const { return muteVol; }
+bool ToxCall::getMuteVol() const { return !ctrlState.enableSpk; }
 
-void ToxCall::setMuteVol(bool value) { muteVol = value; }
+void ToxCall::setMuteVol(bool value) { ctrlState.enableSpk = !value; }
 
-bool ToxCall::getMuteMic() const { return muteMic; }
+bool ToxCall::getMuteMic() const { return !ctrlState.enableMic; }
 
-void ToxCall::setMuteMic(bool value) { muteMic = value; }
+void ToxCall::setMuteMic(bool value) { ctrlState.enableMic = !value; }
 
-bool ToxCall::getVideoEnabled() const { return videoEnabled; }
+bool ToxCall::getVideoEnabled() const { return ctrlState.enableCam; }
 
-void ToxCall::setVideoEnabled(bool value) { videoEnabled = value; }
+void ToxCall::setVideoEnabled(bool value) { ctrlState.enableCam = value; }
 
 bool ToxCall::getNullVideoBitrate() const { return nullVideoBitrate; }
 
@@ -83,7 +85,11 @@ QString ToxCall::getCallId() const { return callId; }
 void ToxCall::setCallId(QString value) { callId = value; }
 
 ToxFriendCall::ToxFriendCall(QString peerId, bool VideoEnabled, CoreAV& av, IAudioControl& audio)
-        : ToxCall(VideoEnabled, av, audio), sink(audio.makeSink()), peerId{peerId} {
+        : ToxCall(VideoEnabled, av, audio)
+        , sink(audio.makeSink())
+        , peerId{peerId}
+
+{
     connect(audioSource.get(), &IAudioSource::frameAvailable, this,
             [this](const int16_t* pcm, size_t samples, uint8_t chans, uint32_t rate) {
                 this->av->sendCallAudio(this->peerId, pcm, samples, chans, rate);
@@ -98,7 +104,7 @@ ToxFriendCall::ToxFriendCall(QString peerId, bool VideoEnabled, CoreAV& av, IAud
     }
 
     // register video
-    if (videoEnabled) {
+    if (ctrlState.enableCam) {
         videoSource = new CoreVideoSource();
         // CameraSource& source = CameraSource::getInstance();
 

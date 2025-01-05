@@ -516,11 +516,9 @@ void MessengerCall::callRetract(const IMContactId& f, const QString& sId) {
 void MessengerCall::callReject(const IMPeerId& f, const QString& sId) {
     call->callReject(f, sId);
 }
-void MessengerCall::setMute(bool mute) {
-    call->setMute(mute);
-}
-void MessengerCall::setRemoteMute(bool mute) {
-    call->setRemoteMute(mute);
+
+void MessengerCall::setMute(ortc::CtrlState state) {
+    call->setCtrlState(state);
 }
 
 // File
@@ -614,8 +612,8 @@ void MessengerMeet::sendMessage(const QString& msg) {
     meet->sendMessage(msg);
 }
 
-void MessengerMeet::setEnable(bool audio, bool video) {
-    meet->setEnable(audio, video);
+void MessengerMeet::setCtrlState(ortc::CtrlState state) {
+    meet->setEnable(state);
 }
 
 }  // namespace lib::messenger

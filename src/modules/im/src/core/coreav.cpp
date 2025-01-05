@@ -36,11 +36,12 @@
 static CoreAV* instance = nullptr;
 
 CoreAV::CoreAV(Core* core)
-        : core{core}
-        , audioCtrl{Nexus::getInstance().audio()}
-        , coreavThread{new QThread{this}}
-        , selfVideoSource{std::make_unique<CoreVideoSource>()}
-        , iterateTimer{new QTimer{this}} {
+        : core(core)
+        , audioCtrl(Nexus::getInstance().audio())
+        , coreavThread(new QThread{this})
+        , selfVideoSource(std::make_unique<CoreVideoSource>())
+        , iterateTimer(new QTimer(this))
+{
     assert(coreavThread);
     assert(iterateTimer);
 
@@ -405,7 +406,7 @@ void CoreAV::toggleMuteCallInput(const ContactId* f) {
     if (f && (it != calls.end())) {
         ToxCall& call = *it->second;
         call.setMuteMic(!call.getMuteMic());
-        imCall->setMute(call.getMuteMic());
+        imCall->setMute(call.getCtrlState());
     }
 }
 
@@ -424,7 +425,7 @@ void CoreAV::toggleMuteCallOutput(const ContactId* f) {
     if (f && (it != calls.end())) {
         ToxCall& call = *it->second;
         call.setMuteMic(!call.getMuteMic());
-        imCall->setRemoteMute(call.getMuteMic());
+        imCall->setMute(call.getCtrlState());
     }
 }
 
@@ -564,8 +565,8 @@ void CoreAV::muteCallInput(const ContactId* g, bool mute) {
     auto it = calls.find(g->getId());
     if (g && (it != calls.end())) {
         it->second->setMuteMic(mute);
+        imCall->setMute(it->second->getCtrlState());
     }
-    imCall->setRemoteMute(mute);
 }
 
 /**
@@ -575,12 +576,11 @@ void CoreAV::muteCallInput(const ContactId* g, bool mute) {
  */
 void CoreAV::muteCallOutput(const ContactId* g, bool mute) {
     QWriteLocker locker{&callsLock};
-
     auto it = calls.find(g->getId());
     if (g && (it != calls.end())) {
         it->second->setMuteVol(mute);
+        imCall->setMute(it->second->getCtrlState());
     }
-    imCall->setMute(mute);
 }
 
 /**

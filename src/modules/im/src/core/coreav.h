@@ -188,6 +188,8 @@ private:
 
     // protect 'calls' and 'groupCalls'
     mutable QReadWriteLock callsLock{QReadWriteLock::Recursive};
+
+    lib::ortc::CtrlState ctrlState;
 };
 
 #endif  // COREAV_H

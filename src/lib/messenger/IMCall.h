@@ -171,9 +171,7 @@ public:
     // 拒绝呼叫
     void callReject(const IMPeerId& f, const QString& sId);
 
-    // 静音功能
-    void setMute(bool mute);
-    void setRemoteMute(bool mute);
+    void setCtrlState(ortc::CtrlState state);
 
     /**
      * jingle-message

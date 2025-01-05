@@ -22,6 +22,7 @@
 #include "Defines.h"
 #include "UI/widget/OMenuWidget.h"
 #include "base/resources.h"
+#include "lib/ortc/ok_rtc.h"
 
 #include <QPointer>
 
@@ -78,7 +79,7 @@ private:
      * 开始会议
      * @param name 会议名称
      */
-    void createMeeting(const QString& name, const CtrlState& ctrlState);
+    void createMeeting(const QString& name, const lib::ortc::CtrlState& ctrlState);
 
     /**
      * 解散会议（销毁）

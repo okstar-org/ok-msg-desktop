@@ -82,9 +82,7 @@ public:
 
     void SessionTerminate(const std::string& peerId) override;
 
-    void setEnable(bool audio, bool video) override;
-
-    void setRemoteMute(bool mute) override;
+    void setEnable(CtrlState state) override;
 
     void addSource(const std::string& peerId,
                    const std::map<std::string, ortc::OMeetSSRCBundle>& map) override;

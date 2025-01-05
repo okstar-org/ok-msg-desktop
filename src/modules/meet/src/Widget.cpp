@@ -138,7 +138,7 @@ void Widget::joinMeeting(const QString& no) {
  * 创建会议
  * @param name
  */
-void Widget::createMeeting(const QString& name, const CtrlState& ctrlState) {
+void Widget::createMeeting(const QString& name, const lib::ortc::CtrlState& ctrlState) {
     qDebug() << __func__;
 
     QMutexLocker locker(&mutex);

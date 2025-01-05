@@ -140,7 +140,6 @@ public:
     void setSelfNickname(const QString& nickname);
     void changePassword(const QString& password);
     void setSelfAvatar(const QByteArray& avatar);
-    // void setMute(bool mute);
 
     /**
      * IMFriend (audio/video)
@@ -329,8 +328,7 @@ public:
     void callReject(const IMPeerId& f, const QString& sId);
 
     // 静音功能
-    void setMute(bool mute);
-    void setRemoteMute(bool mute);
+    void setMute(ortc::CtrlState state);
 
 private:
     IMCall* call;
@@ -494,11 +492,9 @@ public:
     void sendMessage(const QString& msg);
 
     /**
-     * 音视频禁用和开启
-     * @param audio 音频打开/关闭
-     * @param video 视频打开/关闭
+     是音频、视频、扬声器
      */
-    void setEnable(bool audio, bool video);
+    void setCtrlState(ortc::CtrlState state);
 
     void addHandler(MessengerMeetHandler* hdr);
     void removeHandler(MessengerMeetHandler* hdr);
