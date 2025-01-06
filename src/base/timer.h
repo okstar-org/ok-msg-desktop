@@ -82,6 +82,9 @@ private:
 
 class DelayedCallTimer final : private QObject {
 public:
+    explicit DelayedCallTimer (QObject* parent=nullptr);
+    ~DelayedCallTimer();
+
     int call(TimeMs timeout, ok::base::Fn<void()> callback, Qt::TimerType type);
 
     int call(TimeMs timeout, ok::base::Fn<void()> callback) {

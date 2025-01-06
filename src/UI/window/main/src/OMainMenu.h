@@ -27,6 +27,14 @@ class OMainMenu;
 
 namespace UI {
 
+// 系统级别主菜单
+enum class SystemMenu {
+    chat,   //消息
+    meeting,//会议
+    platform,//工作平台
+    setting,//配置
+};
+
 /**
  * 菜单
  */
@@ -41,21 +49,21 @@ protected:
 
     void retranslateUi();
 
+
 private:
     OK_RESOURCE_PTR(UIWindowMain);
 
     Ui::OMainMenu* ui;
 
-    int _showTimes;
-    // delayCaller
-    std::shared_ptr<base::DelayedCallTimer> delayCaller_;
+    base::DelayedCallTimer* delayCaller_;
+
+    void check(SystemMenu menu);
 
 signals:
-    void menuPushed(ok::base::PageMenu menu, bool checked);
+    void menuPushed(SystemMenu menu, bool checked);
 
-private slots:
-    void onButtonToggled(int id, bool toggle);
 public slots:
+    void onButtonToggled(int id, bool toggle);
     void setAvatar(const QPixmap&);
 };
 

@@ -21,7 +21,7 @@
 #include "base/Page.h"
 #include "lib/session/AuthSession.h"
 #include "modules/module.h"
-
+#include "OMainMenu.h"
 
 namespace Ui {
 class MainWindow;
@@ -29,8 +29,8 @@ class MainWindow;
 
 namespace UI {
 
-class OMainMenu;
 class OMenuWidget;
+
 
 /**
  * 主窗口
@@ -46,10 +46,12 @@ public:
     static MainWindow* getInstance();
 
     void init();
-    OMenuWidget* getMenuWindow(ok::base::PageMenu menu);
-    OMenuWidget* initMenuWindow(ok::base::PageMenu menu);
-    inline OMainMenu* menu() { return m_menu; }
-    QWidget* getContainer(ok::base::PageMenu menu);
+    OMenuWidget* getMenuWindow(SystemMenu menu);
+    OMenuWidget* initMenuWindow(SystemMenu menu);
+    inline OMainMenu* menu() {
+        return m_menu;
+    }
+    QWidget* getContainer(SystemMenu menu);
 
 protected:
     void showEvent(QShowEvent* event) override;
@@ -63,7 +65,7 @@ private:
 
     Ui::MainWindow* ui;
     OMainMenu* m_menu;
-    QMap<ok::base::PageMenu, OMenuWidget*> menuWindow;
+    QMap<SystemMenu, OMenuWidget*> menuWindow;
 
     QSystemTrayIcon* sysTrayIcon;
     QMenu* trayMenu;
@@ -80,7 +82,7 @@ signals:
     void toClose();
 
 private slots:
-    void onSwitchPage(ok::base::PageMenu menu, bool checked);
+    void onSwitchPage(SystemMenu menu, bool checked);
 
     void onIconClick(QSystemTrayIcon::ActivationReason);
 

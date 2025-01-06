@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (c) 2022 船山信息 chuanshaninfo.com
  * The project is licensed under Mulan PubL v2.
  * You can use this software according to the terms and conditions of the Mulan
@@ -28,7 +28,7 @@
 
 namespace UI {
 
-OMainMenu::OMainMenu(QWidget* parent) : QFrame(parent), ui(new Ui::OMainMenu), _showTimes(0) {
+OMainMenu::OMainMenu(QWidget* parent) : QFrame(parent), ui(new Ui::OMainMenu) {
     qDebug() << __func__;
 
     OK_RESOURCE_INIT(UIWindowMain);
@@ -39,24 +39,27 @@ OMainMenu::OMainMenu(QWidget* parent) : QFrame(parent), ui(new Ui::OMainMenu), _
     QString qss = ok::base::Files::readStringAll(":/qss/menu.css");
     setStyleSheet(qss);
 
-    ui->chatBtn->setCursor(Qt::PointingHandCursor);
-    ui->settingBtn->setCursor(Qt::PointingHandCursor);
-    ui->platformBtn->setCursor(Qt::PointingHandCursor);
-    ui->meetBtn->setCursor(Qt::PointingHandCursor);
 
-    ui->chatBtn->setToolTip(tr("Message"));
-    ui->settingBtn->setToolTip(tr("Setting"));
-    ui->platformBtn->setToolTip(tr("Work platform"));
-    ui->meetBtn->setToolTip(tr("Meeting"));
 
-    delayCaller_ = std::make_unique<base::DelayedCallTimer>();
+
 
     QButtonGroup* group = new QButtonGroup(this);
     group->setExclusive(true);
-    group->addButton(ui->chatBtn, static_cast<int>(ok::base::PageMenu::chat));
-    group->addButton(ui->settingBtn, static_cast<int>(ok::base::PageMenu::setting));
-    group->addButton(ui->platformBtn, static_cast<int>(ok::base::PageMenu::platform));
-    group->addButton(ui->meetBtn, static_cast<int>(ok::base::PageMenu::meeting));
+    ui->chatBtn->setToolTip(tr("Message"));
+    ui->chatBtn->setCursor(Qt::PointingHandCursor);
+    group->addButton(ui->chatBtn, static_cast<int>(SystemMenu::chat));
+
+    ui->settingBtn->setToolTip(tr("Setting"));
+    ui->settingBtn->setCursor(Qt::PointingHandCursor);
+    group->addButton(ui->settingBtn, static_cast<int>(SystemMenu::setting));
+
+    ui->platformBtn->setToolTip(tr("Work platform"));
+    ui->platformBtn->setCursor(Qt::PointingHandCursor);
+    group->addButton(ui->platformBtn, static_cast<int>(SystemMenu::platform));
+
+    ui->meetBtn->setToolTip(tr("Meeting"));
+    ui->meetBtn->setCursor(Qt::PointingHandCursor);
+    group->addButton(ui->meetBtn, static_cast<int>(SystemMenu::meeting));
     connect(group, &QButtonGroup::idToggled, this, &OMainMenu::onButtonToggled);
 
     QString locale = lib::settings::OkSettings::getInstance().getTranslation();
@@ -68,6 +71,11 @@ OMainMenu::OMainMenu(QWidget* parent) : QFrame(parent), ui(new Ui::OMainMenu), _
     connect(ok::Application::Instance()->bus(), &ok::Bus::languageChanged, [](QString locale0) {
         settings::Translator::translate(OK_UIWindowMain_MODULE, locale0);
     });
+
+    delayCaller_ = new base::DelayedCallTimer(this);
+    delayCaller_->call(1000, [&](){
+        check(SystemMenu::chat);
+    });
 }
 
 OMainMenu::~OMainMenu() {
@@ -78,18 +86,13 @@ OMainMenu::~OMainMenu() {
 
 void OMainMenu::setAvatar(const QPixmap& pixmap) {
     QSize size = ui->label_avatar->size() * ui->label_avatar->devicePixelRatioF();
-    auto newImage = ok::base::Images::roundRectPixmap(pixmap, size,
-                                                      100 * ui->label_avatar->devicePixelRatioF());
+    auto newImage = ok::base::Images::roundRectPixmap(pixmap, size, 100 * ui->label_avatar->devicePixelRatioF());
     newImage.setDevicePixelRatio(ui->label_avatar->devicePixelRatioF());
     ui->label_avatar->setPixmap(newImage);
 }
 
 void OMainMenu::showEvent(QShowEvent* e) {
     Q_UNUSED(e);
-    _showTimes++;
-    if (_showTimes == 1) {
-        ui->chatBtn->setChecked(true);
-    }
 }
 
 void OMainMenu::retranslateUi() {
@@ -100,12 +103,41 @@ void OMainMenu::retranslateUi() {
     ui->retranslateUi(this);
 }
 
+void OMainMenu::check(SystemMenu menu)
+{
+    ui->chatBtn->setChecked(false);
+    ui->settingBtn->setChecked(false);
+    ui->platformBtn->setChecked(false);
+    ui->meetBtn->setChecked(false);
+
+    switch(menu){
+        case SystemMenu::chat:
+            ui->chatBtn->setChecked(true);
+            break;
+        case SystemMenu::platform:
+            ui->platformBtn->setChecked(true);
+            break;
+        case SystemMenu::meeting:
+            ui->meetBtn->setChecked(true);
+            break;
+        case SystemMenu::setting:
+            ui->settingBtn->setChecked(true);
+            break;
+    }
+}
+
 void OMainMenu::onButtonToggled(int id, bool toggle) {
-    if (id < 0 || !toggle) {
+    if ( !toggle) {
         return;
     }
 
-    auto menu = static_cast<ok::base::PageMenu>(id);
+    if(id < 0){
+        return;
+    }
+
+    auto menu = static_cast<SystemMenu>(id);
+    check(menu);
+
     emit menuPushed(menu, true);
 }
 

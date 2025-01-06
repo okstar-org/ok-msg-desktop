@@ -13,10 +13,11 @@
 #include "timer.h"
 #include "basic_types.h"
 
+#include <QDebug>
 #include <QTimer>
 #include <QTimerEvent>
-#include <QtCore/QObject>
-#include <QtCore/QThread>
+#include <QObject>
+#include <QThread>
 #include <algorithm>
 
 namespace base {
@@ -35,12 +36,9 @@ Timer::Timer(QThread* thread, ok::base::Fn<void()> callback)
 
 Timer::Timer(ok::base::Fn<void()> callback)
         : QObject(nullptr)
-        ,  //
-        _callback(std::move(callback))
-        ,  //
-        _type(Qt::PreciseTimer)
-        ,                   //
-        _adjusted(false) {  //
+        , _callback(std::move(callback))
+        , _type(Qt::PreciseTimer)
+        , _adjusted(false) {
 
     setRepeat(Repeat::Interval);
     connect(
@@ -115,6 +113,15 @@ void Timer::timerEvent(QTimerEvent* e) {
     if (_callback) {
         _callback();
     }
+}
+
+DelayedCallTimer::DelayedCallTimer(QObject *parent): QObject(parent){
+    qDebug() << __func__;
+}
+
+DelayedCallTimer::~DelayedCallTimer()
+{
+    qDebug() << __func__;
 }
 
 int DelayedCallTimer::call(TimeMs timeout, ok::base::Fn<void()> callback, Qt::TimerType type) {

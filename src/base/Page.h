@@ -16,7 +16,6 @@
 #include "UI/core/ui.h"
 namespace ok::base {
 
-enum class PageMenu { chat, setting, platform, meeting };
 
 class Page : public QFrame {
     Q_OBJECT

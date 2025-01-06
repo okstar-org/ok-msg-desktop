@@ -32,13 +32,15 @@ public:
     void startMainUI();
     void stopMainUI();
 
-    void putPage(ok::base::PageMenu menu, QFrame* p);
+    void putPage(SystemMenu menu, QFrame* p);
 
-    QFrame* getPage(ok::base::PageMenu menu);
+    QFrame* getPage(SystemMenu menu);
 
-    inline UI::MainWindow* window() { return m_mainWindow.get(); }
+    inline UI::MainWindow* window() {
+        return m_mainWindow.get();
+    }
 
-    QWidget* getContainer(ok::base::PageMenu menu);
+    QWidget* getContainer(SystemMenu menu);
 
     OMainMenu* getMainMenu();
 
@@ -46,7 +48,7 @@ private:
     std::unique_ptr<UI::MainWindow> m_mainWindow;
 
 signals:
-    void menuPushed(ok::base::PageMenu menu, bool checked);
+    void menuPushed(SystemMenu menu, bool checked);
     void mainClose(SavedInfo savedInfo);
 };
-}  // namespace ok::base::UI
+}  // namespace UI

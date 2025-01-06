@@ -33,7 +33,9 @@ WindowManager* WindowManager::Instance() {
     return instance;
 }
 
-QFrame* WindowManager::getPage(ok::base::PageMenu menu) { return m_mainWindow->getPage(menu); }
+QFrame* WindowManager::getPage(SystemMenu menu) {
+    return m_mainWindow->getPage(menu);
+}
 
 void WindowManager::startMainUI() {
     m_mainWindow = std::make_unique<UI::MainWindow>();
@@ -45,9 +47,9 @@ void WindowManager::startMainUI() {
             [&]() { emit mainClose({m_mainWindow->saveGeometry()}); });
 
     // 统一注册类型
-    qRegisterMetaType<ok::base::PageMenu>("ok::base::PageMenu");
+    qRegisterMetaType<SystemMenu>("SystemMenu");
     connect(m_mainWindow->menu(), &OMainMenu::menuPushed,
-            [&](ok::base::PageMenu menu, bool checked) { emit menuPushed(menu, checked); });
+            [&](SystemMenu menu, bool checked) { emit menuPushed(menu, checked); });
     m_mainWindow->show();
 }
 
@@ -56,7 +58,7 @@ void WindowManager::stopMainUI() {
     m_mainWindow.reset();
 }
 
-QWidget* WindowManager::getContainer(ok::base::PageMenu menu) {  //
+QWidget* WindowManager::getContainer(SystemMenu menu) {  //
     return m_mainWindow->getContainer(menu);
 }
 

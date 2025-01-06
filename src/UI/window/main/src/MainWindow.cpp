@@ -25,8 +25,8 @@
 #include <QMenu>
 #include <QPainter>
 #include <QSvgRenderer>
-#include <QTimer>
 #include <QSystemTrayIcon>
+#include <QTimer>
 #include <cstdlib>
 #include <memory>
 
@@ -42,7 +42,8 @@ MainWindow::MainWindow(std::shared_ptr<lib::session::AuthSession> session, QWidg
         : QMainWindow(parent)
         , ui(new Ui::MainWindow)
         , delayCaller(std::make_unique<base::DelayedCallTimer>())
-        , session{session}, sysTrayIcon(nullptr) {
+        , session{session}
+        , sysTrayIcon(nullptr) {
     qDebug() << __func__;
 
     ui->setupUi(this);
@@ -72,7 +73,7 @@ MainWindow::MainWindow(std::shared_ptr<lib::session::AuthSession> session, QWidg
             &MainWindow::onSetShowSystemTray);
 
     auto wg = okSettings.getWindowGeometry();
-    if(!wg.isEmpty()){
+    if (!wg.isEmpty()) {
         restoreGeometry(wg);
     }
 
@@ -83,14 +84,14 @@ MainWindow::MainWindow(std::shared_ptr<lib::session::AuthSession> session, QWidg
     actionQuit->setMenuRole(QAction::QuitRole);
 #endif
 
-    actionQuit->setIcon(prepareIcon(lib::settings::Style::getImagePath("rejectCall/rejectCall.svg"), icon_size, icon_size));
+    actionQuit->setIcon(prepareIcon(lib::settings::Style::getImagePath("rejectCall/rejectCall.svg"),
+                                    icon_size, icon_size));
     actionQuit->setText(tr("Exit", "Tray action menu to exit tox"));
 
-    connect(actionQuit, &QAction::triggered, [&](){
+    connect(actionQuit, &QAction::triggered, [&]() {
         saveWindowGeometry();
         qApp->quit();
     });
-
 
     actionShow = new QAction(this);
     actionShow->setText(tr("Show", "Tray action menu to show window"));
@@ -141,7 +142,7 @@ inline QIcon MainWindow::prepareIcon(QString path, int w, int h) {
 }
 
 void MainWindow::saveWindowGeometry() {
-    auto &s = lib::settings::OkSettings::getInstance();
+    auto& s = lib::settings::OkSettings::getInstance();
     s.setWindowGeometry(saveGeometry());
     s.setWindowState(saveState());
 }
@@ -184,7 +185,7 @@ void MainWindow::onSetShowSystemTray(bool newValue) {
 void MainWindow::createSystemTrayIcon() {
     if (!QSystemTrayIcon::isSystemTrayAvailable()) {
         qWarning() << "System does not support system tray!";
-        return ;
+        return;
     }
 
     auto& settings = lib::settings::OkSettings::getInstance();
@@ -282,19 +283,19 @@ void MainWindow::updateIcons() {
  * @param menu
  * @return
  */
-OMenuWidget* MainWindow::initMenuWindow(ok::base::PageMenu menu) {
+OMenuWidget* MainWindow::initMenuWindow(SystemMenu menu) {
     OMenuWidget* w = nullptr;
     switch (menu) {
-        case ok::base::PageMenu::chat:
+        case SystemMenu::chat:
             w = createChatModule(this);
             break;
-        case ok::base::PageMenu::platform:
+        case SystemMenu::platform:
             w = createPlatformModule(this);
             break;
-        case ok::base::PageMenu::meeting:
+        case SystemMenu::meeting:
             w = createMeetingModule(this);
             break;
-        case ok::base::PageMenu::setting:
+        case SystemMenu::setting:
             w = new ConfigWindow(this);
             break;
     }
@@ -315,11 +316,11 @@ OMenuWidget* MainWindow::initMenuWindow(ok::base::PageMenu menu) {
     return w;
 }
 
-OMenuWidget* MainWindow::getMenuWindow(ok::base::PageMenu menu) {
+OMenuWidget* MainWindow::getMenuWindow(SystemMenu menu) {
     return menuWindow.value(menu);
 }
 
-void MainWindow::onSwitchPage(ok::base::PageMenu menu, bool checked) {
+void MainWindow::onSwitchPage(SystemMenu menu, bool checked) {
     OMenuWidget* p = getMenuWindow(menu);
     if (!p) {
         p = initMenuWindow(menu);
@@ -335,7 +336,7 @@ void MainWindow::onSwitchPage(ok::base::PageMenu menu, bool checked) {
     }
 }
 
-QWidget* MainWindow::getContainer(ok::base::PageMenu menu) {
+QWidget* MainWindow::getContainer(SystemMenu menu) {
     return ui->stacked_widget;
 }
 
@@ -354,7 +355,7 @@ OMenuWidget* MainWindow::createChatModule(MainWindow* pWindow) {
     connect(nexus, &Nexus::destroyProfile,  //
             ok::Application::Instance(), &ok::Application::on_logout);
     // connect(nexus, &Nexus::exit,  //
-            // ok::Application::Instance(), &ok::Application::on_exit);
+    // ok::Application::Instance(), &ok::Application::on_exit);
 
     auto w = new OMenuWidget(this);
     w->setModule(m);
