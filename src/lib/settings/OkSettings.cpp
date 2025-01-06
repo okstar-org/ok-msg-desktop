@@ -60,12 +60,12 @@ OkSettings::OkSettings(QObject* parent) : QObject(parent)
     path = getGlobalSettingsFile();
     qDebug() << "The global settings file at:" << path;
 
-
-
     loadGlobal();
 }
 
 void OkSettings::loadGlobal() {
+    QMutexLocker locker{&bigLock};
+
     QSettings s(path, QSettings::IniFormat, this);
     s.setIniCodec("UTF-8");
     s.beginGroup("General");
@@ -105,10 +105,6 @@ void OkSettings::saveGlobal() {
         return (void)QMetaObject::invokeMethod(&getInstance(), "saveGlobal");
 
     QMutexLocker locker{&bigLock};
-
-    // QString path = ok::base::PlatformInfo::getGlobalSettingsFile();
-    // qDebug() << "Saving global settings at " + path;
-    // QSettings s(path, QSettings::IniFormat);
 
     QSettings s(path, QSettings::IniFormat, this);
     s.setIniCodec("UTF-8");

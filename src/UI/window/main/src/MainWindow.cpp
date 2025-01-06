@@ -26,6 +26,7 @@
 #include <QPainter>
 #include <QSvgRenderer>
 #include <QTimer>
+#include <QSystemTrayIcon>
 #include <cstdlib>
 #include <memory>
 
@@ -41,7 +42,7 @@ MainWindow::MainWindow(std::shared_ptr<lib::session::AuthSession> session, QWidg
         : QMainWindow(parent)
         , ui(new Ui::MainWindow)
         , delayCaller(std::make_unique<base::DelayedCallTimer>())
-        , session{session} {
+        , session{session}, sysTrayIcon(nullptr) {
     qDebug() << __func__;
 
     ui->setupUi(this);
@@ -75,11 +76,6 @@ MainWindow::MainWindow(std::shared_ptr<lib::session::AuthSession> session, QWidg
         restoreGeometry(wg);
     }
 
-    // 启动桌面图标
-    timer = std::make_unique<QTimer>();
-    timer->start(1000);
-    connect(timer.get(), &QTimer::timeout, this, &MainWindow::onTryCreateTrayIcon);
-
     int icon_size = 15;
 
     actionQuit = new QAction(this);
@@ -101,6 +97,9 @@ MainWindow::MainWindow(std::shared_ptr<lib::session::AuthSession> session, QWidg
     connect(actionShow, &QAction::triggered, this, &MainWindow::forceShow);
 
     instance = this;
+
+    // 启动桌面图标
+    createSystemTrayIcon();
 
     qDebug() << __func__ << " has be created.";
 }
@@ -177,18 +176,25 @@ void MainWindow::closeEvent(QCloseEvent* event) {
 void MainWindow::init() {}
 
 void MainWindow::onSetShowSystemTray(bool newValue) {
-    if (icon) {
-        icon->setVisible(newValue);
+    if (sysTrayIcon) {
+        sysTrayIcon->setVisible(newValue);
     }
 }
 
-void MainWindow::onTryCreateTrayIcon() {
+void MainWindow::createSystemTrayIcon() {
+    if (!QSystemTrayIcon::isSystemTrayAvailable()) {
+        qWarning() << "System does not support system tray!";
+        return ;
+    }
+
     auto& settings = lib::settings::OkSettings::getInstance();
     if (!settings.getShowSystemTray()) return;
-    if (!icon) {
-        if (QSystemTrayIcon::isSystemTrayAvailable()) {
-            icon = std::make_unique<QSystemTrayIcon>();
+
+
+
+            sysTrayIcon = new QSystemTrayIcon(this);
             updateIcons();
+
             trayMenu = new QMenu(this);
 
             // adding activate to the top, avoids accidentally clicking quit
@@ -200,27 +206,28 @@ void MainWindow::onTryCreateTrayIcon() {
             //      trayMenu->addSeparator();
             //      trayMenu->addAction(actionLogout);
             trayMenu->addAction(actionQuit);
-            icon->setContextMenu(trayMenu);
 
-            connect(icon.get(), &QSystemTrayIcon::activated, this, &MainWindow::onIconClick);
+            sysTrayIcon->setContextMenu(trayMenu);
+            connect(sysTrayIcon, &QSystemTrayIcon::activated, this, &MainWindow::onIconClick);
 
             if (settings.getShowSystemTray()) {
-                icon->show();
+                sysTrayIcon->show();
                 setHidden(settings.getAutostartInTray());
             } else {
                 show();
             }
 
-        } else if (!isVisible()) {
-            show();
-        }
-    } else {
-        disconnect(timer.get(), &QTimer::timeout, this, &MainWindow::onTryCreateTrayIcon);
-        if (!icon) {
-            qWarning() << "No system tray detected!";
-            show();
-        }
-    }
+        // } else if (!isVisible()) {
+            // show();
+        // }
+    // }
+// else {
+//         // disconnect(timer.get(), &QTimer::timeout, this, &MainWindow::onTryCreateTrayIcon);
+//         if (!icon) {
+//             qWarning() << "No system tray detected!";
+//             show();
+//         }
+//     }
 }
 
 /**
@@ -257,7 +264,7 @@ void MainWindow::forceShow() {
 }
 
 void MainWindow::updateIcons() {
-    if (!icon) {
+    if (!sysTrayIcon) {
         return;
     }
 
@@ -279,8 +286,8 @@ void MainWindow::updateIcons() {
     QIcon ico = QIcon(QPixmap::fromImage(image));
 
     setWindowIcon(ico);
-    if (icon) {
-        icon->setIcon(ico);
+    if (sysTrayIcon) {
+        sysTrayIcon->setIcon(ico);
     }
 }
 

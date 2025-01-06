@@ -22,6 +22,7 @@
 #include "lib/session/AuthSession.h"
 #include "modules/module.h"
 
+
 namespace Ui {
 class MainWindow;
 }
@@ -57,14 +58,14 @@ protected:
 
 private:
     std::shared_ptr<lib::session::AuthSession> session;
-    std::unique_ptr<QTimer> timer;
+
     std::shared_ptr<::base::DelayedCallTimer> delayCaller;
 
     Ui::MainWindow* ui;
     OMainMenu* m_menu;
     QMap<ok::base::PageMenu, OMenuWidget*> menuWindow;
 
-    std::unique_ptr<QSystemTrayIcon> icon;
+    QSystemTrayIcon* sysTrayIcon;
     QMenu* trayMenu;
     QAction* actionQuit;
     QAction* actionShow;
@@ -72,7 +73,7 @@ private:
 
     //  bool autoAwayActive = false;
     void saveWindowGeometry();
-
+    void createSystemTrayIcon();
     static inline QIcon prepareIcon(QString path, int w = 0, int h = 0);
 
 signals:
@@ -84,7 +85,6 @@ private slots:
     void onIconClick(QSystemTrayIcon::ActivationReason);
 
     void onSetShowSystemTray(bool newValue);
-    void onTryCreateTrayIcon();
 
     void forceShow();
     OMenuWidget* createChatModule(MainWindow* pWindow);
