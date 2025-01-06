@@ -190,44 +190,30 @@ void MainWindow::createSystemTrayIcon() {
     auto& settings = lib::settings::OkSettings::getInstance();
     if (!settings.getShowSystemTray()) return;
 
+    sysTrayIcon = new QSystemTrayIcon(this);
+    updateIcons();
 
+    trayMenu = new QMenu(this);
 
-            sysTrayIcon = new QSystemTrayIcon(this);
-            updateIcons();
+    // adding activate to the top, avoids accidentally clicking quit
+    trayMenu->addAction(actionShow);
+    //      trayMenu->addSeparator();
+    //      trayMenu->addAction(statusOnline);
+    //      trayMenu->addAction(statusAway);
+    //      trayMenu->addAction(statusBusy);
+    //      trayMenu->addSeparator();
+    //      trayMenu->addAction(actionLogout);
+    trayMenu->addAction(actionQuit);
 
-            trayMenu = new QMenu(this);
+    sysTrayIcon->setContextMenu(trayMenu);
+    connect(sysTrayIcon, &QSystemTrayIcon::activated, this, &MainWindow::onIconClick);
 
-            // adding activate to the top, avoids accidentally clicking quit
-            trayMenu->addAction(actionShow);
-            //      trayMenu->addSeparator();
-            //      trayMenu->addAction(statusOnline);
-            //      trayMenu->addAction(statusAway);
-            //      trayMenu->addAction(statusBusy);
-            //      trayMenu->addSeparator();
-            //      trayMenu->addAction(actionLogout);
-            trayMenu->addAction(actionQuit);
-
-            sysTrayIcon->setContextMenu(trayMenu);
-            connect(sysTrayIcon, &QSystemTrayIcon::activated, this, &MainWindow::onIconClick);
-
-            if (settings.getShowSystemTray()) {
-                sysTrayIcon->show();
-                setHidden(settings.getAutostartInTray());
-            } else {
-                show();
-            }
-
-        // } else if (!isVisible()) {
-            // show();
-        // }
-    // }
-// else {
-//         // disconnect(timer.get(), &QTimer::timeout, this, &MainWindow::onTryCreateTrayIcon);
-//         if (!icon) {
-//             qWarning() << "No system tray detected!";
-//             show();
-//         }
-//     }
+    if (settings.getShowSystemTray()) {
+        sysTrayIcon->show();
+        setHidden(settings.getAutostartInTray());
+    } else {
+        show();
+    }
 }
 
 /**
