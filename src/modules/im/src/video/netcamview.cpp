@@ -11,11 +11,11 @@
  */
 
 #include "netcamview.h"
-#include <src/core/coreav.h>
 #include <QBoxLayout>
 #include <QFrame>
 #include <QLabel>
 #include "src/core/core.h"
+#include "src/core/coreav.h"
 #include "src/model/friend.h"
 #include "src/model/friendlist.h"
 #include "src/nexus.h"
@@ -101,9 +101,13 @@ void NetCamView::hide() {
     QWidget::hide();
 }
 
-void NetCamView::setSource(VideoSource* s) { videoSurface->setSource(s); }
+void NetCamView::setSource(VideoSource* s) {
+    videoSurface->setSource(s);
+}
 
-void NetCamView::setTitle(const QString& title) { setWindowTitle(title); }
+void NetCamView::setTitle(const QString& title) {
+    setWindowTitle(title);
+}
 
 void NetCamView::showEvent(QShowEvent* event) {
     Q_UNUSED(event);

@@ -20,27 +20,26 @@
 #include <QSizePolicy>
 #include <QSpacerItem>
 #include <QVBoxLayout>
+#include <QFileDialog>
 
+#include "src/widget/tool/chattextedit.h"
 #include "ChatReplyForm.h"
 #include "lib/settings/style.h"
 #include "src/base/MessageBox.h"
 #include "src/chatlog/chatlinecontent.h"
+#include "src/chatlog/chatmessageitem.h"
+#include "src/core/core.h"
+#include "src/core/coreav.h"
+#include "src/nexus.h"
 #include "src/persistence/profile.h"
 #include "src/widget/emoticonswidget.h"
 #include "src/widget/tool/screenshotgrabber.h"
 
-#include <lib/settings/settings.h>
-#include <src/chatlog/chatmessageitem.h>
-#include <src/core/core.h>
-#include <src/core/coreav.h>
-#include <src/nexus.h>
-#include <src/widget/tool/chattextedit.h>
-#include <QFileDialog>
-
 #include "genericchatform.h"
 #include "lib/plugin/pluginmanager.h"
 
-#include <src/persistence/smileypack.h>
+#include "src/persistence/settings.h"
+#include "src/persistence/smileypack.h"
 
 const QString STYLE_PATH = QStringLiteral("chatForm/buttons.css");
 static const short FOOT_BUTTONS_SPACING = 2;
@@ -67,7 +66,7 @@ QPushButton* createButton(const QString& name, T* self, Fun onClickSlot) {
     btn->setCursor(Qt::PointingHandCursor);
     btn->setObjectName(name);
     // btn->setProperty("state", "green");
-    btn->setStyleSheet(Style::getStylesheet(STYLE_PATH));
+    btn->setStyleSheet(lib::settings::Style::getStylesheet(STYLE_PATH));
     btn->setCheckable(true);
     QObject::connect(btn, &QPushButton::clicked, self, onClickSlot);
     return btn;
@@ -147,10 +146,10 @@ ChatInputForm::ChatInputForm(QWidget* parent, bool isGroup)
 
 void ChatInputForm::reloadTheme() {
     const Settings& s = Settings::getInstance();
-    msgEdit->setStyleSheet(Style::getStylesheet("msgEdit/msgEdit.css") +
+    msgEdit->setStyleSheet(lib::settings::Style::getStylesheet("msgEdit/msgEdit.css") +
                            fontToCss(s.getChatMessageFont(), "QTextEdit"));
 
-    auto btnCss = Style::getStylesheet(STYLE_PATH);
+    auto btnCss = lib::settings::Style::getStylesheet(STYLE_PATH);
     setStyleSheet(btnCss);
 }
 
@@ -173,15 +172,19 @@ void ChatInputForm::dragEnterEvent(QDragEnterEvent* ev) {}
 
 void ChatInputForm::dropEvent(QDropEvent* ev) {}
 
-void ChatInputForm::setFocus() { msgEdit->setFocus(); }
+void ChatInputForm::setFocus() {
+    msgEdit->setFocus();
+}
 
 void ChatInputForm::updateFont(const QFont& font) {
     // message editor
-    msgEdit->setStyleSheet(Style::getStylesheet("msgEdit/msgEdit.css") +
+    msgEdit->setStyleSheet(lib::settings::Style::getStylesheet("msgEdit/msgEdit.css") +
                            fontToCss(font, "QTextEdit"));
 }
 
-QString ChatInputForm::getInputText() { return msgEdit->toPlainText(); }
+QString ChatInputForm::getInputText() {
+    return msgEdit->toPlainText();
+}
 
 #ifdef OK_PLUGIN
 void ChatInputForm::onPluginEnabled(const QString& shortName) {
@@ -278,7 +281,7 @@ void ChatInputForm::insertReplyText(const QString& id, QString nickname, QString
     connect(reply, &ChatReplyForm::removeEvent, this, &ChatInputForm::onReplyRemove);
     mainLayout->insertWidget(0, reply);
 
-    auto btnCss = Style::getStylesheet(STYLE_PATH);
+    auto btnCss = lib::settings::Style::getStylesheet(STYLE_PATH);
     reply->setStyleSheet(btnCss);
 }
 namespace {
@@ -323,7 +326,9 @@ void ChatInputForm::onReplyRemove() {
     reply = nullptr;
 }
 
-void ChatInputForm::onScreenshotClicked() { doScreenshot(); }
+void ChatInputForm::onScreenshotClicked() {
+    doScreenshot();
+}
 
 void ChatInputForm::onScreenCaptured(const QPixmap& pixmap) {
     if (pixmap.isNull()) {

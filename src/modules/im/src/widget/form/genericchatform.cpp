@@ -27,6 +27,7 @@
 #include "base/files.h"
 #include "base/images.h"
 #include "gui.h"
+#include "lib/settings/OkSettings.h"
 #include "lib/settings/translator.h"
 #include "src/chatlog/chatlinecontentproxy.h"
 #include "src/chatlog/chatlog.h"
@@ -110,7 +111,7 @@ bool GenericChatForm::shouldRenderDate(ChatLogIdx idxToRender, const IChatLog& c
 }
 
 IChatItem::Ptr GenericChatForm::dateMessageForItem(const ChatLogItem& item) {
-    const auto& s = Settings::getInstance();
+    auto& s = lib::settings::OkSettings::getInstance();
     const auto date = item.getTimestamp().date();
     auto dateText = date.toString(s.getDateFormat());
     return ChatMessage::createChatInfoMessage(dateText, ChatMessage::INFO, QDateTime());
@@ -313,14 +314,14 @@ QDateTime GenericChatForm::getFirstTime() const { return getTime(chatLog->getFir
 
 void GenericChatForm::reloadTheme() {
     const Settings& s = Settings::getInstance();
-    setStyleSheet(Style::getStylesheet("genericChatForm/genericChatForm.css"));
+    setStyleSheet(lib::settings::Style::getStylesheet("genericChatForm/genericChatForm.css"));
 
     //  searchForm->reloadTheme();
 
     //  headWidget->setStyleSheet(Style::getStylesheet("chatArea/chatHead.css"));
     //  headWidget->reloadTheme();
 
-    chatLog->setStyleSheet(Style::getStylesheet("chatArea/chatArea.css"));
+    chatLog->setStyleSheet(lib::settings::Style::getStylesheet("chatArea/chatArea.css"));
     chatLog->reloadTheme();
 }
 
@@ -443,9 +444,8 @@ void GenericChatForm::addSystemInfoMessage(const QString& message,
 }
 
 void GenericChatForm::addSystemDateMessage(const QDate& date) {
-    const Settings& s = Settings::getInstance();
+    auto& s = lib::settings::OkSettings::getInstance();
     QString dateText = date.toString(s.getDateFormat());
-
     insertChatMessage(ChatMessage::createChatInfoMessage(dateText, ChatMessage::INFO, QDateTime()));
 }
 

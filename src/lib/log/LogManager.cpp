@@ -16,7 +16,7 @@
 
 #include "LogManager.h"
 #include "base/OkProcess.h"
-#include "base/OkSettings.h"
+#include "lib/settings/OkSettings.h"
 #include "base/times.h"
 
 #include <QAtomicPointer>
@@ -25,7 +25,7 @@
 #include <QMutexLocker>
 #include <QThread>
 
-namespace ok::lib {
+namespace lib::log {
 
 static QAtomicPointer<QFile> logFilePointer;
 static QMutex logMutex;
@@ -80,12 +80,12 @@ static LogManager* log = nullptr;
 
 LogManager::LogManager() {
     qDebug() << "Initialize LogManager";
-    logFileDir = base::OkSettings::getAppLogPath();
+    logFileDir = settings::OkSettings::getAppLogPath();
     qDebug() << "Log file dir is:" << logFileDir.absolutePath();
 
     logName = APPLICATION_NAME "-" +
               ::ok::base::Times::formatTime(::ok::base::Times::now(), "yyyyMMddHHmmss") + "-" +
-              QString::number(base::OkProcess::selfPid()) + ".log";
+              QString::number(ok::base::OkProcess::selfPid()) + ".log";
 
     QString logFilePath = logFileDir.path() + QDir::separator() + logName;
     qDebug() << "Log file is:" << logFilePath;

@@ -17,25 +17,27 @@
 #include "Widget.h"
 #include "ui_Widget.h"
 
-#include <QTabBar>
-#include "AppCenterWidget.h"
-#include "Bus.h"
-#include "application.h"
-#include "base/OkSettings.h"
-#include "lib/settings/style.h"
-#include "lib/settings/translator.h"
-#include "platformpage.h"
-
 #include <QAbstractButton>
 #include <QPainter>
 #include <QStyle>
 #include <QStyleOption>
+#include <QTabBar>
+
+#include "AppCenterWidget.h"
+#include "Bus.h"
+#include "application.h"
+#include "lib/settings/OkSettings.h"
+#include "lib/settings/style.h"
+#include "lib/settings/translator.h"
+#include "platformpage.h"
 
 class TabCloseButton : public QAbstractButton {
 public:
     explicit TabCloseButton(QWidget* parent = nullptr);
     QSize sizeHint() const override;
-    QSize minimumSizeHint() const override { return sizeHint(); }
+    QSize minimumSizeHint() const override {
+        return sizeHint();
+    }
     void enterEvent(QEvent* event) override;
     void leaveEvent(QEvent* event) override;
     void paintEvent(QPaintEvent* event) override;
@@ -52,7 +54,7 @@ Widget::Widget(QWidget* parent) : UI::OMenuWidget(parent), ui(new Ui::WorkPlatfo
     ui->tabWidget->tabBar()->setCursor(Qt::PointingHandCursor);
     reloadTheme();
 
-    QString locale = ok::base::OkSettings::getInstance().getTranslation();
+    QString locale = lib::settings::OkSettings::getInstance().getTranslation();
     settings::Translator::translate(OK_Platform_MODULE, locale);
     settings::Translator::registerHandler([this] { retranslateUi(); }, this);
     retranslateUi();
@@ -91,7 +93,7 @@ void Widget::start() {
 }
 
 void Widget::reloadTheme() {
-    auto& style = Style::getStylesheet("general.css");
+    auto& style = lib::settings::Style::getStylesheet("general.css");
     setStyleSheet(style);
 }
 

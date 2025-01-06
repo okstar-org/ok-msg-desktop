@@ -27,6 +27,8 @@
 #include <QtCore/QCommandLineParser>
 
 #include "base/autorun.h"
+#include "base/compatiblerecursivemutex.h"
+#include "lib/settings/OkSettings.h"
 #include "src/core/core.h"
 #include "src/core/corefile.h"
 #include "src/ipc.h"
@@ -36,8 +38,6 @@
 #include "src/persistence/profilelocker.h"
 #include "src/persistence/settingsserializer.h"
 #include "src/persistence/smileypack.h"
-#include "base/OkSettings.h"
-#include "base/compatiblerecursivemutex.h"
 
 /**
  * @var QHash<QString, QByteArray> Settings::widgetSettings
@@ -170,8 +170,7 @@ void Settings::loadGlobal() {
         emojiFontPointSize = s.value("emojiFontPointSize", 24).toInt();
         firstColumnHandlePos = s.value("firstColumnHandlePos", 50).toInt();
         secondColumnHandlePosFromRight = s.value("secondColumnHandlePosFromRight", 50).toInt();
-        timestampFormat = s.value("timestampFormat", "hh:mm:ss").toString();
-        dateFormat = s.value("dateFormat", "yyyy-MM-dd").toString();
+
         lightTrayIcon = s.value("lightTrayIcon", false).toBool();
         useEmoticons = s.value("useEmoticons", true).toBool();
         statusChangeNotificationEnabled =
@@ -192,18 +191,7 @@ void Settings::loadGlobal() {
     s.endGroup();
 
     s.beginGroup("Chat");
-    { chatMessageFont = s.value("chatMessageFont", Style::getFont(Style::Big)).value<QFont>(); }
-    s.endGroup();
-    // 隐私
-    s.beginGroup("State");
-    {
-        windowGeometry = s.value("windowGeometry", QByteArray()).toByteArray();
-        windowState = s.value("windowState", QByteArray()).toByteArray();
-        splitterState = s.value("splitterState", QByteArray()).toByteArray();
-        dialogGeometry = s.value("dialogGeometry", QByteArray()).toByteArray();
-        dialogSplitterState = s.value("dialogSplitterState", QByteArray()).toByteArray();
-        dialogSettingsGeometry = s.value("dialogSettingsGeometry", QByteArray()).toByteArray();
-    }
+    { chatMessageFont = s.value("chatMessageFont", lib::settings::Style::getFont(lib::settings::Style::Font::Big)).value<QFont>(); }
     s.endGroup();
 
     s.beginGroup("Audio");
@@ -253,7 +241,7 @@ void Settings::updateProfileData(Profile* profile, const QCommandLineParser* par
         qWarning() << QString("Could not load new settings (profile change to nullptr)");
         return;
     }
-    auto& ok = ok::base::OkSettings::getInstance();
+    auto& ok = lib::settings::OkSettings::getInstance();
     ok.setCurrentProfile(profile->getUsername());
     ok.saveGlobal();
 
@@ -710,7 +698,9 @@ void Settings::loadPersonal(QString profileName, const ToxEncrypt* passKey) {
 /**
  * @brief Asynchronous, saves the current profile.
  */
-void Settings::savePersonal() { savePersonal(Nexus::getProfile()); }
+void Settings::savePersonal() {
+    savePersonal(Nexus::getProfile());
+}
 
 /**
  * @brief Asynchronous, saves the profile.
@@ -1056,13 +1046,13 @@ void Settings::setGroupAlwaysNotify(bool newValue) {
 
 QString Settings::getTranslation() const {
     QMutexLocker locker{&bigLock};
-    auto& s = ok::base::OkSettings::getInstance();
+    auto& s = lib::settings::OkSettings::getInstance();
     return s.getTranslation();
 }
 
 void Settings::setTranslation(const QString& newValue) {
     QMutexLocker locker{&bigLock};
-    auto& s = ok::base::OkSettings::getInstance();
+    auto& s = lib::settings::OkSettings::getInstance();
     auto translation = s.getTranslation();
     if (newValue != translation) {
         translation = newValue;
@@ -1364,34 +1354,6 @@ void Settings::setEmojiFontPointSize(int value) {
     if (value != emojiFontPointSize) {
         emojiFontPointSize = value;
         emit emojiFontPointSizeChanged(emojiFontPointSize);
-    }
-}
-
-const QString& Settings::getTimestampFormat() const {
-    QMutexLocker locker{&bigLock};
-    return timestampFormat;
-}
-
-void Settings::setTimestampFormat(const QString& format) {
-    QMutexLocker locker{&bigLock};
-
-    if (format != timestampFormat) {
-        timestampFormat = format;
-        emit timestampFormatChanged(timestampFormat);
-    }
-}
-
-const QString& Settings::getDateFormat() const {
-    QMutexLocker locker{&bigLock};
-    return dateFormat;
-}
-
-void Settings::setDateFormat(const QString& format) {
-    QMutexLocker locker{&bigLock};
-
-    if (format != dateFormat) {
-        dateFormat = format;
-        emit dateFormatChanged(dateFormat);
     }
 }
 
@@ -2041,7 +2003,9 @@ void Settings::setEnableGroupChatsColor(bool state) {
     }
 }
 
-bool Settings::getEnableGroupChatsColor() const { return nameColors; }
+bool Settings::getEnableGroupChatsColor() const {
+    return nameColors;
+}
 
 /**
  * @brief Creates a path to the settings dir, if it doesn't already exist

@@ -38,7 +38,7 @@
 #include "ContactListWidget.h"
 #include "application.h"
 #include "base/MessageBox.h"
-#include "base/OkSettings.h"
+#include "lib/settings/OkSettings.h"
 #include "base/Page.h"
 #include "base/SvgUtils.h"
 #include "base/images.h"
@@ -173,7 +173,7 @@ Widget::Widget(IAudioControl& audio, QWidget* parent)  //
 #endif
 
     actionQuit->setIcon(ok::base::SvgUtils::prepareIcon(
-            Style::getImagePath("rejectCall/rejectCall.svg"), icon_size, icon_size));
+            lib::settings::Style::getImagePath("rejectCall/rejectCall.svg"), icon_size, icon_size));
     connect(actionQuit, &QAction::triggered, qApp, &QApplication::quit);
 
     //  layout()->setContentsMargins(0, 0, 0, 0);
@@ -202,7 +202,7 @@ Widget::Widget(IAudioControl& audio, QWidget* parent)  //
     // Disable some widgets until we're connected to the DHT
     //  ui->statusButton->setEnabled(false);
 
-    Style::setThemeColor(settings.getThemeColor());
+    lib::settings::Style::setThemeColor(settings.getThemeColor());
 
     onStatusSet(Status::Status::Offline);
 
@@ -934,12 +934,13 @@ ContentLayout* Widget::createContentDialog(DialogType type) const {
         explicit Dialog(DialogType type, Settings& settings, Core* core)
                 : ActivateDialog(nullptr, Qt::Window), type(type), settings(settings), core{core} {
             restoreGeometry(settings.getDialogSettingsGeometry());
+
+            setWindowIcon(QIcon(":/img/icons/qtox.svg"));
+            setStyleSheet(lib::settings::Style::getStylesheet("window/general.css"));
+            connect(core, &Core::usernameSet, this, &Dialog::retranslateUi);
+
             settings::Translator::registerHandler(std::bind(&Dialog::retranslateUi, this), this);
             retranslateUi();
-            setWindowIcon(QIcon(":/img/icons/qtox.svg"));
-            setStyleSheet(Style::getStylesheet("window/general.css"));
-
-            connect(core, &Core::usernameSet, this, &Dialog::retranslateUi);
         }
 
         ~Dialog() { settings::Translator::unregister(this); }
@@ -1298,7 +1299,7 @@ void Widget::cycleContacts(bool forward) {
 void Widget::clearAllReceipts() { chatWidget->clearAllReceipts(); }
 
 void Widget::reloadTheme() {
-    auto& style = Style::getStylesheet("window/general.css");
+    auto& style = lib::settings::Style::getStylesheet("window/general.css");
     this->setStyleSheet(style);
     chatWidget->reloadTheme();
     contactWidget->reloadTheme();

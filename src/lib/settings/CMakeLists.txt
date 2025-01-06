@@ -2,12 +2,16 @@ project(OkSettings)
 
 
 set(${PROJECT_NAME}_SOURCES
-		translator.h
-		translator.cpp
-		applicationinfo.h
-		applicationinfo.cpp
-		style.h
-		style.cpp
+	translator.h
+	translator.cpp
+	applicationinfo.h
+	applicationinfo.cpp
+	style.h
+	style.cpp
+        # settings.h
+        # settings.cpp
+	OkSettings.h
+	OkSettings.cpp
 )
 
 add_library(${PROJECT_NAME} STATIC

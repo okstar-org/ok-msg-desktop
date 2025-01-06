@@ -16,7 +16,7 @@
 
 #include <QWidget>
 
-#include "base/OkSettings.h"
+#include "lib/settings/OkSettings.h"
 #include "lib/settings/translator.h"
 #include "src/base/basic_types.h"
 #include "src/base/widgets.h"
@@ -51,7 +51,7 @@ ConfigWindow::ConfigWindow(QWidget* parent) : OMenuWidget(parent), ui(new Ui::Co
     ui->tabWidget->tabBar()->setCursor(Qt::PointingHandCursor);
     reloadTheme();
 
-    QString locale = ok::base::OkSettings::getInstance().getTranslation();
+    QString locale = lib::settings::OkSettings::getInstance().getTranslation();
     settings::Translator::translate(OK_UIWindowConfig_MODULE, locale);
     settings::Translator::registerHandler([this] { retranslateUi(); }, this);
     retranslateUi();
@@ -63,7 +63,7 @@ ConfigWindow::~ConfigWindow() {
 }
 
 void ConfigWindow::reloadTheme() {
-    auto& style = Style::getStylesheet("general.css");
+    auto& style = lib::settings::Style::getStylesheet("general.css");
     setStyleSheet(style);
 }
 

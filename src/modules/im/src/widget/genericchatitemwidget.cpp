@@ -11,16 +11,16 @@
  */
 
 #include "genericchatitemwidget.h"
-#include <src/core/core.h>
-#include <src/nexus.h>
 #include <QIcon>
 #include <QSvgRenderer>
 #include <QVariant>
 #include "maskablepixmapwidget.h"
+#include "src/core/core.h"
 #include "src/lib/settings/style.h"
 #include "src/model/friend.h"
 #include "src/model/friendlist.h"
 #include "src/model/group.h"
+#include "src/nexus.h"
 #include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
 #include "src/widget/tool/croppinglabel.h"
@@ -44,7 +44,7 @@ GenericChatItemWidget::GenericChatItemWidget(ChatType type, const ContactId& cid
     lastMessageLabel->setTextFormat(Qt::PlainText);
     lastMessageLabel->setText("");
     auto p = lastMessageLabel->palette();
-    p.setColor(QPalette::WindowText, Style::getColor(Style::GroundExtra));
+    p.setColor(QPalette::WindowText, lib::settings::Style::getColor(lib::settings::Style::ColorPalette::GroundExtra));
 
     auto newFont = lastMessageLabel->font();
     newFont.setPixelSize(newFont.pixelSize() * .7);
@@ -71,11 +71,17 @@ GenericChatItemWidget::GenericChatItemWidget(ChatType type, const ContactId& cid
     }
 }
 
-GenericChatItemWidget::~GenericChatItemWidget() { qDebug() << __func__; }
+GenericChatItemWidget::~GenericChatItemWidget() {
+    qDebug() << __func__;
+}
 
-QString GenericChatItemWidget::getName() const { return nameLabel->fullText(); }
+QString GenericChatItemWidget::getName() const {
+    return nameLabel->fullText();
+}
 
-void GenericChatItemWidget::setName(const QString& name) { nameLabel->setText(name); }
+void GenericChatItemWidget::setName(const QString& name) {
+    nameLabel->setText(name);
+}
 
 void GenericChatItemWidget::searchName(const QString& searchString, bool hide) {
     setVisible(!hide && getName().contains(searchString, Qt::CaseInsensitive));
@@ -119,9 +125,13 @@ void GenericChatItemWidget::updateStatusLight(Status::Status status, bool event)
     statusPic->setPixmap(QIcon(pix).pixmap(this->window()->windowHandle(), s));
 }
 
-void GenericChatItemWidget::clearStatusLight() { statusPic->clear(); }
+void GenericChatItemWidget::clearStatusLight() {
+    statusPic->clear();
+}
 
-bool GenericChatItemWidget::isActive() { return active; }
+bool GenericChatItemWidget::isActive() {
+    return active;
+}
 
 void GenericChatItemWidget::setActive(bool _active) {
     active = _active;

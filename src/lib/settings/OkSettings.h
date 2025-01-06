@@ -18,9 +18,15 @@
 
 #include <QDir>
 #include <QObject>
+
 #include "base/compatiblerecursivemutex.h"
 
-namespace ok::base {
+
+namespace lib::settings {
+
+
+enum class MainTheme;
+
 
 class OkSettings : public QObject {
     Q_OBJECT
@@ -81,14 +87,49 @@ public:
     QString getProvider();
     void setProvider(QString val);
 
+    MainTheme getThemeColor();
+    void setThemeColor(MainTheme value);
+
+    Q_PROPERTY(QString timestampFormat
+                READ getTimestampFormat
+                WRITE setTimestampFormat
+                NOTIFY timestampFormatChanged FINAL);
+
+    const QString& getTimestampFormat() ;
+    void setTimestampFormat(const QString& format);
+
+    const QString& getDateFormat();
+    void setDateFormat(const QString& format);
+    Q_PROPERTY(QString dateFormat READ getDateFormat WRITE setDateFormat NOTIFY dateFormatChanged
+                       FINAL)
+
+    // State
+    QByteArray getWindowGeometry() ;
+    void setWindowGeometry(const QByteArray& value);
+
+    QByteArray getWindowState() ;
+    void setWindowState(const QByteArray& value);
+
+
+
+    Q_PROPERTY(QByteArray windowGeometry READ getWindowGeometry WRITE setWindowGeometry NOTIFY
+                       windowGeometryChanged FINAL);
+    
+    Q_PROPERTY(QByteArray windowState READ getWindowState WRITE setWindowState NOTIFY
+                       windowStateChanged FINAL);
+
 private:
     static uint32_t makeProfileId(const QString& profile);
 
     QThread* settingsThread;
 
     CompatibleRecursiveMutex bigLock;
+
     QString translation;
     QString provider;
+    MainTheme themeColor;
+    QString timestampFormat;
+    QString dateFormat;
 
     bool showSystemTray;
     bool closeToTray;
@@ -99,7 +140,14 @@ private:
     bool autoSaveEnabled;
 
     QString currentProfile;
-    uint32_t currentProfileId;
+    quint32 currentProfileId;
+
+    //Window states
+    QByteArray windowGeometry;
+    QByteArray windowState;
+    QByteArray dialogGeometry;
+
+    QString path;
 
 signals:
     void translationChanged(const QString& translation);
@@ -117,10 +165,19 @@ signals:
     void autorunChanged(bool enabled);
     void autoSaveEnabledChanged(bool enabled);
 
+    void currentProfileChanged(const QString& profile);
     void currentProfileIdChanged(quint32 id);
 
+    void themeColorChanged(MainTheme color);
+
+    void timestampFormatChanged(const QString& format);
+    
+    void dateFormatChanged(const QString& format);
+
+    void windowGeometryChanged(const QByteArray& rect);
+    void windowStateChanged(const QByteArray& state);
 public slots:
     void saveGlobal();
 };
 
-}  // namespace ok::base
+}  // namespace lib::settings

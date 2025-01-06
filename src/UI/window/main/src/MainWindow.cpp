@@ -14,9 +14,9 @@
 
 #include "UI/window/config/src/ConfigWindow.h"
 #include "application.h"
-#include "base/OkSettings.h"
 #include "base/PageFactory.h"
 #include "base/logs.h"
+#include "lib/settings/OkSettings.h"
 #include "modules/im/src/model/status.h"
 #include "modules/platform/src/Platform.h"
 #include "src/lib/settings/style.h"
@@ -66,9 +66,14 @@ MainWindow::MainWindow(std::shared_ptr<lib::session::AuthSession> session, QWidg
     connect(m_menu, &OMainMenu::menuPushed, this, &MainWindow::onSwitchPage);
 
     // settings
-    auto& okSettings = ok::base::OkSettings::getInstance();
-    connect(&okSettings, &ok::base::OkSettings::showSystemTrayChanged, this,
+    auto& okSettings = lib::settings::OkSettings::getInstance();
+    connect(&okSettings, &lib::settings::OkSettings::showSystemTrayChanged, this,
             &MainWindow::onSetShowSystemTray);
+
+    auto wg = okSettings.getWindowGeometry();
+    if(!wg.isEmpty()){
+        restoreGeometry(wg);
+    }
 
     // 启动桌面图标
     timer = std::make_unique<QTimer>();
@@ -82,10 +87,14 @@ MainWindow::MainWindow(std::shared_ptr<lib::session::AuthSession> session, QWidg
     actionQuit->setMenuRole(QAction::QuitRole);
 #endif
 
-    actionQuit->setIcon(
-            prepareIcon(Style::getImagePath("rejectCall/rejectCall.svg"), icon_size, icon_size));
+    actionQuit->setIcon(prepareIcon(lib::settings::Style::getImagePath("rejectCall/rejectCall.svg"), icon_size, icon_size));
     actionQuit->setText(tr("Exit", "Tray action menu to exit tox"));
-    connect(actionQuit, &QAction::triggered, qApp, &QApplication::quit);
+
+    connect(actionQuit, &QAction::triggered, [&](){
+        saveWindowGeometry();
+        qApp->quit();
+    });
+
 
     actionShow = new QAction(this);
     actionShow->setText(tr("Show", "Tray action menu to show window"));
@@ -132,22 +141,17 @@ inline QIcon MainWindow::prepareIcon(QString path, int w, int h) {
     return QIcon(path);
 }
 
-// void MainWindow::saveWindowGeometry() {
-//   settings.setWindowGeometry(saveGeometry());
-//   //  settings.setWindowState(saveState());
-// }
-
-// void MainWindow::saveSplitterGeometry() {
-//   if (!settings.getSeparateWindow()) {
-//     settings.setSplitterState(ui->mainSplitter->saveState());
-//   }
-// }
+void MainWindow::saveWindowGeometry() {
+    auto &s = lib::settings::OkSettings::getInstance();
+    s.setWindowGeometry(saveGeometry());
+    s.setWindowState(saveState());
+}
 
 void MainWindow::showEvent(QShowEvent* event) {}
 
 void MainWindow::closeEvent(QCloseEvent* event) {
     qDebug() << __func__ << "closeEvent...";
-    //  auto &settings = ok::base::OkSettings::getInstance();
+    //  auto &settings = lib::settings::OkSettings::getInstance();
 
     //  if (settings.getShowSystemTray() && settings.getCloseToTray()) {
     //    QWidget::closeEvent(event);
@@ -155,13 +159,13 @@ void MainWindow::closeEvent(QCloseEvent* event) {
     //    return;
     //  }
 
-    //    if (autoAwayActive) {
+    //  if (autoAwayActive) {
     //      emit statusSet(Status::Status::Online);
     //      autoAwayActive = false;
-    //    }
-    //    saveWindowGeometry();
+    //  }
+    saveWindowGeometry();
 
-    //      emit toClose();
+    //  emit toClose();
 
     //    saveSplitterGeometry();
     //    QWidget::closeEvent(event);
@@ -179,7 +183,7 @@ void MainWindow::onSetShowSystemTray(bool newValue) {
 }
 
 void MainWindow::onTryCreateTrayIcon() {
-    auto& settings = ok::base::OkSettings::getInstance();
+    auto& settings = lib::settings::OkSettings::getInstance();
     if (!settings.getShowSystemTray()) return;
     if (!icon) {
         if (QSystemTrayIcon::isSystemTrayAvailable()) {
@@ -356,8 +360,8 @@ OMenuWidget* MainWindow::createChatModule(MainWindow* pWindow) {
             ok::Application::Instance(), &ok::Application::onAvatar);
     connect(nexus, &Nexus::destroyProfile,  //
             ok::Application::Instance(), &ok::Application::on_logout);
-    connect(nexus, &Nexus::exit,  //
-            ok::Application::Instance(), &ok::Application::on_exit);
+    // connect(nexus, &Nexus::exit,  //
+            // ok::Application::Instance(), &ok::Application::on_exit);
 
     auto w = new OMenuWidget(this);
     w->setModule(m);

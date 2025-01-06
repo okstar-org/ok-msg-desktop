@@ -11,9 +11,9 @@
  */
 
 #include "contact.h"
-#include <src/nexus.h>
 #include <QVariant>
 #include "base/images.h"
+#include "src/nexus.h"
 #include "src/persistence/profile.h"
 
 Contact::Contact() {}
@@ -98,7 +98,9 @@ void Contact::clearAvatar() {
     emit avatarChanged(avatar);
 }
 
-const QPixmap& Contact::getAvatar() const { return avatar; }
+const QPixmap& Contact::getAvatar() const {
+    return avatar;
+}
 
 void Contact::setName(const QString& _name) {
     if (_name == name) {
@@ -130,4 +132,6 @@ void Contact::setAlias(const QString& alias_) {
 
 void Contact::setEventFlag(bool flag) {}
 
-bool Contact::getEventFlag() const { return false; }
+bool Contact::getEventFlag() const {
+    return false;
+}

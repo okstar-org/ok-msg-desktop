@@ -15,6 +15,7 @@
 #include "src/persistence/settings.h"
 #include "src/widget/form/loadhistorydialog.h"
 #include "ui_searchsettingsform.h"
+#include "lib/settings/OkSettings.h"
 
 SearchSettingsForm::SearchSettingsForm(QWidget* parent)
         : QWidget(parent), ui(new Ui::SearchSettingsForm) {
@@ -89,13 +90,12 @@ ParameterSearch SearchSettingsForm::getParameterSearch() {
 }
 
 void SearchSettingsForm::reloadTheme() {
-    ui->choiceDateButton->setStyleSheet(
-            Style::getStylesheet(QStringLiteral("chatForm/buttons.css")));
-    ui->startDateLabel->setStyleSheet(Style::getStylesheet(QStringLiteral("chatForm/labels.css")));
+    ui->choiceDateButton->setStyleSheet(lib::settings::Style::getStylesheet(QStringLiteral("chatForm/buttons.css")));
+    ui->startDateLabel->setStyleSheet(lib::settings::Style::getStylesheet(QStringLiteral("chatForm/labels.css")));
 }
 
 void SearchSettingsForm::updateStartDateLabel() {
-    ui->startDateLabel->setText(startDate.toString(Settings::getInstance().getDateFormat()));
+    ui->startDateLabel->setText(startDate.toString(lib::settings::OkSettings::getInstance().getDateFormat()));
 }
 
 void SearchSettingsForm::setUpdate(const bool isUpdate) {
@@ -110,7 +110,7 @@ void SearchSettingsForm::onStartSearchSelected(const int index) {
 
         ui->choiceDateButton->setProperty("state", QStringLiteral("green"));
         ui->choiceDateButton->setStyleSheet(
-                Style::getStylesheet(QStringLiteral("chatForm/buttons.css")));
+                lib::settings::Style::getStylesheet(QStringLiteral("chatForm/buttons.css")));
 
         if (startDate.isNull()) {
             startDate = QDate::currentDate();
@@ -122,8 +122,7 @@ void SearchSettingsForm::onStartSearchSelected(const int index) {
         ui->startDateLabel->setEnabled(false);
 
         ui->choiceDateButton->setProperty("state", QString());
-        ui->choiceDateButton->setStyleSheet(
-                Style::getStylesheet(QStringLiteral("chatForm/buttons.css")));
+        ui->choiceDateButton->setStyleSheet(lib::settings::Style::getStylesheet(QStringLiteral("chatForm/buttons.css")));
     }
 
     setUpdate(true);
@@ -138,7 +137,6 @@ void SearchSettingsForm::onWordsOnlyClicked(const bool checked) {
     if (checked) {
         ui->regularRadioButton->setChecked(false);
     }
-
     setUpdate(true);
 }
 
@@ -146,7 +144,6 @@ void SearchSettingsForm::onRegularClicked(const bool checked) {
     if (checked) {
         ui->wordsOnlyRadioButton->setChecked(false);
     }
-
     setUpdate(true);
 }
 

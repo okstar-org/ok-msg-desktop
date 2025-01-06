@@ -32,7 +32,7 @@ public:
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
     void setWidth(qreal width) override;
 
-    void setColor(Style::ColorPalette role);
+    void setColor(lib::settings::Style::ColorPalette role);
     void setColor(const QColor& color);
 
 protected:
@@ -46,7 +46,7 @@ private:
     QSizeF boundSize;
     QFont defFont;
     QColor color;
-    Style::ColorPalette colorRole = Style::MainText;
+    lib::settings::Style::ColorPalette colorRole = lib::settings::Style::ColorPalette::MainText;
     bool customColor = false;
     qreal forceWidth = -1;
 };

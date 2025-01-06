@@ -55,7 +55,7 @@ void ChatMessageBox::init(const QPixmap& avatar, const QString& contactName,
     connect(avatarItem, &ChatLineContent::forward, this, &ChatMessageBox::doForward);
 
     nicknameItem = new SimpleText(contactName, nameFont);
-    nicknameItem->setColor(Style::NameActive);
+    nicknameItem->setColor(lib::settings::Style::ColorPalette::NameActive);
     connect(nicknameItem, &ChatLineContent::reply, this, &ChatMessageBox::doReply);
     connect(nicknameItem, &ChatLineContent::copy, this, &ChatMessageBox::doCopy);
     connect(nicknameItem, &ChatLineContent::forward, this, &ChatMessageBox::doForward);
@@ -79,11 +79,11 @@ void ChatMessageBox::setMessageState(MessageState state) {
     }
     switch (state) {
         case MessageState::pending: {
-            stateItem = new Spinner(Style::getImagePath("chatArea/spinner.svg"), QSize(16, 16),
+            stateItem = new Spinner(lib::settings::Style::getImagePath("chatArea/spinner.svg"), QSize(16, 16),
                                     360.0 / 1.6);
         } break;
         case MessageState::broken: {
-            stateItem = new Broken(Style::getImagePath("chatArea/error.svg"), QSize(16, 16));
+            stateItem = new Broken(lib::settings::Style::getImagePath("chatArea/error.svg"), QSize(16, 16));
         } break;
         default:
             break;
@@ -206,11 +206,11 @@ void ChatMessageBox::updateTextTheme() {
     //    if (customMsg) return;
     if (Text* text_item = dynamic_cast<Text*>(messageItem)) {
         if (_IsSelf) {
-            text_item->setBackgroundColor(Style::getExtColor("chat.message.self.background"));
-            text_item->setColor(Style::getExtColor("chat.message.self.color"));
+            text_item->setBackgroundColor(lib::settings::Style::getExtColor("chat.message.self.background"));
+            text_item->setColor(lib::settings::Style::getExtColor("chat.message.self.color"));
         } else {
-            text_item->setBackgroundColor(Style::getExtColor("chat.message.background"));
-            text_item->setColor(Style::getExtColor("chat.message.color"));
+            text_item->setBackgroundColor(lib::settings::Style::getExtColor("chat.message.background"));
+            text_item->setColor(lib::settings::Style::getExtColor("chat.message.color"));
         }
     }
 }

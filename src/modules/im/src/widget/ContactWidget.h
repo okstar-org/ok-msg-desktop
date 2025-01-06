@@ -17,7 +17,7 @@
 #include <QWidget>
 #include <memory>
 
-#include <src/widget/form/aboutgroupform.h>
+#include "src/widget/form/aboutgroupform.h"
 
 #include "ContactListWidget.h"
 #include "src/model/group.h"

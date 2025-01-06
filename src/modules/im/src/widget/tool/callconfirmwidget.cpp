@@ -95,8 +95,8 @@ CallConfirmWidget::CallConfirmWidget(const ToxPeer& from, bool video, QWidget* p
     reject->setFlat(true);
     accept->setStyleSheet("QPushButton{border:none;}");
     reject->setStyleSheet("QPushButton{border:none;}");
-    accept->setIcon(QIcon(Style::getImagePath("acceptCall/acceptCall.svg")));
-    reject->setIcon(QIcon(Style::getImagePath("rejectCall/rejectCall.svg")));
+    accept->setIcon(QIcon(lib::settings::Style::getImagePath("acceptCall/acceptCall.svg")));
+    reject->setIcon(QIcon(lib::settings::Style::getImagePath("rejectCall/rejectCall.svg")));
     accept->setIconSize(accept->size());
     reject->setIconSize(reject->size());
 

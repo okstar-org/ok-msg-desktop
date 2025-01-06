@@ -15,9 +15,9 @@
 #ifdef OK_HAVE_CONFIG
 #include "ok_config.h"
 #endif
-#include "base/OkSettings.h"
 #include "base/r.h"
 #include "base/system/sys_info.h"
+#include "lib/settings/OkSettings.h"
 
 #include <QCoreApplication>
 #include <QDesktopServices>
@@ -64,13 +64,21 @@
 #define PROG_APPCAST_URL ""
 #endif
 
-QString ApplicationInfo::name() { return PROG_NAME; }
+QString ApplicationInfo::name() {
+    return PROG_NAME;
+}
 
-QLatin1String ApplicationInfo::sname() { return QLatin1String(PROG_SNAME); }
+QLatin1String ApplicationInfo::sname() {
+    return QLatin1String(PROG_SNAME);
+}
 
-QString ApplicationInfo::version() { return APPLICATION_VERSION; }
+QString ApplicationInfo::version() {
+    return APPLICATION_VERSION;
+}
 
-QString ApplicationInfo::capsNode() { return PROG_CAPS_NODE; }
+QString ApplicationInfo::capsNode() {
+    return PROG_CAPS_NODE;
+}
 
 QString ApplicationInfo::osName() {
     ok::base::OsInfo info;
@@ -78,15 +86,25 @@ QString ApplicationInfo::osName() {
     return info.name;
 }
 
-QString ApplicationInfo::IPCName() { return PROG_IPC_NAME; }
+QString ApplicationInfo::IPCName() {
+    return PROG_IPC_NAME;
+}
 
-QString ApplicationInfo::getAppCastURL() { return PROG_APPCAST_URL; }
+QString ApplicationInfo::getAppCastURL() {
+    return PROG_APPCAST_URL;
+}
 
-QString ApplicationInfo::optionsNS() { return PROG_OPTIONS_NS; }
+QString ApplicationInfo::optionsNS() {
+    return PROG_OPTIONS_NS;
+}
 
-QString ApplicationInfo::storageNS() { return PROG_STORAGE_NS; }
+QString ApplicationInfo::storageNS() {
+    return PROG_STORAGE_NS;
+}
 
-QString ApplicationInfo::fileCacheNS() { return PROG_FILECACHE_NS; }
+QString ApplicationInfo::fileCacheNS() {
+    return PROG_FILECACHE_NS;
+}
 
 QStringList ApplicationInfo::getCertificateStoreDirs() {
 #if defined(Q_OS_LINUX) && defined(SHARE_SUFF)
@@ -126,7 +144,7 @@ QStringList ApplicationInfo::pluginDirs() {
             QDir().absoluteFilePath(qApp->applicationDirPath() + "/../lib/" SHARE_SUFF "/plugins");
 #endif
 
-    static const QStringList&& dirs = {ok::base::OkSettings().getAppPluginPath().path()};
+    static const QStringList&& dirs = {lib::settings::OkSettings().getAppPluginPath().path()};
     return dirs;
 }
 
@@ -204,11 +222,11 @@ QString ApplicationInfo::libDir() {
 QString ApplicationInfo::homeDir(ApplicationInfo::HomedirType type) {
     switch (type) {
         case ApplicationInfo::ConfigLocation:
-            return ok::base::OkSettings::configDir().path();
+            return lib::settings::OkSettings::configDir().path();
         case ApplicationInfo::DataLocation:
-            return ok::base::OkSettings::dataDir().path();
+            return lib::settings::OkSettings::dataDir().path();
         case ApplicationInfo::CacheLocation:
-            return ok::base::OkSettings::cacheDir().path();
+            return lib::settings::OkSettings::cacheDir().path();
     }
     return {};
 }
@@ -237,7 +255,9 @@ QString ApplicationInfo::vCardDir() {
     return makeSubprofilePath("vcard", ApplicationInfo::CacheLocation);
 }
 
-QString ApplicationInfo::bobDir() { return makeSubhomePath("bob", ApplicationInfo::CacheLocation); }
+QString ApplicationInfo::bobDir() {
+    return makeSubhomePath("bob", ApplicationInfo::CacheLocation);
+}
 
 QString ApplicationInfo::documentsDir() {
     QString docDir(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + "/" +

@@ -12,14 +12,16 @@
 
 #include "groupinvitewidget.h"
 
+#include <QHBoxLayout>
+#include <QPushButton>
+#include <QSignalMapper>
+
 #include "src/core/core.h"
 #include "src/nexus.h"
 #include "src/persistence/settings.h"
 #include "src/widget/tool/croppinglabel.h"
+#include "lib/settings/OkSettings.h"
 
-#include <QHBoxLayout>
-#include <QPushButton>
-#include <QSignalMapper>
 
 /**
  * @class GroupInviteWidget
@@ -48,11 +50,13 @@ GroupInviteWidget::GroupInviteWidget(QWidget* parent, const GroupInvite& invite)
  * @brief Retranslate all elements in the form.
  */
 void GroupInviteWidget::retranslateUi() {
-    QString name = Nexus::getCore()->getFriendUsername(inviteInfo.getFriendId());
-    QDateTime inviteDate = inviteInfo.getInviteDate();
-    QString date = inviteDate.toString(Settings::getInstance().getDateFormat());
-    QString time = inviteDate.toString(Settings::getInstance().getTimestampFormat());
+    auto &s = lib::settings::OkSettings::getInstance();
 
+    QDateTime inviteDate = inviteInfo.getInviteDate();
+    QString date = inviteDate.toString(s.getDateFormat());
+    QString time = inviteDate.toString(s.getTimestampFormat());
+
+    QString name = Nexus::getCore()->getFriendUsername(inviteInfo.getFriendId());
     inviteMessageLabel->setText(tr("Invited by %1 on %2 at %3.")
                                         .arg("<b>%1</b>")
                                         .arg(name.toHtmlEscaped(), date, time));

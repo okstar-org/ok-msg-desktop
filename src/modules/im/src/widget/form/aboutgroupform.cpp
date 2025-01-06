@@ -12,10 +12,10 @@
 
 #include "aboutgroupform.h"
 
-#include <src/nexus.h>
 #include <QDebug>
 #include "src/model/group.h"
 #include "src/model/grouplist.h"
+#include "src/nexus.h"
 #include "src/persistence/profile.h"
 #include "src/widget/widget.h"
 #include "ui_aboutgroupform.h"
@@ -78,7 +78,9 @@ AboutGroupForm::AboutGroupForm(const Group* group_, QWidget* parent)
     updateUI();
 }
 
-AboutGroupForm::~AboutGroupForm() { delete ui; }
+AboutGroupForm::~AboutGroupForm() {
+    delete ui;
+}
 
 void AboutGroupForm::updateUI() {
     auto role = group->getRole();
@@ -140,4 +142,6 @@ void AboutGroupForm::doDescChanged(const QString& text) {
     // group->setDesc(text);
     // Core::getInstance()->setGroupDesc(groupId.toString(), text);
 }
-const ContactId& AboutGroupForm::getId() { return group->getId(); }
+const ContactId& AboutGroupForm::getId() {
+    return group->getId();
+}

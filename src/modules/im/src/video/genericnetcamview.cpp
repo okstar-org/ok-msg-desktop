@@ -54,7 +54,7 @@ GenericNetCamView::GenericNetCamView(QWidget* parent) : QWidget(parent) {
 
     setStyleSheet("NetCamView { background-color: #c1c1c1; }");
     buttonPanel = new QFrame(this);
-    buttonPanel->setStyleSheet(Style::getStylesheet(BTN_STYLE_SHEET_PATH));
+    buttonPanel->setStyleSheet(lib::settings::Style::getStylesheet(BTN_STYLE_SHEET_PATH));
     buttonPanel->setGeometry(0, 0, BTN_PANEL_WIDTH, BTN_PANEL_HEIGHT);
 
     QHBoxLayout* buttonPanelLayout = new QHBoxLayout(buttonPanel);
@@ -110,7 +110,7 @@ void GenericNetCamView::setShowMessages(bool show, bool notify) {
     toggleMessagesButton->setText(tr("Show Messages"));
 
     if (notify) {
-        toggleMessagesButton->setIcon(QIcon(Style::getImagePath("chatArea/info.svg")));
+        toggleMessagesButton->setIcon(QIcon(lib::settings::Style::getImagePath("chatArea/info.svg")));
     }
 }
 
@@ -163,7 +163,7 @@ QPushButton* GenericNetCamView::createButton(const QString& name, const QString&
     btn->setAttribute(Qt::WA_LayoutUsesWidgetRect);
     btn->setObjectName(name);
     btn->setProperty("state", QVariant(state));
-    btn->setStyleSheet(Style::getStylesheet(BTN_STYLE_SHEET_PATH));
+    btn->setStyleSheet(lib::settings::Style::getStylesheet(BTN_STYLE_SHEET_PATH));
 
     return btn;
 }
@@ -183,7 +183,7 @@ void GenericNetCamView::toggleButtonState(QPushButton* btn) {
         btn->setProperty("state", BTN_STATE_RED);
     }
 
-    btn->setStyleSheet(Style::getStylesheet(BTN_STYLE_SHEET_PATH));
+    btn->setStyleSheet(lib::settings::Style::getStylesheet(BTN_STYLE_SHEET_PATH));
 }
 
 void GenericNetCamView::updateButtonState(QPushButton* btn, bool active) {
@@ -193,7 +193,7 @@ void GenericNetCamView::updateButtonState(QPushButton* btn, bool active) {
         btn->setProperty("state", BTN_STATE_RED);
     }
 
-    btn->setStyleSheet(Style::getStylesheet(BTN_STYLE_SHEET_PATH));
+    btn->setStyleSheet(lib::settings::Style::getStylesheet(BTN_STYLE_SHEET_PATH));
 }
 
 void GenericNetCamView::keyPressEvent(QKeyEvent* event) {

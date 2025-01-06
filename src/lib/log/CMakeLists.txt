@@ -1,6 +1,6 @@
 project(OkLog)
 
-file( GLOB ${PROJECT_NAME}_SOURCES *.cpp )
+file( GLOB ${PROJECT_NAME}_SOURCES *.h *.cpp )
 
 add_library(${PROJECT_NAME} STATIC
 		${${PROJECT_NAME}_SOURCES})

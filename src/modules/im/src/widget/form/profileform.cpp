@@ -11,7 +11,6 @@
  */
 
 #include "profileform.h"
-#include <src/nexus.h>
 #include <QApplication>
 #include <QBuffer>
 #include <QClipboard>
@@ -24,6 +23,7 @@
 #include <QLineEdit>
 #include <QMap>
 #include <QMenu>
+#include "src/nexus.h"
 
 #include <QMouseEvent>
 #include <QWindow>
@@ -146,22 +146,21 @@ ProfileForm::ProfileForm(IProfileInfo* profileInfo, QWidget* parent)
     onSelfAvatarLoaded(profileInfo->getAvatar());
 
     // QrCode
-    bodyUI->qrcodeButton->setIcon(QIcon(Style::getImagePath("window/qrcode.svg")));
+    bodyUI->qrcodeButton->setIcon(QIcon(lib::settings::Style::getImagePath("window/qrcode.svg")));
     bodyUI->qrcodeButton->setCursor(Qt::PointingHandCursor);
-    //bodyUI->qrcodeButton->hide();
+    // bodyUI->qrcodeButton->hide();
     qr = new QRWidget(size, this);
     qr->setVisible(false);
     qr->setWindowFlags(Qt::Popup);
     qr->setQRData(profileInfo->getUsername());
-    //bodyUI->publicGroup->layout()->addWidget(qr);
+    // bodyUI->publicGroup->layout()->addWidget(qr);
 
-    setStyleSheet(Style::getStylesheet("window/profile.css"));
+    setStyleSheet(lib::settings::Style::getStylesheet("window/profile.css"));
 
     retranslateUi();
     settings::Translator::registerHandler(std::bind(&ProfileForm::retranslateUi, this), this);
     connect(bodyUI->qrcodeButton, &QToolButton::clicked, this, &ProfileForm::showQRCode);
 }
-
 
 ProfileForm::~ProfileForm() {
     settings::Translator::unregister(this);
@@ -219,10 +218,9 @@ void ProfileForm::showEvent(QShowEvent* e) {
 }
 
 void ProfileForm::contextMenuEvent(QContextMenuEvent* e) {
-
     QMenu menu(this);
     menu.addAction("Refresh", [this]() {
-        setStyleSheet(Style::getStylesheet(R"(E:\Code\ok-msg-desktop\src\modules\im\themes\default\window\profile.css)"));   
+        setStyleSheet(lib::settings::Style::getStylesheet("window/profile.css"));
     });
     menu.exec(e->globalPos());
 }
@@ -246,12 +244,15 @@ void ProfileForm::showQRCode() {
     qr->show();
 }
 
-void ProfileForm::copyIdClicked() {
+void ProfileForm::copyIdClicked() {}
+
+void ProfileForm::onNicknameEdited() {
+    profileInfo->setNickname(bodyUI->nickname->text());
 }
 
-void ProfileForm::onNicknameEdited() { profileInfo->setNickname(bodyUI->nickname->text()); }
-
-void ProfileForm::onSelfAvatarLoaded(const QPixmap& pic) { profilePicture->setPixmap(pic); }
+void ProfileForm::onSelfAvatarLoaded(const QPixmap& pic) {
+    profilePicture->setPixmap(pic);
+}
 
 QString ProfileForm::getSupportedImageFilter() {
     QString res;
@@ -299,9 +300,13 @@ void ProfileForm::onExportClicked() {
     GUI::showWarning(error.first, error.second);
 }
 
-void ProfileForm::onLogoutClicked() { profileInfo->logout(); }
+void ProfileForm::onLogoutClicked() {
+    profileInfo->logout();
+}
 
-void ProfileForm::onExitClicked() { profileInfo->exit(); }
+void ProfileForm::onExitClicked() {
+    profileInfo->exit();
+}
 
 void ProfileForm::setPasswordButtonsText() {
     //    if (profileInfo->isEncrypted()) {

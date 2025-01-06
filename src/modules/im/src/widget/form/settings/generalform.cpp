@@ -16,7 +16,7 @@
 #include <QDesktopWidget>
 #include <QFileDialog>
 
-#include "base/OkSettings.h"
+#include "lib/settings/OkSettings.h"
 #include "lib/settings/translator.h"
 #include "src/base/RecursiveSignalBlocker.h"
 #include "src/core/core.h"
@@ -47,7 +47,7 @@ GeneralForm::GeneralForm(SettingsWidget* myParent)
 
     Settings& s = Settings::getInstance();
 
-    auto& okSettings = ok::base::OkSettings::getInstance();
+    auto& okSettings = lib::settings::OkSettings::getInstance();
     const QFont chatBaseFont = s.getChatMessageFont();
     bodyUI->txtChatFontSize->setValue(QFontInfo(chatBaseFont).pixelSize());
     bodyUI->txtChatFont->setCurrentFont(chatBaseFont);
@@ -111,12 +111,13 @@ void GeneralForm::on_groupOnlyNotfiyWhenMentioned_stateChanged() {
             !bodyUI->groupOnlyNotfiyWhenMentioned->isChecked());
 }
 
-
 /**
  * @brief Retranslate all elements in the form.
  */
 
-void GeneralForm::retranslateUi() { bodyUI->retranslateUi(this); }
+void GeneralForm::retranslateUi() {
+    bodyUI->retranslateUi(this);
+}
 
 void GeneralForm::on_txtChatFont_currentFontChanged(const QFont& f) {
     qDebug() << __func__ << f;

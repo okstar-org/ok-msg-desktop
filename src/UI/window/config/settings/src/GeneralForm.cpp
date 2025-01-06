@@ -16,8 +16,7 @@
 #include <cmath>
 #include "Bus.h"
 #include "application.h"
-#include "base/OkSettings.h"
-#include "lib/settings/settings.h"
+#include "lib/settings/OkSettings.h"
 #include "lib/settings/translator.h"
 #include "src/base/RecursiveSignalBlocker.h"
 #include "src/lib/settings/style.h"
@@ -37,10 +36,10 @@ GeneralForm::GeneralForm(SettingsWidget* myParent)
     // block all child signals during initialization
     const ok::base::RecursiveSignalBlocker signalBlocker(this);
 
-    Settings& s = Settings::getInstance();
-
     // 先获取当前语言
-    QString locale0 = ok::base::OkSettings::getInstance().getTranslation();
+    auto &s = lib::settings::OkSettings::getInstance();
+
+    QString locale0 = s.getTranslation();
     settings::Translator::translate(OK_UIWindowConfig_MODULE, locale0);
     settings::Translator::registerHandler([this] { retranslateUi(); }, this);
     retranslateUi();
@@ -55,7 +54,7 @@ GeneralForm::GeneralForm(SettingsWidget* myParent)
     // 获取复选框状态
     //  bodyUI->checkUpdates->setChecked(s.getCheckUpdates());
 
-    auto& okSettings = ok::base::OkSettings::getInstance();
+    auto& okSettings = lib::settings::OkSettings::getInstance();
 
     for (int i = 0; i < okSettings.getLocales().size(); ++i) {
         QString langName;
@@ -92,8 +91,9 @@ GeneralForm::GeneralForm(SettingsWidget* myParent)
     //        style = tr("None");
     //    bodyUI->styleBrowser->setCurrentText(style);
 
-    for (const QString& color : Style::getThemeColorNames()) bodyUI->themeColorCBox->addItem(color);
-    bodyUI->themeColorCBox->setCurrentIndex(s.getThemeColor());
+    for (const QString& color : lib::settings::Style::getThemeColorNames())
+        bodyUI->themeColorCBox->addItem(color);
+    bodyUI->themeColorCBox->setCurrentIndex((int)s.getThemeColor());
 
     QLocale ql;
     QStringList timeFormats;
@@ -141,7 +141,7 @@ GeneralForm::~GeneralForm() {
 }
 
 void GeneralForm::on_transComboBox_currentIndexChanged(int index) {
-    auto& s = ok::base::OkSettings::getInstance();
+    auto& s = lib::settings::OkSettings::getInstance();
     const QString& locale = s.getLocales().at(index);
     s.setTranslation(locale);
     s.saveGlobal();
@@ -151,7 +151,7 @@ void GeneralForm::on_transComboBox_currentIndexChanged(int index) {
 }
 
 void GeneralForm::on_cbAutorun_stateChanged() {
-    auto& s = ok::base::OkSettings::getInstance();
+    auto& s = lib::settings::OkSettings::getInstance();
     s.setAutorun(bodyUI->cbAutorun->isChecked());
     s.saveGlobal();
 }
@@ -161,25 +161,25 @@ void GeneralForm::on_cbSpellChecking_stateChanged() {
 }
 
 void GeneralForm::on_showSystemTray_stateChanged() {
-    auto& s = ok::base::OkSettings::getInstance();
+    auto& s = lib::settings::OkSettings::getInstance();
     s.setShowSystemTray(bodyUI->showSystemTray->isChecked());
     s.saveGlobal();
 }
 
 void GeneralForm::on_startInTray_stateChanged() {
-    auto& s = ok::base::OkSettings::getInstance();
+    auto& s = lib::settings::OkSettings::getInstance();
     s.setAutostartInTray(bodyUI->startInTray->isChecked());
     s.saveGlobal();
 }
 
 void GeneralForm::on_closeToTray_stateChanged() {
-    auto& s = ok::base::OkSettings::getInstance();
+    auto& s = lib::settings::OkSettings::getInstance();
     s.setCloseToTray(bodyUI->closeToTray->isChecked());
     s.saveGlobal();
 }
 
 void GeneralForm::on_minimizeToTray_stateChanged() {
-    auto& s = ok::base::OkSettings::getInstance();
+    auto& s = lib::settings::OkSettings::getInstance();
     s.setMinimizeToTray(bodyUI->minimizeToTray->isChecked());
     s.saveGlobal();
 }
@@ -209,13 +209,15 @@ void GeneralForm::on_dateFormats_editTextChanged(const QString& format) {
 void GeneralForm::on_themeColorCBox_currentIndexChanged(int) {
     int index = bodyUI->themeColorCBox->currentIndex();
     auto color = bodyUI->themeColorCBox->currentText();
-    Settings::getInstance().setThemeColor(index);
+    lib::settings::OkSettings::getInstance().setThemeColor(static_cast<lib::settings::MainTheme>(index));
     emit ok::Application::Instance() -> bus()->themeColorChanged(index, color);
 }
 
 /**
  * @brief Retranslate all elements in the form.
  */
-void GeneralForm::retranslateUi() { bodyUI->retranslateUi(this); }
+void GeneralForm::retranslateUi() {
+    bodyUI->retranslateUi(this);
+}
 
 }  // namespace UI

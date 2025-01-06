@@ -20,12 +20,12 @@
 #include <QtCore>
 #include "OkOptions.h"
 #include "base/OkAccount.h"
-#include "base/OkSettings.h"
 #include "base/basic_types.h"
 #include "base/task.h"
 #include "files.h"
 #include "iqnamespacefilter.h"
 #include "lib/messenger/messenger.h"
+#include "lib/settings/OkSettings.h"
 #include "lib/settings/applicationinfo.h"
 #include "okplugin.h"
 #include "pluginhost.h"
@@ -78,7 +78,9 @@ public slots:
  * Function to obtain all the directories in which plugins can be stored
  * \return List of plugin directories
  */
-QStringList PluginManager::pluginDirs() { return ApplicationInfo::pluginDirs(); }
+QStringList PluginManager::pluginDirs() {
+    return ApplicationInfo::pluginDirs();
+}
 
 /**
  * Method for accessing the singleton instance of the class.
@@ -185,7 +187,7 @@ bool PluginManager::installPlugin(const QString& filePath, const QString& shortN
         return false;
     }
 
-    auto pluginFile = ok::base::OkSettings().getAppPluginPath().path() + '/' + shortName;
+    auto pluginFile = lib::settings::OkSettings().getAppPluginPath().path() + '/' + shortName;
     auto moved = ok::base::Files::moveFile(filePath, pluginFile);
     if (!moved) {
         qWarning() << "Plugin move failed!";
@@ -385,7 +387,9 @@ bool PluginManager::unloadAllPlugins() {
     return ok;
 }
 
-bool PluginManager::isAvailable(const QString& plugin) const { return hosts_.contains(plugin); }
+bool PluginManager::isAvailable(const QString& plugin) const {
+    return hosts_.contains(plugin);
+}
 
 bool PluginManager::isEnabled(const QString& plugin) const {
     bool enabled = false;
@@ -449,7 +453,9 @@ QString PluginManager::description(const QString& plugin) const {
 /**
  * Returns a list of available plugin names found in all plugin directories.
  */
-QStringList PluginManager::availablePlugins() const { return hosts_.keys(); }
+QStringList PluginManager::availablePlugins() const {
+    return hosts_.keys();
+}
 
 /**
  * Provides a pointer to a QWidget providing the options dialog for the
@@ -595,7 +601,9 @@ void PluginManager::removeSettingPage(OAH_PluginOptionsTab* tab) {
     //  settingsTabs_.removeOne(tab);
 }
 
-QList<OAH_PluginOptionsTab*> PluginManager::settingsPages() const { return settingsTabs_; }
+QList<OAH_PluginOptionsTab*> PluginManager::settingsPages() const {
+    return settingsTabs_;
+}
 
 /**
  * \brief Give each plugin the opportunity to process the incoming xml
@@ -1108,7 +1116,9 @@ void PluginManager::createNewMessageEvent(int account, QDomElement const& elemen
     //    }
 }
 
-QList<QAction*> PluginManager::globalAboutMenuActions() const { return QList<QAction*>(); }
+QList<QAction*> PluginManager::globalAboutMenuActions() const {
+    return QList<QAction*>();
+}
 
 bool PluginManager::isSelf(int account, const QString& jid) const {
     //    OkAccount *acc = accountIds_.account(account);
@@ -1312,15 +1322,21 @@ void AccountIds::clear() {
     id_keys.clear();
 }
 
-OkAccount* AccountIds::account(int id) const { return id_keys.value(id, nullptr); }
+OkAccount* AccountIds::account(int id) const {
+    return id_keys.value(id, nullptr);
+}
 
-int AccountIds::id(OkAccount* acc) const { return acc_keys.value(acc, -1); }
+int AccountIds::id(OkAccount* acc) const {
+    return acc_keys.value(acc, -1);
+}
 
 PluginManager* PluginManager::instance_ = nullptr;
 const QString PluginManager::loadOptionPrefix = "plugins.auto-load";
 const QString PluginManager::pluginOptionPrefix = "plugins.options";
 
-PluginHost* PluginManager::plugin(const QString& name) const { return hosts_.value(name); }
+PluginHost* PluginManager::plugin(const QString& name) const {
+    return hosts_.value(name);
+}
 
 }  // namespace plugin
 }  // namespace ok

@@ -22,7 +22,7 @@
 #include <QMutex>
 #include <memory>
 
-namespace ok::lib {
+namespace lib::log {
 
 class LogManager {
 public:

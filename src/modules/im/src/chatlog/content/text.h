@@ -66,7 +66,7 @@ public:
 
     void setBoundingRadius(qreal radius);
     void setBackgroundColor(const QColor& color);
-    void setColor(Style::ColorPalette role);
+    void setColor(lib::settings::Style::ColorPalette role);
     void setColor(const QColor& color);
     QString toDisplay(const QString& text);
 
@@ -107,7 +107,7 @@ private:
 
     QColor backgroundColor;
     bool isCustomColor = false;
-    Style::ColorPalette colorRole = Style::MainText;
+    lib::settings::Style::ColorPalette colorRole = lib::settings::Style::ColorPalette::MainText;
     QColor color;
 
     qreal boundRadius = 0.0;

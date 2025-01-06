@@ -170,7 +170,7 @@ AboutFriendForm::~AboutFriendForm() {
 void AboutFriendForm::setName(const QString& name) { ui->userName->setText(name); }
 
 void AboutFriendForm::reloadTheme() {
-    setStyleSheet(Style::getStylesheet("window/aboutFriend.css"));
+    setStyleSheet(lib::settings::Style::getStylesheet("window/aboutFriend.css"));
 }
 
 void AboutFriendForm::onAliasChanged(const QString& text) {

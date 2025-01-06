@@ -17,10 +17,10 @@
 
 #include "PluginInfoForm.h"
 #include "PluginItemForm.h"
-#include "base/OkSettings.h"
 #include "lib/network/NetworkHttp.h"
-#include "lib/settings/translator.h"
+#include "lib/settings/OkSettings.h"
 #include "lib/settings/style.h"
+#include "lib/settings/translator.h"
 #include "src/UI/widget/GenericForm.h"
 #include "ui_PluginManagerForm.h"
 
@@ -31,14 +31,14 @@ PluginManagerForm::PluginManagerForm(QWidget* parent)
         , ui(new Ui::PluginManagerForm) {
     ui->setupUi(this);
 
-    auto qss = Style::getStylesheet(":/qss/UIWindowConfig/plugin.qss");
+    auto qss = lib::settings::Style::getStylesheet(":/qss/UIWindowConfig/plugin.qss");
     setStyleSheet(qss);
 
     if (parent) {
         setGeometry(parent->contentsRect());
     }
 
-    //  QString locale = ok::base::OkSettings::getInstance().getTranslation();
+    //  QString locale = lib::settings::OkSettings::getInstance().getTranslation();
     //  settings::Translator::translate(OK_UIWindowConfig_MODULE, "plugin_"+locale);
     //  settings::Translator::registerHandler([this] { retranslateUi(); }, this);
     //  retranslateUi();
@@ -68,7 +68,9 @@ PluginManagerForm::PluginManagerForm(QWidget* parent)
     ui->splitter->setStretchFactor(1, 1);
 }
 
-PluginManagerForm::~PluginManagerForm() { delete ui; }
+PluginManagerForm::~PluginManagerForm() {
+    delete ui;
+}
 
 void PluginManagerForm::pluginClicked(QListWidgetItem* item) {
     Q_UNUSED(item);

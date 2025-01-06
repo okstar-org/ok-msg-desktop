@@ -19,7 +19,7 @@
 #include <cassert>
 #include "ChatWidget.h"
 #include "ContactListLayout.h"
-#include "base/OkSettings.h"
+#include "lib/settings/OkSettings.h"
 #include "base/times.h"
 #include "circlewidget.h"
 #include "contentdialogmanager.h"
@@ -729,9 +729,9 @@ void MessageSessionListWidget::setFriendFileCancelled(const ContactId& f, const 
 
 void MessageSessionListWidget::reloadTheme() {
     auto p = palette();
-    p.setColor(QPalette::Window, Style::getColor(Style::ThemeMedium));  // Base background color
-    p.setColor(QPalette::Highlight, Style::getColor(Style::ThemeHighlight));  // On mouse over
-    p.setColor(QPalette::Light, Style::getColor(Style::ThemeLight));          // When active
+    p.setColor(QPalette::Window, lib::settings::Style::getColor(lib::settings::Style::ColorPalette::ThemeMedium));          // Base background color
+    p.setColor(QPalette::Highlight, lib::settings::Style::getColor(lib::settings::Style::ColorPalette::ThemeHighlight));    // On mouse over
+    p.setColor(QPalette::Light, lib::settings::Style::getColor(lib::settings::Style::ColorPalette::ThemeLight));            // When active
     setPalette(p);
 
     for (auto fw : sessionWidgets) {

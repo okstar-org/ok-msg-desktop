@@ -88,7 +88,7 @@ void AppCenterWidget::sendAppListToView(const QJsonArray& appList) {
 
 void AppCenterWidget::showLoading() {
     loadingWidget = new LoadingWidget(this);
-    QColor color = Style::getExtColor("view.loadingAnima.color");
+    QColor color = lib::settings::Style::getExtColor("view.loadingAnima.color");
     if (color.isValid()) {
         QPalette pal = loadingWidget->palette();
         pal.setColor(QPalette::Normal, QPalette::WindowText, color);

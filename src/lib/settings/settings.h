@@ -27,12 +27,14 @@
 #include <QPixmap>
 #include <QtNetwork/QNetworkProxy>
 
-class Profile;
 class QCommandLineParser;
+class Profile;
 
 namespace Db {
 enum class syncType;
 }
+
+namespace lib::settings{
 
 class Settings : public QObject, ICoreSettings {
     Q_OBJECT
@@ -87,8 +89,7 @@ class Settings : public QObject, ICoreSettings {
     // Privacy
     Q_PROPERTY(bool typingNotification READ getTypingNotification WRITE setTypingNotification NOTIFY
                        typingNotificationChanged FINAL)
-    Q_PROPERTY(QStringList blackList READ getBlackList WRITE setBlackList NOTIFY blackListChanged
-                       FINAL)
+
 
     // Audio
     Q_PROPERTY(QString inDev READ getInDev WRITE setInDev NOTIFY inDevChanged FINAL)
@@ -157,7 +158,6 @@ public slots:
 
 signals:
     // General
-
     void lightTrayIconChanged(bool enabled);
     void notifyChanged(bool enabled);
     void desktopNotifyChanged(bool enabled);
@@ -179,8 +179,7 @@ signals:
     void autoLoginChanged(bool enabled);
     void nameColorsChanged(bool enabled);
     void separateWindowChanged(bool enabled);
-    void windowGeometryChanged(const QByteArray& rect);
-    void windowStateChanged(const QByteArray& state);
+   
     void splitterStateChanged(const QByteArray& state);
     void dialogGeometryChanged(const QByteArray& rect);
     void dialogSplitterStateChanged(const QByteArray& state);
@@ -285,8 +284,6 @@ public:
     bool getGroupAlwaysNotify() const;
     void setGroupAlwaysNotify(bool newValue);
 
-    QString getInDev() const;
-    void setInDev(const QString& deviceSpecifier);
 
     bool getAudioInDevEnabled() const;
     void setAudioInDevEnabled(bool enabled);
@@ -376,24 +373,7 @@ public:
     bool getShowGroupJoinLeaveMessages() const;
     void setShowGroupJoinLeaveMessages(bool newValue);
 
-    // State
-    QByteArray getWindowGeometry() const;
-    void setWindowGeometry(const QByteArray& value);
 
-    QByteArray getWindowState() const;
-    void setWindowState(const QByteArray& value);
-
-    QByteArray getSplitterState() const;
-    void setSplitterState(const QByteArray& value);
-
-    QByteArray getDialogGeometry() const;
-    void setDialogGeometry(const QByteArray& value);
-
-    QByteArray getDialogSplitterState() const;
-    void setDialogSplitterState(const QByteArray& value);
-
-    QByteArray getDialogSettingsGeometry() const;
-    void setDialogSettingsGeometry(const QByteArray& value);
 
     QString getFriendAddress(const QString& publicKey) const;
     void updateFriendAddress(const QString& newAddr);
@@ -514,12 +494,7 @@ private:
     // GUI 通用
     QString smileyPack;
     int emojiFontPointSize;
-    QByteArray windowGeometry;
-    QByteArray windowState;
-    QByteArray splitterState;
-    QByteArray dialogGeometry;
-    QByteArray dialogSplitterState;
-    QByteArray dialogSettingsGeometry;
+
     QString style;
 
     // ChatView 用户界面
@@ -536,7 +511,7 @@ private:
     // Privacy 隐私
     bool typingNotification;
     Db::syncType dbSyncType;
-    QStringList blackList;
+
 
     // Audio 音频
     QString inDev;
@@ -571,5 +546,7 @@ private:
     static const QString globalSettingsFile;
     static QThread* settingsThread;
 };
+
+}
 
 #endif  // SETTINGS_HPP

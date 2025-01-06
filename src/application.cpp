@@ -23,7 +23,6 @@
 #include "UI/window/login/src/LoginWidget.h"
 #include "UI/window/login/src/LoginWindow.h"
 #include "UI/window/main/src/OMainMenu.h"
-#include "base/OkSettings.h"
 #include "base/files.h"
 #include "base/logs.h"
 #include "base/r.h"
@@ -31,6 +30,7 @@
 #include "ipc.h"
 #include "lib/log/LogManager.h"
 #include "lib/plugin/pluginmanager.h"
+#include "lib/settings/OkSettings.h"
 #include "lib/settings/translator.h"
 #include "modules/im/src/nexus.h"
 
@@ -43,17 +43,27 @@ namespace ok {
  */
 Application::Application(int& argc, char* argv[])
         : QApplication(argc, argv), _argc(argc), _argv(argv) {
+
     // Qt application settings.
     setApplicationName(APPLICATION_NAME);
     setApplicationVersion(APPLICATION_VERSION_ID);
+    setOrganizationName(ORGANIZATION_NAME);
+    setOrganizationDomain(ORGANIZATION_DOMAIN);
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 7, 0)
     setDesktopFileName(APPLICATION_NAME);
 #endif
 
+    connect(qApp, &QApplication::aboutToQuit, this, &Application::on_exit);
+
     // Initialize log manager.
-    ok::lib::LogManager::Instance();
+    lib::log::LogManager::Instance();
     qDebug() << "QT_VERSION:" << QT_VERSION_STR;
+    qDebug() << "APPLICATION_NAME:" << APPLICATION_NAME;
+    qDebug() << "APPLICATION_VERSION_ID:" << APPLICATION_VERSION_ID;
+    qDebug() << "ORGANIZATION_NAME:" << ORGANIZATION_NAME;
+    qDebug() << "ORGANIZATION_DOMAIN:" << ORGANIZATION_DOMAIN;
+
     qDebug() << QString("argc:%1").arg(argc);
     for (int i = 0; i < argc; i++) {
         qDebug() << QString("argv:%1->%2").arg(i).arg(argv[i]);
@@ -85,18 +95,18 @@ Application::Application(int& argc, char* argv[])
     qDebug() << "APPLICATION_ID        :" << APPLICATION_ID;
     qDebug() << "APPLICATION_NAME      :" << APPLICATION_NAME;
 
-    auto configDir = ok::base::OkSettings::configDir();
+    auto configDir = lib::settings::OkSettings::configDir();
     qDebug() << "ConfigDir  :" << configDir.path();
-    auto cacheDir = ok::base::OkSettings::cacheDir();
+    auto cacheDir = lib::settings::OkSettings::cacheDir();
     qDebug() << "CacheDir   :" << cacheDir.path();
-    auto dataDir = ok::base::OkSettings::dataDir();
+    auto dataDir = lib::settings::OkSettings::dataDir();
     qDebug() << "DataDir    :" << dataDir.path();
-    auto downloadDir = ok::base::OkSettings::downloadDir();
+    auto downloadDir = lib::settings::OkSettings::downloadDir();
     qDebug() << "DownloadDir:" << downloadDir.path();
 
-    auto pluginDir = ok::base::OkSettings::getAppPluginPath();
+    auto pluginDir = lib::settings::OkSettings::getAppPluginPath();
     qDebug() << "PluginDir  :" << pluginDir.path();
-    auto logDir = ok::base::OkSettings::getAppLogPath();
+    auto logDir = lib::settings::OkSettings::getAppLogPath();
     qDebug() << "LogDir     :" << logDir.path();
 
     // Windows platform plugins DLL hell fix
@@ -196,7 +206,7 @@ void Application::stopMainUI() {
 }
 
 void Application::cleanup() {
-    qDebug(("Cleanup..."));
+    qDebug() << __func__;
     for (auto e : m_moduleMap) {
         e->cleanup();
     }
@@ -228,10 +238,10 @@ void Application::on_logout(const QString& profile) {
     createLoginUI(false);
 }
 
-void Application::on_exit(const QString& profile) {
-    qDebug() << __func__ << profile;
-    doLogout();
-    qApp->exit();
+void Application::on_exit() {
+    qDebug() << __func__;
+    // auto &s = lib::settings::OkSettings::getInstance();
+    // s.saveGlobal();
 }
 
 void Application::doLogout() {

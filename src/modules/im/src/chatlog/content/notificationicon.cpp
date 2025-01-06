@@ -20,7 +20,7 @@
 
 NotificationIcon::NotificationIcon(QSize Size)
         : ChatLineContent(ChatLineContent::ContentType::CHAT_Nofity), size(Size) {
-    pmap = PixmapCache::getInstance().get(Style::getImagePath("chatArea/typing.svg"), size);
+    pmap = PixmapCache::getInstance().get(lib::settings::Style::getImagePath("chatArea/typing.svg"), size);
 
     updateTimer = new QTimer(this);
     updateTimer->setInterval(1000 / 30);

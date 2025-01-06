@@ -12,14 +12,7 @@
 
 #include "settings.h"
 #include "base/autorun.h"
-#include "src/core/core.h"
-#include "src/core/corefile.h"
-#include "src/ipc.h"
-#include "src/nexus.h"
-#include "src/persistence/profile.h"
-#include "src/persistence/profilelocker.h"
-#include "src/persistence/settingsserializer.h"
-#include "src/persistence/smileypack.h"
+
 #include "style.h"
 
 #include "base/OkSettings.h"
@@ -51,6 +44,8 @@ const QString Settings::globalSettingsFile = APPLICATION_ALIAS "-" OK_IM_MODULE 
 
 CompatibleRecursiveMutex Settings::bigLock;
 QThread* Settings::settingsThread{nullptr};
+
+namespace lib::settings{
 
 Settings::Settings() : loaded(false), useCustomDhtList{false}, makeToxPortable{false} {
     settingsThread = new QThread();
@@ -170,8 +165,7 @@ void Settings::loadGlobal() {
         emojiFontPointSize = s.value("emojiFontPointSize", 24).toInt();
         firstColumnHandlePos = s.value("firstColumnHandlePos", 50).toInt();
         secondColumnHandlePosFromRight = s.value("secondColumnHandlePosFromRight", 50).toInt();
-        timestampFormat = s.value("timestampFormat", "hh:mm:ss").toString();
-        dateFormat = s.value("dateFormat", "yyyy-MM-dd").toString();
+      
         lightTrayIcon = s.value("lightTrayIcon", false).toBool();
         useEmoticons = s.value("useEmoticons", true).toBool();
         statusChangeNotificationEnabled =
@@ -546,16 +540,7 @@ void Settings::saveGlobal() {
     { s.setValue("chatMessageFont", chatMessageFont); }
     s.endGroup();
 
-    s.beginGroup("State");
-    {
-        s.setValue("windowGeometry", windowGeometry);
-        s.setValue("windowState", windowState);
-        s.setValue("splitterState", splitterState);
-        s.setValue("dialogGeometry", dialogGeometry);
-        s.setValue("dialogSplitterState", dialogSplitterState);
-        s.setValue("dialogSettingsGeometry", dialogSettingsGeometry);
-    }
-    s.endGroup();
+
     // 音频
     s.beginGroup("Audio");
     {
@@ -1369,34 +1354,6 @@ void Settings::setEmojiFontPointSize(int value) {
     }
 }
 
-const QString& Settings::getTimestampFormat() const {
-    QMutexLocker locker{&bigLock};
-    return timestampFormat;
-}
-
-void Settings::setTimestampFormat(const QString& format) {
-    QMutexLocker locker{&bigLock};
-
-    if (format != timestampFormat) {
-        timestampFormat = format;
-        emit timestampFormatChanged(timestampFormat);
-    }
-}
-
-const QString& Settings::getDateFormat() const {
-    QMutexLocker locker{&bigLock};
-    return dateFormat;
-}
-
-void Settings::setDateFormat(const QString& format) {
-    QMutexLocker locker{&bigLock};
-
-    if (format != dateFormat) {
-        dateFormat = format;
-        emit dateFormatChanged(dateFormat);
-    }
-}
-
 Settings::StyleType Settings::getStylePreference() const {
     QMutexLocker locker{&bigLock};
     return stylePreference;
@@ -1411,33 +1368,6 @@ void Settings::setStylePreference(StyleType newValue) {
     }
 }
 
-QByteArray Settings::getWindowGeometry() const {
-    QMutexLocker locker{&bigLock};
-    return windowGeometry;
-}
-
-void Settings::setWindowGeometry(const QByteArray& value) {
-    QMutexLocker locker{&bigLock};
-
-    if (value != windowGeometry) {
-        windowGeometry = value;
-        emit windowGeometryChanged(windowGeometry);
-    }
-}
-
-QByteArray Settings::getWindowState() const {
-    QMutexLocker locker{&bigLock};
-    return windowState;
-}
-
-void Settings::setWindowState(const QByteArray& value) {
-    QMutexLocker locker{&bigLock};
-
-    if (value != windowState) {
-        windowState = value;
-        emit windowStateChanged(windowState);
-    }
-}
 
 bool Settings::getCheckUpdates() const {
     QMutexLocker locker{&bigLock};
@@ -1575,20 +1505,6 @@ void Settings::setBlackList(const QStringList& blist) {
     if (blist != blackList) {
         blackList = blist;
         emit blackListChanged(blackList);
-    }
-}
-
-QString Settings::getInDev() const {
-    QMutexLocker locker{&bigLock};
-    return inDev;
-}
-
-void Settings::setInDev(const QString& deviceSpecifier) {
-    QMutexLocker locker{&bigLock};
-
-    if (deviceSpecifier != inDev) {
-        inDev = deviceSpecifier;
-        emit inDevChanged(inDev);
     }
 }
 
@@ -2028,7 +1944,6 @@ int Settings::getThemeColor() const {
 
 void Settings::setThemeColor(int value) {
     QMutexLocker locker{&bigLock};
-
     if (value != themeColor) {
         themeColor = value;
         emit themeColorChanged(themeColor);
@@ -2094,4 +2009,6 @@ ICoreSettings::ProxyType Settings::fixInvalidProxyType(ICoreSettings::ProxyType 
             qWarning() << "Repairing invalid ProxyType, UDP will be enabled";
             return ICoreSettings::ProxyType::ptNone;
     }
+}
+
 }

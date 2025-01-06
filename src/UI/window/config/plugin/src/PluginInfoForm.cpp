@@ -13,20 +13,20 @@
 #include "PluginInfoForm.h"
 
 #include <QDebug>
-#include "base/OkSettings.h"
 #include "base/files.h"
 #include "lib/network/NetworkHttp.h"
 #include "lib/plugin/pluginhost.h"
+#include "lib/settings/OkSettings.h"
 #include "ui_PluginInfoForm.h"
 
 namespace ok::plugin {
 
 inline QString makePath(const QString& id, const QString& name) {
-    return QString("%1/%2_%3").arg(ok::base::OkSettings::downloadDir().path(), id, name);
+    return QString("%1/%2_%3").arg(lib::settings::OkSettings::downloadDir().path(), id, name);
 }
 
 inline QString makePluginPath(const QString& name) {
-    return QString("%1/%2").arg(ok::base::OkSettings().getAppPluginPath().path(), name);
+    return QString("%1/%2").arg(lib::settings::OkSettings().getAppPluginPath().path(), name);
 }
 
 PluginInfoForm::PluginInfoForm(lib::backend::PluginInfo& info, QWidget* parent)
@@ -73,7 +73,9 @@ PluginInfoForm::PluginInfoForm(lib::backend::PluginInfo& info, QWidget* parent)
     ui->progressBar->setSizePolicy(policy);
 }
 
-PluginInfoForm::~PluginInfoForm() { delete ui; }
+PluginInfoForm::~PluginInfoForm() {
+    delete ui;
+}
 
 void PluginInfoForm::on_installBtn_released() {
     QMutexLocker ml{&mMutex};

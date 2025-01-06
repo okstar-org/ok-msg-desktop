@@ -22,8 +22,8 @@
 #include <cassert>
 #include "Bus.h"
 #include "application.h"
-#include "base/OkSettings.h"
 #include "gui.h"
+#include "lib/settings/OkSettings.h"
 #include "lib/settings/translator.h"
 #include "persistence/settings.h"
 #include "src/core/core.h"
@@ -125,7 +125,7 @@ void Nexus::start(std::shared_ptr<lib::session::AuthSession> session) {
     qDebug() << "Starting up";
     stared = true;
 
-    auto& s = ok::base::OkSettings::getInstance();
+    auto& s = lib::settings::OkSettings::getInstance();
     QString locale = s.getTranslation();
     qDebug() << "locale" << locale;
 

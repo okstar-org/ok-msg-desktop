@@ -71,8 +71,7 @@ private:
     bool wasMaximized = false;
 
     //  bool autoAwayActive = false;
-    //  void saveWindowGeometry();
-    //  void saveSplitterGeometry();
+    void saveWindowGeometry();
 
     static inline QIcon prepareIcon(QString path, int w = 0, int h = 0);
 

@@ -15,7 +15,7 @@
 
 SimpleText::SimpleText(const QString& txt, const QFont& font)
         : ChatLineContent(ContentType::CHAT_TEXT), text(txt), defFont(font) {
-    color = Style::getColor(colorRole);
+    color = lib::settings::Style::getColor(colorRole);
     updateBoundingRect();
 }
 
@@ -47,10 +47,10 @@ void SimpleText::setWidth(qreal width) {
     }
 }
 
-void SimpleText::setColor(Style::ColorPalette role) {
+void SimpleText::setColor(lib::settings::Style::ColorPalette role) {
     customColor = false;
     colorRole = role;
-    color = Style::getColor(colorRole);
+    color = lib::settings::Style::getColor(colorRole);
 }
 
 void SimpleText::setColor(const QColor& color) {
@@ -70,6 +70,6 @@ void SimpleText::updateBoundingRect() {
 }
 
 void SimpleText::reloadTheme() {
-    if (!customColor) color = Style::getColor(colorRole);
+    if (!customColor) color = lib::settings::Style::getColor(colorRole);
 }
 const void* SimpleText::getContent() { return &text; }

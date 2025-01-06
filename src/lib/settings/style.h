@@ -19,9 +19,22 @@
 class QString;
 class QWidget;
 
+namespace lib::settings {
+
+
+enum class MainTheme { Light, Dark };
+
+struct ThemeNameColor {
+    MainTheme type;
+    QString name;
+    QColor color;
+};
+
 class Style {
 public:
-    enum ColorPalette {
+    enum class Font { ExtraBig, Big, BigBold, Medium, MediumBold, Small, SmallLight };
+
+    enum class ColorPalette {
         TransferGood,
         TransferWait,
         TransferBad,
@@ -42,17 +55,6 @@ public:
         SearchHighlighted,
         SelectText
     };
-
-    enum Font { ExtraBig, Big, BigBold, Medium, MediumBold, Small, SmallLight };
-
-    enum MainTheme { Light, Dark };
-
-    struct ThemeNameColor {
-        MainTheme type;
-        QString name;
-        QColor color;
-    };
-
     static QStringList getThemeColorNames();
     static const QString getStylesheet(const QString& filename, const QFont& baseFont = QFont());
     static const QString getImagePath(const QString& filename);
@@ -82,4 +84,6 @@ private:
     static QMap<ColorPalette, QString> aliasColors;
 };
 
+
+}
 #endif  // STYLE_H

@@ -11,7 +11,6 @@
  */
 
 #include "coreav.h"
-#include <src/nexus.h>
 #include <QCoreApplication>
 #include <QDebug>
 #include <QThread>
@@ -24,6 +23,7 @@
 #include "src/audio/audio.h"
 #include "src/model/friend.h"
 #include "src/model/group.h"
+#include "src/nexus.h"
 #include "src/persistence/settings.h"
 #include "src/video/corevideosource.h"
 #include "src/video/videoframe.h"
@@ -40,8 +40,7 @@ CoreAV::CoreAV(Core* core)
         , audioCtrl(Nexus::getInstance().audio())
         , coreavThread(new QThread{this})
         , selfVideoSource(std::make_unique<CoreVideoSource>())
-        , iterateTimer(new QTimer(this))
-{
+        , iterateTimer(new QTimer(this)) {
     assert(coreavThread);
     assert(iterateTimer);
 
@@ -277,7 +276,6 @@ void CoreAV::rejectCall(const ToxPeer& peerId) {
         return;
     }
 
-
     auto& call = it->second;
     imCall->callReject(lib::messenger::IMPeerId{peerId.toString()}, call->getCallId());
     calls.erase(it);
@@ -432,7 +430,6 @@ void CoreAV::toggleMuteCallOutput(const ContactId* f) {
 void CoreAV::groupCallCallback(void* tox, QString group, QString peer, const int16_t* data,
                                unsigned samples, uint8_t channels, uint32_t sample_rate,
                                void* core) {
-
     Q_UNUSED(tox);
     Core* c = static_cast<Core*>(core);
 
@@ -919,4 +916,3 @@ void CoreAV::videoFramePush(CoreVideoSource* videoSource,  //
 
     videoSource->pushFrame(&frame);
 }
-

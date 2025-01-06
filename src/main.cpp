@@ -11,7 +11,7 @@
  */
 #include <QDebug>
 #include "launcher.h"
-#include "lib/log/LogManager.h"
+
 
 int main(int argc, char* argv[]) {
     Q_INIT_RESOURCE(application);

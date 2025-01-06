@@ -101,6 +101,6 @@ public slots:
     void onAvatar(const QPixmap&);
 
     void on_logout(const QString& profile);
-    void on_exit(const QString& profile);
+    void on_exit();
 };
 }  // namespace ok

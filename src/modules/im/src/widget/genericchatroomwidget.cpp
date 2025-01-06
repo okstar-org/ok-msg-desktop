@@ -64,7 +64,7 @@ void GenericChatroomWidget::compactChange(bool _compact) {
             mainLayout->addWidget(statusPic);
         }
         mainLayout->activate();
-        nameLabel->setFont(Style::getFont(Style::Medium));
+        nameLabel->setFont(lib::settings::Style::getFont(lib::settings::Style::Font::Medium));
     } else {
         mainLayout->setContentsMargins(8, 8, 8, 8);
         mainLayout->setSpacing(10);
@@ -79,7 +79,7 @@ void GenericChatroomWidget::compactChange(bool _compact) {
             mainLayout->addWidget(statusPic);
         }
         mainLayout->activate();
-        nameLabel->setFont(Style::getFont(Style::Big));
+        nameLabel->setFont(lib::settings::Style::getFont(lib::settings::Style::Font::Big));
     }
 }
 
@@ -115,14 +115,14 @@ void GenericChatroomWidget::reloadTheme() {
     //    active statusMessageLabel->setPalette(p);
 
     p = nameLabel->palette();
-    p.setColor(QPalette::WindowText, Style::getColor(Style::MainText));         // Base color
-    p.setColor(QPalette::HighlightedText, Style::getColor(Style::NameActive));  // Color when active
+    p.setColor(QPalette::WindowText, lib::settings::Style::getColor(lib::settings::Style::ColorPalette::MainText));         // Base color
+    p.setColor(QPalette::HighlightedText, lib::settings::Style::getColor(lib::settings::Style::ColorPalette::NameActive));  // Color when active
     nameLabel->setPalette(p);
 
     p = palette();
-    p.setColor(QPalette::Window, Style::getColor(Style::ThemeMedium));  // Base background color
-    p.setColor(QPalette::Highlight, Style::getColor(Style::ThemeHighlight));  // On mouse over
-    p.setColor(QPalette::Light, Style::getColor(Style::ThemeLight));          // When active
+    p.setColor(QPalette::Window, lib::settings::Style::getColor(lib::settings::Style::ColorPalette::ThemeMedium));  // Base background color
+    p.setColor(QPalette::Highlight, lib::settings::Style::getColor(lib::settings::Style::ColorPalette::ThemeHighlight));  // On mouse over
+    p.setColor(QPalette::Light, lib::settings::Style::getColor(lib::settings::Style::ColorPalette::ThemeLight));          // When active
     setPalette(p);
 }
 

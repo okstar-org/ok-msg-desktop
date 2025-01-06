@@ -30,8 +30,6 @@ set(${PROJECT_NAME}_SOURCES
     Page.h
     Page.cpp
     PageFactory.h
-    OkSettings.h
-    OkSettings.cpp
     OkProcess.h
     utils.h
     SvgUtils.h

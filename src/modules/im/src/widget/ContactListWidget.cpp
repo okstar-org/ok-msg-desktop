@@ -13,7 +13,7 @@
 #include "ContactListWidget.h"
 #include "ChatWidget.h"
 #include "ContactListLayout.h"
-#include "base/OkSettings.h"
+#include "lib/settings/OkSettings.h"
 #include "base/times.h"
 #include "circlewidget.h"
 #include "contentdialogmanager.h"

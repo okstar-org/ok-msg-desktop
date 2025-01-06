@@ -11,6 +11,7 @@
  */
 
 #include "chatlog.h"
+#include "../persistence/settings.h"
 #include "chatlinecontent.h"
 #include "chatlinecontentproxy.h"
 #include "chatmessage.h"
@@ -29,8 +30,6 @@
 
 #include <algorithm>
 #include <cassert>
-
-#include <lib/settings/settings.h>
 
 /**
  * @var ChatLog::repNameAfter
@@ -72,7 +71,8 @@ ChatLog::ChatLog(QWidget* parent) : QGraphicsView(parent), scrollBarValue{0} {
     // setDragMode(QGraphicsView::NoDrag);
     setViewportUpdateMode(MinimalViewportUpdate);
     // setContextMenuPolicy(Qt::CustomContextMenu);
-    setBackgroundBrush(QBrush(Style::getColor(Style::GroundBase), Qt::SolidPattern));
+    setBackgroundBrush(QBrush(lib::settings::Style::getColor(lib::settings::Style::ColorPalette::GroundBase),
+                              Qt::SolidPattern));
 
     setContextMenuPolicy(Qt::CustomContextMenu);
     connect(this, &ChatLog::customContextMenuRequested, this, &ChatLog::onChatContextMenuRequested);
@@ -206,7 +206,9 @@ QRect ChatLog::getVisibleRect() const {
     return mapToScene(viewport()->rect()).boundingRect().toRect();
 }
 
-void ChatLog::updateSceneRect() { setSceneRect(calculateSceneRect()); }
+void ChatLog::updateSceneRect() {
+    setSceneRect(calculateSceneRect());
+}
 
 void ChatLog::layout(int start, int end, qreal width) {
     if (lines.empty()) return;
@@ -571,13 +573,21 @@ QString ChatLog::getSelectedText() const {
     return QString();
 }
 
-bool ChatLog::isEmpty() const { return lines.isEmpty(); }
+bool ChatLog::isEmpty() const {
+    return lines.isEmpty();
+}
 
-bool ChatLog::hasTextToBeCopied() const { return selectionMode != SelectionMode::None; }
+bool ChatLog::hasTextToBeCopied() const {
+    return selectionMode != SelectionMode::None;
+}
 
-IChatItem::Ptr ChatLog::getTypingNotification() const { return typingNotification; }
+IChatItem::Ptr ChatLog::getTypingNotification() const {
+    return typingNotification;
+}
 
-QVector<IChatItem::Ptr> ChatLog::getLines() { return lines; }
+QVector<IChatItem::Ptr> ChatLog::getLines() {
+    return lines;
+}
 
 IChatItem::Ptr ChatLog::getLatestLine() const {
     if (!lines.empty()) {
@@ -664,15 +674,18 @@ void ChatLog::fontChanged(const QFont& font) {
 }
 
 void ChatLog::reloadTheme() {
-    setBackgroundBrush(QBrush(Style::getColor(Style::GroundBase), Qt::SolidPattern));
-    selectionRectColor = Style::getColor(Style::SelectText);
+    setBackgroundBrush(QBrush(lib::settings::Style::getColor(lib::settings::Style::ColorPalette::GroundBase),
+                              Qt::SolidPattern));
+    selectionRectColor = lib::settings::Style::getColor(lib::settings::Style::ColorPalette::SelectText);
 
     for (IChatItem::Ptr l : lines) {
         l->reloadTheme();
     }
 }
 
-void ChatLog::forceRelayout() { startResizeWorker(); }
+void ChatLog::forceRelayout() {
+    startResizeWorker();
+}
 
 void ChatLog::checkVisibility(bool causedByScroll) {
     if (lines.empty()) return;
@@ -840,7 +853,9 @@ void ChatLog::onWorkerTimeout() {
     }
 }
 
-void ChatLog::onMultiClickTimeout() { clickCount = 0; }
+void ChatLog::onMultiClickTimeout() {
+    clickCount = 0;
+}
 
 void ChatLog::onVScrollBarValueChanged(int value) {
     scrollBarValue = value;
@@ -1012,7 +1027,9 @@ void ChatLog::moveMultiSelectionDown(int offset) {
     }
 }
 
-void ChatLog::clearChat() { clear(); }
+void ChatLog::clearChat() {
+    clear();
+}
 
 void ChatLog::clear() {
     clearSelection();

@@ -53,7 +53,7 @@ ContentDialog::ContentDialog(QWidget* parent)
         , videoSurfaceSize(QSize())
         , videoCount(0) {
     const Settings& s = Settings::getInstance();
-    setStyleSheet(Style::getStylesheet("contentDialog/contentDialog.css"));
+    setStyleSheet(lib::settings::Style::getStylesheet("contentDialog/contentDialog.css"));
 
     friendLayout->setMargin(0);
     friendLayout->setSpacing(0);
@@ -80,7 +80,7 @@ ContentDialog::ContentDialog(QWidget* parent)
     friendScroll->setFrameStyle(QFrame::NoFrame);
     friendScroll->setLayoutDirection(Qt::RightToLeft);
     friendScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    friendScroll->setStyleSheet(Style::getStylesheet("friendList/friendList.css"));
+    friendScroll->setStyleSheet(lib::settings::Style::getStylesheet("friendList/friendList.css"));
     friendScroll->setWidgetResizable(true);
     friendScroll->setWidget(friendWidget);
 

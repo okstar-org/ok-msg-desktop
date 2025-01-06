@@ -26,12 +26,12 @@
 #include <QToolButton>
 
 #include <src/core/FriendId.h>
-#include <src/core/coreav.h>
+#include "src/core/coreav.h"
 
 #include <src/model/contact.h>
 #include <src/model/friend.h>
 
-#include <src/widget/tool/callconfirmwidget.h>
+#include "src/widget/tool/callconfirmwidget.h"
 #include "src/model/friendlist.h"
 
 #include "Bus.h"
@@ -85,7 +85,7 @@ QPushButton* createButton(const QString& name, T* self, Fun onClickSlot) {
     QPushButton* btn = new QPushButton();
     btn->setAttribute(Qt::WA_LayoutUsesWidgetRect);
     btn->setObjectName(name);
-    btn->setStyleSheet(Style::getStylesheet(STYLE_PATH));
+    btn->setStyleSheet(lib::settings::Style::getStylesheet(STYLE_PATH));
     QObject::connect(btn, &QPushButton::clicked, self, onClickSlot);
     return btn;
 }
@@ -120,7 +120,7 @@ ChatFormHeader::ChatFormHeader(const ContactId& contactId, QWidget* parent)
     // 名称
     nameLabel = new CroppingLabel(this);
     nameLabel->setObjectName("nameLabel");
-    nameLabel->setMinimumHeight(Style::getFont(Style::Medium).pixelSize());
+    nameLabel->setMinimumHeight(lib::settings::Style::getFont(lib::settings::Style::Font::Medium).pixelSize());
     nameLabel->setCursor(Qt::PointingHandCursor);
     nameLabel->setTextFormat(Qt::PlainText);
     nameLabel->setText(contactId.username);
@@ -179,7 +179,9 @@ ChatFormHeader::ChatFormHeader(const ContactId& contactId, QWidget* parent)
     retranslateUi();
 }
 
-ChatFormHeader::~ChatFormHeader() { settings::Translator::unregister(this); }
+ChatFormHeader::~ChatFormHeader() {
+    settings::Translator::unregister(this);
+}
 
 void ChatFormHeader::setContact(const Contact* contact_) {
     if (!Nexus::getProfile() || contact == contact_) {
@@ -225,7 +227,9 @@ void ChatFormHeader::removeContact() {
     contactId = ContactId();
 }
 
-const Contact* ChatFormHeader::getContact() const { return contact; }
+const Contact* ChatFormHeader::getContact() const {
+    return contact;
+}
 
 void ChatFormHeader::setName(const QString& newName) {
     nameLabel->setText(newName);
@@ -255,10 +259,12 @@ void ChatFormHeader::updateButtonsView() {
     callButton->setEnabled(callState != CallButtonState::Disabled);
     videoButton->setEnabled(videoState != CallButtonState::Disabled);
     retranslateUi();
-    Style::repolish(this);
+    lib::settings::Style::repolish(this);
 }
 
-void ChatFormHeader::onDisplayedNameChanged(const QString& name) { setName(name); }
+void ChatFormHeader::onDisplayedNameChanged(const QString& name) {
+    setName(name);
+}
 
 void ChatFormHeader::nameChanged(const QString& name) {
     if (Core::getInstance()->getSelfId().getId() == contactId.getId()) {
@@ -304,7 +310,9 @@ void ChatFormHeader::showCallConfirm() {
     //   callConfirm->setVisible(true);
 }
 
-void ChatFormHeader::removeCallConfirm() { callConfirm.reset(nullptr); }
+void ChatFormHeader::removeCallConfirm() {
+    callConfirm.reset(nullptr);
+}
 
 void ChatFormHeader::updateMuteVolButton() {
     const CoreAV* av = CoreAV::getInstance();
@@ -352,9 +360,13 @@ void ChatFormHeader::updateCallButtons(bool online, bool audio, bool video) {
     updateButtonsView();
 }
 
-void ChatFormHeader::updateMuteMicButton(bool active, bool inputMuted) { updateButtonsView(); }
+void ChatFormHeader::updateMuteMicButton(bool active, bool inputMuted) {
+    updateButtonsView();
+}
 
-void ChatFormHeader::updateMuteVolButton(bool active, bool outputMuted) { updateButtonsView(); }
+void ChatFormHeader::updateMuteVolButton(bool active, bool outputMuted) {
+    updateButtonsView();
+}
 
 void ChatFormHeader::updateCallButtons() {
     updateMuteMicButton();
@@ -372,22 +384,30 @@ void ChatFormHeader::updateCallButtons(Status::Status status) {
     updateCallButtons();
 }
 
-void ChatFormHeader::setAvatar(const QPixmap& img) { avatar->setPixmap(img); }
+void ChatFormHeader::setAvatar(const QPixmap& img) {
+    avatar->setPixmap(img);
+}
 
-QSize ChatFormHeader::getAvatarSize() const { return QSize{avatar->width(), avatar->height()}; }
+QSize ChatFormHeader::getAvatarSize() const {
+    return QSize{avatar->width(), avatar->height()};
+}
 
 void ChatFormHeader::reloadTheme() {
-    callButton->setStyleSheet(Style::getStylesheet(STYLE_PATH));
-    videoButton->setStyleSheet(Style::getStylesheet(STYLE_PATH));
+    callButton->setStyleSheet(lib::settings::Style::getStylesheet(STYLE_PATH));
+    videoButton->setStyleSheet(lib::settings::Style::getStylesheet(STYLE_PATH));
 }
 
 void ChatFormHeader::addWidget(QWidget* widget, int stretch, Qt::Alignment alignment) {
     headTextLayout->addWidget(widget, stretch, alignment);
 }
 
-void ChatFormHeader::addLayout(QLayout* layout) { headTextLayout->addLayout(layout); }
+void ChatFormHeader::addLayout(QLayout* layout) {
+    headTextLayout->addLayout(layout);
+}
 
-void ChatFormHeader::addStretch() { headTextLayout->addStretch(); }
+void ChatFormHeader::addStretch() {
+    headTextLayout->addStretch();
+}
 
 // void ChatFormHeader::updateCallButtons()
 //{

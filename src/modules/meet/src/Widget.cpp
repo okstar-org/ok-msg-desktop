@@ -24,7 +24,7 @@
 #include "MeetingSettingWidget.h"
 #include "StartMeetingWidget.h"
 #include "application.h"
-#include "base/OkSettings.h"
+#include "lib/settings/OkSettings.h"
 #include "lib/settings/style.h"
 #include "lib/settings/translator.h"
 #include "meetingview/MeetingVideoFrame.h"
@@ -85,10 +85,10 @@ Widget::~Widget() {
 void Widget::start() {}
 
 void Widget::reloadTheme() {
-    QString style = Style::getStylesheet("general.css");
+    QString style = lib::settings::Style::getStylesheet("general.css");
     setStyleSheet(style);
 
-    style = Style::getStylesheet("MeetingBase.css");
+    style = lib::settings::Style::getStylesheet("MeetingBase.css");
     startMeetWidget->setStyleSheet(style);
     joinMeetWidget->setStyleSheet(style);
 }
@@ -96,7 +96,7 @@ void Widget::reloadTheme() {
 void Widget::doStart() {}
 
 void Widget::initTranslate() {
-    QString locale = ok::base::OkSettings::getInstance().getTranslation();
+    QString locale = lib::settings::OkSettings::getInstance().getTranslation();
     settings::Translator::translate(OK_Meet_MODULE, locale);
     settings::Translator::registerHandler([this] { retranslateUi(); }, this);
     retranslateUi();
@@ -169,7 +169,7 @@ void Widget::createMeeting(const QString& name, const lib::ortc::CtrlState& ctrl
         connect(view.data(), &MeetingVideoFrame::participantJoined, this,
                 [this](const QString& name, const lib::messenger::Participant& part) {
                     setState(MeetingState::OnMeeting);
-        });
+                });
     }
 
     currentMeetingName = name;
@@ -193,24 +193,17 @@ void Widget::destroyMeeting() {
 
 void Widget::setState(const MeetingState& state_) {
     if (view) {
-        switch(state_)
-        {
-            case MeetingState::NoMeeting:
-            {
-                if(state == MeetingState::OnMeeting)
-                {
+        switch (state_) {
+            case MeetingState::NoMeeting: {
+                if (state == MeetingState::OnMeeting) {
                     view.data()->stopCounter();
                 }
-            }
-            break;
-            case MeetingState::OnMeeting:
-            {
-                if(state != MeetingState::OnMeeting)
-                {
+            } break;
+            case MeetingState::OnMeeting: {
+                if (state != MeetingState::OnMeeting) {
                     view.data()->startCounter();
                 }
-            }
-            break;
+            } break;
             default:
                 break;
         }
@@ -221,7 +214,6 @@ void Widget::setState(const MeetingState& state_) {
 }
 
 void Widget::activate() {
-
     // 暂时先这么做吧
     // 使用showevent事件感觉有些不合适
     QWidget* curr = ui->tabWidget->currentWidget();

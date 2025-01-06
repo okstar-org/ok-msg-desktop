@@ -22,9 +22,10 @@
 #include <QStandardPaths>
 #include <QtWidgets>
 #include "base/autorun.h"
-#include "system/sys_info.h"
+#include "base/system/sys_info.h"
+#include "style.h"
 
-namespace ok::base {
+namespace lib::settings {
 
 static QStringList locales = {
         "zh_CN",  // 中文简体 zh_CN
@@ -41,27 +42,32 @@ static QStringList locales = {
         "ru",     // 俄语
 };
 
-OkSettings::OkSettings(QObject* parent)  //
-        : QObject(parent)
-        ,  //
-        settingsThread(nullptr)
-        ,  //
-        currentProfileId(0) {
+OkSettings::OkSettings(QObject* parent) : QObject(parent)
+        , settingsThread(nullptr)
+        , currentProfileId(0)
+        , themeColor(MainTheme::Light){
     settingsThread = new QThread();
     settingsThread->setObjectName(objectName());
     settingsThread->start(QThread::LowPriority);
     moveToThread(settingsThread);
 
+    qRegisterMetaType<MainTheme>("MainTheme");
+    connect(this, &OkSettings::themeColorChanged, this, &OkSettings::saveGlobal);
+    connect(this, &OkSettings::windowGeometryChanged, this, &OkSettings::saveGlobal);
+    connect(this, &OkSettings::timestampFormatChanged, this, &OkSettings::saveGlobal);
+    connect(this, &OkSettings::dateFormatChanged, this, &OkSettings::saveGlobal);
+
+    path = getGlobalSettingsFile();
+    qDebug() << "The global settings file at:" << path;
+
+
+
     loadGlobal();
 }
 
 void OkSettings::loadGlobal() {
-    QString filePath = getGlobalSettingsFile();
-    qDebug() << "Loading settings from " + filePath;
-
-    QSettings s(filePath, QSettings::IniFormat);
+    QSettings s(path, QSettings::IniFormat, this);
     s.setIniCodec("UTF-8");
-
     s.beginGroup("General");
     {
         if (currentProfile.isEmpty()) {
@@ -71,14 +77,27 @@ void OkSettings::loadGlobal() {
 
         translation = s.value("translation", true).toString();
         provider = s.value("provider", "").toString();
+        themeColor = static_cast<MainTheme>(s.value("themeColor", 0).toInt());
         showSystemTray = s.value("showSystemTray", true).toBool();
         closeToTray = s.value("closeToTray", false).toBool();
         autostartInTray = s.value("autostartInTray", false).toBool();
         autoSaveEnabled = s.value("autoSaveEnabled", false).toBool();
         minimizeOnClose = s.value("minimizeOnClose", false).toBool();
         minimizeToTray = s.value("minimizeToTray", false).toBool();
+        timestampFormat = s.value("timestampFormat", "hh:mm:ss").toString();
+        dateFormat = s.value("dateFormat", "yyyy-MM-dd").toString();
     }
     s.endGroup();
+
+
+    s.beginGroup("State");
+    {
+        windowGeometry = s.value("windowGeometry", QByteArray()).toByteArray();
+        windowState = s.value("windowState", QByteArray()).toByteArray();
+        dialogGeometry = s.value("dialogGeometry", QByteArray()).toByteArray();
+    }
+    s.endGroup();
+    qDebug() << "Loaded global settings at:" << path;
 }
 
 void OkSettings::saveGlobal() {
@@ -87,16 +106,16 @@ void OkSettings::saveGlobal() {
 
     QMutexLocker locker{&bigLock};
 
-    QString path = ok::base::PlatformInfo::getGlobalSettingsFile();
-    qDebug() << "Saving global settings at " + path;
+    // QString path = ok::base::PlatformInfo::getGlobalSettingsFile();
+    // qDebug() << "Saving global settings at " + path;
+    // QSettings s(path, QSettings::IniFormat);
 
-    QSettings s(path, QSettings::IniFormat);
+    QSettings s(path, QSettings::IniFormat, this);
     s.setIniCodec("UTF-8");
 
     s.clear();
     s.beginGroup("General");
     {
-        //
         s.setValue("currentProfile", currentProfile);
         s.setValue("translation", translation);
         s.setValue("provider", provider);
@@ -106,8 +125,20 @@ void OkSettings::saveGlobal() {
         s.setValue("autoSaveEnabled", autoSaveEnabled);
         s.setValue("minimizeOnClose", minimizeOnClose);
         s.setValue("minimizeToTray", minimizeToTray);
+        s.setValue("themeColor", static_cast<int>(themeColor));    
     }
     s.endGroup();
+
+    s.beginGroup("State");
+    {
+        s.setValue("windowGeometry", windowGeometry);
+        s.setValue("windowState", windowState);
+        s.setValue("dialogGeometry", dialogGeometry);
+    }
+    s.endGroup();
+
+    qDebug() << "Saved global settings at:" << path;
+
 }
 
 OkSettings& OkSettings::getInstance() {
@@ -141,15 +172,11 @@ QDir OkSettings::configDir() { return ok::base::PlatformInfo::getAppConfigDirPat
 
 QDir OkSettings::dataDir() { return ok::base::PlatformInfo::getAppDataDirPath(); }
 
-/**
- * @brief Get path to directory, where the application cache are stored.
- * @return Path to application cache, ends with a directory separator.
- */
-QDir OkSettings::getAppCacheDirPath() { return PlatformInfo::getAppCacheDirPath(); }
+QDir OkSettings::getAppCacheDirPath() { return ok::base::PlatformInfo::getAppCacheDirPath(); }
 
-QDir OkSettings::getAppPluginPath() { return PlatformInfo::getAppPluginDirPath(); }
+QDir OkSettings::getAppPluginPath() { return ok::base::PlatformInfo::getAppPluginDirPath(); }
 
-QDir OkSettings::getAppLogPath() { return PlatformInfo::getAppLogDirPath(); }
+QDir OkSettings::getAppLogPath() { return ok::base::PlatformInfo::getAppLogDirPath(); }
 
 bool OkSettings::getShowSystemTray() {
     QMutexLocker locker{&bigLock};
@@ -290,4 +317,72 @@ void OkSettings::setProvider(QString val) {
     }
 }
 
+MainTheme OkSettings::getThemeColor() {
+    QMutexLocker locker{&bigLock};
+    return themeColor;
+}
+
+void OkSettings::setThemeColor(MainTheme value) {
+    QMutexLocker locker{&bigLock};
+    if (value != themeColor) {
+        themeColor = value;
+        emit themeColorChanged(themeColor);
+    }
+}
+
+const QString& OkSettings::getTimestampFormat() {
+    QMutexLocker locker{&bigLock};
+    return timestampFormat;
+}
+
+void OkSettings::setTimestampFormat(const QString& format) {
+    QMutexLocker locker{&bigLock};
+
+    if (format != timestampFormat) {
+        timestampFormat = format;
+        emit timestampFormatChanged(timestampFormat);
+    }
+}
+
+const QString& OkSettings::getDateFormat() {
+    QMutexLocker locker{&bigLock};
+    return dateFormat;
+}
+
+void OkSettings::setDateFormat(const QString& format) {
+    QMutexLocker locker{&bigLock};
+
+    if (format != dateFormat) {
+        dateFormat = format;
+        emit dateFormatChanged(dateFormat);
+    }
+}
+
+QByteArray OkSettings::getWindowGeometry()  {
+    QMutexLocker locker{&bigLock};
+    return windowGeometry;
+}
+
+void OkSettings::setWindowGeometry(const QByteArray& value) {
+    QMutexLocker locker{&bigLock};
+
+    if (value != windowGeometry) {
+        windowGeometry = value;
+        emit windowGeometryChanged(windowGeometry);
+    }
+}
+
+QByteArray OkSettings::getWindowState()  {
+    QMutexLocker locker{&bigLock};
+    return windowState;
+}
+
+void OkSettings::setWindowState(const QByteArray& value) {
+    QMutexLocker locker{&bigLock};
+
+    if (value != windowState) {
+        windowState = value;
+        emit windowStateChanged(windowState);
+    }
+}
 }  // namespace ok::base

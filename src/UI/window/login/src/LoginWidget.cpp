@@ -19,10 +19,10 @@
 #include <memory>
 
 #include "SettingManager.h"
-#include "base/OkSettings.h"
 #include "base/logs.h"
 #include "base/widgets.h"
 #include "lib/backend/OkCloudService.h"
+#include "lib/settings/OkSettings.h"
 #include "lib/settings/translator.h"
 #include "ui_LoginWidget.h"
 
@@ -93,7 +93,7 @@ void LoginWidget::init() {
     });
 
     // 2. i18n
-    auto& setting = ok::base::OkSettings::getInstance();
+    auto& setting = lib::settings::OkSettings::getInstance();
     qDebug() << "Last settings translation:" << setting.getTranslation();
 
     for (int i = 0; i < setting.getLocales().size(); ++i) {
@@ -118,7 +118,7 @@ void LoginWidget::init() {
                 }
 
                 if (ui->providers->count() > 1) {
-                    auto& setting = ok::base::OkSettings::getInstance();
+                    auto& setting = lib::settings::OkSettings::getInstance();
                     int index = ui->providers->findText(setting.getProvider());
                     // found
                     if (index != -1) {
@@ -249,7 +249,7 @@ void LoginWidget::on_language_currentIndexChanged(int index) {
         return;
     }
 
-    auto& s = ok::base::OkSettings::getInstance();
+    auto& s = lib::settings::OkSettings::getInstance();
     const QString& locale = s.getLocales().at(index - 1);
     s.setTranslation(locale);
     s.saveGlobal();
@@ -269,7 +269,7 @@ void LoginWidget::on_providers_currentIndexChanged(int index) {
         return;
     }
 
-    auto& setting = ok::base::OkSettings::getInstance();
+    auto& setting = lib::settings::OkSettings::getInstance();
     QString provider = ui->providers->currentText();
     QString settingProvider = setting.getProvider();
 

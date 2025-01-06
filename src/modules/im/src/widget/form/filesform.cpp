@@ -19,7 +19,7 @@
 #include "src/widget/widget.h"
 
 FilesForm::FilesForm()
-        : QObject(), doneIcon(Style::getImagePath("fileTransferWidget/fileDone.svg")) {
+        : QObject(), doneIcon(lib::settings::Style::getImagePath("fileTransferWidget/fileDone.svg")) {
     head = new QWidget();
     QFont bold;
     bold.setBold(true);

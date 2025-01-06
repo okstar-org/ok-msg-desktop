@@ -39,7 +39,7 @@
 #include <QTimer>
 #include <QToolButton>
 
-#include <src/nexus.h>
+#include "src/nexus.h"
 
 namespace {
 const auto LABEL_PEER_TYPE_OUR = QVariant(QStringLiteral("our"));
@@ -94,7 +94,7 @@ GroupChatForm::GroupChatForm(const GroupId* chatGroup, IChatLog& chatLog,
     //    headWidget->setMode(mode);
     //    setName(group->getName());
 
-    nusersLabel->setFont(Style::getFont(Style::Medium));
+    nusersLabel->setFont(lib::settings::Style::getFont(lib::settings::Style::Font::Medium));
     nusersLabel->setObjectName("statusLabel");
     retranslateUi();
 
@@ -129,7 +129,9 @@ GroupChatForm::GroupChatForm(const GroupId* chatGroup, IChatLog& chatLog,
     settings::Translator::registerHandler(std::bind(&GroupChatForm::retranslateUi, this), this);
 }
 
-GroupChatForm::~GroupChatForm() { settings::Translator::unregister(this); }
+GroupChatForm::~GroupChatForm() {
+    settings::Translator::unregister(this);
+}
 
 void GroupChatForm::onTitleChanged(const QString& author, const QString& title) {
     if (author.isEmpty()) {
@@ -250,7 +252,8 @@ void GroupChatForm::peerAudioPlaying(QString peerPk) {
         });
     }
 
-    peerLabels[peerPk]->setStyleSheet(Style::getStylesheet(PEER_LABEL_STYLE_SHEET_PATH));
+    peerLabels[peerPk]->setStyleSheet(
+            lib::settings::Style::getStylesheet(PEER_LABEL_STYLE_SHEET_PATH));
     peerAudioTimers[peerPk]->start(500);
 }
 
@@ -373,7 +376,6 @@ void GroupChatForm::onLabelContextMenuRequested(const QPoint& localPos) {
         return;
     }
 
-
     QString menuTitle = label->text();
     if (menuTitle.endsWith(QLatin1String(", "))) {
         menuTitle.chop(2);
@@ -383,7 +385,7 @@ void GroupChatForm::onLabelContextMenuRequested(const QPoint& localPos) {
     contextMenu->addSeparator();
 
     const QAction* toggleMuteAction = contextMenu->addAction(muteString);
-    contextMenu->setStyleSheet(Style::getStylesheet(PEER_LABEL_STYLE_SHEET_PATH));
+    contextMenu->setStyleSheet(lib::settings::Style::getStylesheet(PEER_LABEL_STYLE_SHEET_PATH));
 }
 
 void GroupChatForm::joinGroupCall() {

@@ -18,10 +18,10 @@
 #include "application.h"
 #include "ui_OMainMenu.h"
 
-#include "base/OkSettings.h"
 #include "base/files.h"
 #include "base/images.h"
 #include "base/resources.h"
+#include "lib/settings/OkSettings.h"
 #include "lib/settings/translator.h"
 
 #include <QButtonGroup>
@@ -59,7 +59,7 @@ OMainMenu::OMainMenu(QWidget* parent) : QFrame(parent), ui(new Ui::OMainMenu), _
     group->addButton(ui->meetBtn, static_cast<int>(ok::base::PageMenu::meeting));
     connect(group, &QButtonGroup::idToggled, this, &OMainMenu::onButtonToggled);
 
-    QString locale = ok::base::OkSettings::getInstance().getTranslation();
+    QString locale = lib::settings::OkSettings::getInstance().getTranslation();
     settings::Translator::translate(OK_UIWindowMain_MODULE, locale);
     settings::Translator::registerHandler([this] { retranslateUi(); }, this);
 

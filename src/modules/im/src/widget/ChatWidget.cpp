@@ -15,20 +15,20 @@
 //
 
 #include "ChatWidget.h"
-#include <src/model/profile/profileinfo.h>
-#include <src/widget/form/profileform.h>
+#include "src/model/profile/profileinfo.h"
+#include "src/widget/form/profileform.h"
 #include <QMenu>
 #include <QPainter>
 #include <QSvgRenderer>
 #include "ContactListWidget.h"
 #include "MessageSessionListWidget.h"
 #include "application.h"
-#include "base/OkSettings.h"
 #include "base/SvgUtils.h"
 #include "base/utils.h"
 #include "circlewidget.h"
 #include "contentdialogmanager.h"
 #include "contentlayout.h"
+#include "lib/settings/OkSettings.h"
 #include "lib/settings/translator.h"
 #include "src/core/corefile.h"
 #include "src/lib/settings/style.h"
@@ -43,8 +43,8 @@
 #include "ui_ChatWidget.h"
 #include "widget.h"
 
-#include <src/core/coreav.h>
 #include "src/Bus.h"
+#include "src/core/coreav.h"
 
 namespace {
 
@@ -517,14 +517,14 @@ void ChatWidget::onGroupClicked() {
     //    setActiveToolMenuButton(ActiveToolMenuButton::GroupButton);
 }
 void ChatWidget::reloadTheme() {
-    setStyleSheet(Style::getStylesheet("window/chat.css"));
-    QString statusPanelStyle = Style::getStylesheet("window/statusPanel.css");
+    setStyleSheet(lib::settings::Style::getStylesheet("window/chat.css"));
+    QString statusPanelStyle = lib::settings::Style::getStylesheet("window/statusPanel.css");
     //  ui->tooliconsZone->setStyleSheet(
     //      Style::getStylesheet("tooliconsZone/tooliconsZone.css"));
     //  ui->statusPanel->setStyleSheet(statusPanelStyle);
     ui->statusHead->setStyleSheet(statusPanelStyle);
-    ui->friendList->setStyleSheet(Style::getStylesheet("friendList/friendList.css"));
-    ui->statusButton->setStyleSheet(Style::getStylesheet("statusButton/statusButton.css"));
+    ui->friendList->setStyleSheet(lib::settings::Style::getStylesheet("friendList/friendList.css"));
+    ui->statusButton->setStyleSheet(lib::settings::Style::getStylesheet("statusButton/statusButton.css"));
     sessionListWidget->reDraw();
 
     //  profilePicture->setStyleSheet(Style::getStylesheet("window/profile.css"));
@@ -608,7 +608,7 @@ void ChatWidget::dispatchFile(ToxFile file) {
         const Settings& settings = Settings::getInstance();
         //    QString autoAcceptDir = settings.getAutoAcceptDir(cId);
         //    if (autoAcceptDir.isEmpty() &&
-        //    ok::base::OkSettings::getInstance().getAutoSaveEnabled()) {
+        //    lib::settings::OkSettings::getInstance().getAutoSaveEnabled()) {
         auto autoAcceptDir = settings.getGlobalAutoAcceptDir();
         //    }
 

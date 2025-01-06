@@ -65,10 +65,7 @@ class Settings : public QObject,
     Q_PROPERTY(int emojiFontPointSize READ getEmojiFontPointSize WRITE setEmojiFontPointSize NOTIFY
                        emojiFontPointSizeChanged FINAL)
 
-    Q_PROPERTY(QByteArray windowGeometry READ getWindowGeometry WRITE setWindowGeometry NOTIFY
-                       windowGeometryChanged FINAL)
-    Q_PROPERTY(QByteArray windowState READ getWindowState WRITE setWindowState NOTIFY
-                       windowStateChanged FINAL)
+   
     Q_PROPERTY(QByteArray splitterState READ getSplitterState WRITE setSplitterState NOTIFY
                        splitterStateChanged FINAL)
     Q_PROPERTY(QByteArray dialogGeometry READ getDialogGeometry WRITE setDialogGeometry NOTIFY
@@ -89,10 +86,7 @@ class Settings : public QObject,
                        chatMessageFontChanged FINAL)
     Q_PROPERTY(StyleType stylePreference READ getStylePreference WRITE setStylePreference NOTIFY
                        stylePreferenceChanged FINAL)
-    Q_PROPERTY(QString timestampFormat READ getTimestampFormat WRITE setTimestampFormat NOTIFY
-                       timestampFormatChanged FINAL)
-    Q_PROPERTY(QString dateFormat READ getDateFormat WRITE setDateFormat NOTIFY dateFormatChanged
-                       FINAL)
+
     Q_PROPERTY(bool statusChangeNotificationEnabled READ getStatusChangeNotificationEnabled WRITE
                        setStatusChangeNotificationEnabled NOTIFY
                                statusChangeNotificationEnabledChanged FINAL)
@@ -212,8 +206,7 @@ signals:
     void groupchatPositionChanged(bool enabled);
     void chatMessageFontChanged(const QFont& font);
     void stylePreferenceChanged(StyleType type);
-    void timestampFormatChanged(const QString& format);
-    void dateFormatChanged(const QString& format);
+
     void statusChangeNotificationEnabledChanged(bool enabled);
     void spellCheckingEnabledChanged(bool enabled);
 
@@ -402,12 +395,6 @@ public:
     // ChatView
     const QFont& getChatMessageFont() const;
     void setChatMessageFont(const QFont& font);
-
-    const QString& getTimestampFormat() const;
-    void setTimestampFormat(const QString& format);
-
-    const QString& getDateFormat() const;
-    void setDateFormat(const QString& format);
 
     bool getStatusChangeNotificationEnabled() const;
     void setStatusChangeNotificationEnabled(bool newValue);

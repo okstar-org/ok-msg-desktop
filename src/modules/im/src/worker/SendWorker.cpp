@@ -19,12 +19,12 @@
 #include <src/model/chatroom/groupchatroom.h>
 #include <src/model/friendmessagedispatcher.h>
 #include <src/model/groupmessagedispatcher.h>
-#include <src/nexus.h>
 #include <src/persistence/profile.h>
 #include <src/persistence/settings.h>
 #include <src/widget/chatformheader.h>
 #include <src/widget/contentdialogmanager.h>
 #include <src/widget/form/groupchatform.h>
+#include "src/nexus.h"
 
 SendWorker::SendWorker(const FriendId& friendId) : contactId{friendId} {
     qDebug() << __func__ << "friend:" << friendId.toString();

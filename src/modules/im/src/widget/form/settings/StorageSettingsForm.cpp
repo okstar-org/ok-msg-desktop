@@ -12,7 +12,7 @@
 
 #include "StorageSettingsForm.h"
 #include <cmath>
-#include "base/OkSettings.h"
+#include "lib/settings/OkSettings.h"
 #include "ui_StorageSettingsForm.h"
 
 #include <QDebug>
@@ -53,16 +53,15 @@ StorageSettingsForm::StorageSettingsForm(SettingsWidget* myParent)
 
     Settings& s = Settings::getInstance();
 
-
-    //先获取当前语言
-    auto & okSettings = ok::base::OkSettings::getInstance();
+    // 先获取当前语言
+    auto& okSettings = lib::settings::OkSettings::getInstance();
     //    bodyUI->statusChanges->setChecked(s.getStatusChangeNotificationEnabled());
     //    bodyUI->groupJoinLeaveMessages->setChecked(s.getShowGroupJoinLeaveMessages());
 
     //    bodyUI->autoAwaySpinBox->setValue(s.getAutoAwayTime());
     bodyUI->autoSaveFilesDir->setText(s.getGlobalAutoAcceptDir());
-   // bodyUI->maxAutoAcceptSizeMB->setValue(static_cast<double>(s.getMaxAutoAcceptSize()) / 1024 / 1024);
-   // bodyUI->autoacceptFiles->setChecked(okSettings.getAutoSaveEnabled());
+    // bodyUI->maxAutoAcceptSizeMB->setValue(static_cast<double>(s.getMaxAutoAcceptSize()) / 1024 /
+    // 1024); bodyUI->autoacceptFiles->setChecked(okSettings.getAutoSaveEnabled());
 
     eventsInit();
     settings::Translator::registerHandler(std::bind(&StorageSettingsForm::retranslateUi, this),
@@ -88,16 +87,14 @@ StorageSettingsForm::~StorageSettingsForm() {
 // }
 
 void StorageSettingsForm::on_autoacceptFiles_stateChanged() {
-   // ok::base::OkSettings::getInstance().setAutoSaveEnabled(bodyUI->autoacceptFiles->isChecked());
+    // lib::settings::OkSettings::getInstance().setAutoSaveEnabled(bodyUI->autoacceptFiles->isChecked());
 }
 
 void StorageSettingsForm::on_autoSaveFilesDir_clicked() {
     QString previousDir = Settings::getInstance().getGlobalAutoAcceptDir();
-    QString directory =
-        QFileDialog::getExistingDirectory(Q_NULLPTR,
-                                          tr("Choose an auto accept directory", "popup title"),
-                                          QDir::homePath());
-    if (directory.isEmpty()) // cancel was pressed
+    QString directory = QFileDialog::getExistingDirectory(
+            Q_NULLPTR, tr("Choose an auto accept directory", "popup title"), QDir::homePath());
+    if (directory.isEmpty())  // cancel was pressed
         directory = previousDir;
 
     Settings::getInstance().setGlobalAutoAcceptDir(directory);
@@ -105,11 +102,10 @@ void StorageSettingsForm::on_autoSaveFilesDir_clicked() {
 }
 
 void StorageSettingsForm::on_maxAutoAcceptSizeMB_editingFinished() {
-   // auto newMaxSizeMB = bodyUI->maxAutoAcceptSizeMB->value();
-   // auto newMaxSizeB = std::lround(newMaxSizeMB * 1024 * 1024);
+    // auto newMaxSizeMB = bodyUI->maxAutoAcceptSizeMB->value();
+    // auto newMaxSizeB = std::lround(newMaxSizeMB * 1024 * 1024);
 
-   // Settings::getInstance().setMaxAutoAcceptSize(newMaxSizeB);
-
+    // Settings::getInstance().setMaxAutoAcceptSize(newMaxSizeB);
 }
 
 /**
@@ -118,6 +114,3 @@ void StorageSettingsForm::on_maxAutoAcceptSizeMB_editingFinished() {
 void StorageSettingsForm::retranslateUi() {
     bodyUI->retranslateUi(this);
 }
-
-
-

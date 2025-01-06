@@ -49,13 +49,13 @@
 #include <cassert>
 
 #include <src/chatlog/chatlog.h>
-#include <src/nexus.h>
 #include "form/chatform.h"
 #include "src/model/chathistory.h"
+#include "src/nexus.h"
 #include "src/persistence/profile.h"
 #include "src/widget/chatformheader.h"
 
-#include <src/core/coreav.h>
+#include "src/core/coreav.h"
 
 /**
  * @class MessageSessionWidget

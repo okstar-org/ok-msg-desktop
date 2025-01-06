@@ -98,8 +98,8 @@ MeetingVideoFrame::~MeetingVideoFrame() {
 
 void MeetingVideoFrame::reloadTheme() {
     // 手动拼接一下
-    QString style = Style::getStylesheet("MeetingBase.css");
-    QString style2 = Style::getStylesheet("MeetingVideo.css");
+    QString style = lib::settings::Style::getStylesheet("MeetingBase.css");
+    QString style2 = lib::settings::Style::getStylesheet("MeetingVideo.css");
     this->setStyleSheet(style + "\n" + style2);
     QCoreApplication::postEvent(this->topToolBar, new QEvent(QEvent::StyleChange));
 }

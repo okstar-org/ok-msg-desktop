@@ -20,7 +20,7 @@
 #include "src/widget/friendwidget.h"
 #include "src/widget/widget.h"
 
-#include <src/nexus.h>
+#include "src/nexus.h"
 
 ContactSelectDialog::ContactSelectDialog(QWidget* parent, const QString& title)
         : QDialog(parent), ui(new Ui::ContactSelectDialog) {
@@ -49,7 +49,9 @@ ContactSelectDialog::ContactSelectDialog(QWidget* parent, const QString& title)
     ui->scrollAreaWidgetContents->layout()->addWidget(contactListWidget);
 }
 
-ContactSelectDialog::~ContactSelectDialog() { delete ui; }
+ContactSelectDialog::~ContactSelectDialog() {
+    delete ui;
+}
 
 void ContactSelectDialog::showEvent(QShowEvent* e) {
     auto& fl = Core::getInstance()->getFriendList();

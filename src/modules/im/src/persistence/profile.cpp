@@ -19,10 +19,10 @@
 #include <QObject>
 #include <QSaveFile>
 
-#include "base/OkSettings.h"
 #include "base/hashs.h"
 #include "base/images.h"
 #include "gui.h"
+#include "lib/settings/OkSettings.h"
 #include "profile.h"
 #include "profilelocker.h"
 #include "settings.h"
@@ -301,9 +301,13 @@ const QStringList Profile::getAllProfileNames() {
     return profiles;
 }
 
-Core* Profile::getCore() { return core.get(); }
+Core* Profile::getCore() {
+    return core.get();
+}
 
-const QString& Profile::getUsername() const { return username; }
+const QString& Profile::getUsername() const {
+    return username;
+}
 
 const QString& Profile::getFullName() {
     if (!vCard.fullName.isEmpty()) {
@@ -639,20 +643,26 @@ void Profile::removeAvatar(bool saveToCore) {
 /**
  * @brief Removes friend avatar.
  */
-void Profile::removeFriendAvatar(const FriendId& owner) { QFile::remove(avatarPath(owner)); }
+void Profile::removeFriendAvatar(const FriendId& owner) {
+    QFile::remove(avatarPath(owner));
+}
 
 /**
  * @brief Checks that the history is enabled in the settings, and loaded
  * successfully for this profile.
  * @return True if enabled, false otherwise.
  */
-bool Profile::isHistoryEnabled() { return Settings::getInstance().getEnableLogging() && history; }
+bool Profile::isHistoryEnabled() {
+    return Settings::getInstance().getEnableLogging() && history;
+}
 
 /**
  * @brief Get chat history.
  * @return May return a nullptr if the history failed to load.
  */
-History* Profile::getHistory() { return history.get(); }
+History* Profile::getHistory() {
+    return history.get();
+}
 
 bool Profile::exists(QString name) {
     QString path = Settings::getInstance().getSettingsDirPath() + name;
@@ -664,7 +674,9 @@ bool Profile::exists(QString name) {
  * @return True if we have a password set (doesn't check the actual file on
  * disk).
  */
-bool Profile::isEncrypted() const { return encrypted; }
+bool Profile::isEncrypted() const {
+    return encrypted;
+}
 
 /**
  * @brief Checks if profile is encrypted.
@@ -756,7 +768,7 @@ bool Profile::rename(QString newName) {
         database->rename(newName);
     }
 
-    auto& qs = ok::base::OkSettings::getInstance();
+    auto& qs = lib::settings::OkSettings::getInstance();
     bool resetAutorun = qs.getAutorun();
     qs.setAutorun(false);
     qs.setCurrentProfile(newName);
@@ -768,7 +780,9 @@ bool Profile::rename(QString newName) {
     return true;
 }
 
-const ToxEncrypt* Profile::getPasskey() const { return passkey.get(); }
+const ToxEncrypt* Profile::getPasskey() const {
+    return passkey.get();
+}
 
 /**
  * @brief Changes the encryption password and re-saves everything with it

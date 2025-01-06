@@ -42,7 +42,7 @@ public:
 };
 
 EmoticonsWidget::EmoticonsWidget(QWidget* parent) : QMenu(parent) {
-    setStyleSheet(Style::getStylesheet("emoticonWidget/emoticonWidget.css"));
+    setStyleSheet(lib::settings::Style::getStylesheet("emoticonWidget/emoticonWidget.css"));
     setLayout(&layout);
     layout.addWidget(&stack);
 

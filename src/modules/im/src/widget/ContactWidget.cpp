@@ -95,8 +95,8 @@ ContactWidget::~ContactWidget() {
 }
 
 void ContactWidget::reloadTheme() {
-    setStyleSheet(Style::getStylesheet("contact/ContactWidget.css"));
-    ui->friendList->setStyleSheet(Style::getStylesheet("contact/ContactList.css"));
+    setStyleSheet(lib::settings::Style::getStylesheet("contact/ContactWidget.css"));
+    ui->friendList->setStyleSheet(lib::settings::Style::getStylesheet("contact/ContactList.css"));
 
     contactListWidget->reloadTheme();
     contentLayout->reloadTheme();

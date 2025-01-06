@@ -15,8 +15,8 @@
 //
 
 #include "Backend.h"
-#include "base/OkSettings.h"
 #include "lib/network/NetworkHttp.h"
+#include "lib/settings/OkSettings.h"
 
 namespace module::platform {
 
@@ -25,12 +25,14 @@ Backend::Backend(const QString& baseUrl, const QString& authorization, QObject* 
     setHeader("Authorization", authorization);
     setHeader("Origin", baseUrl);
 
-    auto& s = ok::base::OkSettings::getInstance();
+    auto& s = lib::settings::OkSettings::getInstance();
     QString trans = s.getTranslation();
     setHeader("Accept-Language", trans);
 }
 
-Backend::~Backend() { qWarning() << __func__; }
+Backend::~Backend() {
+    qWarning() << __func__;
+}
 
 bool Backend::getAppList(const lib::network::HttpBodyFn& fn, int pageIndex, int pageSize) {
     QString url = _baseUrl + "/api/work/app/page";
