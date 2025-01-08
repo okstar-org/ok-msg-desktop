@@ -20,7 +20,10 @@
 #include <QObject>
 #include <QSettings>
 #include <QStandardPaths>
-#include <QtWidgets>
+#include <QThread>
+#include <QDebug>
+#include <QCryptographicHash>
+
 #include "base/autorun.h"
 #include "base/system/sys_info.h"
 #include "style.h"

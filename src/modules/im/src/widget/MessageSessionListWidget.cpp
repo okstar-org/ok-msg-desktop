@@ -19,13 +19,13 @@
 #include <cassert>
 #include "ChatWidget.h"
 #include "ContactListLayout.h"
-#include "lib/settings/OkSettings.h"
 #include "base/times.h"
 #include "circlewidget.h"
 #include "contentdialogmanager.h"
 #include "friendwidget.h"
 #include "groupwidget.h"
-#include "src/lib/settings/style.h"
+#include "lib/storeage/settings/OkSettings.h"
+#include "src/lib/storeage/settings/style.h"
 #include "src/model/chathistory.h"
 #include "src/model/chatroom/friendchatroom.h"
 #include "src/model/friendlist.h"
@@ -729,9 +729,15 @@ void MessageSessionListWidget::setFriendFileCancelled(const ContactId& f, const 
 
 void MessageSessionListWidget::reloadTheme() {
     auto p = palette();
-    p.setColor(QPalette::Window, lib::settings::Style::getColor(lib::settings::Style::ColorPalette::ThemeMedium));          // Base background color
-    p.setColor(QPalette::Highlight, lib::settings::Style::getColor(lib::settings::Style::ColorPalette::ThemeHighlight));    // On mouse over
-    p.setColor(QPalette::Light, lib::settings::Style::getColor(lib::settings::Style::ColorPalette::ThemeLight));            // When active
+    p.setColor(QPalette::Window,
+               lib::settings::Style::getColor(
+                       lib::settings::Style::ColorPalette::ThemeMedium));  // Base background color
+    p.setColor(QPalette::Highlight,
+               lib::settings::Style::getColor(
+                       lib::settings::Style::ColorPalette::ThemeHighlight));  // On mouse over
+    p.setColor(QPalette::Light,
+               lib::settings::Style::getColor(
+                       lib::settings::Style::ColorPalette::ThemeLight));  // When active
     setPalette(p);
 
     for (auto fw : sessionWidgets) {

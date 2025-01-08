@@ -21,8 +21,8 @@
 #include "base/files.h"
 #include "base/images.h"
 #include "base/resources.h"
-#include "lib/settings/OkSettings.h"
-#include "lib/settings/translator.h"
+#include "lib/storeage/settings/OkSettings.h"
+#include "lib/storeage/settings/translator.h"
 
 #include <QButtonGroup>
 
@@ -38,10 +38,6 @@ OMainMenu::OMainMenu(QWidget* parent) : QFrame(parent), ui(new Ui::OMainMenu) {
     // 设置样式
     QString qss = ok::base::Files::readStringAll(":/qss/menu.css");
     setStyleSheet(qss);
-
-
-
-
 
     QButtonGroup* group = new QButtonGroup(this);
     group->setExclusive(true);
@@ -73,9 +69,7 @@ OMainMenu::OMainMenu(QWidget* parent) : QFrame(parent), ui(new Ui::OMainMenu) {
     });
 
     delayCaller_ = new base::DelayedCallTimer(this);
-    delayCaller_->call(1000, [&](){
-        check(SystemMenu::chat);
-    });
+    delayCaller_->call(1000, [&]() { check(SystemMenu::chat); });
 }
 
 OMainMenu::~OMainMenu() {
@@ -86,7 +80,8 @@ OMainMenu::~OMainMenu() {
 
 void OMainMenu::setAvatar(const QPixmap& pixmap) {
     QSize size = ui->label_avatar->size() * ui->label_avatar->devicePixelRatioF();
-    auto newImage = ok::base::Images::roundRectPixmap(pixmap, size, 100 * ui->label_avatar->devicePixelRatioF());
+    auto newImage = ok::base::Images::roundRectPixmap(pixmap, size,
+                                                      100 * ui->label_avatar->devicePixelRatioF());
     newImage.setDevicePixelRatio(ui->label_avatar->devicePixelRatioF());
     ui->label_avatar->setPixmap(newImage);
 }
@@ -103,14 +98,13 @@ void OMainMenu::retranslateUi() {
     ui->retranslateUi(this);
 }
 
-void OMainMenu::check(SystemMenu menu)
-{
+void OMainMenu::check(SystemMenu menu) {
     ui->chatBtn->setChecked(false);
     ui->settingBtn->setChecked(false);
     ui->platformBtn->setChecked(false);
     ui->meetBtn->setChecked(false);
 
-    switch(menu){
+    switch (menu) {
         case SystemMenu::chat:
             ui->chatBtn->setChecked(true);
             break;
@@ -127,11 +121,11 @@ void OMainMenu::check(SystemMenu menu)
 }
 
 void OMainMenu::onButtonToggled(int id, bool toggle) {
-    if ( !toggle) {
+    if (!toggle) {
         return;
     }
 
-    if(id < 0){
+    if (id < 0) {
         return;
     }
 

@@ -48,7 +48,7 @@ set(${PROJECT_NAME}_SOURCES
     shadowbackground.cpp
     RoundedPixmapLabel.h
     RoundedPixmapLabel.cpp
-
+    Styles.h
 )
 
 if(WIN32)

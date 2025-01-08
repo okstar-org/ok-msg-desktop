@@ -15,8 +15,6 @@
 //
 
 #include "ChatWidget.h"
-#include "src/model/profile/profileinfo.h"
-#include "src/widget/form/profileform.h"
 #include <QMenu>
 #include <QPainter>
 #include <QSvgRenderer>
@@ -28,18 +26,20 @@
 #include "circlewidget.h"
 #include "contentdialogmanager.h"
 #include "contentlayout.h"
-#include "lib/settings/OkSettings.h"
-#include "lib/settings/translator.h"
+#include "lib/storeage/settings/OkSettings.h"
+#include "lib/storeage/settings/translator.h"
 #include "src/core/corefile.h"
-#include "src/lib/settings/style.h"
+#include "src/lib/storeage/settings/style.h"
 #include "src/model/friendlist.h"
 #include "src/model/group.h"
 #include "src/model/groupinvite.h"
 #include "src/model/grouplist.h"
+#include "src/model/profile/profileinfo.h"
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
 #include "src/widget/form/addfriendform.h"
 #include "src/widget/form/groupinviteform.h"
+#include "src/widget/form/profileform.h"
 #include "ui_ChatWidget.h"
 #include "widget.h"
 
@@ -524,7 +524,8 @@ void ChatWidget::reloadTheme() {
     //  ui->statusPanel->setStyleSheet(statusPanelStyle);
     ui->statusHead->setStyleSheet(statusPanelStyle);
     ui->friendList->setStyleSheet(lib::settings::Style::getStylesheet("friendList/friendList.css"));
-    ui->statusButton->setStyleSheet(lib::settings::Style::getStylesheet("statusButton/statusButton.css"));
+    ui->statusButton->setStyleSheet(
+            lib::settings::Style::getStylesheet("statusButton/statusButton.css"));
     sessionListWidget->reDraw();
 
     //  profilePicture->setStyleSheet(Style::getStylesheet("window/profile.css"));

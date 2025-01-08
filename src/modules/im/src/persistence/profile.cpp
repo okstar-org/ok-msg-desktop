@@ -22,7 +22,7 @@
 #include "base/hashs.h"
 #include "base/images.h"
 #include "gui.h"
-#include "lib/settings/OkSettings.h"
+#include "lib/storeage/settings/OkSettings.h"
 #include "profile.h"
 #include "profilelocker.h"
 #include "settings.h"

@@ -25,8 +25,8 @@
 #include "files.h"
 #include "iqnamespacefilter.h"
 #include "lib/messenger/messenger.h"
-#include "lib/settings/OkSettings.h"
-#include "lib/settings/applicationinfo.h"
+#include "lib/storeage/settings/applicationinfo.h"
+#include "lib/storeage/settings/OkSettings.h"
 #include "okplugin.h"
 #include "pluginhost.h"
 /**

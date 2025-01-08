@@ -21,7 +21,7 @@
 #include "encryptionsupport.h"
 #include "eventcreatinghost.h"
 #include "iconfactoryaccessinghost.h"
-#include "lib/settings/applicationinfo.h"
+#include "lib/storeage/settings/applicationinfo.h"
 // #include "iconset.h"
 #include "iqfilteringhost.h"
 #include "optionaccessinghost.h"

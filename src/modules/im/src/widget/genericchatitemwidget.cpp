@@ -16,7 +16,7 @@
 #include <QVariant>
 #include "maskablepixmapwidget.h"
 #include "src/core/core.h"
-#include "src/lib/settings/style.h"
+#include "src/lib/storeage/settings/style.h"
 #include "src/model/friend.h"
 #include "src/model/friendlist.h"
 #include "src/model/group.h"
@@ -44,7 +44,8 @@ GenericChatItemWidget::GenericChatItemWidget(ChatType type, const ContactId& cid
     lastMessageLabel->setTextFormat(Qt::PlainText);
     lastMessageLabel->setText("");
     auto p = lastMessageLabel->palette();
-    p.setColor(QPalette::WindowText, lib::settings::Style::getColor(lib::settings::Style::ColorPalette::GroundExtra));
+    p.setColor(QPalette::WindowText,
+               lib::settings::Style::getColor(lib::settings::Style::ColorPalette::GroundExtra));
 
     auto newFont = lastMessageLabel->font();
     newFont.setPixelSize(newFont.pixelSize() * .7);

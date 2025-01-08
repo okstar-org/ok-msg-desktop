@@ -10,39 +10,38 @@
  * See the Mulan PubL v2 for more details.
  */
 
-//
-// Created by gaojie on 24-4-19.
-//
+#pragma once
 
-#ifndef OKMSG_PROJECT_LOGMANAGER_H
-#define OKMSG_PROJECT_LOGMANAGER_H
-
+#include "log/LogManager.h"
+#include "settings/OkSettings.h"
 #include <QDir>
-#include <QFile>
-#include <QMutex>
-#include <memory>
+#include <QObject>
 
-namespace lib::log {
 
-class LogManager {
+namespace lib::storeage {
+
+class StoreageManager : public QObject {
+    Q_OBJECT
 public:
-    static const LogManager& Instance();
-    static void Destroy();
+    explicit StoreageManager(QObject* parent = nullptr);
 
-    [[nodiscard]] const QString& getLogFile() const { return logName; };
+    /**
+     * 获取存储根目录
+     * @brief getDir
+     * @return
+     */
+    const QDir& getDir();
 
-    [[nodiscard]] QFile& getFile() const { return *file.get(); }
+    const log::LogManager& getLogManager() const {
+        return logManager;
+    }
 
-    ~LogManager();
+    const settings::OkSettings& getSettings();
 
 private:
-    LogManager();
-
-    QString logName;
-    QDir logFileDir;
-    std::unique_ptr<QFile> file;
+    QDir dir;
+    log::LogManager logManager;
 };
 
-}  // namespace ok::lib
 
-#endif  // OKMSG_PROJECT_LOGMANAGER_H
+}

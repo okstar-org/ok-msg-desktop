@@ -16,7 +16,7 @@
 
 #include "Backend.h"
 #include "lib/network/NetworkHttp.h"
-#include "lib/settings/OkSettings.h"
+#include "lib/storeage/settings/OkSettings.h"
 
 namespace module::platform {
 

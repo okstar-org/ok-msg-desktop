@@ -16,12 +16,11 @@
 #include <QPushButton>
 #include <QSignalMapper>
 
+#include "lib/storeage/settings/OkSettings.h"
 #include "src/core/core.h"
 #include "src/nexus.h"
 #include "src/persistence/settings.h"
 #include "src/widget/tool/croppinglabel.h"
-#include "lib/settings/OkSettings.h"
-
 
 /**
  * @class GroupInviteWidget
@@ -50,7 +49,7 @@ GroupInviteWidget::GroupInviteWidget(QWidget* parent, const GroupInvite& invite)
  * @brief Retranslate all elements in the form.
  */
 void GroupInviteWidget::retranslateUi() {
-    auto &s = lib::settings::OkSettings::getInstance();
+    auto& s = lib::settings::OkSettings::getInstance();
 
     QDateTime inviteDate = inviteInfo.getInviteDate();
     QString date = inviteDate.toString(s.getDateFormat());
@@ -68,4 +67,6 @@ void GroupInviteWidget::retranslateUi() {
  * @brief Returns infomation about invitation - e.g., who and when sent
  * @return Invite information object
  */
-const GroupInvite GroupInviteWidget::getInviteInfo() const { return inviteInfo; }
+const GroupInvite GroupInviteWidget::getInviteInfo() const {
+    return inviteInfo;
+}

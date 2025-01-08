@@ -38,7 +38,6 @@
 #include "ContactListWidget.h"
 #include "application.h"
 #include "base/MessageBox.h"
-#include "lib/settings/OkSettings.h"
 #include "base/Page.h"
 #include "base/SvgUtils.h"
 #include "base/images.h"
@@ -49,7 +48,8 @@
 #include "friendwidget.h"
 #include "groupwidget.h"
 #include "gui.h"
-#include "lib/settings/translator.h"
+#include "lib/storeage/settings/OkSettings.h"
+#include "lib/storeage/settings/translator.h"
 #include "maskablepixmapwidget.h"
 #include "splitterrestorer.h"
 #include "src/audio/audio.h"
@@ -57,7 +57,7 @@
 #include "src/core/core.h"
 #include "src/core/coreav.h"
 #include "src/core/corefile.h"
-#include "src/lib/settings/style.h"
+#include "src/lib/storeage/settings/style.h"
 #include "src/model/friend.h"
 #include "src/model/friendlist.h"
 #include "src/model/group.h"
@@ -310,9 +310,7 @@ bool Widget::eventFilter(QObject* obj, QEvent* event) {
     return false;
 }
 
-void Widget::updateIcons() {
-
-}
+void Widget::updateIcons() {}
 
 /**
  * @brief Switches to the About settings page.
@@ -331,7 +329,9 @@ void Widget::moveEvent(QMoveEvent* event) {
     QWidget::moveEvent(event);
 }
 
-void Widget::closeEvent(QCloseEvent* event) { QWidget::closeEvent(event); }
+void Widget::closeEvent(QCloseEvent* event) {
+    QWidget::closeEvent(event);
+}
 
 void Widget::changeEvent(QEvent* event) {}
 
@@ -340,7 +340,9 @@ void Widget::resizeEvent(QResizeEvent* event) {
     QWidget::resizeEvent(event);
 }
 
-QString Widget::getUsername() { return Nexus::getProfile()->getCore()->getUsername(); }
+QString Widget::getUsername() {
+    return Nexus::getProfile()->getCore()->getUsername();
+}
 
 void Widget::onSelfAvatarLoaded(const QPixmap& pic) {
     if (pic.size().isEmpty()) {
@@ -403,7 +405,9 @@ void Widget::onStatusSet(Status::Status status) {
     //  updateIcons();
 }
 
-void Widget::onSeparateWindowClicked(bool separate) { onSeparateWindowChanged(separate, true); }
+void Widget::onSeparateWindowClicked(bool separate) {
+    onSeparateWindowChanged(separate, true);
+}
 
 void Widget::onSeparateWindowChanged(bool separate, bool clicked) {
     if (!separate) {
@@ -611,7 +615,9 @@ void Widget::playNotificationSound(IAudioSink::Sound sound, bool loop) {
     }
 }
 
-void Widget::cleanupNotificationSound() { audioNotification.reset(); }
+void Widget::cleanupNotificationSound() {
+    audioNotification.reset();
+}
 
 void Widget::incomingNotification(QString friendnumber) {
     const auto& friendId = FriendId(friendnumber);
@@ -629,7 +635,9 @@ void Widget::outgoingNotification() {
 /**
  * @brief Widget::onStopNotification Stop the notification sound.
  */
-void Widget::onStopNotification() { audioNotification.reset(); }
+void Widget::onStopNotification() {
+    audioNotification.reset();
+}
 
 void Widget::addFriendFailed(const FriendId&, const QString& errorInfo) {
     QString info = QString(tr("Couldn't request friendship"));
@@ -943,7 +951,9 @@ ContentLayout* Widget::createContentDialog(DialogType type) const {
             retranslateUi();
         }
 
-        ~Dialog() { settings::Translator::unregister(this); }
+        ~Dialog() {
+            settings::Translator::unregister(this);
+        }
 
     public slots:
 
@@ -1068,7 +1078,9 @@ void Widget::removeGroup(Group* g, bool fake) {
     //  contactListWidget->reDraw();
 }
 
-void Widget::removeGroup(const GroupId& groupId) { removeGroup(GroupList::findGroup(groupId)); }
+void Widget::removeGroup(const GroupId& groupId) {
+    removeGroup(GroupList::findGroup(groupId));
+}
 
 void Widget::destroyGroup(const GroupId& groupId) {
     removeGroup(GroupList::findGroup(groupId), false);
@@ -1296,7 +1308,9 @@ void Widget::cycleContacts(bool forward) {
     //  contactListWidget->cycleContacts(activeChatroomWidget, forward);
 }
 
-void Widget::clearAllReceipts() { chatWidget->clearAllReceipts(); }
+void Widget::clearAllReceipts() {
+    chatWidget->clearAllReceipts();
+}
 
 void Widget::reloadTheme() {
     auto& style = lib::settings::Style::getStylesheet("window/general.css");
@@ -1312,4 +1326,6 @@ void Widget::retranslateUi() {
     ui->tabWidget->setTabText(2, tr("Settings"));
 }
 
-void Widget::showEvent(QShowEvent* e) { QWidget::showEvent(e); }
+void Widget::showEvent(QShowEvent* e) {
+    QWidget::showEvent(e);
+}

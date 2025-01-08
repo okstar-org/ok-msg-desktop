@@ -13,7 +13,7 @@
 #ifndef RAWDATABASE_H
 #define RAWDATABASE_H
 
-#include "src/util/strongtype.h"
+#include "src/base/strongtype.h"
 
 #include <QByteArray>
 #include <QMutex>

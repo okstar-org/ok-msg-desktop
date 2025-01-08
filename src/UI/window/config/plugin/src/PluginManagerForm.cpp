@@ -18,9 +18,9 @@
 #include "PluginInfoForm.h"
 #include "PluginItemForm.h"
 #include "lib/network/NetworkHttp.h"
-#include "lib/settings/OkSettings.h"
-#include "lib/settings/style.h"
-#include "lib/settings/translator.h"
+#include "lib/storeage/settings/OkSettings.h"
+#include "lib/storeage/settings/style.h"
+#include "lib/storeage/settings/translator.h"
 #include "src/UI/widget/GenericForm.h"
 #include "ui_PluginManagerForm.h"
 

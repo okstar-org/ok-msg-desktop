@@ -16,7 +16,7 @@
 #include "gui.h"
 #include "src/core/core.h"
 #include "src/core/corefile.h"
-#include "src/lib/settings/style.h"
+#include "src/lib/storeage/settings/style.h"
 #include "src/persistence/settings.h"
 #include "src/widget/widget.h"
 

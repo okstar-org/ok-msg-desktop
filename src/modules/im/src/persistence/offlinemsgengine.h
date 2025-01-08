@@ -13,10 +13,10 @@
 #ifndef OFFLINEMSGENGINE_H
 #define OFFLINEMSGENGINE_H
 
+#include "lib/storeage/db/rawdatabase.h"
 #include "src/chatlog/chatmessage.h"
 #include "src/core/core.h"
 #include "src/model/message.h"
-#include "src/persistence/db/rawdatabase.h"
 
 #include "base/compatiblerecursivemutex.h"
 

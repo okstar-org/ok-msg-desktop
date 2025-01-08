@@ -17,7 +17,7 @@
 #endif
 #include "base/r.h"
 #include "base/system/sys_info.h"
-#include "lib/settings/OkSettings.h"
+#include "lib/storeage/settings/OkSettings.h"
 
 #include <QCoreApplication>
 #include <QDesktopServices>

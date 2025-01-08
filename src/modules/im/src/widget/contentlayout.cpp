@@ -13,10 +13,12 @@
 #include "contentlayout.h"
 #include <QFrame>
 #include <QStyleFactory>
-#include "src/lib/settings/style.h"
+#include "src/lib/storeage/settings/style.h"
 #include "src/persistence/settings.h"
 
-ContentLayout::ContentLayout() : QStackedLayout() { init(); }
+ContentLayout::ContentLayout() : QStackedLayout() {
+    init();
+}
 
 ContentLayout::ContentLayout(QWidget* parent) : QStackedLayout(parent) {
     init();

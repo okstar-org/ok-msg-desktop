@@ -20,7 +20,7 @@
 #include "groupwidget.h"
 #include "maskablepixmapwidget.h"
 #include "src/core/core.h"
-#include "src/lib/settings/style.h"
+#include "src/lib/storeage/settings/style.h"
 #include "src/model/aboutfriend.h"
 #include "src/model/chatroom/friendchatroom.h"
 #include "src/model/friend.h"
@@ -112,7 +112,9 @@ FriendWidget::FriendWidget(Friend* f, QWidget* parent)
     //  }
 }
 
-FriendWidget::~FriendWidget() { qDebug() << __func__; }
+FriendWidget::~FriendWidget() {
+    qDebug() << __func__;
+}
 
 void FriendWidget::do_widgetClicked(GenericChatroomWidget* w) {
     qDebug() << __func__ << m_friend->getId().toString();
@@ -357,9 +359,13 @@ void FriendWidget::inviteToNewGroup() {
     groupCreate->show();
 }
 
-void FriendWidget::setAsActiveChatroom() { setActive(true); }
+void FriendWidget::setAsActiveChatroom() {
+    setActive(true);
+}
 
-void FriendWidget::setAsInactiveChatroom() { setActive(false); }
+void FriendWidget::setAsInactiveChatroom() {
+    setActive(false);
+}
 
 void FriendWidget::onActiveSet(bool active) {
     //    setBackgroundRole(QPalette::Window);
@@ -379,9 +385,13 @@ QString FriendWidget::getStatusString() const {
     return event ? tr("New message") : names.value(status);
 }
 
-const Friend* FriendWidget::getFriend() const { return m_friend; }
+const Friend* FriendWidget::getFriend() const {
+    return m_friend;
+}
 
-const Contact* FriendWidget::getContact() const { return getFriend(); }
+const Contact* FriendWidget::getContact() const {
+    return getFriend();
+}
 
 void FriendWidget::search(const QString& searchString, bool hide) {
     //  const auto frnd = chatRoom->getFriend();

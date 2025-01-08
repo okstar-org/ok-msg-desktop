@@ -10,17 +10,24 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#ifndef RECEIPT_NUM_H
-#define RECEIPT_NUM_H
+#include "StoreageManager.h"
+#include "src/base/system/sys_info.h"
 
-#include "base/strongtype.h"
+namespace lib::storeage{
 
-#include <QMetaType>
-#include <cstdint>
+StoreageManager::StoreageManager(QObject *parent): QObject(parent),
+    dir(ok::base::PlatformInfo::getAppConfigDirPath())
+{
+}
 
-using MsgId = QString;
+const QDir &StoreageManager::getDir()
+{
+    return dir;
+}
 
-// NamedType<uint32_t, struct ReceiptNumTag, Orderable>;
-// Q_DECLARE_METATYPE(MsgId);
+const settings::OkSettings &StoreageManager::getSettings()
+{
+    return settings::OkSettings::getInstance();
+}
 
-#endif /* RECEIPT_NUM_H */
+}

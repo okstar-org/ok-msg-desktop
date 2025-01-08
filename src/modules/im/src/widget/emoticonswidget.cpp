@@ -11,7 +11,7 @@
  */
 
 #include "emoticonswidget.h"
-#include "src/lib/settings/style.h"
+#include "src/lib/storeage/settings/style.h"
 #include "src/persistence/settings.h"
 #include "src/persistence/smileypack.h"
 
@@ -111,7 +111,9 @@ void EmoticonsWidget::onPageButtonClicked() {
     }
 }
 
-QSize EmoticonsWidget::sizeHint() const { return layout.sizeHint(); }
+QSize EmoticonsWidget::sizeHint() const {
+    return layout.sizeHint();
+}
 
 void EmoticonsWidget::mouseReleaseEvent(QMouseEvent* ev) {
     if (!rect().contains(ev->pos())) hide();
@@ -164,7 +166,9 @@ EmoticonsPageView::EmoticonsPageView(QWidget* parent) : QWidget(parent) {
     invisible_button->setToolButtonStyle(Qt::ToolButtonIconOnly);
 }
 
-QSize EmoticonsPageView::sizeHint() const { return minimumSizeHint(); }
+QSize EmoticonsPageView::sizeHint() const {
+    return minimumSizeHint();
+}
 
 QSize EmoticonsPageView::minimumSizeHint() const {
     QMargins m = this->contentsMargins();

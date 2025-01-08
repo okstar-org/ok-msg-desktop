@@ -28,11 +28,11 @@
 
 #include "base/autorun.h"
 #include "base/compatiblerecursivemutex.h"
-#include "lib/settings/OkSettings.h"
+#include "lib/storeage/settings/OkSettings.h"
 #include "src/core/core.h"
 #include "src/core/corefile.h"
 #include "src/ipc.h"
-#include "src/lib/settings/style.h"
+#include "src/lib/storeage/settings/style.h"
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
 #include "src/persistence/profilelocker.h"
@@ -191,7 +191,11 @@ void Settings::loadGlobal() {
     s.endGroup();
 
     s.beginGroup("Chat");
-    { chatMessageFont = s.value("chatMessageFont", lib::settings::Style::getFont(lib::settings::Style::Font::Big)).value<QFont>(); }
+    {
+        chatMessageFont = s.value("chatMessageFont",
+                                  lib::settings::Style::getFont(lib::settings::Style::Font::Big))
+                                  .value<QFont>();
+    }
     s.endGroup();
 
     s.beginGroup("Audio");

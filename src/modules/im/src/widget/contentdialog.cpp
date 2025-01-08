@@ -21,9 +21,9 @@
 #include <QShortcut>
 #include <QSplitter>
 
-#include "lib/settings/translator.h"
+#include "lib/storeage/settings/translator.h"
 #include "src/core/core.h"
-#include "src/lib/settings/style.h"
+#include "src/lib/storeage/settings/style.h"
 #include "src/model/chatroom/friendchatroom.h"
 #include "src/model/friend.h"
 #include "src/model/friendlist.h"
@@ -135,7 +135,9 @@ ContentDialog::ContentDialog(QWidget* parent)
     settings::Translator::registerHandler(std::bind(&ContentDialog::retranslateUi, this), this);
 }
 
-ContentDialog::~ContentDialog() { settings::Translator::unregister(this); }
+ContentDialog::~ContentDialog() {
+    settings::Translator::unregister(this);
+}
 
 void ContentDialog::closeEvent(QCloseEvent* event) {
     emit willClose();
@@ -300,12 +302,16 @@ void ContentDialog::reorderLayouts(bool newGroupOnTop) {
     }
 }
 
-void ContentDialog::previousContact() { cycleContacts(false); }
+void ContentDialog::previousContact() {
+    cycleContacts(false);
+}
 
 /**
  * @brief Enable next contact.
  */
-void ContentDialog::nextContact() { cycleContacts(true); }
+void ContentDialog::nextContact() {
+    cycleContacts(true);
+}
 
 /**
  * @brief Update username to show in the title.
@@ -524,7 +530,9 @@ void ContentDialog::onGroupchatPositionChanged(bool top) {
 /**
  * @brief Retranslate all elements in the form.
  */
-void ContentDialog::retranslateUi() { updateTitleAndStatusIcon(); }
+void ContentDialog::retranslateUi() {
+    updateTitleAndStatusIcon();
+}
 
 /**
  * @brief Save size of dialog window.
@@ -540,7 +548,9 @@ void ContentDialog::saveSplitterState() {
     Settings::getInstance().setDialogSplitterState(splitter->saveState());
 }
 
-bool ContentDialog::hasContact(const ContactId& contactId) const { return true; }
+bool ContentDialog::hasContact(const ContactId& contactId) const {
+    return true;
+}
 
 /**
  * @brief Find the next or previous layout in layout list.

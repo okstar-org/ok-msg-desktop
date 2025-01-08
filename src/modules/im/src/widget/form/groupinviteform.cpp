@@ -12,7 +12,7 @@
 
 #include "groupinviteform.h"
 
-#include "lib/settings/translator.h"
+#include "lib/storeage/settings/translator.h"
 #include "src/core/core.h"
 #include "src/model/groupinvite.h"
 #include "src/persistence/settings.h"
@@ -70,7 +70,9 @@ GroupInviteForm::GroupInviteForm()
     settings::Translator::registerHandler(std::bind(&GroupInviteForm::retranslateUi, this), this);
 }
 
-GroupInviteForm::~GroupInviteForm() { settings::Translator::unregister(this); }
+GroupInviteForm::~GroupInviteForm() {
+    settings::Translator::unregister(this);
+}
 
 /**
  * @brief Detects that form is shown

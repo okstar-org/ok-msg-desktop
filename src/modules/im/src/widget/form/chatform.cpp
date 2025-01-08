@@ -15,7 +15,7 @@
 #include <QClipboard>
 #include <QFileDialog>
 #include <QFileInfo>
-#include "lib/settings/translator.h"
+#include "lib/storeage/settings/translator.h"
 #include "src/base/MessageBox.h"
 #include "src/chatlog/chatlinecontentproxy.h"
 #include "src/chatlog/chatlog.h"
@@ -25,7 +25,7 @@
 #include "src/core/core.h"
 #include "src/core/coreav.h"
 #include "src/core/corefile.h"
-#include "src/lib/settings/style.h"
+#include "src/lib/storeage/settings/style.h"
 #include "src/model/friend.h"
 #include "src/model/status.h"
 #include "src/nexus.h"
@@ -74,7 +74,8 @@ ChatForm::ChatForm(const FriendId* chatFriend,
     statusMessageLabel = new CroppingLabel();
     statusMessageLabel->setObjectName("statusLabel");
     statusMessageLabel->setFont(lib::settings::Style::getFont(lib::settings::Style::Font::Medium));
-    statusMessageLabel->setMinimumHeight(lib::settings::Style::getFont(lib::settings::Style::Font::Medium).pixelSize());
+    statusMessageLabel->setMinimumHeight(
+            lib::settings::Style::getFont(lib::settings::Style::Font::Medium).pixelSize());
     statusMessageLabel->setTextFormat(Qt::PlainText);
     statusMessageLabel->setContextMenuPolicy(Qt::CustomContextMenu);
 
@@ -128,7 +129,9 @@ ChatForm::ChatForm(const FriendId* chatFriend,
     retranslateUi();
 }
 
-ChatForm::~ChatForm() { settings::Translator::unregister(this); }
+ChatForm::~ChatForm() {
+    settings::Translator::unregister(this);
+}
 
 void ChatForm::setStatusMessage(const QString& newMessage) {
     statusMessageLabel->setText(newMessage);
@@ -136,7 +139,9 @@ void ChatForm::setStatusMessage(const QString& newMessage) {
     statusMessageLabel->setToolTip(Qt::convertFromPlainText(newMessage, Qt::WhiteSpaceNormal));
 }
 
-void ChatForm::callUpdateFriendActivity() { emit updateFriendActivity(*f); }
+void ChatForm::callUpdateFriendActivity() {
+    emit updateFriendActivity(*f);
+}
 
 void ChatForm::updateFriendActivityForFile(const ToxFile& file) {
     if (file.receiver != f->getId()) {
@@ -152,7 +157,7 @@ void ChatForm::onFileNameChanged(const FriendId& friendPk) {
 
     ok::base::MessageBox::warning(this, tr("Filename contained illegal characters"),
                                   tr("Illegal characters have been changed to _ \n"
-                            "so you can save the file on windows."));
+                                     "so you can save the file on windows."));
 }
 
 void ChatForm::showOutgoingCall(bool video) {
@@ -238,7 +243,7 @@ void ChatForm::dropEvent(QDropEvent* ev) {
         if (file.isSequential()) {
             ok::base::MessageBox::critical(nullptr, tr("Bad idea"),
                                            tr("You're trying to send a sequential file, "
-                                     "which is not going to work!"));
+                                              "which is not going to work!"));
             continue;
         }
 
@@ -251,8 +256,6 @@ void ChatForm::dropEvent(QDropEvent* ev) {
 void ChatForm::clearChatArea() {
     GenericChatForm::clearChatArea(/* confirm = */ false, /* inform = */ true);
 }
-
-
 
 void ChatForm::sendImage(const QPixmap& pixmap) {
     QDir(Settings::getInstance().getAppDataDirPath()).mkpath("images");
@@ -283,7 +286,9 @@ void ChatForm::sendImage(const QPixmap& pixmap) {
     }
 }
 
-void ChatForm::insertChatMessage(IChatItem::Ptr msg) { GenericChatForm::insertChatMessage(msg); }
+void ChatForm::insertChatMessage(IChatItem::Ptr msg) {
+    GenericChatForm::insertChatMessage(msg);
+}
 
 void ChatForm::onCopyStatusMessage() {
     qDebug() << __func__;
@@ -303,7 +308,9 @@ void ChatForm::setFriendTyping(bool typing) {
     //  text->setText(typingDiv.arg(tr("%1 is typing").arg(name)));
 }
 
-void ChatForm::show(ContentLayout* contentLayout) { GenericChatForm::show(contentLayout); }
+void ChatForm::show(ContentLayout* contentLayout) {
+    GenericChatForm::show(contentLayout);
+}
 
 void ChatForm::reloadTheme() {
     chatLog->setTypingNotification(ChatMessage::createTypingNotification());
@@ -318,4 +325,6 @@ void ChatForm::hideEvent(QHideEvent* event) {
     //  GenericChatForm::hideEvent(event);
 }
 
-void ChatForm::retranslateUi() { copyStatusAction->setText(tr("Copy")); }
+void ChatForm::retranslateUi() {
+    copyStatusAction->setText(tr("Copy"));
+}

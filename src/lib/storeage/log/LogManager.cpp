@@ -16,8 +16,8 @@
 
 #include "LogManager.h"
 #include "base/OkProcess.h"
-#include "lib/settings/OkSettings.h"
 #include "base/times.h"
+#include "lib/storeage/settings/OkSettings.h"
 
 #include <QAtomicPointer>
 #include <QDebug>
@@ -95,7 +95,9 @@ LogManager::LogManager() {
     qInstallMessageHandler(logMessageHandler);
 }
 
-LogManager::~LogManager() { Destroy(); }
+LogManager::~LogManager() {
+    Destroy();
+}
 
 const LogManager& LogManager::Instance() {
     if (!log) {
@@ -109,4 +111,4 @@ void LogManager::Destroy() {
     log = nullptr;
 }
 
-}  // namespace ok::lib
+}  // namespace lib::log

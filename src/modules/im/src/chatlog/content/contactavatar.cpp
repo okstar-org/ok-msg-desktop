@@ -16,6 +16,7 @@
 #include <QPainter>
 
 static constexpr float avatar_size = 40;
+
 ContactAvatar::ContactAvatar(const QPixmap& avatar)
         : ChatLineContent(ChatLineContent::ContentType::CHAT_AVATA), avatar(avatar) {}
 

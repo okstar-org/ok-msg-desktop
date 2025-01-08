@@ -12,7 +12,7 @@
 
 #include "notificationicon.h"
 #include "../pixmapcache.h"
-#include "src/lib/settings/style.h"
+#include "src/lib/storeage/settings/style.h"
 
 #include <QGraphicsScene>
 #include <QPainter>
@@ -20,7 +20,8 @@
 
 NotificationIcon::NotificationIcon(QSize Size)
         : ChatLineContent(ChatLineContent::ContentType::CHAT_Nofity), size(Size) {
-    pmap = PixmapCache::getInstance().get(lib::settings::Style::getImagePath("chatArea/typing.svg"), size);
+    pmap = PixmapCache::getInstance().get(lib::settings::Style::getImagePath("chatArea/typing.svg"),
+                                          size);
 
     updateTimer = new QTimer(this);
     updateTimer->setInterval(1000 / 30);
@@ -49,9 +50,13 @@ void NotificationIcon::paint(QPainter* painter, const QStyleOptionGraphicsItem* 
     Q_UNUSED(widget)
 }
 
-void NotificationIcon::setWidth(qreal width) { Q_UNUSED(width) }
+void NotificationIcon::setWidth(qreal width) {
+    Q_UNUSED(width)
+}
 
-qreal NotificationIcon::getAscent() const { return 3.0; }
+qreal NotificationIcon::getAscent() const {
+    return 3.0;
+}
 
 void NotificationIcon::onCopyEvent() {}
 
@@ -69,4 +74,6 @@ void NotificationIcon::updateGradient() {
 
     if (scene() && isVisible()) scene()->invalidate(sceneBoundingRect());
 }
-const void* NotificationIcon::getContent() { return &pmap; }
+const void* NotificationIcon::getContent() {
+    return &pmap;
+}

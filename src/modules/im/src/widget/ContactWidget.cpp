@@ -16,8 +16,8 @@
 #include "Bus.h"
 #include "ContactListWidget.h"
 #include "application.h"
-#include "lib/settings/translator.h"
-#include "src/lib/settings/style.h"
+#include "lib/storeage/settings/translator.h"
+#include "src/lib/storeage/settings/style.h"
 #include "src/model/aboutfriend.h"
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
@@ -122,7 +122,9 @@ AddFriendForm* ContactWidget::makeAddForm() {
     return addForm;
 }
 
-void ContactWidget::do_openAddForm() { makeAddForm()->showTo(getContentLayout()); }
+void ContactWidget::do_openAddForm() {
+    makeAddForm()->showTo(getContentLayout());
+}
 
 void ContactWidget::deinit() {
     disconnect(ok::Application::Instance()->bus(),
@@ -184,7 +186,9 @@ void ContactWidget::onFriendAdded(const FriendInfo& frnd) {
     contactListWidget->addFriend(frnd.getId());
 }
 
-void ContactWidget::onFriendRemoved(const Friend* f) { removeFriendDetails(f); }
+void ContactWidget::onFriendRemoved(const Friend* f) {
+    removeFriendDetails(f);
+}
 
 void ContactWidget::onFriendAvatarChanged(const FriendId& friendnumber, const QByteArray& avatar) {
     qDebug() << __func__ << "friend:" << friendnumber.toString() << avatar.size();

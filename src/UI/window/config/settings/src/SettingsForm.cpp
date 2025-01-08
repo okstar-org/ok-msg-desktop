@@ -20,7 +20,7 @@
 #include "ConnectForm.h"
 #include "GeneralForm.h"
 #include "SettingsForm.h"
-#include "lib/settings/translator.h"
+#include "lib/storeage/settings/translator.h"
 
 namespace UI {
 SettingsWidget::SettingsWidget(QWidget* parent)
@@ -56,8 +56,8 @@ SettingsWidget::SettingsWidget(QWidget* parent)
             new GeneralForm(this),
             new ConnectForm(this)  //
                                    //      std::move(pfrm),   //
-                                    //      std::move(expfrm), //
-                                    //      std::move(abtfrm)  //
+                                   //      std::move(expfrm), //
+                                   //      std::move(abtfrm)  //
     }};
 
     for (auto& cfgForm : cfgForms)
@@ -70,13 +70,17 @@ SettingsWidget::SettingsWidget(QWidget* parent)
     retranslateUi();
 }
 
-SettingsWidget::~SettingsWidget() { settings::Translator::unregister(this); }
+SettingsWidget::~SettingsWidget() {
+    settings::Translator::unregister(this);
+}
 
 void SettingsWidget::setBodyHeadStyle(QString style) {
     settingsWidgets->setStyle(QStyleFactory::create(style));
 }
 
-void SettingsWidget::showAbout() { onTabChanged(settingsWidgets->count() - 1); }
+void SettingsWidget::showAbout() {
+    onTabChanged(settingsWidgets->count() - 1);
+}
 
 bool SettingsWidget::isShown() const {
     if (settingsWidgets->isVisible()) {
@@ -87,7 +91,9 @@ bool SettingsWidget::isShown() const {
     return false;
 }
 
-void SettingsWidget::onTabChanged(int index) { settingsWidgets->setCurrentIndex(index); }
+void SettingsWidget::onTabChanged(int index) {
+    settingsWidgets->setCurrentIndex(index);
+}
 
 void SettingsWidget::onUpdateAvailable(void) {
     //    settingsWidgets->tabBar()->setProperty("update-available", true);

@@ -12,8 +12,8 @@
 
 #include "chatformheader.h"
 
-#include "lib/settings/translator.h"
-#include "src/lib/settings/style.h"
+#include "lib/storeage/settings/translator.h"
+#include "src/lib/storeage/settings/style.h"
 #include "src/widget/maskablepixmapwidget.h"
 #include "src/widget/tool/callconfirmwidget.h"
 #include "src/widget/tool/croppinglabel.h"
@@ -25,27 +25,30 @@
 #include <QTextDocument>
 #include <QToolButton>
 
-#include <src/core/FriendId.h>
+#include "src/core/FriendId.h"
 #include "src/core/coreav.h"
 
 #include <src/model/contact.h>
 #include <src/model/friend.h>
 
-#include "src/widget/tool/callconfirmwidget.h"
 #include "src/model/friendlist.h"
+#include "src/widget/tool/callconfirmwidget.h"
 
 #include "Bus.h"
 #include "application.h"
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
 #include "widget.h"
+#include "base/Styles.h"
 
-static const QSize AVATAR_SIZE{40, 40};
+
+
+namespace {
+
 static const short HEAD_LAYOUT_SPACING = 5;
 static const short MIC_BUTTONS_LAYOUT_SPACING = 4;
 static const short BUTTONS_LAYOUT_HOR_SPACING = 4;
 
-namespace {
 const QString STYLE_PATH = QStringLiteral("chatForm/buttons.css");
 
 const QString STATE_NAME[] = {
@@ -113,14 +116,15 @@ ChatFormHeader::ChatFormHeader(const ContactId& contactId, QWidget* parent)
     QHBoxLayout* headLayout = new QHBoxLayout(this);
     headLayout->setContentsMargins(0, 0, 0, 0);
     // 头像
-    avatar = new MaskablePixmapWidget(this, AVATAR_SIZE, ":/img/avatar_mask.svg");
+    avatar = new MaskablePixmapWidget(this, base::Styles::AVATAR_SIZE, ":/img/avatar_mask.svg");
     avatar->setObjectName("avatar");
     headLayout->addWidget(avatar);
 
     // 名称
     nameLabel = new CroppingLabel(this);
     nameLabel->setObjectName("nameLabel");
-    nameLabel->setMinimumHeight(lib::settings::Style::getFont(lib::settings::Style::Font::Medium).pixelSize());
+    nameLabel->setMinimumHeight(
+            lib::settings::Style::getFont(lib::settings::Style::Font::Medium).pixelSize());
     nameLabel->setCursor(Qt::PointingHandCursor);
     nameLabel->setTextFormat(Qt::PlainText);
     nameLabel->setText(contactId.username);
@@ -259,7 +263,7 @@ void ChatFormHeader::updateButtonsView() {
     callButton->setEnabled(callState != CallButtonState::Disabled);
     videoButton->setEnabled(videoState != CallButtonState::Disabled);
     retranslateUi();
-    lib::settings::Style::repolish(this);
+    base::Styles::repolish(this);
 }
 
 void ChatFormHeader::onDisplayedNameChanged(const QString& name) {

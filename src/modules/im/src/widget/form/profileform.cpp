@@ -28,9 +28,9 @@
 #include <QMouseEvent>
 #include <QWindow>
 #include "gui.h"
-#include "lib/settings/translator.h"
+#include "lib/storeage/settings/translator.h"
 #include "src/core/core.h"
-#include "src/lib/settings/style.h"
+#include "src/lib/storeage/settings/style.h"
 #include "src/model/profile/iprofileinfo.h"
 #include "src/persistence/profile.h"
 #include "src/persistence/profilelocker.h"

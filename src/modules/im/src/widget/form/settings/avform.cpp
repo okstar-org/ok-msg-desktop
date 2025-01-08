@@ -20,7 +20,7 @@
 #include <QScreen>
 #include <QShowEvent>
 
-#include "lib/settings/translator.h"
+#include "lib/storeage/settings/translator.h"
 #include "src/audio/audio.h"
 #include "src/audio/iaudiosettings.h"
 #include "src/audio/iaudiosource.h"
@@ -460,7 +460,9 @@ void AVForm::getVideoDevices() {
     updateVideoModes(videoDevIndex);
 }
 
-int AVForm::getModeSize(VideoMode mode) { return qRound(mode.height / 120.0) * 120; }
+int AVForm::getModeSize(VideoMode mode) {
+    return qRound(mode.height / 120.0) * 120;
+}
 
 void AVForm::getAudioInDevices() {
     QStringList deviceNames;
@@ -598,7 +600,9 @@ void AVForm::killVideoSurface() {
     camVideoSurface = nullptr;
 }
 
-void AVForm::retranslateUi() { Ui::AVForm::retranslateUi(this); }
+void AVForm::retranslateUi() {
+    Ui::AVForm::retranslateUi(this);
+}
 
 int AVForm::getStepsFromValue(qreal val, qreal valMin, qreal valMax) {
     const float norm = (val - valMin) / (valMax - valMin);

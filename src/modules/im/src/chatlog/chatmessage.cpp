@@ -21,7 +21,7 @@
 #include "content/spinner.h"
 #include "content/text.h"
 #include "content/timestamp.h"
-#include "src/lib/settings/style.h"
+#include "src/lib/storeage/settings/style.h"
 #include "textformatter.h"
 
 #include <QCryptographicHash>

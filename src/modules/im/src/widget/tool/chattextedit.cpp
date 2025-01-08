@@ -12,7 +12,7 @@
 
 #include "chattextedit.h"
 
-#include "lib/settings/translator.h"
+#include "lib/storeage/settings/translator.h"
 
 #include <QApplication>
 #include <QClipboard>
@@ -31,7 +31,9 @@ ChatTextEdit::ChatTextEdit(QWidget* parent) : QTextEdit(parent) {
     retranslateUi();
 }
 
-ChatTextEdit::~ChatTextEdit() { settings::Translator::unregister(this); }
+ChatTextEdit::~ChatTextEdit() {
+    settings::Translator::unregister(this);
+}
 
 void ChatTextEdit::keyPressEvent(QKeyEvent* event) {
     int key = event->key();
@@ -63,11 +65,17 @@ void ChatTextEdit::keyPressEvent(QKeyEvent* event) {
     QTextEdit::keyPressEvent(event);
 }
 
-void ChatTextEdit::setLastMessage(QString lm) { lastMessage = lm; }
+void ChatTextEdit::setLastMessage(QString lm) {
+    lastMessage = lm;
+}
 
-void ChatTextEdit::retranslateUi() { setPlaceholderText(tr("Type your message here...")); }
+void ChatTextEdit::retranslateUi() {
+    setPlaceholderText(tr("Type your message here..."));
+}
 
-void ChatTextEdit::sendKeyEvent(QKeyEvent* event) { emit keyPressEvent(event); }
+void ChatTextEdit::sendKeyEvent(QKeyEvent* event) {
+    emit keyPressEvent(event);
+}
 
 bool ChatTextEdit::pasteIfImage(QKeyEvent* event) {
     const QClipboard* const clipboard = QApplication::clipboard();
@@ -89,4 +97,6 @@ bool ChatTextEdit::pasteIfImage(QKeyEvent* event) {
     return true;
 }
 
-void ChatTextEdit::onTextChanged() { qDebug() << __func__ << toPlainText(); }
+void ChatTextEdit::onTextChanged() {
+    qDebug() << __func__ << toPlainText();
+}

@@ -10,17 +10,36 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#ifndef RECEIPT_NUM_H
-#define RECEIPT_NUM_H
 
-#include "base/strongtype.h"
+#ifndef STYLES_H
+#define STYLES_H
 
-#include <QMetaType>
-#include <cstdint>
+#include <QWidget>
 
-using MsgId = QString;
+namespace base {
 
-// NamedType<uint32_t, struct ReceiptNumTag, Orderable>;
-// Q_DECLARE_METATYPE(MsgId);
 
-#endif /* RECEIPT_NUM_H */
+class Styles{
+
+public:
+    static constexpr const QSize AVATAR_SIZE{40, 40};
+
+    static void repolish(QWidget* w) {
+    if(!w) return;
+
+    w->style()->unpolish(w);
+    w->style()->polish(w);
+
+    for (QObject* o : w->children()) {
+        QWidget* c = qobject_cast<QWidget*>(o);
+        if (c) {
+            c->style()->unpolish(c);
+            c->style()->polish(c);
+        }
+    }
+}
+
+};
+
+}
+#endif  // STYLES_H

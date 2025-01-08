@@ -29,7 +29,7 @@
 #include "src/model/friend.h"
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
-#include "src/util/strongtype.h"
+#include "base/strongtype.h"
 
 #include <QCoreApplication>
 #include <vector>

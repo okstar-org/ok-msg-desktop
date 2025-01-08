@@ -16,7 +16,7 @@
 #include "base/files.h"
 #include "lib/network/NetworkHttp.h"
 #include "lib/plugin/pluginhost.h"
-#include "lib/settings/OkSettings.h"
+#include "lib/storeage/settings/OkSettings.h"
 #include "ui_PluginInfoForm.h"
 
 namespace ok::plugin {

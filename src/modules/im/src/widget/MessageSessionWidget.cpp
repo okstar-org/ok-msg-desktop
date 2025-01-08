@@ -19,7 +19,7 @@
 
 #include "contentdialogmanager.h"
 #include "src/core/core.h"
-#include "src/lib/settings/style.h"
+#include "src/lib/storeage/settings/style.h"
 #include "src/model/aboutfriend.h"
 #include "src/model/chatroom/friendchatroom.h"
 #include "src/model/friend.h"

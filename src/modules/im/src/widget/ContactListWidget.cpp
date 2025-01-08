@@ -13,12 +13,12 @@
 #include "ContactListWidget.h"
 #include "ChatWidget.h"
 #include "ContactListLayout.h"
-#include "lib/settings/OkSettings.h"
 #include "base/times.h"
 #include "circlewidget.h"
 #include "contentdialogmanager.h"
 #include "friendwidget.h"
 #include "groupwidget.h"
+#include "lib/storeage/settings/OkSettings.h"
 #include "src/model/chathistory.h"
 #include "src/model/chatroom/friendchatroom.h"
 #include "src/model/friend.h"
@@ -33,8 +33,8 @@
 #include <QDragLeaveEvent>
 #include <QGridLayout>
 #include <QMimeData>
-#include <QTimer>
 #include <QShortcut>
+#include <QTimer>
 
 #include "widget.h"
 
@@ -70,12 +70,8 @@ ContactListWidget::ContactListWidget(QWidget* parent, bool groupsOnTop)
     //  connect(Nexus::getProfile(), &Profile::coreChanged,
     //          this, &FriendListWidget::onCoreChanged);
 
-    new QShortcut(QKeySequence(Qt::Key_Up), this, [this](){
-        cycleContacts(true);
-    });
-    new QShortcut(QKeySequence(Qt::Key_Down), this, [this](){
-        cycleContacts(false);
-    });
+    new QShortcut(QKeySequence(Qt::Key_Up), this, [this]() { cycleContacts(true); });
+    new QShortcut(QKeySequence(Qt::Key_Down), this, [this]() { cycleContacts(false); });
 }
 
 ContactListWidget::~ContactListWidget() {
@@ -155,7 +151,9 @@ void ContactListWidget::setMode(SortingMode mode) {
     //    sortByMode(mode);
 }
 
-ContactListWidget::SortingMode ContactListWidget::getMode() const { return mode; }
+ContactListWidget::SortingMode ContactListWidget::getMode() const {
+    return mode;
+}
 
 GroupWidget* ContactListWidget::addGroup(const GroupId& groupId, const QString& groupName) {
     qDebug() << __func__ << groupId.toString();
@@ -193,28 +191,23 @@ void ContactListWidget::do_groupDeleted(const ContactId& cid) {
     removeGroup(GroupId(cid));
 }
 
-void ContactListWidget::cycleContacts(bool forward)
-{
-    if(friendWidgets.empty() && groupWidgets.empty())
-    {
+void ContactListWidget::cycleContacts(bool forward) {
+    if (friendWidgets.empty() && groupWidgets.empty()) {
         return;
     }
 
     GenericChatroomWidget* activeWidget = nullptr;
 
     for (auto fw : friendWidgets) {
-        if(fw->isActive())
-        {
+        if (fw->isActive()) {
             activeWidget = fw;
             break;
         }
     }
 
-    if(activeWidget == nullptr)
-    {
+    if (activeWidget == nullptr) {
         for (auto gw : groupWidgets) {
-            if(gw->isActive())
-            {
+            if (gw->isActive()) {
                 activeWidget = gw;
                 break;
             }
@@ -224,29 +217,21 @@ void ContactListWidget::cycleContacts(bool forward)
     int curActiveWidgetIdx = -1;
     int nextActiveWidgetIdx = -1;
 
-    if(activeWidget != nullptr)
-    {
+    if (activeWidget != nullptr) {
         curActiveWidgetIdx = listLayout->indexOfFriendWidget(activeWidget, true);
     }
 
-    if(curActiveWidgetIdx != -1)
-    {
-        if(forward && curActiveWidgetIdx != 0)
-        {
+    if (curActiveWidgetIdx != -1) {
+        if (forward && curActiveWidgetIdx != 0) {
             nextActiveWidgetIdx = curActiveWidgetIdx - 1;
-        }
-        else if(!forward && curActiveWidgetIdx < listLayout->friendTotalCount() - 1)
-        {
+        } else if (!forward && curActiveWidgetIdx < listLayout->friendTotalCount() - 1) {
             nextActiveWidgetIdx = curActiveWidgetIdx + 1;
         }
-    }
-    else
-    {
+    } else {
         nextActiveWidgetIdx = 0;
     }
 
-    if(nextActiveWidgetIdx != -1)
-    {
+    if (nextActiveWidgetIdx != -1) {
         QWidget* widget = listLayout->getLayoutOnline()->itemAt(nextActiveWidgetIdx)->widget();
         GenericChatroomWidget* chatWidget = qobject_cast<GenericChatroomWidget*>(widget);
         if (chatWidget) {

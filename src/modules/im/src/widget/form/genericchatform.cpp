@@ -27,8 +27,8 @@
 #include "base/files.h"
 #include "base/images.h"
 #include "gui.h"
-#include "lib/settings/OkSettings.h"
-#include "lib/settings/translator.h"
+#include "lib/storeage/settings/OkSettings.h"
+#include "lib/storeage/settings/translator.h"
 #include "src/chatlog/chatlinecontentproxy.h"
 #include "src/chatlog/chatlog.h"
 #include "src/chatlog/content/filetransferwidget.h"
@@ -240,8 +240,6 @@ GenericChatForm::GenericChatForm(const ContactId* contact_,
     //                    QKeySequence(Qt::CTRL + Qt::Key_F));
     // addAction(searchAction);
 
-
-
     connect(&iChatLog, &IChatLog::itemUpdated, this, &GenericChatForm::renderMessage0);
 
     // connect(searchForm, &SearchForm::searchInBegin, this,
@@ -308,9 +306,13 @@ IChatItem::Ptr GenericChatForm::createMessage(const ChatLogItem& item,
     return chatItem;
 }
 
-QDateTime GenericChatForm::getLatestTime() const { return getTime(chatLog->getLatestLine()); }
+QDateTime GenericChatForm::getLatestTime() const {
+    return getTime(chatLog->getLatestLine());
+}
 
-QDateTime GenericChatForm::getFirstTime() const { return getTime(chatLog->getFirstLine()); }
+QDateTime GenericChatForm::getFirstTime() const {
+    return getTime(chatLog->getFirstLine());
+}
 
 void GenericChatForm::reloadTheme() {
     const Settings& s = Settings::getInstance();
@@ -390,11 +392,11 @@ void GenericChatForm::onDisplayedNameChanged(const QString& name) {
     }
 }
 
-void GenericChatForm::onReplyEvent(IChatItem* item) { emit replyEvent(item); }
-
-void GenericChatForm::onChatContextMenuRequested(QPoint pos) {
-
+void GenericChatForm::onReplyEvent(IChatItem* item) {
+    emit replyEvent(item);
 }
+
+void GenericChatForm::onChatContextMenuRequested(QPoint pos) {}
 
 /**
  * @brief Show, is it needed to hide message author name or not
@@ -425,9 +427,13 @@ bool GenericChatForm::needsToHideName(ChatLogIdx idx) const {
            messagesTimeDiff < chatLog->repNameAfter;
 }
 
-void GenericChatForm::onCopyLogClicked() { chatLog->copySelectedText(); }
+void GenericChatForm::onCopyLogClicked() {
+    chatLog->copySelectedText();
+}
 
-void GenericChatForm::focusInput() { inputForm->setFocus(); }
+void GenericChatForm::focusInput() {
+    inputForm->setFocus();
+}
 
 void GenericChatForm::onChatMessageFontChanged(const QFont& font) {
     // chat log
@@ -435,7 +441,9 @@ void GenericChatForm::onChatMessageFontChanged(const QFont& font) {
     chatLog->forceRelayout();
 }
 
-void GenericChatForm::setColorizedNames(bool enable) { colorizeNames = enable; }
+void GenericChatForm::setColorizedNames(bool enable) {
+    colorizeNames = enable;
+}
 
 void GenericChatForm::addSystemInfoMessage(const QString& message,
                                            ChatMessage::SystemMessageType type,
@@ -464,7 +472,9 @@ void GenericChatForm::disableSearchText() {
     }
 }
 
-void GenericChatForm::clearChatArea() { clearChatArea(/* confirm = */ true, /* inform = */ true); }
+void GenericChatForm::clearChatArea() {
+    clearChatArea(/* confirm = */ true, /* inform = */ true);
+}
 
 void GenericChatForm::clearChatArea(bool confirm, bool inform) {
     if (confirm) {
@@ -485,7 +495,9 @@ void GenericChatForm::clearChatArea(bool confirm, bool inform) {
     messages.clear();
 }
 
-void GenericChatForm::onSelectAllClicked() { chatLog->selectAll(); }
+void GenericChatForm::onSelectAllClicked() {
+    chatLog->selectAll();
+}
 
 void GenericChatForm::insertChatMessage(IChatItem::Ptr msg) {
     chatLog->insertChatlineAtBottom(msg);

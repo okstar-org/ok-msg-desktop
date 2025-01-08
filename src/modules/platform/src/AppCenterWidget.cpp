@@ -26,7 +26,7 @@
 #include "LoadingWidget.h"
 #include "Platform.h"
 #include "application.h"
-#include "lib/settings/style.h"
+#include "lib/storeage/settings/style.h"
 #include "websocketclientwrapper.h"
 #include "websockettransport.h"
 

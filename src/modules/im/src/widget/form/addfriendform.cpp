@@ -27,9 +27,9 @@
 #include "gui.h"
 #include "lib/backend/UserService.h"
 #include "lib/session/AuthSession.h"
-#include "lib/settings/translator.h"
+#include "lib/storeage/settings/translator.h"
 #include "src/core/core.h"
-#include "src/lib/settings/style.h"
+#include "src/lib/storeage/settings/style.h"
 #include "src/nexus.h"
 #include "src/persistence/settings.h"
 #include "src/widget/contentlayout.h"
@@ -38,7 +38,9 @@
 
 namespace {
 
-QString getToxId(const QString& id) { return id.trimmed(); }
+QString getToxId(const QString& id) {
+    return id.trimmed();
+}
 
 }  // namespace
 
@@ -85,7 +87,9 @@ AddFriendForm::~AddFriendForm() {
     delete addUi;
 }
 
-bool AddFriendForm::isShown() const { return true; }
+bool AddFriendForm::isShown() const {
+    return true;
+}
 
 void AddFriendForm::showTo(ContentLayout* contentLayout) {
     //  contentLayout->mainContent->layout()->addWidget(tabWidget);
@@ -111,7 +115,9 @@ QString AddFriendForm::getMessage() {
     return tr("hello,I'm ") + Core::getInstance()->getNick();
 }
 
-void AddFriendForm::onUsernameSet(const QString& username) { lastUsername = username; }
+void AddFriendForm::onUsernameSet(const QString& username) {
+    lastUsername = username;
+}
 
 void AddFriendForm::showEvent(QShowEvent* e) {
     //    onSearchTriggered();

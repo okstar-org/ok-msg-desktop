@@ -28,10 +28,10 @@
 #include "base/r.h"
 #include "base/system/sys_info.h"
 #include "ipc.h"
-#include "lib/log/LogManager.h"
+#include "lib/storeage/log/LogManager.h"
 #include "lib/plugin/pluginmanager.h"
-#include "lib/settings/OkSettings.h"
-#include "lib/settings/translator.h"
+#include "lib/storeage/settings/OkSettings.h"
+#include "lib/storeage/settings/translator.h"
 #include "modules/im/src/nexus.h"
 
 namespace ok {
@@ -43,7 +43,6 @@ namespace ok {
  */
 Application::Application(int& argc, char* argv[])
         : QApplication(argc, argv), _argc(argc), _argv(argv) {
-
     // Qt application settings.
     setApplicationName(APPLICATION_NAME);
     setApplicationVersion(APPLICATION_VERSION_ID);

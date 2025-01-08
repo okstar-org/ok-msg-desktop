@@ -28,7 +28,7 @@
 #include "src/core/FriendId.h"
 #include "src/core/toxfile.h"
 #include "src/model/message.h"
-#include "src/persistence/db/rawdatabase.h"
+#include "lib/storeage/db/rawdatabase.h"
 #include "src/widget/searchtypes.h"
 
 class Profile;

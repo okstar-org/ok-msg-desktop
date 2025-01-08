@@ -23,10 +23,10 @@
 #include <QPushButton>
 #include <QRect>
 #include <QVBoxLayout>
-#include "src/lib/settings/style.h"
-#include "src/widget/widget.h"
 #include "base/widgets.h"
+#include "src/lib/storeage/settings/style.h"
 #include "src/model/friendlist.h"
+#include "src/widget/widget.h"
 
 /**
  * @class CallConfirmWidget
@@ -55,14 +55,8 @@ CallConfirmWidget::CallConfirmWidget(const ToxPeer& from, bool video, QWidget* p
         , spikeH{15}
         , roundedFactor{20}
         , rectRatio(static_cast<qreal>(rectH) / static_cast<qreal>(rectW)) {
-
-
-    setWindowFlags(
-            Qt::ToolTip |
-            Qt::FramelessWindowHint |
-            Qt::WindowStaysOnTopHint);
+    setWindowFlags(Qt::ToolTip | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
     setAttribute(Qt::WA_DeleteOnClose);
-
 
     QVBoxLayout* layout = new QVBoxLayout(this);
 
@@ -102,8 +96,7 @@ CallConfirmWidget::CallConfirmWidget(const ToxPeer& from, bool video, QWidget* p
 
     buttonBox->addButton(accept, QDialogButtonBox::AcceptRole);
     buttonBox->addButton(reject, QDialogButtonBox::RejectRole);
-    for(auto *b : buttonBox->buttons())
-        b->setCursor(Qt::PointingHandCursor);
+    for (auto* b : buttonBox->buttons()) b->setCursor(Qt::PointingHandCursor);
 
     connect(buttonBox, &QDialogButtonBox::accepted, this, &CallConfirmWidget::accepted);
     connect(buttonBox, &QDialogButtonBox::rejected, this, &CallConfirmWidget::rejected);

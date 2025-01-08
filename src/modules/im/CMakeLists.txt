@@ -11,14 +11,12 @@ pkg_check_modules(SWSCALE REQUIRED libswscale)
 pkg_check_modules(SWRESAMPLE REQUIRED libswresample)
 pkg_check_modules(QRENCODE REQUIRED libqrencode)
 pkg_check_modules(OpenAL REQUIRED openal)
-pkg_check_modules(sqlite3 REQUIRED sqlite3)
 pkg_check_modules(exif REQUIRED libexif)
 pkg_check_modules(JPEG REQUIRED libjpeg)
 
 include_directories(${AVCODEC_INCLUDE_DIRS})
 include_directories(${AVDEVICE_INCLUDE_DIRS})
 include_directories(${QRENCODE_INCLUDE_DIRS})
-include_directories(${sqlite3_INCLUDE_DIRS})
 include_directories(${exif_INCLUDE_DIRS})
 include_directories(${JPEG_INCLUDE_DIRS})
 include_directories(${OpenAL_INCLUDE_DIRS})
@@ -32,7 +30,6 @@ list(APPEND ALL_LIBRARIES
 		${QRENCODE_LINK_LIBRARIES}
 		${JPEG_LINK_LIBRARIES}
 		${exif_LINK_LIBRARIES}
-		${sqlite3_LINK_LIBRARIES}
 		${OpenAL_LINK_LIBRARIES}
 )
 
@@ -183,8 +180,7 @@ set(${PROJECT_NAME}_SOURCES
 		src/model/toxclientstandards.h
 		src/nexus.cpp
 		src/nexus.h
-		src/persistence/db/rawdatabase.cpp
-		src/persistence/db/rawdatabase.h
+
 		src/persistence/history.cpp
 		src/persistence/history.h
 		src/persistence/ifriendsettings.h

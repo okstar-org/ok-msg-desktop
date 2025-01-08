@@ -14,7 +14,7 @@
 #include <QBoxLayout>
 #include <QMouseEvent>
 #include "maskablepixmapwidget.h"
-#include "src/lib/settings/style.h"
+#include "src/lib/storeage/settings/style.h"
 #include "src/persistence/settings.h"
 #include "src/widget/tool/croppinglabel.h"
 
@@ -29,7 +29,9 @@ GenericChatroomWidget::GenericChatroomWidget(ChatType type, const ContactId& cid
     compactChange(false);
 }
 
-GenericChatroomWidget::~GenericChatroomWidget() { qDebug() << __func__; }
+GenericChatroomWidget::~GenericChatroomWidget() {
+    qDebug() << __func__;
+}
 
 bool GenericChatroomWidget::eventFilter(QObject*, QEvent*) {
     return true;  // Disable all events.
@@ -115,18 +117,30 @@ void GenericChatroomWidget::reloadTheme() {
     //    active statusMessageLabel->setPalette(p);
 
     p = nameLabel->palette();
-    p.setColor(QPalette::WindowText, lib::settings::Style::getColor(lib::settings::Style::ColorPalette::MainText));         // Base color
-    p.setColor(QPalette::HighlightedText, lib::settings::Style::getColor(lib::settings::Style::ColorPalette::NameActive));  // Color when active
+    p.setColor(QPalette::WindowText,
+               lib::settings::Style::getColor(
+                       lib::settings::Style::ColorPalette::MainText));  // Base color
+    p.setColor(QPalette::HighlightedText,
+               lib::settings::Style::getColor(
+                       lib::settings::Style::ColorPalette::NameActive));  // Color when active
     nameLabel->setPalette(p);
 
     p = palette();
-    p.setColor(QPalette::Window, lib::settings::Style::getColor(lib::settings::Style::ColorPalette::ThemeMedium));  // Base background color
-    p.setColor(QPalette::Highlight, lib::settings::Style::getColor(lib::settings::Style::ColorPalette::ThemeHighlight));  // On mouse over
-    p.setColor(QPalette::Light, lib::settings::Style::getColor(lib::settings::Style::ColorPalette::ThemeLight));          // When active
+    p.setColor(QPalette::Window,
+               lib::settings::Style::getColor(
+                       lib::settings::Style::ColorPalette::ThemeMedium));  // Base background color
+    p.setColor(QPalette::Highlight,
+               lib::settings::Style::getColor(
+                       lib::settings::Style::ColorPalette::ThemeHighlight));  // On mouse over
+    p.setColor(QPalette::Light,
+               lib::settings::Style::getColor(
+                       lib::settings::Style::ColorPalette::ThemeLight));  // When active
     setPalette(p);
 }
 
-void GenericChatroomWidget::activate() { emit chatroomWidgetClicked(this); }
+void GenericChatroomWidget::activate() {
+    emit chatroomWidgetClicked(this);
+}
 
 void GenericChatroomWidget::mouseReleaseEvent(QMouseEvent* event) {
     if (event->button() == Qt::LeftButton) {

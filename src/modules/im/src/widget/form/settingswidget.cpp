@@ -12,7 +12,7 @@
 
 #include "settingswidget.h"
 
-#include "lib/settings/translator.h"
+#include "lib/storeage/settings/translator.h"
 #include "src/audio/audio.h"
 #include "src/core/core.h"
 #include "src/core/coreav.h"
@@ -77,13 +77,17 @@ SettingsWidget::SettingsWidget(Widget* parent) : QWidget(parent, Qt::Window) {
     settings::Translator::registerHandler(std::bind(&SettingsWidget::retranslateUi, this), this);
 }
 
-SettingsWidget::~SettingsWidget() { settings::Translator::unregister(this); }
+SettingsWidget::~SettingsWidget() {
+    settings::Translator::unregister(this);
+}
 
 void SettingsWidget::setBodyHeadStyle(QString style) {
     settingsWidgets->setStyle(QStyleFactory::create(style));
 }
 
-void SettingsWidget::showAbout() { onTabChanged(settingsWidgets->count() - 1); }
+void SettingsWidget::showAbout() {
+    onTabChanged(settingsWidgets->count() - 1);
+}
 
 bool SettingsWidget::isShown() const {
     if (settingsWidgets->isVisible()) {
@@ -100,7 +104,9 @@ void SettingsWidget::show(ContentLayout* contentLayout) {
     onTabChanged(settingsWidgets->currentIndex());
 }
 
-void SettingsWidget::onTabChanged(int index) { settingsWidgets->setCurrentIndex(index); }
+void SettingsWidget::onTabChanged(int index) {
+    settingsWidgets->setCurrentIndex(index);
+}
 
 void SettingsWidget::onUpdateAvailable(void) {
     settingsWidgets->tabBar()->setProperty("update-available", true);

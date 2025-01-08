@@ -13,13 +13,14 @@
 #include "filesform.h"
 #include <QFileInfo>
 #include <QWindow>
-#include "lib/settings/translator.h"
-#include "src/lib/settings/style.h"
+#include "lib/storeage/settings/translator.h"
+#include "src/lib/storeage/settings/style.h"
 #include "src/widget/contentlayout.h"
 #include "src/widget/widget.h"
 
 FilesForm::FilesForm()
-        : QObject(), doneIcon(lib::settings::Style::getImagePath("fileTransferWidget/fileDone.svg")) {
+        : QObject()
+        , doneIcon(lib::settings::Style::getImagePath("fileTransferWidget/fileDone.svg")) {
     head = new QWidget();
     QFont bold;
     bold.setBold(true);

@@ -23,9 +23,9 @@
 #include "form/groupchatform.h"
 #include "groupwidget.h"
 #include "gui.h"
-#include "lib/settings/translator.h"
+#include "lib/storeage/settings/translator.h"
 #include "maskablepixmapwidget.h"
-#include "src/lib/settings/style.h"
+#include "src/lib/storeage/settings/style.h"
 #include "src/model/sessionchatlog.h"
 #include "src/model/status.h"
 #include "src/persistence/settings.h"
@@ -72,9 +72,7 @@ GroupWidget::~GroupWidget() {
     settings::Translator::unregister(this);
 }
 
-void GroupWidget::init() {
-
-}
+void GroupWidget::init() {}
 
 ContentDialog* GroupWidget::addGroupDialog(Group* group) {
     auto& settings = Settings::getInstance();
@@ -175,7 +173,9 @@ ContentDialog* GroupWidget::createContentDialog() const {
     return contentDialog;
 }
 
-void GroupWidget::updateTitle(const QString& author, const QString& newName) { Q_UNUSED(author); }
+void GroupWidget::updateTitle(const QString& author, const QString& newName) {
+    Q_UNUSED(author);
+}
 
 void GroupWidget::contextMenuEvent(QContextMenuEvent* event) {
     if (!active) {
@@ -284,9 +284,13 @@ void GroupWidget::updateUserCount(int numPeers) {
     //    }
 }
 
-void GroupWidget::setAsActiveChatroom() { setActive(true); }
+void GroupWidget::setAsActiveChatroom() {
+    setActive(true);
+}
 
-void GroupWidget::setAsInactiveChatroom() { setActive(false); }
+void GroupWidget::setAsInactiveChatroom() {
+    setActive(false);
+}
 
 void GroupWidget::onActiveSet(bool active) {
     //    setBackgroundRole(QPalette::Window);
@@ -311,7 +315,9 @@ QString GroupWidget::getStatusString() const {
     return {};
 }
 
-void GroupWidget::editName() { nameLabel->editBegin(); }
+void GroupWidget::editName() {
+    nameLabel->editBegin();
+}
 
 void GroupWidget::resetEventFlags() {}
 
@@ -351,6 +357,8 @@ void GroupWidget::dropEvent(QDropEvent* ev) {
     //  }
 }
 
-void GroupWidget::retranslateUi() { updateUserCount(group->getPeersCount()); }
+void GroupWidget::retranslateUi() {
+    updateUserCount(group->getPeersCount());
+}
 
 void GroupWidget::reloadTheme() {}

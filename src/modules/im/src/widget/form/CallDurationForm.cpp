@@ -17,7 +17,7 @@
 #include <QTimer>
 #include "base/times.h"
 #include "src/core/coreav.h"
-#include "src/lib/settings/style.h"
+#include "src/lib/storeage/settings/style.h"
 #include "src/video/netcamview.h"
 
 CallDurationForm::CallDurationForm(QWidget* parent)
@@ -71,7 +71,8 @@ void CallDurationForm::setContact(const Contact* c) {
 }
 
 void CallDurationForm::reloadTheme() {
-    setStyleSheet(lib::settings::Style::getStylesheet(QStringLiteral("CallDurationForm/CallDurationForm.css")));
+    setStyleSheet(lib::settings::Style::getStylesheet(
+            QStringLiteral("CallDurationForm/CallDurationForm.css")));
 }
 
 void CallDurationForm::closeEvent(QCloseEvent* e) {}
@@ -86,8 +87,7 @@ void CallDurationForm::onUpdateTime() {
 
 void CallDurationForm::startCounter() {
     // 启动计时
-    if(timeElapsed == nullptr)
-    {
+    if (timeElapsed == nullptr) {
         timeElapsed = new QElapsedTimer();
     }
     timeElapsed->start();

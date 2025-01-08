@@ -16,10 +16,10 @@
 #include <cmath>
 #include "Bus.h"
 #include "application.h"
-#include "lib/settings/OkSettings.h"
-#include "lib/settings/translator.h"
+#include "lib/storeage/settings/OkSettings.h"
+#include "lib/storeage/settings/translator.h"
 #include "src/base/RecursiveSignalBlocker.h"
-#include "src/lib/settings/style.h"
+#include "src/lib/storeage/settings/style.h"
 
 namespace UI {
 /**
@@ -37,7 +37,7 @@ GeneralForm::GeneralForm(SettingsWidget* myParent)
     const ok::base::RecursiveSignalBlocker signalBlocker(this);
 
     // 先获取当前语言
-    auto &s = lib::settings::OkSettings::getInstance();
+    auto& s = lib::settings::OkSettings::getInstance();
 
     QString locale0 = s.getTranslation();
     settings::Translator::translate(OK_UIWindowConfig_MODULE, locale0);
@@ -209,7 +209,8 @@ void GeneralForm::on_dateFormats_editTextChanged(const QString& format) {
 void GeneralForm::on_themeColorCBox_currentIndexChanged(int) {
     int index = bodyUI->themeColorCBox->currentIndex();
     auto color = bodyUI->themeColorCBox->currentText();
-    lib::settings::OkSettings::getInstance().setThemeColor(static_cast<lib::settings::MainTheme>(index));
+    lib::settings::OkSettings::getInstance().setThemeColor(
+            static_cast<lib::settings::MainTheme>(index));
     emit ok::Application::Instance() -> bus()->themeColorChanged(index, color);
 }
 

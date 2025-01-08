@@ -64,7 +64,7 @@ public:
     static QColor getExtColor(const QString& key);
     static QFont getFont(Font font);
     static const QString resolve(const QString& filename, const QFont& baseFont = QFont());
-    static void repolish(QWidget* w);
+
     static void setThemeColor(int color);
     static void setThemeColor(const QColor& color);
     static void applyTheme();

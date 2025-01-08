@@ -16,7 +16,7 @@
 #include "base/SvgUtils.h"
 #include "gui.h"
 #include "src/core/core.h"
-#include "src/lib/settings/style.h"
+#include "src/lib/storeage/settings/style.h"
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
@@ -167,7 +167,9 @@ AboutFriendForm::~AboutFriendForm() {
     delete ui;
 }
 
-void AboutFriendForm::setName(const QString& name) { ui->userName->setText(name); }
+void AboutFriendForm::setName(const QString& name) {
+    ui->userName->setText(name);
+}
 
 void AboutFriendForm::reloadTheme() {
     setStyleSheet(lib::settings::Style::getStylesheet("window/aboutFriend.css"));
@@ -182,4 +184,6 @@ void AboutFriendForm::onAliasChanged(const QString& text) {
     Core::getInstance()->setFriendAlias(fid, text);
 }
 
-const ContactId& AboutFriendForm::getId() { return m_friend->getId(); }
+const ContactId& AboutFriendForm::getId() {
+    return m_friend->getId();
+}

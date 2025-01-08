@@ -16,14 +16,14 @@
 
 #include <QWidget>
 
-#include "lib/settings/OkSettings.h"
-#include "lib/settings/translator.h"
+#include "lib/storeage/settings/OkSettings.h"
+#include "lib/storeage/settings/translator.h"
 #include "src/base/basic_types.h"
 #include "src/base/widgets.h"
 
 #if OK_PLUGIN
 #include "about/src/aboutform.h"
-#include "lib/settings/style.h"
+#include "lib/storeage/settings/style.h"
 #include "plugin/src/PluginManagerForm.h"
 #include "settings/src/SettingsForm.h"
 

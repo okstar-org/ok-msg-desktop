@@ -26,9 +26,9 @@
 #include "AppCenterWidget.h"
 #include "Bus.h"
 #include "application.h"
-#include "lib/settings/OkSettings.h"
-#include "lib/settings/style.h"
-#include "lib/settings/translator.h"
+#include "lib/storeage/settings/style.h"
+#include "lib/storeage/settings/translator.h"
+#include "lib/storeage/settings/OkSettings.h"
 #include "platformpage.h"
 
 class TabCloseButton : public QAbstractButton {

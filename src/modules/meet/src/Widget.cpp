@@ -24,9 +24,9 @@
 #include "MeetingSettingWidget.h"
 #include "StartMeetingWidget.h"
 #include "application.h"
-#include "lib/settings/OkSettings.h"
-#include "lib/settings/style.h"
-#include "lib/settings/translator.h"
+#include "lib/storeage/settings/OkSettings.h"
+#include "lib/storeage/settings/style.h"
+#include "lib/storeage/settings/translator.h"
 #include "meetingview/MeetingVideoFrame.h"
 
 #include <QAbstractButton>

@@ -29,7 +29,7 @@
 #include "src/model/VCard.h"
 #include "src/model/friendlist.h"
 #include "src/model/status.h"
-#include "src/util/strongtype.h"
+#include "base/strongtype.h"
 
 #include <QMutex>
 #include <QObject>

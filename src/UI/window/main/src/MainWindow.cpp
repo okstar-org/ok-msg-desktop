@@ -16,10 +16,10 @@
 #include "application.h"
 #include "base/PageFactory.h"
 #include "base/logs.h"
-#include "lib/settings/OkSettings.h"
+#include "lib/storeage/settings/OkSettings.h"
 #include "modules/im/src/model/status.h"
 #include "modules/platform/src/Platform.h"
-#include "src/lib/settings/style.h"
+#include "src/lib/storeage/settings/style.h"
 
 #include <QLabel>
 #include <QMenu>

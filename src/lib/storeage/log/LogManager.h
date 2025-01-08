@@ -10,17 +10,37 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#ifndef RECEIPT_NUM_H
-#define RECEIPT_NUM_H
+//
+// Created by gaojie on 24-4-19.
+//
 
-#include "base/strongtype.h"
+#pragma once
 
-#include <QMetaType>
-#include <cstdint>
+#include <QDir>
+#include <QFile>
+#include <QMutex>
+#include <memory>
 
-using MsgId = QString;
+namespace lib::log {
 
-// NamedType<uint32_t, struct ReceiptNumTag, Orderable>;
-// Q_DECLARE_METATYPE(MsgId);
+class LogManager {
+public:
+    LogManager();
+    ~LogManager();
 
-#endif /* RECEIPT_NUM_H */
+    static const LogManager& Instance();
+    static void Destroy();
+
+    [[nodiscard]] const QString& getLogFile() const { return logName; }
+
+    [[nodiscard]] QFile& getFile() const { return *file.get(); }
+
+
+private:
+
+    QString logName;
+    QDir logFileDir;
+    std::unique_ptr<QFile> file;
+};
+
+}  // namespace ok::lib

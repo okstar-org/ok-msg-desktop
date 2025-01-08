@@ -11,7 +11,7 @@
  */
 
 #include "customtextdocument.h"
-#include "src/lib/settings/style.h"
+#include "src/lib/storeage/settings/style.h"
 #include "src/persistence/settings.h"
 #include "src/persistence/smileypack.h"
 

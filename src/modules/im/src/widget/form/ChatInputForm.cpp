@@ -17,14 +17,13 @@
 #include "ChatInputForm.h"
 
 #include <QDebug>
+#include <QFileDialog>
 #include <QSizePolicy>
 #include <QSpacerItem>
 #include <QVBoxLayout>
-#include <QFileDialog>
 
-#include "src/widget/tool/chattextedit.h"
 #include "ChatReplyForm.h"
-#include "lib/settings/style.h"
+#include "lib/storeage/settings/style.h"
 #include "src/base/MessageBox.h"
 #include "src/chatlog/chatlinecontent.h"
 #include "src/chatlog/chatmessageitem.h"
@@ -33,6 +32,7 @@
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
 #include "src/widget/emoticonswidget.h"
+#include "src/widget/tool/chattextedit.h"
 #include "src/widget/tool/screenshotgrabber.h"
 
 #include "genericchatform.h"

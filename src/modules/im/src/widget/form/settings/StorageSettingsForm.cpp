@@ -12,7 +12,7 @@
 
 #include "StorageSettingsForm.h"
 #include <cmath>
-#include "lib/settings/OkSettings.h"
+#include "lib/storeage/settings/OkSettings.h"
 #include "ui_StorageSettingsForm.h"
 
 #include <QDebug>
@@ -25,11 +25,11 @@
 #include <QTime>
 #include <QVector>
 
-#include "lib/settings/translator.h"
+#include "lib/storeage/settings/translator.h"
 #include "src/base/RecursiveSignalBlocker.h"
 #include "src/core/core.h"
 #include "src/core/coreav.h"
-#include "src/lib/settings/style.h"
+#include "src/lib/storeage/settings/style.h"
 #include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
 #include "src/persistence/smileypack.h"

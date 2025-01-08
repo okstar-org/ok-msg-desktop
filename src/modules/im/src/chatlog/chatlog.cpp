@@ -16,8 +16,8 @@
 #include "chatlinecontentproxy.h"
 #include "chatmessage.h"
 #include "content/filetransferwidget.h"
-#include "lib/settings/translator.h"
-#include "src/lib/settings/style.h"
+#include "lib/storeage/settings/translator.h"
+#include "src/lib/storeage/settings/style.h"
 
 #include <QAction>
 #include <QApplication>
@@ -71,8 +71,9 @@ ChatLog::ChatLog(QWidget* parent) : QGraphicsView(parent), scrollBarValue{0} {
     // setDragMode(QGraphicsView::NoDrag);
     setViewportUpdateMode(MinimalViewportUpdate);
     // setContextMenuPolicy(Qt::CustomContextMenu);
-    setBackgroundBrush(QBrush(lib::settings::Style::getColor(lib::settings::Style::ColorPalette::GroundBase),
-                              Qt::SolidPattern));
+    setBackgroundBrush(
+            QBrush(lib::settings::Style::getColor(lib::settings::Style::ColorPalette::GroundBase),
+                   Qt::SolidPattern));
 
     setContextMenuPolicy(Qt::CustomContextMenu);
     connect(this, &ChatLog::customContextMenuRequested, this, &ChatLog::onChatContextMenuRequested);
@@ -674,9 +675,11 @@ void ChatLog::fontChanged(const QFont& font) {
 }
 
 void ChatLog::reloadTheme() {
-    setBackgroundBrush(QBrush(lib::settings::Style::getColor(lib::settings::Style::ColorPalette::GroundBase),
-                              Qt::SolidPattern));
-    selectionRectColor = lib::settings::Style::getColor(lib::settings::Style::ColorPalette::SelectText);
+    setBackgroundBrush(
+            QBrush(lib::settings::Style::getColor(lib::settings::Style::ColorPalette::GroundBase),
+                   Qt::SolidPattern));
+    selectionRectColor =
+            lib::settings::Style::getColor(lib::settings::Style::ColorPalette::SelectText);
 
     for (IChatItem::Ptr l : lines) {
         l->reloadTheme();

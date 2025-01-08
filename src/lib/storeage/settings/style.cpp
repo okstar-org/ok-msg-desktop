@@ -22,8 +22,7 @@
 #include <QSettings>
 #include <QStandardPaths>
 #include <QStringBuilder>
-#include <QStyle>
-#include <QWidget>
+
 
 #include "OkSettings.h"
 
@@ -317,18 +316,6 @@ const QString Style::resolve(const QString& filename, const QFont& baseFont) {
     return qss;
 }
 
-void Style::repolish(QWidget* w) {
-    w->style()->unpolish(w);
-    w->style()->polish(w);
-
-    for (QObject* o : w->children()) {
-        QWidget* c = qobject_cast<QWidget*>(o);
-        if (c) {
-            c->style()->unpolish(c);
-            c->style()->polish(c);
-        }
-    }
-}
 
 void Style::setThemeColor(int color) {
     stylesheetsCache.clear();  // clear stylesheet cache which includes color info

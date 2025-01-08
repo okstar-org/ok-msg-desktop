@@ -13,7 +13,7 @@
 #include "videosurface.h"
 #include "base/SvgUtils.h"
 #include "src/core/core.h"
-#include "src/lib/settings/style.h"
+#include "src/lib/storeage/settings/style.h"
 #include "src/model/friend.h"
 #include "src/model/friendlist.h"
 #include "src/persistence/settings.h"
@@ -29,7 +29,9 @@
  * @brief Fast lock for lastFrame.
  */
 
-float getSizeRatio(const QSize size) { return size.width() / static_cast<float>(size.height()); }
+float getSizeRatio(const QSize size) {
+    return size.width() / static_cast<float>(size.height());
+}
 
 VideoSurface::VideoSurface(const QPixmap& avatar, QWidget* parent, bool expanding)
         : QWidget{parent}
@@ -47,9 +49,13 @@ VideoSurface::VideoSurface(const QPixmap& avatar, VideoSource* source, QWidget* 
     setSource(source);
 }
 
-VideoSurface::~VideoSurface() { unsubscribe(); }
+VideoSurface::~VideoSurface() {
+    unsubscribe();
+}
 
-bool VideoSurface::isExpanding() const { return expanding; }
+bool VideoSurface::isExpanding() const {
+    return expanding;
+}
 
 /**
  * @brief Update source.
@@ -72,14 +78,18 @@ QRect VideoSurface::getBoundingRect() const {
     return boundingRect;
 }
 
-float VideoSurface::getRatio() const { return ratio; }
+float VideoSurface::getRatio() const {
+    return ratio;
+}
 
 void VideoSurface::setAvatar(const QPixmap& pixmap) {
     avatar = pixmap;
     update();
 }
 
-QPixmap VideoSurface::getAvatar() const { return avatar; }
+QPixmap VideoSurface::getAvatar() const {
+    return avatar;
+}
 
 void VideoSurface::subscribe() {
     if (source && hasSubscribed++ == 0) {
@@ -148,8 +158,8 @@ void VideoSurface::paintEvent(QPaintEvent*) {
         QPixmap drawnAvatar = avatar;
 
         if (drawnAvatar.isNull())
-            drawnAvatar = ok::base::SvgUtils::scaleSvgImage(":/img/contact_dark.svg", boundingRect.width(),
-                                                  boundingRect.height());
+            drawnAvatar = ok::base::SvgUtils::scaleSvgImage(
+                    ":/img/contact_dark.svg", boundingRect.width(), boundingRect.height());
 
         painter.drawPixmap(boundingRect, drawnAvatar, drawnAvatar.rect());
     }
@@ -196,4 +206,6 @@ void VideoSurface::lock() {
     while (!frameLock.compare_exchange_weak(expected, true)) expected = false;
 }
 
-void VideoSurface::unlock() { frameLock = false; }
+void VideoSurface::unlock() {
+    frameLock = false;
+}

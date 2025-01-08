@@ -12,7 +12,7 @@
 
 #include "searchform.h"
 #include "form/searchsettingsform.h"
-#include "src/lib/settings/style.h"
+#include "src/lib/storeage/settings/style.h"
 
 #include <QHBoxLayout>
 #include <QKeyEvent>
@@ -86,15 +86,25 @@ SearchForm::SearchForm(QWidget* parent) : QWidget(parent) {
     connect(settings, &SearchSettingsForm::updateSettings, this, &SearchForm::changedState);
 }
 
-void SearchForm::removeSearchPhrase() { searchLine->setText(""); }
+void SearchForm::removeSearchPhrase() {
+    searchLine->setText("");
+}
 
-QString SearchForm::getSearchPhrase() const { return searchPhrase; }
+QString SearchForm::getSearchPhrase() const {
+    return searchPhrase;
+}
 
-ParameterSearch SearchForm::getParameterSearch() { return parameter; }
+ParameterSearch SearchForm::getParameterSearch() {
+    return parameter;
+}
 
-void SearchForm::setFocusEditor() { searchLine->setFocus(); }
+void SearchForm::setFocusEditor() {
+    searchLine->setFocus();
+}
 
-void SearchForm::insertEditor(const QString& text) { searchLine->insert(text); }
+void SearchForm::insertEditor(const QString& text) {
+    searchLine->insert(text);
+}
 
 void SearchForm::reloadTheme() {
     settingsButton->setStyleSheet(Style::getStylesheet(QStringLiteral("chatForm/buttons.css")));

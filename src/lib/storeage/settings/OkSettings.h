@@ -31,7 +31,7 @@ enum class MainTheme;
 class OkSettings : public QObject {
     Q_OBJECT
 public:
-    explicit OkSettings(QObject* parent = nullptr);
+    explicit OkSettings( QObject* parent = nullptr);
     ~OkSettings() override {}
     static OkSettings& getInstance();
 

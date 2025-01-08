@@ -16,10 +16,10 @@
 #include <QDesktopServices>
 #include <QPushButton>
 #include <QTimer>
-#include "lib/settings/translator.h"
+#include "lib/storeage/settings/translator.h"
 #include "src/UI/widget/GenericForm.h"
 #include "src/base/RecursiveSignalBlocker.h"
-#include "src/lib/settings/style.h"
+#include "src/lib/storeage/settings/style.h"
 
 #include <memory>
 
@@ -147,7 +147,9 @@ void AboutForm::onUpdateCheckFailed() {
 QString AboutForm::createLink(QString path, QString text) const {
     return QString::fromUtf8(
                    "<a href=\"%1\" style=\"text-decoration: underline; color:%2;\">%3</a>")
-            .arg(path, lib::settings::Style::getColor(lib::settings::Style::ColorPalette::Link).name(), text);
+            .arg(path,
+                 lib::settings::Style::getColor(lib::settings::Style::ColorPalette::Link).name(),
+                 text);
 }
 
 AboutForm::~AboutForm() {

@@ -16,7 +16,7 @@
 #include "ContactListLayout.h"
 #include "ContactListWidget.h"
 #include "friendwidget.h"
-#include "src/lib/settings/style.h"
+#include "src/lib/storeage/settings/style.h"
 #include "src/model/status.h"
 #include "tool/croppinglabel.h"
 
@@ -66,7 +66,9 @@ CategoryWidget::CategoryWidget(bool compact, QWidget* parent)
     updateStatus();
 }
 
-bool CategoryWidget::isExpanded() const { return expanded; }
+bool CategoryWidget::isExpanded() const {
+    return expanded;
+}
 
 void CategoryWidget::setExpanded(bool isExpanded, bool save) {
     if (expanded == isExpanded) {
@@ -91,7 +93,9 @@ void CategoryWidget::setExpanded(bool isExpanded, bool save) {
     if (save) onExpand();
 }
 
-void CategoryWidget::leaveEvent(QEvent* event) { event->ignore(); }
+void CategoryWidget::leaveEvent(QEvent* event) {
+    event->ignore();
+}
 
 void CategoryWidget::setName(const QString& name, bool save) {
     nameLabel->setText(name);
@@ -125,7 +129,9 @@ void CategoryWidget::updateStatus() {
     statusLabel->setText(text);
 }
 
-bool CategoryWidget::hasChatrooms() const { return listLayout->hasChatrooms(); }
+bool CategoryWidget::hasChatrooms() const {
+    return listLayout->hasChatrooms();
+}
 
 void CategoryWidget::search(const QString& searchString, bool updateAll, bool hideOnline,
                             bool hideOffline) {
@@ -250,9 +256,13 @@ void CategoryWidget::setContainerAttribute(Qt::WidgetAttribute attribute, bool e
     Style::repolish(container);
 }
 
-QLayout* CategoryWidget::friendOfflineLayout() const { return listLayout->getLayoutOffline(); }
+QLayout* CategoryWidget::friendOfflineLayout() const {
+    return listLayout->getLayoutOffline();
+}
 
-QLayout* CategoryWidget::friendOnlineLayout() const { return listLayout->getLayoutOnline(); }
+QLayout* CategoryWidget::friendOnlineLayout() const {
+    return listLayout->getLayoutOnline();
+}
 
 void CategoryWidget::moveFriendWidgets(FriendListWidget* friendList) {
     listLayout->moveFriendWidgets(friendList);

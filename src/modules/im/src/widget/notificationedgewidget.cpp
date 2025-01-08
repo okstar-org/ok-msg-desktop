@@ -13,7 +13,7 @@
 #include "notificationedgewidget.h"
 #include <QBoxLayout>
 #include <QLabel>
-#include "src/lib/settings/style.h"
+#include "src/lib/storeage/settings/style.h"
 
 #include <QDebug>
 
@@ -31,9 +31,11 @@ NotificationEdgeWidget::NotificationEdgeWidget(Position position, QWidget* paren
     QLabel* arrowLabel = new QLabel(this);
 
     if (position == Top)
-        arrowLabel->setPixmap(QPixmap(lib::settings::Style::getImagePath("chatArea/scrollBarUpArrow.svg")));
+        arrowLabel->setPixmap(
+                QPixmap(lib::settings::Style::getImagePath("chatArea/scrollBarUpArrow.svg")));
     else
-        arrowLabel->setPixmap(QPixmap(lib::settings::Style::getImagePath("chatArea/scrollBarDownArrow.svg")));
+        arrowLabel->setPixmap(
+                QPixmap(lib::settings::Style::getImagePath("chatArea/scrollBarDownArrow.svg")));
 
     layout->addWidget(arrowLabel);
     layout->addStretch();

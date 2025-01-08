@@ -20,7 +20,7 @@
 #include <QRandomGenerator>
 #endif
 
-#include "lib/settings/translator.h"
+#include "lib/storeage/settings/translator.h"
 #include "src/base/RecursiveSignalBlocker.h"
 #include "src/core/core.h"
 #include "src/nexus.h"
@@ -124,4 +124,6 @@ void PrivacyForm::showEvent(QShowEvent*) {
 //     Settings::getInstance().setBlackList(strlist);
 // }
 
-void PrivacyForm::retranslateUi() { bodyUI->retranslateUi(this); }
+void PrivacyForm::retranslateUi() {
+    bodyUI->retranslateUi(this);
+}

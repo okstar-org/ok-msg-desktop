@@ -11,7 +11,7 @@
  */
 
 #include "translator.h"
-#include <QApplication>
+#include <QCoreApplication>
 #include <QDebug>
 #include <QLibraryInfo>
 #include <QLocale>
@@ -54,7 +54,7 @@ void Translator::translate(const QString& moduleName, const QString& localeName)
             QString s_locale = "qt_" + locale;
             QString location = QLibraryInfo::location(QLibraryInfo::TranslationsPath);
             if (qtTranslator->load(s_locale, location)) {
-                QApplication::installTranslator(qtTranslator);
+                QCoreApplication::installTranslator(qtTranslator);
                 qDebug() << "System translation loaded" << locale;
             } else {
                 qDebug() << "System translation not loaded" << locale;
@@ -79,14 +79,15 @@ void Translator::translate(const QString& moduleName, const QString& localeName)
         }
     }
 
+    // TODO RTL
     // After the language is changed from RTL to LTR, the layout direction isn't
     // always restored
-    const QString direction = QApplication::tr("LTR",
-                                               "Translate this string to the string 'RTL' in"
-                                               " right-to-left languages (for example Hebrew and"
-                                               " Arabic) to get proper widget layout");
+    // const QString direction = QCoreApplication::tr("LTR",
+                                               // "Translate this string to the string 'RTL' in"
+                                               // " right-to-left languages (for example Hebrew and"
+                                               // " Arabic) to get proper widget layout");
 
-    QGuiApplication::setLayoutDirection(direction == "RTL" ? Qt::RightToLeft : Qt::LeftToRight);
+    // QCoreApplication::setLayoutDirection(direction == "RTL" ? Qt::RightToLeft : Qt::LeftToRight);
 
     for (auto& pair : callbacks) {
         pair.second();
