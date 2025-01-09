@@ -159,7 +159,7 @@ protected:
 
     void onLocalDescriptionSet(const std::string& sId,
                                const std::string& peerId,
-                               const ortc::OJingleContentAv* osd) override;
+                               const ortc::OJingleContentMap* osd) override;
 
     void onFailure(const std::string& sId,
                    const std::string& peerId,
@@ -189,7 +189,7 @@ protected:
                   const std::string& peerId,
                   const std::string& resource) override;
 
-    void ToMeetSdp(const ortc::OJingleContentAv* av, gloox::Jingle::PluginList& plugins);
+    void ToMeetSdp(const ortc::OJingleContentMap* av, gloox::Jingle::PluginList& plugins);
 
 private:
     void doForIceCompleted(const QString& sId, const QString& peerId);
@@ -209,7 +209,7 @@ signals:
 public slots:
     void onSelfVCard(const IMVCard& vCard);
     Participant toParticipant(const gloox::Meet::Participant& participant) const;
-    void doStartRTC(const IMPeerId& peerId, const ortc::OJingleContentAv& cav) const;
+    void doStartRTC(const IMPeerId& peerId, const ortc::OJingleContentMap& cav) const;
 };
 
 }  // namespace lib::messenger

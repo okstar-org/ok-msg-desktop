@@ -146,7 +146,7 @@ public:
 
     void onLocalDescriptionSet(const std::string& sId,       //
                                const std::string& friendId,  //
-                               const ortc::OJingleContentAv* av) override;
+                               const ortc::OJingleContentMap* av) override;
 
     // onIce
     void onIce(const std::string& sId,       //

@@ -72,8 +72,6 @@ public:
     explicit IMFile(IM* im, QObject* parent = nullptr);
     ~IMFile() override;
 
-    void parse(const gloox::Jingle::Session::Jingle* jingle, ortc::OJingleContentFile& content);
-
     void addFile(const File& f);
     void addFileHandler(FileHandler*);
 
@@ -82,7 +80,7 @@ public:
      */
     void fileRejectRequest(const QString& friendId, const File& file);
     void fileAcceptRequest(const QString& friendId, const File& file);
-    void fileFinishRequest(QString friendId, const QString& sId);
+    void fileFinishRequest(const QString& friendId, const QString& sId);
     void fileFinishTransfer(QString friendId, const QString& sId);
     void fileCancel(QString fileId);
     bool fileSendToFriend(const QString& f, const File& file);

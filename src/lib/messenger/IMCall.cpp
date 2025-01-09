@@ -345,7 +345,6 @@ void IMCall::setCtrlState(ortc::CtrlState state) {
     lib::ortc::OkRTCManager::getInstance()->getRtc()->setEnable(state);
 }
 
-
 void IMCall::onCreatePeerConnection(const std::string& sId, const std::string& peerId, bool ok) {
     auto p = qstring(peerId);
     auto s = qstring(sId);
@@ -442,7 +441,7 @@ void IMCall::onSignalingChange(const std::string& sId, const std::string& peerId
 
 void IMCall::onLocalDescriptionSet(const std::string& sid,     //
                                    const std::string& peerId,  //
-                                   const ortc::OJingleContentAv* oContext) {
+                                   const ortc::OJingleContentMap* oContext) {
     auto sId = qstring(sid);
     qDebug() << __func__ << "sId:" << sId << "peerId:" << qstring(peerId);
 }
@@ -511,7 +510,7 @@ bool IMCall::doSessionAccept(gloox::Jingle::Session* session,
     }
 
     auto sId = qstring(session->sid());
-    ortc::OJingleContentAv av;
+    ortc::OJingleContentMap av;
     av.sdpType = ortc::JingleSdpType::Answer;
     ParseAV(jingle, av);
 
@@ -785,7 +784,7 @@ bool IMCall::doTransportInfo(const gloox::Jingle::Session::Jingle* jingle, const
         return false;
     }
 
-    ortc::OJingleContentAv av;
+    ortc::OJingleContentMap av;
     ParseAV(jingle, av);
 
     for (auto& kv : av.getContents()) {
@@ -833,15 +832,23 @@ bool IMCall::doSessionInitiate(gloox::Jingle::Session* session,
     auto sId = qstring(jingle->sid());
     qDebug() << __func__ << "sid:" << sId;
 
-    ortc::OJingleContentAv cav;
+    ortc::OJingleContentMap cav;
     ParseAV(jingle, cav);
     if (!cav.isValid()) {
-        qDebug() << "Is no av session!";
+        qWarning() << "Is invalid jingle content!";
         return false;
     }
 
+    for (const auto& item : cav.getContents()) {
+        if (!item.second.isAV()) {
+            qWarning() << "Is no av content!";
+            return false;
+        }
+    }
+
     cav.sdpType = lib::ortc::JingleSdpType::Offer;
-    ortc::OkRTCManager::getInstance()->getRtc()->CreateAnswer(stdstring(peerId.toString()), cav);
+    auto rtc = ortc::OkRTCManager::getInstance()->createRtc(ortc::Mode::p2p, im->self().resource());
+    rtc->CreateAnswer(stdstring(peerId.toString()), cav);
     currentSid = sId;
     return true;
 }

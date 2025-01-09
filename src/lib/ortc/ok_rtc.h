@@ -67,7 +67,30 @@ struct Candidate {
 /** A list of transport candidates. */
 typedef std::vector<Candidate> CandidateList;
 
-struct OIceUdp {
+enum class TransportType {
+    /**
+     * <transport xmlns='urn:xmpp:jingle:transports:ice-udp:1'
+     *  pwd='Cpf1J7KA6x+ejHOTd/VMGMTd' ufrag='KsLU'>
+            <fingerprint xmlns='urn:xmpp:jingle:apps:dtls:0' setup='actpass'
+     hash='sha-256'>8D:BB:7F:FC:E0:EF:FA:AE:3E:4B:95:70:21:D1:E6:85:75:F4:30:D2:35:26:FE:61:FB:A8:06:56:18:7E:92:97</fingerprint>
+        </transport>
+     */
+    iceUdp,
+
+    /**
+     * <transport xmlns='urn:xmpp:jingle:transports:ibb:1'
+            sid='+loOfHolkhIq2szVpQ039A'
+            block-size='8192'
+            />
+     */
+    ibb
+};
+
+struct OTransport {
+    TransportType type;
+};
+
+struct OIceUdp : OTransport {
     std::string mid;
     std::string ufrag;
     std::string pwd;
@@ -177,10 +200,14 @@ struct OContent {
     std::string name;
 };
 
+struct OFileIBB : public OTransport {
+    std::string sId;
+    size_t blockSize;
+};
+
 struct OFile : public OContent {
     std::string id;
     std::string sId;
-
     std::string date;
     std::string desc;
     std::string hash;
@@ -221,21 +248,37 @@ public:
     JingleCallType callType;
 };
 
-struct OJingleContentFile : public OJingleContent {
-    std::vector<OFile> contents;
-    [[nodiscard]] inline bool isValid() const {
-        for (const auto& c : contents)
-            if (!c.name.empty() && c.size > 0) return true;
-        return false;
+// struct OJingleContentFile : public OJingleContent {
+//     std::vector<OFile> contents;
+//     [[nodiscard]] inline bool isValid() const {
+//         for (const auto& c : contents)
+//             if (!c.name.empty() && c.size > 0) return true;
+//         return false;
+//     }
+// };
+
+struct OSdp {
+    std::string name;
+    ORTP rtp;
+    OIceUdp iceUdp;
+    OFile file;
+    OFileIBB ibb;
+
+public:
+    bool isFile() const {
+        return !file.name.empty();
+    }
+
+    bool isAV() const {
+        return !rtp.payloadTypes.empty();
+    }
+
+    bool isInvalid() const {
+        return !isFile() && !isAV();
     }
 };
 
-struct OSdp : public OContent {
-    ORTP rtp;
-    OIceUdp iceUdp;
-};
-
-struct OJingleContentAv : public OJingleContent {
+struct OJingleContentMap : public OJingleContent {
 public:
     [[nodiscard]] inline bool isValid() const {
         return !contents.empty();
@@ -274,7 +317,6 @@ public:
         }
         return contents[name];
     }
-
 private:
     std::map<std::string, OSdp> contents;
     std::map<std::string, OMeetSSRCBundle> ssrcBundle;
@@ -370,7 +412,7 @@ public:
 
     virtual void onLocalDescriptionSet(const std::string& sId,
                                        const std::string& peerId,
-                                       const OJingleContentAv* av) = 0;
+                                       const OJingleContentMap* av) = 0;
 
     virtual void onFailure(const std::string& sId,
                            const std::string& peerId,
@@ -439,9 +481,9 @@ public:
 
     virtual bool CreateOffer(const std::string& peerId, const std::string& sId, bool video) = 0;
 
-    virtual void CreateAnswer(const std::string& peerId, const OJingleContentAv& av) = 0;
+    virtual void CreateAnswer(const std::string& peerId, const OJingleContentMap& av) = 0;
 
-    virtual void setRemoteDescription(const std::string& peerId, const OJingleContentAv& av) = 0;
+    virtual void setRemoteDescription(const std::string& peerId, const OJingleContentMap& av) = 0;
 
     virtual void SessionTerminate(const std::string& peerId) = 0;
 
@@ -458,7 +500,7 @@ public:
 
     virtual std::map<std::string, OIceUdp> getCandidates(const std::string& peerId) = 0;
 
-    virtual std::unique_ptr<OJingleContentAv> getLocalSdp(const std::string& peerId) = 0;
+    virtual std::unique_ptr<OJingleContentMap> getLocalSdp(const std::string& peerId) = 0;
 
     virtual void addSource(const std::string& peerId,
                            const std::map<std::string, OMeetSSRCBundle>& map) = 0;

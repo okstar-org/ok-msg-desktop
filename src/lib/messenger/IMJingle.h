@@ -25,8 +25,11 @@
 
 #include <error.h>
 #include <inbandbytestream.h>
+#include <jinglefiletransfer.h>
+#include <jingleibb.h>
 #include <jingleiceudp.h>
 #include <jinglemessage.h>
+#include <jingletransport.h>
 #include <messagesessionhandler.h>
 #include <presencehandler.h>
 
@@ -93,8 +96,10 @@ protected:
     bool ParseRTP(const gloox::Jingle::RTP* rtp, ortc::ORTP& ortp);
 
     ortc::OIceUdp ParseIce(const std::string& mid, const gloox::Jingle::ICEUDP* udp);
+    ortc::OFile ParseFile(const gloox::Jingle::FileTransfer* transport);
+    ortc::OFileIBB ParseFileIBB(const gloox::Jingle::IBB* ibb);
 
-    void ParseAV(const gloox::Jingle::Session::Jingle* jingle, ortc::OJingleContentAv& contentAv);
+    void ParseAV(const gloox::Jingle::Session::Jingle* jingle, ortc::OJingleContentMap& contentAv);
 
     void ParseOMeetSSRCBundle(const std::string& json,
                               std::map<std::string, ortc::OMeetSSRCBundle>& ssrcBundle);
@@ -120,7 +125,7 @@ protected:
                                                       gloox::Jingle::Content::Creator creator,
                                                       bool candidate);
 
-    void ToPlugins(const ortc::OJingleContentAv* av, gloox::Jingle::PluginList& plugins);
+    void ToPlugins(const ortc::OJingleContentMap* av, gloox::Jingle::PluginList& plugins);
 
     IM* im;
 

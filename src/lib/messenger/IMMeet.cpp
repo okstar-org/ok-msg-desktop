@@ -74,7 +74,7 @@ IMMeet::IMMeet(IM* im, QObject* parent) : IMJingle(im, parent), manager(nullptr)
     qDebug() << "Resource is:" << resource;
 
     // qRegisterMetaType
-    qRegisterMetaType<ortc::OJingleContentAv>("const ortc::OJingleContentAv&");
+    qRegisterMetaType<ortc::OJingleContentMap>("const ortc::OJingleContentAv&");
 
     ortc::OkRTCManager* rtcManager = ortc::OkRTCManager::getInstance();
     //    rtcManager->setIceServerers(im->getExternalServiceDiscovery());
@@ -258,7 +258,7 @@ bool IMMeet::doSessionInitiate(gloox::Jingle::Session* session,
     auto sId = qstring(jingle->sid());
     qDebug() << __func__ << "sid:" << sId << "peer:" << peerId.toString();
 
-    ortc::OJingleContentAv cav;
+    ortc::OJingleContentMap cav;
     ParseAV(jingle, cav);
     if (!cav.isValid()) {
         qDebug() << "Is no av session!";
@@ -268,14 +268,14 @@ bool IMMeet::doSessionInitiate(gloox::Jingle::Session* session,
 
     QMetaObject::invokeMethod(this, "doStartRTC", Qt::QueuedConnection,
                               Q_ARG(const IMPeerId&, peerId),
-                              Q_ARG(const ortc::OJingleContentAv&, cav));
+                              Q_ARG(const ortc::OJingleContentMap&, cav));
 
     currentSid = sId;
     currentSession = session;
     return true;
 }
 
-void IMMeet::doStartRTC(const IMPeerId& peerId, const ortc::OJingleContentAv& cav) const {
+void IMMeet::doStartRTC(const IMPeerId& peerId, const ortc::OJingleContentMap& cav) const {
     qDebug() << __func__;
     auto rtcManager = ortc::OkRTCManager::getInstance();
     auto rtc = rtcManager->getRtc();
@@ -400,7 +400,7 @@ void IMMeet::clearSessionInfo(const QString& sId) {
     qDebug() << __func__ << sId;
 }
 
-void IMMeet::ToMeetSdp(const ortc::OJingleContentAv* av, gloox::Jingle::PluginList& plugins) {
+void IMMeet::ToMeetSdp(const ortc::OJingleContentMap* av, gloox::Jingle::PluginList& plugins) {
     gloox::Jingle::Group::ContentList contentList;
 
     // audio
@@ -449,7 +449,7 @@ void IMMeet::onCreatePeerConnection(const std::string& sId, const std::string& p
 }
 
 void IMMeet::onLocalDescriptionSet(const std::string& sId, const std::string& peerId,
-                                   const ortc::OJingleContentAv* osd) {
+                                   const ortc::OJingleContentMap* osd) {
     auto& map = osd->getSsrcBundle();
     if (map.empty()) {
         return;

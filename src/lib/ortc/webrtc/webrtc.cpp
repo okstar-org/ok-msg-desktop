@@ -445,7 +445,7 @@ void addSource1(const std::map<std::string, OMeetSSRCBundle>& map,
 }
 
 std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertSdpToDown(
-        const OJingleContentAv& av) {
+        const OJingleContentMap& av) {
     auto sessionDescription = std::make_unique<cricket::SessionDescription>();
     cricket::ContentGroup group(cricket::GROUP_TYPE_BUNDLE);
     auto sdpType = convertSdpTypeDown(av.sdpType);
@@ -564,9 +564,9 @@ std::unique_ptr<webrtc::SessionDescriptionInterface> WebRTC::convertSdpToDown(
     return ptr;
 }
 
-std::unique_ptr<OJingleContentAv> WebRTC::convertSdpToUp(
+std::unique_ptr<OJingleContentMap> WebRTC::convertSdpToUp(
         const webrtc::SessionDescriptionInterface* desc) {
-    std::unique_ptr<OJingleContentAv> av = std::make_unique<OJingleContentAv>();
+    std::unique_ptr<OJingleContentMap> av = std::make_unique<OJingleContentMap>();
     av->sessionId = desc->session_id();
     av->sessionVersion = desc->session_version();
 
@@ -834,7 +834,7 @@ std::vector<std::string> WebRTC::getVideoDeviceList() {
     return v;
 }
 
-void WebRTC::setRemoteDescription(const std::string& peerId, const OJingleContentAv& av) {
+void WebRTC::setRemoteDescription(const std::string& peerId, const OJingleContentMap& av) {
     auto conductor = getConductor(peerId);
     auto desc = convertSdpToDown(av);
     conductor->setRemoteDescription(desc.release());
@@ -949,7 +949,7 @@ void WebRTC::SessionTerminate(const std::string& peerId) {
     //    quit(peerId);
 }
 
-void WebRTC::CreateAnswer(const std::string& peerId, const OJingleContentAv& av) {
+void WebRTC::CreateAnswer(const std::string& peerId, const OJingleContentMap& av) {
     RTC_LOG(LS_INFO) << __FUNCTION__ << " peerId:" << peerId;
     auto conductor = createConductor(peerId, av.sessionId, av.isVideo());
     auto sdp = convertSdpToDown(av);
@@ -957,7 +957,7 @@ void WebRTC::CreateAnswer(const std::string& peerId, const OJingleContentAv& av)
     conductor->CreateAnswer();
 }
 
-std::unique_ptr<OJingleContentAv> WebRTC::getLocalSdp(const std::string& peerId) {
+std::unique_ptr<OJingleContentMap> WebRTC::getLocalSdp(const std::string& peerId) {
     auto conductor = getConductor(peerId);
     return convertSdpToUp(conductor->getLocalDescription());
 }

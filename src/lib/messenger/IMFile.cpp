@@ -88,53 +88,14 @@ IMFileSession::~IMFileSession() {
 }
 
 IMFile::IMFile(IM* im, QObject* parent) : IMJingle(im, parent) {
-    qRegisterMetaType<File>("File");
+    qDebug() << __func__;
 
+    qRegisterMetaType<File>("File");
     connect(im, &IM::started, this, &IMFile::onImStartedFile);
 }
 
 IMFile::~IMFile() {
     qDebug() << __func__;
-}
-
-void IMFile::parse(const gloox::Jingle::Session::Jingle* jingle,
-                   ortc::OJingleContentFile& content) {
-    const auto& sId = (jingle->sid());
-    const gloox::Jingle::Plugin* c = nullptr;
-    for (auto p : jingle->plugins()) {
-        auto pt = p->pluginType();
-        switch (pt) {
-            case gloox::Jingle::JinglePluginType::PluginContent: {
-                c = p;
-                break;
-            }
-            default:
-                break;
-        }
-    }
-
-    if (!c) {
-        return;
-    }
-
-    auto file = c->findPlugin<gloox::Jingle::FileTransfer>(gloox::Jingle::PluginFileTransfer);
-    auto ibb = c->findPlugin<gloox::Jingle::IBB>(gloox::Jingle::PluginIBB);
-    if (file && ibb) {
-        for (auto& f : file->files()) {
-            auto id = (ibb->sid());
-            qDebug() << "file:" << qstring(id) << "sId:" << qstring(sId);
-            ortc::OFile file0 = {.id = id,
-                                 .sId = sId,
-                                 .date = f.date,
-                                 .hash = f.hash,
-                                 .hash_algo = f.hash_algo,
-                                 .size = f.size,
-                                 .range = f.range,
-                                 .offset = f.offset};
-            file0.name = f.name;
-            content.contents.push_back(file0);
-        }
-    }
 }
 
 void IMFile::onImStartedFile() {
@@ -178,7 +139,7 @@ void IMFile::fileCancel(QString fileId) {
     currentSid.clear();
 }
 
-void IMFile::fileFinishRequest(QString friendId, const QString& sId) {
+void IMFile::fileFinishRequest(const QString& friendId, const QString& sId) {
     qDebug() << __func__ << sId;
     finishFileRequest(friendId, sId);
 }
@@ -372,24 +333,28 @@ bool IMFile::doSessionAccept(gloox::Jingle::Session* session,
     auto sId = qstring(session->sid());
     qDebug() << __func__ << "sId:" << sId;
 
-    ortc::OJingleContentFile cfile;
-    cfile.sdpType = ortc::JingleSdpType::Answer;
-    parse(jingle, cfile);
+    ortc::OJingleContentMap content;
+    content.sdpType = ortc::JingleSdpType::Answer;
+    ParseAV(jingle, content);
 
-    if (!cfile.isValid()) {
+    if (!content.isValid()) {
         qWarning() << "Is no file session";
         return false;
     }
 
     for (auto h : fileHandlers) {
-        auto& f = cfile.contents.at(0);
-        qDebug() << "file id:" << qstring(f.id) << "name:" << qstring(f.name);
-        File file{.id = qstring(f.id),
-                  .sId = sId,
-                  .name = qstring(f.name),
-                  .status = FileStatus::TRANSMITTING,
-                  .direction = FileDirection::RECEIVING};
-        h->onFileRequest(peerId.toFriendId(), file);
+        for (const auto& item : content.getContents()) {
+            auto& f = item.second;
+            if (!f.isFile()) return false;
+
+            qDebug() << "file id:" << qstring(f.ibb.sId) << "name:" << qstring(f.name);
+            File file{.id = qstring(f.ibb.sId),
+                      .sId = sId,
+                      .name = qstring(f.name),
+                      .status = FileStatus::TRANSMITTING,
+                      .direction = FileDirection::RECEIVING};
+            h->onFileRequest(peerId.toFriendId(), file);
+        }
     }
 
     IMFileSession* sess = m_fileSessionMap.value(sId);
@@ -483,28 +448,24 @@ bool IMFile::doInvalidAction(const gloox::Jingle::Session::Jingle*, const IMPeer
 bool IMFile::doSessionInitiate(gloox::Jingle::Session* session,
                                const gloox::Jingle::Session::Jingle* jingle,
                                const IMPeerId& peerId) {
-    if (currentSid.isEmpty()) {
-        return false;
-    }
-
-    auto& from = session->remote();
-    if (from.server().starts_with("conference.")) {
-        return false;
-    }
 
     auto sId = qstring(session->sid());
     qDebug() << __func__ << "sId:" << sId;
 
-    ortc::OJingleContentFile cfile;
-    cfile.sdpType = ortc::JingleSdpType::Offer;
-    parse(jingle, cfile);
+    ortc::OJingleContentMap contentAv;
+    contentAv.sdpType = ortc::JingleSdpType::Offer;
+    ParseAV(jingle, contentAv);
 
-    for (auto& f : cfile.contents) {
-        File* file0 = new File{.id = qstring(f.id),
-                               .sId = qstring(f.sId),
+    for (auto& item : contentAv.getContents()) {
+        if (!item.second.isFile()) {
+            return false;
+        }
+        auto& f = item.second;
+        File* file0 = new File{.id = qstring(f.ibb.sId),
+                               .sId = sId,
                                .name = qstring(f.name),
                                .path = {},
-                               .size = (quint64)f.size,
+                               .size = (quint64)f.file.size,
                                .status = FileStatus::INITIALIZING,
                                .direction = FileDirection::RECEIVING};
         for (auto h : fileHandlers) {

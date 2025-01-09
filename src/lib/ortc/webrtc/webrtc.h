@@ -70,11 +70,11 @@ public:
 
     bool ensureStart() override;
 
-    void setRemoteDescription(const std::string& peerId, const OJingleContentAv& av) override;
+    void setRemoteDescription(const std::string& peerId, const OJingleContentMap& av) override;
 
     bool CreateOffer(const std::string& peerId, const std::string& sId, bool video) override;
 
-    void CreateAnswer(const std::string& peerId, const OJingleContentAv& av) override;
+    void CreateAnswer(const std::string& peerId, const OJingleContentMap& av) override;
 
     void setTransportInfo(const std::string& peerId,
                           const std::string& sId,
@@ -100,7 +100,7 @@ public:
 
     std::map<std::string, OIceUdp> getCandidates(const std::string& peerId) override;
 
-    std::unique_ptr<OJingleContentAv> getLocalSdp(const std::string& peerId) override;
+    std::unique_ptr<OJingleContentMap> getLocalSdp(const std::string& peerId) override;
 
     const std::vector<OkRTCHandler*>& getHandlers() override;
 
@@ -142,9 +142,9 @@ private:
      * @return webrtc::SessionDescriptionInterface
      */
     std::unique_ptr<webrtc::SessionDescriptionInterface> convertSdpToDown(
-            const OJingleContentAv& av);
+            const OJingleContentMap& av);
 
-    std::unique_ptr<OJingleContentAv> convertSdpToUp(
+    std::unique_ptr<OJingleContentMap> convertSdpToUp(
             const webrtc::SessionDescriptionInterface* sdp);
 
     /**

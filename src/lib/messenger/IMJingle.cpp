@@ -20,6 +20,7 @@
 #include <capabilities.h>
 #include <extdisco.h>
 #include <jinglegroup.h>
+#include <jingleibb.h>
 #include <jinglejsonmessage.h>
 #include <jinglesession.h>
 
@@ -207,7 +208,7 @@ ortc::OIceUdp IMJingle::ParseIce(const std::string& mid, const gloox::Jingle::IC
 }
 
 void IMJingle::ParseAV(const gloox::Jingle::Session::Jingle* jingle,
-                       ortc::OJingleContentAv& contentAv) {
+                       ortc::OJingleContentMap& contentAv) {
     contentAv.sessionId = jingle->sid();
     for (const auto p : jingle->plugins()) {
         auto pt = p->pluginType();
@@ -215,7 +216,6 @@ void IMJingle::ParseAV(const gloox::Jingle::Session::Jingle* jingle,
             case gloox::Jingle::PluginContent: {
                 auto content = static_cast<const gloox::Jingle::Content*>(p);
                 ortc::OSdp& oSdp = contentAv.load(content->name());
-
                 auto rtp = content->findPlugin<gloox::Jingle::RTP>(gloox::Jingle::PluginRTP);
                 if (rtp) {
                     ortc::ORTP oRtp;
@@ -229,30 +229,27 @@ void IMJingle::ParseAV(const gloox::Jingle::Session::Jingle* jingle,
                 if (udp) {
                     oSdp.iceUdp = ParseIce(content->name(), udp);
                 }
+
+                auto fileTransfer = content->findPlugin<gloox::Jingle::FileTransfer>(
+                        gloox::Jingle::PluginFileTransfer);
+                if (fileTransfer) {
+                    oSdp.file = ParseFile(fileTransfer);
+                }
+
+                auto ibb = content->findPlugin<gloox::Jingle::IBB>(gloox::Jingle::PluginIBB);
+                if (ibb) {
+                    oSdp.ibb = ParseFileIBB(ibb);
+                }
+
                 break;
             }
-            case gloox::Jingle::PluginNone:
-                break;
-            case gloox::Jingle::PluginFileTransfer:
-                break;
-            case gloox::Jingle::PluginICEUDP:
-                break;
-            case gloox::Jingle::PluginReason:
-                break;
-            case gloox::Jingle::PluginUser:
-                break;
-            case gloox::Jingle::PluginGroup:
-                break;
-            case gloox::Jingle::PluginRTP:
-                break;
-            case gloox::Jingle::PluginIBB:
-                break;
             case gloox::Jingle::PluginJsonMessage: {
                 auto jm = dynamic_cast<const gloox::Jingle::JsonMessage*>(p);
                 ParseOMeetSSRCBundle(jm->json(), contentAv.getSsrcBundle());
                 break;
             }
             default:
+                qWarning() << "Unsupported content:" << p;
                 break;
         }
     }
@@ -484,7 +481,7 @@ std::unique_ptr<gloox::Jingle::Content> IMJingle::ToContent(const std::string& m
     return std::unique_ptr<gloox::Jingle::Content>(pContent);
 }
 
-void IMJingle::ToPlugins(const ortc::OJingleContentAv* av, gloox::Jingle::PluginList& plugins) {
+void IMJingle::ToPlugins(const ortc::OJingleContentMap* av, gloox::Jingle::PluginList& plugins) {
     //<group>
     auto& contents = av->getContents();
     gloox::Jingle::Group::ContentList contentList;
@@ -587,6 +584,21 @@ void IMJingle::ParseCandidates(gloox::Jingle::ICEUDP::CandidateList& src, ortc::
     for (auto& c : src) {
         to.push_back(ParseCandidate(c));
     }
+}
+ortc::OFile IMJingle::ParseFile(const gloox::Jingle::FileTransfer* file) {
+    for (auto& f : file->files()) {
+        ortc::OFile file0 = {//                .id = id,
+                             //                             .sId = sId,
+                             .date = f.date, .hash = f.hash,   .hash_algo = f.hash_algo,
+                             .size = f.size, .range = f.range, .offset = f.offset};
+        file0.name = f.name;
+        return file0;
+    };
+    return {};
+}
+
+ortc::OFileIBB IMJingle::ParseFileIBB(const gloox::Jingle::IBB* ibb) {
+    return ortc::OFileIBB{.sId = ibb->sid(), .blockSize = ibb->blockSize()};
 }
 
 }  // namespace lib::messenger
