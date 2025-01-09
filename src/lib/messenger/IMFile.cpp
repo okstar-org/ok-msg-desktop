@@ -341,20 +341,20 @@ bool IMFile::doSessionAccept(gloox::Jingle::Session* session,
         return false;
     }
 
-    for (auto h : fileHandlers) {
-        for (const auto& item : content.getContents()) {
-            auto& f = item.second;
-            if (!f.isFile()) return false;
-
-            qDebug() << "file id:" << qstring(f.ibb.sId) << "name:" << qstring(f.name);
-            File file{.id = qstring(f.ibb.sId),
-                      .sId = sId,
-                      .name = qstring(f.file.name),
-                      .status = FileStatus::TRANSMITTING,
-                      .direction = FileDirection::RECEIVING};
-            h->onFileRequest(peerId.toFriendId(), file);
-        }
-    }
+    //    for (auto h : fileHandlers) {
+    //        for (const auto& item : content.getContents()) {
+    //            auto& f = item.second;
+    //            if (!f.isFile()) return false;
+    //
+    //            qDebug() << "file id:" << qstring(f.ibb.sId) << "name:" << qstring(f.name);
+    //            File file{.id = qstring(f.ibb.sId),
+    //                      .sId = sId,
+    //                      .name = qstring(f.file.name),
+    //                      .status = FileStatus::TRANSMITTING,
+    //                      .direction = FileDirection::RECEIVING};
+    //            h->onFileRequest(peerId.toFriendId(), file);
+    //        }
+    //    }
 
     IMFileSession* sess = m_fileSessionMap.value(sId);
     if (sess) {
