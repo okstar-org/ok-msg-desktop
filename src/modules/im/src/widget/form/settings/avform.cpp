@@ -20,13 +20,15 @@
 #include <QScreen>
 #include <QShowEvent>
 
-#include "lib/storeage/settings/translator.h"
-#include "src/audio/audio.h"
-#include "src/audio/iaudiosettings.h"
-#include "src/audio/iaudiosource.h"
+#include "lib/audio/audio.h"
+#include "lib/audio/iaudiosettings.h"
+#include "lib/audio/iaudiosource.h"
+#include "lib/storage/settings/translator.h"
 #include "src/base/RecursiveSignalBlocker.h"
 #include "src/core/core.h"
 #include "src/core/coreav.h"
+#include "src/nexus.h"
+#include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
 #include "src/video/cameradevice.h"
 #include "src/video/camerasource.h"
@@ -43,12 +45,13 @@ AVForm::AVForm(CameraSource& camera, IAudioSettings* audioSettings, IVideoSettin
         , audioSettings{audioSettings}
         , videoSettings{videoSettings}
         , camVideoSurface(nullptr)
-        , camera(camera)
-        , audio{std::unique_ptr<IAudioControl>(Audio::makeAudio(Settings::getInstance()))} {
+        , camera(camera) {
     setupUi(this);
 
     // block all child signals during initialization
     const ok::base::RecursiveSignalBlocker signalBlocker(this);
+    auto s = Nexus::getProfile()->getSettings();
+    audio = std::unique_ptr<IAudioControl>(Audio::makeAudio(*s));
 
     cbEnableTestSound->setChecked(audioSettings->getEnableTestSound());
     cbEnableTestSound->setToolTip(tr("Play a test sound while changing the output volume."));

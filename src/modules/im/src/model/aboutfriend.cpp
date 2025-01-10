@@ -14,6 +14,7 @@
 
 #include "src/model/friend.h"
 #include "src/nexus.h"
+#include "src/persistence/history.h"
 #include "src/persistence/ifriendsettings.h"
 #include "src/persistence/profile.h"
 

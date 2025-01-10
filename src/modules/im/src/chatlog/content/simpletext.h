@@ -14,7 +14,7 @@
 #define SIMPLETEXT_H
 
 #include "../chatlinecontent.h"
-#include "src/lib/storeage/settings/style.h"
+#include "src/lib/storage/settings/style.h"
 
 #include <QFont>
 

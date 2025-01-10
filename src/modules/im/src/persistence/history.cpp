@@ -13,18 +13,20 @@
 #include <QDebug>
 #include <cassert>
 
-#include "lib/storeage/db/rawdatabase.h"
 #include "history.h"
-#include "profile.h"
+#include "lib/storage/db/rawdatabase.h"
 #include "settings.h"
+#include "src/lib/session/profile.h"
+#include "src/nexus.h"
+#include "src/persistence/profile.h"
 
 namespace {
 
 static constexpr int SCHEMA_VERSION = 3;
 
-bool createCurrentSchema(RawDatabase& db) {
-    QVector<RawDatabase::Query> queries;
-    queries += RawDatabase::Query(QString(
+bool createCurrentSchema(lib::db::RawDatabase& db) {
+    QVector<lib::db::RawDatabase::Query> queries;
+    queries += lib::db::RawDatabase::Query(QString(
             // peers
             "CREATE TABLE peers ("
             "id INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -73,14 +75,15 @@ bool createCurrentSchema(RawDatabase& db) {
     //    (receiver); ")); queries += RawDatabase::Query(QString("CREATE INDEX his_sender_idx ON
     //    history (sender); ")); queries += RawDatabase::Query(QString("CREATE INDEX idx_data_id ON
     //    history(data_id); "));
-    queries += RawDatabase::Query(QString("PRAGMA user_version = %1;").arg(SCHEMA_VERSION));
+    queries +=
+            lib::db::RawDatabase::Query(QString("PRAGMA user_version = %1;").arg(SCHEMA_VERSION));
 
     return db.execNow(queries);
 }
 
-bool isNewDb(std::shared_ptr<RawDatabase>& db, bool& success) {
+bool isNewDb(std::shared_ptr<lib::db::RawDatabase>& db, bool& success) {
     bool newDb;
-    if (!db->execNow(RawDatabase::Query(
+    if (!db->execNow(lib::db::RawDatabase::Query(
                 "SELECT COUNT(*) FROM sqlite_master;",
                 [&](const QVector<QVariant>& row) { newDb = row[0].toLongLong() == 0; }))) {
         db.reset();
@@ -91,20 +94,21 @@ bool isNewDb(std::shared_ptr<RawDatabase>& db, bool& success) {
     return newDb;
 }
 
-bool dbSchema1to2(RawDatabase& db) {
+bool dbSchema1to2(lib::db::RawDatabase& db) {
     qDebug() << __func__;
-    QVector<RawDatabase::Query> queries;
-    queries += RawDatabase::Query(
+    QVector<lib::db::RawDatabase::Query> queries;
+    queries += lib::db::RawDatabase::Query(
             QStringLiteral("ALTER TABLE history ADD COLUMN sender_resource text;"));
-    queries += RawDatabase::Query(QStringLiteral("PRAGMA user_version = 2;"));
+    queries += lib::db::RawDatabase::Query(QStringLiteral("PRAGMA user_version = 2;"));
     return db.execNow(queries);
 }
 
-bool dbSchema2to3(RawDatabase& db) {
+bool dbSchema2to3(lib::db::RawDatabase& db) {
     qDebug() << __func__;
-    QVector<RawDatabase::Query> queries;
-    queries += RawDatabase::Query(QStringLiteral("ALTER TABLE history ADD COLUMN msg_id text;"));
-    queries += RawDatabase::Query(QStringLiteral("PRAGMA user_version = 3;"));
+    QVector<lib::db::RawDatabase::Query> queries;
+    queries += lib::db::RawDatabase::Query(
+            QStringLiteral("ALTER TABLE history ADD COLUMN msg_id text;"));
+    queries += lib::db::RawDatabase::Query(QStringLiteral("PRAGMA user_version = 3;"));
     return db.execNow(queries);
 }
 
@@ -115,12 +119,13 @@ bool dbSchema2to3(RawDatabase& db) {
  * variable and add another case to the switch statement below. Make sure to fall through on each
  * case.
  */
-bool dbSchemaUpgrade(std::shared_ptr<RawDatabase>& db) {
+bool dbSchemaUpgrade(std::shared_ptr<lib::db::RawDatabase>& db) {
     qDebug() << __func__;
 
     int64_t databaseSchemaVersion;
-    if (!db->execNow(RawDatabase::Query("PRAGMA user_version", [&](const QVector<QVariant>& row) {
-            databaseSchemaVersion = row[0].toLongLong();
+    if (!db->execNow(lib::db::RawDatabase::Query("PRAGMA user_version",
+                                                 [&](const QVector<QVariant>& row) {
+                                                     databaseSchemaVersion = row[0].toLongLong();
         }))) {
         qCritical() << "History failed to read user_version";
         return false;
@@ -192,7 +197,7 @@ MessageState getMessageState(bool isPending, bool isBroken, bool isReceipt) {
  * @brief Prepares the database to work with the history.
  * @param db This database will be prepared for use with the history.
  */
-History::History(std::shared_ptr<RawDatabase> db_) : db(db_) {
+History::History(std::shared_ptr<lib::db::RawDatabase> db_) : db(db_) {
     if (!isValid()) {
         qWarning() << "Database not open, init failed";
         return;
@@ -209,7 +214,7 @@ History::History(std::shared_ptr<RawDatabase> db_) : db(db_) {
     //    connect(this, &History::fileInserted, this, &History::onFileInserted);
 
     // Cache our current peers
-    db->execLater(RawDatabase::Query{
+    db->execLater(lib::db::RawDatabase::Query{
             "SELECT public_key, id FROM peers;",
             [this](const QVector<QVariant>& row) { peers[row[0].toString()] = row[1].toInt(); }});
 }
@@ -305,14 +310,14 @@ uint History::addNewContact(const QString& contactId) {
  * @param dispName Name, which should be displayed.
  * @param insertIdCallback Function, called after query execution.
  */
-QVector<RawDatabase::Query> History::generateNewMessageQueries(const Message& message,
-                                                               HistMessageContentType type,
+QVector<lib::db::RawDatabase::Query> History::generateNewMessageQueries(const Message& message,
+                                                                        HistMessageContentType type,
                                                                bool isDelivered,
                                                                std::function<void(RowId)>
                                                                        insertIdCallback) {
-    QVector<RawDatabase::Query> queries;
+    QVector<lib::db::RawDatabase::Query> queries;
 
-    queries += RawDatabase::Query(
+    queries += lib::db::RawDatabase::Query(
             QString("INSERT INTO history "
                                           "(timestamp, receiver, sender, message, type, data_id, "
                                           "is_receipt, sender_resource, msg_id) "
@@ -329,7 +334,7 @@ QVector<RawDatabase::Query> History::generateNewMessageQueries(const Message& me
                                   insertIdCallback);
 
     if (!isDelivered) {
-        queries += RawDatabase::Query{
+        queries += lib::db::RawDatabase::Query{
                 "INSERT INTO faux_offline_pending (id) VALUES ("
                 "    last_insert_rowid()"
                 ");"};
@@ -836,8 +841,7 @@ QString History::getPeerAlias(const QString& friendPk) {
  * @return True if history should not be accessed
  */
 bool History::historyAccessBlocked() {
-    if (!Settings::getInstance().getEnableLogging()) {
-        assert(false);
+    if (!Nexus::getProfile()->getSettings()->getEnableLogging()) {
         qCritical() << "Blocked history access while history is disabled";
         return true;
     }

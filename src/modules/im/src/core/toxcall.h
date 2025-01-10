@@ -21,10 +21,10 @@
 #include <QMetaObject>
 #include <QtGlobal>
 
-#include "src/audio/iaudiocontrol.h"
-#include "src/audio/iaudiosink.h"
-#include "src/audio/iaudiosource.h"
-#include "src/core/FriendId.h"
+#include "lib/audio/iaudiocontrol.h"
+#include "lib/audio/iaudiosink.h"
+#include "lib/audio/iaudiosource.h"
+#include "src/model/FriendId.h"
 
 class QTimer;
 class AudioFilterer;

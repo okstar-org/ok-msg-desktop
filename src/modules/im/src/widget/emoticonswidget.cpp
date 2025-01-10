@@ -11,7 +11,9 @@
  */
 
 #include "emoticonswidget.h"
-#include "src/lib/storeage/settings/style.h"
+#include "lib/storage/settings/style.h"
+#include "src/nexus.h"
+#include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
 #include "src/persistence/smileypack.h"
 
@@ -19,7 +21,6 @@
 #include <QButtonGroup>
 #include <QFile>
 #include <QGridLayout>
-#include <QLayout>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPushButton>
@@ -62,7 +63,7 @@ EmoticonsWidget::EmoticonsWidget(QWidget* parent) : QMenu(parent) {
     int pageCount = ceil(float(itemCount) / float(itemsPerPage));
 
     // respect configured emoticon size
-    const int px = Settings::getInstance().getEmojiFontPointSize();
+    const int px = Nexus::getProfile()->getSettings()->getEmojiFontPointSize();
     const QSize size(px, px);
 
     // create pages
@@ -158,7 +159,7 @@ void EmoticonsWidget::keyPressEvent(QKeyEvent* e) {
 EmoticonsPageView::EmoticonsPageView(QWidget* parent) : QWidget(parent) {
     setMouseTracking(true);
 
-    int s = Settings::getInstance().getEmojiFontPointSize();
+    int s = Nexus::getProfile()->getSettings()->getEmojiFontPointSize();
     invisible_button = new QToolButton(this);
     invisible_button->setObjectName("emoticonsItem");
     invisible_button->setVisible(false);

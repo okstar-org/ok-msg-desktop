@@ -16,10 +16,10 @@
 #include <cmath>
 #include "Bus.h"
 #include "application.h"
-#include "lib/storeage/settings/OkSettings.h"
-#include "lib/storeage/settings/translator.h"
+#include "lib/storage/settings/OkSettings.h"
+#include "lib/storage/settings/style.h"
+#include "lib/storage/settings/translator.h"
 #include "src/base/RecursiveSignalBlocker.h"
-#include "src/lib/storeage/settings/style.h"
 
 namespace UI {
 /**
@@ -157,7 +157,7 @@ void GeneralForm::on_cbAutorun_stateChanged() {
 }
 
 void GeneralForm::on_cbSpellChecking_stateChanged() {
-    //  Settings::getInstance().setSpellCheckingEnabled(bodyUI->cbSpellChecking->isChecked());
+    //  Nexus::getProfile()->getSettings()->setSpellCheckingEnabled(bodyUI->cbSpellChecking->isChecked());
 }
 
 void GeneralForm::on_showSystemTray_stateChanged() {
@@ -185,15 +185,15 @@ void GeneralForm::on_minimizeToTray_stateChanged() {
 }
 
 void GeneralForm::on_checkUpdates_stateChanged() {
-    //      Settings::getInstance().setCheckUpdates(bodyUI->checkUpdates->isChecked());
+    //      Nexus::getProfile()->getSettings()->setCheckUpdates(bodyUI->checkUpdates->isChecked());
 }
 
 void GeneralForm::on_timestamp_editTextChanged(const QString& format) {
     QString timeExample = QTime::currentTime().toString(format);
     bodyUI->timeExample->setText(timeExample);
 
-    //        Settings::getInstance().setTimestampFormat(format);
-    //    QString locale = Settings::getInstance().getTranslation();
+    //        Nexus::getProfile()->getSettings()->setTimestampFormat(format);
+    //    QString locale = Nexus::getProfile()->getSettings()->getTranslation();
     //    settings::Translator::translate(OK_UIWindowConfig_MODULE, locale);
 }
 
@@ -201,16 +201,15 @@ void GeneralForm::on_dateFormats_editTextChanged(const QString& format) {
     QString dateExample = QDate::currentDate().toString(format);
     bodyUI->dateExample->setText(dateExample);
 
-    //    Settings::getInstance().setDateFormat(format);
-    //    QString locale = Settings::getInstance().getTranslation();
+    //    Nexus::getProfile()->getSettings()->setDateFormat(format);
+    //    QString locale = Nexus::getProfile()->getSettings()->getTranslation();
     //    settings::Translator::translate(OK_UIWindowConfig_MODULE, locale);
 }
 
 void GeneralForm::on_themeColorCBox_currentIndexChanged(int) {
     int index = bodyUI->themeColorCBox->currentIndex();
     auto color = bodyUI->themeColorCBox->currentText();
-    lib::settings::OkSettings::getInstance().setThemeColor(
-            static_cast<lib::settings::MainTheme>(index));
+    lib::settings::OkSettings().setThemeColor(static_cast<lib::settings::MainTheme>(index));
     emit ok::Application::Instance() -> bus()->themeColorChanged(index, color);
 }
 

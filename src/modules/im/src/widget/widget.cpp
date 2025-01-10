@@ -48,16 +48,17 @@
 #include "friendwidget.h"
 #include "groupwidget.h"
 #include "gui.h"
-#include "lib/storeage/settings/OkSettings.h"
-#include "lib/storeage/settings/translator.h"
+#include "lib/audio/audio.h"
+#include "lib/storage/settings/OkSettings.h"
+#include "lib/storage/settings/translator.h"
 #include "maskablepixmapwidget.h"
 #include "splitterrestorer.h"
-#include "src/audio/audio.h"
 #include "src/chatlog/content/filetransferwidget.h"
 #include "src/core/core.h"
 #include "src/core/coreav.h"
 #include "src/core/corefile.h"
-#include "src/lib/storeage/settings/style.h"
+#include "src/lib/session/profile.h"
+#include "src/lib/storage/settings/style.h"
 #include "src/model/friend.h"
 #include "src/model/friendlist.h"
 #include "src/model/group.h"
@@ -66,7 +67,6 @@
 #include "src/model/profile/profileinfo.h"
 #include "src/model/status.h"
 #include "src/nexus.h"
-#include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
 #include "src/platform/timer.h"
 #include "src/widget/ContactWidget.h"
@@ -99,13 +99,11 @@ Widget* Widget::getInstance() {
     return instance;
 };
 
-Widget::Widget(IAudioControl& audio, QWidget* parent)  //
+Widget::Widget(QWidget* parent)  //
         : QFrame(parent)
         , ui(new Ui::IMMainWindow)
         , eventFlag(false)
         , eventIcon(false)
-        , audio(audio)
-        , settings(Settings::getInstance())
         , delayCaller(std::make_unique<base::DelayedCallTimer>())  //
 {
     instance = this;
@@ -127,7 +125,9 @@ Widget::Widget(IAudioControl& audio, QWidget* parent)  //
 
     installEventFilter(this);
 
-    QString locale = settings.getTranslation();
+    auto settings = Nexus::getProfile()->getSettings();
+
+    QString locale = settings->getTranslation();
     settings::Translator::translate(OK_IM_MODULE, locale);
     connect(ok::Application::Instance()->bus(), &ok::Bus::languageChanged,
             [](QString locale0) { settings::Translator::translate(OK_IM_MODULE, locale0); });
@@ -202,7 +202,7 @@ Widget::Widget(IAudioControl& audio, QWidget* parent)  //
     // Disable some widgets until we're connected to the DHT
     //  ui->statusButton->setEnabled(false);
 
-    lib::settings::Style::setThemeColor(settings.getThemeColor());
+    lib::settings::Style::setThemeColor(settings->getThemeColor());
 
     onStatusSet(Status::Status::Offline);
 
@@ -387,7 +387,8 @@ void Widget::onFailedToStartCore() {
 }
 
 void Widget::onBadProxyCore() {
-    settings.setProxyType(Settings::ProxyType::ptNone);
+    auto settings = Nexus::getProfile()->getSettings();
+    settings->setProxyType(Settings::ProxyType::ptNone);
 
     ok::base::MessageBox::critical(this, "",
                                    tr("The core failed to start with your proxy settings. "
@@ -546,7 +547,8 @@ void Widget::onIconClick(QSystemTrayIcon::ActivationReason reason) {
 }
 
 void Widget::onShowSettings() {
-    if (settings.getSeparateWindow()) {
+    auto settings = Nexus::getProfile()->getSettings();
+    if (settings->getSeparateWindow()) {
         if (!settingsWidget->isShown()) {
             settingsWidget->show(createContentDialog(DialogType::SettingDialog));
         }
@@ -585,58 +587,6 @@ void Widget::setAvatar(QByteArray avatar) {
 
     //  profilePicture->setPixmap(pixmap);
     //  profileInfo->setAvatar(pixmap);
-}
-
-/**
- * @brief Plays a sound via the audioNotification AudioSink
- * @param sound Sound to play
- * @param loop if true, loop the sound until onStopNotification() is called
- */
-void Widget::playNotificationSound(IAudioSink::Sound sound, bool loop) {
-    if (!settings.getAudioOutDevEnabled()) {
-        // don't try to play sounds if audio is disabled
-        return;
-    }
-
-    if (audioNotification == nullptr) {
-        audioNotification = std::unique_ptr<IAudioSink>(audio.makeSink());
-        if (audioNotification == nullptr) {
-            qDebug() << "Failed to allocate AudioSink";
-            return;
-        }
-    }
-
-    audioNotification->connectTo_finishedPlaying(this, [this]() { cleanupNotificationSound(); });
-
-    audioNotification->playMono16Sound(sound);
-
-    if (loop) {
-        audioNotification->startLoop();
-    }
-}
-
-void Widget::cleanupNotificationSound() {
-    audioNotification.reset();
-}
-
-void Widget::incomingNotification(QString friendnumber) {
-    const auto& friendId = FriendId(friendnumber);
-    newFriendMessageAlert(friendId, {}, false);
-
-    // loop until call answered or rejected
-    playNotificationSound(IAudioSink::Sound::IncomingCall, true);
-}
-
-void Widget::outgoingNotification() {
-    // loop until call answered or rejected
-    playNotificationSound(IAudioSink::Sound::OutgoingCall, true);
-}
-
-/**
- * @brief Widget::onStopNotification Stop the notification sound.
- */
-void Widget::onStopNotification() {
-    audioNotification.reset();
 }
 
 void Widget::addFriendFailed(const FriendId&, const QString& errorInfo) {
@@ -714,6 +664,8 @@ void Widget::openDialog(GenericChatroomWidget* widget, bool newWindow) {
 
 bool Widget::newFriendMessageAlert(const FriendId& friendId, const QString& text, bool sound,
                                    bool file) {
+    auto settings = Nexus::getProfile()->getSettings();
+
     bool hasActive = false;
     QWidget* currentWindow;
     ContentDialog* contentDialog = ContentDialogManager::getInstance()->getFriendDialog(friendId);
@@ -723,8 +675,8 @@ bool Widget::newFriendMessageAlert(const FriendId& friendId, const QString& text
         currentWindow = contentDialog->window();
         hasActive = ContentDialogManager::getInstance()->isContactActive(friendId);
     } else {
-        if (settings.getSeparateWindow() && settings.getShowWindow()) {
-            if (settings.getDontGroupWindows()) {
+        if (settings->getSeparateWindow() && settings->getShowWindow()) {
+            if (settings->getDontGroupWindows()) {
                 contentDialog = createContentDialog();
             } else {
                 contentDialog = ContentDialogManager::getInstance()->current();
@@ -832,13 +784,12 @@ bool Widget::newMessageAlert(QWidget* currentWindow, bool isActive, bool sound, 
     }
 
     if (notify) {
-        auto& settings = Settings::getInstance();
-
-        if (settings.getShowWindow()) {
+        auto settings = Nexus::getProfile()->getSettings();
+        if (settings->getShowWindow()) {
             currentWindow->show();
         }
 
-        if (settings.getNotify()) {
+        if (settings->getNotify()) {
             if (inactiveWindow) {
 #if DESKTOP_NOTIFICATIONS
                 if (!settings.getDesktopNotify()) {
@@ -851,11 +802,11 @@ bool Widget::newMessageAlert(QWidget* currentWindow, bool isActive, bool sound, 
             }
 
             bool isBusy = Nexus::getCore()->getStatus() == Status::Status::Busy;
-            bool busySound = settings.getBusySound();
-            bool notifySound = settings.getNotifySound();
+            bool busySound = settings->getBusySound();
+            bool notifySound = settings->getNotifySound();
 
             if (notifySound && sound && (!isBusy || busySound)) {
-                playNotificationSound(IAudioSink::Sound::NewMessage);
+                Nexus::getInstance().playNotificationSound(IAudioSink::Sound::NewMessage);
             }
         }
     }
@@ -924,7 +875,9 @@ void Widget::registerContentDialog(ContentDialog& contentDialog) const {
     connect(&contentDialog, &ContentDialog::friendDialogShown, this, &Widget::onFriendDialogShown);
     connect(&contentDialog, &ContentDialog::groupDialogShown, this, &Widget::onGroupDialogShown);
     connect(core, &Core::usernameSet, &contentDialog, &ContentDialog::setUsername);
-    connect(&settings, &Settings::groupchatPositionChanged, &contentDialog,
+
+    auto settings = Nexus::getProfile()->getSettings();
+    connect(settings, &Settings::groupchatPositionChanged, &contentDialog,
             &ContentDialog::reorderLayouts);
 
 #ifdef Q_OS_MAC
@@ -979,7 +932,8 @@ ContentLayout* Widget::createContentDialog(DialogType type) const {
         Core* core;
     };
 
-    Dialog* dialog = new Dialog(type, settings, core);
+    auto settings = Nexus::getProfile()->getSettings();
+    Dialog* dialog = new Dialog(type, *settings, core);
     dialog->setAttribute(Qt::WA_DeleteOnClose);
     ContentLayout* contentLayoutDialog = new ContentLayout(dialog);
 
@@ -1288,14 +1242,16 @@ void Widget::setStatusBusy() {
 }
 
 void Widget::saveWindowGeometry() {
-    settings.setWindowGeometry(saveGeometry());
+    auto settings = Nexus::getProfile()->getSettings();
+    settings->setWindowGeometry(saveGeometry());
     //  settings.setWindowState(saveState());
 }
 
 void Widget::saveSplitterGeometry() {
-    if (!settings.getSeparateWindow()) {
-        //    settings.setSplitterState(ui->mainSplitter->saveState());
-    }
+    //    auto settings = Nexus::getProfile()->getSettings();
+    //    if (!settings.getSeparateWindow()) {
+    //    settings.setSplitterState(ui->mainSplitter->saveState());
+    //    }
 }
 
 void Widget::onSplitterMoved(int pos, int index) {

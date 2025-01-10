@@ -16,19 +16,20 @@
 #include <QDesktopWidget>
 #include <QFileDialog>
 
-#include "lib/storeage/settings/OkSettings.h"
-#include "lib/storeage/settings/translator.h"
+#include "lib/storage/settings/OkSettings.h"
+#include "lib/storage/settings/translator.h"
 #include "src/base/RecursiveSignalBlocker.h"
 #include "src/core/core.h"
 #include "src/core/coreav.h"
-#include "src/lib/storeage/settings/style.h"
-#include "src/persistence/profile.h"
+#include "src/lib/session/profile.h"
+#include "src/lib/storage/settings/style.h"
 #include "src/persistence/settings.h"
 #include "src/persistence/smileypack.h"
 #include "src/widget/form/settingswidget.h"
 
 #include "src/Bus.h"
 #include "src/application.h"
+#include "src/nexus.h"
 #include "src/widget/widget.h"
 
 /**
@@ -45,28 +46,28 @@ GeneralForm::GeneralForm(SettingsWidget* myParent)
     // block all child signals during initialization
     const ok::base::RecursiveSignalBlocker signalBlocker(this);
 
-    Settings& s = Settings::getInstance();
+    auto s = Nexus::getProfile()->getSettings();
 
     auto& okSettings = lib::settings::OkSettings::getInstance();
-    const QFont chatBaseFont = s.getChatMessageFont();
+    const QFont chatBaseFont = s->getChatMessageFont();
     bodyUI->txtChatFontSize->setValue(QFontInfo(chatBaseFont).pixelSize());
     bodyUI->txtChatFont->setCurrentFont(chatBaseFont);
-    int index = static_cast<int>(s.getStylePreference());
+    int index = static_cast<int>(s->getStylePreference());
     bodyUI->textStyleComboBox->setCurrentIndex(index);
-    bodyUI->useNameColors->setChecked(s.getEnableGroupChatsColor());
+    bodyUI->useNameColors->setChecked(s->getEnableGroupChatsColor());
 
-    bodyUI->notify->setChecked(s.getNotify());
+    bodyUI->notify->setChecked(s->getNotify());
     // Note: UI is boolean inversed from settings to maintain setting file backwards compatibility
-    bodyUI->groupOnlyNotfiyWhenMentioned->setChecked(!s.getGroupAlwaysNotify());
-    bodyUI->groupOnlyNotfiyWhenMentioned->setEnabled(s.getNotify());
-    bodyUI->notifySound->setChecked(s.getNotifySound());
-    bodyUI->notifyHide->setChecked(s.getNotifyHide());
-    bodyUI->notifySound->setEnabled(s.getNotify());
-    bodyUI->busySound->setChecked(s.getBusySound());
-    bodyUI->busySound->setEnabled(s.getNotifySound() && s.getNotify());
+    bodyUI->groupOnlyNotfiyWhenMentioned->setChecked(!s->getGroupAlwaysNotify());
+    bodyUI->groupOnlyNotfiyWhenMentioned->setEnabled(s->getNotify());
+    bodyUI->notifySound->setChecked(s->getNotifySound());
+    bodyUI->notifyHide->setChecked(s->getNotifyHide());
+    bodyUI->notifySound->setEnabled(s->getNotify());
+    bodyUI->busySound->setChecked(s->getBusySound());
+    bodyUI->busySound->setEnabled(s->getNotifySound() && s->getNotify());
 #if DESKTOP_NOTIFICATIONS
-    bodyUI->desktopNotify->setChecked(s.getDesktopNotify());
-    bodyUI->desktopNotify->setEnabled(s.getNotify());
+    bodyUI->desktopNotify->setChecked(s->getDesktopNotify());
+    bodyUI->desktopNotify->setEnabled(s->getNotify());
 #else
     bodyUI->desktopNotify->hide();
 #endif
@@ -82,7 +83,7 @@ GeneralForm::~GeneralForm() {
 
 void GeneralForm::on_notify_stateChanged() {
     const bool notify = bodyUI->notify->isChecked();
-    Settings::getInstance().setNotify(notify);
+    Nexus::getProfile()->getSettings()->setNotify(notify);
     bodyUI->groupOnlyNotfiyWhenMentioned->setEnabled(notify);
     bodyUI->notifySound->setEnabled(notify);
     bodyUI->busySound->setEnabled(notify && bodyUI->notifySound->isChecked());
@@ -92,22 +93,22 @@ void GeneralForm::on_notify_stateChanged() {
 void GeneralForm::on_notifySound_stateChanged()
 {
     const bool notify = bodyUI->notifySound->isChecked();
-    Settings::getInstance().setNotifySound(notify);
+    Nexus::getProfile()->getSettings()->setNotifySound(notify);
     bodyUI->busySound->setEnabled(notify);
 }
 */
 void GeneralForm::on_desktopNotify_stateChanged() {
     const bool notify = bodyUI->desktopNotify->isChecked();
-    Settings::getInstance().setDesktopNotify(notify);
+    Nexus::getProfile()->getSettings()->setDesktopNotify(notify);
 }
 
 void GeneralForm::on_busySound_stateChanged() {
-    Settings::getInstance().setBusySound(bodyUI->busySound->isChecked());
+    Nexus::getProfile()->getSettings()->setBusySound(bodyUI->busySound->isChecked());
 }
 
 void GeneralForm::on_groupOnlyNotfiyWhenMentioned_stateChanged() {
     // Note: UI is boolean inversed from settings to maintain setting file backwards compatibility
-    Settings::getInstance().setGroupAlwaysNotify(
+    Nexus::getProfile()->getSettings()->setGroupAlwaysNotify(
             !bodyUI->groupOnlyNotfiyWhenMentioned->isChecked());
 }
 
@@ -126,18 +127,18 @@ void GeneralForm::on_txtChatFont_currentFontChanged(const QFont& f) {
 
     if (QFontInfo(tmpFont).pixelSize() != px) tmpFont.setPixelSize(px);
 
-    Settings::getInstance().setChatMessageFont(tmpFont);
+    Nexus::getProfile()->getSettings()->setChatMessageFont(tmpFont);
 }
 
 void GeneralForm::on_txtChatFontSize_valueChanged(int px) {
     qDebug() << __func__ << px;
 
-    Settings& s = Settings::getInstance();
-    QFont tmpFont = s.getChatMessageFont();
+    auto s = Nexus::getProfile()->getSettings();
+    QFont tmpFont = s->getChatMessageFont();
     const int fontSize = QFontInfo(tmpFont).pixelSize();
 
     if (px != fontSize) {
         tmpFont.setPixelSize(px);
-        s.setChatMessageFont(tmpFont);
+        s->setChatMessageFont(tmpFont);
     }
 }

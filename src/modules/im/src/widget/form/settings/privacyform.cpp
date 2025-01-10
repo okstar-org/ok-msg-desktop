@@ -20,7 +20,7 @@
 #include <QRandomGenerator>
 #endif
 
-#include "lib/storeage/settings/translator.h"
+#include "lib/storage/settings/translator.h"
 #include "src/base/RecursiveSignalBlocker.h"
 #include "src/core/core.h"
 #include "src/nexus.h"
@@ -49,7 +49,7 @@ PrivacyForm::~PrivacyForm() {
 
 // void PrivacyForm::on_cbKeepHistory_stateChanged()
 //{
-//     Settings::getInstance().setEnableLogging(bodyUI->cbKeepHistory->isChecked());
+//     Nexus::getProfile()->getSettings()->setEnableLogging(bodyUI->cbKeepHistory->isChecked());
 //     if (!bodyUI->cbKeepHistory->isChecked()) {
 //         emit clearAllReceipts();
 //         QMessageBox::StandardButton dialogDelHistory;
@@ -65,7 +65,7 @@ PrivacyForm::~PrivacyForm() {
 //
 // void PrivacyForm::on_cbTypingNotification_stateChanged()
 //{
-//     Settings::getInstance().setTypingNotification(bodyUI->cbTypingNotification->isChecked());
+//     Nexus::getProfile()->getSettings()->setTypingNotification(bodyUI->cbTypingNotification->isChecked());
 // }
 //
 // void PrivacyForm::on_nospamLineEdit_editingFinished()
@@ -79,10 +79,10 @@ PrivacyForm::~PrivacyForm() {
 //}
 
 void PrivacyForm::showEvent(QShowEvent*) {
-    const Settings& s = Settings::getInstance();
+    const Settings& s = Nexus::getProfile()->getSettings();
     //    bodyUI->nospamLineEdit->setText(Core::getInstance()->getSelfId().getNoSpamString());
     bodyUI->cbTypingNotification->setChecked(s.getTypingNotification());
-    bodyUI->cbKeepHistory->setChecked(Settings::getInstance().getEnableLogging());
+    bodyUI->cbKeepHistory->setChecked(Nexus::getProfile()->getSettings()->getEnableLogging());
 }
 //
 // void PrivacyForm::on_randomNosapamButton_clicked()
@@ -121,7 +121,7 @@ void PrivacyForm::showEvent(QShowEvent*) {
 // void PrivacyForm::on_blackListTextEdit_textChanged()
 //{
 //     const QStringList strlist = bodyUI->blackListTextEdit->toPlainText().split('\n');
-//     Settings::getInstance().setBlackList(strlist);
+//     Nexus::getProfile()->getSettings()->setBlackList(strlist);
 // }
 
 void PrivacyForm::retranslateUi() {

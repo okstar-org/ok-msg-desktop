@@ -14,7 +14,7 @@
 #define SETTINGS_HPP
 
 #include "base/r.h"
-#include "src/audio/iaudiosettings.h"
+#include "lib/audio/iaudiosettings.h"
 #include "src/core/icoresettings.h"
 #include "src/core/toxencrypt.h"
 #include "src/core/toxfile.h"
@@ -33,7 +33,7 @@
 #include <QObject>
 #include <QPixmap>
 
-#include <src/core/contactid.h>
+#include "src/model/contactid.h"
 
 class Profile;
 class QCommandLineParser;
@@ -132,7 +132,7 @@ public:
     };
 
 public:
-    static Settings& getInstance();
+    static Settings* getInstance(const QString& path);
     static void destroyInstance();
     QString getSettingsDirPath() const;
     QString getAppDataDirPath() const;
@@ -160,7 +160,7 @@ public slots:
     void saveGlobal();
     void sync();
     void setAutoLogin(bool state);
-    void updateProfileData(Profile* profile, const QCommandLineParser* parser);
+    //    void updateProfileData(Profile* profile, const QCommandLineParser* parser);
 
 signals:
     // General
@@ -506,7 +506,7 @@ public:
 private:
     struct friendProp;
 
-    Settings();
+    Settings(const QString& path);
     ~Settings();
     Settings(Settings& settings) = delete;
     Settings& operator=(const Settings&) = delete;
@@ -518,11 +518,8 @@ public slots:
     void savePersonal(Profile* profile);
 
 private:
+    QString globalSettingsFile;
     bool loaded;
-
-    bool useCustomDhtList;
-    int dhtServerId;
-    bool dontShowDhtDialog;
 
     bool autoLogin;
     bool compactLayout;
@@ -634,7 +631,6 @@ private:
     int themeColor;
 
     static CompatibleRecursiveMutex bigLock;
-    static const QString globalSettingsFile;
     static QThread* settingsThread;
     FontManager* fontManager;
 };

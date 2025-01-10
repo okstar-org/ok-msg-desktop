@@ -15,7 +15,7 @@
 
 #include <QDateTime>
 #include <QDialog>
-#include "src/core/FriendId.h"
+#include "src/model/FriendId.h"
 
 namespace Ui {
 class LoadHistoryDialog;

@@ -12,7 +12,7 @@
 
 #include "StorageSettingsForm.h"
 #include <cmath>
-#include "lib/storeage/settings/OkSettings.h"
+#include "lib/storage/settings/OkSettings.h"
 #include "ui_StorageSettingsForm.h"
 
 #include <QDebug>
@@ -25,12 +25,13 @@
 #include <QTime>
 #include <QVector>
 
-#include "lib/storeage/settings/translator.h"
+#include "lib/storage/settings/translator.h"
 #include "src/base/RecursiveSignalBlocker.h"
 #include "src/core/core.h"
 #include "src/core/coreav.h"
-#include "src/lib/storeage/settings/style.h"
-#include "src/persistence/profile.h"
+#include "src/lib/session/profile.h"
+#include "src/lib/storage/settings/style.h"
+#include "src/nexus.h"
 #include "src/persistence/settings.h"
 #include "src/persistence/smileypack.h"
 #include "src/widget/form/settingswidget.h"
@@ -51,15 +52,15 @@ StorageSettingsForm::StorageSettingsForm(SettingsWidget* myParent)
     // block all child signals during initialization
     const ok::base::RecursiveSignalBlocker signalBlocker(this);
 
-    Settings& s = Settings::getInstance();
+    auto s = Nexus::getProfile()->getSettings();
 
     // 先获取当前语言
-    auto& okSettings = lib::settings::OkSettings::getInstance();
+    //    auto& okSettings = lib::settings::OkSettings::getInstance();
+    bodyUI->autoSaveFilesDir->setText(s->getGlobalAutoAcceptDir());
     //    bodyUI->statusChanges->setChecked(s.getStatusChangeNotificationEnabled());
     //    bodyUI->groupJoinLeaveMessages->setChecked(s.getShowGroupJoinLeaveMessages());
 
     //    bodyUI->autoAwaySpinBox->setValue(s.getAutoAwayTime());
-    bodyUI->autoSaveFilesDir->setText(s.getGlobalAutoAcceptDir());
     // bodyUI->maxAutoAcceptSizeMB->setValue(static_cast<double>(s.getMaxAutoAcceptSize()) / 1024 /
     // 1024); bodyUI->autoacceptFiles->setChecked(okSettings.getAutoSaveEnabled());
 
@@ -74,30 +75,30 @@ StorageSettingsForm::~StorageSettingsForm() {
 }
 
 // void StorageSettingsForm::on_statusChanges_stateChanged() {
-//     Settings::getInstance().setStatusChangeNotificationEnabled(bodyUI->statusChanges->isChecked());
+//     Nexus::getProfile()->getSettings()->setStatusChangeNotificationEnabled(bodyUI->statusChanges->isChecked());
 // }
 //
 // void StorageSettingsForm::on_groupJoinLeaveMessages_stateChanged() {
-//     Settings::getInstance().setShowGroupJoinLeaveMessages(bodyUI->groupJoinLeaveMessages->isChecked());
+//     Nexus::getProfile()->getSettings()->setShowGroupJoinLeaveMessages(bodyUI->groupJoinLeaveMessages->isChecked());
 // }
 //
 // void StorageSettingsForm::on_autoAwaySpinBox_editingFinished() {
 //     int minutes = bodyUI->autoAwaySpinBox->value();
-//     Settings::getInstance().setAutoAwayTime(minutes);
+//     Nexus::getProfile()->getSettings()->setAutoAwayTime(minutes);
 // }
 
 void StorageSettingsForm::on_autoacceptFiles_stateChanged() {
-    // lib::settings::OkSettings::getInstance().setAutoSaveEnabled(bodyUI->autoacceptFiles->isChecked());
+    // lib::settings::OkNexus::getSettings()->setAutoSaveEnabled(bodyUI->autoacceptFiles->isChecked());
 }
 
 void StorageSettingsForm::on_autoSaveFilesDir_clicked() {
-    QString previousDir = Settings::getInstance().getGlobalAutoAcceptDir();
+    QString previousDir = Nexus::getProfile()->getSettings()->getGlobalAutoAcceptDir();
     QString directory = QFileDialog::getExistingDirectory(
             Q_NULLPTR, tr("Choose an auto accept directory", "popup title"), QDir::homePath());
     if (directory.isEmpty())  // cancel was pressed
         directory = previousDir;
 
-    Settings::getInstance().setGlobalAutoAcceptDir(directory);
+    Nexus::getProfile()->getSettings()->setGlobalAutoAcceptDir(directory);
     bodyUI->autoSaveFilesDir->setText(directory);
 }
 
@@ -105,7 +106,7 @@ void StorageSettingsForm::on_maxAutoAcceptSizeMB_editingFinished() {
     // auto newMaxSizeMB = bodyUI->maxAutoAcceptSizeMB->value();
     // auto newMaxSizeB = std::lround(newMaxSizeMB * 1024 * 1024);
 
-    // Settings::getInstance().setMaxAutoAcceptSize(newMaxSizeB);
+    // Nexus::getProfile()->getSettings()->setMaxAutoAcceptSize(newMaxSizeB);
 }
 
 /**

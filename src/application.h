@@ -21,8 +21,9 @@
 #include "UI/core/ControllerManager.h"
 #include "UI/window/WindowManager.h"
 #include "UI/window/login/src/LoginWindow.h"
-#include "src/UI/window/login/src/SettingManager.h"
-
+#include "UI/window/login/src/SettingManager.h"
+#include "lib/session/profile.h"
+#include "lib/storage/StorageManager.h"
 #include "modules/module.h"
 
 namespace UI {
@@ -54,6 +55,10 @@ public:
         return session.get();
     }
 
+    inline lib::session::Profile* getProfile() {
+        return profile.get();
+    }
+
     inline QWidget* getMainWidget() const {
         if (m_mainWindow) {
             return m_mainWindow.get();
@@ -62,20 +67,15 @@ public:
     }
 
 private:
-    QMap<QString, Module*> m_moduleMap;
-
-    void* profile = nullptr;
-
-    int _argc;
-    char** _argv;
-
+    lib::storage::StorageManager* storageManager;
     std::shared_ptr<lib::session::AuthSession> session;
-
+    std::unique_ptr<lib::session::Profile> profile;
     IPC* ipc;
     std::unique_ptr<Bus> _bus;
 
     std::unique_ptr<UI::LoginWindow> m_loginWindow;
     std::unique_ptr<UI::MainWindow> m_mainWindow;
+    QMap<QString, Module*> m_moduleMap;
 
     void doLogout();
     /**

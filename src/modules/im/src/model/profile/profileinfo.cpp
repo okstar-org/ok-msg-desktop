@@ -67,7 +67,9 @@ bool ProfileInfo::deletePassword() {
  * @brief Check if current profile is encrypted.
  * @return True if encrypted, false otherwise.
  */
-bool ProfileInfo::isEncrypted() const { return profile->isEncrypted(); }
+bool ProfileInfo::isEncrypted() const {
+    return false;
+}
 
 /**
  * @brief Copy self ToxId to clipboard.
@@ -86,29 +88,45 @@ void ProfileInfo::copyId() const {
  * @brief Set self user name.
  * @param name New name.
  */
-void ProfileInfo::setNickname(const QString& name) { profile->setNick(name, true); }
+void ProfileInfo::setNickname(const QString& name) {
+    profile->setNick(name, true);
+}
 
-void ProfileInfo::setAvatar(const QPixmap& avatar) { profile->setAvatarOnly(avatar); }
+void ProfileInfo::setAvatar(const QPixmap& avatar) {
+    profile->setAvatarOnly(avatar);
+}
 
-const QPixmap& ProfileInfo::getAvatar() { return profile->loadAvatar(); }
+const QPixmap& ProfileInfo::getAvatar() {
+    return profile->loadAvatar();
+}
 
 /**
  * @brief Set self status message.
  * @param status New status message.
  */
-void ProfileInfo::setStatusMessage(const QString& status) { core->setStatusMessage(status); }
+void ProfileInfo::setStatusMessage(const QString& status) {
+    core->setStatusMessage(status);
+}
 
-const VCard& ProfileInfo::getVCard() const { return profile->getVCard(); }
+const VCard& ProfileInfo::getVCard() const {
+    return profile->getVCard();
+}
 
-const QString& ProfileInfo::getUsername() const { return profile->getUsername(); }
+const QString& ProfileInfo::getUsername() const {
+    return profile->getUsername();
+}
 
 /**
  * @brief Get name of tox profile file.
  * @return Profile name.
  */
-const QString& ProfileInfo::getNickname() const { return profile->getVCard().nickname; }
+const QString& ProfileInfo::getNickname() const {
+    return profile->getVCard().nickname;
+}
 
-const QString& ProfileInfo::getFullName() const { return profile->getFullName(); }
+const QString& ProfileInfo::getFullName() const {
+    return profile->getFullName();
+}
 
 /**
  * @brief Remove characters not supported for profile name from string.
@@ -136,31 +154,6 @@ static QString sanitize(const QString& src) {
 }
 
 /**
- * @brief Rename profile file.
- * @param name New profile name.
- * @return Result code of rename operation.
- */
-IProfileInfo::RenameResult ProfileInfo::renameProfile(const QString& name) {
-    QString cur = profile->getUsername();
-    if (name.isEmpty()) {
-        return RenameResult::EmptyName;
-    }
-
-    QString newName = sanitize(name);
-
-    if (Profile::exists(newName)) {
-        return RenameResult::ProfileAlreadyExists;
-    }
-
-    if (!profile->rename(name)) {
-        return RenameResult::Error;
-    }
-
-    return RenameResult::OK;
-}
-
-// TODO: Find out what is dangerous?
-/**
  * @brief Dangerous way to find out if a path is writable.
  * @param filepath Path to file which should be deleted.
  * @return True, if file writeable, false otherwise.
@@ -178,18 +171,19 @@ static bool tryRemoveFile(const QString& filepath) {
  * @return Result code of save operation.
  */
 IProfileInfo::SaveResult ProfileInfo::exportProfile(const QString& path) const {
-    QString current = profile->getUsername() + Core::TOX_EXT;
-    if (path.isEmpty()) {
-        return SaveResult::EmptyPath;
-    }
-
-    if (!tryRemoveFile(path)) {
-        return SaveResult::NoWritePermission;
-    }
-
-    if (!QFile::copy(Settings::getInstance().getSettingsDirPath() + current, path)) {
-        return SaveResult::Error;
-    }
+    //    QString current = profile->getUsername() + Core::TOX_EXT;
+    //    if (path.isEmpty()) {
+    //        return SaveResult::EmptyPath;
+    //    }
+    //
+    //    if (!tryRemoveFile(path)) {
+    //        return SaveResult::NoWritePermission;
+    //    }
+    //
+    //    if (!QFile::copy(Nexus::getProfile()->getSettings()->getSettingsDirPath() + current,
+    //    path)) {
+    //        return SaveResult::Error;
+    //    }
 
     return SaveResult::OK;
 }
@@ -199,9 +193,10 @@ IProfileInfo::SaveResult ProfileInfo::exportProfile(const QString& path) const {
  * @return List of files, which couldn't be removed automaticaly.
  */
 QStringList ProfileInfo::removeProfile() {
-    QStringList manualDeleteFiles = profile->remove();
-    QMetaObject::invokeMethod(&Nexus::getInstance(), "showLogin");
-    return manualDeleteFiles;
+    //    QStringList manualDeleteFiles = profile->remove();
+    //    QMetaObject::invokeMethod(&Nexus::getInstance(), "showLogin");
+    //    return manualDeleteFiles;
+    return {};
 }
 
 /**
@@ -223,7 +218,9 @@ void ProfileInfo::exit() {
  * @brief Copy image to clipboard.
  * @param image Image to copy.
  */
-void ProfileInfo::copyQr(const QImage& image) const { QApplication::clipboard()->setImage(image); }
+void ProfileInfo::copyQr(const QImage& image) const {
+    QApplication::clipboard()->setImage(image);
+}
 
 /**
  * @brief Save image to file.

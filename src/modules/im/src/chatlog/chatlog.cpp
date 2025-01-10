@@ -16,8 +16,8 @@
 #include "chatlinecontentproxy.h"
 #include "chatmessage.h"
 #include "content/filetransferwidget.h"
-#include "lib/storeage/settings/translator.h"
-#include "src/lib/storeage/settings/style.h"
+#include "lib/storage/settings/translator.h"
+#include "src/lib/storage/settings/style.h"
 
 #include <QAction>
 #include <QApplication>
@@ -30,7 +30,8 @@
 
 #include <algorithm>
 #include <cassert>
-
+#include "src/nexus.h"
+#include "src/persistence/profile.h"
 /**
  * @var ChatLog::repNameAfter
  * @brief repetition interval sender name (sec)
@@ -145,8 +146,8 @@ ChatLog::ChatLog(QWidget* parent) : QGraphicsView(parent), scrollBarValue{0} {
     settings::Translator::registerHandler([this] { retranslateUi(); }, this);
     retranslateUi();
 
-    auto& s = Settings::getInstance();
-    connect(&s, &Settings::emojiFontPointSizeChanged, this, &ChatLog::forceRelayout);
+    auto s = Nexus::getProfile()->getSettings();
+    connect(s, &Settings::emojiFontPointSizeChanged, this, &ChatLog::forceRelayout);
 }
 
 ChatLog::~ChatLog() {

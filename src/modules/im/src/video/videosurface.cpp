@@ -13,7 +13,7 @@
 #include "videosurface.h"
 #include "base/SvgUtils.h"
 #include "src/core/core.h"
-#include "src/lib/storeage/settings/style.h"
+#include "src/lib/storage/settings/style.h"
 #include "src/model/friend.h"
 #include "src/model/friendlist.h"
 #include "src/persistence/settings.h"

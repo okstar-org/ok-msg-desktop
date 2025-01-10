@@ -21,9 +21,9 @@
 #include <QShortcut>
 #include <QSplitter>
 
-#include "lib/storeage/settings/translator.h"
+#include "lib/storage/settings/translator.h"
 #include "src/core/core.h"
-#include "src/lib/storeage/settings/style.h"
+#include "src/lib/storage/settings/style.h"
 #include "src/model/chatroom/friendchatroom.h"
 #include "src/model/friend.h"
 #include "src/model/friendlist.h"
@@ -52,7 +52,7 @@ ContentDialog::ContentDialog(QWidget* parent)
         , activeChatroomWidget(nullptr)
         , videoSurfaceSize(QSize())
         , videoCount(0) {
-    const Settings& s = Settings::getInstance();
+    auto s = Nexus::getProfile()->getSettings();
     setStyleSheet(lib::settings::Style::getStylesheet("contentDialog/contentDialog.css"));
 
     friendLayout->setMargin(0);
@@ -60,7 +60,7 @@ ContentDialog::ContentDialog(QWidget* parent)
 
     layouts = {friendLayout->getLayoutOnline(), groupLayout.getLayout()};
 
-    if (s.getGroupchatPosition()) {
+    if (s->getGroupchatPosition()) {
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 13, 0))
         layouts.swapItemsAt(0, 1);
 #else
@@ -73,7 +73,7 @@ ContentDialog::ContentDialog(QWidget* parent)
     friendWidget->setAutoFillBackground(true);
     friendWidget->setLayout(friendLayout);
 
-    onGroupchatPositionChanged(s.getGroupchatPosition());
+    onGroupchatPositionChanged(s->getGroupchatPosition());
 
     QScrollArea* friendScroll = new QScrollArea(this);
     friendScroll->setMinimumWidth(minWidget);
@@ -105,7 +105,7 @@ ContentDialog::ContentDialog(QWidget* parent)
     setAttribute(Qt::WA_DeleteOnClose);
     setObjectName("detached");
 
-    QByteArray geometry = s.getDialogGeometry();
+    QByteArray geometry = s->getDialogGeometry();
 
     if (!geometry.isNull()) {
         restoreGeometry(geometry);
@@ -114,7 +114,7 @@ ContentDialog::ContentDialog(QWidget* parent)
     }
 
     SplitterRestorer restorer(splitter);
-    restorer.restore(s.getDialogSplitterState(), size());
+    restorer.restore(s->getDialogSplitterState(), size());
 
     username = Core::getInstance()->getUsername();
 
@@ -126,9 +126,7 @@ ContentDialog::ContentDialog(QWidget* parent)
     new QShortcut(QKeySequence(Qt::CTRL, Qt::Key_PageUp), this, SLOT(previousContact()));
     new QShortcut(QKeySequence(Qt::CTRL, Qt::Key_PageDown), this, SLOT(nextContact()));
 
-    connect(&s,
-            &Settings::groupchatPositionChanged,
-            this,
+    connect(s, &Settings::groupchatPositionChanged, this,
             &ContentDialog::onGroupchatPositionChanged);
     connect(splitter, &QSplitter::splitterMoved, this, &ContentDialog::saveSplitterState);
 
@@ -198,7 +196,7 @@ int ContentDialog::getCurrentLayout(QLayout*& layout) {
 /**
  * @brief Activate next/previous contact.
  * @param forward If true, activate next contace, previous otherwise.
- * @param inverse ??? TODO: Add docs.
+ * @param inverse
  */
 void ContentDialog::cycleContacts(bool forward, bool inverse) {
     QLayout* currentLayout;
@@ -208,7 +206,7 @@ void ContentDialog::cycleContacts(bool forward, bool inverse) {
     }
 
     if (!inverse && index == currentLayout->count() - 1) {
-        bool groupsOnTop = Settings::getInstance().getGroupchatPosition();
+        bool groupsOnTop = Nexus::getProfile()->getSettings()->getGroupchatPosition();
         bool onlineEmpty = friendLayout->getLayoutOnline()->isEmpty();
         bool groupsEmpty = groupLayout.getLayout()->isEmpty();
 
@@ -538,14 +536,14 @@ void ContentDialog::retranslateUi() {
  * @brief Save size of dialog window.
  */
 void ContentDialog::saveDialogGeometry() {
-    Settings::getInstance().setDialogGeometry(saveGeometry());
+    Nexus::getProfile()->getSettings()->setDialogGeometry(saveGeometry());
 }
 
 /**
  * @brief Save state of splitter between dialog and dialog list.
  */
 void ContentDialog::saveSplitterState() {
-    Settings::getInstance().setDialogSplitterState(splitter->saveState());
+    Nexus::getProfile()->getSettings()->setDialogSplitterState(splitter->saveState());
 }
 
 bool ContentDialog::hasContact(const ContactId& contactId) const {

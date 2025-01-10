@@ -15,7 +15,7 @@
 #include "accountinfoaccessor.h"
 #include "activetabaccessor.h"
 #include "applicationinfoaccessor.h"
-#include "lib/storeage/settings/applicationinfo.h"
+#include "lib/storage/settings/applicationinfo.h"
 
 #include "chattabaccessor.h"
 

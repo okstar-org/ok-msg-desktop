@@ -15,7 +15,7 @@
 
 #include "ContentWidget.h"
 #include "genericchatroomwidget.h"
-#include "src/core/FriendId.h"
+#include "src/model/FriendId.h"
 #include "src/model/chatroom/groupchatroom.h"
 #include "src/model/friendmessagedispatcher.h"
 #include "src/model/message.h"

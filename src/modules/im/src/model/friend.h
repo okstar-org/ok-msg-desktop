@@ -15,10 +15,10 @@
 
 #include <QObject>
 #include <QString>
-#include "contact.h"
-#include "src/core/contactid.h"
+#include "contactid.h"
 #include "src/core/core.h"
 #include "src/core/toxid.h"
+#include "src/model/contact.h"
 #include "src/model/status.h"
 
 namespace lib::messenger {

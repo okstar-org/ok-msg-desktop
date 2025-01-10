@@ -19,6 +19,7 @@
 #include "content/simpletext.h"
 #include "content/spinner.h"
 #include "content/text.h"
+#include "src/nexus.h"
 #include "src/persistence/settings.h"
 #include "src/widget/widget.h"
 
@@ -28,7 +29,7 @@ ChatMessageBox::ChatMessageBox(const QPixmap& avatar,
                                const QString& id,
                                bool isSelf)
         : IChatItem{id}, _IsSelf{isSelf} {
-    QFont baseFont = Settings::getInstance().getChatMessageFont();
+    QFont baseFont = Nexus::getProfile()->getSettings()->getChatMessageFont();
     auto text = new Text(message, baseFont, false, message);
     text->setBoundingRadius(4.0);
     text->setContentsMargins(QMarginsF(3, 3, 3, 3));
@@ -47,7 +48,7 @@ void ChatMessageBox::init(const QPixmap& avatar, const QString& contactName,
     connect(messageItem, &ChatLineContent::reply, this, &ChatMessageBox::doReply);
     connect(messageItem, &ChatLineContent::forward, this, &ChatMessageBox::doForward);
 
-    QFont baseFont = Settings::getInstance().getChatMessageFont();
+    QFont baseFont = Nexus::getProfile()->getSettings()->getChatMessageFont();
     QFont nameFont = nicknameFont(baseFont);
     avatarItem = new ContactAvatar(avatar);
     connect(avatarItem, &ChatLineContent::reply, this, &ChatMessageBox::doReply);

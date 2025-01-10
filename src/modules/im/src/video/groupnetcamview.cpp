@@ -12,13 +12,15 @@
 
 #include "groupnetcamview.h"
 #include <QBoxLayout>
+#include <QDebug>
 #include <QMap>
 #include <QScrollArea>
 #include <QSplitter>
 #include <QTimer>
-#include "src/audio/audio.h"
-#include "src/core/FriendId.h"
+
+#include "lib/audio/audio.h"
 #include "src/core/core.h"
+#include "src/model/FriendId.h"
 #include "src/model/friend.h"
 #include "src/model/friendlist.h"
 #include "src/nexus.h"
@@ -26,7 +28,6 @@
 #include "src/video/videosurface.h"
 #include "src/widget/tool/croppinglabel.h"
 
-#include <QDebug>
 class LabeledVideo : public QFrame {
 public:
     LabeledVideo(const QPixmap& avatar, QString fontColorString, QWidget* parent = nullptr,

@@ -10,7 +10,6 @@ pkg_check_modules(AVUTIL REQUIRED libavutil)
 pkg_check_modules(SWSCALE REQUIRED libswscale)
 pkg_check_modules(SWRESAMPLE REQUIRED libswresample)
 pkg_check_modules(QRENCODE REQUIRED libqrencode)
-pkg_check_modules(OpenAL REQUIRED openal)
 pkg_check_modules(exif REQUIRED libexif)
 pkg_check_modules(JPEG REQUIRED libjpeg)
 
@@ -19,7 +18,6 @@ include_directories(${AVDEVICE_INCLUDE_DIRS})
 include_directories(${QRENCODE_INCLUDE_DIRS})
 include_directories(${exif_INCLUDE_DIRS})
 include_directories(${JPEG_INCLUDE_DIRS})
-include_directories(${OpenAL_INCLUDE_DIRS})
 
 list(APPEND ALL_LIBRARIES
 		${AVDEVICE_LINK_LIBRARIES}
@@ -30,7 +28,6 @@ list(APPEND ALL_LIBRARIES
 		${QRENCODE_LINK_LIBRARIES}
 		${JPEG_LINK_LIBRARIES}
 		${exif_LINK_LIBRARIES}
-		${OpenAL_LINK_LIBRARIES}
 )
 
 set(CMAKE_AUTOUIC_SEARCH_PATHS ./src src/widget src/widget/form)
@@ -56,18 +53,6 @@ qt5_wrap_ui(
 )
 
 set(${PROJECT_NAME}_SOURCES
-		src/audio/audio.cpp
-		src/audio/audio.h
-		src/audio/backend/alsink.cpp
-		src/audio/backend/alsink.h
-		src/audio/backend/alsource.cpp
-		src/audio/backend/alsource.h
-		src/audio/backend/openal.cpp
-		src/audio/backend/openal.h
-		src/audio/iaudiosettings.h
-		src/audio/iaudiocontrol.h
-		src/audio/iaudiosink.h
-		src/audio/iaudiosource.h
 		src/chatlog/chatlinecontent.cpp
 		src/chatlog/chatlinecontent.h
 		src/chatlog/chatlinecontentproxy.cpp
@@ -114,8 +99,6 @@ set(${PROJECT_NAME}_SOURCES
 		src/core/core.cpp
 		src/core/corefile.cpp
 		src/core/corefile.h
-		src/core/dhtserver.cpp
-		src/core/dhtserver.h
 		src/core/icoresettings.h
 		src/core/toxcall.cpp
 		src/core/toxcall.h
@@ -126,14 +109,14 @@ set(${PROJECT_NAME}_SOURCES
 		src/core/toxfilepause.h
 		src/core/toxid.cpp
 		src/core/toxid.h
-		src/core/groupid.cpp
-		src/core/groupid.h
 		src/core/toxoptions.cpp
 		src/core/toxoptions.h
-		src/core/FriendId.cpp
-		src/core/FriendId.h
-		src/core/contactid.cpp
-		src/core/contactid.h
+		src/model/groupid.h
+		src/model/groupid.cpp
+		src/model/contactid.h
+		src/model/contactid.cpp
+		src/model/FriendId.h
+		src/model/FriendId.cpp
 		src/model/friendlist.cpp
 		src/model/friendlist.h
 		src/model/grouplist.cpp
@@ -188,8 +171,8 @@ set(${PROJECT_NAME}_SOURCES
 		src/persistence/offlinemsgengine.h
 		src/persistence/paths.cpp
 		src/persistence/paths.h
-		src/persistence/profile.cpp
 		src/persistence/profile.h
+		src/persistence/profile.cpp
 		src/persistence/profilelocker.cpp
 		src/persistence/profilelocker.h
 		src/persistence/serialize.cpp
@@ -339,8 +322,6 @@ set(${PROJECT_NAME}_SOURCES
 		src/widget/tool/flyoutoverlaywidget.h
 		src/widget/tool/friendrequestdialog.cpp
 		src/widget/tool/friendrequestdialog.h
-		src/widget/tool/identicon.cpp
-		src/widget/tool/identicon.h
 		src/widget/tool/movablewidget.cpp
 		src/widget/tool/movablewidget.h
 		src/widget/tool/profileimporter.cpp
@@ -523,8 +504,10 @@ elseif (LINUX)
 endif ()
 
 target_link_libraries(${PROJECT_NAME}
-		PUBLIC OkIMCore
-		PUBLIC ${ok-gloox_LIBRARIES}
+		PRIVATE OkIMCore
+		PRIVATE OkStorage
+		PRIVATE OkAudio
+		PRIVATE ${ok-gloox_LIBRARIES}
 		PUBLIC ${Qt5Core_LIBRARIES}
 		PUBLIC ${Qt5Gui_LIBRARIES}
 		PUBLIC ${Qt5Widgets_LIBRARIES}
@@ -534,7 +517,7 @@ target_link_libraries(${PROJECT_NAME}
 		PUBLIC ${CMAKE_REQUIRED_LIBRARIES}
 		PUBLIC ${ALL_LIBRARIES}
 		PUBLIC ${PLATFORM_LIBS}
-		PRIVATE range-v3::meta range-v3::concepts range-v3::range-v3
+		PUBLIC range-v3::meta range-v3::concepts range-v3::range-v3
 )
 
 if (WIN32)

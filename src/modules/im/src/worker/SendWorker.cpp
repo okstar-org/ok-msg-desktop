@@ -19,18 +19,18 @@
 #include <src/model/chatroom/groupchatroom.h>
 #include <src/model/friendmessagedispatcher.h>
 #include <src/model/groupmessagedispatcher.h>
-#include <src/persistence/profile.h>
 #include <src/persistence/settings.h>
 #include <src/widget/chatformheader.h>
 #include <src/widget/contentdialogmanager.h>
 #include <src/widget/form/groupchatform.h>
+#include "src/lib/session/profile.h"
 #include "src/nexus.h"
 
 SendWorker::SendWorker(const FriendId& friendId) : contactId{friendId} {
     qDebug() << __func__ << "friend:" << friendId.toString();
 
     auto core = Core::getInstance();
-    auto& settings = Settings::getInstance();
+    auto settings = Nexus::getProfile()->getSettings();
     auto profile = Nexus::getProfile();
     auto history = profile->getHistory();
 
@@ -39,7 +39,7 @@ SendWorker::SendWorker(const FriendId& friendId) : contactId{friendId} {
     messageDispatcher =
             std::make_unique<FriendMessageDispatcher>(friendId, sharedParams, *core, *core);
 
-    chatHistory = std::make_unique<ChatHistory>(friendId, history, *core, settings,
+    chatHistory = std::make_unique<ChatHistory>(friendId, history, *core, *settings,
                                                 *messageDispatcher.get());
 
     chatForm = std::make_unique<ChatForm>(&friendId, *chatHistory.get(), *messageDispatcher.get());
@@ -54,13 +54,13 @@ SendWorker::SendWorker(const GroupId& groupId) : contactId{groupId} {
 
     auto profile = Nexus::getProfile();
     auto core = Core::getInstance();
-    auto& settings = Settings::getInstance();
+    auto settings = Nexus::getProfile()->getSettings();
     auto history = profile->getHistory();
 
     initChatHeader(groupId);
 
     messageDispatcher = std::make_unique<GroupMessageDispatcher>(groupId, sharedParams, *core,
-                                                                 *core, Settings::getInstance());
+                                                                 *core, *settings);
 
     chatLog = std::make_unique<SessionChatLog>(*core);
     connect(messageDispatcher.get(), &IMessageDispatcher::messageSent, chatLog.get(),
@@ -71,7 +71,7 @@ SendWorker::SendWorker(const GroupId& groupId) : contactId{groupId} {
             &SessionChatLog::onMessageReceived);
 
     chatForm = std::make_unique<GroupChatForm>(&groupId, *chatLog.get(), *messageDispatcher.get(),
-                                               settings);
+                                               *settings);
 
     chatRoom = std::make_unique<GroupChatroom>(&groupId, ContentDialogManager::getInstance());
 }

@@ -18,7 +18,7 @@
 #include <QFlag>
 #include <QObject>
 
-#include <src/core/contactid.h>
+#include "src/model/contactid.h"
 
 class FriendId;
 

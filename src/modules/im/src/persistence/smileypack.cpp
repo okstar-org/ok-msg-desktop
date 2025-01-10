@@ -20,6 +20,8 @@
 #include <QStringBuilder>
 #include <QTimer>
 #include <QtConcurrent/QtConcurrentRun>
+#include "src/nexus.h"
+#include "src/persistence/profile.h"
 
 #if defined(Q_OS_FREEBSD)
 #include <locale.h>
@@ -91,13 +93,16 @@ QStringList loadDefaultPaths() {
  * @param key Describes which smiley is needed
  * @return Key that wrapped into image ref
  */
-QString getAsRichText(const QString& key) { return RICH_TEXT_PATTERN.arg(key); }
+QString getAsRichText(const QString& key) {
+    return RICH_TEXT_PATTERN.arg(key);
+}
 
 SmileyPack::SmileyPack() : cleanupTimer{new QTimer(this)} {
-    QtConcurrent::run(this, &SmileyPack::load, Settings::getInstance().getSmileyPack());
+    auto s = Nexus::getProfile()->getSettings();
 
-    connect(&Settings::getInstance(), &Settings::smileyPackChanged, this,
-            &SmileyPack::onSmileyPackChanged);
+    QtConcurrent::run(this, &SmileyPack::load, s->getSmileyPack());
+
+    connect(s, &Settings::smileyPackChanged, this, &SmileyPack::onSmileyPackChanged);
     connect(cleanupTimer, &QTimer::timeout, this, &SmileyPack::cleanupIconsCache);
     cleanupTimer->start(CLEANUP_TIMEOUT);
 }
@@ -317,5 +322,6 @@ std::shared_ptr<QIcon> SmileyPack::getAsIcon(const QString& emoticon) const {
 }
 
 void SmileyPack::onSmileyPackChanged() {
-    QtConcurrent::run(this, &SmileyPack::load, Settings::getInstance().getSmileyPack());
+    auto s = Nexus::getProfile()->getSettings();
+    QtConcurrent::run(this, &SmileyPack::load, s->getSmileyPack());
 }

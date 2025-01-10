@@ -11,6 +11,8 @@
  */
 
 #include "genericsettings.h"
+#include "src/nexus.h"
+#include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
 
 #include <QCheckBox>
@@ -74,5 +76,5 @@ void GenericForm::showEvent(QShowEvent* e) { QWidget::showEvent(e); }
 
 void GenericForm::hideEvent(QHideEvent* e) {
     QWidget::hideEvent(e);
-    Settings::getInstance().saveGlobal();
+    Nexus::getProfile()->getSettings()->saveGlobal();
 }

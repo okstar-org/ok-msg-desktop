@@ -13,7 +13,7 @@
 #ifndef TOXID_H
 #define TOXID_H
 
-#include "FriendId.h"
+#include "src/model/FriendId.h"
 
 #include <QByteArray>
 #include <QString>

@@ -24,15 +24,15 @@
 #include "contentdialogmanager.h"
 #include "friendwidget.h"
 #include "groupwidget.h"
-#include "lib/storeage/settings/OkSettings.h"
-#include "src/lib/storeage/settings/style.h"
+#include "lib/storage/settings/OkSettings.h"
+#include "src/lib/session/profile.h"
+#include "src/lib/storage/settings/style.h"
 #include "src/model/chathistory.h"
 #include "src/model/chatroom/friendchatroom.h"
 #include "src/model/friendlist.h"
 #include "src/model/group.h"
 #include "src/model/status.h"
 #include "src/nexus.h"
-#include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
 #include "widget.h"
 
@@ -53,7 +53,7 @@ enum class Time {
 static const int LAST_TIME = static_cast<int>(Time::Never);
 
 inline QDateTime getActiveTimeFriend(const Friend* contact) {
-    return Settings::getInstance().getFriendActivity(contact->getPublicKey());
+    return Nexus::getProfile()->getSettings()->getFriendActivity(contact->getPublicKey());
 }
 
 MessageSessionListWidget::MessageSessionListWidget(MainLayout* parent,
@@ -67,11 +67,11 @@ MessageSessionListWidget::MessageSessionListWidget(MainLayout* parent,
     listLayout = new ContactListLayout(this);
     setLayout(listLayout);
 
-    mode = Settings::getInstance().getFriendSortingMode();
+    mode = Nexus::getProfile()->getSettings()->getFriendSortingMode();
     sortByMode(mode);
 
-    auto& settings = Settings::getInstance();
-    connect(&settings, &Settings::compactLayoutChanged, this,
+    auto settings = Nexus::getProfile()->getSettings();
+    connect(settings, &Settings::compactLayoutChanged, this,
             &MessageSessionListWidget::onCompactChanged);
 
     //  connect(&settings, &Settings::groupchatPositionChanged, this,
@@ -139,10 +139,10 @@ void MessageSessionListWidget::connectSessionWidget(MessageSessionWidget& sw) {
 
 void MessageSessionListWidget::updateFriendActivity(const Friend& frnd) {
     const FriendId& pk = frnd.getPublicKey();
-    auto& settings = Settings::getInstance();
-    const auto oldTime = settings.getFriendActivity(pk);
+    auto settings = Nexus::getProfile()->getSettings();
+    const auto oldTime = settings->getFriendActivity(pk);
     const auto newTime = QDateTime::currentDateTime();
-    settings.setFriendActivity(pk, newTime);
+    settings->setFriendActivity(pk, newTime);
     MessageSessionWidget* widget = getMessageSession(frnd.getPublicKey().toString());
     moveWidget(widget, frnd.getStatus());
     updateActivityTime(oldTime);  // update old category widget
@@ -152,7 +152,7 @@ void MessageSessionListWidget::setMode(SortingMode mode) {
     if (this->mode == mode) return;
 
     this->mode = mode;
-    Settings::getInstance().setFriendSortingMode(mode);
+    Nexus::getProfile()->getSettings()->setFriendSortingMode(mode);
 
     sortByMode(mode);
 }
@@ -163,13 +163,13 @@ void MessageSessionListWidget::sortByMode(SortingMode mode) {
         //    circleLayout->getLayout()->setSpacing(0);
         //    circleLayout->getLayout()->setMargin(0);
 
-        //    for (int i = 0; i < Settings::getInstance().getCircleCount(); ++i) {
+        //    for (int i = 0; i < Nexus::getProfile()->getSettings()->getCircleCount(); ++i) {
         //      addCircleWidget(i);
         //      CircleWidget::getFromID(i)->setVisible(false);
         //    }
 
         // Only display circles once all created to avoid artifacts.
-        //    for (int i = 0; i < Settings::getInstance().getCircleCount(); ++i)
+        //    for (int i = 0; i < Nexus::getProfile()->getSettings()->getCircleCount(); ++i)
         //      CircleWidget::getFromID(i)->setVisible(true);
 
         int count = activityLayout ? activityLayout->count() : 0;
@@ -195,7 +195,7 @@ void MessageSessionListWidget::sortByMode(SortingMode mode) {
 
         reDraw();
     } else if (mode == SortingMode::Activity) {
-        QLocale ql(Settings::getInstance().getTranslation());
+        QLocale ql(Nexus::getProfile()->getSettings()->getTranslation());
         QDate today = QDate::currentDate();
 #define COMMENT "Category for sorting friends by activity"
         // clang-format off
@@ -216,7 +216,7 @@ void MessageSessionListWidget::sortByMode(SortingMode mode) {
 #undef COMMENT
 
         activityLayout = new QVBoxLayout();
-        //    bool compact = Settings::getInstance().getCompactLayout();
+        //    bool compact = Nexus::getProfile()->getSettings()->getCompactLayout();
         //    for (Time t : names.keys()) {
         //      CategoryWidget *category = new CategoryWidget(compact, this);
         //      category->setName(names[t]);
@@ -341,7 +341,7 @@ void MessageSessionListWidget::cycleContacts(GenericChatroomWidget* activeChatro
 
     if (friendWidget != nullptr) {
         const FriendId& pk = friendWidget->getFriend()->getPublicKey();
-        uint32_t circleId = Settings::getInstance().getFriendCircleID(pk);
+        uint32_t circleId = Nexus::getProfile()->getSettings()->getFriendCircleID(pk);
         //    circleWidget = CircleWidget::getFromID(circleId);
         //    if (circleWidget != nullptr) {
         //      if (circleWidget->cycleContacts(friendWidget, forward)) {
@@ -422,7 +422,7 @@ void MessageSessionListWidget::dropEvent(QDropEvent* event) {
     if (!f) return;
 
     // Save CircleWidget before changing the Id
-    //  int circleId = Settings::getInstance().getFriendCircleID(f->getPublicKey());
+    //  int circleId = Nexus::getProfile()->getSettings()->getFriendCircleID(f->getPublicKey());
     //  CircleWidget *circleWidget = CircleWidget::getFromID(circleId);
 
     moveWidget(widget, f->getStatus(), true);
@@ -452,12 +452,12 @@ void MessageSessionListWidget::moveWidget(MessageSessionWidget* widget, Status::
                                           bool add) {
     //  if (mode == SortingMode::Name) {
     //    const IMFriend *f = widget->getFriend();
-    //    int circleId = Settings::getInstance().getFriendCircleID(f->getPublicKey());
+    //    int circleId = Nexus::getProfile()->getSettings()->getFriendCircleID(f->getPublicKey());
     //    CircleWidget *circleWidget = CircleWidget::getFromID(circleId);
 
     //    if (circleWidget == nullptr || add) {
     //      if (circleId != -1)
-    //        Settings::getInstance().setFriendCircleID(f->getPublicKey(), -1);
+    //        Nexus::getProfile()->getSettings()->setFriendCircleID(f->getPublicKey(), -1);
     //      listLayout->addWidget(widget);
     //      return;
     //    }

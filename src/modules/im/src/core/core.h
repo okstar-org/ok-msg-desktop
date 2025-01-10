@@ -13,13 +13,13 @@
 #ifndef CORE_HPP
 #define CORE_HPP
 
-#include "FriendId.h"
-#include "groupid.h"
 #include "icorefriendmessagesender.h"
 #include "icoregroupmessagesender.h"
 #include "icoregroupquery.h"
 #include "icoreidhandler.h"
+#include "src/model/FriendId.h"
 #include "src/model/MsgId.h"
+#include "src/model/groupid.h"
 #include "toxfile.h"
 #include "toxid.h"
 
@@ -69,7 +69,6 @@ public:
     static ToxCorePtr makeToxCore(const QString& host,
                                   const QString& name,
                                   const QString& password,
-                                  const QByteArray& savedata,
                                   const ICoreSettings* const settings,
                                   ToxCoreErrors* err = nullptr);
     static Core* getInstance();
@@ -179,7 +178,6 @@ private:
 
     void sendReceiptReceived(const QString& friendId, QString receipt);
 
-    bool checkConnection();
 
     void makeTox(QByteArray savedata, ICoreSettings* s);
     void loadFriends();

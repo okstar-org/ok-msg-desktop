@@ -13,7 +13,7 @@
 #ifndef GROUPLIST_H
 #define GROUPLIST_H
 
-#include "src/core/groupid.h"
+#include "src/model/groupid.h"
 
 template <class A, class B> class QHash;
 template <class T> class QList;

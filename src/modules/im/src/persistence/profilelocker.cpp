@@ -13,6 +13,8 @@
 #include "profilelocker.h"
 #include <QDebug>
 #include <QDir>
+#include "src/nexus.h"
+#include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
 
 /**
@@ -29,7 +31,7 @@ unique_ptr<QLockFile> ProfileLocker::lockfile;
 QString ProfileLocker::curLockName;
 
 QString ProfileLocker::lockPathFromName(const QString& name) {
-    return Settings::getInstance().getSettingsDirPath() + '/' + name + ".lock";
+    return Nexus::getProfile()->getSettings()->getSettingsDirPath() + '/' + name + ".lock";
 }
 
 /**

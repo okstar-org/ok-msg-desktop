@@ -49,6 +49,8 @@ set(${PROJECT_NAME}_SOURCES
     RoundedPixmapLabel.h
     RoundedPixmapLabel.cpp
     Styles.h
+		identicon.cpp
+		identicon.h
 )
 
 if(WIN32)

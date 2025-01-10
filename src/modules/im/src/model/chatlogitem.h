@@ -13,8 +13,8 @@
 #ifndef CHAT_LOG_ITEM_H
 #define CHAT_LOG_ITEM_H
 
-#include "src/core/FriendId.h"
 #include "src/core/toxfile.h"
+#include "src/model/FriendId.h"
 #include "src/model/message.h"
 #include "src/persistence/history.h"
 

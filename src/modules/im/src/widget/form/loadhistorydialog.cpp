@@ -14,10 +14,10 @@
 #include <QCalendarWidget>
 #include <QDate>
 #include <QTextCharFormat>
+#include "src/lib/session/profile.h"
 #include "src/model/ichatlog.h"
 #include "src/nexus.h"
 #include "src/persistence/history.h"
-#include "src/persistence/profile.h"
 #include "ui_loadhistorydialog.h"
 
 LoadHistoryDialog::LoadHistoryDialog(const IChatLog* chatLog, QWidget* parent)

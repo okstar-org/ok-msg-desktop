@@ -27,19 +27,19 @@
 #include "base/files.h"
 #include "base/images.h"
 #include "gui.h"
-#include "lib/storeage/settings/OkSettings.h"
-#include "lib/storeage/settings/translator.h"
+#include "lib/storage/settings/OkSettings.h"
+#include "lib/storage/settings/translator.h"
 #include "src/chatlog/chatlinecontentproxy.h"
 #include "src/chatlog/chatlog.h"
 #include "src/chatlog/content/filetransferwidget.h"
 #include "src/chatlog/content/simpletext.h"
 #include "src/chatlog/content/timestamp.h"
 #include "src/core/core.h"
+#include "src/lib/session/profile.h"
 #include "src/model/friend.h"
 #include "src/model/friendlist.h"
 #include "src/model/grouplist.h"
 #include "src/nexus.h"
-#include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
 #include "src/persistence/smileypack.h"
 #include "src/video/genericnetcamview.h"
@@ -203,8 +203,12 @@ GenericChatForm::GenericChatForm(const ContactId* contact_,
 
     // 聊天框
     chatLog = new ChatLog(this);
+
+    auto s = Nexus::getProfile()->getSettings();
+    // settings
+    connect(s, &Settings::chatMessageFontChanged, this, &GenericChatForm::onChatMessageFontChanged);
     //    chatLog->setMinimumHeight(200);
-    chatLog->setBusyNotification(ChatMessage::createBusyNotification());
+    chatLog->setBusyNotification(ChatMessage::createBusyNotification(s->getChatMessageFont()));
 
     connect(chatLog, &ChatLog::firstVisibleLineChanged, this, &GenericChatForm::updateShowDateInfo);
     connect(chatLog, &ChatLog::loadHistoryLower, this, &GenericChatForm::loadHistoryLower);
@@ -224,11 +228,7 @@ GenericChatForm::GenericChatForm(const ContactId* contact_,
     bodySplitter->setStretchFactor(1, 0);
     bodySplitter->setChildrenCollapsible(false);
 
-    // settings
-    auto& s = Settings::getInstance();
 
-    connect(&s, &Settings::chatMessageFontChanged, this,
-            &GenericChatForm::onChatMessageFontChanged);
     //  dateInfo = new QLabel(this);
     //  dateInfo->setAlignment(Qt::AlignHCenter);
     //  dateInfo->setVisible(false);
@@ -315,14 +315,13 @@ QDateTime GenericChatForm::getFirstTime() const {
 }
 
 void GenericChatForm::reloadTheme() {
-    const Settings& s = Settings::getInstance();
-    setStyleSheet(lib::settings::Style::getStylesheet("genericChatForm/genericChatForm.css"));
+    //    auto s = Nexus::getProfile()->getSettings();
 
     //  searchForm->reloadTheme();
-
     //  headWidget->setStyleSheet(Style::getStylesheet("chatArea/chatHead.css"));
     //  headWidget->reloadTheme();
 
+    setStyleSheet(lib::settings::Style::getStylesheet("genericChatForm/genericChatForm.css"));
     chatLog->setStyleSheet(lib::settings::Style::getStylesheet("chatArea/chatArea.css"));
     chatLog->reloadTheme();
 }
@@ -764,7 +763,7 @@ void GenericChatForm::updateShowDateInfo(const IChatItem::Ptr& prevLine,
     //  if (date.isValid() && date.date() != QDate::currentDate()) {
     //    const auto dateText =
     //        QStringLiteral("<b>%1<\b>")
-    //            .arg(date.toString(Settings::getInstance().getDateFormat()));
+    //            .arg(date.toString(Nexus::getProfile()->getSettings()->getDateFormat()));
     //    dateInfo->setText(dateText);
     //    dateInfo->setVisible(true);
     //  } else {
@@ -780,7 +779,7 @@ void GenericChatForm::retranslateUi() {
 }
 
 void GenericChatForm::onTextEditChanged(const QString& text) {
-    if (!Settings::getInstance().getTypingNotification()) {
+    if (!Nexus::getProfile()->getSettings()->getTypingNotification()) {
         if (isTyping) {
             isTyping = false;
             Core::getInstance()->sendTyping(contactId->getId(), false);

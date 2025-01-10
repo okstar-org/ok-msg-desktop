@@ -13,8 +13,8 @@
 #include "filesform.h"
 #include <QFileInfo>
 #include <QWindow>
-#include "lib/storeage/settings/translator.h"
-#include "src/lib/storeage/settings/style.h"
+#include "lib/storage/settings/translator.h"
+#include "src/lib/storage/settings/style.h"
 #include "src/widget/contentlayout.h"
 #include "src/widget/widget.h"
 

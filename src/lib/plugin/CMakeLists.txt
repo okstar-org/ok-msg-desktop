@@ -35,7 +35,7 @@ add_library(${PROJECT_NAME} STATIC
 
 target_link_libraries(${PROJECT_NAME}
 		PRIVATE OkBase
-		PRIVATE OkStoreage
+		PRIVATE OkStorage
 		PRIVATE ${Qt5Core_LIBRARIES}
 		PRIVATE ${Qt5Xml_LIBRARIES}
 		PRIVATE ${Qt5Widgets_LIBRARIES}

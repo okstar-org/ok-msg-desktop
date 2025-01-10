@@ -13,7 +13,7 @@
 #ifndef ICORE_ID_HANDLER_H
 #define ICORE_ID_HANDLER_H
 
-#include "FriendId.h"
+#include "src/model/FriendId.h"
 #include "toxid.h"
 
 class ICoreIdHandler {

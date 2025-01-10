@@ -16,7 +16,8 @@
 #include "gui.h"
 #include "src/core/core.h"
 #include "src/core/corefile.h"
-#include "src/lib/storeage/settings/style.h"
+#include "src/lib/storage/settings/style.h"
+#include "src/nexus.h"
 #include "src/persistence/settings.h"
 #include "src/widget/widget.h"
 
@@ -550,10 +551,9 @@ void FileTransferWidget::handleButton(QPushButton* btn) {
         } else if (btn->objectName() == "resume") {
             coreFile->pauseResumeFile(fileInfo.receiver, fileInfo.fileId);
         } else if (btn->objectName() == "accept") {
-            QString path =
-                    Settings::getInstance().getGlobalAutoAcceptDir() + "/" + fileInfo.fileName;
+            QString path = Nexus::getProfile()->getSettings()->getGlobalAutoAcceptDir() + "/" +
+                           fileInfo.fileName;
             if (path.isEmpty()) return;
-
             qDebug() << "accept file save to path:" << path;
             acceptTransfer(path);
         }

@@ -11,13 +11,14 @@
  */
 
 #include "customtextdocument.h"
-#include "src/lib/storeage/settings/style.h"
-#include "src/persistence/settings.h"
-#include "src/persistence/smileypack.h"
-
 #include <QDebug>
 #include <QIcon>
 #include <QUrl>
+#include "src/lib/storage/settings/style.h"
+#include "src/nexus.h"
+#include "src/persistence/profile.h"
+#include "src/persistence/settings.h"
+#include "src/persistence/smileypack.h"
 
 CustomTextDocument::CustomTextDocument(QObject* parent) : QTextDocument(parent) {
     setUndoRedoEnabled(false);
@@ -26,8 +27,9 @@ CustomTextDocument::CustomTextDocument(QObject* parent) : QTextDocument(parent) 
 
 QVariant CustomTextDocument::loadResource(int type, const QUrl& name) {
     if (type == QTextDocument::ImageResource && name.scheme() == "key") {
-        QSize size = QSize(Settings::getInstance().getEmojiFontPointSize(),
-                           Settings::getInstance().getEmojiFontPointSize());
+        auto s = Nexus::getProfile()->getSettings();
+
+        QSize size = QSize(s->getEmojiFontPointSize(), s->getEmojiFontPointSize());
         QString fileName = QUrl::fromPercentEncoding(name.toEncoded()).mid(4).toHtmlEscaped();
 
         std::shared_ptr<QIcon> icon = SmileyPack::getInstance().getAsIcon(fileName);

@@ -22,8 +22,8 @@
 #include "base/logs.h"
 #include "base/widgets.h"
 #include "lib/backend/OkCloudService.h"
-#include "lib/storeage/settings/OkSettings.h"
-#include "lib/storeage/settings/translator.h"
+#include "lib/storage/settings/OkSettings.h"
+#include "lib/storage/settings/translator.h"
 #include "ui_LoginWidget.h"
 
 namespace UI {

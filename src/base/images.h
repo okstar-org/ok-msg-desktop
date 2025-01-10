@@ -36,8 +36,26 @@ public:
     inline static bool putToImage(const QByteArray& data, QImage& image) {
         return image.loadFromData(data);
     }
+
     inline static bool putToPixmap(const QByteArray& data, QPixmap& pixmap) {
         return pixmap.loadFromData(data);
+    }
+
+    inline static bool loadFormPixmap(const QPixmap& pixmap, QByteArray* to,
+                                      const std::string& fmt = "PNG") {
+        QBuffer buffer(to);
+        buffer.open(QIODevice::WriteOnly);
+
+        // 将QPixmap转换为QImage，因为QImageWriter需要QImage
+        QImage image = pixmap.toImage();
+        // 保存
+        if (!image.save(&buffer, fmt.data())) {
+            qWarning() << "Failed to save image to QByteArray.";
+            return false;
+        }
+
+        buffer.close();
+        return true;
     }
 
     static QPixmap roundRectPixmap(const QPixmap& srcPixMap, const QSize& size, int radius) {
@@ -64,11 +82,11 @@ public:
         painter.setRenderHints(QPainter::SmoothPixmapTransform, true);
         // 将图片裁剪为圆角
         QPainterPath path;
-        QRectF rect(0, 0, imageWidth - 0.5 , imageHeight - 0.5);
+        QRectF rect(0, 0, imageWidth - 0.5, imageHeight - 0.5);
         path.addRoundedRect(rect, radius, radius);
         painter.setClipPath(path);
         painter.drawPixmap(0, 0, imageWidth, imageHeight, newPixMap);
         return destImage;
     }
 };
-}
+}  // namespace ok::base

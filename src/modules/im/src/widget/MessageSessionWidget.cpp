@@ -19,7 +19,7 @@
 
 #include "contentdialogmanager.h"
 #include "src/core/core.h"
-#include "src/lib/storeage/settings/style.h"
+#include "src/lib/storage/settings/style.h"
 #include "src/model/aboutfriend.h"
 #include "src/model/chatroom/friendchatroom.h"
 #include "src/model/friend.h"
@@ -50,9 +50,9 @@
 
 #include <src/chatlog/chatlog.h>
 #include "form/chatform.h"
+#include "src/lib/session/profile.h"
 #include "src/model/chathistory.h"
 #include "src/nexus.h"
-#include "src/persistence/profile.h"
 #include "src/widget/chatformheader.h"
 
 #include "src/core/coreav.h"
@@ -77,10 +77,6 @@ MessageSessionWidget::MessageSessionWidget(ContentLayout* layout, const ContactI
 
     auto profile = Nexus::getProfile();
     auto core = Core::getInstance();
-    auto& settings = Settings::getInstance();
-    auto history = profile->getHistory();
-    auto dialogManager = ContentDialogManager::getInstance();
-    auto widget = Widget::getInstance();
 
     if (chatType == ChatType::Chat) {
         friendId = FriendId(contactId);
@@ -312,7 +308,7 @@ void MessageSessionWidget::removeChat() {
 // std::tuple<CircleWidget *, FriendListWidget *>
 // getCircleAndFriendList(const IMFriend *frnd, MessageSessionWidget *fw) {
 //   const auto pk = frnd->getPublicKey();
-//   const auto circleId = Settings::getInstance().getFriendCircleID(pk);
+//   const auto circleId = Nexus::getProfile()->getSettings()->getFriendCircleID(pk);
 //   auto circleWidget = CircleWidget::getFromID(circleId);
 //   auto w = circleWidget ? static_cast<QWidget *>(circleWidget)
 //                         : static_cast<QWidget *>(fw);
@@ -336,7 +332,7 @@ void MessageSessionWidget::moveToNewCircle() {
     //    friendList->addCircleWidget(this);
     //  } else {
     //    const auto pk = frnd->getPublicKey();
-    //    auto &s = Settings::getInstance();
+    //    auto &s = Nexus::getProfile()->getSettings();
     //    auto circleId = s.addCircle();
     //    s.setFriendCircleID(pk, circleId);
     //  }
@@ -352,7 +348,7 @@ void MessageSessionWidget::removeFromCircle() {
     //    friendList->moveWidget(this, frnd->getStatus(), true);
     //  } else {
     //    const auto pk = frnd->getPublicKey();
-    //    auto &s = Settings::getInstance();
+    //    auto &s = Nexus::getProfile()->getSettings();
     //    s.setFriendCircleID(pk, -1);
     //  }
 
@@ -365,8 +361,8 @@ void MessageSessionWidget::removeFromCircle() {
 void MessageSessionWidget::moveToCircle(int newCircleId) {
     //  const auto frnd = getFriend();
     //  const auto pk = frnd->getPublicKey();
-    //  const auto oldCircleId = Settings::getInstance().getFriendCircleID(pk);
-    //  auto &s = Settings::getInstance();
+    //  const auto oldCircleId = Nexus::getProfile()->getSettings()->getFriendCircleID(pk);
+    //  auto &s = Nexus::getProfile()->getSettings();
     //  auto oldCircleWidget = CircleWidget::getFromID(oldCircleId);
     //  auto newCircleWidget = CircleWidget::getFromID(newCircleId);
 
@@ -449,8 +445,8 @@ void MessageSessionWidget::setAvInvite(const ToxPeer& peerId, bool video) {
     header->showCallConfirm();
 
     // 发送来电声音
-    auto w = Widget::getInstance();
-    w->incomingNotification(friendId0);
+    auto& nexus = Nexus::getInstance();
+    nexus.incomingNotification(friendId0);
 }
 
 void MessageSessionWidget::setAvStart(bool video) {
@@ -465,8 +461,8 @@ void MessageSessionWidget::setAvStart(bool video) {
         header->removeCallConfirm();
     }
 
-    auto w = Widget::getInstance();
-    w->onStopNotification();
+    auto& w = Nexus::getInstance();
+    w.onStopNotification();
 }
 
 void MessageSessionWidget::setAvPeerConnectedState(lib::ortc::PeerConnectionState state) {
@@ -502,8 +498,8 @@ void MessageSessionWidget::setAvEnd(bool error) {
     // 关计时器
     sendWorker->destroyCallDuration(error);
 
-    auto w = Widget::getInstance();
-    w->onStopNotification();
+    auto& nexus = Nexus::getInstance();
+    nexus.onStopNotification();
 }
 
 void MessageSessionWidget::setGroup(const Group* g) {
@@ -548,8 +544,8 @@ void MessageSessionWidget::doAcceptCall(const ToxPeer& p, bool video) {
     qDebug() << __func__ << p.toString();
 
     // 关闭声音
-    auto w = Widget::getInstance();
-    w->onStopNotification();
+    auto& w = Nexus::getInstance();
+    w.onStopNotification();
 
     // 发送接收应答
     CoreAV* coreav = CoreAV::getInstance();
@@ -563,8 +559,8 @@ void MessageSessionWidget::doRejectCall(const ToxPeer& p) {
     header->removeCallConfirm();
 
     // 关闭声音
-    auto w = Widget::getInstance();
-    w->onStopNotification();
+    auto& nexus = Nexus::getInstance();
+    nexus.onStopNotification();
 
     // 发送拒绝应答
     CoreAV* coreav = CoreAV::getInstance();
@@ -578,8 +574,8 @@ void MessageSessionWidget::doCall() {
     if (av->isCallStarted(&contactId)) {
         av->cancelCall(fId);
     } else if (av->startCall(fId, false)) {
-        auto w = Widget::getInstance();
-        w->outgoingNotification();
+        auto& nexus = Nexus::getInstance();
+        nexus.outgoingNotification();
     }
 }
 
@@ -592,8 +588,8 @@ void MessageSessionWidget::doVideoCall() {
             av->cancelCall(cId);
         }
     } else if (av->startCall(cId, true)) {
-        auto w = Widget::getInstance();
-        w->outgoingNotification();
+        auto& nexus = Nexus::getInstance();
+        nexus.outgoingNotification();
     }
 }
 
@@ -679,7 +675,7 @@ QString MessageSessionWidget::getStatusString() const {
 void MessageSessionWidget::search(const QString& searchString, bool hide) {
     //  const auto frnd = chatRoom->getFriend();
     //  searchName(searchString, hide);
-    //  const Settings &s = Settings::getInstance();
+    //  const Settings &s = Nexus::getProfile()->getSettings();
     //  const uint32_t circleId = s.getFriendCircleID(frnd->getPublicKey());
     //  CircleWidget *circleWidget = CircleWidget::getFromID(circleId);
     //  if (circleWidget) {

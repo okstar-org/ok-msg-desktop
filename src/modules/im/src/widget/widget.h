@@ -22,14 +22,14 @@
 
 #include "genericchatitemwidget.h"
 
-#include "src/audio/iaudiocontrol.h"
-#include "src/audio/iaudiosink.h"
-#include "src/core/FriendId.h"
+#include "lib/audio/iaudiocontrol.h"
+#include "lib/audio/iaudiosink.h"
 #include "src/core/core.h"
-#include "src/core/groupid.h"
 #include "src/core/toxfile.h"
 #include "src/core/toxid.h"
+#include "src/model/FriendId.h"
 #include "src/model/friendmessagedispatcher.h"
+#include "src/model/groupid.h"
 #include "src/model/groupmessagedispatcher.h"
 #include "ui_mainwindow.h"
 #if DESKTOP_NOTIFICATIONS
@@ -94,9 +94,8 @@ enum class ActiveToolMenuButton {
 
 class Widget final : public QFrame {
     Q_OBJECT
-
 public:
-    explicit Widget(IAudioControl& audio, QWidget* parent = nullptr);
+    explicit Widget(QWidget* parent = nullptr);
     ~Widget() override;
 
     static Widget* getInstance();
@@ -129,7 +128,9 @@ public:
 
     void resetIcon();
 
-    ContactWidget* getContactWidget() const { return contactWidget; }
+    ContactWidget* getContactWidget() const {
+        return contactWidget;
+    }
 
 public slots:
     void onShowSettings();
@@ -160,9 +161,7 @@ public slots:
     void toggleFullscreen();
     void onUpdateAvailable();
     void onCoreChanged(Core& core);
-    void incomingNotification(QString friendId);
-    void onStopNotification();
-    void outgoingNotification();
+
     void showForwardMessageDialog(const MsgId& msgId);
     void showAddMemberDialog(const ContactId& groupId);
 
@@ -242,8 +241,6 @@ private:
     void retranslateUi();
 
     void openDialog(GenericChatroomWidget* widget, bool newWindow);
-    void playNotificationSound(IAudioSink::Sound sound, bool loop = false);
-    void cleanupNotificationSound();
     void connectToCore(Core& core);
 
 private:
@@ -265,13 +262,7 @@ private:
     SettingsWidget* settingsWidget;
 
     Core* core;
-    //  Profile *profile;
 
-    //  FilesForm *filesForm;
-
-    //  GenericChatroomWidget *activeChatroomWidget;
-    //  FriendListWidget *contactListWidget;
-    //  MaskablePixmapWidget *profilePicture;
     bool notify(QObject* receiver, QEvent* event);
     bool autoAwayActive = false;
     QTimer* timer;
@@ -281,35 +272,6 @@ private:
 
     int icon_size;
 
-    IAudioControl& audio;
-    std::unique_ptr<IAudioSink> audioNotification = nullptr;
-    Settings& settings;
-
-    //  QMap<ToxPk, FriendWidget *> friendWidgets;
-    //  FriendListWidget* friendListWidget;
-    // Shared pointer because qmap copies stuff all over the place
-    //  QMap<ToxPk, std::shared_ptr<FriendMessageDispatcher>>
-    //      friendMessageDispatchers;
-    // Stop gap method of linking our friend messages back to a group id.
-    // Eventual goal is to have a notification manager that works on
-    // Messages hooked up to message dispatchers but we aren't there
-    // yet
-    //  QMap<ToxPk, QMetaObject::Connection> friendAlertConnections;
-    //  QMap<ToxPk, std::shared_ptr<ChatHistory>> friendChatLogs;
-    //  QMap<ToxPk, std::shared_ptr<FriendChatroom>> friendChatrooms;
-
-    //  QMap<GroupId, GroupWidget *> groupWidgets;
-    //  QMap<GroupId, std::shared_ptr<GroupMessageDispatcher>>
-    //      groupMessageDispatchers;
-
-    // Stop gap method of linking our group messages back to a group id.
-    // Eventual goal is to have a notification manager that works on
-    // Messages hooked up to message dispatchers but we aren't there
-    // yet
-    //  QMap<GroupId, QMetaObject::Connection> groupAlertConnections;
-    //  QMap<GroupId, std::shared_ptr<IChatLog>> groupChatLogs;
-    //  QMap<GroupId, std::shared_ptr<GroupChatroom>> groupChatrooms;
-    //  QMap<GroupId, QSharedPointer<GroupChatForm>> groupChatForms;
 
 #if DESKTOP_NOTIFICATIONS
     DesktopNotify notifier;

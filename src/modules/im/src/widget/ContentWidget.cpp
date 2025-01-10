@@ -66,10 +66,10 @@ void ContentWidget::init() {
     //  palette.setBrush(QPalette::WindowText, QBrush(QColor(193, 193, 193)));
     //  mainHLine.setPalette(palette);
 
-    //  if (QStyleFactory::keys().contains(Settings::getInstance().getStyle())
-    //      && Settings::getInstance().getStyle() != "None") {
-    //    mainHead->setStyle(QStyleFactory::create(Settings::getInstance().getStyle()));
-    //    mainContent->setStyle(QStyleFactory::create(Settings::getInstance().getStyle()));
+    //  if (QStyleFactory::keys().contains(Nexus::getProfile()->getSettings()->getStyle())
+    //      && Nexus::getProfile()->getSettings()->getStyle() != "None") {
+    //    mainHead->setStyle(QStyleFactory::create(Nexus::getProfile()->getSettings()->getStyle()));
+    //    mainContent->setStyle(QStyleFactory::create(Nexus::getProfile()->getSettings()->getStyle()));
     //  }
 
     //  reloadTheme();

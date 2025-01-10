@@ -13,7 +13,7 @@
 #include "contentlayout.h"
 #include <QFrame>
 #include <QStyleFactory>
-#include "src/lib/storeage/settings/style.h"
+#include "src/lib/storage/settings/style.h"
 #include "src/persistence/settings.h"
 
 ContentLayout::ContentLayout() : QStackedLayout() {

@@ -12,7 +12,7 @@
 
 #include "src/core/toxcall.h"
 #include <QTimer>
-#include "src/audio/audio.h"
+#include "lib/audio/audio.h"
 #include "src/core/coreav.h"
 #include "src/model/group.h"
 #include "src/persistence/settings.h"

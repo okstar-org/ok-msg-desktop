@@ -11,8 +11,8 @@
  */
 
 #include "friend.h"
+#include "src/lib/session/profile.h"
 #include "src/model/status.h"
-#include "src/persistence/profile.h"
 #include "src/widget/form/chatform.h"
 
 Friend::Friend(const FriendId& friendPk,  //

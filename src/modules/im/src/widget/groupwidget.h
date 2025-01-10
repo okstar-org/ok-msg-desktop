@@ -15,8 +15,8 @@
 
 #include "genericchatroomwidget.h"
 
-#include "src/core/groupid.h"
 #include "src/model/chatroom/groupchatroom.h"
+#include "src/model/groupid.h"
 #include "src/model/message.h"
 
 #include <src/widget/form/aboutgroupform.h>

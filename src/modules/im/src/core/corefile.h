@@ -13,8 +13,8 @@
 #ifndef COREFILE_H
 #define COREFILE_H
 
-#include "src/core/FriendId.h"
 #include "src/core/core.h"
+#include "src/model/FriendId.h"
 #include "src/model/status.h"
 #include "toxfile.h"
 

@@ -15,7 +15,7 @@
 #include <QClipboard>
 #include <QFileDialog>
 #include <QFileInfo>
-#include "lib/storeage/settings/translator.h"
+#include "lib/storage/settings/translator.h"
 #include "src/base/MessageBox.h"
 #include "src/chatlog/chatlinecontentproxy.h"
 #include "src/chatlog/chatlog.h"
@@ -25,13 +25,13 @@
 #include "src/core/core.h"
 #include "src/core/coreav.h"
 #include "src/core/corefile.h"
-#include "src/lib/storeage/settings/style.h"
+#include "src/lib/session/profile.h"
+#include "src/lib/storage/settings/style.h"
 #include "src/model/friend.h"
 #include "src/model/status.h"
 #include "src/nexus.h"
 #include "src/persistence/history.h"
 #include "src/persistence/offlinemsgengine.h"
-#include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
 #include "src/video/netcamview.h"
 #include "src/widget/chatformheader.h"
@@ -69,7 +69,6 @@ ChatForm::ChatForm(const FriendId* chatFriend,
                    IChatLog& chatLog_,
                    IMessageDispatcher& messageDispatcher)
         : GenericChatForm(chatFriend, chatLog_, messageDispatcher), f(chatFriend) {
-    //      headWidget->setAvatar(QPixmap(":/img/contact_dark.svg"));
 
     statusMessageLabel = new CroppingLabel();
     statusMessageLabel->setObjectName("statusLabel");
@@ -79,7 +78,9 @@ ChatForm::ChatForm(const FriendId* chatFriend,
     statusMessageLabel->setTextFormat(Qt::PlainText);
     statusMessageLabel->setContextMenuPolicy(Qt::CustomContextMenu);
 
-    chatLog->setTypingNotification(ChatMessage::createTypingNotification());
+    auto baseFont = Nexus::getProfile()->getSettings()->getChatMessageFont();
+
+    chatLog->setTypingNotification(ChatMessage::createTypingNotification(baseFont));
     chatLog->setMinimumHeight(CHAT_WIDGET_MIN_HEIGHT);
 
     //  headWidget->addWidget(statusMessageLabel);
@@ -182,7 +183,7 @@ void ChatForm::onFriendStatusChanged(const FriendId& friendId, Status::Status st
 
     //  updateCallButtons();
 
-    //  if (Settings::getInstance().getStatusChangeNotificationEnabled()) {
+    //  if (Nexus::getProfile()->getSettings()->getStatusChangeNotificationEnabled()) {
     //    QString fStatus = Status::getSubject(status);
     //    addSystemInfoMessage(tr("%1 is now %2", "e.g. \"Dubslow is now online\"")
     //                             .arg(f->getDisplayedName())
@@ -258,7 +259,7 @@ void ChatForm::clearChatArea() {
 }
 
 void ChatForm::sendImage(const QPixmap& pixmap) {
-    QDir(Settings::getInstance().getAppDataDirPath()).mkpath("images");
+    QDir(Nexus::getProfile()->getSettings()->getAppDataDirPath()).mkpath("images");
 
     // use ~ISO 8601 for screenshot timestamp, considering FS limitations
     // https://en.wikipedia.org/wiki/ISO_8601
@@ -266,7 +267,7 @@ void ChatForm::sendImage(const QPixmap& pixmap) {
     // Format should be: `qTox_Screenshot_yyyy-MM-dd HH-mm-ss.zzz.png`
     QString filepath =
             QString("%1images%2qTox_Image_%3.png")
-                    .arg(Settings::getInstance().getAppDataDirPath())
+                    .arg(Nexus::getProfile()->getSettings()->getAppDataDirPath())
                     .arg(QDir::separator())
                     .arg(QDateTime::currentDateTime().toString("yyyy-MM-dd HH-mm-ss.zzz"));
     QFile file(filepath);
@@ -313,7 +314,8 @@ void ChatForm::show(ContentLayout* contentLayout) {
 }
 
 void ChatForm::reloadTheme() {
-    chatLog->setTypingNotification(ChatMessage::createTypingNotification());
+    auto s = Nexus::getProfile()->getSettings();
+    chatLog->setTypingNotification(ChatMessage::createTypingNotification(s->getChatMessageFont()));
     GenericChatForm::reloadTheme();
 }
 

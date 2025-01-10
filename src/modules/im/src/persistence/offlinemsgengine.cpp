@@ -16,10 +16,10 @@
 #include <QTimer>
 #include <chrono>
 #include "src/core/core.h"
+#include "src/lib/session/profile.h"
 #include "src/model/friend.h"
 #include "src/model/status.h"
 #include "src/nexus.h"
-#include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
 
 OfflineMsgEngine::OfflineMsgEngine(const FriendId* frnd, ICoreFriendMessageSender* messageSender)

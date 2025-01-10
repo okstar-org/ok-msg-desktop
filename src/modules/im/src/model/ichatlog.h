@@ -13,17 +13,17 @@
 #ifndef ICHAT_LOG_H
 #define ICHAT_LOG_H
 
+#include "base/strongtype.h"
 #include "friendlist.h"
 #include "grouplist.h"
 #include "message.h"
-#include "src/core/FriendId.h"
 #include "src/core/core.h"
 #include "src/core/toxfile.h"
+#include "src/model/FriendId.h"
 #include "src/model/chatlogitem.h"
 #include "src/model/friend.h"
 #include "src/model/group.h"
 #include "src/persistence/history.h"
-#include "base/strongtype.h"
 #include "src/widget/searchtypes.h"
 
 #include <cassert>

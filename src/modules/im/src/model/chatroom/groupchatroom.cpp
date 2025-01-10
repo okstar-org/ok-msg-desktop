@@ -14,15 +14,15 @@
 
 #include "Bus.h"
 #include "application.h"
-#include "src/core/FriendId.h"
 #include "src/core/core.h"
+#include "src/lib/session/profile.h"
+#include "src/model/FriendId.h"
 #include "src/model/dialogs/idialogsmanager.h"
 #include "src/model/friend.h"
 #include "src/model/friendlist.h"
 #include "src/model/group.h"
 #include "src/model/status.h"
 #include "src/nexus.h"
-#include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
 
 GroupChatroom::GroupChatroom(const GroupId* groupId_, IDialogsManager* dialogsManager)

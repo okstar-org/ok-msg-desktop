@@ -19,8 +19,8 @@
 
 #include <vector>
 
-#include <src/core/FriendId.h>
-#include <src/core/groupid.h>
+#include "src/model/FriendId.h"
+#include "src/model/groupid.h"
 
 #include "lib/messenger/IMMessage.h"
 #include "src/core/icoreidhandler.h"

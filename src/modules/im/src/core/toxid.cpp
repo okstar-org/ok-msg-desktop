@@ -11,7 +11,7 @@
  */
 
 #include "toxid.h"
-#include "FriendId.h"
+#include "src/model/FriendId.h"
 
 #include <QDebug>
 #include <QRegularExpression>

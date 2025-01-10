@@ -16,7 +16,7 @@
 #include <QObject>
 #include <QPixmap>
 #include <QString>
-#include "src/core/contactid.h"
+#include "src/model/contactid.h"
 #include "src/model/status.h"
 
 /**

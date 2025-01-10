@@ -36,17 +36,20 @@ ToxOptions::ToxOptions(ToxOptions&& from) {
     from.proxyAddrData.clear();
 }
 
-const char* ToxOptions::getProxyAddrData() const { return proxyAddrData.constData(); }
+const char* ToxOptions::getProxyAddrData() const {
+    return proxyAddrData.constData();
+}
 
-ToxOptions::operator Tox_Options*() { return options; }
+ToxOptions::operator Tox_Options*() {
+    return options;
+}
 
 /**
  * @brief Initializes a ToxOptions instance
  * @param savedata Previously saved Tox data
  * @return ToxOptions instance initialized to create Tox instance
  */
-std::unique_ptr<ToxOptions> ToxOptions::makeToxOptions(const QByteArray& savedata,
-                                                       const ICoreSettings* s) {
+std::unique_ptr<ToxOptions> ToxOptions::makeToxOptions(const ICoreSettings* s) {
     Tox_Options* tox_opts = {};  // tox_options_new(nullptr);
     //
     //  if (!tox_opts) {

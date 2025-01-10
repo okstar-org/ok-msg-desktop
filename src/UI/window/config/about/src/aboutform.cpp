@@ -16,10 +16,10 @@
 #include <QDesktopServices>
 #include <QPushButton>
 #include <QTimer>
-#include "lib/storeage/settings/translator.h"
+#include "lib/storage/settings/translator.h"
 #include "src/UI/widget/GenericForm.h"
 #include "src/base/RecursiveSignalBlocker.h"
-#include "src/lib/storeage/settings/style.h"
+#include "src/lib/storage/settings/style.h"
 
 #include <memory>
 

@@ -30,7 +30,7 @@ DesktopNotify::DesktopNotify()
 
 void DesktopNotify::createNotification(const QString& title, const QString& text,
                                        Snore::Icon& icon) {
-    const Settings& s = Settings::getInstance();
+    const Settings& s = Nexus::getProfile()->getSettings();
     if (!(s.getNotify() && s.getDesktopNotify())) {
         return;
     }

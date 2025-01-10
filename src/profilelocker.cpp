@@ -29,7 +29,7 @@ unique_ptr<QLockFile> ProfileLocker::lockfile;
 QString ProfileLocker::curLockName;
 
 QString ProfileLocker::lockPathFromName(const QString& name) {
-    return Settings::getInstance().getSettingsDirPath() + '/' + name + ".lock";
+    return Nexus::getProfile()->getSettings()->getSettingsDirPath() + '/' + name + ".lock";
 }
 
 /**

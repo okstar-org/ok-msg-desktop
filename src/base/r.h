@@ -23,6 +23,4 @@ namespace ok::base {
 #define XMPP_CONF_SERVER_HOST "conference.meet.chuanshaninfo.com"
 #define XMPP_PUBSUB_SERVICE "pubsub.meet.chuanshaninfo.com"
 
-#define FILE_PROFILE_EXT ".profile"
-#define FILE_INIT_EXT ".ini"
 }

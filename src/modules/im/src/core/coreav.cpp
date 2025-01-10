@@ -20,7 +20,7 @@
 #include "application.h"
 #include "base/compatiblerecursivemutex.h"
 #include "core.h"
-#include "src/audio/audio.h"
+#include "lib/audio/audio.h"
 #include "src/model/friend.h"
 #include "src/model/group.h"
 #include "src/nexus.h"
@@ -188,7 +188,7 @@ bool CoreAV::answerCall(ToxPeer peerId, bool video) {
     //
     //  const uint32_t videoBitrate = video ? VIDEO_DEFAULT_BITRATE : 0;
     //  if (toxav_answer(toxav.get(), friendNum,
-    //                   Settings::getInstance().getAudioBitrate(), videoBitrate,
+    //                   Nexus::getProfile()->getSettings()->getAudioBitrate(), videoBitrate,
     //                   &err)) {
     //    it->second->setActive(true);
     //    return true;

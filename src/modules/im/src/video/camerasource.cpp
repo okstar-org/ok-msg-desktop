@@ -26,6 +26,8 @@ extern "C" {
 #include <memory>
 #include "cameradevice.h"
 #include "camerasource.h"
+#include "src/nexus.h"
+#include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
 #include "videoframe.h"
 
@@ -140,13 +142,15 @@ void CameraSource::destroyInstance() {
  * @note If a device is already open, the source will seamlessly switch to the new device.
  */
 void CameraSource::setupDefault() {
+    auto s = Nexus::getProfile()->getSettings();
+
     QString deviceName = CameraDevice::getDefaultDeviceName();
     qDebug() << "Setup default device:" << deviceName;
     bool isScreen = CameraDevice::isScreen(deviceName);
-    VideoMode mode = VideoMode(Settings::getInstance().getScreenRegion());
+    VideoMode mode = VideoMode(s->getScreenRegion());
     if (!isScreen) {
-        mode = VideoMode(Settings::getInstance().getCamVideoRes());
-        mode.FPS = Settings::getInstance().getCamVideoFPS();
+        mode = VideoMode(s->getCamVideoRes());
+        mode.FPS = s->getCamVideoFPS();
     }
 
     setupDevice(deviceName, mode);

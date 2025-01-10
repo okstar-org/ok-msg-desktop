@@ -28,11 +28,11 @@
 
 #include "base/autorun.h"
 #include "base/compatiblerecursivemutex.h"
-#include "lib/storeage/settings/OkSettings.h"
+#include "lib/storage/settings/OkSettings.h"
 #include "src/core/core.h"
 #include "src/core/corefile.h"
 #include "src/ipc.h"
-#include "src/lib/storeage/settings/style.h"
+#include "src/lib/storage/settings/style.h"
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
 #include "src/persistence/profilelocker.h"
@@ -47,16 +47,16 @@
  * which have widget->saveX() and widget->loadX() methods.
  */
 
-const QString Settings::globalSettingsFile = APPLICATION_ALIAS "-" OK_IM_MODULE ".ini";
-
 CompatibleRecursiveMutex Settings::bigLock;
 QThread* Settings::settingsThread{nullptr};
 
-Settings::Settings() : loaded(false), useCustomDhtList{false}, makeToxPortable{false} {
+Settings::Settings(const QString& path)
+        : globalSettingsFile(path), loaded(false), makeToxPortable{false} {
     settingsThread = new QThread();
-    settingsThread->setObjectName(globalSettingsFile);
+    settingsThread->setObjectName("IM-Settings");
     settingsThread->start(QThread::LowPriority);
     moveToThread(settingsThread);
+
     loadGlobal();
 }
 
@@ -70,10 +70,10 @@ Settings::~Settings() {
 /**
  * @brief Returns the singleton instance.
  */
-Settings& Settings::getInstance() {
+Settings* Settings::getInstance(const QString& path) {
     static Settings* settings = nullptr;
-    if (!settings) settings = new Settings();
-    return *settings;
+    if (!settings) settings = new Settings(path);
+    return settings;
 }
 
 void Settings::destroyInstance() {
@@ -111,7 +111,9 @@ void Settings::loadGlobal() {
 
     // 自动登录
     s.beginGroup("Login");
-    { autoLogin = s.value("autoLogin", false).toBool(); }
+    {
+        autoLogin = s.value("autoLogin", false).toBool();
+    }
     s.endGroup();
     // 语言
     s.beginGroup("General");
@@ -238,24 +240,24 @@ bool Settings::isToxPortable() {
     return result;
 }
 
-void Settings::updateProfileData(Profile* profile, const QCommandLineParser* parser) {
-    QMutexLocker locker{&bigLock};
-
-    if (profile == nullptr) {
-        qWarning() << QString("Could not load new settings (profile change to nullptr)");
-        return;
-    }
-    auto& ok = lib::settings::OkSettings::getInstance();
-    ok.setCurrentProfile(profile->getUsername());
-    ok.saveGlobal();
-
-    saveGlobal();
-
-    loadPersonal(profile->getUsername(), profile->getPasskey());
-    if (parser) {
-        applyCommandLineOptions(*parser);
-    }
-}
+// void Settings::updateProfileData(Profile* profile, const QCommandLineParser* parser) {
+//     QMutexLocker locker{&bigLock};
+//
+//     if (profile == nullptr) {
+//         qWarning() << QString("Could not load new settings (profile change to nullptr)");
+//         return;
+//     }
+//     auto& ok = lib::settings::OkSettings::getInstance();
+//     ok.setCurrentProfile(profile->getUsername());
+//     ok.saveGlobal();
+//
+//     saveGlobal();
+//
+//     loadPersonal(profile->getUsername(), profile->getPasskey());
+//     if (parser) {
+//         applyCommandLineOptions(*parser);
+//     }
+// }
 
 /**
  * Verifies that commandline proxy settings are at least reasonable. Does not
@@ -459,7 +461,7 @@ void Settings::resetToDefault() {
  */
 void Settings::saveGlobal() {
     if (QThread::currentThread() != settingsThread)
-        return (void)QMetaObject::invokeMethod(&getInstance(), "saveGlobal");
+        return (void)QMetaObject::invokeMethod(this, "saveGlobal");
 
     QMutexLocker locker{&bigLock};
     if (!loaded) return;
@@ -473,7 +475,9 @@ void Settings::saveGlobal() {
     s.clear();
 
     s.beginGroup("Login");
-    { s.setValue("autoLogin", autoLogin); }
+    {
+        s.setValue("autoLogin", autoLogin);
+    }
     s.endGroup();
 
     s.beginGroup("General");
@@ -535,7 +539,9 @@ void Settings::saveGlobal() {
     s.endGroup();
 
     s.beginGroup("Chat");
-    { s.setValue("chatMessageFont", chatMessageFont); }
+    {
+        s.setValue("chatMessageFont", chatMessageFont);
+    }
     s.endGroup();
 
     s.beginGroup("State");
@@ -716,10 +722,10 @@ void Settings::savePersonal(Profile* profile) {
                     "profile";
         return;
     }
-    if (QThread::currentThread() != settingsThread)
-        return (void)QMetaObject::invokeMethod(&getInstance(), "savePersonal",
-                                               Q_ARG(Profile*, profile));
-    savePersonal(profile->getUsername(), profile->getPasskey());
+    //    if (QThread::currentThread() != settingsThread)
+    //        return (void)QMetaObject::invokeMethod(&getInstance(), "savePersonal",
+    //                                               Q_ARG(Profile*, profile));
+    //    savePersonal(profile->getUsername(), profile->getPasskey());
 }
 
 void Settings::savePersonal(QString profileName, const ToxEncrypt* passkey) {
@@ -2028,7 +2034,7 @@ void Settings::createSettingsDir() {
  */
 void Settings::sync() {
     if (QThread::currentThread() != settingsThread) {
-        QMetaObject::invokeMethod(&getInstance(), "sync", Qt::BlockingQueuedConnection);
+        QMetaObject::invokeMethod(this, "sync", Qt::BlockingQueuedConnection);
         return;
     }
 

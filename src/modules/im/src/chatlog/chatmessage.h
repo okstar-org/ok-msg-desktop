@@ -46,8 +46,8 @@ public:
                                                 const QDateTime& date);
     static IChatItem::Ptr createFileTransferMessage(const ChatLogItem& item, ToxFile file,
                                                     bool isMe, const QDateTime& date);
-    static IChatItem::Ptr createTypingNotification();
-    static IChatItem::Ptr createBusyNotification();
+    static IChatItem::Ptr createTypingNotification(const QFont& baseFont);
+    static IChatItem::Ptr createBusyNotification(const QFont& baseFont);
 
 protected:
     static QString detectQuotes(const QString& str, MessageType type);

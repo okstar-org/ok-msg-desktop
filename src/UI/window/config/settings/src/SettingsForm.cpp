@@ -20,7 +20,7 @@
 #include "ConnectForm.h"
 #include "GeneralForm.h"
 #include "SettingsForm.h"
-#include "lib/storeage/settings/translator.h"
+#include "lib/storage/settings/translator.h"
 
 namespace UI {
 SettingsWidget::SettingsWidget(QWidget* parent)

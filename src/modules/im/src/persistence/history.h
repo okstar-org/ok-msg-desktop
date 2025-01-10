@@ -25,10 +25,10 @@
 
 #include <base/jsons.h>
 
-#include "src/core/FriendId.h"
+#include "lib/storage/db/rawdatabase.h"
 #include "src/core/toxfile.h"
+#include "src/model/FriendId.h"
 #include "src/model/message.h"
-#include "lib/storeage/db/rawdatabase.h"
 #include "src/widget/searchtypes.h"
 
 class Profile;
@@ -132,7 +132,7 @@ public:
         size_t numMessagesIn;
     };
 
-    explicit History(std::shared_ptr<RawDatabase> db);
+    explicit History(std::shared_ptr<lib::db::RawDatabase> db);
     ~History();
 
     bool isValid();
@@ -183,7 +183,7 @@ public:
     QString getPeerAlias(const QString& friendPk);
 
 protected:
-    QVector<RawDatabase::Query> generateNewMessageQueries(
+    QVector<lib::db::RawDatabase::Query> generateNewMessageQueries(
             const Message& message,
             HistMessageContentType type,
             bool isDelivered,
@@ -196,7 +196,7 @@ private:
     //                                                   const QString& filePath,
     //                                                   const QByteArray& fileHash);
 
-    std::shared_ptr<RawDatabase> db;
+    std::shared_ptr<lib::db::RawDatabase> db;
 
     QHash<QString, int64_t> peers;
     //    struct FileInfo

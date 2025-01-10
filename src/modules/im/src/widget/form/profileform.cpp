@@ -28,11 +28,11 @@
 #include <QMouseEvent>
 #include <QWindow>
 #include "gui.h"
-#include "lib/storeage/settings/translator.h"
+#include "lib/storage/settings/translator.h"
 #include "src/core/core.h"
-#include "src/lib/storeage/settings/style.h"
+#include "src/lib/session/profile.h"
+#include "src/lib/storage/settings/style.h"
 #include "src/model/profile/iprofileinfo.h"
-#include "src/persistence/profile.h"
 #include "src/persistence/profilelocker.h"
 #include "src/persistence/settings.h"
 #include "src/widget/contentlayout.h"
@@ -183,8 +183,9 @@ void ProfileForm::showTo(ContentLayout* contentLayout) {
     }
     contentLayout->setCurrentWidget(this);
 
-    bool portable = Settings::getInstance().getMakeToxPortable();
-    QString defaultPath = QDir(Settings::getInstance().getSettingsDirPath()).path().trimmed();
+    bool portable = Nexus::getProfile()->getSettings()->getMakeToxPortable();
+    QString defaultPath =
+            QDir(Nexus::getProfile()->getSettings()->getSettingsDirPath()).path().trimmed();
     QString appPath = QApplication::applicationDirPath();
     QString dirPath = portable ? appPath : defaultPath;
     QString url = QUrl::fromLocalFile(dirPath).toString();
@@ -282,22 +283,23 @@ void ProfileForm::onAvatarClicked() {
 
 void ProfileForm::onExportClicked() {
     // save dialog title
-    const QString path = QFileDialog::getSaveFileName(Q_NULLPTR,
-                                                      tr("Export profile"),
-                                                      profileInfo->getUsername() + Core::TOX_EXT,
-                                                      //: save dialog filter
-                                                      tr("Tox save file (*.tox)"));
-    if (path.isEmpty()) {
-        return;
-    }
-
-    const IProfileInfo::SaveResult result = profileInfo->exportProfile(path);
-    if (result == IProfileInfo::SaveResult::OK) {
-        return;
-    }
-
-    const QPair<QString, QString> error = SAVE_ERROR[result];
-    GUI::showWarning(error.first, error.second);
+    //    const QString path = QFileDialog::getSaveFileName(Q_NULLPTR,
+    //                                                      tr("Export profile"),
+    //                                                      profileInfo->getUsername() +
+    //                                                      Core::TOX_EXT,
+    //                                                      //: save dialog filter
+    //                                                      tr("Tox save file (*.tox)"));
+    //    if (path.isEmpty()) {
+    //        return;
+    //    }
+    //
+    //    const IProfileInfo::SaveResult result = profileInfo->exportProfile(path);
+    //    if (result == IProfileInfo::SaveResult::OK) {
+    //        return;
+    //    }
+    //
+    //    const QPair<QString, QString> error = SAVE_ERROR[result];
+    //    GUI::showWarning(error.first, error.second);
 }
 
 void ProfileForm::onLogoutClicked() {

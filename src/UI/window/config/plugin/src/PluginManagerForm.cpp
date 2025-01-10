@@ -18,9 +18,9 @@
 #include "PluginInfoForm.h"
 #include "PluginItemForm.h"
 #include "lib/network/NetworkHttp.h"
-#include "lib/storeage/settings/OkSettings.h"
-#include "lib/storeage/settings/style.h"
-#include "lib/storeage/settings/translator.h"
+#include "lib/storage/settings/OkSettings.h"
+#include "lib/storage/settings/style.h"
+#include "lib/storage/settings/translator.h"
 #include "src/UI/widget/GenericForm.h"
 #include "ui_PluginManagerForm.h"
 
@@ -38,7 +38,7 @@ PluginManagerForm::PluginManagerForm(QWidget* parent)
         setGeometry(parent->contentsRect());
     }
 
-    //  QString locale = lib::settings::OkSettings::getInstance().getTranslation();
+    //  QString locale = lib::settings::OkNexus::getSettings()->getTranslation();
     //  settings::Translator::translate(OK_UIWindowConfig_MODULE, "plugin_"+locale);
     //  settings::Translator::registerHandler([this] { retranslateUi(); }, this);
     //  retranslateUi();

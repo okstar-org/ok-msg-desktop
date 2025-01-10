@@ -12,7 +12,7 @@
 
 #include "groupinviteform.h"
 
-#include "lib/storeage/settings/translator.h"
+#include "lib/storage/settings/translator.h"
 #include "src/core/core.h"
 #include "src/model/groupinvite.h"
 #include "src/persistence/settings.h"

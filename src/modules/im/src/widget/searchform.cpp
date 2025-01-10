@@ -12,7 +12,7 @@
 
 #include "searchform.h"
 #include "form/searchsettingsform.h"
-#include "src/lib/storeage/settings/style.h"
+#include "src/lib/storage/settings/style.h"
 
 #include <QHBoxLayout>
 #include <QKeyEvent>

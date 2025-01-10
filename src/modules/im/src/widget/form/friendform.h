@@ -15,8 +15,8 @@
 
 #include <QFrame>
 
-#include <src/core/contactid.h>
 #include "lib/backend/UserService.h"
+#include "src/model/contactid.h"
 
 namespace Ui {
 class FriendForm;

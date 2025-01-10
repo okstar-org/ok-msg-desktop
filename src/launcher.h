@@ -12,7 +12,6 @@
 
 #pragma once
 
-#include <QApplication>
 #include <QStringList>
 #include <memory>
 

@@ -99,7 +99,7 @@ target_link_libraries(${PROJECT_NAME}
     PRIVATE IM
     PRIVATE Meet
     PRIVATE UIWidget
-    PRIVATE OkStoreage
+		PRIVATE OkStorage
     PRIVATE ${Qt5Core_LIBRARIES}
     PRIVATE ${Qt5Widgets_LIBRARIES}
     PRIVATE ${Qt5Svg_LIBRARIES}

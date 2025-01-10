@@ -41,7 +41,7 @@ list(APPEND OK_LIBS
     Platform
     IM
     OkSession
-    OkStoreage
+    OkStorage
     OkNetwork
     OkBackend
     OkBase

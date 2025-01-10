@@ -12,7 +12,7 @@
 
 #include "chattextedit.h"
 
-#include "lib/storeage/settings/translator.h"
+#include "lib/storage/settings/translator.h"
 
 #include <QApplication>
 #include <QClipboard>

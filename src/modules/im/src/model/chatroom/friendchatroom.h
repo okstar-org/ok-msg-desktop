@@ -19,7 +19,7 @@
 #include <QObject>
 #include <QString>
 #include <QVector>
-#include "src/core/FriendId.h"
+#include "src/model/FriendId.h"
 
 class IDialogsManager;
 class Friend;

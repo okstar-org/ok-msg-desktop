@@ -19,8 +19,8 @@
 #include "Bus.h"
 #include "application.h"
 #include "friendlist.h"
+#include "src/lib/session/profile.h"
 #include "src/nexus.h"
-#include "src/persistence/profile.h"
 
 #include <lib/ortc/webrtc/Instance.h>
 

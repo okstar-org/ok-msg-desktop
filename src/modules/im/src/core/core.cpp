@@ -17,35 +17,24 @@
 #include "lib/session/AuthSession.h"
 
 #include "src/core/coreav.h"
-#include "src/core/dhtserver.h"
-#include "src/core/icoresettings.h"
 
+#include "base/compatiblerecursivemutex.h"
+#include "src/core/icoresettings.h"
 #include "src/core/toxoptions.h"
-#include "src/core/toxstring.h"
+#include "src/model/friend.h"
 #include "src/model/groupinvite.h"
 #include "src/model/status.h"
-// #include "src/net/bootstrapnodeupdater.h"
-#include "base/compatiblerecursivemutex.h"
-#include "src/model/friend.h"
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
-#include "base/strongtype.h"
 
 #include <QCoreApplication>
-#include <vector>
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
-#include <QRandomGenerator>
-#endif
-
 #include <QString>
 #include <QStringBuilder>
 #include <QTimer>
 #include <cassert>
+#include <vector>
 
-#include <lib/messenger/IMFriend.h>
-#include <src/persistence/profile.h>
-
-const QString Core::TOX_EXT = ".tox";
+#include "lib/messenger/IMFriend.h"
 
 #define ASSERT_CORE_THREAD assert(QThread::currentThread() == coreThread.get())
 
@@ -118,8 +107,7 @@ void Core::registerCallbacks(lib::messenger::Messenger* messenger) {
  * @return nullptr or a Core object ready to start
  */
 ToxCorePtr Core::makeToxCore(const QString& host, const QString& name, const QString& password,
-                             const QByteArray& savedata, const ICoreSettings* const settings,
-                             ToxCoreErrors* err) {
+                             const ICoreSettings* const settings, ToxCoreErrors* err) {
     QThread* thread = new QThread();
     if (!thread) {
         qCritical() << "could not allocate Core thread";
@@ -127,7 +115,7 @@ ToxCorePtr Core::makeToxCore(const QString& host, const QString& name, const QSt
     }
     thread->setObjectName("Core");
 
-    auto toxOptions = ToxOptions::makeToxOptions(savedata, settings);
+    auto toxOptions = ToxOptions::makeToxOptions(settings);
     if (toxOptions == nullptr) {
         qCritical() << "could not allocate Tox Options data structure";
         if (err) {
@@ -210,84 +198,9 @@ void Core::process() {
     fflush(stdout);
 #endif
 
-    // TODO(sudden6): recheck if this is still necessary
-    //  if (checkConnection()) {
-    //    tolerance = CORE_DISCONNECT_TOLERANCE;
-    //  } else if (!(--tolerance)) {
-    //    bootstrapDht();
-    //    tolerance = 3 * CORE_DISCONNECT_TOLERANCE;
-    //  }
-
     //  unsigned sleeptime = qMin(tox_iteration_interval(tox.get()),
     //                            getCoreFile()->corefileIterationInterval());
     //  toxTimer->start(sleeptime);
-}
-
-bool Core::checkConnection() {
-    ASSERT_CORE_THREAD;
-    static bool isConnected = false;
-    //  bool toxConnected =tox_self_get_connection_status(tox.get()) !=
-    //  TOX_CONNECTION_NONE; if (toxConnected && !isConnected) {
-    //    qDebug() << "Connected to the DHT";
-    //    emit connected();
-    //  } else if (!toxConnected && isConnected) {
-    //    qDebug() << "Disconnected from the DHT";
-    //    emit disconnected();
-    //  }
-    //
-    //  isConnected = toxConnected;
-    //  return toxConnected;
-    return true;
-}
-
-/**
- * @brief Connects us to the Tox network
- */
-void Core::bootstrapDht() {
-    //  ASSERT_CORE_THREAD;
-
-    //  QList<DhtServer> bootstrapNodes =
-    //      BootstrapNodeUpdater::loadDefaultBootstrapNodes();
-    //
-    //  int listSize = bootstrapNodes.size();
-    //  if (!listSize) {
-    //    qWarning() << "no bootstrap list?!?";
-    //    return;
-    //  }
-
-    //  int i = 0;
-    // #if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
-    //  static int j = QRandomGenerator::global()->generate() % listSize;
-    // #else
-    //  static int j = qrand() % listSize;
-    // #endif
-    // i think the more we bootstrap, the more we jitter because the more we
-    // overwrite nodes
-    //  while (i < 2) {
-    //    const DhtServer &dhtServer = bootstrapNodes[j % listSize];
-    //    QString dhtServerAddress = dhtServer.address.toLatin1();
-    //    QString port = QString::number(dhtServer.port);
-    //    QString name = dhtServer.name;
-    //    qDebug() << QString("Connecting to a bootstrap node...");
-    //    QByteArray address = dhtServer.address.toLatin1();
-    //    // TODO: constucting the pk via ToxId is a workaround
-    //    ToxPk pk = ToxId{dhtServer.userId}.getPublicKey();
-
-    //    const uint8_t *pkPtr = pk.getData();
-    //
-    //    Tox_Err_Bootstrap error;
-    //    tox_bootstrap(tox.get(), address.constData(), dhtServer.port, pkPtr,
-    //                  &error);
-    //    parseToxErrBootstrap(error);
-    //
-    //    tox_add_tcp_relay(tox.get(), address.constData(), dhtServer.port,
-    //    pkPtr,
-    //                      &error);
-    //    parseToxErrBootstrap(error);
-
-    //    ++j;
-    //    ++i;
-    //  }
 }
 
 void Core::onFriend(const lib::messenger::IMFriend& frnd) {

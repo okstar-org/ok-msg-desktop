@@ -20,7 +20,7 @@
 #include "groupwidget.h"
 #include "maskablepixmapwidget.h"
 #include "src/core/core.h"
-#include "src/lib/storeage/settings/style.h"
+#include "src/lib/storage/settings/style.h"
 #include "src/model/aboutfriend.h"
 #include "src/model/chatroom/friendchatroom.h"
 #include "src/model/friend.h"
@@ -48,8 +48,8 @@
 
 #include "base/MessageBox.h"
 #include "form/chatform.h"
+#include "src/lib/session/profile.h"
 #include "src/model/chathistory.h"
-#include "src/persistence/profile.h"
 #include "src/widget/form/GroupCreateForm.h"
 
 /**
@@ -133,7 +133,7 @@ ContentDialog* FriendWidget::addFriendDialog(const Friend* frnd) {
         dialog = createContentDialog();
     }
 
-    //    auto& settings = Settings::getInstance();
+    //    auto& settings = Nexus::getProfile()->getSettings();
 
     //  FriendWidget *widget = friendWidgets[friendPk];
     //  bool isCurrent = activeChatroomWidget == widget;
@@ -396,7 +396,7 @@ const Contact* FriendWidget::getContact() const {
 void FriendWidget::search(const QString& searchString, bool hide) {
     //  const auto frnd = chatRoom->getFriend();
     //  searchName(searchString, hide);
-    //  const Settings &s = Settings::getInstance();
+    //  const Settings &s = Nexus::getProfile()->getSettings();
     //  const uint32_t circleId = s.getFriendCircleID(frnd->getPublicKey());
     //  CircleWidget *circleWidget = CircleWidget::getFromID(circleId);
     //  if (circleWidget) {

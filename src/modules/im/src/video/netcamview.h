@@ -15,7 +15,7 @@
 
 #include <QVector>
 #include "genericnetcamview.h"
-#include "src/core/FriendId.h"
+#include "src/model/FriendId.h"
 
 struct vpx_image;
 

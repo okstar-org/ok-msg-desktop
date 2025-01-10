@@ -11,20 +11,16 @@
  */
 
 #include "nexus.h"
-#include <src/audio/audio.h>
 #include <QApplication>
-#include <QBuffer>
 #include <QCommandLineParser>
-#include <QDebug>
 #include <QDesktopWidget>
-#include <QStackedWidget>
-#include <QThread>
+
 #include <cassert>
 #include "Bus.h"
 #include "application.h"
-#include "gui.h"
-#include "lib/storeage/settings/OkSettings.h"
-#include "lib/storeage/settings/translator.h"
+#include "lib/audio/audio.h"
+#include "lib/storage/settings/OkSettings.h"
+#include "lib/storage/settings/translator.h"
 #include "persistence/settings.h"
 #include "src/core/core.h"
 #include "src/core/coreav.h"
@@ -60,78 +56,6 @@ Nexus::Nexus(QObject* parent)
     Q_INIT_RESOURCE(smileys);
     Q_INIT_RESOURCE(IM);
 
-    auto& settings = Settings::getInstance();
-
-    audioControl = std::unique_ptr<IAudioControl>(Audio::makeAudio(settings));
-    // Create GUI
-    m_widget = new Widget(*audioControl);
-
-    //    connect(this, &Nexus::destroyProfile, this, &Nexus::do_logout);
-}
-
-Nexus::~Nexus() {
-    qDebug() << __func__;
-    if (m_widget) m_widget->deleteLater();
-
-    delete profile;
-    profile = nullptr;
-    emit saveGlobal();
-#ifdef Q_OS_MAC
-    delete globalMenuBar;
-#endif
-}
-
-void Nexus::init(Profile* p) {
-    profile = p;
-    assert(profile);
-}
-
-void Nexus::onSave(SavedInfo& savedInfo) {
-    settings->setWindowGeometry(savedInfo.windowGeometry);
-    settings->saveGlobal();
-    m_widget->close();
-}
-
-/**
- * @brief Sets up invariants and calls showLogin
- *
- * Hides the login screen and shows the GUI for the given profile.
- * Will delete the current GUI, if it exists.
- */
-void Nexus::start(std::shared_ptr<lib::session::AuthSession> session) {
-    auto& signInInfo = session->getSignInInfo();
-    qDebug() << __func__ << "for user:" << signInInfo.username;
-
-    if (stared) {
-        qWarning("This module is already started.");
-        return;
-    }
-
-    QCommandLineParser parser;
-    if (!Profile::exists(signInInfo.username)) {
-        profile = Profile::createProfile(signInInfo.host, signInInfo.username, &parser,
-                                         signInInfo.password);
-    } else {
-        profile = Profile::loadProfile(signInInfo.host, signInInfo.username, &parser,
-                                       signInInfo.password);
-    }
-
-    if (!profile) {
-        qWarning() << tr("Can not create profile!");
-        emit createProfileFailed(tr("Can not create profile!"));
-        return;
-    }
-
-    qDebug() << "Starting up";
-    stared = true;
-
-    auto& s = lib::settings::OkSettings::getInstance();
-    QString locale = s.getTranslation();
-    qDebug() << "locale" << locale;
-
-    //  add_definitions(-D${PROJECT_NAME}_MODULE="${PROJECT_NAME}")
-    settings::Translator::translate(OK_IM_MODULE, locale);
-
     // Setup the environment
     qRegisterMetaType<Status::Status>("Status::Status");
 
@@ -156,25 +80,95 @@ void Nexus::start(std::shared_ptr<lib::session::AuthSession> session) {
     qRegisterMetaType<MsgId>("MsgId");
     qRegisterMetaType<RowId>("RowId");
 
+    // Create GUI
+    m_widget = new Widget();
+
+    //    connect(this, &Nexus::destroyProfile, this, &Nexus::do_logout);
+}
+
+Nexus::~Nexus() {
+    qDebug() << __func__;
+    if (m_widget) m_widget->deleteLater();
+
+    emit saveGlobal();
+#ifdef Q_OS_MAC
+    delete globalMenuBar;
+#endif
+}
+
+void Nexus::init(Profile* p) {
+    //    profile = p;
+    //    assert(profile);
+}
+
+void Nexus::onSave(SavedInfo& savedInfo) {
+    auto s = getProfile()->getSettings();
+    s->setWindowGeometry(savedInfo.windowGeometry);
+    s->saveGlobal();
+    m_widget->close();
+}
+
+/**
+ * @brief Sets up invariants and calls showLogin
+ *
+ * Hides the login screen and shows the GUI for the given profile.
+ * Will delete the current GUI, if it exists.
+ */
+void Nexus::start(std::shared_ptr<lib::session::AuthSession> session) {
+    auto& signInInfo = session->getSignInInfo();
+    qDebug() << __func__ << "for user:" << signInInfo.username;
+
+    if (stared) {
+        qWarning("This module is already started.");
+        return;
+    }
+
+    //    QCommandLineParser parser;
+    //    if (!Profile::exists(signInInfo.username)) {
+    profile = Profile::createProfile(signInInfo.host, signInInfo.username, signInInfo.password);
+    //    } else {
+    //        profile = Profile::loadProfile(signInInfo.host, signInInfo.username, &parser,
+    //                                       signInInfo.password);
+    //    }
+
+    if (!profile) {
+        qWarning() << tr("Can not create profile!");
+        emit createProfileFailed(tr("Can not create profile!"));
+        return;
+    }
+
+    qDebug() << "Starting up";
+    stared = true;
+
+    auto& s = lib::settings::OkSettings::getInstance();
+    QString locale = s.getTranslation();
+    qDebug() << "locale" << locale;
+
+    audioControl = std::unique_ptr<IAudioControl>(Audio::makeAudio(*profile->getSettings()));
+
+    //  add_definitions(-D${PROJECT_NAME}_MODULE="${PROJECT_NAME}")
+    settings::Translator::translate(OK_IM_MODULE, locale);
+
     qApp->setQuitOnLastWindowClosed(false);
 
     auto bus = ok::Application::Instance()->bus();
 
     // Connections
-    connect(profile, &Profile::selfAvatarChanged, m_widget, &Widget::onSelfAvatarLoaded);
+    connect(profile.get(), &Profile::selfAvatarChanged, m_widget, &Widget::onSelfAvatarLoaded);
 
-    connect(profile, &Profile::selfAvatarChanged, [&, bus](const QPixmap& pixmap) {
+    connect(profile.get(), &Profile::selfAvatarChanged, [&, bus](const QPixmap& pixmap) {
         emit updateAvatar(pixmap);
         emit bus->avatarChanged(pixmap);
     });
 
     connect(bus, &ok::Bus::getAvatar, [&, bus]() { bus->avatarChanged(profile->loadAvatar()); });
 
-    connect(profile, &Profile::coreChanged, [&, bus](Core& core) { emit bus->coreChanged(&core); });
+    connect(profile.get(), &Profile::coreChanged,
+            [&, bus](Core& core) { emit bus->coreChanged(&core); });
 
     profile->startCore();
 
-    emit ok::Application::Instance() -> bus()->profileChanged(profile);
+    emit ok::Application::Instance() -> bus()->profileChanged(profile.get());
 
 #ifdef Q_OS_MAC
     // TODO: still needed?
@@ -222,10 +216,8 @@ const QString& Nexus::getName() const {
 }
 
 void Nexus::do_logout(const QString& profileName) {
-    Settings::getInstance().saveGlobal();
+    //    Nexus::getProfile()->getSettings()->saveGlobal();
     profile->stopCore();
-    delete profile;
-    profile = nullptr;
 }
 
 void Nexus::bootstrapWithProfile(Profile* p) {
@@ -236,7 +228,7 @@ void Nexus::bootstrapWithProfile(Profile* p) {
     //  Q_INIT_RESOURCE(smileys);
     //  Q_INIT_RESOURCE(translations_IM);
     //
-    //  Settings &settings = Settings::getInstance();
+    //  Settings &settings = Nexus::getProfile()->getSettings();
     //  QString locale = settings.getTranslation();
     //  qDebug() << "locale" << locale;
     //
@@ -254,16 +246,16 @@ void Nexus::bootstrapWithProfile(Profile* p) {
     //    start();
     //  }
 }
-
-void Nexus::setSettings(Settings* settings) {
-    if (this->settings) {
-        QObject::disconnect(this, &Nexus::saveGlobal, this->settings, &Settings::saveGlobal);
-    }
-    this->settings = settings;
-    if (this->settings) {
-        QObject::connect(this, &Nexus::saveGlobal, this->settings, &Settings::saveGlobal);
-    }
-}
+//
+// void Nexus::setSettings(Settings* settings) {
+//    if (this->settings) {
+//        QObject::disconnect(this, &Nexus::saveGlobal, this->settings, &Settings::saveGlobal);
+//    }
+//    this->settings = settings;
+//    if (this->settings) {
+//        QObject::connect(this, &Nexus::saveGlobal, this->settings, &Settings::saveGlobal);
+//    }
+//}
 
 //  void Nexus::connectLoginScreen(const LoginScreen &loginScreen) {
 // TODO(kriby): Move connect sequences to a controller class object instead
@@ -292,19 +284,19 @@ void Nexus::showMainGUI() {
     m_widget->init();
 
     // Connections
-    connect(profile, &Profile::selfAvatarChanged, m_widget, &Widget::onSelfAvatarLoaded);
+    connect(profile.get(), &Profile::selfAvatarChanged, m_widget, &Widget::onSelfAvatarLoaded);
 
-    connect(profile, &Profile::selfAvatarChanged,
+    connect(profile.get(), &Profile::selfAvatarChanged,
             [&](const QPixmap& pixmap) { emit updateAvatar(pixmap); });
 
-    connect(profile, &Profile::coreChanged, [&](Core& core) { emit coreChanged(core); });
+    connect(profile.get(), &Profile::coreChanged, [&](Core& core) { emit coreChanged(core); });
 
-    connect(profile, &Profile::coreChanged, m_widget, &Widget::onCoreChanged);
+    connect(profile.get(), &Profile::coreChanged, m_widget, &Widget::onCoreChanged);
 
-    connect(profile, &Profile::failedToStart, m_widget, &Widget::onFailedToStartCore,
+    connect(profile.get(), &Profile::failedToStart, m_widget, &Widget::onFailedToStartCore,
             Qt::BlockingQueuedConnection);
 
-    connect(profile, &Profile::badProxy, m_widget, &Widget::onBadProxyCore,
+    connect(profile.get(), &Profile::badProxy, m_widget, &Widget::onBadProxyCore,
             Qt::BlockingQueuedConnection);
 
     profile->startCore();
@@ -335,10 +327,7 @@ Nexus& Nexus::createInstance() {
 void Nexus::cleanup() {
     qDebug() << __func__ << "...";
 
-    auto& s = Settings::getInstance();
-    s.saveGlobal();
-    s.savePersonal();
-    s.sync();
+    profile->quit();
 
     CameraSource::destroyInstance();
     Settings::destroyInstance();
@@ -363,7 +352,8 @@ Core* Nexus::getCore() {
  * @deprecated
  */
 Profile* Nexus::getProfile() {
-    return getInstance().profile;
+    assert(getInstance().profile);
+    return getInstance().profile.get();
 }
 
 /**
@@ -372,16 +362,16 @@ Profile* Nexus::getProfile() {
  * @param pass New password
  */
 void Nexus::onCreateNewProfile(const QString& host, const QString& name, const QString& pass) {
-    setProfile(Profile::createProfile(host, name, parser, pass));
-    parser = nullptr;  // only apply cmdline proxy settings once
+    //    setProfile(Profile::createProfile(host, name, pass));
+    //    parser = nullptr;  // only apply cmdline proxy settings once
 }
 
 /**
  * Loads an existing profile and replaces the current one.
  */
 void Nexus::onLoadProfile(const QString& host, const QString& name, const QString& pass) {
-    setProfile(Profile::loadProfile(host, name, parser, pass));
-    parser = nullptr;  // only apply cmdline proxy settings once
+    //    setProfile(Profile::loadProfile(host, name, pass));
+    //    parser = nullptr;  // only apply cmdline proxy settings once
 }
 /**
  * Changes the loaded profile and notifies listeners.
@@ -399,10 +389,6 @@ void Nexus::setProfile(Profile* p) {
     emit currentProfileChanged(p);
 }
 
-void Nexus::setParser(QCommandLineParser* parser) {
-    this->parser = parser;
-}
-
 /**
  * @brief Get desktop GUI widget.
  * @return nullptr if not started, desktop widget otherwise.
@@ -411,24 +397,70 @@ Widget* Nexus::getDesktopGUI() {
     return dynamic_cast<Widget*>(getInstance().widget());
 }
 
+void Nexus::playNotificationSound(IAudioSink::Sound sound, bool loop) {
+    auto settings = Nexus::getProfile()->getSettings();
+    if (!settings->getAudioOutDevEnabled()) {
+        // don't try to play sounds if audio is disabled
+        return;
+    }
+
+    if (audioNotification == nullptr) {
+        audioNotification = std::unique_ptr<IAudioSink>(audioControl->makeSink());
+        if (audioNotification == nullptr) {
+            qDebug() << "Failed to allocate AudioSink";
+            return;
+        }
+    }
+
+    audioNotification->connectTo_finishedPlaying(this, [this]() { cleanupNotificationSound(); });
+    audioNotification->playMono16Sound(sound);
+
+    if (loop) {
+        audioNotification->startLoop();
+    }
+}
+
+void Nexus::cleanupNotificationSound() {
+    audioNotification.reset();
+}
+
+void Nexus::incomingNotification(const QString& friendnumber) {
+    qDebug() << __func__ << friendnumber;
+    const auto& friendId = FriendId(friendnumber);
+    m_widget->newFriendMessageAlert(friendId, {}, false);
+
+    // loop until call answered or rejected
+    playNotificationSound(IAudioSink::Sound::IncomingCall, true);
+}
+
+void Nexus::outgoingNotification() {
+    // loop until call answered or rejected
+    playNotificationSound(IAudioSink::Sound::OutgoingCall, true);
+}
+
+/**
+ * @brief Widget::onStopNotification Stop the notification sound.
+ */
+void Nexus::onStopNotification() {
+    audioNotification.reset();
+}
+
 void Nexus::bootstrapWithProfileName(const QString& host, const QString& profileName) {
     qDebug() << "bootstrapWithProfileName" << profileName;
 
-    Profile* profile = nullptr;
-
-    Settings& settings = Settings::getInstance();
-    setSettings(&settings);
+    //    Profile* profile = nullptr;
+    //    Settings& settings = Nexus::getProfile()->getSettings();
+    //    setSettings(&settings);
 
     //    QString profileName = settings.getCurrentProfile();
-    QCommandLineParser parser;
+    //    QCommandLineParser parser;
 
-    if (Profile::exists(profileName)) {
-        profile = Profile::loadProfile(host, profileName, &parser);
-    }
-
-    if (profile) {
-        bootstrapWithProfile(profile);
-    }
+    //    if (Profile::exists(profileName)) {
+    //        profile = Profile::loadProfile(host, profileName, &parser);
+    //    }
+    //    if (profile) {
+    //        bootstrapWithProfile(profile);
+    //    }
 }
 
 QWidget* Nexus::widget() {

@@ -16,10 +16,12 @@
 #include "src/model/group.h"
 #include "src/model/grouplist.h"
 #include "src/model/status.h"
+#include "src/nexus.h"
 #include "src/persistence/settings.h"
 #include "src/widget/contentdialog.h"
 
 #include <QCollator>
+#include "src/nexus.h"
 
 namespace {
 
@@ -54,15 +56,15 @@ int FriendChatroom::getCircleId() const { return 0; }
 
 QString FriendChatroom::getCircleName() const {
     const auto circleId = getCircleId();
-    return Settings::getInstance().getCircleName(circleId);
+    return Nexus::getProfile()->getSettings()->getCircleName(circleId);
 }
 
 QString FriendChatroom::getAutoAcceptDir() const {
-    return Settings::getInstance().getAutoAcceptDir(*frnd);
+    return Nexus::getProfile()->getSettings()->getAutoAcceptDir(*frnd);
 }
 
 void FriendChatroom::setAutoAcceptDir(const QString& dir) {
-    Settings::getInstance().setAutoAcceptDir(*frnd, dir);
+    Nexus::getProfile()->getSettings()->setAutoAcceptDir(*frnd, dir);
 }
 
 void FriendChatroom::disableAutoAccept() { setAutoAcceptDir(QString{}); }
@@ -92,13 +94,13 @@ QVector<GroupToDisplay> FriendChatroom::getGroups() const {
 QVector<CircleToDisplay> FriendChatroom::getOtherCircles() const {
     QVector<CircleToDisplay> circles;
     const auto currentCircleId = getCircleId();
-    const auto& s = Settings::getInstance();
-    for (int i = 0; i < s.getCircleCount(); ++i) {
+    auto s = Nexus::getProfile()->getSettings();
+    for (int i = 0; i < s->getCircleCount(); ++i) {
         if (i == currentCircleId) {
             continue;
         }
 
-        const auto name = getShortName(s.getCircleName(i));
+        const auto name = getShortName(s->getCircleName(i));
         const CircleToDisplay circle = {name, i};
         circles.push_back(circle);
     }

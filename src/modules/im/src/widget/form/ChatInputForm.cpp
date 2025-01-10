@@ -23,14 +23,14 @@
 #include <QVBoxLayout>
 
 #include "ChatReplyForm.h"
-#include "lib/storeage/settings/style.h"
+#include "lib/storage/settings/style.h"
 #include "src/base/MessageBox.h"
 #include "src/chatlog/chatlinecontent.h"
 #include "src/chatlog/chatmessageitem.h"
 #include "src/core/core.h"
 #include "src/core/coreav.h"
+#include "src/lib/session/profile.h"
 #include "src/nexus.h"
-#include "src/persistence/profile.h"
 #include "src/widget/emoticonswidget.h"
 #include "src/widget/tool/chattextedit.h"
 #include "src/widget/tool/screenshotgrabber.h"
@@ -145,9 +145,9 @@ ChatInputForm::ChatInputForm(QWidget* parent, bool isGroup)
 }
 
 void ChatInputForm::reloadTheme() {
-    const Settings& s = Settings::getInstance();
+    auto s = Nexus::getProfile()->getSettings();
     msgEdit->setStyleSheet(lib::settings::Style::getStylesheet("msgEdit/msgEdit.css") +
-                           fontToCss(s.getChatMessageFont(), "QTextEdit"));
+                           fontToCss(s->getChatMessageFont(), "QTextEdit"));
 
     auto btnCss = lib::settings::Style::getStylesheet(STYLE_PATH);
     setStyleSheet(btnCss);

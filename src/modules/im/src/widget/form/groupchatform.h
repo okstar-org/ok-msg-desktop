@@ -15,7 +15,7 @@
 
 #include <QMap>
 #include "genericchatform.h"
-#include "src/core/FriendId.h"
+#include "src/model/FriendId.h"
 
 namespace Ui {
 class MainWindow;

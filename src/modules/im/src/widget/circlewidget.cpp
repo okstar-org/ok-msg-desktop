@@ -34,7 +34,7 @@
 QHash<int, CircleWidget*> CircleWidget::circleList;
 
 CircleWidget::CircleWidget(FriendListWidget* parent, int id) : CategoryWidget(parent), id(id) {
-    setName(Settings::getInstance().getCircleName(id), false);
+    setName(Nexus::getProfile()->getSettings()->getCircleName(id), false);
     circleList[id] = this;
 
     connect(nameLabel, &CroppingLabel::editFinished, [this](const QString& newName) {
@@ -45,7 +45,7 @@ CircleWidget::CircleWidget(FriendListWidget* parent, int id) : CategoryWidget(pa
         if (isCompact()) nameLabel->minimizeMaximumWidth();
     });
 
-    setExpanded(Settings::getInstance().getCircleExpanded(id), false);
+    setExpanded(Nexus::getProfile()->getSettings()->getCircleExpanded(id), false);
     updateStatus();
 }
 
@@ -83,7 +83,7 @@ void CircleWidget::contextMenuEvent(QContextMenuEvent* event) {
 
             friendList->removeCircleWidget(this);
 
-            int replacedCircle = Settings::getInstance().removeCircle(id);
+            int replacedCircle = Nexus::getProfile()->getSettings()->removeCircle(id);
 
             auto circleReplace = circleList.find(replacedCircle);
             if (circleReplace != circleList.end())
@@ -152,11 +152,11 @@ void CircleWidget::dropEvent(QDropEvent* event) {
     if (!f) return;
 
     // Save CircleWidget before changing the Id
-    int circleId = Settings::getInstance().getFriendCircleID(toxPk);
+    int circleId = Nexus::getProfile()->getSettings()->getFriendCircleID(toxPk);
     CircleWidget* circleWidget = getFromID(circleId);
 
     addFriendWidget(widget, f->getStatus());
-    Settings::getInstance().savePersonal();
+    Nexus::getProfile()->getSettings()->savePersonal();
 
     if (circleWidget != nullptr) {
         circleWidget->updateStatus();
@@ -166,17 +166,19 @@ void CircleWidget::dropEvent(QDropEvent* event) {
     setContainerAttribute(Qt::WA_UnderMouse, false);
 }
 
-void CircleWidget::onSetName() { Settings::getInstance().setCircleName(id, getName()); }
+void CircleWidget::onSetName() {
+    Nexus::getProfile()->getSettings()->setCircleName(id, getName());
+}
 
 void CircleWidget::onExpand() {
-    Settings::getInstance().setCircleExpanded(id, isExpanded());
-    Settings::getInstance().savePersonal();
+    Nexus::getProfile()->getSettings()->setCircleExpanded(id, isExpanded());
+    Nexus::getProfile()->getSettings()->savePersonal();
 }
 
 void CircleWidget::onAddFriendWidget(FriendWidget* w) {
     const Friend* f = w->getFriend();
     ToxPk toxId = f->getPublicKey();
-    Settings::getInstance().setFriendCircleID(toxId, id);
+    Nexus::getProfile()->getSettings()->setFriendCircleID(toxId, id);
 }
 
 void CircleWidget::updateID(int index) {
@@ -196,7 +198,7 @@ void CircleWidget::updateID(int index) {
 
         if (friendWidget) {
             const Friend* f = friendWidget->getFriend();
-            Settings::getInstance().setFriendCircleID(f->getPublicKey(), id);
+            Nexus::getProfile()->getSettings()->setFriendCircleID(f->getPublicKey(), id);
         }
     }
 
@@ -206,7 +208,7 @@ void CircleWidget::updateID(int index) {
 
         if (friendWidget) {
             const Friend* f = friendWidget->getFriend();
-            Settings::getInstance().setFriendCircleID(f->getPublicKey(), id);
+            Nexus::getProfile()->getSettings()->setFriendCircleID(f->getPublicKey(), id);
         }
     }
 }

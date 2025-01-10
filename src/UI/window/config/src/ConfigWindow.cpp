@@ -16,14 +16,14 @@
 
 #include <QWidget>
 
-#include "lib/storeage/settings/OkSettings.h"
-#include "lib/storeage/settings/translator.h"
+#include "lib/storage/settings/OkSettings.h"
+#include "lib/storage/settings/translator.h"
 #include "src/base/basic_types.h"
 #include "src/base/widgets.h"
 
 #if OK_PLUGIN
 #include "about/src/aboutform.h"
-#include "lib/storeage/settings/style.h"
+#include "lib/storage/settings/style.h"
 #include "plugin/src/PluginManagerForm.h"
 #include "settings/src/SettingsForm.h"
 
@@ -51,7 +51,7 @@ ConfigWindow::ConfigWindow(QWidget* parent) : OMenuWidget(parent), ui(new Ui::Co
     ui->tabWidget->tabBar()->setCursor(Qt::PointingHandCursor);
     reloadTheme();
 
-    QString locale = lib::settings::OkSettings::getInstance().getTranslation();
+    QString locale = lib::settings::OkSettings().getTranslation();
     settings::Translator::translate(OK_UIWindowConfig_MODULE, locale);
     settings::Translator::registerHandler([this] { retranslateUi(); }, this);
     retranslateUi();

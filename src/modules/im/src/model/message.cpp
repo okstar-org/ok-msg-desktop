@@ -12,8 +12,8 @@
 
 #include "message.h"
 #include "base/uuid.h"
-#include "friend.h"
 #include "src/core/core.h"
+#include "src/model/friend.h"
 
 void MessageProcessor::SharedParams::onUserNameSet(const QString& username) {
     QString sanename = username;

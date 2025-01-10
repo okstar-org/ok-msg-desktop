@@ -26,10 +26,9 @@
 #include "circlewidget.h"
 #include "contentdialogmanager.h"
 #include "contentlayout.h"
-#include "lib/storeage/settings/OkSettings.h"
-#include "lib/storeage/settings/translator.h"
+#include "lib/storage/settings/style.h"
+#include "lib/storage/settings/translator.h"
 #include "src/core/corefile.h"
-#include "src/lib/storeage/settings/style.h"
 #include "src/model/friendlist.h"
 #include "src/model/group.h"
 #include "src/model/groupinvite.h"
@@ -118,7 +117,7 @@ ChatWidget::ChatWidget(QWidget* parent)
     ui->mainSplitter->setStretchFactor(1, 0);
     ui->mainSplitter->setChildrenCollapsible(false);
 
-    const Settings& s = Settings::getInstance();
+    //    auto s = Nexus::getProfile()->getSettings();
 
     setupStatus();
     setupSearch();
@@ -320,7 +319,7 @@ void ChatWidget::updateIcons() {
                                         ui->statusButton->property("status").toInt())) +
                                 (eventIcon ? "_event" : "");
 
-    QString color = Settings::getInstance().getLightTrayIcon() ? "light" : "dark";
+    QString color = Nexus::getProfile()->getSettings()->getLightTrayIcon() ? "light" : "dark";
     QString path = ":/img/taskbar/" + color + "/taskbar_" + assetSuffix + ".svg";
     QSvgRenderer renderer(path);
 
@@ -505,7 +504,7 @@ void ChatWidget::onProfileChanged(Profile* profile) {
 }
 
 void ChatWidget::onGroupClicked() {
-    auto& settings = Settings::getInstance();
+    //    auto& settings = Nexus::getProfile()->getSettings();
 
     //    hideMainForms(nullptr);
     //  if (!groupInviteForm) {
@@ -606,11 +605,11 @@ void ChatWidget::dispatchFile(ToxFile file) {
     const auto& cId = ContactId(file.getFriendId());
 
     if (file.status == FileStatus::INITIALIZING && file.direction == FileDirection::RECEIVING) {
-        const Settings& settings = Settings::getInstance();
+        auto settings = Nexus::getProfile()->getSettings();
         //    QString autoAcceptDir = settings.getAutoAcceptDir(cId);
         //    if (autoAcceptDir.isEmpty() &&
-        //    lib::settings::OkSettings::getInstance().getAutoSaveEnabled()) {
-        auto autoAcceptDir = settings.getGlobalAutoAcceptDir();
+        //    lib::settings::OkNexus::getSettings()->getAutoSaveEnabled()) {
+        auto autoAcceptDir = settings->getGlobalAutoAcceptDir();
         //    }
 
         //    auto maxAutoAcceptSize = settings.getMaxAutoAcceptSize();
@@ -667,7 +666,7 @@ void ChatWidget::onAvInvite(ToxPeer peerId, bool video) {
     //              Settings::AutoAcceptCall::Video : Settings::AutoAcceptCall::Audio;
 
     //  // AutoAcceptCall is set for this friend
-    //  if (Settings::getInstance()
+    //  if (Nexus::getProfile()->getSettings()
     //          .getAutoAcceptCall(*f)
     //          .testFlag(testedFlag)) {
 

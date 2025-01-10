@@ -16,7 +16,7 @@
 #include <QPushButton>
 #include <QSignalMapper>
 
-#include "lib/storeage/settings/OkSettings.h"
+#include "lib/storage/settings/OkSettings.h"
 #include "src/core/core.h"
 #include "src/nexus.h"
 #include "src/persistence/settings.h"

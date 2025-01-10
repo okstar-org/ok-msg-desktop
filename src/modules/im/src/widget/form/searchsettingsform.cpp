@@ -11,8 +11,8 @@
  */
 
 #include "searchsettingsform.h"
-#include "lib/storeage/settings/OkSettings.h"
-#include "src/lib/storeage/settings/style.h"
+#include "lib/storage/settings/OkSettings.h"
+#include "src/lib/storage/settings/style.h"
 #include "src/persistence/settings.h"
 #include "src/widget/form/loadhistorydialog.h"
 #include "ui_searchsettingsform.h"
@@ -99,8 +99,7 @@ void SearchSettingsForm::reloadTheme() {
 }
 
 void SearchSettingsForm::updateStartDateLabel() {
-    ui->startDateLabel->setText(
-            startDate.toString(lib::settings::OkSettings::getInstance().getDateFormat()));
+    ui->startDateLabel->setText(startDate.toString(lib::settings::OkSettings().getDateFormat()));
 }
 
 void SearchSettingsForm::setUpdate(const bool isUpdate) {

@@ -28,10 +28,11 @@
 #include "base/r.h"
 #include "base/system/sys_info.h"
 #include "ipc.h"
-#include "lib/storeage/log/LogManager.h"
 #include "lib/plugin/pluginmanager.h"
-#include "lib/storeage/settings/OkSettings.h"
-#include "lib/storeage/settings/translator.h"
+#include "lib/storage/StorageManager.h"
+#include "lib/storage/log/LogManager.h"
+#include "lib/storage/settings/OkSettings.h"
+#include "lib/storage/settings/translator.h"
 #include "modules/im/src/nexus.h"
 
 namespace ok {
@@ -41,8 +42,7 @@ namespace ok {
  * @param argc
  * @param argv
  */
-Application::Application(int& argc, char* argv[])
-        : QApplication(argc, argv), _argc(argc), _argv(argv) {
+Application::Application(int& argc, char* argv[]) : QApplication(argc, argv) {
     // Qt application settings.
     setApplicationName(APPLICATION_NAME);
     setApplicationVersion(APPLICATION_VERSION_ID);
@@ -56,7 +56,11 @@ Application::Application(int& argc, char* argv[])
     connect(qApp, &QApplication::aboutToQuit, this, &Application::on_exit);
 
     // Initialize log manager.
-    lib::log::LogManager::Instance();
+
+    storageManager = new lib::storage::StorageManager("", this);
+    auto dir = storageManager->getDir().path();
+
+    qDebug() << "StorageManager root:" << dir;
     qDebug() << "QT_VERSION:" << QT_VERSION_STR;
     qDebug() << "APPLICATION_NAME:" << APPLICATION_NAME;
     qDebug() << "APPLICATION_VERSION_ID:" << APPLICATION_VERSION_ID;
@@ -144,9 +148,10 @@ void Application::start() {
  */
 void Application::createLoginUI(bool bootstrap) {
     qDebug() << __func__ << "bootstrap:" << bootstrap;
-    session = std::make_shared<::lib::session::AuthSession>();
-    connect(session.get(), &::lib::session::AuthSession::tokenSet,  //
-            [&]() {                                                 //
+    session = std::make_shared<lib::session::AuthSession>();
+    connect(session.get(), &lib::session::AuthSession::tokenSet,  //
+            [&]() {
+                profile = std::make_unique<lib::session::Profile>(session.get());
                 startMainUI();
             });
 
@@ -244,7 +249,8 @@ void Application::on_exit() {
 }
 
 void Application::doLogout() {
-    qDebug() << __func__ << profile;
+    qDebug() << __func__ << profile.get();
+
     QVector<QString> remove;
     for (auto mod : m_moduleMap) {
         qDebug() << "delete module:" << mod->getName();

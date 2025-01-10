@@ -23,11 +23,12 @@
 #include "form/groupchatform.h"
 #include "groupwidget.h"
 #include "gui.h"
-#include "lib/storeage/settings/translator.h"
+#include "lib/storage/settings/translator.h"
 #include "maskablepixmapwidget.h"
-#include "src/lib/storeage/settings/style.h"
+#include "src/lib/storage/settings/style.h"
 #include "src/model/sessionchatlog.h"
 #include "src/model/status.h"
+#include "src/nexus.h"
 #include "src/persistence/settings.h"
 #include "src/widget/friendwidget.h"
 #include "src/widget/widget.h"
@@ -75,10 +76,9 @@ GroupWidget::~GroupWidget() {
 void GroupWidget::init() {}
 
 ContentDialog* GroupWidget::addGroupDialog(Group* group) {
-    auto& settings = Settings::getInstance();
+    //    auto settings = Nexus::getProfile()->getSettings();
 
     auto& groupId = group->getId();
-
     ContentDialog* dialog = ContentDialogManager::getInstance()->getGroupDialog(GroupId(groupId));
     //  bool separated = settings.getSeparateWindow();
     //  if (!dialog) {

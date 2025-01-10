@@ -18,7 +18,7 @@
 #include "VideoLayoutPicker.h"
 #include "base/RoundedPixmapLabel.h"
 #include "lib/messenger/messenger.h"
-#include "lib/storeage/settings/style.h"
+#include "lib/storage/settings/style.h"
 #include "modules/im/src/core/core.h"
 #include "modules/im/src/nexus.h"
 

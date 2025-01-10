@@ -17,7 +17,7 @@
 #include <QPolygon>
 #include <QRect>
 #include <QWidget>
-#include "src/core/FriendId.h"
+#include "src/model/FriendId.h"
 
 class QPaintEvent;
 class QShowEvent;

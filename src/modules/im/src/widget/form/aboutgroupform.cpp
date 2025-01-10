@@ -13,10 +13,10 @@
 #include "aboutgroupform.h"
 
 #include <QDebug>
+#include "src/lib/session/profile.h"
 #include "src/model/group.h"
 #include "src/model/grouplist.h"
 #include "src/nexus.h"
-#include "src/persistence/profile.h"
 #include "src/widget/widget.h"
 #include "ui_aboutgroupform.h"
 

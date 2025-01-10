@@ -19,7 +19,7 @@
 #include <cassert>
 #include <memory>
 #include "src/core/toxencrypt.h"
-#include "src/persistence/profile.h"
+#include "src/lib/session/profile.h"
 
 /**
  * @class SettingsSerializer

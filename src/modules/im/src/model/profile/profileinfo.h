@@ -13,7 +13,7 @@
 #include <QObject>
 #include "iprofileinfo.h"
 #include "src/base/interface.h"
-#include "src/core/FriendId.h"
+#include "src/model/FriendId.h"
 
 class Core;
 class QFile;
@@ -44,7 +44,6 @@ public:
 
     const QString& getFullName() const override;
 
-    RenameResult renameProfile(const QString& name) override;
     SaveResult exportProfile(const QString& path) const override;
     QStringList removeProfile() override;
     void logout() override;

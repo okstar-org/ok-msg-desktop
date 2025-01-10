@@ -19,7 +19,7 @@
 
 #include "chatline.h"
 #include "chatmessage.h"
-#include "src/lib/storeage/settings/style.h"
+#include "src/lib/storage/settings/style.h"
 
 class QGraphicsScene;
 class QGraphicsRectItem;

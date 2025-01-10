@@ -16,9 +16,9 @@
 #include "base/SvgUtils.h"
 #include "gui.h"
 #include "src/core/core.h"
-#include "src/lib/storeage/settings/style.h"
+#include "src/lib/session/profile.h"
+#include "src/lib/storage/settings/style.h"
 #include "src/nexus.h"
-#include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
 #include "src/widget/widget.h"
 
@@ -42,7 +42,7 @@ AboutFriendForm::AboutFriendForm(const Friend* fw, QWidget* parent)
     setAttribute(Qt::WA_StyledBackground);
     ui->autoacceptcall->setItemDelegate(new QStyledItemDelegate(ui->autoacceptcall));
 
-    const auto af = new AboutFriend(m_friend, &Settings::getInstance());
+    const auto af = new AboutFriend(m_friend, profile->getSettings());
     about = std::unique_ptr<IAboutFriend>(af);
 
     reloadTheme();

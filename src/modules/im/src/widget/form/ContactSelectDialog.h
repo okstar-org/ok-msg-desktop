@@ -14,7 +14,7 @@
 #define CHATFORWARDIALOG_H
 
 #include <QDialog>
-#include "src/core/contactid.h"
+#include "src/model/contactid.h"
 
 class Friend;
 class FriendWidget;

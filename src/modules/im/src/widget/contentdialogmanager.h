@@ -14,10 +14,10 @@
 #define _CONTENT_DIALOG_MANAGER_H_
 
 #include "contentdialog.h"
-#include "src/core/FriendId.h"
-#include "src/core/contactid.h"
-#include "src/core/groupid.h"
+#include "src/model/FriendId.h"
+#include "src/model/contactid.h"
 #include "src/model/dialogs/idialogsmanager.h"
+#include "src/model/groupid.h"
 
 #include <QObject>
 

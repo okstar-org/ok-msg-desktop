@@ -17,7 +17,7 @@
 
 #include <QObject>
 
-#include "src/core/groupid.h"
+#include "src/model/groupid.h"
 
 class IDialogsManager;
 class Group;

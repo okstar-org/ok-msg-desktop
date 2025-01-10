@@ -18,7 +18,8 @@
 #include "contentdialogmanager.h"
 #include "friendwidget.h"
 #include "groupwidget.h"
-#include "lib/storeage/settings/OkSettings.h"
+#include "lib/storage/settings/OkSettings.h"
+#include "src/lib/session/profile.h"
 #include "src/model/chathistory.h"
 #include "src/model/chatroom/friendchatroom.h"
 #include "src/model/friend.h"
@@ -26,7 +27,6 @@
 #include "src/model/group.h"
 #include "src/model/status.h"
 #include "src/nexus.h"
-#include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
 
 #include <QDragEnterEvent>
@@ -39,7 +39,7 @@
 #include "widget.h"
 
 inline QDateTime getActiveTimeFriend(const Friend* contact) {
-    return Settings::getInstance().getFriendActivity(contact->getPublicKey());
+    return Nexus::getProfile()->getSettings()->getFriendActivity(contact->getPublicKey());
 }
 
 ContactListWidget::ContactListWidget(QWidget* parent, bool groupsOnTop)
@@ -57,9 +57,9 @@ ContactListWidget::ContactListWidget(QWidget* parent, bool groupsOnTop)
 
     setAcceptDrops(true);
 
-    auto& settings = Settings::getInstance();
+    auto settings = Nexus::getProfile()->getSettings();
 
-    connect(&settings, &Settings::groupchatPositionChanged, this,
+    connect(settings, &Settings::groupchatPositionChanged, this,
             &ContactListWidget::onGroupchatPositionChanged);
 
     auto widget = Widget::getInstance();
@@ -133,10 +133,10 @@ FriendWidget* ContactListWidget::getFriend(const ContactId& friendPk) {
 
 void ContactListWidget::updateFriendActivity(const Friend& frnd) {
     const FriendId& pk = frnd.getPublicKey();
-    auto& settings = Settings::getInstance();
-    const auto oldTime = settings.getFriendActivity(pk);
+    auto settings = Nexus::getProfile()->getSettings();
+    const auto oldTime = settings->getFriendActivity(pk);
     const auto newTime = QDateTime::currentDateTime();
-    settings.setFriendActivity(pk, newTime);
+    settings->setFriendActivity(pk, newTime);
     FriendWidget* widget = getFriend(frnd.getPublicKey());
     moveWidget(widget, frnd.getStatus());
     updateActivityTime(oldTime);  // update old category widget
@@ -146,7 +146,7 @@ void ContactListWidget::setMode(SortingMode mode) {
     if (this->mode == mode) return;
 
     this->mode = mode;
-    //    Settings::getInstance().setFriendSortingMode(mode);
+    //    Nexus::getProfile()->getSettings()->setFriendSortingMode(mode);
 
     //    sortByMode(mode);
 }
@@ -165,11 +165,11 @@ GroupWidget* ContactListWidget::addGroup(const GroupId& groupId, const QString& 
     }
     g = GroupList::addGroup(groupId, groupName);
 
-    auto& settings = Settings::getInstance();
+    auto settings = Nexus::getProfile()->getSettings();
 
     //  const bool enabled = core->getGroupAvEnabled(groupId.toString());
 
-    const auto compact = settings.getCompactLayout();
+    const auto compact = settings->getCompactLayout();
     auto gw = new GroupWidget(groupId, groupName, compact);
     groupWidgets[groupId.toString()] = gw;
     //    groupLayout.addSortedWidget(gw);
@@ -345,12 +345,12 @@ void ContactListWidget::showEvent(QShowEvent* event) {}
 void ContactListWidget::moveWidget(FriendWidget* widget, Status::Status s, bool add) {
     if (mode == SortingMode::Name) {
         const Friend* f = widget->getFriend();
-        //    int circleId = Settings::getInstance().getFriendCircleID(f->getPublicKey());
-        //    CircleWidget *circleWidget = CircleWidget::getFromID(circleId);
+        //    int circleId =
+        //    Nexus::getProfile()->getSettings()->getFriendCircleID(f->getPublicKey());//    CircleWidget *circleWidget = CircleWidget::getFromID(circleId);
 
         //    if (circleWidget == nullptr || add) {
         //      if (circleId != -1)
-        //        Settings::getInstance().setFriendCircleID(f->getPublicKey(), -1);
+        //        Nexus::getProfile()->getSettings()->setFriendCircleID(f->getPublicKey(), -1);
 
         //      listLayout->addFriendWidget(widget, s);
         //      return;

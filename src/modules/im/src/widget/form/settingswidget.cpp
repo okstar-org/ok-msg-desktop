@@ -12,10 +12,11 @@
 
 #include "settingswidget.h"
 
-#include "lib/storeage/settings/translator.h"
-#include "src/audio/audio.h"
+#include "lib/audio/audio.h"
+#include "lib/storage/settings/translator.h"
 #include "src/core/core.h"
 #include "src/core/coreav.h"
+#include "src/nexus.h"
 #include "src/persistence/settings.h"
 #include "src/video/camerasource.h"
 #include "src/widget/contentlayout.h"
@@ -32,8 +33,8 @@
 #include <memory>
 
 SettingsWidget::SettingsWidget(Widget* parent) : QWidget(parent, Qt::Window) {
-    IAudioSettings* audioSettings = &Settings::getInstance();
-    IVideoSettings* videoSettings = &Settings::getInstance();
+    IAudioSettings* audioSettings = Nexus::getProfile()->getSettings();
+    IVideoSettings* videoSettings = Nexus::getProfile()->getSettings();
     CameraSource& camera = CameraSource::getInstance();
 
     settingsWidgets = std::unique_ptr<QTabWidget>(new QTabWidget(this));

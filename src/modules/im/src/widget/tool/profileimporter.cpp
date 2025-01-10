@@ -19,6 +19,8 @@
 
 #include "src/base/MessageBox.h"
 #include "src/core/core.h"
+#include "src/nexus.h"
+#include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
 
 /**
@@ -92,7 +94,7 @@ bool ProfileImporter::importProfile(const QString& path) {
         return false;  // ingore importing non-tox file
     }
 
-    QString settingsPath = Settings::getInstance().getSettingsDirPath();
+    QString settingsPath = Nexus::getProfile()->getSettings()->getSettingsDirPath();
     QString profilePath = QDir(settingsPath).filePath(profile + Core::TOX_EXT);
 
     if (QFileInfo(profilePath).exists()) {

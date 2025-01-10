@@ -16,7 +16,7 @@
 #include "ContactListLayout.h"
 #include "ContactListWidget.h"
 #include "friendwidget.h"
-#include "src/lib/storeage/settings/style.h"
+#include "src/lib/storage/settings/style.h"
 #include "src/model/status.h"
 #include "tool/croppinglabel.h"
 

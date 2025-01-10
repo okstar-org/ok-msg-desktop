@@ -16,11 +16,11 @@
 #include "Bus.h"
 #include "ContactListWidget.h"
 #include "application.h"
-#include "lib/storeage/settings/translator.h"
-#include "src/lib/storeage/settings/style.h"
+#include "lib/storage/settings/translator.h"
+#include "src/lib/session/profile.h"
+#include "src/lib/storage/settings/style.h"
 #include "src/model/aboutfriend.h"
 #include "src/nexus.h"
-#include "src/persistence/profile.h"
 #include "src/widget/form/aboutfriendform.h"
 #include "widget.h"
 
@@ -378,8 +378,7 @@ void ContactWidget::onGroupSubjectChanged(const GroupId& groupId, const QString&
 // }
 
 void ContactWidget::onGroupClicked() {
-    auto& settings = Settings::getInstance();
-
+    //    auto settings = Nexus::getProfile()->getSettings();
     //    hideMainForms(nullptr);
     //  if (!groupInviteForm) {
     //    groupInviteForm = new GroupInviteForm;
@@ -393,10 +392,10 @@ void ContactWidget::onGroupClicked() {
 }
 
 void ContactWidget::friendRequestsUpdate() {
-    auto& settings = Settings::getInstance();
+    //    auto& settings = Nexus::getProfile()->getSettings();
 
-    unsigned int unreadFriendRequests = settings.getUnreadFriendRequests();
-    qDebug() << __func__ << "unreadFriendRequests" << unreadFriendRequests;
+    //    unsigned int unreadFriendRequests = settings.getUnreadFriendRequests();
+    //    qDebug() << __func__ << "unreadFriendRequests" << unreadFriendRequests;
     //  if (unreadFriendRequests == 0) {
     //    delete friendRequestsButton;
     //    friendRequestsButton = nullptr;

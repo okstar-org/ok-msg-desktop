@@ -21,7 +21,7 @@
 #include "content/spinner.h"
 #include "content/text.h"
 #include "content/timestamp.h"
-#include "src/lib/storeage/settings/style.h"
+#include "src/lib/storage/settings/style.h"
 #include "textformatter.h"
 
 #include <QCryptographicHash>
@@ -64,7 +64,7 @@ IChatItem::Ptr ChatMessage::createChatInfoMessage(const QString& rawMessage,
             break;
     }
 
-    QFont baseFont = Settings::getInstance().getChatMessageFont();
+    QFont baseFont = Nexus::getProfile()->getSettings()->getChatMessageFont();
     Image* imgItem = new Image(QSize(18, 18), img);
     auto* item = new ChatNotificationBox(text, baseFont);
     item->setIcon(imgItem);
@@ -91,10 +91,8 @@ IChatItem::Ptr ChatMessage::createFileTransferMessage(const ChatLogItem& item, T
     return IChatItem::Ptr(msg);
 }
 
-IChatItem::Ptr ChatMessage::createTypingNotification() {
+IChatItem::Ptr ChatMessage::createTypingNotification(const QFont& baseFont) {
     ChatMessage::Ptr msg = ChatMessage::Ptr(new ChatMessage);
-
-    QFont baseFont = Settings::getInstance().getChatMessageFont();
 
     // Note: "[user]..." is just a placeholder. The actual text is set in
     // ChatForm::setFriendTyping()
@@ -117,8 +115,9 @@ IChatItem::Ptr ChatMessage::createTypingNotification() {
  *
  * @return created message
  */
-IChatItem::Ptr ChatMessage::createBusyNotification() {
-    QFont baseFont = Settings::getInstance().getChatMessageFont();
+IChatItem::Ptr ChatMessage::createBusyNotification(const QFont& baseFont_) {
+    QFont baseFont = baseFont_;
+    //    Nexus::getProfile()->getSettings()->getChatMessageFont();
     baseFont.setPixelSize(baseFont.pixelSize() + 2);
     baseFont.setBold(true);
     auto* item = new ChatNotificationBox(QObject::tr("Reformatting text in progress.."), baseFont);

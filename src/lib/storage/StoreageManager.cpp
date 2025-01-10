@@ -1,0 +1,68 @@
+/*
+ * Copyright (c) 2022 船山信息 chuanshaninfo.com
+ * The project is licensed under Mulan PubL v2.
+ * You can use this software according to the terms and conditions of the Mulan
+ * PubL v2. You may obtain a copy of Mulan PubL v2 at:
+ *          http://license.coscl.org.cn/MulanPubL-2.0
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PubL v2 for more details.
+ */
+
+#include "StorageManager.h"
+
+#include <QDebug>
+#include <memory>
+#include "db/rawdatabase.h"
+#include "src/base/system/sys_info.h"
+
+namespace lib::storage {
+
+StorageManager::StorageManager(const QString& profile, QObject* parent)
+        : QObject(parent), dir(ok::base::PlatformInfo::getAppConfigDirPath()), profile(profile) {
+    qDebug() << __func__ << "Initializing ...";
+    if (!profile.isEmpty()) {
+        // 创建子目录
+        if (!dir.exists(profile)) {
+            dir.mkdir(profile);
+            dir.cd(profile);
+        }
+    }
+
+    cacheManager = new cache::CacheManager(dir.path() + QDir::separator() + "cache", this);
+
+    qDebug() << __func__ << "Initialized";
+}
+
+StorageManager::~StorageManager() {
+    qDebug() << __func__;
+}
+
+const QDir& StorageManager::getDir() {
+    return dir;
+}
+
+std::unique_ptr<settings::OkSettings> StorageManager::getGlobalSettings() const {
+    return std::make_unique<settings::OkSettings>();
+}
+
+StorageManager* StorageManager::create(const QString& profile_) {
+    auto sm = storageMap.value(profile_);
+    if (!sm) {
+        sm = new StorageManager(profile_);
+        storageMap.insert(profile_, sm);
+    }
+    return sm;
+}
+
+std::unique_ptr<db::RawDatabase> StorageManager::getDatabase(const QString& module) {
+    static QString DB_DIR = "db";
+    if (!dir.exists(DB_DIR)) {
+        dir.mkdir(DB_DIR);
+    }
+    QDir dbDir(dir.path() + QDir::separator() + DB_DIR + QDir::separator() + module);
+    return std::make_unique<db::RawDatabase>(dbDir.path(), QString(), QByteArray{});
+}
+
+}  // namespace lib::storage

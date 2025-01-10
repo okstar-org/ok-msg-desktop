@@ -18,9 +18,9 @@
 #include <QMap>
 #include <QObject>
 #include <QStringList>
-#include "src/core/FriendId.h"
-#include "src/core/contactid.h"
-#include "src/core/groupid.h"
+#include "FriendId.h"
+#include "contactid.h"
+#include "groupid.h"
 #include "src/core/icoregroupquery.h"
 #include "src/core/icoreidhandler.h"
 #include "src/model/message.h"

@@ -43,7 +43,6 @@ public:
 
     virtual const VCard& getVCard() const = 0;
 
-    virtual RenameResult renameProfile(const QString& name) = 0;
     virtual SaveResult exportProfile(const QString& path) const = 0;
     virtual QStringList removeProfile() = 0;
     virtual void logout() = 0;

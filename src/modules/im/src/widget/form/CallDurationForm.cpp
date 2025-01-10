@@ -17,7 +17,7 @@
 #include <QTimer>
 #include "base/times.h"
 #include "src/core/coreav.h"
-#include "src/lib/storeage/settings/style.h"
+#include "src/lib/storage/settings/style.h"
 #include "src/video/netcamview.h"
 
 CallDurationForm::CallDurationForm(QWidget* parent)

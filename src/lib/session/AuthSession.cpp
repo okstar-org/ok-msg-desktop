@@ -16,6 +16,7 @@
 #include <QTimer>
 
 #include "lib/backend/PassportService.h"
+#include "profile.h"
 
 namespace lib::session {
 

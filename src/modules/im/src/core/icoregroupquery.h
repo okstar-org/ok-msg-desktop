@@ -13,8 +13,8 @@
 #ifndef ICORE_GROUP_QUERY_H
 #define ICORE_GROUP_QUERY_H
 
-#include "FriendId.h"
-#include "groupid.h"
+#include "src/model/FriendId.h"
+#include "src/model/groupid.h"
 
 #include <QString>
 #include <QStringList>

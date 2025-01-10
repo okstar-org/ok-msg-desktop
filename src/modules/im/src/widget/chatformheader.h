@@ -17,8 +17,8 @@
 
 #include <memory>
 
-#include <src/core/FriendId.h>
-#include <src/core/contactid.h>
+#include "src/model/FriendId.h"
+#include "src/model/contactid.h"
 #include "src/model/status.h"
 
 class MaskablePixmapWidget;

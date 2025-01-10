@@ -12,8 +12,8 @@
 
 #include "chatformheader.h"
 
-#include "lib/storeage/settings/translator.h"
-#include "src/lib/storeage/settings/style.h"
+#include "lib/storage/settings/translator.h"
+#include "src/lib/storage/settings/style.h"
 #include "src/widget/maskablepixmapwidget.h"
 #include "src/widget/tool/callconfirmwidget.h"
 #include "src/widget/tool/croppinglabel.h"
@@ -25,23 +25,21 @@
 #include <QTextDocument>
 #include <QToolButton>
 
-#include "src/core/FriendId.h"
 #include "src/core/coreav.h"
+#include "src/model/FriendId.h"
 
 #include <src/model/contact.h>
-#include <src/model/friend.h>
+#include "src/model/friend.h"
 
 #include "src/model/friendlist.h"
 #include "src/widget/tool/callconfirmwidget.h"
 
 #include "Bus.h"
 #include "application.h"
-#include "src/nexus.h"
-#include "src/persistence/profile.h"
-#include "widget.h"
 #include "base/Styles.h"
-
-
+#include "src/lib/session/profile.h"
+#include "src/nexus.h"
+#include "widget.h"
 
 namespace {
 

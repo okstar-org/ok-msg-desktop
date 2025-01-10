@@ -26,8 +26,7 @@ public:
     ToxOptions(ToxOptions&& from);
     operator Tox_Options*();
     const char* getProxyAddrData() const;
-    static std::unique_ptr<ToxOptions> makeToxOptions(const QByteArray& savedata,
-                                                      const ICoreSettings* s);
+    static std::unique_ptr<ToxOptions> makeToxOptions(const ICoreSettings* s);
     bool getIPv6Enabled() const;
     void setIPv6Enabled(bool enabled);
 

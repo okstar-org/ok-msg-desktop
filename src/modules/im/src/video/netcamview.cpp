@@ -73,7 +73,7 @@ NetCamView::NetCamView(FriendId friendPk, QWidget* parent)
                                if (this->friendPk == friendPk) videoSurface->setAvatar(pixmap);
                            });
 
-    QRect videoSize = Settings::getInstance().getCamVideoRes();
+    QRect videoSize = Nexus::getProfile()->getSettings()->getCamVideoRes();
     qDebug() << "SIZER" << videoSize;
 }
 

@@ -10,31 +10,25 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#ifndef PROFILE_H
-#define PROFILE_H
+//
+// Created by gaojie on 25-1-9.
+//
 
-#include "src/core/toxencrypt.h"
-#include "src/core/toxid.h"
+#pragma once
 
+#include "history.h"
+#include "lib/session/profile.h"
+#include "lib/storage/db/rawdatabase.h"
 #include "src/core/core.h"
 #include "src/core/coreav.h"
 #include "src/core/corefile.h"
-#include "src/core/icoresettings.h"
-#include "src/model/friendlist.h"
-#include "src/persistence/history.h"
+#include "src/core/toxencrypt.h"
 
-#include <QByteArray>
-#include <QObject>
 #include <QPixmap>
-#include <QString>
-#include <QVector>
 #include <memory>
 
-class Settings;
-class QCommandLineParser;
-
 /**
- * 个人中心（包含Core）
+ * IM个人中心（包含Core）
  * 1、对个人帐号的抽象，一个用户登录即产生一个Profile
  * 2、包含基本帐号信息
  * 3、维护聊天核心Core
@@ -42,27 +36,47 @@ class QCommandLineParser;
 class Profile : public QObject {
     Q_OBJECT
 public:
-    static Profile* loadProfile(QString host,                      //
-                                QString name,                      //
-                                const QCommandLineParser* parser,  //
-                                const QString& password = QString());
-    static Profile* createProfile(QString host,
-                                  QString name,                      //
-                                  const QCommandLineParser* parser,  //
-                                  QString password);
-    ~Profile();
+    Profile(const QString& host, const QString& name, const QString& password, bool newProfile);
 
-    // 获取用户名
-    const QString& getUsername() const;
-    // 获取显示名（优先nick，再用户名）
+    //    static Profile* loadProfile(QString host, QString name, const QString& password =
+    //    QString());
+
+    static std::unique_ptr<Profile> createProfile(QString host, QString name, QString password);
+
+    History* getHistory();
+
+    const QPixmap loadAvatar();
+    void setAvatar(QByteArray& pic, bool saveToCore);
+    void setAvatarOnly(const QPixmap& pic);
+    bool removeAvatar(bool saveToCore);
+
+    QByteArray loadAvatarData(const ContactId& friendId);
+    const QPixmap loadAvatar(const ContactId& friendId);
+
+    const QString& getUsername();
+
+    /**
+     * 获取显示名（优先nick，再用户名）
+     */
     const QString& getFullName();
+    void setNick(const QString& nick_, bool saveToCore);
 
-    const QString& getHost() const { return host; };
+    void setVCard(const VCard& v);
+
+    const VCard& getVCard() const {
+        return vCard;
+    }
+
+    uint addContact(const ContactId& cid);
+    void saveContactAlias(const QString& contactId, const QString& alias);
+    QString getContactAlias(const QString& contactId);
+
+    void initCore(ICoreSettings* s, bool isNewProfile);
+
+    Core* getCore();
 
     void startCore();
     void stopCore();
-
-    Core* getCore();
 
     CoreAV* getCoreAv() {
         assert(coreAv.get());
@@ -74,109 +88,56 @@ public:
         return coreFile.get();
     }
 
-    bool isEncrypted() const;
-    QString setPassword(const QString& newPassword);
-    const ToxEncrypt* getPasskey() const;
+    QString setPassword(const QString& pwd);
+    QString getHost();
 
-    const QPixmap& loadAvatar();
-    void setAvatar(QByteArray& pic, bool saveToCore);
-    void setAvatarOnly(const QPixmap& pic);
+    [[nodiscard]] Settings* getSettings() const {
+        return s;
+    }
 
-    QPixmap loadAvatar(const ContactId& owner);
-    QByteArray loadAvatarData(const ContactId& owner);
-    void removeAvatar(bool saveToCore);
-
-    QByteArray getFriendAvatarHash(const FriendId& owner);
-
-    void saveFriendAvatar(const FriendId& owner, const QByteArray& avatar);
-    void saveContactAlias(const QString& contactId, const QString& alias);
-    QString getContactAlias(const QString& contactId);
-
-    bool isHistoryEnabled();
-    History* getHistory();
-
-    QStringList remove();
-
-    bool rename(QString newName);
-
-    static const QStringList getAllProfileNames();
-
-    static bool exists(QString name);
-    static bool isEncrypted(QString name);
-    static QString getDbPath(const QString& profileName);
-
-    uint addContact(const ContactId& cid);
-
-    /**
-     * 保存昵称
-     * @param nick
-     * @param saveToCore 是否存入聊天模块
-     *
-     * 修改昵称后，同时发射信号 `nickChanged`
-     */
-    void setNick(const QString& nick, bool saveToCore);
-
-    void setVCard(const VCard& v);
-
-    const VCard& getVCard() const { return vCard; }
+    void quit();
 
 private:
-    Profile(const QString& host, const QString& name, const QString& password, bool newProfile);
-    static QStringList getFilesByExt(QString extension);
-    QString avatarPath(const ContactId& owner, bool forceUnencrypted = false);
-    bool saveToxSave(QByteArray data);
-    void initCore(const QByteArray& toxsave, ICoreSettings& s, bool isNewProfile);
+    //    QString host;
+    //    // 帐号（用户唯一标识）
+    //    QString username;
+    //    // 密码
+    //    QString password;
 
     std::unique_ptr<Core> core;
     std::unique_ptr<CoreAV> coreAv;
     std::unique_ptr<CoreFile> coreFile;
 
-    QString host;
-    QString username;
-    QString password;
-    QByteArray toxsave;
+    std::unique_ptr<ToxEncrypt> passkey = nullptr;
+    std::shared_ptr<lib::db::RawDatabase> database;
+    std::shared_ptr<History> history;
 
     VCard vCard;
 
-    std::unique_ptr<ToxEncrypt> passkey = nullptr;
-    std::shared_ptr<RawDatabase> database;
-    std::shared_ptr<History> history;
-    bool isRemoved;
-    bool encrypted = false;
-    static QStringList profiles;
-    QPixmap pixmap;
+    lib::session::Profile* _profile;
+    lib::storage::StorageManager* storageManager;
 
+    Settings* s;
+    std::unique_ptr<lib::settings::OkSettings> okSettings;
+    std::unique_ptr<lib::db::RawDatabase> db;
 signals:
-    void selfAvatarChanged(const QPixmap& pixmap);
-    // emit on any change, including default avatar. Used by those that don't care
-    // about active on default avatar.
-    void friendAvatarChanged(const FriendId& friendPk, const QPixmap& pixmap);
-    // emit on a set of avatar, including identicon, used by those two care about
-    // active for default, so can't use friendAvatarChanged
-    void friendAvatarSet(const FriendId& friendPk, const QPixmap& pixmap);
-    // emit on set to default, used by those that modify on active
-    void friendAvatarRemoved(const FriendId& friendPk);
+    void coreChanged(Core& core);
     // TODO(sudden6): this doesn't seem to be the right place for Core errors
     void failedToStart();
     void badProxy();
-    void coreChanged(Core& core);
-    void nickChanged(const QString& nick);
+
+    void vCardChanged(const VCard& vCard);
+    void selfAvatarChanged(const QPixmap& pixmap);
+    void friendAvatarChanged(FriendId friendPk, const QPixmap& pixmap);
     void contactAliasChanged(QString cId, QString alias);
 
+    void nickChanged(const QString& nick);
+
 public slots:
-    void onRequestSent(const FriendId& friendPk, const QString& message);
-
+    //    void onRequestSent(const FriendId& friendPk, const QString& message);
     void loadDatabase(QString password);
-
-    void removeFriendAvatar(const FriendId& owner);
-
     void onSaveToxSave();
 
-    //    void onAvatarOfferReceived(const QString& friendId,
-    //                               const QString &fileId,
-    //                               const QByteArray& avatarHash);
-
-    void setFriendAvatar(const FriendId& owner, const QByteArray& pic);
+    void setFriendAvatar(const ContactId& owner, const QByteArray& pic);
+    void removeFriendAvatar(const ContactId& owner);
 };
-
-#endif  // PROFILE_H
