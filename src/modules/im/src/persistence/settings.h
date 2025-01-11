@@ -32,6 +32,7 @@
 #include <QNetworkProxy>
 #include <QObject>
 #include <QPixmap>
+#include <QSettings>
 
 #include "src/model/contactid.h"
 
@@ -132,19 +133,18 @@ public:
     };
 
 public:
-    static Settings* getInstance(const QString& path);
+    explicit Settings(QSettings* s);
+    ~Settings();
+
     static void destroyInstance();
     QString getSettingsDirPath() const;
     QString getAppDataDirPath() const;
 
     void createSettingsDir();
-    void createPersonal(QString basename);
 
-    void savePersonal();
 
     void loadGlobal();
-    bool isToxPortable();
-    void loadPersonal(QString profileName, const ToxEncrypt* passKey);
+
 
     void resetToDefault();
 
@@ -506,19 +506,13 @@ public:
 private:
     struct friendProp;
 
-    Settings(const QString& path);
-    ~Settings();
+
     Settings(Settings& settings) = delete;
     Settings& operator=(const Settings&) = delete;
-    void savePersonal(QString profileName, const ToxEncrypt* passkey);
     friendProp& getOrInsertFriendPropRef(const FriendId& id);
     ICoreSettings::ProxyType fixInvalidProxyType(ICoreSettings::ProxyType proxyType);
 
-public slots:
-    void savePersonal(Profile* profile);
-
-private:
-    QString globalSettingsFile;
+    QSettings* s;
     bool loaded;
 
     bool autoLogin;

@@ -50,8 +50,8 @@
 CompatibleRecursiveMutex Settings::bigLock;
 QThread* Settings::settingsThread{nullptr};
 
-Settings::Settings(const QString& path)
-        : globalSettingsFile(path), loaded(false), makeToxPortable{false} {
+Settings::Settings(QSettings* s_)
+        : s(s_), loaded(false) {
     settingsThread = new QThread();
     settingsThread->setObjectName("IM-Settings");
     settingsThread->start(QThread::LowPriority);
@@ -67,15 +67,6 @@ Settings::~Settings() {
     delete settingsThread;
 }
 
-/**
- * @brief Returns the singleton instance.
- */
-Settings* Settings::getInstance(const QString& path) {
-    static Settings* settings = nullptr;
-    if (!settings) settings = new Settings(path);
-    return settings;
-}
-
 void Settings::destroyInstance() {
     //  delete settings;
     //  settings = nullptr;
@@ -89,98 +80,80 @@ void Settings::destroyInstance() {
 void Settings::loadGlobal() {
     QMutexLocker locker{&bigLock};
 
-    if (loaded) return;
 
-    createSettingsDir();
-
-    makeToxPortable = Settings::isToxPortable();
-
-    QDir dir(getSettingsDirPath());
-    QString filePath = dir.filePath(globalSettingsFile);
-
-    // If no settings file exist -- use the default one
-    if (!QFile(filePath).exists()) {
-        qDebug() << "No settings file found, using defaults";
-        filePath = ":/conf/" + globalSettingsFile;
-    }
-
-    qDebug() << "Loading settings from " + filePath;
-
-    QSettings s(filePath, QSettings::IniFormat);
-    s.setIniCodec("UTF-8");
 
     // 自动登录
-    s.beginGroup("Login");
+    s->beginGroup("Login");
     {
-        autoLogin = s.value("autoLogin", false).toBool();
+        autoLogin = s->value("autoLogin", false).toBool();
     }
-    s.endGroup();
+    s->endGroup();
     // 语言
-    s.beginGroup("General");
+    s->beginGroup("General");
     {
-        autoAwayTime = s.value("autoAwayTime", 10).toInt();
-        checkUpdates = s.value("checkUpdates", true).toBool();
+        autoAwayTime = s->value("autoAwayTime", 10).toInt();
+        checkUpdates = s->value("checkUpdates", true).toBool();
         // note: notifySound and busySound UI elements are now under UI settings
         // page, but kept under General in settings file to be backwards compatible
-        notifySound = s.value("notifySound", true).toBool();
-        notifyHide = s.value("notifyHide", false).toBool();
-        busySound = s.value("busySound", false).toBool();
+        notifySound = s->value("notifySound", true).toBool();
+        notifyHide = s->value("notifyHide", false).toBool();
+        busySound = s->value("busySound", false).toBool();
         globalAutoAcceptDir =
-                s.value("globalAutoAcceptDir",
+                s->value("globalAutoAcceptDir",
                         QStandardPaths::locate(QStandardPaths::HomeLocation, QString(),
                                                QStandardPaths::LocateDirectory))
                         .toString();
         autoAcceptMaxSize =
-                static_cast<size_t>(s.value("autoAcceptMaxSize", 20 << 20 /*20 MB*/).toLongLong());
-        stylePreference = static_cast<StyleType>(s.value("stylePreference", 1).toInt());
+                static_cast<size_t>(s->value("autoAcceptMaxSize", 20 << 20 /*20 MB*/).toLongLong());
+        stylePreference = static_cast<StyleType>(s->value("stylePreference", 1).toInt());
     }
-    s.endGroup();
+    s->endGroup();
 
-    s.beginGroup("Advanced");
+    s->beginGroup("Advanced");
     {
-        makeToxPortable = s.value("makeToxPortable", false).toBool();
-        enableIPv6 = s.value("enableIPv6", true).toBool();
-        forceTCP = s.value("forceTCP", false).toBool();
-        enableLanDiscovery = s.value("enableLanDiscovery", true).toBool();
+        makeToxPortable = s->value("makeToxPortable", false).toBool();
+        enableIPv6 = s->value("enableIPv6", true).toBool();
+        forceTCP = s->value("forceTCP", false).toBool();
+        enableLanDiscovery = s->value("enableLanDiscovery", true).toBool();
     }
-    s.endGroup();
+    s->endGroup();
 
-    s.beginGroup("Widgets");
+    s->beginGroup("Widgets");
     {
-        QList<QString> objectNames = s.childKeys();
-        for (const QString& name : objectNames) widgetSettings[name] = s.value(name).toByteArray();
+        QList<QString> objectNames = s->childKeys();
+        for (const QString& name : objectNames) widgetSettings[name] = s->value(name).toByteArray();
     }
-    s.endGroup();
+    s->endGroup();
 
-    s.beginGroup("GUI");
+    s->beginGroup("GUI");
     {
-        showWindow = s.value("showWindow", true).toBool();
-        notify = s.value("notify", true).toBool();
-        desktopNotify = s.value("desktopNotify", true).toBool();
-        groupAlwaysNotify = s.value("groupAlwaysNotify", true).toBool();
-        groupchatPosition = s.value("groupchatPosition", true).toBool();
-        separateWindow = s.value("separateWindow", false).toBool();
-        dontGroupWindows = s.value("dontGroupWindows", false).toBool();
-        showIdenticons = s.value("showIdenticons", true).toBool();
+        showWindow = s->value("showWindow", true).toBool();
+        notify = s->value("notify", true).toBool();
+        desktopNotify = s->value("desktopNotify", true).toBool();
+        groupAlwaysNotify = s->value("groupAlwaysNotify", true).toBool();
+        groupchatPosition = s->value("groupchatPosition", true).toBool();
+        separateWindow = s->value("separateWindow", false).toBool();
+        dontGroupWindows = s->value("dontGroupWindows", false).toBool();
+        showIdenticons = s->value("showIdenticons", true).toBool();
 
-        const QString DEFAULT_SMILEYS = ":/smileys/emojione/emoticons.xml";
-        smileyPack = s.value("smileyPack", DEFAULT_SMILEYS).toString();
+        const QString DEFAULT_SMILEYS = ":/smileys/emojione/emoticons->xml";
+        smileyPack = s->value("smileyPack", DEFAULT_SMILEYS).toString();
         if (!QFile::exists(smileyPack)) {
             smileyPack = DEFAULT_SMILEYS;
         }
 
-        emojiFontPointSize = s.value("emojiFontPointSize", 24).toInt();
-        firstColumnHandlePos = s.value("firstColumnHandlePos", 50).toInt();
-        secondColumnHandlePosFromRight = s.value("secondColumnHandlePosFromRight", 50).toInt();
+        emojiFontPointSize = s->value("emojiFontPointSize", 24).toInt();
+        firstColumnHandlePos = s->value("firstColumnHandlePos", 50).toInt();
+        secondColumnHandlePosFromRight = s->value("secondColumnHandlePosFromRight", 50).toInt();
 
-        lightTrayIcon = s.value("lightTrayIcon", false).toBool();
-        useEmoticons = s.value("useEmoticons", true).toBool();
+        lightTrayIcon = s->value("lightTrayIcon", false).toBool();
+        useEmoticons = s->value("useEmoticons", true).toBool();
         statusChangeNotificationEnabled =
-                s.value("statusChangeNotificationEnabled", false).toBool();
-        showGroupJoinLeaveMessages = s.value("showGroupJoinLeaveMessages", false).toBool();
-        spellCheckingEnabled = s.value("spellCheckingEnabled", true).toBool();
-        themeColor = s.value("themeColor", 0).toInt();
-        style = s.value("style", "").toString();
+                s->value("statusChangeNotificationEnabled", false).toBool();
+        showGroupJoinLeaveMessages = s->value("showGroupJoinLeaveMessages", false).toBool();
+        spellCheckingEnabled = s->value("spellCheckingEnabled", true).toBool();
+        themeColor = s->value("themeColor", 0).toInt();
+        style = s->value("style", "").toString();
         if (style == "")  // Default to Fusion if available, otherwise no style
         {
             if (QStyleFactory::keys().contains("Fusion"))
@@ -188,57 +161,46 @@ void Settings::loadGlobal() {
             else
                 style = "None";
         }
-        nameColors = s.value("nameColors", false).toBool();
+        nameColors = s->value("nameColors", false).toBool();
     }
-    s.endGroup();
+    s->endGroup();
 
-    s.beginGroup("Chat");
+    s->beginGroup("Chat");
     {
-        chatMessageFont = s.value("chatMessageFont",
+        chatMessageFont = s->value("chatMessageFont",
                                   lib::settings::Style::getFont(lib::settings::Style::Font::Big))
                                   .value<QFont>();
     }
-    s.endGroup();
+    s->endGroup();
 
-    s.beginGroup("Audio");
+    s->beginGroup("Audio");
     {
-        inDev = s.value("inDev", "").toString();
-        audioInDevEnabled = s.value("audioInDevEnabled", true).toBool();
-        outDev = s.value("outDev", "").toString();
-        audioOutDevEnabled = s.value("audioOutDevEnabled", true).toBool();
-        audioInGainDecibel = s.value("inGain", 0).toReal();
-        audioThreshold = s.value("audioThreshold", 0).toReal();
-        outVolume = s.value("outVolume", 100).toInt();
-        enableTestSound = s.value("enableTestSound", true).toBool();
-        audioBitrate = s.value("audioBitrate", 64).toInt();
+        inDev = s->value("inDev", "").toString();
+        audioInDevEnabled = s->value("audioInDevEnabled", true).toBool();
+        outDev = s->value("outDev", "").toString();
+        audioOutDevEnabled = s->value("audioOutDevEnabled", true).toBool();
+        audioInGainDecibel = s->value("inGain", 0).toReal();
+        audioThreshold = s->value("audioThreshold", 0).toReal();
+        outVolume = s->value("outVolume", 100).toInt();
+        enableTestSound = s->value("enableTestSound", true).toBool();
+        audioBitrate = s->value("audioBitrate", 64).toInt();
     }
-    s.endGroup();
+    s->endGroup();
 
-    s.beginGroup("Video");
+    s->beginGroup("Video");
     {
-        videoDev = s.value("videoDev", "").toString();
-        camVideoRes = s.value("camVideoRes", QRect()).toRect();
-        screenRegion = s.value("screenRegion", QRect()).toRect();
-        screenGrabbed = s.value("screenGrabbed", false).toBool();
-        camVideoFPS = static_cast<quint16>(s.value("camVideoFPS", 0).toUInt());
+        videoDev = s->value("videoDev", "").toString();
+        camVideoRes = s->value("camVideoRes", QRect()).toRect();
+        screenRegion = s->value("screenRegion", QRect()).toRect();
+        screenGrabbed = s->value("screenGrabbed", false).toBool();
+        camVideoFPS = static_cast<quint16>(s->value("camVideoFPS", 0).toUInt());
     }
-    s.endGroup();
+    s->endGroup();
 
     loaded = true;
 }
 
-bool Settings::isToxPortable() {
-    QString localSettingsPath = qApp->applicationDirPath() + QDir::separator() + globalSettingsFile;
-    if (!QFile(localSettingsPath).exists()) {
-        return false;
-    }
-    QSettings ps(localSettingsPath, QSettings::IniFormat);
-    ps.setIniCodec("UTF-8");
-    ps.beginGroup("Advanced");
-    bool result = ps.value("makeToxPortable", false).toBool();
-    ps.endGroup();
-    return result;
-}
+
 
 // void Settings::updateProfileData(Profile* profile, const QCommandLineParser* parser) {
 //     QMutexLocker locker{&bigLock};
@@ -466,351 +428,114 @@ void Settings::saveGlobal() {
     QMutexLocker locker{&bigLock};
     if (!loaded) return;
 
-    QString path = getSettingsDirPath() + globalSettingsFile;
-    qDebug() << "Saving global settings at " + path;
 
-    QSettings s(path, QSettings::IniFormat);
-    s.setIniCodec("UTF-8");
 
-    s.clear();
+    s->clear();
 
-    s.beginGroup("Login");
+    s->beginGroup("Login");
     {
-        s.setValue("autoLogin", autoLogin);
+        s->setValue("autoLogin", autoLogin);
     }
-    s.endGroup();
+    s->endGroup();
 
-    s.beginGroup("General");
+    s->beginGroup("General");
     {
-        s.setValue("autoAwayTime", autoAwayTime);
-        s.setValue("checkUpdates", checkUpdates);
-        s.setValue("notifySound", notifySound);
-        s.setValue("notifyHide", notifyHide);
-        s.setValue("busySound", busySound);
-        s.setValue("autoAcceptMaxSize", static_cast<qlonglong>(autoAcceptMaxSize));
-        s.setValue("globalAutoAcceptDir", globalAutoAcceptDir);
-        s.setValue("stylePreference", static_cast<int>(stylePreference));
+        s->setValue("autoAwayTime", autoAwayTime);
+        s->setValue("checkUpdates", checkUpdates);
+        s->setValue("notifySound", notifySound);
+        s->setValue("notifyHide", notifyHide);
+        s->setValue("busySound", busySound);
+        s->setValue("autoAcceptMaxSize", static_cast<qlonglong>(autoAcceptMaxSize));
+        s->setValue("globalAutoAcceptDir", globalAutoAcceptDir);
+        s->setValue("stylePreference", static_cast<int>(stylePreference));
     }
-    s.endGroup();
+    s->endGroup();
 
-    s.beginGroup("Advanced");
+    s->beginGroup("Advanced");
     {
-        s.setValue("makeToxPortable", makeToxPortable);
-        s.setValue("enableIPv6", enableIPv6);
-        s.setValue("forceTCP", forceTCP);
-        s.setValue("enableLanDiscovery", enableLanDiscovery);
-        s.setValue("dbSyncType", static_cast<int>(dbSyncType));
+        s->setValue("makeToxPortable", makeToxPortable);
+        s->setValue("enableIPv6", enableIPv6);
+        s->setValue("forceTCP", forceTCP);
+        s->setValue("enableLanDiscovery", enableLanDiscovery);
+        s->setValue("dbSyncType", static_cast<int>(dbSyncType));
     }
-    s.endGroup();
+    s->endGroup();
 
-    s.beginGroup("Widgets");
+    s->beginGroup("Widgets");
     {
         const QList<QString> widgetNames = widgetSettings.keys();
-        for (const QString& name : widgetNames) s.setValue(name, widgetSettings.value(name));
+        for (const QString& name : widgetNames) s->setValue(name, widgetSettings.value(name));
     }
-    s.endGroup();
+    s->endGroup();
 
-    s.beginGroup("GUI");
+    s->beginGroup("GUI");
     {
-        s.setValue("showWindow", showWindow);
-        s.setValue("notify", notify);
-        s.setValue("desktopNotify", desktopNotify);
-        s.setValue("groupAlwaysNotify", groupAlwaysNotify);
-        s.setValue("separateWindow", separateWindow);
-        s.setValue("dontGroupWindows", dontGroupWindows);
-        s.setValue("groupchatPosition", groupchatPosition);
-        s.setValue("showIdenticons", showIdenticons);
+        s->setValue("showWindow", showWindow);
+        s->setValue("notify", notify);
+        s->setValue("desktopNotify", desktopNotify);
+        s->setValue("groupAlwaysNotify", groupAlwaysNotify);
+        s->setValue("separateWindow", separateWindow);
+        s->setValue("dontGroupWindows", dontGroupWindows);
+        s->setValue("groupchatPosition", groupchatPosition);
+        s->setValue("showIdenticons", showIdenticons);
 
-        s.setValue("smileyPack", smileyPack);
-        s.setValue("emojiFontPointSize", emojiFontPointSize);
-        s.setValue("firstColumnHandlePos", firstColumnHandlePos);
-        s.setValue("secondColumnHandlePosFromRight", secondColumnHandlePosFromRight);
-        s.setValue("timestampFormat", timestampFormat);
-        s.setValue("dateFormat", dateFormat);
-        s.setValue("lightTrayIcon", lightTrayIcon);
-        s.setValue("useEmoticons", useEmoticons);
-        s.setValue("themeColor", themeColor);
-        s.setValue("style", style);
-        s.setValue("nameColors", nameColors);
-        s.setValue("statusChangeNotificationEnabled", statusChangeNotificationEnabled);
-        s.setValue("showGroupJoinLeaveMessages", showGroupJoinLeaveMessages);
-        s.setValue("spellCheckingEnabled", spellCheckingEnabled);
+        s->setValue("smileyPack", smileyPack);
+        s->setValue("emojiFontPointSize", emojiFontPointSize);
+        s->setValue("firstColumnHandlePos", firstColumnHandlePos);
+        s->setValue("secondColumnHandlePosFromRight", secondColumnHandlePosFromRight);
+        s->setValue("timestampFormat", timestampFormat);
+        s->setValue("dateFormat", dateFormat);
+        s->setValue("lightTrayIcon", lightTrayIcon);
+        s->setValue("useEmoticons", useEmoticons);
+        s->setValue("themeColor", themeColor);
+        s->setValue("style", style);
+        s->setValue("nameColors", nameColors);
+        s->setValue("statusChangeNotificationEnabled", statusChangeNotificationEnabled);
+        s->setValue("showGroupJoinLeaveMessages", showGroupJoinLeaveMessages);
+        s->setValue("spellCheckingEnabled", spellCheckingEnabled);
     }
-    s.endGroup();
+    s->endGroup();
 
-    s.beginGroup("Chat");
+    s->beginGroup("Chat");
     {
-        s.setValue("chatMessageFont", chatMessageFont);
+        s->setValue("chatMessageFont", chatMessageFont);
     }
-    s.endGroup();
+    s->endGroup();
 
-    s.beginGroup("State");
+    s->beginGroup("State");
     {
-        s.setValue("windowGeometry", windowGeometry);
-        s.setValue("windowState", windowState);
-        s.setValue("splitterState", splitterState);
-        s.setValue("dialogGeometry", dialogGeometry);
-        s.setValue("dialogSplitterState", dialogSplitterState);
-        s.setValue("dialogSettingsGeometry", dialogSettingsGeometry);
+        s->setValue("windowGeometry", windowGeometry);
+        s->setValue("windowState", windowState);
+        s->setValue("splitterState", splitterState);
+        s->setValue("dialogGeometry", dialogGeometry);
+        s->setValue("dialogSplitterState", dialogSplitterState);
+        s->setValue("dialogSettingsGeometry", dialogSettingsGeometry);
     }
-    s.endGroup();
+    s->endGroup();
     // 音频
-    s.beginGroup("Audio");
+    s->beginGroup("Audio");
     {
-        s.setValue("inDev", inDev);
-        s.setValue("audioInDevEnabled", audioInDevEnabled);
-        s.setValue("outDev", outDev);
-        s.setValue("audioOutDevEnabled", audioOutDevEnabled);
-        s.setValue("inGain", audioInGainDecibel);
-        s.setValue("audioThreshold", audioThreshold);
-        s.setValue("outVolume", outVolume);
-        s.setValue("enableTestSound", enableTestSound);
-        s.setValue("audioBitrate", audioBitrate);
+        s->setValue("inDev", inDev);
+        s->setValue("audioInDevEnabled", audioInDevEnabled);
+        s->setValue("outDev", outDev);
+        s->setValue("audioOutDevEnabled", audioOutDevEnabled);
+        s->setValue("inGain", audioInGainDecibel);
+        s->setValue("audioThreshold", audioThreshold);
+        s->setValue("outVolume", outVolume);
+        s->setValue("enableTestSound", enableTestSound);
+        s->setValue("audioBitrate", audioBitrate);
     }
-    s.endGroup();
+    s->endGroup();
 
-    s.beginGroup("Video");
+    s->beginGroup("Video");
     {
-        s.setValue("videoDev", videoDev);
-        s.setValue("camVideoRes", camVideoRes);
-        s.setValue("camVideoFPS", camVideoFPS);
-        s.setValue("screenRegion", screenRegion);
-        s.setValue("screenGrabbed", screenGrabbed);
+        s->setValue("videoDev", videoDev);
+        s->setValue("camVideoRes", camVideoRes);
+        s->setValue("camVideoFPS", camVideoFPS);
+        s->setValue("screenRegion", screenRegion);
+        s->setValue("screenGrabbed", screenGrabbed);
     }
-    s.endGroup();
-}
-
-/**
- * @brief Write a default personal .ini settings file for a profile.
- * @param basename Filename without extension to save settings.
- *
- * @note If basename is "profile", settings will be saved in profile.ini
- */
-void Settings::createPersonal(QString basename) {
-    QMutexLocker locker{&bigLock};
-
-    qDebug() << "Creating new profile for" << basename;
-    QString path = getSettingsDirPath() + QDir::separator() + basename + ".ini";
-    qDebug() << "Creating new profile settings in " << path;
-
-    QSettings ps(path, QSettings::IniFormat);
-    ps.setIniCodec("UTF-8");
-    ps.beginGroup("Friends");
-    //  ps.beginWriteArray("IMFriend", 0);
-    //  ps.endArray();
-    ps.endGroup();
-
-    ps.beginGroup("Privacy");
-    ps.endGroup();
-}
-
-void Settings::loadPersonal(QString profileName, const ToxEncrypt* passKey) {
-    QMutexLocker locker{&bigLock};
-
-    QDir dir(getSettingsDirPath());
-    QString filePath = dir.filePath(globalSettingsFile);
-
-    // load from a profile specific friend data list if possible
-    QString tmp = dir.filePath(profileName + ".ini");
-    if (QFile(tmp).exists())  // otherwise, filePath remains the global file
-        filePath = tmp;
-
-    qDebug() << "Loading personal settings from" << filePath;
-
-    QSettings ps(filePath, QSettings::IniFormat);
-    friendLst.clear();
-
-    ps.beginGroup("Privacy");
-    {
-        typingNotification = ps.value("typingNotification", true).toBool();
-        enableLogging = ps.value("enableLogging", true).toBool();
-    }
-    ps.endGroup();
-
-    ps.beginGroup("Friends");
-    {
-        int size = ps.beginReadArray("IMFriend");
-        friendLst.reserve(size);
-        friendLst.clear();
-        for (int i = 0; i < size; i++) {
-            ps.setArrayIndex(i);
-            friendProp fp{ps.value("addr").toString()};
-            fp.alias = ps.value("alias").toString();
-            fp.note = ps.value("note").toString();
-            fp.autoAcceptDir = ps.value("autoAcceptDir").toString();
-
-            if (fp.autoAcceptDir == "") fp.autoAcceptDir = ps.value("autoAccept").toString();
-
-            fp.autoAcceptCall =
-                    Settings::AutoAcceptCallFlags(QFlag(ps.value("autoAcceptCall", 0).toInt()));
-            fp.autoGroupInvite = ps.value("autoGroupInvite").toBool();
-            fp.circleID = ps.value("circle", -1).toInt();
-
-            if (getEnableLogging()) fp.activity = ps.value("activity", QDateTime()).toDateTime();
-            friendLst.insert(ToxId(fp.addr).getPublicKey().getByteArray(), fp);
-        }
-        ps.endArray();
-    }
-    ps.endGroup();
-
-    ps.beginGroup("Requests");
-    {
-        int size = ps.beginReadArray("Request");
-        friendRequests.clear();
-        friendRequests.reserve(size);
-        for (int i = 0; i < size; i++) {
-            ps.setArrayIndex(i);
-            Request request;
-            request.address = ps.value("addr").toString();
-            request.message = ps.value("message").toString();
-            request.read = ps.value("read").toBool();
-            friendRequests.push_back(request);
-        }
-        ps.endArray();
-    }
-    ps.endGroup();
-    // 用戶
-    ps.beginGroup("GUI");
-    {
-        compactLayout = ps.value("compactLayout", true).toBool();
-        sortingMode = static_cast<FriendListSortingMode>(
-                ps.value("friendSortingMethod", static_cast<int>(FriendListSortingMode::Name))
-                        .toInt());
-    }
-    ps.endGroup();
-
-    ps.beginGroup("Proxy");
-    {
-        proxyType = static_cast<ProxyType>(ps.value("proxyType", 0 /* ProxyType::None */).toInt());
-        proxyType = fixInvalidProxyType(proxyType);
-        proxyAddr = ps.value("proxyAddr", proxyAddr).toString();
-        proxyPort = static_cast<quint16>(ps.value("proxyPort", proxyPort).toUInt());
-    }
-    ps.endGroup();
-
-    ps.beginGroup("Circles");
-    {
-        int size = ps.beginReadArray("Circle");
-        circleLst.clear();
-        circleLst.reserve(size);
-        for (int i = 0; i < size; i++) {
-            ps.setArrayIndex(i);
-            circleProp cp;
-            cp.name = ps.value("name").toString();
-            cp.expanded = ps.value("expanded", true).toBool();
-            circleLst.push_back(cp);
-        }
-        ps.endArray();
-    }
-    ps.endGroup();
-}
-
-/**
- * @brief Asynchronous, saves the current profile.
- */
-void Settings::savePersonal() {
-    savePersonal(Nexus::getProfile());
-}
-
-/**
- * @brief Asynchronous, saves the profile.
- * @param profile Profile to save.
- */
-void Settings::savePersonal(Profile* profile) {
-    if (!profile) {
-        qDebug() << "Could not save personal settings because there is no active "
-                    "profile";
-        return;
-    }
-    //    if (QThread::currentThread() != settingsThread)
-    //        return (void)QMetaObject::invokeMethod(&getInstance(), "savePersonal",
-    //                                               Q_ARG(Profile*, profile));
-    //    savePersonal(profile->getUsername(), profile->getPasskey());
-}
-
-void Settings::savePersonal(QString profileName, const ToxEncrypt* passkey) {
-    QMutexLocker locker{&bigLock};
-    if (!loaded) return;
-
-    QString path = getSettingsDirPath() + profileName + ".ini";
-
-    qDebug() << "Saving personal settings at " << path;
-
-    QSettings ps(path, QSettings::IniFormat);
-    ps.beginGroup("Friends");
-    {
-        ps.beginWriteArray("IMFriend", friendLst.size());
-        int index = 0;
-        for (auto& frnd : friendLst) {
-            ps.setArrayIndex(index);
-            ps.setValue("addr", frnd.addr);
-            ps.setValue("alias", frnd.alias);
-            ps.setValue("note", frnd.note);
-            ps.setValue("autoAcceptDir", frnd.autoAcceptDir);
-            ps.setValue("autoAcceptCall", static_cast<int>(frnd.autoAcceptCall));
-            ps.setValue("autoGroupInvite", frnd.autoGroupInvite);
-            ps.setValue("circle", frnd.circleID);
-
-            if (getEnableLogging()) ps.setValue("activity", frnd.activity);
-
-            ++index;
-        }
-        ps.endArray();
-    }
-    ps.endGroup();
-
-    ps.beginGroup("Requests");
-    {
-        ps.beginWriteArray("Request", friendRequests.size());
-        int index = 0;
-        for (auto& request : friendRequests) {
-            ps.setArrayIndex(index);
-            ps.setValue("addr", request.address);
-            ps.setValue("message", request.message);
-            ps.setValue("read", request.read);
-
-            ++index;
-        }
-        ps.endArray();
-    }
-    ps.endGroup();
-
-    ps.beginGroup("GUI");
-    {
-        ps.setValue("compactLayout", compactLayout);
-        ps.setValue("friendSortingMethod", static_cast<int>(sortingMode));
-    }
-    ps.endGroup();
-
-    ps.beginGroup("Proxy");
-    {
-        ps.setValue("proxyType", static_cast<int>(proxyType));
-        ps.setValue("proxyAddr", proxyAddr);
-        ps.setValue("proxyPort", proxyPort);
-    }
-    ps.endGroup();
-
-    ps.beginGroup("Circles");
-    {
-        ps.beginWriteArray("Circle", circleLst.size());
-        int index = 0;
-        for (auto& circle : circleLst) {
-            ps.setArrayIndex(index);
-            ps.setValue("name", circle.name);
-            ps.setValue("expanded", circle.expanded);
-            ++index;
-        }
-        ps.endArray();
-    }
-    ps.endGroup();
-
-    ps.beginGroup("Privacy");
-    {
-        ps.setValue("typingNotification", typingNotification);
-        ps.setValue("enableLogging", enableLogging);
-    }
-    ps.endGroup();
-    //  ps.save();
+    s->endGroup();
 }
 
 /**
@@ -895,23 +620,6 @@ void Settings::setEnableIPv6(bool enabled) {
     if (enabled != enableIPv6) {
         enableIPv6 = enabled;
         emit enableIPv6Changed(enableIPv6);
-    }
-}
-
-bool Settings::getMakeToxPortable() const {
-    QMutexLocker locker{&bigLock};
-    return makeToxPortable;
-}
-
-void Settings::setMakeToxPortable(bool newValue) {
-    QMutexLocker locker{&bigLock};
-
-    if (newValue != makeToxPortable) {
-        QFile(getSettingsDirPath() + globalSettingsFile).remove();
-        makeToxPortable = newValue;
-        saveGlobal();
-
-        emit makeToxPortableChanged(makeToxPortable);
     }
 }
 
@@ -1780,7 +1488,7 @@ void Settings::setFriendActivity(const FriendId& id, const QDateTime& activity) 
 
 void Settings::saveFriendSettings(const FriendId& id) {
     Q_UNUSED(id);
-    savePersonal();
+
 }
 
 void Settings::removeFriendSettings(const FriendId& id) {
@@ -1885,7 +1593,7 @@ QString Settings::getCircleName(int id) const {
 void Settings::setCircleName(int id, const QString& name) {
     QMutexLocker locker{&bigLock};
     circleLst[id].name = name;
-    savePersonal();
+
 }
 
 int Settings::addCircle(const QString& name) {
@@ -1900,7 +1608,7 @@ int Settings::addCircle(const QString& name) {
         cp.name = name;
 
     circleLst.append(cp);
-    savePersonal();
+
     return circleLst.count() - 1;
 }
 
@@ -1973,7 +1681,7 @@ int Settings::removeCircle(int id) {
     // This gives you contiguous ids all the time.
     circleLst[id] = circleLst.last();
     circleLst.pop_back();
-    savePersonal();
+
     return circleLst.count();
 }
 

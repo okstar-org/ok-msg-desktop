@@ -49,14 +49,6 @@ Profile::Profile(storage::StorageManager* sm, const AuthSession* authSession, QO
 
 Profile::~Profile() {
     qDebug() << __func__;
-
-    //    onSaveToxSave();
-    //    Nexus::getProfile()->getSettings()->savePersonal(this);
-    //    Nexus::getProfile()->getSettings()->sync();
-    //
-    //    ProfileLocker::assertLock();
-    //    assert(ProfileLocker::getCurLockName() == username);
-    //    ProfileLocker::unlock();
 }
 
 /**

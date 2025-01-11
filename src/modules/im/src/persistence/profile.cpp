@@ -32,11 +32,9 @@ Profile::Profile(const QString& host,
     connect(_profile, &lib::session::Profile::nickChanged, this, &Profile::nickChanged);
     storageManager = _profile->create(_profile->getUsername());
     okSettings = storageManager->getGlobalSettings();
-    db = storageManager->getDatabase(OK_IM_MODULE);
+    db = storageManager->createDatabase(OK_IM_MODULE);
 
-    s = Settings::getInstance(storageManager->getDir().path() + QDir::separator() + OK_IM_MODULE);
-    s->loadPersonal(name, this->passkey.get());
-
+    s = new Settings(storageManager->createSetting(OK_IM_MODULE));
     initCore(s, isNewProfile);
 
     loadDatabase(password);
@@ -257,7 +255,7 @@ void Profile::loadDatabase(QString password) {
     qDebug() << "Create database for" << username;
 
     bool ok = false;
-    database = storageManager->getDatabase(OK_IM_MODULE);
+    database = storageManager->createDatabase(OK_IM_MODULE);
     if (database && database->isOpen()) {
         history.reset(new History(database));
         ok = history->isValid();
@@ -316,6 +314,5 @@ QString Profile::getHost() {
 }
 void Profile::quit() {
     s->saveGlobal();
-    s->savePersonal();
     s->sync();
 }

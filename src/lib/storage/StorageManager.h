@@ -15,6 +15,7 @@
 #include <QDir>
 #include <QMap>
 #include <QObject>
+#include <QSettings>
 #include "lib/storage/cache/CacheManager.h"
 #include "lib/storage/db/rawdatabase.h"
 #include "log/LogManager.h"
@@ -27,11 +28,7 @@ class StorageManager : public QObject {
 public:
     explicit StorageManager(const QString& profile = "", QObject* parent = nullptr);
     ~StorageManager() override;
-    /**
-     * 获取存储目录
-     * @brief getDir
-     * @return
-     */
+
     const QDir& getDir();
 
     const log::LogManager& getLogManager() const {
@@ -46,7 +43,9 @@ public:
 
     std::unique_ptr<settings::OkSettings> getGlobalSettings() const;
 
-    std::unique_ptr<db::RawDatabase> getDatabase(const QString& module);
+    std::unique_ptr<db::RawDatabase> createDatabase(const QString& module);
+
+    QSettings* createSetting(const QString& module);
 
 private:
     QDir dir;

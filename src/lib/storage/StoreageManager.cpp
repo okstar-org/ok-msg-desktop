@@ -55,13 +55,17 @@ StorageManager* StorageManager::create(const QString& profile_) {
     return sm;
 }
 
-std::unique_ptr<db::RawDatabase> StorageManager::getDatabase(const QString& module) {
-    static QString DB_DIR = "db";
-    if (!dir.exists(DB_DIR)) {
-        dir.mkdir(DB_DIR);
-    }
-    QDir dbDir(dir.path() + QDir::separator() + DB_DIR + QDir::separator() + module+".db");
+std::unique_ptr<db::RawDatabase> StorageManager::createDatabase(const QString& module) {
+    QDir dbDir(dir.path() + QDir::separator() + module+".db");
     return std::make_unique<db::RawDatabase>(dbDir.path(), QString(), QByteArray{});
+}
+
+QSettings* StorageManager::createSetting(const QString &module)
+{
+    QDir iniDir(dir.path() + QDir::separator() + module+".ini");
+    auto ptr = new QSettings(iniDir.path(), QSettings::IniFormat, this);
+    ptr->setIniCodec("UTF-8");
+    return ptr;
 }
 
 }  // namespace lib::storage
