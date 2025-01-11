@@ -183,6 +183,11 @@ bool Messenger::connectIM() {
         }
     });
 
+    connect(_im, &IM::selfVCard, this, [&](IMVCard imvCard) {
+        for (auto handler : selfHandlers) {
+            handler->onSelfVCardChanged(imvCard);
+        }
+    });
     connect(_im, &IM::receiveFriendVCard, this, [&](IMPeerId peerId, IMVCard imvCard) {
         for (auto handler : friendHandlers) {
             handler->onFriendVCard(peerId, imvCard);

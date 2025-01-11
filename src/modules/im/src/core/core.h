@@ -165,11 +165,11 @@ private:
     /**
      *    SelfHandler
      */
-    virtual void onSelfIdChanged(QString id) override;
-    virtual void onSelfNameChanged(QString name) override;
-    virtual void onSelfAvatarChanged(const std::string avatar) override;
-    virtual void onSelfStatusChanged(lib::messenger::IMStatus status,
-                                     const std::string& msg) override;
+    void onSelfIdChanged(QString id) override;
+    void onSelfNameChanged(QString name) override;
+    void onSelfAvatarChanged(const std::string avatar) override;
+    void onSelfStatusChanged(lib::messenger::IMStatus status, const std::string& msg) override;
+    void onSelfVCardChanged(lib::messenger::IMVCard& imvCard) override;
 
     bool sendGroupMessageWithType(QString groupId, const QString& message, const MsgId& msgId);
 
@@ -271,7 +271,8 @@ signals:
     void friendRequestReceived(const FriendId& friendPk, const QString& message);
     void friendAvatarChanged(const FriendId& friendPk, const QByteArray& avatar);
     void friendAliasChanged(const FriendId& fId, const QString& alias);
-    void friendAvatarRemoved(const FriendId& friendPk);
+    void friendAvatarRemoved(const FriendId& fId);
+    void friendVCardSet(const FriendId& fId, const VCard& imvCard);
 
     void requestSent(const FriendId& friendPk, const QString& message);
     void failedToAddFriend(const FriendId& friendPk, const QString& errorInfo = QString());

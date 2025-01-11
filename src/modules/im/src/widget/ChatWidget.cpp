@@ -173,7 +173,9 @@ void ChatWidget::deinit() {
 
 void ChatWidget::connectToCore(Core* core) {
     qDebug() << __func__ << "core:" << core;
-
+    connect(core, &Core::usernameSet, [&](const QString& name){
+        ui->nameLabel->setText(name);
+    });
     connect(core, &Core::statusSet, this, &ChatWidget::onStatusSet);
     connect(core, &Core::statusMessageSet, this, &ChatWidget::onStatusMessageSet);
     connect(core, &Core::messageSessionReceived, this, &ChatWidget::onMessageSessionReceived);
@@ -181,8 +183,7 @@ void ChatWidget::connectToCore(Core* core) {
     connect(core, &Core::friendAvatarChanged, this, &ChatWidget::onFriendAvatarChanged);
     connect(core, &Core::friendMessageReceived, this, &ChatWidget::onFriendMessageReceived);
     connect(core, &Core::friendStatusChanged, this, &ChatWidget::onFriendStatusChanged);
-    connect(core, &Core::friendStatusMessageChanged, this,
-            &ChatWidget::onFriendStatusMessageChanged);
+    connect(core, &Core::friendStatusMessageChanged, this, &ChatWidget::onFriendStatusMessageChanged);
     connect(core, &Core::friendTypingChanged, this, &ChatWidget::onFriendTypingChanged);
     connect(core, &Core::receiptRecieved, this, &ChatWidget::onReceiptReceived);
     connect(core, &Core::groupMessageReceived, this, &ChatWidget::onGroupMessageReceived);
@@ -305,9 +306,7 @@ void ChatWidget::onNicknameSet(const QString& nickname) {
 void ChatWidget::onStatusSet(Status::Status status) {
     int icon_size = 15;
     ui->statusButton->setProperty("status", static_cast<int>(status));
-    ui->statusButton->setIcon(
-            ok::base::SvgUtils::prepareIcon(getIconPath(status), icon_size, icon_size));
-
+    ui->statusButton->setIcon(ok::base::SvgUtils::prepareIcon(getIconPath(status), icon_size, icon_size));
     updateIcons();
 }
 
@@ -413,7 +412,6 @@ void ChatWidget::onGroupPeerSizeChanged(QString groupnumber, const uint size) {
         qWarning() << "Can not find the group named:" << groupnumber;
         return;
     }
-
     g->setPeerCount(size);
 }
 

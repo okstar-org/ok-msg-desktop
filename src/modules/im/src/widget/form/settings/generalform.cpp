@@ -46,34 +46,13 @@ GeneralForm::GeneralForm(SettingsWidget* myParent)
     // block all child signals during initialization
     const ok::base::RecursiveSignalBlocker signalBlocker(this);
 
-    auto s = Nexus::getProfile()->getSettings();
 
-    auto& okSettings = lib::settings::OkSettings::getInstance();
-    const QFont chatBaseFont = s->getChatMessageFont();
-    bodyUI->txtChatFontSize->setValue(QFontInfo(chatBaseFont).pixelSize());
-    bodyUI->txtChatFont->setCurrentFont(chatBaseFont);
-    int index = static_cast<int>(s->getStylePreference());
-    bodyUI->textStyleComboBox->setCurrentIndex(index);
-    bodyUI->useNameColors->setChecked(s->getEnableGroupChatsColor());
-
-    bodyUI->notify->setChecked(s->getNotify());
-    // Note: UI is boolean inversed from settings to maintain setting file backwards compatibility
-    bodyUI->groupOnlyNotfiyWhenMentioned->setChecked(!s->getGroupAlwaysNotify());
-    bodyUI->groupOnlyNotfiyWhenMentioned->setEnabled(s->getNotify());
-    bodyUI->notifySound->setChecked(s->getNotifySound());
-    bodyUI->notifyHide->setChecked(s->getNotifyHide());
-    bodyUI->notifySound->setEnabled(s->getNotify());
-    bodyUI->busySound->setChecked(s->getBusySound());
-    bodyUI->busySound->setEnabled(s->getNotifySound() && s->getNotify());
-#if DESKTOP_NOTIFICATIONS
-    bodyUI->desktopNotify->setChecked(s->getDesktopNotify());
-    bodyUI->desktopNotify->setEnabled(s->getNotify());
-#else
-    bodyUI->desktopNotify->hide();
-#endif
 
     eventsInit();
     settings::Translator::registerHandler(std::bind(&GeneralForm::retranslateUi, this), this);
+
+    auto bus = ok::Application::Instance()->bus();
+    connect(bus, &ok::Bus::profileChanged, this, &GeneralForm::onProfileChanged);
 }
 
 GeneralForm::~GeneralForm() {
@@ -118,6 +97,34 @@ void GeneralForm::on_groupOnlyNotfiyWhenMentioned_stateChanged() {
 
 void GeneralForm::retranslateUi() {
     bodyUI->retranslateUi(this);
+}
+
+void GeneralForm::onProfileChanged(Profile *profile)
+{
+    auto s = profile->getSettings();
+
+    const QFont chatBaseFont = s->getChatMessageFont();
+    bodyUI->txtChatFontSize->setValue(QFontInfo(chatBaseFont).pixelSize());
+    bodyUI->txtChatFont->setCurrentFont(chatBaseFont);
+    int index = static_cast<int>(s->getStylePreference());
+    bodyUI->textStyleComboBox->setCurrentIndex(index);
+    bodyUI->useNameColors->setChecked(s->getEnableGroupChatsColor());
+
+    bodyUI->notify->setChecked(s->getNotify());
+    // Note: UI is boolean inversed from settings to maintain setting file backwards compatibility
+    bodyUI->groupOnlyNotfiyWhenMentioned->setChecked(!s->getGroupAlwaysNotify());
+    bodyUI->groupOnlyNotfiyWhenMentioned->setEnabled(s->getNotify());
+    bodyUI->notifySound->setChecked(s->getNotifySound());
+    bodyUI->notifyHide->setChecked(s->getNotifyHide());
+    bodyUI->notifySound->setEnabled(s->getNotify());
+    bodyUI->busySound->setChecked(s->getBusySound());
+    bodyUI->busySound->setEnabled(s->getNotifySound() && s->getNotify());
+#if DESKTOP_NOTIFICATIONS
+    bodyUI->desktopNotify->setChecked(s->getDesktopNotify());
+    bodyUI->desktopNotify->setEnabled(s->getNotify());
+#else
+    bodyUI->desktopNotify->hide();
+#endif
 }
 
 void GeneralForm::on_txtChatFont_currentFontChanged(const QFont& f) {

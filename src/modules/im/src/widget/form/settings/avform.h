@@ -23,6 +23,8 @@
 
 #include <memory>
 
+#include <src/persistence/profile.h>
+
 class IAudioControl;
 class IAudioSettings;
 class IAudioSink;
@@ -31,10 +33,11 @@ class CameraSource;
 class CoreAV;
 class IVideoSettings;
 class VideoSurface;
+
 class AVForm : public GenericForm, private Ui::AVForm {
     Q_OBJECT
 public:
-    AVForm(CameraSource& camera, IAudioSettings* audioSettings, IVideoSettings* videoSettings);
+    AVForm( );
     ~AVForm() override;
     QString getFormName() final override { return tr("Audio/Video"); }
 
@@ -93,11 +96,14 @@ private:
     std::unique_ptr<IAudioSink> audioSink = nullptr;
     std::unique_ptr<IAudioSource> audioSrc = nullptr;
     VideoSurface* camVideoSurface;
-    CameraSource& camera;
+    CameraSource* camera;
     QVector<QPair<QString, QString>> videoDeviceList;
     QVector<VideoMode> videoModes;
     uint alSource;
     const uint totalSliderSteps = 100;  // arbitrary number of steps to give slider a good "feel"
+
+private slots:
+    void onProfileChanged(Profile*);
 };
 
 #endif

@@ -19,7 +19,6 @@
 #include "base/identicon.h"
 #include "base/images.h"
 #include "gui.h"
-#include "profilelocker.h"
 #include "settings.h"
 
 Profile::Profile(const QString& host,
@@ -41,94 +40,7 @@ Profile::Profile(const QString& host,
     initCore(s, isNewProfile);
 
     loadDatabase(password);
-
-    ProfileLocker::lock(name);
 }
-
-/**
- * @brief Locks and loads an existing profile and creates the associate Core*
- * instance.
- * @param name Profile name.
- * @param password Profile password.
- * @return Returns a nullptr on error. Profile pointer otherwise.
- *
- * @example If the profile is already in use return nullptr.
- */
-// Profile* Profile::loadProfile(QString host, QString name, const QString& password) {
-//     if (ProfileLocker::hasLock()) {
-//         qCritical() << "Tried to load profile " << name
-//                     << ", but another profile is already locked!";
-//         return nullptr;
-//     }
-//
-//     if (!ProfileLocker::lock(name)) {
-//         qWarning() << "Failed to lock profile " << name;
-//         return nullptr;
-//     }
-//
-//     std::unique_ptr<ToxEncrypt> tmpKey = nullptr;
-//     QByteArray data = QByteArray();
-//     Profile* p = nullptr;
-//     qint64 fileSize = 0;
-//
-//     QString path = s->getSettingsDirPath() + name + ".tox";
-//     QFile saveFile(path);
-//     qDebug() << "Loading tox save " << path;
-//
-//     if (!saveFile.exists()) {
-//         qWarning() << "The tox save file " << path << " was not found";
-//         goto fail;
-//     }
-//
-//     if (!saveFile.open(QIODevice::ReadOnly)) {
-//         qCritical() << "The tox save file " << path << " couldn't' be opened";
-//         goto fail;
-//     }
-//
-//     fileSize = saveFile.size();
-//     if (fileSize <= 0) {
-//         qWarning() << "The tox save file" << path << " is empty!";
-//         goto fail;
-//     }
-//
-//     data = saveFile.readAll();
-//     //  if (ToxEncrypt::isEncrypted(data)) {
-//     //    if (password.isEmpty()) {
-//     //      qCritical()
-//     //          << "The tox save file is encrypted, but we don't have a
-//     //          password!";
-//     //      goto fail;
-//     //    }
-//     //
-//     //    tmpKey = ToxEncrypt::makeToxEncrypt(password, data);
-//     //    if (!tmpKey) {
-//     //      qCritical() << "Failed to derive key of the tox save file";
-//     //      goto fail;
-//     //    }
-//     //
-//     //    data = tmpKey->decrypt(data);
-//     //    if (data.isEmpty()) {
-//     //      qCritical() << "Failed to decrypt the tox save file";
-//     //      goto fail;
-//     //    }
-//     //  } else {
-//     //    if (!password.isEmpty()) {
-//     //      qWarning()
-//     //          << "We have a password, but the tox save file is not encrypted";
-//     //    }
-//     //  }
-//
-//     saveFile.close();
-//     p = new Profile(host, name, password, false);
-//     //    s.updateProfileData(p, parser);
-//     return p;
-//
-//// cleanup in case of error
-// fail:
-//     saveFile.close();
-//     ProfileLocker::unlock();
-//     return nullptr;
-// }
 
 /**
  * @brief Creates a new profile and the associated Core* instance.
@@ -148,11 +60,11 @@ std::unique_ptr<Profile> Profile::createProfile(QString host, QString name, QStr
         }
     }
 
-    if (ProfileLocker::hasLock()) {
-        qCritical() << "Tried to create profile " << name
-                    << ", but another profile is already locked!";
-        return nullptr;
-    }
+    // if (ProfileLocker::hasLock()) {
+    //     qCritical() << "Tried to create profile " << name
+    //                 << ", but another profile is already locked!";
+    //     return nullptr;
+    // }
 
     //    if (!ProfileLocker::lock(name)) {
     //        qWarning() << "Failed to lock profile " << name;

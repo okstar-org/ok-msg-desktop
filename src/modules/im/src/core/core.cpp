@@ -272,7 +272,10 @@ void Core::onFriendAvatarChanged(const QString friendId, const std::string avata
     qDebug() << __func__ << friendId << "avatar size" << avatar.size();
     if (avatar.empty()) return;
 
-    emit friendAvatarChanged(getFriendPublicKey(friendId), QByteArray::fromStdString(avatar));
+    auto pic = QByteArray::fromStdString(avatar);
+
+    Nexus::getProfile()->setFriendAvatar(getFriendPublicKey(friendId), pic);
+    emit friendAvatarChanged(getFriendPublicKey(friendId), pic);
 }
 
 void Core::onFriendAliasChanged(const lib::messenger::IMContactId& fId, const QString& alias) {
@@ -1235,7 +1238,7 @@ void Core::logout() {
 
 void Core::onSelfNameChanged(QString name) {
     QMutexLocker ml{&coreLoopLock};
-    //    qDebug() << __func__ << name;
+    qDebug() << __func__ << name;
     emit usernameSet(name);
 }
 
@@ -1243,14 +1246,15 @@ void Core::onSelfAvatarChanged(const std::string avatar) {
     QMutexLocker ml{&coreLoopLock};
 
     auto a = QByteArray::fromStdString(avatar);
+    emit avatarSet(a);
 
-    //  emit avatarSet(a);
     auto p = Nexus::getProfile();
     if (!p) {
         qWarning() << "Can not get profile!";
         return;
     }
     p->setAvatar(a, false);
+
 }
 
 void Core::onSelfStatusChanged(lib::messenger::IMStatus userStatus, const std::string& msg) {
@@ -1262,6 +1266,41 @@ void Core::onSelfStatusChanged(lib::messenger::IMStatus userStatus, const std::s
         t.append(": ").append(msg.data());
     }
     emit statusMessageSet(t);
+}
+
+void Core::onSelfVCardChanged(lib::messenger::IMVCard &imvCard)
+{
+    qDebug() << __func__ << "nick:" << imvCard.nickname;
+
+    VCard vCard = {
+            .fullName = imvCard.fullName,
+            .nickname = imvCard.nickname,
+            .title = imvCard.title,
+    };
+
+    for (const auto& item : imvCard.adrs) {
+        vCard.adrs.push_back({.street = item.street,
+                              .locality = item.locality,
+                              .region = item.region,
+                              .country = item.country});
+    }
+
+    for (const auto& item : imvCard.emails) {
+        vCard.emails.push_back({.type = item.type, .number = item.number});
+    }
+
+    for (const auto& item : imvCard.tels) {
+        vCard.tels.push_back({.type = item.type, .mobile = item.mobile, .number = item.number});
+    }
+
+    if(!vCard.photo.bin.empty()){
+        if(vCard.photo.url.isEmpty()){
+            emit avatarSet(QByteArray::fromStdString(vCard.photo.bin));
+        }
+    }
+
+    emit usernameSet(vCard.fullName);
+    emit vCardSet(vCard);
 }
 
 void Core::onSelfIdChanged(QString id) {
@@ -1284,28 +1323,28 @@ void Core::loadGroupList() const {
 
 void Core::onFriendVCard(const lib::messenger::IMContactId& fId,
                          const lib::messenger::IMVCard& imvCard) {
-    if (fId.getUsername() == getUsername()) {
-        VCard vCard = {
-                .fullName = imvCard.fullName,
-                .nickname = imvCard.nickname,
-                .title = imvCard.title,
-        };
+    qDebug() << __func__ << fId.toString()<<"nick:" << imvCard.nickname;
+    VCard vCard = {
+            .fullName = imvCard.fullName,
+            .nickname = imvCard.nickname,
+            .title = imvCard.title,
+    };
 
-        for (const auto& item : imvCard.adrs) {
-            vCard.adrs.push_back({.street = item.street,
-                                  .locality = item.locality,
-                                  .region = item.region,
-                                  .country = item.country});
-        }
-
-        for (const auto& item : imvCard.emails) {
-            vCard.emails.push_back({.type = item.type, .number = item.number});
-        }
-
-        for (const auto& item : imvCard.tels) {
-            vCard.tels.push_back({.type = item.type, .mobile = item.mobile, .number = item.number});
-        }
-
-        emit vCardSet(vCard);
+    for (const auto& item : imvCard.adrs) {
+        vCard.adrs.push_back({.street = item.street,
+                              .locality = item.locality,
+                              .region = item.region,
+                              .country = item.country});
     }
+
+    for (const auto& item : imvCard.emails) {
+        vCard.emails.push_back({.type = item.type, .number = item.number});
+    }
+
+    for (const auto& item : imvCard.tels) {
+        vCard.tels.push_back({.type = item.type, .mobile = item.mobile, .number = item.number});
+    }
+
+    emit friendVCardSet(FriendId(fId), vCard);
+
 }

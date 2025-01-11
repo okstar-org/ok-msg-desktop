@@ -125,12 +125,6 @@ Widget::Widget(QWidget* parent)  //
 
     installEventFilter(this);
 
-    auto settings = Nexus::getProfile()->getSettings();
-
-    QString locale = settings->getTranslation();
-    settings::Translator::translate(OK_IM_MODULE, locale);
-    connect(ok::Application::Instance()->bus(), &ok::Bus::languageChanged,
-            [](QString locale0) { settings::Translator::translate(OK_IM_MODULE, locale0); });
 
     QIcon themeIcon = QIcon::fromTheme("qtox");
     if (!themeIcon.isNull()) {
@@ -202,7 +196,13 @@ Widget::Widget(QWidget* parent)  //
     // Disable some widgets until we're connected to the DHT
     //  ui->statusButton->setEnabled(false);
 
-    lib::settings::Style::setThemeColor(settings->getThemeColor());
+    auto &settings = lib::settings::OkSettings::getInstance();
+
+    settings::Translator::translate(OK_IM_MODULE, settings.getTranslation());
+    connect(ok::Application::Instance()->bus(), &ok::Bus::languageChanged,
+            [](QString locale0) { settings::Translator::translate(OK_IM_MODULE, locale0); });
+
+    lib::settings::Style::setThemeColor(settings.getThemeColor());
 
     onStatusSet(Status::Status::Offline);
 
@@ -254,6 +254,8 @@ Widget::Widget(QWidget* parent)  //
 
     retranslateUi();
     settings::Translator::registerHandler(std::bind(&Widget::retranslateUi, this), this);
+
+
 
 #ifdef Q_OS_MAC
     // Nexus::getInstance().updateWindows();
@@ -1242,8 +1244,8 @@ void Widget::setStatusBusy() {
 }
 
 void Widget::saveWindowGeometry() {
-    auto settings = Nexus::getProfile()->getSettings();
-    settings->setWindowGeometry(saveGeometry());
+    // auto settings = Nexus::getProfile()->getSettings();
+    // settings->setWindowGeometry(saveGeometry());
     //  settings.setWindowState(saveState());
 }
 

@@ -266,8 +266,8 @@ void IM::onConnect() {
     auto res = _client->resource();
     qDebug() << __func__ << "resource:" << (qstring(res));
 
-    //  fetchVCard(qstring(self().bare()));
-    //  emit selfIdChanged(qstring(_client->username()));
+    requestVCards();
+     // emit selfIdChanged(qstring(_client->username()));
 
     //   enable carbons（多终端支持）
     IQ iq(IQ::IqType::Set, JID(), "server");
@@ -1252,7 +1252,7 @@ void IM::handleVCardResult(VCardContext context, const JID& jid, StanzaError err
 
 void IM::fetchFriendVCard(const QString& friendId) {
     // 获取联系人个人信息
-    qDebug() << "fetchVCard" << friendId;
+    qDebug() << __func__ << friendId;
     JID jid(stdstring(friendId));
     vCardManager->fetchVCard(jid, this);
     //  pubSubManager->subscribe(jid, "", this);
@@ -1260,7 +1260,7 @@ void IM::fetchFriendVCard(const QString& friendId) {
 }
 
 void IM::requestVCards() {
-    qDebug() << "requestVCards";
+    qDebug() << __func__;
     vCardManager->fetchVCard(self().bareJID(), this);
 }
 

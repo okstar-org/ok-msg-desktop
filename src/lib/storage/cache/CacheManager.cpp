@@ -46,7 +46,7 @@ QByteArray CacheManager::loadAvatarData(const QString& owner) const {
     auto filePath = makeAvatarPath(path, owner);
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly)) {
-        qWarning() << "Unable to open file" << path;
+        qWarning() << "Unable to open file" << path.path();
         return {};
     }
 

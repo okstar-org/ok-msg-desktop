@@ -121,11 +121,11 @@ CameraSource::CameraSource()
 /**
  * @brief Returns the singleton instance.
  */
-CameraSource& CameraSource::getInstance() {
+CameraSource* CameraSource::getInstance() {
     qDebug() << __func__;
     if (!instance) instance = new CameraSource();
     instance->setupDefault();
-    return *instance;
+    return instance;
 }
 
 void CameraSource::destroyInstance() {

@@ -33,9 +33,9 @@
 #include <memory>
 
 SettingsWidget::SettingsWidget(Widget* parent) : QWidget(parent, Qt::Window) {
-    IAudioSettings* audioSettings = Nexus::getProfile()->getSettings();
-    IVideoSettings* videoSettings = Nexus::getProfile()->getSettings();
-    CameraSource& camera = CameraSource::getInstance();
+//    IAudioSettings* audioSettings = Nexus::getProfile()->getSettings();
+//    IVideoSettings* videoSettings = Nexus::getProfile()->getSettings();
+
 
     settingsWidgets = std::unique_ptr<QTabWidget>(new QTabWidget(this));
     settingsWidgets->setTabPosition(QTabWidget::North);
@@ -52,7 +52,7 @@ SettingsWidget::SettingsWidget(Widget* parent) : QWidget(parent, Qt::Window) {
     //    std::unique_ptr<PrivacyForm> pfrm(new PrivacyForm());
     //    connect(pfrm.get(), &PrivacyForm::clearAllReceipts, parent, &Widget::clearAllReceipts);
 
-    AVForm* rawAvfrm = new AVForm(camera, audioSettings, videoSettings);
+    AVForm* rawAvfrm = new AVForm();
     std::unique_ptr<AVForm> avfrm(rawAvfrm);
 
 #if UPDATE_CHECK_ENABLED
@@ -64,10 +64,9 @@ SettingsWidget::SettingsWidget(Widget* parent) : QWidget(parent, Qt::Window) {
     }
 #endif
 
-    cfgForms.push_back(std::move(gfrm));   //
-    cfgForms.push_back(std::move(uifrm));  //
-                                           //    cfgForms.push_back(std::move(pfrm));   //
-    cfgForms.push_back(std::move(avfrm));  //
+    cfgForms.push_back(std::move(gfrm));
+    cfgForms.push_back(std::move(uifrm));
+    cfgForms.push_back(std::move(avfrm));
 
     for (auto& cfgForm : cfgForms)
         settingsWidgets->addTab(cfgForm.get(), cfgForm->getFormIcon(), cfgForm->getFormName());

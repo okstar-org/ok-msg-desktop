@@ -260,7 +260,6 @@ QString ProfileForm::getSupportedImageFilter() {
     for (auto type : QImageReader::supportedImageFormats()) {
         res += QString("*.%1 ").arg(QString(type));
     }
-
     return tr("Images (%1)", "filetype filter").arg(res.left(res.size() - 1));
 }
 

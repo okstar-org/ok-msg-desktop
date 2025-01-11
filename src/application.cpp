@@ -151,7 +151,8 @@ void Application::createLoginUI(bool bootstrap) {
     session = std::make_shared<lib::session::AuthSession>();
     connect(session.get(), &lib::session::AuthSession::tokenSet,  //
             [&]() {
-                profile = std::make_unique<lib::session::Profile>(session.get());
+
+                profile = std::make_unique<lib::session::Profile>(storageManager, session.get());
                 startMainUI();
             });
 

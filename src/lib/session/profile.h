@@ -33,10 +33,8 @@ namespace lib::session {
 class Profile : public QObject {
     Q_OBJECT
 public:
-    explicit Profile(const AuthSession* authSession, QObject* parent = nullptr);
+    explicit Profile(storage::StorageManager* sm, const AuthSession* authSession, QObject* parent = nullptr);
     ~Profile();
-
-    //    static bool isEncrypted(QString name);
 
     // 获取用户名
     [[nodiscard]] const QString& getUsername() const;
@@ -59,9 +57,7 @@ public:
 
     //    bool rename(QString newName);
 
-    storage::StorageManager* create(const QString& profile) const {
-        return storageManager->create(profile);
-    }
+    storage::StorageManager* create(const QString& profile);
 
     // profile
     QStringList getFilesByExt(const QString& extension);

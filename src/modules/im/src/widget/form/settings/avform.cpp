@@ -27,7 +27,9 @@
 #include "src/base/RecursiveSignalBlocker.h"
 #include "src/core/core.h"
 #include "src/core/coreav.h"
+#include "src/application.h"
 #include "src/nexus.h"
+#include "src/Bus.h"
 #include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
 #include "src/video/cameradevice.h"
@@ -40,32 +42,91 @@
 #define ALC_ALL_DEVICES_SPECIFIER ALC_DEVICE_SPECIFIER
 #endif
 
-AVForm::AVForm(CameraSource& camera, IAudioSettings* audioSettings, IVideoSettings* videoSettings)
+AVForm::AVForm( )
         : GenericForm(QPixmap(":/img/settings/av.png"))
-        , audioSettings{audioSettings}
-        , videoSettings{videoSettings}
+        , audioSettings(nullptr), videoSettings(nullptr)
         , camVideoSurface(nullptr)
-        , camera(camera) {
+         {
     setupUi(this);
 
     // block all child signals during initialization
     const ok::base::RecursiveSignalBlocker signalBlocker(this);
-    auto s = Nexus::getProfile()->getSettings();
+
+
+
+    eventsInit();
+
+    QDesktopWidget* desktop = QApplication::desktop();
+    for (QScreen* qScreen : QGuiApplication::screens()) {
+        connect(qScreen, &QScreen::geometryChanged, this, &AVForm::rescanDevices);
+    }
+    auto* qGUIApp = qobject_cast<QGuiApplication*>(qApp);
+    assert(qGUIApp);
+    connect(qGUIApp, &QGuiApplication::screenAdded, this, &AVForm::trackNewScreenGeometry);
+    connect(qGUIApp, &QGuiApplication::screenAdded, this, &AVForm::rescanDevices);
+    connect(qGUIApp, &QGuiApplication::screenRemoved, this, &AVForm::rescanDevices);
+    settings::Translator::registerHandler(std::bind(&AVForm::retranslateUi, this), this);
+
+    auto bus = ok::Application::Instance()->bus();
+    connect(bus, &ok::Bus::profileChanged, this, &AVForm::onProfileChanged);
+}
+
+AVForm::~AVForm() {
+    killVideoSurface();
+    settings::Translator::unregister(this);
+}
+
+void AVForm::hideEvent(QHideEvent* event) {
+    audioSink.reset();
+    audioSrc.reset();
+
+    if (camVideoSurface) {
+        camVideoSurface->setSource(nullptr);
+        killVideoSurface();
+    }
+    videoDeviceList.clear();
+
+    GenericForm::hideEvent(event);
+}
+
+void AVForm::showEvent(QShowEvent* event) {
+    camera = CameraSource::getInstance();
+
+
+    GenericForm::showEvent(event);
+}
+
+void AVForm::open(const QString& devName, const VideoMode& mode) {
+    QRect rect = mode.toRect();
+    videoSettings->setCamVideoRes(rect);
+    videoSettings->setCamVideoFPS(static_cast<float>(mode.FPS));
+    camera->setupDevice(devName, mode);
+}
+
+void AVForm::trackNewScreenGeometry(QScreen* qScreen) {
+    connect(qScreen, &QScreen::geometryChanged, this, &AVForm::rescanDevices);
+}
+
+void AVForm::onProfileChanged(Profile* profile)
+{
+    auto s = profile->getSettings();
+    audioSettings = s;
+    videoSettings = s;
     audio = std::unique_ptr<IAudioControl>(Audio::makeAudio(*s));
 
-    cbEnableTestSound->setChecked(audioSettings->getEnableTestSound());
+    cbEnableTestSound->setChecked(s->getEnableTestSound());
     cbEnableTestSound->setToolTip(tr("Play a test sound while changing the output volume."));
 
     connect(rescanButton, &QPushButton::clicked, this, &AVForm::rescanDevices);
 
     playbackSlider->setTracking(false);
     playbackSlider->setMaximum(totalSliderSteps);
-    playbackSlider->setValue(getStepsFromValue(audioSettings->getOutVolume(),
-                                               audioSettings->getOutVolumeMin(),
-                                               audioSettings->getOutVolumeMax()));
+    playbackSlider->setValue(getStepsFromValue(s->getOutVolume(),
+                                               s->getOutVolumeMin(),
+                                               s->getOutVolumeMax()));
     playbackSlider->installEventFilter(this);
 
-    // audio settings
+            // audio settings
     microphoneSlider->setToolTip(tr("Use slider to set the gain of your input device ranging"
                                     " from %1dB to %2dB.")
                                          .arg(audio->minInputGain())
@@ -91,41 +152,7 @@ AVForm::AVForm(CameraSource& camera, IAudioSettings* audioSettings, IVideoSettin
 
     volumeDisplay->setMaximum(totalSliderSteps);
 
-    fillAudioQualityComboBox();
 
-    eventsInit();
-
-    QDesktopWidget* desktop = QApplication::desktop();
-    for (QScreen* qScreen : QGuiApplication::screens()) {
-        connect(qScreen, &QScreen::geometryChanged, this, &AVForm::rescanDevices);
-    }
-    auto* qGUIApp = qobject_cast<QGuiApplication*>(qApp);
-    assert(qGUIApp);
-    connect(qGUIApp, &QGuiApplication::screenAdded, this, &AVForm::trackNewScreenGeometry);
-    connect(qGUIApp, &QGuiApplication::screenAdded, this, &AVForm::rescanDevices);
-    connect(qGUIApp, &QGuiApplication::screenRemoved, this, &AVForm::rescanDevices);
-    settings::Translator::registerHandler(std::bind(&AVForm::retranslateUi, this), this);
-}
-
-AVForm::~AVForm() {
-    killVideoSurface();
-    settings::Translator::unregister(this);
-}
-
-void AVForm::hideEvent(QHideEvent* event) {
-    audioSink.reset();
-    audioSrc.reset();
-
-    if (camVideoSurface) {
-        camVideoSurface->setSource(nullptr);
-        killVideoSurface();
-    }
-    videoDeviceList.clear();
-
-    GenericForm::hideEvent(event);
-}
-
-void AVForm::showEvent(QShowEvent* event) {
     getAudioOutDevices();
     getAudioInDevices();
     createVideoSurface();
@@ -140,18 +167,7 @@ void AVForm::showEvent(QShowEvent* event) {
         audioSink = audio->makeSink();
     }
 
-    GenericForm::showEvent(event);
-}
-
-void AVForm::open(const QString& devName, const VideoMode& mode) {
-    QRect rect = mode.toRect();
-    videoSettings->setCamVideoRes(rect);
-    videoSettings->setCamVideoFPS(static_cast<float>(mode.FPS));
-    camera.setupDevice(devName, mode);
-}
-
-void AVForm::trackNewScreenGeometry(QScreen* qScreen) {
-    connect(qScreen, &QScreen::geometryChanged, this, &AVForm::rescanDevices);
+    fillAudioQualityComboBox();
 }
 
 void AVForm::rescanDevices() {
@@ -436,7 +452,7 @@ void AVForm::on_videoDevCombobox_currentIndexChanged(int index) {
         mode = videoModes[modeIndex];
     }
 
-    camera.setupDevice(dev, mode);
+    camera->setupDevice(dev, mode);
     if (dev == "none") {
         // TODO: Use injected `coreAv` currently injected `nullptr`
         //        Core::getInstance()->getAv()->sendNoVideo();
@@ -588,7 +604,7 @@ void AVForm::createVideoSurface() {
     camVideoSurface = new VideoSurface(QPixmap(), CamFrame);
     camVideoSurface->setObjectName(QStringLiteral("CamVideoSurface"));
     camVideoSurface->setMinimumSize(QSize(160, 120));
-    camVideoSurface->setSource(&camera);
+    camVideoSurface->setSource(camera);
     gridLayout->addWidget(camVideoSurface, 0, 0, 1, 1);
 }
 

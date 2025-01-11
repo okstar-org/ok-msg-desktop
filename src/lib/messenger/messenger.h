@@ -57,6 +57,7 @@ public:
     virtual void onSelfNameChanged(QString name) = 0;
     virtual void onSelfAvatarChanged(const std::string avatar) = 0;
     virtual void onSelfStatusChanged(IMStatus status, const std::string& msg) = 0;
+    virtual void onSelfVCardChanged(IMVCard& imvCard) = 0;
 };
 
 class FriendHandler {

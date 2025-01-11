@@ -27,6 +27,7 @@
 #include "lib/storage/settings/OkSettings.h"
 #include "profile.h"
 
+
 namespace lib::session {
 
 static QString FILE_PROFILE_EXT = ".profile";
@@ -41,10 +42,14 @@ static QString FILE_PROFILE_EXT = ".profile";
  * @var bool Profile::isRemoved
  * @brief True if the profile has been removed by remove().
  */
-Profile::Profile(const AuthSession* authSession, QObject* parent)
-        : QObject(parent), authSession(authSession) {}
+Profile::Profile(storage::StorageManager* sm, const AuthSession* authSession, QObject* parent)
+        : QObject(parent), authSession(authSession), storageManager(sm) {
+    qDebug() << __func__;
+}
 
 Profile::~Profile() {
+    qDebug() << __func__;
+
     //    onSaveToxSave();
     //    Nexus::getProfile()->getSettings()->savePersonal(this);
     //    Nexus::getProfile()->getSettings()->sync();
@@ -322,6 +327,10 @@ bool Profile::removeFriendAvatar(const QString& owner) {
 bool Profile::saveFriendAvatar(const QString& owner, const QByteArray& avatar) {
     auto cm = storageManager->getCacheManager();
     return cm->saveAvatarData(owner, avatar);
+}
+
+storage::StorageManager *Profile::create(const QString &profile) {
+        return storageManager->create(profile);
 }
 
 void Profile::setNickname(const QString& nickname_) {

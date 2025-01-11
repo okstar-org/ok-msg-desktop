@@ -38,9 +38,6 @@ class Profile : public QObject {
 public:
     Profile(const QString& host, const QString& name, const QString& password, bool newProfile);
 
-    //    static Profile* loadProfile(QString host, QString name, const QString& password =
-    //    QString());
-
     static std::unique_ptr<Profile> createProfile(QString host, QString name, QString password);
 
     History* getHistory();
@@ -98,11 +95,6 @@ public:
     void quit();
 
 private:
-    //    QString host;
-    //    // 帐号（用户唯一标识）
-    //    QString username;
-    //    // 密码
-    //    QString password;
 
     std::unique_ptr<Core> core;
     std::unique_ptr<CoreAV> coreAv;

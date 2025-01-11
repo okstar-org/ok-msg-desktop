@@ -33,7 +33,7 @@ public:
 
 
     void setAvatar(const QPixmap& avatar) override;
-    const QPixmap& getAvatar() override;
+    QPixmap getAvatar() override;
     void setStatusMessage(const QString& status) override;
 
     const VCard& getVCard() const override;

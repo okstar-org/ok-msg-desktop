@@ -17,24 +17,20 @@
 #include <QMimeData>
 #include <QTimer>
 #include <cassert>
+#include "Bus.h"
 #include "ChatWidget.h"
 #include "ContactListLayout.h"
+#include "application.h"
 #include "base/times.h"
 #include "circlewidget.h"
 #include "contentdialogmanager.h"
 #include "friendwidget.h"
 #include "groupwidget.h"
-#include "lib/storage/settings/OkSettings.h"
-#include "src/lib/session/profile.h"
-#include "src/lib/storage/settings/style.h"
-#include "src/model/chathistory.h"
-#include "src/model/chatroom/friendchatroom.h"
-#include "src/model/friendlist.h"
-#include "src/model/group.h"
+
 #include "src/model/status.h"
 #include "src/nexus.h"
-#include "src/persistence/settings.h"
 #include "widget.h"
+#include "Bus.h"
 
 enum class Time {
     Today,
@@ -67,19 +63,19 @@ MessageSessionListWidget::MessageSessionListWidget(MainLayout* parent,
     listLayout = new ContactListLayout(this);
     setLayout(listLayout);
 
-    mode = Nexus::getProfile()->getSettings()->getFriendSortingMode();
-    sortByMode(mode);
-
-    auto settings = Nexus::getProfile()->getSettings();
-    connect(settings, &Settings::compactLayoutChanged, this,
-            &MessageSessionListWidget::onCompactChanged);
-
-    //  connect(&settings, &Settings::groupchatPositionChanged, this,
-    //          &MessageSessionListWidget::onGroupchatPositionChanged);
+    //    mode = Nexus::getProfile()->getSettings()->getFriendSortingMode();
+    //    sortByMode(mode);
 
     auto w = Widget::getInstance();
     connect(w, &Widget::toDeleteChat, this, &MessageSessionListWidget::do_deleteSession);
     connect(w, &Widget::toClearHistory, this, &MessageSessionListWidget::do_clearHistory);
+
+    auto bus = ok::Application::Instance()->bus();
+    connect(bus, &ok::Bus::profileChanged, [this](Profile* profile) {
+        auto settings = profile->getSettings();
+        connect(settings, &Settings::compactLayoutChanged, this,
+                &MessageSessionListWidget::onCompactChanged);
+    });
 }
 
 MessageSessionListWidget::~MessageSessionListWidget() {

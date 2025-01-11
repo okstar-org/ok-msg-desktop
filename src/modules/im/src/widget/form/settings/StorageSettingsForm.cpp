@@ -36,6 +36,8 @@
 #include "src/persistence/smileypack.h"
 #include "src/widget/form/settingswidget.h"
 #include "src/widget/widget.h"
+#include "src/application.h"
+#include "src/Bus.h"
 
 /**
  * @brief Constructor of StorageSettingsForm.
@@ -52,21 +54,14 @@ StorageSettingsForm::StorageSettingsForm(SettingsWidget* myParent)
     // block all child signals during initialization
     const ok::base::RecursiveSignalBlocker signalBlocker(this);
 
-    auto s = Nexus::getProfile()->getSettings();
-
-    // 先获取当前语言
-    //    auto& okSettings = lib::settings::OkSettings::getInstance();
-    bodyUI->autoSaveFilesDir->setText(s->getGlobalAutoAcceptDir());
-    //    bodyUI->statusChanges->setChecked(s.getStatusChangeNotificationEnabled());
-    //    bodyUI->groupJoinLeaveMessages->setChecked(s.getShowGroupJoinLeaveMessages());
-
-    //    bodyUI->autoAwaySpinBox->setValue(s.getAutoAwayTime());
-    // bodyUI->maxAutoAcceptSizeMB->setValue(static_cast<double>(s.getMaxAutoAcceptSize()) / 1024 /
-    // 1024); bodyUI->autoacceptFiles->setChecked(okSettings.getAutoSaveEnabled());
 
     eventsInit();
     settings::Translator::registerHandler(std::bind(&StorageSettingsForm::retranslateUi, this),
                                           this);
+
+    auto bus = ok::Application::Instance()->bus();
+    connect(bus, &ok::Bus::profileChanged, this, &StorageSettingsForm::onProfileChanged);
+
 }
 
 StorageSettingsForm::~StorageSettingsForm() {
@@ -114,4 +109,20 @@ void StorageSettingsForm::on_maxAutoAcceptSizeMB_editingFinished() {
  */
 void StorageSettingsForm::retranslateUi() {
     bodyUI->retranslateUi(this);
+}
+
+void StorageSettingsForm::onProfileChanged(Profile *profile)
+{
+    auto s = profile->getSettings();
+    bodyUI->autoSaveFilesDir->setText(s->getGlobalAutoAcceptDir());
+
+    // 先获取当前语言
+    // auto& okSettings = lib::settings::OkSettings::getInstance();
+    // bodyUI->statusChanges->setChecked(s.getStatusChangeNotificationEnabled());
+    // bodyUI->groupJoinLeaveMessages->setChecked(s.getShowGroupJoinLeaveMessages());
+
+    // bodyUI->autoAwaySpinBox->setValue(s.getAutoAwayTime());
+    // bodyUI->maxAutoAcceptSizeMB->setValue(static_cast<double>(s.getMaxAutoAcceptSize()) / 1024 /
+    // 1024); bodyUI->autoacceptFiles->setChecked(okSettings.getAutoSaveEnabled());
+
 }

@@ -14,6 +14,7 @@
 #define USERINTERFACEFORM_H
 
 #include "genericsettings.h"
+#include "src/persistence/profile.h"
 #include "src/widget/form/settingswidget.h"
 
 #include <memory>
@@ -46,6 +47,9 @@ private:
 private:
     SettingsWidget* parent;
     Ui::StorageSettingsForm* bodyUI;
+
+private slots:
+    void onProfileChanged(Profile* profile);
 };
 
 #endif

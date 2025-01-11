@@ -36,6 +36,8 @@
 #include <QShortcut>
 #include <QTimer>
 
+#include "application.h"
+#include "Bus.h"
 #include "widget.h"
 
 inline QDateTime getActiveTimeFriend(const Friend* contact) {
@@ -57,14 +59,16 @@ ContactListWidget::ContactListWidget(QWidget* parent, bool groupsOnTop)
 
     setAcceptDrops(true);
 
-    auto settings = Nexus::getProfile()->getSettings();
 
-    connect(settings, &Settings::groupchatPositionChanged, this,
-            &ContactListWidget::onGroupchatPositionChanged);
+    auto bus = ok::Application::Instance()->bus();
+    connect(bus, &ok::Bus::profileChanged, [this](Profile* profile) {
+        auto settings = Nexus::getProfile()->getSettings();
+        connect(settings, &Settings::groupchatPositionChanged, this,
+                &ContactListWidget::onGroupchatPositionChanged);
+    });
 
     auto widget = Widget::getInstance();
     connect(widget, &Widget::toShowDetails, this, &ContactListWidget::do_toShowDetails);
-
     connect(widget, &Widget::friendRemoved, this, [&](const Friend* f) { removeFriend(f); });
 
     //  connect(Nexus::getProfile(), &Profile::coreChanged,

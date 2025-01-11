@@ -317,17 +317,18 @@ const QString Style::resolve(const QString& filename, const QFont& baseFont) {
 }
 
 
-void Style::setThemeColor(int color) {
+void Style::setThemeColor(MainTheme color) {
     stylesheetsCache.clear();  // clear stylesheet cache which includes color info
     palette.clear();
     dictColor.clear();
     dictExtColor.clear();
     initPalette();
     initDictColor();
-    if (color < 0 || color >= themeNameColors.size())
+    int c = (int) color;
+    if (c < 0 || c >= themeNameColors.size())
         setThemeColor(QColor());
     else
-        setThemeColor(themeNameColors[color].color);
+        setThemeColor(themeNameColors[c].color);
 }
 
 /**

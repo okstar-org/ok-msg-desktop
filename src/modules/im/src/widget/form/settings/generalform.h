@@ -16,6 +16,8 @@
 #include "genericsettings.h"
 #include "src/widget/form/settingswidget.h"
 
+#include <src/persistence/profile.h>
+
 namespace Ui {
 class GeneralSettings;
 }
@@ -57,6 +59,9 @@ private:
     QList<QLabel*> smileLabels;
     QList<std::shared_ptr<QIcon>> emoticonsIcons;
     const int MAX_FORMAT_LENGTH = 128;
+
+private slots:
+    void onProfileChanged(Profile*);
 };
 
 #endif

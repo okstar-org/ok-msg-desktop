@@ -21,17 +21,16 @@ namespace lib::storage {
 
 StorageManager::StorageManager(const QString& profile, QObject* parent)
         : QObject(parent), dir(ok::base::PlatformInfo::getAppConfigDirPath()), profile(profile) {
-    qDebug() << __func__ << "Initializing ...";
+    qDebug() << __func__ << "Initializing for profile:" << profile;
     if (!profile.isEmpty()) {
         // 创建子目录
-        if (!dir.exists(profile)) {
-            dir.mkdir(profile);
-            dir.cd(profile);
+        QString sub = "ok_"+profile;
+        if (!dir.exists(sub)) {
+            dir.mkdir(sub);
+            dir.cd(sub);
         }
     }
-
     cacheManager = new cache::CacheManager(dir.path() + QDir::separator() + "cache", this);
-
     qDebug() << __func__ << "Initialized";
 }
 
@@ -61,7 +60,7 @@ std::unique_ptr<db::RawDatabase> StorageManager::getDatabase(const QString& modu
     if (!dir.exists(DB_DIR)) {
         dir.mkdir(DB_DIR);
     }
-    QDir dbDir(dir.path() + QDir::separator() + DB_DIR + QDir::separator() + module);
+    QDir dbDir(dir.path() + QDir::separator() + DB_DIR + QDir::separator() + module+".db");
     return std::make_unique<db::RawDatabase>(dbDir.path(), QString(), QByteArray{});
 }
 

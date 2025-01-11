@@ -59,6 +59,10 @@ public:
         return profile.get();
     }
 
+    inline lib::storage::StorageManager* getStorageManager(){
+        return storageManager;
+    }
+
     inline QWidget* getMainWidget() const {
         if (m_mainWindow) {
             return m_mainWindow.get();
