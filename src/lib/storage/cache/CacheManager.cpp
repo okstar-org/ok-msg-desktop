@@ -24,15 +24,25 @@
 namespace lib::cache {
 
 static QString AVATAR_EXT = "png";
+static QString AVATAR_FOLD = "avatars";
 
-inline const QString makeAvatarPath(const QDir& path, const QString& owner) {
-    return path.path() + QDir::separator() + "avatars" + QDir::separator() + owner + "." +
-           AVATAR_EXT;
+inline QDir makeAvatarDir(const QDir& path) {
+    auto dir = QDir(path.path());
+    if(!dir.exists(AVATAR_FOLD)){
+        dir.mkpath(AVATAR_FOLD);
+    }
+    return dir.path() + QDir::separator() + AVATAR_FOLD;
 }
 
-CacheManager::CacheManager(const QDir& path, QObject* parent) : QObject(parent), path(path) {
-    qDebug() << __func__ << path;
+inline QString makeAvatarPath(const QDir& path, const QString& owner) {
+    return path.path() + QDir::separator() + owner + "." + AVATAR_EXT;
 }
+
+CacheManager::CacheManager(const QDir& dir, QObject* parent) :
+        QObject(parent), path(dir) {
+    qDebug() << __func__ << dir.path();
+}
+
 CacheManager::~CacheManager() {
     qDebug() << __func__;
 }
@@ -43,7 +53,7 @@ QByteArray CacheManager::loadAvatarData(const QString& owner) const {
         return {};
     }
 
-    auto filePath = makeAvatarPath(path, owner);
+    auto filePath = makeAvatarPath( makeAvatarDir(path), owner);
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly)) {
         qWarning() << "Unable to open file" << path.path();
@@ -68,12 +78,20 @@ bool CacheManager::saveAvatarData(const QString& owner, const QByteArray& buf) {
         return false;
     }
 
-    auto filePath = makeAvatarPath(path, owner);
-    QSaveFile file(filePath);
-    if (!file.open(QIODevice::WriteOnly)) {
-        qWarning() << filePath << " couldn't be saved";
+
+    auto _dir = makeAvatarDir(path);
+    if(!_dir.exists()){
+        qWarning() << "The fold is no existing:" << _dir;
         return false;
     }
+
+    auto _file =makeAvatarPath(_dir, owner);
+    QSaveFile file(_file);
+    if (!file.open(QIODevice::WriteOnly)) {
+        qWarning() << _file << "Couldn't to open file:" << _file ;
+        return false;
+    }
+
     file.write(buf);
     return file.commit();
 }

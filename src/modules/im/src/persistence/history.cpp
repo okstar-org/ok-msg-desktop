@@ -841,10 +841,10 @@ QString History::getPeerAlias(const QString& friendPk) {
  * @return True if history should not be accessed
  */
 bool History::historyAccessBlocked() {
-    if (!Nexus::getProfile()->getSettings()->getEnableLogging()) {
-        qCritical() << "Blocked history access while history is disabled";
-        return true;
-    }
+    // if (!Nexus::getProfile()->getSettings()->getEnableLogging()) {
+    //     qCritical() << "Blocked history access while history is disabled";
+    //     return true;
+    // }
 
     if (!isValid()) {
         return true;

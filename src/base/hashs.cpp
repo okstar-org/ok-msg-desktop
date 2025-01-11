@@ -26,7 +26,7 @@ QByteArray Hashs::hash(const QByteArray& buf, QCryptographicHash::Algorithm algo
 }
 
 QByteArray Hashs::sha1(const QByteArray& buf) {
-    return hash(buf, QCryptographicHash::Algorithm::Md5);
+    return hash(buf, QCryptographicHash::Algorithm::Sha1);
 }
 
 QString Hashs::sha1String(const QByteArray& buf) { return QString{sha1(buf).toHex()}; }

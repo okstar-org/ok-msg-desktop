@@ -274,7 +274,8 @@ void Core::onFriendAvatarChanged(const QString friendId, const std::string avata
 
     auto pic = QByteArray::fromStdString(avatar);
 
-    Nexus::getProfile()->setFriendAvatar(getFriendPublicKey(friendId), pic);
+    auto p = Nexus::getProfile();
+    p->setFriendAvatar(getFriendPublicKey(friendId), pic);
     emit friendAvatarChanged(getFriendPublicKey(friendId), pic);
 }
 

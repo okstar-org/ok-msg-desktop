@@ -27,8 +27,8 @@ StorageManager::StorageManager(const QString& profile, QObject* parent)
         QString sub = "ok_"+profile;
         if (!dir.exists(sub)) {
             dir.mkdir(sub);
-            dir.cd(sub);
         }
+        dir = QDir(dir.path()+QDir::separator()+sub);
     }
     cacheManager = new cache::CacheManager(dir.path() + QDir::separator() + "cache", this);
     qDebug() << __func__ << "Initialized";

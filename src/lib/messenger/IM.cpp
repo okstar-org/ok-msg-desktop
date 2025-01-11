@@ -266,6 +266,10 @@ void IM::onConnect() {
     auto res = _client->resource();
     qDebug() << __func__ << "resource:" << (qstring(res));
 
+
+    pubSubManager->subscribe(_client->jid(), XMLNS_NICKNAME, this);
+    pubSubManager->subscribe(_client->jid(), XMLNS_AVATAR, this);
+
     requestVCards();
      // emit selfIdChanged(qstring(_client->username()));
 
@@ -287,8 +291,6 @@ void IM::onConnect() {
 
     emit onConnected();
     emit started();
-
-    qDebug() << __func__ << "Resume.";
 }
 
 void IM::send(const QString& xml) {
@@ -328,13 +330,13 @@ void IM::enableDiscoManager() {
     /**
      * 头像相关
      */
-    //  client->registerStanzaExtension(new Avatar);
-    //  // urn:xmpp:avatar:data
-    //  disco->addFeature(XMLNS_AVATAR);
-    //  // urn:xmpp:avatar:metadata
-    //  disco->addFeature(XMLNS_META_AVATAR);
-    //  // urn:xmpp:avatar:metadata+notify
-    //  disco->addFeature(XMLNS_META_AVATAR + "+notify");
+     client->registerStanzaExtension(new Avatar);
+     // urn:xmpp:avatar:data
+     disco->addFeature(XMLNS_AVATAR);
+     // urn:xmpp:avatar:metadata
+     disco->addFeature(XMLNS_META_AVATAR);
+     // urn:xmpp:avatar:metadata+notify
+     disco->addFeature(XMLNS_META_AVATAR + "+notify");
 
     disco->addFeature(XMLNS_CHAT_STATES);
     disco->addFeature(XMLNS_MUC);
@@ -536,7 +538,6 @@ void IM::handleMessage(const gloox::Message& msg, MessageSession* session) {
     auto pEvent = msg.findExtension<PubSub::Event>(ExtPubSubEvent);
     if (pEvent) {
         doPubSubEvent(pEvent, msg, friendId);
-        // msleep(100);
         emit doPubSubEventDone();
     }
 
@@ -675,7 +676,7 @@ void IM::doPubSubEvent(const gloox::PubSub::Event* pse,  //
                                                        XMLNS_META_AVATAR);
         if (avatarMetaData) {
             auto itemId = avatarMetaData->findChild("info")->findAttribute("id");
-
+            qDebug() << "avatarId" << qstring(itemId);
             gloox::PubSub::ItemList items;
             auto item0 = new gloox::PubSub::Item();
             item0->setID(itemId);
@@ -1632,7 +1633,6 @@ void IM::handleRosterPresence(const RosterItem& item,               //
                         auto item0 = new gloox::PubSub::Item();
                         item0->setID(vCardUpdate->hash());
                         items.emplace_back(item0);
-
                         pubSubManager->requestItems(item.jid(), XMLNS_AVATAR, "", items, this);
                     }
                     break;
@@ -1788,8 +1788,8 @@ void IM::setNickname(const QString& nickname) {
     item->setID("current");
     item->setPayload(nick.tag());
     items.emplace_back(item);
-
     pubSubManager->publishItem(JID(), XMLNS_NICKNAME, items, nullptr, this);
+    qDebug() << __func__ << "completed.";
 }
 
 QString IM::getNickname() {
@@ -1800,10 +1800,16 @@ QString IM::getNickname() {
 }
 
 void IM::setAvatar(const QByteArray& avatar) {
-    if (avatar.isEmpty()) return;
+    qDebug() << __func__;
+    if (avatar.isEmpty()){
+        qWarning() << "Empty avatar!";
+        return;
+    }
 
-    QString sha1 = ok::base::Hashs::sha1(avatar);
-    qDebug() << QString("avatar size:%1 sha1:%2").arg(avatar.size()).arg(sha1);
+    qDebug() << __func__ << "size:" << avatar.size();
+
+    QString sha1 = ok::base::Hashs::sha1String(avatar);
+    qDebug() << __func__ << "sha1:" << sha1;
 
     auto base64 = avatar.toBase64().toStdString();
 
@@ -1833,10 +1839,12 @@ void IM::setAvatar(const QByteArray& avatar) {
     items.emplace_back(item);
 
     pubSubManager->publishItem(JID(), XMLNS_AVATAR, items, nullptr, this);
+
+    qDebug() << __func__ << "completed.";
 }
 
 void IM::changePassword(const QString& password) {
-    qDebug() << QString("password:%1").arg(password);
+    qDebug() << __func__<< password;
     if (password.isEmpty()) return;
 
     // changing password
@@ -1969,7 +1977,7 @@ void IM::handleItemPublication(const std::string& id,                    //
                                const std::string& node,                  //
                                const gloox::PubSub::ItemList& itemList,  //
                                const gloox::Error* error) {
-    qDebug() << QString("node:%1").arg(qstring(node));
+    qDebug() << __func__ << "node:" << qstring(node);
     if (node == XMLNS_AVATAR) {
         // 更新头像元信息
         //  https://xmpp.org/extensions/xep-0084.html#process-pubmeta
@@ -1981,14 +1989,17 @@ void IM::handleItemPublication(const std::string& id,                    //
 
 void IM::handleItemDeletion(const std::string& id, const JID& service, const std::string& node,
                             const gloox::PubSub::ItemList& itemList, const gloox::Error* error) {
-    qDebug() << QString("id:%1 service:%2").arg(qstring(id)).arg(qstring(service.full()));
+    qDebug() << __func__ << QString("id:%1 service:%2").arg(qstring(id)).arg(qstring(service.full()));
 }
 
 void IM::handleSubscriptionResult(const std::string& id, const JID& service,
                                   const std::string& node, const std::string& sid, const JID& jid,
                                   const gloox::PubSub::SubscriptionType subType,
                                   const gloox::Error* error) {
-    qDebug() << QString("id:%1 jid:%2").arg(qstring(id)).arg(qstring(jid.full()));
+    qDebug() << __func__ << "id" << qstring(id)
+             << "service:" << qstring(service.full())
+             << "node:" << qstring(node)
+             << "jid:" << qstring(jid.full());
     pubSubManager->requestItems(service, node, sid, 100, this);
 }
 

@@ -873,20 +873,6 @@ void Settings::setProxyPort(quint16 port) {
     }
 }
 
-bool Settings::getEnableLogging() const {
-    QMutexLocker locker{&bigLock};
-    return enableLogging;
-}
-
-void Settings::setEnableLogging(bool newValue) {
-    QMutexLocker locker{&bigLock};
-
-    if (newValue != enableLogging) {
-        enableLogging = newValue;
-        emit enableLoggingChanged(enableLogging);
-    }
-}
-
 int Settings::getAutoAwayTime() const {
     QMutexLocker locker{&bigLock};
     return autoAwayTime;

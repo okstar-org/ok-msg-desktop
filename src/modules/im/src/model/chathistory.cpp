@@ -504,7 +504,7 @@ void ChatHistory::receiptMessage(DispatchedMessageId id) {
     }
 }
 
-bool ChatHistory::canUseHistory() const { return history && settings.getEnableLogging(); }
+bool ChatHistory::canUseHistory() const { return history; }
 
 /**
  * @brief Gets the initial chat log index for a sessionChatLog with 0 items loaded from history.

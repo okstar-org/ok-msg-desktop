@@ -101,17 +101,19 @@ private:
     std::unique_ptr<CoreFile> coreFile;
 
     std::unique_ptr<ToxEncrypt> passkey = nullptr;
-    std::shared_ptr<lib::db::RawDatabase> database;
+
     std::shared_ptr<History> history;
 
     VCard vCard;
 
+
     lib::session::Profile* _profile;
+
     lib::storage::StorageManager* storageManager;
 
     Settings* s;
     std::unique_ptr<lib::settings::OkSettings> okSettings;
-    std::unique_ptr<lib::db::RawDatabase> db;
+    std::shared_ptr<lib::db::RawDatabase> db;
 signals:
     void coreChanged(Core& core);
     // TODO(sudden6): this doesn't seem to be the right place for Core errors
@@ -126,8 +128,7 @@ signals:
     void nickChanged(const QString& nick);
 
 public slots:
-    //    void onRequestSent(const FriendId& friendPk, const QString& message);
-    void loadDatabase(QString password);
+
     void onSaveToxSave();
 
     void setFriendAvatar(const ContactId& owner, const QByteArray& pic);

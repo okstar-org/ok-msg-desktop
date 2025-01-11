@@ -164,7 +164,6 @@ public slots:
 
 signals:
     // General
-
     void lightTrayIconChanged(bool enabled);
     void notifyChanged(bool enabled);
     void desktopNotifyChanged(bool enabled);
@@ -175,7 +174,7 @@ signals:
     void notifyHideChanged(bool enabled);
     void groupAlwaysNotifyChanged(bool enabled);
 
-    void enableLoggingChanged(bool enabled);
+
     void autoAwayTimeChanged(int minutes);
     void globalAutoAcceptDirChanged(const QString& path);
     void autoAcceptMaxSizeChanged(size_t size);
@@ -218,9 +217,6 @@ public:
     bool applyCommandLineOptions(const QCommandLineParser& parser);
     static bool verifyProxySettings(const QCommandLineParser& parser);
 
-    bool getMakeToxPortable() const;
-    void setMakeToxPortable(bool newValue);
-
     bool getLightTrayIcon() const;
     void setLightTrayIcon(bool newValue);
 
@@ -261,8 +257,7 @@ public:
     SIGNAL_IMPL(Settings, proxyAddressChanged, const QString& address)
     SIGNAL_IMPL(Settings, proxyPortChanged, quint16 port)
 
-    bool getEnableLogging() const;
-    void setEnableLogging(bool newValue);
+
 
     Db::syncType getDbSyncType() const;
     void setDbSyncType(Db::syncType newValue);
@@ -545,7 +540,6 @@ private:
     QString proxyAddr;
     quint16 proxyPort;
 
-    bool enableLogging;
 
     int autoAwayTime;
 

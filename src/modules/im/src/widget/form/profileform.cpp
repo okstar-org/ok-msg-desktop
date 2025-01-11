@@ -183,11 +183,10 @@ void ProfileForm::showTo(ContentLayout* contentLayout) {
     }
     contentLayout->setCurrentWidget(this);
 
-    bool portable = Nexus::getProfile()->getSettings()->getMakeToxPortable();
-    QString defaultPath =
-            QDir(Nexus::getProfile()->getSettings()->getSettingsDirPath()).path().trimmed();
+
+    QString defaultPath = QDir(Nexus::getProfile()->getSettings()->getSettingsDirPath()).path().trimmed();
     QString appPath = QApplication::applicationDirPath();
-    QString dirPath = portable ? appPath : defaultPath;
+    QString dirPath = appPath;
     QString url = QUrl::fromLocalFile(dirPath).toString();
 
     QString dirPrLink = tr("Current profile location: %1")

@@ -18,7 +18,7 @@
 #include "application.h"
 #include "base/identicon.h"
 #include "base/images.h"
-#include "gui.h"
+
 #include "settings.h"
 
 Profile::Profile(const QString& host,
@@ -28,16 +28,19 @@ Profile::Profile(const QString& host,
     qDebug() << "Initialize profile for" << name;
 
     auto app = ok::Application::Instance();
-    _profile = app->getProfile();
-    connect(_profile, &lib::session::Profile::nickChanged, this, &Profile::nickChanged);
-    storageManager = _profile->create(_profile->getUsername());
-    okSettings = storageManager->getGlobalSettings();
-    db = storageManager->createDatabase(OK_IM_MODULE);
 
+    auto appProfile = app->getProfile();
+    // connect(_profile, &lib::session::Profile::nickChanged, this, &Profile::nickChanged);
+
+    storageManager = appProfile->create(appProfile->getUsername());
+
+    _profile = new lib::session::Profile(storageManager, app->getSession(), this);
+
+    okSettings = storageManager->getGlobalSettings();
+    db = std::shared_ptr<lib::db::RawDatabase>(storageManager->createDatabase(OK_IM_MODULE).release());
+    history.reset(new History(db));
     s = new Settings(storageManager->createSetting(OK_IM_MODULE));
     initCore(s, isNewProfile);
-
-    loadDatabase(password);
 }
 
 /**
@@ -88,6 +91,7 @@ const QPixmap Profile::loadAvatar() {
                     Identicon(core->getSelfPeerId().getPublicKey().getByteArray()).toImage(16));
             return pixmap;
         }
+        return {};
     }
     QPixmap pixmap;
     pixmap.loadFromData(avatar);
@@ -239,33 +243,6 @@ void Profile::removeFriendAvatar(const ContactId& owner) {
 
 const QString& Profile::getUsername() {
     return _profile->getUsername();
-}
-
-void Profile::loadDatabase(QString password) {
-    //    assert(core);
-
-    //    if (isRemoved) {
-    //        qDebug() << "Can't load database of removed profile";
-    //        return;
-    //    }
-
-    auto& username = _profile->getUsername();
-
-    QByteArray salt = password.toUtf8();
-    qDebug() << "Create database for" << username;
-
-    bool ok = false;
-    database = storageManager->createDatabase(OK_IM_MODULE);
-    if (database && database->isOpen()) {
-        history.reset(new History(database));
-        ok = history->isValid();
-    }
-    if (!ok) {
-        qWarning() << "Failed to load database for profile" << username;
-        GUI::showError(QObject::tr("Error"),
-                       QObject::tr("Couldn't open your chat logs, they will be exit."));
-        qApp->exit(1);
-    }
 }
 
 History* Profile::getHistory() {

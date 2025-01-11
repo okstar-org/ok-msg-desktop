@@ -123,14 +123,7 @@ void Nexus::start(std::shared_ptr<lib::session::AuthSession> session) {
         return;
     }
 
-    //    QCommandLineParser parser;
-    //    if (!Profile::exists(signInInfo.username)) {
     profile = Profile::createProfile(signInInfo.host, signInInfo.username, signInInfo.password);
-    //    } else {
-    //        profile = Profile::loadProfile(signInInfo.host, signInInfo.username, &parser,
-    //                                       signInInfo.password);
-    //    }
-
     if (!profile) {
         qWarning() << tr("Can not create profile!");
         emit createProfileFailed(tr("Can not create profile!"));
@@ -341,7 +334,8 @@ void Nexus::cleanup() {
  */
 Core* Nexus::getCore() {
     Nexus& nexus = getInstance();
-    if (!nexus.profile) return nullptr;
+    assert(nexus.profile);
+    assert(nexus.profile->getCore());
 
     return nexus.profile->getCore();
 }

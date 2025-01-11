@@ -322,7 +322,8 @@ bool Profile::saveFriendAvatar(const QString& owner, const QByteArray& avatar) {
 }
 
 storage::StorageManager *Profile::create(const QString &profile) {
-        return storageManager->create(profile);
+    qDebug() << __func__ << profile;
+    return storageManager->create(profile);
 }
 
 void Profile::setNickname(const QString& nickname_) {
