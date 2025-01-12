@@ -21,6 +21,10 @@
 #include "log/LogManager.h"
 #include "settings/OkSettings.h"
 
+namespace lib::db {
+    class RawDatabase;
+}
+
 namespace lib::storage {
 
 class StorageManager : public QObject {
@@ -43,7 +47,7 @@ public:
 
     std::unique_ptr<settings::OkSettings> getGlobalSettings() const;
 
-    std::unique_ptr<db::RawDatabase> createDatabase(const QString& module);
+    db::RawDatabase* createDatabase(const QString& module);
 
     QSettings* createSetting(const QString& module);
 
@@ -52,6 +56,8 @@ private:
     log::LogManager logManager;
     cache::CacheManager* cacheManager;
     QString profile;
+    // k: module
+    QMap<QString, db::RawDatabase*>  dbMap;
 
     // k: profile
     QMap<QString, StorageManager*> storageMap;

@@ -37,7 +37,8 @@ Profile::Profile(const QString& host,
     _profile = new lib::session::Profile(storageManager, app->getSession(), this);
 
     okSettings = storageManager->getGlobalSettings();
-    db = std::shared_ptr<lib::db::RawDatabase>(storageManager->createDatabase(OK_IM_MODULE).release());
+    db = std::shared_ptr<lib::db::RawDatabase>(storageManager->createDatabase(OK_IM_MODULE));
+    //TODO 待优化
     history.reset(new History(db));
     s = new Settings(storageManager->createSetting(OK_IM_MODULE));
     initCore(s, isNewProfile);

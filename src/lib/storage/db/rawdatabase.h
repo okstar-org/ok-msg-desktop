@@ -35,12 +35,17 @@
 #define SQLITE_HAS_CODEC
 #define SQLITE_TEMP_STORE 2
 
-#include <sqlite3.h>
+class sqlite3_stmt;
+class sqlite3_context;
+class sqlite3_value;
+class sqlite3;
 
 using RowId = NamedType<int64_t, struct RowIdTag, Orderable>;
 Q_DECLARE_METATYPE(RowId);
 
 namespace lib::db {
+
+
 
 class RawDatabase : QObject {
     Q_OBJECT
@@ -67,7 +72,7 @@ public:
     };
 
 public:
-    RawDatabase(const QString& path, const QString& password, const QByteArray& salt);
+    RawDatabase(const QString& path, const QString& password, const QByteArray& salt, QObject* parent=nullptr);
 
     ~RawDatabase();
     bool isOpen();

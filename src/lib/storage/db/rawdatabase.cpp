@@ -18,6 +18,7 @@
 #include <QMetaObject>
 #include <QMutexLocker>
 #include <cassert>
+#include <sqlite3.h>
 
 namespace lib::db {
 
@@ -76,8 +77,10 @@ namespace lib::db {
  * @param password If empty, the database will be opened unencrypted.
  * Otherwise we will use toxencryptsave to derive a key and encrypt the database.
  */
-RawDatabase::RawDatabase(const QString& path, const QString& password, const QByteArray& salt)
-        : workerThread{new QThread}
+RawDatabase::RawDatabase(const QString& path, const QString& password, const QByteArray& salt,
+                          QObject* parent)
+        : QObject(parent)
+        , workerThread{new QThread}
         , path{path}
         , currentSalt{salt}  // we need the salt later if a new password should be set
         , currentHexKey{deriveKey(password, salt)}

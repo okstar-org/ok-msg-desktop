@@ -55,9 +55,9 @@ StorageManager* StorageManager::create(const QString& profile_) {
     return sm;
 }
 
-std::unique_ptr<db::RawDatabase> StorageManager::createDatabase(const QString& module) {
+db::RawDatabase* StorageManager::createDatabase(const QString& module) {
     QDir dbDir(dir.path() + QDir::separator() + module+".db");
-    return std::make_unique<db::RawDatabase>(dbDir.path(), QString(), QByteArray{});
+    return new db::RawDatabase(dbDir.path(), QString(), QByteArray{});
 }
 
 QSettings* StorageManager::createSetting(const QString &module)
