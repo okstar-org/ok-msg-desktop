@@ -401,13 +401,12 @@ void Settings::saveGlobal() {
     if (QThread::currentThread() != settingsThread)
         return (void)QMetaObject::invokeMethod(this, "saveGlobal");
 
+    qDebug() << __func__;
+
     QMutexLocker locker{&bigLock};
     if (!loaded) return;
 
-
-
     s->clear();
-
     s->beginGroup("Login");
     {
         s->setValue("autoLogin", autoLogin);

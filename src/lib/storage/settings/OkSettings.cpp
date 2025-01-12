@@ -108,25 +108,25 @@ void OkSettings::loadGlobal() {
     // 音频
     s.beginGroup("Audio");
     {
-        inDev = s.value("inDev").toString();
-        audioInDevEnabled=  s.value("audioInDevEnabled").toBool();
-        outDev = s.value("outDev").toString();
-        audioOutDevEnabled = s.value("audioOutDevEnabled").toBool();
-        audioInGainDecibel = s.value("audioInGainDecibel").toInt();
-        audioThreshold = s.value("audioThreshold").toInt();
-        outVolume=s.value("outVolume").toInt();
-        enableTestSound=s.value("enableTestSound").toInt();
-        audioBitrate=s.value("audioBitrate").toInt();
+        inDev = s.value("inDev", "").toString();
+        audioInDevEnabled = s.value("audioInDevEnabled", true).toBool();
+        audioInGainDecibel = s.value("audioInGainDecibel", 0).toReal();
+        outDev = s.value("outDev", "").toString();
+        audioOutDevEnabled = s.value("audioOutDevEnabled", true).toBool();
+        audioThreshold = s.value("audioThreshold", 0).toReal();
+        outVolume = s.value("outVolume", 100).toInt();
+        enableTestSound = s.value("enableTestSound", true).toBool();
+        audioBitrate = s.value("audioBitrate", 64).toInt();
     }
     s.endGroup();
 
     s.beginGroup("Video");
     {
-        videoDev =  s.value("videoDev").toString();
-        camVideoRes = s.value("camVideoRes").toRect();
-        camVideoFPS=s.value("camVideoFPS").toInt();
-        screenRegion =s.value("screenRegion").toRect();
-        screenGrabbed= s.value("screenGrabbed").toBool();
+        videoDev = s.value("videoDev", "").toString();
+        camVideoRes = s.value("camVideoRes", QRect()).toRect();
+        screenRegion = s.value("screenRegion", QRect()).toRect();
+        screenGrabbed = s.value("screenGrabbed", false).toBool();
+        camVideoFPS = static_cast<quint16>(s.value("camVideoFPS", 0).toUInt());
     }
     s.endGroup();
 
@@ -136,6 +136,7 @@ void OkSettings::loadGlobal() {
 void OkSettings::saveGlobal() {
     if (QThread::currentThread() != settingsThread)
         return (void)QMetaObject::invokeMethod(&getInstance(), "saveGlobal");
+    qDebug() << __func__;
 
     QMutexLocker locker{&bigLock};
 
@@ -166,27 +167,27 @@ void OkSettings::saveGlobal() {
     }
     s.endGroup();
 
-    s.beginGroup("Audio");
+    s.beginGroup("Video");
     {
-        inDev = s.value("inDev", "").toString();
-        audioInDevEnabled = s.value("audioInDevEnabled", true).toBool();
-        outDev = s.value("outDev", "").toString();
-        audioOutDevEnabled = s.value("audioOutDevEnabled", true).toBool();
-        audioInGainDecibel = s.value("inGain", 0).toReal();
-        audioThreshold = s.value("audioThreshold", 0).toReal();
-        outVolume = s.value("outVolume", 100).toInt();
-        enableTestSound = s.value("enableTestSound", true).toBool();
-        audioBitrate = s.value("audioBitrate", 64).toInt();
+        s.setValue("videoDev", videoDev);
+        s.setValue("camVideoRes", camVideoRes);
+        s.setValue("camVideoFPS", camVideoFPS);
+        s.setValue("screenRegion", screenRegion);
+        s.setValue("screenGrabbed", screenGrabbed);
     }
     s.endGroup();
 
-    s.beginGroup("Video");
+    s.beginGroup("Audio");
     {
-        videoDev = s.value("videoDev", "").toString();
-        camVideoRes = s.value("camVideoRes", QRect()).toRect();
-        screenRegion = s.value("screenRegion", QRect()).toRect();
-        screenGrabbed = s.value("screenGrabbed", false).toBool();
-        camVideoFPS = static_cast<quint16>(s.value("camVideoFPS", 0).toUInt());
+        s.setValue("inDev", inDev);
+        s.setValue("audioInDevEnabled", audioInDevEnabled);
+        s.setValue("audioInGainDecibel", audioInGainDecibel);
+        s.setValue("outDev", outDev);
+        s.setValue("audioOutDevEnabled", audioOutDevEnabled);
+        s.setValue("audioThreshold", audioThreshold);
+        s.setValue("outVolume", outVolume);
+        s.setValue("enableTestSound", enableTestSound);
+        s.setValue("audioBitrate", audioBitrate);
     }
     s.endGroup();
 
