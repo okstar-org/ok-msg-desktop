@@ -15,8 +15,8 @@ elseif (${CMAKE_SYSTEM_NAME} MATCHES "Linux" OR ${CMAKE_SYSTEM_NAME} MATCHES "Fr
 			camera/v4l2.h)
 elseif (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 	set(${PROJECT_NAME}_SOURCES ${${PROJECT_NAME}_SOURCES}
-			src/platform/camera/avfoundation.h
-			src/platform/camera/avfoundation.mm
+                        camera/avfoundation.h
+                        camera/avfoundation.mm
 	)
 endif ()
 
