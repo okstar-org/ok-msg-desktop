@@ -58,7 +58,7 @@ using namespace gloox;
 
 ConferenceList mConferenceList;
 BookmarkList mBookmarkList;
-bool __started = false;
+
 
 /**
  * 聊天通讯核心类
@@ -75,8 +75,6 @@ IM::IM(QString host,
         , _username(std::move(user))
         , _password(std::move(pwd)) {
     qDebug() << __func__ << "Create instance...";
-    setObjectName("IM-Connect");
-
     auto osInfo = ok::base::SystemInfo::instance()->osInfo();
     discoVal = osInfo.prettyName;
     // 生成本机resource. 格式:OkEDU.<HOST>.[VER].[UNIQUE]
@@ -94,6 +92,7 @@ IM::IM(QString host,
     qRegisterMetaType<IMFriend>("IMFriend");
     qRegisterMetaType<IMPeerId>("IMPeerId");
     qRegisterMetaType<IMMessage>("IMMessage");
+    qRegisterMetaType<IMGroup>("IMGroup");
     qRegisterMetaType<IMGroupOccupant>("IMGroupOccupant");
     qRegisterMetaType<IMVCard>("IMVCard");
 
@@ -242,6 +241,11 @@ void IM::start() {
     _client->connect(true);
 }
 
+bool IM::isStarted() const
+{
+    return _client.get();
+}
+
 void IM::stop() {
     qDebug() << __func__;
     QMutexLocker locker(&mutex);
@@ -251,21 +255,15 @@ void IM::stop() {
 
 void IM::onDisconnect(ConnectionError e) {
     qDebug() << __func__ << "error:" << e;
-    __started = false;
+
     emit disconnected((int)e);
 }
 
 void IM::onConnect() {
     qDebug() << __func__ << "connected";
-    if (__started) {
-        return;
-    }
-
-    __started = true;
 
     auto res = _client->resource();
     qDebug() << __func__ << "resource:" << (qstring(res));
-
 
     pubSubManager->subscribe(_client->jid(), XMLNS_NICKNAME, this);
     pubSubManager->subscribe(_client->jid(), XMLNS_AVATAR, this);
@@ -480,7 +478,9 @@ void IM::handleMessageSession(MessageSession* session) {
     }
 
     auto contactId = qstring(session->target().bare());
-    emit receiveMessageSession(contactId, qstring(sid));
+    for (auto handler : friendHandlers) {
+        handler->onMessageReceipt(contactId, qstring(sid));
+    }
 
     // 聊天状态过滤器，获取：正在中等输入状态
     auto csf = m_chatStateFilters.value(contactId);
@@ -568,7 +568,9 @@ void IM::doMessageHeadline(const Message& msg, QString& friendId, const QString&
     if (mu) {
         // 群聊邀请
         if (MUCRoom::OpInviteFrom == mu->operation()) {
-            emit groupInvite(qstring(JID(*mu->jid()).username()), friendId, body);
+            for (auto handler : groupHandlers) {
+                handler->onGroupInvite(qstring(JID(*mu->jid()).username()), friendId, body);
+            }
         }
     }
 }
@@ -578,12 +580,12 @@ void IM::doMessageHeadline(const Message& msg, QString& friendId, const QString&
  *
  */
 void IM::doMessageChat(const Message& msg, QString& friendId, const QString& body) {
-    qDebug() << "doMessageChat from:" << friendId;
+    qDebug() << __func__ << "from:" << friendId << body;
     if (!body.isEmpty()) {
         if (!msg.encrypted()) {
-            qDebug() << "Is plain message:" << body;
-            IMMessage imMsg = fromXMsg(MsgType::Chat, msg);
-            emit receiveFriendMessage(friendId, imMsg);
+            for (auto handler : friendHandlers) {
+                handler->onFriendMessage(friendId, fromXMsg(MsgType::Chat, msg));
+            }
         } else {
             QString xml = qstring(msg.tag()->xml());
             qDebug() << "Is encrypted message:" << xml;
@@ -605,7 +607,9 @@ void IM::doMessageChat(const Message& msg, QString& friendId, const QString& bod
             if (!ebody.empty()) {
                 auto msg = fromXMsg(MsgType::Chat, *eMsg);
                 msg.to = qstring(eMsg->to().full());
-                emit receiveFriendMessage(msg.to, msg);
+                for (auto handler : friendHandlers) {
+                    handler->onFriendMessage(msg.to, msg);
+                }
             }
         }
     }
@@ -646,10 +650,14 @@ void IM::doPubSubEvent(const gloox::PubSub::Event* pse,  //
             if (isSelf) {
                 if (_nick != newNick) {
                     _nick = newNick;
-                    emit selfNicknameChanged(newNick);
+                    for (auto handler : selfHandlers) {
+                        handler->onSelfNameChanged(newNick);
+                    }
                 }
             } else {
-                emit receiveNicknameChange(friendId, newNick);
+                for (auto handler : friendHandlers) {
+                    handler->onFriendNickChanged(friendId, newNick);
+                }
             }
         }
         auto avatarData = item->payload->findChild("data", XMLNS, XMLNS_AVATAR);
@@ -662,11 +670,15 @@ void IM::doPubSubEvent(const gloox::PubSub::Event* pse,  //
 
                 auto avt = Base64::decode64(base64);
                 if (isSelf) {
-                    qDebug() << "Receive self avatar size" << avt.size();
-                    emit selfAvatarChanged(avt);
+                    qDebug() << "Receive self avatar size" << avt.size(); 
+                    for (auto handler : selfHandlers) {
+                        handler->onSelfAvatarChanged(avt);
+                    }
                 } else {
                     qDebug() << "Receive friend avatar" << friendId << "size" << avt.size();
-                    emit receiveFriendAvatarChanged(friendId, avt);
+                    for (auto handler : friendHandlers) {
+                        handler->onFriendAvatarChanged(friendId, avt);
+                    }
                 }
             }
         }
@@ -734,9 +746,10 @@ void IM::doPubSubEvent(const gloox::PubSub::Event* pse,  //
  */
 void IM::handleChatState(const JID& from, ChatStateType state) {
     qDebug() << "from:" << qstring(from.full()) << "state:" << static_cast<int>(state);
-
     auto friendId = qstring(from.bare());
-    emit receiveFriendChatState(friendId, state);
+    for (auto handler : friendHandlers) {
+        handler->onFriendChatState(friendId, state);
+    }
 }
 
 /**
@@ -786,7 +799,9 @@ void IM::handleMUCParticipantPresence(gloox::MUCRoom* room,                  //
             occ.codes.push_back(qstring(t->findAttribute("code")).toInt());
         }
 
-        emit groupOccupantStatus(groupId, occ);
+        for (auto handler : groupHandlers) {
+            handler->onGroupOccupantStatus(groupId, occ);
+        }
     }
 }
 
@@ -834,7 +849,10 @@ void IM::handleMUCMessage(MUCRoom* room, const gloox::Message& msg, bool priv) {
          * </message>
          */
         if (MUCRoom::OpInviteFrom == mu->operation()) {
-            emit groupInvite(qstring(JID(*mu->jid()).bare()), roomId, qstring(msg.body()));
+            for(auto h : groupHandlers){
+                h->onGroupInvite(qstring(JID(*mu->jid()).bare()), roomId, qstring(msg.body()));
+            }
+
         }
 
         return;
@@ -861,7 +879,9 @@ void IM::handleMUCMessage(MUCRoom* room, const gloox::Message& msg, bool priv) {
         }
     }
 
-    emit receiveRoomMessage(roomId, peerId, imMsg);
+    for (auto handler : groupHandlers) {
+        handler->onGroupMessage(roomId, peerId, imMsg);
+    }
 }
 
 bool IM::handleMUCRoomCreation(MUCRoom* room) {
@@ -874,7 +894,9 @@ bool IM::handleMUCRoomCreation(MUCRoom* room) {
     m_roomMap.insert(roomId, IMRoomInfo{room, {}});
 
     // 群聊增加
-    emit groupReceived(roomId, qstring(room->name()));
+    for (auto handler : groupHandlers) {
+        handler->onGroup(roomId, qstring(room->name()));
+    }
 
     joinRoom(roomId);
 
@@ -886,7 +908,9 @@ void IM::handleMUCSubject(MUCRoom* room,            //
                           const std::string& nick,  //
                           const std::string& subject) {
     qDebug() << __func__ << room->name().c_str() << "subject" << qstring(subject);
-    emit groupSubjectChanged(room->jid(), subject);
+    for (auto handler : groupHandlers) {
+        handler->onGroupSubjectChanged(qstring(room->jid().bare()), qstring(subject));
+    }
 
     // 可能存在其它更新，执行信息拉取
     room->getRoomInfo();
@@ -933,7 +957,10 @@ void IM::handleMUCInfo(MUCRoom* room,               //
             }
         }
         info->info = groupInfo;
-        emit groupRoomInfo(roomId, groupInfo);
+
+        for (auto handler : groupHandlers) {
+            handler->onGroupInfo(roomId, groupInfo);
+        }
     }
 }
 
@@ -1071,7 +1098,9 @@ void IM::cacheJoinRoom(const std::string& jid, const std::string& name) {
     m_roomMap.insert(roomId, IMRoomInfo{room, {}});
 
     qDebug() << "emit room:" << roomId;
-    emit groupReceived(roomId, name.empty() ? qstring(roomJid.username()) : qstring(name));
+    for (auto handler : groupHandlers) {
+        handler->onGroup(roomId, name.empty() ? qstring(roomJid.username()) : qstring(name));
+    }
 
     // 查询成员列表
     // XMLNS_DISCO_ITEMS
@@ -1238,9 +1267,13 @@ void IM::handleVCard(const JID& jid, const VCard* vcard) {
     }
 
     if (jid.bare() == getClient()->jid().bare()) {
-        emit selfVCard(imvCard);
+        for (auto handler : selfHandlers) {
+            handler->onSelfVCardChanged(imvCard);
+        }
     } else {
-        emit receiveFriendVCard(IMPeerId(jid), imvCard);
+        for (auto handler : friendHandlers) {
+            handler->onFriendVCard(IMPeerId(jid), imvCard);
+        }
     }
 }
 
@@ -1440,7 +1473,10 @@ void IM::handleItemAdded(const gloox::JID& jid) {
         qWarning() << "Unable to find roster.";
         return;
     }
-    emit receiveFriend(IMFriend{item});
+
+    for (auto handler : friendHandlers) {
+        handler->onFriend(IMFriend{item});
+    }
 }
 
 /**
@@ -1449,7 +1485,9 @@ void IM::handleItemAdded(const gloox::JID& jid) {
  */
 void IM::handleItemRemoved(const JID& jid) {
     qDebug() << __func__ << qstring(jid.full());
-    emit receiveFriendRemoved(qstring(jid.bare()));
+    for (auto handler : friendHandlers) {
+        handler->onFriendRemoved(qstring(jid.bare()));
+    }
 }
 
 // 好友更新
@@ -1465,7 +1503,9 @@ void IM::handleItemUpdated(const JID& jid) {
     qDebug() << "ask" << qstring(data->ask()) << "sub" << qstring(data->sub());
 
     if (data->sub() == "both") {
-        emit receiveFriendAliasChanged(jid, data->name());
+        for (auto handler : friendHandlers) {
+            handler->onFriendAliasChanged(IMContactId(jid.bareJID()), qstring(data->name()));
+        }
     }
 }
 
@@ -1576,7 +1616,9 @@ void IM::handleRoster(const Roster& roster) {
         }
 
         auto frnd = IMFriend{item};
-        emit receiveFriend(frnd);
+        for (auto handler : friendHandlers) {
+            handler->onFriend(frnd);
+        }
 
         //    Subscription sub(gloox::Subscription::Subscribe, jid);
         //    _client->send(sub);
@@ -1655,7 +1697,9 @@ void IM::handleSelfPresence(const RosterItem& item,               //
 
     auto st = _client->resource() == resource ? presenceType : (int)gloox::Presence::Available;
 
-    emit selfStatusChanged(st, msg);
+    for (auto handler : selfHandlers) {
+        handler->onSelfStatusChanged(static_cast<IMStatus>(st), msg);
+    }
 
     //  if (presenceType == gloox::Presence::Available) {
     for (auto& it : item.resources()) {
@@ -1948,10 +1992,15 @@ void IM::handleItems(const std::string& id,                    //
             gloox::Nickname nickname(data);
             auto nick = qstring(nickname.nick());
             qDebug() << "nick:" << nick;
-            if (isSelf)
-                emit selfNicknameChanged(nick);
+            if (isSelf){
+                for(auto handler: selfHandlers){
+                    handler->onSelfNameChanged(nick);
+                }
+            }
             else {
-                emit receiveNicknameChange(friendId, nick);
+                for (auto handler : friendHandlers) {
+                    handler->onFriendNickChanged(friendId, nick);
+                }
             }
         }
 
@@ -1963,9 +2012,14 @@ void IM::handleItems(const std::string& id,                    //
                 while ((pos = base64.find('\r')) != std::string::npos) base64.erase(pos, 1);
                 auto avt = Base64::decode64(base64);
                 if (isSelf) {
-                    emit selfAvatarChanged(avt);
+                    for(auto h: selfHandlers){
+                        h->onSelfAvatarChanged(avt);
+                    }
                 } else {
-                    emit receiveFriendAvatarChanged(friendId, avt);
+                    // emit receiveFriendAvatarChanged(friendId, avt);
+                    for (auto handler : friendHandlers) {
+                        handler->onFriendAvatarChanged(friendId, avt);
+                    }
                 }
             }
         }
@@ -2108,7 +2162,10 @@ void IM::updateOnlineStatus(const std::string& bare, const std::string& resource
             }
         }
     }
-    emit receiveFriendStatus(friendId, status);
+
+    for (auto handler : friendHandlers) {
+        handler->onFriendStatus(friendId, static_cast<IMStatus>(status));
+    }
 }
 
 bool IM::leaveGroup(const QString& groupId) {
@@ -2152,8 +2209,7 @@ bool IM::destroyGroup(const QString& groupId) {
 }
 
 Disco::ItemList IM::handleDiscoNodeItems(const JID& from, const JID& to, const std::string& node) {
-    qDebug() << QString("from:%1").arg(from.full().c_str());
-
+    qDebug() << __func__ << QString("from:%1").arg(from.full().c_str());
     return gloox::Disco::ItemList();
 }
 
@@ -2417,6 +2473,21 @@ void IM::addFromHostHandler(const std::string& from, IMFromHostHandler* h) {
 
 void IM::clearFromHostHandler() {
     fromHostHandlers.clear();
+}
+
+void IM::addFriendHandler(FriendHandler *h)
+{
+    friendHandlers.push_back(h);
+}
+
+void IM::addSelfHandler(SelfHandler *h)
+{
+    selfHandlers.push_back(h);
+}
+
+void IM::addGroupHandler(GroupHandler *h)
+{
+    groupHandlers.push_back(h);
 }
 
 }  // namespace lib::messenger

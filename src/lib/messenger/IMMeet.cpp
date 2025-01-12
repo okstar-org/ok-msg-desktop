@@ -53,7 +53,8 @@ IMMeet::IMMeet(IM* im, QObject* parent) : IMJingle(im, parent), manager(nullptr)
     manager = new gloox::MeetManager(im->getClient());
     manager->registerHandler(this);
 
-    connect(im, &IM::selfVCard, this, &IMMeet::onSelfVCard);
+
+    im->addSelfHandler(this);
 
     // request self vcard.
     im->requestVCards();
@@ -87,7 +88,6 @@ IMMeet::~IMMeet() {
     qDebug() << __func__;
     im->removeSessionHandler(this);
     im->clearFromHostHandler();
-    disconnect(im, &IM::selfVCard, this, &IMMeet::onSelfVCard);
 
     delete manager;
     manager = nullptr;
@@ -227,6 +227,11 @@ void IMMeet::handleStatsId(const gloox::JID& jid, const std::string& statsId) {}
 
 void IMMeet::handleJsonMessage(const gloox::JID& jid, const gloox::JsonMessage* json) {
     qDebug() << __func__ << qstring(json->getJson());
+}
+
+void IMMeet::onSelfVCardChanged(IMVCard &imvCard)
+{
+    emit onSelfVCard(imvCard);
 }
 
 void IMMeet::addMeetHandler(MessengerMeetHandler* hdr) {

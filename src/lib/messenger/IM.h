@@ -269,6 +269,7 @@ public:
     const IMRoomInfo* findRoom(const QString& groupId) const;
 
     void start();
+    bool isStarted() const;
 
     void doConnect();
 
@@ -327,6 +328,9 @@ public:
     void addFromHostHandler(const std::string& from, IMFromHostHandler* h);
     void clearFromHostHandler();
 
+    void addFriendHandler(FriendHandler*);
+    void addSelfHandler(SelfHandler *);
+    void addGroupHandler(GroupHandler *);
 protected:
     void run() override;
 
@@ -482,302 +486,96 @@ protected:
     // Presence handler
     void handlePresence(const gloox::Presence& presence) override;
 
-    /**
-     * Receives the payload for an item.
-     *
-     * @param service Service hosting the queried node.
-     * @param node ID of the parent node.
-     * @param entry The complete item Tag (do not delete).
-     */
+
     void handleItem(const gloox::JID& service, const std::string& node,
                     const gloox::Tag* entry) override;
 
-    /**
-     * Receives the list of Items for a node.
-     *
-     * @param id The reply IQ's id.
-     * @param service Service hosting the queried node.
-     * @param node ID of the queried node (empty for the root node).
-     * @param itemList List of contained items.
-     * @param error Describes the error case if the request failed.
-     *
-     * @see Manager::requestItems()
-     */
+
     void handleItems(const std::string& id, const gloox::JID& service, const std::string& node,
                      const gloox::PubSub::ItemList& itemList,
                      const gloox::Error* error = 0) override;
 
-    /**
-     * Receives the result for an item publication.
-     *
-     * @param id The reply IQ's id.
-     * @param service Service hosting the queried node.
-     * @param node ID of the queried node. If empty, the root node has been
-     * queried.
-     * @param itemList List of contained items.
-     * @param error Describes the error case if the request failed.
-     *
-     * @see Manager::publishItem
-     */
+
     void handleItemPublication(const std::string& id, const gloox::JID& service,
                                const std::string& node, const gloox::PubSub::ItemList& itemList,
                                const gloox::Error* error = 0) override;
 
-    /**
-     * Receives the result of an item removal.
-     *
-     * @param id The reply IQ's id.
-     * @param service Service hosting the queried node.
-     * @param node ID of the queried node. If empty, the root node has been
-     * queried.
-     * @param itemList List of contained items.
-     * @param error Describes the error case if the request failed.
-     *
-     * @see Manager::deleteItem
-     */
     void handleItemDeletion(const std::string& id, const gloox::JID& service,
                             const std::string& node, const gloox::PubSub::ItemList& itemList,
                             const gloox::Error* error = 0) override;
 
-    /**
-     * Receives the subscription results. In case a problem occured, the
-     * Subscription ID and SubscriptionType becomes irrelevant.
-     *
-     * @param id The reply IQ's id.
-     * @param service PubSub service asked for subscription.
-     * @param node Node asked for subscription.
-     * @param sid Subscription ID.
-     * @param jid Subscribed entity.
-     * @param subType Type of the subscription.
-     * @param error Subscription Error.
-     *
-     * @see Manager::subscribe
-     */
+
     void handleSubscriptionResult(const std::string& id, const gloox::JID& service,
                                   const std::string& node, const std::string& sid,
                                   const gloox::JID& jid,
                                   const gloox::PubSub::SubscriptionType subType,
                                   const gloox::Error* error = 0) override;
 
-    /**
-     * Receives the unsubscription results. In case a problem occured, the
-     * subscription ID becomes irrelevant.
-     *
-     * @param id The reply IQ's id.
-     * @param service PubSub service.
-     * @param error Unsubscription Error.
-     *
-     * @see Manager::unsubscribe
-     */
     void handleUnsubscriptionResult(const std::string& id, const gloox::JID& service,
                                     const gloox::Error* error = 0) override;
 
-    /**
-     * Receives the subscription options for a node.
-     *
-     * @param id The reply IQ's id.
-     * @param service Service hosting the queried node.
-     * @param jid Subscribed entity.
-     * @param node ID of the node.
-     * @param options Options DataForm.
-     * @param sid An optional subscription ID.
-     * @param error Subscription options retrieval Error.
-     *
-     * @see Manager::getSubscriptionOptions
-     */
+
     void handleSubscriptionOptions(const std::string& id, const gloox::JID& service,
                                    const gloox::JID& jid, const std::string& node,
                                    const gloox::DataForm* options,
                                    const std::string& sid = gloox::EmptyString,
                                    const gloox::Error* error = 0) override;
 
-    /**
-     * Receives the result for a subscription options modification.
-     *
-     * @param id The reply IQ's id.
-     * @param service Service hosting the queried node.
-     * @param jid Subscribed entity.
-     * @param node ID of the queried node.
-     * @param sid An optional subscription ID.
-     * @param error Subscription options modification Error.
-     *
-     * @see Manager::setSubscriptionOptions
-     */
+
     void handleSubscriptionOptionsResult(const std::string& id, const gloox::JID& service,
                                          const gloox::JID& jid, const std::string& node,
                                          const std::string& sid = gloox::EmptyString,
                                          const gloox::Error* error = 0) override;
 
-    /**
-     * Receives the list of subscribers to a node.
-     *
-     * @param id The reply IQ's id.
-     * @param service Service hosting the node.
-     * @param node ID of the queried node.
-     * @param list Subscriber list.
-     * @param error Subscription options modification Error.
-     *
-     * @see Manager::getSubscribers
-     */
     void handleSubscribers(const std::string& id, const gloox::JID& service,
                            const std::string& node, const gloox::PubSub::SubscriptionList& list,
                            const gloox::Error* error = 0) override;
 
-    /**
-     * Receives the result of a subscriber list modification.
-     *
-     * @param id The reply IQ's id.
-     * @param service Service hosting the node.
-     * @param node ID of the queried node.
-     * @param list Subscriber list.
-     * @param error Subscriber list modification Error.
-     *
-     * @see Manager::setSubscribers
-     */
     void handleSubscribersResult(const std::string& id, const gloox::JID& service,
                                  const std::string& node, const gloox::PubSub::SubscriberList* list,
                                  const gloox::Error* error = 0) override;
 
-    /**
-     * Receives the affiliate list for a node.
-     *
-     * @param id The reply IQ's id.
-     * @param service Service hosting the node.
-     * @param node ID of the queried node.
-     * @param list Affiliation list.
-     * @param error Affiliation list retrieval Error.
-     *
-     * @see Manager::getAffiliates
-     */
+
     void handleAffiliates(const std::string& id, const gloox::JID& service, const std::string& node,
                           const gloox::PubSub::AffiliateList* list,
                           const gloox::Error* error = 0) override;
 
-    /**
-     * Handle the affiliate list for a specific node.
-     *
-     * @param id The reply IQ's id.
-     * @param service Service hosting the node.
-     * @param node ID of the node.
-     * @param list The Affiliate list.
-     * @param error Affiliation list modification Error.
-     *
-     * @see Manager::setAffiliations
-     */
     void handleAffiliatesResult(const std::string& id, const gloox::JID& service,
                                 const std::string& node, const gloox::PubSub::AffiliateList* list,
                                 const gloox::Error* error = 0) override;
 
-    /**
-     * Receives the configuration for a specific node.
-     *
-     * @param id The reply IQ's id.
-     * @param service Service hosting the node.
-     * @param node ID of the node.
-     * @param config Configuration DataForm.
-     * @param error Configuration retrieval Error.
-     *
-     * @see Manager::getNodeConfig
-     */
     void handleNodeConfig(const std::string& id, const gloox::JID& service, const std::string& node,
                           const gloox::DataForm* config, const gloox::Error* error = 0) override;
 
-    /**
-     * Receives the result of a node's configuration modification.
-     *
-     * @param id The reply IQ's id.
-     * @param service Service hosting the node.
-     * @param node ID of the node.
-     * @param error Configuration modification Error.
-     *
-     * @see Manager::setNodeConfig
-     */
+
     void handleNodeConfigResult(const std::string& id, const gloox::JID& service,
                                 const std::string& node, const gloox::Error* error = 0) override;
 
-    /**
-     * Receives the result of a node creation.
-     *
-     * @param id The reply IQ's id.
-     * @param service Service hosting the node.
-     * @param node ID of the node.
-     * @param error Node creation Error.
-     *
-     * @see Manager::setNodeConfig
-     */
     void handleNodeCreation(const std::string& id,
                             const gloox::JID& service,
                             const std::string& node,
                             const gloox::Error* error = 0) override;
 
-    /**
-     * Receives the result for a node removal.
-     *
-     * @param id The reply IQ's id.
-     * @param service Service hosting the node.
-     * @param node ID of the node.
-     * @param error Node removal Error.
-     *
-     * @see Manager::deleteNode
-     */
+
     void handleNodeDeletion(const std::string& id,
                             const gloox::JID& service,
                             const std::string& node,
                             const gloox::Error* error = 0) override;
 
-    /**
-     * Receives the result of a node purge request.
-     *
-     * @param id The reply IQ's id.
-     * @param service Service hosting the node.
-     * @param node ID of the node.
-     * @param error Node purge Error.
-     *
-     * @see Manager::purgeNode
-     */
     void handleNodePurge(const std::string& id,
                          const gloox::JID& service,
                          const std::string& node,
                          const gloox::Error* error = 0) override;
 
-    /**
-     * Receives the Subscription list for a specific service.
-     *
-     * @param id The reply IQ's id.
-     * @param service The queried service.
-     * @param subMap The map of node's subscription.
-     * @param error Subscription list retrieval Error.
-     *
-     * @see Manager::getSubscriptions
-     */
+
     void handleSubscriptions(const std::string& id, const gloox::JID& service,
                              const gloox::PubSub::SubscriptionMap& subMap,
                              const gloox::Error* error = 0) override;
 
-    /**
-     * Receives the Affiliation map for a specific service.
-     *
-     * @param id The reply IQ's id.
-     * @param service The queried service.
-     * @param affMap The map of node's affiliation.
-     * @param error Affiliation list retrieval Error.
-     *
-     * @see Manager::getAffiliations
-     */
     void handleAffiliations(const std::string& id, const gloox::JID& service,
                             const gloox::PubSub::AffiliationMap& affMap,
                             const gloox::Error* error = 0) override;
 
-    /**
-     * Receives the default configuration for a specific node type.
-     *
-     * @param id The reply IQ's id.
-     * @param service The queried service.
-     * @param config Configuration form for the node type.
-     * @param error Default node config retrieval Error.
-     *
-     * @see Manager::getDefaultNodeConfig
-     */
     void handleDefaultNodeConfig(const std::string& id,          //
                                  const gloox::JID& service,      //
                                  const gloox::DataForm* config,  //
@@ -821,6 +619,7 @@ private:
 
     std::unique_ptr<gloox::Client> _client;
 
+
     // 发送消息的id
     std::set<std::string> sendIds;
 
@@ -856,7 +655,7 @@ private:
 
     QMap<QString, IMRoomInfo> m_roomMap;
 
-    QThread* thread;
+
 
     QList<IMSessionHandler*> m_sessionHandlers;
     std::unique_ptr<gloox::Jingle::SessionManager> _sessionManager;
@@ -869,35 +668,15 @@ private:
 
     QMap<std::string, IMFromHostHandler*> fromHostHandlers;
 
+    std::vector<SelfHandler*> selfHandlers;
+    std::vector<FriendHandler*> friendHandlers;
+    std::vector<GroupHandler*> groupHandlers;
+
 signals:
     void onConnecting();
     void onConnected();
     void disconnected(int error);
 
-    void receiveRoomMessage(QString groupId, IMPeerId friendId, IMMessage);
-
-    // friend events
-    void receiveFriend(IMFriend frnd);
-
-    void receiveFriendRequest(QString friendId, QString msg);
-
-    void receiveFriendRemoved(QString friendId);
-
-    void receiveFriendStatus(QString friendId, int status);
-
-    void receiveMessageSession(QString contactId, QString sid);
-
-    void receiveFriendMessage(QString peerId, IMMessage);
-
-    void receiveNicknameChange(QString friendId, QString nickname);
-
-    void receiveFriendAliasChanged(gloox::JID friendId, std::string alias);
-
-    void receiveFriendAvatarChanged(QString friendId, std::string avatar);
-
-    void receiveFriendChatState(QString friendId, int state);
-
-    void receiveFriendVCard(IMPeerId peerId, IMVCard vCard);
 
     void exportEncryptedMessage(QString em);
 
@@ -905,25 +684,21 @@ signals:
 
     void incoming(QString xml);
 
-    // Self events
-    void selfIdChanged(QString id);
-    void selfNicknameChanged(QString nickname);
-    void selfAvatarChanged(std::string avatar);
-    void selfStatusChanged(int type, const std::string status);
-    void selfVCard(const IMVCard& vCard);
 
     void started();
     void stopped();
 
-    void groupReceived(const QString groupId, const QString name);
-    void groupListReceivedDone();
-    void groupOccupants(const QString groupId, const uint size);
-    void groupOccupantStatus(const QString& groupId, IMGroupOccupant occ);
-    void groupInvite(const QString groupId, const QString peerId, const QString message);
+    // void receiveRoomMessage(QString groupId, IMPeerId friendId, IMMessage);
 
-    void groupRoomInfo(QString groupId, IMGroup groupInfo);
+    // void groupReceived(const QString groupId, const QString name);
+    // void groupListReceivedDone();
+    // void groupOccupants(const QString groupId, const uint size);
+    // void groupOccupantStatus(const QString& groupId, IMGroupOccupant occ);
+    // void groupInvite(const QString groupId, const QString peerId, const QString message);
 
-    void groupSubjectChanged(const gloox::JID group, const std::string subject);
+    // void groupRoomInfo(QString groupId, IMGroup groupInfo);
+
+    // void groupSubjectChanged(const gloox::JID group, const std::string subject);
 
     void doPubSubEventDone();
 

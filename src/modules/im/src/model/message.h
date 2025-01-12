@@ -97,8 +97,8 @@ struct FriendInfo {
     bool is_friend;
     bool online;
     QStringList groups;
-
-    explicit FriendInfo(const lib::messenger::IMFriend& aFriend);
+    // explicit FriendInfo();
+    // explicit FriendInfo(const lib::messenger::IMFriend& aFriend);
 
     [[nodiscard]] inline const FriendId& getId() const { return id; }
 

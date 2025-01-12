@@ -100,12 +100,12 @@ Message MessageProcessor::processIncomingMessage(Message& ret) {
     return ret;
 }
 
-FriendInfo::FriendInfo(const lib::messenger::IMFriend& aFriend)
-        : id{ContactId{aFriend.id.toString()}}
-        , alias{aFriend.alias}
-        , is_friend{aFriend.isFriend()}
-        , online(aFriend.online)
-        , groups(aFriend.groups) {}
+// FriendInfo::FriendInfo(const lib::messenger::IMFriend& aFriend)
+//         : id{ContactId{aFriend.id.toString()}}
+//         , alias{aFriend.alias}
+//         , is_friend{aFriend.isFriend()}
+//         , online(aFriend.online)
+//         , groups(aFriend.groups) {}
 
 QDebug& operator<<(QDebug& debug, const FriendInfo& f) {
     QDebugStateSaver saver(debug);

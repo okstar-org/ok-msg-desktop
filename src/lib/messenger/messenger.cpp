@@ -53,17 +53,15 @@ Messenger::~Messenger() {
     qDebug() << __func__;
 }
 
-// Messenger *Messenger::getInstance() {
-//   static Messenger *self = nullptr;
-//   if (!self)
-//     self = new Messenger();
-//   return self;
-// }
-
 void Messenger::start() {
     qDebug() << __func__;
     _im->start();
-    //    connect(_im, &IM::started, [&]() { emit started(); });
+    //connect(_im, &IM::started, [&]() { emit started(); });
+}
+
+bool Messenger::isStarted() const
+{
+    return _im->isStarted();
 }
 
 void Messenger::sendChatState(const QString& friendId, int state) {
@@ -94,156 +92,21 @@ void Messenger::onStopped() {
     qDebug() << "onStopped...";
 }
 
+void Messenger::onReceiveFriendMessage(QString peerId, IMMessage msg)
+{
+    qDebug() << __func__ << peerId;
+
+
+
+}
+
 bool Messenger::connectIM() {
     connect(_im, &IM::started, this, &Messenger::onStarted);
     connect(_im, &IM::disconnected, this, &Messenger::onDisconnected);
 
-    connect(
-            _im, &IM::incoming, this, [=, this](QString xml) { emit incoming(xml); },
+    connect(_im, &IM::incoming, this, [=, this](QString xml) { emit incoming(xml); },
             Qt::QueuedConnection);
 
-    /**
-     * selfHandlers
-     */
-    connect(_im, &IM::selfNicknameChanged, this, [&](const QString& nickname) {
-        for (auto handler : selfHandlers) {
-            handler->onSelfNameChanged(nickname);
-        }
-    });
-    connect(_im, &IM::selfAvatarChanged, this, [&](const std::string avatar) {
-        for (auto handler : selfHandlers) {
-            handler->onSelfAvatarChanged(avatar);
-        }
-    });
-    connect(_im, &IM::selfStatusChanged, this, [&](int type, const std::string& status) {
-        for (auto handler : selfHandlers) {
-            handler->onSelfStatusChanged(static_cast<IMStatus>(type), status);
-        }
-    });
-    connect(_im, &IM::selfIdChanged, this, [&](QString id) {
-        for (auto handler : selfHandlers) {
-            handler->onSelfIdChanged(id);
-        }
-    });
-
-    /**
-     * friendHandlers
-     */
-    connect(_im, &IM::receiveFriend, this, [&](const IMFriend& frnd) {
-        for (auto handler : friendHandlers) {
-            handler->onFriend(frnd);
-        }
-    });
-
-    connect(_im, &IM::receiveFriendRequest, this, [&](const QString friendId, QString msg) -> void {
-        for (auto handler : friendHandlers) {
-            handler->onFriendRequest(friendId, msg);
-        }
-    });
-
-    connect(_im, &IM::receiveMessageReceipt, this, [&](QString friendId, QString receipt) -> void {
-        for (auto handler : friendHandlers) {
-            handler->onMessageReceipt(friendId, receipt);
-        }
-    });
-
-    connect(_im, &IM::receiveFriendStatus, this, [&](QString friendId, int type) -> void {
-        for (auto handler : friendHandlers) {
-            handler->onFriendStatus(friendId, static_cast<IMStatus>(type));
-        }
-    });
-
-    connect(_im, &IM::receiveFriendChatState, this, [&](QString friendId, int state) -> void {
-        for (auto handler : friendHandlers) {
-            handler->onFriendChatState(friendId, state);
-        }
-    });
-
-    connect(_im, &IM::receiveFriendMessage, this, [&](QString friendId, IMMessage msg) -> void {
-        for (auto handler : friendHandlers) {
-            handler->onFriendMessage(friendId, msg);
-        }
-    });
-
-    connect(_im, &IM::receiveMessageSession, this, [&](QString contactId, QString sid) -> void {
-        for (auto handler : friendHandlers) {
-            handler->onMessageSession(contactId, sid);
-        }
-    });
-
-    connect(_im, &IM::receiveNicknameChange, this, [&](QString friendId, QString nickname) {
-        for (auto handler : friendHandlers) {
-            handler->onFriendNickChanged(friendId, nickname);
-        }
-    });
-
-    connect(_im, &IM::receiveFriendAvatarChanged, this, [&](QString friendId, std::string avatar) {
-        for (auto handler : friendHandlers) {
-            handler->onFriendAvatarChanged(friendId, avatar);
-        }
-    });
-
-    connect(_im, &IM::selfVCard, this, [&](IMVCard imvCard) {
-        for (auto handler : selfHandlers) {
-            handler->onSelfVCardChanged(imvCard);
-        }
-    });
-    connect(_im, &IM::receiveFriendVCard, this, [&](IMPeerId peerId, IMVCard imvCard) {
-        for (auto handler : friendHandlers) {
-            handler->onFriendVCard(peerId, imvCard);
-        }
-    });
-
-    connect(_im, &IM::receiveFriendAliasChanged, this,
-            [&](const gloox::JID& friendId, const std::string& alias) {
-                for (auto handler : friendHandlers) {
-                    handler->onFriendAliasChanged(IMContactId(friendId.bareJID()), qstring(alias));
-                }
-            });
-
-    // group
-    connect(_im, &IM::groupInvite, this,
-            [&](const QString& groupId, const QString& peerId, const QString& message) {
-                for (auto handler : groupHandlers) {
-                    handler->onGroupInvite(groupId, peerId, message);
-                }
-            });
-
-    connect(_im, &IM::groupSubjectChanged, this,
-            [&](const gloox::JID& group, const std::string& subject) -> void {
-                for (auto handler : groupHandlers) {
-                    handler->onGroupSubjectChanged(qstring(group.bare()), qstring(subject));
-                }
-            });
-
-    connect(_im, &IM::groupReceived, this, &Messenger::onGroupReceived);
-
-    connect(_im, &IM::receiveRoomMessage, this,
-            [&](QString groupId, IMPeerId peerId, IMMessage msg) -> void {
-                for (auto handler : groupHandlers) {
-                    handler->onGroupMessage(groupId, peerId, msg);
-                }
-            });
-
-    connect(_im, &IM::groupOccupants, this, [&](const QString& groupId, const uint size) -> void {
-        for (auto handler : groupHandlers) {
-            handler->onGroupOccupants(groupId, size);
-        }
-    });
-
-    connect(_im, &IM::groupOccupantStatus, this,
-            [&](const QString& groupId, const IMGroupOccupant& go) -> void {
-                for (auto handler : groupHandlers) {
-                    handler->onGroupOccupantStatus(groupId, go);
-                }
-            });
-
-    qRegisterMetaType<IMGroup>("IMGroup");
-    connect(_im, &IM::groupRoomInfo, this, [&](const QString& groupId, const IMGroup info) -> void {
-        for (auto handler : groupHandlers) {
-            handler->onGroupInfo(groupId, info);
-        }
-    });
 
     return true;
 }
@@ -342,16 +205,14 @@ IMStatus Messenger::getFriendStatus(const QString& f) {
     return _im->getFriendStatus(f);
 }
 
-void Messenger::addSelfHandler(SelfHandler* handler) {
-    selfHandlers.push_back(handler);
-}
+
 
 void Messenger::addFriendHandler(FriendHandler* handler) {
-    friendHandlers.push_back(handler);
+    _im->addFriendHandler(handler);
 }
 
 void Messenger::addGroupHandler(GroupHandler* handler) {
-    groupHandlers.push_back(handler);
+    _im->addGroupHandler(handler);
 }
 
 void Messenger::stop() {
@@ -373,6 +234,11 @@ IMPeerId Messenger::getSelfId() const {
 IMStatus Messenger::getSelfStatus() const {
     auto pt = gloox::Presence::PresenceType::Available;
     return static_cast<IMStatus>(pt);
+}
+
+void Messenger::addSelfHandler(SelfHandler *h)
+{
+    _im->addSelfHandler(h);
 }
 
 void Messenger::setSelfNickname(const QString& nickname) {
@@ -421,11 +287,12 @@ void Messenger::onEncryptedMessage(QString xml) {
     auto to = ele.attribute("to");
     auto id = ele.attribute("id");
 
+    //TODO 加密
     auto msg = IMMessage{MsgType::Chat, id, from, to, body, QDateTime::currentDateTime()};
 
-    for (auto handler : friendHandlers) {
-        handler->onFriendMessage(qstring(gloox::JID(stdstring(from)).bareJID().bare()), msg);
-    }
+    // for (auto handler : friendHandlers) {
+    //     handler->onFriendMessage(qstring(gloox::JID(stdstring(from)).bareJID().bare()), msg);
+    // }
 #endif
 }
 
@@ -485,12 +352,6 @@ void Messenger::requestBookmarks() {
     _im->requestVCards();
     // im->requestBookmarks();
     // im->enablePubSubManager();
-}
-
-void Messenger::onGroupReceived(QString groupId, QString name) {
-    for (auto handler : groupHandlers) {
-        handler->onGroup(groupId, name);
-    }
 }
 
 // Call

@@ -255,8 +255,7 @@ private:
     MsgId m_receipt;
     QTimer* toxTimer = nullptr;
 
-    // recursive, since we might call our own functions
-    mutable CompatibleRecursiveMutex coreLoopLock;
+    mutable CompatibleRecursiveMutex mutex;
 
     std::unique_ptr<QThread> coreThread = nullptr;
 
@@ -299,8 +298,8 @@ signals:
 
     void messageSessionReceived(const ContactId& cId, const QString& sid);
 
-    void friendMessageReceived(const FriendId& friendId,      //
-                               const FriendMessage& message,  //
+    void friendMessageReceived(const FriendId friendId,      //
+                               const FriendMessage message,  //
                                bool isAction);
 
     void friendAdded(const FriendInfo frnd);

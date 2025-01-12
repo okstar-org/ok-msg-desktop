@@ -113,6 +113,7 @@ public:
     ~Messenger() override;
 
     void start();
+    bool isStarted()const;
     void stop();
     void doConnect();
 
@@ -196,9 +197,7 @@ private:
     IM* _im;
     IMJingle* jingle;
 
-    std::vector<FriendHandler*> friendHandlers;
-    std::vector<SelfHandler*> selfHandlers;
-    std::vector<GroupHandler*> groupHandlers;
+
 
     size_t sentCount = 0;
 
@@ -208,16 +207,18 @@ signals:
     void connected();
     void disconnected(int);
     void incoming(const QString dom);
-    void receivedGroupMessage(lib::messenger::IMMessage imMsg);  //
+
+    void receivedGroupMessage(lib::messenger::IMMessage msg);  //
     void messageSent(const IMMessage& message);                  //
 
 private slots:
     void onDisconnected(int);
     void onStarted();
     void onStopped();
+    void onReceiveFriendMessage(QString peerId, IMMessage msg);
     void onReceiveGroupMessage(lib::messenger::IMMessage imMsg);
     void onEncryptedMessage(QString dom);
-    void onGroupReceived(QString groupId, QString name);
+
 };
 
 class IMCall;

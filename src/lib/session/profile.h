@@ -74,6 +74,11 @@ public:
         return nickname;
     }
 
+    const QDir& getDir() const {
+        assert(storageManager);
+        return storageManager->getDir();
+    }
+
 private:
     const AuthSession* authSession;
 

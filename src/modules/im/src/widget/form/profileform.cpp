@@ -184,13 +184,11 @@ void ProfileForm::showTo(ContentLayout* contentLayout) {
     contentLayout->setCurrentWidget(this);
 
 
-    QString defaultPath = QDir(Nexus::getProfile()->getSettings()->getSettingsDirPath()).path().trimmed();
-    QString appPath = QApplication::applicationDirPath();
-    QString dirPath = appPath;
-    QString url = QUrl::fromLocalFile(dirPath).toString();
+    QString defaultPath = Nexus::getProfile()->getDir().path();
+    QString url = QUrl::fromLocalFile(defaultPath).toString();
 
     QString dirPrLink = tr("Current profile location: %1")
-                                .arg(QString("<a href=\"%1\">%2</a>").arg(url).arg(dirPath));
+                                .arg(QString("<a href=\"%1\">%2</a>").arg(url).arg(defaultPath));
 
     bodyUI->dirPrLink->setText(dirPrLink);
     bodyUI->dirPrLink->setOpenExternalLinks(true);

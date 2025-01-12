@@ -92,6 +92,11 @@ public:
         return s;
     }
 
+    const QDir& getDir() const {
+        assert(_profile);
+       return _profile->getDir();
+    }
+
     void quit();
 
 private:

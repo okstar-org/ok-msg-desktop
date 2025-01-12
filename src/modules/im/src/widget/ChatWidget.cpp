@@ -222,7 +222,8 @@ void ChatWidget::onMessageSessionReceived(const ContactId& contactId, const QStr
             contactId, sid, contactId.isGroup() ? ChatType::GroupChat : ChatType::Chat);
 }
 
-void ChatWidget::onFriendMessageReceived(const FriendId& friendId, const FriendMessage& message,
+void ChatWidget::onFriendMessageReceived(const FriendId friendId,
+                                         const FriendMessage message,
                                          bool isAction) {
     sessionListWidget->setRecvFriendMessage(friendId, message, isAction);
 }

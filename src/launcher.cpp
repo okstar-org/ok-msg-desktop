@@ -12,6 +12,7 @@
 #include "launcher.h"
 
 #include <memory>
+#include <iostream>
 
 #include "application.h"
 
@@ -55,7 +56,9 @@ int Launcher::executeApplication() {
     app->addLibraryPath("platforms");
     app->start();
     app->finish();
-    return app->exec();
+    auto retval = app->exec();
+    std::cout << "exit:" << retval << std::endl;
+    return retval;
 }
 
 int Launcher::startup() { return executeApplication(); }

@@ -31,6 +31,7 @@ namespace lib::messenger {
 class IM;
 
 class IMMeet : public IMJingle,
+               public SelfHandler,
                public IMSessionHandler,
                public IMFromHostHandler,
                public ortc::OkRTCHandler,
@@ -115,6 +116,15 @@ protected:
     void handleStatsId(const gloox::JID& jid, const std::string& statsId) override;
 
     void handleJsonMessage(const gloox::JID& jid, const gloox::JsonMessage* json) override;
+
+    /**
+     * SelfHandler
+     */
+      void onSelfIdChanged(QString id) override {};
+      void onSelfNameChanged(QString name) override {};
+      void onSelfAvatarChanged(const std::string avatar) override {};
+      void onSelfStatusChanged(IMStatus status, const std::string& msg) override {};
+      void onSelfVCardChanged(IMVCard& imvCard) override;
 
     /**
      * IMSessionHandler

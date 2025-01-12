@@ -19,6 +19,7 @@ extern "C" {
 #include <libavformat/avformat.h>
 }
 #include "cameradevice.h"
+#include "src/nexus.h"
 #include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
 

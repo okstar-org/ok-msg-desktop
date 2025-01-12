@@ -89,6 +89,7 @@ ContactWidget::ContactWidget(QWidget* parent)
 }
 
 ContactWidget::~ContactWidget() {
+    qDebug() << __func__;
     deinit();
     settings::Translator::unregister(this);
     delete ui;
@@ -427,7 +428,7 @@ void ContactWidget::showFriendDetails(const Friend* f) {
     qDebug() << __func__ << f->getIdAsString();
     removeAllDetails();
 
-    friendAbout = std::make_unique<AboutFriendForm>(f, this);
+    friendAbout = std::make_unique<AboutFriendForm>(f);
     //    connect(about.get(), &AboutFriendForm::histroyRemoved, this,
     //    &FriendWidget::friendHistoryRemoved);
     contentLayout->addWidget(friendAbout.get());
@@ -446,7 +447,7 @@ void ContactWidget::showGroupDetails(const Group* g) {
 
     removeAllDetails();
 
-    groupAbout = std::make_unique<AboutGroupForm>(g, this);
+    groupAbout = std::make_unique<AboutGroupForm>(g);
     contentLayout->addWidget(groupAbout.get());
     contentLayout->setCurrentWidget(groupAbout.get());
 }

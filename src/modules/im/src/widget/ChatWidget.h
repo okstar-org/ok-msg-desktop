@@ -124,8 +124,8 @@ public slots:
 
     void onMessageSessionReceived(const ContactId& contactId, const QString& sid);
 
-    void onFriendMessageReceived(const FriendId& friendId,
-                                 const FriendMessage& message,
+    void onFriendMessageReceived(const FriendId friendId,
+                                 const FriendMessage message,
                                  bool isAction);
 
     void onReceiptReceived(const FriendId& friendPk, MsgId receipt);
