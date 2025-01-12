@@ -12,7 +12,7 @@
   brew install pkg-config make nasm openssl
   brew install Qt@5
   brew install ffmpeg@5 
-  brew install mozjpeg libqrencode libexif openh264 openal-soft libx11
+  brew install mozjpeg libqrencode libexif openh264 openal-soft libx11 range-v3
   ```   
 ## 三. 编译安装ok-gloox 
 
