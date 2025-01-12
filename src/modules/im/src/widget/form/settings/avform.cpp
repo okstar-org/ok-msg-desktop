@@ -32,9 +32,9 @@
 #include "src/Bus.h"
 #include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
-#include "src/video/cameradevice.h"
-#include "src/video/camerasource.h"
-#include "src/video/ivideosettings.h"
+#include "lib/video/cameradevice.h"
+#include "lib/video/camerasource.h"
+#include "lib/video/ivideosettings.h"
 #include "src/video/videosurface.h"
 #include "src/widget/tool/screenshotgrabber.h"
 
@@ -109,7 +109,7 @@ void AVForm::trackNewScreenGeometry(QScreen* qScreen) {
 
 void AVForm::onProfileChanged(Profile* profile)
 {
-    auto s = profile->getSettings();
+    auto s = &lib::settings::OkSettings::getInstance();
     audioSettings = s;
     videoSettings = s;
     audio = std::unique_ptr<IAudioControl>(Audio::makeAudio(*s));
@@ -581,9 +581,17 @@ void AVForm::on_playbackSlider_valueChanged(int sliderSteps) {
 void AVForm::on_cbEnableTestSound_stateChanged() {
     audioSettings->setEnableTestSound(cbEnableTestSound->isChecked());
 
-    if (cbEnableTestSound->isChecked() && audio->isOutputReady() && audioSink) {
-        audioSink->playMono16Sound(IAudioSink::Sound::Test);
+    if(!cbEnableTestSound->isChecked()){
+        return;
     }
+
+    if(!audio->isOutputReady() ){
+        return;
+    }
+    if (! audioSink) {
+        return;
+    }
+    audioSink->playMono16Sound(IAudioSink::Sound::Test);
 }
 
 void AVForm::on_microphoneSlider_valueChanged(int sliderSteps) {

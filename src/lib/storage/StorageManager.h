@@ -56,8 +56,6 @@ private:
     log::LogManager logManager;
     cache::CacheManager* cacheManager;
     QString profile;
-    // k: module
-    QMap<QString, db::RawDatabase*>  dbMap;
 
     // k: profile
     QMap<QString, StorageManager*> storageMap;

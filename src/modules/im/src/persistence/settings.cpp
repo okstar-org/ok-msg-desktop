@@ -80,8 +80,6 @@ void Settings::destroyInstance() {
 void Settings::loadGlobal() {
     QMutexLocker locker{&bigLock};
 
-
-
     // 自动登录
     s->beginGroup("Login");
     {
@@ -173,29 +171,7 @@ void Settings::loadGlobal() {
     }
     s->endGroup();
 
-    s->beginGroup("Audio");
-    {
-        inDev = s->value("inDev", "").toString();
-        audioInDevEnabled = s->value("audioInDevEnabled", true).toBool();
-        outDev = s->value("outDev", "").toString();
-        audioOutDevEnabled = s->value("audioOutDevEnabled", true).toBool();
-        audioInGainDecibel = s->value("inGain", 0).toReal();
-        audioThreshold = s->value("audioThreshold", 0).toReal();
-        outVolume = s->value("outVolume", 100).toInt();
-        enableTestSound = s->value("enableTestSound", true).toBool();
-        audioBitrate = s->value("audioBitrate", 64).toInt();
-    }
-    s->endGroup();
 
-    s->beginGroup("Video");
-    {
-        videoDev = s->value("videoDev", "").toString();
-        camVideoRes = s->value("camVideoRes", QRect()).toRect();
-        screenRegion = s->value("screenRegion", QRect()).toRect();
-        screenGrabbed = s->value("screenGrabbed", false).toBool();
-        camVideoFPS = static_cast<quint16>(s->value("camVideoFPS", 0).toUInt());
-    }
-    s->endGroup();
 
     loaded = true;
 }
@@ -512,30 +488,7 @@ void Settings::saveGlobal() {
         s->setValue("dialogSettingsGeometry", dialogSettingsGeometry);
     }
     s->endGroup();
-    // 音频
-    s->beginGroup("Audio");
-    {
-        s->setValue("inDev", inDev);
-        s->setValue("audioInDevEnabled", audioInDevEnabled);
-        s->setValue("outDev", outDev);
-        s->setValue("audioOutDevEnabled", audioOutDevEnabled);
-        s->setValue("inGain", audioInGainDecibel);
-        s->setValue("audioThreshold", audioThreshold);
-        s->setValue("outVolume", outVolume);
-        s->setValue("enableTestSound", enableTestSound);
-        s->setValue("audioBitrate", audioBitrate);
-    }
-    s->endGroup();
 
-    s->beginGroup("Video");
-    {
-        s->setValue("videoDev", videoDev);
-        s->setValue("camVideoRes", camVideoRes);
-        s->setValue("camVideoFPS", camVideoFPS);
-        s->setValue("screenRegion", screenRegion);
-        s->setValue("screenGrabbed", screenGrabbed);
-    }
-    s->endGroup();
 }
 
 /**
@@ -595,19 +548,7 @@ QString Settings::getAppDataDirPath() const {
 #endif
 }
 
-bool Settings::getEnableTestSound() const {
-    QMutexLocker locker{&bigLock};
-    return enableTestSound;
-}
 
-void Settings::setEnableTestSound(bool newValue) {
-    QMutexLocker locker{&bigLock};
-
-    if (newValue != enableTestSound) {
-        enableTestSound = newValue;
-        emit enableTestSoundChanged(enableTestSound);
-    }
-}
 
 bool Settings::getEnableIPv6() const {
     QMutexLocker locker{&bigLock};
@@ -1228,187 +1169,6 @@ void Settings::setTypingNotification(bool enabled) {
     }
 }
 
-QString Settings::getInDev() const {
-    QMutexLocker locker{&bigLock};
-    return inDev;
-}
-
-void Settings::setInDev(const QString& deviceSpecifier) {
-    QMutexLocker locker{&bigLock};
-
-    if (deviceSpecifier != inDev) {
-        inDev = deviceSpecifier;
-        emit inDevChanged(inDev);
-    }
-}
-
-bool Settings::getAudioInDevEnabled() const {
-    QMutexLocker locker(&bigLock);
-    return audioInDevEnabled;
-}
-
-void Settings::setAudioInDevEnabled(bool enabled) {
-    QMutexLocker locker(&bigLock);
-
-    if (enabled != audioInDevEnabled) {
-        audioInDevEnabled = enabled;
-        emit audioInDevEnabledChanged(enabled);
-    }
-}
-
-qreal Settings::getAudioInGainDecibel() const {
-    QMutexLocker locker{&bigLock};
-    return audioInGainDecibel;
-}
-
-void Settings::setAudioInGainDecibel(qreal dB) {
-    QMutexLocker locker{&bigLock};
-
-    if (dB < audioInGainDecibel || dB > audioInGainDecibel) {
-        audioInGainDecibel = dB;
-        emit audioInGainDecibelChanged(audioInGainDecibel);
-    }
-}
-
-qreal Settings::getAudioThreshold() const {
-    QMutexLocker locker{&bigLock};
-    return audioThreshold;
-}
-
-void Settings::setAudioThreshold(qreal percent) {
-    QMutexLocker locker{&bigLock};
-
-    if (percent < audioThreshold || percent > audioThreshold) {
-        audioThreshold = percent;
-        emit audioThresholdChanged(audioThreshold);
-    }
-}
-
-QString Settings::getVideoDev() const {
-    QMutexLocker locker{&bigLock};
-    return videoDev;
-}
-
-void Settings::setVideoDev(const QString& deviceSpecifier) {
-    QMutexLocker locker{&bigLock};
-
-    if (deviceSpecifier != videoDev) {
-        videoDev = deviceSpecifier;
-        emit videoDevChanged(videoDev);
-    }
-}
-
-QString Settings::getOutDev() const {
-    QMutexLocker locker{&bigLock};
-    return outDev;
-}
-
-void Settings::setOutDev(const QString& deviceSpecifier) {
-    QMutexLocker locker{&bigLock};
-
-    if (deviceSpecifier != outDev) {
-        outDev = deviceSpecifier;
-        emit outDevChanged(outDev);
-    }
-}
-
-bool Settings::getAudioOutDevEnabled() const {
-    QMutexLocker locker(&bigLock);
-    return audioOutDevEnabled;
-}
-
-void Settings::setAudioOutDevEnabled(bool enabled) {
-    QMutexLocker locker(&bigLock);
-
-    if (enabled != audioOutDevEnabled) {
-        audioOutDevEnabled = enabled;
-        emit audioOutDevEnabledChanged(audioOutDevEnabled);
-    }
-}
-
-int Settings::getOutVolume() const {
-    QMutexLocker locker{&bigLock};
-    return outVolume;
-}
-
-void Settings::setOutVolume(int volume) {
-    QMutexLocker locker{&bigLock};
-
-    if (volume != outVolume) {
-        outVolume = volume;
-        emit outVolumeChanged(outVolume);
-    }
-}
-
-int Settings::getAudioBitrate() const {
-    const QMutexLocker locker{&bigLock};
-    return audioBitrate;
-}
-
-void Settings::setAudioBitrate(int bitrate) {
-    const QMutexLocker locker{&bigLock};
-
-    if (bitrate != audioBitrate) {
-        audioBitrate = bitrate;
-        emit audioBitrateChanged(audioBitrate);
-    }
-}
-
-QRect Settings::getScreenRegion() const {
-    QMutexLocker locker(&bigLock);
-    return screenRegion;
-}
-
-void Settings::setScreenRegion(const QRect& value) {
-    QMutexLocker locker{&bigLock};
-
-    if (value != screenRegion) {
-        screenRegion = value;
-        emit screenRegionChanged(screenRegion);
-    }
-}
-
-bool Settings::getScreenGrabbed() const {
-    QMutexLocker locker(&bigLock);
-    return screenGrabbed;
-}
-
-void Settings::setScreenGrabbed(bool value) {
-    QMutexLocker locker{&bigLock};
-
-    if (value != screenGrabbed) {
-        screenGrabbed = value;
-        emit screenGrabbedChanged(screenGrabbed);
-    }
-}
-
-QRect Settings::getCamVideoRes() const {
-    QMutexLocker locker{&bigLock};
-    return camVideoRes;
-}
-
-void Settings::setCamVideoRes(QRect newValue) {
-    QMutexLocker locker{&bigLock};
-
-    if (newValue != camVideoRes) {
-        camVideoRes = newValue;
-        emit camVideoResChanged(camVideoRes);
-    }
-}
-
-float Settings::getCamVideoFPS() const {
-    QMutexLocker locker{&bigLock};
-    return camVideoFPS;
-}
-
-void Settings::setCamVideoFPS(float newValue) {
-    QMutexLocker locker{&bigLock};
-
-    if (newValue != camVideoFPS) {
-        camVideoFPS = newValue;
-        emit camVideoFPSChanged(camVideoFPS);
-    }
-}
 
 QString Settings::getFriendAddress(const QString& publicKey) const {
     QMutexLocker locker{&bigLock};

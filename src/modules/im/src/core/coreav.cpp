@@ -18,15 +18,14 @@
 #include <cassert>
 #include "Bus.h"
 #include "application.h"
-#include "base/compatiblerecursivemutex.h"
+
 #include "core.h"
-#include "lib/audio/audio.h"
-#include "src/model/friend.h"
+
 #include "src/model/group.h"
 #include "src/nexus.h"
-#include "src/persistence/settings.h"
+
 #include "src/video/corevideosource.h"
-#include "src/video/videoframe.h"
+#include "lib/video/videoframe.h"
 
 /**
  * 音视频
@@ -37,14 +36,15 @@ static CoreAV* instance = nullptr;
 
 CoreAV::CoreAV(Core* core)
         : core(core)
-        , audioCtrl(Nexus::getInstance().audio())
+
         , coreavThread(new QThread{this})
         , selfVideoSource(std::make_unique<CoreVideoSource>())
         , iterateTimer(new QTimer(this)) {
-    assert(coreavThread);
-    assert(iterateTimer);
 
     qDebug() << __func__;
+
+    assert(coreavThread);
+    assert(iterateTimer);
 
     qRegisterMetaType<FriendId>("FriendId");
     qRegisterMetaType<vpx_image>("vpx_image");
@@ -94,27 +94,6 @@ CoreAV::CoreAVPtr CoreAV::makeCoreAV(Core* core) {
 CoreAV* CoreAV::getInstance() {
     assert(instance);
     return instance;
-}
-
-/**
- * @brief Set the audio backend
- * @param audio The audio backend to use
- * @note This must be called before starting CoreAV and audio must outlive
- * CoreAV
- */
-void CoreAV::setAudio(IAudioControl& newAudio) {
-    audioCtrl.exchange(&newAudio);
-}
-
-/**
- * @brief Get the audio backend used
- * @return Pointer to the audio backend
- * @note This is needed only for the case CoreAV needs to restart and the
- * restarting class doesn't have access to the audio backend and wants to keep
- * it the same.
- */
-IAudioControl* CoreAV::getAudio() {
-    return audioCtrl;
 }
 
 /**
@@ -220,9 +199,10 @@ bool CoreAV::startCall(QString friendNum, bool video) {
     }
 
     // Audio backend must be set before making a call
+    auto audio = Nexus::getInstance().audio();
 
     ToxFriendCallPtr call =
-            ToxFriendCallPtr(new ToxFriendCall(friendNum, video, *this, *audioCtrl));
+            ToxFriendCallPtr(new ToxFriendCall(friendNum, video, *this, *audio));
     assert(call != nullptr);
     call->setCallId(sId);
     // Call object must be owned by this thread or there will be locking problems
@@ -499,8 +479,7 @@ void CoreAV::joinGroupCall(const Group& group) {
     qDebug() << QString("Joining group call %1").arg(group.getIdAsString());
 
     // Audio backend must be set before starting a call
-    assert(audioCtrl != nullptr);
-
+    auto audioCtrl = Nexus::getInstance().audio();
     ToxGroupCallPtr groupcall = ToxGroupCallPtr(new ToxGroupCall{group, *this, *audioCtrl});
     // Call Objects must be owned by CoreAV or there will be locking problems with
     // Audio
@@ -672,7 +651,7 @@ void CoreAV::onCall(const lib::messenger::IMPeerId& peerId, const QString& callI
     auto peer = ToxPeer(peerId);
 
     // Audio backend must be set before receiving a call
-
+    auto audioCtrl= Nexus::getInstance().audio();
     ToxFriendCallPtr call =
             ToxFriendCallPtr(new ToxFriendCall{peerId.toString(), video, *this, *audioCtrl});
     call->setCallId(callId);

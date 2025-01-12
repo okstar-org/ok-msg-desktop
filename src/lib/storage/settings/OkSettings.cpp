@@ -103,6 +103,33 @@ void OkSettings::loadGlobal() {
         dialogGeometry = s.value("dialogGeometry", QByteArray()).toByteArray();
     }
     s.endGroup();
+
+
+    // 音频
+    s.beginGroup("Audio");
+    {
+        inDev = s.value("inDev").toString();
+        audioInDevEnabled=  s.value("audioInDevEnabled").toBool();
+        outDev = s.value("outDev").toString();
+        audioOutDevEnabled = s.value("audioOutDevEnabled").toBool();
+        audioInGainDecibel = s.value("audioInGainDecibel").toInt();
+        audioThreshold = s.value("audioThreshold").toInt();
+        outVolume=s.value("outVolume").toInt();
+        enableTestSound=s.value("enableTestSound").toInt();
+        audioBitrate=s.value("audioBitrate").toInt();
+    }
+    s.endGroup();
+
+    s.beginGroup("Video");
+    {
+        videoDev =  s.value("videoDev").toString();
+        camVideoRes = s.value("camVideoRes").toRect();
+        camVideoFPS=s.value("camVideoFPS").toInt();
+        screenRegion =s.value("screenRegion").toRect();
+        screenGrabbed= s.value("screenGrabbed").toBool();
+    }
+    s.endGroup();
+
     qDebug() << "Loaded global settings at:" << path;
 }
 
@@ -136,6 +163,30 @@ void OkSettings::saveGlobal() {
         s.setValue("windowGeometry", windowGeometry);
         s.setValue("windowState", windowState);
         s.setValue("dialogGeometry", dialogGeometry);
+    }
+    s.endGroup();
+
+    s.beginGroup("Audio");
+    {
+        inDev = s.value("inDev", "").toString();
+        audioInDevEnabled = s.value("audioInDevEnabled", true).toBool();
+        outDev = s.value("outDev", "").toString();
+        audioOutDevEnabled = s.value("audioOutDevEnabled", true).toBool();
+        audioInGainDecibel = s.value("inGain", 0).toReal();
+        audioThreshold = s.value("audioThreshold", 0).toReal();
+        outVolume = s.value("outVolume", 100).toInt();
+        enableTestSound = s.value("enableTestSound", true).toBool();
+        audioBitrate = s.value("audioBitrate", 64).toInt();
+    }
+    s.endGroup();
+
+    s.beginGroup("Video");
+    {
+        videoDev = s.value("videoDev", "").toString();
+        camVideoRes = s.value("camVideoRes", QRect()).toRect();
+        screenRegion = s.value("screenRegion", QRect()).toRect();
+        screenGrabbed = s.value("screenGrabbed", false).toBool();
+        camVideoFPS = static_cast<quint16>(s.value("camVideoFPS", 0).toUInt());
     }
     s.endGroup();
 
@@ -402,4 +453,203 @@ void OkSettings::setWindowState(const QByteArray& value) {
         emit windowStateChanged(windowState);
     }
 }
+
+
+
+QString OkSettings::getInDev() const {
+    // QMutexLocker locker{&bigLock};
+    return inDev;
+}
+
+void OkSettings::setInDev(const QString& deviceSpecifier) {
+    QMutexLocker locker{&bigLock};
+
+    if (deviceSpecifier != inDev) {
+        inDev = deviceSpecifier;
+        emit inDevChanged(inDev);
+    }
+}
+
+bool OkSettings::getAudioInDevEnabled() const {
+    // QMutexLocker locker(&bigLock);
+    return audioInDevEnabled;
+}
+
+void OkSettings::setAudioInDevEnabled(bool enabled) {
+    QMutexLocker locker(&bigLock);
+
+    if (enabled != audioInDevEnabled) {
+        audioInDevEnabled = enabled;
+        emit audioInDevEnabledChanged(enabled);
+    }
+}
+
+qreal OkSettings::getAudioInGainDecibel() const {
+    // QMutexLocker locker{&bigLock};
+    return audioInGainDecibel;
+}
+
+void OkSettings::setAudioInGainDecibel(qreal dB) {
+    QMutexLocker locker{&bigLock};
+
+    if (dB < audioInGainDecibel || dB > audioInGainDecibel) {
+        audioInGainDecibel = dB;
+        emit audioInGainDecibelChanged(audioInGainDecibel);
+    }
+}
+
+qreal OkSettings::getAudioThreshold() const {
+    // QMutexLocker locker{&bigLock};
+    return audioThreshold;
+}
+
+void OkSettings::setAudioThreshold(qreal percent) {
+    QMutexLocker locker{&bigLock};
+
+    if (percent < audioThreshold || percent > audioThreshold) {
+        audioThreshold = percent;
+        emit audioThresholdChanged(audioThreshold);
+    }
+}
+
+QString OkSettings::getVideoDev() const {
+    // QMutexLocker locker{&bigLock};
+    return videoDev;
+}
+
+void OkSettings::setVideoDev(const QString& deviceSpecifier) {
+    QMutexLocker locker{&bigLock};
+
+    if (deviceSpecifier != videoDev) {
+        videoDev = deviceSpecifier;
+        emit videoDevChanged(videoDev);
+    }
+}
+
+bool OkSettings::getEnableTestSound() const {
+    // QMutexLocker locker{&bigLock};
+    return enableTestSound;
+}
+
+void OkSettings::setEnableTestSound(bool newValue) {
+    QMutexLocker locker{&bigLock};
+
+    if (newValue != enableTestSound) {
+        enableTestSound = newValue;
+        emit enableTestSoundChanged(enableTestSound);
+    }
+}
+
+QString OkSettings::getOutDev() const {
+    // QMutexLocker locker{&bigLock};
+    return outDev;
+}
+
+void OkSettings::setOutDev(const QString& deviceSpecifier) {
+    QMutexLocker locker{&bigLock};
+
+    if (deviceSpecifier != outDev) {
+        outDev = deviceSpecifier;
+        emit outDevChanged(outDev);
+    }
+}
+
+bool OkSettings::getAudioOutDevEnabled() const {
+    // QMutexLocker locker(&bigLock);
+    return audioOutDevEnabled;
+}
+
+void OkSettings::setAudioOutDevEnabled(bool enabled) {
+    QMutexLocker locker(&bigLock);
+
+    if (enabled != audioOutDevEnabled) {
+        audioOutDevEnabled = enabled;
+        emit audioOutDevEnabledChanged(audioOutDevEnabled);
+    }
+}
+
+int OkSettings::getOutVolume() const {
+    // QMutexLocker locker{&bigLock};
+    return outVolume;
+}
+
+void OkSettings::setOutVolume(int volume) {
+    QMutexLocker locker{&bigLock};
+
+    if (volume != outVolume) {
+        outVolume = volume;
+        emit outVolumeChanged(outVolume);
+    }
+}
+
+int OkSettings::getAudioBitrate() const {
+    // const QMutexLocker locker{&bigLock};
+    return audioBitrate;
+}
+
+void OkSettings::setAudioBitrate(int bitrate) {
+    const QMutexLocker locker{&bigLock};
+
+    if (bitrate != audioBitrate) {
+        audioBitrate = bitrate;
+        emit audioBitrateChanged(audioBitrate);
+    }
+}
+
+QRect OkSettings::getScreenRegion() const {
+    // QMutexLocker locker(&bigLock);
+    return screenRegion;
+}
+
+void OkSettings::setScreenRegion(const QRect& value) {
+    QMutexLocker locker{&bigLock};
+
+    if (value != screenRegion) {
+        screenRegion = value;
+        emit screenRegionChanged(screenRegion);
+    }
+}
+
+bool OkSettings::getScreenGrabbed() const {
+    // QMutexLocker locker(&bigLock);
+    return screenGrabbed;
+}
+
+void OkSettings::setScreenGrabbed(bool value) {
+    QMutexLocker locker{&bigLock};
+
+    if (value != screenGrabbed) {
+        screenGrabbed = value;
+        emit screenGrabbedChanged(screenGrabbed);
+    }
+}
+
+QRect OkSettings::getCamVideoRes() const {
+    // QMutexLocker locker{&bigLock};
+    return camVideoRes;
+}
+
+void OkSettings::setCamVideoRes(QRect newValue) {
+    QMutexLocker locker{&bigLock};
+
+    if (newValue != camVideoRes) {
+        camVideoRes = newValue;
+        emit camVideoResChanged(camVideoRes);
+    }
+}
+
+float OkSettings::getCamVideoFPS() const {
+    // QMutexLocker locker{&bigLock};
+    return camVideoFPS;
+}
+
+void OkSettings::setCamVideoFPS(float newValue) {
+    QMutexLocker locker{&bigLock};
+
+    if (newValue != camVideoFPS) {
+        camVideoFPS = newValue;
+        emit camVideoFPSChanged(camVideoFPS);
+    }
+}
+
 }  // namespace lib::settings

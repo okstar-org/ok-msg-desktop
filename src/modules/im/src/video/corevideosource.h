@@ -15,7 +15,7 @@
 
 #include <QMutex>
 #include <atomic>
-#include "videosource.h"
+#include "lib/video/videosource.h"
 
 struct vpx_image;
 

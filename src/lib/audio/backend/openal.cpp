@@ -21,6 +21,8 @@
 #include <QtMath>
 
 #include <cassert>
+#include "lib/storage/settings/OkSettings.h"
+
 
 namespace {
 void applyGain(int16_t* buffer, uint32_t bufferSize, qreal gainFactor) {
@@ -226,7 +228,6 @@ bool OpenAL::reinitOutput(const QString& outDevDesc) {
     for (auto& sink : bakSinks) {
         sink->kill();
     }
-
     return result;
 }
 
@@ -237,10 +238,10 @@ bool OpenAL::reinitOutput(const QString& outDevDesc) {
 std::unique_ptr<IAudioSink> OpenAL::makeSink() {
     QMutexLocker locker(&audioLock);
 
-    //    if (!autoInitOutput()) {
-    //        qWarning("Failed to subscribe to audio output device.");
-    //        return {};
-    //    }
+       if (!autoInitOutput()) {
+           qWarning("Failed to subscribe to audio output device.");
+           return {};
+       }
 
     ALuint sid;
     alGenSources(1, &sid);
@@ -342,13 +343,13 @@ void OpenAL::destroySource(AlSource& source) {
  *
  * @return true, if device was initialized; false otherwise
  */
-// bool OpenAL::autoInitInput() {
-//     return alInDev ? true : initInput(Nexus::getProfile()->getSettings()->getInDev());
-// }
-//
-// bool OpenAL::autoInitOutput() {
-//     return alOutDev ? true : initOutput(Nexus::getProfile()->getSettings()->getOutDev());
-// }
+bool OpenAL::autoInitInput() {
+    return alInDev ? true : initInput(lib::settings::OkSettings::getInstance().getInDev());
+}
+
+bool OpenAL::autoInitOutput() {
+    return alOutDev ? true : initOutput(lib::settings::OkSettings::getInstance().getOutDev());
+}
 
 bool OpenAL::initInput(const QString& deviceName) { return initInput(deviceName, AUDIO_CHANNELS); }
 
@@ -394,7 +395,7 @@ bool OpenAL::initOutput(const QString& deviceName) {
     assert(sinks.size() == 0);
 
     outputInitialized = false;
-    //    if (!Nexus::getProfile()->getSettings()->getAudioOutDevEnabled()) return false;
+    if (!lib::settings::OkSettings::getInstance().getAudioOutDevEnabled()) return false;
 
     qDebug() << "Opening audio output" << deviceName;
     assert(!alOutDev);

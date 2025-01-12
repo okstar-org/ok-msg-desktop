@@ -23,67 +23,15 @@ extern "C" {
 #include <QWriteLocker>
 #include <QtConcurrent/QtConcurrentRun>
 #include <functional>
-#include <memory>
 #include "cameradevice.h"
 #include "camerasource.h"
-#include "src/nexus.h"
-#include "src/persistence/profile.h"
-#include "src/persistence/settings.h"
 #include "videoframe.h"
+#include "lib/storage/settings/OkSettings.h"
 
 /**
  * @class CameraSource
  * @brief This class is a wrapper to share a camera's captured video frames
- *
- * It allows objects to suscribe and unsuscribe to the stream, starting
- * the camera and streaming new video frames only when needed.
- * This is a singleton, since we can only capture from one
- * camera at the same time without thread-safety issues.
- * The source is lazy in the sense that it will only keep the video
- * device open as long as there are subscribers, the source can be
- * open but the device closed if there are zero subscribers.
  */
-
-/**
- * @var QVector<std::weak_ptr<VideoFrame>> CameraSource::freelist
- * @brief Frames that need freeing before we can safely close the device
- *
- * @var QFuture<void> CameraSource::streamFuture
- * @brief Future of the streaming thread
- *
- * @var QString CameraSource::deviceName
- * @brief Short name of the device for CameraDevice's open(QString)
- *
- * @var CameraDevice* CameraSource::device
- * @brief Non-owning pointer to an open CameraDevice, or nullptr. Not atomic, synced with memfences
- * when becomes null.
- *
- * @var VideoMode CameraSource::mode
- * @brief What mode we tried to open the device in, all zeros means default mode
- *
- * @var AVCodecContext* CameraSource::cctx
- * @brief Codec context of the camera's selected video stream
- *
- * @var AVCodecContext* CameraSource::cctxOrig
- * @brief Codec context of the camera's selected video stream
- * @deprecated
- *
- * @var int CameraSource::videoStreamIndex
- * @brief A camera can have multiple streams, this is the one we're decoding
- *
- * @var QMutex CameraSource::biglock
- * @brief True when locked. Faster than mutexes for video decoding.
- *
- * @var QMutex CameraSource::freelistLock
- * @brief True when locked. Faster than mutexes for video decoding.
- *
- * @var std::atomic_bool CameraSource::streamBlocker
- * @brief Holds the streaming thread still when true
- *
- * @var std::atomic_int CameraSource::subscriptions
- * @brief Remember how many times we subscribed for RAII
- */
-
 CameraSource* CameraSource::instance{nullptr};
 
 CameraSource::CameraSource()
@@ -142,7 +90,7 @@ void CameraSource::destroyInstance() {
  * @note If a device is already open, the source will seamlessly switch to the new device.
  */
 void CameraSource::setupDefault() {
-    auto s = Nexus::getProfile()->getSettings();
+    auto s = &lib::settings::OkSettings::getInstance();
 
     QString deviceName = CameraDevice::getDefaultDeviceName();
     qDebug() << "Setup default device:" << deviceName;

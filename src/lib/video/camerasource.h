@@ -19,8 +19,8 @@
 #include <QString>
 #include <QVector>
 #include <atomic>
-#include "src/video/videomode.h"
-#include "src/video/videosource.h"
+#include "lib/video/videomode.h"
+#include "lib/video/videosource.h"
 
 class CameraDevice;
 struct AVCodecContext;

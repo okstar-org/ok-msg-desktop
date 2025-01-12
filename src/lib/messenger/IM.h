@@ -615,7 +615,7 @@ private:
     QString _nick;
     gloox::JID loginJid;
     std::unique_ptr<gloox::Client> _client;
-
+    bool isConnected = false;
 
     // 发送消息的id
     std::set<std::string> sendIds;

@@ -28,7 +28,7 @@
 #include "src/model/status.h"
 #include "src/persistence/profile.h"
 #include "src/widget/widget.h"
-#include "video/camerasource.h"
+#include "lib/video/camerasource.h"
 
 #ifdef Q_OS_MAC
 #include <QActionGroup>
@@ -137,9 +137,9 @@ void Nexus::start(std::shared_ptr<lib::session::AuthSession> session) {
     QString locale = s.getTranslation();
     qDebug() << "locale" << locale;
 
-    audioControl = std::unique_ptr<IAudioControl>(Audio::makeAudio(*profile->getSettings()));
+    audioControl = std::unique_ptr<IAudioControl>(Audio::makeAudio(s));
 
-    //  add_definitions(-D${PROJECT_NAME}_MODULE="${PROJECT_NAME}")
+
     settings::Translator::translate(OK_IM_MODULE, locale);
 
     qApp->setQuitOnLastWindowClosed(false);
@@ -390,7 +390,7 @@ Widget* Nexus::getDesktopGUI() {
 }
 
 void Nexus::playNotificationSound(IAudioSink::Sound sound, bool loop) {
-    auto settings = Nexus::getProfile()->getSettings();
+    auto settings = &lib::settings::OkSettings::getInstance();
     if (!settings->getAudioOutDevEnabled()) {
         // don't try to play sounds if audio is disabled
         return;

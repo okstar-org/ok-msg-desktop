@@ -12,12 +12,12 @@
 
 #include "videosurface.h"
 #include "base/SvgUtils.h"
-#include "src/core/core.h"
+
 #include "src/lib/storage/settings/style.h"
-#include "src/model/friend.h"
+
 #include "src/model/friendlist.h"
-#include "src/persistence/settings.h"
-#include "src/video/videoframe.h"
+
+#include "lib/video/videoframe.h"
 #include "src/widget/friendwidget.h"
 
 #include <QDebug>

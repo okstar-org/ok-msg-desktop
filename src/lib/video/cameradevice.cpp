@@ -19,9 +19,8 @@ extern "C" {
 #include <libavformat/avformat.h>
 }
 #include "cameradevice.h"
-#include "src/nexus.h"
-#include "src/persistence/profile.h"
-#include "src/persistence/settings.h"
+#include "lib/storage/settings/OkSettings.h"
+
 
 // no longer needed when avformat version < 59 is no longer supported
 using AvFindInputFormatRet = decltype(av_find_input_format(""));
@@ -36,11 +35,10 @@ using AvFindInputFormatRet = decltype(av_find_input_format(""));
 #include "src/platform/camera/directshow.h"
 #endif
 #if USING_V4L
-#include "src/nexus.h"
-#include "src/platform/camera/v4l2.h"
+#include "camera/v4l2.h"
 #endif
 #ifdef Q_OS_OSX
-#include "src/platform/camera/avfoundation.h"
+#include "camera/avfoundation.h"
 #endif
 
 /**
@@ -396,9 +394,9 @@ QVector<QPair<QString, QString>> CameraDevice::getDeviceList() {
  * This is either the device in the settings or the system default.
  */
 QString CameraDevice::getDefaultDeviceName() {
-    auto s = Nexus::getProfile()->getSettings();
+    auto &s = lib::settings::OkSettings::getInstance();
 
-    QString defaultdev = s->getVideoDev();
+    QString defaultdev = s.getVideoDev();
     qDebug() << "defaultdev:" << defaultdev;
     if (!getDefaultInputFormat()) return defaultdev;
 

@@ -97,8 +97,8 @@ protected:
     virtual void cleanupInput();
     virtual void cleanupOutput();
 
-    //    bool autoInitInput();
-    //    bool autoInitOutput();
+       bool autoInitInput();
+       bool autoInitOutput();
 
     bool initInput(const QString& deviceName, uint32_t channels);
 

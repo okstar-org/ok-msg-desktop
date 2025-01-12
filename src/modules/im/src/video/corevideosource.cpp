@@ -15,9 +15,8 @@ extern "C" {
 #include <libavutil/imgutils.h>
 }
 
-#include "../core/toxcall.h"
 #include "corevideosource.h"
-#include "videoframe.h"
+#include "lib/video/videoframe.h"
 
 /**
  * @class CoreVideoSource

@@ -16,7 +16,7 @@
 #include <QWidget>
 #include <atomic>
 #include <memory>
-#include "src/video/videosource.h"
+#include "lib/video/videosource.h"
 
 class VideoSurface : public QWidget {
     Q_OBJECT

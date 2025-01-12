@@ -12,18 +12,16 @@
 
 #include "settingswidget.h"
 
-#include "lib/audio/audio.h"
+
 #include "lib/storage/settings/translator.h"
-#include "src/core/core.h"
-#include "src/core/coreav.h"
+
 #include "src/nexus.h"
-#include "src/persistence/settings.h"
-#include "src/video/camerasource.h"
+
 #include "src/widget/contentlayout.h"
 #include "src/widget/form/settings/StorageSettingsForm.h"
 #include "src/widget/form/settings/avform.h"
 #include "src/widget/form/settings/generalform.h"
-#include "src/widget/form/settings/privacyform.h"
+
 #include "src/widget/widget.h"
 
 #include <QLabel>

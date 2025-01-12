@@ -13,14 +13,12 @@
 #ifndef SETTINGS_HPP
 #define SETTINGS_HPP
 
-#include "base/r.h"
+
 #include "lib/audio/iaudiosettings.h"
 #include "src/core/icoresettings.h"
-#include "src/core/toxencrypt.h"
 #include "src/core/toxfile.h"
 #include "src/persistence/ifriendsettings.h"
 #include "src/persistence/igroupsettings.h"
-#include "src/video/ivideosettings.h"
 
 #include "base/compatiblerecursivemutex.h"
 
@@ -47,9 +45,8 @@ enum class syncType;
 class Settings : public QObject,
                  public ICoreSettings,
                  public IFriendSettings,
-                 public IGroupSettings,
-                 public IAudioSettings,
-                 public IVideoSettings {
+                 public IGroupSettings
+                {
     Q_OBJECT
 
     Q_ENUMS(StyleType)
@@ -98,31 +95,6 @@ class Settings : public QObject,
     Q_PROPERTY(bool typingNotification READ getTypingNotification WRITE setTypingNotification NOTIFY
                        typingNotificationChanged FINAL)
 
-    // Audio
-    Q_PROPERTY(QString inDev READ getInDev WRITE setInDev NOTIFY inDevChanged FINAL)
-    Q_PROPERTY(bool audioInDevEnabled READ getAudioInDevEnabled WRITE setAudioInDevEnabled NOTIFY
-                       audioInDevEnabledChanged FINAL)
-    Q_PROPERTY(qreal audioInGainDecibel READ getAudioInGainDecibel WRITE setAudioInGainDecibel
-                       NOTIFY audioInGainDecibelChanged FINAL)
-    Q_PROPERTY(qreal audioThreshold READ getAudioThreshold WRITE setAudioThreshold NOTIFY
-                       audioThresholdChanged FINAL)
-    Q_PROPERTY(QString outDev READ getOutDev WRITE setOutDev NOTIFY outDevChanged FINAL)
-    Q_PROPERTY(bool audioOutDevEnabled READ getAudioOutDevEnabled WRITE setAudioOutDevEnabled NOTIFY
-                       audioOutDevEnabledChanged FINAL)
-    Q_PROPERTY(int outVolume READ getOutVolume WRITE setOutVolume NOTIFY outVolumeChanged FINAL)
-    Q_PROPERTY(int audioBitrate READ getAudioBitrate WRITE setAudioBitrate NOTIFY
-                       audioBitrateChanged FINAL)
-
-    // Video
-    Q_PROPERTY(QString videoDev READ getVideoDev WRITE setVideoDev NOTIFY videoDevChanged FINAL)
-    Q_PROPERTY(QRect camVideoRes READ getCamVideoRes WRITE setCamVideoRes NOTIFY camVideoResChanged
-                       FINAL)
-    Q_PROPERTY(QRect screenRegion READ getScreenRegion WRITE setScreenRegion NOTIFY
-                       screenRegionChanged FINAL)
-    Q_PROPERTY(bool screenGrabbed READ getScreenGrabbed WRITE setScreenGrabbed NOTIFY
-                       screenGrabbedChanged FINAL)
-    Q_PROPERTY(float camVideoFPS READ getCamVideoFPS WRITE setCamVideoFPS NOTIFY camVideoFPSChanged
-                       FINAL)
 
 public:
     enum class StyleType { NONE = 0, WITH_CHARS = 1, WITHOUT_CHARS = 2 };
@@ -289,67 +261,6 @@ public:
     bool getGroupAlwaysNotify() const override;
     void setGroupAlwaysNotify(bool newValue) override;
 
-    QString getInDev() const override;
-    void setInDev(const QString& deviceSpecifier) override;
-
-    bool getAudioInDevEnabled() const override;
-    void setAudioInDevEnabled(bool enabled) override;
-
-    QString getOutDev() const override;
-    void setOutDev(const QString& deviceSpecifier) override;
-
-    bool getAudioOutDevEnabled() const override;
-    void setAudioOutDevEnabled(bool enabled) override;
-
-    qreal getAudioInGainDecibel() const override;
-    void setAudioInGainDecibel(qreal dB) override;
-
-    qreal getAudioThreshold() const override;
-    void setAudioThreshold(qreal percent) override;
-
-    int getOutVolume() const override;
-    int getOutVolumeMin() const override { return 0; }
-    int getOutVolumeMax() const override { return 100; }
-    void setOutVolume(int volume) override;
-
-    int getAudioBitrate() const override;
-    void setAudioBitrate(int bitrate) override;
-
-    bool getEnableTestSound() const override;
-    void setEnableTestSound(bool newValue) override;
-
-    SIGNAL_IMPL(Settings, inDevChanged, const QString& device)
-    SIGNAL_IMPL(Settings, audioInDevEnabledChanged, bool enabled)
-
-    SIGNAL_IMPL(Settings, outDevChanged, const QString& device)
-    SIGNAL_IMPL(Settings, audioOutDevEnabledChanged, bool enabled)
-
-    SIGNAL_IMPL(Settings, audioInGainDecibelChanged, qreal dB)
-    SIGNAL_IMPL(Settings, audioThresholdChanged, qreal percent)
-    SIGNAL_IMPL(Settings, outVolumeChanged, int volume)
-    SIGNAL_IMPL(Settings, audioBitrateChanged, int bitrate)
-    SIGNAL_IMPL(Settings, enableTestSoundChanged, bool newValue)
-
-    QString getVideoDev() const override;
-    void setVideoDev(const QString& deviceSpecifier) override;
-
-    QRect getScreenRegion() const override;
-    void setScreenRegion(const QRect& value) override;
-
-    bool getScreenGrabbed() const override;
-    void setScreenGrabbed(bool value) override;
-
-    QRect getCamVideoRes() const override;
-    void setCamVideoRes(QRect newValue) override;
-
-    float getCamVideoFPS() const override;
-    void setCamVideoFPS(float newValue) override;
-
-    SIGNAL_IMPL(Settings, videoDevChanged, const QString& device)
-    SIGNAL_IMPL(Settings, screenRegionChanged, const QRect& region)
-    SIGNAL_IMPL(Settings, screenGrabbedChanged, bool enabled)
-    SIGNAL_IMPL(Settings, camVideoResChanged, const QRect& region)
-    SIGNAL_IMPL(Settings, camVideoFPSChanged, unsigned short fps)
 
     bool isAnimationEnabled() const;
     void setAnimationEnabled(bool newValue);
@@ -576,23 +487,6 @@ private:
     bool typingNotification;
     Db::syncType dbSyncType;
 
-    // Audio 音频
-    QString inDev;
-    bool audioInDevEnabled;
-    qreal audioInGainDecibel;
-    qreal audioThreshold;
-    QString outDev;
-    bool audioOutDevEnabled;
-    int outVolume;
-    int audioBitrate;
-    bool enableTestSound;
-
-    // Video
-    QString videoDev;
-    QRect camVideoRes;
-    QRect screenRegion;
-    bool screenGrabbed;
-    float camVideoFPS;
 
     struct friendProp {
         friendProp() = delete;

@@ -135,30 +135,12 @@ void IMCall::onImStartedCall() {
     auto client = im->getClient();
     assert(client);
     client->registerMessageHandler(this);
-    client->registerStanzaExtension(new gloox::Jingle::JingleMessage());
+
     auto disco = client->disco();
 
-    // jingle av
-    disco->addFeature(gloox::XMLNS_JINGLE);
-    disco->addFeature(gloox::XMLNS_JINGLE_MESSAGE);
-    disco->addFeature(gloox::XMLNS_JINGLE_ERRORS);
-    disco->addFeature(gloox::XMLNS_JINGLE_ICE_UDP);
-    disco->addFeature(gloox::XMLNS_JINGLE_APPS_DTLS);
-    disco->addFeature(gloox::XMLNS_JINGLE_APPS_DTLS_SCTP);
-    disco->addFeature(gloox::XMLNS_JINGLE_APPS_RTP);
-    disco->addFeature(gloox::XMLNS_JINGLE_FEATURE_AUDIO);
-    disco->addFeature(gloox::XMLNS_JINGLE_FEATURE_VIDEO);
-    disco->addFeature(gloox::XMLNS_JINGLE_APPS_RTP_SSMA);
-    disco->addFeature(gloox::XMLNS_JINGLE_APPS_RTP_FB);
-    disco->addFeature(gloox::XMLNS_JINGLE_APPS_RTP_SSMA);
-    disco->addFeature(gloox::XMLNS_JINGLE_APPS_RTP_HDREXT);
-    disco->addFeature(gloox::XMLNS_JINGLE_APPS_GROUP);
 
-    // session manager
-    im->sessionManager()->registerPlugin(new gloox::Jingle::Content());
-    im->sessionManager()->registerPlugin(new gloox::Jingle::ICEUDP());
-    im->sessionManager()->registerPlugin(new gloox::Jingle::Group());
-    im->sessionManager()->registerPlugin(new gloox::Jingle::RTP());
+
+
     im->addSessionHandler(this);
 }
 
@@ -843,12 +825,13 @@ void IMCall::onDisconnected(int)
 
 void IMCall::onStarted()
 {
+    qDebug() << __func__;
     onImStartedCall();
 }
 
 void IMCall::onStopped()
 {
-
+    qDebug() << __func__;
 }
 
 bool IMCall::doSessionInitiate(gloox::Jingle::Session* session,

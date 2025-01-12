@@ -3,28 +3,15 @@ add_definitions(-DOK_${PROJECT_NAME}_MODULE="${PROJECT_NAME}")
 
 include_directories(${PROJECT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
-pkg_check_modules(AVDEVICE REQUIRED libavdevice)
-pkg_check_modules(AVCODEC REQUIRED libavcodec)
-pkg_check_modules(AVFORMAT REQUIRED libavformat)
-pkg_check_modules(AVUTIL REQUIRED libavutil)
-pkg_check_modules(SWSCALE REQUIRED libswscale)
-pkg_check_modules(SWRESAMPLE REQUIRED libswresample)
 pkg_check_modules(QRENCODE REQUIRED libqrencode)
 pkg_check_modules(exif REQUIRED libexif)
 pkg_check_modules(JPEG REQUIRED libjpeg)
 
-include_directories(${AVCODEC_INCLUDE_DIRS})
-include_directories(${AVDEVICE_INCLUDE_DIRS})
 include_directories(${QRENCODE_INCLUDE_DIRS})
 include_directories(${exif_INCLUDE_DIRS})
 include_directories(${JPEG_INCLUDE_DIRS})
 
 list(APPEND ALL_LIBRARIES
-		${AVDEVICE_LINK_LIBRARIES}
-		${AVCODEC_LINK_LIBRARIES}
-		${AVFORMAT_LINK_LIBRARIES}
-		${AVUTIL_LINK_LIBRARIES}
-		${SWSCALE_LINK_LIBRARIES}
 		${QRENCODE_LINK_LIBRARIES}
 		${JPEG_LINK_LIBRARIES}
 		${exif_LINK_LIBRARIES}
@@ -183,27 +170,14 @@ set(${PROJECT_NAME}_SOURCES
 		src/persistence/settingsserializer.h
 		src/persistence/smileypack.cpp
 		src/persistence/smileypack.h
-		src/video/cameradevice.cpp
-		src/video/cameradevice.h
-		src/video/camerasource.cpp
-		src/video/camerasource.h
-		src/video/corevideosource.cpp
-		src/video/corevideosource.h
-		src/video/genericnetcamview.cpp
-		src/video/genericnetcamview.h
-		src/video/groupnetcamview.cpp
-		src/video/groupnetcamview.h
-		src/video/ivideosettings.h
-		src/video/netcamview.cpp
-		src/video/netcamview.h
-		src/video/videoframe.cpp
-		src/video/videoframe.h
-		src/video/videomode.cpp
-		src/video/videomode.h
-		src/video/videosource.cpp
-		src/video/videosource.h
 		src/video/videosurface.cpp
 		src/video/videosurface.h
+		src/video/genericnetcamview.h
+		src/video/genericnetcamview.cpp
+		src/video/netcamview.h
+		src/video/netcamview.cpp
+		src/video/corevideosource.h
+		src/video/corevideosource.cpp
 		src/widget/form/aboutfriendform.cpp
 		src/widget/form/aboutfriendform.h
 		src/widget/chatformheader.cpp
@@ -346,23 +320,7 @@ set(${PROJECT_NAME}_SOURCES
 		src/worker/SendWorker.cpp
 )
 
-if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-	set(${PROJECT_NAME}_SOURCES ${${PROJECT_NAME}_SOURCES}
-			src/platform/camera/directshow.cpp
-			src/platform/camera/directshow.h)
-	set(${PROJECT_NAME}_RESOURCES ${${PROJECT_NAME}_RESOURCES})
-elseif (${CMAKE_SYSTEM_NAME} MATCHES "Linux" OR ${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD")
-	set(${PROJECT_NAME}_SOURCES ${${PROJECT_NAME}_SOURCES}
-			src/platform/camera/v4l2.cpp
-			src/platform/camera/v4l2.h)
-elseif (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-	set(${PROJECT_NAME}_SOURCES ${${PROJECT_NAME}_SOURCES}
-			src/platform/install_osx.cpp
-			src/platform/install_osx.h
-			src/platform/camera/avfoundation.h
-			src/platform/camera/avfoundation.mm
-	)
-endif ()
+
 
 if (UNIX)
 	set(${PROJECT_NAME}_SOURCES ${${PROJECT_NAME}_SOURCES}
@@ -507,6 +465,7 @@ target_link_libraries(${PROJECT_NAME}
 		PRIVATE OkIMCore
 		PRIVATE OkStorage
 		PRIVATE OkAudio
+		PRIVATE OkVideo
 		PRIVATE ${ok-gloox_LIBRARIES}
 		PUBLIC ${Qt5Core_LIBRARIES}
 		PUBLIC ${Qt5Gui_LIBRARIES}

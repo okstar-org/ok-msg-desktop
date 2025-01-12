@@ -16,13 +16,11 @@
 #include <QLabel>
 #include "src/core/core.h"
 #include "src/core/coreav.h"
-#include "src/model/friend.h"
 #include "src/model/friendlist.h"
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
-#include "src/video/corevideosource.h"
-#include "src/video/videosurface.h"
+#include "videosurface.h"
 #include "src/widget/tool/movablewidget.h"
 
 NetCamView::NetCamView(FriendId friendPk, QWidget* parent)
@@ -73,7 +71,7 @@ NetCamView::NetCamView(FriendId friendPk, QWidget* parent)
                                if (this->friendPk == friendPk) videoSurface->setAvatar(pixmap);
                            });
 
-    QRect videoSize = Nexus::getProfile()->getSettings()->getCamVideoRes();
+    QRect videoSize = lib::settings::OkSettings::getInstance().getCamVideoRes();
     qDebug() << "SIZER" << videoSize;
 }
 
@@ -87,7 +85,9 @@ void NetCamView::show(VideoSource* source, const QString& title) {
     QWidget::show();
 
     const auto av = CoreAV::getInstance();
-    selfVideoSurface->setSource(av->getSelfVideoSource());
+    auto vs = av->getSelfVideoSource();
+    //TODO Unable to set video source.
+    // selfVideoSurface->setSource(vs);
 }
 
 void NetCamView::hide() {

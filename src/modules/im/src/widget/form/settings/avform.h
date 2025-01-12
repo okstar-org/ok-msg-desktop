@@ -18,7 +18,7 @@
 #include <QString>
 
 #include "genericsettings.h"
-#include "src/video/videomode.h"
+#include "lib/video/videomode.h"
 #include "ui_avform.h"
 
 #include <memory>

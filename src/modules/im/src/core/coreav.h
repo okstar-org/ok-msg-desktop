@@ -41,8 +41,7 @@ public:
     static CoreAVPtr makeCoreAV(Core* core);
     static CoreAV* getInstance();
 
-    void setAudio(IAudioControl& newAudio);
-    IAudioControl* getAudio();
+
 
     ~CoreAV();
     void start();
@@ -160,10 +159,9 @@ private:
     static constexpr uint32_t VIDEO_DEFAULT_BITRATE = 2500;
 
 private:
-    //  std::unique_ptr<CoreVideoSource> selfVideoSource;
-    // atomic because potentially accessed by different threads
+
     Core* core;
-    std::atomic<IAudioControl*> audioCtrl;
+
     lib::messenger::MessengerCall* imCall;
     std::unique_ptr<QThread> coreavThread;
     QTimer* iterateTimer = nullptr;

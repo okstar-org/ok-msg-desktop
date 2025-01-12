@@ -25,6 +25,22 @@
 #include <memory>
 #include <unordered_map>
 
+
+/**\brief Image Descriptor */
+typedef struct vpx_image {
+    /* Image storage dimensions */
+    unsigned int w;         /**< Stored image width */
+    unsigned int h;         /**< Stored image height */
+    unsigned int bit_depth; /**< Stored image bit-depth */
+
+    /* Image display dimensions */
+    unsigned int d_w; /**< Displayed image width */
+    unsigned int d_h; /**< Displayed image height */
+
+    unsigned char* planes[4]; /**< pointer to the top left pixel for each plane */
+    int stride[4];            /**< stride between rows for each plane */
+} vpx_image_t;                /**< alias for struct vpx_image */
+
 struct AVFrame;
 
 struct ToxYUVFrame {
