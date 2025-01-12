@@ -169,4 +169,6 @@ private:
     static QReadWriteLock refsLock;
 };
 
+std::unique_ptr<VideoFrame> convert(VideoFrame::IDType id, const vpx_image_t* vpxframe);
+
 #endif  // VIDEOFRAME_H

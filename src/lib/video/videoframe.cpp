@@ -743,3 +743,40 @@ bool ToxYUVFrame::isValid() const { return width > 0 && height > 0; }
  * @brief Checks if the given ToxYUVFrame is valid or not, delegates to isValid().
  */
 ToxYUVFrame::operator bool() const { return isValid(); }
+
+std::unique_ptr<VideoFrame> convert(VideoFrame::IDType id, const vpx_image_t* vpxframe) {
+    int width = vpxframe->d_w;
+    int height = vpxframe->d_h;
+
+    AVFrame* avframe = av_frame_alloc();
+    if (!avframe) return std::unique_ptr<VideoFrame>();
+
+    avframe->width = width;
+    avframe->height = height;
+    avframe->format = AV_PIX_FMT_YUV420P;
+
+    int bufSize = av_image_alloc(avframe->data, avframe->linesize, width, height,
+                                 static_cast<AVPixelFormat>(AV_PIX_FMT_YUV420P),
+                                 VideoFrame::dataAlignment);
+
+    if (bufSize < 0) {
+        av_frame_free(&avframe);
+        return std::unique_ptr<VideoFrame>();
+    }
+
+    for (int i = 0; i < 3; ++i) {
+        int dstStride = avframe->linesize[i];
+        int srcStride = vpxframe->stride[i];
+        int minStride = std::min(dstStride, srcStride);
+        int size = (i == 0) ? height : height / 2;
+
+        for (int j = 0; j < size; ++j) {
+            uint8_t* dst = avframe->data[i] + dstStride * j;
+            uint8_t* src = vpxframe->planes[i] + srcStride * j;
+            // TODO: windows10 下在渲染自己视频时存在崩溃可能
+            memcpy(dst, src, minStride);
+        }
+    }
+
+    return std::make_unique<VideoFrame>(id, avframe, true);
+}
