@@ -15,7 +15,6 @@
 #include <cassert>
 #include <map>
 
-#include <QDebug>
 #include <QDesktopWidget>
 #include <QScreen>
 #include <QShowEvent>
@@ -25,16 +24,15 @@
 #include "lib/audio/iaudiosource.h"
 #include "lib/storage/settings/translator.h"
 #include "src/base/RecursiveSignalBlocker.h"
-#include "src/core/core.h"
-#include "src/core/coreav.h"
-#include "src/application.h"
-#include "src/nexus.h"
-#include "src/Bus.h"
-#include "src/persistence/profile.h"
-#include "src/persistence/settings.h"
+
 #include "lib/video/cameradevice.h"
 #include "lib/video/camerasource.h"
 #include "lib/video/ivideosettings.h"
+#include "src/Bus.h"
+#include "src/application.h"
+#include "src/core/coreav.h"
+#include "src/persistence/profile.h"
+#include "src/persistence/settings.h"
 #include "src/video/videosurface.h"
 #include "src/widget/tool/screenshotgrabber.h"
 
@@ -42,17 +40,15 @@
 #define ALC_ALL_DEVICES_SPECIFIER ALC_DEVICE_SPECIFIER
 #endif
 
-AVForm::AVForm( )
+AVForm::AVForm()
         : GenericForm(QPixmap(":/img/settings/av.png"))
-        , audioSettings(nullptr), videoSettings(nullptr)
-        , camVideoSurface(nullptr)
-         {
+        , audioSettings(nullptr)
+        , videoSettings(nullptr)
+        , camVideoSurface(nullptr) {
     setupUi(this);
 
     // block all child signals during initialization
     const ok::base::RecursiveSignalBlocker signalBlocker(this);
-
-
 
     eventsInit();
 
@@ -92,7 +88,6 @@ void AVForm::hideEvent(QHideEvent* event) {
 void AVForm::showEvent(QShowEvent* event) {
     camera = CameraSource::getInstance();
 
-
     GenericForm::showEvent(event);
 }
 
@@ -107,8 +102,7 @@ void AVForm::trackNewScreenGeometry(QScreen* qScreen) {
     connect(qScreen, &QScreen::geometryChanged, this, &AVForm::rescanDevices);
 }
 
-void AVForm::onProfileChanged(Profile* profile)
-{
+void AVForm::onProfileChanged(Profile* profile) {
     auto s = &lib::settings::OkSettings::getInstance();
     audioSettings = s;
     videoSettings = s;
@@ -121,12 +115,11 @@ void AVForm::onProfileChanged(Profile* profile)
 
     playbackSlider->setTracking(false);
     playbackSlider->setMaximum(totalSliderSteps);
-    playbackSlider->setValue(getStepsFromValue(s->getOutVolume(),
-                                               s->getOutVolumeMin(),
-                                               s->getOutVolumeMax()));
+    playbackSlider->setValue(
+            getStepsFromValue(s->getOutVolume(), s->getOutVolumeMin(), s->getOutVolumeMax()));
     playbackSlider->installEventFilter(this);
 
-            // audio settings
+    // audio settings
     microphoneSlider->setToolTip(tr("Use slider to set the gain of your input device ranging"
                                     " from %1dB to %2dB.")
                                          .arg(audio->minInputGain())
@@ -151,7 +144,6 @@ void AVForm::onProfileChanged(Profile* profile)
     audioThresholdSlider->installEventFilter(this);
 
     volumeDisplay->setMaximum(totalSliderSteps);
-
 
     getAudioOutDevices();
     getAudioInDevices();
@@ -581,14 +573,14 @@ void AVForm::on_playbackSlider_valueChanged(int sliderSteps) {
 void AVForm::on_cbEnableTestSound_stateChanged() {
     audioSettings->setEnableTestSound(cbEnableTestSound->isChecked());
 
-    if(!cbEnableTestSound->isChecked()){
+    if (!cbEnableTestSound->isChecked()) {
         return;
     }
 
-    if(!audio->isOutputReady() ){
+    if (!audio->isOutputReady()) {
         return;
     }
-    if (! audioSink) {
+    if (!audioSink) {
         return;
     }
     audioSink->playMono16Sound(IAudioSink::Sound::Test);

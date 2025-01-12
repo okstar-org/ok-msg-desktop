@@ -20,8 +20,9 @@
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
-#include "videosurface.h"
+#include "src/video/corevideosource.h"
 #include "src/widget/tool/movablewidget.h"
+#include "videosurface.h"
 
 NetCamView::NetCamView(FriendId friendPk, QWidget* parent)
         : GenericNetCamView(parent), selfFrame{nullptr}, friendPk{friendPk}, e(false) {
@@ -72,7 +73,7 @@ NetCamView::NetCamView(FriendId friendPk, QWidget* parent)
                            });
 
     QRect videoSize = lib::settings::OkSettings::getInstance().getCamVideoRes();
-    qDebug() << "SIZER" << videoSize;
+    qDebug() << "Video size:" << videoSize;
 }
 
 NetCamView::~NetCamView() {
@@ -83,11 +84,8 @@ void NetCamView::show(VideoSource* source, const QString& title) {
     setSource(source);
     setTitle(title);
     QWidget::show();
-
     const auto av = CoreAV::getInstance();
-    auto vs = av->getSelfVideoSource();
-    //TODO Unable to set video source.
-    // selfVideoSurface->setSource(vs);
+    selfVideoSurface->setSource(av->getSelfVideoSource());
 }
 
 void NetCamView::hide() {
