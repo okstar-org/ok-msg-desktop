@@ -22,11 +22,17 @@ endif ()
 
 
 pkg_check_modules(AVDEVICE REQUIRED libavdevice)
+include_directories(${AVDEVICE_INCLUDE_DIRS})
 pkg_check_modules(AVCODEC REQUIRED libavcodec)
+include_directories(${AVCODEC_INCLUDE_DIRS})
 pkg_check_modules(AVFORMAT REQUIRED libavformat)
+include_directories(${AVFORMAT_INCLUDE_DIRS})
 pkg_check_modules(AVUTIL REQUIRED libavutil)
+include_directories(${AVUTIL_INCLUDE_DIRS})
 pkg_check_modules(SWSCALE REQUIRED libswscale)
+include_directories(${SWSCALE_INCLUDE_DIRS})
 pkg_check_modules(SWRESAMPLE REQUIRED libswresample)
+include_directories(${SWRESAMPLE_INCLUDE_DIRS})
 
 add_library(${PROJECT_NAME} STATIC
 		${${PROJECT_NAME}_SOURCES}

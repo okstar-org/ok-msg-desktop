@@ -16,7 +16,7 @@
 #include <QPair>
 #include <QString>
 #include <QVector>
-#include "src/video/videomode.h"
+#include "lib/video/videomode.h"
 
 #ifndef Q_OS_WIN
 #error "This file is only meant to be compiled for Windows targets"

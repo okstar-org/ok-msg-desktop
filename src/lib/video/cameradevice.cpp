@@ -32,7 +32,7 @@ using AvFindInputFormatRet = decltype(av_find_input_format(""));
 #endif
 
 #ifdef Q_OS_WIN
-#include "src/platform/camera/directshow.h"
+#include "camera/directshow.h"
 #endif
 #if USING_V4L
 #include "camera/v4l2.h"
