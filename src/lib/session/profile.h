@@ -82,8 +82,6 @@ public:
 private:
     const AuthSession* authSession;
 
-    QByteArray toxsave;
-
     bool encrypted = false;
     QStringList profiles;
 

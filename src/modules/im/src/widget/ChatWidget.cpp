@@ -191,6 +191,7 @@ void ChatWidget::connectToCore(Core* core) {
     connect(core, &Core::groupPeerSizeChanged, this, &ChatWidget::onGroupPeerSizeChanged);
     connect(core, &Core::groupPeerNameChanged, this, &ChatWidget::onGroupPeerNameChanged);
     connect(core, &Core::groupPeerStatusChanged, this, &ChatWidget::onGroupPeerStatusChanged);
+
 }
 
 void ChatWidget::connectToCoreFile(CoreFile* coreFile) {
@@ -337,7 +338,7 @@ void ChatWidget::onStatusMessageSet(const QString& statusMessage) {
 }
 
 void ChatWidget::onFriendAdded(const Friend* f) {
-    sessionListWidget->addFriend(f);
+    sessionListWidget->setFriend(f);
 }
 
 void ChatWidget::onFriendRemoved(const Friend* f) {
@@ -500,6 +501,14 @@ void ChatWidget::on_nameClicked() {
 
 void ChatWidget::onProfileChanged(Profile* profile) {
     connect(profile, &Profile::nickChanged, this, &ChatWidget::onNicknameSet);
+
+    QList<MessageSession> mss;
+    profile->getHistory()->getMessageSessions(mss);
+
+    for(auto &p: mss){
+        //TODO ChatType::Chat
+        sessionListWidget->createMessageSession(ContactId(p.peer_jid), p.session_id, ChatType::Chat);
+    }
 }
 
 void ChatWidget::onGroupClicked() {

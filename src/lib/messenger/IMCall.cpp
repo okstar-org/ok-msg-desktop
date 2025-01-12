@@ -123,7 +123,7 @@ void IMCallSession::stop() {}
 IMCall::IMCall(IM* im, QObject* parent) : IMJingle(im, parent) {
     qDebug() << __func__ << "...";
     qRegisterMetaType<CallState>("CallState");
-    connect(im, &IM::started, this, &IMCall::onImStartedCall);
+    im->addIMHandler(this);
     connectCall(this);
 }
 
@@ -134,9 +134,14 @@ IMCall::~IMCall() {
 void IMCall::onImStartedCall() {
     auto client = im->getClient();
     assert(client);
-
+    client->registerMessageHandler(this);
+    client->registerStanzaExtension(new gloox::Jingle::JingleMessage());
     auto disco = client->disco();
+
     // jingle av
+    disco->addFeature(gloox::XMLNS_JINGLE);
+    disco->addFeature(gloox::XMLNS_JINGLE_MESSAGE);
+    disco->addFeature(gloox::XMLNS_JINGLE_ERRORS);
     disco->addFeature(gloox::XMLNS_JINGLE_ICE_UDP);
     disco->addFeature(gloox::XMLNS_JINGLE_APPS_DTLS);
     disco->addFeature(gloox::XMLNS_JINGLE_APPS_DTLS_SCTP);
@@ -819,6 +824,31 @@ bool IMCall::doDescriptionInfo(const gloox::Jingle::Session::Jingle*, const IMPe
 
 bool IMCall::doInvalidAction(const gloox::Jingle::Session::Jingle*, const IMPeerId&) {
     return true;
+}
+
+void IMCall::onConnecting()
+{
+
+}
+
+void IMCall::onConnected()
+{
+
+}
+
+void IMCall::onDisconnected(int)
+{
+
+}
+
+void IMCall::onStarted()
+{
+    onImStartedCall();
+}
+
+void IMCall::onStopped()
+{
+
 }
 
 bool IMCall::doSessionInitiate(gloox::Jingle::Session* session,

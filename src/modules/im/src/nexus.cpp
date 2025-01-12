@@ -161,8 +161,6 @@ void Nexus::start(std::shared_ptr<lib::session::AuthSession> session) {
 
     profile->startCore();
 
-    emit ok::Application::Instance() -> bus()->profileChanged(profile.get());
-
 #ifdef Q_OS_MAC
     // TODO: still needed?
     globalMenuBar = new QMenuBar(0);

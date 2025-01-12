@@ -57,8 +57,8 @@ public:
 };
 
 class IMJingle : public QObject,
-                 public gloox::MessageHandler,
                  public gloox::IqHandler,
+                 public gloox::MessageHandler,
                  public gloox::MessageSessionHandler {
     Q_OBJECT
 public:
@@ -132,8 +132,7 @@ protected:
     QString currentSid;
     gloox::Jingle::Session* currentSession;
 
-protected slots:
-    virtual void onImStarted();
+
 };
 
 }  // namespace lib::messenger

@@ -66,7 +66,9 @@ private:
     std::unique_ptr<IMFileTask> task;
 };
 
-class IMFile : public IMJingle, public IMSessionHandler {
+class IMFile :  public IMJingle,
+                public IMHandler,
+                public IMSessionHandler {
     Q_OBJECT
 public:
     explicit IMFile(IM* im, QObject* parent = nullptr);
@@ -156,6 +158,15 @@ protected:
     bool doSourceAdd(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
 
     bool doInvalidAction(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+
+    /**
+     * IMHandler
+     */
+    void onConnecting()override;
+    void onConnected()override;
+    void onDisconnected(int)override;
+    void onStarted()override;
+    void onStopped()override;
 
 private:
     void rejectFileRequest(const QString& friendId, const QString& sId);

@@ -55,7 +55,7 @@ IMJingle::IMJingle(IM* im, QObject* parent) : QObject(parent), im(im), currentSe
     qDebug() << __func__ << "Creating";
 
     qRegisterMetaType<std::string>("std::string");
-    connect(im, &IM::started, this, &IMJingle::onImStarted);
+
     qDebug() << __func__ << ("Created");
 }
 
@@ -63,21 +63,6 @@ IMJingle::~IMJingle() {
     auto client = im->getClient();
     client->removeMessageHandler(this);
     qDebug() << __func__;
-}
-
-void IMJingle::onImStarted() {
-    auto client = im->getClient();
-    assert(client);
-
-    client->registerMessageHandler(this);
-    client->registerStanzaExtension(new gloox::Jingle::JingleMessage());
-
-    auto disco = client->disco();
-    // jingle
-    disco->addFeature(gloox::XMLNS_JINGLE);
-    disco->addFeature(gloox::XMLNS_JINGLE_MESSAGE);
-    disco->addFeature(gloox::XMLNS_JINGLE_ERRORS);
-    disco->addFeature(gloox::XMLNS_JIT_MEET);
 }
 
 void IMJingle::handleMessageSession(gloox::MessageSession* session) {

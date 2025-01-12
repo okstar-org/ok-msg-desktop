@@ -37,7 +37,9 @@
 #include <QStyle>
 
 ContactWidget::ContactWidget(QWidget* parent)
-        : MainLayout(parent), ui(new Ui::ContactWidget), addForm{nullptr} {
+        : MainLayout(parent)
+        , ui(new Ui::ContactWidget)
+        , addForm(nullptr) {
     ui->setupUi(this);
 
     layout()->setMargin(0);
@@ -141,17 +143,20 @@ void ContactWidget::onCoreChanged(Core* core_) {
     connectToCore(core);
 }
 
+void ContactWidget::onCoreStarted()
+{
+    std::list<FriendInfo> fl;
+    core->loadFriendList(fl);
+    for (auto& friendInfo : fl) {
+        contactListWidget->addFriend(friendInfo.getId());
+    }
+    core->loadGroupList();
+}
+
 void ContactWidget::connectToCore(Core* core) {
     qDebug() << __func__ << core;
 
-    connect(core, &Core::started, [core, this]() {
-        std::list<FriendInfo> fl;
-        core->loadFriendList(fl);
-        for (auto& friendInfo : fl) {
-            contactListWidget->addFriend(friendInfo.getId());
-        }
-        core->loadGroupList();
-    });
+    connect(core, &Core::started, this, &ContactWidget::onCoreStarted);
 
     // 好友请求
     connect(core, &Core::friendRequestReceived, this, &ContactWidget::onFriendRequest);

@@ -12,14 +12,9 @@
 
 #include "messenger.h"
 #include "IMFile.h"
-
-#include <memory>
 #include <range/v3/all.hpp>
-
 #include "application.h"
-#include "base/logs.h"
 #include "base/xmls.h"
-
 #include "IMMeet.h"
 #include "lib/messenger/IM.h"
 #include "lib/messenger/IMCall.h"
@@ -68,46 +63,20 @@ void Messenger::sendChatState(const QString& friendId, int state) {
     _im->sendChatState(friendId, static_cast<gloox::ChatStateType>(state));
 }
 
-void Messenger::onDisconnected(int status) {
-    emit disconnected(status);
-}
+// void Messenger::onStarted() {
+//     qDebug() << __func__;
+// #ifdef OK_PLUGIN
+//     qDebug() << "Initialize plugin manager...";
+//     qRegisterMetaType<QDomDocument>("QDomDocument");
+//     connect(_im, &IM::exportEncryptedMessage, this, &Messenger::onEncryptedMessage);
+//     qDebug() << "Initialized plugin manager successfully";
+// #endif
+//     qDebug() << "connected completed";
+// }
 
-void Messenger::onStarted() {
-    qDebug() << __func__;
-
-    //  _im->enableRosterManager();
-    //  _im->sendPresence();
-    //  _im->sendServiceDiscoveryItems();
-
-#ifdef OK_PLUGIN
-    qDebug() << "Initialize plugin manager...";
-    qRegisterMetaType<QDomDocument>("QDomDocument");
-    connect(_im, &IM::exportEncryptedMessage, this, &Messenger::onEncryptedMessage);
-    qDebug() << "Initialized plugin manager successfully";
-#endif
-    qDebug() << "connected completed";
-}
-
-void Messenger::onStopped() {
-    qDebug() << "onStopped...";
-}
-
-void Messenger::onReceiveFriendMessage(QString peerId, IMMessage msg)
-{
-    qDebug() << __func__ << peerId;
-
-
-
-}
 
 bool Messenger::connectIM() {
-    connect(_im, &IM::started, this, &Messenger::onStarted);
-    connect(_im, &IM::disconnected, this, &Messenger::onDisconnected);
-
-    connect(_im, &IM::incoming, this, [=, this](QString xml) { emit incoming(xml); },
-            Qt::QueuedConnection);
-
-
+    // connect(_im, &IM::incoming, this, [=, this](QString xml) { emit incoming(xml); });
     return true;
 }
 
@@ -116,9 +85,6 @@ bool Messenger::initRoom() {
     return true;
 }
 
-void Messenger::onReceiveGroupMessage(IMMessage msg) {
-    emit receivedGroupMessage(msg);
-}
 
 QString Messenger::genUniqueId() {
     return qstring(_im->getClient()->getID());
@@ -227,13 +193,23 @@ void Messenger::send(const QString& xml) {
     _im->send(xml);
 }
 
-IMPeerId Messenger::getSelfId() const {
+IMContactId Messenger::getSelfId() const {
+    return _im->getSelfId();
+}
+
+IMPeerId Messenger::getSelfPeerId() const
+{
     return _im->getSelfPeerId();
 }
 
 IMStatus Messenger::getSelfStatus() const {
     auto pt = gloox::Presence::PresenceType::Available;
     return static_cast<IMStatus>(pt);
+}
+
+void Messenger::addIMHandler(IMHandler *h)
+{
+    _im->addIMHandler(h);
 }
 
 void Messenger::addSelfHandler(SelfHandler *h)

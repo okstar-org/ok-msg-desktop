@@ -20,9 +20,11 @@ GenericChatItemLayout::GenericChatItemLayout(QWidget* parent) : layout(new QVBox
 
 GenericChatItemLayout::~GenericChatItemLayout() { delete layout; }
 
-void GenericChatItemLayout::addSortedWidget(GenericChatItemWidget* widget, int stretch,
+void GenericChatItemLayout::addSortedWidget(GenericChatItemWidget* widget,
+                                            int stretch,
                                             Qt::Alignment alignment) {
     int closest = indexOfClosestSortedWidget(widget);
+    qDebug() << __func__ << closest;
     layout->insertWidget(closest, widget, stretch, alignment);
 }
 
@@ -30,15 +32,12 @@ int GenericChatItemLayout::indexOfSortedWidget(GenericChatItemWidget* widget) co
     if (layout->isEmpty()) return -1;
 
     int index = indexOfClosestSortedWidget(widget);
-
     if (index >= layout->count()) return -1;
 
-    GenericChatItemWidget* atMid =
-            qobject_cast<GenericChatItemWidget*>(layout->itemAt(index)->widget());
+    auto atMid = layout->itemAt(index)->widget();
     assert(atMid != nullptr);
 
     if (atMid == widget) return index;
-
     return -1;
 }
 

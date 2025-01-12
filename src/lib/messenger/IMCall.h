@@ -17,6 +17,7 @@
 #ifndef OKMSG_PROJECT_IMCALL_H
 #define OKMSG_PROJECT_IMCALL_H
 
+#include "IM.h"
 #include "IMFriend.h"
 #include "IMJingle.h"
 
@@ -115,7 +116,10 @@ private:
 /**
  * 音视频呼叫
  */
-class IMCall : public IMJingle, public IMSessionHandler, public ortc::OkRTCHandler {
+class IMCall : public IMJingle,
+               public IMSessionHandler,
+               public IMHandler,
+               public ortc::OkRTCHandler {
     Q_OBJECT
 public:
     explicit IMCall(IM* im, QObject* parent = nullptr);
@@ -216,6 +220,16 @@ protected:
     virtual bool doDescriptionInfo(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
     virtual bool doSourceAdd(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
     virtual bool doInvalidAction(const gloox::Jingle::Session::Jingle*, const IMPeerId&) override;
+
+
+    /**
+     * IMHandler
+     */
+    void onConnecting()override;
+    void onConnected()override;
+    void onDisconnected(int)override;
+    void onStarted()override;
+    void onStopped()override;
 
     IMCallSession* cacheSessionInfo(const IMContactId& from,
                                     const IMPeerId& to,

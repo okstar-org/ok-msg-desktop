@@ -120,6 +120,13 @@ MessageSessionWidget* MessageSessionListWidget::createMessageSession(const Conta
     listLayout->addWidget(sw);
     sessionWidgets.insert(sw->getContactId().toString(), sw);
 
+    auto his = Nexus::getProfile()->getHistory();
+    MessageSession ms = {
+            .session_id = sid,
+            .peer_jid = contactId.toString()
+    };
+    his->addMessageSession(ms);
+
     emit sessionAdded(sw);
     return sw;
 }
@@ -594,7 +601,7 @@ MessageSessionWidget* MessageSessionListWidget::getMessageSession(const QString&
     return sessionWidgets.value(contactId);
 }
 
-void MessageSessionListWidget::addFriend(const Friend* f) {
+void MessageSessionListWidget::setFriend(const Friend* f) {
     auto ms = getMessageSession(f->getId().toString());
     if (!ms) {
         qWarning() << "Unable to find message session" << f->getId();

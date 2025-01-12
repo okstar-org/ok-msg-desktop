@@ -61,7 +61,9 @@ class Core : public QObject,
              public ICoreGroupQuery,
              public lib::messenger::FriendHandler,
              public lib::messenger::GroupHandler,
-             public lib::messenger::SelfHandler {
+             public lib::messenger::SelfHandler,
+             public lib::messenger::IMHandler
+{
     Q_OBJECT
 public:
     enum class ToxCoreErrors { BAD_PROXY, INVALID_SAVE, FAILED_TO_START, ERROR_ALLOC };
@@ -188,6 +190,16 @@ private:
 
     QString getFriendRequestErrorMessage(const ToxId& friendId, const QString& message) const;
     void registerCallbacks(lib::messenger::Messenger* messenger);
+
+
+    /**
+     * IMHandler
+    */
+    void onConnecting()override;
+    void onConnected()override;
+    void onDisconnected(int)override;
+    void onStarted()override;
+    void onStopped()override;
 
     /**
      * FriendHandler
@@ -344,11 +356,8 @@ signals:
     void receiptRecieved(const FriendId& friedId, MsgId receipt);
 
     void failedToRemoveFriend(QString friendId);
-
 private slots:
     void process();
-    void onStarted();
-    void onDisconnected();
 };
 
 #endif  // CORE_HPP

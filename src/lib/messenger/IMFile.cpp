@@ -91,7 +91,8 @@ IMFile::IMFile(IM* im, QObject* parent) : IMJingle(im, parent) {
     qDebug() << __func__;
 
     qRegisterMetaType<File>("File");
-    connect(im, &IM::started, this, &IMFile::onImStartedFile);
+
+    im->addIMHandler(this);
 }
 
 IMFile::~IMFile() {
@@ -442,6 +443,31 @@ bool IMFile::doInvalidAction(const gloox::Jingle::Session::Jingle*, const IMPeer
         return false;
     }
     return true;
+}
+
+void IMFile::onConnecting()
+{
+
+}
+
+void IMFile::onConnected()
+{
+
+}
+
+void IMFile::onDisconnected(int)
+{
+
+}
+
+void IMFile::onStarted()
+{
+
+}
+
+void IMFile::onStopped()
+{
+    onImStartedFile();
 }
 
 bool IMFile::doSessionInitiate(gloox::Jingle::Session* session,

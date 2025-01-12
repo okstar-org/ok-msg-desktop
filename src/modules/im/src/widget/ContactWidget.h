@@ -74,6 +74,7 @@ public slots:
     void do_addContactToGroup(const ContactId& id, const ContactId& gId);
 
     void onCoreChanged(Core* core);
+    void onCoreStarted();
     void onFriendAdded(const FriendInfo& frnd);
     void onFriendRemoved(const Friend* f);
     void onFriendNickChanged(const FriendId& friendPk, const QString& nick);

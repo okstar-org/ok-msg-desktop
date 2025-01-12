@@ -362,6 +362,9 @@ void Widget::onCoreChanged(Core& coreRef) {
 void Widget::connectToCore(Core& core) {
     connect(&core, &Core::connected, this, &Widget::onConnected);
     connect(&core, &Core::disconnected, this, &Widget::onDisconnected);
+    connect(&core, &Core::started, this, &Widget::onStarted);
+
+
     connect(&core, &Core::statusSet, this, &Widget::onStatusSet);
     connect(&core, &Core::usernameSet, this, &Widget::setUsername);
     connect(&core, &Core::avatarSet, this, &Widget::setAvatar);
@@ -372,13 +375,18 @@ void Widget::connectToCore(Core& core) {
 }
 
 void Widget::onConnected() {
-    //  ui->statusButton->setEnabled(true);
+     // ui->statusButton->setEnabled(true);
     //  emit core->statusSet(core->getStatus());
 }
 
 void Widget::onDisconnected() {
     //  ui->statusButton->setEnabled(false);
     //  emit core->statusSet(Status::Status::Offline);
+}
+
+void Widget::onStarted()
+{
+
 }
 
 void Widget::onFailedToStartCore() {

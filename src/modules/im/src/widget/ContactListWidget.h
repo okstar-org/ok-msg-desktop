@@ -61,9 +61,6 @@ public:
     void setGroupTitle(const GroupId& groupId, const QString& author, const QString& title);
     void setGroupInfo(const GroupId& groupId, const GroupInfo& info);
 
-    //  void addCircleWidget(int id);
-    //  void addCircleWidget(FriendWidget *widget = nullptr);
-    //  void removeCircleWidget(CircleWidget *widget);
     void search(const QString& searchString,
                 bool hideOnline = false,
                 bool hideOffline = false,

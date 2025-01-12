@@ -51,6 +51,15 @@ class IMCall;
  */
 class IMMeet;
 
+class IMHandler{
+public:
+    virtual void onConnecting()= 0;
+    virtual void onConnected()= 0;
+    virtual void onDisconnected(int)= 0;
+    virtual void onStarted()= 0;
+    virtual void onStopped()= 0;
+};
+
 class SelfHandler {
 public:
     virtual void onSelfIdChanged(QString id) = 0;
@@ -124,11 +133,13 @@ public:
         return _im;
     }
 
-    IMPeerId getSelfId() const;
+    IMContactId getSelfId() const;
+    IMPeerId getSelfPeerId() const;
     QString getSelfUsername() const;
     QString getSelfNick() const;
     IMStatus getSelfStatus() const;
 
+    void addIMHandler(IMHandler*);
     void addSelfHandler(SelfHandler*);
     void addGroupHandler(GroupHandler*);
 
@@ -202,21 +213,20 @@ private:
     size_t sentCount = 0;
 
 signals:
-    void started();
-    void stopped();
-    void connected();
-    void disconnected(int);
+
     void incoming(const QString dom);
 
-    void receivedGroupMessage(lib::messenger::IMMessage msg);  //
+
     void messageSent(const IMMessage& message);                  //
 
-private slots:
-    void onDisconnected(int);
-    void onStarted();
-    void onStopped();
-    void onReceiveFriendMessage(QString peerId, IMMessage msg);
-    void onReceiveGroupMessage(lib::messenger::IMMessage imMsg);
+private slots:    
+    // void onConnecting();
+    // void onConnected();
+    // void onDisconnected(int);
+    // void onStarted();
+    // void onStopped();
+    // void onReceiveFriendMessage(QString peerId, IMMessage msg);
+    // void onReceiveGroupMessage(lib::messenger::IMMessage imMsg);
     void onEncryptedMessage(QString dom);
 
 };

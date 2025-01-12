@@ -115,7 +115,7 @@ bool CoreFile::sendFile(QString friendId, const QFile& file_) {
 
     QMutexLocker{coreLoopLock};
 
-    auto sender = messenger->getSelfId().toFriendId();
+    auto sender = messenger->getSelfId().toString();
 
     auto fileInfo = QFileInfo(file_);
     auto fileId = ok::base::UUID::make();
@@ -384,8 +384,7 @@ void CoreFile::handleAvatarOffer(QString friendId, QString fileId, bool accept) 
 
 void CoreFile::onFileRequest(const QString& from, const lib::messenger::File& file) {
     qDebug() << __func__ << file.name << "from" << from;
-
-    auto receiver = messenger->getSelfId().toFriendId();
+    auto receiver = messenger->getSelfId().toString();
     ToxFile toxFile(from, receiver, file.sId, file);
     addFile(toxFile);
     qDebug() << "file:" << toxFile.toString();

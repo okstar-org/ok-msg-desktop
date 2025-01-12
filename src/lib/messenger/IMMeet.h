@@ -30,7 +30,8 @@ namespace lib::messenger {
 
 class IM;
 
-class IMMeet : public IMJingle,
+class IMMeet :
+               public IMJingle,
                public SelfHandler,
                public IMSessionHandler,
                public IMFromHostHandler,

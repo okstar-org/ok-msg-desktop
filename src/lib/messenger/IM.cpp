@@ -24,7 +24,6 @@
 
 #include <list>
 #include <string>
-#include <thread>
 #include <utility>
 
 #include <attention.h>
@@ -103,14 +102,10 @@ IM::~IM() {
     qDebug() << __func__;
 }
 
-void IM::run() {
-    qDebug() << __func__;
-    start();
-}
 
 std::unique_ptr<Client> IM::makeClient() {
-    JID loginJid(QString("%1@%2/%3").arg(_username).arg(_host).arg(_resource).toStdString());
-
+    qDebug() << __func__;
+    loginJid = JID(QString("%1@%2/%3").arg(_username).arg(_host).arg(_resource).toStdString());
     qDebug() << __func__ << "Using Jid:" << qstring(loginJid.full());
 
     /**
@@ -231,12 +226,13 @@ std::unique_ptr<Client> IM::makeClient() {
 
 void IM::start() {
     qDebug() << __func__;
+    mutex.lock();
 
-    QMutexLocker locker(&mutex);
-    _client = makeClient();
-    qDebug() << __func__ << "Create IM client is:" << _client.get();
-    emit onConnecting();
+    for (auto h : imHandlers) {
+        h->onConnecting();
+    }
 
+    _client = makeClient();  
     // block the current thread
     _client->connect(true);
 }
@@ -249,14 +245,21 @@ bool IM::isStarted() const
 void IM::stop() {
     qDebug() << __func__;
     QMutexLocker locker(&mutex);
+
     doDisconnect();
-    emit stopped();
+
+    for (auto h : imHandlers) {
+        h->onStopped();
+    }
 }
 
 void IM::onDisconnect(ConnectionError e) {
     qDebug() << __func__ << "error:" << e;
 
-    emit disconnected((int)e);
+    for (auto h : imHandlers) {
+        h->onDisconnected((int)e);
+    }
+
 }
 
 void IM::onConnect() {
@@ -287,8 +290,12 @@ void IM::onConnect() {
         rosterManager = enableRosterManager();
     }
 
-    emit onConnected();
-    emit started();
+    mutex.unlock();
+
+    for (auto h : imHandlers) {
+        h->onConnected();
+        h->onStarted();
+    }
 }
 
 void IM::send(const QString& xml) {
@@ -300,14 +307,12 @@ void IM::send(const QString& xml) {
     _client.reset();
 }
 
-void IM::interrupt() {}
-
 IMMessage IM::fromXMsg(MsgType type, const gloox::Message& msg) {
     IMMessage imMsg = {.from = qstring(msg.from().full()),
                        .to = qstring(msg.to().full()),
                        .body = qstring(msg.body()),
-                       .timestamp = ok::base::Times::now()};
-
+                       .timestamp = ok::base::Times::now()
+    };
     if (!msg.id().empty()) {
         imMsg.id = (qstring(msg.id()));
     }
@@ -316,10 +321,8 @@ IMMessage IM::fromXMsg(MsgType type, const gloox::Message& msg) {
 
 void IM::enableDiscoManager() {
     qDebug() << "enableDiscoManager";
-
     auto client = _client.get();
     auto disco = client->disco();
-
     for (const auto& feat : features) {
         qDebug() << "addFeature:" << feat;
         disco->addFeature(stdstring(feat));
@@ -597,6 +600,7 @@ void IM::doMessageChat(const Message& msg, QString& friendId, const QString& bod
     if (pReceipt && !pReceipt->id().empty()) {
         emit receiveMessageReceipt(friendId, qstring(pReceipt->id()));
     }
+
     // forwarded/message
     auto pCarbons = msg.findExtension<Carbons>(ExtCarbons);
     if (pCarbons && pCarbons->embeddedStanza()) {
@@ -1804,16 +1808,16 @@ void IM::handleDataForm(const JID& from, const DataForm& form) {};
 void IM::handleOOB(const JID& from, const OOB& oob) {};
 
 IMContactId IM::getSelfId() {
-    IMContactId fId(qstring(_client->jid().bare()));
-    return fId;
+    return IMContactId(loginJid.bare());
 }
 
 IMPeerId IM::getSelfPeerId() {
+    QMutexLocker locker(&mutex);
     return IMPeerId(qstring(_client->jid().full()));
-    ;
 }
 
 QString IM::getSelfUsername() {
+    QMutexLocker locker(&mutex);
     return qstring(self().username());
 }
 
@@ -1912,13 +1916,11 @@ void IM::loadRosterInfo() {
     _client->disco()->getDiscoItems(self().bareJID(), "", this, DISCO_CTX_ROSTER);
     auto m = _client->rosterManager()->roster();
     for (auto it = m->begin(); it != m->end(); it++) {
-        msleep(100);
         _client->disco()->getDiscoItems(it->first, "", this, DISCO_CTX_ROSTER);
     }
 }
 
 void IM::sendPresence() {
-    //
     Presence pres(Presence::PresenceType::Available, JID());
     pres.addExtension(new Capabilities);
     _client->setPresence();
@@ -2488,6 +2490,11 @@ void IM::addSelfHandler(SelfHandler *h)
 void IM::addGroupHandler(GroupHandler *h)
 {
     groupHandlers.push_back(h);
+}
+
+void IM::addIMHandler(IMHandler *h)
+{
+    imHandlers.push_back(h);
 }
 
 }  // namespace lib::messenger

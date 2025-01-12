@@ -56,7 +56,7 @@ public:
 
     void removeSessionWidget(MessageSessionWidget* w);
 
-    void addFriend(const Friend* f);
+    void setFriend(const Friend* f);
     void removeFriend(const Friend* f);
 
     void setFriendStatus(const FriendId& friendPk, Status::Status status);

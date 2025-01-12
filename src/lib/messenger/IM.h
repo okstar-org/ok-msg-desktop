@@ -139,11 +139,9 @@ struct IMRoomInfo {
     std::map<std::string, std::string> changes;
 };
 
-class IM : public ok::base::Task,
+class IM : public QObject,
            public gloox::ConnectionListener,
-#ifdef WANT_PING
            public gloox::PingHandler,
-#endif
            public gloox::RegistrationHandler,
            public gloox::IncomingHandler,
            public gloox::PubSub::ResultHandler,
@@ -277,8 +275,6 @@ public:
 
     void stop();
 
-    void interrupt();
-
     // 2-群组列表
     void loadGroupList();
     // 3-用户信息
@@ -331,18 +327,19 @@ public:
     void addFriendHandler(FriendHandler*);
     void addSelfHandler(SelfHandler *);
     void addGroupHandler(GroupHandler *);
+    void addIMHandler(IMHandler *);
+
 protected:
-    void run() override;
 
     virtual void handleBookmarks(const gloox::BMConferenceList& cList) override;
 
-#ifdef WANT_PING
+
     /**
      * ping handler
      */
     virtual void handlePing(const gloox::PingHandler::PingType type,
                             const std::string& body) override;
-#endif
+
 
     /**
      * incoming handler
@@ -616,7 +613,7 @@ private:
     QString _resource;
 
     QString _nick;
-
+    gloox::JID loginJid;
     std::unique_ptr<gloox::Client> _client;
 
 
@@ -671,34 +668,14 @@ private:
     std::vector<SelfHandler*> selfHandlers;
     std::vector<FriendHandler*> friendHandlers;
     std::vector<GroupHandler*> groupHandlers;
+    std::vector<IMHandler*> imHandlers;
 
 signals:
-    void onConnecting();
-    void onConnected();
-    void disconnected(int error);
-
-
     void exportEncryptedMessage(QString em);
 
     void receiveMessageReceipt(QString friendId, QString receipt);
 
     void incoming(QString xml);
-
-
-    void started();
-    void stopped();
-
-    // void receiveRoomMessage(QString groupId, IMPeerId friendId, IMMessage);
-
-    // void groupReceived(const QString groupId, const QString name);
-    // void groupListReceivedDone();
-    // void groupOccupants(const QString groupId, const uint size);
-    // void groupOccupantStatus(const QString& groupId, IMGroupOccupant occ);
-    // void groupInvite(const QString groupId, const QString peerId, const QString message);
-
-    // void groupRoomInfo(QString groupId, IMGroup groupInfo);
-
-    // void groupSubjectChanged(const gloox::JID group, const std::string subject);
 
     void doPubSubEventDone();
 

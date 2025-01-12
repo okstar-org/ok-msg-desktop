@@ -11,14 +11,17 @@
  */
 
 #include "core.h"
-#include "corefile.h"
 
-#include "lib/messenger/messenger.h"
-#include "lib/session/AuthSession.h"
 
-#include "src/core/coreav.h"
+#include <QCoreApplication>
+#include <QString>
+#include <QStringBuilder>
+#include <QTimer>
+#include <cassert>
+
 
 #include "base/compatiblerecursivemutex.h"
+#include "src/core/coreav.h"
 #include "src/core/icoresettings.h"
 #include "src/core/toxoptions.h"
 #include "src/model/friend.h"
@@ -26,15 +29,10 @@
 #include "src/model/status.h"
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
-
-#include <QCoreApplication>
-#include <QString>
-#include <QStringBuilder>
-#include <QTimer>
-#include <cassert>
-#include <vector>
-
+#include "lib/messenger/messenger.h"
 #include "lib/messenger/IMFriend.h"
+#include "src/application.h"
+#include "src/Bus.h"
 
 #define ASSERT_CORE_THREAD assert(QThread::currentThread() == coreThread.get())
 
@@ -52,7 +50,7 @@ Core::Core(QThread* coreThread)
     qRegisterMetaType<FriendInfo>("FriendInfo");
 
     toxTimer->setSingleShot(true);
-    connect(toxTimer, &QTimer::timeout, this, &Core::process);
+    // connect(toxTimer, &QTimer::timeout, this, &Core::process);
     connect(coreThread, &QThread::finished, toxTimer, &QTimer::stop);
     toxTimer->start();
 }
@@ -92,12 +90,10 @@ void Core::registerCallbacks(lib::messenger::Messenger* messenger) {
     messenger->addFriendHandler(this);
     messenger->addGroupHandler(this);
     messenger->addSelfHandler(this);
-
-    connect(messenger, &lib::messenger::Messenger::started, [this, messenger]() {
-        messenger->requestBookmarks();
-        emit started();
-    });
+    messenger->addIMHandler(this);
 }
+
+
 
 /**
  * @brief Factory method for the Core object
@@ -112,6 +108,7 @@ ToxCorePtr Core::makeToxCore(const QString& host, const QString& name, const QSt
         qCritical() << "could not allocate Core thread";
         return {};
     }
+
     thread->setObjectName("Core");
 
     auto toxOptions = ToxOptions::makeToxOptions(settings);
@@ -133,26 +130,41 @@ ToxCorePtr Core::makeToxCore(const QString& host, const QString& name, const QSt
 
     core->messenger = std::make_unique<lib::messenger::Messenger>(host, name, password);
     core->registerCallbacks(core->messenger.get());
-    connect(core->messenger.get(), &lib::messenger::Messenger::disconnected, core.get(),
-            &Core::onDisconnected);
-    // connect(thread, &QThread::started, core.get(), &Core::onStarted);
-    core->moveToThread(thread);
-   // process();
+    connect(thread, &QThread::started, core.get(), &Core::process);
 
+    core->moveToThread(thread);
     return core;
 }
 
 void Core::onStarted() {
     qDebug() << __func__;
-
-    // process();  // starts its own timer
-
-
     //  emit avReady();
+
+    messenger->requestBookmarks();
+
+    emit ok::Application::Instance() -> bus()->profileChanged(Nexus::getProfile());
+    emit started();
 }
 
-void Core::onDisconnected() {
+void Core::onStopped()
+{
     qDebug() << __func__;
+}
+
+void Core::onDisconnected(int) {
+    qDebug() << __func__;
+    mutex.unlock();
+    emit disconnect();
+}
+void Core::onConnecting()
+{
+    qDebug() << __func__;
+}
+void Core::onConnected()
+{
+    qDebug() << __func__;
+    mutex.unlock();
+    emit connected();
 }
 
 /**
@@ -160,10 +172,12 @@ void Core::onDisconnected() {
  */
 void Core::start() {
     qDebug() << __func__ << "...";
+    QMutexLocker ml{&mutex};
     coreThread->start();
 }
 
 void Core::stop() {
+    QMutexLocker ml{&mutex};
     qDebug() << __func__ << "...";
     coreThread->quit();
 }
@@ -180,11 +194,13 @@ Core* Core::getInstance() {
  * own timer
  */
 void Core::process() {
-    // QMutexLocker ml{&coreLoopLock};
+    qDebug() << __func__ ;
 
     ASSERT_CORE_THREAD;
 
-    QThread::sleep(5);
+    mutex.lock();
+
+    QThread::sleep(1);
     if(!messenger->isStarted()){
         qDebug() << __func__ << "start...";
         messenger->start();
@@ -641,7 +657,6 @@ void Core::setPassword(const QString& password) {
  * @brief Returns our Ok ID
  */
 ToxId Core::getSelfPeerId() const {
-    // QMutexLocker ml{&coreLoopLock};
     auto selfId = messenger->getSelfId();
     return ToxId(selfId.toString().toUtf8());
 }
@@ -651,7 +666,6 @@ ToxId Core::getSelfPeerId() const {
  * @return Self PK
  */
 FriendId Core::getSelfId() const {
-    QMutexLocker ml{&mutex};
     auto friendId = messenger->getSelfId();
     return FriendId(friendId.toString());
 }

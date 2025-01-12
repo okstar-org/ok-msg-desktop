@@ -140,6 +140,7 @@ public slots:
     void forceShow();
     void onConnected();
     void onDisconnected();
+    void onStarted();
     void onStatusSet(Status::Status status);
     void onFailedToStartCore();
     void onBadProxyCore();

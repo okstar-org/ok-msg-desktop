@@ -97,23 +97,19 @@ FriendWidget* ContactListWidget::addFriend(const FriendId& friendId) {
         return exist;
     }
 
-    auto m_friend = Core::getInstance()->getFriendList().findFriend(friendId);
+    Core* core = Nexus::getCore();
+    auto m_friend = core->getFriendList().findFriend(friendId);
     auto fw = new FriendWidget(m_friend, this);
-
-    connect(fw, &FriendWidget::updateFriendActivity, this,
-            &ContactListWidget::updateFriendActivity);
+    connect(fw, &FriendWidget::updateFriendActivity, this, &ContactListWidget::updateFriendActivity);
     connect(fw, &FriendWidget::friendClicked, this, &ContactListWidget::slot_friendClicked);
 
     friendWidgets.insert(friendId.toString(), fw);
-
-    Core* core = Nexus::getCore();
-    auto frid = core->getFriendList().findFriend(friendId);
-    emit Widget::getInstance() -> friendAdded(frid);
-
     listLayout->addWidget(fw);
 
     auto status = core->getFriendStatus(friendId.toString());
     setFriendStatus(friendId, status);
+
+    emit Widget::getInstance() -> friendAdded(m_friend);
     return fw;
 }
 
@@ -376,7 +372,6 @@ void ContactListWidget::updateActivityTime(const QDateTime& time) {
     //  QWidget *widget = activityLayout->itemAt(timeIndex)->widget();
     //  CategoryWidget *categoryWidget = static_cast<CategoryWidget *>(widget);
     //  categoryWidget->updateStatus();
-
     //  categoryWidget->setVisible(categoryWidget->hasChatrooms());
 }
 

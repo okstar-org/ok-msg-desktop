@@ -177,7 +177,6 @@ void LoginWidget::doLogin() {
         }
         case lib::session::Status::CONNECTING: {
             qDebug(("CONNECTING ..."));
-            //    sess->interrupt();
             return;
         }
         default: {
