@@ -60,6 +60,7 @@ OkSettings::OkSettings(QObject* parent)
     connect(this, &OkSettings::windowGeometryChanged, this, &OkSettings::saveGlobal);
     connect(this, &OkSettings::timestampFormatChanged, this, &OkSettings::saveGlobal);
     connect(this, &OkSettings::dateFormatChanged, this, &OkSettings::saveGlobal);
+    connect(this, &OkSettings::outVolumeChanged, this, &OkSettings::saveGlobal);
 
     path = getGlobalSettingsFile();
     qDebug() << "Settings file at:" << path;
@@ -183,9 +184,9 @@ void OkSettings::saveGlobal() {
         s.setValue("audioInDevEnabled", audioInDevEnabled);
         s.setValue("audioInGainDecibel", audioInGainDecibel);
         s.setValue("outDev", outDev);
+        s.setValue("outVolume", outVolume);
         s.setValue("audioOutDevEnabled", audioOutDevEnabled);
         s.setValue("audioThreshold", audioThreshold);
-        s.setValue("outVolume", outVolume);
         s.setValue("enableTestSound", enableTestSound);
         s.setValue("audioBitrate", audioBitrate);
     }

@@ -493,6 +493,9 @@ public:
 
     virtual void setEnable(CtrlState state) = 0;
 
+    // 0-100
+    virtual void setSpeakerVolume(uint32_t vol) = 0;
+
     virtual bool quit(const std::string& peerId) = 0;
 
     // 获取视频设备数量

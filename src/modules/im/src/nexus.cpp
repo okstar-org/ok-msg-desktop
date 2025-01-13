@@ -397,6 +397,7 @@ void Nexus::playNotificationSound(IAudioSink::Sound sound, bool loop) {
     }
 
     if (audioNotification == nullptr) {
+        audioControl->setOutputVolumeStep(settings->getOutVolume());
         audioNotification = std::unique_ptr<IAudioSink>(audioControl->makeSink());
         if (audioNotification == nullptr) {
             qDebug() << "Failed to allocate AudioSink";

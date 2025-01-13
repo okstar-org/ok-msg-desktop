@@ -36,7 +36,6 @@ static CoreAV* instance = nullptr;
 
 CoreAV::CoreAV(Core* core)
         : core(core)
-
         , coreavThread(new QThread{this})
         , selfVideoSource(std::make_unique<CoreVideoSource>())
         , iterateTimer(new QTimer(this)) {
@@ -51,6 +50,14 @@ CoreAV::CoreAV(Core* core)
     qRegisterMetaType<lib::ortc::PeerConnectionState>("lib::ortc::PeerConnectionState");
 
     connect(this, &CoreAV::createCallToPeerId, this, &CoreAV::doCreateCallToPeerId);
+
+    auto s = &lib::settings::OkSettings::getInstance();
+
+    connect(s, &lib::settings::OkSettings::outVolumeChanged, this, [&](int vol) {
+        if (imCall) {
+            imCall->setSpeakerVolume(vol);
+        }
+    });
 
     iterateTimer->setSingleShot(true);
     connect(iterateTimer, &QTimer::timeout, this, &CoreAV::process);
@@ -384,7 +391,7 @@ void CoreAV::toggleMuteCallInput(const ContactId* f) {
     if (f && (it != calls.end())) {
         ToxCall& call = *it->second;
         call.setMuteMic(!call.getMuteMic());
-        imCall->setMute(call.getCtrlState());
+        imCall->setCtrlState(call.getCtrlState());
     }
 }
 
@@ -403,7 +410,7 @@ void CoreAV::toggleMuteCallOutput(const ContactId* f) {
     if (f && (it != calls.end())) {
         ToxCall& call = *it->second;
         call.setMuteMic(!call.getMuteMic());
-        imCall->setMute(call.getCtrlState());
+        imCall->setCtrlState(call.getCtrlState());
     }
 }
 
@@ -541,7 +548,7 @@ void CoreAV::muteCallInput(const ContactId* g, bool mute) {
     auto it = calls.find(g->getId());
     if (g && (it != calls.end())) {
         it->second->setMuteMic(mute);
-        imCall->setMute(it->second->getCtrlState());
+        imCall->setCtrlState(it->second->getCtrlState());
     }
 }
 
@@ -555,7 +562,7 @@ void CoreAV::muteCallOutput(const ContactId* g, bool mute) {
     auto it = calls.find(g->getId());
     if (g && (it != calls.end())) {
         it->second->setMuteVol(mute);
-        imCall->setMute(it->second->getCtrlState());
+        imCall->setCtrlState(it->second->getCtrlState());
     }
 }
 

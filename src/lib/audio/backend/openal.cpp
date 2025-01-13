@@ -21,8 +21,8 @@
 #include <QtMath>
 
 #include <cassert>
+#include "audio.h"
 #include "lib/storage/settings/OkSettings.h"
-
 
 namespace {
 void applyGain(int16_t* buffer, uint32_t bufferSize, qreal gainFactor) {
@@ -127,12 +127,18 @@ qreal OpenAL::outputVolume() const {
  * @param[in] volume   the master volume (between 0 and 1)
  */
 void OpenAL::setOutputVolume(qreal volume) {
+    qDebug() << __func__ << volume;
     QMutexLocker locker(&audioLock);
-
     volume = std::max(0.0, std::min(volume, 1.0));
-
     alListenerf(AL_GAIN, static_cast<ALfloat>(volume));
     checkAlError();
+}
+
+void OpenAL::setOutputVolumeStep(int step) {
+    auto valMin = minOutputVolume();
+    auto valMax = maxOutputVolume();
+    qreal volume = (static_cast<float>(step) / Audio::totalSteps) * (valMax - valMin) + valMin;
+    setOutputVolume(volume);
 }
 
 /**
@@ -238,10 +244,10 @@ bool OpenAL::reinitOutput(const QString& outDevDesc) {
 std::unique_ptr<IAudioSink> OpenAL::makeSink() {
     QMutexLocker locker(&audioLock);
 
-       if (!autoInitOutput()) {
-           qWarning("Failed to subscribe to audio output device.");
-           return {};
-       }
+    if (!autoInitOutput()) {
+        qWarning("Failed to subscribe to audio output device.");
+        return {};
+    }
 
     ALuint sid;
     alGenSources(1, &sid);
@@ -351,10 +357,11 @@ bool OpenAL::autoInitOutput() {
     return alOutDev ? true : initOutput(lib::settings::OkSettings::getInstance().getOutDev());
 }
 
-bool OpenAL::initInput(const QString& deviceName) { return initInput(deviceName, AUDIO_CHANNELS); }
+bool OpenAL::initInput(const QString& deviceName) {
+    return initInput(deviceName, AUDIO_CHANNELS);
+}
 
 bool OpenAL::initInput(const QString& deviceName, uint32_t channels) {
-
     qDebug() << "Opening audio input" << deviceName;
     assert(!alInDev);
 
@@ -593,7 +600,9 @@ float OpenAL::getVolume() {
 /**
  * @brief Called by voiceTimer's timeout to disable audio broadcasting
  */
-void OpenAL::stopActive() { isActive = false; }
+void OpenAL::stopActive() {
+    isActive = false;
+}
 
 /**
  * @brief handles recording of audio frames
@@ -725,15 +734,23 @@ void OpenAL::stopLoop(uint sourceId) {
     cleanupBuffers(sourceId);
 }
 
-qreal OpenAL::inputGain() const { return gain; }
+qreal OpenAL::inputGain() const {
+    return gain;
+}
 
-qreal OpenAL::getInputThreshold() const { return inputThreshold; }
+qreal OpenAL::getInputThreshold() const {
+    return inputThreshold;
+}
 
-qreal OpenAL::inputGainFactor() const { return gainFactor; }
+qreal OpenAL::inputGainFactor() const {
+    return gainFactor;
+}
 
 void OpenAL::setInputGain(qreal dB) {
     gain = qBound(minInGain, dB, maxInGain);
     gainFactor = qPow(10.0, (gain / 20.0));
 }
 
-void OpenAL::setInputThreshold(qreal normalizedThreshold) { inputThreshold = normalizedThreshold; }
+void OpenAL::setInputThreshold(qreal normalizedThreshold) {
+    inputThreshold = normalizedThreshold;
+}

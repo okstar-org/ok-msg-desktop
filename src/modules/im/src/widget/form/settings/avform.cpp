@@ -56,11 +56,71 @@ AVForm::AVForm()
     for (QScreen* qScreen : QGuiApplication::screens()) {
         connect(qScreen, &QScreen::geometryChanged, this, &AVForm::rescanDevices);
     }
+
+    auto s = &lib::settings::OkSettings::getInstance();
+    audioSettings = s;
+    videoSettings = s;
+    audio = std::unique_ptr<IAudioControl>(Audio::makeAudio(*s));
+
+    cbEnableTestSound->setChecked(s->getEnableTestSound());
+    cbEnableTestSound->setToolTip(tr("Play a test sound while changing the output volume."));
+
+    connect(rescanButton, &QPushButton::clicked, this, &AVForm::rescanDevices);
+
+    playbackSlider->setTracking(false);
+    playbackSlider->setMaximum(Audio::totalSteps);
+    playbackSlider->setValue(
+            getStepsFromValue(s->getOutVolume(), s->getOutVolumeMin(), s->getOutVolumeMax()));
+    playbackSlider->installEventFilter(this);
+
+    // audio settings
+    microphoneSlider->setToolTip(tr("Use slider to set the gain of your input device ranging"
+                                    " from %1dB to %2dB.")
+                                         .arg(audio->minInputGain())
+                                         .arg(audio->maxInputGain()));
+    microphoneSlider->setMaximum(Audio::totalSteps);
+    microphoneSlider->setTickPosition(QSlider::TicksBothSides);
+    static const int numTicks = 4;
+    microphoneSlider->setTickInterval(Audio::totalSteps / numTicks);
+    microphoneSlider->setTracking(false);
+    microphoneSlider->installEventFilter(this);
+
+    microphoneSlider->setValue(
+            getStepsFromValue(audio->inputGain(), audio->minInputGain(), audio->maxInputGain()));
+
+    audioThresholdSlider->setToolTip(
+            tr("Use slider to set the activation volume for your input device."));
+    audioThresholdSlider->setMaximum(Audio::totalSteps);
+    audioThresholdSlider->setValue(getStepsFromValue(audioSettings->getAudioThreshold(),
+                                                     audio->minInputThreshold(),
+                                                     audio->maxInputThreshold()));
+    audioThresholdSlider->setTracking(false);
+    audioThresholdSlider->installEventFilter(this);
+
+    volumeDisplay->setMaximum(Audio::totalSteps);
+
+    getAudioOutDevices();
+    getAudioInDevices();
+    createVideoSurface();
+    getVideoDevices();
+
+    if (audioSrc == nullptr) {
+        audioSrc = audio->makeSource();
+        connect(audioSrc.get(), &IAudioSource::volumeAvailable, this, &AVForm::setVolume);
+    }
+
+    if (audioSink == nullptr) {
+        audioSink = audio->makeSink();
+    }
+
+    fillAudioQualityComboBox();
+
     auto* qGUIApp = qobject_cast<QGuiApplication*>(qApp);
     assert(qGUIApp);
     connect(qGUIApp, &QGuiApplication::screenAdded, this, &AVForm::trackNewScreenGeometry);
     connect(qGUIApp, &QGuiApplication::screenAdded, this, &AVForm::rescanDevices);
     connect(qGUIApp, &QGuiApplication::screenRemoved, this, &AVForm::rescanDevices);
+
     settings::Translator::registerHandler(std::bind(&AVForm::retranslateUi, this), this);
 
     auto bus = ok::Application::Instance()->bus();
@@ -102,65 +162,7 @@ void AVForm::trackNewScreenGeometry(QScreen* qScreen) {
     connect(qScreen, &QScreen::geometryChanged, this, &AVForm::rescanDevices);
 }
 
-void AVForm::onProfileChanged(Profile* profile) {
-    auto s = &lib::settings::OkSettings::getInstance();
-    audioSettings = s;
-    videoSettings = s;
-    audio = std::unique_ptr<IAudioControl>(Audio::makeAudio(*s));
-
-    cbEnableTestSound->setChecked(s->getEnableTestSound());
-    cbEnableTestSound->setToolTip(tr("Play a test sound while changing the output volume."));
-
-    connect(rescanButton, &QPushButton::clicked, this, &AVForm::rescanDevices);
-
-    playbackSlider->setTracking(false);
-    playbackSlider->setMaximum(totalSliderSteps);
-    playbackSlider->setValue(
-            getStepsFromValue(s->getOutVolume(), s->getOutVolumeMin(), s->getOutVolumeMax()));
-    playbackSlider->installEventFilter(this);
-
-    // audio settings
-    microphoneSlider->setToolTip(tr("Use slider to set the gain of your input device ranging"
-                                    " from %1dB to %2dB.")
-                                         .arg(audio->minInputGain())
-                                         .arg(audio->maxInputGain()));
-    microphoneSlider->setMaximum(totalSliderSteps);
-    microphoneSlider->setTickPosition(QSlider::TicksBothSides);
-    static const int numTicks = 4;
-    microphoneSlider->setTickInterval(totalSliderSteps / numTicks);
-    microphoneSlider->setTracking(false);
-    microphoneSlider->installEventFilter(this);
-
-    microphoneSlider->setValue(
-            getStepsFromValue(audio->inputGain(), audio->minInputGain(), audio->maxInputGain()));
-
-    audioThresholdSlider->setToolTip(
-            tr("Use slider to set the activation volume for your input device."));
-    audioThresholdSlider->setMaximum(totalSliderSteps);
-    audioThresholdSlider->setValue(getStepsFromValue(audioSettings->getAudioThreshold(),
-                                                     audio->minInputThreshold(),
-                                                     audio->maxInputThreshold()));
-    audioThresholdSlider->setTracking(false);
-    audioThresholdSlider->installEventFilter(this);
-
-    volumeDisplay->setMaximum(totalSliderSteps);
-
-    getAudioOutDevices();
-    getAudioInDevices();
-    createVideoSurface();
-    getVideoDevices();
-
-    if (audioSrc == nullptr) {
-        audioSrc = audio->makeSource();
-        connect(audioSrc.get(), &IAudioSource::volumeAvailable, this, &AVForm::setVolume);
-    }
-
-    if (audioSink == nullptr) {
-        audioSink = audio->makeSink();
-    }
-
-    fillAudioQualityComboBox();
-}
+void AVForm::onProfileChanged(Profile* profile) {}
 
 void AVForm::rescanDevices() {
     getAudioInDevices();
@@ -560,10 +562,9 @@ void AVForm::on_playbackSlider_valueChanged(int sliderSteps) {
     audioSettings->setOutVolume(settingsVolume);
 
     if (audio->isOutputReady()) {
-        const qreal volume =
-                getValueFromSteps(sliderSteps, audio->minOutputVolume(), audio->maxOutputVolume());
-        audio->setOutputVolume(volume);
-
+        // const qreal volume = getValueFromSteps(sliderSteps, audio->minOutputVolume(),
+        // audio->maxOutputVolume());
+        audio->setOutputVolumeStep(settingsVolume);
         if (cbEnableTestSound->isChecked() && audioSink) {
             audioSink->playMono16Sound(IAudioSink::Sound::Test);
         }
@@ -625,9 +626,9 @@ void AVForm::retranslateUi() {
 
 int AVForm::getStepsFromValue(qreal val, qreal valMin, qreal valMax) {
     const float norm = (val - valMin) / (valMax - valMin);
-    return norm * totalSliderSteps;
+    return norm * Audio::totalSteps;
 }
 
 qreal AVForm::getValueFromSteps(int steps, qreal valMin, qreal valMax) {
-    return (static_cast<float>(steps) / totalSliderSteps) * (valMax - valMin) + valMin;
+    return (static_cast<float>(steps) / Audio::totalSteps) * (valMax - valMin) + valMin;
 }

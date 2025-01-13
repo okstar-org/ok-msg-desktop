@@ -22,6 +22,7 @@
 #include <api/audio_codecs/builtin_audio_encoder_factory.h>
 #include <api/create_peerconnection_factory.h>
 #include <api/peer_connection_interface.h>
+#include <api/task_queue/default_task_queue_factory.h>
 #include <api/video_codecs/builtin_video_decoder_factory.h>
 #include <api/video_codecs/builtin_video_encoder_factory.h>
 #include <media/base/codec.h>
@@ -135,8 +136,6 @@ WebRTC::WebRTC(Mode mode, std::string res)
     _rtcConfig.sdp_semantics = webrtc::SdpSemantics::kUnifiedPlan;
     _rtcConfig.enable_implicit_rollback = false;
     _rtcConfig.enable_ice_renomination = true;
-    deviceInfo.reset(webrtc::VideoCaptureFactory::CreateDeviceInfo());
-    RTC_LOG(LS_INFO) << __FUNCTION__ << " be created, resource is: " << resource;
 
     RTC_LOG(LS_INFO) << "Creating network thread";
     network_thread = rtc::Thread::CreateWithSocketServer();
@@ -158,6 +157,8 @@ WebRTC::WebRTC(Mode mode, std::string res)
 
     signaling_thread->SetName("signaling_thread", this);
     RTC_LOG(LS_INFO) << "Signaling thread is started=>" << signaling_thread->Start();
+
+    RTC_LOG(LS_INFO) << __FUNCTION__ << " be created, resource is: " << resource;
 }
 
 WebRTC::~WebRTC() {
@@ -173,6 +174,11 @@ WebRTC::~WebRTC() {
     if (isStarted()) {
         stop();
     }
+
+    worker_thread->BlockingCall([&]() {
+        adm = nullptr;
+        deviceInfo.reset();
+    });
 
     RTC_LOG(LS_INFO) << __FUNCTION__ << " destroyed.";
 }
@@ -217,11 +223,20 @@ bool WebRTC::start() {
         RTC_LOG(LS_INFO) << "codec:" << c.ToString();
     }
 
+    worker_thread->BlockingCall([&]() {
+        adm = webrtc::AudioDeviceModule::Create(webrtc::AudioDeviceModule::kPlatformDefaultAudio,
+                                                webrtc::CreateDefaultTaskQueueFactory().get());
+        RTC_LOG(LS_INFO) << __FUNCTION__ << " ADM: " << adm.get();
+
+        deviceInfo.reset(webrtc::VideoCaptureFactory::CreateDeviceInfo());
+        RTC_LOG(LS_INFO) << __FUNCTION__ << " DeviceInfo: " << deviceInfo.get();
+    });
+
     peer_connection_factory =
             webrtc::CreatePeerConnectionFactory(network_thread.get(),   /* network_thread */
                                                 worker_thread.get(),    /* worker_thread */
                                                 signaling_thread.get(), /* signaling_thread */
-                                                nullptr,                /* default_adm */
+                                                adm,                    /* default_adm */
                                                 audioEncoderFactory,    //
                                                 audioDecoderFactory,    //
                                                 std::move(videoEncoderFactory),  //
@@ -889,12 +904,19 @@ void WebRTC::setTransportInfo(const std::string& peerId, const std::string& sId,
 }
 
 void WebRTC::setEnable(CtrlState state) {
+    RTC_LOG(LS_INFO) << __func__;
     for (auto it : _pcMap) {
         it.second->setEnable(state.enableMic, state.enableCam);
         it.second->setRemoteMute(state.enableSpk);
     }
 }
 
+void WebRTC::setSpeakerVolume(uint32_t vol) {
+    worker_thread->BlockingCall([&]() {
+        uint32_t r = adm->SetSpeakerVolume(vol);
+        if (r != 0) RTC_LOG(LS_INFO) << __func__ << "set=>" << r;
+    });
+}
 
 void WebRTC::addSource(const std::string& peerId,
                        const std::map<std::string, ortc::OMeetSSRCBundle>& map) {

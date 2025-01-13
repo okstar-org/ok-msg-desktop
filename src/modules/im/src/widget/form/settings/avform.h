@@ -100,7 +100,7 @@ private:
     QVector<QPair<QString, QString>> videoDeviceList;
     QVector<VideoMode> videoModes;
     uint alSource;
-    const uint totalSliderSteps = 100;  // arbitrary number of steps to give slider a good "feel"
+    // arbitrary number of steps to give slider a good "feel"
 
 private slots:
     void onProfileChanged(Profile*);

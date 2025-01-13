@@ -84,6 +84,8 @@ public:
 
     void setEnable(CtrlState state) override;
 
+    void setSpeakerVolume(uint32_t vol) override;
+
     void addSource(const std::string& peerId,
                    const std::map<std::string, ortc::OMeetSSRCBundle>& map) override;
 
@@ -217,6 +219,7 @@ private:
     // 资源ID
     std::string resource;
 
+    rtc::scoped_refptr<webrtc::AudioDeviceModule> adm;
     std::unique_ptr<webrtc::VideoCaptureModule::DeviceInfo> deviceInfo = nullptr;
 
     webrtc::PeerConnectionInterface::RTCConfiguration _rtcConfig;

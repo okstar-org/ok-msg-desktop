@@ -329,7 +329,15 @@ bool IMCall::answer(const IMPeerId& peerId, const QString& callId, bool video) {
 }
 
 void IMCall::setCtrlState(ortc::CtrlState state) {
-    lib::ortc::OkRTCManager::getInstance()->getRtc()->setEnable(state);
+    auto rtc = lib::ortc::OkRTCManager::getInstance()->getRtc();
+    if (!rtc) return;
+    rtc->setEnable(state);
+}
+
+void IMCall::setSpeakerVolume(uint32_t vol) {
+    auto rtc = lib::ortc::OkRTCManager::getInstance()->getRtc();
+    if (!rtc) return;
+    rtc->setSpeakerVolume(vol);
 }
 
 void IMCall::onCreatePeerConnection(const std::string& sId, const std::string& peerId, bool ok) {

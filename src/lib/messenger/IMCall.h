@@ -176,6 +176,7 @@ public:
     void callReject(const IMPeerId& f, const QString& sId);
 
     void setCtrlState(ortc::CtrlState state);
+    void setSpeakerVolume(uint32_t vol);
 
     /**
      * jingle-message

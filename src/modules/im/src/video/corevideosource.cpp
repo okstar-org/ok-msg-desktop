@@ -13,18 +13,7 @@
 #include "corevideosource.h"
 #include "lib/video/videoframe.h"
 
-/**
- * @class CoreVideoSource
- * @brief A VideoSource that emits frames received by Core.
- */
-
-/**
- * @var std::atomic_int subscribers
- * @brief Number of suscribers
- *
- * @var std::atomic_bool deleteOnClose
- * @brief If true, self-delete after the last suscriber is gone
- */
+#include <QDebug>
 
 /**
  * @brief CoreVideoSource constructor.
@@ -38,8 +27,10 @@ CoreVideoSource::CoreVideoSource() : subscribers{0}, deleteOnClose{false}, stopp
  * @param vpxframe Frame to copy.
  */
 void CoreVideoSource::pushFrame(const vpx_image_t* vpxframe) {
-    // if (stopped)
-    //   return;
+    if (stopped) {
+        qWarning() << "Video was already stopped.";
+        return;
+    }
 
     QMutexLocker locker(&biglock);
 

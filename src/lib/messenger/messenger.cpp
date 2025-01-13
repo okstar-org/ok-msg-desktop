@@ -359,8 +359,12 @@ void MessengerCall::callReject(const IMPeerId& f, const QString& sId) {
     call->callReject(f, sId);
 }
 
-void MessengerCall::setMute(ortc::CtrlState state) {
+void MessengerCall::setCtrlState(ortc::CtrlState state) {
     call->setCtrlState(state);
+}
+
+void MessengerCall::setSpeakerVolume(uint32_t vol) {
+    call->setSpeakerVolume(vol);
 }
 
 // File

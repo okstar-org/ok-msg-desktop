@@ -24,16 +24,12 @@
 #include "UI/window/login/src/LoginWindow.h"
 #include "UI/window/main/src/OMainMenu.h"
 #include "base/files.h"
-#include "base/logs.h"
 #include "base/r.h"
 #include "base/system/sys_info.h"
 #include "ipc.h"
 #include "lib/plugin/pluginmanager.h"
 #include "lib/storage/StorageManager.h"
-#include "lib/storage/log/LogManager.h"
 #include "lib/storage/settings/OkSettings.h"
-#include "lib/storage/settings/translator.h"
-#include "modules/im/src/nexus.h"
 
 namespace ok {
 

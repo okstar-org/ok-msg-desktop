@@ -220,13 +220,6 @@ signals:
     void messageSent(const IMMessage& message);                  //
 
 private slots:    
-    // void onConnecting();
-    // void onConnected();
-    // void onDisconnected(int);
-    // void onStarted();
-    // void onStopped();
-    // void onReceiveFriendMessage(QString peerId, IMMessage msg);
-    // void onReceiveGroupMessage(lib::messenger::IMMessage imMsg);
     void onEncryptedMessage(QString dom);
 
 };
@@ -340,7 +333,8 @@ public:
     void callReject(const IMPeerId& f, const QString& sId);
 
     // 静音功能
-    void setMute(ortc::CtrlState state);
+    void setCtrlState(ortc::CtrlState state);
+    void setSpeakerVolume(uint32_t vol);
 
 private:
     IMCall* call;

@@ -19,6 +19,7 @@ class IAudioControl;
 class IAudioSettings;
 class Audio {
 public:
+    const static uint totalSteps = 100;
     static std::unique_ptr<IAudioControl> makeAudio(IAudioSettings& settings);
 };
 

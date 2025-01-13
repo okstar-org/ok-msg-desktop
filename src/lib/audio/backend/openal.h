@@ -40,7 +40,6 @@
 
 class OpenAL : public IAudioControl {
     Q_OBJECT
-
 public:
     OpenAL();
     virtual ~OpenAL();
@@ -49,6 +48,7 @@ public:
     qreal minOutputVolume() const { return 0; }
     qreal outputVolume() const;
     void setOutputVolume(qreal volume);
+    void setOutputVolumeStep(int step);
 
     qreal minInputGain() const;
     void setMinInputGain(qreal dB);
