@@ -11,19 +11,13 @@
  */
 #pragma once
 
-#include "base/r.h"
-#include "base/system/sys_info.h"
-#include "base/task.h"
-#include "base/timer.h"
 
 #include "IMFromHostHandler.h"
 #include "IMGroup.h"
 
 #include "base/compatiblerecursivemutex.h"
-#include "lib/backend/OkCloudService.h"
 #include "lib/messenger/IMFriend.h"
 #include "lib/messenger/IMMessage.h"
-#include "lib/session/AuthSession.h"
 #include "messenger.h"
 
 #include <memory>

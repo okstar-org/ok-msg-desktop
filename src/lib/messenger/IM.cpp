@@ -19,6 +19,7 @@
 #include "IMFromHostHandler.h"
 #include "base/hashs.h"
 #include "base/logs.h"
+#include "base/system/sys_info.h"
 #include "base/times.h"
 #include "base/xmls.h"
 
