@@ -133,9 +133,6 @@ public:
     }
 
 public slots:
-    void onShowSettings();
-    void onSeparateWindowClicked(bool separate);
-    void onSeparateWindowChanged(bool separate, bool clicked);
     void setWindowTitle(const QString& title);
     void forceShow();
     void onConnected();
@@ -207,9 +204,6 @@ private slots:
     void onStatusMessageChanged(const QString& newStatusMessage);
 
     void copyFriendIdToClipboard(const FriendId& friendId);
-    void removeGroup(const GroupId& groupId);
-    void destroyGroup(const GroupId& groupId);
-
     void onIconClick(QSystemTrayIcon::ActivationReason);
     void onUserAwayCheck();
     void onEventIconTick();
@@ -230,11 +224,7 @@ private:
     void resizeEvent(QResizeEvent* event) final override;
     void moveEvent(QMoveEvent* event) final override;
 
-    //  void setActiveToolMenuButton(ActiveToolMenuButton newActiveButton);
-    void hideMainForms(GenericChatroomWidget* chatroomWidget);
-    GroupWidget* createGroup(QString groupnumber, const GroupId& groupId, const QString& name);
-    void removeFriend(Friend* f, bool fake = false);
-    void removeGroup(Group* g, bool fake = false);
+
     void saveWindowGeometry();
     void saveSplitterGeometry();
     void cycleContacts(bool forward);

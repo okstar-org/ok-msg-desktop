@@ -318,7 +318,6 @@ void Widget::updateIcons() {}
  * @brief Switches to the About settings page.
  */
 void Widget::showUpdateDownloadProgress() {
-    onShowSettings();
     settingsWidget->showAbout();
 }
 
@@ -397,16 +396,8 @@ void Widget::onFailedToStartCore() {
 }
 
 void Widget::onBadProxyCore() {
-    auto settings = Nexus::getProfile()->getSettings();
-    settings->setProxyType(Settings::ProxyType::ptNone);
 
-    ok::base::MessageBox::critical(this, "",
-                                   tr("The core failed to start with your proxy settings. "
-                                      "So cannot to run; please modify your "
-                                      "settings and restart.",
-                                      "popup text"));
 
-    onShowSettings();
 }
 
 void Widget::onStatusSet(Status::Status status) {
@@ -414,62 +405,6 @@ void Widget::onStatusSet(Status::Status status) {
     //  ui->statusButton->setIcon(
     //      prepareIcon(getIconPath(status), icon_size, icon_size));
     //  updateIcons();
-}
-
-void Widget::onSeparateWindowClicked(bool separate) {
-    onSeparateWindowChanged(separate, true);
-}
-
-void Widget::onSeparateWindowChanged(bool separate, bool clicked) {
-    if (!separate) {
-        QWindowList windowList = QGuiApplication::topLevelWindows();
-
-        for (QWindow* window : windowList) {
-            if (window->objectName() == "detachedWindow") {
-                window->close();
-            }
-        }
-
-        //    SplitterRestorer restorer(ui->mainSplitter);
-        //    restorer.restore(settings.getSplitterState(), size());
-
-        onShowSettings();
-    } else {
-        //    int width = ui->friendList->size().width();
-        QSize size;
-        QPoint pos;
-
-        //    if (contentLayout) {
-        //      pos = mapToGlobal(ui->mainSplitter->widget(1)->pos());
-        //      size = ui->mainSplitter->widget(1)->size();
-        //    }
-
-        //    if (contentLayout) {
-        //      contentLayout->clear();
-        //      contentLayout->parentWidget()->setParent(
-        //          nullptr); // Remove from splitter.
-        //      contentLayout->parentWidget()->hide();
-        //      contentLayout->parentWidget()->deleteLater();
-        //      contentLayout->deleteLater();
-        //      contentLayout = nullptr;
-        //    }
-
-        //    setMinimumWidth(ui->tooliconsZone->sizeHint().width());
-
-        if (clicked) {
-            showNormal();
-            //      resize(width, height());
-
-            if (settingsWidget) {
-                ContentLayout* contentLayout = createContentDialog((DialogType::SettingDialog));
-                contentLayout->parentWidget()->resize(size);
-                contentLayout->parentWidget()->move(pos);
-                settingsWidget->show(contentLayout);
-            }
-        }
-
-        setWindowTitle(QString());
-    }
 }
 
 void Widget::setWindowTitle(const QString& title) {
@@ -556,28 +491,10 @@ void Widget::onIconClick(QSystemTrayIcon::ActivationReason reason) {
     }
 }
 
-void Widget::onShowSettings() {
-    auto settings = Nexus::getProfile()->getSettings();
-    if (settings->getSeparateWindow()) {
-        if (!settingsWidget->isShown()) {
-            settingsWidget->show(createContentDialog(DialogType::SettingDialog));
-        }
-
-        //    setActiveToolMenuButton(ActiveToolMenuButton::None);
-    } else {
-        hideMainForms(nullptr);
-        //    settingsWidget->show(contentLayout);
-        //    setWindowTitle(fromDialogType(DialogType::SettingDialog));
-        //    setActiveToolMenuButton(ActiveToolMenuButton::SettingButton);
-    }
-}
-
-void Widget::hideMainForms(GenericChatroomWidget* chatroomWidget) {}
 
 void Widget::setUsername(const QString& username) {}
 
 void Widget::onStatusMessageChanged(const QString& newStatusMessage) {
-    // Keep old status message until Core tells us to set it.
     core->setStatusMessage(newStatusMessage);
 }
 
@@ -988,73 +905,6 @@ void Widget::onGroupPeerAudioPlaying(QString groupnumber, FriendId peerPk) {
         qWarning() << "Can not find the group named:" << groupnumber;
         return;
     }
-
-    //  auto form = groupChatForms[groupId].data();
-    //  form->peerAudioPlaying(peerPk);
-}
-
-void Widget::removeGroup(Group* g, bool fake) {
-    //  const auto &groupId = g->getPersistentId();
-    //  const auto groupnumber = g->getId();
-    //  auto groupWidgetIt = groupWidgets.find(groupId);
-    //  if (groupWidgetIt == groupWidgets.end()) {
-    //    qWarning() << "Tried to remove group" << groupnumber
-    //               << "but GroupWidget doesn't exist";
-    //    return;
-    //  }
-    //  auto widget = groupWidgetIt.value();
-    //  widget->setAsInactiveChatroom();
-    //  if (static_cast<GenericChatroomWidget *>(widget) == activeChatroomWidget) {
-    //    activeChatroomWidget = nullptr;
-    //    onAddClicked();
-    //  }
-    //
-    //  GroupList::removeGroup(groupId, fake);
-    //  ContentDialog *contentDialog =
-    //      ContentDialogManager::getInstance()->getGroupDialog(groupId);
-    //  if (contentDialog != nullptr) {
-    //    contentDialog->removeGroup(groupId);
-    //  }
-    //
-    //  if (!fake) {
-    //    core->destroyGroup(groupnumber);
-    //  }else{
-    //    core->leaveGroup(groupnumber);
-    //  }
-    //
-    //  contactListWidget->removeGroupWidget(widget); // deletes widget
-    //
-    //  groupWidgets.remove(groupId);
-    //  auto groupChatFormIt = groupChatForms.find(groupId);
-    //  if (groupChatFormIt == groupChatForms.end()) {
-    //    qWarning() << "Tried to remove group" << groupnumber
-    //               << "but GroupChatForm doesn't exist";
-    //    return;
-    //  }
-    //  groupChatForms.erase(groupChatFormIt);
-    //  delete g;
-    ////  if (contentLayout && contentLayout->mainHead->layout()->isEmpty()) {
-    ////    onAddClicked();
-    ////  }
-    //
-    //  groupAlertConnections.remove(groupId);
-    //
-    //  contactListWidget->reDraw();
-}
-
-void Widget::removeGroup(const GroupId& groupId) {
-    removeGroup(GroupList::findGroup(groupId));
-}
-
-void Widget::destroyGroup(const GroupId& groupId) {
-    removeGroup(GroupList::findGroup(groupId), false);
-}
-
-GroupWidget* Widget::createGroup(QString groupnumber,
-                                 const GroupId& groupId,
-                                 const QString& groupName) {
-
-    return nullptr;
 }
 
 /**
