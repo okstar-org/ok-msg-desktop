@@ -215,8 +215,15 @@ std::unique_ptr<gloox::Client> IM::makeClient() {
     disco->addFeature(gloox::XMLNS_JINGLE_APPS_RTP_SSMA);
     disco->addFeature(gloox::XMLNS_JINGLE_APPS_RTP_HDREXT);
     disco->addFeature(gloox::XMLNS_JINGLE_APPS_GROUP);
+        client->registerStanzaExtension(new gloox::Jingle::JingleMessage());
+    // jingle file
 
-    client->registerStanzaExtension(new gloox::Jingle::JingleMessage());
+    disco->addFeature(gloox::XMLNS_JINGLE_FILE_TRANSFER);
+    disco->addFeature(gloox::XMLNS_JINGLE_FILE_TRANSFER4);
+    disco->addFeature(gloox::XMLNS_JINGLE_FILE_TRANSFER5);
+    disco->addFeature(gloox::XMLNS_JINGLE_FILE_TRANSFER_MULTI);
+    disco->addFeature(gloox::XMLNS_JINGLE_IBB);
+
 
     client->setTls(gloox::TLSPolicy::TLSDisabled);
     client->setCompression(false);
@@ -244,6 +251,11 @@ std::unique_ptr<gloox::Client> IM::makeClient() {
     _sessionManager->registerPlugin(new gloox::Jingle::ICEUDP());
     _sessionManager->registerPlugin(new gloox::Jingle::Group());
     _sessionManager->registerPlugin(new gloox::Jingle::RTP());
+
+    _sessionManager->registerPlugin(new gloox::Jingle::Content());
+    _sessionManager->registerPlugin(new gloox::Jingle::FileTransfer());
+    _sessionManager->registerPlugin(new gloox::Jingle::IBB());
+
     return std::move(client);
 }
 
@@ -2453,29 +2465,34 @@ void IM::removeSession(gloox::Jingle::Session* s) {
 
 void IM::addSessionHandler(IMSessionHandler* h) {
     qDebug() << __func__ << "handler:" << h;
-    if (!h) {
-        qWarning() << __func__ << "Handler unable to added due the pointer is nullptr!";
-        return;
-    }
-    int os = m_sessionHandlers.size();
+    assert(h);
+
     m_sessionHandlers.push_back(h);
-    qDebug() << __func__ << "The handler:" << h << " be added size from:" << os << "=>"
-             << m_sessionHandlers.size();
+
 }
 
 void IM::removeSessionHandler(IMSessionHandler* h) {
     qDebug() << __func__ << "handler:" << h;
-
-    int os = m_sessionHandlers.size();
+assert(h);
     m_sessionHandlers.erase(std::find_if(m_sessionHandlers.begin(),
                                          m_sessionHandlers.end(),
                                          [h](IMSessionHandler* e) { return e == h; }),
                             m_sessionHandlers.end());
-    qDebug() << __func__ << "The handler:" << h << " be removed size from:" << os << "=>"
-             << m_sessionHandlers.size();
+}
+
+void IM::removeSelfHandler(SelfHandler *h)
+{
+    qDebug() << __func__ << "handler:" << h;
+    assert(h);
+
+    selfHandlers.erase(std::find_if(selfHandlers.begin(),
+                        selfHandlers.end(),
+                        [h](SelfHandler* e) { return e == h; }),
+                        selfHandlers.end());
 }
 
 void IM::addFromHostHandler(const std::string& from, IMFromHostHandler* h) {
+    qDebug() << __func__ << "from: " << qstring(from) << " handler:" << h;
     assert(h);
     fromHostHandlers[from] = h;
 }

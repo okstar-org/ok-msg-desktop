@@ -103,19 +103,7 @@ void IMFile::onImStartedFile() {
     auto client = im->getClient();
     assert(client);
     client->registerIqHandler(this, gloox::ExtIBB);
-
-    // jingle file
-    auto disco = client->disco();
-    disco->addFeature(gloox::XMLNS_JINGLE_FILE_TRANSFER);
-    disco->addFeature(gloox::XMLNS_JINGLE_FILE_TRANSFER4);
-    disco->addFeature(gloox::XMLNS_JINGLE_FILE_TRANSFER5);
-    disco->addFeature(gloox::XMLNS_JINGLE_FILE_TRANSFER_MULTI);
-    disco->addFeature(gloox::XMLNS_JINGLE_IBB);
-
     // session manager
-    im->sessionManager()->registerPlugin(new gloox::Jingle::Content());
-    im->sessionManager()->registerPlugin(new gloox::Jingle::FileTransfer());
-    im->sessionManager()->registerPlugin(new gloox::Jingle::IBB());
     im->addSessionHandler(this);
 }
 
@@ -232,9 +220,19 @@ void IMFile::acceptFileRequest(const QString& friendId, const File& file) {
         qWarning() << "Unable to find session sId:" << file.sId;
         return;
     }
+
     auto pSession = session->getJingleSession();
     if (pSession) {
+        // 协议：https://xmpp.org/extensions/xep-0234.html#requesting
         gloox::Jingle::PluginList pluginList;
+        gloox::Jingle::FileTransfer::FileList files;
+        files.push_back(gloox::Jingle::FileTransfer::File{.name = stdstring(file.name),
+                                                          .size = (long)file.size});
+        auto ftf = new gloox::Jingle::FileTransfer(gloox::Jingle::FileTransfer::Received, files);
+        auto ibb = new gloox::Jingle::IBB(stdstring(file.txIbb.sid), file.txIbb.blockSize);
+        pluginList.emplace_back(ftf);
+        pluginList.emplace_back(ibb);
+
         auto c = new gloox::Jingle::Content("file", pluginList);
         pSession->sessionAccept(c);
     }
@@ -462,12 +460,12 @@ void IMFile::onDisconnected(int)
 
 void IMFile::onStarted()
 {
-
+    onImStartedFile();
 }
 
 void IMFile::onStopped()
 {
-    onImStartedFile();
+
 }
 
 bool IMFile::doSessionInitiate(gloox::Jingle::Session* session,

@@ -58,18 +58,24 @@ OMainMenu::OMainMenu(QWidget* parent) : QFrame(parent), ui(new Ui::OMainMenu) {
     group->addButton(ui->meetBtn, static_cast<int>(SystemMenu::meeting));
     connect(group, &QButtonGroup::idToggled, this, &OMainMenu::onButtonToggled);
 
+
+    auto bus = ok::Application::Instance()->bus();
+
+
     QString locale = lib::settings::OkSettings().getTranslation();
     settings::Translator::translate(OK_UIWindowMain_MODULE, locale);
     settings::Translator::registerHandler([this] { retranslateUi(); }, this);
 
     retranslateUi();
 
-    connect(ok::Application::Instance()->bus(), &ok::Bus::languageChanged, [](QString locale0) {
+    connect(bus, &ok::Bus::languageChanged, [](QString locale0) {
         settings::Translator::translate(OK_UIWindowMain_MODULE, locale0);
     });
 
+    connect(bus, &ok::Bus::avatarChanged, this, &OMainMenu::setAvatar);
+
     delayCaller_ = new base::DelayedCallTimer(this);
-    delayCaller_->call(1000, [&]() { check(SystemMenu::chat); });
+    delayCaller_->call(200, [&]() { check(SystemMenu::chat); });
 }
 
 OMainMenu::~OMainMenu() {

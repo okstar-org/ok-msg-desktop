@@ -137,10 +137,6 @@ void IMCall::onImStartedCall() {
     client->registerMessageHandler(this);
 
     auto disco = client->disco();
-
-
-
-
     im->addSessionHandler(this);
 }
 

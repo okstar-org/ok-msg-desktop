@@ -51,12 +51,11 @@ Core::Core(QThread* coreThread)
     qRegisterMetaType<FriendId>("FriendId");
     qRegisterMetaType<FriendInfo>("FriendInfo");
 
-    connect(this, &Core::avatarSet, this, [&](QByteArray buf){
-        QPixmap pixmap;
-        ok::base::Images::putToPixmap(buf, pixmap);
-        ok::Application::Instance()->onAvatar(pixmap);
-    });
-
+    // connect(this, &Core::avatarSet, this, [&](QByteArray buf){
+    //     QPixmap pixmap;
+    //     ok::base::Images::putToPixmap(buf, pixmap);
+    //     ok::Application::Instance()->onAvatar(pixmap);
+    // });
 
 
     toxTimer->setSingleShot(true);
@@ -1287,13 +1286,16 @@ void Core::onSelfAvatarChanged(const std::string avatar) {
     auto a = QByteArray::fromStdString(avatar);
     emit avatarSet(a);
 
+    QPixmap pixmap;
+    ok::base::Images::putToPixmap(a, pixmap);
+    emit ok::Application::Instance()->bus()->avatarChanged(pixmap);
+
     auto p = Nexus::getProfile();
     if (!p) {
         qWarning() << "Can not get profile!";
         return;
     }
     p->setAvatar(a, false);
-
 }
 
 void Core::onSelfStatusChanged(lib::messenger::IMStatus userStatus, const std::string& msg) {

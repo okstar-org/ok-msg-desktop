@@ -320,6 +320,7 @@ public:
 
     void addSessionHandler(IMSessionHandler* h);
     void removeSessionHandler(IMSessionHandler* h);
+    void removeSelfHandler(SelfHandler* h);
 
     void addFromHostHandler(const std::string& from, IMFromHostHandler* h);
     void clearFromHostHandler();

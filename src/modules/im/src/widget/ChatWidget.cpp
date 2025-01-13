@@ -465,7 +465,7 @@ void ChatWidget::clearAllReceipts() {
 }
 
 void ChatWidget::on_nameClicked() {
-    qDebug() << __func__;
+    // qDebug() << __func__;
     showProfile();
 }
 

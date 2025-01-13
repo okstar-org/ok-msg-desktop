@@ -19,19 +19,18 @@
 #include <meethandler.h>
 #include <meetmanager.h>
 #include <QObject>
-#include <memory>
 
 #include "IM.h"
 #include "IMFromHostHandler.h"
 #include "IMJingle.h"
-#include "base/jid.h"
+
 
 namespace lib::messenger {
 
 class IM;
 
-class IMMeet :
-               public IMJingle,
+class IMMeet : public IMJingle,
+               public IMHandler,
                public SelfHandler,
                public IMSessionHandler,
                public IMFromHostHandler,
@@ -119,12 +118,21 @@ protected:
     void handleJsonMessage(const gloox::JID& jid, const gloox::JsonMessage* json) override;
 
     /**
+     * IMHandler
+     */
+    void onConnecting()override;
+    void onConnected()override;
+    void onDisconnected(int)override;
+    void onStarted()override;
+    void onStopped()override;
+
+    /**
      * SelfHandler
      */
-      void onSelfIdChanged(QString id) override {};
-      void onSelfNameChanged(QString name) override {};
-      void onSelfAvatarChanged(const std::string avatar) override {};
-      void onSelfStatusChanged(IMStatus status, const std::string& msg) override {};
+      void onSelfIdChanged(QString id) override ;
+      void onSelfNameChanged(QString name) override ;
+      void onSelfAvatarChanged(const std::string avatar) override ;
+      void onSelfStatusChanged(IMStatus status, const std::string& msg) override ;
       void onSelfVCardChanged(IMVCard& imvCard) override;
 
     /**

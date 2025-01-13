@@ -56,8 +56,6 @@ IMMeet::IMMeet(IM* im, QObject* parent) : IMJingle(im, parent), manager(nullptr)
 
     im->addSelfHandler(this);
 
-    // request self vcard.
-    im->requestVCards();
 
     auto session = ok::Application::Instance()->getSession();
     qDebug() << "Username:" << session->getToken().username;
@@ -65,9 +63,11 @@ IMMeet::IMMeet(IM* im, QObject* parent) : IMJingle(im, parent), manager(nullptr)
     auto host = stdstring("conference." + session->getSignInInfo().host);
     im->addFromHostHandler(host, this);
     im->addSessionHandler(this);
-
     // jingle json-message
     im->sessionManager()->registerPlugin(new gloox::Jingle::JsonMessage());
+
+    // request self vcard.
+    im->requestVCards();
 
     // OkMSG.root-host.[meet-241219-51-g57a9b7d0].OTE5Y2 --> OTE5Y2
     auto split = qstring(im->self().resource()).split(".");
@@ -75,7 +75,7 @@ IMMeet::IMMeet(IM* im, QObject* parent) : IMJingle(im, parent), manager(nullptr)
     qDebug() << "Resource is:" << resource;
 
     // qRegisterMetaType
-    qRegisterMetaType<ortc::OJingleContentMap>("const ortc::OJingleContentAv&");
+    qRegisterMetaType<ortc::OJingleContentMap>("const ortc::OJingleContentMap&");
 
     ortc::OkRTCManager* rtcManager = ortc::OkRTCManager::getInstance();
     //    rtcManager->setIceServerers(im->getExternalServiceDiscovery());
@@ -86,6 +86,7 @@ IMMeet::IMMeet(IM* im, QObject* parent) : IMJingle(im, parent), manager(nullptr)
 
 IMMeet::~IMMeet() {
     qDebug() << __func__;
+    im->removeSelfHandler(this);
     im->removeSessionHandler(this);
     im->clearFromHostHandler();
 
@@ -227,6 +228,52 @@ void IMMeet::handleStatsId(const gloox::JID& jid, const std::string& statsId) {}
 
 void IMMeet::handleJsonMessage(const gloox::JID& jid, const gloox::JsonMessage* json) {
     qDebug() << __func__ << qstring(json->getJson());
+}
+
+void IMMeet::onConnecting()
+{
+
+}
+
+void IMMeet::onConnected()
+{
+
+}
+
+void IMMeet::onDisconnected(int)
+{
+
+}
+
+void IMMeet::onStarted()
+{
+
+
+}
+
+void IMMeet::onStopped()
+{
+
+}
+
+void IMMeet::onSelfIdChanged(QString id)
+{
+
+}
+
+void IMMeet::onSelfNameChanged(QString name)
+{
+
+}
+
+void IMMeet::onSelfAvatarChanged(const std::string avatar)
+{
+
+}
+
+void IMMeet::onSelfStatusChanged(IMStatus status, const std::string &msg)
+{
+
 }
 
 void IMMeet::onSelfVCardChanged(IMVCard &imvCard)
