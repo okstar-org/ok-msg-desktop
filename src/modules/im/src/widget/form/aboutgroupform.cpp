@@ -127,7 +127,7 @@ void AboutGroupForm::doNameChanged(const QString& text) {
 
 void AboutGroupForm::doAliasChanged(const QString& text) {
     qDebug() << __func__ << text;
-    auto profile = Nexus::getInstance().getProfile();
+    auto profile = Nexus::getProfile();
     profile->saveContactAlias(getId().toString(), text);
 }
 

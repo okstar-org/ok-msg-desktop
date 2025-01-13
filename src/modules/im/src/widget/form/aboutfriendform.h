@@ -52,11 +52,7 @@ signals:
 
 private slots:
     void onAliasChanged(const QString& text);
-    void onAutoAcceptDirChanged(const QString& path);
     void onSendMessageClicked();
-    void onAutoAcceptDirClicked();
-    void onAutoAcceptCallClicked();
-    void onSelectDirClicked();
     void onRemoveHistoryClicked();
 };
 

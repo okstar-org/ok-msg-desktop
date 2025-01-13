@@ -75,6 +75,7 @@ void OkSettings::loadGlobal() {
     QMutexLocker locker{&bigLock};
 
     QSettings s(path, QSettings::IniFormat, this);
+    qDebug() << "Loaded global settings at:" << path;
     s.setIniCodec("UTF-8");
     s.beginGroup("General");
     {
@@ -131,15 +132,15 @@ void OkSettings::loadGlobal() {
     }
     s.endGroup();
 
-    qDebug() << "Loaded global settings at:" << path;
+
 }
 
 void OkSettings::saveGlobal() {
-    if (QThread::currentThread() != settingsThread)
-        return (void)QMetaObject::invokeMethod(&getInstance(), "saveGlobal");
+
     qDebug() << __func__;
 
     QMutexLocker locker{&bigLock};
+    qDebug() << "Loaded global settings at:" << path;
 
     QSettings s(path, QSettings::IniFormat, this);
     s.setIniCodec("UTF-8");

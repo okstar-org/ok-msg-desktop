@@ -55,24 +55,11 @@ ContactListWidget::ContactListWidget(QWidget* parent, bool groupsOnTop)
     listLayout = new ContactListLayout(this);
     setLayout(listLayout);
 
-    onGroupchatPositionChanged(groupsOnTop);
-
-    setAcceptDrops(true);
-
-
-    auto bus = ok::Application::Instance()->bus();
-    connect(bus, &ok::Bus::profileChanged, [this](Profile* profile) {
-        auto settings = Nexus::getProfile()->getSettings();
-        connect(settings, &Settings::groupchatPositionChanged, this,
-                &ContactListWidget::onGroupchatPositionChanged);
-    });
+    // setAcceptDrops(true);
 
     auto widget = Widget::getInstance();
     connect(widget, &Widget::toShowDetails, this, &ContactListWidget::do_toShowDetails);
     connect(widget, &Widget::friendRemoved, this, [&](const Friend* f) { removeFriend(f); });
-
-    //  connect(Nexus::getProfile(), &Profile::coreChanged,
-    //          this, &FriendListWidget::onCoreChanged);
 
     new QShortcut(QKeySequence(Qt::Key_Up), this, [this]() { cycleContacts(true); });
     new QShortcut(QKeySequence(Qt::Key_Down), this, [this]() { cycleContacts(false); });
@@ -169,8 +156,8 @@ GroupWidget* ContactListWidget::addGroup(const GroupId& groupId, const QString& 
 
     //  const bool enabled = core->getGroupAvEnabled(groupId.toString());
 
-    const auto compact = settings->getCompactLayout();
-    auto gw = new GroupWidget(groupId, groupName, compact);
+
+    auto gw = new GroupWidget(groupId, groupName);
     groupWidgets[groupId.toString()] = gw;
     //    groupLayout.addSortedWidget(gw);
     listLayout->addWidget(gw);
@@ -301,20 +288,6 @@ void ContactListWidget::renameGroupWidget(GroupWidget* groupWidget, const QStrin
     groupWidget->setName(newName);
 }
 
-void ContactListWidget::onGroupchatPositionChanged(bool top) {
-    //    groupsOnTop = top;
-    //
-    //    if (mode != SortingMode::Name) return;
-    //
-    ////    listLayout->removeItem(groupLayout.getLayout());
-    //
-    //    if (top)
-    //        listLayout->insertLayout(0, groupLayout.getLayout());
-    //    else
-    //        listLayout->insertLayout(1, groupLayout.getLayout());
-
-    //    reDraw();
-}
 
 void ContactListWidget::dragEnterEvent(QDragEnterEvent* event) {
     if (!event->mimeData()->hasFormat("toxPk")) {

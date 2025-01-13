@@ -53,8 +53,7 @@ private:
     void fillAudioQualityComboBox();
     int searchPreferredIndex();
 
-    void createVideoSurface();
-    void killVideoSurface();
+    VideoSurface* createVideoSurface();
 
     void retranslateUi();
 
@@ -93,9 +92,9 @@ private:
     IVideoSettings* videoSettings;
 
     bool subscribedToAudioIn;
-    std::unique_ptr<IAudioSink> audioSink = nullptr;
-    std::unique_ptr<IAudioSource> audioSrc = nullptr;
-    VideoSurface* camVideoSurface;
+    std::unique_ptr<IAudioSink> audioSink;
+    std::unique_ptr<IAudioSource> audioSrc;
+    std::unique_ptr<VideoSurface> camVideoSurface;
     CameraSource* camera;
     QVector<QPair<QString, QString>> videoDeviceList;
     QVector<VideoMode> videoModes;

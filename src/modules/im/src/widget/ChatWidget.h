@@ -108,6 +108,10 @@ public slots:
     void on_nameClicked();
     void onProfileChanged(Profile* profile);
 
+    void onConnecting();
+    void onDisconnected(int err);
+    void onConnected();
+
     void onStatusSet(Status::Status status);
     void onNicknameSet(const QString& nickname);
     void onStatusMessageSet(const QString& statusMessage);

@@ -51,10 +51,6 @@ class Settings : public QObject,
 
     Q_ENUMS(StyleType)
 
-    // general
-    Q_PROPERTY(bool compactLayout READ getCompactLayout WRITE setCompactLayout NOTIFY
-                       compactLayoutChanged FINAL)
-
     // GUI
     Q_PROPERTY(bool separateWindow READ getSeparateWindow WRITE setSeparateWindow NOTIFY
                        separateWindowChanged FINAL)
@@ -165,7 +161,7 @@ signals:
     void dialogSettingsGeometryChanged(const QByteArray& rect);
     void styleChanged(const QString& style);
     void themeColorChanged(int color);
-    void compactLayoutChanged(bool enabled);
+
     void sortingModeChanged(FriendListSortingMode mode);
     void showIdenticonsChanged(bool enabled);
 
@@ -356,9 +352,6 @@ public:
     SIGNAL_IMPL(Settings, autoGroupInviteChanged, const FriendId& id, bool accept)
     SIGNAL_IMPL(Settings, autoAcceptDirChanged, const FriendId& id, const QString& dir)
     SIGNAL_IMPL(Settings, contactNoteChanged, const FriendId& id, const QString& note)
-
-    bool getCompactLayout() const;
-    void setCompactLayout(bool compact);
 
     FriendListSortingMode getFriendSortingMode() const;
     void setFriendSortingMode(FriendListSortingMode mode);

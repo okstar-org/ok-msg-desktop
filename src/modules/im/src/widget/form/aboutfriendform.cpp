@@ -36,11 +36,10 @@ AboutFriendForm::AboutFriendForm(const Friend* fw, QWidget* parent)
         , ui(new Ui::AboutFriendForm)
         , m_friend{fw}
         , widget{Widget::getInstance()}
-        , profile{Nexus::getInstance().getProfile()} {
+        , profile{Nexus::getInstance()->getProfile()} {
     ui->setupUi(this);
 
     setAttribute(Qt::WA_StyledBackground);
-    ui->autoacceptcall->setItemDelegate(new QStyledItemDelegate(ui->autoacceptcall));
 
     const auto af = new AboutFriend(m_friend, profile->getSettings());
     about = std::unique_ptr<IAboutFriend>(af);
@@ -48,30 +47,7 @@ AboutFriendForm::AboutFriendForm(const Friend* fw, QWidget* parent)
     reloadTheme();
 
     connect(ui->sendMessage, &QPushButton::clicked, this, &AboutFriendForm::onSendMessageClicked);
-    connect(ui->autoacceptfile, &QCheckBox::clicked, this,
-            &AboutFriendForm::onAutoAcceptDirClicked);
-    connect(ui->autoacceptcall, SIGNAL(activated(int)), this, SLOT(onAutoAcceptCallClicked(void)));
-
-    connect(ui->selectSaveDir, &QPushButton::clicked, this, &AboutFriendForm::onSelectDirClicked);
-    connect(ui->removeHistory, &QPushButton::clicked, this,
-            &AboutFriendForm::onRemoveHistoryClicked);
-    about->connectTo_autoAcceptDirChanged(
-            this, [this](const QString& dir) { onAutoAcceptDirChanged(dir); });
-
-    const QString dir = about->getAutoAcceptDir();
-    ui->autoacceptfile->setChecked(!dir.isEmpty());
-
-    //    ui->removeHistory->setEnabled(about->isHistoryExistence());
-
-    const int index = static_cast<int>(about->getAutoAcceptCall());
-    ui->autoacceptcall->setCurrentIndex(index);
-
-    ui->selectSaveDir->setEnabled(ui->autoacceptfile->isChecked());
-
-    if (ui->autoacceptfile->isChecked()) {
-        ui->selectSaveDir->setText(about->getAutoAcceptDir());
-    }
-
+    connect(ui->removeHistory, &QPushButton::clicked, this, &AboutFriendForm::onRemoveHistoryClicked);
     ui->id->setText(about->getPublicKey().toString());
     ui->statusMessage->setText(about->getStatusMessage());
     ui->avatar->setPixmap(about->getAvatar());
@@ -94,42 +70,6 @@ AboutFriendForm::AboutFriendForm(const Friend* fw, QWidget* parent)
     connect(ui->alias, &QLineEdit::textChanged, this, &AboutFriendForm::onAliasChanged);
 
     connect(&GUI::getInstance(), &GUI::themeApplyRequest, this, &AboutFriendForm::reloadTheme);
-}
-
-static QString getAutoAcceptDir(const QString& dir) {
-    //: popup title
-    const QString title = AboutFriendForm::tr("Choose an auto accept directory");
-    return QFileDialog::getExistingDirectory(Q_NULLPTR, title, dir);
-}
-
-void AboutFriendForm::onAutoAcceptDirClicked() {
-    const QString dir = [&] {
-        if (!ui->autoacceptfile->isChecked()) {
-            return QString{};
-        }
-
-        return getAutoAcceptDir(about->getAutoAcceptDir());
-    }();
-
-    about->setAutoAcceptDir(dir);
-}
-
-void AboutFriendForm::onAutoAcceptDirChanged(const QString& path) {
-    const bool enabled = !path.isNull();
-    ui->autoacceptfile->setChecked(enabled);
-    ui->selectSaveDir->setEnabled(enabled);
-    ui->selectSaveDir->setText(enabled ? path : tr("Auto accept for this contact is disabled"));
-}
-
-void AboutFriendForm::onAutoAcceptCallClicked() {
-    const int index = ui->autoacceptcall->currentIndex();
-    const IFriendSettings::AutoAcceptCallFlags flag{index};
-    about->setAutoAcceptCall(flag);
-}
-
-void AboutFriendForm::onSelectDirClicked() {
-    const QString dir = getAutoAcceptDir(about->getAutoAcceptDir());
-    about->setAutoAcceptDir(dir);
 }
 
 /**

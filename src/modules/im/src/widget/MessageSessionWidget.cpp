@@ -445,8 +445,8 @@ void MessageSessionWidget::setAvInvite(const ToxPeer& peerId, bool video) {
     header->showCallConfirm();
 
     // 发送来电声音
-    auto& nexus = Nexus::getInstance();
-    nexus.incomingNotification(friendId0);
+    auto nexus = Nexus::getInstance();
+    nexus->incomingNotification(friendId0);
 }
 
 void MessageSessionWidget::setAvStart(bool video) {
@@ -461,8 +461,8 @@ void MessageSessionWidget::setAvStart(bool video) {
         header->removeCallConfirm();
     }
 
-    auto& w = Nexus::getInstance();
-    w.onStopNotification();
+    auto w = Nexus::getInstance();
+    w->onStopNotification();
 }
 
 void MessageSessionWidget::setAvPeerConnectedState(lib::ortc::PeerConnectionState state) {
@@ -498,8 +498,8 @@ void MessageSessionWidget::setAvEnd(bool error) {
     // 关计时器
     sendWorker->destroyCallDuration(error);
 
-    auto& nexus = Nexus::getInstance();
-    nexus.onStopNotification();
+    auto nexus = Nexus::getInstance();
+    nexus->onStopNotification();
 }
 
 void MessageSessionWidget::setGroup(const Group* g) {
@@ -544,8 +544,8 @@ void MessageSessionWidget::doAcceptCall(const ToxPeer& p, bool video) {
     qDebug() << __func__ << p.toString();
 
     // 关闭声音
-    auto& w = Nexus::getInstance();
-    w.onStopNotification();
+    auto w = Nexus::getInstance();
+    w->onStopNotification();
 
     // 发送接收应答
     CoreAV* coreav = CoreAV::getInstance();
@@ -559,8 +559,8 @@ void MessageSessionWidget::doRejectCall(const ToxPeer& p) {
     header->removeCallConfirm();
 
     // 关闭声音
-    auto& nexus = Nexus::getInstance();
-    nexus.onStopNotification();
+    auto nexus = Nexus::getInstance();
+    nexus->onStopNotification();
 
     // 发送拒绝应答
     CoreAV* coreav = CoreAV::getInstance();
@@ -574,8 +574,8 @@ void MessageSessionWidget::doCall() {
     if (av->isCallStarted(&contactId)) {
         av->cancelCall(fId);
     } else if (av->startCall(fId, false)) {
-        auto& nexus = Nexus::getInstance();
-        nexus.outgoingNotification();
+        auto nexus = Nexus::getInstance();
+        nexus->outgoingNotification();
     }
 }
 
@@ -588,8 +588,8 @@ void MessageSessionWidget::doVideoCall() {
             av->cancelCall(cId);
         }
     } else if (av->startCall(cId, true)) {
-        auto& nexus = Nexus::getInstance();
-        nexus.outgoingNotification();
+        auto nexus = Nexus::getInstance();
+        nexus->outgoingNotification();
     }
 }
 

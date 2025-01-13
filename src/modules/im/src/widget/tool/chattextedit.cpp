@@ -98,5 +98,5 @@ bool ChatTextEdit::pasteIfImage(QKeyEvent* event) {
 }
 
 void ChatTextEdit::onTextChanged() {
-    qDebug() << __func__ << toPlainText();
+    // qDebug() << __func__ << toPlainText();
 }

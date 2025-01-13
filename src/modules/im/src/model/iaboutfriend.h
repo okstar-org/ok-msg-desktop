@@ -37,12 +37,6 @@ public:
     virtual QString getNote() const = 0;
     virtual void setNote(const QString& note) = 0;
 
-    virtual QString getAutoAcceptDir() const = 0;
-    virtual void setAutoAcceptDir(const QString& path) = 0;
-
-    virtual IFriendSettings::AutoAcceptCallFlags getAutoAcceptCall() const = 0;
-    virtual void setAutoAcceptCall(IFriendSettings::AutoAcceptCallFlags flag) = 0;
-
     virtual bool getAutoGroupInvite() const = 0;
     virtual void setAutoGroupInvite(bool enabled) = 0;
 

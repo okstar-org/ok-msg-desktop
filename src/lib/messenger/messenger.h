@@ -122,7 +122,7 @@ public:
     ~Messenger() override;
 
     void start();
-    bool isStarted()const;
+    [[nodiscard]] bool isStarted() const;
     void stop();
     void doConnect();
 

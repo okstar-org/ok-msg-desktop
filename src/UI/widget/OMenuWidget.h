@@ -29,7 +29,7 @@ class OMenuWidget : public QFrame {
     Q_OBJECT
 public:
     explicit OMenuWidget(QWidget* parent = nullptr);
-    ~OMenuWidget();
+    ~OMenuWidget() override;
 
     void setModule(Module* module_){
         module = module_;
@@ -39,6 +39,7 @@ public:
         return module;
     }
 
+    void stop();
 private:
     Module* module = nullptr;
 };

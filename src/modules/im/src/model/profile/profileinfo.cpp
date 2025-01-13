@@ -205,13 +205,13 @@ QStringList ProfileInfo::removeProfile() {
 void ProfileInfo::logout() {
     auto username = getNickname();
     qDebug() << __func__ << username;
-    emit Nexus::getInstance().destroyProfile(username);
+    emit Nexus::getInstance()->destroyProfile(username);
 }
 
 void ProfileInfo::exit() {
     auto username = getNickname();
     qDebug() << __func__ << username;
-    emit Nexus::getInstance().exit(username);
+    emit Nexus::getInstance()->exit(username);
 }
 
 /**

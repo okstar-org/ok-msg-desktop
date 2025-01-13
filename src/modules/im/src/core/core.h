@@ -272,12 +272,13 @@ private:
     std::unique_ptr<QThread> coreThread = nullptr;
 
     Status::Status fromToxStatus(const lib::messenger::IMStatus& status) const;
-    std::unique_ptr<base::DelayedCallTimer> _delayer;
+
 
 signals:
     void started();
+    void connecting();
     void connected();
-    void disconnected();
+    void disconnected(int err);
 
     void friendRequestReceived(const FriendId& friendPk, const QString& message);
     void friendAvatarChanged(const FriendId& friendPk, const QByteArray& avatar);

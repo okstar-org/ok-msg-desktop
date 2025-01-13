@@ -53,28 +53,6 @@ void AboutFriend::setNote(const QString& note) {
     settings->saveFriendSettings(pk);
 }
 
-QString AboutFriend::getAutoAcceptDir() const {
-    const FriendId pk = f->getPublicKey();
-    return settings->getAutoAcceptDir(pk);
-}
-
-void AboutFriend::setAutoAcceptDir(const QString& path) {
-    const FriendId pk = f->getPublicKey();
-    settings->setAutoAcceptDir(pk, path);
-    settings->saveFriendSettings(pk);
-}
-
-IFriendSettings::AutoAcceptCallFlags AboutFriend::getAutoAcceptCall() const {
-    const FriendId pk = f->getPublicKey();
-    return settings->getAutoAcceptCall(pk);
-}
-
-void AboutFriend::setAutoAcceptCall(IFriendSettings::AutoAcceptCallFlags flag) {
-    const FriendId pk = f->getPublicKey();
-    settings->setAutoAcceptCall(pk, flag);
-    settings->saveFriendSettings(pk);
-}
-
 bool AboutFriend::getAutoGroupInvite() const {
     const FriendId pk = f->getPublicKey();
     return settings->getAutoGroupInvite(pk);
@@ -93,7 +71,6 @@ bool AboutFriend::clearHistory() {
         history->removeFriendHistory(pk.toString());
         return true;
     }
-
     return false;
 }
 

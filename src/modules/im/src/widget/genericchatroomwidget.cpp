@@ -15,19 +15,12 @@
 #include <QMouseEvent>
 #include "lib/storage/settings/style.h"
 #include "maskablepixmapwidget.h"
-#include "src/nexus.h"
-#include "src/persistence/profile.h"
-#include "src/persistence/settings.h"
 #include "src/widget/tool/croppinglabel.h"
 
 GenericChatroomWidget::GenericChatroomWidget(ChatType type, const ContactId& cid, QWidget* parent)
         : GenericChatItemWidget(type, cid, parent), contactId(cid) {
-    auto s = Nexus::getProfile()->getSettings();
-    connect(s, &Settings::compactLayoutChanged, this, &GenericChatroomWidget::compactChange);
-
     setAutoFillBackground(true);
     reloadTheme();
-
     compactChange(false);
 }
 

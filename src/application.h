@@ -79,9 +79,8 @@ private:
 
     std::unique_ptr<UI::LoginWindow> m_loginWindow;
     std::unique_ptr<UI::MainWindow> m_mainWindow;
-    QMap<QString, Module*> m_moduleMap;
 
-    void doLogout();
+
     /**
      * bootstrap: 打开程序首次启动为true，登出启动为false
      */

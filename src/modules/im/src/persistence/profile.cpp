@@ -40,8 +40,8 @@ Profile::Profile(const QString& host,
     db = std::shared_ptr<lib::db::RawDatabase>(storageManager->createDatabase(OK_IM_MODULE));
     //TODO 待优化
     history.reset(new History(db));
-    s = new Settings(storageManager->createSetting(OK_IM_MODULE));
-    initCore(s, isNewProfile);
+    s = std::make_unique<Settings>(storageManager->createSetting(OK_IM_MODULE));
+    initCore(s.get());
 }
 
 /**
@@ -118,16 +118,8 @@ Core* Profile::getCore() {
     return core.get();
 }
 
-void Profile::initCore(ICoreSettings* s, bool isNewProfile) {
-    //    if (toxsave.isEmpty() && !isNewProfile) {
-    //        qCritical() << "Existing toxsave is empty";
-    //        emit failedToStart();
-    //    }
-    //
-    //    if (!toxsave.isEmpty() && isNewProfile) {
-    //        qCritical() << "New profile has toxsave data";
-    //        emit failedToStart();
-    //}
+void Profile::initCore(ICoreSettings* s ) {
+
     auto& sign = _profile->getSignIn();
 
     Core::ToxCoreErrors err;
@@ -161,49 +153,28 @@ void Profile::initCore(ICoreSettings* s, bool isNewProfile) {
 
     // CoreAV
     coreAv = CoreAV::makeCoreAV(core.get());
-    coreAv->start();
+
 
     // CoreFile
     coreFile = CoreFile::makeCoreFile(core.get());
+
+}
+
+void Profile::start() {
+    qDebug() << __func__;
+    core->start();
+    coreAv->start();
     coreFile->start();
 }
 
-/**
- * @brief Starts the Core thread
- */
-void Profile::startCore() {
+void Profile::stop() {
     qDebug() << __func__;
-
-    //    connect(core.get(), &Core::requestSent, this, &Profile::onRequestSent);
-    core->start();
-
-    emit coreChanged(*core);
-
-    //  const ToxId &selfId = core->getSelfId();
-    //  const ToxPk &selfPk = selfId.getPublicKey();
-    //  const QByteArray data = loadAvatarData(selfPk);
-    //  if (data.isEmpty()) {
-    //    qDebug() << "Self avatar not found, will broadcast empty avatar to
-    //    friends";
-    //  }
-    //  // TODO(sudden6): moved here, because it crashes in the constructor
-    //  // reason: Core::getInstance() returns nullptr, because it's not yet
-    //  // initialized solution: kill Core::getInstance
-    //  setAvatar(data);
-}
-
-void Profile::stopCore() {
-    qDebug() << __func__;
-
-    //    disconnect(core.get(), &Core::requestSent, this, &Profile::onRequestSent);
     core->stop();
 }
 
 void Profile::setAvatar(QByteArray& pic, bool saveToCore) {
     _profile->setAvatar(pic);
-
     emit selfAvatarChanged(loadAvatar());
-
     if (saveToCore) {
         core->setAvatar(pic);
     }
@@ -290,6 +261,12 @@ QString Profile::setPassword(const QString& pwd) {
 QString Profile::getHost() {
     return _profile->getSignIn().host;
 }
+
+Settings *Profile::getSettings() const
+{
+    return s.get();
+}
+
 void Profile::quit() {
     s->saveGlobal();
     s->sync();

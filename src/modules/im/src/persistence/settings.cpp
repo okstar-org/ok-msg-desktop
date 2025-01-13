@@ -25,19 +25,13 @@
 #include <QStyleFactory>
 #include <QThread>
 #include <QtCore/QCommandLineParser>
-
-#include "base/autorun.h"
 #include "base/compatiblerecursivemutex.h"
 #include "lib/storage/settings/OkSettings.h"
 #include "src/core/core.h"
-#include "src/core/corefile.h"
-#include "src/ipc.h"
 #include "src/lib/storage/settings/style.h"
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
-#include "src/persistence/profilelocker.h"
-#include "src/persistence/settingsserializer.h"
-#include "src/persistence/smileypack.h"
+
 
 /**
  * @var QHash<QString, QByteArray> Settings::widgetSettings
@@ -64,6 +58,7 @@ Settings::~Settings() {
     sync();
     settingsThread->exit(0);
     settingsThread->wait();
+    delete s;
     delete settingsThread;
 }
 
@@ -1239,20 +1234,6 @@ void Settings::saveFriendSettings(const FriendId& id) {
 void Settings::removeFriendSettings(const FriendId& id) {
     QMutexLocker locker{&bigLock};
     friendLst.remove(id.getByteArray());
-}
-
-bool Settings::getCompactLayout() const {
-    QMutexLocker locker{&bigLock};
-    return compactLayout;
-}
-
-void Settings::setCompactLayout(bool value) {
-    QMutexLocker locker{&bigLock};
-
-    if (value != compactLayout) {
-        compactLayout = value;
-        emit compactLayoutChanged(value);
-    }
 }
 
 Settings::FriendListSortingMode Settings::getFriendSortingMode() const {

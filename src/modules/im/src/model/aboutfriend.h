@@ -39,12 +39,6 @@ public:
     QString getNote() const override;
     void setNote(const QString& note) override;
 
-    QString getAutoAcceptDir() const override;
-    void setAutoAcceptDir(const QString& path) override;
-
-    IFriendSettings::AutoAcceptCallFlags getAutoAcceptCall() const override;
-    void setAutoAcceptCall(IFriendSettings::AutoAcceptCallFlags flag) override;
-
     bool getAutoGroupInvite() const override;
     void setAutoGroupInvite(bool enabled) override;
 

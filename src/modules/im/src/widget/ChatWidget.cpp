@@ -173,9 +173,13 @@ void ChatWidget::deinit() {
 
 void ChatWidget::connectToCore(Core* core) {
     qDebug() << __func__ << "core:" << core;
-    connect(core, &Core::usernameSet, [&](const QString& name){
-        ui->nameLabel->setText(name);
-    });
+
+    connect(core, &Core::connecting, this, &ChatWidget::onConnecting );
+    connect(core, &Core::connected, this, &ChatWidget::onConnected );
+    connect(core, &Core::disconnected, this, &ChatWidget::onDisconnected );
+
+
+    connect(core, &Core::usernameSet, this, &ChatWidget::onNicknameSet);
     connect(core, &Core::statusSet, this, &ChatWidget::onStatusSet);
     connect(core, &Core::statusMessageSet, this, &ChatWidget::onStatusMessageSet);
     connect(core, &Core::messageSessionReceived, this, &ChatWidget::onMessageSessionReceived);
@@ -240,45 +244,10 @@ void ChatWidget::onFriendStatusChanged(const FriendId& friendPk, Status::Status 
         return;
     }
     f->setStatus(status);
-
-    //  bool isActualChange = f->getStatus() != status;
-    //
-    //  FriendWidget *widget = // friendWidgets[f->getPublicKey()];
-    //  contactListWidget->getFriend(f->getPublicKey());
-    //  if (isActualChange) {
-    //    if (!Status::isOnline(f->getStatus())) {
-    //      contactListWidget->moveWidget(widget, Status::Status::Online);
-    //    } else if (status == Status::Status::Offline) {
-    //      contactListWidget->moveWidget(widget, Status::Status::Offline);
-    //    }
-    //  }
-    //
-
-    //  if (widget->isActive()) {
-    //    setWindowTitle(widget->getSubject());
-    //  }
-    //
-    //    ContentDialogManager::getInstance()->updateFriendStatus(friendPk);
 }
 
 void ChatWidget::onFriendStatusMessageChanged(const FriendId& friendPk, const QString& message) {
     sessionListWidget->setFriendStatusMsg(friendPk, message);
-
-    //  IMFriend *f = Nexus::getCore()->getFriendList().findFriend(friendPk);
-    //  if (!f) {
-    //    return;
-    //  }
-    //
-    //  QString str = message;
-    //  str.replace('\n', ' ').remove('\r').remove(QChar('\0'));
-    //  f->setStatusMessage(str);
-    //
-    //  chatForms[friendPk]->setStatusMessage(str);
-    //
-    //  auto frd = contactListWidget->getFriend(friendPk);
-    //  if(frd){
-    //    frd->setStatusMsg(str);
-    //  }
 }
 
 void ChatWidget::onFriendTypingChanged(const FriendId& friendId, bool isTyping) {
@@ -297,11 +266,12 @@ void ChatWidget::showEvent(QShowEvent* e) {}
 
 void ChatWidget::onNicknameSet(const QString& nickname) {
     qDebug() << __func__ << nickname;
+
     ui->nameLabel->setText(nickname);
     ui->nameLabel->setToolTip(Qt::convertFromPlainText(nickname, Qt::WhiteSpaceNormal));
 
     // 修改消息列表自己的昵称
-    auto core = Nexus::getInstance().getProfile()->getCore();
+    auto core = Nexus::getInstance()->getProfile()->getCore();
     sessionListWidget->setFriendName(core->getSelfId(), nickname);
 }
 
@@ -511,31 +481,36 @@ void ChatWidget::onProfileChanged(Profile* profile) {
     }
 }
 
-void ChatWidget::onGroupClicked() {
-    //    auto& settings = Nexus::getProfile()->getSettings();
-
-    //    hideMainForms(nullptr);
-    //  if (!groupInviteForm) {
-    //    groupInviteForm = new GroupInviteForm;
-    //    connect(groupInviteForm, &GroupInviteForm::groupCreate, core, &Core::createGroup);
-    //  }
-    //  groupInviteForm->show(contentLayout);
-    //    setWindowTitle(fromDialogType(DialogType::GroupDialog));
-    //    setActiveToolMenuButton(ActiveToolMenuButton::GroupButton);
+void ChatWidget::onConnecting()
+{
+    //TODO IM模块，"连接中"
+    qDebug() << __func__;
 }
+
+void ChatWidget::onDisconnected(int err)
+{
+    //TODO IM模块，"已断开(err)"
+    qDebug() << __func__;
+}
+
+void ChatWidget::onConnected()
+{
+    //TODO IM模块，"在线"
+    qDebug() << __func__;
+}
+
+void ChatWidget::onGroupClicked() {
+
+}
+
 void ChatWidget::reloadTheme() {
     setStyleSheet(lib::settings::Style::getStylesheet("window/chat.css"));
     QString statusPanelStyle = lib::settings::Style::getStylesheet("window/statusPanel.css");
-    //  ui->tooliconsZone->setStyleSheet(
-    //      Style::getStylesheet("tooliconsZone/tooliconsZone.css"));
-    //  ui->statusPanel->setStyleSheet(statusPanelStyle);
     ui->statusHead->setStyleSheet(statusPanelStyle);
     ui->friendList->setStyleSheet(lib::settings::Style::getStylesheet("friendList/friendList.css"));
     ui->statusButton->setStyleSheet(
             lib::settings::Style::getStylesheet("statusButton/statusButton.css"));
     sessionListWidget->reDraw();
-
-    //  profilePicture->setStyleSheet(Style::getStylesheet("window/profile.css"));
 
     if (contentLayout != nullptr) {
         contentLayout->reloadTheme();

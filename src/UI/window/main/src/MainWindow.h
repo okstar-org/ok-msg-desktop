@@ -45,9 +45,14 @@ public:
 
     static MainWindow* getInstance();
 
+    void stop();
+
     void init();
+
+
     OMenuWidget* getMenuWindow(SystemMenu menu);
     OMenuWidget* initMenuWindow(SystemMenu menu);
+
     inline OMainMenu* menu() {
         return m_menu;
     }
@@ -65,7 +70,7 @@ private:
 
     Ui::MainWindow* ui;
     OMainMenu* m_menu;
-    QMap<SystemMenu, OMenuWidget*> menuWindow;
+    QMap<SystemMenu, OMenuWidget*> menuMap;
 
     QSystemTrayIcon* sysTrayIcon;
     QMenu* trayMenu;

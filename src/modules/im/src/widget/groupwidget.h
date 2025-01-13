@@ -35,8 +35,7 @@ class GroupWidget final : public GenericChatroomWidget {
 
 public:
     GroupWidget(const GroupId& groupId,
-                const QString& groupName,
-                bool compact);
+                const QString& groupName);
 
     ~GroupWidget();
     void init();

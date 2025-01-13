@@ -63,19 +63,9 @@ MessageSessionListWidget::MessageSessionListWidget(MainLayout* parent,
     listLayout = new ContactListLayout(this);
     setLayout(listLayout);
 
-    //    mode = Nexus::getProfile()->getSettings()->getFriendSortingMode();
-    //    sortByMode(mode);
-
     auto w = Widget::getInstance();
     connect(w, &Widget::toDeleteChat, this, &MessageSessionListWidget::do_deleteSession);
     connect(w, &Widget::toClearHistory, this, &MessageSessionListWidget::do_clearHistory);
-
-    auto bus = ok::Application::Instance()->bus();
-    connect(bus, &ok::Bus::profileChanged, [this](Profile* profile) {
-        auto settings = profile->getSettings();
-        connect(settings, &Settings::compactLayoutChanged, this,
-                &MessageSessionListWidget::onCompactChanged);
-    });
 }
 
 MessageSessionListWidget::~MessageSessionListWidget() {
@@ -219,12 +209,6 @@ void MessageSessionListWidget::sortByMode(SortingMode mode) {
 #undef COMMENT
 
         activityLayout = new QVBoxLayout();
-        //    bool compact = Nexus::getProfile()->getSettings()->getCompactLayout();
-        //    for (Time t : names.keys()) {
-        //      CategoryWidget *category = new CategoryWidget(compact, this);
-        //      category->setName(names[t]);
-        //      activityLayout->addWidget(category);
-        //    }
 
         moveFriends(listLayout->getLayoutOnline());
         //    if (circleLayout != nullptr) {

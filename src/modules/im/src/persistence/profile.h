@@ -68,12 +68,12 @@ public:
     void saveContactAlias(const QString& contactId, const QString& alias);
     QString getContactAlias(const QString& contactId);
 
-    void initCore(ICoreSettings* s, bool isNewProfile);
+    void initCore(ICoreSettings* s);
 
     Core* getCore();
 
-    void startCore();
-    void stopCore();
+    void start();
+    void stop();
 
     CoreAV* getCoreAv() {
         assert(coreAv.get());
@@ -88,9 +88,7 @@ public:
     QString setPassword(const QString& pwd);
     QString getHost();
 
-    [[nodiscard]] Settings* getSettings() const {
-        return s;
-    }
+    [[nodiscard]] Settings* getSettings() const ;
 
     const QDir& getDir() const {
         assert(_profile);
@@ -116,7 +114,7 @@ private:
 
     lib::storage::StorageManager* storageManager;
 
-    Settings* s;
+    std::unique_ptr<Settings> s;
     std::unique_ptr<lib::settings::OkSettings> okSettings;
     std::shared_ptr<lib::db::RawDatabase> db;
 signals:

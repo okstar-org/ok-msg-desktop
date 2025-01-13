@@ -206,10 +206,7 @@ void Application::stopMainUI() {
 }
 
 void Application::cleanup() {
-    qDebug() << __func__;
-    for (auto e : m_moduleMap) {
-        e->cleanup();
-    }
+
 }
 
 void Application::finish() {}
@@ -233,7 +230,7 @@ void Application::onAvatar(const QPixmap& pixmap) {
 
 void Application::on_logout(const QString& profile) {
     qDebug() << __func__ << profile;
-    doLogout();
+    stopMainUI();
     QThread::currentThread()->msleep(100);
     createLoginUI(false);
 }
@@ -244,19 +241,5 @@ void Application::on_exit() {
     // s.saveGlobal();
 }
 
-void Application::doLogout() {
-    qDebug() << __func__ << profile.get();
-
-    QVector<QString> remove;
-    for (auto mod : m_moduleMap) {
-        qDebug() << "delete module:" << mod->getName();
-        remove.push_back(mod->getName());
-        mod->cleanup();
-    }
-    for (auto& name : remove) {
-        m_moduleMap.remove(name);
-    }
-    stopMainUI();
-}
 
 }  // namespace ok

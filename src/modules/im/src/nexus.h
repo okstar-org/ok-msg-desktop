@@ -19,6 +19,7 @@
 #include "lib/audio/iaudiocontrol.h"
 #include "lib/audio/iaudiosink.h"
 #include "modules/module.h"
+#include "src/base/compatiblerecursivemutex.h"
 
 class Widget;
 class Profile;
@@ -41,16 +42,17 @@ class QSignalMapper;
 class Nexus : public QObject, public Module {
     Q_OBJECT
 public:
+    explicit Nexus(QObject* parent = nullptr);
+    ~Nexus() override;
+
     static Module* Create();
 
-    void showMainGUI();
-
-    static Nexus& getInstance();
-    static Nexus& createInstance();
+    static Nexus* getInstance();
     static Core* getCore();
     static Profile* getProfile();
     static Widget* getDesktopGUI();
 
+    void showMainGUI();
     [[nodiscard]] IAudioControl* audio() const {
         return audioControl.get();
     }
@@ -75,8 +77,7 @@ protected:
     void cleanup() override;
 
 private:
-    explicit Nexus(QObject* parent = nullptr);
-    ~Nexus();
+
     void setProfile(Profile* p);
 
 private:
@@ -89,6 +90,8 @@ private:
 
     std::unique_ptr<IAudioControl> audioControl;
     std::unique_ptr<IAudioSink> audioNotification;
+
+    CompatibleRecursiveMutex mutex;
 
 #ifdef Q_OS_MAC
 public:
@@ -122,16 +125,11 @@ signals:
     void profileLoadFailed();
     void coreChanged(Core&);
     void saveGlobal();
-    void updateAvatar(const QPixmap& pixmap);
     void createProfileFailed(QString msg);
     void destroyProfile(const QString& profile);
     void exit(const QString& profile);
 
 public slots:
-    void onCreateNewProfile(const QString& host, const QString& name, const QString& pass);
-    void onLoadProfile(const QString& host, const QString& name, const QString& pass);
-    void bootstrapWithProfile(Profile* p);
-    void bootstrapWithProfileName(const QString& host, const QString& p);
     void do_logout(const QString& profile);
 };
 

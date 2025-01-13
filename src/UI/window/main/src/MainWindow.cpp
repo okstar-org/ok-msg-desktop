@@ -107,12 +107,31 @@ MainWindow::MainWindow(std::shared_ptr<lib::session::AuthSession> session, QWidg
 
 MainWindow::~MainWindow() {
     qDebug() << __func__;
+    stop();
+
+
+    for(auto k: menuMap.keys()){
+        auto menu = menuMap.value(k);
+        delete menu;
+    }
+    menuMap.clear();
+
     disconnect(m_menu, &OMainMenu::menuPushed, this, &MainWindow::onSwitchPage);
     delete ui;
 }
 
 MainWindow* MainWindow::getInstance() {
     return instance;
+}
+
+void MainWindow::stop()
+{
+    qDebug() << __func__;
+    for(auto k: menuMap.keys()){
+        auto menu = menuMap.value(k);
+        menu->stop();
+    }
+
 }
 
 inline QIcon MainWindow::prepareIcon(QString path, int w, int h) {
@@ -171,7 +190,7 @@ void MainWindow::closeEvent(QCloseEvent* event) {
     //    QWidget::closeEvent(event);
     //    qApp->quit();
 
-    //  emit Nexus::getInstance().exit("");
+    //  emit Nexus::getInstance()->exit("");
 }
 
 void MainWindow::init() {}
@@ -310,14 +329,14 @@ OMenuWidget* MainWindow::initMenuWindow(SystemMenu menu) {
             });
         }
 
-        menuWindow.insert(menu, w);
+        menuMap.insert(menu, w);
         ui->stacked_widget->addWidget(w);
     }
     return w;
 }
 
 OMenuWidget* MainWindow::getMenuWindow(SystemMenu menu) {
-    return menuWindow.value(menu);
+    return menuMap.value(menu);
 }
 
 void MainWindow::onSwitchPage(SystemMenu menu, bool checked) {
@@ -350,8 +369,9 @@ OMenuWidget* MainWindow::createChatModule(MainWindow* pWindow) {
     auto m = Nexus::Create();
     auto nexus = static_cast<Nexus*>(m);
 
-    connect(nexus, &Nexus::updateAvatar,  //
-            ok::Application::Instance(), &ok::Application::onAvatar);
+    // connect(nexus, &Nexus::updateAvatar,  //
+    //         ok::Application::Instance(), &ok::Application::onAvatar);
+
     connect(nexus, &Nexus::destroyProfile,  //
             ok::Application::Instance(), &ok::Application::on_logout);
     // connect(nexus, &Nexus::exit,  //

@@ -206,7 +206,7 @@ bool CoreAV::startCall(QString friendNum, bool video) {
     }
 
     // Audio backend must be set before making a call
-    auto audio = Nexus::getInstance().audio();
+    auto audio = Nexus::getInstance()->audio();
 
     ToxFriendCallPtr call =
             ToxFriendCallPtr(new ToxFriendCall(friendNum, video, *this, *audio));
@@ -486,7 +486,7 @@ void CoreAV::joinGroupCall(const Group& group) {
     qDebug() << QString("Joining group call %1").arg(group.getIdAsString());
 
     // Audio backend must be set before starting a call
-    auto audioCtrl = Nexus::getInstance().audio();
+    auto audioCtrl = Nexus::getInstance()->audio();
     ToxGroupCallPtr groupcall = ToxGroupCallPtr(new ToxGroupCall{group, *this, *audioCtrl});
     // Call Objects must be owned by CoreAV or there will be locking problems with
     // Audio
@@ -658,7 +658,7 @@ void CoreAV::onCall(const lib::messenger::IMPeerId& peerId, const QString& callI
     auto peer = ToxPeer(peerId);
 
     // Audio backend must be set before receiving a call
-    auto audioCtrl= Nexus::getInstance().audio();
+    auto audioCtrl= Nexus::getInstance()->audio();
     ToxFriendCallPtr call =
             ToxFriendCallPtr(new ToxFriendCall{peerId.toString(), video, *this, *audioCtrl});
     call->setCallId(callId);

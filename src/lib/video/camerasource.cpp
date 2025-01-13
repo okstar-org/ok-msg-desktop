@@ -32,7 +32,7 @@ extern "C" {
  * @class CameraSource
  * @brief This class is a wrapper to share a camera's captured video frames
  */
-CameraSource* CameraSource::instance{nullptr};
+CameraSource* CameraSource::instance = nullptr;
 
 CameraSource::CameraSource()
         : deviceThread{new QThread}

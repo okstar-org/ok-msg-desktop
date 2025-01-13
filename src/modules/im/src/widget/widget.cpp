@@ -258,7 +258,7 @@ Widget::Widget(QWidget* parent)  //
 
 
 #ifdef Q_OS_MAC
-    // Nexus::getInstance().updateWindows();
+    // Nexus::getInstance()->updateWindows();
 #endif
 
     init();
@@ -816,7 +816,7 @@ bool Widget::newMessageAlert(QWidget* currentWindow, bool isActive, bool sound, 
             bool notifySound = settings->getNotifySound();
 
             if (notifySound && sound && (!isBusy || busySound)) {
-                Nexus::getInstance().playNotificationSound(IAudioSink::Sound::NewMessage);
+                Nexus::getInstance()->playNotificationSound(IAudioSink::Sound::NewMessage);
             }
         }
     }
@@ -961,7 +961,7 @@ ContentLayout* Widget::createContentDialog(DialogType type) const {
             &Nexus::updateWindowsStates);
     connect(dialog->windowHandle(), &QWindow::windowTitleChanged, &Nexus::getInstance(),
             &Nexus::updateWindows);
-    Nexus::getInstance().updateWindows();
+    Nexus::getInstance()->updateWindows();
 #endif
 
     return contentLayoutDialog;
@@ -1053,97 +1053,6 @@ void Widget::destroyGroup(const GroupId& groupId) {
 GroupWidget* Widget::createGroup(QString groupnumber,
                                  const GroupId& groupId,
                                  const QString& groupName) {
-    //  auto newgroup = contactListWidget->addGroup(groupnumber, groupId, groupName);
-    //  qDebug() << "createGroup" << groupnumber
-    //            << groupName;
-    //
-    //  Group *g = GroupList::findGroup(groupId);
-    //  if (g) {
-    //    qWarning() << "Group already exists" << groupnumber << "=>group:" << g;
-    //    return g;
-    //  }
-    //
-    //  const bool enabled = core->getGroupAvEnabled(groupnumber);
-    //  Group *newgroup = GroupList::addGroup(groupnumber, groupId, groupName,
-    //                                        enabled, core->getUsername());
-    //
-    //  auto dialogManager = ContentDialogManager::getInstance();
-    //  auto rawChatroom = new GroupChatroom(newgroup, dialogManager);
-    //  std::shared_ptr<GroupChatroom> chatroom(rawChatroom);
-    //
-    //  const auto compact = settings.getCompactLayout();
-    //  auto widget = new GroupWidget(chatroom, compact);
-    //  auto messageProcessor = MessageProcessor(sharedMessageProcessorParams);
-    //  auto messageDispatcher = std::make_shared<GroupMessageDispatcher>(
-    //      *newgroup, std::move(messageProcessor), *core, *core,
-    //      Settings::getInstance());
-    //  auto groupChatLog = std::make_shared<SessionChatLog>(*core);
-    //
-    //  connect(messageDispatcher.get(), &IMessageDispatcher::messageReceived,
-    //          groupChatLog.get(), &SessionChatLog::onMessageReceived);
-    //  connect(messageDispatcher.get(), &IMessageDispatcher::messageSent,
-    //          groupChatLog.get(), &SessionChatLog::onMessageSent);
-    //  connect(messageDispatcher.get(), &IMessageDispatcher::messageComplete,
-    //          groupChatLog.get(), &SessionChatLog::onMessageComplete);
-    //
-    //  auto notifyReceivedCallback = [this, groupId](const ToxPk &author,
-    //                                                const Message &message) {
-    //    auto isTargeted =
-    //        std::any_of(message.metadata.begin(), message.metadata.end(),
-    //                    [](MessageMetadata metadata) {
-    //                      return metadata.type == MessageMetadataType::selfMention;
-    //                    });
-    //    newGroupMessageAlert(groupId, author, message.content,
-    //                         isTargeted || settings.getGroupAlwaysNotify());
-    //  };
-    //
-    //  auto notifyReceivedConnection =
-    //      connect(messageDispatcher.get(), &IMessageDispatcher::messageReceived,
-    //              notifyReceivedCallback);
-    //  groupAlertConnections.insert(groupId, notifyReceivedConnection);
-    //
-    //  auto form =
-    //      new GroupChatForm(newgroup, *groupChatLog, *messageDispatcher, settings);
-    //  connect(&settings, &Settings::nameColorsChanged, form,
-    //          &GenericChatForm::setColorizedNames);
-    //  form->setColorizedNames(settings.getEnableGroupChatsColor());
-    //  groupMessageDispatchers[groupId] = messageDispatcher;
-    //  groupChatLogs[groupId] = groupChatLog;
-    //  groupWidgets[groupId] = widget;
-    //  groupChatrooms[groupId] = chatroom;
-    //  groupChatForms[groupId] = QSharedPointer<GroupChatForm>(form);
-    //
-    //  contactListWidget->addGroupWidget(widget);
-    //
-    //  widget->updateStatusLight();
-    //  contactListWidget->activateWindow();
-    //
-    //  connect(widget, &GroupWidget::chatroomWidgetClicked, this,
-    //          &Widget::onChatroomWidgetClicked);
-    //  connect(widget, &GroupWidget::newWindowOpened, this, &Widget::openNewDialog);
-    // #if (QT_VERSION >= QT_VERSION_CHECK(5, 7, 0))
-    //  auto widgetRemoveGroup = QOverload<const GroupId &>::of(&Widget::removeGroup);
-    //  auto widgetDestroyGroup = QOverload<const GroupId &>::of(&Widget::destroyGroup);
-    // #else
-    //  auto widgetRemoveGroup =
-    //      static_cast<void (Widget::*)(const GroupId &)>(&Widget::removeGroup);
-    //  auto widgetDestroyGroup =
-    //      static_cast<void (Widget::*)(const GroupId &)>(&Widget::destroyGroup);
-    // #endif
-    //  connect(widget, &GroupWidget::removeGroup, this, widgetRemoveGroup);
-    //  connect(widget, &GroupWidget::destroyGroup, this, widgetDestroyGroup);
-    ////  connect(widget, &GroupWidget::middleMouseClicked, this,
-    ////          [this]() { removeGroup(groupId); });
-    //  connect(widget, &GroupWidget::chatroomWidgetClicked, form,
-    //          &ChatForm::focusInput);
-    //  connect(newgroup, &Group::titleChangedByUser, this,
-    //          &Widget::titleChangedByUser);
-    //  connect(core, &Core::usernameSet, newgroup, &Group::setSelfName);
-    //
-    //  FilterCriteria filter = getFilterCriteria();
-    //  widget->searchName(ui->searchContactText->text(), filterGroups(filter));
-
-    //  return newgroup;
 
     return nullptr;
 }
@@ -1190,7 +1099,7 @@ bool Widget::event(QEvent* e) {
             emit windowStateChanged(windowState());
 
         case QEvent::WindowStateChange:
-            Nexus::getInstance().updateWindowsStates();
+            Nexus::getInstance()->updateWindowsStates();
 #endif
             break;
         default:

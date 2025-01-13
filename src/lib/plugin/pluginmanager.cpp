@@ -29,17 +29,7 @@
 #include "lib/storage/settings/applicationinfo.h"
 #include "okplugin.h"
 #include "pluginhost.h"
-/**
- * Helper class used to process incoming XML in plugins.
- * This task should work as long as the related account exists,
- * that's why we override onDisconnect (called when XML stream ends)
- * to prevent it from stopping prematurely.
- *
- * According to common sense, tasks should have at least
- * a vaguely defined execution time, however, this one runs
- * indefinitely long and feels more like a hook/handler.
- * Therefore it should probably be refactored to one.
- */
+
 
 namespace ok {
 namespace plugin {
@@ -47,7 +37,7 @@ namespace plugin {
 class PluginManager::StreamWatcher : public QObject {
 public:
     StreamWatcher(::lib::messenger::Messenger* messenger, PluginManager* pluginManager,
-                  int account_)  //
+                  int account_)
             : manager(pluginManager), account(account_), m_messenger(messenger) {
         // ignore
         connect(m_messenger, &::lib::messenger::Messenger::incoming,  //
@@ -127,8 +117,8 @@ PluginManager::PluginManager()
     // to be able to restart in case of batch events
     connect(_messageViewJSFiltersTimer, &QTimer::timeout, this, &PluginManager::jsFiltersUpdated);
 
-    //    connect(PsiOptions::instance(), &PsiOptions::optionChanged, this,
-    //    &PluginManager::optionChanged);
+            //    connect(PsiOptions::instance(), &PsiOptions::optionChanged, this,
+            //    &PluginManager::optionChanged);
 }
 
 void PluginManager::initNewSession(PsiCon* psi) {

@@ -14,9 +14,7 @@
 #define FRIENDLISTWIDGET_H
 
 #include <QWidget>
-#include "genericchatitemlayout.h"
 #include "src/core/core.h"
-#include "src/model/friendmessagedispatcher.h"
 #include "src/model/message.h"
 #include "src/model/status.h"
 #include "src/persistence/settings.h"
@@ -99,8 +97,6 @@ public slots:
 
     void slot_friendClicked(GenericChatroomWidget*);
     void moveWidget(FriendWidget* w, Status::Status s, bool add = false);
-
-    void onGroupchatPositionChanged(bool top);
 
     void slot_groupClicked(GenericChatroomWidget*);
     void do_toShowDetails(const ContactId& cid);

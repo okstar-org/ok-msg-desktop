@@ -33,6 +33,7 @@
 #include "lib/messenger/IMFriend.h"
 #include "src/application.h"
 #include "src/Bus.h"
+#include "src/base/images.h"
 
 #define ASSERT_CORE_THREAD assert(QThread::currentThread() == coreThread.get())
 
@@ -40,7 +41,8 @@ Core::Core(QThread* coreThread)
         : messenger(nullptr)
         , toxTimer(new QTimer(this))
         , coreThread(coreThread)
-        , _delayer(std::make_unique<::base::DelayedCallTimer>()) {
+{
+    assert(coreThread);
     assert(toxTimer);
 
     qRegisterMetaType<ToxPeer>("ToxPeer");
@@ -49,17 +51,24 @@ Core::Core(QThread* coreThread)
     qRegisterMetaType<FriendId>("FriendId");
     qRegisterMetaType<FriendInfo>("FriendInfo");
 
+    connect(this, &Core::avatarSet, this, [&](QByteArray buf){
+        QPixmap pixmap;
+        ok::base::Images::putToPixmap(buf, pixmap);
+        ok::Application::Instance()->onAvatar(pixmap);
+    });
+
+
+
     toxTimer->setSingleShot(true);
-    // connect(toxTimer, &QTimer::timeout, this, &Core::process);
+    connect(toxTimer, &QTimer::timeout, this, &Core::process);
     connect(coreThread, &QThread::finished, toxTimer, &QTimer::stop);
     toxTimer->start();
+
 }
 
 Core::~Core() {
-    coreThread->exit(0);
+    // coreThread->exit(0);
     // coreThread->wait();
-
-    messenger.reset();
 }
 
 Status::Status Core::fromToxStatus(const lib::messenger::IMStatus& status_) const {
@@ -151,20 +160,24 @@ void Core::onStopped()
     qDebug() << __func__;
 }
 
-void Core::onDisconnected(int) {
+void Core::onDisconnected(int err) {
     qDebug() << __func__;
     mutex.unlock();
-    emit disconnect();
+    emit disconnected(err);
 }
+
 void Core::onConnecting()
 {
     qDebug() << __func__;
+    emit connecting();
 }
+
 void Core::onConnected()
 {
     qDebug() << __func__;
     mutex.unlock();
     emit connected();
+    emit ok::Application::Instance()->bus()->coreChanged(this);
 }
 
 /**
@@ -180,6 +193,7 @@ void Core::stop() {
     QMutexLocker ml{&mutex};
     qDebug() << __func__ << "...";
     coreThread->quit();
+    messenger->stop();
 }
 
 /**
@@ -197,10 +211,8 @@ void Core::process() {
     qDebug() << __func__ ;
 
     ASSERT_CORE_THREAD;
-
     mutex.lock();
 
-    QThread::sleep(1);
     if(!messenger->isStarted()){
         qDebug() << __func__ << "start...";
         messenger->start();
@@ -228,7 +240,6 @@ void Core::onFriend(const lib::messenger::IMFriend& frnd) {
 
     friendList.addFriend(fi);
 
-    // 发射朋友添加事件
     emit friendAdded(fi);
 }
 
@@ -1269,6 +1280,8 @@ void Core::onSelfNameChanged(QString name) {
 }
 
 void Core::onSelfAvatarChanged(const std::string avatar) {
+    qDebug() << __func__;
+
     QMutexLocker ml{&mutex};
 
     auto a = QByteArray::fromStdString(avatar);
@@ -1325,7 +1338,7 @@ void Core::onSelfVCardChanged(lib::messenger::IMVCard &imvCard)
         }
     }
 
-    emit usernameSet(vCard.fullName);
+    emit usernameSet(vCard.nickname);
     emit vCardSet(vCard);
 }
 
@@ -1371,6 +1384,7 @@ void Core::onFriendVCard(const lib::messenger::IMContactId& fId,
         vCard.tels.push_back({.type = item.type, .mobile = item.mobile, .number = item.number});
     }
 
+    // emit friendNicknameChanged(FriendId(fId), vCard.nickname);
     emit friendVCardSet(FriendId(fId), vCard);
 
 }

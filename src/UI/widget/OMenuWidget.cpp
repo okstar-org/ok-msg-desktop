@@ -22,8 +22,16 @@ namespace UI {
 
 OMenuWidget::OMenuWidget(QWidget* parent)
         : QFrame(parent) {
+}
+
+OMenuWidget::~OMenuWidget() {
 
 }
 
-OMenuWidget::~OMenuWidget() {}
+void OMenuWidget::stop()
+{
+    module->cleanup();
+    module->stop();
+}
+
 }  // namespace UI

@@ -99,19 +99,7 @@ AVForm::AVForm()
 
     volumeDisplay->setMaximum(Audio::totalSteps);
 
-    getAudioOutDevices();
-    getAudioInDevices();
-    createVideoSurface();
-    getVideoDevices();
 
-    if (audioSrc == nullptr) {
-        audioSrc = audio->makeSource();
-        connect(audioSrc.get(), &IAudioSource::volumeAvailable, this, &AVForm::setVolume);
-    }
-
-    if (audioSink == nullptr) {
-        audioSink = audio->makeSink();
-    }
 
     fillAudioQualityComboBox();
 
@@ -128,7 +116,7 @@ AVForm::AVForm()
 }
 
 AVForm::~AVForm() {
-    killVideoSurface();
+
     settings::Translator::unregister(this);
 }
 
@@ -138,15 +126,41 @@ void AVForm::hideEvent(QHideEvent* event) {
 
     if (camVideoSurface) {
         camVideoSurface->setSource(nullptr);
-        killVideoSurface();
+        camVideoSurface.reset();
+        QLayoutItem* child;
+        while ((child = gridLayout->takeAt(0)) != nullptr) delete child;
     }
+
     videoDeviceList.clear();
+    camera->destroyInstance();
+    camera = nullptr;
 
     GenericForm::hideEvent(event);
 }
 
 void AVForm::showEvent(QShowEvent* event) {
+    if(camera){
+        return;
+    }
+
+
     camera = CameraSource::getInstance();
+    getAudioOutDevices();
+    getAudioInDevices();
+
+    getVideoDevices();
+
+    auto surface = createVideoSurface();
+    gridLayout->addWidget(surface, 0, 0, 1, 1);
+
+    if (audioSrc == nullptr) {
+        audioSrc = audio->makeSource();
+        connect(audioSrc.get(), &IAudioSource::volumeAvailable, this, &AVForm::setVolume);
+    }
+
+    if (audioSink == nullptr) {
+        audioSink = audio->makeSink();
+    }
 
     GenericForm::showEvent(event);
 }
@@ -599,25 +613,13 @@ void AVForm::on_audioThresholdSlider_valueChanged(int sliderSteps) {
     audioSettings->setAudioThreshold(normThreshold);
     audio->setInputThreshold(normThreshold);
 }
-void AVForm::createVideoSurface() {
-    if (camVideoSurface) return;
 
-    camVideoSurface = new VideoSurface(QPixmap(), CamFrame);
+VideoSurface* AVForm::createVideoSurface() {
+    camVideoSurface = std::make_unique<VideoSurface>(QPixmap());
     camVideoSurface->setObjectName(QStringLiteral("CamVideoSurface"));
     camVideoSurface->setMinimumSize(QSize(160, 120));
     camVideoSurface->setSource(camera);
-    gridLayout->addWidget(camVideoSurface, 0, 0, 1, 1);
-}
-
-void AVForm::killVideoSurface() {
-    if (!camVideoSurface) return;
-
-    QLayoutItem* child;
-    while ((child = gridLayout->takeAt(0)) != nullptr) delete child;
-
-    camVideoSurface->close();
-    delete camVideoSurface;
-    camVideoSurface = nullptr;
+    return camVideoSurface.get();
 }
 
 void AVForm::retranslateUi() {

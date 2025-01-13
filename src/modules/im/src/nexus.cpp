@@ -148,9 +148,7 @@ void Nexus::start(std::shared_ptr<lib::session::AuthSession> session) {
 
     // Connections
     connect(profile.get(), &Profile::selfAvatarChanged, m_widget, &Widget::onSelfAvatarLoaded);
-
     connect(profile.get(), &Profile::selfAvatarChanged, [&, bus](const QPixmap& pixmap) {
-        emit updateAvatar(pixmap);
         emit bus->avatarChanged(pixmap);
     });
 
@@ -159,7 +157,7 @@ void Nexus::start(std::shared_ptr<lib::session::AuthSession> session) {
     connect(profile.get(), &Profile::coreChanged,
             [&, bus](Core& core) { emit bus->coreChanged(&core); });
 
-    profile->startCore();
+    profile->start();
 
 #ifdef Q_OS_MAC
     // TODO: still needed?
@@ -195,7 +193,7 @@ void Nexus::start(std::shared_ptr<lib::session::AuthSession> session) {
 }
 
 void Nexus::stop() {
-    // TODO 断开IM连接
+    profile->stop();
 }
 
 void Nexus::hide() {
@@ -208,66 +206,7 @@ const QString& Nexus::getName() const {
 
 void Nexus::do_logout(const QString& profileName) {
     //    Nexus::getProfile()->getSettings()->saveGlobal();
-    profile->stopCore();
 }
-
-void Nexus::bootstrapWithProfile(Profile* p) {
-    // kriby: This is a hack until a proper controller is written
-    //
-    //  Q_INIT_RESOURCE(res);
-    //  Q_INIT_RESOURCE(emojione);
-    //  Q_INIT_RESOURCE(smileys);
-    //  Q_INIT_RESOURCE(translations_IM);
-    //
-    //  Settings &settings = Nexus::getProfile()->getSettings();
-    //  QString locale = settings.getTranslation();
-    //  qDebug() << "locale" << locale;
-    //
-    ////  add_definitions(-D${PROJECT_NAME}_MODULE="${PROJECT_NAME}")
-    //  settings::Translator::translate(OK_IM_MODULE, locale);
-    //
-    //  profile = p;
-    //  assert(profile);
-    //
-    //  if (profile) {
-    //    audioControl =
-    //    std::unique_ptr<IAudioControl>(Audio::makeAudio(settings));
-    //    assert(audioControl != nullptr);
-    //    profile->getCore()->getAv()->setAudio(*audioControl);
-    //    start();
-    //  }
-}
-//
-// void Nexus::setSettings(Settings* settings) {
-//    if (this->settings) {
-//        QObject::disconnect(this, &Nexus::saveGlobal, this->settings, &Settings::saveGlobal);
-//    }
-//    this->settings = settings;
-//    if (this->settings) {
-//        QObject::connect(this, &Nexus::saveGlobal, this->settings, &Settings::saveGlobal);
-//    }
-//}
-
-//  void Nexus::connectLoginScreen(const LoginScreen &loginScreen) {
-// TODO(kriby): Move connect sequences to a controller class object instead
-
-//    // Nexus -> LoginScreen
-//    QObject::connect(this, &Nexus::profileLoaded, &loginScreen,
-//    &LoginScreen::onProfileLoaded); QObject::connect(this,
-//    &Nexus::profileLoadFailed, &loginScreen,
-//    &LoginScreen::onProfileLoadFailed);
-//    // LoginScreen -> Nexus
-//    QObject::connect(&loginScreen, &LoginScreen::createNewProfile, this,
-//    &Nexus::onCreateNewProfile); QObject::connect(&loginScreen,
-//    &LoginScreen::loadProfile, this, &Nexus::onLoadProfile);
-//    // LoginScreen -> Settings
-//    QObject::connect(&loginScreen, &LoginScreen::autoLoginChanged,
-//    settings, &Settings::setAutoLogin); QObject::connect(&loginScreen,
-//    &LoginScreen::autoLoginChanged, settings, &Settings::saveGlobal);
-//    // Settings -> LoginScreen
-//    QObject::connect(settings, &Settings::autoLoginChanged, &loginScreen,
-//                     &LoginScreen::onAutoLoginChanged);
-//  }
 
 void Nexus::showMainGUI() {
     assert(profile);
@@ -275,44 +214,28 @@ void Nexus::showMainGUI() {
     m_widget->init();
 
     // Connections
-    connect(profile.get(), &Profile::selfAvatarChanged, m_widget, &Widget::onSelfAvatarLoaded);
+    // connect(profile.get(), &Profile::selfAvatarChanged, m_widget, &Widget::onSelfAvatarLoaded);
+    // connect(profile.get(), &Profile::coreChanged, [&](Core& core) { emit coreChanged(core); });
+    // connect(profile.get(), &Profile::coreChanged, m_widget, &Widget::onCoreChanged);
 
-    connect(profile.get(), &Profile::selfAvatarChanged,
-            [&](const QPixmap& pixmap) { emit updateAvatar(pixmap); });
+    // connect(profile.get(), &Profile::failedToStart, m_widget, &Widget::onFailedToStartCore,
+            // Qt::BlockingQueuedConnection);
 
-    connect(profile.get(), &Profile::coreChanged, [&](Core& core) { emit coreChanged(core); });
+    // connect(profile.get(), &Profile::badProxy, m_widget, &Widget::onBadProxyCore,
+            // Qt::BlockingQueuedConnection);
 
-    connect(profile.get(), &Profile::coreChanged, m_widget, &Widget::onCoreChanged);
-
-    connect(profile.get(), &Profile::failedToStart, m_widget, &Widget::onFailedToStartCore,
-            Qt::BlockingQueuedConnection);
-
-    connect(profile.get(), &Profile::badProxy, m_widget, &Widget::onBadProxyCore,
-            Qt::BlockingQueuedConnection);
-
-    profile->startCore();
+    profile->start();
 }
 
 Module* Nexus::Create() {
-    Nexus& inst = createInstance();
-    return (Module*)(&inst);
-}
-
-/**
- * @brief Returns the singleton instance.
- */
-Nexus& Nexus::getInstance() {
-    assert(m_self);
-    return *m_self;
-}
-
-Nexus& Nexus::createInstance() {
-    if (m_self) {
-        delete m_self;
-        m_self = nullptr;
-    }
     m_self = new Nexus();
-    return *m_self;
+    return m_self;
+}
+
+Nexus *Nexus::getInstance()
+{
+    assert(m_self);
+    return m_self;
 }
 
 void Nexus::cleanup() {
@@ -327,58 +250,24 @@ void Nexus::cleanup() {
 }
 
 /**
- * @brief Get core instance.
- * @return nullptr if not started, core instance otherwise.
- */
-Core* Nexus::getCore() {
-    Nexus& nexus = getInstance();
-    assert(nexus.profile);
-    assert(nexus.profile->getCore());
-
-    return nexus.profile->getCore();
-}
-
-/**
  * @brief Get current user profile.
  * @return nullptr if not started, profile otherwise.
  * @deprecated
  */
 Profile* Nexus::getProfile() {
-    assert(getInstance().profile);
-    return getInstance().profile.get();
+    assert(m_self);
+    return m_self->profile.get();
 }
 
 /**
- * @brief Creates a new profile and replaces the current one.
- * @param name New username
- * @param pass New password
+ * @brief Get core instance.
+ * @return nullptr if not started, core instance otherwise.
  */
-void Nexus::onCreateNewProfile(const QString& host, const QString& name, const QString& pass) {
-    //    setProfile(Profile::createProfile(host, name, pass));
-    //    parser = nullptr;  // only apply cmdline proxy settings once
-}
-
-/**
- * Loads an existing profile and replaces the current one.
- */
-void Nexus::onLoadProfile(const QString& host, const QString& name, const QString& pass) {
-    //    setProfile(Profile::loadProfile(host, name, pass));
-    //    parser = nullptr;  // only apply cmdline proxy settings once
-}
-/**
- * Changes the loaded profile and notifies listeners.
- * @param p
- */
-void Nexus::setProfile(Profile* p) {
-    if (!p) {
-        emit profileLoadFailed();
-        // Warnings are issued during respective createNew/load calls
-        return;
-    } else {
-        emit profileLoaded();
-    }
-
-    emit currentProfileChanged(p);
+Core* Nexus::getCore() {
+    auto p = getProfile();
+    assert(p);
+    assert(p->getCore());
+    return p->getCore();
 }
 
 /**
@@ -386,7 +275,7 @@ void Nexus::setProfile(Profile* p) {
  * @return nullptr if not started, desktop widget otherwise.
  */
 Widget* Nexus::getDesktopGUI() {
-    return dynamic_cast<Widget*>(getInstance().widget());
+    return dynamic_cast<Widget*>(m_self->widget());
 }
 
 void Nexus::playNotificationSound(IAudioSink::Sound sound, bool loop) {
@@ -438,23 +327,7 @@ void Nexus::onStopNotification() {
     audioNotification.reset();
 }
 
-void Nexus::bootstrapWithProfileName(const QString& host, const QString& profileName) {
-    qDebug() << "bootstrapWithProfileName" << profileName;
 
-    //    Profile* profile = nullptr;
-    //    Settings& settings = Nexus::getProfile()->getSettings();
-    //    setSettings(&settings);
-
-    //    QString profileName = settings.getCurrentProfile();
-    //    QCommandLineParser parser;
-
-    //    if (Profile::exists(profileName)) {
-    //        profile = Profile::loadProfile(host, profileName, &parser);
-    //    }
-    //    if (profile) {
-    //        bootstrapWithProfile(profile);
-    //    }
-}
 
 QWidget* Nexus::widget() {
     return m_widget->getInstance();

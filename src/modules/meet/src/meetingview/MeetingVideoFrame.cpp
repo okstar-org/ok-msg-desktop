@@ -66,7 +66,7 @@ MeetingVideoFrame::MeetingVideoFrame(const QString& name, lib::ortc::CtrlState c
     retranslateUi();
 
     // TODO 待优化
-    Core* core = Nexus::getInstance().getCore();
+    Core* core = Nexus::getCore();
     meet = new lib::messenger::MessengerMeet(core->getMessenger(), this);
     meet->addHandler(this);
     createMeet(name);
