@@ -914,7 +914,7 @@ void WebRTC::setEnable(CtrlState state) {
 void WebRTC::setSpeakerVolume(uint32_t vol) {
     worker_thread->BlockingCall([&]() {
         uint32_t r = adm->SetSpeakerVolume(vol);
-        if (r != 0) RTC_LOG(LS_INFO) << __func__ << "set=>" << r;
+        if (r != 0) RTC_LOG(LS_WARNING) << __func__ << "set=>" << r;
     });
 }
 
