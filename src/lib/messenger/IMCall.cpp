@@ -352,7 +352,6 @@ void IMCall::destroyRtc() {
     if (terminated && !destroyedRtc) {
         ortc::OkRTC* rtc = ortc::OkRTCManager::getInstance()->getRtc();
         if (rtc) {
-            rtc->removeRTCHandler(this);
             lib::ortc::OkRTCManager::getInstance()->destroyRtc();
         }
         destroyedRtc = true;
@@ -389,9 +388,6 @@ void IMCall::onPeerConnectionChange(const std::string& sId, const std::string& p
     for (const auto& item : callHandlers) {
         assert(item);
         item->onPeerConnectionChange(IMPeerId{peerId}, qstring(sId), state);
-    }
-
-    if (state == ortc::PeerConnectionState::Closed) {
     }
 }
 
