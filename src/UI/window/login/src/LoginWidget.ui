@@ -259,7 +259,7 @@
         <property name="frameShadow">
          <enum>QFrame::Raised</enum>
         </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <layout class="QHBoxLayout">
          <item alignment="Qt::AlignRight">
           <widget class="QLabel" name="providerLabel">
            <property name="minimumSize">
@@ -344,7 +344,7 @@
         <property name="frameShadow">
          <enum>QFrame::Raised</enum>
         </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <layout class="QHBoxLayout" name="_2">
          <item alignment="Qt::AlignRight">
           <widget class="QLabel" name="languageLabel">
            <property name="minimumSize">

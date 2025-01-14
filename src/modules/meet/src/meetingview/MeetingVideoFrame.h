@@ -14,6 +14,7 @@
 #define MEETINGVIDEOFRAME_H
 
 #include <QWidget>
+#include <mutex>
 #include "base/jid.h"
 #include "lib/messenger/messenger.h"
 
