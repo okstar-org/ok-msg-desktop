@@ -81,7 +81,13 @@ private:
     //  bool autoAwayActive = false;
     void saveWindowGeometry();
     void createSystemTrayIcon();
+
     static inline QIcon prepareIcon(QString path, int w = 0, int h = 0);
+
+    OMenuWidget* createChatModule(MainWindow* mw);
+    OMenuWidget* createPlatformModule(MainWindow* mw);
+    OMenuWidget* createMeetingModule(MainWindow* mw);
+    OMenuWidget* createDocumentModule(MainWindow* mw);
 
 signals:
     void toClose();
@@ -94,9 +100,6 @@ private slots:
     void onSetShowSystemTray(bool newValue);
 
     void forceShow();
-    OMenuWidget* createChatModule(MainWindow* pWindow);
-    OMenuWidget* createPlatformModule(MainWindow* pWindow);
-    OMenuWidget* createMeetingModule(MainWindow* pWindow);
 };
 
 }  // namespace UI

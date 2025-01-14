@@ -30,6 +30,7 @@ namespace UI {
 // 系统级别主菜单
 enum class SystemMenu {
     chat,   //消息
+    document,  // 文档
     meeting,//会议
     platform,//工作平台
     setting,//配置

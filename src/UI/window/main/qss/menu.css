@@ -25,6 +25,7 @@ QPushButton {
 }
 
 QPushButton#chatBtn,
+QPushButton#docBtn,
 QPushButton#meetBtn,
 QPushButton#platformBtn,
 QPushButton#settingBtn
@@ -38,6 +39,14 @@ QPushButton#chatBtn::indicator {
 
 QPushButton#chatBtn::indicator:hover, QPushButton#chatBtn::indicator:checked  {
 	image:url(:/icon/UIWindowMain/menu_chat_active.svg) ;
+}
+
+QPushButton#docBtn::indicator {
+	image: url(:/icon/UIWindowMain/menu_doc.svg);
+}
+
+QPushButton#docBtn::indicator:hover, QPushButton#docBtn::indicator:checked {
+	image: url(:/icon/UIWindowMain/menu_doc_active.svg);
 }
 
 QPushButton#meetBtn::indicator {

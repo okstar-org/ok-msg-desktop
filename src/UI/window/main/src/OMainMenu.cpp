@@ -39,11 +39,16 @@ OMainMenu::OMainMenu(QWidget* parent) : QFrame(parent), ui(new Ui::OMainMenu) {
     QString qss = ok::base::Files::readStringAll(":/qss/menu.css");
     setStyleSheet(qss);
 
-    QButtonGroup* group = new QButtonGroup(this);
+    auto* group = new QButtonGroup(this);
     group->setExclusive(true);
+
     ui->chatBtn->setToolTip(tr("Message"));
     ui->chatBtn->setCursor(Qt::PointingHandCursor);
     group->addButton(ui->chatBtn, static_cast<int>(SystemMenu::chat));
+
+    ui->docBtn->setToolTip(tr("Document"));
+    ui->docBtn->setCursor(Qt::PointingHandCursor);
+    group->addButton(ui->docBtn, static_cast<int>(SystemMenu::document));
 
     ui->settingBtn->setToolTip(tr("Setting"));
     ui->settingBtn->setCursor(Qt::PointingHandCursor);
@@ -101,6 +106,7 @@ void OMainMenu::retranslateUi() {
     ui->settingBtn->setToolTip(tr("Setting"));
     ui->platformBtn->setToolTip(tr("Work platform"));
     ui->meetBtn->setToolTip(tr("Meeting"));
+    ui->docBtn->setToolTip(tr("Document"));
     ui->retranslateUi(this);
 }
 
@@ -109,10 +115,14 @@ void OMainMenu::check(SystemMenu menu) {
     ui->settingBtn->setChecked(false);
     ui->platformBtn->setChecked(false);
     ui->meetBtn->setChecked(false);
+    ui->docBtn->setChecked(false);
 
     switch (menu) {
         case SystemMenu::chat:
             ui->chatBtn->setChecked(true);
+            break;
+        case SystemMenu::document:
+            ui->docBtn->setChecked(true);
             break;
         case SystemMenu::platform:
             ui->platformBtn->setChecked(true);
