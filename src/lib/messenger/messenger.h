@@ -455,6 +455,8 @@ public:
                                          const ortc::RendererImage& image) = 0;
 
     virtual void onParticipantMessage(const QString& participant, const QString& msg) = 0;
+
+    virtual void onEnd() = 0;
 };
 
 class MessengerMeet : public QObject, public CallHandler {

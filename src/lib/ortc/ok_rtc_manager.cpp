@@ -24,9 +24,7 @@ static std::recursive_mutex mtx;
 
 OkRTCManager::OkRTCManager() {}
 
-OkRTCManager::~OkRTCManager() {
-    rtc.reset();
-}
+OkRTCManager::~OkRTCManager() {}
 
 OkRTCManager* OkRTCManager::getInstance() {
     std::lock_guard<std::recursive_mutex> lock(mtx);
@@ -62,8 +60,10 @@ OkRTC* OkRTCManager::createRtc(Mode mode, const std::string& res) {
 }
 
 void OkRTCManager::destroyRtc() {
+    RTC_LOG(LS_INFO) << __func__;
     std::lock_guard<std::recursive_mutex> lock(mtx);
     rtc.reset();
+    RTC_LOG(LS_INFO) << __func__ << " completed.";
 }
 
 OkRTC* OkRTCManager::getRtc() {

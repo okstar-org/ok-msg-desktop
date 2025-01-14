@@ -412,4 +412,9 @@ void MeetingVideoFrame::onParticipantMessage(const QString& participant, const Q
     qDebug() << __func__ << "message coming: " << msg << " from: " << participant;
 }
 
+void MeetingVideoFrame::onEnd() {
+    qDebug() << __func__;
+    emit meetDestroyed();
+}
+
 }  // namespace module::meet

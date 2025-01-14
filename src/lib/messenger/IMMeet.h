@@ -214,7 +214,7 @@ private:
     void doForIceCompleted(const QString& sId, const QString& peerId);
 
     gloox::Meet* meet;
-    gloox::MeetManager* manager;
+    gloox::MeetManager* meetManager;
 
     std::vector<MessengerMeetHandler*> handlers;
     IMVCard vCard;

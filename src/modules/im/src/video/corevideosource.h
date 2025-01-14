@@ -15,9 +15,8 @@
 
 #include <QMutex>
 #include <atomic>
+#include "lib/video/videoframe.h"
 #include "lib/video/videosource.h"
-
-struct vpx_image;
 
 class CoreVideoSource : public VideoSource {
     Q_OBJECT
@@ -29,7 +28,7 @@ public:
     virtual void unsubscribe() override;
 
 private:
-    void pushFrame(const vpx_image* frame);
+    void pushFrame(std::unique_ptr<vpx_image_t> frame);
     void setDeleteOnClose(bool newstate);
 
     void stopSource();

@@ -49,10 +49,10 @@ Participant IMMeet::toParticipant(const gloox::Meet::Participant& participant) c
     return p;
 }
 
-IMMeet::IMMeet(IM* im, QObject* parent) : IMJingle(im, parent), manager(nullptr), meet(nullptr) {
-    manager = new gloox::MeetManager(im->getClient());
-    manager->registerHandler(this);
-
+IMMeet::IMMeet(IM* im, QObject* parent)
+        : IMJingle(im, parent), meetManager(nullptr), meet(nullptr) {
+    meetManager = new gloox::MeetManager(im->getClient());
+    meetManager->registerHandler(this);
 
     im->addSelfHandler(this);
 
@@ -86,18 +86,18 @@ IMMeet::IMMeet(IM* im, QObject* parent) : IMJingle(im, parent), manager(nullptr)
 
 IMMeet::~IMMeet() {
     qDebug() << __func__;
+
     im->removeSelfHandler(this);
     im->removeSessionHandler(this);
     im->clearFromHostHandler();
 
-    delete manager;
-    manager = nullptr;
+    delete meetManager;
+    meetManager = nullptr;
 
-    ortc::OkRTCManager* pRtcManager = ortc::OkRTCManager::getInstance();
+    auto pRtcManager = ortc::OkRTCManager::getInstance();
     auto rtc = pRtcManager->getRtc();
     if (rtc) {
         rtc->removeRTCHandler(this);
-        pRtcManager->destroyRtc();
     }
 }
 
@@ -113,19 +113,25 @@ const std::string& IMMeet::create(const QString& name) {
     props.insert(std::pair("rtcstatsEnabled", "false"));
 
     gloox::JID room(stdstring(name) + "@conference." + stdstring(session->getSignInInfo().host));
-    meet = manager->createMeet(room, stdstring(resource), props);
+    meet = meetManager->createMeet(room, stdstring(resource), props);
 
     return meet->getUid();
 }
 
 void IMMeet::disband() {
+    qDebug() << __func__;
     leave();
 
-    // TODO 执行销毁会议
 }
 
 void IMMeet::leave() {
-    manager->exitMeet();
+    meetManager->exitMeet();
+
+    auto pManager = ortc::OkRTCManager::getInstance();
+    auto rtc = pManager->getRtc();
+    if (rtc) {
+        pManager->destroyRtc();
+    }
 }
 
 void IMMeet::join() {}
@@ -211,7 +217,7 @@ void IMMeet::handleCreation(const gloox::JID& jid, bool ready,
             .nick = stdstring(vCard.nickname),
             .resource = stdstring(resource),
     };
-    manager->join(*meet, participant);
+    meetManager->join(*meet, participant);
 
     for (auto* h : handlers) {
         h->onParticipantJoined(ok::base::Jid(jid.full()), toParticipant(participant));
@@ -327,11 +333,11 @@ bool IMMeet::doSessionInitiate(gloox::Jingle::Session* session,
     return true;
 }
 
-void IMMeet::doStartRTC(const IMPeerId& peerId, const ortc::OJingleContentMap& cav) const {
+void IMMeet::doStartRTC(const IMPeerId& peerId, const ortc::OJingleContentMap& map) const {
     qDebug() << __func__;
     auto rtcManager = ortc::OkRTCManager::getInstance();
     auto rtc = rtcManager->getRtc();
-    rtc->CreateAnswer(stdstring(peerId.toString()), cav);
+    rtc->CreateAnswer(stdstring(peerId.toString()), map);
 
     // auto& map = cav.getSsrcBundle();
     // rtc->addSource(stdstring(peerId.toString()), map);
@@ -572,6 +578,12 @@ void IMMeet::onSignalingChange(const std::string& sId, const std::string& peerId
     QString qPeerId = qstring(peerId);
     qDebug() << __func__ << "sId:" << qsId << "peerId:" << qPeerId
              << "state:" << qstring(ortc::SignalingStateAsStr(state));
+
+    if (state == ortc::SignalingState::Closed) {
+        for (auto h : handlers) {
+            h->onEnd();
+        }
+    }
 }
 
 void IMMeet::onRender(const ortc::RendererImage& image,

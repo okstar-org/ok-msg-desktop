@@ -34,6 +34,21 @@
 
 static CoreAV* instance = nullptr;
 
+std::unique_ptr<vpx_image> makeVpxFrame(uint16_t w, uint16_t h, const uint8_t* y, const uint8_t* u,
+                                        const uint8_t* v, int32_t ystride, int32_t ustride,
+                                        int32_t vstride) {
+    auto frame = std::make_unique<vpx_image>();
+    frame->d_h = h;
+    frame->d_w = w;
+    frame->planes[0] = const_cast<uint8_t*>(y);
+    frame->planes[1] = const_cast<uint8_t*>(u);
+    frame->planes[2] = const_cast<uint8_t*>(v);
+    frame->stride[0] = ystride;
+    frame->stride[1] = ustride;
+    frame->stride[2] = vstride;
+    return frame;
+}
+
 CoreAV::CoreAV(Core* core)
         : core(core)
         , coreavThread(new QThread{this})
@@ -44,8 +59,6 @@ CoreAV::CoreAV(Core* core)
     assert(coreavThread);
     assert(iterateTimer);
 
-    qRegisterMetaType<FriendId>("FriendId");
-    qRegisterMetaType<vpx_image>("vpx_image");
     qRegisterMetaType<lib::ortc::PeerConnectionState>("lib::ortc::PeerConnectionState");
 
     connect(this, &CoreAV::createCallToPeerId, this, &CoreAV::doCreateCallToPeerId);
@@ -784,13 +797,13 @@ void CoreAV::onFriendVideoFrame(const QString& friendId, uint16_t w, uint16_t h,
     }
 
     auto frame = makeVpxFrame(w, h, y, u, v, ystride, ustride, vstride);
-    it->second->getVideoSource()->pushFrame(&frame);
+    it->second->getVideoSource()->pushFrame(std::move(frame));
 }
 
 void CoreAV::onSelfVideoFrame(uint16_t w, uint16_t h, const uint8_t* y, const uint8_t* u,
                               const uint8_t* v, int32_t ystride, int32_t ustride, int32_t vstride) {
     auto frame = makeVpxFrame(w, h, y, u, v, ystride, ustride, vstride);
-    selfVideoSource->pushFrame(&frame);
+    selfVideoSource->pushFrame(std::move(frame));
 }
 
 void CoreAV::stateCallback(QString friendNum, lib::messenger::CallState state) {
@@ -889,27 +902,13 @@ void CoreAV::audioFrameCallback(QString friendNum, const int16_t* pcm, size_t sa
     call.playAudioBuffer(pcm, sampleCount, channels, samplingRate);
 }
 
-vpx_image CoreAV::makeVpxFrame(uint16_t w, uint16_t h, const uint8_t* y, const uint8_t* u,
-                               const uint8_t* v, int32_t ystride, int32_t ustride,
-                               int32_t vstride) {
-    vpx_image frame;
-    frame.d_h = h;
-    frame.d_w = w;
-    frame.planes[0] = const_cast<uint8_t*>(y);
-    frame.planes[1] = const_cast<uint8_t*>(u);
-    frame.planes[2] = const_cast<uint8_t*>(v);
-    frame.stride[0] = ystride;
-    frame.stride[1] = ustride;
-    frame.stride[2] = vstride;
-    return frame;
-}
 
 void CoreAV::videoFramePush(CoreVideoSource* videoSource,  //
-                            const vpx_image& frame         //
-) {
+                            std::unique_ptr<vpx_image>
+                                    frame) {
     if (!videoSource) {
         return;
     }
 
-    videoSource->pushFrame(&frame);
+    videoSource->pushFrame(std::move(frame));
 }

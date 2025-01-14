@@ -59,7 +59,7 @@ class WebRTC : public OkRTC, public WebRTCObserver {
 public:
     explicit WebRTC(Mode mode, std::string res);
 
-    ~WebRTC();
+    ~WebRTC() override;
 
     bool start() override;
 
@@ -238,6 +238,7 @@ private:
 
     // 视频源
     std::shared_ptr<VideoCaptureInterface> videoCapture;
+    rtc::scoped_refptr<webrtc::VideoTrackInterface> videoTrack;
 
     // sink
     std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> videoSink;

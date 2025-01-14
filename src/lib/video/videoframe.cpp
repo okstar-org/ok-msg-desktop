@@ -744,12 +744,12 @@ bool ToxYUVFrame::isValid() const { return width > 0 && height > 0; }
  */
 ToxYUVFrame::operator bool() const { return isValid(); }
 
-std::unique_ptr<VideoFrame> convert(VideoFrame::IDType id, const vpx_image_t* vpxframe) {
-    int width = vpxframe->d_w;
-    int height = vpxframe->d_h;
+std::unique_ptr<VideoFrame> convert(VideoFrame::IDType id, std::unique_ptr<vpx_image_t> vpxframe) {
+    auto width = vpxframe->d_w;
+    auto height = vpxframe->d_h;
 
-    AVFrame* avframe = av_frame_alloc();
-    if (!avframe) return std::unique_ptr<VideoFrame>();
+    auto avframe = av_frame_alloc();
+    if (!avframe) return {};
 
     avframe->width = width;
     avframe->height = height;
@@ -761,7 +761,7 @@ std::unique_ptr<VideoFrame> convert(VideoFrame::IDType id, const vpx_image_t* vp
 
     if (bufSize < 0) {
         av_frame_free(&avframe);
-        return std::unique_ptr<VideoFrame>();
+        return {};
     }
 
     for (int i = 0; i < 3; ++i) {

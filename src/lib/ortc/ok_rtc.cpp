@@ -47,6 +47,7 @@ std::string IceGatheringStateAsStr(IceGatheringState state) {
     }
     return {};
 }
+
 std::string IceConnectionStateAsStr(IceConnectionState state) {
     switch (state) {
         case IceConnectionState::New:

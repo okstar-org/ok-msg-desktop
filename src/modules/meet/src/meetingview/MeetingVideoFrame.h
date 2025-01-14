@@ -71,6 +71,7 @@ private:
     void onParticipantVideoFrame(const QString& participant,
                                  const lib::ortc::RendererImage& image) override;
     void onParticipantMessage(const QString& participant, const QString& msg) override;
+    void onEnd() override;
 
 private:
     // for run in UI thread
@@ -134,6 +135,7 @@ private slots:
 signals:
     void meetCreated(const QString& name);
     void meetLeft();
+    void meetDestroyed();
     void participantJoined(const QString& name, const lib::messenger::Participant& part);
     void participantLeft(const QString& name, const QString& participant);
 };

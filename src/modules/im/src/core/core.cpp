@@ -46,10 +46,10 @@ Core::Core(QThread* coreThread)
     assert(toxTimer);
 
     qRegisterMetaType<ToxPeer>("ToxPeer");
-    qRegisterMetaType<VCard>("VCard");
     qRegisterMetaType<FriendMessage>("FriendMessage");
     qRegisterMetaType<FriendId>("FriendId");
     qRegisterMetaType<FriendInfo>("FriendInfo");
+    qRegisterMetaType<VCard>("VCard");
 
     // connect(this, &Core::avatarSet, this, [&](QByteArray buf){
     //     QPixmap pixmap;

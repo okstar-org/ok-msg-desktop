@@ -238,9 +238,9 @@ void IMCall::cancelCall(const IMContactId& friendId, const QString& sId) {
     if (s) {
         terminated = true;
 
-        auto rtc = ortc::OkRTCManager::getInstance();
-        if (rtc) {
-            rtc->getRtc()->close();
+        auto pRtcManager = ortc::OkRTCManager::getInstance();
+        if (pRtcManager) {
+            pRtcManager->destroyRtc();
         }
 
         s->doTerminate();
@@ -397,15 +397,8 @@ void IMCall::onPeerConnectionChange(const std::string& sId, const std::string& p
 
 void IMCall::onSignalingChange(const std::string& sId, const std::string& peerId,
                                ortc::SignalingState state) {
-    /**
-     * OnSignalingChange=>have-local-offer
-     * OnSignalingChange=>stable
-     * OnSignalingChange=>closed
-     */
-    qDebug() << __func__ << "sId:" << state;
+    qDebug() << __func__ << "sId:" << qstring(ortc::SignalingStateAsStr(state));
     if (state == ortc::SignalingState::Closed) {
-        destroyRtc();
-
         for (auto h : callHandlers) {
             h->onEnd(IMPeerId(qstring(peerId)));
         }

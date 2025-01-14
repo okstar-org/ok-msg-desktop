@@ -85,7 +85,6 @@ IM::IM(QString host,
     qDebug() << "Generate self resource:" << _resource;
 
     // qRegisterMetaType
-    qRegisterMetaType<gloox::JID>("gloox::JID");
     qRegisterMetaType<IMContactId>("IMContactId");
     qRegisterMetaType<IMFriend>("IMFriend");
     qRegisterMetaType<IMPeerId>("IMPeerId");

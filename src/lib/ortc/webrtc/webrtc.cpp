@@ -133,6 +133,8 @@ std::unique_ptr<cricket::VideoContentDescription> addVideoSsrcBundle(
 
 WebRTC::WebRTC(Mode mode, std::string res)
         : mode(mode), peer_connection_factory(nullptr), resource(std::move(res)) {
+    RTC_LOG(LS_INFO) << __FUNCTION__;
+
     _rtcConfig.sdp_semantics = webrtc::SdpSemantics::kUnifiedPlan;
     _rtcConfig.enable_implicit_rollback = false;
     _rtcConfig.enable_ice_renomination = true;
@@ -809,18 +811,21 @@ void WebRTC::linkVideoDevice(Conductor* c, int selected) {
     RTC_LOG(LS_INFO) << "Get video device:" << devId;
 
     worker_thread->BlockingCall([=, this]() {
-        auto capture = getVideoCapture(devId);
+        videoCapture = getVideoCapture(devId); });
 
-        auto streamId = resource + "-video-0-0";
+    // signaling_thread->BlockingCall([=, this](){
+    auto streamId = resource + "-video-0-0";
         auto trackId = rtc::CreateRandomString(10);
 
-        c->addLocalVideoTrack(capture->source().get(), streamId, trackId);
+    videoTrack = getFactory()->CreateVideoTrack(videoCapture->source(), trackId);
 
-        if (!videoSink) {
+    c->addLocalVideoTrack(videoTrack, streamId, trackId);
+
+    if (!videoSink) {
             videoSink = std::make_shared<VideoSink>(_handlers, "", "");
         }
-        videoCapture->setOutput(videoSink);
-    });
+    videoCapture->setOutput(videoSink);
+    // });
 }
 
 std::string WebRTC::getVideoDeviceId(int selected) {

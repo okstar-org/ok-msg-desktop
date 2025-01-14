@@ -159,16 +159,7 @@ private:
     void audioFrameCallback(QString friendId, const int16_t* pcm, size_t sampleCount,
                             uint8_t channels, uint32_t samplingRate, void* self);
 
-    //  void videoFrameCallback(ToxAV *toxAV, QString friendId, uint16_t w,
-    //                          uint16_t h, const uint8_t *y, const uint8_t *u,
-    //                          const uint8_t *v, int32_t ystride, int32_t ustride,
-    //                          int32_t vstride, void *self);
-
-    vpx_image makeVpxFrame(uint16_t w, uint16_t h, const uint8_t* y, const uint8_t* u,
-                           const uint8_t* v, int32_t ystride, int32_t ustride, int32_t vstride);
-
-    void videoFramePush(CoreVideoSource* vs, const vpx_image& frame);
-
+    void videoFramePush(CoreVideoSource* vs, std::unique_ptr<vpx_image> frame);
 
 private:
     static constexpr uint32_t VIDEO_DEFAULT_BITRATE = 2500;

@@ -85,7 +85,7 @@ public:
                             const std::string& trackId);
     bool removeLocalAudioTrack();
 
-    bool addLocalVideoTrack(webrtc::VideoTrackSourceInterface* source,
+    bool addLocalVideoTrack(rtc::scoped_refptr<webrtc::MediaStreamTrackInterface> track,
                             const std::string& streamId,
                             const std::string& trackId);
     bool removeLocalVideoTrack();
@@ -170,6 +170,8 @@ private:
     rtc::scoped_refptr<webrtc::RtpSenderInterface> _videoRtpSender;
     webrtc::AudioTrackInterface* _remote_audio_track;
     webrtc::VideoTrackInterface* _remote_video_track{};
+
+    std::unique_ptr<VideoSink> selfVideoSink;
 };
 
 }  // namespace lib::ortc

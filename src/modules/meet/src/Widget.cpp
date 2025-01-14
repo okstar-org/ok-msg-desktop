@@ -170,6 +170,11 @@ void Widget::createMeeting(const QString& name, const lib::ortc::CtrlState& ctrl
                 [this](const QString& name, const lib::messenger::Participant& part) {
                     setState(MeetingState::OnMeeting);
                 });
+
+        connect(view.data(), &MeetingVideoFrame::meetDestroyed, this, [this]() {
+            view->deleteLater();
+            view = nullptr;
+        });
     }
 
     currentMeetingName = name;
@@ -183,11 +188,9 @@ void Widget::destroyMeeting() {
     QMutexLocker locker(&mutex);
     currentMeetingName.clear();
     if (view) {
+        // 离开会议
         view->doLeaveMeet();
-        view->deleteLater();
-        view = nullptr;
     }
-
     setState(MeetingState::NoMeeting);
 }
 

@@ -317,6 +317,7 @@ public:
         }
         return contents[name];
     }
+
 private:
     std::map<std::string, OSdp> contents;
     std::map<std::string, OMeetSSRCBundle> ssrcBundle;
@@ -360,7 +361,7 @@ std::string PeerConnectionStateAsStr(PeerConnectionState state);
  * WebRTC信号状态
  * https://w3c.github.io/webrtc-pc/#dom-rtcsignalingstate
  */
-enum SignalingState {
+enum class SignalingState {
     Stable,              // 已经建立，或者初始状态
     HaveLocalOffer,      // 本地发起，调用setLocalDescription之后
     HaveLocalPrAnswer,   // 创建了本地应答，调用setLocalDescription()之后
@@ -462,6 +463,7 @@ struct CtrlState {
 
 class OkRTC {
 public:
+    virtual ~OkRTC() = default;
     // 启动rtc实例
     virtual bool start() = 0;
     // 停止rtc实例

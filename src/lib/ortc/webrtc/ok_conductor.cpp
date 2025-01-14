@@ -140,15 +140,12 @@ bool Conductor::removeLocalAudioTrack() {
     return result.ok();
 }
 
-bool Conductor::addLocalVideoTrack(webrtc::VideoTrackSourceInterface* source,
+bool Conductor::addLocalVideoTrack(rtc::scoped_refptr<webrtc::MediaStreamTrackInterface> track,
                                    const std::string& streamId,
                                    const std::string& trackId) {
     RTC_LOG(LS_INFO) << __FUNCTION__ << " streamId: " << streamId << " trackId: " << trackId;
 
-    _videoTrack = webRtc->getFactory()->CreateVideoTrack(trackId, source);
-    RTC_LOG(LS_INFO) << "Created video track:" << _videoTrack.get();
-
-    auto added = peer_connection_->AddTrack(_videoTrack, {streamId});
+    auto added = peer_connection_->AddTrack(track, {streamId});
     if (!added.ok()) {
         RTC_LOG(LS_INFO) << "Failed to add track:" << added.error().message();
         return false;
@@ -244,14 +241,14 @@ void Conductor::OnTrack(rtc::scoped_refptr<webrtc::RtpTransceiverInterface> tran
            RTC_LOG(LS_INFO) << __FUNCTION__
                             << " Added successful remote audio track: " << _remote_audio_track;
        } else if (track->kind() == webrtc::MediaStreamTrackInterface::kVideoKind) {
-           auto _videoSink = new VideoSink(webRtc->getHandlers(), peerId, mid);
-           RTC_LOG(LS_INFO) << __FUNCTION__ << " Created video sink:" << _videoSink
+           selfVideoSink = std::make_unique<VideoSink>(webRtc->getHandlers(), peerId, mid);
+           RTC_LOG(LS_INFO) << __FUNCTION__ << " Created video sink:" << selfVideoSink
                             << " for mid:" << mid;
 
            auto videoTrack = dynamic_cast<webrtc::VideoTrackInterface*>(track.get());
-           videoTrack->AddOrUpdateSink(_videoSink, rtc::VideoSinkWants());
+           videoTrack->AddOrUpdateSink(selfVideoSink.get(), rtc::VideoSinkWants());
 
-           _videoSinks.insert(std::make_pair(mid, _videoSink));
+           _videoSinks.insert(std::make_pair(mid, selfVideoSink.get()));
            RTC_LOG(LS_INFO) << __FUNCTION__ << " Added successful remote video track: " <<
            videoTrack;
        }
