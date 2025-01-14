@@ -807,13 +807,6 @@ void Widget::registerContentDialog(ContentDialog& contentDialog) const {
     connect(settings, &Settings::groupchatPositionChanged, &contentDialog,
             &ContentDialog::reorderLayouts);
 
-#ifdef Q_OS_MAC
-    Nexus& n = Nexus::getInstance();
-    connect(&contentDialog, &ContentDialog::destroyed, &n, &Nexus::updateWindowsClosed);
-    connect(&contentDialog, &ContentDialog::windowStateChanged, &n, &Nexus::onWindowStateChanged);
-    connect(contentDialog.windowHandle(), &QWindow::windowTitleChanged, &n, &Nexus::updateWindows);
-    n.updateWindows();
-#endif
 }
 
 ContentLayout* Widget::createContentDialog(DialogType type) const {
@@ -871,15 +864,6 @@ ContentLayout* Widget::createContentDialog(DialogType type) const {
     dialog->setMinimumSize(720, 400);
     dialog->setAttribute(Qt::WA_DeleteOnClose);
     dialog->show();
-
-#ifdef Q_OS_MAC
-    connect(dialog, &Dialog::destroyed, &Nexus::getInstance(), &Nexus::updateWindowsClosed);
-    connect(dialog, &ActivateDialog::windowStateChanged, &Nexus::getInstance(),
-            &Nexus::updateWindowsStates);
-    connect(dialog->windowHandle(), &QWindow::windowTitleChanged, &Nexus::getInstance(),
-            &Nexus::updateWindows);
-    Nexus::getInstance()->updateWindows();
-#endif
 
     return contentLayoutDialog;
 }
