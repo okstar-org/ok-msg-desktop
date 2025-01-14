@@ -279,13 +279,22 @@ bool WebRTC::ensureStart() {
     return isStarted() ? true : start();
 }
 
+void WebRTC::close() {
+    for (auto pc : _pcMap) {
+        pc.second->close();
+    }
+}
+
 void WebRTC::addRTCHandler(OkRTCHandler* hand) {
+    RTC_LOG(LS_INFO) << __func__;
     assert(hand);
     std::lock_guard<std::recursive_mutex> lock(mutex);
     _handlers.push_back(hand);
 }
 
 void WebRTC::removeRTCHandler(OkRTCHandler* hand) {
+    RTC_LOG(LS_INFO) << __func__;
+    assert(hand);
     std::lock_guard<std::recursive_mutex> lock(mutex);
     _handlers.erase(std::remove_if(_handlers.begin(), _handlers.end(),
                                    [&](OkRTCHandler* h) { return h == hand; }),
@@ -907,7 +916,7 @@ void WebRTC::setEnable(CtrlState state) {
     RTC_LOG(LS_INFO) << __func__;
     for (auto it : _pcMap) {
         it.second->setEnable(state.enableMic, state.enableCam);
-        it.second->setRemoteMute(state.enableSpk);
+        it.second->setRemoteMute(!state.enableSpk);
     }
 }
 

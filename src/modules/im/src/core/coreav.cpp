@@ -24,8 +24,8 @@
 #include "src/model/group.h"
 #include "src/nexus.h"
 
-#include "src/video/corevideosource.h"
 #include "lib/video/videoframe.h"
+#include "src/video/corevideosource.h"
 
 /**
  * 音视频
@@ -39,7 +39,6 @@ CoreAV::CoreAV(Core* core)
         , coreavThread(new QThread{this})
         , selfVideoSource(std::make_unique<CoreVideoSource>())
         , iterateTimer(new QTimer(this)) {
-
     qDebug() << __func__;
 
     assert(coreavThread);
@@ -95,6 +94,7 @@ CoreAV::~CoreAV() {
  */
 CoreAV::CoreAVPtr CoreAV::makeCoreAV(Core* core) {
     instance = new CoreAV(core);
+
     return CoreAVPtr{instance};
 }
 
@@ -208,8 +208,7 @@ bool CoreAV::startCall(QString friendNum, bool video) {
     // Audio backend must be set before making a call
     auto audio = Nexus::getInstance()->audio();
 
-    ToxFriendCallPtr call =
-            ToxFriendCallPtr(new ToxFriendCall(friendNum, video, *this, *audio));
+    ToxFriendCallPtr call = ToxFriendCallPtr(new ToxFriendCall(friendNum, video, *this, *audio));
     assert(call != nullptr);
     call->setCallId(sId);
     // Call object must be owned by this thread or there will be locking problems
@@ -219,8 +218,8 @@ bool CoreAV::startCall(QString friendNum, bool video) {
     return true;
 }
 
-bool CoreAV::cancelCall(QString friendNum) {
-    //  QWriteLocker locker{&callsLock};
+bool CoreAV::cancelCall(const QString& friendNum) {
+    QWriteLocker locker{&callsLock};
     //  QMutexLocker coreLocker{&coreLock};
     qDebug() << QString("Canceling call with %1").arg(friendNum);
 
@@ -232,7 +231,7 @@ bool CoreAV::cancelCall(QString friendNum) {
     }
 
     QString callId = it->second->getCallId();
-    imCall->callRetract(lib::messenger::IMContactId{friendNum}, callId);
+    imCall->callCancel(lib::messenger::IMContactId{friendNum}, callId);
     qDebug() << QString("Canceling call=>%1").arg(callId);
     calls.erase(friendNum);
 
@@ -243,12 +242,18 @@ bool CoreAV::cancelCall(QString friendNum) {
     return true;
 }
 
-void CoreAV::onPeerConnectionChange(lib::messenger::IMPeerId peerId,
-                                    QString callId,
+void CoreAV::onPeerConnectionChange(const lib::messenger::IMPeerId& peerId,
+                                    const QString& callId,
                                     lib::ortc::PeerConnectionState state) {
     qDebug() << __func__ << "peer:" << peerId.toString() << "state:" << static_cast<int>(state);
     emit avPeerConnectionState(FriendId{peerId.toFriendId()}, state);
 }
+
+void CoreAV::onIceGatheringChange(const lib::messenger::IMPeerId& peerId, const QString& callId,
+                                  lib::ortc::IceGatheringState state) {}
+
+void CoreAV::onIceConnectionChange(const lib::messenger::IMPeerId& peerId, const QString& callId,
+                                   lib::ortc::IceConnectionState state) {}
 
 void CoreAV::rejectCall(const ToxPeer& peerId) {
     qDebug() << __func__ << "peer:" << peerId;
@@ -537,17 +542,12 @@ bool CoreAV::sendGroupCallAudio(QString groupId, const int16_t* pcm, size_t samp
     return false;
 }
 
-/**
- * @brief Mutes or unmutes the group call's input (microphone).
- * @param g The group
- * @param mute True to mute, false to unmute
- */
-void CoreAV::muteCallInput(const ContactId* g, bool mute) {
+void CoreAV::muteCallSpeaker(const ContactId* g, bool mute) {
     QWriteLocker locker{&callsLock};
-
+    if (!g) return;
     auto it = calls.find(g->getId());
-    if (g && (it != calls.end())) {
-        it->second->setMuteMic(mute);
+    if (it != calls.end()) {
+        it->second->setMuteVol(mute);
         imCall->setCtrlState(it->second->getCtrlState());
     }
 }
@@ -561,7 +561,7 @@ void CoreAV::muteCallOutput(const ContactId* g, bool mute) {
     QWriteLocker locker{&callsLock};
     auto it = calls.find(g->getId());
     if (g && (it != calls.end())) {
-        it->second->setMuteVol(mute);
+        it->second->setMuteMic(mute);
         imCall->setCtrlState(it->second->getCtrlState());
     }
 }
@@ -658,7 +658,7 @@ void CoreAV::onCall(const lib::messenger::IMPeerId& peerId, const QString& callI
     auto peer = ToxPeer(peerId);
 
     // Audio backend must be set before receiving a call
-    auto audioCtrl= Nexus::getInstance()->audio();
+    auto audioCtrl = Nexus::getInstance()->audio();
     ToxFriendCallPtr call =
             ToxFriendCallPtr(new ToxFriendCall{peerId.toString(), video, *this, *audioCtrl});
     call->setCallId(callId);
@@ -695,9 +695,12 @@ void CoreAV::onCall(const lib::messenger::IMPeerId& peerId, const QString& callI
     emit avInvite(ToxPeer(peerId), video);
 }
 
-void CoreAV::onCallRetract(const QString& friendNum, lib::messenger::CallState state) {
-    qDebug() << __func__ << QString("Canceling call with %1").arg(friendNum);
+void CoreAV::onCallCreated(const lib::messenger::IMPeerId& peerId, const QString& callId) {}
 
+void CoreAV::onCallRetract(const lib::messenger::IMPeerId& peerId,
+                           lib::messenger::CallState state) {
+    auto friendNum = peerId.toFriendId();
+    qDebug() << __func__ << QString("Canceling call with %1").arg(friendNum);
     auto it = calls.find(friendNum);
     if (it == calls.end()) {
         qWarning() << QString("Can't cancel call with %1, we're already not in this call!")
@@ -709,7 +712,7 @@ void CoreAV::onCallRetract(const QString& friendNum, lib::messenger::CallState s
     emit avEnd(FriendId{friendNum});
 }
 
-void CoreAV::onCallAcceptByOther(const QString& callId, const lib::messenger::IMPeerId& peerId) {
+void CoreAV::onCallAcceptByOther(const lib::messenger::IMPeerId& peerId, const QString& callId) {
     qDebug() << __func__ << peerId.toString() << "callId" << callId;
     QString friendNum;
     for (auto& item : calls) {
@@ -731,7 +734,8 @@ void CoreAV::onCallAcceptByOther(const QString& callId, const lib::messenger::IM
     emit avEnd(FriendId{friendNum});
 }
 
-void CoreAV::receiveCallStateAccepted(lib::messenger::IMPeerId peerId, QString callId, bool video) {
+void CoreAV::receiveCallStateAccepted(const lib::messenger::IMPeerId& peerId, const QString& callId,
+                                      bool video) {
     qDebug() << __func__ << "peerId" << peerId.toString() << "callId:" << callId;
 
     stateCallback(peerId.toFriendId(),  //
@@ -745,19 +749,26 @@ void CoreAV::receiveCallStateAccepted(lib::messenger::IMPeerId peerId, QString c
     }
 }
 
-void CoreAV::doCreateCallToPeerId(lib::messenger::IMPeerId friendId, QString callId, bool video) {
-    imCall->callToPeerId(friendId, callId, video);
+void CoreAV::doCreateCallToPeerId(const lib::messenger::IMPeerId& peerId, const QString& callId,
+                                  bool video) {
+    imCall->callToPeerId(peerId, callId, video);
 }
 
-void CoreAV::receiveCallStateRejected(lib::messenger::IMPeerId friendId, QString callId,
+void CoreAV::receiveCallStateRejected(const lib::messenger::IMPeerId& peerId,
+                                      const QString& callId,
                                       bool video) {
-    qDebug() << __func__ << "peerId:" << friendId.toString() << "callId:" << callId;
-    stateCallback(friendId.toFriendId(), lib::messenger::CallState::FINISHED);
+    qDebug() << __func__ << "peerId:" << peerId.toString() << "callId:" << callId;
+    stateCallback(peerId.toFriendId(), lib::messenger::CallState::FINISHED);
 }
 
-void CoreAV::onHangup(const QString& friendId, lib::messenger::CallState state) {
-    qDebug() << __func__ << "peerId:" << friendId;
-    stateCallback(friendId, state);
+void CoreAV::onHangup(const lib::messenger::IMPeerId& peerId, lib::messenger::CallState state) {
+    qDebug() << __func__ << "peerId:" << peerId.toString();
+    stateCallback(peerId.toFriendId(), state);
+}
+
+void CoreAV::onEnd(const lib::messenger::IMPeerId& peerId) {
+    qDebug() << __func__ << "peerId:" << peerId.toString();
+    emit avEnd(FriendId(peerId.toFriendId()));
 }
 
 void CoreAV::onFriendVideoFrame(const QString& friendId, uint16_t w, uint16_t h, const uint8_t* y,
@@ -783,7 +794,7 @@ void CoreAV::onSelfVideoFrame(uint16_t w, uint16_t h, const uint8_t* y, const ui
 }
 
 void CoreAV::stateCallback(QString friendNum, lib::messenger::CallState state) {
-    qDebug() << "stateCallback friend:" << friendNum;
+    qDebug() << __func__ << "friend:" << friendNum << "state:" << (int)state;
 
     auto friendId = FriendId{friendNum};
 

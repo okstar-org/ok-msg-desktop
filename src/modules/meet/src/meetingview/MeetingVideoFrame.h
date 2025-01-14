@@ -14,15 +14,14 @@
 #define MEETINGVIDEOFRAME_H
 
 #include <QWidget>
-#include "MeetingVideoDefines.h"
 #include "base/jid.h"
 #include "lib/messenger/messenger.h"
-#include "src/Defines.h"
 
 class QToolBar;
 class QToolButton;
 class PopupMenuComboBox;
 class QLabel;
+class QElapsedTimer;
 
 namespace module::meet {
 

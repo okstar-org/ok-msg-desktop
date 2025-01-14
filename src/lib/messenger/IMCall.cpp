@@ -16,7 +16,6 @@
 
 #include <range/v3/range.hpp>
 #include <range/v3/view.hpp>
-#include <thread>
 
 #include <extdisco.h>
 #include <jinglegroup.h>
@@ -90,8 +89,6 @@ void IMCallSession::doTerminate() {
     // 发送结束协议
     session->sessionTerminate(
             new gloox::Jingle::Session::Reason(gloox::Jingle::Session::Reason::Reasons::Success));
-    // 销毁rtc
-    lib::ortc::OkRTCManager::getInstance()->destroyRtc();
 }
 
 const gloox::Jingle::Session::Jingle* IMCallSession::getJingle() const {
@@ -124,7 +121,6 @@ IMCall::IMCall(IM* im, QObject* parent) : IMJingle(im, parent) {
     qDebug() << __func__ << "...";
     qRegisterMetaType<CallState>("CallState");
     im->addIMHandler(this);
-    connectCall(this);
 }
 
 IMCall::~IMCall() {
@@ -145,53 +141,6 @@ void IMCall::addCallHandler(CallHandler* hdr) {
      * callHandlers
      */
     callHandlers.push_back(hdr);
-}
-
-void IMCall::connectCall(IMCall* imCall) {
-    qDebug() << __func__ << imCall;
-
-    connect(imCall, &IMCall ::receiveCallRequest, this,
-            [&](IMPeerId peerId, QString callId, bool audio, bool video) {
-                for (auto handler : callHandlers) {
-                    handler->onCall(peerId, callId, audio, video);
-                }
-            });
-
-    connect(imCall, &IMCall::receiveCallRetract, this, [&](QString friendId, CallState state) {
-        for (auto handler : callHandlers) {
-            handler->onCallRetract(friendId, state);
-        }
-    });
-
-    connect(imCall, &IMCall::receiveCallAcceptByOther, this,
-            [&](const QString& callId, const IMPeerId& peerId) {
-                for (auto handler : callHandlers) {
-                    handler->onCallAcceptByOther(callId, peerId);
-                }
-            });
-
-    connect(imCall, &IMCall::receiveCallStateAccepted, this, &IMCall::onCallAccepted);
-
-    connect(imCall, &IMCall::receiveCallStateRejected, this,
-            [&](IMPeerId friendId, QString callId, bool video) {
-                for (auto handler : callHandlers) {
-                    handler->receiveCallStateRejected(friendId, callId, video);
-                }
-            });
-
-    connect(imCall, &IMCall::receiveFriendHangup, this, [&](QString friendId, CallState state) {
-        for (auto handler : callHandlers) {
-            handler->onHangup(friendId, state);
-        }
-    });
-}
-
-// 对方接受呼叫
-void IMCall::onCallAccepted(IMPeerId peerId, QString callId, bool video) {
-    qDebug() << __func__ << "peerId:" << peerId.toString() << "sId" << callId << "video?" << video;
-    for (auto handler : callHandlers) {
-        handler->receiveCallStateAccepted(peerId, callId, video);
-    }
 }
 
 bool IMCall::callToFriend(const QString& friendId, const QString& sId, bool video) {
@@ -221,7 +170,7 @@ bool IMCall::callAnswerToFriend(const IMPeerId& f, const QString& callId, bool v
     return answer(f, callId, video);
 }
 
-void IMCall::callRetract(const IMContactId& f, const QString& sId) {
+void IMCall::callCancel(const IMContactId& f, const QString& sId) {
     cancelCall(f, sId);
 }
 
@@ -262,41 +211,45 @@ bool IMCall::createCall(const IMPeerId& to, const QString& sId, bool video) {
     if (created) {
         createSession(im->getSelfId(), to, sId, ortc::JingleCallType::av);
         currentSid = sId;
-        emit callCreated(to, sId, created);
+
+        for (auto h : callHandlers) {
+            h->onCallCreated(to, sId);
+        }
     }
     return created;
 }
-
-void IMCall::cancel(const QString& friendId) {
-    qDebug() << __func__ << friendId;
-
-    auto sId = m_friendSessionMap.value(IMPeerId(friendId));
-    auto session = m_sessionMap.value(sId);
-    if (session) {
-        cancelCall(IMContactId{friendId}, qstring(session->getSession()->sid()));
-        clearSessionInfo(sId);
-    }
-
-    currentSid.clear();
-}
+//
+// void IMCall::cancel(const QString& friendId) {
+//    qDebug() << __func__ << friendId;
+//
+//    auto sId = m_friendSessionMap.value(IMPeerId(friendId));
+//    auto session = m_sessionMap.value(sId);
+//    if (session) {
+//        cancelCall(IMContactId{friendId}, qstring(session->getSession()->sid()));
+//        clearSessionInfo(sId);
+//    }
+//
+//    currentSid.clear();
+//}
 
 void IMCall::cancelCall(const IMContactId& friendId, const QString& sId) {
     qDebug() << __func__ << friendId.toString() << sId;
-
     IMCallSession* s = findSession(sId);
     if (s) {
+        terminated = true;
+
+        auto rtc = ortc::OkRTCManager::getInstance();
+        if (rtc) {
+            rtc->getRtc()->close();
+        }
+
         s->doTerminate();
         s->setCallStage(CallStage::StageNone);
         clearSessionInfo(sId);
+    } else {
+        retractJingleMessage(friendId.toString(), sId);
     }
-    retractJingleMessage(friendId.toString(), sId);
-
     currentSid.clear();
-    auto rtcManager = ortc::OkRTCManager::getInstance();
-    auto rtc = rtcManager->getRtc();
-    if (rtc) {
-        rtc->removeRTCHandler(this);
-    }
 }
 
 void IMCall::rejectCall(const IMPeerId& peerId, const QString& sId) {
@@ -360,10 +313,12 @@ void IMCall::onIceGatheringChange(const std::string& sId, const std::string& pee
     qDebug() << __func__ << "sId:" << qsId << "peerId:" << qPeerId
              << "state:" << static_cast<int>(state);
 
-    emit iceGatheringStateChanged(IMPeerId(qPeerId), qsId, state);
-
     if (state == ortc::IceGatheringState::Complete) {
         doForIceCompleted(qsId, qPeerId);
+    }
+
+    for (auto h : callHandlers) {
+        h->onIceGatheringChange(IMPeerId(qPeerId), qsId, state);
     }
 }
 
@@ -393,6 +348,17 @@ void IMCall::doForIceCompleted(const QString& sId, const QString& peerId) {
     }
 }
 
+void IMCall::destroyRtc() {
+    if (terminated && !destroyedRtc) {
+        ortc::OkRTC* rtc = ortc::OkRTCManager::getInstance()->getRtc();
+        if (rtc) {
+            rtc->removeRTCHandler(this);
+            lib::ortc::OkRTCManager::getInstance()->destroyRtc();
+        }
+        destroyedRtc = true;
+    }
+}
+
 void IMCall::onIceConnectionChange(const std::string& sId,
                                    const std::string& peerId,
                                    ortc::IceConnectionState state) {
@@ -404,6 +370,11 @@ void IMCall::onIceConnectionChange(const std::string& sId,
     OnIceConnectionChange=>disconnected
     OnIceConnectionChange=>closed
      */
+    qDebug() << __func__ << qstring(ortc::IceConnectionStateAsStr(state));
+
+    for (auto h : callHandlers) {
+        h->onIceConnectionChange(IMPeerId(peerId), qstring(sId), state);
+    }
 }
 
 void IMCall::onPeerConnectionChange(const std::string& sId, const std::string& peerId,
@@ -413,21 +384,32 @@ void IMCall::onPeerConnectionChange(const std::string& sId, const std::string& p
      * OnConnectionChange : connected
      * OnConnectionChange : closed
      */
+    qDebug() << __func__ << qstring(ortc::PeerConnectionStateAsStr(state));
 
     for (const auto& item : callHandlers) {
         assert(item);
         item->onPeerConnectionChange(IMPeerId{peerId}, qstring(sId), state);
     }
+
+    if (state == ortc::PeerConnectionState::Closed) {
+    }
 }
 
 void IMCall::onSignalingChange(const std::string& sId, const std::string& peerId,
-                               lib::ortc::SignalingState state) {
+                               ortc::SignalingState state) {
     /**
      * OnSignalingChange=>have-local-offer
      * OnSignalingChange=>stable
      * OnSignalingChange=>closed
      */
     qDebug() << __func__ << "sId:" << state;
+    if (state == ortc::SignalingState::Closed) {
+        destroyRtc();
+
+        for (auto h : callHandlers) {
+            h->onEnd(IMPeerId(qstring(peerId)));
+        }
+    }
 }
 
 void IMCall::onLocalDescriptionSet(const std::string& sid,     //
@@ -562,10 +544,10 @@ void IMCall::doJingleMessage(const IMPeerId& peerId, const gloox::Jingle::Jingle
             /**
              * 对方拒绝
              */
-            //      mPeerRequestMedias.clear();
             const auto& ms = jm->medias();
-            emit receiveCallStateRejected(peerId, sId, ms.size() > 1);
-            //      emit receiveFriendHangup(friendId, 0);
+            for (auto handler : callHandlers) {
+                handler->receiveCallStateRejected(peerId, sId, ms.size() > 1);
+            }
             break;
         }
         case gloox::Jingle::JingleMessage::propose: {
@@ -582,22 +564,29 @@ void IMCall::doJingleMessage(const IMPeerId& peerId, const gloox::Jingle::Jingle
                     video = true;
                 }
             }
+            for (auto handler : callHandlers) {
+                handler->onCall(peerId, sId, audio, video);
+            }
 
-            emit receiveCallRequest(peerId, sId, audio, video);
-            //      emit receiveCallAcceptByOther(sId, peerId);
             break;
         }
         case gloox::Jingle::JingleMessage::retract: {
             /**
              * 撤回(需要判断是对方还是自己其它终端)
              */
-            emit receiveCallRetract(friendId, CallState::NONE);
+
+            for (auto handler : callHandlers) {
+                handler->onCallRetract(IMPeerId(friendId), CallState::NONE);
+            }
             break;
         }
         case gloox::Jingle::JingleMessage::accept: {
             // 自己其它终端接受，挂断自己
             if (peerId != im->getSelfPeerId()) {
-                emit receiveFriendHangup(friendId, CallState::NONE);
+                for (auto handler : callHandlers) {
+                    handler->onHangup(IMPeerId(friendId), CallState::NONE);
+                }
+
             } else {
                 // 自己终端接受，不处理
                 //            OkRTCManager::getInstance()->getRtc()->CreateAnswer(peerId.toString());
@@ -608,7 +597,10 @@ void IMCall::doJingleMessage(const IMPeerId& peerId, const gloox::Jingle::Jingle
             // 对方接受
             auto removed = m_sidVideo.remove(sId);
             createCall(peerId, sId, removed == 1);
-            emit receiveCallStateAccepted(peerId, sId, removed == 1);
+
+            for (auto handler : callHandlers) {
+                handler->receiveCallStateAccepted(peerId, sId, removed == 1);
+            }
             break;
         }
         case gloox::Jingle::JingleMessage::finish:
@@ -884,7 +876,9 @@ bool IMCall::doSessionTerminate(gloox::Jingle::Session* session,
         s->doTerminate();
     }
 
-    emit receiveFriendHangup(peerId.toFriendId(), CallState::FINISHED);
+    for (auto h : callHandlers) {
+        h->onHangup(peerId, CallState::FINISHED);
+    }
 
     auto rtcManager = ortc::OkRTCManager::getInstance();
     auto rtc = rtcManager->getRtc();

@@ -24,6 +24,7 @@
 
 #include <QAction>
 #include <QApplication>
+#include <QElapsedTimer>
 #include <QEvent>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -32,7 +33,6 @@
 #include <QToolBar>
 #include <QToolButton>
 #include <QWindowStateChangeEvent>
-#include <memory>
 
 namespace module::meet {
 

@@ -48,6 +48,8 @@ public:
 
     void CreateOffer();
 
+    void close();
+
     void sessionTerminate();
 
     bool addCandidate(std::unique_ptr<webrtc::IceCandidateInterface> candidate);

@@ -171,7 +171,7 @@ public:
     // 应答呼叫
     bool callAnswerToFriend(const IMPeerId& peer, const QString& callId, bool video);
     // 取消呼叫
-    void callRetract(const IMContactId& f, const QString& sId);
+    void callCancel(const IMContactId& f, const QString& sId);
     // 拒绝呼叫
     void callReject(const IMPeerId& f, const QString& sId);
 
@@ -249,7 +249,6 @@ protected:
     }
 
 private:
-    void connectCall(IMCall* imCall);
 
     /**
      * 发起呼叫
@@ -265,7 +264,6 @@ private:
 
     bool answer(const IMPeerId& to, const QString& callId, bool video);
 
-    void cancel(const QString& friendId);
     // 取消呼叫
     void cancelCall(const IMContactId& friendId, const QString& sId);
     void rejectCall(const IMPeerId& friendId, const QString& sId);
@@ -282,29 +280,14 @@ private:
     // sid -> isVideo,在jingle-message阶段暂时保留呼叫的类型是视频（音频无需保存）。
     QMap<QString, bool> m_sidVideo;
 
-signals:
-    void callCreated(const IMPeerId& to, const QString& sId, bool ok);
+    // 停止标志
+    bool terminated = false;
+    bool destroyedRtc = false;
 
-    // ice
-    void iceGatheringStateChanged(IMPeerId to, const QString sId, ortc::IceGatheringState);
-    void iceConnectionStateChanged(IMPeerId to, const QString sId, ortc::IceConnectionState);
-
-    // 呼叫请求
-    void receiveCallRequest(IMPeerId peerId, QString callId, bool audio, bool video);
-
-    void receiveFriendCall(QString friendId, QString callId, bool audio, bool video);
-
-    // 呼叫撤回
-    void receiveCallRetract(QString friendId, CallState state);
-    void receiveCallAcceptByOther(QString callId, IMPeerId peerId);
-    void receiveFriendHangup(QString friendId, CallState state);
-
-    // 对方状态变化
-    void receiveCallStateAccepted(IMPeerId peerId, QString callId, bool video);
-    void receiveCallStateRejected(IMPeerId peerId, QString callId, bool video);
+    void destroyRtc();
 
 public slots:
-    void onCallAccepted(IMPeerId peerId, QString callId, bool video);
+
     void onImStartedCall();
 };
 

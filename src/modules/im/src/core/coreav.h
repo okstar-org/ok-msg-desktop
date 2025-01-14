@@ -41,8 +41,6 @@ public:
     static CoreAVPtr makeCoreAV(Core* core);
     static CoreAV* getInstance();
 
-
-
     ~CoreAV();
     void start();
 
@@ -64,7 +62,7 @@ public:
 
     void joinGroupCall(const Group& group);
     void leaveGroupCall(QString groupNum);
-    void muteCallInput(const ContactId* g, bool mute);
+    void muteCallSpeaker(const ContactId* g, bool mute);
     void muteCallOutput(const ContactId* g, bool mute);
     bool isGroupCallInputMuted(const Group* g) const;
     bool isGroupCallOutputMuted(const Group* g) const;
@@ -78,10 +76,45 @@ public:
                                   void* core);
     void invalidateGroupCallPeerSource(QString group, FriendId peerPk);
 
+protected:
+    void onCall(const lib::messenger::IMPeerId& peerId,  //
+                const QString& callId, bool audio, bool video) override;
+
+    void onCallCreated(const lib::messenger::IMPeerId& peerId,  //
+                       const QString& callId) override;
+
+    void onCallRetract(const lib::messenger::IMPeerId& peerId,  //
+                       lib::messenger::CallState state) override;
+
+    void onCallAcceptByOther(const lib::messenger::IMPeerId& peerId,  //
+                             const QString& callId) override;
+
+    void onPeerConnectionChange(const lib::messenger::IMPeerId& peerId,  //
+                                const QString& callId,
+                                lib::ortc::PeerConnectionState state) override;
+
+    void onIceGatheringChange(const lib::messenger::IMPeerId& peerId,
+                              const QString& callId,
+                              lib::ortc::IceGatheringState state) override;
+
+    void onIceConnectionChange(const lib::messenger::IMPeerId& peerId,
+                               const QString& callId,
+                               lib::ortc::IceConnectionState state) override;
+
+    void receiveCallStateAccepted(const lib::messenger::IMPeerId& peerId, const QString& callId,
+                                  bool video) override;
+
+    void receiveCallStateRejected(const lib::messenger::IMPeerId& peerId, const QString& callId,
+                                  bool video) override;
+
+    void onHangup(const lib::messenger::IMPeerId& peerId, lib::messenger::CallState state) override;
+
+    void onEnd(const lib::messenger::IMPeerId& peerId) override;
+
 public slots:
     bool startCall(QString friendId, bool video);
     bool answerCall(ToxPeer peerId, bool video);
-    bool cancelCall(QString friendId);
+    bool cancelCall(const QString& friendId);
     void rejectCall(const ToxPeer& peerId);
     void timeoutCall(QString friendId);
 
@@ -90,10 +123,11 @@ signals:
     void avStart(FriendId friendId, bool video);
     void avPeerConnectionState(FriendId friendId, lib::ortc::PeerConnectionState state);
     void avEnd(FriendId friendId, bool error = false);
-    void createCallToPeerId(lib::messenger::IMPeerId friendId, QString callId, bool video);
+    void createCallToPeerId(lib::messenger::IMPeerId friendId, const QString& callId, bool video);
 
 private slots:
-    void doCreateCallToPeerId(lib::messenger::IMPeerId friendId, QString callId, bool video);
+    void doCreateCallToPeerId(const lib::messenger::IMPeerId& friendId, const QString& callId,
+                              bool video);
 
     void stateCallback(QString friendId, lib::messenger::CallState state);
 
@@ -135,25 +169,6 @@ private:
 
     void videoFramePush(CoreVideoSource* vs, const vpx_image& frame);
 
-    void onCall(const lib::messenger::IMPeerId& peerId, const QString& callId, bool audio,
-                bool video) override;
-
-    void onCallRetract(const QString& friendId, lib::messenger::CallState state) override;
-
-    void onCallAcceptByOther(const QString& callId,
-                             const lib::messenger::IMPeerId& peerId) override;
-
-    void onPeerConnectionChange(lib::messenger::IMPeerId peerId,
-                                QString callId,
-                                lib::ortc::PeerConnectionState state) override;
-
-    void receiveCallStateAccepted(lib::messenger::IMPeerId friendId, QString callId,
-                                  bool video) override;
-
-    void receiveCallStateRejected(lib::messenger::IMPeerId friendId, QString callId,
-                                  bool video) override;
-
-    void onHangup(const QString& friendId, lib::messenger::CallState state) override;
 
 private:
     static constexpr uint32_t VIDEO_DEFAULT_BITRATE = 2500;

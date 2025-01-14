@@ -14,12 +14,10 @@
 
 #include <QString>
 #include <cstddef>
-#include <memory>
 #include "IMFriend.h"
 #include "IMGroup.h"
 #include "IMMessage.h"
 #include "base/jid.h"
-#include "base/timer.h"
 #include "lib/ortc/ok_rtc.h"
 
 class QDomElement;
@@ -228,44 +226,18 @@ class IMCall;
 
 enum class CallState {
 
-    /**
-     * The empty bit mask. None of the bits specified below are set.
-     */
     NONE = 0,
 
-    /**
-     * Set by the AV core if an error occurred on the remote end or if friend
-     * timed out. This is the final state after which no more state
-     * transitions can occur for the call. This call state will never be triggered
-     * in combination with other call states.
-     */
     ERROR0 = 1,
 
-    /**
-     * The call has finished. This is the final state after which no more state
-     * transitions can occur for the call. This call state will never be
-     * triggered in combination with other call states.
-     */
     FINISHED = 2,
 
-    /**
-     * The flag that marks that friend is sending audio.
-     */
     SENDING_A = 4,
 
-    /**
-     * The flag that marks that friend is sending video.
-     */
     SENDING_V = 8,
 
-    /**
-     * The flag that marks that friend is receiving audio.
-     */
     ACCEPTING_A = 16,
 
-    /**
-     * The flag that marks that friend is receiving video.
-     */
     ACCEPTING_V = 32,
 };
 
@@ -275,25 +247,40 @@ public:
                         const QString& callId,   //
                         bool audio, bool video) = 0;
 
-    virtual void onCallRetract(const QString& friendId,  //
+    virtual void onCallCreated(const IMPeerId& peerId,  //
+                               const QString& callId) = 0;
+
+    virtual void onCallRetract(const IMPeerId& peerId,  //
                                CallState state) = 0;
 
-    virtual void onCallAcceptByOther(const QString& callId, const IMPeerId& peerId) = 0;
+    virtual void onCallAcceptByOther(const IMPeerId& peerId, const QString& callId) = 0;
 
-    virtual void onPeerConnectionChange(IMPeerId friendId,  //
-                                        QString callId,     //
+    virtual void onPeerConnectionChange(const IMPeerId& friendId,  //
+                                        const QString& callId,     //
                                         ortc::PeerConnectionState state) = 0;
 
-    virtual void receiveCallStateAccepted(IMPeerId friendId,  //
-                                          QString callId,     //
+    virtual void onIceGatheringChange(const IMPeerId& friendId,  //
+                                      const QString& callId,     //
+                                      ortc::IceGatheringState state) = 0;
+
+    virtual void onIceConnectionChange(const lib::messenger::IMPeerId& peerId,
+                                       const QString& callId,
+                                       lib::ortc::IceConnectionState state) = 0;
+
+    virtual void receiveCallStateAccepted(const IMPeerId& friendId,  //
+                                          const QString& callId,     //
                                           bool video) = 0;
 
-    virtual void receiveCallStateRejected(IMPeerId friendId,  //
-                                          QString callId,     //
+    virtual void receiveCallStateRejected(const IMPeerId& friendId,  //
+                                          const QString& callId,     //
                                           bool video) = 0;
 
-    virtual void onHangup(const QString& friendId,  //
+    // 对方挂断
+    virtual void onHangup(const IMPeerId& peerId,  //
                           CallState state) = 0;
+
+    // 呼叫终止
+    virtual void onEnd(const IMPeerId& peerId) = 0;
 
     virtual void onSelfVideoFrame(uint16_t w, uint16_t h,  //
                                   const uint8_t* y,        //
@@ -328,7 +315,7 @@ public:
     // 应答呼叫
     bool callAnswerToFriend(const IMPeerId& peer, const QString& callId, bool video);
     // 取消呼叫
-    void callRetract(const IMContactId& f, const QString& sId);
+    void callCancel(const IMContactId& f, const QString& sId);
     // 拒绝呼叫
     void callReject(const IMPeerId& f, const QString& sId);
 
@@ -510,25 +497,41 @@ protected:
                 const QString& callId,   //
                 bool audio, bool video) override;
 
-    void onCallRetract(const QString& friendId,  //
+    void onCallCreated(const IMPeerId& peerId,  //
+                       const QString& callId) override;
+
+    // 呼叫撤回：其它终端接收
+    void onCallRetract(const IMPeerId& peerId,  //
                        CallState state) override;
 
-    void onCallAcceptByOther(const QString& callId, const IMPeerId& peerId) override;
+    void onCallAcceptByOther(const IMPeerId& peerId,  //
+                             const QString& callId) override;
 
-    void onPeerConnectionChange(IMPeerId friendId,  //
-                                QString callId,     //
+    void onPeerConnectionChange(const IMPeerId& peerId,  //
+                                const QString& callId,   //
                                 ortc::PeerConnectionState state) override;
 
-    void receiveCallStateAccepted(IMPeerId friendId,  //
-                                  QString callId,     //
+    void onIceGatheringChange(const IMPeerId& friendId,  //
+                              const QString& callId,     //
+                              ortc::IceGatheringState state) override;
+
+    void onIceConnectionChange(const lib::messenger::IMPeerId& peerId,
+                               const QString& callId,
+                               lib::ortc::IceConnectionState state) override;
+
+    void receiveCallStateAccepted(const IMPeerId& peerId,  //
+                                  const QString& callId,   //
                                   bool video) override;
 
-    void receiveCallStateRejected(IMPeerId friendId,  //
-                                  QString callId,     //
+    void receiveCallStateRejected(const IMPeerId& peerId,  //
+                                  const QString& callId,   //
                                   bool video) override;
-
-    void onHangup(const QString& friendId,  //
+    // 对方挂断
+    void onHangup(const IMPeerId& peerId,  //
                   CallState state) override;
+
+    // 结束
+    void onEnd(const IMPeerId& peerId) override;
 
     void onSelfVideoFrame(uint16_t w, uint16_t h,  //
                           const uint8_t* y,        //

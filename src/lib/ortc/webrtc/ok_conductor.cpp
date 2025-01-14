@@ -330,6 +330,11 @@ void Conductor::CreateOffer() {
     RTC_LOG(LS_INFO) << __FUNCTION__ << "CreateOffer has done.";
 }
 
+void Conductor::close() {
+    RTC_LOG(LS_INFO) << __FUNCTION__;
+    peer_connection_->Close();
+}
+
 /**
  * @brief CreateAnswer
  *
@@ -426,13 +431,9 @@ void Conductor::OnSuccess(webrtc::SessionDescriptionInterface* desc) {
         peer_connection_->SetLocalDescription(this, desc);
     }
 
-    //    for (auto h : webRtc->getHandlers()) {
-    //        h->onFailure(sId, peerId, error.message());
-    //    }
     if (observer) {
         observer->onDescriptionSet(desc, sId, peerId);
     }
-    //    }
 }
 
 void Conductor::OnFailure(webrtc::RTCError error) {

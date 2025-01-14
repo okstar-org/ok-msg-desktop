@@ -455,15 +455,13 @@ enum class Mode {
  * 控制状态
  */
 struct CtrlState {
-    bool enableMic;
-    bool enableCam;
-    bool enableSpk;
+    bool enableMic = true;
+    bool enableCam = true;
+    bool enableSpk = true;
 };
 
 class OkRTC {
 public:
-    virtual ~OkRTC() = default;
-
     // 启动rtc实例
     virtual bool start() = 0;
     // 停止rtc实例
@@ -478,6 +476,8 @@ public:
     virtual void addRTCHandler(OkRTCHandler* hand) = 0;
     virtual void removeRTCHandler(OkRTCHandler* hand) = 0;
     virtual const std::vector<OkRTCHandler*>& getHandlers() = 0;
+
+    virtual void close() = 0;
 
     virtual bool CreateOffer(const std::string& peerId, const std::string& sId, bool video) = 0;
 

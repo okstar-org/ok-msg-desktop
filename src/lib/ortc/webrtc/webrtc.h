@@ -14,7 +14,6 @@
 
 #include <map>
 #include <mutex>
-#include <optional>
 #include <string>
 
 #include <api/peer_connection_interface.h>
@@ -60,7 +59,7 @@ class WebRTC : public OkRTC, public WebRTCObserver {
 public:
     explicit WebRTC(Mode mode, std::string res);
 
-    ~WebRTC() override;
+    ~WebRTC();
 
     bool start() override;
 
@@ -69,6 +68,8 @@ public:
     bool isStarted() override;
 
     bool ensureStart() override;
+
+    void close() override;
 
     void setRemoteDescription(const std::string& peerId, const OJingleContentMap& av) override;
 

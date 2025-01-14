@@ -352,8 +352,8 @@ bool MessengerCall::callToPeerId(const IMPeerId& to, const QString& sId, bool vi
 bool MessengerCall::callAnswerToFriend(const IMPeerId& peer, const QString& callId, bool video) {
     return call->callAnswerToFriend(peer, callId, video);
 }
-void MessengerCall::callRetract(const IMContactId& f, const QString& sId) {
-    call->callRetract(f, sId);
+void MessengerCall::callCancel(const IMContactId& f, const QString& sId) {
+    call->callCancel(f, sId);
 }
 void MessengerCall::callReject(const IMPeerId& f, const QString& sId) {
     call->callReject(f, sId);
@@ -425,18 +425,30 @@ void MessengerMeet::removeHandler(MessengerMeetHandler* hdr) {
 
 void MessengerMeet::onCall(const IMPeerId& peerId, const QString& callId, bool audio, bool video) {}
 
-void MessengerMeet::onCallRetract(const QString& friendId, CallState state) {}
+void MessengerMeet::onCallCreated(const IMPeerId& peerId, const QString& callId) {}
 
-void MessengerMeet::onCallAcceptByOther(const QString& callId, const IMPeerId& peerId) {}
+void MessengerMeet::onCallRetract(const IMPeerId& peerId, CallState state) {}
 
-void MessengerMeet::onPeerConnectionChange(IMPeerId friendId, QString callId,
+void MessengerMeet::onCallAcceptByOther(const IMPeerId& peerId, const QString& callId) {}
+
+void MessengerMeet::onPeerConnectionChange(const IMPeerId& peerId, const QString& callId,
                                            ortc::PeerConnectionState state) {}
 
-void MessengerMeet::receiveCallStateAccepted(IMPeerId friendId, QString callId, bool video) {}
+void MessengerMeet::onIceGatheringChange(const IMPeerId& friendId, const QString& callId,
+                                         ortc::IceGatheringState state) {}
 
-void MessengerMeet::receiveCallStateRejected(IMPeerId friendId, QString callId, bool video) {}
+void MessengerMeet::onIceConnectionChange(const IMPeerId& peerId, const QString& callId,
+                                          ortc::IceConnectionState state) {}
 
-void MessengerMeet::onHangup(const QString& friendId, CallState state) {}
+void MessengerMeet::receiveCallStateAccepted(const IMPeerId& peerId, const QString& callId,
+                                             bool video) {}
+
+void MessengerMeet::receiveCallStateRejected(const IMPeerId& peerId, const QString& callId,
+                                             bool video) {}
+
+void MessengerMeet::onHangup(const IMPeerId& peerId, CallState state) {}
+
+void MessengerMeet::onEnd(const IMPeerId& peerId) {}
 
 void MessengerMeet::onSelfVideoFrame(uint16_t w, uint16_t h, const uint8_t* y, const uint8_t* u,
                                      const uint8_t* v, int32_t ystride, int32_t ustride,

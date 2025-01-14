@@ -481,11 +481,11 @@ void MessageSessionWidget::setAvPeerConnectedState(lib::ortc::PeerConnectionStat
 }
 
 void MessageSessionWidget::setAvEnd(bool error) {
-    qDebug() << __func__;
+    qDebug() << __func__ << "error:" << error;
 
     auto header = sendWorker->getHeader();
     header->removeCallConfirm();
-    header->updateCallButtons();
+    // header->updateCallButtons();
 
     auto f = Nexus::getCore()->getFriendList().findFriend(friendId);
     if (f) {
@@ -616,7 +616,7 @@ void MessageSessionWidget::doSilenceSpeaker(bool mute) {
     qDebug() << __func__ << fId;
     auto av = CoreAV::getInstance();
     if (av->isCallStarted(&contactId)) {
-        av->muteCallInput(&contactId, mute);
+        av->muteCallSpeaker(&contactId, mute);
     }
 }
 
