@@ -19,14 +19,13 @@
 
 class ContactAvatar : public ChatLineContent {
 public:
-    ContactAvatar(const QPixmap& avatar);
+    explicit ContactAvatar(const QPixmap& avatar);
 
-    virtual QRectF boundingRect() const override;
-    virtual void paint(QPainter* painter,
-                       const QStyleOptionGraphicsItem* option,
+    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
                        QWidget* widget) override;
-    virtual void setWidth(qreal width) override;
-    virtual qreal getAscent() const override;
+    void setWidth(qreal width) override;
+    [[nodiscard]] QRectF boundingRect() const override;
+    [[nodiscard]] qreal getAscent() const override;
     const void* getContent() override;
     void setPixmap(const QPixmap& avatar);
 

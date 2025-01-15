@@ -41,17 +41,17 @@ void VideoSink::OnFrame(const webrtc::VideoFrame& frame) {
         case webrtc::VideoFrameBuffer::Type::kI420: {
             auto i420 = v_buffer->GetI420();
             // 处理视频旋转
-            if (frame.rotation() != webrtc::kVideoRotation_0) {
-                // 创建旋转后的帧缓冲区
-                rtc::scoped_refptr<webrtc::I420Buffer> rotated_buffer =
-                        webrtc::I420Buffer::Rotate(*v_buffer, frame.rotation());
+            // if (frame.rotation() != webrtc::kVideoRotation_0) {
+            //     // 创建旋转后的帧缓冲区
+            //     rtc::scoped_refptr<webrtc::I420Buffer> rotated_buffer =
+            //             webrtc::I420Buffer::Rotate(*v_buffer, frame.rotation());
 
-                if (rotated_buffer) {
-                    i420 = rotated_buffer->GetI420();
-                } else {
-                    RTC_LOG(LS_WARNING) << "Failed to rotate video frame, using original frame";
-                }
-            }
+            //     if (rotated_buffer) {
+            //         i420 = rotated_buffer->GetI420();
+            //     } else {
+            //         RTC_LOG(LS_WARNING) << "Failed to rotate video frame, using original frame";
+            //     }
+            // }
 
             // 设置图像参数
             image.width_ = static_cast<size_t>(i420->width());
