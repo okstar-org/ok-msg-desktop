@@ -90,6 +90,8 @@ private slots:
     void doReply();
     void doCopy();
     void doForward();
+public slots:
+    void doSetAvatar(const QPixmap& pixmap);
 };
 
 class ChatNotificationBox : public IChatItem {

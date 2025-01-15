@@ -11,7 +11,6 @@
  */
 
 #include <QUrl>
-#include <memory>
 
 #include "Bus.h"
 #include "OMainMenu.h"
@@ -25,6 +24,8 @@
 #include "lib/storage/settings/translator.h"
 
 #include <QButtonGroup>
+
+#include <base/RoundedPixmapLabel.h>
 
 namespace UI {
 
@@ -59,23 +60,24 @@ OMainMenu::OMainMenu(QWidget* parent) : QFrame(parent), ui(new Ui::OMainMenu) {
     connect(group, &QButtonGroup::idToggled, this, &OMainMenu::onButtonToggled);
 
 
-    auto bus = ok::Application::Instance()->bus();
-
-
     QString locale = lib::settings::OkSettings().getTranslation();
     settings::Translator::translate(OK_UIWindowMain_MODULE, locale);
     settings::Translator::registerHandler([this] { retranslateUi(); }, this);
 
     retranslateUi();
 
-    connect(bus, &ok::Bus::languageChanged, [](QString locale0) {
+    auto profile = ok::Application::Instance()->getProfile();
+    auto bus = ok::Application::Instance()->bus();
+
+    connect(bus, &ok::Bus::languageChanged, [](const QString& locale0) {
         settings::Translator::translate(OK_UIWindowMain_MODULE, locale0);
     });
 
-    connect(bus, &ok::Bus::avatarChanged, this, &OMainMenu::setAvatar);
+    setAvatar(profile->getAvatar());
+    connect(profile, &lib::session::Profile::selfAvatarChanged, this, &OMainMenu::setAvatar);
 
     delayCaller_ = new base::DelayedCallTimer(this);
-    delayCaller_->call(200, [&]() { check(SystemMenu::chat); });
+    delayCaller_->call(100, [&]() { check(SystemMenu::chat); });
 }
 
 OMainMenu::~OMainMenu() {
@@ -84,10 +86,14 @@ OMainMenu::~OMainMenu() {
     delete ui;
 }
 
-void OMainMenu::setAvatar(const QPixmap& pixmap) {
-    QSize size = ui->label_avatar->size() * ui->label_avatar->devicePixelRatioF();
-    auto newImage = ok::base::Images::roundRectPixmap(pixmap, size,
-                                                      100 * ui->label_avatar->devicePixelRatioF());
+void OMainMenu::setAvatar(const QByteArray& avatar) {
+    qDebug() << __func__;
+
+    QPixmap pixmap;
+    ok::base::Images::putToPixmap(avatar, pixmap);
+    auto size = ui->label_avatar->size() * ui->label_avatar->devicePixelRatioF();
+    auto radius = 100 * ui->label_avatar->devicePixelRatioF();
+    auto newImage = ok::base::Images::roundRectPixmap(pixmap, size, radius);
     newImage.setDevicePixelRatio(ui->label_avatar->devicePixelRatioF());
     ui->label_avatar->setPixmap(newImage);
 }

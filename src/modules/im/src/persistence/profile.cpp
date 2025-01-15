@@ -29,13 +29,10 @@ Profile::Profile(const QString& host,
 
     auto app = ok::Application::Instance();
 
-    auto appProfile = app->getProfile();
+    _profile = app->getProfile();
     // connect(_profile, &lib::session::Profile::nickChanged, this, &Profile::nickChanged);
 
-    storageManager = appProfile->create(appProfile->getUsername());
-
-    _profile = new lib::session::Profile(storageManager, app->getSession(), this);
-
+    storageManager = _profile->create(_profile->getUsername());
     okSettings = storageManager->getGlobalSettings();
     db = std::shared_ptr<lib::db::RawDatabase>(storageManager->createDatabase(OK_IM_MODULE));
     //TODO 待优化
@@ -82,21 +79,21 @@ std::unique_ptr<Profile> Profile::createProfile(QString host, QString name, QStr
  * @brief Get our avatar from cache.
  * @return Avatar as QPixmap.
  */
-const QPixmap Profile::loadAvatar() {
-    // 加载本地
-    auto avatar = _profile->loadAvatarData(core->getSelfPeerId().getPublicKey().toString());
+const QPixmap& Profile::loadAvatar() {
+    auto buf = _profile->getAvatar();
+    if (!buf.isEmpty()) {
+        avatar.loadFromData(buf);
+        return avatar;
+    }
+
     if (avatar.isNull()) {
         // 获取默认
         if (s->getShowIdenticons()) {
-            auto pixmap = QPixmap::fromImage(
+            avatar = QPixmap::fromImage(
                     Identicon(core->getSelfPeerId().getPublicKey().getByteArray()).toImage(16));
-            return pixmap;
         }
-        return {};
     }
-    QPixmap pixmap;
-    pixmap.loadFromData(avatar);
-    return pixmap;
+    return avatar;
 }
 
 void Profile::saveContactAlias(const QString& contactId, const QString& alias) {
@@ -150,6 +147,7 @@ void Profile::initCore(ICoreSettings* s ) {
     connect(core.get(), &Core::started, this, [this]() { emit selfAvatarChanged(loadAvatar()); });
 
     connect(core.get(), &Core::vCardSet, [&](const VCard& vCard) { setVCard(vCard); });
+    connect(core.get(), &Core::avatarSet, this, &Profile::onAvatarSet);
 
     // CoreAV
     coreAv = CoreAV::makeCoreAV(core.get());
@@ -195,10 +193,10 @@ bool Profile::removeAvatar(bool saveToCore) {
 }
 
 QByteArray Profile::loadAvatarData(const ContactId& friendId) {
-    return _profile->loadAvatarData(friendId.toString());
+    return _profile->loadAvatarData(ok::base::Jid(friendId.toString()));
 }
 
-const QPixmap Profile::loadAvatar(const ContactId& friendId) {
+QPixmap Profile::loadAvatar(const ContactId& friendId) {
     QPixmap map;
     auto y = ok::base::Images::putToPixmap(loadAvatarData(friendId), map);
     if (!y) qWarning() << "Can not load image to QPixmap";
@@ -206,11 +204,11 @@ const QPixmap Profile::loadAvatar(const ContactId& friendId) {
 }
 
 void Profile::setFriendAvatar(const ContactId& owner, const QByteArray& pic) {
-    _profile->saveFriendAvatar(owner.toString(), pic);
+    _profile->saveFriendAvatar(ok::base::Jid(owner.toString()), pic);
 }
 
 void Profile::removeFriendAvatar(const ContactId& owner) {
-    _profile->removeFriendAvatar(owner.toString());
+    _profile->removeFriendAvatar(ok::base::Jid(owner.toString()));
 }
 
 const QString& Profile::getUsername() {
@@ -270,4 +268,8 @@ Settings *Profile::getSettings() const
 void Profile::quit() {
     s->saveGlobal();
     s->sync();
+}
+
+void Profile::onAvatarSet(QByteArray avatar) {
+    setAvatar(avatar, false);
 }

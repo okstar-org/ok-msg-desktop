@@ -96,7 +96,7 @@ void ProfileInfo::setAvatar(const QPixmap& avatar) {
     profile->setAvatarOnly(avatar);
 }
 
-QPixmap ProfileInfo::getAvatar() {
+const QPixmap& ProfileInfo::getAvatar() {
     return profile->loadAvatar();
 }
 

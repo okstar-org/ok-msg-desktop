@@ -34,7 +34,7 @@ class Profile : public QObject {
     Q_OBJECT
 public:
     explicit Profile(storage::StorageManager* sm, const AuthSession* authSession, QObject* parent = nullptr);
-    ~Profile();
+    ~Profile() override;
 
     // 获取用户名
     [[nodiscard]] const QString& getUsername() const;
@@ -46,14 +46,15 @@ public:
 
     bool setAvatar(QByteArray& pic);
     bool removeAvatar();
+    const QByteArray& getAvatar();
 
-    QByteArray loadAvatarData(const QString& owner);
+    QByteArray loadAvatarData(const ok::base::Jid& owner);
     //    QPixmap loadAvatar(const QString& owner);
     //    QString avatarPath(const QString& owner, bool forceUnencrypted = false);
 
-    QByteArray getFriendAvatarHash(const QString& owner);
-    bool removeFriendAvatar(const QString& owner);
-    bool saveFriendAvatar(const QString& owner, const QByteArray& avatar);
+    QByteArray getFriendAvatarHash(const ok::base::Jid& owner);
+    bool removeFriendAvatar(const ok::base::Jid& owner);
+    bool saveFriendAvatar(const ok::base::Jid& owner, const QByteArray& avatar);
 
     //    bool rename(QString newName);
 
@@ -70,11 +71,11 @@ public:
      **/
     void setNickname(const QString& nickname_);
 
-    const QString& getNickname() const {
+    [[nodiscard]] const QString& getNickname() const {
         return nickname;
     }
 
-    const QDir& getDir() const {
+    [[nodiscard]] const QDir& getDir() const {
         assert(storageManager);
         return storageManager->getDir();
     }
@@ -86,13 +87,14 @@ private:
     QStringList profiles;
 
     QString nickname;
-    QString selfId;
+    ok::base::Jid selfId;
     storage::StorageManager* storageManager;
+
+    QByteArray avatar;
 
 signals:
     void selfAvatarChanged(const QByteArray& pixmap);
 
-    // emit on any change, including default avatar. Used by those that don't care
     // about active on default avatar.
     void friendAvatarChanged(const messenger::IMFriend& imFriend, const QPixmap& pixmap);
     // emit on a set of avatar, including identicon, used by those two care about

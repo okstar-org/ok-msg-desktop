@@ -13,7 +13,6 @@
 #include <QObject>
 #include "iprofileinfo.h"
 #include "src/base/interface.h"
-#include "src/model/FriendId.h"
 
 class Core;
 class QFile;
@@ -33,7 +32,7 @@ public:
 
 
     void setAvatar(const QPixmap& avatar) override;
-    QPixmap getAvatar() override;
+    const QPixmap& getAvatar() override;
     void setStatusMessage(const QString& status) override;
 
     const VCard& getVCard() const override;

@@ -124,10 +124,9 @@ ProfileForm::ProfileForm(IProfileInfo* profileInfo, QWidget* parent)
         cb->installEventFilter(this);
         cb->setFocusPolicy(Qt::StrongFocus);
     }
-    connect(Nexus::getProfile(), &Profile::selfAvatarChanged, this,
-            &ProfileForm::onSelfAvatarLoaded);
 
     // avatar
+
     QSize size(100, 100);
     profilePicture = new MaskablePixmapWidget(this, size, ":/img/avatar_mask.svg");
     profilePicture->setPixmap(QPixmap(":/img/contact_dark.svg"));
@@ -140,6 +139,9 @@ ProfileForm::ProfileForm(IProfileInfo* profileInfo, QWidget* parent)
     connect(profilePicture, &MaskablePixmapWidget::clicked, this, &ProfileForm::onAvatarClicked);
     connect(profilePicture, &MaskablePixmapWidget::customContextMenuRequested, this,
             &ProfileForm::showProfilePictureContextMenu);
+
+    connect(Nexus::getProfile(), &Profile::selfAvatarChanged, this,
+            &ProfileForm::onSelfAvatarLoaded);
 
     bodyUI->avatarLayout->addWidget(profilePicture);
     bodyUI->avatarLayout->setAlignment(profilePicture, Qt::AlignLeft);
@@ -213,6 +215,9 @@ void ProfileForm::showEvent(QShowEvent* e) {
     if (!c.adrs.isEmpty()) {
         bodyUI->location->setText(c.adrs.at(c.adrs.size() - 1).location());
     }
+
+    auto& avt = profileInfo->getAvatar();
+    profilePicture->setPixmap(avt);
 }
 
 void ProfileForm::contextMenuEvent(QContextMenuEvent* e) {

@@ -17,6 +17,9 @@
 #include "Bus.h"
 
 namespace ok {
+
 Bus::Bus(QObject* parent) : QObject(parent) {}
+
+Bus::~Bus() = default;
 
 }  // namespace ok

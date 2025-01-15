@@ -64,7 +64,7 @@ signals:
 
 public slots:
     void onButtonToggled(int id, bool toggle);
-    void setAvatar(const QPixmap&);
+    void setAvatar(const QByteArray&);
 };
 
 }  // namespace UI

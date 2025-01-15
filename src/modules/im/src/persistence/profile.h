@@ -42,13 +42,13 @@ public:
 
     History* getHistory();
 
-    const QPixmap loadAvatar();
+    const QPixmap& loadAvatar();
     void setAvatar(QByteArray& pic, bool saveToCore);
     void setAvatarOnly(const QPixmap& pic);
     bool removeAvatar(bool saveToCore);
 
     QByteArray loadAvatarData(const ContactId& friendId);
-    const QPixmap loadAvatar(const ContactId& friendId);
+    QPixmap loadAvatar(const ContactId& friendId);
 
     const QString& getUsername();
 
@@ -111,6 +111,7 @@ private:
 
 
     lib::session::Profile* _profile;
+    QPixmap avatar;
 
     lib::storage::StorageManager* storageManager;
 
@@ -119,7 +120,7 @@ private:
     std::shared_ptr<lib::db::RawDatabase> db;
 signals:
     void coreChanged(Core& core);
-    // TODO(sudden6): this doesn't seem to be the right place for Core errors
+
     void failedToStart();
     void badProxy();
 
@@ -131,7 +132,7 @@ signals:
     void nickChanged(const QString& nick);
 
 public slots:
-
+    void onAvatarSet(QByteArray avatar);
     void onSaveToxSave();
 
     void setFriendAvatar(const ContactId& owner, const QByteArray& pic);

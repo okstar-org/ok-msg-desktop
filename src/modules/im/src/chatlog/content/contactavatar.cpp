@@ -11,18 +11,22 @@
  */
 
 #include "contactavatar.h"
-#include "../pixmapcache.h"
 
 #include <QPainter>
+#include <QRecursiveMutex>
 
 static constexpr float avatar_size = 40;
 
 ContactAvatar::ContactAvatar(const QPixmap& avatar)
         : ChatLineContent(ChatLineContent::ContentType::CHAT_AVATA), avatar(avatar) {}
 
-QRectF ContactAvatar::boundingRect() const { return QRectF(0, 0, avatar_size, avatar_size); }
+QRectF ContactAvatar::boundingRect() const {
+    return QRectF(0, 0, avatar_size, avatar_size);
+}
 
-qreal ContactAvatar::getAscent() const { return 0.0; }
+qreal ContactAvatar::getAscent() const {
+    return 0.0;
+}
 
 void ContactAvatar::onCopyEvent() {}
 
@@ -37,6 +41,8 @@ QIcon ContactAvatar::invalidAvatar() {
 void ContactAvatar::paint(QPainter* painter,
                           const QStyleOptionGraphicsItem* option,
                           QWidget* widget) {
+    QMutexLocker locker(&mutex);
+
     QRectF r = boundingRect();
     QPainterPath path;
     path.addRoundedRect(r.adjusted(0, 0, -1, -1), 4.0, 4.0);
@@ -64,4 +70,11 @@ void ContactAvatar::paint(QPainter* painter,
 }
 
 void ContactAvatar::setWidth(qreal width) { Q_UNUSED(width) }
+
 const void* ContactAvatar::getContent() { return &avatar; }
+
+void ContactAvatar::setPixmap(const QPixmap& avatar_) {
+    QMutexLocker locker(&mutex);
+    avatar = avatar_;
+    update();
+}

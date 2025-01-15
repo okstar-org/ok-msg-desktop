@@ -16,19 +16,11 @@
 #include <QObject>
 #include <memory>
 
-#include "base/timer.h"
 
-#include "UI/core/ControllerManager.h"
-#include "UI/window/WindowManager.h"
 #include "UI/window/login/src/LoginWindow.h"
-#include "UI/window/login/src/SettingManager.h"
+#include "UI/window/main/src/MainWindow.h"
 #include "lib/session/profile.h"
 #include "lib/storage/StorageManager.h"
-#include "modules/module.h"
-
-namespace UI {
-class MainWindow;
-}
 
 namespace ok {
 
@@ -47,9 +39,7 @@ public:
     void start();
     void finish();
 
-    inline Bus* bus() const {
-        return _bus.get();
-    }
+    [[nodiscard]] Bus* bus() const;
 
     inline lib::session::AuthSession* getSession() {
         return session.get();
@@ -100,9 +90,6 @@ private:
 
 public slots:
     void cleanup();
-
-    void onAvatar(const QPixmap&);
-
     void on_logout(const QString& profile);
     void on_exit();
 };

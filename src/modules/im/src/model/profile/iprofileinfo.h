@@ -38,7 +38,7 @@ public:
     virtual const QString& getFullName() const = 0;
 
     virtual void setAvatar(const QPixmap& avatar) = 0;
-    virtual QPixmap getAvatar() = 0;
+    virtual const QPixmap& getAvatar() = 0;
     virtual void setStatusMessage(const QString& status) = 0;
 
     virtual const VCard& getVCard() const = 0;

@@ -147,7 +147,8 @@ void Application::createLoginUI(bool bootstrap) {
     session = std::make_shared<lib::session::AuthSession>();
     connect(session.get(), &lib::session::AuthSession::tokenSet,  //
             [&]() {
-                profile = std::make_unique<lib::session::Profile>(storageManager, session.get());
+                profile = std::make_unique<lib::session::Profile>(
+                        storageManager->create(session->getSignInInfo().username), session.get());
                 startMainUI();
             });
 
@@ -211,6 +212,10 @@ void Application::cleanup() {
 
 void Application::finish() {}
 
+Bus* Application::bus() const {
+    return _bus.get();
+}
+
 #ifdef OK_PLUGIN
 void Application::initPluginManager() {
     ok::plugin::PluginManager* pm = ok::plugin::PluginManager::instance();
@@ -220,13 +225,6 @@ void Application::initPluginManager() {
     }
 }
 #endif
-
-void Application::onAvatar(const QPixmap& pixmap) {
-    auto menu = m_mainWindow->menu();
-    if (!menu) return;
-
-    menu->setAvatar(pixmap);
-}
 
 void Application::on_logout(const QString& profile) {
     qDebug() << __func__ << profile;

@@ -1280,22 +1280,9 @@ void Core::onSelfNameChanged(QString name) {
 
 void Core::onSelfAvatarChanged(const std::string avatar) {
     qDebug() << __func__;
-
     QMutexLocker ml{&mutex};
-
     auto a = QByteArray::fromStdString(avatar);
     emit avatarSet(a);
-
-    QPixmap pixmap;
-    ok::base::Images::putToPixmap(a, pixmap);
-    emit ok::Application::Instance()->bus()->avatarChanged(pixmap);
-
-    auto p = Nexus::getProfile();
-    if (!p) {
-        qWarning() << "Can not get profile!";
-        return;
-    }
-    p->setAvatar(a, false);
 }
 
 void Core::onSelfStatusChanged(lib::messenger::IMStatus userStatus, const std::string& msg) {

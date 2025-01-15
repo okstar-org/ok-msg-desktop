@@ -17,6 +17,7 @@
 #pragma once
 
 #include <QDir>
+#include "base/jid.h"
 
 namespace lib::cache {
 
@@ -29,11 +30,10 @@ public:
     [[nodiscard]] const QDir& getPath() const {
         return path;
     };
-    [[nodiscard]] QByteArray loadAvatarData(const QString& owner) const;
-
-    bool saveAvatarData(const QString& owner, const QByteArray& buf);
-    bool deleteAvatarData(const QString& owner);
-    [[nodiscard]] QByteArray getAvatarHash(const QString& owner) const;
+    [[nodiscard]] QByteArray loadAvatarData(const ok::base::Jid& owner) const;
+    bool saveAvatarData(const ok::base::Jid& owner, const QByteArray& buf);
+    bool deleteAvatarData(const ok::base::Jid& owner);
+    [[nodiscard]] QByteArray getAvatarHash(const ok::base::Jid& owner) const;
 
 private:
     QDir path;

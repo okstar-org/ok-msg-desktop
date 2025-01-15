@@ -21,7 +21,7 @@ namespace ok::base {
 static const QChar AT = '@';
 static const QChar SLASH = '/';
 
-class Jid : public QChar {
+class Jid {
 public:
     Jid();
     ~Jid();

@@ -13,20 +13,22 @@
 #ifndef CONTACTAVATAR_H
 #define CONTACTAVATAR_H
 
-#include "../chatlinecontent.h"
-
 #include <QPixmap>
+#include "../chatlinecontent.h"
+#include "base/compatiblerecursivemutex.h"
 
 class ContactAvatar : public ChatLineContent {
 public:
     ContactAvatar(const QPixmap& avatar);
 
     virtual QRectF boundingRect() const override;
-    virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
+    virtual void paint(QPainter* painter,
+                       const QStyleOptionGraphicsItem* option,
                        QWidget* widget) override;
     virtual void setWidth(qreal width) override;
     virtual qreal getAscent() const override;
     const void* getContent() override;
+    void setPixmap(const QPixmap& avatar);
 
 protected:
     void onCopyEvent() override;
@@ -34,6 +36,7 @@ protected:
 private:
     static QIcon invalidAvatar();
     QPixmap avatar;
+    CompatibleRecursiveMutex mutex;
 };
 
 #endif  // CONTACTAVATAR_H

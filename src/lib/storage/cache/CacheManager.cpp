@@ -20,6 +20,7 @@
 #include <QDebug>
 #include <QSaveFile>
 #include "base/hashs.h"
+#include "base/jid.h"
 
 namespace lib::cache {
 
@@ -34,8 +35,8 @@ inline QDir makeAvatarDir(const QDir& path) {
     return dir.path() + QDir::separator() + AVATAR_FOLD;
 }
 
-inline QString makeAvatarPath(const QDir& path, const QString& owner) {
-    return path.path() + QDir::separator() + owner + "." + AVATAR_EXT;
+inline QString makeAvatarPath(const QDir& path, const ok::base::Jid& owner) {
+    return path.path() + QDir::separator() + owner.node() + "." + AVATAR_EXT;
 }
 
 CacheManager::CacheManager(const QDir& dir, QObject* parent) :
@@ -47,13 +48,13 @@ CacheManager::~CacheManager() {
     qDebug() << __func__;
 }
 
-QByteArray CacheManager::loadAvatarData(const QString& owner) const {
+QByteArray CacheManager::loadAvatarData(const ok::base::Jid& owner) const {
     if (owner.isEmpty()) {
         qWarning() << "empty owner!";
         return {};
     }
 
-    auto filePath = makeAvatarPath( makeAvatarDir(path), owner);
+    auto filePath = makeAvatarPath(makeAvatarDir(path), owner);
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly)) {
         qWarning() << "Unable to open file" << path.path();
@@ -68,13 +69,13 @@ QByteArray CacheManager::loadAvatarData(const QString& owner) const {
     return pic;
 }
 
-bool CacheManager::saveAvatarData(const QString& owner, const QByteArray& buf) {
+bool CacheManager::saveAvatarData(const ok::base::Jid& owner, const QByteArray& buf) {
     if (owner.isEmpty()) {
-        qWarning() << "empty owner!";
+        qWarning() << __func__ << "empty owner!";
         return false;
     }
     if (buf.isEmpty()) {
-        qWarning() << "empty buffer!";
+        qWarning() << __func__ << "empty buffer!";
         return false;
     }
 
@@ -96,11 +97,11 @@ bool CacheManager::saveAvatarData(const QString& owner, const QByteArray& buf) {
     return file.commit();
 }
 
-QByteArray CacheManager::getAvatarHash(const QString& owner) const {
+QByteArray CacheManager::getAvatarHash(const ok::base::Jid& owner) const {
     return ok::base::Hashs::hash(loadAvatarData(owner), QCryptographicHash::Algorithm::Md5);
 }
 
-bool CacheManager::deleteAvatarData(const QString& owner) {
+bool CacheManager::deleteAvatarData(const ok::base::Jid& owner) {
     return QFile::remove(makeAvatarPath(path, owner));
 }
 

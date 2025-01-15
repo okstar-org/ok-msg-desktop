@@ -32,7 +32,6 @@
 #include "src/persistence/history.h"
 #include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
-#include "src/persistence/smileypack.h"
 
 #define NAME_COL_WIDTH 140.0
 #define TIME_COL_WIDTH 90.0
@@ -40,8 +39,15 @@
 IChatItem::Ptr ChatMessage::createChatMessage(const ChatLogItem& item, const QString& rawMessage,
                                               MessageType type, bool isMe, MessageState state,
                                               const QDateTime& date, bool colorizeName) {
-    auto avatar = Nexus::getProfile()->loadAvatar(item.getSender());
+    auto profile = Nexus::getProfile();
+    auto avatar = profile->loadAvatar(item.getSender());
+
     auto* msg = new ChatMessageBox(avatar, item.getDisplayName(), rawMessage, item.getId(), isMe);
+    if (isMe) {
+        ChatMessageBox::connect(profile, &Profile::selfAvatarChanged, msg,
+                                &ChatMessageBox::doSetAvatar);
+    }
+
     msg->setMessageState(state);
     msg->setTime(date);
     return IChatItem::Ptr(msg);

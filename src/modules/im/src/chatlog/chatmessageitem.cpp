@@ -50,7 +50,7 @@ void ChatMessageBox::init(const QPixmap& avatar, const QString& contactName,
 
     QFont baseFont = Nexus::getProfile()->getSettings()->getChatMessageFont();
     QFont nameFont = nicknameFont(baseFont);
-    avatarItem = new ContactAvatar(avatar);
+    avatarItem = new ContactAvatar(const_cast<QPixmap&>(avatar));
     connect(avatarItem, &ChatLineContent::reply, this, &ChatMessageBox::doReply);
     connect(avatarItem, &ChatLineContent::copy, this, &ChatMessageBox::doCopy);
     connect(avatarItem, &ChatLineContent::forward, this, &ChatMessageBox::doForward);
@@ -229,6 +229,10 @@ void ChatMessageBox::doForward() {
     qDebug() << __func__ << id;
     auto w = Widget::getInstance();
     emit w->toForwardMessage(id);
+}
+
+void ChatMessageBox::doSetAvatar(const QPixmap& pixmap) {
+    avatarItem->setPixmap(pixmap);
 }
 
 const QString& ChatMessageBox::getNickname() { return *(QString*)nicknameItem->getContent(); }

@@ -35,15 +35,13 @@ class Bus : public QObject {
     Q_OBJECT
 public:
     explicit Bus(QObject* parent = nullptr);
-    ~Bus() {}
+    ~Bus() override;
+
 signals:
-    void languageChanged(QString locale);
+    void languageChanged(const QString& locale);
     void moduleCreated(Module* module);
 
     void profileChanged(Profile* profile);
-
-    void getAvatar();
-    void avatarChanged(const QPixmap& pixmap);
 
     void friendChanged(const Friend* f);
     void groupChanged(const Group* g);

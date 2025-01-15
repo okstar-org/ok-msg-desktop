@@ -12,6 +12,7 @@
 
 #include "MeetingOptionWidget.h"
 #include "base/RoundedPixmapLabel.h"
+#include "base/images.h"
 #include "src/Bus.h"
 #include "src/application.h"
 #include "tools/PopupMenuComboBox.h"
@@ -27,10 +28,13 @@ namespace module::meet {
 MeetingOptionWidget::MeetingOptionWidget(QWidget* parent) : QWidget(parent)
         , ctrlState{true, true, true}
 {
+    auto profile = ok::Application::Instance()->getProfile();
+
     avatarLabel = new RoundedPixmapLabel(this);
     avatarLabel->setObjectName("avatarLabel");
     avatarLabel->setAttribute(Qt::WA_StyledBackground);
     avatarLabel->setContentsSize(QSize(120, 120));
+    avatarLabel->setImage(profile->getAvatar());
 
     micSpeakSetting = new PopupMenuComboBox(this);
     // micSpeakSetting->iconButton()->setIcon(QIcon(":/meet/image/micphone.svg"));
@@ -85,8 +89,9 @@ MeetingOptionWidget::MeetingOptionWidget(QWidget* parent) : QWidget(parent)
     mainLayout->addWidget(avatarLabel, 1);
     mainLayout->addLayout(footerLayout);
 
-    auto bus = ok::Application::Instance()->bus();
-    connect(bus, &ok::Bus::avatarChanged, avatarLabel, &RoundedPixmapLabel::setPixmap);
+    //    auto profile = ok::Application::Instance()->getProfile();
+    //    connect(profile, &lib::session::Profile::selfAvatarChanged, avatarLabel,
+    //    &RoundedPixmapLabel::setImage);
 }
 
 void MeetingOptionWidget::addFooterButton(QPushButton* button) {
@@ -98,10 +103,8 @@ void MeetingOptionWidget::retranslateUi() {
     cameraSetting->setLabel(tr("Camera"));
 }
 
-void MeetingOptionWidget::showEvent(QShowEvent* event) {
-    auto bus = ok::Application::Instance()->bus();
-    emit bus->getAvatar();
-}
+void MeetingOptionWidget::showEvent(QShowEvent* event) {}
+
 void MeetingOptionWidget::updateAudioVideoIcon(bool audio, bool video, bool speaker) {
     if (audio) {
         if (ctrlState.enableMic) {

@@ -148,11 +148,7 @@ void Nexus::start(std::shared_ptr<lib::session::AuthSession> session) {
 
     // Connections
     connect(profile.get(), &Profile::selfAvatarChanged, m_widget, &Widget::onSelfAvatarLoaded);
-    connect(profile.get(), &Profile::selfAvatarChanged, [&, bus](const QPixmap& pixmap) {
-        emit bus->avatarChanged(pixmap);
-    });
 
-    connect(bus, &ok::Bus::getAvatar, [&, bus]() { bus->avatarChanged(profile->loadAvatar()); });
 
     connect(profile.get(), &Profile::coreChanged,
             [&, bus](Core& core) { emit bus->coreChanged(&core); });
