@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Copyright (c) 2022 船山信息 chuanshaninfo.com
+  - The project is licensed under Mulan PubL v2.
+  - You can use this software according to the terms and conditions of the Mulan
+  - PubL v2. You may obtain a copy of Mulan PubL v2 at:
+  -          http://license.coscl.org.cn/MulanPubL-2.0
+  - THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+  - EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+  - MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+  - See the Mulan PubL v2 for more details.
+  -->
+
+<ui version="4.0">
+    <class>OPlayerWidget</class>
+    <widget class="QWidget" name="OPlayerWidget">
+        <property name="geometry">
+            <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>517</width>
+                <height>227</height>
+            </rect>
+        </property>
+        <property name="windowTitle">
+            <string>Player</string>
+        </property>
+        <layout class="QGridLayout" name="gridLayout">
+            <item row="1" column="0">
+                <widget class="OVideoPlayer" name="videoPlayer" native="true">
+                    <layout class="QHBoxLayout" name="player_controller_layout_2"/>
+                </widget>
+            </item>
+            <item row="0" column="0">
+                <widget class="OTitleBar" name="titleBar" native="true">
+                    <property name="maximumSize">
+                        <size>
+                            <width>16777215</width>
+                            <height>35</height>
+                        </size>
+                    </property>
+                </widget>
+            </item>
+        </layout>
+        <action name="action_MenuItem1">
+            <property name="text">
+                <string>MenuItem1</string>
+            </property>
+        </action>
+        <action name="actionMenuItem2">
+            <property name="text">
+                <string>MenuItem2</string>
+            </property>
+        </action>
+    </widget>
+    <layoutdefault spacing="6" margin="11"/>
+    <customwidgets>
+        <customwidget>
+            <class>OTitleBar</class>
+            <extends>QWidget</extends>
+            <header>OTitleBar.h</header>
+            <container>1</container>
+        </customwidget>
+        <customwidget>
+            <class>OVideoPlayer</class>
+            <extends>QWidget</extends>
+            <header>OVideoPlayer.h</header>
+            <container>1</container>
+        </customwidget>
+    </customwidgets>
+    <resources/>
+    <connections/>
+</ui>

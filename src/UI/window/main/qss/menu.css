@@ -26,6 +26,7 @@ QPushButton {
 
 QPushButton#chatBtn,
 QPushButton#meetBtn,
+QPushButton#classroomBtn,
 QPushButton#platformBtn,
 QPushButton#settingBtn
 {
@@ -38,6 +39,14 @@ QPushButton#chatBtn::indicator {
 
 QPushButton#chatBtn::indicator:hover, QPushButton#chatBtn::indicator:checked  {
 	image:url(:/icon/UIWindowMain/menu_chat_active.svg) ;
+}
+
+QPushButton#classroomBtn::indicator {
+	image: url(:/icon/UIWindowMain/menu_classroom.svg);
+}
+
+QPushButton#classroomBtn::indicator:hover, QPushButton#classroomBtn::indicator:checked {
+	image: url(:/icon/UIWindowMain/menu_classroom_active.svg);
 }
 
 QPushButton#meetBtn::indicator {

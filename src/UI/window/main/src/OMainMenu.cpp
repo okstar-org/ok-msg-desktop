@@ -59,6 +59,10 @@ OMainMenu::OMainMenu(QWidget* parent) : QFrame(parent), ui(new Ui::OMainMenu) {
     group->addButton(ui->meetBtn, static_cast<int>(SystemMenu::meeting));
     connect(group, &QButtonGroup::idToggled, this, &OMainMenu::onButtonToggled);
 
+    ui->classroomBtn->setToolTip(tr("Classroom"));
+    ui->classroomBtn->setCursor(Qt::PointingHandCursor);
+    group->addButton(ui->classroomBtn, static_cast<int>(SystemMenu::classroom));
+    connect(group, &QButtonGroup::idToggled, this, &OMainMenu::onButtonToggled);
 
     QString locale = lib::settings::OkSettings().getTranslation();
     settings::Translator::translate(OK_UIWindowMain_MODULE, locale);
@@ -115,6 +119,7 @@ void OMainMenu::check(SystemMenu menu) {
     ui->settingBtn->setChecked(false);
     ui->platformBtn->setChecked(false);
     ui->meetBtn->setChecked(false);
+    ui->classroomBtn->setChecked(false);
 
     switch (menu) {
         case SystemMenu::chat:
@@ -125,6 +130,9 @@ void OMainMenu::check(SystemMenu menu) {
             break;
         case SystemMenu::meeting:
             ui->meetBtn->setChecked(true);
+            break;
+        case SystemMenu::classroom:
+            ui->classroomBtn->setChecked(true);
             break;
         case SystemMenu::setting:
             ui->settingBtn->setChecked(true);

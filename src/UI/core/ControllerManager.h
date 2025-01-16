@@ -17,7 +17,7 @@
 
 namespace ok {
 
-// using namespace painter;
+// using namespace module::painter;
 
 class ControllerManager : public QObject {
     Q_OBJECT

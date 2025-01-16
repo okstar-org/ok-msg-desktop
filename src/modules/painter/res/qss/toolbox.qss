@@ -1,0 +1,44 @@
+QToolButton {
+	background-color: transparent;
+	background-image:url(:/res/icon/toolbox/toolbox_move.png) ;
+	background-repeat: no-repeat;
+	background-position: center;
+	border-radius: 4px;
+
+}
+
+QToolButton#toolbox_move {
+	background-image:url(:/res/icon/toolbox/toolbox_move.png) ;
+}
+
+QToolButton#toolbox_pen {
+	background-image:url(:/res/icon/toolbox/toolbox_pen.png) ;
+}
+
+QToolButton#toolbox_text {
+	background-image:url(:/res/icon/toolbox/toolbox_text.png) ;
+}
+
+QToolButton#toolbox_delete {
+	background-image:url(:/res/icon/toolbox/toolbox_delete.png) ;
+}
+
+QToolButton#toolbox_cutter {
+	background-image:url(:/res/icon/toolbox/toolbox_cutter.png) ;
+}
+
+QToolButton#toolbox_cloud {
+	background-image:url(:/res/icon/toolbox/toolbox_cloud.png) ;
+}
+
+QToolButton#toolbox_team {
+	background-image:url(:/res/icon/toolbox/toolbox_team.png) ;
+}
+
+QFrame#barPanel {
+	background: #424242 ;
+}
+
+QFrame#barPanel QToolButton#toolbox_pull {
+	background-image:url(:/res/icon/toolbox/toolbox_pull.png) ;
+}

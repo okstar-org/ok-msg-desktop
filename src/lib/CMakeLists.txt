@@ -6,6 +6,7 @@ add_subdirectory(session)
 add_subdirectory(storage)
 add_subdirectory(audio)
 add_subdirectory(video)
+add_subdirectory(board)
 
 if(ENABLE_PLUGINS)
   add_subdirectory(plugin)

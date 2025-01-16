@@ -55,9 +55,9 @@ public:
             msg = obj.value("msg").toString();
             if (code == 0) {
                 data = new T(obj.value("data").toObject());
-                auto extra = obj.value("extra").toObject();
-                for (auto key : extra.keys()) {
-                    extra.insert(key, extra.value(key));
+                auto extra_ = obj.value("extra").toObject();
+                for (auto key : extra_.keys()) {
+                    extra.insert(key, extra_.value(key));
                 }
             }
         } else {
@@ -182,7 +182,7 @@ public:
 
 protected:
     QString _baseUrl;
-    std::unique_ptr<network::NetworkHttp> http;
+    std::unique_ptr<lib::network::NetworkHttp> http;
 };
 
 }  // namespace ok::backend

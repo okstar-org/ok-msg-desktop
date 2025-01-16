@@ -32,6 +32,7 @@ enum class SystemMenu {
     chat,   //消息
     meeting,//会议
     platform,//工作平台
+    classroom,  // 课堂
     setting,//配置
 };
 

@@ -22,7 +22,7 @@ namespace lib::session {
 
 AuthSession::AuthSession(QObject* parent)
         : QObject(parent)
-        , m_networkManager(std::make_unique<network::NetworkHttp>(this))
+        , m_networkManager(std::make_unique<lib::network::NetworkHttp>(this))
         , _status(Status::NONE)  //
 {
     qRegisterMetaType<SignInInfo>("SignInInfo");

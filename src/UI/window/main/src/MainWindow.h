@@ -18,10 +18,10 @@
 #include <QStackedWidget>
 #include <QSystemTrayIcon>
 
+#include "OMainMenu.h"
 #include "base/Page.h"
 #include "lib/session/AuthSession.h"
 #include "modules/module.h"
-#include "OMainMenu.h"
 
 namespace Ui {
 class MainWindow;
@@ -30,7 +30,6 @@ class MainWindow;
 namespace UI {
 
 class OMenuWidget;
-
 
 /**
  * 主窗口
@@ -49,7 +48,6 @@ public:
 
     void init();
 
-
     OMenuWidget* getMenuWindow(SystemMenu menu);
     OMenuWidget* initMenuWindow(SystemMenu menu);
 
@@ -57,6 +55,11 @@ public:
         return m_menu;
     }
     QWidget* getContainer(SystemMenu menu);
+
+    OMenuWidget* createChatModule(MainWindow* pWindow);
+    OMenuWidget* createPlatformModule(MainWindow* pWindow);
+    OMenuWidget* createMeetingModule(MainWindow* pWindow);
+    OMenuWidget* createClassroomModule(MainWindow* pWindow);
 
 protected:
     void showEvent(QShowEvent* event) override;
@@ -94,9 +97,6 @@ private slots:
     void onSetShowSystemTray(bool newValue);
 
     void forceShow();
-    OMenuWidget* createChatModule(MainWindow* pWindow);
-    OMenuWidget* createPlatformModule(MainWindow* pWindow);
-    OMenuWidget* createMeetingModule(MainWindow* pWindow);
 };
 
 }  // namespace UI

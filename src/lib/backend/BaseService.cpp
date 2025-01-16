@@ -15,17 +15,16 @@
 #include <QObject>
 #include <QString>
 
-#include "base/r.h"
 #include "lib/network/NetworkHttp.h"
-
 #include <base/singleton.h>
 #include <lib/session/AuthSession.h>
-#include <algorithm>
 
 namespace lib::backend {
 
 BaseService::BaseService(const QString& baseUrl, QObject* parent)  //
-        : QObject(parent), http(std::make_unique<network::NetworkHttp>(this)), _baseUrl(baseUrl) {}
+        : QObject(parent)
+        , http(std::make_unique<lib::network::NetworkHttp>(this))
+        , _baseUrl(baseUrl) {}
 
 BaseService::~BaseService() {}
 

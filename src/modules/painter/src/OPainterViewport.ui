@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Copyright (c) 2022 船山信息 chuanshaninfo.com
+  - The project is licensed under Mulan PubL v2.
+  - You can use this software according to the terms and conditions of the Mulan
+  - PubL v2. You may obtain a copy of Mulan PubL v2 at:
+  -          http://license.coscl.org.cn/MulanPubL-2.0
+  - THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+  - EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+  - MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+  - See the Mulan PubL v2 for more details.
+  -->
+
+<ui version="4.0">
+    <class>OPainterViewport</class>
+    <widget class="QFrame" name="OPainterViewport">
+        <property name="geometry">
+            <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>524</width>
+                <height>271</height>
+            </rect>
+        </property>
+        <property name="palette">
+            <palette>
+                <active>
+                    <colorrole role="Base">
+                        <brush brushstyle="SolidPattern">
+                            <color alpha="255">
+                                <red>255</red>
+                                <green>255</green>
+                                <blue>255</blue>
+                            </color>
+                        </brush>
+                    </colorrole>
+                    <colorrole role="Window">
+                        <brush brushstyle="SolidPattern">
+                            <color alpha="255">
+                                <red>239</red>
+                                <green>239</green>
+                                <blue>239</blue>
+                            </color>
+                        </brush>
+                    </colorrole>
+                </active>
+                <inactive>
+                    <colorrole role="Base">
+                        <brush brushstyle="SolidPattern">
+                            <color alpha="255">
+                                <red>255</red>
+                                <green>255</green>
+                                <blue>255</blue>
+                            </color>
+                        </brush>
+                    </colorrole>
+                    <colorrole role="Window">
+                        <brush brushstyle="SolidPattern">
+                            <color alpha="255">
+                                <red>239</red>
+                                <green>239</green>
+                                <blue>239</blue>
+                            </color>
+                        </brush>
+                    </colorrole>
+                </inactive>
+                <disabled>
+                    <colorrole role="Base">
+                        <brush brushstyle="SolidPattern">
+                            <color alpha="255">
+                                <red>239</red>
+                                <green>239</green>
+                                <blue>239</blue>
+                            </color>
+                        </brush>
+                    </colorrole>
+                    <colorrole role="Window">
+                        <brush brushstyle="SolidPattern">
+                            <color alpha="255">
+                                <red>239</red>
+                                <green>239</green>
+                                <blue>239</blue>
+                            </color>
+                        </brush>
+                    </colorrole>
+                </disabled>
+            </palette>
+        </property>
+        <property name="windowTitle">
+            <string>Frame</string>
+        </property>
+        <property name="autoFillBackground">
+            <bool>true</bool>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_2">
+            <item row="0" column="0">
+                <widget class="QWidget" name="painter_widget" native="true"/>
+            </item>
+        </layout>
+    </widget>
+    <resources/>
+    <connections/>
+</ui>

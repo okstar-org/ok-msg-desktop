@@ -95,14 +95,16 @@ add_library(${PROJECT_NAME} STATIC
     ${${PROJECT_NAME}_SOURCES})
 
 target_link_libraries(${PROJECT_NAME}
-    PRIVATE Platform
     PRIVATE IM
     PRIVATE Meet
+    PRIVATE Painter
+    PRIVATE Platform
+    PRIVATE UIWindowConfig
     PRIVATE UIWidget
 		PRIVATE OkStorage
-    PRIVATE ${Qt5Core_LIBRARIES}
-    PRIVATE ${Qt5Widgets_LIBRARIES}
-    PRIVATE ${Qt5Svg_LIBRARIES}
+    PUBLIC ${Qt5Core_LIBRARIES}
+    PUBLIC ${Qt5Widgets_LIBRARIES}
+    PUBLIC ${Qt5Svg_LIBRARIES}
 )
 
 if(WIN32)

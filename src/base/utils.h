@@ -20,18 +20,6 @@
 
 namespace ok::base {
 
-class KeyUtils {
-public:
-    static QString GetISOTime() {
-        return QDateTime::currentDateTime().toString(Qt::DateFormat::ISODate);
-    }
-
-    static QString GetTimestamp() {
-        QString ts = QString("%1").arg(QDateTime::currentDateTime().toMSecsSinceEpoch());
-        return ts;
-    }
-};
-
 class PathUtils {
 public:
     [[nodiscard]] inline static QDir ensure(const QString& path) {

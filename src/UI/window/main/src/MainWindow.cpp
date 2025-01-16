@@ -18,6 +18,7 @@
 #include "base/logs.h"
 #include "lib/storage/settings/OkSettings.h"
 #include "modules/im/src/model/status.h"
+#include "modules/painter/src/Painter.h"
 #include "modules/platform/src/Platform.h"
 #include "src/lib/storage/settings/style.h"
 
@@ -109,8 +110,7 @@ MainWindow::~MainWindow() {
     qDebug() << __func__;
     stop();
 
-
-    for(auto k: menuMap.keys()){
+    for (auto k : menuMap.keys()) {
         auto menu = menuMap.value(k);
         delete menu;
     }
@@ -124,14 +124,12 @@ MainWindow* MainWindow::getInstance() {
     return instance;
 }
 
-void MainWindow::stop()
-{
+void MainWindow::stop() {
     qDebug() << __func__;
-    for(auto k: menuMap.keys()){
+    for (auto k : menuMap.keys()) {
         auto menu = menuMap.value(k);
         menu->stop();
     }
-
 }
 
 inline QIcon MainWindow::prepareIcon(QString path, int w, int h) {
@@ -314,24 +312,26 @@ OMenuWidget* MainWindow::initMenuWindow(SystemMenu menu) {
         case SystemMenu::meeting:
             w = createMeetingModule(this);
             break;
+        case SystemMenu::classroom:
+            w = createClassroomModule(this);
+            break;
         case SystemMenu::setting:
             w = new ConfigWindow(this);
             break;
     }
-    if (w) {
-        auto m = w->getModule();
-        if (m) {
-            delayCaller->call(1, [=, this]() {
-                assert(w);
-                assert(session);
-                qDebug() << "Start module:" << m->getName();
-                m->start(session);
-            });
-        }
+    assert(w);
 
-        menuMap.insert(menu, w);
-        ui->stacked_widget->addWidget(w);
-    }
+    auto m = w->getModule();
+    assert(m);
+    delayCaller->call(1, [=, this]() {
+        assert(session);
+        qDebug() << "Start module:" << m->getName();
+        m->start(session);
+    });
+
+    menuMap.insert(menu, w);
+    ui->stacked_widget->addWidget(w);
+
     return w;
 }
 
@@ -409,6 +409,21 @@ OMenuWidget* MainWindow::createPlatformModule(MainWindow* pWindow) {
  */
 OMenuWidget* MainWindow::createMeetingModule(MainWindow* pWindow) {
     auto m = new module::meet::Meet();
+    auto w = new OMenuWidget(this);
+    w->setModule(m);
+    w->setLayout(new QGridLayout());
+    w->layout()->setContentsMargins(0, 0, 0, 0);
+    w->layout()->addWidget(m->widget());
+    return w;
+}
+
+/**
+ * 创建课堂模块
+ * @param pWindow
+ * @return
+ */
+OMenuWidget* MainWindow::createClassroomModule(MainWindow* pWindow) {
+    auto m = new module::painter::Painter();
     auto w = new OMenuWidget(this);
     w->setModule(m);
     w->setLayout(new QGridLayout());

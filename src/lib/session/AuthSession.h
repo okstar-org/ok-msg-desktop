@@ -93,7 +93,7 @@ private:
     SignInInfo m_signInInfo;
     lib::backend::SysToken m_token;
 
-    std::unique_ptr<network::NetworkHttp> m_networkManager;
+    std::unique_ptr<lib::network::NetworkHttp> m_networkManager;
     std::unique_ptr<ok::base::OkAccount> okAccount;
     std::unique_ptr<lib::backend::PassportService> passportService;
 
