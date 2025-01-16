@@ -20,9 +20,9 @@
 #include <QWidget>
 
 #include "Defines.h"
-#include "UI/widget/OMenuWidget.h"
 #include "base/resources.h"
 #include "lib/ortc/ok_rtc.h"
+#include "lib/ui/widget/OPage.h"
 
 #include <QPointer>
 
@@ -42,7 +42,7 @@ class MeetingVideoFrame;
 /**
  * 会议主界面
  */
-class Widget : public UI::OMenuWidget {
+class Widget : public UI::window::OPage {
     Q_OBJECT
 public:
     explicit Widget(QWidget* parent = nullptr);

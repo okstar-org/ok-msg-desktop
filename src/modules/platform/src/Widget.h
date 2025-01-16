@@ -17,8 +17,10 @@
 #pragma once
 
 #include <QWidget>
-#include "UI/widget/OMenuWidget.h"
+#include "UI/main/src/OMenuWidget.h"
 #include "base/resources.h"
+#include "lib/ui/widget/OPage.h"
+#include "lib/ui/widget/OWidget.h"
 
 OK_RESOURCE_LOADER(Platform)
 OK_RESOURCE_LOADER(PlatformRes)
@@ -36,7 +38,7 @@ class PlatformPageContainer;
 /**
  * 工作平台主界面
  */
-class Widget : public UI::OMenuWidget {
+class Widget : public UI::window::OPage {
     Q_OBJECT
 public:
     explicit Widget(QWidget* parent = nullptr);

@@ -22,6 +22,7 @@
 #include "src/widget/form/settings/avform.h"
 #include "src/widget/form/settings/generalform.h"
 
+#include "modules/config/settings/src/GeneralForm.h"
 #include "src/widget/widget.h"
 
 #include <QLabel>
@@ -30,8 +31,8 @@
 
 #include <memory>
 
-SettingsWidget::SettingsWidget(Widget* parent) : QWidget(parent, Qt::Window) {
-//    IAudioSettings* audioSettings = Nexus::getProfile()->getSettings();
+SettingsWidget::SettingsWidget(QWidget* parent) : QWidget(parent, Qt::Window) {
+    //    IAudioSettings* audioSettings = Nexus::getProfile()->getSettings();
 //    IVideoSettings* videoSettings = Nexus::getProfile()->getSettings();
 
 
@@ -44,7 +45,7 @@ SettingsWidget::SettingsWidget(Widget* parent) : QWidget(parent, Qt::Window) {
     setLayout(bodyLayout.get());
 
     std::unique_ptr<GeneralForm> gfrm(new GeneralForm(this));
-    connect(gfrm.get(), &GeneralForm::updateIcons, parent, &Widget::updateIcons);
+    //    connect(gfrm.get(), &GeneralForm::updateIcons, parent, &Widget::updateIcons);
 
     std::unique_ptr<StorageSettingsForm> uifrm(new StorageSettingsForm(this));
     //    std::unique_ptr<PrivacyForm> pfrm(new PrivacyForm());

@@ -1,0 +1,24 @@
+<?xml version="1.0" standalone="no"?>
+<!--
+  - Copyright (c) 2022 船山信息 chuanshaninfo.com
+  - The project is licensed under Mulan PubL v2.
+  - You can use this software according to the terms and conditions of the Mulan
+  - PubL v2. You may obtain a copy of Mulan PubL v2 at:
+  -          http://license.coscl.org.cn/MulanPubL-2.0
+  - THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+  - EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+  - MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+  - See the Mulan PubL v2 for more details.
+  -->
+
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg t="1722409840983" class="icon" viewBox="0 0 1024 1024" version="1.1"
+     xmlns="http://www.w3.org/2000/svg" p-id="32828"
+     width="200" height="200">
+    <path
+        d="M375.872 853.312H89.6c-26.624 0-46.912-20.928-46.912-48.256 0-27.392 20.288-48.32 46.912-48.32h286.272c26.624 0 46.976 20.928 46.976 48.32a47.744 47.744 0 0 1-46.976 48.256zM375.872 560.32H89.6C62.976 560.32 42.688 539.392 42.688 512s20.288-48.32 46.912-48.32h286.272c26.624 0 46.976 20.928 46.976 48.32a47.744 47.744 0 0 1-46.976 48.32zM375.872 267.264H89.6c-26.624 0-46.912-20.928-46.912-48.32 0-27.328 20.288-48.256 46.912-48.256h286.272c26.624 0 46.976 20.928 46.976 48.256a47.744 47.744 0 0 1-46.976 48.32z"
+        fill="white" p-id="32829"></path>
+    <path
+        d="M311.744 853.312c-26.56 0-46.912-20.928-46.912-48.256 0-27.392 20.352-48.32 46.912-48.32H934.4c26.624 0 46.912 20.928 46.912 48.32 0 27.328-20.288 48.256-46.912 48.256H311.744c1.6 0 1.6 0 0 0zM311.744 560.32c-26.56 0-46.912-20.928-46.912-48.32s20.352-48.32 46.912-48.32H934.4c26.624 0 46.912 20.928 46.912 48.32s-20.288 48.32-46.912 48.32H311.744c1.6 0 1.6 0 0 0zM311.744 267.264c-26.56 0-46.912-20.928-46.912-48.32 0-27.328 20.352-48.256 46.912-48.256H934.4c26.624 0 46.912 20.928 46.912 48.256 0 27.392-20.288 48.32-46.912 48.32H311.744c1.6 0 1.6 0 0 0z"
+        fill="white" p-id="32830"></path>
+</svg>

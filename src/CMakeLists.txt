@@ -90,6 +90,7 @@ endif ()
 target_link_libraries(
     ${PROJECT_NAME}
     PUBLIC ${OK_LIBS}
+    PRIVATE ${Qt5Widgets_LIBRARIES}
     PRIVATE range-v3::meta range-v3::concepts range-v3::range-v3
 )
 

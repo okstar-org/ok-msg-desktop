@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include "UI/widget/OWidget.h"
+#include "lib/ui/widget/OWidget.h"
 #include "platformpage.h"
 #include "platformpagecontainer.h"
 

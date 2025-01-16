@@ -17,10 +17,10 @@
 #include <QSignalMapper>
 
 #include "lib/storage/settings/OkSettings.h"
+#include "lib/ui/widget/croppinglabel.h"
 #include "src/core/core.h"
 #include "src/nexus.h"
 #include "src/persistence/settings.h"
-#include "src/widget/tool/croppinglabel.h"
 
 /**
  * @class GroupInviteWidget

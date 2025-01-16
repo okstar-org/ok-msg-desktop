@@ -14,6 +14,7 @@
 #include <QIcon>
 #include <QSvgRenderer>
 #include <QVariant>
+#include "lib/ui/widget/croppinglabel.h"
 #include "maskablepixmapwidget.h"
 #include "src/core/core.h"
 #include "src/lib/storage/settings/style.h"
@@ -23,7 +24,6 @@
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
-#include "src/widget/tool/croppinglabel.h"
 
 GenericChatItemWidget::GenericChatItemWidget(ChatType type, const ContactId& cid, QWidget* parent)
         : QFrame(parent)

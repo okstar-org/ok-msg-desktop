@@ -20,9 +20,10 @@
 
 #include <QMenu>
 #include "Bus.h"
-#include "UI/window/login/src/LoginWidget.h"
-#include "UI/window/login/src/LoginWindow.h"
-#include "UI/window/main/src/OMainMenu.h"
+#include "UI/login/src/LoginWidget.h"
+#include "UI/login/src/LoginWindow.h"
+#include "UI/main/src/MainWindow.h"
+#include "UI/main/src/OMainMenu.h"
 #include "base/files.h"
 #include "base/r.h"
 #include "base/system/sys_info.h"
@@ -196,10 +197,6 @@ void Application::startMainUI() {
     initPluginManager();
 #endif
 
-    // 初始化 Painter 模块
-#ifdef OK_MODULE_PAINTER
-    initModulePainter();
-#endif
 }
 
 void Application::stopMainUI() {

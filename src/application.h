@@ -16,9 +16,8 @@
 #include <QObject>
 #include <memory>
 
-
-#include "UI/window/login/src/LoginWindow.h"
-#include "UI/window/main/src/MainWindow.h"
+#include "UI/login/src/LoginWindow.h"
+#include "UI/main/src/MainWindow.h"
 #include "lib/session/profile.h"
 #include "lib/storage/StorageManager.h"
 

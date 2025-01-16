@@ -1,0 +1,52 @@
+<!--
+  - Copyright (c) 2022 船山信息 chuanshaninfo.com
+  - The project is licensed under Mulan PubL v2.
+  - You can use this software according to the terms and conditions of the Mulan
+  - PubL v2. You may obtain a copy of Mulan PubL v2 at:
+  -          http://license.coscl.org.cn/MulanPubL-2.0
+  - THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+  - EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+  - MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+  - See the Mulan PubL v2 for more details.
+  -->
+
+<RCC>
+    <qresource prefix="/res">
+        <file>themes/default/toolbox.css</file>
+        <file>icon/toolbox/toolbox_pen.png</file>
+        <file>icon/toolbox/toolbox_cloud.png</file>
+        <file>icon/toolbox/toolbox_cutter.png</file>
+        <file>icon/toolbox/toolbox_delete.png</file>
+        <file>icon/toolbox/toolbox_move.png</file>
+        <file>icon/toolbox/toolbox_pull.png</file>
+        <file>icon/toolbox/toolbox_team.png</file>
+        <file>icon/toolbox/toolbox_text-gray.png</file>
+        <file>icon/toolbox/toolbox_text.png</file>
+        <file>icon/painter/btn_ctrl_active.png</file>
+        <file>icon/painter/btn_ctrl_all_active.png</file>
+        <file>icon/painter/btn_ctrl_all.png</file>
+        <file>icon/painter/btn_ctrl_bg.png</file>
+        <file>icon/painter/btn_ctrl_gift_active.png</file>
+        <file>icon/painter/btn_ctrl_gift.png</file>
+        <file>icon/painter/btn_ctrl_mute_active.png</file>
+        <file>icon/painter/btn_ctrl_mute.png</file>
+        <file>icon/painter/btn_ctrl_ok_active.png</file>
+        <file>icon/painter/btn_ctrl_ok.png</file>
+        <file>icon/painter/btn_ctrl_plus_active.png</file>
+        <file>icon/painter/btn_ctrl_plus.png</file>
+        <file>icon/painter/btn_ctrl_refresh_active.png</file>
+        <file>icon/painter/btn_ctrl_refresh.png</file>
+        <file>icon/painter/btn_ctrl_wb_active.png</file>
+        <file>icon/painter/btn_ctrl_wb.png</file>
+        <file>icon/painter/draw_line.png</file>
+        <file>icon/painter/move_mode.png</file>
+        <file>icon/weight_point_1_active.png</file>
+        <file>icon/weight_point_1.png</file>
+        <file>icon/weight_point_2_active.png</file>
+        <file>icon/weight_point_2.png</file>
+        <file>icon/weight_point_3_active.png</file>
+        <file>icon/weight_point_3.png</file>
+        <file>icon/weight_point_4_active.png</file>
+        <file>icon/weight_point_4.png</file>
+    </qresource>
+</RCC>

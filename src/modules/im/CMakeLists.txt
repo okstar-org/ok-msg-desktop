@@ -290,8 +290,6 @@ set(${PROJECT_NAME}_SOURCES
 		src/widget/tool/callconfirmwidget.h
 		src/widget/tool/chattextedit.cpp
 		src/widget/tool/chattextedit.h
-		src/widget/tool/croppinglabel.cpp
-		src/widget/tool/croppinglabel.h
 		src/widget/tool/flyoutoverlaywidget.cpp
 		src/widget/tool/flyoutoverlaywidget.h
 		src/widget/tool/friendrequestdialog.cpp

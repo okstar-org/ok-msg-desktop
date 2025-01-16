@@ -29,6 +29,7 @@
 #include <QWindow>
 #include "gui.h"
 #include "lib/storage/settings/translator.h"
+#include "lib/ui/widget/croppinglabel.h"
 #include "src/core/core.h"
 #include "src/lib/session/profile.h"
 #include "src/lib/storage/settings/style.h"
@@ -39,7 +40,6 @@
 #include "src/widget/form/setpassworddialog.h"
 #include "src/widget/form/settingswidget.h"
 #include "src/widget/maskablepixmapwidget.h"
-#include "src/widget/tool/croppinglabel.h"
 #include "src/widget/widget.h"
 #include "ui_profileform.h"
 

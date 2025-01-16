@@ -1,4 +1,5 @@
 add_subdirectory(im)
-add_subdirectory(platform)
 add_subdirectory(meet)
-add_subdirectory(painter)
+add_subdirectory(classroom)
+add_subdirectory(platform)
+add_subdirectory(config)

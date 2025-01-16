@@ -24,13 +24,13 @@
 #include "groupwidget.h"
 #include "gui.h"
 #include "lib/storage/settings/translator.h"
+#include "lib/ui/widget/croppinglabel.h"
 #include "maskablepixmapwidget.h"
 #include "src/lib/storage/settings/style.h"
 #include "src/model/status.h"
 #include "src/nexus.h"
 #include "src/widget/friendwidget.h"
 #include "src/widget/widget.h"
-#include "tool/croppinglabel.h"
 
 GroupWidget::GroupWidget(const GroupId& groupId, const QString& groupName)
         : GenericChatroomWidget(ChatType::GroupChat, groupId) {

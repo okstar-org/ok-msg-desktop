@@ -19,6 +19,7 @@
 #include <QTimer>
 
 #include "lib/audio/audio.h"
+#include "lib/ui/widget/croppinglabel.h"
 #include "src/core/core.h"
 #include "src/model/FriendId.h"
 #include "src/model/friend.h"
@@ -26,7 +27,6 @@
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
 #include "src/video/videosurface.h"
-#include "src/widget/tool/croppinglabel.h"
 
 class LabeledVideo : public QFrame {
 public:

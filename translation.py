@@ -1,13 +1,24 @@
-import subprocess
-import os
-import shutil
-import openpyxl
-import xml.etree.ElementTree as ET
-from pathlib import Path
-from enum import Enum
-from xml.dom import minidom
-import re
+#  Copyright (c) 2022 船山信息 chuanshaninfo.com
+#  The project is licensed under Mulan PubL v2.
+#  You can use this software according to the terms and conditions of the Mulan
+#  PubL v2. You may obtain a copy of Mulan PubL v2 at:
+#           http://license.coscl.org.cn/MulanPubL-2.0
+#  THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+#  EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+#  MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+#  See the Mulan PubL v2 for more details.
+
 import html
+import openpyxl
+import os
+import re
+import shutil
+import subprocess
+import xml.etree.ElementTree as ET
+from enum import Enum
+from pathlib import Path
+from xml.dom import minidom
+
 
 class TranslateTitle(Enum):
     ColumnBegin = 0
@@ -257,9 +268,10 @@ if __name__ == "__main__":
         ts_files = [f"{src_path}ts/{lang}.ts" for lang in languages]
         run_lupdate(src_path, ts_files)
 
-    update_ts_files("./src/UI/window/login/")
-    update_ts_files("./src/UI/window/main/")
-    update_ts_files("./src/UI/window/config/")
+
+    update_ts_files("src/UI/login/")
+    update_ts_files("src/UI/main/")
+    update_ts_files("src/modules/config/")
     update_ts_files("./src/modules/platform/")
     update_ts_files("./src/modules/im/")
     update_ts_files("./src/modules/meet/")

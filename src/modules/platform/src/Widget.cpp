@@ -45,7 +45,7 @@ public:
 
 namespace module::platform {
 
-Widget::Widget(QWidget* parent) : UI::OMenuWidget(parent), ui(new Ui::WorkPlatform) {
+Widget::Widget(QWidget* parent) : UI::window::OPage(parent), ui(new Ui::WorkPlatform) {
     OK_RESOURCE_INIT(Platform);
     OK_RESOURCE_INIT(PlatformRes);
 

@@ -13,16 +13,17 @@
 #include "groupchatform.h"
 
 #include "lib/storage/settings/translator.h"
+#include "lib/ui/widget/croppinglabel.h"
 #include "src/chatlog/chatlog.h"
 #include "src/chatlog/content/text.h"
 #include "src/core/core.h"
 #include "src/core/coreav.h"
-#include "src/model/friend.h"
-#include "src/model/groupid.h"
 #include "src/lib/session/profile.h"
 #include "src/lib/storage/settings/style.h"
+#include "src/model/friend.h"
 #include "src/model/friendlist.h"
 #include "src/model/group.h"
+#include "src/model/groupid.h"
 #include "src/persistence/igroupsettings.h"
 #include "src/video/groupnetcamview.h"
 #include "src/widget/chatformheader.h"
@@ -30,7 +31,6 @@
 #include "src/widget/form/chatform.h"
 #include "src/widget/groupwidget.h"
 #include "src/widget/maskablepixmapwidget.h"
-#include "src/widget/tool/croppinglabel.h"
 #include "tabcompleter.h"
 
 #include <QDragEnterEvent>

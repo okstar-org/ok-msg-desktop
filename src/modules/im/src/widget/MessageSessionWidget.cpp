@@ -18,6 +18,7 @@
 #include "maskablepixmapwidget.h"
 
 #include "contentdialogmanager.h"
+#include "lib/ui/widget/croppinglabel.h"
 #include "src/core/core.h"
 #include "src/lib/storage/settings/style.h"
 #include "src/model/aboutfriend.h"
@@ -31,7 +32,6 @@
 #include "src/widget/contentlayout.h"
 #include "src/widget/form/aboutfriendform.h"
 #include "src/widget/form/chatform.h"
-#include "src/widget/tool/croppinglabel.h"
 #include "src/widget/widget.h"
 
 #include <QApplication>

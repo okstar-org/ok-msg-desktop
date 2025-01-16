@@ -14,8 +14,8 @@
 #include <QBoxLayout>
 #include <QMouseEvent>
 #include "lib/storage/settings/style.h"
+#include "lib/ui/widget/croppinglabel.h"
 #include "maskablepixmapwidget.h"
-#include "src/widget/tool/croppinglabel.h"
 
 GenericChatroomWidget::GenericChatroomWidget(ChatType type, const ContactId& cid, QWidget* parent)
         : GenericChatItemWidget(type, cid, parent), contactId(cid) {

@@ -28,12 +28,12 @@
 #include "lib/backend/UserService.h"
 #include "lib/session/AuthSession.h"
 #include "lib/storage/settings/translator.h"
+#include "lib/ui/widget/croppinglabel.h"
 #include "src/core/core.h"
 #include "src/lib/storage/settings/style.h"
 #include "src/nexus.h"
 #include "src/persistence/settings.h"
 #include "src/widget/contentlayout.h"
-#include "src/widget/tool/croppinglabel.h"
 #include "ui_addfriendform.h"
 
 namespace {

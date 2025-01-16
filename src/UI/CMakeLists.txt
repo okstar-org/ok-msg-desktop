@@ -1,16 +1,25 @@
 project(UI)
 
-add_subdirectory(core)
-add_subdirectory(window)
-add_subdirectory(widget)
+add_definitions(-DOK_${PROJECT_NAME}_MODULE="${PROJECT_NAME}")
 
+include_directories(${CMAKE_SOURCE_DIR}/plugins/include)
 
-add_library(${PROJECT_NAME} STATIC)
+set(${PROJECT_NAME}_SOURCES)
+
+add_subdirectory(login)
+add_subdirectory(main)
+
+add_library(${PROJECT_NAME} STATIC
+		${${PROJECT_NAME}_FORMS}
+		${${PROJECT_NAME}_RESOURCES}
+		${${PROJECT_NAME}_SOURCES})
 
 target_link_libraries(${PROJECT_NAME}
-        PUBLIC UICore
-        PUBLIC UIWindow
-        PUBLIC UIWidget
+		PUBLIC UILoginWindow
+		PUBLIC UIMainWindow
+		PUBLIC Config
+		PRIVATE ${Qt5Core_LIBRARIES}
+		PRIVATE ${Qt5Widgets_LIBRARIES}
 )
 
 if (WIN32)

@@ -16,6 +16,7 @@
 #include <QFileDialog>
 #include <QFileInfo>
 #include "lib/storage/settings/translator.h"
+#include "lib/ui/widget/croppinglabel.h"
 #include "src/base/MessageBox.h"
 #include "src/chatlog/chatlinecontentproxy.h"
 #include "src/chatlog/chatlog.h"
@@ -39,7 +40,6 @@
 #include "src/widget/maskablepixmapwidget.h"
 #include "src/widget/tool/callconfirmwidget.h"
 #include "src/widget/tool/chattextedit.h"
-#include "src/widget/tool/croppinglabel.h"
 #include "src/widget/tool/screenshotgrabber.h"
 #include "src/widget/widget.h"
 

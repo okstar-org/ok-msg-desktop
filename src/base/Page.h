@@ -13,7 +13,7 @@
 #pragma once
 
 #include <QFrame>
-#include "UI/core/ui.h"
+#include "src/lib/ui/ui.h"
 namespace ok::base {
 
 
