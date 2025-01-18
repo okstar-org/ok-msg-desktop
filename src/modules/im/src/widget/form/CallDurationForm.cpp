@@ -13,6 +13,7 @@
 #include "CallDurationForm.h"
 #include "ui_CallDurationForm.h"
 
+#include <QDebug>
 #include <QPushButton>
 #include <QTimer>
 #include "base/times.h"

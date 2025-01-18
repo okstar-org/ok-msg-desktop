@@ -21,10 +21,10 @@
 #include "AuthSession.h"
 #include "lib/messenger/IMFriend.h"
 #include "lib/storage/StorageManager.h"
+#include "lib/messenger/messenger.h"
 
 class Settings;
 class QCommandLineParser;
-
 namespace lib::session {
 
 /**
@@ -80,6 +80,8 @@ public:
         return storageManager->getDir();
     }
 
+    messenger::Messenger* getMessenger();
+
 private:
     const AuthSession* authSession;
 
@@ -89,7 +91,7 @@ private:
     QString nickname;
     ok::base::Jid selfId;
     storage::StorageManager* storageManager;
-
+    messenger::Messenger* messenger;
     QByteArray avatar;
 
 signals:

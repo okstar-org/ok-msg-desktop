@@ -32,7 +32,7 @@ class MeetingOptionWidget : public QWidget {
     Q_OBJECT
 
 public:
-    MeetingOptionWidget(QWidget* parent = nullptr);
+    explicit MeetingOptionWidget(QWidget* parent = nullptr);
     void addFooterButton(QPushButton* button);
 
     void retranslateUi();

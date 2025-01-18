@@ -17,6 +17,7 @@
 #include <QRegularExpression>
 #include <QString>
 #include <cassert>
+#include "base/basic_types.h"
 
 /**
  * @class ToxPk
@@ -65,7 +66,7 @@ FriendId::FriendId(const QString& strId) : ContactId(strId) {
  */
 FriendId::FriendId(const ContactId& rawId) : ContactId(rawId) {}
 
-FriendId::FriendId(const lib::messenger::IMContactId& fId) : ContactId(fId.toString()) {}
+FriendId::FriendId(const lib::messenger::IMContactId& fId) : ContactId(qstring(fId.toString())) {}
 
 bool FriendId::operator==(const FriendId& other) const {
     return toString() == other.toString();
@@ -92,7 +93,7 @@ QString FriendId::toString() const {
 }
 
 ToxPeer::ToxPeer(const lib::messenger::IMPeerId& peerId) : FriendId(peerId) {
-    resource = peerId.resource;
+    resource = qstring(peerId.resource);
 }
 
 ToxPeer::ToxPeer(const QString& rawId) : FriendId(rawId) {

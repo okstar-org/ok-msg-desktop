@@ -12,11 +12,6 @@
 
 #pragma once
 
-#include <QDateTime>
-#include <QDebug>
-#include <QObject>
-#include <QString>
-
 namespace gloox {
 class JID;
 class RosterItem;
@@ -31,11 +26,11 @@ enum class MsgType {
 
 struct IMMessage {
     MsgType type;
-    QString id;
-    QString from;
-    QString to;
-    QString body;
-    QDateTime timestamp;
+    std::string id;
+    std::string from;
+    std::string to;
+    std::string body;
+    int64_t timestamp;
 };
 
 }  // namespace lib::messenger

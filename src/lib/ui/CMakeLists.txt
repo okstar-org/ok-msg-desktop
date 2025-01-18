@@ -3,7 +3,9 @@ project(OkUI)
 file(GLOB ${PROJECT_NAME}_SOURCES
 		*.h *.cpp
 		platform/*.h platform/*.cpp
+		widget/*.ui
 		widget/*.h widget/*.cpp
+		widget/tools/*.h widget/tools/*.cpp
 		layout/*.h layout/*.cpp
 		utils/*.h utils/*.cpp
 )

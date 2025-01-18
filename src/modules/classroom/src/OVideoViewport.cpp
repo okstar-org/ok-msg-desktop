@@ -12,6 +12,7 @@
 #include "OVideoViewport.h"
 
 #include <QSpacerItem>
+#include <QTimer>
 #include "base/StringUtils.h"
 #include "base/logs.h"
 

@@ -10,17 +10,11 @@
  * See the Mulan PubL v2 for more details.
  */
 #pragma once
+
 namespace ok::base {
-#define APPLICATION_VERSION GIT_DESCRIBE
-#define APPLICATION_VERSION_ID GIT_VERSION
-#define APPLICATION_RELEASE APPLICATION_NAME "-" APPLICATION_VERSION
+    #define APPLICATION_VERSION GIT_DESCRIBE
+    #define APPLICATION_VERSION_ID GIT_VERSION
+    #define APPLICATION_RELEASE APPLICATION_NAME "-" APPLICATION_VERSION
 
-#define BACKEND_CLOUD_URL "https://cloud.okstar.org.cn/api/open"
-
-#define XMPP_FOCUS_NAME "focus"
-#define XMPP_CONFERENCE_FOCUS "focus.meet.chuanshaninfo.com"
-
-#define XMPP_CONF_SERVER_HOST "conference.meet.chuanshaninfo.com"
-#define XMPP_PUBSUB_SERVICE "pubsub.meet.chuanshaninfo.com"
-
+    #define BACKEND_CLOUD_URL "https://cloud.okstar.org.cn/api/open"
 }

@@ -16,6 +16,7 @@
 #include <QJsonObject>
 #include <QJsonValue>
 #include <QString>
+
 namespace ok::base {
 class Jsons {
 public:

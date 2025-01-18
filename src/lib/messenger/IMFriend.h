@@ -14,11 +14,11 @@
 // Created by gaojie on 24-5-28.
 //
 
-#ifndef OKMSG_PROJECT_IMFRIEND_H
-#define OKMSG_PROJECT_IMFRIEND_H
+#pragma once
 
-#include <QString>
-#include <QStringList>
+#include <list>
+#include <string>
+#include <vector>
 
 namespace gloox {
 class JID;
@@ -44,32 +44,32 @@ enum class IMStatus {
  * 格式:[username]@[server]
  */
 struct IMContactId {
-    QString username;
-    QString server;
+    std::string username;
+    std::string server;
 
-    bool operator==(const QString& friendId) const;
+    bool operator==(const std::string& friendId) const;
     bool operator==(const IMContactId& friendId) const;
     bool operator!=(const IMContactId& friendId) const;
     bool operator<(const IMContactId& friendId) const;
 
     IMContactId() = default;
     IMContactId(const IMContactId&);
-    explicit IMContactId(const QString& jid);
+    explicit IMContactId(const std::string& jid);
     explicit IMContactId(const gloox::JID& jid);
 
-    [[nodiscard]] QString getUsername() const {
+    [[nodiscard]] std::string getUsername() const {
         return username;
     }
-    [[nodiscard]] QString getServer() const {
+    [[nodiscard]] std::string getServer() const {
         return server;
     }
 
-    [[nodiscard]] QString toString() const {
-        if (username.isEmpty()) {
+    [[nodiscard]] std::string toString() const {
+        if (username.empty()) {
             return {};
         }
 
-        if (server.isEmpty()) {
+        if (server.empty()) {
             return username;
         }
 
@@ -81,19 +81,19 @@ struct IMPeerId : public IMContactId {
     /**
      * [username]@[server]/[resource]
      */
-    QString resource;
+    std::string resource;
 
     IMPeerId();
-    explicit IMPeerId(const QString& peerId);
+    explicit IMPeerId(const std::string& peerId);
     explicit IMPeerId(const gloox::JID& jid);
     bool operator==(const IMPeerId& peerId) const;
 
-    [[nodiscard]] inline QString toFriendId() const {
+    [[nodiscard]] inline std::string toFriendId() const {
         return username + "@" + server;
     }
 
-    [[nodiscard]] inline QString toString() const {
-        if (resource.isEmpty()) return toFriendId();
+    [[nodiscard]] inline std::string toString() const {
+        if (resource.empty()) return toFriendId();
         return toFriendId() + "/" + resource;
     }
 };
@@ -104,57 +104,47 @@ public:
     explicit IMFriend(gloox::RosterItem* pItem);
 
     IMContactId id;
-    QString alias;
-    QStringList groups;
+    std::string alias;
+    std::list<std::string> groups;
     int subscription;
     bool online;
 
     // 互相关注才是朋友
     [[nodiscard]] bool isFriend() const;
-
-    [[nodiscard]] QString toString() const {
-        return QString("{id: %1, alias: %2, subscription:%3, online:%4, groups:[%5]}")  //
-                .arg(id.toString())
-                .arg(alias)
-                .arg(subscription)
-                .arg(online)
-                .arg(groups.join(","));
-    }
 };
 
 struct IMVCard {
     struct Adr {
-        QString street;
-        QString locality;
-        QString region;
-        QString country;
+        std::string street;
+        std::string locality;
+        std::string region;
+        std::string country;
     };
 
     struct Tel {
         int type;  // 0:work
         bool mobile;
-        QString number;
+        std::string number;
     };
 
     struct Email {
         int type;  // 0:work
-        QString number;
+        std::string number;
     };
 
     struct Photo {
-        QString type;
+        std::string type;
         std::string bin;
-        QString url;
+        std::string url;
     };
 
-    QString fullName;
-    QString nickname;
-    QString title;
-    QList<Adr> adrs;
-    QList<Email> emails;
-    QList<Tel> tels;
+    std::string fullName;
+    std::string nickname;
+    std::string title;
+    std::vector<Adr> adrs;
+    std::vector<Email> emails;
+    std::vector<Tel> tels;
     Photo photo;
 };
 
 }  // namespace lib::messenger
-#endif  // OKMSG_PROJECT_IMFRIEND_H

@@ -75,8 +75,9 @@ add_library(${PROJECT_NAME} STATIC
 find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
 
 target_link_libraries(${PROJECT_NAME}
+		PRIVATE OkUI
+		PRIVATE OkMessenger
 		PRIVATE OkBase
-		PRIVATE OkIMCore
 		PRIVATE ${Qt5WebChannel_LIBRARIES}
 		PRIVATE ${Qt5WebSockets_LIBRARIES}
 		PRIVATE ${Qt5WebEngineWidgets_LIBRARIES}

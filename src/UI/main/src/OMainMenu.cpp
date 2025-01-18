@@ -81,7 +81,7 @@ OMainMenu::OMainMenu(QWidget* parent) : QFrame(parent), ui(new Ui::OMainMenu) {
     connect(profile, &lib::session::Profile::selfAvatarChanged, this, &OMainMenu::setAvatar);
 
     delayCaller_ = new base::DelayedCallTimer(this);
-    delayCaller_->call(100, [&]() { check(SystemMenu::classroom); });
+    delayCaller_->call(100, [&]() { check(SystemMenu::chat); });
 }
 
 OMainMenu::~OMainMenu() {

@@ -34,6 +34,7 @@ OPainterViewport::OPainterViewport(QWidget* parent) : QWidget(parent) {
 }
 
 OPainterViewport::~OPainterViewport() {
+    qDebug() << __func__;
 }
 
 void OPainterViewport::showEvent(QShowEvent* e) {

@@ -12,15 +12,19 @@
 
 #include "core.h"
 
-
 #include <QCoreApplication>
 #include <QString>
 #include <QStringBuilder>
 #include <QTimer>
 #include <cassert>
 
-
+#include <range/v3/all.hpp>
 #include "base/compatiblerecursivemutex.h"
+#include "lib/messenger/IMFriend.h"
+#include "lib/messenger/messenger.h"
+#include "src/Bus.h"
+#include "src/application.h"
+#include "src/base/images.h"
 #include "src/core/coreav.h"
 #include "src/core/icoresettings.h"
 #include "src/core/toxoptions.h"
@@ -29,19 +33,40 @@
 #include "src/model/status.h"
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
-#include "lib/messenger/messenger.h"
-#include "lib/messenger/IMFriend.h"
-#include "src/application.h"
-#include "src/Bus.h"
-#include "src/base/images.h"
+
+VCard::Adr toVCardAdr(const lib::messenger::IMVCard::Adr& item) {
+    return VCard::Adr{.street = item.street.c_str(),
+                      .locality = item.locality.c_str(),
+                      .region = item.region.c_str(),
+                      .country = item.country.c_str()};
+}
+
+VCard toVCard(const lib::messenger::IMVCard& imvCard) {
+    return VCard{
+            .fullName = imvCard.fullName.c_str(),
+            .nickname = imvCard.nickname.c_str(),
+            .title = imvCard.title.c_str(),
+            .adrs = ranges::view::all(imvCard.adrs) | ranges::view::transform(toVCardAdr) |
+                    ranges::to<QList>,
+            .emails = ranges::view::all(imvCard.emails) | ranges::view::transform([](auto& item) {
+                          return VCard::Email{.type = item.type, .number = qstring(item.number)};
+                      }) |
+                      ranges::to<QList>,
+            .tels = ranges::view::all(imvCard.tels) | ranges::view::transform([](auto& item) {
+                        return VCard::Tel{.type = item.type,
+                                          .mobile = item.mobile,
+                                          .number = qstring(item.number)};
+                    }) |
+                    ranges::to<QList>,
+            .photo = {.type = imvCard.photo.type.c_str(),
+                      .bin = imvCard.photo.bin,
+                      .url = imvCard.photo.url.c_str()}};
+}
 
 #define ASSERT_CORE_THREAD assert(QThread::currentThread() == coreThread.get())
 
 Core::Core(QThread* coreThread)
-        : messenger(nullptr)
-        , toxTimer(new QTimer(this))
-        , coreThread(coreThread)
-{
+        : messenger(nullptr), toxTimer(new QTimer(this)), coreThread(coreThread) {
     assert(coreThread);
     assert(toxTimer);
 
@@ -57,12 +82,10 @@ Core::Core(QThread* coreThread)
     //     ok::Application::Instance()->onAvatar(pixmap);
     // });
 
-
     toxTimer->setSingleShot(true);
     connect(toxTimer, &QTimer::timeout, this, &Core::process);
     connect(coreThread, &QThread::finished, toxTimer, &QTimer::stop);
     toxTimer->start();
-
 }
 
 Core::~Core() {
@@ -101,16 +124,15 @@ void Core::registerCallbacks(lib::messenger::Messenger* messenger) {
     messenger->addIMHandler(this);
 }
 
-
-
 /**
  * @brief Factory method for the Core object
  * @param savedata empty if new profile or saved data else
  * @param settings Settings specific to Core
  * @return nullptr or a Core object ready to start
  */
-ToxCorePtr Core::makeToxCore(const QString& host, const QString& name, const QString& password,
-                             const ICoreSettings* const settings, ToxCoreErrors* err) {
+ToxCorePtr Core::makeToxCore(lib::messenger::Messenger* messenger,
+                             const ICoreSettings* const settings,
+                             ToxCoreErrors* err) {
     QThread* thread = new QThread();
     if (!thread) {
         qCritical() << "could not allocate Core thread";
@@ -136,8 +158,8 @@ ToxCorePtr Core::makeToxCore(const QString& host, const QString& name, const QSt
         return {};
     }
 
-    core->messenger = std::make_unique<lib::messenger::Messenger>(host, name, password);
-    core->registerCallbacks(core->messenger.get());
+    core->messenger = messenger;
+    core->registerCallbacks(core->messenger);
     connect(thread, &QThread::started, core.get(), &Core::process);
 
     core->moveToThread(thread);
@@ -154,8 +176,7 @@ void Core::onStarted() {
     emit started();
 }
 
-void Core::onStopped()
-{
+void Core::onStopped() {
     qDebug() << __func__;
 }
 
@@ -165,18 +186,16 @@ void Core::onDisconnected(int err) {
     emit disconnected(err);
 }
 
-void Core::onConnecting()
-{
+void Core::onConnecting() {
     qDebug() << __func__;
     emit connecting();
 }
 
-void Core::onConnected()
-{
+void Core::onConnected() {
     qDebug() << __func__;
     mutex.unlock();
     emit connected();
-    emit ok::Application::Instance()->bus()->coreChanged(this);
+    emit ok::Application::Instance() -> bus()->coreChanged(this);
 }
 
 /**
@@ -207,15 +226,15 @@ Core* Core::getInstance() {
  * own timer
  */
 void Core::process() {
-    qDebug() << __func__ ;
+    qDebug() << __func__;
 
     ASSERT_CORE_THREAD;
     mutex.lock();
 
-    if(!messenger->isStarted()){
+    if (!messenger->isStarted()) {
         qDebug() << __func__ << "start...";
         messenger->start();
-    }else{
+    } else {
         qDebug() << __func__ << "connect...";
         messenger->doConnect();
     }
@@ -225,97 +244,103 @@ void Core::process() {
 }
 
 void Core::onFriend(const lib::messenger::IMFriend& frnd) {
-    qDebug() << __func__ << frnd.toString();
+    qDebug() << __func__ << frnd.id.getUsername().c_str();
 
     // 加入到朋友列表
-    auto fi =FriendInfo {
-                        .id= FriendId(frnd.id),
-                        .alias= frnd.alias,
-                        .is_friend = frnd.isFriend(),
-                        .online = frnd.online,
-                        .groups = frnd.groups
+    auto fi = FriendInfo{.id = FriendId(frnd.id),
+                         .alias = qstring(frnd.alias),
+                         .is_friend = frnd.isFriend(),
+                         .online = frnd.online,
+                         .groups = ranges::view::all(frnd.groups) |
+                                   ranges::view::transform([](auto& e) { return qstring(e); }) |
+                                   ranges::to<QStringList>
 
-        };
+    };
 
     friendList.addFriend(fi);
 
     emit friendAdded(fi);
 }
 
-void Core::onFriendRequest(const QString friendId, QString msg) {
-    qDebug() << __func__ << friendId;
-    emit friendRequestReceived(FriendId(friendId), msg);
+void Core::onFriendRequest(const std::string& friendId, const std::string& msg) {
+    qDebug() << __func__ << friendId.c_str();
+    emit friendRequestReceived(FriendId(qstring(friendId)), qstring(msg));
 }
 
-void Core::onFriendRemoved(QString friendId) {
-    qDebug() << __func__ << friendId;
-    emit friendRemoved(friendId);
+void Core::onFriendRemoved(const std::string& friendId) {
+    const QString& id = qstring(friendId);
+    qDebug() << __func__ << id;
+    emit friendRemoved(id);
 }
 
-void Core::onFriendStatus(QString friendId, lib::messenger::IMStatus status) {
+void Core::onFriendStatus(const std::string& friendId, lib::messenger::IMStatus status) {
     Status::Status status0 = fromToxStatus(status);
-    emit friendStatusChanged(getFriendPublicKey(friendId), status0);
+    emit friendStatusChanged(getFriendPublicKey(friendId.c_str()), status0);
 }
 
-void Core::onMessageSession(QString cId, QString sid) {
+void Core::onMessageSession(const std::string& contactId, const std::string& sid_) {
+    auto cId = qstring(contactId);
+    auto sid = qstring(sid_);
     qDebug() << __func__ << "contact:" << cId << "sid:" << sid;
-    auto contactId = ContactId(cId);
-    emit messageSessionReceived(contactId, sid);
+    emit messageSessionReceived(ContactId(cId), sid);
 }
 
-void Core::onFriendMessage(QString friendId, lib::messenger::IMMessage message) {
+void Core::onFriendMessage(const std::string& friendId_, const lib::messenger::IMMessage& message) {
+    auto friendId = qstring(friendId_);
     qDebug() << __func__ << "friend:" << friendId;
-    qDebug() << "content:" << message.body;
 
-    //接收标志
-    sendReceiptReceived(friendId, message.id);
+    // 接收标志
+    sendReceiptReceived(friendId, qstring(message.id));
 
-    auto peerId = ToxPeer(message.from);
+    auto peerId = ToxPeer(qstring(message.from));
 
     FriendMessage msg;
     msg.isAction = false;
-    msg.id = message.id;
+    msg.id = qstring(message.id);
     msg.from = peerId.getId();
     msg.from_resource = peerId.resource;
-    msg.to = message.to;
-    msg.content = message.body;
-    msg.timestamp = message.timestamp;
+    msg.to = qstring(message.to);
+    msg.content = qstring(message.body);
+    msg.timestamp = QDateTime::fromSecsSinceEpoch(message.timestamp);
     msg.displayName = peerId.username;
 
     emit friendMessageReceived(FriendId(friendId), msg, false);
 }
 
+void Core::onFriendMessageReceipt(const std::string& friendId, const std::string& msgId) {}
+
 /**
  * 实现ChatState
  */
-void Core::onFriendChatState(QString friendId, int state) {
-    qDebug() << "onFriendChatState:" << friendId << "state:" << state;
-    emit friendTypingChanged(getFriendPublicKey(friendId), state == 2);
+void Core::onFriendChatState(const std::string& friendId, int state) {
+    qDebug() << "onFriendChatState:" << friendId.c_str() << "state:" << state;
+    emit friendTypingChanged(getFriendPublicKey(friendId.c_str()), state == 2);
 }
 
-void Core::onFriendNickChanged(QString friendId, QString nick) {
-    qDebug() << __func__ << friendId << nick;
-    emit friendNicknameChanged(getFriendPublicKey(friendId), nick);
+void Core::onFriendNickChanged(const std::string& friendId, const std::string& nick) {
+    qDebug() << __func__ << friendId.c_str() << "nick:" << nick.c_str();
+    emit friendNicknameChanged(getFriendPublicKey(friendId.c_str()), nick.c_str());
 }
 
-void Core::onFriendAvatarChanged(const QString friendId, const std::string avatar) {
-    qDebug() << __func__ << friendId << "avatar size" << avatar.size();
+void Core::onFriendAvatarChanged(const std::string& friendId, const std::string& avatar) {
+    qDebug() << __func__ << friendId.c_str() << "avatar size" << avatar.size();
     if (avatar.empty()) return;
 
     auto pic = QByteArray::fromStdString(avatar);
 
     auto p = Nexus::getProfile();
-    p->setFriendAvatar(getFriendPublicKey(friendId), pic);
-    emit friendAvatarChanged(getFriendPublicKey(friendId), pic);
+    p->setFriendAvatar(getFriendPublicKey(friendId.c_str()), pic);
+    emit friendAvatarChanged(getFriendPublicKey(friendId.c_str()), pic);
 }
 
-void Core::onFriendAliasChanged(const lib::messenger::IMContactId& fId, const QString& alias) {
-    emit friendAliasChanged(FriendId{fId}, alias);
+void Core::onFriendAliasChanged(const lib::messenger::IMContactId& fId, const std::string& alias) {
+    emit friendAliasChanged(FriendId{fId}, qstring(alias));
 }
 
-void Core::onGroup(const QString groupId, const QString name) {
-    qDebug() << __func__ << "groupId:" << groupId << name;
-    emit groupAdded(GroupId(groupId), name);
+void Core::onGroup(const std::string& groupId_, const std::string& name) {
+    auto groupId = qstring(groupId_);
+    qDebug() << __func__ << "groupId:" << groupId << name.c_str();
+    emit groupAdded(GroupId(groupId), name.c_str());
 }
 
 //
@@ -373,84 +398,91 @@ void Core::onGroup(const QString groupId, const QString name) {
 //                               ToxString(cTitle, length).getQString());
 //}
 
-void Core::onGroupInvite(const QString groupId, const QString peerId, const QString message) {
-    qDebug() << __func__ << "groupId:" << groupId << " receiver:" << peerId << " msg:" << message;
+void Core::onGroupInvite(const std::string& groupId_, const std::string& peerId_,
+                         const std::string& message) {
+    auto groupId = qstring(groupId_);
+    auto peerId = qstring(peerId_);
+    qDebug() << __func__ << "groupId:" << groupId << " receiver:" << peerId
+             << " msg:" << message.c_str();
 
-    GroupInvite invite(groupId, peerId, ConferenceType::TEXT, message.toUtf8());
+    GroupInvite invite(groupId, peerId, ConferenceType::TEXT, QByteArray::fromStdString(message));
     emit groupInviteReceived(invite);
 }
 
-void Core::onGroupSubjectChanged(const QString& groupId, const QString& subject) {
-    qDebug() << __func__ << "groupId:" << groupId << " subject:" << subject;
-    emit groupSubjectChanged(GroupId(groupId), subject);
+void Core::onGroupSubjectChanged(const std::string& groupId_, const std::string& subject) {
+    auto groupId = qstring(groupId_);
+    qDebug() << __func__ << "groupId:" << groupId << " subject:" << subject.c_str();
+    emit groupSubjectChanged(GroupId(groupId), subject.c_str());
 }
 
-void Core::onGroupMessage(const QString groupId,
-                          const lib::messenger::IMPeerId peerId,
-                          const lib::messenger::IMMessage message) {
-    qDebug() << __func__ << "groupId:" << groupId << "peer:" << peerId.toString();
-    qDebug() << "body:" << message.body;
+void Core::onGroupMessage(const std::string& groupId_,
+                          const lib::messenger::IMPeerId& peerId,
+                          const lib::messenger::IMMessage& message) {
+    auto groupId = qstring(groupId_);
+
+    qDebug() << __func__ << "groupId:" << groupId << "peer:" << peerId.toString().c_str();
+    qDebug() << "body:" << message.body.c_str();
 
     bool isAction = false;
     GroupMessage msg;
     msg.isAction = isAction;
-    msg.id = message.id;
-    msg.from = peerId.toFriendId();
-    msg.from_resource = peerId.resource;
-    msg.to = message.to;
-    msg.content = message.body;
-    msg.timestamp = message.timestamp;
-    msg.resource = peerId.resource;
-    msg.nick = peerId.resource;
+    msg.id = message.id.c_str();
+    msg.from = peerId.toFriendId().c_str();
+    msg.from_resource = peerId.resource.c_str();
+    msg.to = message.to.c_str();
+    msg.content = message.body.c_str();
+    msg.timestamp = QDateTime::fromSecsSinceEpoch(message.timestamp);
+    msg.resource = peerId.resource.c_str();
+    msg.nick = peerId.resource.c_str();
 
     emit groupMessageReceived(GroupId(groupId), msg);
 }
 
-void Core::onGroupOccupants(const QString groupId, const uint size) {
+void Core::onGroupOccupants(const std::string& groupId_, const uint size) {
+    auto groupId = qstring(groupId_);
     qDebug() << __func__ << "groupId" << groupId << "size" << size;
     emit groupPeerSizeChanged(groupId, size);
 }
 
-void Core::onGroupOccupantStatus(const QString groupId,  //
-                                 const lib::messenger::IMGroupOccupant occ) {
-    GroupOccupant go = {.jid = occ.jid,
-                        .nick = occ.nick,
-                        .affiliation = occ.affiliation,
-                        .role = occ.role,
+void Core::onGroupOccupantStatus(const std::string& groupId_,  //
+                                 const lib::messenger::IMGroupOccupant& occ) {
+    auto groupId = qstring(groupId_);
+
+    GroupOccupant go = {.jid = occ.jid.c_str(),
+                        .nick = occ.nick.c_str(),
+                        .affiliation = occ.affiliation.c_str(),
+                        .role = occ.role.c_str(),
                         .status = occ.status,
-                        .codes = occ.codes};
+                        .codes = ranges::view::all(occ.codes) | ranges::to<QList>};
     emit groupPeerStatusChanged(groupId, go);
 }
 
-void Core::onGroupInfo(QString groupId, lib::messenger::IMGroup groupInfo) {
+void Core::onGroupInfo(const std::string& groupId_, const lib::messenger::IMGroup& groupInfo) {
+    auto groupId = qstring(groupId_);
     GroupInfo info = {
-            .name = groupInfo.name,
-            .description = groupInfo.description,
-            .subject = groupInfo.subject,
-            .creationdate = groupInfo.creationdate,
+            .name = groupInfo.name.c_str(),
+            .description = groupInfo.description.c_str(),
+            .subject = groupInfo.subject.c_str(),
+            .creationdate = groupInfo.creationdate.c_str(),
             .occupants = groupInfo.occupants,
     };
     emit groupInfoReceipt(GroupId(groupId), info);
 }
 
-void Core::onMessageReceipt(QString friendId, MsgId receipt) {
-    qDebug() << __func__ << friendId << receipt;
-    emit receiptRecieved(getFriendPublicKey(friendId), receipt);
+void Core::onMessageReceipt(const std::string& friendId, const std::string& receipt) {
+    emit receiptRecieved(getFriendPublicKey(friendId.c_str()), receipt.c_str());
 }
 
 void Core::acceptFriendRequest(const FriendId& friendPk) {
     qDebug() << __func__ << friendPk.toString();
 
     QMutexLocker ml{&mutex};
-
-    QString friendId = friendPk.toString();
-    messenger->acceptFriendRequest(friendId);
-
+    messenger->acceptFriendRequest(friendPk.toString().toStdString());
     emit saveRequest();
 }
 
 void Core::rejectFriendRequest(const FriendId& friendPk) {
-    messenger->rejectFriendRequest(friendPk.toString());
+    messenger->rejectFriendRequest(friendPk.toString().toStdString());
 }
 
 /**
@@ -472,51 +504,16 @@ QString Core::getFriendRequestErrorMessage(const ToxId& friendId, const QString&
         return tr("You need to write a message with your request",
                   "Error while sending friendship request");
     }
-
-    //  if (message.length() >
-    //  static_cast<int>(tox_max_friend_request_length()))
-    //  {
-    //    return tr("Your message is too long!",
-    //              "Error while sending friendship request");
-    //  }
-
-    //  if (hasFriendWithPublicKey(receiver.getPublicKey())) {
     return tr("IMFriend is already added", "Error while sending friendship request");
-    //  }
 
-    return QString{};
 }
 
 void Core::requestFriendship(const FriendId& friendId, const QString& nick,
                              const QString& message) {
     qDebug() << __func__ << friendId.toString() << nick << message;
-
     QMutexLocker ml{&mutex};
-
-    // ToxPk friendPk = receiver.getPublicKey();
-    // QString errorMessage = getFriendRequestErrorMessage(receiver, message);
-    // if (!errorMessage.isNull()) {
-    //   emit failedToAddFriend(friendPk, errorMessage);
-    //   emit saveRequest();
-    //   return;
-    // }
-
-    //  ToxString cMessage(message);
-    //  QString fId = receiver.getToxIdAsStr();
-
-    messenger->sendFriendRequest(friendId.toString(), nick, message);
-
-    //    uint32_t friendNumber = tox_friend_add(tox.get(), receiver.getBytes(),
-    //    cMessage.data(), cMessage.size(), nullptr);
-    //    if (friendNumber == std::numeric_limits<uint32_t>::max()) {
-    //        qDebug() << "Failed to request friendship";
-    //        emit failedToAddFriend(friendPk);
-    //    } else {
-    //        qDebug() << "Requested friendship of " << friendNumber;
-    //        emit friendAdded(friendNumber, friendPk);
-    //        emit requestSent(friendPk, message);
-    //    }
-
+    messenger->sendFriendRequest(friendId.toString().toStdString(), nick.toStdString(),
+                                 message.toStdString());
     emit saveRequest();
 }
 
@@ -528,7 +525,8 @@ bool Core::sendMessageWithType(QString friendId, const QString& message, const M
         return false;
     }
 
-    bool yes = messenger->sendToFriend(friendId, message, id, encrypt);
+    bool yes = messenger->sendToFriend(friendId.toStdString(), message.toStdString(),
+                                       id.toStdString(), encrypt);
 
     //  int size = message.toUtf8().size();
     //  auto maxSize = tox_max_message_length();
@@ -560,13 +558,13 @@ bool Core::sendAction(QString friendId, const QString& action, const MsgId& msgI
 
 void Core::sendTyping(QString friendId, bool typing) {
     QMutexLocker ml{&mutex};
-    messenger->sendChatState(friendId, typing ? 2 : 4);
+    messenger->sendChatState(friendId.toStdString(), typing ? 2 : 4);
     emit failedToSetTyping(typing);
 }
 
 bool Core::sendGroupMessageWithType(QString groupId, const QString& message, const MsgId& id) {
     QMutexLocker ml{&mutex};
-    return messenger->sendToGroup(groupId, message, id);
+    return messenger->sendToGroup(groupId.toStdString(), message.toStdString(), id.toStdString());
 }
 
 bool Core::sendGroupMessage(QString groupId, const QString& message, const MsgId& id) {
@@ -582,31 +580,31 @@ bool Core::sendGroupAction(QString groupId, const QString& message, const MsgId&
 void Core::setGroupName(const QString& groupId, const QString& name) {
     qDebug() << __func__ << groupId << name;
     QMutexLocker ml{&mutex};
-    messenger->setRoomName(groupId, name);
+    messenger->setRoomName(groupId.toStdString(), name.toStdString());
 }
 
 void Core::setGroupSubject(const QString& groupId, const QString& subject) {
     qDebug() << __func__ << groupId << subject;
     QMutexLocker ml{&mutex};
-    messenger->setRoomSubject(groupId, subject);
+    messenger->setRoomSubject(groupId.toStdString(), subject.toStdString());
 }
 
 void Core::setGroupDesc(const QString& groupId, const QString& desc) {
     qDebug() << __func__ << groupId << desc;
     QMutexLocker ml{&mutex};
-    messenger->setRoomDesc(groupId, desc);
+    messenger->setRoomDesc(groupId.toStdString(), desc.toStdString());
 }
 
 void Core::setGroupAlias(const QString& groupId, const QString& alias) {
     qDebug() << __func__ << groupId << alias;
     QMutexLocker ml{&mutex};
-    messenger->setRoomAlias(groupId, alias);
+    messenger->setRoomAlias(groupId.toStdString(), alias.toStdString());
 }
 
 bool Core::removeFriend(QString friendId) {
     qDebug() << __func__ << friendId;
     QMutexLocker ml{&mutex};
-    bool success = messenger->removeFriend(friendId);
+    bool success = messenger->removeFriend(friendId.toStdString());
     if (success) {
         emit saveRequest();
         emit friendRemoved(friendId);
@@ -615,7 +613,7 @@ bool Core::removeFriend(QString friendId) {
 }
 
 void Core::leaveGroup(QString groupId) {
-    bool success = messenger->leaveGroup(groupId);
+    bool success = messenger->leaveGroup(groupId.toStdString());
     if (success) {
         emit saveRequest();
         //    av->leaveGroupCall(groupId);
@@ -623,7 +621,7 @@ void Core::leaveGroup(QString groupId) {
 }
 
 void Core::destroyGroup(QString groupId) {
-    bool success = messenger->destroyGroup(groupId);
+    bool success = messenger->destroyGroup(groupId.toStdString());
     if (success) {
         emit saveRequest();
         //    av->leaveGroupCall(groupId);
@@ -635,7 +633,7 @@ void Core::destroyGroup(QString groupId) {
  */
 QString Core::getUsername() const {
     QMutexLocker ml{&mutex};
-    return messenger->getSelfUsername();
+    return messenger->getSelfUsername().c_str();
 }
 
 void Core::setNick(const QString& nick) {
@@ -644,13 +642,13 @@ void Core::setNick(const QString& nick) {
     if (nick == getNick()) {
         return;
     }
-    messenger->setSelfNickname(nick);
+    messenger->setSelfNickname(nick.toStdString());
     emit saveRequest();
 }
 
 QString Core::getNick() const {
     QMutexLocker ml{&mutex};
-    return messenger->getSelfNick();
+    return messenger->getSelfNick().c_str();
 }
 
 void Core::setPassword(const QString& password) {
@@ -660,15 +658,14 @@ void Core::setPassword(const QString& password) {
         return;
     }
 
-    messenger->changePassword(password);
+    messenger->changePassword(password.toStdString());
 }
 
 /**
  * @brief Returns our Ok ID
  */
 ToxId Core::getSelfPeerId() const {
-    auto selfId = messenger->getSelfId();
-    return ToxId(selfId.toString().toUtf8());
+    return ToxId(qstring(messenger->getSelfId().toString()));
 }
 
 /**
@@ -676,8 +673,7 @@ ToxId Core::getSelfPeerId() const {
  * @return Self PK
  */
 FriendId Core::getSelfId() const {
-    auto friendId = messenger->getSelfId();
-    return FriendId(friendId.toString());
+    return FriendId(qstring(messenger->getSelfId().toString()));
 }
 
 /**
@@ -775,8 +771,7 @@ void Core::setAvatar(const QByteArray& avatar) {
     if (self) {
         self->setAvatar(avatar);
     }
-
-    messenger->setSelfAvatar(avatar);
+    messenger->setSelfAvatar(avatar.toStdString());
 }
 
 /**
@@ -905,13 +900,13 @@ void Core::loadFriendList(std::list<FriendInfo>& friends) const {
 
     for (auto& frnd : fs) {
         // 加入到朋友列表
-        auto fi =FriendInfo {
-            .id= FriendId(frnd.id),
-            .alias= frnd.alias,
-            .is_friend = frnd.isFriend(),
-            .online = frnd.online,
-            .groups = frnd.groups
-        };
+        auto fi = FriendInfo{.id = FriendId(frnd.id),
+                             .alias = frnd.alias.c_str(),
+                             .is_friend = frnd.isFriend(),
+                             .online = frnd.online,
+                             .groups = ranges::view::all(frnd.groups) |
+                                       ranges::view::transform([](auto& e) { return qstring(e); }) |
+                                       ranges::to<QStringList>};
         friends.push_back(fi);
     }
 }
@@ -1068,8 +1063,7 @@ bool Core::getGroupAvEnabled(QString groupId) const {
  */
 QString Core::joinGroupchat(const GroupInvite& inviteInfo) {
     QMutexLocker ml{&mutex};
-
-    messenger->joinGroup(inviteInfo.getGroupId());
+    messenger->joinGroup(inviteInfo.getGroupId().toStdString());
 
     //  const QString receiver = inviteInfo.getFriendId();
     //  const uint8_t confType = inviteInfo.getType();
@@ -1112,22 +1106,22 @@ QString Core::joinGroupchat(const GroupInvite& inviteInfo) {
 }
 
 void Core::joinRoom(const QString& groupId) {
-    messenger->joinGroup(groupId);
+    messenger->joinGroup(groupId.toStdString());
 }
 
 void Core::inviteToGroup(const ContactId& friendId, const GroupId& groupId) {
     QMutexLocker ml{&mutex};
-    messenger->inviteGroup(lib::messenger::IMContactId{groupId.toString()},
-                           lib::messenger::IMContactId{friendId.toString()});
+    messenger->inviteGroup(lib::messenger::IMContactId{groupId.toString().toStdString()},
+                           lib::messenger::IMContactId{friendId.toString().toStdString()});
 }
 
 GroupId Core::createGroup(const QString& name) {
     qDebug() << __func__ << name;
-
     QMutexLocker ml{&mutex};
-    QString id = QUuid::createUuid().toString(QUuid::StringFormat::WithoutBraces);
-
-    return GroupId{messenger->createGroup(id.split("-").at(0), name)};
+    auto id = QUuid::createUuid().toString(QUuid::StringFormat::WithoutBraces);
+    const std::string& group =
+            messenger->createGroup(id.split("-").at(0).toStdString(), name.toStdString());
+    return GroupId(qstring(group));
 }
 
 /**
@@ -1179,15 +1173,15 @@ QString Core::getFriendUsername(QString friendnumber) const {
 }
 
 void Core::setFriendAlias(const QString& friendId, const QString& alias) {
-    messenger->setFriendAlias(friendId, alias);
+    messenger->setFriendAlias(friendId.toStdString(), alias.toStdString());
 }
 
 void Core::getFriendInfo(const QString& friendnumber) const {
-    messenger->getFriendVCard(friendnumber);
+    messenger->getFriendVCard(friendnumber.toStdString());
 }
 
 Status::Status Core::getFriendStatus(const QString& friendNumber) const {
-    auto status = messenger->getFriendStatus(friendNumber);
+    auto status = messenger->getFriendStatus(friendNumber.toStdString());
     return status == lib::messenger::IMStatus::Available ? Status::Status::Online
                                                          : Status::Status::Offline;
 }
@@ -1272,13 +1266,12 @@ void Core::logout() {
     messenger->stop();
 }
 
-void Core::onSelfNameChanged(QString name) {
+void Core::onSelfNameChanged(const std::string& name) {
     QMutexLocker ml{&mutex};
-    qDebug() << __func__ << name;
-    emit usernameSet(name);
+    emit usernameSet(name.c_str());
 }
 
-void Core::onSelfAvatarChanged(const std::string avatar) {
+void Core::onSelfAvatarChanged(const std::string& avatar) {
     qDebug() << __func__;
     QMutexLocker ml{&mutex};
     auto a = QByteArray::fromStdString(avatar);
@@ -1296,33 +1289,13 @@ void Core::onSelfStatusChanged(lib::messenger::IMStatus userStatus, const std::s
     emit statusMessageSet(t);
 }
 
-void Core::onSelfVCardChanged(lib::messenger::IMVCard &imvCard)
-{
-    qDebug() << __func__ << "nick:" << imvCard.nickname;
+void Core::onSelfVCardChanged(lib::messenger::IMVCard& imvCard) {
+    qDebug() << __func__ << "nick:" << imvCard.nickname.c_str();
 
-    VCard vCard = {
-            .fullName = imvCard.fullName,
-            .nickname = imvCard.nickname,
-            .title = imvCard.title,
-    };
+    VCard vCard = toVCard(imvCard);
 
-    for (const auto& item : imvCard.adrs) {
-        vCard.adrs.push_back({.street = item.street,
-                              .locality = item.locality,
-                              .region = item.region,
-                              .country = item.country});
-    }
-
-    for (const auto& item : imvCard.emails) {
-        vCard.emails.push_back({.type = item.type, .number = item.number});
-    }
-
-    for (const auto& item : imvCard.tels) {
-        vCard.tels.push_back({.type = item.type, .mobile = item.mobile, .number = item.number});
-    }
-
-    if(!vCard.photo.bin.empty()){
-        if(vCard.photo.url.isEmpty()){
+    if (!vCard.photo.bin.empty()) {
+        if (vCard.photo.url.isEmpty()) {
             emit avatarSet(QByteArray::fromStdString(vCard.photo.bin));
         }
     }
@@ -1331,14 +1304,14 @@ void Core::onSelfVCardChanged(lib::messenger::IMVCard &imvCard)
     emit vCardSet(vCard);
 }
 
-void Core::onSelfIdChanged(QString id) {
+void Core::onSelfIdChanged(const std::string& id) {
     QMutexLocker ml{&mutex};
-    emit idSet(ToxId(id));
+    emit idSet(ToxId(qstring(id)));
 }
 
-void Core::sendReceiptReceived(const QString& friendId, QString receipt) {
-    qDebug() << "receiver" << friendId << "receipt" << receipt;
-    messenger->receiptReceived(friendId, receipt);
+void Core::sendReceiptReceived(const QString& friendId, const QString& receipt) {
+    qDebug() << __func__ << friendId << "receipt" << receipt;
+    messenger->receiptReceived(friendId.toStdString(), receipt.toStdString());
 }
 
 void Core::requestBookmarks() {
@@ -1351,29 +1324,7 @@ void Core::loadGroupList() const {
 
 void Core::onFriendVCard(const lib::messenger::IMContactId& fId,
                          const lib::messenger::IMVCard& imvCard) {
-    qDebug() << __func__ << fId.toString()<<"nick:" << imvCard.nickname;
-    VCard vCard = {
-            .fullName = imvCard.fullName,
-            .nickname = imvCard.nickname,
-            .title = imvCard.title,
-    };
-
-    for (const auto& item : imvCard.adrs) {
-        vCard.adrs.push_back({.street = item.street,
-                              .locality = item.locality,
-                              .region = item.region,
-                              .country = item.country});
-    }
-
-    for (const auto& item : imvCard.emails) {
-        vCard.emails.push_back({.type = item.type, .number = item.number});
-    }
-
-    for (const auto& item : imvCard.tels) {
-        vCard.tels.push_back({.type = item.type, .mobile = item.mobile, .number = item.number});
-    }
-
-    // emit friendNicknameChanged(FriendId(fId), vCard.nickname);
+    qDebug() << __func__ << fId.toString().c_str() << "nick:" << imvCard.nickname.c_str();
+    VCard vCard = toVCard(imvCard);
     emit friendVCardSet(FriendId(fId), vCard);
-
 }

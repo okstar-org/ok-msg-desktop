@@ -115,8 +115,7 @@ bool CoreFile::sendFile(QString friendId, const QFile& file_) {
 
     QMutexLocker{coreLoopLock};
 
-    auto sender = messenger->getSelfId().toString();
-
+    auto sender = qstring(messenger->getSelfId().toString());
     auto fileInfo = QFileInfo(file_);
     auto fileId = ok::base::UUID::make();
     auto sId = ok::base::UUID::make();
@@ -134,7 +133,7 @@ bool CoreFile::sendFile(QString friendId, const QFile& file_) {
 
     addFile(file);
     qDebug() << "The file info is:" << file.toString();
-    bool y = messengerFile->fileSendToFriend(friendId, file.toIMFile());
+    bool y = messengerFile->fileSendToFriend(friendId.toStdString(), file.toIMFile());
     if (y) {
         emit fileSendStarted(file);
     }
@@ -189,7 +188,7 @@ void CoreFile::cancelFileSend(QString friendId, QString fileId) {
     }
 
     file->status = FileStatus::CANCELED;
-    messengerFile->fileCancel(file->fileId);
+    messengerFile->fileCancel(file->fileId.toStdString());
 
     emit fileTransferCancelled(*file);
     removeFile(fileId);
@@ -204,7 +203,7 @@ void CoreFile::cancelFileRecv(QString friendId, QString fileId) {
         return;
     }
     file->status = FileStatus::CANCELED;
-    messengerFile->fileRejectRequest(friendId, file->toIMFile());
+    messengerFile->fileRejectRequest(friendId.toStdString(), file->toIMFile());
     emit fileTransferCancelled(*file);
     removeFile(fileId);
 }
@@ -218,7 +217,7 @@ void CoreFile::rejectFileRecvRequest(QString friendId, QString fileId) {
         return;
     }
     file->status = FileStatus::CANCELED;
-    messengerFile->fileRejectRequest(friendId, file->toIMFile());
+    messengerFile->fileRejectRequest(friendId.toStdString(), file->toIMFile());
     emit fileTransferCancelled(*file);
     removeFile(fileId);
 }
@@ -239,7 +238,7 @@ void CoreFile::acceptFileRecvRequest(QString friendId, QString fileId, QString p
         return;
     }
     file->status = FileStatus::TRANSMITTING;
-    messengerFile->fileAcceptRequest(friendId, file->toIMFile());
+    messengerFile->fileAcceptRequest(friendId.toStdString(), file->toIMFile());
     emit fileTransferAccepted(*file);
 }
 
@@ -382,10 +381,10 @@ void CoreFile::handleAvatarOffer(QString friendId, QString fileId, bool accept) 
     //  addFile(receiver, fileId, file);
 }
 
-void CoreFile::onFileRequest(const QString& from, const lib::messenger::File& file) {
-    qDebug() << __func__ << file.name << "from" << from;
+void CoreFile::onFileRequest(const std::string& from, const lib::messenger::File& file) {
+    qDebug() << __func__ << file.name.c_str() << "from" << from.c_str();
     auto receiver = messenger->getSelfId().toString();
-    ToxFile toxFile(from, receiver, file.sId, file);
+    ToxFile toxFile(qstring(from), qstring(receiver), qstring(file.sId), file);
     addFile(toxFile);
     qDebug() << "file:" << toxFile.toString();
     emit fileReceiveRequested(toxFile);
@@ -472,13 +471,13 @@ void CoreFile::onFileDataCallback(lib::messenger::Messenger* tox, QString friend
     //  }
 }
 
-void CoreFile::onFileSendInfo(const QString& friendId,            //
+void CoreFile::onFileSendInfo(const std::string& friendId,        //
                               const lib::messenger::File& file_,  //
                               int m_seq, int m_sentBytes, bool end) {
-    qDebug() << __func__ << friendId << "file" << file_.id << "isEnd" << end << "seq" << m_seq
-             << "sentBytes" << m_sentBytes;
+    qDebug() << __func__ << friendId.c_str() << "file" << file_.id.c_str() << "isEnd" << end
+             << "seq" << m_seq << "sentBytes" << m_sentBytes;
 
-    ToxFile* file = findFile(file_.id);
+    ToxFile* file = findFile(file_.id.c_str());
     if (!file) {
         qWarning() << __func__ << "No such file in queue";
         return;
@@ -496,11 +495,12 @@ void CoreFile::onFileSendInfo(const QString& friendId,            //
     }
 }
 
-void CoreFile::onFileSendAbort(const QString& friendId, const lib::messenger::File& file_,
+void CoreFile::onFileSendAbort(const std::string& friendId,
+                               const lib::messenger::File& file_,
                                int m_sentBytes) {
-    qDebug() << __func__ << file_.id;
+    qDebug() << __func__ << file_.id.c_str();
 
-    ToxFile* file = findFile(file_.id);
+    ToxFile* file = findFile(file_.id.c_str());
     if (!file) {
         qWarning() << __func__ << "No such file in queue";
         return;
@@ -511,11 +511,11 @@ void CoreFile::onFileSendAbort(const QString& friendId, const lib::messenger::Fi
     removeFile(file->fileId);
 }
 
-void CoreFile::onFileSendError(const QString& friendId,
+void CoreFile::onFileSendError(const std::string& friendId,
                                const lib::messenger::File& file_,
                                int m_sentBytes) {
     qWarning() << __func__;
-    ToxFile* file = findFile(file_.id);
+    ToxFile* file = findFile(file_.id.c_str());
     if (!file) {
         qWarning() << __func__ << "No such file in queue";
         return;
@@ -523,7 +523,7 @@ void CoreFile::onFileSendError(const QString& friendId,
     file->bytesSent = m_sentBytes;
     file->status = FileStatus::CANCELED;
     removeFile(file->fileId);
-    emit fileSendFailed(friendId, file->fileName);
+    emit fileSendFailed(friendId.c_str(), file->fileName);
 }
 
 void CoreFile::onFileRecvChunkCallback(lib::messenger::Messenger* tox, QString friendId,
@@ -582,9 +582,9 @@ void CoreFile::onFileRecvChunkCallback(lib::messenger::Messenger* tox, QString f
     //  }
 }
 
-void CoreFile::onFileRecvChunk(const QString& friendId, const QString& fileId, int seq,
+void CoreFile::onFileRecvChunk(const std::string& friendId, const std::string& fileId, int seq,
                                const std::string& chunk) {
-    ToxFile* file = findFile(fileId);
+    ToxFile* file = findFile(qstring(fileId));
     if (!file) {
         qWarning() << ("No such file in queue");
         return;
@@ -598,7 +598,7 @@ void CoreFile::onFileRecvChunk(const QString& friendId, const QString& fileId, i
 
         //    取消传输
         messengerFile->fileCancel(fileId);
-        removeFile(fileId);
+        removeFile(qstring(fileId));
         return;
     }
 
@@ -611,8 +611,8 @@ void CoreFile::onFileRecvChunk(const QString& friendId, const QString& fileId, i
     emit fileTransferInfo(*file);
 }
 
-void CoreFile::onFileRecvFinished(const QString& friendId, const QString& fileId) {
-    ToxFile* file = findFile(fileId);
+void CoreFile::onFileRecvFinished(const std::string& friendId, const std::string& fileId) {
+    ToxFile* file = findFile(qstring(fileId));
     if (!file) {
         qWarning() << __func__ << "No such file in queue";
         return;
@@ -620,12 +620,12 @@ void CoreFile::onFileRecvFinished(const QString& friendId, const QString& fileId
 
     file->status = FileStatus::FINISHED;
 
-    messengerFile->fileFinishTransfer(friendId, file->sId);
+    messengerFile->fileFinishTransfer(friendId, file->sId.toStdString());
 
     emit fileTransferFinished(*file);
     emit fileDownloadFinished(file->filePath);
 
-    removeFile(fileId);
+    removeFile(fileId.c_str());
 }
 
 void CoreFile::onConnectionStatusChanged(QString friendId, Status::Status state) {

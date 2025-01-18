@@ -18,11 +18,9 @@
 #include "base/resources.h"
 #include "modules/module.h"
 
-OK_RESOURCE_LOADER(ClassroomRes)
-
 namespace module::classroom {
 
-class PageClassing;
+class Widget;
 
 class Classroom : public Module {
 public:
@@ -41,9 +39,7 @@ public:
     QWidget* widget() override;
 
 private:
-    OK_RESOURCE_PTR(ClassroomRes);
-
     QString m_name;
-    PageClassing* m_widget;
+    Widget* m_widget;
 };
 }  // namespace module::classroom

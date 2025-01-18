@@ -13,12 +13,12 @@
 #include "MeetingVideoFrame.h"
 #include "../MeetingParticipant.h"
 #include "../MeetingVideoRender.h"
-#include "../tools/PopupMenuComboBox.h"
 #include "MeetingVideosLayout.h"
 #include "VideoLayoutPicker.h"
 #include "base/RoundedPixmapLabel.h"
 #include "lib/messenger/messenger.h"
 #include "lib/storage/settings/style.h"
+#include "lib/ui/widget/tools/PopupMenuComboBox.h"
 #include "modules/im/src/core/core.h"
 #include "modules/im/src/nexus.h"
 
@@ -67,7 +67,7 @@ MeetingVideoFrame::MeetingVideoFrame(const QString& name, lib::ortc::CtrlState c
 
     // TODO 待优化
     Core* core = Nexus::getCore();
-    meet = new lib::messenger::MessengerMeet(core->getMessenger(), this);
+    meet = new lib::messenger::MessengerMeet(core->getMessenger());
     meet->addHandler(this);
     createMeet(name);
 
@@ -82,7 +82,7 @@ MeetingVideoFrame::~MeetingVideoFrame() {
 
     disconnect(this);
     meet->removeHandler(this);
-    meet->deleteLater();
+    delete meet;
 
     if (timeElapsed != nullptr) {
         delete timeElapsed;
@@ -297,7 +297,7 @@ void MeetingVideoFrame::stopCounter() {
  */
 void MeetingVideoFrame::createMeet(const QString& name) {
     qDebug() << __func__ << name;
-    meet->create(name);
+    meet->create(stdstring(name));
 }
 
 void MeetingVideoFrame::onMeetCreated(const ok::base::Jid& jid,
@@ -311,32 +311,36 @@ void MeetingVideoFrame::onParticipantJoined(const ok::base::Jid& jid,
     emit participantJoined(jid.node(), part);
 }
 
-void MeetingVideoFrame::onParticipantLeft(const ok::base::Jid& jid, const QString& participant) {
-    emit participantLeft(jid.node(), participant);
+void MeetingVideoFrame::onParticipantLeft(const ok::base::Jid& jid,
+                                          const std::string& participant) {
+    emit participantLeft(jid.node(), qstring(participant));
 }
 
 void MeetingVideoFrame::addParticipant(const QString& name,
                                        const lib::messenger::Participant& parti) {
-    qDebug() << __func__ << "room:" << name << "email:" << parti.email
-             << "resource:" << parti.resource;
+    qDebug() << __func__ << "room:" << name << "email:" << parti.email.c_str()
+             << "resource:" << parti.resource.c_str();
 
     MeetingParticipant* participant;
 
-    auto& k = parti.resource;
+    auto k = qstring(parti.resource);
     auto find = participantMap.find(k);
     if (find != participantMap.end()) {
         participant = find.value();
     } else {
         // 添加用户
         std::lock_guard<std::mutex> g(prt_mutex);
-        participant = new MeetingParticipant(parti.resource, parti.email, parti.nick,
-                                             parti.avatarUrl, parti.jid);
+        participant = new MeetingParticipant(qstring(parti.resource),
+                                             qstring(parti.email),
+                                             qstring(parti.nick),
+                                             (parti.avatarUrl),
+                                             ok::base::Jid(parti.jid.c_str()));
         videosLayout->addParticipant(participant);
         participantMap.insert(k, participant);
     }
 
     // 更新信息
-    participant->setNick(parti.nick);
+    participant->setNick(qstring(parti.nick));
     participant->setAvatarUrl(parti.avatarUrl);
 
     // TODO 音频视频禁止信息 parti.sourceInfo;
@@ -396,20 +400,21 @@ void MeetingVideoFrame::updateDuration() {
     duraionLabel->setText(duration.toString("hh:mm:ss"));
 }
 
-void MeetingVideoFrame::onParticipantVideoFrame(const QString& participant,
+void MeetingVideoFrame::onParticipantVideoFrame(const std::string& participant,
                                                 const lib::ortc::RendererImage& image) {
     std::lock_guard<std::mutex> g(prt_mutex);
     for (auto it = participantMap.begin(); it != participantMap.end(); it++) {
         MeetingParticipant* p = *it;
-        if (p->getResource() == participant) {
+        if (stdstring(p->getResource()) == participant) {
             p->videoRender()->renderImage(image);
         }
     }
 }
 
-void MeetingVideoFrame::onParticipantMessage(const QString& participant, const QString& msg) {
+void MeetingVideoFrame::onParticipantMessage(const std::string& participant,
+                                             const std::string& msg) {
     // TODO 处理成员消息
-    qDebug() << __func__ << "message coming: " << msg << " from: " << participant;
+    qDebug() << __func__ << "message coming: " << msg.c_str() << " from: " << participant.c_str();
 }
 
 void MeetingVideoFrame::onEnd() {

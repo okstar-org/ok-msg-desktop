@@ -67,8 +67,8 @@ public:
     QString fileId;
     QString fileName;
     QString filePath;
-    quint64 fileSize;
-    quint64 bytesSent;
+    quint32 fileSize;
+    quint32 bytesSent;
     FileStatus status;
     FileDirection direction;
     QString sha256;

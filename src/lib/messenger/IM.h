@@ -15,7 +15,6 @@
 #include "IMFromHostHandler.h"
 #include "IMGroup.h"
 
-#include "base/compatiblerecursivemutex.h"
 #include "lib/messenger/IMFriend.h"
 #include "lib/messenger/IMMessage.h"
 #include "messenger.h"
@@ -63,9 +62,6 @@
 #include <rostermanager.h>
 #include <vcardhandler.h>
 #include <vcardmanager.h>
-#include <QDomElement>
-#include <QMutex>
-#include <QString>
 
 namespace gloox {
 class MUCRoom;
@@ -133,8 +129,7 @@ struct IMRoomInfo {
     std::map<std::string, std::string> changes;
 };
 
-class IM : public QObject,
-           public gloox::ConnectionListener,
+class IM : public gloox::ConnectionListener,
            public gloox::PingHandler,
            public gloox::RegistrationHandler,
            public gloox::IncomingHandler,
@@ -156,34 +151,42 @@ class IM : public QObject,
            public gloox::BookmarkHandler,
            public gloox::NativeBookmarkHandler,
            public gloox::Jingle::SessionHandler {
-    Q_OBJECT
 public:
-    explicit IM(QString host, QString user, QString pwd, QStringList features);
+    explicit IM(std::string host, std::string user, std::string pwd,
+                std::vector<std::string> features);
     ~IM() override;
+    const std::string& host() {
+        return _host;
+    }
 
     inline static IMMessage fromXMsg(MsgType type, const gloox::Message& msg);
 
     std::unique_ptr<gloox::Client> makeClient();
 
-    void setNickname(const QString& nickname);
-    QString getNickname();
+    void setNickname(const std::string& nickname);
+    std::string getNickname();
 
-    void setAvatar(const QByteArray& avatar);
-    void changePassword(const QString& password);
+    void setAvatar(const std::string& avatar);
+    void changePassword(const std::string& password);
     IMContactId getSelfId();
     IMPeerId getSelfPeerId();
-    QString getSelfUsername();
+    std::string getSelfUsername();
 
     // External Service Discovery
     const std::vector<ortc::IceServer>& getExternalServiceDiscovery() const {
         return mExtSrvDiscos;
     }
 
+    // PubSub
+    gloox::PubSub::Manager* getPubSubManager() {
+        return pubSubManager.get();
+    }
+
     /**
      * fetchVCard
      */
-    void fetchFriendVCard(const QString& friendId);
-    IMStatus getFriendStatus(const QString& friendId);
+    void fetchFriendVCard(const std::string& friendId);
+    IMStatus getFriendStatus(const std::string& friendId);
     void requestFriendNickname(const gloox::JID& friendId);
 
     /**
@@ -191,7 +194,7 @@ public:
      */
     void sendPresence();
     void sendPresence(const gloox::JID& to, gloox::Presence::PresenceType type);
-    void sendReceiptReceived(const QString& id, QString receiptNum);
+    void sendReceiptReceived(const std::string& id, std::string receiptNum);
 
     /**
      * 服务发现
@@ -207,11 +210,11 @@ public:
      */
     gloox::RosterManager* enableRosterManager();
 
-    void addFriend(const gloox::JID& jid, const QString& nick, const QString& msg);
+    void addFriend(const gloox::JID& jid, const std::string& nick, const std::string& msg);
     bool removeFriend(const gloox::JID& jid);
 
-    void acceptFriendRequest(const QString&);
-    void rejectFriendRequest(const QString&);
+    void acceptFriendRequest(const std::string&);
+    void rejectFriendRequest(const std::string&);
 
     size_t getRosterCount();
     void getRosterList(std::list<IMFriend>&);
@@ -229,22 +232,22 @@ public:
         return _client.get();
     }
 
-    QDomDocument buildMessage(const QString& to, const QString& msg, const QString& id);
+    QDomDocument buildMessage(const std::string& to, const std::string& msg, const std::string& id);
 
-    bool sendTo(const QString& to, const QString& msg, const QString& id);
+    bool sendTo(const std::string& to, const std::string& msg, const std::string& id);
 
     /**
      * 群组相关
      * @param groupId
      * @param nick
      */
-    void setRoomSubject(const QString& groupId, const std::string& nick);
-    void setRoomName(const QString& groupId, const std::string& name);
-    void setRoomAlias(const QString& groupId, const std::string& alias);
-    void setRoomDesc(const QString& groupId, const std::string& desc);
+    void setRoomSubject(const std::string& groupId, const std::string& nick);
+    void setRoomName(const std::string& groupId, const std::string& name);
+    void setRoomAlias(const std::string& groupId, const std::string& alias);
+    void setRoomDesc(const std::string& groupId, const std::string& desc);
     bool inviteToRoom(const gloox::JID& roomJid, const gloox::JID& peerId);
-    bool leaveGroup(const QString& groupId);
-    bool destroyGroup(const QString& groupId);
+    bool leaveGroup(const std::string& groupId);
+    bool destroyGroup(const std::string& groupId);
 
     /**
      * @brief sendToRoom
@@ -252,13 +255,13 @@ public:
      * @param msg
      * @param id 设置消息ID
      */
-    bool sendToRoom(const QString& to, const QString& msg, const QString& id = "");
+    bool sendToRoom(const std::string& to, const std::string& msg, const std::string& id = "");
 
-    void joinRoom(const QString& jid);
+    void joinRoom(const std::string& jid);
 
     void createRoom(const gloox::JID& jid, const std::string& password = "");
 
-    const IMRoomInfo* findRoom(const QString& groupId) const;
+    const IMRoomInfo* findRoom(const std::string& groupId) const;
 
     void start();
     bool isStarted() const;
@@ -273,10 +276,8 @@ public:
     void loadGroupList();
     // 3-用户信息
     void loadRosterInfo();
-    // 4-加入群聊
-    void joinRooms();
 
-    void send(const QString& xml);
+    void send(const std::string& xml);
 
     /**
      * 获取第一个在线终端resource
@@ -294,12 +295,12 @@ public:
     void updateOnlineStatus(const std::string& bare, const std::string& resource,
                             gloox::Presence::PresenceType presenceType);
 
-    [[nodiscard]] gloox::JID wrapJid(const QString& f) const;
+    [[nodiscard]] gloox::JID wrapJid(const std::string& f) const;
 
-    [[nodiscard]] gloox::JID wrapRoomJid(const QString& group) const;
-    void sendChatState(const QString& to, gloox::ChatStateType state);
+    [[nodiscard]] gloox::JID wrapRoomJid(const std::string& group) const;
+    void sendChatState(const std::string& to, gloox::ChatStateType state);
 
-    void makeId(QString& id);
+    void makeId(std::string& id);
 
     //  ExtDisco &extDisco() { return mExtDisco; }
 
@@ -577,11 +578,12 @@ protected:
                          const gloox::ConferenceList& cList) override;
 
     void doPubSubEvent(const gloox::PubSub::Event* pse, const gloox::Message& msg,
-                       QString& friendId);
-    void doMessageHeadline(const gloox::Message& msg, QString& friendId, const QString& body);
-    void doMessageChat(const gloox::Message& msg, QString& friendId, const QString& body);
+                       std::string& friendId);
+    void doMessageHeadline(const gloox::Message& msg, std::string& friendId,
+                           const std::string& body);
+    void doMessageChat(const gloox::Message& msg, std::string& friendId, const std::string& body);
 
-    void doMessageNormal(const gloox::Message& msg, QString& friendId);
+    void doMessageNormal(const gloox::Message& msg, std::string& friendId);
 
     void joinRoom(gloox::MUCRoom* room);
 
@@ -597,17 +599,17 @@ protected:
     void handleIncomingSession(gloox::Jingle::Session* session) override;
 
 private:
-    CompatibleRecursiveMutex mutex;
+    std::mutex mutex;
 
-    QStringList features;
+    std::vector<std::string> features;
 
-    QString discoVal;
-    QString _host;
-    QString _username;
-    QString _password;
-    QString _resource;
+    std::string discoVal;
+    std::string _host;
+    std::string _username;
+    std::string _password;
+    std::string _resource;
 
-    QString _nick;
+    std::string _nick;
     gloox::JID loginJid;
     std::unique_ptr<gloox::Client> _client;
     bool isConnected = false;
@@ -643,13 +645,11 @@ private:
 
     std::unique_ptr<gloox::MessageEventFilter> m_messageEventFilter;
 
-    QMap<QString, gloox::ChatStateFilter*> m_chatStateFilters;
+    std::map<std::string, gloox::ChatStateFilter*> m_chatStateFilters;
 
-    QMap<QString, IMRoomInfo> m_roomMap;
+    std::map<std::string, IMRoomInfo*> m_roomMap;
 
-
-
-    QList<IMSessionHandler*> m_sessionHandlers;
+    std::vector<IMSessionHandler*> m_sessionHandlers;
     std::unique_ptr<gloox::Jingle::SessionManager> _sessionManager;
 
     //  ConferenceList mConferenceList;
@@ -658,23 +658,23 @@ private:
     // External Service Discovery
     std::vector<ortc::IceServer> mExtSrvDiscos;
 
-    QMap<std::string, IMFromHostHandler*> fromHostHandlers;
+    std::map<std::string, IMFromHostHandler*> fromHostHandlers;
 
     std::vector<SelfHandler*> selfHandlers;
     std::vector<FriendHandler*> friendHandlers;
     std::vector<GroupHandler*> groupHandlers;
     std::vector<IMHandler*> imHandlers;
 
-signals:
-    void exportEncryptedMessage(QString em);
+    // signals:
+    //     void exportEncryptedMessage(std::string em);
+    //
+    //     void receiveMessageReceipt(std::string friendId, std::string receipt);
+    //
+    //     void incoming(std::string xml);
+    //
+    //     void doPubSubEventDone();
 
-    void receiveMessageReceipt(QString friendId, QString receipt);
-
-    void incoming(QString xml);
-
-    void doPubSubEventDone();
-
-public slots:
+    // public slots:
     void sendServiceDiscoveryItems();
     void sendServiceDiscoveryInfo(const gloox::JID& item);
 };

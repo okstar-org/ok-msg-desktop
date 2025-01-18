@@ -10,6 +10,8 @@ file(GLOB_RECURSE ${PROJECT_NAME}_SOURCES
 		src/*.h src/*.cpp
 		src/component/*.h src/component/*.cpp
 		src/painter/*.h src/painter/*.cpp
+		src/room/*.h src/room/*.cpp
+		src/core/*.h src/core/*.cpp
 )
 file(GLOB_RECURSE ${PROJECT_NAME}_RESOURCES res/*.html res/*.js)
 file(GLOB_RECURSE ${PROJECT_NAME}_UIS src/*.ui)
@@ -82,7 +84,7 @@ add_library(${PROJECT_NAME} STATIC
 target_link_libraries(${PROJECT_NAME}
 		PRIVATE OkBoard
 		PRIVATE OkBase
-		PRIVATE OkIMCore
+		PRIVATE OkMessenger
 		PRIVATE ${Qt5Widgets_LIBRARIES}
 		PRIVATE ${Qt5Core_LIBRARIES}
 )

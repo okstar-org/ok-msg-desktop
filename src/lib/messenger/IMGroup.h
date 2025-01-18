@@ -14,11 +14,11 @@
 // Created by gaojie on 24-5-28.
 //
 
-#ifndef OKMSG_PROJECT_IMGROUP_H
-#define OKMSG_PROJECT_IMGROUP_H
+#pragma once
 
-#include <QList>
-#include <QString>
+#include <stdint.h>
+#include <string>
+#include <vector>
 
 namespace lib::messenger {
 
@@ -26,26 +26,25 @@ namespace lib::messenger {
  * 群聊
  */
 struct IMGroup {
-    QString name;
-    QString description;
-    QString subject;
-    QString creationdate;
-    uint64_t occupants = 0;
+    std::string name;
+    std::string description;
+    std::string subject;
+    std::string creationdate;
+    uint32_t occupants = 0;
 };
 
 /**
  * 群聊名称
  */
 struct IMGroupOccupant {
-    QString jid;
-    QString nick;
-    QString affiliation;
-    QString role;
+    std::string jid;
+    std::string nick;
+    std::string affiliation;
+    std::string role;
     int status;
     // https://xmpp.org/registrar/mucstatus.html
-    QList<int> codes;
+    std::vector<int> codes;
 };
 
 }  // namespace lib::messenger
 
-#endif  // OKMSG_PROJECT_IMGROUP_H

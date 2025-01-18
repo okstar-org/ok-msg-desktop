@@ -78,33 +78,33 @@ public:
 
 protected:
     void onCall(const lib::messenger::IMPeerId& peerId,  //
-                const QString& callId, bool audio, bool video) override;
+                const std::string& callId, bool audio, bool video) override;
 
     void onCallCreated(const lib::messenger::IMPeerId& peerId,  //
-                       const QString& callId) override;
+                       const std::string& callId) override;
 
     void onCallRetract(const lib::messenger::IMPeerId& peerId,  //
                        lib::messenger::CallState state) override;
 
     void onCallAcceptByOther(const lib::messenger::IMPeerId& peerId,  //
-                             const QString& callId) override;
+                             const std::string& callId) override;
 
     void onPeerConnectionChange(const lib::messenger::IMPeerId& peerId,  //
-                                const QString& callId,
+                                const std::string& callId,
                                 lib::ortc::PeerConnectionState state) override;
 
     void onIceGatheringChange(const lib::messenger::IMPeerId& peerId,
-                              const QString& callId,
+                              const std::string& callId,
                               lib::ortc::IceGatheringState state) override;
 
     void onIceConnectionChange(const lib::messenger::IMPeerId& peerId,
-                               const QString& callId,
+                               const std::string& callId,
                                lib::ortc::IceConnectionState state) override;
 
-    void receiveCallStateAccepted(const lib::messenger::IMPeerId& peerId, const QString& callId,
+    void receiveCallStateAccepted(const lib::messenger::IMPeerId& peerId, const std::string& callId,
                                   bool video) override;
 
-    void receiveCallStateRejected(const lib::messenger::IMPeerId& peerId, const QString& callId,
+    void receiveCallStateRejected(const lib::messenger::IMPeerId& peerId, const std::string& callId,
                                   bool video) override;
 
     void onHangup(const lib::messenger::IMPeerId& peerId, lib::messenger::CallState state) override;
@@ -134,7 +134,7 @@ private slots:
     void bitrateCallback(QString friendId, uint32_t arate, uint32_t vrate, void* self);
     void audioBitrateCallback(QString friendId, uint32_t rate, void* self);
     void videoBitrateCallback(QString friendId, uint32_t rate, void* self);
-    void onFriendVideoFrame(const QString& friendId,  //
+    void onFriendVideoFrame(const std::string& friendId,  //
                             uint16_t w, uint16_t h,   //
                             const uint8_t* y,         //
                             const uint8_t* u,         //

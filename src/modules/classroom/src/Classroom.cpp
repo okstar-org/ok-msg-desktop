@@ -15,17 +15,17 @@
 //
 
 #include "Classroom.h"
-#include "PageClassing.h"
+#include "Widget.h"
 
 namespace module::classroom {
 
 static Classroom* Instance;
 
-Classroom::Classroom() : m_widget(new PageClassing()), m_name(OK_Classroom_MODULE) {
-    OK_RESOURCE_INIT(ClassroomRes);
-}
+Classroom::Classroom() : m_widget(new Widget()), m_name(OK_Classroom_MODULE) {}
 
-Classroom::~Classroom() {}
+Classroom::~Classroom() {
+    qDebug() << __func__;
+}
 
 const QString& Classroom::getName() const {
     return m_name;

@@ -460,7 +460,7 @@ elseif (LINUX)
 endif ()
 
 target_link_libraries(${PROJECT_NAME}
-		PRIVATE OkIMCore
+		PRIVATE OkMessenger
 		PRIVATE OkStorage
 		PRIVATE OkAudio
 		PRIVATE OkVideo

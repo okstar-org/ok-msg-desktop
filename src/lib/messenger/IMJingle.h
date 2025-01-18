@@ -13,7 +13,6 @@
 #ifndef IMJINGLE_H
 #define IMJINGLE_H
 
-#include <QMap>
 #include <list>
 #include <map>
 
@@ -34,7 +33,6 @@
 #include <presencehandler.h>
 
 #include "lib/messenger/messenger.h"
-#include "lib/session/AuthSession.h"
 
 #include "lib/ortc/ok_rtc.h"
 #include "lib/ortc/ok_rtc_manager.h"
@@ -44,8 +42,8 @@ namespace lib::messenger {
 enum class CallDirection;
 
 #define SESSION_CHECK(sid)   \
-    {                        \
-        if (sid.isEmpty()) { \
+    {                      \
+        if (sid.empty()) { \
             return false;    \
         }                    \
     }
@@ -56,13 +54,11 @@ public:
     virtual void stop() = 0;
 };
 
-class IMJingle : public QObject,
-                 public gloox::IqHandler,
+class IMJingle : public gloox::IqHandler,
                  public gloox::MessageHandler,
                  public gloox::MessageSessionHandler {
-    Q_OBJECT
 public:
-    explicit IMJingle(IM* im, QObject* parent = nullptr);
+    explicit IMJingle(IM* im);
     ~IMJingle() override;
 
     IM* getIM() const {
@@ -82,9 +78,9 @@ protected:
     void handleIqID(const gloox::IQ& iq, int context) override;
 
     // receiver -> sid
-    QMap<IMPeerId, QString> m_friendSessionMap;
+    std::map<IMPeerId, std::string> m_friendSessionMap;
 
-    virtual void clearSessionInfo(const QString& sId) = 0;
+    virtual void clearSessionInfo(const std::string& sId) = 0;
 
     ortc::Source ParseSource(const gloox::Jingle::RTP::Source& s);
     gloox::Jingle::RTP::Source ToSource(const ortc::Source& s);
@@ -129,7 +125,7 @@ protected:
 
     IM* im;
 
-    QString currentSid;
+    std::string currentSid;
     gloox::Jingle::Session* currentSession;
 
 

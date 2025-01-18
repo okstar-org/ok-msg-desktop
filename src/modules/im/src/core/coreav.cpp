@@ -129,7 +129,7 @@ void CoreAV::process() {
 
     assert(QThread::currentThread() == coreavThread.get());
 
-    imCall = new lib::messenger::MessengerCall(core->getMessenger(), this);
+    imCall = new lib::messenger::MessengerCall(core->getMessenger());
     imCall->addCallHandler(this);
 
     emit ok::Application::Instance() -> bus()->coreAvChanged(this);
@@ -168,8 +168,9 @@ bool CoreAV::answerCall(ToxPeer peerId, bool video) {
     QString callId = it->second->getCallId();
     qDebug() << QString("callId: %1").arg(callId);
 
-    auto answer =
-            imCall->callAnswerToFriend(lib::messenger::IMPeerId(peerId.toString()), callId, video);
+    auto peerId2 = lib::messenger::IMPeerId(stdstring(peerId.toString()));
+
+    auto answer = imCall->callAnswerToFriend(peerId2, callId.toStdString(), video);
 
     locker.unlock();
 
@@ -213,7 +214,7 @@ bool CoreAV::startCall(QString friendNum, bool video) {
     }
 
     QString sId = QString::number(QDateTime::currentDateTime().toMSecsSinceEpoch());
-    if (!imCall->callToFriend(friendNum, sId, video)) {
+    if (!imCall->callToFriend(friendNum.toStdString(), sId.toStdString(), video)) {
         qWarning() << "Failed call to friend" << friendNum;
         return false;
     }
@@ -244,7 +245,8 @@ bool CoreAV::cancelCall(const QString& friendNum) {
     }
 
     QString callId = it->second->getCallId();
-    imCall->callCancel(lib::messenger::IMContactId{friendNum}, callId);
+    auto cId = lib::messenger::IMContactId{friendNum.toStdString()};
+    imCall->callCancel(cId, callId.toStdString());
     qDebug() << QString("Canceling call=>%1").arg(callId);
     calls.erase(friendNum);
 
@@ -256,16 +258,19 @@ bool CoreAV::cancelCall(const QString& friendNum) {
 }
 
 void CoreAV::onPeerConnectionChange(const lib::messenger::IMPeerId& peerId,
-                                    const QString& callId,
+                                    const std::string& callId,
                                     lib::ortc::PeerConnectionState state) {
-    qDebug() << __func__ << "peer:" << peerId.toString() << "state:" << static_cast<int>(state);
-    emit avPeerConnectionState(FriendId{peerId.toFriendId()}, state);
+    qDebug() << __func__ << "peer:" << peerId.toString().c_str()
+             << "state:" << static_cast<int>(state);
+    emit avPeerConnectionState(FriendId{qstring(peerId.toFriendId())}, state);
 }
 
-void CoreAV::onIceGatheringChange(const lib::messenger::IMPeerId& peerId, const QString& callId,
+void CoreAV::onIceGatheringChange(const lib::messenger::IMPeerId& peerId,
+                                  const std::string& callId,
                                   lib::ortc::IceGatheringState state) {}
 
-void CoreAV::onIceConnectionChange(const lib::messenger::IMPeerId& peerId, const QString& callId,
+void CoreAV::onIceConnectionChange(const lib::messenger::IMPeerId& peerId,
+                                   const std::string& callId,
                                    lib::ortc::IceConnectionState state) {}
 
 void CoreAV::rejectCall(const ToxPeer& peerId) {
@@ -282,7 +287,8 @@ void CoreAV::rejectCall(const ToxPeer& peerId) {
     }
 
     auto& call = it->second;
-    imCall->callReject(lib::messenger::IMPeerId{peerId.toString()}, call->getCallId());
+    imCall->callReject(lib::messenger::IMPeerId{stdstring(peerId.toString())},
+                       stdstring(call->getCallId()));
     calls.erase(it);
 }
 
@@ -296,15 +302,6 @@ void CoreAV::timeoutCall(QString friendNum) {
     qDebug() << "Call with friend" << friendNum << "timed out";
 }
 
-/**
- * @brief Send audio frame to a friend
- * @param callId Id of friend in call list.
- * @param pcm An array of audio samples (Pulse-code modulation).
- * @param samples Number of samples in this frame.
- * @param chans Number of audio channels.
- * @param rate Audio sampling rate used in this frame.
- * @return False only on error, but not if there's nothing to send.
- */
 bool CoreAV::sendCallAudio(QString callId, const int16_t* pcm, size_t samples, uint8_t chans,
                            uint32_t rate) const {
     QReadLocker locker{&callsLock};
@@ -661,9 +658,9 @@ void CoreAV::sendNoVideo() {
     }
 }
 
-void CoreAV::onCall(const lib::messenger::IMPeerId& peerId, const QString& callId, bool audio,
+void CoreAV::onCall(const lib::messenger::IMPeerId& peerId, const std::string& callId, bool audio,
                     bool video) {
-    qDebug() << __func__ << "peerId:" << peerId.toString() << "callId:" << callId;
+    qDebug() << __func__ << "peerId:" << peerId.toString().c_str() << "callId:" << callId.c_str();
 
     //  CoreAV *self = static_cast<CoreAV *>(vSelf);
     QWriteLocker locker{&callsLock};
@@ -672,24 +669,20 @@ void CoreAV::onCall(const lib::messenger::IMPeerId& peerId, const QString& callI
 
     // Audio backend must be set before receiving a call
     auto audioCtrl = Nexus::getInstance()->audio();
-    ToxFriendCallPtr call =
-            ToxFriendCallPtr(new ToxFriendCall{peerId.toString(), video, *this, *audioCtrl});
-    call->setCallId(callId);
-    // Call object must be owned by CoreAV thread or there will be locking
-    // problems with Audio
+    ToxFriendCallPtr call = ToxFriendCallPtr(
+            new ToxFriendCall{qstring(peerId.toString()), video, *this, *audioCtrl});
+    call->setCallId(callId.c_str());
     call->moveToThread(thread());
     assert(call != nullptr);
 
     auto it = calls.emplace(peer.toFriendId().toString(), std::move(call));
     if (it.second == false) {
         qWarning() << QString("Rejecting call invite from %1, we're already in that call!")
-                              .arg(peerId.toString());
+                              .arg(peerId.toString().c_str());
         //    toxav_call_control(toxav, friendNum, TOXAV_CALL_CONTROL_CANCEL,
         //    nullptr);
         return;
     }
-    qDebug() << QString("Received call invite from %1").arg(peerId.toString());
-
     // We don't get a state callback when answering, so fill the state ourselves
     // in advance
     //    int state = 0;
@@ -708,11 +701,11 @@ void CoreAV::onCall(const lib::messenger::IMPeerId& peerId, const QString& callI
     emit avInvite(ToxPeer(peerId), video);
 }
 
-void CoreAV::onCallCreated(const lib::messenger::IMPeerId& peerId, const QString& callId) {}
+void CoreAV::onCallCreated(const lib::messenger::IMPeerId& peerId, const std::string& callId) {}
 
 void CoreAV::onCallRetract(const lib::messenger::IMPeerId& peerId,
                            lib::messenger::CallState state) {
-    auto friendNum = peerId.toFriendId();
+    auto friendNum = qstring(peerId.toFriendId());
     qDebug() << __func__ << QString("Canceling call with %1").arg(friendNum);
     auto it = calls.find(friendNum);
     if (it == calls.end()) {
@@ -725,18 +718,19 @@ void CoreAV::onCallRetract(const lib::messenger::IMPeerId& peerId,
     emit avEnd(FriendId{friendNum});
 }
 
-void CoreAV::onCallAcceptByOther(const lib::messenger::IMPeerId& peerId, const QString& callId) {
-    qDebug() << __func__ << peerId.toString() << "callId" << callId;
+void CoreAV::onCallAcceptByOther(const lib::messenger::IMPeerId& peerId,
+                                 const std::string& callId) {
+    qDebug() << __func__ << peerId.toString().c_str() << "callId" << callId.c_str();
     QString friendNum;
     for (auto& item : calls) {
-        if (item.second->getCallId() == callId) {
+        if (item.second->getCallId().toStdString() == callId) {
             friendNum = item.second->getPeerId();
             break;
         }
     }
 
     if (friendNum.isEmpty()) {
-        qWarning() << "Unable to find friend for call" << callId;
+        qWarning() << "Unable to find friend for call" << callId.c_str();
         return;
     }
 
@@ -747,16 +741,17 @@ void CoreAV::onCallAcceptByOther(const lib::messenger::IMPeerId& peerId, const Q
     emit avEnd(FriendId{friendNum});
 }
 
-void CoreAV::receiveCallStateAccepted(const lib::messenger::IMPeerId& peerId, const QString& callId,
+void CoreAV::receiveCallStateAccepted(const lib::messenger::IMPeerId& peerId,
+                                      const std::string& callId,
                                       bool video) {
-    qDebug() << __func__ << "peerId" << peerId.toString() << "callId:" << callId;
+    qDebug() << __func__ << "peerId" << peerId.toString().c_str() << "callId:" << callId.c_str();
 
-    stateCallback(peerId.toFriendId(),  //
+    stateCallback(peerId.toFriendId().c_str(),  //
                   video ? lib::messenger::CallState::ACCEPTING_V
                         : lib::messenger::CallState::ACCEPTING_A);
 
     if (QThread::currentThread() != coreavThread.get()) {
-        emit createCallToPeerId(peerId, callId, video);
+        emit createCallToPeerId(peerId, callId.c_str(), video);
     } else {
         imCall->callToPeerId(peerId, callId, video);
     }
@@ -764,35 +759,35 @@ void CoreAV::receiveCallStateAccepted(const lib::messenger::IMPeerId& peerId, co
 
 void CoreAV::doCreateCallToPeerId(const lib::messenger::IMPeerId& peerId, const QString& callId,
                                   bool video) {
-    imCall->callToPeerId(peerId, callId, video);
+    imCall->callToPeerId(peerId, callId.toStdString(), video);
 }
 
 void CoreAV::receiveCallStateRejected(const lib::messenger::IMPeerId& peerId,
-                                      const QString& callId,
+                                      const std::string& callId,
                                       bool video) {
-    qDebug() << __func__ << "peerId:" << peerId.toString() << "callId:" << callId;
-    stateCallback(peerId.toFriendId(), lib::messenger::CallState::FINISHED);
+    qDebug() << __func__ << "peerId:" << peerId.toString().c_str() << "callId:" << callId.c_str();
+    stateCallback(qstring(peerId.toFriendId()), lib::messenger::CallState::FINISHED);
 }
 
 void CoreAV::onHangup(const lib::messenger::IMPeerId& peerId, lib::messenger::CallState state) {
-    qDebug() << __func__ << "peerId:" << peerId.toString();
-    stateCallback(peerId.toFriendId(), state);
+    qDebug() << __func__ << "peerId:" << peerId.toString().c_str();
+    stateCallback(qstring(peerId.toFriendId()), state);
 }
 
 void CoreAV::onEnd(const lib::messenger::IMPeerId& peerId) {
-    qDebug() << __func__ << "peerId:" << peerId.toString();
-    emit avEnd(FriendId(peerId.toFriendId()));
+    qDebug() << __func__ << "peerId:" << peerId.toString().c_str();
+    emit avEnd(FriendId(qstring(peerId.toFriendId())));
 }
 
-void CoreAV::onFriendVideoFrame(const QString& friendId, uint16_t w, uint16_t h, const uint8_t* y,
-                                const uint8_t* u, const uint8_t* v, int32_t ystride,
+void CoreAV::onFriendVideoFrame(const std::string& friendId, uint16_t w, uint16_t h,
+                                const uint8_t* y, const uint8_t* u, const uint8_t* v, int32_t ystride,
                                 int32_t ustride, int32_t vstride) {
     // This callback should come from the CoreAV thread
     //     QReadLocker locker{&callsLock}; 为了提高性能暂时去掉
 
-    auto it = calls.find(friendId);
+    auto it = calls.find(qstring(friendId));
     if (it == calls.end()) {
-        qWarning() << "Unable to find call!" << friendId;
+        qWarning() << "Unable to find call!" << friendId.c_str();
         return;
     }
 

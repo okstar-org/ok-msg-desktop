@@ -16,19 +16,6 @@
 
 namespace module::classroom {
 
-enum class PageMenu {
-    welcome = 0,
-#ifdef OK_MODULE_PAINTER
-    classing,
-#endif
-    chat,
-    record,
-    calendar,
-    email,
-    personal,
-    setting
-};
-
 enum class VIDEO_MODE { PLAYER, CAMERA };
 
 enum class VIDEO_SIZE {

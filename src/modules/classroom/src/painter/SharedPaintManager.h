@@ -19,11 +19,11 @@
 #undef DrawText  // 避免windows宏冲突
 #endif
 
-#include "lib/board/smartboarddraw.h"
-#include "lib/board/smartboarddrawline.h"
-#include "lib/board/smartboarddrawmove.h"
-#include "lib/board/smartboarddrawremove.h"
-#include "lib/board/smartboarddrawtext.h"
+#include "lib/board/Draw.h"
+#include "lib/board/DrawLine.h"
+#include "lib/board/DrawMove.h"
+#include "lib/board/DrawRemove.h"
+#include "lib/board/DrawText.h"
 #include "lib/network/NetworkHttp.h"
 #include "src/base/logs.h"
 
@@ -35,8 +35,8 @@
 #include "SharedPaintCommandManager.h"
 
 #include "Base.h"
+#include "ISharedPaintEvent.h"
 #include "SharedPainterScene.h"
-#include "isharedpaintevent.h"
 #include "lib/backend/BaseService.h"
 
 namespace SmartBoard {

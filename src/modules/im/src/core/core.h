@@ -17,6 +17,7 @@
 #include "icoregroupmessagesender.h"
 #include "icoregroupquery.h"
 #include "icoreidhandler.h"
+#include "lib/session/AuthSession.h"
 #include "src/model/FriendId.h"
 #include "src/model/MsgId.h"
 #include "src/model/groupid.h"
@@ -26,10 +27,10 @@
 #include "base/compatiblerecursivemutex.h"
 #include "lib/messenger/messenger.h"
 
+#include "base/strongtype.h"
 #include "src/model/VCard.h"
 #include "src/model/friendlist.h"
 #include "src/model/status.h"
-#include "base/strongtype.h"
 
 #include <QMutex>
 #include <QObject>
@@ -62,15 +63,12 @@ class Core : public QObject,
              public lib::messenger::FriendHandler,
              public lib::messenger::GroupHandler,
              public lib::messenger::SelfHandler,
-             public lib::messenger::IMHandler
-{
+             public lib::messenger::IMHandler {
     Q_OBJECT
 public:
     enum class ToxCoreErrors { BAD_PROXY, INVALID_SAVE, FAILED_TO_START, ERROR_ALLOC };
 
-    static ToxCorePtr makeToxCore(const QString& host,
-                                  const QString& name,
-                                  const QString& password,
+    static ToxCorePtr makeToxCore(lib::messenger::Messenger* messenger,
                                   const ICoreSettings* const settings,
                                   ToxCoreErrors* err = nullptr);
     static Core* getInstance();
@@ -80,7 +78,7 @@ public:
     ~Core() override;
 
     lib::messenger::Messenger* getMessenger() {
-        return messenger.get();
+        return messenger;
     }
     static const QString TOX_EXT;
     static QStringList splitMessage(const QString& message);
@@ -167,9 +165,9 @@ private:
     /**
      *    SelfHandler
      */
-    void onSelfIdChanged(QString id) override;
-    void onSelfNameChanged(QString name) override;
-    void onSelfAvatarChanged(const std::string avatar) override;
+    void onSelfIdChanged(const std::string& id) override;
+    void onSelfNameChanged(const std::string& name) override;
+    void onSelfAvatarChanged(const std::string& avatar) override;
     void onSelfStatusChanged(lib::messenger::IMStatus status, const std::string& msg) override;
     void onSelfVCardChanged(lib::messenger::IMVCard& imvCard) override;
 
@@ -178,8 +176,7 @@ private:
     bool sendMessageWithType(QString friendId, const QString& message, const MsgId& msgId,
                              bool encrypt = false);
 
-    void sendReceiptReceived(const QString& friendId, QString receipt);
-
+    void sendReceiptReceived(const QString& friendId, const QString& receipt);
 
     void makeTox(QByteArray savedata, ICoreSettings* s);
     void loadFriends();
@@ -191,67 +188,70 @@ private:
     QString getFriendRequestErrorMessage(const ToxId& friendId, const QString& message) const;
     void registerCallbacks(lib::messenger::Messenger* messenger);
 
-
     /**
      * IMHandler
-    */
-    void onConnecting()override;
-    void onConnected()override;
-    void onDisconnected(int)override;
-    void onStarted()override;
-    void onStopped()override;
+     */
+    void onConnecting() override;
+    void onConnected() override;
+    void onDisconnected(int) override;
+    void onStarted() override;
+    void onStopped() override;
 
     /**
      * FriendHandler
      * @param list
      */
 
-    virtual void onFriend(const lib::messenger::IMFriend& frnd) override;
+    void onFriend(const lib::messenger::IMFriend& frnd) override;
 
-    virtual void onFriendRequest(const QString friendId, QString name) override;
+    void onFriendRequest(const std::string& friendId, const std::string& name) override;
 
-    virtual void onFriendRemoved(QString friendId) override;
+    void onFriendRemoved(const std::string& friendId) override;
 
-    virtual void onFriendStatus(QString friendId, lib::messenger::IMStatus status) override;
+    void onFriendStatus(const std::string& friendId, lib::messenger::IMStatus status) override;
 
-    virtual void onFriendMessage(QString friendId, lib::messenger::IMMessage message) override;
+    void onFriendMessage(const std::string& friendId,
+                         const lib::messenger::IMMessage& message) override;
 
-    virtual void onMessageSession(QString cId, QString sid) override;
+    void onFriendMessageReceipt(const std::string& friendId, const std::string& msgId) override;
 
-    virtual void onFriendChatState(QString friendId, int state) override;
+    void onMessageSession(const std::string& cId, const std::string& sid) override;
 
-    virtual void onFriendNickChanged(QString friendId, QString nick) override;
+    void onFriendChatState(const std::string& friendId, int state) override;
 
-    virtual void onFriendAvatarChanged(const QString friendId, const std::string avatar) override;
+    void onFriendNickChanged(const std::string& friendId, const std::string& nick) override;
 
-    virtual void onFriendAliasChanged(const lib::messenger::IMContactId& fId,
-                                      const QString& alias) override;
+    void onFriendAvatarChanged(const std::string& friendId, const std::string& avatar) override;
 
-    virtual void onFriendVCard(const lib::messenger::IMContactId& fId,
-                               const lib::messenger::IMVCard& imvCard) override;
+    void onFriendAliasChanged(const lib::messenger::IMContactId& fId,
+                              const std::string& alias) override;
 
-    virtual void onMessageReceipt(QString friendId, MsgId receipt) override;
+    void onFriendVCard(const lib::messenger::IMContactId& fId,
+                       const lib::messenger::IMVCard& imvCard) override;
+
+    void onMessageReceipt(const std::string& friendId, const std::string& receipt) override;
 
     /**
      * GroupHandler
      */
-    virtual void onGroup(const QString groupId, const QString name) override;
+    void onGroup(const std::string& groupId, const std::string& name) override;
 
-    virtual void onGroupInvite(const QString groupId,  //
-                               const QString peerId,   //
-                               const QString message) override;
-    virtual void onGroupSubjectChanged(const QString& groupId, const QString& subject) override;
+    void onGroupInvite(const std::string& groupId,  //
+                       const std::string& peerId,   //
+                       const std::string& message) override;
 
-    virtual void onGroupMessage(const QString groupId,                  //
-                                const lib::messenger::IMPeerId peerId,  //
-                                const lib::messenger::IMMessage message) override;
+    void onGroupSubjectChanged(const std::string& groupId, const std::string& subject) override;
 
-    virtual void onGroupInfo(QString groupId, lib::messenger::IMGroup groupInfo) override;
+    void onGroupMessage(const std::string& groupId,              //
+                        const lib::messenger::IMPeerId& peerId,  //
+                        const lib::messenger::IMMessage& message) override;
 
-    virtual void onGroupOccupants(const QString groupId, uint size) override;
+    void onGroupInfo(const std::string& groupId, const lib::messenger::IMGroup& groupInfo) override;
 
-    virtual void onGroupOccupantStatus(const QString groupId,
-                                       lib::messenger::IMGroupOccupant) override;
+    void onGroupOccupants(const std::string& groupId, uint size) override;
+
+    void onGroupOccupantStatus(const std::string& groupId,
+                               const lib::messenger::IMGroupOccupant&) override;
 
 private:
     //  struct ToxDeleter {
@@ -263,7 +263,7 @@ private:
     //  };
     FriendList friendList;
 
-    std::unique_ptr<lib::messenger::Messenger> messenger;
+    lib::messenger::Messenger* messenger;
     MsgId m_receipt;
     QTimer* toxTimer = nullptr;
 
@@ -272,7 +272,6 @@ private:
     std::unique_ptr<QThread> coreThread = nullptr;
 
     Status::Status fromToxStatus(const lib::messenger::IMStatus& status) const;
-
 
 signals:
     void started();

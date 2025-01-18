@@ -21,7 +21,7 @@
 #include <QPalette>
 #include <QPushButton>
 
-#include "base/r.h"
+
 #include "src/painter/PainterView.h"
 
 namespace module::classroom {
@@ -31,14 +31,13 @@ WhiteboardWidget::WhiteboardWidget(QWidget* parent) : QWidget(parent) {
 
     auto layout = new QVBoxLayout(this);
     _painter = new PainterView(this);
-    qDebug() << __func__ << _painter->size();
 
     layout->addWidget(_painter);
     setLayout(layout);
-
-    qDebug() << __func__ << size();
 }
 
-WhiteboardWidget::~WhiteboardWidget() {}
+WhiteboardWidget::~WhiteboardWidget() {
+    qDebug() << __func__;
+}
 
 }  // namespace module::classroom

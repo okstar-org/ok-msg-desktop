@@ -19,9 +19,6 @@
 #include <QSaveFile>
 
 #include "AuthSession.h"
-#include "base/hashs.h"
-// #include "base/images.h"
-#include "gui.h"
 #include "lib/storage/StorageManager.h"
 #include "lib/storage/cache/CacheManager.h"
 #include "lib/storage/settings/OkSettings.h"
@@ -34,13 +31,7 @@ static QString FILE_PROFILE_EXT = ".profile";
 
 /**
  * @class Profile
- * @brief Manages user profiles.
- *
- * @var bool Profile::newProfile
- * @brief True if this is a newly created profile, with no .tox save file yet.
- *
- * @var bool Profile::isRemoved
- * @brief True if the profile has been removed by remove().
+ * @brief Global user profiles.
  */
 Profile::Profile(storage::StorageManager* sm, const AuthSession* authSession, QObject* parent)
         : QObject(parent), authSession(authSession), storageManager(sm) {
@@ -48,10 +39,13 @@ Profile::Profile(storage::StorageManager* sm, const AuthSession* authSession, QO
     auto& info = authSession->getSignInInfo();
     selfId = ok::base::Jid(info.username, info.host);
     qDebug() << __func__ << "selfId:" << selfId.bare();
+    messenger = new lib::messenger::Messenger(info.host.toStdString(), info.username.toStdString(), info.password.toStdString());
+    qInfo() << __func__ << "Messenger created";
 }
 
 Profile::~Profile() {
     qDebug() << __func__;
+    delete messenger;
 }
 
 /**
@@ -188,5 +182,10 @@ void Profile::setNickname(const QString& nickname_) {
         nickname = nickname_;
         emit nickChanged(nickname);
     }
+}
+
+messenger::Messenger *Profile::getMessenger()
+{
+    return messenger;
 }
 }  // namespace lib::session

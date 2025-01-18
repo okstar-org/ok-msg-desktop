@@ -11,11 +11,12 @@
  */
 #pragma once
 
-#include "playerwidget.h"
+#include "PlayerWidget.h"
 
 #include <QWidget>
 #include <mutex>
 
+#include "User.h"
 #include "lib/network/NetworkHttp.h"
 
 namespace module::classroom {

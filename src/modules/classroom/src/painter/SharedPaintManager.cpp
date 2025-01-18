@@ -11,16 +11,16 @@
  */
 
 #include "SharedPaintManager.h"
+#include "PainterEvent.h"
 #include "PainterWidgetProxy.h"
 #include "SharedPaintCommandManager.h"
-#include "painterevent.h"
 
 #include <QBuffer>
-#include "lib/board/smartboarddraw.h"
-#include "lib/board/smartboarddrawline.h"
-#include "lib/board/smartboarddrawmove.h"
-#include "lib/board/smartboarddrawremove.h"
-#include "lib/board/smartboarddrawtext.h"
+#include "lib/board/Draw.h"
+#include "lib/board/DrawLine.h"
+#include "lib/board/DrawMove.h"
+#include "lib/board/DrawRemove.h"
+#include "lib/board/DrawText.h"
 
 #include "base/times.h"
 #include "src/base/logs.h"

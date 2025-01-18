@@ -120,7 +120,7 @@ void Profile::initCore(ICoreSettings* s ) {
     auto& sign = _profile->getSignIn();
 
     Core::ToxCoreErrors err;
-    core = Core::makeToxCore(sign.host, sign.username, sign.password, s, &err);
+    core = Core::makeToxCore(_profile->getMessenger(), s, &err);
     if (!core) {
         switch (err) {
             case Core::ToxCoreErrors::BAD_PROXY:

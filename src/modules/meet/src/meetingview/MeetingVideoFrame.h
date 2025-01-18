@@ -13,6 +13,8 @@
 #ifndef MEETINGVIDEOFRAME_H
 #define MEETINGVIDEOFRAME_H
 
+#include <QMap>
+#include <QTime>
 #include <QWidget>
 #include <mutex>
 #include "base/jid.h"
@@ -52,7 +54,7 @@ private:
 
     void showAudioPopMenu();
 
-    void changeEvent(QEvent* event);
+    void changeEvent(QEvent* event) override;
 
     /**
      * MessengerMeetHandler
@@ -67,11 +69,11 @@ private:
     void onParticipantJoined(const ok::base::Jid& jid,
                              const lib::messenger::Participant& parti) override;
 
-    void onParticipantLeft(const ok::base::Jid& jid, const QString& participant) override;
+    void onParticipantLeft(const ok::base::Jid& jid, const std::string& participant) override;
 
-    void onParticipantVideoFrame(const QString& participant,
+    void onParticipantVideoFrame(const std::string& participant,
                                  const lib::ortc::RendererImage& image) override;
-    void onParticipantMessage(const QString& participant, const QString& msg) override;
+    void onParticipantMessage(const std::string& participant, const std::string& msg) override;
     void onEnd() override;
 
 private:

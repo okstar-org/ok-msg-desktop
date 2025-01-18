@@ -59,9 +59,8 @@ MainWindow::MainWindow(std::shared_ptr<lib::session::AuthSession> session, QWidg
     this->setPalette(palette);
 
     setWindowTitle(APPLICATION_NAME);
+    setMinimumSize(WindowSize());
     setAttribute(Qt::WA_QuitOnClose, true);
-    // 黄金分割比例 874/520 = 1.618
-    setMinimumSize(QSize(874, 520));
 
     // menu
     m_menu = ui->menu_widget;

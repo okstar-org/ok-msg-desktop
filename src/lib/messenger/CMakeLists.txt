@@ -1,11 +1,11 @@
-project(OkIMCore)
+project(OkMessenger)
 
 if (WIN32)
 	add_definitions(-D_WIN32 -DWIN32 -D_WINDOWS -D_UNICODE)
-endif()
+endif ()
 
 find_package(ok-gloox REQUIRED)
-if(ok-gloox_FOUND)
+if (ok-gloox_FOUND)
 	set(gloox_LIB ok-gloox)
 endif ()
 
@@ -33,11 +33,10 @@ target_link_libraries(${PROJECT_NAME}
 		PRIVATE ${gloox_LIB}
 		PRIVATE ${Qt5Core_LIBRARIES}
 		PRIVATE ${Qt5Xml_LIBRARIES}
-        PRIVATE ${Qt5Widgets_LIBRARIES}
-        PRIVATE range-v3::meta range-v3::concepts range-v3::range-v3
+		PRIVATE range-v3::meta range-v3::concepts range-v3::range-v3
 )
 
 
 if (WIN32)
-    set_property(TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+	set_property(TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif ()

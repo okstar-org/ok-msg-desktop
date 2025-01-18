@@ -79,11 +79,6 @@ protected:
     CoreVideoSource* videoSource{nullptr};
     QMetaObject::Connection videoInConn;
 
-    // bool muteMic{false};
-    // bool muteVol{false};
-    // bool videoEnabled{false};
-
-
     bool nullVideoBitrate{false};
     std::unique_ptr<IAudioSource> audioSource = nullptr;
     QString callId;

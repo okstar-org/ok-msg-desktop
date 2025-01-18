@@ -18,7 +18,6 @@
 
 #include <message.h>
 #include <presence.h>
-#include "base/jid.h"
 
 namespace lib::messenger {
 

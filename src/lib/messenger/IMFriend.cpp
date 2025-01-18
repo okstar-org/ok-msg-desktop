@@ -18,25 +18,25 @@
 #include <jid.h>
 #include <rosteritem.h>
 #include <rosteritemdata.h>
-#include <QDebugStateSaver>
-#include "base/basic_types.h"
 
 namespace lib::messenger {
 
-IMContactId::IMContactId(const QString& jid_) {
-    gloox::JID jid(stdstring(jid_));
-    username = qstring(jid.username());
-    server = qstring(jid.server());
+IMContactId::IMContactId(const std::string& jid_) {
+    gloox::JID jid((jid_));
+    username = (jid.username());
+    server = (jid.server());
 }
 
 IMContactId::IMContactId(const gloox::JID& jid) {
-    username = qstring(jid.username());
-    server = qstring(jid.server());
+    username = (jid.username());
+    server = (jid.server());
 }
 
 IMContactId::IMContactId(const IMContactId& f) : username(f.username), server(f.server) {}
 
-bool IMContactId::operator==(const QString& friendId) const { return toString() == friendId; }
+bool IMContactId::operator==(const std::string& friendId) const {
+    return toString() == friendId;
+}
 
 bool IMContactId::operator==(const IMContactId& friendId) const {
     return friendId.username == username && friendId.server == server;
@@ -47,7 +47,7 @@ bool IMContactId::operator!=(const IMContactId& friendId) const {
 }
 
 bool IMContactId::operator<(const lib::messenger::IMContactId& friendId) const {
-    if (friendId.server.isEmpty()) {
+    if (friendId.server.empty()) {
         return username < friendId.username;
     }
     return username < friendId.username  //
@@ -57,18 +57,16 @@ bool IMContactId::operator<(const lib::messenger::IMContactId& friendId) const {
 IMPeerId::IMPeerId() = default;
 
 IMPeerId::IMPeerId(const gloox::JID& jid) {
-    username = qstring(jid.username());
-    server = qstring(jid.server());
-    resource = qstring(jid.resource());
+    username = (jid.username());
+    server = (jid.server());
+    resource = (jid.resource());
 }
 
-IMPeerId::IMPeerId(const QString& peerId) {
-    assert(peerId.contains("@"));
-
-    auto jid = gloox::JID(peerId.toStdString());
-    username = qstring(jid.username());
-    server = qstring(jid.server());
-    resource = qstring(jid.resource());
+IMPeerId::IMPeerId(const std::string& peerId) {
+    auto jid = gloox::JID(peerId);
+    username = (jid.username());
+    server = (jid.server());
+    resource = (jid.resource());
 }
 
 bool IMPeerId::operator==(const IMPeerId& peerId) const {
@@ -78,14 +76,16 @@ bool IMPeerId::operator==(const IMPeerId& peerId) const {
 }
 
 IMFriend::IMFriend(gloox::RosterItem* item)  //
-        : id{IMContactId{qstring(item->jid().bare())}}
-        , alias{qstring(item->name())}
+        : id{IMContactId{(item->jid().bare())}}
+        , alias{(item->name())}
         , subscription{item->subscription()}
         , online{item->online()}
-        , groups{ok::base::qstringlist(item->groups())} {}
+        , groups{(item->groups())} {}
 
 IMFriend::IMFriend() {}
 
-bool IMFriend::isFriend() const { return subscription == gloox::SubscriptionType::S10nBoth; }
+bool IMFriend::isFriend() const {
+    return subscription == gloox::SubscriptionType::S10nBoth;
+}
 
 }  // namespace lib::messenger

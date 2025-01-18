@@ -34,10 +34,10 @@
 #include <QUrl>
 #include <QUuid>
 
-#include "lib/board/smartboarddraw.h"
-#include "lib/board/smartboarddrawfile.h"
-#include "lib/board/smartboarddrawline.h"
-#include "lib/board/smartboarddrawtext.h"
+#include "lib/board/Draw.h"
+#include "lib/board/DrawFile.h"
+#include "lib/board/DrawLine.h"
+#include "lib/board/DrawText.h"
 
 #include "src/base/colorhelper.h"
 #include "src/base/files.h"
@@ -465,11 +465,10 @@ public:
         };
 
         lib::board::DrawLine* line = new lib::board::DrawLine(itemId(), drawpoints);
-
         draw->addPlugin(line);
 
         // style
-        lib::board::Style& style = draw->style();
+        std::map<std::string, std::string>& style = draw->style();
 
         const std::string& color_ =
                 ColorHelper::makeColorString(color(), ColorHelper::FORMAT::HEX).toStdString();
@@ -611,7 +610,7 @@ public:
         draw->setPosition({(int)posX(), (int)posY()});
 
         // style
-        lib::board::Style& style = draw->style();
+        std::map<std::string, std::string>& style = draw->style();
 
         style.insert(std::pair<std::string, std::string>(
                 "color",

@@ -12,8 +12,6 @@
 #ifndef IMFILE_H
 #define IMFILE_H
 
-#include <QFile>
-#include <QThread>
 #include "IM.h"
 #include "IMJingle.h"
 
@@ -24,21 +22,29 @@ class BytestreamDataHandler;
 
 namespace lib::messenger {
 
-class IMFileTask;
 class IM;
+class IMFileTask;
+
+class IMFileHandler {
+public:
+    virtual void fileSent(const std::string& m_friendId, const File& m_file) = 0;
+    virtual void fileError(const std::string& m_friendId, const File& m_file, int m_sentBytes) = 0;
+    virtual void fileAbort(const std::string& m_friendId, const File& m_file, int m_sentBytes) = 0;
+    virtual void fileSending(const std::string& m_friendId, const File& m_file, int m_seq,
+                             int m_sentBytes, bool end) = 0;
+};
 
 /**
  * 传输文件会话，一次会话代表一次文件传输请求
  */
-class IMFileSession : public QObject, public IMJingleSession {
-    Q_OBJECT
+class IMFileSession : public IMJingleSession {
 public:
-    IMFileSession(const QString& sId,
+    IMFileSession(const std::string& sId,
                   gloox::Jingle::Session* session_,
                   const IMPeerId& peerId,
                   IMFile* sender,
                   File* file);
-    ~IMFileSession() override;
+    ~IMFileSession();
     void start() override;
     void stop() override;
 
@@ -50,7 +56,7 @@ public:
     }
 
 private:
-    QString sId;
+    std::string sId;
     IMFile* sender;
     File* file;
 
@@ -58,7 +64,7 @@ private:
     IMPeerId target;
 
     // 自己
-    QString self;
+    std::string self;
 
     // session
     gloox::Jingle::Session* session;
@@ -66,12 +72,9 @@ private:
     std::unique_ptr<IMFileTask> task;
 };
 
-class IMFile :  public IMJingle,
-                public IMHandler,
-                public IMSessionHandler {
-    Q_OBJECT
+class IMFile : public IMJingle, public IMHandler, public IMSessionHandler {
 public:
-    explicit IMFile(IM* im, QObject* parent = nullptr);
+    explicit IMFile(IM* im);
     ~IMFile() override;
 
     void addFile(const File& f);
@@ -80,12 +83,12 @@ public:
     /**
      * File
      */
-    void fileRejectRequest(const QString& friendId, const File& file);
-    void fileAcceptRequest(const QString& friendId, const File& file);
-    void fileFinishRequest(const QString& friendId, const QString& sId);
-    void fileFinishTransfer(QString friendId, const QString& sId);
-    void fileCancel(QString fileId);
-    bool fileSendToFriend(const QString& f, const File& file);
+    void fileRejectRequest(const std::string& friendId, const File& file);
+    void fileAcceptRequest(const std::string& friendId, const File& file);
+    void fileFinishRequest(const std::string& friendId, const std::string& sId);
+    void fileFinishTransfer(std::string friendId, const std::string& sId);
+    void fileCancel(std::string fileId);
+    bool fileSendToFriend(const std::string& f, const File& file);
 
     bool handleIq(const gloox::IQ& iq) override;
 
@@ -107,16 +110,16 @@ public:
         return fileHandlers;
     }
 
-    IMFileSession* findSession(const QString& sId) {
-        return m_fileSessionMap.value(sId);
+    IMFileSession* findSession(const std::string& sId) {
+        auto it = m_fileSessionMap.find(sId);
+        return it == m_fileSessionMap.end() ? nullptr : it->second;
     }
 
-    void clearSessionInfo(const QString& sId) override;
+    void clearSessionInfo(const std::string& sId) override;
 
 protected:
     void handleJingleMessage(const IMPeerId& peerId,
                              const gloox::Jingle::JingleMessage* jm) override {
-        qWarning() << "Unable to handle messages from:" << peerId.toString();
     }
 
     bool doSessionInitiate(gloox::Jingle::Session* session,        //
@@ -162,19 +165,19 @@ protected:
     /**
      * IMHandler
      */
-    void onConnecting()override;
-    void onConnected()override;
-    void onDisconnected(int)override;
-    void onStarted()override;
-    void onStopped()override;
+    void onConnecting() override;
+    void onConnected() override;
+    void onDisconnected(int) override;
+    void onStarted() override;
+    void onStopped() override;
 
 private:
-    void rejectFileRequest(const QString& friendId, const QString& sId);
-    void acceptFileRequest(const QString& friendId, const File& file);
-    void finishFileRequest(const QString& friendId, const QString& sId);
-    void finishFileTransfer(const QString& friendId, const QString& sId);
+    void rejectFileRequest(const std::string& friendId, const std::string& sId);
+    void acceptFileRequest(const std::string& friendId, const File& file);
+    void finishFileRequest(const std::string& friendId, const std::string& sId);
+    void finishFileTransfer(const std::string& friendId, const std::string& sId);
 
-    bool sendFile(const QString& friendId, const File& file);
+    bool sendFile(const std::string& friendId, const File& file);
     bool sendFileToResource(const gloox::JID& friendId, const File& file);
 
     std::vector<FileHandler*> fileHandlers;
@@ -183,24 +186,25 @@ private:
     QList<File> m_waitSendFiles;
 
     // 文件传输会话（key = session.dataId=file.id）
-    QMap<QString, IMFileSession*> m_fileSessionMap;
+    std::map<std::string, IMFileSession*> m_fileSessionMap;
 
-signals:
-    void sendFileInfo(const QString& friendId, const File& file, int m_seq, int m_sentBytes,
-                      bool end);
-
-    void sendFileAbort(const QString& friendId, const File& file, int m_sentBytes);
-    void sendFileError(const QString& friendId, const File& file, int m_sentBytes);
-
-    void receiveFileRequest(const QString& friendId, const File& file);
-
-    void receiveFileChunk(const IMContactId friendId, QString sId, int seq,
-                          const std::string chunk);
-
-    void receiveFileFinished(const IMContactId friendId, QString sId);
-
-public slots:
-    void onImStartedFile();
+    // signals:
+    //    void sendFileInfo(const std::string& friendId, const File& file, int m_seq, int
+    //    m_sentBytes,
+    //                      bool end);
+    //
+    //    void sendFileAbort(const std::string& friendId, const File& file, int m_sentBytes);
+    //    void sendFileError(const std::string& friendId, const File& file, int m_sentBytes);
+    //
+    //    void receiveFileRequest(const std::string& friendId, const File& file);
+    //
+    //    void receiveFileChunk(const IMContactId friendId, std::string sId, int seq,
+    //                          const std::string chunk);
+    //
+    //    void receiveFileFinished(const IMContactId friendId, std::string sId);
+    //
+    // public slots:
+    // void onImStartedFile();
 };
 
 }  // namespace lib::messenger

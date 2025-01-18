@@ -15,6 +15,7 @@
 #include <lib/messenger/messenger.h>
 #include <QFile>
 #include <QRegularExpression>
+#include "base/basic_types.h"
 #include "src/model/FriendId.h"
 
 FileInfo::FileInfo(const QString& sId,
@@ -62,7 +63,6 @@ void FileInfo::parse(const QString& json) {
 
 ToxFile::ToxFile(const QString& sender,
                  const QString& friendId,
-
                  const QString& sId_,
                  const QString& fileId_,
                  const QString& filename_,
@@ -79,9 +79,9 @@ ToxFile::ToxFile(const QString& sender,
 
 ToxFile::ToxFile(const QString& sender, const QString& friendId, const QString& msgId,
                  const lib::messenger::File& file)
-        : FileInfo(file.sId, file.id, file.name, file.path, file.size, 0, (FileStatus)file.status,
+        : FileInfo(qstring(file.sId),  qstring(file.id), qstring(file.name),qstring(file.path), file.size, 0, (FileStatus)file.status,
                    (FileDirection)file.direction)
-        , file(new QFile(file.path))
+        , file(new QFile(qstring(file.path)))
         , sender{sender}
         , receiver{friendId}
         , timestamp(QDateTime::currentDateTime()) {}
@@ -104,7 +104,7 @@ bool ToxFile::open(bool write) {
 }
 
 lib::messenger::File ToxFile::toIMFile() {
-    return lib::messenger::File{fileId, sId, fileName, filePath, fileSize};
+    return lib::messenger::File{fileId.toStdString(), sId.toStdString(), fileName.toStdString(), filePath.toStdString(), fileSize};
 }
 
 const QString& ToxFile::getFriendId() const {

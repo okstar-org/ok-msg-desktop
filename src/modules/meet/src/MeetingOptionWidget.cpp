@@ -13,9 +13,9 @@
 #include "MeetingOptionWidget.h"
 #include "base/RoundedPixmapLabel.h"
 #include "base/images.h"
+#include "lib/ui/widget/tools/PopupMenuComboBox.h"
 #include "src/Bus.h"
 #include "src/application.h"
-#include "tools/PopupMenuComboBox.h"
 
 #include <QLabel>
 #include <QPushButton>

@@ -22,27 +22,18 @@
 #include <QTextEdit>
 #include <QWidget>
 
-#include "lib/board/smartboardcontroller.h"
-#include "lib/board/smartboardcontrollerselect.h"
-#include "lib/board/smartboardcontrollervoice.h"
-#include "lib/board/smartboarddraw.h"
+#include "lib/board/Controller.h"
+#include "lib/board/ControllerSelect.h"
+#include "lib/board/ControllerVoice.h"
+#include "lib/board/Draw.h"
 
 #include "PaintItem.h"
 #include "SharedPaintManager.h"
 #include "SharedPainterScene.h"
-
 #include "PainterMdiArea.h"
-#include "base/r.h"
-
-#include "src/base/logs.h"
-#include "src/base/timer.h"
-#include "src/base/utils.h"
-
 #include "OPlayerWidget.h"
 #include "OVideoViewport.h"
-#include "PageClassing.h"
-#include "lib/messenger/messenger.h"
-#include "src/painter/OPainterToolBox.h"
+#include "painter/OPainterToolBox.h"
 
 namespace module::classroom {
 
@@ -96,7 +87,9 @@ PainterView::PainterView(QWidget* parent) : QWidget(parent) {
             SLOT(onCtrollerChecked(WB_CTRL, bool)));
 }
 
-PainterView::~PainterView() {}
+PainterView::~PainterView() {
+    qDebug() << __func__;
+}
 
 PainterView* PainterView::Get(QWidget* parent) {
     static PainterView* const painter = new PainterView(parent);
@@ -206,75 +199,75 @@ void PainterView::setPenWeight(int weight) {
 }
 
 void PainterView::onCtrollerChecked(WB_CTRL ctrl, bool checked) {
-    const OVideoViewport* videoViewport = (pClassing->videoViewport());
+//    const OVideoViewport* videoViewport = (pClassing->videoViewport());
 
-    const std::list<UserJID> checkedUsers = videoViewport->isCheckedUsers();
+//    const std::list<UserJID> checkedUsers = videoViewport->isCheckedUsers();
 
-    if (checkedUsers.empty()) return;
+//    if (checkedUsers.empty()) return;
 
-    std::list<std::string> us;
+//    std::list<std::string> us;
 
-    for (auto& e : checkedUsers) {
-        us.push_back(e.node().toStdString());
-    }
+//    for (auto& e : checkedUsers) {
+//        us.push_back(e.node().toStdString());
+//    }
 
-    switch (ctrl) {
-        case WB_CTRL::MOVE:
-            break;
-        case WB_CTRL::MUTE: {
-            std::string id = ok::base::UUID::make().toStdString();
-
-            lib::board::ControllerVoice* voice = new lib::board::ControllerVoice(id);
-
-            if (checked) {
-                voice->setAction(lib::board::Action::OFF);
-            } else
-                voice->setAction(lib::board::Action::ON);
-
-            std::shared_ptr<lib::board::Controller> ctl =
-                    std::make_shared<lib::board::Controller>(id);
-            ctl->addPlugin(voice);
-
-            lib::board::UserList& _t_us = const_cast<lib::board::UserList&>(ctl->userList());
-            std::copy(us.begin(), us.end(), std::back_inserter(_t_us));
-
-            //    _imSmartBoard->sendController(ctl);
-
-            break;
-        }
-        case WB_CTRL::WB:
-            break;
-        case WB_CTRL::RE:
-
-            break;
-        case WB_CTRL::OK:
-
-            break;
-        case WB_CTRL::GIFT:
-
-            break;
-        case WB_CTRL::ALL: {
-            std::string id = ok::base::UUID::make().toStdString();
-
-            lib::board::ControllerSelect* select = new lib::board::ControllerSelect(id);
-
-            if (checked) {
-                select->setAction(lib::board::Action::ON);
-            } else
-                select->setAction(lib::board::Action::OFF);
-
-            std::shared_ptr<lib::board::Controller> ctl =
-                    std::make_shared<lib::board::Controller>(id);
-            ctl->addPlugin(select);
-
-            lib::board::UserList& _t_us = const_cast<lib::board::UserList&>(ctl->userList());
-            std::copy(us.begin(), us.end(), std::back_inserter(_t_us));
-
-            //    _imSmartBoard->sendController(ctl);
-
-            break;
-        }
-    }
+//    switch (ctrl) {
+//        case WB_CTRL::MOVE:
+//            break;
+//        case WB_CTRL::MUTE: {
+//            std::string id = ok::base::UUID::make().toStdString();
+//
+//            lib::board::ControllerVoice* voice = new lib::board::ControllerVoice(id);
+//
+//            if (checked) {
+//                voice->setAction(lib::board::Action::OFF);
+//            } else
+//                voice->setAction(lib::board::Action::ON);
+//
+//            std::shared_ptr<lib::board::Controller> ctl =
+//                    std::make_shared<lib::board::Controller>(id);
+//            ctl->addPlugin(voice);
+//
+//            lib::board::UserList& _t_us = const_cast<lib::board::UserList&>(ctl->userList());
+//            std::copy(us.begin(), us.end(), std::back_inserter(_t_us));
+//
+//            //    _imSmartBoard->sendController(ctl);
+//
+//            break;
+//        }
+//        case WB_CTRL::WB:
+//            break;
+//        case WB_CTRL::RE:
+//
+//            break;
+//        case WB_CTRL::OK:
+//
+//            break;
+//        case WB_CTRL::GIFT:
+//
+//            break;
+//        case WB_CTRL::ALL: {
+//            std::string id = ok::base::UUID::make().toStdString();
+//
+//            lib::board::ControllerSelect* select = new lib::board::ControllerSelect(id);
+//
+//            if (checked) {
+//                select->setAction(lib::board::Action::ON);
+//            } else
+//                select->setAction(lib::board::Action::OFF);
+//
+//            std::shared_ptr<lib::board::Controller> ctl =
+//                    std::make_shared<lib::board::Controller>(id);
+//            ctl->addPlugin(select);
+//
+//            lib::board::UserList& _t_us = const_cast<lib::board::UserList&>(ctl->userList());
+//            std::copy(us.begin(), us.end(), std::back_inserter(_t_us));
+//
+//            //    _imSmartBoard->sendController(ctl);
+//
+//            break;
+//        }
+//    }
 }
 
 // void Painter::onPubSubEvent(PubSub::ItemList &items) {

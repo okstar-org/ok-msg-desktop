@@ -40,8 +40,8 @@ public:
                   int account_)
             : manager(pluginManager), account(account_), m_messenger(messenger) {
         // ignore
-        connect(m_messenger, &::lib::messenger::Messenger::incoming,  //
-                this, &StreamWatcher::doDom, Qt::QueuedConnection);
+//        connect(m_messenger, &::lib::messenger::Messenger::incoming,  //
+//                this, &StreamWatcher::doDom, Qt::QueuedConnection);
     }
 
     ~StreamWatcher() {}
@@ -632,7 +632,7 @@ void PluginManager::sendXml(int account, const QString& xml) {
     }
 
     if (account < clients_.size()) {
-        clients_[account]->send(xml);
+        clients_[account]->send(stdstring(xml));
     }
 }
 
@@ -645,7 +645,7 @@ void PluginManager::sendXml(int account, const QString& xml) {
 QString PluginManager::uniqueId(int account) const {
     QString id;
     if (account < clients_.size()) {
-        id = clients_[account]->genUniqueId();
+        id = qstring( clients_[account]->genUniqueId());
     }
     return id;
 }

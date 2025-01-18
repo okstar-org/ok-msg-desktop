@@ -18,7 +18,6 @@
 
 #include <meethandler.h>
 #include <meetmanager.h>
-#include <QObject>
 
 #include "IM.h"
 #include "IMFromHostHandler.h"
@@ -36,9 +35,8 @@ class IMMeet : public IMJingle,
                public IMFromHostHandler,
                public ortc::OkRTCHandler,
                public gloox::MeetHandler {
-    Q_OBJECT
 public:
-    explicit IMMeet(IM* im, QObject* parent = nullptr);
+    explicit IMMeet(IM* im);
     ~IMMeet() override;
 
     /**
@@ -46,7 +44,7 @@ public:
      * @param name
      * @return
      */
-    const std::string& create(const QString& name);
+    const std::string& create(const std::string& name);
 
     /**
      * 解散会议
@@ -67,7 +65,7 @@ public:
      * 发送消息
      * @param msg
      */
-    void sendMessage(const QString& msg);
+    void sendMessage(const std::string& msg);
 
     /**
      * 添加处理器
@@ -85,7 +83,7 @@ public:
      * 选择视频设备
      * @param deviceId 设备id
      */
-    void switchVideoDevice(const QString& deviceId);
+    void switchVideoDevice(const std::string& deviceId);
 
     /**
      * 选择视频设备
@@ -129,10 +127,10 @@ protected:
     /**
      * SelfHandler
      */
-      void onSelfIdChanged(QString id) override ;
-      void onSelfNameChanged(QString name) override ;
-      void onSelfAvatarChanged(const std::string avatar) override ;
-      void onSelfStatusChanged(IMStatus status, const std::string& msg) override ;
+    void onSelfIdChanged(const std::string& id) override;
+    void onSelfNameChanged(const std::string& name) override;
+    void onSelfAvatarChanged(const std::string& avatar) override;
+    void onSelfStatusChanged(IMStatus status, const std::string& msg) override ;
       void onSelfVCardChanged(IMVCard& imvCard) override;
 
     /**
@@ -169,7 +167,7 @@ protected:
     void handleJingleMessage(const IMPeerId& peerId,
                              const gloox::Jingle::JingleMessage* jm) override;
 
-    void clearSessionInfo(const QString& sId) override;
+    void clearSessionInfo(const std::string& sId) override;
 
     // OkRTCHandler
     void onCreatePeerConnection(const std::string& sId,
@@ -211,21 +209,19 @@ protected:
     void ToMeetSdp(const ortc::OJingleContentMap* av, gloox::Jingle::PluginList& plugins);
 
 private:
-    void doForIceCompleted(const QString& sId, const QString& peerId);
+    void doForIceCompleted(const std::string& sId, const std::string& peerId);
 
     gloox::Meet* meet;
     gloox::MeetManager* meetManager;
 
     std::vector<MessengerMeetHandler*> handlers;
     IMVCard vCard;
-    QString resource;
+    std::string resource;
 
-signals:
+    // signals:
     // ice
-    void iceGatheringStateChanged(IMPeerId to, const QString sId, ortc::IceGatheringState);
-    void iceConnectionStateChanged(IMPeerId to, const QString sId, ortc::IceConnectionState);
 
-public slots:
+    // public slots:
     void onSelfVCard(const IMVCard& vCard);
     Participant toParticipant(const gloox::Meet::Participant& participant) const;
     void doStartRTC(const IMPeerId& peerId, const ortc::OJingleContentMap& cav) const;

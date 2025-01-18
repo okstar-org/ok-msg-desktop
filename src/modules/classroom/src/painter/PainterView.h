@@ -19,15 +19,14 @@
 
 #include "Base.h"
 #include "PaintItem.h"
+#include "PainterDispatcher.h"
+#include "PainterEvent.h"
 #include "PainterMdiArea.h"
+#include "PainterRenderer.h"
 #include "PainterView.h"
 #include "SharedPaintManager.h"
 #include "SharedPainterScene.h"
-#include "painterdispatcher.h"
-#include "painterevent.h"
-#include "painterrenderer.h"
 
-#include "PageClassing.h"
 #include "lib/backend/BaseService.h"
 #include "lib/network/NetworkHttp.h"
 #include "src/base/timer.h"
@@ -39,7 +38,7 @@ class WhiteboardController;
 
 class PainterView : public QWidget {
 public:
-    PainterView(QWidget* parent = nullptr);
+    explicit PainterView(QWidget* parent = nullptr);
     ~PainterView() override;
 
     static PainterView* Get(QWidget* parent = nullptr);
@@ -72,8 +71,6 @@ private:
     std::unique_ptr<base::DelayedCallTimer> _delayCaller;
 
     PainterMdiArea* mdiArea;
-
-    PageClassing* pClassing;
 
 signals:
 

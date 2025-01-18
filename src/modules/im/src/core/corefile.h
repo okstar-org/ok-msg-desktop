@@ -62,16 +62,16 @@ public:
      * File handlers
      */
 
-    void onFileRequest(const QString& friendId, const lib::messenger::File& file) override;
-    void onFileRecvChunk(const QString& friendId, const QString& fileId, int seq,
+    void onFileRequest(const std::string& friendId, const lib::messenger::File& file) override;
+    void onFileRecvChunk(const std::string& friendId, const std::string& fileId, int seq,
                          const std::string& chunk) override;
-    void onFileRecvFinished(const QString& friendId, const QString& fileId) override;
-    void onFileSendInfo(const QString& friendId, const lib::messenger::File& file, int m_seq,
+    void onFileRecvFinished(const std::string& friendId, const std::string& fileId) override;
+    void onFileSendInfo(const std::string& friendId, const lib::messenger::File& file, int m_seq,
                         int m_sentBytes, bool end) override;
 
-    void onFileSendAbort(const QString& friendId, const lib::messenger::File& file,
+    void onFileSendAbort(const std::string& friendId, const lib::messenger::File& file,
                          int m_sentBytes) override;
-    void onFileSendError(const QString& friendId, const lib::messenger::File& file,
+    void onFileSendError(const std::string& friendId, const lib::messenger::File& file,
                          int m_sentBytes) override;
 signals:
     void fileSendStarted(ToxFile& file);

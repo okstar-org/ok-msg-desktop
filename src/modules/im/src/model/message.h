@@ -123,7 +123,7 @@ struct GroupInfo {
     QString description;
     QString subject;
     QString creationdate;
-    uint64_t occupants = 0;
+    uint32_t occupants = 0;
 };
 
 struct GroupOccupant {

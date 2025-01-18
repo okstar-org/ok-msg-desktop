@@ -14,36 +14,30 @@
 // Created by gaojie on 24-5-28.
 //
 
-#ifndef OKMSG_PROJECT_IMFILETASK_H
-#define OKMSG_PROJECT_IMFILETASK_H
+#pragma once
 
-#include <QThread>
 #include <memory>
+#include <thread>
 #include "IMFile.h"
 
 #include <bytestreamdatahandler.h>
 #include <inbandbytestream.h>
 #include <jid.h>
 
-class QFile;
-
 namespace lib::messenger {
 
 class IM;
 struct File;
 
-class IMFileTask : public QThread, public gloox::BytestreamDataHandler {
-    Q_OBJECT
+class IMFileTask : public gloox::BytestreamDataHandler {
 public:
-    IMFileTask(const QString& friendId,  //
-               const File* file,         //
-               IMFile* sender);          //
+    IMFileTask(const std::string& friendId,  //
+               const File* file,             //
+               IMFile* sender);              //
 
     ~IMFileTask();
 
-    void run() override;
-
-    void abort();
+    void run();
 
     void handleBytestreamData(gloox::Bytestream* bs, const std::string& data) override;
 
@@ -61,27 +55,19 @@ public:
     bool ackFinished() const;
 
 private:
-    QString m_friendId;
+    std::string m_friendId;
     const File* m_file;
     IMFile* m_im;
     int m_buf;
     int m_seq;
-    quint64 m_sentBytes;
+    uint64_t m_sentBytes;
     int m_ack_seq;
 
     std::unique_ptr<gloox::InBandBytestream> m_ibb;
-    std::unique_ptr<QFile> qFile;
+    std::string qFile;
+    std::unique_ptr<std::thread> thread;
     gloox::Bytestream* m_byteStream;
-
-public:
-signals:
-    void fileSent(const QString& m_friendId, const File& m_file);
-    void fileError(const QString& m_friendId, const File& m_file, int m_sentBytes);
-    void fileAbort(const QString& m_friendId, const File& m_file, int m_sentBytes);
-    void fileSending(
-            const QString& m_friendId, const File& m_file, int m_seq, int m_sentBytes, bool end);
+    IMFileHandler* handler;
 };
 
 }  // namespace lib::messenger
-
-#endif  // OKMSG_PROJECT_IMFILETASK_H

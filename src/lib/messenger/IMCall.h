@@ -42,16 +42,15 @@ enum CallStage {
     StageSession   // XEP-0166: Jingle https://xmpp.org/extensions/xep-0166.html
 };
 
-class IMCallSession : public QObject, public IMJingleSession {
-    Q_OBJECT
+class IMCallSession : public IMJingleSession {
 public:
-    explicit IMCallSession(const QString& sId,
+    explicit IMCallSession(const std::string& sId,
                            gloox::Jingle::Session* session,
                            const IMContactId& selfId,
                            const IMPeerId& peerId,
                            lib::ortc::JingleCallType callType);
 
-    ~IMCallSession() override;
+    ~IMCallSession();
 
     void start() override;
     void stop() override;
@@ -84,23 +83,12 @@ public:
         return accepted;
     }
 
-    const QString& getId() const {
+    const std::string& getId() const {
         return sId;
     }
 
-    void appendIce(const ortc::OIceUdp& ice) {
-        pendingIceCandidates.emplace_back(ice);
-    }
-
-    void pollIce(ok::base::Fn<void(const ortc::OIceUdp&)> fn) {
-        while (!pendingIceCandidates.empty()) {
-            fn(pendingIceCandidates.back());
-            pendingIceCandidates.pop_back();
-        }
-    }
-
 private:
-    QString sId;
+    std::string sId;
     gloox::Jingle::Session* session;
     IMContactId selfId;
     const gloox::Jingle::Session::Jingle* jingle;
@@ -120,9 +108,8 @@ class IMCall : public IMJingle,
                public IMSessionHandler,
                public IMHandler,
                public ortc::OkRTCHandler {
-    Q_OBJECT
 public:
-    explicit IMCall(IM* im, QObject* parent = nullptr);
+    explicit IMCall(IM* im);
     ~IMCall() override;
 
     void onCreatePeerConnection(const std::string& sId, const std::string& peerId,
@@ -165,15 +152,15 @@ public:
     void addCallHandler(CallHandler*);
 
     // 发起呼叫邀请
-    bool callToFriend(const QString& f, const QString& sId, bool video);
+    bool callToFriend(const std::string& f, const std::string& sId, bool video);
     // 创建呼叫
-    bool callToPeerId(const IMPeerId& to, const QString& sId, bool video);
+    bool callToPeerId(const IMPeerId& to, const std::string& sId, bool video);
     // 应答呼叫
-    bool callAnswerToFriend(const IMPeerId& peer, const QString& callId, bool video);
+    bool callAnswerToFriend(const IMPeerId& peer, const std::string& callId, bool video);
     // 取消呼叫
-    void callCancel(const IMContactId& f, const QString& sId);
+    void callCancel(const IMContactId& f, const std::string& sId);
     // 拒绝呼叫
-    void callReject(const IMPeerId& f, const QString& sId);
+    void callReject(const IMPeerId& f, const std::string& sId);
 
     void setCtrlState(ortc::CtrlState state);
     void setSpeakerVolume(uint32_t vol);
@@ -185,13 +172,13 @@ public:
     void doJingleMessage(const IMPeerId& peerId, const gloox::Jingle::JingleMessage* jm);
 
     // 发起呼叫邀请
-    void proposeJingleMessage(const QString& friendId, const QString& callId, bool video);
+    void proposeJingleMessage(const std::string& friendId, const std::string& callId, bool video);
     // 接受
-    void acceptJingleMessage(const IMPeerId& peerId, const QString& callId, bool video);
+    void acceptJingleMessage(const IMPeerId& peerId, const std::string& callId, bool video);
     // 拒绝
-    void rejectJingleMessage(const QString& friendId, const QString& callId);
+    void rejectJingleMessage(const std::string& friendId, const std::string& callId);
     // 撤回
-    void retractJingleMessage(const QString& friendId, const QString& callId);
+    void retractJingleMessage(const std::string& friendId, const std::string& callId);
 
 protected:
     void handleJingleMessage(const IMPeerId& peerId,
@@ -234,18 +221,19 @@ protected:
 
     IMCallSession* cacheSessionInfo(const IMContactId& from,
                                     const IMPeerId& to,
-                                    const QString& sId,
+                                    const std::string& sId,
                                     lib::ortc::JingleCallType callType);
 
-    void clearSessionInfo(const QString& sId) override;
+    void clearSessionInfo(const std::string& sId);
 
     IMCallSession* createSession(const IMContactId& from,
                                  const IMPeerId& to,
-                                 const QString& sId,
+                                 const std::string& sId,
                                  lib::ortc::JingleCallType ct);
 
-    IMCallSession* findSession(const QString& sId) {
-        return m_sessionMap.value(sId);
+    IMCallSession* findSession(const std::string& sId) {
+        auto it = m_sessionMap.find(sId);
+        return it == m_sessionMap.end() ? nullptr : it->second;
     }
 
 private:
@@ -256,29 +244,29 @@ private:
      * @param video
      * @return
      */
-    bool startCall(const QString& friendId, const QString& sId, bool video);
+    bool startCall(const std::string& friendId, const std::string& sId, bool video);
 
-    bool sendCallToResource(const QString& friendId, const QString& sId, bool video);
+    bool sendCallToResource(const std::string& friendId, const std::string& sId, bool video);
 
-    bool createCall(const IMPeerId& to, const QString& sId, bool video);
+    bool createCall(const IMPeerId& to, const std::string& sId, bool video);
 
-    bool answer(const IMPeerId& to, const QString& callId, bool video);
+    bool answer(const IMPeerId& to, const std::string& callId, bool video);
 
     // 取消呼叫
-    void cancelCall(const IMContactId& friendId, const QString& sId);
-    void rejectCall(const IMPeerId& friendId, const QString& sId);
+    void cancelCall(const IMContactId& friendId, const std::string& sId);
+    void rejectCall(const IMPeerId& friendId, const std::string& sId);
 
     void join(const gloox::JID& room);
 
-    void doForIceCompleted(const QString& sId, const QString& peerId);
+    void doForIceCompleted(const std::string& sId, const std::string& peerId);
 
     std::vector<CallHandler*> callHandlers;
 
     // sid -> session
-    QMap<QString, IMCallSession*> m_sessionMap;
+    std::map<std::string, IMCallSession*> m_sessionMap;
 
     // sid -> isVideo,在jingle-message阶段暂时保留呼叫的类型是视频（音频无需保存）。
-    QMap<QString, bool> m_sidVideo;
+    std::map<std::string, bool> m_sidVideo;
 
     // 停止标志
     bool terminated = false;
@@ -286,7 +274,7 @@ private:
 
     void destroyRtc();
 
-public slots:
+    // public slots:
 
     void onImStartedCall();
 };

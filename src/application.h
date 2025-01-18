@@ -21,6 +21,14 @@
 #include "lib/session/profile.h"
 #include "lib/storage/StorageManager.h"
 
+/**
+ * @brief WindowSize 主窗口大小(黄金分割比例 1.618)
+ * @return QSize
+ */
+constexpr QSize WindowSize() {
+    return QSize{874, 520};
+}
+
 namespace ok {
 
 class IPC;

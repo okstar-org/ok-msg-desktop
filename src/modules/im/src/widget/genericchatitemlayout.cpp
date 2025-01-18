@@ -24,7 +24,6 @@ void GenericChatItemLayout::addSortedWidget(GenericChatItemWidget* widget,
                                             int stretch,
                                             Qt::Alignment alignment) {
     int closest = indexOfClosestSortedWidget(widget);
-    qDebug() << __func__ << closest;
     layout->insertWidget(closest, widget, stretch, alignment);
 }
 

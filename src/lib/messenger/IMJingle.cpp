@@ -12,7 +12,10 @@
 
 #include "IMJingle.h"
 
-#include <QUuid>
+#include "IM.h"
+#include "base/basic_types.h"
+#include "base/jsons.h"
+
 #include <range/v3/range.hpp>
 #include <range/v3/view.hpp>
 #include <vector>
@@ -24,7 +27,9 @@
 #include <jinglejsonmessage.h>
 #include <jinglesession.h>
 
-#include "IM.h"
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QJsonValueRef>
 
 namespace lib::messenger {
 
@@ -51,12 +56,8 @@ auto txParameter = ranges::views::transform([](const gloox::Jingle::RTP::Paramet
     return ortc::Parameter{.name = op.name, .value = op.value};
 });
 
-IMJingle::IMJingle(IM* im, QObject* parent) : QObject(parent), im(im), currentSession(nullptr) {
-    qDebug() << __func__ << "Creating";
-
-    qRegisterMetaType<std::string>("std::string");
-
-    qDebug() << __func__ << ("Created");
+IMJingle::IMJingle(IM* im) : im(im), currentSession(nullptr) {
+    qDebug() << __func__;
 }
 
 IMJingle::~IMJingle() {

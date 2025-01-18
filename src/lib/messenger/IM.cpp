@@ -44,7 +44,7 @@
 #include <rosteritemdata.h>
 #include <rostermanager.h>
 #include <vcardupdate.h>
-#include <QStringList>
+#include <QDebug>
 #include <range/v3/all.hpp>
 
 namespace lib::messenger {
@@ -57,63 +57,45 @@ namespace lib::messenger {
 gloox::ConferenceList mConferenceList;
 gloox::BookmarkList mBookmarkList;
 
-
 /**
  * 聊天通讯核心类
  * @param user
  * @param pwd
  * @param features_
  */
-IM::IM(QString host,
-       QString user,
-       QString pwd,
-       QStringList features_)  //
+IM::IM(std::string host,
+       std::string user,
+       std::string pwd,
+       std::vector<std::string>
+               features_)  //
         : features(std::move(features_))
         , _host(std::move(host))
         , _username(std::move(user))
         , _password(std::move(pwd)) {
-    qDebug() << __func__ << "Create instance...";
-    auto osInfo = ok::base::SystemInfo::instance()->osInfo();
-    discoVal = osInfo.prettyName;
-    // 生成本机resource. 格式:OkEDU.<HOST>.[VER].[UNIQUE]
-    _resource = QString("%1.%2.[%3].%4")  //
-                        .arg(APPLICATION_ALIAS)
-                        .arg(osInfo.hostName)
-                        .arg(GIT_DESCRIBE)
-                        .arg(osInfo.uniqueId.mid(0, 6));
-
-    qDebug() << "Generate self resource:" << _resource;
-
-    // qRegisterMetaType
-    qRegisterMetaType<IMContactId>("IMContactId");
-    qRegisterMetaType<IMFriend>("IMFriend");
-    qRegisterMetaType<IMPeerId>("IMPeerId");
-    qRegisterMetaType<IMMessage>("IMMessage");
-    qRegisterMetaType<IMGroup>("IMGroup");
-    qRegisterMetaType<IMGroupOccupant>("IMGroupOccupant");
-    qRegisterMetaType<IMVCard>("IMVCard");
-
-    qDebug() << "Create messenger instance is successfully";
-}
-
-IM::~IM() {
     qDebug() << __func__;
+    auto osInfo = ok::base::SystemInfo::instance()->osInfo();
+    discoVal = stdstring(osInfo.prettyName);
+    // 生成本机resource. 格式:OkEDU.<HOST>.[VER].[UNIQUE]
+    _resource = APPLICATION_ALIAS "." + stdstring(osInfo.hostName) + "." + GIT_DESCRIBE + "." +
+                stdstring(osInfo.uniqueId.mid(0, 6));  //
+    qDebug() << "resource:" << _resource.c_str();
 }
 
+IM::~IM() {}
 
 std::unique_ptr<gloox::Client> IM::makeClient() {
-    qDebug() << __func__;
-    loginJid = gloox::JID(QString("%1@%2/%3").arg(_username).arg(_host).arg(_resource).toStdString());
-    qDebug() << __func__ << "Using Jid:" << qstring(loginJid.full());
+    //    qDebug() << __func__;
+    loginJid = gloox::JID(_username + "@" + _host + "/" + _resource);
+    //    qDebug() << __func__ << "Using Jid:" << qstring(loginJid.full());
 
     /**
      * Client
      */
-    auto client = std::make_unique<gloox::Client>(loginJid, _password.toStdString());
+    auto client = std::make_unique<gloox::Client>(loginJid, _password);
     auto disco = client->disco();
 
-    disco->setVersion("disco", APPLICATION_VERSION, discoVal.toStdString());
-    disco->setIdentity("client", "pc", APPLICATION_RELEASE);
+    disco->setVersion("disco", GIT_DESCRIBE, discoVal);
+    disco->setIdentity("client", "pc", GIT_VERSION);
     disco->addIdentity("pubsub", "pep");
     disco->addFeature(gloox::XMLNS_PUBSUB);
     disco->addFeature(gloox::XMLNS_PUBSUB_EVENT);
@@ -159,8 +141,7 @@ std::unique_ptr<gloox::Client> IM::makeClient() {
     m_nativeBookmark->registerBookmarkHandler(this);
 
     for (const auto& feat : features) {
-        qDebug() << "addFeature:" << feat;
-        disco->addFeature(stdstring(feat));
+        disco->addFeature((feat));
     }
 
     /**
@@ -196,8 +177,7 @@ std::unique_ptr<gloox::Client> IM::makeClient() {
     disco->addFeature(gloox::XMLNS_NICKNAME);
     disco->addFeature(gloox::XMLNS_NICKNAME + "+notify");
 
-
-    //FILE
+    // FILE
     disco->addFeature(gloox::XMLNS_IBB);
     // jingle av
     disco->addFeature(gloox::XMLNS_JINGLE);
@@ -214,7 +194,7 @@ std::unique_ptr<gloox::Client> IM::makeClient() {
     disco->addFeature(gloox::XMLNS_JINGLE_APPS_RTP_SSMA);
     disco->addFeature(gloox::XMLNS_JINGLE_APPS_RTP_HDREXT);
     disco->addFeature(gloox::XMLNS_JINGLE_APPS_GROUP);
-        client->registerStanzaExtension(new gloox::Jingle::JingleMessage());
+    client->registerStanzaExtension(new gloox::Jingle::JingleMessage());
     // jingle file
 
     disco->addFeature(gloox::XMLNS_JINGLE_FILE_TRANSFER);
@@ -222,7 +202,6 @@ std::unique_ptr<gloox::Client> IM::makeClient() {
     disco->addFeature(gloox::XMLNS_JINGLE_FILE_TRANSFER5);
     disco->addFeature(gloox::XMLNS_JINGLE_FILE_TRANSFER_MULTI);
     disco->addFeature(gloox::XMLNS_JINGLE_IBB);
-
 
     client->setTls(gloox::TLSPolicy::TLSDisabled);
     client->setCompression(false);
@@ -266,19 +245,17 @@ void IM::start() {
         h->onConnecting();
     }
 
-    _client = makeClient();  
+    _client = makeClient();
     // block the current thread
     _client->connect(true);
 }
 
-bool IM::isStarted() const
-{
+bool IM::isStarted() const {
     return _client.get();
 }
 
 void IM::stop() {
-    qDebug() << __func__;
-    QMutexLocker locker(&mutex);
+    std::lock_guard<std::mutex> locker(mutex);
 
     doDisconnect();
 
@@ -294,25 +271,24 @@ void IM::onDisconnect(gloox::ConnectionError e) {
     for (auto h : imHandlers) {
         h->onDisconnected((int)e);
     }
-
 }
 
 void IM::onConnect() {
     qDebug() << __func__ << "connected";
-    if(isConnected){
+    if (isConnected) {
         return;
     }
 
     isConnected = true;
 
     auto res = _client->resource();
-    qDebug() << __func__ << "resource:" << (qstring(res));
+    qDebug() << __func__ << "resource:" << res.c_str();
 
     pubSubManager->subscribe(_client->jid(), gloox::XMLNS_NICKNAME, this);
     pubSubManager->subscribe(_client->jid(), gloox::XMLNS_AVATAR, this);
 
     requestVCards();
-     // emit selfIdChanged(qstring(_client->username()));
+    // emit selfIdChanged(qstring(_client->username()));
 
     //   enable carbons（多终端支持）
     gloox::IQ iq(gloox::IQ::IqType::Set, gloox::JID(), "server");
@@ -320,7 +296,7 @@ void IM::onConnect() {
     _client->send(iq);
 
     // request ext server disco
-    gloox::IQ iq2(gloox::IQ::Get, gloox::JID(_host.toStdString()));
+    gloox::IQ iq2(gloox::IQ::Get, gloox::JID(_host));
     auto t = iq2.tag();
     t->addChild(gloox::ExtDisco::newRequest());
     _client->send(t);
@@ -338,23 +314,22 @@ void IM::onConnect() {
     }
 }
 
-void IM::send(const QString& xml) {
-    if (xml.isEmpty()) {
+void IM::send(const std::string& xml) {
+    if (xml.empty()) {
         qWarning() << "send xml content is empty";
         return;
     }
-    _client->send(stdstring(xml));
+    _client->send(xml);
     _client.reset();
 }
 
 IMMessage IM::fromXMsg(MsgType type, const gloox::Message& msg) {
-    IMMessage imMsg = {.from = qstring(msg.from().full()),
-                       .to = qstring(msg.to().full()),
-                       .body = qstring(msg.body()),
-                       .timestamp = ok::base::Times::now()
-    };
+    IMMessage imMsg = {.from = (msg.from().full()),
+                       .to = (msg.to().full()),
+                       .body = (msg.body()),
+                       .timestamp = ok::base::Times::now().toSecsSinceEpoch()};
     if (!msg.id().empty()) {
-        imMsg.id = (qstring(msg.id()));
+        imMsg.id = ((msg.id()));
     }
     return imMsg;
 }
@@ -364,20 +339,19 @@ void IM::enableDiscoManager() {
     auto client = _client.get();
     auto disco = client->disco();
     for (const auto& feat : features) {
-        qDebug() << "addFeature:" << feat;
-        disco->addFeature(stdstring(feat));
+        disco->addFeature((feat));
     }
 
     /**
      * 头像相关
      */
-     client->registerStanzaExtension(new gloox::Avatar);
-     // urn:xmpp:avatar:data
-     disco->addFeature(gloox::XMLNS_AVATAR);
-     // urn:xmpp:avatar:metadata
-     disco->addFeature(gloox::XMLNS_META_AVATAR);
-     // urn:xmpp:avatar:metadata+notify
-     disco->addFeature(gloox::XMLNS_META_AVATAR + "+notify");
+    client->registerStanzaExtension(new gloox::Avatar);
+    // urn:xmpp:avatar:data
+    disco->addFeature(gloox::XMLNS_AVATAR);
+    // urn:xmpp:avatar:metadata
+    disco->addFeature(gloox::XMLNS_META_AVATAR);
+    // urn:xmpp:avatar:metadata+notify
+    disco->addFeature(gloox::XMLNS_META_AVATAR + "+notify");
 
     disco->addFeature(gloox::XMLNS_CHAT_STATES);
     disco->addFeature(gloox::XMLNS_MUC);
@@ -480,25 +454,22 @@ void IM::doDisconnect() {
     _client->disconnect();
 }
 
-QDomDocument IM::buildMessage(const QString& to,   //
-                              const QString& msg,  //
-                              const QString& id) {
-    gloox::Message m(gloox::Message::MessageType::Chat, gloox::JID(stdstring(to)), msg.toStdString());
+QDomDocument IM::buildMessage(const std::string& to,   //
+                              const std::string& msg,  //
+                              const std::string& id) {
+    gloox::Message m(gloox::Message::MessageType::Chat, gloox::JID(to), msg);
     m.setFrom(_client->jid());
-    m.setID(stdstring(id));
+    m.setID((id));
     m.addExtension(new gloox::Receipt(gloox::Receipt::Request));
-
     return ok::base::Xmls::parse(qstring(m.tag()->xml()));
 }
 
-bool IM::sendTo(const QString& friendId, const QString& msg, const QString& id) {
-    qDebug() << "sendTo:" << friendId;
-    qDebug() << "msgId:" << id << "msg:" << msg;
+bool IM::sendTo(const std::string& friendId, const std::string& msg, const std::string& id) {
+    qDebug() << __func__ << friendId.c_str() << "msgId:" << id.c_str() << "msg:" << msg.c_str();
 
-    gloox::Message m(gloox::Message::MessageType::Chat, gloox::JID(stdstring(friendId)),
-                     msg.toStdString());
+    gloox::Message m(gloox::Message::MessageType::Chat, gloox::JID(friendId), msg);
     m.setFrom(_client->jid());
-    m.setID(stdstring(id));
+    m.setID(id);
     m.addExtension(new gloox::Receipt(gloox::Receipt::Request));
 
     _client->send(m);
@@ -509,36 +480,38 @@ bool IM::sendTo(const QString& friendId, const QString& msg, const QString& id) 
 void IM::handleMessageSession(gloox::MessageSession* session) {
     auto from = session->target();
     auto sid = (session->threadID());
-    qDebug() << __func__ << "from" << qstring(from.full()) << "sid:" << qstring(sid);
+    qDebug() << __func__ << "from:" << from.full().c_str() << "sid:" << sid.c_str();
 
     // 联系人ID（朋友和群聊）
     auto iterator = fromHostHandlers.find(from.server());
     if (iterator != fromHostHandlers.end()) {
-        iterator.value()->handleHostMessageSession(from, sid);
+        iterator->second->handleHostMessageSession(from, sid);
         return;
     }
 
-    auto contactId = qstring(session->target().bare());
+    auto contactId = (session->target().bare());
     for (auto handler : friendHandlers) {
-        handler->onMessageReceipt(contactId, qstring(sid));
+        handler->onMessageReceipt(contactId, (sid));
     }
 
     // 聊天状态过滤器，获取：正在中等输入状态
-    auto csf = m_chatStateFilters.value(contactId);
-    if (!csf) {
+    auto it = m_chatStateFilters.find(contactId);
+
+    if (it != m_chatStateFilters.end()) {
+        auto csf = it->second;
         csf = new gloox::ChatStateFilter(session);
         csf->registerChatStateHandler(this);
-        m_chatStateFilters.insert(contactId, csf);
+        m_chatStateFilters.insert(std::make_pair(contactId, csf));
     }
 }
 
 void IM::handleMessage(const gloox::Message& msg, gloox::MessageSession* session) {
     auto from = msg.from();
-    auto peerId = qstring(from.full());
-    auto friendId = qstring(from.bare());
-    auto body = qstring(msg.body());
+    auto peerId = from.full();
+    auto friendId = from.bare();
+    auto body = msg.body();
 
-    qDebug() << __func__ << "from:" << peerId << "subtype:" << (int)msg.subtype();
+    qDebug() << __func__ << "from:" << peerId.c_str() << "subtype:" << (int)msg.subtype();
 
     gloox::Message::MessageType msgType = msg.subtype();
     switch (msgType) {
@@ -566,8 +539,6 @@ void IM::handleMessage(const gloox::Message& msg, gloox::MessageSession* session
 
     auto conf = msg.findExtension<gloox::Conference>(gloox::ExtConference);
     if (conf) {
-        auto jid = conf->jid();
-        qDebug() << "Received Room" << qstring(jid.full());
         requestBookmarks();
     }
 
@@ -579,38 +550,41 @@ void IM::handleMessage(const gloox::Message& msg, gloox::MessageSession* session
     auto pEvent = msg.findExtension<gloox::PubSub::Event>(gloox::ExtPubSubEvent);
     if (pEvent) {
         doPubSubEvent(pEvent, msg, friendId);
-        emit doPubSubEventDone();
+        //        emit doPubSubEventDone();
     }
 
     auto delay = msg.when();
     if (delay) {
-        qDebug() << "delay:" << qstring(delay->stamp());
+        qDebug() << "delay:" << delay->stamp().c_str();
     }
 
     auto address = msg.address();
     if (address) {
         for (const auto& item : address->addresses()) {
-            qDebug() << "address type:" << qstring(item.type) << "jid:" << qstring(item.jid.full());
+            qDebug() << "address type:" << (item.type.c_str())
+                     << "jid:" << (item.jid.full().c_str());
         }
     }
 
     auto iterator = fromHostHandlers.find(from.server());
     if (iterator != fromHostHandlers.end()) {
-        iterator.value()->handleHostMessage(from, msg);
+        iterator->second->handleHostMessage(from, msg);
         return;
     }
 
-    auto xml = qstring(msg.tag()->xml());
-    emit incoming(xml);
+    // TODO 暂时注释
+    //     auto xml = qstring(msg.tag()->xml());
+    //     emit incoming(xml);
 }
 
-void IM::doMessageHeadline(const gloox::Message& msg, QString& friendId, const QString& body) {
+void IM::doMessageHeadline(const gloox::Message& msg, std::string& friendId,
+                           const std::string& body) {
     auto mu = msg.findExtension<gloox::MUCRoom::MUCUser>(gloox::ExtMUCUser);
     if (mu) {
         // 群聊邀请
         if (gloox::MUCRoom::OpInviteFrom == mu->operation()) {
             for (auto handler : groupHandlers) {
-                handler->onGroupInvite(qstring(gloox::JID(*mu->jid()).username()), friendId, body);
+                handler->onGroupInvite(gloox::JID(*mu->jid()).username(), friendId, body);
             }
         }
     }
@@ -620,37 +594,37 @@ void IM::doMessageHeadline(const gloox::Message& msg, QString& friendId, const Q
  * 处理聊天消息
  *
  */
-void IM::doMessageChat(const gloox::Message& msg, QString& friendId, const QString& body) {
-    qDebug() << __func__ << "from:" << friendId << body;
-    if (!body.isEmpty()) {
+void IM::doMessageChat(const gloox::Message& msg, std::string& friendId, const std::string& body) {
+    qDebug() << __func__ << "from:" << friendId.c_str() << body.c_str();
+    if (!body.empty()) {
         if (!msg.encrypted()) {
             for (auto handler : friendHandlers) {
                 handler->onFriendMessage(friendId, fromXMsg(MsgType::Chat, msg));
             }
         } else {
-            QString xml = qstring(msg.tag()->xml());
-            qDebug() << "Is encrypted message:" << xml;
-            emit exportEncryptedMessage(xml);
+            qDebug() << "Is encrypted message:" << msg.tag()->xml().c_str();
+            //            emit exportEncryptedMessage(xml);
         }
     }
     // 从 message.receipt 提取接收确认ID
     auto pReceipt = msg.findExtension<gloox::Receipt>(gloox::ExtReceipt);
     if (pReceipt && !pReceipt->id().empty()) {
-        emit receiveMessageReceipt(friendId, qstring(pReceipt->id()));
+        for (auto handler : friendHandlers) {
+            handler->onFriendMessageReceipt(friendId, pReceipt->id());
+        }
     }
 
     // forwarded/message
     auto pCarbons = msg.findExtension<gloox::Carbons>(gloox::ExtCarbons);
     if (pCarbons && pCarbons->embeddedStanza()) {
-        qDebug() << "Parse carbon message";
-        gloox::Message* eMsg = static_cast<gloox::Message*>(pCarbons->embeddedStanza());
+        auto* eMsg = static_cast<gloox::Message*>(pCarbons->embeddedStanza());
         if (eMsg) {
             auto ebody = eMsg->body();
             if (!ebody.empty()) {
-                auto msg = fromXMsg(MsgType::Chat, *eMsg);
-                msg.to = qstring(eMsg->to().full());
+                auto imMessage = fromXMsg(MsgType::Chat, *eMsg);
+                imMessage.to = eMsg->to().full();
                 for (auto handler : friendHandlers) {
-                    handler->onFriendMessage(msg.to, msg);
+                    handler->onFriendMessage(imMessage.to, imMessage);
                 }
             }
         }
@@ -662,33 +636,31 @@ void IM::doMessageChat(const gloox::Message& msg, QString& friendId, const QStri
  * @param msg
  * @param friendId
  */
-void IM::doMessageNormal(const gloox::Message& msg, QString& friendId) {
+void IM::doMessageNormal(const gloox::Message& msg, std::string& friendId) {
     auto conf = msg.findExtension<gloox::Conference>(gloox::ExtConference);
     if (conf) {
         auto jid = conf->jid().full();
-        qDebug() << "New conference is arrival" << qstring(jid);
         cacheJoinRoom(jid);
     }
 }
 
 void IM::handleMessageEvent(const gloox::JID& from, const gloox::MessageEvent* et) {
-    qDebug() << __func__ << "from:" << qstring(from.full()) << "MessageEvent:" << et;
+    qDebug() << __func__ << "from:" << from.full().c_str() << "MessageEvent:" << et;
 }
 
 void IM::doPubSubEvent(const gloox::PubSub::Event* pse,  //
-                       const gloox::Message& msg,               //
-                       QString& friendId) {              //
-    qDebug() << __func__ << friendId;
+                       const gloox::Message& msg,        //
+                       std::string& friendId) {          //
+    qDebug() << __func__ << friendId.c_str();
 
-    const QString& selfId = getSelfId().toString();
+    const std::string& selfId = getSelfId().toString();
     auto isSelf = friendId == selfId;
 
     for (auto& item : pse->items()) {
         auto nickTag = item->payload->findChild("nick");
         if (nickTag) {
             gloox::Nickname nickname(nickTag);
-            auto newNick = qstring(nickname.nick());
-            qDebug() << "nick:" << newNick;
+            auto newNick = nickname.nick();
             if (isSelf) {
                 if (_nick != newNick) {
                     _nick = newNick;
@@ -712,12 +684,12 @@ void IM::doPubSubEvent(const gloox::PubSub::Event* pse,  //
 
                 auto avt = gloox::Base64::decode64(base64);
                 if (isSelf) {
-                    qDebug() << "Receive self avatar size" << avt.size(); 
+                    qDebug() << "Receive self avatar size" << avt.size();
                     for (auto handler : selfHandlers) {
                         handler->onSelfAvatarChanged(avt);
                     }
                 } else {
-                    qDebug() << "Receive friend avatar" << friendId << "size" << avt.size();
+                    qDebug() << "Receive friend avatar" << friendId.c_str() << "size" << avt.size();
                     for (auto handler : friendHandlers) {
                         handler->onFriendAvatarChanged(friendId, avt);
                     }
@@ -725,12 +697,11 @@ void IM::doPubSubEvent(const gloox::PubSub::Event* pse,  //
             }
         }
 
-        auto avatarMetaData = item->payload->findChild("metadata",  //
-                                                       gloox::XMLNS,       //
+        auto avatarMetaData = item->payload->findChild("metadata",    //
+                                                       gloox::XMLNS,  //
                                                        gloox::XMLNS_META_AVATAR);
         if (avatarMetaData) {
             auto itemId = avatarMetaData->findChild("info")->findAttribute("id");
-            qDebug() << "avatarId" << qstring(itemId);
             gloox::PubSub::ItemList items;
             auto item0 = new gloox::PubSub::Item();
             item0->setID(itemId);
@@ -787,10 +758,9 @@ void IM::doPubSubEvent(const gloox::PubSub::Event* pse,  //
  * @param state
  */
 void IM::handleChatState(const gloox::JID& from, gloox::ChatStateType state) {
-    qDebug() << "from:" << qstring(from.full()) << "state:" << static_cast<int>(state);
-    auto friendId = qstring(from.bare());
+    qDebug() << __func__ << qstring(from.full()) << "state:" << static_cast<int>(state);
     for (auto handler : friendHandlers) {
-        handler->onFriendChatState(friendId, state);
+        handler->onFriendChatState(from.full(), state);
     }
 }
 
@@ -799,8 +769,8 @@ void IM::handleChatState(const gloox::JID& from, gloox::ChatStateType state) {
  * @param to
  * @param state 聊天状态
  */
-void IM::sendChatState(const QString& to, gloox::ChatStateType state) {
-    qDebug() << "sendChatState" << "to:" << to << "state:" << (static_cast<int>(state));
+void IM::sendChatState(const std::string& to, gloox::ChatStateType state) {
+    qDebug() << __func__ << "to:" << to.c_str() << "state:" << (static_cast<int>(state));
     auto csf = m_chatStateFilters[to];
     if (!csf) {
         qWarning() << "Chat state filter is no existing!";
@@ -810,17 +780,17 @@ void IM::sendChatState(const QString& to, gloox::ChatStateType state) {
 }
 
 // MUC handler -- handleMUCParticipantPresence
-void IM::handleMUCParticipantPresence(gloox::MUCRoom* room,                  //
+void IM::handleMUCParticipantPresence(gloox::MUCRoom* room,                         //
                                       const gloox::MUCRoomParticipant participant,  //
                                       const gloox::Presence& presence) {
-    auto groupId = qstring(room->jid().full());
-    auto nick = qstring(participant.nick->resource());
+    qDebug() << __func__;
 
-    qDebug() << __func__ << groupId;
+    auto groupId = room->jid().full();
+    auto nick = participant.nick->resource();
     auto tag = presence.tag();
 
     auto nickTag = tag->findChild("nick");
-    if (nickTag) nick = qstring(nickTag->cdata());
+    if (nickTag) nick = (nickTag->cdata());
 
     auto x = tag->findChild("x", gloox::XMLNS, gloox::XMLNS_MUC_USER);
     if (x) {
@@ -828,12 +798,9 @@ void IM::handleMUCParticipantPresence(gloox::MUCRoom* room,                  //
 
         auto item = x->findChild("item");
         if (item) {
-            auto affiliation = qstring(item->findAttribute("affiliation"));
-            auto role = qstring(item->findAttribute("role"));
-            auto jid = item->findAttribute("jid");
-            occ.jid = qstring(jid);
-            occ.affiliation = affiliation;
-            occ.role = role;
+            occ.jid = item->findAttribute("jid");
+            occ.affiliation = item->findAttribute("affiliation");
+            occ.role = item->findAttribute("role");
             occ.status = presence.presence();
         }
 
@@ -848,19 +815,13 @@ void IM::handleMUCParticipantPresence(gloox::MUCRoom* room,                  //
 }
 
 void IM::handleMUCMessage(gloox::MUCRoom* room, const gloox::Message& msg, bool priv) {
-    auto msgId = qstring(msg.id());
-    qDebug() << "msgId:" << (msgId);
+    auto msgId = msg.id();
+    auto roomId = room->jid().full();
+    auto from = msg.from().full();
+    auto body = msg.body();
+    qDebug() << __func__ << "roomId:" << roomId.c_str() << "msg:" << body.c_str();
 
-    auto roomId = qstring(room->jid().full());
-    qDebug() << "roomId:" << roomId;
-
-    auto from = qstring(msg.from().full());
-    qDebug() << "from:" << from;
-
-    auto body = qstring(msg.body());
-    qDebug() << "body:" << body;
-
-    IMPeerId peerId(msg.from());
+    IMPeerId peerId(from);
     for (const auto& id : sendIds) {
         if (id == msg.id()) {
             qWarning() << "Ignore messages from oneself";
@@ -891,16 +852,15 @@ void IM::handleMUCMessage(gloox::MUCRoom* room, const gloox::Message& msg, bool 
          * </message>
          */
         if (gloox::MUCRoom::OpInviteFrom == mu->operation()) {
-            for(auto h : groupHandlers){
-                h->onGroupInvite(qstring(gloox::JID(*mu->jid()).bare()), roomId, qstring(msg.body()));
+            for (auto h : groupHandlers) {
+                h->onGroupInvite((gloox::JID(*mu->jid()).bare()), roomId, (msg.body()));
             }
-
         }
 
         return;
     }
 
-    if (body.isEmpty()) {
+    if (body.empty()) {
         return;
     }
 
@@ -908,7 +868,8 @@ void IM::handleMUCMessage(gloox::MUCRoom* room, const gloox::Message& msg, bool 
     const gloox::DelayedDelivery* dd = msg.when();
     if (dd) {
         // yyyy-MM-dd HH:mm:ss 20230614T12:11:43Z
-        imMsg.timestamp = QDateTime::fromString(qstring(dd->stamp()), "yyyy-MM-ddTHH:mm:ssZ");
+        imMsg.timestamp = QDateTime::fromString(qstring(dd->stamp()), "yyyy-MM-ddTHH:mm:ssZ")
+                                  .toSecsSinceEpoch();
     }
 
     auto addresses = msg.address();
@@ -916,7 +877,7 @@ void IM::handleMUCMessage(gloox::MUCRoom* room, const gloox::Message& msg, bool 
         for (auto& item : addresses->addresses()) {
             // 群消息来源辨别多终端
             if (item.type == "ofrom") {
-                imMsg.from = qstring(item.jid.full());
+                imMsg.from = item.jid.full();
             }
         }
     }
@@ -932,12 +893,12 @@ bool IM::handleMUCRoomCreation(gloox::MUCRoom* room) {
     room->requestRoomConfig();
 
     // 添加到缓存
-    auto roomId = qstring(room->jid().bare());
-    m_roomMap.insert(roomId, IMRoomInfo{room, {}});
+    auto roomId = (room->jid().bare());
+    m_roomMap.insert(std::make_pair(roomId, new IMRoomInfo(room, {})));
 
     // 群聊增加
     for (auto handler : groupHandlers) {
-        handler->onGroup(roomId, qstring(room->name()));
+        handler->onGroup(roomId, (room->name()));
     }
 
     joinRoom(roomId);
@@ -946,36 +907,34 @@ bool IM::handleMUCRoomCreation(gloox::MUCRoom* room) {
     return true;
 }
 
-void IM::handleMUCSubject(gloox::MUCRoom* room,            //
+void IM::handleMUCSubject(gloox::MUCRoom* room,     //
                           const std::string& nick,  //
                           const std::string& subject) {
-    qDebug() << __func__ << room->name().c_str() << "subject" << qstring(subject);
+    qDebug() << __func__ << room->name().c_str() << "subject" << subject.c_str();
     for (auto handler : groupHandlers) {
-        handler->onGroupSubjectChanged(qstring(room->jid().bare()), qstring(subject));
+        handler->onGroupSubjectChanged((room->jid().bare()), subject);
     }
 
     // 可能存在其它更新，执行信息拉取
     room->getRoomInfo();
 }
 
-void IM::handleMUCInviteDecline(gloox::MUCRoom* room, const gloox::JID& invitee, const std::string& reason) {
-    qDebug() << QString("MUCRoom:%1").arg(qstring(room->name()));
-    qDebug() << QString("invitee:%1 reason:%2").arg(qstring(invitee.full())).arg(qstring(reason));
-}
+void IM::handleMUCInviteDecline(gloox::MUCRoom* room, const gloox::JID& invitee,
+                                const std::string& reason) {}
 
 void IM::handleMUCError(gloox::MUCRoom* room, gloox::StanzaError error) {
-    qDebug() << __func__ << "MUCRoom:" << qstring(room->name()) << error;
+    qWarning() << __func__ << "MUCRoom:" << qstring(room->name()) << error;
 }
 
 void IM::handleMUCInfo(gloox::MUCRoom* room,               //
-                       int features,                //
-                       const std::string& name,     //
+                       int features,                       //
+                       const std::string& name,            //
                        const gloox::DataForm* infoForm) {  //
 
-    auto roomId = qstring(room->jid().full());
-    auto roomName = qstring(name);
+    auto roomId = room->jid().full();
+    auto roomName = name;
 
-    qDebug() << __func__ << roomId << roomName;
+    qDebug() << __func__ << roomId.c_str() << roomName.c_str();
 
     IMGroup groupInfo;
     groupInfo.name = roomName;
@@ -984,18 +943,18 @@ void IM::handleMUCInfo(gloox::MUCRoom* room,               //
         auto info = const_cast<IMRoomInfo*>(findRoom(roomId));
 
         for (auto field : infoForm->fields()) {
-            qDebug() << "field name:" << qstring(field->name()) << qstring(field->value());
+            qDebug() << "field name:" << field->name().c_str() << field->value().c_str();
 
             if (field->name() == "muc#roominfo_occupants") {
                 groupInfo.occupants = std::stoi(field->value());
             } else if (field->name() == "muc#roominfo_roomname" && !field->value().empty()) {
-                groupInfo.name = qstring(field->value());
+                groupInfo.name = (field->value());
             } else if (field->name() == "muc#roominfo_subject") {
-                groupInfo.subject = qstring(field->value());
+                groupInfo.subject = (field->value());
             } else if (field->name() == "muc#roominfo_description") {
-                groupInfo.description = qstring(field->value());
+                groupInfo.description = (field->value());
             } else if (field->name() == "muc#roominfo_creationdate") {
-                groupInfo.creationdate = qstring(field->value());
+                groupInfo.creationdate = (field->value());
             }
         }
         info->info = groupInfo;
@@ -1006,26 +965,23 @@ void IM::handleMUCInfo(gloox::MUCRoom* room,               //
     }
 }
 
-void IM::handleMUCItems(gloox::MUCRoom* room, const gloox::Disco::ItemList& items) {
-    qDebug() << QString("MUCRoom:%1").arg(qstring(room->name()));
-    qDebug() << QString("items:%1").arg(items.size());
-}
+void IM::handleMUCItems(gloox::MUCRoom* room, const gloox::Disco::ItemList& items) {}
 
 // config
 void IM::handleMUCConfigList(gloox::MUCRoom* room,                 //
                              const gloox::MUCListItemList& items,  //
                              gloox::MUCOperation operation) {
-    qDebug() << QString("IM::handleMUCConfigList");
+    qDebug() << __func__;
 }
 
 void IM::handleMUCConfigForm(gloox::MUCRoom* room, const gloox::DataForm& form) {
     qDebug() << __func__ << "room:" << room->jid().full().c_str();
 
-    auto roomId = qstring(room->jid().bare());
+    auto roomId = (room->jid().bare());
 
     auto find = m_roomMap.find(roomId);
     if (find == m_roomMap.end()) {
-        qWarning() << "Unable to find room from cache:" << roomId;
+        qWarning() << "Unable to find room from cache:" << roomId.c_str();
         return;
     }
 
@@ -1033,9 +989,9 @@ void IM::handleMUCConfigForm(gloox::MUCRoom* room, const gloox::DataForm& form) 
      * 将缓存的房间配置放入`DataForm`
      */
     int changed = 0;
-    auto& roomInfo = find.value();
+    auto& roomInfo = find->second;
     for (auto item : form.fields()) {
-        for (const auto& change : roomInfo.changes) {
+        for (const auto& change : roomInfo->changes) {
             if (item->name() == change.first) {
                 item->setValue(change.second);
                 changed += 1;
@@ -1046,8 +1002,7 @@ void IM::handleMUCConfigForm(gloox::MUCRoom* room, const gloox::DataForm& form) 
 
     if (changed) {
         // 清空修改信息
-        roomInfo.changes.clear();
-
+        roomInfo->changes.clear();
         auto* mform = new gloox::DataForm(form);
         mform->setType(gloox::FormType::TypeSubmit);
         room->setRoomConfig(mform);
@@ -1056,12 +1011,12 @@ void IM::handleMUCConfigForm(gloox::MUCRoom* room, const gloox::DataForm& form) 
 };
 
 void IM::handleMUCConfigResult(gloox::MUCRoom* room, bool success, gloox::MUCOperation operation) {
-    qDebug() << __func__ << "room" << qstring(room->jid().full()) << "operation:" << operation
+    qDebug() << __func__ << "room" << room->jid().full().c_str() << "operation:" << operation
              << "success:" << success;
 };
 
 void IM::handleMUCRequest(gloox::MUCRoom* room, const gloox::DataForm& form) {
-    qDebug() << __func__ << "room" << qstring(room->jid().full());
+    qDebug() << __func__ << "room" << room->jid().full().c_str();
     for (const auto& item : form.items()) {
         qDebug() << "item" << item;
         for (const auto& item_j : item->fields()) {
@@ -1074,7 +1029,7 @@ void IM::handleMUCRequest(gloox::MUCRoom* room, const gloox::DataForm& form) {
  * 初始化房间并加入
  */
 void IM::createRoom(const gloox::JID& jid, const std::string& password) {
-    qDebug() << __func__ << "jid:" << qstring(jid.full());
+    qDebug() << __func__ << "jid:" << jid.full().c_str();
 
     auto room = new gloox::MUCRoom(_client.get(), jid, this, this);
     if (!password.empty()) {
@@ -1084,13 +1039,13 @@ void IM::createRoom(const gloox::JID& jid, const std::string& password) {
     room->instantRoom(gloox::MUCOperation::CreateInstantRoom);
     cacheJoinRoom(jid.bare(), jid.resource());
 
-    setRoomName(qstring(jid.bare()), jid.resource());
+    setRoomName((jid.bare()), jid.resource());
 
     gloox::ConferenceListItem item;
     item.name = jid.resource();
     item.jid = room->jid().full();
     item.autojoin = true;
-    item.nick = stdstring(getNickname());
+    item.nick = (getNickname());
 
     // 添加到书签列表
     mConferenceList.emplace_back(item);
@@ -1106,7 +1061,7 @@ void IM::createRoom(const gloox::JID& jid, const std::string& password) {
  * @param peerId
  */
 bool IM::inviteToRoom(const gloox::JID& roomJid, const gloox::JID& peerId) {
-    auto roomInfo = findRoom(qstring(roomJid.bare()));
+    auto roomInfo = findRoom(roomJid.bare());
     if (!roomInfo) {
         return false;
     }
@@ -1115,72 +1070,63 @@ bool IM::inviteToRoom(const gloox::JID& roomJid, const gloox::JID& peerId) {
     return true;
 }
 
-const IMRoomInfo* IM::findRoom(const QString& groupId) const {
+const IMRoomInfo* IM::findRoom(const std::string& groupId) const {
     auto it = m_roomMap.find(groupId);
     if (it == m_roomMap.end()) {
-        qWarning() << "Unable find room" << groupId;
-        return nullptr;
+        qWarning() << "Unable to find room!";
+        return {};
     }
-    return &(it.value());
+    return it->second;
 }
 
 void IM::joinRoom(gloox::MUCRoom* room) {
-    room->setNick(stdstring(getNickname()));
+    room->setNick((getNickname()));
     room->join();
     room->getRoomInfo();
-    _client->disco()->getDiscoItems(room->jid(),gloox::XMLNS_BOOKMARKS, this, DISCO_CTX_BOOKMARKS);
+    _client->disco()->getDiscoItems(room->jid(), gloox::XMLNS_BOOKMARKS, this, DISCO_CTX_BOOKMARKS);
 }
 
 void IM::cacheJoinRoom(const std::string& jid, const std::string& name) {
-    qDebug() << __func__ << qstring(jid) << qstring(name);
+    qDebug() << __func__ << jid.c_str() << name.c_str();
 
     gloox::JID roomJid(jid);
-    auto roomId = qstring(roomJid.bare());
+    auto roomId = (roomJid.bare());
     auto room = new gloox::MUCRoom(_client.get(), roomJid, this, this);
-    m_roomMap.insert(roomId, IMRoomInfo{room, {}});
+    m_roomMap.insert(std::make_pair(roomId, new IMRoomInfo(room, {})));
 
-    qDebug() << "emit room:" << roomId;
     for (auto handler : groupHandlers) {
-        handler->onGroup(roomId, name.empty() ? qstring(roomJid.username()) : qstring(name));
+        handler->onGroup(roomId, name.empty() ? (roomJid.username()) : (name));
     }
 
     // 查询成员列表
     // XMLNS_DISCO_ITEMS
-    getClient()->disco()->getDiscoItems(jid, gloox::XMLNS_DISCO_ITEMS, this, DISCO_CTX_CONF_MEMBERS);
+    getClient()->disco()->getDiscoItems(jid, gloox::XMLNS_DISCO_ITEMS, this,
+                                        DISCO_CTX_CONF_MEMBERS);
 
     joinRoom(room);
 }
 
-void IM::joinRoom(const QString& roomJid) {
-    qDebug() << "joinRoom" << roomJid;
-    qDebug() << "nick" << getNickname();
+void IM::joinRoom(const std::string& roomJid) {
+    qDebug() << __func__ << roomJid.c_str();
 
     auto it = m_roomMap.find(roomJid);
     if (it == m_roomMap.end()) {
-        qWarning() << "Unable find room from cache" << roomJid;
+        qWarning() << "Unable find room from cache" << roomJid.c_str();
         return;
     }
 
-    joinRoom(it.value().room);
+    joinRoom(it->second->room);
 }
 
-void IM::joinRooms() {
-    qDebug() << "joinRooms";
-    for (const auto& item : m_roomMap) {
-        joinRoom(item.room);
-    }
-}
+bool IM::sendToRoom(const std::string& to, const std::string& msg, const std::string& id) {
+    qDebug() << __func__ << "content:" << msg.c_str() << " => " << to.c_str();
 
-bool IM::sendToRoom(const QString& to, const QString& msg, const QString& id) {
-    qDebug() << __func__ << "=>" << to;
-    qDebug() << "msgId:" << id << "content:" << msg;
-
-    if (msg.isEmpty()) {
+    if (msg.empty()) {
         qWarning() << "empty message!";
         return false;
     }
 
-    if (id.isEmpty()) {
+    if (id.empty()) {
         qWarning() << "id is empty!";
         return false;
     }
@@ -1191,23 +1137,23 @@ bool IM::sendToRoom(const QString& to, const QString& msg, const QString& id) {
         return false;
     }
 
-    auto msgId = stdstring(id);
+    auto msgId = (id);
     sendIds.insert(msgId);
-    return pRoomInfo->room->send(msg.toStdString(), msgId);
+    return pRoomInfo->room->send(msg, msgId);
 }
 
-void IM::setRoomSubject(const QString& groupId, const std::string& subject) {
+void IM::setRoomSubject(const std::string& groupId, const std::string& subject) {
     auto room = findRoom(groupId);
     if (room) {
         room->room->setSubject(subject);
     }
 }
 
-void IM::setRoomName(const QString& groupId, const std::string& roomName) {
-    qDebug() << __func__ << groupId << roomName.c_str();
+void IM::setRoomName(const std::string& groupId, const std::string& roomName) {
+    qDebug() << __func__ << groupId.c_str() << roomName.c_str();
     const IMRoomInfo* pRoomInfo = findRoom(groupId);
     if (!pRoomInfo) {
-        qDebug() << "room is not exist." << groupId;
+        qDebug() << "room is not exist." << groupId.c_str();
         return;
     }
 
@@ -1217,12 +1163,12 @@ void IM::setRoomName(const QString& groupId, const std::string& roomName) {
     info->room->requestRoomConfig();
 }
 
-void IM::setRoomAlias(const QString& groupId, const std::string& alias) {
-    qDebug() << __func__ << groupId << alias.c_str();
+void IM::setRoomAlias(const std::string& groupId, const std::string& alias) {
+    qDebug() << __func__ << groupId.c_str() << alias.c_str();
     // 修改书签列表
     bool update = false;
     for (auto& item : mConferenceList) {
-        if (item.jid == groupId.toStdString()) {
+        if (item.jid == groupId) {
             item.name = alias;
             update = true;
             break;
@@ -1230,16 +1176,15 @@ void IM::setRoomAlias(const QString& groupId, const std::string& alias) {
     }
     // 存储书签列表
     if (update) {
+        qDebug() << "Store the bookmarks:" << groupId.c_str();
         bookmarkStorage->storeBookmarks(mBookmarkList, mConferenceList);
-        qDebug() << "Store the bookmarks:" << groupId;
     }
 }
 
-void IM::setRoomDesc(const QString& groupId, const std::string& desc) {
-    qDebug() << __func__ << groupId << desc.c_str();
+void IM::setRoomDesc(const std::string& groupId, const std::string& desc) {
+    qDebug() << __func__ << groupId.c_str() << desc.c_str();
     const IMRoomInfo* pRoomInfo = findRoom(groupId);
     if (!pRoomInfo) {
-        qDebug() << "room is not exist." << groupId;
         return;
     }
 
@@ -1251,9 +1196,9 @@ void IM::setRoomDesc(const QString& groupId, const std::string& desc) {
 
 #ifdef WANT_PING
 void IM::handlePing(const gloox::PingHandler::PingType type, const std::string& body) {
-    qDebug() << "ping" << type << qstring(body);
+    qDebug() << __func__ << (int)type << qstring(body);
     if (type != websocketPong) {
-        gloox::IQ iq(gloox::IQ::IqType::Result, gloox::JID(_host.toStdString()));
+        gloox::IQ iq(gloox::IQ::IqType::Result, gloox::JID(_host));
         _client->send(iq);
     }
 }
@@ -1268,17 +1213,17 @@ void IM::handleVCard(const gloox::JID& jid, const gloox::VCard* vcard) {
     qDebug() << __func__ << "jid:" << qstring(jid.full());
 
     IMVCard imvCard = {
-            .fullName = qstring(vcard->formattedname()),  // vCard:FN
-            .nickname = qstring(vcard->nickname()),
-            .title = qstring(vcard->title()),
+            .fullName = vcard->formattedname(),  // vCard:FN
+            .nickname = vcard->nickname(),
+            .title = vcard->title(),
     };
 
     for (const auto& item : vcard->addresses()) {
         if (item.work) {
-            IMVCard::Adr adr = {.street = qstring(item.street),
-                                .locality = qstring(item.locality),
-                                .region = qstring(item.region),
-                                .country = qstring(item.ctry)};
+            IMVCard::Adr adr = {.street = (item.street),
+                                .locality = (item.locality),
+                                .region = (item.region),
+                                .country = (item.ctry)};
             imvCard.adrs.push_back(adr);
             break;
         }
@@ -1287,7 +1232,7 @@ void IM::handleVCard(const gloox::JID& jid, const gloox::VCard* vcard) {
     auto& emails = vcard->emailAddresses();
     for (auto& item : emails) {
         if (!item.userid.empty()) {
-            IMVCard::Email email = {.type = 0, .number = qstring(item.userid)};
+            IMVCard::Email email = {.type = 0, .number = (item.userid)};
             email.type = 1;
             imvCard.emails.push_back(email);
             break;
@@ -1296,16 +1241,16 @@ void IM::handleVCard(const gloox::JID& jid, const gloox::VCard* vcard) {
 
     for (auto& item : vcard->telephone()) {
         if (!item.number.empty() && item.work) {
-            IMVCard::Tel tel = {.type = 0, .mobile = item.cell, .number = qstring(item.number)};
+            IMVCard::Tel tel = {.type = 0, .mobile = item.cell, .number = (item.number)};
             imvCard.tels.push_back(tel);
         };
     }
 
     auto& photo = vcard->photo();
     if (!photo.binval.empty() || !photo.extval.empty()) {
-        imvCard.photo = {.type = qstring(photo.type),  //
-                         .bin = photo.binval,          //
-                         .url = qstring(photo.extval)};
+        imvCard.photo = {.type = (photo.type),  //
+                         .bin = photo.binval,   //
+                         .url = (photo.extval)};
     }
 
     if (jid.bare() == getClient()->jid().bare()) {
@@ -1320,16 +1265,16 @@ void IM::handleVCard(const gloox::JID& jid, const gloox::VCard* vcard) {
 }
 
 void IM::handleVCardResult(VCardContext context, const gloox::JID& jid, gloox::StanzaError error) {
-    qDebug() << QString("context:%1 jid:%2").arg(context).arg(qstring(jid.full()));
+    qDebug() << __func__;
     if (error) {
         return;
     }
 }
 
-void IM::fetchFriendVCard(const QString& friendId) {
+void IM::fetchFriendVCard(const std::string& friendId) {
     // 获取联系人个人信息
-    qDebug() << __func__ << friendId;
-    gloox::JID jid(stdstring(friendId));
+    qDebug() << __func__ << friendId.c_str();
+    gloox::JID jid(friendId);
     vCardManager->fetchVCard(jid, this);
     //  pubSubManager->subscribe(jid, "", this);
     //  _client->rosterManager()->subscribe(jid.bareJID());
@@ -1341,11 +1286,11 @@ void IM::requestVCards() {
 }
 
 void IM::handleTag(gloox::Tag* tag) {
-    qDebug() << __func__ << qstring(tag->name());
+    qDebug() << __func__ << tag->name().c_str();
 }
 
 bool IM::handleIq(const gloox::IQ& iq) {
-    qDebug() << __func__ << qstring(iq.id());
+    qDebug() << __func__ << iq.id().c_str();
     const auto* ext = iq.findExtension<gloox::ExtDisco>(gloox::ExtSrvDisco);
     if (ext) {
         std::vector<gloox::ExtDisco::Service> ss;
@@ -1359,14 +1304,11 @@ bool IM::handleIq(const gloox::IQ& iq) {
                             //        +"?transport=" + item.transport;
                             ice.username = item.username;
                             ice.password = item.password;
-                            qDebug() << "Add ice:" << ice.uri.c_str()
-                                     << "user:" << qstring(ice.username)
-                                     << "password:" << qstring(ice.password);
                             return ice;
                         }) |
                         ranges::to_vector;
     }
-    emit incoming(qstring(iq.tag()->xml()));
+    //    emit incoming(qstring(iq.tag()->xml()));
     return true;
 }
 
@@ -1397,22 +1339,20 @@ void IM::handleBookmarks(const gloox::BookmarkList& bList,    //
 
     for (auto& c : cList) {
         auto name = (!c.name.empty() ? c.name : gloox::JID(c.jid).username());
-        qDebug() << "room:" << qstring(name) << "jid:" << qstring(c.jid)
-                 << "nick:" << qstring(c.nick) << "autojoin:" << c.autojoin;
         // 缓存到本地
         cacheJoinRoom(c.jid, name);
     }
 
     mBookmarkList = bList;
     for (auto& c : mBookmarkList) {
-        qDebug() << "Bookmark name:" << qstring(c.name) << "url:" << qstring(c.url);
+        qDebug() << "Bookmark name:" << c.name.c_str() << "url:" << c.url.c_str();
     }
 }
 
 void IM::handleBookmarks(const gloox::BMConferenceList& cList) {
     qDebug() << __func__;
     for (const auto& conf : cList) {
-        qDebug() << "conference:" << qstring(conf.jid);
+        qDebug() << "conference:" << conf.jid.c_str();
     }
 }
 
@@ -1420,17 +1360,16 @@ void IM::handleBookmarks(const gloox::BMConferenceList& cList) {
 void IM::handleDiscoInfo(const gloox::JID& from,          //
                          const gloox::Disco::Info& info,  //
                          int context) {
-    QString _from = QString::fromStdString(from.full());
-    qDebug() << __func__ << _from << "context:" << (context);
+    std::string _from = from.full();
+    qDebug() << __func__ << _from.c_str() << "context:" << context;
 
-    const gloox::StringList features = info.features();
-    for (auto feature : features) {
-        qDebug() << QString("feature=%1").arg(QString::fromStdString(feature));
+    for (auto& feature : info.features()) {
+        qDebug() << "feature:" << feature.c_str();
     }
 
     const gloox::Disco::IdentityList& identities = info.identities();
     for (auto identity : identities) {
-        qDebug() << QString("identity=%1").arg(qstring(identity->name()));
+        qDebug() << "identity:" << identity->name().c_str();
     }
 }
 
@@ -1443,8 +1382,8 @@ void IM::handleDiscoInfo(const gloox::JID& from,          //
 void IM::handleDiscoItems(const gloox::JID& from,            //
                           const gloox::Disco::Items& items,  //
                           int context) {
-    QString _from = QString::fromStdString(from.full());
-    qDebug() << __func__ << "from" << _from << "context" << context;
+    std::string _from = (from.full());
+    qDebug() << __func__ << "from" << _from.c_str() << "context" << context;
 
     const gloox::Disco::ItemList& localItems = items.items();
     for (auto item : localItems) {
@@ -1459,37 +1398,31 @@ void IM::handleDiscoItems(const gloox::JID& from,            //
             /**
              * 处理服务发现的群聊列表
              */
-            auto roomId = qstring(item->jid().bare());
-            auto name = qstring(item->name());
-            qDebug() << "room:" << name << roomId;
+            qDebug() << "room:" << item->name().c_str() << item->jid().bare().c_str();
         }
 
         else if (context == DISCO_CTX_CONF_MEMBERS) {
             // 群聊成员
-            auto memberId = qstring(item->jid().bare());
-            qDebug() << "member:" << memberId;
+            qDebug() << "member:" << item->jid().bare().c_str();
         }
     }
 }
 
-void IM::handleDiscoError(const gloox::JID& from,            //
+void IM::handleDiscoError(const gloox::JID& from,     //
                           const gloox::Error* error,  //
                           int context) {
-    QString _from = qstring(from.full());
-    qDebug() << QString("from=%1 context=%2 error=%3")
-                        .arg(_from)
-                        .arg(context)
-                        .arg(qstring(error->text()));
+    std::string _from = from.full();
+    qDebug() << __func__ << "from:" << _from.c_str();
 }
 
 // Presence Handler
 void IM::handlePresence(const gloox::Presence& presence) {
     auto& from = presence.from();
-    qDebug() << __func__ << "from" << qstring(from.full()) << "presence" << presence.presence();
+    qDebug() << __func__ << "from" << from.full().c_str() << "presence" << presence.presence();
 
     auto iterator = fromHostHandlers.find(from.server());
     if (iterator != fromHostHandlers.end()) {
-        iterator.value()->handleHostPresence(from, presence);
+        iterator->second->handleHostPresence(from, presence);
     }
     updateOnlineStatus(from.bare(), from.resource(), presence.presence());
 }
@@ -1504,7 +1437,7 @@ void IM::handlePresence(const gloox::Presence& presence) {
  * @return
  */
 void IM::handleItemAdded(const gloox::JID& jid) {
-    qDebug() << __func__ << qstring(jid.full());
+    qDebug() << __func__ << jid.full().c_str();
 
     auto m = _client->rosterManager();
     // 订阅对方
@@ -1526,27 +1459,27 @@ void IM::handleItemAdded(const gloox::JID& jid) {
  * @param jid
  */
 void IM::handleItemRemoved(const gloox::JID& jid) {
-    qDebug() << __func__ << qstring(jid.full());
+    qDebug() << __func__ << jid.full().c_str();
     for (auto handler : friendHandlers) {
-        handler->onFriendRemoved(qstring(jid.bare()));
+        handler->onFriendRemoved((jid.bare()));
     }
 }
 
 // 好友更新
 void IM::handleItemUpdated(const gloox::JID& jid) {
-    qDebug() << __func__ << qstring(jid.full());
+    qDebug() << __func__ << jid.full().c_str();
 
-    auto contactId = qstring(jid.bare());
+    auto contactId = jid.bare();
 
     auto item = _client->rosterManager()->getRosterItem(jid);
     auto subType = item->subscription();
     qDebug() << __func__ << "subscription:" << (subType);
     auto data = item->data();
-    qDebug() << "ask" << qstring(data->ask()) << "sub" << qstring(data->sub());
+    qDebug() << "ask" << data->ask().c_str() << "sub" << data->sub().c_str();
 
     if (data->sub() == "both") {
         for (auto handler : friendHandlers) {
-            handler->onFriendAliasChanged(IMContactId(jid.bareJID()), qstring(data->name()));
+            handler->onFriendAliasChanged(IMContactId(jid.bareJID()), (data->name()));
         }
     }
 }
@@ -1581,8 +1514,8 @@ bool IM::removeFriend(const gloox::JID& jid) {
     return true;
 }
 
-void IM::addFriend(const gloox::JID& jid, const QString& nick, const QString& msg) {
-    qDebug() << __func__ << jid.full().c_str() << nick << msg;
+void IM::addFriend(const gloox::JID& jid, const std::string& nick, const std::string& msg) {
+    qDebug() << __func__ << jid.full().c_str() << nick.c_str() << msg.c_str();
 
     auto m = _client->rosterManager();
     auto f = m->getRosterItem(jid);
@@ -1591,14 +1524,14 @@ void IM::addFriend(const gloox::JID& jid, const QString& nick, const QString& ms
         return;
     }
     // 订阅对方(同时加入到联系人列表)
-    m->subscribe(jid, stdstring(nick), {});
-    m->add(jid, stdstring(nick), {});
+    m->subscribe(jid, nick, {});
+    m->add(jid, nick, {});
     m->synchronize();
 }
 
-void IM::acceptFriendRequest(const QString& friendId) {
-    qDebug() << __func__ << friendId;
-    auto jid = gloox::JID(stdstring(friendId)).bareJID();
+void IM::acceptFriendRequest(const std::string& friendId) {
+    qDebug() << __func__ << friendId.c_str();
+    auto jid = gloox::JID(friendId).bareJID();
 
     auto m = _client->rosterManager();
     // 答复同意订阅
@@ -1610,9 +1543,9 @@ void IM::acceptFriendRequest(const QString& friendId) {
     m->synchronize();
 }
 
-void IM::rejectFriendRequest(const QString& friendId) {
-    qDebug() << __func__ << friendId;
-    _client->rosterManager()->ackSubscriptionRequest(gloox::JID(stdstring(friendId)).bareJID(), false);
+void IM::rejectFriendRequest(const std::string& friendId) {
+    qDebug() << __func__ << friendId.c_str();
+    _client->rosterManager()->ackSubscriptionRequest(gloox::JID(friendId).bareJID(), false);
 }
 
 size_t IM::getRosterCount() {
@@ -1622,7 +1555,7 @@ size_t IM::getRosterCount() {
 void IM::getRosterList(std::list<IMFriend>& list) {
     auto rosterManager = _client->rosterManager();
     if (!rosterManager) {
-        QMutexLocker locker(&mutex);
+        std::lock_guard<std::mutex> locker(mutex);
         rosterManager = enableRosterManager();
     }
 
@@ -1678,7 +1611,7 @@ void IM::handleRoster(const gloox::Roster& roster) {
  * @return
  */
 void IM::handleRosterPresence(const gloox::RosterItem& item,               //
-                              const std::string& resource,          //
+                              const std::string& resource,                 //
                               gloox::Presence::PresenceType presenceType,  //
                               const std::string& msg) {
     qDebug() << QString("item:%1 resource:%2 presenceType:%3 msg:%4")
@@ -1698,7 +1631,7 @@ void IM::handleRosterPresence(const gloox::RosterItem& item,               //
                     //        case ExtCaps: {
                     //          auto caps = const_cast<Capabilities *>(
                     //              static_cast<const Capabilities *>(ext));
-                    //          qDebug()<<QString("caps:%1").arg(qstring(caps->node())))
+                    //          qDebug()<<std::string("caps:%1").arg(qstring(caps->node())))
                     //          break;
                     //        }
                 case gloox::ExtVCardUpdate: {
@@ -1710,14 +1643,15 @@ void IM::handleRosterPresence(const gloox::RosterItem& item,               //
                     </items>
                     </pubsub>
                      */
-                    auto vCardUpdate =
-                            const_cast<gloox::VCardUpdate*>(static_cast<const gloox::VCardUpdate*>(ext));
+                    auto vCardUpdate = const_cast<gloox::VCardUpdate*>(
+                            static_cast<const gloox::VCardUpdate*>(ext));
                     if (vCardUpdate && vCardUpdate->hasPhoto()) {
                         gloox::PubSub::ItemList items;
                         auto item0 = new gloox::PubSub::Item();
                         item0->setID(vCardUpdate->hash());
                         items.emplace_back(item0);
-                        pubSubManager->requestItems(item.jid(), gloox::XMLNS_AVATAR, "", items, this);
+                        pubSubManager->requestItems(item.jid(), gloox::XMLNS_AVATAR, "", items,
+                                                    this);
                     }
                     break;
                 }
@@ -1728,7 +1662,7 @@ void IM::handleRosterPresence(const gloox::RosterItem& item,               //
 }
 
 void IM::handleSelfPresence(const gloox::RosterItem& item,               //
-                            const std::string& resource,          //
+                            const std::string& resource,                 //
                             gloox::Presence::PresenceType presenceType,  //
                             const std::string& msg) {
     qDebug() << QString("item:%1 resource:%2 presenceType:%3 msg:%4")  //
@@ -1758,16 +1692,16 @@ void IM::handleSelfPresence(const gloox::RosterItem& item,               //
                     </items>
                     </pubsub>
                      */
-                    auto vCardUpdate =
-                            const_cast<gloox::VCardUpdate*>(static_cast<const gloox::VCardUpdate*>(ext));
+                    auto vCardUpdate = const_cast<gloox::VCardUpdate*>(
+                            static_cast<const gloox::VCardUpdate*>(ext));
                     if (vCardUpdate && vCardUpdate->hasPhoto()) {
                         gloox::PubSub::ItemList items;
                         auto item0 = new gloox::PubSub::Item();
                         item0->setID(vCardUpdate->hash());
                         items.emplace_back(item0);
 
-                        pubSubManager->requestItems(item.jid().bareJID(), gloox::XMLNS_AVATAR, "", items,
-                                                    this);
+                        pubSubManager->requestItems(item.jid().bareJID(), gloox::XMLNS_AVATAR, "",
+                                                    items, this);
                     }
                     break;
                 }
@@ -1799,55 +1733,66 @@ bool IM::handleSubscriptionRequest(const gloox::JID& jid, const std::string& msg
  * @return
  */
 bool IM::handleUnsubscriptionRequest(const gloox::JID& jid, const std::string& msg) {
-    qDebug() << QString("jid:%1 msg:%2").arg(qstring(jid.full())).arg(qstring(msg));
+    qDebug() << __func__;
     return true;
 };
 
 void IM::handleNonrosterPresence(const gloox::Presence& presence) {
-    qDebug() << QString("presence:%1").arg(qstring(presence.from().full()));
+    qDebug() << __func__;
 };
 
 void IM::handleRosterError(const gloox::IQ& iq) {
-    qDebug() << QString("text:%1").arg(qstring(iq.error()->text()));
+    qDebug() << __func__;
 };
 
-void IM::handleRosterItemExchange(const gloox::JID& from, const gloox::RosterX* items) {}
+void IM::handleRosterItemExchange(const gloox::JID& from, const gloox::RosterX* items) {
+    qDebug() << __func__;
+}
 
-void IM::handleRegistrationFields(const gloox::JID& from, int fields, std::string instructions) {};
+void IM::handleRegistrationFields(const gloox::JID& from, int fields, std::string instructions) {
+    qDebug() << __func__;
+};
 
-void IM::handleAlreadyRegistered(const gloox::JID& from) {};
-
+void IM::handleAlreadyRegistered(const gloox::JID& from) {
+    qDebug() << __func__;
+};
 
 void IM::handleRegistrationResult(const gloox::JID& from, gloox::RegistrationResult regResult,
-                                  const gloox::Error* error) {};
+                                  const gloox::Error* error) {
+    qDebug() << __func__;
+};
 
-void IM::handleDataForm(const gloox::JID& from, const gloox::DataForm& form) {};
+void IM::handleDataForm(const gloox::JID& from, const gloox::DataForm& form) {
+    qDebug() << __func__;
+};
 
-void IM::handleOOB(const gloox::JID& from, const gloox::OOB& oob) {};
+void IM::handleOOB(const gloox::JID& from, const gloox::OOB& oob) {
+    qDebug() << __func__;
+};
 
 IMContactId IM::getSelfId() {
     return IMContactId(loginJid.bare());
 }
 
 IMPeerId IM::getSelfPeerId() {
-    QMutexLocker locker(&mutex);
-    return IMPeerId(qstring(_client->jid().full()));
+    std::lock_guard<std::mutex> locker(mutex);
+    return IMPeerId(_client->jid().full());
 }
 
-QString IM::getSelfUsername() {
-    QMutexLocker locker(&mutex);
-    return qstring(self().username());
+std::string IM::getSelfUsername() {
+    std::lock_guard<std::mutex> locker(mutex);
+    return self().username();
 }
 
-void IM::setNickname(const QString& nickname) {
-    qDebug() << __func__ << nickname;
+void IM::setNickname(const std::string& nickname) {
+    qDebug() << __func__ << nickname.c_str();
 
     if (_nick == nickname) {
         return;
     }
     _nick = nickname;
 
-    gloox::Nickname nick(nickname.toStdString());
+    gloox::Nickname nick(nickname);
 
     gloox::PubSub::ItemList items;
     auto item = new gloox::PubSub::Item();
@@ -1858,26 +1803,27 @@ void IM::setNickname(const QString& nickname) {
     qDebug() << __func__ << "completed.";
 }
 
-QString IM::getNickname() {
-    if (!_nick.isEmpty()) {
+std::string IM::getNickname() {
+    if (!_nick.empty()) {
         return _nick;
     }
     return getSelfUsername();
 }
 
-void IM::setAvatar(const QByteArray& avatar) {
+void IM::setAvatar(const std::string& avatar) {
     qDebug() << __func__;
-    if (avatar.isEmpty()){
+    if (avatar.empty()) {
         qWarning() << "Empty avatar!";
         return;
     }
 
     qDebug() << __func__ << "size:" << avatar.size();
 
-    QString sha1 = ok::base::Hashs::sha1String(avatar);
+    const QByteArray& byteArray = QByteArray::fromStdString(avatar);
+    auto sha1 = ok::base::Hashs::sha1String(byteArray);
     qDebug() << __func__ << "sha1:" << sha1;
 
-    auto base64 = avatar.toBase64().toStdString();
+    auto base64 = byteArray.toBase64().toStdString();
 
     /**
      * <data xmlns='urn:xmpp:avatar:data'>
@@ -1909,17 +1855,17 @@ void IM::setAvatar(const QByteArray& avatar) {
     qDebug() << __func__ << "completed.";
 }
 
-void IM::changePassword(const QString& password) {
-    qDebug() << __func__<< password;
-    if (password.isEmpty()) return;
+void IM::changePassword(const std::string& password) {
+    qDebug() << __func__ << password.c_str();
+    if (password.empty()) return;
 
     // changing password
-    mRegistration->changePassword(_client->username(), stdstring(password));
+    mRegistration->changePassword(_client->username(), password);
 }
 
 void IM::loadGroupList() {
     auto disco = _client->disco();
-    disco->getDiscoItems(gloox::JID(XMPP_CONF_SERVER_HOST), "", this, DISCO_CTX_CONF);
+    disco->getDiscoItems(gloox::JID("conference." + _host), "", this, DISCO_CTX_CONF);
     requestBookmarks();
 
     /**
@@ -1948,13 +1894,13 @@ void IM::sendPresence(const gloox::JID& to, gloox::Presence::PresenceType type) 
     _client->setPresence(to, type, 0);
 }
 
-void IM::sendReceiptReceived(const QString& id, QString receiptNum) {
+void IM::sendReceiptReceived(const std::string& id, std::string receiptNum) {
     // <received xmlns='urn:xmpp:receipts' id='richard2-4.1.247'/>
 
-    gloox::Message m(gloox::Message::MessageType::Chat, gloox::JID(stdstring(id)));
+    gloox::Message m(gloox::Message::MessageType::Chat, gloox::JID(id));
     m.setFrom(_client->jid());
 
-    m.addExtension(new gloox::Receipt(gloox::Receipt::ReceiptType::Received, receiptNum.toStdString()));
+    m.addExtension(new gloox::Receipt(gloox::Receipt::ReceiptType::Received, receiptNum));
 
     _client->send(m);
 }
@@ -1963,7 +1909,7 @@ void IM::sendServiceDiscoveryItems() {
     auto tag = new gloox::Tag("query");
     tag->setXmlns(gloox::XMLNS_DISCO_ITEMS);
 
-    gloox::IQ* iq = new gloox::IQ(gloox::IQ::Get, self().server(), _client->getID());
+    auto* iq = new gloox::IQ(gloox::IQ::Get, self().server(), _client->getID());
     iq->setFrom(self());
 
     auto iqt = iq->tag();
@@ -1975,7 +1921,7 @@ void IM::sendServiceDiscoveryInfo(const gloox::JID& item) {
     auto tag = new gloox::Tag("query");
     tag->setXmlns(gloox::XMLNS_DISCO_INFO);
 
-    gloox::IQ* iq = new gloox::IQ(gloox::IQ::Get, item, _client->getID());
+    auto* iq = new gloox::IQ(gloox::IQ::Get, item, _client->getID());
     iq->setFrom(self());
 
     auto iqt = iq->tag();
@@ -1983,12 +1929,10 @@ void IM::sendServiceDiscoveryInfo(const gloox::JID& item) {
     _client->send(iqt);
 }
 
-void IM::handleItem(const gloox::JID& service, const std::string& node, const gloox::Tag* entry) {
-    qDebug() << QString("service:%1 node:%2").arg(qstring(service.full())).arg(qstring(node));
-}
+void IM::handleItem(const gloox::JID& service, const std::string& node, const gloox::Tag* entry) {}
 
 void IM::handleItems(const std::string& id,                    //
-                     const gloox::JID& service,                       //
+                     const gloox::JID& service,                //
                      const std::string& node,                  //
                      const gloox::PubSub::ItemList& itemList,  //
                      const gloox::Error* error) {
@@ -1999,7 +1943,7 @@ void IM::handleItems(const std::string& id,                    //
         return;
     }
 
-    auto friendId = qstring(service.bare());
+    auto friendId = (service.bare());
     auto isSelf = friendId == getSelfId().toString();
 
     for (auto& item : itemList) {
@@ -2010,14 +1954,12 @@ void IM::handleItems(const std::string& id,                    //
 
         if (node == gloox::XMLNS_NICKNAME) {
             gloox::Nickname nickname(data);
-            auto nick = qstring(nickname.nick());
-            qDebug() << "nick:" << nick;
-            if (isSelf){
-                for(auto handler: selfHandlers){
+            auto nick = (nickname.nick());
+            if (isSelf) {
+                for (auto handler : selfHandlers) {
                     handler->onSelfNameChanged(nick);
                 }
-            }
-            else {
+            } else {
                 for (auto handler : friendHandlers) {
                     handler->onFriendNickChanged(friendId, nick);
                 }
@@ -2032,7 +1974,7 @@ void IM::handleItems(const std::string& id,                    //
                 while ((pos = base64.find('\r')) != std::string::npos) base64.erase(pos, 1);
                 auto avt = gloox::Base64::decode64(base64);
                 if (isSelf) {
-                    for(auto h: selfHandlers){
+                    for (auto h : selfHandlers) {
                         h->onSelfAvatarChanged(avt);
                     }
                 } else {
@@ -2047,7 +1989,7 @@ void IM::handleItems(const std::string& id,                    //
 }
 
 void IM::handleItemPublication(const std::string& id,                    //
-                               const gloox::JID& service,                       //
+                               const gloox::JID& service,                //
                                const std::string& node,                  //
                                const gloox::PubSub::ItemList& itemList,  //
                                const gloox::Error* error) {
@@ -2061,51 +2003,50 @@ void IM::handleItemPublication(const std::string& id,                    //
     }
 }
 
-void IM::handleItemDeletion(const std::string& id, const gloox::JID& service, const std::string& node,
-                            const gloox::PubSub::ItemList& itemList, const gloox::Error* error) {
-    qDebug() << __func__ << QString("id:%1 service:%2").arg(qstring(id)).arg(qstring(service.full()));
-}
+void IM::handleItemDeletion(const std::string& id, const gloox::JID& service,
+                            const std::string& node, const gloox::PubSub::ItemList& itemList,
+                            const gloox::Error* error) {}
 
 void IM::handleSubscriptionResult(const std::string& id, const gloox::JID& service,
-                                  const std::string& node, const std::string& sid, const gloox::JID& jid,
+                                  const std::string& node, const std::string& sid,
+                                  const gloox::JID& jid,
                                   const gloox::PubSub::SubscriptionType subType,
                                   const gloox::Error* error) {
-    qDebug() << __func__ << "id" << qstring(id)
-             << "service:" << qstring(service.full())
-             << "node:" << qstring(node)
-             << "jid:" << qstring(jid.full());
+    qDebug() << __func__ << "id" << qstring(id) << "service:" << qstring(service.full())
+             << "node:" << qstring(node) << "jid:" << qstring(jid.full());
     pubSubManager->requestItems(service, node, sid, 100, this);
 }
 
 void IM::handleUnsubscriptionResult(const std::string& id, const gloox::JID& service,
                                     const gloox::Error* error) {}
-void IM::handleSubscriptionOptions(const std::string& id, const gloox::JID& service, const gloox::JID& jid,
-                                   const std::string& node, const gloox::DataForm* options,
-                                   const std::string& sid, const gloox::Error* error) {}
-void IM::handleSubscriptionOptionsResult(const std::string& id, const gloox::JID& service, const gloox::JID& jid,
-                                         const std::string& node, const std::string& sid,
-                                         const gloox::Error* error) {}
-void IM::handleSubscribers(const std::string& id, const gloox::JID& service, const std::string& node,
-                           const gloox::PubSub::SubscriptionList& list, const gloox::Error* error) {
-}
-void IM::handleSubscribersResult(const std::string& id, const gloox::JID& service, const std::string& node,
-                                 const gloox::PubSub::SubscriberList* list,
+void IM::handleSubscriptionOptions(const std::string& id, const gloox::JID& service,
+                                   const gloox::JID& jid, const std::string& node,
+                                   const gloox::DataForm* options, const std::string& sid,
+                                   const gloox::Error* error) {}
+void IM::handleSubscriptionOptionsResult(const std::string& id, const gloox::JID& service,
+                                         const gloox::JID& jid, const std::string& node,
+                                         const std::string& sid, const gloox::Error* error) {}
+void IM::handleSubscribers(const std::string& id, const gloox::JID& service,
+                           const std::string& node, const gloox::PubSub::SubscriptionList& list,
+                           const gloox::Error* error) {}
+void IM::handleSubscribersResult(const std::string& id, const gloox::JID& service,
+                                 const std::string& node, const gloox::PubSub::SubscriberList* list,
                                  const gloox::Error* error) {}
 
 void IM::handleAffiliates(const std::string& id, const gloox::JID& service, const std::string& node,
                           const gloox::PubSub::AffiliateList* list, const gloox::Error* error) {}
 
-void IM::handleAffiliatesResult(const std::string& id, const gloox::JID& service, const std::string& node,
-                                const gloox::PubSub::AffiliateList* list,
+void IM::handleAffiliatesResult(const std::string& id, const gloox::JID& service,
+                                const std::string& node, const gloox::PubSub::AffiliateList* list,
                                 const gloox::Error* error) {}
 void IM::handleNodeConfig(const std::string& id, const gloox::JID& service, const std::string& node,
                           const gloox::DataForm* config, const gloox::Error* error) {}
-void IM::handleNodeConfigResult(const std::string& id, const gloox::JID& service, const std::string& node,
-                                const gloox::Error* error) {}
-void IM::handleNodeCreation(const std::string& id, const gloox::JID& service, const std::string& node,
-                            const gloox::Error* error) {}
-void IM::handleNodeDeletion(const std::string& id, const gloox::JID& service, const std::string& node,
-                            const gloox::Error* error) {}
+void IM::handleNodeConfigResult(const std::string& id, const gloox::JID& service,
+                                const std::string& node, const gloox::Error* error) {}
+void IM::handleNodeCreation(const std::string& id, const gloox::JID& service,
+                            const std::string& node, const gloox::Error* error) {}
+void IM::handleNodeDeletion(const std::string& id, const gloox::JID& service,
+                            const std::string& node, const gloox::Error* error) {}
 void IM::handleNodePurge(const std::string& id, const gloox::JID& service, const std::string& node,
                          const gloox::Error* error) {}
 void IM::handleSubscriptions(const std::string& id, const gloox::JID& service,
@@ -2115,14 +2056,8 @@ void IM::handleAffiliations(const std::string& id, const gloox::JID& service,
                             const gloox::PubSub::AffiliationMap& affMap,
                             const gloox::Error* error) {}
 
-void IM::handleDefaultNodeConfig(const std::string& id, const gloox::JID& service, const gloox::DataForm* config,
-                                 const gloox::Error* error) {
-    Q_UNUSED(config);
-    qDebug() << QString("id:%1 service:%2 error:%3")
-                        .arg(qstring(id))
-                        .arg(qstring(service.full()))
-                        .arg(qstring(error->text()));
-}
+void IM::handleDefaultNodeConfig(const std::string& id, const gloox::JID& service,
+                                 const gloox::DataForm* config, const gloox::Error* error) {}
 
 std::string IM::getOnlineResource(const std::string& bare) {
     auto it = onlineMap.find(bare);
@@ -2154,7 +2089,7 @@ void IM::updateOnlineStatus(const std::string& bare, const std::string& resource
         return;
     }
 
-    auto friendId = qstring(bare);
+    auto friendId = bare;
     int status = -1;
 
     auto it = onlineMap.find(bare);
@@ -2188,52 +2123,54 @@ void IM::updateOnlineStatus(const std::string& bare, const std::string& resource
     }
 }
 
-bool IM::leaveGroup(const QString& groupId) {
-    qDebug() << "leaveGroup" << groupId;
+bool IM::leaveGroup(const std::string& groupId) {
+    qDebug() << "leaveGroup" << groupId.c_str();
     auto r = findRoom(groupId);
     if (!r) {
-        qWarning() << "Unable to find room" << groupId;
+        qWarning() << "Unable to find room" << groupId.c_str();
         return false;
     }
     r->room->leave();
 
     // 删除缓存
-    m_roomMap.remove(groupId);
+    m_roomMap.erase(groupId);
 
     // 从书签删除，再保存书签
-    mConferenceList.remove_if([&](gloox::ConferenceListItem& a) { return a.jid == stdstring(groupId); });
+    mConferenceList.remove_if([&](gloox::ConferenceListItem& a) { return a.jid == groupId; });
     bookmarkStorage->storeBookmarks(mBookmarkList, mConferenceList);
 
     return true;
 }
 
-bool IM::destroyGroup(const QString& groupId) {
-    qDebug() << "destroyGroup" << groupId;
+bool IM::destroyGroup(const std::string& groupId) {
+    qDebug() << "destroyGroup" << groupId.c_str();
 
     auto r = findRoom(groupId);
     if (!r) {
-        qWarning() << "Unable to find room" << groupId;
+        qWarning() << "Unable to find room" << groupId.c_str();
         return false;
     }
     // 删除
     r->room->destroy();
 
     // 删除缓存
-    m_roomMap.remove(groupId);
+    m_roomMap.erase(groupId);
 
     // 从书签删除，再保存书签
-    mConferenceList.remove_if([&](gloox::ConferenceListItem& a) { return a.jid == stdstring(groupId); });
+    mConferenceList.remove_if([&](gloox::ConferenceListItem& a) { return a.jid == (groupId); });
     bookmarkStorage->storeBookmarks(mBookmarkList, mConferenceList);
 
     return true;
 }
 
-gloox::Disco::ItemList IM::handleDiscoNodeItems(const gloox::JID& from, const gloox::JID& to, const std::string& node) {
+gloox::Disco::ItemList IM::handleDiscoNodeItems(const gloox::JID& from, const gloox::JID& to,
+                                                const std::string& node) {
     qDebug() << __func__ << QString("from:%1").arg(from.full().c_str());
     return gloox::Disco::ItemList();
 }
 
-gloox::Disco::IdentityList IM::handleDiscoNodeIdentities(const gloox::JID& from, const std::string& node) {
+gloox::Disco::IdentityList IM::handleDiscoNodeIdentities(const gloox::JID& from,
+                                                         const std::string& node) {
     return gloox::Disco::IdentityList();
 }
 
@@ -2250,25 +2187,15 @@ void IM::handleIncoming(gloox::Tag* tag) {
 }
 
 bool IM::onTLSConnect(const gloox::CertInfo& info) {
-    qDebug() << QString("CertInfo:");
+    qDebug() << "CertInfo:";
 
     time_t from(info.date_from);
     time_t to(info.date_to);
 
-    qDebug() << QString("status: %1\n"    //
-                        "issuer: %2\n"    //
-                        "peer: %3\n"      //
-                        "protocol: %4\n"  //
-                        "mac: %5\n"       //
-                        "cipher: %6\n"    //
-                        "compression: %7\n")
-                        .arg((info.status))                       //
-                        .arg(qstring(info.issuer.c_str()))        //
-                        .arg(qstring(info.server.c_str()))        //
-                        .arg((info.protocol.c_str()))             //
-                        .arg(qstring(info.mac.c_str()))           //
-                        .arg(qstring(info.cipher.c_str()))        //
-                        .arg(qstring(info.compression.c_str()));  //
+    qDebug() << "status: " << info.status << "issuer: " << info.issuer.c_str()
+             << "peer: " << info.server.c_str() << "protocol: " << info.protocol.c_str()
+             << "mac: " << info.mac.c_str() << "cipher: " << info.cipher.c_str()
+             << "compression: " << info.compression.c_str();
 
     qDebug() << QString("from:%1").arg(ctime(&from));
     qDebug() << QString("to:%1").arg(ctime(&to));
@@ -2277,32 +2204,31 @@ bool IM::onTLSConnect(const gloox::CertInfo& info) {
 }
 
 void IM::handleLog(gloox::LogLevel level, gloox::LogArea area, const std::string& message) {
-    //   qDebug()<<QString("%1").arg(message.c_str()));
-    auto line = QString::fromStdString(message);
+    //   qDebug()<<std::string("%1").arg(message.c_str()));
+    auto line = message;
     switch (area) {
         case gloox::LogAreaXmlIncoming:
-            qDebug() << "Received XML:" << line;
+            qDebug() << "Received XML:" << line.c_str();
             break;
         case gloox::LogAreaXmlOutgoing:
-            qDebug() << "Sent XML:" << line;
+            qDebug() << "Sent XML:" << line.c_str();
             break;
         case gloox::LogAreaClassConnectionBOSH:
-            qDebug() << "BOSH:" << line;
+            qDebug() << "BOSH:" << line.c_str();
             break;
         case gloox::LogAreaClassClient:
-            qDebug() << "Client:" << line;
+            qDebug() << "Client:" << line.c_str();
             break;
         case gloox::LogAreaClassDns:
-            qDebug() << "dns:" << line;
+            qDebug() << "dns:" << line.c_str();
             break;
         default:
-            qDebug() << QString("level: %1, area: %2 msg: %3").arg(level).arg(area).arg(line);
+            qDebug() << "msg:" << line.c_str();
     }
 }
 
-IMStatus IM::getFriendStatus(const QString& qString) {
-    return onlineMap.find(qString.toStdString()) != onlineMap.end() ? IMStatus::Available
-                                                                    : IMStatus::Unavailable;
+IMStatus IM::getFriendStatus(const std::string& qString) {
+    return onlineMap.find(qString) != onlineMap.end() ? IMStatus::Available : IMStatus::Unavailable;
 }
 
 void IM::requestFriendNickname(const gloox::JID& friendId) {
@@ -2467,27 +2393,25 @@ void IM::addSessionHandler(IMSessionHandler* h) {
     assert(h);
 
     m_sessionHandlers.push_back(h);
-
 }
 
 void IM::removeSessionHandler(IMSessionHandler* h) {
     qDebug() << __func__ << "handler:" << h;
-assert(h);
+    assert(h);
     m_sessionHandlers.erase(std::find_if(m_sessionHandlers.begin(),
                                          m_sessionHandlers.end(),
                                          [h](IMSessionHandler* e) { return e == h; }),
                             m_sessionHandlers.end());
 }
 
-void IM::removeSelfHandler(SelfHandler *h)
-{
+void IM::removeSelfHandler(SelfHandler* h) {
     qDebug() << __func__ << "handler:" << h;
     assert(h);
 
     selfHandlers.erase(std::find_if(selfHandlers.begin(),
-                        selfHandlers.end(),
-                        [h](SelfHandler* e) { return e == h; }),
-                        selfHandlers.end());
+                                    selfHandlers.end(),
+                                    [h](SelfHandler* e) { return e == h; }),
+                       selfHandlers.end());
 }
 
 void IM::addFromHostHandler(const std::string& from, IMFromHostHandler* h) {
@@ -2500,23 +2424,19 @@ void IM::clearFromHostHandler() {
     fromHostHandlers.clear();
 }
 
-void IM::addFriendHandler(FriendHandler *h)
-{
+void IM::addFriendHandler(FriendHandler* h) {
     friendHandlers.push_back(h);
 }
 
-void IM::addSelfHandler(SelfHandler *h)
-{
+void IM::addSelfHandler(SelfHandler* h) {
     selfHandlers.push_back(h);
 }
 
-void IM::addGroupHandler(GroupHandler *h)
-{
+void IM::addGroupHandler(GroupHandler* h) {
     groupHandlers.push_back(h);
 }
 
-void IM::addIMHandler(IMHandler *h)
-{
+void IM::addIMHandler(IMHandler* h) {
     imHandlers.push_back(h);
 }
 

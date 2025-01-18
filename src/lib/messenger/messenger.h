@@ -12,8 +12,9 @@
 
 #pragma once
 
-#include <QString>
+#include <cassert>
 #include <cstddef>
+#include <string>
 #include "IMFriend.h"
 #include "IMGroup.h"
 #include "IMMessage.h"
@@ -60,9 +61,9 @@ public:
 
 class SelfHandler {
 public:
-    virtual void onSelfIdChanged(QString id) = 0;
-    virtual void onSelfNameChanged(QString name) = 0;
-    virtual void onSelfAvatarChanged(const std::string avatar) = 0;
+    virtual void onSelfIdChanged(const std::string& id) = 0;
+    virtual void onSelfNameChanged(const std::string& name) = 0;
+    virtual void onSelfAvatarChanged(const std::string& avatar) = 0;
     virtual void onSelfStatusChanged(IMStatus status, const std::string& msg) = 0;
     virtual void onSelfVCardChanged(IMVCard& imvCard) = 0;
 };
@@ -70,61 +71,60 @@ public:
 class FriendHandler {
 public:
     virtual void onFriend(const IMFriend& frnd) = 0;
-    virtual void onFriendRequest(QString friendId, QString msg) = 0;
-    virtual void onFriendRemoved(QString friendId) = 0;
-    virtual void onFriendStatus(QString friendId, IMStatus status) = 0;
-    virtual void onFriendMessage(QString friendId, IMMessage message) = 0;
-    virtual void onMessageSession(QString contactId, QString sid) = 0;
-    virtual void onFriendNickChanged(QString friendId, QString name) = 0;
-    virtual void onFriendAvatarChanged(const QString friendId, const std::string avatar) = 0;
+    virtual void onFriendRequest(const std::string& friendId, const std::string& msg) = 0;
+    virtual void onFriendRemoved(const std::string& friendId) = 0;
+    virtual void onFriendStatus(const std::string& friendId, IMStatus status) = 0;
+    virtual void onFriendMessage(const std::string& friendId, const IMMessage& message) = 0;
+    virtual void onFriendMessageReceipt(const std::string& friendId, const std::string& msgId) = 0;
+    virtual void onMessageSession(const std::string& contactId, const std::string& sid) = 0;
+    virtual void onFriendNickChanged(const std::string& friendId, const std::string& name) = 0;
+    virtual void onFriendAvatarChanged(const std::string& friendId, const std::string& avatar) = 0;
 
-    virtual void onFriendAliasChanged(const IMContactId& fId, const QString& alias) = 0;
+    virtual void onFriendAliasChanged(const IMContactId& fId, const std::string& alias) = 0;
     virtual void onFriendVCard(const IMContactId& fId, const IMVCard& imvCard) = 0;
 
-    virtual void onFriendChatState(QString friendId, int state) = 0;
-    virtual void onMessageReceipt(QString friendId, QString receipt) = 0;
+    virtual void onFriendChatState(const std::string& friendId, int state) = 0;
+    virtual void onMessageReceipt(const std::string& friendId, const std::string& receipt) = 0;
 };
 
 class GroupHandler {
 public:
-    virtual void onGroup(const QString groupId, const QString name) = 0;
+    virtual void onGroup(const std::string& groupId, const std::string& name) = 0;
 
-    virtual void onGroupInvite(const QString groupId,  //
-                               const QString peerId,   //
-                               const QString message) = 0;
+    virtual void onGroupInvite(const std::string& groupId,  //
+                               const std::string& peerId,   //
+                               const std::string& message) = 0;
 
-    virtual void onGroupSubjectChanged(const QString& groupId, const QString& subject) = 0;
+    virtual void onGroupSubjectChanged(const std::string& groupId, const std::string& subject) = 0;
 
-    virtual void onGroupMessage(const QString groupId,  //
-                                const IMPeerId peerId,  //
-                                const IMMessage message) = 0;
+    virtual void onGroupMessage(const std::string& groupId,  //
+                                const IMPeerId& peerId,      //
+                                const IMMessage& message) = 0;
 
-    virtual void onGroupOccupants(const QString groupId, uint size) = 0;
+    virtual void onGroupOccupants(const std::string& groupId, uint size) = 0;
 
-    virtual void onGroupInfo(QString groupId, IMGroup groupInfo) = 0;
+    virtual void onGroupInfo(const std::string& groupId, const IMGroup& groupInfo) = 0;
 
-    virtual void onGroupOccupantStatus(const QString groupId,  //
-                                       IMGroupOccupant) = 0;
+    virtual void onGroupOccupantStatus(const std::string& groupId,  //
+                                       const IMGroupOccupant&) = 0;
 };
 
 /**
  * OkIM模块对外接口
  */
-class Messenger : public QObject {
-    Q_OBJECT
+class Messenger {
 public:
-    explicit Messenger(const QString& host,
-                       const QString& name,
-                       const QString& password,
-                       QObject* parent = nullptr);
-    ~Messenger() override;
+    explicit Messenger(const std::string& host,
+                       const std::string& name,
+                       const std::string& password);
+    ~Messenger();
 
     void start();
     [[nodiscard]] bool isStarted() const;
     void stop();
     void doConnect();
 
-    void send(const QString& xml);
+    void send(const std::string& xml);
 
     [[nodiscard]] IM* im() const {
         assert(_im);
@@ -133,24 +133,24 @@ public:
 
     IMContactId getSelfId() const;
     IMPeerId getSelfPeerId() const;
-    QString getSelfUsername() const;
-    QString getSelfNick() const;
+    std::string getSelfUsername() const;
+    std::string getSelfNick() const;
     IMStatus getSelfStatus() const;
 
     void addIMHandler(IMHandler*);
     void addSelfHandler(SelfHandler*);
     void addGroupHandler(GroupHandler*);
 
-    bool sendToGroup(const QString& g, const QString& msg, const QString& id);
+    bool sendToGroup(const std::string& g, const std::string& msg, const std::string& id);
 
-    void receiptReceived(const QString& f, QString receipt);
+    void receiptReceived(const std::string& f, std::string receipt);
 
-    QString genUniqueId();
+    std::string genUniqueId();
 
     /** self */
-    void setSelfNickname(const QString& nickname);
-    void changePassword(const QString& password);
-    void setSelfAvatar(const QByteArray& avatar);
+    void setSelfNickname(const std::string& nickname);
+    void changePassword(const std::string& password);
+    void setSelfAvatar(const std::string& avatar);
 
     /**
      * IMFriend (audio/video)
@@ -161,47 +161,46 @@ public:
 
     void getFriendList(std::list<lib::messenger::IMFriend>&);
 
-    void setFriendAlias(const QString& f, const QString& alias);
+    void setFriendAlias(const std::string& f, const std::string& alias);
 
     // 添加好友
-    void sendFriendRequest(const QString& username, const QString& nick, const QString& message);
+    void sendFriendRequest(const std::string& username, const std::string& nick,
+                           const std::string& message);
     // 接受朋友邀请
-    void acceptFriendRequest(const QString& f);
+    void acceptFriendRequest(const std::string& f);
     // 拒绝朋友邀请
-    void rejectFriendRequest(const QString& f);
+    void rejectFriendRequest(const std::string& f);
 
-    void getFriendVCard(const QString& f);
+    void getFriendVCard(const std::string& f);
 
-    IMStatus getFriendStatus(const QString& f);
+    IMStatus getFriendStatus(const std::string& f);
 
-    bool sendToFriend(const QString& f,
-                      const QString& msg,
-                      const QString& id,
+    bool sendToFriend(const std::string& f,
+                      const std::string& msg,
+                      const std::string& id,
                       bool encrypt = false);
-    bool removeFriend(const QString& f);
+    bool removeFriend(const std::string& f);
 
     /**
      * Group
      */
     void loadGroupList();
-    bool initRoom();
 
-    QString createGroup(const QString& group, const QString& name);
-    void joinGroup(const QString& group);
-    void setRoomName(const QString& group, const QString& nick);
-    void setRoomDesc(const QString& group, const QString& desc);
-    void setRoomSubject(const QString& group, const QString& subject);
-    void setRoomAlias(const QString& group, const QString& alias);
+    std::string createGroup(const std::string& group, const std::string& name);
+    void joinGroup(const std::string& group);
+    void setRoomName(const std::string& group, const std::string& nick);
+    void setRoomDesc(const std::string& group, const std::string& desc);
+    void setRoomSubject(const std::string& group, const std::string& subject);
+    void setRoomAlias(const std::string& group, const std::string& alias);
     bool inviteGroup(const IMContactId& group, const IMContactId& f);
-    bool leaveGroup(const QString& group);
-    bool destroyGroup(const QString& group);
+    bool leaveGroup(const std::string& group);
+    bool destroyGroup(const std::string& group);
 
-    void sendChatState(const QString& friendId, int state);
+    void sendChatState(const std::string& friendId, int state);
 
     void requestBookmarks();
 
 private:
-    bool connectIM();
 
     IM* _im;
     IMJingle* jingle;
@@ -210,16 +209,12 @@ private:
 
     size_t sentCount = 0;
 
-signals:
+    // signals:
+    //     void incoming(const std::string dom);
+    //     void messageSent(const IMMessage& message);                  //
 
-    void incoming(const QString dom);
-
-
-    void messageSent(const IMMessage& message);                  //
-
-private slots:    
-    void onEncryptedMessage(QString dom);
-
+    // private slots:
+    //    void onEncryptedMessage(std::string dom);
 };
 
 class IMCall;
@@ -244,35 +239,35 @@ enum class CallState {
 class CallHandler {
 public:
     virtual void onCall(const IMPeerId& peerId,  //
-                        const QString& callId,   //
+                        const std::string& callId,  //
                         bool audio, bool video) = 0;
 
     virtual void onCallCreated(const IMPeerId& peerId,  //
-                               const QString& callId) = 0;
+                               const std::string& callId) = 0;
 
     virtual void onCallRetract(const IMPeerId& peerId,  //
                                CallState state) = 0;
 
-    virtual void onCallAcceptByOther(const IMPeerId& peerId, const QString& callId) = 0;
+    virtual void onCallAcceptByOther(const IMPeerId& peerId, const std::string& callId) = 0;
 
     virtual void onPeerConnectionChange(const IMPeerId& friendId,  //
-                                        const QString& callId,     //
+                                        const std::string& callId,  //
                                         ortc::PeerConnectionState state) = 0;
 
     virtual void onIceGatheringChange(const IMPeerId& friendId,  //
-                                      const QString& callId,     //
+                                      const std::string& callId,  //
                                       ortc::IceGatheringState state) = 0;
 
     virtual void onIceConnectionChange(const lib::messenger::IMPeerId& peerId,
-                                       const QString& callId,
+                                       const std::string& callId,
                                        lib::ortc::IceConnectionState state) = 0;
 
     virtual void receiveCallStateAccepted(const IMPeerId& friendId,  //
-                                          const QString& callId,     //
+                                          const std::string& callId,  //
                                           bool video) = 0;
 
     virtual void receiveCallStateRejected(const IMPeerId& friendId,  //
-                                          const QString& callId,     //
+                                          const std::string& callId,  //
                                           bool video) = 0;
 
     // 对方挂断
@@ -290,7 +285,7 @@ public:
                                   int32_t ustride,         //
                                   int32_t vstride) = 0;
 
-    virtual void onFriendVideoFrame(const QString& friendId,  //
+    virtual void onFriendVideoFrame(const std::string& friendId,  //
                                     uint16_t w, uint16_t h,   //
                                     const uint8_t* y,         //
                                     const uint8_t* u,         //
@@ -300,24 +295,23 @@ public:
                                     int32_t vstride) = 0;
 };
 
-class MessengerCall : public QObject {
-    Q_OBJECT
+class MessengerCall {
 public:
-    explicit MessengerCall(Messenger* messenger, QObject* parent = nullptr);
-    ~MessengerCall() override;
+    explicit MessengerCall(Messenger* messenger);
+    ~MessengerCall();
 
     void addCallHandler(CallHandler*);
 
     // 发起呼叫邀请
-    bool callToFriend(const QString& f, const QString& sId, bool video);
+    bool callToFriend(const std::string& f, const std::string& sId, bool video);
     // 创建呼叫
-    bool callToPeerId(const IMPeerId& to, const QString& sId, bool video);
+    bool callToPeerId(const IMPeerId& to, const std::string& sId, bool video);
     // 应答呼叫
-    bool callAnswerToFriend(const IMPeerId& peer, const QString& callId, bool video);
+    bool callAnswerToFriend(const IMPeerId& peer, const std::string& callId, bool video);
     // 取消呼叫
-    void callCancel(const IMContactId& f, const QString& sId);
+    void callCancel(const IMContactId& f, const std::string& sId);
     // 拒绝呼叫
-    void callReject(const IMPeerId& f, const QString& sId);
+    void callReject(const IMPeerId& f, const std::string& sId);
 
     // 静音功能
     void setCtrlState(ortc::CtrlState state);
@@ -346,58 +340,58 @@ enum class FileDirection {
 enum class FileControl { RESUME, PAUSE, CANCEL };
 
 struct FileTxIBB {
-    QString sid;
+    std::string sid;
     int blockSize;
 };
 
 struct File {
 public:
     // id = fileId & ibbId & msgId
-    QString id;
+    std::string id;
     // sId: session id)
-    QString sId;
-    QString name;
-    QString path;
-    quint64 size;
+    std::string sId;
+    std::string name;
+    std::string path;
+    uint32_t size;
     FileStatus status;
     FileDirection direction;
     FileTxIBB txIbb;
-    [[__nodiscard__]] QString toString() const;
-    friend QDebug& operator<<(QDebug& debug, const File& f);
+    [[__nodiscard__]] std::string toString() const;
 };
 
 class FileHandler {
 public:
-    virtual void onFileRequest(const QString& friendId, const File& file) = 0;
-    virtual void onFileRecvChunk(const QString& friendId, const QString& fileId, int seq,
+    virtual void onFileRequest(const std::string& friendId, const File& file) = 0;
+    virtual void onFileRecvChunk(const std::string& friendId, const std::string& fileId, int seq,
                                  const std::string& chunk) = 0;
-    virtual void onFileRecvFinished(const QString& friendId, const QString& fileId) = 0;
-    virtual void onFileSendInfo(const QString& friendId, const File& file, int m_seq,
+    virtual void onFileRecvFinished(const std::string& friendId, const std::string& fileId) = 0;
+    virtual void onFileSendInfo(const std::string& friendId, const File& file, int m_seq,
                                 int m_sentBytes, bool end) = 0;
-    virtual void onFileSendAbort(const QString& friendId, const File& file, int m_sentBytes) = 0;
-    virtual void onFileSendError(const QString& friendId, const File& file, int m_sentBytes) = 0;
+    virtual void onFileSendAbort(const std::string& friendId, const File& file,
+                                 int m_sentBytes) = 0;
+    virtual void onFileSendError(const std::string& friendId, const File& file,
+                                 int m_sentBytes) = 0;
 };
 
 /**
  * 文件传输
  */
-class MessengerFile : public QObject {
-    Q_OBJECT
+class MessengerFile {
 public:
-    explicit MessengerFile(Messenger* messenger, QObject* parent = nullptr);
-    ~MessengerFile() override;
+    explicit MessengerFile(Messenger* messenger);
+    ~MessengerFile();
 
     void addFileHandler(FileHandler*);
 
     /**
      * File
      */
-    void fileRejectRequest(QString friendId, const File& file);
-    void fileAcceptRequest(QString friendId, const File& file);
-    void fileFinishRequest(QString friendId, const QString& sId);
-    void fileFinishTransfer(QString friendId, const QString& sId);
-    void fileCancel(QString fileId);
-    bool fileSendToFriend(const QString& f, const File& file);
+    void fileRejectRequest(std::string friendId, const File& file);
+    void fileAcceptRequest(std::string friendId, const File& file);
+    void fileFinishRequest(std::string friendId, const std::string& sId);
+    void fileFinishTransfer(std::string friendId, const std::string& sId);
+    void fileCancel(std::string fileId);
+    bool fileSendToFriend(const std::string& f, const File& file);
 
 private:
     IMFile* fileSender;
@@ -408,8 +402,8 @@ private:
  */
 
 struct Meet {
-    QString jid;
-    QString uid;
+    std::string jid;
+    std::string uid;
     uint32_t startAudioMuted;
     uint32_t startVideoMuted;
     bool rtcstatsEnabled;
@@ -427,16 +421,16 @@ struct SourceInfo {
  */
 struct Participant {
     // 用户邮箱
-    QString email;
+    std::string email;
     // 用户昵称
-    QString nick;
+    std::string nick;
     // 会议成员唯一标识
-    QString resource;
+    std::string resource;
     std::string avatarUrl;
     // IM终端标识(可定位到用户和终端)
-    ok::base::Jid jid;
-    QString affiliation;
-    QString role;
+    std::string jid;
+    std::string affiliation;
+    std::string role;
     // 设备信息
     SourceInfo sourceInfo;
 };
@@ -449,26 +443,29 @@ public:
 
     virtual void onParticipantJoined(const ok::base::Jid& jid, const Participant& participant) = 0;
 
-    virtual void onParticipantLeft(const ok::base::Jid& jid, const QString& participant) = 0;
+    virtual void onParticipantLeft(const ok::base::Jid& jid, const std::string& participant) = 0;
 
-    virtual void onParticipantVideoFrame(const QString& participant,
+    virtual void onParticipantVideoFrame(const std::string& participant,
                                          const ortc::RendererImage& image) = 0;
 
-    virtual void onParticipantMessage(const QString& participant, const QString& msg) = 0;
+    virtual void onParticipantMessage(const std::string& participant, const std::string& msg) = 0;
 
     virtual void onEnd() = 0;
+
+    // void iceGatheringStateChanged(IMPeerId to, const std::string sId, ortc::IceGatheringState) =
+    // 0; void iceConnectionStateChanged(IMPeerId to, const std::string sId,
+    // ortc::IceConnectionState) = 0;
 };
 
-class MessengerMeet : public QObject, public CallHandler {
-    Q_OBJECT
+class MessengerMeet : public CallHandler {
 public:
-    explicit MessengerMeet(Messenger* messenger, QObject* parent = nullptr);
-    ~MessengerMeet() override;
+    explicit MessengerMeet(Messenger* messenger);
+    ~MessengerMeet();
     /**
      * 创建会议
      * @param room
      */
-    void create(const QString& room);
+    void create(const std::string& room);
     /**
      * 离开会议
      */
@@ -484,7 +481,7 @@ public:
      * 发送消息
      * @param msg
      */
-    void sendMessage(const QString& msg);
+    void sendMessage(const std::string& msg);
 
     /**
      是音频、视频、扬声器
@@ -496,37 +493,37 @@ public:
 
 protected:
     void onCall(const IMPeerId& peerId,  //
-                const QString& callId,   //
+                const std::string& callId,  //
                 bool audio, bool video) override;
 
     void onCallCreated(const IMPeerId& peerId,  //
-                       const QString& callId) override;
+                       const std::string& callId) override;
 
     // 呼叫撤回：其它终端接收
     void onCallRetract(const IMPeerId& peerId,  //
                        CallState state) override;
 
     void onCallAcceptByOther(const IMPeerId& peerId,  //
-                             const QString& callId) override;
+                             const std::string& callId) override;
 
     void onPeerConnectionChange(const IMPeerId& peerId,  //
-                                const QString& callId,   //
+                                const std::string& callId,  //
                                 ortc::PeerConnectionState state) override;
 
     void onIceGatheringChange(const IMPeerId& friendId,  //
-                              const QString& callId,     //
+                              const std::string& callId,  //
                               ortc::IceGatheringState state) override;
 
     void onIceConnectionChange(const lib::messenger::IMPeerId& peerId,
-                               const QString& callId,
+                               const std::string& callId,
                                lib::ortc::IceConnectionState state) override;
 
     void receiveCallStateAccepted(const IMPeerId& peerId,  //
-                                  const QString& callId,   //
+                                  const std::string& callId,  //
                                   bool video) override;
 
     void receiveCallStateRejected(const IMPeerId& peerId,  //
-                                  const QString& callId,   //
+                                  const std::string& callId,  //
                                   bool video) override;
     // 对方挂断
     void onHangup(const IMPeerId& peerId,  //
@@ -543,7 +540,7 @@ protected:
                           int32_t ustride,         //
                           int32_t vstride) override;
 
-    void onFriendVideoFrame(const QString& friendId,  //
+    void onFriendVideoFrame(const std::string& friendId,  //
                             uint16_t w, uint16_t h,   //
                             const uint8_t* y,         //
                             const uint8_t* u,         //

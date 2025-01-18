@@ -15,7 +15,7 @@
 
 #include <QString>
 
-#include "src/model/MsgId.h"
+#include "../model/MsgId.h"
 
 class ICoreGroupMessageSender {
 public:
