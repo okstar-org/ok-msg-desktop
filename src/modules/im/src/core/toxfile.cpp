@@ -12,7 +12,7 @@
 
 #include "src/core/toxfile.h"
 #include <base/jsons.h>
-#include <lib/messenger/messenger.h>
+#include <lib/messenger/Messenger.h>
 #include <QFile>
 #include <QRegularExpression>
 #include "base/basic_types.h"

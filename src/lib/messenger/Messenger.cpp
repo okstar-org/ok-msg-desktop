@@ -10,7 +10,7 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#include "messenger.h"
+#include "Messenger.h"
 #include <iostream>
 #include <range/v3/all.hpp>
 #include "IMFile.h"
@@ -349,6 +349,10 @@ MessengerFile::~MessengerFile() {
     delete fileSender;
 }
 
+void MessengerFile::addHandler(FileHandler* h) {
+    fileSender->addHandler(h);
+}
+
 void MessengerFile::fileRejectRequest(std::string friendId, const File& file) {
     fileSender->fileRejectRequest(friendId, file);
 }
@@ -366,12 +370,8 @@ void MessengerFile::fileCancel(std::string fileId) {
     fileSender->fileCancel(fileId);
 }
 
-bool MessengerFile::fileSendToFriend(const std::string& f, const File& file) {
-    return fileSender->fileSendToFriend(f, file);
-}
-
-void MessengerFile::addFileHandler(FileHandler* h) {
-    fileSender->addFileHandler(h);
+bool MessengerFile::fileSendToFriend(const std::string& friendId, const File& file) {
+    return fileSender->fileSendToFriend(friendId, file);
 }
 
 MessengerMeet::MessengerMeet(lib::messenger::Messenger* messenger) : meet{nullptr} {

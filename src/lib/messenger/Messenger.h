@@ -344,11 +344,13 @@ struct FileTxIBB {
     int blockSize;
 };
 
+class FileHandler;
+
 struct File {
 public:
     // id = fileId & ibbId & msgId
     std::string id;
-    // sId: session id)
+    // sId: session id
     std::string sId;
     std::string name;
     std::string path;
@@ -356,21 +358,43 @@ public:
     FileStatus status;
     FileDirection direction;
     FileTxIBB txIbb;
-    [[__nodiscard__]] std::string toString() const;
+    std::vector<FileHandler*> handlers;
 };
 
 class FileHandler {
 public:
-    virtual void onFileRequest(const std::string& friendId, const File& file) = 0;
-    virtual void onFileRecvChunk(const std::string& friendId, const std::string& fileId, int seq,
-                                 const std::string& chunk) = 0;
-    virtual void onFileRecvFinished(const std::string& friendId, const std::string& fileId) = 0;
-    virtual void onFileSendInfo(const std::string& friendId, const File& file, int m_seq,
-                                int m_sentBytes, bool end) = 0;
-    virtual void onFileSendAbort(const std::string& friendId, const File& file,
-                                 int m_sentBytes) = 0;
-    virtual void onFileSendError(const std::string& friendId, const File& file,
-                                 int m_sentBytes) = 0;
+    virtual void onFileRequest(const std::string& sId, const std::string& friendId,
+                               const File& file) = 0;
+
+    virtual void onFileRecvChunk(const std::string& sId, const std::string& friendId,
+                                 const std::string& fileId, int seq, const std::string& chunk) = 0;
+
+    virtual void onFileRecvFinished(const std::string& sId, const std::string& friendId,
+                                    const std::string& fileId) = 0;
+
+    // virtual void onFileSendInfo(const std::string& friendId, const File& file, int m_seq,
+    // int m_sentBytes, bool end) = 0;
+
+    virtual void onFileSendAbort(const std::string& sId, const std::string& friendId,
+                                 const File& file, int m_sentBytes) = 0;
+
+    virtual void onFileSendError(const std::string& sId, const std::string& friendId,
+                                 const File& file, int m_sentBytes) = 0;
+
+    virtual void onFileStreamOpened(const std::string& sId, const std::string& friendId,
+                                    const File& file) = 0;
+
+    virtual void onFileStreamClosed(const std::string& sId, const std::string& friendId,
+                                    const File& file) = 0;
+
+    virtual void onFileStreamData(const std::string& sId, const std::string& friendId,
+                                  const File& file, const std::string& data, int m_seq,
+                                  int m_sentBytes) = 0;
+
+    virtual void onFileStreamDataAck(const std::string& sId, const std::string& friendId,
+                                     const File& file, uint32_t ack) = 0;
+    virtual void onFileStreamError(const std::string& sId, const std::string& friendId,
+                                   const File& file, uint32_t m_sentBytes) = 0;
 };
 
 /**
@@ -381,7 +405,7 @@ public:
     explicit MessengerFile(Messenger* messenger);
     ~MessengerFile();
 
-    void addFileHandler(FileHandler*);
+    void addHandler(FileHandler* h);
 
     /**
      * File
@@ -391,7 +415,7 @@ public:
     void fileFinishRequest(std::string friendId, const std::string& sId);
     void fileFinishTransfer(std::string friendId, const std::string& sId);
     void fileCancel(std::string fileId);
-    bool fileSendToFriend(const std::string& f, const File& file);
+    bool fileSendToFriend(const std::string& friendId, const File& file);
 
 private:
     IMFile* fileSender;

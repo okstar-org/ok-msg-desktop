@@ -25,7 +25,7 @@
 #include "toxid.h"
 
 #include "base/compatiblerecursivemutex.h"
-#include "lib/messenger/messenger.h"
+#include "lib/messenger/Messenger.h"
 
 #include "base/strongtype.h"
 #include "src/model/VCard.h"

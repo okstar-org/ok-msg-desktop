@@ -29,7 +29,7 @@
 #include <cstdint>
 #include <memory>
 
-#include "lib/messenger/messenger.h"
+#include "lib/messenger/Messenger.h"
 
 class CoreFile;
 
@@ -62,17 +62,36 @@ public:
      * File handlers
      */
 
-    void onFileRequest(const std::string& friendId, const lib::messenger::File& file) override;
-    void onFileRecvChunk(const std::string& friendId, const std::string& fileId, int seq,
-                         const std::string& chunk) override;
-    void onFileRecvFinished(const std::string& friendId, const std::string& fileId) override;
-    void onFileSendInfo(const std::string& friendId, const lib::messenger::File& file, int m_seq,
-                        int m_sentBytes, bool end) override;
+    void onFileRequest(const std::string& sId, const std::string& friendId,
+                       const lib::messenger::File& file) override;
+    void onFileRecvChunk(const std::string& sId, const std::string& friendId,
+                         const std::string& fileId, int seq, const std::string& chunk) override;
+    void onFileRecvFinished(const std::string& sId,
+                            const std::string& friendId,
+                            const std::string& fileId) override;
+    // void onFileSendInfo(const std::string& friendId, const lib::messenger::File& file, int m_seq,
+    // int m_sentBytes, bool end) override;
 
-    void onFileSendAbort(const std::string& friendId, const lib::messenger::File& file,
-                         int m_sentBytes) override;
-    void onFileSendError(const std::string& friendId, const lib::messenger::File& file,
-                         int m_sentBytes) override;
+    void onFileSendAbort(const std::string& sId, const std::string& friendId,
+                         const lib::messenger::File& file, int m_sentBytes) override;
+    void onFileSendError(const std::string& sId, const std::string& friendId,
+                         const lib::messenger::File& file, int m_sentBytes) override;
+
+    void onFileStreamOpened(const std::string& sId, const std::string& friendId,
+                            const lib::messenger::File& file) override;
+
+    void onFileStreamClosed(const std::string& sId, const std::string& friendId,
+                            const lib::messenger::File& file) override;
+
+    void onFileStreamData(const std::string& sId, const std::string& friendId,
+                          const lib::messenger::File& file, const std::string& data, int m_seq,
+                          int m_sentBytes) override;
+
+    void onFileStreamDataAck(const std::string& sId, const std::string& friendId,
+                             const lib::messenger::File& file, uint32_t ack) override;
+    void onFileStreamError(const std::string& sId, const std::string& friendId,
+                           const lib::messenger::File& file, uint32_t m_sentBytes) override;
+
 signals:
     void fileSendStarted(ToxFile& file);
     void fileSendWait(ToxFile& file);
@@ -127,9 +146,6 @@ private:
     lib::messenger::Messenger* messenger;
     lib::messenger::MessengerFile* messengerFile;
     CompatibleRecursiveMutex* coreLoopLock = nullptr;
-
-private slots:
-    void onConnectionStatusChanged(QString friendId, Status::Status state);
 };
 
 #endif  // COREFILE_H

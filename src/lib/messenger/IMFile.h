@@ -25,15 +25,6 @@ namespace lib::messenger {
 class IM;
 class IMFileTask;
 
-class IMFileHandler {
-public:
-    virtual void fileSent(const std::string& m_friendId, const File& m_file) = 0;
-    virtual void fileError(const std::string& m_friendId, const File& m_file, int m_sentBytes) = 0;
-    virtual void fileAbort(const std::string& m_friendId, const File& m_file, int m_sentBytes) = 0;
-    virtual void fileSending(const std::string& m_friendId, const File& m_file, int m_seq,
-                             int m_sentBytes, bool end) = 0;
-};
-
 /**
  * 传输文件会话，一次会话代表一次文件传输请求
  */
@@ -78,7 +69,6 @@ public:
     ~IMFile() override;
 
     void addFile(const File& f);
-    void addFileHandler(FileHandler*);
 
     /**
      * File
@@ -88,27 +78,16 @@ public:
     void fileFinishRequest(const std::string& friendId, const std::string& sId);
     void fileFinishTransfer(std::string friendId, const std::string& sId);
     void fileCancel(std::string fileId);
-    bool fileSendToFriend(const std::string& f, const File& file);
+
+    bool fileSendToFriend(const std::string& friendId, const File& file);
+    bool sendFile(const std::string& friendId, const File& file);
+    bool sendFileToResource(const gloox::JID& peerId, const File& file);
 
     bool handleIq(const gloox::IQ& iq) override;
 
-    /**
-     * 启动文件发送任务
-     * @param session
-     * @param file
-     */
-    void doStartFileSendTask(const gloox::Jingle::Session* session, const File& file);
+    std::vector<FileHandler*> getHandlers();
 
-    /**
-     * 停止文件发送任务
-     * @param session
-     * @param file
-     */
-    void doStopFileSendTask(const gloox::Jingle::Session* session, const File& file);
-
-    std::vector<FileHandler*> getHandlers() {
-        return fileHandlers;
-    }
+    void addHandler(FileHandler* h);
 
     IMFileSession* findSession(const std::string& sId) {
         auto it = m_fileSessionMap.find(sId);
@@ -177,9 +156,6 @@ private:
     void finishFileRequest(const std::string& friendId, const std::string& sId);
     void finishFileTransfer(const std::string& friendId, const std::string& sId);
 
-    bool sendFile(const std::string& friendId, const File& file);
-    bool sendFileToResource(const gloox::JID& friendId, const File& file);
-
     std::vector<FileHandler*> fileHandlers;
 
     // file
@@ -188,23 +164,6 @@ private:
     // 文件传输会话（key = session.dataId=file.id）
     std::map<std::string, IMFileSession*> m_fileSessionMap;
 
-    // signals:
-    //    void sendFileInfo(const std::string& friendId, const File& file, int m_seq, int
-    //    m_sentBytes,
-    //                      bool end);
-    //
-    //    void sendFileAbort(const std::string& friendId, const File& file, int m_sentBytes);
-    //    void sendFileError(const std::string& friendId, const File& file, int m_sentBytes);
-    //
-    //    void receiveFileRequest(const std::string& friendId, const File& file);
-    //
-    //    void receiveFileChunk(const IMContactId friendId, std::string sId, int seq,
-    //                          const std::string chunk);
-    //
-    //    void receiveFileFinished(const IMContactId friendId, std::string sId);
-    //
-    // public slots:
-    // void onImStartedFile();
 };
 
 }  // namespace lib::messenger

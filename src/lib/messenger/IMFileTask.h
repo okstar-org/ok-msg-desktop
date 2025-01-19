@@ -17,27 +17,29 @@
 #pragma once
 
 #include <memory>
-#include <thread>
 #include "IMFile.h"
 
 #include <bytestreamdatahandler.h>
 #include <inbandbytestream.h>
 #include <jid.h>
+#include <QFile>
+#include <QThread>
 
 namespace lib::messenger {
 
 class IM;
 struct File;
 
-class IMFileTask : public gloox::BytestreamDataHandler {
+class IMFileTask : public QThread, public gloox::BytestreamDataHandler {
 public:
-    IMFileTask(const std::string& friendId,  //
-               const File* file,             //
-               IMFile* sender);              //
+    IMFileTask(IM* m_im,
+               const std::string& sId,
+               const std::string& friendId,  //
+               const File* file);            //
 
-    ~IMFileTask();
+    ~IMFileTask() override;
 
-    void run();
+    void run() override;
 
     void handleBytestreamData(gloox::Bytestream* bs, const std::string& data) override;
 
@@ -55,19 +57,18 @@ public:
     bool ackFinished() const;
 
 private:
+    IM* m_im;
+    std::string m_sId;
     std::string m_friendId;
     const File* m_file;
-    IMFile* m_im;
     int m_buf;
     int m_seq;
-    uint64_t m_sentBytes;
     int m_ack_seq;
+    uint64_t m_sentBytes;
 
     std::unique_ptr<gloox::InBandBytestream> m_ibb;
-    std::string qFile;
-    std::unique_ptr<std::thread> thread;
+    std::unique_ptr<QFile> qFile;
     gloox::Bytestream* m_byteStream;
-    IMFileHandler* handler;
 };
 
 }  // namespace lib::messenger

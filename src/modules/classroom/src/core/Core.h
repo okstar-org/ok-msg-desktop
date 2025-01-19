@@ -19,7 +19,7 @@
 #include <lib/board/Board.h>
 #include <QThread>
 #include "lib/board/Draw.h"
-#include "lib/messenger/messenger.h"
+#include "lib/messenger/Messenger.h"
 
 namespace module::classroom {
 

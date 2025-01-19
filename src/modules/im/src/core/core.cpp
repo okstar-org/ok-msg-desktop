@@ -21,7 +21,7 @@
 #include <range/v3/all.hpp>
 #include "base/compatiblerecursivemutex.h"
 #include "lib/messenger/IMFriend.h"
-#include "lib/messenger/messenger.h"
+#include "lib/messenger/Messenger.h"
 #include "src/Bus.h"
 #include "src/application.h"
 #include "src/base/images.h"

@@ -17,42 +17,52 @@
 #include "IMFileTask.h"
 #include "IM.h"
 #include "IMFile.h"
+#include "base/basic_types.h"
 
 #include <jid.h>
-#include <fstream>
-#include <iostream>
+#include <QDebug>
+#include <QFile>
 
 namespace lib::messenger {
 
-constexpr int BUF_SIZE = 100 * 1024;  // 100k
+constexpr int BUF_SIZE = 4 * 1024;  // 4k
 
-IMFileTask::IMFileTask(const std::string& friendId, const File* file, IMFile* im)
-        : m_friendId(friendId)
+IMFileTask::IMFileTask(IM* m_im,
+                       const std::string& sId,
+                       const std::string& friendId,
+                       const File* file)
+        : m_im(m_im)
+        , m_sId(sId)
+        , m_friendId(friendId)
         , m_file(file)
-        , m_im(im)
         , m_byteStream(nullptr)
         , m_buf{BUF_SIZE}
         , m_seq{0}
         , m_sentBytes{0}
-        , m_ack_seq{0} {}
+        , m_ack_seq{0} {
+    qDebug() << __func__;
+}
 
-IMFileTask::~IMFileTask() {}
+IMFileTask::~IMFileTask() {
+    qDebug() << __func__;
+}
 
 void IMFileTask::run() {
+    qDebug() << __func__;
     /**
      * 1、创建流通道
      * https://xmpp.org/extensions/xep-0047.html#create
      *
      */
-    auto* im = m_im->getIM();
-    auto client = im->getClient();
+
+    auto client = m_im->getClient();
     //  client->registerStanzaExtension(new InBandBytestream::IBB);
 
     auto iqId = client->getID();
 
     m_ibb = std::make_unique<gloox::InBandBytestream>(client,                    //
                                                       client->logInstance(),     //
-                                                      im->self(),                //
+                                                      client->jid(),             //
                                                       gloox::JID((m_friendId)),  //
                                                       (m_file->id));
     m_ibb->registerBytestreamDataHandler(this);
@@ -60,45 +70,44 @@ void IMFileTask::run() {
 
     bool c = m_ibb->connect();
 
-    std::fstream file(qFile, std::ios::in | std::ios::binary);
     int waitingSecs = 0;
-
+    qFile = std::make_unique<QFile>(qstring(m_file->path));
     for (;;) {
         if (!m_byteStream) {
             sleep(1);
             if (waitingSecs++ >= 60) {
-                std::cerr << "Timeout to wait stream open." << waitingSecs << std::endl;
+                qWarning() << "Timeout to wait stream open." << waitingSecs;
                 break;
             }
             continue;
         }
 
-        std::vector<char> buf(m_buf);
-        file.read(buf.data(), m_buf);
-
-        if (buf.empty()) {
+        QByteArray buf = qFile->read(m_buf);
+        if (buf.isEmpty()) {
             break;
         }
-
-        std::string str(buf.begin(), buf.end());
-        bool b = m_byteStream->send(str);
+        bool b = m_byteStream->send(buf.toStdString());
         if (!b) {
-            std::cerr << "send error" << std::endl;
-            handler->fileError(m_friendId, *m_file, m_sentBytes);
+            qWarning() << "send error!";
+            for (auto handler : m_file->handlers) {
+                handler->onFileSendError(m_sId, m_friendId, *m_file, m_sentBytes);
+            }
             break;
         }
 
         m_seq += 1;
         m_sentBytes += buf.size();
-        handler->fileSending(m_friendId, *m_file, m_ack_seq, m_ack_seq * m_buf, false);
+        for (auto handler : m_file->handlers) {
+            handler->onFileStreamData(m_sId, m_friendId, *m_file, {}, m_ack_seq, m_sentBytes);
+        }
     }
 
     if (m_byteStream) {
         m_byteStream->close();
-        handler->fileSending(m_friendId, *m_file, m_ack_seq, m_sentBytes, true);
     }
 
-    std::cout << "finished." << std::endl;
+    qFile->close();
+    qDebug() << __func__ << "is finished.";
 }
 
 // void IMFileTask::abort() {
@@ -106,51 +115,59 @@ void IMFileTask::run() {
 // }
 
 void IMFileTask::handleBytestreamOpen(gloox::Bytestream* bs) {
-    //    qDebug() << __func__ << ("file") << qFile->fileName();
-    //    if (!qFile->open(QIODevice::ReadOnly)) {
-    //        return;
-    //    }
+    qDebug() << __func__ << m_file->path.c_str();
+    if (!qFile->open(QIODevice::ReadOnly)) {
+        return;
+    }
     m_byteStream = bs;
+    for (auto handler : m_file->handlers) {
+        handler->onFileStreamOpened(m_sId, m_friendId, *m_file);
+    }
 }
 
 void IMFileTask::handleBytestreamClose(gloox::Bytestream* bs) {
-    //    qDebug() << __func__ << "closed:" << (qstring(bs->sid()));
-    handler->fileSent(m_friendId, *m_file);
+    qDebug() << __func__ << "closed:" << ((bs->sid().c_str()));
+    for (auto handler : m_file->handlers) {
+        handler->onFileStreamClosed(m_sId, m_friendId, *m_file);
+    }
+    qFile->close();
 }
 
 void IMFileTask::handleBytestreamData(gloox::Bytestream* bs, const std::string& data) {
-    //    qDebug() << __func__ << "data:" << qstring(bs->sid());
+    qDebug() << __func__ << "chunk:" << m_seq << "sent bytes:" << m_sentBytes;
+    for (auto handler : m_file->handlers) {
+        handler->onFileStreamData(m_sId, m_friendId, *m_file, data, m_seq, m_sentBytes);
+    }
 }
 
 void IMFileTask::handleBytestreamDataAck(gloox::Bytestream* bs) {
-    //    qDebug() << __func__ << "acked:" << qstring(bs->sid());
+    qDebug() << __func__ << "acked:" << (bs->sid().c_str());
     m_ack_seq += 1;
-    // 考虑性能关系暂时不处理实时反馈ack
-    //   if(m_ack_seq < m_seq){
-    //     emit fileSending(m_friendId, m_file, m_ack_seq, m_ack_seq*m_buf,
-    //     false);
-    //   } else{
-    //     emit fileSending(m_friendId, m_file, m_ack_seq, m_sentBytes, true);
-    //   }
+    for (auto handler : m_file->handlers) {
+        handler->onFileStreamDataAck(m_sId, m_friendId, *m_file, m_ack_seq);
+    }
 }
 
 void IMFileTask::handleBytestreamError(gloox::Bytestream* bs, const gloox::IQ& iq) {
-    //    qDebug() << __func__ << qstring(bs->sid());
-    handler->fileError(m_friendId, *m_file, m_sentBytes);
+    qDebug() << __func__ << (bs->sid().c_str());
+    for (auto handler : m_file->handlers) {
+        handler->onFileStreamError(m_sId, m_friendId, *m_file, m_sentBytes);
+    }
 }
 
 bool IMFileTask::sendFinished() const {
     return m_file->size == m_sentBytes;
 }
+
 bool IMFileTask::ackFinished() const {
     return m_seq > 0 && m_seq == m_ack_seq;
 }
 
 void IMFileTask::forceQuit() {
-    //    qDebug() << __func__ << "...";
-    //    quit();
-    //    wait();
-    //    qDebug() << __func__ << "completed.";
+    qDebug() << __func__ << "...";
+    quit();
+    wait();
+    qDebug() << __func__ << "completed.";
 }
 
 }  // namespace lib::messenger

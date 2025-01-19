@@ -21,7 +21,7 @@
 #include <cstdint>
 #include <memory>
 
-#include "lib/messenger/messenger.h"
+#include "lib/messenger/Messenger.h"
 
 inline QRegularExpressionMatch JidMatch(const QString& strId) {
     // 正则表达式模式，这里假设username不包含@，server不包含/

@@ -15,9 +15,9 @@
 #include "IMFromHostHandler.h"
 #include "IMGroup.h"
 
+#include "Messenger.h"
 #include "lib/messenger/IMFriend.h"
 #include "lib/messenger/IMMessage.h"
-#include "messenger.h"
 
 #include <memory>
 #include <range/v3/all.hpp>

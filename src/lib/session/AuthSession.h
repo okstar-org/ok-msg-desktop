@@ -25,7 +25,7 @@
 #include "base/jsons.h"
 
 #include "lib/backend/PassportService.h"
-#include "lib/messenger/messenger.h"
+#include "lib/messenger/Messenger.h"
 
 namespace lib::session {
 

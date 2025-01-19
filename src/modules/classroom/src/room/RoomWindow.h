@@ -17,7 +17,7 @@
 
 #include <QWidget>
 #include "core/Core.h"
-#include "lib/messenger/messenger.h"
+#include "lib/messenger/Messenger.h"
 #include "lib/ortc/ok_rtc.h"
 
 

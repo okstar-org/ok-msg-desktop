@@ -24,7 +24,7 @@
 #include "base/task.h"
 #include "files.h"
 #include "iqnamespacefilter.h"
-#include "lib/messenger/messenger.h"
+#include "lib/messenger/Messenger.h"
 #include "lib/storage/settings/OkSettings.h"
 #include "lib/storage/settings/applicationinfo.h"
 #include "okplugin.h"

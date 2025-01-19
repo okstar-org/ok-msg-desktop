@@ -20,8 +20,8 @@
 
 #include "AuthSession.h"
 #include "lib/messenger/IMFriend.h"
+#include "lib/messenger/Messenger.h"
 #include "lib/storage/StorageManager.h"
-#include "lib/messenger/messenger.h"
 
 class Settings;
 class QCommandLineParser;

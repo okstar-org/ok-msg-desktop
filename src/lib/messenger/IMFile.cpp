@@ -16,9 +16,12 @@
 #include <inbandbytestream.h>
 #include <jinglefiletransfer.h>
 #include <jingleibb.h>
+#include <QDebug>
+
 #include "IM.h"
 #include "IMFile.h"
 #include "IMFileTask.h"
+#include "base/basic_types.h"
 
 namespace lib::messenger {
 
@@ -28,45 +31,25 @@ IMFileSession::IMFileSession(const std::string& sId,
                              IMFile* sender_,
                              File* file)
         : sId(sId), target(peerId), sender(sender_), file(file), session(session_) {
-
-    task = std::make_unique<IMFileTask>(target.toString(), file, sender);
-    //    connect(task.get(), &IMFileTask::fileSending,
-    //            [&](const std::string& m_friendId, const File& m_file, int m_seq, int m_sentBytes,
-    //                bool end) {
-    //                for (auto h : sender->getHandlers())
-    //                    h->onFileSendInfo(m_friendId, m_file, m_seq, m_sentBytes, end);
-    //            });
-    //
-    //    connect(task.get(), &IMFileTask::fileAbort,
-    //            [&](const std::string& m_friendId, const File& m_file, int m_sentBytes) {
-    //                for (auto h : sender->getHandlers()) {
-    //                    h->onFileSendAbort(m_friendId, m_file, m_sentBytes);
-    //                }
-    //            });
-    //
-    //    connect(task.get(), &IMFileTask::fileError,
-    //            [&](const std::string& m_friendId, const File& m_file, int m_sentBytes) {
-    //                for (auto h : sender->getHandlers()) {
-    //                    h->onFileSendError(m_friendId, m_file, m_sentBytes);
-    //                }
-    //            });
-}
-
-void IMFileSession::stop() {
-    //    qDebug() << __func__ << "Send file task will be clear." << sId;
-    //    if (task->isRunning()) {
-    //        task->forceQuit();
-    //    }
-}
-
-void IMFileSession::start() {
-    //    if (task && !task->isRunning()) {
-    //        task->start();
-    //    }
+    qDebug() << __func__ << "sId:" << sId.c_str();
+    task = std::make_unique<IMFileTask>(sender_->getIM(), sId, target.toString(), file);
 }
 
 IMFileSession::~IMFileSession() {
-    //    qDebug() << __func__ << "sId" << sId;
+    qDebug() << __func__ << "sId:" << sId.c_str();
+}
+
+void IMFileSession::stop() {
+    qDebug() << __func__ << "Send file task will be clear." << sId.c_str();
+    if (task->isRunning()) {
+        task->forceQuit();
+    }
+}
+
+void IMFileSession::start() {
+    if (!task->isRunning()) {
+        task->start();
+    }
 }
 
 IMFile::IMFile(IM* im) : IMJingle(im) {
@@ -79,9 +62,6 @@ IMFile::~IMFile() {
 }
 
 
-void IMFile::addFileHandler(FileHandler* handler) {
-    fileHandlers.push_back(handler);
-}
 
 void IMFile::fileRejectRequest(const std::string& friendId, const File& file) {
     auto sId = file.sId;
@@ -123,33 +103,10 @@ bool IMFile::fileSendToFriend(const std::string& bare, const File& file) {
 }
 
 void IMFile::addFile(const File& f) {
+    assert(!f.sId.empty());
+    assert(!f.handlers.empty());
+
     m_waitSendFiles.append(f);
-}
-
-void IMFile::doStartFileSendTask(const gloox::Jingle::Session* session, const File& file) {
-    //    qDebug() << __func__ << file.sId;
-    //    m_fileSenderMap.insert(file.id, task);
-    //    qDebug() << __func__ << ("Send file task has been stared.") << ((file.id));
-}
-
-void IMFile::doStopFileSendTask(const gloox::Jingle::Session* session, const File& file) {
-    //    Q_UNUSED(session)
-    //    qDebug() << __func__ << file.sId;
-    //    auto* task = m_fileSenderMap.value(file.sId);
-    //    if (!task) {
-    //        return;
-    //    }
-    //
-    //    qDebug() << __func__ << "Send file task will be clear." << file.id;
-    //    if (task->isRunning()) {
-    //        task->forceQuit();
-    //    }
-    //    disconnect(task);
-    //    delete task;
-
-    // 返回截断后续处理
-    //    m_fileSenderMap.remove(file.sId);
-    //    qDebug() << "Send file task has been clean." << file.id;
 }
 
 void IMFile::clearSessionInfo(const std::string& sId) {
@@ -167,7 +124,7 @@ void IMFile::clearSessionInfo(const std::string& sId) {
  */
 void IMFile::rejectFileRequest(const std::string& friendId, const std::string& sId) {
     //    qDebug() << __func__ << friendId << sId;
-    IMFileSession* fs = findSession(sId);
+    auto fs = findSession(sId);
     if (fs) {
         auto s = fs->getJingleSession();
         s->sessionTerminate(
@@ -218,13 +175,12 @@ void IMFile::finishFileTransfer(const std::string& friendId, const std::string& 
 }
 
 bool IMFile::sendFile(const std::string& bare, const File& file) {
-    //    qDebug() << __func__ << friendId << (file.name);
+    qDebug() << __func__ << bare.c_str() << "file:" << (file.name.c_str());
     if (file.id.empty()) {
-        //        qWarning() << "file id is no existing";
+        qWarning() << "file id is no existing";
         return false;
     }
 
-    //    auto bare = stdstring(friendId);
     auto resources = im->getOnlineResources(bare);
     if (resources.empty()) {
         //        qWarning() << "目标用户不在线！";
@@ -241,19 +197,19 @@ bool IMFile::sendFile(const std::string& bare, const File& file) {
 }
 
 bool IMFile::sendFileToResource(const gloox::JID& jid, const File& file) {
-    //    qDebug() << __func__ << qstring(jid.full()) << "file:" << file.name;
+    qDebug() << __func__ << (jid.full().c_str()) << "file:" << file.name.c_str();
     if (file.id.empty()) {
-        //        qWarning() << "file's id can not be empty!";
+        qWarning() << "file's id can not be empty!";
         return false;
     }
     if (file.sId.empty()) {
-        //        qWarning() << "file's sid can not be empty!";
+        qWarning() << "file's sid can not be empty!";
         return false;
     }
 
     auto session = getIM()->createSession(jid, (file.sId), this);
     if (!session) {
-        //        qDebug() << "Can not create session!";
+        qWarning() << "Can not create session!";
         return false;
     }
 
@@ -279,6 +235,7 @@ bool IMFile::sendFileToResource(const gloox::JID& jid, const File& file) {
     // 缓存文件
     auto& nf = const_cast<File&>(file);
     nf.sId = (session->sid());
+    nf.handlers = fileHandlers;
     addFile(nf);
 
     currentSid = file.sId;
@@ -292,14 +249,14 @@ bool IMFile::doSessionAccept(gloox::Jingle::Session* session,
     SESSION_CHECK(currentSid);
 
     auto sId = (session->sid());
-    //    qDebug() << __func__ << "sId:" << sId;
+    qDebug() << __func__ << "sId:" << sId.c_str();
 
     ortc::OJingleContentMap content;
     content.sdpType = ortc::JingleSdpType::Answer;
     ParseAV(jingle, content);
 
     if (!content.isValid()) {
-        //        qWarning() << "Is no file session";
+        qWarning() << "Is no file session";
         return false;
     }
 
@@ -319,8 +276,8 @@ bool IMFile::doSessionAccept(gloox::Jingle::Session* session,
     //    }
 
     auto it = m_fileSessionMap.find(sId);
-    if (it == m_fileSessionMap.end()) {
-        //        qWarning() << "File session is existing, the sId is" << sId;
+    if (it != m_fileSessionMap.end()) {
+        qWarning() << "File session is existing, the sId is" << sId.c_str();
         return false;
     }
 
@@ -424,9 +381,9 @@ void IMFile::onDisconnected(int)
 void IMFile::onStarted()
 {
     auto client = im->getClient();
-    assert(client);
+
     client->registerIqHandler(this, gloox::ExtIBB);
-    // session manager
+
     im->addSessionHandler(this);
 }
 
@@ -439,7 +396,7 @@ bool IMFile::doSessionInitiate(gloox::Jingle::Session* session,
                                const gloox::Jingle::Session::Jingle* jingle,
                                const IMPeerId& peerId) {
     auto sId = (session->sid());
-    //    qDebug() << __func__ << "sId:" << sId;
+    qDebug() << __func__ << "sId:" << sId.c_str();
 
     ortc::OJingleContentMap contentAv;
     contentAv.sdpType = ortc::JingleSdpType::Offer;
@@ -456,9 +413,10 @@ bool IMFile::doSessionInitiate(gloox::Jingle::Session* session,
                                .path = {},
                                .size = static_cast<uint32_t>(f.file.size),
                                .status = FileStatus::INITIALIZING,
-                               .direction = FileDirection::RECEIVING};
+                               .direction = FileDirection::RECEIVING,
+                               .handlers = fileHandlers};
         for (auto h : fileHandlers) {
-            h->onFileRequest(peerId.toFriendId(), *file0);
+            h->onFileRequest(sId, peerId.toFriendId(), *file0);
         }
         // 创建session
         auto s = new IMFileSession(sId, session, peerId, this, file0);
@@ -473,28 +431,28 @@ bool IMFile::handleIq(const gloox::IQ& iq) {
     if (!ibb) {
         return false;
     }
-
+    auto sId = (ibb->sid());
     IMContactId friendId((iq.from().bare()));
-    //    qDebug() << __func__ << std::string("IBB stream id:%1").arg((ibb->sid()));
-
     switch (ibb->type()) {
         case gloox::InBandBytestream::IBBOpen: {
-            //            qDebug() << __func__ << std::string("Open");
+            qDebug() << __func__ << qstring("Open");
             break;
         }
         case gloox::InBandBytestream::IBBData: {
-            auto sId = (ibb->sid());
-
-            //            qDebug() << __func__ << std::string("Data seq:%1").arg(ibb->seq());
             for (auto h : fileHandlers) {
-                h->onFileRecvChunk(friendId.toString(), sId, ibb->seq(), ibb->data());
+                h->onFileRecvChunk(sId, friendId.toString(), sId, ibb->seq(), ibb->data());
             }
-
             break;
         }
         case gloox::InBandBytestream::IBBClose: {
-            //            qDebug() << __func__ << std::string("Close");
+            qDebug() << __func__ << qstring("Close");
+
             auto fileId = (ibb->sid());
+
+            for (auto h : fileHandlers) {
+                h->onFileRecvFinished(sId, friendId.toString(), fileId);
+            }
+
             for (auto& p : m_fileSessionMap) {
                 auto k = p.first;
                 auto ss = p.second;
@@ -507,11 +465,6 @@ bool IMFile::handleIq(const gloox::IQ& iq) {
                     break;
                 }
             }
-
-            for (auto h : fileHandlers) {
-                h->onFileRecvFinished(friendId.toString(), fileId);
-            }
-
             break;
         }
         default: {
@@ -521,6 +474,15 @@ bool IMFile::handleIq(const gloox::IQ& iq) {
     gloox::IQ riq(gloox::IQ::IqType::Result, iq.from(), iq.id());
     im->getClient()->send(riq);
     return true;
+}
+
+std::vector<FileHandler*> IMFile::getHandlers() {
+    return fileHandlers;
+}
+
+void IMFile::addHandler(FileHandler* h) {
+    assert(h);
+    fileHandlers.push_back(h);
 }
 
 bool IMFile::doSessionTerminate(gloox::Jingle::Session* session,

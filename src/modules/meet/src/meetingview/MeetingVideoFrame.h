@@ -18,7 +18,7 @@
 #include <QWidget>
 #include <mutex>
 #include "base/jid.h"
-#include "lib/messenger/messenger.h"
+#include "lib/messenger/Messenger.h"
 
 class QToolBar;
 class QToolButton;
