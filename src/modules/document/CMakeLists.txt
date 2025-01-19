@@ -1,4 +1,4 @@
-project(Platform)
+project(Document)
 add_definitions(-DOK_${PROJECT_NAME}_MODULE="${PROJECT_NAME}")
 
 file(GLOB_RECURSE ${PROJECT_NAME}_SOURCES src/*.h src/*.cpp)
@@ -65,8 +65,8 @@ qt5_wrap_ui(${PROJECT_NAME}_FORMS
 
 
 add_library(${PROJECT_NAME} STATIC
-	${${PROJECT_NAME}_SOURCES}
-	${${PROJECT_NAME}_RESOURCES}
+		${${PROJECT_NAME}_SOURCES}
+		${${PROJECT_NAME}_RESOURCES}
 		${${PROJECT_NAME}_FORMS}
 )
 
@@ -81,6 +81,6 @@ target_link_libraries(${PROJECT_NAME}
 		PRIVATE ${Qt5Core_LIBRARIES}
 )
 
-if(WIN32)
-    set_property(TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+if (WIN32)
+	set_property(TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif ()

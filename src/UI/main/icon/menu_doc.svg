@@ -1,0 +1,19 @@
+<!--
+  - Copyright (c) 2022 船山信息 chuanshaninfo.com
+  - The project is licensed under Mulan PubL v2.
+  - You can use this software according to the terms and conditions of the Mulan
+  - PubL v2. You may obtain a copy of Mulan PubL v2 at:
+  -          http://license.coscl.org.cn/MulanPubL-2.0
+  - THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+  - EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+  - MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+  - See the Mulan PubL v2 for more details.
+  -->
+
+<svg t="1736865062340" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
+     p-id="12634" width="200" height="200">
+    <path d="M262 202c-33.138 0-60 26.862-60 60v500c0 33.138 26.862 60 60 60h500c33.138 0 60-26.862 60-60V262c0-33.138-26.862-60-60-60H262z m0-90h500c82.842 0 150 67.158 150 150v500c0 82.842-67.158 150-150 150H262c-82.842 0-150-67.158-150-150V262c0-82.842 67.158-150 150-150z"
+          fill="#ffffff" p-id="12635"></path>
+    <path d="M343.024 382c-24.852 0-45-20.148-45-45s20.148-45 45-45h338.912c24.854 0 45 20.148 45 45s-20.146 45-45 45H343.024zM343.024 556c-24.852 0-45-20.148-45-45s20.148-45 45-45h338.912c24.854 0 45 20.148 45 45s-20.146 45-45 45H343.024zM343.024 732c-24.852 0-45-20.148-45-45s20.148-45 45-45h338.912c24.854 0 45 20.148 45 45s-20.146 45-45 45H343.024z"
+          fill="#ffffff" p-id="12636"></path>
+</svg>

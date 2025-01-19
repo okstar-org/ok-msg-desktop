@@ -29,6 +29,10 @@
 #include <cstdlib>
 #include <memory>
 
+#include <modules/document/src/Document.h>
+#include <modules/im/src/nexus.h>
+#include <modules/meet/src/Meet.h>
+#include <modules/platform/src/Platform.h>
 #include "modules/config/src/Config.h"
 #include "src/modules/im/src/nexus.h"
 #include "src/modules/meet/src/Meet.h"
@@ -304,6 +308,9 @@ OMenuWidget* MainWindow::initMenuWindow(SystemMenu menu) {
         case SystemMenu::chat:
             w = createChatModule(this);
             break;
+        case SystemMenu::document:
+            w = createDocumentModule(this);
+            break;
         case SystemMenu::platform:
             w = createPlatformModule(this);
             break;
@@ -431,6 +438,16 @@ OMenuWidget* MainWindow::createClassroomModule(MainWindow* pWindow) {
 }
 OMenuWidget* MainWindow::createConfigModule(MainWindow* pWindow) {
     auto m = new module::config::Config();
+    auto w = new OMenuWidget(this);
+    w->setModule(m);
+    w->setLayout(new QGridLayout());
+    w->layout()->setContentsMargins(0, 0, 0, 0);
+    w->layout()->addWidget(m->widget());
+    return w;
+}
+
+OMenuWidget* MainWindow::createDocumentModule(MainWindow* mw) {
+    auto m = new module::doc::Document();
     auto w = new OMenuWidget(this);
     w->setModule(m);
     w->setLayout(new QGridLayout());

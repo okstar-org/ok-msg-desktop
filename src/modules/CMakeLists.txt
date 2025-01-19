@@ -1,5 +1,6 @@
 add_subdirectory(im)
 add_subdirectory(meet)
+add_subdirectory(document)
 add_subdirectory(classroom)
 add_subdirectory(platform)
 add_subdirectory(config)

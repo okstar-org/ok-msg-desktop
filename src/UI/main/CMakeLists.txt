@@ -96,10 +96,11 @@ add_library(${PROJECT_NAME} STATIC
 
 target_link_libraries(${PROJECT_NAME}
     PRIVATE IM
-    PRIVATE Meet
+		PRIVATE Meet
+		PRIVATE Document
 		PRIVATE Classroom
-    PRIVATE Platform
-    PRIVATE Config
+		PRIVATE Platform
+		PRIVATE Config
 		PRIVATE OkStorage
     PUBLIC ${Qt5Core_LIBRARIES}
     PUBLIC ${Qt5Widgets_LIBRARIES}

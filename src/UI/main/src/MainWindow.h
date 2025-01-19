@@ -61,6 +61,7 @@ public:
     OMenuWidget* createMeetingModule(MainWindow* pWindow);
     OMenuWidget* createClassroomModule(MainWindow* pWindow);
     OMenuWidget* createConfigModule(MainWindow* pWindow);
+    OMenuWidget* createDocumentModule(MainWindow* pWindow);
 
 protected:
     void showEvent(QShowEvent* event) override;
@@ -85,6 +86,7 @@ private:
     //  bool autoAwayActive = false;
     void saveWindowGeometry();
     void createSystemTrayIcon();
+
     static inline QIcon prepareIcon(QString path, int w = 0, int h = 0);
 
 signals:
