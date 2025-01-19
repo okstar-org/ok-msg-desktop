@@ -14,14 +14,14 @@
 <!DOCTYPE TS>
 <TS version="2.0" language="es_MX">
     <context>
-        <name>ContactSelectDialog</name>
+        <name>module::im::ContactSelectDialog</name>
         <message>
             <source>Please select contact</source>
             <translation>Por favor, seleccione un contacto</translation>
         </message>
     </context>
     <context>
-        <name>AVForm</name>
+        <name>module::im::AVForm</name>
         <message>
             <source>Audio/Video</source>
             <translation>Audio/Vídeo</translation>
@@ -146,7 +146,7 @@
         </message>
     </context>
     <context>
-        <name>AboutForm</name>
+        <name>module::im::AboutForm</name>
         <message>
             <source>About</source>
             <translation>Acerca de</translation>
@@ -205,7 +205,7 @@
         </message>
     </context>
     <context>
-        <name>AboutFriendForm</name>
+        <name>module::im::AboutFriendForm</name>
         <message>
             <source>Dialog</source>
             <translation>Diálogo</translation>
@@ -310,7 +310,7 @@
         </message>
     </context>
     <context>
-        <name>AboutSettings</name>
+        <name>module::im::AboutSettings</name>
         <message>
             <source>Version</source>
             <translation>Versión</translation>
@@ -341,7 +341,7 @@
         </message>
     </context>
     <context>
-        <name>AddFriendForm</name>
+        <name>module::im::AddFriendForm</name>
         <message>
             <source>Add Friends</source>
             <translation>Agregar amigos</translation>
@@ -472,7 +472,7 @@
         </message>
     </context>
     <context>
-        <name>AdvancedForm</name>
+        <name>module::im::AdvancedForm</name>
         <message>
             <source>Advanced</source>
             <translation>Avanzado</translation>
@@ -536,7 +536,7 @@
     </context>
 
     <context>
-        <name>ChatForm</name>
+        <name>module::im::ChatForm</name>
         <message>
             <source>Send a file</source>
             <translation>Enviar un archivo</translation>
@@ -613,7 +613,7 @@
         </message>
     </context>
     <context>
-        <name>ChatFormHeader</name>
+        <name>module::im::ChatFormHeader</name>
         <message>
             <source>Can&apos;t start audio call</source>
             <translation>No se puede iniciar la llamada de audio</translation>
@@ -680,7 +680,7 @@
         </message>
     </context>
     <context>
-        <name>ChatLog</name>
+        <name>module::im::ChatLog</name>
         <message>
             <source>Clear displayed messages</source>
             <translation>Borrar mensajes actuales</translation>
@@ -703,14 +703,14 @@
         </message>
     </context>
     <context>
-        <name>ChatTextEdit</name>
+        <name>module::im::ChatTextEdit</name>
         <message>
             <source>Type your message here...</source>
             <translation>Ingresa tu mensaje aquí...</translation>
         </message>
     </context>
     <context>
-        <name>CircleWidget</name>
+        <name>module::im::CircleWidget</name>
         <message>
             <source>Rename circle</source>
             <comment>Menu for renaming a circle</comment>
@@ -727,7 +727,7 @@
         </message>
     </context>
     <context>
-        <name>Core</name>
+        <name>module::im::Core</name>
         <message>
             <source>/me offers friendship, &quot;%1&quot;</source>
             <translation>/me ofrece amistad, &quot;%1&quot;</translation>
@@ -758,7 +758,7 @@
         </message>
     </context>
     <context>
-        <name>DesktopNotify</name>
+        <name>module::im::DesktopNotify</name>
         <message>
             <source>New message</source>
             <translation>Nuevo mensaje</translation>
@@ -781,7 +781,7 @@
         </message>
     </context>
     <context>
-        <name>FileTransferWidget</name>
+        <name>module::im::FileTransferWidget</name>
         <message>
             <source>Form</source>
             <translation>Plantilla</translation>
@@ -869,7 +869,7 @@
         </message>
     </context>
     <context>
-        <name>FilesForm</name>
+        <name>module::im::FilesForm</name>
         <message>
             <source>Transferred Files</source>
             <comment>&quot;Headline&quot; of the window</comment>
@@ -885,7 +885,7 @@
         </message>
     </context>
     <context>
-        <name>ContactListWidget</name>
+        <name>module::im::ContactListWidget</name>
         <message>
             <source>Today</source>
             <translation>Hoy</translation>
@@ -912,7 +912,7 @@
         </message>
     </context>
     <context>
-        <name>FriendRequestDialog</name>
+        <name>module::im::FriendRequestDialog</name>
         <message>
             <source>Friend request</source>
             <comment>Title of the window to aceept/deny a friend request</comment>
@@ -942,7 +942,7 @@
         </message>
     </context>
     <context>
-        <name>FriendWidget</name>
+        <name>module::im::FriendWidget</name>
         <message>
             <source>Invite to group</source>
             <comment>Menu to invite a friend to a groupchat</comment>
@@ -1026,7 +1026,7 @@
         </message>
     </context>
     <context>
-        <name>GeneralForm</name>
+        <name>module::im::GeneralForm</name>
         <message>
             <source>General</source>
             <translation>General</translation>
@@ -1038,7 +1038,7 @@
         </message>
     </context>
     <context>
-        <name>GeneralSettings</name>
+        <name>module::im::GeneralSettings</name>
         <message>
             <source>General Settings</source>
             <translation>Opciones generales</translation>
@@ -1128,7 +1128,7 @@
         </message>
     </context>
     <context>
-        <name>ChatLineContent</name>
+        <name>module::im::ChatLineContent</name>
         <message>
             <source>Reply</source>
             <translation>Responder</translation>
@@ -1143,7 +1143,7 @@
         </message>
     </context>
     <context>
-        <name>GenericChatForm</name>
+        <name>module::im::GenericChatForm</name>
         <message>
             <source>Send message</source>
             <translation>Enviar mensaje</translation>
@@ -1202,7 +1202,7 @@
         </message>
     </context>
     <context>
-        <name>GenericNetCamView</name>
+        <name>module::im::GenericNetCamView</name>
         <message>
             <source>Tox video</source>
             <translation>Vídeo Tox</translation>
@@ -1241,7 +1241,7 @@
         </message>
     </context>
     <context>
-        <name>GroupChatForm</name>
+        <name>module::im::GroupChatForm</name>
         <message>
             <source>%1 has set the title to %2</source>
             <translation>%1 ha establecido el título a: %2</translation>
@@ -1268,7 +1268,7 @@
         </message>
     </context>
     <context>
-        <name>GroupInviteForm</name>
+        <name>module::im::GroupInviteForm</name>
         <message>
             <source>Groups</source>
             <translation>Grupos</translation>
@@ -1283,7 +1283,7 @@
         </message>
     </context>
     <context>
-        <name>GroupInviteWidget</name>
+        <name>module::im::GroupInviteWidget</name>
         <message>
             <source>Invited by %1 on %2 at %3.</source>
             <translation>Invitado por %1 en %2 a %3.</translation>
@@ -1298,7 +1298,7 @@
         </message>
     </context>
     <context>
-        <name>GroupWidget</name>
+        <name>module::im::GroupWidget</name>
         <message>
             <source>Set title...</source>
             <translation>Establecer título...</translation>
@@ -1326,7 +1326,7 @@
         </message>
     </context>
     <context>
-        <name>IdentitySettings</name>
+        <name>module::im::IdentitySettings</name>
         <message>
             <source>Public Information</source>
             <translation>Información pública</translation>
@@ -1563,7 +1563,7 @@
         </message>
     </context>
     <context>
-        <name>LoadHistoryDialog</name>
+        <name>module::im::LoadHistoryDialog</name>
         <message>
             <source>Load History Dialog</source>
             <translation>Cargar historial</translation>
@@ -1594,7 +1594,7 @@
         </message>
     </context>
     <context>
-        <name>LoginScreen</name>
+        <name>module::im::LoginScreen</name>
         <message>
             <source>Username:</source>
             <translation>Usuario:</translation>
@@ -1747,7 +1747,7 @@
         </message>
     </context>
     <context>
-        <name>MainWindow</name>
+        <name>module::im::MainWindow</name>
         <message>
             <source>...</source>
             <translation>...</translation>
@@ -1850,7 +1850,7 @@
         </message>
     </context>
     <context>
-        <name>Nexus</name>
+        <name>module::im::Nexus</name>
         <message>
             <source>View</source>
             <comment>OS X Menu bar</comment>
@@ -1881,7 +1881,7 @@
         </message>
     </context>
     <context>
-        <name>NotificationEdgeWidget</name>
+        <name>module::im::NotificationEdgeWidget</name>
         <message numerus="yes">
             <source>Unread message(s)</source>
             <translation>
@@ -1891,17 +1891,17 @@
         </message>
     </context>
     <context>
-        <name>PasswordEdit</name>
+        <name>module::im::PasswordEdit</name>
         <message>
             <source>CAPS-LOCK ENABLED</source>
             <translation>BLOQ MAYÚS ACTIVO</translation>
         </message>
     </context>
     <context>
-        <name>Profile</name>
+        <name>module::im::Profile</name>
     </context>
     <context>
-        <name>ProfileForm</name>
+        <name>module::im::ProfileForm</name>
         <message>
             <source>Current profile:</source>
             <translation>Perfil actual:</translation>
@@ -2132,7 +2132,7 @@
         </message>
     </context>
     <context>
-        <name>ProfileImporter</name>
+        <name>module::im::ProfileImporter</name>
         <message>
             <source>Import profile</source>
             <comment>import dialog title</comment>
@@ -2181,7 +2181,7 @@
         </message>
     </context>
     <context>
-        <name>QApplication</name>
+        <name>module::im::QApplication</name>
         <message>
             <source>Ok</source>
             <translation>Aceptar</translation>
@@ -2207,7 +2207,7 @@
         </message>
     </context>
     <context>
-        <name>QMessageBox</name>
+        <name>module::im::QMessageBox</name>
         <message>
             <source>Couldn&apos;t add friend</source>
             <translation>No se pudo agregar el amigo</translation>
@@ -2223,7 +2223,7 @@
         </message>
     </context>
     <context>
-        <name>QObject</name>
+        <name>module::im::QObject</name>
         <message>
             <source>Tox URI to parse</source>
             <translation>URI Tox a utilizar</translation>
@@ -2390,7 +2390,7 @@
         </message>
     </context>
     <context>
-        <name>RemoveFriendDialog</name>
+        <name>module::im::RemoveFriendDialog</name>
         <message>
             <source>Remove friend</source>
             <translation>Eliminar amigo</translation>
@@ -2413,7 +2413,7 @@
         </message>
     </context>
     <context>
-        <name>ScreenshotGrabber</name>
+        <name>module::im::ScreenshotGrabber</name>
         <message>
             <source>Click and drag to select a region. Press %1 to hide/show window, or %2 to cancel.</source>
             <comment>Help text shown when no region has been selected yet</comment>
@@ -2447,7 +2447,7 @@
         </message>
     </context>
     <context>
-        <name>SearchForm</name>
+        <name>module::im::SearchForm</name>
         <message>
             <source>The text could not be found.</source>
             <translation>Texto no encontrado.</translation>
@@ -2458,7 +2458,7 @@
         </message>
     </context>
     <context>
-        <name>SearchSettingsForm</name>
+        <name>module::im::SearchSettingsForm</name>
         <message>
             <source>Form</source>
             <translation>Formulario</translation>
@@ -2501,7 +2501,7 @@
         </message>
     </context>
     <context>
-        <name>SetPasswordDialog</name>
+        <name>module::im::SetPasswordDialog</name>
         <message>
             <source>Set your password</source>
             <translation>Establecer tu contraseña</translation>
@@ -2544,14 +2544,14 @@
         </message>
     </context>
     <context>
-        <name>Settings</name>
+        <name>module::im::Settings</name>
         <message>
             <source>Circle #%1</source>
             <translation>Círculo #%1</translation>
         </message>
     </context>
     <context>
-        <name>ToxURIDialog</name>
+        <name>module::im::ToxURIDialog</name>
         <message>
             <source>Add a friend</source>
             <comment>Title of the window to add a friend through Tox URI</comment>
@@ -2581,7 +2581,7 @@
         </message>
     </context>
     <context>
-        <name>StorageSettingsForm</name>
+        <name>module::im::StorageSettingsForm</name>
         <message>
             <source>None</source>
             <translation>Ninguno</translation>
@@ -2592,7 +2592,7 @@
         </message>
     </context>
     <context>
-        <name>GeneralSettings</name>
+        <name>module::im::GeneralSettings</name>
         <message>
             <source>Chat</source>
             <translation>Chat</translation>
@@ -2780,7 +2780,7 @@
         </message>
     </context>
     <context>
-        <name>Widget</name>
+        <name>module::im::Widget</name>
         <message>
             <source>Online</source>
             <translation>Conectados</translation>

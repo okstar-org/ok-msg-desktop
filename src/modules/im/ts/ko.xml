@@ -14,7 +14,7 @@
 <!DOCTYPE TS>
 <TS language="ko" version="2.1">
     <context>
-        <name>AVForm</name>
+        <name>module::im::AVForm</name>
         <message>
             <source>Audio Settings</source>
             <translation>오디오설정</translation>
@@ -133,7 +133,7 @@ which may lead to problems with video calls.</source>
         </message>
     </context>
     <context>
-        <name>AboutFriendForm</name>
+        <name>module::im::AboutFriendForm</name>
         <message>
             <source>Dialog</source>
             <translation>대화</translation>
@@ -213,7 +213,7 @@ which may lead to problems with video calls.</source>
         </message>
     </context>
     <context>
-        <name>AboutGroupForm</name>
+        <name>module::im::AboutGroupForm</name>
         <message>
             <source>Form</source>
             <translation>폼</translation>
@@ -296,7 +296,7 @@ which may lead to problems with video calls.</source>
         </message>
     </context>
     <context>
-        <name>AddFriendForm</name>
+        <name>module::im::AddFriendForm</name>
         <message>
             <source>Form</source>
             <translation>폼</translation>
@@ -336,7 +336,7 @@ which may lead to problems with video calls.</source>
         </message>
     </context>
     <context>
-        <name>CallDurationForm</name>
+        <name>module::im::CallDurationForm</name>
         <message>
             <source>Form</source>
             <translation>폼</translation>
@@ -351,7 +351,7 @@ which may lead to problems with video calls.</source>
         </message>
     </context>
     <context>
-        <name>ChatForm</name>
+        <name>module::im::ChatForm</name>
         <message>
             <source>Filename contained illegal characters</source>
             <translation>파일 이름에 잘못된 문자가 포함되어 있습니다.</translation>
@@ -397,7 +397,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>ChatFormHeader</name>
+        <name>module::im::ChatFormHeader</name>
         <message>
             <source>Can't start audio call</source>
             <translation>음성 통화를 시작할 수 없습니다.</translation>
@@ -464,7 +464,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>ChatInputForm</name>
+        <name>module::im::ChatInputForm</name>
         <message>
             <source>Send message</source>
             <translation>메시지 보내기</translation>
@@ -503,7 +503,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>ChatLineContent</name>
+        <name>module::im::ChatLineContent</name>
         <message>
             <source>Copy</source>
             <translation>복사</translation>
@@ -518,7 +518,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>ChatLog</name>
+        <name>module::im::ChatLog</name>
         <message>
             <source>Clear displayed messages</source>
             <translation>비우기</translation>
@@ -537,21 +537,21 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>ChatReplyForm</name>
+        <name>module::im::ChatReplyForm</name>
         <message>
             <source>Form</source>
             <translation>폼</translation>
         </message>
     </context>
     <context>
-        <name>ChatTextEdit</name>
+        <name>module::im::ChatTextEdit</name>
         <message>
             <source>Type your message here...</source>
             <translation>여기에 메시지를 입력하세요...</translation>
         </message>
     </context>
     <context>
-        <name>ChatWidget</name>
+        <name>module::im::ChatWidget</name>
         <message>
             <source>Form</source>
             <translation>폼</translation>
@@ -623,7 +623,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>CircleWidget</name>
+        <name>module::im::CircleWidget</name>
         <message>
             <source>Rename circle</source>
             <comment>Menu for renaming a circle</comment>
@@ -640,7 +640,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>ContactSelectDialog</name>
+        <name>module::im::ContactSelectDialog</name>
         <message>
             <source>Dialog</source>
             <translation>대화</translation>
@@ -651,7 +651,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>ContactWidget</name>
+        <name>module::im::ContactWidget</name>
         <message>
             <source>Form</source>
             <translation>폼</translation>
@@ -678,7 +678,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>Core</name>
+        <name>module::im::Core</name>
         <message>
             <source>Invalid Ok ID</source>
             <comment>Error while sending friendship request</comment>
@@ -700,7 +700,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>DesktopNotify</name>
+        <name>module::im::DesktopNotify</name>
         <message>
             <source>New message</source>
             <translation>새 메시지</translation>
@@ -723,7 +723,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>FileTransferWidget</name>
+        <name>module::im::FileTransferWidget</name>
         <message>
             <source>Form</source>
             <translation>폼</translation>
@@ -791,7 +791,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>FilesForm</name>
+        <name>module::im::FilesForm</name>
         <message>
             <source>Transferred Files</source>
             <comment>"Headline" of the window</comment>
@@ -807,7 +807,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>FriendForm</name>
+        <name>module::im::FriendForm</name>
         <message>
             <source>Frame</source>
             <translation>프레임</translation>
@@ -822,7 +822,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>FriendRequestDialog</name>
+        <name>module::im::FriendRequestDialog</name>
         <message>
             <source>IMFriend request</source>
             <comment>Title of the window to aceept/deny a friend request</comment>
@@ -852,7 +852,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>FriendWidget</name>
+        <name>module::im::FriendWidget</name>
         <message>
             <source>Invite to group</source>
             <translation>그룹 초대</translation>
@@ -903,14 +903,14 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>GeneralForm</name>
+        <name>module::im::GeneralForm</name>
         <message>
             <source>General</source>
             <translation>일반</translation>
         </message>
     </context>
     <context>
-        <name>GeneralSettings</name>
+        <name>module::im::GeneralSettings</name>
         <message>
             <source>Chat</source>
             <translation>잡담</translation>
@@ -1020,7 +1020,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>GenericChatForm</name>
+        <name>module::im::GenericChatForm</name>
         <message>
             <source>Confirmation</source>
             <translation>확인</translation>
@@ -1043,7 +1043,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>GenericChatItemWidget</name>
+        <name>module::im::GenericChatItemWidget</name>
         <message>
             <source>I:</source>
             <translation>나는:</translation>
@@ -1054,7 +1054,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>GenericNetCamView</name>
+        <name>module::im::GenericNetCamView</name>
         <message>
             <source>Tox video</source>
             <translation>Tox 동영상</translation>
@@ -1093,7 +1093,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>GroupChatForm</name>
+        <name>module::im::GroupChatForm</name>
         <message>
             <source>%1 has set the title to %2</source>
             <translation>%1이(가) 제목을 %2(으)로 설정했습니다.</translation>
@@ -1127,7 +1127,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>GroupCreateForm</name>
+        <name>module::im::GroupCreateForm</name>
         <message>
             <source>Form</source>
             <translation>폼</translation>
@@ -1146,7 +1146,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>GroupInviteForm</name>
+        <name>module::im::GroupInviteForm</name>
         <message>
             <source>Groups</source>
             <translation>그룹</translation>
@@ -1161,7 +1161,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>GroupInviteWidget</name>
+        <name>module::im::GroupInviteWidget</name>
         <message>
             <source>Invited by %1 on %2 at %3.</source>
             <translation>%3의 %2에 %1이(가) 초대했습니다.</translation>
@@ -1176,7 +1176,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>GroupWidget</name>
+        <name>module::im::GroupWidget</name>
         <message>
             <source>Quit group</source>
             <comment>Menu to quit a groupchat</comment>
@@ -1197,14 +1197,14 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>IMMainWindow</name>
+        <name>module::im::IMMainWindow</name>
         <message>
             <source>Close</source>
             <translation>닫다</translation>
         </message>
     </context>
     <context>
-        <name>IdentitySettings</name>
+        <name>module::im::IdentitySettings</name>
         <message>
             <source>My profile</source>
             <translation>내 프로필</translation>
@@ -1274,7 +1274,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>LoadHistoryDialog</name>
+        <name>module::im::LoadHistoryDialog</name>
         <message>
             <source>Load History Dialog</source>
             <translation>로드 히스토리 대화 상자</translation>
@@ -1285,7 +1285,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>MessageSessionListWidget</name>
+        <name>module::im::MessageSessionListWidget</name>
         <message>
             <source>Today</source>
             <translation>오늘</translation>
@@ -1312,7 +1312,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>MessageSessionWidget</name>
+        <name>module::im::MessageSessionWidget</name>
         <message>
             <source>Delete the session</source>
             <translation>세션 삭제</translation>
@@ -1323,7 +1323,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>Nexus</name>
+        <name>module::im::Nexus</name>
         <message>
             <source>Can not create profile!</source>
             <translation>프로필을 만들 수 없습니다!</translation>
@@ -1358,7 +1358,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>NotificationEdgeWidget</name>
+        <name>module::im::NotificationEdgeWidget</name>
         <message numerus="yes">
             <source>Unread message(s)</source>
             <translation>
@@ -1367,21 +1367,21 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>PasswordEdit</name>
+        <name>module::im::PasswordEdit</name>
         <message>
             <source>CAPS-LOCK ENABLED</source>
             <translation>CAPS-LOCK 활성화</translation>
         </message>
     </context>
     <context>
-        <name>PrivacyForm</name>
+        <name>module::im::PrivacyForm</name>
         <message>
             <source>Privacy</source>
             <translation>사생활</translation>
         </message>
     </context>
     <context>
-        <name>ProfileForm</name>
+        <name>module::im::ProfileForm</name>
         <message>
             <source>Unable to open this file.</source>
             <translation>이 파일을 열 수 없습니다.</translation>
@@ -1518,7 +1518,7 @@ Please use another image.</source>
         </message>
     </context>
     <context>
-        <name>ProfileImporter</name>
+        <name>module::im::ProfileImporter</name>
         <message>
             <source>Import profile</source>
             <comment>import dialog title</comment>
@@ -1567,7 +1567,7 @@ Please use another image.</source>
         </message>
     </context>
     <context>
-        <name>QApplication</name>
+        <name>module::im::QApplication</name>
         <message>
             <source>Ok</source>
             <translation>그래</translation>
@@ -1586,7 +1586,7 @@ Please use another image.</source>
         </message>
     </context>
     <context>
-        <name>QObject</name>
+        <name>module::im::QObject</name>
         <message>
             <source>Reformatting text in progress..</source>
             <translation>텍스트 서식 다시 지정이 진행 중입니다..</translation>
@@ -1640,7 +1640,7 @@ Please use another image.</source>
         </message>
     </context>
     <context>
-        <name>RemoveFriendDialog</name>
+        <name>module::im::RemoveFriendDialog</name>
         <message>
             <source>Remove friend</source>
             <translation>친구 삭제</translation>
@@ -1663,7 +1663,7 @@ Please use another image.</source>
         </message>
     </context>
     <context>
-        <name>ScreenshotGrabber</name>
+        <name>module::im::ScreenshotGrabber</name>
         <message>
             <source>Click and drag to select a region. Press %1 to hide/show window, or %2 to cancel.</source>
             <comment>Help text shown when no region has been selected yet</comment>
@@ -1691,7 +1691,7 @@ Please use another image.</source>
         </message>
     </context>
     <context>
-        <name>SearchForm</name>
+        <name>module::im::SearchForm</name>
         <message>
             <source>The text could not be found.</source>
             <translation>텍스트를 찾을 수 없습니다.</translation>
@@ -1702,7 +1702,7 @@ Please use another image.</source>
         </message>
     </context>
     <context>
-        <name>SearchSettingsForm</name>
+        <name>module::im::SearchSettingsForm</name>
         <message>
             <source>Form</source>
             <translation>폼</translation>
@@ -1753,7 +1753,7 @@ Please use another image.</source>
         </message>
     </context>
     <context>
-        <name>SetPasswordDialog</name>
+        <name>module::im::SetPasswordDialog</name>
         <message>
             <source>Set your password</source>
             <translation>비밀번호 설정</translation>
@@ -1796,14 +1796,14 @@ Please use another image.</source>
         </message>
     </context>
     <context>
-        <name>Settings</name>
+        <name>module::im::Settings</name>
         <message>
             <source>Circle #%1</source>
             <translation>서클 #%1</translation>
         </message>
     </context>
     <context>
-        <name>StorageSettingsForm</name>
+        <name>module::im::StorageSettingsForm</name>
         <message>
             <source>Local Storage</source>
             <translation>로컬 스토리지</translation>
@@ -1895,7 +1895,7 @@ Please use another image.</source>
         </message>
     </context>
     <context>
-        <name>Widget</name>
+        <name>module::im::Widget</name>
         <message>
             <source>Chat</source>
             <translation>잡담</translation>

@@ -14,7 +14,7 @@
 <!DOCTYPE TS>
 <TS language="ja" version="2.1">
     <context>
-        <name>AVForm</name>
+        <name>module::im::module::im::AVForm</name>
         <message>
             <source>Audio Settings</source>
             <translation>音声の設定</translation>
@@ -133,7 +133,7 @@ which may lead to problems with video calls.</source>
         </message>
     </context>
     <context>
-        <name>AboutFriendForm</name>
+        <name>module::im::module::im::AboutFriendForm</name>
         <message>
             <source>Dialog</source>
             <translation>] ダイアログ</translation>
@@ -213,7 +213,7 @@ which may lead to problems with video calls.</source>
         </message>
     </context>
     <context>
-        <name>AboutGroupForm</name>
+        <name>module::im::module::im::AboutGroupForm</name>
         <message>
             <source>Form</source>
             <translation>フォーム</translation>
@@ -296,7 +296,7 @@ which may lead to problems with video calls.</source>
         </message>
     </context>
     <context>
-        <name>AddFriendForm</name>
+        <name>module::im::module::im::AddFriendForm</name>
         <message>
             <source>Form</source>
             <translation>フォーム</translation>
@@ -336,7 +336,7 @@ which may lead to problems with video calls.</source>
         </message>
     </context>
     <context>
-        <name>CallDurationForm</name>
+        <name>module::im::module::im::CallDurationForm</name>
         <message>
             <source>Form</source>
             <translation>フォーム</translation>
@@ -351,7 +351,7 @@ which may lead to problems with video calls.</source>
         </message>
     </context>
     <context>
-        <name>ChatForm</name>
+        <name>module::im::module::im::ChatForm</name>
         <message>
             <source>Filename contained illegal characters</source>
             <translation>ファイル名に不正な文字が含まれています</translation>
@@ -397,7 +397,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>ChatFormHeader</name>
+        <name>module::im::module::im::ChatFormHeader</name>
         <message>
             <source>Can't start audio call</source>
             <translation>音声通話を開始できません</translation>
@@ -464,7 +464,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>ChatInputForm</name>
+        <name>module::im::module::im::ChatInputForm</name>
         <message>
             <source>Send message</source>
             <translation>メッセージを送信</translation>
@@ -503,7 +503,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>ChatLineContent</name>
+        <name>module::im::module::im::ChatLineContent</name>
         <message>
             <source>Copy</source>
             <translation>コピー</translation>
@@ -518,7 +518,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>ChatLog</name>
+        <name>module::im::module::im::ChatLog</name>
         <message>
             <source>Clear displayed messages</source>
             <translation>表示されたメッセージを消去</translation>
@@ -537,21 +537,21 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>ChatReplyForm</name>
+        <name>module::im::module::im::ChatReplyForm</name>
         <message>
             <source>Form</source>
             <translation>フォーム</translation>
         </message>
     </context>
     <context>
-        <name>ChatTextEdit</name>
+        <name>module::im::module::im::ChatTextEdit</name>
         <message>
             <source>Type your message here...</source>
             <translation>ここにメッセージを入力してください…</translation>
         </message>
     </context>
     <context>
-        <name>ChatWidget</name>
+        <name>module::im::module::im::ChatWidget</name>
         <message>
             <source>Form</source>
             <translation>フォーム</translation>
@@ -623,7 +623,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>CircleWidget</name>
+        <name>module::im::module::im::CircleWidget</name>
         <message>
             <source>Rename circle</source>
             <comment>Menu for renaming a circle</comment>
@@ -640,7 +640,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>ContactSelectDialog</name>
+        <name>module::im::ContactSelectDialog</name>
         <message>
             <source>Dialog</source>
             <translation>] ダイアログ</translation>
@@ -651,7 +651,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>ContactWidget</name>
+        <name>module::im::ContactWidget</name>
         <message>
             <source>Form</source>
             <translation>フォーム</translation>
@@ -678,7 +678,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>Core</name>
+        <name>module::im::Core</name>
         <message>
             <source>Invalid Ok ID</source>
             <comment>Error while sending friendship request</comment>
@@ -700,7 +700,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>DesktopNotify</name>
+        <name>module::im::DesktopNotify</name>
         <message>
             <source>New message</source>
             <translation>新しいメッセージがあり</translation>
@@ -723,7 +723,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>FileTransferWidget</name>
+        <name>module::im::FileTransferWidget</name>
         <message>
             <source>Form</source>
             <translation>フォーム</translation>
@@ -791,7 +791,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>FilesForm</name>
+        <name>module::im::FilesForm</name>
         <message>
             <source>Transferred Files</source>
             <comment>"Headline" of the window</comment>
@@ -807,7 +807,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>FriendForm</name>
+        <name>module::im::FriendForm</name>
         <message>
             <source>Frame</source>
             <translation>フレーム</translation>
@@ -822,7 +822,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>FriendRequestDialog</name>
+        <name>module::im::FriendRequestDialog</name>
         <message>
             <source>IMFriend request</source>
             <comment>Title of the window to aceept/deny a friend request</comment>
@@ -852,7 +852,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>FriendWidget</name>
+        <name>module::im::FriendWidget</name>
         <message>
             <source>Invite to group</source>
             <translation>グループに招待</translation>
@@ -903,14 +903,14 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>GeneralForm</name>
+        <name>module::im::GeneralForm</name>
         <message>
             <source>General</source>
             <translation>共通設定</translation>
         </message>
     </context>
     <context>
-        <name>GeneralSettings</name>
+        <name>module::im::GeneralSettings</name>
         <message>
             <source>Chat</source>
             <translation>チャット</translation>
@@ -1021,7 +1021,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>GenericChatForm</name>
+        <name>module::im::GenericChatForm</name>
         <message>
             <source>Confirmation</source>
             <translation>確認</translation>
@@ -1044,7 +1044,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>GenericChatItemWidget</name>
+        <name>module::im::GenericChatItemWidget</name>
         <message>
             <source>I:</source>
             <translation>私：</translation>
@@ -1055,7 +1055,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>GenericNetCamView</name>
+        <name>module::im::GenericNetCamView</name>
         <message>
             <source>Tox video</source>
             <translation>Tox ビデオ</translation>
@@ -1094,7 +1094,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>GroupChatForm</name>
+        <name>module::im::GroupChatForm</name>
         <message>
             <source>%1 has set the title to %2</source>
             <translation>%1 さんがタイトルを %2 に設定しました</translation>
@@ -1128,7 +1128,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>GroupCreateForm</name>
+        <name>module::im::GroupCreateForm</name>
         <message>
             <source>Form</source>
             <translation>フォーム</translation>
@@ -1147,7 +1147,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>GroupInviteForm</name>
+        <name>module::im::GroupInviteForm</name>
         <message>
             <source>Groups</source>
             <translation>グループ</translation>
@@ -1162,7 +1162,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>GroupInviteWidget</name>
+        <name>module::im::GroupInviteWidget</name>
         <message>
             <source>Invited by %1 on %2 at %3.</source>
             <translation>%2 %3 に %1 さんに招待されました。</translation>
@@ -1177,7 +1177,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>GroupWidget</name>
+        <name>module::im::GroupWidget</name>
         <message>
             <source>Quit group</source>
             <comment>Menu to quit a groupchat</comment>
@@ -1198,14 +1198,14 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>IMMainWindow</name>
+        <name>module::im::IMMainWindow</name>
         <message>
             <source>Close</source>
             <translation>閉める</translation>
         </message>
     </context>
     <context>
-        <name>IdentitySettings</name>
+        <name>module::im::IdentitySettings</name>
         <message>
             <source>My profile</source>
             <translation>プロファイル</translation>
@@ -1275,7 +1275,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>LoadHistoryDialog</name>
+        <name>module::im::LoadHistoryDialog</name>
         <message>
             <source>Load History Dialog</source>
             <translation>履歴の読み込みダイアログ</translation>
@@ -1286,7 +1286,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>MessageSessionListWidget</name>
+        <name>module::im::MessageSessionListWidget</name>
         <message>
             <source>Today</source>
             <translation>今日</translation>
@@ -1313,7 +1313,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>MessageSessionWidget</name>
+        <name>module::im::MessageSessionWidget</name>
         <message>
             <source>Delete the session</source>
             <translation>セッションの削除</translation>
@@ -1324,7 +1324,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>Nexus</name>
+        <name>module::im::Nexus</name>
         <message>
             <source>Can not create profile!</source>
             <translation>プロフィールを作成できません!</translation>
@@ -1359,7 +1359,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>NotificationEdgeWidget</name>
+        <name>module::im::NotificationEdgeWidget</name>
         <message numerus="yes">
             <source>Unread message(s)</source>
             <translation>
@@ -1368,21 +1368,21 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>PasswordEdit</name>
+        <name>module::im::PasswordEdit</name>
         <message>
             <source>CAPS-LOCK ENABLED</source>
             <translation>Caps Lock が有効になっています</translation>
         </message>
     </context>
     <context>
-        <name>PrivacyForm</name>
+        <name>module::im::PrivacyForm</name>
         <message>
             <source>Privacy</source>
             <translation>プライバシー</translation>
         </message>
     </context>
     <context>
-        <name>ProfileForm</name>
+        <name>module::im::ProfileForm</name>
         <message>
             <source>Unable to open this file.</source>
             <translation>このファイルを開けません。</translation>
@@ -1519,7 +1519,7 @@ Please use another image.</source>
         </message>
     </context>
     <context>
-        <name>ProfileImporter</name>
+        <name>module::im::ProfileImporter</name>
         <message>
             <source>Import profile</source>
             <comment>import dialog title</comment>
@@ -1568,7 +1568,7 @@ Please use another image.</source>
         </message>
     </context>
     <context>
-        <name>QApplication</name>
+        <name>module::im::QApplication</name>
         <message>
             <source>Ok</source>
             <translation>OK</translation>
@@ -1587,7 +1587,7 @@ Please use another image.</source>
         </message>
     </context>
     <context>
-        <name>QObject</name>
+        <name>module::im::QObject</name>
         <message>
             <source>Reformatting text in progress..</source>
             <translation>テキストの再書式設定が進行中です。</translation>
@@ -1641,7 +1641,7 @@ Please use another image.</source>
         </message>
     </context>
     <context>
-        <name>RemoveFriendDialog</name>
+        <name>module::im::RemoveFriendDialog</name>
         <message>
             <source>Remove friend</source>
             <translation>友達を削除</translation>
@@ -1664,7 +1664,7 @@ Please use another image.</source>
         </message>
     </context>
     <context>
-        <name>ScreenshotGrabber</name>
+        <name>module::im::ScreenshotGrabber</name>
         <message>
             <source>Click and drag to select a region. Press %1 to hide/show window, or %2 to cancel.</source>
             <comment>Help text shown when no region has been selected yet</comment>
@@ -1694,7 +1694,7 @@ Please use another image.</source>
         </message>
     </context>
     <context>
-        <name>SearchForm</name>
+        <name>module::im::SearchForm</name>
         <message>
             <source>The text could not be found.</source>
             <translation>テキストが見つかりませんでした。</translation>
@@ -1705,7 +1705,7 @@ Please use another image.</source>
         </message>
     </context>
     <context>
-        <name>SearchSettingsForm</name>
+        <name>module::im::SearchSettingsForm</name>
         <message>
             <source>Form</source>
             <translation>フォーム</translation>
@@ -1756,7 +1756,7 @@ Please use another image.</source>
         </message>
     </context>
     <context>
-        <name>SetPasswordDialog</name>
+        <name>module::im::SetPasswordDialog</name>
         <message>
             <source>Set your password</source>
             <translation>パスワードを設定</translation>
@@ -1799,14 +1799,14 @@ Please use another image.</source>
         </message>
     </context>
     <context>
-        <name>Settings</name>
+        <name>module::im::Settings</name>
         <message>
             <source>Circle #%1</source>
             <translation>サークル #%1</translation>
         </message>
     </context>
     <context>
-        <name>StorageSettingsForm</name>
+        <name>module::im::StorageSettingsForm</name>
         <message>
             <source>Local Storage</source>
             <translation>ローカルストレージ</translation>
@@ -1898,7 +1898,7 @@ Please use another image.</source>
         </message>
     </context>
     <context>
-        <name>Widget</name>
+        <name>module::im::Widget</name>
         <message>
             <source>Chat</source>
             <translation>チャット</translation>
