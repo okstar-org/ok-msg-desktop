@@ -22,7 +22,7 @@
 #include <memory>
 #include <set>
 #include <mutex>
-#include <range/v3/all.hpp>
+
 
 #include <bookmarkhandler.h>
 #include <bookmarkstorage.h>
