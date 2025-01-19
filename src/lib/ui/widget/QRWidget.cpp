@@ -10,14 +10,12 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#include "qrwidget.h"
+#include "QRWidget.h"
 #include <qrencode.h>
 #include <QBuffer>
 #include <QDebug>
 #include <QImage>
-#include <QLabel>
 #include <QPainter>
-#include <QPixmap>
 #include <QVBoxLayout>
 
 /**

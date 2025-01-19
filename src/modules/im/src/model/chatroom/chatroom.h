@@ -14,6 +14,7 @@
 #define MODEL_CHATROOM_H
 
 #include "src/model/contact.h"
+namespace module::im {
 
 class Chatroom : public QObject {
     Q_OBJECT
@@ -29,5 +30,6 @@ signals:
 private:
     bool active;
 };
+}  // namespace module::im
 
 #endif /* MODEL_CHATROOM_H */

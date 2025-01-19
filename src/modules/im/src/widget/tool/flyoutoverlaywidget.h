@@ -16,6 +16,7 @@
 #include <QWidget>
 
 class QPropertyAnimation;
+namespace module::im {
 
 class FlyoutOverlayWidget : public QWidget {
     Q_OBJECT
@@ -50,5 +51,5 @@ private:
     qreal percent = 1.0f;
     QPoint startPos;
 };
-
+}  // namespace module::im
 #endif  // FLYOUTOVERLAYWIDGET_HPP

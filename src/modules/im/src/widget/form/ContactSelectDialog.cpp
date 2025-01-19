@@ -22,6 +22,8 @@
 
 #include "src/nexus.h"
 
+namespace module::im {
+
 ContactSelectDialog::ContactSelectDialog(QWidget* parent, const QString& title)
         : QDialog(parent), ui(new Ui::ContactSelectDialog) {
     ui->setupUi(this);
@@ -72,3 +74,4 @@ void ContactSelectDialog::onFriendDeleted(const Friend* widget) {
     qDebug() << __func__ << widget;
     contactListWidget->removeFriend(widget);
 }
+}  // namespace module::im

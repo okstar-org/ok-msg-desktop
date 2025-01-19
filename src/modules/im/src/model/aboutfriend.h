@@ -18,6 +18,7 @@
 #include "src/persistence/ifriendsettings.h"
 
 #include <QObject>
+namespace module::im {
 
 class Friend;
 class IFriendSettings;
@@ -27,7 +28,9 @@ class AboutFriend : public QObject, public IAboutFriend {
 
 public:
     AboutFriend(const Friend* f, IFriendSettings* const settings);
-    const Friend* getFriend() const override { return f; }
+    const Friend* getFriend() const override {
+        return f;
+    }
     QString getName() const override;
     const QString& getAlias() const override;
 
@@ -60,5 +63,5 @@ private:
     const Friend* const f;
     IFriendSettings* const settings;
 };
-
+}  // namespace module::im
 #endif  // ABOUT_FRIEND_H

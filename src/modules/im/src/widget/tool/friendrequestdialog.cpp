@@ -18,6 +18,7 @@
 #include <QPlainTextEdit>
 #include <QPushButton>
 #include <QVBoxLayout>
+namespace module::im {
 
 FriendRequestDialog::FriendRequestDialog(QWidget* parent, const QString& userId,
                                          const QString& message)
@@ -55,3 +56,4 @@ FriendRequestDialog::FriendRequestDialog(QWidget* parent, const QString& userId,
 
     resize(300, 200);
 }
+}  // namespace module::im

@@ -25,7 +25,7 @@
 
 static const int MAX_GROUP_TITLE_LENGTH = 128;
 
-namespace {
+namespace module::im {
 
 Group::Role parseRole(const QString& role) {
     if (role == "moderator") {
@@ -50,8 +50,6 @@ Group::Affiliation parseAffiliation(const QString& affiliation) {
     }
     return Group::Affiliation::None;
 }
-
-}  // namespace
 
 Group::Group(const GroupId groupId_, const QString& name, bool isAvGroupchat,
              const QString& selfName, ICoreGroupQuery& groupQuery, ICoreIdHandler& idHandler,
@@ -99,9 +97,13 @@ void Group::updateUsername(const QString oldName, const QString newName) {
     }
 }
 
-bool Group::isAvGroupchat() const { return avGroupchat; }
+bool Group::isAvGroupchat() const {
+    return avGroupchat;
+}
 
-int Group::getPeersCount() const { return peerCount; }
+int Group::getPeersCount() const {
+    return peerCount;
+}
 
 void Group::setPeerCount(uint32_t count) {
     peerCount = count;
@@ -112,7 +114,9 @@ void Group::setPeerCount(uint32_t count) {
  * @brief Gets the PKs and names of all peers
  * @return PKs and names of all peers, including our own PK and name
  */
-const QMap<QString, QString>& Group::getPeerList() const { return peerDisplayNames; }
+const QMap<QString, QString>& Group::getPeerList() const {
+    return peerDisplayNames;
+}
 
 QString Group::getPeerDisplayName(const QString& resource) {
     return peerDisplayNames.value(resource, resource);
@@ -134,13 +138,21 @@ void Group::addPeer(const GroupOccupant& occ) {
     }
 }
 
-void Group::setEventFlag(bool f) { hasNewMessages = f; }
+void Group::setEventFlag(bool f) {
+    hasNewMessages = f;
+}
 
-bool Group::getEventFlag() const { return hasNewMessages; }
+bool Group::getEventFlag() const {
+    return hasNewMessages;
+}
 
-void Group::setMentionedFlag(bool f) { userWasMentioned = f; }
+void Group::setMentionedFlag(bool f) {
+    userWasMentioned = f;
+}
 
-bool Group::getMentionedFlag() const { return userWasMentioned; }
+bool Group::getMentionedFlag() const {
+    return userWasMentioned;
+}
 
 void Group::setDesc(const QString& desc_) {
     if (desc == desc_) {
@@ -150,9 +162,12 @@ void Group::setDesc(const QString& desc_) {
     emit descChanged(desc);
 }
 
-const QString& Group::getDesc() const { return desc; }
+const QString& Group::getDesc() const {
+    return desc;
+}
 
 void Group::setName(const QString& name) {
     qDebug() << __func__ << name;
     Contact::setName(name);
 }
+}  // namespace module::im

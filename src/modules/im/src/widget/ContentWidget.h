@@ -23,6 +23,7 @@
 #include "src/widget/form/groupchatform.h"
 #include "src/worker/SendWorker.h"
 
+namespace module::im {
 class ContentLayout;
 class ChatForm;
 
@@ -48,5 +49,5 @@ private:
     QWidget* seperator;
     QWidget* mainContent;
 };
-
+}  // namespace module::im
 #endif  // OKMSG_PROJECT_CONTENTWIDGET_H

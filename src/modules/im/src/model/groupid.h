@@ -14,6 +14,7 @@
 #define GROUPID_H
 
 #include "contactid.h"
+namespace module::im {
 
 class GroupId : public ContactId {
 public:
@@ -30,5 +31,5 @@ public:
     QString name;
     QString nick;
 };
-
+}  // namespace module::im
 #endif  // GROUPID_H

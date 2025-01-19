@@ -16,6 +16,7 @@
 #include <QString>
 
 #include "../model/MsgId.h"
+namespace module::im {
 
 class ICoreGroupMessageSender {
 public:
@@ -23,5 +24,5 @@ public:
     virtual bool sendGroupAction(QString groupId, const QString& message, const MsgId& id) = 0;
     virtual bool sendGroupMessage(QString groupId, const QString& message, const MsgId& id) = 0;
 };
-
+}  // namespace module::im
 #endif /*ICORE_GROUP_MESSAGE_SENDER_H*/

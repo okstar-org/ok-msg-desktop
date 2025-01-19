@@ -15,6 +15,7 @@
 
 #include <QApplication>
 #include <QPushButton>
+namespace module::im {
 
 const double SetPasswordDialog::reasonablePasswordLength = 8.;
 
@@ -39,7 +40,9 @@ SetPasswordDialog::SetPasswordDialog(QString body, QString extraButton, QWidget*
     }
 }
 
-SetPasswordDialog::~SetPasswordDialog() { delete ui; }
+SetPasswordDialog::~SetPasswordDialog() {
+    delete ui;
+}
 
 void SetPasswordDialog::onPasswordEdit() {
     QString pswd = ui->passwordlineEdit->text();
@@ -86,4 +89,7 @@ int SetPasswordDialog::getPasswordStrength(QString pass) {
     return score;
 }
 
-QString SetPasswordDialog::getPassword() { return ui->passwordlineEdit->text(); }
+QString SetPasswordDialog::getPassword() {
+    return ui->passwordlineEdit->text();
+}
+}  // namespace module::im

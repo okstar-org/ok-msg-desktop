@@ -14,6 +14,7 @@
 #include "src/lib/session/profile.h"
 #include "src/model/status.h"
 #include "src/widget/form/chatform.h"
+namespace module::im {
 
 Friend::Friend(const FriendId& friendPk,  //
                bool isFriend,             //
@@ -22,15 +23,19 @@ Friend::Friend(const FriendId& friendPk,  //
         : Contact(friendPk, userName, userAlias, false)
         , id{friendPk}
         , hasNewEvents{false}
-        , friendStatus{Status::Status::None}
+        , friendStatus{Status::None}
         , mRelationStatus{RelationStatus::none} {
     auto core = Core::getInstance();
     friendStatus = core->getFriendStatus(friendPk.toString());
 }
 
-Friend::~Friend() { qDebug() << __func__; }
+Friend::~Friend() {
+    qDebug() << __func__;
+}
 
-QString Friend::toString() const { return getId().toString(); }
+QString Friend::toString() const {
+    return getId().toString();
+}
 
 void Friend::setStatusMessage(const QString& message) {
     if (statusMessage != message) {
@@ -39,23 +44,32 @@ void Friend::setStatusMessage(const QString& message) {
     }
 }
 
-QString Friend::getStatusMessage() const { return statusMessage; }
+QString Friend::getStatusMessage() const {
+    return statusMessage;
+}
 
-void Friend::setEventFlag(bool flag) { hasNewEvents = flag; }
+void Friend::setEventFlag(bool flag) {
+    hasNewEvents = flag;
+}
 
-bool Friend::getEventFlag() const { return hasNewEvents; }
+bool Friend::getEventFlag() const {
+    return hasNewEvents;
+}
 
-void Friend::setStatus(Status::Status s) {
+void Friend::setStatus(Status s) {
     if (friendStatus != s) {
         auto oldStatus = friendStatus;
         friendStatus = s;
         emit statusChanged(friendStatus, hasNewEvents);
-        if (!Status::isOnline(oldStatus) && Status::isOnline(friendStatus)) {
+        if (!isOnline(oldStatus) && isOnline(friendStatus)) {
             emit onlineOfflineChanged(true);
-        } else if (Status::isOnline(oldStatus) && !Status::isOnline(friendStatus)) {
+        } else if (isOnline(oldStatus) && !isOnline(friendStatus)) {
             emit onlineOfflineChanged(false);
         }
     }
 }
 
-Status::Status Friend::getStatus() const { return friendStatus; }
+Status Friend::getStatus() const {
+    return friendStatus;
+}
+}  // namespace module::im

@@ -22,6 +22,9 @@
 class QVBoxLayout;
 class QGridLayout;
 class QPixmap;
+
+namespace module::im {
+
 class Widget;
 class FriendWidget;
 class GroupWidget;
@@ -46,7 +49,7 @@ public:
     FriendWidget* getFriend(const ContactId& friendPk);
     void removeFriend(const Friend* f);
 
-    void setFriendStatus(const ContactId& friendPk, Status::Status status);
+    void setFriendStatus(const ContactId& friendPk, Status status);
     void setFriendStatusMsg(const FriendId& friendPk, const QString& statusMsg);
     void setFriendName(const FriendId& friendPk, const QString& name);
     void setFriendAlias(const FriendId& friendPk, const QString& alias);
@@ -96,7 +99,7 @@ public slots:
     void renameGroupWidget(GroupWidget* groupWidget, const QString& newName);
 
     void slot_friendClicked(GenericChatroomWidget*);
-    void moveWidget(FriendWidget* w, Status::Status s, bool add = false);
+    void moveWidget(FriendWidget* w, Status s, bool add = false);
 
     void slot_groupClicked(GenericChatroomWidget*);
     void do_toShowDetails(const ContactId& cid);
@@ -104,7 +107,6 @@ public slots:
 
 private slots:
     void cycleContacts(bool forward);
-
 };
-
+}  // namespace module::im
 #endif  // FRIENDLISTWIDGET_H

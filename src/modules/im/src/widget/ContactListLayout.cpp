@@ -18,6 +18,7 @@
 #include "src/model/friend.h"
 #include "src/model/friendlist.h"
 #include "src/model/status.h"
+namespace module::im {
 
 ContactListLayout::ContactListLayout(QWidget* parent) : QVBoxLayout(parent) {
     itemLayout = new GenericChatItemLayout(parent);
@@ -39,17 +40,25 @@ int ContactListLayout::indexOfFriendWidget(GenericChatItemWidget* widget, bool o
     return itemLayout->indexOfSortedWidget(widget);
 }
 
-int ContactListLayout::friendOnlineCount() const { return itemLayout->getLayout()->count(); }
+int ContactListLayout::friendOnlineCount() const {
+    return itemLayout->getLayout()->count();
+}
 
-int ContactListLayout::friendTotalCount() const { return friendOnlineCount(); }
+int ContactListLayout::friendTotalCount() const {
+    return friendOnlineCount();
+}
 
-void ContactListLayout::search(const QString& searchString) { itemLayout->search(searchString); }
+void ContactListLayout::search(const QString& searchString) {
+    itemLayout->search(searchString);
+}
 
-QLayout* ContactListLayout::getLayoutOnline() const { return itemLayout->getLayout(); }
+QLayout* ContactListLayout::getLayoutOnline() const {
+    return itemLayout->getLayout();
+}
 
 void ContactListLayout::addWidget(GenericChatItemWidget* w) {
-
     itemLayout->addSortedWidget(w);
     w->setVisible(true);
     // w->show();
 }
+}  // namespace module::im

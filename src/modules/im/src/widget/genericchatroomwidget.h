@@ -21,6 +21,9 @@ class CroppingLabel;
 
 class QVBoxLayout;
 class QHBoxLayout;
+
+namespace module::im {
+
 class ContentLayout;
 class Friend;
 class Group;
@@ -38,7 +41,9 @@ public slots:
 
     virtual void resetEventFlags() = 0;
     virtual QString getStatusString() const = 0;
-    const ContactId& getContactId() const { return contactId; };
+    const ContactId& getContactId() const {
+        return contactId;
+    };
 
     virtual bool eventFilter(QObject*, QEvent*) final override;
 
@@ -70,5 +75,5 @@ protected:
 
     ContactId contactId;
 };
-
+}  // namespace module::im
 #endif  // GENERICCHATROOMWIDGET_H

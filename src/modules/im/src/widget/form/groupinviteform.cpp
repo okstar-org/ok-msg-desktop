@@ -31,11 +31,7 @@
 
 #include <algorithm>
 
-/**
- * @class GroupInviteForm
- *
- * @brief This form contains all group invites you received
- */
+namespace module::im {
 
 GroupInviteForm::GroupInviteForm()
         : headWidget(new QWidget(this))
@@ -155,3 +151,4 @@ void GroupInviteForm::retranslateUi() {
         invite->retranslateUi();
     }
 }
+}  // namespace module::im

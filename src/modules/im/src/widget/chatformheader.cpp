@@ -15,7 +15,7 @@
 #include "lib/storage/settings/translator.h"
 #include "lib/ui/widget/croppinglabel.h"
 #include "src/lib/storage/settings/style.h"
-#include "src/widget/maskablepixmapwidget.h"
+#include "src/lib/ui/widget/maskablepixmapwidget.h"
 #include "src/widget/tool/callconfirmwidget.h"
 
 #include <QDebug>
@@ -41,7 +41,7 @@
 #include "src/nexus.h"
 #include "widget.h"
 
-namespace {
+namespace module::im {
 
 static const short HEAD_LAYOUT_SPACING = 5;
 static const short MIC_BUTTONS_LAYOUT_SPACING = 4;
@@ -102,7 +102,6 @@ template <class State> void setStateName(QAbstractButton* btn, State state) {
     btn->setProperty("state", STATE_NAME[index]);
     btn->setEnabled(index != 0);
 }
-}  // namespace
 
 ChatFormHeader::ChatFormHeader(const ContactId& contactId, QWidget* parent)
         : QWidget(parent)
@@ -211,7 +210,7 @@ void ChatFormHeader::setContact(const Contact* contact_) {
         updateCallButtons(f->getStatus());
         updateContactStatus(f->getStatus());
 
-        connect(f, &Friend::statusChanged, this, [this](Status::Status status, bool event) {
+        connect(f, &Friend::statusChanged, this, [this](Status status, bool event) {
             updateCallButtons(status);
             updateContactStatus(status);
         });
@@ -253,7 +252,7 @@ void ChatFormHeader::retranslateUi() {
 
     if (contact && !contact->isGroup()) {
         auto f = static_cast<const Friend*>(contact);
-        statusLabel->setText(Status::getTitle(f->getStatus()));
+        statusLabel->setText(getTitle(f->getStatus()));
     }
 }
 
@@ -281,10 +280,10 @@ void ChatFormHeader::nameChanged(const QString& name) {
     }
 }
 
-void ChatFormHeader::updateContactStatus(Status::Status status) {
-    auto pix = Status::getIconPath(status, false);
+void ChatFormHeader::updateContactStatus(Status status) {
+    auto pix = getIconPath(status, false);
     statusIcon->setIcon(QIcon(pix));
-    statusLabel->setText(Status::getTitle(status));
+    statusLabel->setText(getTitle(status));
 }
 
 void ChatFormHeader::showOutgoingCall(bool video) {
@@ -375,12 +374,12 @@ void ChatFormHeader::updateCallButtons() {
     updateMuteVolButton();
 }
 
-void ChatFormHeader::updateCallButtons(Status::Status status) {
+void ChatFormHeader::updateCallButtons(Status status) {
     //    qDebug() << __func__ << (int)status;
     CoreAV* av = CoreAV::getInstance();
     const bool audio = av->isCallActive(&contactId);
     const bool video = av->isCallVideoEnabled(&contactId);
-    const bool online = Status::isOnline(status);
+    const bool online = isOnline(status);
 
     updateCallButtons(online, audio, video);
     updateCallButtons();
@@ -418,7 +417,7 @@ void ChatFormHeader::addStretch() {
 //     updateMuteVolButton();
 // }
 
-// void ChatFormHeader::updateCallButtons(Status::Status status)
+// void ChatFormHeader::updateCallButtons(Status status)
 //{
 //       qDebug() << __func__ << (int)status;
 
@@ -450,3 +449,4 @@ void ChatFormHeader::addStretch() {
 //     netcam->updateMuteVolButton(outputMuted);
 //   }
 // }
+}  // namespace module::im

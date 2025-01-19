@@ -14,6 +14,7 @@
 #include <QBoxLayout>
 #include <QFrame>
 #include <QLabel>
+#include "lib/ui/widget/movablewidget.h"
 #include "src/core/core.h"
 #include "src/core/coreav.h"
 #include "src/model/friendlist.h"
@@ -21,8 +22,9 @@
 #include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
 #include "src/video/corevideosource.h"
-#include "src/widget/tool/movablewidget.h"
 #include "videosurface.h"
+
+namespace module::im {
 
 NetCamView::NetCamView(FriendId friendPk, QWidget* parent)
         : GenericNetCamView(parent), selfFrame{nullptr}, friendPk{friendPk}, e(false) {
@@ -134,3 +136,4 @@ void NetCamView::toggleVideoPreview() {
         selfFrame->hide();
     }
 }
+}  // namespace module::im

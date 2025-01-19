@@ -16,14 +16,12 @@
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
 
+namespace module::im {
+
 Contact::Contact() {}
 
 Contact::Contact(const ContactId& id_, const QString& name_, const QString& alias_, bool isGroup_)
-        : id(id_)
-        , name{name_}
-        , alias{alias_}
-        , group(isGroup_)
-        , avatarSetStatus{Status::AvatarSet::None} {
+        : id(id_), name{name_}, alias{alias_}, group(isGroup_), avatarSetStatus{AvatarSet::None} {
     auto profile = Nexus::getProfile();
 
     uint dbId = profile->addContact(id);
@@ -54,7 +52,7 @@ const QPixmap& Contact::setDefaultAvatar() {
     auto name = !group ? "contact" : "group";
     auto uri = QString(":img/%1_dark.svg").arg(name);
     avatar = QPixmap(uri);
-    avatarSetStatus = Status::AvatarSet::DefaultSet;
+    avatarSetStatus = AvatarSet::DefaultSet;
     return avatar;
 }
 
@@ -70,7 +68,7 @@ void Contact::setAvatar(const QPixmap& pix) {
     }
 
     avatar = pix;
-    avatarSetStatus = Status::AvatarSet::UserSet;
+    avatarSetStatus = AvatarSet::UserSet;
 
     // save to profile
     //    auto profile = Nexus::getProfile();
@@ -86,7 +84,7 @@ void Contact::reloadAvatar() {
     auto avt = profile->loadAvatarData(FriendId{id});
     if (!avt.isNull()) {
         avatar.loadFromData(avt);
-        avatarSetStatus = Status::AvatarSet::UserSet;
+        avatarSetStatus = AvatarSet::UserSet;
     } else {
         setDefaultAvatar();
     }
@@ -135,3 +133,4 @@ void Contact::setEventFlag(bool flag) {}
 bool Contact::getEventFlag() const {
     return false;
 }
+}  // namespace module::im

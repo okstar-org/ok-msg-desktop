@@ -21,11 +21,13 @@
 #include <memory>
 #include "src/persistence/history.h"
 
-class ChatLog;
-class ChatLineContent;
 class QGraphicsScene;
 class QStyleOptionGraphicsItem;
 class QFont;
+
+namespace module::im {
+class ChatLog;
+class ChatLineContent;
 
 enum class IChatItemType { TEXT, IMAGE };
 
@@ -81,5 +83,5 @@ signals:
     // 引用事件
     void replyEvent(IChatItem*);
 };
-
+}  // namespace module::im
 #endif  // CHATLINE_H

@@ -28,10 +28,11 @@
 #include "Bus.h"
 #include "application.h"
 #include "src/model/status.h"
-#include "src/model/toxclientstandards.h"
 #include "src/persistence/settings.h"
 #include "toxfile.h"
 #include "toxstring.h"
+
+namespace module::im {
 
 /**
  * @class CoreFile
@@ -653,3 +654,4 @@ void CoreFile::onFileRecvFinished(const std::string& sId,
 
     removeFile(fileId.c_str());
 }
+}  // namespace module::im

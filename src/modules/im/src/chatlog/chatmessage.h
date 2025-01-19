@@ -21,6 +21,8 @@
 
 class QGraphicsScene;
 
+namespace module::im {
+
 class ChatMessage {
 public:
     using Ptr = std::shared_ptr<ChatMessage>;
@@ -56,5 +58,6 @@ protected:
 private:
     bool action = false;
 };
+}  // namespace module::im
 
 #endif  // CHATMESSAGE_H

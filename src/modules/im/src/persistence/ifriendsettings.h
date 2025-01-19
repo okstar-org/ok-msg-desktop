@@ -19,6 +19,7 @@
 #include <QObject>
 
 #include "src/model/contactid.h"
+namespace module::im {
 
 class FriendId;
 
@@ -59,6 +60,6 @@ signals:
     DECLARE_SIGNAL(autoAcceptDirChanged, const FriendId& pk, const QString& dir);
     DECLARE_SIGNAL(contactNoteChanged, const FriendId& pk, const QString& note);
 };
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(IFriendSettings::AutoAcceptCallFlags)
+}  // namespace module::im
+Q_DECLARE_OPERATORS_FOR_FLAGS(module::im::IFriendSettings::AutoAcceptCallFlags)
 #endif  // I_FRIEND_SETTINGS_H

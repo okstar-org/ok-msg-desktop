@@ -19,7 +19,7 @@
 #include <QSettings>
 #include <QString>
 #include <QVector>
-
+namespace module::im {
 class SettingsSerializer {
 public:
     SettingsSerializer(QString filePath, const ToxEncrypt* passKey = nullptr);
@@ -88,5 +88,5 @@ private:
     QVector<Value> values;
     static const char magic[];
 };
-
+}  // namespace module::im
 #endif  // SETTINGSSERIALIZER_H

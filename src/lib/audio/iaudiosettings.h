@@ -16,7 +16,7 @@
 #include "src/base/interface.h"
 
 #include <QString>
-
+namespace lib::audio {
 class IAudioSettings {
 public:
     virtual ~IAudioSettings() = default;
@@ -62,5 +62,5 @@ public:
     DECLARE_SIGNAL(audioBitrateChanged, int bitrate);
     DECLARE_SIGNAL(enableTestSoundChanged, bool newValue);
 };
-
+}  // namespace lib::audio
 #endif  // I_AUDIO_SETTINGS_H

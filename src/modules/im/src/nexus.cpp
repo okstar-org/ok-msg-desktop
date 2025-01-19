@@ -21,6 +21,7 @@
 #include "lib/audio/audio.h"
 #include "lib/storage/settings/OkSettings.h"
 #include "lib/storage/settings/translator.h"
+#include "lib/video/camerasource.h"
 #include "persistence/settings.h"
 #include "src/core/core.h"
 #include "src/core/coreav.h"
@@ -28,7 +29,6 @@
 #include "src/model/status.h"
 #include "src/persistence/profile.h"
 #include "src/widget/widget.h"
-#include "lib/video/camerasource.h"
 
 #ifdef Q_OS_MAC
 #include <QActionGroup>
@@ -44,6 +44,7 @@
  * and forwarding signals appropriately to the right objects,
  * it is in charge of starting the GUI and the Core.
  */
+namespace module::im {
 
 static Nexus* m_self;
 
@@ -51,13 +52,13 @@ Nexus::Nexus(QObject* parent)
         : name{OK_IM_MODULE}, stared(false), profile{nullptr}, m_widget{nullptr} {
     qDebug() << __func__;
 
-    Q_INIT_RESOURCE(res);
-    Q_INIT_RESOURCE(emojione);
-    Q_INIT_RESOURCE(smileys);
-    Q_INIT_RESOURCE(IM);
+    OK_RESOURCE_INIT(res);
+    OK_RESOURCE_INIT(emojione);
+    OK_RESOURCE_INIT(smileys);
+    OK_RESOURCE_INIT(IM);
 
     // Setup the environment
-    qRegisterMetaType<Status::Status>("Status::Status");
+    qRegisterMetaType<Status>("Status");
 
     qRegisterMetaType<uint8_t>("uint8_t");
     qRegisterMetaType<uint16_t>("uint16_t");
@@ -96,9 +97,8 @@ Nexus::~Nexus() {
 #endif
 }
 
-void Nexus::init(Profile* p) {
-    //    profile = p;
-    //    assert(profile);
+void Nexus::init(lib::session::Profile* p) {
+    assert(p);
 }
 
 void Nexus::onSave(SavedInfo& savedInfo) {
@@ -137,8 +137,7 @@ void Nexus::start(std::shared_ptr<lib::session::AuthSession> session) {
     QString locale = s.getTranslation();
     qDebug() << "locale" << locale;
 
-    audioControl = std::unique_ptr<IAudioControl>(Audio::makeAudio(s));
-
+    audioControl = std::unique_ptr<lib::audio::IAudioControl>(lib::audio::Audio::makeAudio(s));
 
     settings::Translator::translate(OK_IM_MODULE, locale);
 
@@ -148,7 +147,6 @@ void Nexus::start(std::shared_ptr<lib::session::AuthSession> session) {
 
     // Connections
     connect(profile.get(), &Profile::selfAvatarChanged, m_widget, &Widget::onSelfAvatarLoaded);
-
 
     connect(profile.get(), &Profile::coreChanged,
             [&, bus](Core& core) { emit bus->coreChanged(&core); });
@@ -215,10 +213,10 @@ void Nexus::showMainGUI() {
     // connect(profile.get(), &Profile::coreChanged, m_widget, &Widget::onCoreChanged);
 
     // connect(profile.get(), &Profile::failedToStart, m_widget, &Widget::onFailedToStartCore,
-            // Qt::BlockingQueuedConnection);
+    // Qt::BlockingQueuedConnection);
 
     // connect(profile.get(), &Profile::badProxy, m_widget, &Widget::onBadProxyCore,
-            // Qt::BlockingQueuedConnection);
+    // Qt::BlockingQueuedConnection);
 
     profile->start();
 }
@@ -228,8 +226,7 @@ Module* Nexus::Create() {
     return m_self;
 }
 
-Nexus *Nexus::getInstance()
-{
+Nexus* Nexus::getInstance() {
     assert(m_self);
     return m_self;
 }
@@ -274,7 +271,7 @@ Widget* Nexus::getDesktopGUI() {
     return dynamic_cast<Widget*>(m_self->widget());
 }
 
-void Nexus::playNotificationSound(IAudioSink::Sound sound, bool loop) {
+void Nexus::playNotificationSound(lib::audio::IAudioSink::Sound sound, bool loop) {
     auto settings = &lib::settings::OkSettings::getInstance();
     if (!settings->getAudioOutDevEnabled()) {
         // don't try to play sounds if audio is disabled
@@ -283,7 +280,7 @@ void Nexus::playNotificationSound(IAudioSink::Sound sound, bool loop) {
 
     if (audioNotification == nullptr) {
         audioControl->setOutputVolumeStep(settings->getOutVolume());
-        audioNotification = std::unique_ptr<IAudioSink>(audioControl->makeSink());
+        audioNotification = std::unique_ptr<lib::audio::IAudioSink>(audioControl->makeSink());
         if (audioNotification == nullptr) {
             qDebug() << "Failed to allocate AudioSink";
             return;
@@ -308,12 +305,12 @@ void Nexus::incomingNotification(const QString& friendnumber) {
     m_widget->newFriendMessageAlert(friendId, {}, false);
 
     // loop until call answered or rejected
-    playNotificationSound(IAudioSink::Sound::IncomingCall, true);
+    playNotificationSound(lib::audio::IAudioSink::Sound::IncomingCall, true);
 }
 
 void Nexus::outgoingNotification() {
     // loop until call answered or rejected
-    playNotificationSound(IAudioSink::Sound::OutgoingCall, true);
+    playNotificationSound(lib::audio::IAudioSink::Sound::OutgoingCall, true);
 }
 
 /**
@@ -322,8 +319,6 @@ void Nexus::outgoingNotification() {
 void Nexus::onStopNotification() {
     audioNotification.reset();
 }
-
-
 
 QWidget* Nexus::widget() {
     return m_widget->getInstance();
@@ -438,3 +433,4 @@ void Nexus::bringAllToFront() {
     focused->raise();
 }
 #endif
+}  // namespace module::im

@@ -22,6 +22,7 @@
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
+namespace module::im {
 
 /**
  * @class ProfileImporter
@@ -88,9 +89,9 @@ bool ProfileImporter::importProfile(const QString& path) {
     if (info.suffix() != "tox") {
         ok::base::MessageBox::warning(this, tr("Ignoring non-Tox file", "popup title"),
                                       tr("Warning: You have chosen a file that is not a "
-                                "Tox save file; ignoring.",
-                                "popup text"),
-                             QMessageBox::Ok);
+                                         "Tox save file; ignoring.",
+                                         "popup text"),
+                                      QMessageBox::Ok);
         return false;  // ingore importing non-tox file
     }
 
@@ -118,3 +119,4 @@ bool ProfileImporter::importProfile(const QString& path) {
 
     return true;  // import successfull
 }
+}  // namespace module::im

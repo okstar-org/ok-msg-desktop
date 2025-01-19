@@ -18,6 +18,7 @@
 #include <QObject>
 
 #include "src/model/groupid.h"
+namespace module::im {
 
 class IDialogsManager;
 class Group;
@@ -45,5 +46,5 @@ private:
     Profile* mProfile;
     IDialogsManager* dialogsManager{nullptr};
 };
-
+}  // namespace module::im
 #endif /* GROUP_CHATROOM_H */

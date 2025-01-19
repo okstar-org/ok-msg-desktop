@@ -28,6 +28,8 @@ const int BTN_PANEL_WIDTH = 250;
 const auto BTN_STYLE_SHEET_PATH = QStringLiteral("chatForm/fullScreenButtons.css");
 }  // namespace
 
+namespace module::im {
+
 GenericNetCamView::GenericNetCamView(QWidget* parent) : QWidget(parent) {
     verLayout = new QVBoxLayout(this);
     setWindowTitle(tr("Tox video"));
@@ -110,7 +112,8 @@ void GenericNetCamView::setShowMessages(bool show, bool notify) {
     toggleMessagesButton->setText(tr("Show Messages"));
 
     if (notify) {
-        toggleMessagesButton->setIcon(QIcon(lib::settings::Style::getImagePath("chatArea/info.svg")));
+        toggleMessagesButton->setIcon(
+                QIcon(lib::settings::Style::getImagePath("chatArea/info.svg")));
     }
 }
 
@@ -207,3 +210,4 @@ void GenericNetCamView::closeEvent(QCloseEvent* event) {
     exitFullScreen();
     event->ignore();
 }
+}  // namespace module::im

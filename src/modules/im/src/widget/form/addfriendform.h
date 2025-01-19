@@ -27,8 +27,6 @@
 
 #include <lib/session/AuthSession.h>
 
-class ContentLayout;
-
 namespace Ui {
 class AddFriendForm;
 }
@@ -41,6 +39,9 @@ struct OrgStaff;
 namespace lib::session {
 class SignInInfo;
 }
+
+namespace module::im {
+class ContentLayout;
 
 class AddFriendForm : public QWidget {
     Q_OBJECT
@@ -100,5 +101,5 @@ private:
     const lib::session::SignInInfo* signIn;
     std::unique_ptr<lib::backend::UserService> userService;
 };
-
+}  // namespace module::im
 #endif  // ADDFRIENDFORM_H

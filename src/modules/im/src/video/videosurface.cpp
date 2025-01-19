@@ -28,6 +28,7 @@
  * @var std::atomic_bool VideoSurface::frameLock
  * @brief Fast lock for lastFrame.
  */
+namespace module::im {
 
 float getSizeRatio(const QSize size) {
     return size.width() / static_cast<float>(size.height());
@@ -209,3 +210,4 @@ void VideoSurface::lock() {
 void VideoSurface::unlock() {
     frameLock = false;
 }
+}  // namespace module::im

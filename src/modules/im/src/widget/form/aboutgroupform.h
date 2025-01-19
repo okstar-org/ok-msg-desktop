@@ -20,6 +20,8 @@ namespace Ui {
 class AboutGroupForm;
 }
 
+namespace module::im {
+
 class AboutGroupForm : public QWidget {
     Q_OBJECT
 
@@ -43,5 +45,5 @@ private slots:
     void doSubjectChanged(const QString& text);
     void doDescChanged(const QString& text);
 };
-
+}  // namespace module::im
 #endif  // ABOUTGROUPFORM_H

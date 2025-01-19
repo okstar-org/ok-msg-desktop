@@ -19,6 +19,7 @@
 #include "src/nexus.h"
 #include "src/persistence/history.h"
 #include "ui_loadhistorydialog.h"
+namespace module::im {
 
 LoadHistoryDialog::LoadHistoryDialog(const IChatLog* chatLog, QWidget* parent)
         : QDialog(parent), ui(new Ui::LoadHistoryDialog), chatLog(chatLog) {
@@ -33,7 +34,9 @@ LoadHistoryDialog::LoadHistoryDialog(QWidget* parent)
     ui->setupUi(this);
 }
 
-LoadHistoryDialog::~LoadHistoryDialog() { delete ui; }
+LoadHistoryDialog::~LoadHistoryDialog() {
+    delete ui;
+}
 
 QDateTime LoadHistoryDialog::getFromDate() {
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
@@ -50,9 +53,13 @@ QDateTime LoadHistoryDialog::getFromDate() {
     return res;
 }
 
-void LoadHistoryDialog::setTitle(const QString& title) { setWindowTitle(title); }
+void LoadHistoryDialog::setTitle(const QString& title) {
+    setWindowTitle(title);
+}
 
-void LoadHistoryDialog::setInfoLabel(const QString& info) { ui->fromLabel->setText(info); }
+void LoadHistoryDialog::setInfoLabel(const QString& info) {
+    ui->fromLabel->setText(info);
+}
 
 void LoadHistoryDialog::highlightDates(int year, int month) {
     History* history = Nexus::getProfile()->getHistory();
@@ -72,3 +79,4 @@ void LoadHistoryDialog::highlightDates(int year, int month) {
         }
     }
 }
+}  // namespace module::im

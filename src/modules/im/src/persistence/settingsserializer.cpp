@@ -21,30 +21,7 @@
 #include "src/core/toxencrypt.h"
 #include "src/lib/session/profile.h"
 
-/**
- * @class SettingsSerializer
- * @brief Serializes a QSettings's data in an (optionally) encrypted binary format.
- * SettingsSerializer can detect regular .ini files and serialized ones,
- * it will read both regular and serialized .ini, but only save in serialized format.
- * The file is encrypted with the current profile's password, if any.
- * The file is only written to disk if save() is called, the destructor does not save to disk
- * All member functions are reentrant, but not thread safe.
- *
- * @enum SettingsSerializer::RecordTag
- * @var Value
- * Followed by a QString key then a QVariant value
- * @var GroupStart
- * Followed by a QString group name
- * @var ArrayStart
- * Followed by a QString array name and a vuint array size
- * @var ArrayValue
- * Followed by a vuint array index, a QString key then a QVariant value
- * @var ArrayEnd
- * Not followed by any data
- */
-enum class RecordTag : uint8_t {
-
-};
+namespace module::im {
 /**
  * @var static const char magic[];
  * @brief Little endian ASCII "QTOX" magic
@@ -98,7 +75,9 @@ void SettingsSerializer::beginGroup(const QString& prefix) {
     }
 }
 
-void SettingsSerializer::endGroup() { group = -1; }
+void SettingsSerializer::endGroup() {
+    group = -1;
+}
 
 int SettingsSerializer::beginReadArray(const QString& prefix) {
     auto index = std::find_if(std::begin(arrays), std::end(arrays),
@@ -132,9 +111,13 @@ void SettingsSerializer::beginWriteArray(const QString& prefix, int size) {
     }
 }
 
-void SettingsSerializer::endArray() { array = -1; }
+void SettingsSerializer::endArray() {
+    array = -1;
+}
 
-void SettingsSerializer::setArrayIndex(int i) { arrayIndex = i; }
+void SettingsSerializer::setArrayIndex(int i) {
+    arrayIndex = i;
+}
 
 void SettingsSerializer::setValue(const QString& key, const QVariant& value) {
     Value* v = findValue(key);
@@ -488,3 +471,4 @@ void SettingsSerializer::writePackedVariant(QDataStream& stream, const QVariant&
     else
         writeStream(stream, str.toUtf8());
 }
+}  // namespace module::im

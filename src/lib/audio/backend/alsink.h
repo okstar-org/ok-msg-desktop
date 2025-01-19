@@ -20,8 +20,11 @@
 #include "src/base/interface.h"
 #include "src/lib/audio/iaudiosink.h"
 
-class OpenAL;
 class QMutex;
+
+namespace lib::audio {
+class OpenAL;
+
 class AlSink : public QObject, public IAudioSink {
     Q_OBJECT
 public:
@@ -52,5 +55,5 @@ private:
     bool killed = false;
     mutable CompatibleRecursiveMutex killLock;
 };
-
+}  // namespace lib::audio
 #endif  // ALSINK_H

@@ -21,6 +21,7 @@ class CroppingLabel;
 
 class QHBoxLayout;
 class QPushButton;
+namespace module::im {
 
 class GroupInviteWidget : public QWidget {
     Q_OBJECT
@@ -40,5 +41,5 @@ private:
     QHBoxLayout* widgetLayout;
     GroupInvite inviteInfo;
 };
-
+}  // namespace module::im
 #endif  // GROUPINVITEWIDGET_H

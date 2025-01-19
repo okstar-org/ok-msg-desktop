@@ -15,6 +15,7 @@
 
 #include <QByteArray>
 #include <QDebug>
+namespace module::im {
 
 /**
  * @brief The ToxOptions class wraps the Tox_Options struct and the matching
@@ -148,3 +149,4 @@ bool ToxOptions::getIPv6Enabled() const {
 void ToxOptions::setIPv6Enabled(bool enabled) {
     //    tox_options_set_ipv6_enabled(options, enabled);
 }
+}  // namespace module::im

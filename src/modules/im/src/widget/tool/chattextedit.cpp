@@ -19,6 +19,7 @@
 #include <QDebug>
 #include <QKeyEvent>
 #include <QMimeData>
+namespace module::im {
 
 ChatTextEdit::ChatTextEdit(QWidget* parent) : QTextEdit(parent) {
     setAcceptRichText(false);
@@ -100,3 +101,4 @@ bool ChatTextEdit::pasteIfImage(QKeyEvent* event) {
 void ChatTextEdit::onTextChanged() {
     // qDebug() << __func__ << toPlainText();
 }
+}  // namespace module::im

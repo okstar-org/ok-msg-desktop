@@ -15,6 +15,7 @@
 
 #include <QDate>
 #include <QRegularExpression>
+namespace module::im {
 
 enum class FilterSearch {
     None,
@@ -39,7 +40,9 @@ struct ParameterSearch {
         return filter == other.filter && period == other.period && date == other.date;
     }
 
-    bool operator!=(const ParameterSearch& other) { return !(*this == other); }
+    bool operator!=(const ParameterSearch& other) {
+        return !(*this == other);
+    }
 };
 
 class SearchExtraFunctions {
@@ -73,5 +76,5 @@ public:
         return filter;
     }
 };
-
+}  // namespace module::im
 #endif  // SEARCHTYPES_H

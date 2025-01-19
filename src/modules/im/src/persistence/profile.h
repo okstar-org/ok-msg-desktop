@@ -27,6 +27,8 @@
 #include <QPixmap>
 #include <memory>
 
+namespace module::im {
+class Settings;
 /**
  * IM个人中心（包含Core）
  * 1、对个人帐号的抽象，一个用户登录即产生一个Profile
@@ -88,17 +90,16 @@ public:
     QString setPassword(const QString& pwd);
     QString getHost();
 
-    [[nodiscard]] Settings* getSettings() const ;
+    [[nodiscard]] Settings* getSettings() const;
 
     const QDir& getDir() const {
         assert(_profile);
-       return _profile->getDir();
+        return _profile->getDir();
     }
 
     void quit();
 
 private:
-
     std::unique_ptr<Core> core;
     std::unique_ptr<CoreAV> coreAv;
     std::unique_ptr<CoreFile> coreFile;
@@ -108,7 +109,6 @@ private:
     std::shared_ptr<History> history;
 
     VCard vCard;
-
 
     lib::session::Profile* _profile;
     QPixmap avatar;
@@ -138,3 +138,4 @@ public slots:
     void setFriendAvatar(const ContactId& owner, const QByteArray& pic);
     void removeFriendAvatar(const ContactId& owner);
 };
+}  // namespace module::im

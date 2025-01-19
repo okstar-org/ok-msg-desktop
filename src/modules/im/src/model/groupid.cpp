@@ -16,11 +16,7 @@
 #include <QString>
 
 #include <cassert>
-
-/**
- * @class GroupId
- * @brief This class represents a long term persistent group identifier.
- */
+namespace module::im {
 
 /**
  * @brief The default constructor. Creates an empty Tox group ID.
@@ -58,3 +54,4 @@ bool GroupId::operator==(const GroupId& other) const {
 bool GroupId::operator<(const GroupId& other) const {
     return toString() < other.toString();
 }
+}  // namespace module::im

@@ -15,6 +15,7 @@
 
 #include <QHash>
 #include "tool/adjustingscrollarea.h"
+namespace module::im {
 
 class GenericChatroomWidget;
 class NotificationEdgeWidget;
@@ -47,5 +48,5 @@ private:
     size_t referencesAbove = 0;
     size_t referencesBelow = 0;
 };
-
+}  // namespace module::im
 #endif  // NOTIFICATIONSCROLLAREA_H

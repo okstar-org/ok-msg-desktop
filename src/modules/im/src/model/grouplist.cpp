@@ -17,6 +17,7 @@
 #include "src/model/group.h"
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
+namespace module::im {
 
 GroupMap GroupList::groupMap;
 
@@ -39,7 +40,9 @@ Group* GroupList::addGroup(const GroupId& groupId,
     return newGroup;
 }
 
-Group* GroupList::findGroup(const GroupId& groupId) { return groupMap.value(groupId.toString()); }
+Group* GroupList::findGroup(const GroupId& groupId) {
+    return groupMap.value(groupId.toString());
+}
 
 void GroupList::removeGroup(const GroupId& groupId, bool /*fake*/) {
     auto g_it = groupMap.find(groupId.toString());
@@ -61,3 +64,4 @@ void GroupList::clear() {
     for (auto groupptr : groupMap) delete groupptr;
     groupMap.clear();
 }
+}  // namespace module::im

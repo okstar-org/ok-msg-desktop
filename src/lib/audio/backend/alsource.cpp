@@ -13,6 +13,8 @@
 #include "alsource.h"
 #include "openal.h"
 
+namespace lib::audio {
+
 /**
  * @brief Emits audio frames captured by an input device or other audio source.
  */
@@ -45,3 +47,4 @@ void AlSource::kill() {
     killLock.unlock();
     emit invalidated();
 }
+}  // namespace lib::audio

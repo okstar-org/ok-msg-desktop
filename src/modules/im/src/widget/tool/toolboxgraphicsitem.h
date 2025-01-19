@@ -16,6 +16,7 @@
 #include <QGraphicsItemGroup>
 #include <QObject>
 #include <QPropertyAnimation>
+namespace module::im {
 
 class ToolBoxGraphicsItem final : public QObject, public QGraphicsItemGroup {
     Q_OBJECT
@@ -39,5 +40,6 @@ private:
     qreal activeOpacity = 1.0f;
     int fadeTimeMs = 300;
 };
+}  // namespace module::im
 
 #endif  // TOOLBOXGRAPHICSITEM_HPP

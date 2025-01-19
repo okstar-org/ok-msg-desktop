@@ -18,6 +18,7 @@
 #include <QStyleOptionGraphicsItem>
 
 #include "screenshotgrabber.h"
+namespace module::im {
 
 ScreenGrabberOverlayItem::ScreenGrabberOverlayItem(ScreenshotGrabber* grabber)
         : screnshootGrabber(grabber) {
@@ -56,3 +57,4 @@ void ScreenGrabberOverlayItem::paint(QPainter* painter, const QStyleOptionGraphi
     painter->drawRect(leftX, bottomY, chosenRect.width(),
                       self.height() - bottomY);  // Bottom of chosen
 }
+}  // namespace module::im

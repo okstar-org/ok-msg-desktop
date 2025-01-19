@@ -20,6 +20,7 @@
 #include <QStringList>
 
 #include <cstdint>
+namespace module::im {
 
 class ICoreGroupQuery {
 public:
@@ -31,5 +32,5 @@ public:
     virtual QStringList getGroupPeerNames(QString groupId) const = 0;
     virtual bool getGroupAvEnabled(QString groupId) const = 0;
 };
-
+}  // namespace module::im
 #endif /*ICORE_GROUP_QUERY_H*/

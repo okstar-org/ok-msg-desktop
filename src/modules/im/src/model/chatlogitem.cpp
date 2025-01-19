@@ -29,6 +29,7 @@ template <typename T> struct ChatLogItemDeleter {
     static void doDelete(void* ptr) { delete static_cast<T*>(ptr); }
 };
 }  // namespace
+namespace module::im {
 
 ChatLogItem::ChatLogItem(FriendId sender_, QString id, QString displayName, ChatLogFile file_)
         : ChatLogItem(sender_, id, displayName, ContentType::fileTransfer,
@@ -48,9 +49,13 @@ ChatLogItem::ChatLogItem(FriendId sender_, QString id, QString displayName,
         , content(std::move(content_))
         , id(id) {}
 
-const FriendId& ChatLogItem::getSender() const { return sender; }
+const FriendId& ChatLogItem::getSender() const {
+    return sender;
+}
 
-ChatLogItem::ContentType ChatLogItem::getContentType() const { return contentType; }
+ChatLogItem::ContentType ChatLogItem::getContentType() const {
+    return contentType;
+}
 
 ChatLogFile& ChatLogItem::getContentAsFile() {
     assert(contentType == ContentType::fileTransfer);
@@ -84,10 +89,14 @@ QDateTime ChatLogItem::getTimestamp() const {
         }
     }
 
-    assert(false);
     return QDateTime();
 }
 
-void ChatLogItem::setDisplayName(QString name) { displayName = name; }
+void ChatLogItem::setDisplayName(QString name) {
+    displayName = name;
+}
 
-const QString& ChatLogItem::getDisplayName() const { return displayName; }
+const QString& ChatLogItem::getDisplayName() const {
+    return displayName;
+}
+}  // namespace module::im

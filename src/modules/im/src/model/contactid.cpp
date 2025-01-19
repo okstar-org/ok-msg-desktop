@@ -19,6 +19,7 @@
 #include <cstdint>
 #include "base/StringUtils.h"
 #include "lib/messenger/IMMessage.h"
+namespace module::im {
 
 /**
  * @brief The default constructor. Creates an empty id.
@@ -95,3 +96,4 @@ QDebug& operator<<(QDebug& debug, const ContactId& f) {
     debug.nospace() << f.toString();
     return debug;
 }
+}  // namespace module::im

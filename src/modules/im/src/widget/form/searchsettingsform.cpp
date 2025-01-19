@@ -16,6 +16,7 @@
 #include "src/persistence/settings.h"
 #include "src/widget/form/loadhistorydialog.h"
 #include "ui_searchsettingsform.h"
+namespace module::im {
 
 SearchSettingsForm::SearchSettingsForm(QWidget* parent)
         : QWidget(parent), ui(new Ui::SearchSettingsForm) {
@@ -163,3 +164,4 @@ void SearchSettingsForm::onChoiceDate() {
 
     setUpdate(true);
 }
+}  // namespace module::im

@@ -30,6 +30,7 @@
 #include "src/widget/form/setpassworddialog.h"
 #include "src/widget/form/settingswidget.h"
 #include "src/widget/widget.h"
+namespace module::im {
 
 PrivacyForm::PrivacyForm()
         : GenericForm(QPixmap(":/img/settings/privacy.png")), bodyUI(new Ui::PrivacySettings) {
@@ -79,10 +80,10 @@ PrivacyForm::~PrivacyForm() {
 //}
 
 void PrivacyForm::showEvent(QShowEvent*) {
-    const Settings& s = Nexus::getProfile()->getSettings();
+    //    const Settings& s = Nexus::getProfile()->getSettings();
     //    bodyUI->nospamLineEdit->setText(Core::getInstance()->getSelfId().getNoSpamString());
-    bodyUI->cbTypingNotification->setChecked(s.getTypingNotification());
-    bodyUI->cbKeepHistory->setChecked(Nexus::getProfile()->getSettings()->getEnableLogging());
+    //    bodyUI->cbTypingNotification->setChecked(s.getTypingNotification());
+    //    bodyUI->cbKeepHistory->setChecked(Nexus::getProfile()->getSettings()->getEnableLogging());
 }
 //
 // void PrivacyForm::on_randomNosapamButton_clicked()
@@ -125,5 +126,6 @@ void PrivacyForm::showEvent(QShowEvent*) {
 // }
 
 void PrivacyForm::retranslateUi() {
-    bodyUI->retranslateUi(this);
+    //    bodyUI->retranslateUi(this);
 }
+}  // namespace module::im

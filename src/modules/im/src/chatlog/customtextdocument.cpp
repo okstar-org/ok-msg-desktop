@@ -19,7 +19,7 @@
 #include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
 #include "src/persistence/smileypack.h"
-
+namespace module::im {
 CustomTextDocument::CustomTextDocument(QObject* parent) : QTextDocument(parent) {
     setUndoRedoEnabled(false);
     setUseDesignMetrics(false);
@@ -39,3 +39,4 @@ QVariant CustomTextDocument::loadResource(int type, const QUrl& name) {
 
     return QTextDocument::loadResource(type, name);
 }
+}  // namespace module::im

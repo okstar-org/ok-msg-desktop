@@ -22,7 +22,7 @@
 #include "ContactListLayout.h"
 #include "application.h"
 #include "base/times.h"
-#include "circlewidget.h"
+
 #include "contentdialogmanager.h"
 #include "friendwidget.h"
 #include "groupwidget.h"
@@ -31,6 +31,7 @@
 #include "src/nexus.h"
 #include "widget.h"
 #include "Bus.h"
+namespace module::im {
 
 enum class Time {
     Today,
@@ -111,10 +112,7 @@ MessageSessionWidget* MessageSessionListWidget::createMessageSession(const Conta
     sessionWidgets.insert(sw->getContactId().toString(), sw);
 
     auto his = Nexus::getProfile()->getHistory();
-    MessageSession ms = {
-            .session_id = sid,
-            .peer_jid = contactId.toString()
-    };
+    MessageSession ms = {.session_id = sid, .peer_jid = contactId.toString()};
     his->addMessageSession(ms);
 
     emit sessionAdded(sw);
@@ -435,8 +433,7 @@ void MessageSessionListWidget::dayTimeout() {
     // dayTimer->start(ok::base::Times::timeUntilTomorrow());
 }
 
-void MessageSessionListWidget::moveWidget(MessageSessionWidget* widget, Status::Status s,
-                                          bool add) {
+void MessageSessionListWidget::moveWidget(MessageSessionWidget* widget, Status s, bool add) {
     //  if (mode == SortingMode::Name) {
     //    const IMFriend *f = widget->getFriend();
     //    int circleId = Nexus::getProfile()->getSettings()->getFriendCircleID(f->getPublicKey());
@@ -655,7 +652,7 @@ void MessageSessionListWidget::setFriendMessageReceipt(const FriendId& friendId,
     fw->setMessageReceipt(msgId);
 }
 
-void MessageSessionListWidget::setFriendStatus(const FriendId& friendPk, Status::Status status) {
+void MessageSessionListWidget::setFriendStatus(const FriendId& friendPk, Status status) {
     auto fw = getMessageSession(friendPk.toString());
     if (!fw) {
         qWarning() << "friend widget is no existing.";
@@ -731,3 +728,4 @@ void MessageSessionListWidget::reloadTheme() {
         fw->reloadTheme();
     }
 }
+}  // namespace module::im

@@ -13,6 +13,8 @@
 #ifndef AUDIO_H
 #define AUDIO_H
 
+namespace lib::audio {
+
 #include <memory>
 
 class IAudioControl;
@@ -20,7 +22,9 @@ class IAudioSettings;
 class Audio {
 public:
     const static uint32_t totalSteps = 100;
-    static std::unique_ptr<IAudioControl> makeAudio(IAudioSettings& settings);
+    static std::unique_ptr<lib::audio::IAudioControl> makeAudio(IAudioSettings& settings);
 };
+
+}  // namespace lib::audio
 
 #endif  // AUDIO_H

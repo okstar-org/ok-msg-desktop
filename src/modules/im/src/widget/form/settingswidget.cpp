@@ -30,11 +30,10 @@
 #include <QWindow>
 
 #include <memory>
-
+namespace module::im {
 SettingsWidget::SettingsWidget(QWidget* parent) : QWidget(parent, Qt::Window) {
     //    IAudioSettings* audioSettings = Nexus::getProfile()->getSettings();
-//    IVideoSettings* videoSettings = Nexus::getProfile()->getSettings();
-
+    //    IVideoSettings* videoSettings = Nexus::getProfile()->getSettings();
 
     settingsWidgets = std::unique_ptr<QTabWidget>(new QTabWidget(this));
     settingsWidgets->setTabPosition(QTabWidget::North);
@@ -117,3 +116,4 @@ void SettingsWidget::retranslateUi() {
     for (size_t i = 0; i < cfgForms.size(); ++i)
         settingsWidgets->setTabText(i, cfgForms[i]->getFormName());
 }
+}  // namespace module::im

@@ -16,12 +16,10 @@
 #include "src/core/coreav.h"
 #include "src/model/group.h"
 #include "src/video/corevideosource.h"
+namespace module::im {
 
-
-ToxCall::ToxCall(bool VideoEnabled, CoreAV& av, IAudioControl& audio)
-        : av{&av}, audio(audio)
-        , ctrlState({true, VideoEnabled, true})
-{
+ToxCall::ToxCall(bool VideoEnabled, CoreAV& av, lib::audio::IAudioControl& audio)
+        : av{&av}, audio(audio), ctrlState({true, VideoEnabled, true}) {
     audioSource = audio.makeSource();
 }
 
@@ -33,44 +31,71 @@ ToxCall::~ToxCall() {
     }
 }
 
-bool ToxCall::isActive() const { return active; }
+bool ToxCall::isActive() const {
+    return active;
+}
 
-void ToxCall::setActive(bool value) { active = value; }
+void ToxCall::setActive(bool value) {
+    active = value;
+}
 
-bool ToxCall::getMuteVol() const { return !ctrlState.enableSpk; }
+bool ToxCall::getMuteVol() const {
+    return !ctrlState.enableSpk;
+}
 
-void ToxCall::setMuteVol(bool value) { ctrlState.enableSpk = !value; }
+void ToxCall::setMuteVol(bool value) {
+    ctrlState.enableSpk = !value;
+}
 
-bool ToxCall::getMuteMic() const { return !ctrlState.enableMic; }
+bool ToxCall::getMuteMic() const {
+    return !ctrlState.enableMic;
+}
 
-void ToxCall::setMuteMic(bool value) { ctrlState.enableMic = !value; }
+void ToxCall::setMuteMic(bool value) {
+    ctrlState.enableMic = !value;
+}
 
-bool ToxCall::getVideoEnabled() const { return ctrlState.enableCam; }
+bool ToxCall::getVideoEnabled() const {
+    return ctrlState.enableCam;
+}
 
-void ToxCall::setVideoEnabled(bool value) { ctrlState.enableCam = value; }
+void ToxCall::setVideoEnabled(bool value) {
+    ctrlState.enableCam = value;
+}
 
-bool ToxCall::getNullVideoBitrate() const { return nullVideoBitrate; }
+bool ToxCall::getNullVideoBitrate() const {
+    return nullVideoBitrate;
+}
 
-void ToxCall::setNullVideoBitrate(bool value) { nullVideoBitrate = value; }
+void ToxCall::setNullVideoBitrate(bool value) {
+    nullVideoBitrate = value;
+}
 
-CoreVideoSource* ToxCall::getVideoSource() const { return videoSource; }
+CoreVideoSource* ToxCall::getVideoSource() const {
+    return videoSource;
+}
 
-QString ToxCall::getCallId() const { return callId; }
+QString ToxCall::getCallId() const {
+    return callId;
+}
 
-void ToxCall::setCallId(QString value) { callId = value; }
+void ToxCall::setCallId(QString value) {
+    callId = value;
+}
 
-ToxFriendCall::ToxFriendCall(QString peerId, bool VideoEnabled, CoreAV& av, IAudioControl& audio)
+ToxFriendCall::ToxFriendCall(QString peerId, bool VideoEnabled, CoreAV& av,
+                             lib::audio::IAudioControl& audio)
         : ToxCall(VideoEnabled, av, audio)
         , sink(audio.makeSink())
         , peerId{peerId}
 
 {
-    connect(audioSource.get(), &IAudioSource::frameAvailable, this,
+    connect(audioSource.get(), &lib::audio::IAudioSource::frameAvailable, this,
             [this](const int16_t* pcm, size_t samples, uint8_t chans, uint32_t rate) {
                 this->av->sendCallAudio(this->peerId, pcm, samples, chans, rate);
             });
 
-    connect(audioSource.get(), &IAudioSource::invalidated, this,
+    connect(audioSource.get(), &lib::audio::IAudioSource::invalidated, this,
             &ToxFriendCall::onAudioSourceInvalidated);
 
     if (sink) {
@@ -127,9 +152,13 @@ void ToxFriendCall::onAudioSinkInvalidated() {
     sink = std::move(newSink);
 }
 
-lib::messenger::CallState ToxFriendCall::getState() const { return state; }
+lib::messenger::CallState ToxFriendCall::getState() const {
+    return state;
+}
 
-void ToxFriendCall::setState(const lib::messenger::CallState& value) { state = value; }
+void ToxFriendCall::setState(const lib::messenger::CallState& value) {
+    state = value;
+}
 
 void ToxFriendCall::playAudioBuffer(const int16_t* data, int samples, unsigned channels,
                                     int sampleRate) const {
@@ -138,13 +167,13 @@ void ToxFriendCall::playAudioBuffer(const int16_t* data, int samples, unsigned c
     }
 }
 
-ToxGroupCall::ToxGroupCall(const Group& group, CoreAV& av, IAudioControl& audio)
+ToxGroupCall::ToxGroupCall(const Group& group, CoreAV& av, lib::audio::IAudioControl& audio)
         : ToxCall(false, av, audio)
         ,  //
         group{group} {
     // register audio
     connect(audioSource.get(),              //
-            &IAudioSource::frameAvailable,  //
+            &lib::audio::IAudioSource::frameAvailable,  //
             this,                           //
             [this](const int16_t* pcm, size_t samples, uint8_t chans, uint32_t rate) {
                 if (this->group.getPeersCount() <= 1) {
@@ -155,7 +184,7 @@ ToxGroupCall::ToxGroupCall(const Group& group, CoreAV& av, IAudioControl& audio)
             });
 
     connect(audioSource.get(),           //
-            &IAudioSource::invalidated,  //
+            &lib::audio::IAudioSource::invalidated,  //
             this,                        //
             &ToxGroupCall::onAudioSourceInvalidated);
 }
@@ -167,7 +196,7 @@ ToxGroupCall::~ToxGroupCall() {
 
 void ToxGroupCall::onAudioSourceInvalidated() {
     auto newSrc = audio.makeSource();
-    connect(audioSource.get(), &IAudioSource::frameAvailable,
+    connect(audioSource.get(), &lib::audio::IAudioSource::frameAvailable,
             [this](const int16_t* pcm, size_t samples, uint8_t chans, uint32_t rate) {
                 if (this->group.getPeersCount() <= 1) {
                     return;
@@ -179,7 +208,7 @@ void ToxGroupCall::onAudioSourceInvalidated() {
 
     audioSource = std::move(newSrc);
 
-    connect(audioSource.get(), &IAudioSource::invalidated, this,
+    connect(audioSource.get(), &lib::audio::IAudioSource::invalidated, this,
             &ToxGroupCall::onAudioSourceInvalidated);
 }
 
@@ -201,7 +230,7 @@ void ToxGroupCall::removePeer(FriendId peerId) {
 }
 
 void ToxGroupCall::addPeer(FriendId peerId) {
-    std::unique_ptr<IAudioSink> newSink = audio.makeSink();
+    std::unique_ptr<lib::audio::IAudioSink> newSink = audio.makeSink();
 
     QMetaObject::Connection con;
 
@@ -238,3 +267,4 @@ void ToxGroupCall::playAudioBuffer(const FriendId& peer, const int16_t* data, in
         source->second->playAudioBuffer(data, samples, channels, sampleRate);
     }
 }
+}  // namespace module::im

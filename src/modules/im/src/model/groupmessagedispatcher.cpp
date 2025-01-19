@@ -14,6 +14,7 @@
 #include "src/persistence/igroupsettings.h"
 
 #include <QtCore>
+namespace module::im {
 
 GroupMessageDispatcher::GroupMessageDispatcher(const GroupId& g_, MessageProcessor::SharedParams p,
                                                ICoreIdHandler& idHandler_,
@@ -27,7 +28,9 @@ GroupMessageDispatcher::GroupMessageDispatcher(const GroupId& g_, MessageProcess
     //    processor.enableMentions();
 }
 
-GroupMessageDispatcher::~GroupMessageDispatcher() { qDebug() << __func__; }
+GroupMessageDispatcher::~GroupMessageDispatcher() {
+    qDebug() << __func__;
+}
 
 std::pair<DispatchedMessageId, MsgId> GroupMessageDispatcher::sendMessage(bool isAction,
                                                                           QString const& content,
@@ -96,3 +99,4 @@ void GroupMessageDispatcher::onMessageReceived(GroupMessage& msg) {
 void GroupMessageDispatcher::clearOutgoingMessages() {
     // noop
 }
+}  // namespace module::im

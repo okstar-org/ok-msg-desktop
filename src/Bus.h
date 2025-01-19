@@ -19,12 +19,15 @@
 #include <QObject>
 
 class Module;
+
+namespace module ::im {
 class Profile;
 class Core;
 class CoreFile;
 class CoreAV;
 class Group;
 class Friend;
+}  // namespace module::im
 
 namespace ok {
 
@@ -41,13 +44,12 @@ signals:
     void languageChanged(const QString& locale);
     void moduleCreated(Module* module);
 
-    void profileChanged(Profile* profile);
-
-    void friendChanged(const Friend* f);
-    void groupChanged(const Group* g);
-    void coreChanged(Core* core);
-    void coreAvChanged(CoreAV* coreAv);
-    void coreFileChanged(CoreFile* coreFile);
+    void profileChanged(module::im::Profile* profile);
+    void friendChanged(const module::im::Friend* f);
+    void groupChanged(const module::im::Group* g);
+    void coreChanged(module::im::Core* core);
+    void coreAvChanged(module::im::CoreAV* coreAv);
+    void coreFileChanged(module::im::CoreFile* coreFile);
     void themeColorChanged(int idx, const QString& color);
     //    void fontChanged(const QFont& font);
     //    void fontSizeChanged(int size);

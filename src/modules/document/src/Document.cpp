@@ -22,7 +22,7 @@ Document::Document() : name{OK_Document_MODULE}, m_widget(std::make_unique<Widge
 
 Document::~Document() {}
 
-void Document::init(Profile* p) {}
+void Document::init(lib::session::Profile* p) {}
 
 QWidget* Document::widget() {
     return m_widget.get();

@@ -16,6 +16,7 @@
 #include <QByteArray>
 #include <QDateTime>
 #include "message.h"
+namespace module::im {
 
 class GroupInvite {
 public:
@@ -37,5 +38,5 @@ private:
     QByteArray invite;
     QDateTime date;
 };
-
+}  // namespace module::im
 #endif  // GROUPINVITE_H

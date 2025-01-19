@@ -18,6 +18,7 @@
 #include "src/persistence/history.h"
 
 #include <QSet>
+namespace module::im {
 
 class Settings;
 
@@ -82,5 +83,5 @@ private:
     // callback it will end up in this map
     QMap<DispatchedMessageId, RowId> dispatchedMessageRowIdMap;
 };
-
+}  // namespace module::im
 #endif /*CHAT_HISTORY_H*/

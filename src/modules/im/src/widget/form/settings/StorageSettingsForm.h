@@ -22,14 +22,14 @@
 namespace Ui {
 class StorageSettingsForm;
 }
+namespace module::im {
 
 class StorageSettingsForm : public GenericForm {
     Q_OBJECT
 public:
     explicit StorageSettingsForm(SettingsWidget* myParent);
     ~StorageSettingsForm();
-    virtual QString getFormName() final override
-    {
+    virtual QString getFormName() final override {
         return tr("Storage Settings");
     }
 
@@ -51,5 +51,5 @@ private:
 private slots:
     void onProfileChanged(Profile* profile);
 };
-
+}  // namespace module::im
 #endif

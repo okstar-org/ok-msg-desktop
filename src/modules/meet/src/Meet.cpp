@@ -22,7 +22,7 @@ Meet::Meet() : name(OK_Meet_MODULE), m_widget{std::make_unique<Widget>()} {}
 
 Meet::~Meet() = default;
 
-void Meet::init(Profile* p) {}
+void Meet::init(lib::session::Profile* p) {}
 
 const QString& Meet::getName() const {
     return name;

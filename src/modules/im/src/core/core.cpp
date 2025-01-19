@@ -33,6 +33,7 @@
 #include "src/model/status.h"
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
+namespace module::im {
 
 VCard::Adr toVCardAdr(const lib::messenger::IMVCard::Adr& item) {
     return VCard::Adr{.street = item.street.c_str(),
@@ -93,21 +94,21 @@ Core::~Core() {
     // coreThread->wait();
 }
 
-Status::Status Core::fromToxStatus(const lib::messenger::IMStatus& status_) const {
-    Status::Status status;
+Status Core::fromToxStatus(const lib::messenger::IMStatus& status_) const {
+    Status status;
     switch (status_) {
         case lib::messenger::IMStatus::Available:
         case lib::messenger::IMStatus::Chat:
-            status = Status::Status::Online;
+            status = Status::Online;
             break;
         case lib::messenger::IMStatus::Away:
-            status = Status::Status::Away;
+            status = Status::Away;
             break;
         case lib::messenger::IMStatus::DND:
-            status = Status::Status::Busy;
+            status = Status::Busy;
             break;
         default:
-            status = Status::Status::Offline;
+            status = Status::Offline;
             break;
     }
     return status;
@@ -274,7 +275,7 @@ void Core::onFriendRemoved(const std::string& friendId) {
 }
 
 void Core::onFriendStatus(const std::string& friendId, lib::messenger::IMStatus status) {
-    Status::Status status0 = fromToxStatus(status);
+    Status status0 = fromToxStatus(status);
     emit friendStatusChanged(getFriendPublicKey(friendId.c_str()), status0);
 }
 
@@ -505,7 +506,6 @@ QString Core::getFriendRequestErrorMessage(const ToxId& friendId, const QString&
                   "Error while sending friendship request");
     }
     return tr("IMFriend is already added", "Error while sending friendship request");
-
 }
 
 void Core::requestFriendship(const FriendId& friendId, const QString& nick,
@@ -700,26 +700,26 @@ QPair<QByteArray, QByteArray> Core::getKeypair() const {
 QString Core::getStatusMessage() const {
     QMutexLocker ml{&mutex};
     auto status = getStatus();
-    return Status::getAssetSuffix(status);
+    return getAssetSuffix(status);
 }
 
 /**
  * @brief Returns our user status
  */
-Status::Status Core::getStatus() const {
+Status Core::getStatus() const {
     assert(messenger != nullptr);
     QMutexLocker ml{&mutex};
     switch (messenger->getSelfStatus()) {
         case lib::messenger::IMStatus::Available:
         case lib::messenger::IMStatus::Chat:
-            return Status::Status::Online;
+            return Status::Online;
         case lib::messenger::IMStatus::Away:
         case lib::messenger::IMStatus::XA:
-            return Status::Status::Away;
+            return Status::Away;
         case lib::messenger::IMStatus::DND:
-            return Status::Status::Busy;
+            return Status::Busy;
         default:
-            return Status::Status::Offline;
+            return Status::Offline;
     }
 }
 
@@ -741,20 +741,20 @@ void Core::setStatusMessage(const QString& message) {
     emit statusMessageSet(message);
 }
 
-void Core::setStatus(Status::Status status_) {
+void Core::setStatus(Status status_) {
     QMutexLocker ml{&mutex};
 
     lib::messenger::IMStatus userstatus;
     switch (status_) {
-        case Status::Status::Online:
+        case Status::Online:
             userstatus = lib::messenger::IMStatus::Available;
             break;
 
-        case Status::Status::Away:
+        case Status::Away:
             userstatus = lib::messenger::IMStatus::Away;
             break;
 
-        case Status::Status::Busy:
+        case Status::Busy:
             userstatus = lib::messenger::IMStatus::DND;
             break;
         default:
@@ -1180,10 +1180,9 @@ void Core::getFriendInfo(const QString& friendnumber) const {
     messenger->getFriendVCard(friendnumber.toStdString());
 }
 
-Status::Status Core::getFriendStatus(const QString& friendNumber) const {
+Status Core::getFriendStatus(const QString& friendNumber) const {
     auto status = messenger->getFriendStatus(friendNumber.toStdString());
-    return status == lib::messenger::IMStatus::Available ? Status::Status::Online
-                                                         : Status::Status::Offline;
+    return status == lib::messenger::IMStatus::Available ? Status::Online : Status::Offline;
 }
 
 QStringList Core::splitMessage(const QString& message) {
@@ -1328,3 +1327,4 @@ void Core::onFriendVCard(const lib::messenger::IMContactId& fId,
     VCard vCard = toVCard(imvCard);
     emit friendVCardSet(FriendId(fId), vCard);
 }
+}  // namespace module::im

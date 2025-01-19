@@ -30,7 +30,7 @@
 namespace Ui {
 class ContactWidget;
 }
-
+namespace module::im {
 class FriendId;
 class Core;
 class GroupInviteForm;
@@ -79,7 +79,7 @@ public slots:
     void onFriendRemoved(const Friend* f);
     void onFriendNickChanged(const FriendId& friendPk, const QString& nick);
 
-    void onFriendStatusChanged(const FriendId& friendPk, Status::Status status);
+    void onFriendStatusChanged(const FriendId& friendPk, Status status);
     void onFriendStatusMessageChanged(const FriendId& friendPk, const QString& message);
 
     void onFriendAvatarChanged(const FriendId& friendPk, const QByteArray& avatar);
@@ -137,5 +137,5 @@ private:
     QPushButton* friendRequestsButton;
     QPushButton* groupInvitesButton;
 };
-
+}  // namespace module::im
 #endif  // CONTACTWIDGET_H

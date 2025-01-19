@@ -24,6 +24,7 @@
 #include "src/widget/form/groupchatform.h"
 #include "src/worker/SendWorker.h"
 
+namespace module::im {
 static constexpr int HEADER_MARIGN = 8;
 static constexpr int CONTENT_MARIGN = 8;
 static constexpr int SEPERATOR_WIDTH = 2;
@@ -56,10 +57,11 @@ ContentWidget::ContentWidget(SendWorker* sendWorker, QWidget* parent) : QWidget(
     mainContent->layout()->setContentsMargins(CONTENT_MARIGN, 0, CONTENT_MARIGN, CONTENT_MARIGN);
     mainContent->layout()->addWidget(sendWorker->getChatForm());
     layout()->addWidget(mainContent);
-
 }
 
-ContentWidget::~ContentWidget() { qDebug() << __func__; }
+ContentWidget::~ContentWidget() {
+    qDebug() << __func__;
+}
 
 void ContentWidget::init() {
     //  QPalette palette = mainHLine.palette();
@@ -87,3 +89,4 @@ void ContentWidget::showTo(ContentLayout* layout) {
 void ContentWidget::showEvent(QShowEvent* event) {}
 
 void ContentWidget::hideEvent(QHideEvent* event) {}
+}  // namespace module::im

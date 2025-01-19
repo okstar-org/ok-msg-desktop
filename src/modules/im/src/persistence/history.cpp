@@ -20,8 +20,7 @@ namespace {
 
 static constexpr int SCHEMA_VERSION = 4;
 
-//4, 增加消息会话
-
+// 4, 增加消息会话
 
 bool createCurrentSchema(lib::db::RawDatabase& db) {
     QVector<lib::db::RawDatabase::Query> queries;
@@ -80,7 +79,8 @@ bool createCurrentSchema(lib::db::RawDatabase& db) {
 
             ));
 
-    queries += lib::db::RawDatabase::Query(QString("PRAGMA user_version = %1;").arg(SCHEMA_VERSION));
+    queries +=
+            lib::db::RawDatabase::Query(QString("PRAGMA user_version = %1;").arg(SCHEMA_VERSION));
     return db.execNow(queries);
 }
 
@@ -115,15 +115,16 @@ bool dbSchema2to3(lib::db::RawDatabase& db) {
     return db.execNow(queries);
 }
 
-bool dbSchema3to4(lib::db::RawDatabase& db){
+bool dbSchema3to4(lib::db::RawDatabase& db) {
     qDebug() << __func__;
     // message session
-    auto sql = "CREATE TABLE message_sessions"
-    "("
-    "id INTEGER PRIMARY KEY AUTOINCREMENT,"
-    "session_id TEXT,"
-    "peer_id INTEGER"
-    ");";
+    auto sql =
+            "CREATE TABLE message_sessions"
+            "("
+            "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+            "session_id TEXT,"
+            "peer_id INTEGER"
+            ");";
     QVector<lib::db::RawDatabase::Query> queries;
     queries += lib::db::RawDatabase::Query((sql));
     queries += lib::db::RawDatabase::Query(QStringLiteral("PRAGMA user_version = 4;"));
@@ -144,7 +145,7 @@ bool dbSchemaUpgrade(std::shared_ptr<lib::db::RawDatabase>& db) {
     if (!db->execNow(lib::db::RawDatabase::Query("PRAGMA user_version",
                                                  [&](const QVector<QVariant>& row) {
                                                      databaseSchemaVersion = row[0].toLongLong();
-        }))) {
+                                                 }))) {
         qCritical() << "History failed to read user_version";
         return false;
     }
@@ -187,8 +188,7 @@ bool dbSchemaUpgrade(std::shared_ptr<lib::db::RawDatabase>& db) {
             dbSchema2to3(*db.get());
             break;
         }
-        case 3:
-        {
+        case 3: {
             dbSchema3to4(*db.get());
             break;
         }
@@ -200,6 +200,10 @@ bool dbSchemaUpgrade(std::shared_ptr<lib::db::RawDatabase>& db) {
 
     return true;
 }
+
+}  // namespace
+
+namespace module::im {
 
 MessageState getMessageState(bool isPending, bool isBroken, bool isReceipt) {
     MessageState messageState;
@@ -214,7 +218,6 @@ MessageState getMessageState(bool isPending, bool isBroken, bool isReceipt) {
     }
     return messageState;
 }
-}  // namespace
 
 /**
  * @brief Prepares the database to work with the history.
@@ -229,13 +232,14 @@ History::History(std::shared_ptr<lib::db::RawDatabase> db_) : db(db_) {
     const auto upgradeSucceeded = dbSchemaUpgrade(db);
 
     // dbSchemaUpgrade may have put us in an invalid state
-    assert (upgradeSucceeded);
+    assert(upgradeSucceeded);
     //    connect(this, &History::fileInserted, this, &History::onFileInserted);
 
     // Cache our current peers
     // db->execLater(lib::db::RawDatabase::Query{
     //         "SELECT public_key, id FROM peers;",
-    //         [this](const QVector<QVariant>& row) { peers[row[0].toString()] = row[1].toInt(); }});
+    //         [this](const QVector<QVariant>& row) { peers[row[0].toString()] = row[1].toInt();
+    //         }});
 }
 
 History::~History() {
@@ -252,7 +256,9 @@ History::~History() {
  * @brief Checks if the database was opened successfully
  * @return True if database if opened, false otherwise.
  */
-bool History::isValid() { return db && db->isOpen(); }
+bool History::isValid() {
+    return db && db->isOpen();
+}
 
 /**
  * @brief Checks if a friend has chat history
@@ -331,26 +337,26 @@ uint History::addNewContact(const QString& contactId) {
  */
 QVector<lib::db::RawDatabase::Query> History::generateNewMessageQueries(const Message& message,
                                                                         HistMessageContentType type,
-                                                               bool isDelivered,
-                                                               std::function<void(RowId)>
-                                                                       insertIdCallback) {
+                                                                        bool isDelivered,
+                                                                        std::function<void(RowId)>
+                                                                                insertIdCallback) {
     QVector<lib::db::RawDatabase::Query> queries;
 
     queries += lib::db::RawDatabase::Query(
             QString("INSERT INTO history "
-                                          "(timestamp, receiver, sender, message, type, data_id, "
-                                          "is_receipt, sender_resource, msg_id) "
-                                          "values (%1, '%2', '%3', '%4', %5, '%6', %7, '%8', '%9')")
-                                          .arg(message.timestamp.toMSecsSinceEpoch())  // 1
-                                          .arg(message.to)                             // 2
+                    "(timestamp, receiver, sender, message, type, data_id, "
+                    "is_receipt, sender_resource, msg_id) "
+                    "values (%1, '%2', '%3', '%4', %5, '%6', %7, '%8', '%9')")
+                    .arg(message.timestamp.toMSecsSinceEpoch())  // 1
+                    .arg(message.to)                             // 2
                     .arg(message.from)                           // 3
                     .arg(message.content)                        // 4
                     .arg((int)type)                              // 5
                     .arg(message.dataId)                         // 6
-                                          .arg(false)                                  // 7
-                                          .arg(message.from_resource)                  // 8
-                                          .arg(message.id),                            // 9
-                                  insertIdCallback);
+                    .arg(false)                                  // 7
+                    .arg(message.from_resource)                  // 8
+                    .arg(message.id),                            // 9
+            insertIdCallback);
 
     if (!isDelivered) {
         queries += lib::db::RawDatabase::Query{
@@ -382,8 +388,7 @@ void History::addNewFileMessage(const ToxFile& file) {
                    .to = file.receiver,
                    .content = insertionData.json(),
                    .dataId = file.fileId,
-                   .timestamp = file.timestamp
-    };
+                   .timestamp = file.timestamp};
 
     addNewMessage(msg, HistMessageContentType::file, true, insertFileTransferFn);
 }
@@ -434,16 +439,16 @@ QList<History::HistMessage> History::getMessageByDataId(const QString& dataId) {
     }
 
     QString queryText = QString("SELECT "
-                                "id, "         // 0
-                                "timestamp, "  // 1
-                                "receiver, "   // 2
-                                "sender, "     // 3
-                                "message, "    // 4
-                                "type, "       // 5
-                                "0, "          // 6
-                                "0, "          // 7
-                                "data_id,"         // 8
-                                "is_receipt, "     // 9
+                                "id, "               // 0
+                                "timestamp, "        // 1
+                                "receiver, "         // 2
+                                "sender, "           // 3
+                                "message, "          // 4
+                                "type, "             // 5
+                                "0, "                // 6
+                                "0, "                // 7
+                                "data_id,"           // 8
+                                "is_receipt, "       // 9
                                 "sender_resource, "  // 10
                                 "msg_id "            // 11
                                 "from history where data_id = '%1'")
@@ -855,8 +860,7 @@ QString History::getPeerAlias(const QString& friendPk) {
     return name;
 }
 
-void History::getPeers(QList<Peer> &peers){
-
+void History::getPeers(QList<Peer>& peers) {
     auto rowCallback = [&peers](const QVector<QVariant>& row) {
         Peer data;
         data.id = row[0].toLongLong();
@@ -864,12 +868,13 @@ void History::getPeers(QList<Peer> &peers){
         data.alias = row[2].toString();
         peers.append(data);
     };
-    auto queryString = "select p.id, p.public_key, a.display_name from peers p left join aliases a on a.owner = p.id;";
+    auto queryString =
+            "select p.id, p.public_key, a.display_name from peers p left join aliases a on a.owner "
+            "= p.id;";
     db->execNow({queryString, rowCallback});
 }
 
-Peer History::getPeer(const QString &friendPk)
-{
+Peer History::getPeer(const QString& friendPk) {
     Peer data;
     auto rowCallback = [&data](const QVector<QVariant>& row) {
         data.id = row[0].toLongLong();
@@ -877,28 +882,29 @@ Peer History::getPeer(const QString &friendPk)
         data.alias = row[2].toString();
     };
     auto queryString = QString("select p.id, p.public_key, a.display_name "
-                                "from peers p left join aliases a on a.owner = p.id "
-                                "where p.public_key = '%1';").arg(friendPk);
+                               "from peers p left join aliases a on a.owner = p.id "
+                               "where p.public_key = '%1';")
+                               .arg(friendPk);
     db->execNow({queryString, rowCallback});
     return data;
 }
 
-MessageSession History::getMessageSession(const QString &peer)
-{
+MessageSession History::getMessageSession(const QString& peer) {
     MessageSession data;
     auto rowCallback = [&data](const QVector<QVariant>& row) {
         data.id = row[0].toLongLong();
         data.session_id = row[1].toString();
         data.peer_jid = row[2].toString();
     };
-    auto queryString = QString("select ms.id, ms.session_id, p.public_key from message_sessions ms left join peers p on ms.peer_id = p.id "
-                               "where p.public_key = '%1';").arg(peer);
+    auto queryString = QString("select ms.id, ms.session_id, p.public_key from message_sessions ms "
+                               "left join peers p on ms.peer_id = p.id "
+                               "where p.public_key = '%1';")
+                               .arg(peer);
     db->execNow({queryString, rowCallback});
     return data;
 }
 
-void History::getMessageSessions(QList<MessageSession> & peers)
-{
+void History::getMessageSessions(QList<MessageSession>& peers) {
     auto rowCallback = [&peers](const QVector<QVariant>& row) {
         MessageSession data;
         data.id = row[0].toLongLong();
@@ -906,27 +912,29 @@ void History::getMessageSessions(QList<MessageSession> & peers)
         data.peer_jid = row[2].toString();
         peers.append(data);
     };
-    auto queryString = "select ms.id, ms.session_id, p.public_key from message_sessions ms left join peers p on ms.peer_id = p.id;";
+    auto queryString =
+            "select ms.id, ms.session_id, p.public_key from message_sessions ms left join peers p "
+            "on ms.peer_id = p.id;";
     db->execNow({queryString, rowCallback});
 }
 
-uint History::addMessageSession(const MessageSession & ms)
-{
+uint History::addMessageSession(const MessageSession& ms) {
     auto peer = getPeer(ms.peer_jid);
-    if(peer.jid.isEmpty()){
+    if (peer.jid.isEmpty()) {
         qWarning() << "Peer is no existing!";
         return 0;
     }
 
-    if(ms.id > 0){
+    if (ms.id > 0) {
         return 0;
     }
 
     auto old = getMessageSession(ms.peer_jid);
-    if(old.session_id.isEmpty()){
+    if (old.session_id.isEmpty()) {
         auto q = QString("INSERT OR IGNORE INTO message_sessions (session_id, peer_id) "
                          "VALUES ('%1', %2);")
-                         .arg(ms.session_id).arg(peer.id);
+                         .arg(ms.session_id)
+                         .arg(peer.id);
         db->execNow(q);
 
         uint id = 0;
@@ -936,7 +944,8 @@ uint History::addMessageSession(const MessageSession & ms)
     }
 
     auto q = QString("UPDATE message_sessions set session_id='%1' where peer_id = %2; ")
-                     .arg(ms.session_id).arg(peer.id);
+                     .arg(ms.session_id)
+                     .arg(peer.id);
     db->execNow(q);
     return old.id;
 }
@@ -957,3 +966,4 @@ bool History::historyAccessBlocked() {
 
     return false;
 }
+}  // namespace module::im

@@ -15,15 +15,16 @@
 #include <QSvgRenderer>
 #include <QVariant>
 #include "lib/ui/widget/croppinglabel.h"
-#include "maskablepixmapwidget.h"
 #include "src/core/core.h"
 #include "src/lib/storage/settings/style.h"
+#include "src/lib/ui/widget/maskablepixmapwidget.h"
 #include "src/model/friend.h"
 #include "src/model/friendlist.h"
 #include "src/model/group.h"
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
+namespace module::im {
 
 GenericChatItemWidget::GenericChatItemWidget(ChatType type, const ContactId& cid, QWidget* parent)
         : QFrame(parent)
@@ -31,7 +32,7 @@ GenericChatItemWidget::GenericChatItemWidget(ChatType type, const ContactId& cid
         , statusPic{nullptr}
         , contactId{cid}
         , contact{nullptr}
-        , prevStatus{Status::Status::None}
+        , prevStatus{Status::None}
         , active{false}
         , showContextMenu{true} {
     nameLabel = new CroppingLabel(this);
@@ -57,7 +58,7 @@ GenericChatItemWidget::GenericChatItemWidget(ChatType type, const ContactId& cid
     statusPic = new QLabel(this);
     statusPic->setContentsMargins(1, 1, 1, 1);
     if (type == ChatType::Chat) {
-        updateStatusLight(Status::Status::Offline, false);
+        updateStatusLight(Status::Offline, false);
     } else {
         clearStatusLight();
     }
@@ -114,10 +115,10 @@ void GenericChatItemWidget::updateLastMessage(const Message& m) {
     setLastMessage(prefix + m.content);
 }
 
-void GenericChatItemWidget::updateStatusLight(Status::Status status, bool event) {
+void GenericChatItemWidget::updateStatusLight(Status status, bool event) {
     if (!statusPic) return;
 
-    auto pix = Status::getIconPath(status, event);
+    auto pix = getIconPath(status, event);
     if (pix.isEmpty()) return;
 
     // 图片是svg格式，按照原有逻辑先获取默认尺寸
@@ -146,7 +147,7 @@ void GenericChatItemWidget::setActive(bool _active) {
         nameLabel->setForegroundRole(QPalette::WindowText);
     }
 
-    //    if(avatarSetStatus == Status::AvatarSet::DefaultSet){
+    //    if(avatarSetStatus == AvatarSet::DefaultSet){
     //        setDefaultAvatar();
     //    }
 
@@ -191,3 +192,4 @@ void GenericChatItemWidget::showEvent(QShowEvent* e) {
         setAvatar(contact->getAvatar());
     }
 }
+}  // namespace module::im

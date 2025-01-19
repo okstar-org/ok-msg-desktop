@@ -14,14 +14,14 @@
 #include "gui.h"
 
 #include "ContactListWidget.h"
-#include "circlewidget.h"
+
 #include "contentdialogmanager.h"
 #include "contentlayout.h"
 #include "groupwidget.h"
 #include "lib/ui/widget/croppinglabel.h"
-#include "maskablepixmapwidget.h"
 #include "src/core/core.h"
 #include "src/lib/storage/settings/style.h"
+#include "src/lib/ui/widget/maskablepixmapwidget.h"
 #include "src/model/aboutfriend.h"
 #include "src/model/chatroom/friendchatroom.h"
 #include "src/model/friend.h"
@@ -52,13 +52,8 @@
 #include "src/model/chathistory.h"
 #include "src/widget/form/GroupCreateForm.h"
 
-/**
- * @class FriendWidget
- *
- * Widget, which displays brief information about friend.
- * For example, used on friend list.
- * When you click should open the chat with friend. Widget has a context menu.
- */
+namespace module::im {
+
 FriendWidget::FriendWidget(Friend* f, QWidget* parent)
         : GenericChatroomWidget(ChatType::Chat, f->getId(), parent), about{nullptr}, m_friend{f} {
     setHidden(true);
@@ -482,7 +477,7 @@ ContentDialog* FriendWidget::createContentDialog() const {
     return contentDialog;
 }
 
-void FriendWidget::setStatus(Status::Status status, bool event) {
+void FriendWidget::setStatus(Status status, bool event) {
     updateStatusLight(status, event);
 }
 
@@ -498,3 +493,4 @@ void FriendWidget::setName(const QString& name) {
         about->setName(name);
     }
 }
+}  // namespace module::im

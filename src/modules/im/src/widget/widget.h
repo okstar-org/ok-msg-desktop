@@ -42,11 +42,20 @@ namespace Ui {
 class IMMainWindow;
 }
 
-class AddFriendForm;
 class AlSink;
 class Camera;
+class QActionGroup;
+class QMenu;
+class QPushButton;
+class QSplitter;
+class QTimer;
+
+class MaskablePixmapWidget;
+
+namespace module::im {
 
 class CircleWidget;
+class AddFriendForm;
 class ContentDialog;
 class ContentLayout;
 class Core;
@@ -62,14 +71,10 @@ class GroupChatroom;
 class GroupInvite;
 class GroupInviteForm;
 class GroupWidget;
-class MaskablePixmapWidget;
+
 class ProfileForm;
 class ProfileInfo;
-class QActionGroup;
-class QMenu;
-class QPushButton;
-class QSplitter;
-class QTimer;
+
 class SettingsWidget;
 class SystemTrayIcon;
 class VideoSurface;
@@ -138,7 +143,7 @@ public slots:
     void onConnected();
     void onDisconnected();
     void onStarted();
-    void onStatusSet(Status::Status status);
+    void onStatusSet(Status status);
     void onFailedToStartCore();
     void onBadProxyCore();
     void onSelfAvatarLoaded(const QPixmap& pic);
@@ -173,8 +178,8 @@ signals:
     void groupAdded(const Group* g);
     void groupRemoved(const Group* g);
 
-    void statusSet(Status::Status status);
-    void statusSelected(Status::Status status);
+    void statusSet(Status status);
+    void statusSelected(Status status);
     void usernameChanged(const QString& username);
     void avatarSet(const QPixmap& avt);
 
@@ -224,7 +229,6 @@ private:
     void resizeEvent(QResizeEvent* event) final override;
     void moveEvent(QMoveEvent* event) final override;
 
-
     void saveWindowGeometry();
     void saveSplitterGeometry();
     void cycleContacts(bool forward);
@@ -263,7 +267,6 @@ private:
 
     int icon_size;
 
-
 #if DESKTOP_NOTIFICATIONS
     DesktopNotify notifier;
 #endif
@@ -284,5 +287,5 @@ private:
 };
 
 bool toxActivateEventHandler(const QByteArray& data);
-
+}  // namespace module::im
 #endif  // WIDGET_H

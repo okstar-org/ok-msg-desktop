@@ -20,6 +20,7 @@
 #include "base/images.h"
 
 #include "settings.h"
+namespace module::im {
 
 Profile::Profile(const QString& host,
                  const QString& name,
@@ -35,7 +36,7 @@ Profile::Profile(const QString& host,
     storageManager = _profile->create(_profile->getUsername());
     okSettings = storageManager->getGlobalSettings();
     db = std::shared_ptr<lib::db::RawDatabase>(storageManager->createDatabase(OK_IM_MODULE));
-    //TODO 待优化
+    // TODO 待优化
     history.reset(new History(db));
     s = std::make_unique<Settings>(storageManager->createSetting(OK_IM_MODULE));
     initCore(s.get());
@@ -50,28 +51,6 @@ Profile::Profile(const QString& host,
  * @note If the profile is already in use return nullptr.
  */
 std::unique_ptr<Profile> Profile::createProfile(QString host, QString name, QString password) {
-    std::unique_ptr<ToxEncrypt> tmpKey;
-    if (!password.isEmpty()) {
-        tmpKey = ToxEncrypt::makeToxEncrypt(password);
-        if (!tmpKey) {
-            qCritical() << "Failed to derive key for the tox save";
-            return nullptr;
-        }
-    }
-
-    // if (ProfileLocker::hasLock()) {
-    //     qCritical() << "Tried to create profile " << name
-    //                 << ", but another profile is already locked!";
-    //     return nullptr;
-    // }
-
-    //    if (!ProfileLocker::lock(name)) {
-    //        qWarning() << "Failed to lock profile " << name;
-    //        return nullptr;
-    //    }
-
-    //    Nexus::getProfile()->getSettings()->createPersonal(name);
-    //    Profile* p = new Profile(host, name, password, true);
     return std::make_unique<Profile>(host, name, password, true);
 }
 
@@ -115,8 +94,7 @@ Core* Profile::getCore() {
     return core.get();
 }
 
-void Profile::initCore(ICoreSettings* s ) {
-
+void Profile::initCore(ICoreSettings* s) {
     auto& sign = _profile->getSignIn();
 
     Core::ToxCoreErrors err;
@@ -152,10 +130,8 @@ void Profile::initCore(ICoreSettings* s ) {
     // CoreAV
     coreAv = CoreAV::makeCoreAV(core.get());
 
-
     // CoreFile
     coreFile = CoreFile::makeCoreFile(core.get());
-
 }
 
 void Profile::start() {
@@ -260,8 +236,7 @@ QString Profile::getHost() {
     return _profile->getSignIn().host;
 }
 
-Settings *Profile::getSettings() const
-{
+Settings* Profile::getSettings() const {
     return s.get();
 }
 
@@ -273,3 +248,4 @@ void Profile::quit() {
 void Profile::onAvatarSet(QByteArray avatar) {
     setAvatar(avatar, false);
 }
+}  // namespace module::im

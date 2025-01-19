@@ -16,6 +16,7 @@
 class QSize;
 class QSplitter;
 class QByteArray;
+namespace module::im {
 
 class SplitterRestorer {
 public:
@@ -25,5 +26,5 @@ public:
 private:
     QSplitter* splitter;
 };
-
+}  // namespace module::im
 #endif  // SPLITTERRESTORER_H

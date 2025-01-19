@@ -17,6 +17,8 @@
 
 class QTextDocument;
 
+namespace module::im {
+
 class DocumentCache {
 public:
     static DocumentCache& getInstance();
@@ -33,5 +35,5 @@ private:
 private:
     QStack<QTextDocument*> documents;
 };
-
+}  // namespace module::im
 #endif  // DOCUMENTCACHE_H

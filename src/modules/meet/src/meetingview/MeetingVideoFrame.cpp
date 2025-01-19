@@ -15,6 +15,7 @@
 #include "../MeetingVideoRender.h"
 #include "MeetingVideosLayout.h"
 #include "VideoLayoutPicker.h"
+#include "application.h"
 #include "base/RoundedPixmapLabel.h"
 #include "lib/messenger/Messenger.h"
 #include "lib/storage/settings/style.h"
@@ -65,9 +66,8 @@ MeetingVideoFrame::MeetingVideoFrame(const QString& name, lib::ortc::CtrlState c
     reloadTheme();
     retranslateUi();
 
-    // TODO 待优化
-    Core* core = Nexus::getCore();
-    meet = new lib::messenger::MessengerMeet(core->getMessenger());
+    auto profile = ok::Application::Instance()->getProfile();
+    meet = new lib::messenger::MessengerMeet(profile->getMessenger());
     meet->addHandler(this);
     createMeet(name);
 

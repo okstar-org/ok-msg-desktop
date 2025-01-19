@@ -14,6 +14,7 @@
 #define GENERICFORM_H
 
 #include <QWidget>
+namespace module::im {
 
 class GenericForm : public QWidget {
     Q_OBJECT
@@ -33,5 +34,5 @@ protected:
 protected:
     QPixmap formIcon;
 };
-
+}  // namespace module::im
 #endif

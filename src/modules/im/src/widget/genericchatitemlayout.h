@@ -18,6 +18,9 @@
 
 class QLayout;
 class QVBoxLayout;
+
+namespace module::im {
+
 class GenericChatItemWidget;
 
 class GenericChatItemLayout {
@@ -44,5 +47,5 @@ private:
     int indexOfClosestSortedWidget(GenericChatItemWidget* widget) const;
     QVBoxLayout* layout;
 };
-
+}  // namespace module::im
 #endif  // GENERICCHATITEMLAYOUT_H

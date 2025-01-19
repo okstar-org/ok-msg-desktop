@@ -23,7 +23,11 @@
 
 #include <memory>
 
+class QCloseEvent;
+class QSplitter;
 template <typename K, typename V> class QHash;
+
+namespace module::im {
 
 class ContentLayout;
 class Friend;
@@ -35,8 +39,6 @@ class GenericChatroomWidget;
 class Group;
 class GroupChatroom;
 class GroupWidget;
-class QCloseEvent;
-class QSplitter;
 
 class ContentDialog : public ActivateDialog, public IDialogs {
     Q_OBJECT
@@ -56,14 +58,14 @@ public:
     void onVideoShow(QSize size);
     void onVideoHide();
 
-    void addFriendWidget(FriendWidget* widget, Status::Status status);
+    void addFriendWidget(FriendWidget* widget, Status status);
     bool isActiveWidget(GenericChatroomWidget* widget);
 
     bool hasContact(const ContactId& contactId) const override;
     bool isContactActive(const ContactId& contactId) const override;
 
     void focusContact(const ContactId& friendPk);
-    void updateFriendStatus(const FriendId& friendPk, Status::Status status);
+    void updateFriendStatus(const FriendId& friendPk, Status status);
     void updateContactStatusLight(const ContactId& contactId);
 
     void setStatusMessage(const FriendId& friendPk, const QString& message);
@@ -127,5 +129,5 @@ private:
 
     QString username;
 };
-
+}  // namespace module::im
 #endif  // CONTENTDIALOG_H

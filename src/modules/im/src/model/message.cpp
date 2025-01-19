@@ -14,6 +14,7 @@
 #include "base/uuid.h"
 #include "src/core/core.h"
 #include "src/model/friend.h"
+namespace module::im {
 
 void MessageProcessor::SharedParams::onUserNameSet(const QString& username) {
     QString sanename = username;
@@ -112,3 +113,4 @@ QDebug& operator<<(QDebug& debug, const FriendInfo& f) {
     debug.nospace() << f.toString();
     return debug;
 }
+}  // namespace module::im

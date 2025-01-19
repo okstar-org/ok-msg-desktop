@@ -23,7 +23,6 @@
 #include "application.h"
 #include "base/SvgUtils.h"
 #include "base/utils.h"
-#include "circlewidget.h"
 #include "contentdialogmanager.h"
 #include "contentlayout.h"
 #include "lib/storage/settings/style.h"
@@ -45,7 +44,7 @@
 #include "src/Bus.h"
 #include "src/core/coreav.h"
 
-namespace {
+namespace module::im {
 
 /**
  * @brief Dangerous way to find out if a path is writable.
@@ -85,7 +84,6 @@ void acceptFileTransfer(ToxFile& file, const QString& path) {
         qWarning() << "Cannot write to " << filepath;
     }
 }
-}  // namespace
 
 ChatWidget::ChatWidget(QWidget* parent)
         : MainLayout(parent)
@@ -174,10 +172,9 @@ void ChatWidget::deinit() {
 void ChatWidget::connectToCore(Core* core) {
     qDebug() << __func__ << "core:" << core;
 
-    connect(core, &Core::connecting, this, &ChatWidget::onConnecting );
-    connect(core, &Core::connected, this, &ChatWidget::onConnected );
-    connect(core, &Core::disconnected, this, &ChatWidget::onDisconnected );
-
+    connect(core, &Core::connecting, this, &ChatWidget::onConnecting);
+    connect(core, &Core::connected, this, &ChatWidget::onConnected);
+    connect(core, &Core::disconnected, this, &ChatWidget::onDisconnected);
 
     connect(core, &Core::usernameSet, this, &ChatWidget::onNicknameSet);
     connect(core, &Core::statusSet, this, &ChatWidget::onStatusSet);
@@ -187,7 +184,8 @@ void ChatWidget::connectToCore(Core* core) {
     connect(core, &Core::friendAvatarChanged, this, &ChatWidget::onFriendAvatarChanged);
     connect(core, &Core::friendMessageReceived, this, &ChatWidget::onFriendMessageReceived);
     connect(core, &Core::friendStatusChanged, this, &ChatWidget::onFriendStatusChanged);
-    connect(core, &Core::friendStatusMessageChanged, this, &ChatWidget::onFriendStatusMessageChanged);
+    connect(core, &Core::friendStatusMessageChanged, this,
+            &ChatWidget::onFriendStatusMessageChanged);
     connect(core, &Core::friendTypingChanged, this, &ChatWidget::onFriendTypingChanged);
     connect(core, &Core::receiptRecieved, this, &ChatWidget::onReceiptReceived);
     connect(core, &Core::groupMessageReceived, this, &ChatWidget::onGroupMessageReceived);
@@ -195,7 +193,6 @@ void ChatWidget::connectToCore(Core* core) {
     connect(core, &Core::groupPeerSizeChanged, this, &ChatWidget::onGroupPeerSizeChanged);
     connect(core, &Core::groupPeerNameChanged, this, &ChatWidget::onGroupPeerNameChanged);
     connect(core, &Core::groupPeerStatusChanged, this, &ChatWidget::onGroupPeerStatusChanged);
-
 }
 
 void ChatWidget::connectToCoreFile(CoreFile* coreFile) {
@@ -237,7 +234,7 @@ void ChatWidget::onReceiptReceived(const FriendId& friendId, MsgId receipt) {
     sessionListWidget->setFriendMessageReceipt(friendId, receipt);
 }
 
-void ChatWidget::onFriendStatusChanged(const FriendId& friendPk, Status::Status status) {
+void ChatWidget::onFriendStatusChanged(const FriendId& friendPk, Status status) {
     Friend* f = Nexus::getCore()->getFriendList().findFriend(friendPk);
     if (!f) {
         qWarning() << "Unable to find friend" << friendPk.toString();
@@ -275,10 +272,11 @@ void ChatWidget::onNicknameSet(const QString& nickname) {
     sessionListWidget->setFriendName(core->getSelfId(), nickname);
 }
 
-void ChatWidget::onStatusSet(Status::Status status) {
+void ChatWidget::onStatusSet(Status status) {
     int icon_size = 15;
     ui->statusButton->setProperty("status", static_cast<int>(status));
-    ui->statusButton->setIcon(ok::base::SvgUtils::prepareIcon(getIconPath(status), icon_size, icon_size));
+    ui->statusButton->setIcon(
+            ok::base::SvgUtils::prepareIcon(getIconPath(status), icon_size, icon_size));
     updateIcons();
 }
 
@@ -286,8 +284,8 @@ void ChatWidget::updateIcons() {
     QIcon ico;
     bool eventIcon = true;
 
-    const QString assetSuffix = Status::getAssetSuffix(static_cast<Status::Status>(
-                                        ui->statusButton->property("status").toInt())) +
+    const QString assetSuffix =
+            getAssetSuffix(static_cast<Status>(ui->statusButton->property("status").toInt())) +
                                 (eventIcon ? "_event" : "");
 
     QString color = Nexus::getProfile()->getSettings()->getLightTrayIcon() ? "light" : "dark";
@@ -475,33 +473,29 @@ void ChatWidget::onProfileChanged(Profile* profile) {
     QList<MessageSession> mss;
     profile->getHistory()->getMessageSessions(mss);
 
-    for(auto &p: mss){
-        //TODO ChatType::Chat
-        sessionListWidget->createMessageSession(ContactId(p.peer_jid), p.session_id, ChatType::Chat);
+    for (auto& p : mss) {
+        // TODO ChatType::Chat
+        sessionListWidget->createMessageSession(ContactId(p.peer_jid), p.session_id,
+                                                ChatType::Chat);
     }
 }
 
-void ChatWidget::onConnecting()
-{
-    //TODO IM模块，"连接中"
+void ChatWidget::onConnecting() {
+    // TODO IM模块，"连接中"
     qDebug() << __func__;
 }
 
-void ChatWidget::onDisconnected(int err)
-{
-    //TODO IM模块，"已断开(err)"
+void ChatWidget::onDisconnected(int err) {
+    // TODO IM模块，"已断开(err)"
     qDebug() << __func__;
 }
 
-void ChatWidget::onConnected()
-{
-    //TODO IM模块，"在线"
+void ChatWidget::onConnected() {
+    // TODO IM模块，"在线"
     qDebug() << __func__;
 }
 
-void ChatWidget::onGroupClicked() {
-
-}
+void ChatWidget::onGroupClicked() {}
 
 void ChatWidget::reloadTheme() {
     setStyleSheet(lib::settings::Style::getStylesheet("window/chat.css"));
@@ -551,18 +545,18 @@ void ChatWidget::setupStatus() {
 
     // Preparing icons and set their size
     statusOnline = new QAction(this);
-    statusOnline->setIcon(ok::base::SvgUtils::prepareIcon(
-            Status::getIconPath(Status::Status::Online), icon_size, icon_size));
+    statusOnline->setIcon(
+            ok::base::SvgUtils::prepareIcon(getIconPath(Status::Online), icon_size, icon_size));
     connect(statusOnline, &QAction::triggered, this, &ChatWidget::setStatusOnline);
 
     statusAway = new QAction(this);
-    statusAway->setIcon(ok::base::SvgUtils::prepareIcon(Status::getIconPath(Status::Status::Away),
-                                                        icon_size, icon_size));
+    statusAway->setIcon(
+            ok::base::SvgUtils::prepareIcon(getIconPath(Status::Away), icon_size, icon_size));
     connect(statusAway, &QAction::triggered, this, &ChatWidget::setStatusAway);
 
     statusBusy = new QAction(this);
-    statusBusy->setIcon(ok::base::SvgUtils::prepareIcon(Status::getIconPath(Status::Status::Busy),
-                                                        icon_size, icon_size));
+    statusBusy->setIcon(
+            ok::base::SvgUtils::prepareIcon(getIconPath(Status::Busy), icon_size, icon_size));
     connect(statusBusy, &QAction::triggered, this, &ChatWidget::setStatusBusy);
 
     QMenu* statusButtonMenu = new QMenu(ui->statusButton);
@@ -622,7 +616,7 @@ void ChatWidget::setStatusOnline() {
     //  if (!ui->statusButton->isEnabled()) {
     //    return;
     //  }
-    Nexus::getCore()->setStatus(Status::Status::Online);
+    Nexus::getCore()->setStatus(Status::Online);
 }
 
 void ChatWidget::setStatusAway() {
@@ -630,7 +624,7 @@ void ChatWidget::setStatusAway() {
     //    return;
     //  }
 
-    Nexus::getCore()->setStatus(Status::Status::Away);
+    Nexus::getCore()->setStatus(Status::Away);
 }
 
 void ChatWidget::setStatusBusy() {
@@ -638,7 +632,7 @@ void ChatWidget::setStatusBusy() {
     //    return;
     //  }
 
-    Nexus::getCore()->setStatus(Status::Status::Busy);
+    Nexus::getCore()->setStatus(Status::Busy);
 }
 
 void ChatWidget::onAvInvite(ToxPeer peerId, bool video) {
@@ -689,3 +683,4 @@ void ChatWidget::onFriendNickChanged(const FriendId& friendPk, const QString& ni
 void ChatWidget::onFriendAvatarChanged(const FriendId& friendPk, const QByteArray& avatar) {
     sessionListWidget->setFriendAvatar(friendPk, avatar);
 }
+}  // namespace module::im

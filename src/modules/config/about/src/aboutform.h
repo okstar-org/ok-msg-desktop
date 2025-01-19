@@ -25,7 +25,7 @@ class QLayoutItem;
 
 namespace module::config {
 
-class AboutForm : public GenericForm {
+class AboutForm : public UI::GenericForm {
     Q_OBJECT
 public:
     AboutForm(QWidget* parent = nullptr);

@@ -17,17 +17,22 @@
 #include <QLineEdit>
 #include <QTimer>
 #include <QVBoxLayout>
-#include "src/widget/qrwidget.h"
+#include "src/lib/ui/widget/QRWidget.h"
 
-class ContentLayout;
-class CroppingLabel;
-class IProfileInfo;
 class MaskablePixmapWidget;
+class CroppingLabel;
 
 namespace Ui {
 class IdentitySettings;
 }
+
+namespace module::im {
+
+class ContentLayout;
+
+class IProfileInfo;
 class ToxId;
+
 class ClickableTE : public QLabel {
     Q_OBJECT
 public:
@@ -35,7 +40,9 @@ signals:
     void clicked();
 
 protected:
-    virtual void mouseReleaseEvent(QMouseEvent*) final override { emit clicked(); }
+    virtual void mouseReleaseEvent(QMouseEvent*) final override {
+        emit clicked();
+    }
 };
 
 /**
@@ -87,5 +94,5 @@ private:
     QRWidget* qr;
     IProfileInfo* profileInfo;
 };
-
+}  // namespace module::im
 #endif

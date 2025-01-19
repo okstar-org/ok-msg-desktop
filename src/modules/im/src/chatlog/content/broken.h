@@ -17,6 +17,7 @@
 
 #include <QObject>
 #include <QPixmap>
+namespace module::im {
 
 class Broken : public ChatLineContent {
     Q_OBJECT
@@ -37,4 +38,5 @@ private:
     QPixmap pmap;
 };
 
+}  // namespace module::im
 #endif  // BROKEN_H

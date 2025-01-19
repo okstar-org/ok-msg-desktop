@@ -26,7 +26,7 @@ class FileTransferWidget;
 
 class QVariantAnimation;
 class QPushButton;
-
+namespace module::im {
 class FileTransferWidget : public QWidget {
     Q_OBJECT
 
@@ -102,5 +102,5 @@ private:
         LeftBottom = 8
     };
 };
-
+}  // namespace module::im
 #endif  // FILETRANSFERWIDGET_H

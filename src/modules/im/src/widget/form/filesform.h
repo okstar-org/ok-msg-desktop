@@ -18,9 +18,10 @@
 #include <QString>
 #include <QTabWidget>
 #include <QVBoxLayout>
-
-class ContentLayout;
 class QListWidget;
+
+namespace module::im {
+class ContentLayout;
 
 class FilesForm : public QObject {
     Q_OBJECT
@@ -50,5 +51,5 @@ private:
     QTabWidget main;
     QListWidget *sent, *recvd;
 };
-
+}  // namespace module::im
 #endif  // FILESFORM_H

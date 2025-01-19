@@ -34,19 +34,20 @@
 
 #include "src/model/contactid.h"
 
-class Profile;
 class QCommandLineParser;
-class FontManager;
 
 namespace Db {
 enum class syncType;
 }
 
+namespace module::im {
+
+class Profile;
+
 class Settings : public QObject,
                  public ICoreSettings,
                  public IFriendSettings,
-                 public IGroupSettings
-                {
+                 public IGroupSettings {
     Q_OBJECT
 
     Q_ENUMS(StyleType)
@@ -59,7 +60,6 @@ class Settings : public QObject,
     Q_PROPERTY(int emojiFontPointSize READ getEmojiFontPointSize WRITE setEmojiFontPointSize NOTIFY
                        emojiFontPointSizeChanged FINAL)
 
-   
     Q_PROPERTY(QByteArray splitterState READ getSplitterState WRITE setSplitterState NOTIFY
                        splitterStateChanged FINAL)
     Q_PROPERTY(QByteArray dialogGeometry READ getDialogGeometry WRITE setDialogGeometry NOTIFY
@@ -91,7 +91,6 @@ class Settings : public QObject,
     Q_PROPERTY(bool typingNotification READ getTypingNotification WRITE setTypingNotification NOTIFY
                        typingNotificationChanged FINAL)
 
-
 public:
     enum class StyleType { NONE = 0, WITH_CHARS = 1, WITHOUT_CHARS = 2 };
 
@@ -110,9 +109,7 @@ public:
 
     void createSettingsDir();
 
-
     void loadGlobal();
-
 
     void resetToDefault();
 
@@ -141,7 +138,6 @@ signals:
     void notifySoundChanged(bool enabled);
     void notifyHideChanged(bool enabled);
     void groupAlwaysNotifyChanged(bool enabled);
-
 
     void autoAwayTimeChanged(int minutes);
     void globalAutoAcceptDirChanged(const QString& path);
@@ -225,8 +221,6 @@ public:
     SIGNAL_IMPL(Settings, proxyAddressChanged, const QString& address)
     SIGNAL_IMPL(Settings, proxyPortChanged, quint16 port)
 
-
-
     Db::syncType getDbSyncType() const;
     void setDbSyncType(Db::syncType newValue);
 
@@ -256,7 +250,6 @@ public:
 
     bool getGroupAlwaysNotify() const override;
     void setGroupAlwaysNotify(bool newValue) override;
-
 
     bool isAnimationEnabled() const;
     void setAnimationEnabled(bool newValue);
@@ -307,7 +300,6 @@ public:
     // Privacy
     bool getTypingNotification() const;
     void setTypingNotification(bool enabled);
-
 
     bool getShowGroupJoinLeaveMessages() const override;
     void setShowGroupJoinLeaveMessages(bool newValue) override;
@@ -405,7 +397,6 @@ public:
 private:
     struct friendProp;
 
-
     Settings(Settings& settings) = delete;
     Settings& operator=(const Settings&) = delete;
     friendProp& getOrInsertFriendPropRef(const FriendId& id);
@@ -444,7 +435,6 @@ private:
     QString proxyAddr;
     quint16 proxyPort;
 
-
     int autoAwayTime;
 
     QHash<QString, QByteArray> widgetSettings;
@@ -480,7 +470,6 @@ private:
     bool typingNotification;
     Db::syncType dbSyncType;
 
-
     struct friendProp {
         friendProp() = delete;
         friendProp(QString addr) : addr(addr) {}
@@ -507,7 +496,6 @@ private:
 
     static CompatibleRecursiveMutex bigLock;
     static QThread* settingsThread;
-    FontManager* fontManager;
 };
-
+}  // namespace module::im
 #endif  // SETTINGS_HPP

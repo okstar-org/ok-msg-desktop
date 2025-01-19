@@ -13,16 +13,13 @@
 #include "MessageSessionWidget.h"
 
 #include "ContactListWidget.h"
-#include "circlewidget.h"
 #include "groupwidget.h"
-#include "maskablepixmapwidget.h"
+#include "src/lib/ui/widget/maskablepixmapwidget.h"
 
 #include "contentdialogmanager.h"
 #include "lib/ui/widget/croppinglabel.h"
 #include "src/core/core.h"
-#include "src/lib/storage/settings/style.h"
 #include "src/model/aboutfriend.h"
-#include "src/model/chatroom/friendchatroom.h"
 #include "src/model/friend.h"
 #include "src/model/friendlist.h"
 #include "src/model/group.h"
@@ -56,6 +53,7 @@
 #include "src/widget/chatformheader.h"
 
 #include "src/core/coreav.h"
+namespace module::im {
 
 /**
  * @class MessageSessionWidget
@@ -415,7 +413,7 @@ void MessageSessionWidget::setFriend(const Friend* f) {
     connect(f, &Friend::displayedNameChanged, this, [&](const QString& name) { setName(name); });
     connect(f, &Friend::avatarChanged, this, [this](const QPixmap& avatar) { setAvatar(avatar); });
     connect(f, &Friend::statusChanged, this,
-            [this](Status::Status status, bool event) { setStatus(status, event); });
+            [this](Status status, bool event) { setStatus(status, event); });
 
     setContact(*f);
 
@@ -489,7 +487,7 @@ void MessageSessionWidget::setAvEnd(bool error) {
 
     auto f = Nexus::getCore()->getFriendList().findFriend(friendId);
     if (f) {
-        header->updateCallButtons(f->getStatus() == Status::Status::Online, false, false);
+        header->updateCallButtons(f->getStatus() == Status::Online, false, false);
     }
 
     auto chatForm = (ChatForm*)sendWorker->getChatForm();
@@ -787,7 +785,7 @@ void MessageSessionWidget::setRecvGroupMessage(const GroupMessage& msg) {
     auto vis = contentWidget->isVisible();
     if (!vis) {
         // 更新状态信号灯
-        updateStatusLight(Status::Status::Online, true);
+        updateStatusLight(Status::Online, true);
         // 聊天界面不显示，消息提示。
         Widget::getInstance()->newGroupMessageAlert(GroupId(contactId), FriendId(msg.from),
                                                     msg.content, true);
@@ -810,7 +808,7 @@ void MessageSessionWidget::clearHistory() {
     sendWorker->clearHistory();
 }
 
-void MessageSessionWidget::setStatus(Status::Status status, bool event) {
+void MessageSessionWidget::setStatus(Status status, bool event) {
     updateStatusLight(status, event);
     auto f = Nexus::getCore()->getFriendList().findFriend(contactId);
     if (!f) {
@@ -840,3 +838,4 @@ void MessageSessionWidget::setAvatar(const QPixmap& avatar) {
     GenericChatroomWidget::setAvatar(avatar);
     sendWorker->getHeader()->setAvatar(avatar);
 }
+}  // namespace module::im

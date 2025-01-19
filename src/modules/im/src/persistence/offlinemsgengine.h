@@ -26,6 +26,7 @@
 #include <QObject>
 #include <QSet>
 #include <chrono>
+namespace module::im {
 
 class Friend;
 class ICoreFriendMessageSender;
@@ -70,5 +71,5 @@ private:
     QMap<MsgId, OfflineMessage> sentMessages;
     QVector<OfflineMessage> unsentMessages;
 };
-
+}  // namespace module::im
 #endif  // OFFLINEMSGENGINE_H

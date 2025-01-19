@@ -17,6 +17,7 @@
 #include "src/persistence/history.h"
 #include "src/persistence/ifriendsettings.h"
 #include "src/persistence/profile.h"
+namespace module::im {
 
 AboutFriend::AboutFriend(const Friend* f, IFriendSettings* const s) : f{f}, settings{s} {
     s->connectTo_contactNoteChanged(
@@ -32,15 +33,25 @@ AboutFriend::AboutFriend(const Friend* f, IFriendSettings* const s) : f{f}, sett
             this, [this](const FriendId& pk, bool enable) { emit autoGroupInviteChanged(enable); });
 }
 
-QString AboutFriend::getName() const { return f->getName(); }
+QString AboutFriend::getName() const {
+    return f->getName();
+}
 
-const QString& AboutFriend::getAlias() const { return f->getAlias(); }
+const QString& AboutFriend::getAlias() const {
+    return f->getAlias();
+}
 
-QString AboutFriend::getStatusMessage() const { return f->getStatusMessage(); }
+QString AboutFriend::getStatusMessage() const {
+    return f->getStatusMessage();
+}
 
-FriendId AboutFriend::getPublicKey() const { return f->getPublicKey(); }
+FriendId AboutFriend::getPublicKey() const {
+    return f->getPublicKey();
+}
 
-QPixmap AboutFriend::getAvatar() const { return f->getAvatar(); }
+QPixmap AboutFriend::getAvatar() const {
+    return f->getAvatar();
+}
 
 QString AboutFriend::getNote() const {
     const FriendId pk = f->getPublicKey();
@@ -86,3 +97,4 @@ bool AboutFriend::isHistoryExistence() {
 
     return false;
 }
+}  // namespace module::im

@@ -31,6 +31,7 @@
 #include "src/application.h"
 #include "src/nexus.h"
 #include "src/widget/widget.h"
+namespace module::im {
 
 /**
  * @class GeneralForm
@@ -45,8 +46,6 @@ GeneralForm::GeneralForm(SettingsWidget* myParent)
 
     // block all child signals during initialization
     const ok::base::RecursiveSignalBlocker signalBlocker(this);
-
-
 
     eventsInit();
     settings::Translator::registerHandler(std::bind(&GeneralForm::retranslateUi, this), this);
@@ -99,8 +98,7 @@ void GeneralForm::retranslateUi() {
     bodyUI->retranslateUi(this);
 }
 
-void GeneralForm::onProfileChanged(Profile *profile)
-{
+void GeneralForm::onProfileChanged(Profile* profile) {
     auto s = profile->getSettings();
 
     const QFont chatBaseFont = s->getChatMessageFont();
@@ -149,3 +147,4 @@ void GeneralForm::on_txtChatFontSize_valueChanged(int px) {
         s->setChatMessageFont(tmpFont);
     }
 }
+}  // namespace module::im

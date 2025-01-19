@@ -25,7 +25,7 @@
 #include <QRegularExpression>
 #include <QTextBlock>
 #include <QTextFragment>
-
+namespace module::im {
 Text::Text(const QString& txt, const QFont& font, bool enableElide, const QString& rwText)
         : ChatLineContent(ContentType::CHAT_TEXT)
         , rawText(rwText)
@@ -506,3 +506,4 @@ void Text::selectText(QTextCursor& cursor, const std::pair<int, int>& point) {
 
 QColor Text::textColor() const { return isCustomColor ? color : lib::settings::Style::getColor(colorRole); }
 const void* Text::getContent() { return (void*)(&text); }
+}  // namespace module::im

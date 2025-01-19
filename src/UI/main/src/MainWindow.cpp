@@ -179,7 +179,7 @@ void MainWindow::closeEvent(QCloseEvent* event) {
     //  }
 
     //  if (autoAwayActive) {
-    //      emit statusSet(Status::Status::Online);
+    //      emit statusSet(Status::Online);
     //      autoAwayActive = false;
     //  }
     saveWindowGeometry();
@@ -371,15 +371,15 @@ QWidget* MainWindow::getContainer(SystemMenu menu) {
  */
 OMenuWidget* MainWindow::createChatModule(MainWindow* pWindow) {
     qDebug() << "Creating chat module...";
-    auto m = Nexus::Create();
-    auto nexus = static_cast<Nexus*>(m);
+    auto m = module::im::Nexus::Create();
+    auto nexus = static_cast<module::im::Nexus*>(m);
 
-    // connect(nexus, &Nexus::updateAvatar,  //
+    // connect(nexus, &Nexus::updateAvatar,
     //         ok::Application::Instance(), &ok::Application::onAvatar);
 
-    connect(nexus, &Nexus::destroyProfile,  //
+    connect(nexus, &module::im::Nexus::destroyProfile,  //
             ok::Application::Instance(), &ok::Application::on_logout);
-    // connect(nexus, &Nexus::exit,  //
+    // connect(nexus, &Nexus::exit,
     // ok::Application::Instance(), &ok::Application::on_exit);
 
     auto w = new OMenuWidget(this);

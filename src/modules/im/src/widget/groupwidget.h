@@ -26,6 +26,7 @@
 #include "form/groupchatform.h"
 #include "src/model/groupmessagedispatcher.h"
 #include "src/model/sessionchatlog.h"
+namespace module::im {
 
 /**
  * 群组件
@@ -34,18 +35,19 @@ class GroupWidget final : public GenericChatroomWidget {
     Q_OBJECT
 
 public:
-    GroupWidget(const GroupId& groupId,
-                const QString& groupName);
+    GroupWidget(const GroupId& groupId, const QString& groupName);
 
     ~GroupWidget();
     void init();
 
     void setAsInactiveChatroom() final override;
     void setAsActiveChatroom() final override;
-    void updateStatusLight(Status::Status status, bool event) final override;
+    void updateStatusLight(Status status, bool event) final override;
     void resetEventFlags() final override;
     QString getStatusString() const final override;
-    const Group* getGroup() const { return group; };
+    const Group* getGroup() const {
+        return group;
+    };
 
     void editName();
     ContentDialog* addGroupDialog(Group* group);
@@ -83,5 +85,6 @@ private:
     Group::Affiliation aff;
     QList<int> codes;
 };
+}  // namespace module::im
 
 #endif  // GROUPWIDGET_H

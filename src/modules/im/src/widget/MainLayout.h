@@ -16,6 +16,7 @@
 #include <QWidget>
 
 #include "src/widget/contentlayout.h"
+namespace module::im {
 
 /**
  * 主业务布局
@@ -29,5 +30,5 @@ public:
 
 signals:
 };
-
+}  // namespace module::im
 #endif  // MAINLAYOUT_H

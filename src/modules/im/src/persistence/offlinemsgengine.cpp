@@ -21,6 +21,7 @@
 #include "src/model/status.h"
 #include "src/nexus.h"
 #include "src/persistence/settings.h"
+namespace module::im {
 
 OfflineMsgEngine::OfflineMsgEngine(const FriendId* frnd, ICoreFriendMessageSender* messageSender)
         : f(frnd), messageSender(messageSender) {}
@@ -34,7 +35,7 @@ void OfflineMsgEngine::onReceiptReceived(MsgId receipt) {
 
     QMutexLocker ml(&mutex);
     if (receivedReceipts.contains(receipt)) {
-        qWarning() << "Receievd duplicate receipt" << receipt << "from friend" << f->getId();
+        qWarning() << "Received duplicate receipt" << receipt << "from friend" << f->getId();
         return;
     }
     receivedReceipts.append(receipt);
@@ -197,3 +198,4 @@ void OfflineMsgEngine::checkForCompleteMessages(MsgId receipt) {
     // 发送消息即标识成功
     completeMessage(msgIt);
 }
+}  // namespace module::im

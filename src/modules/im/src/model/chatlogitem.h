@@ -19,6 +19,7 @@
 #include "src/persistence/history.h"
 
 #include <memory>
+namespace module::im {
 
 struct ChatLogMessage {
     MessageState state;
@@ -54,15 +55,16 @@ public:
     QDateTime getTimestamp() const;
     void setDisplayName(QString name);
     const QString& getDisplayName() const;
-    const QString& getId() const { return id; };
+    const QString& getId() const {
+        return id;
+    };
 
 private:
-
     FriendId sender;
     QString displayName;
     ContentType contentType;
     ContentPtr content;
     QString id;
 };
-
+}  // namespace module::im
 #endif /*CHAT_LOG_ITEM_H*/

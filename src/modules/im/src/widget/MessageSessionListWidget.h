@@ -25,6 +25,9 @@
 class QVBoxLayout;
 class QGridLayout;
 class QPixmap;
+
+namespace module::im {
+
 class Widget;
 class FriendWidget;
 class GroupWidget;
@@ -59,7 +62,7 @@ public:
     void setFriend(const Friend* f);
     void removeFriend(const Friend* f);
 
-    void setFriendStatus(const FriendId& friendPk, Status::Status status);
+    void setFriendStatus(const FriendId& friendPk, Status status);
     void setFriendStatusMsg(const FriendId& friendPk, const QString& statusMsg);
     void setFriendName(const FriendId& fId, const QString& name);
     void setFriendAvatar(const FriendId& fId, const QByteArray& avatar);
@@ -115,7 +118,7 @@ public slots:
     void do_deleteSession(const QString& contactId);
     void do_clearHistory(const QString& contactId);
 
-    void moveWidget(MessageSessionWidget* w, Status::Status s, bool add = false);
+    void moveWidget(MessageSessionWidget* w, Status s, bool add = false);
 
     void dayTimeout();
 
@@ -144,5 +147,5 @@ private:
 
     QMap<QString, MessageSessionWidget*> sessionWidgets;
 };
-
+}  // namespace module::im
 #endif  // FRIENDLISTWIDGET_H

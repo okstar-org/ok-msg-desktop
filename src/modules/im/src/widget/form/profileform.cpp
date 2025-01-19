@@ -33,15 +33,16 @@
 #include "src/core/core.h"
 #include "src/lib/session/profile.h"
 #include "src/lib/storage/settings/style.h"
+#include "src/lib/ui/widget/maskablepixmapwidget.h"
 #include "src/model/profile/iprofileinfo.h"
 #include "src/persistence/profilelocker.h"
 #include "src/persistence/settings.h"
 #include "src/widget/contentlayout.h"
 #include "src/widget/form/setpassworddialog.h"
 #include "src/widget/form/settingswidget.h"
-#include "src/widget/maskablepixmapwidget.h"
 #include "src/widget/widget.h"
 #include "ui_profileform.h"
+namespace module::im {
 
 static const QMap<IProfileInfo::SetAvatarResult, QString> SET_AVATAR_ERROR = {
         {IProfileInfo::SetAvatarResult::CanNotOpen, ProfileForm::tr("Unable to open this file.")},
@@ -184,7 +185,6 @@ void ProfileForm::showTo(ContentLayout* contentLayout) {
         contentLayout->addWidget(this);
     }
     contentLayout->setCurrentWidget(this);
-
 
     QString defaultPath = Nexus::getProfile()->getDir().path();
     QString url = QUrl::fromLocalFile(defaultPath).toString();
@@ -380,3 +380,4 @@ void ProfileForm::retranslateUi() {
     bodyUI->retranslateUi(this);
     setPasswordButtonsText();
 }
+}  // namespace module::im

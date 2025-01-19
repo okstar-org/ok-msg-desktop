@@ -15,7 +15,7 @@
 
 #include <QGraphicsProxyWidget>
 #include "chatlinecontent.h"
-
+namespace module::im {
 class FileTransferWidget;
 
 class ChatLineContentProxy : public ChatLineContent {
@@ -53,5 +53,5 @@ private:
     int widthMin;
     const ChatLineContentProxyType widgetType;
 };
-
+}  // namespace module::im
 #endif  // CHATLINECONTENTPROXY_H

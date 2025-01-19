@@ -16,6 +16,7 @@
 #include <QWidget>
 
 class QLabel;
+namespace module::im {
 
 class NotificationEdgeWidget final : public QWidget {
     Q_OBJECT
@@ -34,5 +35,6 @@ protected:
 private:
     QLabel* textLabel;
 };
+}  // namespace module::im
 
 #endif  // NOTIFICATIONEDGEWIDGET_H

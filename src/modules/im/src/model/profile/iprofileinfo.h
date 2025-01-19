@@ -14,6 +14,7 @@
 
 #include <QObject>
 #include "../VCard.h"
+namespace module::im {
 
 class ToxId;
 
@@ -60,3 +61,4 @@ public:
     DECLARE_SIGNAL(statusMessageChanged, const QString&);
     DECLARE_SIGNAL(vCardChanged, const VCard&);
 };
+}  // namespace module::im

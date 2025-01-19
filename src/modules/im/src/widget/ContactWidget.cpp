@@ -35,11 +35,9 @@
 
 #include <QLabel>
 #include <QStyle>
-
+namespace module::im {
 ContactWidget::ContactWidget(QWidget* parent)
-        : MainLayout(parent)
-        , ui(new Ui::ContactWidget)
-        , addForm(nullptr) {
+        : MainLayout(parent), ui(new Ui::ContactWidget), addForm(nullptr) {
     ui->setupUi(this);
 
     layout()->setMargin(0);
@@ -143,8 +141,7 @@ void ContactWidget::onCoreChanged(Core* core_) {
     connectToCore(core);
 }
 
-void ContactWidget::onCoreStarted()
-{
+void ContactWidget::onCoreStarted() {
     std::list<FriendInfo> fl;
     core->loadFriendList(fl);
     for (auto& friendInfo : fl) {
@@ -211,7 +208,7 @@ void ContactWidget::onFriendNickChanged(const FriendId& friendPk, const QString&
     contactListWidget->setFriendName(friendPk, nick);
 }
 
-void ContactWidget::onFriendStatusChanged(const FriendId& friendPk, Status::Status status) {
+void ContactWidget::onFriendStatusChanged(const FriendId& friendPk, Status status) {
     contactListWidget->setFriendStatus(friendPk, status);
 }
 
@@ -479,3 +476,4 @@ void ContactWidget::removeAllDetails() {
 void ContactWidget::do_addContactToGroup(const ContactId& id, const ContactId& gId) {
     core->inviteToGroup(id, GroupId(gId));
 }
+}  // namespace module::im

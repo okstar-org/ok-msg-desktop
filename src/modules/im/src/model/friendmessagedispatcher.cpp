@@ -15,7 +15,7 @@
 #include "src/model/status.h"
 #include "src/persistence/settings.h"
 
-namespace {
+namespace module::im {
 
 /**
  * @brief Sends message to friend using messageSender
@@ -36,7 +36,6 @@ bool sendMessageToCore(ICoreFriendMessageSender& messageSender,
 
     return sendFn(messageSender, friendId, message.content, msgId, encrypt);
 }
-}  // namespace
 
 FriendMessageDispatcher::FriendMessageDispatcher(const FriendId& f_,
                                                  const MessageProcessor::SharedParams& p,
@@ -50,7 +49,9 @@ FriendMessageDispatcher::FriendMessageDispatcher(const FriendId& f_,
     //          this, &FriendMessageDispatcher::onFriendOnlineOfflineChanged);
 }
 
-FriendMessageDispatcher::~FriendMessageDispatcher() { qDebug() << __func__; }
+FriendMessageDispatcher::~FriendMessageDispatcher() {
+    qDebug() << __func__;
+}
 
 /**
  * @see IMessageSender::sendMessage
@@ -127,7 +128,9 @@ void FriendMessageDispatcher::onFriendOnlineOfflineChanged(bool isOnline) {
 /**
  * @brief Clears all currently outgoing messages
  */
-void FriendMessageDispatcher::clearOutgoingMessages() { offlineMsgEngine.removeAllMessages(); }
+void FriendMessageDispatcher::clearOutgoingMessages() {
+    offlineMsgEngine.removeAllMessages();
+}
 
 void FriendMessageDispatcher::onFileReceived(const ToxFile& file) {
     const auto& friendId = FriendId(f);
@@ -138,3 +141,4 @@ void FriendMessageDispatcher::onFileCancelled(const QString& fileId) {
     const auto& friendId = FriendId(f);
     emit fileCancelled(friendId, fileId);
 }
+}  // namespace module::im

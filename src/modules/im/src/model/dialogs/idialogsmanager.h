@@ -14,6 +14,7 @@
 #define I_DIALOGS_MANAGER
 
 #include "idialogs.h"
+namespace module::im {
 
 class GroupId;
 class FriendId;
@@ -24,5 +25,5 @@ public:
     virtual IDialogs* getFriendDialogs(const FriendId& friendId) const = 0;
     virtual IDialogs* getGroupDialogs(const GroupId& groupId) const = 0;
 };
-
+}  // namespace module::im
 #endif  // I_DIALOGS_MANAGER

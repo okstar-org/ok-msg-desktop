@@ -14,9 +14,9 @@
 #define TEXTFORMATTER_H
 
 #include <QString>
-
+namespace module::im {
 QString highlightURI(const QString& message);
 
 QString applyMarkdown(const QString& message, bool showFormattingSymbols);
-
+}  // namespace module::im
 #endif  // TEXTFORMATTER_H

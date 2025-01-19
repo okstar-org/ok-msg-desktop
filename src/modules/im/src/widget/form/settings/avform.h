@@ -25,21 +25,28 @@
 
 #include <src/persistence/profile.h>
 
+class CameraSource;
+class IVideoSettings;
+
+namespace lib::audio {
 class IAudioControl;
 class IAudioSettings;
 class IAudioSink;
 class IAudioSource;
-class CameraSource;
+}  // namespace lib::audio
+
+namespace module::im {
 class CoreAV;
-class IVideoSettings;
 class VideoSurface;
 
 class AVForm : public GenericForm, private Ui::AVForm {
     Q_OBJECT
 public:
-    AVForm( );
+    AVForm();
     ~AVForm() override;
-    QString getFormName() final override { return tr("Audio/Video"); }
+    QString getFormName() final override {
+        return tr("Audio/Video");
+    }
 
 private:
     void getAudioInDevices();
@@ -86,14 +93,14 @@ private:
     void trackNewScreenGeometry(QScreen* qScreen);
 
 private:
-    std::unique_ptr<IAudioControl> audio;
+    std::unique_ptr<lib::audio::IAudioControl> audio;
 
-    IAudioSettings* audioSettings;
+    lib::audio::IAudioSettings* audioSettings;
     IVideoSettings* videoSettings;
 
     bool subscribedToAudioIn;
-    std::unique_ptr<IAudioSink> audioSink;
-    std::unique_ptr<IAudioSource> audioSrc;
+    std::unique_ptr<lib::audio::IAudioSink> audioSink;
+    std::unique_ptr<lib::audio::IAudioSource> audioSrc;
     std::unique_ptr<VideoSurface> camVideoSurface;
     CameraSource* camera;
     QVector<QPair<QString, QString>> videoDeviceList;
@@ -104,5 +111,5 @@ private:
 private slots:
     void onProfileChanged(Profile*);
 };
-
+}  // namespace module::im
 #endif

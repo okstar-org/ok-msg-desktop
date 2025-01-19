@@ -17,6 +17,7 @@
 
 #include <cassert>
 #include <climits>
+namespace module::im {
 
 /**
  * @class ToxString
@@ -57,16 +58,23 @@ const uint8_t* ToxString::data() const {
  * @brief Get the number of bytes in the string.
  * @return Number of bytes in the string.
  */
-size_t ToxString::size() const { return string.size(); }
+size_t ToxString::size() const {
+    return string.size();
+}
 
 /**
  * @brief Gets the string as QString.
  * @return QString representation of the string.
  */
-QString ToxString::getQString() const { return QString::fromUtf8(string); }
+QString ToxString::getQString() const {
+    return QString::fromUtf8(string);
+}
 
 /**
  * @brief getBytes Gets the bytes of the string.
  * @return Bytes of the string as QByteArray.
  */
-QByteArray ToxString::getBytes() const { return QByteArray(string); }
+QByteArray ToxString::getBytes() const {
+    return QByteArray(string);
+}
+}  // namespace module::im

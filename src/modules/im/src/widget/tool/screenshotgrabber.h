@@ -23,6 +23,9 @@ class QGraphicsTextItem;
 class QGraphicsScene;
 class QGraphicsView;
 class QKeyEvent;
+
+namespace module::im {
+
 class ScreenGrabberChooserRectItem;
 class ScreenGrabberOverlayItem;
 class ToolBoxGraphicsItem;
@@ -82,5 +85,6 @@ private:
     bool mQToxVisible;
     QVector<QPointer<QWidget>> mHiddenWindows;
 };
+}  // namespace module::im
 
 #endif  // SCREENSHOTGRABBER_H

@@ -17,7 +17,9 @@
 #include <QWidget>
 #include "lib/session/AuthSession.h"
 
+namespace lib::session {
 class Profile;
+}
 
 /**
  * 需要保存的信息
@@ -33,7 +35,7 @@ class Module {
 public:
     static Module* Create();
 
-    virtual void init(Profile* p) = 0;
+    virtual void init(lib::session::Profile* p) = 0;
     virtual const QString& getName() const = 0;
     virtual QWidget* widget() = 0;
 

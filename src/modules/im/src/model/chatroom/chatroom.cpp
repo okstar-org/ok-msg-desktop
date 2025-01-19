@@ -14,6 +14,7 @@
 // Created by gaojie on 24-5-14.
 //
 #include "chatroom.h"
+namespace module::im {
 
 Chatroom::Chatroom() {}
 
@@ -25,3 +26,4 @@ void Chatroom::setActive(bool _active) {
         emit activeChanged(active);
     }
 }
+}  // namespace module::im

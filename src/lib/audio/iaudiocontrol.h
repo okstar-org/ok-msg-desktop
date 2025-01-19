@@ -16,7 +16,7 @@
 #include <QObject>
 #include <QStringList>
 #include <memory>
-
+namespace lib::audio {
 /**
  * @class IAudioControl
  *
@@ -139,5 +139,5 @@ protected:
             AUDIO_FRAME_DURATION * AUDIO_SAMPLE_RATE / 1000;
     uint32_t AUDIO_FRAME_SAMPLE_COUNT_TOTAL = 0;
 };
-
+}  // namespace lib::audio
 #endif  // IAUDIOCONTROL_H

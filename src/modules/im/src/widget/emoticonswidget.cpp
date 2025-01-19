@@ -41,6 +41,7 @@ public:
         return QSize(s.height(), s.height());
     }
 };
+namespace module::im {
 
 EmoticonsWidget::EmoticonsWidget(QWidget* parent) : QMenu(parent) {
     setStyleSheet(lib::settings::Style::getStylesheet("emoticonWidget/emoticonWidget.css"));
@@ -313,3 +314,4 @@ int EmoticonsPageView::itemSize() const {
     if (_itemSize < 0) _itemSize = invisible_button->sizeHint().width();
     return _itemSize;
 }
+}  // namespace module::im

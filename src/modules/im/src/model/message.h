@@ -27,6 +27,7 @@
 
 #include "MsgId.h"
 #include "contact.h"
+namespace module::im {
 
 // NOTE: This could be extended in the future to handle all text processing (see
 // ChatMessage::createChatMessage)
@@ -75,7 +76,9 @@ struct FriendMessage : Message {
 
 struct GroupMessage : public Message {
 public:
-    GroupMessage() { isGroup = true; }
+    GroupMessage() {
+        isGroup = true;
+    }
     QString nick;
     QString resource;
 
@@ -100,11 +103,17 @@ struct FriendInfo {
     // explicit FriendInfo();
     // explicit FriendInfo(const lib::messenger::IMFriend& aFriend);
 
-    [[nodiscard]] inline const FriendId& getId() const { return id; }
+    [[nodiscard]] inline const FriendId& getId() const {
+        return id;
+    }
 
-    [[nodiscard]] inline const QString& getAlias() const { return alias; }
+    [[nodiscard]] inline const QString& getAlias() const {
+        return alias;
+    }
 
-    [[nodiscard]] inline bool isFriend() const { return is_friend; };
+    [[nodiscard]] inline bool isFriend() const {
+        return is_friend;
+    };
 
     [[nodiscard]] inline QString toString() const {
         return QString("{id: %1, alias: %2, is_friend:%3, online:%4, groups:[%5]}")  //
@@ -151,10 +160,16 @@ public:
     class SharedParams {
     public:
         // 模式匹配
-        const QRegularExpression& GetNameMention() const { return nameMention; }
+        const QRegularExpression& GetNameMention() const {
+            return nameMention;
+        }
 
-        const QRegularExpression& GetSanitizedNameMention() const { return sanitizedNameMention; }
-        const QRegularExpression& GetPublicKeyMention() const { return pubKeyMention; }
+        const QRegularExpression& GetSanitizedNameMention() const {
+            return sanitizedNameMention;
+        }
+        const QRegularExpression& GetPublicKeyMention() const {
+            return pubKeyMention;
+        }
 
         void onUserNameSet(const QString& username);
         void setPublicKey(const QString& pk);
@@ -176,12 +191,16 @@ public:
     /**
      * @brief Enables mention detection in the processor
      */
-    inline void enableMentions() { detectingMentions = true; }
+    inline void enableMentions() {
+        detectingMentions = true;
+    }
 
     /**
      * @brief Disables mention detection in the processor
      */
-    inline void disableMentions() { detectingMentions = false; };
+    inline void disableMentions() {
+        detectingMentions = false;
+    };
 
 private:
     bool detectingMentions = false;
@@ -189,5 +208,5 @@ private:
     const ContactId& f;
     const SharedParams& sharedParams;
 };
-
+}  // namespace module::im
 #endif /*MESSAGE_H*/

@@ -23,7 +23,7 @@
 namespace Ui {
 class AboutFriendForm;
 }
-
+namespace module::im {
 class Widget;
 class Profile;
 class Friend;
@@ -36,7 +36,9 @@ public:
     ~AboutFriendForm() override;
 
     void setName(const QString& name);
-    const Friend* getFriend() const { return m_friend; }
+    const Friend* getFriend() const {
+        return m_friend;
+    }
     const ContactId& getId();
 
 private:
@@ -55,5 +57,5 @@ private slots:
     void onSendMessageClicked();
     void onRemoveHistoryClicked();
 };
-
+}  // namespace module::im
 #endif  // ABOUT_USER_FORM_H

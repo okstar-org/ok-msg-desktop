@@ -18,6 +18,7 @@
 #include <QByteArray>
 #include <QString>
 #include <cstdint>
+namespace module::im {
 
 class ToxId {
 public:
@@ -53,5 +54,6 @@ public:
 private:
     QByteArray toxId;
 };
+}  // namespace module::im
 
 #endif  // TOXID_H

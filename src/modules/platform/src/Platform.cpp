@@ -41,7 +41,7 @@ Platform::~Platform() {
     }
 }
 
-void Platform::init(Profile* p) {}
+void Platform::init(lib::session::Profile* p) {}
 
 const QString& Platform::getName() const {
     return name;

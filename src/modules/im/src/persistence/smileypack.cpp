@@ -22,31 +22,7 @@
 #include <QtConcurrent/QtConcurrentRun>
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
-
-#if defined(Q_OS_FREEBSD)
-#include <locale.h>
-#endif
-
-/**
- * @class SmileyPack
- * @brief Maps emoticons to smileys.
- *
- * @var SmileyPack::filenameTable
- * @brief Matches an emoticon to its corresponding smiley ie. ":)" -> "happy.png"
- *
- * @var SmileyPack::iconCache
- * @brief representation of a smiley ie. "happy.png" -> data
- *
- * @var SmileyPack::emoticons
- * @brief {{ ":)", ":-)" }, {":(", ...}, ... }
- *
- * @var SmileyPack::path
- * @brief directory containing the cfg and image files
- *
- * @var SmileyPack::defaultPaths
- * @brief Contains all directories where smileys could be found
- */
-
+namespace module::im {
 QStringList loadDefaultPaths();
 
 static const QStringList DEFAULT_PATHS = loadDefaultPaths();
@@ -325,3 +301,4 @@ void SmileyPack::onSmileyPackChanged() {
     auto s = Nexus::getProfile()->getSettings();
     QtConcurrent::run(this, &SmileyPack::load, s->getSmileyPack());
 }
+}  // namespace module::im

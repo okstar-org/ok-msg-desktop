@@ -21,6 +21,7 @@
 class QHBoxLayout;
 class QVBoxLayout;
 class QFile;
+namespace module::im {
 
 class EmoticonsWidget;
 class ChatTextEdit;
@@ -93,3 +94,4 @@ signals:
     void inputFile(const QFile& file);
     void inputScreenCapture(const QPixmap& pixmap);
 };
+}  // namespace module::im

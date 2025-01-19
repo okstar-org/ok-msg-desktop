@@ -13,7 +13,6 @@
 #include "desktopnotify.h"
 
 #include <src/persistence/settings.h>
-
 #include <libsnore/snore.h>
 
 #include <QDebug>

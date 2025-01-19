@@ -12,7 +12,6 @@
 
 #include "profileinfo.h"
 #include "src/core/core.h"
-#include "src/model/toxclientstandards.h"
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
@@ -23,19 +22,8 @@
 #include <QFile>
 #include <QImageReader>
 
-/**
- * @class ProfileInfo
- * @brief Implement interface, that provides invormation about self profile.
- * Also, provide methods to work with profile file.
- * @note Should be used only when QAppliaction constructed.
- */
+namespace module::im {
 
-/**
- * @brief ProfileInfo constructor.
- * @param core Pointer to Tox Core.
- * @param profile Pointer to Profile.
- * @note All pointers parameters shouldn't be null.
- */
 ProfileInfo::ProfileInfo(Core* core, Profile* profile) : profile{profile}, core{core} {
     connect(core, &Core::idSet, this, &ProfileInfo::idChanged);
     connect(core, &Core::vCardSet, this, &ProfileInfo::vCardChanged);
@@ -205,13 +193,13 @@ QStringList ProfileInfo::removeProfile() {
 void ProfileInfo::logout() {
     auto username = getNickname();
     qDebug() << __func__ << username;
-    emit Nexus::getInstance()->destroyProfile(username);
+    emit Nexus::getInstance() -> destroyProfile(username);
 }
 
 void ProfileInfo::exit() {
     auto username = getNickname();
     qDebug() << __func__ << username;
-    emit Nexus::getInstance()->exit(username);
+    emit Nexus::getInstance() -> exit(username);
 }
 
 /**
@@ -339,19 +327,15 @@ IProfileInfo::SetAvatarResult ProfileInfo::scalePngToAvatar(QByteArray& avatar) 
     constexpr int scaleSizes[] = {256, 128, 64, 32};
 
     for (auto scaleSize : scaleSizes) {
-        if (ToxClientStandards::IsValidAvatarSize(avatar.size())) break;
         QImage image;
         image.loadFromData(avatar);
         image = image.scaled(scaleSize, scaleSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
         avatar = picToPng(image);
     }
 
-    // If this happens, you're really doing it on purpose.
-    if (!ToxClientStandards::IsValidAvatarSize(avatar.size())) {
-        return SetAvatarResult::TooLarge;
-    }
     return SetAvatarResult::OK;
 }
 void ProfileInfo::removeAvatar() {
     profile->removeAvatar(true);
 }
+}  // namespace module::im

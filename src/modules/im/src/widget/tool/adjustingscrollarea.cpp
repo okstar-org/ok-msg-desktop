@@ -16,6 +16,7 @@
 #include <QEvent>
 #include <QLayout>
 #include <QScrollBar>
+namespace module::im {
 
 AdjustingScrollArea::AdjustingScrollArea(QWidget* parent) : QScrollArea(parent) {}
 
@@ -37,3 +38,4 @@ QSize AdjustingScrollArea::sizeHint() const {
 
     return QScrollArea::sizeHint();
 }
+}  // namespace module::im

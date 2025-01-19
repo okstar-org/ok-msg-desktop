@@ -25,6 +25,7 @@ class FriendForm;
 namespace lib::backend {
 struct OrgStaff;
 }
+namespace module::im {
 
 class FriendForm : public QFrame {
     Q_OBJECT
@@ -41,5 +42,5 @@ private:
 signals:
     void add(const QString& cId, const QString& nick);
 };
-
+}  // namespace module::im
 #endif  // FRIENDFORM_H

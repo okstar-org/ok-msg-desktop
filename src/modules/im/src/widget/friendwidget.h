@@ -23,9 +23,12 @@
 
 #include <memory>
 
-class FriendChatroom;
 class QPixmap;
 class MaskablePixmapWidget;
+
+namespace module::im {
+
+class FriendChatroom;
 class CircleWidget;
 class ContentDialog;
 class ContentLayout;
@@ -41,7 +44,7 @@ public:
     void setAsActiveChatroom() override final;
     void setAsInactiveChatroom() override final;
 
-    void setStatus(Status::Status status, bool event);
+    void setStatus(Status status, bool event);
     void setStatusMsg(const QString& msg);
     void setTyping(bool typing);
     void setName(const QString& name);
@@ -63,7 +66,6 @@ protected:
     void onActiveSet(bool active) override;
 
 private:
-
     AboutFriendForm* about;
 
     Friend* m_friend;
@@ -90,5 +92,5 @@ signals:
     void updateFriendActivity(const Friend& frnd);
     //    void setActive(bool active);
 };
-
+}  // namespace module::im
 #endif  // FRIENDWIDGET_H

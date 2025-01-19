@@ -17,6 +17,7 @@
 
 #include <QString>
 #include <cstdint>
+namespace module::im {
 
 class ICoreFriendMessageSender {
 public:
@@ -26,5 +27,5 @@ public:
     virtual bool sendMessage(QString friendId, const QString& message, const MsgId& msgId,
                              bool encrypt = false) = 0;
 };
-
+}  // namespace module::im
 #endif /* ICORE_FRIEND_MESSAGE_SENDER_H */

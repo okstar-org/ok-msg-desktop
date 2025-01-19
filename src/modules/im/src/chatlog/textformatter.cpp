@@ -14,7 +14,7 @@
 
 #include <QRegularExpression>
 #include <QVector>
-
+namespace module::im {
 // clang-format off
 
 // Note: escaping of '\' is only needed because QStringLiteral is broken by linebreak
@@ -239,3 +239,4 @@ QString applyMarkdown(const QString& message, bool showFormattingSymbols) {
     }
     return result;
 }
+}  // namespace module::im

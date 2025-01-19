@@ -19,10 +19,7 @@
 #include <cassert>
 #include "base/basic_types.h"
 
-/**
- * @class ToxPk
- * @brief This class represents a Tox Public Key, which is a part of Ok ID.
- */
+namespace module::im {
 
 /**
  * @brief The default constructor. Creates an empty Tox key.
@@ -112,3 +109,4 @@ bool ToxPeer::isValid() const {
 QString ToxPeer::toString() const {
     return FriendId::toString() + "/" + resource;
 }
+}  // namespace module::im

@@ -24,7 +24,7 @@ Config::Config() : m_widget(new ConfigWindow()), m_name(OK_Config_MODULE) {
 
 Config::~Config() {}
 
-void Config::init(Profile* p) {}
+void Config::init(lib::session::Profile* p) {}
 
 const QString& Config::getName() const {
     return m_name;

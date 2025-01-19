@@ -26,6 +26,7 @@
 class QIcon;
 class QToolButton;
 class QButtonGroup;
+namespace module::im {
 
 /**
  * 聊天表情控件
@@ -93,5 +94,5 @@ private:
     mutable int _itemSize = -1;
     QStringList displayCache;
 };
-
+}  // namespace module::im
 #endif  // EMOTICONSWIDGET_H

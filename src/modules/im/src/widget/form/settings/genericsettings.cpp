@@ -19,6 +19,7 @@
 #include <QComboBox>
 #include <QEvent>
 #include <QSpinBox>
+namespace module::im {
 
 /**
  * @class GenericForm
@@ -29,7 +30,9 @@
 
 GenericForm::GenericForm(const QPixmap& icon, QWidget* parent) : QWidget(parent), formIcon(icon) {}
 
-QPixmap GenericForm::getFormIcon() { return formIcon; }
+QPixmap GenericForm::getFormIcon() {
+    return formIcon;
+}
 
 /**
  * @brief Prevent stealing mouse wheel scroll.
@@ -72,9 +75,12 @@ bool GenericForm::eventFilter(QObject* o, QEvent* e) {
     return QWidget::eventFilter(o, e);
 }
 
-void GenericForm::showEvent(QShowEvent* e) { QWidget::showEvent(e); }
+void GenericForm::showEvent(QShowEvent* e) {
+    QWidget::showEvent(e);
+}
 
 void GenericForm::hideEvent(QHideEvent* e) {
     QWidget::hideEvent(e);
     Nexus::getProfile()->getSettings()->saveGlobal();
 }
+}  // namespace module::im

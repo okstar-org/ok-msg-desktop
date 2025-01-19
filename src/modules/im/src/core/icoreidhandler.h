@@ -15,6 +15,7 @@
 
 #include "src/model/FriendId.h"
 #include "toxid.h"
+namespace module::im {
 
 class ICoreIdHandler {
 public:
@@ -24,5 +25,6 @@ public:
     virtual QString getUsername() const = 0;
     virtual QString getNick() const = 0;
 };
+}  // namespace module::im
 
 #endif /*ICORE_ID_HANDLER_H*/

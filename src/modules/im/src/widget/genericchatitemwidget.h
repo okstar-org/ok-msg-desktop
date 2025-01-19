@@ -23,6 +23,8 @@
 class CroppingLabel;
 class MaskablePixmapWidget;
 
+namespace module::im {
+
 /**
  * 聊天控件基类
  */
@@ -36,8 +38,12 @@ public:
 
     ~GenericChatItemWidget() override;
 
-    bool isCompact() const { return compact; };
-    void setCompact(bool compact_) { compact = compact_; };
+    bool isCompact() const {
+        return compact;
+    };
+    void setCompact(bool compact_) {
+        compact = compact_;
+    };
     Q_PROPERTY(bool compact READ isCompact WRITE setCompact)
 
     QString getName() const;
@@ -45,17 +51,23 @@ public:
 
     void searchName(const QString& searchString, bool hideAll);
 
-    ChatType getChatType() const { return chatType; };
-    void setChatType(ChatType type) { chatType = type; };
+    ChatType getChatType() const {
+        return chatType;
+    };
+    void setChatType(ChatType type) {
+        chatType = type;
+    };
     Q_PROPERTY(ChatType chatType READ getChatType WRITE setChatType)
 
-    inline bool isGroup() const { return chatType == ChatType::GroupChat; };
+    inline bool isGroup() const {
+        return chatType == ChatType::GroupChat;
+    };
 
     void setLastMessage(const QString& msg);
 
     void updateLastMessage(const Message&);
 
-    virtual void updateStatusLight(Status::Status status, bool event);
+    virtual void updateStatusLight(Status status, bool event);
     virtual void clearStatusLight();
 
     bool isActive();
@@ -68,7 +80,9 @@ public:
 
     void setContact(const Contact& contact);
     void removeContact();
-    void setShowContextMenu(bool show) { this->showContextMenu = show; };
+    void setShowContextMenu(bool show) {
+        this->showContextMenu = show;
+    };
 
 protected:
     virtual void showEvent(QShowEvent* e) override;
@@ -94,8 +108,8 @@ protected:
      */
     const Contact* contact;
 
-    Status::Status prevStatus;
+    Status prevStatus;
     bool active;
 };
-
+}  // namespace module::im
 #endif  // GENERICCHATITEMWIDGET_H

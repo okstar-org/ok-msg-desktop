@@ -17,6 +17,7 @@
 #include <QPainter>
 #include <QPropertyAnimation>
 #include <QTimer>
+namespace module::im {
 
 FlyoutOverlayWidget::FlyoutOverlayWidget(QWidget* parent) : QWidget(parent) {
     setContentsMargins(0, 0, 0, 0);
@@ -34,11 +35,17 @@ FlyoutOverlayWidget::FlyoutOverlayWidget(QWidget* parent) : QWidget(parent) {
 
 FlyoutOverlayWidget::~FlyoutOverlayWidget() {}
 
-int FlyoutOverlayWidget::animationDuration() const { return animation->duration(); }
+int FlyoutOverlayWidget::animationDuration() const {
+    return animation->duration();
+}
 
-void FlyoutOverlayWidget::setAnimationDuration(int timeMs) { animation->setDuration(timeMs); }
+void FlyoutOverlayWidget::setAnimationDuration(int timeMs) {
+    animation->setDuration(timeMs);
+}
 
-qreal FlyoutOverlayWidget::flyoutPercent() const { return percent; }
+qreal FlyoutOverlayWidget::flyoutPercent() const {
+    return percent;
+}
 
 void FlyoutOverlayWidget::setFlyoutPercent(qreal progress) {
     percent = progress;
@@ -49,7 +56,9 @@ void FlyoutOverlayWidget::setFlyoutPercent(qreal progress) {
     setVisible(progress != 0);
 }
 
-bool FlyoutOverlayWidget::isShown() const { return (percent == 1); }
+bool FlyoutOverlayWidget::isShown() const {
+    return (percent == 1);
+}
 
 bool FlyoutOverlayWidget::isBeingAnimated() const {
     return (animation->state() == QAbstractAnimation::Running);
@@ -86,3 +95,4 @@ void FlyoutOverlayWidget::startAnimation(bool forward) {
     animation->start();
     animation->setCurrentTime(animation->duration() * percent);
 }
+}  // namespace module::im

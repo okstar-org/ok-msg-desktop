@@ -21,6 +21,8 @@
 
 class QVariantAnimation;
 
+namespace module::im {
+
 class Spinner : public ChatLineContent {
     Q_OBJECT
 public:
@@ -49,5 +51,5 @@ private:
 private slots:
     void timeout();
 };
-
+}  // namespace module::im
 #endif  // SPINNER_H

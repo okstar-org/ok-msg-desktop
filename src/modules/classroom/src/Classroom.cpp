@@ -31,7 +31,7 @@ const QString& Classroom::getName() const {
     return m_name;
 }
 
-void Classroom::init(Profile* p) {}
+void Classroom::init(lib::session::Profile* p) {}
 
 void Classroom::start(std::shared_ptr<lib::session::AuthSession> session) {}
 

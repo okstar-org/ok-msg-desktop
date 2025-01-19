@@ -18,10 +18,6 @@
 #include <QScrollArea>
 #include <QWidget>
 
-class ContentLayout;
-class GroupInvite;
-class GroupInviteWidget;
-
 class QGroupBox;
 class QLabel;
 class QPushButton;
@@ -31,6 +27,12 @@ class QSignalMapper;
 namespace Ui {
 class MainWindow;
 }
+
+namespace module::im {
+
+class ContentLayout;
+class GroupInvite;
+class GroupInviteWidget;
 
 class GroupInviteForm : public QWidget {
     Q_OBJECT
@@ -62,5 +64,5 @@ private:
     QList<GroupInviteWidget*> invites;
     QScrollArea* scroll;
 };
-
+}  // namespace module::im
 #endif  // GROUPINVITEFORM_H

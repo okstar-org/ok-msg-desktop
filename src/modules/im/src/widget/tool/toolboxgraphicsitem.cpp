@@ -13,6 +13,7 @@
 #include "toolboxgraphicsitem.h"
 
 #include <QPainter>
+namespace module::im {
 
 ToolBoxGraphicsItem::ToolBoxGraphicsItem() {
     this->opacityAnimation = new QPropertyAnimation(this, QByteArrayLiteral("opacity"), this);
@@ -51,3 +52,4 @@ void ToolBoxGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsIte
 
     QGraphicsItemGroup::paint(painter, option, widget);
 }
+}  // namespace module::im

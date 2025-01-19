@@ -16,6 +16,7 @@
 #include "src/base/interface.h"
 
 #include <QStringList>
+namespace module::im {
 
 class IGroupSettings {
 public:
@@ -29,5 +30,5 @@ public:
 
     DECLARE_SIGNAL(showGroupJoinLeaveMessagesChanged, bool show);
 };
-
+}  // namespace module::im
 #endif /*IGROUP_SETTINGS_H*/

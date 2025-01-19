@@ -21,13 +21,11 @@
 
 class QPaintEvent;
 class QShowEvent;
-
+namespace module::im {
 class CallConfirmWidget final : public QWidget {
     Q_OBJECT
 public:
-    explicit CallConfirmWidget(const ToxPeer& from,
-                               bool video,
-                               QWidget* parent=nullptr);
+    explicit CallConfirmWidget(const ToxPeer& from, bool video, QWidget* parent = nullptr);
 
 signals:
     void accepted();
@@ -53,5 +51,5 @@ private:
     const int roundedFactor;
     const qreal rectRatio;
 };
-
+}  // namespace module::im
 #endif  // CALLCONFIRMWIDGET_H

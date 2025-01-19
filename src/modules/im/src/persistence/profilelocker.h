@@ -15,7 +15,7 @@
 
 #include <QLockFile>
 #include <memory>
-
+namespace module::im {
 class ProfileLocker {
 private:
     ProfileLocker() = delete;
@@ -36,5 +36,5 @@ private:
     static std::unique_ptr<QLockFile> lockfile;
     static QString curLockName;
 };
-
+}  // namespace module::im
 #endif  // PROFILELOCKER_H

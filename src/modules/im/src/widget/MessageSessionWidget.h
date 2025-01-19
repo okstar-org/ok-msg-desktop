@@ -25,9 +25,11 @@
 
 #include <src/worker/SendWorker.h>
 
-class FriendChatroom;
 class QPixmap;
 class MaskablePixmapWidget;
+
+namespace module::im {
+class FriendChatroom;
 class CircleWidget;
 class ChatForm;
 class ChatHistory;
@@ -35,7 +37,6 @@ class ContentDialog;
 class ContentLayout;
 class Widget;
 class FriendWidget;
-
 class MessageSessionWidget : public GenericChatroomWidget {
     Q_OBJECT
 
@@ -48,7 +49,7 @@ public:
     void setAsActiveChatroom() override final;
     void setAsInactiveChatroom() override final;
     void setAvatar(const QPixmap& avatar) override final;
-    void setStatus(Status::Status status, bool event);
+    void setStatus(Status status, bool event);
     void setStatusMsg(const QString& msg);
     void setTyping(bool typing);
     void setName(const QString& name);
@@ -137,5 +138,5 @@ private:
     FriendId friendId;
     GroupId groupId;
 };
-
+}  // namespace module::im
 #endif  // FRIENDWIDGET_H

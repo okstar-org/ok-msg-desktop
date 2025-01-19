@@ -24,6 +24,7 @@
 #include <QObject>
 #include "src/model/message.h"
 
+namespace module::im {
 class SendWorker : public QObject {
     Q_OBJECT
 public:
@@ -92,5 +93,5 @@ signals:
     void muteSpeaker(bool mute);
     void muteMicrophone(bool mute);
 };
-
+}  // namespace module::im
 #endif  // OKMSG_PROJECT_SENDWORKER_H

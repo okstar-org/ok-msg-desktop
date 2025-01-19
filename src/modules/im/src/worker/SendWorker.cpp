@@ -26,6 +26,7 @@
 #include "src/lib/session/profile.h"
 #include "src/nexus.h"
 
+namespace module::im {
 SendWorker::SendWorker(const FriendId& friendId) : contactId{friendId} {
     qDebug() << __func__ << "friend:" << friendId.toString();
 
@@ -140,3 +141,4 @@ void SendWorker::destroyCallDuration(bool error) {
     }
     callDuration.reset();
 }
+}  // namespace module::im

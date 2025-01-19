@@ -12,30 +12,49 @@
 
 #ifndef TOX_FILE_PAUSE_H
 #define TOX_FILE_PAUSE_H
+namespace module::im {
 
 class ToxFilePause {
 public:
-    void localPause() { localPauseState = true; }
+    void localPause() {
+        localPauseState = true;
+    }
 
-    void localResume() { localPauseState = false; }
+    void localResume() {
+        localPauseState = false;
+    }
 
-    void localPauseToggle() { localPauseState = !localPauseState; }
+    void localPauseToggle() {
+        localPauseState = !localPauseState;
+    }
 
-    void remotePause() { remotePauseState = true; }
+    void remotePause() {
+        remotePauseState = true;
+    }
 
-    void remoteResume() { remotePauseState = false; }
+    void remoteResume() {
+        remotePauseState = false;
+    }
 
-    void remotePauseToggle() { remotePauseState = !remotePauseState; }
+    void remotePauseToggle() {
+        remotePauseState = !remotePauseState;
+    }
 
-    bool localPaused() const { return localPauseState; }
+    bool localPaused() const {
+        return localPauseState;
+    }
 
-    bool remotePaused() const { return remotePauseState; }
+    bool remotePaused() const {
+        return remotePauseState;
+    }
 
-    bool paused() const { return localPauseState || remotePauseState; }
+    bool paused() const {
+        return localPauseState || remotePauseState;
+    }
 
 private:
     bool localPauseState = false;
     bool remotePauseState = false;
 };
-
+}  // namespace module::im
 #endif  // TOX_FILE_PAUSE_H

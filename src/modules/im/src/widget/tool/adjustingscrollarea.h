@@ -14,6 +14,7 @@
 #define ADJUSTINGSCROLLAREA_H
 
 #include <QScrollArea>
+namespace module::im {
 
 class AdjustingScrollArea : public QScrollArea {
     Q_OBJECT
@@ -25,5 +26,5 @@ protected:
     virtual void resizeEvent(QResizeEvent* ev) override;
     virtual QSize sizeHint() const final override;
 };
-
+}  // namespace module::im
 #endif  // ADJUSTINGSCROLLAREA_H

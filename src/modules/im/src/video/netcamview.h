@@ -17,12 +17,14 @@
 #include "genericnetcamview.h"
 #include "src/model/FriendId.h"
 
-struct vpx_image;
-
-class QHBoxLayout;
-class VideoSource;
 class QFrame;
+class QHBoxLayout;
+struct vpx_image;
+class VideoSource;
+
 class MovableWidget;
+
+namespace module::im {
 
 class NetCamView : public GenericNetCamView {
     Q_OBJECT
@@ -53,5 +55,5 @@ private:
     bool e;
     QVector<QMetaObject::Connection> connections;
 };
-
+}  // namespace module::im
 #endif  // NETCAMVIEW_H

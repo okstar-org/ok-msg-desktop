@@ -19,9 +19,9 @@
 
 #include <QMap>
 
-class LabeledVideo;
 class QHBoxLayout;
-
+namespace module::im {
+class LabeledVideo;
 class GroupNetCamView : public GenericNetCamView {
 public:
     GroupNetCamView(QString group, QWidget* parent = nullptr);
@@ -47,5 +47,5 @@ private:
     int activePeer;
     QString group;
 };
-
+}  // namespace module::im
 #endif  // GROUPNETCAMVIEW_H

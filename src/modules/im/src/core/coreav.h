@@ -21,17 +21,23 @@
 
 #include "base/compatiblerecursivemutex.h"
 #include "src/core/toxcall.h"
-
-class Friend;
-class Group;
-class IAudioControl;
 class QThread;
 class QTimer;
-class CoreVideoSource;
-class VideoSource;
-class VideoFrame;
-class Core;
+
 struct vpx_image;
+class VideoFrame;
+class VideoSource;
+
+namespace lib::audio {
+class IAudioControl;
+}
+
+namespace module::im {
+class Friend;
+class Group;
+class CoreVideoSource;
+
+class Core;
 
 class CoreAV : public QObject, public lib::messenger::CallHandler {
     Q_OBJECT
@@ -135,12 +141,12 @@ private slots:
     void audioBitrateCallback(QString friendId, uint32_t rate, void* self);
     void videoBitrateCallback(QString friendId, uint32_t rate, void* self);
     void onFriendVideoFrame(const std::string& friendId,  //
-                            uint16_t w, uint16_t h,   //
-                            const uint8_t* y,         //
-                            const uint8_t* u,         //
-                            const uint8_t* v,         //
-                            int32_t ystride,          //
-                            int32_t ustride,          //
+                            uint16_t w, uint16_t h,       //
+                            const uint8_t* y,             //
+                            const uint8_t* u,             //
+                            const uint8_t* v,             //
+                            int32_t ystride,              //
+                            int32_t ustride,              //
                             int32_t vstride) override;
 
     void onSelfVideoFrame(uint16_t w, uint16_t h,  //
@@ -165,7 +171,6 @@ private:
     static constexpr uint32_t VIDEO_DEFAULT_BITRATE = 2500;
 
 private:
-
     Core* core;
 
     lib::messenger::MessengerCall* imCall;
@@ -195,5 +200,5 @@ private:
 
     lib::ortc::CtrlState ctrlState;
 };
-
+}  // namespace module::im
 #endif  // COREAV_H

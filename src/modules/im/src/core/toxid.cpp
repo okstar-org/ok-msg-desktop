@@ -16,6 +16,7 @@
 #include <QDebug>
 #include <QRegularExpression>
 #include <cstdint>
+namespace module::im {
 
 // Tox doesn't publicly define these
 #define NOSPAM_BYTES 4
@@ -82,7 +83,9 @@ ToxId::ToxId(const QString& id) {
  *
  * @param rawId Ok ID bytes to convert to ToxId object
  */
-ToxId::ToxId(const QByteArray& rawId) { constructToxId(rawId); }
+ToxId::ToxId(const QByteArray& rawId) {
+    constructToxId(rawId);
+}
 
 /**
  * @brief Create a Ok ID from uint8_t bytes and lenght, convenience function
@@ -120,14 +123,18 @@ void ToxId::constructToxId(const QByteArray& rawId) {
  * @param other Ok ID to compare.
  * @return True if both Tox IDs have the same public keys, false otherwise.
  */
-bool ToxId::operator==(const ToxId& other) const { return toxId.compare(other.toxId) == 0; }
+bool ToxId::operator==(const ToxId& other) const {
+    return toxId.compare(other.toxId) == 0;
+}
 
 /**
  * @brief Compares the inequality of the Public Key.
  * @param other Ok ID to compare.
  * @return True if both Tox IDs have different public keys, false otherwise.
  */
-bool ToxId::operator!=(const ToxId& other) const { return getPublicKey() != other.getPublicKey(); }
+bool ToxId::operator!=(const ToxId& other) const {
+    return getPublicKey() != other.getPublicKey();
+}
 
 /**
  * @brief Returns the Ok ID converted to QString.
@@ -135,12 +142,16 @@ bool ToxId::operator!=(const ToxId& other) const { return getPublicKey() != othe
  * Key.
  * @return The Ok ID as QString.
  */
-QString ToxId::toString() const { return QString(toxId); }
+QString ToxId::toString() const {
+    return QString(toxId);
+}
 
 /**
  * @brief Clears all elements of the Ok ID.
  */
-void ToxId::clear() { toxId.clear(); }
+void ToxId::clear() {
+    toxId.clear();
+}
 
 /**
  * @brief Gets the ToxID as bytes, convenience function for toxcore interface.
@@ -173,7 +184,9 @@ FriendId ToxId::getPublicKey() const {
  * @return The NoSpam value as QString or "" if the ToxId was constructed from a
  * Public Key.
  */
-QString ToxId::getNoSpamString() const { return {}; }
+QString ToxId::getNoSpamString() const {
+    return {};
+}
 
 /**
  * @brief Check, that id is a valid Ok ID.
@@ -181,7 +194,9 @@ QString ToxId::getNoSpamString() const { return {}; }
  * @return True if id is a valid Ok ID, false otherwise.
  * @note Validates the checksum.
  */
-bool ToxId::isValidToxId(const QString& id) { return isToxId(id) && ToxId(id).isValid(); }
+bool ToxId::isValidToxId(const QString& id) {
+    return isToxId(id) && ToxId(id).isValid();
+}
 
 /**
  * @brief Check, that id is probably a valid Ok ID.
@@ -205,4 +220,7 @@ bool ToxId::isValid() const {
     return false;
 }
 
-QString ToxId::getToxIdAsStr() const { return QString::fromUtf8(toxId); }
+QString ToxId::getToxIdAsStr() const {
+    return QString::fromUtf8(toxId);
+}
+}  // namespace module::im

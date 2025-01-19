@@ -12,6 +12,7 @@
 
 #include "removefrienddialog.h"
 #include <QPushButton>
+namespace module::im {
 
 RemoveFriendDialog::RemoveFriendDialog(QWidget* parent, const Friend* f) : QDialog(parent) {
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
@@ -36,3 +37,4 @@ void RemoveFriendDialog::onAccepted() {
     _accepted = true;
     close();
 }
+}  // namespace module::im

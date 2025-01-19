@@ -42,6 +42,8 @@
 
 #include <src/model/message.h>
 
+namespace module::im {
+
 class IAudioControl;
 class ICoreSettings;
 class GroupInvite;
@@ -100,7 +102,7 @@ public:
     void setFriendAlias(const QString& friendId, const QString& alias);
 
     void getFriendInfo(const QString& friendNumber) const;
-    Status::Status getFriendStatus(const QString& friendNumber) const;
+    Status getFriendStatus(const QString& friendNumber) const;
 
     bool isFriendOnline(QString friendId) const;
     bool hasFriendWithPublicKey(const FriendId& publicKey) const;
@@ -110,7 +112,7 @@ public:
 
     QString getUsername() const override;
     QString getNick() const override;
-    Status::Status getStatus() const;
+    Status getStatus() const;
     QString getStatusMessage() const;
     ToxId getSelfPeerId() const override;
     FriendId getSelfId() const override;
@@ -142,7 +144,7 @@ public:
     void leaveGroup(QString groupId);
     void destroyGroup(QString groupId);
 
-    void setStatus(Status::Status status);
+    void setStatus(Status status);
     void setNick(const QString& nick);
     void setPassword(const QString& password);
     void setStatusMessage(const QString& message);
@@ -271,7 +273,7 @@ private:
 
     std::unique_ptr<QThread> coreThread = nullptr;
 
-    Status::Status fromToxStatus(const lib::messenger::IMStatus& status) const;
+    Status fromToxStatus(const lib::messenger::IMStatus& status) const;
 
 signals:
     void started();
@@ -291,13 +293,13 @@ signals:
     void usernameSet(const QString& username);
     void avatarSet(QByteArray avatar);
     void statusMessageSet(const QString& message);
-    void statusSet(Status::Status status);
+    void statusSet(Status status);
     void idSet(const ToxId& id);
     void vCardSet(const VCard& imvCard);
 
     void failedToSetUsername(const QString& username);
     void failedToSetStatusMessage(const QString& message);
-    void failedToSetStatus(Status::Status status);
+    void failedToSetStatus(Status status);
     void failedToSetTyping(bool typing);
 
     void avReady();
@@ -316,7 +318,7 @@ signals:
 
     void friendAdded(const FriendInfo frnd);
 
-    void friendStatusChanged(const FriendId& friendId, Status::Status status);
+    void friendStatusChanged(const FriendId& friendId, Status status);
     void friendStatusMessageChanged(const FriendId& friendId, const QString& message);
     void friendUsernameChanged(const FriendId& friendPk, const QString& username);
     void friendNicknameChanged(const FriendId& friendPk, const QString& nickname);
@@ -359,5 +361,5 @@ signals:
 private slots:
     void process();
 };
-
+}  // namespace module::im
 #endif  // CORE_HPP

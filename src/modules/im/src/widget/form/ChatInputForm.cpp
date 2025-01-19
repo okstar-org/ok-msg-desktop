@@ -40,6 +40,7 @@
 
 #include "src/persistence/settings.h"
 #include "src/persistence/smileypack.h"
+namespace module::im {
 
 const QString STYLE_PATH = QStringLiteral("chatForm/buttons.css");
 static const short FOOT_BUTTONS_SPACING = 2;
@@ -115,9 +116,9 @@ ChatInputForm::ChatInputForm(QWidget* parent, bool isGroup)
 #ifdef OK_PLUGIN
     auto pm = ok::plugin::PluginManager::instance();
     connect(pm, &ok::plugin::PluginManager::pluginEnabled,  //
-            this, &::ChatInputForm::onPluginEnabled);
+            this, &ChatInputForm::onPluginEnabled);
     connect(pm, &ok::plugin::PluginManager::pluginDisabled,  //
-            this, &::ChatInputForm::onPluginDisabled);
+            this, &ChatInputForm::onPluginDisabled);
     auto omemo = pm->plugin("omemo");
     if (omemo) {
         ctrlLayout->addWidget(encryptButton);
@@ -385,3 +386,4 @@ void ChatInputForm::onEmoteInsertRequested(QString str) {
         emoticonsWidget->close();
     }
 }
+}  // namespace module::im

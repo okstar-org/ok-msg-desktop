@@ -19,7 +19,7 @@
 #include "src/nexus.h"
 #include "src/widget/widget.h"
 #include "ui_aboutgroupform.h"
-
+namespace module::im {
 AboutGroupForm::AboutGroupForm(const Group* group_, QWidget* parent)
         : QWidget(parent), ui(new Ui::AboutGroupForm), group{group_} {
     ui->setupUi(this);
@@ -145,3 +145,4 @@ void AboutGroupForm::doDescChanged(const QString& text) {
 const ContactId& AboutGroupForm::getId() {
     return group->getId();
 }
+}  // namespace module::im

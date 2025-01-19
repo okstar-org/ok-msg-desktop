@@ -23,8 +23,8 @@
 #include "lib/messenger/Messenger.h"
 #include "lib/storage/StorageManager.h"
 
-class Settings;
 class QCommandLineParser;
+
 namespace lib::session {
 
 /**

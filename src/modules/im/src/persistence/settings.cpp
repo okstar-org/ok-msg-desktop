@@ -32,7 +32,6 @@
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
 
-
 /**
  * @var QHash<QString, QByteArray> Settings::widgetSettings
  * @brief Assume all widgets have unique names
@@ -40,12 +39,12 @@
  * for some general purpose widgets, such as MainWindows or Splitters,
  * which have widget->saveX() and widget->loadX() methods.
  */
+namespace module::im {
 
 CompatibleRecursiveMutex Settings::bigLock;
 QThread* Settings::settingsThread{nullptr};
 
-Settings::Settings(QSettings* s_)
-        : s(s_), loaded(false) {
+Settings::Settings(QSettings* s_) : s(s_), loaded(false) {
     settingsThread = new QThread();
     settingsThread->setObjectName("IM-Settings");
     settingsThread->start(QThread::LowPriority);
@@ -93,8 +92,8 @@ void Settings::loadGlobal() {
         busySound = s->value("busySound", false).toBool();
         globalAutoAcceptDir =
                 s->value("globalAutoAcceptDir",
-                        QStandardPaths::locate(QStandardPaths::HomeLocation, QString(),
-                                               QStandardPaths::LocateDirectory))
+                         QStandardPaths::locate(QStandardPaths::HomeLocation, QString(),
+                                                QStandardPaths::LocateDirectory))
                         .toString();
         autoAcceptMaxSize =
                 static_cast<size_t>(s->value("autoAcceptMaxSize", 20 << 20 /*20 MB*/).toLongLong());
@@ -161,17 +160,13 @@ void Settings::loadGlobal() {
     s->beginGroup("Chat");
     {
         chatMessageFont = s->value("chatMessageFont",
-                                  lib::settings::Style::getFont(lib::settings::Style::Font::Big))
+                                   lib::settings::Style::getFont(lib::settings::Style::Font::Big))
                                   .value<QFont>();
     }
     s->endGroup();
 
-
-
     loaded = true;
 }
-
-
 
 // void Settings::updateProfileData(Profile* profile, const QCommandLineParser* parser) {
 //     QMutexLocker locker{&bigLock};
@@ -482,7 +477,6 @@ void Settings::saveGlobal() {
         s->setValue("dialogSettingsGeometry", dialogSettingsGeometry);
     }
     s->endGroup();
-
 }
 
 /**
@@ -541,8 +535,6 @@ QString Settings::getAppDataDirPath() const {
            QDir::separator();
 #endif
 }
-
-
 
 bool Settings::getEnableIPv6() const {
     QMutexLocker locker{&bigLock};
@@ -1163,7 +1155,6 @@ void Settings::setTypingNotification(bool enabled) {
     }
 }
 
-
 QString Settings::getFriendAddress(const QString& publicKey) const {
     QMutexLocker locker{&bigLock};
     // TODO: using ToxId here is a hack
@@ -1228,7 +1219,6 @@ void Settings::setFriendActivity(const FriendId& id, const QDateTime& activity) 
 
 void Settings::saveFriendSettings(const FriendId& id) {
     Q_UNUSED(id);
-
 }
 
 void Settings::removeFriendSettings(const FriendId& id) {
@@ -1319,7 +1309,6 @@ QString Settings::getCircleName(int id) const {
 void Settings::setCircleName(int id, const QString& name) {
     QMutexLocker locker{&bigLock};
     circleLst[id].name = name;
-
 }
 
 int Settings::addCircle(const QString& name) {
@@ -1498,3 +1487,4 @@ ICoreSettings::ProxyType Settings::fixInvalidProxyType(ICoreSettings::ProxyType 
             return ICoreSettings::ProxyType::ptNone;
     }
 }
+}  // namespace module::im

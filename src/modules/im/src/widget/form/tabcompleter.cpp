@@ -17,7 +17,7 @@
 
 #include "src/model/group.h"
 #include "src/widget/tool/chattextedit.h"
-
+namespace module::im {
 /**
  * @file tabcompleter.h
  * @file tabcompleter.cpp
@@ -108,7 +108,9 @@ void TabCompleter::complete() {
     }
 }
 
-void TabCompleter::reset() { enabled = false; }
+void TabCompleter::reset() {
+    enabled = false;
+}
 
 // this determines the sort order
 bool TabCompleter::SortableString::operator<(const SortableString& other) const {
@@ -124,3 +126,4 @@ bool TabCompleter::SortableString::operator<(const SortableString& other) const 
 
     return QString::localeAwareCompare(this->contents, other.contents) < 0;
 }
+}  // namespace module::im

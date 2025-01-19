@@ -6,13 +6,7 @@ include_directories(.)
 include_directories(./src)
 include_directories(./src/component)
 
-file(GLOB_RECURSE ${PROJECT_NAME}_SOURCES
-		src/*.h src/*.cpp
-		src/component/*.h src/component/*.cpp
-		src/painter/*.h src/painter/*.cpp
-		src/room/*.h src/room/*.cpp
-		src/core/*.h src/core/*.cpp
-)
+file(GLOB_RECURSE ${PROJECT_NAME}_SOURCES src/*.h src/*.cpp)
 file(GLOB_RECURSE ${PROJECT_NAME}_RESOURCES res/*.html res/*.js)
 file(GLOB_RECURSE ${PROJECT_NAME}_UIS src/*.ui)
 

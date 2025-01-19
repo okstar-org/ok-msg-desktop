@@ -17,10 +17,11 @@
 
 #include <QMetaType>
 #include <cstdint>
+namespace module::im {
 
 using MsgId = QString;
 
 // NamedType<uint32_t, struct ReceiptNumTag, Orderable>;
 // Q_DECLARE_METATYPE(MsgId);
-
+}  // namespace module::im
 #endif /* RECEIPT_NUM_H */

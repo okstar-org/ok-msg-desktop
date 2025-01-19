@@ -17,6 +17,7 @@
 #include "src/lib/storage/settings/style.h"
 #include "src/widget/contentlayout.h"
 #include "src/widget/widget.h"
+namespace module::im {
 
 FilesForm::FilesForm()
         : QObject()
@@ -90,3 +91,4 @@ void FilesForm::retranslateUi() {
     main.setTabText(0, tr("Downloads"));
     main.setTabText(1, tr("Uploads"));
 }
+}  // namespace module::im

@@ -40,6 +40,8 @@
 #include "src/widget/tool/adjustingscrollarea.h"
 #include "src/widget/widget.h"
 
+namespace module::im {
+
 static const int minWidget = 220;
 static const int minHeight = 220;
 static const QSize minSize(minHeight, minWidget);
@@ -280,8 +282,8 @@ void ContentDialog::updateTitleAndStatusIcon() {
         return;
     }
 
-    //    Status::Status currentStatus = activeChatroomWidget->getFriend()->getStatus();
-    //    setWindowIcon(QIcon{Status::getIconPath(currentStatus)});
+    //    Status currentStatus = activeChatroomWidget->getFriend()->getStatus();
+    //    setWindowIcon(QIcon{getIconPath(currentStatus)});
 }
 
 /**
@@ -472,7 +474,7 @@ void ContentDialog::activate(GenericChatroomWidget* widget) {
     updateTitleAndStatusIcon();
 }
 
-void ContentDialog::updateFriendStatus(const FriendId& friendPk, Status::Status status) {
+void ContentDialog::updateFriendStatus(const FriendId& friendPk, Status status) {
     //    auto widget = qobject_cast<FriendWidget*>(contactWidgets.value(friendPk));
     //    addFriendWidget(widget, status);
 }
@@ -510,7 +512,7 @@ void ContentDialog::updateFriendWidget(const FriendId& friendPk, QString alias) 
     //    Friend* f = Nexus::getCore()->getFriendList().findFriend(friendPk);
     //    FriendWidget* friendWidget = qobject_cast<FriendWidget*>(contactWidget);
 
-    //    Status::Status status = f->getStatus();
+    //    Status status = f->getStatus();
     //    friendLayout->addFriendWidget(friendWidget, status);
 }
 
@@ -569,10 +571,11 @@ QLayout* ContentDialog::nextLayout(QLayout* layout, bool forward) const {
     return layouts[next];
 }
 
-void ContentDialog::addFriendWidget(FriendWidget* widget, Status::Status status) {
+void ContentDialog::addFriendWidget(FriendWidget* widget, Status status) {
     //    friendLayout->addFriendWidget(widget, status);
 }
 
 bool ContentDialog::isActiveWidget(GenericChatroomWidget* widget) {
     return activeChatroomWidget == widget;
 }
+}  // namespace module::im

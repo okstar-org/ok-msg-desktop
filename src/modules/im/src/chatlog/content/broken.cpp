@@ -15,7 +15,7 @@
 #include "src/chatlog/pixmapcache.h"
 
 class QStyleOptionGraphicsItem;
-
+namespace module::im {
 Broken::Broken(const QString& img, QSize size)
         : ChatLineContent(ContentType::CHAT_BROKEN)
         , pmap{PixmapCache::getInstance().get(img, size)}
@@ -34,11 +34,20 @@ void Broken::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QW
     Q_UNUSED(widget)
 }
 
-void Broken::setWidth(qreal width) { Q_UNUSED(width); }
+void Broken::setWidth(qreal width) {
+    Q_UNUSED(width);
+}
 
-void Broken::visibilityChanged(bool visible) { Q_UNUSED(visible); }
+void Broken::visibilityChanged(bool visible) {
+    Q_UNUSED(visible);
+}
 
-qreal Broken::getAscent() const { return 0.0; }
+qreal Broken::getAscent() const {
+    return 0.0;
+}
 
 void Broken::onCopyEvent() {}
-const void* Broken::getContent() { return &pmap; }
+const void* Broken::getContent() {
+    return &pmap;
+}
+}  // namespace module::im

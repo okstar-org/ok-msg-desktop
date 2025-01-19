@@ -25,6 +25,7 @@
 #include "src/core/icoreidhandler.h"
 #include "src/model/message.h"
 #include "src/persistence/profile.h"
+namespace module::im {
 
 class Group : public Contact {
     Q_OBJECT
@@ -74,16 +75,24 @@ public:
     void updateUsername(const QString oldName, const QString newName);
 
     void setSubject(const QString& author, const QString& subject);
-    const QString& getSubject() const { return subject; };
+    const QString& getSubject() const {
+        return subject;
+    };
 
     void setDesc(const QString& desc_);
     const QString& getDesc() const;
 
-    const Role& getRole() const { return role; }
+    const Role& getRole() const {
+        return role;
+    }
 
-    const Affiliation& getAffiliation() const { return affiliation; }
+    const Affiliation& getAffiliation() const {
+        return affiliation;
+    }
 
-    const GroupId& getId() const { return groupId; };
+    const GroupId& getId() const {
+        return groupId;
+    };
 
     void setName(const QString& name);
 
@@ -97,7 +106,6 @@ signals:
     void peerNameChanged(const QString& oldName, const QString& newName);
     void descChanged(const QString&);
     void privilegesChanged(const Role& role, const Affiliation& aff, const QList<int> codes);
-
 
 private:
     Profile* profile;
@@ -115,5 +123,5 @@ private:
     Affiliation affiliation{Affiliation::None};
     QList<int> statusCodes;
 };
-
+}  // namespace module::im
 #endif  // GROUP_H

@@ -17,7 +17,7 @@
 #include "src/lib/storage/settings/style.h"
 
 #include <QFont>
-
+namespace module::im {
 class SimpleText : public ChatLineContent {
     Q_OBJECT
 
@@ -50,5 +50,5 @@ private:
     bool customColor = false;
     qreal forceWidth = -1;
 };
-
+}  // namespace module::im
 #endif  // !SIMPLETEXT_H

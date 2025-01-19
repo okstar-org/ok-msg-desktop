@@ -18,13 +18,16 @@
 namespace Ui {
 class PrivacySettings;
 }
+namespace module::im {
 
 class PrivacyForm : public GenericForm {
     Q_OBJECT
 public:
     PrivacyForm();
     ~PrivacyForm();
-    virtual QString getFormName() final override { return tr("Privacy"); }
+    virtual QString getFormName() final override {
+        return tr("Privacy");
+    }
 
 signals:
     void clearAllReceipts();
@@ -38,5 +41,5 @@ private:
 private:
     Ui::PrivacySettings* bodyUI;
 };
-
+}  // namespace module::im
 #endif

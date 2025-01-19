@@ -15,6 +15,7 @@
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
 #include "ui_friendform.h"
+namespace module::im {
 
 FriendForm::FriendForm(const lib::backend::OrgStaff& staff_, QWidget* parent)
         : QFrame(parent), ui(new Ui::FriendForm), staff(staff_) {
@@ -38,3 +39,4 @@ FriendForm::~FriendForm() {
     disconnect(ui->addFriend);
     delete ui;
 }
+}  // namespace module::im

@@ -16,7 +16,7 @@
 #include <QMenu>
 #include <QObject>
 #include "chatline.h"
-
+namespace module::im {
 class ContactAvatar;
 class Text;
 class SimpleText;
@@ -116,5 +116,5 @@ private:
     ChatLineContent* iconItem = nullptr;
     Text* textItem = nullptr;
 };
-
+}  // namespace module::im
 #endif  // !CHATMESSAGEITEM_H

@@ -24,8 +24,15 @@
 
 class QFile;
 class QTimer;
-class FriendId;
 
+namespace lib::messenger {
+struct File;
+enum class FileStatus;
+enum class FileDirection;
+}  // namespace lib::messenger
+
+namespace module::im {
+class FriendId;
 
 // 不要修改顺序和值
 enum class FileStatus {
@@ -42,12 +49,6 @@ enum class FileDirection {
     SENDING = 0,
     RECEIVING = 1,
 };
-
-namespace lib::messenger {
-struct File;
-enum class FileStatus;
-enum class FileDirection;
-}  // namespace lib::messenger
 
 struct FileInfo {
 public:
@@ -76,9 +77,10 @@ public:
 public:
     [[nodiscard]] QString json() const;
     void parse(const QString& json);
-    void setFilePath(const QString& path) { this->filePath = path; }
+    void setFilePath(const QString& path) {
+        this->filePath = path;
+    }
 };
-Q_DECLARE_METATYPE(FileInfo);
 
 struct ToxFile : public FileInfo {
     explicit ToxFile() = default;
@@ -89,9 +91,9 @@ struct ToxFile : public FileInfo {
                      const QString& fileName,
                      const QString& filePath,
                      quint64 fileSize_,
-            quint64 bytesSent,
-            FileStatus status,
-            FileDirection Direction);
+                     quint64 bytesSent,
+                     FileStatus status,
+                     FileDirection Direction);
 
     explicit ToxFile(const QString& sender,
                      const QString& friendId,
@@ -126,5 +128,8 @@ struct ToxFile : public FileInfo {
     //  std::shared_ptr<QCryptographicHash> hashGenerator =
     //  std::make_shared<QCryptographicHash>(QCryptographicHash::Sha256);
 };
+}  // namespace module::im
+
+Q_DECLARE_METATYPE(module::im::FileInfo);
 
 #endif  // CORESTRUCTS_H

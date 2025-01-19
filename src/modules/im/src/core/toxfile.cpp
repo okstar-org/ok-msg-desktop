@@ -17,7 +17,7 @@
 #include <QRegularExpression>
 #include "base/basic_types.h"
 #include "src/model/FriendId.h"
-
+namespace module::im {
 FileInfo::FileInfo(const QString& sId,
                    const QString& id,
                    const QString& fileName,
@@ -79,8 +79,8 @@ ToxFile::ToxFile(const QString& sender,
 
 ToxFile::ToxFile(const QString& sender, const QString& friendId, const QString& msgId,
                  const lib::messenger::File& file)
-        : FileInfo(qstring(file.sId),  qstring(file.id), qstring(file.name),qstring(file.path), file.size, 0, (FileStatus)file.status,
-                   (FileDirection)file.direction)
+        : FileInfo(qstring(file.sId), qstring(file.id), qstring(file.name), qstring(file.path),
+                   file.size, 0, (FileStatus)file.status, (FileDirection)file.direction)
         , file(new QFile(qstring(file.path)))
         , sender{sender}
         , receiver{friendId}
@@ -90,9 +90,13 @@ ToxFile::ToxFile(const FileInfo& fi) : FileInfo(fi), file(new QFile(fi.filePath)
 
 ToxFile::~ToxFile() {}
 
-bool ToxFile::operator==(const ToxFile& other) const { return (fileId == other.fileId); }
+bool ToxFile::operator==(const ToxFile& other) const {
+    return (fileId == other.fileId);
+}
 
-bool ToxFile::operator!=(const ToxFile& other) const { return !(*this == other); }
+bool ToxFile::operator!=(const ToxFile& other) const {
+    return !(*this == other);
+}
 
 void ToxFile::setFilePath(QString path) {
     filePath = path;
@@ -104,9 +108,11 @@ bool ToxFile::open(bool write) {
 }
 
 lib::messenger::File ToxFile::toIMFile() {
-    return lib::messenger::File{fileId.toStdString(), sId.toStdString(), fileName.toStdString(), filePath.toStdString(), fileSize};
+    return lib::messenger::File{fileId.toStdString(), sId.toStdString(), fileName.toStdString(),
+                                filePath.toStdString(), fileSize};
 }
 
 const QString& ToxFile::getFriendId() const {
     return direction == FileDirection::RECEIVING ? sender : receiver;
 }
+}  // namespace module::im

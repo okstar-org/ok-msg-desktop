@@ -15,12 +15,13 @@
 #include "audio.h"
 #include "iaudiosettings.h"
 #include "src/lib/audio/backend/openal.h"
-
+namespace lib::audio {
 /**
  * @brief Select the audio backend
  * @param settings Audio settings to use
  * @return Audio backend selection based on settings
  */
-std::unique_ptr<IAudioControl> Audio::makeAudio(IAudioSettings& settings) {
-    return std::unique_ptr<IAudioControl>(new OpenAL());
+std::unique_ptr<lib::audio::IAudioControl> Audio::makeAudio(IAudioSettings& settings) {
+    return std::unique_ptr<lib::audio::IAudioControl>(new OpenAL());
 }
+}  // namespace lib::audio

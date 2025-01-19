@@ -16,6 +16,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
+namespace module::im {
 
 enum {
     HandleSize = 10,
@@ -291,3 +292,4 @@ void ScreenGrabberChooserRectItem::forwardHandleEvent(QGraphicsItem* watched, QE
             return;
     }
 }
+}  // namespace module::im

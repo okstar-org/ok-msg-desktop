@@ -27,6 +27,7 @@
 #include "screengrabberoverlayitem.h"
 #include "src/widget/widget.h"
 #include "toolboxgraphicsitem.h"
+namespace module::im {
 
 ScreenshotGrabber::ScreenshotGrabber()
         : QObject(), mKeysBlocked(false), scene(nullptr), mQToxVisible(true) {
@@ -233,3 +234,4 @@ void ScreenshotGrabber::beginRectChooser(QGraphicsSceneMouseEvent* event) {
     this->chooserRect->setY(pos.y());
     this->chooserRect->beginResize(event->scenePos());
 }
+}  // namespace module::im

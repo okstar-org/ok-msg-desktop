@@ -24,7 +24,7 @@
 
 #include <lib/ortc/webrtc/Instance.h>
 
-namespace {
+namespace module::im {
 
 /**
  * lower_bound needs two way comparisons. This adaptor allows us to compare
@@ -100,7 +100,6 @@ std::map<ChatLogIdx, ChatLogItem>::const_iterator firstItemAfterDate(
                                 return a.timestamp.date() < b.timestamp.date();
                             });
 }
-}  // namespace
 
 SessionChatLog::SessionChatLog(const ICoreIdHandler& coreIdHandler)
         : coreIdHandler(coreIdHandler) {}
@@ -114,7 +113,9 @@ SessionChatLog::SessionChatLog(ChatLogIdx initialIdx, const ICoreIdHandler& core
             [&](Profile* profile) { mProfile = profile; });
 }
 
-SessionChatLog::~SessionChatLog() { qDebug() << __func__; }
+SessionChatLog::~SessionChatLog() {
+    qDebug() << __func__;
+}
 
 const ChatLogItem* SessionChatLog::at(ChatLogIdx idx) const {
     auto it = items.find(idx);
@@ -251,7 +252,9 @@ ChatLogIdx SessionChatLog::getFirstIdx() const {
     return items.begin()->first;
 }
 
-ChatLogIdx SessionChatLog::getNextIdx() const { return nextIdx; }
+ChatLogIdx SessionChatLog::getNextIdx() const {
+    return nextIdx;
+}
 
 std::vector<IChatLog::DateChatLogIdxPair> SessionChatLog::getDateIdxs(const QDate& startDate,
                                                                       size_t maxDates) const {
@@ -428,7 +431,6 @@ void SessionChatLog::onFileUpdated(const FriendId& friendId, const ToxFile& file
         currentTransfer.idx = nextIdx++;
         currentFileTransfers.push_back(currentTransfer);
 
-
         QString senderName;
         FriendId senderId{file.sender};
         auto frnd = Nexus::getCore()->getFriendList().findFriend(senderId);
@@ -515,3 +517,4 @@ ChatLogIdx SessionChatLog::getNextIdx(MsgId msgId) {
     qDebug() << "make next msgId:" << msgId << " idx:" << idx.get();
     return idx;
 }
+}  // namespace module::im

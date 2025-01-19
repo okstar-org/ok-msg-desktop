@@ -27,6 +27,7 @@
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
 #include "src/video/videosurface.h"
+namespace module::im {
 
 class LabeledVideo : public QFrame {
 public:
@@ -52,11 +53,17 @@ public:
 
     ~LabeledVideo() {}
 
-    VideoSurface* getVideoSurface() const { return videoSurface; }
+    VideoSurface* getVideoSurface() const {
+        return videoSurface;
+    }
 
-    void setText(const QString& text) { label->setText(text); }
+    void setText(const QString& text) {
+        label->setText(text);
+    }
 
-    QString getText() const { return label->text(); }
+    QString getText() const {
+        return label->text();
+    }
 
     void setActive(bool active = true) {
         if (active)
@@ -178,7 +185,9 @@ void GroupNetCamView::removePeer(const QString& peer) {
     }
 }
 
-void GroupNetCamView::onUpdateActivePeer() { setActive(); }
+void GroupNetCamView::onUpdateActivePeer() {
+    setActive();
+}
 
 void GroupNetCamView::setActive(const FriendId& peer) {
     if (!peer.isValid()) {
@@ -217,3 +226,4 @@ void GroupNetCamView::friendAvatarChanged(QString friendPk, const QPixmap& pixma
         setActive();
     }
 }
+}  // namespace module::im

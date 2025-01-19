@@ -16,7 +16,7 @@
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
-
+namespace module::im {
 /**
  * @class ProfileLocker
  * @brief Locks a Tox profile so that multiple instances can not use the same profile.
@@ -112,7 +112,9 @@ void ProfileLocker::deathByBrokenLock() {
  * @brief Chacks, that profile locked.
  * @return Returns true if we're currently holding a lock.
  */
-bool ProfileLocker::hasLock() { return lockfile.operator bool(); }
+bool ProfileLocker::hasLock() {
+    return lockfile.operator bool();
+}
 
 /**
  * @brief Get current locked profile name.
@@ -124,3 +126,4 @@ QString ProfileLocker::getCurLockName() {
     else
         return QString();
 }
+}  // namespace module::im

@@ -36,6 +36,7 @@
 #include "src/chatlog/content/timestamp.h"
 #include "src/core/core.h"
 #include "src/lib/session/profile.h"
+#include "src/lib/ui/widget/maskablepixmapwidget.h"
 #include "src/model/friend.h"
 #include "src/model/friendlist.h"
 #include "src/model/grouplist.h"
@@ -48,7 +49,6 @@
 #include "src/widget/emoticonswidget.h"
 #include "src/widget/form/chatform.h"
 #include "src/widget/form/loadhistorydialog.h"
-#include "src/widget/maskablepixmapwidget.h"
 #include "src/widget/tool/chattextedit.h"
 #include "src/widget/tool/flyoutoverlaywidget.h"
 #include "src/widget/widget.h"
@@ -58,6 +58,7 @@
  * @brief Parent class for all chatforms. It's provide the minimum required UI
  * elements and methods to work with chat messages.
  */
+namespace module::im {
 
 static const QSize FILE_FLYOUT_SIZE{24, 24};
 static const short MAIN_FOOT_MARGIN = 8;
@@ -227,7 +228,6 @@ GenericChatForm::GenericChatForm(const ContactId* contact_,
     bodySplitter->setStretchFactor(0, 1);
     bodySplitter->setStretchFactor(1, 0);
     bodySplitter->setChildrenCollapsible(false);
-
 
     //  dateInfo = new QLabel(this);
     //  dateInfo->setAlignment(Qt::AlignHCenter);
@@ -841,3 +841,4 @@ void GenericChatForm::sendFile(const QFile& file) {
                 this, "", tr("The community version cannot send files to offline contacts!"));
     }
 }
+}  // namespace module::im

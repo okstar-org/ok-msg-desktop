@@ -17,10 +17,12 @@
 
 template <class A, class B> class QHash;
 template <class T> class QList;
-class Group;
+
 class QString;
 
-using GroupMap = QHash<QString, Group*>;
+namespace module::im {
+class Group;
+using GroupMap = ::QHash<::QString, Group*>;
 
 class GroupList {
 public:
@@ -35,5 +37,5 @@ public:
 private:
     static GroupMap groupMap;
 };
-
+}  // namespace module::im
 #endif  // GROUPLIST_H

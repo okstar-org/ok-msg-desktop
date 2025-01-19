@@ -28,6 +28,8 @@ namespace Ui {
 class ChatWidget;
 }
 
+namespace module::im {
+
 class CircleWidget;
 class GroupInviteForm;
 class AddFriendForm;
@@ -44,9 +46,8 @@ class CoreFile;
 class ChatWidget : public MainLayout {
     Q_OBJECT
 public:
-
-    ChatWidget(QWidget* parent = nullptr);
-    ~ChatWidget();
+    explicit ChatWidget(QWidget* parent = nullptr);
+    ~ChatWidget() override;
 
     [[nodiscard]] ContentLayout* getContentLayout() const override {
         assert(contentLayout);
@@ -112,7 +113,7 @@ public slots:
     void onDisconnected(int err);
     void onConnected();
 
-    void onStatusSet(Status::Status status);
+    void onStatusSet(Status status);
     void onNicknameSet(const QString& nickname);
     void onStatusMessageSet(const QString& statusMessage);
 
@@ -123,7 +124,7 @@ public slots:
     void doSendMessage(const QString& to, bool isGroup);
     void doForwardMessage(const ContactId& cid, const MsgId& msgId);
 
-    void onFriendStatusChanged(const FriendId& friendPk, Status::Status status);
+    void onFriendStatusChanged(const FriendId& friendPk, Status status);
     void onFriendStatusMessageChanged(const FriendId& friendPk, const QString& message);
 
     void onMessageSessionReceived(const ContactId& contactId, const QString& sid);
@@ -166,5 +167,5 @@ public slots:
     void onAvPeerConnectionState(const FriendId& friendId, lib::ortc::PeerConnectionState state);
     void onAvEnd(const FriendId& friendId, bool error);
 };
-
+}  // namespace module::im
 #endif  // CHATWIDGET_H

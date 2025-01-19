@@ -21,15 +21,19 @@
 #include "src/model/contactid.h"
 #include "src/model/status.h"
 
-class MaskablePixmapWidget;
 class QVBoxLayout;
-class CroppingLabel;
 class QPushButton;
 class QToolButton;
+class QLabel;
+
+class CroppingLabel;
+class MaskablePixmapWidget;
+
+namespace module::im {
+
 class CallConfirmWidget;
 class ToxPeer;
 class Contact;
-class QLabel;
 class Profile;
 
 /**
@@ -72,7 +76,7 @@ public:
     void updateMuteVolButton(bool active, bool outputMuted);
 
     void updateCallButtons();
-    void updateCallButtons(Status::Status status);
+    void updateCallButtons(Status status);
     void updateCallButtons(bool online, bool audio, bool video = false);
 
     void updateMuteMicButton();
@@ -106,7 +110,7 @@ private slots:
 
 private:
     void nameChanged(const QString& name);
-    void updateContactStatus(Status::Status status);
+    void updateContactStatus(Status status);
 
 private:
     ContactId contactId;
@@ -128,5 +132,5 @@ private:
     std::unique_ptr<CallConfirmWidget> callConfirm;
     Profile* mProfile;
 };
-
+}  // namespace module::im
 #endif  // CHAT_FORM_HEADER

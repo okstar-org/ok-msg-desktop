@@ -17,6 +17,7 @@
 #include "genericchatitemlayout.h"
 #include "src/core/core.h"
 #include "src/model/status.h"
+namespace module::im {
 
 class FriendWidget;
 class ContactListWidget;
@@ -42,5 +43,5 @@ public:
 private:
     GenericChatItemLayout* itemLayout;
 };
-
+}  // namespace module::im
 #endif  // FRIENDLISTLAYOUT_H

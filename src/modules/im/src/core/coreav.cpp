@@ -31,6 +31,7 @@
  * 音视频
  * @brief CoreAV::CoreAV
  */
+namespace module::im {
 
 static CoreAV* instance = nullptr;
 
@@ -780,8 +781,8 @@ void CoreAV::onEnd(const lib::messenger::IMPeerId& peerId) {
 }
 
 void CoreAV::onFriendVideoFrame(const std::string& friendId, uint16_t w, uint16_t h,
-                                const uint8_t* y, const uint8_t* u, const uint8_t* v, int32_t ystride,
-                                int32_t ustride, int32_t vstride) {
+                                const uint8_t* y, const uint8_t* u, const uint8_t* v,
+                                int32_t ystride, int32_t ustride, int32_t vstride) {
     // This callback should come from the CoreAV thread
     //     QReadLocker locker{&callsLock}; 为了提高性能暂时去掉
 
@@ -897,7 +898,6 @@ void CoreAV::audioFrameCallback(QString friendNum, const int16_t* pcm, size_t sa
     call.playAudioBuffer(pcm, sampleCount, channels, samplingRate);
 }
 
-
 void CoreAV::videoFramePush(CoreVideoSource* videoSource,  //
                             std::unique_ptr<vpx_image>
                                     frame) {
@@ -907,3 +907,4 @@ void CoreAV::videoFramePush(CoreVideoSource* videoSource,  //
 
     videoSource->pushFrame(std::move(frame));
 }
+}  // namespace module::im

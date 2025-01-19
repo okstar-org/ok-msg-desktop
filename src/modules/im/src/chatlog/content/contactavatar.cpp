@@ -16,7 +16,7 @@
 #include <QRecursiveMutex>
 
 static constexpr float avatar_size = 40;
-
+namespace module::im {
 ContactAvatar::ContactAvatar(const QPixmap& avatar)
         : ChatLineContent(ChatLineContent::ContentType::CHAT_AVATA), avatar(avatar) {}
 
@@ -69,12 +69,17 @@ void ContactAvatar::paint(QPainter* painter,
     Q_UNUSED(widget)
 }
 
-void ContactAvatar::setWidth(qreal width) { Q_UNUSED(width) }
+void ContactAvatar::setWidth(qreal width) {
+    Q_UNUSED(width)
+}
 
-const void* ContactAvatar::getContent() { return &avatar; }
+const void* ContactAvatar::getContent() {
+    return &avatar;
+}
 
 void ContactAvatar::setPixmap(const QPixmap& avatar_) {
     QMutexLocker locker(&mutex);
     avatar = avatar_;
     update();
 }
+}  // namespace module::im

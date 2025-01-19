@@ -27,14 +27,17 @@
 #include "src/persistence/history.h"
 #include "src/widget/tool/screenshotgrabber.h"
 
+class QPixmap;
+class QHideEvent;
+class QMoveEvent;
+
+namespace module::im {
+
 class CallConfirmWidget;
 class FileTransferInstance;
 class Friend;
 class History;
 class OfflineMsgEngine;
-class QPixmap;
-class QHideEvent;
-class QMoveEvent;
 
 /**
  * 聊天框
@@ -83,7 +86,7 @@ private slots:
     //  void onMicMuteToggle();
     //  void onVolMuteToggle();
 
-    void onFriendStatusChanged(const FriendId& friendId, Status::Status status);
+    void onFriendStatusChanged(const FriendId& friendId, Status status);
     void onFriendNameChanged(const QString& name);
     void onStatusMessage(const QString& message);
 
@@ -108,5 +111,5 @@ private:
 
     QAction* copyStatusAction;
 };
-
+}  // namespace module::im
 #endif  // CHATFORM_H

@@ -39,6 +39,7 @@
 #ifndef ALC_ALL_DEVICES_SPECIFIER
 #define ALC_ALL_DEVICES_SPECIFIER ALC_DEVICE_SPECIFIER
 #endif
+namespace module::im {
 
 AVForm::AVForm()
         : GenericForm(QPixmap(":/img/settings/av.png"))
@@ -60,7 +61,7 @@ AVForm::AVForm()
     auto s = &lib::settings::OkSettings::getInstance();
     audioSettings = s;
     videoSettings = s;
-    audio = std::unique_ptr<IAudioControl>(Audio::makeAudio(*s));
+    audio = std::unique_ptr<lib::audio::IAudioControl>(lib::audio::Audio::makeAudio(*s));
 
     cbEnableTestSound->setChecked(s->getEnableTestSound());
     cbEnableTestSound->setToolTip(tr("Play a test sound while changing the output volume."));
@@ -68,7 +69,7 @@ AVForm::AVForm()
     connect(rescanButton, &QPushButton::clicked, this, &AVForm::rescanDevices);
 
     playbackSlider->setTracking(false);
-    playbackSlider->setMaximum(Audio::totalSteps);
+    playbackSlider->setMaximum(lib::audio::Audio::totalSteps);
     playbackSlider->setValue(
             getStepsFromValue(s->getOutVolume(), s->getOutVolumeMin(), s->getOutVolumeMax()));
     playbackSlider->installEventFilter(this);
@@ -78,10 +79,10 @@ AVForm::AVForm()
                                     " from %1dB to %2dB.")
                                          .arg(audio->minInputGain())
                                          .arg(audio->maxInputGain()));
-    microphoneSlider->setMaximum(Audio::totalSteps);
+    microphoneSlider->setMaximum(lib::audio::Audio::totalSteps);
     microphoneSlider->setTickPosition(QSlider::TicksBothSides);
     static const int numTicks = 4;
-    microphoneSlider->setTickInterval(Audio::totalSteps / numTicks);
+    microphoneSlider->setTickInterval(lib::audio::Audio::totalSteps / numTicks);
     microphoneSlider->setTracking(false);
     microphoneSlider->installEventFilter(this);
 
@@ -90,16 +91,14 @@ AVForm::AVForm()
 
     audioThresholdSlider->setToolTip(
             tr("Use slider to set the activation volume for your input device."));
-    audioThresholdSlider->setMaximum(Audio::totalSteps);
+    audioThresholdSlider->setMaximum(lib::audio::Audio::totalSteps);
     audioThresholdSlider->setValue(getStepsFromValue(audioSettings->getAudioThreshold(),
                                                      audio->minInputThreshold(),
                                                      audio->maxInputThreshold()));
     audioThresholdSlider->setTracking(false);
     audioThresholdSlider->installEventFilter(this);
 
-    volumeDisplay->setMaximum(Audio::totalSteps);
-
-
+    volumeDisplay->setMaximum(lib::audio::Audio::totalSteps);
 
     fillAudioQualityComboBox();
 
@@ -116,7 +115,6 @@ AVForm::AVForm()
 }
 
 AVForm::~AVForm() {
-
     settings::Translator::unregister(this);
 }
 
@@ -139,10 +137,9 @@ void AVForm::hideEvent(QHideEvent* event) {
 }
 
 void AVForm::showEvent(QShowEvent* event) {
-    if(camera){
+    if (camera) {
         return;
     }
-
 
     camera = CameraSource::getInstance();
     getAudioOutDevices();
@@ -155,7 +152,8 @@ void AVForm::showEvent(QShowEvent* event) {
 
     if (audioSrc == nullptr) {
         audioSrc = audio->makeSource();
-        connect(audioSrc.get(), &IAudioSource::volumeAvailable, this, &AVForm::setVolume);
+        connect(audioSrc.get(), &lib::audio::IAudioSource::volumeAvailable, this,
+                &AVForm::setVolume);
     }
 
     if (audioSink == nullptr) {
@@ -541,7 +539,8 @@ void AVForm::on_inDevCombobox_currentIndexChanged(int deviceIndex) {
         audioSettings->setInDev(deviceName);
         audio->reinitInput(deviceName);
         audioSrc = audio->makeSource();
-        connect(audioSrc.get(), &IAudioSource::volumeAvailable, this, &AVForm::setVolume);
+        connect(audioSrc.get(), &lib::audio::IAudioSource::volumeAvailable, this,
+                &AVForm::setVolume);
     }
 
     microphoneSlider->setEnabled(inputEnabled);
@@ -580,7 +579,7 @@ void AVForm::on_playbackSlider_valueChanged(int sliderSteps) {
         // audio->maxOutputVolume());
         audio->setOutputVolumeStep(settingsVolume);
         if (cbEnableTestSound->isChecked() && audioSink) {
-            audioSink->playMono16Sound(IAudioSink::Sound::Test);
+            audioSink->playMono16Sound(lib::audio::IAudioSink::Sound::Test);
         }
     }
 }
@@ -598,7 +597,7 @@ void AVForm::on_cbEnableTestSound_stateChanged() {
     if (!audioSink) {
         return;
     }
-    audioSink->playMono16Sound(IAudioSink::Sound::Test);
+    audioSink->playMono16Sound(lib::audio::IAudioSink::Sound::Test);
 }
 
 void AVForm::on_microphoneSlider_valueChanged(int sliderSteps) {
@@ -628,9 +627,10 @@ void AVForm::retranslateUi() {
 
 int AVForm::getStepsFromValue(qreal val, qreal valMin, qreal valMax) {
     const float norm = (val - valMin) / (valMax - valMin);
-    return norm * Audio::totalSteps;
+    return norm * lib::audio::Audio::totalSteps;
 }
 
 qreal AVForm::getValueFromSteps(int steps, qreal valMin, qreal valMax) {
-    return (static_cast<float>(steps) / Audio::totalSteps) * (valMax - valMin) + valMin;
+    return (static_cast<float>(steps) / lib::audio::Audio::totalSteps) * (valMax - valMin) + valMin;
 }
+}  // namespace module::im

@@ -11,6 +11,7 @@
  */
 
 #include "groupinvite.h"
+namespace module::im {
 
 /**
  * @class GroupInvite
@@ -31,12 +32,23 @@ bool GroupInvite::operator==(const GroupInvite& other) const {
            date == other.date;
 }
 
-const QString& GroupInvite::getGroupId() const { return groupId; }
+const QString& GroupInvite::getGroupId() const {
+    return groupId;
+}
 
-const QString& GroupInvite::getFriendId() const { return friendId; }
+const QString& GroupInvite::getFriendId() const {
+    return friendId;
+}
 
-ConferenceType GroupInvite::getType() const { return type; }
+ConferenceType GroupInvite::getType() const {
+    return type;
+}
 
-QByteArray GroupInvite::getInvite() const { return invite; }
+QByteArray GroupInvite::getInvite() const {
+    return invite;
+}
 
-QDateTime GroupInvite::getInviteDate() const { return date; }
+QDateTime GroupInvite::getInviteDate() const {
+    return date;
+}
+}  // namespace module::im

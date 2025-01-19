@@ -30,6 +30,7 @@
 #include <memory>
 
 #include "lib/messenger/Messenger.h"
+namespace module::im {
 
 class CoreFile;
 
@@ -147,5 +148,5 @@ private:
     lib::messenger::MessengerFile* messengerFile;
     CompatibleRecursiveMutex* coreLoopLock = nullptr;
 };
-
+}  // namespace module::im
 #endif  // COREFILE_H

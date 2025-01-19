@@ -18,6 +18,7 @@
 
 #include <QList>
 #include <QObject>
+namespace module::im {
 
 struct SessionChatLogMetadata;
 
@@ -88,5 +89,5 @@ private:
 
     Profile* mProfile;
 };
-
+}  // namespace module::im
 #endif /*SESSION_CHAT_LOG_H*/

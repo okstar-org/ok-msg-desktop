@@ -20,6 +20,7 @@
 #include <QString>
 #include <QVector>
 #include "src/model/FriendId.h"
+namespace module::im {
 
 class IDialogsManager;
 class Friend;
@@ -74,5 +75,6 @@ private:
     const FriendId* frnd{nullptr};
     IDialogsManager* dialogsManager{nullptr};
 };
+}  // namespace module::im
 
 #endif  // FRIEND_H

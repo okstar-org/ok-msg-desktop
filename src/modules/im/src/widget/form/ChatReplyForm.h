@@ -19,6 +19,7 @@
 namespace Ui {
 class ChatReplyForm;
 }
+namespace module::im {
 
 struct ChatReplyItem {
     MsgId id;
@@ -33,7 +34,9 @@ public:
     explicit ChatReplyForm(const ChatReplyItem& item, QWidget* parent = nullptr);
     ~ChatReplyForm();
 
-    const QString& getText() const { return item.content; }
+    const QString& getText() const {
+        return item.content;
+    }
 
 private:
     Ui::ChatReplyForm* ui;
@@ -43,5 +46,5 @@ private:
 signals:
     void removeEvent();
 };
-
+}  // namespace module::im
 #endif  // CHATREPLYFORM_H

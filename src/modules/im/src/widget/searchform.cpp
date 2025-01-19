@@ -21,6 +21,7 @@
 #include <QVBoxLayout>
 
 #include <array>
+namespace module::im {
 
 static std::array<QString, 3> STATE_NAME = {
         QString{},
@@ -29,19 +30,19 @@ static std::array<QString, 3> STATE_NAME = {
 };
 
 SearchForm::SearchForm(QWidget* parent) : QWidget(parent) {
-    using namespace SearchFormUI;
     QVBoxLayout* layout = new QVBoxLayout();
     QHBoxLayout* layoutNavigation = new QHBoxLayout();
     QHBoxLayout* layoutMessage = new QHBoxLayout();
     QSpacerItem* lSpacer = new QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Ignored);
     QSpacerItem* rSpacer = new QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Ignored);
-    searchLine = new SearchFormUI::LineEdit();
+    searchLine = new LineEdit();
     settings = new SearchSettingsForm();
     messageLabel = new QLabel();
 
     settings->setVisible(false);
     messageLabel->setProperty("state", QStringLiteral("red"));
-    messageLabel->setStyleSheet(Style::getStylesheet(QStringLiteral("chatForm/labels.css")));
+    messageLabel->setStyleSheet(
+            lib::settings::Style::getStylesheet(QStringLiteral("chatForm/labels.css")));
     messageLabel->setText(tr("The text could not be found."));
     messageLabel->setVisible(false);
 
@@ -107,11 +108,16 @@ void SearchForm::insertEditor(const QString& text) {
 }
 
 void SearchForm::reloadTheme() {
-    settingsButton->setStyleSheet(Style::getStylesheet(QStringLiteral("chatForm/buttons.css")));
-    upButton->setStyleSheet(Style::getStylesheet(QStringLiteral("chatForm/buttons.css")));
-    downButton->setStyleSheet(Style::getStylesheet(QStringLiteral("chatForm/buttons.css")));
-    hideButton->setStyleSheet(Style::getStylesheet(QStringLiteral("chatForm/buttons.css")));
-    startButton->setStyleSheet(Style::getStylesheet(QStringLiteral("chatForm/buttons.css")));
+    settingsButton->setStyleSheet(
+            lib::settings::Style::getStylesheet(QStringLiteral("chatForm/buttons.css")));
+    upButton->setStyleSheet(
+            lib::settings::Style::getStylesheet(QStringLiteral("chatForm/buttons.css")));
+    downButton->setStyleSheet(
+            lib::settings::Style::getStylesheet(QStringLiteral("chatForm/buttons.css")));
+    hideButton->setStyleSheet(
+            lib::settings::Style::getStylesheet(QStringLiteral("chatForm/buttons.css")));
+    startButton->setStyleSheet(
+            lib::settings::Style::getStylesheet(QStringLiteral("chatForm/buttons.css")));
 
     settings->reloadTheme();
 }
@@ -126,7 +132,7 @@ QPushButton* SearchForm::createButton(const QString& name, const QString& state)
     btn->setAttribute(Qt::WA_LayoutUsesWidgetRect);
     btn->setObjectName(name);
     btn->setProperty("state", state);
-    btn->setStyleSheet(Style::getStylesheet(QStringLiteral("chatForm/buttons.css")));
+    btn->setStyleSheet(lib::settings::Style::getStylesheet(QStringLiteral("chatForm/buttons.css")));
 
     return btn;
 }
@@ -150,7 +156,7 @@ ParameterSearch SearchForm::getAndCheckParametrSearch() {
 void SearchForm::setStateName(QPushButton* btn, ToolButtonState state) {
     const auto index = static_cast<unsigned long>(state);
     btn->setProperty("state", STATE_NAME[index]);
-    btn->setStyleSheet(Style::getStylesheet(QStringLiteral("chatForm/buttons.css")));
+    btn->setStyleSheet(lib::settings::Style::getStylesheet(QStringLiteral("chatForm/buttons.css")));
     btn->setEnabled(index != 0);
 }
 
@@ -279,13 +285,10 @@ void SearchForm::showMessageNotFound(SearchDirection direction) {
     messageLabel->setVisible(true);
 }
 
-using namespace SearchFormUI;
-
 LineEdit::LineEdit(QWidget* parent) : QLineEdit(parent) {}
 
 void LineEdit::keyPressEvent(QKeyEvent* event) {
     int key = event->key();
-
     if ((key == Qt::Key_Enter || key == Qt::Key_Return)) {
         if ((event->modifiers() & Qt::ShiftModifier)) {
             emit clickShiftEnter();
@@ -298,3 +301,4 @@ void LineEdit::keyPressEvent(QKeyEvent* event) {
 
     QLineEdit::keyPressEvent(event);
 }
+}  // namespace module::im

@@ -19,12 +19,14 @@
 #include "src/model/FriendId.h"
 #include "src/model/contactid.h"
 #include "src/model/message.h"
-
-template <class T> class QList;
-template <class A, class B> class QHash;
-class Friend;
 class QByteArray;
 class QString;
+template <class T> class QList;
+template <class A, class B> class QHash;
+
+namespace module::im {
+
+class Friend;
 class FriendId;
 
 using FriendMap = QMap<QString, Friend*>;
@@ -48,5 +50,5 @@ private:
 signals:
     void friendAdded(Friend* f);
 };
-
+}  // namespace module::im
 #endif  // FRIENDLIST_H

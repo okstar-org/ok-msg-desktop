@@ -27,11 +27,6 @@
  *        - Even a different font is not enough – TODO #1307 ~~zetok
  */
 
-class ChatFormHeader;
-class ChatLog;
-class ChatTextEdit;
-class Contact;
-class ContentLayout;
 class CroppingLabel;
 class FlyoutOverlayWidget;
 class GenericNetCamView;
@@ -45,20 +40,22 @@ class QSplitter;
 class QToolButton;
 class QVBoxLayout;
 class QHBoxLayout;
-class IMessageDispatcher;
-class EmoticonsWidget;
-class ChatInputForm;
-struct Message;
 
 namespace Ui {
 class MainWindow;
 }
 
-#ifdef SPELL_CHECKING
-namespace Sonnet {
-class SpellCheckDecorator;
-}
-#endif
+namespace module::im {
+
+class ChatFormHeader;
+class ChatLog;
+class ChatTextEdit;
+class Contact;
+class ContentLayout;
+class IMessageDispatcher;
+class EmoticonsWidget;
+class ChatInputForm;
+struct Message;
 
 class GenericChatForm : public QWidget {
     Q_OBJECT
@@ -98,7 +95,9 @@ public:
     QDateTime getLatestTime() const;
     QDateTime getFirstTime() const;
 
-    [[__nodiscard__]] inline ChatLog* getChatLog() const { return chatLog; }
+    [[__nodiscard__]] inline ChatLog* getChatLog() const {
+        return chatLog;
+    }
 
 signals:
     void messageInserted();
@@ -198,5 +197,5 @@ protected:
     bool isTyping;
     QTimer typingTimer;
 };
-
+}  // namespace module::im
 #endif  // GENERICCHATFORM_H

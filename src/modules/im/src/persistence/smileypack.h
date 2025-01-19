@@ -21,7 +21,7 @@
 #include <memory>
 
 class QTimer;
-
+namespace module::im {
 class SmileyPack : public QObject {
     Q_OBJECT
 
@@ -55,5 +55,5 @@ private:
     QRegularExpression smilify;
     mutable QMutex loadingMutex;
 };
-
+}  // namespace module::im
 #endif  // SMILEYPACK_H

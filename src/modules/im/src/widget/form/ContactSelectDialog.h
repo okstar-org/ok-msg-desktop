@@ -16,13 +16,15 @@
 #include <QDialog>
 #include "src/model/contactid.h"
 
-class Friend;
-class FriendWidget;
-class ContactListWidget;
-
 namespace Ui {
 class ContactSelectDialog;
 }
+
+namespace module::im {
+
+class Friend;
+class FriendWidget;
+class ContactListWidget;
 
 class ContactSelectDialog : public QDialog {
     Q_OBJECT
@@ -46,5 +48,5 @@ public slots:
     void onFriendClicked(FriendWidget* widget);
     void onFriendDeleted(const Friend* f);
 };
-
+}  // namespace module::im
 #endif  // CHATFORWARDIALOG_H

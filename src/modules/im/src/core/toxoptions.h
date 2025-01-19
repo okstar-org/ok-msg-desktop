@@ -16,6 +16,7 @@
 #include <QByteArray>
 
 #include <memory>
+namespace module::im {
 
 class ICoreSettings;
 struct Tox_Options;
@@ -37,5 +38,5 @@ private:
     Tox_Options* options = nullptr;
     QByteArray proxyAddrData;
 };
-
+}  // namespace module::im
 #endif  // TOXOPTIONS_H

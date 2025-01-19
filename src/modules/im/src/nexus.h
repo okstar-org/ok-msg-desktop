@@ -15,17 +15,28 @@
 
 #include <QObject>
 #include <QPointer>
-
+#include "base/resources.h"
 #include "lib/audio/iaudiocontrol.h"
 #include "lib/audio/iaudiosink.h"
 #include "modules/module.h"
 #include "src/base/compatiblerecursivemutex.h"
 
-class Widget;
+class QCommandLineParser;
+
+OK_RESOURCE_LOADER(res);
+OK_RESOURCE_LOADER(emojione);
+OK_RESOURCE_LOADER(smileys);
+OK_RESOURCE_LOADER(IM);
+
+namespace lib::session {
 class Profile;
+}
+
+namespace module::im {
+class Profile;
+class Widget;
 class Settings;
 class Core;
-class QCommandLineParser;
 
 #ifdef Q_OS_MAC
 class QMenuBar;
@@ -51,22 +62,22 @@ public:
     static Core* getCore();
     static Profile* getProfile();
     static Widget* getDesktopGUI();
+    const QString& getName() const override;
+    QWidget* widget() override;
+    void init(lib::session::Profile*) override;
 
     void showMainGUI();
-    [[nodiscard]] IAudioControl* audio() const {
+    [[nodiscard]] lib::audio::IAudioControl* audio() const {
         return audioControl.get();
     }
 
-    void playNotificationSound(IAudioSink::Sound sound, bool loop = false);
+    void playNotificationSound(lib::audio::IAudioSink::Sound sound, bool loop = false);
     void incomingNotification(const QString& friendId);
     void onStopNotification();
     void outgoingNotification();
     void cleanupNotificationSound();
 
 protected:
-    const QString& getName() const override;
-    QWidget* widget() override;
-    void init(Profile*) override;
     void start(std::shared_ptr<lib::session::AuthSession> session) override;
     void stop() override;
     bool isStarted() override {
@@ -77,8 +88,7 @@ protected:
     void cleanup() override;
 
 private:
-
-    void setProfile(Profile* p);
+    void setProfile(lib::session::Profile* p);
 
 private:
     QString name;
@@ -88,39 +98,18 @@ private:
     // 某些异常情况下widget会被提前释放
     QPointer<Widget> m_widget;
 
-    std::unique_ptr<IAudioControl> audioControl;
-    std::unique_ptr<IAudioSink> audioNotification;
+    std::unique_ptr<lib::audio::IAudioControl> audioControl;
+    std::unique_ptr<lib::audio::IAudioSink> audioNotification;
 
     CompatibleRecursiveMutex mutex;
 
-#ifdef Q_OS_MAC
-public:
-    QMenuBar* globalMenuBar;
-    QMenu* viewMenu;
-    QMenu* windowMenu;
-    QAction* minimizeAction;
-    QAction* fullscreenAction;
-    QAction* frontAction;
-    QMenu* dockMenu;
-
-public slots:
-    void retranslateUi();
-    void onWindowStateChanged(Qt::WindowStates state);
-    void updateWindows();
-    void updateWindowsClosed();
-    void updateWindowsStates();
-    void onOpenWindow(QObject* object);
-    void toggleFullscreen();
-    void bringAllToFront();
-
-private:
-    void updateWindowsArg(QWindow* closedWindow);
-
-    QActionGroup* windowActions = nullptr;
-#endif
+    OK_RESOURCE_PTR(res);
+    OK_RESOURCE_PTR(emojione);
+    OK_RESOURCE_PTR(smileys);
+    OK_RESOURCE_PTR(IM);
 
 signals:
-    void currentProfileChanged(Profile* Profile);
+    void currentProfileChanged(lib::session::Profile* Profile);
     void profileLoaded();
     void profileLoadFailed();
     void coreChanged(Core&);
@@ -132,5 +121,5 @@ signals:
 public slots:
     void do_logout(const QString& profile);
 };
-
+}  // namespace module::im
 #endif  // NEXUS_H

@@ -21,6 +21,7 @@ namespace lib::messenger {
 class IMContactId;
 class IMPeerId;
 }  // namespace lib::messenger
+namespace module::im {
 
 /**
  * 朋友ID
@@ -72,5 +73,5 @@ public:
 
     QString resource;
 };
-
+}  // namespace module::im
 #endif  // TOXPK_H

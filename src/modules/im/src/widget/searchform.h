@@ -19,10 +19,25 @@
 
 class QPushButton;
 class QLabel;
+
+namespace module::im {
+
 class SearchSettingsForm;
-namespace SearchFormUI {
-class LineEdit;
-}
+
+class LineEdit : public QLineEdit {
+    Q_OBJECT
+
+public:
+    LineEdit(QWidget* parent = nullptr);
+
+protected:
+    virtual void keyPressEvent(QKeyEvent* event) final override;
+
+signals:
+    void clickEnter();
+    void clickShiftEnter();
+    void clickEsc();
+};
 
 class SearchForm final : public QWidget {
     Q_OBJECT
@@ -56,7 +71,7 @@ private:
     QPushButton* downButton;
     QPushButton* hideButton;
     QPushButton* startButton;
-    SearchFormUI::LineEdit* searchLine;
+    LineEdit* searchLine;
     SearchSettingsForm* settings;
     QLabel* messageLabel;
 
@@ -87,21 +102,6 @@ signals:
     void visibleChanged();
 };
 
-namespace SearchFormUI {
-class LineEdit : public QLineEdit {
-    Q_OBJECT
-
-public:
-    LineEdit(QWidget* parent = nullptr);
-
-protected:
-    virtual void keyPressEvent(QKeyEvent* event) final override;
-
-signals:
-    void clickEnter();
-    void clickShiftEnter();
-    void clickEsc();
-};
-}  // namespace SearchFormUI
+}  // namespace module::im
 
 #endif  // SEARCHFORM_H

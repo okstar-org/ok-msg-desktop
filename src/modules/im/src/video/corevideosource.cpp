@@ -14,6 +14,7 @@
 #include "lib/video/videoframe.h"
 
 #include <QDebug>
+namespace module::im {
 
 /**
  * @brief CoreVideoSource constructor.
@@ -117,3 +118,4 @@ void CoreVideoSource::restartSource() {
     QMutexLocker locker(&biglock);
     stopped = false;
 }
+}  // namespace module::im

@@ -31,7 +31,7 @@ class Platform : public QObject, public Module {
 public:
     explicit Platform();
     ~Platform() override;
-    void init(Profile* p) override;
+    void init(lib::session::Profile* p) override;
     [[nodiscard]] const QString& getName() const override;
     void start(std::shared_ptr<lib::session::AuthSession> session) override;
     void stop() override;

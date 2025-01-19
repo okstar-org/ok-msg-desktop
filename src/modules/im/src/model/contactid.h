@@ -22,6 +22,7 @@
 #include <memory>
 
 #include "lib/messenger/Messenger.h"
+namespace module::im {
 
 inline QRegularExpressionMatch JidMatch(const QString& strId) {
     // 正则表达式模式，这里假设username不包含@，server不包含/
@@ -75,5 +76,5 @@ inline uint qHash(const ContactId& id) {
 }
 
 using ContactIdPtr = std::shared_ptr<const ContactId>;
-
+}  // namespace module::im
 #endif  // CONTACTID_H

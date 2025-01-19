@@ -24,6 +24,7 @@
 #include "src/model/status.h"
 #include "src/nexus.h"
 #include "src/persistence/settings.h"
+namespace module::im {
 
 GroupChatroom::GroupChatroom(const GroupId* groupId_, IDialogsManager* dialogsManager)
         : groupId{groupId_}, dialogsManager{dialogsManager}, mProfile{nullptr} {
@@ -31,11 +32,17 @@ GroupChatroom::GroupChatroom(const GroupId* groupId_, IDialogsManager* dialogsMa
             [&](Profile* profile) { mProfile = profile; });
 }
 
-GroupChatroom::~GroupChatroom() { qDebug() << __func__; }
+GroupChatroom::~GroupChatroom() {
+    qDebug() << __func__;
+}
 
-const ContactId& GroupChatroom::getContactId() { return *groupId; }
+const ContactId& GroupChatroom::getContactId() {
+    return *groupId;
+}
 
-bool GroupChatroom::hasNewMessage() const { return false; }
+bool GroupChatroom::hasNewMessage() const {
+    return false;
+}
 
 void GroupChatroom::resetEventFlags() {
     //    group->setEventFlag(false);
@@ -63,3 +70,4 @@ void GroupChatroom::inviteFriend(const FriendId& pk) {
     //        Core::getInstance()->groupInviteFriend(friendId.toString(), groupId->getId());
     //    }
 }
+}  // namespace module::im

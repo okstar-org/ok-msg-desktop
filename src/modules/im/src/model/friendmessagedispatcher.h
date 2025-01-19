@@ -23,6 +23,7 @@
 #include <QString>
 
 #include <cstdint>
+namespace module::im {
 
 class FriendMessageDispatcher : public IMessageDispatcher {
     Q_OBJECT
@@ -55,5 +56,5 @@ private:
     OfflineMsgEngine offlineMsgEngine;
     MessageProcessor processor;
 };
-
+}  // namespace module::im
 #endif /* IMESSAGE_DISPATCHER_H */

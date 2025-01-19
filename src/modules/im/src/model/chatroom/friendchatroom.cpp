@@ -35,24 +35,33 @@ QString getShortName(const QString& name) {
 }
 
 }  // namespace
+namespace module::im {
 
 FriendChatroom::FriendChatroom(const FriendId* frnd, IDialogsManager* dialogsManager)
         : frnd{frnd}, dialogsManager{dialogsManager} {
     qDebug() << __func__ << "friend" << frnd->getId();
 }
 
-FriendChatroom::~FriendChatroom() { qDebug() << __func__; }
+FriendChatroom::~FriendChatroom() {
+    qDebug() << __func__;
+}
 
-const FriendId* FriendChatroom::getFriend() { return frnd; }
+const FriendId* FriendChatroom::getFriend() {
+    return frnd;
+}
 
-const ContactId& FriendChatroom::getContactId() { return *frnd; }
+const ContactId& FriendChatroom::getContactId() {
+    return *frnd;
+}
 
 bool FriendChatroom::canBeInvited() const {
     return false;
     //    return Status::isOnline(frnd->getStatus());
 }
 
-int FriendChatroom::getCircleId() const { return 0; }
+int FriendChatroom::getCircleId() const {
+    return 0;
+}
 
 QString FriendChatroom::getCircleName() const {
     const auto circleId = getCircleId();
@@ -67,9 +76,13 @@ void FriendChatroom::setAutoAcceptDir(const QString& dir) {
     Nexus::getProfile()->getSettings()->setAutoAcceptDir(*frnd, dir);
 }
 
-void FriendChatroom::disableAutoAccept() { setAutoAcceptDir(QString{}); }
+void FriendChatroom::disableAutoAccept() {
+    setAutoAcceptDir(QString{});
+}
 
-bool FriendChatroom::autoAcceptEnabled() const { return getAutoAcceptDir().isEmpty(); }
+bool FriendChatroom::autoAcceptEnabled() const {
+    return getAutoAcceptDir().isEmpty();
+}
 
 void FriendChatroom::inviteFriend(const Group* group) {
     const auto friendId = frnd->getId();
@@ -140,3 +153,4 @@ void FriendChatroom::removeFriendFromDialogs() {
     auto dialogs = dialogsManager->getFriendDialogs(*frnd);
     dialogs->removeFriend(*frnd);
 }
+}  // namespace module::im

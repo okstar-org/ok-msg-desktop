@@ -24,7 +24,7 @@ class Document : public QObject, public Module {
 public:
     explicit Document();
     ~Document() override;
-    void init(Profile* p) override;
+    void init(lib::session::Profile* p) override;
     QWidget* widget() override;
     [[nodiscard]] const QString& getName() const override;
     void start(std::shared_ptr<lib::session::AuthSession> session) override;

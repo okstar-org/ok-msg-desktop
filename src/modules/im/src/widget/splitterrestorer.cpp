@@ -13,6 +13,7 @@
 #include "src/widget/splitterrestorer.h"
 
 #include <QSplitter>
+namespace module::im {
 
 /**
  * @class SplitterRestorer
@@ -58,3 +59,4 @@ void SplitterRestorer::restore(const QByteArray& state, const QSize& windowSize)
         splitter->setSizes(sizes);
     }
 }
+}  // namespace module::im

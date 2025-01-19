@@ -17,17 +17,22 @@
 #include "genericchatform.h"
 #include "src/model/FriendId.h"
 
+class QTimer;
+class FlowLayout;
+
 namespace Ui {
 class MainWindow;
 }
+
+namespace module::im {
+
 class Group;
 class TabCompleter;
-class FlowLayout;
-class QTimer;
+
 class GroupId;
 class IMessageDispatcher;
-struct Message;
 class IGroupSettings;
+struct Message;
 
 class GroupChatForm : public GenericChatForm {
     Q_OBJECT
@@ -75,5 +80,5 @@ private:
     bool inCall;
     IGroupSettings& settings;
 };
-
+}  // namespace module::im
 #endif  // GROUPCHATFORM_H

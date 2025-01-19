@@ -21,9 +21,9 @@
 #include <QString>
 
 #include <cstdint>
+namespace module::im {
 
 using DispatchedMessageId = NamedType<size_t, struct SentMessageIdTag, Orderable, Incrementable>;
-Q_DECLARE_METATYPE(DispatchedMessageId);
 
 class IMessageDispatcher : public QObject {
     Q_OBJECT
@@ -64,5 +64,6 @@ signals:
 
     void fileCancelled(const FriendId& f, const QString& fileId);
 };
-
+}  // namespace module::im
+Q_DECLARE_METATYPE(module::im::DispatchedMessageId);
 #endif /* IMESSAGE_DISPATCHER_H */

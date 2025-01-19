@@ -16,6 +16,7 @@
 #include "src/lib/storage/settings/style.h"
 #include "src/persistence/settings.h"
 
+namespace module::im {
 ContentLayout::ContentLayout() : QStackedLayout() {
     init();
 }
@@ -77,3 +78,4 @@ void ContentLayout::clear() {
 }
 
 void ContentLayout::init() {}
+}  // namespace module::im

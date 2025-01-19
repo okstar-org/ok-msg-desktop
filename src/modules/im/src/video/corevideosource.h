@@ -18,7 +18,9 @@
 #include "lib/video/videoframe.h"
 #include "lib/video/videosource.h"
 
-class CoreVideoSource : public VideoSource {
+namespace module::im {
+
+class CoreVideoSource : public ::VideoSource {
     Q_OBJECT
 public:
     CoreVideoSource();
@@ -43,5 +45,6 @@ private:
     friend class CoreAV;
     friend class ToxFriendCall;
 };
+}  // namespace module::im
 
 #endif  // COREVIDEOSOURCE_H

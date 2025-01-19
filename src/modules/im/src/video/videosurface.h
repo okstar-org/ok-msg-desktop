@@ -17,6 +17,7 @@
 #include <atomic>
 #include <memory>
 #include "lib/video/videosource.h"
+namespace module::im {
 
 class VideoSurface : public QWidget {
     Q_OBJECT
@@ -63,5 +64,5 @@ private:
     volatile float ratio;
     bool expanding;
 };
-
+}  // namespace module::im
 #endif  // SELFCAMVIEW_H

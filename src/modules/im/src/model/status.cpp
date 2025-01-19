@@ -19,7 +19,8 @@
 
 #include <cassert>
 
-namespace Status {
+namespace module::im {
+
 QString getTitle(Status status) {
     switch (status) {
         case Status::Online:
@@ -65,5 +66,7 @@ QString getIconPath(Status status, bool event) {
     }
 }
 
-bool isOnline(Status status) { return status != Status::Offline && status != Status::Blocked; }
-}  // namespace Status
+bool isOnline(Status status) {
+    return status != Status::Offline && status != Status::Blocked;
+}
+}  // namespace module::im

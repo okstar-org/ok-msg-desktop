@@ -16,10 +16,13 @@
 #include "src/model/FriendId.h"
 #include "src/model/friend.h"
 #include "src/persistence/settings.h"
+namespace module::im {
 
 FriendList::FriendList(QObject* parent) : QObject(parent) {}
 
-FriendList::~FriendList() { clear(); }
+FriendList::~FriendList() {
+    clear();
+}
 
 Friend* FriendList::addFriend(const FriendInfo& friendInfo) {
     qDebug() << __func__ << "friendInfo:" << friendInfo.toString();
@@ -63,7 +66,9 @@ void FriendList::clear() {
     friendMap.clear();
 }
 
-QList<Friend*> FriendList::getAllFriends() { return friendMap.values(); }
+QList<Friend*> FriendList::getAllFriends() {
+    return friendMap.values();
+}
 
 QString FriendList::decideNickname(const FriendId& friendPk, const QString& origName) {
     Friend* f = FriendList::findFriend(friendPk);
@@ -75,3 +80,4 @@ QString FriendList::decideNickname(const FriendId& friendPk, const QString& orig
         return friendPk.toString();
     }
 }
+}  // namespace module::im

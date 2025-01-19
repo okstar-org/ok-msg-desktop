@@ -25,12 +25,13 @@
 #include "gui.h"
 #include "lib/storage/settings/translator.h"
 #include "lib/ui/widget/croppinglabel.h"
-#include "maskablepixmapwidget.h"
 #include "src/lib/storage/settings/style.h"
+#include "src/lib/ui/widget/maskablepixmapwidget.h"
 #include "src/model/status.h"
 #include "src/nexus.h"
 #include "src/widget/friendwidget.h"
 #include "src/widget/widget.h"
+namespace module::im {
 
 GroupWidget::GroupWidget(const GroupId& groupId, const QString& groupName)
         : GenericChatroomWidget(ChatType::GroupChat, groupId) {
@@ -296,10 +297,10 @@ void GroupWidget::onActiveSet(bool active) {
     //  avatar->setPixmap(Style::scaleSvgImage(uri, avatar->width(), avatar->height()));
 }
 
-void GroupWidget::updateStatusLight(Status::Status status, bool event) {
+void GroupWidget::updateStatusLight(Status status, bool event) {
     //  const Group *g = chatroom->getGroup();
     //  if(statusPic){
-    //    statusPic->setPixmap(QPixmap(Status::getIconPath(status, event)));
+    //    statusPic->setPixmap(QPixmap(getIconPath(status, event)));
     //    statusPic->setMargin(event ? 1 : 3);
     //  }
 }
@@ -360,3 +361,4 @@ void GroupWidget::retranslateUi() {
 }
 
 void GroupWidget::reloadTheme() {}
+}  // namespace module::im

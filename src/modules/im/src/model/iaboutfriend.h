@@ -17,6 +17,7 @@
 #include "src/persistence/ifriendsettings.h"
 
 #include <QObject>
+namespace module::im {
 
 class Friend;
 
@@ -55,5 +56,5 @@ public:
     DECLARE_SIGNAL(autoAcceptCallChanged, IFriendSettings::AutoAcceptCallFlags);
     DECLARE_SIGNAL(autoGroupInviteChanged, bool);
 };
-
+}  // namespace module::im
 #endif  // I_ABOUT_FRIEND_H

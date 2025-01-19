@@ -14,6 +14,7 @@
 #include <cassert>
 #include "genericchatroomwidget.h"
 #include "notificationedgewidget.h"
+namespace module::im {
 
 NotificationScrollArea::NotificationScrollArea(QWidget* parent) : AdjustingScrollArea(parent) {
     connect(verticalScrollBar(), &QAbstractSlider::valueChanged, this,
@@ -56,7 +57,9 @@ void NotificationScrollArea::trackWidget(GenericChatroomWidget* widget) {
 /**
  * @brief Delete notification bar from visible elements on scroll area
  */
-void NotificationScrollArea::updateVisualTracking() { updateTracking(nullptr); }
+void NotificationScrollArea::updateVisualTracking() {
+    updateTracking(nullptr);
+}
 
 /**
  * @brief Delete notification bar from visible elements and widget on scroll area
@@ -174,3 +177,4 @@ void NotificationScrollArea::recalculateBottomEdge() {
     bottomEdge->move(position);
     bottomEdge->resize(viewport()->width(), bottomEdge->height());
 }
+}  // namespace module::im

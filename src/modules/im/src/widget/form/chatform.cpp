@@ -28,6 +28,7 @@
 #include "src/core/corefile.h"
 #include "src/lib/session/profile.h"
 #include "src/lib/storage/settings/style.h"
+#include "src/lib/ui/widget/maskablepixmapwidget.h"
 #include "src/model/friend.h"
 #include "src/model/status.h"
 #include "src/nexus.h"
@@ -37,7 +38,6 @@
 #include "src/video/netcamview.h"
 #include "src/widget/chatformheader.h"
 #include "src/widget/form/loadhistorydialog.h"
-#include "src/widget/maskablepixmapwidget.h"
 #include "src/widget/tool/callconfirmwidget.h"
 #include "src/widget/tool/chattextedit.h"
 #include "src/widget/tool/screenshotgrabber.h"
@@ -50,6 +50,7 @@
 #include <QStringBuilder>
 
 #include <cassert>
+namespace module::im {
 
 /**
  * @brief ChatForm::incomingNotification Notify that we are called by someone.
@@ -69,7 +70,6 @@ ChatForm::ChatForm(const FriendId* chatFriend,
                    IChatLog& chatLog_,
                    IMessageDispatcher& messageDispatcher)
         : GenericChatForm(chatFriend, chatLog_, messageDispatcher), f(chatFriend) {
-
     statusMessageLabel = new CroppingLabel();
     statusMessageLabel->setObjectName("statusLabel");
     statusMessageLabel->setFont(lib::settings::Style::getFont(lib::settings::Style::Font::Medium));
@@ -169,7 +169,7 @@ void ChatForm::showOutgoingCall(bool video) {
     emit updateFriendActivity(*f);
 }
 
-void ChatForm::onFriendStatusChanged(const FriendId& friendId, Status::Status status) {
+void ChatForm::onFriendStatusChanged(const FriendId& friendId, Status status) {
     qDebug() << __func__ << friendId.toString() << (int)status;
     // Disable call buttons if friend is offline
     if (friendId.toString() != f->getId()) {
@@ -330,3 +330,4 @@ void ChatForm::hideEvent(QHideEvent* event) {
 void ChatForm::retranslateUi() {
     copyStatusAction->setText(tr("Copy"));
 }
+}  // namespace module::im

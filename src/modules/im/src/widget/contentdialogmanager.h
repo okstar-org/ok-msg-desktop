@@ -20,6 +20,7 @@
 #include "src/model/groupid.h"
 
 #include <QObject>
+namespace module::im {
 
 /**
  * @breaf Manage all content dialogs
@@ -67,5 +68,5 @@ private:
 
     static ContentDialogManager* instance;
 };
-
+}  // namespace module::im
 #endif  // _CONTENT_DIALOG_MANAGER_H_

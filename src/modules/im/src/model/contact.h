@@ -18,6 +18,7 @@
 #include <QString>
 #include "src/model/contactid.h"
 #include "src/model/status.h"
+namespace module::im {
 
 /**
  * 联系人（朋友和群的基类）
@@ -30,19 +31,31 @@ public:
             bool isGroup = false);
     ~Contact() override;
 
-    bool isGroup() const { return group; }
+    bool isGroup() const {
+        return group;
+    }
 
     void setName(const QString& name);
-    const QString& getName() const { return name; };
+    const QString& getName() const {
+        return name;
+    };
 
     void setAlias(const QString& name);
-    const QString& getAlias() const { return alias; };
-    bool hasAlias() const { return !alias.isEmpty(); }
+    const QString& getAlias() const {
+        return alias;
+    };
+    bool hasAlias() const {
+        return !alias.isEmpty();
+    }
 
     QString getDisplayedName() const;
 
-    const ContactId& getId() const { return id; };
-    QString getIdAsString() const { return id.toString(); };
+    const ContactId& getId() const {
+        return id;
+    };
+    QString getIdAsString() const {
+        return id.toString();
+    };
 
     const QPixmap& setDefaultAvatar();
     void setAvatar(const QPixmap& avatar);
@@ -77,7 +90,8 @@ protected:
 
     // 头像
     QPixmap avatar;
-    Status::AvatarSet avatarSetStatus;
+    module::im::AvatarSet avatarSetStatus;
 };
+}  // namespace module::im
 
 #endif  // CONTACT_H

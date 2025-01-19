@@ -17,6 +17,7 @@
 #include <QString>
 
 #include <memory>
+namespace module::im {
 
 struct Tox_Pass_Key;
 
@@ -31,9 +32,7 @@ public:
     static bool isEncrypted(const QByteArray& ciphertext);
     static QByteArray encryptPass(const QString& password, const QByteArray& plaintext);
     static QByteArray decryptPass(const QString& password, const QByteArray& ciphertext);
-    static std::unique_ptr<ToxEncrypt> makeToxEncrypt(const QString& password);
-    static std::unique_ptr<ToxEncrypt> makeToxEncrypt(const QString& password,
-                                                      const QByteArray& toxSave);
+
     QByteArray encrypt(const QByteArray& plaintext) const;
     QByteArray decrypt(const QByteArray& ciphertext) const;
 
@@ -43,5 +42,5 @@ private:
 private:
     Tox_Pass_Key* passKey = nullptr;
 };
-
+}  // namespace module::im
 #endif  // TOXENCRYPT_H

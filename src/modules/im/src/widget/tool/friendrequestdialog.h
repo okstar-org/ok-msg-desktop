@@ -14,11 +14,12 @@
 #define FRIENDREQUESTDIALOG_HPP
 
 #include <QDialog>
+namespace module::im {
 
 class FriendRequestDialog : public QDialog {
     Q_OBJECT
 public:
     explicit FriendRequestDialog(QWidget* parent, const QString& userId, const QString& message);
 };
-
+}  // namespace module::im
 #endif  // FRIENDREQUESTDIALOG_HPP

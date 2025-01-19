@@ -14,6 +14,7 @@
 #define SCREENGRABBEROVERLAYITEM_HPP
 
 #include <QGraphicsRectItem>
+namespace module::im {
 
 class ScreenshotGrabber;
 
@@ -35,5 +36,5 @@ private:
 
     QRect chosenRect;
 };
-
+}  // namespace module::im
 #endif  // SCREENGRABBEROVERLAYITEM_HPP

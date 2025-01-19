@@ -17,8 +17,7 @@
 #include "lib/storage/settings/style.h"
 
 #include <QFont>
-
-class QTextDocument;
+namespace module::im {
 
 class Text : public ChatLineContent {
     Q_OBJECT
@@ -114,5 +113,5 @@ private:
     QMarginsF margins;
     bool selectable;
 };
-
+}  // namespace module::im
 #endif  // TEXT_H

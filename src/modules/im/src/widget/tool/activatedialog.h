@@ -14,6 +14,7 @@
 #define ACTIVATEDIALOG_H
 
 #include <QDialog>
+namespace module::im {
 
 class ActivateDialog : public QDialog {
     Q_OBJECT
@@ -28,5 +29,5 @@ public:
 signals:
     void windowStateChanged(Qt::WindowStates state);
 };
-
+}  // namespace module::im
 #endif  // ACTIVATEDIALOG_H

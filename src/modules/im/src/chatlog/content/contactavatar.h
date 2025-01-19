@@ -16,13 +16,12 @@
 #include <QPixmap>
 #include "../chatlinecontent.h"
 #include "base/compatiblerecursivemutex.h"
-
+namespace module::im {
 class ContactAvatar : public ChatLineContent {
 public:
     explicit ContactAvatar(const QPixmap& avatar);
 
-    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
-                       QWidget* widget) override;
+    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
     void setWidth(qreal width) override;
     [[nodiscard]] QRectF boundingRect() const override;
     [[nodiscard]] qreal getAscent() const override;
@@ -37,5 +36,5 @@ private:
     QPixmap avatar;
     CompatibleRecursiveMutex mutex;
 };
-
+}  // namespace module::im
 #endif  // CONTACTAVATAR_H

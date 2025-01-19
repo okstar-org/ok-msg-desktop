@@ -21,6 +21,7 @@
 #include "src/core/core.h"
 #include "src/nexus.h"
 #include "src/persistence/settings.h"
+namespace module::im {
 
 /**
  * @class GroupInviteWidget
@@ -70,3 +71,4 @@ void GroupInviteWidget::retranslateUi() {
 const GroupInvite GroupInviteWidget::getInviteInfo() const {
     return inviteInfo;
 }
+}  // namespace module::im

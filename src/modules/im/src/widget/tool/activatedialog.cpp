@@ -12,6 +12,7 @@
 
 #include "activatedialog.h"
 #include <QEvent>
+namespace module::im {
 
 ActivateDialog::ActivateDialog(QWidget* parent, Qt::WindowFlags f) : QDialog(parent, f) {}
 
@@ -21,3 +22,4 @@ bool ActivateDialog::event(QEvent* event) {
 
     return QDialog::event(event);
 }
+}  // namespace module::im

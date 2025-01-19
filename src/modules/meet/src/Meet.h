@@ -30,7 +30,7 @@ public:
     explicit Meet();
     ~Meet() override;
     // 初始化
-    void init(Profile* p) override;
+    void init(lib::session::Profile* p) override;
     const QString& getName() const override;
     void start(std::shared_ptr<lib::session::AuthSession> session) override;
     void stop() override;

@@ -20,6 +20,7 @@
 #include "src/core/coreav.h"
 #include "src/lib/storage/settings/style.h"
 #include "src/video/netcamview.h"
+namespace module::im {
 
 CallDurationForm::CallDurationForm(QWidget* parent)
         : QWidget(parent)
@@ -187,3 +188,4 @@ void CallDurationForm::showAvatar() {
         ui->viewbar->layout()->addWidget(c);
     }
 }
+}  // namespace module::im

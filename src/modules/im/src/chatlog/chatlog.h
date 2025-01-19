@@ -26,6 +26,9 @@ class QGraphicsRectItem;
 class QMouseEvent;
 class QTimer;
 class QMenu;
+
+namespace module::im {
+
 class ChatLineContent;
 struct ToxFile;
 
@@ -60,7 +63,9 @@ public:
     ChatLineContent* getContentFromGlobalPos(QPoint pos) const;
     const uint repNameAfter = 5 * 60;
 
-    constexpr inline int getVScrollBarValue() const { return scrollBarValue; }
+    constexpr inline int getVScrollBarValue() const {
+        return scrollBarValue;
+    }
 
 protected:
     QRectF calculateSceneRect() const;
@@ -141,7 +146,8 @@ private:
     int selClickedCol = -1;
     int selFirstRow = -1;
     int selLastRow = -1;
-    QColor selectionRectColor = lib::settings::Style::getColor(lib::settings::Style::ColorPalette::SelectText);
+    QColor selectionRectColor =
+            lib::settings::Style::getColor(lib::settings::Style::ColorPalette::SelectText);
     SelectionMode selectionMode = SelectionMode::None;
     QPointF clickPos;
     QGraphicsRectItem* selGraphItem = nullptr;
@@ -185,5 +191,5 @@ private slots:
     void onVScrollBarValueChanged(int value);
     void clearChat();
 };
-
+}  // namespace module::im
 #endif  // CHATLOG_H

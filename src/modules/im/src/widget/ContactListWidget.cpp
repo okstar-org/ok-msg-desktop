@@ -14,7 +14,7 @@
 #include "ChatWidget.h"
 #include "ContactListLayout.h"
 #include "base/times.h"
-#include "circlewidget.h"
+
 #include "contentdialogmanager.h"
 #include "friendwidget.h"
 #include "groupwidget.h"
@@ -36,9 +36,10 @@
 #include <QShortcut>
 #include <QTimer>
 
-#include "application.h"
 #include "Bus.h"
+#include "application.h"
 #include "widget.h"
+namespace module::im {
 
 inline QDateTime getActiveTimeFriend(const Friend* contact) {
     return Nexus::getProfile()->getSettings()->getFriendActivity(contact->getPublicKey());
@@ -87,7 +88,8 @@ FriendWidget* ContactListWidget::addFriend(const FriendId& friendId) {
     Core* core = Nexus::getCore();
     auto m_friend = core->getFriendList().findFriend(friendId);
     auto fw = new FriendWidget(m_friend, this);
-    connect(fw, &FriendWidget::updateFriendActivity, this, &ContactListWidget::updateFriendActivity);
+    connect(fw, &FriendWidget::updateFriendActivity, this,
+            &ContactListWidget::updateFriendActivity);
     connect(fw, &FriendWidget::friendClicked, this, &ContactListWidget::slot_friendClicked);
 
     friendWidgets.insert(friendId.toString(), fw);
@@ -155,7 +157,6 @@ GroupWidget* ContactListWidget::addGroup(const GroupId& groupId, const QString& 
     auto settings = Nexus::getProfile()->getSettings();
 
     //  const bool enabled = core->getGroupAvEnabled(groupId.toString());
-
 
     auto gw = new GroupWidget(groupId, groupName);
     groupWidgets[groupId.toString()] = gw;
@@ -288,7 +289,6 @@ void ContactListWidget::renameGroupWidget(GroupWidget* groupWidget, const QStrin
     groupWidget->setName(newName);
 }
 
-
 void ContactListWidget::dragEnterEvent(QDragEnterEvent* event) {
     if (!event->mimeData()->hasFormat("toxPk")) {
         return;
@@ -315,11 +315,12 @@ void ContactListWidget::dropEvent(QDropEvent* event) {
 
 void ContactListWidget::showEvent(QShowEvent* event) {}
 
-void ContactListWidget::moveWidget(FriendWidget* widget, Status::Status s, bool add) {
+void ContactListWidget::moveWidget(FriendWidget* widget, Status s, bool add) {
     if (mode == SortingMode::Name) {
         const Friend* f = widget->getFriend();
         //    int circleId =
-        //    Nexus::getProfile()->getSettings()->getFriendCircleID(f->getPublicKey());//    CircleWidget *circleWidget = CircleWidget::getFromID(circleId);
+        //    Nexus::getProfile()->getSettings()->getFriendCircleID(f->getPublicKey());//
+        //    CircleWidget *circleWidget = CircleWidget::getFromID(circleId);
 
         //    if (circleWidget == nullptr || add) {
         //      if (circleId != -1)
@@ -402,7 +403,7 @@ void ContactListWidget::setRecvGroupMessage(const GroupMessage& msg) {
     //    gw->setRecvMessage(msg);
 }
 
-void ContactListWidget::setFriendStatus(const ContactId& friendPk, Status::Status status) {
+void ContactListWidget::setFriendStatus(const ContactId& friendPk, Status status) {
     auto fw = getFriend(friendPk);
     if (!fw) {
         qWarning() << "friend" << friendPk.toString() << "widget is no existing.";
@@ -483,3 +484,4 @@ void ContactListWidget::do_toShowDetails(const ContactId& cid) {
         }
     }
 }
+}  // namespace module::im

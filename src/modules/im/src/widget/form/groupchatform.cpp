@@ -13,6 +13,7 @@
 #include "groupchatform.h"
 
 #include "lib/storage/settings/translator.h"
+#include "lib/ui/layout/FlowLayout.h"
 #include "lib/ui/widget/croppinglabel.h"
 #include "src/chatlog/chatlog.h"
 #include "src/chatlog/content/text.h"
@@ -20,6 +21,7 @@
 #include "src/core/coreav.h"
 #include "src/lib/session/profile.h"
 #include "src/lib/storage/settings/style.h"
+#include "src/lib/ui/widget/maskablepixmapwidget.h"
 #include "src/model/friend.h"
 #include "src/model/friendlist.h"
 #include "src/model/group.h"
@@ -27,10 +29,8 @@
 #include "src/persistence/igroupsettings.h"
 #include "src/video/groupnetcamview.h"
 #include "src/widget/chatformheader.h"
-#include "src/widget/flowlayout.h"
 #include "src/widget/form/chatform.h"
 #include "src/widget/groupwidget.h"
-#include "src/widget/maskablepixmapwidget.h"
 #include "tabcompleter.h"
 
 #include <QDragEnterEvent>
@@ -75,6 +75,7 @@ QString editName(const QString& name) {
  * @var QMap<int, QTimer*> GroupChatForm::peerAudioTimers
  * @brief Timeout = peer stopped sending audio.
  */
+namespace module::im {
 
 GroupChatForm::GroupChatForm(const GroupId* chatGroup, IChatLog& chatLog,
                              IMessageDispatcher& messageDispatcher, IGroupSettings& _settings)
@@ -86,7 +87,7 @@ GroupChatForm::GroupChatForm(const GroupId* chatGroup, IChatLog& chatLog,
 
     //    tabber = new TabCompleter(msgEdit, group);
 
-    ChatFormHeader::Mode mode = ChatFormHeader::Mode::None;
+    //    ChatFormHeader::Mode mode = ChatFormHeader::Mode::None;
     //    if (group->isAvGroupchat()) {
     //        mode = ChatFormHeader::Mode::Audio;
     //    }
@@ -271,23 +272,23 @@ void GroupChatForm::dragEnterEvent(QDragEnterEvent* ev) {
 }
 
 void GroupChatForm::dropEvent(QDropEvent* ev) {
-    if (!ev->mimeData()->hasFormat("toxPk")) {
-        return;
-    }
-    FriendId toxPk{ev->mimeData()->data("toxPk")};
-    auto profile = Nexus::getProfile();
-    if (!profile) {
-        return;
-    }
-
-    Friend* frnd = Nexus::getCore()->getFriendList().findFriend(toxPk);
-    if (!frnd) return;
-
-    QString friendId = frnd->getId().toString();
-    QString cid = contactId->toString();
-    if (Status::isOnline(frnd->getStatus())) {
-        //        Core::getInstance()->groupInviteFriend(friendId, cid);
-    }
+    //    if (!ev->mimeData()->hasFormat("toxPk")) {
+    //        return;
+    //    }
+    //    FriendId toxPk{ev->mimeData()->data("toxPk")};
+    //    auto profile = Nexus::getProfile();
+    //    if (!profile) {
+    //        return;
+    //    }
+    //
+    //    Friend* frnd = Nexus::getCore()->getFriendList().findFriend(toxPk);
+    //    if (!frnd) return;
+    //
+    //    QString friendId = frnd->getId().toString();
+    //    QString cid = contactId->toString();
+    //    if (isOnline(frnd->getStatus())) {
+    //        Core::getInstance()->groupInviteFriend(friendId, cid);
+    //    }
 }
 
 void GroupChatForm::onMicMuteToggle() {
@@ -403,3 +404,4 @@ void GroupChatForm::leaveGroupCall() {
     audioOutputFlag = false;
     inCall = false;
 }
+}  // namespace module::im

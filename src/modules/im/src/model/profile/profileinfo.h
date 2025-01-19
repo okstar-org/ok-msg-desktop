@@ -14,9 +14,12 @@
 #include "iprofileinfo.h"
 #include "src/base/interface.h"
 
-class Core;
 class QFile;
 class QPoint;
+
+namespace module::im {
+
+class Core;
 class Profile;
 
 class ProfileInfo : public QObject, public IProfileInfo {
@@ -29,7 +32,6 @@ public:
     bool isEncrypted() const override;
 
     void copyId() const override;
-
 
     void setAvatar(const QPixmap& avatar) override;
     const QPixmap& getAvatar() override;
@@ -70,3 +72,4 @@ private:
 signals:
     void logouted();
 };
+}  // namespace module::im

@@ -23,6 +23,7 @@
 namespace Ui {
 class CallDurationForm;
 }
+namespace module::im {
 
 /**
  * 音视频聊天对话框
@@ -77,5 +78,5 @@ private slots:
     // 禁止扬声器
     void onMuteIn();
 };
-
+}  // namespace module::im
 #endif  // CALLDURATTIONFORM_H

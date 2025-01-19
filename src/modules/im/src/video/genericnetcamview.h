@@ -20,6 +20,7 @@
 
 #include "lib/storage/settings/style.h"
 #include "videosurface.h"
+namespace module::im {
 
 class GenericNetCamView : public QWidget {
     Q_OBJECT
@@ -66,5 +67,6 @@ private:
     void keyPressEvent(QKeyEvent* event) override;
     void closeEvent(QCloseEvent* event) override;
 };
+}  // namespace module::im
 
 #endif  // GENERICNETCAMVIEW_H

@@ -30,7 +30,7 @@
 #include <QPushButton>
 #include <QStyledItemDelegate>
 #include <QSvgRenderer>
-
+namespace module::im {
 AboutFriendForm::AboutFriendForm(const Friend* fw, QWidget* parent)
         : QWidget(parent)
         , ui(new Ui::AboutFriendForm)
@@ -47,7 +47,8 @@ AboutFriendForm::AboutFriendForm(const Friend* fw, QWidget* parent)
     reloadTheme();
 
     connect(ui->sendMessage, &QPushButton::clicked, this, &AboutFriendForm::onSendMessageClicked);
-    connect(ui->removeHistory, &QPushButton::clicked, this, &AboutFriendForm::onRemoveHistoryClicked);
+    connect(ui->removeHistory, &QPushButton::clicked, this,
+            &AboutFriendForm::onRemoveHistoryClicked);
     ui->id->setText(about->getPublicKey().toString());
     ui->statusMessage->setText(about->getStatusMessage());
     ui->avatar->setPixmap(about->getAvatar());
@@ -127,3 +128,4 @@ void AboutFriendForm::onAliasChanged(const QString& text) {
 const ContactId& AboutFriendForm::getId() {
     return m_friend->getId();
 }
+}  // namespace module::im

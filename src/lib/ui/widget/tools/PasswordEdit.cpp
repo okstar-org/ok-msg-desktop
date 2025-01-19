@@ -10,16 +10,9 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#include "passwordedit.h"
-#ifdef QTOX_PLATFORM_EXT
-#include "src/platform/capslock.h"
-#endif
-#include <QCoreApplication>
+#include "PasswordEdit.h"
 
-// It isn't needed for OSX, because it shows indicator by default
-#if defined(QTOX_PLATFORM_EXT) && !defined(Q_OS_OSX)
-#define ENABLE_CAPSLOCK_INDICATOR
-#endif
+#include <QCoreApplication>
 
 PasswordEdit::EventHandler* PasswordEdit::eventHandler{nullptr};
 

@@ -795,7 +795,7 @@
           </widget>
          </item>
          <item>
-          <widget class="NotificationScrollArea" name="friendList">
+          <widget class="module::im::NotificationScrollArea" name="friendList">
            <property name="enabled">
             <bool>true</bool>
            </property>

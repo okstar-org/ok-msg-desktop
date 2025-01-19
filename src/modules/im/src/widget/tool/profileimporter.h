@@ -14,6 +14,7 @@
 #define PROFILEIMPORTER_H
 
 #include <QWidget>
+namespace module::im {
 
 class ProfileImporter : public QWidget {
     Q_OBJECT
@@ -26,5 +27,6 @@ public:
 private:
     bool askQuestion(QString title, QString message);
 };
+}  // namespace module::im
 
 #endif  // PROFILEIMPORTER_H

@@ -31,13 +31,14 @@
 #include "src/model/message.h"
 #include "src/widget/searchtypes.h"
 
+namespace module::im {
+
 class Profile;
 class HistoryKeeper;
 
 enum class HistMessageContentType { message, file };
 
-struct Peer
-{
+struct Peer {
     int64_t id;
     QString jid;
     QString alias;
@@ -204,5 +205,5 @@ private:
 
     History::HistMessage rowToMessage(const QVector<QVariant>& row);
 };
-
+}  // namespace module::im
 #endif  // HISTORY_H

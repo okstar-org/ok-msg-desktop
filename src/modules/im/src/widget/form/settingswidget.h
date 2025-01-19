@@ -19,14 +19,16 @@
 
 #include <array>
 #include <memory>
-
+class QLabel;
+class QTabWidget;
 class Camera;
+
+namespace module::im {
 class GenericForm;
 class GeneralForm;
 class IAudioControl;
 class AVForm;
-class QLabel;
-class QTabWidget;
+
 class ContentLayout;
 class Widget;
 
@@ -60,5 +62,5 @@ private:
     std::vector<std::unique_ptr<GenericForm>> cfgForms;
     int currentIndex;
 };
-
+}  // namespace module::im
 #endif  // SETTINGSWIDGET_H

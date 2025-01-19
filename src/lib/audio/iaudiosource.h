@@ -14,7 +14,7 @@
 #define IAUDIOSOURCE_H
 
 #include <QObject>
-
+namespace lib::audio {
 /**
  * @fn void Audio::frameAvailable(const int16_t *pcm, size_t sample_count, uint8_t channels,
  * uint32_t sampling_rate);
@@ -38,5 +38,5 @@ signals:
     void volumeAvailable(float value);
     void invalidated();
 };
-
+}  // namespace lib::audio
 #endif  // IAUDIOSOURCE_H

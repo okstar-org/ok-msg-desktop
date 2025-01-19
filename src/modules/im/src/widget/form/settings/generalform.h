@@ -21,6 +21,7 @@
 namespace Ui {
 class GeneralSettings;
 }
+namespace module::im {
 
 class SettingsWidget;
 
@@ -29,7 +30,9 @@ class GeneralForm : public GenericForm {
 public:
     explicit GeneralForm(SettingsWidget* parent);
     ~GeneralForm();
-    virtual QString getFormName() final override { return tr("General"); }
+    virtual QString getFormName() final override {
+        return tr("General");
+    }
 
 signals:
     void updateIcons();
@@ -38,8 +41,8 @@ private slots:
 
     void on_notify_stateChanged();
     void on_desktopNotify_stateChanged();
-   // void on_notifySound_stateChanged();
-   // void on_notifyHide_stateChanged(int);
+    // void on_notifySound_stateChanged();
+    // void on_notifyHide_stateChanged(int);
     void on_busySound_stateChanged();
 
     void on_groupOnlyNotfiyWhenMentioned_stateChanged();
@@ -63,5 +66,6 @@ private:
 private slots:
     void onProfileChanged(Profile*);
 };
+}  // namespace module::im
 
 #endif

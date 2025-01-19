@@ -12,6 +12,7 @@
 
 #ifndef I_DIALOGS_H
 #define I_DIALOGS_H
+namespace module::im {
 
 class ContactId;
 class GroupId;
@@ -28,5 +29,5 @@ public:
 
     virtual int chatroomCount() const = 0;
 };
-
+}  // namespace module::im
 #endif  // I_DIALOGS_H

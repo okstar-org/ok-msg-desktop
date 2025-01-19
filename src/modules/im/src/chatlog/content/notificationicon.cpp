@@ -17,7 +17,7 @@
 #include <QGraphicsScene>
 #include <QPainter>
 #include <QTimer>
-
+namespace module::im {
 NotificationIcon::NotificationIcon(QSize Size)
         : ChatLineContent(ChatLineContent::ContentType::CHAT_Nofity), size(Size) {
     pmap = PixmapCache::getInstance().get(lib::settings::Style::getImagePath("chatArea/typing.svg"),
@@ -77,3 +77,4 @@ void NotificationIcon::updateGradient() {
 const void* NotificationIcon::getContent() {
     return &pmap;
 }
+}  // namespace module::im

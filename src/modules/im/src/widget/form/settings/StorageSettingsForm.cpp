@@ -26,6 +26,8 @@
 #include <QVector>
 
 #include "lib/storage/settings/translator.h"
+#include "src/Bus.h"
+#include "src/application.h"
 #include "src/base/RecursiveSignalBlocker.h"
 #include "src/core/core.h"
 #include "src/core/coreav.h"
@@ -36,8 +38,8 @@
 #include "src/persistence/smileypack.h"
 #include "src/widget/form/settingswidget.h"
 #include "src/widget/widget.h"
-#include "src/application.h"
-#include "src/Bus.h"
+
+namespace module::im {
 
 /**
  * @brief Constructor of StorageSettingsForm.
@@ -54,14 +56,12 @@ StorageSettingsForm::StorageSettingsForm(SettingsWidget* myParent)
     // block all child signals during initialization
     const ok::base::RecursiveSignalBlocker signalBlocker(this);
 
-
     eventsInit();
     settings::Translator::registerHandler(std::bind(&StorageSettingsForm::retranslateUi, this),
                                           this);
 
     auto bus = ok::Application::Instance()->bus();
     connect(bus, &ok::Bus::profileChanged, this, &StorageSettingsForm::onProfileChanged);
-
 }
 
 StorageSettingsForm::~StorageSettingsForm() {
@@ -111,8 +111,7 @@ void StorageSettingsForm::retranslateUi() {
     bodyUI->retranslateUi(this);
 }
 
-void StorageSettingsForm::onProfileChanged(Profile *profile)
-{
+void StorageSettingsForm::onProfileChanged(Profile* profile) {
     auto s = profile->getSettings();
     bodyUI->autoSaveFilesDir->setText(s->getGlobalAutoAcceptDir());
 
@@ -124,5 +123,5 @@ void StorageSettingsForm::onProfileChanged(Profile *profile)
     // bodyUI->autoAwaySpinBox->setValue(s.getAutoAwayTime());
     // bodyUI->maxAutoAcceptSizeMB->setValue(static_cast<double>(s.getMaxAutoAcceptSize()) / 1024 /
     // 1024); bodyUI->autoacceptFiles->setChecked(okSettings.getAutoSaveEnabled());
-
 }
+}  // namespace module::im

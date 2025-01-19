@@ -14,6 +14,7 @@
 #define CHATTEXTEDIT_H
 
 #include <QTextEdit>
+namespace module::im {
 
 class ChatTextEdit final : public QTextEdit {
     Q_OBJECT
@@ -40,5 +41,6 @@ signals:
 public slots:
     void onTextChanged();
 };
+}  // namespace module::im
 
 #endif  // CHATTEXTEDIT_H

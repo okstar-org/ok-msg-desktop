@@ -15,10 +15,13 @@
 #include <QCollator>
 #include <cassert>
 #include "genericchatitemwidget.h"
+namespace module::im {
 
 GenericChatItemLayout::GenericChatItemLayout(QWidget* parent) : layout(new QVBoxLayout(parent)) {}
 
-GenericChatItemLayout::~GenericChatItemLayout() { delete layout; }
+GenericChatItemLayout::~GenericChatItemLayout() {
+    delete layout;
+}
 
 void GenericChatItemLayout::addSortedWidget(GenericChatItemWidget* widget,
                                             int stretch,
@@ -68,7 +71,9 @@ void GenericChatItemLayout::search(const QString& searchString, bool hideAll) {
     }
 }
 
-QLayout* GenericChatItemLayout::getLayout() const { return layout; }
+QLayout* GenericChatItemLayout::getLayout() const {
+    return layout;
+}
 
 int GenericChatItemLayout::indexOfClosestSortedWidget(GenericChatItemWidget* widget) const {
     // Binary search: Deferred test of equality.
@@ -98,3 +103,4 @@ int GenericChatItemLayout::indexOfClosestSortedWidget(GenericChatItemWidget* wid
     }
     return min;
 }
+}  // namespace module::im

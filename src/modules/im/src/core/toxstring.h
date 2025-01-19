@@ -17,6 +17,7 @@
 #include <QString>
 
 #include <cstdint>
+namespace module::im {
 
 class ToxString {
 public:
@@ -32,4 +33,5 @@ public:
 private:
     QByteArray string;
 };
+}  // namespace module::im
 #endif  // TOXSTRING_H

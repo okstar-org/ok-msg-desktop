@@ -15,7 +15,8 @@
 #include <QMouseEvent>
 #include "lib/storage/settings/style.h"
 #include "lib/ui/widget/croppinglabel.h"
-#include "maskablepixmapwidget.h"
+#include "src/lib/ui/widget/maskablepixmapwidget.h"
+namespace module::im {
 
 GenericChatroomWidget::GenericChatroomWidget(ChatType type, const ContactId& cid, QWidget* parent)
         : GenericChatItemWidget(type, cid, parent), contactId(cid) {
@@ -153,3 +154,4 @@ void GenericChatroomWidget::leaveEvent(QEvent* event) {
     if (!active) setBackgroundRole(QPalette::Window);
     QWidget::leaveEvent(event);
 }
+}  // namespace module::im

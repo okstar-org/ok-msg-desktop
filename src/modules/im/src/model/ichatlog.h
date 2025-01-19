@@ -27,10 +27,10 @@
 #include "src/widget/searchtypes.h"
 
 #include <cassert>
+namespace module::im {
 
 using ChatLogIdx = NamedType<size_t, struct ChatLogIdxTag, Orderable, UnderlyingAddable,
                              UnitlessDifferencable, Incrementable>;
-Q_DECLARE_METATYPE(ChatLogIdx);
 
 struct SearchPos {
     // Index to the chat log item we want
@@ -39,13 +39,21 @@ struct SearchPos {
     // start even if we're searching backwards.
     size_t numMatches;
 
-    bool operator==(const SearchPos& other) const { return tie() == other.tie(); }
+    bool operator==(const SearchPos& other) const {
+        return tie() == other.tie();
+    }
 
-    bool operator!=(const SearchPos& other) const { return tie() != other.tie(); }
+    bool operator!=(const SearchPos& other) const {
+        return tie() != other.tie();
+    }
 
-    bool operator<(const SearchPos& other) const { return tie() < other.tie(); }
+    bool operator<(const SearchPos& other) const {
+        return tie() < other.tie();
+    }
 
-    std::tuple<ChatLogIdx, size_t> tie() const { return std::tie(logIdx, numMatches); }
+    std::tuple<ChatLogIdx, size_t> tie() const {
+        return std::tie(logIdx, numMatches);
+    }
 };
 
 struct SearchResult {
@@ -118,5 +126,6 @@ public:
 signals:
     void itemUpdated(ChatLogIdx idx);
 };
-
+}  // namespace module::im
+Q_DECLARE_METATYPE(module::im::ChatLogIdx);
 #endif /*ICHAT_LOG_H*/

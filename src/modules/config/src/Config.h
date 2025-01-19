@@ -22,6 +22,10 @@
 
 OK_RESOURCE_LOADER(Config)
 
+namespace lib::session {
+class Profile;
+}
+
 namespace module::config {
 
 class Config : public Module {
@@ -29,7 +33,7 @@ public:
     explicit Config();
     ~Config();
 
-    void init(Profile* p) override;
+    void init(lib::session::Profile* p) override;
     const QString& getName() const override;
     void start(std::shared_ptr<lib::session::AuthSession> session) override;
     [[nodiscard]] bool isStarted() override;

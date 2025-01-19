@@ -43,6 +43,7 @@ QString getToxId(const QString& id) {
 }
 
 }  // namespace
+namespace module::im {
 
 /**
  * @var QString AddFriendForm::lastUsername
@@ -201,3 +202,4 @@ void AddFriendForm::retranslateUi() {
     searchButton.setText(tr("Search users"));
     tabWidget->setTabText(0, tr("Add a friend"));
 }
+}  // namespace module::im

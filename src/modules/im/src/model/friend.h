@@ -24,6 +24,7 @@
 namespace lib::messenger {
 class IMFriend;
 }
+namespace module::im {
 
 class Friend : public Contact {
     Q_OBJECT
@@ -43,7 +44,9 @@ public:
 
     ~Friend();
 
-    const FriendId& getId() const { return id; };
+    const FriendId& getId() const {
+        return id;
+    };
 
     QString toString() const;
 
@@ -55,16 +58,20 @@ public:
     void setEventFlag(bool f) override;
     bool getEventFlag() const override;
 
-    const FriendId getPublicKey() const { return FriendId{Contact::getIdAsString()}; };
+    const FriendId getPublicKey() const {
+        return FriendId{Contact::getIdAsString()};
+    };
 
-    void setStatus(Status::Status s);
-    Status::Status getStatus() const;
+    void setStatus(Status s);
+    Status getStatus() const;
 
-    void addEnd(const QString& end) { ends.append(end); }
+    void addEnd(const QString& end) {
+        ends.append(end);
+    }
 signals:
     //  void nameChanged(const QString &name);
     //  void aliasChanged(const ToxPk &receiver, QString alias);
-    void statusChanged(Status::Status status, bool event);
+    void statusChanged(Status status, bool event);
     void onlineOfflineChanged(bool isOnline);
     void statusMessageChanged(const QString& message);
     void loadChatHistory();
@@ -77,7 +84,7 @@ private:
     FriendId id;
     bool hasNewEvents{};
     QString statusMessage;
-    Status::Status friendStatus;
+    Status friendStatus;
 
     /**
      * 朋友关系
@@ -86,5 +93,5 @@ private:
     RelationStatus mRelationStatus;
     QList<QString> ends;  // 终端列表
 };
-
+}  // namespace module::im
 #endif  // FRIEND_H

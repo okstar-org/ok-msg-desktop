@@ -19,6 +19,7 @@
 #include <QString>
 
 class QNetworkProxy;
+namespace module::im {
 
 class ICoreSettings {
 public:
@@ -57,5 +58,6 @@ public:
     DECLARE_SIGNAL(proxyAddressChanged, const QString& address);
     DECLARE_SIGNAL(proxyPortChanged, quint16 port);
 };
+}  // namespace module::im
 
 #endif  // I_CORE_SETTINGS_H

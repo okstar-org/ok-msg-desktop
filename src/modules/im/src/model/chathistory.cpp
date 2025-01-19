@@ -14,7 +14,8 @@
 #include "src/persistence/settings.h"
 #include "src/widget/form/chatform.h"
 
-namespace {
+namespace module::im {
+
 /**
  * @brief Determines if the given idx needs to be loaded from history
  * @param[in] idx index to check
@@ -59,7 +60,6 @@ bool handleActionPrefix(QString& content) {
 
     return isAction;
 }
-}  // namespace
 
 ChatHistory::ChatHistory(const ContactId& f_,                  //
                          History* history_,                    //
@@ -117,7 +117,9 @@ ChatHistory::ChatHistory(const ContactId& f_,                  //
     connect(&sessionChatLog, &IChatLog::itemUpdated, this, &IChatLog::itemUpdated);
 }
 
-ChatHistory::~ChatHistory() { qDebug() << __func__; }
+ChatHistory::~ChatHistory() {
+    qDebug() << __func__;
+}
 
 const ChatLogItem* ChatHistory::at(ChatLogIdx idx) const {
     if (canUseHistory()) {
@@ -201,7 +203,9 @@ ChatLogIdx ChatHistory::getFirstIdx() const {
     }
 }
 
-ChatLogIdx ChatHistory::getNextIdx() const { return sessionChatLog.getNextIdx(); }
+ChatLogIdx ChatHistory::getNextIdx() const {
+    return sessionChatLog.getNextIdx();
+}
 
 std::vector<IChatLog::DateChatLogIdxPair>  //
 ChatHistory::getDateIdxs(const QDate& startDate, size_t maxDates) const {
@@ -504,7 +508,9 @@ void ChatHistory::receiptMessage(DispatchedMessageId id) {
     }
 }
 
-bool ChatHistory::canUseHistory() const { return history; }
+bool ChatHistory::canUseHistory() const {
+    return history;
+}
 
 /**
  * @brief Gets the initial chat log index for a sessionChatLog with 0 items loaded from history.
@@ -519,3 +525,4 @@ ChatLogIdx ChatHistory::getInitialChatLogIdx() const {
     }
     return ChatLogIdx(0);
 }
+}  // namespace module::im

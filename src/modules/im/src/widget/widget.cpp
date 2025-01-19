@@ -41,7 +41,7 @@
 #include "base/Page.h"
 #include "base/SvgUtils.h"
 #include "base/images.h"
-#include "circlewidget.h"
+
 #include "contentdialog.h"
 #include "contentlayout.h"
 #include "form/groupchatform.h"
@@ -51,7 +51,6 @@
 #include "lib/audio/audio.h"
 #include "lib/storage/settings/OkSettings.h"
 #include "lib/storage/settings/translator.h"
-#include "maskablepixmapwidget.h"
 #include "splitterrestorer.h"
 #include "src/chatlog/content/filetransferwidget.h"
 #include "src/core/core.h"
@@ -59,6 +58,7 @@
 #include "src/core/corefile.h"
 #include "src/lib/session/profile.h"
 #include "src/lib/storage/settings/style.h"
+#include "src/lib/ui/widget/maskablepixmapwidget.h"
 #include "src/model/friend.h"
 #include "src/model/friendlist.h"
 #include "src/model/group.h"
@@ -80,17 +80,7 @@
 #include "tool/removefrienddialog.h"
 #include "ui_mainwindow.h"
 
-bool toxActivateEventHandler(const QByteArray&) {
-    Widget* widget = Nexus::getDesktopGUI();
-    if (!widget) {
-        return true;
-    }
-
-    qDebug() << "Handling [activate] event from other instance";
-    widget->forceShow();
-
-    return true;
-}
+namespace module::im {
 
 static Widget* instance = nullptr;
 
@@ -125,7 +115,6 @@ Widget::Widget(QWidget* parent)  //
 
     installEventFilter(this);
 
-
     QIcon themeIcon = QIcon::fromTheme("qtox");
     if (!themeIcon.isNull()) {
         setWindowIcon(themeIcon);
@@ -143,18 +132,18 @@ Widget::Widget(QWidget* parent)  //
 
     // Preparing icons and set their size
     statusOnline = new QAction(this);
-    statusOnline->setIcon(ok::base::SvgUtils::prepareIcon(
-            Status::getIconPath(Status::Status::Online), icon_size, icon_size));
+    statusOnline->setIcon(
+            ok::base::SvgUtils::prepareIcon(getIconPath(Status::Online), icon_size, icon_size));
     connect(statusOnline, &QAction::triggered, this, &Widget::setStatusOnline);
 
     statusAway = new QAction(this);
-    statusAway->setIcon(ok::base::SvgUtils::prepareIcon(Status::getIconPath(Status::Status::Away),
-                                                        icon_size, icon_size));
+    statusAway->setIcon(
+            ok::base::SvgUtils::prepareIcon(getIconPath(Status::Away), icon_size, icon_size));
     connect(statusAway, &QAction::triggered, this, &Widget::setStatusAway);
 
     statusBusy = new QAction(this);
-    statusBusy->setIcon(ok::base::SvgUtils::prepareIcon(Status::getIconPath(Status::Status::Busy),
-                                                        icon_size, icon_size));
+    statusBusy->setIcon(
+            ok::base::SvgUtils::prepareIcon(getIconPath(Status::Busy), icon_size, icon_size));
     connect(statusBusy, &QAction::triggered, this, &Widget::setStatusBusy);
 
     actionLogout = new QAction(this);
@@ -196,7 +185,7 @@ Widget::Widget(QWidget* parent)  //
     // Disable some widgets until we're connected to the DHT
     //  ui->statusButton->setEnabled(false);
 
-    auto &settings = lib::settings::OkSettings::getInstance();
+    auto& settings = lib::settings::OkSettings::getInstance();
 
     settings::Translator::translate(OK_IM_MODULE, settings.getTranslation());
     connect(ok::Application::Instance()->bus(), &ok::Bus::languageChanged,
@@ -204,7 +193,7 @@ Widget::Widget(QWidget* parent)  //
 
     lib::settings::Style::setThemeColor(settings.getThemeColor());
 
-    onStatusSet(Status::Status::Offline);
+    onStatusSet(Status::Offline);
 
     // NOTE: We intentionally do not connect the fileUploadFinished and
     // fileDownloadFinished signals because they are duplicates of
@@ -254,8 +243,6 @@ Widget::Widget(QWidget* parent)  //
 
     retranslateUi();
     settings::Translator::registerHandler(std::bind(&Widget::retranslateUi, this), this);
-
-
 
 #ifdef Q_OS_MAC
     // Nexus::getInstance()->updateWindows();
@@ -363,7 +350,6 @@ void Widget::connectToCore(Core& core) {
     connect(&core, &Core::disconnected, this, &Widget::onDisconnected);
     connect(&core, &Core::started, this, &Widget::onStarted);
 
-
     connect(&core, &Core::statusSet, this, &Widget::onStatusSet);
     connect(&core, &Core::usernameSet, this, &Widget::setUsername);
     connect(&core, &Core::avatarSet, this, &Widget::setAvatar);
@@ -374,19 +360,16 @@ void Widget::connectToCore(Core& core) {
 }
 
 void Widget::onConnected() {
-     // ui->statusButton->setEnabled(true);
+    // ui->statusButton->setEnabled(true);
     //  emit core->statusSet(core->getStatus());
 }
 
 void Widget::onDisconnected() {
     //  ui->statusButton->setEnabled(false);
-    //  emit core->statusSet(Status::Status::Offline);
+    //  emit core->statusSet(Status::Offline);
 }
 
-void Widget::onStarted()
-{
-
-}
+void Widget::onStarted() {}
 
 void Widget::onFailedToStartCore() {
     ok::base::MessageBox::critical(this, "",
@@ -395,12 +378,9 @@ void Widget::onFailedToStartCore() {
     qApp->exit(EXIT_FAILURE);
 }
 
-void Widget::onBadProxyCore() {
+void Widget::onBadProxyCore() {}
 
-
-}
-
-void Widget::onStatusSet(Status::Status status) {
+void Widget::onStatusSet(Status status) {
     //  ui->statusButton->setProperty("status", static_cast<int>(status));
     //  ui->statusButton->setIcon(
     //      prepareIcon(getIconPath(status), icon_size, icon_size));
@@ -490,7 +470,6 @@ void Widget::onIconClick(QSystemTrayIcon::ActivationReason reason) {
         }
     }
 }
-
 
 void Widget::setUsername(const QString& username) {}
 
@@ -728,12 +707,13 @@ bool Widget::newMessageAlert(QWidget* currentWindow, bool isActive, bool sound, 
                 eventFlag = true;
             }
 
-            bool isBusy = Nexus::getCore()->getStatus() == Status::Status::Busy;
+            bool isBusy = Nexus::getCore()->getStatus() == Status::Busy;
             bool busySound = settings->getBusySound();
             bool notifySound = settings->getNotifySound();
 
             if (notifySound && sound && (!isBusy || busySound)) {
-                Nexus::getInstance()->playNotificationSound(IAudioSink::Sound::NewMessage);
+                Nexus::getInstance()->playNotificationSound(
+                        lib::audio::IAudioSink::Sound::NewMessage);
             }
         }
     }
@@ -806,7 +786,6 @@ void Widget::registerContentDialog(ContentDialog& contentDialog) const {
     auto settings = Nexus::getProfile()->getSettings();
     connect(settings, &Settings::groupchatPositionChanged, &contentDialog,
             &ContentDialog::reorderLayouts);
-
 }
 
 ContentLayout* Widget::createContentDialog(DialogType type) const {
@@ -946,18 +925,18 @@ bool Widget::event(QEvent* e) {
 void Widget::onUserAwayCheck() {
 #ifdef QTOX_PLATFORM_EXT
     uint32_t autoAwayTime = settings.getAutoAwayTime() * 60 * 1000;
-//  bool online = static_cast<Status::Status>(
+//  bool online = static_cast<Status>(
 //                    ui->statusButton->property("status").toInt()) ==
-//                Status::Status::Online;
+//                Status::Online;
 //  bool away = autoAwayTime && Platform::getIdleTime() >= autoAwayTime;
 
 //  if (online && away) {
 //    qDebug() << "auto away activated at" << QTime::currentTime().toString();
-//    emit statusSet(Status::Status::Away);
+//    emit statusSet(Status::Away);
 //    autoAwayActive = true;
 //  } else if (autoAwayActive && !away) {
 //    qDebug() << "auto away deactivated at" << QTime::currentTime().toString();
-//    emit statusSet(Status::Status::Online);
+//    emit statusSet(Status::Online);
 //    autoAwayActive = false;
 //  }
 #endif
@@ -975,7 +954,7 @@ void Widget::setStatusOnline() {
     //    return;
     //  }
 
-    core->setStatus(Status::Status::Online);
+    core->setStatus(Status::Online);
 }
 
 void Widget::setStatusAway() {
@@ -983,7 +962,7 @@ void Widget::setStatusAway() {
     //    return;
     //  }
 
-    core->setStatus(Status::Status::Away);
+    core->setStatus(Status::Away);
 }
 
 void Widget::setStatusBusy() {
@@ -991,7 +970,7 @@ void Widget::setStatusBusy() {
     //    return;
     //  }
 
-    core->setStatus(Status::Status::Busy);
+    core->setStatus(Status::Busy);
 }
 
 void Widget::saveWindowGeometry() {
@@ -1038,3 +1017,4 @@ void Widget::retranslateUi() {
 void Widget::showEvent(QShowEvent* e) {
     QWidget::showEvent(e);
 }
+}  // namespace module::im

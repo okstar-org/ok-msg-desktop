@@ -27,7 +27,7 @@ public:
     Classroom();
     ~Classroom();
 
-    void init(Profile* p) override;
+    void init(lib::session::Profile* p) override;
     const QString& getName() const override;
     void start(std::shared_ptr<lib::session::AuthSession> session) override;
     [[nodiscard]] bool isStarted() override;

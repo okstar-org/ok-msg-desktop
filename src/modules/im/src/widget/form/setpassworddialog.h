@@ -18,6 +18,7 @@
 namespace Ui {
 class SetPasswordDialog;
 }
+namespace module::im {
 
 class SetPasswordDialog : public QDialog {
     Q_OBJECT
@@ -37,5 +38,5 @@ private:
     QString body;
     static const double reasonablePasswordLength;
 };
-
+}  // namespace module::im
 #endif  // SETPASSWORDDIALOG_H

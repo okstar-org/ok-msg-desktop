@@ -19,6 +19,7 @@
 namespace Ui {
 class SearchSettingsForm;
 }
+namespace module::im {
 
 class SearchSettingsForm : public QWidget {
     Q_OBJECT
@@ -48,5 +49,5 @@ private slots:
 signals:
     void updateSettings(const bool isUpdate);
 };
-
+}  // namespace module::im
 #endif  // SEARCHSETTINGSFORM_H

@@ -17,6 +17,7 @@
 #include <QFrame>
 #include <QStackedLayout>
 
+namespace module::im {
 class ContentLayout : public QStackedLayout {
 public:
     ContentLayout();
@@ -34,5 +35,5 @@ public:
 private:
     void init();
 };
-
+}  // namespace module::im
 #endif  // CONTENTLAYOUT_H

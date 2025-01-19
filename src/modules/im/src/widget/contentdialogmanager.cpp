@@ -14,8 +14,8 @@
 
 #include <tuple>
 
-#include "src/model/friend.h"
 #include "src/lib/session/profile.h"
+#include "src/model/friend.h"
 #include "src/model/friendlist.h"
 #include "src/model/group.h"
 #include "src/model/grouplist.h"
@@ -23,7 +23,8 @@
 #include "src/widget/friendwidget.h"
 #include "src/widget/groupwidget.h"
 
-namespace {
+namespace module::im {
+
 void removeDialog(ContentDialog* dialog, QHash<const ContactId&, ContentDialog*>& dialogs) {
     for (auto it = dialogs.begin(); it != dialogs.end();) {
         if (*it == dialog) {
@@ -33,11 +34,12 @@ void removeDialog(ContentDialog* dialog, QHash<const ContactId&, ContentDialog*>
         }
     }
 }
-}  // namespace
 
 ContentDialogManager* ContentDialogManager::instance;
 
-ContentDialog* ContentDialogManager::current() { return currentDialog; }
+ContentDialog* ContentDialogManager::current() {
+    return currentDialog;
+}
 
 bool ContentDialogManager::contactWidgetExists(const ContactId& contactId) {
     const auto dialog = contactDialogs.value(contactId, nullptr);
@@ -189,3 +191,4 @@ IDialogs* ContentDialogManager::getFriendDialogs(const FriendId& friendPk) const
 IDialogs* ContentDialogManager::getGroupDialogs(const GroupId& groupId) const {
     return getGroupDialog(groupId);
 }
+}  // namespace module::im

@@ -16,6 +16,7 @@
 #include "src/lib/storage/settings/style.h"
 
 #include <QDebug>
+namespace module::im {
 
 NotificationEdgeWidget::NotificationEdgeWidget(Position position, QWidget* parent)
         : QWidget(parent) {
@@ -51,3 +52,4 @@ void NotificationEdgeWidget::mouseReleaseEvent(QMouseEvent* event) {
     emit clicked();
     QWidget::mousePressEvent(event);
 }
+}  // namespace module::im

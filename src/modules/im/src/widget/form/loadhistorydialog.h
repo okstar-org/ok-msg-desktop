@@ -20,6 +20,9 @@
 namespace Ui {
 class LoadHistoryDialog;
 }
+
+namespace module::im {
+
 class IChatLog;
 
 class LoadHistoryDialog : public QDialog {
@@ -41,5 +44,5 @@ private:
     Ui::LoadHistoryDialog* ui;
     const IChatLog* chatLog;
 };
-
+}  // namespace module::im
 #endif  // LOADHISTORYDIALOG_H

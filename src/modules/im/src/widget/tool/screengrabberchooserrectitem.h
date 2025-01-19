@@ -14,6 +14,7 @@
 #define SCREENGRABBERCHOOSERRECTITEM_HPP
 
 #include <QGraphicsItemGroup>
+namespace module::im {
 
 class ScreenGrabberChooserRectItem final : public QObject, public QGraphicsItemGroup {
     Q_OBJECT
@@ -77,5 +78,5 @@ private:
     QGraphicsRectItem* bottomLeft;
     QGraphicsRectItem* leftCenter;
 };
-
+}  // namespace module::im
 #endif  // SCREENGRABBERCHOOSERRECTITEM_HPP
